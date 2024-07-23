@@ -1,0 +1,73 @@
+## @file
+# Unit test suite for the TbtRetimerNvmUpdateLib using Google Test
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION     = 0x00010005
+  BASE_NAME       = GoogleTestTbtRetimerNvmUpdateLib
+  FILE_GUID       = F358972D-D822-47BD-B6DD-213F6F893418
+  MODULE_TYPE     = HOST_APPLICATION
+  VERSION_STRING  = 1.0
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  #
+  # Test Main
+  #
+  GTestTbtRetimerNvmUpdateLib.cpp
+  TestCreateRetimerDevInstance.cpp
+  TestCreateTBTDevInstance.cpp
+  TestDestroyRetimerDevInstance.cpp
+  TestDestroyTbtDevInstance.cpp
+  TestReadRetimerNvmVersion.cpp
+  TestUpdateRetimerNvmInformation.cpp
+  TestUpdateRetimerNvmFirmware.cpp
+  TestUpdateDiscreteTbtNvmFirmware.cpp
+
+[Packages]
+  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  FmpDevicePkg/FmpDevicePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+
+[LibraryClasses]
+  GoogleTestLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  PcdLib
+  UefiRuntimeServicesTableLib
+
+[Protocols]
+
+[Pcd]
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber    ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable    ## CONSUMES
+
+[Guids]
+  gITbtInfoHobGuid                         ## CONSUMES
+  gUsbCRetimerSetupGuid                    ## CONSUMES

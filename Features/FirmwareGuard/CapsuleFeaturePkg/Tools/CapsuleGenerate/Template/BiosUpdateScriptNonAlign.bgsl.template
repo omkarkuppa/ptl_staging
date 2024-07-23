@@ -1,0 +1,145 @@
+//
+//  @file
+//  BiosGuard Update Script Language file for BIOS region update.
+//
+//  DO NOT MODIFY THIS FILE.
+//
+//  NOTE:
+//    (1) Set up BIOS offset and length to be updated.
+//    (2) Script that erases F0 and writes all the flash from B0 and
+//        allowing a max of 3 write and 3 erase errors.
+//    (3) The flash size is dynamically calculated based FLREG1 Region
+//        Base and Limit Erase block size is 4KB.
+//    (4) Return values set in If
+//        - Return 0 = Success
+//        - Return 1 = Erase errors > 3
+//        - Return 2 = Write errors > 3
+//
+//  @copyright
+//  INTEL CONFIDENTIAL
+//  Copyright (C) 2023 Intel Corporation.
+//
+//  This software and the related documents are Intel copyrighted materials,
+//  and your use of them is governed by the express license under which they
+//  were provided to you ("License"). Unless the License provides otherwise,
+//  you may not use, modify, copy, publish, distribute, disclose or transmit
+//  this software or the related documents without Intel's prior written
+//  permission.
+//
+//  This software and the related documents are provided as is, with no
+//  express or implied warranties, other than those that are expressly stated
+//  in the License.
+//
+//  @par Specification
+//
+//
+
+//
+// For flash update which size is less than 4KB, start address and end address are both in one block.
+//
+
+begin
+set I7 {RegionOffset};      $BIOS_region_offset
+set I9 {RegionSize};      $Image_buffer_length
+
+// Set up initial values for locating BIOS Base Address dynamically
+set I1 0;               Region Base of FLREG1
+set I8 0;               Region Limit of FLREG1
+set F0 0x16;            Move offset to read FRBA from FLMAP0 [bits 23:16] stored in SPI
+
+read B1 F0 0x1;         Read FRBA
+loadbyte I1 B1;         Load one byte from B1 to I1
+shiftl I1 4;            Define FRBA for Region Base (Should be 0x40)
+set I8 I1;              Define FRBA for Region Limit
+add I1 4;               Define Region Base of FLREG1 (FRBA+0x4)
+add I8 6;               Define Region Limit of FLREG1 (FRBA+0x6)
+
+// Read Region Base
+set F0 I1;              Move flash offset to FLREG1
+read B1 F0 0x2;         Reading FLREG1
+loadword I1 B1;         Load WORD [bits 15:0] of FLREG1
+and I1 0x7FFF;          Masking bits [14:0] for Region Base
+shiftl I1 0xC;          I1 contains BIOS Base Address
+
+// Read Region Limit
+set F0 I8;
+read B1 F0 0x2;         Reading FLREG1
+loadword I8 B1;         Load DWORD [bits 31:0] of FLREG1
+and I8 0x7FFF;          Masking bits [30:16] for Region Limit
+add I8 0x1;
+shiftl I8 0xC;          I8 contains BIOS Region Limit
+
+// Make sure flash range is under BIOS region
+set I6 I1;
+add I6 I7;              calculate flash update start address (BIOS Region Base + offset)
+add I6 I9;              add image length to get flash update end addres
+compare I6 I8;          flash end address should not exceed BIOS Region Limit
+jg _region_error_label
+
+// align flash offset to 4KB
+set I8 I7;
+shiftr I8 12;
+shiftl I8 12;           I8 now contains 4KB block offset
+sub I7 I8;              I7 now contains offset from 4KB align
+
+// Read 4KB original flash content
+add I1 I8;
+set F0 I1;              Set the address in flash where the BIOS image resides
+read B2 F0 0x1000;      Read 4KB original flash content to B2
+
+add B2 I7;              Move B2 offset to update content
+copy B2 B0 I9;          Copy update content from B0 to B2
+sub B2 I7;              Restore B2 offset
+
+// Set up initial values for update process
+set I0 0;               The offset counter
+set I1 0x1000;          The block size 4KB
+set I2 0;               Erase error counter
+set I3 0;               Write error counter
+set I4 3;               Max errors
+set I5 0;               Error Code Buffer
+
+jmp _erase;             Start to flash BIOS
+
+_erase_retry_label:
+add I2 1;               Increment the erase retries counter
+compare I2 I4;          Compare erase retries counter to max retries
+jge _erase_error_label
+jmp _erase;             If error count < Max errors jump to erase
+
+_write_retry_label:
+add I3 1;               Increment the write retries counter
+compare I3 I4;          Compare erase retries counter to max retries
+jge _write_error_label
+
+_erase:
+eraseblk F0;            Erase block (4KB)
+rdsts I5;               Read the HW status into I5
+compare I5 0;
+jne _erase_retry_label; If HW status != 0 jump to retry
+
+_write:
+write F0 B2 I1;         Write block
+rdsts I5;               Read the HW status into I5
+compare I5 0;
+jne _write_retry_label; If HW status != 0 jump to retry
+
+jmp _success;           If the counter is greater or equal to BIOS Image Size, then complete
+
+_erase_error_label:
+set If 1;               Set error in If
+jmp _end;
+
+_write_error_label:
+set If 2;               Set error in If
+jmp _end;
+
+_region_error_label:
+set If 3;               Set error in If
+jmp _end;
+
+_success:
+set If 0;               Set error = 0 if success
+
+_end:
+end

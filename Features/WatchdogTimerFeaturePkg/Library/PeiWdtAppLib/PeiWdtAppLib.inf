@@ -1,0 +1,56 @@
+### @file
+# Component information file for PeiWdtApp library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PeiWdtAppLib
+  FILE_GUID                      = E7593B2E-A57B-48F4-93FD-3AAD1EA18916
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  LIBRARY_CLASS                  = PeiWdtAppLib|PEIM
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 EBC
+#
+
+[LibraryClasses]
+  PeimEntryPoint
+  DebugLib
+  PeiServicesLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  WatchdogTimerFeaturePkg/WatchdogTimerFeaturePkg.dec
+
+[Pcd]
+  gWatchdogTimerFeaturePkgTokenSpaceGuid.PcdWdtTimeoutBetweenPeiDxe ## CONSUMES
+
+[Sources]
+  PeiWdtAppLib.c
+
+[Ppis]
+  gWdtPpiGuid                                   ## CONSUMES
+
+[Guids]
+  gWdtPersistentDataGuid                        ## CONSUMES

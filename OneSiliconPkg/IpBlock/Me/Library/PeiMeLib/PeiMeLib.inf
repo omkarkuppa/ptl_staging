@@ -1,0 +1,72 @@
+## @file
+# Component description file for Me Library functions for PEIMs
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2006 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiMeLib
+FILE_GUID = 4E8D6566-F87E-40EF-9626-E39D98EDADD2
+VERSION_STRING = 1.0
+MODULE_TYPE = BASE
+LIBRARY_CLASS = MeLib
+
+[LibraryClasses]
+PeiServicesLib
+PeiServicesTablePointerLib
+DebugLib
+BaseMemoryLib
+ConfigBlockLib
+HobLib
+HeciInitLib
+TimerLib
+IoLib
+ResetSystemLib
+PmcPrivateLib
+MemoryAllocationLib
+MeUtilsLib
+MeInfoLib
+MeFruInitLib
+
+[Packages]
+MdePkg/MdePkg.dec
+MdeModulePkg/MdeModulePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+[Sources]
+MePolicyPeiLib.c
+HeciMsgPeiLib.c
+MeHeciReset.c
+
+[Ppis]
+gSiPolicyPpiGuid ## CONSUMES
+gSiPreMemPolicyPpiGuid ## CONSUMES
+gEdkiiPlatformSpecificResetHandlerPpiGuid ## CONSUMES
+gEdkiiPlatformSpecificResetNotificationPpiGuid ## CONSUMES
+gEfiPeiMemoryDiscoveredPpiGuid ## CONSUMES
+
+[Guids]
+gMePeiPreMemConfigGuid
+gMePeiConfigGuid
+gMeEopDoneHobGuid
+gPchGlobalResetGuid
+gMeDidSentHobGuid
+gPchGeneralConfigHobGuid

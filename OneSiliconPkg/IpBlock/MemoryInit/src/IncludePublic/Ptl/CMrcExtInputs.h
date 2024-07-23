@@ -1,0 +1,276 @@
+/** @file
+  This file contains the structure of MRC inputs that can be modified by customers.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2024 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#ifndef MRC_EXT_INPUTS_H_
+#define MRC_EXT_INPUTS_H_
+#include "CMrcExtTypes.h"
+
+/// Keep in sync with MEMORY_CONFIGURATION_REVISION in MemoryConfig.h
+/// Rev 1:  - Initial version.
+#define MRC_EXT_INPUTS_REVISION          1
+
+#pragma pack(push, 1)
+
+typedef struct {
+  UINT16  Size;                   ///< Offset 0 The size of this structure, in bytes. Must be the first entry in this structure.
+  UINT8   HobBufferSize;          ///< Offset 2 Size of HOB buffer for MRC
+
+  UINT8   MemoryProfile;          ///< Offset 3 SPD XMP profile selection - for XMP supported DIMM: <b>0=Default DIMM profile</b>, 1=Customized profile, 2=XMP profile 1, 3=XMP profile 2.
+
+  // The following parameters are used only when SpdProfileSelected is UserDefined (CUSTOM PROFILE)
+  UINT16  tCL;                    ///< Offset 4 User defined Memory Timing tCL value,   valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, 31=Maximum.
+  UINT16  tRCDtRP;                ///< Offset 6 User defined Memory Timing tRCD value (same as tRP), valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, 63=Maximum
+  UINT16  tRAS;                   ///< Offset 8 User defined Memory Timing tRAS value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, 64=Maximum.
+  UINT16  tWR;                    ///< Offset 10 User defined Memory Timing tWR value,   valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, legal values: 5, 6, 7, 8, 10, 12, 14, 16, 18, 20, 24.
+  UINT16  tRFC;                   ///< Offset 12 User defined Memory Timing tRFC value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, 1023=Maximum.
+  UINT16  tRRD;                   ///< Offset 14 User defined Memory Timing tRRD value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, 15=Maximum.
+  UINT16  tWTR;                   ///< Offset 16 User defined Memory Timing tWTR value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, 28=Maximum.
+  UINT16  tRTP;                   ///< Offset 18 User defined Memory Timing tRTP value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, 15=Maximum. legal values: 5, 6, 7, 8, 9, 10, 12
+  UINT16  tFAW;                   ///< Offset 20 User defined Memory Timing tFAW value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, 63=Maximum.
+  UINT16  tCWL;                   ///< Offset 22 User defined Memory Timing tCWL value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, 20=Maximum.
+  UINT32  tREFI;                  ///< Offset 24 User defined Memory Timing tREFI value, valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>, 131071=Maximum.
+  UINT16  VddVoltage;             ///< Offset 28 DRAM voltage (Vdd) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc.
+
+  UINT32  EccSupport:1;              ///< Offset 30 Bit 0  - DIMM Ecc Support option - for Desktop only: 0=Disable, <b>1=Enable</b>
+  UINT32  RsvdBit1:1;                ///<           Bit 1  - Reserved
+  UINT32  RemapEnable:1;             ///<           Bit 2  - This option is used to control whether to enable/disable memory remap above 4GB: 0=Disable, <b>1=Enable</b>.
+  UINT32  ScramblerSupport:1;        ///<           Bit 3  - Memory scrambler support: 0=Disable, <b>1=Enable</b>
+  UINT32  ProbelessTrace:1;          ///<           Bit 4  - Probeless Trace: <b>0=Disabled</b>, <b>1=Enabled</b>
+  UINT32  PerBankRefresh:1;          ///<           Bit 5  - Enables and Disables the per bank refresh. FALSE=Disabled, <b>TRUE=Enabled</b>
+  UINT32  SimicsFlag:1;              ///<           Bit 6  - Option to Enable SIMICS: 0=Disable, <b>1=Enable</b>
+  UINT32  ExtendedBankHashing:1;     ///<           Bit 7  - Enable EBH Extended Bank Hashing: 0=Disabled; <b>1 = Enabled</b>.
+  UINT32  SharedZqPin:1;             ///<           Bit 8  - Select if the ZQ resistor is shared between Ranks in LPDDR4 DRAM Packages <b>0=Not Shared</b>, 1=Shared
+  UINT32  UserThresholdEnable:1;     ///<           Bit 9  - Flag to manually select the DIMM CLTM Thermal Threshold, 0=Disable,  1=Enable, <b>0=Default</b>
+  UINT32  RmtPerTask:1;              ///<           Bit 10 - Rank Margin Tool Per Task. <b>0 = Disabled</b>, 1 = Enabled
+  UINT32  TrainTrace:1;              ///<           Bit 11 - Trained state tracing debug. <b>0 = Disabled</b>, 1 = Enabled
+  UINT32  UserBudgetEnable:1;        ///<           Bit 12 - Flag to manually select the Budget Registers for CLTM Memory Dimms , 0=Disable,  1=Enable, <b>0=Default</b>
+  UINT32  MsHashEnable:1;            ///<           Bit 13 - Controller Hash Enable: 0=Disable, <b>1=Enable</b>
+  UINT32  DisPgCloseIdleTimeout:1;   ///<           Bit 14 - Disable Page Close Idle Timeout: 0=Enable, <b>1=Disable</b>
+  UINT32  Ibecc:1;                   ///<           Bit 15 - Inband ECC - <b>0=Disable</b>, 1=Enable
+  UINT32  IbeccParity:1;             ///<           Bit 16 - Inband ECC Parity Control - <b>0=Disable</b>, 1=Enable
+  UINT32  IbeccOperationMode:2;      ///<           Bits 17:18 - Inband ECC Operation Mode: 0=Functional Mode protects requests based on the address range, <b>1=Makes all requests non protected and ignore range checks</b>, 2=Makes all requests protected and ignore range checks
+  UINT32  ChHashOverride:1;          ///<           Bit 19 - Select if Channel Hash setting values will be taken from input parameters or automatically taken from POR values depending on DRAM type detected.
+  UINT32  SimicsMinDbgMsg:1;         ///<           Bit 20 - Option to disable most MRC debug messages. Only used when SimicsFlag = 1. Options: <b>0=Disable</b>, 1=Enable
+  UINT32  RetrainOnFastFail:1;       ///<           Bit 21 - Restart MRC in Cold mode if SW MemTest fails during Fast flow. 0 = Disabled, <b>1 = Enabled</b>
+  UINT32  DvfsqEnabled:1;            ///<           Bit 22 - DVFSQ feature (LP5): 0=Disable, <b>1=Enable</b>
+  UINT32  DvfscEnabled:1;            ///<           Bit 23 - E-DVFSC feature (LP5): 0=Disable, <b>1=Enable</b>
+  UINT32  VoltageReadout:1;          ///<           Bit 24 - Display VCCClk and PBias voltage readings across partitions: 0=Disable, <b>1: Enable</b>
+  UINT32  CccHalfFrequency:1;        ///<           Bit 25 - CCC Half Frequency: <b>0=Disabled (Full Frequency)</b>; 1=Enabled (Half Frequency)
+  UINT32  Ddr5AutoPrechargeEnable:2; ///<           Bit 26:27 - Auto Precharge Enable for DDR5: <b>O=Auto</b>, 1=Disable, 2=Enable
+  UINT32  Lp5SplitACTEnable:2;       ///<           Bit 28:29 - SplitACT enable for LP5: <b>0=Auto</b>, 1=Disable, 2=Enable
+  UINT32  RetrainToWorkingChannel:1; ///<           Bit 30 - Disable Failing Channel during Cold Boot and Retrain To Working Channel: <b>0=Disable</b>, 1=Enable
+  UINT32  SubChHashOverride:1;       ///<           Bit 31 - Select if SubChannel Hash setting values will be taken from input parameters or automatically taken from POR values depending on DRAM type detected.
+  UINT8   DisableChannel[MAX_CONTROLLER][MAX_CHANNEL]; ///< Offset 34-41 Disables a channel
+  UINT16  Ratio;                  ///< Offset 42 DDR Frequency ratio, to multiply by 33 MHz <b>0 = Auto</b>
+  /**
+    Channel Hash Enable.\n
+    NOTE: BIT7 will interleave the channels at a 2 cache-line granularity, BIT8 at 4 and BIT9 at 8\n
+    0=BIT6, <B>1=BIT7</B>, 2=BIT8, 3=BIT9
+  **/
+  UINT8   ChHashInterleaveBit;    ///< Offset 44 Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)
+  UINT8   SmramMask;              ///< Offset 45 Reserved memory ranges for SMRAM
+  UINT16  Vdd2Mv;                 ///< Offset 46 Vdd2Mv
+  // Training Algorithms
+  TrainingStepsEn  TrainingEnables;   ///< Offset 52 Options to Enable individual training steps
+  TrainingStepsEn2 TrainingEnables2;  ///< Offset 56 Options to Enable individual training steps
+  TrainingStepsEn3 TrainingEnables3;  ///< Offset 60 Options to Enable individual training steps
+
+  UINT32  MrcTimeMeasure:1;                   ///< Offset 64  Bit 0  - Enables serial debug level to display the MRC execution times only: <b>0=Disable</b>, 1=Enable
+  UINT32  MrcFastBoot:1;                      ///<            Bit 1  - Enables the MRC fast boot path for faster cold boot execution: 0=Disable, <b>1=Enable</b>
+  UINT32  DqPinsInterleaved:1;                ///<            Bit 2  - Interleaving mode of DQ/DQS pins which depends on board routing: <b>0=Disable</b>, 1=Enable
+  UINT32  RankInterleave:1;                   ///<            Bit 3  - Rank Interleave Mode: 0=Disable, <b>1=Enable</b>
+  UINT32  EnhancedInterleave:1;               ///<            Bit 4  - Enhanced Interleave Mode: 0=Disable, <b>1=Enable</b>
+  UINT32  WeaklockEn:1;                       ///<            Bit 5  - Weak Lock Enable: 0=Disable, <b>1=Enable</b>
+  UINT32  ChHashEnable:1;                     ///<            Bit 6  - Channel Hash Enable: 0=Disable, <b>1=Enable</b>
+  UINT32  EnablePwrDn:1;                      ///<            Bit 7  - Enable Power Down control for DDR: 0=PCODE control, <b>1=BIOS control</b>
+  UINT32  EnablePwrDnLpddr:1;                 ///<            Bit 8  - Enable Power Down for LPDDR: 0=PCODE control, <b>1=BIOS control</b>
+  UINT32  SrefCfgEna:1;                       ///<            Bit 9  - Enable Self Refresh: 0=Disable, <b>1=Enable</b>
+  UINT32  ThrtCkeMinDefeatLpddr:1;            ///<            Bit 10 - Throttler CKE min defeature for LPDDR: 0=Disable, <b>1=Enable</b>
+  UINT32  ThrtCkeMinDefeat:1;                 ///<            Bit 11 - Throttler CKE min defeature: <b>0=Disable</b>, 1=Enable
+  UINT32  AutoSelfRefreshSupport:1;           ///<            Bit 12 - FALSE = No auto self refresh support, <b>TRUE = auto self refresh support</b>
+  UINT32  ExtTemperatureSupport:1;            ///<            Bit 13 - FALSE = No extended temperature support, <b>TRUE = extended temperature support</b>
+  UINT32  AllowOppRefBelowWriteThrehold:1;    ///<            Bit 14 - Option to allow opportunistic refreshes while we don't exit power down.
+  UINT32  Force1Dpc:1;                        ///<            Bit 15 - TRUE means force one DIMM per channel, <b>FALSE means no limit</b>
+  UINT32  ForceSingleRank:1;                  ///<            Bit 16 - TRUE means use Rank0 only (in each DIMM): <b>0=Disable</b>, 1=Enable
+  UINT32  DynamicMemoryBoost:1;               ///<            Bit 17 - Dynamic Memory Boost: 0 - Disabled, 1 - Enabled. Only valid if SpdProfileSelected is an XMP Profile; otherwise ignored.
+  UINT32  RealtimeMemoryFrequency:1;          ///<            Bit 18 - Realtime Memory Frequency: <b>0=Disabled</b>, 1=Enabled. Only valid if SpdProfileSelected is XMP Profile 1; otherwise ignored.
+  UINT32  ExitOnFailure:1;                    ///<            Bit 19 - MRC option for exit on failure or continue on failure: 0=Disable, <b>1=Enable</b>
+  UINT32  ForceRetrainPath:1;                 ///<            Bit 20 - Force retrain path in RetrainMarginCheck even if margins are good enough
+  UINT32  SaGv:1;                             ///<            Bit 21 - SaGv Status: 0 - Disabled, 1 - Enabled
+  UINT32  IsDdr5MR7WicaSupported:1;           ///<            Bit 22 - TRUE if DDR5 DRAM Device supports MR7 WICA 0.5 tCK offset alignment <b>0: Disable</b>, 1: Enable
+  UINT32  VoltageCurrentSensor:1;             ///<            Bit 23 - Voltage and Current Sensor: 0: Disabe, <b>1: Enable</b>
+  UINT32  DataInvertNibble:1;                 ///<            Bit 24 - DataInvertNibble: 0: Disable, <b>1: Enable</b>
+  UINT32  CccPinsInterleaved:1;               ///<            Bit 25 - Interleaving mode of CCC pins which depends on board routing: <b>0=Disable</b>, 1=Enable
+  UINT32  EnPeriodicComp:1;                   ///             Bit 26 - Enable/disable Periodic Compensation
+  UINT32  AsyncOdtDis:1;                      ///<            Bit 27 - Option to Enable Asynchronous ODT
+  UINT32  OpportunisticRead:1;                ///<            Bit 28 - Option to Enable Opportunistic Read in Write Major Mode.
+  UINT32  Disable2CycleBypass:1;              ///<            Bit 29 - Option to disable 2 cycle bypass
+  UINT32  OCSafeMode:1;                       ///<            Bit 30 - OverClocking Safe Mode
+  UINT32  Rsvd63B31:1;                        ///<            Bit 31:- Rsvd
+  UINT16  SrefCfgIdleTmr;         ///< Offset 68 Self Refresh idle timer: <b>512=Minimal</b>, 65535=Maximum
+  UINT16  ChHashMask;             ///< Offset 70 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
+  UINT16  DdrFreqLimit;           ///< Offset 72 Memory Frequency limit: <b>0 = Auto</b>, or memory speed value in MT/s: 1067, 1333, 1600 etc. See the possible values in CMrcInterface.h
+  UINT8   ThrtCkeMinTmr;          ///< Offset 74 Throttler CKE min timer: 0=Minimal, 0xFF=Maximum, <b>0x00=Default</b>
+  UINT8   ThrtCkeMinTmrLpddr;     ///< Offset 75 Throttler CKE min timer for LPDDR: 0=Minimal, 0xFF=Maximum, <b>0x00=Default</b>
+  UINT8   SaGvWpMask;             ///< Offset 76 SA GV: Bitmask of enabled SaGv Points 0x3:Points0_1, 0x7:Points0_1_2, <b>0xF:AllPoints0_1_2_3</b>
+  UINT8   NModeSupport;           ///< Offset 77 Memory N Mode Support - Enable user to select Auto, 1N or 2N: <b>0=AUTO</b>, 1=1N, 2=2N.
+  UINT8   McRefreshRate;          ///< Offset 78 Refresh Rate: Type of solution to be used for RHP - 0/1/2/3 = RefreshNORMAL/Refresh1x/Refresh2x/Refresh4x
+  UINT8   PowerDownMode;          ///< Offset 79 CKE Power Down Mode: <b>0xFF=AUTO</b>, 0=No Power Down, 1= APD mode, 6=PPD-DLL Off mode
+  UINT8   PwdwnIdleCounter;       ///< Offset 80 CKE Power Down Mode Idle Counter: 0=Minimal, 255=Maximum, <b>0x80=0x80 DCLK</b>
+  UINT8   CmdRanksTerminated;     ///< Offset 81 LPDDR: Bitmask of ranks that have CA bus terminated. <b>0x01=Default, Rank0 is terminating and Rank1 is non-terminating</b>
+  UINT16  MsHashMask;             ///< Offset 82 Controller Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
+  UINT32  Lp5CccConfig;           ///< Offset 84 BitMask where bits [3:0] are controller 0 Channel [3:0] and [7:4] are Controller 1 Channel [3:0].  0 selects Ascending mapping and 1 selects Descending mapping.
+  UINT8   RMTLoopCount;           ///< Offset 88 Indicates the Loop Count to be used for Rank Margin Tool Testing: 1=Minimal, 32=Maximum, 0=AUTO, <b>0=Default</b>
+  UINT8   MsHashInterleaveBit;    ///< Offset 89 Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9
+  UINT8   GearRatio;              ///< Offset 90 Gear Ratio when SAGV is disabled: <b>0=Auto</b>, 1=rsvd, 2=Gear2, 3=rsvd, 4=Gear4.
+  UINT8   DdrOneDpc;              ///< Offset 91 DDR5 1DPC performance feature: 0 - Disabled; 1 - Enabled on DIMM0 only, 2 - Enabled on DIMM1 only; 3 - Enabled on both DIMMs. (bit [0] - DIMM0, bit [1] - DIMM1)
+  UINT16  VddqVoltageOverride;    ///< Offset 92 VccddqVoltage override in # of 1mV, Auto = 0
+  UINT16  VccIogVoltageOverride;  ///< Offset 94 VccIogVoltage override in # of 1mV, Auto = 0
+  UINT16  VccClkVoltageOverride;  ///< Offset 96 VccClkVoltage override in # of 1mV, Auto = 0
+  UINT8   LpddrRttWr;             ///< Offset 98 Initial RttWr for LP5 in Ohms, 0 means Auto
+  UINT8   LpddrRttCa;             ///< Offset 99 Initial RttCa for LP5 in Ohms, 0 means Auto
+  UINT16  SaGvFreq[MAX_SAGV_POINTS];    ///< Offset 100 Frequency per SAGV point.  0 is Auto, otherwise holds the frequency value expressed as an integer: <b>0=Default</b>, 1067, 1333, 1600, 1800, 1867, etc.
+  /**
+    Offset 152 Gear ratio per SAGV point.  0 is Auto, otherwise holds the Gear ratio expressed as an integer: <b>0=Default</b>, 1=rsvd, 2=Gear2, 3=rsvd, 4=Gear4.
+      Only valid combinations of Gear Ratio per point is:
+      | point | set1 | set2 | set3
+      | 0     | 1    | 2    | 2
+      | 1     | 1    | 2    | 2
+      | 2     | 1    | 2    | 2
+      | 3     | 1    | 2    | 1
+  **/
+  UINT8   SaGvGear[MAX_SAGV_POINTS];                      ///< Offset 108
+  UINT8   IbeccProtectedRegionEnable[MAX_IBECC_REGIONS];  ///< Offset 112 Enable use of address range for ECC Protection:  <b>0=Default</b>, 1
+  UINT16  IbeccProtectedRegionBase[MAX_IBECC_REGIONS];    ///< Offset 120 Base address for address range of ECC Protection:  <b>0=Default</b>, 1
+  UINT16  IbeccProtectedRegionMask[MAX_IBECC_REGIONS];    ///< Offset 136 Mask address for address range of ECC Protection:  <b>0=Default</b>, 1
+  UINT8   WriteThreshold;         ///< Offset 152 Option to set number of writes that can be accumulated while CKE is low before CKE is asserted.
+  UINT16  MarginLimitL2;          ///< Offset 153 Margin limit check L2 threshold: <b>100=Default</b>
+  UINT8   MarginLimitCheck;       ///< Offset 155 Margin limit check enable: 0=Disable, <b>1=L1 only</b>, 2=L2 only, 3=Both L1 and L2
+  UINT8   Lfsr0Mask;              ///< Offset 156 RH pTRR LFSR0 Mask
+  UINT8   Lfsr1Mask;              ///< Offset 157 RH pTRR LFSR1 Mask
+  UINT8   RefreshWm;              ///< Offset 158 Refresh Watermarks, 0 = Low, <b>1 = High</b>
+  UINT8   DramRfmMode;            ///< Offset 159 Row Hammer Dram Refresh Management Mode runs orthogonally with DRFM/pTRR: <b>0=RFM</b>, 1=ARFM Level A, 2=ARFM Level B, 3=ARFM Level C, 4=Disable RFM and ARFM
+  UINT8   TargetedRowRefreshMode; ///< Offset 160 Row Hammer Targeted Row Refresh Mode runs orthogonally with ARFM/RFM: <b>0=DRFM (w/ fallback to pTRR)</b>, 1=pTRR, 2=Disable DRFM and pTRR
+  UINT8   DrfmBrc;                ///< Offset 161 Row Hammer DRFM Blast Radius Configuration determines number of victim rows around aggressor row targeted to send the DRFM sequence to: <b>0=BlastRadius 2</b>, 1=BlastRadius 3, 2=BlastRadius 4
+  UINT8   CmdMirror;              ///< Offset 162 BitMask where bits [3:0] are controller 0 Channel [3:0] and [7:4] are Controller 1 Channel [3:0].  0 = No Command Mirror and 1 = Command Mirror.
+  UINT8   SafeModeOverride;       ///< Offset 163
+  UINT32   DdrSafeMode;           ///< Offset 164
+  UINT8   McSafeMode;             ///< Offset 168
+  UINT8   Reserved169[2];         ///< Offset 169 Reserved
+  UINT8   LpMode;                 ///< Offset 171 Bit mask: Bit[0] - Enable Lpmode0p5 (Idle_enable); Bit[1] - Enable Lpmode2 (Powerdown_enable); Bit[2] - Enable Lpmode3 (Selfrefresh_enable); Default = 7 ('111')
+  UINT8   LpMode4;                ///< Offset 172 LpMode4: 0=Disabled; <b>1=Enabled</b>; 2=Dynamic with threshold 2; 3=Dynamic with threshold=3
+  UINT8   PprTestType;            ///< Offset 173 PPR Test Type- enable/disable various memory tests in the PPR flow
+  UINT16  tRFCpb;                 ///< Offset 174 User defined Memory Timing tRFCpb value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
+  UINT16  tRFC2;                  ///< Offset 176 User defined Memory Timing tRFC2 value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
+  UINT16  tRFC4;                  ///< Offset 178 User defined Memory Timing tRFC4 value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
+  UINT16  tRRD_L;                 ///< Offset 180 User defined Memory Timing tRRD_L value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
+  UINT16  tRRD_S;                 ///< Offset 182 User defined Memory Timing tRRD_S value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
+  UINT16  tWTR_L;                 ///< Offset 184 User defined Memory Timing tWTR_L value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
+  UINT16  tCCD_L;                 ///< Offset 186 User defined Memory Timing tCCD_L value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
+  UINT16  tWTR_S;                 ///< Offset 188 User defined Memory Timing tWTR_S value,  valid when SpdProfileSelected is CUSTOM_PROFILE: <b>0=AUTO</b>
+  UINT16  DimmOdt[EXT_MAX_DIMMS_IN_CHANNEL][MAX_DIMMODT_ENTRY];   ///< Offset 190 Dimm Odt values: <b>0=AUTO</b>, RttWr, RttNomRd, RttNomWr, RttPark, RttParkDqs, RttCa GroupA, RttCs GroupA, RttCk GroupA, RttCa GroupB, RttCs GroupB, RttCk GroupB
+  UINT8   DFETap1StepSize;        ///< Offset 234 Dimm DFE Tap1 Step Size
+  UINT8   DFETap2StepSize;        ///< Offset 235 Dimm DFE Tap1 Step Size
+  UINT8   CsVrefLow;              ///< Offset 236 DDR5 Cs Sweep Low Vref Value
+  UINT8   CsVrefHigh;             ///< Offset 237 DDR5 Cs Sweep High Vref Value
+  UINT8   CaVrefLow;              ///< Offset 238 DDR5 Ca Sweep Low Vref Value
+  UINT8   CaVrefHigh;             ///< Offset 239 DDR5 Ca Sweep High Vref Value
+  UINT8   EccCorrectionMode;      ///< Offset 240 0 (Default) = SECDED (Single error correction, double error detection), 1 = ZECTED (Zero error correct triple error detect)
+  UINT8   EccGranularity32BEn;    ///< Offset 241 EccGranularity: 0 = 64B(Default), 1 = 32B
+  UINT8   LowerBasicMemTestSize;  ///< Offset 242 LowerBasicMemTestSize
+  UINT8   MCREGOFFSET;            ///< Offset 243 MC Register offset
+  UINT8   PcuDdrVoltage;          ///< Offset 244 Override for PCU_CR_DDR_VOLTAGE.
+  McRegOffsets    OffsetKnobs;    ///< Offset 245 - 254 Options for MC Register Offset settings
+  // TurnAround Timing Delta
+  // 0 - Auto. Signed TAT delta is (Value - 128). Input value range of [1..255] will give a TAT delta range of [-127..127]
+  UINT8   Trrsg;                  ///< Offset 255 tRRSG delta
+  UINT8   Trrdg;                  ///< Offset 256 tRRDG delta
+  UINT8   Trrdr;                  ///< Offset 257 tRRDR delta
+  UINT8   Trrdd;                  ///< Offset 258 tRRDD delta
+  UINT8   Twrsg;                  ///< Offset 259 tWRSG delta
+  UINT8   Twrdg;                  ///< Offset 260 tWRDG delta
+  UINT8   Twrdr;                  ///< Offset 261 tWRDR delta
+  UINT8   Twrdd;                  ///< Offset 262 tWRDD delta
+  UINT8   Twwsg;                  ///< Offset 263 tWWSG delta
+  UINT8   Twwdg;                  ///< Offset 264 tWWDG delta
+  UINT8   Twwdr;                  ///< Offset 265 tWWDR delta
+  UINT8   Twwdd;                  ///< Offset 266 tWWDD delta
+  UINT8   Trwsg;                  ///< Offset 267 tRWSG delta
+  UINT8   Trwdg;                  ///< Offset 268 tRWDG delta
+  UINT8   Trwdr;                  ///< Offset 269 tRWDR delta
+  UINT8   Trwdd;                  ///< Offset 270 tRWDD delta
+
+  UINT8   Interpreter;            ///< Offset 271 0 = CMOS location detection, 1 = Ctrl-break detection, 2 = Force into interpreter.
+  UINT8   IoOdtMode;              ///< Offset 272 This defines the ODT mode the DDRIO is set to: MRC_ODT_MODE_TYPE.
+  UINT8   Reserved273;            ///< Offset 273 Reserved
+  UINT16  VddqVoltage;            ///< Offset 274 DRAM voltage (Vddq) in millivolts: <b>0=Platform Default (no override)</b>, 1200=1.2V, 1350=1.35V etc
+  UINT16  VppVoltage;             ///< Offset 276 DRAM voltage (Vpp) in millivolts: <b>0=Platform Default (no override)</b>, 1800=1.8V, 2050=2.05V etc
+
+  UINT16  RcompResistor;          ///< Offset 278 Reference RCOMP resistor on motherboard ~ 100 ohms
+  UINT16  RcompTarget[MAX_RCOMP_TARGETS]; ///< Offset 280 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
+  UINT16  tCCD_L_WR;                ///< Offset 290 User defined Memory Timing tCCD_L_WR value, valid when SpdProfileSelected is CUSTOM_PROFILE
+  UINT8   PprRepairType;            ///< Offset 292 PPR Repair Type: 0=DoNotRepair, 1=SoftPPR, <b>2=HardPPR</b>
+  UINT8   PprRunOnce;               ///< Offset 293 PPR Run Once
+  UINT8   PprRunAtFastboot;         ///< Offset 294 PPR Run During Fastboot
+  UINT8   PprErrorInjection;        ///< Offset 295 PPR Error Injection
+  UINT32  PprRepairPhysicalAddrLow; ///< Offset 296 PPR Repair Physical Address Low 4 bytes
+  UINT32  PprRepairPhysicalAddrHigh;///< Offset 300 PPR Repair Physical Address High 4 bytes
+  UINT32  PprRepairRow;             ///< Offset 304 PPR Repair Row
+  UINT8   PprRepairController;      ///< Offset 308 PPR Repair Controller
+  UINT8   PprRepairChannel;         ///< Offset 309 PPR Repair Channel
+  UINT8   PprRepairDimm;            ///< Offset 310 PPR Repair Dimm
+  UINT8   PprRepairRank;            ///< Offset 311 PPR Repair Rank
+  UINT8   PprRepairBankGroup;       ///< Offset 312 PPR Repair Bank Group
+  UINT8   PprRepairBank;            ///< Offset 313 PPR Repair Bank
+  UINT8   PprForceRepair;           ///< Offset 314 PPR Force Repair Some Rows
+  UINT8   RunRefPiMaxVoltage;       ///< Offset 315 Run Ref PI Calibration for both min and max Voltage
+  MrcBoardInputs BoardDetails;      ///< Offset 316 The details of the board that help MRC determine top memory speed
+  UINT8   SubChHashInterleaveBit;   ///< Offset 320 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)
+  UINT16  SubChHashMask;            ///< Offset 321 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
+  UINT8   Reserved323[17];          ///< Offset 323 Reserved for future use
+
+  // Below policies are used by SV
+  UINT32  DprLock                   : 2;   ///< Bit 0-1    Lock DPR register. <b>0: Platform POR </b>; 1: Enable; 2: Disable
+  UINT32  AllocateSharedMailbox     : 1;   ///< Bit 2      Allocate shared mailbox for SV module <b>0: Disable </b>; 1: Enable
+  UINT32  MimicWcDisaplayInIpq      : 4;   ///< Bit 3-6    Using for Disable/Enable Mimic WC display pattern in IPQ: <b>0: Disable</b>; <b>1: Enable 1 ACT resources usage</b>; <b>3: Enable 2 ACT resources usage</b>; <b>7: Enable 3 ACT resources usage</b>; <b>0xf: Enable 4 ACT resources usage</b>;
+  UINT32  FakeSagv                  : 1;   ///< Bit 7      Fake SAGV <b>0: Disable</b>; 1: Enable
+  UINT32  DisableZq                 : 1;   ///< Bit 8      Disable Zq Calibration: <b>0: Enable</b>, 1: Disable
+  UINT32  ReplicateSagv             : 1;   ///< Bit 9      Replicate SAGV point0 for 4 points <b>0: Disable</b>; 1: Enable
+  UINT32  AdjustWckMode             : 2;   ///< Bit 10-11  Adjust wck mode: 0 - safe mode; 1 - manual mode; 2 - dynamic mode; 3 - Default
+  UINT32  TelemetryControl          : 2;   ///< Bit 12-13  Control MC/PMA telemetry : 0 - Default, 1 - Enable Telemetry, 2 - Disable Telemetry
+  UINT32  SpineAndPhclkGateControl  : 1;   ///< Bit 14     Enable/Disable PHclk\Qclk SPINE gating Control: 0 - Disable; 1 - Enable
+  UINT32  SpineGatePerLpmode        : 4;   ///< Bit 15-18  SpineGating control per lpmode
+                                           ///<            SpineGatePerLpmode[0] - SpineGating control at Lpmode0.5
+                                           ///<            SpineGatePerLpmode[1]   SpineGating control at Lpmode2
+                                           ///<            SpineGatePerLpmode[2]   SpineGating control at Lpmode3
+                                           ///<            SpineGatePerLpmode[3]   SpineGating control at Lpmode4
+  UINT32  PhclkGatePerLpmode        : 5;   ///< Bit 19-23  PhClkGating control per lpmode
+                                           ///<            PhclkGatePerLpmode[0]  PhClkGating control at lpmode0.5
+                                           ///<            PhclkGatePerLpmode[1]  PhClkGating control at lpmode1
+                                           ///<            PhclkGatePerLpmode[2]  PhClkGating control at lpmode2
+                                           ///<            PhclkGatePerLpmode[3]  PhClkGating control at lpmode3
+                                           ///<            PhclkGatePerLpmode[4]  PhClkGating control at lpmode4
+  UINT32  DisableSwitchDfiToMc      : 1;   ///< Bit 24     keep the control of the DFI with the PHY/MPTU or switching it to MC (after cold boot) : <b>1=Enable, 0=Disable(Default)
+  UINT32  SvReservedBits            : 7;   ///< Bit 25-31  Reserved
+} MRC_EXT_INPUTS_TYPE;
+
+#pragma pack(pop)
+#endif // MRC_EXT_INPUTS_H_

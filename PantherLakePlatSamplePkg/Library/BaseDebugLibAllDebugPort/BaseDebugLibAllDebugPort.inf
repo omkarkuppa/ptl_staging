@@ -1,0 +1,59 @@
+### @file
+#  Instance of Debug Library based on all Debug Port Library.
+#  It uses Print Library to produce formatted output strings to all Debug Port device.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2018 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = BaseDebugLibAllDebugPort
+  MODULE_UNI_FILE                = BaseDebugLibAllDebugPort.uni
+  FILE_GUID                      = 861254E8-A56C-477E-9F42-DF5974B7F9C3
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = DebugLib
+  CONSTRUCTOR                    = BaseDebugLibAllDebugPortConstructor
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  DebugLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  Usb3DebugFeaturePkg/Usb3DebugFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[LibraryClasses]
+  SerialPortLib
+  BaseMemoryLib
+  PcdLib
+  PrintLib
+  BaseLib
+  DebugPrintErrorLevelLib
+  TraceHubDebugLib
+  Usb3DebugPortLib
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdDebugClearMemoryValue       ## SOMETIMES_CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask           ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdFixedDebugPrintErrorLevel   ## CONSUMES

@@ -1,0 +1,163 @@
+## @file
+#  The INF file of Bluetooth Bus driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2013 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = BluetoothBusDxe
+  FILE_GUID                      = B7D4E312-4894-4147-BF44-9D6BFF50B7AF
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = BluetoothBusDriverBindingEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+#  DRIVER_BINDING                =  gBluetoothBusDriverBinding
+#  COMPONENT_NAME                =  gBluetoothBusComponentName
+#  COMPONENT_NAME2               =  gBluetoothBusComponentName2
+#
+
+[Sources]
+  ComponentName.c
+  BluetoothBusDxe.c
+  BluetoothBusDxe.h
+  BluetoothAttribute.c
+  BluetoothConfigInit.c
+  BluetoothConfigScan.c
+  BluetoothConfigConnect.c
+  BluetoothConfigGetData.c
+  BluetoothConfigGetRemoteData.c
+  BluetoothConfigSetData.c
+  BluetoothConfigRegisterCallBack.c
+  BluetoothIntHciEvent.c
+
+# iLE files
+
+#ifc inc
+  ./iLE/ifc/inc/config_host.h
+  ./iLE/ifc/inc/device_struct.h
+  ./iLE/ifc/inc/error_code.h
+  ./iLE/ifc/inc/int_interface.h
+  ./iLE/ifc/inc/interface.h
+#core inc
+  ./iLE/core/inc/att.h
+  ./iLE/core/inc/gap.h
+  ./iLE/core/inc/hci_host.h
+  ./iLE/core/inc/l2cap.h
+  ./iLE/core/inc/smp.h
+
+#hwal inc
+  ./iLE/hwal/uefi/inc/tl.h
+
+#mgr inc
+  ./iLE/mgr/inc/device_mgr.h
+  ./iLE/mgr/inc/profile_mgr.h
+  ./iLE/mgr/inc/service_mgr.h
+  ./iLE/mgr/inc/smp_mgr.h
+
+#osa inc
+  ./iLE/osa/uefi/inc/osa_types.h
+
+#app inc
+ ./iLE/apps/inc/app_interface.h
+ ./iLE/apps/inc/uefi_app.h
+ ./iLE/apps/inc/hogp_host.h
+ ./iLE/apps/inc/uhid_host.h
+
+#storage inc
+  ./iLE/storage/inc/storage.h
+
+#utils inc
+  ./iLE/utils/inc/bt_types.h
+  ./iLE/utils/inc/log.h
+  ./iLE/utils/inc/utils.h
+
+#osa src
+  ./iLE/osa/uefi/src/osa_utils.c
+
+#utils src
+  ./iLE/utils/src/device_utils.c
+  ./iLE/utils/src/utils.c
+
+
+#ifc src
+  ./iLE/ifc/src/interface.c
+
+#core src
+  ./iLE/core/src/att.c
+  ./iLE/core/src/gap.c
+  ./iLE/core/src/gatt_client.c
+  ./iLE/core/src/gatt_common.c
+  ./iLE/core/src/gatt_server.c
+  ./iLE/core/src/hci.c
+  ./iLE/core/src/hcicmds.c
+  ./iLE/core/src/l2cap.c
+  ./iLE/core/src/smp.c
+
+
+#hwal src
+  ./iLE/hwal/uefi/src/tl.c
+
+
+#mgr src
+  ./iLE/mgr/src/device_mgr.c
+  ./iLE/mgr/src/profile_mgr.c
+  ./iLE/mgr/src/service_mgr.c
+  ./iLE/mgr/src/smp_mgr.c
+
+
+#storage src
+  ./iLE/storage/src/storage.c
+
+#apps src
+  ./iLE/apps/src/uefi_app.c
+  ./iLE/apps/src/hogp_host.c
+  ./iLE/apps/src/uhid_host.c
+
+
+[Packages]
+  BluetoothPkg/BluetoothPkg.dec
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  MemoryAllocationLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  BaseMemoryLib
+  DevicePathLib
+  BluetoothLib
+
+[Protocols]
+  gEfiCpuArchProtocolGuid
+  gEfiBluetoothHcProtocolGuid                   ## TO_START
+  gEfiDevicePathProtocolGuid                    ## TO_START
+  gEfiBluetoothLeConfigProtocolGuid
+  gEfiBluetoothAttributeServiceBindingProtocolGuid
+  gEfiBluetoothAttributeProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+
+[BuildOptions]
+  *_*_*_CC_FLAGS = -DTARGET_UEFI=1
+

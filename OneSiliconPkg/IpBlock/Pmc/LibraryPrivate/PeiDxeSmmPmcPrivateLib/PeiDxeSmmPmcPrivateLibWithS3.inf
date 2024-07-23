@@ -1,0 +1,50 @@
+## @file
+# PEI/DXE/SMM PCH private PMC Lib.
+# This part of PMC lib includes S3BootScript support
+#
+# All function in this library is available for PEI, DXE, and SMM,
+# But do not support UEFI RUNTIME environment call.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2016 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiDxeSmmPmcPrivateLibWithS3
+FILE_GUID = 5890CA5A-1955-4A02-A09C-01E4150606CC
+VERSION_STRING = 1.0
+MODULE_TYPE = BASE
+LIBRARY_CLASS = PmcPrivateLibWithS3
+
+
+[LibraryClasses]
+IoLib
+DebugLib
+PmcLib
+S3BootScriptLib
+
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+
+[Sources]
+PmcPrivateLibWithS3.c

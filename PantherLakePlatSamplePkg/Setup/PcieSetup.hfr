@@ -1,0 +1,322 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2018 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#include "SetupPreProcTools.hfr"
+
+// Define forms
+form formid = AUTO_ID(PCIE_FORM_ID),
+  title = STRING_TOKEN(STR_PCIE_FORM);
+
+  oneof varid   = PCH_SETUP.PcieRootPort8xhDecode,
+    prompt      = STRING_TOKEN(STR_PCH_PCIE_PORT8XH_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_PCIE_PORT8XH_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  suppressif ideqval PCH_SETUP.PcieRootPort8xhDecode == 0 ;
+    numeric varid = PCH_SETUP.Pcie8xhDecodePortIndex,
+      prompt      = STRING_TOKEN (STR_PCH_PCIE_PORT8XH_PORT_PROMPT),
+      help        = STRING_TOKEN (STR_PCH_PCIE_PORT8XH_PORT_HELP),
+      flags       = RESET_REQUIRED,
+      minimum     = 1,
+      maximum     = 12,
+      step        = 1,    // Stepping of 0 equates to a manual entering of a value, otherwise it will auto-increment with a left/right arrow
+      default     = 1,    // PCIe Port0 as default
+    endnumeric;
+  endif;
+
+  oneof varid   = PCH_SETUP.PcieComplianceTestMode,
+    prompt      = STRING_TOKEN(STR_PCH_PCIE_COMPLIANCETEST_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_PCIE_COMPLIANCETEST_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  oneof varid   = PCH_SETUP.PcieResizableBarSupport,
+    prompt      = STRING_TOKEN(STR_PCIE_RESIZABLE_BAR_SUPPORT_PROMPT),
+    help        = STRING_TOKEN(STR_PCIE_RESIZABLE_BAR_SUPPORT_HELP),
+    option text = STRING_TOKEN(STR_AUTO), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+  endoneof;
+
+//
+// All strings used for PCIE are given as C preprocessor macros that concatenate string name and rootport number
+// Tool that gathers string usage info from hfr files doesn't run preprocessor and can't find the new representation of strings
+// To work around this problem, all such problematics strings are included in PchPcieStringPool file
+//
+#include "PchPcieStringPool.hfr"
+
+#define PORT_INDEX 0
+#include "PchPcieSetupSinglePortMenu.hfr"
+#undef PORT_INDEX
+#define PORT_INDEX 1
+#include "PchPcieSetupSinglePortMenu.hfr"
+#undef PORT_INDEX
+#define PORT_INDEX 2
+#include "PchPcieSetupSinglePortMenu.hfr"
+#undef PORT_INDEX
+#define PORT_INDEX 3
+#include "PchPcieSetupSinglePortMenu.hfr"
+#undef PORT_INDEX
+#define PORT_INDEX 4
+#include "PchPcieSetupSinglePortMenu.hfr"
+#undef PORT_INDEX
+#define PORT_INDEX 5
+#include "PchPcieSetupSinglePortMenu.hfr"
+#undef PORT_INDEX
+#define PORT_INDEX 6
+#include "PchPcieSetupSinglePortMenu.hfr"
+#undef PORT_INDEX
+#define PORT_INDEX 7
+#include "PchPcieSetupSinglePortMenu.hfr"
+#undef PORT_INDEX
+#define PORT_INDEX 8
+#include "PchPcieSetupSinglePortMenu.hfr"
+#undef PORT_INDEX
+#define PORT_INDEX 9
+#include "PchPcieSetupSinglePortMenu.hfr"
+#undef PORT_INDEX
+
+suppressif NOT ideqval SETUP_VOLATILE_DATA.PchSeries == PCH_H;
+  #define PORT_INDEX 10
+  #include "PchPcieSetupSinglePortMenu.hfr"
+  #undef PORT_INDEX
+  #define PORT_INDEX 11
+  #include "PchPcieSetupSinglePortMenu.hfr"
+  #undef PORT_INDEX
+endif;
+
+  SEPARATOR
+  goto PCH_PCIE_CLOCK_FORM_ID,
+    prompt = STRING_TOKEN(STR_PCIE_CLOCK_FORM_TITLE),
+    help   = STRING_TOKEN(STR_PCIE_CLOCK_FORM_HELP);
+
+  SEPARATOR
+
+endform;
+
+//
+// All strings used for PCIE are given as C preprocessor macros that concatenate string name and rootport number
+// Tool that gathers string usage info from hfr files doesn't run preprocessor and can't find the new representation of strings
+// To work around this problem, all such problematics strings are included in PchPcieStringPool file
+//
+
+#define PORT_INDEX 0
+#define GEN5_SUPPORT 0
+#include "PchPcieSetupSinglePort.hfr"
+#undef PORT_INDEX
+#undef GEN5_SUPPORT
+
+#define PORT_INDEX 1
+#define GEN5_SUPPORT 0
+#include "PchPcieSetupSinglePort.hfr"
+#undef PORT_INDEX
+#undef GEN5_SUPPORT
+
+#define PORT_INDEX 2
+#define GEN5_SUPPORT 0
+#include "PchPcieSetupSinglePort.hfr"
+#undef PORT_INDEX
+#undef GEN5_SUPPORT
+
+#define PORT_INDEX 3
+#define GEN5_SUPPORT 0
+#include "PchPcieSetupSinglePort.hfr"
+#undef PORT_INDEX
+#undef GEN5_SUPPORT
+
+#define PORT_INDEX 4
+#define GEN5_SUPPORT 0
+#include "PchPcieSetupSinglePort.hfr"
+#undef PORT_INDEX
+#undef GEN5_SUPPORT
+
+#define PORT_INDEX 5
+#define GEN5_SUPPORT 0
+#include "PchPcieSetupSinglePort.hfr"
+#undef PORT_INDEX
+#undef GEN5_SUPPORT
+
+#define PORT_INDEX 6
+#define GEN5_SUPPORT 0
+#include "PchPcieSetupSinglePort.hfr"
+#undef PORT_INDEX
+#undef GEN5_SUPPORT
+
+#define PORT_INDEX 7
+#define GEN5_SUPPORT 0
+#include "PchPcieSetupSinglePort.hfr"
+#undef PORT_INDEX
+#undef GEN5_SUPPORT
+
+#define PORT_INDEX 8
+#define GEN5_SUPPORT 1
+#include "PchPcieSetupSinglePort.hfr"
+#undef PORT_INDEX
+#undef GEN5_SUPPORT
+
+#define PORT_INDEX 9
+#define GEN5_SUPPORT 1
+#include "PchPcieSetupSinglePort.hfr"
+#undef PORT_INDEX
+#undef GEN5_SUPPORT
+
+suppressif NOT ideqval SETUP_VOLATILE_DATA.PchSeries == PCH_H;
+  #define PORT_INDEX 10
+  #define GEN5_SUPPORT 1
+  #include "PchPcieSetupSinglePort.hfr"
+  #undef PORT_INDEX
+  #undef GEN5_SUPPORT
+
+  #define PORT_INDEX 11
+  #define GEN5_SUPPORT 1
+  #include "PchPcieSetupSinglePort.hfr"
+  #undef PORT_INDEX
+  #undef GEN5_SUPPORT
+endif;
+  form formid = PCH_PCIE_CLOCK_FORM_ID,
+    title     = STRING_TOKEN(STR_PCIE_CLOCK_FORM_TITLE);
+
+    oneof varid   = PCH_SETUP.PchPcieClockUsageOverride[0],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLOCK0_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLOCK_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClkReqSupport[0],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLKREQ0_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLKREQ_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 0xFF, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClockUsageOverride[1],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLOCK1_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLOCK_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClkReqSupport[1],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLKREQ1_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLKREQ_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 0xFF, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClockUsageOverride[2],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLOCK2_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLOCK_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClkReqSupport[2],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLKREQ2_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLKREQ_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 0xFF, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClockUsageOverride[3],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLOCK3_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLOCK_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClkReqSupport[3],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLKREQ3_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLKREQ_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 0xFF, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClockUsageOverride[4],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLOCK4_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLOCK_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClkReqSupport[4],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLKREQ4_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLKREQ_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 0xFF, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClockUsageOverride[5],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLOCK5_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLOCK_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid   = PCH_SETUP.PchPcieClkReqSupport[5],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLKREQ5_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLKREQ_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 0xFF, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.PchPcieClockUsageOverride[6],
+      prompt      = STRING_TOKEN(STR_PCH_PCIE_CLOCK6_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_PCIE_CLOCK_HELP),
+      option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+
+      oneof varid   = PCH_SETUP.PchPcieClkReqSupport[6],
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_CLKREQ6_PROMPT),
+        help        = STRING_TOKEN(STR_PCH_PCIE_CLKREQ_HELP),
+        option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0xFF, flags = RESET_REQUIRED;
+      endoneof;
+
+    suppressif (NOT ideqval SETUP_VOLATILE_DATA.PchSeries == PCH_H);
+      oneof varid   = PCH_SETUP.PchPcieClockUsageOverride[7],
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_CLOCK7_PROMPT),
+        help        = STRING_TOKEN(STR_PCH_PCIE_CLOCK_HELP),
+        option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+      endoneof;
+      oneof varid   = PCH_SETUP.PchPcieClkReqSupport[7],
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_CLKREQ7_PROMPT),
+        help        = STRING_TOKEN(STR_PCH_PCIE_CLKREQ_HELP),
+        option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0xFF, flags = RESET_REQUIRED;
+      endoneof;
+      oneof varid   = PCH_SETUP.PchPcieClockUsageOverride[8],
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_CLOCK8_PROMPT),
+        help        = STRING_TOKEN(STR_PCH_PCIE_CLOCK_HELP),
+        option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+      endoneof;
+      oneof varid   = PCH_SETUP.PchPcieClkReqSupport[8],
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_CLKREQ8_PROMPT),
+        help        = STRING_TOKEN(STR_PCH_PCIE_CLKREQ_HELP),
+        option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0xFF, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+  endform;
+

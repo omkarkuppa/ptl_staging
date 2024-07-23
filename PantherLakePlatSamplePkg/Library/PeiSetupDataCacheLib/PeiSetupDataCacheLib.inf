@@ -1,0 +1,60 @@
+### @file
+#  SetupDataCache PEIM library Information file.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PeiSetupDataCacheLib
+  FILE_GUID                      = 3867950C-7F9B-45E3-A9E1-1679F4D0CCFB
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  LIBRARY_CLASS                  = SetupDataCacheLib|PEIM PEI_CORE SEC
+
+[LibraryClasses]
+  BaseMemoryLib
+  PcdLib
+  HobLib
+  DebugLib
+  IoLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  PeiSetupDataCacheLib.c
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid               ## CONSUMES
+
+[Guids]
+  gSetupDataHobGuid                             ## CONSUMES
+  gBoardInfoVariableGuid                        ## CONSUMES
+  gSetupVariableGuid                            ## CONSUMES
+  gSaSetupVariableGuid                          ## CONSUMES
+  gMeSetupVariableGuid                          ## CONSUMES
+  gCpuSetupVariableGuid                         ## CONSUMES
+  gPchSetupVariableGuid                         ## CONSUMES
+  gOcSetupVariableGuid                          ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdOverclockEnable       ## CONSUMES

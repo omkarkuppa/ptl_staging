@@ -1,0 +1,59 @@
+## @file
+# Library description file for PEI Phase SA VT-d Init
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiVtdInitLib
+FILE_GUID = 8aae227c-d45e-4554-89c4-30ce31e96923
+VERSION_STRING = 1.0
+MODULE_TYPE = PEIM
+LIBRARY_CLASS = VtdInitLib
+
+[LibraryClasses]
+BaseLib
+DebugLib
+CpuPlatformLib
+BaseMemoryLib
+PeiServicesLib
+PeiServicesTablePointerLib
+HobLib
+IoLib
+PciSegmentLib
+VtdInfoLib
+PeiVtdInitFruLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+IntelSiliconPkg/IntelSiliconPkg.dec
+
+[Sources]
+PeiVtdInitLibVer3.c
+
+[Ppis]
+gSiPreMemPolicyPpiGuid                             ## CONSUMES
+gEfiPeiMemoryDiscoveredPpiGuid                     ## CONSUMES
+gVTdEnableDmaBufferPpiGuid                         ## CONSUMES
+
+[Guids]
+gSiConfigGuid
+gVtdConfigGuid                                     ## CONSUMES
+gVtdDataHobGuid                                    ## PRODUCES

@@ -1,0 +1,77 @@
+## @file
+#  Component description file for Smbios Misc module.
+#
+#  This driver parses the Smbios Platform Info table structure
+#  and reports any generated data using SMBIOS protocol.
+#  SmBios Platform Info Table which is customized/updated from PcdSmbiosPlatformInfoSize by Intel\MeteorLakeBoardPkg\SmbiosPlatformInfo\SmbiosPlatformInfo driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = SmbiosMisc
+  FILE_GUID                      = D22C15F5-818B-4940-90EB-ABB377255643
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = SmbiosMiscEntryPoint
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64
+#
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  BaseMemoryLib
+  BaseLib
+  MemoryAllocationLib
+  DebugLib
+  PrintLib
+  PcdLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  ClientSmbiosFeaturePkg/ClientSmbiosFeaturePkg.dec
+
+[Pcd]
+  gClientSmbiosFeaturePkgTokenSpaceGuid.PcdSmbiosPlatformInfo       ## CONSUMES
+  gClientSmbiosFeaturePkgTokenSpaceGuid.PcdSmbiosPlatformInfoSize   ## CONSUMES
+  gClientSmbiosFeaturePkgTokenSpaceGuid.PcdPasswordStatusAdminName  ## CONSUMES
+  gClientSmbiosFeaturePkgTokenSpaceGuid.PcdPasswordStatusUserName   ## CONSUMES
+
+[Sources]
+  SmbiosMiscEntryPoint.c
+  SmbiosMisc.h
+
+[Protocols]
+  gEfiSmbiosProtocolGuid                                            ## CONSUMES
+
+[Guids]
+  gEfiSmbiosTableGuid                                               ## CONSUMES
+
+[Depex]
+  gEfiSmbiosProtocolGuid                  AND
+  gEfiPciEnumerationCompleteProtocolGuid  AND
+  gEfiPciRootBridgeIoProtocolGuid

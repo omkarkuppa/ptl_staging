@@ -1,0 +1,39 @@
+## @file
+# Component description file for Boot Guard Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2016 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiDxeSmmBootGuardLib
+FILE_GUID = BD979D42-1582-4DDC-B8ED-D73FE99C28EC
+VERSION_STRING = 1.0
+MODULE_TYPE = BASE
+LIBRARY_CLASS = BootGuardLib
+
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+
+[Sources]
+BootGuardLibraryNull.c

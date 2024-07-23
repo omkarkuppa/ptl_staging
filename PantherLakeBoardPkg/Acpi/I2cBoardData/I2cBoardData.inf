@@ -1,0 +1,67 @@
+## @file
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##.
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = I2cBoardData
+  FILE_GUID                      = cf42800e-be31-4c7f-ab03-01b826e4adcc
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = I2cBoardInfo
+
+
+[Sources]
+  I2cBoardData.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  I2cFeaturePkg/I2cFeaturePkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  PcdLib
+  BaseMemoryLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  PchInfoLib
+
+[Pcd]
+  gBoardModuleTokenSpaceGuid.VpdI2CRptable ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdTouchpanel0IrqGpio  ##CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdTouchpanelIrqGpio
+  gBoardModuleTokenSpaceGuid.PcdTouchpadIrqGpio
+
+[Protocols]
+ gI2cDeviceInfoProtocolGuid        ##CONSUMES
+
+[Guids]
+ gPchSetupVariableGuid       ##CONSUMES
+ gSetupVariableGuid          ##CONSUMES
+
+[DEPEX]
+gI2cDeviceInfoProtocolGuid  AND
+gEfiVariableArchProtocolGuid

@@ -1,0 +1,53 @@
+### @file
+#  INF for UFS Provisioning Application
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+
+[Defines]
+  INF_VERSION                    = 0x00010006
+  BASE_NAME                      = UFSProvisioningTool
+  FILE_GUID                      = C9C87129-DFAC-48DE-8581-7363A90E101D
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 0.1
+  ENTRY_POINT                    = ShellCEntryLib
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF
+#
+
+[Sources]
+  UFSProvisioningTool.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ShellPkg/ShellPkg.dec
+
+[LibraryClasses]
+  UefiLib
+  ShellCEntryLib
+  IoLib
+  BaseMemoryLib
+  TimerLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiApplicationEntryPoint
+
+  [Protocols]
+  gEfiUfsDeviceConfigProtocolGuid               ## BY_START

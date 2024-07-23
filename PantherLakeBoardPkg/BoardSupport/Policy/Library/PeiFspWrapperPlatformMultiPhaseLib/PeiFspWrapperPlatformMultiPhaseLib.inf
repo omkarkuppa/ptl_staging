@@ -1,0 +1,68 @@
+## @file
+#  FSP Wrapper to handle platform specific actions for
+#  FSP MultiPhase (SeparatePhase) Initialization.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiFspWrapperPlatformMultiPhaseLib
+  FILE_GUID                      = 768923AF-D259-449C-84C1-FC91DD56BB63
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PeiFspWrapperPlatformMultiPhaseLib
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  PeiFspWrapperPlatformMultiPhaseLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+
+[LibraryClasses]
+  DebugLib
+  BaseLib
+  PcdLib
+  HobLib
+  PeiServicesLib
+  PeiPolicyUpdateLib
+  PeiPolicyDebugLib
+  PeiPolicyBoardConfigLib
+  PeiPolicyAdvancedConfigLib
+
+[Guids]
+  gSetupVariableGuid       ## CONSUMES
+  gSiliconPolicyHobGuid    ## CONSUMES
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdFspVEnable                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdAmtEnable                         ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdOverclockEnable       ## CONSUMES

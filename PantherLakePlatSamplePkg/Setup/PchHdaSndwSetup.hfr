@@ -1,0 +1,109 @@
+/** @file
+  Setup menu definition for HD Audio SoundWire Links.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+form formid = CONCATENATE3(PCH_HDAUDIO_SNDW,SNDW_INDEX,_FORM_ID),
+  title     = STRING_TOKEN(CONCATENATE3(STR_PCH_HDA_SNDW,SNDW_INDEX,_CONFIGURATION_PROMPT));
+
+  oneof varid   = PCH_SETUP.PchHdaAutonomousClockStopSndw[SNDW_INDEX],
+    prompt      = STRING_TOKEN(STR_PCH_HDA_SNDW_AUTONOMOUS_CLOCK_STOP_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_HDA_SNDW_AUTONOMOUS_CLOCK_STOP_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  SEPARATOR
+
+  SUBTITLE(STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_CONFIGURATION))
+  oneof varid   = PCH_SETUP.PchHdaDataOnActiveIntervalSelectSndw[SNDW_INDEX],
+    prompt      = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_SELECT_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_SELECT_HELP),
+    option text = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_SELECT_3CLOCK_PERIOD), value = 0, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_SELECT_4CLOCK_PERIOD), value = 1, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_SELECT_5CLOCK_PERIOD), value = 2, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_SELECT_6CLOCK_PERIOD), value = 3, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  oneof varid   = PCH_SETUP.PchHdaDataOnActiveIntervalExtSelectSndw[SNDW_INDEX],
+    prompt      = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_EXT_SELECT_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_EXT_SELECT_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  oneof varid   = PCH_SETUP.PchHdaDataOnActiveIntervalExt2SelectSndw[SNDW_INDEX],
+    prompt      = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_EXT2_SELECT_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_ACTIVE_INTERVAL_EXT2_SELECT_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  SEPARATOR
+
+  SUBTITLE(STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_DELAY_CONFIGURATION))
+  oneof varid   = PCH_SETUP.PchHdaDataOnDelaySelectSndw[SNDW_INDEX],
+    prompt      = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_DELAY_SELECT_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_DELAY_SELECT_HELP),
+    option text = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_DELAY_SELECT_3CLOCK_PERIOD), value = 0, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_DELAY_SELECT_4CLOCK_PERIOD), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  oneof varid   = PCH_SETUP.PchHdaDataOnDelaySelectExtSndw[SNDW_INDEX],
+    prompt      = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_DELAY_EXT_SELECT_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_DELAY_EXT_SELECT_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  oneof varid   = PCH_SETUP.PchHdaDataOnDelaySelectExt2Sndw[SNDW_INDEX],
+    prompt      = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_DELAY_EXT2_SELECT_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_HDA_SNDW_DATA_ON_DELAY_EXT2_SELECT_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  SEPARATOR
+
+  numeric varid = PCH_SETUP.PchHdaClockLoopbackDelaySelectSndw[SNDW_INDEX],
+    prompt      = STRING_TOKEN(STR_PCH_HDA_SNDW_CLOCK_LOOPBACK_DELAY_SELECT_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_HDA_SNDW_CLOCK_LOOPBACK_DELAY_SELECT_HELP),
+    flags       = DISPLAY_UINT_HEX | RESET_REQUIRED | INTERACTIVE,
+    minimum     = 0x0,
+    maximum     = 0xE,
+    step        = 1,
+    default     = 0x0,
+  endnumeric;
+
+  oneof varid   = PCH_SETUP.PchHdaClockLoopbackEnableSndw[SNDW_INDEX],
+    prompt      = STRING_TOKEN(STR_PCH_HDA_SNDW_CLOCK_LOOPBACK_ENABLE_PROMPT),
+    help        = STRING_TOKEN(STR_PCH_HDA_SNDW_CLOCK_LOOPBACK_ENABLE_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  grayoutif ideqval PCH_SETUP.PchHdaClockLoopbackEnableSndw[SNDW_INDEX] == 0x0;
+    oneof varid   = PCH_SETUP.PchHdaClockLoopbackSourceSndw[SNDW_INDEX],
+      prompt      = STRING_TOKEN(STR_PCH_HDA_SNDW_SOURCE_CLOCK_LOOPBACK_SELECT_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_HDA_SNDW_SOURCE_CLOCK_LOOPBACK_SELECT_HELP),
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_SOURCE_CLOCK_LOOPBACK_SELECT_EXTERNAL), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_SOURCE_CLOCK_LOOPBACK_SELECT_INTERNAL), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+  endif;
+endform;

@@ -1,0 +1,111 @@
+### @file
+#  Component information file for Board Advanced SMM Driver
+#
+#  {CB73C3D9-2F01-4342-AE67-04DDE5264092}
+#  0xcb73c3d9, 0x2f01, 0x4342, 0xae, 0x67, 0x4, 0xdd, 0xe5, 0x26, 0x40, 0x92)
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2018 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = BoardInitAdvancedSmm
+  FILE_GUID                      = CB73C3D9-2F01-4342-AE67-04DDE5264092
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  PI_SPECIFICATION_VERSION       = 1.20
+  ENTRY_POINT                    = InitializePlatformSmm
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseMemoryLib
+  BasePciLibPciExpress
+  DebugLib
+  ReportStatusCodeLib
+  EcMiscLib
+  DxeSmmScriptLib
+  SmmServicesTableLib
+  PmcLib
+  UefiRuntimeServicesTableLib
+  PciSegmentLib
+  TimerLib
+  ItssLib
+  PchPciBdfLib
+  RtcAccessLib
+  EcSmiLib
+  MemoryAllocationLib
+  GpioV2WrapperLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdAcpiEnableSwSmi                 ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdAcpiDisableSwSmi                ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdSmcExtSmiBitPosition            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformFlavor
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
+  gSiPkgTokenSpaceGuid.PcdS3Enable                                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdGpioTier2WakeEnable                ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdCapsuleEnable                   ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdTopSwapEnableSwSmi           ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdTopSwapDisableSwSmi          ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdTopSwapSmiSupport            ## CONSUMES
+
+[Sources]
+  BoardInitAdvancedSmm.h
+  BoardInitAdvancedSmm.c
+
+[Protocols]
+  gPlatformNvsAreaProtocolGuid                  ## CONSUMES
+  gEfiS3SmmSaveStateProtocolGuid                ## CONSUMES
+  gEfiSmmBase2ProtocolGuid                      ## CONSUMES
+  gEfiSmmSwDispatch2ProtocolGuid                ## CONSUMES
+  gEfiSmmSxDispatch2ProtocolGuid                ## CONSUMES
+  gEfiSmmPowerButtonDispatch2ProtocolGuid       ## CONSUMES
+  gEfiSmmVariableProtocolGuid                   ## CONSUMES
+  gPchEspiSmiDispatchProtocolGuid               ## CONSUMES
+  gPchTcoSmiDispatchProtocolGuid                ## CONSUMES
+  gEfiSmmCpuProtocolGuid                        ## CONSUMES
+  gEfiSmmEndOfDxeProtocolGuid                   ## CONSUMES
+
+[Guids]
+  gSetupVariableGuid                            ## PRODUCES
+  gCpuSetupVariableGuid                         ## CONSUMES
+  gPchSetupVariableGuid                         ## CONSUMES
+  gSkipBiosLockForSysFwUpdateGuid               ## CONSUMES
+  gIGpuDxeConfigGuid                            ## CONSUMES
+  gSiConfigHobGuid                              ## CONSUMES
+  gUefiIntelPlatformVariablesGuid               ## CONSUMES
+
+[Depex]
+  gEfiSmmBase2ProtocolGuid                 AND
+  gEfiSmmPowerButtonDispatch2ProtocolGuid  AND
+  gEfiSmmSxDispatch2ProtocolGuid           AND
+  gEfiSmmSwDispatch2ProtocolGuid           AND
+  gPlatformNvsAreaProtocolGuid             AND
+  gPchEspiSmiDispatchProtocolGuid          AND
+  gPchTcoSmiDispatchProtocolGuid

@@ -1,0 +1,2 @@
+This FSP supports the following:
+Panther Lake processor and Panther Lake PCH

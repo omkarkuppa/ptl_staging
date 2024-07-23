@@ -1,0 +1,129 @@
+/** @file
+  Intel Processor Power Management IST ACPI Code.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 1999 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#include "CpuPowerMgmt.h"
+
+#define AP_SCOPE_PPC_PCT_PSS_METHOD(INDEX) \
+  External(\_SB.PR##INDEX, DeviceObj) \
+  If (CondRefOf (\_SB.PR##INDEX)) { \
+    Scope(\_SB.PR##INDEX) \
+    { \
+      Method(_PPC,0) \
+      { \
+        Return(\_SB.PR00._PPC) \
+      } \
+      Method(_PCT,0) \
+      { \
+        Return(\_SB.PR00._PCT) \
+      } \
+      Method(_PSS,0) \
+      { \
+        Return(\_SB.PR00._PSS) \
+      } \
+    } \
+  }
+
+DefinitionBlock (
+  "APIST.aml",
+  "SSDT",
+  2,
+  "PmRef",
+  "ApIst",
+  0x3000
+  )
+{
+  External (\_SB.PR00._PPC, MethodObj)
+  External (\_SB.PR00._PCT, MethodObj)
+  External (\_SB.PR00._PSS, MethodObj)
+
+  AP_SCOPE_PPC_PCT_PSS_METHOD (01)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (02)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (03)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (04)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (05)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (06)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (07)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (08)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (09)
+
+  AP_SCOPE_PPC_PCT_PSS_METHOD (10)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (11)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (12)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (13)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (14)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (15)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (16)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (17)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (18)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (19)
+
+  AP_SCOPE_PPC_PCT_PSS_METHOD (20)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (21)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (22)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (23)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (24)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (25)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (26)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (27)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (28)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (29)
+
+  AP_SCOPE_PPC_PCT_PSS_METHOD (30)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (31)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (32)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (33)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (34)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (35)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (36)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (37)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (38)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (39)
+
+  AP_SCOPE_PPC_PCT_PSS_METHOD (40)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (41)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (42)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (43)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (44)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (45)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (46)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (47)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (48)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (49)
+
+  AP_SCOPE_PPC_PCT_PSS_METHOD (50)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (51)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (52)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (53)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (54)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (55)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (56)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (57)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (58)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (59)
+
+  AP_SCOPE_PPC_PCT_PSS_METHOD (60)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (61)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (62)
+  AP_SCOPE_PPC_PCT_PSS_METHOD (63)
+
+} // End of Definition Block
+
+#undef AP_SCOPE_PPC_PCT_PSS_METHOD

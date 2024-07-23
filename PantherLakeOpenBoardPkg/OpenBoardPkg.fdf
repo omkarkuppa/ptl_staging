@@ -1,0 +1,785 @@
+## @file
+#  FDF file of Platform.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+[Defines]
+   !include $(PLATFORM_BOARD_PACKAGE)/Include/Fdf/FlashMapInclude.fdf
+
+################################################################################
+#
+# FD Section
+# The [FD] Section is made up of the definition statements and a
+# description of what goes into  the Flash Device Image.  Each FD section
+# defines one flash "device" image.  A flash device image may be one of
+# the following: Removable media bootable image (like a boot floppy
+# image,) an Option ROM image (that would be "flashed" into an add-in
+# card,) a System "Flash"  image (that would be burned into a system's
+# flash) or an Update ("Capsule") image that will be used to update and
+# existing system flash.
+#
+################################################################################
+[FD.PantherLakeOpenboard]
+#
+# FD Tokens, BaseAddress, Size, ErasePolarity, BlockSize, and NumBlocks, cannot be
+# assigned with PCD values. Instead, it uses the definitions for its variety, which
+# are FLASH_BASE, FLASH_SIZE, FLASH_BLOCK_SIZE and FLASH_NUM_BLOCKS.
+#
+BaseAddress   = $(FLASH_BASE) | gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress  #The base address of the FLASH Device.
+Size          = $(FLASH_SIZE) | gSiPkgTokenSpaceGuid.PcdBiosSize             #The size in bytes of the FLASH Device
+ErasePolarity = 1
+BlockSize     = $(FLASH_BLOCK_SIZE)
+NumBlocks     = $(FLASH_NUM_BLOCKS)
+
+DEFINE SIPKG_DXE_SMM_BIN  = INF
+DEFINE SIPKG_PEI_BIN      = INF
+
+# Set FLASH_REGION_FV_RECOVERY_OFFSET to PcdNemCodeCacheBase, because macro expression is not supported.
+# So, PlatformSecLib uses PcdFlashAreaBaseAddress + PcdNemCodeCacheBase to get the real CodeCache base address.
+SET gSiPkgTokenSpaceGuid.PcdNemCodeCacheBase = $(gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset)
+SET gMinPlatformPkgTokenSpaceGuid.PcdMicrocodeOffsetInFv = 0x1000
+SET gIntelFsp2WrapperTokenSpaceGuid.PcdFlashCodeCacheAddress = gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress
+SET gIntelFsp2WrapperTokenSpaceGuid.PcdFlashCodeCacheSize    = gSiPkgTokenSpaceGuid.PcdBiosSize
+SET gIntelFsp2WrapperTokenSpaceGuid.PcdFsptBaseAddress = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset)
+SET gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset)
+SET gIntelFsp2WrapperTokenSpaceGuid.PcdFspsBaseAddress = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashAreaBaseAddress    = gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashAreaSize           = gSiPkgTokenSpaceGuid.PcdBiosSize
+SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvBase   = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset)
+
+!if gBoardModuleTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == TRUE
+  SET gBoardModuleTokenSpaceGuid.PcdFspWrapperBfvforResetVectorInFsp = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset)
+!endif
+
+################################################################################
+#
+# Following are lists of FD Region layout which correspond to the locations of different
+# images within the flash device.
+#
+# Regions must be defined in ascending order and may not overlap.
+#
+# A Layout Region start with a eight digit hex offset (leading "0x" required) followed by
+# the pipe "|" character, followed by the size of the region, also in hex with the leading
+# "0x" characters. Like:
+# Offset|Size
+# PcdOffsetCName|PcdSizeCName
+# RegionType <FV, DATA, or FILE>
+# Fv Size can be adjusted
+#
+################################################################################
+gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageVariableOffset|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
+gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
+#NV_VARIABLE_STORE
+DATA = {
+  ## This is the EFI_FIRMWARE_VOLUME_HEADER
+  # ZeroVector []
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  # FileSystemGuid
+  0x8D, 0x2B, 0xF1, 0xFF, 0x96, 0x76, 0x8B, 0x4C,
+  0xA9, 0x85, 0x27, 0x47, 0x07, 0x5B, 0x4F, 0x50,
+  # FvLength: 0x60000
+  0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00,
+  #Signature "_FVH"       #Attributes
+  0x5F, 0x46, 0x56, 0x48, 0xFF, 0xFE, 0x04, 0x00,
+  #HeaderLength #CheckSum #ExtHeaderOffset #Reserved #Revision
+  #
+  # Be careful on CheckSum field.
+  #
+  0x48, 0x00, 0x2E, 0x09, 0x00, 0x00, 0x00, 0x02,
+  #Blockmap[0]: 6 Blocks  0x10000 Bytes / Block
+  0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
+  #Blockmap[1]: End
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  ## This is the VARIABLE_STORE_HEADER
+!if gMinPlatformPkgTokenSpaceGuid.PcdUefiSecureBootEnable == TRUE
+  #  Signature: gEfiAuthenticatedVariableGuid = { 0xaaf32c78, 0x947b, 0x439a, { 0xa1, 0x80, 0x2e, 0x14, 0x4e, 0xc3, 0x77, 0x92 }}
+  0x78, 0x2c, 0xf3, 0xaa, 0x7b, 0x94, 0x9a, 0x43,
+  0xa1, 0x80, 0x2e, 0x14, 0x4e, 0xc3, 0x77, 0x92,
+!else
+  #  Signature: gEfiVariableGuid = { 0xddcf3616, 0x3275, 0x4164, { 0x98, 0xb6, 0xfe, 0x85, 0x70, 0x7f, 0xfe, 0x7d }}
+  0x16, 0x36, 0xcf, 0xdd, 0x75, 0x32, 0x64, 0x41,
+  0x98, 0xb6, 0xfe, 0x85, 0x70, 0x7f, 0xfe, 0x7d,
+!endif
+  #Size: 0x2E000 (gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize) - 0x48 (size of EFI_FIRMWARE_VOLUME_HEADER) = 0x2DFB8
+  # This can speed up the Variable Dispatch a bit.
+  0xB8, 0xDF, 0x02, 0x00,
+  #FORMATTED: 0x5A #HEALTHY: 0xFE #Reserved: UINT16 #Reserved1: UINT32
+  0x5A, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+}
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingOffset|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize
+gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize
+#NV_FTW_WORKING
+DATA = {
+  # EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER->Signature = gEdkiiWorkingBlockSignatureGuid         =
+  #  { 0x9e58292b, 0x7c68, 0x497d, { 0xa0, 0xce, 0x65,  0x0, 0xfd, 0x9f, 0x1b, 0x95 }}
+  0x2b, 0x29, 0x58, 0x9e, 0x68, 0x7c, 0x7d, 0x49,
+  0xa0, 0xce, 0x65,  0x0, 0xfd, 0x9f, 0x1b, 0x95,
+  # Crc:UINT32            #WorkingBlockValid:1, WorkingBlockInvalid:1, Reserved
+  0xE2, 0x33, 0xF2, 0x03, 0xFE, 0xFF, 0xFF, 0xFF,
+  # WriteQueueSize: UINT64
+  0xE0, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+}
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareOffset|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize
+gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize
+#NV_FTW_SPARE
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize
+FV = FvAdvanced
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecuritySize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecuritySize
+FV = FvSecurity
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootSize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootSize
+FV = FvOsBoot
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootSize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootSize
+FV = FvUefiBoot
+
+gBoardModuleTokenSpaceGuid.PcdFlashFvUplOffset|gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize
+gBoardModuleTokenSpaceGuid.PcdFlashFvUplBase|gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize
+FV = FvUpl
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize
+FV = FvPostMemory
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize
+#Microcode
+FV = FvMicrocode
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize
+# FSP_S Section
+FILE = $(PLATFORM_FSP_BIN_PACKAGE)/Fsp_Rebased_S.fd
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize
+# FSP_M Section
+FILE = $(PLATFORM_FSP_BIN_PACKAGE)/Fsp_Rebased_M.fd
+
+!if gBoardModuleTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == TRUE
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize
+FV = FvPreMemory
+
+gBoardModuleTokenSpaceGuid.PcdFspTopOffset|gBoardModuleTokenSpaceGuid.PcdFspTopSize
+gBoardModuleTokenSpaceGuid.PcdFspTopBase|gBoardModuleTokenSpaceGuid.PcdFspTopSize
+# FSP_O Section
+FILE = $(PLATFORM_FSP_BIN_PACKAGE)/FspTopAt4G.fd
+
+!else
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize
+# FSP_T Section
+FILE = $(PLATFORM_FSP_BIN_PACKAGE)/Fsp_Rebased_T.fd
+
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize
+FV = FvPreMemory
+
+
+!endif
+
+################################################################################
+#
+# FV Section
+#
+# [FV] section is used to define what components or modules are placed within a flash
+# device file.  This section also defines order the components and modules are positioned
+# within the image.  The [FV] section consists of define statements, set statements and
+# module statements.
+#
+################################################################################
+
+[FV.FvMicrocode]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+
+!if gPantherLakeBinPkgTokenSpaceGuid.PcdMicrocodeBinEnable == TRUE
+  #  Version FFS
+  #  1. MicrocodeVersion.data carries global version info to manage entire microcode Region.
+  #  2. MicrocodeVersion.data is auto generated by prep.bat with the following default value:
+  #     FW-VERSION = 1, LSV = 1, FW-VERSION-STRING = "0.0.0.1", or change them in prep.bat.
+  #
+  FILE RAW = gIntelMicrocodeVersionFfsBinGuid {
+    $(PLATFORM_BIN_PACKAGE)/Binaries/Microcode/MicrocodeVersion.data
+  }
+  #
+  #  1. uCode FFS file GUID {197DB236-F856-4924-90F8-CDF12FB875F3} is specific.
+  #     to help binary tools to locate uCode Array.
+  #  2. Starting address of Microcode Array is aligned at 4KB alignment.
+  #     PcdMicrocodeOffsetInFv must also set to 4KB accordingly.
+  #  3. Platform use Slot mode to avoid future FIT update in case of uCode size
+  #     change, each uCode patch below is placed in a Slot with reserved space.
+  #  4. uCode patches defined below will be padded and packed for slot mode
+  #     microcode_padding.py in prep.bat performs padding job, with default SLOT_SIZE set to 0x37000.
+  #     Generated Microcode arrary layout is
+  #       |<--uCode0--><-Reserved->|<--uCode1--><-Reserved->|
+  #       |<-------0x37000-------->|<-------0x37000-------->|
+  #
+  #  Caution!
+  #     1. If users add/update uCode patch. please rerun prep before build to get them padded.
+  #     2. For Resiliency BIOS, IBB only has space for one microcode for debug build, and doesn't support compatibility.
+  #        Please always place the latest stepping uCode patch in the first priority.
+  #
+  #  m_07_b06d0_00000001.pdb
+  #
+  FILE RAW = gIntelMicrocodeArrayFfsBinGuid {
+      Align=4K $(PLATFORM_BIN_PACKAGE)/Binaries/Microcode/m_07_b06d0_00000001.pdb # PTL-UH dummy ucode
+  }
+!endif
+
+[FV.FvPreMemory]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D
+
+!if $(FSP64_BUILD) == FALSE
+INF UefiCpuPkg/SecCore/SecCore.inf
+!else
+INF RuleOverride=NORMAL UefiCpuPkg/SecCore/SecCoreNative.inf
+
+!if gBoardModuleTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
+  INF RuleOverride=RESET_VECTOR UefiCpuPkg/ResetVector/Vtf0/Vtf0.inf
+!endif
+
+!endif
+
+
+#
+# In EDK2 mode or FSP API mode, the PeiMain is necessary.
+#
+!if gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1
+  INF MdeModulePkg/Core/Pei/PeiMain.inf
+!endif
+INF $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpiInitPei.inf
+
+#
+# KeyServicePei driver in this feature fdf needs to be included
+# before CorePreMemoryInclude.fdf because the protected variable driver
+# needs generate key service to be enabled and it's included in CorePreMemoryInclude.fdf
+#
+!include $(PLATFORM_PACKAGE)/Include/Fdf/CorePreMemoryInclude.fdf
+
+
+INF $(PLATFORM_BSP_PATH)/BiosInfo/BiosInfo.inf
+
+INF $(PLATFORM_PACKAGE)/Services/StallServicePei/StallServicePei.inf
+  INF $(PLATFORM_PACKAGE)/PlatformInit/ReportFv/ReportFvPei.inf
+
+INF $(PLATFORM_PACKAGE)/PlatformInit/PlatformInitPei/PlatformInitPreMem.inf
+INF $(PLATFORM_PACKAGE)/PlatformInit/SiliconPolicyPei/SiliconPolicyPeiPreMem.inf
+
+
+INF IntelFsp2WrapperPkg/FspmWrapperPeim/FspmWrapperPeim.inf
+
+INF MdeModulePkg/Universal/ResetSystemPei/ResetSystemPei.inf
+FILE FREEFORM = 338FA35A-CA4A-4DBC-A6F4-9BD1593B61BC {
+  SECTION RAW = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/8C3D856A-9BE6-468E-850A-24F7A8D38E08.bin
+}
+
+
+[FV.FvPostMemoryUncompact]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 7C4DCFC6-AECA-4707-85B9-FD4B2EEA49E7
+
+!include $(PLATFORM_PACKAGE)/Include/Fdf/CorePostMemoryInclude.fdf
+
+# Init Board Config PCD
+INF $(PLATFORM_PACKAGE)/PlatformInit/PlatformInitPei/PlatformInitPostMem.inf
+INF IntelFsp2WrapperPkg/FspsWrapperPeim/FspsWrapperPeim.inf
+!if gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 0
+INF $(PLATFORM_PACKAGE)/PlatformInit/SiliconPolicyPei/SiliconPolicyPeiPostMem.inf
+!endif
+
+INF UefiPayloadPkg/PayloadLoaderPeim/PayloadLoaderPeim.inf
+
+!if gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopVbtBinEnable == TRUE
+  FILE FREEFORM = PCD(gIntelSiliconPkgTokenSpaceGuid.PcdIntelGraphicsVbtFileGuid) {
+    SECTION RAW = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/Vbt.bin
+    SECTION UI  = "IntelGopVbt"
+  }
+!endif
+
+!if gSiPkgTokenSpaceGuid.PcdPeiDisplayEnable == TRUE
+FILE FREEFORM = 7BB28B99-61BB-11D5-9A5D-0090273FC14D {
+  SECTION RAW = MdeModulePkg/Logo/Logo.bmp
+}
+!endif # PcdPeiDisplayEnable
+
+[FV.FvPostMemory]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 9DFE49DB-8EF0-4D9C-B273-0036144DE917
+
+FILE FV_IMAGE = 244FAAF4-FAE1-4892-8B7D-7EF84CBFA709 {
+      SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
+        SECTION FV_IMAGE = FvPostMemoryUncompact
+      }
+      SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
+        SECTION FV_IMAGE = FvSecurityPostMemory
+      }
+      SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
+        SECTION FV_IMAGE = FvSecurityLate
+      }
+}
+
+[FV.FvUefiBootUncompact]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = A881D567-6CB0-4eee-8435-2E72D33E45B5
+
+INF  MdeModulePkg/Universal/ResetSystemRuntimeDxe/ResetSystemRuntimeDxe.inf
+INF  MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
+
+INF  BoardModulePkg/BoardBdsHookDxe/BoardBdsHookDxe.inf
+
+INF $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/DxeSmm/GpioV2PtlPcdProtocolInitDxe.inf
+
+
+!if gSiPkgTokenSpaceGuid.PcdIgdEnable == TRUE
+  !if gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopBinEnable == TRUE
+    FILE DRIVER = gIntelGopDriverBinGuid {
+      !if $(TARGET) == DEBUG
+        SECTION PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/IntelGopDriverDebug.efi
+      !else
+        SECTION PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/IntelGopDriver.efi
+      !endif
+      SECTION DXE_DEPEX_EXP = {gGopPolicyProtocolGuid}
+      SECTION UI = "IntelGopDriver"
+    }
+  !endif # PcdIntelGopBinEnable
+!endif # gSiPkgTokenSpaceGuid.PcdIgdEnable
+
+
+INF  $(PLATFORM_PACKAGE)/PlatformInit/PlatformInitDxe/PlatformInitDxe.inf
+!if gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1
+INF  IntelFsp2WrapperPkg/FspWrapperNotifyDxe/FspWrapperNotifyDxe.inf
+!endif
+INF  $(PLATFORM_PACKAGE)/Test/TestPointStubDxe/TestPointStubDxe.inf
+
+
+#
+# This includes W/A for QemuVideoDxe driver otherwise Simics no screen
+#
+INF   $(PLATFORM_BOARD_PACKAGE)/PciPlatform/Dxe/PciPlatform.inf
+
+[FV.FvUefiBoot]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 0496D33D-EA79-495C-B65D-ABF607184E3B
+
+FILE FV_IMAGE = 9E21FD93-9C72-4c15-8C4B-E77F1DB2D792 {
+       SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
+         SECTION FV_IMAGE = FvUefiBootUncompact
+       }
+     }
+
+[FV.FvPplBdsUncompact]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvForceRebase      = FALSE
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 819C9DB2-17CE-412D-B19C-1AAA39241A9E
+
+INF  MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
+
+[FV.FvUpl]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = F69584D4-56F0-4D8E-A387-072A836CDD4E
+
+[FV.FvOsBootUncompact]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = A0F04529-B715-44C6-BCA4-2DEBDD01EEEC
+
+!include $(PLATFORM_BOARD_PACKAGE)/Include/Fdf/CoreOsBootInclude.fdf
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdBootToShellOnly == FALSE
+INF  $(PLATFORM_PACKAGE)/PlatformInit/PlatformInitSmm/PlatformInitSmm.inf
+INF  IntelSiliconPkg/Feature/Flash/SpiFvbService/SpiFvbServiceSmm.inf
+
+INF  UefiCpuPkg/PiSmmCpuDxeSmm/PiSmmCpuDxeSmm.inf
+INF  $(PLATFORM_PACKAGE)/Acpi/AcpiTables/AcpiPlatform.inf
+INF  $(PLATFORM_PACKAGE)/Acpi/AcpiSmm/AcpiSmm.inf
+INF  RuleOverride = DRIVER_ACPITABLE $(PLATFORM_PACKAGE)/Acpi/MinDsdt/MinDsdt.inf
+
+INF  $(PLATFORM_PACKAGE)/FspWrapper/SaveMemoryConfig/SaveMemoryConfig.inf
+!endif #PcdBootToShellOnly
+
+
+[FV.FvLateSilicon]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 97F09B89-9E83-4DDC-A3D1-10C4AF539D1E
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdBootToShellOnly == FALSE
+
+$(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/Pch/PchSmiDispatcher/Smm/PchSmiDispatcher.inf
+$(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/Pch/SmmControl/RuntimeDxe/SmmControl.inf
+$(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Spi/Smm/SpiSmm.inf
+
+!if gSiPkgTokenSpaceGuid.PcdAcpiEnable == TRUE
+INF  RuleOverride = ACPITABLE $(PLATFORM_SI_PACKAGE)/IpBlock/DomainIGpu/AcpiTables/IGpuSsdt.inf
+!endif
+!endif
+[FV.FvOsBoot]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 13BF8810-75FD-4B1A-91E6-E16C4201F80A
+
+FILE FV_IMAGE = B9020753-84A8-4BB6-947C-CE7D41F5CE39 {
+       SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
+         SECTION FV_IMAGE = FvOsBootUncompact
+       }
+     }
+
+FILE FV_IMAGE = D4632741-510C-44E3-BE21-C3D6D7881485 {
+       SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
+         SECTION FV_IMAGE = FvLateSilicon
+       }
+     }
+
+[FV.FvSecurityPreMemory]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16         #FV alignment and FV attributes setting.
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 9B7FA59D-71C6-4A36-906E-9725EA6ADD5B
+
+!include $(PLATFORM_PACKAGE)/Include/Fdf/CoreSecurityPreMemoryInclude.fdf
+
+[FV.FvSecurityPostMemory]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16         #FV alignment and FV attributes setting.
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 4199E560-54AE-45E5-91A4-F7BC3804E14A
+
+!include $(PLATFORM_PACKAGE)/Include/Fdf/CoreSecurityPostMemoryInclude.fdf
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable == TRUE
+INF $(PLATFORM_PACKAGE)/Tcg/Tcg2PlatformPei/Tcg2PlatformPei.inf
+!endif
+
+[FV.FvSecurityLate]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = F753FE9A-EEFD-485B-840B-E032D538102C
+
+!include $(PLATFORM_PACKAGE)/Include/Fdf/CoreSecurityLateInclude.fdf
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdBootToShellOnly == FALSE
+
+INF  $(PLATFORM_PACKAGE)/Hsti/HstiIbvPlatformDxe/HstiIbvPlatformDxe.inf
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable == TRUE
+INF  $(PLATFORM_PACKAGE)/Tcg/Tcg2PlatformDxe/Tcg2PlatformDxe.inf
+!endif
+
+!endif
+INF  IntelSiliconPkg/Feature/SmmAccess/SmmAccessDxe/SmmAccess.inf
+
+
+[FV.FvSecurity]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 5A9A8B4E-149A-4CB2-BDC7-C8D62DE2C8CF
+
+FILE FV_IMAGE = 757CC075-1428-423D-A73C-22639706C119 {
+       SECTION FV_IMAGE = FvSecurityPreMemory
+     }
+
+
+[FV.FvAdvanced]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = B23E7388-9953-45C7-9201-0473DDE5487A
+
+################################################################################
+#
+# Rules are use with the [FV] section's module INF type to define
+# how an FFS file is created for a given INF file. The following Rule are the default
+# rules for the different module type. User can add the customized rules to define the
+# content of the FFS file.
+#
+################################################################################
+
+!include $(PLATFORM_PACKAGE)/Include/Fdf/RuleInclude.fdf
+
+#
+# FFS layout for native modules
+#
+[Rule.Common.SEC.NORMAL]
+  FILE SEC = $(NAMED_GUID) {
+    PE32     PE32           $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+[Rule.Common.SEC.RESET_VECTOR]
+  FILE RAW = $(NAMED_GUID) {
+    RAW RAW  Align = 8      $(INF_OUTPUT)/Vtf0.bin
+  }

@@ -1,0 +1,51 @@
+## @file
+# Library description file for PEI Graphics Init FRU
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+
+[Defines]
+  INF_VERSION = 0x00010017
+  BASE_NAME = PeiGraphicsInitFruLib
+  FILE_GUID = 1E9D0EE7-BB02-442C-8BBF-14327A44DE4B
+  VERSION_STRING = 1.0
+  MODULE_TYPE = PEIM
+  LIBRARY_CLASS = GraphicsInitFruLib
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  IoLib
+  HobLib
+  BaseMemoryLib
+  PciSegmentLib
+  PeiServicesLib
+  PeiExtGfxCardDetectLib
+  P2SbSocLib
+  PtlPcdGpioNativeLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  PeiGraphicsInitFruLib.c
+
+[Guids]
+  gSiMemoryInfoDataGuid  ## CONSUMES

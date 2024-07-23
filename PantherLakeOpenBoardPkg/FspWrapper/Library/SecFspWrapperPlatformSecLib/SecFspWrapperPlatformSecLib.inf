@@ -1,0 +1,176 @@
+## @file
+#  Provide FSP wrapper platform sec related function.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+################################################################################
+#
+# Defines Section - statements that will be processed to create a Makefile.
+#
+################################################################################
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = SecFspWrapperPlatformSecLib
+  FILE_GUID                      = 71D20935-14C5-435E-AE29-DAC4D432070C
+  MODULE_TYPE                    = SEC
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PlatformSecLib
+
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+################################################################################
+#
+# Sources Section - list of files that are required for the build to succeed.
+#
+################################################################################
+
+[Sources]
+  FspWrapperPlatformSecLib.c
+  SecRamInitData.c
+  SecPlatformInformation.c
+  SecGetPerformance.c
+  SecTempRamDone.c
+  PlatformInit.c
+  SerialPortInit.c
+  Fsp.h
+
+
+[Sources.X64]
+  X64/SecEntry.nasm
+  X64/PeiCoreEntry.nasm
+  X64/Stack.nasm
+
+################################################################################
+#
+# Package Dependency Section - list of Package files that are required for
+#                              this module.
+#
+################################################################################
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  FspWrapperFeaturePkg/FspWrapperFeaturePkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+
+[LibraryClasses]
+  LocalApicLib
+  SerialPortLib
+  FspWrapperPlatformLib
+  FspWrapperApiLib
+  SecBoardInitLib
+  TestPointCheckLib
+  PeiServicesTablePointerLib
+  SecGetFsptApiParameterLib
+  PchCycleDecodingLib
+
+[Ppis]
+  gEfiSecPlatformInformationPpiGuid       ## CONSUMES
+  gPeiSecPerformancePpiGuid               ## CONSUMES
+  gTopOfTemporaryRamPpiGuid               ## PRODUCES
+  gEfiPeiFirmwareVolumeInfoPpiGuid        ## PRODUCES
+  gFspTempRamExitPpiGuid                  ## CONSUMES
+  gPlatformInitTempRamExitPpiGuid         ## CONSUMES
+  gFsptUpdLocationPpiGuid                 ## CONSUMES
+[Pcd]
+  gUefiCpuPkgTokenSpaceGuid.PcdPeiTemporaryRamStackSize               ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFsptBaseAddress                  ## CONSUMES
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspTemporaryRamSize                  ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTcoBaseAddress                              ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpcIoDecodeRange                            ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdSecSerialPortDebugEnable           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpcIoEnableDecoding                         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFspWrapperResetVectorInFsp           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFspWrapperBfvforResetVectorInFsp
+
+[FixedPcd]
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase               ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize               ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdMicrocodeOffsetInFv                ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFlashCodeCacheAddress            ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFlashCodeCacheSize               ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress                  ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartNumber                          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartMode                            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartBaudRate                        ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                   ## PRODUCES
+  gSiPkgTokenSpaceGuid.PcdTemporaryPciExpressRegionLength             ## PRODUCES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartParity                          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartDataBits                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartStopBits                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartAutoFlow                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartRxPinMux                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartTxPinMux                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartRtsPinMux                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartCtsPinMux                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugMmioBase                   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugPciCfgBase                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpcUartDebugEnable                          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdDebugInterfaceFlags                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialDebugLevel                            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdIsaSerialUartBase                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartEnable                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartNumber                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartMode                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartBaudRate                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartParity                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartDataBits                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartStopBits                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartAutoFlow                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartRxPinMux                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartTxPinMux                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartRtsPinMux                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartCtsPinMux                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartMmioBase                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartPciCfgBase                   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTopMemoryCacheSize                          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress                         ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                  ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFspDispatchModeUseFspPeiMain       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoI2cMmioBase                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoI2cSdaPin                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoI2cSclPin                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoI2cPadsTerm                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoI2cNumber                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiCs0Polarity                      ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiCs1Polarity                      ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiCs0Enable                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiCs1Enable                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiMode                             ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiDefaultCsOutput                  ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiCsMode                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiCsState                          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiNumber                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiMmioBase                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiCs0PinMux                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiClkPinMux                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiMisoPinMux                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoSpiMosiPinMux                       ## CONSUMES

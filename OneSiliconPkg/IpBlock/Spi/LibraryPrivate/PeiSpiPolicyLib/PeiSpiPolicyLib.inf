@@ -1,0 +1,46 @@
+## @file
+# Component description file for the Usb policy library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2020 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiSpiPolicyLib
+FILE_GUID = BD1AB138-7E28-F67D-9CB0-D30A54736B92
+VERSION_STRING = 1.0
+MODULE_TYPE = PEIM
+LIBRARY_CLASS = PeiSpiPolicyLib
+
+[LibraryClasses]
+DebugLib
+ConfigBlockLib
+SiConfigBlockLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+CsiApiPkg/CsiApiPkg.dec
+
+[Sources]
+PeiSpiPolicyLib.c
+
+[Guids]
+gSpiConfigGuid                     ## CONSUMES

@@ -1,0 +1,56 @@
+## @file
+#  Component information file for PantherLakeMRvpInitLib in PEI post memory phase.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiPtlMultiBoardInitLib
+  FILE_GUID                      = C7D39F17-E5BA-41D9-8DFE-FF9017499280
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = NULL
+  CONSTRUCTOR                    = PeiPtlMultiBoardInitLibConstructor
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PcdLib
+  MultiBoardInitSupportLib
+  PciSegmentLib
+
+[Packages]
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  PeiInitPostMemLib.c
+  PeiMultiBoardInitPostMemLib.c
+
+[FixedPcd]
+
+[Pcd]
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTable
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryBase
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTable

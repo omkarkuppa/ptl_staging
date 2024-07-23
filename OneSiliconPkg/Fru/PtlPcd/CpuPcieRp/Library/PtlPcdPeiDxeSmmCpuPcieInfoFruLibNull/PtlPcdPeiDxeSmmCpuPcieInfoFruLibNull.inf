@@ -1,0 +1,53 @@
+## @file
+#  CPU PCIe information library for TigerLake PCH.
+#
+#  All function in this library is available for PEI, DXE, and SMM,
+#  But do not support UEFI RUNTIME environment call.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2018 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PtlPcdPeiDxeSmmCpuPcieInfoFruLibNull
+FILE_GUID = 897E8783-9E5F-4F57-A8FB-3FE08C054A7C
+VERSION_STRING = 1.0
+MODULE_TYPE = BASE
+LIBRARY_CLASS = CpuPcieInfoFruLib
+
+
+[LibraryClasses]
+IoLib
+BaseLib
+DebugLib
+PrintLib
+PciSegmentLib
+PchPcrLib
+PmcPrivateLib
+PcdLib
+ConfigBlockLib
+CpuPlatformLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+[Sources]
+CpuPcieInfoFruLibNull.c

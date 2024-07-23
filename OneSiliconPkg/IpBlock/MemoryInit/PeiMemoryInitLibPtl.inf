@@ -1,0 +1,370 @@
+## @file
+# Component description file for PeiMemoryInitLib
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiMemoryInitLib
+FILE_GUID = B5F80917-1A80-44C4-B22B-F5AF69B5E1E6
+VERSION_STRING = 1.0
+MODULE_TYPE = PEIM
+LIBRARY_CLASS = MemoryInitLib
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF
+#
+
+
+
+[BuildOptions]
+MSFT: *_*_*_CC_FLAGS = /Oi /GL- /Gs262144 /Zi /Gm /MAP
+GCC:*_*_IA32_CC_FLAGS = -fno-lto
+*_*_*_CC_FLAGS = $(MRC_NDEBUG)
+
+[LibraryClasses]
+PeimEntryPoint
+BaseMemoryLib
+BaseLib
+IoLib
+DebugLib
+PeiServicesLib
+MemoryAllocationLib
+HobLib
+PcdLib
+PrintLib
+ReportStatusCodeLib
+ConfigBlockLib
+CpuPlatformLib
+PeiTxtLib
+TxtLib
+PciSegmentLib
+FspCommonLib
+FspPlatformLib
+PchInfoLib
+PreSiliconEnvDetectLib
+PeiHostBridgeInitLib
+PeiHostBridgeInitFruLib
+FspErrorInfoLib
+TmeLib
+PeiMemoryMapPrintLib
+PeiPsmiInitLib
+ImrInitLib
+TseInfoLib
+PeiHostBridgeIpStatusLib
+PeiMemorySubSystemInitLib
+NocInitLib
+CceLib
+PeiTelemetryFruLib
+NguInfoLib
+PeiCpuInitFruLib
+TdxInfoLib
+PeiTdxLib
+BaseIGpuInfoLib
+PeiMemorySubSystemInfoLib
+MemoryInstallLib
+IGpuInitLib
+PeiTraceHubInitLib
+PeiTelemetryInitLib
+PeiMemorySubSystemFruLib
+CapsulePpiProcessLib
+
+[Packages]
+MdePkg/MdePkg.dec
+MdeModulePkg/MdeModulePkg.dec
+IntelFsp2Pkg/IntelFsp2Pkg.dec
+UefiCpuPkg/UefiCpuPkg.dec
+OneSiliconPkg/SiPkg.dec
+
+[Pcd]
+gSiPkgTokenSpaceGuid.PcdSiPciExpressBaseAddress
+gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedMemoryLength
+gSiPkgTokenSpaceGuid.PcdPsmiEnable
+gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress           ## CONSUMES
+
+[FixedPcd]
+gSiPkgTokenSpaceGuid.PcdMchBaseAddress
+
+[Sources]
+src/ApiLib/IncludePublic/CMrcCommonTypes.h
+src/ApiLib/IncludePublic/CBlueMrcCommonTypes.h
+LibraryPrivate/MemoryInitPtl.c
+LibraryPrivate/MemoryTest.c
+src/ApiLib/BlueMrcDebugPrint.c
+src/ApiLib/BlueMrcGeneralCommon.c
+src/ApiLib/MrcSagv.c
+src/ApiLib/MrcSagv.h
+src/ApiLib/Ptl/MrcSagvConfig.c
+src/ApiLib/BlueMrcStartMemoryConfiguration.c
+src/BdatLib/MrcBdat.c
+src/BdatLib/IncludePublic/MrcBdat.h
+src/BdatLib/MrcBdatPrivate.h
+src/ApiLib/MrcMemoryScrub.c
+src/ApiLib/MrcMemoryScrub.h
+src/ApiLib/BlueMrcInterpreterPrivate.h
+src/ApiLib/BlueMrcInterpreter.c
+src/ApiLib/BlueMrcInterpreter.h
+src/ApiLib/Ptl/MrcSaveRestore.c
+src/ApiLib/Ptl/BlueMrcGeneral.c
+src/ApiLib/IncludePublic/CMrcStartMemoryConfiguration.h
+src/McLib/MrcAddressDecodeConfiguration.c
+src/McLib/MrcChipRoutingCommon.c
+src/McLib/Ptl/MrcChipRouting.c
+src/McLib/MrcMaintenance.c
+src/McLib/MrcMcApiCommon.c
+src/McLib/MrcMcConfigurationCommon.c
+src/McLib/MrcModeRegisterHandler.c
+src/McLib/MrcPowerModes.c
+src/McLib/MrcRefreshConfiguration.c
+src/McLib/MrcRowHammer.c
+src/McLib/MrcSchedulerParameters.c
+src/McLib/MrcTimingConfiguration.c
+src/McLib/MrcPowerMetering.c
+src/McLib/Ptl/MrcMcHalHashes.c
+src/McLib/Ptl/MrcMcApi.c
+src/McLib/Ptl/MrcMcConfiguration.c
+src/McLib/Ptl/MrcMcHalLimits.c
+src/McLib/Ptl/MrcMcHalOffsets.c
+src/McLib/Ptl/MrcMcSiSpecific.c
+src/PmaLib/BluePmMessageApiCommon.c
+src/PmaLib/Ptl/BluePmMessageApi.c
+src/PmaLib/MrcPmaApiCrossProj.c
+src/PmaLib/Ptl/MrcPmaApi.c
+src/TestDataEngineLib/BlueTestDataEngine.c
+src/TestDataEngineLib/IncludePublic/BlueTestDataEngine.h
+src/HalLib/MrcCkdOffsets.c
+src/HalLib/IncludePublic/MrcCkdOffsets.h
+src/HalLib/MrcHalApi.c
+src/HalLib/IncludePublic/MrcHalApi.h
+src/HalLib/Ptl/BlueMrcHalRegisterAccess.c
+src/HalLib/IncludePublic/MrcHalRegisterAccess.h
+src/ServicesLib/MrcAmt.h
+src/ApiLib/BlueMrcAgentCommunication.h
+src/ApiLib/BlueMrcPmic.h
+src/ServicesLib/MrcTurnAround.h
+src/ServicesLib/MrcTurnAroundPrivate.h
+src/ServicesLib/MrcPpr.h
+src/JedecLib/Ddr5/BlueMrcDdr5.c
+src/JedecLib/Lpddr5/BlueMrcLpddr5.c
+src/ServicesLib/MrcAmt.c
+src/JedecLib/IncludePublic/BlueMrcJedecApi.h
+src/JedecLib/BlueMrcMemoryApi.c
+src/SpdProcessing/MrcSpdProcessing.c
+src/ServicesLib/BlueMrcAgentCommunication.c
+src/ServicesLib/BlueMrcCommon.c
+src/ServicesLib/MrcTurnAround.c
+src/ServicesLib/MrcPpr.c
+src/ServicesLib/MrcPmic.c
+src/ServicesLib/BlueMrcReset.c
+src/ServicesLib/BlueMrcIoTest.c
+src/ServicesLib/IncludePublic/BlueMrcIoTest.h
+src/ServicesLib/Ptl/BlueMrcSpecific.c
+src/SpdProcessing/IncludePublic/BlueMrcSpdProcessingApi.h
+src/UcManagement/MrcUcManagement.c
+src/UcManagement/MrcUcManagement.h
+src/UcManagement/Ptl/MrcUcPayloadData.c
+src/UcManagement/Ptl/MrcUcPayloadData.h
+src/WriteTraining/BlueMrcWriteDqDqs.c
+src/ApiLib/MrcBlueGreenCommunication.h
+src/IncludePublic/MrcPostCodes.h
+Include/CMrcInterface.h
+src/IncludePublic/CMrcInterfaceGlobalTypes.h
+src/IncludePublic/Ptl/MrcGlobalDefinitions.h
+src/IncludePublic/Ptl/MrcGenSaveRestoreRegCount.h
+src/IncludePublic/CMrcRmtData.h
+src/IncludePublic/MrcSpdData.h
+src/IncludePublic/CMrcSpdDataDdr5.h
+src/StatsLib/IncludePublic/CMrcStatsTrackerConfig.h
+src/StatsLib/IncludePublic/CMrcStatsTrackerFramework.h
+src/IncludePublic/CMrcTypes.h
+src/IncludePrivate/Ptl/MrcVersion.h
+src/ApiLib/IncludePublic/CMrcApi.h
+src/ApiLib/MrcDebugPrintCommon.c
+src/ApiLib/MrcDebugPrint.h
+src/ApiLib/MrcGeneral.c
+src/ApiLib/MrcGeneral.h
+src/ApiLib/MrcSaveRestore.h
+src/StatsLib/MrcStatsTracker.c
+src/StatsLib/IncludePublic/CMrcStatsTracker.h
+src/DdrIoLib/IncludePublic/MrcDdrIoDefines.h
+src/DdrIoLib/Ptl/MrcDdrIoUtils.c
+src/DdrIoLib/IncludePublic/MrcDdrIoUtils.h
+src/DdrIoLib/IncludePublic/MrcDdrIoRefPi.h
+src/DdrIoLib/MrcDdrIoUtilsPrivate.h
+src/DdrIoLib/Ptl/MrcDdrIoVcc.c
+src/DdrIoLib/Ptl/MrcDdrIoRcomp.c
+src/DdrIoLib/IncludePublic/MrcDdrIoVcc.h
+src/DdrIoLib/MrcDdrIoVccCrossProj.c
+src/DdrIoLib/IncludePublic/MrcDdrIoRcomp.h
+src/DdrIoLib/Ptl/BlueMrcDdrIoHalHashes.c
+src/DdrIoLib/Ptl/BlueMrcDdrIoHalLimits.c
+src/DdrIoLib/MrcDdrIoHalStrings.c
+src/DdrIoLib/MrcDdrIoHalOffsetsCommon.c
+src/DdrIoLib/Ptl/BlueMrcDdrIoHalOffsets.c
+src/DdrIoLib/Ptl/MrcDdrIoSiSpecific.c
+src/DdrIoLib/MrcDdrIoSiSpecific.h
+src/DdrIoLib/IncludePublic/MrcDdrIoApi.h
+src/DdrIoLib/MrcDdrIoUtilsCrossProj.c
+src/DdrIoLib/MrcDdrIoHalOffsetsPrivate.h
+src/McLib/MrcChipRouting.h
+src/McLib/MrcAddressDecodeConfiguration.h
+src/McLib/MrcMaintenance.h
+src/McLib/IncludePublic/MrcMcApi.h
+src/McLib/MrcMcConfiguration.h
+src/McLib/MrcModeRegisterHandler.h
+src/McLib/MrcPowerModes.h
+src/McLib/MrcRefreshConfiguration.h
+src/McLib/MrcRowHammer.h
+src/McLib/MrcSchedulerParameters.h
+src/McLib/MrcTimingConfiguration.h
+src/McLib/MrcPowerMetering.h
+src/McLib/MrcMcSiSpecific.h
+src/ChipLib/MrcChipApi.c
+src/ChipLib/IncludePublic/MrcChipApi.h
+src/PmaLib/IncludePublic/MrcPmaApiCrossProj.h
+src/PmaLib/MrcPmMessageApi.c
+src/CPGC/Cpgc20/Cpgc20.h
+src/CPGC/Cpgc20/Cpgc20Patterns.c
+src/CPGC/Cpgc20/Cpgc20Patterns.h
+src/CPGC/Cpgc20/Cpgc20TestCtl.c
+src/CPGC/Cpgc20/Cpgc20TestCtl.h
+src/CPGC/MrcCpgcApi.c
+src/CPGC/MrcCpgcApi.h
+src/HalLib/MrcCpgcOffsets.c
+src/HalLib/IncludePublic/MrcCpgcOffsets.h
+src/HalLib/MrcHalInternal.c
+src/HalLib/MrcHalInternal.h
+src/HalLib/MrcRegisterCache.c
+src/HalLib/IncludePublic/MrcRegisterCache.h
+src/IncludePrivate/CMcAddress.h
+src/ServicesLib/MrcCommon.h
+src/ServicesLib/MrcCrosser.h
+src/ServicesLib/MrcCrosserPrivate.h
+src/ServicesLib/MrcPmic.h
+src/MrcRegisters/Ptl/Pci000Tgl.h
+src/MrcRegisters/Ptl/MrcRegister.h
+src/MrcRegisters/Ptl/MrcRegisterPtl0xxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl1xxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl2xxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl3xxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl4xxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl8xxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl9xxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtlAxxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtlBxxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtlCxxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtlDxxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtlExxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtlFxxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl13xxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl1Cxxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl1Dxxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl1Exxx.h
+src/MrcRegisters/Ptl/MrcRegisterPtl1Fxxx.h
+src/MrcRegisters/Ptl/MrcRegisterStruct.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl0xxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl1xxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl2xxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl3xxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl4xxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl8xxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl9xxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtlAxxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtlBxxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtlCxxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtlDxxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtlExxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtlFxxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl13xxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl1Cxxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl1Dxxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl1Exxx.h
+src/MrcRegisters/Ptl/MrcRegisterStructPtl1Fxxx.h
+src/MemoryTypes/MrcDdr5.c
+src/MemoryTypes/MrcDdr5.h
+src/MemoryTypes/MrcDdr5Private.h
+src/MemoryTypes/MrcDdr5Ckd.h
+src/MemoryTypes/MrcDdr5Registers.h
+src/MemoryTypes/MrcDdrCommon.c
+src/MemoryTypes/MrcDdrCommon.h
+src/MemoryTypes/MrcLpddr5.c
+src/MemoryTypes/MrcLpddr5.h
+src/MemoryTypes/MrcLpddr5Registers.h
+src/MemoryTypes/MrcMemoryApi.c
+src/MemoryTypes/MrcMemoryApi.h
+src/MemoryTypes/MrcLpddr5Settings.h
+src/MemoryTypes/MrcDdr5Settings.h
+src/MemoryTypes/Ptl/MrcLpddr5Settings.c
+src/MemoryTypes/Ptl/MrcDdr5Settings.c
+src/ServicesLib/MrcCommon.c
+src/ServicesLib/MrcCommonModeRegisterHandler.c
+src/ServicesLib/MrcCommonModeRegisterHandler.h
+src/ServicesLib/MrcDdr5ModeRegisterHandler.c
+src/ServicesLib/MrcDdr5ModeRegisterHandler.h
+src/ServicesLib/MrcLpddr5ModeRegisterHandler.c
+src/ServicesLib/MrcLpddr5ModeRegisterHandler.h
+src/ServicesLib/IncludePublic/MrcReset.h
+src/ServicesLib/IncludePublic/MrcIoTest.h
+src/SpdProcessing/MrcSpdProcessingDefs.h
+src/WriteTraining/MrcWriteDqDqs.h
+
+[Ppis]
+gSiPolicyPpiGuid                        ## CONSUMES
+gFspmArchConfigPpiGuid                  ## CONSUMES
+gMrcColdBootRequiredPpiGuid             ## PRODUCES
+gEfiPeiMasterBootModePpiGuid            ## CONSUMES
+gEfiPeiTsegMemoryTestPpiGuid            ## PRODUCES
+
+[Guids]
+gEfiMemoryTypeInformationGuid
+gSiMemoryS3Data2Guid                    ## PRODUCES ## HOB
+gSiMemoryInfoDataGuid                   ## PRODUCES ## HOB
+gSiMemoryPlatformDataGuid               ## PRODUCES ## HOB
+gFspReservedMemoryResourceHobGuid
+gFspReservedMemoryResourceHobTsegGuid
+gEfiSmmSmramMemoryGuid
+gFspBootLoaderTolumHobGuid              ## PRODUCES
+gEfiMemorySchemaGuid
+gMrcSchemaListHobGuid
+gSsaBiosResultsGuid
+gSsaBiosResults1Guid
+gSsaBiosResults2Guid
+gSsaBiosResults3Guid
+gRmtResultMetadataGuid
+gRmtResultColumnsGuid
+gMargin2DResultMetadataGuid
+gMargin2DResultColumnsGuid
+# gSsaBiosResultPprGuid
+# gPprResultMetadataGuid
+# gPprResultColumnsGuid
+gMrcFspErrorTypeCallerId                ## SOMETIMES_PRODUCES
+gMrcFspErrorTypeMemoryInit              ## SOMETIMES_PRODUCES
+gVtdDataHobGuid
+gVtdConfigGuid
+gPsmiDataHobGuid                        ## CONSUMES
+gSiPreMemConfigGuid                     ## CONSUMES
+gTraceHubDataHobGuid                    ## CONSUMES
+gDprInfoHobGuid                         ## CONSUMES
+gMemoryUcPayloadGuid                    ## CONSUMES
+gTseDataHobGuid                         ## CONSUMES
+gTdxDataHobGuid                         ## CONSUMES
+gMemorySubSystemConfigGuid              ## CONSUMES

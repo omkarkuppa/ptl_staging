@@ -1,0 +1,118 @@
+## @file
+#  Unit test main of the Smbios Misc Dxe driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = SmbiosMiscDxeHostTest
+  FILE_GUID      = A49BD05E-91FE-419C-9BE4-EEEA2F203FC8
+  MODULE_TYPE    = HOST_APPLICATION
+  VERSION_STRING = 1.0
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  #
+  # Unit Test Main
+  #
+  UnitTestMain.c
+  #
+  # Common Mock
+  #
+  ClientSmbiosFeaturePkg/Test/CommonMock/BootServicesMock.c
+  ClientSmbiosFeaturePkg/Test/CommonMock/UefiLibMock.c
+
+  #
+  # Private Mock
+  #
+  PrivateMock/PrivateMock.c
+  PrivateMock/SmbiosMiscDxeDefault.c
+  #
+  # PreRequisite
+  #
+  PreRequisite/AddSmbiosT24Callback/PreAddSmbiosT24Callback.c
+  PreRequisite/AddSmbiosT14Callback/PreAddSmbiosT14Callback.c
+  PreRequisite/AddSmbiosRecord/PreAddSmbiosRecord.c
+  PreRequisite/UpdateMiscSmbios/PreUpdateMiscSmbios.c
+  PreRequisite/UpdateMiscSmbiosCallback/PreUpdateMiscSmbiosCallback.c
+  PreRequisite/SmbiosMiscEntryPoint/PreSmbiosMiscEntryPoint.c
+  PreRequisite/MiscCommonSmbiosFunction/PreMiscCommonSmbiosFunction.c
+
+  #
+  # Unit Test Case
+  #
+  TestCase/AddSmbiosT24Callback/TestCaseAddSmbiosT24Callback.c
+  TestCase/AddSmbiosT14Callback/TestCaseAddSmbiosT14Callback.c
+  TestCase/AddSmbiosRecord/TestCaseAddSmbiosRecord.c
+  TestCase/UpdateMiscSmbios/TestCaseUpdateMiscSmbios.c
+  TestCase/UpdateMiscSmbiosCallback/TestCaseUpdateMiscSmbiosCallback.c
+  TestCase/SmbiosStrInit/TestCaseSmbiosStrInit.c
+  TestCase/SmbiosStringsUpdate/TestCaseSmbiosStringsUpdate.c
+  TestCase/SmbiosMiscEntryPoint/TestCaseSmbiosMiscEntryPoint.c
+  TestCase/MiscCommonSmbiosFunction/TestCaseMiscCommonSmbiosFunction.c
+  #
+  # Clean Up
+  #
+  CleanUp/AddSmbiosT24Callback/CleanUpAddSmbiosT24Callback.c
+  CleanUp/AddSmbiosT14Callback/CleanUpAddSmbiosT14Callback.c
+  CleanUp/AddSmbiosRecord/CleanUpAddSmbiosRecord.c
+  CleanUp/UpdateMiscSmbios/CleanUpUpdateMiscSmbios.c
+  CleanUp/UpdateMiscSmbiosCallback/CleanUpUpdateMiscSmbiosCallback.c
+  CleanUp/SmbiosMiscEntryPoint/CleanUpSmbiosMiscEntryPoint.c
+  CleanUp/MiscCommonSmbiosFunction/CleanUpMiscCommonSmbiosFunction.c
+
+  #
+  # Platform IP function
+  #
+  ClientSmbiosFeaturePkg/SmbiosMiscDxe/SmbiosMiscEntryPoint.c
+  ClientSmbiosFeaturePkg/SmbiosMiscDxe/SmbiosMisc.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  ClientSmbiosFeaturePkg/ClientSmbiosFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  UnitTestLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PrintLib
+  CmockaLib
+
+[Pcd]
+  gClientSmbiosFeaturePkgTokenSpaceGuid.PcdSmbiosPlatformInfo       ## CONSUMES
+  gClientSmbiosFeaturePkgTokenSpaceGuid.PcdSmbiosPlatformInfoSize   ## CONSUMES
+  gClientSmbiosFeaturePkgTokenSpaceGuid.PcdPasswordStatusAdminName  ## CONSUMES
+  gClientSmbiosFeaturePkgTokenSpaceGuid.PcdPasswordStatusUserName   ## CONSUMES
+
+[Protocols]
+  gEfiSmbiosProtocolGuid                                            ## CONSUMES
+
+[Guids]
+  gEfiSmbiosTableGuid                                               ## CONSUMES

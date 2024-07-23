@@ -1,0 +1,297 @@
+### @file
+#  Component information file for AdvancedAcpiDxe module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2013 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = AdvancedAcpiDxe
+  FILE_GUID                      = C3E69EB2-0429-4BD6-AE4A-8CA02FBACC2E
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InstallAcpiPlatform
+
+[Sources.common]
+  EcInit.c
+  AcpiPlatform.h
+  AcpiPlatform.c
+  GenSsdtLib.c
+  GenSsdtLib.h
+  AcpiByteStream.h
+
+[Packages]
+  MinPlatformPkg/MinPlatformPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  DptfFeaturePkg/DptfFeaturePkg.dec
+  FspWrapperFeaturePkg/FspWrapperFeaturePkg.dec
+  CnvFeaturePkg/CnvFeaturePkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+  VtioFeaturePkg/VtioFeaturePkg.dec
+  UcsiFeaturePkg/UcsiFeaturePkg.dec
+  UsbPortMapPkg/UsbPortMapPkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  DebugLib
+  IoLib
+  PcdLib
+  EcMiscLib
+  AslUpdateLib
+  DxeAcpiGnvsInitLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  S3BootScriptLib
+  PchCycleDecodingLib
+  PchInfoLib
+  PciSegmentLib
+  HobLib
+  SerialIoAccessLib
+  EspiLib
+  CpuPlatformLib
+  GbeLib
+  IpuLib
+  SpiAccessLib
+  PchPciBdfLib
+  TsnLib
+  LocalApicLib
+  NpuInfoLib
+  MeChipsetLib
+  P2SbSocLib
+  P2SbSidebandAccessLib
+  VariablePolicyHelperLib
+  CnviLib
+  GpioV2WrapperLib
+  PciHostBridgeLib
+  VmdInfoLib
+  PlatformUsbConfigLib
+  UefiLib
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdMipiCamSensor                       ## CONSUMES
+  #gBoardModuleTokenSpaceGuid.PcdZPODD                              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdRGBCameraAdr                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdDepthCameraAdr                      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdSmcRuntimeSciPin                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdConvertableDockSupport              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF3Support                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF4Support                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF5Support                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF6Support                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF7Support                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF8Support                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdVirtualButtonVolumeUpSupport        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdVirtualButtonVolumeDownSupport      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdVirtualButtonHomeButtonSupport      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdVirtualButtonRotationLockSupport    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdSlateModeSwitchSupport              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdAcDcAutoSwitchSupport               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPmPowerButtonGpioPin                ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdAcpiEnableAllButtonSupport          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdAcpiHidDriverButtonSupport          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdTsOnDimmTemperature                 ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId           ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId
+  gEcFeaturePkgTokenSpaceGuid.PcdBatterySupport                     ## CONSUMES
+
+  # DXE PCD
+  gMinPlatformPkgTokenSpaceGuid.PcdFadtPreferredPmProfile                   ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFadtIaPcBootArch                         ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFadtFlags                                ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepControlRegisterAddressSpaceId   ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepControlRegisterBitWidth         ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepControlRegisterBitOffset        ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepControlRegisterAccessSize       ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepControlRegisterAddress          ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepStatusRegisterAddressSpaceId    ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepStatusRegisterBitWidth          ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepStatusRegisterBitOffset         ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepStatusRegisterAccessSize        ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepStatusRegisterAddress           ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.PcdWwanModemBaseBandResetGpio                  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdTouchpadIrqGpio                             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdTouchpanelIrqGpio                           ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.VpdPcdUsbCUcmMode                              ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.PcdBoardRtd3TableSignature
+
+  gBoardModuleTokenSpaceGuid.PcdEnableVoltageMargining                      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformGeneration                          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardRev                                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardType                                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformType                                ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformFlavor                              ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.PcdHdaI2sCodecIrqGpio
+  gBoardModuleTokenSpaceGuid.PcdHdaI2sCodecI2cBusNumber
+
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                                   ## CONSUMES
+
+  # WWAN GPIO configuration PCDs
+  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpio            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpioPolarity    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpioPolarity               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanSourceClock                     ## CONWUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanRootPortNumber                  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable                      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOn2ResDelayMs             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnRes2PerDelayMs          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnPer2PdsDelayMs          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTRes2OffDelayMs            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOffDisDelayMs             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTResTogDelayMs             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTRes2PdsDelayMs            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTPer2ResDelayMs            ## CONSUMES
+
+  # PCIE Slot1 GPIO configuration  PCDs
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1RootPort                ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1HoldRstGpioNo           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1HoldRstGpioPolarity     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1PwrEnableGpioNo         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1PwrEnableGpioPolarity   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdDg1VramSRGpio                    ## CONSUMES
+
+  # PCIE Slot2 GPIO configuration PCDs
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot2RootPort                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot2PwrEnableGpioNo          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot2PwrEnableGpioPolarity    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot2HoldRstGpioNo            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot2HoldRstGpioPolarity      ## CONSUMES
+
+  # PCIE Slot3 GPIO configuration PCDs
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot3RootPort                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot3PwrEnableGpioNo          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot3PwrEnableGpioPolarity    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot3HoldRstGpioNo            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot3HoldRstGpioPolarity      ## CONSUMES
+
+  # PCH M.2 SSD GPIO configuration PCDs
+  gBoardModuleTokenSpaceGuid.PcdPchSsd1PwrEnableGpioNo            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPchSsd1PwrEnableGpioPolarity      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPchSsd1RstGpioNo                  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPchSsd1RstGpioPolarity            ## CONSUMES
+
+  # GEN5 M.2 SSD2 GPIO configuration PCDs
+  gBoardModuleTokenSpaceGuid.PcdM2Ssd2PowerEnableGpio             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdM2Ssd2PowerEnableGpioPolarity     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdM2Ssd2RstGpio                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdM2Ssd2RstGpioPolarity             ## CONSUMES
+
+  # Root port PEWAKE configuration PCDs
+  gBoardModuleTokenSpaceGuid.VpdPcdRootPortPewakeConfig
+
+  # ACPI configuration file data
+  gBoardModuleTokenSpaceGuid.PcdBoardAcpiData                    ## CONSUMES
+
+  gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdPowerMeter
+
+  # Retimer Power State GPIO pin
+  gBoardModuleTokenSpaceGuid.VpdPcdRetimerPowerStateGpio          ## CONSUMES
+
+  # Lch Gpio pin
+  gBoardModuleTokenSpaceGuid.PcdLchIrqGpioPin                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdLchResetGpioPin                   ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.PcdTouchpanel0IrqGpio
+  gBoardModuleTokenSpaceGuid.PcdTouchpanel0PwrEnableGpio
+  gBoardModuleTokenSpaceGuid.PcdTouchpanel0RstGpio
+  gBoardModuleTokenSpaceGuid.PcdTouchpanel0IrqGpioPolarity
+  gBoardModuleTokenSpaceGuid.PcdTouchpanel0PwrEnableGpioPolarity
+  gBoardModuleTokenSpaceGuid.PcdTouchpanel0RstGpioPolarity
+
+
+[FixedPcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress
+  gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress
+  gSiPkgTokenSpaceGuid.PcdTcssSupport                         ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdS3AcpiReservedMemorySize
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
+  gSiPkgTokenSpaceGuid.PcdVmdEnable
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid                     ## CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
+  gEfiPciRootBridgeIoProtocolGuid               ## CONSUMES
+  gEfiMpServiceProtocolGuid                     ## CONSUMES
+  gEfiPciIoProtocolGuid                         ## CONSUMES
+  gIgdOpRegionProtocolGuid                      ## CONSUMES
+  gPchSerialIoUartDebugInfoProtocolGuid         ## CONSUMES
+  gEfiCpuIo2ProtocolGuid                        ## CONSUMES
+  gEfiSimpleFileSystemProtocolGuid              ## CONSUMES
+  gPlatformNvsAreaProtocolGuid                  ## PRODUCES
+  gEdkiiVariablePolicyProtocolGuid              ## CONSUMES
+  gEcNvsAreaProtocolGuid                        ## CONSUMES
+  gUcsiNvsAreaProtocolGuid                      ## CONSUMES
+  gUsbPortMapNvsAreaProtocolGuid                ## CONSUMES
+
+[Guids]
+  gMinPlatformPkgTokenSpaceGuid                 ## CONSUMES
+  gAcpiTableStorageGuid                         ## CONSUMES
+  gRcAcpiTableStorageGuid                       ## CONSUMES
+  gOcAcpiTableStorageGuid                       ## CONSUMES
+  gEfiGlobalVariableGuid                        ## CONSUMES
+  gEfiHobListGuid                               ## CONSUMES
+  gEfiFileInfoGuid                              ## CONSUMES
+  gSetupVariableGuid                            ## SOMETIMES_PRODUCES
+  gSaSetupVariableGuid                          ## CONSUMES
+  gMeSetupVariableGuid                          ## CONSUMES
+  gCpuSetupVariableGuid                         ## CONSUMES
+  gPchSetupVariableGuid                         ## CONSUMES
+  gMeBiosPayloadHobGuid                         ## CONSUMES
+  gEfiEndOfDxeEventGroupGuid                    ## CONSUMES
+  gS3MemoryVariableGuid                         ## CONSUMES
+  gTcssHobGuid                                  ## CONSUMES
+  gSocGpeSsdtAcpiTableStorageGuid               ## CONSUMES
+  gSocCmnSsdtAcpiTableStorageGuid               ## CONSUMES
+  gUsb4PlatformHobGuid                          ## CONSUMES
+  gDptfConfigVariableGuid                       ## CONSUMES
+  gTxtAcpiTableStorageGuid                      ## CONSUMES
+  gCnvFeatureSetupGuid                          ## CONSUMES
+  gUefiIntelPlatformVariablesGuid               ## CONSUMES
+  gUsbConnectorHobGuid                          ## CONSUMES
+  gUsbCConnectorHobGuid                         ## CONSUMES
+
+[Depex]
+  gEfiAcpiTableProtocolGuid           AND
+  gEfiFirmwareVolume2ProtocolGuid     AND
+  gEfiCpuIo2ProtocolGuid              AND
+  gEfiMpServiceProtocolGuid           AND
+  gEfiPciRootBridgeIoProtocolGuid     AND
+  gEdkiiVariablePolicyProtocolGuid    AND
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid

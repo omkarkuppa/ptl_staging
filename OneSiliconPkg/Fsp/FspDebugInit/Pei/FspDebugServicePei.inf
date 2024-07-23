@@ -1,0 +1,80 @@
+### @file
+# The main major of this peim are print a debug message to the debug
+# output device if the specified error level is enabled, and prints an
+# assert message containing a filename, line number, and description.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2017 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+# @par Glossary:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FspDebugServicePei
+  FILE_GUID                      = 1B04374D-FA9C-420F-AC62-FEE6D45E8443
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  ENTRY_POINT                    = DebugServiceEntryPoint
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[LibraryClasses]
+  PeiServicesLib
+  PeimEntryPoint
+  SerialPortLib
+  PrintLib
+  DebugLib
+  PcdLib
+  FspCommonLib
+  TraceHubDebugLib
+  ReportStatusCodeLib
+  FspSwitchStackLib
+  HobLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+
+[Sources]
+  FspDebugServicePei.c
+
+[Sources.IA32]
+  Ia32/FspDebugServicePei.nasm
+
+[Sources.X64]
+  X64/FspDebugServicePei.nasm
+
+[Ppis]
+  gFspDebugServicePpiGuid                          ## PRODUCES
+
+[Protocols]
+  gEfiSerialIoProtocolGuid                         ## CONSUMES
+
+[Guids]
+  gEfiStatusCodeDataTypeStringGuid                 ## PRODUCES
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel  ## CONSUMES
+
+[Depex]
+  TRUE

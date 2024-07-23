@@ -1,0 +1,48 @@
+### @file
+#  Component description file for BootState Variable Information during Dxe Phase.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2020 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DxeBootStateLib
+  FILE_GUID                      = E572E3DF-DC5F-4E27-9300-93BC83BA000D
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = DxeBootStateLib|DXE_DRIVER DXE_RUNTIME_DRIVER
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  UefiRuntimeServicesTableLib
+  DxeBootStateLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[Sources]
+  DxeBootStateLib.c
+
+
+[Pcd]
+
+[Guids]
+  gBootStateGuid                         ##

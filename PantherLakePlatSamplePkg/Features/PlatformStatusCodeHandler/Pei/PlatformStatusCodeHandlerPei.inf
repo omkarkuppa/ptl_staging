@@ -1,0 +1,74 @@
+## @file
+#  Platform status code implementation.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2010 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PlatformStatusCodeHandlerPei2
+  FILE_GUID                      = BB67A43B-C7AE-4299-A275-7526DC697735
+  MODULE_TYPE                    = PEIM
+  ENTRY_POINT                    = StatusCodeHandlerPeiEntry
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC (EBC is only for build)
+#
+
+[Sources]
+  PlatformStatusCodeHandlerPei.c
+  PlatformStatusCodeHandlerPei.h
+  SerialIoUartStatusCodeWorker.c
+  Usb3StatusCodeWorker.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Usb3DebugFeaturePkg/Usb3DebugFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+
+[LibraryClasses]
+  PeimEntryPoint
+  PeiServicesLib
+  ReportStatusCodeLib
+  DebugLib
+  PrintLib
+  DebugPrintErrorLevelLib
+  PcdLib
+  Usb3DebugPortLib
+  SerialPortParameterLib
+  SerialIoUartDebugHelperLib
+  FspErrorInfoLib
+
+[Guids]
+  gEfiStatusCodeDataTypeStringGuid              ## SOMETIMES_CONSUMES ## GUID
+
+[Pcd]
+  gPlatformModuleTokenSpaceGuid.PcdStatusCodeUseUsb3          ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdStatusCodeUseSerialIoUart  ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection         ## CONSUMES
+
+[Ppis]
+  gEfiPeiRscHandlerPpiGuid                      ## CONSUMES
+
+[Depex]
+  TRUE

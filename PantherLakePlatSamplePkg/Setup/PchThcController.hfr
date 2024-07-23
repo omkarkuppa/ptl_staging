@@ -1,0 +1,442 @@
+/** @file
+  Setup menu definition for single THC controller.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2021 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#include "SetupPreProcTools.hfr"
+
+#if defined(THC_INDEX) && (THC_INDEX < PCH_MAX_THC_CONTROLLERS)
+  oneof varid  = PCH_SETUP.ThcAssignment[THC_INDEX],
+    prompt   = STRING_TOKEN(STR_THC_ASSIGNMENT_TITLE),
+#if (THC_INDEX == 0)
+    help     = STRING_TOKEN(STR_THC_ASSIGNMENT0_HELP),
+#endif
+#if (THC_INDEX == 1)
+    help     = STRING_TOKEN(STR_THC_ASSIGNMENT1_HELP),
+#endif
+    option text = STRING_TOKEN(STR_THC_ASSIGNMENT_NONE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+#if (THC_INDEX == 0)
+    option text = STRING_TOKEN(STR_THC_ASSIGNMENT_THC0), value = 1, flags = RESET_REQUIRED;
+#endif
+#if (THC_INDEX == 1)
+    option text = STRING_TOKEN(STR_THC_ASSIGNMENT_THC1), value = 2, flags = RESET_REQUIRED;
+#endif
+  endoneof;
+
+  suppressif ideqval PCH_SETUP.ThcAssignment[THC_INDEX] == 0x0;
+    oneof varid  = PCH_SETUP.ThcClock[THC_INDEX],
+      prompt   = STRING_TOKEN(STR_THC_CLOCK_TITLE),
+      help     = STRING_TOKEN(STR_THC_CLOCK_HELP),
+      option text = STRING_TOKEN(STR_THC_CLOCK_FUNC_TITLE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_CLOCK_DFX_TITLE), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+    numeric varid  = PCH_SETUP.ThcActiveLtr[THC_INDEX],
+      prompt   = STRING_TOKEN(STR_THC_ACTIVE_LTR_TITLE),
+      help     = STRING_TOKEN(STR_THC_ACTIVE_LTR_HELP),
+      flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+      minimum  = 0,
+      maximum  = 0xFFFFFFFF,
+      step     = 1,
+      default  = 0xFFFFFFFF,
+    endnumeric;
+    numeric varid  = PCH_SETUP.ThcIdleLtr[THC_INDEX],
+      prompt   = STRING_TOKEN(STR_THC_IDLE_LTR_TITLE),
+      help     = STRING_TOKEN(STR_THC_IDLE_LTR_HELP),
+      flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+      minimum  = 0,
+      maximum  = 0xFFFFFFFF,
+      step     = 1,
+      default  = 0xFFFFFFFF,
+    endnumeric;
+    numeric varid  = PCH_SETUP.ThcPerformanceLimitation[THC_INDEX],
+      prompt   = STRING_TOKEN(STR_THC_PERFORMANCE_LIMITATION_TITLE),
+      help     = STRING_TOKEN(STR_THC_PERFORMANCE_LIMITATION_HELP),
+      flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+      minimum  = 0,
+      maximum  = 0xFFFF,
+      step     = 1,
+      default  = 0,
+    endnumeric;
+    oneof varid  = PCH_SETUP.ThcWakeOnTouch[THC_INDEX],
+      prompt   = STRING_TOKEN(STR_THC_WAKE_TITLE),
+      help     = STRING_TOKEN(STR_THC_WAKE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval PCH_SETUP.ThcWakeOnTouch[THC_INDEX] == 0x0;
+        oneof varid  = PCH_SETUP.ThcWotEdgeLevel[THC_INDEX],
+          prompt   = STRING_TOKEN(STR_THC_WOT_EDGE_LEVEL_PROMPT),
+          help     = STRING_TOKEN(STR_THC_WOT_EDGE_LEVEL_HELP),
+          option text = STRING_TOKEN(STR_THC_WOT_EDGE_LEVEL_LEVEL), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_THC_WOT_EDGE_LEVEL_EDGE), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+        oneof varid  = PCH_SETUP.ThcWotActiveLevel[THC_INDEX],
+          prompt   = STRING_TOKEN(STR_THC_WOT_ACTIVE_LEVEL_PROMPT),
+          help     = STRING_TOKEN(STR_THC_WOT_ACTIVE_LEVEL_HELP),
+          option text = STRING_TOKEN(STR_THC_WOT_ACTIVE_LEVEL_HIGH), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_THC_WOT_ACTIVE_LEVEL_LOW), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_THC_WOT_ACTIVE_LEVEL_BOTH), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+        oneof varid  = PCH_SETUP.ThcWotPinConfig[THC_INDEX],
+          prompt   = STRING_TOKEN(STR_THC_WOT_PIN_CONFIG_PROMPT),
+          help     = STRING_TOKEN(STR_THC_WOT_PIN_CONFIG_HELP),
+          option text = STRING_TOKEN(STR_THC_WOT_PIN_CONFIG_PULL_DEFAULT), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_THC_WOT_PIN_CONFIG_PULL_UP), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_THC_WOT_PIN_CONFIG_PULL_DOWN), value = 2, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_THC_WOT_PIN_CONFIG_PULL_NONE), value = 3, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+    oneof varid  = PCH_SETUP.ThcDisplayFrameSyncPeriod[THC_INDEX],
+      prompt   = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_TITLE),
+      help     = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_HELP),
+      option text = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_10_MS), value = 10, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_20_MS), value = 20, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_30_MS), value = 30, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_40_MS), value = 40, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_50_MS), value = 50, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_60_MS), value = 60, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_70_MS), value = 70, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_80_MS), value = 80, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_90_MS), value = 90, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_DISPLAY_FRAME_SYNC_100_MS), value = 100, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid  = PCH_SETUP.ThcTimestampTimerMode[THC_INDEX],
+     prompt   = STRING_TOKEN(STR_THC_TIMESTAMP_TITLE),
+     help     = STRING_TOKEN(STR_THC_TIMESTAMP_HELP),
+     option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+     option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
+    endoneof;
+    oneof varid  = PCH_SETUP.ThcResetPadTrigger[THC_INDEX],
+      prompt   = STRING_TOKEN(STR_THC_RESET_PAD_TRIGGER_TITLE),
+      help     = STRING_TOKEN(STR_THC_RESET_PAD_TRIGGER_HELP),
+      option text = STRING_TOKEN(STR_THC_RESET_PAD_TRIGGER_LOW), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_RESET_PAD_TRIGGER_HIGH), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+    oneof varid  = PCH_SETUP.ThcDsyncPad[THC_INDEX],
+      prompt   = STRING_TOKEN(STR_THC_DSYNC_PAD_TITLE),
+      help     = STRING_TOKEN(STR_THC_DSYNC_PAD_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+    oneof varid  = PCH_SETUP.ThcMode[THC_INDEX],
+      prompt   = STRING_TOKEN(STR_THC_MODE_TITLE),
+      help     = STRING_TOKEN(STR_THC_MODE_HELP),
+      option text = STRING_TOKEN(STR_THC_MODE_HIDSPI), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_MODE_HIDI2C), value = 2, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_MODE_NONE),   value = 3, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval PCH_SETUP.ThcMode[THC_INDEX] == 0x3;
+      numeric varid  = PCH_SETUP.ThcCustomizedSsdid[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_CUSTOMIZED_SSID_TITLE),
+        help     = STRING_TOKEN(STR_THC_CUSTOMIZED_SSID_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFF,
+        step     = 1,
+        default  = 0x7270,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcCustomizedSsvid[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_CUSTOMIZED_SVID_TITLE),
+        help     = STRING_TOKEN(STR_THC_CUSTOMIZED_SVID_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFF,
+        step     = 1,
+        default  = 0x8086,
+      endnumeric;
+    endif;
+
+    suppressif NOT ideqval PCH_SETUP.ThcMode[THC_INDEX] == 0x1;
+      numeric varid  = PCH_SETUP.ThcHidSpiConnectionSpeed[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_CONNECTION_SPEED_TITLE),
+        help     = STRING_TOKEN(STR_THC_SPI_CONNECTION_SPEED_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_DEC,
+        minimum  = 0,
+        maximum  = 70000000,
+        step     = 1,
+        default  = 17000000,
+      endnumeric;
+      oneof varid  = PCH_SETUP.ThcHidSpiFlags[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_FLAGS_TITLE),
+        help     = STRING_TOKEN(STR_THC_FLAGS_HELP),
+        option text = STRING_TOKEN(STR_THC_FLAGS_SINLGE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_THC_FLAGS_DUAL), value = 0x4000, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_THC_FLAGS_QUAD), value = 0x8000, flags = RESET_REQUIRED;
+      endoneof;
+      numeric varid  = PCH_SETUP.ThcHidSpiInputReportBodyAddress[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_INPUT_REPORT_BODY_ADDRESS_TITLE),
+        help     = STRING_TOKEN(STR_THC_INPUT_REPORT_BODY_ADDRESS_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidSpiInputReportHeaderAddress[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_INPUT_REPORT_HEADER_ADDRESS_TITLE),
+        help     = STRING_TOKEN(STR_THC_INPUT_REPORT_HEADER_ADDRESS_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidSpiOutputReportAddress[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_OUTPUT_REPORT_ADDRESS_TITLE),
+        help     = STRING_TOKEN(STR_THC_OUTPUT_REPORT_ADDRESS_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidSpiWriteOpcode[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_WRITE_OPCODE_TITLE),
+        help     = STRING_TOKEN(STR_THC_WRITE_OPCODE_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidSpiReadOpcode[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_READ_OPCODE_TITLE),
+        help     = STRING_TOKEN(STR_THC_READ_OPCODE_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidSpiLimitPacketSize[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_LIMIT_PACKET_SIZE_TITLE),
+        help     = STRING_TOKEN(STR_THC_LIMIT_PACKET_SIZE_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0x1,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+    endif;
+    suppressif NOT ideqval PCH_SETUP.ThcMode[THC_INDEX] == 0x2;
+      numeric varid  = PCH_SETUP.ThcHidI2cDeviceAddress[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_DEVICE_ADDRESS_TITLE),
+        help     = STRING_TOKEN(STR_THC_DEVICE_ADDRESS_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cConnectionSpeed[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_CONNECTION_SPEED_TITLE),
+        help     = STRING_TOKEN(STR_THC_I2C_CONNECTION_SPEED_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cAddressingMode[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_ADDRESSING_MODE_TITLE),
+        help     = STRING_TOKEN(STR_THC_ADDRESSING_MODE_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 1,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cDeviceDescriptorAddress[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_DEVICE_DESCRIPTOR_ADDRESS_TITLE),
+        help     = STRING_TOKEN(STR_THC_DEVICE_DESCRIPTOR_ADDRESS_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cStandardModeSerialClockLineHighPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_SM_SCL_HIGH_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_SM_SCL_HIGH_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cStandardModeSerialClockLineLowPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_SM_SCL_LOW_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_SM_SCL_LOW_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cStandardModeSerialDataLineTransmitHoldPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_SM_SDA_HOLD_TX_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_SM_SDA_HOLD_TX_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cStandardModeSerialDataLineReceiveHoldPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_SM_SDA_HOLD_RX_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_SM_SDA_HOLD_RX_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cFastModeSerialClockLineHighPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_FM_SCL_HIGH_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_FM_SCL_HIGH_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cFastModeSerialClockLineLowPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_FM_SCL_LOW_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_FM_SCL_LOW_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cFastModeSerialDataLineTransmitHoldPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_FM_SDA_HOLD_TX_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_FM_SDA_HOLD_TX_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cFastModeSerialDataLineReceiveHoldPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_FM_SDA_HOLD_RX_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_FM_SDA_HOLD_RX_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cMaxSuppressedSpikesSMFMFMP[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_SUPPRESSED_SPIKES_S_F_FP_TITLE),
+        help     = STRING_TOKEN(STR_THC_SUPPRESSED_SPIKES_S_F_FP_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cFastModePlusSerialClockLineHighPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_FMP_SCL_HIGH_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_FMP_SCL_HIGH_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cFastModePlusSerialClockLineLowPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_FMP_SCL_LOW_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_FMP_SCL_LOW_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cFastModePlusSerialDataLineTransmitHoldPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_FMP_SDA_HOLD_TX_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_FMP_SDA_HOLD_TX_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cFastModePlusSerialDataLineReceiveHoldPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_FMP_SDA_HOLD_RX_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_FMP_SDA_HOLD_RX_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cHighSpeedModePlusSerialClockLineHighPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_HM_SCL_HIGH_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_HM_SCL_HIGH_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cHighSpeedModePlusSerialClockLineLowPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_HM_SCL_LOW_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_HM_SCL_LOW_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cHighSpeedModePlusSerialDataLineTransmitHoldPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_HM_SDA_HOLD_TX_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_HM_SDA_HOLD_TX_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cHighSpeedModePlusSerialDataLineReceiveHoldPeriod[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_HM_SDA_HOLD_RX_PERIOD_TITLE),
+        help     = STRING_TOKEN(STR_THC_HM_SDA_HOLD_RX_PERIOD_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+      numeric varid  = PCH_SETUP.ThcHidI2cMaximumLengthOfSuppressedSpikesInHighSpeedMode[THC_INDEX],
+        prompt   = STRING_TOKEN(STR_THC_SUPPRESSED_SPIKES_H_TITLE),
+        help     = STRING_TOKEN(STR_THC_SUPPRESSED_SPIKES_H_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFFFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+    endif;
+  endif;
+#endif
+

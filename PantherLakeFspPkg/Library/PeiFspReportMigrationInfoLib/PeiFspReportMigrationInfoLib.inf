@@ -1,0 +1,59 @@
+## @file
+#  Report which FVs should must be migrated by FSP when memory is ready.
+#  This is a NULL library instance and leave to platform to implement.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FspReportMigrationInfoLib
+  FILE_GUID                      = 101EF845-6EF1-4E07-821E-E3708B698984
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = NULL
+  CONSTRUCTOR                    = FspReportMigrationInfoConstructor
+
+[Sources]
+  PeiFspReportMigrationInfoLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeFspPkg/PantherLakeFspPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  HobLib
+  DebugLib
+  MemoryAllocationLib
+  FspFbmSupportLib
+  PeiServicesLib
+
+[Guids]
+  gEdkiiMigrationInfoGuid                    ## PRODUCES
+  gEdkiiMigratedFvInfoGuid                   ## COMSUMES
+
+[Pcd]
+gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase    ## CONSUMES
+
+[Ppis]
+  gEfiPeiMemoryDiscoveredPpiGuid             ## CONSUMES

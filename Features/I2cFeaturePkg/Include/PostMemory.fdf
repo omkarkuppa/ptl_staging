@@ -1,0 +1,40 @@
+## @file
+#  I2C feature modules included in the flash map.
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+##
+
+!if gI2cFeaturePkgTokenSpaceGuid.PcdI2cFeatureEnable == TRUE
+  INF I2cFeaturePkg/I2cPlatformDxe/I2cPlatformDxe.inf
+!if gI2cFeaturePkgTokenSpaceGuid.PcdI2cTouchEnable == TRUE
+  INF I2cFeaturePkg/I2cTouchPanelDxe/I2cTouchPanelDxe.inf
+!endif
+!if gI2cFeaturePkgTokenSpaceGuid.PcdI2cPssEnable == TRUE
+  INF I2cFeaturePkg/I2cPssMonzaDxe/I2cPssMonzaDxe.inf
+!endif
+
+!if gI2cFeaturePkgTokenSpaceGuid.PcdI2cTouchCommonEnable == TRUE
+!if gI2cFeaturePkgTokenSpaceGuid.PcdI2cTouchVersion == 0x2
+  INF RuleOverride = DRIVER_ACPITABLE I2cFeaturePkg/I2cTouchAcpiDxe/I2cTouchCommonV2/I2cCommonDxe.inf
+!else
+  INF RuleOverride = DRIVER_ACPITABLE I2cFeaturePkg/I2cTouchAcpiDxe/I2cTouchCommon/I2cCommon.inf
+!endif
+  INF I2cFeaturePkg/I2cTouchAcpiDxe/I2cTouchDevAcpi/I2cTouchDev.inf
+!endif
+
+!endif
+INF RuleOverride = DRIVER_ACPITABLE I2cFeaturePkg/I2cPowerMeter/I2cPowerMeterAcpiTable.inf
+
+INF I2cFeaturePkg/I2cSensorPei/I2cSensorPei.inf

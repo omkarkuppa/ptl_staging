@@ -1,0 +1,62 @@
+## @file
+#  SMM Library instance of Spi Flash Common Library Class
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = SmmSpiFlashCommonLib
+  FILE_GUID                      = 9632D96E-E849-4217-9217-DC500B8AAE47
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  LIBRARY_CLASS                  = SpiFlashCommonLib|DXE_SMM_DRIVER
+  CONSTRUCTOR                    = SmmSpiFlashCommonLibConstructor
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64
+#
+
+[LibraryClasses]
+  IoLib
+  MemoryAllocationLib
+  BaseLib
+  UefiLib
+  SmmServicesTableLib
+  BaseMemoryLib
+  DebugLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdBiosSize              ## CONSUMES
+
+[Sources]
+  SpiFlashCommonSmmLib.c
+  SpiFlashCommon.c
+
+[Protocols]
+  gPchSmmSpiProtocolGuid                        ## CONSUMES
+
+[Depex.X64.DXE_SMM_DRIVER]
+  gPchSmmSpiProtocolGuid

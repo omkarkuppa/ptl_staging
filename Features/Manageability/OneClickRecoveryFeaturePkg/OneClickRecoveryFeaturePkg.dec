@@ -1,0 +1,49 @@
+## @file
+#  DEC file for One Click Recovery and Wifi Profile Sync feature package.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  DEC_SPECIFICATION     = 0x0001000A
+  PACKAGE_NAME          = OneClickRecoveryFeaturePkg
+  PACKAGE_VERSION       = 0.1
+  PACKAGE_GUID          = 074E0F6E-51B3-43AB-B9DB-3265FC9DCF40
+
+[Includes]
+  Include
+
+[Guids]
+  gOneClickRecoveryFeaturePkgTokenSpaceGuid = { 0x7e3452f6, 0x8e41, 0x4d2e, {0x87, 0xf2, 0x39, 0x0c, 0x23, 0x44, 0xee, 0xcd}}
+  gOcrConfigVariableGuid                    = { 0xf505ee81, 0xc2a1, 0x42ea, {0x99, 0xb4, 0x30, 0x55, 0x81, 0x44, 0x2d, 0xd2}}
+  gWifiProfileSyncBootVariableGuid          = { 0x40dc2b4a, 0xc2b1, 0x43ea, {0x9a, 0xb4, 0x30, 0x55, 0x81, 0x42, 0x2d, 0xd2}}
+
+[Protocols]
+  gEdkiiWiFiProfileSyncProtocolGuid = { 0x399a2b8a, 0xc267, 0x44aa, {0x9a, 0xb4, 0x30, 0x58, 0x8c, 0xd2, 0x2d, 0xcc}}
+
+[PcdsFixedAtBuild]
+  ## This PCD controls the OCR capabilities set by OEM.
+  #  Default values is 0x0F as all capabilities are enabled.
+  #  BIT0 - Controls OCR HTTPS Boot capability (Default Enabled).
+  #  BIT1 - Controls OCR PBA boot capability (Default Enabled).
+  #  BIT2 - Controls OCR WinRe boot capability (Default Enabled).
+  #  BIT3 - Controls OCR Secure boot disable capability (Default Enabled).
+  gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdOneClickRecoveryCapabilities|0xF|UINT8|0x000000AA
+  gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdOneClickRecoveryEnable|TRUE|BOOLEAN|0xF00000A2
+
+  gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdWifiProfileSyncEnable|TRUE|BOOLEAN|0xF00000A4

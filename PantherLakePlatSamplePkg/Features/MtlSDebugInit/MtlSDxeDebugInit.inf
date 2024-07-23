@@ -1,0 +1,53 @@
+## @file
+# MTL-S Dxe Debug Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION         = 0x00010005
+  BASE_NAME           = MtlSDxeDebugInit
+  FILE_GUID           = A64C07AA-6F36-41B7-95D1-4B1A240DA3E4
+  MODULE_TYPE         = DXE_DRIVER
+  VERSION_STRING      = 1.0
+  ENTRY_POINT         = MtlSDxeDebugInitEntryPoint
+
+[LibraryClasses]
+  BaseMemoryLib
+  PcdLib
+  PrintLib
+  BaseLib
+  DebugPrintErrorLevelLib
+  FspCommonLib
+  SerialPortLib
+  TraceHubDebugLib
+  Usb3DebugPortLib
+  UefiDriverEntryPoint
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  Usb3DebugFeaturePkg/Usb3DebugFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[Sources]
+  MtlSDxeDebugInit.c
+
+[Depex]
+  TRUE

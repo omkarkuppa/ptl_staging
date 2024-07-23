@@ -1,0 +1,73 @@
+## @file
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+#
+#  Module Name:
+#   BlockIoTestApp.inf
+#
+#  Abstract:
+#   Component description file for EFI Shell command for BlockIoTestApp.
+
+[Defines]
+  INF_VERSION                    = 0x00010006
+  BASE_NAME                      = BlockIoTestApp
+  FILE_GUID                      = 5f673227-217f-42d6-b047-34e06f0286b7
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 0.1.3
+  ENTRY_POINT                    = BlockIoTestAppMain
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 EBC
+#
+
+[Sources]
+  BlockIoTestApp.c
+  BlockIoTestApp.uni
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ShellPkg/ShellPkg.dec
+  TseFeaturePkg/TseFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  SortLib
+  DevicePathLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiApplicationEntryPoint
+  ShellCommandLib
+  ShellLib
+  HiiLib
+
+[Protocols]
+  gEfiDevicePathProtocolGuid
+  gEfiBlockIoProtocolGuid                     ## SOMETIMES_CONSUMES
+  gEfiBlockIoCryptoProtocolGuid               ## SOMETIMES_CONSUMES
+
+[Guids]
+  gEfiBlockIoCryptoAlgoAesXtsGuid  ## CONSUMES
+  gEfiGlobalVariableGuid           ## SOMETIMES_CONSUMES ## GUID
+  gBlockIoTestAppHiiGuid

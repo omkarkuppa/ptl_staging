@@ -1,0 +1,53 @@
+### @file
+#  Component information file for the Set Cache Mtrr Dxe module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = SetCacheMtrrDxe
+  FILE_GUID                      = fba7b37f-8d11-4daf-8ecd-b5c09c4c14ac
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = SetCacheMtrrDxeEntryPoint
+
+[LibraryClasses]
+  DebugLib
+  PciSegmentLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  BaseIGpuInfoLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+
+[Sources]
+  SetCacheMtrrDxe.c
+[Protocols]
+  gEfiPciEnumerationCompleteProtocolGuid        ## CONSUMES
+  gEfiCpuArchProtocolGuid                       ## CONSUMES
+[Depex]
+  gDxePolicyProtocolGuid

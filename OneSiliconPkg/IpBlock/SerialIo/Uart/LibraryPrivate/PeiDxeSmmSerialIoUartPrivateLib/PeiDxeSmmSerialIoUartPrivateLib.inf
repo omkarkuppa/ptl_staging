@@ -1,0 +1,53 @@
+## @file
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION    = 0x00010017
+  BASE_NAME      = PeiDxeSmmSerialIoUartPrivateLib
+  FILE_GUID      = 9FD237D8-1D35-4AA3-946D-697C86C273E8
+  VERSION_STRING = 1.0
+  MODULE_TYPE    = BASE
+  LIBRARY_CLASS  = SerialIoUartPrivateLib|SEC PEI_CORE PEIM DXE_CORE DXE_DRIVER SMM_CORE DXE_SMM_DRIVER UEFI_DRIVER UEFI_APPLICATION MM_CORE_STANDALONE MM_STANDALONE DXE_RUNTIME_DRIVER
+
+[LibraryClasses]
+  BaseLib
+  IoLib
+  PciSegmentLib
+  TimerLib
+  SerialIoAccessLib
+  SerialIoPrivateLib
+  PchPciBdfLib
+  SerialIoUartLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUartDefaultDataBits         ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdUartDefaultParity           ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdUartDefaultStopBits         ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdUartDefaultBaudRate         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartTimeOut             ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSerialIoUartLibSkipMmioCheck    ## CONSUMES
+
+[Sources]
+  PeiDxeSmmSerialIoUartPrivateLib.c

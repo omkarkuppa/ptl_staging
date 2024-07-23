@@ -1,0 +1,136 @@
+/** @file
+  String definitions for the BlockIoTestApp application.
+
+  Copyright (c) 2022 - 2023, Intel Corporation. All rights reserved.<BR>
+
+  This program and the accompanying materials
+  are licensed and made available under the terms and conditions of the BSD License
+  which accompanies this distribution.  The full text of the license may be found at
+  http://opensource.org/licenses/bsd-license.php.
+
+  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#langdef   en-US "english"
+
+#string STR_GET_HELP_BLOCKIOTESTAPP   #language en-US ""
+".TH blockiotestapp 0 "Test application for BlockIo and BlockIoCrypto protocols."\r\n"
+".SH NAME\r\n"
+"This application exercises both read and write IO operations in block devices through the BlockIo and BlockIoCrypto protocols. This application also allows the user to configure entries into the UEFI Crypto configuration table.\r\n"
+".SH SYNOPSIS\r\n"
+" \r\n"
+"BlockIoTestApp\r\n"
+".SH OPTIONS\r\n"
+" \r\n"
+"  -h           - Displays this help.\r\n\n"
+"\n"
+"Configuration operations:\r\n"
+"  -showconfig  - Show current UEFI configuration table entries.\r\n"
+"  -setconfig   - Set new configuration into the UEFI configuration table:\r\n"
+"    -index     - Parameter for describing the new key index value. (a hexadecimal number)\r\n"
+"    -key       - Parameter for describing the new crypto key value. (a hexadecimal number)\r\n"
+"    -clear     - When present, any exiting entry for the specified index will be released. (a hexadecimal number)\r\n"
+"\n"
+"Regular IO operations options:\r\n"
+"  -r         - Read operation using BlockIo protocol.\r\n"
+"  -w         - Write operation using BlockIo protocol.\r\n"
+"\n"
+"TSE IO operations options:\r\n"
+"  -cr        - Crypto read operation using BlockIo protocol.\r\n"
+"  -cw        - Crypto write operation using BlockIoCrypto protocol.\r\n"
+"  -encrypt   - Crypto encryption operation of block device.\r\n"
+"    -slba    - Parameter for describing the start LBA value for decrypting process. (a hexadecimal number)\r\n"
+"               If not specified, the whole drive will be encrypted.\r\n"
+"    -elba    - Parameter for describing the end LBA value for decrypting process. (a hexadecimal number)\r\n"
+"    -clba    - Parameter for describing the chunk LBA value for decrypting process. (a hexadecimal number)\r\n"
+"\n"
+"IO operations options:\r\n"
+"    -device  - Block device name in which to issue IO operation.\r\n"
+"    -index   - Parameter for describing the key index value for the IO operation (a hexadecimal number).\r\n"
+"               Note: Required for TSE to perform cryptographic IO operations.
+"               Omitting this parameter on crypto operations will result in the BlockIoCrypto falling back to BlockIo to perform a non-cryptographic operation.\r\n"
+"    -tweak   - Specifies the custom tweak value used in the AES-XTS encryption (a hexadecimal number).\r\n"
+"               Note: Required for TSE to perform cryptographic IO operations.\r\n"
+"    -lba     - Specifies the index of the first block of the operation (a hexadecimal number).\r\n"
+"               The default is 0.\r\n"
+"    -count   - Specifies the number of blocks to read or write (a hexadecimal number). The default\r\n"
+"               is 1. If larger than 0x10, then only 0x10 are displayed.\r\n"
+"    -align   - Specifies the host's transfer buffer natural alignment (a hexadecimal number). The default\r\n"
+"               is EFI_PAGE_SIZE (0x1000).\r\n"
+"    -offset  - Specifies an offset to apply on top of the defined natural alignment (a hexadecimal number).\r\n"
+"               The default is 0.\r\n"
+"    -zero    - For write operations, this flag implies zeroing out all blocks.\r\n"
+" \r\n"
+".SH DESCRIPTION\r\n"
+" \r\n"
+"This application will perform read and write IO operation on one or more blocks from specified block device.\r\n"
+"It can perform regular IO operations using the BlockIo protocol.\r\n"
+"It can also perform IO operations using the BlockIoCrypto protocol.\r\n"
+" \r\n"
+"To perform operations using the BlockIoProtocol, the user must first configure the keys to be used in the IO operation by calling the the tool using the -setconfig configuration parameters prior to issuing TSE IO operations.\r\n"
+" \r\n"
+"Configuration operations:\r\n"
+"    Shell> BlockIoTestApp -showconfig\r\n"
+"    Shell> BlockIoTestApp -setconfig -index INDEX -key KEY\r\n"
+"    Shell> BlockIoTestApp -setconfig -index INDEX -clear\r\n"
+"Regular IO operations:\r\n"
+"    Shell> BlockIoTestApp -r -device BLOCK_DEVICE_NAME [-lba START_BLOCK] [-count BLOCK_COUNT] [-align BUFFER_ALIGNMENT] [-offset BUFFER_OFFSET]\r\n"
+"    Shell> BlockIoTestApp -w -device BLOCK_DEVICE_NAME [-lba START_BLOCK] [-count BLOCK_COUNT] [-align BUFFER_ALIGNMENT] [-offset BUFFER_OFFSET] [-zero]\r\n"
+"TSE IO operations:\r\n"
+"    Shell> BlockIoTestApp -cr -device BLOCK_DEVICE_NAME [-index INDEX -tweak TWEAK_VALUE] [-lba START_BLOCK] [-count BLOCK_COUNT] [-align BUFFER_ALIGNMENT] [-offset BUFFER_OFFSET] \r\n"
+"    Shell> BlockIoTestApp -cw -device BLOCK_DEVICE_NAME [-index INDEX -tweak TWEAK_VALUE] [-lba START_BLOCK] [-count BLOCK_COUNT] [-align BUFFER_ALIGNMENT] [-offset BUFFER_OFFSET] [-zero]\r\n"
+" \r\n"
+".SH EXAMPLES\r\n"
+" \r\n"
+"EXAMPLES:\r\n"
+"Configuration operations:\r\n"
+"  * Show current key configuration.\r\n"
+"    Shell> BlockIoTestApp -showconfig\r\n"
+"  * Adding a new configuration entry using index 0x1 with key 0xF\r\n"
+"    Shell> BlockIoTestApp -setconfig -index 0x1 -key 0xF\r\n"
+"Regular IO operations:\r\n"
+"  * To read one block using BlockIo of blk1, beginning from block 0x2 and aligning the host buffer to 0x10:\r\n"
+"    Shell> BlockIoTestApp -r -device blk1 -lba 0x2 -count 0x1 -align 0x10\r\n"
+"  * To write one block using BlockIo of blk1, beginning from block 0x2 and aligning the host buffer to 0x10:\r\n"
+"    Shell> BlockIoTestApp -w -device blk1 -lba 0x2 -count 0x1 -align 0x10\r\n"
+"TSE IO operations:\r\n"
+"  * To read one block using BlockIoCrypto of blk1, beginning at block 0x2 and aligning the host buffer to 0x10:\r\n"
+"    Shell> BlockIoTestApp -cr -device blk1 -index 0x1 -tweak 0x2 -lba 0x2 -count 0x1 -align 0x10\r\n"
+"  * To write one block using BlockIoCrypto of blk1, beginning at block 0x2 and aligning the host buffer to 0x10:\r\n"
+"    Shell> BlockIoTestApp -cw -device blk1 -index 0x1 -tweak 0x2 -lba 0x2 -count 0x1 -align 0x10\r\n"
+"  * To encrypt whole drive (with key at index 0):\r\n"
+"    Shell> BlockIoTestApp -encrypt\r\n"
+"  * To encrypt specific range of the drive <10;100> by using 2 LBAs at time (with key at index 0):\r\n"
+"    Shell> BlockIoTestApp -encrypt -slba 0x10 -elba 0x100 -clba 0x2\r\n"
+
+#string STR_GET_USAGE_BLOCKIOTESTAPP   #language en-US "BlockIoTestApp usage:\r\n"
+"    Shell> BlockIoTestApp [OPTIONS]\r\n"
+"For additional detail see the extended help by calling the tool with the -h parameter.\r\n"
+"    Shell> BlockIoTestApp -h\r\n"
+
+#string STR_BLOCK_IO_TEST_APP_HEADER #language en-US "LBA %016LX Size %08x bytes\r\n"
+#string STR_FILE_READ_FAIL        #language en-US "%H%s%N: Read file error - '%H%s%N'\r\n"
+#string STR_GEN_PROBLEM           #language en-US "%H%s%N: Unknown flag - '%H%s%N'\r\n"
+#string STR_GEN_TOO_MANY          #language en-US "%H%s%N: Too many arguments.\r\n"
+#string STR_GEN_TOO_FEW           #language en-US "%H%s%N: Too few arguments.\r\n"
+#string STR_GEN_PARAM_INV         #language en-US "%H%s%N: Invalid argument - '%H%s%N'\r\n"
+#string STR_GEN_MAP_PROTOCOL      #language en-US "%H%s%N: Mapped device '%B%s%N' does not have protocol %B%s%N\r\n"
+#string STR_GEN_READONLY_MEDIA    #language en-US "%H%s%N: Unable to write to the current directory, check if media is writable.\r\n"

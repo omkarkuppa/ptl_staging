@@ -1,0 +1,111 @@
+## @file
+#  INF for Intel NhltInstallTable driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2020 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = NhltInstallTable
+  FILE_GUID                      = 1009A840-C625-42B3-A94B-B90F991B1B1A
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = UEFI_DRIVER
+  ENTRY_POINT                    = NhltInstallTableDriverEntryPoint
+
+[Sources]
+  NhltInstallTable.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  NhltFeaturePkg/NhltFeaturePkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  MemoryAllocationLib
+  BaseLib
+  BaseMemoryLib
+  PcdLib
+  DebugLib
+  IoLib
+  HobLib
+  NhltLib
+  DxeServicesLib
+  DxeServicesTableLib
+  GetNhltConfigurationLib
+
+[Guids]
+  gEfiAcpiTableGuid
+  gNhltEndpointsTableConfigurationVariableGuid
+  gNhltFileConf0BinGuid
+  gNhltFileConf1BinGuid
+  gNhltFileConf2BinGuid
+  gNhltFileConf3BinGuid
+  gNhltFileConf4BinGuid
+  gNhltFileConf5BinGuid
+  gNhltFileConf6BinGuid
+  gNhltFileConf7BinGuid
+  gNhltFileConf8BinGuid
+  gNhltFileConf9BinGuid
+  gNhltFileConf10BinGuid
+  gNhltFileConf11BinGuid
+  gNhltFileConf12BinGuid
+  gNhltFileConf13BinGuid
+  gNhltFileConf14BinGuid
+  gNhltFileConf15BinGuid
+  gNhltFileConf16BinGuid
+  gNhltFileConf17BinGuid
+  gNhltFileConf18BinGuid
+  gNhltFileConf19BinGuid
+  gNhltFileConf20BinGuid
+  gNhltFileConf21BinGuid
+  gNhltFileConf22BinGuid
+  gNhltFileConf23BinGuid
+  gNhltFileConf24BinGuid
+  gNhltFileConf25BinGuid
+  gNhltFileConf26BinGuid
+  gNhltFileConf27BinGuid
+  gNhltFileConf28BinGuid
+  gNhltFileConf29BinGuid
+  gNhltFileConf30BinGuid
+  gNhltFileConf31BinGuid
+  gNhltFileConf32BinGuid
+  gNhltFileConf33BinGuid
+  gNhltFileConf34BinGuid
+  gNhltFileConf35BinGuid
+  gNhltFileConf36BinGuid
+  gNhltFileConf37BinGuid
+  gNhltFileConf38BinGuid
+  gNhltFileConf39BinGuid
+
+[Protocols]
+  gEfiFirmwareVolume2ProtocolGuid  ## CONSUMES
+  gEfiAcpiTableProtocolGuid        ## CONSUMES
+
+[Depex]
+  gEfiAcpiTableProtocolGuid
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId                   ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId                    ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision              ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision                  ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId                        ## CONSUMES

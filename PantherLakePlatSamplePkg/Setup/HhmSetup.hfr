@@ -1,0 +1,45 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2014 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+form formid = AUTO_ID(HHM_FORM_ID),
+  title     = STRING_TOKEN(STR_HHM_FORM);
+  grayoutif TRUE;
+    action
+      questionid  = AUTO_ID(HHM_SETUP_REFRESH_KEY),
+      prompt      = STRING_TOKEN(STR_HHM_FORM),
+      help        = STRING_TOKEN(STR_HHM_FORM),
+      flags       = INTERACTIVE,
+      config      = STRING_TOKEN(STR_HHM_FORM),
+      refresh interval = 1
+    endaction;
+  endif;
+  SEPARATOR
+
+  grayoutif TRUE;
+  INTERACTIVE_TEXT(STRING_TOKEN(STR_THERMAL_SENSOR_1_HELP),STRING_TOKEN(STR_THERMAL_SENSOR_1_TEXT),STRING_TOKEN(STR_THERMAL_SENSOR_1_VALUE),AUTO_ID(THERMAL_SENSOR_1_KEY))
+  INTERACTIVE_TEXT(STRING_TOKEN(STR_THERMAL_SENSOR_2_HELP),STRING_TOKEN(STR_THERMAL_SENSOR_2_TEXT),STRING_TOKEN(STR_THERMAL_SENSOR_2_VALUE),AUTO_ID(THERMAL_SENSOR_2_KEY))
+  INTERACTIVE_TEXT(STRING_TOKEN(STR_THERMAL_SENSOR_3_HELP),STRING_TOKEN(STR_THERMAL_SENSOR_3_TEXT),STRING_TOKEN(STR_THERMAL_SENSOR_3_VALUE),AUTO_ID(THERMAL_SENSOR_3_KEY))
+  INTERACTIVE_TEXT(STRING_TOKEN(STR_THERMAL_SENSOR_4_HELP),STRING_TOKEN(STR_THERMAL_SENSOR_4_TEXT),STRING_TOKEN(STR_THERMAL_SENSOR_4_VALUE),AUTO_ID(THERMAL_SENSOR_4_KEY))
+  INTERACTIVE_TEXT(STRING_TOKEN(STR_THERMAL_SENSOR_5_HELP),STRING_TOKEN(STR_THERMAL_SENSOR_5_TEXT),STRING_TOKEN(STR_THERMAL_SENSOR_5_VALUE),AUTO_ID(THERMAL_SENSOR_5_KEY))
+
+  INTERACTIVE_TEXT(STRING_TOKEN(STR_CPU_FAN_HELP),STRING_TOKEN(STR_CPU_FAN_TEXT),STRING_TOKEN(STR_CPU_FAN_VALUE),AUTO_ID(CPU_FAN_KEY))
+  INTERACTIVE_TEXT(STRING_TOKEN(STR_PCH_DTS_TEMP_HELP),STRING_TOKEN(STR_PCH_DTS_TEMP_TEXT),STRING_TOKEN(STR_PCH_DTS_TEMP_VALUE),AUTO_ID(PCH_DTS_TEMP_KEY))
+  endif;
+endform;

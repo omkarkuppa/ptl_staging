@@ -1,0 +1,42 @@
+## @file
+#
+# DEC file for UfsFeaturePkg.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2020 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+DEC_SPECIFICATION = 0x00010017
+PACKAGE_NAME = UfsFeaturePkg
+PACKAGE_VERSION = 0.1
+PACKAGE_GUID = 465B3C00-0A18-4a5f-90C0-D5B851D2574B
+
+[Includes]
+  Include
+
+[Guids]
+  gUfsFeaturePkgTokenSpaceGuid = { 0x490ad719, 0xef41, 0x43b9, { 0x81, 0x71, 0x97, 0x20, 0x26, 0xe2, 0x6c, 0x8a } }
+
+[PcdsFeatureFlag]
+  gUfsFeaturePkgTokenSpaceGuid.PcdUfsFeatureEnable|FALSE|BOOLEAN|0x00000001
+  gUfsFeaturePkgTokenSpaceGuid.PcdUfsEraseSupport|FALSE|BOOLEAN|0x00000002
+
+[Protocols]
+  ## Include/Protocol/UfsEraseBlock.h
+  gUfsEraseBlockProtocolGuid = { 0x44a955ad, 0xd12b, 0x40bf, { 0x96, 0x63, 0x60, 0xab, 0x45, 0xbc, 0x46, 0x47 }}

@@ -1,0 +1,50 @@
+## @file
+# Component Description File for OcWdt Support.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2017 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiOcWdtLib
+FILE_GUID = D5207C23-3632-4078-A671-3B5C364B2BDB
+VERSION_STRING = 1.0
+MODULE_TYPE = PEIM
+LIBRARY_CLASS = OcWdtLib
+
+
+[LibraryClasses]
+DebugLib
+PeiServicesLib
+WdtCommonLib
+PmcLib
+IoLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+
+[Sources]
+PeiOcWdtLib.c
+
+
+[Ppis]
+gWdtPpiGuid  ## PRODUCES

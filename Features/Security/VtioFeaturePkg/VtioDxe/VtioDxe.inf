@@ -1,0 +1,70 @@
+## @file
+# This is a VTIO Dxe driver which is used to support VTIO feature.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010007
+  BASE_NAME                      = VtioDxe
+  FILE_GUID                      = 812BA1E0-6A75-4AE5-AD37-63D030974501
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = VtioDxeEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+
+  VtioDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  VtioFeaturePkg/VtioFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  DebugLib
+  UefiLib
+  PciSegmentLib
+  PchPciBdfLib
+
+[Guids]
+  gEfiEndOfDxeEventGroupGuid                                        ## CONSUMES
+
+[Pcd]
+  gVtioFeaturePkgTokenSpaceGuid.PcdVtioSetupDataPtr                 ## CONSUMES
+  gVtioFeaturePkgTokenSpaceGuid.PcdIsVtdEnabled                     ## CONSUMES
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid                                         ## CONSUMES
+
+[Depex]
+  gEfiAcpiTableProtocolGuid
+

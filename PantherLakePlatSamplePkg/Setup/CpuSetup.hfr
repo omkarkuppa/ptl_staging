@@ -1,0 +1,3291 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+#include "CpuSetupStringPool.hfr"
+
+#define SENSOR_0 0
+#define SENSOR_1 1
+#define SENSOR_2 2
+
+  form formid = AUTO_ID(CPU_FORM_ID),
+  title = STRING_TOKEN (STR_CPU_FORM);
+
+  SUBTITLE(STRING_TOKEN (STR_CPU_FORM))
+  SEPARATOR
+
+  grayoutif ideqval CPU_SETUP.AllSmallCoreCount == 0;
+    goto CPU_ATOM_CORE_FORM_ID,
+      prompt = STRING_TOKEN (STR_CPU_ATOM_CORE_FORM_TITLE),
+      help   = STRING_TOKEN (STR_CPU_ATOM_CORE_FORM_HELP);
+  endif;
+  grayoutif ideqval CPU_SETUP.AllBigCoreCount == 0;
+    goto CPU_CORE_FORM_ID,
+      prompt = STRING_TOKEN (STR_CPU_CORE_FORM_TITLE),
+      help   = STRING_TOKEN (STR_CPU_CORE_FORM_HELP);
+  endif;
+  SEPARATOR
+
+  text
+    help  = STRING_TOKEN (STR_PROCESSOR_ID_HELP),
+    text  = STRING_TOKEN (STR_PROCESSOR_ID_STRING),
+    text  = STRING_TOKEN (STR_PROCESSOR_ID_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN (STR_PROCESSOR_BRAND_HELP),
+    text  = STRING_TOKEN (STR_PROCESSOR_BRAND_STRING),
+    text  = STRING_TOKEN (STR_PROCESSOR_BRAND_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN (STR_PROCESSOR_VMX_HELP),
+    text  = STRING_TOKEN (STR_PROCESSOR_VMX_STRING),
+    text  = STRING_TOKEN (STR_PROCESSOR_VMX_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN (STR_PROCESSOR_SMX_HELP),
+    text  = STRING_TOKEN (STR_PROCESSOR_SMX_STRING),
+    text  = STRING_TOKEN (STR_PROCESSOR_SMX_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN(STR_PROCESSOR_CRASH_REGISTER_HELP),
+    text  = STRING_TOKEN(STR_PROCESSOR_CRASH_REGISTER_STRING),
+    text  = STRING_TOKEN(STR_PROCESSOR_CRASH_REGISTER_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN(STR_PROCESSOR_SPAD_REGISTER_HELP),
+    text  = STRING_TOKEN(STR_PROCESSOR_SPAD_REGISTER_STRING),
+    text  = STRING_TOKEN(STR_PROCESSOR_SPAD_REGISTER_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN(STR_PROCESSOR_BTG_STATUS_HELP),
+    text  = STRING_TOKEN(STR_PROCESSOR_BTG_STATUS_STRING),
+    text  = STRING_TOKEN(STR_PROCESSOR_BTG_STATUS_VALUE),
+    flags = 0,
+    key   = 0;
+
+   text
+    help  = STRING_TOKEN(STR_PROCESSOR_BTG_ACM_POL_STS_HELP),
+    text  = STRING_TOKEN(STR_PROCESSOR_BTG_ACM_POL_STS_STRING),
+    text  = STRING_TOKEN(STR_PROCESSOR_BTG_ACM_POL_STS_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN(STR_PROCESSOR_BTG_SACM_INFO_HELP),
+    text  = STRING_TOKEN(STR_PROCESSOR_BTG_SACM_INFO_STRING),
+    text  = STRING_TOKEN(STR_PROCESSOR_BTG_SACM_INFO_VALUE),
+    flags = 0,
+    key   = 0;
+
+  SEPARATOR
+
+  oneof varid   = CPU_SETUP.CpuRatioOverride,
+    prompt      = STRING_TOKEN (STR_PROCESSOR_RATIO_OVERRIDE),
+    help        = STRING_TOKEN (STR_PROCESSOR_RATIO_OVERRIDE_HELP),
+    option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  label LABEL_CPU_RATIO;
+
+  grayoutif ideqval CPU_SETUP.CpuRatioOverride == 0;
+    numeric varid = CPU_SETUP.CpuRatio,
+      prompt      = STRING_TOKEN (STR_PROCESSOR_RATIO),
+      help        = STRING_TOKEN (STR_PROCESSOR_RATIO_HELP),
+      flags       = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_CpuRatioLimit),
+      minimum     = 0,
+      maximum     = 63,
+      step        = 0,
+      default     = 20,
+    endnumeric;
+  endif; // grayoutif
+
+  suppressif ideqval SETUP_CPU_FEATURES.VTAvailable == 0;
+    grayoutif ideqval SYSTEM_ACCESS.Access == SYSTEM_PASSWORD_USER;
+      oneof varid   = CPU_SETUP.VT,
+        questionid  = AUTO_ID(VT_QUESTION_ID),
+        prompt      = STRING_TOKEN (STR_VT_PROMPT),
+        help        = STRING_TOKEN (STR_VT_PROMPT_HELP),
+        option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+      endoneof;
+  SUPPRESS_GRAYOUT_ENDIF
+
+#ifndef MDEPKG_NDEBUG
+  suppressif ideqval SETUP_CPU_FEATURES.PpinFeatureAvailable == 0;
+    oneof varid = CPU_SETUP.PpinSupport,
+      prompt      = STRING_TOKEN (STR_PPIN_SUPPORT_PROMPT),
+      help        = STRING_TOKEN (STR_PPIN_SUPPORT_HELP),
+      option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_PPIN_ENABLE_MODE), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval CPU_SETUP.PpinSupport == 0;
+      oneof varid = CPU_SETUP.PpinEnableMode,
+        prompt      = STRING_TOKEN (STR_PPIN_ENABLE_MODE_PROMPT),
+        help        = STRING_TOKEN (STR_PPIN_ENABLE_MODE_HELP),
+        option text = STRING_TOKEN (STR_PPIN_EOM_BASED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+  endif;
+#endif
+
+  oneof varid = CPU_SETUP.AvxDisable,
+    prompt      = STRING_TOKEN (STR_AVX_DISABLE_PROMPT),
+    help        = STRING_TOKEN (STR_AVX_DISABLE_HELP),
+    option text = STRING_TOKEN (STR_ENABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN (STR_DISABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  grayoutif ideqval CPU_SETUP.Txt == 1;
+    grayoutif ideqval CPU_SETUP.AllBigCoreCount == 0;
+      oneof varid     = CPU_SETUP.ActiveCoreCount,
+        prompt        = STRING_TOKEN (STR_ACTIVE_CORE_COUNT_PROMPT),
+        help          = STRING_TOKEN (STR_ACTIVE_CORE_COUNT_PROMPT_HELP),
+        option text   = STRING_TOKEN (STR_ALL), value = 0xFF, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+
+#define ALL_BIG_CORE_COUNT(Index) \
+  suppressif ideqval CPU_SETUP.AllBigCoreCount <= Index; \
+    option text = STRING_TOKEN (STR_##Index), value = Index, flags = RESET_REQUIRED; \
+  endif; // suppressif
+
+        ALL_BIG_CORE_COUNT(7)
+        ALL_BIG_CORE_COUNT(6)
+        ALL_BIG_CORE_COUNT(5)
+        ALL_BIG_CORE_COUNT(4)
+        ALL_BIG_CORE_COUNT(3)
+        ALL_BIG_CORE_COUNT(2)
+        ALL_BIG_CORE_COUNT(1)
+
+        option text   = STRING_TOKEN (STR_0), value = 0, flags = RESET_REQUIRED;
+      endoneof;
+    endif; // grayoutif
+
+    suppressif ideqval CPU_SETUP.AllSmallCoreCount == 0;
+      oneof varid     = CPU_SETUP.ActiveSmallCoreCount,
+        prompt        = STRING_TOKEN (STR_ACTIVE_ATOM_CORE_COUNT_PROMPT),
+        help          = STRING_TOKEN (STR_ACTIVE_ATOM_CORE_COUNT_PROMPT_HELP),
+        option text   = STRING_TOKEN (STR_ALL), value = 0xFF, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+
+#define ALL_SMALL_CORE_COUNT(Index) \
+  suppressif ideqval CPU_SETUP.AllSmallCoreCount <= Index; \
+    option text = STRING_TOKEN (STR_##Index), value = Index, flags = RESET_REQUIRED; \
+  endif; // suppressif
+
+        ALL_SMALL_CORE_COUNT(31)
+        ALL_SMALL_CORE_COUNT(30)
+        ALL_SMALL_CORE_COUNT(29)
+        ALL_SMALL_CORE_COUNT(28)
+        ALL_SMALL_CORE_COUNT(27)
+        ALL_SMALL_CORE_COUNT(26)
+        ALL_SMALL_CORE_COUNT(25)
+        ALL_SMALL_CORE_COUNT(24)
+        ALL_SMALL_CORE_COUNT(23)
+        ALL_SMALL_CORE_COUNT(22)
+        ALL_SMALL_CORE_COUNT(21)
+        ALL_SMALL_CORE_COUNT(20)
+        ALL_SMALL_CORE_COUNT(19)
+        ALL_SMALL_CORE_COUNT(18)
+        ALL_SMALL_CORE_COUNT(17)
+        ALL_SMALL_CORE_COUNT(16)
+        ALL_SMALL_CORE_COUNT(15)
+        ALL_SMALL_CORE_COUNT(14)
+        ALL_SMALL_CORE_COUNT(13)
+        ALL_SMALL_CORE_COUNT(12)
+        ALL_SMALL_CORE_COUNT(11)
+        ALL_SMALL_CORE_COUNT(10)
+        ALL_SMALL_CORE_COUNT(9)
+        ALL_SMALL_CORE_COUNT(8)
+        ALL_SMALL_CORE_COUNT(7)
+        ALL_SMALL_CORE_COUNT(6)
+        ALL_SMALL_CORE_COUNT(5)
+        ALL_SMALL_CORE_COUNT(4)
+        ALL_SMALL_CORE_COUNT(3)
+        ALL_SMALL_CORE_COUNT(2)
+        ALL_SMALL_CORE_COUNT(1)
+        option text   = STRING_TOKEN (STR_0), value = 0, flags = RESET_REQUIRED;
+      endoneof;
+    endif; // suppressif
+
+    suppressif ideqval CPU_SETUP.AllLpAtomCoreCount == 0;
+      oneof varid     = CPU_SETUP.ActiveLpAtomCoreCount,
+        prompt        = STRING_TOKEN (STR_ACTIVE_LP_ATOM_CORE_COUNT_PROMPT),
+        help          = STRING_TOKEN (STR_ACTIVE_LP_ATOM_CORE_COUNT_PROMPT_HELP),
+        option text   = STRING_TOKEN (STR_ALL), value = 0xFF, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+
+#define ALL_LP_ATOM_CORE_COUNT(Index) \
+  suppressif ideqval CPU_SETUP.AllLpAtomCoreCount <= Index; \
+    option text = STRING_TOKEN (STR_##Index), value = Index, flags = RESET_REQUIRED; \
+  endif; // suppressif
+
+        ALL_LP_ATOM_CORE_COUNT(3)
+        ALL_LP_ATOM_CORE_COUNT(2)
+        ALL_LP_ATOM_CORE_COUNT(1)
+
+        option text   = STRING_TOKEN (STR_0), value = 0, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+  endif; // suppressif
+
+  oneof varid   = CPU_SETUP.BistOnReset,
+    prompt      = STRING_TOKEN (STR_BIST_PROMPT),
+    help        = STRING_TOKEN (STR_BIST_PROMPT_HELP),
+    option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  oneof varid   = CPU_SETUP.ApIdleManner,
+    prompt      = STRING_TOKEN (STR_APIDLEMANNER_PROMPT),
+    help        = STRING_TOKEN (STR_APIDLEMANNER_PROMPT_HELP),
+    option text = STRING_TOKEN (STR_APHALTLOOP), value = 1, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN (STR_APMWAITLOOP), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN (STR_APRUNLOOP), value = 3, flags = RESET_REQUIRED;
+  endoneof;
+
+  suppressif  ideqval SETUP_CPU_FEATURES.AESAvailable == 0;
+  grayoutif ideqval SYSTEM_ACCESS.Access == SYSTEM_PASSWORD_USER;
+        oneof varid     = CPU_SETUP.AES,
+            prompt      = STRING_TOKEN (STR_AES_PROMPT),
+            help        = STRING_TOKEN (STR_AES_PROMPT_HELP),
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+  SUPPRESS_GRAYOUT_ENDIF
+
+  oneof varid     = CPU_SETUP.MachineCheck,
+      prompt      = STRING_TOKEN (STR_MACHINE_CHECK_PROMPT),
+      help        = STRING_TOKEN (STR_MACHINE_CHECK_PROMPT_HELP),
+      option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  oneof varid     = CPU_SETUP.MonitorMwait,
+      prompt      = STRING_TOKEN (STR_MONITOR_MWAIT_PROMPT),
+      help        = STRING_TOKEN (STR_MONITOR_MWAIT_PROMPT_HELP),
+      option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  suppressif  ideqval SETUP_CPU_FEATURES.TXTAvailable == 0;
+  grayoutif ideqval CPU_SETUP.VT == 0
+              OR ideqval CPU_SETUP.FitRecTxt == 0
+              // Gray out the TXT option when FIT Record 0xA absent
+#if FixedPcdGetBool(PcdTxtEnable) == 0
+              OR TRUE // Gray out the TXT option when TXT is disabled with PcdTxtEnable
+#endif
+#if FixedPcdGetBool(PcdTpmEnable) == 1
+              OR (
+                  (NOT ideqval SETUP_DATA.FirmwareConfiguration == 5) AND
+                  (ideqval SETUP_VOLATILE_DATA.TpmLocation == 0))
+#endif
+              OR ideqval SA_SETUP.EnableVtd == 0
+              OR ideqval ME_STORAGE_EXPOSURE.RemoteSessionActive == 1;
+        oneof varid     = CPU_SETUP.Txt,
+            questionid  = AUTO_ID(KEY_TXT_POLICY_FIT),
+            prompt      = STRING_TOKEN (STR_TXT_PROMPT),
+            help        = STRING_TOKEN (STR_TXT_PROMPT_HELP),
+            flags       = INTERACTIVE,
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),   value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      SUPPRESS_GRAYOUT_ENDIF
+
+      suppressif  ideqval SETUP_CPU_FEATURES.TXTAvailable == 0;
+      grayoutif ideqval CPU_SETUP.Txt == 0;
+        oneof varid    = CPU_SETUP.AcheckRequest,
+           prompt      = STRING_TOKEN (STR_ACHECKREQUEST_PROMPT),
+           help        = STRING_TOKEN (STR_ACHECKREQUEST_PROMPT_HELP),
+           option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+           option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      SUPPRESS_GRAYOUT_ENDIF
+
+      suppressif  ideqval SETUP_CPU_FEATURES.TXTAvailable == 0;
+      grayoutif ideqval CPU_SETUP.LtDprProgramming == 1
+#if FixedPcdGetBool(PcdTpmEnable) == 1
+              OR ideqval SETUP_VOLATILE_DATA.TpmLocation == 0
+#endif
+              OR ideqval CPU_SETUP.VT == 0
+              OR ideqval SA_SETUP.EnableVtd == 0
+              OR ideqval CPU_SETUP.Txt == 0
+              OR NOT (ideqval CPU_SETUP.ActiveCoreCount == 0xFF AND ideqval CPU_SETUP.ActiveSmallCoreCount == 0xFF);
+      numeric varid = CPU_SETUP.DprSize,
+        prompt      = STRING_TOKEN (STR_PROCESSOR_DPR_STRING),
+        help        = STRING_TOKEN (STR_PROCESSOR_DPR_HELP),
+        minimum     = 0,
+        maximum     = 255,
+        step        = 1,    // Stepping of 0 equates to a manual entering of a value, otherwise it will auto-increment with a left/right arrow
+        default     = 4,    // default no extra bus reserved
+      endnumeric;
+      SUPPRESS_GRAYOUT_ENDIF
+
+      suppressif  ideqval SETUP_CPU_FEATURES.TXTAvailable == 0;
+      grayoutif ideqval CPU_SETUP.LtDprProgramming == 1
+#if FixedPcdGetBool(PcdTpmEnable) == 1
+              OR ideqval SETUP_VOLATILE_DATA.TpmLocation == 0
+#endif
+              OR ideqval CPU_SETUP.VT == 0
+              OR ideqval SA_SETUP.EnableVtd == 0
+              OR ideqval CPU_SETUP.Txt == 1
+              OR NOT ideqval CPU_SETUP.ActiveCoreCount == 0;
+      oneof varid   = CPU_SETUP.ResetAux,
+        prompt      = STRING_TOKEN (STR_PROCESSOR_RESET_AUX_STRING),
+        help        = STRING_TOKEN (STR_PROCESSOR_RESET_AUX_HELP),
+        option text = STRING_TOKEN (STR_YES), value=1, flags=RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_NO), value=0, flags=DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+      SUPPRESS_GRAYOUT_ENDIF
+
+    suppressif ideqval SETUP_CPU_FEATURES.FclkSupported == 0;
+      oneof varid   = CPU_SETUP.EpocFclkFreq,
+        prompt      = STRING_TOKEN (STR_EPOC_FCLK_PROMPT),
+        help        = STRING_TOKEN (STR_EPOC_FCLK_HELP),
+        option text = STRING_TOKEN (STR_800MHZ),  value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_1GHZ),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_400MHZ),  value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_AUTO),  value = 3, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval SETUP_CPU_FEATURES.TseSupported == 0;
+      oneof varid   = CPU_SETUP.TseEnable,
+        prompt      = STRING_TOKEN (STR_TSE_PROMPT),
+        help        = STRING_TOKEN (STR_TSE_HELP),
+        option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif; // suppressif
+
+    suppressif ideqval SETUP_CPU_FEATURES.TmeSupported == 0;
+    grayoutif ideqval SA_SETUP.EnableVtd == 0;
+      oneof varid   = CPU_SETUP.TmeEnable,
+        questionid  = AUTO_ID(MKTME_STATUS_QUESTION_ID),
+        prompt      = STRING_TOKEN (STR_TME_PROMPT),
+        help        = STRING_TOKEN (STR_TME_HELP),
+        option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED | INTERACTIVE;
+      endoneof;
+    SUPPRESS_GRAYOUT_ENDIF
+
+    suppressif ideqval SETUP_CPU_FEATURES.TmeBypassSupported == 0;
+      grayoutif ideqval CPU_SETUP.TmeEnable == 0;
+        oneof varid   = CPU_SETUP.TmeBypassCapability,
+          prompt      = STRING_TOKEN (STR_TME_BYPASS_PROMPT),
+          help        = STRING_TOKEN (STR_TME_BYPASS_PROMPT_HELP),
+          option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+    SUPPRESS_GRAYOUT_ENDIF
+
+    suppressif ideqval SETUP_CPU_FEATURES.TdxSupported == 0;
+      grayoutif ideqval CPU_SETUP.TmeEnable == 0
+            OR  ideqval SETUP_CPU_FEATURES.TXTAvailable == 0
+            OR  ideqval SETUP_CPU_FEATURES.VTAvailable == 0
+            OR  ideqval SA_SETUP.EnableVtd == 0
+            OR  ideqval CPU_SETUP.VT == 0;
+          oneof varid   = CPU_SETUP.TdxEnable,
+            prompt      = STRING_TOKEN (STR_TDX_PROMPT),
+            help        = STRING_TOKEN (STR_TDX_PROMPT_HELP),
+            option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          endoneof;
+    SUPPRESS_GRAYOUT_ENDIF
+
+    suppressif ideqval SETUP_CPU_FEATURES.LocalX2ApicAvailable == 0;
+    grayoutif ideqval SA_SETUP.EnableVtd == 0;
+      oneof varid   = CPU_SETUP.X2ApicEnable,
+        prompt      = STRING_TOKEN (STR_X2APIC_ENABLE_PROMPT),
+        help        = STRING_TOKEN (STR_X2APIC_ENABLE_HELP),
+        option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    SUPPRESS_GRAYOUT_ENDIF
+
+  endform; // CPU_FORM_ID
+
+  form formid = AUTO_ID(CPU_ATOM_CORE_FORM_ID),
+  title = STRING_TOKEN (STR_CPU_ATOM_CORE_FORM_TITLE);
+
+  SUBTITLE(STRING_TOKEN (STR_CPU_ATOM_CORE_FORM_TITLE))
+  SEPARATOR
+
+  text
+    help  = STRING_TOKEN (STR_ATOM_CORE_L1_DATA_CACHE_HELP),
+    text  = STRING_TOKEN (STR_ATOM_CORE_L1_DATA_CACHE_STRING),
+    text  = STRING_TOKEN (STR_ATOM_CORE_L1_DATA_CACHE_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN (STR_ATOM_CORE_L1_INSTR_CACHE_HELP),
+    text  = STRING_TOKEN (STR_ATOM_CORE_L1_INSTR_CACHE_STRING),
+    text  = STRING_TOKEN (STR_ATOM_CORE_L1_INSTR_CACHE_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN (STR_ATOM_CORE_L2_CACHE_HELP),
+    text  = STRING_TOKEN (STR_ATOM_CORE_L2_CACHE_STRING),
+    text  = STRING_TOKEN (STR_ATOM_CORE_L2_CACHE_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN (STR_ATOM_CORE_L3_CACHE_HELP),
+    text  = STRING_TOKEN (STR_ATOM_CORE_L3_CACHE_STRING),
+    text  = STRING_TOKEN (STR_ATOM_CORE_L3_CACHE_VALUE),
+    flags = 0,
+    key   = 0;
+  endform;
+
+  form formid = AUTO_ID (CPU_CORE_FORM_ID),
+  title = STRING_TOKEN (STR_CPU_CORE_FORM_TITLE);
+
+  SUBTITLE(STRING_TOKEN (STR_CPU_CORE_FORM_TITLE))
+  SEPARATOR
+
+  text
+    help  = STRING_TOKEN (STR_CORE_L0_DATA_CACHE_HELP),
+    text  = STRING_TOKEN (STR_CORE_L0_DATA_CACHE_STRING),
+    text  = STRING_TOKEN (STR_CORE_L0_DATA_CACHE_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN (STR_CORE_L1_INSTR_CACHE_HELP),
+    text  = STRING_TOKEN (STR_CORE_L1_INSTR_CACHE_STRING),
+    text  = STRING_TOKEN (STR_CORE_L1_INSTR_CACHE_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN (STR_CORE_L2_CACHE_HELP),
+    text  = STRING_TOKEN (STR_CORE_L2_CACHE_STRING),
+    text  = STRING_TOKEN (STR_CORE_L2_CACHE_VALUE),
+    flags = 0,
+    key   = 0;
+
+  text
+    help  = STRING_TOKEN (STR_CORE_L3_CACHE_HELP),
+    text  = STRING_TOKEN (STR_CORE_L3_CACHE_STRING),
+    text  = STRING_TOKEN (STR_CORE_L3_CACHE_VALUE),
+    flags = 0,
+    key   = 0;
+  endform;
+
+  form formid = AUTO_ID(POWER_CONFIG_FORM_ID),
+  title = STRING_TOKEN (STR_POWER_CONFIGURATION);
+
+    SUBTITLE(STRING_TOKEN (STR_POWER_CONFIGURATION))
+    SEPARATOR
+
+    goto CPU_POWER_CONFIG_FORM_ID,
+      prompt = STRING_TOKEN (STR_CPU_POWER_CONFIG_FORM_TITLE),
+      help = STRING_TOKEN (STR_CPU_POWER_CONFIG_FORM_HELP);
+
+  suppressif ((ideqval SETUP_CPU_FEATURES.HwpAvailable == 0) OR
+              (ideqval SETUP_CPU_FEATURES.HwpInterruptSupported == 0));
+    oneof varid = CPU_SETUP.HwpInterruptControl,
+      prompt = STRING_TOKEN (STR_ISST_INTERRUPT_CONTROL_PROMPT),
+      help   = STRING_TOKEN (STR_ISST_INTERRUPT_CONTROL_HELP),
+      option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_ENABLED),   value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+  endif;
+  endform; //POWER_CONFIG_FORM_ID
+
+  form formid = AUTO_ID(CPU_POWER_CONFIG_FORM_ID),
+  title = STRING_TOKEN (STR_CPU_POWER_CONFIG_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN (STR_CPU_POWER_CONFIG_FORM_TITLE))
+      SEPARATOR
+
+      oneof varid = CPU_SETUP.BootMaxFrequency,
+          prompt  = STRING_TOKEN (STR_BOOT_MAX_FREQUENCY),
+          help    = STRING_TOKEN (STR_BOOT_MAX_FREQUENCY_HELP),
+          option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval CPU_SETUP.BootMaxFrequency == 0;
+        oneof varid = CPU_SETUP.BootFrequency,
+            questionid  = AUTO_ID (KEY_BootFrequency),
+            prompt  = STRING_TOKEN (STR_BOOT_FREQUENCY),
+            help    = STRING_TOKEN (STR_BOOT_FREQUENCY_HELP),
+            flags = INTERACTIVE,
+            default     = 2, defaultstore = MyStandardDefault,
+            option text = STRING_TOKEN (STR_BOOT_FREQUENCY_MIN), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_BOOT_FREQUENCY_MAX), value = 1, flags = RESET_REQUIRED;
+            suppressif ideqval SETUP_CPU_FEATURES.TurboModeAvailable == 0;
+              option text = STRING_TOKEN (STR_BOOT_FREQUENCY_TURBO), value = 2, flags = RESET_REQUIRED;
+            endif;
+        endoneof;
+      endif; // suppressif
+
+      suppressif ideqval SETUP_CPU_FEATURES.EISTAvailable == 0;
+        oneof varid     = CPU_SETUP.EnableGv,
+            questionid  = AUTO_ID(ENABLE_GV_QUESTION_ID),
+            prompt      = STRING_TOKEN (STR_CPU_IST_PROMPT),
+            help        = STRING_TOKEN (STR_CPU_IST_HELP),
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif;
+
+        oneof varid     = CPU_SETUP.RaceToHalt,
+            prompt      = STRING_TOKEN (STR_RACE_TO_HALT_PROMPT),
+            help        = STRING_TOKEN (STR_RACE_TO_HALT_HELP),
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        oneof varid     = CPU_SETUP.EnableHwp,
+            questionid  = AUTO_ID(HWP_ENABLE_QUESTION_ID),
+            prompt      = STRING_TOKEN (STR_CPU_ISST_PROMPT),
+            help        = STRING_TOKEN (STR_CPU_ISST_HELP),
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+      //
+      //  Resource Priority Feature
+      //
+      suppressif ideqval SETUP_CPU_FEATURES.RpSupported == 0;
+        oneof varid  = CPU_SETUP.EnableRp,
+          prompt   = STRING_TOKEN (STR_CPU_RP_PROMPT),
+          help     = STRING_TOKEN (STR_CPU_RP_HELP),
+          option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif; // suppressif
+
+      suppressif ideqval SETUP_CPU_FEATURES.HwpAvailable == 0;
+        //
+        // HwP p-Code mailbox setup options
+        //
+
+        oneof varid   = CPU_SETUP.EnableHwpAutoPerCorePstate,
+          prompt      = STRING_TOKEN (STR_CPU_HWP_AUTO_PER_CORE_PSTATE_PROMPT),
+          help        = STRING_TOKEN (STR_CPU_HWP_AUTO_PER_CORE_PSTATE_HELP),
+          option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        oneof varid   = CPU_SETUP.EnableHwpAutoEppGrouping,
+          prompt      = STRING_TOKEN (STR_CPU_HWP_AUTO_EPP_GROUPING),
+          help        = STRING_TOKEN (STR_CPU_HWP_AUTO_EPP_GROUPING_HELP),
+          option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        //
+        // Enable/Disable Hwp Lock
+        //
+        oneof varid   = CPU_SETUP.HwpLock,
+          prompt      = STRING_TOKEN (STR_CPU_HWP_LOCK_PROMPT),
+          help        = STRING_TOKEN (STR_CPU_HWP_LOCK_HELP),
+          option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif; // end of HwPcheck
+
+      suppressif (ideqval CPU_SETUP.EnableGv == 0
+              AND ideqval CPU_SETUP.EnableHwp == 0)
+              OR ideqval SETUP_CPU_FEATURES.TurboModeAvailable == 0;
+        oneof varid  = CPU_SETUP.TurboMode,
+            questionid  = AUTO_ID (KEY_TurboMode),
+            prompt   = STRING_TOKEN (STR_TURBO_MODE_ENABLE),
+            help     = STRING_TOKEN (STR_TURBO_MODE_ENABLE_HELP),
+            flags = INTERACTIVE,
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        goto CPU_TURBO_OPTIONS_FORM_ID,
+          prompt = STRING_TOKEN (STR_CPU_TURBO_FORM_TITLE),
+          help = STRING_TOKEN (STR_CPU_TURBO_FORM_HELP);
+      endif;
+
+      suppressif ideqval SETUP_CPU_FEATURES.ConfigTdpAvailable == 0;
+        goto CPU_CTDP_OPTIONS_FORM_ID,
+          prompt = STRING_TOKEN (STR_CTDP_FORM_TITLE),
+          help = STRING_TOKEN (STR_CTDP_FORM_HELP);
+      endif;
+
+    goto CPU_VR_OPTIONS_FORM_ID,
+      prompt = STRING_TOKEN (STR_CPU_VR_FORM_TITLE),
+      help = STRING_TOKEN (STR_CPU_VR_FORM_TITLE);
+
+    goto SKIN_TEMP_CONTROL_FORM_ID,
+      prompt = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_TITLE),
+      help = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_HELP);
+
+    oneof varid  = CPU_SETUP.PlatformPowerLimit1Enable,
+        prompt   = STRING_TOKEN (STR_PLAT_PWR_LIMIT_1_ENABLE),
+        help     = STRING_TOKEN (STR_PLAT_PWR_LIMIT_1_ENABLE_HELP),
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval CPU_SETUP.PlatformPowerLimit1Enable == 0;
+      numeric varid   = CPU_SETUP.PlatformPowerLimit1Power,
+          prompt   = STRING_TOKEN (STR_PLAT_PWR_LIMIT1_PWR),
+          help     = STRING_TOKEN (STR_PLAT_PWR_LIMIT1_PWR_HELP),
+          flags    = 0 | RESET_REQUIRED,
+          minimum  = 0,
+          maximum  = 4095875,
+          step     = 125,        // Stepping of 0 equates to a manual entering of a value,
+                                 // otherwise it will auto-increment with a left/right arrow
+          default = 0,
+      endnumeric;
+
+      oneof varid   = CPU_SETUP.PlatformPowerLimit1Time,
+          prompt   = STRING_TOKEN (STR_PLAT_PWR_LIMIT1_TIME),
+          help     = STRING_TOKEN (STR_PLAT_PWR_LIMIT1_TIME_HELP),
+          flags    = 0 | RESET_REQUIRED,
+          option text = STRING_TOKEN (STR_0),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_1),  value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_2),  value = 2, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_3),  value = 3, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_4),  value = 4, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_5),  value = 5, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_6),  value = 6, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_7),  value = 7, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_8),  value = 8, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_10),  value = 10, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_12),  value = 12, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_14),  value = 14, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_16),  value = 16, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_20),  value = 20, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_24),  value = 24, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_28),  value = 28, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_32),  value = 32, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_40),  value = 40, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_48),  value = 48, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_56),  value = 56, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_64),  value = 64, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_80),  value = 80, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_96),  value = 96, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_112),  value = 112, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_128),  value = 128, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    oneof varid  = CPU_SETUP.PlatformPowerLimit2Enable,
+        prompt   = STRING_TOKEN (STR_PLAT_PWR_LIMIT_2_ENABLE),
+        help     = STRING_TOKEN (STR_PLAT_PWR_LIMIT_2_ENABLE_HELP),
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+  suppressif ideqval CPU_SETUP.PlatformPowerLimit2Enable == 0;
+    numeric varid   = CPU_SETUP.PlatformPowerLimit2Power,
+        prompt   = STRING_TOKEN (STR_PLAT_PWR_LIMIT2_PWR),
+        help     = STRING_TOKEN (STR_PLAT_PWR_LIMIT2_PWR_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        minimum  = 0,
+        maximum  = 4095875,
+        step     = 125,        // Stepping of 0 equates to a manual entering of a value,
+                               // otherwise it will auto-increment with a left/right arrow
+        default = 0,
+    endnumeric;
+  endif;
+
+    oneof varid     = CPU_SETUP.PlatformAtxTelemetryUnit,
+        prompt      = STRING_TOKEN (STR_PLAT_ATX_TELEMETRY_UNIT),
+        help        = STRING_TOKEN (STR_PLAT_ATX_TELEMETRY_UNIT_HELP),
+        option text = STRING_TOKEN (STR_WATTS),   value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_PERCENT), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = CPU_SETUP.PowerLimit4Override,
+       prompt   = STRING_TOKEN (STR_POWER_LIMIT_4_OVERRIDE),
+       help     = STRING_TOKEN (STR_POWER_LIMIT_4_OVERRIDE_HELP),
+       default  = 0, defaultstore = MyStandardDefault,
+       option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+  suppressif ideqval CPU_SETUP.PowerLimit4Override == 0;
+      numeric varid   = CPU_SETUP.PowerLimit4,
+          prompt   = STRING_TOKEN (STR_POWER_LIMIT_4_LIMIT),
+          help     = STRING_TOKEN (STR_POWER_LIMIT_4_LIMIT_HELP),
+          flags    = 0 | RESET_REQUIRED,
+          minimum  = 0,
+          maximum  = 4095875,
+          step     = 125,
+          default  = 0, defaultstore = MyStandardDefault,
+      endnumeric;
+   endif;
+
+  suppressif ideqval CPU_SETUP.PowerLimit4Override == 0;
+      oneof varid  = CPU_SETUP.PowerLimit4Lock,
+         prompt   = STRING_TOKEN (STR_POWER_LIMIT_4_LOCK),
+         help     = STRING_TOKEN (STR_POWER_LIMIT_4_LOCK_HELP),
+         option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+         option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+  endif;
+
+  text
+    help   = STRING_TOKEN (STR_EMPTY_STRING),
+    text   = STRING_TOKEN (STR_CURRENT_POWER_LIMIT_4_BOOST_STRING),
+    text   = STRING_TOKEN (STR_CURRENT_POWER_LIMIT_4_BOOST_VALUE),
+    flags  = 0, key = 0;
+
+  numeric varid = CPU_SETUP.PowerLimit4Boost,
+    prompt   = STRING_TOKEN (STR_POWER_LIMIT_4_BOOST),
+    help     = STRING_TOKEN (STR_POWER_LIMIT_4_BOOST_HELP),
+    flags    = 0 | RESET_REQUIRED,
+    minimum  = 0,
+    maximum  = 63000,
+    step     = 125,
+    default  = 0,
+  endnumeric;
+
+      suppressif ideqval SETUP_CPU_FEATURES.CxAvailable == 0;
+        oneof varid     = CPU_SETUP.EnableCx,
+            questionid  = AUTO_ID(CX_ENABLE_QUESTION_ID),
+            prompt      = STRING_TOKEN (STR_CX_PROMPT),
+            help        = STRING_TOKEN (STR_CX_PROMPT_HELP),
+            default     = 1, defaultstore = MyStandardDefault,
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      suppressif ideqval SETUP_CPU_FEATURES.CxAvailable == 0 OR ideqval CPU_SETUP.EnableCx == 0 OR ideqval SETUP_CPU_FEATURES.C1EAvailable == 0;
+        oneof varid     = CPU_SETUP.EnableC1e,
+            prompt      = STRING_TOKEN (STR_CXE_PROMPT),
+            help        = STRING_TOKEN (STR_CXE_PROMPT_HELP),
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      suppressif ideqval SETUP_CPU_FEATURES.CxAvailable == 0 OR ideqval CPU_SETUP.EnableCx == 0;
+        oneof varid       = CPU_SETUP.CStateAutoDemotion,
+              prompt      = STRING_TOKEN (STR_CST_AUTO_DEMOTION),
+              help        = STRING_TOKEN (STR_CST_AUTO_DEMOTION_HELP),
+              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_C1_AUTO_DEMOTION), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        oneof varid       = CPU_SETUP.CStateUnDemotion,
+              prompt      = STRING_TOKEN (STR_CST_UNDEMOTION),
+              help        = STRING_TOKEN (STR_CST_UNDEMOTION_HELP),
+              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_C1_AUTO_DEMOTION), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        oneof varid       = CPU_SETUP.PkgCStateDemotion,
+              prompt      = STRING_TOKEN (STR_PKG_CST_DEMOTION),
+              help        = STRING_TOKEN (STR_PKG_CST_DEMOTION),
+              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        oneof varid       = CPU_SETUP.PkgCStateUnDemotion,
+              prompt      = STRING_TOKEN (STR_PKG_CST_UNDEMOTION),
+              help        = STRING_TOKEN (STR_PKG_CST_UNDEMOTION),
+              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        oneof varid       = CPU_SETUP.CStatePreWake,
+              prompt      = STRING_TOKEN (STR_CST_PREWAKE),
+              help        = STRING_TOKEN (STR_CST_PREWAKE_HELP),
+              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        oneof varid    = CPU_SETUP.PkgCStateLimit,
+            prompt   = STRING_TOKEN (STR_PKG_C_STATE_LIMIT_PROMPT),
+            help     = STRING_TOKEN (STR_PKG_C_STATE_LIMIT_HELP),
+            default  = 255, defaultstore = MyStandardDefault,
+            option text = STRING_TOKEN (STR_PKG_C_STATE_LIMIT_C0_C1), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_PKG_C_STATE_LIMIT_C6), value = 3, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_PKG_C_STATE_LIMIT_C10), value = 8, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_PKG_C_STATE_LIMIT_CPU_DEFAULT), value = 254, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_PKG_C_STATE_LIMIT_AUTO), value = 255, flags = RESET_REQUIRED;
+        endoneof;
+
+        text
+             help   = STRING_TOKEN (STR_EMPTY_STRING),
+             text   = STRING_TOKEN (STR_IOM_STATE),
+             flags  = 0, key = 0;
+
+      endif;
+
+      oneof varid   = CPU_SETUP.EnableThermalMonitor,
+        prompt      = STRING_TOKEN (STR_THERMAL_MONITOR_PROMPT),
+        help        = STRING_TOKEN (STR_THERMAL_MONITOR_PROMPT_HELP),
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid = CPU_SETUP.InterruptRedirectMode,
+        prompt   = STRING_TOKEN (STR_IRC_MODE_PROMPT),
+        help     = STRING_TOKEN (STR_IRC_MODE_HELP),
+        option text = STRING_TOKEN (STR_IRC_MODE_FIXED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_IRC_MODE_ROUND_ROBIN), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_IRC_MODE_HASH_VECTOR), value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_IRC_MODE_AUTO), value = 7, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif  ideqval SETUP_CPU_FEATURES.TimedMwaitSupported == 0;
+        oneof varid   = CPU_SETUP.TimedMwait,
+          prompt      = STRING_TOKEN (STR_TIMED_MWAIT_PROMPT),
+          help        = STRING_TOKEN (STR_TIMED_MWAIT_PROMPT_HELP),
+          option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags =  RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      goto VID_OPTIONS_FORM_ID,
+        prompt = STRING_TOKEN (STR_CUSTOM_P_STATE_FORM_TITLE),
+        help = STRING_TOKEN (STR_CUSTOM_P_STATE_FORM_HELP);
+
+
+
+ // EC turbo control test mode
+   suppressif ((NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorMobile) AND
+               (NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorEmbedded)) OR
+              ideqval CPU_SETUP.TurboMode == 0;
+        oneof varid  = CPU_SETUP.EcTurboControlMode,
+            prompt   = STRING_TOKEN (STR_EC_TURBO_CONTROL_MODE),
+            help     = STRING_TOKEN (STR_EC_TURBO_CONTROL_MODE_HELP),
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+    endif;
+
+   suppressif ideqval CPU_SETUP.EcTurboControlMode == 0;
+        oneof varid  = CPU_SETUP.AcBrickCapacity,
+            prompt   = STRING_TOKEN (STR_AC_BRICK_CAPACITY),
+            help     = STRING_TOKEN (STR_AC_BRICK_CAPACITY_HELP),
+            option text = STRING_TOKEN (STR_90W_AC_BRICK),  value = 1, flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_65W_AC_BRICK),  value = 2, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_75W_AC_BRICK),  value = 3, flags = RESET_REQUIRED;
+          endoneof;
+
+      numeric varid = CPU_SETUP.EcPollingPeriod,
+            prompt  = STRING_TOKEN (STR_EC_POLLING_PERIOD),
+            help    = STRING_TOKEN (STR_EC_POLLING_PERIOD_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 1,
+            maximum = 255,
+            step    = 1,
+            default = 1,
+      endnumeric;
+
+      numeric varid = CPU_SETUP.EcGuardBandValue,
+            prompt  = STRING_TOKEN (STR_EC_GUARD_BAND),
+            help    = STRING_TOKEN (STR_EC_GUARD_BAND_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 20,
+            step    = 1,
+            default = 0,
+      endnumeric;
+
+      numeric varid = CPU_SETUP.EcAlgorithmSel,
+            prompt  = STRING_TOKEN (STR_EC_ALGORITHM_SEL),
+            help    = STRING_TOKEN (STR_EC_ALGORITHM_SEL_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 1,
+            maximum = 10,
+            step    = 1,
+            default = 1,
+      endnumeric;
+
+    endif;
+// EC turbo control test mode *** end
+
+  // Power Floor Controls
+    oneof varid   = CPU_SETUP.PowerFloorManagement,
+      prompt      = STRING_TOKEN (STR_POWER_FLOOR_MANAGEMENT_PROMPT),
+      help        = STRING_TOKEN (STR_POWER_FLOOR_MANAGEMENT_HELP),
+      option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_ENABLED),   value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval CPU_SETUP.PowerFloorManagement == 0;
+      oneof varid   = CPU_SETUP.PowerFloorDisplayDisconnect,
+        prompt      = STRING_TOKEN (STR_POWER_FLOOR_DISPLAY_DISCONNECT_PROMPT),
+        help        = STRING_TOKEN (STR_POWER_FLOOR_DISPLAY_DISCONNECT_HELP),
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),   value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;  //suppressif
+
+    suppressif ideqval CPU_SETUP.PowerFloorManagement == 0;
+      oneof varid   = CPU_SETUP.PowerFloorPcieGenDowngrade,
+        prompt      = STRING_TOKEN (STR_POWER_FLOOR_PCIE_GEN_DOWNGRADE_PROMPT),
+        help        = STRING_TOKEN (STR_POWER_FLOOR_PCIE_GEN_DOWNGRADE_HELP),
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),   value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;  //suppressif
+
+    goto CPU_PL3_OPTIONS_FORM_ID,
+      prompt = STRING_TOKEN (STR_PL3_FORM_TITLE),
+      help = STRING_TOKEN (STR_PL3_FORM_TITLE_HELP);
+
+    goto CPU_LOCK_OPTIONS_FORM_ID,
+      prompt  = STRING_TOKEN (STR_CPU_LOCK_CONFIGURATION),
+      help    = STRING_TOKEN (STR_CPU_LOCK_CONFIGURATION_HELP);
+
+    suppressif NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorDesktop;
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+      grayoutif ideqval SETUP_DATA.IpfEnable == 1;
+#endif
+        oneof varid   = CPU_SETUP.DualTauBoost,
+          prompt      = STRING_TOKEN(STR_DUAL_TAU_BOOST),
+          help        = STRING_TOKEN(STR_DUAL_TAU_BOOST_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+      endif; // grayoutif
+#endif
+    endif;
+
+  endform; // CPU_POWER_FORM_ID
+
+  form formid = AUTO_ID(VID_OPTIONS_FORM_ID),
+  title = STRING_TOKEN (STR_CUSTOM_P_STATE_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN (STR_CUSTOM_P_STATE_FORM_TITLE))
+      SEPARATOR
+
+      numeric varid = CPU_SETUP.NumOfCustomPStates,
+            prompt  = STRING_TOKEN (STR_NUMBER_OF_CUSTOM_P_STATES),
+            help    = STRING_TOKEN (STR_NUMBER_OF_CUSTOM_P_STATES_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 0,
+            maximum = MAX_CUSTOM_P_STATES,
+            step    = 0,
+            default = 0,
+      endnumeric;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 2;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_0],
+                prompt  = STRING_TOKEN (STR_MAX_P_STATE_RATIO),
+                help    = STRING_TOKEN (STR_MAX_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_1],
+            prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO1),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 3;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_2],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO2),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 4;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_3],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO3),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 5;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_4],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO4),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 6;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_5],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO5),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 7;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_6],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO6),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 8;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_7],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO7),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 9;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_8],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO8),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 10;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_9],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO9),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 11;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_10],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO10),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 12;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_11],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO11),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 13;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_12],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO12),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 14;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_13],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO13),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 15;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_14],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO14),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 16;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_15],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO15),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 17;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_16],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO16),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 18;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_17],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO17),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 19;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_18],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO18),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 20;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_19],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO19),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 21;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_20],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO20),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 22;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_21],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO21),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 23;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_22],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO22),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 24;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_23],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO23),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 25;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_24],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO24),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 26;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_25],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO25),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 27;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_26],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO26),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 28;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_27],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO27),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 29;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_28],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO28),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 30;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_29],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO29),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 31;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_30],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO30),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 32;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_31],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO31),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 33;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_32],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO32),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 34;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_33],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO33),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 35;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_34],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO34),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 36;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_35],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO35),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 37;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_36],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO36),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 38;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_37],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO37),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 39;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_38],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO38),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 40;
+        numeric varid   = CPU_SETUP.StateRatio[OFFSET_39],
+                prompt  = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO39),
+                help    = STRING_TOKEN (STR_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval CPU_SETUP.NumOfCustomPStates < 17;
+        SEPARATOR
+        SUBTITLE(STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_SUBTITLE))
+        SEPARATOR
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_0],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO0),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_1],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO1),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_2],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO2),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_3],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO3),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_4],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO4),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_5],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO5),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_6],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO6),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_7],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO7),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_8],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO8),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_9],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO9),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_10],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO10),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_11],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO11),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_12],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO12),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_13],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO13),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_14],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO14),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+        numeric varid   = CPU_SETUP.StateRatioMax16[OFFSET_15],
+                prompt  = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO15),
+                help    = STRING_TOKEN (STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP),
+                flags   = RESET_REQUIRED,
+                minimum = 0,
+                maximum = 0x7F,
+                step    = 0,
+                default = 0,
+        endnumeric;
+
+      endif;
+
+  endform; // VID_OPTIONS_FORM_ID
+
+  form formid = AUTO_ID(CPU_TURBO_RATIO_LIMIT_FORM_ID),
+  title = STRING_TOKEN (STR_CPU_TURBO_RATIO_LIMIT_FORM_TITLE);
+
+    SUBTITLE(STRING_TOKEN (STR_CPU_TURBO_RATIO_LIMIT_SETTINGS))
+    SEPARATOR
+
+    //
+    // All Big cores are disabled, hide the options.
+    //
+    suppressif ideqval CPU_SETUP.ActiveCoreCount == 0  OR ideqval CPU_SETUP.AllBigCoreCount == 0;
+
+      text
+        help   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE0_HELP),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE0_STRING),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE0_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE1_HELP),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE1_STRING),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE1_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE2_HELP),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE2_STRING),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE2_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE3_HELP),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE3_STRING),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE3_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE4_HELP),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE4_STRING),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE4_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE5_HELP),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE5_STRING),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE5_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE6_HELP),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE6_STRING),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE6_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE7_HELP),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE7_STRING),
+        text   = STRING_TOKEN(STR_TURBO_RATIO_LIMIT_NUMCORE7_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO0_HELP),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO0_STRING),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO0_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO1_HELP),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO1_STRING),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO1_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO2_HELP),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO2_STRING),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO2_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO3_HELP),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO3_STRING),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO3_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO4_HELP),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO4_STRING),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO4_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO5_HELP),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO5_STRING),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO5_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO6_HELP),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO6_STRING),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO6_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO7_HELP),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO7_STRING),
+        text   = STRING_TOKEN (STR_TURBO_RATIO_LIMIT_RATIO7_VALUE),
+      flags  = 0, key = 0;
+
+    endif; //suppressif
+
+    SEPARATOR
+
+    //
+    // All small cores are disabled, hide the options.
+    //
+    suppressif ideqval CPU_SETUP.ActiveSmallCoreCount == 0 OR ideqval CPU_SETUP.AllSmallCoreCount == 0;
+
+      text
+        help   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE0_HELP),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE0_STRING),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE0_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE1_HELP),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE1_STRING),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE1_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE2_HELP),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE2_STRING),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE2_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE3_HELP),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE3_STRING),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE3_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE4_HELP),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE4_STRING),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE4_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE5_HELP),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE5_STRING),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE5_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE6_HELP),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE6_STRING),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE6_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE7_HELP),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE7_STRING),
+        text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE7_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO0_HELP),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO0_STRING),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO0_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO1_HELP),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO1_STRING),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO1_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO2_HELP),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO2_STRING),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO2_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO3_HELP),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO3_STRING),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO3_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO4_HELP),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO4_STRING),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO4_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO5_HELP),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO5_STRING),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO5_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO6_HELP),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO6_STRING),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO6_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO7_HELP),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO7_STRING),
+        text   = STRING_TOKEN (STR_ATOM_TURBO_RATIO_LIMIT_RATIO7_VALUE),
+        flags  = 0, key = 0;
+
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval CPU_SETUP.ActiveCoreCount == 0  OR ideqval CPU_SETUP.AllBigCoreCount == 0;
+
+      numeric varid   = CPU_SETUP.RatioLimitNumCore[0],
+              prompt  = STRING_TOKEN(STR_TRLC_CORE0_OVERRIDE),
+              help    = STRING_TOKEN(STR_TRLC_CORE0_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitNumCore0),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitNumCore[1],
+              prompt  = STRING_TOKEN(STR_TRLC_CORE1_OVERRIDE),
+              help    = STRING_TOKEN(STR_TRLC_CORE1_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitNumCore1),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitNumCore[2],
+              prompt  = STRING_TOKEN(STR_TRLC_CORE2_OVERRIDE),
+              help    = STRING_TOKEN(STR_TRLC_CORE2_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitNumCore2),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitNumCore[3],
+              prompt  = STRING_TOKEN(STR_TRLC_CORE3_OVERRIDE),
+              help    = STRING_TOKEN(STR_TRLC_CORE3_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitNumCore3),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitNumCore[4],
+              prompt  = STRING_TOKEN(STR_TRLC_CORE4_OVERRIDE),
+              help    = STRING_TOKEN(STR_TRLC_CORE4_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitNumCore4),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitNumCore[5],
+              prompt  = STRING_TOKEN(STR_TRLC_CORE5_OVERRIDE),
+              help    = STRING_TOKEN(STR_TRLC_CORE5_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitNumCore5),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitNumCore[6],
+              prompt  = STRING_TOKEN(STR_TRLC_CORE6_OVERRIDE),
+              help    = STRING_TOKEN(STR_TRLC_CORE6_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitNumCore6),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitNumCore[7],
+              prompt  = STRING_TOKEN(STR_TRLC_CORE7_OVERRIDE),
+              help    = STRING_TOKEN(STR_TRLC_CORE7_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitNumCore7),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitRatio[0],
+              prompt  = STRING_TOKEN (STR_TRLR_RATIO0_OVERRIDE),
+              help    = STRING_TOKEN (STR_TRLR_RATIO0_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitRatio0),
+              minimum = 0,
+              maximum = 83,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitRatio[1],
+              prompt  = STRING_TOKEN (STR_TRLR_RATIO1_OVERRIDE),
+              help    = STRING_TOKEN (STR_TRLR_RATIO1_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitRatio1),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitRatio[2],
+              prompt  = STRING_TOKEN (STR_TRLR_RATIO2_OVERRIDE),
+              help    = STRING_TOKEN (STR_TRLR_RATIO2_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitRatio2),
+              minimum = 0,
+              maximum = 83,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitRatio[3],
+              prompt  = STRING_TOKEN (STR_TRLR_RATIO3_OVERRIDE),
+              help    = STRING_TOKEN (STR_TRLR_RATIO3_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitRatio3),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitRatio[4],
+              prompt  = STRING_TOKEN (STR_TRLR_RATIO4_OVERRIDE),
+              help    = STRING_TOKEN (STR_TRLR_RATIO4_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitRatio4),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitRatio[5],
+              prompt  = STRING_TOKEN (STR_TRLR_RATIO5_OVERRIDE),
+              help    = STRING_TOKEN (STR_TRLR_RATIO5_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitRatio5),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitRatio[6],
+              prompt  = STRING_TOKEN (STR_TRLR_RATIO6_OVERRIDE),
+              help    = STRING_TOKEN (STR_TRLR_RATIO6_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitRatio6),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.RatioLimitRatio[7],
+              prompt  = STRING_TOKEN (STR_TRLR_RATIO7_OVERRIDE),
+              help    = STRING_TOKEN (STR_TRLR_RATIO7_OVERRIDE_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_RatioLimitRatio7),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+    endif; // suppressif
+
+    //
+    // All small cores are disabled, hide the options.
+    //
+    suppressif ideqval CPU_SETUP.ActiveSmallCoreCount == 0 OR ideqval CPU_SETUP.AllSmallCoreCount == 0;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitNumCore[0],
+              prompt  = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE0),
+              help    = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE0_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitNumCore0),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitNumCore[1],
+              prompt  = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE1),
+              help    = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE1_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitNumCore1),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitNumCore[2],
+              prompt  = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE2),
+              help    = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE2_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitNumCore2),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitNumCore[3],
+              prompt  = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE3),
+              help    = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE3_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitNumCore3),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitNumCore[4],
+              prompt  = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE4),
+              help    = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE4_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitNumCore4),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitNumCore[5],
+              prompt  = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE5),
+              help    = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE5_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitNumCore5),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitNumCore[6],
+              prompt  = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE6),
+              help    = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE6_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitNumCore6),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitNumCore[7],
+              prompt  = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE7),
+              help    = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE7_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitNumCore7),
+              minimum = 0,
+              maximum = 255,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitRatio[0],
+              prompt  = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO0),
+              help    = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO0_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitRatio0),
+              minimum = 0,
+              maximum = 83,      //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitRatio[1],
+              prompt  = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO1),
+              help    = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO1_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitRatio1),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitRatio[2],
+              prompt  = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO2),
+              help    = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO2_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitRatio2),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitRatio[3],
+              prompt  = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO3),
+              help    = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO3_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitRatio3),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitRatio[4],
+              prompt  = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO4),
+              help    = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO4_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitRatio4),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitRatio[5],
+              prompt  = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO5),
+              help    = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO5_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitRatio5),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitRatio[6],
+              prompt  = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO6),
+              help    = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO6_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitRatio6),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.AtomRatioLimitRatio[7],
+              prompt  = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO7),
+              help    = STRING_TOKEN (STR_ATOM_RATIO_LIMIT_RATIO7_HELP),
+              flags   = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_AtomRatioLimitRatio7),
+              minimum = 0,
+              maximum = 83,       //
+              step    = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                  // otherwise it will auto-increment with a left/right arrow
+              default = 0,
+      endnumeric;
+
+    endif; // suppressif ideqval CPU_SETUP.ActiveSmallCoreCount
+
+  endform; // CPU_TURBO_RATIO_LIMIT_FORM_ID
+
+  form formid = AUTO_ID(CPU_TURBO_OPTIONS_FORM_ID),
+  title = STRING_TOKEN (STR_CPU_TURBO_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN (STR_CPU_TURBO_SETTINGS))
+      SEPARATOR
+
+      text
+        help   = STRING_TOKEN (STR_MAX_TURBO_POWER_LIMIT_HELP),
+        text   = STRING_TOKEN (STR_MAX_TURBO_POWER_LIMIT_STRING),
+        text   = STRING_TOKEN (STR_MAX_TURBO_POWER_LIMIT_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_MIN_TURBO_POWER_LIMIT_HELP),
+        text   = STRING_TOKEN (STR_MIN_TURBO_POWER_LIMIT_STRING),
+        text   = STRING_TOKEN (STR_MIN_TURBO_POWER_LIMIT_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_TDP_LIMIT_HELP),
+        text   = STRING_TOKEN (STR_TDP_LIMIT_STRING),
+        text   = STRING_TOKEN (STR_TDP_LIMIT_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_LONG_DUR_PWR_LIMIT_HELP),
+        text   = STRING_TOKEN (STR_LONG_DUR_PWR_LIMIT_STRING),
+        text   = STRING_TOKEN (STR_LONG_DUR_PWR_LIMIT_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_SHORT_DUR_PWR_LIMIT_HELP),
+        text   = STRING_TOKEN (STR_SHORT_DUR_PWR_LIMIT_STRING),
+        text   = STRING_TOKEN (STR_SHORT_DUR_PWR_LIMIT_VALUE),
+        flags  = 0, key = 0;
+
+      SEPARATOR
+
+      goto CPU_TURBO_RATIO_LIMIT_FORM_ID,
+        prompt = STRING_TOKEN (STR_CPU_TURBO_RATIO_LIMIT_FORM_TITLE),
+        help = STRING_TOKEN (STR_CPU_TURBO_RATIO_LIMIT_FORM_HELP);
+
+      suppressif ideqval CPU_SETUP.EnableGv == 0
+                         OR ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorUpServer;
+        oneof varid   = CPU_SETUP.EnergyEfficientPState,
+            prompt   = STRING_TOKEN (STR_ENERGY_EFFICIENT_P_STATE),
+            help     = STRING_TOKEN (STR_ENERGY_EFFICIENT_P_STATE_HELP),
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+       endif;
+
+       suppressif ideqval CPU_SETUP.EnableGv == 0;
+        oneof varid  = CPU_SETUP.TurboPowerLimitLock,
+            prompt   = STRING_TOKEN (STR_PKG_PWR_LIMIT_LOCK),
+            help     = STRING_TOKEN (STR_PKG_PWR_LIMIT_LOCK_HELP),
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+       endif;
+
+       suppressif ideqval SETUP_CPU_FEATURES.ConfigTdpAvailable == 1;
+        oneof varid  = CPU_SETUP.LongDurationPwrLimitOverride,
+            prompt   = STRING_TOKEN (STR_LONG_DUR_PWR_LIMIT_OVERRIDE),
+            help     = STRING_TOKEN (STR_LONG_DUR_PWR_LIMIT_OVERRIDE_HELP),
+            default  = 0, defaultstore = MyStandardDefault,
+            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+       suppressif ideqval SETUP_CPU_FEATURES.ConfigTdpAvailable == 1
+                       OR  ideqval CPU_SETUP.LongDurationPwrLimitOverride == 0;
+          numeric varid   = CPU_SETUP.PowerLimit1,
+              prompt   = STRING_TOKEN (STR_LONG_DUR_PWR_LIMIT),
+              help     = STRING_TOKEN (STR_LONG_DUR_PWR_LIMIT_HELP),
+              flags    = 0 | RESET_REQUIRED,
+              minimum  = 0,
+              maximum  = 4095875,
+              step     = 125,        // Stepping of 0 equates to a manual entering of a value,
+                                   // otherwise it will auto-increment with a left/right arrow
+              default  = 0, defaultstore = MyStandardDefault,
+          endnumeric;
+      endif;
+
+      suppressif ideqval SETUP_CPU_FEATURES.ConfigTdpAvailable == 1
+                       OR  ideqval CPU_SETUP.LongDurationPwrLimitOverride == 0;
+          oneof varid   = CPU_SETUP.PowerLimit1Time,
+              prompt   = STRING_TOKEN (STR_LONG_DUR_TIME_WINDOW),
+              help     = STRING_TOKEN (STR_LONG_DUR_TIME_WINDOW_HELP),
+              flags    = 0 | RESET_REQUIRED,
+              default  = 0, defaultstore = MyStandardDefault,
+              option text = STRING_TOKEN (STR_0),  value = 0, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_1),  value = 1, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_2),  value = 2, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_3),  value = 3, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_4),  value = 4, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_5),  value = 5, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_6),  value = 6, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_7),  value = 7, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_8),  value = 8, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_10),  value = 10, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_12),  value = 12, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_14),  value = 14, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_16),  value = 16, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_20),  value = 20, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_24),  value = 24, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_28),  value = 28, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_32),  value = 32, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_40),  value = 40, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_48),  value = 48, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_56),  value = 56, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_64),  value = 64, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_80),  value = 80, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_96),  value = 96, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_112),  value = 112, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_128),  value = 128, flags = RESET_REQUIRED;
+          endoneof;
+      endif;
+
+      suppressif ideqval SETUP_CPU_FEATURES.ConfigTdpAvailable == 1;
+          oneof varid  = CPU_SETUP.PowerLimit2,
+             prompt   = STRING_TOKEN (STR_SHORT_DUR_PWR_LIMIT_OVERRIDE),
+             help     = STRING_TOKEN (STR_SHORT_DUR_PWR_LIMIT_OVERRIDE_HELP),
+             option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags =RESET_REQUIRED;
+             option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          endoneof;
+      endif;
+
+      suppressif ideqval SETUP_CPU_FEATURES.ConfigTdpAvailable == 1
+                        OR ideqval CPU_SETUP.PowerLimit2 == 0;
+          numeric varid   = CPU_SETUP.PowerLimit2Power,
+              prompt   = STRING_TOKEN (STR_SHORT_DUR_PWR_LIMIT2),
+              help     = STRING_TOKEN (STR_SHORT_DUR_PWR_LIMIT_HELP),
+              flags    = 0 | RESET_REQUIRED,
+              minimum  = 0,
+              maximum  = 4095875,
+              step     = 125,        // Stepping of 0 equates to a manual entering of a value,
+                                   // otherwise it will auto-increment with a left/right arrow
+              default  = 0, defaultstore = MyStandardDefault,
+          endnumeric;
+       endif;
+
+        oneof varid  = CPU_SETUP.EnergyEfficientTurbo,
+           prompt   = STRING_TOKEN (STR_ENERGY_EFFICIENT_TURBO_PROMPT),
+           help     = STRING_TOKEN (STR_ENERGY_EFFICIENT_TURBO_HELP),
+           option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+           option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+        endoneof;
+  endform; // CPU_TURBO_OPTIONS_FORM_ID
+
+  form formid = AUTO_ID(SKIN_TEMP_CONTROL_FORM_ID),
+  title = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_TITLE);
+
+    SUBTITLE(STRING_TOKEN (STR_SKIN_TEMP_CONTROL_TITLE))
+    SEPARATOR
+
+    oneof varid = CPU_SETUP.SkinTempControl,
+      prompt = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_ENABLE_TITLE),
+      help   = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_ENABLE_HELP),
+      option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT| MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_ENABLED),   value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval CPU_SETUP.SkinTempControl == 0;
+      goto SKIN_TEMP_CONTROL_SENSOR_0_FORM_ID,
+        prompt = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_1_FORM_TITLE),
+        help = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_1_FORM_HELP);
+
+      goto SKIN_TEMP_CONTROL_SENSOR_1_FORM_ID,
+        prompt = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_2_FORM_TITLE),
+        help = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_2_FORM_HELP);
+
+      goto SKIN_TEMP_CONTROL_SENSOR_2_FORM_ID,
+        prompt = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_3_FORM_TITLE),
+        help = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_3_FORM_HELP);
+    endif;    // grayoutif
+
+  endform; //SKIN_TEMP_CONTROL_FORM_ID
+
+  form formid = AUTO_ID(SKIN_TEMP_CONTROL_SENSOR_0_FORM_ID),
+  title = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_1_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_1_FORM_TITLE))
+      SEPARATOR
+
+      numeric varid   = CPU_SETUP.SkinTargetTemp[SENSOR_0],
+        prompt        = STRING_TOKEN (STR_TARGET_TEMP),
+        help          = STRING_TOKEN (STR_TARGET_TEMP_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 255,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+      oneof varid     = CPU_SETUP.SkinTempControlEnable[SENSOR_0],
+        prompt        = STRING_TOKEN (STR_SKIN_CONTROL_ENABLE_MMIO),
+        help          = STRING_TOKEN (STR_SKIN_CONTROL_ENABLE_MMIO_HELP),
+        option text   = STRING_TOKEN (STR_DISABLED),  value = 0, flags =DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text   = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      numeric varid   = CPU_SETUP.SkinControlLoopGain[SENSOR_0],
+        prompt        = STRING_TOKEN (STR_CONTROL_LOOP_GAIN),
+        help          = STRING_TOKEN (STR_CONTROL_LOOP_GAIN_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 7,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+      oneof varid     = CPU_SETUP.SkinTempOverrideEnable[SENSOR_0],
+        prompt        = STRING_TOKEN (STR_TEMP_OVERRIDE_ENABLE),
+        help          = STRING_TOKEN (STR_TEMP_OVERRIDE_ENABLE_HELP),
+        option text   = STRING_TOKEN (STR_DISABLED),  value = 0, flags =DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text   = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      numeric varid   = CPU_SETUP.SkinMinPerformanceLevel[SENSOR_0],
+        prompt        = STRING_TOKEN (STR_MIN_PERFORMANCE_LEVEL),
+        help          = STRING_TOKEN (STR_MIN_PERFORMANCE_LEVEL_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 255,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.SkinTempOverride[SENSOR_0],
+        prompt        = STRING_TOKEN (STR_TEMP_OVERRIDE),
+        help          = STRING_TOKEN (STR_TEMP_OVERRIDE_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 255,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+  endform; //SKIN_TEMP_CONTROL_SENSOR_0_FORM_ID
+
+  form formid = AUTO_ID(SKIN_TEMP_CONTROL_SENSOR_1_FORM_ID),
+  title = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_2_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_2_FORM_TITLE))
+      SEPARATOR
+
+      numeric varid   = CPU_SETUP.SkinTargetTemp[SENSOR_1],
+        prompt        = STRING_TOKEN (STR_TARGET_TEMP),
+        help          = STRING_TOKEN (STR_TARGET_TEMP_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 255,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+      oneof varid     = CPU_SETUP.SkinTempControlEnable[SENSOR_1],
+        prompt        = STRING_TOKEN (STR_SKIN_CONTROL_ENABLE_MMIO),
+        help          = STRING_TOKEN (STR_SKIN_CONTROL_ENABLE_MMIO_HELP),
+        option text   = STRING_TOKEN (STR_DISABLED),  value = 0, flags =DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text   = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      numeric varid   = CPU_SETUP.SkinControlLoopGain[SENSOR_1],
+        prompt        = STRING_TOKEN (STR_CONTROL_LOOP_GAIN),
+        help          = STRING_TOKEN (STR_CONTROL_LOOP_GAIN_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 7,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+      oneof varid     = CPU_SETUP.SkinTempOverrideEnable[SENSOR_1],
+        prompt        = STRING_TOKEN (STR_TEMP_OVERRIDE_ENABLE),
+        help          = STRING_TOKEN (STR_TEMP_OVERRIDE_ENABLE_HELP),
+        option text   = STRING_TOKEN (STR_DISABLED),  value = 0, flags =DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text   = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      numeric varid   = CPU_SETUP.SkinMinPerformanceLevel[SENSOR_1],
+        prompt        = STRING_TOKEN (STR_MIN_PERFORMANCE_LEVEL),
+        help          = STRING_TOKEN (STR_MIN_PERFORMANCE_LEVEL_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 255,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.SkinTempOverride[SENSOR_1],
+        prompt        = STRING_TOKEN (STR_TEMP_OVERRIDE),
+        help          = STRING_TOKEN (STR_TEMP_OVERRIDE_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 255,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+  endform; //SKIN_TEMP_CONTROL_SENSOR_1_FORM_ID
+
+  form formid = AUTO_ID(SKIN_TEMP_CONTROL_SENSOR_2_FORM_ID),
+  title = STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_3_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN (STR_SKIN_TEMP_CONTROL_SENSOR_3_FORM_TITLE))
+      SEPARATOR
+
+      numeric varid   = CPU_SETUP.SkinTargetTemp[SENSOR_2],
+        prompt        = STRING_TOKEN (STR_TARGET_TEMP),
+        help          = STRING_TOKEN (STR_TARGET_TEMP_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 255,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+      oneof varid     = CPU_SETUP.SkinTempControlEnable[SENSOR_2],
+        prompt        = STRING_TOKEN (STR_SKIN_CONTROL_ENABLE_MMIO),
+        help          = STRING_TOKEN (STR_SKIN_CONTROL_ENABLE_MMIO_HELP),
+        option text   = STRING_TOKEN (STR_DISABLED),  value = 0, flags =DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text   = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      numeric varid   = CPU_SETUP.SkinControlLoopGain[SENSOR_2],
+        prompt        = STRING_TOKEN (STR_CONTROL_LOOP_GAIN),
+        help          = STRING_TOKEN (STR_CONTROL_LOOP_GAIN_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 7,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+      oneof varid     = CPU_SETUP.SkinTempOverrideEnable[SENSOR_2],
+        prompt        = STRING_TOKEN (STR_TEMP_OVERRIDE_ENABLE),
+        help          = STRING_TOKEN (STR_TEMP_OVERRIDE_ENABLE_HELP),
+        option text   = STRING_TOKEN (STR_DISABLED),  value = 0, flags =DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text   = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      numeric varid   = CPU_SETUP.SkinMinPerformanceLevel[SENSOR_2],
+        prompt        = STRING_TOKEN (STR_MIN_PERFORMANCE_LEVEL),
+        help          = STRING_TOKEN (STR_MIN_PERFORMANCE_LEVEL_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 255,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+      numeric varid   = CPU_SETUP.SkinTempOverride[SENSOR_2],
+        prompt        = STRING_TOKEN (STR_TEMP_OVERRIDE),
+        help          = STRING_TOKEN (STR_TEMP_OVERRIDE_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 255,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+  endform; //SKIN_TEMP_CONTROL_SENSOR_2_FORM_ID
+
+  form formid = AUTO_ID(CPU_VR_OPTIONS_FORM_ID),
+  title = STRING_TOKEN (STR_CPU_VR_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN (STR_CPU_VR_SETTINGS))
+      SEPARATOR
+
+      numeric varid   = CPU_SETUP.PsysSlope,
+        prompt        = STRING_TOKEN (STR_PSYS_SLOPE),
+        help          = STRING_TOKEN (STR_PSYS_SLOPE_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 200,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+    suppressif ideqval SYSTEM_ACCESS.Access == SYSTEM_PASSWORD_USER;
+      oneof varid     = CPU_SETUP.ThETAIbattEnable,
+        prompt        = STRING_TOKEN (STR_THETA_IBATT),
+        help          = STRING_TOKEN (STR_THETA_IBATT_HELP),
+        option text   = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text   = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval CPU_SETUP.ThETAIbattEnable == 0;
+        oneof varid   = CPU_SETUP.IsysCurrentLimitL1Enable,
+          prompt      = STRING_TOKEN (STR_ISYS_CURRENT_LIMIT_L1_ENABLE),
+          help        = STRING_TOKEN (STR_ISYS_CURRENT_LIMIT_L1_ENABLE_HELP),
+          option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        oneof varid   = CPU_SETUP.IsysCurrentLimitL2Enable,
+          prompt      = STRING_TOKEN (STR_ISYS_CURRENT_LIMIT_L2_ENABLE),
+          help        = STRING_TOKEN (STR_ISYS_CURRENT_LIMIT_L2_ENABLE_HELP),
+          option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif ideqval CPU_SETUP.IsysCurrentLimitL1Enable == 0;
+          numeric varid   = CPU_SETUP.IsysCurrentLimitL1,
+            prompt        = STRING_TOKEN (STR_ISYS_CURRENT_LIMIT_L1),
+            help          = STRING_TOKEN (STR_ISYS_CURRENT_LIMIT_L1_HELP),
+            flags         = RESET_REQUIRED,
+            minimum       = 0,
+            maximum       = 0x7FFF,
+            step          = 1,
+            default       = 0x0,
+          endnumeric;
+
+          oneof varid   = CPU_SETUP.IsysCurrentL1Tau,
+            prompt      = STRING_TOKEN (STR_ISYS_CURRENT_L1_TAU),
+            help        = STRING_TOKEN (STR_ISYS_CURRENT_L1_TAU_HELP),
+            option text = STRING_TOKEN (STR_0),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_1),  value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_2),  value = 2, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_3),  value = 3, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_4),  value = 4, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_5),  value = 5, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_6),  value = 6, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_7),  value = 7, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_8),  value = 8, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_10),  value = 10, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_12),  value = 12, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_14),  value = 14, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_16),  value = 16, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_20),  value = 20, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_24),  value = 24, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_28),  value = 28, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_32),  value = 32, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_40),  value = 40, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_48),  value = 48, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_56),  value = 56, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_64),  value = 64, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_80),  value = 80, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_96),  value = 96, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_112),  value = 112, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN (STR_128),  value = 128, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+
+        suppressif ideqval CPU_SETUP.IsysCurrentLimitL2Enable == 0;
+          numeric varid   = CPU_SETUP.IsysCurrentLimitL2,
+            prompt        = STRING_TOKEN (STR_ISYS_CURRENT_LIMIT_L2),
+            help          = STRING_TOKEN (STR_ISYS_CURRENT_LIMIT_L2_HELP),
+            flags         = RESET_REQUIRED,
+            minimum       = 0,
+            maximum       = 0x7FFF,
+            step          = 1,
+            default       = 0x0,
+          endnumeric;
+        endif;
+
+        numeric varid   = CPU_SETUP.VsysMax,
+          prompt        = STRING_TOKEN (STR_VSYS_MAX),
+          help          = STRING_TOKEN (STR_VSYS_MAX_HELP),
+          flags         = RESET_REQUIRED,
+          minimum       = 0,
+          maximum       = 65535,
+          step          = 1,
+          default       = 0x0,
+        endnumeric;
+      endif;
+    endif;
+
+      numeric varid   = CPU_SETUP.PsysOffset,
+        prompt        = STRING_TOKEN (STR_PSYS_OFFSET),
+        help          = STRING_TOKEN (STR_PSYS_OFFSET_HELP),
+        flags         = RESET_REQUIRED,
+        minimum       = 0,
+        maximum       = 128000,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+
+      oneof varid   = CPU_SETUP.PsysOffsetPrefix,
+        prompt      = STRING_TOKEN (STR_PSYS_OFFSET_PREFIX),
+        help        = STRING_TOKEN (STR_PSYS_OFFSET_PREFIX_HELP),
+        option text = STRING_TOKEN (STR_POSITIVE_SIGN),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_NEGATIVE_SIGN),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      numeric varid = CPU_SETUP.PsysPmax,
+        prompt  = STRING_TOKEN (STR_PSYS_MAX),
+        help    = STRING_TOKEN (STR_PSYS_MAX_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 0,
+        maximum = 0x1FFF,
+        step    = 1,
+        default = 0, defaultstore = MyStandardDefault,
+      endnumeric;
+
+      oneof varid = CPU_SETUP.EnableVsysCritical,
+        prompt      = STRING_TOKEN (STR_VSYS_PSYS_CRITICAL),
+        help        = STRING_TOKEN (STR_VSYS_PSYS_CRITICAL_HELP),
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_PSYS_CRITICAL),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_VSYS_CRITICAL),  value = 2, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif (ideqval CPU_SETUP.EnableVsysCritical == 0) OR (ideqval CPU_SETUP.EnableVsysCritical == 2);
+        numeric varid = CPU_SETUP.PsysFullScale,
+          prompt  = STRING_TOKEN (STR_VSYS_PSYS_FULL_SCALE),
+          help    = STRING_TOKEN (STR_VSYS_PSYS_FULL_SCALE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 255000,
+          step    = 1,
+          default = 200000,
+        endnumeric;
+
+        numeric varid = CPU_SETUP.PsysCriticalThreshold,
+          prompt  = STRING_TOKEN (STR_VSYS_PSYS_CRITICAL_THRESHOLD),
+          help    = STRING_TOKEN (STR_VSYS_PSYS_CRITICAL_THRESHOLD_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 255000,
+          step    = 1,
+          default = 120000,
+        endnumeric;
+      endif;
+
+      suppressif (ideqval CPU_SETUP.EnableVsysCritical == 0) OR (ideqval CPU_SETUP.EnableVsysCritical == 1);
+        numeric varid = CPU_SETUP.VsysFullScale,
+          prompt  = STRING_TOKEN (STR_VSYS_PSYS_FULL_SCALE),
+          help    = STRING_TOKEN (STR_VSYS_PSYS_FULL_SCALE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 255000,
+          step    = 1,
+          default = 24000,
+        endnumeric;
+
+        numeric varid = CPU_SETUP.VsysCriticalThreshold,
+          prompt  = STRING_TOKEN (STR_VSYS_PSYS_CRITICAL_THRESHOLD),
+          help    = STRING_TOKEN (STR_VSYS_PSYS_CRITICAL_THRESHOLD_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 255000,
+          step    = 1,
+          default = 6000,
+        endnumeric;
+      endif;
+
+      numeric varid = CPU_SETUP.VsysAssertionDeglitchMantissa,
+        prompt  = STRING_TOKEN (STR_VSYS_ASSERTION_MANTISSA),
+        help    = STRING_TOKEN (STR_VSYS_ASSERTION_MANTISSA_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 0,
+        maximum = 255,
+        step    = 1,
+        default = 1,
+      endnumeric;
+
+      numeric varid = CPU_SETUP.VsysAssertionDeglitchExponent,
+        prompt  = STRING_TOKEN (STR_VSYS_ASSERTION_EXPONENT),
+        help    = STRING_TOKEN (STR_VSYS_ASSERTION_EXPONENT_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 0,
+        maximum = 255,
+        step    = 1,
+        default = 0,
+      endnumeric;
+
+      numeric varid = CPU_SETUP.VsysDeassertionDeglitchMantissa,
+        prompt  = STRING_TOKEN (STR_VSYS_DEASSERTION_MANTISSA),
+        help    = STRING_TOKEN (STR_VSYS_DEASSERTION_MANTISSA_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 0,
+        maximum = 255,
+        step    = 1,
+        default = 13,
+      endnumeric;
+
+      numeric varid = CPU_SETUP.VsysDeassertionDeglitchExponent,
+        prompt  = STRING_TOKEN (STR_VSYS_DEASSERTION_EXPONENT),
+        help    = STRING_TOKEN (STR_VSYS_DEASSERTION_EXPONENT_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 0,
+        maximum = 255,
+        step    = 1,
+        default = 2,
+      endnumeric;
+
+  suppressif TRUE;
+      goto CPU_ACOUSTIC_NOISE_FORM_ID,
+        prompt = STRING_TOKEN (STR_CPU_ACOUSTIC_NOISE_FORM_TITLE),
+        help = STRING_TOKEN (STR_CPU_ACOUSTIC_NOISE_FORM_TITLE_HELP);
+  endif;
+
+      suppressif ideqval CPU_SETUP_VOLATILE_DATA.CoreVrLocked == 1;
+        goto CPU_IA_VR_OPTIONS_FORM_ID,
+          prompt = STRING_TOKEN (STR_CPU_IA_VR_FORM_TITLE),
+          help = STRING_TOKEN (STR_CPU_IA_VR_FORM_TITLE);
+      endif;
+
+      suppressif ideqval CPU_SETUP_VOLATILE_DATA.GtVrLocked == 1;
+        goto CPU_GT_VR_OPTIONS_FORM_ID,
+          prompt = STRING_TOKEN (STR_CPU_GT_VR_FORM_TITLE),
+          help = STRING_TOKEN (STR_CPU_GT_VR_FORM_TITLE);
+      endif;
+
+      suppressif ideqval CPU_SETUP_VOLATILE_DATA.SaVrLocked == 1;
+        goto CPU_SA_VR_OPTIONS_FORM_ID,
+          prompt = STRING_TOKEN (STR_CPU_SA_VR_FORM_TITLE),
+          help = STRING_TOKEN (STR_CPU_SA_VR_FORM_TITLE);
+      endif;
+
+      suppressif ideqval CPU_SETUP_VOLATILE_DATA.AtomVrLocked == 1;
+        goto CPU_ATOM_VR_OPTIONS_FORM_ID,
+          prompt = STRING_TOKEN (STR_CPU_ATOM_VR_FORM_TITLE),
+          help = STRING_TOKEN (STR_CPU_ATOM_VR_FORM_TITLE);
+      endif;
+
+      goto CPU_RFI_VR_OPTIONS_FORM_ID,
+        prompt = STRING_TOKEN (STR_CPU_RFI_VR_FORM_TITLE),
+        help = STRING_TOKEN (STR_CPU_RFI_VR_FORM_TITLE);
+
+endform; // CPU_VR_SETTINGS
+
+    form formid = AUTO_ID(CPU_ACOUSTIC_NOISE_FORM_ID),
+    title = STRING_TOKEN (STR_CPU_ACOUSTIC_NOISE_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN (STR_CPU_ACOUSTIC_NOISE_FORM_SETTINGS))
+      SEPARATOR
+
+      oneof varid  = CPU_SETUP.AcousticNoiseMitigation,
+         prompt   = STRING_TOKEN (STR_ACOUSTIC_NOISE_MITIGATION),
+         help     = STRING_TOKEN (STR_ACOUSTIC_NOISE_MITIGATION_HELP),
+         option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+         option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      grayoutif ideqval CPU_SETUP.AcousticNoiseMitigation == 0;
+
+          ///
+          /// Pre Wake, Ramp Up and Ramp Down times programming.
+          ///
+          numeric varid = CPU_SETUP.PreWake,
+            prompt  = STRING_TOKEN (STR_PRE_WAKE),
+            help    = STRING_TOKEN (STR_PRE_WAKE_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 255,
+            step    = 1,
+            default = 0,
+          endnumeric;
+
+          numeric varid = CPU_SETUP.RampUp,
+            prompt  = STRING_TOKEN (STR_RAMP_UP),
+            help    = STRING_TOKEN (STR_RAMP_UP_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 255,
+            step    = 1,
+            default = 0,
+          endnumeric;
+
+          numeric varid = CPU_SETUP.RampDown,
+            prompt  = STRING_TOKEN (STR_RAMP_DOWN),
+            help    = STRING_TOKEN (STR_RAMP_DOWN_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 255,
+            step    = 1,
+            default = 0,
+          endnumeric;
+      endif;
+endform;
+
+  form formid = AUTO_ID (CPU_IA_VR_OPTIONS_FORM_ID),
+  title       = STRING_TOKEN (STR_CPU_IA_VR_FORM_TITLE);
+
+      SUBTITLE (STRING_TOKEN (STR_CPU_IA_VR_SETTINGS))
+      SEPARATOR
+        //
+        //  IA (Core)
+        //
+#define VR_INDEX 0
+      #include "VoltageRegulatorSetup.hfr"
+#undef  VR_INDEX
+endform;
+
+  form formid = AUTO_ID (CPU_GT_VR_OPTIONS_FORM_ID),
+  title       = STRING_TOKEN (STR_CPU_GT_VR_FORM_TITLE);
+
+      SUBTITLE (STRING_TOKEN (STR_CPU_GT_VR_SETTINGS))
+      SEPARATOR
+        //
+        //  GT
+        //
+#define VR_INDEX 1
+      #include "VoltageRegulatorSetup.hfr"
+#undef  VR_INDEX
+endform;
+
+  form formid = AUTO_ID (CPU_SA_VR_OPTIONS_FORM_ID),
+  title       = STRING_TOKEN (STR_CPU_SA_VR_FORM_TITLE);
+
+      SUBTITLE (STRING_TOKEN (STR_CPU_SA_VR_SETTINGS))
+      SEPARATOR
+        //
+        //  SA VR
+        //
+#define VR_INDEX 2
+      #include "VoltageRegulatorSetup.hfr"
+#undef  VR_INDEX
+endform;
+
+  form formid = AUTO_ID (CPU_ATOM_VR_OPTIONS_FORM_ID),
+  title       = STRING_TOKEN (STR_CPU_ATOM_VR_FORM_TITLE);
+
+      SUBTITLE (STRING_TOKEN (STR_CPU_ATOM_VR_SETTINGS))
+      SEPARATOR
+        //
+        //  ATOM
+        //
+#define VR_INDEX 3
+      #include "VoltageRegulatorSetup.hfr"
+#undef  VR_INDEX
+endform;
+
+form formid = AUTO_ID (CPU_RFI_VR_OPTIONS_FORM_ID),
+  title = STRING_TOKEN (STR_CPU_RFI_VR_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN (STR_CPU_RFI_VR_SETTINGS))
+      SEPARATOR
+      //
+      // DLVR clock frequency and SSC percentage config.
+      //
+      oneof varid  = CPU_SETUP.DlvrRfiEnable,
+        questionid  = AUTO_ID(KEY_DLVR_RFIM),
+        prompt      = STRING_TOKEN (STR_CPU_DVLR_RFI_ENABLE_PROMPT),
+        help        = STRING_TOKEN (STR_CPU_DVLR_RFI_ENABLE_PROMPT_HELP),
+        flags       = INTERACTIVE,
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval CPU_SETUP.DlvrRfiEnable == 0;
+        oneof varid  = CPU_SETUP.DlvrSpreadSpectrumPercentage,
+          prompt   = STRING_TOKEN (STR_CPU_DLVR_SSC_PERCENTAGE),
+          help     = STRING_TOKEN (STR_CPU_DLVR_SSC_PERCENTAGE_HELP),
+          flags    = 0 | RESET_REQUIRED,
+          default  = 0x02, defaultstore = MyStandardDefault,
+          option text = STRING_TOKEN (STR_0_0),    value = 0x00, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_0_5),    value = 0x02, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_1_0),    value = 0x04, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_2_0),    value = 0x08, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_4_0),    value = 0x10, flags = RESET_REQUIRED;
+        endoneof;
+
+        oneof varid   = CPU_SETUP.DlvrRfiFrequency,
+          prompt   = STRING_TOKEN (STR_CPU_DVLR_RFI_FREQ_SELECT),
+          help     = STRING_TOKEN (STR_CPU_DVLR_RFI_FREQ_SELECT_HELP),
+          flags    = 0 | RESET_REQUIRED,
+          default  = 0, defaultstore = MyStandardDefault,
+          option text = STRING_TOKEN (STR_2227_2MHZ),  value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_2140MHZ),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif;  // CPU_SETUP.DlvrRfiEnable == 0
+
+      //
+      // CPU: DLVR Phase Modulation SSC
+      //
+      suppressif ideqval SETUP_CPU_FEATURES.DlvrPhaseSscSupported == 0;
+        oneof varid  = CPU_SETUP.DlvrPhaseSsc,
+          prompt   = STRING_TOKEN (STR_CPU_DVLR_PHASE_SSC_ENABLE_PROMPT),
+          help     = STRING_TOKEN (STR_CPU_DVLR_PHASE_SSC_ENABLE_HELP),
+          option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif; // suppressif
+
+endform;
+
+  form formid = AUTO_ID(CPU_PL3_OPTIONS_FORM_ID),
+  title = STRING_TOKEN (STR_PL3_FORM_TITLE);
+
+      oneof varid  = CPU_SETUP.PowerLimit3Override,
+         prompt   = STRING_TOKEN (STR_POWER_LIMIT_3_OVERRIDE),
+         help     = STRING_TOKEN (STR_POWER_LIMIT_3_OVERRIDE_HELP),
+         default  = 0, defaultstore = MyStandardDefault,
+         option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+         option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval CPU_SETUP.PowerLimit3Override == 0;
+          numeric varid   = CPU_SETUP.PowerLimit3,
+              prompt   = STRING_TOKEN (STR_POWER_LIMIT_3_LIMIT),
+              help     = STRING_TOKEN (STR_POWER_LIMIT_3_LIMIT_HELP),
+              flags    = 0 | RESET_REQUIRED,
+              minimum  = 0,
+              maximum  = 4095875,
+              step     = 125,
+              default  = 0, defaultstore = MyStandardDefault,
+          endnumeric;
+
+          oneof varid   = CPU_SETUP.PowerLimit3Time,
+              prompt   = STRING_TOKEN (STR_POWER_LIMIT_3_TIME_WINDOW),
+              help     = STRING_TOKEN (STR_POWER_LIMIT_3_TIME_WINDOW_HELP),
+              flags    = 0 | RESET_REQUIRED,
+              default  = 0, defaultstore = MyStandardDefault,
+              option text = STRING_TOKEN (STR_0),  value = 0, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_3),  value = 3, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_4),  value = 4, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_5),  value = 5, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_6),  value = 6, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_7),  value = 7, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_8),  value = 8, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_10),  value = 10, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_12),  value = 12, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_14),  value = 14, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_16),  value = 16, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_20),  value = 20, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_24),  value = 24, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_28),  value = 28, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_32),  value = 32, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_40),  value = 40, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_48),  value = 48, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_56),  value = 56, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_64),  value = 64, flags = RESET_REQUIRED;
+          endoneof;
+
+          numeric varid   = CPU_SETUP.PowerLimit3DutyCycle,
+              prompt   = STRING_TOKEN (STR_POWER_LIMIT_3_DUTY_CYCLE),
+              help     = STRING_TOKEN (STR_POWER_LIMIT_3_DUTY_CYCLE_HELP),
+              flags    = 0 | RESET_REQUIRED,
+              minimum  = 0,
+              maximum  = 100,
+              default  = 0, defaultstore = MyStandardDefault,
+          endnumeric;
+
+          oneof varid     = CPU_SETUP.ResponseMode,
+              prompt      = STRING_TOKEN (STR_RESPONSE_MODE),
+              help        = STRING_TOKEN (STR_RESPONSE_MODE_HELP),
+              option text = STRING_TOKEN (STR_GRADUAL),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_AGGRESSIVE),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+
+          oneof varid  = CPU_SETUP.PowerLimit3Lock,
+             prompt   = STRING_TOKEN (STR_POWER_LIMIT_3_LOCK),
+             help     = STRING_TOKEN (STR_POWER_LIMIT_3_LOCK_HELP),
+             default  = 0, defaultstore = MyStandardDefault,
+             option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+             option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+      endif;
+  endform; // CPU_PL3_OPTIONS_FORM_ID
+
+  form formid = AUTO_ID(CPU_CTDP_OPTIONS_FORM_ID),
+  title = STRING_TOKEN (STR_CTDP_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN (STR_CTDP_SETTINGS))
+      SEPARATOR
+
+      oneof varid   = CPU_SETUP.ApplyConfigTdp,
+          prompt   = STRING_TOKEN (STR_APPLY_CONFIG_TDP),
+          help     = STRING_TOKEN (STR_APPLY_CONFIG_TDP_HELP),
+          option text = STRING_TOKEN (STR_NON_CTDP_APPLIED),  value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_CTDP_APPLIED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      //
+      //  We need to only expose the number of cTDP levels supported for UI selection.
+      //
+      oneof varid   = CPU_SETUP.ConfigTdpLevel,
+          prompt   = STRING_TOKEN (STR_CONFIG_TDP_LEVEL),
+          help     = STRING_TOKEN (STR_CONFIG_TDP_LEVEL_HELP),
+          option text = STRING_TOKEN (STR_CONFIG_TDP_LEVEL_NOMINAL),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          suppressif ideqval SETUP_CPU_FEATURES.CtdpLevel1Supported == 0;
+            suppressif ideqval CPU_SETUP.CompareCtdpRatio == 1;
+              option text = STRING_TOKEN (STR_CONFIG_TDP_MIN_ASSURED),  value = 1, flags = RESET_REQUIRED;
+            endif;
+            suppressif ideqval CPU_SETUP.CompareCtdpRatio == 0;
+              option text = STRING_TOKEN (STR_CONFIG_TDP_MAX_ASSURED),  value = 1, flags = RESET_REQUIRED;
+            endif;
+          endif;
+          suppressif ideqval SETUP_CPU_FEATURES.CtdpLevel2Supported == 0;
+            suppressif ideqval CPU_SETUP.CompareCtdpRatio2 == 1;
+              option text = STRING_TOKEN (STR_CONFIG_TDP_MIN_ASSURED),  value = 2, flags = RESET_REQUIRED;
+            endif;
+            suppressif ideqval CPU_SETUP.CompareCtdpRatio2 == 0;
+              option text = STRING_TOKEN (STR_CONFIG_TDP_MAX_ASSURED),  value = 2, flags = RESET_REQUIRED;
+            endif;
+          endif;
+      endoneof;
+
+      oneof varid   = CPU_SETUP.ConfigTdpLock,
+          prompt   = STRING_TOKEN (STR_CONFIG_TDP_LOCK),
+          help     = STRING_TOKEN (STR_CONFIG_TDP_LOCK_HELP),
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+      suppressif ideqval CPU_SETUP.ConfigTdpLock == 1 OR ideqval SETUP_DATA.IpfEnable == 1;
+#else
+      suppressif ideqval CPU_SETUP.ConfigTdpLock == 1;
+#endif
+      oneof varid   = CPU_SETUP.ConfigTdpBios,
+          prompt   = STRING_TOKEN (STR_CONFIG_TDP_BIOS),
+          help     = STRING_TOKEN (STR_CONFIG_TDP_BIOS_HELP),
+          option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+      endif;
+
+      text
+        help   = STRING_TOKEN (STR_CTDP_LEVELS_HELP),
+        text   = STRING_TOKEN (STR_CTDP_LEVELS_STRING),
+        text   = STRING_TOKEN (STR_CTDP_LEVELS_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_CTDP_TAR_HELP),
+        text   = STRING_TOKEN (STR_CTDP_TAR_STRING),
+        text   = STRING_TOKEN (STR_CTDP_TAR_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_CTDP_PWR_LIMIT1_HELP),
+        text   = STRING_TOKEN (STR_CTDP_PWR_LIMIT1_STRING),
+        text   = STRING_TOKEN (STR_CTDP_PWR_LIMIT1_VALUE),
+        flags  = 0, key = 0;
+
+      text
+        help   = STRING_TOKEN (STR_CTDP_PWR_LIMIT2_HELP),
+        text   = STRING_TOKEN (STR_CTDP_PWR_LIMIT2_STRING),
+        text   = STRING_TOKEN (STR_CTDP_PWR_LIMIT2_VALUE),
+        flags  = 0, key = 0;
+
+      SEPARATOR
+
+    SUBTITLE(STRING_TOKEN (STR_CTDP_STRING))
+
+    text
+      help   = STRING_TOKEN (STR_CTDP_NOMINAL_HELP),
+      text   = STRING_TOKEN (STR_CTDP_NOMINAL_STRING),
+      text   = STRING_TOKEN (STR_CTDP_NOMINAL_VALUE),
+      flags  = 0, key = 0;
+
+    suppressif ideqval SETUP_CPU_FEATURES.CtdpLevel1Supported == 0;
+      suppressif ideqval CPU_SETUP.CompareCtdpRatio == 0;
+        text
+          help   = STRING_TOKEN (STR_CTDP_MAX_ASSURED_POWER_HELP),
+          text   = STRING_TOKEN (STR_CTDP_MAX_ASSURED_POWER_STRING),
+          text   = STRING_TOKEN (STR_CTDP_LEVEL1_VALUE),
+          flags  = 0, key = 0;
+      endif;
+      suppressif ideqval CPU_SETUP.CompareCtdpRatio == 1;
+        text
+          help   = STRING_TOKEN (STR_CTDP_MIN_ASSURED_POWER_HELP),
+          text   = STRING_TOKEN (STR_CTDP_MIN_ASSURED_POWER_STRING),
+          text   = STRING_TOKEN (STR_CTDP_LEVEL1_VALUE),
+          flags  = 0, key = 0;
+      endif;
+    endif;
+
+    suppressif ideqval SETUP_CPU_FEATURES.CtdpLevel2Supported == 0;
+      suppressif ideqval CPU_SETUP.CompareCtdpRatio2 == 0;
+        text
+          help   = STRING_TOKEN (STR_CTDP_MAX_ASSURED_POWER_HELP),
+          text   = STRING_TOKEN (STR_CTDP_MAX_ASSURED_POWER_STRING),
+          text   = STRING_TOKEN (STR_CTDP_LEVEL2_VALUE),
+          flags  = 0, key = 0;
+      endif;
+      suppressif ideqval CPU_SETUP.CompareCtdpRatio2 == 1;
+        text
+          help   = STRING_TOKEN (STR_CTDP_MIN_ASSURED_POWER_HELP),
+          text   = STRING_TOKEN (STR_CTDP_MIN_ASSURED_POWER_STRING),
+          text   = STRING_TOKEN (STR_CTDP_LEVEL2_VALUE),
+          flags  = 0, key = 0;
+      endif;
+    endif;
+
+    grayoutif ideqval CPU_SETUP.ConfigTdpLock == 1;
+    numeric varid   = CPU_SETUP.CustomPowerLimit1Power,
+      prompt   = STRING_TOKEN (STR_LONG_DUR_CUSTOM_PWR_LIMIT),
+        help     = STRING_TOKEN (STR_CTDP_LONG_DUR_PWR_LIMIT_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        minimum  = 0,
+        maximum  = 4095875,
+        step     = 125,        // Stepping of 0 equates to a manual entering of a value,
+                             // otherwise it will auto-increment with a left/right arrow
+        default = 0,
+    endnumeric;
+
+    numeric varid   = CPU_SETUP.CustomPowerLimit2Power,
+      prompt   = STRING_TOKEN (STR_SHORT_DUR_CUST_PWR_LIMIT2),
+        help     = STRING_TOKEN (STR_CTDP_SHORT_DUR_PWR_LIMIT_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        minimum  = 0,
+        maximum  = 4095875,
+        step     = 125,        // Stepping of 0 equates to a manual entering of a value,
+                                 // otherwise it will auto-increment with a left/right arrow
+        default = 0,
+    endnumeric;
+
+    oneof varid   = CPU_SETUP.CustomPowerLimit1Time,
+      prompt   = STRING_TOKEN (STR_LONG_DUR_CUSTOM_TIME_WINDOW),
+        help     = STRING_TOKEN (STR_LONG_DUR_TIME_WINDOW_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        default = 0,
+        option text = STRING_TOKEN (STR_0),  value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_1),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_2),  value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_3),  value = 3, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_4),  value = 4, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_5),  value = 5, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_6),  value = 6, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_7),  value = 7, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_8),  value = 8, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_10),  value = 10, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_12),  value = 12, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_14),  value = 14, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_16),  value = 16, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_20),  value = 20, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_24),  value = 24, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_28),  value = 28, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_32),  value = 32, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_40),  value = 40, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_48),  value = 48, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_56),  value = 56, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_64),  value = 64, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_80),  value = 80, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_96),  value = 96, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_112),  value = 112, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_128),  value = 128, flags = RESET_REQUIRED;
+    endoneof;
+
+    numeric varid   = CPU_SETUP.CustomTurboActivationRatio,
+      prompt   = STRING_TOKEN (STR_CTDP_TAR_STRING),
+        help     = STRING_TOKEN (STR_CTDP_CUSTOM_TAR_STRING_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        minimum  = 0,
+        maximum  = 255,    //
+        step     = 1,        // Stepping of 0 equates to a manual entering of a value,
+                                 // otherwise it will auto-increment with a left/right arrow
+        default = 0,
+    endnumeric;
+    endif;
+  endform; // CPU_CTDP_OPTIONS_FORM_ID
+
+  form formid = AUTO_ID(CPU_LOCK_OPTIONS_FORM_ID),
+  title = STRING_TOKEN (STR_CPU_LOCK_FORM_TITLE);
+
+  oneof varid     = CPU_SETUP.PmgCstCfgCtrlLock,
+    prompt      = STRING_TOKEN (STR_PM_CST_CFG_CTL_LOCK_PROMPT),
+    help        = STRING_TOKEN (STR_PM_CST_CFG_CTL_LOCK_PROMPT_HELP),
+    option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  oneof varid     = CPU_SETUP.OverclockingLock,
+      prompt      = STRING_TOKEN (STR_OC_LOCK),
+      help        = STRING_TOKEN (STR_OC_LOCK_HELP),
+      option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  endform; // CPU_LOCK_OPTIONS_FORM_ID

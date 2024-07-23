@@ -1,0 +1,178 @@
+/** @file
+
+    Browser formset.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2007 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+
+**/
+
+#include "FormsetGuid.h"
+
+#define FRONT_PAGE_CLASS               0x0000
+#define FRONT_PAGE_SUBCLASS            0x0002
+
+#define FRONT_PAGE_FORM_ID             0x1000
+
+#define FRONT_PAGE_ITEM_ONE            0x0001
+#define FRONT_PAGE_ITEM_TWO            0x0002
+#define FRONT_PAGE_ITEM_THREE          0x0003
+#define FRONT_PAGE_ITEM_FOUR           0x0004
+#define FRONT_PAGE_ITEM_FIVE           0x0005
+
+#define FRONT_PAGE_KEY_CONTINUE        0x1000
+#define FRONT_PAGE_KEY_LANGUAGE        0x1234
+#define FRONT_PAGE_KEY_BOOT_MANAGER    0x1064
+#define FRONT_PAGE_KEY_DEVICE_MANAGER  0x8567
+#define FRONT_PAGE_KEY_BOOT_MAINTAIN   0x9876
+#define FRONT_PAGE_KEY_RESET           0x7654
+
+#define LABEL_SELECT_LANGUAGE          0x1000
+#define LABEL_PLATFORM_INFORMATION     0x1001
+#define LABEL_TIMEOUT                  0x2000
+#define LABEL_END                      0xffff
+
+formset
+  guid     = FRONT_PAGE_FORMSET_GUID,
+  title    = STRING_TOKEN(STR_FRONT_PAGE_TITLE),
+  help     = STRING_TOKEN(STR_NULL_STRING),
+  classguid = FRONT_PAGE_FORMSET_GUID,
+  class    = FRONT_PAGE_CLASS,
+  subclass = FRONT_PAGE_SUBCLASS,
+
+  form formid = FRONT_PAGE_FORM_ID,
+       title  = STRING_TOKEN(STR_FRONT_PAGE_TITLE);
+
+    banner
+      title = STRING_TOKEN(STR_FRONT_PAGE_COMPUTER_MODEL),
+      line  1,
+      align left;
+
+    banner
+      title = STRING_TOKEN(STR_FRONT_PAGE_CPU_MODEL),
+      line  2,
+      align left;
+
+    banner
+      title = STRING_TOKEN(STR_FRONT_PAGE_CPU_SPEED),
+      line  2,
+      align right;
+
+    banner
+      title = STRING_TOKEN(STR_FRONT_PAGE_BIOS_VERSION),
+      line  3,
+      align left;
+
+    banner
+      title = STRING_TOKEN(STR_FRONT_PAGE_MEMORY_SIZE),
+      line  3,
+      align right;
+
+//    banner
+//      title = STRING_TOKEN(STR_FRONT_PAGE_BANNER_0_LEFT),
+//      line  0,
+//      align left;
+
+//    banner
+//      title = STRING_TOKEN(STR_FRONT_PAGE_BANNER_0_RIGHT),
+//      line  0,
+//      align right;
+
+//    banner
+//      title = STRING_TOKEN(STR_FRONT_PAGE_BANNER_1_LEFT),
+//      line  1,
+//      align left;
+
+//    banner
+//      title = STRING_TOKEN(STR_FRONT_PAGE_BANNER_1_RIGHT),
+//      line  1,
+//      align right;
+
+//    banner
+//      title = STRING_TOKEN(STR_FRONT_PAGE_BANNER_2_LEFT),
+//      line  2,
+//      align left;
+
+//    banner
+//      title = STRING_TOKEN(STR_FRONT_PAGE_BANNER_3_LEFT),
+//      line  3,
+//      align left;
+
+
+    label LABEL_SELECT_LANGUAGE;
+    //
+    // This is where we will dynamically add a OneOf type op-code to select
+    // Languages from the currently available choices
+    //
+    label LABEL_END;
+    subtitle text = STRING_TOKEN(STR_EMPTY_STRING);
+
+    label LABEL_PLATFORM_INFORMATION;
+    //
+    // This is where we will dynamically add a Action type op-code to show
+    // the platform information.
+    //
+
+    //
+    // This is where we will dynamically add a Action type op-code to show
+    // the advanced menu.
+    //
+
+    //
+    // This is where we will dynamically add a Action type op-code to show
+    // the intel test menu.
+    //
+    label LABEL_END;
+
+    goto FRONT_PAGE_ITEM_FOUR,
+      prompt  = STRING_TOKEN(STR_TPV_MANAGER),
+      help    = STRING_TOKEN(STR_TPV_MANAGER_HELP),
+      flags   = INTERACTIVE,
+      key     = FRONT_PAGE_KEY_DEVICE_MANAGER;
+
+    subtitle text = STRING_TOKEN(STR_EMPTY_STRING);
+
+    goto FRONT_PAGE_ITEM_THREE,
+      prompt  = STRING_TOKEN(STR_BOOT_MANAGER),
+      help    = STRING_TOKEN(STR_BOOT_MANAGER_HELP),
+      flags   = INTERACTIVE,
+      key     = FRONT_PAGE_KEY_BOOT_MANAGER;
+
+    goto FRONT_PAGE_ITEM_FIVE,
+      prompt  = STRING_TOKEN(STR_BOOT_MAINT_MANAGER),
+      help    = STRING_TOKEN(STR_BOOT_MAINT_MANAGER_HELP),
+      flags   = INTERACTIVE,
+      key     = FRONT_PAGE_KEY_BOOT_MAINTAIN;
+
+    subtitle text = STRING_TOKEN(STR_EMPTY_STRING);
+
+    text
+      help    = STRING_TOKEN(STR_CONTINUE_HELP),
+      text    = STRING_TOKEN(STR_CONTINUE_PROMPT),
+      text    = STRING_TOKEN(STR_NULL_STRING),
+      flags   = INTERACTIVE,
+      key     = FRONT_PAGE_KEY_CONTINUE;
+
+    text
+      help    = STRING_TOKEN(STR_RESET_STRING_HELP),
+      text    = STRING_TOKEN(STR_RESET_STRING),
+      text    = STRING_TOKEN(STR_NULL_STRING),
+      flags   = INTERACTIVE,
+      key     = FRONT_PAGE_KEY_RESET;
+  endform;
+
+endformset;

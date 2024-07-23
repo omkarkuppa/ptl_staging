@@ -1,0 +1,134 @@
+### @file
+#  Component information file for the Board Init Advanced Pre-Memory PEI module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = BoardInitAdvancedPreMem
+  FILE_GUID                      = d5d946c7-92ab-41fb-a390-6c6239b4e413
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  ENTRY_POINT                    = BoardInitAdvancedPreMemEntryPoint
+
+[LibraryClasses]
+  PeimEntryPoint
+  BaseMemoryLib
+  DebugLib
+  HobLib
+  IoLib
+  PcdLib
+  PciSegmentLib
+  ReportStatusCodeLib
+  PmcLib
+  PlatformNvRamHookLib
+  GuidForwardLib
+  EcMiscLib
+  PchCycleDecodingLib
+  TimerLib
+  PchPciBdfLib
+  MeLib
+  TcoLib
+  BpmAccessLib
+  BootGuardLib
+  PlatformVoltageControlLib
+  GpioV2WrapperLib
+  FspWrapperApiLib
+  UsbcRetimerConfigLib
+  PeiDTbtPolicyLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  PostCodeDebugFeaturePkg/PostCodeDebugFeaturePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  SecurityPkg/SecurityPkg.dec
+  CnvFeaturePkg/CnvFeaturePkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+
+[Pcd]
+  gPlatformModuleTokenSpaceGuid.PcdEcExtraIoBase                ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdPlatformInitPreMem
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                       ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdGuidForward
+  gPlatformModuleTokenSpaceGuid.PcdShellEntryMapPrint           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformType
+  gBoardModuleTokenSpaceGuid.PcdBootGuardPerformanceEnable      ## CONSUMES
+
+  #
+  # EC FailSafe Cpu Temp and Fan Speed Setting
+  #
+  gBoardModuleTokenSpaceGuid.PcdEcFailSafeActionCpuTemp
+  gBoardModuleTokenSpaceGuid.PcdEcFailSafeActionFanPwm
+
+
+  gSiPkgTokenSpaceGuid.PcdStatusCodeUseTraceHub                 ## PRODUCES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiS3Enable                ## PRODUCES
+  gSiPkgTokenSpaceGuid.PcdS3Enable                              ## CONSUMES
+
+  gEfiSecurityPkgTokenSpaceGuid.PcdCRBIdleByPass                ## SOMETIMES_PRODUCES
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpmInstanceGuid              ## SOMETIMES_PRODUCES
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpm2SelfTestPolicy           ## SOMETIMES_PRODUCES
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpm2InitializationPolicy     ## SOMETIMES_PRODUCES
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpmBaseAddress               ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTcoBaseAddress                        ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdBootGuardEnable                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTxtEnable                             ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress             ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection           ## CONSUMES
+
+  gSiPkgTokenSpaceGuid.PcdOverclockEnable                       ## CONSUMES
+
+  gPlatformModuleTokenSpaceGuid.PcdTpmEnable                    ## CONSUMES
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                   ## CONSUMES
+
+[Sources]
+  BoardInitAdvancedPreMem.c
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid                               ## SOMETIMES_CONSUMES ## NOTIFY
+  gEfiPeiMemoryDiscoveredPpiGuid                                ## NOTIFY
+  gSiPreMemPolicyReadyPpiGuid                                   ## NOTIFY
+  gPchSpiPpiGuid                                                ## CONSUMES
+  gEfiPeiResetPpiGuid                                           ## NOTIFY
+  gEfiPeiMasterBootModePpiGuid                                  ## CONSUMES
+
+[Guids]
+  gOsVendorGlobalVariableGuid                                   ## CONSUMES ## Variable
+  gTcoWdtHobGuid                                                ## PRODUCES ## HOB
+  gPchSetupVariableGuid                                         ## CONSUMES ## Variable
+  gSetupVariableGuid                                            ## CONSUMES ## Variable
+  gSaSetupVariableGuid                                          ## CONSUMES ## Variable
+  gEfiTpmDeviceInstanceNoneGuid                                 ## CONSUMES
+  gEfiTpmDeviceSelectedGuid                                     ## CONSUMES
+  gAcmDataHobGuid                                               ## PRODUCES ## HOB
+
+[Depex]
+  gEfiPeiReadOnlyVariable2PpiGuid

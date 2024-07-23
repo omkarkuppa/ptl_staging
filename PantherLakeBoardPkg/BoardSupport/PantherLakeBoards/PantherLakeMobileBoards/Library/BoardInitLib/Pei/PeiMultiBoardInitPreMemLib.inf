@@ -1,0 +1,299 @@
+## @file
+# Component information file for PEI Board Init Pre-Mem Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2020 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiPtlMultiBoardInitPreMemLib
+  FILE_GUID                      = 4DB081D7-E455-4488-9F69-FFA90C83E5B0
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = NULL
+  CONSTRUCTOR                    = PeiPtlMultiBoardInitPreMemLibConstructor
+
+[LibraryClasses]
+  BaseLib
+  BiosIdLib
+  DebugLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PcdLib
+  SiliconInitLib
+  MultiBoardInitSupportLib
+  PeiLib
+  EcMiscLib
+  MmioInitLib
+  BoardConfigLib
+  BoardIdsLib
+  PeiBootModeLib
+  WakeupEventLib
+  PreSiliconEnvDetectLib
+  SetupInitLib
+  PchInfoLib
+  EcTcssLib
+  GpioV2WrapperLib
+  PtlPcdInfoLib
+  PlatformUsbConfigLib
+  NemMapLib
+  PeiServicesLib
+  HobLib
+
+[Packages]
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  OneSiliconPkg/SiPkg.dec
+  BoardModulePkg/BoardModulePkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  DptfFeaturePkg/DptfFeaturePkg.dec
+  MipiCamFeaturePkg/MipiCamFeaturePkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+  UcsiFeaturePkg/UcsiFeaturePkg.dec
+  MultiIbbFeaturePkg/MultiIbbFeaturePkg.dec
+
+[Sources]
+  PeiInitPreMemLib.c
+  PeiMultiBoardInitPreMemLib.c
+  PeiDetect.c
+  BoardSaInitPreMemLib.c
+  BoardPchInitPreMemLib.c
+
+[Pcd]
+
+  #MISC
+  gBoardModuleTokenSpaceGuid.PcdRecoveryModeGpio
+  gBoardModuleTokenSpaceGuid.PcdOddPowerInitEnable
+  gBoardModuleTokenSpaceGuid.PcdSmbusAlertEnable
+  gBoardModuleTokenSpaceGuid.PcdWakeupType
+  gBoardModuleTokenSpaceGuid.PcdSetupEnable
+
+  #Board Information
+  gBoardModuleTokenSpaceGuid.PcdPlatformGeneration
+  gBoardModuleTokenSpaceGuid.PcdSpdPresent
+  gBoardModuleTokenSpaceGuid.PcdDockAttached
+  gBoardModuleTokenSpaceGuid.PcdPlatformType
+  gBoardModuleTokenSpaceGuid.PcdPlatformFlavor
+  gBoardModuleTokenSpaceGuid.PcdBoardRev
+  gBoardModuleTokenSpaceGuid.PcdBoardId
+  gBoardModuleTokenSpaceGuid.PcdSkuType
+  gBoardModuleTokenSpaceGuid.PcdBoardBomId
+  gBoardModuleTokenSpaceGuid.PcdBoardType
+  gBoardModuleTokenSpaceGuid.PcdBoardName
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTablePreMem
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableEarlyPreMem
+  gBoardModuleTokenSpaceGuid.VpdPcdPcieClkUsageMap
+  gBoardModuleTokenSpaceGuid.VpdPcdPPcieClkUsageMap
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqsMapCpu2Dram
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqMapCpu2Dram
+  gBoardModuleTokenSpaceGuid.PcdDisplayId                      ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.PcdCpuRatio
+  gBoardModuleTokenSpaceGuid.PcdBiosGuard
+
+  gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamBase              ## CONSUMES
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspTemporaryRamSize           ## CONSUMES
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedBufferSize         ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.PcdStackBase
+  gBoardModuleTokenSpaceGuid.PcdStackSize
+
+  #SA GPIO Config
+  gBoardModuleTokenSpaceGuid.PcdRootPortIndex
+
+  # PCIE Slot1 (x4 Connector) GPIO PCDs
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1GpioSupport
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1HoldRstExpanderNo
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1HoldRstGpioNo
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1HoldRstGpioPolarity
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1PwrEnableExpanderNo
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1PwrEnableGpioNo
+  gBoardModuleTokenSpaceGuid.PcdPcieSlot1PwrEnableGpioPolarity
+
+  # RTD3 PCIE
+  gBoardModuleTokenSpaceGuid.PcdPcie0GpioSupport                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie0HoldRstExpanderNo             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie0HoldRstGpioNo                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie0HoldRstActive                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie0PwrEnableExpanderNo           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie0PwrEnableGpioNo               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie0PwrEnableActive               ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.PcdPcie1GpioSupport                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie1HoldRstExpanderNo             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie1HoldRstGpioNo                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie1HoldRstActive                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie1PwrEnableExpanderNo           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie1PwrEnableGpioNo               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie1PwrEnableActive               ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.PcdPcie2GpioSupport                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie2HoldRstExpanderNo             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie2HoldRstGpioNo                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie2HoldRstActive                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie2PwrEnableExpanderNo           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie2PwrEnableGpioNo               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie2PwrEnableActive               ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.PcdPcie3GpioSupport                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie3HoldRstExpanderNo             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie3HoldRstGpioNo                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie3HoldRstActive                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie3PwrEnableExpanderNo           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie3PwrEnableGpioNo               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcie3PwrEnableActive               ## CONSUMES
+
+  # PCIe Clock Info
+  gBoardModuleTokenSpaceGuid.PcdPcieClock0
+  gBoardModuleTokenSpaceGuid.PcdPcieClock1
+  gBoardModuleTokenSpaceGuid.PcdPcieClock2
+  gBoardModuleTokenSpaceGuid.PcdPcieClock3
+  gBoardModuleTokenSpaceGuid.PcdPcieClock4
+  gBoardModuleTokenSpaceGuid.PcdPcieClock5
+  gBoardModuleTokenSpaceGuid.PcdPcieClock6
+  gBoardModuleTokenSpaceGuid.PcdPcieClock7
+  gBoardModuleTokenSpaceGuid.PcdPcieClock8
+  gBoardModuleTokenSpaceGuid.PcdPcieClock9
+  gBoardModuleTokenSpaceGuid.PcdPcieClock10
+  gBoardModuleTokenSpaceGuid.PcdPcieClock11
+  gBoardModuleTokenSpaceGuid.PcdPcieClock12
+  gBoardModuleTokenSpaceGuid.PcdPcieClock13
+  gBoardModuleTokenSpaceGuid.PcdPcieClock14
+  gBoardModuleTokenSpaceGuid.PcdPcieClock15
+  gBoardModuleTokenSpaceGuid.PcdPcieClock16
+  gBoardModuleTokenSpaceGuid.PcdPcieClock17
+
+  # USB 2.0 PHY Port parameters
+  gBoardModuleTokenSpaceGuid.PcdUsb2PhyTuningTable
+
+  # GPIO Group Tier
+  gBoardModuleTokenSpaceGuid.PcdGpioGroupToGpeDw0
+  gBoardModuleTokenSpaceGuid.PcdGpioGroupToGpeDw1
+  gBoardModuleTokenSpaceGuid.PcdGpioGroupToGpeDw2
+
+  gBoardModuleTokenSpaceGuid.PcdDisableVpdGpioTable
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTablePreMem                   ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOnEarlyPreMem        ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOnEarlyPreMemSize    ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOffEarlyPreMem       ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOffEarlyPreMemSize   ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMem     ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMemSize ## PRODUCES
+
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEarlyPreMem
+
+  # Display DDI
+  gBoardModuleTokenSpaceGuid.PcdSaDisplayConfigTable           ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdSaDisplayConfigTableSize       ## PRODUCES
+
+  # EC FailSafe Cpu Temp and Fan Speed Setting
+  gBoardModuleTokenSpaceGuid.PcdEcFailSafeActionCpuTemp
+  gBoardModuleTokenSpaceGuid.PcdEcFailSafeActionFanPwm
+  gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable          ## CONSUMES
+
+  # Coin-less mode
+  gBoardModuleTokenSpaceGuid.PcdCoinlessSpiNorClearGpio        ## PRODUCES
+
+  ##
+  ## VPD Pcd's
+  ##
+  gBoardModuleTokenSpaceGuid.VpdPcdUsb2PhyTuningTable                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdGpioGroupToGpeDw0                         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdGpioGroupToGpeDw1                         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdGpioGroupToGpeDw2                         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOnEarlyPreMem           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOffEarlyPreMem          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableM80WwanOnEarlyPreMem        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd                              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit                            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdDataSize                            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqByteMap                              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcRcompResistor                          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcRcompTarget                            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqPinsInterleavedControl               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqPinsInterleaved                      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcLp5CccConfig                           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcCmdMirror                              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcCaVrefConfig                           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdDisplayDdiConfigTable                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardRetimerForcePwrGpio                  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdCpuRatio                                  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdBiosGuard                                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdOddPowerInitEnable                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdSmbusAlertEnable                          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionCpuTemp                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionFanPwm                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdRecoveryModeGpio                          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdSkuType                                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining                      ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVpdBaseAddress64                         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessSpiNorClearGpio                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdVdd2lPowerRailPresent                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdUsbCUcmMode                               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdGopConfigSoftwareId                       ## CONSUMES
+
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable                   ## CONSUMES
+
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection                        ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMigrateTemporaryRamFirmwareVolumes       ## CONSUMES
+
+  #Tbt config
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUsbCUcmMode            ## PRODUCES
+
+  #MultiIBB
+  gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdSignedFspEnable                              ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMBase                           ## CONSUMES
+
+[Guids]
+  gFspNonVolatileStorageHobGuid
+  gSetupVariableGuid
+  gSaSetupVariableGuid
+  gCpuSetupVariableGuid
+  gPchSetupVariableGuid
+  gMeSetupVariableGuid
+  gSiSetupVariableGuid
+  gDptfConfigVariableGuid                       ## CONSUMES
+  gVpdFfsGuid                                   ## CONSUMES
+  gMipiCamConfigVariableGuid                    ## CONSUMES
+  gOsVendorGlobalVariableGuid                   ## CONSUMES ## Variable
+  gSetupDataHobGuid
+  gEdkiiMigratedFvInfoGuid
+  gVpdFfsGuid
+  gBiosGuardHobGuid
+  gTcssSsidHobGuid
+  gGopConfigDriverHobGuid                       ## PRODUCES
+  gEdkiiMigrationInfoGuid
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid         ## CONSUMES
+  gSiPreMemPolicyReadyPpiGuid             ## NOTIFY
+  gPchSpiPpiGuid
+  gEfiPeiMemoryDiscoveredPpiGuid
+  gBoardDetectedPpiGuid                   ## NOTIFY

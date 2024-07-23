@@ -1,0 +1,426 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2010 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#ifndef MDEPKG_NDEBUG
+#define DEBUG_INTERFACE_FORM_ENABLE
+#endif
+
+#include <SetupPrivate.h>
+#include <SaSetup.h>
+#include "MeSetup.h"
+#include "PlatformBoardId.h"
+#if FixedPcdGetBool(PcdFspVEnable) == 1
+#include "FspVSetup.h"
+#endif
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+#include <DptfConfig.h>
+#endif
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+#include <MipiCamConfig.h>
+#endif
+#include <NhltEndpointsConfigurationVariable.h>
+#include <SndwDevTopologyConfigurationVariable.h>
+#include <AmtMacPassThroughConfigVariable.h>
+#if FixedPcdGetBool (PcdAmtPetInitFeatureEnable) == 1
+#include <AmtPetInitConfigVariable.h>
+#endif
+
+typedef struct {
+  UINT8 InstallExtOpRom;
+} PCI_BUS_SETUP;
+#include <Library/PchInfoDefs.h>
+#include <NvmeSetup.h>
+#include <CnvSetupId.h>
+#include <CnvVfrSetupMenuHii.h>
+#include <CrashLogVariable.h>
+
+formset guid = ADVANCED_FORM_SET_GUID,
+  title      = STRING_TOKEN(STR_ADVANCED),
+  help       = STRING_TOKEN(STR_ADVANCED_HELP),
+  classguid  = FRONT_PAGE_GUID,
+  class      = ADVANCED_FORM_SET_CLASS,
+  subclass   = 0,
+
+  SA_SETUP_VARSTORE
+  ME_SETUP_VARSTORE
+  CPU_SETUP_VARSTORE
+  PCH_SETUP_VARSTORE
+  SI_SETUP_VARSTORE
+  SETUP_DATA_VARSTORE
+  BOARD_INFO_SETUP_VARSTORE
+  AMT_MAC_PASSTHROUGH_SETUP_VARSTORE
+#if FixedPcdGetBool (PcdAmtPetInitFeatureEnable) == 1
+  AMT_PET_INIT_SETUP_VARSTORE
+#endif
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+  DPTF_CONFIG_VARSTORE
+#endif
+  SYSTEM_ACCESS_VARSTORE
+#ifdef DEBUG_INTERFACE_FORM_ENABLE
+  DEBUG_CONFIG_DATA_VARSTORE
+#endif // DEBUG_INTERFACE_FORM_ENABLE
+
+  NVME_SETUP_DATA_VARSTORE
+  CRASHLOG_SETUP_VARSTORE
+  CRASHLOG_CTL_SETUP_VARSTORE
+
+#if FixedPcdGetBool (PcdMipiCamFeatureEnable) == 1
+  MIPICAM_CONFIG_VARSTORE
+#endif
+#if FixedPcdGetBool(PcdOverclockEnable) == 1
+  OC_SETUP_VARSTORE
+#endif
+
+efivarstore NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE,
+  attribute = 0x7,
+  name = NhltEndpointsTableConfigurationVariable,
+  guid = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_GUID;
+
+efivarstore SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE,
+  attribute = 0x7,
+  name = SndwDevTopologyConfigurationVariable,
+  guid = SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE_GUID;
+
+  // PciBusSetup is an EfiVarStore that is related to EFI variable with attribute 0x07
+  // (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS)
+  efivarstore PCI_BUS_SETUP,
+    attribute = 0x7,
+    name      = PciBusSetup,
+    guid      = SETUP_GUID;
+#if FixedPcdGetBool (PcdCnvSetupMenu) == 1
+  efivarstore CNV_VFR_CONFIG_SETUP,
+    varid = AUTO_ID(CNV_VFR_CONFIG_SETUP_DATA_ID),
+    attribute = 0x7, // EFI variable attributes  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE
+    name  = CnvSetup,
+    guid  = gCnvFeatureSetupGuid;
+#endif
+
+  varstore SETUP_VOLATILE_DATA,
+    varid = AUTO_ID(SETUP_VOLATILE_DATA_ID),
+    name  = SetupVolatileData,
+    guid  = SETUP_GUID;
+
+  varstore OS_PROFILE,
+    name  = OsProfile,
+    guid  = OS_PROFILE_GUID;
+
+  varstore SETUP_CPU_FEATURES,
+    varid = AUTO_ID(CPU_FEATURES_ID),
+    name  = SetupCpuFeatures,
+    guid  = SETUP_GUID;
+
+  varstore CPU_SETUP_VOLATILE_DATA,
+    varid = AUTO_ID(CPU_SETUP_VOLATILE_DATA_ID),
+    name  = CpuSetupVolatileData,
+    guid  = CPU_SETUP_GUID;
+
+  varstore TBT_SETUP_VOLATILE_DATA,
+    varid = AUTO_ID(TBT_SETUP_VOLATILE_DATA_ID),
+    name  = TbtSetupVolatileData,
+    guid  = SETUP_GUID;
+
+  varstore ME_SETUP_STORAGE,
+    varid = AUTO_ID(ME_FEATURES_ID),
+    name  = MeSetupStorage,
+    guid  = ME_SETUP_GUID;
+
+  varstore ME_STORAGE_EXPOSURE,
+    name  = MeStorageExposure,
+    guid  = ME_SETUP_GUID;
+
+  varstore DEBUG_SETUP_VOLATILE_DATA,
+    varid = AUTO_ID(DEBUG_SETUP_VOLATILE_DATA_ID),
+    name  = DebugSetupVolatileData,
+    guid  = SETUP_GUID;
+
+#if FixedPcdGetBool(PcdFspVEnable) == 1
+  // FspVSetup is an EfiVarStore that is related to EFI variable with attribute 0x07
+  // (EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS)
+  efivarstore FSPV_SETUP,
+    attribute = 0x7,
+    name      = FspVSetup,
+    guid      = SETUP_GUID;
+#endif
+  defaultstore MyStandardDefault,
+    prompt    = STRING_TOKEN(STR_STANDARD_DEFAULT_PROMPT),
+    attribute = 0x0000; // Default ID: 0000 standard default
+
+  form formid = AUTO_ID(ADVANCED_MAIN),
+    title     = STRING_TOKEN(STR_ADVANCED);
+
+   text
+     help   = STRING_TOKEN(STR_EMPTY_STRING),
+     text   = STRING_TOKEN(STR_SETUP_DATA_REVISION),
+     text   = STRING_TOKEN(STR_SETUP_DATA_REVISION_VALUE),
+     flags  = 0,
+     key    = 0;
+
+   text
+     help   = STRING_TOKEN(STR_EMPTY_STRING),
+     text   = STRING_TOKEN(STR_ME_SETUP_REVISION),
+     text   = STRING_TOKEN(STR_ME_SETUP_REVISION_VALUE),
+     flags  = 0,
+     key    = 0;
+
+   text
+     help   = STRING_TOKEN(STR_EMPTY_STRING),
+     text   = STRING_TOKEN(STR_CPU_SETUP_REVISION),
+     text   = STRING_TOKEN(STR_CPU_SETUP_REVISION_VALUE),
+     flags  = 0,
+     key    = 0;
+
+   text
+     help   = STRING_TOKEN(STR_EMPTY_STRING),
+     text   = STRING_TOKEN(STR_OC_SETUP_REVISION),
+     text   = STRING_TOKEN(STR_OC_SETUP_REVISION_VALUE),
+     flags  = 0,
+     key    = 0;
+
+   text
+     help   = STRING_TOKEN(STR_EMPTY_STRING),
+     text   = STRING_TOKEN(STR_SA_SETUP_REVISION),
+     text   = STRING_TOKEN(STR_SA_SETUP_REVISION_VALUE),
+     flags  = 0,
+     key    = 0;
+
+   text
+     help   = STRING_TOKEN(STR_EMPTY_STRING),
+     text   = STRING_TOKEN(STR_PCH_SETUP_REVISION),
+     text   = STRING_TOKEN(STR_PCH_SETUP_REVISION_VALUE),
+     flags  = 0,
+     key    = 0;
+
+   text
+     help   = STRING_TOKEN(STR_EMPTY_STRING),
+     text   = STRING_TOKEN(STR_SI_SETUP_REVISION),
+     text   = STRING_TOKEN(STR_SI_SETUP_REVISION_VALUE),
+     flags  = 0,
+     key    = 0;
+
+    oneof varid   = SETUP_DATA.FirmwareConfiguration,
+      prompt      = STRING_TOKEN(STR_FIRMWARE_CONFIG_NAME),
+      help        = STRING_TOKEN(STR_FIRMWARE_CONFIG_NAME_HELP),
+      option text = STRING_TOKEN(STR_FW_CONFIG_DEFAULT_VALUE), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_FW_CONFIG_PRODUCTION_VALUE), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_FW_CONFIG_TEST_VALUE), value = 2, flags = DEFAULT | RESET_REQUIRED;
+    endoneof;
+
+
+    // specify PlatId scope
+    disableif TRUE;
+      oneof varid   = SETUP_VOLATILE_DATA.PlatId,
+        prompt      = STRING_TOKEN(STR_PLATID_PROMPT),
+        help        = STRING_TOKEN(0),
+        option text = STRING_TOKEN(STR_NONE), value = 0, flags = 0;
+      endoneof;
+    endif; // disableif
+
+    // Define goto commands for the forms defined in this file
+    label LABEL_FORM_START;
+
+    // XmlCli Setup Form
+    goto
+      formsetguid = {0x8fd6d4e5, 0x138c, 0x4b5c, {0xef, 0x95, 0xdd, 0x00, 0xd2, 0x68, 0x9b, 0x8c}},  // XMLCLI_FORM_SET_GUID
+      formid      = 1,  // the first Form id in XmlCliSetupVfr.vfr
+      question    = 0,
+      prompt      = STRING_TOKEN(STR_XMLCLI_FORM),
+      help        = STRING_TOKEN(STR_XMLCLI_FORM_HELP);
+
+    goto MANAGEABILITY_FORM_ID,
+      prompt = STRING_TOKEN(STR_MANAGEABILITY_FORM),
+      help   = STRING_TOKEN(STR_MANAGEABILITY_FORM_HELP);
+
+    goto DEBUG_FORM_ID,
+      prompt = STRING_TOKEN(STR_DEBUG_FORM),
+      help   = STRING_TOKEN(STR_DEBUG_FORM_HELP);
+
+    // Define goto commands for the forms defined in this file
+    goto ACPI_FORM_ID,
+      prompt = STRING_TOKEN(STR_ACPI_FORM),
+      help   = STRING_TOKEN(STR_ACPI_FORM_HELP);
+
+    // Define goto commands for the forms defined in this file
+    goto CPU_FORM_ID,
+      prompt = STRING_TOKEN(STR_CPU_FORM),
+      help   = STRING_TOKEN(STR_CPU_FORM_HELP);
+
+    goto WWAN_OPTIONS_FORM_ID,
+      prompt = STRING_TOKEN(STR_WWAN_CONFIGURATION),
+      help   = STRING_TOKEN(STR_WWAN_HELP);
+
+    goto POWER_CONFIG_FORM_ID,
+      prompt = STRING_TOKEN(STR_POWER_CONFIGURATION),
+      help   = STRING_TOKEN(STR_POWER_CONFIGURATION_HELP);
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+    goto TCC_MODE_CONFIG_FORM_ID,
+      prompt = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_TITLE),
+      help = STRING_TOKEN(STR_TCC_MODE_CONFIG_FORM_HELP);
+
+    goto FUSA_FORM_ID,
+      prompt = STRING_TOKEN(STR_FUSA_FORM_TITLE),
+      help = STRING_TOKEN(STR_FUSA_FORM_HELP);
+#endif
+
+#if FixedPcdGetBool (PcdOverclockEnable) == 0x1
+      goto PERFORMANCE_MENU_CONFIG_FORM_ID,
+      prompt = STRING_TOKEN(STR_PERFORMANCE_MENU_CONFIGURATION),
+      help   = STRING_TOKEN(STR_PERFORMANCE_CONFIGURATION_HELP);
+#endif
+
+    // Define goto commands for the forms defined in this file
+    goto MEMORY_FORM_ID,
+      prompt = STRING_TOKEN(STR_MEMORY_FORM),
+      help   = STRING_TOKEN(STR_MEMORY_FORM_HELP);
+
+    goto NB_FORM_ID,
+      prompt = STRING_TOKEN(STR_NB_FORM),
+      help   = STRING_TOKEN(STR_NB_FORM_HELP);
+
+    // Define goto commands for the forms defined in this file
+    goto PCIE_FORM_ID,
+      prompt = STRING_TOKEN(STR_PCIE_FORM),
+      help   = STRING_TOKEN(STR_PCIE_FORM_HELP);
+
+    // Define goto commands for the forms defined in this file
+    goto SB_FORM_ID,
+      prompt = STRING_TOKEN(STR_SB_FORM),
+      help   = STRING_TOKEN(STR_SB_FORM_HELP);
+
+    // Define goto commands for the forms defined in this file
+    goto ME_FORM_ID,
+      prompt = STRING_TOKEN(STR_ME_FORM),
+      help   = STRING_TOKEN(STR_ME_FORM_HELP);
+
+    goto THERMAL_CONFIG_FORM_ID,
+      prompt = STRING_TOKEN(STR_THERMAL_CONFIGURATION),
+      help   = STRING_TOKEN(STR_THERMAL_CONFIGURATION_HELP);
+
+    // Define goto commands for the forms defined in this file
+    goto PLATFORM_SETTINGS_FORM_ID,
+      prompt = STRING_TOKEN(STR_PLATFORM_SETTINGS_FORM),
+      help   = STRING_TOKEN(STR_PLATFORM_SETTINGS_FORM_HELP);
+
+    goto RTD3_FORM_ID,
+      prompt = STRING_TOKEN(STR_RTD3_FORM),
+      help   = STRING_TOKEN(STR_RTD3_FORM_HELP);
+
+#if FixedPcdGetBool(PcdFspVEnable) == 1
+    goto FSPV_CONFIG_FORM_ID,
+      prompt = STRING_TOKEN(STR_FSPV_CFG),
+      help   = STRING_TOKEN(STR_FSPV_CFG_HELP);
+#endif
+
+#ifdef DEBUG_INTERFACE_FORM_ENABLE
+#ifndef RELEASE_CATALOG
+    goto DEBUG_INTERFACE_FORM_ID,
+      prompt = STRING_TOKEN(STR_DEBUG_INTERFACE_FORM),
+      help   = STRING_TOKEN(STR_DEBUG_INTERFACE_FORM_HELP);
+#endif
+#endif // DEBUG_INTERFACE_FORM_ENABLE
+
+  endform;
+
+  #include "DebugSetup.hfr"
+  #include "AcpiSetup.hfr"
+  #include "CpuSetup.hfr"
+  #include "WwanSetup.hfr"
+#if FixedPcdGetBool (PcdOverclockEnable) == 0x1
+  #include "OverClockSetup.hfr"
+#endif
+  #include "PchSetup.hfr"
+  #include "SaSetup.hfr"
+  #include "PcieSetup.hfr"
+  #include "MeSetup.hfr"
+  #include "PlatformSetup.hfr"
+#if FixedPcdGetBool(PcdFspVEnable) == 1
+  #include "FspVSetup.hfr"
+#endif
+
+  #include "HhmSetup.hfr"
+  #include "TbtSetup.hfr"
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  #include "FusaSetup.hfr"
+#endif
+#ifdef DEBUG_INTERFACE_FORM_ENABLE
+  #include "StatusCodeSetup.hfr"
+#endif // DEBUG_INTERFACE_FORM_ENABLE
+
+  form formid = AUTO_ID(MANAGEABILITY_FORM_ID),
+    title     = STRING_TOKEN(STR_MANAGEABILITY_FORM);
+
+    // Define goto commands for the forms defined in this file
+    label LABEL_FORM_START;
+
+#if FixedPcdGet8 (PcdOneClickRecoveryEnable) == 0x1
+suppressif ideqval SETUP_VOLATILE_DATA.OcrOptionExposure == 0;
+  grayoutif ideqval SETUP_VOLATILE_DATA.OcrOptionGrayOut == 1;
+    goto ONE_CLICK_RECOVERY_FORM_ID,
+      prompt = STRING_TOKEN(STR_ONE_CLICK_RECOVERY_FORM),
+      help   = STRING_TOKEN(STR_ONE_CLICK_RECOVERY_FORM_HELP);
+  endif; // grayoutif
+endif; // suppressif
+#endif // PcdOneClickRecoveryEnable
+
+  endform; // MANAGEABILITY_FORM_ID
+
+  form formid = AUTO_ID(ONE_CLICK_RECOVERY_FORM_ID),
+    title     = STRING_TOKEN(STR_ONE_CLICK_RECOVERY_FORM);
+
+    suppressif ideqval SETUP_VOLATILE_DATA.OcrBootHttpsSupported == 0;
+      oneof varid   = ME_SETUP.OcrBootHttps,
+        prompt      = STRING_TOKEN(STR_OCR_BOOT_HTTPS_PROMPT),
+        help        = STRING_TOKEN(STR_OCR_BOOT_HTTPS_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval SETUP_VOLATILE_DATA.OcrBootPbaSupported == 0;
+      oneof varid   = ME_SETUP.OcrBootPba,
+        prompt      = STRING_TOKEN(STR_OCR_BOOT_PBA_PROMPT),
+        help        = STRING_TOKEN(STR_OCR_BOOT_PBA_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval SETUP_VOLATILE_DATA.OcrBootWinReSupported == 0;
+      oneof varid   = ME_SETUP.OcrBootWinRe,
+        prompt      = STRING_TOKEN(STR_OCR_BOOT_WIN_RE_PROMPT),
+        help        = STRING_TOKEN(STR_OCR_BOOT_WIN_RE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval SETUP_VOLATILE_DATA.OcrAmtDisSecBootSupported == 0;
+      oneof varid   = ME_SETUP.OcrAmtDisSecBoot,
+        prompt      = STRING_TOKEN(STR_OCR_AMT_DIS_SEC_BOOT_PROMPT),
+        help        = STRING_TOKEN(STR_OCR_AMT_DIS_SEC_BOOT_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+  endform; // ONE_CLICK_RECOVERY_FORM_ID
+
+endformset;

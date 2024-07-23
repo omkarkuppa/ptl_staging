@@ -1,0 +1,57 @@
+## @file
+#  DEC file for MipiCamFeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+DEC_SPECIFICATION = 0x00010017
+PACKAGE_NAME      = MipiCamFeaturePkg
+PACKAGE_VERSION   = 0.1
+PACKAGE_GUID      = 32F7C363-A82C-4AD4-BCBF-CDF099C7DB76
+
+[Includes]
+  Include
+  AcpiTables
+
+[Guids]
+##
+## MipiCam ConfigHob Guids
+##
+  gMipiCamConfigHobGuid                     =  { 0x6352E904, 0xD0A2, 0x4AD6, { 0x94, 0xF9, 0xEA, 0xC5, 0x0A, 0xA1, 0x6D, 0xB9 }}
+  gMipiCamConfigHobExtGuid                  =  { 0x956E3203, 0x49E5, 0x4CD4, { 0x9C, 0x29, 0x4A, 0x64, 0xF4, 0x23, 0x1B, 0x12 }}
+
+##
+## AcpiTables
+##
+  gMipiCamAcpiTableStorageGuid              =  { 0x2B55068D, 0x0546, 0x45E4, { 0xA0, 0xC9, 0x0A, 0x09, 0xDD, 0xE1, 0x08, 0x38 }}
+  gMipiCamFeaturePkgTokenSpaceGuid          =  { 0x76F5DE5B, 0x98B9, 0x4940, { 0xAD, 0xC1, 0x9B, 0xAA, 0x64, 0x10, 0x25, 0x39 }}
+  gMipiCamConfigVariableGuid                =  { 0xD592F6B0, 0x231B, 0x409E, { 0xB2, 0x66, 0xFB, 0xB0, 0xC7, 0x2E, 0x2F, 0xD9 }}
+
+
+[Protocols]
+  gMipiCamNvsAreaProtocolGuid               =  { 0x295C6B57, 0x75B9, 0x4525, { 0x9F, 0x04, 0xEF, 0x9D, 0xB3, 0x50, 0x56, 0x68 }}
+
+[Ppis]
+
+[PcdsDynamic]
+
+[PcdsFixedAtBuild]
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable|TRUE|BOOLEAN|0xE0000010
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdIpuDriverPlatformId|0xFF|UINT8|0xE0000000

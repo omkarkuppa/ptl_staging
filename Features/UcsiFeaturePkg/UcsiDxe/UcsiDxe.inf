@@ -1,0 +1,72 @@
+### @file
+# Component description file for UcsiDxe module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = UcsiDxe
+  FILE_GUID                      = 15B985C5-7103-4F35-B59D-2235FC5F3FFE
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = UcsiEntryPoint
+
+[LibraryClasses]
+  DebugLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  DxeServicesLib
+  PcdLib
+  UefiLib
+  HobLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  UcsiFeaturePkg/UcsiFeaturePkg.dec
+
+[Sources]
+  UcsiDxe.c
+  UcsiFeaturePkg/AcpiTables/Ucsi.asl
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid                                          ## CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid                                    ## CONSUMES
+  gUcsiNvsAreaProtocolGuid                                           ## PRODUCES
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId            ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUsbCUcmMode                       ## CONSUMES
+
+  # UCxx Driver Type and Support for Port
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUcxxDriverType                    ## CONSUMES
+  gUcsiFeaturePkgTokenSpaceGuid.PcdPortUcxxDriverSupport             ## CONSUMES
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUcsiRevision                      ## CONSUMES
+
+[Depex]
+  gEfiAcpiTableProtocolGuid           AND
+  gEfiVariableArchProtocolGuid        AND
+  gEfiFirmwareVolume2ProtocolGuid     AND
+  gEfiVariableWriteArchProtocolGuid

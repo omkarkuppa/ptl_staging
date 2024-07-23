@@ -1,0 +1,548 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2010 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#include <SetupPrivate.h>
+#include <OemSetup.h>
+#include <PlatformBoardId.h>
+
+formset guid = MAIN_FORM_SET_GUID,
+  title      = STRING_TOKEN(STR_MAIN),
+  help       = STRING_TOKEN(STR_MAIN_HELP),
+  classguid  = FRONT_PAGE_GUID,
+  class      = MAIN_FORM_SET_CLASS,
+  subclass   = 0,
+
+  SETUP_DATA_VARSTORE
+  SYSTEM_ACCESS_VARSTORE
+
+  varstore SETUP_VOLATILE_DATA,
+    varid = SETUP_VOLATILE_DATA_ID,
+    name  = SetupVolatileData,
+    guid  = SETUP_GUID;
+
+  //
+  // MAIN form
+  //
+  form formid = AUTO_ID(MAIN_MAIN),
+    title     = STRING_TOKEN(STR_MAIN);
+
+    //
+    // BIOS INFORMATION
+    //
+    SUBTITLE(STRING_TOKEN(STR_BIOS))
+    INVENTORY(STRING_TOKEN(STR_BIOS_VENDOR_NAME),STRING_TOKEN(STR_BIOS_VENDOR_VALUE))
+    INVENTORY(STRING_TOKEN(STR_BIOS_VERSION_NAME),STRING_TOKEN(STR_BIOS_VERSION_VALUE))
+    INVENTORY(STRING_TOKEN(STR_BIOS_DATE_NAME),STRING_TOKEN(STR_BIOS_DATE_VALUE))
+
+    //
+    // FSP INFORMATION
+    //
+    SEPARATOR
+    SUBTITLE(STRING_TOKEN(STR_FSP_INFO))
+
+    text
+      help  = STRING_TOKEN(STR_FSP_VERSION_HELP),
+      text  = STRING_TOKEN(STR_FSP_VERSION_STRING),
+      text  = STRING_TOKEN(STR_FSP_VERSION_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_RC_VERSION_HELP),
+      text  = STRING_TOKEN(STR_RC_VERSION_STRING),
+      text  = STRING_TOKEN(STR_RC_VERSION_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_BUILD_DATE_HELP),
+      text  = STRING_TOKEN(STR_BUILD_DATE_STRING),
+      text  = STRING_TOKEN(STR_BUILD_DATE_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_FSP_MODE_HELP),
+      text  = STRING_TOKEN(STR_FSP_MODE_STRING),
+      text  = STRING_TOKEN(STR_FSP_MODE_VALUE),
+      flags = 0,
+      key   = 0;
+
+#if FixedPcdGetBool (PcdUplEnable) == 1
+    //
+    // UPL Information
+    //
+    SEPARATOR
+    SUBTITLE(STRING_TOKEN(STR_UPL_INFO))
+
+    text
+      help  = STRING_TOKEN(STR_UPL_SPEC_REVISION_HELP),
+      text  = STRING_TOKEN(STR_UPL_SPEC_REVISION_STRING),
+      text  = STRING_TOKEN(STR_UPL_SPEC_REVISION_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_UPL_VERSION_HELP),
+      text  = STRING_TOKEN(STR_UPL_VERSION_STRING),
+      text  = STRING_TOKEN(STR_UPL_VERSION_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_UPL_PRODUCER_ID_HELP),
+      text  = STRING_TOKEN(STR_UPL_PRODUCER_ID_STRING),
+      text  = STRING_TOKEN(STR_UPL_PRODUCER_ID_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_UPL_IMAGE_ID_HELP),
+      text  = STRING_TOKEN(STR_UPL_IMAGE_ID_STRING),
+      text  = STRING_TOKEN(STR_UPL_IMAGE_ID_VALUE),
+      flags = 0,
+      key   = 0;
+#endif
+
+    //
+    // BOARD INFORMATION
+    //
+    SEPARATOR
+    SUBTITLE(STRING_TOKEN(STR_BOARD_FORM_SUBTITLE))
+
+    text
+      help  = STRING_TOKEN(STR_BOARD_NAME_HELP),
+      text  = STRING_TOKEN(STR_BOARD_NAME_STRING),
+      text  = STRING_TOKEN(STR_BOARD_NAME_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_BOARD_ID_HELP),
+      text  = STRING_TOKEN(STR_BOARD_ID_STRING),
+      text  = STRING_TOKEN(STR_BOARD_ID_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_FAB_ID_HELP),
+      text  = STRING_TOKEN(STR_FAB_ID_STRING),
+      text  = STRING_TOKEN(STR_FAB_ID_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_LAN_PHY_REV_HELP),
+      text  = STRING_TOKEN(STR_LAN_PHY_REV_STRING),
+      text  = STRING_TOKEN(STR_LAN_PHY_REV_VALUE),
+      flags = 0,
+      key   = 0;
+
+    //
+    // CPU INFORMATION
+    //
+    SEPARATOR
+    SUBTITLE(STRING_TOKEN(STR_CPU_FORM_SUBTITLE))
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_VERSION_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_VERSION_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_VERSION_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_SPEED_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_SPEED_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_SPEED_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_ID_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_ID_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_ID_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_STEPPING_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_STEPPING_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_STEPPING_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_PACKAGE_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_PACKAGE_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_PACKAGE_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_COUNT_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_ATOM_COUNT_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_ATOM_COUNT_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_COUNT_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_CORE_COUNT_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_CORE_COUNT_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_COUNT_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_LP_ATOM_COUNT_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_LP_ATOM_COUNT_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_MICROCODE_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_MICROCODE_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_MICROCODE_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PROCESSOR_GT_HELP),
+      text  = STRING_TOKEN(STR_PROCESSOR_GT_STRING),
+      text  = STRING_TOKEN(STR_PROCESSOR_GT_VALUE),
+      flags = 0,
+      key   = 0;
+
+    SEPARATOR
+    suppressif ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorUpServer;
+
+      text
+        help  = STRING_TOKEN(STR_CHIP_IGFX_GOP_REV_HELP),
+        text  = STRING_TOKEN(STR_CHIP_IGFX_GOP_REV_NAME),
+        text  = STRING_TOKEN(STR_CHIP_IGFX_GOP_REV_VALUE),
+        flags = 0,
+        key   = 0;
+    endif; // suppressif
+
+    text
+      help  = STRING_TOKEN(STR_MRC_REV_HELP),
+      text  = STRING_TOKEN(STR_MRC_REV_NAME),
+      text  = STRING_TOKEN(STR_MRC_REV_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_MEMORY_SIZE_HELP),
+      text  = STRING_TOKEN(STR_MEMORY_SIZE_NAME),
+      text  = STRING_TOKEN(STR_MEMORY_SIZE_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_MEMORY_FREQ_HELP),
+      text  = STRING_TOKEN(STR_MEMORY_FREQ_NAME),
+      text  = STRING_TOKEN(STR_MEMORY_FREQ_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PCIE_REV_HELP),
+      text  = STRING_TOKEN(STR_PCIE_REV_NAME),
+      text  = STRING_TOKEN(STR_PCIE_REV_VALUE),
+      flags = 0,
+      key   = 0;
+
+    //
+    // PCH INFORMATION
+    //
+    SEPARATOR
+    SUBTITLE(STRING_TOKEN(STR_SB_INFORMATION))
+
+    text
+      help  = STRING_TOKEN(STR_CHIP_SB_NAME_HELP),
+      text  = STRING_TOKEN(STR_CHIP_SB_NAME),
+      text  = STRING_TOKEN(STR_CHIP_SB_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_CHIP_SB_SKU_NAME_HELP),
+      text  = STRING_TOKEN(STR_CHIP_SB_SKU_NAME),
+      text  = STRING_TOKEN(STR_CHIP_SB_SKU_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_CHIP_SB_REV_HELP),
+      text  = STRING_TOKEN(STR_CHIP_SB_REV_NAME),
+      text  = STRING_TOKEN(STR_CHIP_SB_REV_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_CHIP_HSIO_INTEL_VER_HELP),
+      text  = STRING_TOKEN(STR_CHIP_HSIO_INTEL_VER_NAME),
+      text  = STRING_TOKEN(STR_CHIP_HSIO_INTEL_VER_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_CHIP_HSIO_OEM_VER_HELP),
+      text  = STRING_TOKEN(STR_CHIP_HSIO_OEM_VER_NAME),
+      text  = STRING_TOKEN(STR_CHIP_HSIO_OEM_VER_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_CHIP_SB_PACKAGE_HELP),
+      text  = STRING_TOKEN(STR_CHIP_SB_PACKAGE_NAME),
+      text  = STRING_TOKEN(STR_CHIP_SB_PACKAGE_VALUE),
+      flags = 0,
+      key   = 0;
+
+    // PLATFORM INFORMATION
+    text
+      help  = STRING_TOKEN(STR_PLATFORM_TXT_HELP),
+      text  = STRING_TOKEN(STR_PLATFORM_TXT_NAME),
+      text  = STRING_TOKEN(STR_PLATFORM_TXT_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PRODUCTION_TYPE_HELP),
+      text  = STRING_TOKEN(STR_PRODUCTION_TYPE_NAME),
+      text  = STRING_TOKEN(STR_PRODUCTION_TYPE_VALUE),
+      flags = 0,
+      key   = 0;
+
+      text
+      help  = STRING_TOKEN(STR_QDF_INFO_HELP),
+      text  = STRING_TOKEN(STR_QDF_INFO_NAME),
+      text  = STRING_TOKEN(STR_QDF_INFO_VALUE),
+      flags = 0,
+      key   = 0;
+
+    SEPARATOR
+    text
+      help   = STRING_TOKEN(STR_SPI_DUAL_OUTPUT_FAST_READ_SUPPORT_HELP),
+      text   = STRING_TOKEN(STR_SPI_DUAL_OUTPUT_FAST_READ_SUPPORT_PROMPT),
+      text   = STRING_TOKEN(STR_SPI_DUAL_OUTPUT_FAST_READ_SUPPORT_VALUE),
+      flags  = 0,
+      key    = 0;
+
+    text
+      help   = STRING_TOKEN(STR_SPI_READ_ID_STATUS_CLOCK_FREQUENCY_HELP),
+      text   = STRING_TOKEN(STR_SPI_READ_ID_STATUS_CLOCK_FREQUENCY_PROMPT),
+      text   = STRING_TOKEN(STR_SPI_READ_ID_STATUS_CLOCK_FREQUENCY_VALUE),
+      flags  = 0,
+      key    = 0;
+
+    text
+      help   = STRING_TOKEN(STR_SPI_WRITE_ERASE_CLOCK_FREQUENCY_HELP),
+      text   = STRING_TOKEN(STR_SPI_WRITE_ERASE_CLOCK_FREQUENCY_PROMPT),
+      text   = STRING_TOKEN(STR_SPI_WRITE_ERASE_CLOCK_FREQUENCY_VALUE),
+      flags  = 0,
+     key    = 0;
+
+    text
+      help   = STRING_TOKEN(STR_SPI_FAST_READ_CLOCK_FREQUENCY_HELP),
+      text   = STRING_TOKEN(STR_SPI_FAST_READ_CLOCK_FREQUENCY_PROMPT),
+      text   = STRING_TOKEN(STR_SPI_FAST_READ_CLOCK_FREQUENCY_VALUE),
+      flags  = 0,
+      key    = 0;
+
+    text
+      help   = STRING_TOKEN(STR_SPI_FAST_READ_SUPPORT_HELP),
+      text   = STRING_TOKEN(STR_SPI_FAST_READ_SUPPORT_PROMPT),
+      text   = STRING_TOKEN(STR_SPI_FAST_READ_SUPPORT_VALUE),
+      flags  = 0,
+      key    = 0;
+
+    text
+      help   = STRING_TOKEN(STR_SPI_NUMBER_OF_COMPONENTS_HELP),
+      text   = STRING_TOKEN(STR_SPI_NUMBER_OF_COMPONENTS_PROMPT),
+      text   = STRING_TOKEN(STR_SPI_NUMBER_OF_COMPONENTS_VALUE),
+      flags  = 0,
+      key    = 0;
+
+    suppressif   ideqval SETUP_DATA.TwoComponents == 0;
+      text
+        help   = STRING_TOKEN(STR_SPI1_DENSITY_HELP),
+        text   = STRING_TOKEN(STR_SPI1_DENSITY_PROMPT),
+        text   = STRING_TOKEN(STR_SPI1_DENSITY_VALUE),
+        flags  = 0,
+        key    = 0;
+    endif;  // Suppress if there is only one component
+
+    text
+      help   = STRING_TOKEN(STR_SPI0_DENSITY_HELP),
+      text   = STRING_TOKEN(STR_SPI0_DENSITY_PROMPT),
+      text   = STRING_TOKEN(STR_SPI0_DENSITY_VALUE),
+      flags  = 0,
+      key    = 0;
+
+    // KSC EC INFORMATION
+    SEPARATOR
+    text
+      help  = STRING_TOKEN(STR_CHIP_EC_REV_HELP),
+      text  = STRING_TOKEN(STR_CHIP_EC_REV_NAME),
+      text  = STRING_TOKEN(STR_CHIP_EC_REV_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_ESPI_SHARING_MODE_HELP),
+      text  = STRING_TOKEN(STR_ESPI_SHARING_MODE_NAME),
+      text  = STRING_TOKEN(STR_ESPI_SHARING_MODE_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_EC_PECI_MODE_HELP),
+      text  = STRING_TOKEN(STR_READ_PECI_MODE_NAME),
+      text  = STRING_TOKEN(STR_READ_PECI_MODE_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_ME_FW_REV_HELP),
+      text  = STRING_TOKEN(STR_ME_FW_REV_PROMPT),
+      text  = STRING_TOKEN(STR_ME_FW_REV_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_ME_FW_SKU_HELP),
+      text  = STRING_TOKEN(STR_ME_FW_SKU_PROMPT),
+      text  = STRING_TOKEN(STR_ME_FW_SKU_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_SSE_FW_REV_HELP),
+      text  = STRING_TOKEN(STR_SSE_FW_REV_PROMPT),
+      text  = STRING_TOKEN(STR_SSE_FW_REV_VALUE),
+      flags = 0,
+      key   = 0;
+
+    text
+      help  = STRING_TOKEN(STR_PMC_FW_REV_HELP),
+      text  = STRING_TOKEN(STR_PMC_FW_REV_PROMPT),
+      text  = STRING_TOKEN(STR_PMC_FW_REV_VALUE),
+      flags = 0,
+      key   = 0;
+
+    //TPM current location
+    SEPARATOR
+    text
+      help   = STRING_TOKEN(STR_TCG2_DEVICE_LOC_HELP),
+      text   = STRING_TOKEN(STR_TCG2_DEVICE_LOC_PROMPT),
+      text   = STRING_TOKEN(STR_TCG2_DEVICE_LOC_CONTENT),
+      flags = 0,
+      key   = 0;
+
+    // TIME
+    SEPARATOR
+    date
+      year
+        varid   = Date.Year,
+        prompt  = STRING_TOKEN(STR_DATE),
+        help    = STRING_TOKEN(STR_DATE_HELP),
+        minimum = 2005,
+        maximum = 2099,
+        step    = 1,
+        default = 2005,
+
+      month
+        varid   = Date.Month,
+        prompt  = STRING_TOKEN(STR_DATE),
+        help    = STRING_TOKEN(STR_DATE_HELP),
+        minimum = 1,
+        maximum = 12,
+        step    = 1,
+        default = 1,
+
+      day
+        varid   = Date.Day,
+        prompt  = STRING_TOKEN(STR_DATE),
+        help    = STRING_TOKEN(STR_DATE_HELP),
+        minimum = 1,
+        maximum = 31,
+        step    = 1,
+        default = 1,
+    enddate;
+
+    time
+      hour
+        varid   = Time.Hours,
+        prompt  = STRING_TOKEN(STR_TIME),
+        help    = STRING_TOKEN(STR_TIME_HELP),
+        minimum = 0,
+        maximum = 23,
+        step    = 1,
+        default = 0,
+
+      minute
+        varid   = Time.Minutes,
+        prompt  = STRING_TOKEN(STR_TIME),
+        help    = STRING_TOKEN(STR_TIME_HELP),
+        minimum = 0,
+        maximum = 59,
+        step    = 1,
+        default = 0,
+
+      second
+        varid   = Time.Seconds,
+        prompt  = STRING_TOKEN(STR_TIME),
+        help    = STRING_TOKEN(STR_TIME_HELP),
+        minimum = 0,
+        maximum = 59,
+        step    = 1,
+        default = 0,
+    endtime;
+
+    SEPARATOR
+    suppressif ideqval SYSTEM_ACCESS.Access == SYSTEM_PASSWORD_ADMIN;
+      text
+        help  = STRING_TOKEN(STR_EMPTY),
+        text  = STRING_TOKEN(STR_ACCESS_LEVEL),
+        text  = STRING_TOKEN(STR_ACCESS_USER),
+        flags = 0,
+        key   = 0;
+    endif; // suppressif
+
+    suppressif ideqval SYSTEM_ACCESS.Access == SYSTEM_PASSWORD_USER;
+      text
+        help  = STRING_TOKEN(STR_EMPTY),
+        text  = STRING_TOKEN(STR_ACCESS_LEVEL),
+        text  = STRING_TOKEN(STR_ACCESS_ADMIN),
+        flags = 0,
+        key   = 0;
+    endif; // suppressif
+  endform;
+endformset;

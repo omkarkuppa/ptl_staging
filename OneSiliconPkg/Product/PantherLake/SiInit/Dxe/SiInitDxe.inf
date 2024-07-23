@@ -1,0 +1,108 @@
+## @file
+#  Component information file for the Silicion Init DXE module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION = 0x00010017
+  BASE_NAME = SiInitDxe
+  FILE_GUID = ACD28235-075B-48b5-98A1-DA04FCAF84F3
+  VERSION_STRING = 1.0
+  MODULE_TYPE = DXE_DRIVER
+  ENTRY_POINT = SiInitDxe
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiRuntimeServicesTableLib
+  UefiBootServicesTableLib
+  UefiLib
+  DebugLib
+  SmbiosMemoryLib
+  SiFviInitLib
+  ConfigBlockLib
+  HobLib
+  PciSegmentLib
+  DxeIgdOpRegionInitLib
+  DxeGraphicsInitLib
+  DxeTseLib
+  DxeIpuInitLib
+  DxeVtdInitLib
+  DxeSaNvsInitLib
+  AslUpdateLib
+  DxeHybridGraphicsInitLib
+  PciExpressHelpersLib
+  DxeTcssInitLib
+  DxeSaInitFruLib
+  IpuLib
+  DxeTcssInitFruLib
+  DxeHostBridgeInitLib
+  DxeVmdInitLib
+  DxeVmdInitFruLib
+  RtcAccessLib
+  MemoryAddressDecodeEncodeLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+
+[Sources]
+  SiInitDxe.c
+  IncompatiblePciDeviceSupport.c
+  TopSwapControlSupport.c
+
+[Protocols]
+  gEfiSmbiosProtocolGuid                       ## CONSUMES
+  gDxeSiPolicyProtocolGuid                     ## CONSUMES
+  gEfiIncompatiblePciDeviceSupportProtocolGuid ## CONSUMES
+  gEfiPciEnumerationCompleteProtocolGuid       ## CONSUMES
+  gEfiAcpiTableProtocolGuid                    ## CONSUMES
+  gIGpuPolicyProtocolGuid                      ## CONSUMES
+  gIgdOpRegionProtocolGuid                     ## PRODUCES
+  gEfiFirmwareVolume2ProtocolGuid              ## CONSUMES
+  gTopSwapControlProtocolGuid                  ## PRODUCES
+
+[Guids]
+  gEfiEndOfDxeEventGroupGuid                   ## CONSUMES
+  gPchGeneralConfigGuid                        ## CONSUMES
+  gPchGeneralConfigHobGuid                     ## CONSUMES
+  gGraphicsAcpiTableStorageGuid                ## CONSUMES
+  gTseAcpiTableStorageGuid                     ## CONSUMES
+  gIpuAcpiTableStorageGuid                     ## CONSUMES
+  gImrConfigGuid                               ## CONSUMES
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdSiPciExpressBaseAddress
+  gEfiMdeModulePkgTokenSpaceGuid.PcdPcieResizableBarSupport
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdTcssSupport          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTseEnable            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdVmdEnable            ## CONSUMES
+
+[Depex]
+  gEfiAcpiTableProtocolGuid AND
+  gEfiFirmwareVolume2ProtocolGuid AND
+  gIGpuPolicyProtocolGuid AND
+  gEfiPciRootBridgeIoProtocolGuid AND
+  gEfiPciHostBridgeResourceAllocationProtocolGuid AND # This is to ensure that PCI MMIO resource has been prepared and available for this driver to allocate.
+  gEfiHiiDatabaseProtocolGuid

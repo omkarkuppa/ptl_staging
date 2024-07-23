@@ -1,0 +1,242 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#include "VFR.uni"
+
+#string STR_DMI_FORM                             #language en-US "DMI Configuration"
+#string STR_DMI_FORM_HELP                        #language en-US "Control various DMI functions."
+
+#string STR_UP_DMI_TITLE                         #language en-US "UP DMI Configuration"
+#string STR_DP_DMI_TITLE                         #language en-US "DP DMI Configuration"
+#string STR_DMI_ADVANCED_OPTIONS                 #language en-US "Advanced DMI Configuration"
+
+#string STR_DMI_INFO_HELP                       #language en-US "DMI Link and Speed Information"
+#string STR_DMI_INFO_NAME                       #language en-US "DMI"
+#string STR_DMI_INFO_VALUE                      #language en-US "N/A"
+
+#string STR_DMI_ASPM_PROMPT                     #language en-US "DMI ASPM"
+#string STR_DMI_ASPM_HELP                       #language en-US "DMI ASPM Support"
+
+#string STR_DMI_L1_EXIT_LATENCY_PROMPT          #language en-US "DMI L1 Exit Latency"
+#string STR_DMI_L1_EXIT_LATENCY_HELP            #language en-US "DMI L1 Exit Latency"
+
+#string STR_DMI_MAX_SPEED_PROMPT                #language en-US "DMI Max Link Speed"
+#string STR_DMI_MAX_SPEED_HELP                  #language en-US "Set DMI Speed Gen1/Gen2/Gen3"
+
+#string STR_DMI_L1SS_PROMPT                     #language en-US "L1ss"
+#string STR_DMI_L1SS_HELP                       #language en-US "L1.2/Disable L1ss"
+#string STR_ENABLE_L1SS                         #language en-US "L1.2"
+#string STR_DISABLE_L1SS                        #language en-US "Disabled"
+
+#string STR_DMI_GEN3_EQ_PHASE2_PROMPT           #language en-US "DMI Gen3 Eq Phase 2"
+#string STR_GEN3_EQ_PHASE2_HELP                 #language en-US "Perform Gen3 Equalization Phase 2"
+#string STR_EQ_PH2_PH3_INCONSISTENT_PROMPT      #language en-US "Phase 3 Eq must be Software or Static if Phase 2 is disabled"
+
+#string STR_DMI_GEN3_EQ_PHASE3_METHOD_PROMPT    #language en-US "DMI Gen3 Eq Phase 3 Method"
+#string STR_GEN3_EQ_PHASE3_METHOD_HELP          #language en-US "Select Method for Gen3 Equalization Phase 3"
+
+#string STR_EQ_PH3_METHOD_HWEQ                  #language en-US "Adaptive Hardware Equalization"
+#string STR_EQ_PH3_METHOD_SWEQ                  #language en-US "Adaptive Software Equalization"
+#string STR_EQ_PH3_METHOD_STATIC                #language en-US "Static Equalization"
+
+#string STR_DMI_GEN3_EQ_PROMPT                  #language en-US "Program Static Phase1 Eq"
+#string STR_DMI_GEN3_EQ_HELP                    #language en-US "Program Phase1 Presets/CTLEp"
+
+#string STR_GEN3_ROOT_PORT_PRESET_PROMPT        #language en-US " Gen3 Root Port Preset value for each Lane"
+#string STR_GEN3_ROOT_PORT_PRESET_HELP          #language en-US "Root Port preset value per lane for Gen3 Equalization"
+
+#string STR_GEN3_END_POINT_PRESET_PROMPT        #language en-US " Gen3 Endpoint Preset value for each Lane"
+#string STR_GEN3_END_POINT_PRESET_HELP          #language en-US "Endpoint preset value per lane for Gen3 Equalization"
+
+#string STR_GEN3_END_POINT_HINT_PROMPT          #language en-US " Gen3 Endpoint Hint value for each Lane"
+#string STR_GEN3_END_POINT_HINT_HELP            #language en-US "Endpoint Hint value per lane for Gen3 Equalization"
+
+#string STR_DMI_GEN3_ROOT_PORT_PRESET_LANE0_PROMPT  #language en-US " Lane 0"
+#string STR_GEN3_ROOT_PORT_PRESET_LANE0_HELP    #language en-US " Value for Lane 0"
+
+#string STR_DMI_GEN3_ROOT_PORT_PRESET_LANE1_PROMPT  #language en-US " Lane 1"
+#string STR_GEN3_ROOT_PORT_PRESET_LANE1_HELP    #language en-US " Value for Lane 1"
+
+#string STR_DMI_GEN3_ROOT_PORT_PRESET_LANE2_PROMPT  #language en-US " Lane 2"
+#string STR_GEN3_ROOT_PORT_PRESET_LANE2_HELP    #language en-US " Value for Lane 2"
+
+#string STR_DMI_GEN3_ROOT_PORT_PRESET_LANE3_PROMPT  #language en-US " Lane 3"
+#string STR_GEN3_ROOT_PORT_PRESET_LANE3_HELP    #language en-US " Value for Lane 3"
+
+#string STR_DMI_GEN3_ROOT_PORT_PRESET_LANE4_PROMPT  #language en-US " Lane 4"
+#string STR_GEN3_ROOT_PORT_PRESET_LANE4_HELP    #language en-US " Value for Lane 4"
+
+#string STR_DMI_GEN3_ROOT_PORT_PRESET_LANE5_PROMPT  #language en-US " Lane 5"
+#string STR_GEN3_ROOT_PORT_PRESET_LANE5_HELP    #language en-US " Value for Lane 5"
+
+#string STR_DMI_GEN3_ROOT_PORT_PRESET_LANE6_PROMPT  #language en-US " Lane 6"
+#string STR_GEN3_ROOT_PORT_PRESET_LANE6_HELP    #language en-US " Value for Lane 6"
+
+#string STR_DMI_GEN3_ROOT_PORT_PRESET_LANE7_PROMPT  #language en-US " Lane 7"
+#string STR_GEN3_ROOT_PORT_PRESET_LANE7_HELP    #language en-US " Value for Lane 7"
+
+#string STR_DMI_GEN3_END_POINT_PRESET_LANE0_PROMPT  #language en-US " Lane 0"
+#string STR_GEN3_END_POINT_PRESET_LANE0_HELP    #language en-US " Value for Lane 0"
+
+#string STR_DMI_GEN3_END_POINT_PRESET_LANE1_PROMPT  #language en-US " Lane 1"
+#string STR_GEN3_END_POINT_PRESET_LANE1_HELP    #language en-US " Value for Lane 1"
+
+#string STR_DMI_GEN3_END_POINT_PRESET_LANE2_PROMPT  #language en-US " Lane 2"
+#string STR_GEN3_END_POINT_PRESET_LANE2_HELP    #language en-US " Value for Lane 2"
+
+#string STR_DMI_GEN3_END_POINT_PRESET_LANE3_PROMPT  #language en-US " Lane 3"
+#string STR_GEN3_END_POINT_PRESET_LANE3_HELP    #language en-US " Value for Lane 3"
+
+#string STR_DMI_GEN3_END_POINT_PRESET_LANE4_PROMPT  #language en-US " Lane 4"
+#string STR_GEN3_END_POINT_PRESET_LANE4_HELP    #language en-US " Value for Lane 4"
+
+#string STR_DMI_GEN3_END_POINT_PRESET_LANE5_PROMPT  #language en-US " Lane 5"
+#string STR_GEN3_END_POINT_PRESET_LANE5_HELP    #language en-US " Value for Lane 5"
+
+#string STR_DMI_GEN3_END_POINT_PRESET_LANE6_PROMPT  #language en-US " Lane 6"
+#string STR_GEN3_END_POINT_PRESET_LANE6_HELP    #language en-US " Value for Lane 6"
+
+#string STR_DMI_GEN3_END_POINT_PRESET_LANE7_PROMPT  #language en-US " Lane 7"
+#string STR_GEN3_END_POINT_PRESET_LANE7_HELP    #language en-US " Value for Lane 7"
+
+#string STR_DMI_GEN3_END_POINT_HINT_LANE0_PROMPT    #language en-US " Lane 0"
+#string STR_GEN3_END_POINT_HINT_LANE0_HELP      #language en-US " Value for Lane 0"
+
+#string STR_DMI_GEN3_END_POINT_HINT_LANE1_PROMPT    #language en-US " Lane 1"
+#string STR_GEN3_END_POINT_HINT_LANE1_HELP      #language en-US " Value for Lane 1"
+
+#string STR_DMI_GEN3_END_POINT_HINT_LANE2_PROMPT    #language en-US " Lane 2"
+#string STR_GEN3_END_POINT_HINT_LANE2_HELP      #language en-US " Value for Lane 2"
+
+#string STR_DMI_GEN3_END_POINT_HINT_LANE3_PROMPT    #language en-US " Lane 3"
+#string STR_GEN3_END_POINT_HINT_LANE3_HELP      #language en-US " Value for Lane 3"
+
+#string STR_DMI_GEN3_END_POINT_HINT_LANE4_PROMPT    #language en-US " Lane 4"
+#string STR_GEN3_END_POINT_HINT_LANE4_HELP      #language en-US " Value for Lane 4"
+
+#string STR_DMI_GEN3_END_POINT_HINT_LANE5_PROMPT    #language en-US " Lane 5"
+#string STR_GEN3_END_POINT_HINT_LANE5_HELP      #language en-US " Value for Lane 5"
+
+#string STR_DMI_GEN3_END_POINT_HINT_LANE6_PROMPT    #language en-US " Lane 6"
+#string STR_GEN3_END_POINT_HINT_LANE6_HELP      #language en-US " Value for Lane 6"
+
+#string STR_DMI_GEN3_END_POINT_HINT_LANE7_PROMPT    #language en-US " Lane 7"
+#string STR_GEN3_END_POINT_HINT_LANE7_HELP      #language en-US " Value for Lane 7"
+
+#string STR_DMI_GEN3_RTCO_EQ_RTPO_PROMPT        #language en-US "Gen3 EQ Remote Transmitter Coefficient/Preset Override"
+#string STR_DMI_GEN3_RTCO_EQ_RTPO_HELP          #language en-US "Gen3 EQ Remote Transmitter Coefficient/Preset Override Enable"
+
+#string STR_DMI_GEN4_RTCO_EQ_RTPO_PROMPT        #language en-US "Gen4 EQ Remote Transmitter Coefficient/Preset Override"
+#string STR_DMI_GEN4_RTCO_EQ_RTPO_HELP          #language en-US "Gen4 EQ Remote Transmitter Coefficient/Preset Override Enable"
+
+#string STR_DMI_RTCO_CPRE_LANE0_PROMPT          #language en-US "Cpre Lane0"
+#string STR_DMI_RTCO_CPRE_LANE0_HELP            #language en-US "Value for Cpre Lane0"
+
+#string STR_DMI_RTCO_CPO_LANE0_PROMPT           #language en-US "Cpo Lane0"
+#string STR_DMI_RTCO_CPO_LANE0_HELP             #language en-US "Value for Cpo Lane0"
+
+#string STR_DMI_RTCO_CPRE_LANE1_PROMPT          #language en-US "Cpre Lane1"
+#string STR_DMI_RTCO_CPRE_LANE1_HELP            #language en-US "Value for Cpre Lane1"
+
+#string STR_DMI_RTCO_CPO_LANE1_PROMPT           #language en-US "Cpo Lane1"
+#string STR_DMI_RTCO_CPO_LANE1_HELP             #language en-US "Value for Cpo Lane1"
+
+#string STR_DMI_RTCO_CPRE_LANE2_PROMPT          #language en-US "Cpre Lane2"
+#string STR_DMI_RTCO_CPRE_LANE2_HELP            #language en-US "Value for Cpre Lane2"
+
+#string STR_DMI_RTCO_CPO_LANE2_PROMPT           #language en-US "Cpo Lane2"
+#string STR_DMI_RTCO_CPO_LANE2_HELP             #language en-US "Value for Cpo Lane2"
+
+#string STR_DMI_RTCO_CPRE_LANE3_PROMPT          #language en-US "Cpre Lane3"
+#string STR_DMI_RTCO_CPRE_LANE3_HELP            #language en-US "Value for Cpre Lane3"
+
+#string STR_DMI_RTCO_CPO_LANE3_PROMPT           #language en-US "Cpo Lane3"
+#string STR_DMI_RTCO_CPO_LANE3_HELP             #language en-US "Value for Cpo Lane3"
+
+#string STR_DMI_RTCO_CPRE_LANE4_PROMPT          #language en-US "Cpre Lane4"
+#string STR_DMI_RTCO_CPRE_LANE4_HELP            #language en-US "Value for Cpre Lane4"
+
+#string STR_DMI_RTCO_CPO_LANE4_PROMPT           #language en-US "Cpo Lane4"
+#string STR_DMI_RTCO_CPO_LANE4_HELP             #language en-US "Value for Cpo Lane4"
+
+#string STR_DMI_RTCO_CPRE_LANE5_PROMPT          #language en-US "Cpre Lane5"
+#string STR_DMI_RTCO_CPRE_LANE5_HELP            #language en-US "Value for Cpre Lane5"
+
+#string STR_DMI_RTCO_CPO_LANE5_PROMPT           #language en-US "Cpo Lane5"
+#string STR_DMI_RTCO_CPO_LANE5_HELP             #language en-US "Value for Cpo Lane5"
+
+#string STR_DMI_RTCO_CPRE_LANE6_PROMPT          #language en-US "Cpre Lane6"
+#string STR_DMI_RTCO_CPRE_LANE6_HELP            #language en-US "Value for Cpre Lane6"
+
+#string STR_DMI_RTCO_CPO_LANE6_PROMPT           #language en-US "Cpo Lane6"
+#string STR_DMI_RTCO_CPO_LANE6_HELP             #language en-US "Value for Cpo Lane6"
+
+#string STR_DMI_RTCO_CPRE_LANE7_PROMPT          #language en-US "Cpre Lane7"
+#string STR_DMI_RTCO_CPRE_LANE7_HELP            #language en-US "Value for Cpre Lane7"
+
+#string STR_DMI_RTCO_CPO_LANE7_PROMPT           #language en-US "Cpo Lane7"
+#string STR_DMI_RTCO_CPO_LANE7_HELP             #language en-US "Value for Cpo Lane7"
+
+#string STR_PCH_DMI_UP_PORT_PRESET_ENABLE       #language en-US "Enable/Disable PCH DMI Up Port Preset"
+#string STR_PCH_DMI_UP_PORT_PRESET_HELP         #language en-US "Enable/Disable PCH DMI Up Port Preset"
+
+#string STR_PCH_DMI_RTLEPCEB_PROMPT             #language en-US "DMI RTLEPCEB"
+#string STR_PCH_DMI_RTLEPCEB_HELP               #language en-US "DMI Remote Transmit Link Equalization Preset/Coefficient Evaluation Bypass"
+
+#string STR_PCH_DMI_UPL0TP_PROMPT               #language en-US "DMI Lane 0 UPTP"
+#string STR_PCH_DMI_UPL1TP_PROMPT               #language en-US "DMI Lane 1 UPTP"
+#string STR_PCH_DMI_UPL2TP_PROMPT               #language en-US "DMI Lane 2 UPTP"
+#string STR_PCH_DMI_UPL3TP_PROMPT               #language en-US "DMI Lane 3 UPTP"
+#string STR_PCH_DMI_UPL4TP_PROMPT               #language en-US "DMI Lane 4 UPTP"
+#string STR_PCH_DMI_UPL5TP_PROMPT               #language en-US "DMI Lane 5 UPTP"
+#string STR_PCH_DMI_UPL6TP_PROMPT               #language en-US "DMI Lane 6 UPTP"
+#string STR_PCH_DMI_UPL7TP_PROMPT               #language en-US "DMI Lane 7 UPTP"
+#string STR_PCH_DMI_UPLTP_HELP                  #language en-US "DMI Upstream Port Transmitter Preset value."
+
+#string STR_PCH_DMI_L0TCOE_PROMPT               #language en-US "DMI Lane 0 TCO"
+#string STR_PCH_DMI_L1TCOE_PROMPT               #language en-US "DMI Lane 1 TCO"
+#string STR_PCH_DMI_L2TCOE_PROMPT               #language en-US "DMI Lane 2 TCO"
+#string STR_PCH_DMI_L3TCOE_PROMPT               #language en-US "DMI Lane 3 TCO"
+#string STR_PCH_DMI_L4TCOE_PROMPT               #language en-US "DMI Lane 4 TCO"
+#string STR_PCH_DMI_L5TCOE_PROMPT               #language en-US "DMI Lane 5 TCO"
+#string STR_PCH_DMI_L6TCOE_PROMPT               #language en-US "DMI Lane 6 TCO"
+#string STR_PCH_DMI_L7TCOE_PROMPT               #language en-US "DMI Lane 7 TCO"
+#string STR_PCH_DMI_LTCOE_HELP                  #language en-US "Enable/Disable DMI Lane Transmitter Coefficient Override."
+
+#string STR_PCH_DMI_L0TPRECO_PROMPT             #language en-US "DMI Lane 0 TPRECO"
+#string STR_PCH_DMI_L1TPRECO_PROMPT             #language en-US "DMI Lane 1 TPRECO"
+#string STR_PCH_DMI_L2TPRECO_PROMPT             #language en-US "DMI Lane 2 TPRECO"
+#string STR_PCH_DMI_L3TPRECO_PROMPT             #language en-US "DMI Lane 3 TPRECO"
+#string STR_PCH_DMI_L4TPRECO_PROMPT             #language en-US "DMI Lane 4 TPRECO"
+#string STR_PCH_DMI_L5TPRECO_PROMPT             #language en-US "DMI Lane 5 TPRECO"
+#string STR_PCH_DMI_L6TPRECO_PROMPT             #language en-US "DMI Lane 6 TPRECO"
+#string STR_PCH_DMI_L7TPRECO_PROMPT             #language en-US "DMI Lane 7 TPRECO"
+#string STR_PCH_DMI_LTPRECO_HELP                #language en-US "DMI Lane Transmitter Pre-Cursor Coefficient Override value."
+
+#string STR_PCH_DMI_L0TPOSTCO_PROMPT            #language en-US "DMI Lane 0 TPOSTCO"
+#string STR_PCH_DMI_L1TPOSTCO_PROMPT            #language en-US "DMI Lane 1 TPOSTCO"
+#string STR_PCH_DMI_L2TPOSTCO_PROMPT            #language en-US "DMI Lane 2 TPOSTCO"
+#string STR_PCH_DMI_L3TPOSTCO_PROMPT            #language en-US "DMI Lane 3 TPOSTCO"
+#string STR_PCH_DMI_L4TPOSTCO_PROMPT            #language en-US "DMI Lane 4 TPOSTCO"
+#string STR_PCH_DMI_L5TPOSTCO_PROMPT            #language en-US "DMI Lane 5 TPOSTCO"
+#string STR_PCH_DMI_L6TPOSTCO_PROMPT            #language en-US "DMI Lane 6 TPOSTCO"
+#string STR_PCH_DMI_L7TPOSTCO_PROMPT            #language en-US "DMI Lane 7 TPOSTCO"
+#string STR_PCH_DMI_LTPOSTCO_HELP               #language en-US "DMI Lane Transmitter Post-Cursor Coefficient Override value."
+

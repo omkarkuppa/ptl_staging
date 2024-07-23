@@ -1,0 +1,68 @@
+## @file
+#  FmpDeviceLib instance to support IFWI update.
+#
+#  !!! Warning !!! IFWI FMP for capsule update should be only use on development stage.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION    = 0x0001001B
+  BASE_NAME      = FmpDeviceLibIfwi
+  FILE_GUID      = A3E22BCB-4531-4216-8D31-CB20320BD43C
+  MODULE_TYPE    = DXE_DRIVER
+  VERSION_STRING = 1.0
+  LIBRARY_CLASS  = FmpDeviceLib|DXE_DRIVER
+  CONSTRUCTOR    = FmpDeviceLibIfwiConstructor
+
+[Sources]
+  FmpDeviceLibIfwi.c
+  IfwiUpdateHelperInternal.h
+  IfwiUpdateHelperInternal.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  FmpDevicePkg/FmpDevicePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  PciSegmentLib
+  TimerLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  CpuPlatformLib
+  MeLib
+  SpiAccessLib
+  CapsuleUpdateResetLib
+  ConfigProfileAccessLib
+  PlatformBiosUpdateHookLib
+  PlatformFlashAccessLib
+
+[Protocols]
+  gPchSpiProtocolGuid  ## CONSUMES
+
+[Guids]
+  gCapsuleIfwiConfigFileGuid  ## CONSUMES
+
+[Depex]
+  TRUE

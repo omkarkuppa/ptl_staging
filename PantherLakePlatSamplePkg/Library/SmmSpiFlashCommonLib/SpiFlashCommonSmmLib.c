@@ -1,0 +1,90 @@
+/** @file
+  SMM Library instance of SPI Flash Common Library Class
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2011 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+  @par Specification Reference:
+**/
+
+#include <Library/SpiFlashCommon.h>
+#include <Library/SmmServicesTableLib.h>
+#include <Protocol/BiosGuard.h>
+
+extern PCH_SPI_PROTOCOL   *mSpiProtocol;
+extern BIOSGUARD_PROTOCOL *mBiosGuardProtocol;
+
+extern UINTN mBiosAreaBaseAddress;
+extern UINTN mBiosSize;
+extern UINTN mBiosOffset;
+
+/**
+  The library constructuor.
+
+  The function does the necessary initialization work for this library
+  instance.
+
+  @param[in]  ImageHandle       The firmware allocated handle for the UEFI image.
+  @param[in]  SystemTable       A pointer to the EFI system table.
+
+  @retval     EFI_SUCCESS       The function always return EFI_SUCCESS for now.
+                                It will ASSERT on error for debug version.
+  @retval     EFI_ERROR         Please reference LocateProtocol for error code details.
+**/
+EFI_STATUS
+EFIAPI
+SmmSpiFlashCommonLibConstructor (
+  IN EFI_HANDLE        ImageHandle,
+  IN EFI_SYSTEM_TABLE  *SystemTable
+  )
+{
+  EFI_STATUS           Status;
+  UINT32               BaseAddr;
+  UINT32               RegionSize;
+
+  mBiosAreaBaseAddress = (UINTN) PcdGet32 (PcdBiosAreaBaseAddress);
+  mBiosSize = (UINTN) PcdGet32 (PcdBiosSize);
+
+#if FixedPcdGetBool(PcdExtendedBiosRegionSupport) == 1
+  mBiosAreaBaseAddress = (UINTN) PcdGet32 (PcdBiosAreaBaseAddress) + (UINTN) PcdGet32 (PcdFlashExtendRegionOffset);
+  mBiosSize            = 0x1000000 + (UINTN) PcdGet32 (PcdFlashExtendRegionSizeInUse);
+#endif
+  //
+  // Locate the SMM SPI protocol.
+  //
+  Status = gSmst->SmmLocateProtocol (
+                    &gPchSmmSpiProtocolGuid,
+                    NULL,
+                    (VOID **) &mSpiProtocol
+                    );
+  ASSERT_EFI_ERROR (Status);
+
+  mSpiProtocol->GetRegionAddress (mSpiProtocol, FlashRegionBios, &BaseAddr, &RegionSize);
+  mBiosOffset = BaseAddr;
+
+#if FixedPcdGetBool(PcdBiosGuardEnable) == 1
+  //
+  // Locate the BiosGuard protocol.
+  //
+  Status = gSmst->SmmLocateProtocol (
+                  &gSmmBiosGuardProtocolGuid,
+                  NULL,
+                  (VOID **)&mBiosGuardProtocol
+                  );
+  ASSERT_EFI_ERROR (Status);
+#endif
+
+  return Status;
+}

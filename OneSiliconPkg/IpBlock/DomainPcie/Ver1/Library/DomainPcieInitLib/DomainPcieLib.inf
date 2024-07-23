@@ -1,0 +1,65 @@
+## @file
+# Component description file for Domain Pcie Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = DomainPcieInitLib
+  FILE_GUID                      = 8BA45A71-34AA-4104-BB5F-18F3B6F9A272
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  LIBRARY_CLASS                  = DomainPcieInitLib
+
+[LibraryClasses]
+  PeiServicesLib
+  DebugLib
+  IpWrapperLib
+  IpPcieLib
+  PchPciBdfLib
+  IoLib
+  PcdLib
+  ConfigBlockLib
+  HobLib
+  TimerLib
+  PcieHelpersLib
+  BasePcieHelperLib
+  PeiItssLib
+  P2SbSocLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CsiApiPkg/CsiApiPkg.dec
+
+[Ppis]
+  gSiPolicyPpiGuid                                   ## CONSUMES
+
+[Guids]
+  gPchPcieConfigGuid                                 ## CONSUMES
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMin   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMax   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdVtdEnable                  ## CONSUMES
+
+[Sources]
+  DomainPcieInit.c

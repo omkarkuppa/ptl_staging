@@ -1,0 +1,106 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+//
+// Name:        PlatformSanitizeSetup.uni
+//
+// Description: Platform Sanitize Setup String Definitions.
+//
+//**********************************************************************
+//**********************************************************************
+
+/////////////////////////////////   GENERIC DEFINITIONS   /////////////////////////////////
+#langdef en-US                                 "English"
+#string STR_NULL                               #language en-US " "
+
+/////////////////////////////////   FORM SET   /////////////////////////////////
+#string STR_PLATFORM_SANITIZATION              #language en-US "Platform Sanitization"
+#string STR_PLATFORM_SANITIZATION_HELP         #language en-US "Perform Platform Sanitization"
+
+/////////////////////////////////   MAIN MENU FORM   /////////////////////////////////
+
+#string STR_ENABLED                            #language en-US "Enabled"
+#string STR_DISABLED                           #language en-US "Disabled"
+
+//---------------------------------------------------------------------------
+// Remote Platform Erase Configuration
+//---------------------------------------------------------------------------
+#string STR_PS_REMOTE_ACCESS_PROMPT            #language en-US  "Remote Platform Erase (RPE) Support"
+#string STR_PS_REMOTE_ACCESS_HELP              #language en-US  "This enables Remote Admin to trigger Platform Sanitize by accessing remotely"
+
+//---------------------------------------------------------------------------
+//  Storage erase configuration
+//---------------------------------------------------------------------------
+#string STR_STORAGE_ERASE_CONFIG                           #language en-US "Storage Erase Configuration"
+#string STR_STORAGE_ERASE_CONFIG_HELP                      #language en-US "Configures Storage Erase as per NIST 800-88R1 Standard"
+
+// Erase method priority
+#string STR_SANITIZE_TITLE                                 #language en-US "Erase Method Priority"
+#string STR_SANITIZE_OPTIONS                               #language en-US "BIOS attempt to erase data on storage device according to the method order"
+#string STR_SANITIZE_BLOCK_ERASE                           #language en-US "Block Erase"
+#string STR_SANITIZE_CRYPTO_ERASE                          #language en-US "Crypto Erase"
+#string STR_SANITIZE_OVR_ERASE                             #language en-US "Override Erase"
+#string STR_SANITIZE_CLEAR                                 #language en-US "Clear"
+
+// Connected storage Info
+#string STR_MAIN_PHY_DISKS_LBL                             #language en-US "Connected Storage Devices"
+#string STR_MAIN_NO_DISKS_PRESENT_LBL                      #language en-US "No disks connected to system"
+#string STR_MAIN_NO_DISKS_PRESENT_LBL_HELP                 #language en-US "The storage needs to be connected before EndOfDxe"
+
+//---------------------------------------------------------------------------
+// Local Platform Erase Configuration
+//---------------------------------------------------------------------------
+#string STR_LOCAL_PLATFORM_ERASE_FORM_TITLE                #language en-US  "Local Platform Erase Configuration"
+#string STR_LOCAL_PLATFORM_ERASE_FORM_TITLE_HELP           #language en-US  "Local Platform Erase configuration menu"
+
+#string STR_LPE_VERIFICATION                               #language en-US  "     Storage Erase Verification"
+#string STR_LPE_VERIFICATION_HELP                          #language en-US  "Perform storage erase verification. As per NIST 800-88r1 suggestion and Timing concern, 10% of sampling data will be verified by collecting at different locations."
+
+#string STR_ENABLE_LOCAL_PLATFORM_ERASE_PROMPT             #language en-US  "Perform Platform Erase Operations"
+#string STR_ENABLE_LOCAL_PLATFORM_ERASE_HELP               #language en-US  "Enabling this Feature will trigger Platform Erase Operations on the Next Boot"
+
+#string STR_LPE_ERASE_ALL_PROMPT                           #language en-US  "Erase All"
+#string STR_LPE_ERASE_ALL_PROMPT_HELP                      #language en-US  "Performs SSD Erase, TPM Clear, Reload BIOS golden config, Clear NVME and OEM Custom actions"
+#string STR_WARNING_ERASE_ALL                              #language en-US  " This option clears SSD, TPM, NVM variables and Loads the BIOS default Config "
+
+#string STR_LPE_SSD_ERASE_CHECK_BOX_PROMPT                 #language en-US  "   Storage Device Erase"
+#string STR_LPE_SSD_ERASE_CHECK_BOX_HELP                   #language en-US  "Perform Storage Erase"
+
+#string STR_LPE_TPM_CLEAR_CHECK_BOX_PROMPT                 #language en-US  "   TPM CLEAR"
+#string STR_LPE_TPM_CLEAR_CHECK_BOX_HELP                   #language en-US  "Clear TPM"
+
+#string STR_LPE_OEM_CUST_CHECK_BOX_PROMPT                  #language en-US  "   OEM Custom Actions"
+#string STR_LPE_OEM_CUST_CHECK_BOX_HELP                    #language en-US  "OEM Custom Actions"
+
+#string STR_LPE_CLEAR_NVME_CHECK_BOX_PROMPT                #language en-US  "   Clear NVM Variable"
+#string STR_LPE_CLEAR_NVME_CHECK_BOX_HELP                  #language en-US  "Clears NVM Variables"
+
+#string STR_LPE_BIOS_RELOAD_CHECK_BOX_PROMPT               #language en-US  "   BIOS Reload Golden Config"
+#string STR_LPE_BIOS_RELOAD_CHECK_BOX_HELP                 #language en-US  "Load BIOS default config"
+
+#string STR_LPE_UNCONFIGURE_CSME_PROMPT                    #language en-US  "Unconfigure CSME"
+#string STR_LPE_UNCONFIGURE_CSME_HELP                      #language en-US  "This option Unconfigure CSME Firmware and Unprovision AMT."
+#string STR_LPE_WARNING_UNCONFIGURE_CSME                   #language en-US  "Performing this Action disconnect AMT Remote Access and require Admin to provision AMT"
+
+//---------------------------------------------------------------------------
+// Platform Sanitize Simulation Support
+//---------------------------------------------------------------------------
+
+#string STR_PS_SIMULATED_MODE_PROMPT           #language en-US  "Simulation Mode"
+#string STR_PS_SIMULATED_MODE_HELP             #language en-US  "Used to verify the flow from Remote UI/BIOS UI to actual erase action. But do not perform erase, instead returns Success."

@@ -1,0 +1,124 @@
+### @file
+# Module Information file for PeiPolicyBoardConfigLib Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2017 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PeiPolicyBoardConfigLib
+  FILE_GUID                      = A518A8DB-C499-43CD-A933-5E85B00CD2C2
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  LIBRARY_CLASS                  = PeiPolicyBoardConfigLib|PEIM PEI_CORE SEC
+
+[Sources]
+  PeiPolicyBoardConfig.c
+  PeiAmtPolicyBoardConfig.c
+  PeiCpuPolicyBoardConfigPreMem.c
+  PeiCpuPolicyBoardConfig.c
+  PeiMePolicyBoardConfigPreMem.c
+  PeiMePolicyBoardConfig.c
+  PeiPchPolicyBoardConfigPreMem.c
+  PeiPchPolicyBoardConfig.c
+  PeiSaPolicyBoardConfigPreMem.c
+  PeiSaPolicyBoardConfig.c
+  PeiTbtPolicyBoardConfig.c
+  PeiSiPolicyBoardConfig.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  PantherLakeFspBinPkg/PantherLakeFspBinPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  CryptoPkg/CryptoPkg.dec
+  SecurityPkg/SecurityPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeBinPkg/PantherLakeBinPkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+  UcsiFeaturePkg/UcsiFeaturePkg.dec
+
+[LibraryClasses]
+  PcdLib
+  DebugLib
+  HobLib
+  ConfigBlockLib
+  IoLib
+  EcMiscLib
+  BaseCryptLib
+  BaseMemoryLib
+  PlatformNvRamHookLib
+  PmcLib
+  TxtLib
+  PlatformUsbConfigLib
+
+[Guids]
+  gCpuSecurityPreMemConfigGuid                  ## CONSUMES
+  gTxtPreMemConfigGuid                          ## CONSUMES
+  gMePeiPreMemConfigGuid                        ## CONSUMES
+  gPchGeneralPreMemConfigGuid                   ## CONSUMES
+  gAmtPeiConfigGuid                             ## CONSUMES
+  gCpuInitConfigGuid                            ## CONSUMES
+  gMePeiConfigGuid                              ## CONSUMES
+  gPchGeneralConfigGuid                         ## CONSUMES
+  gGraphicsPeiConfigGuid                        ## CONSUMES
+  gTxtApStartupPeiFileGuid                      ## CONSUMES
+  gTxtBiosAcmPeiFileGuid                        ## CONSUMES
+  gStartupAcmPeiBinGuid                         ## CONSUMES
+  gBiosGuardHobGuid                             ## CONSUMES
+  gEfiTpmDeviceInstanceTpm20DtpmGuid            ## CONSUMES
+  gEfiTpmDeviceInstanceTpm12Guid                ## CONSUMES
+  gSetupVariableGuid                            ## CONSUMES
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid               ## CONSUMES
+  gEdkiiPeiMpServices2PpiGuid                   ## CONSUMES
+  gPeiDTbtPolicyPpiGuid                         ## CONSUMES
+
+[Pcd]
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress                ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdDmiBaseAddress         ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdEpBaseAddress          ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdEdramBaseAddress       ## CONSUMES
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpmInstanceGuid        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardId                   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdAmtEnable                       ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspmUpdDataAddress64 ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspsUpdDataAddress64 ## CONSUMES
+
+  # Discrete Thunderbolt Board Configuration VPD
+  gBoardModuleTokenSpaceGuid.VpdPcdDTbtBoardConfig             ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdBiosSize                             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesBase    ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress                      ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTcssSupport                          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdBiosGuardEnable                      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPolicyDefaultChkEnable         ## CONSUMES
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                  ## CONSUMES
+  gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber   ## CONSUMES

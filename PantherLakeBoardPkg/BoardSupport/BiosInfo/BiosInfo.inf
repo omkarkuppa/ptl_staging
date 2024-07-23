@@ -1,0 +1,136 @@
+### @file
+# Module Information description file for BIOS Info PEIM.
+# The module provides BiosInfo structure listing up all firmware volume's base addresses,
+# sizes, attributes, those information associated to each firmware volume.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2011 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = BiosInfo
+  FILE_GUID                      = 4A4CA1C6-871C-45BB-8801-6910A7AA5807
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  ENTRY_POINT                    = BiosInfoEntryPoint
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES IA32 X64
+#
+
+[LibraryClasses]
+  PeimEntryPoint
+  PeiServicesLib
+  PeiServicesTablePointerLib
+  HobLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  SpiAccessLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  SecurityPkg/SecurityPkg.dec
+  BoardModulePkg/BoardModulePkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+  MultiIbbFeaturePkg/MultiIbbFeaturePkg.dec
+  FspWrapperFeaturePkg/FspWrapperFeaturePkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdBiosSize                                    ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase        ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize        ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase      ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize      ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase        ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesBase           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize           ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedBase                ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize                ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityBase                ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecuritySize                ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootBase                  ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootSize                  ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootBase                ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootSize                ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryBase              ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize              ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase               ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize               ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSBase                    ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                    ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMBase                    ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                    ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTBase                    ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFspOBase                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFspOSize                       ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase               ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize               ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdCapsuleEnable                      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressBase              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressSize              ## CONSUMES
+  gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Base                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Size                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Base                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemorySize         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemoryBase         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedSize           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedBase           ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdExtendedBiosRegionSupport          ## CONSUMES
+  gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdSignedFspEnable                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashFvUplBase                        ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress                  ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspmUpdDataAddress64             ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection                 ## CONSUMES
+
+[Sources]
+  BiosInfo.c
+
+[Ppis]
+  gEfiPeiFirmwareVolumeInfoMeasurementExcludedPpiGuid    ## PRODUCES
+  gPeiFvMeasurementExcludedPlatformPpiGuid               ## NOTIFY
+  gEfiPeiMemoryDiscoveredPpiGuid
+
+[Guids]
+  gBiosInfoGuid                                 ## PRODUCES
+  gBiosInfoRecoveryGuid                         ## SOMETIMES_PRODUCES
+  gSysFwUpdateProgressGuid                      ## COMSUMES
+  gEdkiiMigratedFvInfoGuid                      ## COMSUMES
+
+[Depex]
+  gEfiPeiMasterBootModePpiGuid

@@ -1,0 +1,56 @@
+## @file
+# Component description file for CPU Common Lib
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiDxeSmmCpuCommonLib
+FILE_GUID = B4E0E3E8-DCE9-46FE-9670-03FDD2F08D6C
+VERSION_STRING = 1.0
+MODULE_TYPE = BASE
+LIBRARY_CLASS = CpuCommonLib
+
+
+[LibraryClasses]
+BaseLib
+BaseMemoryLib
+DebugLib
+IoLib
+PcdLib
+CpuLib
+TimerLib
+CpuPlatformLib
+CpuMailboxLib
+BootGuardLib
+CpuInfoFruLib
+PmcPrivateLib
+
+[Packages]
+MdePkg/MdePkg.dec
+UefiCpuPkg/UefiCpuPkg.dec
+OneSiliconPkg/SiPkg.dec
+
+[Sources]
+CpuCommonLib.c
+
+[Guids]
+gMpInformation2HobGuid                   ## CONSUMES # Assume the HOB must has been created

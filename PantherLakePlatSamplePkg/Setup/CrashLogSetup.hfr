@@ -1,0 +1,152 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2020 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+
+form formid   = AUTO_ID(CRASHLOG_FORM_ID),
+  title         = STRING_TOKEN(STR_CRASH_LOG_FORM_TITLE);
+  oneof varid  = CRASHLOG_VARIABLE.EnableCrashLog,
+    prompt      = STRING_TOKEN(STR_CRASH_LOG_PROMPT),
+    help        = STRING_TOKEN(STR_CRASH_LOG_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  suppressif  ideqval CRASHLOG_VARIABLE.EnableCrashLog == 0;
+
+    subtitle text = STRING_TOKEN(STR_CRASH_LOG_CPU);
+
+    oneof varid  = CPU_SETUP.CrashLogGprs,
+      prompt      = STRING_TOKEN(STR_CRASH_LOG_GPRS_PROMPT),
+      help        = STRING_TOKEN(STR_CRASH_LOG_GPRS_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_CRASH_LOG_DISABLE_SMM_GPRS), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+
+    //
+    // CPU RE-ARM control
+    //
+    suppressif  ideqval CRASHLOG_CONTROL_VARIABLE.CpuRearm == 0;
+    oneof varid  = CRASHLOG_VARIABLE.CpuRearm,
+      prompt      = STRING_TOKEN(STR_CRASH_LOG_REAEM_PROMPT),
+      help        = STRING_TOKEN(STR_CRASH_LOG_REARM_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+    endif;
+
+    //
+    // CPU clear command control
+    //
+    suppressif  ideqval CRASHLOG_CONTROL_VARIABLE.CpuClear == 0;
+    oneof varid  = CRASHLOG_VARIABLE.CpuClear,
+      prompt      = STRING_TOKEN(STR_CRASH_LOG_CLEAR_ENABLE_PROMPT),
+      help        = STRING_TOKEN(STR_CRASH_LOG_CLEAR_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+    endif;
+
+    subtitle text = STRING_TOKEN(STR_NULL);
+    subtitle text = STRING_TOKEN(STR_CRASH_LOG_SILICON);
+
+    //
+    // SOC crashlog on all reset control
+    //
+    suppressif  ideqval CRASHLOG_CONTROL_VARIABLE.SiliconOnAllReset == 0;
+    oneof varid  = CRASHLOG_VARIABLE.SiliconOnAllReset,
+      prompt      = STRING_TOKEN(STR_COLLECT_CRASH_LOG_ON_ALL_RESET_PROMPT),
+      help        = STRING_TOKEN(STR_COLLECT_CRASH_LOG_ON_ALL_RESET_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+    endif;
+
+    //
+    // SOC re-arm control
+    //
+    suppressif  ideqval CRASHLOG_CONTROL_VARIABLE.SiliconRearm == 0;
+    oneof varid  = CRASHLOG_VARIABLE.SiliconRearm,
+      prompt      = STRING_TOKEN(STR_CRASH_LOG_REAEM_PROMPT),
+      help        = STRING_TOKEN(STR_CRASH_LOG_REARM_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+    endif;
+
+    //
+    // SOC clear control
+    //
+    suppressif  ideqval CRASHLOG_CONTROL_VARIABLE.SiliconClear == 0;
+    oneof varid  = CRASHLOG_VARIABLE.SiliconClear,
+      prompt      = STRING_TOKEN(STR_CRASH_LOG_CLEAR_ENABLE_PROMPT),
+      help        = STRING_TOKEN(STR_CRASH_LOG_CLEAR_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+    endif;
+
+    //
+    // SOC global reset control
+    //
+    suppressif  ideqval CRASHLOG_CONTROL_VARIABLE.SiliconGblRst == 0;
+    oneof varid  = CRASHLOG_VARIABLE.SiliconGblRst,
+      prompt      = STRING_TOKEN(STR_CRASH_LOG_GBL_RST_PROMPT),
+      help        = STRING_TOKEN(STR_CRASH_LOG_GBL_RST_HELP),
+      option text = STRING_TOKEN(STR_DEFAULT), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_MODIFY), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval CRASHLOG_VARIABLE.SiliconGblRst == 0;
+      numeric
+        varid   = CRASHLOG_VARIABLE.SiliconGblRstMask0,
+        prompt  = STRING_TOKEN(STR_CRASH_LOG_GBL_RST_MASK0_PROMPT),
+        help    = STRING_TOKEN(STR_CRASH_LOG_GBL_RST_MASK0_HELP),
+        minimum = 0x0,
+        maximum = 0xFFFFFFFF,
+        default = 0xFFFFFFFF,
+      endnumeric;
+
+      numeric
+        varid   = CRASHLOG_VARIABLE.SiliconGblRstMask1,
+        prompt  = STRING_TOKEN(STR_CRASH_LOG_GBL_RST_MASK1_PROMPT),
+        help    = STRING_TOKEN(STR_CRASH_LOG_GBL_RST_MASK1_HELP),
+        minimum = 0x0,
+        maximum = 0xFFFFFFFF,
+        default = 0xFFFFFFFF,
+      endnumeric;
+    endif; // suppressif ideqval CRASHLOG_VARIABLE.CrashLogSiliconGblRst
+
+    endif;
+
+    //
+    // Pivacy consent control for Unique ID collection
+    //
+    grayoutif ideqval PCH_SETUP.PmcPrivacyConsentSupport == 0;
+      oneof varid  = PCH_SETUP.PmcPrivacyConsent,
+        prompt      = STRING_TOKEN(STR_CRASH_LOG_PRIVACY_CONSENT_PROMPT),
+        help        = STRING_TOKEN(STR_CRASH_LOG_PRIVACY_CONSENT_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+  endif;
+endform;

@@ -1,0 +1,64 @@
+## @file
+# Instance of Post Code Library using I/O port 0x80.
+#
+# Post Code Library that writes post code values to I/O port 0x80.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2011 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = BasePostCodeLibPort80TraceHub
+  FILE_GUID                      = 445E7394-53E8-40c1-8461-5242EF9AE7F7
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = BASE
+  LIBRARY_CLASS                  = PostCodeLib
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[LibraryClasses]
+  IoLib
+  PcdLib
+  DebugLib
+  BaseLib
+  PrintLib
+  TraceHubDebugLib
+  PostCodeToScratchPadLib
+  SerialIoI2cLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPostCodePropertyMask
+  gSiPkgTokenSpaceGuid.PcdI2cPostCode       ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdTraceHubCatalogEnable  ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdI2cPostCodePortNumber  ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdI2cPostCodeAddress     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdI2cPostCodeCommand     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdI2cPostCodeByteCount   ## CONSUMES
+
+[Sources]
+  PostCode.c

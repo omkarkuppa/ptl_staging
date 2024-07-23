@@ -1,0 +1,62 @@
+/**
+@file
+  Common setup tools that can be used while working around toolchain
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2016 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#ifndef __SETUP_PP_TOOLS__
+#define __SETUP_PP_TOOLS__
+
+#define CONCATENATE2_(X, Y) X##Y
+#define CONCATENATE2(X, Y) CONCATENATE2_(X, Y)
+
+#define CONCATENATE3_(X, Y, Z) X##Y##Z
+#define CONCATENATE3(X, Y, Z) CONCATENATE3_(X, Y, Z)
+
+/**
+  Macro for incrementation
+  The range of incrementation is determined by SETUP_PP_TOOLS_INC_X macros
+**/
+#define INC(Argument) CONCATENATE2(SETUP_PP_TOOLS_INC_, Argument)
+
+#define SETUP_PP_TOOLS_INC_0 1
+#define SETUP_PP_TOOLS_INC_1 2
+#define SETUP_PP_TOOLS_INC_2 3
+#define SETUP_PP_TOOLS_INC_3 4
+#define SETUP_PP_TOOLS_INC_4 5
+#define SETUP_PP_TOOLS_INC_5 6
+#define SETUP_PP_TOOLS_INC_6 7
+#define SETUP_PP_TOOLS_INC_7 8
+#define SETUP_PP_TOOLS_INC_8 9
+#define SETUP_PP_TOOLS_INC_9 10
+#define SETUP_PP_TOOLS_INC_10 11
+#define SETUP_PP_TOOLS_INC_11 12
+#define SETUP_PP_TOOLS_INC_12 13
+#define SETUP_PP_TOOLS_INC_13 14
+#define SETUP_PP_TOOLS_INC_14 15
+#define SETUP_PP_TOOLS_INC_15 16
+#define SETUP_PP_TOOLS_INC_16 17
+#define SETUP_PP_TOOLS_INC_17 18
+#define SETUP_PP_TOOLS_INC_18 19
+#define SETUP_PP_TOOLS_INC_19 20
+#define SETUP_PP_TOOLS_INC_20 21
+#define SETUP_PP_TOOLS_INC_21 22
+#define SETUP_PP_TOOLS_INC_22 23
+
+#endif

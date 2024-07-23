@@ -1,0 +1,350 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2016 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+form formid = AUTO_ID(DEBUG_FORM_ID),
+  title     = STRING_TOKEN(STR_DEBUG_FORM);
+
+  SUBTITLE(STRING_TOKEN(STR_DEBUG_FORM))
+  SEPARATOR
+
+  oneof varid     = SETUP_DATA.OsDebugPort,
+    prompt      = STRING_TOKEN(STR_DEBUG_PORT),
+    help        = STRING_TOKEN(STR_DEBUG_PORT_HELP),
+    default     = 0, defaultstore = MyStandardDefault,
+    option text = STRING_TOKEN(STR_DEBUG_PORT_LEGACY_UART), value = 0, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_DEBUG_PORT_SERIALIO_UART0), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  oneof varid = SETUP_DATA.KernelDebugPatch,
+    prompt    = STRING_TOKEN(STR_KERNEL_DEBUG_PATCH),
+    help      = STRING_TOKEN(STR_KERNEL_DEBUG_PATCH_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  oneof varid = SETUP_DATA.TerminalOverDebug,
+    prompt    = STRING_TOKEN(STR_TERMINAL_OVER_DEBUG),
+    help      = STRING_TOKEN(STR_TERMINAL_OVER_DEBUG_HELP),
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+  endoneof;
+
+  text
+    help  = STRING_TOKEN(STR_DEBUG_TOKEN_PRESENCE),
+    text  = STRING_TOKEN(STR_DEBUG_TOKEN_PRESENCE),
+    text  = STRING_TOKEN(STR_DEBUG_TOKEN_PRESENCE_VALUE),
+    flags = 0,
+    key   = 0;
+
+
+  grayoutif ideqval DEBUG_SETUP_VOLATILE_DATA.StreamingTraceSink == 0x1;
+    oneof varid = SI_SETUP.PlatformDebugOption,
+      questionid = PLATFORM_DEBUG_OPTION_KEY,
+      prompt   = STRING_TOKEN(STR_PLATFORM_DEBUG_OPTION_STRING),
+      help     = STRING_TOKEN(STR_PLATFORM_DEBUG_OPTION_STRING_HELP),
+#if FixedPcdGetBool(PcdSiCatalogDebugEnable) == 1
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
+      option text = STRING_TOKEN(STR_PDC_TRACE_ACTIVE_STRING), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+      option text = STRING_TOKEN(STR_PDC_TRACE_READY_STRING), value = 4, flags = RESET_REQUIRED | INTERACTIVE;
+#else
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+      option text = STRING_TOKEN(STR_PDC_TRACE_ACTIVE_STRING), value = 2, flags = RESET_REQUIRED | INTERACTIVE;
+      option text = STRING_TOKEN(STR_PDC_TRACE_READY_STRING), value = 4, flags = RESET_REQUIRED | INTERACTIVE;
+#endif
+      option text = STRING_TOKEN(STR_PDC_TRACE_POWER_OFF_STRING), value = 6, flags = RESET_REQUIRED | INTERACTIVE;
+      option text = STRING_TOKEN(STR_PDC_MANUAL_STRING), value = 7, flags = RESET_REQUIRED | INTERACTIVE;
+    endoneof;
+  endif;
+
+  //
+  // Crash Log Setting
+  //
+  goto CRASHLOG_FORM_ID,
+       prompt = STRING_TOKEN(STR_CRASH_LOG_FORM_TITLE),
+       help = STRING_TOKEN(STR_CRASH_LOG_FORM_HELP);
+
+  goto ADVANCED_DEBUG_FORM_ID,
+       prompt = STRING_TOKEN(STR_ADVANCED_DEBUG_FORM),
+       help = STRING_TOKEN(STR_ADVANCED_DEBUG_FORM_HELP);
+endform;
+
+form formid   = AUTO_ID(ADVANCED_DEBUG_FORM_ID),
+  title         = STRING_TOKEN(STR_ADVANCED_DEBUG_FORM);
+
+  grayoutif NOT ideqval SI_SETUP.PlatformDebugOption == 7;
+    oneof varid  = PCH_SETUP.DciDbcMode,
+      prompt   = STRING_TOKEN(STR_PCH_DCI_DBC_MODE_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_DCI_DBC_MODE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_DCI_DBC_MODE_USB2), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_DCI_DBC_MODE_USB3), value = 2, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_DCI_DBC_MODE_BOTH), value = 3, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_NO_CHANGE), value = 4, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.DciEn,
+      prompt   = STRING_TOKEN(STR_PCH_DCI_EN_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_DCI_EN_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.DciClkEnable,
+      prompt   = STRING_TOKEN(STR_DCI_CLK_EN_PROMPT),
+      help     = STRING_TOKEN(STR_DCI_CLK_EN_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.SocTraceHubMode,
+      prompt   = STRING_TOKEN(STR_SOC_TRACE_HUB_PROMPT),
+      help     = STRING_TOKEN(STR_TRACE_HUB_MODE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval PCH_SETUP.SocTraceHubMode == 0;
+      oneof varid  = PCH_SETUP.SocTraceHubMemReg0Size,
+        questionid = TRACEHUB_BUFFER_SIZE_KEY,
+        prompt   = STRING_TOKEN(STR_SOC_TRACE_HUB_MEM_REGION_0_SIZE),
+        help     = STRING_TOKEN(STR_TRACE_HUB_MEM_REGION_0_HELP),
+        option text = STRING_TOKEN(STR_TRACE_HUB_NONE),  value = 14, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_1MB),   value = 0,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_8MB),   value = 3,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_64MB),  value = 6,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_128MB), value = 7,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_256MB), value = 8,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_512MB), value = 9,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_1GB),   value = 10, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_2GB),   value = 11, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_4GB),   value = 12, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_8GB),   value = 13, flags = RESET_REQUIRED | INTERACTIVE;
+      endoneof;
+
+      oneof varid  = PCH_SETUP.SocTraceHubMemReg1Size,
+        questionid = TRACEHUB_BUFFER_SIZE_KEY1,
+        prompt   = STRING_TOKEN(STR_SOC_TRACE_HUB_MEM_REGION_1_SIZE),
+        help     = STRING_TOKEN(STR_TRACE_HUB_MEM_REGION_1_HELP),
+        option text = STRING_TOKEN(STR_TRACE_HUB_NONE),  value = 14, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_1MB),   value = 0,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_8MB),   value = 3,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_64MB),  value = 6,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_128MB), value = 7,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_256MB), value = 8,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_512MB), value = 9,  flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_1GB),   value = 10, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_2GB),   value = 11, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_4GB),   value = 12, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_TRACE_HUB_8GB),   value = 13, flags = RESET_REQUIRED | INTERACTIVE;
+      endoneof;
+    endif;
+
+    suppressif ideqval PCH_SETUP.SocTraceHubMode == 0 AND ideqval PCH_SETUP.PchTraceHubMode == 0;
+      oneof varid  = PCH_SETUP.KeepEarlyTrace,
+        prompt   = STRING_TOKEN(STR_KEEP_EARLY_TRACE_PROMPT),
+        help     = STRING_TOKEN(STR_KEEP_EARLY_TRACE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval DEBUG_SETUP_VOLATILE_DATA.PchIsAttached == 0x0;
+      oneof varid  = PCH_SETUP.PchTraceHubMode,
+        prompt   = STRING_TOKEN(STR_PCH_TRACE_HUB_PROMPT),
+        help     = STRING_TOKEN(STR_TRACE_HUB_MODE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval PCH_SETUP.PchTraceHubMode == 0;
+        oneof varid  = PCH_SETUP.PchTraceHubMemReg0Size,
+          questionid = TRACEHUB_BUFFER_SIZE_KEY2,
+          prompt   = STRING_TOKEN(STR_PCH_TRACE_HUB_MEM_REGION_0_SIZE),
+          help     = STRING_TOKEN(STR_TRACE_HUB_MEM_REGION_0_HELP),
+          option text = STRING_TOKEN(STR_TRACE_HUB_NONE),  value = 14, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_1MB),   value = 0,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_8MB),   value = 3,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_64MB),  value = 6,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_128MB), value = 7,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_256MB), value = 8,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_512MB), value = 9,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_1GB),   value = 10, flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_2GB),   value = 11, flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_4GB),   value = 12, flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_8GB),   value = 13, flags = RESET_REQUIRED | INTERACTIVE;
+        endoneof;
+
+        oneof varid  = PCH_SETUP.PchTraceHubMemReg1Size,
+          questionid = TRACEHUB_BUFFER_SIZE_KEY3,
+          prompt   = STRING_TOKEN(STR_PCH_TRACE_HUB_MEM_REGION_1_SIZE),
+          help     = STRING_TOKEN(STR_TRACE_HUB_MEM_REGION_1_HELP),
+          option text = STRING_TOKEN(STR_TRACE_HUB_NONE),  value = 14, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_1MB),   value = 0,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_8MB),   value = 3,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_64MB),  value = 6,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_128MB), value = 7,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_256MB), value = 8,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_512MB), value = 9,  flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_1GB),   value = 10, flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_2GB),   value = 11, flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_4GB),   value = 12, flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_TRACE_HUB_8GB),   value = 13, flags = RESET_REQUIRED | INTERACTIVE;
+        endoneof;
+      endif;
+    endif;
+
+    oneof varid  = CPU_SETUP.DfdEnable,
+      prompt   = STRING_TOKEN(STR_DFD_ENABLE_PROMPT),
+      help     = STRING_TOKEN(STR_DFD_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),   value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PmodeClkEn,
+      prompt   = STRING_TOKEN(STR_PMODE_CLK_EN_PROMPT),
+      help     = STRING_TOKEN(STR_PMODE_CLK_EN_HELP),
+      option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),   value = 1, flags = RESET_REQUIRED;
+    endoneof;
+  endif; // grayoutif NOT ideqval SI_SETUP.PlatformDebugOption == 7;
+
+  suppressif ideqval PCH_SETUP.PchTraceHubMode == 0x0;
+    oneof varid  = PCH_SETUP.AetTraceHubMode,
+      prompt   = STRING_TOKEN(STR_AET_TRACE_HUB_MODE_PROMPT),
+      help     = STRING_TOKEN(STR_AET_TRACE_HUB_MODE_HELP),
+      option text = STRING_TOKEN(STR_SOC_TRACE_HUB_MODE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_TRACE_HUB_MODE), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.BiosTraceSinkMode,
+      prompt   = STRING_TOKEN(STR_TRACE_HUB_KNOB_PROMPT),
+      help     = STRING_TOKEN(STR_TRACE_HUB_KNOB_HELP),
+      option text = STRING_TOKEN(STR_SOC_TRACE_HUB_MODE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_TRACE_HUB_MODE), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+  endif;
+
+  suppressif  ideqval SETUP_CPU_FEATURES.DebugInterfaceSupported == 0;
+    oneof varid   = CPU_SETUP.DebugInterfaceEnable,
+      prompt      = STRING_TOKEN(STR_DEBUG_MSR_INTERFACE_PROMPT),
+      help        = STRING_TOKEN(STR_DEBUG_MSR_INTERFACE_PROMPT_HELP),
+      option text = STRING_TOKEN(STR_DISABLED_STRING),  value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED_STRING),  value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_NO_CHANGE), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+    suppressif  ideqval CPU_SETUP.DebugInterfaceEnable == 2;
+      oneof varid   = CPU_SETUP.DebugInterfaceLockEnable,
+        prompt      = STRING_TOKEN(STR_DEBUG_MSR_INTERFACE_LOCK_PROMPT),
+        help        = STRING_TOKEN(STR_DEBUG_MSR_INTERFACE_LOCK_PROMPT_HELP),
+        option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags =  RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+  endif; // supressif DebugInterfaceSupported == 0
+
+  grayoutif ideqval DEBUG_SETUP_VOLATILE_DATA.ProcessorTraceEnable == 0x1;
+    suppressif  ideqval SETUP_CPU_FEATURES.ProcTraceSupported == 0;
+      oneof varid   = CPU_SETUP.ProcessorTraceMemSize,
+        questionid  = PROCESSOR_TRACE_MEM_SIZE_KEY,
+        prompt      = STRING_TOKEN(STR_PROC_TRACE_MEM_SIZE_PROMPT),
+        help        = STRING_TOKEN(STR_PROC_TRACE_MEM_SIZE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0xFF, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_4KB), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_8KB), value = 1, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_16KB), value = 2, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_32KB), value = 3, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_64KB), value = 4, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_128KB), value = 5, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_256KB), value = 6, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_512KB), value = 7, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_1MB), value = 8, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_2MB), value = 9, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_4MB), value = 10, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_8MB), value = 11, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_16MB), value = 12, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_32MB), value = 13, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_64MB), value = 14, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_128MB), value = 15, flags = RESET_REQUIRED | INTERACTIVE;
+      endoneof;
+    endif;
+
+    suppressif  ideqval SETUP_CPU_FEATURES.ProcTraceSupported == 0
+            OR ideqval CPU_SETUP.ProcessorTraceMemSize == 0xFF;
+      oneof varid   = CPU_SETUP.ProcessorTraceEnable,
+        prompt      = STRING_TOKEN(STR_PROC_TRACE_ENABLE_PROMPT),
+        help        = STRING_TOKEN(STR_PROC_TRACE_ENABLE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED_STRING),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED_STRING),  value = 1, flags =  RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = CPU_SETUP.ProcessorTraceOutputScheme,
+        prompt      = STRING_TOKEN(STR_PROC_TRACE_OUTPUT_SCHEME_PROMPT),
+        help        = STRING_TOKEN(STR_PROC_TRACE_OUTPUT_SCHEME_HELP),
+        option text = STRING_TOKEN(STR_SINGLE_RANGE_OUTPUT),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_TOPA_OUTPUT),  value = 1, flags =  RESET_REQUIRED;
+      endoneof;
+
+      suppressif  ideqval CPU_SETUP.ProcessorTraceEnable == 0;
+        oneof varid   = CPU_SETUP.ProcessorTraceBspOnly,
+          prompt      = STRING_TOKEN(STR_PROC_TRACE_CORE_PROMPT),
+          help        = STRING_TOKEN(STR_PROC_TRACE_CORE_HELP),
+          option text = STRING_TOKEN(STR_PROC_TRACE_ALL_CORE),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_PROC_TRACE_BSP),  value = 1, flags =  RESET_REQUIRED;
+        endoneof;
+        oneof varid   = CPU_SETUP.ProcessorTraceTimingPacket,
+          prompt      = STRING_TOKEN(STR_PROC_TRACE_TIMING_PACKET_PROMPT),
+          help        = STRING_TOKEN(STR_PROC_TRACE_TIMING_PACKET_HELP),
+          option text = STRING_TOKEN(STR_DISABLED_STRING),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED_STRING),  value = 1, flags =  RESET_REQUIRED;
+        endoneof;
+      endif;   // suppressif ProcessorTraceEnable
+
+      oneof varid   = CPU_SETUP.SmmProcTraceEnable,
+        prompt      = STRING_TOKEN (STR_SMM_PROC_TRACE_ENABLE_PROMPT),
+        help        = STRING_TOKEN (STR_SMM_PROC_TRACE_ENABLE_HELP),
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),   value = 1, flags = RESET_REQUIRED;
+        warningif prompt = STRING_TOKEN (STR_WARNING_SMM_PROC_TRACE),
+          ideqval CPU_SETUP.SmmProcTraceEnable == 1
+        endif; //warningif
+      endoneof;
+    endif;
+  endif; //grayoutif
+
+  oneof varid     = CPU_SETUP.ThreeStrikeCounter,
+      prompt      = STRING_TOKEN(STR_THREE_STRIKE_PROMPT),
+      help        = STRING_TOKEN(STR_THREE_STRIKE_PROMPT_HELP),
+      option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags =  RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  grayoutif ideqval ME_STORAGE_EXPOSURE.AfterEoP == 0x1;
+    oneof varid   = ME_SETUP_STORAGE.DelayedAuthenticationMode,
+      questionid  = DAM_STATE_KEY,
+      prompt      = STRING_TOKEN(STR_DELAYED_AUTHENTICATION_MODE_PROMPT),
+      help        = STRING_TOKEN(STR_DELAYED_AUTHENTICATION_MODE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | RESET_REQUIRED | INTERACTIVE;
+      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED | INTERACTIVE;
+    endoneof;
+  endif; // grayoutif
+
+endform; //End of ADVANCED_DEBUG_FORM_ID
+
+#include "CrashLogSetup.hfr"

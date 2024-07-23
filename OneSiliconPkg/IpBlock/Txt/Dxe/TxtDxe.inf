@@ -1,0 +1,85 @@
+## @file
+# Component information file for TXT DXE module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 1999 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = TxtDxe
+FILE_GUID = FF917E22-A228-448d-BDAA-68EFCCDDA5D3
+VERSION_STRING = 1.0
+MODULE_TYPE = DXE_DRIVER
+ENTRY_POINT = DriverEntry
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 EBC
+#
+
+
+
+[LibraryClasses]
+UefiDriverEntryPoint
+DxeServicesTableLib
+S3BootScriptLib
+HobLib
+IoLib
+CpuPlatformLib
+TimerLib
+PcdLib
+PmcLib
+LocalApicLib
+AslUpdateLib
+DxeSaNvsInitLib
+ReportStatusCodeLib
+
+
+[Packages]
+MdePkg/MdePkg.dec
+UefiCpuPkg/UefiCpuPkg.dec
+OneSiliconPkg/SiPkg.dec
+IntelSiliconPkg/IntelSiliconPkg.dec
+
+
+[Pcd]
+
+[FixedPcd]
+
+[Sources]
+TxtDxe.c
+TxtDxeLib.c
+x64/TxtDxeBsp.nasm
+
+
+[Protocols]
+gEfiMpServiceProtocolGuid ## CONSUMES
+gEfiPciEnumerationCompleteProtocolGuid ## CONSUMES
+
+
+[Guids]
+gTxtInfoHobGuid
+gTxtAcpiTableStorageGuid
+
+
+[Depex]
+gEfiMpServiceProtocolGuid AND
+gEfiCpuIo2ProtocolGuid
+

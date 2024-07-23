@@ -1,0 +1,91 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2021 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+// Name:        VtioSetupStrings.uni
+//
+// Description: Vtio String Definitions.
+//
+//**********************************************************************
+//**********************************************************************
+/=#
+
+
+#langdef   en-US "English"     // English
+
+#string STR_EMPTY                                      #language en-US ""
+
+#string STR_ENABLED                                    #language en-US "Enabled"
+#string STR_DISABLED                                   #language en-US "Disabled"
+#string STR_PLATFORM_VTIO_FORM                         #language en-US "VTIO"
+#string STR_PLATFORM_VTIO_FORM_HELP                    #language en-US "Configure settings for VTIO"
+#string STR_PLATFORM_VTIO_FORM_TITLE                   #language en-US "VTIO"
+#string STR_VTIO_SUPPORT_PROMPT                        #language en-US "Enable VTIO Support"
+#string STR_VTIO_SUPPORT_HELP                          #language en-US "Enable/Disable VTIO Support."
+#string STR_SDEV_NUMBER_OF_SENSORS_PROMPT              #language en-US "  Number of Sensor Entries"
+#string STR_SDEV_NUMBER_OF_SENSORS_HELP                #language en-US "An array of Sensors Entries"
+#string STR_SDEV_SENSOR_ENTRY_1_PROMPT                 #language en-US "  Sensor Entry 1"
+#string STR_SDEV_SENSOR_ENTRY_2_PROMPT                 #language en-US "  Sensor Entry 2"
+#string STR_SDEV_SENSOR_ENTRY_HELP                     #language en-US "Enter HEX value\n\nBIT[8:7] - Camera type\nBIT[6]   - Plug-N-Play supported\nBIT[5:2] - Port ID\nBIT[1]   - Privacy Enabled Sensor present\nBIT[0]   - Embedded Sensor present\n"
+#string STR_SDEV_ISP_ENTRY_PROMPT                      #language en-US "Expose ISP SDEV Entry"
+#string STR_SDEV_ISP_ENTRY_HELP                        #language en-US "ISP Entry in SDEV table will be exposed based on this option"
+#string STR_SDEV_HECI_ENTRY_PROMPT                     #language en-US "Expose HECI SDEV Entry"
+#string STR_SDEV_HECI_ENTRY_HELP                       #language en-US "HECI Entry in SDEV table will be exposed based on this option"
+#string STR_SDEV_SPI1_ENTRY_PROMPT                     #language en-US "Expose SPI1 Dev 1E Fun 2 SDEV Entry"
+#string STR_SDEV_SPI1_ENTRY_HELP                       #language en-US "SPI1 Entry in SDEV table will be exposed based on this option"
+#string STR_SDEV_SPI2_ENTRY_PROMPT                     #language en-US "Expose SPI2 Dev 1E Fun 3 SDEV Entry"
+#string STR_SDEV_SPI2_ENTRY_HELP                       #language en-US "SPI2 Entry in SDEV table will be exposed based on this option"
+#string STR_SDEV_XHCI_ENTRY_PROMPT                     #language en-US "Expose XHCI SDEV Entry"
+#string STR_SDEV_XHCI_ENTRY_HELP                       #language en-US "XHCI Entry in SDEV table will be exposed based on this option"
+#string STR_SDEV_XHCI_NUMBER_OF_DEVICES_PROMPT         #language en-US "  Number of USB Devices"
+#string STR_SDEV_XHCI_NUMBER_OF_DEVICES_HELP           #language en-US "Number of USB Devices"
+#string STR_SDEV_HXCI_DEVICE_1_PROMPT                  #language en-US "  USB Device 1"
+#string STR_SDEV_HXCI_DEVICE_2_PROMPT                  #language en-US "  USB Device 2"
+#string STR_SDEV_HXCI_DEVICE_ATTR_PROMPT               #language en-US "  Attributes"
+#string STR_SDEV_HXCI_DEVICE_ATTR_HELP                 #language en-US "Enter HEX value\n\nBIT[7:1] - Reserved.\nBIT[0]   - USB Composite Device\n0x0 - A single interface USB device\n0x1 - A function on a USB composite device\n"
+#string STR_SDEV_HXCI_DEVICE_ROOT_PORT_NUMBER_PROMPT   #language en-US "  Root Port Number"
+#string STR_SDEV_HXCI_DEVICE_ROOT_PORT_NUMBER_HELP     #language en-US "Root port number on which the secure device is attached to the root hub."
+#string STR_SDEV_HXCI_DEVICE_VID_PROMPT                #language en-US "  VID"
+#string STR_SDEV_HXCI_DEVICE_VID_HELP                  #language en-US "Vendor ID"
+#string STR_SDEV_HXCI_DEVICE_PID_PROMPT                #language en-US "  PID"
+#string STR_SDEV_HXCI_DEVICE_PID_HELP                  #language en-US "Product ID"
+#string STR_SDEV_HXCI_DEVICE_REVISION_PROMPT           #language en-US "  Revision"
+#string STR_SDEV_HXCI_DEVICE_REVISION_HELP             #language en-US "Revision"
+#string STR_SDEV_HXCI_DEVICE_INTERFACE_NUMBER_PROMPT   #language en-US "  Interface Number"
+#string STR_SDEV_HXCI_DEVICE_INTERFACE_NUMBER_HELP     #language en-US "Interface number (0-based) of the interface on the device that this entry corresponds to. This field is considered valid only if the Attributes indicates that the device is a composite device."
+#string STR_SDEV_HXCI_DEVICE_CLASS_PROMPT              #language en-US "  Class"
+#string STR_SDEV_HXCI_DEVICE_CLASS_HELP                #language en-US "Class Number of the secure device"
+#string STR_SDEV_HXCI_DEVICE_SUBCLASS_PROMPT           #language en-US "  Subclass"
+#string STR_SDEV_HXCI_DEVICE_SUBCLASS_HELP             #language en-US "Subclass Number of the secure device"
+#string STR_SDEV_HXCI_DEVICE_PROTOCOL_PROMPT           #language en-US "  Protocol"
+#string STR_SDEV_HXCI_DEVICE_PROTOCOL_HELP             #language en-US "Protocol Number of the secure device"
+#string STR_SDEV_HXCI_DEVICE_PATH_STRING_OFFSET_PROMPT #language en-US "  ACPI Path String Offset"
+#string STR_SDEV_HXCI_DEVICE_PATH_STRING_OFFSET_HELP   #language en-US "Offset for fully qualified ACPI path name of the secure device from the beginning of this table"
+#string STR_SDEV_HXCI_DEVICE_PATH_STRING_LENGTH_PROMPT #language en-US "  ACPI Path String Length"
+#string STR_SDEV_HXCI_DEVICE_PATH_STRING_LENGTH_HELP   #language en-US "Length of fully qualified, null terminated ACPI path name of the secure device, The length includes the NULL terminator."
+#string STR_SDEV_HXCI_DEVICE_PATH_NAME_PROMPT          #language en-US "  ACPI Path Name"
+#string STR_SDEV_HXCI_DEVICE_FW_HASH_255_192_PROMPT    #language en-US "  Firmware Hash [255:192]"
+#string STR_SDEV_HXCI_DEVICE_FW_HASH_191_128_PROMPT    #language en-US "  Firmware Hash [191:128]"
+#string STR_SDEV_HXCI_DEVICE_FW_HASH_127_64_PROMPT     #language en-US "  Firmware Hash [127:64]"
+#string STR_SDEV_HXCI_DEVICE_FW_HASH_63_0_PROMPT       #language en-US "  Firmware Hash [63:0]"
+#string STR_SDEV_HXCI_DEVICE_1_PATH_NAME_HELP          #language en-US "ACPI Path Name. \n The default value is: \\_SB.PC00.XHCI.RHUB.HS00.CRGB"
+#string STR_SDEV_HXCI_DEVICE_2_PATH_NAME_HELP          #language en-US "ACPI Path Name. \n The default value is: \\_SB.PC00.XHCI.RHUB.HS01.CIR"
+#string STR_SDEV_FLAGS_PROMPT                          #language en-US "  Flags"
+#string STR_SDEV_FLAGS_HELP                            #language en-US "Enter HEX value\n\nBIT[0] - Allow handoff to non-secure OS\n"

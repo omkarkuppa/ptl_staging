@@ -1,0 +1,78 @@
+## @file
+# Library description file for DXE Phase TSE
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = DxeTseLib
+  FILE_GUID                      = ABA10D4C-CF49-45B9-ABF2-6A00E781D60D
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  UEFI_SPECIFICATION_VERSION     = 2.00
+  LIBRARY_CLASS                  = DxeTseLib
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  DxeServicesLib
+  PcdLib
+  HobLib
+  MemoryAllocationLib
+  AslUpdateLib
+  IoLib
+  PeiHostBridgeIpStatusLib
+  HostBridgeDataLib
+  TseInfoLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  DxeTseLib.c
+
+[Guids]
+  gEfiAcpiTableGuid
+  gTseDataHobGuid
+  gTseAcpiTableStorageGuid
+
+[Protocols]
+  gTseNvsAreaProtocolGuid                                          ## PRODUCES
+  gEfiAcpiTableProtocolGuid                                        ## CONSUMES
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId               ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId          ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision         ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId           ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision     ## SOMETIMES_CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTseCapabilityReportingStructureRevision  ## SOMETIMES_CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTseNumberOfDeviceScopes                  ## SOMETIMES_CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTseEngines                               ## SOMETIMES_CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTseTweakSize                             ## SOMETIMES_CONSUMES
+
+[Depex]
+  gEfiAcpiTableProtocolGuid

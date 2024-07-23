@@ -1,0 +1,47 @@
+/** @file
+  PEIM to initialize Graphics FRU.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2021 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#include <Register/GraphicsRegs.h>
+#include <IndustryStandard/Pci22.h>
+#include <Library/HobLib.h>
+#include <Library/P2SbSidebandAccessLib.h>
+#include <Library/P2SbSocLib.h>
+#include <PcdSbPortIds.h>
+
+/**
+  The function will inform the Display PHY that IGPU has been disabled
+*/
+VOID
+InformIGpuDisableStatus (
+  VOID
+  )
+{
+  P2SB_CONTROLLER               P2SbController;
+  P2SB_PORT_16_ID               P2SBPid;
+  P2SB_SIDEBAND_REGISTER_ACCESS IGpuSbAccess;
+
+  P2SBPid.Pid16bit = PTL_SID_F2_PID_DISPIO0PGA;
+
+  PtlPcdGetP2SbController (&P2SbController, P2SBPid);
+  BuildP2SbSidebandAccess (&P2SbController, P2SBPid.PortId.LocalPid, 0, P2SbPrivateConfig, P2SbMmioAccess, FALSE, &IGpuSbAccess);
+  IGpuSbAccess.Access.Or32 (&IGpuSbAccess.Access, PHYCOMMONREG2_EDP_PGA_REGION_REG, BIT0);
+  IGpuSbAccess.Access.Or32 (&IGpuSbAccess.Access, PRIVREG4_EDP_PGA_REGION_REG, BIT10);
+}

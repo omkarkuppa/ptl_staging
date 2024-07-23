@@ -1,0 +1,84 @@
+## @file
+# Component description file for the Dxe VTD Init library.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+INF_VERSION    = 0x00010017
+BASE_NAME      = DxeVtdInitLib
+FILE_GUID      = 3a3f1649-4589-4763-8d76-c671ffb6a150
+VERSION_STRING = 1.0
+MODULE_TYPE    = DXE_DRIVER
+LIBRARY_CLASS  = DxeVtdInitLib
+
+[LibraryClasses]
+UefiLib
+UefiRuntimeServicesTableLib
+UefiBootServicesTableLib
+DebugLib
+ConfigBlockLib
+HobLib
+IoLib
+PciSegmentLib
+BaseMemoryLib
+MemoryAllocationLib
+MmPciLib
+VtdInfoLib
+PchInfoLib
+CpuPlatformLib
+TmeInfoLib
+PeiHostBridgeIpStatusLib
+DxeVtdInitFruLib
+BaseIGpuInfoLib
+LocalApicLib
+
+[Packages]
+MdePkg/MdePkg.dec
+MdeModulePkg/MdeModulePkg.dec
+OneSiliconPkg/SiPkg.dec
+UefiCpuPkg/UefiCpuPkg.dec
+
+[Sources]
+DxeVtdInitLibVer3.c
+
+[Pcd]
+gSiPkgTokenSpaceGuid.PcdSiIoApicBaseAddress
+gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId
+gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId
+gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision
+gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId
+gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
+
+[Guids]
+gPchInfoHobGuid          ## CONSUMES
+gDmarAcpiTableStorageGuid
+gVtdDataHobGuid
+
+[Protocols]
+gEfiFirmwareVolume2ProtocolGuid
+gEfiAcpiTableProtocolGuid
+gVtdTopologyProtocolGuid
+
+[Depex]
+gEfiAcpiTableProtocolGuid AND
+gEfiFirmwareVolume2ProtocolGuid AND
+gEfiPciRootBridgeIoProtocolGuid AND
+gEfiPciHostBridgeResourceAllocationProtocolGuid AND # This is to ensure that PCI MMIO resource has been prepared and available for this driver to allocate.
+gEfiHiiDatabaseProtocolGuid

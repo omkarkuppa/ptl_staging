@@ -1,0 +1,52 @@
+## @file
+# Component description file for PEI/DXE/SMM Serial Io Access Lib.
+#
+# All function in this library is available for PEI, DXE, and SMM,
+# But do not support UEFI RUNTIME environment call.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2017 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+  INF_VERSION    = 0x00010017
+  BASE_NAME      = PeiDxeSmmSerialIoAccessLib
+  FILE_GUID      = 3F2CE76F-D8D2-4668-B173-7EF93D8B6890
+  VERSION_STRING = 1.0
+  MODULE_TYPE    = BASE
+  LIBRARY_CLASS  = SerialIoAccessLib
+
+[LibraryClasses]
+  BaseLib
+  IoLib
+  DebugLib
+  PcdLib
+  PciSegmentLib
+  PchPcrLib
+  SerialIoPrivateLib
+  SocInfoLib
+  SerialIoUartSocLib
+  SerialIoI2cSocLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  SerialIoAccessLib.c

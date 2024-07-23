@@ -1,0 +1,46 @@
+/** @file
+  Setup menu definition for CPU V/F point selection mode.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+      suppressif NOT ideqval OC_SETUP.VfPointCount[OCDOMAIN_INDEX] > VFPOINT_INDEX;
+        numeric varid = OC_SETUP.GtVfPointOffset[VFPOINT_INDEX],
+          prompt  = STRING_TOKEN (CONCATENATE2(STR_VF_POINT_OFFSET_,VFPOINT_INDEX)),
+          help    = STRING_TOKEN (CONCATENATE3(STR_VF_POINT_OFFSET_,VFPOINT_INDEX,_HELP)),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 1000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        oneof varid   = OC_SETUP.GtVfPointOffsetPrefix[VFPOINT_INDEX],
+          prompt      = STRING_TOKEN(CONCATENATE2(STR_VF_POINT_OFFSET_PREFIX_,VFPOINT_INDEX)),
+          help        = STRING_TOKEN(STR_VOLTAGE_OFFSET_PREFIX_HELP),
+          option text = STRING_TOKEN(STR_POSITIVE_SIGN),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NEGATIVE_SIGN),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        text
+          help  = STRING_TOKEN(STR_EMPTY_STRING),
+          text  = STRING_TOKEN(CONCATENATE2(STR_VF_POINT_OC_RATIO_NAME,VFPOINT_INDEX)),
+          text  = STRING_TOKEN(CONCATENATE2(STR_GT_VF_POINT_OC_RATIO_VALUE,VFPOINT_INDEX)),
+          flags = 0,
+          key   = 0;
+      endif;

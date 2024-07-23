@@ -1,0 +1,53 @@
+## @file
+#
+# Declaration (DEC) file for Multi-stage IBB verification feature
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME      = MultiIbbFeaturePkg
+  PACKAGE_GUID      = 5A0274EB-3F37-418E-AAAF-4E97CCD2410B
+  PACKAGE_VERSION   = 0.1
+
+[Includes]
+  Include
+
+[LibraryClasses]
+  AccessNemConfigLib|Include/Library/AccessNemConfigLib.h
+
+[Ppis]
+  gEfiEndOfIbbSignalPpiGuid             = {0xeed52bb, 0xfa2e, 0x4b7e, { 0x96, 0x7b, 0xe5, 0x83, 0x41, 0x8d, 0xd2, 0x83}}
+  gPeiFirmwareVolumeVerifyHashFvPpiGuid = {0xc6f495a3, 0xc4a3, 0x4f51, { 0x8c, 0x1d, 0x1a, 0x94, 0x80, 0x6c, 0x3b, 0xdb}}
+  gMtrrRangeChangePpiGuid               = {0xad35a0af, 0x7a67, 0x4aea, { 0x8b, 0x5a, 0x1a, 0xfc, 0xae, 0x36, 0xda, 0x68}}
+  gNemSizeCalculatePpiGuid              = {0x5ec190dc, 0xfe2d, 0x4e79, { 0xbf, 0x43, 0xf0, 0xb0, 0xb3, 0x4f, 0xc9, 0x3b}}
+  gMtrrInitMaskPpiGuid                  = {0x4ec0c431, 0x47a7, 0x4594, { 0x98, 0x85, 0xbd, 0xde, 0xe3, 0x35, 0x83, 0xd7}}
+
+
+[Guids]
+  gMultiIbbFeaturePkgTokenSpaceGuid     = {0x9178cbf, 0xe8b1, 0x4994, { 0xa2, 0xea, 0x6, 0xdc, 0xa6, 0x4a, 0x38, 0x7c}}
+
+[PcdsFixedAtBuild]
+  gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable|FALSE|BOOLEAN|0xA0000001
+  gMultiIbbFeaturePkgTokenSpaceGuid.PcdCacheMissDetectEnable|FALSE|BOOLEAN|0xA0000002
+  gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbInfoCount|1|UINT32|0x0000A000
+
+[PcdsDynamic, PcdsDynamicEx]
+  gMultiIbbFeaturePkgTokenSpaceGuid.PcdAcmSetNem|TRUE|BOOLEAN|0x40000001

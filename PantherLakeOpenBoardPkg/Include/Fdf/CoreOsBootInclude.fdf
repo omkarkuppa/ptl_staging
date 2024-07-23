@@ -1,0 +1,44 @@
+## @file
+#  FDF file of Platform.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdBootToShellOnly == FALSE
+INF  MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteSmm.inf
+INF  MdeModulePkg/Universal/Variable/RuntimeDxe/VariableSmmRuntimeDxe.inf
+INF  MdeModulePkg/Universal/Variable/RuntimeDxe/VariableSmm.inf
+!endif
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdBootToShellOnly == FALSE
+INF  MdeModulePkg/Core/PiSmmCore/PiSmmIpl.inf
+INF  MdeModulePkg/Core/PiSmmCore/PiSmmCore.inf
+INF  MdeModulePkg/Universal/ReportStatusCodeRouter/Smm/ReportStatusCodeRouterSmm.inf
+INF  MdeModulePkg/Universal/StatusCodeHandler/Smm/StatusCodeHandlerSmm.inf
+#INF  UefiCpuPkg/PiSmmCpuDxeSmm/PiSmmCpuDxeSmm.inf
+INF  UefiCpuPkg/CpuIo2Smm/CpuIo2Smm.inf
+INF  MdeModulePkg/Universal/SmmCommunicationBufferDxe/SmmCommunicationBufferDxe.inf
+INF  MdeModulePkg/Universal/LockBox/SmmLockBox/SmmLockBox.inf
+!endif
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdBootToShellOnly == FALSE
+INF  MdeModulePkg/Universal/Acpi/FirmwarePerformanceDataTableSmm/FirmwarePerformanceSmm.inf
+INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
+!endif
+

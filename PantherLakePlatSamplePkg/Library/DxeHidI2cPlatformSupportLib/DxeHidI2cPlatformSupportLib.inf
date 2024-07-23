@@ -1,0 +1,50 @@
+### @file
+#  HID-I2C platform support library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = HidI2cPlatformSupportLib
+  FILE_GUID                      = CBEE7195-5EBD-460D-A714-A21CAD2AEF4D
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = BASE
+  LIBRARY_CLASS                  = HidI2cPlatformSupportLib
+
+[LibraryClasses]
+  BaseLib
+  IoLib
+  DebugLib
+  GpioV2WrapperLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[Guids]
+  gSetupVariableGuid                            ## CONSUMES
+
+[Sources]
+  DxeHidI2cPlatformSupportLib.c
+
+[Pcd]
+  gBoardModuleTokenSpaceGuid.PcdTouchpanel1IrqGpio
+  gBoardModuleTokenSpaceGuid.PcdTouchpanelIrqGpio

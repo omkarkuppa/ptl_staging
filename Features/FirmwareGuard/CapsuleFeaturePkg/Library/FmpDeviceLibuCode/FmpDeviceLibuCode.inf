@@ -1,0 +1,93 @@
+## @file
+#  FmpDeviceLib instance to support uCode update
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = FmpDeviceLibuCode
+  FILE_GUID                      = 09EE5BD9-E78F-4534-AED6-A1852BD706A8
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = FmpDeviceLib|DXE_DRIVER
+  CONSTRUCTOR                    = FmpDeviceLibuCodeConstructor
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  FmpDeviceLibuCode.c
+  MicrocodeUpdate.c
+  MicrocodeUpdate.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  FmpDevicePkg/FmpDevicePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+
+[LibraryClasses]
+  DebugLib
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  UefiRuntimeServicesTableLib
+  PcdLib
+  PlatformFlashAccessLib
+  SeamlessRecoverySupportLib
+  HobLib
+  CapsuleUpdateResetLib
+  CpuPlatformLib
+  TopSwapSupportLib
+  ResiliencySupportLib
+  PlatformBiosUpdateHookLib
+  PayloadResiliencySupportLib
+
+[Pcd]
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset              ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize                ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase                ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdMicrocodeOffsetInFv                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress                          ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcduCodeSelectionPolicy             ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable             ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryEnable               ## CONSUMES
+
+[Protocols]
+  gEfiMpServiceProtocolGuid                     ## CONSUMES
+  gEfiFirmwareVolumeBlockProtocolGuid           ## CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
+
+[Guids]
+  gIntelMicrocodeVersionFfsFileGuid
+  gIntelMicrocodeArrayFfsFileGuid
+  gFmpDeviceMicrocodeDefaultGuid
+
+[Depex]
+  gEfiVariableArchProtocolGuid AND
+  gEfiVariableWriteArchProtocolGuid AND
+  gEfiMpServiceProtocolGuid

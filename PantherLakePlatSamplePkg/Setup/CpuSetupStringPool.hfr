@@ -1,0 +1,56 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+#define MAKE_SURE_THOSE_ARE_NOT_INCLUDED_CPUSETUP
+#ifndef MAKE_SURE_THOSE_ARE_NOT_INCLUDED_CPUSETUP
+
+STRING_TOKEN(STR_0)
+STRING_TOKEN(STR_1)
+STRING_TOKEN(STR_2)
+STRING_TOKEN(STR_3)
+STRING_TOKEN(STR_4)
+STRING_TOKEN(STR_5)
+STRING_TOKEN(STR_6)
+STRING_TOKEN(STR_7)
+STRING_TOKEN(STR_8)
+STRING_TOKEN(STR_9)
+STRING_TOKEN(STR_10)
+STRING_TOKEN(STR_11)
+STRING_TOKEN(STR_12)
+STRING_TOKEN(STR_13)
+STRING_TOKEN(STR_14)
+STRING_TOKEN(STR_15)
+STRING_TOKEN(STR_16)
+STRING_TOKEN(STR_17)
+STRING_TOKEN(STR_18)
+STRING_TOKEN(STR_19)
+STRING_TOKEN(STR_20)
+STRING_TOKEN(STR_21)
+STRING_TOKEN(STR_22)
+STRING_TOKEN(STR_23)
+STRING_TOKEN(STR_24)
+STRING_TOKEN(STR_25)
+STRING_TOKEN(STR_26)
+STRING_TOKEN(STR_27)
+STRING_TOKEN(STR_28)
+STRING_TOKEN(STR_29)
+STRING_TOKEN(STR_30)
+STRING_TOKEN(STR_31)
+
+#endif

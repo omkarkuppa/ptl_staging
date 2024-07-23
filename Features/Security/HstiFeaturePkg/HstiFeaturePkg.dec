@@ -1,0 +1,49 @@
+## @file
+#
+# DEC file for HstiFeaturePkg.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+DEC_SPECIFICATION = 0x00010017
+PACKAGE_NAME = HstiFeaturePkg
+PACKAGE_VERSION = 0.1
+PACKAGE_GUID = F04DD5F4-9956-4733-9ADB-4963EB578D05
+
+[Includes]
+  Include
+
+[Guids]
+gPlatformConfigChangeGuid = {0xe3cacf62, 0x3062, 0x4e1d, {0x97, 0x8e, 0x46, 0x80, 0x7a, 0xb9, 0x74, 0x7d}}
+gHstiStoredResultsGuid    = {0xa59863aa, 0xc319, 0x4a07, {0x92, 0x87, 0xba, 0xb4, 0x5d, 0xeb, 0x0a, 0x5a}}
+
+[Protocols]
+
+#
+# Platform setup to notify Hsti for platform config change
+#
+gPlatformConfigChangeProtocolGuid = {0x142bd88b, 0x8474, 0x4d49, {0xa2, 0x1a, 0x61, 0x4d, 0x1f, 0xf9, 0xc1, 0xab}}
+
+#
+# Handler to gather and publish HSTI results on ReadyToBootEvent
+#
+gHstiPublishCompleteProtocolGuid  =  {0xccf12452, 0x2970, 0x4766, {0xa2, 0x74, 0xe0, 0xae, 0xd4, 0xbc, 0xbf, 0xf1}}
+
+

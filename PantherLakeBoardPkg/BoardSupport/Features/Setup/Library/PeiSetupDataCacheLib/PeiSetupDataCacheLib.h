@@ -1,0 +1,139 @@
+/** @file
+  Header file for PEI SetupDataCacheLib.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2014 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#ifndef _PEI_SETUP_DATA_CACHE_LIB_H_
+#define _PEI_SETUP_DATA_CACHE_LIB_H_
+
+#include <Library/PeiServicesLib.h>
+#include <PiPei.h>
+#include <Ppi/ReadOnlyVariable2.h>
+#include <Library/DebugLib.h>
+#include <Library/PeimEntryPoint.h>
+#include <Library/HobLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <SetupVariable.h>
+#include <Library/IoLib.h>
+#include <Library/PcdLib.h>
+
+#pragma pack(1)
+
+// Component attributes are moved to place prior to component data to avoid compiler warning C4366 for X64
+typedef struct {
+  EFI_HOB_GUID_TYPE                Header;
+  UINT32                           TotalCnt;
+  UINT32                           CacheCnt;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariablePpi;
+  UINT32                           SetupAttributes;
+  UINT32                           BoardInfoAttributes;
+  UINT32                           SaAttributes;
+  UINT32                           MeAttributes;
+  UINT32                           CpuAttributes;
+  UINT32                           PchAttributes;
+#if FixedPcdGetBool(PcdOverclockEnable) == 1
+  UINT32                           OcAttributes;
+  OC_SETUP                         OcSetup;
+#endif
+  SETUP_DATA                       SetupData;
+  BOARD_INFO_SETUP                 BoardInfoSetup;
+  SA_SETUP                         SaSetup;
+  ME_SETUP                         MeSetup;
+  CPU_SETUP                        CpuSetup;
+  PCH_SETUP                        PchSetup;
+} SETUP_DATA_HOB;
+
+#pragma pack()
+
+/**
+  This service retrieves a variable's value using its name and GUID.
+
+  Read the specified variable from the UEFI variable store. If the Data
+  buffer is too small to hold the contents of the variable, the error
+  EFI_BUFFER_TOO_SMALL is returned and DataSize is set to the required buffer
+  size to obtain the data.
+
+  @param[in]      This                  A pointer to this instance of the EFI_PEI_READ_ONLY_VARIABLE2_PPI.
+  @param[in]      VariableName          A pointer to a null-terminated string that is the variable's name.
+  @param[in]      VariableGuid          A pointer to an EFI_GUID that is the variable's GUID. The combination of
+                                        VariableGuid and VariableName must be unique.
+  @param[out]     Attributes            If non-NULL, on return, points to the variable's attributes.
+  @param[in, out] DataSize              On entry, points to the size in bytes of the Data buffer.
+                                        On return, points to the size of the data returned in Data.
+  @param[out]     Data                  Points to the buffer which will hold the returned variable value.
+
+  @retval         EFI_SUCCESS           The variable was read successfully.
+  @retval         EFI_NOT_FOUND         The variable could not be found.
+  @retval         EFI_BUFFER_TOO_SMALL  The DataSize is too small for the resulting data.
+                                        DataSize is updated with the size required for
+                                        the specified variable.
+  @retval         EFI_INVALID_PARAMETER VariableName, VariableGuid, DataSize or Data is NULL.
+  @retval         EFI_DEVICE_ERROR      The variable could not be retrieved because of a device error.
+**/
+EFI_STATUS
+EFIAPI
+NewGetVariable (
+  IN CONST  EFI_PEI_READ_ONLY_VARIABLE2_PPI *This,
+  IN CONST  CHAR16                          *VariableName,
+  IN CONST  EFI_GUID                        *VariableGuid,
+  OUT       UINT32                          *Attributes,
+  IN OUT    UINTN                           *DataSize,
+  OUT       VOID                            *Data
+  );
+
+/**
+  Return the next variable name and GUID.
+
+  This function is called multiple times to retrieve the VariableName
+  and VariableGuid of all variables currently available in the system.
+  On each call, the previous results are passed into the interface,
+  and, on return, the interface returns the data for the next
+  interface. When the entire variable list has been returned,
+  EFI_NOT_FOUND is returned.
+
+  @param[in]      This                  A pointer to this instance of the EFI_PEI_READ_ONLY_VARIABLE2_PPI.
+
+  @param[in, out] VariableNameSize      On entry, points to the size of the buffer pointed to by
+                                        VariableName. On return, the size of the variable name buffer.
+  @param[in, out] VariableName          On entry, a pointer to a null-terminated string that is the
+                                        variable's name. On return, points to the next variable's
+                                        null-terminated name string.
+  @param[in, out] VariableGuid          On entry, a pointer to an EFI_GUID that is the variable's GUID.
+                                        On return, a pointer to the next variable's GUID.
+
+  @retval         EFI_SUCCESS           The variable was read successfully.
+  @retval         EFI_NOT_FOUND         The variable could not be found.
+  @retval         EFI_BUFFER_TOO_SMALL  The VariableNameSize is too small for the resulting
+                                        data. VariableNameSize is updated with the size
+                                        required for the specified variable.
+  @retval         EFI_INVALID_PARAMETER VariableName, VariableGuid or
+                                        VariableNameSize is NULL.
+  @retval         EFI_DEVICE_ERROR      The variable could not be retrieved because of a device error.
+**/
+EFI_STATUS
+EFIAPI
+NewNextVariableName (
+  IN CONST  EFI_PEI_READ_ONLY_VARIABLE2_PPI *This,
+  IN OUT UINTN                              *VariableNameSize,
+  IN OUT CHAR16                             *VariableName,
+  IN OUT EFI_GUID                           *VariableGuid
+  );
+
+#endif
+

@@ -1,0 +1,88 @@
+## @file
+#  FDF file of Platform.
+# Flashmap FDF for Extended BIOS Region support
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+#=================================================================================#
+# 16MB BIOS + Extended BIOS region                                                #
+#=================================================================================#
+DEFINE FLASH_BASE                                                   = 0xFD000000  #
+DEFINE FLASH_SIZE                                                   = 0x03000000  #
+DEFINE FLASH_BLOCK_SIZE                                             = 0x00010000  #
+DEFINE FLASH_NUM_BLOCKS                                             = 0x00000300  #
+DEFINE EXTENDED_REGION_MEMMAP_ADDRESS                               = 0xF8000000  #
+DEFINE EXTENDED_REGION_SIZE                                         = 0x02000000  #
+DEFINE EXTENDED_REGION_IN_USE                                       = 0x00100000  #
+DEFINE ACM_ALIGNMENT_ON_FV_BASE                                     = 256K        #
+#=================================================================================#
+
+####
+#  Flashmap supporting Extended BIOS Region
+#
+# - Flash address: As Extended BIOS Region initialization code supported by
+#   Intel silicon code initializes EXT_BIOS_LIMIT_OFFSET for 16MB offset,
+#   starting from the 16MB offset of the flash BIOS region gets mapped to memory.
+# - Memory address: 32MB from SPI BAR1 BASE is the memory address range for
+#   Extended BIOS Region of the flash to be mapped. BAR1 BASE addresses
+#   should be configured through policy.
+#
+# Example configuration
+#  - Intel Silicon code has a policy to set SPI BAR1 BASE.
+#    Default address is the recommended base address according to the current memory usage.
+#       SpiConfig->ExtendedBiosDecodeRangeBase = 0xF8000000
+#    Set the same address to EXTENDED_REGION_MEMMAP_ADDRESS macro.
+#       EXTENDED_REGION_MEMMAP_ADDRESS = 0xF8000000
+#  - Define EXTENDED_REGION_IN_USE to 1MB, or the size the project needs.
+#       EXTENDED_REGION_IN_USE         = 0x00100000
+#  - Configure macro FLASH_BASE and EXTENDED_REGION_SIZE
+#    -- EXTENDED_REGION_SIZE always 32MB in max. This is defined by Silicon.
+#       EXTENDED_REGION_SIZE      = 0x02000000
+#    -- Total map-able size in max  : 16MB(main) + 32MB(extended)
+#    -- FLASH_BASE                  : 4GB - (16MB + 32MB)
+#    -- Redundant region size       : EXTENDED_REGION_SIZE - EXTENDED_REGION_IN_USE
+#    In BoardPkg FDF, place the extended code region next to the 16MB BIOS region so
+#    postbuild script cuts off the redundant space and one single final image is made.
+#  - Keep NvStorage firmware volume inside of the main 16MB region as the region is
+#    expected to be accessible in early phase.
+
+####
+# Flashmap for Extended BIOS Region (start from FLASH_BASE, Offset start from 0x0)
+#
+# ================================================================================= #
+#  postbuild script cuts off the unused region                          0x00000000  #
+#                                                                       0x01F00000  #
+# ================================================================================= #
+SET gBoardModuleTokenSpaceGuid.PcdFlashExtendAreaBaseAddress          = 0xF8000000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashAllExtendAreaSize              = 0x02000000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashExtendRegionOffset             = 0x01F00000  # equal to flash base + flash size - 16MB - extended BIOS region in use
+SET gBoardModuleTokenSpaceGuid.PcdFlashExtendRegionSizeInUse          = 0x00100000  # equal to the macro setting for extneded BIOS region in use
+
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedOffset       = 0x01F00000  # Flash addr (0xF8000000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedSize         = 0x00080000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemoryOffset     = 0x01F80000  # Flash addr (0xF8800000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemorySize       = 0x00080000  #
+
+####
+# Flashmap for 16MB BIOS Region  (start from FLASH_BASE + EXTENDED_REGION_SIZE)
+#
+
+
+
+#-----------  Flash map is auto generated ---------#

@@ -1,0 +1,420 @@
+### @file
+#  Component description file for Setup module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = Setup
+  FILE_GUID                      = E6A7A1CE-5881-4B49-80BE-69C91811685C
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = SetupEntry
+
+[Sources.common]
+  Setup.uni
+  Main.vfr
+  Advanced.vfr
+  Boot.vfr
+  Setup.c
+  HiiConfigAccess.c
+  BootSetup.c
+  SetupUpdate.c
+  HdaSetup.c
+
+#Firmware Configuration
+  FwConfig.uni
+
+#Sa
+  SaSetup.uni
+  SaSetup.hfr
+  SaSetup.c
+  ItbtPcieSetupSinglePort.hfr
+  ItbtPcieStringPool.hfr
+
+#Pcie
+  PcieSetup.uni
+  PcieSetup.hfr
+
+#Pch
+  PchSetup.uni
+  PchSetup.hfr
+  PchPcieSetupSinglePortMenu.hfr
+  PchPcieSetupSinglePort.hfr
+  PchPcieStringPool.hfr
+  PchIshStringPool.hfr
+  PchUfsSingleController.hfr
+  PchUfsStringPool.hfr
+  PchSetup.c
+  PchUsbSingleHsPort.hfr
+  PchUsbSingleSsPort.hfr
+  PchUsbStringPool.hfr
+  PchThcStringPool.hfr
+  PchUsbSwDevModePort.hfr
+  PchHdaSetup.hfr
+  PchHdaSndwSetup.hfr
+  PchHdaStringPool.hfr
+  PchThcController.hfr
+
+#CPU
+  CpuSetup.uni
+  CpuSetup.hfr
+  VoltageRegulatorSetup.hfr
+  CpuSetup.c
+  CpuSetupStringPool.hfr
+
+#ME
+  MeSetup.uni
+  MeSetup.hfr
+  MeSetup.c
+  AmtSetup.uni
+  AmtSetup.hfr
+
+#Platform
+  PlatformSetup.uni
+  PlatformSetup.hfr
+  PlatformSetup.c
+
+#Memory Configuration
+  MemorySetup.c
+
+#OverClockInit
+  OverClockSetup.uni
+  OverClockSetup.hfr
+  OverClockSetup.c
+  OverClockStringPool.hfr
+  OverClockSetupGtSelectionMode.hfr
+  OverClockSetupNguSelectionMode.hfr
+  OverClockSetupCpuSelectionMode.hfr
+  OverClockSetupMemSSSelectionMode.hfr
+  OverClockSetupRingSelectionMode.hfr
+  OverClockSetupDomain.hfr
+
+#Acpi
+  AcpiSetup.uni
+  AcpiSetup.hfr
+  AcpiSetup.c
+
+#Connectivity
+  ConnectivitySetup.c
+
+#Wwan
+  WwanSetup.uni
+  WwanSetup.hfr
+
+#Security
+  SecuritySetup.c
+
+#Hhm
+  HhmSetup.uni
+  HhmSetup.hfr
+  EcSetup.c
+
+#StatusCode
+  StatusCodeSetup.uni
+  StatusCodeSetup.hfr
+
+#Debug
+  DebugSetup.c
+  DebugSetup.uni
+  DebugSetup.hfr
+
+#Thunderbolt(TM)
+  TbtSetup.uni
+  iTbtStringPool.hfr
+
+  IntegratedTbtOptions.hfr
+
+  TbtSetup.hfr
+  TbtSetup.c
+
+  DiscreteTbtOptions.hfr
+  DiscreteTbtStringPool.hfr
+
+#Fusa
+  FusaSetup.hfr
+  FusaSetup.uni
+
+#CrashLog
+  CrashLogSetup.hfr
+  CrashLogSetup.uni
+
+#FspV
+  FspVSetup.hfr
+  FspVSetup.uni
+
+[Packages]
+  AcpiDebugFeaturePkg/AcpiDebugFeaturePkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  CryptoPkg/CryptoPkg.dec
+  PantherLakeFspBinPkg/PantherLakeFspBinPkg.dec
+  BoardModulePkg/BoardModulePkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  NhltFeaturePkg/NhltFeaturePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  CmosFeaturePkg/CmosFeaturePkg.dec
+  DptfFeaturePkg/DptfFeaturePkg.dec
+  HstiFeaturePkg/HstiFeaturePkg.dec
+  AmtMacPassThroughFeaturePkg/AmtMacPassThroughFeaturePkg.dec
+  NvmeFeaturePkg/NvmeFeaturePkg.dec
+  CnvFeaturePkg/CnvFeaturePkg.dec
+  MipiCamFeaturePkg/MipiCamFeaturePkg.dec
+  SndwDevTopologyFeaturePkg/SndwDevTopologyFeaturePkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  ProtectedVariableFeaturePkg/ProtectedVariableFeaturePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  FspWrapperFeaturePkg/FspWrapperFeaturePkg.dec
+  OneClickRecoveryFeaturePkg/OneClickRecoveryFeaturePkg.dec
+  WatchdogTimerFeaturePkg/WatchdogTimerFeaturePkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+  UcsiFeaturePkg/UcsiFeaturePkg.dec
+  AmtPetInitFeaturePkg/AmtPetInitFeaturePkg.dec
+  MemoryHealthInsightsFeaturePkg/MemoryHealthInsightsFeaturePkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  DebugPrintErrorLevelLib
+  BiosIdLib
+  HobLib
+  IoLib
+  HiiLib
+  MeLib
+  DxeAmtSupportLib
+  EcMiscLib
+  CpuPlatformLib
+  CmosAccessLib
+  PlatformNvRamHookLib
+  SerialPortParameterLib
+  PciSegmentLib
+  BootGuardLib
+  MeFwStsLib
+  DevicePathLib
+  BaseLib
+  GbeLib
+  TsnLib
+  PchInfoLib
+  AslUpdateLib
+  RngLib
+  TbtCommonLib
+  DimmInfoLib
+  ConfigBlockLib
+  CpuMailboxLib
+  CnviLib
+  HashLib
+  TimerLib
+  ReportStatusCodeLib
+  PreSiliconEnvDetectLib
+  BoardIdsLib
+  SpiAccessLib
+  PchPciBdfLib
+  PcdLib
+  NpuInfoLib
+  DxeBootStateLib
+  PtlPcdInfoLib
+  HostBridgeInfoFruLib
+  IaxInfoLib
+  PeiHostBridgeIpStatusLib
+  DxeAmtHeciLib
+  VariablePolicyHelperLib
+  OcMailboxLib
+  TbtNvmRetimerUpdateLib
+  LocalApicLib
+  PmcLib
+  FspInfoLib
+  VmdInfoLib
+  BaseIGpuInfoLib
+  PlatformUsbConfigLib
+  OcPlatformLib
+  MeUtilsLib
+  FixedPointLib
+  PmcSocLib
+  FitAccessLib
+
+[Guids]
+  gEfiGlobalVariableGuid                        ## CONSUMES
+  gEfiIfrTianoGuid                              ## CONSUMES
+  gEfiHobListGuid                               ## CONSUMES
+  gSetupVariableGuid                            ## PRODUCES
+  gSaSetupVariableGuid                          ## PRODUCES
+  gMeSetupVariableGuid                          ## PRODUCES
+  gCpuSetupVariableGuid                         ## PRODUCES
+  gPchSetupVariableGuid                         ## PRODUCES
+  gSiSetupVariableGuid                          ## PRODUCES
+  gDptfConfigVariableGuid                       ## CONSUMES
+  gMipiCamConfigVariableGuid                    ## CONSUMES
+  gDebugConfigVariableGuid                      ## CONSUMES
+  gOsProfileGuid                                ## PRODUCES
+  gSetupEnterGuid                               ## CONSUMES
+  gSystemAccessGuid                             ## PRODUCES
+  gSetupNvramUpdateGuid                         ## PRODUCES
+  gSystemConfigGuid                             ## CONSUMES
+  gMeInfoSetupGuid                              ## CONSUMES
+  gITbtInfoHobGuid                              ## CONSUMES
+  gMeDxeConfigGuid                              ## CONSUMES
+  gIGpuDxeConfigGuid                            ## CONSUMES
+  gPchInfoHobGuid                               ## CONSUMES
+  gChipsetInitHobGuid                           ## CONSUMES
+  gFspInfoGuid                                  ## CONSUMES
+  gWdtPersistentDataGuid                        ## PRODUCES
+  gIpuDataHobGuid                               ## CONSUMES
+  gTxtInfoHobGuid                               ## CONSUMES
+  gTcssHobGuid                                  ## CONSUMES
+  gVrDataHobGuid                                ## CONSUMES
+  gDebugTokenDataHobGuid                        ## CONSUMES
+  gPdtExistGuid                                 ## CONSUMES
+  gEfiConsoleInDeviceGuid                       ## CONSUMES
+  gOcDataHobGuid                                ## CONSUMES
+  gBoardInfoVariableGuid                        ## CONSUMES
+  gCnvFeatureSetupGuid                          ## CONSUMES
+  gNhltEndpointsTableConfigurationVariableGuid  ## CONSUMES
+  gSndwDevTopologyConfigurationVariableGuid     ## CONSUMES
+  gSiMemoryInfoDataGuid                         ## CONSUMES
+  gVmdInfoHobGuid                               ## CONSUMES
+  gEfiIfrFrontPageGuid                          ## CONSUMES
+  gAllTbtRetimerDeviceGuid                      ## CONSUMES
+  gUsbCRetimerSetupGuid                         ## CONSUMES
+  gUsbCPdSetupGuid                              ## CONSUMES
+  gOcSetupVariableGuid                          ## PRODUCES
+  gDccDividerDataBufferHobGuid                  ## CONSUMES
+  gDTbtInfoHobGuid                              ## CONSUMES
+  gBiosPayloadVarGuid                           ## CONSUMES
+  gTpmErrorHobGuid                              ## CONSUMES
+
+[Protocols]
+  gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
+  gEfiCpuIo2ProtocolGuid                        ## CONSUMES
+  gWdtProtocolGuid                              ## CONSUMES
+  gMemInfoProtocolGuid                          ## CONSUMES
+  gEfiDiskInfoProtocolGuid                      ## CONSUMES
+  gEfiPciIoProtocolGuid                         ## CONSUMES
+  gHeciControlProtocolGuid                      ## CONSUMES
+  gIGpuPolicyProtocolGuid                       ## CONSUMES
+  gEfiDxeSmmReadyToLockProtocolGuid             ## CONSUMES
+  gEfiI2cIoProtocolGuid                         ## CONSUMES
+  gCpuInfoProtocolGuid                          ## CONSUMES
+  gPchSpiProtocolGuid                           ## CONSUMES
+  gEfiSmbiosProtocolGuid                        ## CONSUMES
+  gBdsAllDriversConnectedProtocolGuid           ## CONSUMES
+  gEfiUsbIoProtocolGuid                         ## CONSUMES
+  gPlatformConfigChangeProtocolGuid             ## SOMETIMES_PRODUCES
+  gEdkiiPlatformSpecificResetFilterProtocolGuid ## CONSUMES
+  gEfiMpServiceProtocolGuid                     ## CONSUMES
+  gOneClickRecoveryProtocolGuid                 ## CONSUMES
+  gEfiHiiPopupProtocolGuid                      ## CONSUMES
+  gEdkiiVariablePolicyProtocolGuid              ## SOMETIMES_CONSUMES
+  gCnvFormPlatformProtocolGuid                  ## PRODUCES
+  gUsbCRetimerProtocolGuid                      ## CONSUMES
+  gMemoryAddressEncodeDecodeProtocolGuid        ## CONSUMES
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                      ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdMchBaseAddress                                 ## CONSUMES
+  gAcpiDebugFeaturePkgTokenSpaceGuid.PcdAcpiDebugAddress                 ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdDmiBaseAddress                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdDockAttached
+  gBoardModuleTokenSpaceGuid.PcdBoardRev
+  gBoardModuleTokenSpaceGuid.PcdBoardType
+  gBoardModuleTokenSpaceGuid.PcdPlatformType
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
+  gBoardModuleTokenSpaceGuid.PcdEcEspiFlashSharingMode
+  gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor                          ## CONSUMES
+
+  gPlatformModuleTokenSpaceGuid.PcdTpmEnable
+  gSiPkgTokenSpaceGuid.PcdTxtEnable                                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTseEnable                                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdAmtEnable                                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                                ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdITbtToPcieRegister
+  gSiPkgTokenSpaceGuid.PcdPcieToITbtRegister
+  gSiPkgTokenSpaceGuid.PcdBiosGuardEnable
+  gSiPkgTokenSpaceGuid.PcdMrcTraceMessageSupported                      ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdVirtualKeyboardEnable                ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection
+  gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable                    ## CONSUMES
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPeciMode                             ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTsnSupport                                    ## CONSUMES
+
+  # SA USB Config
+  gBoardModuleTokenSpaceGuid.PcdTcssPortCapMap                          ## CONSUMES
+  gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable                    ## CONSUMES
+
+  gPlatformModuleTokenSpaceGuid.PcdExtendedBiosRegionSupport            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportRetimerInfoPresent         ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber        ## CONSUMES
+
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable              ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdCnviCrfBtUsbOnly                     ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdCnviBtInterfaceUpdate                ## CONSUMES
+  gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyBtSndwSupported ##CONSUMES
+
+
+  #
+  # CNV Config
+  #
+  gCnvFeaturePkgTokenSpaceGuid.PcdGlobalCnvDlvrRfim                     ## PRODUCES
+
+  #
+  # ME Config
+  #
+  gAmtPetInitFeaturePkgTokenSpaceGuid.PcdAmtPetInitFeatureEnable        ## CONSUMES
+
+[FixedPcd]
+  gBoardModuleTokenSpaceGuid.PcdUplEnable                               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUplMajorRevision                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUplMinorRevision                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUplRevision                             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUplBuildNumber                          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUplSpecRevision                         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUplProducerId                           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUplImageId                              ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTcssSupport                                   ## CONSUMES
+  gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdOneClickRecoveryEnable   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable                          ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu
+  gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdFspVEnable                                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdOverclockEnable                               ## CONSUMES
+    # USB4
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                           ## CONSUMES
+  gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber            ## CONSUMES
+
+[Depex]
+  gMemInfoProtocolGuid                AND
+  gEdkiiVariablePolicyProtocolGuid    AND
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid   AND
+  gEfiHiiDatabaseProtocolGuid         AND
+  gDxePolicyProtocolGuid              AND
+  gPchSpiProtocolGuid                 AND
+  gEfiMpServiceProtocolGuid

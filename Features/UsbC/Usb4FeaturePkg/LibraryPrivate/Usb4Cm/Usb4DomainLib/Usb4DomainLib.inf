@@ -1,0 +1,42 @@
+## @file
+#  Component description file for USB4 domain library.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION    = 0x0001001B
+  BASE_NAME      = Usb4DomainLib
+  FILE_GUID      = 552D9DD0-F337-4DFC-97B9-4DD258DB0208
+  VERSION_STRING = 1.0
+  MODULE_TYPE    = DXE_DRIVER
+  LIBRARY_CLASS  = Usb4DomainLib
+
+[Sources]
+  Usb4DomainLib.c
+  Usb4DomainDp.c
+
+[LibraryClasses]
+  IoLib
+  DebugLib
+  CmUtilsLib
+  Usb4DebugLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec

@@ -1,0 +1,53 @@
+## @file
+# PEI WDT Lib.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2017 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiWdtLib
+FILE_GUID = f81c1f8e-33ec-45f4-9182-6ce0f9896b6a
+VERSION_STRING = 1.0
+MODULE_TYPE = PEIM
+LIBRARY_CLASS = PeiWdtLib
+
+
+[LibraryClasses]
+IoLib
+DebugLib
+PeiServicesLib
+ConfigBlockLib
+WdtCommonLib
+
+[Packages]
+MdePkg/MdePkg.dec
+MdeModulePkg/MdeModulePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+[Ppis]
+gEdkiiPlatformSpecificResetNotificationPpiGuid ## CONSUMES
+gEfiPeiMemoryDiscoveredPpiGuid
+
+[Guids]
+gWatchDogPreMemConfigGuid
+
+[Sources]
+PeiWdtLib.c

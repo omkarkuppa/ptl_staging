@@ -1,0 +1,89 @@
+## @file
+# Component information file for the FSP Init Pre-Memory PEI module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2010 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FspInitPreMem
+  FILE_GUID                      = 9E1CC850-6731-4848-8752-6673C7005EEE
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = FspInitPreMemEntryPoint
+
+[Sources]
+  FspInitPreMem.h
+  FspInitPreMem.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Ppis]
+  gEfiPeiResetPpiGuid                       ## PRODUCES
+  gEfiPeiReset2PpiGuid                      ## PRODUCES
+  gEfiPeiMemoryDiscoveredPpiGuid            ## NOTIFY
+  gEfiPeiMasterBootModePpiGuid              ## PRODUCES
+  gFspTempRamExitPpiGuid                    ## CONSUMES
+  gFspmArchConfigPpiGuid                    ## SOMETIMES_PRODUCES
+  gEdkiiPlatformSpecificResetHandlerPpiGuid ## CONSUMES
+  gSiPreMemDefaultPolicyInitPpiGuid         ## CONSUMES
+  gPchPreMemDefaultPolicyInitPpiGuid
+  gPchPreMemPolicyPpiGuid
+
+[Guids]
+  gFspReservedMemoryResourceHobGuid         ## PRODUCES
+  gFspSiliconFvGuid                         ## CONSUMES
+  gFspPerformanceDataGuid                   ## CONSUMES
+  gPchGlobalResetGuid                       ## CONSUMES
+  gSiliconPolicyHobGuid                     ## PRODUCES
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdPeiCoreMaxPeiStackSize    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdFspVEnable                          ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdOverclockEnable   ## CONSUMES
+
+[LibraryClasses]
+  #
+  # Generic library class
+  #
+  PeimEntryPoint
+  FspPlatformLib
+  ConfigBlockLib
+  SiPolicyLib
+  PeiMePolicyLib
+  SmbusLib
+  FspSwitchStackLib
+  PciSegmentLib
+  FspCommonLib
+  PerformanceLib
+  ResetSystemLib
+  MemoryAllocationLib
+  StallPpiLib
+  FiaSocLib
+  ReportStatusCodeLib
+
+[Depex]
+  gSiPreMemDefaultPolicyInitPpiGuid AND
+  gFspInApiModePpiGuid

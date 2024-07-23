@@ -1,0 +1,169 @@
+## @file
+#  Configuration file for PantherLake Mobile Platform.
+#  (Platform configuration)
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification
+#
+##
+
+Title = "Configuration file - TOML for PantherLake Mobile Platform"
+
+[Common]
+  Vendor             = 'Intel'
+  PlatformGeneration = 17
+  PlatformFullName   = 'PantherLake'
+  PlatformPrefix     = 'PTLP'
+
+[Keystore]
+  MePreProdCertSubject = ''
+  MeProdCertSubject    = ''
+
+[FitTool]
+  Method         = 'mFit'
+  LayoutPlatform = ''
+
+[BiosGuard]
+  PlatformId = 'PANTHERLAKE'
+  [BiosGuard.Certificate]
+    SignType  = 'OpenSSL'
+    Algorithm = 'RSA3072_SHA384_1_5'
+    SignTool  = 'Tools/OpenSSL/openssl.exe'
+    PbkFile   = 'Tools/BiosGuard/SignBiosGuard/BiosGuardPubKey.der'
+    PvkFile   = 'Tools/BiosGuard/SignBiosGuard/BiosGuardPrivKey.pem'
+
+[Firmware]
+  [Firmware.Bios]
+    Version   = 1
+    IsEnabled = true
+
+    [Firmware.Bios.Offset.Normal.Debug.Default]
+      Obb  = { Offset = '0x00140000', Size = '0x00740000' }
+      Ibbr = { Offset = '0x00300000', Size = '0x00580000' }
+      Ibb  = { Offset = '0x00880000', Size = '0x00580000' }
+
+    [Firmware.Bios.Offset.Normal.Release.Default]
+      Obb  = { Offset = '0x00140000', Size = '0x008C0000' }
+      Ibbr = { Offset = '0x00600000', Size = '0x00400000' }
+      Ibb  = { Offset = '0x00A00000', Size = '0x00400000' }
+
+    [Firmware.Bios.Offset.Resiliency.Default]
+      Obb  = { Offset = '0x00140000', Size = '0x006C0000' }
+      Ibbr = { Offset = '0x00800000', Size = '0x00400000' }
+      Ibb  = { Offset = '0x00C00000', Size = '0x00400000' }
+
+  [Firmware.Ec]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.ExtendedBios]
+    Version   = 1
+    IsEnabled = true
+
+    [Firmware.ExtendedBios.Offset.Normal.Debug.Default]
+      Ext  = { Offset = '0x00000000', Size = '0x00100000' }
+      Obb  = { Offset = '0x00440000', Size = '0x00740000' }
+      Ibbr = { Offset = '0x00600000', Size = '0x00580000' }
+      Ibb  = { Offset = '0x00B80000', Size = '0x00580000' }
+
+    [Firmware.ExtendedBios.Offset.Normal.Release.Default]
+      Ext  = { Offset = '0x00000000', Size = '0x00100000' }
+      Obb  = { Offset = '0x00440000', Size = '0x008C0000' }
+      Ibbr = { Offset = '0x00900000', Size = '0x00400000' }
+      Ibb  = { Offset = '0x00D00000', Size = '0x00400000' }
+
+    [Firmware.ExtendedBios.Offset.Resiliency.Default]
+      Ext  = { Offset = '0x00000000', Size = '0x00100000' }
+      Obb  = { Offset = '0x00240000', Size = '0x006C0000' }
+      Ibbr = { Offset = '0x00900000', Size = '0x00400000' }
+      Ibb  = { Offset = '0x00D00000', Size = '0x00400000' }
+
+  [Firmware.IshPdt]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.Me]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.Monolithic]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.Ifwi]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.Btgacm]
+    Version   = 1
+    IsEnabled = true
+
+    [Firmware.Btgacm.Offset.Normal.Debug.Default]
+      Fv = { Offset = '0x008C0000', Size = '0x00040000' }
+
+    [Firmware.Btgacm.Offset.Normal.Release.Default]
+      Fv = { Offset = '0x00A40000', Size = '0x00040000' }
+
+    [Firmware.Btgacm.Offset.Resiliency.Default]
+      Fv = { Offset = '0x00C40000', Size = '0x00040000' }
+
+  [Firmware.Fsp]
+    Version   = 1
+    IsEnabled = true
+
+    [Firmware.Fsp.Offset.Resiliency.Default]
+      FspM  = { Offset = '0x00D20000', Size = '0x000F0000' }
+      FspS  = { Offset = '0x00E10000', Size = '0x00060000' }
+      FspT  = { Offset = '0x00FE4000', Size = '0x00010000' }
+      FspO  = { Offset = '0x00FF4000', Size = '0x0000B000' }
+      FspRV = { Offset = '0x00FFFFF0', Size = '0x00000010' }
+      FBM   = { Offset = '0x00FE2000', Size = '0x00001000' }
+
+    [Firmware.Fsp.Offset.Normal.Debug.Default]
+      FspM  = { Offset = '0x009F0000', Size = '0x00190000' }
+      FspS  = { Offset = '0x00B80000', Size = '0x000A0000' }
+      FspT  = { Offset = '0x00DD4000', Size = '0x00020000' }
+      FspO  = { Offset = '0x00DF4000', Size = '0x0000B000' }
+      FspRV = { Offset = '0x00DFFFF0', Size = '0x00000010' }
+      FBM   = { Offset = '0x00DD2000', Size = '0x00001000' }
+
+    [Firmware.Fsp.Offset.Normal.Release.Default]
+      FspM  = { Offset = '0x00B50000', Size = '0x00100000' }
+      FspS  = { Offset = '0x00C50000', Size = '0x00060000' }
+      FspT  = { Offset = '0x00DE4000', Size = '0x00010000' }
+      FspO  = { Offset = '0x00DF4000', Size = '0x0000B000' }
+      FspRV = { Offset = '0x00DFFFF0', Size = '0x00000010' }
+      FBM   = { Offset = '0x00DE2000', Size = '0x00001000' }
+
+    [Firmware.Fsp.CompressInfo]
+      FspS  = { CompressionGuid = 'EE4E5898-3914-4259-9D6E-DC7BD79403CF', FvNameGuid = 'C24E92DA-E0CD-436D-8188-F20677FF8EC4', FvImageGuid = '3417F275-4CF1-42D8-A0C3-B3F60779dF4D' }
+
+  [Firmware.Ucode]
+    Version   = 1
+    IsEnabled = true
+
+    [Firmware.Ucode.Offset.Normal.Debug.Default]
+      Fv = { Offset = '0x00000000', Size = '0x00080000' }
+
+    [Firmware.Ucode.Offset.Normal.Release.Default]
+      Fv = { Offset = '0x00000000', Size = '0x00080000' }
+
+    [Firmware.Ucode.Offset.Resiliency.Default]
+      Fv = { Offset = '0x00000000', Size = '0x00040000' }
+
+    [Firmware.Ucode.Slotsize]
+      Default = '0x37000'

@@ -1,0 +1,117 @@
+/** @file
+
+  This file contains a structure definition for the ACPI Embedded Controller Boot
+  Resources Table (ECDT).  The contents of this file should only be modified
+  for bug fixes, no porting is required.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2021 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+//
+// Statements that include other files
+//
+
+#include "Ecdt.h"
+
+//
+// Embedded Controller Boot Resources Table Structure
+//
+#pragma pack(1)
+typedef struct {
+  EFI_ACPI_6_5_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE ActionTable;
+  //
+  // ASCII, null terminated, string that contains a fully qualified
+  // reference to the namespace object that is this embedded controller device.
+  //
+  CHAR8                                                 Ec_Id[40];
+} EFI_ACPI_EMBEDDED_CONTROLLER_BOOT_RESOURCES_ENTIRE_TABLE;
+#pragma pack()
+
+EFI_ACPI_EMBEDDED_CONTROLLER_BOOT_RESOURCES_ENTIRE_TABLE Ecdt = {
+  {
+    {
+      EFI_ACPI_6_5_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE_SIGNATURE,
+      sizeof (EFI_ACPI_6_5_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE) + 40,
+      EFI_ACPI_6_5_EMBEDDED_CONTROLLER_BOOT_RESOURCES_TABLE_REVISION,
+
+      //
+      // Checksum will be updated at runtime
+      //
+      0x00,
+
+      //
+      // It is expected that these values will be updated at runtime
+      //
+      { ' ', ' ', ' ', ' ', ' ', ' ' },
+
+      0,
+      EFI_ACPI_OEM_ECDT_REVISION,
+      0,
+      0
+    },
+
+    //
+    // EC_CONTROL Register Block
+    //
+    {
+      EFI_ACPI_6_5_SYSTEM_IO,
+      8,
+      0,
+      EFI_ACPI_RESERVED_BYTE,
+      0x66
+    },
+
+    //
+    // EC_DATA Register Block
+    //
+    {
+      EFI_ACPI_6_5_SYSTEM_IO,
+      8,
+      0,
+      EFI_ACPI_RESERVED_BYTE,
+      0x62
+    },
+
+    1, // UID
+    0  // GPE_BIT
+  },
+  "\\_SB.PC00.LPCB.H_EC" //EC_ID
+};
+
+#ifdef __GNUC__
+VOID*
+ReferenceAcpiTable (
+ VOID
+ )
+
+{
+ //
+ // Reference the table being generated to prevent the optimizer from removing the
+ // data structure from the exeutable
+ //
+ return (VOID*)&Ecdt;
+}
+#else
+VOID
+main (
+ VOID
+ )
+
+{
+}
+#endif

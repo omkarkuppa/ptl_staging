@@ -1,0 +1,158 @@
+## @file
+#  Component description file for Hsti Silicon Driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2015 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = HstiIhvDxe
+  FILE_GUID                      = 60740CF3-D428-4500-80E6-04A5798241ED
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = HstiIhvDxeEntrypoint
+
+################################################################################
+#
+# Sources Section - list of files that are required for the build to succeed.
+#
+################################################################################
+
+[Sources]
+  HstiIhvDxe.c
+  HardwareRootedBootIntegrity.c
+  SignedFirmwareUpdate.c
+  MeasuredBootEnforcement.c
+  IntegratedDeviceDmaProtection.c
+  SecureDebugInterfaceConfiguration.c
+  SecureCpuConfiguration.c
+  SecureMemoryMapConfiguration.c
+  SecureIntegratedGraphicsConfiguration.c
+  MpServiceHelp.c
+  BootFirmwareMediaProtection.c
+  SecurePchConfiguration.c
+
+################################################################################
+#
+# Package Dependency Section - list of Package files that are required for
+#                              this module.
+#
+################################################################################
+[Packages]
+  MdePkg/MdePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  PcAtChipsetPkg/PcAtChipsetPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  HstiFeaturePkg/HstiFeaturePkg.dec
+
+################################################################################
+#
+# Library Class Section - list of Library Classes that are required for
+#                         this module.
+#
+################################################################################
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiLib
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  IoLib
+  PcdLib
+  HstiLib
+  Tpm2CommandLib
+  PchCycleDecodingLib
+  HobLib
+  PciSegmentLib
+  PmcLib
+  PchInfoLib
+  SmbusInfoLib
+  SpiAccessLib
+  IocAccessLib
+  RtcAccessLib
+  ThermalAccessLib
+  CpuPlatformLib
+  IpuLib
+  VtdInfoLib
+  HostBridgeInfoFruLib
+  PchPciBdfLib
+  TmeInfoLib
+  TcoLib
+  NguInfoLib
+  HostBridgeDataLib
+  PeiHostBridgeIpStatusLib
+  BaseTraceHubInfoLib
+  TseInfoLib
+  BaseImrInfoLib
+  TcssInfoLib
+  VmdInfoLib
+  BaseIGpuInfoLib
+  MeUtilsLib
+  CceInfoLib
+
+################################################################################
+#
+# Protocol C Name Section - list of Protocol and Protocol Notify C Names
+#                           that this module uses or produces.
+#
+################################################################################
+
+[Guids]
+  gEfiEndOfDxeEventGroupGuid
+  gSiMemoryPlatformDataGuid          ## CONSUMES
+  gSetupVariableGuid                 ## PRODUCES
+  gTpmErrorHobGuid                   ## CONSUMES
+
+[Protocols]
+  gEfiDxeSmmReadyToLockProtocolGuid  ## CONSUMES
+  gHstiProtocolGuid                  ## PRODUCES
+  gDxeSiPolicyProtocolGuid           ## CONSUMES
+  gHstiPublishCompleteProtocolGuid   ## PRODUCES
+  gEfiTrEEProtocolGuid               ## CONSUMES
+  gPchSpiProtocolGuid                ## CONSUMES
+  gEfiMpServiceProtocolGuid          ## CONSUMES
+  gEfiPciIoProtocolGuid              ## CONSUMES
+
+[Depex]
+  gDxeSiPolicyProtocolGuid           AND
+  gEfiVariableArchProtocolGuid       AND
+  gPchSpiProtocolGuid                AND
+  gEfiVariableWriteArchProtocolGuid
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdTcssSupport              ## CONSUMES
+
+[Pcd]
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpmBaseAddress           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSiHpetBaseAddress                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSiIoApicBaseAddress               ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTemporaryPciExpressRegionLength   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSiPciExpressBaseAddress           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSafBarBaseAddress                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdRegBarBaseAddress                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTcoBaseAddress                    ## CONSUMES
+
+

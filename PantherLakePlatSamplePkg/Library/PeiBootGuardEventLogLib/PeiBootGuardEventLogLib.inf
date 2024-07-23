@@ -1,0 +1,92 @@
+## @file
+#
+# This library is responsible for adding events to the TCG event log that correspond to measurements taken
+# by the Bootguard ACM prior to Bios launch
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification
+##
+
+[Defines]
+INF_VERSION                    = 0x00010017
+BASE_NAME                      = PeiBootGuardEventLogLib
+FILE_GUID                      = 93D53BB1-F5A7-4698-BF40-4562FAEE2C2D
+VERSION_STRING                 = 1.0
+MODULE_TYPE                    = PEIM
+LIBRARY_CLASS                  = NULL
+CONSTRUCTOR                    = PeiBootGuardEventLogConstructor
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[Sources]
+  PeiBootGuardEventLogLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  CryptoPkg/CryptoPkg.dec
+  BoardModulePkg/BoardModulePkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[LibraryClasses]
+  HobLib
+  PeimEntryPoint
+  PeiServicesLib
+  PeiServicesTablePointerLib
+  BaseMemoryLib
+  DebugLib
+  Tpm2CommandLib
+  Tpm2DeviceLib
+  HashLib
+  PerformanceLib
+  MemoryAllocationLib
+  ReportStatusCodeLib
+  PcdLib
+  BootGuardLib
+  BpmAccessLib
+  PciSegmentLib
+  TpmMeasurementLib
+  PrintLib
+
+[Guids]
+  gTcgEventEntryHobGuid
+  gTcgEvent2EntryHobGuid
+  gAcmDataHobGuid                                                     ## CONSUMES ## HOB
+  gPerfAcmGuid
+
+[Ppis]
+  gPeiFvMeasurementExcludedPlatformPpiGuid                            ## SOMETIMES PRODUCES
+  gEdkiiTcgPpiGuid                                                    ## CONSUMES
+
+[Pcd]
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpm2HashMask                       ## CONSUMES
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpm2ScrtmPolicy                    ## SOMETIMES_PRODUCES
+  gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBootGuardPerformanceEnable            ## CONSUMES
+
+[Depex]
+  gBiosInfoGuid

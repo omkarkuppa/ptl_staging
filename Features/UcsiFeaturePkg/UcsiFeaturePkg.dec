@@ -1,0 +1,48 @@
+## @file
+#  DEC file for Ucsi
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME = UcsiFeaturePkg
+  PACKAGE_VERSION = 0.1
+  PACKAGE_GUID = 58678911-5B66-4C1D-AEF9-C1AFA42FD5D7
+
+[Includes]
+  Include
+  UcsiDxe
+  AcpiTables
+
+[Protocols]
+  gUcsiNvsAreaProtocolGuid  = {0xadf318ae, 0x997c, 0x468c, {0xaa, 0x80, 0xe9, 0x1f, 0x5e, 0xa0, 0x2a, 0x70}}
+
+[Guids]
+  gUcsiFeaturePkgTokenSpaceGuid = {0xB5384E2E, 0x5E8F, 0x4EEB, {0x8A, 0xD5, 0x05, 0x8B, 0xF1, 0x68, 0x2C, 0xD1 }}
+
+[PcdsFeatureFlag]
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUcsiFeatureEnable |TRUE|BOOLEAN|0x20000001
+
+[PcdsDynamic]
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUsbCUcmMode           |0|UINT8|0x20000010
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUcxxDriverType        |0|UINT8|0x20000011
+  gUcsiFeaturePkgTokenSpaceGuid.PcdPortUcxxDriverSupport |{0}|UINT8[]|0x20000012
+
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUcsiRevision          |0xFFFF|UINT16|0x20000013

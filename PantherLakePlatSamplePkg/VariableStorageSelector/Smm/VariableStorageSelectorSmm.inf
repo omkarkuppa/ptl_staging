@@ -1,0 +1,64 @@
+## @file
+#  DXE Variable Storage Selector Module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2016 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = VariableStorageSelectorSmm
+  FILE_GUID                      = 5A18C536-DB68-4154-908D-0E1D53BE8247
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  VERSION_STRING                 = 1.0
+  PI_SPECIFICATION_VERSION       = 0x0001000A
+  ENTRY_POINT                    = VariableStorageSelectorSmmInitialize
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  VariableStorageSelectorSmm.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  PcdLib
+  SmmServicesTableLib
+  UefiDriverEntryPoint
+  VariableStorageSelectorLib
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdEnableCseVariableStorage
+  gSiPkgTokenSpaceGuid.PcdEnableFvbVariableStorage
+
+[Protocols]
+  gEdkiiSmmVariableStorageSelectorProtocolGuid  ## PRODUCES
+
+[Guids]
+  gCseVariableStorageProtocolInstanceGuid       ## CONSUMES
+  gFvbVariableStorageProtocolInstanceGuid       ## CONSUMES
+
+[Depex]
+  gEdkiiVariableStorageProtocolGuid

@@ -1,0 +1,81 @@
+## @file
+#  Provides protected variable services.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010029
+  BASE_NAME                      = SmmProtectedVariableLib
+  MODULE_UNI_FILE                = ProtectedVariableLib.uni
+  FILE_GUID                      = 2BEE71E5-259B-4057-A2C1-2115DF43C76A
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  VERSION_STRING                 = 0.1
+  LIBRARY_CLASS                  = ProtectedVariableLib|DXE_SMM_DRIVER MM_STANDALONE
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  SmmProtectedVariable.c
+  ProtectedVariableCommon.c
+  ProtectedVariableSmmDxeCommon.c
+  ProtectedVariableEncryption.c
+  ProtectedVariableInternal.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ProtectedVariablePkg/ProtectedVariablePkg.dec
+  CryptoPkg/CryptoPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  HobLib
+  BaseCryptLib
+  ProtectedVariableRpmcLib
+  ProtectedVariableKeyLib
+  HashApiLib
+  SortLib
+
+[Protocols]
+  gEfiMmEndOfDxeProtocolGuid
+
+[Guids]
+  gSmmVariableWriteGuid
+  gEdkiiMetaDataHmacVariableGuid
+  gEdkiiProtectedVariableGlobalGuid
+  gEdkiiVarErrorFlagGuid
+  gEdkiiProtectedVariableContextGuid
+
+[Pcd]
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdPlatformVariableName
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdPlatformVariableCount
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdProtectedVariableIntegrity
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdProtectedVariableConfidentiality
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxAuthVariableSize
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxHardwareErrorVariableSize
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdMetaDataHmac256KeySeed

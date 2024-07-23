@@ -1,0 +1,82 @@
+## @file
+#  Provides protected variable services.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010029
+  BASE_NAME                      = PeiProtectedVariableLib
+  MODULE_UNI_FILE                = ProtectedVariableLib.uni
+  FILE_GUID                      = 76FBFBCE-ACBB-4084-A348-8FCC97AAEB9D
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 0.1
+  LIBRARY_CLASS                  = ProtectedVariableLib|PEIM
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 AARCH64
+#
+
+[Sources]
+  PeiProtectedVariable.c
+  ProtectedVariableCommon.c
+  ProtectedVariableInternal.h
+  ProtectedVariableEncryption.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ProtectedVariablePkg/ProtectedVariablePkg.dec
+  CryptoPkg/CryptoPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  HobLib
+  BaseCryptLib
+  ProtectedVariableRpmcLib
+  ProtectedVariableKeyLib
+  ReportStatusCodeLib
+  PeiServicesLib
+  HashApiLib
+  SortLib
+
+[Guids]
+  gEdkiiMetaDataHmacVariableGuid
+  gEdkiiProtectedVariableGlobalGuid
+  gEdkiiVarErrorFlagGuid
+  gEdkiiProtectedVariableContextGuid
+
+[Ppis]
+  gEfiPeiMemoryDiscoveredPpiGuid
+
+[Pcd]
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdStatusCodeVariableIntegrity
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdPlatformVariableName
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdPlatformVariableCount
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdProtectedVariableIntegrity
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdProtectedVariableConfidentiality
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxAuthVariableSize
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxHardwareErrorVariableSize
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdMetaDataHmac256KeySeed

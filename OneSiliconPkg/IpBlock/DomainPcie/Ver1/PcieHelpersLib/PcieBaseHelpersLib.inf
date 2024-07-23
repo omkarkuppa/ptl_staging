@@ -1,0 +1,49 @@
+## @file
+#  Component description file for the PcieBaseHelpersLib
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification Reference:
+#
+##
+[Defines]
+  INF_VERSION    = 0x00010017
+  BASE_NAME      = PcieBaseHelpersLib
+  FILE_GUID      = B9C7FE6B-732E-4077-BEED-7C34FC00909F
+  VERSION_STRING = 1.0
+  MODULE_TYPE    = BASE
+  LIBRARY_CLASS  = PcieHelpersLib
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[LibraryClasses]
+  BasePcieHelperLib
+  BaseMemoryLib
+  PciSegmentLib
+  DebugLib
+  IpPcieLib
+  PciExpressHelpersLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CsiApiPkg/CsiApiPkg.dec
+
+[Sources]
+  PcieHelpersLib.c

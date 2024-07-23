@@ -1,0 +1,66 @@
+/** @file
+  Clean-up functions of the MemoryDiscoveredPpiNotifyCallback function.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#include "CleanUpMemoryDiscoveredPpiNotifyCallback.h"
+#include "PrivateMock.h"
+
+/**
+  Clean up all variables used in testing MemoryDiscoveredPpiNotifyCallback function.
+
+  @retval EFI_SUCCESS  - Clean up success.
+**/
+EFI_STATUS
+EFIAPI
+CleanMemoryDiscoveredPpiNotifyCallbackEnvironment (
+  VOID
+  )
+{
+  gIbbTestIndex = 0;
+  FreeSetNull (&gReturnResult);
+  FreeSetNull (&(VOID*)gMockPeiFileHandle);
+  FreeSetNull (&gSha384Digest);
+  FreeSetNull (&(VOID*)gMockVolumeHandle);
+  FreeIbbHashInfoPpi (&gIbbHashInfoPpi);
+
+  return EFI_SUCCESS;
+}
+
+/**
+  Clean up the environment for next test case.
+
+  @param[in]  Context  The pointer for the Unit Test context.
+
+  @retval UNIT_TEST_PASSED                - Clean up success.
+  @retval UNIT_TEST_ERROR_CLEANUP_FAILED  - Fail to clean up.
+**/
+UNIT_TEST_STATUS
+EFIAPI
+CleanUpMemoryDiscoveredPpiNotifyCallback (
+  IN UNIT_TEST_CONTEXT  Context
+  )
+{
+  EFI_STATUS  Status;
+
+  Status = CleanMemoryDiscoveredPpiNotifyCallbackEnvironment ();
+  UT_ASSERT_NOT_EFI_ERROR (Status);
+
+  return UNIT_TEST_PASSED;
+}

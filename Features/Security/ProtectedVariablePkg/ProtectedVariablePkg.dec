@@ -1,0 +1,98 @@
+## @file
+# Protected Variable Package
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = ProtectedVariablePkg
+  PACKAGE_UNI_FILE               = ProtectedVariablePkg.uni
+  PACKAGE_GUID                   = 465956E7-C6F8-4E1F-9D3A-233A1E2F4733
+  PACKAGE_VERSION                = 0.98
+
+[Includes]
+  Include
+
+[Includes.Common.Private]
+  PrivateInclude
+
+[LibraryClasses]
+  ## @libraryclass  Provides interfaces to access RPMC device.
+  #
+  ProtectedVariableRpmcLib|Include/Library/ProtectedVariableRpmcLib.h
+
+  ## @libraryclass  Provides interfaces to access variable root key.
+  #
+  ProtectedVariableKeyLib|Include/Library/ProtectedVariableKeyLib.h
+
+[LibraryClasses.Common.Private]
+  ProtectedVariableLib|PrivateInclude/Library/ProtectedVariableLib.h
+
+[Guids]
+  gEfiProtectedVariablePkgTokenSpaceGuid = { 0xbc19a2fb, 0x7042, 0x40b2, { 0xb2, 0x5a, 0x9d, 0x51, 0x8d, 0xd0, 0xe1, 0xd2 } }
+
+  ## GUID used for ProtectedVariable global structure
+  # {8EBF379A-F18E-4728-A410-00CF9A65BE91}
+  gEdkiiProtectedVariableGlobalGuid = { 0x8ebf379a, 0xf18e, 0x4728, { 0xa4, 0x10, 0x0, 0xcf, 0x9a, 0x65, 0xbe, 0x91 } }
+
+  ## GUID used for ProtectedVariable metadata HMAC variable
+  # {e3e890ad-5b67-466e-904f-94ca7e9376bb}
+  gEdkiiMetaDataHmacVariableGuid = {0xe3e890ad, 0x5b67, 0x466e, {0x90, 0x4f, 0x94, 0xca, 0x7e, 0x93, 0x76, 0xbb}}
+
+  ## GUID used for ProtectedVariable context structure
+  # {a11a3652-875b-495a-b097-200917580b98}
+  gEdkiiProtectedVariableContextGuid = {0xa11a3652, 0x875b, 0x495a, {0xb0, 0x97, 0x20, 0x09, 0x17, 0x58, 0x0b, 0x98} }
+
+[PcdsFixedAtBuild, PcdsPatchableInModule]
+  ## Null-terminated Unicode string list of selected variables for confidentiality
+  # Encrypting all variables might not fit within the limited NV storage space
+  # OEM should replace below sample list with their own variable list and respective count
+  # Encrypt all variables when PcdPlatformVariableCount or PcdPlatformVariableName size is zero
+  # @Prompt known protected variable list for confidentiality
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdPlatformVariableName|L""|VOID*|0x00010034
+
+  ## Count of number of variables in the PcdPlatformVariableName string list
+  # @Prompt known count of protected variable list for confidentiality
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdPlatformVariableCount|0|UINT32|0x00010035
+
+  ## Defines Protected Variable Integrity support.
+  #   TRUE  - Enable Protected Variable Integrity.<BR>
+  #   FALSE - Disable Protected Variable Integrity.<BR>
+  # @Prompt Protected Variable Integrity support.
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdProtectedVariableIntegrity|FALSE|BOOLEAN|0x00010036
+
+  ## Defines Protected Variable Confidentiality support.
+  #   TRUE  - Enable Protected Variable Confidentiality.<BR>
+  #   FALSE - Disable Protected Variable Confidentiality.<BR>
+  # @Prompt Protected Variable Integrity support.
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdProtectedVariableConfidentiality|FALSE|BOOLEAN|0x00010037
+
+  ## Progress Code for variable integrity check result.<BR><BR>
+  #  DEFAULT: (EFI_PERIPHERAL_FIXED_MEDIA | [EFI_STATUS&0xFF])
+  # @Prompt Status Code for variable integiry check result
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdStatusCodeVariableIntegrity|0x01070000|UINT32|0x00010033
+
+  ## Defines MetaDataHmac Seed Value
+  # This seed value is used for generating the random salt value.
+  gEfiProtectedVariablePkgTokenSpaceGuid.PcdMetaDataHmac256KeySeed|L"MetaDataHmac seed"|VOID*|0x00010038
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  ProtectedVariablePkg.uni

@@ -1,0 +1,176 @@
+## @file
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2016 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+#
+# Performs the primary build
+#
+
+function BuildFail {
+  cd $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE
+  echo
+  echo "The EDKII BIOS Build has failed!"
+  echo
+  exit $1
+}
+
+#
+# MicroCodeUpdate
+#
+# The following 4 envir vairable is used for Micorocode update.
+# The Microcode region layout as the following format:
+# We will use FW_VERSION, LSV and FW_VERSION_STRING to generate Version.ffs
+# Use SLOT_SIZE to add padding data for each Microcode patch.
+# Caution: DO NOT set SLOT_SIZE to 0, otherwise it will build fail.
+#
+# --------------------
+# |   Fv Header      |
+# --------------------
+# |   Version.ffs    |
+# --------------------
+# |MicrocodeArray.ffs|
+# --------------------
+#
+export SLOT_SIZE=0x37000
+export FW_VERSION=0x0001
+export LSV=0x0001
+export FW_VERSION_STRING="Version 0.0.0.1"
+export MICROCODE_FV_FDF=$WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Include/Fdf/FvMicrocode.fdf
+
+python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/microcode_padding.py \
+  --opt padding \
+  --fw-version \
+  $FW_VERSION \
+  --lsv $LSV \
+  --fw-version-string $FW_VERSION_STRING \
+  --slotsize $SLOT_SIZE \
+  --fdf $MICROCODE_FV_FDF
+
+if [ $ret -ne 0 ]; then
+  echo "!!! ERROR: microcode_padding.py execute failure !!!"
+  echo "microcode_padding.py --opt padding --fw-version $FW_VERSION --lsv $LSV --fw-version-string $FW_VERSION_STRING --slotsize $SLOT_SIZE"
+  BuildFail $ret
+fi
+
+cd $WORKSPACE
+
+#
+# Run the actual build
+#
+if [ "$SILENT_MODE" = "TRUE" ]; then
+  echo > Build.log
+  echo "************************************************************************" >> Build.log
+  echo "***********            build.sh is launched here             ***********" >> Build.log
+  echo "************************************************************************" >> Build.log
+  build -n $NUMBER_OF_PROCESSORS $EXT_BUILD_FLAGS $BUILD_OPTION_PCD >> Build.log 2>&1
+  ret=$?
+  if [ $ret -ne 0 ]; then
+    BuildFail $ret
+  fi
+  echo >> Build.log
+  echo "Running PostBuild.sh to complete the build process." >> Build.log
+  echo >> Build.log
+  . $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/PostBuild.sh >> Build.log 2>&1
+  ret=$?
+  if [ $ret -ne 0 ]; then
+    BuildFail $ret
+  fi
+  if [ -f EDK2.log ]; then
+    rm EDK2.log
+  fi
+  if [ -f Prep.log ] && [ -f Build.log ]; then
+    cat Prep.log  >  EDK2.log
+    cat Build.log >> EDK2.log
+  fi
+else
+  if [ "$UNIVERSAL_PAYLOAD" = "TRUE" ]; then
+    export PPL_SETUP_FV_LIST="$PPL_SETUP_FV_LIST $BUILD_DIR/FV/FVPPLBDSUNCOMPACT.Fv"
+    python3 $WORKSPACE_CORE/UefiPayloadPkg/UniversalPayloadBuild.py \
+    -t $TOOL_CHAIN_TAG -b $PrepRelease \
+    -s $UPL_SPEC_REVISION \
+    -D UNIVERSAL_PAYLOAD=TRUE \
+    -D DISABLE_RESET_SYSTEM=TRUE \
+    -D NETWORK_DRIVER_ENABLE=TRUE \
+    -D PS2_KEYBOARD_ENABLE=TRUE \
+    -D SERIAL_DRIVER_ENABLE=FALSE \
+    -D VARIABLE_SUPPORT=None \
+    -D SECURITY_STUB_ENABLE=FALSE \
+    -D CRYPTO_PROTOCOL_SUPPORT=TRUE \
+    -D CRYPTO_DRIVER_EXTERNAL_SUPPORT=TRUE \
+    -D NVME_ENABLE=FALSE \
+    -D MEMORY_TEST=GENERIC \
+    -D PERFORMANCE_MEASUREMENT_ENABLE=TRUE \
+    -D MULTIPLE_DEBUG_PORT_SUPPORT=TRUE \
+    -D CAPSULE_SUPPORT=TRUE \
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdPs2KbdExtendedVerification=FALSE \
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdSrIovSupport=FALSE \
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration=FALSE \
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdAriSupport=FALSE \
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdBrowserSubtitleTextColor=0x0 \
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdBrowserGrayOutTextStatement=TRUE \
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdBrowserFieldTextColor=0x01 \
+    -p gUefiCpuPkgTokenSpaceGuid.PcdCpuApLoopMode=0x2 \
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport=TRUE \
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset=TRUE
+    ret=$?
+    if [ $ret -ne 0 ]; then
+      BuildFail $ret
+    fi
+    export UPL_BUILD_OPTION_PCD=$(python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Features/Upl/Tools/GetUplVerFromBin.py \
+      --UplBinFile $WORKSPACE/Build/UefiPayloadPkgX64/UniversalPayload.elf
+    )
+    ret=$?
+    if [ $ret -ne 0 ]; then
+      BuildFail $ret
+    fi
+    export UPL_BUILD_OPTION_PCD=$(echo $UPL_BUILD_OPTION_PCD | sed -e "s/gBoardModule/--pcd gBoardModule/g")
+    export BUILD_OPTION_PCD="$BUILD_OPTION_PCD $(echo $UPL_BUILD_OPTION_PCD | sed -e "s/\"//g")"
+  fi
+  export EXT_BUILD_FLAGS="$EXT_BUILD_FLAGS -y $WORKSPACE/Build/$LATFORM_BOARD_PACKAGE/BoardPkgReport.log"
+  build -n $NUMBER_OF_PROCESSORS $EXT_BUILD_FLAGS $BUILD_OPTION_PCD
+  ret=$?
+  if [ $ret -ne 0 ]; then
+    BuildFail $ret
+  fi
+  if [ "$UNIVERSAL_PAYLOAD" = "TRUE" ]; then
+    python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Features/Upl/Tools/PcdCheck.py
+    if [ $ret -ne 0 ]; then
+      BuildFail $ret
+    fi
+  fi
+  echo
+  echo "Running PostBuild.sh to complete the build process."
+  echo
+  . $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/PostBuild.sh
+  ret=$?
+  if [ $ret -ne 0 ]; then
+    BuildFail $ret
+  fi
+fi
+
+echo
+echo "TARGET:               $TARGET"
+echo "TOOL_CHAIN_TAG:       $TOOL_CHAIN_TAG"
+echo "BIOS location:        $BUILD_DIR/FV"
+echo "SPI Images location:  $WORKSPACE/RomImages"
+echo
+echo "The EDKII BIOS build has successfully completed!"
+echo
+
+python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/microcode_padding.py --opt revert --fdf $MICROCODE_FV_FDF

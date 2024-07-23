@@ -1,0 +1,98 @@
+##@file
+#  Unit test main of the Power Loss Notify Dxe driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = PowerLossNotifyDxeHostTest
+  FILE_GUID      = 153c9deb-4abe-4ca0-b009-bffbdabd1e9b
+  MODULE_TYPE    = HOST_APPLICATION
+  VERSION_STRING = 1.0
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  #
+  # Unit Test Main
+  #
+  UnitTestMain.c
+  #
+  # Common Mock
+  #
+  NvmeFeaturePkg/Test/CommonMock/UefiLibMock.c
+  NvmeFeaturePkg/Test/CommonMock/BootServicesMock.c
+  #
+  # Private Mock
+  #
+  PrivateMock/NvmePassThruProtocolMock.c
+  PrivateMock/PlnSettingProtocolMock.c
+
+  #
+  # PreRequisite
+  #
+  PreRequisite/PreRequisite.c
+  #
+  # Clean Up
+  #
+  CleanUp/CleanUp.c
+  #
+  # Unit Test Case
+  #
+  TestCase/NvmeSetFeature/TestCase.c
+  TestCase/NvmeSetFeature/PreRequisite.c
+  TestCase/NvmeSetFeature/CleanUp.c
+  TestCase/NvmeGetFeature/TestCase.c
+  TestCase/NvmeGetFeature/PreRequisite.c
+  TestCase/NvmeGetFeature/CleanUp.c
+  TestCase/ConfigureDevicePln/TestCase.c
+  TestCase/ConfigureDevicePln/PreRequisite.c
+  TestCase/ConfigureDevicePln/CleanUp.c
+  TestCase/PowerLossNotifyEntryPoint/TestCase.c
+  TestCase/NvmePassthruNotificationEvent/TestCase.c
+  TestCase/NvmePassthruNotificationEvent/PreRequisite.c
+  TestCase/NvmePassthruNotificationEvent/CleanUp.c
+  #
+  # Platform IP function
+  #
+  NvmeFeaturePkg/PowerLossNotifyDxe/PowerLossNotify.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  NvmeFeaturePkg/NvmeFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  UnitTestLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PrintLib
+  CmockaLib
+
+[Protocols]
+  gEfiNvmExpressPassThruProtocolGuid            ## CONSUMES
+  gPowerLossNotifySettingProtocolGuid           ## CONSUMES
+

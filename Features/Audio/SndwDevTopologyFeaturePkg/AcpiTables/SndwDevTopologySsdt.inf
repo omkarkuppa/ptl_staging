@@ -1,0 +1,39 @@
+## @file
+#  SoundWire Device Topology SSDT ACPI table INF file.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+INF_VERSION          = 0x00010005
+BASE_NAME            = SndwDevTopologySsdt
+FILE_GUID            = 141BB3EB-9563-4B06-A6CC-2036C6135DDD
+MODULE_TYPE          = USER_DEFINED
+VERSION_STRING       = 1.0
+
+[Sources]
+  SndwDevTopologySt00Ssdt/SndwDevTopologySt00Ssdt.asl
+  SndwDevTopologySt01Ssdt/SndwDevTopologySt01Ssdt.asl
+  SndwDevTopologySt02Ssdt/SndwDevTopologySt02Ssdt.asl
+  SndwDevTopologySt03Ssdt/SndwDevTopologySt03Ssdt.asl
+  SndwDevTopologySt04Ssdt/SndwDevTopologySt04Ssdt.asl
+  SndwDevTopologySt05Ssdt/SndwDevTopologySt05Ssdt.asl
+
+[Packages]
+  MdePkg/MdePkg.dec

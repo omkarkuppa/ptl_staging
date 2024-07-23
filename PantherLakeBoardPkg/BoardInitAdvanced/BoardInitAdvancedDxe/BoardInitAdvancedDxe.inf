@@ -1,0 +1,102 @@
+### @file
+#  Component information file for the Board Init Advanced DXE module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = BoardInitAdvancedDxe
+  FILE_GUID                      = C5046EFD-7BC3-4206-987C-32DA45026E6D
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = BoardInitAdvancedDxeEntryPoint
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiRuntimeServicesTableLib
+  IoLib
+  HobLib
+  DebugLib
+  PmcLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PlatformNvRamHookLib
+  CpuPlatformLib
+  ConfigBlockLib
+  Tpm2CommandLib
+  BootGuardLib
+  BootGuardRevocationLib
+  DxeFirmwareVersionInfoLib
+  DxeSmbiosDataHobLib
+  ReportStatusCodeLib
+  PciSegmentLib
+  TpmMeasurementLib
+  HostBridgeDataLib
+  DxeServicesTableLib
+  HostBridgeInfoFruLib
+  ItbtVariableUpdateLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  SecurityPkg/SecurityPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  MipiCamFeaturePkg/MipiCamFeaturePkg.dec
+
+[Pcd]
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpmInstanceGuid                 ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdSinitAcmBinEnable
+  gSiPkgTokenSpaceGuid.PcdTcssSupport                              ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength                   ## CONSUMES
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable         ## CONSUMES
+
+[Sources]
+  BoardInitAdvancedDxe.c
+  BoardInitAdvancedDxe.h
+  SaPlatformInitAdvancedDxe.c
+
+[Protocols]
+  gCpuInfoProtocolGuid                          ## CONSUMES
+  gEdkiiVariableLockProtocolGuid                ## CONSUMES
+  gGopPolicyProtocolGuid                        ## CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
+  gEfiResetNotificationProtocolGuid             ## CONSUMES
+  gPlatformNvsAreaProtocolGuid                  ## CONSUMES
+  gEfiUfsDeviceConfigProtocolGuid               ## CONSUMES
+
+[Guids]
+  gEfiEndOfDxeEventGroupGuid                    ## CONSUMES
+  gSaSetupVariableGuid                          ## CONSUMES
+  gPchSetupVariableGuid                         ## CONSUMES
+  gIGpuDxeConfigGuid                            ## CONSUMES
+  gEfiTpmDeviceInstanceTpm20DtpmGuid            ## CONSUMES
+  gTxtInfoHobGuid                               ## CONSUMES
+  gSinitModuleGuid                              ## CONSUMES
+  gMipiCamConfigVariableGuid                    ## CONSUMES
+
+[Depex]
+  gCpuInfoProtocolGuid                AND
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid   AND
+  gDxePolicyProtocolGuid

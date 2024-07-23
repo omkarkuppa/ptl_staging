@@ -1,0 +1,51 @@
+## @file
+#  This file declares EFI Usb4 Debug Init Protocol.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification Reference:
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = Usb4DebugLib
+  FILE_GUID                      = 6BA1846D-4778-18B4-D02C-B564C94E04FE
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = BASE
+  LIBRARY_CLASS                  = Usb4DebugLib
+
+[LibraryClasses]
+  BaseLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  MemoryAllocationLib
+  UefiLib
+  DebugLib
+  PrintLib
+  CmUtilsLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+
+[Sources]
+  Usb4DebugLib.c
+  Usb4LogMappingTable.c
+
+[Protocols]
+  gEfiUsb4DebugProtocolGuid                     ## PRODUCES

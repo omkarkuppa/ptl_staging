@@ -1,0 +1,60 @@
+## @file
+#  Telemetry firmware version driver information file.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = TelemetryFirmwareVersionHookLib
+  FILE_GUID                      = 77B34E5A-02C3-4CAC-B5AB-B19B5FCE4F1E
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = TelemetryFirmwareVersionHookLib
+
+[Sources]
+  TelemetryFirmwareVersionHookLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  TelemetryFeaturePkg/TelemetryFeaturePkg.dec
+
+[LibraryClasses]
+  UefiLib
+  PciSegmentLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  DevicePathLib
+  HobLib
+  MeLib
+
+[Protocols]
+
+
+[Guids]
+  gMeBiosPayloadHobGuid                         ## CONSUMES
+  gMeFirmwareVersionComponentId                 ## PRODUCES
+  gMeSseVersionComponentId                      ## PRODUCES
+
+[Depex]
+  TRUE

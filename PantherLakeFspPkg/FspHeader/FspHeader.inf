@@ -1,0 +1,64 @@
+## @file
+#  Provide FSP information header
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2006 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FspHeader
+  FILE_GUID                      = 912740BE-2284-4734-B971-84B027353F0C
+  MODULE_TYPE                    = USER_DEFINED
+  VERSION_STRING                 = 1.0
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  FspHeader.aslc
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  PantherLakeFspPkg/PantherLakeFspPkg.dec
+
+[Pcd]
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspAreaBaseAddress
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspAreaSize
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspHeaderSpecVersion
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFspHeaderRevision
+  gSiPkgTokenSpaceGuid.PcdFspImageIdString
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFspImageAttributes
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFspComponentAttributes
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptBase
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmBase
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsBase
+  gSiPkgTokenSpaceGuid.PcdFamilyBranch
+  gSiPkgTokenSpaceGuid.PcdProgBranch
+  gSiPkgTokenSpaceGuid.PcdBranchNestedLevel
+  gSiPkgTokenSpaceGuid.PcdSiliconSegment
+  gSiPkgTokenSpaceGuid.PcdFspSku
+  gSiPkgTokenSpaceGuid.PcdFspYear
+  gSiPkgTokenSpaceGuid.PcdFspBuildVer
+
+[FixedPcd]
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspMaxPatchEntry

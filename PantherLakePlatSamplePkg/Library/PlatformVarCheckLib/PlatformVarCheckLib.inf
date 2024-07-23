@@ -1,0 +1,82 @@
+## @file
+#  Library functions for Platform variable check Library.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2015 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PlatformVarCheckLib
+  FILE_GUID                      = D4702DE2-D2E5-4C67-89AB-E4E92A3D64BE
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = NULL|DXE_RUNTIME_DRIVER DXE_SMM_DRIVER
+  CONSTRUCTOR                    = PlatformVarCheckLibNullClassConstructor
+
+[Sources]
+  PlatformVarCheckLibNullClass.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  DptfFeaturePkg/DptfFeaturePkg.dec
+  PlatformSanitizeFeaturePkg/PlatformSanitizeFeaturePkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiLib
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  VarCheckLib
+
+[Protocols]
+  gEfiSmmBase2ProtocolGuid               ## CONSUMES
+  gEdkiiSmmExitBootServicesProtocolGuid  ## CONSUMES
+  gEfiVariableArchProtocolGuid           ## CONSUMES
+  gEfiSmmVariableProtocolGuid            ## CONSUMES
+
+[Guids]
+  gSystemConfigGuid
+  gSetupVariableGuid
+  gBoardInfoVariableGuid
+  gSiSetupVariableGuid
+  gSaSetupVariableGuid
+  gMeSetupVariableGuid
+  gCpuSetupVariableGuid
+  gPchSetupVariableGuid
+  gSystemAccessGuid
+  gOsProfileGuid
+  gTcg2ConfigFormSetGuid
+  gEfiSecureBootEnableDisableGuid
+  gEfiEventExitBootServicesGuid
+  gLpeSetupVariableGuid
+  gDptfConfigVariableGuid
+  gOcSetupVariableGuid
+
+[Pcd]
+  gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable        ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdOverclockEnable                   ## CONSUMES
+

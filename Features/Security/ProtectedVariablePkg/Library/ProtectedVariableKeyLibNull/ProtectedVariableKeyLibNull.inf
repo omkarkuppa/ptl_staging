@@ -1,0 +1,46 @@
+## @file
+#  Provides Null version of ProctectedVariableKeyLib for build only.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010029
+  BASE_NAME                      = ProtectedVariableKeyLibNull
+  FILE_GUID                      = 2B640ED8-1E6A-4516-9F1D-25910E59BC4A
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = ProtectedVariableKeyLib
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 Arm AArch64
+#
+
+[Sources]
+  ProtectedVariableKeyLibNull.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ProtectedVariablePkg/ProtectedVariablePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib

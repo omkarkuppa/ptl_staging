@@ -1,0 +1,70 @@
+## @file
+# Component description file for DGR module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = DgrDxeInit
+FILE_GUID = AFC628F7-F153-5E56-80FE-D1AC2F67B006
+VERSION_STRING = 1.0
+MODULE_TYPE = DXE_DRIVER
+PI_SPECIFICATION_VERSION = 1.10
+ENTRY_POINT = DgrDxeInitEntryPoint
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[LibraryClasses]
+UefiDriverEntryPoint
+BaseLib
+DebugLib
+BaseMemoryLib
+MemoryAllocationLib
+AslUpdateLib
+UefiBootServicesTableLib
+DgrInfoLib
+PcdLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+UefiCpuPkg/UefiCpuPkg.dec
+
+[Sources]
+DgrDxeInit.c
+
+[Protocols]
+gEfiAcpiTableProtocolGuid       ## CONSUMES
+gEfiFirmwareVolume2ProtocolGuid ## CONSUMES
+gDgrNvsAreaProtocolGuid         ## PRODUCES
+gEfiSmbiosProtocolGuid          ## CONSUMES
+
+[Guids]
+gDgrAcpiTableStorageGuid        ## CONSUMES
+gEfiEndOfDxeEventGroupGuid      ## CONSUMES
+
+[Pcd]
+gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable
+
+[Depex]
+gEfiAcpiTableProtocolGuid

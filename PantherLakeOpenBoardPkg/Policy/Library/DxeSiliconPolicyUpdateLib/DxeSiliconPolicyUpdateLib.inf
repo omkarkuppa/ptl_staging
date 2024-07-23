@@ -1,0 +1,62 @@
+## @file
+#  Component information file for Silicon Policy Update Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DxeSiliconUpdateLib
+  FILE_GUID                      = C523609D-E354-416B-B24F-33468D4BD21D
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SiliconPolicyUpdateLib
+
+[LibraryClasses]
+  BaseLib
+  PcdLib
+  DebugLib
+  UefiBootServicesTableLib
+  DxeIGpuPolicyLib
+  DxePchPolicyLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  PantherLakeBinPkg/PantherLakeBinPkg.dec
+
+[Sources]
+  DxeSiliconPolicyUpdateLate.c
+  DxeSaPolicyInit.c
+  DxePchPolicyInit.c
+  DxeGopPolicyInit.c
+
+[Pcd]
+  gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopBinEnable
+  gBoardModuleTokenSpaceGuid.PcdAdvancedFeatureEnable
+  gIntelSiliconPkgTokenSpaceGuid.PcdIntelGraphicsVbtFileGuid
+
+[Protocols]
+  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
+  gGopPolicyProtocolGuid                        ## PRODUCES
+
+[Depex]
+  gEfiVariableArchProtocolGuid

@@ -1,0 +1,70 @@
+## @file
+#  The INF file of HidMouse driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2013 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = HidMouseDxe
+  FILE_GUID                      = E751F11E-E85A-4690-A729-75756C1E7D32
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = HidMouseDriverBindingEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+#  DRIVER_BINDING                =  gHidMouseDriverBinding
+#  COMPONENT_NAME                =  gHidMouseComponentName
+#  COMPONENT_NAME2               =  gHidMouseComponentName2
+#
+
+[Sources]
+  ComponentName.c
+  EfiMouse.c
+  HidMouseDxe.c
+  HidMouseDxe.h
+
+[Packages]
+  BluetoothPkg/BluetoothPkg.dec
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  MemoryAllocationLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  BaseMemoryLib
+  HidLib
+
+[Protocols]
+  gEdkiiHidProtocolGuid                         ## TO_START
+  gEdkiiHid2ProtocolGuid                        ## TO_START
+  gEfiSimplePointerProtocolGuid                 ## BY_START
+
+# [Event]
+#   ##
+#   # Event for EFI_SIMPLE_POINTER_PROTOCOL.WaitForInput
+#   #
+#   EVENT_TYPE_NOTIFY_WAIT                      ## PRODUCES
+#
+#

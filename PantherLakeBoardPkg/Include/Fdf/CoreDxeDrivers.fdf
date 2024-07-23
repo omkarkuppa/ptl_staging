@@ -1,0 +1,132 @@
+## @file
+#  FDF file of Platform.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+APRIORI DXE {
+  # Load Pcd at first, since all the other drivers depend on it.
+  INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
+  # In order to support use PeiDxeDebugLibReportStatusCode as DebugLib,
+  # load ReportStatusCodeRouterRuntimeDxe, StatusCodeHandlerRuntimeDxe and PlatformStatusCodeHandlerRuntimeDxe early.
+  INF MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
+  INF MdeModulePkg/Universal/StatusCodeHandler/RuntimeDxe/StatusCodeHandlerRuntimeDxe.inf
+}
+
+INF  MdeModulePkg/Core/Dxe/DxeMain.inf
+INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
+INF  MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
+INF  MdeModulePkg/Universal/StatusCodeHandler/RuntimeDxe/StatusCodeHandlerRuntimeDxe.inf
+
+INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
+INF  MdeModulePkg/Universal/Metronome/Metronome.inf
+INF  MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
+INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
+INF  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdBootToShellOnly == TRUE
+INF  MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
+!endif
+
+INF  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
+
+INF  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
+
+INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
+
+INF  PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
+
+INF  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+INF  MdeModulePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
+
+!if gSiPkgTokenSpaceGuid.PcdAtaEnable == TRUE
+INF  MdeModulePkg/Bus/Pci/SataControllerDxe/SataControllerDxe.inf
+INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+!endif
+
+INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
+INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+!if gPlatformModuleTokenSpaceGuid.PcdUsbEnable == TRUE
+INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
+!endif
+INF  MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2KeyboardDxe.inf
+!if gPlatformModuleTokenSpaceGuid.PcdMouseEnable == TRUE
+INF  MdeModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
+!endif
+
+!if gPlatformModuleTokenSpaceGuid.PcdEbcEnable == TRUE
+INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
+!endif
+
+!if gPlatformModuleTokenSpaceGuid.PcdScsiEnable == TRUE
+INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+!endif
+
+INF  MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
+INF  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
+INF  FatPkg/EnhancedFatDxe/Fat.inf
+
+INF  MdeModulePkg/Universal/Console/GraphicsOutputDxe/GraphicsOutputDxe.inf
+INF  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+
+INF  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
+INF  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+
+INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
+
+!if gPlatformModuleTokenSpaceGuid.PcdMemoryTestEnable == TRUE
+INF  MdeModulePkg/Universal/MemoryTest/GenericMemoryTestDxe/GenericMemoryTestDxe.inf
+!else
+INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
+!endif
+
+INF  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+INF  MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
+INF  MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
+
+
+!if gTseFeaturePkgTokenSpaceGuid.PcdTseFeatureEnable == FALSE
+INF MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe.inf
+!endif
+
+INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+INF  MdeModulePkg/Universal/Acpi/FirmwarePerformanceDataTableDxe/FirmwarePerformanceDxe.inf
+
+!if gSiPkgTokenSpaceGuid.PcdSmbiosEnable == TRUE
+INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+!endif
+
+!if gBoardModuleTokenSpaceGuid.PcdTerminalEnable == TRUE
+INF  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+!endif
+
+!if gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable == TRUE
+INF ShellPkg/DynamicCommand/DpDynamicCommand/DpDynamicCommand.inf
+!endif
+
+!if gBoardModuleTokenSpaceGuid.PcdUefiShellEnable == TRUE
+INF ShellPkg/Application/Shell/Shell.inf
+!endif

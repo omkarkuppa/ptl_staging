@@ -1,0 +1,67 @@
+## @file
+#  UFS erase driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = UfsEraseDxe
+  FILE_GUID                      = 5DF4E4F9-9BCE-4C38-9D9C-8DFE61687AA5
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = UfsEraseEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 EBC
+#
+
+[Sources]
+  UfsEraseDxe.c
+  ComponentName.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UfsFeaturePkg/UfsFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiRuntimeServicesTableLib
+  UefiLib
+  BaseMemoryLib
+  DebugLib
+  PrintLib
+  DevicePathLib
+  PciLib
+  TimerLib
+
+[Protocols]
+  gUfsEraseBlockProtocolGuid               ## PRODUCES
+  gEfiBlockIoProtocolGuid                  ## CONSUMES
+  gEfiEraseBlockProtocolGuid               ## CONSUMES
+  gEfiScsiIoProtocolGuid                   ## CONSUMES
+  gEfiDevicePathProtocolGuid               ## CONSUMES
+  gEfiExtScsiPassThruProtocolGuid          ## CONSUMES
+  gEfiUfsDeviceConfigProtocolGuid          ## CONSUMES
+

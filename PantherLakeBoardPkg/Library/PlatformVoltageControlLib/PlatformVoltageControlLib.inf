@@ -1,0 +1,57 @@
+## @file
+#  Component Description File For SD/MMC Pci Host Controller Pei Module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PlatformVoltageControlLib
+  FILE_GUID                      = DA5DFABB-424C-461A-A6A0-8CF3C779C208
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  LIBRARY_CLASS                  = PlatformVoltageControlLib
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  IoLib
+  SmbusLib
+  PeiServicesLib
+  PciSegmentLib
+  PcdLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[Sources]
+  PlatformVoltageControlLib.c
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid
+
+[Guids]
+  gCpuSetupVariableGuid
+  gOcSetupVariableGuid
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdOverclockEnable            ## CONSUMES
+

@@ -1,0 +1,50 @@
+## @file
+#  PEI Top Swap support library.
+#
+#  This library support to toggle the Top Swap bit.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+##
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = TopSwapSupportPeiLib
+  FILE_GUID                      = CCF6A8E2-49D7-4D8F-9A80-D5E0336F8654
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = TopSwapSupportLib|PEIM
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  TopSwapSupportPeiLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+
+[LibraryClasses]
+  DebugLib
+  SpiAccessLib
+
+[Depex]
+  TRUE

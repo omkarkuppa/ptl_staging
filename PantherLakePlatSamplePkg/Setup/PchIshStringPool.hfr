@@ -1,0 +1,51 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+#define MAKE_SURE_THOSE_ARE_NOT_INCLUDED_ISH
+#ifndef MAKE_SURE_THOSE_ARE_NOT_INCLUDED_ISH
+suppressif TRUE
+
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_SPI_0_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_SPI_0_CS_0_PROMPT))
+
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_UART0_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_UART1_PROMPT))
+
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_I2C0_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_I2C1_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_I2C2_PROMPT))
+
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_I3C0_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_I3C1_PROMPT))
+
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP0_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP1_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP2_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP3_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP4_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP5_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP6_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP7_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP8_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP9_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP10_PROMPT))
+SUBTITLE(STRING_TOKEN(STR_ISH_GPIO_GP11_PROMPT))
+
+endif;
+#endif

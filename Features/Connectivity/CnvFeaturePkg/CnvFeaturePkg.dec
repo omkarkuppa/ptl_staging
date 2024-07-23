@@ -1,0 +1,120 @@
+## @file
+#  DEC file for CnvFeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME = CnvFeaturePkg
+  PACKAGE_VERSION = 0.1
+  PACKAGE_GUID = 58678911-5B66-4C1D-AEF9-C1AFA42FD5DF
+
+[Includes]
+  Include
+  AcpiTables
+  AcpiTables/Dsdt
+  AcpiTables/Library
+
+[Guids]
+  gCnvFeaturePkgTokenSpaceGuid      = {0x2347AEE4, 0x3931, 0x4D18, {0x8E, 0xAE, 0x57, 0xF1, 0x48, 0xD9, 0x05, 0xE2}}
+  gUefiIntelCnvCommonVariablesGuid  = {0xe65d8884, 0xd4af, 0x4b20, {0x8d, 0x03, 0x77, 0x2e, 0xcc, 0x3d, 0xa5, 0x31}}
+  gUefiIntelCnvWlanVariablesGuid    = {0x92daaf2f, 0xc02b, 0x455b, {0xb2, 0xec, 0xf5, 0xa3, 0x59, 0x4f, 0x4a, 0xea}}
+  gUefiIntelCnvBtVariablesGuid      = {0x42780dd5, 0x9a7d, 0x404c, {0x80, 0xe4, 0x7f, 0x70, 0x94, 0x36, 0x03, 0x94}}
+  gCnvFeatureSetupGuid              = {0x5b8ed662, 0x3498, 0x4dec, {0xab, 0x00, 0x59, 0x96, 0x1f, 0x8d, 0xb1, 0x78}}
+  ##
+  ## CnvCompatibility Guids
+  ##
+  gCnvCompatibilityGuid             = {0x74614485, 0x7F16, 0x4297, {0xAA, 0x36, 0x2F, 0x20, 0x35, 0x99, 0x02, 0x4D}}
+  gCnvExternalGuid                  = {0x07BD652E, 0x9C84, 0x4F06, {0xAB, 0xBC, 0x47, 0xDD, 0xDB, 0x73, 0xF1, 0x8E}}
+
+[PcdsFeatureFlag]
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable     |TRUE       |BOOLEAN|0x20000001
+
+[PcdsFixedAtBuild]
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc1    |TRUE       |BOOLEAN|0x30000001
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc2    |TRUE       |BOOLEAN|0x30000002
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc4    |TRUE       |BOOLEAN|0x30000004
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc5    |TRUE       |BOOLEAN|0x30000005
+  gCnvFeaturePkgTokenSpaceGuid.PcdOemWifiDsmFunc11     |TRUE       |BOOLEAN|0x30000031
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc1      |TRUE       |BOOLEAN|0x30001001
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc2      |TRUE       |BOOLEAN|0x30001002
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc3      |TRUE       |BOOLEAN|0x30001003
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc4      |TRUE       |BOOLEAN|0x30001004
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc5      |TRUE       |BOOLEAN|0x30001005
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc6      |TRUE       |BOOLEAN|0x30001006
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc7      |TRUE       |BOOLEAN|0x30001007
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtTileDsmFunc1  |TRUE       |BOOLEAN|0x30001021
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi1       |0x25268086 |UINT32 |0x30002001
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi2       |0x271B8086 |UINT32 |0x30002002
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi3       |0x27238086 |UINT32 |0x30002003
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi4       |0x27258086 |UINT32 |0x30002004
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi5       |0x272B8086 |UINT32 |0x30002005
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi6       |0          |UINT32 |0x30002006
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi7       |0          |UINT32 |0x30002007
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi8       |0          |UINT32 |0x30002008
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi9       |0          |UINT32 |0x30002009
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi10      |0          |UINT32 |0x3000200A
+  gCnvFeaturePkgTokenSpaceGuid.PcdMaxRootPortNumber    |0x00       |UINT8  |0x30000060
+  gCnvFeaturePkgTokenSpaceGuid.PcdMaxUsb2PortNumber    |0x00       |UINT8  |0x30000061
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu         |TRUE       |BOOLEAN|0x30000070
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables        |FALSE      |BOOLEAN|0x30000071
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables     |TRUE       |BOOLEAN|0x30000073
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion    |0x0002     |UINT16 |0x30000074
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenuConfig   |0x0        |UINT32 |0x30000075
+  ## This PCD hold a list GUIDs
+  gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids    |{0x0}      |VOID*  |0x3000007D
+
+[PcdsDynamic]
+  gCnvFeaturePkgTokenSpaceGuid.PcdGlobalCnvDlvrRfim    |1          |UINT8  |0x30000079
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvCompatibilityGuid |{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}|VOID*|0x3000007A
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvPresent           |0          |UINT8  |0x3000007B
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDispatch          |FALSE      |BOOLEAN|0x3000007C
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUnloadRequirement |FALSE      |BOOLEAN|0x3000007E
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvGuidLockStatus    |1          |UINT8  |0x30000077
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDeviceId          |0x0        |UINT16 |0x3000007F
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnviPresence         |FALSE      |BOOLEAN|0x30000078
+
+[Protocols]
+  gCnvUefiVariableConfigProtocolGuid  = {0xadf318ae, 0x99ec, 0x468c, {0xaa, 0x80, 0xe9, 0x1f, 0x5e, 0xa0, 0x2a, 0xe0}}
+  gCnvUefiVariablesProtocolGuid       = {0xc77ae557, 0x40a3, 0x41c0, {0xac, 0xe6, 0x71, 0x43, 0x8c, 0x60, 0xf8, 0x71}}
+  gCnvNvsAreaProtocolGuid             = {0x40e4696f, 0xdaac, 0x4005, {0xa1, 0x28, 0x56,  0x3, 0xcd, 0xb4, 0x66, 0x33}}
+  gCnvFormPlatformProtocolGuid        = {0x012dc5f7, 0xc243, 0x4a1e, {0x8f, 0x7f, 0xd2, 0xa7, 0x51, 0xc1, 0x46, 0x6d}}
+  gCnvUefiGuidLockStatusProtocolGuid  = {0x55df6f94, 0x420b, 0x4dd5, {0xb4, 0x2d, 0xb2, 0xbd, 0xfb, 0xb8, 0xcf, 0x39}}
+  gCnvDispatchProtocolGuid            = {0x8dba4261, 0xea98, 0x48dc, {0xb0, 0xc2, 0x60, 0x01, 0x6b, 0x60, 0xf8, 0x52}}
+
+[PcdsDynamic, PcdsDynamicEx]
+  #
+  # Dynamic Non-Structural PCD with Start Base 0x0000A000
+  #
+
+  #
+  # Dynamic Structural PCD with Start Base 0x0000C000
+  #
+  #
+  # Structural PCD Of CNV Board Configuration
+  #
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvBoardConfig|{0}|CNV_BOARD_CONFIG_PCD|0x0000C000 {
+    <HeaderFiles>
+      CnvBoardConfigPcd.h
+    <Packages>
+      MdePkg/MdePkg.dec
+      MdeModulePkg/MdeModulePkg.dec
+      CnvFeaturePkg/CnvFeaturePkg.dec
+  }

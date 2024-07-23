@@ -1,0 +1,56 @@
+## @file
+#  This PEIM driver initialize Ahci host contoller and
+#  produce gEdkiiPeiAtaAhciHostControllerPpi instance for other driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = AhciPciHcPei
+  FILE_GUID                      = 3D417445-1F37-46D8-BC1F-D07014344974
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = AhciPciHcPeimEntry
+
+[Sources]
+  AhciPciHcPei.h
+  AhciPciHcPei.c
+  Pci.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  SataFeaturePkg/SataFeaturePkg.dec
+
+[LibraryClasses]
+  PciLib
+  DebugLib
+  PeiServicesLib
+  MemoryAllocationLib
+  PeimEntryPoint
+  AhciPcieRpLib
+
+[Ppis]
+  gEdkiiPeiAtaAhciHostControllerPpiGuid                ## SOMETIMES_PRODUCES
+  gEfiEndOfPeiSignalPpiGuid                            ## SOMETIMES_CONSUMES
+
+[Depex]
+  gFspSiliconInitDonePpiGuid OR gEndOfSiInitPpiGuid

@@ -1,0 +1,72 @@
+### @file
+#  Component description file for USB4 Connection Manager DXE driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = Usb4PlatformDxe
+  FILE_GUID                      = B7520A2D-509A-423B-B7CD-E320E805C7E0
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = Usb4PlatformDxeEntry
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+#
+[Sources]
+  Usb4PlatformDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  TimerLib
+  DebugLib
+  PciSegmentLib
+  MemoryAllocationLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  IUsb4HrLib
+  TbtCommonLib
+
+[Protocols]
+  gEfiResetNotificationProtocolGuid       ## CONSUMES
+
+[Guids]
+  gUsb4PlatformHobGuid                    ## CONSUMES
+  gSetupVariableGuid                      ## CONSUMES
+  gEfiEventExitBootServicesGuid           ## CONSUMES
+  gITbtInfoHobGuid                        ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdTcssSupport     ## CONSUMES
+
+[Depex]
+  TRUE

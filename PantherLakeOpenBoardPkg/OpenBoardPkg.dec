@@ -1,0 +1,191 @@
+## @file
+#  The DEC files are used by the utilities that parse DSC and
+#  INF files to generate AutoGen.c and AutoGen.h files
+#  for the build infrastructure.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+[Defines]
+DEC_SPECIFICATION = 0x00010017
+PACKAGE_NAME = OpenBoardPkg
+PACKAGE_VERSION = 0.1
+PACKAGE_GUID = 734F5E12-4C70-4EC9-908B-D7421B4B128C
+
+[Includes]
+Include
+
+[Guids]
+  gBoardModuleTokenSpaceGuid            =  {0x72d1fff7, 0xa42a, 0x4219, {0xb9, 0x95, 0x5a, 0x67, 0x53, 0x6e, 0xa4, 0x2a}}
+  gTianoLogoGuid                        =  {0x7BB28B99, 0x61BB, 0x11D5, {0x9A, 0x5D, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D}}
+  gVpdFfsGuid                           =  {0x338FA35A, 0xCA4A, 0x4DBC, {0xA6, 0xF4, 0x9B, 0xD1, 0x59, 0x3B, 0x61, 0xBC}}
+
+[Protocols]
+
+[Ppis]
+
+[LibraryClasses]
+
+[PcdsFixedAtBuild, PcdsPatchableInModule]
+
+[PcdsFixedAtBuild]
+  gBoardModuleTokenSpaceGuid.PcdDmiBaseAddress|0xFED18000|UINT64|0x90000003
+  gBoardModuleTokenSpaceGuid.PcdDmiMmioSize|0x1000|UINT32|0x90000004
+  gBoardModuleTokenSpaceGuid.PcdEpBaseAddress|0xFED19000|UINT64|0x90000005
+  gBoardModuleTokenSpaceGuid.PcdEpMmioSize|0x1000|UINT32|0x90000006
+
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesBase|0x00000000|UINT32|0x20000040
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize|0x00000000|UINT32|0x20000041
+
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFspOOffset|0x00000000|UINT32|0x2000004C
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFspOBase|0x00000000|UINT32|0x2000004D
+  gBoardModuleTokenSpaceGuid.PcdFlashFvFspOSize|0x00000000|UINT32|0x2000004E
+
+  gBoardModuleTokenSpaceGuid.PcdFspWrapperResetVectorInFsp|FALSE|BOOLEAN|0x00000002
+  gBoardModuleTokenSpaceGuid.PcdFspWrapperBfvforResetVectorInFsp|0xFFFF0000|UINT32|0x00000003
+
+  # FspTop is to keep FSP components (FSP-O/T) which should be put at Top 4G location
+  gBoardModuleTokenSpaceGuid.PcdFspTopOffset|0x00000000|UINT32|0x20000083
+  gBoardModuleTokenSpaceGuid.PcdFspTopBase|0x00000000|UINT32|0x20000084
+  gBoardModuleTokenSpaceGuid.PcdFspTopSize|0x00000000|UINT32|0x20000085
+
+  # UPL
+  gBoardModuleTokenSpaceGuid.PcdFlashFvUplBase|0x00000000|UINT32|0x20000066
+  gBoardModuleTokenSpaceGuid.PcdFlashFvUplOffset|0x00000000|UINT32|0x20000067
+  gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize|0x00000000|UINT32|0x20000068
+
+[PcdsDynamic]
+  # SA Misc Configuration
+  gBoardModuleTokenSpaceGuid.PcdSaMiscMmioSizeAdjustment|0|UINT16|0x00000067
+
+  # Root Port Clock Info
+  gBoardModuleTokenSpaceGuid.PcdPcieClock0|0|UINT64|0x0000009E
+  gBoardModuleTokenSpaceGuid.PcdPcieClock1|0|UINT64|0x0000009F
+  gBoardModuleTokenSpaceGuid.PcdPcieClock2|0|UINT64|0x000000A0
+  gBoardModuleTokenSpaceGuid.PcdPcieClock3|0|UINT64|0x000000A1
+  gBoardModuleTokenSpaceGuid.PcdPcieClock4|0|UINT64|0x000000A2
+  gBoardModuleTokenSpaceGuid.PcdPcieClock5|0|UINT64|0x000000A3
+  gBoardModuleTokenSpaceGuid.PcdPcieClock6|0|UINT64|0x000000A4
+  gBoardModuleTokenSpaceGuid.PcdPcieClock7|0|UINT64|0x000000A5
+  gBoardModuleTokenSpaceGuid.PcdPcieClock8|0|UINT64|0x000000A6
+  gBoardModuleTokenSpaceGuid.PcdPcieClock9|0|UINT64|0x000000A7
+  gBoardModuleTokenSpaceGuid.PcdPcieClock10|0|UINT64|0x000000A8
+  gBoardModuleTokenSpaceGuid.PcdPcieClock11|0|UINT64|0x000000A9
+  gBoardModuleTokenSpaceGuid.PcdPcieClock12|0|UINT64|0x000000AA
+  gBoardModuleTokenSpaceGuid.PcdPcieClock13|0|UINT64|0x000000AB
+  gBoardModuleTokenSpaceGuid.PcdPcieClock14|0|UINT64|0x000000AC
+  gBoardModuleTokenSpaceGuid.PcdPcieClock15|0|UINT64|0x000000AD
+  gBoardModuleTokenSpaceGuid.PcdPcieClock16|0|UINT64|0x000000AE
+  gBoardModuleTokenSpaceGuid.PcdPcieClock17|0|UINT64|0x000000AF
+
+
+  # CPU
+  gBoardModuleTokenSpaceGuid.PcdCpuRatio|0x0|UINT8|0x00000200
+  gBoardModuleTokenSpaceGuid.PcdBiosGuard|0x0|UINT8|0x00000201
+
+  # Display DDI
+  gBoardModuleTokenSpaceGuid.PcdSaDisplayConfigTable|0|UINT64|0x00100033
+  gBoardModuleTokenSpaceGuid.PcdSaDisplayConfigTableSize|0|UINT16|0x00100034
+
+# MISC
+  gBoardModuleTokenSpaceGuid.PcdSmbusAlertEnable|FALSE|BOOLEAN|0x0010101E
+[PcdsDynamicEx]
+  # Pre-Mem GPIO table
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTablePreMem|{0}|GPIO_INIT_CONFIG_ARRAY|0x50000017 {
+  <HeaderFiles>
+    Register/GpioV2PcdPins.h
+    GpioV2Config.h
+    PlatformGpioConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  }
+
+  # GPIO table
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTable|{0}|GPIO_INIT_CONFIG_ARRAY|0x50000018 {
+  <HeaderFiles>
+    Register/GpioV2PcdPins.h
+    GpioV2Config.h
+    PlatformGpioConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  }
+
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTablePreMem|{0}|GPIOV2_INIT_CONFIG[]|0x50000021 {
+  <HeaderFiles>
+    Register/GpioV2PcdPins.h
+    GpioV2Config.h
+    PlatformGpioConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  }
+
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTable|{0}|GPIOV2_INIT_CONFIG[]|0x50000022 {
+  <HeaderFiles>
+    Register/GpioV2PcdPins.h
+    GpioV2Config.h
+    PlatformGpioConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  }
+
+  # PCIE CLOCKS USAGE
+  gBoardModuleTokenSpaceGuid.VpdPcdPcieClkUsageMap|{0}|PCIE_CLOCKS_USAGE|0x50000023 {
+  <HeaderFiles>
+    PlatformOpenBoardConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  }
+
+  # PCIE CLOCKS USAGE
+  gBoardModuleTokenSpaceGuid.VpdPcdPPcieClkUsageMap|{0}|PCIE_CLOCKS_USAGE|0x50000024 {
+  <HeaderFiles>
+    PlatformOpenBoardConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  }
+
+  #MRC UserBd
+  gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|0|UINT8|0x00001130
+
+  #Mrc Spd Address Table
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable|{0}|VPD_MRC_SPD_ADDRESS_TABLE|0x00001133 {
+  <HeaderFiles>
+    PlatformOpenBoardConfig.h
+  }
+
+  #VPD PCD Ratio
+  gBoardModuleTokenSpaceGuid.VpdPcdCpuRatio|0|UINT8|0x00001190
+
+  #BIOS Guard
+  gBoardModuleTokenSpaceGuid.VpdPcdBiosGuard|0|UINT8|0x00001191
+
+[PcdsPatchableInModule]
+
+[PcdsFeatureFlag]
+  gBoardModuleTokenSpaceGuid.PcdAdvancedFeatureEnable      |FALSE|BOOLEAN|0xF0000B51

@@ -1,0 +1,107 @@
+### @file
+#  Component information file for the ACPI tables
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 1999 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+################################################################################
+#
+# Defines Section - statements that will be processed to create a Makefile.
+#
+################################################################################
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = AcpiTables
+  FILE_GUID                      = 7E374E25-8E01-4FEE-87F2-390C23C606CD
+  MODULE_TYPE                    = USER_DEFINED
+  VERSION_STRING                 = 1.0
+
+[Sources]
+  Dsdt/Dsdt.asl
+  SsdtRvp/Thermal.asl
+  SsdtRtd3/PtlUHLp5Rvp1Rtd3.asl
+  SsdtRtd3/PtlUHLp5SsdRtd3.asl
+  SsdtRtd3/PtlUHRvp34Rtd3.asl
+  SsdtRtd3/PtlUPHSsdt34Rtd3.asl
+
+################################################################################
+#
+# Package Dependency Section - list of Package files that are required for
+#                              this module.
+#
+################################################################################
+[Packages]
+  MdePkg/MdePkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  CnvFeaturePkg/CnvFeaturePkg.dec
+  DptfFeaturePkg/DptfFeaturePkg.dec
+  CmosFeaturePkg/CmosFeaturePkg.dec
+  PcAtChipsetPkg/PcAtChipsetPkg.dec
+  UcsiFeaturePkg/UcsiFeaturePkg.dec
+
+################################################################################
+#
+# Library Class Section - list of Library Classes that are required for
+#                         this module.
+#
+################################################################################
+
+[LibraryClasses]
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress             ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength                ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdAcpiDebugEnableFlag                   ## CONSUMES
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                       ## CONSUMES
+  gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable            ## CONSUMES
+  gPcAtChipsetPkgTokenSpaceGuid.PcdRealTimeClockUpdateTimeout   ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress               ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTcoBaseAddress                ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTcssSupport                   ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables         ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi1        ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi2        ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi3        ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi4        ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi5        ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi6        ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi7        ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi8        ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi9        ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi10       ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdMaxRootPortNumber     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdVmdEnable                     ## CONSUMES
+
+################################################################################
+#
+# Protocol C Name Section - list of Protocol and Protocol Notify C Names
+#                           that this module uses or produces.
+#
+################################################################################
+[Protocols]
+
+[PPIs]
+
+[Guids]
+
+[Depex]

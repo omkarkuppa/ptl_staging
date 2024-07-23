@@ -1,0 +1,57 @@
+### @file
+#  Component information file for ME Resiliency driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = MeResiliencyDxe
+  FILE_GUID                      = 89908199-9126-4EA2-849B-06A75C245D0B
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  UEFI_SPECIFICATION_VERSION     = 2.00
+  ENTRY_POINT                    = MeResiliencyDxeEntryPoint
+
+[LibraryClasses]
+  DebugLib
+  BaseLib
+  BaseMemoryLib
+  UefiRuntimeServicesTableLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  PciSegmentLib
+  SeamlessRecoverySupportLib
+  MeFwStsLib
+  MeInfoLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+
+[Sources]
+  MeResiliencyDxe.c
+
+[Guids]
+  gPlatformBeforeEndOfDxeEventGroupGuid                ## CONSUMES
+
+[Depex]
+  gEfiVariableWriteArchProtocolGuid AND
+  gEfiVariableArchProtocolGuid

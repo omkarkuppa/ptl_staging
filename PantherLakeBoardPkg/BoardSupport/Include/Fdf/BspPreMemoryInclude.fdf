@@ -1,0 +1,82 @@
+## @file
+#  FDF file of BoardSupportModules in Pre Memory.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+!if $(FSP64_BUILD) == FALSE
+INF UefiCpuPkg/SecCore/SecCore.inf
+!else
+INF RuleOverride=NORMAL UefiCpuPkg/SecCore/SecCoreNative.inf
+
+!if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
+  INF RuleOverride=RESET_VECTOR UefiCpuPkg/ResetVector/Vtf0/Vtf0.inf
+!endif
+
+!endif
+
+
+#
+# In EDK2 mode or FSP API mode, the PeiMain is necessary.
+#
+!if (gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1) || (gMinPlatformPkgTokenSpaceGuid.PcdFspDispatchModeUseFspPeiMain == FALSE) || (gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable == 1)
+  INF MdeModulePkg/Core/Pei/PeiMain.inf
+!endif
+
+#
+# KeyServicePei driver in this feature fdf needs to be included
+# before CorePreMemoryInclude.fdf because the protected variable driver
+# needs generate key service to be enabled and it's included in CorePreMemoryInclude.fdf
+#
+!if gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable == TRUE
+  !include ProtectedVariableFeaturePkg/Include/ProtectedVariableFeaturePreMem.fdf
+!endif
+!include $(PLATFORM_BOARD_PACKAGE)/Include/Fdf/CorePreMemoryInclude.fdf
+
+!if (gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1)
+  !if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperFeatureSupport == TRUE
+    !include FspWrapperFeaturePkg/Include/Fdf/FspWrapperPkgPeiPreMem.fdf
+  !endif
+!endif
+
+!if gBoardModuleTokenSpaceGuid.PcdSetupEnable == TRUE
+  !include $(PLATFORM_BOARD_PACKAGE)/Features/Setup/Include/Fdf/SetupPei.fdf
+!endif
+
+INF $(PLATFORM_BSP_PATH)/BiosInfo/BiosInfo.inf
+
+INF $(PLATFORM_PACKAGE)/Services/StallServicePei/StallServicePei.inf
+!if gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable == FALSE
+  INF $(PLATFORM_PACKAGE)/PlatformInit/ReportFv/ReportFvPei.inf
+!endif
+
+INF $(PLATFORM_PACKAGE)/PlatformInit/PlatformInitPei/PlatformInitPreMem.inf
+INF $(PLATFORM_PACKAGE)/PlatformInit/SiliconPolicyPei/SiliconPolicyPeiPreMem.inf
+
+!if $(TARGET) == DEBUG
+  #
+  # This is for reducing NATIVE DEBUG binary size, replacing some library routines with PPI.
+  #
+  INF MdeModulePkg/Universal/DebugServicePei/DebugServicePei.inf
+!endif
+
+INF IntelFsp2WrapperPkg/FspmWrapperPeim/FspmWrapperPeim.inf
+
+INF MdeModulePkg/Universal/ResetSystemPei/ResetSystemPei.inf
+
+INF $(SILICON_PRODUCT_PATH)/EarlyDevices/EarlyDevices.inf

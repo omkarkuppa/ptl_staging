@@ -1,0 +1,49 @@
+## @file
+# Component description file for the PeiDxeSmmPchEspiPrivateLib
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiDxeSmmEspiPrivateLib
+FILE_GUID = 1352A3F1-E075-425A-B3AE-BEECD4C187FD
+VERSION_STRING = 1.0
+MODULE_TYPE = BASE
+LIBRARY_CLASS = EspiPrivateLib
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[LibraryClasses]
+DebugLib
+TimerLib
+PchInfoLib
+PciSegmentLib
+PchPciBdfLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+[Sources]
+EspiPrivateLib.c

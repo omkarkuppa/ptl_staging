@@ -1,0 +1,66 @@
+## @file
+#  FDF file for Fv compression for capsule payload.
+#
+## @file
+#  FDF file of Platform.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  DEFINE FLASH_BASE        = 0x0
+  DEFINE FLASH_SIZE        = {RegionSize}
+  DEFINE FLASH_BLOCK_SIZE  = {BlockSize}
+  DEFINE FLASH_NUM_BLOCKS  = {BlockNum}
+  DEFINE FVCOMPRESSIONGUID = {CompressionGuid}
+
+[FD.Fv{FvName}]
+  BaseAddress        = $(FLASH_BASE)
+  Size               = $(FLASH_SIZE)
+  ErasePolarity      = 1
+  BlockSize          = $(FLASH_BLOCK_SIZE)
+  NumBlocks          = $(FLASH_NUM_BLOCKS)
+
+  $(FLASH_BASE)|$(FLASH_SIZE)
+  FV = {FvName}
+
+[FV.{FvName}]
+  BlockSize          = $(FLASH_BLOCK_SIZE)
+  FvAlignment        = 16
+  ERASE_POLARITY     = 1
+  MEMORY_MAPPED      = TRUE
+  STICKY_WRITE       = TRUE
+  LOCK_CAP           = TRUE
+  LOCK_STATUS        = TRUE
+  WRITE_DISABLED_CAP = TRUE
+  WRITE_ENABLED_CAP  = TRUE
+  WRITE_STATUS       = TRUE
+  WRITE_LOCK_CAP     = TRUE
+  WRITE_LOCK_STATUS  = TRUE
+  READ_DISABLED_CAP  = TRUE
+  READ_ENABLED_CAP   = TRUE
+  READ_STATUS        = TRUE
+  READ_LOCK_CAP      = TRUE
+  READ_LOCK_STATUS   = TRUE
+  FvNameGuid         = {FvNameGuid}
+
+  FILE FV_IMAGE = {FvImageGuid} {{
+    SECTION GUIDED $(FVCOMPRESSIONGUID) PROCESSING_REQUIRED = TRUE {{
+      SECTION FV_IMAGE = {FileName}
+    }}
+  }}

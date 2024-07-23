@@ -1,0 +1,51 @@
+## @file
+# CPU Initialization Config Block.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiBootGuardPolicyLib
+FILE_GUID = 274A6F2C-0C4C-A3A7-1E0A-27D14C11967B
+VERSION_STRING = 1.0
+MODULE_TYPE = PEIM
+LIBRARY_CLASS = PeiBootGuardPolicyLib
+
+
+[LibraryClasses]
+DebugLib
+SiConfigBlockLib
+ConfigBlockLib
+PcdLib
+
+[FixedPcd]
+gSiPkgTokenSpaceGuid.PcdBiosGuardEnable
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+CsiApiPkg/CsiApiPkg.dec
+
+[Sources]
+PeiBootGuardPolicy.c
+
+[Guids]
+gCpuSecurityPreMemConfigGuid        ## PRODUCES

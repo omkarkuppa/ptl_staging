@@ -1,0 +1,463 @@
+## @file
+#  FDF file of Platform.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2016 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+# Initialize base address of first component of FSP in platform BIOS
+DEFINE FLASH_BASE       = 0xFFE20000
+
+DEFINE FLASH_BLOCK_SIZE = 0x00001000     #The block size
+
+# FSP-M expected to be < 0x190000 for PantherLake project
+
+#
+# Flash Size
+#
+!if $(TARGET) == "RELEASE"
+#=============================================================================#
+DEFINE FLASH_BASE       = 0xFFE95000     # 4G - FLASH_SIZE (size of Fsp.fd)   #
+DEFINE FLASH_SIZE       = 0x0016B000     # The flash size in bytes of the FSP #
+DEFINE FLASH_NUM_BLOCKS = 0x16B          # The number of blocks               #
+#=============================================================================#
+#=============================================================================#
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x0000A000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x000F0000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0005F000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x00012000      #
+#=============================================================================#
+!if gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable == TRUE
+#=============================================================================#
+DEFINE FLASH_SIZE       = 0x00128000     # The flash size in bytes of the FSP #
+DEFINE FLASH_NUM_BLOCKS = 0x128          # The number of blocks               #
+#=============================================================================#
+#=============================================================================#
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x00017000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x000AF000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x00062000      #
+#=============================================================================#
+!endif
+!else
+#=============================================================================#
+DEFINE FLASH_BASE       = 0xFFDA3000     # 4G - FLASH_SIZE (size of Fsp.fd)   #
+DEFINE FLASH_SIZE       = 0x0025D000     # The flash size in bytes of the FSP #
+DEFINE FLASH_NUM_BLOCKS = 0x25D          # The number of blocks               #
+#=============================================================================#
+#=============================================================================#
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x00010000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x00190000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0009F000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x0001E000      #
+#=============================================================================#
+!if gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable == TRUE
+#=============================================================================#
+DEFINE FLASH_SIZE       = 0x001BD000     # The flash size in bytes of the FSP #
+DEFINE FLASH_NUM_BLOCKS = 0x1BD          # The number of blocks               #
+#=============================================================================#
+#=============================================================================#
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x0001B000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x00129000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x00079000      #
+#=============================================================================#
+!endif
+!endif
+
+################################################################################
+#
+# FD Section
+# The [FD] Section is made up of the definition statements and a
+# description of what goes into  the Flash Device Image.  Each FD section
+# defines one flash "device" image.  A flash device image may be one of
+# the following: Removable media bootable image (like a boot floppy
+# image,) an Option ROM image (that would be "flashed" into an add-in
+# card,) a System "Flash"  image (that would be burned into a system's
+# flash) or an Update ("Capsule") image that will be used to update and
+# existing system flash.
+#
+################################################################################
+[FD.FSP]
+BaseAddress   = $(FLASH_BASE) | gIntelFsp2PkgTokenSpaceGuid.PcdFspAreaBaseAddress
+Size          = $(FLASH_SIZE) | gIntelFsp2PkgTokenSpaceGuid.PcdFspAreaSize
+ErasePolarity = 1
+BlockSize     = $(FLASH_BLOCK_SIZE)
+NumBlocks     = $(FLASH_NUM_BLOCKS)          #The number of blocks for 2Mb FLASH Device.
+
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspBase = $(FLASH_BASE)
+SET gIntelFsp2PkgTokenSpaceGuid.PcdFspBootFirmwareVolumeBase = $(FLASH_BASE) + $(gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize)
+
+#FSP-S
+#FSP-S FV offset|FSP-S FV size
+0x00000000|gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize
+gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsBase|gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize
+FV = FSP-S
+
+#FSP-M
+#FSP-M FV offset = FSP-S size|FSP-M FV size
+$(gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize)|gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize
+gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmBase|gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize
+FV = FSP-M
+
+#FSP-T
+#FSP-T FV offset = FSP-S size + FSP-M size|FSP-T FV size
+$(gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize) + $(gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize)|gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize
+gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptBase|gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize
+FV = FSP-T
+
+!if gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable == FALSE
+#FSP-O
+#FSP-O FV offset = FSP-S size + FSP-M size + FSP-T size|FSP-O FV size
+$(gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize) + $(gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize) + $(gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize)|gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize
+gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoBase|gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize
+FV = FSP-O
+!endif
+
+################################################################################
+#
+# FV Section
+#
+# [FV] section is used to define what components or modules are placed within a flash
+# device file.  This section also defines order the components and modules are positioned
+# within the image.  The [FV] section consists of define statements, set statements and
+# module statements.
+#
+################################################################################
+[FV.FSP-O]
+BlockSize          = 0x00001000
+FvAlignment        = 16         #FV alignment and FV attributes setting.
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 01530A64-BD0f-4CD8-80B1-5AC6B83EE3B8
+
+#
+# FSP header
+#
+INF RuleOverride = FSPHEADER   $(FSP_PACKAGE)/FspHeader/FspHeader.inf
+INF RuleOverride = RELOC   $(FSP_PACKAGE)/FspSecCore/FspSecCoreO.inf
+
+INF $(FSP_PACKAGE)/FspLoaderPeim/FspLoaderPeim.inf
+
+!if $(FSP64_BUILD) == TRUE
+  INF RuleOverride=RESET_VECTOR UefiCpuPkg/ResetVector/Vtf0/Vtf0.inf
+!endif
+
+
+[FV.FSP-T]
+BlockSize          = 0x00001000
+FvAlignment        = 16         #FV alignment and FV attributes setting.
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 7BEBD21A-A1E5-4C4C-9CA1-A0C168BCBD9D
+
+#
+# FSP header
+#
+INF RuleOverride = FSPHEADER   $(FSP_PACKAGE)/FspHeader/FspHeader.inf
+INF RuleOverride = RELOC   IntelFsp2Pkg/FspSecCore/FspSecCoreT.inf
+
+#
+# Project specific configuration data files
+#
+!if gPantherLakeFspPkgTokenSpaceGuid.PcdCfgRebuild == FALSE
+FILE RAW = $(FSP_T_UPD_FFS_GUID) {
+    SECTION RAW = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/$(FSP_T_UPD_TOOL_GUID).bin
+}
+!endif
+
+
+[FV.FSP-M]
+BlockSize          = 0x00001000
+FvAlignment        = 16         #FV alignment and FV attributes setting.
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 52F1AFB6-78A6-448f-8274-F370549AC5D0
+
+#
+# FSP header
+#
+INF RuleOverride = FSPHEADER   $(FSP_PACKAGE)/FspHeader/FspHeader.inf
+
+#
+# It is important to keep the proper order for these PEIMs
+# for this implementation
+#
+INF RuleOverride = RELOC   IntelFsp2Pkg/FspSecCore/Fsp24SecCoreM.inf
+
+
+
+INF MdeModulePkg/Core/Pei/PeiMain.inf
+
+INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
+
+INF MdeModulePkg/Universal/ResetSystemPei/ResetSystemPei.inf
+
+INF $(SILICON_FSP_PATH)/FspGlobalDataInit/Pei/FspGlobalDataInitPei.inf
+
+INF $(SILICON_FSP_PATH)/FspRsc2PostCodeMapInit/Pei/FspRsc2PostCodeMapServicePei.inf
+
+!if gSiPkgTokenSpaceGuid.PcdFspVEnable == TRUE
+INF MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
+!endif
+
+!if $(TARGET) == DEBUG
+  INF $(SILICON_FSP_PATH)/FspDebugInit/Pei/FspDebugServicePei.inf
+!endif
+
+!if (gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE)
+  INF $(SILICON_FSP_PATH)/FspCatalogTHDebugInit/Pei/FspCatalogTHDebugServicePei.inf
+
+!endif
+
+FILE RAW = BC09E184-0407-4334-8589-6E32813F435C {
+!if $(TARGET) == DEBUG
+    SECTION RAW = $(PLATFORM_SI_PACKAGE)/IpBlock/MemoryInit/src/GreenMrc.bin
+!else
+    SECTION RAW = $(PLATFORM_SI_PACKAGE)/IpBlock/MemoryInit/src/ReleaseGreenMrc.bin
+!endif
+}
+
+#
+# Project specific PEIMs
+#
+INF $(SILICON_FSP_PATH)/FspPcdInit/Pei/FspPcdInit.inf
+INF $(SILICON_PRODUCT_PATH)/EarlyDevices/EarlyDevicesFsp.inf
+!if gSiPkgTokenSpaceGuid.PcdFspVEnable == TRUE
+INF $(SILICON_FSP_PATH)/FspInit/Pei/FspVInit/FspMVInit.inf
+!endif
+INF $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpiInitPei.inf
+
+!include $(PLATFORM_SI_PACKAGE)/IpBlock/Me/Heci/HeciDriverPei.fdf
+
+#
+# SiInit will produce a PPI for installing default policy PPI, so it has to be
+# dispatch earlier.
+#
+INF $(SILICON_PRODUCT_PATH)/SiInit/Pei/SiInitPreMem.inf
+INF $(SILICON_FSP_PATH)/FspInit/Pei/FspInitPreMem.inf
+
+#
+# Description file
+#
+FILE RAW = D9093578-08EB-44DF-B9D8-D0C1D3D55D96 {
+    SECTION RAW = $(FSP_PACKAGE)/FspDescription/FspDescription.txt
+}
+
+#
+# Project specific configuration data files
+#
+!if gPantherLakeFspPkgTokenSpaceGuid.PcdCfgRebuild == FALSE
+FILE RAW = $(FSP_M_UPD_FFS_GUID) {
+    SECTION RAW = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/$(FSP_M_UPD_TOOL_GUID).bin
+}
+!endif
+
+[FV.FSP-S]
+BlockSize          = 0x00001000
+FvAlignment        = 16         #FV alignment and FV attributes setting.
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 1B5C27FE-F01C-4fbc-AEAE-341B2E992A17
+
+#
+# FSP header
+#
+INF RuleOverride = FSPHEADER   $(FSP_PACKAGE)/FspHeader/FspHeader.inf
+
+#
+# It is important to keep the proper order for these PEIMs
+# for this implementation
+#
+INF RuleOverride = RELOC   IntelFsp2Pkg/FspSecCore/Fsp24SecCoreS.inf
+
+#
+# Project specific configuration data files
+#
+!if gPantherLakeFspPkgTokenSpaceGuid.PcdCfgRebuild == FALSE
+FILE RAW = $(FSP_S_UPD_FFS_GUID) {
+    SECTION RAW = $(OUTPUT_DIRECTORY)/$(TARGET)_$(TOOL_CHAIN_TAG)/FV/$(FSP_S_UPD_TOOL_GUID).bin
+}
+!endif
+
+INF MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
+!if gSiPkgTokenSpaceGuid.PcdFspVEnable == TRUE
+INF $(SILICON_FSP_PATH)/FspInit/Pei/FspVInit/FspSVInit.inf
+!endif
+#
+# SiInit will produce a PPI for installing default policy PPI, so it has to be
+# dispatch earlier.
+#
+
+INF RuleOverride = PE32 $(SILICON_FSP_PATH)/FspInit/Pei/FspInit.inf
+
+#
+# CpuMp PEIM for MpService PPI
+#
+INF RuleOverride = PE32 UefiCpuPkg/CpuMpPei/CpuMpPei.inf
+INF RuleOverride = PE32 $(SILICON_PRODUCT_PATH)/SiInit/Pei/SiInit.inf
+INF RuleOverride = PE32 UefiCpuPkg/CpuFeatures/CpuFeaturesPei.inf
+
+INF RuleOverride = PE32 $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/Dxe/PtlPcdPchInitFsp.inf
+INF RuleOverride = PE32 $(PLATFORM_SI_PACKAGE)/IpBlock/Me/HeciInit/Pei/HeciInitApi.inf
+
+!if gSiPkgTokenSpaceGuid.PcdPeiDisplayEnable == TRUE
+INF RuleOverride = PE32  MdeModulePkg/Universal/PcatSingleSegmentPciCfg2Pei/PcatSingleSegmentPciCfg2Pei.inf
+FILE PEIM = 76ed893a-b2f9-4c7d-a05f-1ea170ecf6cd {
+  SECTION COMPRESS {
+    !if $(TARGET) == DEBUG
+        SECTION Align = Auto PE32 = PantherLakeBinPkg/Binaries/Gop/IntelGraphicsPeimDebug.efi
+    !else
+        SECTION Align = Auto PE32 = PantherLakeBinPkg/Binaries/Gop/IntelGraphicsPeim.efi
+    !endif
+    SECTION PEI_DEPEX_EXP = {gEfiPeiStallPpiGuid AND gEnablePeiGraphicsPpiGuid AND gEnableFspPeiGopPpiGuid}
+    SECTION UI = "IntelGraphicsPeim"
+  }
+}
+!endif  #PcdPeiDisplayEnable
+
+!if (gPantherLakeFspPkgTokenSpaceGuid.PcdAcpiInFspEnabled == TRUE)
+  INF $(PLATFORM_SI_PACKAGE)/Product/PantherLake/AcpiInit/Pei/AcpiTablePei.inf
+!endif
+
+INF RuleOverride = PE32 IntelFsp2Pkg/FspNotifyPhase/FspNotifyPhasePeim.inf
+!if gSiPkgTokenSpaceGuid.PcdS3Enable == TRUE
+INF $(SILICON_FSP_PATH)/FspInit/Pei/FspS3Notify.inf
+!endif
+INF RuleOverride = PE32 $(SILICON_FSP_PATH)/FspEndOfPei2/FspEndOfPei2Peim.inf
+
+#
+# X64 module for notify phase
+#
+INF $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/Dxe/PtlPcdPchInitDxeFsp.inf
+INF $(PLATFORM_SI_PACKAGE)/IpBlock/Me/HeciInit/Dxe/HeciInitDxeFsp.inf
+INF $(SILICON_PRODUCT_PATH)/SiInit/Dxe/SiInitDxeFsp.inf
+
+[Rule.Common.SEC]
+  FILE SEC = $(NAMED_GUID) RELOCS_STRIPPED {
+    TE  TE    Align = 8       $(INF_OUTPUT)/$(MODULE_NAME).efi
+  }
+
+[Rule.Common.SEC.RELOC]
+  FILE SEC = $(NAMED_GUID) {
+    TE  TE    Align = 8       $(INF_OUTPUT)/$(MODULE_NAME).efi
+  }
+
+[Rule.Common.PEI_CORE]
+  FILE PEI_CORE = $(NAMED_GUID) Align = 16 {
+    TE  TE    Align = 16      $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI        STRING="$(MODULE_NAME)" Optional
+    VERSION   STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+[Rule.Common.PEIM.NORELOC]
+  FILE PEIM = $(NAMED_GUID) RELOCS_STRIPPED {
+    PEI_DEPEX PEI_DEPEX Optional        $(INF_OUTPUT)/$(MODULE_NAME).depex
+    TE        TE                        $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI        STRING="$(MODULE_NAME)" Optional
+    VERSION   STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+[Rule.Common.PEIM]
+  FILE PEIM = $(NAMED_GUID) Align = 16 {
+    PEI_DEPEX PEI_DEPEX Optional        $(INF_OUTPUT)/$(MODULE_NAME).depex
+    TE  TE    Align = 16                $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI        STRING="$(MODULE_NAME)" Optional
+    VERSION   STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+[Rule.Common.PEIM.PE32]
+  FILE PEIM = $(NAMED_GUID) {
+    PEI_DEPEX PEI_DEPEX Optional        $(INF_OUTPUT)/$(MODULE_NAME).depex
+    COMPRESS {
+      PE32      PE32 Align = Auto       $(INF_OUTPUT)/$(MODULE_NAME).efi
+      UI        STRING="$(MODULE_NAME)" Optional
+      VERSION   STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+    }
+  }
+
+[Rule.Common.USER_DEFINED.FSPHEADER]
+  FILE RAW = $(NAMED_GUID) {
+     RAW BIN                  |.acpi
+  }
+
+[Rule.Common.DXE_DRIVER]
+  FILE DRIVER = $(NAMED_GUID) {
+    DXE_DEPEX DXE_DEPEX Optional        $(INF_OUTPUT)/$(MODULE_NAME).depex
+    COMPRESS {
+      PE32      PE32                    $(INF_OUTPUT)/$(MODULE_NAME).efi
+      UI        STRING="$(MODULE_NAME)" Optional
+      VERSION   STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+    }
+  }
+
+[Rule.Common.SEC.RESET_VECTOR]
+  FILE RAW = $(NAMED_GUID) {
+    RAW RAW  Align = 8      $(INF_OUTPUT)/Vtf0.bin
+  }
+

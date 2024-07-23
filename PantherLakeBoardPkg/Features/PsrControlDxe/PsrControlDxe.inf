@@ -1,0 +1,67 @@
+## @file
+# Component information file for PsrControlDxe driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PsrControlDxe
+  FILE_GUID                      = C05A042A-7E6F-410A-9177-E288D13C3C34
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = PsrControlEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64
+#
+
+[LibraryClasses]
+  DebugLib
+  MemoryAllocationLib
+  UefiDriverEntryPoint
+  HobLib
+  BaseLib
+  EcMiscLib
+  MeUtilsLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  PsrFeaturePkg/PsrFeaturePkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+
+[Sources]
+  PsrControlDxe.c
+
+[Pcd]
+  gPsrFeatureModuleTokenSpaceGuid.VpdPcdPsrSupportedCapabilities
+
+[Protocols]
+  gPlatformServiceRecordProtocolGuid
+
+[Guids]
+  gChassisIntrudeDetHobGuid                     ## CONSUMES
+  gPsrFeatureModuleTokenSpaceGuid               ## CONSUMES
+
+[Depex]
+  gPlatformServiceRecordProtocolGuid

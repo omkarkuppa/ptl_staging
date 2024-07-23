@@ -1,0 +1,37 @@
+## @file
+#
+#  DEC file for TmeFeaturePkg.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME = TmeFeaturePkg
+  PACKAGE_VERSION = 0.1
+  PACKAGE_GUID = CD5153C2-4007-48A5-A57B-87E387E4EABB
+
+[Includes]
+  Include
+
+[Guids]
+  gTmeFeaturePkgTokenSpaceGuid                       =  { 0x834a3c5c, 0xd546, 0x450a, { 0xb0, 0x86, 0x9c, 0x0b, 0x35, 0xde, 0x4a, 0x11 }}
+
+[PcdsFeatureFlag]
+  gTmeFeaturePkgTokenSpaceGuid.PcdTmeFeatureEnable     |TRUE|BOOLEAN|0x00000001

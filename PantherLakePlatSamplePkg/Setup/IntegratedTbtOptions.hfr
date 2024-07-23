@@ -1,0 +1,73 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+form formid = CONCATENATE3(ITBT_ROOTPORT,ROOTPORT_INDEX,_FORM_ID),
+  title = STRING_TOKEN(CONCATENATE3(STR_ITBT_ROOTPORT,ROOTPORT_INDEX,_FORM));
+    SUBTITLE(STRING_TOKEN(CONCATENATE3(STR_ITBT_RP,ROOTPORT_INDEX,_PCIE_ALLOCATION)))
+    numeric varid = SETUP_DATA.ITbtPcieExtraBusRsvd[ROOTPORT_INDEX],
+      prompt      = STRING_TOKEN (CONCATENATE3(STR_ITBT_RP,ROOTPORT_INDEX,_PCIE_RBUS_PROMPT)),
+      help        = STRING_TOKEN (STR_ITBT_PCIE_RBUS_HELP),
+      flags       = RESET_REQUIRED | INTERACTIVE,
+      minimum     = 0,
+      maximum     = 224,
+      step        = 1,    // Stepping of 0 equates to a manual entering of a value, otherwise it will auto-increment with a left/right arrow
+      default     = 42,   // default no extra bus reserved
+    endnumeric;
+
+    numeric varid = SETUP_DATA.ITbtPcieMemRsvd[ROOTPORT_INDEX],
+      prompt      = STRING_TOKEN (CONCATENATE3(STR_ITBT_RP,ROOTPORT_INDEX,_PCIE_RMEM_PROMPT)),
+      help        = STRING_TOKEN (STR_ITBT_PCIE_RMEM_HELP),
+      flags       = RESET_REQUIRED | INTERACTIVE,
+      minimum     = 1,
+      maximum     = 4096,
+      step        = 1,    // Stepping of 0 equates to a manual entering of a value, otherwise it will auto-increment with a left/right arrow
+      default     = 96,   // 96 MB Default
+    endnumeric;
+
+    numeric varid = SETUP_DATA.ITbtPcieMemAddrRngMax[ROOTPORT_INDEX],
+      prompt      = STRING_TOKEN (CONCATENATE3(STR_ITBT_RP,ROOTPORT_INDEX,_PCIE_RMEM_ADDRRNGMAX)),
+      help        = STRING_TOKEN (STR_ITBT_PCIE_RMEM_RNG_HELP),
+      flags       = RESET_REQUIRED | INTERACTIVE,
+      minimum     = 0,
+      maximum     = 31,
+      step        = 1,
+      default     = 25,   // 32 MB Allignment
+    endnumeric;
+
+    numeric varid = SETUP_DATA.ITbtPciePMemRsvd[ROOTPORT_INDEX],
+      prompt      = STRING_TOKEN (CONCATENATE3(STR_ITBT_RP,ROOTPORT_INDEX,_PCIE_RPMEM_PROMPT)),
+      help        = STRING_TOKEN (STR_ITBT_PCIE_RPMEM_HELP),
+      flags     = RESET_REQUIRED | INTERACTIVE,
+      minimum     = 1,
+      maximum     = 32768,
+      step        = 1,        // Stepping of 0 equates to a manual entering of a value, otherwise it will auto-increment with a left/right arrow
+      default     = 32768,    // 32768 MB Default
+    endnumeric;
+
+    numeric varid = SETUP_DATA.ITbtPciePMemAddrRngMax[ROOTPORT_INDEX],
+      prompt      = STRING_TOKEN (CONCATENATE3(STR_ITBT_RP,ROOTPORT_INDEX,_PCIE_RPMEM_ADDRRNGMAX)),
+      help        = STRING_TOKEN (STR_ITBT_PCIE_RPMEM_RNG_HELP),
+      flags     = RESET_REQUIRED | INTERACTIVE,
+      minimum     = 0,
+      maximum     = 31,
+      step        = 1,
+      default     = 28, // 256 MB Allignment
+    endnumeric;
+
+  endform;  // ITBT_FORM_ID

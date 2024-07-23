@@ -1,0 +1,1331 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+// Name: CpuSetup.uni
+//
+// Description:
+//  CPU Setup strings
+//
+//**********************************************************************
+
+#include "VFR.uni"
+
+//
+// CPU Configuration
+//
+#string STR_YES                                 #language en-US "Yes"
+#string STR_NO                                  #language en-US "No"
+#string STR_CPU_FORM                            #language en-US "CPU Configuration"
+#string STR_CPU_FORM                            #language fr "CPU Configuration"
+
+#string STR_CPU_FORM_HELP                       #language en-US "CPU Configuration Parameters"
+#string STR_CPU_FORM_HELP                       #language fr "CPU Configuration Parameters"
+
+#string STR_CPU_TURBO_FORM_TITLE                #language en-US "  View/Configure Turbo Options"
+#string STR_CPU_TURBO_FORM_HELP                 #language en-US "View/Configure Turbo Options"
+
+#string STR_CPU_LOCK_FORM_TITLE                 #language en-US "  View/Configure CPU Lock Options"
+#string STR_CPU_LOCK_FORM_HELP                  #language en-US "View/Configure CPU Lock Options"
+
+#string STR_CPU_TURBO_SETTINGS                  #language en-US "Current Turbo Settings"
+
+#string STR_CPU_TURBO_RATIO_LIMIT_FORM_TITLE    #language en-US "Turbo Ratio Limit Options"
+#string STR_CPU_TURBO_RATIO_LIMIT_FORM_HELP     #language en-US "View/Configure Turbo Ratio Limit Options"
+
+#string STR_CPU_TURBO_RATIO_LIMIT_SETTINGS      #language en-US "Current Turbo Ratio Limit Settings"
+
+#string STR_CPU_VR_FORM_TITLE                   #language en-US "CPU VR Settings"
+#string STR_CPU_VR_FORM_TITLE_HELP              #language en-US "Configure CPU VR Settings"
+#string STR_CPU_VR_SETTINGS                     #language en-US "CPU VR Settings"
+
+#string STR_CPU_ACOUSTIC_NOISE_FORM_TITLE       #language en-US "Acoustic Noise Settings"
+#string STR_CPU_ACOUSTIC_NOISE_FORM_TITLE_HELP  #language en-US "Configure Acoustic Noise Settings for Core, GT, SA and LP-Ecore domains"
+#string STR_CPU_ACOUSTIC_NOISE_FORM_SETTINGS    #language en-US "Acoustic Noise Settings"
+
+#string STR_CPU_IA_VR_FORM_TITLE                #language en-US "Performance Core VR Settings"
+#string STR_CPU_IA_VR_FORM_TITLE_HELP           #language en-US "Configure Performance Core VR Settings"
+#string STR_CPU_IA_VR_SETTINGS                  #language en-US "Performance Core VR Domain"
+
+#string STR_CPU_GT_VR_FORM_TITLE                #language en-US "GT VR Settings"
+#string STR_CPU_GT_VR_FORM_TITLE_HELP           #language en-US "Configure GT VR Settings"
+#string STR_CPU_GT_VR_SETTINGS                  #language en-US "GT Domain"
+
+#string STR_CPU_SA_VR_FORM_TITLE                #language en-US "SA VR Settings"
+#string STR_CPU_SA_VR_FORM_TITLE_HELP           #language en-US "Configure SA VR Settings"
+#string STR_CPU_SA_VR_SETTINGS                  #language en-US "SA Domain"
+
+#string STR_CPU_ATOM_VR_FORM_TITLE              #language en-US "LP-Efficiency Core VR Settings"
+#string STR_CPU_ATOM_VR_FORM_TITLE_HELP         #language en-US "Configure LP-Efficiency Core VR Settings"
+#string STR_CPU_ATOM_VR_SETTINGS                #language en-US "LP-Efficiency Core Domain"
+
+#string STR_CPU_RFI_VR_FORM_TITLE               #language en-US "RFI Settings"
+#string STR_CPU_RFI_VR_FORM_TITLE_HELP          #language en-US "Configure RFI Settings"
+#string STR_CPU_RFI_VR_SETTINGS                 #language en-US "RFI Domain"
+
+#string STR_CPU_RFI_FREQ_ADJ_TITLE              #language en-US "RFI Frequency Adjustment"
+#string STR_CPU_RFI_FREQ_ADJ_TITLE_HELP         #language en-US "Adjust the RFI frequency relative to the nominal frequency in increments of 100KHz (Eg. For an adjustment of 10.6MHz, enter 106. New Frequency = Nominal Frequency + Adjustment Frequency) For subtraction, change prefix below."
+
+#string STR_CPU_RFI_FREQ_PREFIX                 #language en-US "RFI Frequency Prefix"
+#string STR_CPU_RFI_FREQ_PREFIX_HELP            #language en-US "Adjust the RFI Frequency Adjustment Prefix (add/subtract)"
+#string STR_POSITIVE_SIGN                       #language en-US "+"
+#string STR_NEGATIVE_SIGN                       #language en-US "-"
+
+#string STR_CPU_RFI_CURRENT_FREQ_HELP           #language en-US "RFI Current Frequency"
+#string STR_CPU_RFI_CURRENT_FREQ_STRING         #language en-US "RFI Current Frequency"
+
+#string STR_CPU_DVLR_RFI_ENABLE_PROMPT          #language en-US "Global DLVR RFI Mitigation Control"
+#string STR_CPU_DVLR_RFI_ENABLE_PROMPT_HELP     #language en-US "Enable/Disable Global DLVR RFI Mitigation Control"
+#string STR_CPU_DLVR_SSC_PERCENTAGE             #language en-US "DLVR SSC Value"
+#string STR_CPU_DLVR_SSC_PERCENTAGE_HELP        #language en-US "DLVR SSC in percentage with multiple of 0.25%. 0 = 0%, 10 = 4%."
+#string STR_CPU_DVLR_RFI_FREQ_SELECT            #language en-US "DLVR RFI Frequency"
+#string STR_CPU_DVLR_RFI_FREQ_SELECT_HELP       #language en-US "DLVR RFI Frequency in MHz."
+
+#string STR_2227_2MHZ                             #language en-US "2227.2MHz"
+#string STR_2140MHZ                             #language en-US "2140MHz"
+
+#string STR_0_0                                 #language en-US "0%"
+#string STR_0_5                                 #language en-US "0.5%"
+#string STR_1_0                                 #language en-US "1%"
+#string STR_2_0                                 #language en-US "2%"
+#string STR_4_0                                 #language en-US "4%"
+
+#string STR_CPU_DVLR_PHASE_SSC_ENABLE_PROMPT    #language en-US "DLVR PHASE_SSC"
+#string STR_CPU_DVLR_PHASE_SSC_ENABLE_HELP     #language en-US "Enable/Disable DLVR PHASE_SSC"
+
+#string STR_AUTO                                #language en-US "AUTO"
+
+#string STR_PROCESSOR_BRAND_STRING              #language en-US "Brand String"
+#string STR_PROCESSOR_BRAND_HELP                #language en-US "Brand String of the Performance Processor"
+#string STR_PROCESSOR_BRAND_VALUE               #language en-US "N/A"
+
+#string STR_PROCESSOR_ID_STRING                 #language en-US "Processor ID"
+#string STR_PROCESSOR_ID_VALUE                  #language en-US "N/A"
+#string STR_PROCESSOR_ID_HELP                   #language en-US "Displays the Processor Stepping."
+
+#string STR_ATOM_CORE_L1_DATA_CACHE_STRING      #language en-US "L1 Data Cache"
+#string STR_ATOM_CORE_L1_DATA_CACHE_VALUE       #language en-US "N/A"
+#string STR_ATOM_CORE_L1_DATA_CACHE_HELP        #language en-US "Displays the Efficient-core L1 Data Cache size."
+
+#string STR_ATOM_CORE_L1_INSTR_CACHE_STRING     #language en-US "L1 Instruction Cache"
+#string STR_ATOM_CORE_L1_INSTR_CACHE_VALUE      #language en-US "N/A"
+#string STR_ATOM_CORE_L1_INSTR_CACHE_HELP       #language en-US "Displays the Efficient-core L1 Instruction Cache size."
+
+#string STR_ATOM_CORE_L2_CACHE_STRING           #language en-US "L2 Cache"
+#string STR_ATOM_CORE_L2_CACHE_VALUE            #language en-US "N/A"
+#string STR_ATOM_CORE_L2_CACHE_HELP             #language en-US "Displays the Efficient-core L2 Cache size."
+
+#string STR_ATOM_CORE_L3_CACHE_STRING           #language en-US "L3 Cache"
+#string STR_ATOM_CORE_L3_CACHE_VALUE            #language en-US "N/A"
+#string STR_ATOM_CORE_L3_CACHE_HELP             #language en-US "Displays the Efficient-core L3 Cache size."
+
+#string STR_CORE_L0_DATA_CACHE_STRING           #language en-US "L0 Data Cache"
+#string STR_CORE_L0_DATA_CACHE_VALUE            #language en-US "N/A"
+#string STR_CORE_L0_DATA_CACHE_HELP             #language en-US "Displays the Performance-core L0 Data Cache size."
+
+#string STR_CORE_L1_INSTR_CACHE_STRING          #language en-US "L1 Instruction Cache"
+#string STR_CORE_L1_INSTR_CACHE_VALUE           #language en-US "N/A"
+#string STR_CORE_L1_INSTR_CACHE_HELP            #language en-US "Displays the Performance-core L1 Instruction Cache size."
+
+#string STR_CORE_L2_CACHE_STRING                #language en-US "L2 Cache"
+#string STR_CORE_L2_CACHE_VALUE                 #language en-US "N/A"
+#string STR_CORE_L2_CACHE_HELP                  #language en-US "Displays the Performance-core L2 Cache size."
+
+#string STR_CORE_L3_CACHE_STRING                #language en-US "L3 Cache"
+#string STR_CORE_L3_CACHE_VALUE                 #language en-US "N/A"
+#string STR_CORE_L3_CACHE_HELP                  #language en-US "Displays the Performance-core L3 Cache size."
+
+#string STR_PROCESSOR_VMX_STRING                #language en-US "VMX"
+#string STR_PROCESSOR_VMX_HELP                  #language en-US "VMX Supported or Not"
+#string STR_PROCESSOR_VMX_VALUE                 #language en-US "N/A"
+
+#string STR_PROCESSOR_SMX_STRING                #language en-US "SMX/TXT"
+#string STR_PROCESSOR_SMX_HELP                  #language en-US "SMX/TXT Supported or Not"
+#string STR_PROCESSOR_SMX_VALUE                 #language en-US "N/A"
+
+#string STR_PROCESSOR_CRASH_REGISTER_STRING     #language en-US "TXT Crash Code"
+#string STR_PROCESSOR_CRASH_REGISTER_HELP       #language en-US "TXT Crash Code Register value"
+#string STR_PROCESSOR_CRASH_REGISTER_VALUE      #language en-US "N/A"
+
+#string STR_PROCESSOR_SPAD_REGISTER_STRING      #language en-US "TXT SPAD"
+#string STR_PROCESSOR_SPAD_REGISTER_HELP        #language en-US "TXT SPAD Register value"
+#string STR_PROCESSOR_SPAD_REGISTER_VALUE       #language en-US "N/A"
+
+#string STR_PROCESSOR_BTG_STATUS_STRING         #language en-US "Boot Guard Status"
+#string STR_PROCESSOR_BTG_STATUS_HELP           #language en-US "Boot Guard Status Register value"
+#string STR_PROCESSOR_BTG_STATUS_VALUE          #language en-US "N/A"
+
+#string STR_PROCESSOR_BTG_ACM_POL_STS_STRING    #language en-US "Boot Guard ACM Policy Status"
+#string STR_PROCESSOR_BTG_ACM_POL_STS_HELP      #language en-US "Boot Guard ACM Policy Status value"
+#string STR_PROCESSOR_BTG_ACM_POL_STS_VALUE     #language en-US "N/A"
+
+#string STR_PROCESSOR_BTG_SACM_INFO_STRING      #language en-US "Boot Guard SACM Information"
+#string STR_PROCESSOR_BTG_SACM_INFO_HELP        #language en-US "Boot Guard SACM Info MSR value"
+#string STR_PROCESSOR_BTG_SACM_INFO_VALUE       #language en-US "N/A"
+
+#string STR_PROCESSOR_DPR_STRING                #language en-US "DPR Memory Size (MB)"
+#string STR_PROCESSOR_DPR_HELP                  #language en-US "Reserve DPR memory size (0-255) MB"
+
+#string STR_PROCESSOR_RATIO                     #language en-US "CPU Flex Ratio Settings"
+#string STR_PROCESSOR_RATIO_HELP                #language en-US "This value must be between Max Efficiency Ratio (LFM) and Maximum non-turbo ratio set by Hardware (HFM)."
+
+#string STR_PROCESSOR_RATIO_OVERRIDE            #language en-US "CPU Flex Ratio Override"
+#string STR_PROCESSOR_RATIO_OVERRIDE_HELP       #language en-US "Enable/Disable CPU Flex Ratio Programming"
+
+#string STR_POWER_CONFIGURATION                 #language en-US "Power & Performance"
+#string STR_POWER_CONFIGURATION_HELP            #language en-US "Power & Performance Options"
+
+#string STR_CPU_LOCK_CONFIGURATION              #language en-US "CPU Lock Configuration"
+#string STR_CPU_LOCK_CONFIGURATION_HELP         #language en-US "CPU Lock Configuration"
+
+#string STR_DUAL_TAU_BOOST                      #language en-US "Dual Tau Boost"
+#string STR_DUAL_TAU_BOOST_HELP                 #language en-US "Enable Dual Tau Boost feature. This is only applicable for Desktop 35W/65W/125W sku. When DPTF is enabled this feature is ignored."
+
+#string STR_CPU_POWER_CONFIG_FORM_TITLE         #language en-US "CPU - Power Management Control"
+#string STR_CPU_POWER_CONFIG_FORM_HELP          #language en-US "CPU - Power Management Control Options"
+
+#string STR_CUSTOM_P_STATE_FORM_TITLE           #language en-US "Custom P-state Table"
+#string STR_CUSTOM_P_STATE_FORM_HELP            #language en-US "Add Custom P-state Table"
+
+#string STR_CPU_TMF_PROMPT                      #language en-US "CPU TM Function"
+#string STR_CPU_TMF_HELP                        #language en-US "Disable/Enable"
+
+#string STR_PROCESSOR_FSB_SPEED_STRING          #language en-US "System Bus Speed"
+#string STR_PROCESSOR_FSB_SPEED_STRING          #language fr "Vitesse du bus système"
+//#string STR_PROCESSOR_FSB_SPEED_STRING        #language es "Velocidad del bus del sistema"
+
+#string STR_PROCESSOR_FSB_SPEED_VALUE           #language en-US ""
+
+#string STR_PROCESSOR_FSB_SPEED_HELP            #language en-US "Displays the System Bus Speed."
+#string STR_PROCESSOR_FSB_SPEED_HELP            #language fr "Displays the System Bus Speed."
+
+#string STR_BSP_SELECT_PROMPT                   #language en-US "BSP Select"
+#string STR_BSP_SELECT_PROMPT_HELP              #language en-US "User selects which core is BSP."
+#string STR_BSP_SELECT_0                        #language en-US "CPU 0"
+#string STR_BSP_SELECT_1                        #language en-US "CPU 1"
+
+#string STR_BIST_PROMPT                         #language en-US "BIST"
+#string STR_BIST_PROMPT                         #language fr "BIST"
+#string STR_BIST_PROMPT_HELP                    #language en-US "Enable/Disable BIST (Built-In Self Test) on reset"
+#string STR_BIST_PROMPT_HELP                    #language fr "Enable/Disable BIST (Built-In Self Test) on reset"
+
+#string STR_APIDLEMANNER_PROMPT                 #language en-US "AP threads Idle Manner"
+#string STR_APIDLEMANNER_PROMPT_HELP            #language en-US "AP threads Idle Manner for waiting signal to run"
+#string STR_APHALTLOOP                          #language en-US "HALT Loop"
+#string STR_APMWAITLOOP                         #language en-US "MWAIT Loop"
+#string STR_APRUNLOOP                           #language en-US "RUN Loop"
+
+#string STR_AES_PROMPT                          #language en-US "AES"
+#string STR_AES_PROMPT_HELP                     #language en-US "Enable/Disable AES (Advanced Encryption Standard)"
+
+
+#string STR_MACHINE_CHECK_PROMPT                #language en-US "MachineCheck"
+#string STR_MACHINE_CHECK_PROMPT_HELP           #language en-US "Enable/Disable Machine Check"
+
+#string STR_MONITOR_MWAIT_PROMPT                #language en-US "MonitorMWait"
+#string STR_MONITOR_MWAIT_PROMPT_HELP           #language en-US "Enable/Disable MonitorMWait, if Disable MonitorMwait, the AP threads Idle Manner should not set in MWAIT Loop"
+
+#string STR_ACTIVE_CORE_COUNT_PROMPT                      #language en-US "Active Performance-cores"
+#string STR_ACTIVE_CORE_COUNT_PROMPT_HELP                 #language en-US "Number of P-cores to enable in each processor package. Note: Number of P-cores, E-cores and LP E-cores are looked at together. When all are {0,0,0}, Pcode will enable all cores."
+#string STR_ACTIVE_ATOM_CORE_COUNT_PROMPT                 #language en-US "Active Efficient-cores"
+#string STR_ACTIVE_ATOM_CORE_COUNT_PROMPT_HELP            #language en-US "Number of E-cores to enable in each processor package. Note: Number of P-cores, E-cores and LP E-cores are looked at together. When all are {0,0,0}, Pcode will enable all cores."
+#string STR_ACTIVE_LP_ATOM_CORE_COUNT_PROMPT              #language en-US "Active LP Efficient-cores"
+#string STR_ACTIVE_LP_ATOM_CORE_COUNT_PROMPT_HELP         #language en-US "Number of LP E-cores off ring. Note: Number of P-cores, E-cores and LP E-cores are looked at together. When all are {0,0,0}, Pcode will enable all cores."
+#string STR_0                                   #language en-US "0"
+#string STR_1                                   #language en-US "1"
+#string STR_2                                   #language en-US "2"
+#string STR_3                                   #language en-US "3"
+#string STR_4                                   #language en-US "4"
+#string STR_5                                   #language en-US "5"
+#string STR_6                                   #language en-US "6"
+#string STR_7                                   #language en-US "7"
+#string STR_8                                   #language en-US "8"
+#string STR_9                                   #language en-US "9"
+#string STR_10                                  #language en-US "10"
+#string STR_11                                  #language en-US "11"
+#string STR_12                                  #language en-US "12"
+#string STR_13                                  #language en-US "13"
+#string STR_14                                  #language en-US "14"
+#string STR_15                                  #language en-US "15"
+#string STR_16                                  #language en-US "16"
+#string STR_17                                  #language en-US "17"
+#string STR_18                                  #language en-US "18"
+#string STR_19                                  #language en-US "19"
+#string STR_20                                  #language en-US "20"
+#string STR_21                                  #language en-US "21"
+#string STR_22                                  #language en-US "22"
+#string STR_23                                  #language en-US "23"
+#string STR_24                                  #language en-US "24"
+#string STR_25                                  #language en-US "25"
+#string STR_26                                  #language en-US "26"
+#string STR_27                                  #language en-US "27"
+#string STR_28                                  #language en-US "28"
+#string STR_29                                  #language en-US "29"
+#string STR_30                                  #language en-US "30"
+#string STR_31                                  #language en-US "31"
+#string STR_32                                  #language en-US "32"
+#string STR_34                                  #language en-US "34"
+#string STR_40                                  #language en-US "40"
+#string STR_48                                  #language en-US "48"
+#string STR_56                                  #language en-US "56"
+#string STR_64                                  #language en-US "64"
+#string STR_80                                  #language en-US "80"
+#string STR_96                                  #language en-US "96"
+#string STR_112                                 #language en-US "112"
+#string STR_128                                 #language en-US "128"
+
+#string STR_ALL                                 #language en-US "All"
+
+#string STR_VT_PROMPT                           #language en-US "Intel (VMX) Virtualization Technology"
+#string STR_VT_PROMPT                           #language fr "Intel (VMX) Virtualization Technology"
+#string STR_VT_PROMPT_HELP                      #language en-US "When enabled, a VMM can utilize the additional hardware capabilities provided by Vanderpool Technology."
+#string STR_VT_PROMPT_HELP                      #language fr "When enabled, a VMM can utilize the additional hardware capabilities provided by Vanderpool Technology."
+
+#string STR_EIST_PROMPT                         #language en-US "Intel SpeedStep"
+#string STR_EIST_PROMPT                         #language fr "Intel SpeedStep"
+#string STR_EIST_PROMPT_HELP                    #language en-US "Enable/Disable Intel SpeedStep"
+#string STR_EIST_PROMPT_HELP                    #language fr "Enable/Disable Intel SpeedStep"
+
+#string STR_TXT_PROMPT                          #language en-US "Intel Trusted Execution Technology"
+#string STR_TXT_PROMPT_HELP                     #language en-US "Enables utilization of additional hardware capabilities provided by Intel (R) Trusted Execution Technology.\n\nChanges require a full power cycle to take effect."
+#string STR_ACHECKREQUEST_PROMPT                #language en-US "Alias Check Request"
+#string STR_ACHECKREQUEST_PROMPT_HELP           #language en-US "Enables Txt Alias Checking capability\n\nChanges require full Txt capability before it will take effect.\n\n It is a one time only change, next reboot will be reset."
+#string STR_STM_MODE_PROMPT                     #language en-US "STM Mode."
+#string STR_STM_MODE_OPT_IN                     #language en-US "Opt-In"
+#string STR_STM_MODE_OPT_OUT                    #language en-US "Opt-Out"
+#string STR_STM_MODE_PROMPT_HELP                #language en-US "Selects mode of SMI Transfer Monitor operation as provided by Intel (R) Trusted Execution Technology.\n\nChanges require a full power cycle to take effect."
+#string STR_MSEG_PROMPT                         #language en-US "MSEG Size"
+#string STR_MSEG_PROMPT_HELP                    #language en-US "Selects size of MSEG."
+#string STR_MSEG_128K                           #language en-US "128K"
+#string STR_MSEG_256K                           #language en-US "256K"
+#string STR_MSEG_512K                           #language en-US "512K"
+#string STR_MSEG_1M                             #language en-US "1M"
+#string STR_MSEG_1_5M                           #language en-US "1.5M"
+#string STR_MSEG_2M                             #language en-US "2M"
+#string STR_MSEG_2_5M                           #language en-US "2.5M"
+#string STR_MSEG_3M                             #language en-US "3M"
+
+#string STR_CPU_IST_PROMPT                      #language en-US "Intel(R) SpeedStep(tm)"
+#string STR_CPU_IST_HELP                        #language en-US "Allows more than two frequency ranges to be supported."
+#string STR_ENERGY_EFFICIENT_P_STATE            #language en-US "Energy Efficient P-state"
+#string STR_ENERGY_EFFICIENT_P_STATE_HELP       #language en-US "Enable/Disable Energy Efficient P-state feature. When set to 0, will disable access to ENERGY_PERFORMANCE_BIAS MSR and CPUID Function will read 0 indicating no support for Energy Efficient policy setting. When set to 1 will enable access to ENERGY_PERFORMANCE_BIAS MSR and CPUID Function will read 1 indicating Energy Efficient policy setting is supported."
+
+#string STR_CPU_ISST_PROMPT                     #language en-US "Intel(R) Speed Shift Technology"
+#string STR_CPU_ISST_HELP                       #language en-US "Enable/Disable Intel(R) Speed Shift Technology support. Enabling will expose the CPPC v2 interface to allow for hardware controlled P-states."
+
+#string STR_CPU_RP_PROMPT                       #language en-US "Resource Priority Feature"
+#string STR_CPU_RP_HELP                         #language en-US "Enable/Disable Resource Priority Feature support."
+
+#string STR_CPU_HWP_AUTO_PER_CORE_PSTATE_PROMPT #language en-US "HwP Autonomous Per Core P State"
+#string STR_CPU_HWP_AUTO_PER_CORE_PSTATE_HELP   #language en-US "Disable Autonomous PCPS Autonomous will request the same value for all cores all the time."
+
+#string STR_CPU_HWP_AUTO_EPP_GROUPING           #language en-US "HwP Autonomous EPP Grouping"
+#string STR_CPU_HWP_AUTO_EPP_GROUPING_HELP      #language en-US "Enable EPP grouping Autonomous will request the same values for all cores with same EPP. Disable EPP grouping autonomous will not necessarily request same values for all cores with same EPP."
+
+#string STR_FAST_MSR_HWP_REQ_PROMPT             #language en-US "HwP Fast MSR Support"
+#string STR_FAST_MSR_HWP_REQ_HELP               #language en-US "Enable/Disable HwP Fast MSR Support for IA32_HWP_REQUEST MSR."
+
+#string STR_CPU_HWP_LOCK_PROMPT                 #language en-US "HwP Lock"
+#string STR_CPU_HWP_LOCK_HELP                   #language en-US "Enable/Disable HWP Lock support in Misc Power Management MSR."
+
+#string STR_ENERGY_POLICY                       #language en-US "Energy Policy"
+#string STR_ENERGY_POLICY_HELP                  #language en-US "Configure energy policy, MSR 0x1B0[3:0]. Enter values between 0 - 15. 0-3 Max Performance ; 4-7 Balanced Performance; 8-11 Balanced Power; 12-15 Max Power Savings."
+#string STR_CONFIG_TDP_CONFIGURATION            #language en-US "Configurable Base Power Settings"
+#string STR_CONFIG_TDP_CONFIGURATION_HELP       #language en-US "Assured Power (cTDP) Settings."
+#string STR_CONFIG_TDP_FORM_TITLE               #language en-US "Configurable Base Power Settings"
+#string STR_CONFIG_TDP_SETTINGS                 #language en-US "Configurable Base Power Settings"
+
+#string STR_APPLY_CONFIG_TDP                    #language en-US "Enable Configurable Base Power"
+#string STR_APPLY_CONFIG_TDP_HELP               #language en-US "Applies Assured Power (cTDP) initialization settings based on non-Assured Power (cTDP) or Assured Power (cTDP). Default is 1: Applies to Assured Power (cTDP); if 0 then applies non-Assured Power (cTDP) and BIOS will bypass Assured Power (cTDP) initialization flow"
+#string STR_NON_CTDP_APPLIED                    #language en-US "Applies to non-cTDP"
+#string STR_CTDP_APPLIED                        #language en-US "Applies to cTDP"
+
+#string STR_CONFIG_TDP_LEVEL                    #language en-US "Configurable Base Power Boot Mode"
+#string STR_CONFIG_TDP_LEVEL_HELP               #language en-US "Assured Power (cTDP) Mode as Nominal/Maximum/Minimum Base Power (TDP) selection."
+#string STR_CONFIG_TDP_LEVEL_NOMINAL            #language en-US "Nominal (Base Power)"
+#string STR_CONFIG_TDP_MIN_ASSURED              #language en-US "Min Assured Power"
+#string STR_CONFIG_TDP_MAX_ASSURED              #language en-US "Max Assured Power"
+
+#string STR_CONFIG_TDP_LOCK                     #language en-US "Configurable Base Power Lock"
+#string STR_CONFIG_TDP_LOCK_HELP                #language en-US "Assured Power (cTDP) Mode Lock sets the Lock bits on TURBO_ACTIVATION_RATIO and BASE_POWER_CONTROL.                 Note: When CTDP (Assured Power) Lock is enabled Custom Config Base Power (cTDP) Count will be forced to 1 and Custom ConfigTDP Boot Index will be forced to 0."
+#string STR_CONFIG_TDP_BIOS                     #language en-US "CTDP BIOS control"
+#string STR_CONFIG_TDP_BIOS_HELP                #language en-US "Enables Assured Power (cTDP) control via runtime ACPI BIOS methods. This 'BIOS only' feature does not require EC or driver support."
+#string STR_CTDP_LEVELS_HELP                    #language en-US "Assured Power (cTDP) Levels Supported from MSR"
+#string STR_CTDP_LEVELS_STRING                  #language en-US "Config Base Power(cTDP) Levels"
+#string STR_CTDP_LEVELS_VALUE                   #language en-US ""
+
+#string STR_CTDP_STRING                         #language en-US "ConfigTDP Setting"
+
+#string STR_CTDP_NOMINAL_HELP                   #language en-US "Processor Base Ratio and Processor Base Power (TDP) from MSR"
+#string STR_CTDP_NOMINAL_STRING                 #language en-US "Config Base Power (cTDP) Nominal"
+#string STR_CTDP_NOMINAL_VALUE                  #language en-US "N/A"
+
+#string STR_CTDP_MAX_ASSURED_POWER_HELP         #language en-US "Maximum Assured Ratio and Processor Base Power (TDP) from MSR"
+#string STR_CTDP_MAX_ASSURED_POWER_STRING       #language en-US "Maximum Assured Power"
+#string STR_CTDP_LEVEL1_VALUE                   #language en-US "N/A"
+
+#string STR_CTDP_MIN_ASSURED_POWER_HELP         #language en-US "Minimum Assured Ratio and Processor Base Power (TDP) from MSR"
+#string STR_CTDP_MIN_ASSURED_POWER_STRING       #language en-US "Minimum Assured Power"
+#string STR_CTDP_LEVEL2_VALUE                   #language en-US "N/A"
+
+#string STR_CTDP_FORM_TITLE                     #language en-US "Config Base Power Configurations"
+#string STR_CTDP_SETTINGS                       #language en-US "Config Base Power Configurations"
+#string STR_CTDP_FORM_HELP                      #language en-US "Assured Power (cTDP) Configurations"
+
+#string STR_CTDP_TAR_HELP                       #language en-US "Assured Power (cTDP) Turbo Activation Ratio values from MSR"
+#string STR_CTDP_TAR_STRING                     #language en-US "Config Base Power Turbo Activation Ratio"
+#string STR_CTDP_TAR_VALUE                      #language en-US "N/A"
+
+#string STR_CTDP_PWR_LIMIT1_HELP                #language en-US "Power Limit 1 values from MMIO"
+#string STR_CTDP_PWR_LIMIT1_STRING              #language en-US "Power Limit 1"
+#string STR_CTDP_PWR_LIMIT1_VALUE               #language en-US "N/A"
+
+#string STR_CTDP_PWR_LIMIT2_HELP                #language en-US "Power Limit 2 values from MMIO"
+#string STR_CTDP_PWR_LIMIT2_STRING              #language en-US "Power Limit 2"
+#string STR_CTDP_PWR_LIMIT2_VALUE               #language en-US "N/A"
+
+#string STR_CONFIG_TDP_CUSTOM                   #language en-US "Custom Configurable Base Power"
+#string STR_CONFIG_TDP_CUSTOM_HELP              #language en-US "Custom Assured Power (cTDP) settings"
+#string STR_CTDP_CUSTOM_FORM_TITLE              #language en-US "Custom Configurable Base Power Setting"
+#string STR_CTDP_CUSTOM_FORM_HELP               #language en-US "Custom Assured Power (cTDP) Setting"
+#string STR_CTDP_CUSTOM_SETTINGS                #language en-US "Custom Configurable Base Power Setting"
+
+#string STR_CTDP_TAR_STRING                     #language en-US "Config Base Power Turbo Activation Ratio"
+#string STR_CTDP_CUSTOM_TAR_STRING_HELP         #language en-US "Custom value for Turbo Activation Ratio. Needs to be configured with valid values from LFM to Max Turbo. 0 means don't use custom value."
+
+#string STR_CPU_EC1_PROMPT                      #language en-US "Enhanced C1"
+#string STR_CPU_EC1_HELP                        #language en-US "Enable/Disable Enhanced C1 State."
+#string STR_CPU_EC2_PROMPT                      #language en-US "Enhanced C2"
+#string STR_CPU_EC2_HELP                        #language en-US "Enable/Disable Enhanced C2 State."
+#string STR_CPU_EC3_PROMPT                      #language en-US "Enhanced C3"
+#string STR_CPU_EC3_HELP                        #language en-US "Enable/Disable Enhanced C3 State."
+#string STR_CPU_EC4_PROMPT                      #language en-US "Enhanced C4"
+#string STR_CPU_EC4_HELP                        #language en-US "Enable/Disable Enhanced C4 State."
+#string STR_CST_AUTO_DEMOTION                   #language en-US "  C-State Auto Demotion"
+#string STR_CST_AUTO_DEMOTION_HELP              #language en-US "Configure C-State Auto Demotion"
+#string STR_C1_AUTO_DEMOTION                    #language en-US "C1"
+#string STR_CST_UNDEMOTION                      #language en-US "  C-State Un-demotion"
+#string STR_CST_UNDEMOTION_HELP                 #language en-US "Configure C-State Un-demotion"
+#string STR_PKG_CST_DEMOTION                    #language en-US "  Package C-State Demotion"
+#string STR_PKG_CST_DEMOTION_HELP               #language en-US "Enable/Disable Pkg C-State Demotion"
+#string STR_PKG_CST_UNDEMOTION                  #language en-US "  Package C-State Un-demotion"
+#string STR_PKG_CST_UNDEMOTION_HELP             #language en-US "Enable/Disable Pkg C-State Un-demotion"
+
+#string STR_CST_PREWAKE                         #language en-US "CState Pre-Wake"
+#string STR_CST_PREWAKE_HELP                    #language en-US "Disable - to 1 to disable the Cstate Pre-Wake"
+
+#string STR_BOOT_FREQUENCY                      #language en-US "Boot performance mode"
+#string STR_BOOT_FREQUENCY_HELP                 #language en-US "Select the performance state that the BIOS will set starting from reset vector."
+#string STR_BOOT_FREQUENCY_MIN                  #language en-US "Max Battery"
+#string STR_BOOT_FREQUENCY_MAX                  #language en-US "Max Non-Turbo Performance"
+#string STR_BOOT_FREQUENCY_TURBO                #language en-US "Turbo Performance"
+#string STR_BOOT_MAX_FREQUENCY                  #language en-US "Boot Max Frequency"
+#string STR_BOOT_MAX_FREQUENCY_HELP             #language en-US "Enable/Disable Boot Maximum Frequency in CPU strap."
+#string STR_CX_PROMPT                           #language en-US "C states"
+#string STR_CX_PROMPT_HELP                      #language en-US "Enable/Disable CPU Power Management. Allows CPU to go to C states when it's not 100% utilized."
+#string STR_CXE_PROMPT                          #language en-US "Enhanced C-states"
+#string STR_CXE_PROMPT_HELP                     #language en-US "Enable/Disable C1E. When enabled, CPU will switch to minimum speed when all cores enter C-State."
+//#string STR_RTCS4_WAKE_PROMPT                 #language en-US ""
+//#string STR_RTCS4_WAKE_HELP                   #language en-US "Enable/Disable"
+
+#string STR_TURBO_MODE_ENABLE                   #language en-US "Turbo Mode"
+#string STR_TURBO_MODE_ENABLE_HELP              #language en-US "Enable/Disable processor Turbo Mode."
+
+#string STR_PLAT_PWR_LIMIT_1_ENABLE             #language en-US "Platform PL1 Enable"
+#string STR_PLAT_PWR_LIMIT_1_ENABLE_HELP        #language en-US "Enable/Disable Platform Power Limit 1 programming. If this option is enabled, it activates the PL1 value to be used by the processor to limit the average power of given time window."
+
+#string STR_PLAT_PWR_LIMIT1_PWR                 #language en-US "Platform PL1 Power"
+#string STR_PLAT_PWR_LIMIT1_PWR_HELP            #language en-US "Platform Power Limit 1 Power in Milli Watts. BIOS will round to the nearest 1/8W when programming. Any value can be programmed between Max and Min Power Limits. For 12.50W, enter 12500. This setting will act as the new PL1 value for the Package RAPL algorithm."
+
+#string STR_PLAT_PWR_LIMIT1_TIME                #language en-US "Platform PL1 Time Window"
+#string STR_PLAT_PWR_LIMIT1_TIME_HELP           #language en-US "Platform Power Limit 1 Time Window value in seconds. The value may vary from 0 to 128. 0 = default values. Indicates the time window over which Platform Processor Base Power (TDP) value should be maintained."
+
+#string STR_PLAT_PWR_LIMIT_2_ENABLE             #language en-US "Platform PL2 Enable"
+#string STR_PLAT_PWR_LIMIT_2_ENABLE_HELP        #language en-US "Enable/Disable Platform Power Limit 2 programming. If this option is disabled, BIOS will program the default values for Platform Power Limit 2."
+
+#string STR_PLAT_PWR_LIMIT2_PWR                 #language en-US "Platform PL2 Power"
+#string STR_PLAT_PWR_LIMIT2_PWR_HELP            #language en-US "Platform Power Limit 2 Power in Milli Watts / Milli Percent. BIOS will round to the nearest 1/8W or 1/8% when programming. Any value can be programmed between Max and Min Power Limits (specified by PACKAGE_POWER_SKU_MSR) or PMAX value in %. For example if 12%, enter 12000, if 50%, enter 50000. If the value is '0', will default to PACKAGE_POWER_SKU_MSR if Psys is in Watts. Recommended value is 97000 if Psys is in %. This setting will act as the new PL2 value for the Package RAPL algorithm."
+
+#string STR_PLAT_ATX_TELEMETRY_UNIT             #language en-US "ATX Telemetry Unit"
+#string STR_PLAT_ATX_TELEMETRY_UNIT_HELP        #language en-US "ATX Telemetry Unit in Watts or Percentage, it indicates the telemetry type for Psys support. Psys data is in Unitless format when selecting Percentage, it is a relative % from P100%PSU rated power. Default is Watts, recommended to select Percentage when plug-in ATX12VO PSU."
+
+#string STR_WATTS                               #language en-US "Watts"
+#string STR_PERCENT                             #language en-US "Percentage"
+
+#string STR_PKG_PWR_LIMIT_LOCK                  #language en-US "Package Power Limit MSR Lock"
+#string STR_PKG_PWR_LIMIT_LOCK_HELP             #language en-US "Enable/Disable locking of Package Power Limit settings. When enabled, PACKAGE_POWER_LIMIT MSR will be locked and a reset will be required to unlock the register."
+
+#string STR_LONG_DUR_PWR_LIMIT_OVERRIDE         #language en-US "Power Limit 1 Override"
+#string STR_LONG_DUR_PWR_LIMIT_OVERRIDE_HELP    #language en-US "Enable/Disable Power Limit 1 override. If this option is disabled, BIOS will program the default values for Power Limit 1 and Power Limit 1 Time Window."
+
+#string STR_LONG_DUR_PWR_LIMIT                  #language en-US "Power Limit 1"
+#string STR_LONG_DUR_CUSTOM_PWR_LIMIT           #language en-US "Power Limit 1"
+#string STR_LONG_DUR_PWR_LIMIT_HELP             #language en-US "Power Limit 1 in Milli Watts. BIOS will round to the nearest 1/8W when programming. 0 = no custom override. For 12.50W, enter 12500. Overclocking SKU: Value must be between Max and Min Power Limits. Other SKUs: This value must be between Min Power Limit and Processor Base Power (TDP) Limit. If value is 0, BIOS will program Processor Base Power (TDP) value."
+
+#string STR_LONG_DUR_TIME_WINDOW                #language en-US "Power Limit 1 Time Window"
+#string STR_LONG_DUR_CUSTOM_TIME_WINDOW         #language en-US "Power Limit 1 Time Window"
+#string STR_LONG_DUR_TIME_WINDOW_HELP           #language en-US "Power Limit 1 Time Window value in seconds. The value may vary from 0 to 128. 0 = default value (28 sec for Mobile and 8 sec for Desktop). Defines time window which Processor Base Power (TDP) value should be maintained."
+
+#string STR_SHORT_DUR_PWR_LIMIT_OVERRIDE        #language en-US "Power Limit 2 Override"
+#string STR_SHORT_DUR_PWR_LIMIT_OVERRIDE_HELP   #language en-US "Enable/Disable Power Limit 2 override. If this option is disabled, BIOS will program the default values for Power Limit 2."
+
+#string STR_SHORT_DUR_PWR_LIMIT2                #language en-US "Power Limit 2"
+#string STR_SHORT_DUR_CUST_PWR_LIMIT2           #language en-US "Power Limit 2"
+#string STR_SHORT_DUR_PWR_LIMIT_HELP            #language en-US "Power Limit 2 value in Milli Watts. BIOS will round to the nearest 1/8W when programming. If the value is 0, BIOS will program this value as 1.25*Processor Base Power (TDP). For 12.50W, enter 12500. Processor applies control policies such that the package power does not exceed this limit."
+
+#string STR_PL3_FORM_TITLE                      #language en-US "Power Limit 3 Settings"
+#string STR_PL3_FORM_TITLE_HELP                 #language en-US "Power Limit 3 Settings"
+#string STR_POWER_LIMIT_3_OVERRIDE              #language en-US "Power Limit 3 Override "
+#string STR_POWER_LIMIT_3_OVERRIDE_HELP         #language en-US "Enable/DisablePower Limit 3 override. If this option is disabled, BIOS will leave the hardware default values for Power Limit 3 and Power Limit 3 Time Window."
+#string STR_POWER_LIMIT_3_LIMIT                 #language en-US "Power Limit 3"
+#string STR_POWER_LIMIT_3_LIMIT_HELP            #language en-US "Platform Power Limit 3 Power in Milli Watts / Milli Percent. BIOS will round to the nearest 1/8W or 1/8% when programming. For example if 12%, enter 12000, if 50%, enter 50000.  For all SKUs, limit must be less than Psys Pmax value (either in Watts or %). XE SKU: Any value up through Psys Pmax can be programmed. Overclocking SKU: value must be between Max and Min Power Limits (specified by PACKAGE_POWER_SKU_MSR). Other SKUs: This value must be between Min Power Limit and Processor Base Power (TDP). If the value is '0', will default to hardware default value. Recommended value is 100000 if Psys is in %."
+#string STR_POWER_LIMIT_3_TIME_WINDOW           #language en-US "Power Limit 3 Time Window"
+#string STR_POWER_LIMIT_3_TIME_WINDOW_HELP      #language en-US "Power Limit 3 Time Window value in Milli seconds. The value may vary from 3 to 64(max). Indicates the time window over which Power Limit 3 value should be maintained. If the value is 0, BIOS leaves the hardware default value. For ATX12VO PSU systems, recommended value is 40."
+#string STR_POWER_LIMIT_3_LOCK                  #language en-US "Power Limit 3 Lock"
+#string STR_POWER_LIMIT_3_LOCK_HELP             #language en-US "Power Limit 3 Lock. When enabled PL3 configurations are locked during OS. When disabled PL3 configuration can be changed during OS."
+#string STR_POWER_LIMIT_3_DUTY_CYCLE            #language en-US "Power Limit 3 Duty Cycle"
+#string STR_POWER_LIMIT_3_DUTY_CYCLE_HELP       #language en-US "Specify the duty cycle in percentage that the CPU is required to maintain over the configured time window. Range is 0-100. For ATX12VO PSU systems, recommended value is 25."
+
+#string STR_RESPONSE_MODE                       #language en-US "Response Mode"
+#string STR_RESPONSE_MODE_HELP                  #language en-US "Response Mode is used to adjust Psys_PL3 power reduction behavior, it indicates how quickly Pcode reduces power consumption to a low (safe) level. Default is Gradual Power Reduction, recommended to select Gradual Power Reduction for Battery-enabled systems and Aggressive Power Reduction for PSU."
+
+#string STR_GRADUAL                             #language en-US "Gradual Power Reduction"
+#string STR_AGGRESSIVE                          #language en-US "Aggressive Power Reduction"
+
+#string STR_POWER_LIMIT_4_OVERRIDE              #language en-US "Power Limit 4 Override"
+#string STR_POWER_LIMIT_4_OVERRIDE_HELP         #language en-US "Enable/Disable Power Limit 4 override. If this option is disabled, BIOS will leave the default values for Power Limit 4."
+#string STR_POWER_LIMIT_4_LIMIT                 #language en-US "Power Limit 4"
+#string STR_POWER_LIMIT_4_LIMIT_HELP            #language en-US "Power Limit 4 in Milli Watts. BIOS will round to the nearest 1/8W when programming. For 12.50W, enter 12500. If the value is 0, BIOS leaves default value"
+#string STR_POWER_LIMIT_4_LOCK                  #language en-US "Power Limit 4 Lock"
+#string STR_POWER_LIMIT_4_LOCK_HELP             #language en-US "Power Limit 4 Lock. When enabled PL4 configurations are locked during OS. When disabled PL4 configuration can be changed during OS."
+
+#string STR_CURRENT_POWER_LIMIT_4_BOOST_STRING  #language en-US "Current Power Limit 4 Boost"
+#string STR_CURRENT_POWER_LIMIT_4_BOOST_VALUE   #language en-US "N/A"
+#string STR_POWER_LIMIT_4_BOOST                 #language en-US "Power Limit 4 Boost"
+#string STR_POWER_LIMIT_4_BOOST_HELP            #language en-US "Configure Power Limit 4 Boost in Milli Watts. BIOS will round to the nearest 1/8W when programming. For 12.50W, enter 12500. The value 0 means disable."
+
+#string STR_IOM_STATE                           #language en-US "N/A"
+
+#string STR_PPM_CONFIG_SUBTITLE                 #language en-US "PPM Config "
+#string STR_PPM_CONFIG_SUBTITLE_HELP            #language en-US "PPM Config"
+
+#string STR_NUMBER_OF_CUSTOM_P_STATES           #language en-US "Number of P states"
+#string STR_NUMBER_OF_CUSTOM_P_STATES_HELP      #language en-US "Sets the number of custom P-states. At least 2 states must be present."
+#string STR_MAX_P_STATE_RATIO                   #language en-US "Max P-State Ratio"
+#string STR_MAX_P_STATE_RATIO_HELP              #language en-US "Maximum P-state ratio to use in the custom P-state table."
+#string STR_CUSTOM_P_STATE_RATIO1               #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO2               #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO3               #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO4               #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO5               #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO6               #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO7               #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO8               #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO9               #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO10              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO11              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO12              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO13              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO14              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO15              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO16              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO17              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO18              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO19              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO20              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO21              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO22              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO23              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO24              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO25              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO26              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO27              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO28              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO29              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO30              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO31              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO32              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO33              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO34              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO35              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO36              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO37              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO38              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO39              #language en-US "P-State Ratio"
+#string STR_CUSTOM_P_STATE_RATIO_HELP           #language en-US "P-state ratio for the given state in the custom P-state table."
+
+#string STR_MAX_16_CUSTOM_P_STATE_SUBTITLE      #language en-US "Max 16 custom P-state Table"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO0        #language en-US "Max P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO1        #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO2        #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO3        #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO4        #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO5        #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO6        #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO7        #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO8        #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO9        #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO10       #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO11       #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO12       #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO13       #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO14       #language en-US "P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO15       #language en-US "Min P-State Ratio (Max 16 table)"
+#string STR_MAX_16_CUSTOM_P_STATE_RATIO_HELP    #language en-US "P-state ratio for the given state in the Max 16 P-state table. Used if OS only supports 16 P-states"
+
+#string STR_MAX_TURBO_POWER_LIMIT_HELP          #language en-US "Max Turbo Power Limit"
+#string STR_MAX_TURBO_POWER_LIMIT_STRING        #language en-US "Max Turbo Power Limit"
+#string STR_MAX_TURBO_POWER_LIMIT_VALUE         #language en-US ""
+
+#string STR_MIN_TURBO_POWER_LIMIT_HELP          #language en-US "Min Turbo Power Limit"
+#string STR_MIN_TURBO_POWER_LIMIT_STRING        #language en-US "Min Turbo Power Limit"
+#string STR_MIN_TURBO_POWER_LIMIT_VALUE         #language en-US ""
+
+#string STR_CTDP_LONG_DUR_PWR_LIMIT_HELP        #language en-US "Power Limit 1 in Milli Watts. BIOS will round to the nearest 1/8W when programming. 0 = no custom override. For 12.50W, enter 12500. Overclocking SKU: Value must be between Max and Min Power Limits. Other SKUs: This value must be between Min Power Limit and Processor Base Power (TDP) Limit."
+#string STR_LONG_DUR_PWR_LIMIT_STRING           #language en-US "Power Limit 1"
+#string STR_LONG_DUR_PWR_LIMIT_VALUE            #language en-US ""
+
+#string STR_CTDP_SHORT_DUR_PWR_LIMIT_HELP       #language en-US "Power Limit 2 value in Milli Watts. BIOS will round to the nearest 1/8W when programming. 0 = no custom override. For 12.50W, enter 12500. Processor applies control policies such that the package power does not exceed this limit."
+#string STR_SHORT_DUR_PWR_LIMIT_STRING          #language en-US "Power Limit 2"
+#string STR_SHORT_DUR_PWR_LIMIT_VALUE           #language en-US ""
+
+#string STR_TDP_LIMIT_HELP                      #language en-US "Package Processor Base Power (TDP) Limit"
+#string STR_TDP_LIMIT_STRING                    #language en-US "Package Base Power Limit"
+#string STR_TDP_LIMIT_VALUE                     #language en-US ""
+
+#string STR_VR_AC_LOADLINE_INFO_HELP            #language en-US "Current AC Loadline"
+#string STR_VR_AC_LOADLINE_INFO_STRING          #language en-US "Current AC Loadline"
+#string STR_VR_AC_LOADLINE_INFO_VALUE0          #language en-US ""
+#string STR_VR_AC_LOADLINE_INFO_VALUE1          #language en-US ""
+#string STR_VR_AC_LOADLINE_INFO_VALUE2          #language en-US ""
+#string STR_VR_AC_LOADLINE_INFO_VALUE3          #language en-US ""
+
+#string STR_VR_DC_LOADLINE_INFO_HELP            #language en-US "Current DC Loadline"
+#string STR_VR_DC_LOADLINE_INFO_STRING          #language en-US "Current DC Loadline"
+#string STR_VR_DC_LOADLINE_INFO_VALUE0          #language en-US ""
+#string STR_VR_DC_LOADLINE_INFO_VALUE1          #language en-US ""
+#string STR_VR_DC_LOADLINE_INFO_VALUE2          #language en-US ""
+#string STR_VR_DC_LOADLINE_INFO_VALUE3          #language en-US ""
+
+#string STR_VR_PS1_THRESHOLD_INFO_HELP         #language en-US "Current PS1 Threshold"
+#string STR_VR_PS1_THRESHOLD_INFO_STRING       #language en-US "Current PS1 Threshold"
+#string STR_VR_PS1_THRESHOLD_INFO_VALUE0       #language en-US ""
+#string STR_VR_PS1_THRESHOLD_INFO_VALUE1       #language en-US ""
+#string STR_VR_PS1_THRESHOLD_INFO_VALUE2       #language en-US ""
+#string STR_VR_PS1_THRESHOLD_INFO_VALUE3       #language en-US ""
+
+#string STR_VR_PS2_THRESHOLD_INFO_HELP         #language en-US "Current PS2 Threshold"
+#string STR_VR_PS2_THRESHOLD_INFO_STRING       #language en-US "Current PS2 Threshold"
+#string STR_VR_PS2_THRESHOLD_INFO_VALUE0       #language en-US ""
+#string STR_VR_PS2_THRESHOLD_INFO_VALUE1       #language en-US ""
+#string STR_VR_PS2_THRESHOLD_INFO_VALUE2       #language en-US ""
+#string STR_VR_PS2_THRESHOLD_INFO_VALUE3       #language en-US ""
+
+#string STR_VR_PS3_THRESHOLD_INFO_HELP         #language en-US "Current PS3 Threshold"
+#string STR_VR_PS3_THRESHOLD_INFO_STRING       #language en-US "Current PS3 Threshold"
+#string STR_VR_PS3_THRESHOLD_INFO_VALUE0       #language en-US ""
+#string STR_VR_PS3_THRESHOLD_INFO_VALUE1       #language en-US ""
+#string STR_VR_PS3_THRESHOLD_INFO_VALUE2       #language en-US ""
+#string STR_VR_PS3_THRESHOLD_INFO_VALUE3       #language en-US ""
+
+#string STR_VR_IMON_SLOPE_INFO_HELP             #language en-US "Current Imon Slope"
+#string STR_VR_IMON_SLOPE_INFO_STRING           #language en-US "Current Imon Slope"
+#string STR_VR_IMON_SLOPE_INFO_VALUE0           #language en-US ""
+#string STR_VR_IMON_SLOPE_INFO_VALUE1           #language en-US ""
+#string STR_VR_IMON_SLOPE_INFO_VALUE2           #language en-US ""
+#string STR_VR_IMON_SLOPE_INFO_VALUE3           #language en-US ""
+
+#string STR_VR_IMON_OFFSET_INFO_HELP            #language en-US "Current Imon Offset"
+#string STR_VR_IMON_OFFSET_INFO_STRING          #language en-US "Current Imon Offset"
+#string STR_VR_IMON_OFFSET_INFO_VALUE0          #language en-US ""
+#string STR_VR_IMON_OFFSET_INFO_VALUE1          #language en-US ""
+#string STR_VR_IMON_OFFSET_INFO_VALUE2          #language en-US ""
+#string STR_VR_IMON_OFFSET_INFO_VALUE3          #language en-US ""
+
+#string STR_VR_ICCMAX_INFO_HELP                 #language en-US "Current VR ICC MAX"
+#string STR_VR_ICCMAX_INFO_STRING               #language en-US "Current VR ICC MAX"
+#string STR_VR_ICCMAX_INFO_VALUE0               #language en-US ""
+#string STR_VR_ICCMAX_INFO_VALUE1               #language en-US ""
+#string STR_VR_ICCMAX_INFO_VALUE2               #language en-US ""
+#string STR_VR_ICCMAX_INFO_VALUE3               #language en-US ""
+
+#string STR_VR_ICCLIMIT_INFO_HELP               #language en-US "Current VR ICC Limit"
+#string STR_VR_ICCLIMIT_INFO_STRING             #language en-US "Current VR ICC Limit"
+#string STR_VR_ICCLIMIT_INFO_VALUE0             #language en-US ""
+#string STR_VR_ICCLIMIT_INFO_VALUE1             #language en-US ""
+#string STR_VR_ICCLIMIT_INFO_VALUE2             #language en-US ""
+#string STR_VR_ICCLIMIT_INFO_VALUE3             #language en-US ""
+
+#string STR_VR_TDC_CURRENT_LIMIT_INFO_HELP      #language en-US "Current VR Tdc Chosen Mode Current Limit"
+#string STR_VR_TDC_CURRENT_LIMIT_INFO_STRING    #language en-US "Current Tdc Chosen Mode Current Limit"
+#string STR_VR_TDC_CURRENT_LIMIT_INFO_VALUE0    #language en-US ""
+#string STR_VR_TDC_CURRENT_LIMIT_INFO_VALUE1    #language en-US ""
+#string STR_VR_TDC_CURRENT_LIMIT_INFO_VALUE2    #language en-US ""
+#string STR_VR_TDC_CURRENT_LIMIT_INFO_VALUE3    #language en-US ""
+
+#string STR_VR_CONFIG_ENABLE                    #language en-US "VR Config Enable"
+#string STR_VR_CONFIG_ENABLE_HELP               #language en-US "VR Config Enable"
+
+#string STR_AC_LOADLINE                         #language en-US "AC Loadline"
+#string STR_AC_LOADLINE_HELP                    #language en-US "AC Loadline defined in 1/100 mOhms. A value of 100 = 1.00 mOhm, and 1255 = 12.55 mOhm. Range is 0-6249 (0-62.49 mOhms). 0 = AUTO/HW default."
+
+#string STR_DC_LOADLINE                         #language en-US "DC Loadline"
+#string STR_DC_LOADLINE_HELP                    #language en-US "DC Loadline defined in 1/100 mOhms. A value of 100 = 1.00 mOhm, and 1255 = 12.55 mOhm. Range is 0-6249 (0-62.49 mOhms). 0 = AUTO/HW default."
+
+#string STR_VR_CURRENT_LIMIT                    #language en-US "VR Current Limit"
+#string STR_VR_CURRENT_LIMIT_HELP               #language en-US "Voltage Regulator Current Limit (Icc Max). This value represents the Maximum instantaneous current allowed at any given time. The value is represented in 1/4 A increments. A value of 400 = 100A. 0 = AUTO/HW default."
+
+#string STR_CORE_VR_FAST_VMODE                  #language en-US "Core VR Fast Vmode"
+#string STR_CORE_VR_FAST_VMODE_HELP             #language en-US "Core VR Fast Vmode. Use to control Core Fast Vmode Enable/Disable."
+
+#string STR_GT_VR_FAST_VMODE                    #language en-US "GT VR Fast Vmode"
+#string STR_GT_VR_FAST_VMODE_HELP               #language en-US "GT VR Fast Vmode. Use to control GT Fast Vmode Enable/Disable."
+
+#string STR_SA_VR_FAST_VMODE                    #language en-US "SA VR Fast Vmode"
+#string STR_SA_VR_FAST_VMODE_HELP               #language en-US "SA VR Fast Vmode. Use to control SA Fast Vmode Enable/Disable."
+
+#string STR_VR_FAST_VMODE_ICC_LIMIT             #language en-US "  VR Fast Vmode ICC Limit"
+#string STR_VR_FAST_VMODE_ICC_LIMIT_HELP        #language en-US "Voltage Regulator Fast Vmode ICC Limit. A value of 400 = 100A. This value represents the current threshold where the VR would initiate reactive protection if Fast Vmode is enabled. The value is represented in 1/4 A increments."
+
+#string STR_VR_FAST_VMODE_ICC_LIMIT_POPUP_WARN_MAX   #language en-US "ICC Limit can't be greater than max allowed value. Set back to max allowed value!"
+
+#string STR_PS1_THRESHOLD                      #language en-US "PS1 Current Threshold"
+#string STR_PS1_THRESHOLD_HELP                 #language en-US "PS1 Current Threshold, defined in 1/4 A increments. A value of 400 = 100A. Range 0-512, which translates to 0-128A. 0 = AUTO."
+
+#string STR_PS2_THRESHOLD                      #language en-US "PS2 Current Threshold"
+#string STR_PS2_THRESHOLD_HELP                 #language en-US "PS2 Current Threshold, defined in 1/4 A increments. A value of 400 = 100A. Range 0-512, which translates to 0-128A. 0 = AUTO. Make sure PS2 <= PS1"
+
+#string STR_PS3_THRESHOLD                      #language en-US "PS3 Current Threshold"
+#string STR_PS3_THRESHOLD_HELP                 #language en-US "PS3 Current Threshold, defined in 1/4 A increments. A value of 400 = 100A. Range 0-512, which translates to 0-128A. 0 = AUTO. Make sure PS3 <= PS2"
+
+#string STR_PS3_ENABLE                         #language en-US "PS3 Enable"
+#string STR_PS3_ENABLE_HELP                    #language en-US "PS3 Enable/Disable. 0 - Disabled, 1 - Enabled."
+
+#string STR_PS4_ENABLE                         #language en-US "PS4 Enable"
+#string STR_PS4_ENABLE_HELP                    #language en-US "PS4 Enable/Disable. 0 - Disabled, 1 - Enabled."
+
+#string STR_VR_VOLTAGE_LIMIT                    #language en-US "VR Voltage Limit"
+#string STR_VR_VOLTAGE_LIMIT_HELP               #language en-US "Voltage Limit (VMAX). This value represents the Maximum instantaneous voltage allowed at any given time. Range is 1 - 7999mV. 0 = AUTO/HW default."
+
+#string STR_IMON_SLOPE                          #language en-US "IMON Slope"
+#string STR_IMON_SLOPE_HELP                     #language en-US "IMON Slope defined in 1/100 increments. Range is 0-200. For a 1.25 slope, enter 125. 0 = AUTO/HW default."
+
+#string STR_IMON_OFFSET                         #language en-US "IMON Offset"
+#string STR_IMON_OFFSET_HELP                    #language en-US "IMON Offset defined in 1/1000 increments. Range is 0-128000. For an offset of 25.348, enter 25348."
+
+#string STR_IMON_OFFSET_PREFIX                  #language en-US "IMON Prefix"
+#string STR_IMON_OFFSET_PREFIX_HELP             #language en-US "Sets the offset value as positive or negative."
+
+#string STR_POSITIVE_SIGN                       #language en-US "+"
+#string STR_NEGATIVE_SIGN                       #language en-US "-"
+
+#string STR_ISYS_CURRENT_LIMIT_L1               #language en-US "ISYS Current Limit L1"
+#string STR_ISYS_CURRENT_LIMIT_L1_HELP          #language en-US "This field indicated the current limitation of L1. Units of measurements are 1/8 A. For a 6.5 A, enter 52 (0x34)."
+
+#string STR_ISYS_CURRENT_LIMIT_L1_ENABLE        #language en-US "ISYS Current Limit L1 Enable"
+#string STR_ISYS_CURRENT_LIMIT_L1_ENABLE_HELP   #language en-US "This bits enables disables ISYS_CURRENT_LIMIT_L1 algorithm"
+
+#string STR_ISYS_CURRENT_L1_TAU                 #language en-US "ISYS Current Limit L1 Tau"
+#string STR_ISYS_CURRENT_L1_TAU_HELP            #language en-US "Isys L1 time window value in seconds. The value may vary from 0 to 128. 0 = default values. Specifies the time window used to calculate average current for ISYS_L1."
+
+#string STR_THETA_IBATT                         #language en-US "ThETA Ibatt Feature"
+#string STR_THETA_IBATT_HELP                    #language en-US "Enable/Disable ThETA Ibatt Feature"
+
+#string STR_ISYS_CURRENT_LIMIT_L2               #language en-US "ISYS Current Limit L2"
+#string STR_ISYS_CURRENT_LIMIT_L2_HELP          #language en-US "This field indicated the current limitation of L2. Units of measurements are 1/8 A. For a 6.5 A, enter 52 (0x34)."
+
+#string STR_ISYS_CURRENT_LIMIT_L2_ENABLE        #language en-US "ISYS Current Limit L2 Enable"
+#string STR_ISYS_CURRENT_LIMIT_L2_ENABLE_HELP   #language en-US "This bits enables disables ISYS_CURRENT_LIMIT_L2 algorithm"
+
+#string STR_VSYS_MAX                            #language en-US "Vsys Max"
+#string STR_VSYS_MAX_HELP                       #language en-US "Vsys Max defined in 1/1000 increments. Range is 0-65535. For a 1.25 voltage, enter 1250."
+
+#string STR_PSYS_SLOPE                          #language en-US "PSYS Slope"
+#string STR_PSYS_SLOPE_HELP                     #language en-US "PSYS Slope defined in 1/100 increments. Range is 0-200. For a 1.25 slope, enter 125. 0 = AUTO."
+
+#string STR_PSYS_OFFSET                         #language en-US "PSYS Offset"
+#string STR_PSYS_OFFSET_HELP                    #language en-US "PSYS Offset defined in 1/1000 increments. Range is 0-128000. For an offset of 25.348, enter 25348."
+
+#string STR_PSYS_OFFSET_PREFIX                  #language en-US "PSYS Prefix"
+#string STR_PSYS_OFFSET_PREFIX_HELP             #language en-US "Sets the offset value as positive or negative."
+
+#string STR_PSYS_MAX                            #language en-US "PSYS PMax Power"
+#string STR_PSYS_MAX_HELP                       #language en-US "Psys Pmax power, defined in 1/8 Watt or 1/8 Percent increments. For Watts, range is 0-8191 (ex. For 125W, enter 1000). For ATX12VO Percent, Range is 0-1600 (ex. For recommended value of 200%, enter 1600). Uses BIOS VR mailbox command 0xB."
+
+#string STR_VSYS_PSYS_CRITICAL                  #language en-US "Vsys/Psys Critical"
+#string STR_VSYS_PSYS_CRITICAL_HELP             #language en-US "Vsys/Psys Critical Enable or disable"
+#string STR_VSYS_CRITICAL                       #language en-US "Vsys Critical"
+#string STR_PSYS_CRITICAL                       #language en-US "Psys Critical"
+#string STR_VSYS_PSYS_FULL_SCALE                #language en-US "Vsys/Psys Full Scale"
+#string STR_VSYS_PSYS_FULL_SCALE_HELP           #language en-US "Input Vsys or Psys Full-Scale and Critical Threshold to program Vsys/Psys Critical (0x4A) register. Critical Limit Trigger = (Critical Threshold/Full-Scale) * 0xFF. Input for Vsys is in Milli-Volts. For Psys either in Milli-Watts or Milli-Percent. For ATX12VO systems, recommended value is 200000. "
+#string STR_VSYS_PSYS_CRITICAL_THRESHOLD        #language en-US "Vsys/Psys Critical Threshold"
+#string STR_VSYS_PSYS_CRITICAL_THRESHOLD_HELP   #language en-US "Input Vsys or Psys Full-Scale and Critical Threshold to program Vsys/Psys Critical (0x4A) register. Critical Limit Trigger = (Critical Threshold/Full-Scale) * 0xFF. Input for Vsys is in Milli-Volts. For Psys either in Milli-Watts or Milli-Percent. For ATX12VO systems, recommended value is 120000. "
+#string STR_VSYS_ASSERTION_MANTISSA             #language en-US "Assertion Deglitch Mantissa "
+#string STR_VSYS_ASSERTION_MANTISSA_HELP        #language en-US "Assertion Deglitch Mantissa 0x4F[7-3]. Assertion Deglitch = 2µs * Mantissa * 2^(Exponent) "
+#string STR_VSYS_ASSERTION_EXPONENT             #language en-US "Assertion Deglitch Exponent "
+#string STR_VSYS_ASSERTION_EXPONENT_HELP        #language en-US "Assertion Deglitch Exponent 0x4F[3-0]. Assertion Deglitch = 2µs * Mantissa * 2^(Exponent)"
+#string STR_VSYS_DEASSERTION_MANTISSA           #language en-US "De assertion Deglitch Mantissa"
+#string STR_VSYS_DEASSERTION_MANTISSA_HELP      #language en-US "De Assertion Deglitch Mantissa 0x49[7-3]. Assertion Deglitch = 2µs * Mantissa * 2^(Exponent) "
+#string STR_VSYS_DEASSERTION_EXPONENT           #language en-US "De assertion Deglitch Exponent"
+#string STR_VSYS_DEASSERTION_EXPONENT_HELP      #language en-US "De Assertion Deglitch Exponent 0x49[3-0]. Assertion Deglitch = 2µs * Mantissa * 2^(Exponent) "
+
+#string STR_ACOUSTIC_NOISE_MITIGATION           #language en-US "Acoustic Noise Mitigation"
+#string STR_ACOUSTIC_NOISE_MITIGATION_HELP      #language en-US "Enabling this option will help mitigate acoustic noise on certain SKUs when the CPU is in deeper C state"
+
+#string STR_FALSE                               #language en-US "False"
+#string STR_TRUE                                #language en-US "True"
+
+#string STR_PRE_WAKE                            #language en-US "Pre Wake Time"
+#string STR_PRE_WAKE_HELP                       #language en-US "Set the maximum Pre Wake randomization time in micro ticks. Range is 0-255. This is for acoustic noise mitigation Dynamic Periodicity Alteration (DPA) tuning."
+#string STR_RAMP_UP                             #language en-US "Ramp Up Time"
+#string STR_RAMP_UP_HELP                        #language en-US "Set the maximum Ramp Up randomization time in micro ticks. Range is 0-255. This is for acoustic noise mitigation Dynamic Periodicity Alteration (DPA) tuning."
+#string STR_RAMP_DOWN                           #language en-US "Ramp Down Time"
+#string STR_RAMP_DOWN_HELP                      #language en-US "Set the maximum Ramp Down randomization time in micro ticks. Range is 0-255. This is for acoustic noise mitigation Dynamic Periodicity Alteration (DPA) tuning."
+
+#string STR_FAST_PKG_C_RAMP_DISABLE             #language en-US "Disable Fast PKG C State Ramp"
+#string STR_FAST_PKG_C_RAMP_DISABLE_HELP        #language en-US "This option needs to be configured to reduce acoustic noise during deeper C states. False: Don't disable Fast ramp during deeper C states; True: Disable Fast ramp during deeper C state"
+
+#string STR_SLOW_SLEW_RATE_CONFIG               #language en-US "Slow Slew Rate"
+#string STR_IA_SLOW_SLEW_RATE_CONFIG_HELP       #language en-US "Set VR Core Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4, 8, 16 to slow down the slew rate to help minimize acoustic noise"
+#string STR_GT_SLOW_SLEW_RATE_CONFIG_HELP       #language en-US "Set VR GT Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4, 8 to slow down the slew rate to help minimize acoustic noise; divide by 16 is disabled"
+
+#string STR_FAST_2                              #language en-US "Fast/2"
+#string STR_FAST_4                              #language en-US "Fast/4"
+#string STR_FAST_8                              #language en-US "Fast/8"
+#string STR_FAST_16                             #language en-US "Fast/16"
+
+#string STR_TDC_ENABLE                          #language en-US "TDC Enable"
+#string STR_TDC_ENABLE_HELP                     #language en-US "VR TDC Enable. 0- Disable, 1 - Enable"
+
+#string STR_TDC_MODE                            #language en-US "TDC Mode"
+#string STR_TDC_MODE_HELP                       #language en-US "VR TDC Mode Based on supported bit from Mailbox. Support bit set to 1 means IRMS supported and IRMS will display as an option of TDC Mode"
+#string STR_IRMS                                #language en-US "IRMS"
+#string STR_IPL2                                #language en-US "iPL2"
+
+#string STR_TDC_CURRENT_LIMIT                   #language en-US "TDC Chosen Mode Current Limit"
+#string STR_TDC_CURRENT_LIMIT_HELP              #language en-US "VR TDC Chosen Mode Current Limit, defined in 1/8A increments. Range 0-32767. For a TDC Current Limit of 125A, enter 1000. 0 = use processor default setting."
+
+#string STR_TDC_TIME_WINDOW                     #language en-US "TDC Chosen Mode Time Window"
+#string STR_TDC_TIME_WINDOW_HELP                #language en-US "VR TDC Chosen Mode Time Window, value in seconds. Auto = use processor default setting. Range from 1s to 448s."
+
+#string STR_TIMEWINDOW_1S                       #language en-US "1 sec"
+#string STR_TIMEWINDOW_2S                       #language en-US "2 sec"
+#string STR_TIMEWINDOW_3S                       #language en-US "3 sec"
+#string STR_TIMEWINDOW_4S                       #language en-US "4 sec"
+#string STR_TIMEWINDOW_5S                       #language en-US "5 sec"
+#string STR_TIMEWINDOW_6S                       #language en-US "6 sec"
+#string STR_TIMEWINDOW_7S                       #language en-US "7 sec"
+#string STR_TIMEWINDOW_8S                       #language en-US "8 sec"
+#string STR_TIMEWINDOW_10S                      #language en-US "10 sec"
+#string STR_TIMEWINDOW_12S                      #language en-US "12 sec"
+#string STR_TIMEWINDOW_14S                      #language en-US "14 sec"
+#string STR_TIMEWINDOW_16S                      #language en-US "16 sec"
+#string STR_TIMEWINDOW_20S                      #language en-US "20 sec"
+#string STR_TIMEWINDOW_24S                      #language en-US "24 sec"
+#string STR_TIMEWINDOW_28S                      #language en-US "28 sec"
+#string STR_TIMEWINDOW_32S                      #language en-US "32 sec"
+#string STR_TIMEWINDOW_40S                      #language en-US "40 sec"
+#string STR_TIMEWINDOW_48S                      #language en-US "48 sec"
+#string STR_TIMEWINDOW_56S                      #language en-US "56 sec"
+#string STR_TIMEWINDOW_64S                      #language en-US "64 sec"
+#string STR_TIMEWINDOW_80S                      #language en-US "80 sec"
+#string STR_TIMEWINDOW_96S                      #language en-US "96 sec"
+#string STR_TIMEWINDOW_112S                     #language en-US "112 sec"
+#string STR_TIMEWINDOW_128S                     #language en-US "128 sec"
+#string STR_TIMEWINDOW_160S                     #language en-US "160 sec"
+#string STR_TIMEWINDOW_192S                     #language en-US "192 sec"
+#string STR_TIMEWINDOW_224S                     #language en-US "224 sec"
+#string STR_TIMEWINDOW_256S                     #language en-US "256 sec"
+#string STR_TIMEWINDOW_320S                     #language en-US "320 sec"
+#string STR_TIMEWINDOW_384S                     #language en-US "384 sec"
+#string STR_TIMEWINDOW_448S                     #language en-US "448 sec"
+
+#string STR_TDC_LOCK                            #language en-US "TDC Lock"
+#string STR_TDC_LOCK_HELP                       #language en-US "VR TDC Lock"
+
+#string STR_TURBO_RATIO_LIMIT_STRING            #language en-US "Turbo Ratio Limits"
+
+//
+// Turbo Ratio Limit NumCore (TRLC) information
+//
+#string STR_TURBO_RATIO_LIMIT_NUMCORE0_HELP     #language en-US "Performance-core Turbo Ratio Limit Core0 (TRLC) defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio0. If value is zero, this entry is ignored."
+#string STR_TURBO_RATIO_LIMIT_NUMCORE0_STRING   #language en-US "P-core Turbo Ratio Limit Core0 (TRLC)"
+#string STR_TURBO_RATIO_LIMIT_NUMCORE0_VALUE    #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_NUMCORE1_HELP     #language en-US "Performance-core Turbo Ratio Limit Core1 (TRLC) defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio1. If value is zero, this entry is ignored."
+#string STR_TURBO_RATIO_LIMIT_NUMCORE1_STRING   #language en-US "P-core Turbo Ratio Limit Core1 (TRLC)"
+#string STR_TURBO_RATIO_LIMIT_NUMCORE1_VALUE    #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_NUMCORE2_HELP     #language en-US "Performance-core Turbo Ratio Limit Core2 (TRLC) defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio2. If value is zero, this entry is ignored."
+#string STR_TURBO_RATIO_LIMIT_NUMCORE2_STRING   #language en-US "P-core Turbo Ratio Limit Core2 (TRLC)"
+#string STR_TURBO_RATIO_LIMIT_NUMCORE2_VALUE    #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_NUMCORE3_HELP     #language en-US "Performance-core Turbo Ratio Limit Core3 (TRLC)defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio3. If value is zero, this entry is ignored."
+#string STR_TURBO_RATIO_LIMIT_NUMCORE3_STRING   #language en-US "P-core Turbo Ratio Limit Core3 (TRLC)"
+#string STR_TURBO_RATIO_LIMIT_NUMCORE3_VALUE    #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_NUMCORE4_HELP     #language en-US "Performance-core Turbo Ratio Limit Core4 (TRLC) defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio4. If value is zero, this entry is ignored."
+#string STR_TURBO_RATIO_LIMIT_NUMCORE4_STRING   #language en-US "P-core Turbo Ratio Limit Core4 (TRLC)"
+#string STR_TURBO_RATIO_LIMIT_NUMCORE4_VALUE    #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_NUMCORE5_HELP     #language en-US "Performance-core Turbo Ratio Limit Core5 (TRLC) defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio5. If value is zero, this entry is ignored."
+#string STR_TURBO_RATIO_LIMIT_NUMCORE5_STRING   #language en-US "P-core Turbo Ratio Limit Core5 (TRLC)"
+#string STR_TURBO_RATIO_LIMIT_NUMCORE5_VALUE    #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_NUMCORE6_HELP     #language en-US "Performance-core Turbo Ratio Limit Core6 (TRLC) defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio6. If value is zero, this entry is ignored."
+#string STR_TURBO_RATIO_LIMIT_NUMCORE6_STRING   #language en-US "P-core Turbo Ratio Limit Core6 (TRLC)"
+#string STR_TURBO_RATIO_LIMIT_NUMCORE6_VALUE    #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_NUMCORE7_HELP     #language en-US "Performance-core Turbo Ratio Limit Core7 (TRLC) defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio7. If value is zero, this entry is ignored."
+#string STR_TURBO_RATIO_LIMIT_NUMCORE7_STRING   #language en-US "P-core Turbo Ratio Limit Core7 (TRLC)"
+#string STR_TURBO_RATIO_LIMIT_NUMCORE7_VALUE    #language en-US ""
+
+//
+// Turbo Ratio Limit Ratio (TRLR) information
+//
+#string STR_TURBO_RATIO_LIMIT_RATIO0_HELP       #language en-US "Performance-core Turbo Ratio Limit Ratio0 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO0_STRING     #language en-US "P-core Turbo Ratio Limit Ratio0 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO0_VALUE      #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_RATIO1_HELP       #language en-US "Performance-core Turbo Ratio Limit Ratio1 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO1_STRING     #language en-US "P-core Turbo Ratio Limit Ratio1 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO1_VALUE      #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_RATIO2_HELP       #language en-US "Performance-core Turbo Ratio Limit Ratio2 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO2_STRING     #language en-US "P-core Turbo Ratio Limit Ratio2 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO2_VALUE      #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_RATIO3_HELP       #language en-US "Performance-core Turbo Ratio Limit Ratio3 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO3_STRING     #language en-US "P-core Turbo Ratio Limit Ratio3 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO3_VALUE      #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_RATIO4_HELP       #language en-US "Performance-core Turbo Ratio Limit Ratio4 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO4_STRING     #language en-US "P-core Turbo Ratio Limit Ratio4 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO4_VALUE      #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_RATIO5_HELP       #language en-US "Performance-core Turbo Ratio Limit Ratio5 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO5_STRING     #language en-US "P-core Turbo Ratio Limit Ratio5 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO5_VALUE      #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_RATIO6_HELP       #language en-US "Performance-core Turbo Ratio Limit Ratio6 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO6_STRING     #language en-US "P-core Turbo Ratio Limit Ratio6 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO6_VALUE      #language en-US ""
+
+#string STR_TURBO_RATIO_LIMIT_RATIO7_HELP       #language en-US "Performance-core Turbo Ratio Limit Ratio7 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO7_STRING     #language en-US "P-core Turbo Ratio Limit Ratio7 (TRLR)"
+#string STR_TURBO_RATIO_LIMIT_RATIO7_VALUE      #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE0_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount0 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio0. If value is zero, this entry is ignored."
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE0_STRING        #language en-US "E-core Turbo Ratio Limit CoreCount0"
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE0_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE1_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount1 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio1. If value is zero, this entry is ignored."
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE1_STRING        #language en-US "E-core Turbo Ratio Limit CoreCount1"
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE1_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE2_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount2 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio2. If value is zero, this entry is ignored."
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE2_STRING        #language en-US "E-core Turbo Ratio Limit CoreCount2"
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE2_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE3_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount3 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio3. If value is zero, this entry is ignored."
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE3_STRING        #language en-US "E-core Turbo Ratio Limit CoreCount3"
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE3_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE4_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount4 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio4. If value is zero, this entry is ignored."
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE4_STRING        #language en-US "E-core Turbo Ratio Limit CoreCount4"
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE4_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE5_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount5 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio5. If value is zero, this entry is ignored."
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE5_STRING        #language en-US "E-core Turbo Ratio Limit CoreCount5"
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE5_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE6_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount6 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio6. If value is zero, this entry is ignored."
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE6_STRING        #language en-US "E-core Turbo Ratio Limit CoreCount6"
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE6_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE7_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount7 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio7. If value is zero, this entry is ignored."
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE7_STRING        #language en-US "E-core Turbo Ratio Limit CoreCount7"
+#string STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE7_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO0_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio0 defines the turbo ratio, the core range is defined in E-core Turbo Ratio Limit CoreCount0."
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO0_STRING        #language en-US "E-core Turbo Ratio Limit Ratio0"
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO0_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO1_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio1 defines the turbo ratio, the core range is defined in E-core Turbo Ratio Limit CoreCount1."
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO1_STRING        #language en-US "E-core Turbo Ratio Limit Ratio1"
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO1_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO2_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio2 defines the turbo ratio, the core range is defined in E-core Turbo Ratio Limit CoreCount2."
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO2_STRING        #language en-US "E-core Turbo Ratio Limit Ratio2"
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO2_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO3_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio3 defines the turbo ratio, the core range is defined in E-core Turbo Ratio Limit CoreCount3."
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO3_STRING        #language en-US "E-core Turbo Ratio Limit Ratio3"
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO3_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO4_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio4 defines the turbo ratio, the core range is defined in E-core Turbo Ratio Limit CoreCount4."
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO4_STRING        #language en-US "E-core Turbo Ratio Limit Ratio4"
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO4_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO5_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio5 defines the turbo ratio, the core range is defined in E-core Turbo Ratio Limit CoreCount5."
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO5_STRING        #language en-US "E-core Turbo Ratio Limit Ratio5"
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO5_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO6_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio6 defines the turbo ratio, the core range is defined in E-core Turbo Ratio Limit CoreCount6."
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO6_STRING        #language en-US "E-core Turbo Ratio Limit Ratio6"
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO6_VALUE         #language en-US ""
+
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO7_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio7 defines the turbo ratio, the core range is defined in E-core Turbo Ratio Limit CoreCount7."
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO7_STRING        #language en-US "E-core Turbo Ratio Limit Ratio7"
+#string STR_ATOM_TURBO_RATIO_LIMIT_RATIO7_VALUE         #language en-US ""
+
+//
+// Turbo Ratio Limit NumCore (TRLC) override
+//
+#string STR_TRLC_CORE0_OVERRIDE_HELP            #language en-US "Performance-core Turbo Ratio Limit Core0 defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio0. If value is zero, this entry is ignored."
+#string STR_TRLC_CORE0_OVERRIDE                 #language en-US "P-core Turbo Ratio Limit Core0"
+
+#string STR_TRLC_CORE1_OVERRIDE_HELP            #language en-US "Performance-core Turbo Ratio Limit Core1 defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio1. If value is zero, this entry is ignored."
+#string STR_TRLC_CORE1_OVERRIDE                 #language en-US "P-core Turbo Ratio Limit Core1"
+
+#string STR_TRLC_CORE2_OVERRIDE_HELP            #language en-US "Performance-core Turbo Ratio Limit Core2 defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio2. If value is zero, this entry is ignored."
+#string STR_TRLC_CORE2_OVERRIDE                 #language en-US "P-core Turbo Ratio Limit Core2"
+
+#string STR_TRLC_CORE3_OVERRIDE_HELP            #language en-US "Performance-core Turbo Ratio Limit Core3 defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio3. If value is zero, this entry is ignored."
+#string STR_TRLC_CORE3_OVERRIDE                 #language en-US "P-core Turbo Ratio Limit Core3"
+
+#string STR_TRLC_CORE4_OVERRIDE_HELP            #language en-US "Performance-core Turbo Ratio Limit Core4 defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio4. If value is zero, this entry is ignored."
+#string STR_TRLC_CORE4_OVERRIDE                 #language en-US "P-core Turbo Ratio Limit Core4"
+
+#string STR_TRLC_CORE5_OVERRIDE_HELP            #language en-US "Performance-core Turbo Ratio Limit Core5 defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio5. If value is zero, this entry is ignored."
+#string STR_TRLC_CORE5_OVERRIDE                 #language en-US "P-core Turbo Ratio Limit Core5"
+
+#string STR_TRLC_CORE6_OVERRIDE_HELP            #language en-US "Performance-core Turbo Ratio Limit Core6 defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio6. If value is zero, this entry is ignored."
+#string STR_TRLC_CORE6_OVERRIDE                 #language en-US "P-core Turbo Ratio Limit Core6"
+
+#string STR_TRLC_CORE7_OVERRIDE_HELP            #language en-US "Performance-core Turbo Ratio Limit Core7 defines the core range, the turbo ratio is defined in Turbo Ratio Limit Ratio7. If value is zero, this entry is ignored."
+#string STR_TRLC_CORE7_OVERRIDE                 #language en-US "P-core Turbo Ratio Limit Core7"
+
+//
+// Turbo Ratio Limit Ratio (TRLR) Override
+//
+#string STR_TRLR_RATIO0_OVERRIDE_HELP           #language en-US "Performance-core Turbo Ratio Limit Ratio0 (TRLR) with range of Max Non-Turbo Ratio to 120.This Turbo Ratio Limit Ratio0 must be greater than or equal all other ratio values. If this value is invalid, then set all other active cores to minimum. Otherwise, align the Ratio Limit to 0.\n\nPlease check each active cores"
+#string STR_TRLR_RATIO0_OVERRIDE                #language en-US "P-core Turbo Ratio Limit Ratio0 (TRLR)"
+
+#string STR_TRLR_RATIO1_OVERRIDE_HELP           #language en-US "Performance-core Turbo Ratio Limit Ratio1 (TRLR) with range of Max Non-Turbo Ratio to 120.This Turbo Ratio Limit Ratio1 must be <= to Turbo Ratio Limit Ratio0."
+#string STR_TRLR_RATIO1_OVERRIDE                #language en-US "P-core Turbo Ratio Limit Ratio1 (TRLR)"
+
+#string STR_TRLR_RATIO2_OVERRIDE_HELP           #language en-US "Performance-core Turbo Ratio Limit Ratio2 (TRLR) with range of Max Non-Turbo Ratio to 120.This Turbo Ratio Limit Ratio2 must be <= to Turbo Ratio Limit Ratio1."
+#string STR_TRLR_RATIO2_OVERRIDE                #language en-US "P-core Turbo Ratio Limit Ratio2 (TRLR)"
+
+#string STR_TRLR_RATIO3_OVERRIDE_HELP           #language en-US "Performance-core Turbo Ratio Limit Ratio3 (TRLR) with range of Max Non-Turbo Ratio to 120.This Turbo Ratio Limit Ratio3 must be <= to Turbo Ratio Limit Ratio2."
+#string STR_TRLR_RATIO3_OVERRIDE                #language en-US "P-core Turbo Ratio Limit Ratio3 (TRLR)"
+
+#string STR_TRLR_RATIO4_OVERRIDE_HELP           #language en-US "Performance-core Turbo Ratio Limit Ratio4 (TRLR) with range of Max Non-Turbo Ratio to 120.This Turbo Ratio Limit Ratio4 must be <= to Turbo Ratio Limit Ratio3."
+#string STR_TRLR_RATIO4_OVERRIDE                #language en-US "P-core Turbo Ratio Limit Ratio4 (TRLR)"
+
+#string STR_TRLR_RATIO5_OVERRIDE_HELP           #language en-US "Performance-core Turbo Ratio Limit Ratio5 (TRLR) with range of Max Non-Turbo Ratio to 120.This Turbo Ratio Limit Ratio5 must be <= to Turbo Ratio Limit Ratio4."
+#string STR_TRLR_RATIO5_OVERRIDE                #language en-US "P-core Turbo Ratio Limit Ratio5 (TRLR)"
+
+#string STR_TRLR_RATIO6_OVERRIDE_HELP           #language en-US "Performance-core Turbo Ratio Limit Ratio6 (TRLR) with range of Max Non-Turbo Ratio to 120.This Turbo Ratio Limit Ratio6 must be <= to Turbo Ratio Limit Ratio5."
+#string STR_TRLR_RATIO6_OVERRIDE                #language en-US "P-core Turbo Ratio Limit Ratio6 (TRLR)"
+
+#string STR_TRLR_RATIO7_OVERRIDE_HELP           #language en-US "Performance-core Turbo Ratio Limit Ratio7 (TRLR) with range of Max Non-Turbo Ratio to 120.This Turbo Ratio Limit Ratio7 must be <= to Turbo Ratio Limit Ratio6."
+#string STR_TRLR_RATIO7_OVERRIDE                #language en-US "P-core Turbo Ratio Limit Ratio7 (TRLR)"
+
+#string STR_ATOM_RATIO_LIMIT_NUMCORE0_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount0 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio0. If value is zero, this entry is ignored."
+#string STR_ATOM_RATIO_LIMIT_NUMCORE0        #language en-US "E-core Turbo Ratio Limit CoreCount0"
+
+#string STR_ATOM_RATIO_LIMIT_NUMCORE1_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount1 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio1. If value is zero, this entry is ignored."
+#string STR_ATOM_RATIO_LIMIT_NUMCORE1        #language en-US "E-core Turbo Ratio Limit CoreCount1"
+
+#string STR_ATOM_RATIO_LIMIT_NUMCORE2_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount2 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio2. If value is zero, this entry is ignored."
+#string STR_ATOM_RATIO_LIMIT_NUMCORE2        #language en-US "E-core Turbo Ratio Limit CoreCount2"
+
+#string STR_ATOM_RATIO_LIMIT_NUMCORE3_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount3 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio3. If value is zero, this entry is ignored."
+#string STR_ATOM_RATIO_LIMIT_NUMCORE3        #language en-US "E-core Turbo Ratio Limit CoreCount3"
+
+#string STR_ATOM_RATIO_LIMIT_NUMCORE4_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount4 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio4. If value is zero, this entry is ignored."
+#string STR_ATOM_RATIO_LIMIT_NUMCORE4        #language en-US "E-core Turbo Ratio Limit CoreCount4"
+
+#string STR_ATOM_RATIO_LIMIT_NUMCORE5_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount5 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio5. If value is zero, this entry is ignored."
+#string STR_ATOM_RATIO_LIMIT_NUMCORE5        #language en-US "E-core Turbo Ratio Limit CoreCount5"
+
+#string STR_ATOM_RATIO_LIMIT_NUMCORE6_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount6 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio6. If value is zero, this entry is ignored."
+#string STR_ATOM_RATIO_LIMIT_NUMCORE6        #language en-US "E-core Turbo Ratio Limit CoreCount6"
+
+#string STR_ATOM_RATIO_LIMIT_NUMCORE7_HELP          #language en-US "Efficient-core Turbo Ratio Limit CoreCount7 defines the core range, the turbo ratio is defined in E-core Turbo Ratio Limit Ratio7. If value is zero, this entry is ignored."
+#string STR_ATOM_RATIO_LIMIT_NUMCORE7        #language en-US "E-core Turbo Ratio Limit CoreCount7"
+
+#string STR_ATOM_RATIO_LIMIT_RATIO0_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio0 defines the turbo ratio, the core range is defined in E-core Turbo Ratio Limit CoreCount0."
+#string STR_ATOM_RATIO_LIMIT_RATIO0        #language en-US "E-core Turbo Ratio Limit Ratio0"
+
+#string STR_ATOM_RATIO_LIMIT_RATIO1_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio1 defines the turbo ratio, the core range is defined in ATOM Turbo Ratio Limit CoreCount1."
+#string STR_ATOM_RATIO_LIMIT_RATIO1        #language en-US "E-core Turbo Ratio Limit Ratio1"
+
+#string STR_ATOM_RATIO_LIMIT_RATIO2_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio2 defines the turbo ratio, the core range is defined in ATOM Turbo Ratio Limit CoreCount2."
+#string STR_ATOM_RATIO_LIMIT_RATIO2        #language en-US "E-core Turbo Ratio Limit Ratio2"
+
+#string STR_ATOM_RATIO_LIMIT_RATIO3_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio3 defines the turbo ratio, the core range is defined in ATOM Turbo Ratio Limit CoreCount3."
+#string STR_ATOM_RATIO_LIMIT_RATIO3        #language en-US "E-core Turbo Ratio Limit Ratio3"
+
+#string STR_ATOM_RATIO_LIMIT_RATIO4_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio4 defines the turbo ratio, the core range is defined in ATOM Turbo Ratio Limit CoreCount4."
+#string STR_ATOM_RATIO_LIMIT_RATIO4        #language en-US "E-core Turbo Ratio Limit Ratio4"
+
+#string STR_ATOM_RATIO_LIMIT_RATIO5_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio5 defines the turbo ratio, the core range is defined in ATOM Turbo Ratio Limit CoreCount5."
+#string STR_ATOM_RATIO_LIMIT_RATIO5        #language en-US "E-core Turbo Ratio Limit Ratio5"
+
+#string STR_ATOM_RATIO_LIMIT_RATIO6_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio6 defines the turbo ratio, the core range is defined in ATOM Turbo Ratio Limit CoreCount6."
+#string STR_ATOM_RATIO_LIMIT_RATIO6        #language en-US "E-core Turbo Ratio Limit Ratio6"
+
+#string STR_ATOM_RATIO_LIMIT_RATIO7_HELP          #language en-US "Efficient-core Turbo Ratio Limit Ratio7 defines the turbo ratio, the core range is defined in ATOM Turbo Ratio Limit CoreCount7."
+#string STR_ATOM_RATIO_LIMIT_RATIO7        #language en-US "E-core Turbo Ratio Limit Ratio7"
+
+#string STR_OC_LOCK                             #language en-US "Overclocking Lock"
+#string STR_OC_LOCK_HELP                        #language en-US "Enable/Disable Overclocking Lock."
+
+#string STR_PM_CST_CFG_CTL_LOCK_PROMPT          #language en-US "CFG Lock"
+#string STR_PM_CST_CFG_CTL_LOCK_PROMPT_HELP     #language en-US "Configure MSR to CFG Lock bit"
+
+#string STR_IRC_MODE_PROMPT                     #language en-US "Interrupt Redirection Mode Selection"
+#string STR_IRC_MODE_HELP                       #language en-US "Interrupt Redirection Mode Select for Logical Interrupts "
+#string STR_IRC_MODE_FIXED                      #language en-US "Fixed Priority"
+#string STR_IRC_MODE_ROUND_ROBIN                #language en-US "Round robin"
+#string STR_IRC_MODE_HASH_VECTOR                #language en-US "Hash Vector"
+#string STR_IRC_MODE_PAIR_FIXED                 #language en-US "PAIR with Fixed Priority"
+#string STR_IRC_MODE_PAIR_ROUND_ROBIN           #language en-US "PAIR with Round Robin"
+#string STR_IRC_MODE_PAIR_HASH_VECTOR           #language en-US "PAIR with Hash Vector"
+#string STR_IRC_MODE_AUTO                       #language en-US "No Change"
+
+#string STR_SEC_PLANE_LOCK_PROMPT_PROMPT        #language en-US "Internal Gfx Current Limit Lock"
+#string STR_SEC_PLANE_LOCK_PROMPT_PROMPT_HELP   #language en-US "Configure MSR 0x602[31], Current Limit Lock bit"
+
+#string STR_LOCAL_X2_APIC_PROMPT                #language en-US "Local x2APIC"
+#string STR_LOCAL_X2_APIC_PROMPT_HELP           #language en-US "Enable Local x2APIC. Some OSes do not support this"
+
+#string STR_EC_TURBO_CONTROL_MODE               #language en-US "EC Turbo Control Mode"
+#string STR_EC_TURBO_CONTROL_MODE_HELP          #language en-US "Enable/Disable EC Turbo Control mode"
+
+#string STR_AC_BRICK_CAPACITY                   #language en-US "  AC Brick Capacity"
+#string STR_AC_BRICK_CAPACITY_HELP              #language en-US "Specify the AC Brick capacity"
+
+#string STR_EC_POLLING_PERIOD                   #language en-US "  EC Polling Period"
+#string STR_EC_POLLING_PERIOD_HELP              #language en-US "Count 1 to 255 for a range of 10ms to 2.55 seconds (1 count = 10ms)"
+
+#string STR_EC_GUARD_BAND                       #language en-US "  EC Guard Band Value"
+#string STR_EC_GUARD_BAND_HELP                  #language en-US "Count 1 to 20 for a range of 1 watt to 20 watts"
+
+#string STR_EC_ALGORITHM_SEL                    #language en-US "  EC Algorithm Selection"
+#string STR_EC_ALGORITHM_SEL_HELP               #language en-US "Count 1 to 10 for Algorithm Selection"
+
+//
+// CPPC
+//
+#string STR_CPPC_PROMPT                         #language en-US "ACPI 5.0 CPPC Support"
+#string STR_CPPC_PROMPT_HELP                    #language en-US "Enable ACPI 5.0 Collaborative Processor Performance Control (CPPC) support. When Enabled, Platform exposes CPPC interfaces to Operating System. When Disabled, Platform exposes legacy (non-CPPC) processor interfaces to Operating System."
+#string STR_CPPC_PLATFORMSCI_PROMPT             #language en-US "  ACPI 5.0 CPPC Platform SCI"
+#string STR_CPPC_PLATFORMSCI_PROMPT_HELP        #language en-US "Enable ACPI 5.0 platform generation of SCI on CPPC command completion. When Enabled, Platform generates GPE/SCI. When Disabled, Platform does not generate GPE/SCI and OS polls for command completion."
+
+#string STR_90W_AC_BRICK                        #language en-US "90W AC Brick"
+#string STR_65W_AC_BRICK                        #language en-US "65W AC Brick"
+#string STR_75W_AC_BRICK                        #language en-US "75W AC Brick"
+
+#string STR_1_CORE_RATIO_LIMIT                  #language en-US "1-Core Ratio Limit Override"
+#string STR_1_CORE_RATIO_LIMIT_HELP             #language en-US "1-Core Ratio Limit with range 0 to 83. The Minimum range may vary between Processors. This 1-Core Ratio Limit Must be greater than or equal to 2-Core Ratio Limit, 3-Core Ratio Limit, 4-Core Ratio Limit."
+
+#string STR_2_CORE_RATIO_LIMIT                  #language en-US "2-Core Ratio Limit Override"
+#string STR_2_CORE_RATIO_LIMIT_HELP             #language en-US "2-Core Ratio Limit with range 0 to 83. The Minimum range may vary between Processors. This 2-Core Ratio Limit Must be Less than or equal to 1-Core Ratio Limit."
+
+#string STR_3_CORE_RATIO_LIMIT                  #language en-US "3-Core Ratio Limit Override"
+#string STR_3_CORE_RATIO_LIMIT_HELP             #language en-US "3-Core Ratio Limit with range 0 to 83. The Minimum range may vary between Processors. This 3-Core Ratio Limit Must be Less than or equal to 1-Core Ratio Limit."
+
+#string STR_4_CORE_RATIO_LIMIT                  #language en-US "4-Core Ratio Limit Override"
+#string STR_4_CORE_RATIO_LIMIT_HELP             #language en-US "4-Core Ratio Limit with range 0 to 83. The Minimum range may vary between Processors. This 4-Core Ratio Limit Must be Less than or equal to 1-Core Ratio Limit."
+
+#string STR_5_CORE_RATIO_LIMIT                  #language en-US "5-Core Ratio Limit Override"
+#string STR_5_CORE_RATIO_LIMIT_HELP             #language en-US "5-Core Ratio Limit with range 0 to 83. The Minimum range may vary between Processors. This 5-Core Ratio Limit Must be Less than or equal to 1-Core Ratio Limit."
+
+#string STR_6_CORE_RATIO_LIMIT                  #language en-US "6-Core Ratio Limit Override"
+#string STR_6_CORE_RATIO_LIMIT_HELP             #language en-US "6-Core Ratio Limit with range 0 to 83. The Minimum range may vary between Processors. This 6-Core Ratio Limit Must be Less than or equal to 1-Core Ratio Limit."
+
+#string STR_7_CORE_RATIO_LIMIT                  #language en-US "7-Core Ratio Limit Override"
+#string STR_7_CORE_RATIO_LIMIT_HELP             #language en-US "7-Core Ratio Limit with range 0 to 83. The Minimum range may vary between Processors. This 7-Core Ratio Limit Must be Less than or equal to 1-Core Ratio Limit."
+
+#string STR_8_CORE_RATIO_LIMIT                  #language en-US "8-Core Ratio Limit Override"
+#string STR_8_CORE_RATIO_LIMIT_HELP             #language en-US "8-Core Ratio Limit with range 0 to 83. The Minimum range may vary between Processors. This 8-Core Ratio Limit Must be Less than or equal to 1-Core Ratio Limit."
+
+#string STR_ENERGY_EFFICIENT_TURBO_PROMPT       #language en-US "Energy Efficient Turbo"
+#string STR_ENERGY_EFFICIENT_TURBO_HELP         #language en-US "Enable/Disable Energy Efficient Turbo Feature. This feature will opportunistically lower the turbo frequency to increase efficiency. Recommended only to disable in overclocking situations where turbo frequency must remain constant. Otherwise, leave enabled."
+
+#string STR_BIOS_GUARD_PROMPT                   #language en-US "BIOS Guard"
+#string STR_CPU_BIOS_GUARD_FORM_TITLE           #language en-US "BIOS Guard"
+#string STR_BIOS_GUARD_HELP                     #language en-US "Configure BIOS Guard feature. Options are: DISABLE - Disable BIOS Guard Feature; ENABLE - Enable BIOS Guard Feature. NOTE: This option should not be present on Production System"
+
+#string STR_SAF_MODE_ACTIVE_STRING              #language en-US "SAF Mode is Active"
+#string STR_BIOS_GUARD_SAF_MODE_DISABLED_STRING #language en-US "BIOS Guard has been disabled due to incompatibility with SAF Mode"
+
+#string STR_PROCESSOR_RESET_AUX_STRING     #language en-US "Reset AUX Content"
+#string STR_PROCESSOR_RESET_AUX_HELP       #language en-US "Reset TPM Aux content. Txt may not functional after AUX content gets reset."
+
+#string STR_PKG_C_STATE_LIMIT_PROMPT       #language en-US  "Package C State Limit"
+#string STR_PKG_C_STATE_LIMIT_HELP         #language en-US  "Maximum Package C State Limit Setting. Cpu Default: Leaves to Factory default value.Auto: Initializes to deepest available Package C State Limit."
+#string STR_PKG_C_STATE_LIMIT_C0_C1        #language en-US  "C0/C1"
+#string STR_PKG_C_STATE_LIMIT_C6           #language en-US  "C6"
+#string STR_PKG_C_STATE_LIMIT_C10          #language en-US  "C10"
+#string STR_PKG_C_STATE_LIMIT_CPU_DEFAULT  #language en-US  "Cpu Default"
+#string STR_PKG_C_STATE_LIMIT_AUTO         #language en-US  "Auto"
+
+#string STR_THERMAL_MONITOR_PROMPT         #language en-US "Thermal Monitor "
+#string STR_THERMAL_MONITOR_PROMPT_HELP    #language en-US "Enable/Disable Thermal Monitor"
+
+#string STR_TIMED_MWAIT_PROMPT             #language en-US "Timed MWAIT "
+#string STR_TIMED_MWAIT_PROMPT_HELP        #language en-US "Enable/Disable Timed MWAIT Support"
+
+#string STR_POSITIVE                       #language en-US "+ve"
+#string STR_NEGATIVE                       #language en-US "-ve"
+
+#string STR_POSITIVE                            #language en-US  "Positive"
+#string STR_NEGATIVE                            #language en-US  "Negative"
+
+#string STR_SINGLE_RANGE_OUTPUT                 #language en-US "Single Range Output"
+#string STR_TOPA_OUTPUT                         #language en-US "ToPA Output"
+#string STR_4KB                                 #language en-US "4KB"
+#string STR_8KB                                 #language en-US "8KB"
+#string STR_16KB                                #language en-US "16KB"
+#string STR_32KB                                #language en-US "32KB"
+#string STR_64KB                                #language en-US "64KB"
+#string STR_128KB                               #language en-US "128KB"
+#string STR_256KB                               #language en-US "256KB"
+#string STR_512KB                               #language en-US "512KB"
+#string STR_1MB                                 #language en-US "1MB"
+#string STR_2MB                                 #language en-US "2MB"
+#string STR_4MB                                 #language en-US "4MB"
+#string STR_8MB                                 #language en-US "8MB"
+#string STR_16MB                                #language en-US "16MB"
+#string STR_32MB                                #language en-US "32MB"
+#string STR_64MB                                #language en-US "64MB"
+#string STR_128MB                               #language en-US "128MB"
+#string STR_256MB                               #language en-US "256MB"
+#string STR_512MB                               #language en-US "512MB"
+
+#string STR_ISST_INTERRUPT_CONTROL_PROMPT            #language en-US "Intel(R) Speed Shift Technology Interrupt Control"
+#string STR_ISST_INTERRUPT_CONTROL_HELP              #language en-US "Enable/Disable Intel(R) Speed Shift Technology Interrupts"
+
+#string STR_HWP_REQ_FAST_UNCORE_MSR_PROMPT           #language en-US "Fast uncore MSR for HwP"
+#string STR_HWP_REQ_FAST_UNCORE_MSR_HELP             #language en-US "Enable/Disable Fast uncore MSR for HwP"
+
+
+#string STR_PPIN_SUPPORT_PROMPT                   #language en-US "PPIN Feature Support"
+#string STR_PPIN_SUPPORT_HELP                     #language en-US "PPIN Feature Support to view Protected Processor Inventory Number. Disable to turn off this feature. When 'PPIN Enable Mode' is selected, this shows second option where feature can be enabled based on EOM (End of Manufacturing) flag or it is always enabled"
+#string STR_PPIN_ENABLE_MODE                      #language en-US "PPIN Enable Mode"
+#string STR_PPIN_ENABLE_MODE_PROMPT               #language en-US "PPIN Enable Mode"
+#string STR_PPIN_ENABLE_MODE_HELP                 #language en-US "Enabled will completely enable this feature. EOM Based (End of Manufacturing), will disable this feature if EOM flag is set"
+#string STR_PPIN_EOM_BASED                        #language en-US "EOM Based "
+
+#string STR_AVX_DISABLE_PROMPT                    #language en-US "AVX"
+#string STR_AVX_DISABLE_HELP                      #language en-US "Enable/Disable the AVX and AVX2 Instructions"
+
+#string STR_EPOC_FCLK_PROMPT                      #language en-US "FCLK Frequency for Early Power On"
+#string STR_EPOC_FCLK_HELP                        #language en-US "FCLK frequency can take values of 400MHz, 800MHz  and 1GHz (1GHz not supported for ULT/ULX SKUs)"
+
+#string STR_800MHZ                                #language en-US "Normal (800Mhz)"
+#string STR_400MHZ                                #language en-US "400MHz"
+#string STR_1GHZ                                  #language en-US "1GHz"
+
+#string STR_RACE_TO_HALT_PROMPT                   #language en-US "Race To Halt (RTH)"
+#string STR_RACE_TO_HALT_HELP                     #language en-US "Enable/Disable Race To Halt feature. RTH will dynamically increase CPU frequency in order to enter pkg C-State faster to reduce overall power."
+
+#string STR_PERCENT_5                           #language en-US "5%"
+#string STR_PERCENT_10                          #language en-US "10%"
+#string STR_PERCENT_15                          #language en-US "15%"
+#string STR_PERCENT_20                          #language en-US "20%"
+#string STR_PERCENT_25                          #language en-US "25%"
+#string STR_PERCENT_30                          #language en-US "30%"
+#string STR_PERCENT_35                          #language en-US "35%"
+#string STR_PERCENT_40                          #language en-US "40%"
+#string STR_PERCENT_45                          #language en-US "45%"
+#string STR_PERCENT_50                          #language en-US "50%"
+#string STR_PERCENT_55                          #language en-US "55%"
+#string STR_PERCENT_60                          #language en-US "60%"
+#string STR_PERCENT_65                          #language en-US "65%"
+#string STR_PERCENT_70                          #language en-US "70%"
+#string STR_PERCENT_75                          #language en-US "75%"
+#string STR_PERCENT_80                          #language en-US "80%"
+#string STR_PERCENT_85                          #language en-US "85%"
+#string STR_PERCENT_90                          #language en-US "90%"
+#string STR_PERCENT_95                          #language en-US "95%"
+#string STR_PERCENT_100                         #language en-US "100%"
+#string STR_TSE_PROMPT                          #language en-US "Intel(R) Total Storage Encryption"
+#string STR_TSE_HELP                            #language en-US "Configure Intel(R) Total Storage Encryption"
+#string STR_TME_PROMPT                          #language en-US "Total Memory Encryption"
+#string STR_TME_HELP                            #language en-US "Configure Total Memory Encryption (TME) to protect DRAM data from physical attacks.\nWhen this option is configured as 'Enabled', 'VT-d' option must be 'Enabled'.\nThis option will be grayed out when 'VT-d' option is configured as 'Disabled'."
+#string STR_TME_BYPASS_PROMPT                   #language en-US "Total Memory Encryption (TME) Bypass"
+#string STR_TME_BYPASS_PROMPT_HELP              #language en-US "Disable/Enable Total Memory Encryption (TME)\nIf 'Enabled', then transactions with KeyID0 bypass the encryption in CCE.\n Any other KeyIDs which are configured to encrypted with KeyID0 shall also bypass the encryption in CCE if this bit is set "
+
+#string STR_TDX_PROMPT                          #language en-US "Trust Domain Extension (TDX)"
+#string STR_TDX_PROMPT_HELP                     #language en-US "Enable/Disable Trust Domain Extension (TDX). 'Total Memory Encryption' option must be 'Enabled'.\nThis option will be grayed out when 'Total Memory Encryption' option is configured as 'Disabled'."
+#string STR_CPU_ATOM_CORE_FORM_TITLE            #language en-US "Efficient-core Information"
+#string STR_CPU_ATOM_CORE_FORM_HELP             #language en-US "Displays the E-core Information:  L1/L2 cache includes both E-cores and LP-Ecores, L3 Cache is for P-core and E-core on ring but not shared with LP-Ecores off ring"
+#string STR_CPU_CORE_FORM_TITLE                 #language en-US "Performance-core Information"
+#string STR_CPU_CORE_FORM_HELP                  #language en-US "Displays the P-core Information"
+#string STR_X2APIC_ENABLE_PROMPT                #language en-US "X2APIC Enable"
+#string STR_X2APIC_ENABLE_HELP                  #language en-US "Enable/Disable X2APIC Operating Mode.\nWhen this option is configured as 'Enabled', 'VT-d' option must be 'Enabled'.\nThis option will be grayed out when 'VT-d' option is configured as 'Disabled'."
+
+#string STR_POWER_FLOOR_MANAGEMENT_PROMPT           #language en-US "Power Floor Management"
+#string STR_POWER_FLOOR_MANAGEMENT_HELP             #language en-US "This option is to disable SoC's aggressive throttling to manage floor power (minimum power consumption). Disabling this might effectively raise power floor of the SoC and may lead to stability issues."
+
+#string STR_POWER_FLOOR_DISPLAY_DISCONNECT_PROMPT   #language en-US "  Display Disconnect"
+#string STR_POWER_FLOOR_DISPLAY_DISCONNECT_HELP     #language en-US "When this option is enabled, SoC can disconnect secondary/external display to lower SoC floor power. When disabled, display disconnect will not be used by SoC."
+
+#string STR_POWER_FLOOR_PCIE_GEN_DOWNGRADE_PROMPT   #language en-US "  PCIe Gen Speed Downgrade"
+#string STR_POWER_FLOOR_PCIE_GEN_DOWNGRADE_HELP     #language en-US "When this option is enabled, SoC can reduce PCIe Gen speed to lower SoC floor power. When disabled, Pcie Gen speed reduction option will not be used by SoC."
+
+#string STR_SKIN_TEMP_CONTROL_TITLE                 #language en-US "Skin Temperature Control"
+#string STR_SKIN_TEMP_CONTROL_HELP                  #language en-US "Skin Temperature Control Sensors"
+
+#string STR_SKIN_TEMP_CONTROL_ENABLE_TITLE          #language en-US "Skin Temperature Control Enable"
+#string STR_SKIN_TEMP_CONTROL_ENABLE_HELP           #language en-US "Enables Skin Temperature Control Sensors Feature"
+
+#string STR_SKIN_TEMP_CONTROL_SENSOR_1_FORM_TITLE   #language en-US "Skin Temperature Control First Sensor"
+#string STR_SKIN_TEMP_CONTROL_SENSOR_1_FORM_HELP    #language en-US "Skin Temperature Control First Sensor MMIO"
+
+#string STR_SKIN_TEMP_CONTROL_SENSOR_2_FORM_TITLE   #language en-US "Skin Temperature Control Second Sensor"
+#string STR_SKIN_TEMP_CONTROL_SENSOR_2_FORM_HELP    #language en-US "Skin Temperature Control Second Sensor MMIO"
+
+#string STR_SKIN_TEMP_CONTROL_SENSOR_3_FORM_TITLE   #language en-US "Skin Temperature Control Third Sensor"
+#string STR_SKIN_TEMP_CONTROL_SENSOR_3_FORM_HELP    #language en-US "Skin Temperature Control Third Sensor MMIO"
+
+#string STR_TARGET_TEMP                             #language en-US "Skin Temperature Target"
+#string STR_TARGET_TEMP_HELP                        #language en-US "Target temperature is limit to which the control mechanism is regulating.It is defined in 1/2 °C increments.Range is 0-127.5 °C. For a 0.5 °C temperature, enter 1. 0 = AUTO."
+
+#string STR_SKIN_CONTROL_ENABLE_MMIO                #language en-US "Skin Control Temperature Enable MMIO"
+#string STR_SKIN_CONTROL_ENABLE_MMIO_HELP           #language en-US "Enables the skin temperature control for MMIO register."
+
+#string STR_CONTROL_LOOP_GAIN                       #language en-US "Skin Temperature Loop Gain"
+#string STR_CONTROL_LOOP_GAIN_HELP                  #language en-US "Sets the aggressiveness of control loop where 0 - graceful, favors performance on expense of temperature overshoots and 7 - aggressive, favors tight regulation over performance. Range is 0-7"
+
+#string STR_TEMP_OVERRIDE_ENABLE                    #language en-US "Skin Temperature Override Enable"
+#string STR_TEMP_OVERRIDE_ENABLE_HELP               #language en-US "When set, Pcode will use TEMPERATURE_OVERRIDE values instead of reading from corresponding sensor."
+
+#string STR_MIN_PERFORMANCE_LEVEL                   #language en-US "Skin Temperature Minimum Performance Level"
+#string STR_MIN_PERFORMANCE_LEVEL_HELP              #language en-US "Minimum Performance level below which the STC limit will not throttle. 0 - all levels of throttling allowed incl. survivability actions. 256 - no throttling allowed"
+
+#string STR_TEMP_OVERRIDE                           #language en-US "Skin Temperature Override"
+#string STR_TEMP_OVERRIDE_HELP                      #language en-US "Allows SW to override the input temperature. Pcode will use this value instead of the sensor temperature. EC control is not impacted. Units: 0.5 °C. Values are 0 to 255 which represents 0-127.5 °C range"

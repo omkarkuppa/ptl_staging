@@ -1,0 +1,487 @@
+/** @file
+  CPU PEI Policy Update & initialization.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+  @par Specification Reference:
+
+**/
+#include "PeiCpuPolicyUpdate.h"
+#include <Library/ConfigBlockLib.h>
+#include <Library/CpuPlatformLib.h>
+#include <Library/HobLib.h>
+#include <Library/PeiSiPolicyUpdateLib.h>
+#include <Library/PeiVrDomainLib.h>
+#include <Library/SiPolicyLib.h>
+#include <Library/Tpm12CommandLib.h>
+#include <Library/Tpm2CommandLib.h>
+#include <Library/PayloadResiliencySupportLib.h>
+#include <Ppi/SecPlatformInformation2.h>
+
+#include <PolicyUpdateMacro.h>
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+#include <DptfConfig.h>
+#endif
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+#include <FspmUpd.h>
+#include <FspsUpd.h>
+#include <Library/FspCommonLib.h>
+#endif
+
+/**
+  Update Cpu Power Management Policy settings according to the related BIOS Setup options
+
+  @param[in] SetupData             The Setup variables instance
+  @param[in] CpuSetup              The Setup variables instance
+  @param[in] DptfConfig            Dptf Config Variable
+  @param[in] SiPolicyPpi           The RC POSTMEM Policy PPI instance
+
+  @retval EFI_SUCCESS              The PPI is installed and initialized.
+  @retval EFI ERRORS               The PPI is not successfully installed.
+  @retval EFI_OUT_OF_RESOURCES     Do not have enough resources to initialize the driver
+**/
+EFI_STATUS
+InitCpuPmConfigBySetupValues (
+  IN SETUP_DATA                    *SetupData,
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+  IN DPTF_CONFIG                   *DptfConfig,
+#endif
+  IN CPU_SETUP                     *CpuSetup,
+  IN SI_POLICY_PPI                 *SiPolicyPpi
+  )
+{
+  UINT8                            Index;
+  UINT8                            MaxBusRatio;
+  UINT8                            MinBusRatio;
+  EFI_STATUS                       Status;
+  CPU_POWER_MGMT_BASIC_CONFIG      *CpuPowerMgmtBasicConfig;
+  CPU_POWER_MGMT_CUSTOM_CONFIG     *CpuPowerMgmtCustomConfig;
+
+  Status = EFI_SUCCESS;
+  CpuPowerMgmtBasicConfig = NULL;
+  CpuPowerMgmtCustomConfig = NULL;
+
+  MaxBusRatio = 0;
+  MinBusRatio = 0;
+
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gCpuPowerMgmtBasicConfigGuid, (VOID *) &CpuPowerMgmtBasicConfig);
+  ASSERT_EFI_ERROR (Status);
+
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gCpuPowerMgmtCustomConfigGuid, (VOID *) &CpuPowerMgmtCustomConfig);
+  ASSERT_EFI_ERROR (Status);
+
+  ///
+  /// Get Maximum Non-Turbo bus ratio (HFM) from Platform Info MSR Bits[15:8]
+  /// Get Maximum Efficiency bus ratio (LFM) from Platform Info MSR Bits[47:40]
+  ///
+  GetBusRatio (&MaxBusRatio, &MinBusRatio);
+
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->TurboMode, CpuSetup->TurboMode);
+
+  if (CpuSetup->BootMaxFrequency == 1) {
+    COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->BootFrequency, CpuSetup->BootFrequency);
+  } else {
+    UPDATE_POLICY (CpuPowerMgmtBasicConfig->BootFrequency, 0);
+  }
+
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->TurboPowerLimitLock, CpuSetup->TurboPowerLimitLock             );
+
+  //
+  // Intel Speed Shift Technology
+  //
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->Hwp,                 CpuSetup->EnableHwp          );
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->HwpInterruptControl, CpuSetup->HwpInterruptControl);
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->HwpLock,             CpuSetup->HwpLock            );
+
+  //
+  // Resource Priority Feature
+  //
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->EnableRp, CpuSetup->EnableRp);
+
+  //
+  // HwP Misc Functions
+  //
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->EnableHwpAutoPerCorePstate, CpuSetup->EnableHwpAutoPerCorePstate);
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping,   CpuSetup->EnableHwpAutoEppGrouping  );
+
+  //
+  // Power Floor Survivability controls
+  //
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->PowerFloorManagement,        CpuSetup->PowerFloorManagement);
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->PowerFloorDisplayDisconnect, CpuSetup->PowerFloorDisplayDisconnect);
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade,  CpuSetup->PowerFloorPcieGenDowngrade);
+
+  //
+  // Custom VID table
+  //
+  if (CpuSetup->StateRatio[0] < MinBusRatio) {
+    UPDATE_POLICY (CpuPowerMgmtCustomConfig->CustomRatioTable.MaxRatio, MinBusRatio);
+  } else {
+    COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtCustomConfig->CustomRatioTable.MaxRatio, CpuSetup->StateRatio[0]);
+  }
+
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtCustomConfig->CustomRatioTable.NumberOfEntries, CpuSetup->NumOfCustomPStates);
+
+  for (Index = 0; Index < CpuSetup->NumOfCustomPStates; Index++) {
+    COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtCustomConfig->CustomRatioTable.StateRatio[Index], CpuSetup->StateRatio[Index], Index);
+  }
+
+  if (CpuSetup->NumOfCustomPStates > MAX_16_CUSTOM_RATIO_TABLE_ENTRIES) {
+    for (Index = 0; Index < MAX_16_CUSTOM_RATIO_TABLE_ENTRIES; Index++) {
+      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtCustomConfig->CustomRatioTable.StateRatioMax16[Index], CpuSetup->StateRatioMax16[Index], Index);
+    }
+  }
+
+  //
+  // Update Turbo Ratio limit override table
+  //
+  if (CpuSetup->IsTurboRatioDefaultsInitialized != 0) {
+    for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE; Index++) {
+      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index],     CpuSetup->RatioLimitNumCore[Index],     Index);
+      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index],       CpuSetup->RatioLimitRatio[Index],       Index);
+      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[Index], CpuSetup->AtomRatioLimitNumCore[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[Index],   CpuSetup->AtomRatioLimitRatio[Index],   Index);
+    }
+  }
+
+  //
+  // Update Ring Ratio limits
+  //
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->MinRingRatioLimit,    CpuSetup->MinRingRatioLimit);
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->MaxRingRatioLimit,    CpuSetup->MaxRingRatioLimit);
+
+  return EFI_SUCCESS;
+}
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+/**
+  This routine is used to get Sec Platform Information Record2 Pointer.
+
+  @param[in] PeiServices    Pointer to the PEI services table
+
+  @retval GetSecPlatformInformation2 - The pointer of Sec Platform Information Record2 Pointer.
+**/
+EFI_SEC_PLATFORM_INFORMATION_RECORD2 *
+GetSecPlatformInformation2 (
+  IN EFI_PEI_SERVICES **PeiServices
+  )
+{
+  EFI_SEC_PLATFORM_INFORMATION2_PPI    *SecPlatformInformation2Ppi;
+  EFI_SEC_PLATFORM_INFORMATION_RECORD2 *SecPlatformInformation2 = NULL;
+  UINT64                               InformationSize;
+  EFI_STATUS Status;
+
+  //
+  // Get BIST information from Sec Platform Information2 Ppi firstly
+  //
+  Status = PeiServicesLocatePpi (
+             &gEfiSecPlatformInformation2PpiGuid,   // GUID
+             0,                                     // Instance
+             NULL,                                  // EFI_PEI_PPI_DESCRIPTOR
+             (VOID ** ) &SecPlatformInformation2Ppi // PPI
+             );
+  if (EFI_ERROR(Status)) {
+    DEBUG((DEBUG_ERROR, "LocatePpi SecPlatformInformationPpi2 Status - %r\n", Status));
+    return NULL;
+  }
+
+  InformationSize = 0;
+
+  Status = SecPlatformInformation2Ppi->PlatformInformation2 (
+                                         (CONST EFI_PEI_SERVICES **) PeiServices,
+                                         &InformationSize,
+                                         SecPlatformInformation2
+                                         );
+
+  ASSERT (Status == EFI_BUFFER_TOO_SMALL);
+  if (Status != EFI_BUFFER_TOO_SMALL) {
+    return NULL;
+  }
+
+  SecPlatformInformation2 = AllocatePool((UINTN)InformationSize);
+  ASSERT (SecPlatformInformation2 != NULL);
+  if (SecPlatformInformation2 == NULL) {
+    return NULL;
+  }
+
+  //
+  // Retrieve BIST data from SecPlatform2
+  //
+  Status = SecPlatformInformation2Ppi->PlatformInformation2 (
+                                         (CONST EFI_PEI_SERVICES  **) PeiServices,
+                                         &InformationSize,
+                                         SecPlatformInformation2
+                                         );
+  DEBUG((DEBUG_INFO, "SecPlatformInformation2Ppi->PlatformInformation2 Status - %r\n", Status));
+  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return NULL;
+  }
+
+  return SecPlatformInformation2;
+}
+
+
+/**
+  This routine is used to get Sec Platform Information Record Pointer.
+
+  @param[in] PeiServices    Pointer to the PEI services table
+
+  @retval GetSecPlatformInformation2 - The pointer of Sec Platform Information Record Pointer.
+**/
+EFI_SEC_PLATFORM_INFORMATION_RECORD2 *
+GetSecPlatformInformationInfoInFormat2 (
+  IN EFI_PEI_SERVICES **PeiServices
+  )
+{
+  EFI_SEC_PLATFORM_INFORMATION_PPI     *SecPlatformInformationPpi;
+  EFI_SEC_PLATFORM_INFORMATION_RECORD  *SecPlatformInformation = NULL;
+  EFI_SEC_PLATFORM_INFORMATION_RECORD2 *SecPlatformInformation2;
+  UINT64                               InformationSize;
+  EFI_STATUS                           Status;
+
+  //
+  // Get BIST information from Sec Platform Information
+  //
+  Status = PeiServicesLocatePpi (
+             &gEfiSecPlatformInformationPpiGuid,    // GUID
+             0,                                     // Instance
+             NULL,                                  // EFI_PEI_PPI_DESCRIPTOR
+             (VOID ** ) &SecPlatformInformationPpi  // PPI
+             );
+  if (EFI_ERROR(Status)) {
+    DEBUG((DEBUG_ERROR, "LocatePpi SecPlatformInformationPpi Status - %r\n", Status));
+    return NULL;
+  }
+
+  InformationSize = 0;
+  Status = SecPlatformInformationPpi->PlatformInformation (
+                                        (CONST EFI_PEI_SERVICES  **) PeiServices,
+                                        &InformationSize,
+                                        SecPlatformInformation
+                                        );
+
+  ASSERT (Status == EFI_BUFFER_TOO_SMALL);
+  if (Status != EFI_BUFFER_TOO_SMALL) {
+    return NULL;
+  }
+
+  SecPlatformInformation = AllocatePool((UINTN)InformationSize);
+  ASSERT (SecPlatformInformation != NULL);
+  if (SecPlatformInformation == NULL) {
+    return NULL;
+  }
+
+  //
+  // Retrieve BIST data from SecPlatform
+  //
+  Status = SecPlatformInformationPpi->PlatformInformation (
+                                        (CONST EFI_PEI_SERVICES  **) PeiServices,
+                                        &InformationSize,
+                                        SecPlatformInformation
+                                        );
+  DEBUG((DEBUG_INFO, "FSP  SecPlatformInformation2Ppi->PlatformInformation Status - %r\n", Status));
+  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    FreePool(SecPlatformInformation);
+    return NULL;
+  }
+
+  SecPlatformInformation2 = AllocatePool(sizeof (EFI_SEC_PLATFORM_INFORMATION_RECORD2));
+  ASSERT (SecPlatformInformation2 != NULL);
+  if (SecPlatformInformation2 == NULL) {
+    FreePool(SecPlatformInformation);
+    return NULL;
+  }
+
+  SecPlatformInformation2->NumberOfCpus = 1;
+  SecPlatformInformation2->CpuInstance[0].CpuLocation = 0;
+  SecPlatformInformation2->CpuInstance[0].InfoRecord.x64HealthFlags.Uint32 = SecPlatformInformation->x64HealthFlags.Uint32;
+
+  FreePool(SecPlatformInformation);
+
+  return SecPlatformInformation2;
+}
+#endif
+
+/**
+  This function performs CPU PEI Policy initialization.
+
+  @param[in] SiPreMemPolicyPpi     The RC PREMEM Policy PPI instance
+  @param[in] SiPolicyPpi           The RC POSTMEM Policy PPI instance
+  @retval EFI_SUCCESS              The PPI is installed and initialized.
+  @retval EFI ERRORS               The PPI is not successfully installed.
+  @retval EFI_OUT_OF_RESOURCES     Do not have enough resources to initialize the driver
+**/
+EFI_STATUS
+EFIAPI
+UpdatePeiCpuPolicy (
+  IN SI_PREMEM_POLICY_PPI   *SiPreMemPolicyPpi,
+  IN SI_POLICY_PPI          *SiPolicyPpi
+  )
+{
+  EFI_STATUS                       Status;
+  UINTN                            VariableSize;
+  SETUP_DATA                       SetupData;
+  CPU_SETUP                        CpuSetup;
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+  DPTF_CONFIG                      DptfConfig;
+#endif
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  EFI_SEC_PLATFORM_INFORMATION_RECORD2 *SecPlatformInformation2;
+#endif
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariableServices;
+  CPU_INIT_CONFIG                  *CpuInitConfig;
+  CPU_POWER_MGMT_BASIC_CONFIG      *CpuPowerMgmtBasicConfig;
+  CPU_SECURITY_PREMEM_CONFIG       *CpuSecurityPreMemConfig;
+  UINT32                           MicrocodeBaseAddress;
+
+  DEBUG ((DEBUG_INFO, "Update PeiCpuPolicyUpdate Pos-Mem Start\n"));
+
+  CpuInitConfig           = NULL;
+  CpuPowerMgmtBasicConfig = NULL;
+  CpuSecurityPreMemConfig = NULL;
+
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuSecurityPreMemConfigGuid, (VOID *) &CpuSecurityPreMemConfig);
+  ASSERT_EFI_ERROR (Status);
+
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gCpuInitConfigGuid, (VOID *) &CpuInitConfig);
+  ASSERT_EFI_ERROR (Status);
+
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gCpuPowerMgmtBasicConfigGuid, (VOID *) &CpuPowerMgmtBasicConfig);
+  ASSERT_EFI_ERROR (Status);
+
+  //
+  // Make sure ReadOnlyVariablePpi is available
+  //
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiReadOnlyVariable2PpiGuid,
+             0,
+             NULL,
+             (VOID **) &VariableServices
+             );
+  ASSERT_EFI_ERROR (Status);
+
+  //
+  // Get Setup Variable
+  //
+  VariableSize = sizeof (SETUP_DATA);
+  Status = VariableServices->GetVariable (
+                               VariableServices,
+                               L"Setup",
+                               &gSetupVariableGuid,
+                               NULL,
+                               &VariableSize,
+                               &SetupData
+                               );
+  ASSERT_EFI_ERROR (Status);
+
+  VariableSize = sizeof (CPU_SETUP);
+  Status = VariableServices->GetVariable (
+                               VariableServices,
+                               L"CpuSetup",
+                               &gCpuSetupVariableGuid,
+                               NULL,
+                               &VariableSize,
+                               &CpuSetup
+                               );
+  ASSERT_EFI_ERROR (Status);
+
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+  VariableSize = sizeof (DPTF_CONFIG);
+  Status = VariableServices->GetVariable (
+                               VariableServices,
+                               L"DptfConfig",
+                               &gDptfConfigVariableGuid,
+                               NULL,
+                               &VariableSize,
+                               &DptfConfig
+                               );
+  ASSERT_EFI_ERROR (Status);
+#endif
+
+  COMPARE_AND_UPDATE_POLICY (CpuInitConfig->AesEnable, CpuSetup.AES);
+  COMPARE_AND_UPDATE_POLICY (CpuInitConfig->TxtEnable, CpuSetup.Txt);
+
+  if (CpuSetup.PpinSupport == 0) {
+    // Update value is related with Setup value, Need to check Policy Default
+    COMPARE_AND_UPDATE_POLICY (CpuInitConfig->PpinSupport, 0); ///< reference code policy is disabled
+  } else if ((CpuSetup.PpinSupport == 1) && (CpuSetup.PpinEnableMode == 0)) {
+    // Update value is related with Setup value, Need to check Policy Default
+    COMPARE_AND_UPDATE_POLICY (CpuInitConfig->PpinSupport, 2); ///< reference code policy is set to Auto. The feature is disabled if End of Manufacturing flag is set.
+  } else if ((CpuSetup.PpinSupport == 1) && (CpuSetup.PpinEnableMode == 1)) {
+    //Update value is related with Setup value, Need to check Policy Default
+    COMPARE_AND_UPDATE_POLICY (CpuInitConfig->PpinSupport, 1); ///< reference code policy is enabled
+  }
+
+  COMPARE_AND_UPDATE_POLICY (CpuInitConfig->AvxDisable,  CpuSetup.AvxDisable);
+
+  //
+  // Directly assign the microcode flash location to FSPS UPD (API mode) or CpuInitConfig (Dispatch mode)
+  // The microcode copy from flash to memory will be done just before microcode reload.
+  //
+  MicrocodeBaseAddress = GetMicrocodeBaseAddressInRecovery ();
+  if (MicrocodeBaseAddress == 0) {
+    MicrocodeBaseAddress = FixedPcdGet32 (PcdFlashFvMicrocodeBase);
+  }
+  UPDATE_POLICY (CpuInitConfig->MicrocodePatchAddress,
+    MicrocodeBaseAddress + FixedPcdGet32 (PcdMicrocodeOffsetInFv)
+    );
+  UPDATE_POLICY (CpuInitConfig->MicrocodePatchRegionSize,
+    FixedPcdGet32 (PcdFlashFvMicrocodeSize) - FixedPcdGet32 (PcdMicrocodeOffsetInFv)
+    );
+
+  //
+  // Init Power Management Policy Variables based on setup values
+  //
+  InitCpuPmConfigBySetupValues (
+    &SetupData,
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+    &DptfConfig,
+#endif
+    &CpuSetup,
+    SiPolicyPpi
+    );
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  //
+  // Get BIST information from Sec Platform Information
+  //
+  SecPlatformInformation2 = GetSecPlatformInformation2 ((EFI_PEI_SERVICES **) GetPeiServicesTablePointer ());
+  if (SecPlatformInformation2 == NULL) {
+    SecPlatformInformation2 = GetSecPlatformInformationInfoInFormat2 ((EFI_PEI_SERVICES **) GetPeiServicesTablePointer ());
+  }
+
+  ASSERT (SecPlatformInformation2 != NULL);
+
+  if (SecPlatformInformation2 != NULL) {
+    DEBUG((DEBUG_INFO, "SecPlatformInformation NumberOfCpus - %x\n", SecPlatformInformation2->NumberOfCpus));
+    DEBUG((DEBUG_INFO, "SecPlatformInformation BIST - %x\n", SecPlatformInformation2->CpuInstance[0].InfoRecord.x64HealthFlags.Uint32));
+  }
+#endif
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+    //
+    // AC Split Lock
+    //
+    COMPARE_AND_UPDATE_POLICY (CpuInitConfig->AcSplitLock, CpuSetup.AcSplitLock);
+#endif
+
+  COMPARE_AND_UPDATE_POLICY (CpuInitConfig->X2ApicEnable, CpuSetup.X2ApicEnable);
+
+  return EFI_SUCCESS;
+}

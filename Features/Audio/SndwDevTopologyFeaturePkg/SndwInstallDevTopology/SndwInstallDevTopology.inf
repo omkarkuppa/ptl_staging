@@ -1,0 +1,75 @@
+## @file
+#  SoundWire Devices Topology Driver INF file.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = SndwInstallDevTopology
+  FILE_GUID                      = 2C2694BC-FDD8-452C-8899-2A1A6B401D56
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = UEFI_DRIVER
+  ENTRY_POINT                    = SndwInstallDevTopologyDriverEntryPoint
+
+[Sources]
+  SndwInstallDevTopology.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  SndwDevTopologyFeaturePkg/SndwDevTopologyFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  MemoryAllocationLib
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  IoLib
+  HobLib
+  DxeServicesLib
+  DxeServicesTableLib
+  AslUpdateLib
+
+[Guids]
+  gEfiAcpiTableGuid                             ## CONSUMES
+  gSndwDevTopologyConfigurationVariableGuid     ## CONSUMES
+  gSndwDevTopologyAcpiTableStorageGuid          ## CONSUMES
+  gSndwBtNdaiAcpiTableStorageGuid               ## CONSUMES
+  gSndwIDispNdaiAcpiTableStorageGuid            ## CONSUMES
+
+[Protocols]
+  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
+  gEfiAcpiTableProtocolGuid                     ## CONSUMES
+  gEfiPciIoProtocolGuid                         ## CONSUMES
+
+[Pcd]
+  gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyBtSndwSupported     ## CONSUMES
+  gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyIDispSndwSupported  ## CONSUMES
+
+[Depex]
+  gEfiAcpiTableProtocolGuid AND
+  gEfiPciIoProtocolGuid AND
+  gEfiPciEnumerationCompleteProtocolGuid  AND
+  gEfiPciRootBridgeIoProtocolGuid

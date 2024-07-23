@@ -1,0 +1,235 @@
+/**@file
+  Platform Sanitize setup menu items.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#include "SetupForm.h"
+
+formset
+  guid      = PLATFORM_SANITIZE_FORMSET_GUID,
+  title     = STRING_TOKEN(STR_PLATFORM_SANITIZATION),
+  help      = STRING_TOKEN(STR_PLATFORM_SANITIZATION_HELP),
+  classguid = PLATFORM_SANITIZE_FORMSET_GUID,
+
+  // Define a Buffer Storage (EFI_IFR_VARSTORE) that will be filled
+  // out initially through extractConfig call
+  varstore HII_CONFIG,                        // This is the Data structure type
+    varid = STORAGE_ERASE_VARSTORE_ID,
+    name  = PlatformSanitizeHiiCfg,           // Define referenced name in vfr
+    guid  = PLATFORM_SANITIZE_FORMSET_GUID;   // GUID of this Buffer storage
+
+  efivarstore PLATFORM_ERASE_VARIABLE,        // This is the Data structure type
+    attribute = 0x3,
+    name  = PlatformEraseSetup,               // Define referenced name in vfr
+    guid  = PLATFORM_ERASE_VARIABLE_GUID;     // GUID of this Buffer storage
+
+  efivarstore LPE_SETUP,
+    attribute = 0x3,
+    name  = LpeSetup,
+    guid  = LPE_SETUP_VARIABLE_GUID;
+
+  efivarstore RPE_SETUP,
+    attribute = 0x3,
+    name  = RpeSetup,
+    guid  = RPE_SETUP_VARIABLE_GUID;
+
+  //
+  // Menu of main menu
+  //
+  form formid = FORMID_MAIN_MENU,
+    title  = STRING_TOKEN(STR_PLATFORM_SANITIZATION);
+
+    guidop
+      guid     = gEfiIfrFrontPageGuid,
+      datatype = UINT32,
+      data     = FixedPcdGet32 (PcdPsSetupConfiguration),
+    endguidop;
+
+    //
+    // Remote platform erase settings
+    //
+    #if FixedPcdGetBool (PcdPlatformSanitizeRpeSupport) == 0x1
+    suppressif ideqval PLATFORM_ERASE_VARIABLE.RpeOptionExposure == 0;
+      grayoutif ideqval PLATFORM_ERASE_VARIABLE.RpeOptionGrayOut == 1;
+        oneof varid   = RPE_SETUP.RpeEnable,
+          questionid  = KEY_RPE_ENABLE,
+          prompt      = STRING_TOKEN(STR_PS_REMOTE_ACCESS_PROMPT),
+          help        = STRING_TOKEN(STR_PS_REMOTE_ACCESS_HELP),
+          flags       = INTERACTIVE,
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif; // grayoutif ideqval PLATFORM_ERASE_VARIABLE.RpeOptionGrayOut == 1
+    endif; // suppressif
+    #endif
+
+    //
+    // Local platform erase configuration
+    //
+    goto FORMID_LOCAL_PLATFORM_ERASE_MENU,
+    prompt = STRING_TOKEN(STR_LOCAL_PLATFORM_ERASE_FORM_TITLE),
+    help   = STRING_TOKEN(STR_LOCAL_PLATFORM_ERASE_FORM_TITLE_HELP);
+
+    //
+    // Storage erase configuration
+    //
+    goto FORMID_STORAGE_ERASE_MENU,
+    prompt = STRING_TOKEN(STR_STORAGE_ERASE_CONFIG),
+    help   = STRING_TOKEN(STR_STORAGE_ERASE_CONFIG_HELP);
+
+    //
+    // Simulated erase settings
+    //
+    #if FixedPcdGetBool (PcdPsSimulationSupport) == 0x1
+       oneof varid  = PLATFORM_ERASE_VARIABLE.PlatformEraseSimulation,
+        prompt      = STRING_TOKEN(STR_PS_SIMULATED_MODE_PROMPT),
+        help        = STRING_TOKEN(STR_PS_SIMULATED_MODE_HELP),
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED),value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+       endoneof;
+    #endif
+
+  endform;  // MAIN MENU FORM
+
+  //
+  // Menu of storage erase configuration
+  //
+  form formid   = FORMID_STORAGE_ERASE_MENU,
+    title       = STRING_TOKEN(STR_STORAGE_ERASE_CONFIG);
+    suppressif TRUE;
+      text
+      help    = STRING_TOKEN(STR_NULL),
+      text    = STRING_TOKEN(STR_NULL),
+      flags   = INTERACTIVE,
+      key     = FORMID_STORAGE_ERASE_MENU;
+    endif;
+
+    subtitle text = STRING_TOKEN(STR_MAIN_PHY_DISKS_LBL);
+
+    //
+    // This is where we will dynamically add device.
+    //
+    label LABEL_START;
+    label LABEL_END;
+
+    subtitle text = STRING_TOKEN(STR_NULL);
+
+    //
+    // erase method priority
+    //
+    orderedlist
+      varid       = PLATFORM_ERASE_VARIABLE.SanitizeOrder,
+      prompt      = STRING_TOKEN(STR_SANITIZE_TITLE),
+      help        = STRING_TOKEN(STR_SANITIZE_OPTIONS),
+      flags       = RESET_REQUIRED,
+      option text = STRING_TOKEN(STR_SANITIZE_BLOCK_ERASE), value = SANITIZE_BLOCK_ERASE, flags = 0;
+      option text = STRING_TOKEN(STR_SANITIZE_CRYPTO_ERASE), value = SANITIZE_CRYPTO_ERASE, flags = 0;
+      option text = STRING_TOKEN(STR_SANITIZE_OVR_ERASE), value = SANITIZE_OVR_ERASE, flags = 0;
+      option text = STRING_TOKEN(STR_SANITIZE_CLEAR), value = SANITIZE_CLEAR, flags = 0;
+      default     = {SANITIZE_BLOCK_ERASE, SANITIZE_CRYPTO_ERASE, SANITIZE_OVR_ERASE, SANITIZE_CLEAR},
+    endlist;
+
+  endform;
+
+  //
+  // Define Local Platform Erase Setup Form.
+  //
+  form formid = FORMID_LOCAL_PLATFORM_ERASE_MENU,
+  title = STRING_TOKEN(STR_LOCAL_PLATFORM_ERASE_FORM_TITLE);
+
+    oneof varid   = LPE_SETUP.LpeEnable,
+      questionid  = KEY_LPE_PLATFORM_ENABLE,
+      prompt      = STRING_TOKEN (STR_ENABLE_LOCAL_PLATFORM_ERASE_PROMPT),
+      help        = STRING_TOKEN (STR_ENABLE_LOCAL_PLATFORM_ERASE_HELP),
+      flags       = INTERACTIVE,
+      option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      warningif prompt = STRING_TOKEN (STR_WARNING_ERASE_ALL),
+        ideqval LPE_SETUP.LpeEnable == 1
+      endif; //warningif
+    endoneof;
+
+    suppressif ideqval LPE_SETUP.LpeEnable == 0;
+      oneof varid   = LPE_SETUP.LpeEraseAll,
+        questionid  = KEY_LPE_ERASE_ALL,
+        prompt      = STRING_TOKEN (STR_LPE_ERASE_ALL_PROMPT),
+        help        = STRING_TOKEN (STR_LPE_ERASE_ALL_PROMPT_HELP),
+        flags       = INTERACTIVE,
+        option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      checkbox varid = LPE_SETUP.LpeEraseSSD,
+        prompt       = STRING_TOKEN (STR_LPE_SSD_ERASE_CHECK_BOX_PROMPT),
+        help         = STRING_TOKEN (STR_LPE_SSD_ERASE_CHECK_BOX_HELP),
+        flags        = INTERACTIVE | RESET_REQUIRED,
+        key          = KEY_LPE_ERASE_SSD,
+      endcheckbox;
+
+      suppressif ideqval LPE_SETUP.LpeEraseSSD == 0;
+        oneof varid   = LPE_SETUP.LpeStorageEraseVerify,
+          prompt      = STRING_TOKEN(STR_LPE_VERIFICATION),
+          help        = STRING_TOKEN(STR_LPE_VERIFICATION_HELP),
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif; // suppressif ideqval LPE_SETUP.LpeEraseSSD == 0;
+
+      checkbox varid = LPE_SETUP.LpeClearTPM,
+        prompt       = STRING_TOKEN (STR_LPE_TPM_CLEAR_CHECK_BOX_PROMPT),
+        help         = STRING_TOKEN (STR_LPE_TPM_CLEAR_CHECK_BOX_HELP),
+        flags        = INTERACTIVE | RESET_REQUIRED,
+        key          = KEY_LPE_TPM_CLEAR,
+      endcheckbox;
+
+      checkbox varid = LPE_SETUP.LpeOemCustomAction,
+        prompt       = STRING_TOKEN (STR_LPE_OEM_CUST_CHECK_BOX_PROMPT),
+        help         = STRING_TOKEN (STR_LPE_OEM_CUST_CHECK_BOX_HELP),
+        flags        = INTERACTIVE | RESET_REQUIRED,
+        key          = KEY_LPE_OEM_ACTION,
+      endcheckbox;
+
+      checkbox varid = LPE_SETUP.LpeClearNvm,
+        prompt       = STRING_TOKEN (STR_LPE_CLEAR_NVME_CHECK_BOX_PROMPT),
+        help         = STRING_TOKEN (STR_LPE_CLEAR_NVME_CHECK_BOX_HELP),
+        flags        = INTERACTIVE | RESET_REQUIRED,
+        key          = KEY_LPE_CLEAR_NVM,
+      endcheckbox;
+
+      checkbox varid = LPE_SETUP.LpeBiosReloadGoldenConfig,
+        prompt       = STRING_TOKEN (STR_LPE_BIOS_RELOAD_CHECK_BOX_PROMPT),
+        help         = STRING_TOKEN (STR_LPE_BIOS_RELOAD_CHECK_BOX_HELP),
+        flags        = INTERACTIVE | RESET_REQUIRED,
+        key          = KEY_LPE_RELOAD_BIOS,
+      endcheckbox;
+
+      checkbox varid = LPE_SETUP.LpeCsmeUnconfigure,
+        prompt       = STRING_TOKEN (STR_LPE_UNCONFIGURE_CSME_PROMPT),
+        help         = STRING_TOKEN (STR_LPE_UNCONFIGURE_CSME_HELP),
+        flags        = 0 | RESET_REQUIRED,
+        key          = 0,
+        warningif prompt = STRING_TOKEN (STR_LPE_WARNING_UNCONFIGURE_CSME),
+        ideqval LPE_SETUP.LpeCsmeUnconfigure == 1
+        endif; //warningif
+      endcheckbox;
+
+    endif;   // suppressif LPE_SETUP.LpeEnable == 0
+  endform;   // End of LOCAL_PLATFORM_ERASE_FORM_ID
+
+endformset;

@@ -1,0 +1,59 @@
+### @file
+#  Instance of Debug Library.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2019 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+# @par Glossary:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = DebugLibDebugPort
+  FILE_GUID                      = AA36B2FC-CCB7-4779-BE46-FA1874FF6EFC
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = DebugLib|DXE_DRIVER DXE_RUNTIME_DRIVER UEFI_DRIVER
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  DebugLibDebugPort.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  PcdLib
+  PrintLib
+  UefiBootServicesTableLib
+
+[Protocols]
+  gEfiStatusCodeRuntimeProtocolGuid                     ## CONSUMES
+
+[Guids]
+  gEfiStatusCodeDataTypeStringGuid                      ## PRODUCES
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdDebugClearMemoryValue                   ## SOMETIMES_CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask                       ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdFixedDebugPrintErrorLevel               ## CONSUMES

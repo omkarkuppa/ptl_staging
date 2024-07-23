@@ -1,0 +1,67 @@
+### @file
+#  Module Information file for PeiPolicyDebugLib
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiPolicyDebugLib
+  FILE_GUID                      = FDEA13BF-C85A-491F-B138-3252B6083CF3
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PeiPolicyDebugLib|PEIM PEI_CORE SEC
+
+[Sources]
+  PeiCpuPolicyDebugLib.c
+  PeiCpuPolicyDebugPreMemLib.c
+  PeiPchPolicyDebugLib.c
+  PeiPchPolicyDebugPreMemLib.c
+  PeiSaPolicyDebugLib.c
+  PeiSiPolicyDebugLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  CryptoPkg/CryptoPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[LibraryClasses]
+  ConfigBlockLib
+  CpuPlatformLib
+  PcdLib
+  PchInfoLib
+
+[Guids]
+  gSetupVariableGuid                            ## CONSUMES
+  gPchSetupVariableGuid                         ## CONSUMES
+  gCpuTestConfigGuid                            ## CONSUMES
+  gCpuPowerMgmtTestConfigGuid                   ## CONSUMES
+  gSiSetupVariableGuid                          ## CONSUMES
+  gCpuSetupVariableGuid                         ## CONSUMES
+  gSaSetupVariableGuid                          ## CONSUMES
+
+[Pcd]
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuApLoopMode          ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection ## CONSUMES
+
+[FixedPcd]
+  gBoardModuleTokenSpaceGuid.PcdPolicyDefaultChkEnable  ## CONSUMES

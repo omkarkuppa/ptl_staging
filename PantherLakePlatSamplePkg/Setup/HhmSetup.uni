@@ -1,0 +1,73 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2012 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+//Module Name:
+//
+//  HhmSetup.uni
+//
+//Abstract:
+//
+// Hhm Form String Definitions
+//--*/
+/=#
+//#include "itk\Dpsdsetup\DpsdVFR.uni"
+#include "VFR.uni"
+
+#string STR_HHM_FORM                      #language en-US "Hardware Health Monitor"
+#string STR_HHM_FORM_HELP                 #language en-US "Monitor the Hardware Health."
+
+#string STR_THERMAL_SENSOR_1_HELP         #language en-US "Help on Thermal Sensor 1 Temp"
+#string STR_THERMAL_SENSOR_1_TEXT         #language en-US "Thermal Sensor 1 Temp"
+#string STR_THERMAL_SENSOR_1_VALUE        #language en-US " "
+
+#string STR_THERMAL_SENSOR_2_HELP         #language en-US "Help on Thermal Sensor 2 Temp"
+#string STR_THERMAL_SENSOR_2_TEXT         #language en-US "Thermal Sensor 2 Temp"
+#string STR_THERMAL_SENSOR_2_VALUE        #language en-US " "
+
+#string STR_THERMAL_SENSOR_3_HELP         #language en-US "Help on Thermal Sensor 3 Temp"
+#string STR_THERMAL_SENSOR_3_TEXT         #language en-US "Thermal Sensor 3 Temp"
+#string STR_THERMAL_SENSOR_3_VALUE        #language en-US " "
+
+#string STR_THERMAL_SENSOR_4_HELP         #language en-US "Help on Thermal Sensor 4 Temp"
+#string STR_THERMAL_SENSOR_4_TEXT         #language en-US "Thermal Sensor 4 Temp"
+#string STR_THERMAL_SENSOR_4_VALUE        #language en-US " "
+
+#string STR_THERMAL_SENSOR_5_HELP         #language en-US "Help on Thermal Sensor 5 Temp"
+#string STR_THERMAL_SENSOR_5_TEXT         #language en-US "Thermal Sensor 5 Temp"
+#string STR_THERMAL_SENSOR_5_VALUE        #language en-US " "
+
+#string STR_CPU_FAN_HELP                  #language en-US "Help on CPU Fan"
+#string STR_CPU_FAN_TEXT                  #language en-US "CPU Fan Speed"
+#string STR_CPU_FAN_VALUE                 #language en-US " "
+
+#string STR_PCH_DTS_TEMP_HELP             #language en-US "Help on PCH DTS Temp"
+#string STR_PCH_DTS_TEMP_TEXT             #language en-US "PCH DTS Temp from PCH"
+#string STR_PCH_DTS_TEMP_VALUE            #language en-US " "
+
+#string STR_TS_ON_DIMM0_TEMP_HELP         #language en-US "Help on TS-on-DIMM0 Temp"
+#string STR_TS_ON_DIMM0_TEMP_TEXT         #language en-US "TS-on-DIMM0 Temp"
+#string STR_TS_ON_DIMM0_TEMP_VALUE        #language en-US " "
+
+#string STR_TS_ON_DIMM1_TEMP_HELP         #language en-US "Help on TS-on-DIMM1 Temp"
+#string STR_TS_ON_DIMM1_TEMP_TEXT         #language en-US "TS-on-DIMM1 Temp"
+#string STR_TS_ON_DIMM1_TEMP_VALUE        #language en-US " "
+
+#string STR_DEMO                          #language en-US "All Information are only for Demo!!"

@@ -1,0 +1,90 @@
+## @file
+# Library description file for PeiMemoryMapPrintLib
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PeiMemoryMapPrintLib
+FILE_GUID = ef2fe7fb-12f8-4815-ae93-44b60d81ed13
+VERSION_STRING = 1.0
+MODULE_TYPE = PEIM
+LIBRARY_CLASS = PeiMemoryMapPrintLib
+
+
+[LibraryClasses]
+BaseLib
+DebugLib
+BaseMemoryLib
+PeiServicesLib
+PeiServicesTablePointerLib
+PostCodeLib
+IoLib
+PeiHostBridgeIpStatusLib
+NguInfoLib
+BaseIGpuInfoLib
+PeiTdxLib
+TdxInfoLib
+HobLib
+PeiTelemetryFruLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+IntelFsp2Pkg/IntelFsp2Pkg.dec
+
+[Pcd]
+gSiPkgTokenSpaceGuid.PcdNemCodeCacheBase
+gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress
+gSiPkgTokenSpaceGuid.PcdBiosSize
+gSiPkgTokenSpaceGuid.PcdTemporaryRamBase
+gSiPkgTokenSpaceGuid.PcdMchBaseAddress
+gSiPkgTokenSpaceGuid.PcdMchMmioSize
+gSiPkgTokenSpaceGuid.PcdVtdMmioBase
+gSiPkgTokenSpaceGuid.PcdVtdMmioSize
+gSiPkgTokenSpaceGuid.PcdSiHpetBaseAddress
+gSiPkgTokenSpaceGuid.PcdSiIoApicBaseAddress
+gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemBaseAddr
+gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemSize
+gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugMmioBase
+gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartMmioBase
+gSiPkgTokenSpaceGuid.PcdRegBarBaseAddress
+gSiPkgTokenSpaceGuid.PcdSiPciExpressBaseAddress
+gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength
+gSiPkgTokenSpaceGuid.PcdPciReservedIoLimit
+gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress
+gSiPkgTokenSpaceGuid.PcdPciReservedIobase
+gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress
+gSiPkgTokenSpaceGuid.PcdTcoBaseAddress
+gSiPkgTokenSpaceGuid.PcdSafBarBaseAddress
+gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize
+
+[Ppis]
+gSiPreMemPolicyPpiGuid            ## CONSUMES
+gSiPolicyPpiGuid                  ## CONSUMES
+
+[Sources]
+PeiMemoryMapPrintLib.c
+
+[Guids]
+gGraphicsPeiPreMemConfigGuid        ## CONSUMES
+gHostBridgePeiPreMemConfigGuid      ## CONSUMES
+gTelemetryPeiPreMemConfigGuid       ## CONSUMES
+gIGpuDataHobGuid                    ## CONSUMES

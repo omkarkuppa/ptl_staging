@@ -1,0 +1,79 @@
+### @file
+#  Component description file for FSP WrapperPeim
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FspWrapperPeim
+  FILE_GUID                      = 960241A5-5CE6-4EBF-B9C4-E37D294BEBA9
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+
+  ENTRY_POINT                    = FspWrapperPeimEntry
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32
+#
+
+[Sources]
+  FspWrapperPeim.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  FspWrapperFeaturePkg/FspWrapperFeaturePkg.dec
+
+[LibraryClasses]
+  PeimEntryPoint
+  BaseMemoryLib
+  DebugLib
+  PeiServicesLib
+  PchSmmControlLib
+  SmmAccessLib
+  FspWrapperApiLib
+  HobLib
+  MemoryAllocationLib
+  MtrrLib
+  SiMtrrLib
+  PciSegmentLib
+  PrintLib
+  FspInfoLib
+
+[Ppis]
+  gEfiEndOfPeiSignalPpiGuid           ## CONSUMES
+  gEdkiiPeiMpServices2PpiGuid         ## CONSUMES
+  gPeiReadyToInstallMpPpiGuid         ## SOMETIMES_PRODUCES
+
+[Guids]
+  gIntelSmbiosDataHobGuid             ## CONSUMES
+  gFspInfoGuid                        ## PRODUCES
+
+[FixedPcd]
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection  ## CONSUMES
+
+[Depex]
+  gFspSiliconInitDonePpiGuid OR gEndOfSiInitPpiGuid

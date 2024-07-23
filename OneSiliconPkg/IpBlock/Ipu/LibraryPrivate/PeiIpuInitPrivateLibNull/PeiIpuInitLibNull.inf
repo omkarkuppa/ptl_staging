@@ -1,0 +1,41 @@
+## @file
+# Library description file for PEI Phase SA IPU Init
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+
+[Defines]
+  INF_VERSION    = 0x00010017
+  BASE_NAME      = PeiIpuInitLibNull
+  FILE_GUID      = 4A4980B6-7C3E-48E1-8B8E-53D6B73FFC7E
+  VERSION_STRING = 1.0
+  MODULE_TYPE    = PEIM
+  LIBRARY_CLASS  = IpuInitLib
+
+[LibraryClasses]
+  DebugLib
+  PeiHostBridgeIpStatusLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+
+[Sources]
+  PeiIpuInitLibNull.c

@@ -1,0 +1,179 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+// Name:        PsrStrings.uni
+//
+// Description: Platform Service Record String Definitions.
+//
+//**********************************************************************
+//**********************************************************************
+
+#langdef   en-US "English"     // English
+
+#string STR_EMPTY                                                  #language en-US ""
+
+//UI Strings for PSR
+#string STR_FORM_SET_TITLE                                         #language en-US "Intel(R) Platform Service Record"
+#string STR_FORM_SET_HELP_TITLE                                    #language en-US "This formset contains forms for displaying platform service record"
+
+//Submenu Name Strings for PSR
+#string STR_SUBMENU_PSR_INFO                                       #language en-US "Platform Service Record Information"
+#string STR_SUBMENU_PSR_INFO_HELP                                  #language en-US "Zero values means not started to receive PSR data from CSME"
+#string STR_SUBMENU_PSR_GENESIS                                    #language en-US "Genesis"
+#string STR_SUBMENU_PSR_LEDGER                                     #language en-US "Ledger"
+#string STR_SUBMENU_PSR_EVENTS                                     #language en-US "Events"
+#string STR_SUBMENU_PSR_RECORD_EXPORT                              #language en-US "Export Platform Service Record To USB"
+
+//Option Name Strings for PSR
+#string STR_OPTION_PSR_GDL_INTEL_UPID                              #language en-US "Intel(R) Unique Platform ID"
+#string STR_OPTION_PSR_GDL_INTEL_UPID_VALUE1                       #language en-US "N/A"
+#string STR_OPTION_PSR_GDL_INTEL_UPID_VALUE2                       #language en-US "N/A"
+#string STR_OPTION_PSR_GDL_INTEL_UPID_VALUE3                       #language en-US "N/A"
+#string STR_OPTION_PSR_GDL_INTEL_UPID_VALUE4                       #language en-US "N/A"
+
+#string STR_OPTION_PSR_GDL_PSR_ID                                  #language en-US "Platform Service Record ID"
+#string STR_OPTION_PSR_GDL_PSR_ID_VALUE                            #language en-US "N/A"
+
+#string STR_OPTION_PSR_GDL_PSR_VER                                 #language en-US "PSR Version"
+#string STR_OPTION_PSR_GDL_PSR_VER_VALUE                           #language en-US "N/A"
+
+#string STR_SUBMENU_PSR_GDL_INFO                                   #language en-US "Platform Events Information"
+#string STR_SUBMENU_PSR_GDL_INFO_HELP                              #language en-US "Platform Events Ledger"
+
+#string STR_OPTION_PSR_LOG_STATE                                   #language en-US "PSR State"
+#string STR_OPTION_PSR_LOG_STATE_VALUE                             #language en-US "N/A"
+
+#string STR_OPTION_PSR_CAPABILITIES                                #language en-US "PSR Capabilities"
+
+#string STR_OPTION_PSR_CAP_CHASSIS_INTRUSION                       #language en-US "Chassis Intrusion"
+#string STR_OPTION_PSR_CAP_CHASSIS_INTRUSION_VALUE                 #language en-US "N/A"
+
+#string STR_OPTION_PSR_CAP_EXCESSIVE_OPERATIONAL_TEMPERATURE       #language en-US "Excessive Operational Temperature"
+#string STR_OPTION_PSR_CAP_EXCESSIVE_OPERATIONAL_TEMPERATURE_VALUE #language en-US "N/A"
+
+#string STR_OPTION_PSR_CAP_EXCESSIVE_SHOCK                         #language en-US "Excessive Shock"
+#string STR_OPTION_PSR_CAP_EXCESSIVE_SHOCK_VALUE                   #language en-US "N/A"
+
+#string STR_OPTION_PSR_CAP_REMOTE_PLATFORM_ERASE                   #language en-US "Remote Platform Erase"
+#string STR_OPTION_PSR_CAP_REMOTE_PLATFORM_ERASE_VALUE             #language en-US "N/A"
+
+#string STR_OPTION_PSR_CAP_LOCAL_PLATFORM_ERASE                    #language en-US "Local Platform Erase"
+#string STR_OPTION_PSR_CAP_LOCAL_PLATFORM_ERASE_VALUE              #language en-US "N/A"
+
+#string STR_OPTION_PSR_CAP_FW_RECOVERY                             #language en-US "Firmware Recovery"
+#string STR_OPTION_PSR_CAP_FW_RECOVERY_VALUE                       #language en-US "N/A"
+
+#string STR_OPTION_PSR_CAP_FW_UPDATE                               #language en-US "Firmware Update"
+#string STR_OPTION_PSR_CAP_FW_UPDATE_VALUE                         #language en-US "N/A"
+
+#string STR_OPTION_PSR_CAP_SYS_HANG                                #language en-US "System Hang"
+#string STR_OPTION_PSR_CAP_SYS_HANG_VALUE                          #language en-US "N/A"
+
+#string STR_OPTION_PSR_CAP_POWER_DROP                              #language en-US "Power Drop"
+#string STR_OPTION_PSR_CAP_POWER_DROP_VALUE                        #language en-US "N/A"
+
+#string STR_OPTION_PSR_GDL_PSR_STATUS                              #language en-US "PSR Status"
+#string STR_OPTION_PSR_GDL_STATUS_VALUE                            #language en-US "N/A"
+
+#string STR_OPTION_PSR_GDL_CSME_VER                                #language en-US "CSME Firmware Version"
+#string STR_OPTION_PSR_GDL_CSME_VER_VALUE                          #language en-US "N/A"
+
+#string STR_OPTION_PSR_GDL_GENESIS_DATE                            #language en-US "Log Start Date"
+#string STR_OPTION_PSR_GDL_GENESIS_DATE_VALUE                      #language en-US "N/A"
+
+#string STR_OPTION_PSR_GDL_OEM_INFO                                #language en-US "OEM Name"
+#string STR_OPTION_PSR_GDL_OEM_INFO_VALUE                          #language en-US "N/A"
+
+#string STR_OPTION_PSR_GDL_OEM_MAKE_INFO                           #language en-US "OEM Make"
+#string STR_OPTION_PSR_GDL_OEM_MAKE_INFO_VALUE                     #language en-US "N/A"
+
+#string STR_OPTION_PSR_GDL_OEM_MODEL_INFO                          #language en-US "OEM Model"
+#string STR_OPTION_PSR_GDL_OEM_MODEL_INFO_VALUE                    #language en-US "N/A"
+
+#string STR_OPTION_PSR_GDL_MANUF_COE                               #language en-US "Manufacturing Country of Origin"
+#string STR_OPTION_PSR_GDL_MANUF_COE_VALUE                         #language en-US "N/A"
+
+#string STR_OPTION_PSR_GDL_OEM_DATA_STORE                          #language en-US "OEM Data"
+#string STR_OPTION_PSR_GDL_OEM_DATA_STORE_VALUE                    #language en-US "N/A"
+
+///////////////////////////////////////////////////Ledger///////////////////////////////////////////////////////////////
+#string STR_OPTION_PSR_PSHC_SO_RUNTIME                             #language en-US "S0 Runtime in seconds"
+#string STR_OPTION_PSR_PSHC_SO_RUNTIME_VALUE                       #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_S0_TO_S5_CTR                           #language en-US "S0 to S5 Transition Count"
+#string STR_OPTION_PSR_PSHC_S0_TO_S5_CTR_VALUE                     #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_S0_TO_S4_CTR                           #language en-US "S0 to S4 Transition Count"
+#string STR_OPTION_PSR_PSHC_S0_TO_S4_CTR_VALUE                     #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_S0_TO_S3_CTR                           #language en-US "S0 to S3 Transition Count"
+#string STR_OPTION_PSR_PSHC_S0_TO_S3_CTR_VALUE                     #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_PLAT_RST_CTR                           #language en-US "Warm Reset Count"
+#string STR_OPTION_PSR_PSHC_PLAT_RST_CTR_VALUE                     #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_ISH_CONNECTION_CTR                     #language en-US "ISH Connection Count"
+#string STR_OPTION_PSR_PSHC_ISH_CONNECTION_CTR_VALUE               #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_CSME_RESET_CTR                         #language en-US "CSME Reset Count"
+#string STR_OPTION_PSR_PSHC_CSME_RESET_CTR_VALUE                   #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_PRTC_FAILURE_CTR                       #language en-US "PRTC Reset Count"
+#string STR_OPTION_PSR_PSHC_PRTC_FAILURE_CTR_VALUE                 #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_CSME_INVALID_STATE_CTR                 #language en-US "Log in Recovery State Count"
+#string STR_OPTION_PSR_PSHC_CSME_INVALID_STATE_CTR_VALUE           #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_CSME_DAM_STATE_CTR                     #language en-US "DAM State Entered Count"
+#string STR_OPTION_PSR_PSHC_CSME_DAM_STATE_CTR_VALUE               #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_CSME_UNLOCKED_STATE_CTR                #language en-US "Unlock State Entered Count"
+#string STR_OPTION_PSR_PSHC_CSME_UNLOCKED_STATE_CTR_VALUE          #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_SVN_INCREASE_CTR                       #language en-US "PSR SVN Incremented Count"
+#string STR_OPTION_PSR_PSHC_SVN_INCREASE_CTR_VALUE                 #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_EXCESSIVE_SHOCK_CTR                    #language en-US "Excessive Shock Count"
+#string STR_OPTION_PSR_PSHC_EXCESSIVE_SHOCK_CTR_VALUE              #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_EXCESSIVE_OPER_TEMP_CTR                #language en-US "Excessive Operational Temperature Count"
+#string STR_OPTION_PSR_PSHC_EXCESSIVE_OPER_TEMP_CTR_VALUE          #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_FW_RECOVERY_CTR                        #language en-US "Firmware Recovery Count"
+#string STR_OPTION_PSR_PSHC_FW_RECOVERY_CTR_VALUE                  #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_FW_UPDATE_CTR                          #language en-US "Firmware Update Count"
+#string STR_OPTION_PSR_PSHC_FW_UPDATE_CTR_VALUE                    #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_SYS_HANG_CTR                           #language en-US "System Hang Count"
+#string STR_OPTION_PSR_PSHC_SYS_HANG_CTR_VALUE                     #language en-US "N/A"
+
+#string STR_OPTION_PSR_PSHC_PWR_DROP_CTR                           #language en-US "Power Drop Count"
+#string STR_OPTION_PSR_PSHC_PWR_DROP_CTR_VALUE                     #language en-US "N/A"
+
+//////////////////////////////////////////////PSR USB EXPORT////////////////////////////////////////////////////////////////////
+#string STR_PSR_RECORD_EXPORT_USB_LIST                             #language en-US "Platform Service Record Export Selection"
+#string STR_PSR_RECORD_EXPORT_STATUS_RETURN                        #language en-US "N/A"
+#string STR_PSR_RECORD_EXPORT_USB_LIST_HELP                        #language en-US "Export Platform Service Record To USB Storage"
+
+#string STR_EXPORT_HELP_FOOTER                                     #language en-US "Use the <↑> and <↓> keys to choose a USB device option, the <Enter> key to select a USB device option to export data."
+#string STR_EXPORT_HELP_FOOTER_NOTE                                #language en-US "NOTE: Export file name is 'PlatformServiceRecord_YYYY-MM-DD HH-MM-SS.bin'."
+#string STR_EXPORT_HELP_FOOTER_NOTE_2                              #language en-US "      Only support UEFI FILE SYSTEM format."

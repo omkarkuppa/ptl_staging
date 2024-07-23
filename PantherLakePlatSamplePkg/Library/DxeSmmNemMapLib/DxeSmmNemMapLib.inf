@@ -1,0 +1,62 @@
+### @file
+#  DXE SMM Non-Eviction Mode (NEM) Map Library.
+#
+#  Provides an API to retrieve structures related to the NEM layout agnostic of the
+#  firmware boot device.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2017 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DxeSmmNemMapLib
+  FILE_GUID                      = 9F80BD03-B154-4C00-85E4-963C3AC9EFBE
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = BootMediaLib|DXE_DRIVER DXE_SMM_DRIVER DXE_RUNTIME_DRIVER UEFI_APPLICATION
+
+[Sources]
+  DxeSmmNemMapLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  BootMediaLib
+  DebugLib
+  HobLib
+  PcdLib
+
+[FixedPcd]
+  gPlatformModuleTokenSpaceGuid.PcdFlashFvRecoverySize
+  gPlatformModuleTokenSpaceGuid.PcdFlashFvRecovery2Size
+  gPlatformModuleTokenSpaceGuid.PcdFlashFvRecovery3Size
+  gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress
+  gSiPkgTokenSpaceGuid.PcdNemCodeCacheBase
+  gSiPkgTokenSpaceGuid.PcdTemporaryRamBase
+  gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize
+
+[Guids]
+  gNemMapStructureGuid        ## CONSUMES
+  gNemMapStructureHobGuid     ## CONSUMES

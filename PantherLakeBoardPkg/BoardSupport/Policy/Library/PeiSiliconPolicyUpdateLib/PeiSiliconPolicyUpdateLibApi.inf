@@ -1,0 +1,87 @@
+## @file
+#  Provide Silicon policy update functionality for FSP API mode
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2020 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+################################################################################
+#
+# Defines Section - statements that will be processed to create a Makefile.
+#
+################################################################################
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = SiliconPolicyUpdateLib
+  FILE_GUID                      = 7C8EA246-EE91-45C4-9958-1674DE154B89
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SiliconPolicyUpdateLib
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+################################################################################
+#
+# Sources Section - list of files that are required for the build to succeed.
+#
+################################################################################
+
+[Sources]
+  PeiSiliconPolicyUpdatePreMemApi.c
+  PeiSiliconPolicyUpdatePostMemApi.c
+  PeiSiliconPolicyUpdateLate.c
+
+################################################################################
+#
+# Package Dependency Section - list of Package files that are required for
+#                              this module.
+#
+################################################################################
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  BaseMemoryLib
+  PeiServicesLib
+  PcdLib
+  PeiPolicyBoardConfigLib
+  PeiPolicyAdvancedConfigLib
+  FspWrapperApiLib
+
+[Pcd]
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress        ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspmUpdDataAddress64   ## PRODUCES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspsBaseAddress        ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspsUpdDataAddress64   ## PRODUCES
+
+[FixedPcd]
+
+[Ppis]
+
+[Guids]

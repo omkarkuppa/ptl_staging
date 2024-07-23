@@ -1,0 +1,1461 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2014 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+  form formid = CONCATENATE3(PCH_PCIERP,PORT_INDEX,_OPTIONS_FORM_ID),
+    title     = STRING_TOKEN(CONCATENATE3(STR_PCIERP,PORT_INDEX,_OPTIONS_FORM_TITLE));
+
+    oneof varid   = PCH_SETUP.PcieRootPortEn[PORT_INDEX],
+      prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_PROMPT,PORT_INDEX)),
+      help        = STRING_TOKEN(STR_PCH_PCIERP_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval PCH_SETUP.PcieRootPortEn[PORT_INDEX] == 0x0;
+      grayoutif ideqval PCH_SETUP.PcieRootPortHPE[PORT_INDEX] == 1;
+        oneof varid   = PCH_SETUP.PcieRootPortSI[PORT_INDEX],
+          prompt      = STRING_TOKEN(CONCATENATE2(STR_PCIE_SI_PROMPT,PORT_INDEX)),
+          help        = STRING_TOKEN(STR_PCIE_SLOT_IMPLEMENTED_HELP),
+          option text = STRING_TOKEN(STR_PCIE_BUILT_IN), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_PCIE_SLOT), value = 1, flags = DEFAULT | RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      oneof varid   = PCH_SETUP.PcieRootPortAspm[PORT_INDEX],
+        questionid  = CONCATENATE3(PCH_ASPM_PCIERP,PORT_INDEX,_QUESTION_ID),
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_ASPM_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCIE_ASPM_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCIE_ASPM_L0S_STRING), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCIE_ASPM_L1_STRING), value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCIE_ASPM_L0SL1_STRING), value = 3, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_AUTO_STRING), value = 4, flags = DEFAULT | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortL1SubStates[PORT_INDEX],
+        questionid  = CONCATENATE3(PCH_L1SUB_PCIERP,PORT_INDEX,_QUESTION_ID),
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCIE_L1SUB_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCIE_L1SUB_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCIE_L1SUB_1_STRING), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCIE_L1SUB_1_2_STRING), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortACS[PORT_INDEX],
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCIE_ACS_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCIE_ACS_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortPTM[PORT_INDEX],
+        questionid  = CONCATENATE3(PCH_PTM_PCIERP,PORT_INDEX,_QUESTION_ID),
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCIE_PTM_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCIE_PTM_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieFomsCp[PORT_INDEX],
+        prompt      = STRING_TOKEN(STR_PCIE_FOMSCP_PROMPT),
+        help        = STRING_TOKEN(STR_PCIE_FOMSCP_HELP),
+        option text = STRING_TOKEN(STR_AUTO), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_GEN3), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_GEN4), value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_GEN3_GEN4), value = 3, flags = RESET_REQUIRED;
+      suppressif (PORT_INDEX < 8);
+        option text = STRING_TOKEN(STR_GEN5), value = 4, flags = RESET_REQUIRED;
+      endif;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortURE[PORT_INDEX],
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_URE_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCH_PCIE_URE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortFEE[PORT_INDEX],
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_FEE_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCH_PCIE_FEE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortNFE[PORT_INDEX],
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_NFE_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCH_PCIE_NFE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortCEE[PORT_INDEX],
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_CEE_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCH_PCIE_CEE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortSFE[PORT_INDEX],
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_SFE_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCH_PCIE_SFE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortSNE[PORT_INDEX],
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_SNE_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCH_PCIE_SNE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortSCE[PORT_INDEX],
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_SCE_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCH_PCIE_SCE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortPMCE[PORT_INDEX],
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_PMCE_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCH_PCIE_PMCE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      grayoutif ideqval PCH_SETUP.PcieRootPortSI[PORT_INDEX] == 0;
+        oneof varid   = PCH_SETUP.PcieRootPortHPE[PORT_INDEX],
+          prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_HPE_PROMPT,PORT_INDEX)),
+          help        = STRING_TOKEN(STR_PCH_PCIE_HPE_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      oneof varid   = PCH_SETUP.PcieRootPortSpeed[PORT_INDEX],
+        prompt   = STRING_TOKEN (CONCATENATE2(STR_PCIE_SPEED_PROMPT,PORT_INDEX)),
+        help     = STRING_TOKEN (STR_PCIE_SPEED_HELP),
+        option text = STRING_TOKEN (STR_AUTO), value = 0, flags = RESET_REQUIRED | DEFAULT;
+        option text = STRING_TOKEN (STR_GEN1), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_GEN2), value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_GEN3), value = 3, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_GEN4), value = 4, flags = RESET_REQUIRED;
+      suppressif (PORT_INDEX < 8);
+        option text = STRING_TOKEN (STR_GEN5), value = 5, flags = RESET_REQUIRED;
+      endif;
+      endoneof;
+
+      numeric varid = PCH_SETUP.PcieDetectTimeoutMs[PORT_INDEX],
+        prompt      = STRING_TOKEN (CONCATENATE2(STR_PCH_PCIE_DETECT_TIMEOUT_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN (STR_PCH_PCIE_DETECT_TIMEOUT_HELP),
+        minimum     = 0,
+        maximum     = 65535,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      oneof varid   = PCH_SETUP.CompletionTimeout[PORT_INDEX],
+        prompt      = STRING_TOKEN (STR_PCH_PCIE_COMPLETION_TIMEOUT_PROMPT),
+        help        = STRING_TOKEN (STR_PCH_PCIE_COMPLETION_TIMEOUT_HELP),
+        option text = STRING_TOKEN(STR_COMPLETION_TIMEOUT_DEFAULT), value = 0x00, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_COMPLETION_TIMEOUT_1), value = 0x01, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_COMPLETION_TIMEOUT_2), value = 0x02, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_COMPLETION_TIMEOUT_3), value = 0x05, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_COMPLETION_TIMEOUT_4), value = 0x06, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_COMPLETION_TIMEOUT_5), value = 0x09, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_COMPLETION_TIMEOUT_6), value = 0x0A, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_COMPLETION_TIMEOUT_7), value = 0x0D, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_COMPLETION_TIMEOUT_8), value = 0x0E, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_COMPLETION_TIMEOUT_DISABLE), value = 0x10, flags = RESET_REQUIRED;
+      endoneof;
+
+    suppressif ideqval PCH_SETUP.PcieRootPortHPE[PORT_INDEX] == 0;
+      numeric varid = PCH_SETUP.PcieExtraBusRsvd[PORT_INDEX],
+        prompt      = STRING_TOKEN (CONCATENATE2(STR_PCH_PCIE_RBUS_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN (STR_PCH_PCIE_RBUS_HELP),
+        minimum     = 0,
+        maximum     = 7,
+        step        = 1,    // Stepping of 0 equates to a manual entering of a value, otherwise it will auto-increment with a left/right arrow
+        default     = 0,    // default no extra bus reserved
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieMemRsvd[PORT_INDEX],
+        prompt      = STRING_TOKEN (CONCATENATE2(STR_PCH_PCIE_RMEM_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN (STR_PCH_PCIE_RMEM_HELP),
+        minimum     = 1,
+        maximum     = 20,
+        step        = 1,    // Stepping of 0 equates to a manual entering of a value, otherwise it will auto-increment with a left/right arrow
+        default     = 10,   // Default 10MB Memory Reserved
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieIoRsvd[PORT_INDEX],
+        prompt      = STRING_TOKEN (CONCATENATE2(STR_PCH_PCIE_RVIO_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN (STR_PCH_PCIE_RVIO_HELP),
+        minimum     = 4,
+        maximum     = 20,
+        step        = 4,    // Stepping of 0 equates to a manual entering of a value, otherwise it will auto-increment with a left/right arrow
+        default     = 4,    // Default 4K IO Reserved
+      endnumeric;
+    endif;
+
+      SEPARATOR
+
+      subtitle text = STRING_TOKEN(STR_PCH_PCIE_LTR_CONFIG);
+      oneof varid   = PCH_SETUP.PchPcieLtrEnable[PORT_INDEX],
+        prompt   = STRING_TOKEN (CONCATENATE2(STR_PCH_PCIE_LTR_PROMPT,PORT_INDEX)),
+        help     = STRING_TOKEN (STR_PCH_PCIE_LTR_HELP),
+        option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval PCH_SETUP.PchPcieLtrEnable[PORT_INDEX] == 0;
+        oneof varid   = PCH_SETUP.PchPcieSnoopLatencyOverrideMode[PORT_INDEX],
+          prompt      = STRING_TOKEN (CONCATENATE2(STR_PCH_PCIE_SL_OVRD_PROMPT,PORT_INDEX)),
+          help        = STRING_TOKEN (STR_PCH_PCIE_SL_OVRD_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_MANUAL_STRING),   value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval PCH_SETUP.PchPcieSnoopLatencyOverrideMode[PORT_INDEX] == 1;
+          numeric varid = PCH_SETUP.PchPcieSnoopLatencyOverrideValue[PORT_INDEX],
+            prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_SL_VAL_PROMPT,PORT_INDEX)),
+            help        = STRING_TOKEN(STR_PCH_PCIE_SL_VAL_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 1023,
+            step        = 1,
+            default     = 65,
+          endnumeric;
+
+          oneof varid   = PCH_SETUP.PchPcieSnoopLatencyOverrideMultiplier[PORT_INDEX],
+            prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_SL_SCALE_PROMPT,PORT_INDEX)),
+            help        = STRING_TOKEN(STR_PCH_PCIE_SL_SCALE_HELP),
+            option text = STRING_TOKEN(STR_LTR_SCALE_0), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_LTR_SCALE_1), value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_LTR_SCALE_2), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_LTR_SCALE_3), value = 3, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_LTR_SCALE_4), value = 4, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_LTR_SCALE_5), value = 5, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+
+        oneof varid   = PCH_SETUP.PchPcieNonSnoopLatencyOverrideMode[PORT_INDEX],
+          prompt      = STRING_TOKEN (CONCATENATE2(STR_PCH_PCIE_NSL_OVRD_PROMPT,PORT_INDEX)),
+          help        = STRING_TOKEN (STR_PCH_PCIE_NSL_OVRD_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_MANUAL_STRING),   value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval PCH_SETUP.PchPcieNonSnoopLatencyOverrideMode[PORT_INDEX] == 1;
+          numeric varid = PCH_SETUP.PchPcieNonSnoopLatencyOverrideValue[PORT_INDEX],
+            prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_NSL_VAL_PROMPT,PORT_INDEX)),
+            help        = STRING_TOKEN(STR_PCH_PCIE_NSL_VAL_HELP),
+            flags       = RESET_REQUIRED,
+            minimum     = 0,
+            maximum     = 1023,
+            step        = 1,
+            default     = 65,
+          endnumeric;
+
+          oneof varid   = PCH_SETUP.PchPcieNonSnoopLatencyOverrideMultiplier[PORT_INDEX],
+            prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_NSL_SCALE_PROMPT,PORT_INDEX)),
+            help        = STRING_TOKEN(STR_PCH_PCIE_NSL_SCALE_HELP),
+            option text = STRING_TOKEN(STR_LTR_SCALE_0), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_LTR_SCALE_1), value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_LTR_SCALE_2), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_LTR_SCALE_3), value = 3, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_LTR_SCALE_4), value = 4, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_LTR_SCALE_5), value = 5, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+
+        oneof varid  = PCH_SETUP.PchPcieLtrOverrideSpecCompliant[PORT_INDEX],
+            prompt      = STRING_TOKEN(STR_PCH_PCIE_LTR_OVRD_SPEC_COMPLIANT),
+            help        = STRING_TOKEN(STR_PCH_PCIE_LTR_OVRD_SPEC_COMPLIANT_HELP),
+            option text = STRING_TOKEN(STR_SPEC_COMPLIANT), value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DESIRED_VALUE), value = 0, flags = DEFAULT | RESET_REQUIRED;
+        endoneof;
+
+      endif;
+
+      SEPARATOR
+
+      oneof varid   = PCH_SETUP.PcieRootPortPeerMemoryWriteEnable[PORT_INDEX],
+        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_ROOTPORT_PEER_TO_PEER_MODE_PROMPT,PORT_INDEX)),
+        help        = STRING_TOKEN(STR_PCH_PCIE_ROOTPORT_PEER_TO_PEER_MODE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.PcieRootPortLinkDownGpios[PORT_INDEX],
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_ROOTPORT_LINKDOWN_GPIO_PROMPT),
+        help        = STRING_TOKEN(STR_PCH_PCIE_ROOTPORT_LINKDOWN_GPIO_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+  goto CONCATENATE3(PCIE,PORT_INDEX,_EQ_SETTINGS_FORM_ID),
+    prompt = STRING_TOKEN(STR_PCIE_EQ_SETTINGS_FORM_TITLE),
+    help   = STRING_TOKEN(STR_PCIE_EQ_SETTINGS_FORM_TITLE);
+
+    endif;
+  endform; //End of PCH_PCIERP1_OPTIONS_FORM_ID
+
+  form formid = CONCATENATE3(PCIE,PORT_INDEX,_EQ_SETTINGS_FORM_ID),
+    title     = STRING_TOKEN(STR_PCIE_EQ_SETTINGS_FORM_TITLE);
+  checkbox varid  = PCH_SETUP.PcieEqOverrideDefault[PORT_INDEX],
+    prompt   = STRING_TOKEN(STR_PCIE_EQ_OVERRIDE_PROMPT),
+    help     = STRING_TOKEN(STR_PCIE_EQ_OVERRIDE_HELP),
+    default  = 0,
+  endcheckbox;
+
+  suppressif ideqval PCH_SETUP.PcieEqOverrideDefault[PORT_INDEX] == 0;
+    subtitle text = STRING_TOKEN(STR_PCIE_GEN3_HWEQ_CONFIG);
+
+    oneof varid   = PCH_SETUP.PcieGen3PcetTimer[PORT_INDEX],
+      prompt      = STRING_TOKEN(STR_PCIE_PCET_PROMPT),
+      help        = STRING_TOKEN(STR_PCIE_PCET_HELP),
+      option text = STRING_TOKEN(STR_PCET_2),   value = 0,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_2_5), value = 1,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_3),   value = 2,  flags = RESET_REQUIRED | DEFAULT;
+      option text = STRING_TOKEN(STR_PCET_3_5), value = 3,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_4),   value = 4,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_4_5), value = 5,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_5),   value = 6,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_6),   value = 7,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_7),   value = 8,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_8),   value = 9,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_9),   value = 10, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_10),  value = 11, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_11),  value = 12, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_21),  value = 13, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_22),  value = 14, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_23),  value = 15, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid = PCH_SETUP.PcieGen3EqMode[PORT_INDEX],
+          prompt = STRING_TOKEN(STR_PCIE_EQ_MODE_PROMPT),
+          help = STRING_TOKEN(STR_PCIE_EQ_MODE_HELP),
+          option text = STRING_TOKEN(STR_PCIE_EQ_MODE_PRESET), value = 0, flags = RESET_REQUIRED | DEFAULT;
+          option text = STRING_TOKEN(STR_PCIE_EQ_MODE_COEFFICIENT), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    numeric varid = PCH_SETUP.PcieGen3EqPh1DpTxPreset[PORT_INDEX],
+          prompt = STRING_TOKEN(STR_PCIE_EQ_PH1_DOWNSTREAM_PORT_TRANSMITTER_PRESET_PROMPT),
+          help = STRING_TOKEN(STR_PCIE_EQ_PH1_TRANSMITTER_PRESET_HELP),
+          flags = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 10,
+          step = 1,
+          default = 7,
+    endnumeric;
+
+    numeric varid = PCH_SETUP.PcieGen3EqPh1UpTxPreset[PORT_INDEX],
+            prompt = STRING_TOKEN(STR_PCIE_EQ_PH1_UPSTREAM_PORT_TRANSMITTER_PRESET_PROMPT),
+            help = STRING_TOKEN(STR_PCIE_EQ_PH1_TRANSMITTER_PRESET_HELP),
+            flags = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 10,
+            step = 1,
+            default = 7,
+    endnumeric;
+
+    numeric varid = PCH_SETUP.PcieGen3EqPh3NoOfPresetOrCoeff[PORT_INDEX],
+            prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_COEFF_NUMBER_PROMPT),
+            help = STRING_TOKEN(STR_PCIE_EQ_PRESET_COEFF_NUMBER_HELP),
+            flags = RESET_REQUIRED,
+            minimum = 1,
+            maximum = 11, // Maximum number of presets supported in the hardware
+            step = 1,
+            default = 5,
+    endnumeric;
+
+    suppressif NOT ideqval PCH_SETUP.PcieGen3EqMode[PORT_INDEX] == 0; // PCIe EQ preset mode
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset0List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_0),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 4,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset1List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_1),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 5,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset2List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_2),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 6,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset3List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_3),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default value = cond(GEN5_SUPPORT == 1 ? 8 : 9), defaultstore = MyStandardDefault,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset4List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_4),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default value = cond(GEN5_SUPPORT == 1 ? 8 : 9), defaultstore = MyStandardDefault,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset5List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_5),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset6List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_6),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset7List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_7),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset8List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_8),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset9List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_9),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3Preset10List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_10),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+    endif;
+
+    suppressif NOT ideqval PCH_SETUP.PcieGen3EqMode[PORT_INDEX] == 1; // Coefficient mode
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PreCursor0List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_0),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PostCursor0List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_0),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PreCursor1List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_1),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PostCursor1List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_1),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PreCursor2List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_2),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PostCursor2List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_2),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PreCursor3List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_3),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PostCursor3List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_3),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PreCursor4List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_4),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PostCursor4List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_4),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PreCursor5List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_5),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PostCursor5List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_5),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PreCursor6List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_6),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PostCursor6List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_6),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PreCursor7List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_7),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PostCursor7List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_7),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PreCursor8List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_8),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PostCursor8List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_8),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PreCursor9List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_9),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen3EqPh3PostCursor9List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_9),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+    endif;
+
+    subtitle text = STRING_TOKEN(STR_PCIE_GEN4_HWEQ_CONFIG);
+
+    oneof varid   = PCH_SETUP.PcieGen4PcetTimer[PORT_INDEX],
+      prompt      = STRING_TOKEN(STR_PCIE_PCET_PROMPT),
+      help        = STRING_TOKEN(STR_PCIE_PCET_HELP),
+      option text = STRING_TOKEN(STR_PCET_2),   value = 0,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_2_5), value = 1,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_3),   value = 2,  flags = RESET_REQUIRED | DEFAULT;
+      option text = STRING_TOKEN(STR_PCET_3_5), value = 3,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_4),   value = 4,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_4_5), value = 5,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_5),   value = 6,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_6),   value = 7,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_7),   value = 8,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_8),   value = 9,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_9),   value = 10, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_10),  value = 11, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_11),  value = 12, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_21),  value = 13, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_22),  value = 14, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_23),  value = 15, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid = PCH_SETUP.PcieGen4EqMode[PORT_INDEX],
+          prompt = STRING_TOKEN(STR_PCIE_EQ_MODE_PROMPT),
+          help = STRING_TOKEN(STR_PCIE_EQ_MODE_HELP),
+          option text = STRING_TOKEN(STR_PCIE_EQ_MODE_PRESET), value = 0, flags = RESET_REQUIRED | DEFAULT;
+          option text = STRING_TOKEN(STR_PCIE_EQ_MODE_COEFFICIENT), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+
+    numeric varid = PCH_SETUP.PcieGen4EqPh1DpTxPreset[PORT_INDEX],
+          prompt = STRING_TOKEN(STR_PCIE_EQ_PH1_DOWNSTREAM_PORT_TRANSMITTER_PRESET_PROMPT),
+          help = STRING_TOKEN(STR_PCIE_EQ_PH1_TRANSMITTER_PRESET_HELP),
+          flags = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 10,
+          step = 1,
+          default = 7,
+    endnumeric;
+
+    numeric varid = PCH_SETUP.PcieGen4EqPh1UpTxPreset[PORT_INDEX],
+            prompt = STRING_TOKEN(STR_PCIE_EQ_PH1_UPSTREAM_PORT_TRANSMITTER_PRESET_PROMPT),
+            help = STRING_TOKEN(STR_PCIE_EQ_PH1_TRANSMITTER_PRESET_HELP),
+            flags = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 10,
+            step = 1,
+            default = 7,
+    endnumeric;
+
+    numeric varid = PCH_SETUP.PcieGen4EqPh3NoOfPresetOrCoeff[PORT_INDEX],
+            prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_COEFF_NUMBER_PROMPT),
+            help = STRING_TOKEN(STR_PCIE_EQ_PRESET_COEFF_NUMBER_HELP),
+            flags = RESET_REQUIRED,
+            minimum = 1,
+            maximum = 11, // Maximum number of presets supported in the hardware
+            step = 1,
+            default value = cond(GEN5_SUPPORT == 1 ? 3 : 5), defaultstore = MyStandardDefault,
+    endnumeric;
+
+    suppressif NOT ideqval PCH_SETUP.PcieGen4EqMode[PORT_INDEX] == 0; // PCIe EQ preset mode
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset0List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_0),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 4,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset1List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_1),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 5,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset2List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_2),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 6,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset3List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_3),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default value = cond(GEN5_SUPPORT == 1 ? 0 : 8), defaultstore = MyStandardDefault,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset4List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_4),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default value = cond(GEN5_SUPPORT == 1 ? 0 : 9), defaultstore = MyStandardDefault,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset5List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_5),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 7,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset6List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_6),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset7List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_7),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset8List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_8),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset9List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_9),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3Preset10List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_10),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+    endif;
+
+    suppressif NOT ideqval PCH_SETUP.PcieGen4EqMode[PORT_INDEX] == 1; // Coefficient mode
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PreCursor0List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_0),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PostCursor0List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_0),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PreCursor1List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_1),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PostCursor1List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_1),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PreCursor2List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_2),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PostCursor2List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_2),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PreCursor3List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_3),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PostCursor3List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_3),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PreCursor4List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_4),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PostCursor4List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_4),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PreCursor5List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_5),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PostCursor5List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_5),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PreCursor6List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_6),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PostCursor6List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_6),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PreCursor7List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_7),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PostCursor7List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_7),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PreCursor8List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_8),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PostCursor8List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_8),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PreCursor9List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_9),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen4EqPh3PostCursor9List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_9),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+    endif;
+
+  suppressif (PORT_INDEX < 8);
+    subtitle text = STRING_TOKEN(STR_PCIE_GEN5_HWEQ_CONFIG);
+
+    oneof varid   = PCH_SETUP.PcieGen5PcetTimer[PORT_INDEX],
+      prompt      = STRING_TOKEN(STR_PCIE_PCET_PROMPT),
+      help        = STRING_TOKEN(STR_PCIE_PCET_HELP),
+      default value = 0x2, defaultstore = MyStandardDefault,
+      option text = STRING_TOKEN(STR_PCET_2),   value = 0,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_2_5), value = 1,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_3),   value = 2,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_3_5), value = 3,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_4),   value = 4,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_4_5), value = 5,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_5),   value = 6,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_6),   value = 7,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_7),   value = 8,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_8),   value = 9,  flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_9),   value = 10, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_10),  value = 11, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_11),  value = 12, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_21),  value = 13, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_22),  value = 14, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCET_23),  value = 15, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid = PCH_SETUP.PcieGen5EqMode[PORT_INDEX],
+          prompt = STRING_TOKEN(STR_PCIE_EQ_MODE_PROMPT),
+          help = STRING_TOKEN(STR_PCIE_EQ_MODE_HELP),
+          option text = STRING_TOKEN(STR_PCIE_EQ_MODE_PRESET), value = 0, flags = RESET_REQUIRED | DEFAULT;
+          option text = STRING_TOKEN(STR_PCIE_EQ_MODE_COEFFICIENT), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    numeric varid = PCH_SETUP.PcieGen5EqPh1DpTxPreset[PORT_INDEX],
+          prompt = STRING_TOKEN(STR_PCIE_EQ_PH1_DOWNSTREAM_PORT_TRANSMITTER_PRESET_PROMPT),
+          help = STRING_TOKEN(STR_PCIE_EQ_PH1_TRANSMITTER_PRESET_HELP),
+          flags = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 10,
+          step = 1,
+          default = 5,
+    endnumeric;
+
+    numeric varid = PCH_SETUP.PcieGen5EqPh1UpTxPreset[PORT_INDEX],
+            prompt = STRING_TOKEN(STR_PCIE_EQ_PH1_UPSTREAM_PORT_TRANSMITTER_PRESET_PROMPT),
+            help = STRING_TOKEN(STR_PCIE_EQ_PH1_TRANSMITTER_PRESET_HELP),
+            flags = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 10,
+            step = 1,
+            default = 5,
+    endnumeric;
+
+    numeric varid = PCH_SETUP.PcieGen5EqPh3NoOfPresetOrCoeff[PORT_INDEX],
+            prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_COEFF_NUMBER_PROMPT),
+            help = STRING_TOKEN(STR_PCIE_EQ_PRESET_COEFF_NUMBER_HELP),
+            flags = RESET_REQUIRED,
+            minimum = 1,
+            maximum = 11, // Maximum number of presets supported in the hardware
+            step = 1,
+            default = 4,
+    endnumeric;
+
+    suppressif NOT ideqval PCH_SETUP.PcieGen5EqMode[PORT_INDEX] == 0; // PCIe EQ preset mode
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset0List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_0),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 4,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset1List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_1),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 5,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset2List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_2),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 7,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset3List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_3),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 8,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset4List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_4),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset5List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_5),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset6List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_6),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset7List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_7),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset8List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_8),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset9List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_9),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3Preset10List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_PROMPT_10),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRESET_LIST_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63, // Maximum preset value supported by hardware
+              step = 1,
+              default = 0,
+      endnumeric;
+    endif;
+
+    suppressif NOT ideqval PCH_SETUP.PcieGen5EqMode[PORT_INDEX] == 1; // Coefficient mode
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PreCursor0List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_0),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PostCursor0List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_0),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PreCursor1List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_1),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PostCursor1List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_1),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PreCursor2List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_2),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PostCursor2List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_2),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PreCursor3List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_3),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PostCursor3List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_3),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PreCursor4List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_4),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PostCursor4List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_4),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PreCursor5List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_5),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PostCursor5List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_5),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PreCursor6List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_6),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PostCursor6List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_6),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PreCursor7List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_7),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PostCursor7List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_7),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PreCursor8List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_8),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PostCursor8List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_8),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PreCursor9List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_PROMPT_9),
+              help = STRING_TOKEN(STR_PCIE_EQ_PRE_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.PcieGen5EqPh3PostCursor9List[PORT_INDEX],
+              prompt = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_PROMPT_9),
+              help = STRING_TOKEN(STR_PCIE_EQ_POST_CURSOR_COEFF_HELP),
+              flags = RESET_REQUIRED,
+              minimum = 0,
+              maximum = 63,
+              step = 1,
+              default = 0,
+      endnumeric;
+    endif;
+  endif;
+ endif;
+
+endform;
+

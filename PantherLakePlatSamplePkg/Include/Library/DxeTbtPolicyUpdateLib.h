@@ -1,0 +1,39 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2017 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#ifndef _DXE_TBT_POLICY_UPDATE_LIB_H_
+#define _DXE_TBT_POLICY_UPDATE_LIB_H_
+
+/**
+  Get data for platform policy from setup options.
+
+  @param[in] ITbtPolicy           The pointer to get ITBT Policy protocol instance
+
+  @retval EFI_SUCCESS             Operation success.
+
+**/
+EFI_STATUS
+EFIAPI
+UpdateDxeTbtPolicy (
+  IN OUT  ITBT_POLICY_PROTOCOL    *ITbtPolicy
+  )
+;
+
+#endif

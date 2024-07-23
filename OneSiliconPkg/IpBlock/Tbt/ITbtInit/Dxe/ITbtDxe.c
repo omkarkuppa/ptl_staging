@@ -1,0 +1,375 @@
+/** @file
+  ITBT init Dxe driver.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 1999 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+#include <Uefi.h>
+#include <Library/IoLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/BaseLib.h>
+#include <Library/TbtCommonLib.h>
+#include <ITbtInfoHob.h>
+#include <Protocol/ITbtPolicy.h>
+#include <Protocol/ITbtNvsArea.h>
+#include <Protocol/FirmwareVolume2.h>
+#include <Library/DebugLib.h>
+#include <Library/HobLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
+#include <Library/UefiLib.h>
+#include <Uefi/UefiSpec.h>
+#include <Library/PcdLib.h>
+#include <Library/ConfigBlockLib.h>
+#include <Library/AslUpdateLib.h>
+#include <Library/PcdLib.h>
+#include <Library/DxeTbtDisBmeLib.h>
+#include <Library/ItbtPcieRpLib.h>
+#include <Library/MeUtilsLib.h>
+#include <Protocol/TbtDisBmeProtocol.h>
+#include <MeState.h>
+#include <MkhiMsgs.h>
+#include <MeBiosPayloadHob.h>
+#include <TcssDataHob.h>
+#include <TcssInfo.h>
+#include <Register/HostDmaRegs.h>
+
+GLOBAL_REMOVE_IF_UNREFERENCED ITBT_NVS_AREA_PROTOCOL                    mITbtNvsAreaProtocol;
+
+/**
+  DisableiTbtBmeCallBackFunction
+
+  Disable BME on iTBT tree at ExitBootServices to hand off security of TBT hierarchies to the OS.
+
+  @param[in] Event     - A pointer to the Event that triggered the callback.
+  @param[in] Context   - A pointer to private data registered with the callback function.
+**/
+VOID
+EFIAPI
+DisableITbtBmeCallBackFunction (
+  IN EFI_EVENT    Event,
+  IN VOID         *Context
+  )
+{
+  EFI_STATUS                Status;
+  UINT8                     Index;
+  SBDF                      Sbdf = {0,0,0,0,0};
+  UINTN                     RpDev;
+  UINTN                     RpFunc;
+  UINTN                     RpSegment;
+  UINTN                     RpBus;
+
+  DEBUG((DEBUG_INFO, "[TBT] DisableITbtBmeCallBackFunction START\n"));
+
+  Status      = EFI_SUCCESS;
+  Index       = 0;
+  RpDev       = 0;
+  RpFunc      = 0;
+  RpSegment   = 0;
+  RpBus       = 0;
+
+  for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index++) {
+      Status = GetItbtPcieRpInfo ((UINTN) Index, &RpSegment, &RpBus, &RpDev, &RpFunc);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "Failed to get port[%d] info, Status: %r\n", Index, Status));
+        continue;
+      }
+
+      Sbdf.Dev = (UINT32) RpDev;
+      Sbdf.Func = (UINT32) RpFunc;
+      Sbdf.Bus = (UINT32) RpBus;
+      Sbdf.Seg = (UINT32) RpSegment;
+      DEBUG ((DEBUG_INFO, "iTBT Root Port: %02x:%02x:%02x:%02x\n", Sbdf.Seg, Sbdf.Bus, Sbdf.Dev, Sbdf.Func));
+      RecursiveTbtHierarchyConfiguration (Sbdf);
+  }
+
+  gBS->CloseEvent (Event);
+  DEBUG((DEBUG_INFO, "[TBT] DisableITbtBmeCallBackFunction END\n"));
+}
+
+EFI_DISABLE_TBT_BME_PROTOCOL mDisableITbtBmeProtocol = {
+    DisableITbtBmeCallBackFunction,
+};
+
+/**
+  The function install DisableBme protocol for iTBT Shell validation
+**/
+VOID
+InstallITbtDisableBmeProtocol (
+  VOID
+  )
+{
+  EFI_STATUS        Status;
+  EFI_HANDLE        Handle;
+
+  Handle = NULL;
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                  &Handle,
+                  &gDisableITbtBmeProtocolGuid,
+                  &mDisableITbtBmeProtocol,
+                  NULL
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "ITbtDisableBmeProtocol Failed. Status: %d\n", Status));
+  } else {
+    DEBUG ((DEBUG_INFO, "ITbtDisableBmeProtocol Installed\n"));
+  }
+}
+
+/**
+  ITBT NVS Area Initialize
+**/
+VOID
+ITbtNvsAreaInit (
+  IN  VOID              **mITbtNvsAreaPtr
+  )
+{
+  UINTN                         Pages;
+  EFI_PHYSICAL_ADDRESS          Address;
+  EFI_STATUS                    Status;
+  UINT8                         Index;
+  ITBT_NVS_AREA_PROTOCOL        *ITbtNvsAreaProtocol;
+  ITBT_POLICY_PROTOCOL          *ITbtPolicy;
+  DXE_ITBT_CONFIG               *DxeITbtConfig;
+  TCSS_DATA_HOB                 *TcssHob;
+  ITBT_INFO_HOB                 *ITbtInfoHob;
+  UINT32                        MeMode;
+
+  ITbtNvsAreaProtocol = NULL;
+  ITbtPolicy = NULL;
+  DxeITbtConfig = NULL;
+  TcssHob = NULL;
+  ITbtInfoHob = NULL;
+
+  DEBUG ((DEBUG_INFO, "ITbtNvsAreaInit Start\n"));
+
+  Status = gBS->LocateProtocol (&gITbtPolicyProtocolGuid, NULL, (VOID **) &ITbtPolicy);
+  ASSERT_EFI_ERROR (Status);
+  Status = GetConfigBlock ((VOID *) ITbtPolicy, &gDxeITbtConfigGuid, (VOID *)&DxeITbtConfig);
+  ASSERT_EFI_ERROR (Status);
+
+  TcssHob = (TCSS_DATA_HOB *) GetFirstGuidHob (&gTcssHobGuid);
+  ITbtInfoHob = (ITBT_INFO_HOB *) GetFirstGuidHob (&gITbtInfoHobGuid);
+
+  Pages = EFI_SIZE_TO_PAGES (sizeof (ITBT_NVS_AREA));
+  Address = 0xffffffff; // allocate address below 4G.
+
+  Status  = gBS->AllocatePages (
+                   AllocateMaxAddress,
+                   EfiACPIMemoryNVS,
+                   Pages,
+                   &Address
+                   );
+  ASSERT_EFI_ERROR (Status);
+
+  *mITbtNvsAreaPtr = (VOID *) (UINTN) Address;
+  SetMem (*mITbtNvsAreaPtr, sizeof (ITBT_NVS_AREA), 0);
+
+  //
+  // ITBTNvsAreaProtocol default value init here
+  //
+  ITbtNvsAreaProtocol = (ITBT_NVS_AREA_PROTOCOL *) &Address;
+
+  //
+  // Initialize default values for ITBT NVS
+  //
+  ITbtNvsAreaProtocol->Area->OsNativeResourceBalance = DxeITbtConfig->OsNativeResourceBalance;
+  ITbtNvsAreaProtocol->Area->ITbtRtd3              = (UINT8) DxeITbtConfig->ITbtGenericConfig.ITbtRtd3;
+  ITbtNvsAreaProtocol->Area->ITbtRtd3ExitDelay     = (UINT16) DxeITbtConfig->ITbtGenericConfig.ITbtRtd3ExitDelay;
+  ITbtNvsAreaProtocol->Area->PcieRtd3LinkActiveTimeout = (UINT16) DxeITbtConfig->PcieRtd3LinkActiveTimeout;
+
+  if (ITbtInfoHob != NULL) {
+    for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index ++) {
+      if (ITbtInfoHob->ITbtRootPortConfig[Index].ITbtPcieRootPortEn == 1) {
+        ITbtNvsAreaProtocol->Area->IntegratedTbtSupport = 1;
+        break;
+      }
+    }
+    ITbtNvsAreaProtocol->Area->ITbtPcieRootPortEn0   = ITbtInfoHob->ITbtRootPortConfig[0].ITbtPcieRootPortEn;
+    ITbtNvsAreaProtocol->Area->ITbtPcieRootPortEn1   = ITbtInfoHob->ITbtRootPortConfig[1].ITbtPcieRootPortEn;
+    ITbtNvsAreaProtocol->Area->ITbtPcieRootPortEn2   = ITbtInfoHob->ITbtRootPortConfig[2].ITbtPcieRootPortEn;
+    ITbtNvsAreaProtocol->Area->ITbtPcieRootPortEn3   = ITbtInfoHob->ITbtRootPortConfig[3].ITbtPcieRootPortEn;
+    ITbtNvsAreaProtocol->Area->ITbtForcePowerOnTimeoutInMs = ITbtInfoHob->ITbtForcePowerOnTimeoutInMs;
+    ITbtNvsAreaProtocol->Area->ITbtConnectTopologyTimeoutInMs = ITbtInfoHob->ITbtConnectTopologyTimeoutInMs;
+  }
+  if (TcssHob != NULL) {
+    ITbtNvsAreaProtocol->Area->IntegratedTbtDma0   = TcssHob->TcssData.ItbtDmaEn[0];
+    ITbtNvsAreaProtocol->Area->IntegratedTbtDma1   = TcssHob->TcssData.ItbtDmaEn[1];
+    ITbtNvsAreaProtocol->Area->ITbtImrValid        = (UINT8) ((TcssHob->TcssData.TbtImrStatus.Bits.Valid) & (TcssHob->TcssData.TbtImrStatus.Bits.Done));
+  }
+
+  if (DxeITbtConfig->ITbtGenericConfig.ITbtVproDockSupport == 1) {
+    Status = MeBiosGetMeMode (&MeMode);
+    if (!EFI_ERROR (Status) && MeMode == ME_MODE_NORMAL) {
+      ITbtNvsAreaProtocol->Area->ITbtVproDockSupport = 1;
+    }
+  }
+
+  DEBUG ((DEBUG_INFO, "ITbtNvsAreaInit End\n"));
+}
+
+/**
+  This function gets registered as a callback to patch TBT ASL code
+
+  @param[in] Event     - A pointer to the Event that triggered the callback.
+  @param[in] Context   - A pointer to private data registered with the callback function.
+**/
+VOID
+EFIAPI
+ITbtAcpiEndOfDxeCallback (
+  IN EFI_EVENT    Event,
+  IN VOID         *Context
+  )
+{
+  EFI_STATUS                            Status;
+  UINT32                                Address;
+  UINT16                                Length;
+  UINT64                                SsdtOemTableId;
+
+  SsdtOemTableId = SIGNATURE_64 ('T','c','s','s','S','s','d','t');
+
+  Address = (UINT32) (UINTN) mITbtNvsAreaProtocol.Area;
+  Length  = (UINT16) sizeof (ITBT_NVS_AREA);
+  DEBUG ((DEBUG_INFO, "Patch ITBT NvsAreaAddress: ITBT NVS Address %x Length %x\n", Address, Length));
+  Status = UpdateSsdtNameAslCode ((UINT8*) &SsdtOemTableId, sizeof (SsdtOemTableId), SIGNATURE_32 ('I','T','N','B'), &Address, sizeof (Address));
+  ASSERT_EFI_ERROR (Status);
+  Status = UpdateSsdtNameAslCode ((UINT8*) &SsdtOemTableId, sizeof (SsdtOemTableId), SIGNATURE_32 ('I','T','N','L'), &Length, sizeof (Length));
+  ASSERT_EFI_ERROR (Status);
+
+  return;
+}
+
+/**
+  Initialize Thunderbolt(TM) SSDT ACPI tables
+
+  @retval EFI_SUCCESS    ACPI tables are initialized successfully
+  @retval EFI_NOT_FOUND  ACPI tables not found
+**/
+
+EFI_STATUS
+EFIAPI
+ITbtDxeEntryPoint (
+  IN EFI_HANDLE           ImageHandle,
+  IN EFI_SYSTEM_TABLE     *SystemTable
+  )
+{
+  EFI_STATUS              Status;
+  EFI_HANDLE              Handle;
+  EFI_EVENT               EndOfDxeEvent;
+  EFI_EVENT               ExitBootServiceEvent;
+  DXE_ITBT_CONFIG         *DxeITbtConfig;
+  ITBT_POLICY_PROTOCOL    *ITbtPolicy;
+  BOOLEAN                 ITbtExisted;
+  UINT8                   Index;
+
+  Status                  = EFI_SUCCESS;
+  Handle                  = NULL;
+  EndOfDxeEvent           = NULL;
+  ExitBootServiceEvent    = NULL;
+  DxeITbtConfig           = NULL;
+  ITbtPolicy              = NULL;
+  ITbtExisted             = FALSE;
+
+  DEBUG ((DEBUG_INFO, "[TBT] ITbtDxeEntryPoint START\n"));
+
+  for (Index = 0; Index < MAX_HOST_ITBT_DMA_NUMBER; Index ++) {
+    if (0xFFFF != PciSegmentRead16 (PCI_SEGMENT_LIB_ADDRESS (0, HOST_DMA_BUS_NUM, HOST_DMA_DEV_NUM, HOST_DMA0_FUN_NUM + Index, PCI_VENDOR_ID_OFFSET))) {
+      ITbtExisted = TRUE;
+    }
+  }
+
+  if (ITbtExisted == FALSE) {
+    DEBUG ((DEBUG_ERROR, "ITBT DMA controller is not existed\n"));
+    goto Exit;
+  }
+
+  //
+  // Initialize ITbt Nvs Area
+  //
+  ITbtNvsAreaInit ((VOID **) &mITbtNvsAreaProtocol.Area);
+
+  //
+  // [ACPI] ITBT ACPI table
+  //
+
+  Handle = NULL;
+
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                  &Handle,
+                  &gITbtNvsAreaProtocolGuid,
+                  &mITbtNvsAreaProtocol,
+                  NULL
+                  );
+  ASSERT_EFI_ERROR (Status);
+
+  //
+  // Register an end of DXE event for ITBT ACPI to do some patch
+  //
+  Status = gBS->CreateEventEx (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  ITbtAcpiEndOfDxeCallback,
+                  NULL,
+                  &gEfiEndOfDxeEventGroupGuid,
+                  &EndOfDxeEvent
+                  );
+  ASSERT_EFI_ERROR (Status);
+
+  Status = gBS->LocateProtocol (
+              &gITbtPolicyProtocolGuid,
+              NULL,
+              (VOID **) &ITbtPolicy
+              );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to get ITbtPolicy, Status: %d\n", Status));
+    goto Exit;
+  }
+
+  Status = GetConfigBlock ((VOID *) ITbtPolicy, &gDxeITbtConfigGuid, (VOID *)&DxeITbtConfig);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to get DxeITbtConfig, Status: %d\n", Status));
+    goto Exit;
+  }
+
+  //
+  // Register a Exit Boot Service for disable iTBT BME
+  //
+  DEBUG ((DEBUG_INFO, "Register a Exit Boot Service for disable iTBT BME\n"));
+
+  Status = gBS->CreateEventEx (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  DisableITbtBmeCallBackFunction,
+                  NULL,
+                  &gEfiEventExitBootServicesGuid,
+                  &ExitBootServiceEvent
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to Register a Exit Boot Service for disable TBT BME, Status: %d\n", Status));
+    gBS->CloseEvent (ExitBootServiceEvent);
+    goto Exit;
+  }
+
+  //
+  // Install iTBT Disable Bme protocol for Shell testing purpose
+  //
+  InstallITbtDisableBmeProtocol ();
+
+Exit:
+  DEBUG ((DEBUG_INFO, "[TBT] ITbtDxeEntryPoint END\n"));
+  return Status;
+}

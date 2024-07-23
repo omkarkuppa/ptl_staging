@@ -1,0 +1,100 @@
+## @file
+#  NVM Express Host Controller Module with TSE support.
+#
+#  NvmExpressDxe driver is used to manage non-volatile memory subsystem which follows
+#  NVM Express specification.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = NvmExpressDxe
+  MODULE_UNI_FILE                = NvmExpressDxe.uni
+  FILE_GUID                      = 41BED8AD-FF38-4203-A7A5-1631706DCB1E
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = NvmExpressDriverEntry
+  UNLOAD_IMAGE                   = NvmExpressUnload
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 EBC
+#
+#  DRIVER_BINDING                =  gNvmExpressDriverBinding
+#  COMPONENT_NAME                =  gNvmExpressComponentName
+#  COMPONENT_NAME2               =  gNvmExpressComponentName2
+
+[Sources]
+  NvmExpressBlockIoCrypto.c
+  NvmExpressBlockIoCrypto.h
+  NvmExpressBlockIo.c
+  NvmExpressBlockIo.h
+  ComponentName.c
+  NvmExpress.c
+  NvmExpress.h
+  NvmExpressDiskInfo.c
+  NvmExpressDiskInfo.h
+  NvmExpressHci.c
+  NvmExpressHci.h
+  NvmExpressPassthru.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  BaseLib
+  DebugLib
+  DevicePathLib
+  MemoryAllocationLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiLib
+  PrintLib
+  ReportStatusCodeLib
+
+[Pcd]
+
+
+[Guids]
+  gEfiBlockIoCryptoAlgoAesXtsGuid
+
+[Protocols]
+  gEfiPciIoProtocolGuid                       ## TO_START
+  ## BY_START
+  ## TO_START
+  gEfiDevicePathProtocolGuid
+  gEfiNvmExpressPassThruProtocolGuid          ## BY_START
+  gEfiBlockIoProtocolGuid                     ## BY_START
+  gEfiBlockIo2ProtocolGuid                    ## BY_START
+  gEfiBlockIoCryptoProtocolGuid               ## BY_START
+  gEfiDiskInfoProtocolGuid                    ## BY_START
+  gEfiStorageSecurityCommandProtocolGuid      ## BY_START
+  gEfiDriverSupportedEfiVersionProtocolGuid   ## PRODUCES
+  gEfiResetNotificationProtocolGuid           ## CONSUMES
+  gTseProtocolGuid                            ## CONSUMES
+
+# [Event]
+# EVENT_TYPE_RELATIVE_TIMER ## SOMETIMES_CONSUMES
+#
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  NvmExpressDxeExtra.uni

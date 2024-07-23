@@ -1,0 +1,42 @@
+## @file FspWrapperPkgPeiPostMem.fdf
+#  FDF file for FSP Wrapper PEI post-mem drivers.
+#
+#  This file is intended to be included into another package so advanced features of
+#  FSP Wrapper can be conditionally included in the flash image by enabling the respective
+#  feature via its FeaturePCD.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+################################################################################
+#
+# FV Section
+#
+# [FV] section is used to define what components or modules are placed within a flash
+# device file.  This section also defines order the components and modules are positioned
+# within the image.  The [FV] section consists of define statements, set statements and
+# module statements.
+#
+################################################################################
+!if gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1
+  INF FspWrapperFeaturePkg/FspWrapperExtractGuidedPeim/FspWrapperExtractGuidedPeim.inf
+!endif #PcdFspModeSelection
+INF  FspWrapperFeaturePkg/FspWrapperPeim/FspWrapperPeim.inf
+!if gSiPkgTokenSpaceGuid.PcdFspVEnable == TRUE
+  INF FspWrapperFeaturePkg/FspValidation/FspVPhatUpdate/FspVPhatUpdate.inf
+!endif

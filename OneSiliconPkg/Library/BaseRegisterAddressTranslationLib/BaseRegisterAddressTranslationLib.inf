@@ -1,0 +1,47 @@
+## @file
+# Base implementation of the Register Address Translation library class.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2020 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION                   = 0x00010019
+  BASE_NAME                     = BaseRegisterAddressTranslationLib
+  FILE_GUID                     = C477AAF9-97D9-4338-A9AB-753D919120E1
+  MODULE_TYPE                   = BASE
+  VERSION_STRING                = 1.0
+  LIBRARY_CLASS                 = RegisterAddressTranslationLib
+
+[Sources]
+  BaseRegisterAddressTranslationLib.c
+  BaseRegisterAddressTranslationLib.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  SystemTopologyLib
+  RegisterAddressMapLib
+  RatRegisterFilterLib
+  PrintLib
+
+[Guids]
+

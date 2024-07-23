@@ -1,0 +1,887 @@
+/** @file
+  Setup menu definition for HD Audio.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+  #include "PchHdaStringPool.hfr"
+
+  #define SNDW_INDEX 0
+    #include "PchHdaSndwSetup.hfr"
+  #undef SNDW_INDEX
+
+  #define SNDW_INDEX 1
+    #include "PchHdaSndwSetup.hfr"
+  #undef SNDW_INDEX
+
+  #define SNDW_INDEX 2
+    #include "PchHdaSndwSetup.hfr"
+  #undef SNDW_INDEX
+
+  #define SNDW_INDEX 3
+    #include "PchHdaSndwSetup.hfr"
+  #undef SNDW_INDEX
+
+  #define SNDW_INDEX 4
+    #include "PchHdaSndwSetup.hfr"
+  #undef SNDW_INDEX
+
+  form formid = AUTO_ID(PCH_HDAUDIO_OPTIONS_FORM_ID),
+    title     = STRING_TOKEN(STR_HDAUDIO_OPTIONS_FORM_TITLE);
+
+    SUBTITLE(STRING_TOKEN(STR_HDAUDIO_OPTIONS_FORM_HELP))
+    SEPARATOR
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+    //
+    // HDA and TSN sharing same GPIO pin. Disabling Thc by default for Embedded
+    //
+    grayoutif ideqval PCH_SETUP.PchTsnEnable == 1;
+#endif
+    oneof varid  = PCH_SETUP.PchHdAudio,
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_HELP),
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
+#else
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+#endif
+    endoneof;
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+   endif; //grayout
+#endif
+
+    suppressif ideqval PCH_SETUP.PchHdAudio == 0x0;
+      grayoutif ideqval SETUP_VOLATILE_DATA.AudioDspFusedOut == 0x1;
+        oneof varid  = PCH_SETUP.PchHdAudioDsp,
+          prompt   = STRING_TOKEN(STR_PCH_HDA_ADSP_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_HDA_ADSP_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      oneof varid  = PCH_SETUP.PchHdAudioDspUaaCompliance,
+        prompt   = STRING_TOKEN(STR_PCH_HDA_ADSP_UAA_COMP_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_HDA_ADSP_UAA_COMP_HELP),
+        option text = STRING_TOKEN(STR_PCH_HDA_NON_UAA), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_HDA_UAA), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      // HDA-Link
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioHdaLinkSupported == 0;
+        oneof varid  = PCH_SETUP.PchHdAudioHdaLinkEnable,
+          prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_HDA_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+        suppressif ideqval PCH_SETUP.PchHdAudioHdaLinkEnable == 0;
+          oneof varid  = PCH_SETUP.PchHdAudioSdiLaneEnable[0],
+            prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_HDA_SDI0_LANE_PROMPT),
+            help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          endoneof;
+          oneof varid  = PCH_SETUP.PchHdAudioSdiLaneEnable[1],
+            prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_HDA_SDI1_LANE_PROMPT),
+            help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif; // suppressif
+      endif; // suppressif
+
+      // DMIC0
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioDmicLinkSupported[0] == 0;
+        oneof varid  = PCH_SETUP.PchHdAudioDmicLinkEnable[0],
+          prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_DMIC0_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif; // suppressif
+
+      // DMIC1
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioDmicLinkSupported[1] == 0;
+        oneof varid  = PCH_SETUP.PchHdAudioDmicLinkEnable[1],
+          prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_DMIC1_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif; // suppressif
+
+      // SSP0
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioSspLinkSupported[0] == 0;
+        oneof varid  = PCH_SETUP.PchHdAudioSspLinkEnable[0],
+          prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SSP0_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif; // suppressif
+
+      // I2S/SSP1
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioSspLinkSupported[1] == 0;
+        oneof varid  = PCH_SETUP.PchHdAudioSspLinkEnable[1],
+          prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SSP1_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif; // suppressif
+
+      // I2S/SSP2
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioSspLinkSupported[2] == 0;
+#if FixedPcdGetBool (PcdCnvSetupMenu) == 1
+        grayoutif ideqval CNV_VFR_CONFIG_SETUP.CnviIsPresent == 1;
+#endif
+          oneof varid  = PCH_SETUP.PchHdAudioSspLinkEnable[2],
+            prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SSP2_PROMPT),
+            help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          endoneof;
+#if FixedPcdGetBool (PcdCnvSetupMenu) == 1
+        endif;
+#endif
+      endif;
+
+      // SoundWire 0
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioSndwLinkSupported[0] == 0;
+        grayoutif NOT ideqval PCH_SETUP.PchHdAudioSndwMultilaneEnable[1] == 0x0;
+          oneof varid  = PCH_SETUP.PchHdAudioSndwLinkEnable[0],
+            prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW0_PROMPT),
+            help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif; // grayoutif
+      endif; // suppressif
+
+      // SoundWire 1
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioSndwLinkSupported[1] == 0;
+        grayoutif NOT ideqval PCH_SETUP.PchHdAudioSndwMultilaneEnable[0] == 0x0 OR
+                      ideqval PCH_SETUP.PchHdAudioSndwMultilaneEnable[1] == 0x3;
+          oneof varid  = PCH_SETUP.PchHdAudioSndwLinkEnable[1],
+            prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW1_PROMPT),
+            help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          endoneof;
+        endif; // grayoutif
+      endif; // suppressif
+
+      // SoundWire 2
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioSndwLinkSupported[2] == 0;
+        grayoutif NOT ideqval PCH_SETUP.PchHdAudioSndwMultilaneEnable[0] == 0x0;
+          oneof varid  = PCH_SETUP.PchHdAudioSndwLinkEnable[2],
+            prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW2_PROMPT),
+            help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif; // grayoutif
+      endif; // suppressif
+
+      // SoundWire 3
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioSndwLinkSupported[3] == 0;
+        grayoutif NOT ideqval PCH_SETUP.PchHdAudioSndwMultilaneEnable[1] == 0x0;
+          oneof varid  = PCH_SETUP.PchHdAudioSndwLinkEnable[3],
+            prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW3_PROMPT),
+            help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif; // grayoutif
+      endif; // suppressif
+
+      // SoundWire 2 Multilane
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioSndwMultilaneSupported[0] == 0;
+        grayoutif ideqval PCH_SETUP.PchHdAudioSndwLinkEnable[2] == 0x1 OR
+                  ideqval PCH_SETUP.PchHdAudioSndwLinkEnable[1] == 0x1;
+          oneof varid  = PCH_SETUP.PchHdAudioSndwMultilaneEnable[0],
+            prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW2_MULTILANE_PROMPT),
+            help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW_MULTILANE_TWO_LINES),   value = 1, flags = RESET_REQUIRED;
+            suppressif ideqval PCH_SETUP.PchHdAudioSndwMultilaneEnable[1] == 0x3;
+              option text = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW_MULTILANE_THREE_LINES), value = 2, flags = RESET_REQUIRED;
+            endif; // grayoutif
+          endoneof;
+        endif; // grayoutif
+      endif; // suppressif
+
+      // SoundWire 3 Multilane
+      suppressif ideqval SETUP_VOLATILE_DATA.AudioSndwMultilaneSupported[1] == 0;
+        grayoutif ideqval PCH_SETUP.PchHdAudioSndwLinkEnable[3] == 0x1 OR
+                  ideqval PCH_SETUP.PchHdAudioSndwLinkEnable[0] == 0x1;
+          oneof varid  = PCH_SETUP.PchHdAudioSndwMultilaneEnable[1],
+            prompt   = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW3_MULTILANE_PROMPT),
+            help     = STRING_TOKEN(STR_PCH_HDA_LINK_MODE_ADVANCED_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags =  RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW_MULTILANE_TWO_LINES), value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW_MULTILANE_THREE_LINES), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            suppressif ideqval PCH_SETUP.PchHdAudioSndwMultilaneEnable[0] == 0x2 OR
+                      ideqval PCH_SETUP.PchHdAudioSndwLinkEnable[1] == 0x1;
+              option text = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SNDW_MULTILANE_FOUR_LINES), value = 3, flags = RESET_REQUIRED;
+            endif; // grayoutif;
+          endoneof;
+        endif; // grayoutif
+      endif; // suppressif
+
+      SEPARATOR
+
+    goto PCH_HDAUDIO_ADVANCED_OPTIONS_FORM_ID,
+      prompt = STRING_TOKEN(STR_HDAUDIO_ADVANCED_OPTIONS_FORM_TITLE),
+      help = STRING_TOKEN(STR_HDAUDIO_ADVANCED_OPTIONS_FORM_HELP);
+
+    suppressif ideqval PCH_SETUP.PchHdAudioDsp == 0x0 OR
+               ideqval SETUP_VOLATILE_DATA.AudioDspFusedOut == 0x1;
+      goto PCH_HDAUDIO_FEATURES_FORM_ID,
+        prompt = STRING_TOKEN(STR_HDAUDIO_FEATURES_FORM_TITLE),
+        help = STRING_TOKEN(STR_HDAUDIO_FEATURES_FORM_HELP);
+    endif; //  PCH_SETUP.PchHdAudioDsp == 0x0;
+    endif; // PCH_SETUP.PchHdAudio == 0x0;
+
+    oneof varid  = PCH_SETUP.PchHdaAlc245DmicConfiguration,
+      prompt   = STRING_TOKEN(STR_PCH_HDA_ALC245_DMIC_CONFIG),
+      help     = STRING_TOKEN(STR_PCH_HDA_ALC245_DMIC_CONFIG_HELP),
+      flags    = DISPLAY_UINT_HEX,
+      option text = STRING_TOKEN(STR_PCH_HDA_ALC245_DMIC_CONFIG_NO_DMIC), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_ALC245_DMIC_CONFIG_4DMIC), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE.SndwDevTopologyConfigurationNumber,
+      prompt   = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_SELECT_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_SELECT_HELP),
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_DEFAULT), value = 0x0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_10EC3056), value = 0x1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_5STAR), value = 0x2, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_4STAR_3), value = 0x3, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_4STAR_1), value = 0x4, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_CIRRUS), value = 0x5, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_SNDW_CODEC_TOPOLOGY_DISABLED), value = 0xFF, flags = RESET_REQUIRED;
+    endoneof;
+
+    goto PCH_HDAUDIO_MIC_PRIVACY_FORM_ID,
+      prompt = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_FORM_TITLE),
+      help = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_FORM_HELP);
+
+  endform; //End of PCH_HDAUDIO_OPTIONS_FORM_ID
+
+  form formid = AUTO_ID(PCH_HDAUDIO_ADVANCED_OPTIONS_FORM_ID),
+    title     = STRING_TOKEN(STR_HDAUDIO_ADVANCED_OPTIONS_FORM_TITLE);
+
+    SUBTITLE(STRING_TOKEN(STR_HDAUDIO_ADVANCED_OPTIONS_FORM_HELP))
+    SEPARATOR
+
+    oneof varid  = PCH_SETUP.PchHdaIDisplayCodecDisconnect,
+      prompt   = STRING_TOKEN(STR_PCH_HDA_IDISP_CODEC_DIS_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_IDISP_CODEC_DIS_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchHdAudioCodecSxWakeCapability,
+      prompt   = STRING_TOKEN(STR_PCH_HDA_CODEC_SX_WAKE_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_CODEC_SX_WAKE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchHdAudioPme,
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PME_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PME_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    text
+       help   = STRING_TOKEN(STR_PCH_HDA_LINK_CONTROL_TITLE),
+       text   = STRING_TOKEN(STR_PCH_HDA_LINK_CONTROL_TITLE),
+       flags  = 0,
+       key    = 0;
+
+    oneof varid        = PCH_SETUP.PchHdaHdAudioLinkFreq,
+           prompt      = STRING_TOKEN(STR_PCH_HDA_HDAUDIO_LINK_FREQ),
+           help        = STRING_TOKEN(STR_PCH_HDA_HDAUDIO_LINK_FREQ_HELP),
+           option text = STRING_TOKEN(STR_6MHZ),  value = 0, flags = RESET_REQUIRED;
+           option text = STRING_TOKEN(STR_12MHZ), value = 1, flags = RESET_REQUIRED;
+           option text = STRING_TOKEN(STR_24MHZ), value = 2, flags = DEFAULT | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid        = PCH_SETUP.PchHdaIDisplayLinkFreq,
+           prompt      = STRING_TOKEN(STR_PCH_HDA_IDISP_LINK_FREQ),
+           help        = STRING_TOKEN(STR_PCH_HDA_IDISP_LINK_FREQ_HELP),
+           option text = STRING_TOKEN(STR_48MHZ), value = 3, flags = RESET_REQUIRED;
+           option text = STRING_TOKEN(STR_96MHZ), value = 4, flags = DEFAULT | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchHdaIDisplayLinkTmode,
+      prompt   = STRING_TOKEN(STR_PCH_HDA_IDISP_LINK_TMODE),
+      help     = STRING_TOKEN(STR_PCH_HDA_IDISP_LINK_TMODE_HELP),
+      option text = STRING_TOKEN(STR_PCH_HDA_IDISP_1T_MODE), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_IDISP_2T_MODE), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_IDISP_4T_MODE), value = 2, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_IDISP_8T_MODE), value = 3, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_HDA_IDISP_16T_MODE), value = 4, flags = RESET_REQUIRED;
+    endoneof;
+
+    goto PCH_HDAUDIO_SNDW0_FORM_ID,
+      prompt = STRING_TOKEN(STR_PCH_HDA_SNDW0_CONFIGURATION_PROMPT),
+      help   = STRING_TOKEN(STR_PCH_HDA_SNDW_CONFIGURATION_HELP);
+
+    goto PCH_HDAUDIO_SNDW1_FORM_ID,
+      prompt = STRING_TOKEN(STR_PCH_HDA_SNDW1_CONFIGURATION_PROMPT),
+      help   = STRING_TOKEN(STR_PCH_HDA_SNDW_CONFIGURATION_HELP);
+
+    goto PCH_HDAUDIO_SNDW2_FORM_ID,
+      prompt = STRING_TOKEN(STR_PCH_HDA_SNDW2_CONFIGURATION_PROMPT),
+      help   = STRING_TOKEN(STR_PCH_HDA_SNDW_CONFIGURATION_HELP);
+
+    goto PCH_HDAUDIO_SNDW3_FORM_ID,
+      prompt = STRING_TOKEN(STR_PCH_HDA_SNDW3_CONFIGURATION_PROMPT),
+      help   = STRING_TOKEN(STR_PCH_HDA_SNDW_CONFIGURATION_HELP);
+
+    goto PCH_HDAUDIO_SNDW4_FORM_ID,
+      prompt = STRING_TOKEN(STR_PCH_HDA_SNDW4_CONFIGURATION_PROMPT),
+      help   = STRING_TOKEN(STR_PCH_HDA_SNDW_CONFIGURATION_HELP);
+
+  endform; //End of STR_HDAUDIO_ADVANCED_OPTIONS_FORM_ID
+
+  form formid = AUTO_ID(PCH_HDAUDIO_FEATURES_FORM_ID),
+    title     = STRING_TOKEN(STR_HDAUDIO_FEATURES_FORM_TITLE);
+
+    //
+    // Invisible text to indicate entry into DSP Features Submenu and triggering form open action.
+    //
+    suppressif TRUE;
+     text
+           help  = STRING_TOKEN(STR_NONE),
+           text  = STRING_TOKEN(STR_NONE),
+           flags = INTERACTIVE,
+           key   = PCH_HDAUDIO_DSP_FEATURES_FORM_ACTION_KEY;
+    endif;
+
+    SUBTITLE(STRING_TOKEN(STR_HDAUDIO_FEATURES_FORM_HELP))
+    SEPARATOR
+
+    grayoutif NOT ideqval PCH_SETUP.PchHdAudioDspUaaCompliance == 0x0;
+      // NHLT Endpoints selection
+      text
+         help   = STRING_TOKEN(STR_PCH_HDA_NHLT_ENDPOINT_TITLE),
+         text   = STRING_TOKEN(STR_PCH_HDA_NHLT_ENDPOINT_TITLE),
+         flags  = 0,
+         key    = 0;
+
+      grayoutif NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicStereoEnabled == 0 OR
+                NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicStereoVpEnabled == 0 OR
+                NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicQuadEnabled == 0;
+        oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicMonoEnabled,
+          prompt      = STRING_TOKEN(STR_NHLT_CONFIG_DMIC_MONO_PROMPT),
+          help        = STRING_TOKEN(STR_NHLT_CONFIG_DMIC_MONO_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_48KHZ), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_96KHZ), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      grayoutif NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicMonoEnabled == 0 OR
+                NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicStereoVpEnabled == 0 OR
+                NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicQuadEnabled == 0;
+        oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicStereoEnabled,
+          prompt      = STRING_TOKEN(STR_NHLT_CONFIG_DMIC_STEREO_PROMPT),
+          help        = STRING_TOKEN(STR_NHLT_CONFIG_DMIC_STEREO_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_48KHZ), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_96KHZ), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      grayoutif NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicMonoEnabled == 0 OR
+                NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicStereoEnabled == 0 OR
+                NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicStereoVpEnabled == 0;
+        oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicQuadEnabled,
+          prompt      = STRING_TOKEN(STR_NHLT_CONFIG_DMIC_QUAD_PROMPT),
+          help        = STRING_TOKEN(STR_NHLT_CONFIG_DMIC_QUAD_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_48KHZ), value = 1, flags = DEFAULT | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_96KHZ), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      grayoutif NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicMonoEnabled == 0 OR
+                NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicStereoEnabled == 0 OR
+                NOT ideqval NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicQuadEnabled == 0;
+        oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltDmicStereoVpEnabled,
+          prompt      = STRING_TOKEN(STR_NHLT_CONFIG_DMIC_STEREO_VP_PROMPT),
+          help        = STRING_TOKEN(STR_NHLT_CONFIG_DMIC_STEREO_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltBluetoothEnabled,
+        prompt      = STRING_TOKEN(STR_NHLT_CONFIG_BLUETOOTH_PROMPT),
+        help        = STRING_TOKEN(STR_NHLT_CONFIG_BLUETOOTH_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltI2sAlc274Enabled,
+        prompt      = STRING_TOKEN(STR_NHLT_CONFIG_I2S_ALC274_PROMPT),
+        help        = STRING_TOKEN(STR_NHLT_CONFIG_I2S_ALC274_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_48KHZ), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_96KHZ), value = 2, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid  = PCH_SETUP.PchHdAudioI2sCodecSelect,
+        prompt   = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_SELECT_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_SELECT_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_HDA_I2S_CODEC_ALC274), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+    endif; // UAA compliance check (PchHdAudioDspUaaCompliance)
+
+    SEPARATOR
+    // DSP Feature support selection
+    text
+       help   = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
+       text   = STRING_TOKEN(STR_PCH_HDA_FEATURE_TITLE),
+       flags  = 0,
+       key    = 0;
+
+    // Wake on Voice (WoV) support
+    checkbox varid  = PCH_SETUP.PchHdAudioFeature[0],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_FEATURE_0_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
+      // Flags behavior for checkbox is overloaded so that it equals
+      // a DEFAULT value.  CHECKBOX_DEFAULT = ON, 0 = off
+      flags    = RESET_REQUIRED,
+      default  = TRUE, defaultstore = MyStandardDefault,
+    endcheckbox;
+
+    // BT Sideband support
+    checkbox varid  = PCH_SETUP.PchHdAudioFeature[1],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_FEATURE_1_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      default  = TRUE, defaultstore = MyStandardDefault,
+    endcheckbox;
+
+    grayoutif ideqval PCH_SETUP.PchHdAudioFeature[1] == 0x0 OR
+#if FixedPcdGetBool (PcdCnvSetupMenu) == 1
+              ((ideqval CNV_VFR_CONFIG_SETUP.CnviIsPresent == 0 OR ideqval PCH_SETUP.CnviMode == 0) AND
+              ideqval PCH_SETUP.HdaDiscBtOffEnabled == 0);
+#else
+              ideqval PCH_SETUP.HdaDiscBtOffEnabled == 0;
+#endif
+        // BT Intel HFP SCO
+        checkbox varid  = PCH_SETUP.PchHdAudioFeature[5],
+          prompt   = STRING_TOKEN(STR_PCH_HDA_FEATURE_5_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
+          flags    = 0 | RESET_REQUIRED,
+          default  = TRUE, defaultstore = MyStandardDefault,
+        endcheckbox;
+
+        // BT Intel A2DP
+        checkbox varid  = PCH_SETUP.PchHdAudioFeature[6],
+          prompt   = STRING_TOKEN(STR_PCH_HDA_FEATURE_6_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
+          flags    = 0 | RESET_REQUIRED,
+          default  = TRUE, defaultstore = MyStandardDefault,
+        endcheckbox;
+
+      // BT Intel LE
+      checkbox varid  = PCH_SETUP.PchHdAudioFeature[9],
+        prompt   = STRING_TOKEN(STR_PCH_HDA_FEATURE_9_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        key      = 0,
+        default  = TRUE, defaultstore = MyStandardDefault,
+      endcheckbox;
+    endif;
+
+    // Codec based Voice Activity Detection (VAD) support
+    checkbox varid  = PCH_SETUP.PchHdAudioFeature[2],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_FEATURE_2_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // ACX/SDCA
+    checkbox varid  = PCH_SETUP.PchHdAudioFeature[10],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_FEATURE_10_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    grayoutif ideqval PCH_SETUP.PchHdAudioFeature[10] == 0x0;
+      // ACX/SDCA speaker aggregation
+      checkbox varid  = PCH_SETUP.PchHdAudioFeature[11],
+        prompt   = STRING_TOKEN(STR_PCH_HDA_FEATURE_11_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        key      = 0,
+      endcheckbox;
+    endif;
+
+    // Discrete BT HCI Audio Offload Support
+    oneof varid   = PCH_SETUP.HdaDiscBtOffEnabled,
+      questionid  = PCH_HDAUDIO_DBT_OFFLOAD_ACTION_KEY,
+      prompt      = STRING_TOKEN(STR_PCH_HDA_DISC_BT_OFFLOAD_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_HDA_DISC_BT_OFFLOAD_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED | INTERACTIVE;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED | INTERACTIVE;
+    endoneof;
+
+    suppressif ideqval PCH_SETUP.HdaDiscBtOffEnabled == 0x0;
+      oneof varid  = PCH_SETUP.HdaDiscBtOffSspLink,
+        prompt   = STRING_TOKEN(STR_PCH_HDA_DISC_BT_OFFLOAD_LINK_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_HDA_DISC_BT_OFFLOAD_LINK_HELP),
+        suppressif ideqval PCH_SETUP.PchHdAudioSspLinkEnable[0] == 0x0;
+          option text = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SSP0_PROMPT), value = 0, flags =  RESET_REQUIRED;
+        endif;
+        suppressif ideqval PCH_SETUP.PchHdAudioSspLinkEnable[1] == 0x0;
+          option text = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SSP1_PROMPT), value = 1, flags =  RESET_REQUIRED;
+        endif;
+        suppressif ideqval PCH_SETUP.PchHdAudioSspLinkEnable[2] == 0x0;
+          option text = STRING_TOKEN(STR_PCH_HDA_LINK_ADVANCED_SSP2_PROMPT), value = 2, flags =  RESET_REQUIRED;
+        endif;
+      endoneof;
+    endif;
+
+    SEPARATOR
+    // DSP Pre/Post Processing module support selection
+    text
+       help   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+       text   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_TITLE),
+       flags  = 0,
+       key    = 0;
+
+    // Post Processing Module 0 - Waves Post-process
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[0],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_0_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 1 - DTS
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[1],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_1_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Pre Processing Module 2 - IntelSst Speech
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[2],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_2_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 3 - Dolby
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[3],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_3_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 4 - Waves Pre-process
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[4],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_4_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 5 - Audyssey
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[5],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_5_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 5 - Maxim Smart AMP
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[6],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_6_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 7 - ForteMedia SAMSoft
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[7],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_7_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 9 - Sound Research IP
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[9],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_9_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 10 - Conexant Pre-Process
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[10],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_10_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 11 - Conexant Smart Amp
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[11],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_11_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 12 - Realtek Post-Process
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[12],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_12_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 13 - Realtek Smart Amp
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[13],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_13_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 14 - Icepower IP MFX sub module
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[14],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_14_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 15 - Icepower IP EFX sub module
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[15],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_15_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 16 - Icepower IP SFX sub module
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[16],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_16_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 17 - Voice Preprocessing
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[17],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_17_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 18 - Acoustic Context Awareness (ACA)
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[18],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_18_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 27 - AEC for Cirrus
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[27],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_27_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Post Processing Module 28 - Waves Full and Reduced for Cirrus
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[28],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_28_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    // Custom Pre/Post-Processing modules with GUID entered by user
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[29],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_29_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    suppressif ideqval PCH_SETUP.PchHdAudioPostProcessingMod[29] == 0x0;
+      string  varid   = PCH_SETUP.PchHdAudioPostProcessingModCustomGuid1,
+              prompt  = STRING_TOKEN(STR_PCH_HDA_PP_CUSTOM_GUID_29_PROMPT),
+              help    = STRING_TOKEN(STR_PCH_HDA_PP_CUSTOM_GUID_HELP),
+              flags   = 0 | RESET_REQUIRED, //INTERACTIVE,
+              key     = 0,
+              minsize = 36, // GUID characters number in format 11111111-2222-3333-4444-1234567890ab (without ending null)
+              maxsize = 36,
+      endstring;
+    endif; // Custom module 29 disabled
+
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[30],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_30_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    suppressif ideqval PCH_SETUP.PchHdAudioPostProcessingMod[30] == 0x0;
+      string  varid   = PCH_SETUP.PchHdAudioPostProcessingModCustomGuid2,
+              prompt  = STRING_TOKEN(STR_PCH_HDA_PP_CUSTOM_GUID_30_PROMPT),
+              help    = STRING_TOKEN(STR_PCH_HDA_PP_CUSTOM_GUID_HELP),
+              flags   = 0 | RESET_REQUIRED, //INTERACTIVE,
+              key     = 0,
+              minsize = 36, // GUID characters number in format 11111111-2222-3333-4444-1234567890ab (without ending null)
+              maxsize = 36,
+      endstring;
+    endif; // Custom module 30 disabled
+
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[31],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_31_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    suppressif ideqval PCH_SETUP.PchHdAudioPostProcessingMod[31] == 0x0;
+      string  varid   = PCH_SETUP.PchHdAudioPostProcessingModCustomGuid3,
+              prompt  = STRING_TOKEN(STR_PCH_HDA_PP_CUSTOM_GUID_31_PROMPT),
+              help    = STRING_TOKEN(STR_PCH_HDA_PP_CUSTOM_GUID_HELP),
+              flags   = 0 | RESET_REQUIRED, //INTERACTIVE,
+              key     = 0,
+              minsize = 36, // GUID characters number in format 11111111-2222-3333-4444-1234567890ab (without ending null)
+              maxsize = 36,
+      endstring;
+    endif; // Custom module 31 disabled
+  endform; //End of PCH_HDAUDIO_FEATURES_FORM_ID
+
+  form formid = AUTO_ID(PCH_HDAUDIO_MIC_PRIVACY_FORM_ID),
+    title     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_FORM_TITLE);
+
+    oneof varid  = PCH_SETUP.PchHdaMicPrivacyMode,
+      prompt   = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_MODE_PROMPT),
+      help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_MODE_HELP),
+      option text = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_NOT_SUPPORTED_PROMPT), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_PROMPT), value = 1, flags = DEFAULT | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_FW_MODE_PROMPT), value = 2, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_FORCE_MUTED_MODE_PROMPT), value = 3, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval  PCH_SETUP.PchHdaMicPrivacyMode == 0 OR
+      ideqval  PCH_SETUP.PchHdaMicPrivacyMode == 3;
+      oneof varid   = PCH_SETUP.PchHdaMicPrivacyDeglitch,
+        prompt      = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_DEGLITCH_PROMPT),
+        help        = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_DEGLITCH_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif NOT ideqval  PCH_SETUP.PchHdaMicPrivacyMode == 1; // HW mode
+    SEPARATOR
+    SUBTITLE(STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_LINK_PROMPT))
+
+      checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeSoundWire0,
+        prompt   = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_SNDW0_PROMPT),
+        help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        key      = 0,
+      endcheckbox;
+
+      checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeSoundWire1,
+        prompt   = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_SNDW1_PROMPT),
+        help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        key      = 0,
+      endcheckbox;
+
+      checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeSoundWire2,
+        prompt   = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_SNDW2_PROMPT),
+        help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        key      = 0,
+      endcheckbox;
+
+      checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeSoundWire3,
+        prompt   = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_SNDW3_PROMPT),
+        help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        key      = 0,
+      endcheckbox;
+
+      checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeSoundWire4,
+        prompt   = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_SNDW4_PROMPT),
+        help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        key      = 0,
+      endcheckbox;
+
+      checkbox varid  = PCH_SETUP.PchHdaMicPrivacyHwModeDmic,
+        prompt   = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_DMIC_PROMPT),
+        help     = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        key      = 0,
+      endcheckbox;
+
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval  PCH_SETUP.PchHdaMicPrivacyMode == 0 OR
+      ideqval  PCH_SETUP.PchHdaMicPrivacyMode == 3;
+      numeric varid = PCH_SETUP.PchHdaMicPrivacyTimeout,
+        prompt      = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_TIMEOUT_PROMPT),
+        help        = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_TIMEOUT_HELP),
+        flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
+        minimum     = 0,
+        maximum     = 0x3E8,
+        step        = 1,
+        default     = 0x64,
+      endnumeric;
+    endif;
+    endform; //End of STR_HDAUDIO_MIC_PRIVACY_FORM_TITLE
+

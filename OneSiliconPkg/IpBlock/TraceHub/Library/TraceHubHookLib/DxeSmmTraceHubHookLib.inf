@@ -1,0 +1,46 @@
+## @file
+# Component description file for DXE and SMM TraceHub hook Lib.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = DxeSmmTraceHubHookLib
+FILE_GUID = BF56EE71-6E59-4501-9F87-99F2EB8D625E
+VERSION_STRING = 1.0
+MODULE_TYPE = DXE_DRIVER
+LIBRARY_CLASS = TraceHubHookLib|DXE_DRIVER DXE_SMM_DRIVER SMM_CORE DXE_RUNTIME_DRIVER UEFI_APPLICATION UEFI_DRIVER
+CONSTRUCTOR = DxeSmmTraceHubHookLibInit
+
+[LibraryClasses]
+IoLib
+HobLib
+DebugLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+[Sources]
+DxeSmmTraceHubHookLib.c
+
+[Guids]
+gTraceHubDataHobGuid

@@ -1,0 +1,80 @@
+## @file
+# Component information file for the Platform Config Tool Init Pre-Memory PEI module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2019 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+  INF_VERSION            = 0x00010017
+  BASE_NAME              = PlatformConfigTool
+  FILE_GUID              = A20F7425-BC87-47D1-945C-637603323584
+  VERSION_STRING         = 1.0
+  MODULE_TYPE            = PEIM
+  ENTRY_POINT            = PlatformConfigToolEntry
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[Sources]
+  PlatformConfigToolDataParser.c
+  PlatformConfigToolCommonDataShare.c
+  PlatformConfigToolSupport.c
+  PlatformConfigToolInit.h
+  PlatformConfigToolGuids.h
+  PlatformConfigToolStructures.h
+
+[LibraryClasses]
+  PeimEntryPoint
+  BaseLib
+  DebugLib
+  PeiServicesLib
+  PcdLib
+
+[Pcd]
+  gBoardModuleTokenSpaceGuid.PcdBoardId
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTablePreMem
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTable
+  gBoardModuleTokenSpaceGuid.PcdBoardAcpiData
+  gBoardModuleTokenSpaceGuid.PcdDisableVpdGpioTable
+
+[Guids]
+  gPctAcpiFileNameGuid
+  gPctPreMemFileNameGuid
+  gPctPostMemFileNameGuid
+  gPctAcpiDataTypeGuid
+  gPctPreMemGpioDataTypeGuid
+  gPctPostMemGpioDataTypeGuid
+
+[Ppis]
+  gEfiPeiMasterBootModePpiGuid
+
+[Protocols]
+
+[Depex]
+  TRUE
+
+[BuildOptions]
+  MSFT:*_*_*_CC_FLAGS = /FAcs

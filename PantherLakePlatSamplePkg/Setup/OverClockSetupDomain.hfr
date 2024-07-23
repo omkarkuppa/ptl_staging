@@ -1,0 +1,1570 @@
+/** @file
+  Setup menu definition for each Oc domain
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+// OC DOMAIN 0 : Processor (IA_CORE)
+//
+#if OCDOMAIN_INDEX == 0
+    oneof varid   = OC_SETUP.PerCoreDisableConfiguration,
+      questionid  = AUTO_ID(KEY_PERCORE_DISABLE_DEPENDENCY),
+      prompt      = STRING_TOKEN(STR_PERCORE_DISABLE_CONFIGURATION),
+      help        = STRING_TOKEN(STR_PERCORE_DISABLE_CONFIGURATION_HELP),
+      flags       = INTERACTIVE,
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
+    endoneof;
+
+    suppressif NOT ideqval OC_SETUP.PerCoreDisableConfiguration == 1;
+      goto      PROCESSOR_DISABLE_FORM_ID,
+      prompt  = STRING_TOKEN(STR_PROCESSOR_DISABLE),
+      help    = STRING_TOKEN(STR_PROCESSOR_DISABLE_HELP);
+    endif;
+
+    text
+      help  = STRING_TOKEN(STR_CORE_MAX_OC_RATIO_LIMIT_HELP),
+      text  = STRING_TOKEN(STR_CORE_MAX_OC_RATIO_LIMIT),
+      text  = STRING_TOKEN(STR_CORE_MAX_OC_RATIO_LIMIT_VALUE),
+      flags = 0,
+      key   = 0;
+
+    numeric varid = OC_SETUP.MaxOcRatio[OCDOMAIN_INDEX],  // IA_CORE
+      prompt  = STRING_TOKEN (STR_CORE_MAX_OC_RATIO),
+      help    = STRING_TOKEN (STR_CORE_MAX_OC_RATIO_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 120,
+      step    = 1,
+      default = 0,
+    endnumeric;
+
+    oneof varid   = OC_SETUP.PerCoreRatioOverride,
+      prompt      = STRING_TOKEN(STR_PERCODE_RATIO_OVERRIDE),
+      help        = STRING_TOKEN(STR_PERCODE_RATIO_OVERRIDE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.PerCoreRatioOverride == 0x0;
+#define PERCORE_RATIO(Index) \
+      suppressif ideqval SETUP_CPU_FEATURES.NumCores <= Index OR \
+                 ideqval CPU_SETUP.ActiveCoreCount <= Index; \
+        numeric varid = OC_SETUP.PerCoreRatio[Index], \
+          prompt  = STRING_TOKEN (STR_PERCORE_RATIO_##Index), \
+          help    = STRING_TOKEN (STR_PERCORE_RATIO_##Index##_HELP), \
+          flags   = RESET_REQUIRED, \
+          minimum = 0, \
+          maximum = 120, \
+          step    = 1, \
+          default = 0, \
+        endnumeric; \
+      endif;
+      PERCORE_RATIO(0)
+      PERCORE_RATIO(1)
+      PERCORE_RATIO(2)
+      PERCORE_RATIO(3)
+      PERCORE_RATIO(4)
+      PERCORE_RATIO(5)
+      PERCORE_RATIO(6)
+      PERCORE_RATIO(7)
+
+#define ATOM_CLUSTER_RATIO(Index) \
+      suppressif ideqval SETUP_CPU_FEATURES.NumSmallCoresCLuster <= Index; \
+        numeric varid = OC_SETUP.AtomClusterRatio[Index], \
+          prompt  = STRING_TOKEN (STR_ATOM_CLUSTER_##Index##_RATIO), \
+          help    = STRING_TOKEN (STR_ATOM_CLUSTER_##Index##_RATIO_HELP), \
+          flags   = RESET_REQUIRED, \
+          minimum = 0, \
+          maximum = 120, \
+          step    = 1, \
+          default = 0, \
+        endnumeric; \
+      endif;
+      ATOM_CLUSTER_RATIO(0)
+      ATOM_CLUSTER_RATIO(1)
+      ATOM_CLUSTER_RATIO(2)
+      ATOM_CLUSTER_RATIO(3)
+      ATOM_CLUSTER_RATIO(4)
+      ATOM_CLUSTER_RATIO(5)
+      ATOM_CLUSTER_RATIO(6)
+      ATOM_CLUSTER_RATIO(7)
+
+    endif; // suppressif ideqval OC_SETUP.PerCoreRatioOverride == 0x0;
+
+    suppressif ideqval OC_SETUP.GranularRatioSupported == 0x0;
+      oneof varid   = OC_SETUP.GranularRatioOverride,
+        prompt      = STRING_TOKEN(STR_GRANULAR_RATIO_OVERRIDE),
+        help        = STRING_TOKEN(STR_GRANULAR_RATIO_OVERRIDE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval OC_SETUP.GranularRatioOverride == 0x0;
+      text
+        help   = STRING_TOKEN(STR_GRANULAR_RATIO_UNITS_HELP),
+        text   = STRING_TOKEN(STR_GRANULAR_RATIO_UNITS_STRING),
+        text   = STRING_TOKEN(STR_GRANULAR_RATIO_UNITS_VALUE),
+        flags  = 0, key = 0;
+
+#define PERCORE_GRANULAR_RATIO_BINS(Index) \
+      suppressif ideqval SETUP_CPU_FEATURES.NumCores <= Index OR \
+                 ideqval CPU_SETUP.ActiveCoreCount <= Index; \
+        numeric varid = OC_SETUP.PerCoreGranularityBins[Index], \
+          prompt  = STRING_TOKEN (STR_PERCORE_GRANULAR_RATIO_BINS_##Index), \
+          help    = STRING_TOKEN (STR_PERCORE_GRANULAR_RATIO_BINS_##Index##_HELP), \
+          flags   = RESET_REQUIRED, \
+          minimum = 0, \
+          maximum = 255, \
+          step    = 1, \
+          default = 0, \
+        endnumeric; \
+      endif;
+      PERCORE_GRANULAR_RATIO_BINS(0)
+      PERCORE_GRANULAR_RATIO_BINS(1)
+      PERCORE_GRANULAR_RATIO_BINS(2)
+      PERCORE_GRANULAR_RATIO_BINS(3)
+      PERCORE_GRANULAR_RATIO_BINS(4)
+      PERCORE_GRANULAR_RATIO_BINS(5)
+      PERCORE_GRANULAR_RATIO_BINS(6)
+      PERCORE_GRANULAR_RATIO_BINS(7)
+
+#define ATOM_CLUSTER_GRANULAR_RATIO_BINS(Index) \
+      suppressif ideqval SETUP_CPU_FEATURES.NumSmallCoresCLuster <= Index; \
+        numeric varid = OC_SETUP.PerAtomClusterGranularityBins[Index], \
+          prompt  = STRING_TOKEN (STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_##Index), \
+          help    = STRING_TOKEN (STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_##Index##_HELP), \
+          flags   = RESET_REQUIRED, \
+          minimum = 0, \
+          maximum = 255, \
+          step    = 1, \
+          default = 0, \
+        endnumeric; \
+      endif;
+      ATOM_CLUSTER_GRANULAR_RATIO_BINS(0)
+      ATOM_CLUSTER_GRANULAR_RATIO_BINS(1)
+      ATOM_CLUSTER_GRANULAR_RATIO_BINS(2)
+      ATOM_CLUSTER_GRANULAR_RATIO_BINS(3)
+      ATOM_CLUSTER_GRANULAR_RATIO_BINS(4)
+      ATOM_CLUSTER_GRANULAR_RATIO_BINS(5)
+      ATOM_CLUSTER_GRANULAR_RATIO_BINS(6)
+      ATOM_CLUSTER_GRANULAR_RATIO_BINS(7)
+
+    endif; //suppressif ideqval OC_SETUP.GranularRatioOverride == 0x0;
+
+    grayoutif ideqval OC_SETUP.VfPointCount[OCDOMAIN_INDEX] == 0x0;
+      oneof varid   = OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_VF_POINT_OFFSET_MODE),
+        help        = STRING_TOKEN(STR_VF_POINT_OFFSET_MODE_HELP),
+        option text = STRING_TOKEN(STR_VOLTAGE_OFFSET_LEGACY), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_VOLTAGE_OFFSET_SELECTION), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x1;
+      oneof varid   = OC_SETUP.CoreVfConfigScope,
+        prompt      = STRING_TOKEN(STR_VF_CONFIG_SCOPE),
+        help        = STRING_TOKEN(STR_VF_CONFIG_SCOPE_HELP),
+        option text = STRING_TOKEN(STR_VF_CONFIG_ALL_CORE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_VF_CONFIG_PER_CORE), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval OC_SETUP.CoreVfConfigScope == 0x1;
+        oneof varid   = OC_SETUP.VoltageMode[OCDOMAIN_INDEX],
+          prompt      = STRING_TOKEN(STR_CORE_VOLTAGE_MODE),
+          help        = STRING_TOKEN(STR_CORE_VOLTAGE_MODE_HELP),
+          option text = STRING_TOKEN(STR_VOLTAGE_ADAPTIVE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_VOLTAGE_OVERRIDE), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 0x0;
+          numeric varid = OC_SETUP.VoltageOverride[OCDOMAIN_INDEX],
+            prompt  = STRING_TOKEN (STR_CORE_VOLTAGE_OVERRIDE),
+            help    = STRING_TOKEN (STR_CORE_VOLTAGE_OVERRIDE_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 2000,
+            step    = 1,
+            default = 0,
+          endnumeric;
+        endif;
+
+        suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 0x1;
+          numeric varid = OC_SETUP.AdaptiveVoltage[OCDOMAIN_INDEX],
+            prompt  = STRING_TOKEN (STR_CORE_ADAPTIVE_VOLTAGE),
+            help    = STRING_TOKEN (STR_CORE_ADAPTIVE_VOLTAGE_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 2000,
+            step    = 1,
+            default = 0,
+          endnumeric;
+        endif;
+
+        numeric varid = OC_SETUP.VoltageOffset[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_CORE_VOLTAGE_OFFSET),
+          help    = STRING_TOKEN (STR_CORE_VOLTAGE_OFFSET_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 1000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        oneof varid   = OC_SETUP.VoltageOffsetPrefix[OCDOMAIN_INDEX],
+          prompt      = STRING_TOKEN(STR_CORE_VOLTAGE_OFFSET_PREFIX),
+          help        = STRING_TOKEN(STR_VOLTAGE_OFFSET_PREFIX_HELP),
+          option text = STRING_TOKEN(STR_POSITIVE_SIGN),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NEGATIVE_SIGN),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif;  // suppressif ideqval OC_SETUP.CoreVfConfigScope == 0x1;
+
+      suppressif ideqval OC_SETUP.CoreVfConfigScope == 0x0;
+#define PERCORE_RATIO_VOLTAGE(Index) \
+        suppressif ideqval SETUP_CPU_FEATURES.NumCores <=Index OR \
+                    ((ideqval CPU_SETUP.ActiveCoreCount <= Index)); \
+          numeric varid = OC_SETUP.PerCoreMaxRatio[Index], \
+            prompt  = STRING_TOKEN (STR_PERCORE_MAX_RATIO_##Index), \
+            help    = STRING_TOKEN (STR_PERCORE_MAX_RATIO_##Index##_HELP), \
+            flags   = RESET_REQUIRED, \
+            minimum = 0, \
+            maximum = 120, \
+            step    = 1, \
+            default = 0, \
+          endnumeric; \
+        endif; \
+        \
+        suppressif ideqval SETUP_CPU_FEATURES.NumCores <= Index; \
+          suppressif ideqval OC_SETUP.IsPerCoreVotage == 0x0; \
+            oneof varid   = OC_SETUP.PerCoreVoltageMode[Index], \
+              prompt      = STRING_TOKEN(STR_PERCORE_VOLTAGE_MODE_##Index), \
+              help        = STRING_TOKEN(STR_PERCORE_VOLTAGE_MODE_##Index##_HELP), \
+              option text = STRING_TOKEN(STR_VOLTAGE_ADAPTIVE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED; \
+              option text = STRING_TOKEN(STR_VOLTAGE_OVERRIDE), value = 1, flags = RESET_REQUIRED; \
+            endoneof; \
+            \
+            suppressif ideqval OC_SETUP.PerCoreVoltageMode[Index] == 0x0; \
+              numeric varid = OC_SETUP.PerCoreVoltageOverride[Index], \
+                prompt  = STRING_TOKEN (STR_PERCORE_VOLTAGE_OVERRIDE_##Index), \
+                help    = STRING_TOKEN (STR_PERCORE_VOLTAGE_OVERRIDE_##Index##_HELP), \
+                flags   = RESET_REQUIRED, \
+                minimum = 0, \
+                maximum = 2000, \
+                step    = 1, \
+                default = 0, \
+              endnumeric; \
+            endif; \
+            \
+            suppressif ideqval OC_SETUP.PerCoreVoltageMode[Index] == 0x1; \
+              numeric varid = OC_SETUP.PerCoreAdaptiveVoltage[Index], \
+                prompt  = STRING_TOKEN (STR_PERCORE_ADAPTIVE_VOLTAGE_##Index), \
+                help    = STRING_TOKEN (STR_PERCORE_ADAPTIVE_VOLTAGE_##Index##_HELP), \
+                flags   = RESET_REQUIRED, \
+                minimum = 0, \
+                maximum = 2000, \
+                step    = 1, \
+                default = 0, \
+              endnumeric; \
+            endif; \
+          endif; \
+          \
+          numeric varid = OC_SETUP.PerCoreVoltageOffset[Index], \
+            prompt  = STRING_TOKEN (STR_PER_CORE_VOLTAGE_OFFSET_##Index), \
+            help    = STRING_TOKEN (STR_PER_CORE_VOLTAGE_OFFSET_##Index##_HELP), \
+            flags   = RESET_REQUIRED, \
+            minimum = 0, \
+            maximum = 1000, \
+            step    = 1, \
+            default = 0, \
+          endnumeric; \
+          \
+          oneof varid   = OC_SETUP.PerCoreVoltageOffsetPrefix[Index], \
+            prompt      = STRING_TOKEN(STR_CORE_VOLTAGE_OFFSET_PREFIX), \
+            help        = STRING_TOKEN(STR_VOLTAGE_OFFSET_PREFIX_HELP), \
+            option text = STRING_TOKEN(STR_POSITIVE_SIGN),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED; \
+            option text = STRING_TOKEN(STR_NEGATIVE_SIGN),  value = 1, flags = RESET_REQUIRED; \
+          endoneof; \
+        endif;
+        PERCORE_RATIO_VOLTAGE(0)
+        PERCORE_RATIO_VOLTAGE(1)
+        PERCORE_RATIO_VOLTAGE(2)
+        PERCORE_RATIO_VOLTAGE(3)
+        PERCORE_RATIO_VOLTAGE(4)
+        PERCORE_RATIO_VOLTAGE(5)
+        PERCORE_RATIO_VOLTAGE(6)
+        PERCORE_RATIO_VOLTAGE(7)
+
+      SEPARATOR
+
+#define ATOM_CLUSTER_VOLTAGE_ITEMS(Index) \
+        suppressif ideqval SETUP_CPU_FEATURES.NumSmallCoresCLuster <= Index; \
+          numeric varid = OC_SETUP.PerAtomClusterMaxRatio[Index], \
+            prompt  = STRING_TOKEN (STR_ATOM_CLUSTER_MAX_RATIO_##Index), \
+            help    = STRING_TOKEN (STR_ATOM_CLUSTER_MAX_RATIO_##Index##_HELP), \
+            flags   = RESET_REQUIRED, \
+            minimum = 0, \
+            maximum = 120, \
+            step    = 1, \
+            default = 0, \
+          endnumeric; \
+          \
+          suppressif ideqval OC_SETUP.IsPerCoreVotage == 0x0; \
+            oneof varid   = OC_SETUP.PerAtomClusterVoltageMode[Index], \
+              prompt      = STRING_TOKEN(STR_ATOM_CLUSTER_VOLTAGE_MODE_##Index), \
+              help        = STRING_TOKEN(STR_ATOM_CLUSTER_VOLTAGE_MODE_##Index##_HELP), \
+              option text = STRING_TOKEN(STR_VOLTAGE_ADAPTIVE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED; \
+              option text = STRING_TOKEN(STR_VOLTAGE_OVERRIDE), value = 1, flags = RESET_REQUIRED; \
+            endoneof; \
+            \
+            suppressif ideqval OC_SETUP.PerAtomClusterVoltageMode[Index] == 0x0; \
+              numeric varid = OC_SETUP.PerAtomClusterVoltageOverride[Index], \
+                prompt  = STRING_TOKEN (STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_##Index), \
+                help    = STRING_TOKEN (STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_##Index##_HELP), \
+                flags   = RESET_REQUIRED, \
+                minimum = 0, \
+                maximum = 2000, \
+                step    = 1, \
+                default = 0, \
+              endnumeric; \
+            endif; \
+            \
+            suppressif ideqval OC_SETUP.PerAtomClusterVoltageMode[Index] == 0x1; \
+              numeric varid = OC_SETUP.PerAtomClusterAdaptiveVoltage[Index], \
+                prompt  = STRING_TOKEN (STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_##Index), \
+                help    = STRING_TOKEN (STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_##Index##_HELP), \
+                flags   = RESET_REQUIRED, \
+                minimum = 0, \
+                maximum = 2000, \
+                step    = 1, \
+                default = 0, \
+              endnumeric; \
+            endif; \
+          endif; \
+          \
+          numeric varid = OC_SETUP.PerAtomClusterVoltageOffset[Index], \
+            prompt  = STRING_TOKEN (STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_##Index), \
+            help    = STRING_TOKEN (STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_##Index##_HELP), \
+            flags   = RESET_REQUIRED, \
+            minimum = 0, \
+            maximum = 1000, \
+            step    = 1, \
+            default = 0, \
+          endnumeric; \
+          \
+          oneof varid   = OC_SETUP.PerAtomClusterVoltageOffsetPrefix[Index], \
+            prompt      = STRING_TOKEN(STR_CORE_VOLTAGE_OFFSET_PREFIX), \
+            help        = STRING_TOKEN(STR_VOLTAGE_OFFSET_PREFIX_HELP), \
+            option text = STRING_TOKEN(STR_POSITIVE_SIGN),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED; \
+            option text = STRING_TOKEN(STR_NEGATIVE_SIGN),  value = 1, flags = RESET_REQUIRED; \
+          endoneof; \
+        endif;
+
+        ATOM_CLUSTER_VOLTAGE_ITEMS(0)
+        ATOM_CLUSTER_VOLTAGE_ITEMS(1)
+        ATOM_CLUSTER_VOLTAGE_ITEMS(2)
+        ATOM_CLUSTER_VOLTAGE_ITEMS(3)
+        ATOM_CLUSTER_VOLTAGE_ITEMS(4)
+        ATOM_CLUSTER_VOLTAGE_ITEMS(5)
+        ATOM_CLUSTER_VOLTAGE_ITEMS(6)
+        ATOM_CLUSTER_VOLTAGE_ITEMS(7)
+      endif; // suppressif ideqval OC_SETUP.CoreVfConfigScope == 0x0;
+    endif; // suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x1;
+
+    suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x0;
+      #define VFPOINT_INDEX 0
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 1
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 2
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 3
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 4
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 5
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 6
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 7
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 8
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 9
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 10
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 11
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 12
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 13
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 14
+        #include "OverClockSetupCpuSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+    endif; // suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x0;
+
+
+    SEPARATOR
+    numeric varid = OC_SETUP.Avx2RatioOffset,
+      prompt  = STRING_TOKEN (STR_CORE_AVX2_RATIO_OFFSET),
+      help    = STRING_TOKEN (STR_CORE_AVX2_RATIO_OFFSET_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 31,
+      step    = 1,
+      default = 0,
+    endnumeric;
+
+    numeric varid = OC_SETUP.Avx2VoltageScaleFactor,
+      prompt  = STRING_TOKEN (STR_CORE_AVX2_GUARD_BAND_PROMPT),
+      help    = STRING_TOKEN (STR_CORE_AVX2_GUARD_BAND_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 200,
+      step    = 1,
+      default = 100,
+    endnumeric;
+
+    SEPARATOR
+    numeric varid = OC_SETUP.TjMaxOffset,
+      prompt  = STRING_TOKEN (STR_CORE_TJMAX_OFFSET),
+      help    = STRING_TOKEN (STR_CORE_TJMAX_OFFSET_HELP),
+      flags   = RESET_REQUIRED,
+      key     = AUTO_ID (KEY_TjMaxOffset), // 0 indicates no offset (Hardware defaults). Acceptable values 10 to 63. Rest all set to 0.
+      minimum = 0,
+      maximum = 63,
+      step    = 1,
+      default = 0,
+    endnumeric;
+
+    SEPARATOR
+    SUBTITLE(STRING_TOKEN(STR_TVB_CONFIGURATION))
+
+    oneof varid   = OC_SETUP.TvbVoltageOptimization,
+      prompt      = STRING_TOKEN(STR_TVB_VOLTAGE_OPTIMIZATION_PROMPT),
+      help        = STRING_TOKEN(STR_TVB_VOLTAGE_OPTIMIZATION_HELP),
+      option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags =  RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = OC_SETUP.TvbRatioClipping,
+      prompt      = STRING_TOKEN(STR_TVB_RATIO_CLIPPING_PROMPT),
+      help        = STRING_TOKEN(STR_TVB_RATIO_CLIPPING_HELP),
+      option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags =  RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.TvbRatioClipping == 0x0;
+      oneof varid   = OC_SETUP.OcTvb,
+        prompt      = STRING_TOKEN(STR_OC_TVB_PROMPT),
+        help        = STRING_TOKEN(STR_OC_TVB_HELP),
+        option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+     endif;
+
+    suppressif ideqval OC_SETUP.OcTvb == 0 OR ideqval OC_SETUP.TvbRatioClipping == 0x0;
+      goto      OC_TVB_CONFIG_FORM_ID,
+      prompt  = STRING_TOKEN(STR_OC_TVB_PARAMETERS),
+      help    = STRING_TOKEN(STR_OC_TVB_PARAMETERS_HELP);
+    endif;
+
+    suppressif ideqval CPU_SETUP.FlexOverrideEnable == 0x0 OR ideqval CPU_SETUP.BusSpeedEnable == 0x0;
+      INTERACTIVE_TEXT(STRING_TOKEN(STR_OVERCLOCK_EXPFREQ_HELP),STRING_TOKEN(STR_OVERCLOCK_EXPFREQ_PROMPT),STRING_TOKEN(STR_OVERCLOCK_EXPFREQ_VAL),AUTO_ID(OVERCLOCK_KEY))
+    endif;
+  endform;
+
+  //
+  // OC TVB Parameters
+  //
+  form formid = AUTO_ID(OC_TVB_CONFIG_FORM_ID),
+  title = STRING_TOKEN(STR_OC_TVB_PARAMETERS);
+
+    numeric varid = OC_SETUP.PcoreTvbTempThreshold0,
+      prompt  = STRING_TOKEN (STR_PCORE_TVB_TEMP_THRESHOLD_0_PROMPT),
+      help    = STRING_TOKEN (STR_PCORE_TVB_TEMP_THRESHOLD_0_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 100,
+      step    = 1,
+      default = 70,
+    endnumeric;
+
+    numeric varid = OC_SETUP.PcoreTvbTempThreshold1,
+      prompt  = STRING_TOKEN (STR_PCORE_TVB_TEMP_THRESHOLD_1_PROMPT),
+      help    = STRING_TOKEN (STR_PCORE_TVB_TEMP_THRESHOLD_1_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 100,
+      step    = 1,
+      default = 100,
+    endnumeric;
+
+    numeric varid = OC_SETUP.EcoreTvbTempThreshold0,
+      prompt  = STRING_TOKEN (STR_ECORE_TVB_TEMP_THRESHOLD_0_PROMPT),
+      help    = STRING_TOKEN (STR_ECORE_TVB_TEMP_THRESHOLD_0_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 100,
+      step    = 1,
+      default = 70,
+    endnumeric;
+
+    numeric varid = OC_SETUP.EcoreTvbTempThreshold1,
+      prompt  = STRING_TOKEN (STR_ECORE_TVB_TEMP_THRESHOLD_1_PROMPT),
+      help    = STRING_TOKEN (STR_ECORE_TVB_TEMP_THRESHOLD_1_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 100,
+      step    = 1,
+      default = 100,
+    endnumeric;
+
+    oneof varid   = OC_SETUP.TvbConfigLimitSelect,
+      prompt      = STRING_TOKEN(STR_TVB_LIMIT_SELECT),
+      help        = STRING_TOKEN(STR_TVB_LIMIT_SELECT_HELP),
+      option text = STRING_TOKEN(STR_PER_CCP_MODULE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PER_BIG_CORE_GROUP), value = 1, flags =  RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.TvbConfigLimitSelect == 0x1;
+#define PCORE_DOWNBIN_ABOVET0(Index) \
+      suppressif ideqval SETUP_CPU_FEATURES.NumCores <= Index ; \
+        numeric varid = OC_SETUP.PerPcoreRatioDownBinAboveT0[Index], \
+          prompt  = STRING_TOKEN (STR_PCORE_DOWNBINS_ABOVET0_##Index), \
+          help    = STRING_TOKEN (STR_PCORE_DOWNBINS_ABOVET0_##Index##_HELP), \
+          flags   = RESET_REQUIRED, \
+          minimum = 0, \
+          maximum = 10, \
+          step    = 1, \
+          default = 1, \
+        endnumeric; \
+      endif;
+      PCORE_DOWNBIN_ABOVET0(0)
+      PCORE_DOWNBIN_ABOVET0(1)
+      PCORE_DOWNBIN_ABOVET0(2)
+      PCORE_DOWNBIN_ABOVET0(3)
+      PCORE_DOWNBIN_ABOVET0(4)
+      PCORE_DOWNBIN_ABOVET0(5)
+      PCORE_DOWNBIN_ABOVET0(6)
+      PCORE_DOWNBIN_ABOVET0(7)
+
+    SEPARATOR
+
+#define PCORE_DOWNBIN_ABOVET1(Index) \
+      suppressif ideqval SETUP_CPU_FEATURES.NumCores <= Index ; \
+        numeric varid = OC_SETUP.PerPcoreRatioDownBinAboveT1[Index], \
+          prompt  = STRING_TOKEN (STR_PCORE_DOWNBINS_ABOVET1_##Index), \
+          help    = STRING_TOKEN (STR_PCORE_DOWNBINS_ABOVET1_##Index##_HELP), \
+          flags   = RESET_REQUIRED, \
+          minimum = 0, \
+          maximum = 10, \
+          step    = 1, \
+          default = 2, \
+        endnumeric; \
+      endif;
+      PCORE_DOWNBIN_ABOVET1(0)
+      PCORE_DOWNBIN_ABOVET1(1)
+      PCORE_DOWNBIN_ABOVET1(2)
+      PCORE_DOWNBIN_ABOVET1(3)
+      PCORE_DOWNBIN_ABOVET1(4)
+      PCORE_DOWNBIN_ABOVET1(5)
+      PCORE_DOWNBIN_ABOVET1(6)
+      PCORE_DOWNBIN_ABOVET1(7)
+
+    SEPARATOR
+
+#define ECLUSTER_DOWNBIN_ABOVET0(Index) \
+      suppressif ideqval SETUP_CPU_FEATURES.NumSmallCoresCLuster <= Index ; \
+        numeric varid = OC_SETUP.PerEcoreCcpRatioDownBinAboveT0 [Index], \
+          prompt  = STRING_TOKEN (STR_ECLUSTER_DOWNBINS_ABOVET0_##Index), \
+          help    = STRING_TOKEN (STR_ECLUSTER_DOWNBINS_ABOVET0_##Index##_HELP), \
+          flags   = RESET_REQUIRED, \
+          minimum = 0, \
+          maximum = 10, \
+          step    = 1, \
+          default = 0, \
+        endnumeric; \
+      endif;
+      ECLUSTER_DOWNBIN_ABOVET0(0)
+      ECLUSTER_DOWNBIN_ABOVET0(1)
+      ECLUSTER_DOWNBIN_ABOVET0(2)
+      ECLUSTER_DOWNBIN_ABOVET0(3)
+
+    SEPARATOR
+
+#define ECLUSTER_DOWNBIN_ABOVET1(Index) \
+      suppressif ideqval SETUP_CPU_FEATURES.NumSmallCoresCLuster <= Index ; \
+        numeric varid = OC_SETUP.PerEcoreCcpRatioDownBinAboveT1 [Index], \
+          prompt  = STRING_TOKEN (STR_ECLUSTER_DOWNBINS_ABOVET1_##Index), \
+          help    = STRING_TOKEN (STR_ECLUSTER_DOWNBINS_ABOVET1_##Index##_HELP), \
+          flags   = RESET_REQUIRED, \
+          minimum = 0, \
+          maximum = 10, \
+          step    = 1, \
+          default = 0, \
+        endnumeric; \
+      endif;
+        ECLUSTER_DOWNBIN_ABOVET1(0)
+        ECLUSTER_DOWNBIN_ABOVET1(1)
+        ECLUSTER_DOWNBIN_ABOVET1(2)
+        ECLUSTER_DOWNBIN_ABOVET1(3)
+    endif; // suppressif ideqval OC_SETUP.TvbConfigLimitSelect == 0x1;
+
+    suppressif ideqval OC_SETUP.TvbConfigLimitSelect == 0x0;
+#define PCORE_GROUP_DOWNBIN_ABOVET0(Index) \
+      numeric varid = OC_SETUP.PerPcoreGrRatioDownBinAboveT0[Index], \
+        prompt  = STRING_TOKEN (STR_PCORE_GROUP_DOWNBINS_ABOVET0_##Index), \
+        help    = STRING_TOKEN (STR_PCORE_GROUP_DOWNBINS_ABOVET0_##Index##_HELP), \
+        flags   = RESET_REQUIRED, \
+        minimum = 0, \
+        maximum = 10, \
+        step    = 1, \
+        default = 1, \
+      endnumeric;
+      PCORE_GROUP_DOWNBIN_ABOVET0(0)
+      PCORE_GROUP_DOWNBIN_ABOVET0(1)
+      PCORE_GROUP_DOWNBIN_ABOVET0(2)
+      PCORE_GROUP_DOWNBIN_ABOVET0(3)
+      PCORE_GROUP_DOWNBIN_ABOVET0(4)
+      PCORE_GROUP_DOWNBIN_ABOVET0(5)
+      PCORE_GROUP_DOWNBIN_ABOVET0(6)
+      PCORE_GROUP_DOWNBIN_ABOVET0(7)
+
+    SEPARATOR
+
+#define PCORE_GROUP_DOWNBIN_ABOVET1(Index) \
+      numeric varid = OC_SETUP.PerPcoreGrRatioDownBinAboveT1[Index], \
+        prompt  = STRING_TOKEN (STR_PCORE_GROUP_DOWNBINS_ABOVET1_##Index), \
+        help    = STRING_TOKEN (STR_PCORE_GROUP_DOWNBINS_ABOVET1_##Index##_HELP), \
+        flags   = RESET_REQUIRED, \
+        minimum = 0, \
+        maximum = 10, \
+        step    = 1, \
+        default = 2, \
+      endnumeric;
+      PCORE_GROUP_DOWNBIN_ABOVET1(0)
+      PCORE_GROUP_DOWNBIN_ABOVET1(1)
+      PCORE_GROUP_DOWNBIN_ABOVET1(2)
+      PCORE_GROUP_DOWNBIN_ABOVET1(3)
+      PCORE_GROUP_DOWNBIN_ABOVET1(4)
+      PCORE_GROUP_DOWNBIN_ABOVET1(5)
+      PCORE_GROUP_DOWNBIN_ABOVET1(6)
+      PCORE_GROUP_DOWNBIN_ABOVET1(7)
+    endif; // suppressif ideqval OC_SETUP.TvbConfigLimitSelect == 0x0;
+
+#endif
+
+//
+// OC DOMAIN 1 : GT
+//
+#if OCDOMAIN_INDEX == 1
+    text
+      help  = STRING_TOKEN(STR_GT_MAX_OC_RATIO_LIMIT_HELP),
+      text  = STRING_TOKEN(STR_GT_MAX_OC_RATIO_LIMIT),
+      text  = STRING_TOKEN(STR_GT_MAX_OC_RATIO_LIMIT_VALUE),
+      flags = 0,
+      key   = 0;
+
+    numeric varid = OC_SETUP.MaxOcRatio[OCDOMAIN_INDEX],
+      prompt   = STRING_TOKEN(STR_GT_MAX_OC_RATIO),
+      help     = STRING_TOKEN(STR_GT_MAX_OC_RATIO_HELP),
+      flags    = RESET_REQUIRED,
+      minimum     = 0,
+      maximum     = 42,
+      step        = 1,    // Increment/Decrement with a +/- keys
+      default     = 0,
+    endnumeric;
+
+    grayoutif ideqval OC_SETUP.VfPointCount[OCDOMAIN_INDEX] == 0x0;
+      oneof varid   = OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_VF_POINT_OFFSET_MODE),
+        help        = STRING_TOKEN(STR_VF_POINT_OFFSET_MODE_HELP),
+        option text = STRING_TOKEN(STR_VOLTAGE_OFFSET_LEGACY), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_VOLTAGE_OFFSET_SELECTION), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x1;
+      oneof varid   = OC_SETUP.VoltageMode[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_GT_VOLTAGE_MODE),
+        help        = STRING_TOKEN(STR_GT_VOLTAGE_MODE_HELP),
+        option text = STRING_TOKEN(STR_VOLTAGE_ADAPTIVE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_VOLTAGE_OVERRIDE), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 0;
+        numeric varid = OC_SETUP.VoltageOverride[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_GT_VOLTAGE_OVERRIDE),
+          help    = STRING_TOKEN (STR_GT_VOLTAGE_OVERRIDE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 2000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 1;
+        numeric varid = OC_SETUP.AdaptiveVoltage[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_GT_ADAPTIVE_VOLTAGE),
+          help    = STRING_TOKEN (STR_GT_ADAPTIVE_VOLTAGE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 2000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+      endif;
+
+      numeric varid = OC_SETUP.VoltageOffset[OCDOMAIN_INDEX],
+        prompt  = STRING_TOKEN (STR_GT_VOLTAGE_OFFSET),
+        help    = STRING_TOKEN (STR_GT_VOLTAGE_OFFSET_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 0,
+        maximum = 1000,
+        step    = 1,
+        default = 0,
+      endnumeric;
+
+      oneof varid   = OC_SETUP.VoltageOffsetPrefix[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_GT_VOLTAGE_OFFSET_PREFIX),
+        help        = STRING_TOKEN(STR_VOLTAGE_OFFSET_PREFIX_HELP),
+        option text = STRING_TOKEN(STR_POSITIVE_SIGN),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_NEGATIVE_SIGN),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x0;
+      #define VFPOINT_INDEX 0
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 1
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 2
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 3
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 4
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 5
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 6
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 7
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 8
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 9
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 10
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 11
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 12
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 13
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 14
+        #include "OverClockSetupGtSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+    endif;
+#endif
+
+//
+// OC DOMAIN 2 : RING
+//
+#if OCDOMAIN_INDEX == 2
+    text
+      help  = STRING_TOKEN(STR_RING_MAX_OC_RATIO_LIMIT_HELP),
+      text  = STRING_TOKEN(STR_RING_MAX_OC_RATIO_LIMIT),
+      text  = STRING_TOKEN(STR_RING_MAX_OC_RATIO_LIMIT_VALUE),
+      flags = 0,
+      key   = 0;
+
+    numeric varid = OC_SETUP.MaxOcRatio[OCDOMAIN_INDEX],
+      prompt  = STRING_TOKEN (STR_RING_MAX_OC_RATIO),
+      help    = STRING_TOKEN (STR_RING_MAX_OC_RATIO_HELP),
+      flags   = RESET_REQUIRED | INTERACTIVE,
+      key     = AUTO_ID(KEY_RING_MAX_OC_RATIO_LIMIT),
+      minimum = 0,
+      maximum = 85,
+      step    = 1,
+      default = 0,
+    endnumeric;
+
+    grayoutif ideqval OC_SETUP.VfPointCount[OCDOMAIN_INDEX] == 0x0;
+      oneof varid   = OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_VF_POINT_OFFSET_MODE),
+        help        = STRING_TOKEN(STR_VF_POINT_OFFSET_MODE_HELP),
+        option text = STRING_TOKEN(STR_VOLTAGE_OFFSET_LEGACY), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_VOLTAGE_OFFSET_SELECTION), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x1;
+      oneof varid   = OC_SETUP.VoltageMode[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_RING_VOLTAGE_MODE),
+        help        = STRING_TOKEN(STR_RING_VOLTAGE_MODE_HELP),
+        option text = STRING_TOKEN(STR_VOLTAGE_ADAPTIVE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_VOLTAGE_OVERRIDE), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 0x0;
+        numeric varid = OC_SETUP.VoltageOverride[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_RING_VOLTAGE_OVERRIDE),
+          help    = STRING_TOKEN (STR_RING_VOLTAGE_OVERRIDE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 2000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 0x1;
+        numeric varid = OC_SETUP.AdaptiveVoltage[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_RING_ADAPTIVE_VOLTAGE),
+          help    = STRING_TOKEN (STR_RING_ADAPTIVE_VOLTAGE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 2000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+      endif;
+
+        numeric varid = OC_SETUP.VoltageOffset[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_RING_VOLTAGE_OFFSET),
+          help    = STRING_TOKEN (STR_RING_VOLTAGE_OFFSET_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 1000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        oneof varid   = OC_SETUP.VoltageOffsetPrefix[OCDOMAIN_INDEX],
+          prompt      = STRING_TOKEN(STR_RING_VOLTAGE_OFFSET_PREFIX),
+          help        = STRING_TOKEN(STR_VOLTAGE_OFFSET_PREFIX_HELP),
+          option text = STRING_TOKEN(STR_POSITIVE_SIGN),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NEGATIVE_SIGN),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+    endif;
+
+    suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x0;
+      #define VFPOINT_INDEX 0
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 1
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 2
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 3
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 4
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 5
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 6
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 7
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 8
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 9
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 10
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 11
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 12
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 13
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 14
+        #include "OverClockSetupRingSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+    endif;
+
+    SEPARATOR
+    oneof varid   = OC_SETUP.RingDownBin,
+      prompt      = STRING_TOKEN(STR_RING_DOWN_BIN_PROMPT),
+      help        = STRING_TOKEN(STR_RING_DOWN_BIN_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    numeric varid = CPU_SETUP.MinRingRatioLimit,
+      prompt  = STRING_TOKEN (STR_MIN_RING_RATIO_LIMIT),
+      help    = STRING_TOKEN (STR_MIN_RING_RATIO_LIMIT_HELP),
+      flags   = RESET_REQUIRED | INTERACTIVE,
+      key     = AUTO_ID(KEY_RING_MIN_RATIO_LIMIT),
+      minimum = 0,
+      maximum = 85,
+      step    = 1,
+      default = 0,
+    endnumeric;
+
+    numeric varid = CPU_SETUP.MaxRingRatioLimit,
+      prompt  = STRING_TOKEN (STR_MAX_RING_RATIO_LIMIT),
+      help    = STRING_TOKEN (STR_MAX_RING_RATIO_LIMIT_HELP),
+      flags   = RESET_REQUIRED | INTERACTIVE,
+      key     = AUTO_ID(KEY_RING_MAX_RATIO_LIMIT),
+      minimum = 0,
+      maximum = 85,
+      step    = 1,
+      default = 0,
+    endnumeric;
+#endif
+
+//
+// OC DOMAIN 4 : SA
+//
+#if OCDOMAIN_INDEX == 4
+    oneof varid   = OC_SETUP.VoltageMode[OCDOMAIN_INDEX],
+      prompt      = STRING_TOKEN(STR_SA_VOLTAGE_MODE),
+      help        = STRING_TOKEN(STR_SA_VOLTAGE_MODE_HELP),
+      option text = STRING_TOKEN(STR_VOLTAGE_ADAPTIVE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_VOLTAGE_OVERRIDE), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 0x0;
+      numeric varid = OC_SETUP.VoltageOverride[OCDOMAIN_INDEX],
+        prompt  = STRING_TOKEN (STR_SA_VOLTAGE_OVERRIDE),
+        help    = STRING_TOKEN (STR_SA_VOLTAGE_OVERRIDE_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 0,
+        maximum = 2000,
+        step    = 1,
+        default = 0,
+      endnumeric;
+    endif;
+
+    suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 0x1;
+      numeric varid = OC_SETUP.AdaptiveVoltage[OCDOMAIN_INDEX],
+        prompt  = STRING_TOKEN (STR_SA_ADAPTIVE_VOLTAGE),
+        help    = STRING_TOKEN (STR_SA_ADAPTIVE_VOLTAGE_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 0,
+        maximum = 2000,
+        step    = 1,
+        default = 0,
+      endnumeric;
+    endif;
+
+    numeric varid = OC_SETUP.VoltageOffset[OCDOMAIN_INDEX],
+      prompt  = STRING_TOKEN (STR_SA_VOLTAGE_OFFSET),
+      help    = STRING_TOKEN (STR_SA_VOLTAGE_OFFSET_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 1000,
+      step    = 1,
+      default = 0,
+    endnumeric;
+
+    oneof varid   = OC_SETUP.VoltageOffsetPrefix[OCDOMAIN_INDEX],
+      prompt      = STRING_TOKEN(STR_SA_VOLTAGE_OFFSET_PREFIX),
+      help        = STRING_TOKEN(STR_VOLTAGE_OFFSET_PREFIX_HELP),
+      option text = STRING_TOKEN(STR_POSITIVE_SIGN),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_NEGATIVE_SIGN),  value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+  endform;
+
+  form formid = AUTO_ID(VCC_CONFIG_FORM_ID),
+    title = STRING_TOKEN(STR_VCC_CONFIGURATION);
+
+    SUBTITLE(STRING_TOKEN(STR_VCC_CONFIGURATION))
+    SEPARATOR
+
+    //
+    // Vcc1p8 CPU Voltage overrides
+    //
+    oneof varid   = OC_SETUP.Vcc1p8CpuOverrideEnable,
+      prompt      = STRING_TOKEN(STR_VCC1P8_CPU_OVERRIDE_ENABLE),
+      help        = STRING_TOKEN(STR_VCC1P8_CPU_OVERRIDE_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.Vcc1p8CpuOverrideEnable == 0;
+      numeric varid = OC_SETUP.Vcc1p8CpuOverrideVoltage,
+        prompt  = STRING_TOKEN (STR_VCC1P8_CPU_OVERRIDE_VOLTS),
+        help    = STRING_TOKEN (STR_VCC1P8_CPU_OVERRIDE_VOLTS_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 800,
+        maximum = 2550,
+        step    = 10,
+        default = 1800,
+      endnumeric;
+    endif;
+
+    //
+    // Vcc1p8 DDR Voltage overrides
+    //
+    oneof varid   = OC_SETUP.Vcc1p8DdrOverrideEnable,
+      prompt      = STRING_TOKEN(STR_VCC1P8_DDR_OVERRIDE_ENABLE),
+      help        = STRING_TOKEN(STR_VCC1P8_DDR_OVERRIDE_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.Vcc1p8DdrOverrideEnable == 0;
+      numeric varid = OC_SETUP.Vcc1p8DdrOverrideVoltage,
+        prompt  = STRING_TOKEN (STR_VCC1P8_DDR_OVERRIDE_VOLTS),
+        help    = STRING_TOKEN (STR_VCC1P8_DDR_OVERRIDE_VOLTS_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 800,
+        maximum = 2550,
+        step    = 10,
+        default = 1800,
+      endnumeric;
+    endif;
+
+    //
+    // VccDD2 Voltage overrides
+    //
+    oneof varid   = OC_SETUP.VccDd2OverrideEnable,
+      prompt      = STRING_TOKEN(STR_VCCDD2_OVERRIDE_ENABLE),
+      help        = STRING_TOKEN(STR_VCCDD2_OVERRIDE_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.VccDd2OverrideEnable == 0;
+      numeric varid = OC_SETUP.VccDd2OverrideVoltage,
+        prompt  = STRING_TOKEN (STR_VCCDD2_OVERRIDE_VOLTS),
+        help    = STRING_TOKEN (STR_VCCDD2_OVERRIDE_VOLTS_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 800,
+        maximum = 2550,
+        step    = 10,
+        default = 1100,
+      endnumeric;
+    endif;
+
+    //
+    // VNNAON Voltage overrides
+    //
+    oneof varid   = OC_SETUP.VnnaonOverrideEnable,
+      prompt      = STRING_TOKEN(STR_VNNAON_OVERRIDE_ENABLE),
+      help        = STRING_TOKEN(STR_VNNAON_OVERRIDE_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.VnnaonOverrideEnable == 0;
+      numeric varid = OC_SETUP.VnnaonOverrideVoltage,
+        prompt  = STRING_TOKEN (STR_VNNAON_OVERRIDE_VOLTS),
+        help    = STRING_TOKEN (STR_VNNAON_OVERRIDE_VOLTS_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 500,
+        maximum = 1500,
+        step    = 10,
+        default = 770,
+      endnumeric;
+    endif;
+
+    //
+    // VCCIO Voltage overrides
+    //
+    oneof varid   = OC_SETUP.VccIoOverrideEnable,
+      prompt      = STRING_TOKEN(STR_VCCIO_OVERRIDE_ENABLE),
+      help        = STRING_TOKEN(STR_VCCIO_OVERRIDE_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.VccIoOverrideEnable == 0;
+      numeric varid = OC_SETUP.VccIoOverrideVoltage,
+        prompt  = STRING_TOKEN (STR_VCCIO_OVERRIDE_VOLTS),
+        help    = STRING_TOKEN (STR_VCCIO_OVERRIDE_VOLTS_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 800,
+        maximum = 2250,
+        step    = 10,
+        default = 1250,
+      endnumeric;
+    endif;
+
+    SEPARATOR
+
+    //
+    // PCH V0P82 Voltage overrides
+    //
+    oneof varid   = OC_SETUP.V0p82OverrideEnable,
+      prompt      = STRING_TOKEN(STR_PCH_V0P82_OVERRIDE_ENABLE),
+      help        = STRING_TOKEN(STR_PCH_V0P82_OVERRIDE_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.V0p82OverrideEnable == 0;
+      numeric varid = OC_SETUP.V0p82OverrideVoltage,
+        prompt  = STRING_TOKEN (STR_PCH_V0P82_OVERRIDE_VOLTS),
+        help    = STRING_TOKEN (STR_PCH_V0P82_OVERRIDE_VOLTS_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 780,
+        maximum = 1500,
+        step    = 10,
+        default = 820,
+      endnumeric;
+    endif;
+
+    //
+    // PCH V3P3 Voltage overrides
+    //
+    oneof varid   = OC_SETUP.V3p3OverrideEnable,
+      prompt      = STRING_TOKEN(STR_PCH_V3P3_OVERRIDE_ENABLE),
+      help        = STRING_TOKEN(STR_PCH_V3P3_OVERRIDE_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.V3p3OverrideEnable == 0;
+      numeric varid = OC_SETUP.V3p3OverrideVoltage,
+        prompt  = STRING_TOKEN (STR_PCH_V3P3_OVERRIDE_VOLTS),
+        help    = STRING_TOKEN (STR_PCH_V3P3_OVERRIDE_VOLTS_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 3000,
+        maximum = 5000,
+        step    = 10,
+        default = 3300,
+      endnumeric;
+    endif;
+
+    //
+    // PCH V1P8 Voltage overrides
+    //
+    oneof varid   = OC_SETUP.V1p8OverrideEnable,
+      prompt      = STRING_TOKEN(STR_PCH_V1P8_OVERRIDE_ENABLE),
+      help        = STRING_TOKEN(STR_PCH_V1P8_OVERRIDE_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.V1p8OverrideEnable == 0;
+      numeric varid = OC_SETUP.V1p8OverrideVoltage,
+        prompt  = STRING_TOKEN (STR_PCH_V1P8_OVERRIDE_VOLTS),
+        help    = STRING_TOKEN (STR_PCH_V1P8_OVERRIDE_VOLTS_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 1500,
+        maximum = 3500,
+        step    = 10,
+        default = 1800,
+      endnumeric;
+    endif;
+
+    SEPARATOR
+
+    //
+    // VccIA (Core) Voltage overrides from RichTek VR
+    //
+    oneof varid   = OC_SETUP.RichtekVccIaEnable,
+      prompt      = STRING_TOKEN(STR_RICHTEK_VCC_IA_ENABLE),
+      help        = STRING_TOKEN(STR_RICHTEK_VCC_IA_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.RichtekVccIaEnable == 0;
+      oneof varid   = OC_SETUP.RichtekVccIaFixedVidMode,
+        prompt      = STRING_TOKEN(STR_RICHTEK_VCC_FIXED_VID_ENABLE),
+        help        = STRING_TOKEN(STR_RICHTEK_VCC_FIXED_VID_ENABLE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval OC_SETUP.RichtekVccIaFixedVidMode == 0;
+      numeric varid = OC_SETUP.RichtekVccIaVoltage,
+        prompt  = STRING_TOKEN (STR_RICHTEK_VCC_IA_VOLTAGE_VALUE),
+        help    = STRING_TOKEN (STR_RICHTEK_VCC_IA_VOLTAGE_VALUE_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 250,
+        maximum = 2170,
+        step    = 10,
+        default = 1050,
+      endnumeric;
+      endif;
+    endif;
+
+    //
+    // VccGT Voltage overrides  from RichTek VR
+    //
+    oneof varid   = OC_SETUP.RichtekVccGtEnable,
+      prompt      = STRING_TOKEN(STR_RICHTEK_VCC_GT_ENABLE),
+      help        = STRING_TOKEN(STR_RICHTEK_VCC_GT_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.RichtekVccGtEnable == 0;
+      oneof varid   = OC_SETUP.RichtekVccGtFixedVidMode,
+        prompt      = STRING_TOKEN(STR_RICHTEK_VCC_FIXED_VID_ENABLE),
+        help        = STRING_TOKEN(STR_RICHTEK_VCC_FIXED_VID_ENABLE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval OC_SETUP.RichtekVccGtFixedVidMode == 0;
+      numeric varid = OC_SETUP.RichtekVccGtVoltage,
+        prompt  = STRING_TOKEN (STR_RICHTEK_VCC_GT_VOLTAGE_VALUE),
+        help    = STRING_TOKEN (STR_RICHTEK_VCC_GT_VOLTAGE_VALUE_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 250,
+        maximum = 2170,
+        step    = 10,
+        default = 1050,
+      endnumeric;
+      endif;
+    endif;
+
+    //
+    // VccSA Voltage overrides from RichTek VR
+    //
+    oneof varid   = OC_SETUP.RichtekVccSaEnable,
+      prompt      = STRING_TOKEN(STR_RICHTEK_VCC_SA_ENABLE),
+      help        = STRING_TOKEN(STR_RICHTEK_VCC_SA_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval OC_SETUP.RichtekVccSaEnable == 0;
+      oneof varid   = OC_SETUP.RichtekVccSaFixedVidMode,
+        prompt      = STRING_TOKEN(STR_RICHTEK_VCC_FIXED_VID_ENABLE),
+        help        = STRING_TOKEN(STR_RICHTEK_VCC_FIXED_VID_ENABLE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval OC_SETUP.RichtekVccSaFixedVidMode == 0;
+      numeric varid = OC_SETUP.RichtekVccSaVoltage,
+        prompt  = STRING_TOKEN (STR_RICHTEK_VCC_SA_VOLTAGE_VALUE),
+        help    = STRING_TOKEN (STR_RICHTEK_VCC_SA_VOLTAGE_VALUE_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 250,
+        maximum = 2170,
+        step    = 10,
+        default = 1050,
+      endnumeric;
+      endif;
+    endif;
+#endif
+
+//
+// OC DOMAIN 6 : MemSS
+//
+#if OCDOMAIN_INDEX == 6
+    text
+      help  = STRING_TOKEN(STR_MEMSS_MAX_OC_RATIO_LIMIT_HELP),
+      text  = STRING_TOKEN(STR_MEMSS_MAX_OC_RATIO_LIMIT),
+      text  = STRING_TOKEN(STR_MEMSS_MAX_OC_RATIO_LIMIT_VALUE),
+      flags = 0,
+      key   = 0;
+
+    #define OCDOMAIN_INDEX 6
+    numeric varid = OC_SETUP.MaxOcRatio[OCDOMAIN_INDEX],
+      prompt  = STRING_TOKEN (STR_MEMSS_MAX_OC_RATIO),
+      help    = STRING_TOKEN (STR_MEMSS_MAX_OC_RATIO_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 109,
+      step    = 1,
+      default = 0,
+    endnumeric;
+
+    grayoutif ideqval OC_SETUP.VfPointCount[OCDOMAIN_INDEX] == 0x0;
+      oneof varid   = OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_VF_POINT_OFFSET_MODE),
+        help        = STRING_TOKEN(STR_VF_POINT_OFFSET_MODE_HELP),
+        option text = STRING_TOKEN(STR_VOLTAGE_OFFSET_LEGACY), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_VOLTAGE_OFFSET_SELECTION), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x1;
+      oneof varid   = OC_SETUP.VoltageMode[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_MEMSS_VOLTAGE_MODE),
+        help        = STRING_TOKEN(STR_MEMSS_VOLTAGE_MODE_HELP),
+        option text = STRING_TOKEN(STR_VOLTAGE_ADAPTIVE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_VOLTAGE_OVERRIDE), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 0x0;
+        numeric varid = OC_SETUP.VoltageOverride[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_MEMSS_VOLTAGE_OVERRIDE),
+          help    = STRING_TOKEN (STR_MEMSS_VOLTAGE_OVERRIDE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 2000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 0x1;
+        numeric varid = OC_SETUP.AdaptiveVoltage[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_MEMSS_ADAPTIVE_VOLTAGE),
+          help    = STRING_TOKEN (STR_MEMSS_ADAPTIVE_VOLTAGE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 2000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+      endif;
+
+        numeric varid = OC_SETUP.VoltageOffset[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_MEMSS_VOLTAGE_OFFSET),
+          help    = STRING_TOKEN (STR_MEMSS_VOLTAGE_OFFSET_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 1000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        oneof varid   = OC_SETUP.VoltageOffsetPrefix[OCDOMAIN_INDEX],
+          prompt      = STRING_TOKEN(STR_MEMSS_VOLTAGE_OFFSET_PREFIX),
+          help        = STRING_TOKEN(STR_VOLTAGE_OFFSET_PREFIX_HELP),
+          option text = STRING_TOKEN(STR_POSITIVE_SIGN),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_NEGATIVE_SIGN),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+    endif;
+
+    suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x0;
+      #define VFPOINT_INDEX 0
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 1
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 2
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 3
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 4
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 5
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 6
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 7
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 8
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 9
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 10
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 11
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 12
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 13
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 14
+        #include "OverClockSetupMemSSSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+    endif;
+#endif
+
+//
+// OC DOMAIN 7 : NGU
+//
+#if OCDOMAIN_INDEX == 7
+    text
+      help  = STRING_TOKEN(STR_NGU_MAX_OC_RATIO_LIMIT_HELP),
+      text  = STRING_TOKEN(STR_NGU_MAX_OC_RATIO_LIMIT),
+      text  = STRING_TOKEN(STR_NGU_MAX_OC_RATIO_LIMIT_VALUE),
+      flags = 0,
+      key   = 0;
+
+    numeric varid = OC_SETUP.MaxOcRatio[OCDOMAIN_INDEX],
+      prompt   = STRING_TOKEN(STR_NGU_MAX_OC_RATIO),
+      help     = STRING_TOKEN(STR_NGU_MAX_OC_RATIO_HELP),
+      flags    = RESET_REQUIRED,
+      minimum     = 0,
+      maximum     = 34,
+      step        = 1,    // Increment/Decrement with a +/- keys
+      default     = 0,
+    endnumeric;
+
+    grayoutif ideqval OC_SETUP.VfPointCount[OCDOMAIN_INDEX] == 0x0;
+      oneof varid   = OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_VF_POINT_OFFSET_MODE),
+        help        = STRING_TOKEN(STR_VF_POINT_OFFSET_MODE_HELP),
+        option text = STRING_TOKEN(STR_VOLTAGE_OFFSET_LEGACY), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_VOLTAGE_OFFSET_SELECTION), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x1;
+      oneof varid   = OC_SETUP.VoltageMode[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_NGU_VOLTAGE_MODE),
+        help        = STRING_TOKEN(STR_NGU_VOLTAGE_MODE_HELP),
+        option text = STRING_TOKEN(STR_VOLTAGE_ADAPTIVE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_VOLTAGE_OVERRIDE), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 0;
+        numeric varid = OC_SETUP.VoltageOverride[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_NGU_VOLTAGE_OVERRIDE),
+          help    = STRING_TOKEN (STR_NGU_VOLTAGE_OVERRIDE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 2000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+      endif;
+
+      suppressif ideqval OC_SETUP.VoltageMode[OCDOMAIN_INDEX] == 1;
+        numeric varid = OC_SETUP.AdaptiveVoltage[OCDOMAIN_INDEX],
+          prompt  = STRING_TOKEN (STR_NGU_ADAPTIVE_VOLTAGE),
+          help    = STRING_TOKEN (STR_NGU_ADAPTIVE_VOLTAGE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 2000,
+          step    = 1,
+          default = 0,
+        endnumeric;
+      endif;
+
+      numeric varid = OC_SETUP.VoltageOffset[OCDOMAIN_INDEX],
+        prompt  = STRING_TOKEN (STR_NGU_VOLTAGE_OFFSET),
+        help    = STRING_TOKEN (STR_NGU_VOLTAGE_OFFSET_HELP),
+        flags   = RESET_REQUIRED,
+        minimum = 0,
+        maximum = 1000,
+        step    = 1,
+        default = 0,
+      endnumeric;
+
+      oneof varid   = OC_SETUP.VoltageOffsetPrefix[OCDOMAIN_INDEX],
+        prompt      = STRING_TOKEN(STR_NGU_VOLTAGE_OFFSET_PREFIX),
+        help        = STRING_TOKEN(STR_VOLTAGE_OFFSET_PREFIX_HELP),
+        option text = STRING_TOKEN(STR_POSITIVE_SIGN),  value = 0, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_NEGATIVE_SIGN),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif ideqval OC_SETUP.VfPointOffsetMode[OCDOMAIN_INDEX] == 0x0;
+      #define VFPOINT_INDEX 0
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 1
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 2
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 3
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 4
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 5
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 6
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 7
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 8
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 9
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 10
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 11
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 12
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 13
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+      #define VFPOINT_INDEX 14
+        #include "OverClockSetupNguSelectionMode.hfr"
+      #undef VFPOINT_INDEX
+    endif;
+#endif

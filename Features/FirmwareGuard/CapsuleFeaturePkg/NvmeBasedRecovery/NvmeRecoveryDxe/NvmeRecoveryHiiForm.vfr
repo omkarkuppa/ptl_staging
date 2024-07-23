@@ -1,0 +1,58 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#include <Guid/NvmeRecoveryHiiFormValues.h>
+
+formset
+  guid      = NVME_BASED_RECOVERY_HII_GUID,
+  title     = STRING_TOKEN(STR_NVME_BASED_TITLE),
+  help      = STRING_TOKEN(STR_NVME_BASED_HELP),
+  classguid = EFI_HII_PLATFORM_SETUP_FORMSET_GUID,
+
+  // Define a Buffer Storage (EFI_IFR_VARSTORE) that will be filled
+  // out initially through extractConfig call
+  varstore NVME_BASED_RECOVERY_HII_CONFIG,          // This is the Data structure type
+    name      = NvmeRecoverHii,                     // Define referenced name in vfr
+    guid      = NVME_BASED_RECOVERY_HII_GUID;       // GUID of this Buffer storage
+
+form formid = FORMID_VALUE_MAIN_MENU,
+    title  = STRING_TOKEN(STR_NVME_BASED_TITLE);
+
+    oneof varid   = NVME_BASED_RECOVERY_HII_CONFIG.NvmeRecoverySupported,
+      questionid  = NVME_RECOVERY_SUPPORT_QUESTION_ID,
+      prompt      = STRING_TOKEN(STR_NVME_SUPPORT),
+      help        = STRING_TOKEN(STR_NVME_SUPPORT_HELP),
+      option text = STRING_TOKEN(STR_ENABLED),  value = NVME_RECOVERY_FUNCTION_ENABLE_VALUE, flags = RESET_REQUIRED | INTERACTIVE;
+      option text = STRING_TOKEN(STR_DISABLED), value = NVME_RECOVERY_FUNCTION_DISABLE_VALUE, flags = MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+    endoneof;
+
+    suppressif ideqvallist NVME_BASED_RECOVERY_HII_CONFIG.NvmeRecoverySupported == NVME_RECOVERY_FUNCTION_DISABLE_VALUE;
+      oneof varid   = NVME_BASED_RECOVERY_HII_CONFIG.KeyMigrationAction,
+        prompt      = STRING_TOKEN(STR_INVOKE_KEY_MIGRATION),
+        help        = STRING_TOKEN(STR_INVOKE_KEY_MIGRATION_HELP),
+        option text = STRING_TOKEN(STR_NONE),              value = NVME_RPMB_KEY_MIGRATION_VALUE_NO_ACTION, flags = MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_SET_PIN_KEY),       value = NVME_RPMB_KEY_MIGRATION_VALUE_SET_PIN_KEY, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_UNLOCK_BY_PIN_KEY), value = NVME_RPMB_KEY_MIGRATION_VALUE_UNLOCK_BY_PIN_KEY, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+endform;  // MAIN MENU FORM
+
+endformset;

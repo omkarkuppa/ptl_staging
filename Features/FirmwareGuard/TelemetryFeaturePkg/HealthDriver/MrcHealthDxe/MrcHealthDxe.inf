@@ -1,0 +1,65 @@
+## @file
+# Component description file for the MrcHealthDxe module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = MrcHealthDxe
+  FILE_GUID                      = 4A64C620-1CEF-40A0-BE1C-EED6B20ECCE9
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = MrcHealthDxeEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64
+#
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  AslUpdateLib
+  BaseMemoryLib
+  DebugLib
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  HobLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  TelemetryFeaturePkg/TelemetryFeaturePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+
+[Sources]
+  MrcHealthDxe.c
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid             ## CONSUMES
+  gEfiAdapterInformationProtocolGuid    ## PRODUCE
+
+[Guids]
+  gAdapterInfoMrcGuid                   ## PRODUCE
+  gSiMemoryPlatformDataGuid             ## PRODUCE
+
+[Depex]
+  gEfiAcpiTableProtocolGuid AND
+  gEfiRealTimeClockArchProtocolGuid

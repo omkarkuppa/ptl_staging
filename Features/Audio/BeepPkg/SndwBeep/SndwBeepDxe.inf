@@ -1,0 +1,60 @@
+### @file
+#  INF for DXE Library, which configures and supports "PC Beep" by SoundWire interface.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2019 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DxeSndwBeep
+  FILE_GUID                      = 11472071-A5CA-4281-9779-DF2C839A455A
+  MODULE_TYPE                    = DXE_RUNTIME_DRIVER
+  ENTRY_POINT                    = DxeSndwBeepEntryPoint
+
+[LibraryClasses]
+  UefiLib
+  BaseLib
+  IoLib
+  DebugLib
+  TimerLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DxeServicesLib
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+
+[Pcd]
+  gBeepModuleTokenSpaceGuid.PcdSndwBeepCodecId            ## CONSUMES
+
+[Protocols]
+  gBeepProtocolGuid                                       ## PRODUCES
+  gSndwAccessProtocolGuid                                 ## CONSUMES
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  BeepPkg/BeepPkg.dec
+
+[Sources]
+  SndwBeepDxe.c
+  SndwBeepRltkAlc1308.c
+
+[Depex]
+  gSndwAccessProtocolGuid

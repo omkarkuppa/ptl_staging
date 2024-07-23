@@ -1,0 +1,57 @@
+## @file
+#  This PEIM driver initialize Nvm Express host contoller and
+#  produce EdkiiPeiNvmExpressHostControllerPpi instance for other driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = NvmePciHcPei
+  FILE_GUID                      = 846E721C-E036-4F2F-90A6-8094917FB077
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = NvmePciHcPeimEntry
+
+[Sources]
+  NvmePciHcPei.h
+  NvmePciHcPei.c
+  Pci.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  NvmeFeaturePkg/NvmeFeaturePkg.dec
+
+[LibraryClasses]
+  PciLib
+  DebugLib
+  PeiServicesLib
+  MemoryAllocationLib
+  PcdLib
+  PeimEntryPoint
+  NvmePcieRpLib
+
+[Ppis]
+  gEdkiiPeiNvmExpressHostControllerPpiGuid             ## SOMETIMES_PRODUCES
+  gEfiEndOfPeiSignalPpiGuid                            ## SOMETIMES_CONSUMES
+
+[Depex]
+  gFspSiliconInitDonePpiGuid OR gEndOfSiInitPpiGuid

@@ -1,0 +1,82 @@
+## @file
+# INF for DXE driver which is responsible for creating and publishing DMAR ACPI table
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DmarAcpiDxe
+  FILE_GUID                      = 49D11146-2E31-4AFA-8B05-0E6FDED2E090
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = DmarAcpiInitEntryPoint
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  IoLib
+  TimerLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DxeServicesLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  PcdLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  DmarAcpiFeaturePkg/DmarAcpiFeaturePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+
+[Sources]
+  DmarInitDxe.c
+  Dmar.c
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid
+  gEfiPciEnumerationCompleteProtocolGuid
+  gVtdTopologyProtocolGuid
+  gOemDmarProtocolGuid
+
+[Pcd]
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarFlags
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRmrrEnable
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSatcEnable
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSidpEnable
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRhsaEnable
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarAtsrEnable
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
+
+[FixedPcd]
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRmrrSupport
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSatcSupport
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSidpSupport
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRhsaSupport
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarAtsrSupport
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRevision
+
+[Depex]
+  gEfiAcpiTableProtocolGuid AND
+  gVtdTopologyProtocolGuid

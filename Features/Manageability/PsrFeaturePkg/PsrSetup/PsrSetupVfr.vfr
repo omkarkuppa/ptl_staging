@@ -1,0 +1,202 @@
+/** @file
+
+  PSR Setup.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#include "PsrSetup.h"
+#include <Guid/HiiPlatformSetupFormset.h>
+
+#define PSR_FORM_SET_CLASS 0x60
+
+formset guid = PSR_FORMSET_GUID,
+  title      = STRING_TOKEN(STR_FORM_SET_TITLE),
+  help       = STRING_TOKEN(STR_FORM_SET_HELP_TITLE),
+  classguid  = PSR_FORMSET_GUID,
+  class      = PSR_FORM_SET_CLASS,
+  subclass   = 0,
+
+  varstore PSR_CONFIGURATION,    // This is the data structure type
+    varid = VARSTORE_ID_PSR,     // Optional VarStore ID
+    name  = PsrCfg,              // Define referenced name in vfr
+    guid  = PSR_FORMSET_GUID;    // GUID of this buffer storage
+
+  form formid = FORM_ID_PSR,
+    title = STRING_TOKEN(STR_FORM_SET_TITLE);
+
+    guidop
+      guid     = gEfiIfrFrontPageGuid,
+      datatype = UINT32,
+      data     = FixedPcdGet32 (PcdPsrSetupConfiguration),
+    endguidop;
+
+    text
+      help    = STRING_TOKEN(STR_SUBMENU_PSR_INFO_HELP),
+      text    = STRING_TOKEN(STR_SUBMENU_PSR_INFO),
+      flags   = INTERACTIVE,
+      key     = FORM_ID_PSR;
+
+    //Intel UPID
+    INVENTORY(STRING_TOKEN(STR_OPTION_PSR_GDL_INTEL_UPID)  , STRING_TOKEN(STR_OPTION_PSR_GDL_INTEL_UPID_VALUE1))
+    INVENTORY(STRING_TOKEN(STR_EMPTY)                      , STRING_TOKEN(STR_OPTION_PSR_GDL_INTEL_UPID_VALUE2))
+    INVENTORY(STRING_TOKEN(STR_EMPTY)                      , STRING_TOKEN(STR_OPTION_PSR_GDL_INTEL_UPID_VALUE3))
+    INVENTORY(STRING_TOKEN(STR_EMPTY)                      , STRING_TOKEN(STR_OPTION_PSR_GDL_INTEL_UPID_VALUE4))
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+
+    //PSR ID
+    INVENTORY(STRING_TOKEN(STR_OPTION_PSR_GDL_PSR_ID)      , STRING_TOKEN(STR_OPTION_PSR_GDL_PSR_ID_VALUE))
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+
+    //PSR Version
+    INVENTORY(STRING_TOKEN(STR_OPTION_PSR_GDL_PSR_VER)     , STRING_TOKEN(STR_OPTION_PSR_GDL_PSR_VER_VALUE))
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+
+    //PSR State
+    INVENTORY(STRING_TOKEN(STR_OPTION_PSR_LOG_STATE)       , STRING_TOKEN(STR_OPTION_PSR_LOG_STATE_VALUE))
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+
+    //PSR Capability Mask
+    subtitle text = STRING_TOKEN(STR_OPTION_PSR_CAPABILITIES);
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_CAP_CHASSIS_INTRUSION),                 STRING_TOKEN(STR_OPTION_PSR_CAP_CHASSIS_INTRUSION_VALUE))
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_CAP_EXCESSIVE_OPERATIONAL_TEMPERATURE), STRING_TOKEN(STR_OPTION_PSR_CAP_EXCESSIVE_OPERATIONAL_TEMPERATURE_VALUE))
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_CAP_EXCESSIVE_SHOCK),                   STRING_TOKEN(STR_OPTION_PSR_CAP_EXCESSIVE_SHOCK_VALUE))
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_CAP_REMOTE_PLATFORM_ERASE),             STRING_TOKEN(STR_OPTION_PSR_CAP_REMOTE_PLATFORM_ERASE_VALUE))
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_CAP_LOCAL_PLATFORM_ERASE),              STRING_TOKEN(STR_OPTION_PSR_CAP_LOCAL_PLATFORM_ERASE_VALUE))
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_CAP_FW_RECOVERY),                       STRING_TOKEN(STR_OPTION_PSR_CAP_FW_RECOVERY_VALUE))
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_CAP_FW_UPDATE),                         STRING_TOKEN(STR_OPTION_PSR_CAP_FW_UPDATE_VALUE))
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_CAP_SYS_HANG),                          STRING_TOKEN(STR_OPTION_PSR_CAP_SYS_HANG_VALUE))
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_CAP_POWER_DROP),                        STRING_TOKEN(STR_OPTION_PSR_CAP_POWER_DROP_VALUE))
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+
+
+    //CSME FW Version
+    INVENTORY(STRING_TOKEN(STR_OPTION_PSR_GDL_CSME_VER), STRING_TOKEN(STR_OPTION_PSR_GDL_CSME_VER_VALUE))
+
+    //Blank line to seperate Genesis Data Ledger
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+    //Genesis Data Ledger SubForm
+    subtitle text = STRING_TOKEN(STR_SUBMENU_PSR_GENESIS);
+      //Genesis Date
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_GDL_GENESIS_DATE)  , STRING_TOKEN(STR_OPTION_PSR_GDL_GENESIS_DATE_VALUE))
+      //OEM Info
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_GDL_OEM_INFO)      , STRING_TOKEN(STR_OPTION_PSR_GDL_OEM_INFO_VALUE))
+      //OEM Make
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_GDL_OEM_MAKE_INFO) , STRING_TOKEN(STR_OPTION_PSR_GDL_OEM_MAKE_INFO_VALUE))
+      //OEM Model
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_GDL_OEM_MODEL_INFO), STRING_TOKEN(STR_OPTION_PSR_GDL_OEM_MODEL_INFO_VALUE))
+      //COE
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_GDL_MANUF_COE)     , STRING_TOKEN(STR_OPTION_PSR_GDL_MANUF_COE_VALUE))
+      //OEM Data
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_GDL_OEM_DATA_STORE), STRING_TOKEN(STR_OPTION_PSR_GDL_OEM_DATA_STORE_VALUE))
+    //Blank line to seperate Power State Historical Counter
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+    //Power State Historical Counter
+    subtitle text = STRING_TOKEN(STR_SUBMENU_PSR_LEDGER);
+      // S0 Cumulative Runtime
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_SO_RUNTIME)  , STRING_TOKEN(STR_OPTION_PSR_PSHC_SO_RUNTIME_VALUE))
+      // S0 to S5 Transitions Cumulative Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_S0_TO_S5_CTR), STRING_TOKEN(STR_OPTION_PSR_PSHC_S0_TO_S5_CTR_VALUE))
+      // S0 to S4 Transitions Cumulative Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_S0_TO_S4_CTR), STRING_TOKEN(STR_OPTION_PSR_PSHC_S0_TO_S4_CTR_VALUE))
+      // S0 to S3 Transitions Cumulative Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_S0_TO_S3_CTR), STRING_TOKEN(STR_OPTION_PSR_PSHC_S0_TO_S3_CTR_VALUE))
+      // Platform Reset Cumulative Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_PLAT_RST_CTR), STRING_TOKEN(STR_OPTION_PSR_PSHC_PLAT_RST_CTR_VALUE))
+      // ISH Connection Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_ISH_CONNECTION_CTR), STRING_TOKEN(STR_OPTION_PSR_PSHC_ISH_CONNECTION_CTR_VALUE))
+      // CSME Reset Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_CSME_RESET_CTR), STRING_TOKEN(STR_OPTION_PSR_PSHC_CSME_RESET_CTR_VALUE))
+      // PRTC Failure Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_PRTC_FAILURE_CTR)        , STRING_TOKEN(STR_OPTION_PSR_PSHC_PRTC_FAILURE_CTR_VALUE))
+      // CSME Invalid (Recovery/Disabled/SKU mismatch) State Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_CSME_INVALID_STATE_CTR)  , STRING_TOKEN(STR_OPTION_PSR_PSHC_CSME_INVALID_STATE_CTR_VALUE))
+      // CSME DAM State Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_CSME_DAM_STATE_CTR    )  , STRING_TOKEN(STR_OPTION_PSR_PSHC_CSME_DAM_STATE_CTR_VALUE))
+      // CSME Unlocked State Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_CSME_UNLOCKED_STATE_CTR) , STRING_TOKEN(STR_OPTION_PSR_PSHC_CSME_UNLOCKED_STATE_CTR_VALUE))
+      // SVN Increase Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_SVN_INCREASE_CTR)        , STRING_TOKEN(STR_OPTION_PSR_PSHC_SVN_INCREASE_CTR_VALUE))
+      // Excessive Shock Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_EXCESSIVE_SHOCK_CTR)     , STRING_TOKEN(STR_OPTION_PSR_PSHC_EXCESSIVE_SHOCK_CTR_VALUE))
+      // Excessive Operational Temperature Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_EXCESSIVE_OPER_TEMP_CTR) , STRING_TOKEN(STR_OPTION_PSR_PSHC_EXCESSIVE_OPER_TEMP_CTR_VALUE))
+      // Firmware Recovery Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_FW_RECOVERY_CTR)         , STRING_TOKEN(STR_OPTION_PSR_PSHC_FW_RECOVERY_CTR_VALUE))
+      // Firmware Update Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_FW_UPDATE_CTR)           , STRING_TOKEN(STR_OPTION_PSR_PSHC_FW_UPDATE_CTR_VALUE))
+      // System Hang Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_SYS_HANG_CTR)            , STRING_TOKEN(STR_OPTION_PSR_PSHC_SYS_HANG_CTR_VALUE))
+      // Power Drop Count
+      INVENTORY(STRING_TOKEN(STR_OPTION_PSR_PSHC_PWR_DROP_CTR)            , STRING_TOKEN(STR_OPTION_PSR_PSHC_PWR_DROP_CTR_VALUE))
+      // Blank line to seperate Event Page
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+    goto FORM_ID_PSR_EDL,
+           prompt = STRING_TOKEN(STR_SUBMENU_PSR_EVENTS),
+           help = STRING_TOKEN(STR_EMPTY);
+    // Blank line to seperate USB export Page
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+    goto FORM_ID_PSR_RECORD_EXPORT,
+           prompt = STRING_TOKEN(STR_SUBMENU_PSR_RECORD_EXPORT),
+           help = STRING_TOKEN(STR_EMPTY);
+  endform; // formid = FORM_ID_PSR END
+
+  //Event Data Ledger SubForm
+  form formid = FORM_ID_PSR_EDL,
+    title = STRING_TOKEN(STR_SUBMENU_PSR_EVENTS);
+
+    text
+      help    = STRING_TOKEN(STR_SUBMENU_PSR_GDL_INFO_HELP),
+      text    = STRING_TOKEN(STR_SUBMENU_PSR_GDL_INFO),
+      flags   = INTERACTIVE,
+      key     = FORM_ID_PSR_EDL;
+
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+    //
+    // This is where we will dynamically add add Event Data here.
+    //
+    label PSR_EVENT_LABEL;
+    label PSR_EVENT_LABEL_END;
+  endform; // formid = FORM_ID_PSR_EDL END
+
+  //Export PSR to Flash SubForm
+  form formid = FORM_ID_PSR_RECORD_EXPORT,
+    title = STRING_TOKEN(STR_SUBMENU_PSR_RECORD_EXPORT);
+  
+    text
+      help    = STRING_TOKEN(STR_PSR_RECORD_EXPORT_USB_LIST_HELP),    
+      text    = STRING_TOKEN(STR_PSR_RECORD_EXPORT_USB_LIST),
+      flags   = INTERACTIVE,
+      key     = FORM_ID_PSR_RECORD_EXPORT;
+
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+    //
+    // This is where we will dynamically add choices for the USB Mass Storage List
+    //
+    label PSR_EXPORT_OPTION_LABEL;
+    label PSR_EXPORT_OPTION_LABEL_END;
+
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+    subtitle text = STRING_TOKEN(STR_EXPORT_HELP_FOOTER);
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+    subtitle text = STRING_TOKEN(STR_EXPORT_HELP_FOOTER_NOTE);
+    subtitle text = STRING_TOKEN(STR_EXPORT_HELP_FOOTER_NOTE_2);
+
+  endform; // formid = FORM_ID_PSR_RECORD_EXPOR END
+
+endformset; // formset = PSR_FORMSET_GUID END

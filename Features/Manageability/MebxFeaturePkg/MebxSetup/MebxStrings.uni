@@ -1,0 +1,273 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2017 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+// Name:        MebxStrings.uni
+//
+// Description: MEBx String Definitions.
+//
+//**********************************************************************
+//**********************************************************************
+/=#
+
+
+#langdef   en-US "English"     // English
+
+#string STR_EMPTY                                                  #language en-US ""
+
+//Begin UI Strings for MEBx
+#string STR_FORM_SET_TITLE                                         #language en-US "MEBx"
+#string STR_FORM_SET_HELP_TITLE                                    #language en-US "This Formset contains forms for configuring MEBx"
+
+//Begin Submenu Name Strings for MEBx
+#string STR_SUBMENU_AMT                                            #language en-US "Intel(R) AMT Configuration"
+#string STR_SUBMENU_STD_MANAGEABILITY                              #language en-US "Intel(R) Standard Manageability Configuration"
+#string STR_SUBMENU_POWER_CTRL                                     #language en-US "Power Control"
+#string STR_SUBMENU_SOL_STORAGEREDIR_KVM                           #language en-US "Redirection features"
+#string STR_SUBMENU_USERCONSENT                                    #language en-US "User Consent"
+#string STR_SUBMENU_NETWORK_SETUP                                  #language en-US "Network Setup"
+#string STR_SUBMENU_REMOTE_SETUP                                   #language en-US "Remote Setup And Configuration"
+#string STR_SUBMENU_ME_NETWORK_NAME                                #language en-US "Intel(R) ME Network Name Settings"
+#string STR_SUBMENU_TCPIP                                          #language en-US "TCP/IP Settings"
+#string STR_SUBMENU_WIRED_IPV4                                     #language en-US "Wired LAN IPV4 Configuration"
+#string STR_SUBMENU_MANAGE_HASHES                                  #language en-US "Manage Certificates"
+//End Submenu Name Strings for MEBx
+
+//Begin MEBx Main Menu Exposure Errors
+#string STR_LOGIN_COUNTER_EXCEEDED                                 #language en-US "Login attempts exceeded, system will reboot when user exits MEBx"
+#string STR_FW_NOT_READY_YET                                       #language en-US "Firmware failed to load"
+#string STR_AMT_DISABLED                                           #language en-US "AMT disabled"
+#string STR_STD_MANAGEABILITY_DISABLED                             #language en-US "Standard Manageability disabled"
+#string STR_AFTER_EOP                                              #language en-US "Configuration locked after EndOfPost"
+#string STR_REDIR_ACTIVE                                           #language en-US "Configuration locked during remote AMT session"
+#string STR_UNSUPPORTED_INTERFACE                                  #language en-US "Unsupported AMTHI Interface version"
+//End MEBx Main Menu Exposure Errors
+
+//Begin Option Name Strings for MEBx
+#string STR_OPTION_MEPWD                                           #language en-US "MEBx Login"
+#string STR_OPTION_CHANGEMEPWD                                     #language en-US "Change ME Password"
+#string STR_OPTION_AMT_GLOBAL_STATE                                #language en-US "Intel(R) AMT"
+#string STR_OPTION_STD_MANAGEABILITY_GLOBAL_STATE                  #language en-US "Intel(R) Standard Manageability"
+#string STR_OPTION_MEONHOSTSLPSTATES                               #language en-US "ME ON in Host Sleep States"
+#string STR_OPTION_IDLETIMEOUT                                     #language en-US "Idle Timeout"
+#string STR_OPTION_PWDPOLICY                                       #language en-US "Password Policy"
+#string STR_OPTION_NETACCESS_STATE                                 #language en-US "Network Access State"
+#string STR_OPTION_SOLENABLE                                       #language en-US "SOL"
+#string STR_OPTION_STORAGEREDIRENABLE                              #language en-US "Storage Redirection"
+#string STR_OPTION_KVMENABLE                                       #language en-US "KVM Feature Selection"
+#string STR_OPTION_USER_OPTIN                                      #language en-US "User Opt-in"
+#string STR_OPTION_REMOTE_IT_OPTIN_CONFIG                          #language en-US "Opt-in Configurable from Remote IT"
+#string STR_OPTION_HOST_DOMAIN_NAME                                #language en-US "FQDN"
+#string STR_OPTION_FQDNTYPE                                        #language en-US "Shared/Dedicated FQDN"
+#string STR_OPTION_DHCPMODE                                        #language en-US "DHCP Mode"
+#string STR_OPTION_IPV4ADDR                                        #language en-US "IPV4 Address"
+#string STR_OPTION_IPV4MASKADDR                                    #language en-US "Subnet Mask Address"
+#string STR_OPTION_IPV4GATEWAYADDR                                 #language en-US "Default Gateway Address"
+#string STR_OPTION_IPV4PREFDNSADDR                                 #language en-US "Preferred DNS Address"
+#string STR_OPTION_IPV4ALTDNSADDR                                  #language en-US "Alternate DNS Address"
+#string STR_OPTION_CURRENTPROVMODE                                 #language en-US "Current Provisioning Mode"
+#string STR_OPTION_PROVRECORD                                      #language en-US "Provisioning Record"
+#string STR_OPTION_PROVSERVER_ADDR                                 #language en-US "Provisioning Server address"
+#string STR_OPTION_PROVSERVER_PORT                                 #language en-US "Provisioning server port number"
+#string STR_OPTION_TLSPPKREMOTECONFIG                              #language en-US "Remote Configuration **"
+#string STR_OPTION_PKIDNSSUFFIX                                    #language en-US "PKI DNS Suffix"
+//End Option Name Strings for MEBx
+
+
+//Begin Help Strings for MEBx
+#string STR_HELP_MEPWD                                             #language en-US "Intel(R) ME Password"
+#string STR_HELP_CHANGEMEPWD                                       #language en-US "Intel(R) ME New Password"
+#string STR_HELP_AMT_GLOBAL_STATE                                  #language en-US " "
+#string STR_HELP_AMT                                               #language en-US " "
+#string STR_HELP_POWER_CTRL                                        #language en-US " "
+#string STR_HELP_MEONHOSTSLPSTATES                                 #language en-US " "
+#string STR_HELP_IDLETIMEOUT                                       #language en-US "Timeout Value (1-65535)"
+#string STR_HELP_SOL_STORAGEREDIR_KVM                              #language en-US " "
+#string STR_HELP_USERCONSENT                                       #language en-US " "
+#string STR_HELP_PWDPOLICY                                         #language en-US " "
+#string STR_HELP_NETWORK_SETUP                                     #language en-US " "
+#string STR_HELP_NETACCESS_STATE                                   #language en-US "Changes network state of ME. When disabling, it will also clear some other settings."
+#string STR_HELP_REMOTE_SETUP                                      #language en-US " "
+#string STR_HELP_SOLENABLE                                         #language en-US "Enable FW SOL Interface"
+#string STR_HELP_STORAGEREDIRENABLE                                #language en-US "Enable FW Remote - Storage Redirection"
+#string STR_HELP_KVMENABLE                                         #language en-US "Enable FW KVM Feature"
+#string STR_HELP_USER_OPTIN                                        #language en-US "Configure When User Consent Should be Required"
+#string STR_HELP_REMOTE_IT_OPTIN_CONFIG                            #language en-US "Enable/Disable Remote Change Capability of User Consent Feature"
+#string STR_HELP_ME_NETWORK_NAME                                   #language en-US " "
+#string STR_HELP_TCPIP                                             #language en-US " "
+#string STR_HELP_HOST_DOMAIN_NAME                                  #language en-US "Computer's FQDN"
+#string STR_HELP_FQDNTYPE                                          #language en-US " "
+#string STR_HELP_WIRED_IPV4                                        #language en-US " "
+#string STR_HELP_DHCPMODE                                          #language en-US "Enable/Disable IPV4 DHCP Mode"
+#string STR_HELP_IPV4ADDR                                          #language en-US "IP address (e.g. 123.123.123.100)"
+#string STR_HELP_IPV4MASKADDR                                      #language en-US "Subnet mask (e.g. 255.255.255.0)"
+#string STR_HELP_IPV4GATEWAYADDR                                   #language en-US "Default Gateway address"
+#string STR_HELP_IPV4PREFDNSADDR                                   #language en-US "Preferred DNS address"
+#string STR_HELP_IPV4ALTDNSADDR                                    #language en-US "Alternate DNS address"
+#string STR_HELP_CURRENTPROVMODE                                   #language en-US " "
+#string STR_HELP_PROVRECORD                                        #language en-US " "
+#string STR_HELP_PROVSERVER_ADDR                                   #language en-US "Provisioning server address. Either host name or IPv4 or IPv6 address"
+#string STR_HELP_PROVSERVER_PORT                                   #language en-US "Provisioning server port number (0-65535)"
+#string STR_HELP_TLSPPKREMOTECONFIG                                #language en-US " "
+#string STR_HELP_PKIDNSSUFFIX                                      #language en-US "Enter PKI DNS Suffix"
+#string STR_HELP_MANAGE_HASHES                                     #language en-US "Manage Hashes"
+#string STR_HELP_PWR_SETTINGS_UPDATE_INFO                          #language en-US "  These configurations are effective only after ME provisioning has started"
+//End Help Strings for MEBx
+
+//Begin Selection Strings for MEBx
+#string STR_SELECTION_ENABLED                                      #language en-US "Enabled"
+#string STR_SELECTION_PARTIALLY_DISABLED                           #language en-US "Partially Disabled"
+#string STR_SELECTION_DISABLED                                     #language en-US "Disabled"
+#string STR_SELECTION_1_MEONHOSTSLPSTATES                          #language en-US "Desktop: ON in S0"
+#string STR_SELECTION_2_MEONHOSTSLPSTATES                          #language en-US "Desktop: ON in S0, ME Wake in S3, S4-5"
+#string STR_SELECTION_3_MEONHOSTSLPSTATES                          #language en-US "Desktop: ON in S3, ME Wake in S3, S4-5"
+#string STR_SELECTION_1_PWDPOLICY                                  #language en-US "Default Password Only"
+#string STR_SELECTION_2_PWDPOLICY                                  #language en-US "During Setup And Configuration"
+#string STR_SELECTION_3_PWDPOLICY                                  #language en-US "Anytime"
+#string STR_SELECTION_1_USER_OPTIN                                 #language en-US "NONE"
+#string STR_SELECTION_2_USER_OPTIN                                 #language en-US "KVM"
+#string STR_SELECTION_3_USER_OPTIN                                 #language en-US "ALL"
+#string STR_SELECTION_1_FQDNTYPE                                   #language en-US "Dedicated"
+#string STR_SELECTION_2_FQDNTYPE                                   #language en-US "Shared"
+
+#string STR_NET_ACCESS_ACTIVE                                      #language en-US "Network Active"
+#string STR_NET_ACCESS_INACTIVE                                    #language en-US "Network Inactive"
+#string STR_NET_ACCESS_PARTIAL_UNPROVISION                         #language en-US "Partial Unprovision"
+#string STR_NET_ACCESS_FULL_UNPROVISION                            #language en-US "Full Unprovision"
+
+#string STR_WARNING_IP                                             #language en-US "Illegal IP address"
+#string STR_WARNING_FQDN                                           #language en-US "Illegal FQDN"
+#string STR_WARNING_UPDATE_INTERVAL                                #language en-US "Interval must be 0 (auto) or greater than 20"
+#string STR_WARNING_MASK                                           #language en-US "Illegal network mask"
+#string STR_ADDR_MASK_INVALID_HELP                                 #language en-US "Invalid Address:Mask combination"
+#string STR_ADDR_MASK_INVALID                                      #language en-US "Invalid Address:Mask combination"
+#string STR_WARNING_AMT_DISABLE                                    #language en-US "This will set most manageability settings to factory defaults"
+#string STR_WARNING_AMT_PARTIAL_DISABLE                            #language en-US "This will set most manageability settings to factory defaults"
+#string STR_WARNING_PARTIAL_UNPROV                                 #language en-US "Partial unprovisioning will clear some manageability settings"
+#string STR_WARNING_FULL_UNPROV                                    #language en-US "Full unprovisioning will set most manageability settings to factory defaults"
+
+#string STR_ERROR_LOGIN_FAILED                                     #language en-US "Invalid Password - Try Again"
+
+#string STR_PROV_RECORD_NOT_PRESENT                                #language en-US "Provision Record is not present"
+#string STR_PROVMODE_UNKNOWN                                       #language en-US "UNKNOWN"
+#string STR_PROVMODE_PKI                                           #language en-US "PKI"
+
+#string STR_RCFG_START                                             #language en-US "Activate Remote Configuration"
+#string STR_RCFG_IN_PROGRESS                                       #language en-US "Attempting remote configuration"
+#string STR_RCFG_HALT                                              #language en-US "Stop Remote Configuration"
+
+//Begin Provision Record Strings for MEBx
+#string STR_PROVRECORD_UNSUPPORTED                                 #language en-US "Provisioned with unexpected hashtype, can't display"
+#string STR_SECURE_DNS                                             #language en-US "Secure DNS:"
+#string STR_HOST_INITIATED                                         #language en-US "Host Initiated:"
+#string STR_HASH_DATA                                              #language en-US "HashData:"
+#string STR_HASH_ALGORITHM                                         #language en-US "Hash Algorithm:"
+#string STR_SERIAL_NUM                                             #language en-US "Serial Num:"
+#string STR_IS_DEFAULT_BIT                                         #language en-US "IsDefault Bit:"
+#string STR_TIME_VALID                                             #language en-US "Time Validity Pass:"
+#string STR_PROVRECORD_FQDN                                        #language en-US "FQDN:"
+#string STR_PROVISIONING_IP                                        #language en-US "Provisioning IP:"
+#string STR_PROVISIONING_DATE                                      #language en-US "Date of Provision:"
+#string STR_PROVISIONING_TIME                                      #language en-US "Time of Provision:"
+#string STR_ADDITIONAL_SERIAL_NUM                                  #language en-US "Additional Serial Num:"
+#string STR_PROVRECORD_HASHTYPE_MD5                                #language en-US "MD5"
+#string STR_PROVRECORD_HASHTYPE_SHA1                               #language en-US "SHA1"
+#string STR_PROVRECORD_HASHTYPE_SHA256                             #language en-US "SHA256"
+#string STR_PROVRECORD_HASHTYPE_SHA384                             #language en-US "SHA384"
+#string STR_PROVRECORD_TLSMODE_1                                   #language en-US "PKI"
+#string STR_NO                                                     #language en-US "NO"
+#string STR_YES                                                    #language en-US "YES"
+#string STR_INVALID                                                #language en-US "INVALID"
+//End Provision Record Strings for MEBx
+
+// new cert hashes
+#string STR_CERT_ACTIVE                                            #language en-US  "Active?"
+#string STR_CERT_DEFAULT                                           #language en-US  "Default?"
+#string STR_CERT_HASHTYPE                                          #language en-US  "Hash type"
+#string STR_CERT_HASHDATA                                          #language en-US  "Hash data"
+
+#string STR_CERTIFICATE_NAME_0                                     #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_1                                     #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_2                                     #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_3                                     #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_4                                     #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_5                                     #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_6                                     #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_7                                     #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_8                                     #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_9                                     #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_10                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_11                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_12                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_13                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_10                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_14                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_15                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_16                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_17                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_18                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_19                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_20                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_21                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_22                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_23                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_24                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_25                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_26                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_27                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_28                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_29                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_30                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_31                                    #language en-US  "CertName updated at runtime"
+#string STR_CERTIFICATE_NAME_32                                    #language en-US  "CertName updated at runtime"
+
+#string STR_CERTIFICATE_HASH_0                                     #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_1                                     #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_2                                     #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_3                                     #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_4                                     #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_5                                     #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_6                                     #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_7                                     #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_8                                     #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_9                                     #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_10                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_11                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_12                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_13                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_14                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_15                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_16                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_17                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_18                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_19                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_20                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_21                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_22                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_23                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_24                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_25                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_26                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_27                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_28                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_29                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_30                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_31                                    #language en-US  "CertHash updated at runtime"
+#string STR_CERTIFICATE_HASH_32                                    #language en-US  "CertHash updated at runtime"

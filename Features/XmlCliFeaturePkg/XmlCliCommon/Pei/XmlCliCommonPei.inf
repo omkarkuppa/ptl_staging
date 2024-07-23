@@ -1,0 +1,65 @@
+## @file
+# XMLCLI PEI MODULE to restore Dram shared MailBox address during S3 resume.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = XmlCliCommonPei
+  FILE_GUID                      = 47727552-A54B-4A84-8CC1-BFF23E249637
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  ENTRY_POINT                    = PeimXmlCliEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PeiServicesLib
+  IoLib
+  PeimEntryPoint
+  DebugLib
+  PcdLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  BoardModulePkg/BoardModulePkg.dec
+  XmlCliFeaturePkg/XmlCliFeaturePkg.dec
+
+[Sources]
+  XmlCliCommonPei.c
+
+[Guids]
+  gXmlCliSetupGuid                    ## CONSUMES
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid               ## CONSUMES
+
+[Pcd]
+
+[Depex]
+  gEfiPeiS3Resume2PpiGuid
+

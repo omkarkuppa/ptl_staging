@@ -1,0 +1,128 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2014 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+form formid = AUTO_ID(AMT_FORM_ID),
+  title     = STRING_TOKEN(STR_AMT_FORM);
+
+  //
+  // Invisible text to indicate entry into AMT Submenu and triggering form open action.
+  //
+  suppressif TRUE;
+   text
+         help  = STRING_TOKEN(STR_NONE),
+         text  = STRING_TOKEN(STR_NONE),
+         flags = INTERACTIVE,
+         key   = AMT_FORM_ACTION_KEY;
+  endif;
+
+  oneof varid   = ME_SETUP.UsbProvision,
+    prompt      = STRING_TOKEN(STR_AMT_USB_PROVISION_PROMPT),
+    help        = STRING_TOKEN(STR_AMT_USB_PROVISION_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  oneof varid   = AMT_MAC_PASSTHROUGH_CONFIG.AmtMacPassThroughState,
+    prompt      = STRING_TOKEN(STR_AMT_MAC_PASS_THROUGH_PROMPT),
+    help        = STRING_TOKEN(STR_AMT_MAC_PASS_THROUGH_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  grayoutif ideqval ME_STORAGE_EXPOSURE.AfterEoP == 0x1;
+    oneof varid   = ME_SETUP_STORAGE.ActiveLanInterface,
+      prompt      = STRING_TOKEN(STR_AMT_DYNAMIC_LAN_SWITCH_PROMPT),
+      help        = STRING_TOKEN(STR_AMT_DYNAMIC_LAN_SWITCH_HELP),
+      option text = STRING_TOKEN(STR_AMT_LAN_INTERFACE_DEFAULT),    value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_AMT_LAN_INTERFACE_INTEGRATED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_AMT_LAN_INTERFACE_DISCRETE),   value = 2, flags = RESET_REQUIRED;
+    endoneof;
+  endif;
+
+  checkbox varid = ME_SETUP.AmtCiraRequest,
+    prompt       = STRING_TOKEN(STR_AMT_CIRA_REQUEST_PROMPT),
+    help         = STRING_TOKEN(STR_AMT_CIRA_REQUEST_HELP),
+    // Flags behavior for checkbox is overloaded so that it equals
+    // a DEFAULT value. CHECKBOX_DEFAULT = ON, 0 = off
+    flags        = 0 | RESET_REQUIRED,
+    key          = 0,
+  endcheckbox;
+
+  checkbox varid = ME_SETUP.UnConfigureMe,
+    prompt       = STRING_TOKEN(STR_MEBX_UNCONFIGURE_ME_PROMPT),
+    help         = STRING_TOKEN(STR_MEBX_UNCONFIGURE_ME_HELP),
+    flags        = 0 | RESET_REQUIRED,
+    key          = 0,
+  endcheckbox;
+
+  goto ASF_CONFIGURATION_FORM_ID,
+    prompt = STRING_TOKEN(STR_ASF_CONFIGURATION_FORM),
+    help   = STRING_TOKEN(STR_ASF_CONFIGURATION_FORM_HELP);
+
+endform; // AMT_FORM_ID
+
+
+form formid = AUTO_ID(ASF_CONFIGURATION_FORM_ID),
+  title     = STRING_TOKEN(STR_ASF_CONFIGURATION_FORM);
+
+#if FixedPcdGetBool (PcdAmtPetInitFeatureEnable) == 1
+      oneof varid   = AMT_PET_INIT_CONFIG.FwProgress,
+        prompt      = STRING_TOKEN(STR_ASF_PET_PROGRESS_PROMPT),
+        help        = STRING_TOKEN(STR_ASF_PET_PROGRESS_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+#endif
+
+      oneof varid   = ME_SETUP.WatchDogEnabled,
+        prompt      = STRING_TOKEN(STR_ASF_WATCHDOG_PROMPT),
+        help        = STRING_TOKEN(STR_ASF_WATCHDOG_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+    grayoutif ideqval ME_SETUP.WatchDogEnabled == 0;
+      numeric varid = ME_SETUP.WatchDogTimerOs,
+        prompt      = STRING_TOKEN (STR_ASF_WATCHDOG_TIMER_OS_PROMPT),
+        help        = STRING_TOKEN (STR_ASF_WATCHDOG_TIMER_OS_HELP),
+        minimum     = 0,
+        maximum     = 65535,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = ME_SETUP.WatchDogTimerBios,
+        prompt      = STRING_TOKEN (STR_ASF_WATCHDOG_TIMER_BIOS_PROMPT),
+        help        = STRING_TOKEN (STR_ASF_WATCHDOG_TIMER_BIOS_HELP),
+        minimum     = 0,
+        maximum     = 65535,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+    endif; // grayoutif ideqval ME_SETUP.WatchDogEnabled == 0;
+
+    oneof varid   = ME_SETUP.AsfSensorsTable,
+      prompt      = STRING_TOKEN(STR_ASF_SENSORS_TABLE_PROMPT),
+      help        = STRING_TOKEN(STR_ASF_SENSORS_TABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+endform; // ASF_CONFIGURATION_FORM_ID

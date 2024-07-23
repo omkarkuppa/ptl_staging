@@ -1,0 +1,56 @@
+## @file
+# Component information file for MMIO Init Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2015 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification Reference:
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = BaseMmioInitLib
+  FILE_GUID                      = 75ADFA4D-1F37-49AB-A3F5-05EE7D7452B7
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = MmioInitLib
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  IoLib
+  HobLib
+
+[Packages]
+  MinPlatformPkg/MinPlatformPkg.dec
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[Sources]
+  BaseMmioInitLib.c
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress
+  gMinPlatformPkgTokenSpaceGuid.PcdLocalApicAddress
+  gMinPlatformPkgTokenSpaceGuid.PcdLocalApicMmioSize
+  gSiPkgTokenSpaceGuid.PcdMchBaseAddress
+  gSiPkgTokenSpaceGuid.PcdMchMmioSize
+  gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength
+  gPlatformModuleTokenSpaceGuid.PcdDmiBaseAddress
+  gPlatformModuleTokenSpaceGuid.PcdDmiMmioSize
+  gPlatformModuleTokenSpaceGuid.PcdEpBaseAddress
+  gPlatformModuleTokenSpaceGuid.PcdEpMmioSize

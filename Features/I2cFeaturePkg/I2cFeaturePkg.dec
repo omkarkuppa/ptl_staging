@@ -1,0 +1,100 @@
+## @file
+#
+# DEC file for I2cFeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME      = I2cFeaturePkg
+  PACKAGE_GUID      = 693948A7-ECB1-4FA3-86D2-A978DCF82B5A
+  PACKAGE_VERSION   = 0.1
+
+[Includes]
+  Include
+
+[LibraryClasses]
+  HidI2cPlatformSupportLib|Include/Library/HidI2cPlatformSupportLib.h
+
+[Guids]
+  gI2cFeaturePkgTokenSpaceGuid = {0x19f365b6, 0x6b94, 0x46dc, {0x89, 0xda, 0x6a, 0x6c, 0x38, 0x36, 0x62, 0x6d}}
+  gI2cPssMonzaDeviceGuid       = {0x6daef2df, 0x2a5e, 0x4aa8, {0xa7, 0x6c, 0x43, 0x85, 0x83, 0x12, 0x3d, 0x90}}
+  gI2cTouchPanelDeviceGuid     = {0x1bf4b7ae, 0xc199, 0x4f10, {0xa8, 0xc6, 0xd0, 0xc1, 0xd0, 0x10, 0x98, 0x06}}
+
+[Protocols]
+  gI2cPssProtocolGuid          = {0xde06c299, 0x3619, 0x43d3, {0xb3, 0xa5, 0xe7, 0xc2, 0xfd, 0xab, 0x61, 0x6d}}
+  gI2cDeviceInfoProtocolGuid   = {0x48080ab7, 0xe703, 0x4095, {0x8c, 0x16, 0x91, 0xc8, 0x8d, 0x76, 0xdd, 0xf1}}
+  gI2cDeviceProtocolGuid       = {0xc5b2f99c, 0x98b9, 0x4d8a, {0x94, 0x95, 0x45, 0x60, 0x24, 0x2a, 0x57, 0x2f}}
+  gI2cPmUpdateProtocolGuid     = {0x98a9d83c, 0xf54e, 0x47d0, {0x84, 0x18, 0xf1, 0xb9, 0x43, 0x7d, 0x2d, 0x5e}}
+
+[Ppis]
+  gSensorI2cPpiGuid = { 0xd2546d19, 0xa917, 0x45f1, { 0xb5, 0xc2, 0x9d, 0x76, 0x4c, 0x5b, 0xe4, 0x31 }}
+
+[PcdsFeatureFlag]
+  gI2cFeaturePkgTokenSpaceGuid.PcdI2cFeatureEnable|TRUE|BOOLEAN|0x50000032
+  gI2cFeaturePkgTokenSpaceGuid.PcdI2cPssEnable|TRUE|BOOLEAN|0x50000036
+  gI2cFeaturePkgTokenSpaceGuid.PcdI2cTouchEnable|TRUE|BOOLEAN|0x50000037
+  gI2cFeaturePkgTokenSpaceGuid.PcdI2cTouchCommonEnable|FALSE|BOOLEAN|0x50000038
+  gI2cFeaturePkgTokenSpaceGuid.PcdI2cTouchVersion|0x1|UINT8|0x50000042
+
+[PcdsDynamic]
+  #
+  # Display Posture Based on I2C Sensor
+  #
+  gI2cFeaturePkgTokenSpaceGuid.PcdI2cSensorDisplayRotationOn|FALSE|BOOLEAN|0x50000039
+  gI2cFeaturePkgTokenSpaceGuid.PcdOrientationI2cSensorAddress|0x6B|UINT8|0x50000040
+  gI2cFeaturePkgTokenSpaceGuid.PcdOrientationI2cSensorBusNumber|0x3|UINT8|0x50000041
+
+  gI2cFeaturePkgTokenSpaceGuid.PcdI2cDevTableName|0x0|UINT64|0x001011028
+
+[PcdsDynamicEx]
+# Serial I2C Controller frequency Information table
+  gI2cFeaturePkgTokenSpaceGuid.PcdI2cFrequencyDataMap|{0}|I2C_FREQUENCY_DATA_TABLE|0x50000029 {
+  <HeaderFiles>
+    I2cPlatformDxe.h
+  <Packages>
+    I2cFeaturePkg/I2cFeaturePkg.dec
+  }
+
+# Serial Io I2c DeviceID List
+  gI2cFeaturePkgTokenSpaceGuid.PcdSerialIoI2cDevId|{0}|SERIAL_IO_I2C_DEVID|0x50000033 {
+  <HeaderFiles>
+    I2cPlatformDxe.h
+  <Packages>
+    I2cFeaturePkg/I2cFeaturePkg.dec
+  }
+
+# Serial Io I2c Device List for all controllers
+  gI2cFeaturePkgTokenSpaceGuid.PcdI2cControllerDevList|{0}|I2C_CONTROLLER_DEVICE_LIST|0x50000035 {
+  <HeaderFiles>
+    I2cPlatformDxe.h
+  <Packages>
+    I2cFeaturePkg/I2cFeaturePkg.dec
+  }
+
+[PcdsDynamic, PcdsDynamicEx]
+  # PSS Read Serial Number
+  gI2cFeaturePkgTokenSpaceGuid.VpdPcdPssReadSN             |FALSE|BOOLEAN|0x00001120
+
+  # PSS I2C Bus Number
+  gI2cFeaturePkgTokenSpaceGuid.VpdPcdPssI2cBusNumber      |0x05|UINT8|0x00001122
+
+  # PSS I2C Peripheral Address
+  gI2cFeaturePkgTokenSpaceGuid.VpdPcdPssI2cDeviceAddress  |0x6E|UINT8|0x00001121

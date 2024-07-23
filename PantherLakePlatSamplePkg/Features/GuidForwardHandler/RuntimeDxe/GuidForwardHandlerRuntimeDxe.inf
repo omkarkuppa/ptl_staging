@@ -1,0 +1,75 @@
+### @file
+#  Platform GUID forward implementation.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = GuidForwardHandlerDxe
+  FILE_GUID                      = FA302ADA-F9E5-4206-9038-EBA322BB502C
+  VERSION_STRING                 = 0
+  MODULE_TYPE                    = DXE_RUNTIME_DRIVER
+  ENTRY_POINT                    = GuidForwardHandlerDxeEntry
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[LibraryClasses]
+  CpuPlatformLib
+  UefiRuntimeLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  ReportStatusCodeLib
+  DebugLib
+  PostCodeLib
+  PostCodeMapLib
+  PciSegmentLib
+  PcdLib
+  PlatformNvRamHookLib
+  TimerLib
+  PeiHostBridgeIpStatusLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PostCodeDebugFeaturePkg/PostCodeDebugFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[FeaturePcd]
+
+[Sources]
+  GuidForwardHandlerRuntimeDxe.c
+  GuidForwardHandlerRuntimeDxe.h
+  GuidForwardWorker.c
+
+[Protocols]
+  gEfiRscHandlerProtocolGuid                    ## CONSUMES
+  gEfiLoadedImageProtocolGuid                   ## CONSUMES
+
+[Guids]
+  gZeroGuid                                     ## CONSUMES
+
+[Depex]
+  gEfiRscHandlerProtocolGuid
+
+[Pcd]
+  gPlatformModuleTokenSpaceGuid.PcdGuidForward  ## CONSUMES

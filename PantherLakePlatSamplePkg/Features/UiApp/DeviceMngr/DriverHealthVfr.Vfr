@@ -1,0 +1,54 @@
+/** @file
+
+    Driver Health formset.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2004 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+
+**/
+
+
+#define DRIVER_HEALTH_FORMSET_GUID  { 0xf76e0a70, 0xb5ed, 0x4c38, 0xac, 0x9a, 0xe5, 0xf5, 0x4b, 0xf1, 0x6e, 0x34 }
+
+#define LABEL_DRIVER_HEALTH                0x2000
+#define LABEL_DRIVER_HEALTH_END            0x2001
+#define LABEL_DRIVER_HEALTH_REAPIR_ALL     0x3000
+#define LABEL_DRIVER_HEALTH_REAPIR_ALL_END 0x3001
+
+#define DRIVER_HEALTH_FORM_ID              0x1001
+
+formset
+  guid      = DRIVER_HEALTH_FORMSET_GUID,
+  title     = STRING_TOKEN(STR_DH_BANNER),
+  help      = STRING_TOKEN(STR_EMPTY_STRING),
+  classguid = DRIVER_HEALTH_FORMSET_GUID,
+
+  form formid = DRIVER_HEALTH_FORM_ID,
+      title  = STRING_TOKEN(STR_DH_BANNER);
+
+      label LABEL_DRIVER_HEALTH;
+      label LABEL_DRIVER_HEALTH_END;
+
+      subtitle text = STRING_TOKEN(STR_LAST_STRING);
+      label LABEL_DRIVER_HEALTH_REAPIR_ALL;
+      label LABEL_DRIVER_HEALTH_REAPIR_ALL_END;
+
+      subtitle text = STRING_TOKEN(STR_LAST_STRING);
+      subtitle text = STRING_TOKEN(STR_HELP_FOOTER);
+      subtitle text = STRING_TOKEN(STR_LAST_STRING);
+  endform;
+endformset;

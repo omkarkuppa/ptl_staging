@@ -1,0 +1,65 @@
+### @file
+# Component information file for platform recover library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PeiPlatformRecoveryLib
+  FILE_GUID                      = 62312AA1-3F10-42DB-9C21-2878B8AE00B3
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  LIBRARY_CLASS                  = PeiPlatformRecoveryLib|PEIM
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF
+#
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  PcdLib
+  HobLib
+  HashSupportLib
+  PayloadResiliencySupportLib
+
+[Sources]
+  PeiPlatformRecoveryLib.c
+
+[Guids]
+  gSysFwUpdateProgressGuid      ## CONSUMES
+  gBiosInfoRecoveryGuid         ## CONSUMES
+  gObbSha384HashFileGuid        ## CONSUMES
+  gPayloadSha384HashFileGuid    ## CONSUMES
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdRecoveryFileName                          ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase                       ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdObbRecoveryRequiredFvGuid               ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdNonFitPayloadRecoveryRequiredFvGuid     ## CONSUMES
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid               ## CONSUMES

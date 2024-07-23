@@ -1,0 +1,111 @@
+### @file
+#  NvmeRecoveryDxe provides a mechanism to store firware image to NVMe device
+#  Boot Partition, EC can recovery the golden image to SPI once it found Boot
+#  process was failed.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010006
+  BASE_NAME                      = NvmeRecoveryDxe
+  FILE_GUID                      = 8E88BF4D-9F15-4206-BBD5-55D368B62AD1
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = NvmeRecoveryDxeEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  NvmeRecoveryDxe.c
+  NvmeRecoveryDxe.h
+  NvmeDevice.h
+  NvmeDevice.c
+  NvmeSecure.h
+  NvmeSecure.c
+
+  NvmeRecoveryHii.c
+  NvmeRecoveryHii.h
+  NvmeRecoveryHiiFormStrings.uni
+  NvmeRecoveryHiiForm.vfr
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  CryptoPkg/CryptoPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiDriverEntryPoint
+  DebugLib
+  MemoryAllocationLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  RngLib
+  BaseCryptLib
+  VmdInfoLib
+  IoLib
+  PciSegmentLib
+  BasePcieHelperLib
+  SeamlessRecoverySupportLib
+  PrintLib
+  UefiHiiServicesLib
+  HiiLib
+  PlatformDxeBootStateHookLib
+  PlatformWdtLib
+  ResiliencySupportLib
+  HashSupportLib
+  MeInfoLib
+  MeFwStsLib
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress                            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdBiosSize                                       ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryPrimarySlotPortNumber  ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoverySupported              ## CONSUMES
+
+[Protocols]
+  gEfiStorageSecurityCommandProtocolGuid  ## CONSUMES
+  gEfiShellProtocolGuid                   ## CONSUMES
+  gEfiBlockIoProtocolGuid                 ## CONSUMES
+  gPchSpiProtocolGuid                     ## CONSUMES
+  gEfiPciIoProtocolGuid                   ## CONSUMES
+  gEfiNvmExpressPassThruProtocolGuid      ## CONSUMES
+  gRstConfigSpaceAccessProtocolGuid       ## CONSUMES
+  gEfiHiiConfigAccessProtocolGuid         ## CONSUMES
+  gMeFwuProtocol                          ## CONSUMES
+  gEfiSmbiosProtocolGuid                  ## CONSUMES
+
+[Guids]
+  gPlatformBeforeEndOfDxeEventGroupGuid  ## CONSUMES
+  gSysFwUpdateProgressGuid               ## CONSUMES
+  gCsmeSeedHobGuid                       ## CONSUMES
+  gNvmeBasedRecoveryVarGuid              ## CONSUMES
+  gNvmeBasedRecoveryHiiGuid              ## CONSUMES
+  gEfiEndOfDxeEventGroupGuid             ## CONSUMES
+
+[Depex]
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid

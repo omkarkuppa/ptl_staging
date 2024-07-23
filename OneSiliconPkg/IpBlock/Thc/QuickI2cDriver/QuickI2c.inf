@@ -1,0 +1,74 @@
+## @file
+# Touch Host Controller - Quick I2C (HID over I2C) Driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION               = 0x00010005
+  BASE_NAME                 = QuickI2c
+  FILE_GUID                 = 49F71D68-D464-435A-9C95-11325BACEFE6
+  MODULE_TYPE               = UEFI_DRIVER
+  VERSION_STRING            = 1.0
+  ENTRY_POINT               = QuickI2cEntryPoint
+  UNLOAD_IMAGE              = QuickI2cUnload
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  QuickI2cPrivate.h
+  QuickI2cLibPrivate.c
+  QuickI2cAbsPtr.c
+  QuickI2cDriver.c
+  QuickI2cHid.c
+  QuickI2c.c
+  QuickI2cComponentName.c
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  TimerLib
+  IoLib
+  HobLib
+  #DxeThcSocLib
+
+[Protocols]
+  gEfiDriverBindingProtocolGuid ## CONSUMES
+  gEfiPciIoProtocolGuid ## CONSUMES
+  gEfiDriverSupportedEfiVersionProtocolGuid ## PRODUCES
+  gEfiAbsolutePointerProtocolGuid ## PRODUCES
+  gThcProtocolGuid ## PRODUCES
+  gThcResetProtocolGuid ## CONSUMES
+
+[Guids]
+  gEfiEventExitBootServicesGuid ## CONSUMES
+  gEdkiiTouchPanelGuid          ## CONSUMES VIRTUAL KEYBOARD SUPPORT
+  gPchThcConfigHobGuid          ## CONSUMES
+  gPchInfoHobGuid               ## CONSUMES
+
+[Depex]
+  TRUE

@@ -1,0 +1,56 @@
+## @file
+# Component description file for Me functionality
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = DxeMePolicyLib
+FILE_GUID = 3D29303D-5351-460F-941C-9C4BE1595262
+VERSION_STRING = 1.0
+MODULE_TYPE = BASE
+LIBRARY_CLASS = DxeMePolicyLib
+
+
+[LibraryClasses]
+BaseMemoryLib
+UefiRuntimeServicesTableLib
+UefiBootServicesTableLib
+DebugLib
+PostCodeLib
+HobLib
+ConfigBlockLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+CsiApiPkg/CsiApiPkg.dec
+
+[Sources]
+DxeMePolicyLib.c
+DxeMePolicyLibrary.h
+
+
+[Guids]
+gMeDxeConfigGuid
+
+[Protocols]
+gDxeMePolicyGuid ## PRODUCES

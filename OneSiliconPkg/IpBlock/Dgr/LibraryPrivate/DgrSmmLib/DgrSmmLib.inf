@@ -1,0 +1,127 @@
+## @file
+# Component description file for DGR SMM Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DgrSmmLib
+  FILE_GUID                      = 4611A03B-0D2E-43F6-9935-0B359668D55D
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = DgrSmmLib
+  CONSTRUCTOR                    = DgrSmmLibConstructor
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources.X64]
+  X64/SmmPpamSupport.c
+  X64/SmmFuncsArch.c
+  X64/SmiEntry.nasm
+  X64/SmiException.nasm
+
+[Sources]
+  DgrSmmLib.c
+  SmmPpam.c
+  SmmSps.c
+  SmmSpa.c
+  IoMsrBitmap.c
+
+[LibraryClasses]
+  DgrInfoLib
+  PcdLib
+  BaseLib
+  BaseMemoryLib
+  SynchronizationLib
+  SmmServicesTableLib
+  MemoryAllocationLib
+  LocalApicLib
+  MtrrLib
+  DebugLib
+  UefiBootServicesTableLib
+  DxeServicesLib
+  CpuInfoFruLib
+  PeCoffGetEntryPointLib
+  MsrFruLib
+  HobLib
+  VtdInfoLib
+  DevicePathLib
+  PrintLib
+  ReportStatusCodeLib
+
+[Protocols]
+  gEfiSmmAccess2ProtocolGuid               ## CONSUMES
+  gEfiSmmEndOfDxeProtocolGuid              ## CONSUMES
+  gEfiSmMonitorInitProtocolGuid            ## PRODUCES
+  gSmmResourceConfigProtocolGuid           ## PRODUCES
+  gDxeCpuPolicyProtocolGuid                ## CONSUMES
+  gEdkiiSmmMemoryAttributeProtocolGuid     ## CONSUMES
+  gEfiSmmReadyToLockProtocolGuid           ## CONSUMES
+  gSpsRing3ExceptionHandlerProtocolGuid    ## CONSUMES
+  gEfiSpaLogOutputProtocolGuid             ## CONSUMES
+  gEfiLoadedImageProtocolGuid              ## CONSUMES
+  gEfiSmmSwDispatch2ProtocolGuid           ## CONSUMES
+  gDgrNvsAreaProtocolGuid                  ## CONSUMES
+  gEfiSmmBase2ProtocolGuid                 ## CONSUMES
+
+
+[Guids]
+  gMsegSmramGuid                           ## SOMETIMES_CONSUMES ## HOB
+  gTxtInfoHobGuid                          ## SOMETIMES_CONSUMES ## HOB
+
+[FeaturePcd]
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuSmmDebug                         ## CONSUMES
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuSmmStackGuard                    ## CONSUMES
+
+[Pcd]
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuMaxLogicalProcessorNumber        ## SOMETIMES_CONSUMES
+  gSiPkgTokenSpaceGuid.PcdCpuSmmProtectedModeEnable                ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdCpuSmmSmrr2Base                          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdCpuSmmSmrr2Size                          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdCpuSmmSmrr2CacheType                     ## CONSUMES
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuMsegSize                         ## SOMETIMES_CONSUMES
+  gSiPkgTokenSpaceGuid.PcdPpamEnable                               ## SOMETIMES_CONSUMES
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuSmmShadowStackSize
+  gSiPkgTokenSpaceGuid.PcdSmmTestRsvMemorySize                     ## SOMETIMES_CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdControlFlowEnforcementPropertyMask   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSpsBinFile                               ## SOMETIMES_CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSpaBinFile                               ## SOMETIMES_CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSpsSmmEntryPointBinFile                  ## SOMETIMES_CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSpaSmmEntryPointBinFile                  ## SOMETIMES_CONSUMES
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuSmmStackSize                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSpsStateSaveEnable                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSpaEnable                                ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLedgerIslandBufferSize                   ## CONSUMES
+
+[Pcd.X64]
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuSmmRestrictedMemoryAccess        ## CONSUMES
+
+[Depex]
+  gEfiVariableArchProtocolGuid AND
+  gEfiSmmAccess2ProtocolGuid AND
+  gEfiMpServiceProtocolGuid AND
+  gDxeCpuPolicyProtocolGuid

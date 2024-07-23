@@ -1,0 +1,78 @@
+### @file
+# Component file for XmlCliCommonLib
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = XmlCliCommonLib
+  FILE_GUID                      = 71992832-785E-54E8-9623-8E4787B44940
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = XmlCliCommonLib
+  CONSTRUCTOR                    = XmlCliExecuteInSmmConstructor
+  EDK_RELEASE_VERSION            = 0x00020000
+  EFI_SPECIFICATION_VERSION      = 0x00020000
+
+#
+# The following information is for reference only and not required by the build tools.
+#  VALID_ARCHITECTURES           = IA32 X64 IPF
+#
+[Sources.common]
+  BiosKnobsElement.c
+  CliMain.c
+  Cli.h
+  SharedMailbox.c
+  XmlWriter.c
+  XmlCliComLib.c
+  XmlCliComLib.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  BoardModulePkg/BoardModulePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  XmlCliFeaturePkg/XmlCliFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  DebugLib
+  DxeServicesLib
+  PcdLib
+  IoLib
+  HiiLib
+  BiosIdLib
+
+[Guids]
+  gBiosKnobsDataBinGuid
+  gEfiGlobalVariableGuid
+  gEfiSecureBootEnableDisableGuid
+  gXmlCliSetupGuid
+  gEdkiiIfrBitVarstoreGuid
+
+[Protocols]
+  gEfiHiiDatabaseProtocolGuid
+  gXmlCliCommonGuid
+  gEfiSmbiosProtocolGuid
+  gEfiSmmBase2ProtocolGuid                      ## CONSUMES
+
+[Pcd]
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdKnobsEntriesSize
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdDramPublishToCmos

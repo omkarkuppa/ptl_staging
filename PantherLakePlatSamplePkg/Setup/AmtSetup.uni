@@ -1,0 +1,86 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2009 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+// Name:        AmtSetup.UNI
+//
+// Description: AMT Form String Definitions.
+//
+//**********************************************************************
+//**********************************************************************
+/=#
+
+#include "VFR.uni"
+
+#string STR_ENABLED                                        #language en-US  "Enabled"
+#string STR_DISABLED                                       #language en-US  "Disabled"
+
+#string STR_AMT_FORM                                       #language en-US  "AMT Configuration"
+#string STR_AMT_FORM_HELP                                  #language en-US  "Configure Intel(R) Active Management Technology Parameters"
+
+//---------------------------------------------------------------------------
+// AMT Configuration
+//---------------------------------------------------------------------------
+
+#string STR_AMT_USB_PROVISION_PROMPT                       #language en-US  "USB Provisioning of AMT"
+#string STR_AMT_USB_PROVISION_HELP                         #language en-US  "Enable/Disable of AMT USB Provisioning."
+
+#string STR_AMT_CIRA_REQUEST_PROMPT                        #language en-US  "Activate Remote Assistance Process"
+#string STR_AMT_CIRA_REQUEST_HELP                          #language en-US  "Trigger CIRA boot\n\nNote:\nNetwork Access must be activated first from MEBx Setup."
+
+#string STR_MEBX_UNCONFIGURE_ME_PROMPT                     #language en-US  "Unconfigure ME"
+#string STR_MEBX_UNCONFIGURE_ME_HELP                       #language en-US  "Unconfigure ME with resetting MEBx password to default on next boot."
+
+//---------------------------------------------------------------------------
+// ASF Configuration
+//---------------------------------------------------------------------------
+
+#string STR_ASF_CONFIGURATION_FORM                         #language en-US  "ASF Configuration"
+#string STR_ASF_CONFIGURATION_FORM_HELP                    #language en-US  "Configure Alert Standard Format parameters."
+
+#string STR_ASF_PET_PROGRESS_PROMPT                        #language en-US  "PET Progress"
+#string STR_ASF_PET_PROGRESS_HELP                          #language en-US  "Enable/Disable PET Events Progress to receive PET Events."
+
+#string STR_ASF_WATCHDOG_PROMPT                            #language en-US  "WatchDog"
+#string STR_ASF_WATCHDOG_HELP                              #language en-US  "Enable/Disable WatchDog Timer."
+
+#string STR_ASF_WATCHDOG_TIMER_OS_PROMPT                   #language en-US  "OS Timer"
+#string STR_ASF_WATCHDOG_TIMER_OS_HELP                     #language en-US  "Set OS watchdog timer."
+
+#string STR_ASF_WATCHDOG_TIMER_BIOS_PROMPT                 #language en-US  "BIOS Timer"
+#string STR_ASF_WATCHDOG_TIMER_BIOS_HELP                   #language en-US  "Set BIOS watchdog timer."
+
+#string STR_ASF_SENSORS_TABLE_PROMPT                       #language en-US  "ASF Sensors Table"
+#string STR_ASF_SENSORS_TABLE_HELP                         #language en-US  "Adds ASF Sensor Table into ASF! ACPI Table"
+
+//---------------------------------------------------------------------------
+// MAC Pass Through Definitions
+//---------------------------------------------------------------------------
+#string STR_AMT_MAC_PASS_THROUGH_PROMPT                    #language en-US  "MAC Pass Through"
+#string STR_AMT_MAC_PASS_THROUGH_HELP                      #language en-US  "Enable/Disable MAC Pass Through function."
+
+//---------------------------------------------------------------------------
+// Dynamic Lan Switch Definitions
+//---------------------------------------------------------------------------
+#string STR_AMT_DYNAMIC_LAN_SWITCH_PROMPT                  #language en-US  "Dynamic Lan Switch"
+#string STR_AMT_DYNAMIC_LAN_SWITCH_HELP                    #language en-US  "Allow switching AMT support from Integrated LAN to Discrete LAN."
+#string STR_AMT_LAN_INTERFACE_DEFAULT                      #language en-US  "As defined in FIT"
+#string STR_AMT_LAN_INTERFACE_INTEGRATED                   #language en-US  "Integrated LAN"
+#string STR_AMT_LAN_INTERFACE_DISCRETE                     #language en-US  "Discrete LAN"

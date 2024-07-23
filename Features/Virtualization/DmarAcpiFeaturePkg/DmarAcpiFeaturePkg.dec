@@ -1,0 +1,65 @@
+## @file
+#
+# DEC file for DmarAcpiFeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME = DmarAcpiFeaturePkg
+  PACKAGE_VERSION = 0.1
+  PACKAGE_GUID = 5C083F41-E5A2-4C9D-AB6D-3C25A7470135
+
+[Includes]
+  Include
+
+[Guids]
+  gDmarAcpiFeaturePkgTokenSpaceGuid = {0x4e88d86e, 0x9018, 0x4179, {0x98, 0x44, 0x9e, 0x5b, 0x98, 0x18, 0x85, 0x6e}}
+
+[PcdsFeatureFlag]
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarFeatureEnable |TRUE|BOOLEAN|0xA0000001
+
+[PcdsFixedAtBuild]
+  ## DMAR ACPI table revision
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRevision      |0x1  |UINT8  |0xB0000001
+  ## Below PCDs may be used for disabling/enabling some parts of code responsible for creating a specific remapping structure
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRmrrSupport   |FALSE|BOOLEAN|0xB0000002
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSatcSupport   |FALSE|BOOLEAN|0xB0000003
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSidpSupport   |FALSE|BOOLEAN|0xB0000004
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRhsaSupport   |FALSE|BOOLEAN|0xB0000005
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarAtsrSupport   |FALSE|BOOLEAN|0xB0000006
+
+[PcdsDynamic]
+  ## The PCD is used for DMAR Flags.<BR><BR>
+  #  BIT0: INTR_REMAP - If Clear, the platform does not support interrupt remapping. If Set, the platform supports
+  #        interrupt remapping.
+  #  BIT1: X2APIC_OPT_OUT - For firmware compatibility reasons, platform firmware may Set this field to request system
+  #        software to opt out of enabling Extended xAPIC (X2APIC) mode.
+  #  BIT3: DMA_CTRL_PLATFORM_OPT_IN_FLAG: Platform firmware is recommended to Set this field to report any platform
+  #        initiated DMA is restricted to only reserved memory regions (reported in RMRR structures) when transferring
+  #        control to system software such as on ExitBootServices().
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarFlags        |0x1 |UINT8  |0xC0000001
+  ## Below PCDs may be used to dynamically include/exclude a specific remapping structure type from DMAR ACPI table
+  #  It may be used for debug purposes.
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRmrrEnable   |TRUE |BOOLEAN|0xC0000002
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSatcEnable   |TRUE |BOOLEAN|0xC0000003
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSidpEnable   |TRUE |BOOLEAN|0xC0000004
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRhsaEnable   |FALSE|BOOLEAN|0xC0000005
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarAtsrEnable   |FALSE|BOOLEAN|0xC0000006

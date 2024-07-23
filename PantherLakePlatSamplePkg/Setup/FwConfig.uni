@@ -1,0 +1,37 @@
+/**@file
+  Firmware Configuration strings
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2014 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+/=#
+#include "VFR.uni"
+
+// Firmware Config
+#string STR_FIRMWARE_CONFIG_NAME          #language en-US "Firmware Configuration"
+#string STR_FIRMWARE_CONFIG_NAME_HELP     #language en-US "Firmware Configuration options.\nNOTE:Ignore Policy Update(STR_FW_CONFIG_DEFAULT_VALUE) is to skip policy update and will ONLY WORK ON A PLATFORM."
+#string STR_FW_CONFIG_DEFAULT_VALUE       #language en-US "Ignore Policy Update"
+#string STR_FW_CONFIG_PRODUCTION_VALUE    #language en-US "Production"
+#string STR_FW_CONFIG_TEST_VALUE          #language en-US "Test"
+#string STR_FW_CONFIG_INTERNAL_VALUE      #language en-US "Internal"
+#string STR_FW_CONFIG_RESTRICTED_VALUE    #language en-US "Restricted"
+#string STR_FW_CONFIG_RESTRICTED_SV_VALUE #language en-US "Restricted SV"
+#string STR_LOAD_VALIDATION_NAME          #language en-US "Load Validation FV"
+#string STR_LOAD_VALIDATION_HELP          #language en-US "Load Sv Validation FV to boot to F6"
+#string STR_INSTALL_PLATFORM_DRIVER_NAME  #language en-US "Install Platform Driver"
+#string STR_INSTALL_PLATFORM_DRIVER_HELP  #language en-US "Force installing the protocol"

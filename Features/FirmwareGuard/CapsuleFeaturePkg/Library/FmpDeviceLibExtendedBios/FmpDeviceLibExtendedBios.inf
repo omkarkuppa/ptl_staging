@@ -1,0 +1,72 @@
+## @file
+#  FmpDeviceLib instance to support Extended BIOS update
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = FmpDeviceLibExtendedBios
+  FILE_GUID                      = A52BA2AC-21BE-4AE4-B57B-AE4B873082A8
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = FmpDeviceLib|DXE_DRIVER
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  FmpDeviceLibExtendedBios.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  FmpDevicePkg/FmpDevicePkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+
+[LibraryClasses]
+  DebugLib
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  UefiRuntimeServicesTableLib
+  PcdLib
+  PlatformFlashAccessLib
+  BiosUpdateHelpersLib
+  SeamlessRecoverySupportLib
+  CapsuleUpdateResetLib
+  PlatformBiosUpdateHookLib
+  ResiliencySupportLib
+  PayloadResiliencySupportLib
+
+[Pcd]
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdSystemFirmwareFmpSupportedMode   ## CONSUMES ## SOMETIMES_PRODUCES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable             ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryEnable               ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashAllExtendedRegionSize       ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset                   ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbSize                     ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashExtendSize                  ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset         ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadSize           ## CONSUMES
+
+[Guids]
+  gCapsuleBiosImageFileGuid                                            ## CONSUMES
+  gCapsuleExtendedBiosConfigFileGuid                                   ## CONSUMES

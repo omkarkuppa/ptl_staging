@@ -1,0 +1,143 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2016 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+// Name:        DebugSetup.uni
+//
+// Description: Debug Form String Definitions.
+//
+//**********************************************************************
+/=#
+#include "VFR.uni"
+#string STR_DEBUG_FORM                                  #language en-US "Debug Settings"
+#string STR_DEBUG_FORM_HELP                             #language en-US "Debug interface Settings"
+
+#string STR_ADVANCED_DEBUG_FORM                         #language en-US "Advanced Debug Settings"
+#string STR_ADVANCED_DEBUG_FORM_HELP                    #language en-US "Advanced Debug Settings"
+
+#string STR_DEBUG_PORT                                  #language en-US "Kernel Debug Serial Port"
+#string STR_DEBUG_PORT_LEGACY_UART                      #language en-US "Legacy UART"
+#string STR_DEBUG_PORT_SERIALIO_UART0                   #language en-US "SERIALIO UART0"
+#string STR_DEBUG_PORT_SERIALIO_UART1                   #language en-US "SERIALIO UART1"
+#string STR_DEBUG_PORT_SERIALIO_UART2                   #language en-US "SERIALIO UART2"
+#string STR_DEBUG_PORT_HELP                             #language en-US "Select Kernel Debug Port and report in ACPI DBG2 table"
+
+#string STR_KERNEL_DEBUG_PATCH                          #language en-US "Kernel Debug Patch"
+#string STR_KERNEL_DEBUG_PATCH_HELP                     #language en-US "Enable/Disable Kernel Debug Patch"
+
+#string STR_TERMINAL_OVER_DEBUG                         #language en-US "Virtual UART - Terminal Over Debug"
+#string STR_TERMINAL_OVER_DEBUG_HELP                    #language en-US "Enable/Disable BIOS console redirection to Debug Cable."
+
+#string STR_DEBUG_TOKEN_PRESENCE                        #language en-US "Debug Token BIOS Payload present"
+#string STR_DEBUG_TOKEN_PRESENCE_VALUE                  #language en-US "N/A" //dynamically updated
+
+#string STR_PLATFORM_DEBUG_OPTION_STRING                #language en-US "Platform Debug Option"
+#string STR_PLATFORM_DEBUG_OPTION_STRING_HELP           #language en-US "Enabled Trace active: TraceHub is enabled and trace is active, blocks s0ix.\n\nEnabled Trace ready: TraceHub is enabled and allowed S0ix.\n\nEnabled Trace power off: TraceHub is powergated, provide setting close to functional low power state\n\nManual: user needs to configure Advanced Debug Settings manually, aimed at advanced users"
+
+
+#string STR_PDC_TRACE_ACTIVE_STRING                     #language en-US "Enabled - Trace active"
+#string STR_PDC_TRACE_READY_STRING                      #language en-US "Enabled - Trace ready"
+#string STR_PDC_TRACE_POWER_OFF_STRING                  #language en-US "Enabled - Trace power off"
+#string STR_PDC_MANUAL_STRING                           #language en-US "Manual"
+
+#string STR_PCH_DCI_EN_PROMPT                           #language en-US "DCI Enable"
+#string STR_PCH_DCI_EN_HELP                             #language en-US "Determine if to enable DCI debug from host"
+
+#string STR_DCI_CLK_EN_PROMPT                           #language en-US "DCI Clock Enable"
+#string STR_DCI_CLK_EN_HELP                             #language en-US "Enable DCI Clock in s0ix"
+
+#string STR_PMODE_CLK_EN_PROMPT                         #language en-US "Pmode Clock Enable"
+#string STR_PMODE_CLK_EN_HELP                           #language en-US "Enable/Disable PMODE clock. When enabled, Pmode clock will toggle for XDP use"
+
+#string STR_PCH_DCI_DBC_MODE_PROMPT                     #language en-US "USB DbC Enable Mode"
+#string STR_PCH_DCI_DBC_MODE_HELP                       #language en-US "Disabled:Clear both USB2/3DBCEN\nUSB2:Set USB2DBCEN\nUSB3:Set USB3DBCEN\nBoth:Set both USB2/3DBCEN\nNo Change:Comply with HW value"
+#string STR_PCH_DCI_DBC_MODE_USB2                       #language en-US "USB2"
+#string STR_PCH_DCI_DBC_MODE_USB3                       #language en-US "USB3"
+#string STR_PCH_DCI_DBC_MODE_BOTH                       #language en-US "Both"
+
+#string STR_DEBUG_MSR_INTERFACE_PROMPT                  #language en-US "CPU Run Control "
+#string STR_DEBUG_MSR_INTERFACE_PROMPT_HELP             #language en-US "Enable/Disable CPU Run Control Support; No Change : Comply with HW value"
+
+#string STR_DEBUG_MSR_INTERFACE_LOCK_PROMPT             #language en-US "CPU Run Control Lock "
+#string STR_DEBUG_MSR_INTERFACE_LOCK_PROMPT_HELP        #language en-US "Enable/Disable CPU Run Control Lock"
+
+#string STR_DEBUG_MSR_INTERFACE_STATUS_STRING           #language en-US "Current CPU Run Control Status"
+#string STR_DEBUG_MSR_INTERFACE_STATUS_VALUE            #language en-US "Disabled"
+
+#string STR_PROC_TRACE_TIMING_PACKET_PROMPT             #language en-US "Processor Trace Timing Packet"
+#string STR_PROC_TRACE_TIMING_PACKET_HELP               #language en-US "Enable/Disable collocating processor trace performance (CYC, TSC)."
+#string STR_PROC_TRACE_ALL_CORE                         #language en-US "All Cores"
+#string STR_PROC_TRACE_BSP                              #language en-US "Bsp"
+#string STR_PROC_TRACE_CORE_PROMPT                      #language en-US "Processor Trace Core"
+#string STR_PROC_TRACE_CORE_HELP                        #language en-US "Processor trace enabled for cores.\nBsp only or all cores."
+#string STR_PROC_TRACE_MEM_SIZE_PROMPT                  #language en-US "Processor trace memory allocation"
+#string STR_PROC_TRACE_MEM_SIZE_HELP                    #language en-US "Disable or Select Processor trace memory region Size: from 4KB ~ 128MB.\nUser should be cautious to choose the amount of memory. If total IPT size of all cores is larger than half of system memory, setup will be reverted.\n"
+#string STR_PROC_TRACE_ENABLE_PROMPT                    #language en-US "Processor trace"
+#string STR_PROC_TRACE_ENABLE_HELP                      #language en-US "Enable/Disable processor trace feature from CPU MSR. Enabling this feature will immediately start trace collection."
+#string STR_PROC_TRACE_OUTPUT_SCHEME_PROMPT             #language en-US "Processor Trace OutPut Scheme"
+#string STR_PROC_TRACE_OUTPUT_SCHEME_HELP               #language en-US "Select Single Range Output scheme or ToPA table Output scheme"
+#string STR_SMM_PROC_TRACE_ENABLE_PROMPT                #language en-US "SMM Processor Trace"
+#string STR_SMM_PROC_TRACE_ENABLE_HELP                  #language en-US "Enable/Disable usage of Processor Trace in SMM"
+#string STR_WARNING_SMM_PROC_TRACE                      #language en-US "This option conflicts with DGR, when DGR enabled, this optiton is invalid."
+
+#string STR_THREE_STRIKE_PROMPT                         #language en-US "Three Strike Counter"
+#string STR_THREE_STRIKE_PROMPT_HELP                    #language en-US "Enable/Disable Three Strike Counter"
+
+#string STR_NO_CHANGE                                   #language en-US "No Change"
+
+#string STR_SOC_TRACE_HUB_PROMPT                        #language en-US "SOC Trace Hub Enable Mode"
+#string STR_PCH_TRACE_HUB_PROMPT                        #language en-US "PCH Trace Hub Enable Mode"
+#string STR_TRACE_HUB_MODE_HELP                         #language en-US "Enable/Disable TraceHub"
+
+#string STR_TRACE_HUB_KNOB_PROMPT                       #language en-US "BIOS trace destination"
+#string STR_TRACE_HUB_KNOB_HELP                         #language en-US "This option specifies which Trace Hub that BIOS trace goes to (either SOC TH or PCH TH)"
+#string STR_SOC_TRACE_HUB_MODE                          #language en-US "SOC Trace Hub"
+#string STR_PCH_TRACE_HUB_MODE                          #language en-US "PCH Trace Hub"
+
+#string STR_SOC_TRACE_HUB_MEM_REGION_0_SIZE             #language en-US "SOC TH Mem Buffer Size 0"
+#string STR_SOC_TRACE_HUB_MEM_REGION_1_SIZE             #language en-US "SOC TH Mem Buffer Size 1"
+#string STR_PCH_TRACE_HUB_MEM_REGION_0_SIZE             #language en-US "PCH TH Mem Buffer Size 0"
+#string STR_PCH_TRACE_HUB_MEM_REGION_1_SIZE             #language en-US "PCH TH Mem Buffer Size 1"
+#string STR_TRACE_HUB_MEM_REGION_0_HELP                 #language en-US "Select size of memory region 0 buffer. Memory allocated by BIOS only applies to ITH tool running on the host. For ITH tool running on the target, choose None/OS, memory shall be allocated by tool.\n\nUser should be cautious to choose the amount of memory. If chosen size is larger than half of system memory, setup will automatically rollback to default value.\n"
+#string STR_TRACE_HUB_MEM_REGION_1_HELP                 #language en-US "Select size of memory region 1 buffer. Memory allocated by BIOS only applies to ITH tool running on the host. For ITH tool running on the target, choose None/OS, memory shall be allocated by tool.\n\nUser should be cautious to choose the amount of memory. If chosen size is larger than half of system memory, setup will automatically rollback to default value.\n"
+
+#string STR_KEEP_EARLY_TRACE_PROMPT                     #language en-US "Keep Early Trace"
+#string STR_KEEP_EARLY_TRACE_HELP                       #language en-US "Trace is activated by default. When enable, keep early trace data and keep tracing, may block s0ix.\nWhen disabled will abandon trace data and stop tracing which allows enter s0ix.\n\nnoted:enable this option will not enable TraceHub; When probe is connected, keep early trace will then be configured by tool, this option will not take effect."
+
+#string STR_TRACE_HUB_NONE                              #language en-US "None/OS"
+#string STR_TRACE_HUB_1MB                               #language en-US "1MB"
+#string STR_TRACE_HUB_8MB                               #language en-US "8MB"
+#string STR_TRACE_HUB_64MB                              #language en-US "64MB"
+#string STR_TRACE_HUB_128MB                             #language en-US "128MB"
+#string STR_TRACE_HUB_256MB                             #language en-US "256MB"
+#string STR_TRACE_HUB_512MB                             #language en-US "512MB"
+#string STR_TRACE_HUB_1GB                               #language en-US "1GB"
+#string STR_TRACE_HUB_2GB                               #language en-US "2GB"
+#string STR_TRACE_HUB_4GB                               #language en-US "4GB"
+#string STR_TRACE_HUB_8GB                               #language en-US "8GB"
+
+#string STR_AET_TRACE_HUB_MODE_PROMPT                   #language en-US "AET Trace Hub Destination"
+#string STR_AET_TRACE_HUB_MODE_HELP                     #language en-US "Select SOC/PCH Trace Hub for Architectural Event Traces to send debug messages"
+
+#string STR_DFD_ENABLE_PROMPT                           #language en-US "DFD Enable"
+#string STR_DFD_ENABLE_HELP                             #language en-US "When enabled, DFD power will keep up; when disabled, DFD power will shutdown"
+
+#string STR_DELAYED_AUTHENTICATION_MODE_PROMPT          #language en-US "Delayed Authentication Mode"
+#string STR_DELAYED_AUTHENTICATION_MODE_HELP            #language en-US "Enable/Disable Delayed Authentication Mode"

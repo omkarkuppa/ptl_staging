@@ -1,0 +1,68 @@
+## @file
+#
+# DEC file for EcFeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION         = 0x00010017
+  PACKAGE_NAME              = EcFeaturePkg
+  PACKAGE_VERSION           = 0.1
+  PACKAGE_GUID              = 973450A3-B13B-40AF-8924-89B76E6A051F
+
+[Includes]
+  Include
+
+[Includes.Common.Private]
+  IncludePrivate
+
+[Guids]
+  gEcFeaturePkgTokenSpaceGuid   = { 0xdb80b6c2, 0x7dba, 0x457f, { 0x9f, 0xd9, 0x86, 0xa0, 0x1f, 0x55, 0x84, 0x80 } }
+
+  #
+  # file guid that contain EcSsdt and Ecdt
+  #
+  gEcSsdtAcpiTableStorageGuid   = { 0x0EA7273B, 0xE79F, 0x4DC1, { 0x8C, 0x19, 0xAD, 0xD5, 0xB3, 0xB5, 0xDB, 0x01 } }
+
+[Protocols]
+  gEcNvsAreaProtocolGuid        = { 0xF5A366B8, 0xC1F4, 0x4A5F, { 0xA0, 0x44, 0x87, 0x47, 0xF7, 0x08, 0x67, 0x83 } }
+  gBatteryProtocolGuid          = { 0xa94e3f49, 0x2e6b, 0x49c2, { 0xbe, 0xf6, 0x00, 0x72, 0x75, 0x16, 0x1e, 0x8a } }
+
+[LibraryClasses]
+  EcLib|Include/Library/EcLib.h
+  EcMiscLib|Include/Library/EcMiscLib.h
+  EcSmiLib|Include/Library/EcSmiLib.h
+  EcTcssLib|Include/Library/EcTcssLib.h
+  EcPrivateLib|IncludePrivate/Library/EcPrivateLib.h
+  DxeBatteryLib|Include/Library/DxeBatteryLib.h
+
+[PcdsFixedAtBuild, PcdsPatchableInModule]
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                   |TRUE|BOOLEAN|0xF000004D
+  #
+  # define Ec Version to differ the Ec APIs across different generations
+  # default version: 0.1  - 0000 0001 - main version high 16 bits
+  #                       -           - sub version low 16 bits
+  #
+  gEcFeaturePkgTokenSpaceGuid.PcdEcFeatureVersion           |0x00000001|UINT32|0xF000004E
+  gEcFeaturePkgTokenSpaceGuid.PcdEcZeroTimeout              |FALSE|BOOLEAN|0xF0000013
+
+[PcdsDynamic, PcdsDynamicEx]
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPeciMode|0x00|UINT8|0x00101035
+  gEcFeaturePkgTokenSpaceGuid.PcdBatterySupport|0x0|UINT8|0x00101036

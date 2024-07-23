@@ -1,0 +1,47 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2014 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+    suppressif NOT ideqval SETUP_VOLATILE_DATA.PciePortCfg[PORT_INDEX] == PCH_RP_AVAILABLE;
+      goto CONCATENATE3(PCH_PCIERP,PORT_INDEX,_OPTIONS_FORM_ID),
+        prompt = STRING_TOKEN(CONCATENATE3(STR_PCIERP,PORT_INDEX,_OPTIONS_FORM_TITLE)),
+        help = STRING_TOKEN(STR_PCIERP_OPTIONS_FORM_HELP);
+    endif;
+    suppressif NOT ideqval SETUP_VOLATILE_DATA.PciePortCfg[PORT_INDEX] == PCH_RP_FUSED_OFF;
+      text
+        help   = STRING_TOKEN(STR_EMPTY_STRING),
+        text   = STRING_TOKEN(CONCATENATE3(STR_PCIERP,PORT_INDEX,_OPTIONS_FORM_TITLE)),
+        text   = STRING_TOKEN(STR_PCIERP_FUSED_OFF);
+    endif;
+    suppressif NOT ideqval SETUP_VOLATILE_DATA.PciePortCfg[PORT_INDEX] == PCH_RP_MERGED;
+      text
+        help   = STRING_TOKEN(STR_EMPTY_STRING),
+        text   = STRING_TOKEN(CONCATENATE3(STR_PCIERP,PORT_INDEX,_OPTIONS_FORM_TITLE)),
+        text   = STRING_TOKEN(STR_PCIERP_MERGED);
+    endif;
+    suppressif NOT ideqval SETUP_VOLATILE_DATA.PciePortCfg[PORT_INDEX] == PCH_RP_DIFFERENT_BUS;
+      text
+        help   = STRING_TOKEN(STR_EMPTY_STRING),
+        text   = STRING_TOKEN(CONCATENATE3(STR_PCIERP,PORT_INDEX,_OPTIONS_FORM_TITLE)),
+        text   = STRING_TOKEN(STR_PCIERP_DIFFERENT_BUS);
+    endif;
+    //
+    // Don't display anything if SETUP_VOLATILE_DATA.PciePortCfg[PORT_INDEX] == PCH_RP_NOT_IMPLEMENTED
+    //
+

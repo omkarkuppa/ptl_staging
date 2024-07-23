@@ -1,0 +1,51 @@
+/** @file
+  String definitions for BdsPlatform formset.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2004 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+
+/=#
+
+#langdef   en-US "English"
+#langdef   fr-FR "Français"
+
+#string STR_INTERNAL_EFI_SHELL         #language en-US  "[Internal EFI Shell]"
+                                       #language fr-FR  "[la Coquille interne de EFI]"
+#string STR_PROCESSED_ALL_BOOT_OPTIONS #language en-US  "[ProcessedAllBootOptions(): Load shell from the FV]"
+                                       #language fr-FR  "[ProcessedAllBootOptions() : la coquille de Chargement du FV]"
+#string STR_BOOT_FAILED                #language en-US  "Boot Failed. "
+                                       #language fr-FR  "la Botte A. "
+#string STR_BOOT_SUCCEEDED             #language en-US  "Boot Succeeded - "
+                                       #language fr-FR  "Charge Réussi - "
+#string STR_DEFAULT_TIMEOUT_BANNER     #language en-US  "Default boot selection will be booted in "
+                                       #language fr-FR  "la sélection de botte de Défaut sera dans "
+#string STR_SECONDS                    #language en-US  " seconds"
+                                       #language fr-FR  " les secondes"
+#string STR_EXIT_DATA                  #language en-US  "ExitData: "
+                                       #language fr-FR  "ExitData: "
+#string STR_LOADING                    #language en-US  "Loading: "
+                                       #language fr-FR  "Chargement: "
+#string STR_ENTER_NORMAL_BOOT          #language en-US  "Entering Normal Boot Process..."
+                                       #language fr-FR  "l'Entrer le Procédé de Botte Normal..."
+#string RESTORE_DEFAULTS_STRING        #language en-US  "F3=Load Defaults"
+                                       #language fr-FR  "F3=Charger Défauts"
+#string SAVE_CHANGES_STRING            #language en-US  "F4=Save Changes"
+                                       #language fr-FR  "F4=Économiser"
+#string DISCARD_CHANGES_STRING         #language en-US  "F2=Discard Changes"
+                                       #language fr-FR  "F2=Abandonner"

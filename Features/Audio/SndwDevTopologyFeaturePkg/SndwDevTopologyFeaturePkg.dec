@@ -1,0 +1,49 @@
+## @file
+#  SoundWire Device Topology Feature Package DEC file.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+DEC_SPECIFICATION = 0x00010017
+PACKAGE_NAME = SndwDevTopologyFeaturePkg
+PACKAGE_VERSION = 0.1
+PACKAGE_GUID = 99FDE1A2-F78E-4B09-AE69-0E5B4000F0ED
+
+[Includes]
+  Include
+  AcpiTables
+  AcpiTables/SndwDevTopologySt00Ssdt
+  AcpiTables/SndwDevTopologySt01Ssdt
+  AcpiTables/SndwDevTopologySt02Ssdt
+  AcpiTables/SndwDevTopologySt03Ssdt
+  AcpiTables/SndwDevTopologySt04Ssdt
+  AcpiTables/SndwDevTopologySt05Ssdt
+
+[Guids]
+  gSndwDevTopologyFeaturePkgTokenSpaceGuid  = { 0x526819A3, 0x4A77, 0x410E, { 0x9C, 0x12, 0x22, 0xBB, 0x6D, 0x35, 0x9F, 0x39 }}
+  gSndwDevTopologyConfigurationVariableGuid = { 0x7975600E, 0x4C1B, 0x4E52, { 0xB7, 0x5E, 0x1D, 0xED, 0x70, 0x34, 0x18, 0x13 }}
+  gSndwDevTopologyAcpiTableStorageGuid      = { 0x141BB3EB, 0x9563, 0x4B06, { 0xA6, 0xCC, 0x20, 0x36, 0xC6, 0x13, 0x5D, 0xDD }}
+  gSndwBtNdaiAcpiTableStorageGuid           = { 0x9A3325C6, 0xF45B, 0x4BDA, { 0xA9, 0xF3, 0xDD, 0x5E, 0x91, 0x35, 0x52, 0xCE }}
+  gSndwIDispNdaiAcpiTableStorageGuid        = { 0x940F304A, 0xF946, 0x46E8, { 0xBC, 0xF0, 0x5D, 0x8E, 0x65, 0xD6, 0x7D, 0x91 }}
+
+[PcdsFeatureFlag]
+  gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyFeatureEnable|TRUE|BOOLEAN|0xA0000001
+  gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyBtSndwSupported|TRUE|BOOLEAN|0xA0000002
+  gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyIDispSndwSupported|TRUE|BOOLEAN|0xA0000003

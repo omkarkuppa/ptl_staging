@@ -1,0 +1,69 @@
+## @file
+# Component description file for AMT Initialization driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2019 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = AmtInitDxe
+FILE_GUID = FE5C7F1B-E256-47a8-8F1E-9478107C7875
+VERSION_STRING = 1.0
+MODULE_TYPE = DXE_DRIVER
+ENTRY_POINT = AmtInitDxeEntryPoint
+
+[LibraryClasses]
+BaseMemoryLib
+DebugLib
+HobLib
+UefiLib
+UefiBootServicesTableLib
+UefiDriverEntryPoint
+MemoryAllocationLib
+DxeAmtHeciLib
+DxeAsfLib
+AslUpdateLib
+MeInfoLib
+PciSegmentLib
+
+[Packages]
+MdePkg/MdePkg.dec
+MdeModulePkg/MdeModulePkg.dec
+OneSiliconPkg/SiPkg.dec
+IntelSiliconPkg/IntelSiliconPkg.dec
+
+[Sources]
+AmtInitDxe.c
+Kvm.c
+
+[Protocols]
+gEfiAcpiTableProtocolGuid    ## CONSUMES
+gAmtReadyToBootProtocolGuid  ## PRODUCES
+gAmtDisplayMsgProtocolGuid   ## CONSUMES
+
+[Guids]
+gAmtPetQueueHobGuid         ## CONSUMES
+gEfiConsoleOutDeviceGuid    ## CONSUMES
+gMeBiosPayloadHobGuid       ## CONSUMES
+gAmtPolicyHobGuid           ## CONSUMES
+gEfiEndOfDxeEventGroupGuid  ## CONSUMES
+
+[Depex]
+gHeciControlProtocolGuid
+

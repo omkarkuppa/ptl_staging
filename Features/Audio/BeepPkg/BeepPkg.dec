@@ -1,0 +1,52 @@
+## @file
+#  DEC file for NhltFeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+DEC_SPECIFICATION = 0x00010017
+PACKAGE_NAME = BeepPkg
+PACKAGE_VERSION = 0.1
+PACKAGE_GUID = 5C083F41-E5A2-4C9D-AB6D-3C25A7470135
+
+[Includes]
+  Include
+
+[Includes.Common.Private]
+  IncludePrivate
+
+[Guids]
+  gBeepModuleTokenSpaceGuid   =  {0xf203253f, 0x2593, 0x4bb1, {0xaa, 0x29, 0xa2, 0x83, 0x3a, 0x54, 0xbb, 0xc8}}
+
+[Protocols]
+  gSndwAccessProtocolGuid     =  {0x0da23d05, 0x425b, 0x4a21, {0x83, 0xee, 0xd3, 0x54, 0x6e, 0x2c, 0xd4, 0xc3}}
+  gBeepProtocolGuid           =  {0x5d2a7ccf, 0x33be, 0x444d, {0xba, 0xa6, 0xd6, 0xb5, 0x97, 0xf5, 0x66, 0x8b}}
+
+[Ppis]
+  gSndwAccessPpiGuid          =  {0x9d42ad70, 0x2d57, 0x425a, {0x83, 0x18, 0xe3, 0x50, 0x90, 0x09, 0x53, 0x8f}}
+  gBeepPpiGuid                =  {0x7f6c03d8, 0xad3b, 0x406e, {0xbf, 0x36, 0x04, 0x67, 0xa8, 0x40, 0x09, 0xe5}}
+
+[PcdsFeatureFlag]
+  gBeepModuleTokenSpaceGuid.PcdPeiBeepEnable               |FALSE|BOOLEAN|0x20000012
+  gBeepModuleTokenSpaceGuid.PcdDxeBeepEnable               |FALSE|BOOLEAN|0x20000013
+  gBeepModuleTokenSpaceGuid.PcdSndwInterfaceEnable         |FALSE|BOOLEAN|0x20000014
+  gBeepModuleTokenSpaceGuid.PcdHdaInterfaceEnable          |FALSE|BOOLEAN|0x20000015
+
+[PcdsFixedAtBuild]
+  gBeepModuleTokenSpaceGuid.PcdSndwBeepCodecId             |{0x20, 0x02, 0x5D, 0x13, 0x08, 0x00}|VOID*|0x20000017

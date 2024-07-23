@@ -1,0 +1,1206 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2011 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//----------------------------------------------------------------------------
+//
+// Name:  OverClockSetup.uni
+//
+// Description: Unicode strings for OverClocking are implemented
+//
+//----------------------------------------------------------------------------
+/=#
+#include "VFR.uni"
+
+#string STR_EMPTY_STRING                                        #language en-US ""
+#string STR_DEFAULT_STRING                                      #language en-US "Default"
+
+#string STR_PERFORMANCE_MENU_CONFIGURATION                      #language en-US "OverClocking Performance Menu"
+#string STR_PERFORMANCE_CONFIGURATION_HELP                      #language en-US "Performance Menu for Processor and Memory."
+
+#string STR_OVERCLOCKING_MENU_CONFIGURATION                     #language en-US "OverClocking Feature"
+#string STR_OVERCLOCKING_CONFIGURATION_HELP                     #language en-US "Performance Menu for Processor and Memory."
+
+#string STR_PER_CORE_HT_DISABLE                                 #language en-US "Per-core HT Disable"
+#string STR_PER_CORE_HT_DISABLE_HELP                            #language en-US "Defines the per-core HT disable mask where: 1 - Disable selected logical core HT, 0 - is ignored. Input is in HEX and each bit maps to a logical core. Ex. A value of '1F' would disable HT for cores 4,3,2,1 and 0. Default is 0, all cores have HT enabled. Range is 0 - 0x7F for max 8 cores. You can only disable up to MAX_CORE_COUNT - 1."
+
+//
+// Integrated BCLK
+//
+#string STR_ICC_CPU_BCLK_PROMPT                                 #language en-US "Integrated Clock"
+
+//
+// Discrete BCLK (RC26008)
+//
+#string STR_BCLK_CONFIGURATION                                  #language en-US "BCLK Configuration"
+#string STR_BCLK_CONFIGURATION_HELP                             #language en-US "BCLK Configuration."
+
+#string STR_DCC_CPU_BCLK_PROMPT                                 #language en-US "Discrete Clock"
+
+#string STR_DCC_CPU_BCLK_FREQ_CURRENT                           #language en-US "Current CPU Bclk Frequency"
+#string STR_DCC_CPU_BCLK_FREQ_VALUE                             #language en-US "100 MHz"
+#string STR_DCC_CPU_BCLK_FREQ_PROMPT                            #language en-US "CPU Bclk Frequency"
+#string STR_DCC_CPU_BCLK_FREQ_HELP                              #language en-US "Config Discrete Clock Frequency in MHz. Range from 80 MHz up to MAX 530 MHz."
+
+#string STR_DCC_PEGDMI_CLK_FREQ_CURRENT                         #language en-US "Current Peg/Dmi Clk Frequency"
+#string STR_DCC_PEGDMI_CLK_FREQ_VALUE                           #language en-US "100 MHz"
+#string STR_DCC_PEGDMI_CLK_FREQ_PROMPT                          #language en-US "Peg/Dmi Clk Frequency"
+#string STR_DCC_PEGDMI_CLK_FREQ_HELP                            #language en-US "Config Peg/Dmi Clock Frequency in MHz. Range from 80 MHz up to MAX 200 MHz."
+
+#string STR_DISABLE_CLOCK                                       #language en-US "External Clock Control"
+#string STR_DISABLE_CLOCK_HELP                                  #language en-US "Enable/Disable External Clock"
+#string STR_BCLK_ENABLE_CLOCK                                   #language en-US "Enable"
+#string STR_BCLK_DISABLE_CLOCK                                  #language en-US "Disable"
+
+#string STR_PMC_BCLK_PCD_PLL_PROMPT                             #language en-US "PCD BCLK PLL configuration"
+#string STR_PMC_BCLK_PCD_PLL_HELP                               #language en-US "Configure PCD BCLK PLL state. When this PLL is ON, BCLK source for SOC-N and for CPU (unless CPU PLL is ON) will be from the SOC PLL."
+
+#string STR_PMC_BCLK_CPU_PLL_PROMPT                             #language en-US "CPU BCLK PLL configuration"
+#string STR_PMC_BCLK_CPU_PLL_HELP                               #language en-US "Configure CPU BCLK PLL state. When this PLL is ON, BCLK source for CPU will be from the CPU PLL."
+
+#string STR_PMC_BCLK_PLL_HELP                                   #language en-US "Configure BCLK PLL state. Note that values not matching default HW state will cause system to perform additional reset during next boot"
+#string STR_PMC_BCLK_HW_DEFAULT                                 #language en-US "PLL in HW default state"
+#string STR_PMC_BCLK_FORCE_ON                                   #language en-US "PLL ON"
+#string STR_PMC_BCLK_FORCE_OFF                                  #language en-US "PLL OFF"
+
+#string STR_FIVR_FAULTS_ENABLE                                  #language en-US "FIVR Faults"
+#string STR_FIVR_FAULTS_ENABLE_HELP                             #language en-US "Enable/Disable Fivr Faults. Default is enabled. When FIVR faults are disabled, over-voltage and over-current protections are disabled. Extreme OC will require faults to be disabled, but presents reliability risks."
+
+#string STR_FIVR_EFFICIENCY_ENABLE                              #language en-US "FIVR Efficiency"
+#string STR_FIVR_EFFICIENCY_ENABLE_HELP                         #language en-US "Enable/Disable FIVR Efficiency. Default is enabled. Efficiency management is good for power delivery, but may impede OC. Disabling FIVR efficiency will force FIVR to always run in max power delivery mode."
+
+#string STR_WDT_ENABLE                                          #language en-US "WDT Enable"
+#string STR_WDT_ENABLE_HELP                                     #language en-US "Enable/Disable WatchDog Timer. Note: This option is ignored on debug BIOS."
+
+#string STR_PLL_TRIM_CONFIGURATION                              #language en-US "Voltage PLL Trim Controls"
+#string STR_PLL_TRIM_CONFIGURATION_HELP                         #language en-US "Voltage PLL Trim Controls Menu"
+
+#string STR_PROCESSOR_CONFIGURATION                             #language en-US "Processor"
+#string STR_PROCESSOR_CONFIGURATION_HELP                        #language en-US "Processor Bus Ratio Override and Bus Speed Override."
+
+#string STR_TVB_CONFIGURATION                                   #language en-US "Thermal Velocity Boost (TVB)"
+
+#string STR_RING_CONFIGURATION                                  #language en-US "Ring"
+#string STR_RING_CONFIGURATION_HELP                             #language en-US "Ring Ratio and Voltage Settings"
+
+#string STR_MEMORY_CONFIGURATION                                #language en-US "Memory"
+#string STR_MEMORY_CONFIGURATION_HELP                           #language en-US "Memory Ratio and Voltage Settings"
+
+#string STR_NGU_CONFIGURATION                                   #language en-US "NGU"
+#string STR_NGU_CONFIGURATION_HELP                              #language en-US "NGU Ratio and Voltage Settings"
+
+#string STR_FLEXENABLE_PROMPT                                   #language en-US "Non-Turbo Flex Support"
+#string STR_FLEXENABLE_PROMPT_HELP                              #language en-US "Enable/Disable Non-Turbo Flex Support."
+
+#string STR_PROCESSORBUS_RATIO_OVERRIDE_VALUE                   #language en-US "  Flex Ratio Override"
+#string STR_PROCESSORBUS_RATIO_OVERRIDE_VALUE_HELP              #language en-US "Processor Flex Ratio Override Parameters with range 0 to 31 and the Min and Max may vary between Processors."
+
+#string STR_FLEX_VID_ENABLE_PROMPT                              #language en-US "CPU VID Support"
+#string STR_FLEX_VID_ENABLE_PROMPT_HELP                         #language en-US "Enable/Disable Cpu Vid Support."
+
+#string STR_PROCESSOR_FLEXVID_OVERRIDE_VALUE                    #language en-US "  Flex VID Override"
+#string STR_PROCESSOR_FLEXVID_OVERRIDE_VALUE_HELP               #language en-US "VID Override Parameters. The value may vary from 8 to 48 which actual relates to volts 1.4000v  to 0.9000v. Each step equates to 0.0125v."
+
+#string STR_PROCESSOR_BUSSPEED_PROMPT                           #language en-US "Bus Speed Support"
+#string STR_PROCESSOR_BUSSPEED_PROMPT_HELP                      #language en-US "Enable/Disable CPU Speed Override Support."
+
+#string STR_PROCESSORBUS_SPEED_OVERRIDE_VALUE                   #language en-US "  Bus Speed Override (%)"
+#string STR_PROCESSORBUS_SPEED_OVERRIDE_VALUE_HELP              #language en-US "Processor Bus Speed Override Parameters. The value entered will be taken as Overclocking Percentage(%) of current Clock frequency. The value varies from 0% to 49%."
+
+#string STR_OVERCLOCK_EXPFREQ_PROMPT                            #language en-US "Expected CPU Freq"
+#string STR_OVERCLOCK_EXPFREQ_VAL                               #language en-US ""
+#string STR_OVERCLOCK_EXPFREQ_HELP                              #language en-US "Expected Processor frequency calculated using Bus ratio and Bus speed."
+
+#string STR_PERCODE_RATIO_OVERRIDE                              #language en-US "Per Core Ratio Override"
+#string STR_PERCODE_RATIO_OVERRIDE_HELP                         #language en-US "Enable / Disable Per Core Ratio Override. Enable - Set maximum OC ratio to specific core by OCMB 0x1D command; Disable - Set maximum OC ratio to all cores by OCMB command 0x11. Reminding: It's expected we should manual change the "Turbo Ratio Limit(TRL) MSR 0x1AD / 0x1AE" settings based on here max core ratio changed"
+
+#string STR_PERCORE_DISABLE_CONFIGURATION                       #language en-US "Per Core Disable Configuration"
+#string STR_PERCORE_DISABLE_CONFIGURATION_HELP                  #language en-US "Enable/Disable Per Core Disable. When Per Core Disable Configuration is enabled, selection of Active Cores and Active Efficient-cores will be disabled."
+
+#string STR_PROCESSOR_DISABLE                                   #language en-US "Processor Disable"
+#string STR_PROCESSOR_DISABLE_HELP                              #language en-US "Processor Disable Control"
+
+#string STR_GRANULAR_RATIO_OVERRIDE                             #language en-US "Granular Ratio Override"
+#string STR_GRANULAR_RATIO_OVERRIDE_HELP                        #language en-US "Enable / Disable Granular Ratio Override. After Enable, user can limit the Core frequency to a sub-bin ratio below P0 by OCMB 0x27."
+
+#string STR_GRANULAR_RATIO_UNITS_HELP                           #language en-US ""
+
+#string STR_GRANULAR_RATIO_UNITS_STRING                         #language en-US "  Granular Ratio Units"
+#string STR_GRANULAR_RATIO_UNITS_VALUE                          #language en-US ""
+
+#string STR_PERCORE_GRANULAR_RATIO_BINS_0                       #language en-US "  Core 0 Granular Ratio Bins"
+#string STR_PERCORE_GRANULAR_RATIO_BINS_0_HELP                  #language en-US "Override Granular Ratio Bins for the CPU Core 0. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_PERCORE_GRANULAR_RATIO_BINS_1                       #language en-US "  Core 1 Granular Ratio Bins"
+#string STR_PERCORE_GRANULAR_RATIO_BINS_1_HELP                  #language en-US "Override Granular Ratio Bins for the CPU Core 1. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_PERCORE_GRANULAR_RATIO_BINS_2                       #language en-US "  Core 2 Granular Ratio Bins"
+#string STR_PERCORE_GRANULAR_RATIO_BINS_2_HELP                  #language en-US "Override Granular Ratio Bins for the CPU Core 2. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_PERCORE_GRANULAR_RATIO_BINS_3                       #language en-US "  Core 3 Granular Ratio Bins"
+#string STR_PERCORE_GRANULAR_RATIO_BINS_3_HELP                  #language en-US "Override Granular Ratio Bins for the CPU Core 3. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_PERCORE_GRANULAR_RATIO_BINS_4                       #language en-US "  Core 4 Granular Ratio Bins"
+#string STR_PERCORE_GRANULAR_RATIO_BINS_4_HELP                  #language en-US "Override Granular Ratio Bins for the CPU Core 4. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_PERCORE_GRANULAR_RATIO_BINS_5                       #language en-US "  Core 5 Granular Ratio Bins"
+#string STR_PERCORE_GRANULAR_RATIO_BINS_5_HELP                  #language en-US "Override Granular Ratio Bins for the CPU Core 5. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_PERCORE_GRANULAR_RATIO_BINS_6                       #language en-US "  Core 6 Granular Ratio Bins"
+#string STR_PERCORE_GRANULAR_RATIO_BINS_6_HELP                  #language en-US "Override Granular Ratio Bins for the CPU Core 6. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_PERCORE_GRANULAR_RATIO_BINS_7                       #language en-US "  Core 7 Granular Ratio Bins"
+#string STR_PERCORE_GRANULAR_RATIO_BINS_7_HELP                  #language en-US "Override Granular Ratio Bins for the CPU Core 7. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_0                  #language en-US "  AtomCluster 0 Granular Ratio Bins"
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_0_HELP             #language en-US "Override Granular Ratio Bins for the CPU AtomCluster 0. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_1                  #language en-US "  AtomCluster 1 Granular Ratio Bins"
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_1_HELP             #language en-US "Override Granular Ratio Bins for the CPU AtomCluster 1. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_2                  #language en-US "  AtomCluster 2 Granular Ratio Bins"
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_2_HELP             #language en-US "Override Granular Ratio Bins for the CPU AtomCluster 2. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_3                  #language en-US "  AtomCluster 3 Granular Ratio Bins"
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_3_HELP             #language en-US "Override Granular Ratio Bins for the CPU AtomCluster 3. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_4                  #language en-US "  AtomCluster 4 Granular Ratio Bins"
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_4_HELP             #language en-US "Override Granular Ratio Bins for the CPU AtomCluster 4. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_5                  #language en-US "  AtomCluster 5 Granular Ratio Bins"
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_5_HELP             #language en-US "Override Granular Ratio Bins for the CPU AtomCluster 5. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_6                  #language en-US "  AtomCluster 6 Granular Ratio Bins"
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_6_HELP             #language en-US "Override Granular Ratio Bins for the CPU AtomCluster 6. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_7                  #language en-US "  AtomCluster 7 Granular Ratio Bins"
+#string STR_ATOM_CLUSTER_GRANULAR_RATIO_BINS_7_HELP             #language en-US "Override Granular Ratio Bins for the CPU AtomCluster 7. Defines how many bins of 'Granularity Units' will be subtracted from the otherwise-configured P0 frequency."
+
+#string STR_CORE_BIT0                                           #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT1                                           #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT2                                           #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT3                                           #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT4                                           #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT5                                           #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT6                                           #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT7                                           #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT8                                           #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT9                                           #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT10                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT11                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT12                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT13                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT14                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT15                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT16                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT17                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT18                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT19                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT20                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT21                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT22                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT23                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT24                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT25                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT26                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT27                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT28                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT29                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT30                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT31                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT32                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT33                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT34                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT35                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT36                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT37                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT38                                          #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT39                                          #language en-US "N/A" //dynamically updated
+
+#string STR_CORE_BIT0_HELP                                      #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT1_HELP                                      #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT2_HELP                                      #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT3_HELP                                      #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT4_HELP                                      #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT5_HELP                                      #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT6_HELP                                      #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT7_HELP                                      #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT8_HELP                                      #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT9_HELP                                      #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT10_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT11_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT12_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT13_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT14_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT15_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT16_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT17_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT18_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT19_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT20_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT21_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT22_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT23_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT24_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT25_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT26_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT27_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT28_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT29_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT30_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT31_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT32_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT33_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT34_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT35_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT36_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT37_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT38_HELP                                     #language en-US "N/A" //dynamically updated
+#string STR_CORE_BIT39_HELP                                     #language en-US "N/A" //dynamically updated
+
+
+#string STR_SA_PLL_FREQUENCY_OVERRIDE                           #language en-US "SA PLL Frequency Override"
+#string STR_SA_PLL_FREQUENCY_OVERRIDE_HELP                      #language en-US "Configure Sa PLL Frequency."
+#string STR_2400M                                               #language en-US "2400 MHz"
+#string STR_1600M                                               #language en-US "1600 MHz"
+
+#string STR_TSC_DISABLE_HW_FIXUP                                #language en-US "BCLK TSC HW Fixup"
+#string STR_TSC_DISABLE_HW_FIXUP_HELP                           #language en-US "BCLK TSC HW Fixup disable during TSC copy from PMA to APIC"
+
+#string STR_CPU_DLVR_MODE                                       #language en-US "CPU DLVR Mode"
+#string STR_CPU_DLVR_MODE_HELP                                  #language en-US "Select Core(s) and RING DLVR Mode"
+#string STR_REGULATION_MODE                                     #language en-US "Regulation Mode"
+#string STR_POWER_GATE_MODE                                     #language en-US "Power Gate Mode"
+
+#string STR_CORE_OP_POINT_REPORTING                             #language en-US "Core Operating Point Reporting"
+#string STR_CORE_OP_POINT_REPORTING_HELP                        #language en-US "When this option is enabled, current core performance values of Ratio and Voltage will be reported in the MSR 0x196. User is allowed to enable reporting on overclocking parts."
+
+#string STR_CORE_MAX_OC_RATIO                                   #language en-US "Core Max OC Ratio"
+#string STR_CORE_MAX_OC_RATIO_HELP                              #language en-US "Sets the maximum OC Ratio for the CPU Core. Uses Mailbox MSR 0x150, cmd 0x10, 0x11. Range non-turbo max - 120."
+
+#string STR_PERCORE_RATIO_0                                     #language en-US "  Core 0 Max Ratio"
+#string STR_PERCORE_RATIO_0_HELP                                #language en-US "Override current maximum OC Ratio for the CPU Core 0."
+#string STR_PERCORE_RATIO_1                                     #language en-US "  Core 1 Max Ratio"
+#string STR_PERCORE_RATIO_1_HELP                                #language en-US "Override current maximum OC Ratio for the CPU Core 1."
+#string STR_PERCORE_RATIO_2                                     #language en-US "  Core 2 Max Ratio"
+#string STR_PERCORE_RATIO_2_HELP                                #language en-US "Override current maximum OC Ratio for the CPU Core 2."
+#string STR_PERCORE_RATIO_3                                     #language en-US "  Core 3 Max Ratio"
+#string STR_PERCORE_RATIO_3_HELP                                #language en-US "Override current maximum OC Ratio for the CPU Core 3."
+#string STR_PERCORE_RATIO_4                                     #language en-US "  Core 4 Max Ratio"
+#string STR_PERCORE_RATIO_4_HELP                                #language en-US "Override current maximum OC Ratio for the CPU Core 4."
+#string STR_PERCORE_RATIO_5                                     #language en-US "  Core 5 Max Ratio"
+#string STR_PERCORE_RATIO_5_HELP                                #language en-US "Override current maximum OC Ratio for the CPU Core 5."
+#string STR_PERCORE_RATIO_6                                     #language en-US "  Core 6 Max Ratio"
+#string STR_PERCORE_RATIO_6_HELP                                #language en-US "Override current maximum OC Ratio for the CPU Core 6."
+#string STR_PERCORE_RATIO_7                                     #language en-US "  Core 7 Max Ratio"
+#string STR_PERCORE_RATIO_7_HELP                                #language en-US "Override current maximum OC Ratio for the CPU Core 7."
+#string STR_PERCORE_RATIO_8                                     #language en-US "  Core 8 Max Ratio"
+#string STR_PERCORE_RATIO_8_HELP                                #language en-US "Override current maximum OC Ratio for the CPU Core 8."
+#string STR_PERCORE_RATIO_9                                     #language en-US "  Core 9 Max Ratio"
+#string STR_PERCORE_RATIO_9_HELP                                #language en-US "Override current maximum OC Ratio for the CPU Core 9."
+
+#string STR_PERCORE_VOLTAGE_MODE_0                              #language en-US "Core 0 Voltage Mode"
+#string STR_PERCORE_VOLTAGE_MODE_0_HELP                         #language en-US "Selects Core 0 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_PERCORE_VOLTAGE_MODE_1                              #language en-US "Core 1 Voltage Mode"
+#string STR_PERCORE_VOLTAGE_MODE_1_HELP                         #language en-US "Selects Core 1 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_PERCORE_VOLTAGE_MODE_2                              #language en-US "Core 2 Voltage Mode"
+#string STR_PERCORE_VOLTAGE_MODE_2_HELP                         #language en-US "Selects Core 2 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_PERCORE_VOLTAGE_MODE_3                              #language en-US "Core 3 Voltage Mode"
+#string STR_PERCORE_VOLTAGE_MODE_3_HELP                         #language en-US "Selects Core 3 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_PERCORE_VOLTAGE_MODE_4                              #language en-US "Core 4 Voltage Mode"
+#string STR_PERCORE_VOLTAGE_MODE_4_HELP                         #language en-US "Selects Core 4 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_PERCORE_VOLTAGE_MODE_5                              #language en-US "Core 5 Voltage Mode"
+#string STR_PERCORE_VOLTAGE_MODE_5_HELP                         #language en-US "Selects Core 5 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_PERCORE_VOLTAGE_MODE_6                              #language en-US "Core 6 Voltage Mode"
+#string STR_PERCORE_VOLTAGE_MODE_6_HELP                         #language en-US "Selects Core 6 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_PERCORE_VOLTAGE_MODE_7                              #language en-US "Core 7 Voltage Mode"
+#string STR_PERCORE_VOLTAGE_MODE_7_HELP                         #language en-US "Selects Core 7 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+
+#string STR_PERCORE_VOLTAGE_OVERRIDE_0                          #language en-US "  Core 0 Voltage Override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_0_HELP                     #language en-US "Specifies the Override Voltage applied to the IA Core 0 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_1                          #language en-US "  Core 1 Voltage Override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_1_HELP                     #language en-US "Specifies the Override Voltage applied to the IA Core 1 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_2                          #language en-US "  Core 2 Voltage Override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_2_HELP                     #language en-US "Specifies the Override Voltage applied to the IA Core 2 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_3                          #language en-US "  Core 3 Voltage Override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_3_HELP                     #language en-US "Specifies the Override Voltage applied to the IA Core 3 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_4                          #language en-US "  Core 4 Voltage Override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_4_HELP                     #language en-US "Specifies the Override Voltage applied to the IA Core 4 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_5                          #language en-US "  Core 5 Voltage Override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_5_HELP                     #language en-US "Specifies the Override Voltage applied to the IA Core 5 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_6                          #language en-US "  Core 6 Voltage Override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_6_HELP                     #language en-US "Specifies the Override Voltage applied to the IA Core 6 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_7                          #language en-US "  Core 7 Voltage Override"
+#string STR_PERCORE_VOLTAGE_OVERRIDE_7_HELP                     #language en-US "Specifies the Override Voltage applied to the IA Core 7 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_0                          #language en-US "  Core 0 Adaptive Voltage"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_0_HELP                     #language en-US "Specifies the adaptive voltage applied while IA Core 0 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_1                          #language en-US "  Core 1 Adaptive Voltage"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_1_HELP                     #language en-US "Specifies the adaptive voltage applied while IA Core 1 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_2                          #language en-US "  Core 2 Adaptive Voltage"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_2_HELP                     #language en-US "Specifies the adaptive voltage applied while IA Core 2 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_3                          #language en-US "  Core 3 Adaptive Voltage"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_3_HELP                     #language en-US "Specifies the adaptive voltage applied while IA Core 3 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_4                          #language en-US "  Core 4 Adaptive Voltage"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_4_HELP                     #language en-US "Specifies the adaptive voltage applied while IA Core 4 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_5                          #language en-US "  Core 5 Adaptive Voltage"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_5_HELP                     #language en-US "Specifies the adaptive voltage applied while IA Core 5 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_6                          #language en-US "  Core 6 Adaptive Voltage"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_6_HELP                     #language en-US "Specifies the adaptive voltage applied while IA Core 6 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_7                          #language en-US "  Core 7 Adaptive Voltage"
+#string STR_PERCORE_ADAPTIVE_VOLTAGE_7_HELP                     #language en-US "Specifies the adaptive voltage applied while IA Core 7 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+
+#string STR_PERCORE_MAX_RATIO_0                                 #language en-US "Core 0 Max OC Ratio"
+#string STR_PERCORE_MAX_RATIO_0_HELP                            #language en-US "Override maximum OC Ratio for the CPU Core 0 by setting OCMB 0x11 command."
+#string STR_PERCORE_MAX_RATIO_1                                 #language en-US "Core 1 Max OC Ratio"
+#string STR_PERCORE_MAX_RATIO_1_HELP                            #language en-US "Override maximum OC Ratio for the CPU Core 1 by setting OCMB 0x11 command."
+#string STR_PERCORE_MAX_RATIO_2                                 #language en-US "Core 2 Max OC Ratio"
+#string STR_PERCORE_MAX_RATIO_2_HELP                            #language en-US "Override maximum OC Ratio for the CPU Core 2 by setting OCMB 0x11 command."
+#string STR_PERCORE_MAX_RATIO_3                                 #language en-US "Core 3 Max OC Ratio"
+#string STR_PERCORE_MAX_RATIO_3_HELP                            #language en-US "Override maximum OC Ratio for the CPU Core 3 by setting OCMB 0x11 command."
+#string STR_PERCORE_MAX_RATIO_4                                 #language en-US "Core 4 Max OC Ratio"
+#string STR_PERCORE_MAX_RATIO_4_HELP                            #language en-US "Override maximum OC Ratio for the CPU Core 4 by setting OCMB 0x11 command."
+#string STR_PERCORE_MAX_RATIO_5                                 #language en-US "Core 5 Max OC Ratio"
+#string STR_PERCORE_MAX_RATIO_5_HELP                            #language en-US "Override maximum OC Ratio for the CPU Core 5 by setting OCMB 0x11 command."
+#string STR_PERCORE_MAX_RATIO_6                                 #language en-US "Core 6 Max OC Ratio"
+#string STR_PERCORE_MAX_RATIO_6_HELP                            #language en-US "Override maximum OC Ratio for the CPU Core 6 by setting OCMB 0x11 command."
+#string STR_PERCORE_MAX_RATIO_7                                 #language en-US "Core 7 Max OC Ratio"
+#string STR_PERCORE_MAX_RATIO_7_HELP                            #language en-US "Override maximum OC Ratio for the CPU Core 7 by setting OCMB 0x11 command."
+
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_0                         #language en-US "Cluster 0 Voltage Mode"
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_0_HELP                    #language en-US "Selects Cluster 0 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_1                         #language en-US "Cluster 1 Voltage Mode"
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_1_HELP                    #language en-US "Selects Cluster 1 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_2                         #language en-US "Cluster 2 Voltage Mode"
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_2_HELP                    #language en-US "Selects Cluster 2 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_3                         #language en-US "Cluster 3 Voltage Mode"
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_3_HELP                    #language en-US "Selects Cluster 3 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_4                         #language en-US "Cluster 4 Voltage Mode"
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_4_HELP                    #language en-US "Selects Cluster 4 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_5                         #language en-US "Cluster 5 Voltage Mode"
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_5_HELP                    #language en-US "Selects Cluster 5 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_6                         #language en-US "Cluster 6 Voltage Mode"
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_6_HELP                    #language en-US "Selects Cluster 6 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_7                         #language en-US "Cluster 7 Voltage Mode"
+#string STR_ATOM_CLUSTER_VOLTAGE_MODE_7_HELP                    #language en-US "Selects Cluster 7 between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode."
+
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_0                     #language en-US "  Cluster 0 Voltage Override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_0_HELP                #language en-US "Specifies the Override Voltage applied to the IA Cluster 0 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_1                     #language en-US "  Cluster 1 Voltage Override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_1_HELP                #language en-US "Specifies the Override Voltage applied to the IA Cluster 1 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_2                     #language en-US "  Cluster 2 Voltage Override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_2_HELP                #language en-US "Specifies the Override Voltage applied to the IA Cluster 2 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_3                     #language en-US "  Cluster 3 Voltage Override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_3_HELP                #language en-US "Specifies the Override Voltage applied to the IA Cluster 3 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_4                     #language en-US "  Cluster 4 Voltage Override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_4_HELP                #language en-US "Specifies the Override Voltage applied to the IA Cluster 4 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_5                     #language en-US "  Cluster 5 Voltage Override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_5_HELP                #language en-US "Specifies the Override Voltage applied to the IA Cluster 5 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_6                     #language en-US "  Cluster 6 Voltage Override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_6_HELP                #language en-US "Specifies the Override Voltage applied to the IA Cluster 6 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_7                     #language en-US "  Cluster 7 Voltage Override"
+#string STR_ATOM_CLUSTER_VOLTAGE_OVERRIDE_7_HELP                #language en-US "Specifies the Override Voltage applied to the IA Cluster 7 domain. This voltage is specified in millivolts. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_0                     #language en-US "  Cluster 0 Adaptive Voltage"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_0_HELP                #language en-US "Specifies the adaptive voltage applied while IA Cluster 0 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_1                     #language en-US "  Cluster 1 Adaptive Voltage"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_1_HELP                #language en-US "Specifies the adaptive voltage applied while IA Cluster 1 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_2                     #language en-US "  Cluster 2 Adaptive Voltage"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_2_HELP                #language en-US "Specifies the adaptive voltage applied while IA Cluster 2 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_3                     #language en-US "  Cluster 3 Adaptive Voltage"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_3_HELP                #language en-US "Specifies the adaptive voltage applied while IA Cluster 3 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_4                     #language en-US "  Cluster 4 Adaptive Voltage"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_4_HELP                #language en-US "Specifies the adaptive voltage applied while IA Cluster 4 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_5                     #language en-US "  Cluster 5 Adaptive Voltage"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_5_HELP                #language en-US "Specifies the adaptive voltage applied while IA Cluster 5 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_6                     #language en-US "  Cluster 6 Adaptive Voltage"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_6_HELP                #language en-US "Specifies the adaptive voltage applied while IA Cluster 6 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_7                     #language en-US "  Cluster 7 Adaptive Voltage"
+#string STR_ATOM_CLUSTER_ADAPTIVE_VOLTAGE_7_HELP                #language en-US "Specifies the adaptive voltage applied while IA Cluster 7 is operating in adaptive mode. Range 0-2050 mV. Type 1200 means 1200mV and default 0 means no override"
+
+#string STR_ATOM_CLUSTER_MAX_RATIO_0                            #language en-US "Cluster 0 Max OC Ratio"
+#string STR_ATOM_CLUSTER_MAX_RATIO_0_HELP                       #language en-US "Override maximum OC Ratio for the CPU Cluster 0 by setting OCMB 0x11 command."
+#string STR_ATOM_CLUSTER_MAX_RATIO_1                            #language en-US "Cluster 1 Max OC Ratio"
+#string STR_ATOM_CLUSTER_MAX_RATIO_1_HELP                       #language en-US "Override maximum OC Ratio for the CPU Cluster 1 by setting OCMB 0x11 command."
+#string STR_ATOM_CLUSTER_MAX_RATIO_2                            #language en-US "Cluster 2 Max OC Ratio"
+#string STR_ATOM_CLUSTER_MAX_RATIO_2_HELP                       #language en-US "Override maximum OC Ratio for the CPU Cluster 2 by setting OCMB 0x11 command."
+#string STR_ATOM_CLUSTER_MAX_RATIO_3                            #language en-US "Cluster 3 Max OC Ratio"
+#string STR_ATOM_CLUSTER_MAX_RATIO_3_HELP                       #language en-US "Override maximum OC Ratio for the CPU Cluster 3 by setting OCMB 0x11 command."
+#string STR_ATOM_CLUSTER_MAX_RATIO_4                            #language en-US "Cluster 4 Max OC Ratio"
+#string STR_ATOM_CLUSTER_MAX_RATIO_4_HELP                       #language en-US "Override maximum OC Ratio for the CPU Cluster 4 by setting OCMB 0x11 command."
+#string STR_ATOM_CLUSTER_MAX_RATIO_5                            #language en-US "Cluster 5 Max OC Ratio"
+#string STR_ATOM_CLUSTER_MAX_RATIO_5_HELP                       #language en-US "Override maximum OC Ratio for the CPU Cluster 5 by setting OCMB 0x11 command."
+#string STR_ATOM_CLUSTER_MAX_RATIO_6                            #language en-US "Cluster 6 Max OC Ratio"
+#string STR_ATOM_CLUSTER_MAX_RATIO_6_HELP                       #language en-US "Override maximum OC Ratio for the CPU Cluster 6 by setting OCMB 0x11 command."
+#string STR_ATOM_CLUSTER_MAX_RATIO_7                            #language en-US "Cluster 7 Max OC Ratio"
+#string STR_ATOM_CLUSTER_MAX_RATIO_7_HELP                       #language en-US "Override maximum OC Ratio for the CPU Cluster 7 by setting OCMB 0x11 command."
+
+#string STR_ATOM_CLUSTER_0_RATIO                                #language en-US "  Cluster 0 Max Ratio"
+#string STR_ATOM_CLUSTER_0_RATIO_HELP                           #language en-US "Override Efficient-cores 0 - 3 Maximum OC Ratio, maximum value up to 120."
+                                                                                "Note. E-cores 0 - 3 are in the same Cluster and their max core ratio will be aligned."
+#string STR_ATOM_CLUSTER_1_RATIO                                #language en-US "  Cluster 1 Max Ratio"
+#string STR_ATOM_CLUSTER_1_RATIO_HELP                           #language en-US "Override Efficient-cores 4 - 7 Maximum OC Ratio, maximum value up to 120."
+                                                                                "Note. E-cores 4 - 7 are in the same Cluster and their max core ratio will be aligned."
+#string STR_ATOM_CLUSTER_2_RATIO                                #language en-US "  Cluster 2 Max Ratio"
+#string STR_ATOM_CLUSTER_2_RATIO_HELP                           #language en-US "Override Efficient-cores 8 - 11 Maximum OC Ratio, maximum value up to 120."
+                                                                                "Note. E-cores 8 - 11 are in the same Cluster and their max core ratio will be aligned."
+#string STR_ATOM_CLUSTER_3_RATIO                                #language en-US "  Cluster 3 Max Ratio"
+#string STR_ATOM_CLUSTER_3_RATIO_HELP                           #language en-US "Override Efficient-cores 12 - 15 Maximum OC Ratio, maximum value up to 120."
+                                                                                "Note. E-cores 12 - 15 are in the same Cluster and their max core ratio will be aligned."
+#string STR_ATOM_CLUSTER_4_RATIO                                #language en-US "  Cluster 4 Max Ratio"
+#string STR_ATOM_CLUSTER_4_RATIO_HELP                           #language en-US "Override Efficient-cores 16 - 19 Maximum OC Ratio, maximum value up to 120."
+                                                                                "Note. E-cores 16 - 19 are in the same Cluster and their max core ratio will be aligned."
+#string STR_ATOM_CLUSTER_5_RATIO                                #language en-US "  Cluster 5 Max Ratio"
+#string STR_ATOM_CLUSTER_5_RATIO_HELP                           #language en-US "Override Efficient-cores 20 - 23 Maximum OC Ratio, maximum value up to 120."
+                                                                                "Note. E-cores 20 - 23 are in the same Cluster and their max core ratio will be aligned."
+#string STR_ATOM_CLUSTER_6_RATIO                                #language en-US "  Cluster 6 Max Ratio"
+#string STR_ATOM_CLUSTER_6_RATIO_HELP                           #language en-US "Override Efficient-cores 24 - 27 Maximum OC Ratio, maximum value up to 120."
+                                                                                "Note. E-cores 24 - 27 are in the same Cluster and their max core ratio will be aligned."
+#string STR_ATOM_CLUSTER_7_RATIO                                #language en-US "  Cluster 7 Max Ratio"
+#string STR_ATOM_CLUSTER_7_RATIO_HELP                           #language en-US "Override Efficient-cores 28 - 31 Maximum OC Ratio, maximum value up to 120."
+                                                                                "Note. E-cores 28 - 31 are in the same Cluster and their max core ratio will be aligned."
+
+#string STR_ATOM_VOLTAGE_OFFSET_PREFIX                          #language en-US "  Offset Prefix"
+
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_0                   #language en-US "E-core Cluster 0 Voltage Offset"
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_0_HELP              #language en-US "Specifies the Offset Voltage applied to the Efficient-core Cluster 0 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_1                   #language en-US "E-core Cluster 1 Voltage Offset"
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_1_HELP              #language en-US "Specifies the Offset Voltage applied to the Efficient-core Cluster 1 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_2                   #language en-US "E-core Cluster 2 Voltage Offset"
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_2_HELP              #language en-US "Specifies the Offset Voltage applied to the Efficient-core Cluster 2 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_3                   #language en-US "E-core Cluster 3 Voltage Offset"
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_3_HELP              #language en-US "Specifies the Offset Voltage applied to the Efficient-core Cluster 3 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_4                   #language en-US "E-core Cluster 4 Voltage Offset"
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_4_HELP              #language en-US "Specifies the Offset Voltage applied to the Efficient-core Cluster 4 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_5                   #language en-US "E-core Cluster 5 Voltage Offset"
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_5_HELP              #language en-US "Specifies the Offset Voltage applied to the Efficient-core Cluster 5 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_6                   #language en-US "E-core Cluster 6 Voltage Offset"
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_6_HELP              #language en-US "Specifies the Offset Voltage applied to the Efficient-core Cluster 6 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_7                   #language en-US "E-core Cluster 7 Voltage Offset"
+#string STR_PER_ATOM_CLUSTER_VOLTAGE_OFFSET_7_HELP              #language en-US "Specifies the Offset Voltage applied to the Efficient-core Cluster 7 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OC_RATIO_NAME0                             #language en-US "  VF Point 1 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE0                            #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME1                             #language en-US "  VF Point 2 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE1                            #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME2                             #language en-US "  VF Point 3 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE2                            #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME3                             #language en-US "  VF Point 4 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE3                            #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME4                             #language en-US "  VF Point 5 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE4                            #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME5                             #language en-US "  VF Point 6 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE5                            #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME6                             #language en-US "  VF Point 7 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE6                            #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME7                             #language en-US "  VF Point 8 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE7                            #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME8                             #language en-US "  VF Point 9 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE8                            #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME9                             #language en-US "  VF Point 10 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE9                            #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME10                            #language en-US "  VF Point 11 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE10                           #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME11                            #language en-US "  VF Point 12 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE11                           #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME12                            #language en-US "  VF Point 13 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE12                           #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME13                            #language en-US "  VF Point 14 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE13                           #language en-US "N/A"
+#string STR_VF_POINT_OC_RATIO_NAME14                            #language en-US "  VF Point 15 Ratio"
+#string STR_VF_POINT_OC_RATIO_VALUE14                           #language en-US "N/A"
+
+#string STR_CORE_VOLTAGE_MODE                                   #language en-US "Core Voltage Mode"
+#string STR_CORE_VOLTAGE_MODE_HELP                              #language en-US "Selects between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11."
+
+#string STR_VF_POINT_OFFSET_MODE                                #language en-US "VF Offset Mode"
+#string STR_VF_POINT_OFFSET_MODE_HELP                           #language en-US "Selects between Legacy and Selection modes. Need Reset System after enabling OverClocking Feature to Initialize the default value. In Legacy Mode, setting a global offset for the entire VF curve. In Selection modes, setting a selected VF point."
+
+#string STR_VF_CONFIG_SCOPE                                     #language en-US "VF Configuration Scope"
+#string STR_VF_CONFIG_SCOPE_HELP                                #language en-US "Allows both all cores VF curve or per-core VF curve configuration."
+
+#string STR_CORE_VOLTAGE_OVERRIDE                               #language en-US "P-core Voltage Override"
+#string STR_CORE_VOLTAGE_OVERRIDE_HELP                          #language en-US "Specifies the Override Voltage applied to the Performance-core domain. This voltage is specified in millivolts. Range 0-2000 mV."
+
+#string STR_CORE_VOLTAGE_OFFSET                                 #language en-US "P-core Voltage Offset"
+#string STR_CORE_VOLTAGE_OFFSET_HELP                            #language en-US "Specifies the Offset Voltage applied to the Global Performance-core domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_CORE_VOLTAGE_OFFSET_0                           #language en-US "P-core 0 Voltage Offset"
+#string STR_PER_CORE_VOLTAGE_OFFSET_0_HELP                      #language en-US "Specifies the Offset Voltage applied to the Performance-core 0 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_CORE_VOLTAGE_OFFSET_1                           #language en-US "P-core 1 Voltage Offset"
+#string STR_PER_CORE_VOLTAGE_OFFSET_1_HELP                      #language en-US "Specifies the Offset Voltage applied to the Performance-core 1 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_CORE_VOLTAGE_OFFSET_2                           #language en-US "P-core 2 Voltage Offset"
+#string STR_PER_CORE_VOLTAGE_OFFSET_2_HELP                      #language en-US "Specifies the Offset Voltage applied to the Performance-core 2 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_CORE_VOLTAGE_OFFSET_3                           #language en-US "P-core 3 Voltage Offset"
+#string STR_PER_CORE_VOLTAGE_OFFSET_3_HELP                      #language en-US "Specifies the Offset Voltage applied to the Performance-core 3 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_CORE_VOLTAGE_OFFSET_4                           #language en-US "P-core 4 Voltage Offset"
+#string STR_PER_CORE_VOLTAGE_OFFSET_4_HELP                      #language en-US "Specifies the Offset Voltage applied to the Performance-core 4 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_CORE_VOLTAGE_OFFSET_5                           #language en-US "P-core 5 Voltage Offset"
+#string STR_PER_CORE_VOLTAGE_OFFSET_5_HELP                      #language en-US "Specifies the Offset Voltage applied to the Performance-core 5 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_CORE_VOLTAGE_OFFSET_6                           #language en-US "P-core 6 Voltage Offset"
+#string STR_PER_CORE_VOLTAGE_OFFSET_6_HELP                      #language en-US "Specifies the Offset Voltage applied to the Performance-core 6 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_PER_CORE_VOLTAGE_OFFSET_7                           #language en-US "P-core 7 Voltage Offset"
+#string STR_PER_CORE_VOLTAGE_OFFSET_7_HELP                      #language en-US "Specifies the Offset Voltage applied to the Performance-core 7 domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_0                                   #language en-US "VF Point 1 Offset"
+#string STR_VF_POINT_OFFSET_0_HELP                              #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 1. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0x1. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_1                                   #language en-US "VF Point 2 Offset"
+#string STR_VF_POINT_OFFSET_1_HELP                              #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 2. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0x2. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_2                                   #language en-US "VF Point 3 Offset"
+#string STR_VF_POINT_OFFSET_2_HELP                              #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 3. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0x3. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_3                                   #language en-US "VF Point 4 Offset"
+#string STR_VF_POINT_OFFSET_3_HELP                              #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 4. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0x4. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_4                                   #language en-US "VF Point 5 Offset"
+#string STR_VF_POINT_OFFSET_4_HELP                              #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 5. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0x5. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_5                                   #language en-US "VF Point 6 Offset"
+#string STR_VF_POINT_OFFSET_5_HELP                              #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 6. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0x6. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_6                                   #language en-US "VF Point 7 Offset"
+#string STR_VF_POINT_OFFSET_6_HELP                              #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 7. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0x7. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_7                                   #language en-US "VF Point 8 Offset"
+#string STR_VF_POINT_OFFSET_7_HELP                              #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 8. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0x8. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_8                                   #language en-US "VF Point 9 Offset"
+#string STR_VF_POINT_OFFSET_8_HELP                              #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 9. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0x9. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_9                                  #language en-US "VF Point 10 Offset"
+#string STR_VF_POINT_OFFSET_9_HELP                             #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 10. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0xA. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_10                                  #language en-US "VF Point 11 Offset"
+#string STR_VF_POINT_OFFSET_10_HELP                             #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 11. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0xB. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_11                                  #language en-US "VF Point 12 Offset"
+#string STR_VF_POINT_OFFSET_11_HELP                             #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 12. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0xC. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_12                                  #language en-US "VF Point 13 Offset"
+#string STR_VF_POINT_OFFSET_12_HELP                             #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 13. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0xD. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_13                                  #language en-US "VF Point 14 Offset"
+#string STR_VF_POINT_OFFSET_13_HELP                             #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 14. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0xE. Range -500 to 500 mV"
+
+#string STR_VF_POINT_OFFSET_14                                  #language en-US "VF Point 15 Offset"
+#string STR_VF_POINT_OFFSET_14_HELP                             #language en-US "Specifies the Offset Voltage applied to the Selected VF Point 15. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11, Param1 0:Core 2:Ring, Param2 0xF. Range -500 to 500 mV"
+
+#string STR_GT_VF_POINT_OC_RATIO_VALUE0                         #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE1                         #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE2                         #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE3                         #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE4                         #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE5                         #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE6                         #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE7                         #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE8                         #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE9                         #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE10                        #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE11                        #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE12                        #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE13                        #language en-US "N/A"
+#string STR_GT_VF_POINT_OC_RATIO_VALUE14                        #language en-US "N/A"
+
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE0                      #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE1                      #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE2                      #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE3                      #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE4                      #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE5                      #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE6                      #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE7                      #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE8                      #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE9                      #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE10                     #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE11                     #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE12                     #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE13                     #language en-US "N/A"
+#string STR_MEMSS_VF_POINT_OC_RATIO_VALUE14                     #language en-US "N/A"
+
+#string STR_RING_VF_POINT_OC_RATIO_VALUE0                       #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE1                       #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE2                       #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE3                       #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE4                       #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE5                       #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE6                       #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE7                       #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE8                       #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE9                       #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE10                      #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE11                      #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE12                      #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE13                      #language en-US "N/A"
+#string STR_RING_VF_POINT_OC_RATIO_VALUE14                      #language en-US "N/A"
+
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE0                        #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE1                        #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE2                        #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE3                        #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE4                        #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE5                        #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE6                        #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE7                        #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE8                        #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE9                        #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE10                       #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE11                       #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE12                       #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE13                       #language en-US "N/A"
+#string STR_NGU_VF_POINT_OC_RATIO_VALUE14                       #language en-US "N/A"
+
+#string STR_RING_MAX_OC_RATIO                                   #language en-US "Ring Max OC Ratio"
+#string STR_RING_MAX_OC_RATIO_HELP                              #language en-US "Sets the maximum OC Ratio for the CPU Ring. Uses Mailbox MSR 0x150, cmd 0x10, 0x11. Range non-turbo max - 85."
+
+#string STR_RING_VOLTAGE_MODE                                   #language en-US "Ring Voltage Mode"
+#string STR_RING_VOLTAGE_MODE_HELP                              #language en-US "Selects between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11."
+
+#string STR_RING_VOLTAGE_OVERRIDE                               #language en-US "Ring Voltage Override"
+#string STR_RING_VOLTAGE_OVERRIDE_HELP                          #language en-US "Specifies the Override Voltage applied to the Ring domain. This voltage is specified in millivolts. Range 0-2000 mV."
+
+#string STR_RING_VOLTAGE_OFFSET                                 #language en-US "Ring Voltage Offset"
+#string STR_RING_VOLTAGE_OFFSET_HELP                            #language en-US "Specifies the Offset Voltage applied to the Ring domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_RING_ADAPTIVE_VOLTAGE                               #language en-US "Ring Adaptive Voltage"
+#string STR_RING_ADAPTIVE_VOLTAGE_HELP                          #language en-US "Specifies the adaptive voltage applied while ring is operating in adaptive mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11. Range 0-2000 mV"
+
+#string STR_CORE_PLL_VOLTAGE_OFFSET                             #language en-US "Core PLL Voltage Offset"
+#string STR_GT_PLL_VOLTAGE_OFFSET                               #language en-US "GT PLL Voltage Offset"
+#string STR_RING_PLL_VOLTAGE_OFFSET                             #language en-US "Ring PLL Voltage Offset"
+#string STR_IA_ATOM_PLL_VOLTAGE_OFFSET                          #language en-US "IA Atom PLL Voltage Offset"
+#string STR_PLL_VOLTAGE_OFFSET_HELP                             #language en-US "PLL Voltage Offset, Range 0-15. Units are in 17.5mV. Default is 0. This control can be used to increase the range of this domain frequency in extreme overclocking conditions."
+
+#string STR_CORE_ADAPTIVE_VOLTAGE                               #language en-US "P-core Adaptive Voltage"
+#string STR_CORE_ADAPTIVE_VOLTAGE_HELP                          #language en-US "Specifies the adaptive voltage applied while Performance-core is operating in adaptive mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11. Range 0-2000 mV"
+
+#string STR_CORE_AVX2_RATIO_OFFSET                              #language en-US "AVX2 Ratio Offset"
+#string STR_CORE_AVX2_RATIO_OFFSET_HELP                         #language en-US "AVX2 Ratio Offset. Specifies number of bins to decrease AVX ratio vs. Core Ratio. AVX is a more stressful workload, it is helpful to lower the AVX ratio to ensure maximum possible ratio for SSE workloads. Uses Mailbox MSR 0x150, cmd 0x1B. Range 0 - 31. 0 = No offset."
+
+#string STR_CORE_AVX2_GUARD_BAND_PROMPT                         #language en-US "AVX2 Voltage Guardband Scale Factor"
+#string STR_CORE_AVX2_GUARD_BAND_HELP                           #language en-US "AVX2 Voltage Guardband Scale Factor. Controls the voltage guardband applied to AVX workloads. Range 0 - 200 in 1/100 units, where 125 = 1.25 scale factor. A default value of 100 applies the default voltage guardband scale factor of 1.0. A value > 100 will increase the votlage guardband, and < 100 will decrease the voltage guardband."
+
+#string STR_CORE_TJMAX_OFFSET                                   #language en-US "TjMax Offset"
+#string STR_CORE_TJMAX_OFFSET_HELP                              #language en-US "TjMax Offset. Specified value here is clipped by pCode (125 - TjMax Offset) to support TjMax in the range of 62 to 115 deg Celsius. Uses Mailbox MSR 0x37, command 0x01. Range 10 - 63. 0 = No override."
+
+#string STR_TVB_RATIO_CLIPPING_PROMPT                           #language en-US "TVB Ratio Clipping"
+#string STR_TVB_RATIO_CLIPPING_HELP                             #language en-US "This service controls Core frequency reduction caused by high package temperatures for processors that implement the Intel Thermal Velocity Boost (TVB) feature. Uses Overclocking Mailbox command 0x18/0x19."
+
+#string STR_TVB_VOLTAGE_OPTIMIZATION_PROMPT                     #language en-US "TVB Voltage Optimizations"
+#string STR_TVB_VOLTAGE_OPTIMIZATION_HELP                       #language en-US "This service controls thermal based voltage optimizations for processors that implement the Intel Thermal Velocity Boost (TVB) feature. Default is enabled. Uses Overclocking Mailbox command 0x18/0x19."
+
+#string STR_VR_ICCMAX_CURRENT_OVERRIDE_CONFIGURATION            #language en-US "VR ICCMAX Current Override"
+#string STR_VR_ICCMAX_CURRENT_OVERRIDE_CONFIGURATION_HELP       #language en-US "VR ICCMAX Current Override Menu"
+
+#string STR_IA_VR_ICCMAX_INFO_HELP                              #language en-US "Current IA VR Current Limit"
+#string STR_IA_VR_ICCMAX_INFO_STRING                            #language en-US "Current IA VR Current Limit"
+#string STR_IA_VR_ICCMAX_INFO_VALUE                             #language en-US ""
+
+#string STR_GT_VR_ICCMAX_INFO_HELP                              #language en-US "Current GT VR Current Limit"
+#string STR_GT_VR_ICCMAX_INFO_STRING                            #language en-US "Current GT VR Current Limit"
+#string STR_GT_VR_ICCMAX_INFO_VALUE                             #language en-US ""
+
+#string STR_IA_ICC_MAX_CURRENT_LIMIT_OVERRIDE                   #language en-US "IA ICC Max Current Limit Override"
+#string STR_IA_ICC_MAX_CURRENT_LIMIT_OVERRIDE_HELP              #language en-US "IA Voltage Regulator Current Limit (Icc Max). This value represents the Maximum instantaneous current allowed at any given time. The value is represented in 1/4 A increments. A value of 400 = 100A. Range is 4 to 2047. Uses OC mailbox command 0x17"
+#string STR_IA_ICC_UNLIMITED_MODE                               #language en-US "IA ICC Unlimited Mode"
+#string STR_IA_ICC_UNLIMITED_MODE_HELP                          #language en-US "Enable/Disable IA Unlimited ICCMAX. When Enabled, IA VR ICCMAX value is set to max ICC current 512A."
+
+#string STR_GT_ICC_MAX_CURRENT_LIMIT_OVERRIDE                   #language en-US "GT ICC Max Current Limit Override"
+#string STR_GT_ICC_MAX_CURRENT_LIMIT_OVERRIDE_HELP              #language en-US "GT Voltage Regulator Current Limit (Icc Max). This value represents the Maximum instantaneous current allowed at any given time. The value is represented in 1/4 A increments. A value of 400 = 100A. Range is 4 to 2047. Uses OC mailbox command 0x17"
+#string STR_GT_ICC_UNLIMITED_MODE                               #language en-US "GT ICC Unlimited Mode"
+#string STR_GT_ICC_UNLIMITED_MODE_HELP                          #language en-US "Enable/Disable GT Unlimited ICCMAX. When Enabled, GT VR ICCMAX value is set to max ICC current 512A."
+
+#string STR_BCLK_ADAPTIVE_VOLTAGE_ENABLE                        #language en-US "BCLK Aware Adaptive Voltage"
+#string STR_BCLK_ADAPTIVE_VOLTAGE_ENABLE_HELP                   #language en-US "BCLK Aware Adaptive Voltage enable/disable. When enabled, pcode will be aware of the BCLK frequency when calculating the CPU V/F curves. This is ideal for BCLK OC to avoid high voltage overrides. Uses OC Mailbox command 0x15."
+
+#string STR_VOLTAGE_ADAPTIVE                                    #language en-US "Adaptive"
+#string STR_VOLTAGE_OVERRIDE                                    #language en-US "Override"
+
+#string STR_VOLTAGE_OFFSET_LEGACY                               #language en-US "Legacy"
+#string STR_VOLTAGE_OFFSET_SELECTION                            #language en-US "Selection"
+
+#string STR_VF_CONFIG_ALL_CORE                                  #language en-US "All-core"
+#string STR_VF_CONFIG_PER_CORE                                  #language en-US "Per-core"
+
+#string STR_POSITIVE_SIGN                                       #language en-US "+"
+#string STR_NEGATIVE_SIGN                                       #language en-US "-"
+
+#string STR_CORE_VOLTAGE_OFFSET_PREFIX                          #language en-US "  Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_0                            #language en-US "  VF Point 1 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_1                            #language en-US "  VF Point 2 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_2                            #language en-US "  VF Point 3 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_3                            #language en-US "  VF Point 4 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_4                            #language en-US "  VF Point 5 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_5                            #language en-US "  VF Point 6 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_6                            #language en-US "  VF Point 7 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_7                            #language en-US "  VF Point 8 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_8                            #language en-US "  VF Point 9 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_9                            #language en-US "  VF Point 10 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_10                           #language en-US "  VF Point 11 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_11                           #language en-US "  VF Point 12 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_12                           #language en-US "  VF Point 13 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_13                           #language en-US "  VF Point 14 Offset Prefix"
+#string STR_VF_POINT_OFFSET_PREFIX_14                           #language en-US "  VF Point 15 Offset Prefix"
+#string STR_MEMSS_VOLTAGE_OFFSET_PREFIX                         #language en-US "  Offset Prefix"
+#string STR_RING_VOLTAGE_OFFSET_PREFIX                          #language en-US "  Offset Prefix"
+#string STR_GT_VOLTAGE_OFFSET_PREFIX                            #language en-US "  Offset Prefix"
+#string STR_SA_VOLTAGE_OFFSET_PREFIX                            #language en-US "  Offset Prefix"
+#string STR_NGU_VOLTAGE_OFFSET_PREFIX                           #language en-US "  Offset Prefix"
+#string STR_VOLTAGE_OFFSET_PREFIX_HELP                          #language en-US "Sets the offset value as positive or negative."
+
+#string STR_VCC_CONFIGURATION                                   #language en-US "Platform Voltage Overrides"
+#string STR_VCC_CONFIGURATION_HELP                              #language en-US "Platform Voltages related Overclocking Menu"
+
+#string STR_VCC1P8_CPU_OVERRIDE_ENABLE                          #language en-US "CPU Vcc1p8 Override Enable"
+#string STR_VCC1P8_CPU_OVERRIDE_ENABLE_HELP                     #language en-US "Overrides the CPU Vcc1p8 voltage using SMBUS/PMBUS interface of VRM. Use the next option for exact voltage configuration"
+#string STR_VCC1P8_CPU_OVERRIDE_VOLTS                           #language en-US "  CPU Vcc1p8"
+#string STR_VCC1P8_CPU_OVERRIDE_VOLTS_HELP                      #language en-US "Range of CPU Vcc1p8 voltage - Default is 1800 mV"
+
+#string STR_VCC1P8_DDR_OVERRIDE_ENABLE                          #language en-US "DDR Vcc1p8 Override Enable"
+#string STR_VCC1P8_DDR_OVERRIDE_ENABLE_HELP                     #language en-US "Overrides the DDR Vcc1p8 voltage using SMBUS/PMBUS interface of VRM. Use the next option for exact voltage configuration"
+#string STR_VCC1P8_DDR_OVERRIDE_VOLTS                           #language en-US "  DDR Vcc1p8"
+#string STR_VCC1P8_DDR_OVERRIDE_VOLTS_HELP                      #language en-US "Range of DDR Vcc1p8 voltage - Default is 1800 mV"
+
+#string STR_VCCDD2_OVERRIDE_ENABLE                              #language en-US "VccDD2 Override Enable"
+#string STR_VCCDD2_OVERRIDE_ENABLE_HELP                         #language en-US "Overrides the VccDD2 voltage using SMBUS/PMBUS interface of VRM. Use the next option for exact voltage configuration"
+#string STR_VCCDD2_OVERRIDE_VOLTS                               #language en-US "  VccDD2"
+#string STR_VCCDD2_OVERRIDE_VOLTS_HELP                          #language en-US "Range of VccDD2 voltage - Default is 1100 mV"
+
+#string STR_VNNAON_OVERRIDE_ENABLE                              #language en-US "VNNAON Override Enable"
+#string STR_VNNAON_OVERRIDE_ENABLE_HELP                         #language en-US "Overrides the VNNAON voltage using SMBUS/PMBUS interface of VRM. Use the next option for exact voltage configuration"
+#string STR_VNNAON_OVERRIDE_VOLTS                               #language en-US "  VNNAON"
+#string STR_VNNAON_OVERRIDE_VOLTS_HELP                          #language en-US "Range of VNNAON voltage - Default is 770 mV"
+
+#string STR_VCCIO_OVERRIDE_ENABLE                               #language en-US "VCCIO Override Enable"
+#string STR_VCCIO_OVERRIDE_ENABLE_HELP                          #language en-US "Overrides the VCCIO voltage using SMBUS/PMBUS interface of VRM. Use the next option for exact voltage configuration"
+#string STR_VCCIO_OVERRIDE_VOLTS                                #language en-US "  VCCIO"
+#string STR_VCCIO_OVERRIDE_VOLTS_HELP                           #language en-US "Range of VCCIO voltage - Default is 1250 mV"
+
+#string STR_PCH_V0P82_OVERRIDE_ENABLE                           #language en-US "PCH V0P82 Override Enable"
+#string STR_PCH_V0P82_OVERRIDE_ENABLE_HELP                      #language en-US "Overrides the PCH V0P82 voltage using SMBUS/PMBUS interface of VRM. Use the next option for exact voltage configuration"
+#string STR_PCH_V0P82_OVERRIDE_VOLTS                            #language en-US "  PCH V0P82"
+#string STR_PCH_V0P82_OVERRIDE_VOLTS_HELP                       #language en-US "Range of PCH V0P82 voltage - Default is 820 mV"
+
+#string STR_PCH_V3P3_OVERRIDE_ENABLE                            #language en-US "PCH V3P3 Override Enable"
+#string STR_PCH_V3P3_OVERRIDE_ENABLE_HELP                       #language en-US "Overrides the PCH V3P3 voltage using SMBUS/PMBUS interface of VRM. Use the next option for exact voltage configuration"
+#string STR_PCH_V3P3_OVERRIDE_VOLTS                             #language en-US "  PCH V3P3"
+#string STR_PCH_V3P3_OVERRIDE_VOLTS_HELP                        #language en-US "Range of PCH V3P3 voltage - Default is 3300 mV"
+
+#string STR_PCH_V1P8_OVERRIDE_ENABLE                            #language en-US "PCH V1P8 Override Enable"
+#string STR_PCH_V1P8_OVERRIDE_ENABLE_HELP                       #language en-US "Overrides the PCH V1P8 voltage using SMBUS/PMBUS interface of VRM. Use the next option for exact voltage configuration"
+#string STR_PCH_V1P8_OVERRIDE_VOLTS                             #language en-US "  PCH V1P8"
+#string STR_PCH_V1P8_OVERRIDE_VOLTS_HELP                        #language en-US "Range of PCH V1P8 voltage - Default is 1800 mV"
+
+
+#string STR_VRLL_MINUS_100UOHM                                  #language en-US " -100 uOhm"
+#string STR_VRLL_0UOHM                                          #language en-US "    0 uOhm"
+#string STR_VRLL_100UOHM                                        #language en-US "  100 uOhm"
+#string STR_VRLL_700UOHM                                        #language en-US "  700 uOhm"
+#string STR_VRLL_900UOHM                                        #language en-US "  900 uOhm"
+#string STR_VRLL_1000UOHM                                       #language en-US " 1000 uOhm"
+#string STR_VRLL_1200UOHM                                       #language en-US " 1200 uOhm"
+#string STR_VRLL_1300UOHM                                       #language en-US " 1300 uOhm"
+#string STR_VRLL_1400UOHM                                       #language en-US " 1400 uOhm"
+#string STR_VRLL_1500UOHM                                       #language en-US " 1500 uOhm"
+#string STR_VRLL_1700UOHM                                       #language en-US " 1700 uOhm"
+#string STR_VRLL_1800UOHM                                       #language en-US " 1800 uOhm"
+#string STR_VRLL_2100UOHM                                       #language en-US " 2100 uOhm"
+
+#string STR_MEMSS_MAX_OC_RATIO                                  #language en-US "MemSS Max OC Ratio"
+#string STR_MEMSS_MAX_OC_RATIO_HELP                             #language en-US "Sets the maximum OC Ratio for memory subsystem. Uses Mailbox MSR 0x150, cmd 0x10, 0x11. Range non-turbo max - 85."
+
+#string STR_MEMSS_VOLTAGE_MODE                                  #language en-US "MemSS Voltage Mode"
+#string STR_MEMSS_VOLTAGE_MODE_HELP                             #language en-US "Selects between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11."
+
+#string STR_MEMSS_VOLTAGE_OVERRIDE                              #language en-US "MemSS Voltage Override"
+#string STR_MEMSS_VOLTAGE_OVERRIDE_HELP                         #language en-US "Specifies the Override Voltage applied to memory subsystem domain. This voltage is specified in millivolts. Range 0-2000 mV."
+
+#string STR_MEMSS_VOLTAGE_OFFSET                                #language en-US "MemSS Voltage Offset"
+#string STR_MEMSS_VOLTAGE_OFFSET_HELP                           #language en-US "Specifies the Offset Voltage applied to memory subsystem domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_MEMSS_ADAPTIVE_VOLTAGE                              #language en-US "MemSS Adaptive Voltage"
+#string STR_MEMSS_ADAPTIVE_VOLTAGE_HELP                         #language en-US "Specifies the adaptive voltage applied while memory subsystem is operating in adaptive mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11. Range 0-2000 mV"
+
+#string STR_MEMSS_VOLTAGE_VALUE                                 #language en-US "MemSS Voltage"
+#string STR_MEMSS_VOLTAGE_VALUE_HELP                            #language en-US "Memory subsystem Voltage Override (Vddq). Default = no override"
+
+#string STR_NGU_MAX_OC_RATIO                                    #language en-US "NGU Max OC Ratio"
+#string STR_NGU_MAX_OC_RATIO_HELP                               #language en-US "Sets the maximum OC Ratio for NGU. Uses Mailbox MSR 0x150, cmd 0x10, 0x11. Range non-turbo max - 34."
+
+#string STR_NGU_VOLTAGE_MODE                                    #language en-US "NGU Voltage Mode"
+#string STR_NGU_VOLTAGE_MODE_HELP                               #language en-US "Selects between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11."
+
+#string STR_NGU_VOLTAGE_OVERRIDE                                #language en-US "NGU Voltage Override"
+#string STR_NGU_VOLTAGE_OVERRIDE_HELP                           #language en-US "Specifies the Override Voltage applied to the NGU domain. This voltage is specified in millivolts. Range 0-2000 mV."
+
+#string STR_NGU_VOLTAGE_OFFSET                                  #language en-US "NGU Voltage Offset"
+#string STR_NGU_VOLTAGE_OFFSET_HELP                             #language en-US "Specifies the Offset Voltage applied to the NGU domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_NGU_ADAPTIVE_VOLTAGE                                #language en-US "NGU Adaptive Voltage"
+#string STR_NGU_ADAPTIVE_VOLTAGE_HELP                           #language en-US "Specifies the adaptive voltage applied while NGU is operating in adaptive mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11. Range 0-2000 mV"
+
+#string STR_NGU_VOLTAGE_VALUE                                   #language en-US "NGU Voltage"
+#string STR_NGU_VOLTAGE_VALUE_HELP                              #language en-US "NGU Voltage Override (Vddq). Default = no override"
+
+#string STR_VOLTAGE_600                                         #language en-US "0.60 Volts"
+#string STR_VOLTAGE_1100                                        #language en-US "1.10 Volts"
+#string STR_VOLTAGE_1150                                        #language en-US "1.15 Volts"
+#string STR_VOLTAGE_1200                                        #language en-US "1.20 Volts"
+#string STR_VOLTAGE_1250                                        #language en-US "1.25 Volts"
+#string STR_VOLTAGE_1300                                        #language en-US "1.30 Volts"
+#string STR_VOLTAGE_1350                                        #language en-US "1.35 Volts"
+#string STR_VOLTAGE_1400                                        #language en-US "1.40 Volts"
+#string STR_VOLTAGE_1450                                        #language en-US "1.45 Volts"
+#string STR_VOLTAGE_1500                                        #language en-US "1.50 Volts"
+#string STR_VOLTAGE_1550                                        #language en-US "1.55 Volts"
+#string STR_VOLTAGE_1600                                        #language en-US "1.60 Volts"
+#string STR_VOLTAGE_1650                                        #language en-US "1.65 Volts"
+
+#string STR_2                                                   #language en-US "2"
+#string STR_3                                                   #language en-US "3"
+#string STR_4                                                   #language en-US "4"
+#string STR_5                                                   #language en-US "5"
+#string STR_6                                                   #language en-US "6"
+#string STR_7                                                   #language en-US "7"
+#string STR_8                                                   #language en-US "8"
+#string STR_9                                                   #language en-US "9"
+#string STR_10                                                  #language en-US "10"
+#string STR_11                                                  #language en-US "11"
+#string STR_12                                                  #language en-US "12"
+#string STR_13                                                  #language en-US "13"
+#string STR_14                                                  #language en-US "14"
+#string STR_15                                                  #language en-US "15"
+#string STR_16                                                  #language en-US "16"
+#string STR_17                                                  #language en-US "17"
+#string STR_18                                                  #language en-US "18"
+#string STR_19                                                  #language en-US "19"
+#string STR_20                                                  #language en-US "20"
+#string STR_21                                                  #language en-US "21"
+#string STR_22                                                  #language en-US "22"
+#string STR_23                                                  #language en-US "23"
+#string STR_24                                                  #language en-US "24"
+#string STR_25                                                  #language en-US "25"
+#string STR_26                                                  #language en-US "26"
+#string STR_27                                                  #language en-US "27"
+#string STR_28                                                  #language en-US "28"
+#string STR_29                                                  #language en-US "29"
+#string STR_30                                                  #language en-US "30"
+#string STR_32                                                  #language en-US "32"
+#string STR_34                                                  #language en-US "34"
+#string STR_40                                                  #language en-US "40"
+#string STR_48                                                  #language en-US "48"
+#string STR_56                                                  #language en-US "56"
+#string STR_64                                                  #language en-US "64"
+#string STR_80                                                  #language en-US "80"
+#string STR_96                                                  #language en-US "96"
+#string STR_112                                                 #language en-US "112"
+#string STR_128                                                 #language en-US "128"
+
+#string STR_GT_CONFIGURATION                                    #language en-US "GT"
+#string STR_GT_CONFIGURATION_HELP                               #language en-US "GT Ratio Override and Delta voltage programming"
+
+#string STR_GT_MAX_OC_RATIO                                     #language en-US "GT Max OC Ratio Limit"
+#string STR_GT_MAX_OC_RATIO_HELP                                #language en-US "Sets the maximum OC Ratio for memory subsystem. Uses Mailbox MSR 0x150, cmd 0x10, 0x11. Range non-turbo max - 85."
+
+#string STR_GT_VOLTAGE_MODE                                     #language en-US "  GT Voltage Mode"
+#string STR_GT_VOLTAGE_MODE_HELP                                #language en-US "Selects between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11."
+
+#string STR_GT_VOLTAGE_OVERRIDE                                 #language en-US "  GT Voltage Override"
+#string STR_GT_VOLTAGE_OVERRIDE_HELP                            #language en-US "Specifies the Override Voltage applied to the GT domain. This voltage is specified in millivolts. Range 0-2000 mV"
+
+#string STR_GT_VOLTAGE_OFFSET                                   #language en-US "  GT Voltage Offset"
+#string STR_GT_VOLTAGE_OFFSET_HELP                              #language en-US "Specifies the Offset Voltage applied to the GT domain. This voltage is specified in millivolts. Range -500 to 500 mV"
+
+#string STR_GT_ADAPTIVE_VOLTAGE                                 #language en-US "  GT Adaptive Voltage"
+#string STR_GT_ADAPTIVE_VOLTAGE_HELP                            #language en-US "Specifies the adaptive voltage applied while GT is operating in adaptive mode. Unit is in millivolts. Range 0-2000 mV"
+
+#string STR_RING_DOWN_BIN_PROMPT                                #language en-US "Ring Down Bin"
+#string STR_RING_DOWN_BIN_HELP                                  #language en-US "Enable/Disable Ring Downbin feature. Enabled - CPU will down bin the ring ratio, which means the requested max ring ratio will not be observed. Disable - CPU will not down bin the ring ratio and the requested ring ratio limit will be observed. Default for Overclocking is "Disabled" to allow for a predictable ring ratio. Uses OC mailbox command 0x19."
+
+#string STR_CLR_MAX_OC_RATIO                                    #language en-US "Ring Max OC Ratio Limit"
+#string STR_CLR_MAX_OC_RATIO_HELP                               #language en-US "This sets the maximum overclocking ratio for the RING Domain. This ratio limit is only valid when in the overclocking range of frequency. Set through the overclocking mailbox. Note: 1-HFM are invalid ratio settings."
+
+#string STR_MIN_RING_RATIO_LIMIT                                #language en-US "Min Ring Ratio Limit"
+#string STR_MIN_RING_RATIO_LIMIT_HELP                           #language en-US "This sets the minimum ring ratio limit. 0 - Auto/HW default. 1-LFM are invalid ratio settings."
+
+#string STR_MAX_RING_RATIO_LIMIT                                #language en-US "Max Ring Ratio Limit"
+#string STR_MAX_RING_RATIO_LIMIT_HELP                           #language en-US "This sets the maximum ring ratio limit. 0 - Auto/HW default. 1-LFM are invalid ratio settings."
+
+#string STR_SA_CONFIGURATION                                    #language en-US "SA"
+#string STR_SA_CONFIGURATION_HELP                               #language en-US "SA Overclocking Menu"
+
+#string STR_SA_VOLTAGE_OFFSET                                   #language en-US "SA Voltage Offset"
+#string STR_SA_VOLTAGE_OFFSET_HELP                              #language en-US "Specifies the Offset Voltage applied to the SA domain. This voltage is specified in millivolts. Range -1000 to 1000 mV"
+
+#string STR_OC_MISC_CONFIGURATION                               #language en-US "OC Miscellaneous Configuration"
+#string STR_OC_MISC_CONFIGURATION_HELP                          #language en-US "Overclocking miscellaneous configuration, including CEP (Current Excursion Protection), SIRP (SoC Iccmax Reactive Protector) and IDT (Inverse Temperature Dependency) Throttle Disable Menu"
+
+#string STR_SA_VOLTAGE_MODE                                     #language en-US "SA Voltage Mode"
+#string STR_SA_VOLTAGE_MODE_HELP                                #language en-US "Selects between Adaptive and Override Voltage modes. In Override Mode the voltage selected will be applied over all operating frequencies. In Adaptive Mode the voltage is interpolated only in turbo mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11."
+
+#string STR_SA_VOLTAGE_OVERRIDE                                 #language en-US "SA Voltage Override"
+#string STR_SA_VOLTAGE_OVERRIDE_HELP                            #language en-US "Specifies the Override Voltage applied to the SA  domain. This voltage is specified in millivolts. Uses Mailbox MSR 0x150, cmd 0x11. Range 0-2000 mV."
+
+#string STR_SA_ADAPTIVE_VOLTAGE                                 #language en-US "SA Adaptive Voltage"
+#string STR_SA_ADAPTIVE_VOLTAGE_HELP                            #language en-US "Specifies the adaptive voltage applied while SA is operating in adaptive mode. Uses Mailbox MSR 0x150, cmd 0x10, 0x11. Range 0-2000 mV"
+
+#string STR_CPU_BCLK_FREQUENCY_NAME                             #language en-US "Current CPU BCLK Frequency"
+#string STR_CPU_BCLK_FREQUENCY_VALUE                            #language en-US "100.00 MHz"
+
+#string STR_SOC_BCLK_FREQUENCY_NAME                             #language en-US "Current SOC BCLK Frequency"
+#string STR_SOC_BCLK_FREQUENCY_VALUE                            #language en-US "100.00 MHz"
+
+#string STR_CORE_MAX_OC_RATIO_LIMIT                             #language en-US "Core Max OC Ratio Limit"
+#string STR_CORE_MAX_OC_RATIO_LIMIT_HELP                        #language en-US "Core Max OC Ratio Limit"
+#string STR_CORE_MAX_OC_RATIO_LIMIT_VALUE                       #language en-US "N/A"
+
+#string STR_GT_MAX_OC_RATIO_LIMIT                               #language en-US "GT Max OC Ratio Limit"
+#string STR_GT_MAX_OC_RATIO_LIMIT_HELP                          #language en-US "GT Max OC Ratio Limit"
+#string STR_GT_MAX_OC_RATIO_LIMIT_VALUE                         #language en-US "N/A"
+
+#string STR_RING_MAX_OC_RATIO_LIMIT                             #language en-US "Ring Max OC Ratio Limit"
+#string STR_RING_MAX_OC_RATIO_LIMIT_HELP                        #language en-US "Ring Max OC Ratio Limit"
+#string STR_RING_MAX_OC_RATIO_LIMIT_VALUE                       #language en-US "N/A"
+
+#string STR_MEMSS_MAX_OC_RATIO_LIMIT                            #language en-US "MemSS Max OC Ratio Limit"
+#string STR_MEMSS_MAX_OC_RATIO_LIMIT_HELP                       #language en-US "MemSS Max OC Ratio Limit"
+#string STR_MEMSS_MAX_OC_RATIO_LIMIT_VALUE                      #language en-US "N/A"
+
+#string STR_NGU_MAX_OC_RATIO_LIMIT                              #language en-US "NGU Max OC Ratio Limit"
+#string STR_NGU_MAX_OC_RATIO_LIMIT_HELP                         #language en-US "NGU Max OC Ratio Limit"
+#string STR_NGU_MAX_OC_RATIO_LIMIT_VALUE                        #language en-US "N/A"
+
+#string STR_PVD_RATIO_THRESHOLD_SOC                             #language en-US "PVD Ratio Threshold for SOC"
+#string STR_PVD_RATIO_THRESHOLD_SOC_HELP                        #language en-US "Select PVD Ratio Threshold Value from Range 1 to 63. 0 - Static PVD ratio specified by PvdMode for SOC"
+
+#string STR_PVD_MODE_SELECT_SOC                                 #language en-US "PVD Mode Select for SOC "
+#string STR_PVD_MODE_SELECT_SOC_HELP                            #language en-US "Select PVD Mode Value from Range 1 to 3. 0x0 = div-1 (VCO = Output clock), 0x1 = div-2 (VCO = 2x Output clock), 0x2 = div-4 (VCO = 4x Output clock), 0x3 = div-8 (VCO = 8x Output clock)"
+
+#string STR_PVD_RATIO_THRESHOLD_CPU                             #language en-US "PVD Ratio Threshold for CPU"
+#string STR_PVD_RATIO_THRESHOLD_CPU_HELP                        #language en-US "Select PVD Ratio Threshold Value from Range 1 to 63. 0 - Static PVD ratio specified by PvdMode for CPU"
+
+#string STR_PVD_MODE_SELECT_CPU                                 #language en-US "PVD Mode Select for CPU "
+#string STR_PVD_MODE_SELECT_CPU_HELP                            #language en-US "Select PVD Mode Value from Range 1 to 3. 0x0 = div-1 (VCO = Output clock), 0x1 = div-2 (VCO = 2x Output clock), 0x2 = div-4 (VCO = 4x Output clock), 0x3 = div-8 (VCO = 8x Output clock)"
+
+#string STR_FLL_MODE_SELECT                                     #language en-US "FLL Overclock Mode Select"
+#string STR_FLL_MODE_SELECT_HELP                                #language en-US "Select FLL Mode Value from Range 1 to 3. 0x0 = no overclocking, 0x1 = ratio overclocking with nominal (0.5-1x) reference clock frequency, 0x2 = BCLK overclocking with elevated (1-3x) reference clock frequency, 0x3 = BCLK overclocking with extreme elevated (3-5x) reference clock frequency and ratio limited to 63"
+
+#string STR_CPU_D2D_RATIO                                       #language en-US "CPU D2D Ratio"
+#string STR_CPU_D2D_RATIO_HELP                                  #language en-US "Set CPU D2D Ratio from Range 15 to 40. 0 indicates no setting."
+
+#string STR_CPU_BCLK_OC_FREQUENCY                               #language en-US "CPU BCLK OC Frequency"
+#string STR_CPU_BCLK_OC_FREQUENCY_HELP                          #language en-US "CPU BCLK Frequency in 10kHz increments. Specifies new CPU BCLK frequency to be applied. Frequency is rounded to nearest valid value. Allowed range is limited by the Max/Min supported frequencies. Changes are not applied until settings are saved and platform resets. Example: For 125.70MHz, enter 12570. Range is 40 MHz - 1000 MHz w/ 10KHz."
+
+#string STR_SOC_BCLK_OC_FREQUENCY                               #language en-US "SOC BCLK OC Frequency"
+#string STR_SOC_BCLK_OC_FREQUENCY_HELP                          #language en-US "SOC BCLK Frequency in 10kHz increments. Specifies new CPU BCLK frequency to be applied. Frequency is rounded to nearest valid value. Allowed range is limited by the Max/Min supported frequencies. Changes are not applied until settings are saved and platform resets. Example: For 125.70MHz, enter 12570. Range is 40 MHz - 1000 MHz w/ 10KHz."
+
+#string STR_VCCSA_BOOT_VOLTAGE_CONFIGURATION                    #language en-US "VCCSA Boot Voltage"
+#string STR_VCCSA_BOOT_VOLTAGE_CONFIGURATION_HELP               #language en-US "Select VCCSA boot voltage between Nominal and High Voltage(up to 1.2/1.3V). VCCSA boot Voltage - the default voltage is Nominal, to support the high voltage, BIOS can program the EPOC2 bits to bump up voltage to up to 1.2/1.3V.  0 - Nominal. 1 - High Voltage(up to 1.2/1.3V)."
+
+#string STR_NOMINAL                                             #language en-US "Nominal"
+#string STR_HIGH_VOLTAGE                                        #language en-US "High Voltage"
+
+#string STR_CPU_BGREF_MODE_CONFIGURATION                        #language en-US "CPU BGREF Mode"
+#string STR_CPU_BGREF_MODE_CONFIGURATION_HELP                   #language en-US "Select CPU Bandgap Reference Mode between Normal and Bandgap Bypassed. CPU Bandgap Reference Mode - the default voltage is Normal."
+
+#string STR_NORMAL                                              #language en-US "Normal"
+#string STR_BANDGAP_BYPASSED                                    #language en-US "Bandgap Bypassed"
+
+#string STR_VCCIA_BOOT_VOLTAGE_CONFIGURATION                    #language en-US "VCCIA Boot Voltage"
+#string STR_VCCIA_BOOT_VOLTAGE_CONFIGURATION_HELP               #language en-US "Select VCCIA boot voltage between Nominal and High Voltage. VCCIA boot Voltage - the default voltage is Nominal, to support the high voltage, BIOS can program VCCIA boot voltage higher than 1.65v (max 2.01v))."
+
+#string STR_UNDERVOLT_PROTECTION                                #language en-US "UnderVolt Protection"
+#string STR_UNDERVOLT_PROTECTION_HELP                           #language en-US "When UnderVolt Protection is enabled, user will not be able to program under voltage in OS runtime. Recommended to keep it enabled by default. Enabled: Allow BIOS undervolting, but enable UnderVolt Protection in Runtime. Disabled: No UnderVolt Protection in Runtime."
+
+#string STR_RICHTEK_VCC_FIXED_VID_ENABLE                        #language en-US " Fixed VID Mode"
+#string STR_RICHTEK_VCC_FIXED_VID_ENABLE_HELP                   #language en-US "Fixed VID Mode Enabled for the VccIA/VccGT Voltage rail Overrides from Richtek SMBUS/PMBUS VR. When Disabled, voltage rail will use IMVP from SVID BUS."
+
+#string STR_RICHTEK_VCC_IA_ENABLE                               #language en-US "RichTek VccIA Control Overrides"
+#string STR_RICHTEK_VCC_IA_ENABLE_HELP                          #language en-US "VccIA Core Voltage can be overrides from Richtek SMBUS/PMBUS VR. Use the next option for exact voltage configuration"
+
+#string STR_RICHTEK_VCC_IA_VOLTAGE_VALUE                        #language en-US "  VccIA (mV)"
+#string STR_RICHTEK_VCC_IA_VOLTAGE_VALUE_HELP                   #language en-US "Voltage Range of RichTek VccIA Core from 250mV - 2155mV; Default is 1050 mV"
+
+#string STR_RICHTEK_VCC_GT_ENABLE                               #language en-US "RichTek VccGT Control Overrides"
+#string STR_RICHTEK_VCC_GT_ENABLE_HELP                          #language en-US "VccGT Voltage can be overrides from Richtek SMBUS/PMBUS VR. Use the next option for exact voltage configuration"
+
+#string STR_RICHTEK_VCC_GT_VOLTAGE_VALUE                        #language en-US "  VccGT (mV)"
+#string STR_RICHTEK_VCC_GT_VOLTAGE_VALUE_HELP                   #language en-US "Voltage Range of RichTek VccGT from 250mV - 2155mV; Default is 1050 mV"
+
+#string STR_RICHTEK_VCC_SA_ENABLE                               #language en-US "RichTek VccSA Control Overrides"
+#string STR_RICHTEK_VCC_SA_ENABLE_HELP                          #language en-US "VccSA Voltage can be overrides from Richtek SMBUS/PMBUS VR. Use the next option for exact voltage configuration"
+
+#string STR_RICHTEK_VCC_SA_VOLTAGE_VALUE                        #language en-US "  VccSA (mV)"
+#string STR_RICHTEK_VCC_SA_VOLTAGE_VALUE_HELP                   #language en-US "Voltage Range of RichTek VccSA from 250mV - 2155mV; Default is 1050 mV"
+
+#string STR_RICHTEK_VCC_SA_VOLTAGE_VALUE                        #language en-US "  VccSA (mV)"
+#string STR_RICHTEK_VCC_SA_VOLTAGE_VALUE_HELP                   #language en-US "Voltage Range of RichTek VccSA from 250mV - 2155mV; Default is 1050 mV"
+
+#string STR_OC_TVB_PROMPT                                       #language en-US " OC TVB"
+#string STR_OC_TVB_HELP                                         #language en-US "This control will allow user to modify and program new parameters for temperature thresholds T0, T1 and delta DownBins for temp thresholds T0 and T1"
+
+#string STR_PCORE_TVB_TEMP_THRESHOLD_0_PROMPT                   #language en-US "P-core TVB Temp Threshold T0 "
+#string STR_PCORE_TVB_TEMP_THRESHOLD_0_HELP                     #language en-US "For Pcores Running ABOVE this temperature (in degrees C) will clip delta Down Bins for Threshold 0 from the resolved OC Ratio"
+
+#string STR_PCORE_TVB_TEMP_THRESHOLD_1_PROMPT                   #language en-US "P-core TVB Temp Threshold T1"
+#string STR_PCORE_TVB_TEMP_THRESHOLD_1_HELP                     #language en-US "For Pcores Running ABOVE this temperature (in degrees C) will clip delta Down Bins for Threshold 1 from the resolved OC Ratio"
+
+#string STR_ECORE_TVB_TEMP_THRESHOLD_0_PROMPT                   #language en-US "E-core TVB Temp Threshold T0"
+#string STR_ECORE_TVB_TEMP_THRESHOLD_0_HELP                     #language en-US "For Ecores Running ABOVE this temperature (in degrees C) will clip delta Down Bins for Threshold 0 from the resolved OC Ratio"
+
+#string STR_ECORE_TVB_TEMP_THRESHOLD_1_PROMPT                   #language en-US "E-core TVB Temp Threshold T1"
+#string STR_ECORE_TVB_TEMP_THRESHOLD_1_HELP                     #language en-US "For E-cores Running ABOVE this temperature (in degrees C) will clip delta Down Bins for Threshold 1 from the resolved OC Ratio"
+
+#string STR_TVB_LIMIT_SELECT                                    #language en-US "OC TVB Configuration Limit"
+#string STR_TVB_LIMIT_SELECT_HELP                               #language en-US "Select one of the two OC TVB Configuration limits, between Per CCP Module or Per P-core Group"
+#string STR_PER_CCP_MODULE                                      #language en-US "Per CCP Module"
+#string STR_PER_BIG_CORE_GROUP                                  #language en-US "Per P-core Group"
+
+#string STR_PCORE_DOWNBINS_ABOVET0_0                            #language en-US "P-core 0 DownBins for T0"
+#string STR_PCORE_DOWNBINS_ABOVET0_0_HELP                       #language en-US "When running above Temperature Threshold 0, the P-core 0 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET0_1                            #language en-US "P-core 1 DownBins for T0"
+#string STR_PCORE_DOWNBINS_ABOVET0_1_HELP                       #language en-US "When running above Temperature Threshold 0, the P-core 1 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET0_2                            #language en-US "P-core 2 DownBins for T0"
+#string STR_PCORE_DOWNBINS_ABOVET0_2_HELP                       #language en-US "When running above Temperature Threshold 0, the P-core 2 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET0_3                            #language en-US "P-core 3 DownBins for T0"
+#string STR_PCORE_DOWNBINS_ABOVET0_3_HELP                       #language en-US "When running above Temperature Threshold 0, the P-core 3 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET0_4                            #language en-US "P-core 4 DownBins for T0"
+#string STR_PCORE_DOWNBINS_ABOVET0_4_HELP                       #language en-US "When running above Temperature Threshold 0, the P-core 4 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET0_5                            #language en-US "P-core 5 DownBins for T0"
+#string STR_PCORE_DOWNBINS_ABOVET0_5_HELP                       #language en-US "When running above Temperature Threshold 0, the P-core 5 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET0_6                            #language en-US "P-core 6 DownBins for T0"
+#string STR_PCORE_DOWNBINS_ABOVET0_6_HELP                       #language en-US "When running above Temperature Threshold 0, the P-core 6 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET0_7                            #language en-US "P-core 7 DownBins for T0"
+#string STR_PCORE_DOWNBINS_ABOVET0_7_HELP                       #language en-US "When running above Temperature Threshold 0, the P-core 7 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET1_0                            #language en-US "P-core 0 DownBins for T1"
+#string STR_PCORE_DOWNBINS_ABOVET1_0_HELP                       #language en-US "When running above Temperature Threshold 1, the P-core 0 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET1_1                            #language en-US "P-core 1 DownBins for T1"
+#string STR_PCORE_DOWNBINS_ABOVET1_1_HELP                       #language en-US "When running above Temperature Threshold 1, the P-core 1 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET1_2                            #language en-US "P-core 2 DownBins for T1"
+#string STR_PCORE_DOWNBINS_ABOVET1_2_HELP                       #language en-US "When running above Temperature Threshold 1, the P-core 2 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET1_3                            #language en-US "P-core 3 DownBins for T1"
+#string STR_PCORE_DOWNBINS_ABOVET1_3_HELP                       #language en-US "When running above Temperature Threshold 1, the P-core 3 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET1_4                            #language en-US "P-core 4 DownBins for T1"
+#string STR_PCORE_DOWNBINS_ABOVET1_4_HELP                       #language en-US "When running above Temperature Threshold 1, the P-core 4 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET1_5                            #language en-US "P-core 5 DownBins for T1"
+#string STR_PCORE_DOWNBINS_ABOVET1_5_HELP                       #language en-US "When running above Temperature Threshold 1, the P-core 5 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET1_6                            #language en-US "P-core 6 DownBins for T1"
+#string STR_PCORE_DOWNBINS_ABOVET1_6_HELP                       #language en-US "When running above Temperature Threshold 1, the P-core 6 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_DOWNBINS_ABOVET1_7                            #language en-US "P-core 7 DownBins for T1"
+#string STR_PCORE_DOWNBINS_ABOVET1_7_HELP                       #language en-US "When running above Temperature Threshold 1, the P-core 7 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_ECLUSTER_DOWNBINS_ABOVET0_0                         #language en-US "E-core Cluster 0 DownBins for T0"
+#string STR_ECLUSTER_DOWNBINS_ABOVET0_0_HELP                    #language en-US "When running above Temperature Threshold 0, the E-core cluster 0 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_ECLUSTER_DOWNBINS_ABOVET0_1                         #language en-US "E-core Cluster 1 DownBins for T0"
+#string STR_ECLUSTER_DOWNBINS_ABOVET0_1_HELP                    #language en-US "When running above Temperature Threshold 0, the E-core cluster 1 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_ECLUSTER_DOWNBINS_ABOVET0_2                         #language en-US "E-core Cluster 2 DownBins for T0"
+#string STR_ECLUSTER_DOWNBINS_ABOVET0_2_HELP                    #language en-US "When running above Temperature Threshold 0, the E-core cluster 2 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_ECLUSTER_DOWNBINS_ABOVET0_3                         #language en-US "E-core Cluster 3 DownBins for T0"
+#string STR_ECLUSTER_DOWNBINS_ABOVET0_3_HELP                    #language en-US "When running above Temperature Threshold 0, the E-core cluster 3 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_ECLUSTER_DOWNBINS_ABOVET1_0                         #language en-US "E-core Cluster 0 DownBins for T1"
+#string STR_ECLUSTER_DOWNBINS_ABOVET1_0_HELP                    #language en-US "When running above Temperature Threshold 1, the E-core cluster 0 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_ECLUSTER_DOWNBINS_ABOVET1_1                         #language en-US "E-core Cluster 1 DownBins for T1"
+#string STR_ECLUSTER_DOWNBINS_ABOVET1_1_HELP                    #language en-US "When running above Temperature Threshold 1, the E-core cluster 1 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_ECLUSTER_DOWNBINS_ABOVET1_2                         #language en-US "E-core Cluster 2 DownBins for T1"
+#string STR_ECLUSTER_DOWNBINS_ABOVET1_2_HELP                    #language en-US "When running above Temperature Threshold 1, the E-core cluster 2 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_ECLUSTER_DOWNBINS_ABOVET1_3                         #language en-US "E-core Cluster 3 DownBins for T1"
+#string STR_ECLUSTER_DOWNBINS_ABOVET1_3_HELP                    #language en-US "When running above Temperature Threshold 1, the E-core cluster 3 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_0                      #language en-US "P-core Group 0 DownBins for T0"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_0_HELP                 #language en-US "When running above Temperature Threshold 0, the P-core group 0 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_1                      #language en-US "P-core Group 1 DownBins for T0"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_1_HELP                 #language en-US "When running above Temperature Threshold 0, the P-core group 1 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_2                      #language en-US "P-core Group 2 DownBins for T0"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_2_HELP                 #language en-US "When running above Temperature Threshold 0, the P-core group 2 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_3                      #language en-US "P-core Group 3 DownBins for T0"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_3_HELP                 #language en-US "When running above Temperature Threshold 0, the P-core group 3 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_4                      #language en-US "P-core Group 4 DownBins for T0"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_4_HELP                 #language en-US "When running above Temperature Threshold 0, the P-core group 4 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_5                      #language en-US "P-core Group 5 DownBins for T0"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_5_HELP                 #language en-US "When running above Temperature Threshold 0, the P-core group 5 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_6                      #language en-US "P-core Group 6 DownBins for T0"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_6_HELP                 #language en-US "When running above Temperature Threshold 0, the P-core group 6 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_7                      #language en-US "P-core Group 7 DownBins for T0"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET0_7_HELP                 #language en-US "When running above Temperature Threshold 0, the P-core group 7 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_0                      #language en-US "P-core Group 0 DownBins for T1"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_0_HELP                 #language en-US "When running above Temperature Threshold 1, the P-core group 0 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_1                      #language en-US "P-core Group 1 DownBins for T1"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_1_HELP                 #language en-US "When running above Temperature Threshold 1, the P-core group 1 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_2                      #language en-US "P-core Group 2 DownBins for T1"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_2_HELP                 #language en-US "When running above Temperature Threshold 1, the P-core group 2 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_3                      #language en-US "P-core Group 3 DownBins for T1"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_3_HELP                 #language en-US "When running above Temperature Threshold 1, the P-core group 3 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_4                      #language en-US "P-core Group 4 DownBins for T1"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_4_HELP                 #language en-US "When running above Temperature Threshold 1, the P-core group 4 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_5                      #language en-US "P-core Group 5 DownBins for T1"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_5_HELP                 #language en-US "When running above Temperature Threshold 1, the P-core group 5 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_6                      #language en-US "P-core Group 6 DownBins for T1"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_6_HELP                 #language en-US "When running above Temperature Threshold 1, the P-core group 6 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_7                      #language en-US "P-core Group 7 DownBins for T1"
+#string STR_PCORE_GROUP_DOWNBINS_ABOVET1_7_HELP                 #language en-US "When running above Temperature Threshold 1, the P-core group 7 ratio will be clipped to (Max_Ratio-This Down Bins value)"
+
+#string STR_OC_TVB_PARAMETERS                                   #language en-US "  OC TVB Parameters"
+#string STR_OC_TVB_PARAMETERS_HELP                              #language en-US "OC TVB Parameters for temperature thresholds T0, T1 and delta DownBins for temp thresholds T0 and T1"
+
+#string STR_CPU_COMPUTE_DIE_SSC_ENABLE_PROMPT                   #language en-US "Compute-Die SSC Configuration"
+#string STR_CPU_SOC_DIE_SSC_ENABLE_PROMPT                       #language en-US "Soc-Die SSC Configuration"
+
+#string STR_CPU_COMPUTE_DIE_SSC_ENABLE_HELP                     #language en-US "Enable/Disable Compute-Die SSC Configuration"
+#string STR_CPU_SOC_DIE_SSC_ENABLE_HELP                         #language en-US "Enable/Disable Soc-Die SSC Configuration"
+
+#string STR_OC_SETUP_REVISION                                   #language en-US "OC Setup Variable Revision"
+#string STR_OC_SETUP_REVISION_VALUE                             #language en-US "N/A"

@@ -1,0 +1,60 @@
+### @file
+# A library that manages the UEFI Variable default data HOB in PEI.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2018 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PeiUefiVariableDefaultHobLib
+  FILE_GUID                      = E012DD3B-F0FC-4156-8E75-71C746C62F23
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  LIBRARY_CLASS                  = UefiVariableDefaultHobLib|PEIM
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF
+#
+
+[LibraryClasses]
+  BaseMemoryLib
+  PeiServicesTablePointerLib
+  HobLib
+  DebugLib
+  PeiServicesLib
+  UefiVariableHelperLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+
+[Sources]
+  PeiUefiVariableDefaultHobLib.c
+
+[Ppis]
+  gEfiPeiMemoryDiscoveredPpiGuid                ## NOTIFY
+
+[Guids]
+  gEfiVariableGuid                              ## SOMETIMES_PRODUCES ## HOB
+  gEfiAuthenticatedVariableGuid                 ## SOMETIMES_CONSUMES ## HOB
+  gDefaultDataOptSizeFileGuid                   ## SOMETIMES_CONSUMES ## FV
+

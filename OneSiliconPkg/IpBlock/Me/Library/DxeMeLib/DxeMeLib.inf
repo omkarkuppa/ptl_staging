@@ -1,0 +1,69 @@
+## @file
+# Component description file for Me functionality
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2010 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = DxeMeLib
+FILE_GUID = BED096A7-775D-4AA0-AEA5-55E6CEEB02F6
+VERSION_STRING = 1.0
+MODULE_TYPE = BASE
+LIBRARY_CLASS = MeLib
+
+[LibraryClasses]
+BaseMemoryLib
+BaseLib
+DebugLib
+MemoryAllocationLib
+PerformanceLib
+UefiBootServicesTableLib
+PciSegmentLib
+TimerLib
+ConfigBlockLib
+PostCodeLib
+HobLib
+MeUtilsLib
+MeInfoLib
+RngLib
+ReportStatusCodeLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+[Sources]
+MePolicyDxeLib.c
+HeciMsgDxeLib.c
+
+[Protocols]
+gDxeMePolicyGuid ## CONSUMES
+gPlatformMeHookProtocolGuid ## CONSUMES
+gHeciControlProtocolGuid ## CONSUMES
+gWdtProtocolGuid ## CONSUMES
+gMeEopDoneProtocolGuid ## PRODUCES
+
+[Guids]
+gPchGlobalResetGuid ## CONSUMES
+gMeDxeConfigGuid ## CONSUMES
+gMeEopDoneHobGuid ## CONSUMES
+gMePreMemPolicyHobGuid ## CONSUMES
+gMePolicyHobGuid ## CONSUMES
+

@@ -1,0 +1,67 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2016 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+// Name:        CrashLogSetup.uni
+//
+// Description: Debug Form String Definitions.
+//
+//**********************************************************************
+/=#
+#include "VFR.uni"
+
+#string STR_CRASH_LOG_FORM_TITLE                        #language en-US "CrashLog Settings"
+#string STR_CRASH_LOG_FORM_HELP                         #language en-US "CrashLog Settings"
+
+#string STR_DEBUG_NULL                                  #language en-US ""
+#string STR_CRASH_LOG_PROMPT                            #language en-US "CrashLog Feature"
+#string STR_CRASH_LOG_HELP                              #language en-US "The feature helps collecting crash data from PMC SSRAM"
+
+#string STR_CRASH_LOG_CPU                               #language en-US "CPU"
+#string STR_CRASH_LOG_SILICON                           #language en-US "Silicon"
+
+#string STR_COLLECT_CRASH_LOG_ON_ALL_RESET_PROMPT       #language en-US "CrashLog On All Reset"
+#string STR_COLLECT_CRASH_LOG_ON_ALL_RESET_HELP         #language en-US "Option to invoke CrashLog collection on all reset"
+
+#string STR_CRASH_LOG_REAEM_PROMPT                      #language en-US "CrashLog Re-Arm Enable"
+#string STR_CRASH_LOG_REARM_HELP                        #language en-US "Option to invoke CrashLog Re-Arm"
+
+#string STR_CRASH_LOG_CLEAR_ENABLE_PROMPT               #language en-US "CrashLog Clear Enable"
+#string STR_CRASH_LOG_CLEAR_ENABLE_HELP                 #language en-US "Option to invoke CrashLog clear"
+
+#string STR_CRASH_LOG_GBL_RST_PROMPT                    #language en-US "CrashLog Global Reset Trigger mask status"
+#string STR_CRASH_LOG_GBL_RST_HELP                      #language en-US "Option to override CrashLog Global Reset Trigger mask"
+#string STR_DEFAULT                                     #language en-US "Default"
+#string STR_MODIFY                                      #language en-US "Modify"
+
+#string STR_CRASH_LOG_GBL_RST_MASK0_PROMPT              #language en-US "  Global Reset Trigger mask 0"
+#string STR_CRASH_LOG_GBL_RST_MASK0_HELP                #language en-US "Set value to override global reset trigger mask 0. The valid range is 0 ~ 0xffffffff. Please convert to decimal form when setting new mask value."
+
+#string STR_CRASH_LOG_GBL_RST_MASK1_PROMPT              #language en-US "  Global Reset Trigger mask 1"
+#string STR_CRASH_LOG_GBL_RST_MASK1_HELP                #language en-US "Set value to override global reset trigger mask 1. The valid range is 0 ~ 0xffffffff. Please convert to decimal form when setting new mask value."
+
+#string STR_CRASH_LOG_GPRS_PROMPT                       #language en-US "CrashLog GPRs"
+#string STR_CRASH_LOG_GPRS_HELP                         #language en-US "Helps collecting crash data from PMC SSRAM. Enabling this may expose personal or confidential information that may be held in the GPRs at the time of the Crash trigger"
+#string STR_CRASH_LOG_DISABLE_SMM_GPRS                  #language en-US "Gprs Enabled, Smm Gprs Disabled"
+
+#string STR_CRASH_LOG_PRIVACY_CONSENT_PROMPT            #language en-US "Unique_ID Collection Control"
+#string STR_CRASH_LOG_PRIVACY_CONSENT_HELP              #language en-US "Enable/Disable Unique ID collection by Crash Log. Enabling the Unique ID collection will mean the id can be shared to Intel and text necessary as approved by privacy assessment. EOM Based (End of Manufacturing), will disable this feature if EOM flag is set."
+
+#string STR_NULL                                        #language en-US " "

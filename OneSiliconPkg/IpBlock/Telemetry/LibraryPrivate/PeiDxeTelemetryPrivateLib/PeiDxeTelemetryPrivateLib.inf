@@ -1,0 +1,56 @@
+## @file
+#  Library description file for Telemetry Private Lib
+#
+# All function in this library is available for PEI, DXE, and SMM,
+# But do not support UEFI RUNTIME environment call.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2018 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION               = 0x00010017
+BASE_NAME                 = PeiDxeTelemetryPrivateLib
+FILE_GUID                 = 34F4FA7D-982A-42DF-AB46-15C84174CF97
+VERSION_STRING            = 1.0
+MODULE_TYPE               = BASE
+LIBRARY_CLASS             = TelemetryPrivateLib
+
+
+[LibraryClasses]
+BaseLib
+BaseMemoryLib
+IoLib
+DebugLib
+PciSegmentLib
+CpuPlatformLib
+TelemetryLib
+PeiHostBridgeIpStatusLib
+S3BootScriptLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+[Pcd]
+gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemBaseAddr
+gSiPkgTokenSpaceGuid.PcdSiPciExpressBaseAddress               ## CONSUMES
+
+[Sources]
+PeiDxeTelemetryPrivateLib.c

@@ -1,0 +1,95 @@
+### @file
+#  Component information file for AcpiFeatures module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2016 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+# @par Glossary:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = AcpiPlatformFeatures
+  FILE_GUID                      = 07709C98-414A-4039-B7D0-29C21F105E92
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InstallAcpiPlatformFeatures
+
+[Sources.common]
+  AcpiFeatures.h
+  AcpiFeatures.c
+
+  Lpit/Lpit.act
+  Wdat/Wdat.act
+  SsdtPtid/Ptid.asl
+  #zpodd/zpodd.asl  TODO: Include for S/H segments
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  DebugLib
+  PcdLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  HobLib
+  SerialIoAccessLib
+  CpuPlatformLib
+  PmcLib
+  PchInfoLib
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterBase           ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision       ## SOMETIMES_CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformType
+  gBoardModuleTokenSpaceGuid.PcdBoardType
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId
+  gSiPkgTokenSpaceGuid.PcdAcpiDebugEnableFlag                    ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdTcoBaseAddress                         ## CONSUMES
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid                                      ## CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid                                ## CONSUMES
+  gPlatformNvsAreaProtocolGuid                                   ## CONSUMES
+
+[Guids]
+  gEfiHobListGuid                                                ## CONSUMES
+  gTcoWdtHobGuid                                                 ## CONSUMES
+  gSetupVariableGuid                                             ## CONSUMES
+  gPchSetupVariableGuid                                          ## CONSUMES
+  gPchInfoHobGuid                                                ## CONSUMES
+
+[Depex]
+  gEfiAcpiTableProtocolGuid           AND
+  gEfiFirmwareVolume2ProtocolGuid     AND
+  gEfiVariableArchProtocolGuid        AND
+  gPlatformNvsAreaProtocolGuid
+

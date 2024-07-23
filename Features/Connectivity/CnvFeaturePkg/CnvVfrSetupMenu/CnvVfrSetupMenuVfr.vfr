@@ -1,0 +1,151 @@
+/** @file
+  CNV Vfr Setup Menu Items
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#include <CnvSetupId.h>
+#include "CnvVfrSetupMenu.h"
+
+formset
+  guid      = gCnvFeatureSetupGuid,
+  title     = STRING_TOKEN(STR_CONNECTIVITY_CONFIGURATION),
+  help      = STRING_TOKEN(STR_CONNECTIVITY_HELP),
+  classguid = gCnvFeatureSetupGuid,
+
+  efivarstore CNV_VFR_CONFIG_SETUP,
+  varid = AUTO_ID(CNV_VFR_CONFIG_SETUP_DATA_ID),
+  attribute = 0x7, // EFI variable attributes  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE
+  name  = CnvSetup,
+  guid  = gCnvFeatureSetupGuid;
+
+  defaultstore MyStandardDefault,
+    prompt      = STRING_TOKEN(STR_STANDARD_DEFAULT_PROMPT),
+    attribute   = 0x0000;                         // Default ID: 0000 standard default
+
+  // Define form for Connectivity related options
+  form formid = AUTO_ID(CONNECTIVITY_OPTIONS_FORM_ID),
+  title       = STRING_TOKEN(STR_CONNECTIVITY_CONFIGURATION);
+
+    // Define guid op for Connectivity to dispaly on Advanced menu
+    guidop
+      guid     = gEfiIfrFrontPageGuid,
+      datatype = UINT32,
+      data     = FixedPcdGet32 (PcdCnvSetupMenuConfig),
+    endguidop;
+
+    text
+      help   = STRING_TOKEN(STR_CNVI_HELP),
+      text   = STRING_TOKEN(STR_CNVI_STATE),
+      text   = STRING_TOKEN(STR_CNVI_CURRENT_STATE),
+      flags  = 0, key = 0;
+
+    text
+      help   = STRING_TOKEN(STR_CNVI_CONFIG),
+      text   = STRING_TOKEN(STR_CNVI_CONFIG),
+      flags  = 0,
+      key    = 0;
+
+    oneof varid   = CNV_VFR_CONFIG_SETUP.CnviMode,
+      questionid  = KEY_CNV_BT_CNVI_MODE,
+      prompt      = STRING_TOKEN(STR_CNVI_MODE),
+      help        = STRING_TOKEN(STR_CNVI_MODE_HELP),
+      option text = STRING_TOKEN(STR_CNVI_DISABLE), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
+      option text = STRING_TOKEN(STR_CNVI_AUTO), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+    endoneof;
+
+    suppressif ideqval CNV_VFR_CONFIG_SETUP.CnviMode == 0;
+      grayoutif match (stringref (STRING_TOKEN (STR_CNVI_IS_NOT_PRESENT_PATTERN)), stringref (STRING_TOKEN (STR_CNVI_CURRENT_STATE)));
+
+        oneof varid   = CNV_VFR_CONFIG_SETUP.CnviWifiCore,
+          prompt      = STRING_TOKEN(STR_CNVI_WIFI_CORE),
+          help        = STRING_TOKEN(STR_CNVI_WIFI_CORE_HELP),
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        endoneof;
+
+        oneof varid   = CNV_VFR_CONFIG_SETUP.CnviBtCore,
+          prompt      = STRING_TOKEN(STR_CNVI_BT_CORE),
+          help        = STRING_TOKEN(STR_CNVI_BT_CORE_HELP),
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        endoneof;
+
+        grayoutif  ideqval CNV_VFR_CONFIG_SETUP.CnviBtCore == 0;
+          oneof varid   = CNV_VFR_CONFIG_SETUP.CnviBtInterface,
+            questionid  = KEY_CNV_BT_INTERFACE,
+            prompt      = STRING_TOKEN(STR_CNVI_BT_INTERFACE),
+            help        = STRING_TOKEN(STR_CNVI_BT_INTERFACE_HELP),
+            option text = STRING_TOKEN(STR_CNVI_BT_USB), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+            option text = STRING_TOKEN(STR_CNVI_BT_PCI), value = 2, flags = RESET_REQUIRED | INTERACTIVE;
+          endoneof;
+
+        endif;
+      endif;
+    endif;
+
+#if FixedPcdGetBool (PcdCnvUefiVarVersion) == 3
+    oneof varid   = CNV_VFR_CONFIG_SETUP.CnviBtAudioOffload,
+      questionid  = KEY_CNV_BT_AUDIO_OFFLOAD,
+      prompt      = STRING_TOKEN(STR_CNV_BT_AUDIO_OFFLOAD),
+      help        = STRING_TOKEN(STR_CNV_BT_AUDIO_OFFLOAD_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED | INTERACTIVE;
+    endoneof;
+#endif
+
+    suppressif ideqval CNV_VFR_CONFIG_SETUP.CnviBtAudioOffload == 0;
+      oneof varid   = CNV_VFR_CONFIG_SETUP.CnviBtAudioOffloadInterface,
+        questionid  = KEY_CNV_BT_AUDIO_OFFLOAD_INTERFACE,
+        prompt      = STRING_TOKEN(STR_CNV_BT_AUDIO_OFFLOAD_INTERFACE),
+        help        = STRING_TOKEN(STR_CNV_BT_AUDIO_OFFLOAD_INTERFACE_HELP),
+        option text = STRING_TOKEN(STR_CNV_BT_AUDIO_OFFLOAD_INTERFACE_I2S), value = 0, flags = DEFAULT | RESET_REQUIRED | INTERACTIVE;
+        suppressif ideqval CNV_VFR_CONFIG_SETUP.CnviBtAudioOffloadI2sInterfaceOnly == 1;
+          option text = STRING_TOKEN(STR_CNV_BT_AUDIO_OFFLOAD_INTERFACE_SOUNDWIRE), value = 1, flags = RESET_REQUIRED | INTERACTIVE;
+        endif;
+      endoneof;
+    endif;
+
+    oneof varid   = CNV_VFR_CONFIG_SETUP.SkipVidDidCheck,
+      prompt      = STRING_TOKEN(STR_CNVD_SKIP_VDID_CHECK_PROMPT),
+      help        = STRING_TOKEN(STR_CNVD_SKIP_VDID_CHECK_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    subtitle text = STRING_TOKEN(STR_EMPTY);
+    oneof varid   = CNV_VFR_CONFIG_SETUP.PrebootBleEnable,
+      prompt      = STRING_TOKEN(STR_PREBOOT_BLE_PROMPT),
+      help        = STRING_TOKEN(STR_PREBOOT_BLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+    endoneof;
+    SEPARATOR
+
+    oneof varid  = CNV_VFR_CONFIG_SETUP.DiscreteBtModule,
+      prompt   = STRING_TOKEN(STR_BT_INTERFACE),
+      help     = STRING_TOKEN(STR_BT_INTERFACE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_BT_USB), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    SEPARATOR
+    
+    
+  endform;
+endformset;

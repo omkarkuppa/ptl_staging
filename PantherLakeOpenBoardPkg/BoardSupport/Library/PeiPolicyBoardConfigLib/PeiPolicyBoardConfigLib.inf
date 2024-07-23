@@ -1,0 +1,133 @@
+### @file
+# Module Information file for PeiPolicyBoardConfigLib Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PeiPolicyBoardConfigLib
+  FILE_GUID                      = B1E959E3-9DCA-4D6F-938C-420C3BF5D820
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  LIBRARY_CLASS                  = PeiPolicyBoardConfigLib|PEIM PEI_CORE SEC
+
+[Sources]
+  PeiPolicyBoardConfig.c
+  PeiCpuPolicyBoardConfigPreMem.c
+  PeiCpuPolicyBoardConfig.c
+  PeiMePolicyBoardConfigPreMem.c
+  PeiMePolicyBoardConfig.c
+  PeiPchPolicyBoardConfigPreMem.c
+  PeiPchPolicyBoardConfig.c
+  PeiSaPolicyBoardConfigPreMem.c
+  PeiSaPolicyBoardConfig.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[LibraryClasses]
+  PcdLib
+  DebugLib
+  PeiLib
+  ConfigBlockLib
+  BaseMemoryLib
+  BmpSupportLib
+  PchInfoLib
+
+[Guids]
+  gVmdPeiConfigGuid                       ## CONSUMES
+  gCnviConfigGuid                         ## CONSUMES
+  gTianoLogoGuid                          ## CONSUMES
+  gVtdConfigGuid                          ## CONSUMES
+  gMemoryConfigNoCrcGuid                  ## CONSUMES
+  gTcssPeiPreMemConfigGuid                ## CONSUMES
+  gHostBridgePeiPreMemConfigGuid          ## CONSUMES
+  gPchGeneralPreMemConfigGuid             ## CONSUMES
+  gPcieRpPreMemConfigGuid                 ## CONSUMES
+  gMePeiPreMemConfigGuid                  ## CONSUMES
+  gCpuInitPreMemConfigGuid                ## CONSUMES
+  gCpuSecurityPreMemConfigGuid            ## CONSUMES
+  gGraphicsPeiConfigGuid                  ## CONSUMES
+  gPchGeneralConfigGuid                   ## CONSUMES
+  gSerialIoConfigGuid                     ## CONSUMES
+  gMePeiConfigGuid                        ## CONSUMES
+  gCpuInitConfigGuid                      ## CONSUMES
+  gMemorySubSystemConfigGuid              ## CONSUMES
+
+[Ppis]
+  gFspmArchConfigPpiGuid
+  gPeiGraphicsPlatformPpiGuid             ## CONSUMES
+  gSiPolicyPpiGuid                        ## CONSUMES
+  gSiPreMemPolicyPpiGuid                  ## CONSUMES
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdTsegSize                             ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection          ## CONSUMES
+  # Cpu Config
+  gBoardModuleTokenSpaceGuid.PcdCpuRatio
+  gBoardModuleTokenSpaceGuid.PcdBiosGuard
+
+  # SA Misc Config
+  gBoardModuleTokenSpaceGuid.PcdSaMiscMmioSizeAdjustment       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData                  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdDataSize              ## CONSUMES
+
+  # SPD Address Table
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable          ## CONSUMES
+
+  # PCIe Clock Info
+  gBoardModuleTokenSpaceGuid.PcdPcieClock0                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock1                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock2                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock3                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock4                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock5                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock6                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock7                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock8                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock9                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock10                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock11                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock12                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock13                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock14                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock15                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock16                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieClock17                    ## CONSUMES
+
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuMaxLogicalProcessorNumber    ## CONSUMES
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuMicrocodePatchAddress        ## CONSUMES
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuMicrocodePatchRegionSize     ## CONSUMES
+  gIntelSiliconPkgTokenSpaceGuid.PcdIntelGraphicsVbtFileGuid   ## CONSUMES
+
+[FixedPcd]
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase        ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize        ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdMicrocodeOffsetInFv         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPolicyDefaultChkEnable         ## CONSUMES

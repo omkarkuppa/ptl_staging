@@ -1,0 +1,63 @@
+### @file
+#  Component description file for Serial I/O Port library functions with BIOS Setup Check.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PeiPlatformSerialPortLib
+  FILE_GUID                      = 2A122015-8572-4EC8-98A8-5D5FE893086C
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = BASE
+  LIBRARY_CLASS                  = SerialPortLib
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF
+#
+
+[LibraryClasses]
+  BaseLib
+  IoLib
+  HobLib
+  PcdLib
+  PeiServicesLib
+  SerialPortParameterLib
+  PlatformHookLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialUseHardwareFlowControl  ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialDetectCable             ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialFifoControl             ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialLineControl             ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialBaudRate                ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterBase            ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdStatusCodeFlags                ## CONSUMES
+
+[Guids]
+  gDebugConfigHobGuid
+
+[Sources]
+  PeiPlatformSerialPortLib.c

@@ -1,0 +1,54 @@
+## @file
+# Component information file for Silicon Policy Init Library
+# This library implements Silicon Policy Initialization for PreMemory in FSP API mode.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2020 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiPreMemSiliconPolicyInitLib
+  FILE_GUID                      = 267C4709-47AC-418C-B456-B3B478F9CA38
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SiliconPolicyInitLib
+
+
+[LibraryClasses]
+  PcdLib
+  PeiServicesLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  DebugLib
+  SiPolicyLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  PeiPreMemSiliconPolicyInitLibApi.c
+
+[Pcd]
+
+[Ppis]
+
+
+[Depex]
+

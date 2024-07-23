@@ -1,0 +1,74 @@
+### @file
+# Component description file for ME SMBIOS Update Config module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2019 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION    = 0x00010017
+  BASE_NAME      = MeSmbiosUpdateConfig
+  FILE_GUID      = 83EC90A9-D791-4613-9C57-68C3DE923C3B
+  VERSION_STRING = 1.0
+  MODULE_TYPE    = DXE_DRIVER
+  ENTRY_POINT    = MeSmbiosUpdateConfigEntryPoint
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  DebugLib
+  BaseMemoryLib
+  PciSegmentLib
+  HobLib
+  GbeLib
+  PchPciBdfLib
+  PcdLib
+  PciHostBridgeLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneClickRecoveryFeaturePkg/OneClickRecoveryFeaturePkg.dec
+  PlatformSanitizeFeaturePkg/PlatformSanitizeFeaturePkg.dec
+
+[Sources]
+  MeSmbiosUpdateConfig.c
+
+[Protocols]
+  gEfiSmbiosProtocolGuid                ## CONSUMES
+  gMeSmbiosTablesUpdateProtocolGuid     ## PRODUCES
+  gOneClickRecoveryProtocolGuid         ## CONSUMES
+  gMebxConfigProtocolGuid               ## CONSUMES
+  gEfiPciIoProtocolGuid                 ## CONSUMES
+
+[Guids]
+  gMeBiosPayloadHobGuid                 ## CONSUMES
+  gSetupVariableGuid                    ## CONSUMES
+  gMeSetupVariableGuid                  ## CONSUMES
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdSolTerminalType                       ## CONSUMES
+  gPsFeatureModuleTokenSpaceGuid.PcdPlatformSanitizeRpeSupport  ## CONSUMES
+  gPsFeatureModuleTokenSpaceGuid.PcdPsSupportCapabilities       ## CONSUMES
+
+[Depex]
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid

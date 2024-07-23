@@ -1,0 +1,64 @@
+## @file
+# This is a VTIO DXE driver which is used to collect platform specific information for VTIO feature.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010007
+  BASE_NAME                      = VtioSetup
+  FILE_GUID                      = 03327D04-C807-4B76-965F-B30046F15391
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = VtioSetupEntry
+
+[Sources]
+  VtioSetupStrings.uni
+  VtioSetupVfr.vfr
+  VtioSetup.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  VtioFeaturePkg/VtioFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiLib
+  BaseMemoryLib
+  DebugLib
+  PrintLib
+  HiiLib
+  PcdLib
+  DevicePathLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+
+[Protocols]
+  gEfiDevicePathProtocolGuid                            ## CONSUMES
+  gEfiHiiConfigAccessProtocolGuid                       ## CONSUMES
+  gEdkiiPlatformSpecificResetFilterProtocolGuid         ## CONSUMES
+
+[Pcd]
+  gVtioFeaturePkgTokenSpaceGuid.PcdVtioSetupDataPtr                 ## PRODUCES
+
+[Depex]
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid

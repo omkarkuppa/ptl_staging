@@ -1,0 +1,43 @@
+## @file
+#  This is a build description for CNV UEFI feature.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Packages]
+  CnvFeaturePkg/CnvFeaturePkg.dec
+
+[Components.X64]
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables == TRUE
+  CnvFeaturePkg/CnvDxe/CnvDxe.inf {
+    <BuildOptions>
+      *_*_*_ASLPP_FLAGS = $(CNV_ASLPP_FLAGS)
+  }
+!endif
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu == TRUE
+  CnvFeaturePkg/CnvVfrSetupMenu/CnvVfrSetupMenu.inf
+!endif
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables == TRUE
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion >= 2
+  CnvFeaturePkg/CnvUefiConfigVariables/CnvUefiConfigVariablesVer2.inf
+!endif
+!endif
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion >= 4
+  CnvFeaturePkg/CnvCompatibility/CnvCompatibilityDxe.inf
+!endif

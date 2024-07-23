@@ -1,0 +1,87 @@
+## @file
+#  Configuration file for Sample Platform. (Platform configuration)
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification
+#
+##
+
+Title = "Configuartion file - TOML for PlatformSample Platform"
+
+[Common]
+  Vendor             = 'Intel'
+  PlatformGeneration = 0
+  PlatformFullName   = 'Sample'
+  PlatformPrefix     = 'SAM'
+
+[Keystore]
+  MePreProdCertSubject = ''
+  MeProdCertSubject    = ''
+
+[FitTool]
+  Method         = 'mFit'
+  LayoutPlatform = ''
+
+[BiosGuard]
+  PlatformId = 'Sample'
+  [BiosGuard.Certificate]
+    SignType  = ''
+    Algorithm = ''
+    SignTool  = ''
+    PbkFile   = 'PATH/TO/SAMPLE_PUBLIC_KEY'
+    PvkFile   = 'PATH/TO/SAMPLE_PRIVATE_KEY'
+
+[Firmware]
+  [Firmware.Bios]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.Ec]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.ExtendedBios]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.IshPdt]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.Me]
+    Version   = 1
+    IsEnabled = false
+
+  [Firmware.Monolithic]
+    Version   = 1
+    IsEnabled = false
+
+  [Firmware.Ifwi]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.BtGAcm]
+    Version   = 1
+    IsEnabled = false
+
+  [Firmware.Fsp]
+    Version   = 1
+    IsEnabled = true
+
+  [Firmware.Ucode]
+    Version   = 1
+    IsEnabled = false

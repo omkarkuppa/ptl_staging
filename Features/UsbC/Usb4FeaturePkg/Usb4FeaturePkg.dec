@@ -1,0 +1,129 @@
+## @file
+#  DEC file for Usb4FeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME      = Usb4FeaturePkg
+  PACKAGE_GUID      = D0C477E4-FE5F-4DE3-AED3-CEBAB2E18DE8
+  PACKAGE_VERSION   = 0.1
+
+[Includes]
+  Include
+  Include/TbtInit
+  Include/Usb4Cm
+
+[Includes.Common.Private]
+  IncludePrivate/Usb4Cm
+  IncludePrivate/DTbtNvsArea
+  IncludePrivate/Acpi
+  AcpiTables/DTbtAcpi/BarlowRidge
+
+[Guids]
+  #
+  # Usb4FeaturePkg Token Guid
+  #
+  gUsb4FeaturePkgTokenSpaceGuid  = { 0x6f6c3bfe, 0xe3e1, 0x45a5, { 0x9c, 0x39, 0x86, 0x01, 0xfa, 0x1f, 0x11, 0xb5 } }
+
+  #
+  # DTBT Info HOB Guid
+  #
+  gDTbtInfoHobGuid               = { 0xc2d628a1, 0xdd7a, 0x4865, { 0xa8, 0xec, 0x89, 0x61, 0xf3, 0x57, 0xf8, 0x63 } }
+
+  #
+  # USB4 target platform infomation
+  #
+  gUsb4PlatformHobGuid           = { 0xb6043ada, 0xf129, 0x482c, { 0x82, 0xd9, 0x64, 0xe5, 0xb0, 0x2a, 0x98, 0x5d}}
+
+[Ppis]
+  #
+  # DTBT Policy PPI
+  #
+  gPeiDTbtPolicyPpiGuid          = { 0xbec8b921, 0xb70b, 0x4041, { 0x92, 0xc1, 0x37, 0x24, 0xdb, 0xad, 0x72, 0x64 } }
+
+[Protocols]
+  #
+  # DTBT Policy Protocol
+  #
+  gDxeDTbtPolicyProtocolGuid     = { 0x714aedbd, 0xfbf6, 0x4cf9, { 0xb5, 0xc7, 0xb9, 0x3a, 0xbd, 0x21, 0xe0, 0xcd } }
+
+  #
+  # DTBT NVS Area Protocol
+  #
+  gDTbtNvsAreaProtocolGuid       = { 0xd7778b4c, 0x85b5, 0x479b, { 0xa8, 0x83, 0x80, 0xbd, 0x23, 0xeb, 0x1c, 0x48 } }
+
+  #
+  # DTBT Disable BME Protocol
+  #
+  gDxeDisableDTbtBmeProtocolGuid = { 0x29627704, 0xf178, 0x442c, { 0x8e, 0x1b, 0xfc, 0x29, 0x94, 0x3a, 0x46, 0x59 } }
+
+  ## USB4 debug protocol GUID
+  ## Include/Protocol/Usb4DebugProtocol.h
+  gEfiUsb4DebugProtocolGuid        =  { 0x80bf4c72, 0x460d, 0x4231, { 0x89, 0x4f, 0xfa, 0xe9, 0x90, 0x15, 0xe0, 0x6d } }
+
+[PcdsFixedAtBuild]
+
+  #
+  # Enable / Disable Usb4 Feature
+  #
+  gUsb4FeaturePkgTokenSpaceGuid.PcdUsb4Enable                                |FALSE|BOOLEAN|0xF0000001
+
+  #
+  #  Enable / Disable DTBT feature
+  #
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                                |FALSE|BOOLEAN|0xF0000110
+
+  #
+  #  Max number of DTbt controller supported.
+  #
+  gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber                 |0x2|UINT8|0xF0000015  # MAX_DTBT_CONTROLLER_NUMBER
+
+  #
+  #  Handshake register value driven to PCIE venodr specific configuration register from FW
+  #  (LC/CM to host)
+  #
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtToPcieRegister                        |0x0548|UINT16|0x10001007
+
+  #
+  #  Handshake register value driven from PCIE venodr specific configuration register to FW
+  #  (HOST to LC/CM)
+  #
+  gUsb4FeaturePkgTokenSpaceGuid.PcdPcieToDTbtRegister                        |0x054C|UINT16|0x10001008
+
+  #
+  #  Bus 40(0x28) is reserved before PCI Sacn when dTBT is enabled.
+  #
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtTempBusNumber                         |0x28|UINT8|0x1000100B
+
+  #
+  # Bit mask for dTBT IOE RP support in board.
+  # Bit index is based on RP ACPI device name
+  # Bit 0 - xx00, Bit 1 - xx01, ... Bit 31 - xx31.
+  # xx can be RP, PEG, ...etc
+  #
+  gUsb4FeaturePkgTokenSpaceGuid.PcdIoeDTbtRpSupport                          |0x00000000|UINT32|0x10002001
+
+  #
+  # Bit mask for dTBT PCH RP support in board.
+  # Bit index is based on RP ACPI device name
+  # Bit 0 - xx00, Bit 1 - xx01, ... Bit 31 - xx31.
+  # xx can be RP, PEG, ...etc
+  #
+  gUsb4FeaturePkgTokenSpaceGuid.PcdPchDTbtRpSupport                          |0x00000000|UINT32|0x10002002

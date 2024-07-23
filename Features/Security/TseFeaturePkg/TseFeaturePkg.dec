@@ -1,0 +1,39 @@
+## @file
+#
+# DEC file for TseFeaturePkg.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+DEC_SPECIFICATION = 0x00010017
+PACKAGE_NAME = TseFeaturePkg
+PACKAGE_VERSION = 0.1
+PACKAGE_GUID = 326A8B00-35AF-4472-B6BD-77ABD9BA8E6E
+
+[Includes]
+  Include
+
+[PcdsFeatureFlag]
+  gTseFeaturePkgTokenSpaceGuid.PcdTseFeatureEnable|TRUE|BOOLEAN|0x00000001
+  gTseFeaturePkgTokenSpaceGuid.PcdBuildBlockIoTestApp|FALSE|BOOLEAN|0x00000002
+
+[Guids]
+  gBlockIoTestAppHiiGuid = {0xe4d6d028, 0x9de6, 0x4090, {0x82, 0x6a, 0x07, 0xb4, 0xc4, 0xdc, 0x2d, 0x55}}
+  gTseFeaturePkgTokenSpaceGuid = {0x36023cec, 0x3acd, 0x4774, {0x9a, 0x5a, 0x4c, 0x2, 0x84, 0xa6, 0xf3, 0x41}}

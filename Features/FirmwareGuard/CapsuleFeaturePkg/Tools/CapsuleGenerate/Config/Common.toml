@@ -1,0 +1,895 @@
+## @file
+#  Configuration file for Client CapsuleGenerate. (Common configuration)
+#
+#  Note:
+#    All the paths in here should be related paths and based on
+#    the workspace root path.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification
+#
+##
+
+Title = "Configuration file - TOML for Client CapsuleGenerate"
+
+[Common]
+  Vendor             = 'Intel'
+  PlatformGeneration = 999
+  PlatformFullName   = 'Client'
+  PlatformPrefix     = 'Client'
+
+[Keystore]
+  CapTrustPublicCert   = 'SigningKeys/TestRoot3K.pub.pem'
+  CapOtherPublicCert   = 'SigningKeys/TestSub3K.pub.pem'
+  CapSignerPrivateCert = 'SigningKeys/TestCert3K.pem'
+  WinDriverPfxCert     = 'SigningKeys/SAMPLE_DEVELOPMENT.pfx'
+  MePreProdCertSubject = ''
+  MeProdCertSubject    = ''
+
+[Path]
+  ToolDir          = 'Tools'
+  TemplateDir      = 'CapsuleGenerate/Template'
+  EdkIIBaseToolDir = 'Tools/BaseTools'
+  OpenSSLDir       = 'Tools/OpenSSL'
+  EdssSignFileDir  = 'Tools/SignFile'
+
+  [Path.PyScript]
+    CleanUpScript         = 'Scripts/CleanUp.py'
+    XdrBuilderScript      = 'Scripts/XdrBuilder.py'
+    EdkiiFdBuilderScript  = 'Scripts/Edk2/Edk2FdBuilder.py'
+    WinInfGeneratorScript = 'Scripts/Capsule/WinDriverInfGenerator.py'
+    WinCatGeneratorScript = 'Scripts/Capsule/WinDriverCatGenerator.py'
+    WinCatSignerScript    = 'Scripts/Capsule/WinDriverCatSigner.py'
+
+[FitTool]
+  Method                    = 'mFit'
+  LayoutPlatform            = ''
+  IfwiDecomposerScript      = 'Scripts/Intel/Ifwi/IfwiDecomposer.py'
+  IfwiXmlConfigParserScript = 'Scripts/Intel/Ifwi/IfwiXmlConfigParser.py'
+  IfwiFWUpdateBuilderScript = 'Scripts/Intel/Ifwi/IfwiFWUpdateBuilder.py'
+
+[BiosGuard]
+  PlatformId          = 'Client'
+  BgupGeneratorScript = 'Scripts/Intel/BiosGuard/SignedBgupGenerator.py'
+  [BiosGuard.Program]
+    Bgpb     = 'Tools/BiosGuard/UpdatePackage/BiosGuardPB.exe'
+    Bgsl2Bin = 'Tools/BiosGuard/UpdatePackage/BiosGuardSL2BIN.exe'
+  [BiosGuard.Certificate]
+    #
+    # The valid SignType should be one of the following.
+    # 'Self', 'OpenSSL'
+    #
+    SignType  = 'OpenSSL'
+    #
+    # The valid Algorithm should be one of the following.
+    # 'RSA2048_SHA256_1_5', 'RSA2048_SHA256_v_2_1',
+    # 'RSA3072_SHA256_1_5', 'RSA3072_SHA256_v_2_1',
+    # 'RSA3072_SHA384_1_5', 'RSA3072_SHA384_v_2_1',
+    #
+    Algorithm = ''
+    SignTool  = 'Tools/OpenSSL/openssl.exe'
+    PbkFile   = ''
+    PvkFile   = ''
+
+[Device]
+  [Device.Spi]
+    [Device.Spi.TopSwapSize]
+      # 4MB
+      Default = '0x00400000'
+    [Device.Spi.FlashBlockSize]
+      # 64KB
+      Default = '0x00010000'
+
+[FirmwareComponent]
+  # gCapsuleBiosImageFileGuid
+  Bios          = { FileName = 'ClientBios.rom',          FileGuid = '5C245293-53B5-4455-BA02-2279EA55BB68' }
+  # gCapsuleBiosBgupFileGuid
+  BiosBgup      = { FileName = 'BiosBgup.bin',            FileGuid = 'C2E2039C-CFD8-4706-BE37-8F4DBB526005' }
+  # gCapsuleBiosConfigFileGuid
+  BiosConfig    = { FileName = 'BiosUpdateConfig.ini',    FileGuid = '812136D3-4D3A-433A-9418-29BB9BF78F6E' }
+  # gCapsuleExtendedBiosConfigFileGuid
+  ExtBiosConfig = { FileName = 'ExtBiosUpdateConfig.ini', FileGuid = 'BFEABAF1-0306-494B-9126-28CE91FB4EF6' }
+  # gCapsuleEcImageFileGuid
+  Ec            = { FileName = 'Ec.bin',                  FileGuid = 'E0139CE3-81BE-421C-B882-FDDEE1DE1C41' }
+  # gCapsuleGbEImageFileGuid
+  GbE           = { FileName = 'GbE.bin',                 FileGuid = 'B7016578-FA9A-4758-8F67-8746D839E083' }
+  # gCapsuleMeImageFileGuid
+  Me            = { FileName = 'Me.bin',                  FileGuid = 'BA18C3BB-FD85-4D24-9730-DEB55D39562F' }
+  # gCapsulePdtImageFileGuid
+  IshPdt        = { FileName = 'IshPdt.bin',              FileGuid = 'CDD975BA-DE5D-4820-BE44-51B11B602324' }
+  # gCapsuleIfwiImageFileGuid
+  Ifwi         = { FileName = 'Ifwi.bin',                 FileGuid = '60247F48-5DAC-4140-ABCD-8C54A7FD49B0' }
+  # gCapsuleIfwiBgupFileGuid
+  IfwiBgup     = { FileName = 'IfwiBgup.bin',             FileGuid = 'D4892E64-8710-4541-82E5-50092A4DC9D9' }
+  # gCapsuleIfwiConfigFileGuid
+  IfwiConfig   = { FileName = 'IfwiUpdateConfig.ini',     FileGuid = 'B2C92F59-9AA9-4C0A-9850-35FE2F84C276' }
+  # gCapsuleBtGAcmImageFileGuid
+  BtGAcm        = { FileName = 'BtGAcm.bin',              FileGuid = '1F725288-145F-4129-9F59-03F64FE1A10C' }
+  # gCapsuleBtGAcmConfigFileGuid
+  BtGAcmConfig  = { FileName = 'BtGAcmUpdateConfig.ini',  FileGuid = '23C9D7A5-FEEB-4AF3-A38E-6E066F271EF3' }
+  # gCapsuleBtGAcmBgupFileGuid
+  BtGAcmBgup    = { FileName = 'BtGAcmBgup.bin',          FileGuid = '64B015D5-B088-44AB-9375-751FE94A351C' }
+  # gCapsuleFspImageFileGuid
+  Fsp           = { FileName = 'Fsp.bin',                 FileGuid = '3A6E0F9C-5B7E-4F8D-8E1C-9B0A0F6B8D2A' }
+  # gCapsuleFspBgupFileGuid
+  FspBgup       = { FileName = 'FspBgup.bin',             FileGuid = '7D0E8C2F-1F6D-4F9B-AE0B-6A9C8B3A3E7C' }
+  # gCapsuleFspConfigFileGuid
+  FspConfig     = { FileName = 'FspUpdateConfig.ini',     FileGuid = '8F9E0C7B-9D2F-4C8A-9F0D-1E6F5B7B0D3C' }
+  Fbm           = { FileName = 'Fbm.bin',                 FileGuid = '' }
+  # gIntelMicrocodeArrayFfsFileGuid
+  Ucode         = { FileName = 'Ucode.bin',               FileGuid = '197DB236-F856-4924-90F8-CDF12FB875F3' }
+  # gIntelMicrocodeVersionFfsFileGuid
+  UcodeVersion  = { FileName = 'MicrocodeVersion.data',   FileGuid = 'E0562501-B41B-4566-AC0F-7EA8EE817F20' }
+  UcodeBgup     = { FileName = 'UcodeBgup.bin',           FileGuid = ''                                     }
+  UcodeXdr      = { FileName = 'UcodeXdr.bin ',           FileGuid = ''                                     }
+
+#######################################################################################################################
+#                                            Firmware Configuration Section                                           #
+#######################################################################################################################
+[Firmware]
+#
+# BIOS Firmware sub-section
+#
+[[Firmware.Bios]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'bioscap'
+  CapFilePrefix  = 'FmpBios'
+  CapFilePostfix = ''
+
+  #
+  # Template file should be relative path to Template folder.
+  #
+  BgslTemplateFile = 'BiosUpdateScript.bgsl.template'
+
+  #
+  # The format of BIOS Version (in DEC): MMMMmm
+  # M: major version, m: minor version. e.g., 2413.01 -> 241301
+  #
+  [Firmware.Bios.Command]
+    Title          = 'Build BIOS capsule update file'
+    Description    = '''
+To build the BIOS Capsule File.
+Support two methods
+  (1) Use -fit and -ifwi to decompose the BIOS firmware.
+  (2) Use -bios to assign the BIOS firmware.
+    '''
+    SubDescription = '''
+Note:
+  (1) -bios have the high priority to override the BIOS firmware that decompose from IFWI.
+    '''
+
+  [Firmware.Bios.Command.-fit]
+    Compulsory  = false
+    Description = 'Path of the FIT tool. (Should use with "-ifwi")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Bios.Command.-ifwi]
+    Compulsory  = false
+    Description = 'Path of the IFWI image. (Should use with "-fit")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Bios.Command.-bios]
+    Compulsory  = false
+    Description = 'Path of BIOS image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Bios.Command.-biossvn]
+    Compulsory  = false
+    Description = 'BiosGuard SVN default would be the same as BIOS version.'
+    Syntax      = 'HEX'
+    Default     = 'NA'
+
+  [Firmware.Bios.Command.-bioslsv]
+    Compulsory  = false
+    Description = 'Lowest supported version on BIOS firmware.'
+    Syntax      = 'INT'
+    Default     = '0'
+
+  [Firmware.Bios.Command.res]
+    Compulsory  = false
+    Description = 'Set the flag as input the resiliency BIOS.'
+    Syntax      = ''
+    Default     = false
+
+  #
+  # The actual offset and size should be depend on the platform.
+  # Tag order: [Type].[Build].[SKU]
+  # e.g. { Offset = "0x00C80000", Size = "0x00040000" }
+  #
+  [Firmware.Bios.Offset.Default]
+    Obb  = 'NA'
+    Ibbr = 'NA'
+    Ibb  = 'NA'
+
+  [Firmware.Bios.Guid]
+    Default = '6C8E136F-D3E6-4131-AC32-4687CB4ABD27'
+
+#
+# Extended BIOS Firmware sub-section
+#
+[[Firmware.ExtendedBios]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'extbioscap'
+  CapFilePrefix  = 'FmpExtBios'
+  CapFilePostfix = ''
+
+  #
+  # Template file should be relative path to Template folder.
+  #
+  BgslTemplateFile = 'BiosUpdateScript.bgsl.template'
+
+  #
+  # The format of Extended BIOS Version (in DEC): MMMMmm
+  # M: major version, m: minor version. e.g., 2413.01 -> 241301
+  #
+  [Firmware.ExtendedBios.Command]
+    Title          = 'Build Extended BIOS capsule update file'
+    Description    = '''
+To build the Extended BIOS Capsule File.
+Support two methods
+  (1) Use -fit and -ifwi to decompose the Extended BIOS firmware.
+  (2) Use -bios to assign the Extended BIOS firmware.
+    '''
+    SubDescription = '''
+Note:
+  (1) -bios have the high priority to override the Extended BIOS firmware that decompose from IFWI.
+    '''
+
+  [Firmware.ExtendedBios.Command.-fit]
+    Compulsory  = false
+    Description = 'Path of the FIT tool. (Should use with "-ifwi")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.ExtendedBios.Command.-ifwi]
+    Compulsory  = false
+    Description = 'Path of the IFWI image. (Should use with "-fit")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.ExtendedBios.Command.-bios]
+    Compulsory  = false
+    Description = 'Path of Extended BIOS image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.ExtendedBios.Command.-biossvn]
+    Compulsory  = false
+    Description = 'BiosGuard SVN default would be the same as Extended BIOS version.'
+    Syntax      = 'HEX'
+    Default     = 'NA'
+
+  [Firmware.ExtendedBios.Command.-bioslsv]
+    Compulsory  = false
+    Description = 'Lowest supported version on Extended BIOS firmware.'
+    Syntax      = 'INT'
+    Default     = '0'
+
+  [Firmware.ExtendedBios.Command.res]
+    Compulsory  = false
+    Description = 'Set the flag as input the resiliency Extended BIOS.'
+    Syntax      = ''
+    Default     = false
+
+  #
+  # The actual offset and size should be depend on the platform.
+  # Tag order: [Type].[Build].[SKU]
+  # e.g. { Offset = "0x00C80000", Size = "0x00040000" }
+  #
+  [Firmware.ExtendedBios.Offset.Default]
+    Ext  = 'NA'
+    Obb  = 'NA'
+    Ibbr = 'NA'
+    Ibb  = 'NA'
+
+  [Firmware.ExtendedBios.Guid]
+    Default = 'FD0AADC7-9696-4795-8F34-53069F759FB0'
+
+#
+# EC Firmware sub-section
+#
+[[Firmware.Ec]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'eccap'
+  CapFilePrefix  = 'FmpEc'
+  CapFilePostfix = ''
+
+  [Firmware.Ec.Command]
+    Title          = 'Build EC capsule update file'
+    Description    = '''
+To build the EC Capsule File.
+Support two methods
+  (1) Use -fit and -ifwi to decompose the EC firmware.
+  (2) Use -ec to assign the EC firmware.
+    '''
+    SubDescription = '''
+Note:
+  (1) -ec have the high priority to override the EC firmware that decompose from IFWI.
+    '''
+
+  [Firmware.Ec.Command.-fit]
+    Compulsory  = false
+    Description = 'Path of the FIT tool. (Should use with "-ifwi")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Ec.Command.-ifwi]
+    Compulsory  = false
+    Description = 'Path of IFWI image. (Should use with "-fit")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Ec.Command.-ec]
+    Compulsory  = false
+    Description = 'Path of EC image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Ec.Command.-eclsv]
+    Compulsory  = false
+    Description = 'Lowest supported version on EC firmware.'
+    Syntax      = 'DOT_FORMAT'
+    Default     = '0.0.0.0'
+
+  [Firmware.Ec.Guid]
+    Default = '3DD84775-EC79-4ECB-8404-74DE030C3F77'
+
+#
+# IshPdt Firmware sub-section
+#
+[[Firmware.IshPdt]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'pdtcap'
+  CapFilePrefix  = 'FmpIshPdt'
+  CapFilePostfix = ''
+
+  [Firmware.IshPdt.Command]
+    Title          = 'Build IshPdt capsule update file'
+    Description    = '''
+To build the IshPdt Capsule File.
+Support two methods
+  (1) Use -fit and -ifwi to decompose the IshPdt firmware.
+  (2) Use -ishpdt to assign the IshPdt firmware.
+    '''
+    SubDescription = '''
+Note:
+  (1) -ishpdt have the high priority to override the IshPdt firmware that decompose from IFWI.
+  (2) To decompose from IFWI please make sure IshPdt is supported.
+    '''
+
+  [Firmware.IshPdt.Command.-fit]
+    Compulsory  = false
+    Description = 'Path of the FIT tool. (Should use with "-ifwi")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.IshPdt.Command.-ifwi]
+    Compulsory  = false
+    Description = 'Path of IFWI image. (Should use with "-fit")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.IshPdt.Command.-pdt]
+    Compulsory  = false
+    Description = 'Path of IshPdt image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.IshPdt.Command.-pdtver]
+    Compulsory  = true
+    Description = 'Input image version on IshPdt firmware.'
+    Syntax      = 'INT'
+    Default     = ''
+
+  [Firmware.IshPdt.Command.-pdtlsv]
+    Compulsory  = false
+    Description = 'Lowest supported version on IshPdt firmware.'
+    Syntax      = 'INT'
+    Default     = '0'
+
+  [Firmware.IshPdt.Guid]
+    Default = '76CA0AD8-4A14-4389-B7E5-FD88791762AD'
+
+#
+# ME Firmware sub-section
+#
+[[Firmware.Me]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'mecap'
+  CapFilePrefix  = 'FmpMe'
+  CapFilePostfix = ''
+
+  [Firmware.Me.Command]
+    Title          = 'Build ME capsule update file'
+    Description    = '''
+To build the ME Capsule File.
+Support two methods
+  (1) Use -fit and -ifwi to decompose the ME firmware.
+  (2) Use -me to assign the BIOS firmware.
+    '''
+    SubDescription = '''
+Note:
+  (1) -me have the high priority to override the ME firmware that decompose from IFWI.
+    '''
+
+  [Firmware.Me.Command.-fit]
+    Compulsory  = false
+    Description = 'Path of the FIT tool. (Should use with "-ifwi")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Me.Command.-ifwi]
+    Compulsory  = false
+    Description = 'Path of the IFWI image. (Should use with "-fit")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Me.Command.-me]
+    Compulsory  = false
+    Description = 'Path of ME image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Me.Command.-mever]
+    Compulsory  = true
+    Description = 'Input image version on ME firmware.'
+    Syntax      = 'DOT_FORMAT'
+    Default     = ''
+
+  [Firmware.Me.Command.-mesku]
+    Compulsory  = false
+    Description = 'The SKU of this ME image. (Depend on different platform and GUID defined)'
+    Syntax      = 'DOT_FORMAT'
+    Default     = 'Default'
+
+  [Firmware.Me.Command.-melsv]
+    Compulsory  = false
+    Description = 'Lowest supported version on ME firmware.'
+    Syntax      = 'DOT_FORMAT'
+    Default     = '0.0.0.0'
+
+  [Firmware.Me.Command.-cse]
+    Compulsory  = false
+    Description = 'Path of CSE image. (Should use when input Corporate IFWI)'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Me.Command.cseregion]
+    Compulsory  = false
+    Description = 'To get the full CSE region not FWU image. (Should use when decompose from IFWI)'
+    Syntax      = ''
+    Default     = false
+
+  [Firmware.Me.Command.-sign]
+    Compulsory  = false
+    Description = 'Assign the sign keystore to sign the capsule file. (Default is platform sign key)'
+    Syntax      = 'preprodsign|prodsign'
+    Default     = ''
+
+  [Firmware.Me.Guid]
+    Default = '0EAB05C1-766A-4805-A039-3081DE0210C7'
+
+#
+# Monolithic Firmware sub-section
+#
+[[Firmware.Monolithic]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'monocap'
+  CapFilePrefix  = 'FmpMonolithic'
+  CapFilePostfix = ''
+
+  [Firmware.Monolithic.Command]
+    Title          = 'Build Monolithic capsule update file'
+    Description    = '''
+To build the Monolithic Capsule File.
+Support two methods
+  (1) Use -fit and -ifwi to decompose the each firmware component.
+      Could use each firmware flag to override the decsompose component.
+        -bios: BIOS image file. (If decompose from IFWI, then optional)
+        -me  : ME image file.   (Optional)
+        -ec  : EC image file.   (Optional)
+        -pdt : Pdt image file.  (Optional)
+        -gbe : GbE image file.  (Optional)
+  (2) Use each firmware flag to input separately others would use dummy file to replace.
+    '''
+    SubDescription = '''
+Note:
+  (1) At least need input the BIOS image or capsule build would get failed.
+    '''
+
+  [Firmware.Monolithic.Command.-fit]
+    Compulsory  = false
+    Description = 'Path of the FIT tool. (Should use with "-ifwi")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Monolithic.Command.-ifwi]
+    Compulsory  = false
+    Description = 'Path of the IFWI image. (Should use with "-fit")'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Monolithic.Command.-bios]
+    Compulsory  = false
+    Description = 'Path of BIOS image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Monolithic.Command.-me]
+    Compulsory  = false
+    Description = 'Path of ME image. (Input "IGNORE" as dummy)'
+    Syntax      = 'PATH|IGNORE'
+    Default     = ''
+
+  [Firmware.Monolithic.Command.-ec]
+    Compulsory  = false
+    Description = 'Path of EC image. (Input "IGNORE" as dummy)'
+    Syntax      = 'PATH|IGNORE'
+    Default     = ''
+
+  [Firmware.Monolithic.Command.-pdt]
+    Compulsory  = false
+    Description = 'Path of IshPdt image. (Input "IGNORE" as dummy)'
+    Syntax      = 'PATH|IGNORE'
+    Default     = ''
+
+  [Firmware.Monolithic.Command.-gbe]
+    Compulsory  = false
+    Description = 'Path of GbE image. (Input "IGNORE" as dummy)'
+    Syntax      = 'PATH|IGNORE'
+    Default     = ''
+
+  [Firmware.Monolithic.Command.-biossvn]
+    Compulsory  = false
+    Description = 'BiosGuard SVN default would be the same as BIOS version.'
+    Syntax      = 'HEX'
+    Default     = 'NA'
+
+  [Firmware.Monolithic.Command.-bioslsv]
+    Compulsory  = false
+    Description = 'Lowest supported version on BIOS firmware.'
+    Syntax      = 'INT'
+    Default     = '0'
+
+  [Firmware.Monolithic.Command.-cse]
+    Compulsory  = false
+    Description = 'Path of CSE image. (Should use when input Corporate IFWI)'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Monolithic.Command.res]
+    Compulsory  = false
+    Description = 'Set the flag as input the resiliency BIOS.'
+    Syntax      = ''
+    Default     = false
+
+  [Firmware.Monolithic.Command.cseregion]
+    Compulsory  = false
+    Description = 'To get the full CSE region not FWU image. (Should use when decompose from IFWI)'
+    Syntax      = ''
+    Default     = false
+
+  [Firmware.Monolithic.Guid]
+    Default = '7FEB1D5D-33F4-48D3-BD11-C4B36B6D0E57'
+
+#
+# IFWI Firmware sub-section
+#
+[[Firmware.Ifwi]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'ifwicap'
+  CapFilePrefix  = 'FmpIfwi'
+  CapFilePostfix = ''
+
+  #
+  # Template file should be relative path to Template folder.
+  #
+  BgslTemplateFile = 'IfwiUpdateScript.bgsl.template'
+
+  [Firmware.Ifwi.Command]
+    Title          = 'Build IFWI capsule update file'
+    Description    = '''
+To build the IFWI Capsule File.
+  (1) User assign the IFWI image by command '-ifwi' directly.
+  (2) Capsule LSV and ESRT information are not supported.
+    '''
+    SubDescription = '''
+Caution:
+  (1) IFWI capsule is supported on development stage only and not supported after End-of-Manufactory (EOM).
+  (2) It should not be used on product.
+    '''
+
+  [Firmware.Ifwi.Command.-ifwi]
+    Compulsory  = true
+    Description = 'Path of the IFWI image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Ifwi.Command.-biossvn]
+    Compulsory  = false
+    Description = 'BiosGuard SVN default would be the same as BIOS version.'
+    Syntax      = 'HEX'
+    Default     = 'NA'
+
+  [Firmware.Ifwi.Guid]
+    Default = 'F9FA5980-95F5-491A-9583-136D7F26D63E'
+
+#
+# BtGAcm Firmware sub-section
+#
+[[Firmware.Btgacm]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'btgacmcap'
+  CapFilePrefix  = 'FmpBtGAcm'
+  CapFilePostfix = ''
+
+  #
+  # Template file should be relative path to Template folder.
+  #
+  BgslTemplateFile = 'BiosUpdateScript.bgsl.template'
+
+  [Firmware.Btgacm.Command]
+    Title          = 'Build BtGAcm capsule update file'
+    Description    = '''
+To build the BtGAcm Capsule File.
+  (1) Use -build to decide the target of BIOS is debug or release.
+  (2) Use -res to decide the type of BIOS is resiliency BIOS or not.
+    '''
+    SubDescription = '''
+    '''
+
+  [Firmware.Btgacm.Command.-btgacm]
+    Compulsory  = true
+    Description = 'Path of BtGAcm image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Btgacm.Command.-btgacmlsv]
+    Compulsory  = false
+    Description = 'Lowest supported version of BtGAcm. (Should be MM.mm.BB)'
+    Syntax      = 'DEC|HEX'
+    Default     = '0.0.0'
+
+  [Firmware.Btgacm.Command.-build]
+    Compulsory  = true
+    Description = 'Assign using debug or release BIOS.'
+    Syntax      = 'Debug|Release'
+    Default     = ''
+
+  [Firmware.Btgacm.Command.-biossvn]
+    Compulsory  = true
+    Description = 'BiosGuard SVN value.'
+    Syntax      = 'HEX'
+    Default     = 'NA'
+
+  [Firmware.Btgacm.Command.res]
+    Compulsory  = false
+    Description = 'Set the flag as input the resiliency BIOS.'
+    Syntax      = ''
+    Default     = false
+
+  [Firmware.Btgacm.Command.--single]
+    Compulsory  = false
+    Description = 'Build for the primary slot of BtGAcm only.'
+    Syntax      = ''
+    Default     = false
+
+  #
+  # The actual offset and size should be depend on the platform.
+  # Tag order: [Type].[Build].[SKU]
+  # e.g. { Offset = '0x00C80000', Size = '0x00040000' }
+  #
+  [Firmware.Btgacm.Offset.Default]
+    Fv = 'NA'
+
+  [Firmware.Btgacm.Guid]
+    Default = '4E88068B-41B2-4E05-893C-DB0B43F7D348'
+
+#
+# FSP Firmware sub-section
+#
+[[Firmware.Fsp]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'fspcap'
+  CapFilePrefix  = 'FmpFsp'
+  CapFilePostfix = ''
+
+  #
+  # Template file should be relative path to Template folder.
+  #
+  BgslTemplateFileAlign    = 'BiosUpdateScript.bgsl.template'
+  BgslTemplateFileNonAlign = 'BiosUpdateScriptNonAlign.bgsl.template'
+
+  [Firmware.Fsp.Command]
+    Title          = 'Build FSP capsule update file'
+    Description    = '''
+To build the FSP Capsule File.
+  (1) Use -build to decide the target of BIOS is debug or release.
+  (2) Use res to decide the type of BIOS is resiliency BIOS or not.
+    '''
+    SubDescription = '''
+    '''
+
+  [Firmware.Fsp.Command.-fsp]
+    Compulsory  = true
+    Description = 'Path of FSP image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Fsp.Command.-fbm]
+    Compulsory  = true
+    Description = 'Path of Fbm image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Fsp.Command.-fsplsv]
+    Compulsory  = false
+    Description = 'Lowest supported version of FSP. (Should be MM.mm)'
+    Syntax      = 'DEC'
+    Default     = '0.0'
+
+  [Firmware.Fsp.Command.-build]
+    Compulsory  = true
+    Description = 'Assign using debug or release BIOS.'
+    Syntax      = 'Debug|Release'
+    Default     = ''
+
+  [Firmware.Fsp.Command.-biossvn]
+    Compulsory  = true
+    Description = 'BiosGuard SVN value.'
+    Syntax      = 'HEX'
+    Default     = 'NA'
+
+  [Firmware.Fsp.Command.res]
+    Compulsory  = false
+    Description = 'Set the flag as input the resiliency BIOS.'
+    Syntax      = ''
+    Default     = false
+
+  #
+  # The actual offset and size should be depend on the platform.
+  # Tag order: [Type].[Build].[SKU]
+  # e.g. { Offset = '0x00C80000'}
+  #
+  [Firmware.Fsp.Offset.Default]
+    FspS  = 'NA'
+    FspM  = 'NA'
+    FspT  = 'NA'
+    FspO  = 'NA'
+    FspRV = 'NA'
+    FBM   = 'NA'
+
+  [Firmware.Fsp.CompressInfo]
+    FspS   = 'NA'
+    FspM   = 'NA'
+    FspT   = 'NA'
+    FspO   = 'NA'
+    FspRV  = 'NA'
+
+  [Firmware.Fsp.Guid]
+    Default = '5E8F2C7B-6D4F-4A9E-BF6D-8A7E9B0F3C2A'
+
+#
+# uCode Firmware sub-section
+#
+[[Firmware.Ucode]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'ucodecap'
+  CapFilePrefix  = 'FmpuCode'
+  CapFilePostfix = ''
+
+  #
+  # Template file should be relative path to Template folder.
+  #
+  BgslTemplateFile = 'BiosUpdateScript.bgsl.template'
+
+  [Firmware.Ucode.Command]
+    Title          = 'Build uCode capsule update file'
+    Description    = '''
+To build the Ucode Capsule File.
+  (1) Use -sku to assign whick platform need to be built.
+      (This flag is align with slot size)
+  (2) Use -ucode multple to assign all needed uCode.
+      e.g. -ucode <uCode1> -ucode <uCode2> ...
+    '''
+    SubDescription = '''
+Note:
+  (1) Numbers of avaiable uCode depend on slot size and FV size.
+    '''
+
+  [Firmware.Ucode.Command.-sku]
+    Compulsory  = false
+    Description = 'Decide to build the Ucode slot size and FV size.'
+    Syntax      = 'SKU_ID'
+    Default     = 'Default'
+
+  [Firmware.Ucode.Command.-ucode]
+    Compulsory  = true
+    Description = 'Path of Ucode image. (Should be .pdt file)'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Ucode.Command.-ucodemode]
+    Compulsory  = true
+    Description = 'Current support ucodefull, ucodebgup, ucodeslot.'
+    Syntax      = 'ucodefull|ucodebgup|ucodeslot'
+    Default     = ''
+
+  [Firmware.Ucode.Command.-ucodever]
+    Compulsory  = false
+    Description = 'Version of uCode could input DEC or HEX. (HEX should be with 0x prefix)'
+    Syntax      = 'DEC|HEX'
+    Default     = '1'
+
+  [Firmware.Ucode.Command.-ucodelsv]
+    Compulsory  = false
+    Description = 'Lowest supported version of uCode could input DEC or HEX. (HEX should be with 0x prefix)'
+    Syntax      = 'DEC|HEX'
+    Default     = '1'
+
+  [Firmware.Ucode.Command.-ucodeverstr]
+    Compulsory  = false
+    Description = 'String of uCode be built in Ucode header.'
+    Syntax      = 'STR'
+    Default     = 'Version 0.0.0.1'
+
+  [Firmware.Ucode.Command.-build]
+    Compulsory  = false
+    Description = 'Assign using debug or release BIOS. (uCodeslot mode no need)'
+    Syntax      = 'Debug|Release'
+    Default     = ''
+
+  [Firmware.Ucode.Command.-biossvn]
+    Compulsory  = false
+    Description = 'BiosGuard SVN value. (ucodebgup mode is mandatory)'
+    Syntax      = 'HEX'
+    Default     = 'NA'
+
+  [Firmware.Ucode.Command.res]
+    Compulsory  = false
+    Description = 'Set the flag as input the resiliency BIOS.'
+    Syntax      = ''
+    Default     = false
+
+  #
+  # The actual offset and size should be depend on the platform.
+  # Tag order: [Type].[Build].[SKU]
+  # e.g. { Offset = '0x00C80000', Size = '0x00040000' }
+  #
+  [Firmware.Ucode.Offset.Default]
+    Fv = 'NA'
+
+  [Firmware.Ucode.Slotsize]
+    # The default slot size value should be depended by platforms.
+    # (e.g. '0x3F000')
+    Default = 'NA'
+
+  [Firmware.Ucode.Guid]
+    Default = '69585D92-B50A-4AD7-B265-2EB1AE066574'

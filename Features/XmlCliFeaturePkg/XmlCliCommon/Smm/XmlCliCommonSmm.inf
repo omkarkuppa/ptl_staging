@@ -1,0 +1,69 @@
+### @file
+# Component information file for XmlCliSmm
+#
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = XmlCliCommonSmm
+  FILE_GUID                      = A342B464-0D5D-4576-9400-750FF10719E7
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  VERSION_STRING                 = 1.0
+  PI_SPECIFICATION_VERSION       = 0x0001000A
+  ENTRY_POINT                    = XmlCliCommonSmmInit
+
+#
+# The following information is for reference only and not required by the build tools.
+#  VALID_ARCHITECTURES           = IA32 X64 IPF
+#
+[Sources.common]
+  XmlCliCommonSmm.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  XmlCliFeaturePkg/XmlCliFeaturePkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  DxeServicesTableLib
+  DebugLib
+  XmlCliCommonLib
+  SmmMemLib
+
+[Guids]
+  gXmlCliVarGuid
+
+[Protocols]
+  gEfiSmmBase2ProtocolGuid
+  gEfiSmmSwDispatch2ProtocolGuid
+  gEfiSmmVariableProtocolGuid
+  gXmlCliCommonGuid
+  gSmmCliApiGuid
+
+[Depex]
+  gEfiSmmAccess2ProtocolGuid      AND
+  gEfiSmmControl2ProtocolGuid     AND
+  gEfiSmmBase2ProtocolGuid        AND
+  gEfiSmmSwDispatch2ProtocolGuid  AND
+  gEfiSmmVariableProtocolGuid     AND
+  gPchSmmSpiProtocolGuid          AND
+  ( gXmlCliCommonGuid OR gXmlCliVarGuid )

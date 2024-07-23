@@ -1,0 +1,43 @@
+## @file
+# Component information file for Silicon Policy Init Library
+# This library implements NULL functions and the purpose is to add Silicon Policy PPI
+# dependency to the PEIM.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2019 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiPostMemSiliconPolicyInitLibDependency
+  FILE_GUID                      = 22D1F7FB-9299-4BB3-A11F-D63A92DF715A
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SiliconPolicyInitLib
+
+[LibraryClasses]
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  PeiSiliconPolicyInitLibDependency.c
+
+[Depex]
+  gSiPolicyReadyPpiGuid

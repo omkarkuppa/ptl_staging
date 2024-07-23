@@ -1,0 +1,134 @@
+## @file
+#  Runtime DXE part corresponding to SMM authenticated variable module.
+#
+#  This module installs variable arch protocol and variable write arch protocol to provide
+#  variable service. This module need work together with SMM authenticated variable module.
+#
+#  Caution: This module requires additional review when modified.
+#  This driver will have external input - variable data.
+#  This external input must be validated carefully to avoid security issues such as
+#  buffer overflow or integer overflow.
+#    The whole SMM authentication variable design relies on the integrity of flash part and SMM.
+#  which is assumed to be protected by platform.  All variable code and metadata in flash/SMM Memory
+#  may not be modified without authorization. If platform fails to protect these resources,
+#  the authentication service provided in this driver will be broken, and the behavior is undefined.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = ProtectedVariableSmmRuntimeDxe
+  MODULE_UNI_FILE                = RuntimeDxe/VariableSmmRuntimeDxe.uni
+  FILE_GUID                      = 2F24379B-55CE-4AB9-8CC8-1E0D010B9FF8
+  MODULE_TYPE                    = DXE_RUNTIME_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = VariableSmmRuntimeInitialize
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+#  VIRTUAL_ADDRESS_MAP_CALLBACK  =  VariableAddressChangeEvent
+#
+
+[Sources]
+  VariableSmmRuntimeDxe.c
+  PrivilegePolymorphic.h
+  Measurement.c
+  VariableParsing.c
+  VariableParsing.h
+  Variable.h
+  VariablePolicySmmDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ProtectedVariablePkg/ProtectedVariablePkg.dec
+  CryptoPkg/CryptoPkg.dec
+
+[LibraryClasses]
+  MemoryAllocationLib
+  BaseLib
+  UefiBootServicesTableLib
+  DebugLib
+  UefiRuntimeLib
+  DxeServicesTableLib
+  UefiDriverEntryPoint
+  TpmMeasurementLib
+  SafeIntLib
+  PcdLib
+  MmUnblockMemoryLib
+  ProtectedVariableLib
+
+[Protocols]
+  gEfiVariableWriteArchProtocolGuid             ## PRODUCES
+  gEfiVariableArchProtocolGuid                  ## PRODUCES
+  gEfiMmCommunication2ProtocolGuid              ## CONSUMES
+  ## CONSUMES
+  ## NOTIFY
+  ## UNDEFINED # Used to do smm communication
+  gEfiSmmVariableProtocolGuid
+  gEdkiiVariableLockProtocolGuid                ## PRODUCES
+  gEdkiiVarCheckProtocolGuid                    ## PRODUCES
+  gEdkiiVariablePolicyProtocolGuid              ## PRODUCES
+
+[FeaturePcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdEnableVariableRuntimeCache           ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVariableCollectStatistics            ## CONSUMES
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAllowVariablePolicyEnforcementDisable     ## CONSUMES
+
+[Guids]
+  ## PRODUCES             ## GUID # Signature of Variable store header
+  ## CONSUMES             ## GUID # Signature of Variable store header
+  ## SOMETIMES_PRODUCES   ## SystemTable
+  gEfiAuthenticatedVariableGuid
+
+  ## PRODUCES             ## GUID # Signature of Variable store header
+  ## CONSUMES             ## GUID # Signature of Variable store header
+  ## SOMETIMES_PRODUCES   ## SystemTable
+  gEfiVariableGuid
+
+  gEfiEventVirtualAddressChangeGuid             ## CONSUMES ## Event
+  gEfiEventExitBootServicesGuid                 ## CONSUMES ## Event
+  ## CONSUMES ## GUID # Locate protocol
+  ## CONSUMES ## GUID # Protocol notify
+  gSmmVariableWriteGuid
+
+  ## SOMETIMES_CONSUMES   ## Variable:L"PK"
+  ## SOMETIMES_CONSUMES   ## Variable:L"KEK"
+  ## SOMETIMES_CONSUMES   ## Variable:L"SecureBoot"
+  gEfiGlobalVariableGuid
+
+  ## SOMETIMES_CONSUMES   ## Variable:L"db"
+  ## SOMETIMES_CONSUMES   ## Variable:L"dbx"
+  ## SOMETIMES_CONSUMES   ## Variable:L"dbt"
+  gEfiImageSecurityDatabaseGuid
+
+  gVarCheckPolicyLibMmiHandlerGuid
+  gEfiEndOfDxeEventGroupGuid
+
+[Depex]
+  gEfiMmCommunication2ProtocolGuid
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  RuntimeDxe/VariableSmmRuntimeDxeExtra.uni

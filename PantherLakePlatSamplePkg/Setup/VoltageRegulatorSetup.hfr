@@ -1,0 +1,360 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2021 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+#include "SetupPreProcTools.hfr"
+
+  oneof varid       = CPU_SETUP.VrConfigEnable[VR_INDEX],
+    prompt          = STRING_TOKEN (STR_VR_CONFIG_ENABLE),
+    help            = STRING_TOKEN (STR_VR_CONFIG_ENABLE_HELP),
+    option text     = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+    option text     = STRING_TOKEN (STR_ENABLED) , value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  suppressif ideqval CPU_SETUP.VrConfigEnable[VR_INDEX] == 0;
+    text
+      help          = STRING_TOKEN (STR_VR_AC_LOADLINE_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_AC_LOADLINE_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_AC_LOADLINE_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
+    text
+      help          = STRING_TOKEN (STR_VR_DC_LOADLINE_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_DC_LOADLINE_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_DC_LOADLINE_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
+    text
+      help          = STRING_TOKEN (STR_VR_PS1_THRESHOLD_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_PS1_THRESHOLD_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_PS1_THRESHOLD_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
+    text
+      help          = STRING_TOKEN (STR_VR_PS2_THRESHOLD_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_PS2_THRESHOLD_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_PS2_THRESHOLD_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
+    text
+      help          = STRING_TOKEN (STR_VR_PS3_THRESHOLD_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_PS3_THRESHOLD_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_PS3_THRESHOLD_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
+    text
+      help          = STRING_TOKEN (STR_VR_IMON_SLOPE_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_IMON_SLOPE_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_IMON_SLOPE_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
+    text
+      help          = STRING_TOKEN (STR_VR_IMON_OFFSET_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_IMON_OFFSET_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_IMON_OFFSET_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
+    text
+      help          = STRING_TOKEN (STR_VR_ICCMAX_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_ICCMAX_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_ICCMAX_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
+    text
+      help          = STRING_TOKEN (STR_VR_ICCLIMIT_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_ICCLIMIT_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_ICCLIMIT_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
+    text
+      help          = STRING_TOKEN (STR_VR_TDC_CURRENT_LIMIT_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_TDC_CURRENT_LIMIT_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_TDC_CURRENT_LIMIT_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
+    numeric varid   = CPU_SETUP.AcLoadline[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_AC_LOADLINE),
+      help          = STRING_TOKEN (STR_AC_LOADLINE_HELP),
+      flags         = 0 | RESET_REQUIRED,
+      minimum       = 0,
+      maximum       = 6249,
+      step          = 0,  // Stepping of 0 equates to a manual entering of a value,
+                          // otherwise it will auto-increment with a left/right arrow
+      default       = 0, defaultstore = MyStandardDefault,
+    endnumeric;
+
+    numeric varid   = CPU_SETUP.DcLoadline[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_DC_LOADLINE),
+      help          = STRING_TOKEN (STR_DC_LOADLINE_HELP),
+      flags         = 0 | RESET_REQUIRED,
+      minimum       = 0,
+      maximum       = 6249,
+      step          = 0,  // Stepping of 0 equates to a manual entering of a value,
+                          // otherwise it will auto-increment with a left/right arrow
+      default       = 0, defaultstore = MyStandardDefault,
+    endnumeric;
+
+    numeric varid   = CPU_SETUP.VrVoltageLimit[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_VR_VOLTAGE_LIMIT),
+      help          = STRING_TOKEN (STR_VR_VOLTAGE_LIMIT_HELP),
+      flags         = RESET_REQUIRED,
+      minimum       = 0,
+      maximum       = 7999,
+      step          = 1,
+      default       = 0,
+    endnumeric;
+
+    numeric varid   = CPU_SETUP.IccMax[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_VR_CURRENT_LIMIT),
+      help          = STRING_TOKEN (STR_VR_CURRENT_LIMIT_HELP),
+      flags         = RESET_REQUIRED,
+      minimum       = 0,
+      maximum       = 1023,
+      step          = 1,
+      default       = 0,
+    endnumeric;
+
+    numeric varid   = CPU_SETUP.Ps1Threshold[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_PS1_THRESHOLD),
+      help          = STRING_TOKEN (STR_PS1_THRESHOLD_HELP),
+      flags         = RESET_REQUIRED,
+      minimum       = 0,
+      maximum       = 512,
+      step          = 1,
+      default       = 80,
+    endnumeric;
+
+    numeric varid   = CPU_SETUP.Ps2Threshold[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_PS2_THRESHOLD),
+      help          = STRING_TOKEN (STR_PS2_THRESHOLD_HELP),
+      flags         = RESET_REQUIRED,
+      minimum       = 0,
+      maximum       = 512,
+      step          = 1,
+      default       = 20,
+    endnumeric;
+
+    numeric varid   = CPU_SETUP.Ps3Threshold[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_PS3_THRESHOLD),
+      help          = STRING_TOKEN (STR_PS3_THRESHOLD_HELP),
+      flags         = RESET_REQUIRED,
+      minimum       = 0,
+      maximum       = 512,
+      step          = 1,
+      default       = 4,
+    endnumeric;
+
+    oneof varid     = CPU_SETUP.Ps3Enable[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_PS3_ENABLE),
+      help          = STRING_TOKEN (STR_PS3_ENABLE_HELP),
+      option text   = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_ENABLED) , value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid     = CPU_SETUP.Ps4Enable[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_PS4_ENABLE),
+      help          = STRING_TOKEN (STR_PS4_ENABLE_HELP),
+      option text   = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_ENABLED) , value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    numeric varid   = CPU_SETUP.ImonSlope[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_IMON_SLOPE),
+      help          = STRING_TOKEN (STR_IMON_SLOPE_HELP),
+      flags         = RESET_REQUIRED,
+      minimum       = 0,
+      maximum       = 200,
+      step          = 1,
+      default       = 0,
+    endnumeric;
+
+    numeric varid   = CPU_SETUP.ImonOffset[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_IMON_OFFSET),
+      help          = STRING_TOKEN (STR_IMON_OFFSET_HELP),
+      flags         = RESET_REQUIRED,
+      minimum       = 0,
+      maximum       = 128000,
+      step          = 1,
+      default       = 0,
+    endnumeric;
+
+    oneof varid     = CPU_SETUP.ImonOffsetPrefix[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_IMON_OFFSET_PREFIX),
+      help          = STRING_TOKEN (STR_IMON_OFFSET_PREFIX_HELP),
+      option text   = STRING_TOKEN (STR_POSITIVE_SIGN), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_NEGATIVE_SIGN), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+#if (VR_INDEX < 3)
+    oneof varid     = CPU_SETUP.EnableFastVmode[VR_INDEX],
+#if VR_INDEX == 0
+      questionid    = AUTO_ID(KEY_CoreVrEnableFastVmode),
+      prompt        = STRING_TOKEN (STR_CORE_VR_FAST_VMODE),
+      help          = STRING_TOKEN (STR_CORE_VR_FAST_VMODE_HELP),
+#endif
+#if VR_INDEX == 1
+      questionid    = AUTO_ID(KEY_GtVrEnableFastVmode),
+      prompt        = STRING_TOKEN (STR_GT_VR_FAST_VMODE),
+      help          = STRING_TOKEN (STR_GT_VR_FAST_VMODE_HELP),
+#endif
+#if VR_INDEX == 2
+      questionid    = AUTO_ID(KEY_SaVrEnableFastVmode),
+      prompt        = STRING_TOKEN (STR_SA_VR_FAST_VMODE),
+      help          = STRING_TOKEN (STR_SA_VR_FAST_VMODE_HELP),
+#endif
+      flags         = INTERACTIVE,
+      option text   = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+    endoneof;
+#endif
+
+    suppressif ideqval CPU_SETUP.EnableFastVmode[VR_INDEX] == 0;
+      numeric varid   = CPU_SETUP.IccLimit[VR_INDEX],
+        prompt        = STRING_TOKEN (STR_VR_FAST_VMODE_ICC_LIMIT),
+        help          = STRING_TOKEN (STR_VR_FAST_VMODE_ICC_LIMIT_HELP),
+#if VR_INDEX == 0
+        flags         = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_IccLimit0),
+#endif
+#if VR_INDEX == 1
+        flags         = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_IccLimit1),
+#endif
+#if VR_INDEX == 2
+        flags         = RESET_REQUIRED | INTERACTIVE, key = AUTO_ID(KEY_IccLimit2),
+#endif
+        minimum       = 0,
+        maximum       = MAX_ICC_LIMIT,
+        step          = 1,
+        default       = 0,
+      endnumeric;
+    endif;
+
+    oneof varid     = CPU_SETUP.TdcEnable[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_TDC_ENABLE),
+      help          = STRING_TOKEN (STR_TDC_ENABLE_HELP),
+      option text   = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_ENABLED) , value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+  suppressif ideqval CPU_SETUP.TdcEnable[VR_INDEX] == 0;
+
+    oneof varid     = CPU_SETUP.TdcMode[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_TDC_MODE),
+      help          = STRING_TOKEN (STR_TDC_MODE_HELP),
+      suppressif ideqval CPU_SETUP.IrmsSupported[VR_INDEX] == 0;
+        option text   = STRING_TOKEN (STR_IRMS),  value = 1, flags = RESET_REQUIRED;
+      endif;
+      option text   = STRING_TOKEN (STR_IPL2),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    numeric varid   = CPU_SETUP.TdcCurrentLimit[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_TDC_CURRENT_LIMIT),
+      help          = STRING_TOKEN (STR_TDC_CURRENT_LIMIT_HELP),
+      flags         = 0 | RESET_REQUIRED,
+      minimum       = 0,
+      maximum       = 32767,
+      step          = 125,  // Stepping of 0 equates to a manual entering of a value,
+                            // otherwise it will auto-increment with a left/right arrow
+      default       = 0,
+    endnumeric;
+
+    oneof varid     = CPU_SETUP.TdcTimeWindow[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_TDC_TIME_WINDOW),
+      help          = STRING_TOKEN (STR_TDC_TIME_WINDOW_HELP),
+      option text   = STRING_TOKEN (STR_AUTO)            , value = 0     , flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_1S)   , value = 1000  , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_2S)   , value = 2000  , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_3S)   , value = 3000  , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_4S)   , value = 4000  , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_5S)   , value = 5000  , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_6S)   , value = 6000  , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_7S)   , value = 7000  , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_8S)   , value = 8000  , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_10S)  , value = 10000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_12S)  , value = 12000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_14S)  , value = 14000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_16S)  , value = 16000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_20S)  , value = 20000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_24S)  , value = 24000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_28S)  , value = 28000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_32S)  , value = 32000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_40S)  , value = 40000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_48S)  , value = 48000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_56S)  , value = 56000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_64S)  , value = 64000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_80S)  , value = 80000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_96S)  , value = 96000 , flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_112S) , value = 112000, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_128S) , value = 128000, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_160S) , value = 160000, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_192S) , value = 192000, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_224S) , value = 224000, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_256S) , value = 256000, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_320S) , value = 320000, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_384S) , value = 384000, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_TIMEWINDOW_448S) , value = 448000, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid     = CPU_SETUP.TdcLock[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_TDC_LOCK),
+      help          = STRING_TOKEN (STR_TDC_LOCK_HELP),
+      option text   = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text   = STRING_TOKEN (STR_ENABLED) , value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+  endif; // supressif TDC Enable
+
+  suppressif TRUE;
+#if  (VR_INDEX < 2)
+    oneof varid   = CPU_SETUP.FastPkgCRampDisable[VR_INDEX],
+      prompt      = STRING_TOKEN (STR_FAST_PKG_C_RAMP_DISABLE),
+      help        = STRING_TOKEN (STR_FAST_PKG_C_RAMP_DISABLE_HELP),
+      option text = STRING_TOKEN (STR_TRUE),  value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_FALSE), value = 0, flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+    endoneof;
+
+    grayoutif ideqval CPU_SETUP.FastPkgCRampDisable[VR_INDEX] == 0;
+      oneof varid   = CPU_SETUP.SlowSlewRate[VR_INDEX],
+      prompt        = STRING_TOKEN (STR_SLOW_SLEW_RATE_CONFIG),
+#if VR_INDEX == 0
+        help        = STRING_TOKEN (STR_IA_SLOW_SLEW_RATE_CONFIG_HELP),
+        option text = STRING_TOKEN (STR_FAST_2),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_FAST_4),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_FAST_8),  value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_FAST_16), value = 3, flags = RESET_REQUIRED;
+#endif
+#if VR_INDEX == 1
+        help        = STRING_TOKEN (STR_GT_SLOW_SLEW_RATE_CONFIG_HELP),
+        option text = STRING_TOKEN(STR_FAST_2),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_FAST_4),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_FAST_8),  value = 2, flags = RESET_REQUIRED;
+#endif
+      endoneof;
+    endif; // grayoutif FastPkgCRampDisable Disable
+#endif
+  endif;
+endif;

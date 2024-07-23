@@ -1,0 +1,69 @@
+### @file
+# Component information file for Multi IBB Service PEI module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = MultiIbbServicePei
+  FILE_GUID                      = 145B9673-3F69-445C-9C3B-098F8029BEBA
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  ENTRY_POINT                    = MultiIbbServiceEntryPoint
+
+[LibraryClasses]
+  DebugLib
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PeimEntryPoint
+  PeiServicesLib
+  BaseCryptLib
+  MtrrLib
+  CacheMaintenanceLib
+  PcdLib
+  AccessNemConfigLib
+
+[Packages]
+  MinPlatformPkg/MinPlatformPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  CryptoPkg/CryptoPkg.dec
+  MultiIbbFeaturePkg/MultiIbbFeaturePkg.dec
+
+[Sources]
+  MultiIbbServicePei.c
+
+[Ppis]
+  gPeiFirmwareVolumeVerifyHashFvPpiGuid     ## CONSUMES
+  gEfiEndOfIbbSignalPpiGuid                 ## Notify
+  gEfiPeiMemoryDiscoveredPpiGuid            ## Notify
+
+[Pcd]
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase         ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize         ## CONSUMES
+  gMultiIbbFeaturePkgTokenSpaceGuid.PcdCacheMissDetectEnable    ## CONSUMES
+  gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbInfoCount        ## CONSUMES
+  gMultiIbbFeaturePkgTokenSpaceGuid.PcdAcmSetNem                ## CONSUMES
+  gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable    ## CONSUMES
+
+[Depex]
+  gPeiFirmwareVolumeVerifyHashFvPpiGuid
+

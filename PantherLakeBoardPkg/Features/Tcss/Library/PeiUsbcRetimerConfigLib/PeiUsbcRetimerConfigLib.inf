@@ -1,0 +1,58 @@
+## @file
+#  USBC Retimer Compliance Mode Configure Library.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification Reference:
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PeiUsbcRetimerConfigLib
+  FILE_GUID                      = 31FD06B4-9275-43C1-B842-146B45CC4D10
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  LIBRARY_CLASS                  = UsbcRetimerConfigLib|PEIM
+
+[LibraryClasses]
+  PeiServicesLib
+  BaseMemoryLib
+  DebugLib
+  PcdLib
+  EcTcssLib
+  GpioV2WrapperLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[Pcd]
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardRetimerForcePwrGpio
+
+[Sources]
+  PeiUsbcRetimerConfigLib.c
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid                               ## CONSUMES
+
+[Guids]
+  gSetupVariableGuid                                            ## CONSUMES ## Variable
+
+[Depex]
+  gEfiPeiReadOnlyVariable2PpiGuid

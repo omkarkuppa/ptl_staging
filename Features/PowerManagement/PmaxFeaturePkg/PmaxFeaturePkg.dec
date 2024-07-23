@@ -1,0 +1,46 @@
+## @file
+# DEC file for PmaxFeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification Reference:
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME      = PmaxFeaturePkg
+  PACKAGE_GUID      = 8A0472C2-7577-4c52-B8DC-603D29684B59
+  PACKAGE_VERSION   = 0.1
+
+[Includes]
+  Include
+
+[Guids]
+  gPmaxFeaturePkgTokenSpaceGuid  =  {0xd75231a7, 0x2315, 0x45ef, {0xa0, 0x50, 0x75, 0x8e, 0x91, 0x1f, 0xa0, 0xc6}}
+  gPmaxAcpiTableStorageGuid       =  {0x66E6C2E4, 0x0245, 0x4545, {0x81, 0x65, 0x12, 0x32, 0x24, 0x80, 0xAF, 0x31}}
+
+[PcdsDynamicEx]
+# PMAX DEVICE CONFIG
+  gPmaxFeaturePkgTokenSpaceGuid.VpdPcdPmaxDevices|{0}|VPD_PMAX_DEV[]|0x50000030 {
+  <HeaderFiles>
+    PmaxDevDef.h
+  <Packages>
+    PmaxFeaturePkg/PmaxFeaturePkg.dec
+}
+
+[PcdsFixedAtBuild]
+  # Main feature PCD to support Pmax feature on system firmware.
+  gPmaxFeaturePkgTokenSpaceGuid.PcdPmaxFeatureEnable|FALSE|BOOLEAN|0xA0000001

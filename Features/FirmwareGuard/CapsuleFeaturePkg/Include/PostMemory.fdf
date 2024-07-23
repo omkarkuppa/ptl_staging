@@ -1,0 +1,66 @@
+## @file
+# Flash Definition to include Post-mem modules for CapsuleFeature.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+
+#
+# FmpDevices
+#
+INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_MONO)             FmpDevicePkg/FmpDxe/FmpDxe.inf
+INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_BIOS)             FmpDevicePkg/FmpDxe/FmpDxe.inf
+INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_FOXVILLE)                FmpDevicePkg/FmpDxe/FmpDxe.inf
+!if gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosExtenedRegionEnable == TRUE
+INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_EXTENDED_BIOS)    FmpDevicePkg/FmpDxe/FmpDxe.inf
+!endif
+!if (gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable == TRUE) || (gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryEnable == TRUE)
+  INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_BTGACM)  FmpDevicePkg/FmpDxe/FmpDxe.inf
+  INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_UCODE)   FmpDevicePkg/FmpDxe/FmpDxe.inf
+  INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_FSP)     FmpDevicePkg/FmpDxe/FmpDxe.inf
+!endif
+INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_ME)      FmpDevicePkg/FmpDxe/FmpDxe.inf
+INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_EC)      FmpDevicePkg/FmpDxe/FmpDxe.inf
+INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_ISH_PDT) FmpDevicePkg/FmpDxe/FmpDxe.inf
+
+!if gCapsuleFeaturePkgTokenSpaceGuid.PcdIfwiCapsuleUpdateEnable == TRUE
+  #####################################################################################################################
+  #                                            IFWI Capsule Update Support                                            #
+  #                                                  !!! Warning !!!                                                  #
+  #      IFWI FMP driver should be included in development stage, product should not enable IFWI capsule update.      #
+  #####################################################################################################################
+  INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_IFWI)  FmpDevicePkg/FmpDxe/FmpDxe.inf
+!endif
+
+!if gSiPkgTokenSpaceGuid.PcdTsnSupport == 0x1
+  INF  FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_TSN_MAC_ADDR)   FmpDevicePkg/FmpDxe/FmpDxe.inf
+!endif
+
+#
+# Resiliency
+#
+!if gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable == TRUE
+  INF  CapsuleFeaturePkg/BiosResiliencyDxe/BiosResiliencyDxe.inf
+!endif
+
+!if gCapsuleFeaturePkgTokenSpaceGuid.PcdMeResiliencyEnable == TRUE
+  INF  CapsuleFeaturePkg/MeResiliencyDxe/MeResiliencyDxe.inf
+!endif
+
+!if gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryEnable == TRUE
+  INF  CapsuleFeaturePkg/NvmeBasedRecovery/NvmeRecoveryDxe/NvmeRecoveryDxe.inf
+!endif

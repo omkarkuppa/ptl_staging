@@ -1,0 +1,87 @@
+## @file
+# Component description file for PpamPlatformSmm module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2019 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PpamPlatformSmm
+  FILE_GUID                      = 91D211BF-37C2-495A-8DF7-9546BD2555C0
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  VERSION_STRING                 = 1.0
+  PI_SPECIFICATION_VERSION       = 0x0001000A
+  ENTRY_POINT                    = InstallPpamPlatformSmm
+
+[Sources]
+  PpamPlatformSmm.c
+  SmmIoMsrAccess.h
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBinPkg/PantherLakeBinPkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  DxeServicesLib
+  UefiBootServicesTableLib
+  SmmServicesTableLib
+  IntrinsicLib
+  CpuPlatformLib
+  CpuExceptionHandlerLib
+  SerialPortLib
+  DgrInfoLib
+
+[Pcd]
+  gPantherLakeBinPkgTokenSpaceGuid.PcdPpam11BinFile            ## CONSUMES
+  gPantherLakeBinPkgTokenSpaceGuid.PcdPpam11ManifestBinFile    ## CONSUMES
+  gPantherLakeBinPkgTokenSpaceGuid.PcdPpam11Manifest3kBinFile  ## CONSUMES
+  gPantherLakeBinPkgTokenSpaceGuid.PcdDgrPolicyOverride        ## CONSUMES
+  gPantherLakeBinPkgTokenSpaceGuid.PcdSpsIoPolicyBitmap        ## CONSUMES
+  gPantherLakeBinPkgTokenSpaceGuid.PcdSpsMsrPolicyBitmap       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSpaEnable                          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTcoBaseAddress                      ## CONSUMES
+
+[Guids]
+  gPpamManifestGuid                  ## PRODUCES
+  gPpamManifest3kGuid                ## PRODUCES
+
+[Protocols]
+  gEfiSmmCpuProtocolGuid                 ## CONSUMES
+  gEfiSmmEndOfDxeProtocolGuid            ## CONSUMES
+  gEfiSmMonitorInitProtocolGuid          ## CONSUMES
+  gSmmResourceConfigProtocolGuid         ## CONSUMES
+  gSpsRing3ExceptionHandlerProtocolGuid  ## CONSUMES
+  gEfiSpaLogOutputProtocolGuid           ## PRODUCES
+
+[Depex]
+  gEfiSmmCpuProtocolGuid AND
+  gEfiSmmSwDispatch2ProtocolGuid
+
+[BuildOptions]
+  MSFT:*_*_*_CC_FLAGS  = /Od  /GL-

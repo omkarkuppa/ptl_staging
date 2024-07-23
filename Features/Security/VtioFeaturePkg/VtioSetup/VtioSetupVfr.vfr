@@ -1,0 +1,639 @@
+/** @file
+  Vtio Setup.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2021 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#include "VtioSetup.h"
+
+#define VTIO_FORM_SET_CLASS 0x786
+
+#define SUBTITLE(Text) subtitle text = Text;
+#define SEPARATOR SUBTITLE(STRING_TOKEN(STR_EMPTY))
+
+formset
+  guid = VTIO_FORMSET_GUID,
+  title      = STRING_TOKEN(STR_PLATFORM_VTIO_FORM),
+  help       = STRING_TOKEN(STR_PLATFORM_VTIO_FORM_HELP),
+  classguid  = VTIO_FORMSET_GUID,       // Form class guid for the forms those will be showed on first front page.
+  class      = VTIO_FORM_SET_CLASS,
+  subclass   = 0,
+
+  efivarstore VTIO_SETUP_DATA_STRUCT, // This is the data structure type
+    varid = AUTO_ID(PLATFORM_VTIO_SETUP_DATA_ID),
+    attribute = 0x7,
+    name  = VtioCfg,               // Define referenced name in vfr
+    guid  = VTIO_FORMSET_GUID;     // GUID of this buffer storage
+
+  form formid = AUTO_ID(PLATFORM_VTIO_FORM_ID),
+    title = STRING_TOKEN(STR_PLATFORM_VTIO_FORM);
+
+      SUBTITLE(STRING_TOKEN(STR_PLATFORM_VTIO_FORM_TITLE))
+      SEPARATOR
+
+      oneof varid  = VtioCfg.VtioSupport,
+        prompt   = STRING_TOKEN(STR_VTIO_SUPPORT_PROMPT),
+        help     = STRING_TOKEN(STR_VTIO_SUPPORT_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags  = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval VtioCfg.VtioSupport == 0;
+        oneof varid  = VtioCfg.SdevIspEntry,
+          prompt   = STRING_TOKEN(STR_SDEV_ISP_ENTRY_PROMPT),
+          help     = STRING_TOKEN(STR_SDEV_ISP_ENTRY_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif ideqval VtioCfg.SdevIspEntry == 0;
+          numeric varid   = VtioCfg.SdevNumberOfSensors[1],
+            prompt        = STRING_TOKEN (STR_SDEV_NUMBER_OF_SENSORS_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_NUMBER_OF_SENSORS_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0x2,
+            step          = 0x0,
+            default value = 0x2,
+          endnumeric;
+
+          suppressif ideqval VtioCfg.SdevNumberOfSensors[1] == 0;
+            numeric varid   = VtioCfg.SdevFlags[1],
+              prompt        = STRING_TOKEN (STR_SDEV_FLAGS_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_FLAGS_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0x01,
+              step          = 0x0,
+              default value = 0x00,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevSensorEntry1[1],
+              prompt        = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_1_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x01,
+            endnumeric;
+          endif; //suppressif VtioCfg.SdevNumberOfSensors[1] == 0
+
+          suppressif ideqval VtioCfg.SdevNumberOfSensors[1] <= 1;
+            numeric varid   = VtioCfg.SdevSensorEntry2[1],
+              prompt        = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_2_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x85,
+            endnumeric;
+          endif; //suppressif VtioCfg.SdevNumberOfSensors[1] <= 1
+        endif; //suppressif SdevIspEntry == 0
+
+        SEPARATOR
+
+        oneof varid  = VtioCfg.SdevHeciEntry,
+          prompt   = STRING_TOKEN(STR_SDEV_HECI_ENTRY_PROMPT),
+          help     = STRING_TOKEN(STR_SDEV_HECI_ENTRY_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif ideqval VtioCfg.SdevHeciEntry == 0;
+          numeric varid   = VtioCfg.SdevNumberOfSensors[2],
+            prompt        = STRING_TOKEN (STR_SDEV_NUMBER_OF_SENSORS_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_NUMBER_OF_SENSORS_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0x2,
+            step          = 0x0,
+            default value = 0x0,
+          endnumeric;
+
+          suppressif ideqval VtioCfg.SdevNumberOfSensors[2] == 0;
+            numeric varid   = VtioCfg.SdevFlags[2],
+              prompt        = STRING_TOKEN (STR_SDEV_FLAGS_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_FLAGS_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0x01,
+              step          = 0x0,
+              default value = 0x00,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevSensorEntry1[2],
+              prompt        = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_1_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x00,
+            endnumeric;
+          endif; //suppressif VtioCfg.SdevNumberOfSensors[2] == 0
+
+          suppressif ideqval VtioCfg.SdevNumberOfSensors[2] <= 1;
+            numeric varid   = VtioCfg.SdevSensorEntry2[2],
+              prompt        = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_2_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x0,
+            endnumeric;
+          endif; //suppressif VtioCfg.SdevNumberOfSensors[2] <= 1
+        endif; //suppressif SdevHeciEntry == 0
+
+        SEPARATOR
+
+        oneof varid  = VtioCfg.SdevSpi1Entry,
+          prompt   = STRING_TOKEN(STR_SDEV_SPI1_ENTRY_PROMPT),
+          help     = STRING_TOKEN(STR_SDEV_SPI1_ENTRY_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif ideqval VtioCfg.SdevSpi1Entry == 0;
+          numeric varid   = VtioCfg.SdevNumberOfSensors[3],
+            prompt        = STRING_TOKEN (STR_SDEV_NUMBER_OF_SENSORS_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_NUMBER_OF_SENSORS_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0x2,
+            step          = 0x0,
+            default value = 0x1,
+          endnumeric;
+
+          suppressif ideqval VtioCfg.SdevNumberOfSensors[3] == 0;
+            numeric varid   = VtioCfg.SdevFlags[3],
+              prompt        = STRING_TOKEN (STR_SDEV_FLAGS_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_FLAGS_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0x01,
+              step          = 0x0,
+              default value = 0x00,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevSensorEntry1[3],
+              prompt        = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_1_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x01,
+            endnumeric;
+          endif; //suppressif VtioCfg.SdevNumberOfSensors[3] == 0
+
+          suppressif ideqval VtioCfg.SdevNumberOfSensors[3] <= 1;
+            numeric varid   = VtioCfg.SdevSensorEntry2[3],
+              prompt        = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_2_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x0,
+            endnumeric;
+          endif; //suppressif VtioCfg.SdevNumberOfSensors[3] <= 1
+        endif; //suppressif SdevSpi1Entry == 0
+
+        SEPARATOR
+
+        oneof varid  = VtioCfg.SdevSpi2Entry,
+          prompt   = STRING_TOKEN(STR_SDEV_SPI2_ENTRY_PROMPT),
+          help     = STRING_TOKEN(STR_SDEV_SPI2_ENTRY_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif ideqval VtioCfg.SdevSpi2Entry == 0;
+          numeric varid   = VtioCfg.SdevNumberOfSensors[4],
+            prompt        = STRING_TOKEN (STR_SDEV_NUMBER_OF_SENSORS_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_NUMBER_OF_SENSORS_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0x2,
+            step          = 0x0,
+            default value = 0x1,
+          endnumeric;
+
+          suppressif ideqval VtioCfg.SdevNumberOfSensors[4] == 0;
+            numeric varid   = VtioCfg.SdevFlags[4],
+              prompt        = STRING_TOKEN (STR_SDEV_FLAGS_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_FLAGS_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0x01,
+              step          = 0x0,
+              default value = 0x00,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevSensorEntry1[4],
+              prompt        = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_1_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x01,
+            endnumeric;
+          endif; //suppressif VtioCfg.SdevNumberOfSensors[4] == 0
+
+          suppressif ideqval VtioCfg.SdevNumberOfSensors[4] <= 1;
+            numeric varid   = VtioCfg.SdevSensorEntry2[4],
+              prompt        = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_2_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_SENSOR_ENTRY_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x0,
+            endnumeric;
+          endif; //suppressif VtioCfg.SdevNumberOfSensors[4] <= 1
+        endif; //suppressif SdevSpi2Entry == 0
+
+        SEPARATOR
+
+        oneof varid  = VtioCfg.SdevXhciEntry,
+          prompt   = STRING_TOKEN(STR_SDEV_XHCI_ENTRY_PROMPT),
+          help     = STRING_TOKEN(STR_SDEV_XHCI_ENTRY_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif ideqval VtioCfg.SdevXhciEntry == 0;
+          numeric varid   = VtioCfg.SdevXhciNumberOfDevices,
+            prompt        = STRING_TOKEN (STR_SDEV_XHCI_NUMBER_OF_DEVICES_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_XHCI_NUMBER_OF_DEVICES_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x1,
+            maximum       = 0x2,
+            step          = 0x0,
+            default value = 0x2,
+          endnumeric;
+
+          numeric varid   = VtioCfg.SdevXhciFlags,
+            prompt        = STRING_TOKEN (STR_SDEV_FLAGS_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_FLAGS_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0x01,
+            step          = 0x0,
+            default value = 0x00,
+          endnumeric;
+
+          text
+            help  = STRING_TOKEN(STR_SDEV_HXCI_DEVICE_1_PROMPT),
+            text  = STRING_TOKEN(STR_SDEV_HXCI_DEVICE_1_PROMPT);
+
+          numeric varid   = VtioCfg.SdevXhciDeviceAttributes[0],
+            prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_ATTR_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_ATTR_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0xFF,
+            step          = 0x0,
+            default value = 0x00,
+          endnumeric;
+
+          numeric varid   = VtioCfg.SdevXhciRootPortNumber[0],
+            prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_ROOT_PORT_NUMBER_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_ROOT_PORT_NUMBER_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0xFF,
+            step          = 0x0,
+            default value = 0x00,
+          endnumeric;
+
+          numeric varid   = VtioCfg.SdevXhciVendorId[0],
+            prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_VID_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_VID_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0xFFFF,
+            step          = 0x0,
+            default value = 0x0000,
+          endnumeric;
+
+          numeric varid   = VtioCfg.SdevXhciProductId[0],
+            prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PID_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PID_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0xFFFF,
+            step          = 0x0,
+            default value = 0x0000,
+          endnumeric;
+
+          numeric varid   = VtioCfg.SdevXhciRevision[0],
+            prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_REVISION_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_REVISION_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0xFFFF,
+            step          = 0x0,
+            default value = 0x0000,
+          endnumeric;
+
+          numeric varid   = VtioCfg.SdevXhciInterfaceNumber[0],
+            prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_INTERFACE_NUMBER_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_INTERFACE_NUMBER_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0xFF,
+            step          = 0x0,
+            default value = 0x00,
+          endnumeric;
+
+          numeric varid   = VtioCfg.SdevXhciClass[0],
+            prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_CLASS_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_CLASS_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0xFF,
+            step          = 0x0,
+            default value = 0x0E,
+          endnumeric;
+
+          numeric varid   = VtioCfg.SdevXhciSubClass[0],
+            prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_SUBCLASS_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_SUBCLASS_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0xFF,
+            step          = 0x0,
+            default value = 0x01,
+          endnumeric;
+
+          numeric varid   = VtioCfg.SdevXhciProtocol[0],
+            prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PROTOCOL_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PROTOCOL_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0xFF,
+            step          = 0x0,
+            default value = 0x01,
+          endnumeric;
+
+          numeric varid   = VtioCfg.SdevXhciAcpiPathStringOffset[0],
+            prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PATH_STRING_OFFSET_PROMPT),
+            help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PATH_STRING_OFFSET_HELP),
+            flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+            minimum       = 0x0,
+            maximum       = 0xFFFF,
+            step          = 0x0,
+            default value = 0x0034,
+          endnumeric;
+
+          grayoutif TRUE;
+            numeric varid   = VtioCfg.SdevXhciAcpiPathStringLength[0],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PATH_STRING_LENGTH_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PATH_STRING_LENGTH_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x001D,
+            endnumeric;
+          endif;  //grayoutif TRUE
+
+          numeric varid = VtioCfg.SdevXhciFirmwareHashDevice1[3],
+            prompt      = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_255_192_PROMPT),
+            help        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_255_192_PROMPT),
+            flags       = DISPLAY_UINT_HEX | NUMERIC_SIZE_8 | RESET_REQUIRED,
+            minimum     = 0x0,
+            maximum     = 0xFFFFFFFFFFFFFFFF,
+            step        = 0x1,
+            default     = 0x0,
+          endnumeric;
+
+          numeric varid = VtioCfg.SdevXhciFirmwareHashDevice1[2],
+            prompt      = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_191_128_PROMPT),
+            help        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_191_128_PROMPT),
+            flags       = DISPLAY_UINT_HEX | NUMERIC_SIZE_8 | RESET_REQUIRED,
+            minimum     = 0x0,
+            maximum     = 0xFFFFFFFFFFFFFFFF,
+            step        = 0x1,
+            default     = 0x0,
+          endnumeric;
+
+          numeric varid = VtioCfg.SdevXhciFirmwareHashDevice1[1],
+            prompt      = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_127_64_PROMPT),
+            help        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_127_64_PROMPT),
+            flags       = DISPLAY_UINT_HEX | NUMERIC_SIZE_8 | RESET_REQUIRED,
+            minimum     = 0x0,
+            maximum     = 0xFFFFFFFFFFFFFFFF,
+            step        = 0x1,
+            default     = 0x0,
+          endnumeric;
+
+          numeric varid = VtioCfg.SdevXhciFirmwareHashDevice1[0],
+            prompt      = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_63_0_PROMPT),
+            help        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_63_0_PROMPT),
+            flags       = DISPLAY_UINT_HEX | NUMERIC_SIZE_8 | RESET_REQUIRED,
+            minimum     = 0x0,
+            maximum     = 0xFFFFFFFFFFFFFFFF,
+            step        = 0x1,
+            default     = 0x0,
+          endnumeric;
+
+          string  varid   = VtioCfg.SdevXhciAcpiPathNameDevice1,
+            questionid  = AUTO_ID(KEY_SdevXhciAcpiPathNameDevice1),
+            prompt  = STRING_TOKEN(STR_SDEV_HXCI_DEVICE_PATH_NAME_PROMPT),
+            help    = STRING_TOKEN(STR_SDEV_HXCI_DEVICE_1_PATH_NAME_HELP),
+            flags   = 0 | RESET_REQUIRED | INTERACTIVE,
+            minsize = 1,
+            maxsize = 48, // Max size without NULL terminator. default  = \\_SB.PC00.XHCI.RHUB.HS00.CRGB
+          endstring;
+
+          suppressif ideqval VtioCfg.SdevXhciNumberOfDevices <= 1;
+            text
+              help  = STRING_TOKEN(STR_SDEV_HXCI_DEVICE_2_PROMPT),
+              text  = STRING_TOKEN(STR_SDEV_HXCI_DEVICE_2_PROMPT);
+
+            numeric varid   = VtioCfg.SdevXhciDeviceAttributes[1],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_ATTR_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_ATTR_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFF,
+              step          = 0x0,
+              default value = 0x00,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevXhciRootPortNumber[1],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_ROOT_PORT_NUMBER_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_ROOT_PORT_NUMBER_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFF,
+              step          = 0x0,
+              default value = 0x01,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevXhciVendorId[1],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_VID_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_VID_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x0000,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevXhciProductId[1],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PID_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PID_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x0000,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevXhciRevision[1],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_REVISION_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_REVISION_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x0000,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevXhciInterfaceNumber[1],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_INTERFACE_NUMBER_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_INTERFACE_NUMBER_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFF,
+              step          = 0x0,
+              default value = 0x00,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevXhciClass[1],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_CLASS_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_CLASS_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFF,
+              step          = 0x0,
+              default value = 0x0E,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevXhciSubClass[1],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_SUBCLASS_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_SUBCLASS_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFF,
+              step          = 0x0,
+              default value = 0x01,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevXhciProtocol[1],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PROTOCOL_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PROTOCOL_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFF,
+              step          = 0x0,
+              default value = 0x01,
+            endnumeric;
+
+            numeric varid   = VtioCfg.SdevXhciAcpiPathStringOffset[1],
+              prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PATH_STRING_OFFSET_PROMPT),
+              help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PATH_STRING_OFFSET_HELP),
+              flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+              minimum       = 0x0,
+              maximum       = 0xFFFF,
+              step          = 0x0,
+              default value = 0x0034,
+            endnumeric;
+
+            grayoutif TRUE;
+              numeric varid   = VtioCfg.SdevXhciAcpiPathStringLength[1],
+                prompt        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PATH_STRING_LENGTH_PROMPT),
+                help          = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_PATH_STRING_LENGTH_HELP),
+                flags         = DISPLAY_UINT_HEX | RESET_REQUIRED,
+                minimum       = 0x0,
+                maximum       = 0xFFFF,
+                step          = 0x0,
+                default value = 0x001C,
+              endnumeric;
+            endif;  //grayoutif TRUE
+
+            numeric varid = VtioCfg.SdevXhciFirmwareHashDevice2[3],
+              prompt      = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_255_192_PROMPT),
+              help        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_255_192_PROMPT),
+              flags       = DISPLAY_UINT_HEX | NUMERIC_SIZE_8 | RESET_REQUIRED,
+              minimum     = 0x0,
+              maximum     = 0xFFFFFFFFFFFFFFFF,
+              step        = 0x1,
+              default     = 0x0,
+            endnumeric;
+
+            numeric varid = VtioCfg.SdevXhciFirmwareHashDevice2[2],
+              prompt      = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_191_128_PROMPT),
+              help        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_191_128_PROMPT),
+              flags       = DISPLAY_UINT_HEX | NUMERIC_SIZE_8 | RESET_REQUIRED,
+              minimum     = 0x0,
+              maximum     = 0xFFFFFFFFFFFFFFFF,
+              step        = 0x1,
+              default     = 0x0,
+            endnumeric;
+
+            numeric varid = VtioCfg.SdevXhciFirmwareHashDevice2[1],
+              prompt      = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_127_64_PROMPT),
+              help        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_127_64_PROMPT),
+              flags       = DISPLAY_UINT_HEX | NUMERIC_SIZE_8 | RESET_REQUIRED,
+              minimum     = 0x0,
+              maximum     = 0xFFFFFFFFFFFFFFFF,
+              step        = 0x1,
+              default     = 0x0,
+            endnumeric;
+
+            numeric varid = VtioCfg.SdevXhciFirmwareHashDevice2[0],
+              prompt      = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_63_0_PROMPT),
+              help        = STRING_TOKEN (STR_SDEV_HXCI_DEVICE_FW_HASH_63_0_PROMPT),
+              flags       = DISPLAY_UINT_HEX | NUMERIC_SIZE_8 | RESET_REQUIRED,
+              minimum     = 0x0,
+              maximum     = 0xFFFFFFFFFFFFFFFF,
+              step        = 0x1,
+              default     = 0x0,
+            endnumeric;
+
+            string  varid   = VtioCfg.SdevXhciAcpiPathNameDevice2,
+              questionid  = AUTO_ID(KEY_SdevXhciAcpiPathNameDevice2),
+              prompt  = STRING_TOKEN(STR_SDEV_HXCI_DEVICE_PATH_NAME_PROMPT),
+              help    = STRING_TOKEN(STR_SDEV_HXCI_DEVICE_2_PATH_NAME_HELP),
+              flags   = 0 | RESET_REQUIRED | INTERACTIVE,
+              minsize = 1,
+              maxsize = 48, // Max size without NULL terminator. default  = \\_SB.PC00.XHCI.RHUB.HS00.CIR
+            endstring;
+          endif; //suppressif VtioCfg.SdevXhciNumberOfDevices <= 1
+        endif; //suppressif SdevXhciEntry == 0
+      endif; //supressif VtioCfg.VtioSupport == 0
+    endform; //VTIO
+endformset;

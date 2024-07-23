@@ -1,0 +1,54 @@
+## @file
+#  Component Description File for Asynchronous Heci communication library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification Reference:
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DxeHeciAsyncSupportLib
+  FILE_GUID                      = 7824f619-7207-4319-8b39-98ba169f53d4
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = HeciAsyncSupportLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  DxeHeciAsyncSupport.c
+
+[LibraryClasses]
+  BaseMemoryLib
+  BaseLib
+  DebugLib
+  PciSegmentLib
+  PchCycleDecodingLib
+  ReportStatusCodeLib
+  PchPciBdfLib
+  SpiAccessLib
+  IoLib
+  TimerLib
+  UefiBootServicesTableLib
+
+[Protocols]
+  gHeciProtocolGuid               ## CONSUMES
+
+
+

@@ -1,0 +1,41 @@
+## @file
+#  FDF file of Platform.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+#INF  UefiCpuPkg/SecCore/SecCore.inf
+#INF  MdeModulePkg/Core/Pei/PeiMain.inf
+
+INF  MdeModulePkg/Universal/PCD/Pei/Pcd.inf
+INF  MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
+INF  MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
+
+INF  UefiCpuPkg/CpuIoPei/CpuIoPei.inf
+
+INF  MdeModulePkg/Universal/PcatSingleSegmentPciCfg2Pei/PcatSingleSegmentPciCfg2Pei.inf
+!if gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable == TRUE
+INF  ProtectedVariablePkg/Universal/ProtectedVariable/Pei/VariablePei.inf
+!else
+INF  MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
+!endif
+INF  MdeModulePkg/Universal/FaultTolerantWritePei/FaultTolerantWritePei.inf
+
+INF  MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
+

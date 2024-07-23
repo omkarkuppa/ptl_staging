@@ -1,0 +1,2228 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2014 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#include "SetupPreProcTools.hfr"
+
+    // Define forms
+    form formid = AUTO_ID(SB_FORM_ID),
+    title       = STRING_TOKEN(STR_SB_FORM);
+
+    SUBTITLE(STRING_TOKEN(STR_SB_FORM))
+    SEPARATOR
+
+    goto USB_OPTIONS_FORM_ID,
+         prompt = STRING_TOKEN(STR_USB_OPTIONS_FORM_TITLE),
+         help = STRING_TOKEN(STR_USB_OPTIONS_FORM_HELP);
+
+    goto SECURITY_OPTIONS_FORM_ID,
+         prompt = STRING_TOKEN(STR_SECURITY_OPTIONS_FORM_TITLE),
+         help = STRING_TOKEN(STR_SECURITY_OPTIONS_FORM_HELP);
+
+    suppressif ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorUpServer;
+        goto PCH_HDAUDIO_OPTIONS_FORM_ID,
+             prompt = STRING_TOKEN(STR_HDAUDIO_OPTIONS_FORM_TITLE),
+             help = STRING_TOKEN(STR_HDAUDIO_OPTIONS_FORM_HELP);
+    endif;
+
+    grayoutif ideqval SETUP_VOLATILE_DATA.ThcSupported == 0x0;
+      goto THC_OPTIONS_FORM_ID,
+           prompt = STRING_TOKEN(STR_THC_OPTIONS_FORM_TITLE),
+           help = STRING_TOKEN(STR_THC_OPTIONS_FORM_HELP);
+    endif;
+
+    goto 122, //SerialIo
+         prompt = STRING_TOKEN(STR_SERIAL_IO_OPTIONS_FORM_TITLE),
+         help = STRING_TOKEN(STR_SERIAL_IO_OPTIONS_FORM_HELP);
+
+    goto SCS_OPTIONS_FORM_ID,
+         prompt = STRING_TOKEN(STR_SCS_OPTIONS_FORM_TITLE),
+         help = STRING_TOKEN(STR_SCS_OPTIONS_FORM_HELP);
+
+    goto ISH_OPTIONS_FORM_ID,
+         prompt = STRING_TOKEN(STR_ISH_OPTIONS_FORM_TITLE),
+         help = STRING_TOKEN(STR_ISH_OPTIONS_FORM_HELP);
+
+    goto PCH_THERMAL_THROTTLING_OPTIONS_FORM_ID,
+        prompt   = STRING_TOKEN(STR_PCH_THERMAL_THROTTLING),
+        help     = STRING_TOKEN(STR_PCH_THERMAL_THROTTLING),
+        flags   = 0,
+        key     = 0;
+
+    goto PMC_CONFIGURATION_FORM_ID,
+        prompt = STRING_TOKEN(STR_PMC_CONFIGURATION_FORM_TITLE),
+        help   = STRING_TOKEN(STR_PMC_CONFIGURATION_FORM_HELP);
+
+    SEPARATOR
+
+  #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+    suppressif ideqval SETUP_VOLATILE_DATA.TsnSupportByPch == 0;
+        //
+        // Tsn Region present
+        //
+      suppressif ideqval SETUP_VOLATILE_DATA.TsnAvailable == 0;
+        oneof varid = PCH_SETUP.PchTsnEnable,
+          prompt   = STRING_TOKEN(STR_PCH_TSN_CONTROLLER),
+          help     = STRING_TOKEN(STR_PCH_TSN_CONTROLLER_HELP),
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      grayoutif ideqval PCH_SETUP.PchTsnEnable == 0;
+        oneof varid   = PCH_SETUP.TsnPcsEnabled,
+          prompt      = STRING_TOKEN(STR_ENABLE_TSN_PCS),
+          help        = STRING_TOKEN(STR_ENABLE_TSN_PCS_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      suppressif ideqval PCH_SETUP.PchTsnEnable == 0 OR ideqval SETUP_VOLATILE_DATA.TsnAvailable == 0;
+
+        oneof varid = PCH_SETUP.PchTsnLinkSpeed,
+          prompt   = STRING_TOKEN(STR_PCH_TSN_LINKSPEED_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_TSN_LINKSPEED_HELP),
+          option text = STRING_TOKEN(STR_TSN_SPEED_24MHZ_2_5G_STRING), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_TSN_SPEED_24MHZ_1G_STRING), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_TSN_SPEED_38_4MHZ_2_5G_STRING), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_TSN_SPEED_38_4MHZ_1G_STRING), value = 3, flags = RESET_REQUIRED;
+        endoneof;
+
+        oneof varid = PCH_SETUP.TsnMultiVcEnable,
+          questionid  = AUTO_ID(PCH_TSN_MULTI_VC_QUESTION_ID),
+          prompt      = STRING_TOKEN(STR_PCH_TSN_MULTI_VC),
+          help        = STRING_TOKEN(STR_PCH_TSN_MULTI_VC_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+    endif;
+  #endif
+
+    suppressif ideqval SETUP_VOLATILE_DATA.GbeSupportByPch == 0;
+      //
+      // GbE Region present
+      //
+      suppressif ideqval SETUP_VOLATILE_DATA.GbeAvailable == 0;
+        oneof varid = PCH_SETUP.PchLan,
+          prompt   = STRING_TOKEN(STR_GBE_CONTROLLER),
+          help     = STRING_TOKEN(STR_GBE_CONTROLLER_HELP),
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      suppressif ideqval PCH_SETUP.PchLan == 0 OR ideqval SETUP_VOLATILE_DATA.GbeAvailable == 0;
+
+        oneof varid = PCH_SETUP.PchWakeOnLan,
+          prompt   = STRING_TOKEN(STR_GBE_WOL_PROMPT),
+          help     = STRING_TOKEN(STR_GBE_WOL_HELP),
+          //
+          // The default setup option has been changed from Disabled to Enabled to sync with Greens Glacier and to fix the
+          // SelfTest error LPC Controller (Bus 0 Dev 31 Fun 0) 0A4[8]
+          //
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        endoneof;
+
+        oneof varid = PCH_SETUP.SlpLanLowDc,
+          prompt   = STRING_TOKEN(STR_PCH_SLP_LAN_LOW_DC_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_SLP_LAN_LOW_DC_HELP),
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        endoneof;
+
+        oneof varid   = PCH_SETUP.PchWOLFastSupport,
+          prompt      = STRING_TOKEN(STR_GBE_WAKE_FAST_SUPPORT),
+          help        = STRING_TOKEN(STR_GBE_WAKE_FAST_SUPPORT_HELP),
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT |  RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      //
+      // GbE Region not available
+      //
+      suppressif ideqval SETUP_VOLATILE_DATA.GbeAvailable == 1;
+        text
+          help   = STRING_TOKEN(STR_EMPTY_STRING),
+          text   = STRING_TOKEN(STR_GBE_CONTROLLER),
+          text   = STRING_TOKEN(STR_GBE_NOT_PRESENT),
+          flags  = 0,
+          key    = 0;
+      endif;
+    endif;
+
+    //
+    // Network Driver support is required for Wifi/BT and GbE
+    //
+    oneof varid = SETUP_DATA.EfiNetworkSupport,
+     prompt   = STRING_TOKEN(STR_EFI_NETWORK_CONTROL),
+     help     = STRING_TOKEN(STR_EFI_NETWORK_CONTROL_HELP),
+     option text = STRING_TOKEN(STR_EFI_NETWORK_ONBOARD_NIC), value = 3, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN(STR_EFI_NETWORK_WIFI), value = 2, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN(STR_EFI_NETWORK_ALL), value = 1, flags = RESET_REQUIRED;
+     option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+    endoneof;
+
+     suppressif NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorMobile AND
+                NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorEmbedded;
+      oneof varid = SETUP_DATA.SensorHubType,
+       prompt   = STRING_TOKEN(STR_SENSOR_HUB_TYPE),
+       help     = STRING_TOKEN(STR_SENSOR_HUB_TYPE_HELP),
+       option text = STRING_TOKEN(STR_NONE_STRING), value = 0, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN(STR_I2C_SENSOR_HUB_STRING), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+       option text = STRING_TOKEN(STR_USB_SENSOR_HUB_STRING), value = 2, flags = RESET_REQUIRED;
+      endoneof;
+      endif;
+
+    oneof varid = PCH_SETUP.PchWakeOnWlan,
+        prompt   = STRING_TOKEN(STR_PCH_WOWLAN_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_WOWLAN_HELP),
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.StateAfterG3,
+      questionid  = AUTO_ID(KEY_PCH_STATE_AFTER_G3),
+      prompt   = STRING_TOKEN(STR_STATE_AFTER_G3),
+      help     = STRING_TOKEN(STR_STATE_AFTER_G3_HELP),
+      option text   = STRING_TOKEN(STR_S0_AFTER_G3_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+      option text   = STRING_TOKEN(STR_S5_AFTER_G3_STRING), value = 1, flags = RESET_REQUIRED | INTERACTIVE;
+    endoneof;
+
+    oneof varid = PCH_SETUP.IchPort80Route,
+      prompt   = STRING_TOKEN(PORT_80_REDIRECT),
+      help     = STRING_TOKEN(PORT_80_REDIRECT_HELP),
+      option text = STRING_TOKEN(STR_LPC_BUS), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCIE_BUS), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    grayoutif NOT ideqval PCH_SETUP.IchPort80Route == 0;
+      oneof varid = PCH_SETUP.EnhancePort8xhDecoding,
+        prompt   = STRING_TOKEN(ENHANCE_PORT_80_DECODING),
+        help     = STRING_TOKEN(ENHANCE_PORT_80_DECODING_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    grayoutif ideqval SETUP_VOLATILE_DATA.PchCridSupport == 0;
+      oneof varid  = PCH_SETUP.PchCrid,
+        prompt   = STRING_TOKEN(STR_PCH_CRID_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_CRID_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    oneof varid  = PCH_SETUP.PchLegacyIoLowLatency,
+      questionid  = AUTO_ID(PCH_LEGACY_IO_LOW_LATENCY_QUESTION_ID),
+      prompt      = STRING_TOKEN(STR_PCH_LEGACY_IO_LOW_LATENCY),
+      help        = STRING_TOKEN(STR_PCH_LEGACY_IO_LOW_LATENCY_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchEnergyReport,
+      prompt   = STRING_TOKEN(STR_PCH_ENERGY_REPORTING_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_ENERGY_REPORTING_HELP),
+       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PmcLpmS0i2p0En,
+      prompt   = STRING_TOKEN(STR_PMC_LPM_S0I2P0_EN_PROMPT),
+      help     = STRING_TOKEN(STR_PMC_LPM_S0IX_EN_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PmcLpmS0i2p1En,
+      prompt   = STRING_TOKEN(STR_PMC_LPM_S0I2P1_EN_PROMPT),
+      help     = STRING_TOKEN(STR_PMC_LPM_S0IX_EN_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PmcLpmS0i2p2En,
+      prompt   = STRING_TOKEN(STR_PMC_LPM_S0I2P2_EN_PROMPT),
+      help     = STRING_TOKEN(STR_PMC_LPM_S0IX_EN_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid = PCH_SETUP.PmcC10DynamicThresholdAdjustment,
+      prompt    = STRING_TOKEN(STR_PMC_C10_DYNAMIC_THRESHOLD_ADJUSTMENT_PROMPT),
+      help      = STRING_TOKEN(STR_PMC_C10_DYNAMIC_THRESHOLD_ADJUSTMENT_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchPmErDebugMode,
+      prompt   = STRING_TOKEN(STR_PCH_ER_DEBUG_MODE_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_ER_DEBUG_MODE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.IehMode,
+      prompt   = STRING_TOKEN(STR_PCH_IEH_MODE_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_IEH_MODE_HELP),
+      option text = STRING_TOKEN(STR_BYPASS_MODE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.EnableTcoTimer,
+      prompt      = STRING_TOKEN(STR_ENABLE_TCO_TIMER),
+      help        = STRING_TOKEN(STR_ENABLE_TCO_TIMER_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+      oneof varid   = PCH_SETUP.EnableTimedGpio0,
+        prompt      = STRING_TOKEN(STR_ENABLE_TIMED_GPIO0),
+        help        = STRING_TOKEN(STR_ENABLE_TIMED_GPIO0_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT |  MANUFACTURING |RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = PCH_SETUP.EnableTimedGpio1,
+        prompt      = STRING_TOKEN(STR_ENABLE_TIMED_GPIO1),
+        help        = STRING_TOKEN(STR_ENABLE_TIMED_GPIO1_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT  |  MANUFACTURING |RESET_REQUIRED;
+      endoneof;
+    #endif
+
+    suppressif NOT ideqval SETUP_VOLATILE_DATA.PlatformType == TypeUltUlx AND
+               NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorUpServer;
+      oneof varid   = PCH_SETUP.PchIoApic24119Entries,
+        prompt      = STRING_TOKEN(STR_IOAPIC_24_119_ENTRIES),
+        help        = STRING_TOKEN(STR_IOAPIC_24_119_ENTRIES_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    oneof varid   = PCH_SETUP.Enable8254ClockGating,
+      prompt      = STRING_TOKEN(STR_ENABLE_8254_CLOCK_GATE),
+      help        = STRING_TOKEN(STR_ENABLE_8254_CLOCK_GATE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLE_8254_CLOCK_GATE_RUNTIME), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchSidebandLock,
+      prompt      = STRING_TOKEN(STR_PCH_SB_LOCK),
+      help        = STRING_TOKEN(STR_PCH_SB_LOCK_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.FprrEnable,
+      prompt      = STRING_TOKEN(STR_FPRR_ENABLE),
+      help        = STRING_TOKEN(STR_FPRR_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.SmbusSpdWriteDisable,
+      prompt      = STRING_TOKEN(STR_SMBUS_SPDWDIS),
+      help        = STRING_TOKEN(STR_SMBUS_SPDWDIS_HELP),
+      option text = STRING_TOKEN(STR_TRUE), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_FALSE), value = 0, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.PchEspiLgmrEnable,
+      prompt      = STRING_TOKEN(STR_PCH_ESPI_LGMR_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_ESPI_LGMR_HELP),
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.PchEspiHostC10ReportEnable,
+      prompt      = STRING_TOKEN(STR_PCH_ESPI_HOSTC10_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_ESPI_HOSTC10_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.PchPmcOsIdleModeEnable,
+      prompt      = STRING_TOKEN(STR_PCH_OS_IDLE_MODE_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_OS_IDLE_MODE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid = PCH_SETUP.PchS0ixAutoDemotion,
+        prompt   = STRING_TOKEN(STR_PCH_S0IX_AUTO_DEMOTION_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_S0IX_AUTO_DEMOTION_HELP),
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.PchLatchEventsC10Exit,
+        prompt      = STRING_TOKEN(STR_PCH_LATCH_EVENTS_C10_EXIT_PROMPT),
+        help        = STRING_TOKEN(STR_PCH_LATCH_EVENTS_C10_EXIT_PROMPT_HELP),
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+#if FixedPcdGet8 (PcdExtendedBiosRegionSupport) == 0x1
+    oneof varid   = PCH_SETUP.ExtendedBiosDecodeRangeEnable,
+        prompt      = STRING_TOKEN(STR_EXT_BIOS_RANDE_DECODE_ENABLE_PROMPT),
+        help        = STRING_TOKEN(STR_EXT_BIOS_RANDE_DECODE_ENABLE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+#endif
+    endform;
+
+  form formid = AUTO_ID(USB_OPTIONS_FORM_ID),
+    title     = STRING_TOKEN(STR_USB_OPTIONS_FORM_TITLE);
+
+    SUBTITLE(STRING_TOKEN(STR_USB_OPTIONS_FORM_TITLE))
+    SEPARATOR
+
+    oneof varid   = PCH_SETUP.PchXdciSupport,
+      prompt      = STRING_TOKEN(STR_PCH_XDCI_SUPPORT_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_XDCI_SUPPORT_HELP),
+    #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+      default     = 1, defaultstore = MyStandardDefault,
+    #else
+      default     = 0, defaultstore = MyStandardDefault,
+    #endif
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
+    endoneof;
+
+    SEPARATOR
+
+    oneof varid   = PCH_SETUP.PchUsbPdoProgramming,
+      prompt      = STRING_TOKEN(STR_USB_PDO_PROGRAMMING),
+      help        = STRING_TOKEN(STR_USB_PDO_PROGRAMMING_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.PchUsbOverCurrentEnable,
+      prompt      = STRING_TOKEN(STR_USB_OVERCURRENT),
+      help        = STRING_TOKEN(STR_USB_OVERCURRENT_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.PchXhciOcLock,
+      prompt      = STRING_TOKEN(STR_USB_OC_LOCK),
+      help        = STRING_TOKEN(STR_USB_OC_LOCK_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid   = PCH_SETUP.PchXhciUaol,
+      prompt      = STRING_TOKEN(STR_USB_UAOL_ENABLE),
+      help        = STRING_TOKEN(STR_USB_UAOL_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    SEPARATOR
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+    //
+    // Usb 3.1 speed control
+    //
+    oneof varid   = PCH_SETUP.PchUsb31Speed,
+      prompt      = STRING_TOKEN(STR_PCH_USB3_1_SPEED_PROMPT),
+      help        = STRING_TOKEN(STR_PCH_USB3_1_SPEED_DIS_HELP),
+      option text = STRING_TOKEN(STR_PCH_USB3_1_GEN_2_SPEED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_USB3_1_GEN_1_SPEED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+#endif
+
+    //
+    // Usb ports per-port disable control enable
+    //
+    oneof varid  = PCH_SETUP.PchUsbPortDisable,
+      prompt   = STRING_TOKEN(STR_PCH_USB_PORT_TERM_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_USB_PORT_TERM_HELP),
+      default     = 0, defaultstore = MyStandardDefault,
+      option text = STRING_TOKEN(STR_DISABLE), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_USB_PORT_TERM_PER_PORT), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    SEPARATOR
+
+
+
+    //
+    // USB Port Disable Override fields
+    //
+    suppressif ideqval PCH_SETUP.PchUsbPortDisable == 0x0;
+
+      //
+      // @note Make sure strings used in include for CONCATENATE macro are specified in separate HFR file and added in INF
+      //
+      #define PCH_SS_PORT_INDEX 0
+      #include "PchUsbSingleSsPort.hfr"
+      #undef PCH_SS_PORT_INDEX
+      #define PCH_SS_PORT_INDEX 1
+      #include "PchUsbSingleSsPort.hfr"
+      #undef PCH_SS_PORT_INDEX
+      #define PCH_SS_PORT_INDEX 2
+      #include "PchUsbSingleSsPort.hfr"
+      #undef PCH_SS_PORT_INDEX
+      #define PCH_SS_PORT_INDEX 3
+      #include "PchUsbSingleSsPort.hfr"
+      #undef PCH_SS_PORT_INDEX
+      #define PCH_SS_PORT_INDEX 4
+      #include "PchUsbSingleSsPort.hfr"
+      #undef PCH_SS_PORT_INDEX
+      #define PCH_SS_PORT_INDEX 5
+      #include "PchUsbSingleSsPort.hfr"
+      #undef PCH_SS_PORT_INDEX
+      #define PCH_SS_PORT_INDEX 6
+      #include "PchUsbSingleSsPort.hfr"
+      #undef PCH_SS_PORT_INDEX
+      #define PCH_SS_PORT_INDEX 7
+      #include "PchUsbSingleSsPort.hfr"
+      #undef PCH_SS_PORT_INDEX
+      #define PCH_SS_PORT_INDEX 8
+      #include "PchUsbSingleSsPort.hfr"
+      #undef PCH_SS_PORT_INDEX
+      #define PCH_SS_PORT_INDEX 9
+      #include "PchUsbSingleSsPort.hfr"
+      #undef PCH_SS_PORT_INDEX
+
+      #define PCH_HS_PORT_INDEX 0
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 1
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 2
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 3
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 4
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 5
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 6
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 7
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 8
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 9
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 10
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 11
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 12
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+      #define PCH_HS_PORT_INDEX 13
+      #include "PchUsbSingleHsPort.hfr"
+      #undef PCH_HS_PORT_INDEX
+
+    endif; // if PchUsbPortDisable == 0x0
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+      SEPARATOR
+      //
+      // @note Make sure strings used in include for CONCATENATE macro are specified in separate HFR file and added in INF
+      //
+      #define PCH_SW_DEV_MODE_PORT_INDEX 0
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 1
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 2
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 3
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 4
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 5
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 6
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 7
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 8
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 9
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 10
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 11
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 12
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+      #define PCH_SW_DEV_MODE_PORT_INDEX 13
+      #include "PchUsbSwDevModePort.hfr"
+      #undef PCH_SW_DEV_MODE_PORT_INDEX
+#endif
+
+    suppressif NOT ideqval SETUP_DATA.SensorHubType == 2;
+    SEPARATOR
+      oneof varid   = SETUP_DATA.UsbSensorHub,
+        prompt      = STRING_TOKEN(STR_USB_SENSOR_HUB_SUPPORT),
+        help        = STRING_TOKEN(STR_USB_SENSOR_HUB_SUPPORT_HELP),
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+  endform; //end of USB_OPTIONS_FORM_ID
+
+  form formid = AUTO_ID(THC_OPTIONS_FORM_ID),
+    title     = STRING_TOKEN(STR_THC_OPTIONS_FORM_TITLE);
+
+    suppressif ideqval SETUP_VOLATILE_DATA.ThcAvailable == 0;
+      SUBTITLE(STRING_TOKEN(STR_THC_OPTIONS_FORM_HELP))
+      SEPARATOR
+
+      #include "PchThcStringPool.hfr"
+
+      #define THC_INDEX 0
+        #include "PchThcController.hfr"
+      #undef THC_INDEX
+
+      #define THC_INDEX 1
+        #include "PchThcController.hfr"
+      #undef THC_INDEX
+    endif;
+
+    suppressif ideqval SETUP_VOLATILE_DATA.ThcAvailable == 1;
+      SUBTITLE(STRING_TOKEN(STR_THC_NOT_AVAILABLE_HELP))
+      SEPARATOR
+    endif;
+
+  endform; //End of THC_OPTIONS_FORM_ID
+
+  form formid = AUTO_ID(SECURITY_OPTIONS_FORM_ID),
+    title     = STRING_TOKEN(STR_SECURITY_OPTIONS_FORM_TITLE);
+
+    SUBTITLE(STRING_TOKEN(STR_SECURITY_OPTIONS_FORM_TITLE))
+    SEPARATOR
+
+    oneof varid  = PCH_SETUP.PchRtcMemoryLock,
+      prompt   = STRING_TOKEN(STR_PCH_RTC_MEMORY_LOCK_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_RTC_MEMORY_LOCK_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+#if FixedPcdGetBool(PcdBiosGuardEnable) == 1
+    suppressif TRUE;
+      oneof varid  = PCH_SETUP.PchBiosLock,
+        prompt   = STRING_TOKEN(STR_PCH_BLE_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_BLE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+#else // PcdBiosGuardEnable
+    oneof varid  = PCH_SETUP.PchBiosLock,
+      prompt   = STRING_TOKEN(STR_PCH_BLE_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_BLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+#endif // PcdBiosGuardEnable
+
+    oneof varid  = PCH_SETUP.UnlockGpioPads,
+      prompt   = STRING_TOKEN(STR_PCH_UNLOCK_GPIO_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_UNLOCK_GPIO_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+  endform; //End of SECURITY_OPTIONS_FORM_ID
+
+//
+// Serial Io
+//
+form formid = 122,
+    title     = STRING_TOKEN(STR_SERIAL_IO_OPTIONS_FORM_TITLE);
+
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_OPTIONS_FORM_TITLE))
+
+    //
+    // I2C1-3 would be undetectable by OS if I2C0 is disabled, because it's Function0 of their PCIE device
+    //
+    oneof varid  = PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C0],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_I2C0),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C1],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_I2C1),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C2],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_I2C2),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+      default  = 1, defaultstore = MyStandardDefault,
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C3],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_I2C3),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C4],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_I2C4),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_I2C4_DEVICE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C5],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_I2C5),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_I2C5_DEVICE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    //
+    //
+      oneof varid  = PCH_SETUP.PchSerialIoI3c[0],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_I3C0),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+    grayoutif ideqval PCH_SETUP.PchSerialIoI3c[0] == 0;
+      oneof varid  = PCH_SETUP.PchSerialIoI3c[1],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_I3C1),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 2, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+      oneof varid  = PCH_SETUP.PchSerialIoI3c[2],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_I3C2),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid  = PCH_SETUP.PchSerialIoSpi[SERIAL_IO_SPI0],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI0),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid  = PCH_SETUP.PchSerialIoSpi[SERIAL_IO_SPI1],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI1),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+        default  = 0, defaultstore = MyStandardDefault,
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid  = PCH_SETUP.PchSerialIoSpi[SERIAL_IO_SPI2],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI2),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI2_DEVICE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval SETUP_DATA.OsDebugPort == 1;
+        oneof varid  = PCH_SETUP.PchSerialIoUart[SERIAL_IO_UART0],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART0),
+      #ifdef MDEPKG_NDEBUG
+      help = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+      #if FixedPcdGetBool(PcdEmbeddedEnable) == 1
+              option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      #else
+              option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+              option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      #endif
+      #else
+      #if FixedPcdGetBool(PcdEmbeddedEnable) == 1
+              help        = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+              option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      #else
+              help        = STRING_TOKEN(STR_PCH_SERIAL_IO_UART0_DEVICE_HELP),
+              option text = STRING_TOKEN(STR_DBG_ONLY), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      #endif
+      #endif
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_COM), value = 3, flags = RESET_REQUIRED;
+      endoneof;
+      endif;
+
+      suppressif NOT ideqval SETUP_DATA.OsDebugPort == 1;
+        text
+          help   = STRING_TOKEN(STR_EMPTY_STRING),
+          text   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART0),
+          text   = STRING_TOKEN(STR_PCH_RESERVED_FOR_DBG),
+          flags = 0, key = 0;
+      endif;
+
+    oneof varid  = PCH_SETUP.PchSerialIoUart[SERIAL_IO_UART1],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART1),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_COM), value = 3, flags = RESET_REQUIRED;
+    endoneof;
+
+      oneof varid  = PCH_SETUP.PchSerialIoUart[SERIAL_IO_UART2],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART2),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_DEVICE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_COM), value = 3, flags = RESET_REQUIRED;
+      endoneof;
+
+    //
+    // GPIO
+    //
+    oneof varid  = PCH_SETUP.PchGpioIrqRoute,
+      prompt   = STRING_TOKEN(STR_PCH_GPIO_IRQ_ROUTE),
+      help     = STRING_TOKEN(STR_PCH_GPIO_IRQ_ROUTE_HELP),
+      option text = STRING_TOKEN(STR_PCH_GPIO_ROUTE_IRQ14), value = 14, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_GPIO_ROUTE_IRQ15), value = 15, flags = RESET_REQUIRED;
+    endoneof;
+
+    SEPARATOR
+
+    suppressif ideqval PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C0] == 0;
+        goto 128,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_I2C0_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C1] == 0;
+        goto 129,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_I2C1_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+
+    suppressif ideqval PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C2] == 0;
+        goto 135,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_I2C2_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C3] == 0;
+        goto 136,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_I2C3_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+
+    suppressif ideqval PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C4] == 0 OR
+               ideqval PCH_SETUP.PchSerialIoDeviceI2C4Support == 1;
+        goto 137,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_I2C4_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoI2c[SERIAL_IO_I2C5] == 0;
+        goto 138,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_I2C5_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoI3c[0] == 0;
+        goto I3C0_AUTO_ID,
+        prompt = STRING_TOKEN(STR_SERIAL_IO_I3C0_FORM_TITLE),
+        help   = STRING_TOKEN(STR_SERIAL_IO_I3C_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoI3c[2] == 0;
+        goto I3C2_AUTO_ID,
+        prompt = STRING_TOKEN(STR_SERIAL_IO_I3C2_FORM_TITLE),
+        help   = STRING_TOKEN(STR_SERIAL_IO_I3C_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoSpi[SERIAL_IO_SPI0] == 0;
+        goto 130,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_SPI0_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoSpi[SERIAL_IO_SPI1] == 0;
+        goto 131,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_SPI1_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoSpi[SERIAL_IO_SPI2] == 0;
+        goto 140,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_SPI2_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoUart[SERIAL_IO_UART0] == 0 OR
+                ideqval SETUP_DATA.OsDebugPort == 1;
+        goto 132,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_UART0_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoUart[SERIAL_IO_UART1] == 0 OR
+                ideqval SETUP_DATA.OsDebugPort == 2;
+        goto 133,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_UART1_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+    suppressif ideqval PCH_SETUP.PchSerialIoUart[SERIAL_IO_UART2] == 0;
+        goto 139,
+          prompt = STRING_TOKEN(STR_SERIAL_IO_UART2_FORM_TITLE),
+          help = STRING_TOKEN(STR_SERIAL_IO_CTRL_FORM_HELP);
+    endif;
+
+    SEPARATOR
+
+    oneof varid  = SETUP_DATA.PchI2cWittDevice,
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_WITT),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_WITT_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_I2C0), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_I2C1), value = 2, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_I2C2), value = 3, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_I2C3), value = 4, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_I2C4), value = 5, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_I2C5), value = 6, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_I3C0), value = 7, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_I3C1), value = 8, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_SPI0), value = 9, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_SPI1), value = 10, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_WITT_ENABLED_SPI2), value = 11, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval SETUP_DATA.PchI2cWittDevice == 0;
+      oneof varid  = SETUP_DATA.PchI2cWittVersion,
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_WITT_VER),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_WITT_VER_HELP),
+        option text = STRING_TOKEN(STR_WITT), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_MITT), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+    oneof varid  = SETUP_DATA.PchUartUtkDevice,
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_UTK),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_UTK_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED_UART0), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED_UART1), value = 2, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED_UART2), value = 3, flags = RESET_REQUIRED;
+    endoneof;
+    checkbox varid  = PCH_SETUP.PchAdditionalSerialIoDevices,
+      prompt      = STRING_TOKEN(STR_SERIAL_IO_TEST_DEVICES),
+      help        = STRING_TOKEN(STR_SERIAL_IO_TEST_DEVICES_HELP),
+      flags   = RESET_REQUIRED, key = 0,
+    endcheckbox;
+
+    checkbox varid  = SETUP_DATA.PchSerialIoUseTimingParameters,
+      prompt        = STRING_TOKEN(STR_SERIAL_IO_TIMING),
+      help          = STRING_TOKEN(STR_SERIAL_IO_TIMING_HELP),
+      flags         = RESET_REQUIRED, key = 0,
+    endcheckbox;
+
+endform; //End of SerialIo Options Form ID
+
+  form formid = 128,
+    title     = STRING_TOKEN(STR_SERIAL_IO_I2C0_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C0_FORM_TITLE))
+      numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C0],
+        prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
+        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        minimum  = 0,
+        maximum  = 0xFF,
+        default  = 0,
+      endnumeric;
+    SEPARATOR
+
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C0] == 1 3 5 7; //Please refer "8 Bits Map of I2C Devices" in SetupVariable.h
+        goto TOUCH_PAD_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PAD_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PAD_HELP);
+    endif;
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C0] == 2 3 6 7; //Please refer "8 Bits Map of I2C Devices" in SetupVariable.h
+        goto TOUCH_PANEL_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PANEL_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PANEL_HELP);
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_SUB))
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSH0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 612,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSL0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 706,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSD0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMH0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 110,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFML0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW_HELP), minimum = 0, maximum = 65535, default = 207,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMD0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPH0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 43,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPL0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW_HELP), minimum = 0, maximum = 65535, default = 76,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPD0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSH0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 11,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSL0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 22,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSD0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 8,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM0C0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M0D3), help = STRING_TOKEN (STR_PCH_SIO_M0D3_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM1C0,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M1D3), help = STRING_TOKEN (STR_PCH_SIO_M1D3_HELP), minimum = 1, maximum = 10000, default = 2000,
+      endnumeric;
+    endif;
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+    endif;
+
+ endform;
+
+ form formid = AUTO_ID(I3C0_AUTO_ID),
+  title     = STRING_TOKEN(STR_SERIAL_IO_I3C0_FORM_TITLE);
+  SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I3C_CTRL_FORM_HELP))
+
+  SEPARATOR
+
+  suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I3C_TIMING_SUB))
+    numeric varid = SETUP_DATA.I3c0QueueThld,
+      prompt = STRING_TOKEN (STR_QUEUE_THLD_CTRL),
+      help = STRING_TOKEN (STR_QUEUE_THLD_CTRL_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX, minimum = 0, maximum = 0xFFFFFFFF, default = 0x200002,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c0DataBufferThld,
+      prompt = STRING_TOKEN (STR_DATA_BUFFER_THLD_CTRL),
+      help = STRING_TOKEN (STR_DATA_BUFFER_THLD_CTRL_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x1010404,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c0OdTiming,
+      prompt = STRING_TOKEN (STR_SCL_I3C_OD_TIMING),
+      help = STRING_TOKEN (STR_SCL_I3C_OD_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0xFA00FA,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c0PpTiming,
+      prompt = STRING_TOKEN (STR_SCL_I3C_PP_TIMING),
+      help = STRING_TOKEN (STR_SCL_I3C_PP_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x80008,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c0SclI2cFmTiming,
+      prompt = STRING_TOKEN (STR_SCL_I2C_FM_TIMING),
+      help = STRING_TOKEN (STR_SCL_I2C_FM_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0xFA00FA,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c0SclI2cFmpTiming,
+      prompt = STRING_TOKEN (STR_SCL_I2C_FMP_TIMING),
+      help = STRING_TOKEN (STR_SCL_I2C_FMP_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x640064,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c0SclI2cSsTiming,
+      prompt = STRING_TOKEN (STR_SCL_I2C_SS_TIMING),
+      help = STRING_TOKEN (STR_SCL_I2C_SS_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x32003AC,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c0ExtLcntTiming,
+      prompt = STRING_TOKEN (STR_SCL_EXT_LCNT_TIMING),
+      help = STRING_TOKEN (STR_SCL_EXT_LCNT_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x20202020,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c0ExtTermLcntTiming,
+      prompt = STRING_TOKEN (STR_SCL_EXT_TERMN_LCNT_TIMING),
+      help = STRING_TOKEN (STR_SCL_EXT_TERMN_LCNT_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x30000,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c0SdaSwitchDelayTiming,
+      prompt = STRING_TOKEN (STR_SDA_HOLD_SWITCH_DLY_TIMING),
+      help = STRING_TOKEN (STR_SDA_HOLD_SWITCH_DLY_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x10000,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c0BusDelayTiming,
+      prompt = STRING_TOKEN (STR_BUS_FREE_TIMING),
+      help = STRING_TOKEN (STR_BUS_FREE_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x8,
+    endnumeric;
+  endif;
+  suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+  endif;
+endform;
+
+form formid = AUTO_ID(I3C2_AUTO_ID),
+  title     = STRING_TOKEN(STR_SERIAL_IO_I3C2_FORM_TITLE);
+  SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I3C_CTRL_FORM_HELP))
+
+  SEPARATOR
+
+  suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I3C_TIMING_SUB))
+    numeric varid = SETUP_DATA.I3c2QueueThld,
+      prompt = STRING_TOKEN (STR_QUEUE_THLD_CTRL),
+      help = STRING_TOKEN (STR_QUEUE_THLD_CTRL_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX, minimum = 0, maximum = 0xFFFFFFFF, default = 0x200002,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c2DataBufferThld,
+      prompt = STRING_TOKEN (STR_DATA_BUFFER_THLD_CTRL),
+      help = STRING_TOKEN (STR_DATA_BUFFER_THLD_CTRL_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x1010404,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c2OdTiming,
+      prompt = STRING_TOKEN (STR_SCL_I3C_OD_TIMING),
+      help = STRING_TOKEN (STR_SCL_I3C_OD_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0xFA00FA,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c2PpTiming,
+      prompt = STRING_TOKEN (STR_SCL_I3C_PP_TIMING),
+      help = STRING_TOKEN (STR_SCL_I3C_PP_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x80008,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c2SclI2cFmTiming,
+      prompt = STRING_TOKEN (STR_SCL_I2C_FM_TIMING),
+      help = STRING_TOKEN (STR_SCL_I2C_FM_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0xFA00FA,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c2SclI2cFmpTiming,
+      prompt = STRING_TOKEN (STR_SCL_I2C_FMP_TIMING),
+      help = STRING_TOKEN (STR_SCL_I2C_FMP_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x640064,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c2SclI2cSsTiming,
+      prompt = STRING_TOKEN (STR_SCL_I2C_SS_TIMING),
+      help = STRING_TOKEN (STR_SCL_I2C_SS_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x32003AC,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c2ExtLcntTiming,
+      prompt = STRING_TOKEN (STR_SCL_EXT_LCNT_TIMING),
+      help = STRING_TOKEN (STR_SCL_EXT_LCNT_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x20202020,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c2ExtTermLcntTiming,
+      prompt = STRING_TOKEN (STR_SCL_EXT_TERMN_LCNT_TIMING),
+      help = STRING_TOKEN (STR_SCL_EXT_TERMN_LCNT_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x30000,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c2SdaSwitchDelayTiming,
+      prompt = STRING_TOKEN (STR_SDA_HOLD_SWITCH_DLY_TIMING),
+      help = STRING_TOKEN (STR_SDA_HOLD_SWITCH_DLY_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x10000,
+    endnumeric;
+    numeric varid = SETUP_DATA.I3c2BusDelayTiming,
+      prompt = STRING_TOKEN (STR_BUS_FREE_TIMING),
+      help = STRING_TOKEN (STR_BUS_FREE_TIMING_HELP),
+      flags = RESET_REQUIRED | DISPLAY_UINT_HEX,  minimum = 0, maximum = 0xFFFFFFFF, default = 0x8,
+    endnumeric;
+  endif;
+  suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+  endif;
+endform;
+
+  form formid = 129,
+    title     = STRING_TOKEN(STR_SERIAL_IO_I2C1_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C1_FORM_TITLE))
+      numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C1],
+        prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
+        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        minimum  = 0,
+        maximum  = 0xFF,
+        default  = 0,
+      endnumeric;
+
+    SEPARATOR
+
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C1] == 1 3 5 7;
+        goto TOUCH_PAD_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PAD_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PAD_HELP);
+    endif;
+
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C1] == 2 3 6 7;
+        goto TOUCH_PANEL_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PANEL_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PANEL_HELP);
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_SUB))
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSH1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 612,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSL1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 706,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSD1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMH1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 110,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFML1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW_HELP), minimum = 0, maximum = 65535, default = 207,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMD1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPH1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 43,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPL1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW_HELP), minimum = 0, maximum = 65535, default = 76,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPD1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSH1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 11,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSL1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 22,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSD1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 8,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM0C1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M0D3), help = STRING_TOKEN (STR_PCH_SIO_M0D3_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM1C1,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M1D3), help = STRING_TOKEN (STR_PCH_SIO_M1D3_HELP), minimum = 1, maximum = 10000, default = 2000,
+      endnumeric;
+    endif;
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+    endif;
+
+ endform;
+
+
+  form formid = 135,
+    title     = STRING_TOKEN(STR_SERIAL_IO_I2C2_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C2_FORM_TITLE))
+      numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C2],
+        prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
+        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        minimum  = 0,
+        maximum  = 0xFF,
+        default  = 0,
+      endnumeric;
+
+    SEPARATOR
+
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C2] == 1 3 5 7;
+        goto TOUCH_PAD_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PAD_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PAD_HELP);
+    endif;
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C2] == 2 3 6 7;
+        goto TOUCH_PANEL_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PANEL_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PANEL_HELP);
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_SUB))
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSH2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 612,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSL2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 706,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSD2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMH2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 110,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFML2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW_HELP), minimum = 0, maximum = 65535, default = 207,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMD2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPH2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 43,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPL2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW_HELP), minimum = 0, maximum = 65535, default = 76,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPD2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSH2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 11,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSL2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 22,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSD2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 8,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM0C2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M0D3), help = STRING_TOKEN (STR_PCH_SIO_M0D3_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM1C2,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M1D3), help = STRING_TOKEN (STR_PCH_SIO_M1D3_HELP), minimum = 1, maximum = 10000, default = 2000,
+      endnumeric;
+    endif;
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+    endif;
+
+endform;
+
+
+  form formid = 136,
+    title     = STRING_TOKEN(STR_SERIAL_IO_I2C3_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C3_FORM_TITLE))
+      numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C3],
+        prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
+        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        minimum  = 0,
+        maximum  = 0xFF,
+        default  = 0,
+      endnumeric;
+
+    SEPARATOR
+
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C3] == 1 3 5 7;
+        goto TOUCH_PAD_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PAD_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PAD_HELP);
+    endif;
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C3] == 2 3 6 7;
+        goto TOUCH_PANEL_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PANEL_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PANEL_HELP);
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_SUB))
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSH3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 612,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSL3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 706,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSD3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMH3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 110,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFML3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW_HELP), minimum = 0, maximum = 65535, default = 207,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMD3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPH3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 43,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPL3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW_HELP), minimum = 0, maximum = 65535, default = 76,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPD3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSH3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 11,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSL3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 22,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSD3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 8,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM0C3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M0D3), help = STRING_TOKEN (STR_PCH_SIO_M0D3_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM1C3,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M1D3), help = STRING_TOKEN (STR_PCH_SIO_M1D3_HELP), minimum = 1, maximum = 10000, default = 2000,
+      endnumeric;
+    endif;
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+    endif;
+
+ endform;
+
+
+  form formid = 137,
+    title     = STRING_TOKEN(STR_SERIAL_IO_I2C4_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C4_FORM_TITLE))
+      numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C4],
+        prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
+        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        minimum  = 0,
+        maximum  = 0xFF,
+        default  = 0,
+      endnumeric;
+
+    SEPARATOR
+
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C4] == 1 3 5 7;
+        goto TOUCH_PAD_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PAD_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PAD_HELP);
+    endif;
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C4] == 2 3 6 7;
+        goto TOUCH_PANEL_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PANEL_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PANEL_HELP);
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_SUB))
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSH4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 612,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSL4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 706,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSD4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMH4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 110,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFML4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW_HELP), minimum = 0, maximum = 65535, default = 207,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMD4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPH4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 43,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPL4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW_HELP), minimum = 0, maximum = 65535, default = 76,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPD4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSH4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 11,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSL4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 22,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSD4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 8,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM0C4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M0D3), help = STRING_TOKEN (STR_PCH_SIO_M0D3_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM1C4,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M1D3), help = STRING_TOKEN (STR_PCH_SIO_M1D3_HELP), minimum = 1, maximum = 10000, default = 2000,
+      endnumeric;
+    endif;
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+    endif;
+
+ endform;
+
+
+  form formid = 138,
+    title     = STRING_TOKEN(STR_SERIAL_IO_I2C5_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C5_FORM_TITLE))
+      numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C5],
+        prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
+        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        minimum  = 0,
+        maximum  = 0xFF,
+        default  = 0,
+      endnumeric;
+
+    SEPARATOR
+
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C5] == 1 3 5 7;
+        goto TOUCH_PAD_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PAD_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PAD_HELP);
+    endif;
+    suppressif NOT ideqvallist SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C5] == 2 3 6 7;
+        goto TOUCH_PANEL_FORM_ID,
+          prompt = STRING_TOKEN(STR_TOUCH_PANEL_FORM_TITLE),
+          help = STRING_TOKEN(STR_TOUCH_PANEL_HELP);
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_SUB))
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSH5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 706,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSL5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_SSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 612,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingSSD5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_SSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMH5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 110,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFML5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FMCN_LOW_HELP), minimum = 0, maximum = 65535, default = 207,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFMD5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FMCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPH5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 43,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPL5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_FPCN_LOW_HELP), minimum = 0, maximum = 65535, default = 76,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingFPD5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_FPCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 30,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSH5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HIGH_HELP), minimum = 0, maximum = 65535, default = 11,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSL5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW), help = STRING_TOKEN (STR_PCH_SIO_HSCN_LOW_HELP), minimum = 0, maximum = 65535, default = 22,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingHSD5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD), help = STRING_TOKEN (STR_PCH_SIO_HSCN_HOLD_HELP), minimum = 0, maximum = 65535, default = 8,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM0C5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M0D3), help = STRING_TOKEN (STR_PCH_SIO_M0D3_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM1C5,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M1D3), help = STRING_TOKEN (STR_PCH_SIO_M1D3_HELP), minimum = 1, maximum = 10000, default = 2000,
+      endnumeric;
+    endif;
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+    endif;
+ endform;
+
+  form formid = 130,
+    title     = STRING_TOKEN(STR_SERIAL_IO_SPI0_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_SPI0_FORM_TITLE))
+
+    oneof varid  = PCH_SETUP.PchSpiCsPolarity[0],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS0_POLARITY_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS_POLARITY_HELP),
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_LOW), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_HIGH), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchSpiCsPolarity[1],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS1_POLARITY_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS_POLARITY_HELP),
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_LOW), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_HIGH), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_SUB))
+      numeric varid = SETUP_DATA.PchSerialIoTimingM0C6,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M0D3), help = STRING_TOKEN (STR_PCH_SIO_M0D3_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM1C6,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M1D3), help = STRING_TOKEN (STR_PCH_SIO_M1D3_HELP), minimum = 1, maximum = 10000, default = 2000,
+      endnumeric;
+    endif;
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+    endif;
+
+ endform;
+
+
+  form formid = 131,
+    title     = STRING_TOKEN(STR_SERIAL_IO_SPI1_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_SPI1_FORM_TITLE))
+
+    oneof varid  = PCH_SETUP.PchSpiCsPolarity[2],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS0_POLARITY_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS_POLARITY_HELP),
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_LOW), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_HIGH), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchSpiCsPolarity[3],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS1_POLARITY_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS_POLARITY_HELP),
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_LOW), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_HIGH), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+  endform;
+
+
+  form formid = 140,
+    title     = STRING_TOKEN(STR_SERIAL_IO_SPI2_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_SPI2_FORM_TITLE))
+
+    oneof varid  = PCH_SETUP.PchSpiCsPolarity[4],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS0_POLARITY_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS_POLARITY_HELP),
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_LOW), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_HIGH), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchSpiCsPolarity[5],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS1_POLARITY_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_SPI_CS_POLARITY_HELP),
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_LOW), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_SERIAL_SPI_CS_ACTIVE_HIGH), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+  endform;
+
+
+  form formid = 132,
+    title     = STRING_TOKEN(STR_SERIAL_IO_UART0_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_UART0_FORM_TITLE))
+
+    oneof varid  = PCH_SETUP.PchUartHwFlowCtrl[0],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_HW_FLOW_CTRL_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_HW_FLOW_CTRL_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+      oneof varid  = PCH_SETUP.PchUartDmaEnable[0],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_DMA_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_DMA_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+    #if FixedPcdGetBool(PcdEmbeddedEnable) != 1
+      suppressif NOT ideqval PCH_SETUP.PchSerialIoUart[0] == 3;
+        oneof varid  = PCH_SETUP.PchUartPowerGating[0],
+          prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_PG_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_PG_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_AUTO),     value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif;
+    #endif
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_SUB))
+      numeric varid = SETUP_DATA.PchSerialIoTimingM0C9,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M0D3), help = STRING_TOKEN (STR_PCH_SIO_M0D3_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM1C9,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M1D3), help = STRING_TOKEN (STR_PCH_SIO_M1D3_UART_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+    endif;
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+    endif;
+ endform;
+
+
+
+
+  form formid = 133,
+    title     = STRING_TOKEN(STR_SERIAL_IO_UART1_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_UART1_FORM_TITLE))
+
+      oneof varid  = PCH_SETUP.PchUartHwFlowCtrl[1],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_HW_FLOW_CTRL_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_UART1_HW_FLOW_CTRL_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+    oneof varid  = PCH_SETUP.PchUartDmaEnable[1],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_DMA_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_DMA_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    suppressif NOT ideqval PCH_SETUP.PchSerialIoUart[1] == 3;
+      oneof varid  = PCH_SETUP.PchUartPowerGating[1],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_PG_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_PG_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_AUTO),     value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_SUB))
+      numeric varid = SETUP_DATA.PchSerialIoTimingM0CA,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M0D3), help = STRING_TOKEN (STR_PCH_SIO_M0D3_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM1CA,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M1D3), help = STRING_TOKEN (STR_PCH_SIO_M1D3_UART_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+    endif;
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+    endif;
+
+   endform;
+
+
+
+
+  form formid = 139,
+    title     = STRING_TOKEN(STR_SERIAL_IO_UART2_FORM_TITLE);
+    SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_UART2_FORM_TITLE))
+
+    oneof varid  = PCH_SETUP.PchUartHwFlowCtrl[2],
+      prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_HW_FLOW_CTRL_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_HW_FLOW_CTRL_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    oneof varid  = PCH_SETUP.PchUartDmaEnable[2],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_DMA_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_DMA_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+
+    suppressif NOT ideqval PCH_SETUP.PchSerialIoUart[2] == 3;
+      oneof varid  = PCH_SETUP.PchUartPowerGating[2],
+        prompt   = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_PG_PROMPT),
+        help     = STRING_TOKEN(STR_PCH_SERIAL_IO_UART_PG_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_AUTO),     value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 0;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_SUB))
+      numeric varid = SETUP_DATA.PchSerialIoTimingM0CB,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M0D3), help = STRING_TOKEN (STR_PCH_SIO_M0D3_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+      numeric varid = SETUP_DATA.PchSerialIoTimingM1CB,
+        prompt = STRING_TOKEN (STR_PCH_SIO_M1D3), help = STRING_TOKEN (STR_PCH_SIO_M1D3_UART_HELP), minimum = 1, maximum = 10000, default = 200,
+      endnumeric;
+    endif;
+    suppressif ideqval SETUP_DATA.PchSerialIoUseTimingParameters == 1;
+      SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_TIMING_DISABLED))
+    endif;
+  endform; //End of SerialIo Options Form ID
+
+  #define UFS_INDEX 0
+    suppressif ideqval SETUP_VOLATILE_DATA.UfsSupported[UFS_INDEX] == 0;
+      form formid = AUTO_ID(SCS_OPTIONS_FORM_ID),
+        title = STRING_TOKEN(STR_SCS_OPTIONS_FORM_TITLE);
+        #include "PchUfsStringPool.hfr"
+        #include "PchUfsSingleController.hfr"
+      endform;
+    endif;
+  #undef UFS_INDEX
+
+  form formid = AUTO_ID(ISH_OPTIONS_FORM_ID),
+    title = STRING_TOKEN(STR_ISH_OPTIONS_FORM_TITLE);
+
+    suppressif ideqval SETUP_VOLATILE_DATA.IshAvailable == 0;
+      oneof varid  = PCH_SETUP.PchIshEnable,
+        prompt   = STRING_TOKEN(STR_ISH_PROMPT),
+        help     = STRING_TOKEN(STR_ISH_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval PCH_SETUP.PchIshEnable == 0;
+
+        checkbox varid  = PCH_SETUP.PchIshMsiInterrupt,
+          prompt   = STRING_TOKEN(STR_ISH_MSI_INTERRUPT_PROMPT),
+          help     = STRING_TOKEN(STR_ISH_MSI_INTERRUPT_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endcheckbox;
+
+        checkbox varid  = PCH_SETUP.PchIshPdtUnlock,
+          prompt   = STRING_TOKEN(STR_ISH_PDT_UNLOCK_PROMPT),
+          help     = STRING_TOKEN(STR_ISH_PDT_UNLOCK_HELP),
+          flags    = 0 | RESET_REQUIRED,
+          key      = 0,
+        endcheckbox;
+
+
+        // ISH GPIO Assignment
+        //
+        // Reason to include PchIshStringPool.hfr is the same as for PchPcieStringPool.hfr
+        //
+        #include "PchIshStringPool.hfr"
+        text
+          help   = STRING_TOKEN(STR_ISH_GPIO_ASSIGN_HELP),
+          text   = STRING_TOKEN(STR_ISH_GPIO_ASSIGN_TITLE),
+          flags  = 0,
+          key    = 0;
+
+        #define SPI_INDEX 0
+        #define CHECKBOX_ISH_SPI_VALUE 0
+        #define CHECKBOX_ISH_SPI_CS0_VALUE 0
+        #include "PchSetupIshSpi.hfr"
+        #undef CHECKBOX_ISH_SPI_CS0_VALUE
+        #undef CHECKBOX_ISH_SPI_VALUE
+        #undef SPI_INDEX
+
+        #define UART_INDEX 0
+        #define CHECKBOX_VALUE 0
+        #include "PchSetupIshUart.hfr"
+        #undef CHECKBOX_VALUE
+        #undef UART_INDEX
+
+        #define UART_INDEX 1
+        #define CHECKBOX_VALUE 0
+        #include "PchSetupIshUart.hfr"
+        #undef CHECKBOX_VALUE
+        #undef UART_INDEX
+
+        #define I2C_INDEX 0
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshI2c.hfr"
+        #undef CHECKBOX_VALUE
+        #undef I2C_INDEX
+
+        #define I2C_INDEX 1
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshI2c.hfr"
+        #undef CHECKBOX_VALUE
+        #undef I2C_INDEX
+
+        #define I2C_INDEX 2
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshI2c.hfr"
+        #undef CHECKBOX_VALUE
+        #undef I2C_INDEX
+
+        #define I3C_INDEX 0
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshI3c.hfr"
+        #undef CHECKBOX_VALUE
+        #undef I3C_INDEX
+
+        #define I3C_INDEX 1
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshI3c.hfr"
+        #undef CHECKBOX_VALUE
+        #undef I3C_INDEX
+
+        #define GP_INDEX 0
+        #define GP_NUMBER 0
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 1
+        #define GP_NUMBER 1
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 2
+        #define GP_NUMBER 2
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 3
+        #define GP_NUMBER 3
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 4
+        #define GP_NUMBER 4
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 5
+        #define GP_NUMBER 5
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 6
+        #define GP_NUMBER 6
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 7
+        #define GP_NUMBER 7
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 8
+        #define GP_NUMBER 8
+        #define CHECKBOX_VALUE 0
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 9
+        #define GP_NUMBER 9
+        #define CHECKBOX_VALUE 0
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 10
+        #define GP_NUMBER 10
+        #define CHECKBOX_VALUE 0
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+        #define GP_INDEX 11
+        #define GP_NUMBER 11
+        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #include "PchSetupIshGp.hfr"
+        #undef CHECKBOX_VALUE
+        #undef GP_NUMBER
+        #undef GP_INDEX
+
+      endif; // suppressif PchIshEnable == 0;
+    endif; // suppressif IshAvailable == 0;
+
+    suppressif ideqval SETUP_VOLATILE_DATA.IshAvailable == 1;
+      SUBTITLE(STRING_TOKEN(STR_ISH_NOT_AVAILABLE_HELP))
+      SEPARATOR
+    endif;
+  endform; // End of ISH_OPTIONS_FORM_ID
+
+  form formid = AUTO_ID(PCH_THERMAL_THROTTLING_OPTIONS_FORM_ID),
+    title = STRING_TOKEN(STR_PCH_THERMAL_THROTTLING);
+
+        oneof varid  = PCH_SETUP.PchTtLevelSuggestSet,
+          prompt   = STRING_TOKEN(STR_PCH_THRM_TTLVL_SET_PROMPT),
+          help     = STRING_TOKEN(STR_PCH_THRM_TTLVL_SET_HELP),
+          option text = STRING_TOKEN(STR_SUGGEST_SETTING), value = 1, flags = DEFAULT | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_MANUAL), value = 0, flags = RESET_REQUIRED;
+        endoneof;
+
+      suppressif ideqval PCH_SETUP.PchTtLevelSuggestSet == 1;
+        checkbox varid  = PCH_SETUP.PchThrmTtEnable,
+         prompt   = STRING_TOKEN(STR_PCH_THRM_TT_PROMPT),
+         help     = STRING_TOKEN(STR_PCH_THRM_TT_HELP),
+         // Flags behavior for checkbox is overloaded so that it equals
+         // a DEFAULT value.  1 = ON, 0 = off
+         flags    = 0 | RESET_REQUIRED,
+         key      = 0,
+        endcheckbox;
+
+        checkbox varid  = PCH_SETUP.PchThrmTtState13Enable,
+         prompt   = STRING_TOKEN(STR_PCH_THRM_TT13_PROMPT),
+         help     = STRING_TOKEN(STR_PCH_THRM_TT13_HELP),
+         // Flags behavior for checkbox is overloaded so that it equals
+         // a DEFAULT value.  1 = ON, 0 = off
+         flags    = 0 | RESET_REQUIRED,
+         key      = 0,
+        endcheckbox;
+
+        checkbox varid  = PCH_SETUP.PchThrmTtLock,
+         prompt   = STRING_TOKEN(STR_PCH_THRM_TT_LOCK_PROMPT),
+         help     = STRING_TOKEN(STR_PCH_THRM_TT_LOCK_HELP),
+         // Flags behavior for checkbox is overloaded so that it equals
+         // a DEFAULT value.  1 = ON, 0 = off
+         flags    = 0 | RESET_REQUIRED,
+         key      = 0,
+        endcheckbox;
+
+        numeric varid = PCH_SETUP.PchThrmT0Level,
+         prompt    = STRING_TOKEN(STR_PCH_THRM_T0_LVL_PROMPT),
+         help      = STRING_TOKEN(STR_PCH_THRM_T0_LVL_HELP),
+         flags     = RESET_REQUIRED,
+         minimum   = 0,
+         maximum   = 65535,
+         step      = 1,
+         default   = 0,
+        endnumeric;
+
+        numeric varid = PCH_SETUP.PchThrmT1Level,
+         prompt    = STRING_TOKEN(STR_PCH_THRM_T1_LVL_PROMPT),
+         help      = STRING_TOKEN(STR_PCH_THRM_T1_LVL_HELP),
+         flags     = RESET_REQUIRED,
+         minimum   = 0,
+         maximum   = 65535,
+         step      = 1,
+         default   = 0,
+        endnumeric;
+
+        numeric varid = PCH_SETUP.PchThrmT2Level,
+         prompt    = STRING_TOKEN(STR_PCH_THRM_T2_LVL_PROMPT),
+         help      = STRING_TOKEN(STR_PCH_THRM_T2_LVL_HELP),
+         flags     = RESET_REQUIRED,
+         minimum   = 0,
+         maximum   = 65535,
+         step      = 1,
+         default   = 0,
+        endnumeric;
+      endif;
+    endform; // End of PCH_THERMAL_THROTTLING_OPTIONS_FORM_ID
+
+  form formid = AUTO_ID(TOUCH_PAD_FORM_ID),
+    title     = STRING_TOKEN(STR_TOUCH_PAD_FORM_TITLE);
+
+    oneof varid  = SETUP_DATA.PchI2cTouchPadType,
+        prompt   = STRING_TOKEN(STR_TOUCH_PAD_PROMPT),
+        help     = STRING_TOKEN(STR_TOUCH_PAD_HELP),
+        option text = STRING_TOKEN(STR_DISABLED),                         value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SYNAPTICS_PRECISION_TOUCHPAD), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SYNAPTICS_FORCEPAD),           value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_CUSTOM_DEVICE),      value = 5, flags = RESET_REQUIRED;
+        // ALPS Precision Touchpad (ClickPad)
+        option text = STRING_TOKEN(STR_PCH_ALPS_PRECISION_TOUCHPAD),      value = 6, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_HYNITRON_THAT_TOUCHPAD),       value = 7, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval SETUP_DATA.PchI2cTouchPadType == 0 OR (
+               ideqval SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C0] == SERIAL_IO_I2C_TOUCHPAD AND (
+               ideqval SETUP_DATA.PchI2cTouchPadType == 3 OR
+               ideqval SETUP_DATA.PchI2cTouchPadType == 4 ));
+      oneof varid  = SETUP_DATA.PchI2cTouchPadIrqMode,
+        prompt    = STRING_TOKEN(STR_TOUCH_PAD_IRQ_MODE),
+        help      = STRING_TOKEN(STR_TOUCH_PAD_IRQ_MODE_HELP),
+        option text = STRING_TOKEN(STR_GPIO_INT), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_APIC_INT), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif NOT ideqval SETUP_DATA.PchI2cTouchPadType == 5;
+      numeric varid = SETUP_DATA.PchI2cTouchPadBusAddress,
+        prompt      = STRING_TOKEN(STR_CUSTOM_DEVICE_BUS_ADDRESS),
+        help        = STRING_TOKEN(STR_CUSTOM_DEVICE_PARAMETERS_HELP),
+        flags       = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0x7F,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.PchI2cTouchPadHidAddress,
+        prompt      = STRING_TOKEN(STR_CUSTOM_DEVICE_HID_ADDRESS),
+        help        = STRING_TOKEN(STR_CUSTOM_DEVICE_PARAMETERS_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+
+      oneof varid  = SETUP_DATA.PchI2cTouchPadSpeed,
+        prompt   = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED),
+        help     = STRING_TOKEN(STR_CUSTOM_DEVICE_PARAMETERS_HELP),
+        option text = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED_100K), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED_400K), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED_1M),   value = 2, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif NOT ideqval SETUP_DATA.PchI2cTouchPadType == 7;
+      oneof varid  = SETUP_DATA.PchI2cTouchPadSpeed,
+        prompt   = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED),
+        help     = STRING_TOKEN(STR_CUSTOM_DEVICE_PARAMETERS_HELP),
+        option text = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED_400K), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED_1M),   value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+  endform;
+
+
+  form formid = AUTO_ID(TOUCH_PANEL_FORM_ID),
+    title     = STRING_TOKEN(STR_TOUCH_PANEL_FORM_TITLE);
+
+    oneof varid  = SETUP_DATA.PchI2cTouchPanelType,
+        prompt   = STRING_TOKEN(STR_TOUCH_PANEL_PROMPT),
+        help     = STRING_TOKEN(STR_TOUCH_PANEL_HELP),
+        option text = STRING_TOKEN(STR_DISABLED),                          value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_ATMEL3432_PANEL),     value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_ATMEL2952_PANEL),     value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_ELAN9048_PANEL),      value = 3, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_NTRIG_SAMSUNG_PANEL), value = 4, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_NTRIG_SHARP_PANEL),   value = 5, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_WACOM_PANEL),         value = 6, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_CUSTOM_DEVICE),       value = 7, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SERIAL_IO_ELAN8E18_PANEL),      value = 8, flags = RESET_REQUIRED;
+      endoneof;
+
+    suppressif ideqval SETUP_DATA.PchI2cTouchPanelType == 0;
+      oneof varid  = SETUP_DATA.PchI2cTouchPanelIrqMode,
+        prompt   = STRING_TOKEN(STR_TOUCH_PANEL_IRQ_MODE),
+        help     = STRING_TOKEN(STR_TOUCH_PANEL_IRQ_MODE_HELP),
+        option text = STRING_TOKEN(STR_GPIO_INT), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_APIC_INT), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    suppressif NOT ideqval SETUP_DATA.PchI2cTouchPanelType == 7;
+      numeric varid = SETUP_DATA.PchI2cTouchPanelBusAddress,
+        prompt      = STRING_TOKEN(STR_CUSTOM_DEVICE_BUS_ADDRESS),
+        help        = STRING_TOKEN(STR_CUSTOM_DEVICE_PARAMETERS_HELP),
+        flags       = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0x7F,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.PchI2cTouchPanelHidAddress,
+        prompt      = STRING_TOKEN(STR_CUSTOM_DEVICE_HID_ADDRESS),
+        help        = STRING_TOKEN(STR_CUSTOM_DEVICE_PARAMETERS_HELP),
+        flags    = RESET_REQUIRED | DISPLAY_UINT_HEX,
+        minimum  = 0,
+        maximum  = 0xFFFF,
+        step     = 1,
+        default  = 0,
+      endnumeric;
+    endif;
+
+    suppressif NOT ideqval SETUP_DATA.PchI2cTouchPanelType >= 6;
+      oneof varid  = SETUP_DATA.PchI2cTouchPanelSpeed,
+        prompt   = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED),
+        help     = STRING_TOKEN(STR_CUSTOM_DEVICE_PARAMETERS_HELP),
+      suppressif NOT ideqval SETUP_DATA.PchI2cTouchPanelType >= 7;
+        option text = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED_100K), value = 0, flags = RESET_REQUIRED;
+      endif;
+          option text = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED_400K), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_CUSTOM_DEVICE_SPEED_1M),   value = 2, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+  endform;
+
+
+form formid = AUTO_ID (PMC_CONFIGURATION_FORM_ID),
+  title = STRING_TOKEN (STR_PMC_CONFIGURATION_FORM_TITLE);
+  
+   SEPARATOR
+
+    oneof varid     = PCH_SETUP.PmcWdtTimerEn,
+      prompt      = STRING_TOKEN(STR_PMC_WDT_TIMER_EN_PROMPT),
+      help        = STRING_TOKEN(STR_PMC_WDT_TIMER_EN_HELP),
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid = PCH_SETUP.SocBclkPllOn,
+      prompt = STRING_TOKEN (STR_PMC_BCLK_PCD_PLL_PROMPT),
+      help = STRING_TOKEN (STR_PMC_BCLK_PLL_HELP),
+      option text = STRING_TOKEN (STR_PMC_BCLK_HW_DEFAULT), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_PMC_BCLK_FORCE_ON), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_PMC_BCLK_FORCE_OFF), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+
+    oneof varid = PCH_SETUP.CpuBclkPllOn,
+      prompt = STRING_TOKEN (STR_PMC_BCLK_CPU_PLL_PROMPT),
+      help = STRING_TOKEN (STR_PMC_BCLK_PLL_HELP),
+      option text = STRING_TOKEN (STR_PMC_BCLK_HW_DEFAULT), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_PMC_BCLK_FORCE_ON), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_PMC_BCLK_FORCE_OFF), value = 2, flags = RESET_REQUIRED;
+    endoneof;
+endform;
+
+//
+// HD Audio Setup
+//
+#include "PchHdaSetup.hfr"

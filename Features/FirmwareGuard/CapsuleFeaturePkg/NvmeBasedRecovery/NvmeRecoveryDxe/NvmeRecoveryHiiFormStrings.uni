@@ -1,0 +1,50 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+**/
+
+/=#
+/////////////////////////////////   GENERIC DEFINITIONS   /////////////////////////////////
+#langdef en-US                                  "English"
+#string STR_NULL                                #language en-US " "
+
+/////////////////////////////////   FORM SET   /////////////////////////////////
+#string STR_FORM_SET_HELP                        #language en-US "Select to manage"
+#string STR_NVME_BASED_TITLE                     #language en-US "NVMe Based Recovery Configuration"
+#string STR_NVME_BASED_HELP                      #language en-US "NVMe Based Recovery Configuration Settings"
+
+/////////////////////////////////   MULTIPLE FORMS   /////////////////////////////////
+#string STR_NVME_RPMB_KEY_MIGRATION              #language en-US "NVMe RPMB Key Migration"
+
+/////////////////////////////////   MAIN MENU FORM   /////////////////////////////////
+#string STR_SET_PIN_KEY                          #language en-US "Set PIN key"
+#string STR_UNLOCK_BY_PIN_KEY                    #language en-US "Unlock device by PIN key"
+#string STR_NONE                                 #language en-US "No action"
+
+#string STR_INVOKE_KEY_MIGRATION                 #language en-US "Invoke Key migration"
+#string STR_INVOKE_KEY_MIGRATION_HELP            #language en-US "This is used when migrating NVMe SSD from platform "
+                                                                 "A -> B. Before migrating the device, please set PIN "
+                                                                 "Key on platform A. After migrating to platform B, "
+                                                                 "please unlock device by PIN key for finishing the "
+                                                                 "migration process."
+
+#string STR_NVME_SUPPORT                         #language en-US "NVMe Based Recovery Function"
+#string STR_NVME_SUPPORT_HELP                    #language en-US "Enables/Disables NVMe Based Recovery Function"
+#string STR_ENABLED                              #language en-US "Enabled"
+#string STR_DISABLED                             #language en-US "Disabled"

@@ -1,0 +1,70 @@
+## @file
+# Component description file about Heci notify driver for FSP support
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2015 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = HeciInitDxeFsp
+FILE_GUID = C92652E3-C7DE-4C78-9577-1C897C51BFFA
+VERSION_STRING = 1.0
+MODULE_TYPE = DXE_DRIVER
+ENTRY_POINT = HeciInitDxeFspEntryPoint
+
+[LibraryClasses]
+UefiDriverEntryPoint
+UefiBootServicesTableLib
+BaseMemoryLib
+DebugLib
+ReportStatusCodeLib
+FspErrorInfoLib
+HeciInitLib
+MeChipsetLib
+MeLib
+MeFwStsLib
+MeFruInitLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+IntelFsp2Pkg/IntelFsp2Pkg.dec
+
+[Sources]
+HeciInitDxeFsp.c
+MeReadyToBoot.c
+
+[Protocols]
+gWdtProtocolGuid              ## CONSUMES
+gAmtReadyToBootProtocolGuid   ## CONSUMES
+gMeSendEopInFspProtocolGuid   ## PRODUCES
+gMeDisplayMsgProtocolGuid     ## CONSUMES
+
+[Guids]
+gEfiEventReadyToBootGuid      ## CONSUMES
+gEfiEventExitBootServicesGuid ## CONSUMES
+gMeFwHobGuid                  ## CONSUMES
+gMePlatformReadyToBootGuid    ## CONSUMES
+gMeFspErrorTypeEop            ## SOMETIMES_PRODUCES
+gMeFspErrorTypeCallerId       ## SOMETIMES_PRODUCES
+
+[Depex]
+gEfiPciRootBridgeIoProtocolGuid AND
+gDxeMePolicyGuid AND
+gEfiPciHostBridgeResourceAllocationProtocolGuid ## This is to ensure that PCI IO resource has been prepared and available for this driver to allocate.

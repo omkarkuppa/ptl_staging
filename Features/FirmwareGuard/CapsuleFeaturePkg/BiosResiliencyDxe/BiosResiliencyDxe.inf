@@ -1,0 +1,112 @@
+### @file
+#  Component information file for BIOS Resiliency Dxe.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = BiosResiliencyDxe
+  FILE_GUID                      = FA8ADDEF-38F2-43A9-BF1A-2936EFC5C0CC
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  UEFI_SPECIFICATION_VERSION     = 2.00
+  ENTRY_POINT                    = BiosResiliencyDxeEntryPoint
+
+[Sources]
+  BiosResiliencyDxe.c
+  PayloadRecovery.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  HobLib
+  ComponentUpdateLib
+  SeamlessRecoverySupportLib
+  DxeServicesLib
+  PrintLib
+  CpuPlatformLib
+  PlatformWdtLib
+  VariablePolicyHelperLib
+  CapsuleUpdateResetLib
+  TopSwapSupportLib
+  PlatformDxeBootStateHookLib
+  HashSupportLib
+  PayloadResiliencySupportLib
+
+[Pcd]
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase           ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize           ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase           ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset         ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize           ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset              ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbBase                ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbSize                ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbBase                ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbOffset              ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbRBase               ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbROffset             ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbSize                ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashExtendSize             ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashExtendOffset           ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashAllExtendedRegionSize  ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashExtendedRegionBase     ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashFvMicrocodeRBase       ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashFvMicrocodeROffset     ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashFvMicrocodeRSize       ## CONSUMES
+  gIntelSiliconPkgTokenSpaceGuid.PcdBiosAreaBaseAddress           ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset    ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadBase      ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadSize      ## CONSUMES
+
+[FixedPcd]
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosExtenedRegionEnable  ## CONSUMES
+
+[Guids]
+  gIbbBgslFileGuid                       ## CONSUMES
+  gObbRBgslFileGuid                      ## CONSUMES
+  gExtendedBgslFileGuid                  ## CONSUMES
+  gNonFitPayloadBgslFileGuid             ## CONSUMES
+  gObbSha384HashFileGuid                 ## CONSUMES
+  gExtendedSha384HashFileGuid            ## CONSUMES
+  gPayloadSha384HashFileGuid             ## CONSUMES
+  gPlatformBeforeEndOfDxeEventGroupGuid  ## CONSUMES
+  gEfiCapsuleReportGuid                  ## CONSUMES
+  gUcodeBgslFileGuid                     ## CONSUMES
+  gFitTableSyncBgslFileGuid              ## CONSUMES
+
+[Protocols]
+  gEfiVariableWriteArchProtocolGuid      ## CONSUMES
+  gEdkiiVariablePolicyProtocolGuid       ## CONSUMES
+
+[Depex]
+  gEdkiiVariablePolicyProtocolGuid  AND
+  gEfiVariableArchProtocolGuid

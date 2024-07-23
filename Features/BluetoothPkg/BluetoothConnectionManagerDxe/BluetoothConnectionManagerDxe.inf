@@ -1,0 +1,75 @@
+## @file
+#  The INF file of Bluetooth Config Dxe driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2013 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = BluetoothConfigDxe
+  FILE_GUID                      = D15E7D4B-138B-4ca3-BB2C-5907127F8DAD
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = BluetoothConfigDriverBindingEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  BluetoothConnectionManagerDxe.h
+  BluetoothConnectionManagerDxe.c
+  BluetoothConnectionManagerVfr.h
+  BluetoothConnectionManagerHii.h
+  BluetoothConnectionManager.uni
+  BluetoothConnectionManager.vfr
+  ComponentName.c
+
+[Packages]
+  BluetoothPkg/BluetoothPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  UefiHiiServicesLib
+  HiiLib
+  DebugLib
+  PrintLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  UefiLib
+  BluetoothLib
+  PerformanceLib
+
+[Protocols]
+  gEfiHiiPackageListProtocolGuid                ## CONSUMES
+  gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
+  gEfiBluetoothLeConfigProtocolGuid             ## CONSUMES
+  gEfiBluetoothAttributeServiceBindingProtocolGuid
+
+[Guids]
+  gEfiIfrTianoGuid
+
+[BuildOptions]
+  GCC:*_*_*_CC_FLAGS = -Wno-enum-compare -Wno-switch

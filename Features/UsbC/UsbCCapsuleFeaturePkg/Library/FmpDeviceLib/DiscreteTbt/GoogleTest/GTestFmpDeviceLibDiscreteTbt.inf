@@ -1,0 +1,75 @@
+## @file
+#  Google Test for the implementation of FmpDeviceLib instance to support 
+#  Discrete Thunderbolt Firmware update
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION     = 0x00010005
+  BASE_NAME       = GTestFmpDeviceLibDiscreteTbt
+  FILE_GUID       = 393A75CD-65FD-40A0-645B-7D412B852A5A
+  MODULE_TYPE     = HOST_APPLICATION
+  VERSION_STRING  = 1.0
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  GTestFmpDeviceLibDiscreteTbt.cpp
+  TestRegisterFmpInstaller.cpp
+  TestRegisterFmpUninstaller.cpp
+  TestFmpDeviceSetContext.cpp
+  TestFmpDeviceGetSize.cpp
+  TestFmpDeviceGetImageTypeIdGuidPtr.cpp
+  TestFmpDeviceGetAttributes.cpp
+  TestFmpDeviceGetLowestSupportedVersion.cpp
+  TestFmpDeviceGetVersionString.cpp
+  TestFmpDeviceGetVersion.cpp
+  TestFmpDeviceGetHardwareInstance.cpp
+  TestFmpDeviceGetImage.cpp
+  TestFmpDeviceCheckImage.cpp
+  TestFmpDeviceSetImage.cpp
+  TestFmpDeviceLock.cpp
+
+[Packages]
+  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  FmpDevicePkg/FmpDevicePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+
+[LibraryClasses]
+  GoogleTestLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  UefiRuntimeServicesTableLib
+  MockUefiBootServicesTableLib
+  
+[Protocols]
+  gEfiUsb2HcProtocolGuid
+  gEfiPciIoProtocolGuid
+  
+[Pcd]
+
+[Guids]

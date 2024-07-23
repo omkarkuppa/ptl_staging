@@ -1,0 +1,107 @@
+## @file
+#  One Click Recovery feature DXE Driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2020 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+##
+
+[Defines]
+  INF_VERSION                 = 0x00010017
+  BASE_NAME                   = OneClickRecovery
+  FILE_GUID                   = 86997AE6-D443-4939-B729-A3D0F32FB772
+  VERSION_STRING              = 1.0
+  MODULE_TYPE                 = DXE_DRIVER
+  UEFI_SPECIFICATION_VERSION  = 2.00
+  ENTRY_POINT                 = OneClickRecoveryEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF
+#
+
+[LibraryClasses]
+  IoLib
+  HobLib
+  PcdLib
+  NetLib
+  HttpLib
+  BaseLib
+  UefiLib
+  DebugLib
+  MeLib
+  DxeAsfLib
+  PchInfoLib
+  DevicePathLib
+  DxeAsfHeciLib
+  DxeAmtHeciLib
+  UefiBootManagerLib
+  UefiDriverEntryPoint
+  UefiRuntimeServicesTableLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  NetworkPkg/NetworkPkg.dec
+  SecurityPkg/SecurityPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneClickRecoveryFeaturePkg/OneClickRecoveryFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  OneClickRecovery.c
+  OcrPetEvent.c
+  OcrFileSupport.c
+  OcrHttpSupport.c
+  OcrProxySupport.c
+  OcrPbaBootSupport.c
+  OcrHttpsCertificate.c
+  OcrBootOptionSupport.c
+  OcrSecureBootSupport.c
+  OcrHttpBootCallbackSupport.c
+
+[Guids]
+  gEfiEventExitBootServicesGuid                ## CONSUMES
+  gEfiTlsCaCertificateGuid                     ## SOMETIMES_PRODUCES
+  gEfiCertX509Guid                             ## SOMETIMES_CONSUMES
+  gEfiFileInfoGuid                             ## SOMETIMES_CONSUMES
+  gEfiSecureBootEnableDisableGuid              ## SOMETIMES_CONSUMES
+  gOcrConfigVariableGuid                       ## CONSUMES
+
+[Protocols]
+  gOneClickRecoveryProtocolGuid                ## PRODUCES
+  gEfiLoadFileProtocolGuid                     ## CONSUMES
+  gEfiWiFi2ProtocolGuid                        ## SOMETIMES_CONSUMES
+  gEfiPciIoProtocolGuid                        ## SOMETIMES_CONSUMES
+  gEfiBlockIoProtocolGuid                      ## SOMETIMES_CONSUMES
+  gEfiDevicePathProtocolGuid                   ## SOMETIMES_CONSUMES
+  gEfiRscHandlerProtocolGuid                   ## SOMETIMES_PRODUCES
+  gEfiSimpleNetworkProtocolGuid                ## SOMETIMES_CONSUMES
+  gEdkiiHttpCallbackProtocolGuid               ## SOMETIMES_PRODUCES
+  gEfiSimpleFileSystemProtocolGuid             ## SOMETIMES_CONSUMES
+  gEfiHttpBootCallbackProtocolGuid             ## SOMETIMES_CONSUMES
+  gEdkiiWiFiProfileSyncProtocolGuid            ## SOMETIMES_CONSUMES
+
+[Pcd]
+  gEfiNetworkPkgTokenSpaceGuid.PcdHttpIoTimeout                             ## PRODUCES
+  gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdOneClickRecoveryCapabilities ## PRODUCES
+  gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdWifiProfileSyncEnable        ## CONSUMES
+
+[Depex]
+  gHeciControlProtocolGuid          AND
+  gAlertStandardFormatProtocolGuid  AND
+  gEfiVariableArchProtocolGuid      AND
+  gEfiVariableWriteArchProtocolGuid

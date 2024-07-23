@@ -1,0 +1,148 @@
+## @file
+# Component information file for PantherLake Multi-Board Initialization in DXE phase.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2020 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DxePtlMultiBoardInitLib
+  FILE_GUID                      = E7D21F79-1126-4B45-987C-41FF30AC0EC2
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = NULL
+  CONSTRUCTOR                    = DxePtlMultiBoardInitLibConstructor
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  PcdLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  HobLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  DxeUpdatePlatformInfoLib
+  BoardConfigLib
+  PciSegmentLib
+  EcTcssLib
+  PreSiliconEnvDetectLib
+  IoLib
+  PmcLib
+  EcMiscLib
+  ItssLib
+  MtrrLib
+  SiMtrrLib
+  UefiLib
+  S3BootScriptLib
+
+[Packages]
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  DptfFeaturePkg/DptfFeaturePkg.dec
+  MipiCamFeaturePkg/MipiCamFeaturePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+
+[Sources]
+  DxeInitLib.c
+  DxeMultiBoardInitLib.c
+
+[Protocols]
+  gPlatformNvsAreaProtocolGuid
+  gEfiMpServiceProtocolGuid
+  gBdsAllDriversConnectedProtocolGuid
+
+[Guids]
+  gSiMemoryInfoDataGuid                         ## CONSUMES
+  gSetupVariableGuid                            ## CONSUMES
+  gSaSetupVariableGuid                          ## CONSUMES
+  gCpuSetupVariableGuid                         ## CONSUMES
+  gPchSetupVariableGuid                         ## CONSUMES
+  gMeSetupVariableGuid                          ## CONSUMES
+  gSiSetupVariableGuid                          ## CONSUMES
+  gDptfConfigVariableGuid                       ## CONSUMES
+  gMipiCamConfigVariableGuid                    ## CONSUMES
+
+[Pcd]
+  # Board Init Table List
+  gBoardModuleTokenSpaceGuid.PcdTouchpanelIrqGpio
+  gBoardModuleTokenSpaceGuid.PcdTouchpadIrqGpio
+  gBoardModuleTokenSpaceGuid.PcdHdaI2sCodecIrqGpio
+  gBoardModuleTokenSpaceGuid.PcdHdaI2sCodecI2cBusNumber
+
+  gBoardModuleTokenSpaceGuid.PcdWwanModemBaseBandResetGpio
+
+  gBoardModuleTokenSpaceGuid.PcdBoardRtd3TableSignature
+
+  gBoardModuleTokenSpaceGuid.PcdSpdAddressOverride
+
+  gBoardModuleTokenSpaceGuid.PcdMipiCamSensor
+  gBoardModuleTokenSpaceGuid.PcdZPoddConfig
+
+  gBoardModuleTokenSpaceGuid.PcdSmcRuntimeSciPin
+  gBoardModuleTokenSpaceGuid.PcdConvertableDockSupport
+
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF3Support
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF4Support
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF5Support
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF6Support
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF7Support
+  gBoardModuleTokenSpaceGuid.PcdEcHotKeyF8Support
+
+  gBoardModuleTokenSpaceGuid.PcdVirtualButtonVolumeUpSupport
+  gBoardModuleTokenSpaceGuid.PcdVirtualButtonVolumeDownSupport
+  gBoardModuleTokenSpaceGuid.PcdVirtualButtonHomeButtonSupport
+  gBoardModuleTokenSpaceGuid.PcdVirtualButtonRotationLockSupport
+
+  gBoardModuleTokenSpaceGuid.PcdSlateModeSwitchSupport
+  gBoardModuleTokenSpaceGuid.PcdVirtualGpioButtonSupport
+  gBoardModuleTokenSpaceGuid.PcdAcDcAutoSwitchSupport
+  gBoardModuleTokenSpaceGuid.PcdPmPowerButtonGpioPin
+  gBoardModuleTokenSpaceGuid.PcdAcpiEnableAllButtonSupport
+  gBoardModuleTokenSpaceGuid.PcdAcpiHidDriverButtonSupport
+
+  gBoardModuleTokenSpaceGuid.PcdSmbiosFabBoardName
+  gBoardModuleTokenSpaceGuid.PcdBoardName
+  gBoardModuleTokenSpaceGuid.PcdPlatformFlavor            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardId                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardBomId
+
+  gBoardModuleTokenSpaceGuid.PcdFuncBoardHookPlatformSetupOverride  ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdGpioTier2WakeEnable                 ## PRODUCES
+
+  gBoardModuleTokenSpaceGuid.PcdGpioTier2WakeEnable
+  gBoardModuleTokenSpaceGuid.PcdDimmPopulationError
+
+  gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable                ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdSkuType                             ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
+  gPlatformModuleTokenSpaceGuid.PcdSmcExtSmiBitPosition             ## CONSUMES
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                           ## CONSUMES
+
+  gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable          ## CONSUMES
+
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength                    ## CONSUMES
+
+[Depex]
+  gPlatformNvsAreaProtocolGuid

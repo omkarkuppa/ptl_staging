@@ -1,0 +1,85 @@
+### @file
+#  Component description file for Intel(R) Dynamic Tuning Technology module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PlatformData
+  FILE_GUID                      = F9A9F8E6-C797-4FD8-9213-80C0CDC290B1
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InitializePlatformData
+
+[Sources]
+  DptfPlatformData.h
+  DptfPlatformData.c
+
+################################################################################
+#
+# Package Dependency Section - list of Package files that are required for
+#                              this module.
+#
+################################################################################
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  DptfFeaturePkg/DptfFeaturePkg.dec
+
+################################################################################
+#
+# Library Class Section - list of Library Classes that are required for
+#                         this module.
+#
+################################################################################
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  DebugLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  DxeServicesTableLib
+  UefiLib
+  BaseMemoryLib
+
+################################################################################
+#
+# Protocol C Name Section - list of Protocol and Protocol Notify C Names
+#                           that this module uses or produces.
+#
+################################################################################
+[Guids]
+  gPlatformDataAcpiTableStorageGuid             ## CONSUMES
+  gDptfConfigVariableGuid                       ## CONSUMES
+  gSetupVariableGuid                            ## CONSUMES
+
+[Pcd]
+  gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable          ## CONSUMES
+
+[Protocols]
+  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
+  gEfiAcpiTableProtocolGuid                     ## CONSUMES
+
+[Depex]
+  gEfiAcpiTableProtocolGuid           AND
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid
+

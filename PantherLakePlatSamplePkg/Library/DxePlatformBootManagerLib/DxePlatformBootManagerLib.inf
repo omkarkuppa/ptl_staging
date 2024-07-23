@@ -1,0 +1,228 @@
+### @file
+#  Component name for module DxePlatformBootManagerLib
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2008 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = DxePlatformBootManagerLib
+  FILE_GUID                      = F4B7636C-B799-49EB-9BB7-F7FDA399D65D
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  UEFI_SPECIFICATION_VERSION     = 2.10
+  LIBRARY_CLASS                  = PlatformBootManagerLib|DXE_DRIVER
+  CONSTRUCTOR                    = FastBootLibConstructor
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 EBC
+#
+
+[LibraryClasses]
+  BaseLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  DebugLib
+  PcdLib
+  PrintLib
+  DevicePathLib
+  UefiLib
+  HobLib
+  DxeServicesLib
+  DxeServicesTableLib
+  HiiLib
+  UefiBootManagerLib
+  BootLogoLib
+  PerformanceLib
+  TcgPhysicalPresenceLib
+  TimerLib
+  PciSegmentLib
+  PchInfoLib
+  EcMiscLib
+  BiosIdLib
+  Tcg2PhysicalPresenceLib
+  Tpm2CommandLib
+  CapsuleLib
+  SerialPortLib
+  ConfigBlockLib
+  DxeAsfLib
+  DxeAmtSupportLib
+  UserPasswordUiLib
+  UserPasswordLib
+  PmcLib
+  DxeBootStateLib
+  PlatformWdtLib
+  MeUtilsLib
+  MeLib
+  DxeAmtHeciLib
+  PciHostBridgeLib
+  TpmMeasurementLib
+  ResiliencySupportLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  ShellPkg/ShellPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  UserAuthFeaturePkg/UserAuthFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  BoardModulePkg/BoardModulePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  CnvFeaturePkg/CnvFeaturePkg.dec
+  CommonBinPkg/CommonBinPkg.dec
+  PantherLakeBinPkg/PantherLakeBinPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+  OneClickRecoveryFeaturePkg/OneClickRecoveryFeaturePkg.dec
+  PlatformSanitizeFeaturePkg/PlatformSanitizeFeaturePkg.dec
+
+[FeaturePcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport                     ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset       ## CONSUMES
+
+[Pcd]
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedBase              ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize              ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut                   ## PRODUCES
+  gPlatformModuleTokenSpaceGuid.PcdPlatformMemoryCheck              ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdComPortAttributes0IsEnabled      ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution       ## PRODUCES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution         ## PRODUCES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow                       ## PRODUCES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn                    ## PRODUCES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutColumn               ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutRow                  ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution  ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution    ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConInConnectOnDemand            ## PRODUCES
+  gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType                   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdRegisterSvBootOption                      ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdReducedShellEntryTime            ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdForceSerialAfterConsoleReady     ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdShellEntryMapPrint               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUefiShellEnable                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdDetectPs2KbOnCmdAck                 ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardType
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
+  gBoardModuleTokenSpaceGuid.PcdDockAttached                        ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSystemFmpCapsuleImageTypeIdGuid ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdAmtEnable                                 ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable                       ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdCapsuleEnable                    ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootBase              ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootSize              ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdTrustedConsoleInputDevicePath    ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdTrustedConsoleOutputDevicePath   ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdTrustedStorageDevicePath         ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable          ## CONSUMES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryEnable            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdVmdEnable                                 ## CONSUMES
+
+[FixedPcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialBaudRate                  ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdVirtualKeyboardEnable            ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdTerminalOverDebugEnable          ## CONSUMES
+
+[Sources]
+  AmtSupport.c
+  FastBootSupport.c
+  FastBootConsoleHook.c
+  BdsPlatform.c
+  PlatformData.c
+  MemoryTest.c
+  PlatformBootOption.c
+  String.c
+  Strings.uni
+
+[Protocols]
+  gEfiPciRootBridgeIoProtocolGuid               ## CONSUMES
+  gEfiPciIoProtocolGuid                         ## CONSUMES
+  gEfiCpuIo2ProtocolGuid                        ## CONSUMES
+  gEfiDxeSmmReadyToLockProtocolGuid             ## PRODUCES
+  gEfiGenericMemTestProtocolGuid                ## CONSUMES
+  gEfiDiskInfoProtocolGuid                      ## CONSUMES
+  gEfiDevicePathToTextProtocolGuid              ## CONSUMES
+  gEfiSimpleTextInputExProtocolGuid             ## CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
+  gHddPasswordNotifyProtocolGuid                ## PRODUCES
+  gFastBootExceptionProtocolGuid                ## PRODUCES
+  gEfiFormBrowser2ProtocolGuid                  ## CONSUMES
+  gBdsAllDriversConnectedProtocolGuid           ## PRODUCES
+  gRstStatusProtocolGuid                        ## CONSUMES
+  gEsrtManagementProtocolGuid                   ## CONSUMES
+  gDxeAmtPolicyGuid                             ## CONSUMES
+  gEfiResetNotificationProtocolGuid             ## CONSUMES
+  gEfiRscHandlerProtocolGuid                    ## CONSUMES
+  gConsoleOutConnectedProtocolGuid              ## PRODUCES
+  gOneClickRecoveryProtocolGuid                 ## CONSUMES
+  gEfiPxeBaseCodeCallbackProtocolGuid           ## CONSUMES
+
+[Guids]
+  gEfiGlobalVariableGuid                        ## PRODUCES
+  gEfiMemoryOverwriteControlDataGuid            ## PRODUCES
+  gEfiEndOfDxeEventGroupGuid                    ## CONSUMES
+  gEfiVTUTF8Guid                                ## CONSUMES
+  gEfiVT100Guid                                 ## CONSUMES
+  gEfiVT100PlusGuid                             ## CONSUMES
+  gEfiPcAnsiGuid                                ## CONSUMES
+  gPlatformBeforeEndOfDxeEventGroupGuid         ## CONSUMES
+  gPlatformGlobalVariableGuid                   ## PRODUCES
+  gOsVendorGlobalVariableGuid                   ## PRODUCES
+  gAttemptUsbFirstHotkeyInfoHobGuid             ## CONSUMES
+  gAttemptUsbFirstRuntimeVarInfoGuid            ## PRODUCES
+  gMeBiosPayloadHobGuid                         ## CONSUMES
+  gSetupEnterGuid                               ## CONSUMES
+  gSetupVariableGuid                            ## PRODUCES
+  gSaSetupVariableGuid                          ## PRODUCES
+  gMeSetupVariableGuid                          ## PRODUCES
+  gCpuSetupVariableGuid                         ## PRODUCES
+  gPchSetupVariableGuid                         ## PRODUCES
+  gSystemConfigGuid                             ## CONSUMES
+  gUndiDriverBinGuid                            ## CONSUMES
+  gWlanDriverBinGuid                            ## CONSUMES
+  gBluetoothHciImageGuid                        ## CONSUMES
+  gOsProfileGuid                                ## PRODUCES
+  gTcg2ConfigFormSetGuid                        ## PRODUCES
+  gEfiSecureBootEnableDisableGuid               ## PRODUCES
+  gSystemAccessGuid                             ## PRODUCES
+  gVirtualKeyboardDriverImageGuid               ## CONSUMES
+  ## SOMETIMES_CONSUMES  ## Variable
+  gEfiMemoryOverwriteControlDataGuid
+  gPchGlobalResetGuid                           ## CONSUMES
+  gMePlatformReadyToBootGuid                    ## CONSUMES
+  gSkipBiosLockForSysFwUpdateGuid               ## CONSUMES
+  gAmtDxeConfigGuid                             ## CONSUMES
+  gChassisIntrudeDetHobGuid                     ## CONSUMES
+  gEfiEventExitBootServicesGuid                 ## CONSUMES  ## Event
+  gSysFwUpdateProgressGuid                      ## CONSUMES
+  gSystemAccessGuid                             ## CONSUMES
+  gUiFileGuid                                   ## CONSUMES
+  gBootMenuFileGuid                             ## CONSUMES
+  gUefiShellFileGuid                            ## CONSUMES
+  gCnvFeatureSetupGuid                          ## CONSUMES
+  gPsStorageDeviceConnectNotifyGuid             ## PRODUCES
+  gOcrConfigVariableGuid                        ## CONSUMES
+
+[Depex.common.DXE_DRIVER]
+  gEfiVariableArchProtocolGuid

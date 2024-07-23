@@ -1,0 +1,79 @@
+### @file
+#  Modular USBC IO PEI driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = ModularUsbCIoPei
+  FILE_GUID                      = A1CEAD44-F252-42DF-822F-26EC08C6BFF9
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = ModularUsbCIoEntry
+
+[Sources]
+  ModularUsbCIoPei.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  UcsiFeaturePkg/UcsiFeaturePkg.dec
+
+[LibraryClasses]
+  PeimEntryPoint
+  PeiServicesLib
+  PeiServicesTablePointerLib
+  BaseLib
+  DebugLib
+  MeLib
+  EcTcssLib
+  HobLib
+  PlatformUsbConfigLib
+  BaseMemoryLib
+  PmcLib
+  PcdLib
+
+[Pcd]
+  gBoardModuleTokenSpaceGuid.PcdPlatformModularUsbCIoConfig
+  gBoardModuleTokenSpaceGuid.VpdPcdTcssCovUsbA
+  gBoardModuleTokenSpaceGuid.VpdPcdDisplayDdiConfigTable
+
+[FixedPcd]
+
+[Protocols]
+
+
+[Guids]
+  gG3StateHobGuid
+  gPchGlobalResetGuid
+  gDisplayDdiConfigHobGuid
+  gGopConfigDriverHobGuid
+  gTcssStrapDataHobGuid
+  gTcssStrapDataVariableGuid
+
+[Ppis]
+  gBoardDetectedPpiGuid
+  gEfiPeiMemoryDiscoveredPpiGuid
+  gEfiPeiReadOnlyVariable2PpiGuid
+
+[Depex]
+  TRUE

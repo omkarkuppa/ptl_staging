@@ -1,0 +1,42 @@
+/** @file
+  Setup menu definition for single UFS controller.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2017 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#include "SetupPreProcTools.hfr"
+
+#if defined(UFS_INDEX) && (UFS_INDEX < PCH_MAX_UFS_DEV_NUM)
+  suppressif ideqval SETUP_VOLATILE_DATA.UfsSupported[UFS_INDEX] == 0;
+    oneof varid  = PCH_SETUP.PchScsUfsEnable[UFS_INDEX],
+      prompt     = STRING_TOKEN(CONCATENATE2(STR_SCS_UFS_CONTROLLER, UFS_INDEX)),
+      help       = STRING_TOKEN(STR_SCS_UFS_CONTROLLER_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags =  RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+    suppressif ideqval PCH_SETUP.PchScsUfsEnable[UFS_INDEX] == 0;
+      oneof varid = PCH_SETUP.PchScsUfsInlineEncryption[UFS_INDEX],
+        prompt = STRING_TOKEN(STR_SCS_UFS_INLINE_ENCRYPTION),
+        help = STRING_TOKEN(STR_SCS_UFS_INLINE_ENCRYPTION_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+    endif;
+  endif;
+#endif
+

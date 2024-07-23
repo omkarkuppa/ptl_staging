@@ -1,0 +1,124 @@
+## @file
+#  Component information file for PEI PantherLakeSimics Board Init Pre-Mem Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiPtlMultiBoardInitPreMemLib
+  FILE_GUID                      = EA05BD43-136F-45EE-BBBA-27D75817574F
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = NULL
+  CONSTRUCTOR                    = PeiPtlMultiBoardInitPreMemLibConstructor
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PcdLib
+  MultiBoardInitSupportLib
+  PeiLib
+  PreSiliconEnvDetectLib
+
+[Packages]
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+
+[FixedPcd]
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection           ## CONSUMES
+
+[Sources]
+  PeiInitPreMemLib.c
+  PeiMultiBoardInitPreMemLib.c
+  PeiDetect.c
+  BoardSaInitPreMemLib.c
+  BoardPchInitPreMemLib.c
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid
+  gEfiPeiMemoryDiscoveredPpiGuid                ## CONSUMES
+  gEfiPeiResetPpiGuid                           ## PRODUCES
+
+[Pcd]
+
+  #===========================================================
+  # Board Init Table List
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTablePreMem
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTablePreMem
+
+  # PCIe Clock Info
+  gBoardModuleTokenSpaceGuid.PcdPcieClock0
+  gBoardModuleTokenSpaceGuid.PcdPcieClock1
+  gBoardModuleTokenSpaceGuid.PcdPcieClock2
+  gBoardModuleTokenSpaceGuid.PcdPcieClock3
+  gBoardModuleTokenSpaceGuid.PcdPcieClock4
+  gBoardModuleTokenSpaceGuid.PcdPcieClock5
+  gBoardModuleTokenSpaceGuid.PcdPcieClock6
+  gBoardModuleTokenSpaceGuid.PcdPcieClock7
+  gBoardModuleTokenSpaceGuid.PcdPcieClock8
+  gBoardModuleTokenSpaceGuid.PcdPcieClock9
+  gBoardModuleTokenSpaceGuid.PcdPcieClock10
+  gBoardModuleTokenSpaceGuid.PcdPcieClock11
+  gBoardModuleTokenSpaceGuid.PcdPcieClock12
+  gBoardModuleTokenSpaceGuid.PcdPcieClock13
+  gBoardModuleTokenSpaceGuid.PcdPcieClock14
+  gBoardModuleTokenSpaceGuid.PcdPcieClock15
+
+  # Cpu Config
+  gBoardModuleTokenSpaceGuid.PcdCpuRatio
+  gBoardModuleTokenSpaceGuid.PcdBiosGuard
+
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress
+
+  gMinPlatformPkgTokenSpaceGuid.PcdPciExpressRegionLength
+  gMinPlatformPkgTokenSpaceGuid.PcdLocalApicAddress
+  gMinPlatformPkgTokenSpaceGuid.PcdLocalApicMmioSize
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashAreaBaseAddress
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashAreaSize
+
+  gSiPkgTokenSpaceGuid.PcdMchBaseAddress
+  gSiPkgTokenSpaceGuid.PcdMchMmioSize
+
+  gBoardModuleTokenSpaceGuid.PcdDmiBaseAddress
+  gBoardModuleTokenSpaceGuid.PcdDmiMmioSize
+  gBoardModuleTokenSpaceGuid.PcdEpBaseAddress
+  gBoardModuleTokenSpaceGuid.PcdEpMmioSize
+
+  ##
+  ## VPD Pcd's
+  ##
+  gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdPcieClkUsageMap
+  gBoardModuleTokenSpaceGuid.VpdPcdPPcieClkUsageMap
+  gBoardModuleTokenSpaceGuid.VpdPcdCpuRatio               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdBiosGuard              ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVpdBaseAddress64      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable     ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress      ## CONSUMES
+
+[Guids]
+  gFspNonVolatileStorageHobGuid
+  gEfiMemoryOverwriteControlDataGuid
+  gVpdFfsGuid                                             ## CONSUMES

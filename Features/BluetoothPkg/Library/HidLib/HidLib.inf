@@ -1,0 +1,49 @@
+## @file
+#  The INF file of HidLib library instance.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2013 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = HidLib
+  FILE_GUID                      = 98640479-835D-4F03-8232-7E809A7BBF8C
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = HidLib|DXE_DRIVER DXE_RUNTIME_DRIVER DXE_SAL_DRIVER DXE_SMM_DRIVER UEFI_APPLICATION UEFI_DRIVER
+
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  HidLib.c
+
+[Packages]
+  BluetoothPkg/BluetoothPkg.dec
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+
+[Pcd]
+

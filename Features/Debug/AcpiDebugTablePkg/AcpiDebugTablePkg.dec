@@ -1,0 +1,43 @@
+
+## @file
+#
+#  DEC file for AcpiDebugTablePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x0001001D
+  PACKAGE_NAME      = AcpiDebugTablePkg
+  PACKAGE_GUID      = 3F43EB57-9FD0-4AF4-8DDA-C37C6BD6FECE
+  PACKAGE_VERSION   = 0.1
+
+[Includes]
+  Include
+
+[Guids]
+  gAcpiDebugTablePkgTokenSpaceGuid = { 0x808305B4, 0xEE91, 0x418C, {0xAF, 0xC9, 0xB6, 0xB1, 0x2C, 0xC0, 0x1E, 0xCC }}
+
+[PcdsDynamic]
+  gAcpiDebugTablePkgTokenSpaceGuid.PcdAcpiDebugOsDebugPort|0x0|UINT8|0x10001000
+  gAcpiDebugTablePkgTokenSpaceGuid.PcdAcpiDebugSerialIoDebugUartPowerGating|0x0|UINT8|0x10001001
+  gAcpiDebugTablePkgTokenSpaceGuid.PcdAcpiDebugPciCfgBase|0x0|UINT64|0x10001002
+
+[PcdsFixedAtBuild]
+  gAcpiDebugTablePkgTokenSpaceGuid.PcdAcpiDebugTableEnable|TRUE|BOOLEAN|0x00000001

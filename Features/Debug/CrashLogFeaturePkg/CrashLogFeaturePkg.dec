@@ -1,0 +1,36 @@
+## @file
+#  DEC file for CrashLog feature package
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME      = CrashLogFeaturePkg
+  PACKAGE_GUID      = F080D827-C6B9-4BFA-B8CE-00D4FDAFEA64
+  PACKAGE_VERSION   = 0.1
+
+[Includes]
+  Include
+
+[Guids]
+  gCrashLogFeaturePkgTokenSpaceGuid  =  {0x3f26b99c, 0x3385, 0x49c9, { 0x83, 0x23, 0xa2, 0x55, 0x65, 0x92, 0x87, 0x2b}}
+  gCrashLogRecordHobGuid       =  {0x09f119d5, 0xa5ad, 0x4b30, {0x90, 0x9e, 0xfa, 0x94, 0xdc, 0xa3, 0xc9, 0xb5}}
+
+[PcdsFeatureFlag]
+  gCrashLogFeaturePkgTokenSpaceGuid.PcdCrashLogFeatureEnable|TRUE|BOOLEAN|0x00000001

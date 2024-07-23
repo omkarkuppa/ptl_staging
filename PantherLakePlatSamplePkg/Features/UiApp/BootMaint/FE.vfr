@@ -1,0 +1,116 @@
+/** @file
+
+    File Explorer Formset
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2004 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#include "FormGuid.h"
+
+formset
+  guid = FILE_EXPLORE_FORMSET_GUID,
+  title = STRING_TOKEN(STR_FILE_EXPLORER_TITLE),
+  help = STRING_TOKEN(STR_NULL_STRING),
+  classguid = FILE_EXPLORE_FORMSET_GUID,
+  class = 0,
+  subclass = 0,
+
+  varstore FILE_EXPLORER_NV_DATA,
+    varid = VARSTORE_ID_BOOT_MAINT,
+    name = FeData,
+    guid = FILE_EXPLORE_FORMSET_GUID;
+
+  form formid = FORM_FILE_EXPLORER_ID,
+       title = STRING_TOKEN(STR_FILE_EXPLORER_TITLE);
+
+       suppressif TRUE;
+          text
+            help   = STRING_TOKEN(STR_NULL_STRING),
+            text   = STRING_TOKEN(STR_NULL_STRING),
+            flags  = INTERACTIVE,
+            key    = KEY_VALUE_INIT_FORM;
+       endif;
+
+       label FORM_FILE_EXPLORER_ID;
+       label LABEL_END;
+  endform;
+
+  form formid = FORM_BOOT_ADD_DESCRIPTION_ID,
+       title = STRING_TOKEN(STR_FORM_BOOT_ADD_DESC_TITLE);
+
+       label FORM_BOOT_ADD_DESCRIPTION_ID;
+       label LABEL_END;
+
+       subtitle text = STRING_TOKEN(STR_NULL_STRING);
+
+       string    varid    = FeData.BootDescriptionData,
+                 prompt   = STRING_TOKEN(STR_LOAD_OPTION_DESC),
+                 help     = STRING_TOKEN(STR_NULL_STRING),
+                 minsize  = 6,
+                 maxsize  = 75,
+       endstring;
+
+       string    varid    = FeData.BootOptionalData,
+                 prompt   = STRING_TOKEN(STR_OPTIONAL_DATA),
+                 help     = STRING_TOKEN(STR_NULL_STRING),
+                 minsize  = 0,
+                 maxsize  = 120,
+       endstring;
+
+       subtitle text = STRING_TOKEN(STR_NULL_STRING);
+
+
+
+  endform;
+
+  form formid = FORM_DRIVER_ADD_FILE_DESCRIPTION_ID,
+       title = STRING_TOKEN(STR_FORM_DRV_ADD_DESC_TITLE);
+
+       label FORM_DRIVER_ADD_FILE_DESCRIPTION_ID;
+       label LABEL_END;
+
+       subtitle text = STRING_TOKEN(STR_NULL_STRING);
+
+       string    varid    = FeData.DriverDescriptionData,
+                 prompt   = STRING_TOKEN(STR_LOAD_OPTION_DESC),
+                 help     = STRING_TOKEN(STR_NULL_STRING),
+                 minsize  = 6,
+                 maxsize  = 75,
+       endstring;
+
+       string    varid    = FeData.DriverOptionalData,
+                 prompt   = STRING_TOKEN(STR_OPTIONAL_DATA),
+                 help     = STRING_TOKEN(STR_NULL_STRING),
+                 minsize  = 0,
+                 maxsize  = 120,
+       endstring;
+
+       checkbox varid   = FeData.ForceReconnect,
+               prompt   = STRING_TOKEN(STR_LOAD_OPTION_FORCE_RECON),
+               help     = STRING_TOKEN(STR_LOAD_OPTION_FORCE_RECON),
+               flags    = CHECKBOX_DEFAULT,
+               key      = 0,
+       endcheckbox;
+
+       subtitle text = STRING_TOKEN(STR_NULL_STRING);
+
+
+
+  endform;
+
+endformset;

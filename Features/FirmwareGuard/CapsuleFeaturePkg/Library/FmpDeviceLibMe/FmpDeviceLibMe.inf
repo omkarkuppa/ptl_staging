@@ -1,0 +1,68 @@
+## @file
+# FmpDeviceLib instance to support ME update
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = FmpDeviceLibMe
+  FILE_GUID                      = 049EFD4D-BEF5-494D-89DE-C2FA0648B622
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = FmpDeviceLib|DXE_DRIVER
+  CONSTRUCTOR                    = FmpDeviceLibMeConstructor
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  FmpDeviceLibMe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  FmpDevicePkg/FmpDevicePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+
+[LibraryClasses]
+  DebugLib
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  UefiRuntimeServicesTableLib
+  PcdLib
+  UefiBootServicesTableLib
+  HobLib
+  PlatformFlashAccessLib
+  SeamlessRecoverySupportLib
+  CapsuleUpdateResetLib
+  ComponentUpdateLib
+  PlatformMeUpdateHookLib
+  ResiliencySupportLib
+
+[Pcd]
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdSystemFirmwareFmpSupportedMode            ## CONSUMES ## SOMETIMES_PRODUCES
+  gCapsuleFeaturePkgTokenSpaceGuid.PcdMeResiliencyEnable                        ## CONSUMES
+
+[Guids]
+  gMeBiosPayloadHobGuid    ## CONSUMES
+  gFmpDeviceMeDefaultGuid  ## SOMETIMES_PRODUCES

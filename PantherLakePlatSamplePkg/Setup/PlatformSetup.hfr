@@ -1,0 +1,1427 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2014 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+    //
+    // Define forms
+    //
+
+    form formid = AUTO_ID(THERMAL_CONFIG_FORM_ID),
+    title = STRING_TOKEN(STR_THERMAL_CONFIGURATION);
+
+      SUBTITLE(STRING_TOKEN(STR_THERMAL_CONFIGURATION))
+      SEPARATOR
+
+      oneof varid    = CPU_SETUP.EnableAllThermalFunctions,
+        questionid = AUTO_ID(KEY_ENABLE_THERMAL_FUN),
+        prompt      = STRING_TOKEN(STR_THERMAL_REPORTING_PROMPT),
+        help        = STRING_TOKEN(STR_THERMAL_REPORTING_HELP),
+        flags       = INTERACTIVE,
+        default     = 1, defaultstore = MyStandardDefault,
+        option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags =  RESET_REQUIRED;
+      endoneof;
+
+      goto CPU_THERMAL_CONFIG_FORM_ID,
+        prompt = STRING_TOKEN(STR_CPU_THERMAL_CONFIG_FORM_TITLE),
+        help = STRING_TOKEN(STR_CPU_THERMAL_CONFIG_FORM_HELP);
+
+      goto PLATFORM_THERMAL_CONFIG_FORM_ID,
+        prompt = STRING_TOKEN(STR_PLATFORM_THERMAL_CONFIG_FORM_TITLE),
+        help = STRING_TOKEN(STR_PLATFORM_THERMAL_CONFIG_FORM_HELP);
+
+      goto DPTF_FORM_ID,
+        prompt = STRING_TOKEN(STR_DPTF_CONFIG_FORM_TITLE),
+        help = STRING_TOKEN(STR_DPTF_CONFIG_FORM_HELP);
+
+      goto OEM_OBJ_FORM_ID,
+        prompt = STRING_TOKEN(STR_OEM_OBJ_CONFIG_FORM_TITLE),
+        help = STRING_TOKEN(STR_OEM_OBJ_CONFIG_FORM_HELP);
+
+      goto HHM_FORM_ID,
+        prompt  = STRING_TOKEN(STR_HHM_FORM),
+        help    = STRING_TOKEN(STR_HHM_FORM_HELP);
+    endform;
+
+    form formid = AUTO_ID(CPU_THERMAL_CONFIG_FORM_ID),
+    title = STRING_TOKEN(STR_CPU_THERMAL_CONFIGURATION);
+
+      SUBTITLE(STRING_TOKEN(STR_CPU_THERMAL_CONFIGURATION))
+      SEPARATOR
+
+      numeric varid = CPU_SETUP.TCCActivationOffset,
+        prompt      = STRING_TOKEN(STR_TCC_ACTIVATION_OFFSET_PROMPT),
+        help        = STRING_TOKEN(STR_TCC_ACTIVATION_OFFSET_PROMPT_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 0x3F,
+        step        = 0,
+        default     = 0,
+      endnumeric;
+
+
+       oneof varid   = CPU_SETUP.TccOffsetLock,
+           prompt      = STRING_TOKEN(STR_TCC_OFFSET_LOCK_ENABLE_PROMPT),
+           help        = STRING_TOKEN(STR_TCC_OFFSET_LOCK_ENABLE_HELP),
+           option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = MANUFACTURING | RESET_REQUIRED;
+           option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | RESET_REQUIRED;
+       endoneof;
+
+      oneof varid     = CPU_SETUP.DisableVrThermalAlert,
+          prompt      = STRING_TOKEN(STR_VR_THERMAL_ALERT),
+          help        = STRING_TOKEN(STR_VR_THERMAL_ALERT_HELP),
+          option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1,  flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid     = CPU_SETUP.ForcePrDemotion,
+          prompt      = STRING_TOKEN(STR_FORCEPR_DEMOTION),
+          help        = STRING_TOKEN(STR_FORCEPR_DEMOTION_HELP),
+          option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_HARDWARE_DEFAULT),  value = 1,  flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid     = CPU_SETUP.VrAlertDemotion,
+          prompt      = STRING_TOKEN(STR_VR_ALERT_DEMOTION),
+          help        = STRING_TOKEN(STR_VR_ALERT_DEMOTION_HELP),
+          option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_HARDWARE_DEFAULT),  value = 1,  flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      checkbox varid  = CPU_SETUP.TStatesEnable,
+        prompt        = STRING_TOKEN (STR_ACPI_TSTATES_ENABLE),
+        help          = STRING_TOKEN (STR_ACPI_TSTATES_ENABLE_HELP),
+        // Flags behavior for checkbox is overloaded so that it equals a DEFAULT value.  CHECKBOX_DEFAULT = Enable, 0 = Disable
+        flags         = RESET_REQUIRED,
+        default       = FALSE, defaultstore = MyStandardDefault,
+      endcheckbox;
+
+    endform; //cpu thermal config
+
+    form formid = AUTO_ID(PLATFORM_THERMAL_CONFIG_FORM_ID),
+    title = STRING_TOKEN(STR_PLATFORM_THERMAL_CONFIG_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN(STR_PLATFORM_THERMAL_CONFIG_FORM_TITLE))
+      SEPARATOR
+
+    suppressif ideqval CPU_SETUP.EnableAllThermalFunctions == 0;
+      oneof varid    = SETUP_DATA.CriticalThermalTripPoint,
+        prompt   = STRING_TOKEN (STR_ACPI_CRITICAL_THERMAL_TRIP_POINT),
+        help     = STRING_TOKEN (STR_ACPI_CRITICAL_THERMAL_TRIP_POINT_HELP),
+        flags    = 0 | RESET_REQUIRED,
+        default  = 119, defaultstore = MyStandardDefault,
+        option text = STRING_TOKEN (STR_15_C), value = 15, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_23_C), value = 23, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_31_C), value = 31, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_39_C), value = 39, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_47_C), value = 47, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_55_C), value = 55, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_63_C), value = 63, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_71_C), value = 71, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_79_C), value = 79, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_87_C), value = 87, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_95_C), value = 95, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_100_C), value = 100, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_103_C), value = 103, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_111_C), value = 111, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_119_C), value = 119, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_127_C), value = 127, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_130_C), value = 130, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+        oneof varid     = SETUP_DATA.Ac0TripPoint,
+          prompt    = STRING_TOKEN(STR_ACPI_ACTIVE_THERMAL_TRIP_POINT_HIGH),
+          help      = STRING_TOKEN(STR_ACPI_ACTIVE_THERMAL_TRIP_POINT_HELP_HIGH),
+          option text = STRING_TOKEN (STR_DISABLED), value = 127, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_15_C), value = 15, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_23_C), value = 23, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_31_C), value = 31, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_39_C), value = 39, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_47_C), value = 47, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_55_C), value = 55, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_63_C), value = 63, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_71_C), value = 71, flags = RESET_REQUIRED | DEFAULT | MANUFACTURING;
+          option text = STRING_TOKEN (STR_79_C), value = 79, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_87_C), value = 87, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_95_C), value = 95, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_103_C), value = 103, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_111_C), value = 111, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_119_C), value = 119, flags = RESET_REQUIRED;
+        endoneof;
+
+
+      numeric varid = SETUP_DATA.Ac0FanSpeed,
+        prompt    = STRING_TOKEN(STR_AC0_FAN_SPEED),
+        help      = STRING_TOKEN(STR_AC0_FAN_SPEED_HELP),
+        minimum = 0,
+        maximum = 100,
+        step    = 1,
+        default = 100,
+      endnumeric;
+
+      oneof varid     = SETUP_DATA.Ac1TripPoint,
+        prompt    = STRING_TOKEN(STR_ACPI_ACTIVE_THERMAL_TRIP_POINT_LOW),
+        help      = STRING_TOKEN(STR_ACPI_ACTIVE_THERMAL_TRIP_POINT_HELP_LOW),
+        option text = STRING_TOKEN (STR_DISABLED), value = 127, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_15_C), value = 15, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_23_C), value = 23, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_31_C), value = 31, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_39_C), value = 39, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_47_C), value = 47, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_55_C), value = 55, flags = RESET_REQUIRED | DEFAULT | MANUFACTURING;
+        option text = STRING_TOKEN (STR_63_C), value = 63, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_71_C), value = 71, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_79_C), value = 79, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_87_C), value = 87, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_95_C), value = 95, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_103_C), value = 103, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_111_C), value = 111, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_119_C), value = 119, flags = RESET_REQUIRED;
+      endoneof;
+
+      numeric varid = SETUP_DATA.Ac1FanSpeed,
+        prompt    = STRING_TOKEN(STR_AC1_FAN_SPEED),
+        help      = STRING_TOKEN(STR_AC1_FAN_SPEED_HELP),
+        minimum = 0,
+        maximum = 100,
+        step    = 1,
+        default = 75,
+      endnumeric;
+
+
+      oneof varid    = SETUP_DATA.PassiveThermalTripPoint,
+        prompt    = STRING_TOKEN (STR_ACPI_PASSIVE_THERMAL_TRIP_POINT),
+        help      = STRING_TOKEN (STR_ACPI_PASSIVE_THERMAL_TRIP_POINT_HELP),
+        default   = 95, defaultstore = MyStandardDefault,
+        option text = STRING_TOKEN (STR_DISABLED), value = 127, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_15_C), value = 15, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_23_C), value = 23, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_31_C), value = 31, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_39_C), value = 39, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_47_C), value = 47, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_55_C), value = 55, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_63_C), value = 63, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_71_C), value = 71, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_79_C), value = 79, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_87_C), value = 87, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_95_C), value = 95, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_103_C), value = 103, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_111_C), value = 111, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_119_C), value = 119, flags = RESET_REQUIRED;
+      endoneof;
+
+
+      numeric varid = SETUP_DATA.PassiveTc1Value,
+        prompt  = STRING_TOKEN (STR_ACPI_PASSIVE_TC1_VALUE),
+        help    = STRING_TOKEN (STR_ACPI_PASSIVE_TC1_VALUE_HELP),
+        minimum = 1,
+        maximum = 16,
+        step    = 1,
+        default = 1,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.PassiveTc2Value,
+        prompt  = STRING_TOKEN (STR_ACPI_PASSIVE_TC2_VALUE),
+        help    = STRING_TOKEN (STR_ACPI_PASSIVE_TC2_VALUE_HELP),
+        minimum = 1,
+        maximum = 16,
+        step    = 1,
+        default = 5,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.PassiveTspValue,
+        prompt  = STRING_TOKEN (STR_ACPI_PASSIVE_TSP_VALUE),
+        help    = STRING_TOKEN (STR_ACPI_PASSIVE_TSP_VALUE_HELP),
+        minimum = 2,
+        maximum = 32,
+        step    = 2,
+        default = 10,
+      endnumeric;
+
+      SEPARATOR
+      oneof varid    = SETUP_DATA.DisableActiveTripPoints,
+        prompt      = STRING_TOKEN(STR_DATP_PROMPT),
+        help        = STRING_TOKEN(STR_DATP_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+      oneof varid    = SETUP_DATA.DisablePassiveTripPoints,
+        prompt      = STRING_TOKEN(STR_DPTP_PROMPT),
+        help        = STRING_TOKEN(STR_DPTP_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+      oneof varid    = SETUP_DATA.DisableCriticalTripPoints,
+        prompt      = STRING_TOKEN(STR_DCTP_PROMPT),
+        help        = STRING_TOKEN(STR_DCTP_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+      SEPARATOR
+
+      checkbox varid  = SETUP_DATA.PCHTempReadEnable,
+        prompt   = STRING_TOKEN (STR_PCH_TEMP_READ),
+        help     = STRING_TOKEN (STR_PCH_TEMP_READ_HELP),
+        // Flags behavior for checkbox is overloaded so that it equals
+        // a DEFAULT value.  CHECKBOX_DEFAULT = Enable, 0 = Disable
+        flags    = CHECKBOX_DEFAULT | RESET_REQUIRED,
+        key      = 0,
+      endcheckbox;
+
+      checkbox varid  = SETUP_DATA.CPUEnergyReadEnable,
+        prompt   = STRING_TOKEN (STR_CPU_ENERGY_READ),
+        help     = STRING_TOKEN (STR_CPU_ENERGY_READ_HELP),
+        // Flags behavior for checkbox is overloaded so that it equals
+        // a DEFAULT value.  CHECKBOX_DEFAULT = Enable, 0 = Disable
+        flags    = CHECKBOX_DEFAULT | RESET_REQUIRED,
+        key      = 0,
+      endcheckbox;
+
+      checkbox varid  = SETUP_DATA.CPUTempReadEnable,
+        prompt   = STRING_TOKEN (STR_CPU_TEMP_READ),
+        help     = STRING_TOKEN (STR_CPU_TEMP_READ_HELP),
+        // Flags behavior for checkbox is overloaded so that it equals
+        // a DEFAULT value.  CHECKBOX_DEFAULT = Enable, 0 = Disable
+        flags    = CHECKBOX_DEFAULT | RESET_REQUIRED,
+        key      = 0,
+      endcheckbox;
+
+      oneof varid     = SETUP_DATA.AlertEnableLock,
+        prompt      = STRING_TOKEN(STR_ALERT_ENABLE_LOCK),
+        help        = STRING_TOKEN(STR_ALERT_ENABLE_LOCK_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval SETUP_DATA.AlertEnableLock == 0x0;
+        oneof varid     = SETUP_DATA.PchAlert,
+          prompt      = STRING_TOKEN(STR_PCH_ALERT),
+          help        = STRING_TOKEN(STR_PCH_ALERT_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        oneof varid     = SETUP_DATA.DimmAlert,
+           prompt      = STRING_TOKEN(STR_DIMM_ALERT),
+          help        = STRING_TOKEN(STR_DIMM_ALERT_HELP),
+           option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+           option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =   RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      numeric varid = SETUP_DATA.CpuTemp,
+        prompt  = STRING_TOKEN (STR_CPU_TEMP),
+        help    = STRING_TOKEN (STR_CPU_TEMP_HELP),
+        minimum = 1,
+        maximum = 110,
+        step    = 1,
+        default value = 72,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.CpuFanSpeed,
+        prompt  = STRING_TOKEN (STR_CPU_FAN_SPEED),
+        help    = STRING_TOKEN (STR_CPU_FAN_SPEED_HELP),
+        minimum = 1,
+        maximum = 100,
+        step    = 1,
+        default = 65,
+      endnumeric;
+    endform;//end form platform thermal config
+
+    form formid = AUTO_ID(DPTF_FORM_ID),
+    title = STRING_TOKEN(STR_DPTF_CONFIG_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN(STR_DPTF_CONFIG_FORM_TITLE))
+      SEPARATOR
+
+      oneof varid    = SETUP_DATA.IpfEnable,
+        prompt      = STRING_TOKEN(STR_DPTF_PROMPT),
+        help        = STRING_TOKEN(STR_DPTF_HELP),
+        default     = 1, defaultstore = MyStandardDefault,
+        option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = 0;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+      suppressif ideqval SETUP_DATA.IpfEnable == 0;
+        oneof varid     = DPTF_CONFIG.PpccStepSize,
+          prompt      = STRING_TOKEN(STR_PPCC_STEP_SIZE),
+          help        = STRING_TOKEN(STR_PPCC_STEP_SIZE_HELP),
+          option text = STRING_TOKEN (STR_500_MW), value = 500, flags = RESET_REQUIRED | DEFAULT | MANUFACTURING;
+          option text = STRING_TOKEN (STR_1000_MW), value = 1000, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_1500_MW), value = 1500, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_2000_MW), value = 2000, flags = RESET_REQUIRED;
+        endoneof;
+
+        numeric varid     = DPTF_CONFIG.EnableDCFG,
+          prompt   = STRING_TOKEN (STR_DPTF_CONFIG_PROMPT),
+          help     = STRING_TOKEN (STR_DPTF_CONFIG_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 4294967295,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        //
+        // FAN Devices
+        //
+        grayoutif ideqval SETUP_DATA.DetectEcFan[0] == 0;
+          oneof varid    = DPTF_CONFIG.EnableFan1Device,
+            prompt      = STRING_TOKEN(STR_FAN1_DPTF_PROMPT),
+            help        = STRING_TOKEN(STR_FAN1_DPTF_HELP),
+            option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          endoneof;
+        endif;
+
+        grayoutif ideqval SETUP_DATA.DetectEcFan[1] == 0;
+          oneof varid    = DPTF_CONFIG.EnableFan2Device,
+            prompt      = STRING_TOKEN(STR_FAN2_DPTF_PROMPT),
+            help        = STRING_TOKEN(STR_FAN2_DPTF_HELP),
+            option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+
+        grayoutif ideqval SETUP_DATA.DetectEcFan[2] == 0;
+          oneof varid    = DPTF_CONFIG.EnableFan3Device,
+            prompt      = STRING_TOKEN(STR_FAN3_DPTF_PROMPT),
+            help        = STRING_TOKEN(STR_FAN3_DPTF_HELP),
+            option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+
+        //
+        // Charger Participant
+        //
+        oneof varid     = DPTF_CONFIG.EnableChargerParticipant,
+          prompt      = STRING_TOKEN(STR_CHARGER_DEVICE),
+          help        = STRING_TOKEN(STR_CHARGER_DEVICE_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        //
+        // Power Participant
+        //
+        oneof varid     = DPTF_CONFIG.EnablePowerParticipant,
+          prompt      = STRING_TOKEN(STR_POWER_DEVICE),
+          help        = STRING_TOKEN(STR_POWER_DEVICE_HELP),
+          option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        //
+        // Battery Participant (BAT1)
+        //
+        oneof varid   = DPTF_CONFIG.EnableBatteryParticipant,
+          prompt      = STRING_TOKEN(STR_BAT1_DEVICE),
+          help        = STRING_TOKEN(STR_BAT1_DEVICE_HELP),
+          option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif ideqval DPTF_CONFIG.EnableBatteryParticipant == 0;
+          numeric varid     = DPTF_CONFIG.PowerParticipantPollingRate,
+            prompt      = STRING_TOKEN(STR_DPTF_PPPR),
+            help        = STRING_TOKEN(STR_DPTF_PPPR_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 1000,
+            step    = 1,
+            default = 0,
+          endnumeric;
+        endif; // end suppressif if EnableBatteryParticipant disabled
+
+        SEPARATOR
+        grayoutif ideqval SETUP_DATA.DetectEcSensors[0] == 0;
+          oneof varid    = DPTF_CONFIG.EnableSen1Participant,  // Sensor 1
+            prompt      = STRING_TOKEN(STR_SEN1_DEVICE_PROMPT),
+            help        = STRING_TOKEN(STR_SEN1_DEVICE_HELP),
+            option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+
+        grayoutif ideqval SETUP_DATA.DetectEcSensors[1] == 0;
+          oneof varid    = DPTF_CONFIG.EnableSen2Participant,  // Sensor 2
+            prompt      = STRING_TOKEN(STR_SEN2_DEVICE_PROMPT),
+            help        = STRING_TOKEN(STR_SEN2_DEVICE_HELP),
+            option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+
+        grayoutif ideqval SETUP_DATA.DetectEcSensors[2] == 0;
+          oneof varid    = DPTF_CONFIG.EnableSen3Participant,  // Sensor 3
+            prompt      = STRING_TOKEN(STR_SEN3_DEVICE_PROMPT),
+            help        = STRING_TOKEN(STR_SEN3_DEVICE_HELP),
+            option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+
+        grayoutif ideqval SETUP_DATA.DetectEcSensors[3] == 0;
+          oneof varid    = DPTF_CONFIG.EnableSen4Participant,  // Sensor 4
+            prompt      = STRING_TOKEN(STR_SEN4_DEVICE_PROMPT),
+            help        = STRING_TOKEN(STR_SEN4_DEVICE_HELP),
+            option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+
+        grayoutif ideqval SETUP_DATA.DetectEcSensors[4] == 0;
+          oneof varid    = DPTF_CONFIG.EnableSen5Participant,  // Sensor 5
+            prompt      = STRING_TOKEN(STR_SEN5_DEVICE_PROMPT),
+            help        = STRING_TOKEN(STR_SEN5_DEVICE_HELP),
+            option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+      endif; // suppressif ideqval SETUP_DATA.IpfEnable
+#endif
+    endform; //DPTF _FORM_ID
+
+    form formid = AUTO_ID(OEM_OBJ_FORM_ID),
+    title = STRING_TOKEN(STR_OEM_OBJ_CONFIG_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN(STR_OEM_OBJ_CONFIG_FORM_TITLE))
+#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+      suppressif ideqval SETUP_DATA.IpfEnable == 0;
+        oneof varid    = DPTF_CONFIG.OemDesignVariable0,  // PPS Support
+          prompt      = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_0),
+          help        = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_HELP_0),
+          option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        grayoutif TRUE;
+          oneof varid    = DPTF_CONFIG.OemDesignVariable1,  // PPS Charger Connection Status
+            prompt      = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_1),
+            help        = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_HELP_1),
+            option text = STRING_TOKEN(STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+          endoneof;
+        endif;
+
+
+        numeric varid    = DPTF_CONFIG.OemDesignVariable2,
+          prompt   = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_2),
+          help     = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_HELP),
+          minimum = 0,
+          maximum = 255,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        numeric varid    = DPTF_CONFIG.OemDesignVariable3,
+          prompt   = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_3),
+          help     = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_HELP),
+          minimum = 0,
+          maximum = 255,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        numeric varid    = DPTF_CONFIG.OemDesignVariable4,
+          prompt   = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_4),
+          help     = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_HELP),
+          minimum = 0,
+          maximum = 255,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        numeric varid    = DPTF_CONFIG.OemDesignVariable5,
+          prompt   = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_5),
+          help     = STRING_TOKEN (STR_DPTF_OEM_DESIGN_VARIABLE_HELP),
+          minimum = 0,
+          maximum = 255,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        SEPARATOR
+
+        oneof varid     = DPTF_CONFIG.PpccObject,
+          prompt      = STRING_TOKEN(STR_PPCC_OBJECT),
+          help        = STRING_TOKEN(STR_PPCC_OBJECT_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        oneof varid     = DPTF_CONFIG.ArtgObject,
+          prompt      = STRING_TOKEN(STR_ARTG_OBJECT),
+          help        = STRING_TOKEN(STR_ARTG_OBJECT_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        oneof varid     = DPTF_CONFIG.PmaxObject,
+          prompt      = STRING_TOKEN(STR_PMAX_OBJECT),
+          help        = STRING_TOKEN(STR_PMAX_OBJECT_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif; //suppressif ideqval SETUP_DATA.IpfEnable
+#endif
+
+        oneof varid     = SETUP_DATA.PmaxDevice,
+          prompt      = STRING_TOKEN(STR_PMAX_DEVICE),
+          help        = STRING_TOKEN(STR_PMAX_DEVICE_HELP),
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        suppressif ideqval SETUP_DATA.PmaxDevice == 0;
+          oneof varid     = SETUP_DATA.PmaxAudioCodec,
+            prompt      = STRING_TOKEN(STR_PMAX_AUDIO_CODEC),
+            help        = STRING_TOKEN(STR_PMAX_AUDIO_CODEC_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          endoneof;
+
+          oneof varid     = SETUP_DATA.PmaxWfCamera,
+            prompt      = STRING_TOKEN(STR_PMAX_WF_CAMERA),
+            help        = STRING_TOKEN(STR_PMAX_WF_CAMERA_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          endoneof;
+
+          oneof varid     = SETUP_DATA.PmaxUfCamera,
+            prompt      = STRING_TOKEN(STR_PMAX_UF_CAMERA),
+            help        = STRING_TOKEN(STR_PMAX_UF_CAMERA_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          endoneof;
+
+          oneof varid     = SETUP_DATA.PmaxFlashDevice,
+            prompt      = STRING_TOKEN(STR_PMAX_FLASH_DEVICE),
+            help        = STRING_TOKEN(STR_PMAX_FLASH_DEVICE_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          endoneof;
+        endif;
+
+    endform; //OEM_OBJ_FORM_ID
+
+  // Define forms
+    form formid = AUTO_ID(PLATFORM_SETTINGS_FORM_ID),
+
+    title = STRING_TOKEN(STR_PLATFORM_SETTINGS_FORM);
+
+      SUBTITLE(STRING_TOKEN(STR_PLATFORM_SETTINGS_FORM_TITLE))
+      SEPARATOR
+
+ oneof varid   = SETUP_DATA.EcChargingMethod,
+       prompt      = STRING_TOKEN(STR_CHARGING_METHOD),
+       help        = STRING_TOKEN(STR_CHARGING_METHOD_HELP),
+       option text = STRING_TOKEN(STR_CHARGING_NORMAL), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+       option text = STRING_TOKEN(STR_CHARGING_FAST),   value = 1, flags = RESET_REQUIRED;
+ endoneof;
+
+// Pseudo G3 option
+ suppressif NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorMobile;
+      oneof varid   = SETUP_DATA.PseudoG3State,
+          prompt      = STRING_TOKEN(STR_PSEUDO_G3),
+          help        = STRING_TOKEN(STR_PSEUDO_G3_HELP),
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = INTERACTIVE;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED | RESET_REQUIRED | INTERACTIVE;
+      endoneof;
+  endif;
+
+  oneof varid  = SETUP_DATA.Gpe1BlockEnable,
+    prompt      = STRING_TOKEN (STR_GPE1_PROMPT),
+    help        = STRING_TOKEN (STR_GPE1_HELP),
+    option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+// Scan Matrix and Keyborad Support control
+  oneof varid     = SETUP_DATA.ScanMatrixEnable,
+      prompt        = STRING_TOKEN(STR_SCAN_MATRIX_PROFILE),
+      help          = STRING_TOKEN(STR_SCAN_MATRIX_PROFILE_HELP),
+      default value = cond (ideqvallist SETUP_VOLATILE_DATA.PlatformFlavor == FlavorDesktop
+                         ? 1 : 0), defaultstore = MyStandardDefault,
+      option text   = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+  // Switch eSPI PECI Mode or Legacy PECI mode
+  oneof varid   = SETUP_DATA.EcPeciMode,
+      questionid  = AUTO_ID(EC_PECI_MODE_KEY),
+      prompt      = STRING_TOKEN(STR_SET_PECI_MODE_PROMPT),
+      help        = STRING_TOKEN(STR_EC_PECI_MODE_HELP),
+      option text = STRING_TOKEN(STR_SET_PECI_LEGACY_MODE), value = 0, flags = DEFAULT | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_SET_PECI_ESPI_MODE),  value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+ // Power Loss Notification
+ oneof varid = NVME_SETUP.PlnEnable,
+       prompt   = STRING_TOKEN(STR_PLN_ENABLE),
+       help     = STRING_TOKEN(STR_PLN_ENABLE_HELP),
+       option text = STRING_TOKEN(STR_PLN_DEFAULT), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+       option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+ endoneof;
+
+ checkbox varid = SETUP_DATA.DevicePasswordSupport,
+       prompt   = STRING_TOKEN(STR_DEVICE_PASSWORD_SUPPORT_PROMPT),
+       help     = STRING_TOKEN(STR_DEVICE_PASSWORD_SUPPORT_HELP),
+       // Flags behavior for checkbox is overloaded so that it equals
+       // a DEFAULT value.  1 = ON, 0 = off
+       flags    = CHECKBOX_DEFAULT | RESET_REQUIRED,
+ endcheckbox;
+
+ suppressif NOT ideqval SETUP_DATA.HebcValueSupport == 1;
+   numeric varid = SETUP_DATA.HebcValue,
+     prompt   = STRING_TOKEN (STR_HEBC_VALUE),
+     help     = STRING_TOKEN (STR_HEBC_VALUE_HELP),
+     minimum = 0,
+     maximum = 0xFFFFFFFF,
+     step    = 1,
+     default = 0x233F3,
+   endnumeric;
+ endif;
+
+  suppressif NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorMobile;
+    oneof varid  = SETUP_DATA.HidEventFilterDriverEnable,
+         prompt   = STRING_TOKEN(STR_HID_EVENT_FILTER_ENABLE),
+         help     = STRING_TOKEN(STR_HID_EVENT_FILTER_ENABLE_HELP),
+         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+  endif;
+
+  suppressif ideqval SETUP_DATA.WwanEnable == 0;
+    numeric varid  = SETUP_DATA.I2cSarResetDelay,
+         prompt   = STRING_TOKEN(STR_I2C_SAR_RESET_DELAY),
+         help     = STRING_TOKEN(STR_I2C_SAR_RESET_DELAY_HELP),
+         minimum = 0,
+         maximum = 255,
+         step    = 1,
+         default = 8,
+    endnumeric;
+  endif;
+
+  oneof varid   = SETUP_DATA.SystemTimeAndAlarmSource,
+      prompt      = STRING_TOKEN(STR_SYSTEM_TIME_AND_ALARM),
+      help        = STRING_TOKEN(STR_SYSTEM_TIME_AND_ALARM_HELP),
+      option text = STRING_TOKEN(STR_ACPI_TAD), value = 0 , flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_LEGACY_RTC), value = 1, flags =  RESET_REQUIRED;
+    endoneof;
+
+  suppressif NOT ideqval SETUP_DATA.ItpxdpMuxSupport == 1;
+    oneof varid     = SETUP_DATA.ItpxdpMux,
+      prompt      = STRING_TOKEN(STR_ITPXDP_MUX),
+      help        = STRING_TOKEN(STR_ITPXDP_MUX_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+  endif;
+
+    oneof varid   = SETUP_DATA.DgPlatformSupport,
+      prompt      = STRING_TOKEN(STR_DG_PLATFORM_SUPPORT),
+      help        = STRING_TOKEN(STR_DG_PLATFORM_SUPPORT_HELP),
+      option text = STRING_TOKEN(STR_AIC), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_MB_DOWN), value = 1, flags = RESET_REQUIRED;
+  endoneof;
+
+    oneof varid  = SETUP_DATA.PowermeterDeviceEnable,
+      prompt      = STRING_TOKEN(STR_ENABLE_POWERMETER),
+      help        = STRING_TOKEN(STR_ENABLE_POWERMETER_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif NOT ideqval SETUP_DATA.PowermeterDeviceEnable == 1;
+      oneof varid   = SETUP_DATA.TelemetryDeviceEnable,
+        prompt      = STRING_TOKEN(STR_ENABLE_TELEMETRY),
+        help        = STRING_TOKEN(STR_ENABLE_TELEMETRY_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+
+  oneof varid   = SETUP_DATA.MPdtSupport,
+    prompt      = STRING_TOKEN(STR_MPDT_SUPPORT_PROMPT),
+    help        = STRING_TOKEN(STR_MPDT_SUPPORT_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_SENSOR_BOM1), value = 1, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_SENSOR_BOM2), value = 2, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_SENSOR_BOM1_WITH_COMPANION_CHIP), value = 3, flags = RESET_REQUIRED;
+  endoneof;
+
+   oneof varid    = SETUP_DATA.SkipObbHashVerification,
+    prompt      = STRING_TOKEN(STR_SKIP_OBB_HASH_VERIFY),
+    help        = STRING_TOKEN(STR_SKIP_OBB_HASH_VERIFY_HELP),
+    option text = STRING_TOKEN(STR_DISABLED),    value = 0, flags =  RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ENABLED),     value = 1, flags =  RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_AUTO_STRING), value = 2, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  // GBE Firmware Update Support
+  oneof varid   = SETUP_DATA.GbeFwUpdateEnable,
+    prompt      = STRING_TOKEN(STR_GBE_UPDATE_PROFILE),
+    help        = STRING_TOKEN(STR_GBE_UPDATE_PROFILE_HELP),
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+  endoneof;
+
+  oneof varid   = SETUP_DATA.OrientationSensor,
+    prompt      = STRING_TOKEN(STR_SENSOR_TYPE_PROMPT),
+    help        = STRING_TOKEN(STR_SENSOR_TYPE_HELP),
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_BOSCH_BMI323),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_ST_LSM6DSOX),  value = 2, flags = RESET_REQUIRED;
+  endoneof;
+
+  oneof varid   = SETUP_DATA.SafeLoadingBiosEnable,
+    prompt      = STRING_TOKEN(STR_SAFE_LOADING_BIOS_ENABLE),
+    help        = STRING_TOKEN(STR_SAFE_LOADING_BIOS_ENABLE_HELP),
+    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+  endoneof;
+
+  suppressif ideqval SETUP_DATA.SafeLoadingBiosEnable == 0x0;
+    numeric
+      varid   = SETUP_DATA.TsegReallocateEnableCount,
+      prompt  = STRING_TOKEN(STR_TSEG_REALLOCATE_ENABLE_COUNT),
+      help    = STRING_TOKEN(STR_TSEG_REALLOCATE_ENABLE_COUNT_HELP),
+      flags   = INTERACTIVE,
+      minimum = 0x0,
+      maximum = 0x4,
+      default = 0x0,
+    endnumeric;
+  endif;
+
+  goto SYS_FW_UPDATE_CONFIG_FORM_ID,
+    prompt  = STRING_TOKEN(STR_SYS_FW_UPDATE_CONFIG_FORM),
+    help    = STRING_TOKEN(STR_SYS_FW_UPDATE_CONFIG_FORM_HELP);
+
+  goto
+    formsetguid = VTIO_FORM_SET_GUID,
+    formid      = PLATFORM_VTIO_FORM_ID,
+    question    = 0,
+    prompt      = STRING_TOKEN(STR_PLATFORM_VTIO_FORM),
+    help        = STRING_TOKEN(STR_PLATFORM_VTIO_FORM_HELP);
+
+  goto PLATFORM_TCSS_FORM_ID,
+    prompt  = STRING_TOKEN(STR_PLATFORM_TCSS_FORM),
+    help    = STRING_TOKEN(STR_PLATFORM_TCSS_FORM_HELP);
+
+  goto PLATFORM_STC_CONFIG_FORM_ID,
+    prompt  = STRING_TOKEN (STR_STC_CONFIG_FORM),
+    help    = STRING_TOKEN (STR_STC_CONFIG_FORM_HELP);
+
+  endform; //Platform Settings
+
+  // Define forms
+    form formid = AUTO_ID(RTD3_FORM_ID),
+
+    title = STRING_TOKEN(STR_RTD3_FORM_TITLE);
+
+      SUBTITLE(STRING_TOKEN(STR_RTD3_FORM_TITLE))
+      SEPARATOR
+
+      oneof varid     = SETUP_DATA.Rtd3Support,
+            questionid  = AUTO_ID(RTD3_SUPPORT_QUESTION_ID),
+            prompt      = STRING_TOKEN(STR_RTD3),
+            help        = STRING_TOKEN(STR_RTD3_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+      endoneof;
+
+      SEPARATOR
+
+      suppressif ideqval SETUP_DATA.Rtd3Support == 0x0;
+
+        numeric varid     = SETUP_DATA.VRRampUpDelay,
+          prompt      = STRING_TOKEN(STR_VR_RAMP_DELAY),
+          help        = STRING_TOKEN(STR_VR_RAMP_DELAY_HELP),
+          minimum = 0,
+          maximum = 100,
+          // Sighting 4993392 : Need to fix Sleep(x) where x<16 to Sleep(16) due to OS bug (if OSYS is "Windows 2012"  (Win8)). Then revert delay to 10ms for WinBlue
+          // Sighting 4993392 : If VRRD decreased from 16 to 10ms (for WinBlue), TouchPanel, TouchPad, and SensorHub default delay value should increase accordingly  (100 - 16 - 10 = 74)
+          // step    = 1 ,
+          // default = 10,
+          step    = 16 ,
+          default = 16,
+        endnumeric;
+
+        numeric varid     = SETUP_DATA.Rtd3P0dl,
+          prompt      = STRING_TOKEN(STR_PEP0),
+          help        = STRING_TOKEN(STR_PEP0_HELP),
+          minimum = 0,
+          maximum = 200,
+          // Sighting 4993392 : Need to change Sleep(x) where x<16 to Sleep(16) due to OS bug
+          // step    = 1 ,
+          step    = 16 ,
+          default = 100,
+        endnumeric;
+
+        // Do not allow changing Azalia/ADSP delay for DVT2 or older rev
+        // Delay is hard coded to 500ms (in AcpiPlatform.c) to workaround HW issue
+        //
+        suppressif ideqval PCH_SETUP.PchHdAudio == 0x0;
+          numeric varid     = SETUP_DATA.Rtd3AudioDelay,
+            prompt      = STRING_TOKEN(STR_AUDIO_DELAY),
+            help        = STRING_TOKEN(STR_AUDIO_DELAY_HELP),
+            minimum = 0,
+            maximum = 1000,
+            // Sighting 4993392 : Need to change Sleep(x) where x<16 to Sleep(16) due to OS bug
+            // step    = 1 ,
+            step    = 16 ,
+            default = 200,
+          endnumeric;
+        endif;
+
+        numeric varid     = SETUP_DATA.Rtd3SensorHub,
+          prompt      = STRING_TOKEN(STR_SENSORHUB),
+          help        = STRING_TOKEN(STR_SENSORHUB_HELP),
+          minimum = 0,
+          maximum = 1000,
+          // 100ms WHCK I2C cold start target - 16ms (1 clock tick) driver budget - 16ms (VRRD).
+          // Sighting 4993392 : If VRRD decreased from 16 to 10ms (for WinBlue), this value should increase accordingly  (100 - 16 - 10 = 74)
+          // step    = 1 ,
+          // default = 74,
+          step    = 16 ,
+          default = 68,
+        endnumeric;
+
+        numeric varid     = SETUP_DATA.Rtd3TouchPadDelay,
+          prompt      = STRING_TOKEN(STR_TOUCHPAD),
+          help        = STRING_TOKEN(STR_TOUCHPAD_HELP),
+          minimum = 0,
+          maximum = 1000,
+          // 100ms WHCK I2C cold start target - 16ms (1 clock tick) driver budget - 16ms (VRRD).
+          // Sighting 4993392 : If VRRD decreased from 16 to 10ms (for WinBlue), this value should increase accordingly  (100 - 16 - 10 = 74)
+          // step    = 1 ,
+          // default = 74,
+          step    = 16 ,
+          default = 68,
+        endnumeric;
+
+        numeric varid     = SETUP_DATA.Rtd3TouchPanelDelay,
+          prompt      = STRING_TOKEN(STR_TOUCHPANEL),
+          help        = STRING_TOKEN(STR_TOUCHPANEL_HELP),
+          minimum = 0,
+          maximum = 1000,
+          // 100ms WHCK I2C cold start target - 16ms (1 clock tick) driver budget - 16ms (VRRD).
+          // Sighting 4993392 : If VRRD decreased from 16 to 10ms (for WinBlue), this value should increase accordingly  (100 - 16 - 10 = 74)
+          // step    = 1 ,
+          // default = 74,
+          step    = 16 ,
+          default = 68,
+        endnumeric;
+
+        oneof varid     = SETUP_DATA.PstateCapping,
+          prompt      = STRING_TOKEN(STR_RTD3_PSTATE_CAPPING),
+          help        = STRING_TOKEN(STR_RTD3_PSTATE_CAPPING_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        grayoutif ideqval SETUP_DATA.WwanEnable == 0;
+          oneof varid     = SETUP_DATA.Rtd3WWAN,
+            prompt      = STRING_TOKEN(STR_RTD3_WWAN),
+            help        = STRING_TOKEN(STR_RTD3_WWAN_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_WWAN_PCIE_D0_L12), value = 1, flags = RESET_REQUIRED;
+            suppressif NOT ideqval SETUP_DATA.WwanEnable == 2;
+              option text = STRING_TOKEN(STR_WWAN_PCIE_D3_L12), value = 2, flags = RESET_REQUIRED;
+            endif;
+            option text = STRING_TOKEN(STR_WWAN_PCIE_D3_L2),  value = 3, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          endoneof;
+        endif; // grayoutif ideqval SETUP_DATA.WwanEnable == 0;
+
+        oneof varid    = SETUP_DATA.Rtd3Pcie,
+          prompt   = STRING_TOKEN(STR_PCIE_RTD3_PROMPT),
+          help     = STRING_TOKEN(STR_PCIE_RTD3_HELP),
+          option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval SETUP_DATA.DiscreteTbtSupport == 1 ;
+          oneof varid   = SETUP_DATA.DTbtRtd3,
+            prompt      = STRING_TOKEN(STR_DTBT_RTD3_PROMPT),
+            help        = STRING_TOKEN(STR_DTBT_RTD3_HELP),
+            option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+          endoneof;
+
+          suppressif NOT ideqval SETUP_DATA.DTbtRtd3 == 1 ;
+            numeric varid = SETUP_DATA.DTbtRtd3OffDelay,
+              prompt      = STRING_TOKEN(STR_DTBT_RTD3_OFF_DELAY),
+              help        = STRING_TOKEN(STR_DTBT_RTD3_OFF_DELAY_HELP),
+              minimum     = 0,
+              maximum     = 15000,
+              step        = 1,
+              default     = 5000,
+            endnumeric;
+
+            oneof varid   = SETUP_DATA.DTbtRtd3ClkReq,
+              prompt      = STRING_TOKEN(STR_DTBT_RTD3_CLKREQ),
+              help        = STRING_TOKEN(STR_DTBT_RTD3_CLKREQ_HELP),
+              option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+              option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+            endoneof;
+
+            numeric varid = SETUP_DATA.DTbtRtd3ClkReqDelay,
+              prompt      = STRING_TOKEN(STR_DTBT_RTD3_CLKREQ_DELAY),
+              help        = STRING_TOKEN(STR_DTBT_RTD3_CLKREQ_DELAY_HELP),
+              minimum     = 0,
+              maximum     = 2000,
+              step        = 1,
+              default     = 0,
+            endnumeric;
+          endif; // DTbtRtd3 != 1
+        endif; // TBT support != 1
+
+    endif; // Rtd3Support
+
+    oneof varid = SETUP_DATA.IuerButtonEnable,
+      prompt   = STRING_TOKEN(STR_IUER_BUTTON_ENABLE),
+      help     = STRING_TOKEN(STR_IUER_BUTTON_ENABLE_HELP),
+      default  = 0, defaultstore = MyStandardDefault,
+      option text = STRING_TOKEN(STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
+     endoneof;
+
+      suppressif NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorMobile;
+        goto IGPU_IUER_FORM_ID,
+          prompt  = STRING_TOKEN(STR_IUER_SUPPORT_STRING),
+          help    = STRING_TOKEN(STR_IUER_SUPPORT_STRING);
+      endif;  // suppres if NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorMobile
+   endform; //RTD3
+
+    form formid = AUTO_ID(SYS_FW_UPDATE_CONFIG_FORM_ID),
+    title = STRING_TOKEN(STR_SYS_FW_UPDATE_CONFIG_FORM);
+
+      SUBTITLE(STRING_TOKEN(STR_SYS_FW_UPDATE_CONFIG_FORM_TITLE))
+      SEPARATOR
+
+      oneof varid   = SETUP_DATA.SysFwUpdateLoadDefault,
+        prompt      = STRING_TOKEN(STR_SYS_FW_UPDATE_LOAD_DEFAULT),
+        help        = STRING_TOKEN(STR_SYS_FW_UPDATE_LOAD_DEFAULT_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = SETUP_DATA.SysFwUpdateSkipPowerCheck,
+        prompt      = STRING_TOKEN(STR_SYS_FW_UPDATE_SKIP_POWER_CHECK),
+        help        = STRING_TOKEN(STR_SYS_FW_UPDATE_SKIP_POWER_CHECK_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+    endform; //SysFwUpdateConfig
+
+
+    form formid = AUTO_ID(PLATFORM_TCSS_FORM_ID),
+    title = STRING_TOKEN(STR_PLATFORM_TCSS_FORM);
+
+      SUBTITLE(STRING_TOKEN(STR_PLATFORM_TCSS_FORM_TITLE))
+      SEPARATOR
+
+      // Disable TBT PCIE RP and child device Tree BME. It was earlier known as TbtVtdBaseSecurity
+      oneof varid   = SETUP_DATA.DisableTbtPcieTreeBme,
+        prompt      = STRING_TOKEN(STR_DISABLE_TBT_TREE_BME_SETTINGS),
+        help        = STRING_TOKEN(STR_DISABLE_TBT_TREE_BME_SETTINGS_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED| INTERACTIVE;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED| INTERACTIVE;
+      endoneof;
+
+      oneof varid  = SETUP_DATA.TcssUcmDevice,
+        prompt   = STRING_TOKEN(STR_UCM_SELECTION),
+        help     = STRING_TOKEN(STR_UCM_SELECTION_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_UCSI_1_2), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_UCSI_2_X), value = 2, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif (ideqval SETUP_DATA.AuxOriOverrideSupport == 0);
+        oneof varid  = SETUP_DATA.AuxOriOverride,
+          prompt      = STRING_TOKEN(STR_AUX_ORI_OVERRIDE),
+          help        = STRING_TOKEN(STR_AUX_ORI_OVERRIDE_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      oneof varid   = SETUP_DATA.TypecRetimerTxComplianceModeEn,
+        prompt      = STRING_TOKEN(STR_TCSS_RETIMER_TX_COMPLIANCE_PROMPT),
+        help        = STRING_TOKEN(STR_TCSS_RETIMER_TX_COMPLIANCE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+      suppressif ideqval SETUP_DATA.TypecRetimerTxComplianceModeEn == 0;
+        oneof varid   = SETUP_DATA.TypecRetimerPD0,
+          prompt      = STRING_TOKEN(STR_TCSS_RETIMER_PD_0_PROMPT),
+          help        = STRING_TOKEN(STR_TCSS_RETIMER_PD_0_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING |  RESET_REQUIRED;
+        endoneof;
+        oneof varid   = SETUP_DATA.TypecRetimerPD1,
+          prompt      = STRING_TOKEN(STR_TCSS_RETIMER_PD_1_PROMPT),
+          help        = STRING_TOKEN(STR_TCSS_RETIMER_PD_1_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+        oneof varid   = SETUP_DATA.TypecRetimerPD2,
+          prompt      = STRING_TOKEN(STR_TCSS_RETIMER_PD_2_PROMPT),
+          help        = STRING_TOKEN(STR_TCSS_RETIMER_PD_2_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+        oneof varid   = SETUP_DATA.TypecRetimerPD3,
+          prompt      = STRING_TOKEN(STR_TCSS_RETIMER_PD_3_PROMPT),
+          help        = STRING_TOKEN(STR_TCSS_RETIMER_PD_3_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+      endif;
+
+      oneof varid  = SETUP_DATA.UsbcBiosTcssHandshake,
+        prompt      = STRING_TOKEN(STR_TCSS_BIOS_HANDSHAKE),
+        help        = STRING_TOKEN(STR_TCSS_BIOS_HANDSHAKE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      suppressif (ideqval SETUP_DATA.UsbcBiosTcssHandshake == 0);
+        numeric varid  = SETUP_DATA.UsbConnStatusTimeout,
+          prompt     = STRING_TOKEN(STR_TCSS_USB_CONN_STATUS_TIMEOUT),
+          help       = STRING_TOKEN(STR_TCSS_USB_CONN_STATUS_TIMEOUT_HELP),
+          flags      = RESET_REQUIRED,
+          minimum    = 50,
+          maximum    = 1000,
+          step       = 10,
+          default    = 500,
+        endnumeric;
+      endif;
+
+      grayoutif ideqval SETUP_VOLATILE_DATA.IsS3Supported == 0;
+        oneof varid   = SETUP_DATA.DeepestUSBSleepWakeCapability,
+          questionid  = AUTO_ID(KEY_DEEPEST_USB_SLEEP_WAKE_CAPABILITY),
+          prompt      = STRING_TOKEN(STR_DEEPEST_USB_SLEEP_WAKE_CAPABILITY),
+          help        = STRING_TOKEN(STR_DEEPEST_USB_SLEEP_WAKE_CAPABILITY_HELP),
+          option text = STRING_TOKEN(STR_DEEPEST_USB_SLEEP_WAKE_CAPABILITY_S3), value = 3, flags = RESET_REQUIRED | INTERACTIVE;
+          option text = STRING_TOKEN(STR_DEEPEST_USB_SLEEP_WAKE_CAPABILITY_S4), value = 4, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+        endoneof;
+      endif;
+
+      oneof varid    = SETUP_DATA.UsbcDataRoleSwapPlatformDisable,
+        prompt   = STRING_TOKEN(STR_USBC_DRSWAP_PLATFORM_DISABLE),
+        help     = STRING_TOKEN(STR_USBC_DRSWAP_PLATFORM_DISABLE_HELP),
+        option text = STRING_TOKEN(STR_TRUE), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_FALSE), value = 0, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = SETUP_DATA.UsbcCapsuleDebugLevel,
+        prompt      = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_PROMPT),
+        help        = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_HELP),
+        default     = 0, defaultstore = MyStandardDefault,
+        option text = STRING_TOKEN(STR_UUSBC_CAPSULE_DEBUG_LEVEL_DISABLED), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_ERROR), value = 1, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_VERBOSE), value = 2, flags = RESET_REQUIRED | INTERACTIVE;
+      endoneof;
+
+      goto TBT_FORM_ID,
+        prompt = STRING_TOKEN(STR_TBT_FORM),
+        help   = STRING_TOKEN(STR_TBT_FORM_HELP);
+
+      //
+      // PD0
+      //
+      SEPARATOR
+      SUBTITLE(STRING_TOKEN(STR_PD_INFORMATION))
+
+      suppressif NOT ideqval SETUP_VOLATILE_DATA.TcssPdType == UsbCPdTypeCypress;
+        text
+          help  = STRING_TOKEN(STR_PD0_APPLICATION_NAME_HELP),
+          text  = STRING_TOKEN(STR_PD0_APPLICATION_NAME_NAME),
+          text  = STRING_TOKEN(STR_PD0_APPLICATION_NAME_VALUE),
+          flags = 0,
+          key   = 0;
+
+        text
+          help  = STRING_TOKEN(STR_PD0_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_HELP),
+          text  = STRING_TOKEN(STR_PD0_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_NAME),
+          text  = STRING_TOKEN(STR_PD0_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_VALUE),
+          flags = 0,
+          key   = 0;
+      endif;
+
+      text
+        help  = STRING_TOKEN(STR_PD0_VERSION_HELP),
+        text  = STRING_TOKEN(STR_PD0_VERSION_NAME),
+        text  = STRING_TOKEN(STR_PD0_VERSION_VALUE),
+        flags = 0,
+        key   = 0;
+
+      //
+      // PD1
+      //
+      suppressif NOT ideqval SETUP_VOLATILE_DATA.TcssPdType == UsbCPdTypeCypress;
+        text
+          help  = STRING_TOKEN(STR_PD1_APPLICATION_NAME_HELP),
+          text  = STRING_TOKEN(STR_PD1_APPLICATION_NAME_NAME),
+          text  = STRING_TOKEN(STR_PD1_APPLICATION_NAME_VALUE),
+          flags = 0,
+          key   = 0;
+
+        text
+          help  = STRING_TOKEN(STR_PD1_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_HELP),
+          text  = STRING_TOKEN(STR_PD1_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_NAME),
+          text  = STRING_TOKEN(STR_PD1_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_VALUE),
+          flags = 0,
+          key   = 0;
+      endif;
+
+      text
+        help  = STRING_TOKEN(STR_PD1_VERSION_HELP),
+        text  = STRING_TOKEN(STR_PD1_VERSION_NAME),
+        text  = STRING_TOKEN(STR_PD1_VERSION_VALUE),
+        flags = 0,
+        key   = 0;
+
+      suppressif NOT ideqval SETUP_DATA.UsbCRetimerNumber > 0;
+        SEPARATOR
+        SUBTITLE(STRING_TOKEN(STR_RETIMER_INFORMATION))
+      endif;
+
+      suppressif NOT ideqval SETUP_DATA.UsbCRetimerNumber > 0;
+        text
+          help  = STRING_TOKEN(STR_RETIMER0_VERSION_HELP),
+          text  = STRING_TOKEN(STR_RETIMER0_VERSION_NAME),
+          text  = STRING_TOKEN(STR_RETIMER0_VERSION_VALUE),
+          flags = 0,
+          key   = 0;
+      endif;
+
+      suppressif NOT ideqval SETUP_DATA.UsbCRetimerNumber > 1;
+        text
+          help  = STRING_TOKEN(STR_RETIMER1_VERSION_HELP),
+          text  = STRING_TOKEN(STR_RETIMER1_VERSION_NAME),
+          text  = STRING_TOKEN(STR_RETIMER1_VERSION_VALUE),
+          flags = 0,
+          key   = 0;
+      endif;
+
+      suppressif NOT ideqval SETUP_DATA.UsbCRetimerNumber > 2;
+        text
+          help  = STRING_TOKEN(STR_RETIMER2_VERSION_HELP),
+          text  = STRING_TOKEN(STR_RETIMER2_VERSION_NAME),
+          text  = STRING_TOKEN(STR_RETIMER2_VERSION_VALUE),
+          flags = 0,
+          key   = 0;
+      endif;
+
+    endform; //TCSS
+
+    form formid = AUTO_ID(IGPU_IUER_FORM_ID),
+    title     = STRING_TOKEN(STR_IUER_SUPPORT_STRING);
+
+      SUBTITLE(STRING_TOKEN(STR_IUER_SUPPORT_STRING))
+      SEPARATOR
+
+    oneof varid = SETUP_DATA.IuerConvertibleEnable,
+      prompt   = STRING_TOKEN(STR_IUER_SLATE_ENABLE),
+      help     = STRING_TOKEN(STR_IUER_SLATE_ENABLE_HELP),
+      default  = 0, defaultstore = MyStandardDefault,
+      option text = STRING_TOKEN(STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval SETUP_DATA.IuerConvertibleEnable == 0;
+      oneof varid = SETUP_DATA.SlateIndicatorRT,
+        prompt   = STRING_TOKEN(STR_SLATE_INDICATOR_RT),
+        help     = STRING_TOKEN(STR_SLATE_INDICATOR_RT_HELP),
+        option text = STRING_TOKEN(STR_SLATE_STRING), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_LAPTOP_STRING), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid = SETUP_DATA.SlateIndicatorSx,
+        prompt   = STRING_TOKEN(STR_SLATE_INDICATOR_SX),
+        help     = STRING_TOKEN(STR_SLATE_INDICATOR_SX_HELP),
+        option text = STRING_TOKEN(STR_SAME_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_TOGGLE_STRING), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    oneof varid = SETUP_DATA.IuerDockEnable,
+      prompt   = STRING_TOKEN(STR_IUER_DOCK_ENABLE),
+      help     = STRING_TOKEN(STR_IUER_DOCK_ENABLE_HELP),
+      default  = 0, defaultstore = MyStandardDefault,
+      option text = STRING_TOKEN(STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED_STRING), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+    suppressif ideqval SETUP_DATA.IuerDockEnable == 0;
+      oneof varid = SETUP_DATA.DockIndicatorRT,
+        prompt   = STRING_TOKEN(STR_DOCK_INDICATOR_RT),
+        help     = STRING_TOKEN(STR_DOCK_INDICATOR_RT_HELP),
+        option text = STRING_TOKEN(STR_UNDOCK_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DOCK_STRING), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid = SETUP_DATA.DockIndicatorSx,
+        prompt   = STRING_TOKEN(STR_DOCK_INDICATOR_SX),
+        help     = STRING_TOKEN(STR_DOCK_INDICATOR_SX_HELP),
+        option text = STRING_TOKEN(STR_SAME_STRING), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_TOGGLE_STRING), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    endform;
+
+    form formid = AUTO_ID (PLATFORM_STC_CONFIG_FORM_ID),
+    title = STRING_TOKEN (STR_PLATFORM_STC_CONFIG_FORM);
+
+      SUBTITLE (STRING_TOKEN (STR_PLATFORM_STC_CONFIG_FORM_TITLE))
+      SEPARATOR
+
+      oneof varid     = SETUP_DATA.StcPeciInterfaceEnable,
+        prompt        = STRING_TOKEN (STRING_STC_PECI_INTERFACE_ENABLE),
+        help          = STRING_TOKEN (STRING_STC_PECI_INTERFACE_ENABLE_HELP),
+        option text   = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text   = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      grayoutif ideqval SETUP_DATA.StcPeciInterfaceEnable == 0;
+        // Tsc Sensor #1
+        numeric varid   = SETUP_DATA.StcTargetTemp[0],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR1_TARGET_TEMPERATURE_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR1_TARGET_TEMPERATURE_SETTINGS_HELP),
+          flags         = RESET_REQUIRED,
+          minimum       = 0,
+          maximum       = 255,
+          step          = 1,
+          default       = 0,
+        endnumeric;
+
+        oneof varid     = SETUP_DATA.StcEnable[0],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR1_ENABLE_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR1_ENABLE_SETTINGS_HELP),
+          option text   = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text   = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        numeric varid   = SETUP_DATA.StcGain[0],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR1_GAIN_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR1_GAIN_SETTINGS_HELP),
+          flags         = RESET_REQUIRED,
+          minimum       = 0,
+          maximum       = 7,
+          step          = 1,
+          default       = 0,
+        endnumeric;
+
+        numeric varid   = SETUP_DATA.StcMinPerfLevel[0],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR1_MIN_PERFORMANCE_LEVEL_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR1_MIN_PERFORMANCE_LEVEL_SETTINGS_HELP),
+          flags         = RESET_REQUIRED,
+          minimum       = 0,
+          maximum       = 255,
+          step          = 1,
+          default       = 0,
+        endnumeric;
+
+        // Tsc Sensor #2
+        numeric varid   = SETUP_DATA.StcTargetTemp[1],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR2_TARGET_TEMPERATURE_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR2_TARGET_TEMPERATURE_SETTINGS_HELP),
+          flags         = RESET_REQUIRED,
+          minimum       = 0,
+          maximum       = 255,
+          step          = 1,
+          default       = 0,
+        endnumeric;
+
+        oneof varid     = SETUP_DATA.StcEnable[1],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR2_ENABLE_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR2_ENABLE_SETTINGS_HELP),
+          option text   = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text   = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        numeric varid   = SETUP_DATA.StcGain[1],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR2_GAIN_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR2_GAIN_SETTINGS_HELP),
+          flags         = RESET_REQUIRED,
+          minimum       = 0,
+          maximum       = 7,
+          step          = 1,
+          default       = 0,
+        endnumeric;
+
+        numeric varid   = SETUP_DATA.StcMinPerfLevel[1],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR2_MIN_PERFORMANCE_LEVEL_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR2_MIN_PERFORMANCE_LEVEL_SETTINGS_HELP),
+          flags         = RESET_REQUIRED,
+          minimum       = 0,
+          maximum       = 255,
+          step          = 1,
+          default       = 0,
+        endnumeric;
+
+        // Tsc Sensor #3
+        numeric varid   = SETUP_DATA.StcTargetTemp[2],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR3_TARGET_TEMPERATURE_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR3_TARGET_TEMPERATURE_SETTINGS_HELP),
+          flags         = RESET_REQUIRED,
+          minimum       = 0,
+          maximum       = 255,
+          step          = 1,
+          default       = 0,
+        endnumeric;
+
+        oneof varid     = SETUP_DATA.StcEnable[2],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR3_ENABLE_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR3_ENABLE_SETTINGS_HELP),
+          option text   = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text   = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+
+        numeric varid   = SETUP_DATA.StcGain[2],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR3_GAIN_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR3_GAIN_SETTINGS_HELP),
+          flags         = RESET_REQUIRED,
+          minimum       = 0,
+          maximum       = 7,
+          step          = 1,
+          default       = 0,
+        endnumeric;
+
+        numeric varid   = SETUP_DATA.StcMinPerfLevel[2],
+          prompt        = STRING_TOKEN (STRING_STC_SENSOR3_MIN_PERFORMANCE_LEVEL_SETTINGS),
+          help          = STRING_TOKEN (STRING_STC_SENSOR3_MIN_PERFORMANCE_LEVEL_SETTINGS_HELP),
+          flags         = RESET_REQUIRED,
+          minimum       = 0,
+          maximum       = 255,
+          step          = 1,
+          default       = 0,
+        endnumeric;
+      endif;
+
+    endform;

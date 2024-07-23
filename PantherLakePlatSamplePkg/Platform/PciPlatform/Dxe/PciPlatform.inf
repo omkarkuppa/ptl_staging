@@ -1,0 +1,79 @@
+### @file
+# Component description file for PciPlatform module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2017 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PciPlatform
+  FILE_GUID                      = DED1F2F1-6B0C-4072-9189-0CF8949724BB
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = PciPlatformDriverEntry
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  MemoryAllocationLib
+  DxeOpromPatchLib
+  DebugLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiLib
+  IoLib
+  PciSegmentLib
+  HobLib
+  EcTcssLib
+  ConfigBlockLib
+  PreSiliconEnvDetectLib
+  TcssInfoLib
+  PchPciBdfLib
+  PcdLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable    ## CONSUMES
+
+[Sources]
+  PciPlatform.c
+  PciPlatform.h
+
+[Protocols]
+  gEfiPciPlatformProtocolGuid                   ## PRODUCES
+  gEfiPciIoProtocolGuid                         ## CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
+  gEfiDriverSupportedEfiVersionProtocolGuid     ## CONSUMES
+  gEfiComponentName2ProtocolGuid                ## CONSUMES
+  gEfiDriverDiagnostics2ProtocolGuid            ## CONSUMES
+  gEfiPlatformToDriverConfigurationProtocolGuid ## CONSUMES
+
+[Guids]
+  gEfiGlobalVariableGuid                        ## SOMETIMES_CONSUMES
+  gSetupVariableGuid                            ## CONSUMES
+  gSaSetupVariableGuid                          ## CONSUMES
+
+[Depex]
+  TRUE

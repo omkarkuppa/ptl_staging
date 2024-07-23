@@ -1,0 +1,1936 @@
+/** @file
+  HDAudio verb tables
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2015 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#include <Ppi/SiPolicy.h>
+#include <HdAudioConfig.h>
+#include <PlatformBoardConfig.h>
+#include <Library/PeiHdaVerbTables.h>
+
+HDAUDIO_VERB_TABLE HdaVerbTableAlc701 = HDAUDIO_VERB_TABLE_INIT (
+  //
+  //  VerbTable: (Realtek ALC701) CNL external kit
+  //  Revision ID = 0xff
+  //  Codec Verb Table for CNL PCH boards
+  //  Codec Address: CAd value (0/1/2)
+  //  Codec Vendor: 0x10EC0701
+  //
+  0x10EC, 0x0701,
+  0xFF, 0xFF,
+  //===================================================================================================
+  //
+  //                               Realtek Semiconductor Corp.
+  //
+  //===================================================================================================
+
+  //Realtek High Definition Audio Configuration - Version : 5.0.3.2
+  //Realtek HD Audio Codec : ALC701
+  //PCI PnP ID : PCI\VEN_8086&DEV_2668&SUBSYS_72708086
+  //HDA Codec PnP ID : HDAUDIO\FUNC_01&VEN_10EC&DEV_0701&SUBSYS_10EC10F4
+  //The number of verb command block : 17
+
+  //    NID 0x12 : 0x90A60130
+  //    NID 0x13 : 0x411111F0
+  //    NID 0x14 : 0x411111F0
+  //    NID 0x15 : 0x411111F0
+  //    NID 0x16 : 0x411111F0
+  //    NID 0x17 : 0x90170110
+  //    NID 0x18 : 0x411111F0
+  //    NID 0x19 : 0x04A11040
+  //    NID 0x1A : 0x411111F0
+  //    NID 0x1B : 0x411111F0
+  //    NID 0x1D : 0x40600001
+  //    NID 0x1E : 0x411111F0
+  //    NID 0x1F : 0x411111F0
+  //    NID 0x21 : 0x04211020
+  //    NID 0x29 : 0x411111F0
+
+
+  //===== HDA Codec Subsystem ID Verb-table =====
+  //HDA Codec Subsystem ID  : 0x10EC10F4
+  0x001720C0,
+  0x00172110,
+  0x001722EC,
+  0x00172310,
+
+  //===== Pin Widget Verb-table =====
+  //Widget node 0x01 :
+  0x0017FF00,
+  0x0017FF00,
+  0x0017FF00,
+  0x0017FF00,
+  //Pin widget 0x13 - DMIC
+  0x01371CF0,
+  0x01371D11,
+  0x01371E11,
+  0x01371F41,
+  //Pin widget 0x14 - FRONT (Port-D)
+  0x01471CF0,
+  0x01471D11,
+  0x01471E11,
+  0x01471F41,
+  //Pin widget 0x15 - I2S-OUT
+  0x01571CF0,
+  0x01571D11,
+  0x01571E11,
+  0x01571F41,
+  //Pin widget 0x16 - LINE3 (Port-B)
+  0x01671CF0,
+  0x01671D11,
+  0x01671E11,
+  0x01671F41,
+  //Pin widget 0x17 - I2S-OUT
+  0x01771C10,
+  0x01771D01,
+  0x01771E17,
+  0x01771F90,
+  //Pin widget 0x18 - I2S-IN
+  0x01871CF0,
+  0x01871D11,
+  0x01871E11,
+  0x01871F41,
+  //Pin widget 0x19 - MIC2 (Port-F)
+  0x01971C40,
+  0x01971D10,
+  0x01971EA1,
+  0x01971F04,
+  //Pin widget 0x1A - LINE1 (Port-C)
+  0x01A71CF0,
+  0x01A71D11,
+  0x01A71E11,
+  0x01A71F41,
+  //Pin widget 0x1B - LINE2 (Port-E)
+  0x01B71CF0,
+  0x01B71D11,
+  0x01B71E11,
+  0x01B71F41,
+  //Pin widget 0x1D - PC-BEEP
+  0x01D71C01,
+  0x01D71D00,
+  0x01D71E60,
+  0x01D71F40,
+  //Pin widget 0x1E - S/PDIF-OUT
+  0x01E71CF0,
+  0x01E71D11,
+  0x01E71E11,
+  0x01E71F41,
+  //Pin widget 0x1F - S/PDIF-IN
+  0x01F71CF0,
+  0x01F71D11,
+  0x01F71E11,
+  0x01F71F41,
+  //Pin widget 0x21 - HP-OUT (Port-I)
+  0x02171C20,
+  0x02171D10,
+  0x02171E21,
+  0x02171F04,
+  //Pin widget 0x29 - I2S-IN
+  0x02971CF0,
+  0x02971D11,
+  0x02971E11,
+  0x02971F41,
+  //Widget node 0x20 :
+  0x02050045,
+  0x02045289,
+  0x0205004A,
+  0x0204201B,
+
+  //Widget node 0x20 - 1 :
+  0x05B50010,
+  0x05B45C1D,
+  0x0205006F,
+  0x02040F8B,
+
+  0x205003C,
+  0x204F254,
+  0x205003C,
+  0x204F214,
+
+  //Class D silent detection Enable -84dB t,res,old
+  0x2050030,
+  0x2049000,
+  0x2050037,
+  0x204FE15,
+
+//Widget node 0X20 for ALC1306   20180730 update   2W/4o,m
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040000,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006A,
+  0x2050028,
+  0x20400CF,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006C,
+  0x2050028,
+  0x2045548,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003F,
+  0x2050028,
+  0x2041000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040004,
+  0x2050028,
+  0x2040600,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003C,
+  0x2050028,
+  0x204FFD0,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040080,
+  0x2050028,
+  0x2040080,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040080,
+  0x2050028,
+  0x2040880,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003A,
+  0x2050028,
+  0x2040DFE,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006A,
+  0x2050028,
+  0x204005D,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006C,
+  0x2050028,
+  0x2040442,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040005,
+  0x2050028,
+  0x2040880,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040006,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040008,
+  0x2050028,
+  0x204B000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204002E,
+  0x2050028,
+  0x2040800,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006A,
+  0x2050028,
+  0x20400C3,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006C,
+  0x2050028,
+  0x204D4A0,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006A,
+  0x2050028,
+  0x20400CC,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006C,
+  0x2050028,
+  0x204400A,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006A,
+  0x2050028,
+  0x20400C1,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006C,
+  0x2050028,
+  0x2040320,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040039,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003B,
+  0x2050028,
+  0x204FFFF,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003C,
+  0x2050028,
+  0x204FC20,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006A,
+  0x2050028,
+  0x2040006,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006C,
+  0x2050028,
+  0x20400C0,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003C,
+  0x2050028,
+  0x204FCA0,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003C,
+  0x2050028,
+  0x204FCE0,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003C,
+  0x2050028,
+  0x204FCF0,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040080,
+  0x2050028,
+  0x2040080,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040080,
+  0x2050028,
+  0x2040880,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040080,
+  0x2050028,
+  0x2040880,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003C,
+  0x2050028,
+  0x204FCE0,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003C,
+  0x2050028,
+  0x204FCA0,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003C,
+  0x2050028,
+  0x204FC20,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006A,
+  0x2050028,
+  0x2040006,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006C,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040080,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400C0,
+  0x2050028,
+  0x20401F0,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400C1,
+  0x2050028,
+  0x204C1C7,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400C2,
+  0x2050028,
+  0x2041C00,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400C3,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400C4,
+  0x2050028,
+  0x2040200,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400C5,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400C6,
+  0x2050028,
+  0x20403E1,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400C7,
+  0x2050028,
+  0x2040F5A,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400C8,
+  0x2050028,
+  0x2041E1E,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400C9,
+  0x2050028,
+  0x204083F,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400CA,
+  0x2050028,
+  0x20401F0,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400CB,
+  0x2050028,
+  0x204C1C7,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400CC,
+  0x2050028,
+  0x2041C00,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400CD,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400CE,
+  0x2050028,
+  0x2040200,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400CF,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400D0,
+  0x2050028,
+  0x20403E1,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400D1,
+  0x2050028,
+  0x2040F5A,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400D2,
+  0x2050028,
+  0x2041E1E,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x20400D3,
+  0x2050028,
+  0x204083F,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040062,
+  0x2050028,
+  0x2048000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040063,
+  0x2050028,
+  0x2045F5F,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040064,
+  0x2050028,
+  0x2042000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040065,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040066,
+  0x2050028,
+  0x2044004,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040067,
+  0x2050028,
+  0x2040802,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040068,
+  0x2050028,
+  0x204890F,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040069,
+  0x2050028,
+  0x204E021,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040070,
+  0x2050028,
+  0x2048012,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040071,
+  0x2050028,
+  0x2043450,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040072,
+  0x2050028,
+  0x2040123,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040073,
+  0x2050028,
+  0x2044543,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040074,
+  0x2050028,
+  0x2042100,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040075,
+  0x2050028,
+  0x2044321,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040076,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040050,
+  0x2050028,
+  0x2048200,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040051,
+  0x2050028,
+  0x2040707,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040052,
+  0x2050028,
+  0x2044090,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006A,
+  0x2050028,
+  0x2040090,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204006C,
+  0x2050028,
+  0x204721F,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040012,
+  0x2050028,
+  0x204DFDF,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204009E,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040004,
+  0x2050028,
+  0x2040500,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040060,
+  0x2050028,
+  0x2042213,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003A,
+  0x2050028,
+  0x2041DFE,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204003F,
+  0x2050028,
+  0x2043000,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040040,
+  0x2050028,
+  0x204800C,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x2040046,
+  0x2050028,
+  0x204C22E,
+  0x2050029,
+  0x204B024,
+
+  0x2050024,
+  0x2040010,
+  0x2050026,
+  0x204004B,
+  0x2050028,
+  0x2040000,
+  0x2050029,
+  0x204B024
+); // HdaVerbTableAlc701
+
+HDAUDIO_VERB_TABLE HdaVerbTableAlc274 = HDAUDIO_VERB_TABLE_INIT (
+  //
+  //  VerbTable: (Realtek ALC274) CNL external kit
+  //  Revision ID = 0xff
+  //  Codec Verb Table for CNL PCH boards
+  //  Codec Address: CAd value (0/1/2)
+  //  Codec Vendor: 0x10EC0274
+  //
+  0x10EC, 0x0274,
+  0xFF, 0xFF,
+  //===================================================================================================
+  //
+  //                               Realtek Semiconductor Corp.
+  //
+  //===================================================================================================
+
+  //Realtek High Definition Audio Configuration - Version : 5.0.3.0
+  //Realtek HD Audio Codec : ALC274
+  //PCI PnP ID : PCI\VEN_8086&DEV_2668&SUBSYS_72708086
+  //HDA Codec PnP ID : HDAUDIO\FUNC_01&VEN_10EC&DEV_0274&SUBSYS_10EC10F6
+  //The number of verb command block : 16
+
+  //    NID 0x12 : 0x40000000
+  //    NID 0x13 : 0x411111F0
+  //    NID 0x14 : 0x411111F0
+  //    NID 0x15 : 0x411111F0
+  //    NID 0x16 : 0x411111F0
+  //    NID 0x17 : 0x411111F0
+  //    NID 0x18 : 0x411111F0
+  //    NID 0x19 : 0x04A11020
+  //    NID 0x1A : 0x411111F0
+  //    NID 0x1B : 0x411111F0
+  //    NID 0x1D : 0x40451B05
+  //    NID 0x1E : 0x411111F0
+  //    NID 0x1F : 0x411111F0
+  //    NID 0x21 : 0x04211010
+
+
+  //===== HDA Codec Subsystem ID Verb-table =====
+  //,DA Codec Subsystem ID  : 0x10EC10F6
+  0x001720F6,
+  0x00172110,
+  0x001722EC,
+  0x00172310,
+
+  //===== Pin Widget Verb-table =====
+  //Widget node 0x01 :
+  0x0017FF00,
+  0x0017FF00,
+  0x0017FF00,
+  0x0017FF00,
+  //Pin widget 0x12 - DMIC
+  0x01271C00,
+  0x01271D00,
+  0x01271E00,
+  0x01271F40,
+  //Pin widget 0x13 - DMIC
+  0x01371CF0,
+  0x01371D11,
+  0x01371E11,
+  0x01371F41,
+  //Pin widget 0x14 - NPC
+  0x01471CF0,
+  0x01471D11,
+  0x01471E11,
+  0x01471F41,
+  //Pin widget 0x15 - I2S_OUT2
+  0x01571CF0,
+  0x01571D11,
+  0x01571E11,
+  0x01571F41,
+  //Pin widget 0x16 - LINE3 (Port-B)
+  0x01671CF0,
+  0x01671D11,
+  0x01671E11,
+  0x01671F41,
+  //Pin widget 0x17 - I2S_OUT1
+  0x01771CF0,
+  0x01771D11,
+  0x01771E11,
+  0x01771F41,
+  //Pin widget 0x18 - I2S_IN
+  0x01871CF0,
+  0x01871D11,
+  0x01871E11,
+  0x01871F41,
+  //Pin widget 0x19 - MIC2 (Port-F)
+  0x01971C20,
+  0x01971D10,
+  0x01971EA1,
+  0x01971F04,
+  //Pin widget 0x1A - LINE1 (Port-C)
+  0x01A71CF0,
+  0x01A71D11,
+  0x01A71E11,
+  0x01A71F41,
+  //Pin widget 0x1B - LINE2 (Port-E)
+  0x01B71CF0,
+  0x01B71D11,
+  0x01B71E11,
+  0x01B71F41,
+  //Pin widget 0x1D - PC-BEEP
+  0x01D71C05,
+  0x01D71D1B,
+  0x01D71E45,
+  0x01D71F40,
+  //Pin widget 0x1E - S/PDIF-OUT
+  0x01E71CF0,
+  0x01E71D11,
+  0x01E71E11,
+  0x01E71F41,
+  //Pin widget 0x1F - S/PDIF-IN
+  0x01F71CF0,
+  0x01F71D11,
+  0x01F71E11,
+  0x01F71F41,
+  //Pin widget 0x21 - HP-OUT (Port-I)
+  0x02171C10,
+  0x02171D10,
+  0x02171E21,
+  0x02171F04,
+  //Widget node 0x20 :
+  0x02050045,
+  0x02045289,
+  0x0205006F,
+  0x02042C0B,
+  //Widget node 0x20 - 1 :
+  0x02050035,
+  0x02048968,
+  0x05B50001,
+  0x05B48540,
+  //Widget node 0x20 - 2 :
+  0x05850000,
+  0x05843888,
+  0x05850000,
+  0x05843888,
+  //Widget node 0x20 - 3 :
+  0x0205004A,
+  0x0204201B,
+  0x0205004A,
+  0x0204201B
+); //HdaVerbTableAlc274
+
+HDAUDIO_VERB_TABLE HdaVerbTableAlc711 = HDAUDIO_VERB_TABLE_INIT (
+  //
+  //  VerbTable: (Realtek ALC711)
+  //  Revision ID = 0xff
+  //  Codec Verb Table
+  //  Codec Address: CAd value (0/1/2)
+  //  Codec Vendor: 0x10EC0700
+  //
+  0x10EC, 0x0711,
+  0xFF, 0xFF,
+  //===================================================================================================
+  //
+  //                               Realtek Semiconductor Corp.
+  //
+  //===================================================================================================
+
+  //Realtek High Definition Audio Configuration - Version : 5.0.3.1
+  //Realtek HD Audio Codec : ALC711
+  //PCI PnP ID : PCI\VEN_8086&DEV_2668&SUBSYS_72708086
+  //HDA Codec PnP ID : INTELAUDIO\FUNC_01&VEN_10EC&DEV_0711&SUBSYS_10EC11C2
+  //The number of verb command block : 17
+
+  //    NID 0x12 : 0x40000000
+  //    NID 0x13 : 0x411111F0
+  //    NID 0x14 : 0x411111F0
+  //    NID 0x15 : 0x411111F0
+  //    NID 0x16 : 0x411111F0
+  //    NID 0x17 : 0x411111F0
+  //    NID 0x18 : 0x411111F0
+  //    NID 0x19 : 0x04A11010
+  //    NID 0x1A : 0x411111F0
+  //    NID 0x1B : 0x411111F0
+  //    NID 0x1D : 0x40400001
+  //    NID 0x1E : 0x411111F0
+  //    NID 0x1F : 0x411111F0
+  //    NID 0x21 : 0x04211020
+  //    NID 0x29 : 0x411111F0
+
+  //===== HDA Codec Subsystem ID Verb-table =====
+  //HDA Codec Subsystem ID  : 0x10EC11C2
+  0x001720C2,
+  0x00172111,
+  0x001722EC,
+  0x00172310,
+
+  //===== Pin Widget Verb-table =====
+  //Widget node 0x01 :
+  0x0017FF00,
+  0x0017FF00,
+  0x0017FF00,
+  0x0017FF00,
+  //Pin widget 0x12 - DMIC
+  0x01271C00,
+  0x01271D00,
+  0x01271E00,
+  0x01271F40,
+  //Pin widget 0x13 - DMIC
+  0x01371CF0,
+  0x01371D11,
+  0x01371E11,
+  0x01371F41,
+  //Pin widget 0x14 - FRONT (Port-D)
+  0x01471CF0,
+  0x01471D11,
+  0x01471E11,
+  0x01471F41,
+  //Pin widget 0x15 - I2S-OUT
+  0x01571CF0,
+  0x01571D11,
+  0x01571E11,
+  0x01571F41,
+  //Pin widget 0x16 - LINE3 (Port-B)
+  0x01671CF0,
+  0x01671D11,
+  0x01671E11,
+  0x01671F41,
+  //Pin widget 0x17 - I2S-OUT
+  0x01771CF0,
+  0x01771D11,
+  0x01771E11,
+  0x01771F41,
+  //Pin widget 0x18 - I2S-IN
+  0x01871CF0,
+  0x01871D11,
+  0x01871E11,
+  0x01871F41,
+  //Pin widget 0x19 - MIC2 (Port-F)
+  0x01971C10,
+  0x01971D10,
+  0x01971EA1,
+  0x01971F04,
+  //Pin widget 0x1A - LINE1 (Port-C)
+  0x01A71CF0,
+  0x01A71D11,
+  0x01A71E11,
+  0x01A71F41,
+  //Pin widget 0x1B - LINE2 (Port-E)
+  0x01B71CF0,
+  0x01B71D11,
+  0x01B71E11,
+  0x01B71F41,
+  //Pin widget 0x1D - PC-BEEP
+  0x01D71C01,
+  0x01D71D00,
+  0x01D71E40,
+  0x01D71F40,
+  //Pin widget 0x1E - S/PDIF-OUT
+  0x01E71CF0,
+  0x01E71D11,
+  0x01E71E11,
+  0x01E71F41,
+  //Pin widget 0x1F - S/PDIF-IN
+  0x01F71CF0,
+  0x01F71D11,
+  0x01F71E11,
+  0x01F71F41,
+  //Pin widget 0x21 - HP-OUT (Port-I)
+  0x02171C20,
+  0x02171D10,
+  0x02171E21,
+  0x02171F04,
+  //Pin widget 0x29 - I2S-IN
+  0x02971CF0,
+  0x02971D11,
+  0x02971E11,
+  0x02971F41,
+  //Widget node 0x20 - 1 : //remove NID 58 realted setting for ALC711  bypass DAC02 DRE(NID5B bit14)
+  0x05B50010,
+  0x05B4581D,
+  0x0205006F,
+  0x0204058B,
+  //Widget node 0x20 - 2 : //2 MIC Vrefo-L/R for headset
+  0x02050045,
+  0x02045289,
+  0x0205004A,
+  0x0204201B,
+  //Widget node 0x20 - 3 : /To set 1 pin detect JD for headset &  JD2 headset behavior.
+  0x02050008,
+  0x0204A805,
+  0x02050009,
+  0x0204142B,
+  //Widget node 0x20 - 4 : /To set 1 pin detect JD voltage to 1.8V AHP-JD final result control for JD-1/2 result
+  0x0205000B,
+  0x0204777A,
+  0x02050011,
+  0x0204047A
+); // HdaVerbTableAlc711
+
+HDAUDIO_VERB_TABLE HdaVerbTableAlc897 = HDAUDIO_VERB_TABLE_INIT (
+  //
+  //  VerbTable: (Realtek ALC897)
+  //  Revision ID = 0xff
+  //  Codec Verb Table
+  //  Codec Address: CAd value (0/1/2)
+  //  Codec Vendor: 0x10EC0256
+  //
+  0x10EC, 0x0897,
+  0xFF, 0xFF,
+  //===================================================================================================
+  //
+  //                               Realtek Semiconductor Corp.
+  //
+  //===================================================================================================
+
+  //Realtek High Definition Audio Configuration - Version : 5.0.3.3
+  //Realtek HD Audio Codec : ALC897
+  //PCI PnP ID : PCI\VEN_8086&DEV_2668&SUBSYS_72708086
+  //HDA Codec PnP ID : HDAUDIO\FUNC_01&VEN_10EC&DEV_0897&SUBSYS_10EC12B0
+  //The number of verb command block : 16
+
+  //    NID 0x11 : 0x40000000
+  //    NID 0x12 : 0x90A60140
+  //    NID 0x14 : 0x01211010
+  //    NID 0x15 : 0x411111F0
+  //    NID 0x16 : 0x411111F0
+  //    NID 0x17 : 0x411111F0
+  //    NID 0x18 : 0x01A11030
+  //    NID 0x19 : 0x411111F0
+  //    NID 0x1A : 0x01111120
+  //    NID 0x1B : 0x411111F0
+  //    NID 0x1C : 0x411111F0
+  //    NID 0x1D : 0x40220601
+  //    NID 0x1E : 0x411111F0
+  //    NID 0x1F : 0x411111F0
+
+
+  //===== HDA Codec Subsystem ID Verb-table =====
+  //HDA Codec Subsystem ID  : 0x10EC12B0
+  0x001720B0,
+  0x00172112,
+  0x001722EC,
+  0x00172310,
+
+
+  //===== Pin Widget Verb-table =====
+  //Widget node 0x01 :
+  0x0017FF00,
+  0x0017FF00,
+  0x0017FF00,
+  0x0017FF00,
+  //Pin widget 0x11 - S/PDIF-OUT2
+  0x01171C00,
+  0x01171D00,
+  0x01171E00,
+  0x01171F40,
+  //Pin widget 0x12 - DMIC
+  0x01271C40,
+  0x01271D01,
+  0x01271EA6,
+  0x01271F90,
+  //Pin widget 0x14 - FRONT (Port-D)
+  0x01471C10,
+  0x01471D10,
+  0x01471E21,
+  0x01471F01,
+  //Pin widget 0x15 - SURR (Port-A)
+  0x01571CF0,
+  0x01571D11,
+  0x01571E11,
+  0x01571F41,
+  //Pin widget 0x16 - CEN/LFE (Port-G)
+  0x01671CF0,
+  0x01671D11,
+  0x01671E11,
+  0x01671F41,
+  //Pin widget 0x17 - SIDESURR (Port-H)
+  0x01771CF0,
+  0x01771D11,
+  0x01771E11,
+  0x01771F41,
+  //Pin widget 0x18 - MIC1 (Port-B)
+  0x01871C30,
+  0x01871D10,
+  0x01871EA1,
+  0x01871F01,
+  //Pin widget 0x19 - MIC2 (Port-F)
+  0x01971CF0,
+  0x01971D11,
+  0x01971E11,
+  0x01971F41,
+  //Pin widget 0x1A - LINE1 (Port-C)
+  0x01A71C20,
+  0x01A71D11,
+  0x01A71E11,
+  0x01A71F01,
+  //Pin widget 0x1B - LINE2 (Port-E)
+  0x01B71CF0,
+  0x01B71D11,
+  0x01B71E11,
+  0x01B71F41,
+  //Pin widget 0x1C - CD-IN
+  0x01C71CF0,
+  0x01C71D11,
+  0x01C71E11,
+  0x01C71F41,
+  //Pin widget 0x1D - BEEP-IN
+  0x01D71C01,
+  0x01D71D06,
+  0x01D71E22,
+  0x01D71F40,
+  //Pin widget 0x1E - S/PDIF-OUT1
+  0x01E71CF0,
+  0x01E71D11,
+  0x01E71E11,
+  0x01E71F41,
+  //Pin widget 0x1F - S/PDIF-IN
+  0x01F71CF0,
+  0x01F71D11,
+  0x01F71E11,
+  0x01F71F41,
+  //Pin widget 0x20 -1
+  0x0205003B,
+  0x02040080,
+  0x02050039,
+  0x02044031,
+  //Pin widget 0x20 -2
+  0x02050013,
+  0x02040053,
+  0x02050030,
+  0x020492D1,
+  //Pin widget 0x20 -3
+  0x02050021,
+  0x02040000,
+  0x02050023,
+  0x02040000,
+  //Pin widget 0x20 -4
+  0x02050025,
+  0x02040000,
+  0x02050027,
+  0x02040000,
+  //Pin widget 0x20 -5
+  0x02050029,
+  0x02040000,
+  0x0205002A,
+  0x02041640,
+  //Pin widget 0x20 -6
+  0x0205002B,
+  0x02041640,
+  0x02050021,
+  0x02040C00,
+  //Pin widget 0x20 -7
+  0x02050023,
+  0x02040C00,
+  0x02050025,
+  0x02040C00,
+  //Pin widget 0x20 -8
+  0x02050027,
+  0x02040C00,
+  0x02050029,
+  0x02040C00,
+  //Pin widget 0x20 -9
+  0x0205002A,
+  0x02041641,
+  0x0205002B,
+  0x02041641,
+  //Pin widget 0x20 -10
+  0x02050030,
+  0x02049251,
+  0x0205002A,
+  0x02041649,
+  //Pin widget 0x20 -11
+  0x0205002B,
+  0x02041649,
+  0x0205000C,
+  0x02043F06,
+  //Pin widget 0x20 -12
+  0x02050006,
+  0x020433B3,
+  0x02050016,
+  0x02040708
+);
+
+HDAUDIO_VERB_TABLE HdaVerbTableAlc892 = HDAUDIO_VERB_TABLE_INIT (
+  //
+  //  VerbTable: (Realtek Audio ALC892)
+  //  Revision ID = 0xff
+  //  Codec Verb Table
+  //  Codec Address: CAd value (0/1/2)
+  //  Codec Vendor: 0x10EC0892
+  //
+  0x10EC, 0x0892,
+  0xFF, 0xFF,
+  //===================================================================================================
+  //
+  //                               Realtek Semiconductor Corp.
+  //
+  //===================================================================================================
+
+  // Realtek High Definition Audio Configuration - Version : 5.0.3.2
+  // Realtek HD Audio Codec : ALC892
+  // PCI PnP ID : PCI\VEN_8086&DEV_2668&SUBSYS_72708086
+  // HDA Codec PnP ID : INTELAUDIO\FUNC_01&VEN_10EC&DEV_0892&SUBSYS_10EC1266
+  // The number of verb command block : 17
+
+  //    NID 0x11 : 0x40000000
+  //    NID 0x12 : 0x411111F0
+  //    NID 0x14 : 0x01014010
+  //    NID 0x15 : 0x01011012
+  //    NID 0x16 : 0x01016011
+  //    NID 0x17 : 0x01012014
+  //    NID 0x18 : 0x01A19020
+  //    NID 0x19 : 0x411111F0
+  //    NID 0x1A : 0x0181302F
+  //    NID 0x1B : 0x411111F0
+  //    NID 0x1C : 0x411111F0
+  //    NID 0x1D : 0x40232601
+  //    NID 0x1E : 0x411111F0
+  //    NID 0x1F : 0x411111F0
+
+  //===== HDA Codec Subsystem ID Verb-table =====
+  //HDA Codec Subsystem ID  : 0x10EC1266
+  0x00172066,
+  0x00172112,
+  0x001722EC,
+  0x00172310,
+  //===== Pin Widget Verb-table =====
+  //Widget node 0x01 :
+  0x0017FF00,
+  0x0017FF00,
+  0x0017FF00,
+  0x0017FF00,
+  //Pin widget 0x11 - S/PDIF-OUT2
+  0x01171C00,
+  0x01171D00,
+  0x01171E00,
+  0x01171F40,
+  //Pin widget 0x12 - DMIC
+  0x01271CF0,
+  0x01271D11,
+  0x01271E11,
+  0x01271F41,
+  //Pin widget 0x14 - FRONT (Port-D)
+  0x01471C10,
+  0x01471D40,
+  0x01471E01,
+  0x01471F01,
+  //Pin widget 0x15 - SURR (Port-A)
+  0x01571C12,
+  0x01571D10,
+  0x01571E01,
+  0x01571F01,
+  //Pin widget 0x16 - CEN/LFE (Port-G)
+  0x01671C11,
+  0x01671D60,
+  0x01671E01,
+  0x01671F01,
+  //Pin widget 0x17 - SIDESURR (Port-H)
+  0x01771C14,
+  0x01771D20,
+  0x01771E01,
+  0x01771F01,
+  //Pin widget 0x18 - MIC1 (Port-B)
+  0x01871C20,
+  0x01871D90,
+  0x01871EA1,
+  0x01871F01,
+  //Pin widget 0x19 - MIC2 (Port-F)
+  0x01971CF0,
+  0x01971D11,
+  0x01971E11,
+  0x01971F41,
+  //Pin widget 0x1A - LINE1 (Port-C)
+  0x01A71C2F,
+  0x01A71D30,
+  0x01A71E81,
+  0x01A71F01,
+  //Pin widget 0x1B - LINE2 (Port-E)
+  0x01B71CF0,
+  0x01B71D11,
+  0x01B71E11,
+  0x01B71F41,
+  //Pin widget 0x1C - CD-IN
+  0x01C71CF0,
+  0x01C71D11,
+  0x01C71E11,
+  0x01C71F41,
+  //Pin widget 0x1D - BEEP-IN
+  0x01D71C01,
+  0x01D71D26,
+  0x01D71E23,
+  0x01D71F40,
+  //Pin widget 0x1E - S/PDIF-OUT
+  0x01E71CF0,
+  0x01E71D11,
+  0x01E71E11,
+  0x01E71F41,
+  //Pin widget 0x1F - S/PDIF-IN
+  0x01F71CF0,
+  0x01F71D11,
+  0x01F71E11,
+  0x01F71F41,
+  //Widget node 0x20 :
+  0x02050007,
+  0x020409C8,
+  0x02050007,
+  0x020409C8
+);
+
+HDAUDIO_VERB_TABLE HdaVerbTableAlc245NoDmic = HDAUDIO_VERB_TABLE_INIT (
+  //
+  //  VerbTable: (Realtek ALC245)
+  //  Revision ID = 0xff
+  //  Codec Verb Table
+  //  Codec Address: CAd value (0/1/2)
+  //  Codec Vendor: 0x10EC0245
+  //
+  0x10EC, 0x0245,
+  0xFF, 0xFF,
+//===================================================================================================
+//
+//                               Realtek Semiconductor Corp.
+//
+//===================================================================================================
+//
+//Realtek High Definition Audio Configuration - Version : 5.0.3.0
+//Realtek HD Audio Codec : ALC295
+//PCI PnP ID : PCI\VEN_8086&DEV_2668&SUBSYS_72708086
+//HDA Codec PnP ID : INTELAUDIO\FUNC_01&VEN_10EC&DEV_0245&SUBSYS_10EC130E
+//    NID 0x12 : 0x411111F0
+//    NID 0x13 : 0x40000000
+//    NID 0x14 : 0x90170110
+//    NID 0x16 : 0x411111F0
+//    NID 0x17 : 0x411111F0
+//    NID 0x18 : 0x411111F0
+//    NID 0x19 : 0x04A11040
+//    NID 0x1A : 0x411111F0
+//    NID 0x1B : 0x411111F0
+//    NID 0x1D : 0x40600001
+//    NID 0x1E : 0x411111F0
+//    NID 0x21 : 0x04211020
+
+
+//===== HDA Codec Subsystem ID Verb-table =====
+//HDA Codec Subsystem ID  : 0x10EC130E
+0x0017200E,
+0x00172113,
+0x001722EC,
+0x00172310,
+
+
+//===== Pin Widget Verb-table =====
+//Widget node 0x01 :
+0x0017FF00,
+0x0017FF00,
+0x0017FF00,
+0x0017FF00,
+//===== 1bit reset =====
+0x0205001A,
+0x0204C003,
+0x0205001A,
+0x02048003,
+//Pin widget 0x12 - DMIC
+0x01271CF0,
+0x01271D11,
+0x01271E11,
+0x01271F41,
+//Pin widget 0x13 - DMIC
+0x01371C00,
+0x01371D00,
+0x01371E00,
+0x01371F40,
+//Pin widget 0x14 - Front (Port-D)
+0x01471C10,
+0x01471D01,
+0x01471E17,
+0x01471F90,
+//Pin widget 0x16 - HP2-OUT (Port-B)
+0x01671CF0,
+0x01671D11,
+0x01671E11,
+0x01671F41,
+//Pin widget 0x17 - I2S OUT
+0x01771CF0,
+0x01771D11,
+0x01771E11,
+0x01771F41,
+//Pin widget 0x18 - I2S IN
+0x01871CF0,
+0x01871D11,
+0x01871E11,
+0x01871F41,
+//Pin widget 0x19 - MIC2 (Port-F)
+0x01971C40,
+0x01971D10,
+0x01971EA1,
+0x01971F04,
+//Pin widget 0x1A - LINE1 (Port-C)
+0x01A71CF0,
+0x01A71D11,
+0x01A71E11,
+0x01A71F41,
+//Pin widget 0x1B - LINE2 (Port-E)
+0x01B71CF0,
+0x01B71D11,
+0x01B71E11,
+0x01B71F41,
+//Pin widget 0x1D - BEEP-IN
+0x01D71C01,
+0x01D71D00,
+0x01D71E60,
+0x01D71F40,
+//Pin widget 0x1E - S/PDIF-OUT
+0x01E71CF0,
+0x01E71D11,
+0x01E71E11,
+0x01E71F41,
+//Pin widget 0x21 - HP1-OUT (Port-I)
+0x02171C20,
+0x02171D10,
+0x02171E21,
+0x02171F04,
+//NID 0x20  - SW hidden reset, enable DAC02/03 Hi-Res 44.1kHz,96kHz,192kHz
+0x0205001A,
+0x0204C34B,
+0x0205001A,
+0x0204C34B,
+//Class-D power on reset and do headphone JD reset
+0x0205004A,
+0x0204A010,
+0x0205003C,
+0x0204F135,
+//NID 0x20 JD1 - 1 pin detect 2 port
+0x02050009,
+0x0204E003,
+0x0205000A,
+0x02047770,
+//NID 0x20 HP-JD enable and EAPD as default
+0x0205004A,
+0x02042010,
+0x02050010,
+0x02040020,
+//Set Class-d to 2W /4ohm and Smart amp Sine tone monitor setting
+0x02050038,
+0x02047909,
+0x05C50000,
+0x05C43982,
+//Class D silent detection Enable(-84dB threshold)
+0x02050037,
+0x0204FE15,
+0x02050030,
+0x02049000,
+// I2S Pad Floating Control  and disable DMIC Floating
+0x05A50001,
+0x05A4001F,
+0x02050035,
+0x02048DAA,
+//Class-d DC detect
+0x0205006B,
+0x0204A390,
+0x0205006B,
+0x0204A390,
+//Class-d DC detect
+0x0205006C,
+0x02040C9E,
+0x0205006D,
+0x02040C00,
+//restore default for ultra-low power mode
+0x02050008,
+0x02046A8C,
+0x02050076,
+0x0204F000,
+
+0x0205000E,
+0x020465C0,
+0x02050033,
+0x02048580,
+
+0x02050069,
+0x0204FDA8,
+0x02050068,
+0x02040000,
+
+0x02050003,
+0x02040002,
+0x02050069,
+0x02040000,
+
+0x02050068,
+0x02040001,
+0x0205002E,
+0x0204290E
+);
+
+HDAUDIO_VERB_TABLE HdaVerbTableAlc245X4 = HDAUDIO_VERB_TABLE_INIT (
+  //
+  //  VerbTable: (Realtek ALC245)
+  //  Revision ID = 0xff
+  //  Codec Verb Table
+  //  Codec Address: CAd value (0/1/2)
+  //  Codec Vendor: 0x10EC0245
+  //
+  0x10EC, 0x0245,
+  0xFF, 0xFF,
+//===================================================================================================
+//
+//                               Realtek Semiconductor Corp.
+//
+//===================================================================================================
+//
+//Realtek High Definition Audio Configuration - Version : 5.0.3.0
+//Realtek HD Audio Codec : ALC245
+//PCI PnP ID : PCI\VEN_8086&DEV_2668&SUBSYS_72708086
+//HDA Codec PnP ID : INTELAUDIO\FUNC_01&VEN_10EC&DEV_0245&SUBSYS_10EC1310
+//    NID 0x12 : 0x90A60130
+//    NID 0x13 : 0x90A60150
+//    NID 0x14 : 0x90170110
+//    NID 0x16 : 0x411111F0
+//    NID 0x17 : 0x411111F0
+//    NID 0x18 : 0x411111F0
+//    NID 0x19 : 0x04A11040
+//    NID 0x1A : 0x411111F0
+//    NID 0x1B : 0x411111F0
+//    NID 0x1D : 0x40E00001
+//    NID 0x1E : 0x411111F0
+//    NID 0x21 : 0x04211020
+
+
+//===== HDA Codec Subsystem ID Verb-table =====
+//HDA Codec Subsystem ID  : 0x10EC1310
+0x00172010,
+0x00172113,
+0x001722EC,
+0x00172310,
+
+
+//===== Pin Widget Verb-table =====
+//Widget node 0x01 :
+0x0017FF00,
+0x0017FF00,
+0x0017FF00,
+0x0017FF00,
+//===== 1bit reset =====
+0x0205001A,
+0x0204C003,
+0x0205001A,
+0x02048003,
+//Pin widget 0x12 - DMIC
+0x01271C30,
+0x01271D01,
+0x01271EA6,
+0x01271F90,
+//Pin widget 0x13 - DMIC
+0x01371C50,
+0x01371D01,
+0x01371EA6,
+0x01371F90,
+//Pin widget 0x14 - Front (Port-D)
+0x01471C10,
+0x01471D01,
+0x01471E17,
+0x01471F90,
+//Pin widget 0x16 - HP2-OUT (Port-B)
+0x01671CF0,
+0x01671D11,
+0x01671E11,
+0x01671F41,
+//Pin widget 0x17 - I2S OUT
+0x01771CF0,
+0x01771D11,
+0x01771E11,
+0x01771F41,
+//Pin widget 0x18 - I2S IN
+0x01871CF0,
+0x01871D11,
+0x01871E11,
+0x01871F41,
+//Pin widget 0x19 - MIC2 (Port-F)
+0x01971C40,
+0x01971D10,
+0x01971EA1,
+0x01971F04,
+//Pin widget 0x1A - LINE1 (Port-C)
+0x01A71CF0,
+0x01A71D11,
+0x01A71E11,
+0x01A71F41,
+//Pin widget 0x1B - LINE2 (Port-E)
+0x01B71CF0,
+0x01B71D11,
+0x01B71E11,
+0x01B71F41,
+//Pin widget 0x1D - BEEP-IN
+0x01D71C01,
+0x01D71D00,
+0x01D71EE0,
+0x01D71F40,
+//Pin widget 0x1E - S/PDIF-OUT
+0x01E71CF0,
+0x01E71D11,
+0x01E71E11,
+0x01E71F41,
+//Pin widget 0x21 - HP1-OUT (Port-I)
+0x02171C20,
+0x02171D10,
+0x02171E21,
+0x02171F04,
+//NID 0x20  - SW hidden reset, enable DAC02/03 Hi-Res 44.1kHz,96kHz,192kHz
+0x0205001A,
+0x0204C34B,
+0x0205001A,
+0x0204C34B,
+//Class-D power on reset and do headphone JD reset
+0x0205004A,
+0x0204A010,
+0x0205003C,
+0x0204F135,
+//NID 0x20 JD1 - 1 pin detect 2 port
+0x02050009,
+0x0204E003,
+0x0205000A,
+0x02047770,
+//NID 0x20 HP-JD enable and EAPD as default
+0x0205004A,
+0x02042010,
+0x02050010,
+0x02040020,
+//Set Class-d to 2W /4ohm and Smart amp Sine tone monitor setting
+0x02050038,
+0x02047909,
+0x05C50000,
+0x05C43982,
+//Class D silent detection Enable(-84dB threshold)
+0x02050037,
+0x0204FE15,
+0x02050030,
+0x02049000,
+// I2S Pad Floating Control  and disable DMIC Floating
+0x05A50001,
+0x05A4001F,
+0x02050035,
+0x02048DAA,
+//Class-d DC detect
+0x0205006B,
+0x0204A390,
+0x0205006B,
+0x0204A390,
+//Class-d DC detect
+0x0205006C,
+0x02040C9E,
+0x0205006D,
+0x02040C00,
+//restore default for ultra-low power mode
+0x02050008,
+0x02046A8C,
+0x02050076,
+0x0204F000,
+
+0x0205000E,
+0x020465C0,
+0x02050033,
+0x02048580,
+
+0x02050069,
+0x0204FDA8,
+0x02050068,
+0x02040000,
+
+0x02050003,
+0x02040002,
+0x02050069,
+0x02040000,
+
+0x02050068,
+0x02040001,
+0x0205002E,
+0x0204290E
+);
+
+HDA_VERB_TABLE_DATABASE HdaVerbTableDataBase = HDAUDIO_VERB_TABLE_DATABASE_INIT (
+  &HdaVerbTableAlc245NoDmic,
+  &HdaVerbTableAlc711,
+  &HdaVerbTableAlc701,
+  &HdaVerbTableAlc274,
+  &HdaVerbTableAlc897,
+  &HdaVerbTableAlc892
+);
+

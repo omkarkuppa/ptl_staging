@@ -1,0 +1,155 @@
+### @file
+# Component information file for BaseBoardConfigLib.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2015 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiBoardConfigLib
+  FILE_GUID                      = AA9812A8-1BA6-40AD-A846-50D0BC29C38C
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = BoardConfigLib|PEIM
+
+[LibraryClasses]
+  DebugLib
+  PcdLib
+  ReportStatusCodeLib
+  TimerLib
+  EcMiscLib
+  EcTcssLib
+  BoardIdsLib
+  SiliconInitLib
+  PeiServicesLib
+  PmcLib
+  PeiBootStateLib
+  PchInfoLib
+  GpioV2WrapperLib
+  CpuPlatformLib
+  BaseLib
+  MeInfoLib
+  PciSegmentLib
+  PeiGetFvInfoLib
+  BaseMemoryLib
+  BiosIdLib
+  PlatformUsbConfigLib
+  TcssInfoLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  BoardModulePkg/BoardModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  CnvFeaturePkg/CnvFeaturePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  UcsiFeaturePkg/UcsiFeaturePkg.dec
+
+[Sources]
+  PeiBoardConfigLib.c
+  PeiHdaVerbTables.c
+  PeiSpdTables.c
+  BoardInfo.h
+
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid               ## CONSUMES
+  gFspSiliconInitDonePpiGuid                    ## CONSUMES
+  gEfiEndOfPeiSignalPpiGuid                     ## CONSUMES
+  gPeiGraphicsPlatformPpiGuid                   ## PRODUCES
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId ## PRODUCES  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdEcMajorRevision           ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdEcMinorRevision           ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdEcPlatformMajorRevision   ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdEcBuildRevision           ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdEcEspiFlashSharingMode    ## PRODUCES  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardId                   ## PRODUCES  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardBomId                ## PRODUCES  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardRev                  ## PRODUCES  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdSpdPresent                ## PRODUCES  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardName                 ## PRODUCES  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardType                 ## PRODUCES  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformType              ## PRODUCES  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformFlavor            ## PRODUCES  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdDockAttached              ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdPlatformGeneration        ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdCapsuleEnable          ## CONSUMES
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                 ## PRODUCES  ## CONSUMES
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPeciMode               ## PRODUCES
+  gBoardModuleTokenSpaceGuid.VpdPcdGpioLidStatus          ## PRODUCES
+
+  # HDA Verb Table
+  gBoardModuleTokenSpaceGuid.PcdHdaVerbTableDatabase
+
+  # TCSS Port Capability Map
+  gBoardModuleTokenSpaceGuid.PcdTcssPortCapMap                    ## PRODUCES
+
+  # GPIO Group Tier
+  gBoardModuleTokenSpaceGuid.PcdGpioGroupToGpeDw0
+  gBoardModuleTokenSpaceGuid.PcdGpioGroupToGpeDw1
+  gBoardModuleTokenSpaceGuid.PcdGpioGroupToGpeDw2
+
+  gBoardModuleTokenSpaceGuid.PcdDisableVpdGpioTable
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTable
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTablePreMem
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEarlyPreMem
+
+  # PD and Retimer Info
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber
+
+  # UCxx Driver Type and Support for Port
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUcxxDriverType         ## PRODUCES
+  gUcsiFeaturePkgTokenSpaceGuid.PcdPortUcxxDriverSupport  ## PRODUCES
+
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUcsiRevision           ## PRODUCES
+
+  gBoardModuleTokenSpaceGuid.PcdDisplayId                 ## PRODUCES  ## CONSUMES
+
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvBoardConfig
+  gBoardModuleTokenSpaceGuid.VpdPcdCnvBoardConfig
+  gEfiSecurityPkgTokenSpaceGuid.PcdFirmwareDebuggerInitialized    ## CONSUMES
+  gIntelSiliconPkgTokenSpaceGuid.PcdIntelGraphicsVbtFileGuid      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformType                      ## CONSUMES
+
+  gBoardModuleTokenSpaceGuid.VpdPcdUsbConnector                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdUsbCConnector                  ## CONSUMES
+
+[FixedPcd]
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection             ## CONSUMES
+
+[Guids]
+  gSetupVariableGuid
+  gBoardInfoVariableGuid
+  gBiosIdGuid
+  gSaSetupVariableGuid
+
+[Depex]
+  gEfiPeiReadOnlyVariable2PpiGuid

@@ -1,0 +1,86 @@
+### @file
+# Component description file for the Serial Flash device Runtime driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2011 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = SpiFvbServiceSmm
+  FILE_GUID                      = 7DC2838E-525E-4674-9F23-A55E8C9B00C4
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  PI_SPECIFICATION_VERSION       = 1.10
+  ENTRY_POINT                    = FvbInitialize
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64
+#
+
+[LibraryClasses]
+  PcdLib
+  MemoryAllocationLib
+  CacheMaintenanceLib
+  BaseMemoryLib
+  DebugLib
+  BaseLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  SpiFlashCommonLib
+  SmmServicesTableLib
+  PciSegmentLib
+  SpiAccessLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+
+[FixedPcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase   ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize   ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase   ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize   ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase          ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize          ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootBase           ## CONSUMES
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootSize           ## CONSUMES
+
+[Sources]
+  Common/SpiFvbServiceCommon.c
+  Common/FvbInfo.c
+  Smm/SpiFvbServiceSmm.c
+
+[Protocols]
+  gEfiDevicePathProtocolGuid                    ## PRODUCES
+  gEfiSmmFirmwareVolumeBlockProtocolGuid        ## PRODUCES
+
+[Guids]
+  gEfiFirmwareFileSystem2Guid                   ## CONSUMES
+  gEfiSystemNvDataFvGuid                        ## CONSUMES
+  gEfiEventVirtualAddressChangeGuid             ## CONSUMES
+
+[Depex]
+  TRUE

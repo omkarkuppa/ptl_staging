@@ -1,0 +1,235 @@
+## @file
+#  FDF file of Platform.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+#=================================================================================#
+# BIOS for FSP wrapper
+#=================================================================================#
+DEFINE FLASH_BASE                                                   = 0xFF200000  #
+DEFINE FLASH_SIZE                                                   = 0x00E00000  #
+DEFINE FLASH_BLOCK_SIZE                                             = 0x00010000  #
+DEFINE FLASH_NUM_BLOCKS                                             = 0x000000E0  #
+DEFINE ACM_ALIGNMENT_ON_FV_BASE                                     = 256K        #
+#=================================================================================#
+
+!if $(TARGET) == DEBUG
+#=================================================================================#
+#
+# FIT Payload Region
+# FIT Payload has a separete build process, and will be stitched into ClientBios.rom at PostBuild
+#
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset           = 0x00000000  # Flash addr (0xFF200000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize             = 0X00080000  #
+SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvSize            = 0x00080000  #
+
+#
+# NON FIT Payload
+# NON FIT Payload has a separete build process, and will be stitched into ClientBios.rom at PostBuild
+#
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset      = 0x00080000  # Flash addr (0xFF200000)
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadSize        = 0x00060000
+
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageOffset             = 0x000E0000  # Flash addr (0xFF2E0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageSize               = 0x00060000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageVariableOffset     = 0x000E0000  # Flash addr (0xFF2E0000)
+SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize      = 0x0002E000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingOffset   = 0x0010E000  # Flash addr (0xFF30E000)
+SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize    = 0x00002000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareOffset     = 0x00110000  # Flash addr (0xFF310000)
+SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize      = 0x00030000  #
+#
+# OBB - Begin
+#
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset                = 0x00140000  # Flash addr (0xFF340000)
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbSize                  = 0x00740000  #
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressOffset          = 0x001D0000  # Flash addr (0xFF3D0000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressSize            = 0x00010000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedOffset            = 0x001E0000  # Flash addr (0xFF3E0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize              = 0x00420000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityOffset            = 0x00600000  # Flash addr (0xFF800000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecuritySize              = 0x000D0000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootOffset              = 0x006D0000  # Flash addr (0xFF8D0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootSize                = 0x000D0000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootOffset            = 0x007A0000  # Flash addr (0xFF9A0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootSize              = 0x000E0000  #
+!else
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedOffset            = 0x001D0000  # Flash addr (0xFF3D0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize              = 0x00330000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityOffset            = 0x00500000  # Flash addr (0xFF700000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecuritySize              = 0x000D0000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootOffset              = 0x005D0000  # Flash addr (0xFF7D0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootSize                = 0x00060000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootOffset            = 0x00630000  # Flash addr (0xFF830000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootSize              = 0x000B0000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvUplOffset                    = 0x006E0000  # Flash addr (0xFF8E0000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize                      = 0x001A0000  #
+!endif
+#
+# OBB - End
+#
+
+#
+# IBB - Begin
+# (Note : IBB here is referenced for capsule update solution. BIOS_INFO defines IBB for Secure Boot)
+#
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbOffset                = 0x00880000  # Flash addr (0xFFA80000)
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbSize                  = 0x00580000  #
+## Firmware binaries FV absolute address requires (256KB align - ACM_ALIGNMENT_ON_FV_BASE).
+## Use ACM_ALIGNMENT_ON_FV_BASE = 256KB (0x40000) for an effective use of flash space based on the FV layout.
+## Build script checks the requirement.
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesOffset       = 0x00880000  # Flash addr (0xFFA80000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000D0000  # Keep 0x80000 or larger
+# When FSP Signing enabled, FSPM and FvPreMemory must be loaded to different NEM Buffers. Guard Band will be
+# added between NEM Buffers, leave enough space between FSPM and FvPreMemory to avoid overlap.
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00950000  # Flash addr (0xFFB50000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x00190000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00AE0000  # Flash addr (0xFFCE0000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00060000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00B40000  # Flash addr (0xFFD40000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00090000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00BD0000  # Flash addr (0xFFDD0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x000A0000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Offset                   = 0x00C70000  # Flash addr (0xFFE70000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Size                     = 0x00020000  #
+!if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00C90000  # Flash addr (0xFFE90000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x00020000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00CB0000  # Flash addr (0xFFEB0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x00150000  #
+!else
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00C90000  # Flash addr (0xFFE90000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x00140000  #
+## FspTopAt4G contains FSP components (FSP-T and FSP-O) which should be put at Top 4G location, these FSP
+## components come from FSP build directly, which require base and size MUST align with the settings under
+## PantherLakeFspPkg\PantherLakeFspPkg.fdf.
+## FspTopAt4G may have a padding file at start for 64KB alignment requirement or reserve size for future use.
+SET gBoardModuleTokenSpaceGuid.PcdFspTopOffset                        = 0x00DD0000  # Flash addr (0xFFFD0000)
+SET gBoardModuleTokenSpaceGuid.PcdFspTopSize                          = 0x00030000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x0001C000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvFspOSize                     = 0x00012000  #
+!endif
+
+#
+# IBB - End
+#
+#=================================================================================#
+!else #(Release)
+#=================================================================================#
+#=================================================================================#
+#
+# FIT Payload Region
+# FIT Payload has a separete build process, and will be stitched into ClientBios.rom at PostBuild
+#
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset           = 0x00000000  # Flash addr (0xFF200000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize             = 0X00080000  #
+SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvSize            = 0x00080000  #
+
+#
+# NON FIT Payload
+# NON FIT Payload has a separete build process, and will be stitched into ClientBios.rom at PostBuild
+#
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset      = 0x00080000  # Flash addr (0xFF200000)
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadSize        = 0x00060000
+
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageOffset             = 0x000E0000  # Flash addr (0xFF2E0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageSize               = 0x00060000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageVariableOffset     = 0x000E0000  # Flash addr (0xFF2E0000)
+SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize      = 0x0002E000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingOffset   = 0x0010E000  # Flash addr (0xFF30E000)
+SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize    = 0x00002000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareOffset     = 0x00110000  # Flash addr (0xFF310000)
+SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize      = 0x00030000  #
+#
+# OBB - Begin
+#
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset                = 0x00140000  # Flash addr (0xFF340000)
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbSize                  = 0x00740000  #
+!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressOffset          = 0x001D0000  # Flash addr (0xFF3D0000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressSize            = 0x00010000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedOffset            = 0x001E0000  # Flash addr (0xFF3E0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize              = 0x00420000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityOffset            = 0x00600000  # Flash addr (0xFF800000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecuritySize              = 0x000C0000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootOffset              = 0x006C0000  # Flash addr (0xFF8C0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootSize                = 0x000D0000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootOffset            = 0x00790000  # Flash addr (0xFF990000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootSize              = 0x000F0000  #
+!else
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedOffset            = 0x001D0000  # Flash addr (0xFF3D0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize              = 0x00330000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityOffset            = 0x00500000  # Flash addr (0xFF800000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecuritySize              = 0x000C0000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootOffset              = 0x005C0000  # Flash addr (0xFF7C0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootSize                = 0x00060000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootOffset            = 0x00620000  # Flash addr (0xFF820000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootSize              = 0x000C0000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvUplOffset                    = 0x006E0000  # Flash addr (0xFF8E0000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize                      = 0x001A0000  #
+!endif
+#
+# OBB - End
+#
+
+#
+# IBB - Begin
+# (Note : IBB here is referenced for capsule update solution. BIOS_INFO defines IBB for Secure Boot)
+#
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbOffset                = 0x00880000  # Flash addr (0xFFA00000)
+SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbSize                  = 0x00580000  #
+## Firmware binaries FV absolute address requires (256KB align - ACM_ALIGNMENT_ON_FV_BASE).
+## Use ACM_ALIGNMENT_ON_FV_BASE = 256KB (0x40000) for an effective use of flash space based on the FV layout.
+## Build script checks the requirement.
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesOffset       = 0x00880000  # Flash addr (0xFFA80000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000D0000  # Keep 0x80000 or larger
+# When FSP Signing enabled, FSPM and FvPreMemory must be loaded to different NEM Buffers. Guard Band will be
+# added between NEM Buffers, leave enough space between FSPM and FvPreMemory to avoid overlap.
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00950000  # Flash addr (0xFFB50000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x00160000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00AB0000  # Flash addr (0xFFCB0000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00060000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00B10000  # Flash addr (0xFFD10000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x000C0000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00BD0000  # Flash addr (0xFFDD0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x000A0000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Offset                   = 0x00C70000  # Flash addr (0xFFE70000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Size                     = 0x00020000  #
+!if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00C90000  # Flash addr (0xFFE90000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x00020000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00CB0000  # Flash addr (0xFFEB0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x00150000  #
+!else
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00C90000  # Flash addr (0xFFE90000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x00150000  #
+## FspTopAt4G contains FSP components (FSP-T and FSP-O) which should be put at Top 4G location, these FSP
+## components come from FSP build directly, which require base and size MUST align with the settings under
+## PantherLakeFspPkg\PantherLakeFspPkg.fdf.
+## FspTopAt4G may have a padding file at start for 64KB alignment requirement or reserve size for future use.
+SET gBoardModuleTokenSpaceGuid.PcdFspTopOffset                        = 0x00DE0000  # Flash addr (0xFFFE0000)
+SET gBoardModuleTokenSpaceGuid.PcdFspTopSize                          = 0x00020000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x0000E000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvFspOSize                     = 0x0000E000  #
+!endif
+#
+# IBB - End
+#
+!endif #(Release)

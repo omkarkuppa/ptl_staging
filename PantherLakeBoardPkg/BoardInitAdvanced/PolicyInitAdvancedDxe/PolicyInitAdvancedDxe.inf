@@ -1,0 +1,120 @@
+### @file
+#  Module Information file for the PolicyInit Advanced DXE driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2013 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PolicyInitAdvancedDxe
+  FILE_GUID                      = 490D0119-4448-440D-8F5C-F58FB53EE057
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = PolicyInitAdvancedDxeEntryPoint
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  CpuPlatformLib
+  DebugLib
+  DxeServicesTableLib
+  IntrinsicLib
+  IoLib
+  MemoryAllocationLib
+  DxeMePolicyLib
+  DxeIGpuPolicyLib
+  DxeAmtPolicyLib
+  DxePchPolicyLib
+  DxeITbtPolicyLib
+  PcdLib
+  DxePolicyUpdateLib
+  ReportStatusCodeLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  UefiRuntimeServicesTableLib
+  ConfigBlockLib
+  DevicePathLib
+  EcMiscLib
+  PreSiliconEnvDetectLib
+  DxeServicesLib
+  BaseIGpuInfoLib
+  DxeDTbtPolicyLib
+  GpioV2WrapperLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  PantherLakeFspBinPkg/PantherLakeFspBinPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeBinPkg/PantherLakeBinPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                     ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange
+  gSiPkgTokenSpaceGuid.PcdAmtEnable                                     ## CONSUMES
+  gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopBinEnable
+  gBoardModuleTokenSpaceGuid.PcdPlatformFlavor
+  gBoardModuleTokenSpaceGuid.PcdPlatformType
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
+  gIntelSiliconPkgTokenSpaceGuid.PcdIntelGraphicsVbtFileGuid
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspsUpdDataAddress64               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdGpioLidStatus                        ## CONSUMES
+
+[FixedPcd]
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection                   ## CONSUMES
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                           ## CONSUMES
+
+[Sources]
+  AmtPolicyInitDxe.c
+  MePolicyInitDxe.c
+  PolicyInitAdvancedDxe.c
+  SaPolicyInitDxe.c
+  SiliconPolicyInitDxe.c
+  GopPolicyInitDxe.c
+  PchPolicyInitDxe.c
+  CpuPolicyInitDxe.c
+  TbtPolicyInitDxe.c
+  TbtPolicyInitDxe.h
+
+[Protocols]
+  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
+  gDxeMePolicyGuid                              ## PRODUCES
+  gDxeAmtPolicyGuid                             ## PRODUCES
+  gIGpuPolicyProtocolGuid                       ## CONSUMES
+  gPchPolicyProtocolGuid                        ## CONSUMES
+  gDxeSiPolicyProtocolGuid                      ## PRODUCES
+  gGopPolicyProtocolGuid                        ## PRODUCES
+  gDxeCpuPolicyProtocolGuid                     ## PRODUCES
+  gITbtPolicyProtocolGuid                       ## CONSUMES
+
+[Guids]
+  gSetupVariableGuid                            ## CONSUMES
+  gSaSetupVariableGuid                          ## CONSUMES
+  gPchSetupVariableGuid                         ## CONSUMES
+  gCpuSmmGuid                                   ## CONSUMES
+
+[Depex]
+  gEfiVariableArchProtocolGuid

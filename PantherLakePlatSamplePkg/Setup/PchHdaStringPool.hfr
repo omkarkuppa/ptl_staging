@@ -1,0 +1,33 @@
+/**
+@file
+  PCH HDA menu strings definitions, this is a work around for toolchain
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+
+#define _PCH_HDA_STRING_POOL_HFR_
+#ifndef _PCH_HDA_STRING_POOL_HFR_
+
+STRING_TOKEN(STR_PCH_HDA_SNDW0_CONFIGURATION_PROMPT)
+STRING_TOKEN(STR_PCH_HDA_SNDW1_CONFIGURATION_PROMPT)
+STRING_TOKEN(STR_PCH_HDA_SNDW2_CONFIGURATION_PROMPT)
+STRING_TOKEN(STR_PCH_HDA_SNDW3_CONFIGURATION_PROMPT)
+STRING_TOKEN(STR_PCH_HDA_SNDW4_CONFIGURATION_PROMPT)
+
+#endif /** _PCH_HDA_STRING_POOL_HFR_ **/

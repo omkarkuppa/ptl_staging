@@ -1,0 +1,63 @@
+## @file
+#  SATA erase driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010007
+  BASE_NAME                      = SataEraseDxe
+  FILE_GUID                      = 99DF8490-F92E-4A45-8A3E-A80C85D32826
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = SataEraseEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 EBC
+#
+
+[Sources]
+  SataEraseDxe.c
+  ComponentName.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  SataFeaturePkg/SataFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  BaseMemoryLib
+  DebugLib
+  DevicePathLib
+  AhciCommandLib
+
+[Protocols]
+  gSataEraseBlockProtocolGuid               ## PRODUCES
+  gEfiBlockIoProtocolGuid                   ## CONSUMES
+  gEfiAtaPassThruProtocolGuid               ## CONSUMES
+  gEfiDevicePathProtocolGuid                ## CONSUMES
+
+[Depex]
+  TRUE

@@ -1,0 +1,70 @@
+## @file
+# Component information file for the FSP S3 Notify PEI module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2018 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FspS3Notify
+  FILE_GUID                      = EA7F0916-B5C8-493F-A006-565CC2041044
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = FspS3NotifyEntryPoint
+
+[Sources]
+  FspS3Notify.h
+  FspS3Notify.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+
+[Protocols]
+  gEfiPciEnumerationCompleteProtocolGuid                ## CONSUMES
+
+[Ppis]
+  gEfiReadyToInstallPciEnumerationCompleteProtocolGuid  ## PRODUCES
+  gEfiReadyToInstallEventReadyToBootGuid                ## PRODUCES
+  gFspReadyToInstallEventEndOfFirmwareGuid              ## PRODUCES
+  gEndOfFspS3NotifyGuid                                 ## PRODUCES
+  gEfiEndOfPeiSignalPpiGuid                             ## CONSUMES
+
+[LibraryClasses]
+  #
+  # Generic library class
+  #
+  PeimEntryPoint
+  FspCommonLib
+  ConfigBlockLib
+  PcdLib
+  MonoStatusCodeLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  HobLib
+
+[Guids]
+  gEfiEventReadyToBootGuid                              ## CONSUMES
+  gFspEventEndOfFirmwareGuid                            ## CONSUMES
+
+[Depex]
+  gEndOfSiInitPpiGuid AND
+  NOT gFspInApiModePpiGuid

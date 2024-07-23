@@ -1,0 +1,54 @@
+## @file
+#  Component description file for DTBT USB4 PEI library.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = DUsb4HrPeiLib
+  FILE_GUID      = BBB1CBF9-BB70-4B2B-B074-F0B8A90D12FC
+  VERSION_STRING = 1.0
+  MODULE_TYPE    = PEIM
+  LIBRARY_CLASS  = DUsb4HrPeiLib
+
+[Sources]
+  DUsb4HrPeiLib.c
+
+[LibraryClasses]
+  IoLib
+  DebugLib
+  TbtCommonLib
+  DTbtCommonLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+
+[Ppis]
+  gPeiDTbtPolicyPpiGuid                                      ## CONSUMES
+
+[Pcd]
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtToPcieRegister        ## CONSUMES
+  gUsb4FeaturePkgTokenSpaceGuid.PcdPcieToDTbtRegister        ## CONSUMES
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtTempBusNumber         ## CONSUMES
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                ## CONSUMES
+
+[FixedPcd]
+  gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber ## CONSUMES

@@ -1,0 +1,47 @@
+### @file
+#  Platform GUID forward PEIM library implementation.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PeiGuidForwardHandlerLib
+  FILE_GUID                      = 8A08C5FD-A33E-4F48-B88E-8D0F81B6E842
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  LIBRARY_CLASS                  = GuidForwardLib|PEIM PEI_CORE SEC
+
+[LibraryClasses]
+  PostCodeMapLib
+  PciSegmentLib
+  CmosAccessLib
+  TimerLib
+  PeiHostBridgeIpStatusLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PostCodeDebugFeaturePkg/PostCodeDebugFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[Sources]
+  PeiGuidForwardLib.c
+
+[Ppis]
+  gEfiPeiRscHandlerPpiGuid                      ## CONSUMES

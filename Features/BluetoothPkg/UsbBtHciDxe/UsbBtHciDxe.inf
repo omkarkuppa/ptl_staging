@@ -1,0 +1,64 @@
+## @file
+#  The INF file of UsbBtHciDxe driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2013 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = UsbBtHciDxe
+  FILE_GUID                      = B2D52FB6-6C9D-4190-B8AA-7CF7F23B343A
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = USBBtHciDriverBindingEntryPoint
+  UNLOAD_IMAGE                   = UsbBtHciDxeUnload
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+#  DRIVER_BINDING                =  gUsbBtHciDriverBinding
+#  COMPONENT_NAME                =  gUsbBtHciComponentName
+#  COMPONENT_NAME2               =  gUsbBtHciComponentName2
+#
+
+[Sources]
+  ComponentName.c
+  UsbBtHciDxe.c
+  UsbBtHciDxe.h
+  UsbBtHci.c
+
+[Packages]
+  BluetoothPkg/BluetoothPkg.dec
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  MemoryAllocationLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  BaseMemoryLib
+  UefiUsbLib
+
+[Protocols]
+  gEfiUsbIoProtocolGuid                         ## TO_START
+  gEfiDevicePathProtocolGuid                    ## TO_START
+  gEfiBluetoothHcProtocolGuid                         ## TO_START
+

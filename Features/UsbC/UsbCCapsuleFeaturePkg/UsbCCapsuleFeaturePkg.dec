@@ -1,0 +1,65 @@
+## @file
+# DEC file for UsbCCapsuleFeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification Reference:
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME      = UsbCCapsuleFeaturePkg
+  PACKAGE_GUID      = 1D63F64F-9DE5-49CE-BED8-5477EA0E7D05
+  PACKAGE_VERSION   = 0.1
+
+[Includes]
+  Include
+  Include/UsbCCapsuleDebug
+  Test/Mock/Include
+
+[Guids]
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid  =  {0xDAD050DE, 0xAA13, 0x46A4, {0xB0, 0x78, 0x70, 0xDA, 0xCB, 0x5D, 0xEB, 0xFC}}
+
+  gAllTbtRetimerDeviceGuid              =  {0x1E06E744, 0xD14F, 0x426A, {0xB2, 0x3F, 0x99, 0xCD, 0x87, 0x73, 0xE6, 0x21}}
+
+  gUsbCRetimerSetupGuid                 =  {0x8542C05D, 0x78F1, 0x4229, {0xBF, 0x5C, 0x79, 0x8E, 0x44, 0xA0, 0xBF, 0xC9}}
+
+  gUsbCPdSetupGuid                      =  {0x191FC86C, 0x6215, 0x440F, {0x84, 0x88, 0xCD, 0xBA, 0x9E, 0xFA, 0x28, 0x53}}
+
+[Protocols]
+  gUsbCRetimerProtocolGuid                   =  {0xB9AC2BD1, 0xD450, 0x4BEC, {0xBD, 0x5B, 0x19, 0x26,  0x1, 0x11, 0x9B, 0x84}}
+  gEfiUsbCCapsuleDebugProtocolGuid           =  {0x70CE41F4, 0x51AC, 0x5A2B, {0x12, 0xAD, 0x1B, 0xC9, 0x87, 0x29, 0xEE, 0x7C}}
+  gUsbCCapsuleDebugProgressCodeProtocolGuid  =  {0xAE97B655, 0xB3A1, 0x40A6, {0xA5, 0xAD, 0xAF, 0xE3, 0x00, 0x76, 0xE7, 0x0E}}
+
+[PcdsFixedAtBuild]
+  # Main feature PCD to support UsbC Capsule update feature
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable|FALSE|BOOLEAN|0xCC000001
+
+[PcdsDynamic]
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber|0x0|UINT8|0xCC000010
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber|0x0|UINT8|0xCC000011
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapabilityParsingTimeDelay|0x0|UINT32|0xCC000014
+  # Time delay to make sure retimer is ready for communication after Drive to TBT mode.
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdTcssWaitRetimerDeviceReady|0x0|UINT32|0xCC000017
+
+[PcdsDynamicEx]
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable|{0}|RETIMER_CONFIG_ARRAY|0xCC000012 {
+  <HeaderFiles>
+    TbtNvmRetimer.h
+  <Packages>
+    UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+}
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleDebugLevel|0x0|UINT8|0xCC000013

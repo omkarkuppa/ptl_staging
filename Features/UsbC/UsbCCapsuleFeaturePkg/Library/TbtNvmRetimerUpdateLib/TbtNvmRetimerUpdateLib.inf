@@ -1,0 +1,86 @@
+## @file
+#  TbtNvmRetimerUpdateLib instance to support TBT Retimer firmware update
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = TbtNvmRetimerUpdateLib
+  FILE_GUID                      = 928E3B21-84F3-48D9-BF47-FE6E3E197428
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = TbtNvmRetimerUpdateLib|DXE_DRIVER
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  TbtNvmRetimerUpdateLib.c
+  TbtNvmRetimerDrvHelpers.c
+  TbtNvmDrvRetimerThruHr.c
+  TbtNvmDrvRetimerThruHrHelpers.c
+  TbtNvmDrvYflRouter.c
+  TbtNvmDrvHr.c
+  TbtNvmDrvDma.c
+  TbtNvmDrvUtils.c
+  Crc32c.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+
+[LibraryClasses]
+  DebugLib
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  PchPciBdfLib
+  PciSegmentLib
+  PciLib
+  PcdLib
+  HobLib
+  Usb4DebugLib
+  UsbcCapsuleDebugLib
+
+[Pcd]
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber         ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable         ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber                   ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapabilityParsingTimeDelay ## COMSUMES
+
+[FixedPcd]
+  gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber             ## CONSUMES
+
+[Protocols]
+  gEfiPciIoProtocolGuid                      ## CONSUMES
+  gEfiUsbCCapsuleDebugProtocolGuid           ## PRODUCES
+  gUsbCCapsuleDebugProgressCodeProtocolGuid  ## CONSUMES
+
+[Guids]
+  gITbtInfoHobGuid                         ## CONSUMES
+  gUsbCRetimerSetupGuid                    ## CONSUMES
+  gDTbtInfoHobGuid                         ## CONSUMES
+  gUsb4PlatformHobGuid                     ## CONSUMES

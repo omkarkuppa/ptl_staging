@@ -1,0 +1,151 @@
+/** @file
+  Setup script for the "Boot" top level setup screen
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2012 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+#include <SetupPrivate.h>
+#include <OemSetup.h>
+#include <SetupConfiguration.h>
+#include <PlatformBoardId.h>
+#include <PlatformBoardType.h>
+#include <Guid/GlobalVariable.h>
+
+typedef struct{
+  UINT8   SecureBoot;
+} SECURE_BOOT_VARIABLE;
+
+formset guid = BOOT_FORM_SET_GUID,
+  title      = STRING_TOKEN(STR_BOOT),
+  help       = STRING_TOKEN(STR_BOOT_HELP),
+  classguid  = BOOT_MAINTENANCE_GUID,
+  class      = BOOT_FORM_SET_CLASS,
+  subclass   = 0,
+
+  SETUP_DATA_VARSTORE
+
+  varstore SECURE_BOOT_VARIABLE,
+    varid = AUTO_ID(SECURE_BOOT_VARIABLE_KEY),
+    name  = SecureBoot,
+    guid  = EFI_GLOBAL_VARIABLE;
+
+  varstore SETUP_VOLATILE_DATA,
+    varid = AUTO_ID(SETUP_VOLATILE_DATA_ID),
+    name  = SetupVolatileData,
+    guid  = SETUP_GUID;
+
+  defaultstore MyStandardDefault,
+    prompt    = STRING_TOKEN(STR_STANDARD_DEFAULT_PROMPT),
+    attribute = 0x0000; // Default ID: 0000 standard default
+
+  form formid = AUTO_ID(BOOT_MAIN),
+    title     = STRING_TOKEN(STR_BOOT_CFG_MENU);
+
+    SUBTITLE(STRING_TOKEN(STR_BOOT_CFG))
+
+    SEPARATOR
+
+    suppressif ideqval SETUP_DATA.FastBoot == 1;
+      oneof varid   = SETUP_DATA.DisplayBootMode,
+        prompt      = STRING_TOKEN (STR_DISPLAY_BOOT_MODE),
+        help        = STRING_TOKEN (STR_DISPLAY_BOOT_MODE_HELP),
+        option text = STRING_TOKEN (STR_NORMAL_BOOT), value = 0, flags = DEFAULT;
+        option text = STRING_TOKEN (STR_QUIET_BOOT), value = 1, flags = 0;
+        option text = STRING_TOKEN (STR_SILENT_BOOT), value = 2, flags = 0;
+      endoneof;
+    endif; // suppressif
+
+    suppressif ideqval SETUP_DATA.FastBoot == 0;
+      grayoutif TRUE;
+        oneof varid   = SETUP_DATA.DisplayBootMode,
+          prompt      = STRING_TOKEN (STR_DISPLAY_BOOT_MODE),
+          help        = STRING_TOKEN (STR_DISPLAY_BOOT_MODE_HELP),
+          option text = STRING_TOKEN (STR_SILENT_BOOT), value = 0, flags = DEFAULT;
+          option text = STRING_TOKEN (STR_SILENT_BOOT), value = 1, flags = 0;
+          option text = STRING_TOKEN (STR_SILENT_BOOT), value = 2, flags = 0;
+        endoneof;
+    SUPPRESS_GRAYOUT_ENDIF
+
+
+    oneof varid   = SETUP_DATA.FastBoot,
+      prompt      = STRING_TOKEN(STR_FAST_BOOT),
+      help        = STRING_TOKEN(STR_FAST_BOOT_HELP),
+#if FixedPcdGetBool(PcdPerformanceEnable) == 1
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+#else
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+#endif
+    endoneof;
+
+    suppressif ideqval SETUP_DATA.FastBoot == 0;
+      oneof varid   = SETUP_DATA.FastBootWdt,
+        prompt      = STRING_TOKEN(STR_FAST_BOOT_WDT),
+        help        = STRING_TOKEN(STR_FAST_BOOT_WDT_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = SETUP_DATA.SkipHIIUpdate,
+        prompt      = STRING_TOKEN(STR_FAST_BOOT_SKIP_HII),
+        help        = STRING_TOKEN(STR_FAST_BOOT_SKIP_HII_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = SETUP_DATA.ConInBehavior,
+        prompt      = STRING_TOKEN(STR_FAST_BOOT_CONSOLE_BHVR),
+        help        = STRING_TOKEN(STR_FAST_BOOT_CONIN_BHVR_HELP),
+#if FixedPcdGetBool(PcdPerformanceEnable) == 1
+        option text = STRING_TOKEN(STR_USB_CONSOLE), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_LASTCONSOLE), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_WINDOWS_CONSOLE), value = 2, flags =  DEFAULT | RESET_REQUIRED;
+#else
+        option text = STRING_TOKEN(STR_USB_CONSOLE), value = 0, flags = DEFAULT | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_LASTCONSOLE), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_WINDOWS_CONSOLE), value = 2, flags = RESET_REQUIRED;
+#endif
+      endoneof;
+    endif; // suppressif
+
+    checkbox varid = SETUP_DATA.LazyConIn,
+      prompt       = STRING_TOKEN(STR_LAZY_CONIN),
+      help         = STRING_TOKEN(STR_LAZY_CONIN),
+    endcheckbox;
+
+#if FixedPcdGetBool (PcdVirtualKeyboardEnable) == 1
+    oneof varid   = SETUP_DATA.VirtualKeyboard,
+      prompt      = STRING_TOKEN(STR_VIRTUAL_KEYBOARD),
+      help        = STRING_TOKEN(STR_VIRTUAL_KEYBOARD_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+#endif
+
+    oneof varid     = SETUP_DATA.BootFirstToShell,
+      prompt        = STRING_TOKEN(STR_BOOT_FIRST_TO_SHELL),
+      help          = STRING_TOKEN(STR_BOOT_FIRST_TO_SHELL_HELP),
+      default value = 0, defaultstore = MyStandardDefault,
+      option text   = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text   = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
+  endform;
+
+endformset;

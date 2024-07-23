@@ -1,0 +1,65 @@
+## @file
+# PEI TraceHub SoC library
+#
+# All functions in this library are available for PEI
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PtlPcdPeiTraceHubLib
+FILE_GUID = AF178A21-52AA-48F8-A425-46E8AC6CE14E
+VERSION_STRING = 1.0
+MODULE_TYPE = PEIM
+LIBRARY_CLASS = PeiTraceHubSocLib
+
+[LibraryClasses]
+BaseLib
+BaseMemoryLib
+MemoryAllocationLib
+DebugLib
+PchPciBdfLib
+P2SbSocLib
+P2SbSidebandAccessLib
+ConfigBlockLib
+PsfSocLib
+PmcLib
+PciSegmentLib
+PmcPrivateLib
+DciPrivateLib
+CpuCommonLib
+VtdInfoFruLib
+ReportStatusCodeLib
+MtrrLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+UefiCpuPkg/UefiCpuPkg.dec
+
+[Ppis]
+gSiPreMemPolicyPpiGuid
+
+[Guids]
+gTraceHubPreMemConfigGuid   ## CONSUMES
+gTraceHubDataHobGuid
+
+[Sources]
+PeiTraceHubSocLib.c

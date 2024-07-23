@@ -1,0 +1,82 @@
+### @file
+#  Component information file for CNV Pre-Memory PEI module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = ConnectivityPreMem
+  FILE_GUID                      = 7466d0fd-1507-499d-b5cc-a8f1edddf69d
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  ENTRY_POINT                    = ConnectivityPreMemEntryPoint
+
+[LibraryClasses]
+  PeimEntryPoint
+  BaseMemoryLib
+  DebugLib
+  IoLib
+  PcdLib
+  GpioV2WrapperLib
+  TimerLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CnvFeaturePkg/CnvFeaturePkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[Pcd]
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOnEarlyPreMem
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOnEarlyPreMemSize
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOffEarlyPreMem
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableWwanOffEarlyPreMemSize
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMem     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableM80WwanOnEarlyPreMemSize ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOn2ResDelayMs                ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnRes2PerDelayMs             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOnPer2PdsDelayMs             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTRes2OffDelayMs               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTOffDisDelayMs                ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTResTogDelayMs                ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTRes2PdsDelayMs               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardWwanTPer2ResDelayMs               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio                          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity                  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable
+  gBoardModuleTokenSpaceGuid.PcdWwanResetWorkaround
+
+[Sources]
+  ConnectivityPreMem.c
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid                               ## SOMETIMES_CONSUMES ## NOTIFY
+  gPeiFvCnvDispatchFlagPpiGuid                                  ## SOMETIMES_CONSUMES
+
+[Guids]
+  gCnvFeatureSetupGuid                                          ## CONSUMES
+  gBoardModuleTokenSpaceGuid
+  gSetupVariableGuid
+
+[Depex]
+  gEfiPeiReadOnlyVariable2PpiGuid

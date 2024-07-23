@@ -1,0 +1,51 @@
+/** @file
+  Serial IO policy
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2016 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+#ifndef _SERIAL_IO_CONFIG_H_
+#define _SERIAL_IO_CONFIG_H_
+
+#define SERIAL_IO_CONFIG_REVISION 3
+extern EFI_GUID gSerialIoConfigGuid;
+
+#include <SerialIoDevices.h>
+
+#pragma pack (push,1)
+
+/**
+  The SERIAL_IO_CONFIG block provides the configurations to set the Serial IO controllers
+
+  <b>Revision 1:</b>
+  - Inital version.
+  <b>Revision 2:</b>
+  - Modified SPI Config to support pinmux functionality.
+  <b>Revision 3:</b>
+  - Modified I3C Config to support more controllers.
+**/
+typedef struct {
+  CONFIG_BLOCK_HEADER   Header;                                              ///< Config Block Header
+  SERIAL_IO_SPI_CONFIG  SpiDeviceConfig[PCH_MAX_SERIALIO_SPI_CONTROLLERS];   ///< SPI Configuration
+  SERIAL_IO_I2C_CONFIG  I2cDeviceConfig[PCH_MAX_SERIALIO_I2C_CONTROLLERS];   ///< I2C Configuration
+  SERIAL_IO_I3C_CONFIG  I3cDeviceConfig[PCH_MAX_SERIALIO_I3C_CONTROLLERS];   ///< I3C Configuration
+  SERIAL_IO_UART_CONFIG UartDeviceConfig[PCH_MAX_SERIALIO_UART_CONTROLLERS]; ///< UART Configuration
+} SERIAL_IO_CONFIG;
+
+#pragma pack (pop)
+
+#endif // _SERIAL_IO_CONFIG_H_

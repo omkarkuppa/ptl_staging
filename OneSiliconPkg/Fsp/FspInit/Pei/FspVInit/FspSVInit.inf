@@ -1,0 +1,55 @@
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = FspSVInit
+  FILE_GUID                      = 97A41D9E-5F34-4FEF-B218-F344392BB69F
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = FspSVInitEntryPoint
+
+[Sources]
+  FspSVInit.h
+  FspSVInit.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  OneSiliconPkg/SiPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+
+[Guids]
+  gFspVInfoGuid                              ## CONSUMES
+  gFspVConfigGuid                            ## CONSUMES
+
+[LibraryClasses]
+  PeimEntryPoint
+  PeiServicesLib
+  DebugLib
+  MemoryAllocationLib
+  FspVInfoLib
+  FspVTestCaseLib
+  FspCommonLib
+  ConfigBlockLib
+
+[Ppis]
+  gEfiPeiRscHandlerPpiGuid                  ## CONSUMES
+  gSiPreMemPolicyPpiGuid                    ## CONSUMES
+  gSiPolicyPpiGuid                          ## CONSUMES
+
+[Depex]
+  TRUE

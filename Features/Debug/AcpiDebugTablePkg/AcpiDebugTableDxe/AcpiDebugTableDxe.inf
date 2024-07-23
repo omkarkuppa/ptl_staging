@@ -1,0 +1,67 @@
+### @file
+#  Component information file for AcpiDebugTableDxe module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+# @par Glossary:
+###
+
+[Defines]
+  INF_VERSION                    = 0x0001001E
+  BASE_NAME                      = AcpiDebugTableDxe
+  FILE_GUID                      = F0D7E5FE-B820-458D-A6AA-7D41EA5CC705
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InstallDebugAcpiTable
+
+[Sources.common]
+  AcpiDebugTableDxe.h
+  AcpiDebugTableDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  AcpiDebugTablePkg/AcpiDebugTablePkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  DebugLib
+  PcdLib
+  UefiBootServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterBase                      ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision                  ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId
+  gAcpiDebugTablePkgTokenSpaceGuid.PcdAcpiDebugOsDebugPort                  ## CONSUMES
+  gAcpiDebugTablePkgTokenSpaceGuid.PcdAcpiDebugSerialIoDebugUartPowerGating ## CONSUMES
+  gAcpiDebugTablePkgTokenSpaceGuid.PcdAcpiDebugPciCfgBase                   ## CONSUMES
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid                                                 ## CONSUMES
+
+[Depex]
+  gEfiAcpiTableProtocolGuid
+

@@ -1,0 +1,51 @@
+## @file
+#
+# DEC file for SataFeaturePkg.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME = SataFeaturePkg
+  PACKAGE_VERSION = 0.1
+  PACKAGE_GUID = 137AA647-F43F-4453-915B-238EE6976F1A
+
+[Includes]
+  Include
+
+[LibraryClasses]
+  AhciPcieRpLib|Include/Library/AhciPcieRpLib.h
+  AhciCommandLib|Include/Library/AhciCommandLib.h
+
+[Guids]
+  ## Sata Feature package token space guid.
+  gSataFeaturePkgTokenSpaceGuid    = { 0xA59FB032, 0x5358, 0x438F, { 0xA8, 0x1A, 0x36, 0x72, 0x71, 0x7C, 0x25, 0xF5 }}
+
+[PcdsFeatureFlag]
+# Enable/Disable the Sata feature
+  gSataFeaturePkgTokenSpaceGuid.PcdSataFeatureEnable  |FALSE|BOOLEAN|0x20000001
+
+[PcdsFixedAtBuild]
+  gSataFeaturePkgTokenSpaceGuid.PcdSataPciScanEnable  |FALSE|BOOLEAN|0x20000002
+  gSataFeaturePkgTokenSpaceGuid.PcdSataEraseEnable    |FALSE|BOOLEAN|0x20000003
+
+[Protocols]
+  ## Include/Protocol/SataEraseBlock.h
+  gSataEraseBlockProtocolGuid      = { 0xD1BECCBB, 0x3928, 0x4E33, { 0xAA, 0x47, 0x32, 0x10, 0xD1, 0x4C, 0x91, 0x11 }}

@@ -1,0 +1,67 @@
+### @file
+# Component information file for SaveMemoryConfig module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 1999 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = SaveMemoryConfig
+  FILE_GUID                      = 36033FB5-38F3-4C20-BA10-E49970C5EE7E
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = SaveMemoryConfigEntryPoint
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  HobLib
+  DebugLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  IoLib
+  BaseLib
+  PmcLib
+  VariablePolicyHelperLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  SaveMemoryConfig.h
+  SaveMemoryConfig.c
+
+[Protocols]
+  gEfiVariableArchProtocolGuid                  ## CONSUMES
+  gEfiVariableWriteArchProtocolGuid             ## CONSUMES
+  gEdkiiVariablePolicyProtocolGuid              ## CONSUMES
+
+[Guids]
+  gFspNonVolatileStorageHobGuid                 ## CONSUMES
+  gFspNonVolatileStorageHob2Guid                ## CONSUMES
+  gMemoryConfigVariableGuid                     ## CONSUMES
+
+[Depex]
+  gEdkiiVariablePolicyProtocolGuid    AND
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid

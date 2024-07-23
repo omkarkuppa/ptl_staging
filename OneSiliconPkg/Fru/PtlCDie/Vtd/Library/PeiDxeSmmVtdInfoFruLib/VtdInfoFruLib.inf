@@ -1,0 +1,48 @@
+## @file
+# Library description file for VT-d Info FRU Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION    = 0x00010017
+  BASE_NAME      = PeiDxeSmmVtdInfoFruLib
+  FILE_GUID      = 8b087264-32df-4032-af31-077cef06ead2
+  VERSION_STRING = 1.0
+  MODULE_TYPE    = BASE
+  LIBRARY_CLASS  = VtdInfoFruLib
+
+[LibraryClasses]
+  BaseLib
+  IoLib
+  DebugLib
+  PciSegmentLib
+  HobLib
+  NpuInfoLib
+  IaxInfoLib
+  IpuLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  VtdInfoFruLib.c
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdVtdMmioBase

@@ -1,0 +1,102 @@
+### @file
+# Component description file for PlatformInfoDxe Driver.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2013 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = PlatformSetup
+  FILE_GUID                      = A4F2909C-5E2A-438A-91BA-272B0923049A
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = PlatformSetupEntry
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 EBC
+#
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  DxeServicesTableLib
+  HobLib
+# CpuIA32Lib
+  IoLib
+  CpuPlatformLib
+  S3BootScriptLib
+  PchInfoLib
+  MemoryAllocationLib
+  CpuMailboxLib
+  ConfigBlockLib
+  LocalApicLib
+  TseInfoLib
+  TmeInfoLib
+  DgrInfoLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFuncBoardHookPlatformSetupOverride
+  gBoardModuleTokenSpaceGuid.PcdPlatformFlavor
+  gBoardModuleTokenSpaceGuid.PcdPlatformType
+  gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAtaSmartEnable               ## PRODUCES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFastPS2Detection             ## PRODUCES
+  gPlatformModuleTokenSpaceGuid.PcdAhciMaxPorts                  ## PRODUCES
+  gSiPkgTokenSpaceGuid.PcdTseEnable                              ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdOverclockEnable                        ## CONSUMES
+
+[Sources]
+  Configuration.h
+  PlatformSetup.h
+  KeyboardSetup.h
+  PlatformSetup.c
+  PlatformPolicySetup.c
+  KeyboardSetup.c
+
+[Protocols]
+  gEfiPciRootBridgeIoProtocolGuid               ## CONSUMES
+  gEfiMpServiceProtocolGuid                     ## CONSUMES
+  gEfiPs2PolicyProtocolGuid                     ## PRODUCES
+  gMemInfoProtocolGuid                          ## PRODUCES
+  gDxePolicyProtocolGuid                        ## PRODUCES
+  gEfiVariableWriteArchProtocolGuid             ## CONSUMES
+
+[Guids]
+  gEfiHobListGuid                               ## CONSUMES
+  gSiMemoryInfoDataGuid                         ## CONSUMES
+  gSetupVariableGuid                            ## PRODUCES
+  gCpuSetupVariableGuid                         ## CONSUMES
+  gSystemConfigGuid
+  gOcSetupVariableGuid                          ## CONSUMES
+
+[Depex]
+  gEfiPciRootBridgeIoProtocolGuid     AND
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid

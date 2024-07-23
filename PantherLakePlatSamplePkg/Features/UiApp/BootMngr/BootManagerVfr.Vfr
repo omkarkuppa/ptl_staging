@@ -1,0 +1,61 @@
+/** @file
+
+    Browser formset.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2004 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+
+**/
+
+
+#include "FormsetGuid.h"
+
+#define BOOT_MANAGER_FORM_ID     0x1000
+
+#define LABEL_BOOT_OPTION        0x00
+#define LABEL_BOOT_OPTION_END    0x01
+
+#define BOOT_MANAGER_CLASS       0x00
+#define BOOT_MANAGER_SUBCLASS    0x00
+
+formset
+  guid      = BOOT_MANAGER_FORMSET_GUID,
+  title     = STRING_TOKEN(STR_BM_BANNER),
+  help      = STRING_TOKEN(STR_LAST_STRING),
+  classguid = BOOT_MANAGER_FORMSET_GUID,
+  class     = BOOT_MANAGER_CLASS,
+  subclass  = BOOT_MANAGER_SUBCLASS,
+
+  form formid = BOOT_MANAGER_FORM_ID,
+       title  = STRING_TOKEN(STR_BM_BANNER);
+
+    subtitle text = STRING_TOKEN(STR_LAST_STRING);
+    subtitle text = STRING_TOKEN(STR_BOOT_OPTION_BANNER);
+    subtitle text = STRING_TOKEN(STR_LAST_STRING);
+
+    //
+    // This is where we will dynamically add choices for the Boot Manager
+    //
+    label LABEL_BOOT_OPTION;
+    label LABEL_BOOT_OPTION_END;
+
+    subtitle text = STRING_TOKEN(STR_LAST_STRING);
+    subtitle text = STRING_TOKEN(STR_HELP_FOOTER);
+
+  endform;
+
+endformset;

@@ -1,0 +1,36 @@
+/** @file
+  This module is the Runtime DXE part correspond to SMM variable module.
+
+  It installs variable arch protocol and variable write arch protocol to provide
+  four EFI_RUNTIME_SERVICES: SetVariable, GetVariable, GetNextVariableName and QueryVariableInfo
+  and works with SMM variable module together.
+
+  Caution: This module requires additional review when modified.
+  This driver will have external input - variable data.
+  This external input must be validated carefully to avoid security issues such as
+  buffer overflow or integer overflow.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+
+**/
+
+
+#string STR_MODULE_ABSTRACT             #language en-US "The Runtime DXE part corresponding to the SMM variable module"
+
+#string STR_MODULE_DESCRIPTION          #language en-US "It installs variable arch protocol and variable write arch protocol to provide four EFI_RUNTIME_SERVICES: SetVariable, GetVariable, GetNextVariableName and QueryVariableInfo and works with SMM variable module together."
+

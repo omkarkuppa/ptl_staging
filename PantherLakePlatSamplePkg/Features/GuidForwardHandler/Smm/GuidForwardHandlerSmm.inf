@@ -1,0 +1,72 @@
+### @file
+#  Platform GUID forward implementation.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = GuidForwardHandlerSmm
+  FILE_GUID                      = 531DC189-0DCE-4AE2-ACA7-E79A8273FE45
+  VERSION_STRING                 = 0
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  PI_SPECIFICATION_VERSION       = 1.10
+  ENTRY_POINT                    = GuidForwardHandlerSmmEntry
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = X64
+#
+
+[LibraryClasses]
+  CpuPlatformLib
+  SmmServicesTableLib
+  UefiDriverEntryPoint
+  DebugLib
+  PostCodeMapLib
+  PciSegmentLib
+  PlatformNvRamHookLib
+  TimerLib
+  PeiHostBridgeIpStatusLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PostCodeDebugFeaturePkg/PostCodeDebugFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[FeaturePcd]
+
+[Sources]
+  GuidForwardHandlerSmm.c
+  GuidForwardHandlerSmm.h
+  GuidForwardWorker.c
+
+[Protocols]
+  gEfiSmmRscHandlerProtocolGuid                 ## CONSUMES
+  gEfiLoadedImageProtocolGuid                   ## CONSUMES
+
+[Guids]
+  gZeroGuid                                     ## CONSUMES
+
+[Depex]
+  gEfiSmmRscHandlerProtocolGuid
+
+[Pcd]
+  gPlatformModuleTokenSpaceGuid.PcdGuidForward  ## CONSUMES

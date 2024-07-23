@@ -1,0 +1,123 @@
+## @file
+#  Component description file for PtlPcdPchInitSmm driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2010 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PchInitSmm
+FILE_GUID = DC760281-B712-413A-B18C-4120E0451542
+VERSION_STRING = 1.0
+MODULE_TYPE = DXE_SMM_DRIVER
+PI_SPECIFICATION_VERSION = 1.10
+ENTRY_POINT = PchInitSmmEntryPoint
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64
+#
+
+
+[LibraryClasses]
+UefiBootServicesTableLib
+UefiDriverEntryPoint
+DxeServicesTableLib
+IoLib
+DebugLib
+BaseLib
+BaseMemoryLib
+S3BootScriptLib
+PciExpressHelpersLib
+SmmServicesTableLib
+PciSegmentLib
+HobLib
+ReportStatusCodeLib
+DevicePathLib
+PmcLib
+SocInfoLib
+EspiLib
+TimerLib
+ConfigBlockLib
+PmcPrivateLib
+SataSocLib
+GbeLib
+GbeMdiLib
+PchPciBdfLib
+DciPrivateLib
+S3PciSegmentLib
+SpiSocLib
+SpiInitLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+
+[Pcd]
+gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMin
+gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMax
+gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemBaseAddr
+gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemSize
+
+
+[Sources]
+PchInitSmm.c
+PchPcieSmm.c
+GbeSxSmm.c
+PchInitSmm.h
+PchBiosWriteProtect.c
+PchSpiAsync.c
+PchHdaSxSmm.c
+
+
+[Protocols]
+gEfiSmmIoTrapDispatch2ProtocolGuid ## CONSUMES
+gEfiSmmSxDispatch2ProtocolGuid ## CONSUMES
+gPchSmmIoTrapControlGuid ## CONSUMES
+gEfiSmmCpuProtocolGuid ## CONSUMES
+gPchNvsAreaProtocolGuid ## CONSUMES
+gPchPcieSmiDispatchProtocolGuid ## CONSUMES
+gPchTcoSmiDispatchProtocolGuid ## CONSUMES
+gPchSmiDispatchProtocolGuid ## CONSUMES
+gPchEspiSmiDispatchProtocolGuid ## CONSUMES
+gPchPcieIoTrapProtocolGuid ## PRODUCES
+gPchPolicyProtocolGuid ##CONSUMES
+
+
+[Guids]
+gPchHdaConfigHobGuid         ## CONSUMES
+gPchPcieRpConfigHobGuid      ## CONSUMES
+gPchGbeConfigHobGuid         ## CONSUMES
+gPchLockDownConfigHobGuid    ## CONSUMES
+gPchDeviceTableHobGuid
+gPchPcieRpDxeConfigGuid         ## CONSUMES
+
+
+[Depex]
+gEfiSmmIoTrapDispatch2ProtocolGuid AND
+gEfiSmmSxDispatch2ProtocolGuid AND
+gPchSmmIoTrapControlGuid AND
+gPchTcoSmiDispatchProtocolGuid AND
+gEfiSmmCpuProtocolGuid AND
+gPchNvsAreaProtocolGuid AND
+gEfiPciHostBridgeResourceAllocationProtocolGuid AND # This is to ensure that PCI MMIO resource has been prepared and available for this driver to allocate.
+gEfiSmmBase2ProtocolGuid AND # This is for SmmServicesTableLib
+gPchPolicyProtocolGuid

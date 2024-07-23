@@ -1,0 +1,90 @@
+### @file
+#  Platform Sanitize Dxe Driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification
+###
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PlatformSanitize
+  FILE_GUID                      = 02D28686-51A4-4988-85F8-B1DE49154B05
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 0.1
+  ENTRY_POINT                    = PlatformSanitizeEntryPoint
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PlatformSanitizeFeaturePkg/PlatformSanitizeFeaturePkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+
+[Sources]
+  PlatformSanitizeDxe.c
+  PlatformSanitizeService.c
+  PlatformSanitizeSimulation.c
+  PsTpmClear.c
+  PsNvmVarErase.c
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  MemoryAllocationLib
+  UefiDriverEntryPoint
+  DebugLib
+  MeLib
+  PsStorageLib
+  PsCsmeAccessLib
+  PsCsmeAccessRpeLib
+  PsLpeLib
+  PcdLib
+  TimerLib
+  Tpm2CommandLib
+  SanitizeUiLib
+  IoLib
+
+[Protocols]
+  gEfiTcg2ProtocolGuid                          ## CONSUMES
+  gEfiGraphicsOutputProtocolGuid                ## CONSUMES
+  gEfiSimpleTextOutProtocolGuid                 ## CONSUMES
+  gPchSpiProtocolGuid                           ## CONSUMES
+  gPsBoardOemProtocolGuid
+
+[Guids]
+  gEfiEndOfDxeEventGroupGuid                    ## CONSUMES
+  gPchGlobalResetGuid                           ## CONSUMES
+  gPsLpeSetupVariableGuid                       ## CONSUMES
+  gPsRpeSetupVariableGuid
+  gPsPlatformEraseVariableGuid                  ## CONSUMES
+  gPsStorageDeviceConnectNotifyGuid             ## CONSUMES
+  gPsNvmBootParametersGuid                      ## CONSUMES
+
+[FixedPcd]
+  gPsFeatureModuleTokenSpaceGuid.PcdPsSupportCapabilities
+  gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageVariableOffset
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
+  gPsFeatureModuleTokenSpaceGuid.PcdPsSimulationSupport
+  gPsFeatureModuleTokenSpaceGuid.PcdPsSimulationReportEnable
+
+[Depex]
+  gHeciProtocolGuid                  AND
+  gEfiVariableArchProtocolGuid       AND
+  gEfiVariableWriteArchProtocolGuid

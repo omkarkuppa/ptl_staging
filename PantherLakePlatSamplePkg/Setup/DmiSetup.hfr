@@ -1,0 +1,1052 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+    form formid = DMI_OPTIONS_FORM_ID,
+    title     = STRING_TOKEN(STR_DMI_FORM);
+
+      oneof varid   = PCH_SETUP.DmiMaxLinkSpeed,
+        prompt      = STRING_TOKEN(STR_DMI_MAX_SPEED_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_MAX_SPEED_HELP),
+        option text = STRING_TOKEN (STR_AUTO_STRING), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_GEN1),        value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_GEN2),        value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_GEN3),        value = 3, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_GEN4),        value = 4, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid = PCH_SETUP.DmiL1ssEnable,
+        prompt      = STRING_TOKEN(STR_DMI_L1SS_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_L1SS_HELP),
+        option text = STRING_TOKEN(STR_DISABLE_L1SS), value = 0,  flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLE_L1SS),  value = 1,  flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      SUBTITLE(STRING_TOKEN(STR_DP_DMI_TITLE))
+
+      oneof varid   = PCH_SETUP.DmiAspm,
+        prompt      = STRING_TOKEN(STR_DMI_ASPM_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_ASPM_HELP),
+        default = 4 , defaultstore = MyStandardDefault,
+        option text = STRING_TOKEN(STR_DISABLED_STRING),        value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_AUTO_STRING),            value = 4, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCIE_ASPM_L0S_PROMPT),   value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCIE_ASPM_L1_PROMPT),    value = 2, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval PCH_SETUP.DmiAspm == 0;
+        numeric varid = PCH_SETUP.DmiAspmL1ExitLatency,
+          prompt      = STRING_TOKEN(STR_DMI_L1_EXIT_LATENCY_PROMPT),
+          help        = STRING_TOKEN(STR_DMI_L1_EXIT_LATENCY_HELP),
+          flags       = RESET_REQUIRED,
+          minimum     = 0,
+          maximum     = 7,
+          step        = 1,
+          default     = 6,
+        endnumeric;
+      endif;
+
+      oneof varid   = SETUP_DATA.Gen3RtcoRtpoEnable,
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_RTCO_EQ_RTPO_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_GEN3_RTCO_EQ_RTPO_HELP),
+        option text = STRING_TOKEN(STR_DISABLED_STRING),      value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED_STRING),       value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      goto DMI_GEN3_RTCO_COE_OVERRIDE_FORM_ID,
+        prompt = STRING_TOKEN(STR_DMI_GEN3_RTCO_EQ_RTPO_PROMPT),
+        help   = STRING_TOKEN(STR_DMI_GEN3_RTCO_EQ_RTPO_HELP);
+
+      oneof varid   = SETUP_DATA.Gen4RtcoRtpoEnable,
+        prompt      = STRING_TOKEN(STR_DMI_GEN4_RTCO_EQ_RTPO_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_GEN4_RTCO_EQ_RTPO_HELP),
+        option text = STRING_TOKEN(STR_DISABLED_STRING),      value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED_STRING),       value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval SETUP_DATA.Gen4RtcoRtpoEnable == 0;
+        goto DMI_GEN4_RTCO_COE_OVERRIDE_FORM_ID,
+          prompt = STRING_TOKEN(STR_DMI_GEN4_RTCO_EQ_RTPO_PROMPT),
+          help   = STRING_TOKEN(STR_DMI_GEN4_RTCO_EQ_RTPO_HELP);
+      endif;
+
+      SEPARATOR
+      goto ADVANCED_DMI_OPTIONS_FORM_ID,
+        prompt = STRING_TOKEN(STR_DMI_ADVANCED_OPTIONS),
+        help   = STRING_TOKEN(STR_DMI_ADVANCED_OPTIONS);
+    endform;
+
+    form formid = ADVANCED_DMI_OPTIONS_FORM_ID,
+    title     = STRING_TOKEN(STR_DMI_ADVANCED_OPTIONS);
+        oneof varid   = PCH_SETUP.DmiGen3EqPh2Enable,
+          prompt      = STRING_TOKEN(STR_DMI_GEN3_EQ_PHASE2_PROMPT),
+          help        = STRING_TOKEN(STR_GEN3_EQ_PHASE2_HELP),
+          option text = STRING_TOKEN(STR_DISABLED_STRING),       value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED_STRING),        value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_AUTO_STRING),           value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          inconsistentif
+            prompt    = STRING_TOKEN(STR_EQ_PH2_PH3_INCONSISTENT_PROMPT),
+            ideqval PCH_SETUP.DmiGen3EqPh2Enable == 0 AND ideqval PCH_SETUP.DmiGen3EqPh3Method == 1
+          endif
+        endoneof;
+
+        oneof varid   = PCH_SETUP.DmiGen3EqPh3Method,
+          prompt      = STRING_TOKEN(STR_DMI_GEN3_EQ_PHASE3_METHOD_PROMPT),
+          help        = STRING_TOKEN(STR_GEN3_EQ_PHASE3_METHOD_HELP),
+          option text = STRING_TOKEN (STR_AUTO_STRING),           value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_EQ_PH3_METHOD_HWEQ),    value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_EQ_PH3_METHOD_SWEQ),    value = 2, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_EQ_PH3_METHOD_STATIC),  value = 3, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_DISABLED_STRING),      value = 4, flags = RESET_REQUIRED;
+          inconsistentif
+            prompt    = STRING_TOKEN(STR_EQ_PH2_PH3_INCONSISTENT_PROMPT),
+            ideqval PCH_SETUP.DmiGen3EqPh2Enable == 0 AND ideqval PCH_SETUP.DmiGen3EqPh3Method == 1
+          endif
+        endoneof;
+
+        oneof varid   = PCH_SETUP.DmiGen3ProgramStaticEq,
+          prompt      = STRING_TOKEN(STR_DMI_GEN3_EQ_PROMPT),
+          help        = STRING_TOKEN(STR_DMI_GEN3_EQ_HELP),
+          option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_ENABLED_STRING),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        endoneof;
+
+        suppressif ideqval PCH_SETUP.DmiGen3ProgramStaticEq == 0;
+          goto DMI_GEN3_RP_PRESET_FORM_ID,
+            prompt = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_PROMPT),
+            help   = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_HELP);
+
+          goto DMI_GEN3_EP_PRESET_FORM_ID,
+            prompt = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_PROMPT),
+            help   = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_HELP);
+
+          goto DMI_GEN3_EP_HINT_FORM_ID,
+            prompt = STRING_TOKEN(STR_GEN3_END_POINT_HINT_PROMPT),
+            help   = STRING_TOKEN(STR_GEN3_END_POINT_HINT_HELP);
+        endif;
+
+        oneof varid  = PCH_SETUP.DmiUpPortTranPresetEn,
+          prompt      = STRING_TOKEN(STR_PCH_DMI_UP_PORT_PRESET_ENABLE),
+          help        = STRING_TOKEN(STR_PCH_DMI_UP_PORT_PRESET_HELP),
+          option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+
+        grayoutif NOT ideqval PCH_SETUP.DmiUpPortTranPresetEn == FORCE_ENABLE;
+          numeric varid   = PCH_SETUP.PchDmiUpPortTranPreset[0],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_UPL0TP_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_UPLTP_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 10,
+              step        = 0,
+              default     = 7,
+          endnumeric;
+
+          numeric varid   = PCH_SETUP.PchDmiUpPortTranPreset[1],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_UPL1TP_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_UPLTP_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 10,
+              step        = 0,
+              default     = 7,
+          endnumeric;
+
+          numeric varid   = PCH_SETUP.PchDmiUpPortTranPreset[2],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_UPL2TP_PROMPT),
+                help        = STRING_TOKEN(STR_PCH_DMI_UPLTP_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 10,
+              step        = 0,
+              default     = 7,
+          endnumeric;
+
+          numeric varid   = PCH_SETUP.PchDmiUpPortTranPreset[3],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_UPL3TP_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_UPLTP_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 10,
+              step        = 0,
+              default     = 7,
+          endnumeric;
+          numeric varid   = PCH_SETUP.PchDmiUpPortTranPreset[4],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_UPL4TP_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_UPLTP_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 10,
+              step        = 0,
+              default     = 7,
+          endnumeric;
+
+          numeric varid   = PCH_SETUP.PchDmiUpPortTranPreset[5],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_UPL5TP_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_UPLTP_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 10,
+              step        = 0,
+              default     = 7,
+          endnumeric;
+
+          numeric varid   = PCH_SETUP.PchDmiUpPortTranPreset[6],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_UPL6TP_PROMPT),
+                help        = STRING_TOKEN(STR_PCH_DMI_UPLTP_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 10,
+              step        = 0,
+              default     = 7,
+          endnumeric;
+
+          numeric varid   = PCH_SETUP.PchDmiUpPortTranPreset[7],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_UPL7TP_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_UPLTP_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 10,
+              step        = 0,
+              default     = 7,
+          endnumeric;
+        endif;
+
+        oneof varid   = PCH_SETUP.PchDmiTranCoOverEn[0],
+            prompt      = STRING_TOKEN(STR_PCH_DMI_L0TCOE_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_DMI_LTCOE_HELP),
+            option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval PCH_SETUP.PchDmiTranCoOverEn[0] == FORCE_ENABLE;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPostCur[0],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L0TPRECO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPRECO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPreCur[0],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L0TPOSTCO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPOSTCO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+        endif;
+
+        oneof varid   = PCH_SETUP.PchDmiTranCoOverEn[1],
+            prompt      = STRING_TOKEN(STR_PCH_DMI_L1TCOE_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_DMI_LTCOE_HELP),
+            option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval PCH_SETUP.PchDmiTranCoOverEn[1] == FORCE_ENABLE;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPostCur[1],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L1TPRECO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPRECO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPreCur[1],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L1TPOSTCO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPOSTCO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+        endif;
+
+        oneof varid   = PCH_SETUP.PchDmiTranCoOverEn[2],
+            prompt      = STRING_TOKEN(STR_PCH_DMI_L2TCOE_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_DMI_LTCOE_HELP),
+            option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval PCH_SETUP.PchDmiTranCoOverEn[2] == FORCE_ENABLE;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPostCur[2],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L2TPRECO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPRECO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPreCur[2],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L2TPOSTCO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPOSTCO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+        endif;
+
+        oneof varid   = PCH_SETUP.PchDmiTranCoOverEn[3],
+            prompt      = STRING_TOKEN(STR_PCH_DMI_L3TCOE_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_DMI_LTCOE_HELP),
+            option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval PCH_SETUP.PchDmiTranCoOverEn[3] == FORCE_ENABLE;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPostCur[3],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L3TPRECO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPRECO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPreCur[3],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L3TPOSTCO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPOSTCO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+        endif;
+
+        oneof varid   = PCH_SETUP.PchDmiTranCoOverEn[4],
+            prompt      = STRING_TOKEN(STR_PCH_DMI_L4TCOE_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_DMI_LTCOE_HELP),
+            option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval PCH_SETUP.PchDmiTranCoOverEn[4] == FORCE_ENABLE;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPostCur[4],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L4TPRECO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPRECO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPreCur[4],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L4TPOSTCO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPOSTCO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+        endif;
+
+        oneof varid   = PCH_SETUP.PchDmiTranCoOverEn[5],
+            prompt      = STRING_TOKEN(STR_PCH_DMI_L5TCOE_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_DMI_LTCOE_HELP),
+            option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval PCH_SETUP.PchDmiTranCoOverEn[5] == FORCE_ENABLE;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPostCur[5],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L5TPRECO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPRECO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPreCur[5],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L5TPOSTCO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPOSTCO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+        endif;
+
+        oneof varid   = PCH_SETUP.PchDmiTranCoOverEn[6],
+            prompt      = STRING_TOKEN(STR_PCH_DMI_L6TCOE_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_DMI_LTCOE_HELP),
+            option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval PCH_SETUP.PchDmiTranCoOverEn[6] == FORCE_ENABLE;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPostCur[6],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L6TPRECO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPRECO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPreCur[6],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L6TPOSTCO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPOSTCO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+        endif;
+
+        oneof varid   = PCH_SETUP.PchDmiTranCoOverEn[7],
+            prompt      = STRING_TOKEN(STR_PCH_DMI_L7TCOE_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_DMI_LTCOE_HELP),
+            option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+
+        suppressif NOT ideqval PCH_SETUP.PchDmiTranCoOverEn[7] == FORCE_ENABLE;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPostCur[7],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L7TPRECO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPRECO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+          numeric varid   = PCH_SETUP.PchDmiTranCoOverPreCur[7],
+              prompt      = STRING_TOKEN(STR_PCH_DMI_L7TPOSTCO_PROMPT),
+              help        = STRING_TOKEN(STR_PCH_DMI_LTPOSTCO_HELP),
+              flags       = RESET_REQUIRED,
+              minimum     = 0,
+              maximum     = 63,
+              step        = 0,
+              default     = 5,
+          endnumeric;
+        endif;
+
+        oneof varid   = PCH_SETUP.PchDmiRtlepceb,
+            prompt      = STRING_TOKEN(STR_PCH_DMI_RTLEPCEB_PROMPT),
+            help        = STRING_TOKEN(STR_PCH_DMI_RTLEPCEB_HELP),
+            option text = STRING_TOKEN(STR_PLATFORM_POR), value = 0, flags = RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+            option text = STRING_TOKEN(STR_DISABLED), value = 2, flags = RESET_REQUIRED;
+        endoneof;
+    endform;
+
+    form formid = AUTO_ID(DMI_GEN3_RP_PRESET_FORM_ID),
+    title       = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_PROMPT);
+
+      SUBTITLE(STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_PROMPT))
+      SEPARATOR
+
+      numeric varid = PCH_SETUP.DmiGen3RootPortPreset[OFFSET_0],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_ROOT_PORT_PRESET_LANE0_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_LANE0_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 4,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3RootPortPreset[OFFSET_1],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_ROOT_PORT_PRESET_LANE1_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_LANE1_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 4,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3RootPortPreset[OFFSET_2],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_ROOT_PORT_PRESET_LANE2_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_LANE2_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 4,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3RootPortPreset[OFFSET_3],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_ROOT_PORT_PRESET_LANE3_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_LANE3_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 4,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3RootPortPreset[OFFSET_4],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_ROOT_PORT_PRESET_LANE4_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_LANE4_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 4,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3RootPortPreset[OFFSET_5],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_ROOT_PORT_PRESET_LANE5_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_LANE5_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 4,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3RootPortPreset[OFFSET_6],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_ROOT_PORT_PRESET_LANE6_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_LANE6_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 4,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3RootPortPreset[OFFSET_7],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_ROOT_PORT_PRESET_LANE7_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_ROOT_PORT_PRESET_LANE7_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 4,
+      endnumeric;
+    endform;
+
+    form formid = AUTO_ID(DMI_GEN3_EP_PRESET_FORM_ID),
+    title       = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_PROMPT);
+
+      SUBTITLE(STRING_TOKEN(STR_GEN3_END_POINT_PRESET_PROMPT))
+      SEPARATOR
+
+      numeric varid = PCH_SETUP.DmiGen3EndPointPreset[OFFSET_0],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_PRESET_LANE0_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_LANE0_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 7,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointPreset[OFFSET_1],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_PRESET_LANE1_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_LANE1_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 7,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointPreset[OFFSET_2],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_PRESET_LANE2_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_LANE2_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 7,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointPreset[OFFSET_3],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_PRESET_LANE3_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_LANE3_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 7,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.DmiGen3EndPointPreset[OFFSET_4],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_PRESET_LANE4_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_LANE4_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 7,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointPreset[OFFSET_5],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_PRESET_LANE5_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_LANE5_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 7,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointPreset[OFFSET_6],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_PRESET_LANE6_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_LANE6_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 7,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointPreset[OFFSET_7],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_PRESET_LANE7_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_PRESET_LANE7_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 9,
+        step        = 1,
+        default     = 7,
+      endnumeric;
+    endform;
+
+    form formid = AUTO_ID(DMI_GEN3_EP_HINT_FORM_ID),
+    title       = STRING_TOKEN(STR_GEN3_END_POINT_HINT_PROMPT);
+
+      SUBTITLE(STRING_TOKEN(STR_GEN3_END_POINT_HINT_PROMPT))
+      SEPARATOR
+
+      numeric varid = PCH_SETUP.DmiGen3EndPointHint[OFFSET_0],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_HINT_LANE0_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_HINT_LANE0_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 6,
+        step        = 1,
+        default     = 2,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointHint[OFFSET_1],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_HINT_LANE1_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_HINT_LANE1_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 6,
+        step        = 1,
+        default     = 2,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointHint[OFFSET_2],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_HINT_LANE2_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_HINT_LANE2_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 6,
+        step        = 1,
+        default     = 2,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointHint[OFFSET_3],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_HINT_LANE3_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_HINT_LANE3_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 6,
+        step        = 1,
+        default     = 2,
+      endnumeric;
+
+      numeric varid = PCH_SETUP.DmiGen3EndPointHint[OFFSET_4],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_HINT_LANE4_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_HINT_LANE4_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 6,
+        step        = 1,
+        default     = 2,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointHint[OFFSET_5],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_HINT_LANE5_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_HINT_LANE5_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 6,
+        step        = 1,
+        default     = 2,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointHint[OFFSET_6],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_HINT_LANE6_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_HINT_LANE6_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 6,
+        step        = 1,
+        default     = 2,
+      endnumeric;
+      numeric varid = PCH_SETUP.DmiGen3EndPointHint[OFFSET_7],
+        prompt      = STRING_TOKEN(STR_DMI_GEN3_END_POINT_HINT_LANE7_PROMPT),
+        help        = STRING_TOKEN(STR_GEN3_END_POINT_HINT_LANE7_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 6,
+        step        = 1,
+        default     = 2,
+      endnumeric;
+    endform;
+
+ // RTCO Coe
+
+    form formid = AUTO_ID(DMI_GEN3_RTCO_COE_OVERRIDE_FORM_ID),
+    title       = STRING_TOKEN(STR_DMI_GEN3_RTCO_EQ_RTPO_PROMPT);
+
+      SUBTITLE(STRING_TOKEN(STR_DMI_GEN3_RTCO_EQ_RTPO_PROMPT))
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpre[OFFSET_0],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE0_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE0_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 4,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpo[OFFSET_0],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE0_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE0_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 5,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpre[OFFSET_1],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE1_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE1_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 6,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpo[OFFSET_1],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE1_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE1_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 7,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpre[OFFSET_2],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE2_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE2_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 8,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpo[OFFSET_2],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE2_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE2_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpre[OFFSET_3],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE3_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE3_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpo[OFFSET_3],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE3_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE3_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+    suppressif ideqval SETUP_DATA.Gen3RtcoRtpoEnable == 0;
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpre[OFFSET_4],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE4_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE4_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpo[OFFSET_4],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE4_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE4_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpre[OFFSET_5],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE5_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE5_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpo[OFFSET_5],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE5_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE5_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpre[OFFSET_6],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE6_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE6_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpo[OFFSET_6],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE6_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE6_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpre[OFFSET_7],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE7_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE7_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen3RtcoCpo[OFFSET_7],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE7_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE7_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+  endif;
+  endform;
+
+//Gen4 RTCO
+    form formid = AUTO_ID(DMI_GEN4_RTCO_COE_OVERRIDE_FORM_ID),
+    title       = STRING_TOKEN(STR_DMI_GEN4_RTCO_EQ_RTPO_PROMPT);
+
+      SUBTITLE(STRING_TOKEN(STR_DMI_GEN4_RTCO_EQ_RTPO_PROMPT))
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpre[OFFSET_0],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE0_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE0_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 4,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpo[OFFSET_0],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE0_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE0_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 5,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpre[OFFSET_1],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE1_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE1_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 6,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpo[OFFSET_1],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE1_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE1_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 7,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpre[OFFSET_2],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE2_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE2_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpo[OFFSET_2],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE2_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE2_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpre[OFFSET_3],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE3_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE3_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpo[OFFSET_3],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE3_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE3_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpre[OFFSET_4],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE4_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE4_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpo[OFFSET_4],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE4_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE4_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpre[OFFSET_5],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE5_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE5_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpo[OFFSET_5],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE5_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE5_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpre[OFFSET_6],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE6_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE6_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpo[OFFSET_6],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE6_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE6_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpre[OFFSET_7],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE7_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPRE_LANE7_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+
+      numeric varid = SETUP_DATA.DmiGen4RtcoCpo[OFFSET_7],
+        prompt      = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE7_PROMPT),
+        help        = STRING_TOKEN(STR_DMI_RTCO_CPO_LANE7_HELP),
+        flags       = RESET_REQUIRED,
+        minimum     = 0,
+        maximum     = 63,
+        step        = 1,
+        default     = 0,
+      endnumeric;
+    endform;
+//end of RTCO

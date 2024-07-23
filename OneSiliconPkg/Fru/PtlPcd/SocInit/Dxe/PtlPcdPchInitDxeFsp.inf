@@ -1,0 +1,95 @@
+## @file
+# Component description file for Pch Initialization driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2018 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+INF_VERSION = 0x00010017
+BASE_NAME = PtlPcdPchInitDxeFsp
+FILE_GUID = 8531CFD5-3CE7-442C-AE19-703C5947B8BB
+VERSION_STRING = 1.0
+MODULE_TYPE = DXE_DRIVER
+ENTRY_POINT = PchInitEntryPointDxeFsp
+
+
+[LibraryClasses]
+S3BootScriptLib
+UefiBootServicesTableLib
+DebugLib
+IoLib
+UefiLib
+DxeServicesTableLib
+UefiDriverEntryPoint
+UefiRuntimeServicesTableLib
+ConfigBlockLib
+PmcLib
+PmcPrivateLib
+PmcPrivateLibWithS3
+SataSocLib
+SiScheduleResetLib
+DxeEspiPrivateLib
+PchPciBdfLib
+DciPrivateLib
+S3PciSegmentLib
+SocInfoLib
+SpiSocLib
+SpiInitLib
+SerialIoPrivateLib
+PtlPcdGpioNativeLib
+GpioV2AccessLib
+LpssI2cSocLib
+LpssControllerInfoLib
+P2sbPrivateLib
+
+[Packages]
+MdePkg/MdePkg.dec
+OneSiliconPkg/SiPkg.dec
+
+
+[Pcd]
+gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
+gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMin
+gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMax
+
+[Sources]
+PchInitDxeFsp.c
+PchInit.h
+PchInit.c
+
+
+[Protocols]
+gEfiPciEnumerationCompleteProtocolGuid ## CONSUMES
+
+
+[Guids]
+gSiConfigHobGuid                 ## CONSUMES
+gPchPmcConfigHobGuid             ## CONSUMES
+gPchLpssUartConfigHobGuid        ## CONSUMES
+gPchLpssSpiConfigHobGuid         ## CONSUMES
+gPchItssConfigHobGuid            ## CONSUMES
+gPchHdaConfigHobGuid             ## CONSUMES
+gPchPcieRpConfigHobGuid          ## CONSUMES
+gPchEspiConfigHobGuid            ## CONSUMES
+gPchP2SbConfigHobGuid            ## CONSUMES
+gTraceHubDataHobGuid             ## CONSUMES
+
+[Depex]
+gEfiPciHostBridgeResourceAllocationProtocolGuid ## This is to ensure that PCI MMIO and IO resource has been prepared and available for this driver to allocate.

@@ -1,0 +1,865 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2014 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+#include "OverClockStringPool.hfr"
+#include "SetupPreProcTools.hfr"
+
+  form formid = AUTO_ID(PERFORMANCE_MENU_CONFIG_FORM_ID),
+  title     = STRING_TOKEN(STR_PERFORMANCE_MENU_CONFIGURATION);
+
+    SUBTITLE(STRING_TOKEN(STR_PERFORMANCE_MENU_CONFIGURATION))
+    SEPARATOR
+
+    oneof varid   = OC_SETUP.OverclockingSupport,
+    questionid    = AUTO_ID(KEY_OC_ENABLE_DEPENDENCY),
+      prompt      = STRING_TOKEN(STR_OVERCLOCKING_MENU_CONFIGURATION),
+      help        = STRING_TOKEN(STR_OVERCLOCKING_CONFIGURATION_HELP),
+      flags       = INTERACTIVE,
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
+    endoneof;
+
+  suppressif ideqval OC_SETUP.OverclockingSupport == 0 OR ideqval OC_SETUP.OverclockingMsrStatus == 0;
+    oneof varid   = OC_SETUP.UnderVoltProtection,
+      prompt      = STRING_TOKEN(STR_UNDERVOLT_PROTECTION),
+      help        = STRING_TOKEN(STR_UNDERVOLT_PROTECTION_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED) , value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+  endif;
+
+    suppressif ideqval SETUP_CPU_FEATURES.PerCoreHtDisableSupported == 0 OR ideqval OC_SETUP.OverclockingSupport == 0;
+      numeric varid = OC_SETUP.PerCoreHtDisable,
+        prompt  = STRING_TOKEN (STR_PER_CORE_HT_DISABLE),
+        help    = STRING_TOKEN (STR_PER_CORE_HT_DISABLE_HELP),
+        flags   = RESET_REQUIRED | INTERACTIVE | DISPLAY_UINT_HEX,
+        minimum = 0,
+        maximum = 0x7F,
+        step    = 1,
+        default = 0,
+      endnumeric;
+    endif;
+
+    oneof varid   = PCH_SETUP.WdtEnable,
+      prompt      = STRING_TOKEN(STR_WDT_ENABLE),
+      help        = STRING_TOKEN(STR_WDT_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
+    endoneof;
+
+    goto BCLK_CONFIG_FORM_ID,
+    prompt  = STRING_TOKEN(STR_BCLK_CONFIGURATION),
+    help    = STRING_TOKEN(STR_BCLK_CONFIGURATION_HELP);
+
+    suppressif ideqval OC_SETUP.OverclockingSupport == 0;
+
+      oneof varid   = OC_SETUP.BclkAdaptiveVoltageEnable,
+        prompt      = STRING_TOKEN(STR_BCLK_ADAPTIVE_VOLTAGE_ENABLE),
+        help        = STRING_TOKEN(STR_BCLK_ADAPTIVE_VOLTAGE_ENABLE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = OC_SETUP.VcciaBootVoltageSel,
+
+        prompt      = STRING_TOKEN(STR_VCCIA_BOOT_VOLTAGE_CONFIGURATION),
+        help        = STRING_TOKEN(STR_VCCIA_BOOT_VOLTAGE_CONFIGURATION_HELP),
+        option text = STRING_TOKEN(STR_NOMINAL), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_HIGH_VOLTAGE), value = 1, flags =  RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = OC_SETUP.VccsaBootVoltageSel,
+        prompt      = STRING_TOKEN(STR_VCCSA_BOOT_VOLTAGE_CONFIGURATION),
+        help        = STRING_TOKEN(STR_VCCSA_BOOT_VOLTAGE_CONFIGURATION_HELP),
+        option text = STRING_TOKEN(STR_NOMINAL), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_HIGH_VOLTAGE), value = 1, flags =  RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = OC_SETUP.CpuBandgapRefMode,
+        prompt      = STRING_TOKEN(STR_CPU_BGREF_MODE_CONFIGURATION),
+        help        = STRING_TOKEN(STR_CPU_BGREF_MODE_CONFIGURATION_HELP),
+        option text = STRING_TOKEN(STR_NORMAL), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_BANDGAP_BYPASSED), value = 1, flags =  RESET_REQUIRED;
+      endoneof;
+
+      suppressif NOT ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorDesktop;
+        numeric varid = OC_SETUP.PvdRatioThreshold[0],
+          prompt  = STRING_TOKEN (STR_PVD_RATIO_THRESHOLD_SOC),
+          help    = STRING_TOKEN (STR_PVD_RATIO_THRESHOLD_SOC_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 63,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        suppressif NOT ideqval OC_SETUP.PvdRatioThreshold[0] == 0;
+          numeric varid = OC_SETUP.PvdMode[0],
+            prompt  = STRING_TOKEN (STR_PVD_MODE_SELECT_SOC),
+            help    = STRING_TOKEN (STR_PVD_MODE_SELECT_SOC_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 3,
+            step    = 1,
+            default = 0,
+          endnumeric;
+        endif;
+
+        numeric varid = OC_SETUP.PvdRatioThreshold[1],
+          prompt  = STRING_TOKEN (STR_PVD_RATIO_THRESHOLD_CPU),
+          help    = STRING_TOKEN (STR_PVD_RATIO_THRESHOLD_CPU_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 63,
+          step    = 1,
+          default = 0,
+        endnumeric;
+
+        suppressif NOT ideqval OC_SETUP.PvdRatioThreshold[1] == 0;
+          numeric varid = OC_SETUP.PvdMode[1],
+            prompt  = STRING_TOKEN (STR_PVD_MODE_SELECT_CPU),
+            help    = STRING_TOKEN (STR_PVD_MODE_SELECT_CPU_HELP),
+            flags   = RESET_REQUIRED,
+            minimum = 0,
+            maximum = 3,
+            step    = 1,
+            default = 0,
+          endnumeric;
+        endif;
+
+        numeric varid = OC_SETUP.FllOverclockMode,
+          prompt  = STRING_TOKEN (STR_FLL_MODE_SELECT),
+          help    = STRING_TOKEN (STR_FLL_MODE_SELECT_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 0,
+          maximum = 3,
+          step    = 1,
+          default = 0,
+        endnumeric;
+      endif;
+
+      numeric varid = OC_SETUP.CpuD2dRatio,
+        prompt  = STRING_TOKEN (STR_CPU_D2D_RATIO),
+        help    = STRING_TOKEN (STR_CPU_D2D_RATIO_HELP),
+        flags   = RESET_REQUIRED,
+        key     = AUTO_ID (KEY_CPU_D2D_RATIO), // 0 indicates no setting. Acceptable values from 15 to 40. Rest all set to 0.
+        minimum = 0,
+        maximum = 40,
+        step    = 1,
+        default = 0,
+      endnumeric;
+
+      oneof varid   = OC_SETUP.TscDisableHwFixup,
+        prompt      = STRING_TOKEN(STR_TSC_DISABLE_HW_FIXUP),
+        help        = STRING_TOKEN(STR_TSC_DISABLE_HW_FIXUP_HELP),
+        option text = STRING_TOKEN(STR_ENABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid   = OC_SETUP.CpuDlvrMode,
+        prompt      = STRING_TOKEN(STR_CPU_DLVR_MODE),
+        help        = STRING_TOKEN(STR_CPU_DLVR_MODE_HELP),
+        option text = STRING_TOKEN(STR_REGULATION_MODE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_POWER_GATE_MODE), value = 1, flags =  RESET_REQUIRED;
+      endoneof;
+
+      suppressif ideqval CPU_SETUP.MtlArlSocDetected == 1;
+        oneof varid   = OC_SETUP.CoreOpPointReportingEn,
+          prompt      = STRING_TOKEN(STR_CORE_OP_POINT_REPORTING),
+          help        = STRING_TOKEN(STR_CORE_OP_POINT_REPORTING_HELP),
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        endoneof;
+      endif; // end of MtlArlSocDetected check
+    endif;
+
+    suppressif ideqval OC_SETUP.OverclockingSupport == 0;
+
+      goto PROCESSOR_OC_CONFIG_FORM_ID,
+      prompt  = STRING_TOKEN(STR_PROCESSOR_CONFIGURATION),
+      help    = STRING_TOKEN(STR_PROCESSOR_CONFIGURATION_HELP);
+
+      goto MEMSS_OC_CONFIG_FORM_ID,
+      prompt  = STRING_TOKEN(STR_MEMORY_CONFIGURATION),
+      help    = STRING_TOKEN(STR_MEMORY_CONFIGURATION_HELP);
+
+      goto RING_OC_CONFIG_FORM_ID,
+      prompt  = STRING_TOKEN(STR_RING_CONFIGURATION),
+      help    = STRING_TOKEN(STR_RING_CONFIGURATION_HELP);
+
+      goto GT_OC_CONFIG_FORM_ID,
+      prompt  = STRING_TOKEN(STR_GT_CONFIGURATION),
+      help    = STRING_TOKEN(STR_GT_CONFIGURATION_HELP);
+
+      goto UNCORE_OC_CONFIG_FORM_ID,
+      prompt  = STRING_TOKEN(STR_SA_CONFIGURATION),
+      help    = STRING_TOKEN(STR_SA_CONFIGURATION_HELP);
+
+      goto NGU_OC_CONFIG_FORM_ID,
+      prompt  = STRING_TOKEN(STR_NGU_CONFIGURATION),
+      help    = STRING_TOKEN(STR_NGU_CONFIGURATION_HELP);
+
+      goto PLL_TRIM_CONFIG_FORM_ID,
+      prompt  = STRING_TOKEN(STR_PLL_TRIM_CONFIGURATION),
+      help    = STRING_TOKEN(STR_PLL_TRIM_CONFIGURATION_HELP);
+
+      suppressif TRUE;
+        goto VCC_CONFIG_FORM_ID,
+        prompt  = STRING_TOKEN(STR_VCC_CONFIGURATION),
+        help    = STRING_TOKEN(STR_VCC_CONFIGURATION_HELP);
+      endif;
+
+      goto VR_ICCMAX_CURRENT_OVERRIDE_CONFIG_FORM_ID,
+      prompt  = STRING_TOKEN(STR_VR_ICCMAX_CURRENT_OVERRIDE_CONFIGURATION),
+      help    = STRING_TOKEN(STR_VR_ICCMAX_CURRENT_OVERRIDE_CONFIGURATION_HELP);
+    endif;
+
+  endform;
+
+  form formid = AUTO_ID(BCLK_CONFIG_FORM_ID),
+    title = STRING_TOKEN(STR_BCLK_CONFIGURATION);
+
+    //
+    // Integrate BCLK
+    //
+    suppressif ideqval CPU_SETUP.DccClkCtrl == 1;
+      SUBTITLE(STRING_TOKEN(STR_ICC_CPU_BCLK_PROMPT))
+      text
+        help  = STRING_TOKEN(STR_EMPTY_STRING),
+        text  = STRING_TOKEN(STR_CPU_BCLK_FREQUENCY_NAME),
+        text  = STRING_TOKEN(STR_CPU_BCLK_FREQUENCY_VALUE),
+        flags = 0,
+        key   = 0;
+
+      text
+        help  = STRING_TOKEN(STR_EMPTY_STRING),
+        text  = STRING_TOKEN(STR_SOC_BCLK_FREQUENCY_NAME),
+        text  = STRING_TOKEN(STR_SOC_BCLK_FREQUENCY_VALUE),
+        flags = 0,
+        key   = 0;
+
+      suppressif ideqval OC_SETUP.OverclockingSupport == 0;
+        numeric varid = OC_SETUP.CpuBclkOcFrequency,
+          prompt    = STRING_TOKEN(STR_CPU_BCLK_OC_FREQUENCY),
+          help      = STRING_TOKEN(STR_CPU_BCLK_OC_FREQUENCY_HELP),
+          flags     = RESET_REQUIRED,
+          minimum   = 0,
+          maximum   = 100000,
+          step      = 1,
+          default   = 0, //this value is ignored, default values are retrieved from C code
+        endnumeric;
+
+        numeric varid = OC_SETUP.SocBclkOcFrequency,
+          prompt    = STRING_TOKEN(STR_SOC_BCLK_OC_FREQUENCY),
+          help      = STRING_TOKEN(STR_SOC_BCLK_OC_FREQUENCY_HELP),
+          flags     = RESET_REQUIRED,
+          minimum   = 0,
+          maximum   = 100000,
+          step      = 1,
+          default   = 0, //this value is ignored, default values are retrieved from C code
+        endnumeric;
+      endif;
+    endif;
+
+    SEPARATOR
+
+    //
+    // Discrete BCLK
+    //
+    suppressif ideqval CPU_SETUP.DccClkCtrl == 0;
+      SUBTITLE(STRING_TOKEN(STR_DCC_CPU_BCLK_PROMPT))
+      text
+        help  = STRING_TOKEN(STR_EMPTY_STRING),
+        text  = STRING_TOKEN(STR_DCC_CPU_BCLK_FREQ_CURRENT),
+        text  = STRING_TOKEN(STR_DCC_CPU_BCLK_FREQ_VALUE),
+        flags = 0,
+        key   = 0;
+
+      text
+        help  = STRING_TOKEN(STR_EMPTY_STRING),
+        text  = STRING_TOKEN(STR_DCC_PEGDMI_CLK_FREQ_CURRENT),
+        text  = STRING_TOKEN(STR_DCC_PEGDMI_CLK_FREQ_VALUE),
+        flags = 0,
+        key   = 0;
+
+      suppressif ideqval OC_SETUP.OverclockingSupport == 0;
+        numeric varid = CPU_SETUP.CpuBclkFreq,
+          prompt      = STRING_TOKEN (STR_DCC_CPU_BCLK_FREQ_PROMPT),
+            help        = STRING_TOKEN (STR_DCC_CPU_BCLK_FREQ_HELP),
+            flags       = DISPLAY_UINT_DEC | RESET_REQUIRED,
+            minimum     = 80,
+            maximum     = 530,
+            step        = 1,
+            default     = 100,
+        endnumeric;
+
+        numeric varid = CPU_SETUP.PegDmiClkFreq,
+          prompt      = STRING_TOKEN (STR_DCC_PEGDMI_CLK_FREQ_PROMPT),
+            help        = STRING_TOKEN (STR_DCC_PEGDMI_CLK_FREQ_HELP),
+            flags       = DISPLAY_UINT_DEC | RESET_REQUIRED,
+            minimum     = 80,
+            maximum     = 200,
+            step        = 1,
+            default     = 100,
+        endnumeric;
+      endif;
+    endif;
+
+    SEPARATOR
+
+    suppressif ideqval OC_SETUP.OverclockingSupport == 0;
+      oneof varid = PCH_SETUP.SocBclkPllOn,
+          prompt      = STRING_TOKEN (STR_PMC_BCLK_PCD_PLL_PROMPT),
+          help        = STRING_TOKEN (STR_PMC_BCLK_PCD_PLL_HELP),
+          option text = STRING_TOKEN (STR_PMC_BCLK_HW_DEFAULT), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_PMC_BCLK_FORCE_ON), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_PMC_BCLK_FORCE_OFF), value = 2, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid = PCH_SETUP.CpuBclkPllOn,
+          prompt      = STRING_TOKEN (STR_PMC_BCLK_CPU_PLL_PROMPT),
+          help        = STRING_TOKEN (STR_PMC_BCLK_CPU_PLL_HELP),
+          option text = STRING_TOKEN (STR_PMC_BCLK_HW_DEFAULT), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_PMC_BCLK_FORCE_ON), value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN (STR_PMC_BCLK_FORCE_OFF), value = 2, flags = RESET_REQUIRED;
+      endoneof;
+
+      oneof varid    = OC_SETUP.ComputeDieSscEnable,
+          prompt       = STRING_TOKEN (STR_CPU_COMPUTE_DIE_SSC_ENABLE_PROMPT),
+          help         = STRING_TOKEN (STR_CPU_COMPUTE_DIE_SSC_ENABLE_HELP),
+          option text  = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text  = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+      oneof varid    = OC_SETUP.SocDieSscEnable,
+          prompt       = STRING_TOKEN (STR_CPU_SOC_DIE_SSC_ENABLE_PROMPT),
+          help         = STRING_TOKEN (STR_CPU_SOC_DIE_SSC_ENABLE_HELP),
+          option text  = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+          option text  = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
+    endif;
+  endform;
+
+  #define OCDOMAIN_INDEX 0
+  form formid = AUTO_ID(PROCESSOR_OC_CONFIG_FORM_ID),
+  title = STRING_TOKEN(STR_PROCESSOR_CONFIGURATION);
+    //
+    // Processor Domain (IA_CORE)
+    //
+    SUBTITLE(STRING_TOKEN(STR_PROCESSOR_CONFIGURATION))
+    SEPARATOR
+    #include "OverClockSetupDomain.hfr"
+  endform;
+  #undef  OCDOMAIN_INDEX
+  #define OCDOMAIN_INDEX 1
+  form formid = AUTO_ID(GT_OC_CONFIG_FORM_ID),
+  title = STRING_TOKEN(STR_GT_CONFIGURATION);
+    //
+    //  GT Domain
+    //
+    SUBTITLE(STRING_TOKEN(STR_GT_CONFIGURATION))
+    SEPARATOR
+    #include "OverClockSetupDomain.hfr"
+  endform;
+  #undef  OCDOMAIN_INDEX
+  #define OCDOMAIN_INDEX 2
+  form formid = AUTO_ID(RING_OC_CONFIG_FORM_ID),
+  title = STRING_TOKEN(STR_RING_CONFIGURATION);
+    //
+    // Ring Domain
+    //
+    SUBTITLE(STRING_TOKEN(STR_RING_CONFIGURATION))
+    SEPARATOR
+    #include "OverClockSetupDomain.hfr"
+  endform;
+  #undef  OCDOMAIN_INDEX
+  #define OCDOMAIN_INDEX 4
+  form formid = AUTO_ID(UNCORE_OC_CONFIG_FORM_ID),
+  title = STRING_TOKEN(STR_SA_CONFIGURATION);
+    //
+    // SA
+    //
+    SUBTITLE(STRING_TOKEN(STR_SA_CONFIGURATION))
+    SEPARATOR
+    #include "OverClockSetupDomain.hfr"
+  endform;
+  #undef  OCDOMAIN_INDEX
+  #define OCDOMAIN_INDEX 6
+  form formid = AUTO_ID(MEMSS_OC_CONFIG_FORM_ID),
+  title = STRING_TOKEN(STR_MEMORY_CONFIGURATION);
+    //
+    // Memory Domain
+    //
+    SUBTITLE(STRING_TOKEN(STR_MEMORY_CONFIGURATION))
+    SEPARATOR
+    #include "OverClockSetupDomain.hfr"
+  endform;
+  #undef  OCDOMAIN_INDEX
+  #define OCDOMAIN_INDEX 7
+  form formid = AUTO_ID(NGU_OC_CONFIG_FORM_ID),
+  title = STRING_TOKEN(STR_NGU_CONFIGURATION);
+    //
+    // NGU Domain
+    //
+    SUBTITLE(STRING_TOKEN(STR_NGU_CONFIGURATION))
+    SEPARATOR
+    #include "OverClockSetupDomain.hfr"
+  endform;
+  #undef  OCDOMAIN_INDEX
+
+  //
+  // Voltage PLL Trim Controls
+  //
+  form formid = AUTO_ID(PLL_TRIM_CONFIG_FORM_ID),
+  title = STRING_TOKEN(STR_PLL_TRIM_CONFIGURATION);
+
+    SUBTITLE(STRING_TOKEN(STR_PLL_TRIM_CONFIGURATION))
+    SEPARATOR
+    numeric varid = OC_SETUP.CorePllVoltageOffset,
+      prompt  = STRING_TOKEN (STR_CORE_PLL_VOLTAGE_OFFSET),
+      help    = STRING_TOKEN (STR_PLL_VOLTAGE_OFFSET_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 15,
+      step    = 1,
+      default = 0,
+    endnumeric;
+
+    numeric varid = OC_SETUP.RingPllVoltageOffset,
+      prompt  = STRING_TOKEN (STR_RING_PLL_VOLTAGE_OFFSET),
+      help    = STRING_TOKEN (STR_PLL_VOLTAGE_OFFSET_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 15,
+      step    = 1,
+      default = 0,
+    endnumeric;
+
+    numeric varid = OC_SETUP.IaAtomPllVoltageOffset,
+      prompt  = STRING_TOKEN (STR_IA_ATOM_PLL_VOLTAGE_OFFSET),
+      help    = STRING_TOKEN (STR_PLL_VOLTAGE_OFFSET_HELP),
+      flags   = RESET_REQUIRED,
+      minimum = 0,
+      maximum = 15,
+      step    = 1,
+      default = 0,
+    endnumeric;
+
+  endform;
+
+  form formid = AUTO_ID(VR_ICCMAX_CURRENT_OVERRIDE_CONFIG_FORM_ID),
+    title = STRING_TOKEN(STR_VR_ICCMAX_CURRENT_OVERRIDE_CONFIGURATION);
+
+    SUBTITLE(STRING_TOKEN(STR_VR_ICCMAX_CURRENT_OVERRIDE_CONFIGURATION))
+    SEPARATOR
+
+    suppressif ideqval CPU_SETUP_VOLATILE_DATA.CoreVrLocked == 1;
+      text
+        help  = STRING_TOKEN(STR_IA_VR_ICCMAX_INFO_HELP),
+        text  = STRING_TOKEN(STR_IA_VR_ICCMAX_INFO_STRING),
+        text  = STRING_TOKEN(STR_IA_VR_ICCMAX_INFO_VALUE),
+        flags = 0,
+        key   = 0;
+    endif;
+
+    suppressif ideqval CPU_SETUP_VOLATILE_DATA.GtVrLocked == 1;
+      text
+        help  = STRING_TOKEN(STR_GT_VR_ICCMAX_INFO_HELP),
+        text  = STRING_TOKEN(STR_GT_VR_ICCMAX_INFO_STRING),
+        text  = STRING_TOKEN(STR_GT_VR_ICCMAX_INFO_VALUE),
+        flags = 0,
+        key   = 0;
+    endif;
+
+    SEPARATOR
+
+    grayoutif ideqval CPU_SETUP_VOLATILE_DATA.CoreVrLocked == 1;
+      grayoutif ideqval OC_SETUP.IaIccUnlimitedMode == 1;
+        numeric varid = OC_SETUP.IaIccMax,
+          prompt  = STRING_TOKEN (STR_IA_ICC_MAX_CURRENT_LIMIT_OVERRIDE),
+          help    = STRING_TOKEN (STR_IA_ICC_MAX_CURRENT_LIMIT_OVERRIDE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 4,
+          maximum = 2047,
+          step    = 1,
+          default = 4,
+        endnumeric;
+      endif;
+
+      oneof varid   = OC_SETUP.IaIccUnlimitedMode,
+        prompt      = STRING_TOKEN(STR_IA_ICC_UNLIMITED_MODE),
+        help        = STRING_TOKEN(STR_IA_ICC_UNLIMITED_MODE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
+      endoneof;
+    endif;
+
+    SEPARATOR
+
+    grayoutif ideqval CPU_SETUP_VOLATILE_DATA.GtVrLocked == 1;
+      grayoutif ideqval OC_SETUP.GtIccUnlimitedMode == 1;
+        numeric varid = OC_SETUP.GtIccMax,
+          prompt  = STRING_TOKEN (STR_GT_ICC_MAX_CURRENT_LIMIT_OVERRIDE),
+          help    = STRING_TOKEN (STR_GT_ICC_MAX_CURRENT_LIMIT_OVERRIDE_HELP),
+          flags   = RESET_REQUIRED,
+          minimum = 4,
+          maximum = 2047,
+          step    = 1,
+          default = 4,
+        endnumeric;
+      endif;
+
+      oneof varid   = OC_SETUP.GtIccUnlimitedMode,
+        prompt      = STRING_TOKEN(STR_GT_ICC_UNLIMITED_MODE),
+        help        = STRING_TOKEN(STR_GT_ICC_UNLIMITED_MODE_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
+      endoneof;
+    endif;
+  endform;
+
+   //
+   // Processor Disable Control
+   //
+   form formid = AUTO_ID(PROCESSOR_DISABLE_FORM_ID),
+   title = STRING_TOKEN(STR_PROCESSOR_DISABLE);
+
+   SEPARATOR
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT0)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[0],
+       prompt   = STRING_TOKEN(STR_CORE_BIT0),
+       help     = STRING_TOKEN(STR_CORE_BIT0_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT1)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[1],
+       prompt   = STRING_TOKEN(STR_CORE_BIT1),
+       help     = STRING_TOKEN(STR_CORE_BIT1_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT2)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[2],
+       prompt   = STRING_TOKEN(STR_CORE_BIT2),
+       help     = STRING_TOKEN(STR_CORE_BIT2_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT3)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[3],
+       prompt   = STRING_TOKEN(STR_CORE_BIT3),
+       help     = STRING_TOKEN(STR_CORE_BIT3_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT4)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[4],
+       prompt   = STRING_TOKEN(STR_CORE_BIT4),
+       help     = STRING_TOKEN(STR_CORE_BIT4_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT5)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[5],
+       prompt   = STRING_TOKEN(STR_CORE_BIT5),
+       help     = STRING_TOKEN(STR_CORE_BIT5_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT6)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[6],
+       prompt   = STRING_TOKEN(STR_CORE_BIT6),
+       help     = STRING_TOKEN(STR_CORE_BIT6_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT7)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[7],
+       prompt   = STRING_TOKEN(STR_CORE_BIT7),
+       help     = STRING_TOKEN(STR_CORE_BIT7_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT8)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[8],
+       prompt   = STRING_TOKEN(STR_CORE_BIT8),
+       help     = STRING_TOKEN(STR_CORE_BIT8_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT9)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[9],
+       prompt   = STRING_TOKEN(STR_CORE_BIT9),
+       help     = STRING_TOKEN(STR_CORE_BIT9_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT10)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[10],
+       prompt   = STRING_TOKEN(STR_CORE_BIT10),
+       help     = STRING_TOKEN(STR_CORE_BIT10_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT11)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[11],
+       prompt   = STRING_TOKEN(STR_CORE_BIT11),
+       help     = STRING_TOKEN(STR_CORE_BIT11_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT12)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[12],
+       prompt   = STRING_TOKEN(STR_CORE_BIT12),
+       help     = STRING_TOKEN(STR_CORE_BIT12_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT13)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[13],
+       prompt   = STRING_TOKEN(STR_CORE_BIT13),
+       help     = STRING_TOKEN(STR_CORE_BIT13_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT14)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[14],
+       prompt   = STRING_TOKEN(STR_CORE_BIT14),
+       help     = STRING_TOKEN(STR_CORE_BIT14_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT15)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[15],
+       prompt   = STRING_TOKEN(STR_CORE_BIT15),
+       help     = STRING_TOKEN(STR_CORE_BIT15_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT16)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[16],
+       prompt   = STRING_TOKEN(STR_CORE_BIT16),
+       help     = STRING_TOKEN(STR_CORE_BIT16_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT17)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[17],
+       prompt   = STRING_TOKEN(STR_CORE_BIT17),
+       help     = STRING_TOKEN(STR_CORE_BIT17_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT18)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[18],
+       prompt   = STRING_TOKEN(STR_CORE_BIT18),
+       help     = STRING_TOKEN(STR_CORE_BIT18_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT19)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[19],
+       prompt   = STRING_TOKEN(STR_CORE_BIT19),
+       help     = STRING_TOKEN(STR_CORE_BIT19_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT20)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[20],
+       prompt   = STRING_TOKEN(STR_CORE_BIT20),
+       help     = STRING_TOKEN(STR_CORE_BIT20_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT21)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[21],
+       prompt   = STRING_TOKEN(STR_CORE_BIT21),
+       help     = STRING_TOKEN(STR_CORE_BIT21_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT22)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[22],
+       prompt   = STRING_TOKEN(STR_CORE_BIT22),
+       help     = STRING_TOKEN(STR_CORE_BIT22_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT23)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[23],
+       prompt   = STRING_TOKEN(STR_CORE_BIT23),
+       help     = STRING_TOKEN(STR_CORE_BIT23_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT24)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[24],
+       prompt   = STRING_TOKEN(STR_CORE_BIT24),
+       help     = STRING_TOKEN(STR_CORE_BIT24_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT25)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[25],
+       prompt   = STRING_TOKEN(STR_CORE_BIT25),
+       help     = STRING_TOKEN(STR_CORE_BIT25_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT26)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[26],
+       prompt   = STRING_TOKEN(STR_CORE_BIT26),
+       help     = STRING_TOKEN(STR_CORE_BIT26_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT27)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[27],
+       prompt   = STRING_TOKEN(STR_CORE_BIT27),
+       help     = STRING_TOKEN(STR_CORE_BIT27_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT28)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[28],
+       prompt   = STRING_TOKEN(STR_CORE_BIT28),
+       help     = STRING_TOKEN(STR_CORE_BIT28_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT29)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[29],
+       prompt   = STRING_TOKEN(STR_CORE_BIT29),
+       help     = STRING_TOKEN(STR_CORE_BIT29_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT30)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[30],
+       prompt   = STRING_TOKEN(STR_CORE_BIT30),
+       help     = STRING_TOKEN(STR_CORE_BIT30_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT31)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[31],
+       prompt   = STRING_TOKEN(STR_CORE_BIT31),
+       help     = STRING_TOKEN(STR_CORE_BIT31_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT32)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[32],
+       prompt   = STRING_TOKEN(STR_CORE_BIT32),
+       help     = STRING_TOKEN(STR_CORE_BIT32_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT33)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[33],
+       prompt   = STRING_TOKEN(STR_CORE_BIT33),
+       help     = STRING_TOKEN(STR_CORE_BIT33_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT34)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[34],
+       prompt   = STRING_TOKEN(STR_CORE_BIT34),
+       help     = STRING_TOKEN(STR_CORE_BIT34_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT35)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[35],
+       prompt   = STRING_TOKEN(STR_CORE_BIT35),
+       help     = STRING_TOKEN(STR_CORE_BIT35_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT36)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[36],
+       prompt   = STRING_TOKEN(STR_CORE_BIT36),
+       help     = STRING_TOKEN(STR_CORE_BIT36_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT37)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[37],
+       prompt   = STRING_TOKEN(STR_CORE_BIT37),
+       help     = STRING_TOKEN(STR_CORE_BIT37_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT38)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[38],
+       prompt   = STRING_TOKEN(STR_CORE_BIT38),
+       help     = STRING_TOKEN(STR_CORE_BIT38_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+   suppressif  (get(OC_SETUP.PerCoreDisableOriMask) & BIT39)  != 0;
+     checkbox varid = OC_SETUP.PerCoreDisable[39],
+       prompt   = STRING_TOKEN(STR_CORE_BIT39),
+       help     = STRING_TOKEN(STR_CORE_BIT39_HELP),
+       flags    = RESET_REQUIRED,
+     endcheckbox;
+   endif;
+
+  endform;

@@ -1,0 +1,111 @@
+### @file
+#  Component information file for firmware version information module.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2013 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = DxeFirmwareVersionInfoLib
+  FILE_GUID                      = CEE33516-58E3-47DB-BB3F-2758B5A76C28
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  LIBRARY_CLASS                  = DxeFirmwareVersionInfoLib
+  CONSTRUCTOR                    = DxeFirmwareVersionInfoLibConstructor
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 EBC
+#
+
+[LibraryClasses]
+  BaseLib
+  IoLib
+  HobLib
+  DebugLib
+  PciSegmentLib
+  BaseMemoryLib
+  DevicePathLib
+  MemoryAllocationLib
+  ReportStatusCodeLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  SiFviLib
+  GbeLib
+  PcdLib
+  EcMiscLib
+  TbtNvmRetimerUpdateLib
+  PmcLib
+
+[Packages]
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeBinPkg/PantherLakeBinPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+
+[Pcd]
+  gPlatformModuleTokenSpaceGuid.PcdPlatformVersionMajor                  ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdPlatformVersionMinor                  ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdPlatformVersionRevision               ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdPlatformVersionBuild                  ## CONSUMES
+  gPlatformModuleTokenSpaceGuid.PcdSourceDebugUseUsb
+  gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdEcPlatformMajorRevision                  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdEcBuildRevision                          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor                          ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportRetimerInfoPresent          ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber         ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable         ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdTcssWaitRetimerDeviceReady     ## CONSUMES
+
+[Sources]
+  DxeFirmwareVersionInfoLib.c
+
+[Protocols]
+  gEfiPxeBaseCodeProtocolGuid                   ## CONSUMES
+  gGopComponentName2ProtocolGuid                ## CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
+  gEfiLoadedImageProtocolGuid                   ## CONSUMES
+  gEfiI2cIoProtocolGuid                         ## CONSUMES
+  gBdsAllDriversConnectedProtocolGuid           ## CONSUMES
+  gEfiSmbiosProtocolGuid                        ## CONSUMES
+  gUsbCRetimerProtocolGuid                      ## CONSUMES
+  gEdkiiPlatformSpecificResetFilterProtocolGuid ## CONSUMES
+  gUsbCCapsuleDebugProgressCodeProtocolGuid     ## CONSUMES
+
+[Guids]
+  gEfiGlobalVariableGuid                        ## CONSUMES
+  gPlatformFviSetupGuid                         ## PRODUCES
+  gSetupVariableGuid                            ## CONSUMES
+  gUndiDriverBinGuid                            ## CONSUMES
+  gAllTbtRetimerDeviceGuid                      ## CONSUMES
+  gUsbCRetimerSetupGuid                         ## CONSUMES
+  gUsbCPdSetupGuid                              ## CONSUMES
+  gEfiEndOfDxeEventGroupGuid                    ## CONSUMES
+
+[Depex]
+  gEfiVariableArchProtocolGuid        AND
+  gEfiSmbiosProtocolGuid

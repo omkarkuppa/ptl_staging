@@ -1,0 +1,2406 @@
+/**@file
+  String definition for SaSetup
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2009 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+/=#
+#include "VFR.uni"
+
+#string STR_EMPTY_STRING                        #language en-US ""
+#string STR_AUTO_STRING                         #language en-US "Auto"
+#string STR_ENABLED_STRING                      #language en-US "Enabled"
+#string STR_DISABLED_STRING                     #language en-US "Disabled"
+#string STR_MANUAL_STRING                       #language en-US "Manual"
+#string STR_NORMAL_STRING                       #language en-US "Normal"
+#string STR_DEFAULT_STRING                      #language en-US "Default"
+
+#string STR_NB_FORM                             #language en-US "System Agent (SA) Configuration"
+#string STR_NB_FORM_HELP                        #language en-US "System Agent (SA) Parameters"
+
+#string STR_MEMORY_FORM                         #language en-US "Memory Configuration"
+#string STR_MEMORY_FORM_HELP                    #language en-US "Memory Configuration Parameters"
+
+#string STR_HOB_BUFFER_SIZE_PROMPT              #language en-US "HOB Buffer Size"
+#string STR_HOB_BUFFER_SIZE_HELP                #language en-US "Size to set HOB Buffer"
+#string STR_1B                                  #language en-US "1B"
+#string STR_1KB                                 #language en-US "1KB"
+#string STR_MAX                                 #language en-US "Max (assuming 63KB total HOB size)"
+
+#string STR_ECC_SUPPORT_PROMPT                  #language en-US "ECC Support"
+#string STR_ECC_SUPPORT_HELP                    #language en-US "Enable/disable DDR Ecc Support"
+
+#string STR_RFI_SETTING_MENU_FORM              #language en-US "RFI Setting"
+#string STR_RFI_SETTING_MENU_FORM_HELP         #language en-US "RFI Setting Menu"
+#string STR_RFI_SETTING_MENU_TITLE             #language en-US "RFI Setting"
+#string STR_SA_CNV_RFIM                        #language en-US "Global DDR RFI Mitigation"
+#string STR_SA_CNV_RFIM_HELP                   #language en-US "This is an option intended to Enable/Disable DDR-RFIM feature for Connectivity\nThis RFI mitigation feature may result in temporary slowdown of the DDR speed."
+
+#string STR_ECC_CORRECTION_MODE_PROMPT          #language en-US "ECC correction mode"
+#string STR_ECC_CORRECTION_MODE_HELP            #language en-US "Set Ecc correction option: SECDED (Single error correction, double error detection) or ZECTED (Zero error correct triple error detection)"
+#string STR_ECC_CORRECTION_MODE_EN              #language en-US "ZECTED"
+#string STR_ECC_CORRECTION_MODE_DIS             #language en-US "SECDED"
+
+#string STR_ECC_GRANULARITY_32B_EN_PROMPT       #language en-US "ECC Granularity"
+#string STR_ECC_GRANULARITY_32B_EN_HELP         #language en-US "Set ECC Granularity to 32B or 64B"
+#string STR_ECC_GRANULARITY_32B_EN_EN           #language en-US "32B"
+#string STR_ECC_GRANULARITY_32B_EN_DIS          #language en-US "64B"
+
+#string STR_LOWER_BASIC_MEMORY_TEST_SIZE_PROMPT     #language en-US "Reduce BasicMemoryTest size"
+#string STR_LOWER_BASIC_MEMORY_TEST_SIZE_HELP       #language en-US "Reduce BasicMemoryTest size: 0(Default)=Disable, 1=Enable"
+
+#string STR_MAX_TOLUD_PROMPT                    #language en-US "Max TOLUD"
+#string STR_MAX_TOLUD_HELP                      #language en-US "Maximum Value of TOLUD. Dynamic assignment would adjust TOLUD automatically based on largest MMIO length of installed graphic controller"
+#string STR_MAX_TOLUD_DYNAMIC_STRING            #language en-US "Dynamic"
+#string STR_MAX_TOLUD_2G_STRING                 #language en-US "2 GB"
+#string STR_MAX_TOLUD_1_75G_STRING              #language en-US "1.75 GB"
+#string STR_MAX_TOLUD_1_5G_STRING               #language en-US "1.5 GB"
+#string STR_MAX_TOLUD_1_25G_STRING              #language en-US "1.25 GB"
+#string STR_MAX_TOLUD_1G_STRING                 #language en-US "1 GB"
+
+#string STR_MRC_DEFAULT                         #language en-US "MRC default"
+
+#string STR_MRC_REV_HELP                        #language en-US "Memory RC Version"
+#string STR_MRC_REV_NAME                        #language en-US "Memory RC Version"
+#string STR_MRC_REV_VALUE                       #language en-US "N/A" //dynamically updated
+
+#string STR_MEMORY_FREQ_HELP                    #language en-US "Displays the Frequency of Memory"
+#string STR_MEMORY_FREQ_NAME                    #language en-US "Memory Frequency"
+#string STR_MEMORY_FREQ_VALUE                   #language en-US "N/A" // Dynamically updated
+
+#string STR_MEMORY_TIMINGS_HELP                 #language en-US "Memory Timings"
+#string STR_MEMORY_TIMINGS_NAME                 #language en-US "Memory Timings (tCL-tRCD-tRP-tRAS)"
+#string STR_MEMORY_TIMINGS_VALUE                #language en-US "N/A"
+
+#string STR_DIMM_CH_SLT_SUBTITLE_HELP           #language en-US "Channel Slot Subtitle"
+#string STR_DIMM_CH0_SLT0_FORM_SUBTITLE         #language en-US "Channel 0 Slot 0"
+#string STR_DIMM_CH0_SLT1_FORM_SUBTITLE         #language en-US "Channel 0 Slot 1"
+#string STR_DIMM_CH1_SLT0_FORM_SUBTITLE         #language en-US "Channel 1 Slot 0"
+#string STR_DIMM_CH1_SLT1_FORM_SUBTITLE         #language en-US "Channel 1 Slot 1"
+
+#string STR_DIMM_MC_CH_SLT_SUBTITLE_HELP        #language en-US "Controller Channel Slot Subtitle"
+#string STR_DIMM_MC0_CH0_SLT0_FORM_SUBTITLE     #language en-US "Controller 0 Channel 0 Slot 0"
+#string STR_DIMM_MC0_CH0_SLT1_FORM_SUBTITLE     #language en-US "Controller 0 Channel 0 Slot 1"
+#string STR_DIMM_MC0_CH1_SLT0_FORM_SUBTITLE     #language en-US "Controller 0 Channel 1 Slot 0"
+#string STR_DIMM_MC0_CH1_SLT1_FORM_SUBTITLE     #language en-US "Controller 0 Channel 1 Slot 1"
+#string STR_DIMM_MC0_CH2_SLT0_FORM_SUBTITLE     #language en-US "Controller 0 Channel 2 Slot 0"
+#string STR_DIMM_MC0_CH2_SLT1_FORM_SUBTITLE     #language en-US "Controller 0 Channel 2 Slot 1"
+#string STR_DIMM_MC0_CH3_SLT0_FORM_SUBTITLE     #language en-US "Controller 0 Channel 3 Slot 0"
+#string STR_DIMM_MC0_CH3_SLT1_FORM_SUBTITLE     #language en-US "Controller 0 Channel 3 Slot 1"
+#string STR_DIMM_MC1_CH0_SLT0_FORM_SUBTITLE     #language en-US "Controller 1 Channel 0 Slot 0"
+#string STR_DIMM_MC1_CH0_SLT1_FORM_SUBTITLE     #language en-US "Controller 1 Channel 0 Slot 1"
+#string STR_DIMM_MC1_CH1_SLT0_FORM_SUBTITLE     #language en-US "Controller 1 Channel 1 Slot 0"
+#string STR_DIMM_MC1_CH1_SLT1_FORM_SUBTITLE     #language en-US "Controller 1 Channel 1 Slot 1"
+#string STR_DIMM_MC1_CH2_SLT0_FORM_SUBTITLE     #language en-US "Controller 1 Channel 2 Slot 0"
+#string STR_DIMM_MC1_CH2_SLT1_FORM_SUBTITLE     #language en-US "Controller 1 Channel 2 Slot 1"
+#string STR_DIMM_MC1_CH3_SLT0_FORM_SUBTITLE     #language en-US "Controller 1 Channel 3 Slot 0"
+#string STR_DIMM_MC1_CH3_SLT1_FORM_SUBTITLE     #language en-US "Controller 1 Channel 3 Slot 1"
+
+#string STR_DIMM_CH0_SLT0_STATUS                #language en-US "N/A"
+#string STR_DIMM_CH0_SLT1_STATUS                #language en-US "N/A"
+#string STR_DIMM_CH1_SLT0_STATUS                #language en-US "N/A"
+#string STR_DIMM_CH1_SLT1_STATUS                #language en-US "N/A"
+
+#string STR_DIMM_MC0_CH0_SLT0_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC0_CH0_SLT1_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC0_CH1_SLT0_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC0_CH1_SLT1_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC0_CH2_SLT0_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC0_CH2_SLT1_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC0_CH3_SLT0_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC0_CH3_SLT1_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC1_CH0_SLT0_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC1_CH0_SLT1_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC1_CH1_SLT0_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC1_CH1_SLT1_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC1_CH2_SLT0_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC1_CH2_SLT1_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC1_CH3_SLT0_STATUS            #language en-US "N/A"
+#string STR_DIMM_MC1_CH3_SLT1_STATUS            #language en-US "N/A"
+
+#string STR_DIMM_SIZE_HELP                      #language en-US "Memory Size in the Slot."
+#string STR_DIMM_SIZE_NAME                      #language en-US "    Size"
+#string STR_DIMM_SIZE_CH0_SLT0_VALUE            #language en-US "N/A"
+#string STR_DIMM_SIZE_CH0_SLT1_VALUE            #language en-US "N/A"
+#string STR_DIMM_SIZE_CH1_SLT0_VALUE            #language en-US "N/A"
+#string STR_DIMM_SIZE_CH1_SLT1_VALUE            #language en-US "N/A"
+
+#string STR_DIMM_SIZE_MC0_CH0_SLT0_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC0_CH0_SLT1_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC0_CH1_SLT0_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC0_CH1_SLT1_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC0_CH2_SLT0_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC0_CH2_SLT1_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC0_CH3_SLT0_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC0_CH3_SLT1_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC1_CH0_SLT0_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC1_CH0_SLT1_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC1_CH1_SLT0_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC1_CH1_SLT1_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC1_CH2_SLT0_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC1_CH2_SLT1_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC1_CH3_SLT0_VALUE        #language en-US "N/A"
+#string STR_DIMM_SIZE_MC1_CH3_SLT1_VALUE        #language en-US "N/A"
+
+#string STR_DIMM_NUM_RANKS_HELP                 #language en-US "Number of Ranks in the slot"
+#string STR_DIMM_NUM_RANKS_NAME                 #language en-US "    Number of Ranks"
+#string STR_DIMM_CH0_SLT0_RANK_VALUE            #language en-US "N/A"
+#string STR_DIMM_CH0_SLT1_RANK_VALUE            #language en-US "N/A"
+#string STR_DIMM_CH1_SLT0_RANK_VALUE            #language en-US "N/A"
+#string STR_DIMM_CH1_SLT1_RANK_VALUE            #language en-US "N/A"
+
+#string STR_DIMM_MC0_CH0_SLT0_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC0_CH0_SLT1_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC0_CH1_SLT0_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC0_CH1_SLT1_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC0_CH2_SLT0_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC0_CH2_SLT1_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC0_CH3_SLT0_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC0_CH3_SLT1_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC1_CH0_SLT0_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC1_CH0_SLT1_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC1_CH1_SLT0_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC1_CH1_SLT1_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC1_CH2_SLT0_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC1_CH2_SLT1_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC1_CH3_SLT0_RANK_VALUE        #language en-US "N/A"
+#string STR_DIMM_MC1_CH3_SLT1_RANK_VALUE        #language en-US "N/A"
+
+#string STR_DIMM_MFG_HELP                       #language en-US "DIMM / DRAM Manufacturer Value"
+#string STR_DIMM_MFG_NAME                       #language en-US "    Manufacturer"
+#string STR_DIMM_CH0_SLT0_MFG_VALUE             #language en-US "UnKnown"
+#string STR_DIMM_CH0_SLT1_MFG_VALUE             #language en-US "UnKnown"
+#string STR_DIMM_CH1_SLT0_MFG_VALUE             #language en-US "UnKnown"
+#string STR_DIMM_CH1_SLT1_MFG_VALUE             #language en-US "UnKnown"
+
+#string STR_DIMM_MC0_CH0_SLT0_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC0_CH0_SLT1_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC0_CH1_SLT0_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC0_CH1_SLT1_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC0_CH2_SLT0_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC0_CH2_SLT1_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC0_CH3_SLT0_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC0_CH3_SLT1_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC1_CH0_SLT0_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC1_CH0_SLT1_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC1_CH1_SLT0_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC1_CH1_SLT1_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC1_CH2_SLT0_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC1_CH2_SLT1_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC1_CH3_SLT0_MFG_VALUE         #language en-US "UnKnown"
+#string STR_DIMM_MC1_CH3_SLT1_MFG_VALUE         #language en-US "UnKnown"
+
+#string STR_CH_HASH_SUPPORT_PROMPT              #language en-US "Ch Hash Support"
+#string STR_CH_HASH_SUPPORT_HELP                #language en-US "Enable/Disable Channel Hash Support. NOTE: ONLY if Memory interleaved Mode"
+
+#string STR_CH_HASH_MASK_SUPPORT_PROMPT         #language en-US "Ch Hash Mask"
+#string STR_CH_HASH_MASK_SUPPORT_HELP           #language en-US "Set the BIT(s) to be included in the XOR function. NOTE BIT mask corresponds to BITS [19:6}"
+
+#string STR_CH_HASH_INTLVED_BIT_SUPPORT_PROMPT  #language en-US "Ch Hash Interleaved Bit"
+#string STR_CH_HASH_INTLVED_BIT_SUPPORT_HELP    #language en-US "Select the BIT to be used for Channel Interleaved mode. NOTE: BIT7 will interlave the channels at a 2 cacheline granularity, BIT8 at 4 and BIT9 at 8"
+#string STR_BIT6_STRING                         #language en-US "BIT6"
+#string STR_BIT7_STRING                         #language en-US "BIT7"
+#string STR_BIT8_STRING                         #language en-US "BIT8"
+#string STR_BIT9_STRING                         #language en-US "BIT9"
+#string STR_BIT10_STRING                        #language en-US "BIT10"
+#string STR_BIT11_STRING                        #language en-US "BIT11"
+#string STR_BIT12_STRING                        #language en-US "BIT12"
+#string STR_BIT13_STRING                        #language en-US "BIT13"
+
+#string STR_CH_HASH_OVERRIDE_PROMPT             #language en-US "Ch Hash Override"
+#string STR_CH_HASH_OVERRIDE_HELP               #language en-US "Select if Channel Hash setting values will be taken from input parameters or automatically chosen based on DRAM type detected."
+
+#string STR_EXTENDED_BANK_HASHING_PROMPT        #language en-US "Extended Bank Hashing"
+#string STR_EXTENDED_BANK_HASHING_HELP          #language en-US "Enable/disable Extended Bank Hashing."
+
+#string STR_PER_BANK_REFRESH_PROMPT             #language en-US "Per Bank Refresh"
+#string STR_PER_BANK_REFRESH_HELP               #language en-US "Enables and Disables the per bank refresh.  This only impacts memory technologies that support PBR: LPDDR3, LPDDR4."
+
+#string STR_STRONG_WK_LEAKER_PROMPT             #language en-US "Strong Weak Leaker"
+#string STR_STRONG_WK_LEAKER_HELP               #language en-US "Value for StrongWkLeaker"
+
+#string STR_DRAM_RFM_PROMPT                     #language en-US "Row Hammer Mode: DRAM Refresh Management Mode"
+#string STR_DRAM_RFM_HELP                       #language en-US "Row Hammer Dram Refresh Management Mode runs orthogonally with DRFM/pTRR."
+#string STR_ENABLE_RFM                          #language en-US "Enable RFM"
+#string STR_ENABLE_ARFM_LEVELA                  #language en-US "Enable ARFM Level A"
+#string STR_ENABLE_ARFM_LEVELB                  #language en-US "Enable ARFM Level B"
+#string STR_ENABLE_ARFM_LEVELC                  #language en-US "Enable ARFM Level C"
+#string STR_DISABLE_DRAM_RFM                    #language en-US "Disable ARFM and RFM"
+
+#string STR_TRR_PROMPT                          #language en-US "Row Hammer Mode: Targeted Row Refresh Mode"
+#string STR_TRR_HELP                            #language en-US "Row Hammer: Targeted Row Refresh Mode runs orthogonally with ARFM/RFM. DRFM will only be enabled if it is supported by the DRAM. If not, pTRR will be enabled instead."
+#string STR_ENABLE_DRFM_STRING                  #language en-US "Enable DRFM or pTRR"
+#string STR_ENABLE_PTRR_STRING                  #language en-US "Enable pTRR"
+#string STR_DISABLE_TRR                         #language en-US "Disable DRFM and pTRR"
+
+#string STR_DRFM_BRC_PROMPT                     #language en-US "Row Hammer: Directed Refresh Management Blast Radius Configuration"
+#string STR_DRFM_BRC_HELP                       #language en-US "Row Hammer: This is a Blast Radius Configuration setting for DRFM that will be used if DRFM is supported. DRFM Blast Radius Configuration determines number of victim rows around aggressor row targeted to send the DRFM sequence to."
+#string STR_ENABLE_DRFM_BRC2_STRING             #language en-US "BlastRadius: (+/-) 2 victim rows"
+#string STR_ENABLE_DRFM_BRC3_STRING             #language en-US "BlastRadius: (+/-) 3 victim rows"
+#string STR_ENABLE_DRFM_BRC4_STRING             #language en-US "BlastRadius: (+/-) 4 victim rows"
+
+#string STR_MC_REFRESH_RATE_PROMPT              #language en-US "MC Refresh Rate"
+#string STR_MC_REFRESH_RATE_HELP                #language en-US "Select refresh rate on the MC"
+#string STR_NORMAL_REFRESH                      #language en-US "NORMAL Refresh"
+#string STR_1X_REFRESH                          #language en-US "1x Refresh"
+#string STR_2X_REFRESH                          #language en-US "2x Refresh"
+#string STR_4X_REFRESH                          #language en-US "4x Refresh"
+
+#string STR_REFRESH_WM_PROMPT                   #language en-US  "Refresh Watermarks"
+#string STR_REFRESH_WM_HELP                     #language en-US  "Sets Refresh Panic Watermark and Refresh High-Priority Watermark to HIGH or LOW values"
+#string STR_REFRESH_WM_HIGH_STRING              #language en-US  "High"
+#string STR_REFRESH_WM_LOW_STRING               #language en-US  "Low"
+
+#string STR_RH_PTRR_LFSR_0_MASK_PROMPT          #language en-US "RH LFSR0 Mask"
+#string STR_RH_PTRR_LFSR_0_MASK_HELP            #language en-US "LFSR0 mask for RH pTRR"
+
+#string STR_RH_PTRR_LFSR_1_MASK_PROMPT          #language en-US "RH LFSR1 Mask"
+#string STR_RH_PTRR_LFSR_1_MASK_HELP            #language en-US "LFSR1 mask for RH pTRR"
+
+#string STR_ODT_LPDDR_RTTWR_PROMPT              #language en-US "LPDDR ODT RttWr"
+#string STR_ODT_LPDDR_RTTWR_HELP                #language en-US "Initial RttWr ODT override for LP4/5 in Ohms. Range 0x01 - 0xFF, default 0 = AUTO"
+
+#string STR_ODT_LPDDR_RTTCA_PROMPT              #language en-US "LPDDR ODT RttCa"
+#string STR_ODT_LPDDR_RTTCA_HELP                #language en-US "Initial RttCa ODT override for LP4/5 in Ohms. Range 0x01 - 0xFF, default 0 = AUTO"
+
+#string STR_1_IN_2_TO_12                        #language en-US "1/2^12"
+#string STR_1_IN_2_TO_11                        #language en-US "1/2^11"
+#string STR_1_IN_2_TO_10                        #language en-US "1/2^10"
+#string STR_1_IN_2_TO_9                         #language en-US "1/2^9"
+
+#string STR_EXIT_ON_FAIL_PROMPT                 #language en-US "Exit On Failure (MRC)"
+#string STR_EXIT_ON_FAIL_HELP                   #language en-US "Exit On Failure for MRC training steps"
+
+#string STR_MRC_PLL_OFFSET_CAL_PROMPT           #language en-US "PLL Offset Calibration"
+#string STR_MRC_PLL_OFFSET_CAL_PROMPT_HELP      #language en-US "Enabling/Disabling PLL Offset Calibration"
+#string STR_MRC_VCC_LVR_AUTO_TRIM_PROMPT        #language en-US "Vcc LVR Auto Trim"
+#string STR_MRC_VCC_LVR_AUTO_TRIM_PROMPT_HELP   #language en-US "Enabling/Disabling Vcc LVR Auto Trim"
+#string STR_VDDQ_VOLTAGE_PROMPT                 #language en-US "Vddq Voltage Override"
+#string STR_VCCIOG_VOLTAGE_PROMPT               #language en-US "VccIog Voltage Override"
+#string STR_VCCCLK_VOLTAGE_PROMPT               #language en-US "VccClk Voltage Override"
+#string STR_VDDQ_VOLTAGE_HELP                   #language en-US "# is multiple of 1mV where 0 means Auto."
+
+#string STR_MRC_DDR5_MR7_WICA_SUPPORT_PROMPT    #language en-US "DDR5 MR7 WICA support"
+#string STR_MRC_DDR5_MR7_WICA_SUPPORT_HELP      #language en-US "Enable if DDR5 DRAM Device supports MR7 WICA 0.5 tCK offset alignment"
+
+#string STR_MRC_SAFEMODEOVERRIDE_PROMPT         #language en-US "MRC Safe Mode Override"
+#string STR_MRC_SAFEMODEOVERRIDE_HELP           #language en-US "Bit mask to enable the use of the input safe mode values"
+                                                When a bit is set, the corresponding safe mode input field value will be used instead of the pre-defined MRC safe mode configuration.
+                                                The definitions are: [0] Enable DdrSafeMode override, [1] Enable McSafeMode override, [2] Reserved,
+                                                [3] Enable Training Algorithm (TrainingEnables) safe mode override, [4] Enable SaGv safe mode override"
+
+#string STR_MC_SAFEMODE_PROMPT                  #language en-US "MC Safe Mode Support"
+#string STR_MC_SAFEMODE_HELP                    #language en-US "Safe Mode options enabled via bitmask. SafeMode[0]: Clk Gate / BGF, SafeMode[1]: CKE Pdwn, SafeMode[2]: Tristate,
+                                                SafeMode[3]: PHY Power States / Clock Spine, SafeMode[4]: Same Rank TA, SafeMode[5]: Different Rank TA, SafeMode[6]: MR4_Period / ZQCAL_Period
+                                                SafeMode[7]: LP5 Wck Mode SafeMode[8]: Self Refresh, SafeMode[9]: WR/RD Retraining, SafeMode[10]: Power Saving"
+
+#string STR_DDR_SAFEMODE_PROMPT                 #language en-US "DDR PHY Safe Mode Support"
+#string STR_DDR_SAFEMODE_HELP                   #language en-US "Safe Mode options enabled via bitmask. Bit 0: Basic PM Features, Bit 1: Spine Gating,
+                                                  Bit 2: Advanced DCC, Bit 3: R2R Training, Bit 4: Transformer Mode, Bit 5: PLL Operation, Bit 6: Safe ODT"
+
+#string STR_LPMODE_PROMPT                       #language en-US "LpMode"
+#string STR_LPMODE_HELP                         #language en-US "LpMode options enabled via bitmask. Bit 0: Lpmode0p5 (Idle_enable), Bit 1: Lpmode2 (PowerDown_enable), Bit 2: Enable Lpmode3 (Selfrefresh_enable), Bit 7: Auto"
+
+#string STR_LPMODE4_PROMPT                      #language en-US "LPMode4 Support"
+#string STR_LPMODE4_HELP                        #language en-US "LPMode4 options"
+#string STR_LPMODE4_DYNAMIC_THRESHOD_2_STRING   #language en-US "Dynamic Threshold 2"
+#string STR_LPMODE4_DYNAMIC_THRESHOD_3_STRING   #language en-US "Dynamic Threshold 3"
+
+#string STR_MEMTEST_WARMBOOT_SUPPORT_PROMPT     #language en-US "Memory Test on Warm Boot"
+#string STR_MEMTEST_WARMBOOT_SUPPORT_HELP       #language en-US "Enable Or Disable Base Memory Test Run on Warm Boot"
+
+#string STR_ALLOW_OPP_REF_BELOW_WRITE_THREHOLD_PROMPT     #language en-US "Allow Opp Ref Below Write Threshold"
+#string STR_ALLOW_OPP_REF_BELOW_WRITE_THREHOLD_HELP       #language en-US "Allow opportunistic refreshes while we don't exit power down."
+
+#string STR_WRITE_THRESHOLD_PROMPT              #language en-US "Write Threshold"
+#string STR_WRITE_THRESHOLD_HELP                #language en-US "Number of writes that can be accumulated while CKE is low before CKE is asserted."
+
+#string STR_RETRAIN_ON_FAST_FAIL_PROMPT         #language en-US "Retrain on Fast Fail"
+#string STR_RETRAIN_ON_FAST_FAIL_HELP           #language en-US "Restart MRC in Cold mode if SW MemTest fails during Fast flow. Default = Enabled"
+
+#string STR_DDR_ONE_DPC_PROMPT                  #language en-US "DDR_1DPC"
+#string STR_DDR_ONE_DPC_HELP                    #language en-US "DDR 1DPC performance feature for 2R DIMMs. Can be enabled on DIMM0 or DIMM1 only, or on both"
+#string STR_ENABLED_DIMM0_STRING                #language en-US "Enabled on DIMM0 only"
+#string STR_ENABLED_DIMM1_STRING                #language en-US "Enabled on DIMM1 only"
+
+#string STR_PPR_ENABLE_PROMPT                   #language en-US "Post Package Repair"
+#string STR_PPR_ENABLE_HELP                     #language en-US "PPR feature."
+#string STR_PPR_ENABLE_STRING                   #language en-US "Enable PPR"
+#string STR_MEMORY_PPR_CONFIGURATION                #language en-US "Post Package Repair"
+#string STR_MEMORY_PPR_CONFIGURATION_HELP           #language en-US "Post Package Repair Options"
+#string STR_MEMORY_PPR_ADV_CONFIGURATION            #language en-US "PPR Advanced Debug Options"
+#string STR_MEMORY_PPR_ADV_CONFIGURATION_HELP       #language en-US "Recommended only for experienced users. Use with caution."
+#string STR_MEMORY_PPR_RUN_ONCE_PROMPT              #language en-US "Run Once"
+#string STR_MEMORY_PPR_RUN_ONCE_HELP                #language en-US "When it's enabled, PPR training runs only once, then is disabled at further training reboot"
+#string STR_MEMORY_PPR_RUN_AT_FASTBOOT_PROMPT       #language en-US "Run At Fastboot"
+#string STR_MEMORY_PPR_RUN_AT_FASTBOOT_HELP         #language en-US "When it's enabled, PPR training runs at each fastboot"
+#string STR_MEMORY_PPR_REPAIR_TYPE_PROMPT           #language en-US "Repair Type"
+#string STR_MEMORY_PPR_REPAIR_TYPE_HELP             #language en-US "PPR Repair Type"
+#string STR_MEMORY_PPR_RUN_TEST_WCHMATS8_PROMPT     #language en-US "Run Test WCHMATS8"
+#string STR_MEMORY_PPR_RUN_TEST_WCHMATS8_HELP       #language en-US "PPR Run Test WCHMATS8"
+#string STR_MEMORY_PPR_RUN_TEST_RETENTION_PROMPT    #language en-US "Run Test Data Retention"
+#string STR_MEMORY_PPR_RUN_TEST_RETENTION_HELP      #language en-US "PPR Run Test Data Retention"
+#string STR_MEMORY_PPR_RUN_TEST_XMARCH_PROMPT       #language en-US "Run Test XMarch"
+#string STR_MEMORY_PPR_RUN_TEST_XMARCH_HELP         #language en-US "PPR Run Test XMarch"
+#string STR_MEMORY_PPR_RUN_TEST_XMARCHG_PROMPT      #language en-US "Run Test XMarchG"
+#string STR_MEMORY_PPR_RUN_TEST_XMARCHG_HELP        #language en-US "PPR Run Test XMarchG"
+#string STR_MEMORY_PPR_RUN_TEST_YMARCHSHORT_PROMPT  #language en-US "Run Test YMarch Short"
+#string STR_MEMORY_PPR_RUN_TEST_YMARCHSHORT_HELP    #language en-US "PPR Run Test YMarch Short"
+#string STR_MEMORY_PPR_RUN_TEST_YMARCHLONG_PROMPT   #language en-US "Run Test YMarch Long"
+#string STR_MEMORY_PPR_RUN_TEST_YMARCHLONG_HELP     #language en-US "PPR Run Test YMarch Long"
+#string STR_MEMORY_PPR_ERROR_INJECTION_PROMPT       #language en-US "Error Injection"
+#string STR_MEMORY_PPR_ERROR_INJECTION_HELP         #language en-US "Experiment: Inject Bad Rows."
+#string STR_MEMORY_PPR_FORCE_REPAIR_PROMPT          #language en-US "Force Repair"
+#string STR_MEMORY_PPR_FORCE_REPAIR_HELP            #language en-US "Experiment: Force Repair Some Rows (about 90 rows). Will likely consume all PPR resources for a bank."
+#string STR_SOFT_PPR                                #language en-US "Soft PPR"
+#string STR_HARD_PPR                                #language en-US "Hard PPR"
+#string STR_NO_REPAIR                               #language en-US "Do Not Repair"
+#string STR_MEMORY_PPR_PHYSICAL_ADDRESS_PROMPT        #language en-US "Repair Row At Physical Address(Hex)"
+#string STR_MEMORY_PPR_PHYSICAL_ADDRESS_HELP          #language en-US "Experimental only: Hex format. If the address doesn't equal 0,PPR repairs the row at the address and doesn't run detection tests."
+#string STR_MEMORY_PPR_MEM_ADDRESS_CONTROLLER_PROMPT  #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_CONTROLLER_HELP    #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_CHANNEL_PROMPT     #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_CHANNEL_HELP       #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_DIMM_PROMPT        #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_DIMM_HELP          #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_RANK_PROMPT        #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_RANK_HELP          #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_BANKGROUP_PROMPT   #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_BANKGROUP_HELP     #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_BANK_PROMPT        #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_BANK_HELP          #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_ROW_PROMPT         #language en-US "Repair Memory Address"
+#string STR_MEMORY_PPR_MEM_ADDRESS_ROW_HELP           #language en-US "Repair Memory Address"
+#string STR_PPR_STAT_HELP                           #language en-US "PPR Detection And Repair Stat"
+#string STR_PPR_STAT_NAME                           #language en-US "PPR Stat"
+#string STR_PPR_STAT_VALUE                          #language en-US "PPR Stat"
+
+#string STR_MEM_VALIDATION_MENU_FORM            #language en-US "Validation Menu"
+#string STR_MEM_VALIDATION_MENU_FORM_HELP       #language en-US "Validation Menu for internal validation"
+#string STR_MEM_VALIDATION_MENU_TITLE           #language en-US "Validation Menu"
+
+#string STR_FORCE_RETRAIN_PROMPT                #language en-US "Force Retrain"
+#string STR_FORCE_RETRAIN_HELP                  #language en-US "Forces BIOS to re-train regardless of final margin"
+
+#string STR_PCU_DDR_VOLTAGE_PROMPT              #language en-US "PCU DDR Voltage"
+#string STR_PCU_DDR_VOLTAGE_HELP                #language en-US "Override PCU_CR_DDR_VOLTAGE register"
+#string STR_1_5_DDR3                            #language en-US "1.5V - DDR3"
+#string STR_1_35_DDR3                           #language en-US "1.35V - DDR3"
+#string STR_1_2_LPDDR_SINGLE_CA                 #language en-US "1.2V - LPDDR single CA"
+#string STR_1_2_LPDDR_DUAL_CA                   #language en-US "1.2V - LPDDR dual CA"
+#string STR_1_2_DDR4                            #language en-US "1.2V - DDR4"
+
+#string STR_CMD_3ST_SUPPORT_PROMPT              #language en-US "Command Tristate"
+#string STR_CMD_3ST_SUPPORT_HELP                #language en-US "Command Tristate Support."
+
+#string STR_CPU_MEMORY_CAPABILITIES             #language en-US "CPU Supported Memory Capabilities"
+#string STR_CPU_MEMORY_CAPABILITIES_HELP        #language en-US "CPU Supported Memory Capabilities"
+
+//CAPID0_A
+#string STR_MEMORY_CPU_MC_CAPABILITIES          #language en-US "CPU/MC Capabilities"
+
+#string STR_CPU_CAP_DDR3L_EN_NAME               #language en-US "DDR3L"
+#string STR_CPU_CAP_DDR3L_EN_HELP               #language en-US "Allow DDR3L operation"
+#string STR_CPU_CAP_DDR3L_EN_VALUE              #language en-US "N/A" //dynamically updated
+
+#string STR_CPU_CAP_DDR_WRTVREF_NAME            #language en-US "DDR WriteVref"
+#string STR_CPU_CAP_DDR_WRTVREF_HELP            #language en-US "Allow on-die DDR Write Vref"
+#string STR_CPU_CAP_DDR_WRTVREF_VALUE           #language en-US "N/A" //dynamically updated
+
+#string STR_CPU_CAP_DDR_OVERCLOCK_NAME          #language en-US "DDR Overclock"
+#string STR_CPU_CAP_DDR_OVERCLOCK_HELP          #language en-US "Allow OverClocking"
+#string STR_CPU_CAP_DDR_OVERCLOCK_VALUE         #language en-US "N/A" //dynamically updated
+
+#string STR_CPU_CAP_PDCD_NAME                   #language en-US "Dual Channel"
+#string STR_CPU_CAP_PDCD_HELP                   #language en-US "Dual Channel Capability"
+#string STR_CPU_CAP_PDCD_VALUE                  #language en-US "N/A" //dynamically updated
+
+#string STR_CPU_CAP_DDPCD_NAME                  #language en-US "Dual Dimm"
+#string STR_CPU_CAP_DDPCD_HELP                  #language en-US "Dual Dimm Support"
+#string STR_CPU_CAP_DDPCD_VALUE                 #language en-US "N/A" //dynamically updated
+
+#string STR_CPU_CAP_D1NM_NAME                   #language en-US "1N Mode"
+#string STR_CPU_CAP_D1NM_HELP                   #language en-US "1N Mode Support"
+#string STR_CPU_CAP_D1NM_VALUE                  #language en-US "N/A" //dynamically updated
+
+#string STR_CPU_CAP_DDRSZ_NAME                  #language en-US "Maximum Size per Ch"
+#string STR_CPU_CAP_DDRSZ_HELP                  #language en-US "Maximum Allowed Memory Freq per Channel"
+#string STR_CPU_CAP_DDRSZ_VALUE                 #language en-US "N/A" //dynamically updated
+
+#string STR_CPU_CAP_FDEE_NAME                   #language en-US "ECC Optional via Software"
+#string STR_CPU_CAP_FDEE_HELP                   #language en-US "DRAM ECC Support / cannot be enabled when ECC capability is disabled"
+#string STR_CPU_CAP_FDEE_VALUE                  #language en-US "N/A" //dynamically updated
+
+#string STR_CPU_CAP_ECCDIS_NAME                 #language en-US "ECC "
+#string STR_CPU_CAP_ECCDIS_HELP                 #language en-US "Allow ECC Capability"
+#string STR_CPU_CAP_ECCDIS_VALUE                #language en-US "N/A" //dynamically updated
+
+//CAPID0_B
+#string STR_CPU_CAP_DDR3MAXFREQ_REF100_NAME     #language en-US "Maximum Frequency BClk 100"
+#string STR_CPU_CAP_DDR3MAXFREQ_REF100_HELP     #language en-US "CPU DDR3 Maximum Frequency when Ref Clk 100"
+#string STR_CPU_CAP_DDR3MAXFREQ_REF100_VALUE    #language en-US "N/A" //dynamically updated
+
+#string STR_CPU_CAP_DMFC_NAME                   #language en-US "Maximum Frequency"
+#string STR_CPU_CAP_DMFC_HELP                   #language en-US "Max frequency supported by MC"
+#string STR_CPU_CAP_DMFC_VALUE                  #language en-US "N/A" //dynamically updated
+
+#string STR_REFRESH_STAGGER_PROMPT              #language en-US "Refresh Stagger Support"
+#string STR_REFRESH_STAGGER_HELP                #language en-US "Enable/Disable Refresh Stagger support"
+
+#string STR_REFRESH_STAGGER_MODE_PROMPT         #language en-US "Refresh Stagger Mode"
+#string STR_REFRESH_STAGGER_MODE_HELP           #language en-US "Select Refresh Stagger Mode: per DIMM/per Channel basis"
+#string STR_PER_DIMM_STRING                     #language en-US "per DIMM"
+#string STR_PER_CH_STRING                       #language en-US "per CHANNEL"
+
+#string STR_DISPLAY_REFRESH_TYPE_PROMPT         #language en-US "Disp Ref Type Support"
+#string STR_DISPLAY_REFRESH_TYPE_HELP           #language en-US "Enable/Disable Display Refresh Type support. NOTE: when Enabled refresh type is displayed on the BA address pins, 000 = Stolen refresh, 100 = Opportunistic Refresh, 010 = Hi Priority Refresh, 001 = Panic Refresh"
+
+#string STR_RANK_INTERLEAVE_PROMPT              #language en-US "RI Support"
+#string STR_RANK_INTERLEAVE_HELP                #language en-US "Enable/Disable Rank Interleave support.  NOTE: RI and HORI can not be enabled at the same time."
+
+#string STR_ENHANCED_INTERLEAVE_PROMPT          #language en-US "Enhanced Interleave Support"
+#string STR_ENHANCED_INTERLEAVE_HELP            #language en-US "Enable/Disable Enhanced Interleave support"
+
+#string STR_WEAKLOCK_SUPPORT_PROMPT             #language en-US "DLL Weak Lock Support"
+#string STR_WEAKLOCK_SUPPORT_HELP               #language en-US "Enable/Disable Dll Weaklock support"
+
+#string STR_ASYNCODT_SUPPORT_PROMPT             #language en-US "Async Odt Support"
+#string STR_ASYNCODT_SUPPORT_HELP               #language en-US "Enable/Disable Async Odt Support"
+
+#string STR_OPPORTUNISTIC_READ_PROMPT           #language en-US "Opportunistic Read"
+#string STR_OPPORTUNISTIC_READ_HELP             #language en-US "Enable Opportunistic Read during Write Major Mode."
+
+#string STR_CYCLE_BYPASS_SUPPORT_PROMPT         #language en-US "Cycle Bypass Support"
+#string STR_2_CYCLE_BYPASS_PROMPT               #language en-US "2 Cycle Bypass"
+#string STR_2_CYCLE_BYPASS_HELP                 #language en-US "Controls SCHED_CBIT.dis_2c_byp"
+
+#string STR_PROBELESS_TRACE_SUPPORT_PROMPT      #language en-US "Probeless Trace Support"
+#string STR_PROBELESS_TRACE_PROMPT              #language en-US "Probeless Trace"
+#string STR_PROBELESS_TRACE_HELP                #language en-US "Controls ddrpl_cfg_dtf.ddrpl_activate"
+
+//Turn Around Timing
+#string STR_TURNAROUNDTIMING_TITLE                          #language en-US "Turn Around Timing Delta Programming"
+#string STR_TURNAROUNDTIMING_HELP                           #language en-US "Knobs to override default timings.  0 is no override."
+#string STR_TAT_DELTA_HELP                                  #language en-US "0 - Auto. Signed TAT delta is (Value - 128). Input value range of [1..255] will give a TAT delta range of [-127..127]"
+
+//Read-to-Read
+#string STR_TRRSG_VALUE                                     #language en-US "tRRSG Delta"
+#string STR_TRRDG_VALUE                                     #language en-US "tRRDG Delta"
+#string STR_TRRDR_VALUE                                     #language en-US "tRRDR Delta"
+#string STR_TRRDD_VALUE                                     #language en-US "tRRDD Delta"
+//Write-to-Read
+#string STR_TWRSG_VALUE                                     #language en-US "tWRSG Delta"
+#string STR_TWRDG_VALUE                                     #language en-US "tWRDG Delta"
+#string STR_TWRDR_VALUE                                     #language en-US "tWRDR Delta"
+#string STR_TWRDD_VALUE                                     #language en-US "tWRDD Delta"
+//Write-to-Write
+#string STR_TWWSG_VALUE                                     #language en-US "tWWSG Delta"
+#string STR_TWWDG_VALUE                                     #language en-US "tWWDG Delta"
+#string STR_TWWDR_VALUE                                     #language en-US "tWWDR Delta"
+#string STR_TWWDD_VALUE                                     #language en-US "tWWDD Delta"
+//Read-to-Write
+#string STR_TRWSG_VALUE                                     #language en-US "tRWSG Delta"
+#string STR_TRWDG_VALUE                                     #language en-US "tRWDG Delta"
+#string STR_TRWDR_VALUE                                     #language en-US "tRWDR Delta"
+#string STR_TRWDD_VALUE                                     #language en-US "tRWDD Delta"
+
+#string STR_MRC_INTERPRETER_PROMPT                          #language en-US "MRC Interpreter"
+#string STR_MRC_INTERPRETER_PROMPT_HELP                     #language en-US "Select CMOS location match of DD01 or Ctrl-Break key or force entry"
+#string STR_MRC_INTERPRETER_CMOS                            #language en-US "CMOS"
+#string STR_MRC_INTERPRETER_BREAK                           #language en-US "Break"
+#string STR_MRC_INTERPRETER_FORCE                           #language en-US "Force"
+
+#string STR_POWER_DOWN_MODE_PROMPT                          #language en-US "Power Down Mode"
+#string STR_POWER_DOWN_MODE_HELP                            #language en-US "CKE Power Down Mode Control"
+#string STR_NO_PD_STRING                                    #language en-US "No Power Down"
+#string STR_APD_STRING                                      #language en-US "APD"
+#string STR_PPD_DLL_OFF_STRING                              #language en-US "PPD-DLLoff"
+
+#string STR_POWER_DOWN_IDLE_COUNTER_PROMPT                  #language en-US "Pwr Down Idle Timer"
+#string STR_POWER_DOWN_IDLE_COUNTER_HELP                    #language en-US "The minimum value should = to the worst case Roundtrip delay + Burst_Length. 0 means AUTO: 64 for ULX/ULT, 128 for DT/Halo"
+
+#string STR_PAGE_IDLE_TIMEOUT_PROMPT                        #language en-US "Page Close Idle Timeout"
+#string STR_PAGE_IDLE_TIMEOUT_HELP                          #language en-US "Page Close Idle Timeout Control"
+
+#string STR_MEMORY_THERMAL_CONFIG_FORM_TITLE                #language en-US "Memory Thermal Configuration"
+#string STR_MEMORY_THERMAL_CONFIG_FORM_HELP                 #language en-US "Memory Thermal Configuration Options"
+
+#string STR_MEMORY_CONFIGURATION                                #language en-US "Memory"
+#string STR_MEMORY_CONFIGURATION_HELP                           #language en-US "Memory Overclocking Menu"
+
+#string STR_MEMORY_TIMING_HEADER_NAME                           #language en-US "Memory Profile:"
+#string STR_MEMORY_TIMING_HEADER_VALUE                          #language en-US "Default  Custom    XMP1    XMP2"
+
+#string STR_MEMORY_TIMING_TCK_NAME                              #language en-US "  tCK [MHz]"
+#string STR_MEMORY_TIMING_TCK_VALUE                             #language en-US "0000000 0000000 0000000 0000000"
+
+#string STR_MEMORY_TIMING_TCL_NAME                              #language en-US "  tCL"
+#string STR_MEMORY_TIMING_TCL_VALUE                             #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TRCD_TRP_NAME                         #language en-US "  tRCD/tRP"
+#string STR_MEMORY_TIMING_TRCD_TRP_VALUE                        #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TRP_NAME                              #language en-US "  tRP"
+#string STR_MEMORY_TIMING_TRP_VALUE                             #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TRAS_NAME                             #language en-US "  tRAS"
+#string STR_MEMORY_TIMING_TRAS_VALUE                            #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TCWL_NAME                             #language en-US "  tCWL"
+#string STR_MEMORY_TIMING_TCWL_VALUE                            #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TFAW_NAME                             #language en-US "  tFAW"
+#string STR_MEMORY_TIMING_TFAW_VALUE                            #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TREFI_NAME                            #language en-US "  tREFI"
+#string STR_MEMORY_TIMING_TREFI_VALUE                           #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TRFC_NAME                             #language en-US "  tRFC"
+#string STR_MEMORY_TIMING_TRFC_VALUE                            #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TRRD_NAME                             #language en-US "  tRRD"
+#string STR_MEMORY_TIMING_TRRD_VALUE                            #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TRTP_NAME                             #language en-US "  tRTP"
+#string STR_MEMORY_TIMING_TRTP_VALUE                            #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TWR_NAME                              #language en-US "  tWR"
+#string STR_MEMORY_TIMING_TWR_VALUE                             #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_TWTR_NAME                             #language en-US "  tWTR"
+#string STR_MEMORY_TIMING_TWTR_VALUE                            #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_TIMING_NMODE_NAME                            #language en-US "  NMode"
+#string STR_MEMORY_TIMING_NMODE_VALUE                           #language en-US "  00000   00000   00000   00000"
+
+#string STR_MEMORY_VOLTAGE_VDD_NAME                             #language en-US "  VDD [mV]"
+#string STR_MEMORY_VOLTAGE_VDD_VALUE                            #language en-US "  00000   00000   00000   00000"
+
+#string STR_DLLBWEN0_PROMPT                                     #language en-US "DllBwEn[0]"
+#string STR_DLLBWEN0_HELP                                       #language en-US "DllBwEn[0], for 1067 (0..7)"
+
+#string STR_DLLBWEN1_PROMPT                                     #language en-US "DllBwEn[1]"
+#string STR_DLLBWEN1_HELP                                       #language en-US "DllBwEn[1], for 1333 (0..7)"
+
+#string STR_DLLBWEN2_PROMPT                                     #language en-US "DllBwEn[2]"
+#string STR_DLLBWEN2_HELP                                       #language en-US "DllBwEn[2], for 1600 (0..7)"
+
+#string STR_DLLBWEN3_PROMPT                                     #language en-US "DllBwEn[3]"
+#string STR_DLLBWEN3_HELP                                       #language en-US "DllBwEn[3], for 1867 and up (0..7)"
+
+#string STR_REALTIME_MEMORY_TIMING_PROMPT                       #language en-US "Realtime Memory Timing"
+#string STR_REALTIME_MEMORY_TIMING_HELP                         #language en-US "Enable/Disable realtime memory timings. When enabled, the system will allow performing realtime memory timing changes after MRC_DONE."
+
+#string STR_XMP_PROFILE_PROMPT                                  #language en-US "Memory profile"
+#string STR_XMP_PROFILE_PROMPT_HELP                             #language en-US "Select DIMM timing profile. The below values start with the currently running values and don't auto populate."
+
+#string STR_DMB_ENABLE_PROMPT                                   #language en-US "Dynamic Memory Boost"
+#string STR_DMB_ENABLE_PROMPT_HELP                              #language en-US "Enable/Disable Dynamic Memory Boost feature, Allows automatic switching between default SPD Profile frequency and selected XMP profile frequency. Only valid if an XMP Profile is selected."
+
+#string STR_RMF_ENABLE_PROMPT                                   #language en-US "Realtime Memory Frequency"
+#string STR_RMF_ENABLE_PROMPT_HELP                              #language en-US "Enable/Disable Realtime Memory Frequency feature, Allows manual switching in runtime between default SPD Profile frequency and XMP profile 1 frequency. Only valid if XMP Profile 1 is selected."
+
+#string STR_DEFAULT_SPD_PROFILE                                 #language en-US "Default profile"
+#string STR_XMP_PROFILE_1                                       #language en-US "XMP profile 1"
+#string STR_XMP_PROFILE_2                                       #language en-US "XMP profile 2"
+#string STR_CUSTOM_PROFILE                                      #language en-US "Custom profile"
+
+#string STR_OCSAFEMODE_ENABLE_PROMPT                            #language en-US "OCSafeMode(Hex)"
+#string STR_OCSAFEMODE_ENABLE_PROMPT_HELP                       #language en-US "OverClocking Safe Mode. Bit 0: Use safe tCL, Bit 1: Limit tWR, tRTP, tCCD_L, tCCD_L_WR, tCL to of freq 6400 when programming Dimm MR if DIMM doesn't support new spec"
+
+#string STR_DDR_VDD2MV_PROMPT                                   #language en-US "Vdd2Mv"
+#string STR_DDR_VDD2MV_PROMPT_HELP                              #language en-US "The VR Rail tied to the DRAM. Usually, it equals to or lower than VDD2 voltage."
+
+#string STR_DDR_REFCLK_PROMPT                                   #language en-US "Memory Reference Clock"
+#string STR_DDR_REFCLK_PROMPT_HELP                              #language en-US "33.333MHz."
+#string STR_DDR_REFCLK_33_STRING                                #language en-US "33.333"
+
+#string STR_DDR_RATIO_PROMPT                                    #language en-US "Memory Ratio"
+#string STR_DDR_RATIO_PROMPT_HELP                               #language en-US "0 = Auto, or the frequency will equal ratio times reference clock. Set to 0 (Auto) to recalculate memory timings listed below."
+
+#string STR_DDR_ODD_RATIO_MODE_PROMPT                           #language en-US "QCLK Odd Ratio"
+#string STR_DDR_ODD_RATIO_MODE_HELP                             #language en-US "Adds 133 or 100 MHz to QCLK frequency, depending on RefClk"
+
+#string STR_TCL_VALUE                                           #language en-US "  tCL"
+#string STR_TCL_VALUE_HELP                                      #language en-US "CAS Latency, 0: AUTO, max: 255"
+
+#string STR_TRCD_TRP_VALUE                                      #language en-US "  tRCD/tRP"
+#string STR_TRCD_TRP_VALUE_HELP                                 #language en-US "RAS to CAS delay time and Row Precharge delay time, 0: AUTO, max: 255"
+
+#string STR_TRAS_VALUE                                          #language en-US "  tRAS"
+#string STR_TRAS_VALUE_HELP                                     #language en-US "RAS Active Time, 0: AUTO, max: 65535"
+
+#string STR_TCWL_VALUE                                          #language en-US "  tCWL"
+#string STR_TCWL_VALUE_HELP                                     #language en-US "Min CAS Write Latency Delay Time, 0: AUTO, max: 255"
+
+#string STR_TFAW_VALUE                                          #language en-US "  tFAW"
+#string STR_TFAW_VALUE_HELP                                     #language en-US "Min Four Activate Window Delay Time, 0: AUTO, max: 65535"
+
+#string STR_TREFI_VALUE                                         #language en-US "  tREFI"
+#string STR_TREFI_VALUE_HELP                                    #language en-US "Refresh Interval, 0: AUTO, max: 131071"
+
+#string STR_TRFC_VALUE                                          #language en-US "  tRFC"
+#string STR_TRFC_VALUE_HELP                                     #language en-US "Min Refresh Recovery Delay Time, 0: AUTO, max: 65535"
+
+#string STR_TRRD_VALUE                                          #language en-US "  tRRD"
+#string STR_TRRD_VALUE_HELP                                     #language en-US "Min Row Active to Row Active Delay Time, 0: AUTO, max: 255"
+
+#string STR_TRTP_VALUE                                          #language en-US "  tRTP"
+#string STR_TRTP_VALUE_HELP                                     #language en-US "Min Internal Read to Precharge Command Delay Time, 0: AUTO, max: 255"
+
+#string STR_TWR_VALUE                                           #language en-US "  tWR"
+#string STR_TWR_VALUE_HELP                                      #language en-US "Min Write Recovery Time, 0: AUTO, max: 255"
+
+#string STR_TWTR_VALUE                                          #language en-US "  tWTR"
+#string STR_TWTR_VALUE_HELP                                     #language en-US "Min Internal Write to Read Command Delay Time, 0: AUTO, max: 255"
+
+#string STR_TRFCPB_VALUE                                        #language en-US "  tRFCpb"
+#string STR_TRFCPB_VALUE_HELP                                   #language en-US "Min Internal Write to Read Command Delay Time, 0: AUTO, max: 15000"
+
+#string STR_TRFC2_VALUE                                         #language en-US "  tRFC2"
+#string STR_TRFC2_VALUE_HELP                                    #language en-US "Min Internal Write to Read Command Delay Time, 0: AUTO, max: 15000"
+
+#string STR_TRFC4_VALUE                                         #language en-US "  tRFC4"
+#string STR_TRFC4_VALUE_HELP                                    #language en-US "Min Internal Write to Read Command Delay Time, 0: AUTO, max: 15000"
+
+#string STR_TRRD_L_VALUE                                        #language en-US "  tRRD_L"
+#string STR_TRRD_L_VALUE_HELP                                   #language en-US "Min Internal Write to Read Command Delay Time, 0: AUTO, max:80 "
+
+#string STR_TRRD_S_VALUE                                        #language en-US "  tRRD_S"
+#string STR_TRRD_S_VALUE_HELP                                   #language en-US "Min Internal Write to Read Command Delay Time, 0: AUTO, max: 80"
+
+#string STR_TWTR_L_VALUE                                        #language en-US "  tWTR_L"
+#string STR_TWTR_L_VALUE_HELP                                   #language en-US "Min Internal Write to Read Command Delay Time, 0: AUTO, max: 127"
+
+#string STR_TCCD_L_VALUE                                        #language en-US "  tCCD_L"
+#string STR_TCCD_L_VALUE_HELP                                   #language en-US "Min Internal Write to Read Command Delay Time, 0: AUTO, max: 80"
+
+#string STR_TCCD_L_WR_VALUE                                     #language en-US "  tCCD_L_WR"
+#string STR_TCCD_L_WR_VALUE_HELP                                #language en-US "Min Internal Write to Write Command Delay Time, 0: AUTO, max: 255"
+
+#string STR_TWTR_S_VALUE                                        #language en-US "  tWTR_S"
+#string STR_TWTR_S_VALUE_HELP                                   #language en-US "Min Internal Write to Read Command Delay Time, 0: AUTO, max: 50"
+
+#string STR_NMODE_SUPPORT_PROMPT                                #language en-US "  NMode"
+#string STR_NMODE_SUPPORT_HELP                                  #language en-US "System command rate, range 0-2, 0 means auto, 1 = 1N, 2 = 2N"
+
+#string STR_MEMORY_VOLTAGE_VALUE                                #language en-US "Memory Voltage"
+#string STR_MEMORY_VOLTAGE_VALUE_HELP                           #language en-US "Memory Voltage Override (Vddq). Default = no override"
+
+#string STR_VOLTAGE_500                                         #language en-US "0.50 Volts"
+#string STR_VOLTAGE_600                                         #language en-US "0.60 Volts"
+#string STR_VOLTAGE_1100                                        #language en-US "1.10 Volts"
+#string STR_VOLTAGE_1200                                        #language en-US "1.20 Volts"
+#string STR_VOLTAGE_1250                                        #language en-US "1.25 Volts"
+#string STR_VOLTAGE_1300                                        #language en-US "1.30 Volts"
+#string STR_VOLTAGE_1350                                        #language en-US "1.35 Volts"
+#string STR_VOLTAGE_1400                                        #language en-US "1.40 Volts"
+#string STR_VOLTAGE_1450                                        #language en-US "1.45 Volts"
+#string STR_VOLTAGE_1500                                        #language en-US "1.50 Volts"
+#string STR_VOLTAGE_1550                                        #language en-US "1.55 Volts"
+#string STR_VOLTAGE_1600                                        #language en-US "1.60 Volts"
+#string STR_VOLTAGE_1650                                        #language en-US "1.65 Volts"
+
+#string STR_MEMORY_VDD_NAME                                     #language en-US "VDD"
+#string STR_MEMORY_VDD_VALUE                                    #language en-US "N/A"
+
+#string STR_MEMORY_RCOMP_RESISTOR_VALUE                         #language en-US "RcompResistor"
+#string STR_MEMORY_RCOMP_RESISTOR_VALUE_HELP                    #language en-US "RcompResistor Setting"
+#string STR_MEMORY_RCOMP_RDODT_VALUE                            #language en-US "Rcomp RdODT"
+#string STR_MEMORY_RCOMP_RDODT_VALUE_HELP                       #language en-US "Rcomp Read ODT Setting"
+#string STR_MEMORY_RCOMP_WRDS_VALUE                             #language en-US "Rcomp WrDS"
+#string STR_MEMORY_RCOMP_WRDS_VALUE_HELP                        #language en-US "Rcomp WrDS Setting"
+#string STR_MEMORY_RCOMP_WRDSCMD_VALUE                          #language en-US "Rcomp WrDSCmd"
+#string STR_MEMORY_RCOMP_WRDSCMD_VALUE_HELP                     #language en-US "Rcomp WrDSCmd Setting"
+#string STR_MEMORY_RCOMP_WRDSCTL_VALUE                          #language en-US "Rcomp WrDSCtl"
+#string STR_MEMORY_RCOMP_WRDSCTL_VALUE_HELP                     #language en-US "Rcomp WrDSCtl Setting"
+#string STR_MEMORY_RCOMP_WRDSCLK_VALUE                          #language en-US "Rcomp WrDSClk"
+#string STR_MEMORY_RCOMP_WRDSCLK_VALUE_HELP                     #language en-US "Rcomp WrDSClk Setting"
+
+#string STR_MEMORY_OVERCLOCK_RCOMP_TARGET_CONFIGURATION         #language en-US "RcompTarget"
+#string STR_MEMORY_OVERCLOCK_RCOMP_TARGET_CONFIGURATION_HELP    #language en-US "RcompTarget Menu"
+
+#string STR_MEMORY_RCOMP_RDODT_DEFAULT_NAME                     #language en-US "Default RdODT"
+#string STR_MEMORY_RCOMP_RDODT_DEFAULT_VALUE                    #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_RCOMP_WRDS_DEFAULT_NAME                      #language en-US "Default WrDS"
+#string STR_MEMORY_RCOMP_WRDS_DEFAULT_VALUE                     #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_RCOMP_WRDSCMD_DEFAULT_NAME                   #language en-US "Default WrDSCmd"
+#string STR_MEMORY_RCOMP_WRDSCMD_DEFAULT_VALUE                  #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_RCOMP_WRDSCTL_DEFAULT_NAME                   #language en-US "Default WrDSCtl"
+#string STR_MEMORY_RCOMP_WRDSCTL_DEFAULT_VALUE                  #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_RCOMP_WRDSCLK_DEFAULT_NAME                   #language en-US "Default WrDSClk"
+#string STR_MEMORY_RCOMP_WRDSCLK_DEFAULT_VALUE                  #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+
+#string STR_MEMORY_OVERCLOCK_DIMM_ODT_CONFIGURATION             #language en-US "Dimm Odt"
+#string STR_MEMORY_OVERCLOCK_DIMM_ODT_CONFIGURATION_HELP        #language en-US "Dimm Odt Menu"
+
+#string STR_MEMORY_DIMM0_RTTWR_DEFAULT_NAME                     #language en-US "Dimm0 Default Wr"
+#string STR_MEMORY_DIMM0_RTTWR_DEFAULT_VALUE                    #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM0_RTTNOMRD_DEFAULT_NAME                  #language en-US "Dimm0 Default NomRd"
+#string STR_MEMORY_DIMM0_RTTNOMRD_DEFAULT_VALUE                 #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM0_RTTNOMWR_DEFAULT_NAME                  #language en-US "Dimm0 Default NomWr"
+#string STR_MEMORY_DIMM0_RTTNOMWR_DEFAULT_VALUE                 #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM0_RTTPARK_DEFAULT_NAME                   #language en-US "Dimm0 Default Park"
+#string STR_MEMORY_DIMM0_RTTPARK_DEFAULT_VALUE                  #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM0_RTTPARKDQS_DEFAULT_NAME                #language en-US "Dimm0 Default ParkDqs"
+#string STR_MEMORY_DIMM0_RTTPARKDQS_DEFAULT_VALUE               #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM0_RTTCA_GROUPA_DEFAULT_NAME              #language en-US "Dimm0 Default Ca A"
+#string STR_MEMORY_DIMM0_RTTCA_GROUPA_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM0_RTTCS_GROUPA_DEFAULT_NAME              #language en-US "Dimm0 Default Cs A"
+#string STR_MEMORY_DIMM0_RTTCS_GROUPA_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM0_RTTCK_GROUPA_DEFAULT_NAME              #language en-US "Dimm0 Default Ck A"
+#string STR_MEMORY_DIMM0_RTTCK_GROUPA_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM0_RTTCA_GROUPB_DEFAULT_NAME              #language en-US "Dimm0 Default Ca B"
+#string STR_MEMORY_DIMM0_RTTCA_GROUPB_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM0_RTTCS_GROUPB_DEFAULT_NAME              #language en-US "Dimm0 Default Cs B"
+#string STR_MEMORY_DIMM0_RTTCS_GROUPB_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM0_RTTCK_GROUPB_DEFAULT_NAME              #language en-US "Dimm0 Default Ck B"
+#string STR_MEMORY_DIMM0_RTTCK_GROUPB_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+
+#string STR_MEMORY_DIMM1_RTTWR_DEFAULT_NAME                     #language en-US "Dimm1 Default Wr"
+#string STR_MEMORY_DIMM1_RTTWR_DEFAULT_VALUE                    #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM1_RTTNOMRD_DEFAULT_NAME                  #language en-US "Dimm1 Default NomRd"
+#string STR_MEMORY_DIMM1_RTTNOMRD_DEFAULT_VALUE                 #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM1_RTTNOMWR_DEFAULT_NAME                  #language en-US "Dimm1 Default NomWr"
+#string STR_MEMORY_DIMM1_RTTNOMWR_DEFAULT_VALUE                 #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM1_RTTPARK_DEFAULT_NAME                   #language en-US "Dimm1 Default Park"
+#string STR_MEMORY_DIMM1_RTTPARK_DEFAULT_VALUE                  #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM1_RTTPARKDQS_DEFAULT_NAME                #language en-US "Dimm1 Default ParkDqs"
+#string STR_MEMORY_DIMM1_RTTPARKDQS_DEFAULT_VALUE               #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM1_RTTCA_GROUPA_DEFAULT_NAME              #language en-US "Dimm1 Default Ca A"
+#string STR_MEMORY_DIMM1_RTTCA_GROUPA_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM1_RTTCS_GROUPA_DEFAULT_NAME              #language en-US "Dimm1 Default Cs A"
+#string STR_MEMORY_DIMM1_RTTCS_GROUPA_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM1_RTTCK_GROUPA_DEFAULT_NAME              #language en-US "Dimm1 Default Ck A"
+#string STR_MEMORY_DIMM1_RTTCK_GROUPA_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM1_RTTCA_GROUPB_DEFAULT_NAME              #language en-US "Dimm1 Default Ca B"
+#string STR_MEMORY_DIMM1_RTTCA_GROUPB_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM1_RTTCS_GROUPB_DEFAULT_NAME              #language en-US "Dimm1 Default Cs B"
+#string STR_MEMORY_DIMM1_RTTCS_GROUPB_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+#string STR_MEMORY_DIMM1_RTTCK_GROUPB_DEFAULT_NAME              #language en-US "Dimm1 Default Ck B"
+#string STR_MEMORY_DIMM1_RTTCK_GROUPB_DEFAULT_VALUE             #language en-US "  00000   00000   00000   00000   00000   00000   00000"
+
+#string STR_MEMORY_DIMM0_ODT_RTTWR_VALUE                        #language en-US "Dimm0 RttWr"
+#string STR_MEMORY_DIMM0_ODT_RTTWR_VALUE_HELP                   #language en-US "Dimm0 Odt RttWr Value Setting"
+#string STR_MEMORY_DIMM0_ODT_RTTNOMRD_VALUE                     #language en-US "Dimm0 RttNomRd"
+#string STR_MEMORY_DIMM0_ODT_RTTNOMRD_VALUE_HELP                #language en-US "Dimm0 Odt RttNomRd Value Setting"
+#string STR_MEMORY_DIMM0_ODT_RTTNOMWR_VALUE                     #language en-US "Dimm0 RttNomWr"
+#string STR_MEMORY_DIMM0_ODT_RTTNOMWR_VALUE_HELP                #language en-US "Dimm0 Odt RttNomWr Value Setting"
+#string STR_MEMORY_DIMM0_ODT_RTTPARK_VALUE                      #language en-US "Dimm0 RttPark"
+#string STR_MEMORY_DIMM0_ODT_RTTPARK_VALUE_HELP                 #language en-US "Dimm0 Odt RttPark Value Setting"
+#string STR_MEMORY_DIMM0_ODT_RTTPARKDQS_VALUE                   #language en-US "Dimm0 RttParkDqs"
+#string STR_MEMORY_DIMM0_ODT_RTTPARKDQS_VALUE_HELP              #language en-US "Dimm0 Odt RttParkDqs Value Setting"
+#string STR_MEMORY_DIMM0_ODT_RTTCA_GROUPA_VALUE                 #language en-US "Dimm0 RttCa A"
+#string STR_MEMORY_DIMM0_ODT_RTTCA_GROUPA_VALUE_HELP            #language en-US "Dimm0 Odt RttCa GroupA Value Setting"
+#string STR_MEMORY_DIMM0_ODT_RTTCS_GROUPA_VALUE                 #language en-US "Dimm0 RttCs A"
+#string STR_MEMORY_DIMM0_ODT_RTTCS_GROUPA_VALUE_HELP            #language en-US "Dimm0 Odt RttCs GroupA Value Setting"
+#string STR_MEMORY_DIMM0_ODT_RTTCK_GROUPA_VALUE                 #language en-US "Dimm0 RttCk A"
+#string STR_MEMORY_DIMM0_ODT_RTTCK_GROUPA_VALUE_HELP            #language en-US "Dimm0 Odt RttCk GroupA Value Setting"
+#string STR_MEMORY_DIMM0_ODT_RTTCA_GROUPB_VALUE                 #language en-US "Dimm0 RttCa B"
+#string STR_MEMORY_DIMM0_ODT_RTTCA_GROUPB_VALUE_HELP            #language en-US "Dimm0 Odt RttCa GroupB Value Setting"
+#string STR_MEMORY_DIMM0_ODT_RTTCS_GROUPB_VALUE                 #language en-US "Dimm0 RttCs B"
+#string STR_MEMORY_DIMM0_ODT_RTTCS_GROUPB_VALUE_HELP            #language en-US "Dimm0 Odt RttCs GroupB Value Setting"
+#string STR_MEMORY_DIMM0_ODT_RTTCK_GROUPB_VALUE                 #language en-US "Dimm0 RttCk B"
+#string STR_MEMORY_DIMM0_ODT_RTTCK_GROUPB_VALUE_HELP            #language en-US "Dimm0 Odt RttCk GroupB Value Setting"
+
+#string STR_MEMORY_DIMM1_ODT_RTTWR_VALUE                        #language en-US "Dimm1 RttWr"
+#string STR_MEMORY_DIMM1_ODT_RTTWR_VALUE_HELP                   #language en-US "Dimm1 Odt RttWr Value Setting"
+#string STR_MEMORY_DIMM1_ODT_RTTNOMRD_VALUE                     #language en-US "Dimm1 RttNomRd"
+#string STR_MEMORY_DIMM1_ODT_RTTNOMRD_VALUE_HELP                #language en-US "Dimm1 Odt RttNomRd Value Setting"
+#string STR_MEMORY_DIMM1_ODT_RTTNOMWR_VALUE                     #language en-US "Dimm1 RttNomWr"
+#string STR_MEMORY_DIMM1_ODT_RTTNOMWR_VALUE_HELP                #language en-US "Dimm1 Odt RttNomWr Value Setting"
+#string STR_MEMORY_DIMM1_ODT_RTTPARK_VALUE                      #language en-US "Dimm1 RttPark"
+#string STR_MEMORY_DIMM1_ODT_RTTPARK_VALUE_HELP                 #language en-US "Dimm1 Odt RttPark Value Setting"
+#string STR_MEMORY_DIMM1_ODT_RTTPARKDQS_VALUE                   #language en-US "Dimm1 RttParkDqs"
+#string STR_MEMORY_DIMM1_ODT_RTTPARKDQS_VALUE_HELP              #language en-US "Dimm1 Odt RttParkDqs Value Setting"
+#string STR_MEMORY_DIMM1_ODT_RTTCA_GROUPA_VALUE                 #language en-US "Dimm1 RttCa A"
+#string STR_MEMORY_DIMM1_ODT_RTTCA_GROUPA_VALUE_HELP            #language en-US "Dimm1 Odt RttCa GroupA Value Setting"
+#string STR_MEMORY_DIMM1_ODT_RTTCS_GROUPA_VALUE                 #language en-US "Dimm1 RttCs A"
+#string STR_MEMORY_DIMM1_ODT_RTTCS_GROUPA_VALUE_HELP            #language en-US "Dimm1 Odt RttCs GroupA Value Setting"
+#string STR_MEMORY_DIMM1_ODT_RTTCK_GROUPA_VALUE                 #language en-US "Dimm1 RttCk A"
+#string STR_MEMORY_DIMM1_ODT_RTTCK_GROUPA_VALUE_HELP            #language en-US "Dimm1 Odt RttCk GroupA Value Setting"
+#string STR_MEMORY_DIMM1_ODT_RTTCA_GROUPB_VALUE                 #language en-US "Dimm1 RttCa B"
+#string STR_MEMORY_DIMM1_ODT_RTTCA_GROUPB_VALUE_HELP            #language en-US "Dimm1 Odt RttCa GroupB Value Setting"
+#string STR_MEMORY_DIMM1_ODT_RTTCS_GROUPB_VALUE                 #language en-US "Dimm1 RttCs B"
+#string STR_MEMORY_DIMM1_ODT_RTTCS_GROUPB_VALUE_HELP            #language en-US "Dimm1 Odt RttCs GroupB Value Setting"
+#string STR_MEMORY_DIMM1_ODT_RTTCK_GROUPB_VALUE                 #language en-US "Dimm1 RttCk B"
+#string STR_MEMORY_DIMM1_ODT_RTTCK_GROUPB_VALUE_HELP            #language en-US "Dimm1 Odt RttCk GroupB Value Setting"
+
+#string STR_DIMM_ODT_34                                         #language en-US  "34"
+#string STR_DIMM_ODT_40                                         #language en-US  "40"
+#string STR_DIMM_ODT_48                                         #language en-US  "48"
+#string STR_DIMM_ODT_60                                         #language en-US  "60"
+#string STR_DIMM_ODT_80                                         #language en-US  "80"
+#string STR_DIMM_ODT_120                                        #language en-US  "120"
+#string STR_DIMM_ODT_240                                        #language en-US  "240"
+#string STR_DIMM_ODT_480                                        #language en-US  "480"
+
+#string STR_DFE_TAP1_STEP_SIZE_VALUE                            #language en-US "Dimm DFE Tap1 Step Size"
+#string STR_DFE_TAP1_STEP_SIZE_VALUE_HELP                       #language en-US "Dimm DFE Tap1 Sweep Step Size"
+#string STR_DFE_TAP2_STEP_SIZE_VALUE                            #language en-US "Dimm DFE Tap2 Step Size"
+#string STR_DFE_TAP2_STEP_SIZE_VALUE_HELP                       #language en-US "Dimm DFE Tap2 Sweep Step Size"
+
+#string STR_DDR5_VREF_87P0                                      #language en-US "87.0"
+#string STR_DDR5_VREF_86P5                                      #language en-US "86.5"
+#string STR_DDR5_VREF_86P0                                      #language en-US "86.0"
+#string STR_DDR5_VREF_85P5                                      #language en-US "85.5"
+#string STR_DDR5_VREF_85P0                                      #language en-US "85.0"
+#string STR_DDR5_VREF_84P5                                      #language en-US "84.5"
+#string STR_DDR5_VREF_84P0                                      #language en-US "84.0"
+#string STR_DDR5_VREF_83P5                                      #language en-US "83.5"
+#string STR_DDR5_VREF_83P0                                      #language en-US "83.0"
+#string STR_DDR5_VREF_82P5                                      #language en-US "82.5"
+#string STR_DDR5_VREF_82P0                                      #language en-US "82.0"
+#string STR_DDR5_VREF_81P5                                      #language en-US "81.5"
+#string STR_DDR5_VREF_81P0                                      #language en-US "81.0"
+#string STR_DDR5_VREF_80P5                                      #language en-US "80.5"
+#string STR_DDR5_VREF_80P0                                      #language en-US "80.0"
+#string STR_DDR5_VREF_79P5                                      #language en-US "79.5"
+#string STR_DDR5_VREF_79P0                                      #language en-US "79.0"
+#string STR_DDR5_VREF_78P5                                      #language en-US "78.5"
+#string STR_DDR5_VREF_78P0                                      #language en-US "78.0"
+#string STR_DDR5_VREF_77P5                                      #language en-US "77.5"
+#string STR_DDR5_VREF_77P0                                      #language en-US "77.0"
+#string STR_DDR5_VREF_76P5                                      #language en-US "76.5"
+#string STR_DDR5_VREF_76P0                                      #language en-US "76.0"
+#string STR_DDR5_VREF_75P5                                      #language en-US "75.5"
+#string STR_DDR5_VREF_75P0                                      #language en-US "75.0"
+#string STR_DDR5_VREF_74P5                                      #language en-US "74.5"
+#string STR_DDR5_VREF_74P0                                      #language en-US "74.0"
+#string STR_DDR5_VREF_73P5                                      #language en-US "73.5"
+#string STR_DDR5_VREF_73P0                                      #language en-US "73.0"
+#string STR_DDR5_VREF_72P5                                      #language en-US "72.5"
+#string STR_DDR5_VREF_72P0                                      #language en-US "72.0"
+#string STR_DDR5_VREF_71P5                                      #language en-US "71.5"
+#string STR_DDR5_VREF_71P0                                      #language en-US "71.0"
+#string STR_DDR5_VREF_70P5                                      #language en-US "70.5"
+#string STR_DDR5_VREF_70P0                                      #language en-US "70.0"
+#string STR_DDR5_VREF_69P5                                      #language en-US "69.5"
+#string STR_DDR5_VREF_69P0                                      #language en-US "69.0"
+#string STR_DDR5_VREF_68P5                                      #language en-US "68.5"
+#string STR_DDR5_VREF_68P0                                      #language en-US "68.0"
+#string STR_DDR5_VREF_67P5                                      #language en-US "67.5"
+#string STR_DDR5_VREF_67P0                                      #language en-US "67.0"
+#string STR_DDR5_VREF_66P5                                      #language en-US "66.5"
+#string STR_DDR5_VREF_66P0                                      #language en-US "66.0"
+#string STR_DDR5_VREF_65P5                                      #language en-US "65.5"
+#string STR_DDR5_VREF_65P0                                      #language en-US "65.0"
+#string STR_DDR5_VREF_64P5                                      #language en-US "64.5"
+#string STR_DDR5_VREF_64P0                                      #language en-US "64.0"
+#string STR_DDR5_VREF_63P5                                      #language en-US "63.5"
+#string STR_DDR5_VREF_63P0                                      #language en-US "63.0"
+#string STR_DDR5_VREF_62P5                                      #language en-US "62.5"
+#string STR_DDR5_VREF_62P0                                      #language en-US "62.0"
+#string STR_DDR5_VREF_61P5                                      #language en-US "61.5"
+#string STR_DDR5_VREF_61P0                                      #language en-US "61.0"
+#string STR_DDR5_VREF_60P5                                      #language en-US "60.5"
+#string STR_DDR5_VREF_60P0                                      #language en-US "60.0"
+#string STR_DDR5_VREF_59P5                                      #language en-US "59.5"
+#string STR_DDR5_VREF_59P0                                      #language en-US "59.0"
+#string STR_DDR5_VREF_58P5                                      #language en-US "58.5"
+#string STR_DDR5_VREF_58P0                                      #language en-US "58.0"
+#string STR_DDR5_VREF_57P5                                      #language en-US "57.5"
+#string STR_DDR5_VREF_57P0                                      #language en-US "57.0"
+#string STR_DDR5_VREF_56P5                                      #language en-US "56.5"
+#string STR_DDR5_VREF_56P0                                      #language en-US "56.0"
+#string STR_DDR5_VREF_55P5                                      #language en-US "55.5"
+#string STR_DDR5_VREF_55P0                                      #language en-US "55.0"
+#string STR_DDR5_VREF_54P5                                      #language en-US "54.5"
+#string STR_DDR5_VREF_54P0                                      #language en-US "54.0"
+#string STR_DDR5_VREF_53P5                                      #language en-US "53.5"
+#string STR_DDR5_VREF_53P0                                      #language en-US "53.0"
+#string STR_DDR5_VREF_52P5                                      #language en-US "52.5"
+#string STR_DDR5_VREF_52P0                                      #language en-US "52.0"
+#string STR_DDR5_VREF_51P5                                      #language en-US "51.5"
+#string STR_DDR5_VREF_51P0                                      #language en-US "51.0"
+#string STR_DDR5_VREF_50P5                                      #language en-US "50.5"
+#string STR_DDR5_VREF_50P0                                      #language en-US "50.0"
+
+#string STR_MEMORY_CS_VREF_LOW_VALUE                            #language en-US "CsVrefLow"
+#string STR_MEMORY_CS_VREF_LOW_VALUE_HELP                       #language en-US "Cs Sweep Vref Low Value. 0 = no override"
+#string STR_MEMORY_CS_VREF_HIGH_VALUE                           #language en-US "CsVrefHigh"
+#string STR_MEMORY_CS_VREF_HIGH_VALUE_HELP                      #language en-US "Cs Sweep Vref High Value"
+#string STR_MEMORY_CA_VREF_LOW_VALUE                            #language en-US "CaVrefLow"
+#string STR_MEMORY_CA_VREF_LOW_VALUE_HELP                       #language en-US "Ca Sweep Vref Low Value. 0 = no override"
+#string STR_MEMORY_CA_VREF_HIGH_VALUE                           #language en-US "CaVrefHigh"
+#string STR_MEMORY_CA_VREF_HIGH_VALUE_HELP                      #language en-US "Ca Sweep Vref High Value"
+
+#string STR_0                                               #language en-US  "0"
+#string STR_1                                               #language en-US  "1"
+#string STR_MEM_THERMMGT_TITLE                              #language en-US  "Memory Power and Thermal Throttling"
+#string STR_MEM_THERMMGT_HELP                               #language en-US  "Memory Power and Thermal Throttling Options"
+#string STR_MEMORY_THERMAL_REPORTING_TITLE                  #language en-US "Memory Thermal Reporting"
+
+#string STR_EXTTS_PROMPT                                    #language en-US  "Extern Therm Status"
+#string STR_EXTTS_HELP                                      #language en-US  "Enabled: The value from EXTTS is used Disabled: Pcode ignores the EXTTS."
+#string STR_CLTM_PROMPT                                     #language en-US  "Closed Loop Therm Manage"
+#string STR_CLTM_HELP                                       #language en-US  "Enabled: CLTM pcode algorithm will be used. Note: CLTM will proceed OLTM"
+#string STR_OLTM_PROMPT                                     #language en-US  "Open Loop Therm Manage"
+#string STR_OLTM_HELP                                       #language en-US  "Enabled: OLTM pcode algorithm will be used. Note: CLTM will proceed OLTM"
+#string STR_PWRDN_PROMPT                                    #language en-US  "DDR PowerDown and idle counter"
+#string STR_PWRDN_HELP                                      #language en-US  "BIOS: BIOS is in control of DDR CKE mode and idle timer value. PCODE: pcode will manage the modes."
+#string STR_PWRDN_LPDDR_PROMPT                              #language en-US  "For LPDDR Only: DDR PowerDown and idle counter"
+#string STR_PWRDN_LPDDR_HELP                                #language en-US  "For LPDDR Only: BIOS: BIOS is in control of DDR CKE mode and idle timer value. PCODE: pcode will manage the modes."
+#string STR_PWRDN_ENABLED                                   #language en-US  "BIOS"
+#string STR_PWRDN_DISABLED                                  #language en-US  "PCODE"
+#string STR_REFRESH_2X_MODE_PROMPT                          #language en-US  "REFRESH_2X_MODE"
+#string STR_REFRESH_2X_MODE_HELP                            #language en-US  "0- Disabled 1-iMC enables 2xRef when Warm and Hot 2- iMC enables 2xRef when Hot"
+#string STR_REFRESH_2X_WARM_HOT                             #language en-US  "1- Enabled for WARM or HOT"
+#string STR_REFRESH_2X_HOT                                  #language en-US  "2- Enabled HOT only"
+#string STR_LPDDR_THERMAL_SENSOR_PROMPT                     #language en-US  "LPDDR Thermal Sensor"
+#string STR_LPDDR_THERMAL_SENSOR_HELP                       #language en-US  "When enabled, MC uses MR4 to read LPDDR thermal sensors"
+#string STR_PDWN_CONFIG_CTL_PROMPT                          #language en-US  "Lock Thermal Management Registers"
+#string STR_PDWN_CONFIG_CTL_HELP                            #language en-US  "Enabled: lock several PCU registers related to DDR power/thermal management"
+#string STR_PWR_WEIGHT_PROMPT                               #language en-US  "Use user provided power weights, scale factor, and channel power floor values"
+#string STR_PWR_WEIGHT_HELP                                 #language en-US  "Enabled: User provided power weights, scale factor, and channel power floor values are used. Disabled: BIOS sets power weights, scale factor, and channel power floor values based on DIMMs present in system."
+
+#string STR_DRAM_POWER_METER_TITLE               #language en-US  "Dram Power Meter"
+#string STR_ENERGYSCALEFACT_PROMPT               #language en-US  "Energy Scale Factor"
+#string STR_ENERGYSCALEFACT_HELP                 #language en-US  "range[7;0]= [7.3;931.3]in pJ, (3= 116pJ Def)"
+#string STR_RAPLPWRFLCH1_PROMPT                  #language en-US  "Rapl Power Floor Ch1"
+#string STR_RAPLPWRFLCH1_HELP                    #language en-US  "Power budget ,range[255;0],(0= 5.3W Def)"
+#string STR_RAPLPWRFLCH0_PROMPT                  #language en-US  "Rapl Power Floor Ch0"
+#string STR_RAPLPWRFLCH0_HELP                    #language en-US  "Power budget ,range[255;0], (0= 5.3W Def)"
+
+#string STR_MEMORY_RAPL_TITLE                    #language en-US  "Memory RAPL"
+#string STR_RAPLLIM2LOCK_PROMPT                  #language en-US  "RAPL PL Lock"
+#string STR_RAPLLIM2LOCK_HELP                    #language en-US  "Enable= lock Rapl Limit register , Disable(Disable= Def)"
+#string STR_RAPLLIM2WINDX_PROMPT                 #language en-US  "RAPL PL 2 WindowX"
+#string STR_RAPLLIM2WINDX_HELP                   #language en-US  "Power PL 2 time window X value, (1/1024)*(1+(x/4))*(2^y) (0=Def)"
+#string STR_RAPLLIM2WINDY_PROMPT                 #language en-US  "RAPL PL 2 WindowY"
+#string STR_RAPLLIM2WINDY_HELP                   #language en-US  "Power PL 2 time window Y value, (1/1024)*(1+(x/4))*(2^y) (0=Def)"
+#string STR_RAPLLIM2ENA_PROMPT                   #language en-US  "RAPL PL 2 enable"
+#string STR_RAPLLIM2ENA_HELP                     #language en-US  "Enable= enable, Disable(Disable= Def)"
+#string STR_RAPLLIM2PWR_PROMPT                   #language en-US  "RAPL PL 2 Power"
+#string STR_RAPLLIM2PWR_HELP                     #language en-US  "range[0;2^14-1]= [2047.875;0]in W, (0= Def)"
+
+#string STR_RAPLLIM1WINDX_PROMPT                 #language en-US  "RAPL PL 1 WindowX"
+#string STR_RAPLLIM1WINDX_HELP                   #language en-US  "Power PL 1 time window X value, (1/1024)*(1+(x/4))*(2^y) (0=Def)"
+#string STR_RAPLLIM1WINDY_PROMPT                 #language en-US  "RAPL PL 1 WindowY"
+#string STR_RAPLLIM1WINDY_HELP                   #language en-US  "Power PL 1 time window Y value, (1/1024)*(1+(x/4))*(2^y) (0=Def)"
+#string STR_RAPLLIM1ENA_PROMPT                   #language en-US  "RAPL PL 1 enable"
+#string STR_RAPLLIM1ENA_HELP                     #language en-US  "Enable= enable, Disable(Disable= Def)"
+#string STR_RAPLLIM1PWR_PROMPT                   #language en-US  "RAPL PL 1 Power"
+#string STR_RAPLLIM1PWR_HELP                     #language en-US  "range[0;2^14-1]= [2047.875;0]in W, (0= Def)"
+
+#string STR_THERMAL_THRESHOLD                    #language en-US  "Thermal Threshold Settings"
+#string STR_THERMAL_THROTTLE_BUDGET                 #language en-US  "Thermal Throttle Budget Settings"
+
+#string STR_IDLEENERGYMC0CH0DIMM0_PROMPT               #language en-US  "Idle Energy Mc0Ch0Dimm0"
+#string STR_IDLEENERGYMC0CH0DIMM1_PROMPT               #language en-US  "Idle Energy Mc0Ch0Dimm1"
+#string STR_IDLEENERGYMC0CH1DIMM0_PROMPT               #language en-US  "Idle Energy Mc0Ch1Dimm0"
+#string STR_IDLEENERGYMC0CH1DIMM1_PROMPT               #language en-US  "Idle Energy Mc0Ch1Dimm1"
+#string STR_IDLEENERGYMC1CH0DIMM0_PROMPT               #language en-US  "Idle Energy Mc1Ch0Dimm0"
+#string STR_IDLEENERGYMC1CH0DIMM1_PROMPT               #language en-US  "Idle Energy Mc1Ch0Dimm1"
+#string STR_IDLEENERGYMC1CH1DIMM0_PROMPT               #language en-US  "Idle Energy Mc1Ch1Dimm0"
+#string STR_IDLEENERGYMC1CH1DIMM1_PROMPT               #language en-US  "Idle Energy Mc1Ch1Dimm1"
+#string STR_IDLEENERGY_MC_CH_DIMM_HELP                 #language en-US  "Idle Energy Consumed for 1 clk w/dimm idle/cke on, range[63;0],(10= Def)"
+
+#string STR_PDENERGYMC0CH0DIMM0_PROMPT                 #language en-US  "PowerDown Energy Mc0Ch0Dimm0"
+#string STR_PDENERGYMC0CH0DIMM1_PROMPT                 #language en-US  "PowerDown Energy Mc0Ch0Dimm1"
+#string STR_PDENERGYMC0CH1DIMM0_PROMPT                 #language en-US  "PowerDown Energy Mc0Ch1Dimm0"
+#string STR_PDENERGYMC0CH1DIMM1_PROMPT                 #language en-US  "PowerDown Energy Mc0Ch1Dimm1"
+#string STR_PDENERGYMC1CH0DIMM0_PROMPT                 #language en-US  "PowerDown Energy Mc1Ch0Dimm0"
+#string STR_PDENERGYMC1CH0DIMM1_PROMPT                 #language en-US  "PowerDown Energy Mc1Ch0Dimm1"
+#string STR_PDENERGYMC1CH1DIMM0_PROMPT                 #language en-US  "PowerDown Energy Mc1Ch1Dimm0"
+#string STR_PDENERGYMC1CH1DIMM1_PROMPT                 #language en-US  "PowerDown Energy Mc1Ch1Dimm1"
+#string STR_PDENERGY_MC_CH_DIMM_HELP                   #language en-US  "PowerDown Energy Consumed w/dimm idle/cke off, range[63;0],(6= Def)"
+
+#string STR_ACTENERGYMC0CH0DIMM1_PROMPT                #language en-US  "Activate Energy Mc0Ch0Dimm1"
+#string STR_ACTENERGYMC0CH0DIMM0_PROMPT                #language en-US  "Activate Energy Mc0Ch0Dimm0"
+#string STR_ACTENERGYMC0CH1DIMM1_PROMPT                #language en-US  "Activate Energy Mc0Ch1Dimm1"
+#string STR_ACTENERGYMC0CH1DIMM0_PROMPT                #language en-US  "Activate Energy Mc0Ch1Dimm0"
+#string STR_ACTENERGYMC1CH0DIMM1_PROMPT                #language en-US  "Activate Energy Mc1Ch0Dimm1"
+#string STR_ACTENERGYMC1CH0DIMM0_PROMPT                #language en-US  "Activate Energy Mc1Ch0Dimm0"
+#string STR_ACTENERGYMC1CH1DIMM1_PROMPT                #language en-US  "Activate Energy Mc1Ch1Dimm1"
+#string STR_ACTENERGYMC1CH1DIMM0_PROMPT                #language en-US  "Activate Energy Mc1Ch1Dimm0"
+#string STR_ACTENERGY_MC_CH_DIMM_HELP                  #language en-US  "Activate Energy Contribution, range[255;0],(172= Def)"
+
+#string STR_RDENERGYMC0CH0DIMM0_PROMPT                 #language en-US  "Read Energy Mc0Ch0Dimm0"
+#string STR_RDENERGYMC0CH0DIMM1_PROMPT                 #language en-US  "Read Energy Mc0Ch0Dimm1"
+#string STR_RDENERGYMC0CH1DIMM0_PROMPT                 #language en-US  "Read Energy Mc0Ch1Dimm0"
+#string STR_RDENERGYMC0CH1DIMM1_PROMPT                 #language en-US  "Read Energy Mc0Ch1Dimm1"
+#string STR_RDENERGYMC1CH0DIMM0_PROMPT                 #language en-US  "Read Energy Mc1Ch0Dimm0"
+#string STR_RDENERGYMC1CH0DIMM1_PROMPT                 #language en-US  "Read Energy Mc1Ch0Dimm1"
+#string STR_RDENERGYMC1CH1DIMM0_PROMPT                 #language en-US  "Read Energy Mc1Ch1Dimm0"
+#string STR_RDENERGYMC1CH1DIMM1_PROMPT                 #language en-US  "Read Energy Mc1Ch1Dimm1"
+#string STR_RDENERGY_MC_CH_DIMM_HELP                   #language en-US  "Read Energy Contribution, range[255;0],(212= Def)"
+
+#string STR_WRENERGYMC0CH0DIMM0_PROMPT                 #language en-US  "Write Energy Mc0Ch0Dimm0"
+#string STR_WRENERGYMC0CH0DIMM1_PROMPT                 #language en-US  "Write Energy Mc0Ch0Dimm1"
+#string STR_WRENERGYMC0CH1DIMM0_PROMPT                 #language en-US  "Write Energy Mc0Ch1Dimm0"
+#string STR_WRENERGYMC0CH1DIMM1_PROMPT                 #language en-US  "Write Energy Mc0Ch1Dimm1"
+#string STR_WRENERGYMC1CH0DIMM0_PROMPT                 #language en-US  "Write Energy Mc1Ch0Dimm0"
+#string STR_WRENERGYMC1CH0DIMM1_PROMPT                 #language en-US  "Write Energy Mc1Ch0Dimm1"
+#string STR_WRENERGYMC1CH1DIMM0_PROMPT                 #language en-US  "Write Energy Mc1Ch1Dimm0"
+#string STR_WRENERGYMC1CH1DIMM1_PROMPT                 #language en-US  "Write Energy Mc1Ch1Dimm1"
+#string STR_WRENERGY_MC_CH_DIMM_HELP                   #language en-US  "Write Energy Contribution, range[255;0],(221= Def)"
+
+#string STR_WARMTHRCH0DIMM1_PROMPT                     #language en-US  "Warm Threshold Ch0 Dimm1"
+#string STR_WARMTHRCH1DIMM0_PROMPT                     #language en-US  "Warm Threshold Ch1 Dimm0"
+#string STR_WARMTHRCH0DIMM0_PROMPT                     #language en-US  "Warm Threshold Ch0 Dimm0"
+#string STR_WARMTHRCH1DIMM1_PROMPT                     #language en-US  "Warm Threshold Ch1 Dimm1"
+#string STR_WARMTHR_CH_DIMM_HELP                       #language en-US  "range[255;0]=[31.875;0] in W for OLTM, [127.5;0] in C for CLTM"
+
+#string STR_HOTTHRCH0DIMM0_PROMPT                      #language en-US  "Hot Threshold Ch0 Dimm0"
+#string STR_HOTTHRCH0DIMM1_PROMPT                      #language en-US  "Hot Threshold Ch0 Dimm1"
+#string STR_HOTTHRCH1DIMM0_PROMPT                      #language en-US  "Hot Threshold Ch1 Dimm0"
+#string STR_HOTTHRCH1DIMM1_PROMPT                      #language en-US  "Hot Threshold Ch1 Dimm1"
+#string STR_HOTTHR_CH_DIMM_HELP                        #language en-US  "range[255;0]=[31.875;0] in W for OLTM, [127.5;0] in C for CLTM"
+//
+#string STR_WARMBUDGETCH0DIMM0_PROMPT                  #language en-US  "Warm Budget Ch0 Dimm0"
+#string STR_WARMBUDGETCH0DIMM1_PROMPT                  #language en-US  "Warm Budget Ch0 Dimm1"
+#string STR_WARMBUDGETCH1DIMM0_PROMPT                  #language en-US  "Warm Budget Ch1 Dimm0"
+#string STR_WARMBUDGETCH1DIMM1_PROMPT                  #language en-US  "Warm Budget Ch1 Dimm1"
+#string STR_WARMBUDGET_CH_DIMM_HELP                    #language en-US  "range[255;0]=[31.875;0] in W for OLTM, [127.5;0] in C for CLTM"
+
+#string STR_HOTBUDGETCH0DIMM0_PROMPT                   #language en-US  "Hot Budget Ch0 Dimm0"
+#string STR_HOTBUDGETCH0DIMM1_PROMPT                   #language en-US  "Hot Budget Ch0 Dimm1"
+#string STR_HOTBUDGETCH1DIMM0_PROMPT                   #language en-US  "Hot Budget Ch1 Dimm0"
+#string STR_HOTBUDGETCH1DIMM1_PROMPT                   #language en-US  "Hot Budget Ch1 Dimm1"
+#string STR_HOTBUDGET_CH_DIMM_HELP                     #language en-US  "range[255;0]=[31.875;0] in W for OLTM, [127.5;0] in C for CLTM"
+
+#string STR_IDLEENERGYCH0DIMM0_PROMPT                  #language en-US  "Idle Energy Ch0Dimm0"
+#string STR_IDLEENERGYCH0DIMM1_PROMPT                  #language en-US  "Idle Energy Ch0Dimm1"
+#string STR_IDLEENERGYCH1DIMM0_PROMPT                  #language en-US  "Idle Energy Ch1Dimm0"
+#string STR_IDLEENERGYCH1DIMM1_PROMPT                  #language en-US  "Idle Energy Ch1Dimm1"
+#string STR_IDLEENERGY_CH_DIMM_HELP                    #language en-US  "Idle Energy Consumed for 1 clk w/dimm idle/cke on, range[63;0],(10= Def)"
+
+#string STR_PDENERGYCH0DIMM0_PROMPT                    #language en-US  "PowerDown Energy Ch0Dimm0"
+#string STR_PDENERGYCH0DIMM1_PROMPT                    #language en-US  "PowerDown Energy Ch0Dimm1"
+#string STR_PDENERGYCH1DIMM0_PROMPT                    #language en-US  "PowerDown Energy Ch1Dimm0"
+#string STR_PDENERGYCH1DIMM1_PROMPT                    #language en-US  "PowerDown Energy Ch1Dimm1"
+#string STR_PDENERGY_CH_DIMM_HELP                      #language en-US  "PowerDown Energy Consumed w/dimm idle/cke off, range[63;0],(6= Def)"
+
+#string STR_ACTENERGYCH0DIMM0_PROMPT                   #language en-US  "Activate Energy Ch0Dimm0"
+#string STR_ACTENERGYCH0DIMM1_PROMPT                   #language en-US  "Activate Energy Ch0Dimm1"
+#string STR_ACTENERGYCH1DIMM0_PROMPT                   #language en-US  "Activate Energy Ch1Dimm0"
+#string STR_ACTENERGYCH1DIMM1_PROMPT                   #language en-US  "Activate Energy Ch1Dimm1"
+#string STR_ACTENERGY_CH_DIMM_HELP                     #language en-US  "Activate Energy Contribution, range[255;0],(172= Def)"
+
+#string STR_RDENERGYCH0DIMM0_PROMPT                    #language en-US  "Read Energy Ch0Dimm0"
+#string STR_RDENERGYCH0DIMM1_PROMPT                    #language en-US  "Read Energy Ch0Dimm1"
+#string STR_RDENERGYCH1DIMM0_PROMPT                    #language en-US  "Read Energy Ch1Dimm0"
+#string STR_RDENERGYCH1DIMM1_PROMPT                    #language en-US  "Read Energy Ch1Dimm1"
+#string STR_RDENERGY_CH_DIMM_HELP                      #language en-US  "Read Energy Contribution, range[255;0],(212= Def)"
+
+#string STR_WRENERGYCH0DIMM0_PROMPT                    #language en-US  "Write Energy Ch0Dimm0"
+#string STR_WRENERGYCH0DIMM1_PROMPT                    #language en-US  "Write Energy Ch0Dimm1"
+#string STR_WRENERGYCH1DIMM0_PROMPT                    #language en-US  "Write Energy Ch1Dimm0"
+#string STR_WRENERGYCH1DIMM1_PROMPT                    #language en-US  "Write Energy Ch1Dimm1"
+#string STR_WRENERGY_CH_DIMM_HELP                      #language en-US  "Write Energy Contribution, range[255;0],(221= Def)"
+
+#string STR_SREFCFGENA_PROMPT                    #language en-US  "SelfRefresh Enable"
+#string STR_SREFCFGENA_HELP                      #language en-US  "Enable, Disable(Enable= Def)"
+#string STR_SREFCFGIDLETMR_PROMPT                #language en-US  "SelfRefresh IdleTimer"
+#string STR_SREFCFGIDLETMR_HELP                  #language en-US  "range [64K-1;512]in DLCK800s, (512= Def)"
+
+#string STR_THRTCKEMINDEFEAT_PROMPT              #language en-US  "Throttler CKEMin Defeature"
+#string STR_THRTCKEMINDEFEAT_HELP                #language en-US  "On, Off"
+#string STR_THRTCKEMINTMR_PROMPT                 #language en-US  "Throttler CKEMin Timer"
+#string STR_THRTCKEMINTMR_HELP                   #language en-US  "Timer value for CKEMin, range[255;0]. Req'd min of SC_ROUND_T + BYTE_LENGTH (4)"
+#string STR_THRTCKEMINDEFEAT_LPDDR_PROMPT        #language en-US  "For LPDDR Only: Throttler CKEMin Defeature"
+#string STR_THRTCKEMINDEFEAT_LPDDR_HELP          #language en-US  "For LPDDR Only: On, Off"
+#string STR_THRTCKEMINTMR_LPDDR_PROMPT           #language en-US  "For LPDDR Only: Throttler CKEMin Timer"
+#string STR_THRTCKEMINTMR_LPDDR_HELP             #language en-US  "For LPDDR Only: Timer value for CKEMin, range[255;0]. Req'd min of SC_ROUND_T + BYTE_LENGTH (4)"
+
+#string STR_OFFSETKNOBS_TITLE                   #language en-US "MC Register Offset Knobs"
+#string STR_OFFSETKNOBS_HELP                    #language en-US "Offsets to be applied to select MC registers at the end of MRC"
+
+#string STR_DDRCRVREFADJUST1_TITLE              #language en-US "DDRDATA_CR_DDRCRVREFADJUST1"
+
+#string STR_CA_VREF_CTL_OFFSET_PROMPT           #language en-US "CA Vref Ctl Offset"
+#string STR_CA_VREF_CTL_OFFSET_HELP             #language en-US "Offset to be applied to DDRDATA7CH1_CR_DDRCRVREFADJUST1.CAVref"
+
+#string STR_VREF_CTL_OFFSET_PROMPT          #language en-US "DQ Vref Ctrl Offset"
+#string STR_VREF_CTL_OFFSET_HELP            #language en-US "Offset to be applied to DDRDATA7CH1_CR_DDRCRVREFADJUST1.Ch0VrefCtl"
+
+#string STR_DDRCRCLKPICODE_TITLE            #language en-US "DDRCLK_CR_DDRCRCLKPICODE"
+
+#string STR_CLK_PI_CODE_OFFSET_PROMPT       #language en-US "Clk PI Code Offset"
+#string STR_CLK_PI_CODE_OFFSET_HELP         #language en-US "Offset to be applied to DDRCLKCH0_CR_DDRCRCLKPICODE.PiSettingRank[0-3]"
+
+#string STR_DDRCRDATAOFFSETTRAIN_TITLE      #language en-US "DDRDATA_CR_DDRCRDATAOFFSETTRAIN"
+
+#string STR_RCV_EN_OFFSET_PROMPT            #language en-US "RcvEn Offset"
+#string STR_RCV_EN_OFFSET_HELP              #language en-US "Offset to be applied to DDRDATACH0_CR_DDRCRDATAOFFSETTRAIN.RcvEn"
+
+#string STR_RX_DQS_OFFSET_PROMPT            #language en-US "Rx Dqs Offset"
+#string STR_RX_DQS_OFFSET_HELP              #language en-US "Offset to be applied to DDRDATACH0_CR_DDRCRDATAOFFSETTRAIN.RxDqsOffset"
+
+#string STR_TX_DQ_OFFSET_PROMPT             #language en-US "Tx Dq Offset"
+#string STR_TX_DQ_OFFSET_HELP               #language en-US "Offset to be applied to DDRDATACH0_CR_DDRCRDATAOFFSETTRAIN.TxDqOffset"
+
+#string STR_TX_DQS_OFFSET_PROMPT            #language en-US "Tx Dqs Offset"
+#string STR_TX_DQS_OFFSET_HELP              #language en-US "Offset to be applied to DDRDATACH0_CR_DDRCRDATAOFFSETTRAIN.TxDqsOffset"
+
+#string STR_VREF_OFFSET_PROMPT              #language en-US "Vref Offset"
+#string STR_VREF_OFFSET_HELP                #language en-US "Offset to be applied to DDRDATACH0_CR_DDRCRDATAOFFSETTRAIN.VrefOffset"
+
+#string STR_CNTRL_MASK_PROMPT               #language en-US "Controller Mask"
+#string STR_CNTRL_MASK_HELP                 #language en-US "Controller mask to be applied to parameter Offset"
+
+#string STR_CH_MASK_PROMPT                  #language en-US "Channel  Mask"
+#string STR_CH_MASK_HELP                    #language en-US "Channel mask to be applied to parameter Offset"
+
+#string STR_ZERO                                #language en-US "0"
+#string STR_POS_1                               #language en-US "+1"
+#string STR_NEG_1                               #language en-US "-1"
+#string STR_POS_2                               #language en-US "+2"
+#string STR_NEG_2                               #language en-US "-2"
+#string STR_POS_3                               #language en-US "+3"
+#string STR_NEG_3                               #language en-US "-3"
+#string STR_POS_4                               #language en-US "+4"
+#string STR_NEG_4                               #language en-US "-4"
+#string STR_POS_5                               #language en-US "+5"
+#string STR_NEG_5                               #language en-US "-5"
+#string STR_POS_6                               #language en-US "+6"
+#string STR_NEG_6                               #language en-US "-6"
+#string STR_POS_7                               #language en-US "+7"
+#string STR_NEG_7                               #language en-US "-7"
+#string STR_POS_8                               #language en-US "+8"
+#string STR_NEG_8                               #language en-US "-8"
+#string STR_POS_9                               #language en-US "+9"
+#string STR_NEG_9                               #language en-US "-9"
+#string STR_POS_10                              #language en-US "+10"
+#string STR_NEG_10                              #language en-US "-10"
+#string STR_POS_11                              #language en-US "+11"
+#string STR_NEG_11                              #language en-US "-11"
+#string STR_POS_12                              #language en-US "+12"
+#string STR_NEG_12                              #language en-US "-12"
+#string STR_RANDOM                              #language en-US "Random"
+
+#string STR_MEMORY_THERMAL_CONFIGURATION        #language en-US "Memory Thermal Configuration"
+#string STR_SAGV_PROMPT                         #language en-US "SAGV"
+#string STR_SAGV_HELP                           #language en-US "System Agent Geyserville. Disabled or Enabled."
+#string STR_SAGV_MASK_PROMPT                    #language en-US "SA GV Mask"
+#string STR_SAGV_MASK_HELP                      #language en-US "System Agent Geyserville. Set the BIT(s) for which points to use in frequency switching."
+#string STR_POINTS_0_1_STRING                   #language en-US "Enable Points: 1st and 2nd"
+#string STR_POINTS_0_1_2_STRING                 #language en-US "Enable Points: 1st, 2nd, and 3rd"
+#string STR_POINTS_0_1_2_3_STRING               #language en-US "Enable All Points: 1st, 2nd, 3rd, and 4th"
+#string STR_SAGV_FIRST_FREQ                     #language en-US "First Point Frequency"
+#string STR_SAGV_FIRST_GEAR                     #language en-US "First Point Gear"
+#string STR_SAGV_SECOND_FREQ                    #language en-US "Second Point Frequency"
+#string STR_SAGV_SECOND_GEAR                    #language en-US "Second Point Gear"
+#string STR_SAGV_THIRD_FREQ                     #language en-US "Third Point Frequency"
+#string STR_SAGV_THIRD_GEAR                     #language en-US "Third Point Gear"
+#string STR_SAGV_FOURTH_FREQ                    #language en-US "Fourth Point Frequency"
+#string STR_SAGV_FOURTH_GEAR                    #language en-US "Fourth Point Gear"
+#string STR_SAGV_FREQ_HELP                      #language en-US "Specify the frequency for the given point.  0 - MRC auto, Else a specific frequency as an integer: 1333"
+#string STR_SAGV_GEAR_HELP                      #language en-US "Selection for the Gear Ratio of the SAGV point"
+#string STR_GEAR_NO_SAGV_PROMPT                 #language en-US "Sets the gear ratio when SAGV is disabled"
+
+#string STR_FIXED_LOW_STRING                    #language en-US "Fixed Low"
+#string STR_FIXED_MID_STRING                    #language en-US "Fixed Mid"
+#string STR_FIXED_HIGH_STRING                   #language en-US "Fixed High"
+#string STR_SA_GV_LOW_PROMPT                    #language en-US "SA GV Low Freq"
+#string STR_SA_GV_LOW_HELP                      #language en-US "System Agent Geyserville. Set frequency for low point. Default 1067 for LPDDR4, 1333 for DDR4.  Must be the lowest frequency."
+#string STR_SA_GV_MID_PROMPT                    #language en-US "SA GV Mid Freq"
+#string STR_SA_GV_MID_HELP                      #language en-US "System Agent Geyserville. Set frequency for mid point. Default 1867.  Must be Low <= Mid <= High"
+
+#string STR_DDR_SPEED_CONTROL_PROMPT            #language en-US "DDR Speed Control"
+#string STR_DDR_SPEED_CONTROL_HELP              #language en-US "DDR Frequency and Gear1 / Gear2 control for all SAGV points"
+
+#string STR_GEAR1_STRING                        #language en-US "Gear1"
+#string STR_GEAR2_STRING                        #language en-US "Gear2"
+
+#string STR_PROBELESS_TRACE_PROMPT              #language en-US "Probeless Trace"
+#string STR_PROBELESS_TRACE_HELP                #language en-US "Enable/Disable capacity to activate Probeless Trace feature."
+#string STR_IOT_MOT_STRING                      #language en-US "GDXC IOT/MOT"
+#string STR_HD_PORT_STRING                      #language en-US "HD Port"
+
+#string STR_GDXC_IOT_SIZE_SUPPORT_PROMPT        #language en-US "GDXC IOT size"
+#string STR_GDXC_MOT_SIZE_SUPPORT_PROMPT        #language en-US "GDXC MOT size"
+#string STR_GDXC_IOT_MOT_SIZE_SUPPORT_HELP      #language en-US "Size of IOT and MOT is in 8 MB chunks"
+
+#string STR_MEMORY_TRACE_PROMPT                 #language en-US "Memory Trace"
+#string STR_MEMORY_TRACE_HELP                   #language en-US "Enable Memory Trace of Ch 0 to Ch 1 using Stacked Mode. Both channels must be of equal size. This option may change TOLUD and REMAP values as needed."
+//
+// Memory Training Algorithms
+//
+#string STR_MEMORY_TRAINING_ALGOS_PROMPT        #language en-US "Memory Training Algorithms"
+#string STR_MEMORY_TRAINING_ALGOS_HELP          #language en-US "Enable/Disable Memory Training Algorithms."
+#string STR_EARLY_CMD_TRNG_NAME                 #language en-US "Early Command Training"
+#string STR_EARLY_CMD_TRNG_HELP                 #language en-US "Early Command Training"
+#string STR_SENSEAMP_TRNG_NAME                  #language en-US "SenseAmp Offset Training"
+#string STR_SENSEAMP_TRNG_HELP                  #language en-US "SenseAmp Offset Training"
+#string STR_ERDMPRTC2D_TRNG_NAME                #language en-US "Early ReadMPR Timing Centering 2D"
+#string STR_ERDMPRTC2D_TRNG_HELP                #language en-US "Early ReadMPR Timing Centering 2D"
+#string STR_RDMPR_TRNG_NAME                     #language en-US "Read MPR Training"
+#string STR_RDMPR_TRNG_HELP                     #language en-US "Read MPR Training"
+#string STR_RCVEN_TRNG_NAME                     #language en-US "Receive Enable Training"
+#string STR_RCVEN_TRNG_HELP                     #language en-US "Receive Enable Training"
+#string STR_JWRL_TRNG_NAME                      #language en-US "Jedec Write Leveling"
+#string STR_JWRL_TRNG_HELP                      #language en-US "Jedec Write Leveling"
+#string STR_EWRTC2D_TRNG_NAME                   #language en-US "Early Write Time Centering 2D"
+#string STR_EWRTC2D_TRNG_HELP                   #language en-US "Early Write Time Centering 2D"
+#string STR_ERDTC2D_TRNG_NAME                   #language en-US "Early Read Time Centering 2D"
+#string STR_ERDTC2D_TRNG_HELP                   #language en-US "Early Read Time Centering 2D"
+#string STR_UNMATCHEDWRTC1D_TRNG_NAME           #language en-US "Unmatched Write-Time Centering 1D"
+#string STR_WRTC1D_TRNG_NAME                    #language en-US "Write Timing Centering 1D"
+#string STR_WRTC1D_TRNG_HELP                    #language en-US "Write Timing Centering 1D"
+#string STR_WRVC1D_TRNG_NAME                    #language en-US "Write Voltage Centering 1D"
+#string STR_WRVC1D_TRNG_HELP                    #language en-US "Write Voltage Centering 1D"
+#string STR_RDTC1D_TRNG_NAME                    #language en-US "Read Timing Centering 1D"
+#string STR_RDTC1D_TRNG_HELP                    #language en-US "Read Timing Centering 1D"
+#string STR_DIMMODTT_TRNG_NAME                  #language en-US "Dimm ODT Training*"
+#string STR_DIMMODTT_TRNG_HELP                  #language en-US "Dimm On-Die Termination Training"
+#string STR_DIMMRONT_TRNG_NAME                  #language en-US "DIMM RON Training*"
+#string STR_DIMMRONT_TRNG_HELP                  #language en-US "DIMM RON Training"
+#string STR_WRDSEQT_TRNG_NAME                   #language en-US "Write Drive Strength/Equalization 2D*"
+#string STR_WRDSEQT_TRNG_HELP                   #language en-US "Write Drive Strength/Equalization 2D*"
+#string STR_DQSRF_TRNG_NAME                     #language en-US "DQ Rise/Fall"
+#string STR_RDDQSODTT_TRNG_NAME                 #language en-US "Read DQS ODT Training*"
+#string STR_RDDQSODTT_TRNG_HELP                 #language en-US "Read DQS On-Die Termination Training"
+#string STR_RDDQODTT_TRNG_NAME                  #language en-US "Read DQ ODT Training"
+#string STR_RDDQODTT_TRNG_HELP                  #language en-US "Read DQ On-Die Termination Training"
+#string STR_RDEQT_TRNG_NAME                     #language en-US "Read Equalization Training*"
+#string STR_RDEQT_TRNG_HELP                     #language en-US "Read Equalization Training"
+#string STR_DUNITC_TRNG_NAME                    #language en-US "DUINT Calibration"
+#string STR_RDCTLET_TRNG_NAME                   #language en-US "Read CTLE Training"
+#string STR_WRTC2D_TRNG_NAME                    #language en-US "Write Timing Centering 2D"
+#string STR_WRTC2D_TRNG_HELP                    #language en-US "Write Dq-Dqs Timing Centering 2D"
+#string STR_RDTC2D_TRNG_NAME                    #language en-US "Read Timing Centering 2D"
+#string STR_RDTC2D_TRNG_HELP                    #language en-US "Read Dq-Dqs Timing Centering 2D"
+#string STR_CMDVC_TRNG_NAME                     #language en-US "Command Voltage Centering"
+#string STR_CMDVC_TRNG_HELP                     #language en-US "Command Voltage Centering"
+#string STR_WRVC2D_TRNG_NAME                    #language en-US "Write Voltage Centering 2D"
+#string STR_WRVC2D_TRNG_HELP                    #language en-US "Write Voltage Centering 2D"
+#string STR_RDVC2D_TRNG_NAME                    #language en-US "Read Voltage Centering 2D"
+#string STR_RDVC2D_TRNG_HELP                    #language en-US "Read Voltage Centering 2D"
+#string STR_RXVREFPERBIT_TRNG_NAME              #language en-US "RxVref Per-Bit Training"
+#string STR_LCT_TRNG_NAME                       #language en-US "Late Command Training"
+#string STR_LCT_TRNG_HELP                       #language en-US "Late Command Training"
+#string STR_RTL_TRNG_NAME                       #language en-US "Round Trip Latency"
+#string STR_RTL_TRNG_HELP                       #language en-US "Round Trip Latency Training"
+#string STR_TAT_TRNG_NAME                       #language en-US "Turn Around Timing Training"
+#string STR_TAT_TRNG_HELP                       #language en-US "Turn Around Timing Training"
+#string STR_RMT_TRNG_NAME                       #language en-US "Rank Margin Tool"
+#string STR_RMT_TRNG_HELP                       #language en-US "Rank Margin Tool Training"
+#string STR_RMTBIT_TRNG_NAME                    #language en-US "Rank Margin Tool Per Bit"
+#string STR_RMTBIT_TRNG_HELP                    #language en-US "Rank Margin Tool Per Bit Training"
+#string STR_RMTEVENODD_TRNG_NAME                #language en-US "Rank Margin Tool Even Odd"
+#string STR_RMTEVENODD_TRNG_HELP                #language en-US "Rank Margin Tool Even Odd Training"
+#string STR_ALIASCHK_NAME                       #language en-US "DIMM SPD Alias Test"
+#string STR_ALIASCHK_HELP                       #language en-US "Test to determine if the SPD has been corrupted to cause memory aliasing."
+#string STR_RCVENC1D_NAME                       #language en-US "Receive Enable Centering 1D"
+#string STR_RMC_NAME                            #language en-US "Retrain Margin Check"
+#string STR_PRETRAIN_NAME                       #language en-US "PreTraining"
+#string STR_RDVC1D_NAME                         #language en-US "Read Voltage Centering 1D"
+#string STR_TXTCO_NAME                          #language en-US "TxDqTCO Comp Training*"
+#string STR_CLKTCO_NAME                         #language en-US "ClkTCO Comp Training*"
+#string STR_CMDDSEQ_NAME                        #language en-US "CMD/CTL DS & E 2D"
+#string STR_CMDDSEQ_HELP                        #language en-US "CMD/CTL Drive Strength and Equalization 2D"
+#string STR_CMDSR_NAME                          #language en-US "CMD CTL CLK Slew Rate"
+#string STR_DIMMODTCA_NAME                      #language en-US "DIMM CA ODT Training"
+#string STR_RDVREFDC_NAME                       #language en-US "Read Vref Decap Training*"
+#string STR_VDDQT_NAME                          #language en-US "Vddq Training"
+#string STR_DCCPICODELUT_NAME                   #language en-US "DCC PI Code LUT Calibration"
+#string STR_REFPI_NAME                          #language en-US "Ref PI Calibration"
+#string STR_PHASECLKCAL_NAME                    #language en-US "DCC Phase Clk Calibration"
+#string STR_DATAPILIN_NAME                      #language en-US "Data PI Linearity Calibration"
+#string STR_DCCPISERIALCAL_NAME                 #language en-US "DCC PI Serializer Calibration"
+#string STR_DDR5XTALK_NAME                      #language en-US "Ddr5 Rx Cross-Talk Cancellation"
+#string STR_RMTBIT_NAME                         #language en-US "Rank Margin Tool Per Bit"
+#string STR_WRTDIMMDFE_NAME                     #language en-US "DIMM DFE Training"
+#string STR_DDR5ODTTIMING_NAME                  #language en-US "DDR5 ODT Timing Config"
+#string STR_WCKPADDCCCAL_NAME                   #language en-US "Wck Pad DCC Calibration"
+#string STR_DLLDCC_NAME                         #language en-US "DLL DCC Calibration"
+#string STR_DLLBWSEL_NAME                       #language en-US "DLL Bandwidth Select Calibration"
+#string STR_DQDQSSWZ_NAME                       #language en-US "DQ/DQS Swizzling"
+#string STR_VCCCLKFF_NAME                       #language en-US "VccClk FF Offset Correction"
+#string STR_FUNCDCCDQS_NAME                     #language en-US "Function DCC for DDR5 DQS"
+#string STR_FUNCDCCCLK_NAME                     #language en-US "Function DCC for CLK"
+#string STR_FUNCDCCWCK_NAME                     #language en-US "Function DCC for LP5 WCK"
+#string STR_FUNCDCCDQ_NAME                      #language en-US "Function DCC for Data DQ"
+#string STR_DCCLP5READDCA_NAME                  #language en-US "DRAM DCC for LP5 READ DCA"
+#string STR_DCCLP5WCKDCA_NAME                   #language en-US "DRAM DCC For LP5 WCK DCA"
+#string STR_RXUNMATCHEDCAL_NAME                 #language en-US "Unmatched Rx Calibration"
+#string STR_RXDQSDCC_NAME                       #language en-US "RX DQS DCC"
+#string STR_DIMMNTODT_TRNG_NAME                 #language en-US "DIMM Non-Target ODT Training"
+#string STR_ENPERIODICCOMP_PROMPT               #language en-US "Enable/Disable Periodic Compensation"
+#string STR_LVRAUTOTRIM_NAME                    #language en-US "LVR Auto Trim"
+#string STR_TLINECLKCAL_NAME                    #language en-US "Tline Clk Calibration"
+#string STR_PWRMETER_NAME                       #language en-US "Power Saving Meter"
+#string STR_OPTIMIZECOMP_NAME                   #language en-US "Comp Optimization"
+#string STR_WRTRETRAIN_NAME                     #language en-US "Write Dq/Dqs Retraining"
+#string STR_DDRPRECOMP_NAME                     #language en-US "Ddr Comp Calibration Pre Training"
+
+#string STR_MARGIN_LIMIT_CHECK_NAME             #language en-US "Margin Check Limit"
+#string STR_MARGIN_LIMIT_CHECK_HELP             #language en-US "Checks Margin to Limit to see if next boot memory needs to be retrain"
+#string STR_MARGIN_LIMIT_CHECK_L1               #language en-US "L1"
+#string STR_MARGIN_LIMIT_CHECK_L2               #language en-US "L2"
+#string STR_MARGIN_LIMIT_CHECK_BOTH             #language en-US "Both"
+#string STR_MARGIN_LIMIT_CHECK_L2_THSD_NAME     #language en-US "Margin Limit Check L2 "
+#string STR_MARGIN_LIMIT_CHECK_L2_THSD_HELP     #language en-US "L2 check threshold is scale of L1 check. Ex. 200 is 2 x L1 Check"
+
+#string STR_EMPHASIS_TRNG_NAME                  #language en-US "Pre EMPHASIS Training"
+
+#string STR_MCREGOFFSET_NAME                    #language en-US "MC Register Offset"
+#string STR_MCREGOFFSET_HELP                    #language en-US "Apply user offsets to select MC registers"
+
+#string STR_SCRAM_CLOCK_GATE_AB_PROMPT          #language en-US " Clock Gate AB"
+#string STR_SCRAM_CLOCK_GATE_C_PROMPT           #language en-US " Clock Gate C"
+#string STR_SCRAM_ENABLE_DBI_AB_PROMPT          #language en-US " Enable DBI AB"
+#string STR_2_CYCLES_STRING                     #language en-US "2 Cycles"
+#string STR_3_CYCLES_STRING                     #language en-US "3 Cycles"
+#string STR_4_CYCLES_STRING                     #language en-US "4 Cycles"
+#string STR_8_CYCLES_STRING                     #language en-US "8 Cycles"
+
+#string STR_LPDDR_MEM_WL_SET_PROMPT             #language en-US "Lpddr Mem WL Set"
+#string STR_LPDDR_MEM_WL_SET_HELP               #language en-US "Only applicable to LPDDR, Memory Write Latency Set selection (A is default, B will be used if memory devices support it)"
+#string STR_SET_A                               #language en-US "Set A"
+#string STR_SET_B                               #language en-US "Set B"
+
+#string STR_TRAIN_TRACE_PROMPT                  #language en-US "Training Tracing"
+#string STR_TRAIN_TRACE_HELP                    #language en-US "Enables/Disables printing of the current trained state at every major training step."
+
+#string STR_RMT_PER_TASK_PROMPT                 #language en-US "Rank Margin Tool Per Task"
+#string STR_RMT_PER_TASK_HELP                   #language en-US "Enables/Disables RMT running at every major training step"
+
+#string STR_MEMORY_SCRAMBLER_PROMPT             #language en-US "Memory Scrambler"
+#string STR_MEMORY_SCRAMBLER_HELP               #language en-US "Enable/Disable Memory Scrambler support."
+
+#string STR_FORCE_COLDRESET_PROMPT              #language en-US "Force ColdReset"
+#string STR_FORCE_COLDRESET_HELP                #language en-US "Force ColdReset OR Choose MrcColdBoot mode, when Coldboot is required during MRC execution. Note: If ME 5.0MB is present, ForceColdReset is required!"
+
+#string STR_DISABLE_MC0_CH0_PROMPT              #language en-US "Controller 0, Channel 0 Control"
+#string STR_DISABLE_MC0_CH0_HELP                #language en-US "Controller 0, Channel 0 Control - Enable or Disable Controller 0, Channel 0."
+#string STR_DISABLE_MC0_CH1_PROMPT              #language en-US "Controller 0, Channel 1 Control"
+#string STR_DISABLE_MC0_CH1_HELP                #language en-US "Controller 0, Channel 1 Control - Enable or Disable Controller 0, Channel 1."
+#string STR_DISABLE_MC0_CH2_PROMPT              #language en-US "Controller 0, Channel 2 Control"
+#string STR_DISABLE_MC0_CH2_HELP                #language en-US "Controller 0, Channel 2 Control - Enable or Disable Controller 0, Channel 2."
+#string STR_DISABLE_MC0_CH3_PROMPT              #language en-US "Controller 0, Channel 3 Control"
+#string STR_DISABLE_MC0_CH3_HELP                #language en-US "Controller 0, Channel 3 Control - Enable or Disable Controller 0, Channel 3."
+#string STR_DISABLE_MC1_CH0_PROMPT              #language en-US "Controller 1, Channel 0 Control"
+#string STR_DISABLE_MC1_CH0_HELP                #language en-US "Controller 1, Channel 0 Control - Enable or Disable Controller 1, Channel 0."
+#string STR_DISABLE_MC1_CH1_PROMPT              #language en-US "Controller 1, Channel 1 Control"
+#string STR_DISABLE_MC1_CH1_HELP                #language en-US "Controller 1, Channel 1 Control - Enable or Disable Controller 1, Channel 1."
+#string STR_DISABLE_MC1_CH2_PROMPT              #language en-US "Controller 1, Channel 2 Control"
+#string STR_DISABLE_MC1_CH2_HELP                #language en-US "Controller 1, Channel 2 Control - Enable or Disable Controller 1, Channel 2."
+#string STR_DISABLE_MC1_CH3_PROMPT              #language en-US "Controller 1, Channel 3 Control"
+#string STR_DISABLE_MC1_CH3_HELP                #language en-US "Controller 1, Channel 3 Control - Enable or Disable Controller 1, Channel 3."
+
+#string STR_FORCE_SINGLE_RANK_PROMPT            #language en-US "Force Single Rank"
+#string STR_FORCE_SINGLE_RANK_HELP              #language en-US "When enabled, only Rank 0 will be used in each DIMM"
+
+#string STR_IBECC_ENABLE_PROMPT                 #language en-US "In-Band ECC Support"
+#string STR_IBECC_ENABLE_PROMPT_HELP            #language en-US "Enable/Disable In-Band ECC. Will be enabled if memory has symmetric configuration."
+
+#string STR_IBECC_PARITY_PROMPT                 #language en-US "In-Band ECC Parity Control"
+#string STR_IBECC_PARITY_PROMPT_HELP            #language en-US "Enable/Disable In-Band ECC Parity Control"
+
+#string STR_IBECC_OPMODE_PROMPT                 #language en-US "In-Band ECC Operation Mode"
+#string STR_IBECC_OPMODE_PROMPT_HELP            #language en-US "0: Functional Mode protects requests based on the address range, 1: Makes all requests non protected and ignore range checks, 2:Makes all requests protected and ignore range checks"
+#string STR_0_IBECC_STRING                      #language en-US "0"
+#string STR_1_IBECC_STRING                      #language en-US "1"
+#string STR_2_IBECC_STRING                      #language en-US "2"
+
+#string STR_IBECC_PROTECTED_0_ENABLE_PROMPT       #language en-US "IBECC Protect Region 0"
+#string STR_IBECC_PROTECTED_0_ENABLE_PROMPT_HELP  #language en-US "Enable/Disable In-Band ECC for Region 0"
+#string STR_IBECC_PROTECTED_0_BASE_PROMPT         #language en-US "Protected Region 0 Base (in size of 32MB)"
+#string STR_IBECC_PROTECTED_0_BASE_PROMPT_HELP    #language en-US "Set the base address for protected region 0 (in size of 32MB) for enabled IBECC instance (2X if 2 IBECC enabled). Make sure doesn't overlap with other region, and must be aligned with protected size. Example: 1 = 32MB, 2 = 64MB"
+#string STR_IBECC_PROTECTED_0_MASK_PROMPT         #language en-US "Protected Region 0 Size"
+#string STR_IBECC_PROTECTED_0_MASK_PROMPT_HELP    #language en-US "Set the protected size for region 0 for enabled IBECC instance (2X if 2 IBECC enabled)."
+#string STR_32MB_IBECC_STRING                     #language en-US "N/A"
+#string STR_64MB_IBECC_STRING                     #language en-US "N/A"
+#string STR_128MB_IBECC_STRING                    #language en-US "N/A"
+#string STR_256MB_IBECC_STRING                    #language en-US "N/A"
+#string STR_512MB_IBECC_STRING                    #language en-US "N/A"
+#string STR_1GB_IBECC_STRING                      #language en-US "N/A"
+#string STR_2GB_IBECC_STRING                      #language en-US "N/A"
+#string STR_4GB_IBECC_STRING                      #language en-US "N/A"
+#string STR_8GB_IBECC_STRING                      #language en-US "N/A"
+#string STR_16GB_IBECC_STRING                     #language en-US "N/A"
+#string STR_32GB_IBECC_STRING                     #language en-US "N/A"
+#string STR_64GB_IBECC_STRING                     #language en-US "N/A"
+#string STR_128GB_IBECC_STRING                    #language en-US "N/A"
+#string STR_256GB_IBECC_STRING                    #language en-US "N/A"
+
+#string STR_IBECC_PROTECTED_1_ENABLE_PROMPT       #language en-US "IBECC Protect Region 1"
+#string STR_IBECC_PROTECTED_1_ENABLE_PROMPT_HELP  #language en-US "Enable/Disable In-Band ECC for Region 1"
+#string STR_IBECC_PROTECTED_1_BASE_PROMPT         #language en-US "Protected Region 1 Base (in size of 32MB)"
+#string STR_IBECC_PROTECTED_1_BASE_PROMPT_HELP    #language en-US "Set the base address for protected region 1 (in size of 32MB) for enabled IBECC instance (2X if 2 IBECC enabled). Make sure doesn't overlap with other region, and must be aligned with protected size. Example: 1 = 32MB, 2 = 64MB"
+#string STR_IBECC_PROTECTED_1_MASK_PROMPT         #language en-US "Protected Region 1 Size"
+#string STR_IBECC_PROTECTED_1_MASK_PROMPT_HELP    #language en-US "Set the protected size for region 1 for enabled IBECC instance (2X if 2 IBECC enabled)."
+
+#string STR_IBECC_PROTECTED_2_ENABLE_PROMPT       #language en-US "IBECC Protect Region 2"
+#string STR_IBECC_PROTECTED_2_ENABLE_PROMPT_HELP  #language en-US "Enable/Disable In-Band ECC for Region 2"
+#string STR_IBECC_PROTECTED_2_BASE_PROMPT         #language en-US "Protected Region 2 Base (in size of 32MB)"
+#string STR_IBECC_PROTECTED_2_BASE_PROMPT_HELP    #language en-US "Set the base address for protected region 2 (in size of 32MB) for enabled IBECC instance (2X if 2 IBECC enabled). Make sure doesn't overlap with other region, and must be aligned with protected size. Example: 1 = 32MB, 2 = 64MB"
+#string STR_IBECC_PROTECTED_2_MASK_PROMPT         #language en-US "Protected Region 2 Size"
+#string STR_IBECC_PROTECTED_2_MASK_PROMPT_HELP    #language en-US "Set the protected size for region 2 for enabled IBECC instance (2X if 2 IBECC enabled)."
+
+#string STR_IBECC_PROTECTED_3_ENABLE_PROMPT       #language en-US "IBECC Protect Region 3"
+#string STR_IBECC_PROTECTED_3_ENABLE_PROMPT_HELP  #language en-US "Enable/Disable In-Band ECC for Region 3"
+#string STR_IBECC_PROTECTED_3_BASE_PROMPT         #language en-US "Protected Region 3 Base (in size of 32MB)"
+#string STR_IBECC_PROTECTED_3_BASE_PROMPT_HELP    #language en-US "Set the base address for protected region 3 (in size of 32MB) for enabled IBECC instance (2X if 2 IBECC enabled). Make sure doesn't overlap with other region, and must be aligned with protected size. Example: 1 = 32MB, 2 = 64MB"
+#string STR_IBECC_PROTECTED_3_MASK_PROMPT         #language en-US "Protected Region 3 Size"
+#string STR_IBECC_PROTECTED_3_MASK_PROMPT_HELP    #language en-US "Set the protected size for region 3 for enabled IBECC instance (2X if 2 IBECC enabled)."
+
+#string STR_IBECC_PROTECTED_4_ENABLE_PROMPT       #language en-US "IBECC Protect Region 4"
+#string STR_IBECC_PROTECTED_4_ENABLE_PROMPT_HELP  #language en-US "Enable/Disable In-Band ECC for Region 4"
+#string STR_IBECC_PROTECTED_4_BASE_PROMPT         #language en-US "Protected Region 4 Base (in size of 32MB)"
+#string STR_IBECC_PROTECTED_4_BASE_PROMPT_HELP    #language en-US "Set the base address for protected region 4 (in size of 32MB) for enabled IBECC instance (2X if 2 IBECC enabled). Make sure doesn't overlap with other region, and must be aligned with protected size. Example: 1 = 32MB, 2 = 64MB"
+#string STR_IBECC_PROTECTED_4_MASK_PROMPT         #language en-US "Protected Region 4 Size"
+#string STR_IBECC_PROTECTED_4_MASK_PROMPT_HELP    #language en-US "Set the protected size for region 4 for enabled IBECC instance (2X if 2 IBECC enabled)."
+
+#string STR_IBECC_PROTECTED_5_ENABLE_PROMPT       #language en-US "IBECC Protect Region 5"
+#string STR_IBECC_PROTECTED_5_ENABLE_PROMPT_HELP  #language en-US "Enable/Disable In-Band ECC for Region 5"
+#string STR_IBECC_PROTECTED_5_BASE_PROMPT         #language en-US "Protected Region 5 Base (in size of 32MB)"
+#string STR_IBECC_PROTECTED_5_BASE_PROMPT_HELP    #language en-US "Set the base address for protected region 5 (in size of 32MB) for enabled IBECC instance (2X if 2 IBECC enabled). Make sure doesn't overlap with other region, and must be aligned with protected size. Example: 1 = 32MB, 2 = 64MB"
+#string STR_IBECC_PROTECTED_5_MASK_PROMPT         #language en-US "Protected Region 5 Size"
+#string STR_IBECC_PROTECTED_5_MASK_PROMPT_HELP    #language en-US "Set the protected size for region 5 for enabled IBECC instance (2X if 2 IBECC enabled)."
+
+#string STR_IBECC_PROTECTED_6_ENABLE_PROMPT       #language en-US "IBECC Protect Region 6"
+#string STR_IBECC_PROTECTED_6_ENABLE_PROMPT_HELP  #language en-US "Enable/Disable In-Band ECC for Region 6"
+#string STR_IBECC_PROTECTED_6_BASE_PROMPT         #language en-US "Protected Region 6 Base (in size of 32MB)"
+#string STR_IBECC_PROTECTED_6_BASE_PROMPT_HELP    #language en-US "Set the base address for protected region 6 (in size of 32MB) for enabled IBECC instance (2X if 2 IBECC enabled). Make sure doesn't overlap with other region, and must be aligned with protected size. Example: 1 = 32MB, 2 = 64MB"
+#string STR_IBECC_PROTECTED_6_MASK_PROMPT         #language en-US "Protected Region 6 Size"
+#string STR_IBECC_PROTECTED_6_MASK_PROMPT_HELP    #language en-US "Set the protected size for region 6 for enabled IBECC instance (2X if 2 IBECC enabled)."
+
+#string STR_IBECC_PROTECTED_7_ENABLE_PROMPT       #language en-US "IBECC Protect Region 7"
+#string STR_IBECC_PROTECTED_7_ENABLE_PROMPT_HELP  #language en-US "Enable/Disable In-Band ECC for Region 7"
+#string STR_IBECC_PROTECTED_7_BASE_PROMPT         #language en-US "Protected Region 7 Base (in size of 32MB)"
+#string STR_IBECC_PROTECTED_7_BASE_PROMPT_HELP    #language en-US "Set the base address for protected region 7 (in size of 32MB) for enabled IBECC instance (2X if 2 IBECC enabled). Make sure doesn't overlap with other region, and must be aligned with protected size. Example: 1 = 32MB, 2 = 64MB"
+#string STR_IBECC_PROTECTED_7_MASK_PROMPT         #language en-US "Protected Region 7 Size"
+#string STR_IBECC_PROTECTED_7_MASK_PROMPT_HELP    #language en-US "Set the protected size for region 7 for enabled IBECC instance (2X if 2 IBECC enabled)."
+
+#string STR_REMAP_ENABLE_PROMPT                 #language en-US "Memory Remap"
+#string STR_REMAP_ENABLE_PROMPT_HELP            #language en-US "Enable/Disable Memory Remap above 4GB"
+
+#string STR_TIME_MEASURE_PROMPT                 #language en-US "Time Measure"
+#string STR_TIME_MEASURE_PROMPT_HELP            #language en-US "Enable/Disable printing of the time it takes to execute MRC."
+
+#string STR_CCC_HALF_FREQUENCY_PROMPT           #language en-US "CCC Half Frequency"
+#string STR_CCC_HALF_FREQUENCY_PROMPT_HELP      #language en-US "Enable CCC Half Frequency (0 = Full Frequency, 1 = Half Frequency)"
+
+#string STR_MRC_FAST_BOOT_ENABLE_PROMPT         #language en-US "Fast Boot"
+#string STR_MRC_FAST_BOOT_ENABLE_PROMPT_HELP    #language en-US "Enable/Disable fast path thru the MRC"
+
+#string STR_VTT_COMP_FOR_VSSHI_PROMPT           #language en-US "Vtt Comparator For Vsshi"
+#string STR_VTT_COMP_FOR_VSSHI_PROMPT_HELP      #language en-US "Vtt comparator for VssHi usage"
+
+#string STR_DBI_PROMPT                          #language en-US "DBI"
+#string STR_DBI_HELP                            #language en-US "LPDDR5 Data Bus Inversion feature"
+
+#string STR_VOLTAGE_READOUT_PROMPT              #language en-US "Voltage Readout for VCCClk and PBias"
+#string STR_VOLTAGE_READOUT_HELP                #language en-US "Enable/Disable Voltage Readout"
+
+#string STR_DVFSQ_PROMPT                        #language en-US "DVFSQ"
+#string STR_DVFSQ_HELP                          #language en-US "LP5 DVFSQ feature for speeds 3200 and below"
+
+#string STR_DVFSC_PROMPT                        #language en-US "E-DVFSC"
+#string STR_DVFSC_HELP                          #language en-US "Support E-DVFSC feature when Vdd2lPowerRail capability is available on board, if capability is not available then this feature won't be supported"
+
+#string STR_RETRAIN_TO_WORKING_CHANNEL_PROMPT   #language en-US "RetrainToWorkingChannel"
+#string STR_RETRAIN_TO_WORKING_CHANNEL_HELP     #language en-US "Retrain To Working Channel"
+
+//
+// DVMT5.0 Graphics Memory
+//
+#string STR_DVMT50_TITLE                        #language en-US "DVMT5.0 Graphic memory setting"
+#string STR_DVMT50_PRE_ALLOC                    #language en-US "DVMT Pre-Allocated"
+#string STR_DVMT50_PRE_ALLOC_0M                 #language en-US "0M"
+#string STR_DVMT50_PRE_ALLOC_32M                #language en-US "32M"
+#string STR_DVMT50_PRE_ALLOC_64M                #language en-US "64M"
+#string STR_DVMT50_PRE_ALLOC_96M                #language en-US "96M"
+#string STR_DVMT50_PRE_ALLOC_128M               #language en-US "128M"
+#string STR_DVMT50_PRE_ALLOC_4M                 #language en-US "4M"
+#string STR_DVMT50_PRE_ALLOC_8M                 #language en-US "8M"
+#string STR_DVMT50_PRE_ALLOC_12M                #language en-US "12M"
+#string STR_DVMT50_PRE_ALLOC_16M                #language en-US "16M"
+#string STR_DVMT50_PRE_ALLOC_20M                #language en-US "20M"
+#string STR_DVMT50_PRE_ALLOC_24M                #language en-US "24M"
+#string STR_DVMT50_PRE_ALLOC_28M                #language en-US "28M"
+#string STR_DVMT50_PRE_ALLOC_32M_F7             #language en-US "32M/F7"
+#string STR_DVMT50_PRE_ALLOC_36M                #language en-US "36M"
+#string STR_DVMT50_PRE_ALLOC_40M                #language en-US "40M"
+#string STR_DVMT50_PRE_ALLOC_44M                #language en-US "44M"
+#string STR_DVMT50_PRE_ALLOC_48M                #language en-US "48M"
+#string STR_DVMT50_PRE_ALLOC_52M                #language en-US "52M"
+#string STR_DVMT50_PRE_ALLOC_56M                #language en-US "56M"
+#string STR_DVMT50_PRE_ALLOC_60M                #language en-US "60M"
+
+#string STR_DVMT50_PRE_ALLOC_HELP               #language en-US "Select DVMT 5.0 Pre-Allocated (Fixed) Graphics Memory size used by the Internal Graphics Device."
+
+//
+//IGPU - Sub-Menu
+//
+
+#string STR_VIDEO_RS2_PROMPT                    #language en-US "RC6(Render Standby)"
+#string STR_VIDEO_RS2_HELP                      #language en-US "Check to enable render standby support."
+
+#string STR_MEDIA_MC6_PROMPT                    #language en-US "MC6(Media Standby)"
+#string STR_MEDIA_MC6_HELP                      #language en-US "Check to enable Media standby support."
+
+#string STR_PRIMARY_DISPLAY                     #language en-US "Primary Display"
+#string STR_PRIMARY_DISPLAY_HELP                #language en-US "Select AUTO set IGD to be Primary Display if no external Graphics Device connected otherwise external Graphics Device detected on first PCIe port will be Primary Display or Select IGPU for IGD to be Primary Display Or Select HG for Hybrid Gfx."
+#string STR_IGPU_STRING                         #language en-US "IGPU"
+#string STR_IGPU                                #language en-US "Graphics Configuration"
+#string STR_IGPU_DISPLAY                        #language en-US "Display Configuration"
+#string STR_IGPU_MEDIA                          #language en-US "Media Configuration"
+#string STR_IGPU_GT                             #language en-US "GT Configuration"
+#string STR_HG_STRING                           #language en-US "HG"
+
+#string STR_IGPU_DISPLAY_HELP                   #language en-US "Display capability"
+#string STR_IGPU_DISPLAY_VALUE                  #language en-US "N/A"
+#string STR_IGPU_MEDIA_HELP                     #language en-US "Media capability"
+#string STR_IGPU_MEDIA_VALUE                    #language en-US "N/A"
+#string STR_IGPU_GT_HELP                        #language en-US "GT capability"
+#string STR_IGPU_GT_VALUE                       #language en-US "N/A"
+//
+// SA:GfxRemovePostPOBegin
+//
+#string STR_SKIP_EXT_GFX_SCAN                   #language en-US "Skip Scanning of External Gfx Card"
+#string STR_SKIP_EXT_GFX_SCAN_HELP              #language en-US "If Enable, it will not scan for External Gfx Card on PCIE Ports"
+//
+// SA:GfxRemovePostPOEnd
+//
+#string STR_PCH_STRING                          #language en-US "PCH Slot"
+
+#string STR_HG_DELAY_AFTR_PWR_EN                #language en-US "HG Delay After Power Enable"
+#string STR_HG_DELAY_AFTR_PWR_EN_HELP           #language en-US "Delay in milli-seconds after power enable"
+
+#string STR_HG_DELAY_AFTR_HLD_RST               #language en-US "HG Delay After Hold Reset"
+#string STR_HG_DELAY_AFTR_HLD_RST_HELP          #language en-US "Delay in milli-seconds after hold reset"
+
+#string STR_INT_GRAPHICS_PROMPT                 #language en-US "Internal Graphics"
+#string STR_INT_GRAPHICS_HELP                   #language en-US "Keep IGPU enabled based on the setup options."
+
+#string STR_MRC_ULT_SAFE_CONFIG_PROMPT          #language en-US "MRC ULT Safe Config"
+#string STR_MRC_ULT_SAFE_CONFIG_HELP            #language en-US "MRC ULT Safe Config for PO"
+
+#string STR_DQ_DQS_RE_TRAINING_PROMPT           #language en-US "Write DqDqs Re-Training"
+#string STR_DQ_DQS_RE_TRAINING_HELP             #language en-US "Disable/Enable Write DqDqs Re Training"
+
+#string STR_DDR5_AUTO_PRECHARGE_ENABLE_PROMPT   #language en-US "DDR5 Auto Precharge Enable"
+#string STR_DDR5_AUTO_PRECHARGE_ENABLE_HELP     #language en-US "Disable/Enable DDR5 Auto Precharge"
+
+#string STR_LP5_SPLIT_ACT_ENABLE_PROMPT         #language en-US "LP5 SplitACT Enable"
+#string STR_LP5_SPLIT_ACT_ENABLE_HELP           #language en-US "Disable/Enable LP5 SplitACT"
+
+#string STR_CCC_PINS_INTERLEAVED_PROMPT         #language en-US "Interleaving mode of CCC pins"
+#string STR_CCC_PINS_INTERLEAVED_HELP           #language en-US "Disable/Enable Interleaving mode of CCC pins which depends on board routing"
+
+#string STR_MIMIC_WC_DISAPLAY_IN_IPQ_PROMPT     #language en-US "Mimic WC display pattern in IPQ"
+#string STR_MIMIC_WC_DISAPLAY_IN_IPQ_HELP       #language en-US "Disable/Enable Mimic WC display pattern in IPQ"
+#string STR_1_ACT_ENABLED_STRING                #language en-US "Enable 1 ACT resources usage"
+#string STR_2_ACT_ENABLED_STRING                #language en-US "Enable 2 ACT resources usage"
+#string STR_3_ACT_ENABLED_STRING                #language en-US "Enable 3 ACT resources usage"
+#string STR_4_ACT_ENABLED_STRING                #language en-US "Enable 4 ACT resources usage"
+
+#string STR_FAKE_SAGV_PROMPT                    #language en-US "Fake SAGV"
+#string STR_FAKE_SAGV_HELP                      #language en-US "Disable/Enable Fake SAGV"
+
+#string STR_DISABLE_ZQ_PROMPT                   #language en-US "Disable Zq Calibration"
+#string STR_DISABLE_ZQ_HELP                     #language en-US "Support Disabling Zq Calibration when DVFSQ is enabled"
+
+#string STR_REPLICATE_SAGV_PROMPT               #language en-US "Replicate SAGV"
+#string STR_REPLICATE_SAGV_HELP                 #language en-US "Replicate SAGV from 1 pt to all 4 pts"
+
+#string STR_ADJUST_WCK_MODE_PROMPT              #language en-US "Adjust Wck Mode"
+#string STR_ADJUST_WCK_MODE_HELP                #language en-US "Adjust Wck Mode [SAFE\MANUAL\DYNAMIC], Default: Not Override"
+#string STR_WCK_SAFE_MODE_STRING                #language en-US "Safe Mode"
+#string STR_WCK_MANUAL_MODE_STRING              #language en-US "Manual Mode"
+#string STR_WCK_DYNAMIC_MODE_STRING             #language en-US "Dynamic Mode"
+#string STR_WCK_MODE_DEFAULT_STRING             #language en-US "Default"
+
+#string STR_TELEMETRY_CONTROL_PROMPT            #language en-US "MC/PMA telemetry Control"
+#string STR_TELEMETRY_CONTROL_HELP              #language en-US "Disable/Enable MC/PMA telemetry, Default: Not Override"
+#string STR_TELEMETRY_CONTROL_DEFAULT           #language en-US "Default"
+
+#string STR_SPINE_PHCLK_CONTROL_PROMPT          #language en-US "PHclk\Qclk SPINE gating Control"
+#string STR_SPINE_PHCLK_CONTROL_HELP            #language en-US "Disable/Enable PHclk\Qclk SPINE gating Control"
+
+#string STR_SPINE_GATE_PER_LPMODE_PROMPT        #language en-US "SPINE Gate Control Per Lpmode"
+#string STR_SPINE_GATE_PER_LPMODE_HELP          #language en-US "SPINE Gate Control Per Lpmode via bitmask. [0]:SpineGating control at Lpmode0.5,[1]:SpineGating control at Lpmode2,[2]:SpineGating control at Lpmode3,[3]:SpineGating control at Lpmode4"
+
+#string STR_PHCLK_GATE_PER_LPMODE_PROMPT        #language en-US "PHCLK Gate Control Per Lpmode"
+#string STR_PHCLK_GATE_PER_LPMODE_HELP          #language en-US "PHCLK Gate Control Per Lpmode via bitmask. [0]:PhClkGating control at lpmode0.5,[1]:PhClkGating control at lpmode1,[2]:PhClkGating control at lpmode2,[3]:PhClkGating control at lpmode3,[4]:PhClkGating control at lpmode4"
+
+#string STR_SWITCHDFITOMC_PROMPT                #language en-US "Disable Switch DFI to MC after cold boot"
+#string STR_SWITCHDFITOMC_HELP                  #language en-US "Enable/Disable Switch DFI to MC after cold boot, Enable: Keep DFI control with PHY/MPTU, Disable: Switch DFI to MC"
+
+
+#string STR_DDR_FREQ_LIMIT_PROMPT               #language en-US "Maximum Memory Frequency"
+#string STR_DDR_FREQ_LIMIT_PROMPT_HELP          #language en-US "Maximum Memory Frequency Selections in Mhz."
+#string STR_DDR3_FREQ_800_STRING                #language en-US "800"
+#string STR_DDR3_FREQ_1000_STRING               #language en-US "1000"
+#string STR_DDR3_FREQ_1067_STRING               #language en-US "1067"
+#string STR_DDR3_FREQ_1200_STRING               #language en-US "1200"
+#string STR_DDR3_FREQ_1333_STRING               #language en-US "1333"
+#string STR_DDR3_FREQ_1400_STRING               #language en-US "1400"
+#string STR_DDR3_FREQ_1600_STRING               #language en-US "1600"
+#string STR_DDR3_FREQ_1800_STRING               #language en-US "1800"
+#string STR_DDR3_FREQ_1867_STRING               #language en-US "1867"
+#string STR_DDR3_FREQ_2000_STRING               #language en-US "2000"
+#string STR_DDR3_FREQ_2133_STRING               #language en-US "2133"
+#string STR_DDR3_FREQ_2200_STRING               #language en-US "2200"
+#string STR_DDR3_FREQ_2400_STRING               #language en-US "2400"
+#string STR_DDR3_FREQ_2600_STRING               #language en-US "2600"
+#string STR_DDR3_FREQ_2667_STRING               #language en-US "2667"
+#string STR_DDR3_FREQ_2800_STRING               #language en-US "2800"
+#string STR_DDR3_FREQ_2933_STRING               #language en-US "2933"
+#string STR_DDR3_FREQ_3000_STRING               #language en-US "3000"
+#string STR_DDR3_FREQ_3200_STRING               #language en-US "3200"
+#string STR_DDR3_FREQ_3467_STRING               #language en-US "3467"
+#string STR_DDR3_FREQ_3600_STRING               #language en-US "3600"
+#string STR_DDR3_FREQ_3733_STRING               #language en-US "3733"
+#string STR_DDR3_FREQ_4000_STRING               #language en-US "4000"
+#string STR_DDR3_FREQ_4200_STRING               #language en-US "4200"
+#string STR_DDR3_FREQ_4267_STRING               #language en-US "4267"
+#string STR_DDR3_FREQ_4400_STRING               #language en-US "4400"
+#string STR_DDR3_FREQ_4600_STRING               #language en-US "4600"
+#string STR_DDR3_FREQ_4800_STRING               #language en-US "4800"
+#string STR_DDR3_FREQ_5000_STRING               #language en-US "5000"
+#string STR_DDR3_FREQ_5200_STRING               #language en-US "5200"
+#string STR_DDR3_FREQ_5400_STRING               #language en-US "5400"
+#string STR_DDR3_FREQ_5600_STRING               #language en-US "5600"
+#string STR_DDR3_FREQ_6400_STRING               #language en-US "6400"
+#string STR_DDR3_FREQ_7467_STRING               #language en-US "7467"
+#string STR_DDR3_FREQ_8533_STRING               #language en-US "8533"
+
+#string STR_PEI_DISPLAY                         #language en-US "Intel Graphics Pei Display Peim"
+#string STR_PEI_DISPLAY_HELP                    #language en-US "Enable/Disable Pei (Early) Display"
+
+#string STR_CONFIGURE_GT                        #language en-US "Configure GT for use"
+#string STR_CONFIGURE_GT_HELP                   #language en-US "Enable/Disable GT configuration in BIOS"
+
+#string STR_CONFIGURE_MEDIA                     #language en-US "Configure Media for use"
+#string STR_CONFIGURE_MEDIA_HELP                #language en-US "Enable/Disable Media configuration in BIOS"
+
+#string STR_RC1P_GT_SUPPORT                     #language en-US "GT RC1p Support"
+#string STR_RC1P_GT_SUPPORT_HELP                #language en-US "Enable/Disable RC1p support. If GT RC1p is enabled, send a RC1p frequency request to PMA if other conditions being met"
+
+#string STR_RC1P_MEDIA_SUPPORT                  #language en-US "Media RC1p Support"
+#string STR_RC1P_MEDIA_SUPPORT_HELP             #language en-US "Enable/Disable RC1p support. If Media RC1p is enabled, send a RC1p frequency request to PMA if other conditions being met"
+
+
+#string STR_PAVP_ENABLE                         #language en-US "PAVP Enable"
+#string STR_PAVP_ENABLE_HELP                    #language en-US "Enable/Disable PAVP"
+
+#string STR_MEMORY_BANDWIDTH_COMPRESSION        #language en-US "Memory Bandwidth Compression"
+#string STR_MEMORY_BANDWIDTH_COMPRESSION_HELP   #language en-US "Enable/Disable Memory Bandwidth Compression.\n Enabling reserves small fraction of RAM to enable GPU memory bandwidth compression.\n Disabling Memory Bandwidth Compression can reduce supported feature set, performance and power efficiency"
+
+#string STR_PANEL_POWER                         #language en-US "VDD Enable"
+#string STR_PANEL_POWER_HELP                    #language en-US "Enable/Disable forcing of VDD in the BIOS"
+
+#string STR_LEGACY                              #language en-US "Legacy"
+#string STR_ACPI                                #language en-US "ACPI"
+//
+// SA Devices
+//
+#string STR_NB_OPTIONS_FORM_TITLE               #language en-US "DMI/OPI Configuration"
+#string STR_NB_OPTIONS_FORM_HELP                #language en-US "Control various DMI functions."
+
+#string STR_SA_CHAP_DEVICE_PROMPT               #language en-US "CHAP Device (B0:D7:F0)"
+#string STR_SA_CHAP_DEVICE_HELP                 #language en-US "Enable/Disable SA CHAP Device."
+
+#string STR_SA_AUDIO_DEVICE_PROMPT              #language en-US "Cpu Audio Device (B0:D3:F0)"
+#string STR_SA_AUDIO_DEVICE_HELP                #language en-US "Enable/Disable CPU Audio Device."
+
+#string STR_SA_IPU_DEVICE_PROMPT                #language en-US "IPU Device (B0:D5:F0)"
+#string STR_SA_IPU_DEVICE_HELP                  #language en-US "Enable/Disable SA IPU Device."
+
+#string STR_NPU_DEVICE_PROMPT                   #language en-US "NPU Device (B0:D11:F0)"
+#string STR_NPU_DEVICE_HELP                     #language en-US "Enable/Disable NPU Device."
+
+//---------------------------------------------------------------------------
+// MipiCam configuration strings
+//---------------------------------------------------------------------------
+#string STR_MIPICAM_OPTIONS_FORM_TITLE          #language en-US "MIPI Camera Configuration"
+
+#string STR_LCH_SUPPORT                         #language en-US "CVS (Computer Vision Sensing) Support"
+#string STR_LCH_SUPPORT_HELP                    #language en-US "Disable/Enable CVS"
+
+#string STR_LCH_TESTDEVICE                      #language en-US "CVS Test Device"
+#string STR_LCH_TESTDEVICE_HELP                 #language en-US "CVS Test Device support"
+#string STR_LCH_TESTDEVICE_DISABLED             #language en-US "Disabled"
+#string STR_LCH_TESTDEVICE_GPIO                 #language en-US "GPIO"
+
+#string STR_MIPICAM_LINK0                       #language en-US "Camera1"
+#string STR_MIPICAM_LINK1                       #language en-US "Camera2"
+#string STR_MIPICAM_LINK2                       #language en-US "Camera3"
+#string STR_MIPICAM_LINK3                       #language en-US "Camera4"
+#string STR_MIPICAM_LINK4                       #language en-US "Camera5"
+#string STR_MIPICAM_LINK5                       #language en-US "Camera6"
+
+#string STR_MIPICAM_INPUT_CLOCK                 #language en-US "Input Clock"
+#string STR_MIPICAM_INPUT_CLOCK_0               #language en-US "20 MHz"
+#string STR_MIPICAM_INPUT_CLOCK_1               #language en-US "24 MHz"
+#string STR_MIPICAM_INPUT_CLOCK_2               #language en-US "26 MHz"
+#string STR_MIPICAM_INPUT_CLOCK_3               #language en-US "19.2 MHz"
+#string STR_MIPICAM_LINK_OPTIONS                #language en-US "Link options"
+#string STR_MIPICAM_SENSOR_MODEL                #language en-US "Sensor Model"
+#string STR_MIPICAM_DEVICES_I2C                 #language en-US "Number of I2C Components"
+#string STR_MIPICAM_LINK0_DEVICES_I2C           #language en-US "Number of I2C Components"
+#string STR_MIPICAM_LINK1_DEVICES_I2C           #language en-US "Number of I2C Components"
+#string STR_MIPICAM_LINK2_DEVICES_I2C           #language en-US "Number of I2C Components"
+#string STR_MIPICAM_LINK3_DEVICES_I2C           #language en-US "Number of I2C Components"
+#string STR_MIPICAM_LINK4_DEVICES_I2C           #language en-US "Number of I2C Components"
+#string STR_MIPICAM_LINK5_DEVICES_I2C           #language en-US "Number of I2C Components"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_CUST_DEV01  #language en-US "Customize Device1"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_CUST_DEV02  #language en-US "Customize Device2"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_CUST_DEV03  #language en-US "Customize Device3"
+#string STR_MIPICAM_DEVICES_CUSTOMIZE_LIST      #language en-US "Customize Device ID List"
+#string STR_MIPICAM_DEVICES_CUSTOMIZE1_ID        #language en-US "  Customize Device1 ID Number"
+#string STR_MIPICAM_DEVICES_CUSTOMIZE2_ID        #language en-US "  Customize Device2 ID Number"
+#string STR_MIPICAM_DEVICES_CUSTOMIZE3_ID        #language en-US "  Customize Device3 ID Number"
+#string STR_MIPICAM_DEVICES_CUSTOMIZE_ID_HELP   #language en-US "Customize Device ID Number, value 17 - 255"
+#string STR_MIPICAM_GPIO_PIN_COUNT              #language en-US "Number of GPIO Pins"
+#string STR_MIPICAM_DEVICE0                     #language en-US "  Device 0"
+#string STR_MIPICAM_DEVICE1                     #language en-US "  Device 1"
+#string STR_MIPICAM_DEVICE2                     #language en-US "  Device 2"
+#string STR_MIPICAM_DEVICE3                     #language en-US "  Device 3"
+#string STR_MIPICAM_DEVICE4                     #language en-US "  Device 4"
+#string STR_MIPICAM_DEVICE5                     #language en-US "  Device 5"
+#string STR_MIPICAM_DEVICE6                     #language en-US "  Device 6"
+#string STR_MIPICAM_DEVICE7                     #language en-US "  Device 7"
+#string STR_MIPICAM_DEVICE8                     #language en-US "  Device 8"
+#string STR_MIPICAM_DEVICE9                     #language en-US "  Device 9"
+#string STR_MIPICAM_DEVICE10                    #language en-US "  Device 10"
+#string STR_MIPICAM_DEVICE11                    #language en-US "  Device 11"
+#string STR_MIPICAM_I2C_CHANNEL                 #language en-US "I2C Channel"
+#string STR_MIPICAM_CL_I2C_CHANNEL              #language en-US "I2C Channel"
+#string STR_MIPICAM_I2C_ADDRESS_MAIN            #language en-US "I2C Address"
+#string STR_MIPICAM_LINK_I2C_ADDRESS            #language en-US "  I2C Address"
+#string STR_MIPICAM_WLED_FLASH_MAX_CURRENT      #language en-US "WLED Flash Max Current\nValid range is 0x00-0x1F\n0x00 for HW default max current"
+#string STR_MIPICAM_WLED1_FLASH_MAX_CURRENT     #language en-US "WLED1 Flash Max Current"
+#string STR_MIPICAM_WLED2_FLASH_MAX_CURRENT     #language en-US "WLED2 Flash Max Current"
+#string STR_MIPICAM_WLED_TORCH_MAX_CURRENT      #language en-US "WLED Torch Max Current\nValid range is 0x00-0x07\n0x00 for HW default max current"
+#string STR_MIPICAM_WLED1_TORCH_MAX_CURRENT     #language en-US "WLED1 Torch Max Current"
+#string STR_MIPICAM_WLED2_TORCH_MAX_CURRENT     #language en-US "WLED2 Torch Max Current"
+#string STR_MIPICAM_WLED_TYPE                   #language en-US "WLED Type"
+#string STR_MIPICAM_WLED1_TYPE                  #language en-US "WLED1 Type"
+#string STR_MIPICAM_WLED2_TYPE                  #language en-US "WLED2 Type"
+#string STR_WHITE_LED                           #language en-US "White Led"
+#string STR_WARM_LED                            #language en-US "Warm Led"
+#string STR_IR_LED                              #language en-US "IR Led"
+#string STR_XEON_LED                            #language en-US "Xeon Led"
+#string STR_MIPICAM_GPIO_FUNCTION               #language en-US "  Function"
+#string STR_MIPICAM_GPIO_GROUP_PAD_NUMBER       #language en-US "  Group Pad Number"
+#string STR_MIPICAM_GPIO_GROUP_NUMBER           #language en-US "  Group Number"
+#string STR_MIPICAM_GPIO_ACTIVE_VALUE           #language en-US "  Active Value"
+#string STR_MIPICAM_GPIO_INITIAL_VALUE          #language en-US "  Initial Value"
+#string STR_MIPICAM_GPIO_COM_NUMBER             #language en-US "  Com number"
+#string STR_MIPICAM_GPIO_COM_NUMBER0            #language en-US "COM0"
+#string STR_MIPICAM_GPIO_COM_NUMBER1            #language en-US "COM1"
+#string STR_MIPICAM_GPIO_COM_NUMBER3            #language en-US "COM3"
+#string STR_MIPICAM_GPIO_COM_NUMBER4            #language en-US "COM4"
+#string STR_MIPICAM_GPIO_COM_NUMBER5            #language en-US "COM5"
+#string STR_MIPICAM_GPIO_FUNCTION_RESET         #language en-US "Reset"
+#string STR_MIPICAM_GPIO_FUNCTION_POWER_EN      #language en-US "Power_En"
+#string STR_MIPICAM_GPIO_FUNCTION_CLOCK_EN      #language en-US "Clock_En"
+#string STR_MIPICAM_GPIO_FUNCTION_PLED_EN       #language en-US "pLED_En"
+#string STR_MIPICAM_GPIO_FUNCTION_STROBE_EN     #language en-US "Strobe_En"
+#string STR_MIPICAM_GPIO_FUNCTION_HANDSHAKE_EN  #language en-US "Handshake_En"
+#string STR_MIPICAM_GPIO_GROUP_B_F_S_V          #language en-US "B_F_S_V"
+#string STR_MIPICAM_GPIO_GROUP_C_D_E_H          #language en-US "C_D_E_H"
+#string STR_MIPICAM_GPIO_FUNCTION_CUSTOM        #language en-US "User Custom"
+#string STR_MIPICAM_GPIO_FUNCTION_CUSTOM_HELP   #language en-US "value can be 0x15-0xFF"
+
+#string STR_MIPICAM_LOCATION                    #language en-US "Camera position"
+#string STR_MIPICAM_MODULE_NAME                 #language en-US "Camera module name"
+#string STR_MIPICAM_MODULE_A12N08B              #language en-US "A12N08B"
+#string STR_MIPICAM_MODULE_A12N08BU             #language en-US "A12N08BU"
+#string STR_MIPICAM_MODULE_56B6                 #language en-US "56B6"
+#string STR_MIPICAM_MODULE_INT60                #language en-US "INT60"
+#string STR_MIPICAM_MODULE_7BF131N2             #language en-US "7BF131N2"
+#string STR_MIPICAM_MODULE_YHRN                 #language en-US "YHRN"
+#string STR_MIPICAM_MODULE_SB6                  #language en-US "SB6"
+#string STR_MIPICAM_MODULE_Chicony              #language en-US "Chicony"
+#string STR_MIPICAM_MODULE_CJFI521              #language en-US "CJFI521"
+#string STR_MIPICAM_MODULE_CJFKE26              #language en-US "CJFKE26"
+#string STR_MIPICAM_MODULE_CJFME36              #language en-US "CJFME36"
+#string STR_MIPICAM_MODULE_09B13                #language en-US "09B13"
+#string STR_MIPICAM_MODULE_09B13U               #language en-US "09B13U"
+#string STR_MIPICAM_MODULE_KAFE799              #language en-US "KAFE799"
+#string STR_MIPICAM_LOCATION_FRONT              #language en-US "Front"
+#string STR_MIPICAM_LOCATION_BACK               #language en-US "Back"
+#string STR_MIPICAM_PMIC_FLASH_PANEL            #language en-US "PMIC Flash Panel"
+#string STR_MIPICAM_CL_PMIC_FLASH_PANEL         #language en-US "PMIC Flash Panel"
+#string STR_MIPICAM_FLASH_SUPPORT               #language en-US "Flash Support"
+#string STR_MIPICAM_FLASH_DRIVER_DEFAULT        #language en-US "Driver default"
+#string STR_MIPICAM_PRIVACY_LED                 #language en-US "Privacy LED"
+#string STR_MIPICAM_PRIVACY_LED_DRIVER_DEFAULT  #language en-US "Driver default"
+#string STR_MIPICAM_PRIVACY_LED_ILEDA_16MA      #language en-US "ILEDA, 16mA"
+#string STR_MIPICAM_PRIVACY_LED_ILEDB_2MA       #language en-US "ILEDB, 2mA"
+#string STR_MIPICAM_PRIVACY_LED_ILEDB_4MA       #language en-US "ILEDB, 4mA"
+#string STR_MIPICAM_PRIVACY_LED_ILEDB_8MA       #language en-US "ILEDB, 8mA"
+#string STR_MIPICAM_PRIVACY_LED_ILEDB_16MA      #language en-US "ILEDB, 16mA"
+#string STR_MIPICAM_DEGREE                      #language en-US "Rotation"
+#string STR_MIPICAM_DEGREE_0                    #language en-US "0"
+#string STR_MIPICAM_DEGREE_45                   #language en-US "45"
+#string STR_MIPICAM_DEGREE_90                   #language en-US "90"
+#string STR_MIPICAM_DEGREE_135                  #language en-US "135"
+#string STR_MIPICAM_DEGREE_180                  #language en-US "180"
+#string STR_MIPICAM_DEGREE_225                  #language en-US "225"
+#string STR_MIPICAM_DEGREE_270                  #language en-US "270"
+#string STR_MIPICAM_DEGREE_315                  #language en-US "315"
+#string STR_MIPICAM_PMIC_POSITION               #language en-US "PMIC Position\nPosition 1 indicates the current module is placed on the left side of the CRD-G2 card\nPosition 2 indicates the current module is placed on the right side of the CRD-G2 card"
+#string STR_MIPICAM_LINK_PMIC_POSITION          #language en-US "PMIC Position"
+#string STR_MIPICAM_PMIC_POSITION_1             #language en-US "Position 1"
+#string STR_MIPICAM_PMIC_POSITION_2             #language en-US "Position 2"
+#string STR_MIPICAM_VOLTAGE_RAIL                #language en-US "Voltage Rail"
+#string STR_MIPICAM_VOLTAGE_RAIL_3              #language en-US "3 voltage rail"
+#string STR_MIPICAM_VOLTAGE_RAIL_2              #language en-US "2 voltage rail"
+#string STR_MIPICAM_PHY_CONFIG                  #language en-US "PhyConfiguration"
+#string STR_MIPICAM_PHY_CONFIG_0                #language en-US "DPHY"
+#string STR_MIPICAM_PHY_CONFIG_1                #language en-US "CPHY"
+#string STR_MIPICAM_LANE_CONFIG                 #language en-US "LaneConfiguration"
+#string STR_MIPICAM_FLASH_DRIVER_SEL            #language en-US "Select the Flash Driver as External or Internal PMIC "
+#string STR_MIPICAM_FLASH_DRIVER                #language en-US "Flash Driver Selection"
+#string STR_MIPICAM_FLASH_DRIVER_DISABLED       #language en-US "Disabled"
+#string STR_MIPICAM_FLASH_DRIVER_EXTERNAL       #language en-US "External"
+#string STR_MIPICAM_FLASH_MODULE_SEL            #language en-US "Select the Flash Driver as External or Internal PMIC "
+#string STR_MIPICAM_FLASH_MODULE                #language en-US "Flash Driver Selection"
+#string STR_MIPICAM_SDD_VERSION                 #language en-US "Version"
+#string STR_MIPICAM_SDD_CRD                     #language en-US "CRD Version"
+#string STR_MIPICAM_CL_SDD_CRD                  #language en-US "CRD Version"
+#string STR_MIPICAM_SDD_CRD_D                   #language en-US "CRD-D"
+#string STR_MIPICAM_SDD_CRD_G                   #language en-US "CRD-G"
+#string STR_MIPICAM_SDD_CRD_G2                  #language en-US "CRD-G2"
+#string STR_MIPICAM_SDD_LINK_USED               #language en-US "LinkUsed"
+#string STR_MIPICAM_LINK_SDD_LINK_USED          #language en-US "MIPI port"
+#string STR_MIPICAM_SDD_LANE_USED               #language en-US "LaneUsed"
+#string STR_MIPICAM_SDD_MCLK                    #language en-US "MCLK"
+#string STR_MIPICAM_LINK_SDD_MCLK               #language en-US "MCLK"
+#string STR_MIPICAM_SDD_MCLK_19_2               #language en-US "19.2 MHz"
+#string STR_MIPICAM_SDD_MCLK_24                 #language en-US "24 MHz"
+#string STR_MIPICAM_SDD_MCLK_20                 #language en-US "20 MHz"
+#string STR_MIPICAM_SDD_EEPROM_TYPE             #language en-US "EEPROM Type\n0x00: ROM_NONE\n0x01: ROM_OTP\n0x02: ROM_EEPROM_16K_64\n0x03: ROM_EEPROM_16K_16\n0x04: ROM_OTP_ACPI_ACPI\n0x05: ROM_ACPI\n0x06: ROM_EEPROM_BRCA016GWZ\n0x07: ROM_EEPROM_24AA32\n0x08: ROM_EEPROM_CAT24C08\n0x09: ROM_M24C64\n0x0A: ROM_DW9806B\n0x10: ROM_EEPROM_CAT24C16\n0x11: ROM_EEPROM_CAT24C64\n0x12: ROM_EEPROM_24AA16\n0x14: ROM_EEPROM_GT24P64E"
+#string STR_MIPICAM_LINK_SDD_EEPROM_TYPE        #language en-US "EEPROM Type"
+#string STR_MIPICAM_SDD_VCM_TYPE                #language en-US "VCM Type\n0x00: VCM_NONE\n0x01: VCM_AD5823\n0x02: VCM_DW9714\n0x03: VCM_AD5816\n0x04: VCM_DW9719\n0x05: VCM_DW9718\n0x06: VCM_DW9806B\n0x07: VCM_WV517S\n0x08: VCM_LC898122XA\n0x09: VCM_LC898212AXB\n0x0F: VCM_AK7371\n0x10: VCM_BU64297GWZ"
+#string STR_MIPICAM_LINK_SDD_VCM_TYPE           #language en-US "VCM Type"
+#string STR_MIPICAM_SDD_EEPROM_ROM_NONE         #language en-US "ROM_NONE"
+#string STR_MIPICAM_SDD_EEPROM_ROM_OTP          #language en-US "ROM_OTP"
+#string STR_MIPICAM_SDD_EEPROM_16K_64           #language en-US "ROM_EEPROM_16K_64"
+#string STR_MIPICAM_SDD_EEPROM_16K_16           #language en-US "ROM_EEPROM_16K_16"
+#string STR_MIPICAM_SDD_EEPROM_OTP_ACPI_ACPI    #language en-US "ROM_OTP_ACPI_ACPI"
+#string STR_MIPICAM_SDD_EEPROM_ACPI             #language en-US "ROM_ACPI"
+#string STR_MIPICAM_SDD_EEPROM_BRCA016GWZ       #language en-US "ROM_EEPROM_BRCA016GWZ"
+#string STR_MIPICAM_SDD_EEPROM_24AA32           #language en-US "ROM_EEPROM_24AA32"
+#string STR_MIPICAM_SDD_EEPROM_CAT24C08         #language en-US "ROM_EEPROM_CAT24C08"
+#string STR_MIPICAM_SDD_EEPROM_M24C64           #language en-US "ROM_EEPROM_M24C64"
+#string STR_MIPICAM_SDD_EEPROM_DW9806B          #language en-US "ROM_EEPROM_DW9806B"
+#string STR_MIPICAM_SDD_EEPROM_CAT24C16         #language en-US "ROM_EEPROM_CAT24C16"
+#string STR_MIPICAM_SDD_EEPROM_CAT24C64         #language en-US "ROM_EEPROM_CAT24C64"
+#string STR_MIPICAM_SDD_EEPROM_24AA16           #language en-US "ROM_EEPROM_24AA16"
+#string STR_MIPICAM_SDD_EEPROM_GT24P64E         #language en-US "ROM_EEPROM_GT24P64E"
+#string STR_MIPICAM_SDD_EEPROM_USER             #language en-US "User Custom"
+#string STR_MIPICAM_SDD_EEPROM_CUSTOM           #language en-US "Custom  EEPROM"
+#string STR_MIPICAM_SDD_VCM_NONE                #language en-US "VCM_NONE"
+#string STR_MIPICAM_SDD_VCM_AD5823              #language en-US "VCM_AD5823"
+#string STR_MIPICAM_SDD_VCM_DW9714              #language en-US "VCM_DW9714"
+#string STR_MIPICAM_SDD_VCM_AD5816              #language en-US "VCM_AD5816"
+#string STR_MIPICAM_SDD_VCM_DW9718              #language en-US "VCM_DW9718"
+#string STR_MIPICAM_SDD_VCM_DW9719              #language en-US "VCM_DW9719"
+#string STR_MIPICAM_SDD_VCM_DW9806B             #language en-US "VCM_DW9806B"
+#string STR_MIPICAM_SDD_VCM_WV517S              #language en-US "VCM_WV517S"
+#string STR_MIPICAM_SDD_VCM_LC898122XA          #language en-US "VCM_LC898122XA"
+#string STR_MIPICAM_SDD_VCM_LC898212AXB         #language en-US "VCM_LC898212AXB"
+#string STR_MIPICAM_SDD_VCM_RESERVED1           #language en-US "VCM_RESERVED1"
+#string STR_MIPICAM_SDD_VCM_RESERVED2           #language en-US "VCM_RESERVED2"
+#string STR_MIPICAM_SDD_VCM_AK7371              #language en-US "VCM_AK7371"
+#string STR_MIPICAM_SDD_VCM_BU64297GWZ          #language en-US "VCM_BU64297GWZ"
+#string STR_MIPICAM_SDD_VCM_USER                #language en-US "User Custom"
+#string STR_MIPICAM_SDD_VCM_CUSTOM              #language en-US "Custom VCM"
+
+#string STR_MIPICAM_LANES_X1                    #language en-US "x1"
+#string STR_MIPICAM_LANES_X2                    #language en-US "x2"
+#string STR_MIPICAM_LANES_X3                    #language en-US "x3"
+#string STR_MIPICAM_LANES_X4                    #language en-US "x4"
+#string STR_MIPICAM_LANES_X8                    #language en-US "x8"
+
+#string STR_MIPICAM_SPEED_SENSOR_DEFAULT        #language en-US "0"
+#string STR_MIPICAM_SPEED_416MBPS               #language en-US "1"
+#string STR_MIPICAM_SPEED_1_5GBPS               #language en-US "2"
+#string STR_MIPICAM_SPEED_2GBPS                 #language en-US "3"
+#string STR_MIPICAM_SPEED_2_5GBPS               #language en-US "4"
+#string STR_MIPICAM_SPEED_4GBPS                 #language en-US "5"
+#string STR_MIPICAM_SPEED_4GBPS_ABOVE           #language en-US "6"
+
+#string STR_MIPICAM_OVTI01AF                    #language en-US "OVTI01AF"
+#string STR_MIPICAM_OV01A1S                     #language en-US "OV01A1S"
+#string STR_MIPICAM_OV13B                       #language en-US "OV13B"
+#string STR_MIPICAM_OG0VA1B                     #language en-US "OG0VA1B"
+#string STR_MIPICAM_IMX688                      #language en-US "IMX688"
+#string STR_MIPICAM_OV08X40                     #language en-US "OV08X40"
+#string STR_MIPICAM_USER                        #language en-US "User Custom"
+#string STR_MIPICAM_CUSTOM_HID                  #language en-US "Custom HID"
+
+#string STR_CHANNEL_I2C0                        #language en-US "I2C0"
+#string STR_CHANNEL_I2C1                        #language en-US "I2C1"
+#string STR_CHANNEL_I2C2                        #language en-US "I2C2"
+#string STR_CHANNEL_I2C3                        #language en-US "I2C3"
+#string STR_CHANNEL_I2C4                        #language en-US "I2C4"
+#string STR_CHANNEL_I2C5                        #language en-US "I2C5"
+
+#string STR_MIPICAM_CONTROL_LOGIC_OPTIONS       #language en-US "Control Logic options"
+#string STR_MIPICAM_CONTROL_LOGIC0              #language en-US "Control Logic 1"
+#string STR_MIPICAM_CONTROL_LOGIC1              #language en-US "Control Logic 2"
+#string STR_MIPICAM_CONTROL_LOGIC2              #language en-US "Control Logic 3"
+#string STR_MIPICAM_CONTROL_LOGIC3              #language en-US "Control Logic 4"
+#string STR_MIPICAM_CONTROL_LOGIC4              #language en-US "Control Logic 5"
+#string STR_MIPICAM_CONTROL_LOGIC5              #language en-US "Control Logic 6"
+#string STR_MIPICAM_CONTROL_LOGIC_NONE          #language en-US "No Control Logic"
+#string STR_MIPICAM_I2C_DEVICE_TYPE             #language en-US "  Device Type"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_SENSOR      #language en-US "Sensor"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_VCM         #language en-US "VCM"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_EEPROM      #language en-US "EEPROM"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_EEPROM_EXT1 #language en-US "EEPROM_EXT1"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_EEPROM_EXT2 #language en-US "EEPROM_EXT2"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_EEPROM_EXT3 #language en-US "EEPROM_EXT3"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_EEPROM_EXT4 #language en-US "EEPROM_EXT4"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_EEPROM_EXT5 #language en-US "EEPROM_EXT5"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_EEPROM_EXT6 #language en-US "EEPROM_EXT6"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_EEPROM_EXT7 #language en-US "EEPROM_EXT7"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_IO_EXPANDER #language en-US "IO Expander"
+#string STR_MIPICAM_I2C_DEVICE_TYPE_FLASH       #language en-US "Flash"
+
+
+#string STR_MIPICAM_GPIO_CONTROL                #language en-US "GPIO control"
+#string STR_MIPICAM_CONTROL_LOGIC_TYPE          #language en-US "Control Logic Type"
+#string STR_MIPICAM_CONTROL_LOGIC_PMIC          #language en-US "PMIC"
+#string STR_MIPICAM_CONTROL_LOGIC_DISCRETE      #language en-US "Discrete"
+#string STR_MIPICAM_PMIC_TPS68470               #language en-US "PMIC_TPS68470"
+#string STR_MIPICAM_DISCRETE_HDMI2MIPI          #language en-US "Discrete_HDMI2MIPI"
+#string STR_MIPICAM_CONTROL_LOGIC_NAME          #language en-US "Name"
+#string STR_MIPICAM_CONTROL_LOGIC_GPIO_1        #language en-US "GPIO Pin 1"
+#string STR_MIPICAM_CONTROL_LOGIC_GPIO_2        #language en-US "GPIO Pin 2"
+#string STR_MIPICAM_CONTROL_LOGIC_GPIO_3        #language en-US "GPIO Pin 3"
+#string STR_MIPICAM_CONTROL_LOGIC_GPIO_4        #language en-US "GPIO Pin 4"
+#string STR_MIPICAM_CONTROL_LOGIC_GPIO_5        #language en-US "GPIO Pin 5"
+#string STR_MIPICAM_CONTROL_LOGIC_GPIO_6        #language en-US "GPIO Pin 6"
+
+#string STR_MIPICAM_PCH_CLOCK_SOURCE            #language en-US "PCH Clock Source"
+#string STR_MIPICAM_PCH_CLOCK_SOURCE_HELP       #language en-US "This option specifies which IMGCLKOUT is chosen"
+#string STR_MIPICAM_PCH_CLOCK_SOURCE_0          #language en-US "IMGCLKOUT_0"
+#string STR_MIPICAM_PCH_CLOCK_SOURCE_1          #language en-US "IMGCLKOUT_1"
+#string STR_MIPICAM_PCH_CLOCK_SOURCE_2          #language en-US "IMGCLKOUT_2"
+
+#string STR_MIPICAM_FLASH_ID1                   #language en-US "Camera Flash ID 1"
+#string STR_MIPICAM_FLASH_ID2                   #language en-US "Camera Flash ID 2"
+#string STR_MIPICAM_FLASH_ID3                   #language en-US "Camera Flash ID 3"
+#string STR_MIPICAM_FLASH_ID4                   #language en-US "Camera Flash ID 4"
+#string STR_MIPICAM_FLASH_ID5                   #language en-US "Camera Flash ID 5"
+#string STR_MIPICAM_FLASH_ID6                   #language en-US "Camera Flash ID 6"
+#string STR_MIPICAM_CAMERA1_FLASH_CONF          #language en-US "Camera 1 Flash configuration"
+#string STR_MIPICAM_CAMERA2_FLASH_CONF          #language en-US "Camera 2 Flash configuration"
+#string STR_MIPICAM_CAMERA3_FLASH_CONF          #language en-US "Camera 3 Flash configuration"
+#string STR_MIPICAM_CAMERA4_FLASH_CONF          #language en-US "Camera 4 Flash configuration"
+#string STR_MIPICAM_CAMERA5_FLASH_CONF          #language en-US "Camera 5 Flash configuration"
+#string STR_MIPICAM_CAMERA6_FLASH_CONF          #language en-US "Camera 6 Flash configuration"
+#string STR_MIPICAM_FLASH_OPTIONS               #language en-US "Flash Options"
+#string STR_MIPICAM_FLASH_MODEL                 #language en-US "Flash Model"
+#string STR_MIPICAM_FLASH_MODE                  #language en-US "Flash Mode"
+#string STR_MIPICAM_FLASH_MODE_HELP             #language en-US "Select Flash Mode White LED/Warm LED/IR LED/Xeon LED"
+#string STR_MIPICAM_LM3643                      #language en-US "External - LM3643"
+#string STR_MIPICAM_FLASH_GPIO_GROUP_PAD_NUMBER #language en-US "  Group Pad Number"
+#string STR_MIPICAM_FLASH_TRIGGER_GPIO_SUPPORT  #language en-US "Flash Trigger Gpio Support"
+
+//
+//  CRID
+//
+#string STR_SA_CRID_ENABLE_PROMPT               #language en-US "CRID Support"
+#string STR_SA_CRID_ENABLE_HELP                 #language en-US "Enable/Disable SA CRID and TCSS CRID control for Intel SIPP"
+
+#string STR_THRESHOLD_MANUAL_PROMPT             #language en-US "User Manual Threshold"
+#string STR_THRESHOLD_MANUAL_HELP               #language en-US "Disabled: Predefined threshold will be used.\nEnabled: User Input will be used."
+
+#string STR_BUDGET_MANUAL_PROMPT                #language en-US "User Manual Budget"
+#string STR_BUDGET_MANUAL_HELP                  #language en-US "Disabled: Configuration of memories will defined the Budget value.\nEnabled: User Input will be used."
+
+//TSOD Strings
+
+#string STR_STSOD_TITLE                         #language en-US "Thermal Sensor on DIMM Configuration "
+#string STR_STSOD_HELP                          #language en-US "GO TO Thermal Sensor on DIMM Configuration "
+
+#string STR_CLTM_TCRITMAX_PROMPT                #language en-US "  TcritMax"
+#string STR_CLTM_TCRITMAX_PROMPT_HELP           #language en-US "Maximum Critical Temperature in ÂºC of the On-DIMM Thermal Sensor. TCRITMax has to be greater than THIGHMax .\n Critical temperature will be  TcritMax "
+
+#string STR_CLTM_THIGH_PROMPT                   #language en-US " ThighMax "
+#string STR_CLTM_THIGH_PROMPT_HELP              #language en-US " Thigh = ThighMax"
+
+#string STR_EVENT_MODE_PROMPT                   #language en-US "Event mode "
+#string STR_EVENT_MODE_HELP                     #language en-US "Uncheck:Comparator mode.\nCheck:Interrupt mode"
+
+#string STR_POLARITY_PROMPT                     #language en-US "EVENT# polarity "
+#string STR_POLARITY_MODE_HELP                  #language en-US "Uncheck:Active LOW.\nCheck:Active HIGH"
+
+#string STR_CRITICAL_EVENT_ONLY_PROMPT          #language en-US "Critical event only"
+#string STR_CRITICAL_EVENT_ONLY_HELP            #language en-US "Uncheck:Trips on alarm or critical.\nCheck:Trips only if critical temperature is reached"
+
+#string STR_EVENT_OUTPUT_CONTROL_PROMPT         #language en-US "Event output control "
+#string STR_EVENT_OUTPUT_CONTROL_HELP           #language en-US "Uncheck:Event output disable.\nCheck:Event output enabled"
+
+#string STR_ALARM_WINDOW_LOCK_PROMPT            #language en-US "Alarm window lock bit "
+#string STR_ALARM_WINDOW_LOCK_HELP              #language en-US "Uncheck:Alarm trips are not locked and can be changed.\nCheck:Alarm trips are locked and cannot be changed"
+
+#string STR_CRITICAL_TRIP_LOCK_PROMPT           #language en-US "Critical trip lock bit "
+#string STR_CRITICAL_TRIP_LOCK_HELP             #language en-US "Uncheck:Critical trip is not locked and can be changed.\nCheck:Critical trip is locked and cannot be changed"
+
+#string STR_SHUTDOWN_MODE_PROMPT                #language en-US "Shutdown mode "
+#string STR_SHUTDOWN_MODE_HELP                  #language en-US "Uncheck:Temperature sensor enable.\nCheck:Temperature sensor disable"
+
+#string STR_TEMP_TSOD_MANUAL_PROMPT             #language en-US "User Manual Thig and Tcrit"
+#string STR_TEMP_TSOD_MANUAL_HELP               #language en-US "Disabled: Temperature will be given by the configuration of memories and 1x or 2xrefresh rate.\nEnabled: User Input will define for Thigh and Tcrit."
+
+//
+// PCI Express
+//
+#string STR_PCIE_ASPM_HELP                      #language en-US "Automatically enable ASPM based on reported capabilities and known issues."
+#string STR_PCIE_ASPM_L0S_PROMPT                #language en-US "ASPM L0s"
+#string STR_PCIE_ASPM_L0SL1_PROMPT              #language en-US "ASPM L0sL1"
+#string STR_PCIE_ASPM_L1_PROMPT                 #language en-US "ASPM L1"
+
+#string STR_6DB_STRING                          #language en-US "-6 dB"
+#string STR_35DB_STRING                         #language en-US "-3.5 dB"
+
+#string STR_EQ_PH3_METHOD_HWEQ                  #language en-US "Adaptive Hardware Equalization"
+#string STR_EQ_PH3_METHOD_SWEQ                  #language en-US "Adaptive Software Equalization"
+#string STR_EQ_PH3_METHOD_STATIC                #language en-US "Static Equalization"
+
+
+
+#string STR_EDRAMWA_PROMPT                      #language en-US "eDRAM Mode"
+#string STR_EDRAMWA_HELP                        #language en-US "SW Mode eDRAM On or eDRAM Off"
+#string STR_EDRAM_DISABLED                      #language en-US "SW Mode eDRAM Off"
+#string STR_EDRAM_ENABLE                        #language en-US "SW Mode eDRAM On"
+#string STR_EDRAM_HW_MODE                       #language en-US "eDRAM HW Mode"
+
+#string STR_EV_LOADER_ENABLE_PROMPT             #language en-US "EV Loader"
+#string STR_EV_LOADER_ENABLE_HELP               #language en-US "Enable/Disable EV Loader Functionality"
+
+#string STR_EV_LOADER_DELAY_ENABLE_PROMPT       #language en-US "EV Loader Delay"
+#string STR_EV_LOADER_DELAY_ENABLE_HELP         #language en-US "Enable/Disable EV Loader 2 Second Delay"
+
+#string STR_BDAT_TEST_TYPE_PROMPT               #language en-US "BDAT Memory Test Type"
+#string STR_BDAT_TEST_TYPE_HELP                 #language en-US "Indicates the type of Memory Training data to populate into the BDAT ACPI table."
+#string STR_BDAT_TEST_TYPE_RMT_RANK             #language en-US "Rank Margin Tool Rank"
+#string STR_BDAT_TEST_TYPE_RMT_BIT              #language en-US "Rank Margin Tool Bit"
+#string STR_BDAT_TEST_TYPE_MARGIN_2D            #language en-US "Margin 2D"
+
+#string STR_RMT_LOOPCOUNT_PROMPT                #language en-US "Rank Margin Tool Loop Count"
+#string STR_RMT_LOOPCOUNT_HELP                  #language en-US "Specifies the Loop Count to be used during Rank Margin Tool Testing. 0 - AUTO"
+
+#string STR_IED_MEMORY_ENABLE_PROMPT            #language en-US "Enable/Disable IED (Intel Enhanced Debug)"
+#string STR_IED_MEMORY_ENABLE_HELP              #language en-US "Intel Enhanced Debug requires 4MB Runtime memory"
+
+//---------------------------------------------------------------------------
+// TCSS Configuration
+//---------------------------------------------------------------------------
+//
+// IOM version
+//
+#string STR_TCSS_IOM_VERSION_STRING              #language en-US "IOM FW version: N/A"  // Updated dynamically if IOM is detected
+#string STR_TCSS_IOM_ENGR_VERSION_STRING         #language en-US "IOM FW Engr version: N/A"  // Updated dynamically if IOM is detected
+
+//
+// TBT version
+//
+#string STR_TCSS_TBT_VERSION_STRING              #language en-US "TBT FW version: N/A"  // Updated dynamically if TBT is detected
+#string STR_TCSS_TBT_STATUS_STRING               #language en-US "TBT IMR Status: N/A"  // Updated dynamically if TBT is detected
+//
+// PHY version
+//
+#string STR_TCSS_PHY_VERSION_STRING              #language en-US "PHY FW version: N/A"  // Updated dynamically if TBT is detected
+//
+// TCSS PCIe RP Multiple Segment Configuration
+//
+#string STR_CPU_PCIE_MULTIPLE_SEGMENT_ENABLED       #language en-US "Enable the iTBT PCIe on Extra Segment"
+#string STR_CPU_PCIE_MULTIPLE_SEGMENT_ENABLED_HELP  #language en-US "If Disabled, all iTBT PCIe will be enumerated on Segment0, If Enabled, all iTBT PCIe will be enumerated on Segment1."
+
+#string STR_RP1_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP2_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP3_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP4_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP5_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP6_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP7_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP8_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP9_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP10_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP11_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP12_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP13_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP14_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP15_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP16_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP17_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP18_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP19_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP20_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP21_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP22_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP23_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP24_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP25_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP26_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP27_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP28_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP29_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP30_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP31_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+
+//
+// TCSS Ports
+//
+#string STR_TCSS_PORT0_PROMPT                   #language en-US "TCSS Port0"
+#string STR_TCSS_PORT1_PROMPT                   #language en-US "TCSS Port1"
+#string STR_TCSS_PORT2_PROMPT                   #language en-US "TCSS Port2"
+#string STR_TCSS_PORT3_PROMPT                   #language en-US "TCSS Port3"
+#string STR_TCSS_PORT_HELP                      #language en-US "TCSS Port Configuration. This knob is only applicable when the port is used as USBC or USBA connector. The port capability is also limited according to board design."
+#string STR_TCSS_PORT_FULL_FUNCTION             #language en-US "Full Function"
+#string STR_TCSS_PORT_NO_PCIE                   #language en-US "No PCIE"
+#string STR_TCSS_PORT_NO_THUNDERBOLT            #language en-US "USB3 Native and DP ALT"
+#string STR_TCSS_PORT_DP_ONLY                   #language en-US "DP ALT and DP tunneling"
+
+//
+// PCI Express
+//
+
+#string STR_GEN1                                       #language en-US  "Gen1"
+#string STR_GEN2                                       #language en-US  "Gen2"
+#string STR_GEN3                                       #language en-US  "Gen3"
+#string STR_GEN4                                       #language en-US  "Gen4"
+#string STR_GEN3_GEN4                                  #language en-US  "Gen3/Gen4"
+#string STR_GEN5                                       #language en-US  "Gen5"
+
+
+
+//
+// TCSS XHCI
+//
+#string STR_TCSS_USB_OPTIONS_FORM_TITLE         #language en-US "TCSS USB Configuration"
+#string STR_TCSS_USB_OPTIONS_FORM_HELP          #language en-US "SA TCSS USB Configuration settings"
+#string STR_TCSS_USB_PROTOCOL_MENU_TITLE        #language en-US "SA TCSS USB Configuration"
+
+#string STR_TCSS_XHCI_PROMPT                    #language en-US "TCSS xHCI Support"
+#string STR_TCSS_XHCI_HELP                      #language en-US "Enable/Disable TCSS xHCI"
+
+//
+// TCSS DMA0
+//
+#string STR_TCSS_DMA0_PROMPT                    #language en-US "ITBT DMA0"
+#string STR_TCSS_DMA0_HELP                      #language en-US "Enable/Disable ITBT DMA0"
+
+//
+// TCSS DMA1
+//
+#string STR_TCSS_DMA1_PROMPT                    #language en-US "ITBT DMA1"
+#string STR_TCSS_DMA1_HELP                      #language en-US "Enable/Disable ITBT DMA1"
+
+#string STR_SA_TCSS_OPTIONS_FORM_TITLE          #language en-US "TCSS setup menu"
+#string STR_SA_TCSS_OPTIONS_FORM_SUBTITLE       #language en-US "TCSS Configuration"
+#string STR_SA_TCSS_OPTIONS_FORM_HELP           #language en-US "TCSS Configuration settings"
+
+
+
+//
+// IOM VCCST Status
+//
+#string STR_TCSS_VCCST_STATUS                   #language en-US "VCCST status of IOM"
+#string STR_TCSS_VCCST_STATUS_HELP              #language en-US "Enables/Disables VCCST. \nEnable: Sends VCCST ON message to EC or PMC  \nDisable: Sends VCCST OFF message to EC or PMC"
+
+//
+// TCSS D3 Cold Enable/Disable
+//
+#string STR_TCSS_D3_COLD                        #language en-US "TCSS D3 Cold Enable/Disable"
+#string STR_TCSS_D3_COLD_HELP                   #language en-US "Enables/Disables TCSS D3 Cold. \nEnable: D3 cold support for TCSS is enabled   \nDisable: D3 cold support for TCSS is Disabled"
+
+//
+// Tc C-State Limit
+//
+#string STR_TC_CSTATE_STATUS                    #language en-US "Tc CState deepest stage: N/A"  // Updated dynamically if IOM response data
+
+#string STR_TC_CSTATE_LIMIT                     #language en-US "Tc C-State Limit"
+#string STR_TC_CSTATE_LIMIT_HELP                #language en-US "BIOS mailbox to limit deepest TCx state"
+
+#string STR_TC_STATE_0                          #language en-US "Disable"
+#string STR_TC_STATE_1                          #language en-US "1"
+#string STR_TC_STATE_2                          #language en-US "2"
+#string STR_TC_STATE_4                          #language en-US "4"
+#string STR_TC_STATE_5                          #language en-US "5"
+#string STR_TC_STATE_6                          #language en-US "6"
+#string STR_TC_STATE_7                          #language en-US "7"
+#string STR_TC_STATE_10                         #language en-US "10"
+
+#string STR_TC_NOTIFY_IGD                       #language en-US "Tc Notify iGFX"
+#string STR_TC_NOTIFY_IGD_HELP                  #language en-US "Enable/Disable Tc Notify iGfx"
+
+//
+// VMD SA Configuration
+//
+#string STR_SA_VMD_SUPPORT_PROMPT              #language en-US "Enable VMD controller"
+#string STR_SA_VMD_SUPPORT_HELP                #language en-US "Enable/Disable to VMD controller"
+
+#string STR_SA_VMD_GLOBAL_MAPPING_PROMPT       #language en-US "Enable VMD Global Mapping"
+#string STR_SA_VMD_GLOBAL_MAPPING_HELP         #language en-US "Enable/Disable to VMD Global Mapping"
+
+#string STR_SA_VMDPORT_SUPPORT_PROMPT          #language en-US "Map this Root Port under VMD"
+#string STR_SA_VMDPORT_SUPPORT_HELP            #language en-US "Map/UnMap this Root Port to VMD"
+
+#string STR_SA_RAID0_SUPPORT_PROMPT            #language en-US "RAID0"
+#string STR_SA_RAID0_SUPPORT_HELP              #language en-US "Enable/Disable RAID0 support"
+
+#string STR_SA_RAID1_SUPPORT_PROMPT            #language en-US "RAID1"
+#string STR_SA_RAID1_SUPPORT_HELP              #language en-US "Enable/Disable RAID1 support"
+
+#string STR_SA_RAID5_SUPPORT_PROMPT            #language en-US "RAID5"
+#string STR_SA_RAID5_SUPPORT_HELP              #language en-US "Enable/Disable RAID5 support"
+
+#string STR_SA_RAID10_SUPPORT_PROMPT           #language en-US "RAID10"
+#string STR_SA_RAID10_SUPPORT_HELP             #language en-US "Enable/Disable RAID10 support"
+
+#string STR_SA_VMD_OPTIONS_FORM_TITLE          #language en-US "VMD setup menu"
+#string STR_SA_VMD_OPTIONS_FORM_SUBTITLE       #language en-US "VMD Configuration"
+#string STR_SA_VMD_OPTIONS_FORM_HELP           #language en-US "VMD Configuration settings"
+
+#string STR_RP1_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP2_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP3_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP4_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP5_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP6_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP7_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP8_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP9_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP10_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP11_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP12_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP13_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP14_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP15_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP16_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP17_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP18_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP19_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP20_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP21_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP22_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP23_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP24_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP25_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP26_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP27_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP28_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP29_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP30_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+#string STR_RP31_BDF_VALUE                      #language en-US "N/A" //dynamically updated
+
+#string STR_ITBT_PCIERP0_OPTIONS_FORM_TITLE     #language en-US "PCI Express Root Port 0"
+#string STR_ITBT_PCIERP1_OPTIONS_FORM_TITLE     #language en-US "PCI Express Root Port 1"
+#string STR_ITBT_PCIERP2_OPTIONS_FORM_TITLE     #language en-US "PCI Express Root Port 2"
+#string STR_ITBT_PCIERP3_OPTIONS_FORM_TITLE     #language en-US "PCI Express Root Port 3"
+#string STR_ITBT_PCIERP_OPTIONS_FORM_HELP       #language en-US "PCI Express Root Port Settings."
+
+//
+// TCSS PCIE COMMON
+//
+#string STR_SA_ITBT_PCIE_PTM_PROMPT0                #language en-US "PTM"
+#string STR_SA_ITBT_PCIE_PTM_PROMPT1                #language en-US "PTM"
+#string STR_SA_ITBT_PCIE_PTM_PROMPT2                #language en-US "PTM"
+#string STR_SA_ITBT_PCIE_PTM_PROMPT3                #language en-US "PTM"
+#string STR_SA_ITBT_PCIE_PTM_HELP                   #language en-US "Enable/Disable Precision Time Measurement"
+
+#string STR_SA_ITBT_PCIE_LTR_CONFIG                 #language en-US "SA PCIe LTR Configuration"
+#string STR_SA_ITBT_PCIE_LTR_PROMPT0                #language en-US "LTR"
+#string STR_SA_ITBT_PCIE_LTR_PROMPT1                #language en-US "LTR"
+#string STR_SA_ITBT_PCIE_LTR_PROMPT2                #language en-US "LTR"
+#string STR_SA_ITBT_PCIE_LTR_PROMPT3                #language en-US "LTR"
+#string STR_SA_ITBT_PCIE_LTR_HELP                   #language en-US "PCIE Latency Reporting Enable/Disable"
+
+
+#string STR_SA_ITBT_PCIE_SL_OVRD_PROMPT0            #language en-US "  Snoop Latency Override"
+#string STR_SA_ITBT_PCIE_NSL_OVRD_PROMPT0           #language en-US "  Non Snoop Latency Override"
+#string STR_SA_ITBT_PCIE_SL_VAL_PROMPT0             #language en-US "    Snoop Latency Value"
+#string STR_SA_ITBT_PCIE_SL_SCALE_PROMPT0           #language en-US "    Snoop Latency Multiplier"
+#string STR_SA_ITBT_PCIE_NSL_VAL_PROMPT0            #language en-US "    Non Snoop Latency Value"
+#string STR_SA_ITBT_PCIE_NSL_SCALE_PROMPT0          #language en-US "    Non Snoop Latency Multiplier"
+
+#string STR_SA_ITBT_PCIE_SL_OVRD_HELP               #language en-US "Snoop Latency Override for SA PCIE.\nDisabled: Disable override.\nManual: Manually enter override values.\nAuto (default): Maintain default BIOS flow."
+#string STR_SA_ITBT_PCIE_NSL_OVRD_HELP              #language en-US "Non Snoop Latency Override for SA PCIE.\nDisabled: Disable override.\nManual: Manually enter override values."
+#string STR_SA_ITBT_PCIE_SL_SCALE_HELP              #language en-US "LTR Snoop Latency Multiplier of SA PCIE"
+#string STR_SA_ITBT_PCIE_SL_VAL_HELP                #language en-US "LTR Snoop Latency value of SA PCIE"
+#string STR_SA_ITBT_PCIE_NSL_VAL_HELP               #language en-US "LTR Non Snoop Latency value of PCH PCIE"
+#string STR_SA_ITBT_PCIE_NSL_SCALE_HELP             #language en-US "LTR Non Snoop Latency Multiplier of SA PCIE"
+
+#string STR_SA_ITBT_PCIE_SL_OVRD_PROMPT1            #language en-US "  Snoop Latency Override"
+#string STR_SA_ITBT_PCIE_NSL_OVRD_PROMPT1           #language en-US "  Non Snoop Latency Override"
+#string STR_SA_ITBT_PCIE_SL_VAL_PROMPT1             #language en-US "    Snoop Latency Value"
+#string STR_SA_ITBT_PCIE_SL_SCALE_PROMPT1           #language en-US "    Snoop Latency Multiplier"
+#string STR_SA_ITBT_PCIE_NSL_VAL_PROMPT1            #language en-US "    Non Snoop Latency Value"
+#string STR_SA_ITBT_PCIE_NSL_SCALE_PROMPT1          #language en-US "    Non Snoop Latency Multiplier"
+
+#string STR_SA_ITBT_PCIE_SL_OVRD_PROMPT2            #language en-US "  Snoop Latency Override"
+#string STR_SA_ITBT_PCIE_NSL_OVRD_PROMPT2           #language en-US "  Non Snoop Latency Override"
+#string STR_SA_ITBT_PCIE_SL_VAL_PROMPT2             #language en-US "    Snoop Latency Value"
+#string STR_SA_ITBT_PCIE_SL_SCALE_PROMPT2           #language en-US "    Snoop Latency Multiplier"
+#string STR_SA_ITBT_PCIE_NSL_VAL_PROMPT2            #language en-US "    Non Snoop Latency Value"
+#string STR_SA_ITBT_PCIE_NSL_SCALE_PROMPT2          #language en-US "    Non Snoop Latency Multiplier"
+
+#string STR_SA_ITBT_PCIE_SL_OVRD_PROMPT3            #language en-US "  Snoop Latency Override"
+#string STR_SA_ITBT_PCIE_NSL_OVRD_PROMPT3           #language en-US "  Non Snoop Latency Override"
+#string STR_SA_ITBT_PCIE_SL_VAL_PROMPT3             #language en-US "    Snoop Latency Value"
+#string STR_SA_ITBT_PCIE_SL_SCALE_PROMPT3           #language en-US "    Snoop Latency Multiplier"
+#string STR_SA_ITBT_PCIE_NSL_VAL_PROMPT3            #language en-US "    Non Snoop Latency Value"
+#string STR_SA_ITBT_PCIE_NSL_SCALE_PROMPT3          #language en-US "    Non Snoop Latency Multiplier"
+
+#string STR_SA_ITBT_PCIE_LTR_OVRD_FORCE_PROMPT0     #language en-US "  Force LTR Override"
+#string STR_SA_ITBT_PCIE_LTR_OVRD_FORCE_PROMPT1     #language en-US "  Force LTR Override"
+#string STR_SA_ITBT_PCIE_LTR_OVRD_FORCE_PROMPT2     #language en-US "  Force LTR Override"
+#string STR_SA_ITBT_PCIE_LTR_OVRD_FORCE_PROMPT3     #language en-US "  Force LTR Override"
+#string STR_SA_ITBT_PCIE_LTR_OVRD_FORCE_HELP        #language en-US "Force LTR Override for ITBT PCIE.\nDisabled: LTR override values will not be forced.\nEnable: LTR override values will be forced and LTR messages from the device will be ignored."
+
+#string STR_SA_ITBT_PCIE_LTRLOCK_PROMPT0            #language en-US "LTR Lock"
+#string STR_SA_ITBT_PCIE_LTRLOCK_PROMPT1            #language en-US "LTR Lock"
+#string STR_SA_ITBT_PCIE_LTRLOCK_PROMPT2            #language en-US "LTR Lock"
+#string STR_SA_ITBT_PCIE_LTRLOCK_PROMPT3            #language en-US "LTR Lock"
+#string STR_SA_ITBT_PCIE_LTRLOCK_HELP               #language en-US "PCIE LTR Configuration Lock"
+
+//
+// Display Configuration
+//
+#string STR_SA_DISPLAY_OPTIONS_FORM_SUBTITLE    #language en-US "Display Configuration"
+#string STR_SA_DISPLAY_OPTIONS_FORM_HELP        #language en-US "Display Configuration settings"
+
+#string STR_DDI_PORT1_PROMPT                    #language en-US "DDI TC Port 1"
+#string STR_DDI_PORT2_PROMPT                    #language en-US "DDI TC Port 2"
+#string STR_DDI_PORT3_PROMPT                    #language en-US "DDI TC Port 3"
+#string STR_DDI_PORT4_PROMPT                    #language en-US "DDI TC Port 4"
+#string STR_DDI_PORT_HELP                       #language en-US "Configure DDI Port Gpio : Disable/Native DP-HDMI"
+#string STR_NATIVE_DP_HDMI                      #language en-US "Native DP/HDMI Config"
+
+//
+// VT-d Form
+//
+#string STR_SA_VTD_FORM_TITLE                   #language en-US "VT-d setup menu"
+#string STR_SA_VTD_FORM_SUBTITLE                #language en-US "VT-d Configuration"
+#string STR_SA_VTD_FORM_HELP                    #language en-US "VT-d Configuration settings"
+
+#string STR_SA_VTD_STRING                       #language en-US "VT-d"
+#string STR_SA_VTD_HELP                         #language en-US "VT-d capability"
+#string STR_SA_VTD_VALUE                        #language en-US "N/A"
+
+#string STR_SA_VTD_PROMPT                       #language en-US "VT-d"
+#string STR_SA_VTD_HELP                         #language en-US "Check to enable VT-d function on MCH.\nThis option will be grayed out when 'X2APIC Enable' option is configured as 'Enabled'."
+
+#string STR_DMA_CONTROL_GUARANTEE_PROMPT        #language en-US "DMA Control Guarantee"
+#string STR_DMA_CONTROL_GUARANTEE_HELP          #language en-US "Enable/Disable DMA_CONTROL_GUARANTEE bit"

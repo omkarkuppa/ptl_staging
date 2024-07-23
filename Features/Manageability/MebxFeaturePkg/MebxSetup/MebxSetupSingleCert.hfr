@@ -1,0 +1,50 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2022 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+form formid = CONCATENATE2(FORM_ID_CERT_,CERT_INDEX),
+  title = STRING_TOKEN(CONCATENATE2(STR_CERTIFICATE_NAME_,CERT_INDEX));
+  subtitle text = STRING_TOKEN(CONCATENATE2(STR_CERTIFICATE_NAME_,CERT_INDEX));
+
+  oneof varid   = MebxCfg.CertActive[CERT_INDEX], prompt = STRING_TOKEN(STR_CERT_ACTIVE), help = STRING_TOKEN(STR_EMPTY),
+    option text = STRING_TOKEN(STR_NO), value = 0, flags = 0;
+    option text = STRING_TOKEN(STR_YES), value = 1, flags = 0;
+  endoneof;
+
+  grayoutif TRUE;
+    oneof varid   = MebxCfg.CertDefault[CERT_INDEX], prompt = STRING_TOKEN(STR_CERT_DEFAULT), help = STRING_TOKEN(STR_EMPTY),
+      option text = STRING_TOKEN(STR_NO), value = 0, flags = 0;
+      option text = STRING_TOKEN(STR_YES), value = 1, flags = 0;
+    endoneof;
+
+    oneof varid   = MebxCfg.CertHashType[CERT_INDEX], prompt = STRING_TOKEN(STR_CERT_HASHTYPE), help = STRING_TOKEN(STR_EMPTY),
+      option text = STRING_TOKEN(STR_PROVRECORD_HASHTYPE_MD5), value = 0, flags = 0;
+      option text = STRING_TOKEN(STR_PROVRECORD_HASHTYPE_SHA1), value = 1, flags = 0;
+      option text = STRING_TOKEN(STR_PROVRECORD_HASHTYPE_SHA256), value = 2, flags = 0;
+      option text = STRING_TOKEN(STR_PROVRECORD_HASHTYPE_SHA384), value = 3, flags = 0;
+    endoneof;
+
+    text
+      help   = STRING_TOKEN(STR_EMPTY),
+      text   = STRING_TOKEN(STR_CERT_HASHDATA),
+      text   = STRING_TOKEN(CONCATENATE2(STR_CERTIFICATE_HASH_,CERT_INDEX)),
+      flags  = 0, key = 0;
+  endif;
+endform;
+

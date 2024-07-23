@@ -1,0 +1,43 @@
+## @file
+#  Version information of this package.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification
+#
+##
+
+PACKAGE_VERSION          : str = '1.0.8'
+PACKAGE_VERSION_YEAR     : str = '2024'
+PACKAGE_VERSION_WORK_WEEK: str = 'WW12.1'
+
+def GetPackageVersion () -> str:
+    """ Get the package version information.
+
+    Args:
+        None.
+
+    Raises:
+        None.
+
+    Returns:
+        str:
+            The version information string.
+    """
+    return ' '.join ([
+                 f'{PACKAGE_VERSION}',
+                 f'{PACKAGE_VERSION_YEAR}{PACKAGE_VERSION_WORK_WEEK}',
+                 ])

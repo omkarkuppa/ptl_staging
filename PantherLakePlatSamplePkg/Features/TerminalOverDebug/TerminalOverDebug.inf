@@ -1,0 +1,59 @@
+### @file
+#  Terminal Over Debug driver for Redirecting Shell and Setup through DCI
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = TerminalOverDebug
+  MODULE_UNI_FILE                = TerminalOverDebug.uni
+  FILE_GUID                      = 7aa323d5-4200-4aa2-a6b7-f2b6d411ca2f
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = TerminalOverDebugDriverEntry
+
+[Sources]
+  TerminalOverDebugIO.c
+  TerminalOverDebug.h
+  TerminalOverDebug.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[LibraryClasses]
+  PcdLib
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  DevicePathLib
+  UefiLib
+  UefiDriverEntryPoint
+  DebugLib
+  IoLib
+  TimerLib
+  BaseDciInfoLib 
+  BaseLib
+
+[Protocols]
+  gEfiDevicePathProtocolGuid                    ## TO_START
+  gEfiSerialIoProtocolGuid
+  gEfiPciIoProtocolGuid

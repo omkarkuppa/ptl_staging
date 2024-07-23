@@ -1,0 +1,6197 @@
+/** @file
+  PCIE_CFG.h
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2007 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+
+  This file contains Silicon register definitions.
+
+  This is a generated file; please do not modify it directly.
+
+**/
+
+#ifndef _PCIE_CFG_h
+#define _PCIE_CFG_h
+
+
+
+// IP GUID: dc6bb884-1558-436c-aec8-a85483b06e19
+#define PCIE_CFG_ID 0xdc6bb8841558436c
+
+//************************************************ RegisterStructs
+
+
+/** ID_PCIE_CFG desc:
+  */
+
+#define ID_PCIE_CFG_REG                  (0x00000000U)
+
+typedef union {
+  struct {
+    UINT32 vid : 16;
+
+    UINT32 did : 16;
+
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} ID_PCIE_CFG_STRUCT;
+
+#define ID_PCIE_CFG_WIDTH 32
+#define ID_PCIE_CFG_DEFAULT 0x00008086U
+#define ID_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define ID_PCIE_CFG_VID_LSB 0x0000
+#define ID_PCIE_CFG_VID_SIZE 0x0010
+#define ID_PCIE_CFG_DID_LSB 0x0010
+#define ID_PCIE_CFG_DID_SIZE 0x0010
+
+/** CMD desc:
+  */
+
+#define CMD_PCIE_CFG_REG                 (0x00000004U)
+
+typedef union {
+  struct {
+    UINT16 iose : 1;
+    UINT16 mse : 1;
+    UINT16 bme : 1;
+    UINT16 sce : 1;
+    UINT16 mwie : 1;
+    UINT16 vga_pse : 1;
+    UINT16 pere : 1;
+    UINT16 wcc : 1;
+    UINT16 see : 1;
+    UINT16 fbe : 1;
+    UINT16 id : 1;
+    UINT16 rsvd_m : 5;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} CMD_PCIE_CFG_STRUCT;
+
+#define CMD_PCIE_CFG_WIDTH 16
+#define CMD_PCIE_CFG_DEFAULT 0x0000U
+#define CMD_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define CMD_PCIE_CFG_IOSE_LSB 0x0000
+#define CMD_PCIE_CFG_IOSE_SIZE 0x0001
+#define CMD_PCIE_CFG_MSE_LSB 0x0001
+#define CMD_PCIE_CFG_MSE_SIZE 0x0001
+#define CMD_PCIE_CFG_BME_LSB 0x0002
+#define CMD_PCIE_CFG_BME_SIZE 0x0001
+#define CMD_PCIE_CFG_SCE_LSB 0x0003
+#define CMD_PCIE_CFG_SCE_SIZE 0x0001
+#define CMD_PCIE_CFG_MWIE_LSB 0x0004
+#define CMD_PCIE_CFG_MWIE_SIZE 0x0001
+#define CMD_PCIE_CFG_VGA_PSE_LSB 0x0005
+#define CMD_PCIE_CFG_VGA_PSE_SIZE 0x0001
+#define CMD_PCIE_CFG_PERE_LSB 0x0006
+#define CMD_PCIE_CFG_PERE_SIZE 0x0001
+#define CMD_PCIE_CFG_WCC_LSB 0x0007
+#define CMD_PCIE_CFG_WCC_SIZE 0x0001
+#define CMD_PCIE_CFG_SEE_LSB 0x0008
+#define CMD_PCIE_CFG_SEE_SIZE 0x0001
+#define CMD_PCIE_CFG_FBE_LSB 0x0009
+#define CMD_PCIE_CFG_FBE_SIZE 0x0001
+#define CMD_PCIE_CFG_ID_LSB 0x000a
+#define CMD_PCIE_CFG_ID_SIZE 0x0001
+#define CMD_PCIE_CFG_RSVD_M_LSB 0x000b
+#define CMD_PCIE_CFG_RSVD_M_SIZE 0x0005
+
+
+/** RID_CC desc:
+  */
+
+#define RID_CC_PCIE_CFG_REG              (0x00000008U)
+
+typedef union {
+  struct {
+    UINT32 rid : 8;
+    UINT32 pi : 8;
+    UINT32 scc : 8;
+    UINT32 bcc : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} RID_CC_PCIE_CFG_STRUCT;
+
+#define RID_CC_PCIE_CFG_WIDTH 32
+#define RID_CC_PCIE_CFG_DEFAULT 0x060400f0U
+#define RID_CC_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define RID_CC_PCIE_CFG_RID_LSB 0x0000
+#define RID_CC_PCIE_CFG_RID_SIZE 0x0008
+#define RID_CC_PCIE_CFG_PI_LSB 0x0008
+#define RID_CC_PCIE_CFG_PI_SIZE 0x0008
+#define RID_CC_PCIE_CFG_SCC_LSB 0x0010
+#define RID_CC_PCIE_CFG_SCC_SIZE 0x0008
+#define RID_CC_PCIE_CFG_BCC_LSB 0x0018
+#define RID_CC_PCIE_CFG_BCC_SIZE 0x0008
+
+
+/** BAR0 desc:
+  */
+
+#define BAR0_PCIE_CFG_REG                (0x00000010U)
+
+typedef union {
+  struct {
+    UINT32 msi : 1;
+    UINT32 mmt : 2;
+    UINT32 p : 1;
+    UINT32 lba : 28;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} BAR0_PCIE_CFG_STRUCT;
+
+#define BAR0_PCIE_CFG_WIDTH 32
+#define BAR0_PCIE_CFG_DEFAULT 0x00000008U
+#define BAR0_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define BAR0_PCIE_CFG_MSI_LSB 0x0000
+#define BAR0_PCIE_CFG_MSI_SIZE 0x0001
+#define BAR0_PCIE_CFG_MMT_LSB 0x0001
+#define BAR0_PCIE_CFG_MMT_SIZE 0x0002
+#define BAR0_PCIE_CFG_P_LSB 0x0003
+#define BAR0_PCIE_CFG_P_SIZE 0x0001
+#define BAR0_PCIE_CFG_LBA_LSB 0x0004
+#define BAR0_PCIE_CFG_LBA_SIZE 0x001c
+
+
+/** BAR1 desc:
+  */
+
+#define BAR1_PCIE_CFG_REG                (0x00000014U)
+
+typedef union {
+  struct {
+    UINT32 uba : 32;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} BAR1_PCIE_CFG_STRUCT;
+
+#define BAR1_PCIE_CFG_WIDTH 32
+#define BAR1_PCIE_CFG_DEFAULT 0x00000000U
+#define BAR1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define BAR1_PCIE_CFG_UBA_LSB 0x0000
+#define BAR1_PCIE_CFG_UBA_SIZE 0x0020
+
+
+/** BNUM_SLT desc:
+  */
+
+#define BNUM_SLT_PCIE_CFG_REG            (0x00000018U)
+
+typedef union {
+  struct {
+    UINT32 pbn : 8;
+    UINT32 scbn : 8;
+    UINT32 sbbn : 8;
+    UINT32 slt : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} BNUM_SLT_PCIE_CFG_STRUCT;
+
+#define BNUM_SLT_PCIE_CFG_WIDTH 32
+#define BNUM_SLT_PCIE_CFG_DEFAULT 0x00000000U
+#define BNUM_SLT_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define BNUM_SLT_PCIE_CFG_PBN_LSB 0x0000
+#define BNUM_SLT_PCIE_CFG_PBN_SIZE 0x0008
+#define BNUM_SLT_PCIE_CFG_SCBN_LSB 0x0008
+#define BNUM_SLT_PCIE_CFG_SCBN_SIZE 0x0008
+#define BNUM_SLT_PCIE_CFG_SBBN_LSB 0x0010
+#define BNUM_SLT_PCIE_CFG_SBBN_SIZE 0x0008
+#define BNUM_SLT_PCIE_CFG_SLT_LSB 0x0018
+#define BNUM_SLT_PCIE_CFG_SLT_SIZE 0x0008
+
+
+/** CAPP desc:
+  */
+
+#define CAPP_PCIE_CFG_REG                (0x00000034U)
+
+typedef union {
+  struct {
+    UINT8 ptr : 8;
+  }     Bits;
+  UINT8 Data;
+} CAPP_PCIE_CFG_STRUCT;
+
+#define CAPP_PCIE_CFG_WIDTH 8
+#define CAPP_PCIE_CFG_DEFAULT 0x40U
+#define CAPP_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define CAPP_PCIE_CFG_PTR_LSB 0x0000
+#define CAPP_PCIE_CFG_PTR_SIZE 0x0008
+
+
+/** BCTRL desc:
+  */
+
+#define BCTRL_PCIE_CFG_REG               (0x0000003eU)
+
+typedef union {
+  struct {
+    UINT16 pere : 1;
+    UINT16 se : 1;
+    UINT16 ie : 1;
+    UINT16 ve : 1;
+    UINT16 v16 : 1;
+    UINT16 mam : 1;
+    UINT16 sbr : 1;
+    UINT16 fbe : 1;
+    UINT16 pdt : 1;
+    UINT16 sdt : 1;
+    UINT16 dts : 1;
+    UINT16 dtse : 1;
+    UINT16 rsvd_m : 4;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} BCTRL_PCIE_CFG_STRUCT;
+
+#define BCTRL_PCIE_CFG_WIDTH 16
+#define BCTRL_PCIE_CFG_DEFAULT 0x0000U
+#define BCTRL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define BCTRL_PCIE_CFG_PERE_LSB 0x0000
+#define BCTRL_PCIE_CFG_PERE_SIZE 0x0001
+#define BCTRL_PCIE_CFG_SE_LSB 0x0001
+#define BCTRL_PCIE_CFG_SE_SIZE 0x0001
+#define BCTRL_PCIE_CFG_IE_LSB 0x0002
+#define BCTRL_PCIE_CFG_IE_SIZE 0x0001
+#define BCTRL_PCIE_CFG_VE_LSB 0x0003
+#define BCTRL_PCIE_CFG_VE_SIZE 0x0001
+#define BCTRL_PCIE_CFG_V16_LSB 0x0004
+#define BCTRL_PCIE_CFG_V16_SIZE 0x0001
+#define BCTRL_PCIE_CFG_MAM_LSB 0x0005
+#define BCTRL_PCIE_CFG_MAM_SIZE 0x0001
+#define BCTRL_PCIE_CFG_SBR_LSB 0x0006
+#define BCTRL_PCIE_CFG_SBR_SIZE 0x0001
+#define BCTRL_PCIE_CFG_FBE_LSB 0x0007
+#define BCTRL_PCIE_CFG_FBE_SIZE 0x0001
+#define BCTRL_PCIE_CFG_PDT_LSB 0x0008
+#define BCTRL_PCIE_CFG_PDT_SIZE 0x0001
+#define BCTRL_PCIE_CFG_SDT_LSB 0x0009
+#define BCTRL_PCIE_CFG_SDT_SIZE 0x0001
+#define BCTRL_PCIE_CFG_DTS_LSB 0x000a
+#define BCTRL_PCIE_CFG_DTS_SIZE 0x0001
+#define BCTRL_PCIE_CFG_DTSE_LSB 0x000b
+#define BCTRL_PCIE_CFG_DTSE_SIZE 0x0001
+#define BCTRL_PCIE_CFG_RSVD_M_LSB 0x000c
+#define BCTRL_PCIE_CFG_RSVD_M_SIZE 0x0004
+
+
+/** CLIST desc:
+  */
+
+#define CLIST_PCIE_CFG_REG               (0x00000040U)
+
+typedef union {
+  struct {
+    UINT16 cid : 8;
+    UINT16 next : 8;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} CLIST_PCIE_CFG_STRUCT;
+
+#define CLIST_PCIE_CFG_WIDTH 16
+#define CLIST_PCIE_CFG_DEFAULT 0x8010U
+#define CLIST_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define CLIST_PCIE_CFG_CID_LSB 0x0000
+#define CLIST_PCIE_CFG_CID_SIZE 0x0008
+#define CLIST_PCIE_CFG_NEXT_LSB 0x0008
+#define CLIST_PCIE_CFG_NEXT_SIZE 0x0008
+
+
+/** XCAP desc:
+  */
+
+#define XCAP_PCIE_CFG_REG                (0x00000042U)
+
+typedef union {
+  struct {
+    UINT16 cv : 4;
+    UINT16 dt : 4;
+    UINT16 si : 1;
+    UINT16 imn : 5;
+    UINT16 rsvd_m : 2;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} XCAP_PCIE_CFG_STRUCT;
+
+#define XCAP_PCIE_CFG_WIDTH 16
+#define XCAP_PCIE_CFG_DEFAULT 0x0042U
+#define XCAP_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define XCAP_PCIE_CFG_CV_LSB 0x0000
+#define XCAP_PCIE_CFG_CV_SIZE 0x0004
+#define XCAP_PCIE_CFG_DT_LSB 0x0004
+#define XCAP_PCIE_CFG_DT_SIZE 0x0004
+#define XCAP_PCIE_CFG_SI_LSB 0x0008
+#define XCAP_PCIE_CFG_SI_SIZE 0x0001
+#define XCAP_PCIE_CFG_IMN_LSB 0x0009
+#define XCAP_PCIE_CFG_IMN_SIZE 0x0005
+#define XCAP_PCIE_CFG_RSVD_M_LSB 0x000e
+#define XCAP_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+/** DCAP desc:
+  */
+
+#define DCAP_PCIE_CFG_REG                (0x00000044U)
+
+typedef union {
+  struct {
+    UINT32 mps : 3;
+    UINT32 pfs : 2;
+    UINT32 etfs : 1;
+    UINT32 e0al : 3;
+    UINT32 e1al : 3;
+    UINT32 abp : 1;
+    UINT32 aip : 1;
+    UINT32 pip : 1;
+    UINT32 rber : 1;
+    UINT32 rsvd_0 : 2;
+    UINT32 cspv : 8;
+    UINT32 csps : 2;
+    UINT32 flrc : 1;
+    UINT32 rsvd_m : 3;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} DCAP_PCIE_CFG_STRUCT;
+
+#define DCAP_PCIE_CFG_WIDTH 32
+#define DCAP_PCIE_CFG_DEFAULT 0x00008001U
+#define DCAP_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define DCAP_PCIE_CFG_MPS_LSB 0x0000
+#define DCAP_PCIE_CFG_MPS_SIZE 0x0003
+#define DCAP_PCIE_CFG_PFS_LSB 0x0003
+#define DCAP_PCIE_CFG_PFS_SIZE 0x0002
+#define DCAP_PCIE_CFG_ETFS_LSB 0x0005
+#define DCAP_PCIE_CFG_ETFS_SIZE 0x0001
+#define DCAP_PCIE_CFG_E0AL_LSB 0x0006
+#define DCAP_PCIE_CFG_E0AL_SIZE 0x0003
+#define DCAP_PCIE_CFG_E1AL_LSB 0x0009
+#define DCAP_PCIE_CFG_E1AL_SIZE 0x0003
+#define DCAP_PCIE_CFG_ABP_LSB 0x000c
+#define DCAP_PCIE_CFG_ABP_SIZE 0x0001
+#define DCAP_PCIE_CFG_AIP_LSB 0x000d
+#define DCAP_PCIE_CFG_AIP_SIZE 0x0001
+#define DCAP_PCIE_CFG_PIP_LSB 0x000e
+#define DCAP_PCIE_CFG_PIP_SIZE 0x0001
+#define DCAP_PCIE_CFG_RBER_LSB 0x000f
+#define DCAP_PCIE_CFG_RBER_SIZE 0x0001
+#define DCAP_PCIE_CFG_CSPV_LSB 0x0012
+#define DCAP_PCIE_CFG_CSPV_SIZE 0x0008
+#define DCAP_PCIE_CFG_CSPS_LSB 0x001a
+#define DCAP_PCIE_CFG_CSPS_SIZE 0x0002
+#define DCAP_PCIE_CFG_FLRC_LSB 0x001c
+#define DCAP_PCIE_CFG_FLRC_SIZE 0x0001
+#define DCAP_PCIE_CFG_RSVD_M_LSB 0x001d
+#define DCAP_PCIE_CFG_RSVD_M_SIZE 0x0003
+
+
+/** DCTL desc:
+  */
+
+#define DCTL_PCIE_CFG_REG                (0x00000048U)
+
+typedef union {
+  struct {
+    UINT16 cee : 1;
+    UINT16 nfe : 1;
+    UINT16 fee : 1;
+    UINT16 ure : 1;
+    UINT16 ero : 1;
+    UINT16 mps : 3;
+    UINT16 etfe : 1;
+    UINT16 pfe : 1;
+    UINT16 apme : 1;
+    UINT16 ens : 1;
+    UINT16 mrrs : 3;
+    UINT16 rsvd_m : 1;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} DCTL_PCIE_CFG_STRUCT;
+
+#define DCTL_PCIE_CFG_WIDTH 16
+#define DCTL_PCIE_CFG_DEFAULT 0x0020U
+#define DCTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define DCTL_PCIE_CFG_CEE_LSB 0x0000
+#define DCTL_PCIE_CFG_CEE_SIZE 0x0001
+#define DCTL_PCIE_CFG_NFE_LSB 0x0001
+#define DCTL_PCIE_CFG_NFE_SIZE 0x0001
+#define DCTL_PCIE_CFG_FEE_LSB 0x0002
+#define DCTL_PCIE_CFG_FEE_SIZE 0x0001
+#define DCTL_PCIE_CFG_URE_LSB 0x0003
+#define DCTL_PCIE_CFG_URE_SIZE 0x0001
+#define DCTL_PCIE_CFG_ERO_LSB 0x0004
+#define DCTL_PCIE_CFG_ERO_SIZE 0x0001
+#define DCTL_PCIE_CFG_MPS_LSB 0x0005
+#define DCTL_PCIE_CFG_MPS_SIZE 0x0003
+#define DCTL_PCIE_CFG_ETFE_LSB 0x0008
+#define DCTL_PCIE_CFG_ETFE_SIZE 0x0001
+#define DCTL_PCIE_CFG_PFE_LSB 0x0009
+#define DCTL_PCIE_CFG_PFE_SIZE 0x0001
+#define DCTL_PCIE_CFG_APME_LSB 0x000a
+#define DCTL_PCIE_CFG_APME_SIZE 0x0001
+#define DCTL_PCIE_CFG_ENS_LSB 0x000b
+#define DCTL_PCIE_CFG_ENS_SIZE 0x0001
+#define DCTL_PCIE_CFG_MRRS_LSB 0x000c
+#define DCTL_PCIE_CFG_MRRS_SIZE 0x0003
+#define DCTL_PCIE_CFG_RSVD_M_LSB 0x000f
+#define DCTL_PCIE_CFG_RSVD_M_SIZE 0x0001
+
+
+/** LCAP desc:
+  */
+
+#define LCAP_PCIE_CFG_REG                (0x0000004cU)
+
+typedef union {
+  struct {
+    UINT32 mls : 4;
+    UINT32 mlw : 6;
+    UINT32 apms : 2;
+    UINT32 el0 : 3;
+    UINT32 el1 : 3;
+    UINT32 cpm : 1;
+    UINT32 sderc : 1;
+    UINT32 larc : 1;
+    UINT32 lbnc : 1;
+    UINT32 aspmoc : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 pn : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LCAP_PCIE_CFG_STRUCT;
+
+#define LCAP_PCIE_CFG_WIDTH 32
+#define LCAP_PCIE_CFG_DEFAULT 0x01714c10U
+#define LCAP_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LCAP_PCIE_CFG_MLS_LSB 0x0000
+#define LCAP_PCIE_CFG_MLS_SIZE 0x0004
+#define LCAP_PCIE_CFG_MLW_LSB 0x0004
+#define LCAP_PCIE_CFG_MLW_SIZE 0x0006
+#define LCAP_PCIE_CFG_APMS_LSB 0x000a
+#define LCAP_PCIE_CFG_APMS_SIZE 0x0002
+#define LCAP_PCIE_CFG_EL0_LSB 0x000c
+#define LCAP_PCIE_CFG_EL0_SIZE 0x0003
+#define LCAP_PCIE_CFG_EL1_LSB 0x000f
+#define LCAP_PCIE_CFG_EL1_SIZE 0x0003
+#define LCAP_PCIE_CFG_CPM_LSB 0x0012
+#define LCAP_PCIE_CFG_CPM_SIZE 0x0001
+#define LCAP_PCIE_CFG_SDERC_LSB 0x0013
+#define LCAP_PCIE_CFG_SDERC_SIZE 0x0001
+#define LCAP_PCIE_CFG_LARC_LSB 0x0014
+#define LCAP_PCIE_CFG_LARC_SIZE 0x0001
+#define LCAP_PCIE_CFG_LBNC_LSB 0x0015
+#define LCAP_PCIE_CFG_LBNC_SIZE 0x0001
+#define LCAP_PCIE_CFG_ASPMOC_LSB 0x0016
+#define LCAP_PCIE_CFG_ASPMOC_SIZE 0x0001
+#define LCAP_PCIE_CFG_PN_LSB 0x0018
+#define LCAP_PCIE_CFG_PN_SIZE 0x0008
+
+
+/** LCTL desc:
+  */
+
+#define LCTL_PCIE_CFG_REG                (0x00000050U)
+
+typedef union {
+  struct {
+    UINT16 aspm : 2;
+    UINT16 ptmpdaib : 1;
+    UINT16 rcbc : 1;
+    UINT16 ld : 1;
+    UINT16 rl : 1;
+    UINT16 ccc : 1;
+    UINT16 es : 1;
+    UINT16 ecpm : 1;
+    UINT16 hawd : 1;
+    UINT16 lbmie : 1;
+    UINT16 labie : 1;
+    UINT16 rsvd_m : 4;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} LCTL_PCIE_CFG_STRUCT;
+
+#define LCTL_PCIE_CFG_WIDTH 16
+#define LCTL_PCIE_CFG_DEFAULT 0x0000U
+#define LCTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LCTL_PCIE_CFG_ASPM_LSB 0x0000
+#define LCTL_PCIE_CFG_ASPM_SIZE 0x0002
+#define LCTL_PCIE_CFG_PTMPDAIB_LSB 0x0002
+#define LCTL_PCIE_CFG_PTMPDAIB_SIZE 0x0001
+#define LCTL_PCIE_CFG_RCBC_LSB 0x0003
+#define LCTL_PCIE_CFG_RCBC_SIZE 0x0001
+#define LCTL_PCIE_CFG_LD_LSB 0x0004
+#define LCTL_PCIE_CFG_LD_SIZE 0x0001
+#define LCTL_PCIE_CFG_RL_LSB 0x0005
+#define LCTL_PCIE_CFG_RL_SIZE 0x0001
+#define LCTL_PCIE_CFG_CCC_LSB 0x0006
+#define LCTL_PCIE_CFG_CCC_SIZE 0x0001
+#define LCTL_PCIE_CFG_ES_LSB 0x0007
+#define LCTL_PCIE_CFG_ES_SIZE 0x0001
+#define LCTL_PCIE_CFG_ECPM_LSB 0x0008
+#define LCTL_PCIE_CFG_ECPM_SIZE 0x0001
+#define LCTL_PCIE_CFG_HAWD_LSB 0x0009
+#define LCTL_PCIE_CFG_HAWD_SIZE 0x0001
+#define LCTL_PCIE_CFG_LBMIE_LSB 0x000a
+#define LCTL_PCIE_CFG_LBMIE_SIZE 0x0001
+#define LCTL_PCIE_CFG_LABIE_LSB 0x000b
+#define LCTL_PCIE_CFG_LABIE_SIZE 0x0001
+#define LCTL_PCIE_CFG_RSVD_M_LSB 0x000c
+#define LCTL_PCIE_CFG_RSVD_M_SIZE 0x0004
+
+
+/** LSTS desc:
+  */
+
+#define LSTS_PCIE_CFG_REG                (0x00000052U)
+
+typedef union {
+  struct {
+    UINT16 cls : 4;
+    UINT16 nlw : 6;
+    UINT16 rsvd_0 : 1;
+    UINT16 lt : 1;
+    UINT16 scc : 1;
+    UINT16 la : 1;
+    UINT16 lbms : 1;
+    UINT16 labs : 1;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} LSTS_PCIE_CFG_STRUCT;
+
+#define LSTS_PCIE_CFG_WIDTH 16
+#define LSTS_PCIE_CFG_DEFAULT 0x1011U
+#define LSTS_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LSTS_PCIE_CFG_CLS_LSB 0x0000
+#define LSTS_PCIE_CFG_CLS_SIZE 0x0004
+#define LSTS_PCIE_CFG_NLW_LSB 0x0004
+#define LSTS_PCIE_CFG_NLW_SIZE 0x0006
+#define LSTS_PCIE_CFG_LT_LSB 0x000b
+#define LSTS_PCIE_CFG_LT_SIZE 0x0001
+#define LSTS_PCIE_CFG_SCC_LSB 0x000c
+#define LSTS_PCIE_CFG_SCC_SIZE 0x0001
+#define LSTS_PCIE_CFG_LA_LSB 0x000d
+#define LSTS_PCIE_CFG_LA_SIZE 0x0001
+#define LSTS_PCIE_CFG_LBMS_LSB 0x000e
+#define LSTS_PCIE_CFG_LBMS_SIZE 0x0001
+#define LSTS_PCIE_CFG_LABS_LSB 0x000f
+#define LSTS_PCIE_CFG_LABS_SIZE 0x0001
+
+
+/** SLCAP desc:
+  */
+
+#define SLCAP_PCIE_CFG_REG               (0x00000054U)
+
+typedef union {
+  struct {
+    UINT32 abp : 1;
+    UINT32 pcp : 1;
+    UINT32 msp : 1;
+    UINT32 aip : 1;
+    UINT32 pip : 1;
+    UINT32 hps : 1;
+    UINT32 hpc : 1;
+    UINT32 slv : 8;
+    UINT32 sls : 2;
+    UINT32 emip : 1;
+    UINT32 nccs : 1;
+    UINT32 psn : 13;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} SLCAP_PCIE_CFG_STRUCT;
+
+#define SLCAP_PCIE_CFG_WIDTH 32
+#define SLCAP_PCIE_CFG_DEFAULT 0x00040060U
+#define SLCAP_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define SLCAP_PCIE_CFG_ABP_LSB 0x0000
+#define SLCAP_PCIE_CFG_ABP_SIZE 0x0001
+#define SLCAP_PCIE_CFG_PCP_LSB 0x0001
+#define SLCAP_PCIE_CFG_PCP_SIZE 0x0001
+#define SLCAP_PCIE_CFG_MSP_LSB 0x0002
+#define SLCAP_PCIE_CFG_MSP_SIZE 0x0001
+#define SLCAP_PCIE_CFG_AIP_LSB 0x0003
+#define SLCAP_PCIE_CFG_AIP_SIZE 0x0001
+#define SLCAP_PCIE_CFG_PIP_LSB 0x0004
+#define SLCAP_PCIE_CFG_PIP_SIZE 0x0001
+#define SLCAP_PCIE_CFG_HPS_LSB 0x0005
+#define SLCAP_PCIE_CFG_HPS_SIZE 0x0001
+#define SLCAP_PCIE_CFG_HPC_LSB 0x0006
+#define SLCAP_PCIE_CFG_HPC_SIZE 0x0001
+#define SLCAP_PCIE_CFG_SLV_LSB 0x0007
+#define SLCAP_PCIE_CFG_SLV_SIZE 0x0008
+#define SLCAP_PCIE_CFG_SLS_LSB 0x000f
+#define SLCAP_PCIE_CFG_SLS_SIZE 0x0002
+#define SLCAP_PCIE_CFG_EMIP_LSB 0x0011
+#define SLCAP_PCIE_CFG_EMIP_SIZE 0x0001
+#define SLCAP_PCIE_CFG_NCCS_LSB 0x0012
+#define SLCAP_PCIE_CFG_NCCS_SIZE 0x0001
+#define SLCAP_PCIE_CFG_PSN_LSB 0x0013
+#define SLCAP_PCIE_CFG_PSN_SIZE 0x000d
+
+
+/** SLCTL desc:
+  */
+
+#define SLCTL_PCIE_CFG_REG               (0x00000058U)
+
+typedef union {
+  struct {
+    UINT16 abe : 1;
+    UINT16 pfe : 1;
+    UINT16 mse : 1;
+    UINT16 pde : 1;
+    UINT16 cce : 1;
+    UINT16 hpe : 1;
+    UINT16 aic : 2;
+    UINT16 pic : 2;
+    UINT16 pcc : 1;
+    UINT16 emic : 1;
+    UINT16 dllsce : 1;
+    UINT16 aspld : 1;
+    UINT16 rsvd_m : 2;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} SLCTL_PCIE_CFG_STRUCT;
+
+#define SLCTL_PCIE_CFG_WIDTH 16
+#define SLCTL_PCIE_CFG_DEFAULT 0x0000U
+#define SLCTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define SLCTL_PCIE_CFG_ABE_LSB 0x0000
+#define SLCTL_PCIE_CFG_ABE_SIZE 0x0001
+#define SLCTL_PCIE_CFG_PFE_LSB 0x0001
+#define SLCTL_PCIE_CFG_PFE_SIZE 0x0001
+#define SLCTL_PCIE_CFG_MSE_LSB 0x0002
+#define SLCTL_PCIE_CFG_MSE_SIZE 0x0001
+#define SLCTL_PCIE_CFG_PDE_LSB 0x0003
+#define SLCTL_PCIE_CFG_PDE_SIZE 0x0001
+#define SLCTL_PCIE_CFG_CCE_LSB 0x0004
+#define SLCTL_PCIE_CFG_CCE_SIZE 0x0001
+#define SLCTL_PCIE_CFG_HPE_LSB 0x0005
+#define SLCTL_PCIE_CFG_HPE_SIZE 0x0001
+#define SLCTL_PCIE_CFG_AIC_LSB 0x0006
+#define SLCTL_PCIE_CFG_AIC_SIZE 0x0002
+#define SLCTL_PCIE_CFG_PIC_LSB 0x0008
+#define SLCTL_PCIE_CFG_PIC_SIZE 0x0002
+#define SLCTL_PCIE_CFG_PCC_LSB 0x000a
+#define SLCTL_PCIE_CFG_PCC_SIZE 0x0001
+#define SLCTL_PCIE_CFG_EMIC_LSB 0x000b
+#define SLCTL_PCIE_CFG_EMIC_SIZE 0x0001
+#define SLCTL_PCIE_CFG_DLLSCE_LSB 0x000c
+#define SLCTL_PCIE_CFG_DLLSCE_SIZE 0x0001
+#define SLCTL_PCIE_CFG_ASPLD_LSB 0x000d
+#define SLCTL_PCIE_CFG_ASPLD_SIZE 0x0001
+#define SLCTL_PCIE_CFG_RSVD_M_LSB 0x000e
+#define SLCTL_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+/** SLSTS desc:
+  */
+
+#define SLSTS_PCIE_CFG_REG               (0x0000005aU)
+
+typedef union {
+  struct {
+    UINT16 abp : 1;
+    UINT16 pfd : 1;
+    UINT16 msc : 1;
+    UINT16 pdc : 1;
+    UINT16 cc : 1;
+    UINT16 ms : 1;
+    UINT16 pds : 1;
+    UINT16 emis : 1;
+    UINT16 dllsc : 1;
+    UINT16 rsvd_m : 7;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} SLSTS_PCIE_CFG_STRUCT;
+
+#define SLSTS_PCIE_CFG_WIDTH 16
+#define SLSTS_PCIE_CFG_DEFAULT 0x0000U
+#define SLSTS_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define SLSTS_PCIE_CFG_ABP_LSB 0x0000
+#define SLSTS_PCIE_CFG_ABP_SIZE 0x0001
+#define SLSTS_PCIE_CFG_PFD_LSB 0x0001
+#define SLSTS_PCIE_CFG_PFD_SIZE 0x0001
+#define SLSTS_PCIE_CFG_MSC_LSB 0x0002
+#define SLSTS_PCIE_CFG_MSC_SIZE 0x0001
+#define SLSTS_PCIE_CFG_PDC_LSB 0x0003
+#define SLSTS_PCIE_CFG_PDC_SIZE 0x0001
+#define SLSTS_PCIE_CFG_CC_LSB 0x0004
+#define SLSTS_PCIE_CFG_CC_SIZE 0x0001
+#define SLSTS_PCIE_CFG_MS_LSB 0x0005
+#define SLSTS_PCIE_CFG_MS_SIZE 0x0001
+#define SLSTS_PCIE_CFG_PDS_LSB 0x0006
+#define SLSTS_PCIE_CFG_PDS_SIZE 0x0001
+#define SLSTS_PCIE_CFG_EMIS_LSB 0x0007
+#define SLSTS_PCIE_CFG_EMIS_SIZE 0x0001
+#define SLSTS_PCIE_CFG_DLLSC_LSB 0x0008
+#define SLSTS_PCIE_CFG_DLLSC_SIZE 0x0001
+#define SLSTS_PCIE_CFG_RSVD_M_LSB 0x0009
+#define SLSTS_PCIE_CFG_RSVD_M_SIZE 0x0007
+
+
+/** RCTL desc:
+  */
+
+#define RCTL_PCIE_CFG_REG                (0x0000005cU)
+
+typedef union {
+  struct {
+    UINT16 sce : 1;
+    UINT16 sne : 1;
+    UINT16 sfe : 1;
+    UINT16 pie : 1;
+    UINT16 crssve : 1;
+    UINT16 rsvd_m : 11;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} RCTL_PCIE_CFG_STRUCT;
+
+#define RCTL_PCIE_CFG_WIDTH 16
+#define RCTL_PCIE_CFG_DEFAULT 0x0000U
+#define RCTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define RCTL_PCIE_CFG_SCE_LSB 0x0000
+#define RCTL_PCIE_CFG_SCE_SIZE 0x0001
+#define RCTL_PCIE_CFG_SNE_LSB 0x0001
+#define RCTL_PCIE_CFG_SNE_SIZE 0x0001
+#define RCTL_PCIE_CFG_SFE_LSB 0x0002
+#define RCTL_PCIE_CFG_SFE_SIZE 0x0001
+#define RCTL_PCIE_CFG_PIE_LSB 0x0003
+#define RCTL_PCIE_CFG_PIE_SIZE 0x0001
+#define RCTL_PCIE_CFG_CRSSVE_LSB 0x0004
+#define RCTL_PCIE_CFG_CRSSVE_SIZE 0x0001
+#define RCTL_PCIE_CFG_RSVD_M_LSB 0x0005
+#define RCTL_PCIE_CFG_RSVD_M_SIZE 0x000b
+
+
+/** DCAP2 desc:
+  */
+
+#define DCAP2_PCIE_CFG_REG               (0x00000064U)
+
+typedef union {
+  struct {
+    UINT32 ctrs : 4;
+    UINT32 ctds : 1;
+    UINT32 afs : 1;
+    UINT32 ars : 1;
+    UINT32 ac32bs : 1;
+    UINT32 ac64bs : 1;
+    UINT32 ac128bs : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 ltrms : 1;
+    UINT32 rsvd_1 : 4;
+    UINT32 px10btcs : 1;
+    UINT32 px10btrs : 1;
+    UINT32 obffs : 2;
+    UINT32 effs : 1;
+    UINT32 eetlpps : 1;
+    UINT32 meetlpp : 2;
+    UINT32 rsvd_m : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} DCAP2_PCIE_CFG_STRUCT;
+
+#define DCAP2_PCIE_CFG_WIDTH 32
+#define DCAP2_PCIE_CFG_DEFAULT 0x00b80837U
+#define DCAP2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define DCAP2_PCIE_CFG_CTRS_LSB 0x0000
+#define DCAP2_PCIE_CFG_CTRS_SIZE 0x0004
+#define DCAP2_PCIE_CFG_CTDS_LSB 0x0004
+#define DCAP2_PCIE_CFG_CTDS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_AFS_LSB 0x0005
+#define DCAP2_PCIE_CFG_AFS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_ARS_LSB 0x0006
+#define DCAP2_PCIE_CFG_ARS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_AC32BS_LSB 0x0007
+#define DCAP2_PCIE_CFG_AC32BS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_AC64BS_LSB 0x0008
+#define DCAP2_PCIE_CFG_AC64BS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_AC128BS_LSB 0x0009
+#define DCAP2_PCIE_CFG_AC128BS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_LTRMS_LSB 0x000b
+#define DCAP2_PCIE_CFG_LTRMS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_PX10BTCS_LSB 0x0010
+#define DCAP2_PCIE_CFG_PX10BTCS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_PX10BTRS_LSB 0x0011
+#define DCAP2_PCIE_CFG_PX10BTRS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_OBFFS_LSB 0x0012
+#define DCAP2_PCIE_CFG_OBFFS_SIZE 0x0002
+#define DCAP2_PCIE_CFG_EFFS_LSB 0x0014
+#define DCAP2_PCIE_CFG_EFFS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_EETLPPS_LSB 0x0015
+#define DCAP2_PCIE_CFG_EETLPPS_SIZE 0x0001
+#define DCAP2_PCIE_CFG_MEETLPP_LSB 0x0016
+#define DCAP2_PCIE_CFG_MEETLPP_SIZE 0x0002
+#define DCAP2_PCIE_CFG_RSVD_M_LSB 0x0018
+#define DCAP2_PCIE_CFG_RSVD_M_SIZE 0x0008
+
+
+/** DCTL2 desc:
+  */
+
+#define DCTL2_PCIE_CFG_REG               (0x00000068U)
+
+typedef union {
+  struct {
+    UINT16 ctv : 4;
+    UINT16 ctd : 1;
+    UINT16 afe : 1;
+    UINT16 are : 1;
+    UINT16 aeb : 1;
+    UINT16 rsvd_0 : 2;
+    UINT16 ltren : 1;
+    UINT16 rsvd_1 : 1;
+    UINT16 px10btre : 1;
+    UINT16 obffen : 2;
+    UINT16 eetlppb : 1;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} DCTL2_PCIE_CFG_STRUCT;
+
+#define DCTL2_PCIE_CFG_WIDTH 16
+#define DCTL2_PCIE_CFG_DEFAULT 0x0000U
+#define DCTL2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define DCTL2_PCIE_CFG_CTV_LSB 0x0000
+#define DCTL2_PCIE_CFG_CTV_SIZE 0x0004
+#define DCTL2_PCIE_CFG_CTD_LSB 0x0004
+#define DCTL2_PCIE_CFG_CTD_SIZE 0x0001
+#define DCTL2_PCIE_CFG_AFE_LSB 0x0005
+#define DCTL2_PCIE_CFG_AFE_SIZE 0x0001
+#define DCTL2_PCIE_CFG_ARE_LSB 0x0006
+#define DCTL2_PCIE_CFG_ARE_SIZE 0x0001
+#define DCTL2_PCIE_CFG_AEB_LSB 0x0007
+#define DCTL2_PCIE_CFG_AEB_SIZE 0x0001
+#define DCTL2_PCIE_CFG_LTREN_LSB 0x000a
+#define DCTL2_PCIE_CFG_LTREN_SIZE 0x0001
+#define DCTL2_PCIE_CFG_PX10BTRE_LSB 0x000c
+#define DCTL2_PCIE_CFG_PX10BTRE_SIZE 0x0001
+#define DCTL2_PCIE_CFG_OBFFEN_LSB 0x000d
+#define DCTL2_PCIE_CFG_OBFFEN_SIZE 0x0002
+#define DCTL2_PCIE_CFG_EETLPPB_LSB 0x000f
+#define DCTL2_PCIE_CFG_EETLPPB_SIZE 0x0001
+
+
+/** LCAP2 desc:
+  */
+
+#define LCAP2_PCIE_CFG_REG               (0x0000006cU)
+
+typedef union {
+  struct {
+    UINT32 rsvd_0 : 1;
+    UINT32 slsv : 7;
+    UINT32 cs : 1;
+    UINT32 lsosgssv : 7;
+    UINT32 lsosrss : 7;
+    UINT32 rpds : 1;
+    UINT32 trpds : 1;
+    UINT32 rsvd_m : 7;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LCAP2_PCIE_CFG_STRUCT;
+
+#define LCAP2_PCIE_CFG_WIDTH 32
+#define LCAP2_PCIE_CFG_DEFAULT 0x0180000eU
+#define LCAP2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LCAP2_PCIE_CFG_SLSV_LSB 0x0001
+#define LCAP2_PCIE_CFG_SLSV_SIZE 0x0007
+#define LCAP2_PCIE_CFG_CS_LSB 0x0008
+#define LCAP2_PCIE_CFG_CS_SIZE 0x0001
+#define LCAP2_PCIE_CFG_LSOSGSSV_LSB 0x0009
+#define LCAP2_PCIE_CFG_LSOSGSSV_SIZE 0x0007
+#define LCAP2_PCIE_CFG_LSOSRSS_LSB 0x0010
+#define LCAP2_PCIE_CFG_LSOSRSS_SIZE 0x0007
+#define LCAP2_PCIE_CFG_RPDS_LSB 0x0017
+#define LCAP2_PCIE_CFG_RPDS_SIZE 0x0001
+#define LCAP2_PCIE_CFG_TRPDS_LSB 0x0018
+#define LCAP2_PCIE_CFG_TRPDS_SIZE 0x0001
+#define LCAP2_PCIE_CFG_RSVD_M_LSB 0x0019
+#define LCAP2_PCIE_CFG_RSVD_M_SIZE 0x0007
+
+
+/** LCTL2 desc:
+  */
+
+#define LCTL2_PCIE_CFG_REG               (0x00000070U)
+
+typedef union {
+  struct {
+    UINT16 tls : 4;
+    UINT16 ec : 1;
+    UINT16 hasd : 1;
+    UINT16 sd : 1;
+    UINT16 tm : 3;
+    UINT16 emc : 1;
+    UINT16 csos : 1;
+    UINT16 cd : 4;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} LCTL2_PCIE_CFG_STRUCT;
+
+#define LCTL2_PCIE_CFG_WIDTH 16
+#define LCTL2_PCIE_CFG_DEFAULT 0x0001U
+#define LCTL2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LCTL2_PCIE_CFG_TLS_LSB 0x0000
+#define LCTL2_PCIE_CFG_TLS_SIZE 0x0004
+#define LCTL2_PCIE_CFG_EC_LSB 0x0004
+#define LCTL2_PCIE_CFG_EC_SIZE 0x0001
+#define LCTL2_PCIE_CFG_HASD_LSB 0x0005
+#define LCTL2_PCIE_CFG_HASD_SIZE 0x0001
+#define LCTL2_PCIE_CFG_SD_LSB 0x0006
+#define LCTL2_PCIE_CFG_SD_SIZE 0x0001
+#define LCTL2_PCIE_CFG_TM_LSB 0x0007
+#define LCTL2_PCIE_CFG_TM_SIZE 0x0003
+#define LCTL2_PCIE_CFG_EMC_LSB 0x000a
+#define LCTL2_PCIE_CFG_EMC_SIZE 0x0001
+#define LCTL2_PCIE_CFG_CSOS_LSB 0x000b
+#define LCTL2_PCIE_CFG_CSOS_SIZE 0x0001
+#define LCTL2_PCIE_CFG_CD_LSB 0x000c
+#define LCTL2_PCIE_CFG_CD_SIZE 0x0004
+
+
+/** LSTS2 desc:
+  */
+
+#define LSTS2_PCIE_CFG_REG               (0x00000072U)
+
+typedef union {
+  struct {
+    UINT16 cdl : 1;
+    UINT16 eqc : 1;
+    UINT16 eqp1s : 1;
+    UINT16 eqp2s : 1;
+    UINT16 eqp3s : 1;
+    UINT16 ler : 1;
+    UINT16 rpd : 1;
+    UINT16 px2rpd : 1;
+    UINT16 rsvd_m : 8;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} LSTS2_PCIE_CFG_STRUCT;
+
+#define LSTS2_PCIE_CFG_WIDTH 16
+#define LSTS2_PCIE_CFG_DEFAULT 0x0000U
+#define LSTS2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LSTS2_PCIE_CFG_CDL_LSB 0x0000
+#define LSTS2_PCIE_CFG_CDL_SIZE 0x0001
+#define LSTS2_PCIE_CFG_EQC_LSB 0x0001
+#define LSTS2_PCIE_CFG_EQC_SIZE 0x0001
+#define LSTS2_PCIE_CFG_EQP1S_LSB 0x0002
+#define LSTS2_PCIE_CFG_EQP1S_SIZE 0x0001
+#define LSTS2_PCIE_CFG_EQP2S_LSB 0x0003
+#define LSTS2_PCIE_CFG_EQP2S_SIZE 0x0001
+#define LSTS2_PCIE_CFG_EQP3S_LSB 0x0004
+#define LSTS2_PCIE_CFG_EQP3S_SIZE 0x0001
+#define LSTS2_PCIE_CFG_LER_LSB 0x0005
+#define LSTS2_PCIE_CFG_LER_SIZE 0x0001
+#define LSTS2_PCIE_CFG_RPD_LSB 0x0006
+#define LSTS2_PCIE_CFG_RPD_SIZE 0x0001
+#define LSTS2_PCIE_CFG_PX2RPD_LSB 0x0007
+#define LSTS2_PCIE_CFG_PX2RPD_SIZE 0x0001
+#define LSTS2_PCIE_CFG_RSVD_M_LSB 0x0008
+#define LSTS2_PCIE_CFG_RSVD_M_SIZE 0x0008
+
+
+/** MID desc:
+  */
+
+#define MID_PCIE_CFG_REG                 (0x00000080U)
+
+typedef union {
+  struct {
+    UINT16 cid : 8;
+    UINT16 next : 8;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} MID_PCIE_CFG_STRUCT;
+
+#define MID_PCIE_CFG_WIDTH 16
+#define MID_PCIE_CFG_DEFAULT 0x9005U
+#define MID_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define MID_PCIE_CFG_CID_LSB 0x0000
+#define MID_PCIE_CFG_CID_SIZE 0x0008
+#define MID_PCIE_CFG_NEXT_LSB 0x0008
+#define MID_PCIE_CFG_NEXT_SIZE 0x0008
+
+
+/** SVCAP desc:
+  */
+
+#define SVCAP_PCIE_CFG_REG               (0x00000098U)
+
+typedef union {
+  struct {
+    UINT16 cid : 8;
+    UINT16 next : 8;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} SVCAP_PCIE_CFG_STRUCT;
+
+#define SVCAP_PCIE_CFG_WIDTH 16
+#define SVCAP_PCIE_CFG_DEFAULT 0xa00dU
+#define SVCAP_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define SVCAP_PCIE_CFG_CID_LSB 0x0000
+#define SVCAP_PCIE_CFG_CID_SIZE 0x0008
+#define SVCAP_PCIE_CFG_NEXT_LSB 0x0008
+#define SVCAP_PCIE_CFG_NEXT_SIZE 0x0008
+
+
+/** PMCS desc:
+  */
+
+#define PMCS_PCIE_CFG_REG                (0x000000a4U)
+
+typedef union {
+  struct {
+    UINT32 ps : 2;
+    UINT32 rsvd_0 : 1;
+    UINT32 nsr : 1;
+    UINT32 rsvd_1 : 4;
+    UINT32 pmee : 1;
+    UINT32 dsel : 4;
+    UINT32 dsc : 2;
+    UINT32 pmes : 1;
+    UINT32 rsvd_2 : 6;
+    UINT32 b23s : 1;
+    UINT32 bpce : 1;
+    UINT32 dta : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PMCS_PCIE_CFG_STRUCT;
+
+#define PMCS_PCIE_CFG_WIDTH 32
+#define PMCS_PCIE_CFG_DEFAULT 0x00000008U
+#define PMCS_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PMCS_PCIE_CFG_PS_LSB 0x0000
+#define PMCS_PCIE_CFG_PS_SIZE 0x0002
+#define PMCS_PCIE_CFG_NSR_LSB 0x0003
+#define PMCS_PCIE_CFG_NSR_SIZE 0x0001
+#define PMCS_PCIE_CFG_PMEE_LSB 0x0008
+#define PMCS_PCIE_CFG_PMEE_SIZE 0x0001
+#define PMCS_PCIE_CFG_DSEL_LSB 0x0009
+#define PMCS_PCIE_CFG_DSEL_SIZE 0x0004
+#define PMCS_PCIE_CFG_DSC_LSB 0x000d
+#define PMCS_PCIE_CFG_DSC_SIZE 0x0002
+#define PMCS_PCIE_CFG_PMES_LSB 0x000f
+#define PMCS_PCIE_CFG_PMES_SIZE 0x0001
+#define PMCS_PCIE_CFG_B23S_LSB 0x0016
+#define PMCS_PCIE_CFG_B23S_SIZE 0x0001
+#define PMCS_PCIE_CFG_BPCE_LSB 0x0017
+#define PMCS_PCIE_CFG_BPCE_SIZE 0x0001
+#define PMCS_PCIE_CFG_DTA_LSB 0x0018
+#define PMCS_PCIE_CFG_DTA_SIZE 0x0008
+
+
+/** CCFG desc:
+  */
+
+#define CCFG_PCIE_CFG_REG                (0x000000d0U)
+
+typedef union {
+  struct {
+    UINT32 uprs : 3;
+    UINT32 rsvd_0 : 1;
+    UINT32 unrs : 3;
+    UINT32 rsvd_1 : 1;
+    UINT32 mrpc : 1;
+    UINT32 mrnpc : 1;
+    UINT32 upsaap : 1;
+    UINT32 rbms : 1;
+    UINT32 unrd : 2;
+    UINT32 unpsaap : 1;
+    UINT32 dcgeisma : 1;
+    UINT32 npap : 1;
+    UINT32 npas : 6;
+    UINT32 unsd : 1;
+    UINT32 upsd : 1;
+    UINT32 upmwpd : 1;
+    UINT32 umrpd : 1;
+    UINT32 uarpd : 1;
+    UINT32 ufdm : 1;
+    UINT32 rsvd_2 : 1;
+    UINT32 iore : 1;
+    UINT32 cre : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} CCFG_PCIE_CFG_STRUCT;
+
+#define CCFG_PCIE_CFG_WIDTH 32
+#define CCFG_PCIE_CFG_DEFAULT 0x0f000017U
+#define CCFG_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define CCFG_PCIE_CFG_UPRS_LSB 0x0000
+#define CCFG_PCIE_CFG_UPRS_SIZE 0x0003
+#define CCFG_PCIE_CFG_UNRS_LSB 0x0004
+#define CCFG_PCIE_CFG_UNRS_SIZE 0x0003
+#define CCFG_PCIE_CFG_MRPC_LSB 0x0008
+#define CCFG_PCIE_CFG_MRPC_SIZE 0x0001
+#define CCFG_PCIE_CFG_MRNPC_LSB 0x0009
+#define CCFG_PCIE_CFG_MRNPC_SIZE 0x0001
+#define CCFG_PCIE_CFG_UPSAAP_LSB 0x000a
+#define CCFG_PCIE_CFG_UPSAAP_SIZE 0x0001
+#define CCFG_PCIE_CFG_RBMS_LSB 0x000b
+#define CCFG_PCIE_CFG_RBMS_SIZE 0x0001
+#define CCFG_PCIE_CFG_UNRD_LSB 0x000c
+#define CCFG_PCIE_CFG_UNRD_SIZE 0x0002
+#define CCFG_PCIE_CFG_UNPSAAP_LSB 0x000e
+#define CCFG_PCIE_CFG_UNPSAAP_SIZE 0x0001
+#define CCFG_PCIE_CFG_DCGEISMA_LSB 0x000f
+#define CCFG_PCIE_CFG_DCGEISMA_SIZE 0x0001
+#define CCFG_PCIE_CFG_NPAP_LSB 0x0010
+#define CCFG_PCIE_CFG_NPAP_SIZE 0x0001
+#define CCFG_PCIE_CFG_NPAS_LSB 0x0011
+#define CCFG_PCIE_CFG_NPAS_SIZE 0x0006
+#define CCFG_PCIE_CFG_UNSD_LSB 0x0017
+#define CCFG_PCIE_CFG_UNSD_SIZE 0x0001
+#define CCFG_PCIE_CFG_UPSD_LSB 0x0018
+#define CCFG_PCIE_CFG_UPSD_SIZE 0x0001
+#define CCFG_PCIE_CFG_UPMWPD_LSB 0x0019
+#define CCFG_PCIE_CFG_UPMWPD_SIZE 0x0001
+#define CCFG_PCIE_CFG_UMRPD_LSB 0x001a
+#define CCFG_PCIE_CFG_UMRPD_SIZE 0x0001
+#define CCFG_PCIE_CFG_UARPD_LSB 0x001b
+#define CCFG_PCIE_CFG_UARPD_SIZE 0x0001
+#define CCFG_PCIE_CFG_UFDM_LSB 0x001c
+#define CCFG_PCIE_CFG_UFDM_SIZE 0x0001
+#define CCFG_PCIE_CFG_IORE_LSB 0x001e
+#define CCFG_PCIE_CFG_IORE_SIZE 0x0001
+#define CCFG_PCIE_CFG_CRE_LSB 0x001f
+#define CCFG_PCIE_CFG_CRE_SIZE 0x0001
+
+
+
+/** MPC2 desc:
+  */
+
+#define MPC2_PCIE_CFG_REG                (0x000000d4U)
+
+typedef union {
+  struct {
+    UINT32 l1ctm : 1;
+    UINT32 eoifd : 1;
+    UINT32 aspmco : 2;
+    UINT32 aspmcoen : 1;
+    UINT32 ieime : 1;
+    UINT32 lstp : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 cam : 1;
+    UINT32 tlpf : 1;
+    UINT32 itcum : 1;
+    UINT32 ipf : 1;
+    UINT32 ptnfae : 1;
+    UINT32 orcr : 1;
+    UINT32 orce : 2;
+    UINT32 displlewl1se : 1;
+    UINT32 rxl0sebpro : 1;
+    UINT32 macphyimpghpu : 1;
+    UINT32 dnprl : 1;
+    UINT32 gen3pllc : 1;
+    UINT32 gen2pllc : 1;
+    UINT32 mipipllc : 1;
+    UINT32 rud : 1;
+    UINT32 pllwait : 3;
+    UINT32 rsvd_1 : 1;
+    UINT32 nvc0dnprl : 1;
+    UINT32 ebrwuodil0 : 1;
+    UINT32 l1ssese : 1;
+    UINT32 devinitupcfgplcy : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} MPC2_PCIE_CFG_STRUCT;
+
+#define MPC2_PCIE_CFG_WIDTH 32
+#define MPC2_PCIE_CFG_DEFAULT 0x00000800U
+#define MPC2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define MPC2_PCIE_CFG_L1CTM_LSB 0x0000
+#define MPC2_PCIE_CFG_L1CTM_SIZE 0x0001
+#define MPC2_PCIE_CFG_EOIFD_LSB 0x0001
+#define MPC2_PCIE_CFG_EOIFD_SIZE 0x0001
+#define MPC2_PCIE_CFG_ASPMCO_LSB 0x0002
+#define MPC2_PCIE_CFG_ASPMCO_SIZE 0x0002
+#define MPC2_PCIE_CFG_ASPMCOEN_LSB 0x0004
+#define MPC2_PCIE_CFG_ASPMCOEN_SIZE 0x0001
+#define MPC2_PCIE_CFG_IEIME_LSB 0x0005
+#define MPC2_PCIE_CFG_IEIME_SIZE 0x0001
+#define MPC2_PCIE_CFG_LSTP_LSB 0x0006
+#define MPC2_PCIE_CFG_LSTP_SIZE 0x0001
+#define MPC2_PCIE_CFG_CAM_LSB 0x0008
+#define MPC2_PCIE_CFG_CAM_SIZE 0x0001
+#define MPC2_PCIE_CFG_TLPF_LSB 0x0009
+#define MPC2_PCIE_CFG_TLPF_SIZE 0x0001
+#define MPC2_PCIE_CFG_ITCUM_LSB 0x000a
+#define MPC2_PCIE_CFG_ITCUM_SIZE 0x0001
+#define MPC2_PCIE_CFG_IPF_LSB 0x000b
+#define MPC2_PCIE_CFG_IPF_SIZE 0x0001
+#define MPC2_PCIE_CFG_PTNFAE_LSB 0x000c
+#define MPC2_PCIE_CFG_PTNFAE_SIZE 0x0001
+#define MPC2_PCIE_CFG_ORCR_LSB 0x000d
+#define MPC2_PCIE_CFG_ORCR_SIZE 0x0001
+#define MPC2_PCIE_CFG_ORCE_LSB 0x000e
+#define MPC2_PCIE_CFG_ORCE_SIZE 0x0002
+#define MPC2_PCIE_CFG_DISPLLEWL1SE_LSB 0x0010
+#define MPC2_PCIE_CFG_DISPLLEWL1SE_SIZE 0x0001
+#define MPC2_PCIE_CFG_RXL0SEBPRO_LSB 0x0011
+#define MPC2_PCIE_CFG_RXL0SEBPRO_SIZE 0x0001
+#define MPC2_PCIE_CFG_MACPHYIMPGHPU_LSB 0x0012
+#define MPC2_PCIE_CFG_MACPHYIMPGHPU_SIZE 0x0001
+#define MPC2_PCIE_CFG_DNPRL_LSB 0x0013
+#define MPC2_PCIE_CFG_DNPRL_SIZE 0x0001
+#define MPC2_PCIE_CFG_GEN3PLLC_LSB 0x0014
+#define MPC2_PCIE_CFG_GEN3PLLC_SIZE 0x0001
+#define MPC2_PCIE_CFG_GEN2PLLC_LSB 0x0015
+#define MPC2_PCIE_CFG_GEN2PLLC_SIZE 0x0001
+#define MPC2_PCIE_CFG_MIPIPLLC_LSB 0x0016
+#define MPC2_PCIE_CFG_MIPIPLLC_SIZE 0x0001
+#define MPC2_PCIE_CFG_RUD_LSB 0x0017
+#define MPC2_PCIE_CFG_RUD_SIZE 0x0001
+#define MPC2_PCIE_CFG_PLLWAIT_LSB 0x0018
+#define MPC2_PCIE_CFG_PLLWAIT_SIZE 0x0003
+#define MPC2_PCIE_CFG_NVC0DNPRL_LSB 0x001c
+#define MPC2_PCIE_CFG_NVC0DNPRL_SIZE 0x0001
+#define MPC2_PCIE_CFG_EBRWUODIL0_LSB 0x001d
+#define MPC2_PCIE_CFG_EBRWUODIL0_SIZE 0x0001
+#define MPC2_PCIE_CFG_L1SSESE_LSB 0x001e
+#define MPC2_PCIE_CFG_L1SSESE_SIZE 0x0001
+#define MPC2_PCIE_CFG_DEVINITUPCFGPLCY_LSB 0x001f
+#define MPC2_PCIE_CFG_DEVINITUPCFGPLCY_SIZE 0x0001
+
+
+
+/** MPC desc:
+  */
+
+#define MPC_PCIE_CFG_REG                 (0x000000d8U)
+
+typedef union {
+  struct {
+    UINT32 pmme : 1;
+    UINT32 hpme : 1;
+    UINT32 bt : 1;
+    UINT32 mctpse : 1;
+    UINT32 fcp : 3;
+    UINT32 pae : 1;
+    UINT32 at : 4;
+    UINT32 pciesd : 3;
+    UINT32 ccel : 3;
+    UINT32 ucel : 3;
+    UINT32 fcdl1e : 1;
+    UINT32 rsvd_0 : 2;
+    UINT32 bmerce : 1;
+    UINT32 irrce : 1;
+    UINT32 p8xde : 1;
+    UINT32 mmbnce : 1;
+    UINT32 ate : 1;
+    UINT32 lho : 1;
+    UINT32 hpce : 1;
+    UINT32 pmce : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} MPC_PCIE_CFG_STRUCT;
+
+#define MPC_PCIE_CFG_WIDTH 32
+#define MPC_PCIE_CFG_DEFAULT 0x09110000U
+#define MPC_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define MPC_PCIE_CFG_PMME_LSB 0x0000
+#define MPC_PCIE_CFG_PMME_SIZE 0x0001
+#define MPC_PCIE_CFG_HPME_LSB 0x0001
+#define MPC_PCIE_CFG_HPME_SIZE 0x0001
+#define MPC_PCIE_CFG_BT_LSB 0x0002
+#define MPC_PCIE_CFG_BT_SIZE 0x0001
+#define MPC_PCIE_CFG_MCTPSE_LSB 0x0003
+#define MPC_PCIE_CFG_MCTPSE_SIZE 0x0001
+#define MPC_PCIE_CFG_FCP_LSB 0x0004
+#define MPC_PCIE_CFG_FCP_SIZE 0x0003
+#define MPC_PCIE_CFG_PAE_LSB 0x0007
+#define MPC_PCIE_CFG_PAE_SIZE 0x0001
+#define MPC_PCIE_CFG_AT_LSB 0x0008
+#define MPC_PCIE_CFG_AT_SIZE 0x0004
+#define MPC_PCIE_CFG_PCIESD_LSB 0x000c
+#define MPC_PCIE_CFG_PCIESD_SIZE 0x0003
+#define MPC_PCIE_CFG_CCEL_LSB 0x000f
+#define MPC_PCIE_CFG_CCEL_SIZE 0x0003
+#define MPC_PCIE_CFG_UCEL_LSB 0x0012
+#define MPC_PCIE_CFG_UCEL_SIZE 0x0003
+#define MPC_PCIE_CFG_FCDL1E_LSB 0x0015
+#define MPC_PCIE_CFG_FCDL1E_SIZE 0x0001
+#define MPC_PCIE_CFG_BMERCE_LSB 0x0018
+#define MPC_PCIE_CFG_BMERCE_SIZE 0x0001
+#define MPC_PCIE_CFG_IRRCE_LSB 0x0019
+#define MPC_PCIE_CFG_IRRCE_SIZE 0x0001
+#define MPC_PCIE_CFG_P8XDE_LSB 0x001a
+#define MPC_PCIE_CFG_P8XDE_SIZE 0x0001
+#define MPC_PCIE_CFG_MMBNCE_LSB 0x001b
+#define MPC_PCIE_CFG_MMBNCE_SIZE 0x0001
+#define MPC_PCIE_CFG_ATE_LSB 0x001c
+#define MPC_PCIE_CFG_ATE_SIZE 0x0001
+#define MPC_PCIE_CFG_LHO_LSB 0x001d
+#define MPC_PCIE_CFG_LHO_SIZE 0x0001
+#define MPC_PCIE_CFG_HPCE_LSB 0x001e
+#define MPC_PCIE_CFG_HPCE_SIZE 0x0001
+#define MPC_PCIE_CFG_PMCE_LSB 0x001f
+#define MPC_PCIE_CFG_PMCE_SIZE 0x0001
+
+
+
+/** SPR desc:
+  */
+
+#define SPR_PCIE_CFG_REG                 (0x000000e0U)
+
+typedef union {
+  struct {
+    UINT8 scb : 4;
+    UINT8 bdfcp : 1;
+    UINT8 dlrfad : 1;
+    UINT8 nscb : 2;
+  }     Bits;
+  UINT8 Data;
+} SPR_PCIE_CFG_STRUCT;
+
+#define SPR_PCIE_CFG_WIDTH 8
+#define SPR_PCIE_CFG_DEFAULT 0x00U
+#define SPR_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define SPR_PCIE_CFG_SCB_LSB 0x0000
+#define SPR_PCIE_CFG_SCB_SIZE 0x0004
+#define SPR_PCIE_CFG_BDFCP_LSB 0x0004
+#define SPR_PCIE_CFG_BDFCP_SIZE 0x0001
+#define SPR_PCIE_CFG_DLRFAD_LSB 0x0005
+#define SPR_PCIE_CFG_DLRFAD_SIZE 0x0001
+#define SPR_PCIE_CFG_NSCB_LSB 0x0006
+#define SPR_PCIE_CFG_NSCB_SIZE 0x0002
+
+
+
+/** RPDCGEN desc:
+  */
+
+#define RPDCGEN_PCIE_CFG_REG             (0x000000e1U)
+
+typedef union {
+  struct {
+    UINT8 rpdbcgen : 1;
+    UINT8 rpdlcgen : 1;
+    UINT8 srdbcgen : 1;
+    UINT8 rsvd_rw : 1;
+    UINT8 bbclkreqen : 1;
+    UINT8 lclkreqen : 1;
+    UINT8 ptocge : 1;
+    UINT8 rsvd_m : 1;
+  }     Bits;
+  UINT8 Data;
+} RPDCGEN_PCIE_CFG_STRUCT;
+
+#define RPDCGEN_PCIE_CFG_WIDTH 8
+#define RPDCGEN_PCIE_CFG_DEFAULT 0x00U
+#define RPDCGEN_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define RPDCGEN_PCIE_CFG_RPDBCGEN_LSB 0x0000
+#define RPDCGEN_PCIE_CFG_RPDBCGEN_SIZE 0x0001
+#define RPDCGEN_PCIE_CFG_RPDLCGEN_LSB 0x0001
+#define RPDCGEN_PCIE_CFG_RPDLCGEN_SIZE 0x0001
+#define RPDCGEN_PCIE_CFG_SRDBCGEN_LSB 0x0002
+#define RPDCGEN_PCIE_CFG_SRDBCGEN_SIZE 0x0001
+#define RPDCGEN_PCIE_CFG_RSVD_RW_LSB 0x0003
+#define RPDCGEN_PCIE_CFG_RSVD_RW_SIZE 0x0001
+#define RPDCGEN_PCIE_CFG_BBCLKREQEN_LSB 0x0004
+#define RPDCGEN_PCIE_CFG_BBCLKREQEN_SIZE 0x0001
+#define RPDCGEN_PCIE_CFG_LCLKREQEN_LSB 0x0005
+#define RPDCGEN_PCIE_CFG_LCLKREQEN_SIZE 0x0001
+#define RPDCGEN_PCIE_CFG_PTOCGE_LSB 0x0006
+#define RPDCGEN_PCIE_CFG_PTOCGE_SIZE 0x0001
+#define RPDCGEN_PCIE_CFG_RSVD_M_LSB 0x0007
+#define RPDCGEN_PCIE_CFG_RSVD_M_SIZE 0x0001
+
+
+
+/** RPPGEN desc:
+  */
+
+#define RPPGEN_PCIE_CFG_REG              (0x000000e2U)
+
+typedef union {
+  struct {
+    UINT8 mdlswpr : 1;
+    UINT8 mdlswpgea : 1;
+    UINT8 l23er : 1;
+    UINT8 l23r2dt : 1;
+    UINT8 seoscge : 1;
+    UINT8 mdlswpgexa : 1;
+    UINT8 rsvd_0 : 1;
+    UINT8 mcwpgs : 1;
+  }     Bits;
+  UINT8 Data;
+} RPPGEN_PCIE_CFG_STRUCT;
+
+#define RPPGEN_PCIE_CFG_WIDTH 8
+#define RPPGEN_PCIE_CFG_DEFAULT 0x01U
+#define RPPGEN_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define RPPGEN_PCIE_CFG_MDLSWPR_LSB 0x0000
+#define RPPGEN_PCIE_CFG_MDLSWPR_SIZE 0x0001
+#define RPPGEN_PCIE_CFG_MDLSWPGEA_LSB 0x0001
+#define RPPGEN_PCIE_CFG_MDLSWPGEA_SIZE 0x0001
+#define RPPGEN_PCIE_CFG_L23ER_LSB 0x0002
+#define RPPGEN_PCIE_CFG_L23ER_SIZE 0x0001
+#define RPPGEN_PCIE_CFG_L23R2DT_LSB 0x0003
+#define RPPGEN_PCIE_CFG_L23R2DT_SIZE 0x0001
+#define RPPGEN_PCIE_CFG_SEOSCGE_LSB 0x0004
+#define RPPGEN_PCIE_CFG_SEOSCGE_SIZE 0x0001
+#define RPPGEN_PCIE_CFG_MDLSWPGEXA_LSB 0x0005
+#define RPPGEN_PCIE_CFG_MDLSWPGEXA_SIZE 0x0001
+#define RPPGEN_PCIE_CFG_MCWPGS_LSB 0x0007
+#define RPPGEN_PCIE_CFG_MCWPGS_SIZE 0x0001
+
+
+
+/** PWRCTL desc:
+  */
+
+#define PWRCTL_PCIE_CFG_REG              (0x000000e8U)
+
+typedef union {
+  struct {
+    UINT32 rpdtsqpol : 1;
+    UINT32 rpl1sqpol : 1;
+    UINT32 rpsewl : 2;
+    UINT32 ltrr : 1;
+    UINT32 isct : 1;
+    UINT32 pcsceiost : 1;
+    UINT32 sctem : 1;
+    UINT32 rptfsmwi : 1;
+    UINT32 selaq : 1;
+    UINT32 hrbf : 1;
+    UINT32 atodedtt : 1;
+    UINT32 efsostoetr : 1;
+    UINT32 txswing : 1;
+    UINT32 ilsvrx : 1;
+    UINT32 dbupi : 1;
+    UINT32 dlp : 1;
+    UINT32 wpdmpgep : 1;
+    UINT32 g3snb : 1;
+    UINT32 lwued : 1;
+    UINT32 ltssmrtc : 1;
+    UINT32 bishb : 1;
+    UINT32 ishcf : 1;
+    UINT32 lifecf : 1;
+    UINT32 ecf128b130b : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 l1ssvnnre : 1;
+    UINT32 rsvd_1 : 1;
+    UINT32 darece : 1;
+    UINT32 rxeispl1s : 1;
+    UINT32 txcmdspl1s : 1;
+    UINT32 rsvd_m : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PWRCTL_PCIE_CFG_STRUCT;
+
+#define PWRCTL_PCIE_CFG_WIDTH 32
+#define PWRCTL_PCIE_CFG_DEFAULT 0x00008004U
+#define PWRCTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PWRCTL_PCIE_CFG_RPDTSQPOL_LSB 0x0000
+#define PWRCTL_PCIE_CFG_RPDTSQPOL_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_RPL1SQPOL_LSB 0x0001
+#define PWRCTL_PCIE_CFG_RPL1SQPOL_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_RPSEWL_LSB 0x0002
+#define PWRCTL_PCIE_CFG_RPSEWL_SIZE 0x0002
+#define PWRCTL_PCIE_CFG_LTRR_LSB 0x0004
+#define PWRCTL_PCIE_CFG_LTRR_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_ISCT_LSB 0x0005
+#define PWRCTL_PCIE_CFG_ISCT_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_PCSCEIOST_LSB 0x0006
+#define PWRCTL_PCIE_CFG_PCSCEIOST_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_SCTEM_LSB 0x0007
+#define PWRCTL_PCIE_CFG_SCTEM_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_RPTFSMWI_LSB 0x0008
+#define PWRCTL_PCIE_CFG_RPTFSMWI_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_SELAQ_LSB 0x0009
+#define PWRCTL_PCIE_CFG_SELAQ_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_HRBF_LSB 0x000a
+#define PWRCTL_PCIE_CFG_HRBF_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_ATODEDTT_LSB 0x000b
+#define PWRCTL_PCIE_CFG_ATODEDTT_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_EFSOSTOETR_LSB 0x000c
+#define PWRCTL_PCIE_CFG_EFSOSTOETR_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_TXSWING_LSB 0x000d
+#define PWRCTL_PCIE_CFG_TXSWING_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_ILSVRX_LSB 0x000e
+#define PWRCTL_PCIE_CFG_ILSVRX_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_DBUPI_LSB 0x000f
+#define PWRCTL_PCIE_CFG_DBUPI_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_DLP_LSB 0x0010
+#define PWRCTL_PCIE_CFG_DLP_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_WPDMPGEP_LSB 0x0011
+#define PWRCTL_PCIE_CFG_WPDMPGEP_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_G3SNB_LSB 0x0012
+#define PWRCTL_PCIE_CFG_G3SNB_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_LWUED_LSB 0x0013
+#define PWRCTL_PCIE_CFG_LWUED_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_LTSSMRTC_LSB 0x0014
+#define PWRCTL_PCIE_CFG_LTSSMRTC_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_BISHB_LSB 0x0015
+#define PWRCTL_PCIE_CFG_BISHB_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_ISHCF_LSB 0x0016
+#define PWRCTL_PCIE_CFG_ISHCF_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_LIFECF_LSB 0x0017
+#define PWRCTL_PCIE_CFG_LIFECF_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_ECF128B130B_LSB 0x0018
+#define PWRCTL_PCIE_CFG_ECF128B130B_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_L1SSVNNRE_LSB 0x001a
+#define PWRCTL_PCIE_CFG_L1SSVNNRE_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_DARECE_LSB 0x001c
+#define PWRCTL_PCIE_CFG_DARECE_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_RXEISPL1S_LSB 0x001d
+#define PWRCTL_PCIE_CFG_RXEISPL1S_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_TXCMDSPL1S_LSB 0x001e
+#define PWRCTL_PCIE_CFG_TXCMDSPL1S_SIZE 0x0001
+#define PWRCTL_PCIE_CFG_RSVD_M_LSB 0x001f
+#define PWRCTL_PCIE_CFG_RSVD_M_SIZE 0x0001
+
+
+
+/** DC desc:
+  */
+
+#define DC_PCIE_CFG_REG                  (0x000000ecU)
+
+typedef union {
+  struct {
+    UINT32 vc0nsaov : 1;
+    UINT32 vc0nsao : 1;
+    UINT32 pcibem : 1;
+    UINT32 ecd : 1;
+    UINT32 rcrbnrce : 1;
+    UINT32 rsvd_0 : 8;
+    UINT32 com : 1;
+    UINT32 rsvd_1 : 2;
+    UINT32 ioapicrb : 8;
+    UINT32 ioapicrl : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} DC_PCIE_CFG_STRUCT;
+
+#define DC_PCIE_CFG_WIDTH 32
+#define DC_PCIE_CFG_DEFAULT 0x00000000U
+#define DC_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define DC_PCIE_CFG_VC0NSAOV_LSB 0x0000
+#define DC_PCIE_CFG_VC0NSAOV_SIZE 0x0001
+#define DC_PCIE_CFG_VC0NSAO_LSB 0x0001
+#define DC_PCIE_CFG_VC0NSAO_SIZE 0x0001
+#define DC_PCIE_CFG_PCIBEM_LSB 0x0002
+#define DC_PCIE_CFG_PCIBEM_SIZE 0x0001
+#define DC_PCIE_CFG_ECD_LSB 0x0003
+#define DC_PCIE_CFG_ECD_SIZE 0x0001
+#define DC_PCIE_CFG_RCRBNRCE_LSB 0x0004
+#define DC_PCIE_CFG_RCRBNRCE_SIZE 0x0001
+#define DC_PCIE_CFG_COM_LSB 0x000d
+#define DC_PCIE_CFG_COM_SIZE 0x0001
+#define DC_PCIE_CFG_IOAPICRB_LSB 0x0010
+#define DC_PCIE_CFG_IOAPICRB_SIZE 0x0008
+#define DC_PCIE_CFG_IOAPICRL_LSB 0x0018
+#define DC_PCIE_CFG_IOAPICRL_SIZE 0x0008
+
+
+
+/** IPCS desc:
+  */
+
+#define IPCS_PCIE_CFG_REG                (0x000000f0U)
+
+typedef union {
+  struct {
+    UINT32 urre : 1;
+    UINT32 urd : 1;
+    UINT32 rsvd_0 : 2;
+    UINT32 imrs : 3;
+    UINT32 rsvd_1 : 1;
+    UINT32 imps : 3;
+    UINT32 rsvd_2 : 1;
+    UINT32 pric : 3;
+    UINT32 rsvd_3 : 1;
+    UINT32 pppcibsn : 4;
+    UINT32 hbpcibsn : 4;
+    UINT32 rsvd_m : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} IPCS_PCIE_CFG_STRUCT;
+
+#define IPCS_PCIE_CFG_WIDTH 32
+#define IPCS_PCIE_CFG_DEFAULT 0x00000170U
+#define IPCS_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define IPCS_PCIE_CFG_URRE_LSB 0x0000
+#define IPCS_PCIE_CFG_URRE_SIZE 0x0001
+#define IPCS_PCIE_CFG_URD_LSB 0x0001
+#define IPCS_PCIE_CFG_URD_SIZE 0x0001
+#define IPCS_PCIE_CFG_IMRS_LSB 0x0004
+#define IPCS_PCIE_CFG_IMRS_SIZE 0x0003
+#define IPCS_PCIE_CFG_IMPS_LSB 0x0008
+#define IPCS_PCIE_CFG_IMPS_SIZE 0x0003
+#define IPCS_PCIE_CFG_PRIC_LSB 0x000c
+#define IPCS_PCIE_CFG_PRIC_SIZE 0x0003
+#define IPCS_PCIE_CFG_PPPCIBSN_LSB 0x0010
+#define IPCS_PCIE_CFG_PPPCIBSN_SIZE 0x0004
+#define IPCS_PCIE_CFG_HBPCIBSN_LSB 0x0014
+#define IPCS_PCIE_CFG_HBPCIBSN_SIZE 0x0004
+#define IPCS_PCIE_CFG_RSVD_M_LSB 0x0018
+#define IPCS_PCIE_CFG_RSVD_M_SIZE 0x0008
+
+
+
+/** PHYCTL2 desc:
+  */
+
+#define PHYCTL2_PCIE_CFG_REG             (0x000000f5U)
+
+typedef union {
+  struct {
+    UINT8 pxpg2plloffen : 1;
+    UINT8 pxpg3plloffen : 1;
+    UINT8 blkpllen : 1;
+    UINT8 rsvd_0 : 1;
+    UINT8 txcfgchgwait : 2;
+    UINT8 tdft : 2;
+  }     Bits;
+  UINT8 Data;
+} PHYCTL2_PCIE_CFG_STRUCT;
+
+#define PHYCTL2_PCIE_CFG_WIDTH 8
+#define PHYCTL2_PCIE_CFG_DEFAULT 0xf4U
+#define PHYCTL2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PHYCTL2_PCIE_CFG_PXPG2PLLOFFEN_LSB 0x0000
+#define PHYCTL2_PCIE_CFG_PXPG2PLLOFFEN_SIZE 0x0001
+#define PHYCTL2_PCIE_CFG_PXPG3PLLOFFEN_LSB 0x0001
+#define PHYCTL2_PCIE_CFG_PXPG3PLLOFFEN_SIZE 0x0001
+#define PHYCTL2_PCIE_CFG_BLKPLLEN_LSB 0x0002
+#define PHYCTL2_PCIE_CFG_BLKPLLEN_SIZE 0x0001
+#define PHYCTL2_PCIE_CFG_TXCFGCHGWAIT_LSB 0x0004
+#define PHYCTL2_PCIE_CFG_TXCFGCHGWAIT_SIZE 0x0002
+#define PHYCTL2_PCIE_CFG_TDFT_LSB 0x0006
+#define PHYCTL2_PCIE_CFG_TDFT_SIZE 0x0002
+
+
+
+/** PHYCTL3 desc:
+  */
+
+#define PHYCTL3_PCIE_CFG_REG             (0x000000f6U)
+
+typedef union {
+  struct {
+    UINT8 txhsdeempctl : 1;
+    UINT8 sqdirctrl : 1;
+    UINT8 sqdirovren : 1;
+    UINT8 rsvd_m : 5;
+  }     Bits;
+  UINT8 Data;
+} PHYCTL3_PCIE_CFG_STRUCT;
+
+#define PHYCTL3_PCIE_CFG_WIDTH 8
+#define PHYCTL3_PCIE_CFG_DEFAULT 0x00U
+#define PHYCTL3_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PHYCTL3_PCIE_CFG_TXHSDEEMPCTL_LSB 0x0000
+#define PHYCTL3_PCIE_CFG_TXHSDEEMPCTL_SIZE 0x0001
+#define PHYCTL3_PCIE_CFG_SQDIRCTRL_LSB 0x0001
+#define PHYCTL3_PCIE_CFG_SQDIRCTRL_SIZE 0x0001
+#define PHYCTL3_PCIE_CFG_SQDIROVREN_LSB 0x0002
+#define PHYCTL3_PCIE_CFG_SQDIROVREN_SIZE 0x0001
+#define PHYCTL3_PCIE_CFG_RSVD_M_LSB 0x0003
+#define PHYCTL3_PCIE_CFG_RSVD_M_SIZE 0x0005
+
+
+
+/** IOSFSBCS desc:
+  */
+
+#define IOSFSBCS_PCIE_CFG_REG            (0x000000f7U)
+
+typedef union {
+  struct {
+    UINT8 sbic : 2;
+    UINT8 siid : 2;
+    UINT8 isurd : 1;
+    UINT8 isfsided : 1;
+    UINT8 scptcge : 1;
+    UINT8 rsvd_m : 1;
+  }     Bits;
+  UINT8 Data;
+} IOSFSBCS_PCIE_CFG_STRUCT;
+
+#define IOSFSBCS_PCIE_CFG_WIDTH 8
+#define IOSFSBCS_PCIE_CFG_DEFAULT 0x04U
+#define IOSFSBCS_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define IOSFSBCS_PCIE_CFG_SBIC_LSB 0x0000
+#define IOSFSBCS_PCIE_CFG_SBIC_SIZE 0x0002
+#define IOSFSBCS_PCIE_CFG_SIID_LSB 0x0002
+#define IOSFSBCS_PCIE_CFG_SIID_SIZE 0x0002
+#define IOSFSBCS_PCIE_CFG_ISURD_LSB 0x0004
+#define IOSFSBCS_PCIE_CFG_ISURD_SIZE 0x0001
+#define IOSFSBCS_PCIE_CFG_ISFSIDED_LSB 0x0005
+#define IOSFSBCS_PCIE_CFG_ISFSIDED_SIZE 0x0001
+#define IOSFSBCS_PCIE_CFG_SCPTCGE_LSB 0x0006
+#define IOSFSBCS_PCIE_CFG_SCPTCGE_SIZE 0x0001
+#define IOSFSBCS_PCIE_CFG_RSVD_M_LSB 0x0007
+#define IOSFSBCS_PCIE_CFG_RSVD_M_SIZE 0x0001
+
+
+
+/** STRPFUSECFG desc:
+  */
+
+#define STRPFUSECFG_PCIE_CFG_REG         (0x000000fcU)
+
+typedef union {
+  struct {
+    UINT32 rsvd_0 : 2;
+    UINT32 desktopmob : 1;
+    UINT32 cdcgdis : 1;
+    UINT32 ltcgdis : 1;
+    UINT32 ldcgdis : 1;
+    UINT32 aspmdis : 1;
+    UINT32 rsvd_rof : 1;
+    UINT32 pllshtdwndis : 1;
+    UINT32 mphyiopmdis : 1;
+    UINT32 nal : 2;
+    UINT32 nalpg : 1;
+    UINT32 lr : 1;
+    UINT32 rpc : 3;
+    UINT32 xoscf : 2;
+    UINT32 ftm : 2;
+    UINT32 rsvd_1 : 1;
+    UINT32 mphypgd : 1;
+    UINT32 rsvd_2 : 1;
+    UINT32 pxip : 4;
+    UINT32 drpc : 1;
+    UINT32 serm : 1;
+    UINT32 blkdqda_rstvalue : 1;
+    UINT32 blkpllen_rstvalue : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} STRPFUSECFG_PCIE_CFG_STRUCT;
+
+#define STRPFUSECFG_PCIE_CFG_WIDTH 32
+#define STRPFUSECFG_PCIE_CFG_DEFAULT 0xc0000000U
+#define STRPFUSECFG_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define STRPFUSECFG_PCIE_CFG_DESKTOPMOB_LSB 0x0002
+#define STRPFUSECFG_PCIE_CFG_DESKTOPMOB_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_CDCGDIS_LSB 0x0003
+#define STRPFUSECFG_PCIE_CFG_CDCGDIS_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_LTCGDIS_LSB 0x0004
+#define STRPFUSECFG_PCIE_CFG_LTCGDIS_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_LDCGDIS_LSB 0x0005
+#define STRPFUSECFG_PCIE_CFG_LDCGDIS_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_ASPMDIS_LSB 0x0006
+#define STRPFUSECFG_PCIE_CFG_ASPMDIS_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_RSVD_ROF_LSB 0x0007
+#define STRPFUSECFG_PCIE_CFG_RSVD_ROF_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_PLLSHTDWNDIS_LSB 0x0008
+#define STRPFUSECFG_PCIE_CFG_PLLSHTDWNDIS_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_MPHYIOPMDIS_LSB 0x0009
+#define STRPFUSECFG_PCIE_CFG_MPHYIOPMDIS_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_NAL_LSB 0x000a
+#define STRPFUSECFG_PCIE_CFG_NAL_SIZE 0x0002
+#define STRPFUSECFG_PCIE_CFG_NALPG_LSB 0x000c
+#define STRPFUSECFG_PCIE_CFG_NALPG_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_LR_LSB 0x000d
+#define STRPFUSECFG_PCIE_CFG_LR_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_RPC_LSB 0x000e
+#define STRPFUSECFG_PCIE_CFG_RPC_SIZE 0x0003
+#define STRPFUSECFG_PCIE_CFG_XOSCF_LSB 0x0011
+#define STRPFUSECFG_PCIE_CFG_XOSCF_SIZE 0x0002
+#define STRPFUSECFG_PCIE_CFG_FTM_LSB 0x0013
+#define STRPFUSECFG_PCIE_CFG_FTM_SIZE 0x0002
+#define STRPFUSECFG_PCIE_CFG_MPHYPGD_LSB 0x0016
+#define STRPFUSECFG_PCIE_CFG_MPHYPGD_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_PXIP_LSB 0x0018
+#define STRPFUSECFG_PCIE_CFG_PXIP_SIZE 0x0004
+#define STRPFUSECFG_PCIE_CFG_DRPC_LSB 0x001c
+#define STRPFUSECFG_PCIE_CFG_DRPC_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_SERM_LSB 0x001d
+#define STRPFUSECFG_PCIE_CFG_SERM_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_BLKDQDA_RSTVALUE_LSB 0x001e
+#define STRPFUSECFG_PCIE_CFG_BLKDQDA_RSTVALUE_SIZE 0x0001
+#define STRPFUSECFG_PCIE_CFG_BLKPLLEN_RSTVALUE_LSB 0x001f
+#define STRPFUSECFG_PCIE_CFG_BLKPLLEN_RSTVALUE_SIZE 0x0001
+
+
+
+/** AECH desc:
+  */
+
+#define AECH_PCIE_CFG_REG                (0x00000100U)
+
+typedef union {
+  struct {
+    UINT32 cid : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} AECH_PCIE_CFG_STRUCT;
+
+#define AECH_PCIE_CFG_WIDTH 32
+#define AECH_PCIE_CFG_DEFAULT 0x00000000U
+#define AECH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define AECH_PCIE_CFG_CID_LSB 0x0000
+#define AECH_PCIE_CFG_CID_SIZE 0x0010
+#define AECH_PCIE_CFG_CV_LSB 0x0010
+#define AECH_PCIE_CFG_CV_SIZE 0x0004
+#define AECH_PCIE_CFG_NCO_LSB 0x0014
+#define AECH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+/** UEM desc:
+  */
+
+#define UEM_PCIE_CFG_REG                 (0x00000108U)
+
+typedef union {
+  struct {
+    UINT32 te : 1;
+    UINT32 rsvd_0 : 3;
+    UINT32 dlpe : 1;
+    UINT32 sde : 1;
+    UINT32 rsvd_1 : 6;
+    UINT32 pt : 1;
+    UINT32 fcpe : 1;
+    UINT32 ct : 1;
+    UINT32 cm : 1;
+    UINT32 uc : 1;
+    UINT32 ro : 1;
+    UINT32 mt : 1;
+    UINT32 rsvd_2 : 1;
+    UINT32 ure : 1;
+    UINT32 avm : 1;
+    UINT32 uiem : 1;
+    UINT32 mcbtlpm : 1;
+    UINT32 aebm : 1;
+    UINT32 tlppbem : 1;
+    UINT32 ptlpebm : 1;
+    UINT32 rsvd_3 : 5;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} UEM_PCIE_CFG_STRUCT;
+
+#define UEM_PCIE_CFG_WIDTH 32
+#define UEM_PCIE_CFG_DEFAULT 0x00000000U
+#define UEM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define UEM_PCIE_CFG_TE_LSB 0x0000
+#define UEM_PCIE_CFG_TE_SIZE 0x0001
+#define UEM_PCIE_CFG_DLPE_LSB 0x0004
+#define UEM_PCIE_CFG_DLPE_SIZE 0x0001
+#define UEM_PCIE_CFG_SDE_LSB 0x0005
+#define UEM_PCIE_CFG_SDE_SIZE 0x0001
+#define UEM_PCIE_CFG_PT_LSB 0x000c
+#define UEM_PCIE_CFG_PT_SIZE 0x0001
+#define UEM_PCIE_CFG_FCPE_LSB 0x000d
+#define UEM_PCIE_CFG_FCPE_SIZE 0x0001
+#define UEM_PCIE_CFG_CT_LSB 0x000e
+#define UEM_PCIE_CFG_CT_SIZE 0x0001
+#define UEM_PCIE_CFG_CM_LSB 0x000f
+#define UEM_PCIE_CFG_CM_SIZE 0x0001
+#define UEM_PCIE_CFG_UC_LSB 0x0010
+#define UEM_PCIE_CFG_UC_SIZE 0x0001
+#define UEM_PCIE_CFG_RO_LSB 0x0011
+#define UEM_PCIE_CFG_RO_SIZE 0x0001
+#define UEM_PCIE_CFG_MT_LSB 0x0012
+#define UEM_PCIE_CFG_MT_SIZE 0x0001
+#define UEM_PCIE_CFG_URE_LSB 0x0014
+#define UEM_PCIE_CFG_URE_SIZE 0x0001
+#define UEM_PCIE_CFG_AVM_LSB 0x0015
+#define UEM_PCIE_CFG_AVM_SIZE 0x0001
+#define UEM_PCIE_CFG_UIEM_LSB 0x0016
+#define UEM_PCIE_CFG_UIEM_SIZE 0x0001
+#define UEM_PCIE_CFG_MCBTLPM_LSB 0x0017
+#define UEM_PCIE_CFG_MCBTLPM_SIZE 0x0001
+#define UEM_PCIE_CFG_AEBM_LSB 0x0018
+#define UEM_PCIE_CFG_AEBM_SIZE 0x0001
+#define UEM_PCIE_CFG_TLPPBEM_LSB 0x0019
+#define UEM_PCIE_CFG_TLPPBEM_SIZE 0x0001
+#define UEM_PCIE_CFG_PTLPEBM_LSB 0x001a
+#define UEM_PCIE_CFG_PTLPEBM_SIZE 0x0001
+
+
+/** PTMECH desc:
+  */
+
+#define PTMECH_PCIE_CFG_REG              (0x00000150U)
+
+typedef union {
+  struct {
+    UINT32 cid : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PTMECH_PCIE_CFG_STRUCT;
+
+#define PTMECH_PCIE_CFG_WIDTH 32
+#define PTMECH_PCIE_CFG_DEFAULT 0x00000000U
+#define PTMECH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PTMECH_PCIE_CFG_CID_LSB 0x0000
+#define PTMECH_PCIE_CFG_CID_SIZE 0x0010
+#define PTMECH_PCIE_CFG_CV_LSB 0x0010
+#define PTMECH_PCIE_CFG_CV_SIZE 0x0004
+#define PTMECH_PCIE_CFG_NCO_LSB 0x0014
+#define PTMECH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+/** PTMCAPR desc:
+  */
+
+#define PTMCAPR_PCIE_CFG_REG             (0x00000154U)
+
+typedef union {
+  struct {
+    UINT32 ptmreqc : 1;
+    UINT32 ptmrspc : 1;
+    UINT32 ptmrc : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 ptmpdac : 1;
+    UINT32 rsvd_1 : 3;
+    UINT32 lcg : 8;
+    UINT32 rsvd_m : 16;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PTMCAPR_PCIE_CFG_STRUCT;
+
+#define PTMCAPR_PCIE_CFG_WIDTH 32
+#define PTMCAPR_PCIE_CFG_DEFAULT 0x00000410U
+#define PTMCAPR_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PTMCAPR_PCIE_CFG_PTMREQC_LSB 0x0000
+#define PTMCAPR_PCIE_CFG_PTMREQC_SIZE 0x0001
+#define PTMCAPR_PCIE_CFG_PTMRSPC_LSB 0x0001
+#define PTMCAPR_PCIE_CFG_PTMRSPC_SIZE 0x0001
+#define PTMCAPR_PCIE_CFG_PTMRC_LSB 0x0002
+#define PTMCAPR_PCIE_CFG_PTMRC_SIZE 0x0001
+#define PTMCAPR_PCIE_CFG_PTMPDAC_LSB 0x0004
+#define PTMCAPR_PCIE_CFG_PTMPDAC_SIZE 0x0001
+#define PTMCAPR_PCIE_CFG_LCG_LSB 0x0008
+#define PTMCAPR_PCIE_CFG_LCG_SIZE 0x0008
+#define PTMCAPR_PCIE_CFG_RSVD_M_LSB 0x0010
+#define PTMCAPR_PCIE_CFG_RSVD_M_SIZE 0x0010
+
+
+/** PTMCTLR desc:
+  */
+
+#define PTMCTLR_PCIE_CFG_REG             (0x00000158U)
+
+typedef union {
+  struct {
+    UINT32 ptme : 1;
+    UINT32 rs : 1;
+    UINT32 rsvd_0 : 6;
+    UINT32 eg : 8;
+    UINT32 rsvd_m : 16;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PTMCTLR_PCIE_CFG_STRUCT;
+
+#define PTMCTLR_PCIE_CFG_WIDTH 32
+#define PTMCTLR_PCIE_CFG_DEFAULT 0x00000000U
+#define PTMCTLR_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PTMCTLR_PCIE_CFG_PTME_LSB 0x0000
+#define PTMCTLR_PCIE_CFG_PTME_SIZE 0x0001
+#define PTMCTLR_PCIE_CFG_RS_LSB 0x0001
+#define PTMCTLR_PCIE_CFG_RS_SIZE 0x0001
+#define PTMCTLR_PCIE_CFG_EG_LSB 0x0008
+#define PTMCTLR_PCIE_CFG_EG_SIZE 0x0008
+#define PTMCTLR_PCIE_CFG_RSVD_M_LSB 0x0010
+#define PTMCTLR_PCIE_CFG_RSVD_M_SIZE 0x0010
+
+
+/** L1SECH desc:
+  */
+
+#define L1SECH_PCIE_CFG_REG              (0x00000200U)
+
+typedef union {
+  struct {
+    UINT32 pcieec : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L1SECH_PCIE_CFG_STRUCT;
+
+#define L1SECH_PCIE_CFG_WIDTH 32
+#define L1SECH_PCIE_CFG_DEFAULT 0x00000000U
+#define L1SECH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L1SECH_PCIE_CFG_PCIEEC_LSB 0x0000
+#define L1SECH_PCIE_CFG_PCIEEC_SIZE 0x0010
+#define L1SECH_PCIE_CFG_CV_LSB 0x0010
+#define L1SECH_PCIE_CFG_CV_SIZE 0x0004
+#define L1SECH_PCIE_CFG_NCO_LSB 0x0014
+#define L1SECH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+/** L1SCAP desc:
+  */
+
+#define L1SCAP_PCIE_CFG_REG              (0x00000204U)
+
+typedef union {
+  struct {
+    UINT32 ppl12s : 1;
+    UINT32 ppl11s : 1;
+    UINT32 al12s : 1;
+    UINT32 al11s : 1;
+    UINT32 l1pss : 1;
+    UINT32 l1sses : 1;
+    UINT32 rsvd_0 : 2;
+    UINT32 pcmrt : 8;
+    UINT32 ptpos : 2;
+    UINT32 rsvd_1 : 1;
+    UINT32 ptv : 5;
+    UINT32 rsvd_m : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L1SCAP_PCIE_CFG_STRUCT;
+
+#define L1SCAP_PCIE_CFG_WIDTH 32
+#define L1SCAP_PCIE_CFG_DEFAULT 0x0028281fU
+#define L1SCAP_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L1SCAP_PCIE_CFG_PPL12S_LSB 0x0000
+#define L1SCAP_PCIE_CFG_PPL12S_SIZE 0x0001
+#define L1SCAP_PCIE_CFG_PPL11S_LSB 0x0001
+#define L1SCAP_PCIE_CFG_PPL11S_SIZE 0x0001
+#define L1SCAP_PCIE_CFG_AL12S_LSB 0x0002
+#define L1SCAP_PCIE_CFG_AL12S_SIZE 0x0001
+#define L1SCAP_PCIE_CFG_AL11S_LSB 0x0003
+#define L1SCAP_PCIE_CFG_AL11S_SIZE 0x0001
+#define L1SCAP_PCIE_CFG_L1PSS_LSB 0x0004
+#define L1SCAP_PCIE_CFG_L1PSS_SIZE 0x0001
+#define L1SCAP_PCIE_CFG_L1SSES_LSB 0x0005
+#define L1SCAP_PCIE_CFG_L1SSES_SIZE 0x0001
+#define L1SCAP_PCIE_CFG_PCMRT_LSB 0x0008
+#define L1SCAP_PCIE_CFG_PCMRT_SIZE 0x0008
+#define L1SCAP_PCIE_CFG_PTPOS_LSB 0x0010
+#define L1SCAP_PCIE_CFG_PTPOS_SIZE 0x0002
+#define L1SCAP_PCIE_CFG_PTV_LSB 0x0013
+#define L1SCAP_PCIE_CFG_PTV_SIZE 0x0005
+#define L1SCAP_PCIE_CFG_RSVD_M_LSB 0x0018
+#define L1SCAP_PCIE_CFG_RSVD_M_SIZE 0x0008
+
+
+/** L1SCTL1 desc:
+  */
+
+#define L1SCTL1_PCIE_CFG_REG             (0x00000208U)
+
+typedef union {
+  struct {
+    UINT32 ppl12e : 1;
+    UINT32 ppl11e : 1;
+    UINT32 al12e : 1;
+    UINT32 al11e : 1;
+    UINT32 l1sseie : 1;
+    UINT32 l1ssec : 1;
+    UINT32 rsvd_0 : 2;
+    UINT32 cmrt : 8;
+    UINT32 l12ltrtlv : 10;
+    UINT32 rsvd_1 : 3;
+    UINT32 l12ltrtlsv : 3;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L1SCTL1_PCIE_CFG_STRUCT;
+
+#define L1SCTL1_PCIE_CFG_WIDTH 32
+#define L1SCTL1_PCIE_CFG_DEFAULT 0x00000000U
+#define L1SCTL1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L1SCTL1_PCIE_CFG_PPL12E_LSB 0x0000
+#define L1SCTL1_PCIE_CFG_PPL12E_SIZE 0x0001
+#define L1SCTL1_PCIE_CFG_PPL11E_LSB 0x0001
+#define L1SCTL1_PCIE_CFG_PPL11E_SIZE 0x0001
+#define L1SCTL1_PCIE_CFG_AL12E_LSB 0x0002
+#define L1SCTL1_PCIE_CFG_AL12E_SIZE 0x0001
+#define L1SCTL1_PCIE_CFG_AL11E_LSB 0x0003
+#define L1SCTL1_PCIE_CFG_AL11E_SIZE 0x0001
+#define L1SCTL1_PCIE_CFG_L1SSEIE_LSB 0x0004
+#define L1SCTL1_PCIE_CFG_L1SSEIE_SIZE 0x0001
+#define L1SCTL1_PCIE_CFG_L1SSEC_LSB 0x0005
+#define L1SCTL1_PCIE_CFG_L1SSEC_SIZE 0x0001
+#define L1SCTL1_PCIE_CFG_CMRT_LSB 0x0008
+#define L1SCTL1_PCIE_CFG_CMRT_SIZE 0x0008
+#define L1SCTL1_PCIE_CFG_L12LTRTLV_LSB 0x0010
+#define L1SCTL1_PCIE_CFG_L12LTRTLV_SIZE 0x000a
+#define L1SCTL1_PCIE_CFG_L12LTRTLSV_LSB 0x001d
+#define L1SCTL1_PCIE_CFG_L12LTRTLSV_SIZE 0x0003
+
+
+/** L1SCTL2 desc:
+  */
+
+#define L1SCTL2_PCIE_CFG_REG             (0x0000020cU)
+
+typedef union {
+  struct {
+    UINT32 tpos : 2;
+    UINT32 rsvd_0 : 1;
+    UINT32 powt : 5;
+    UINT32 rsvd_m : 24;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L1SCTL2_PCIE_CFG_STRUCT;
+
+#define L1SCTL2_PCIE_CFG_WIDTH 32
+#define L1SCTL2_PCIE_CFG_DEFAULT 0x00000028U
+#define L1SCTL2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L1SCTL2_PCIE_CFG_TPOS_LSB 0x0000
+#define L1SCTL2_PCIE_CFG_TPOS_SIZE 0x0002
+#define L1SCTL2_PCIE_CFG_POWT_LSB 0x0003
+#define L1SCTL2_PCIE_CFG_POWT_SIZE 0x0005
+#define L1SCTL2_PCIE_CFG_RSVD_M_LSB 0x0008
+#define L1SCTL2_PCIE_CFG_RSVD_M_SIZE 0x0018
+
+
+/** ACSECH desc:
+  */
+
+#define ACSECH_PCIE_CFG_REG              (0x00000220U)
+
+typedef union {
+  struct {
+    UINT32 cid : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} ACSECH_PCIE_CFG_STRUCT;
+
+#define ACSECH_PCIE_CFG_WIDTH 32
+#define ACSECH_PCIE_CFG_DEFAULT 0x00000000U
+#define ACSECH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define ACSECH_PCIE_CFG_CID_LSB 0x0000
+#define ACSECH_PCIE_CFG_CID_SIZE 0x0010
+#define ACSECH_PCIE_CFG_CV_LSB 0x0010
+#define ACSECH_PCIE_CFG_CV_SIZE 0x0004
+#define ACSECH_PCIE_CFG_NCO_LSB 0x0014
+#define ACSECH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+/** ACSCAPR desc:
+  */
+
+#define ACSCAPR_PCIE_CFG_REG             (0x00000224U)
+
+typedef union {
+  struct {
+    UINT16 v : 1;
+    UINT16 b : 1;
+    UINT16 r : 1;
+    UINT16 c : 1;
+    UINT16 u : 1;
+    UINT16 e : 1;
+    UINT16 t : 1;
+    UINT16 rsvd_m : 9;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} ACSCAPR_PCIE_CFG_STRUCT;
+
+#define ACSCAPR_PCIE_CFG_WIDTH 16
+#define ACSCAPR_PCIE_CFG_DEFAULT 0x001fU
+#define ACSCAPR_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define ACSCAPR_PCIE_CFG_V_LSB 0x0000
+#define ACSCAPR_PCIE_CFG_V_SIZE 0x0001
+#define ACSCAPR_PCIE_CFG_B_LSB 0x0001
+#define ACSCAPR_PCIE_CFG_B_SIZE 0x0001
+#define ACSCAPR_PCIE_CFG_R_LSB 0x0002
+#define ACSCAPR_PCIE_CFG_R_SIZE 0x0001
+#define ACSCAPR_PCIE_CFG_C_LSB 0x0003
+#define ACSCAPR_PCIE_CFG_C_SIZE 0x0001
+#define ACSCAPR_PCIE_CFG_U_LSB 0x0004
+#define ACSCAPR_PCIE_CFG_U_SIZE 0x0001
+#define ACSCAPR_PCIE_CFG_E_LSB 0x0005
+#define ACSCAPR_PCIE_CFG_E_SIZE 0x0001
+#define ACSCAPR_PCIE_CFG_T_LSB 0x0006
+#define ACSCAPR_PCIE_CFG_T_SIZE 0x0001
+#define ACSCAPR_PCIE_CFG_RSVD_M_LSB 0x0007
+#define ACSCAPR_PCIE_CFG_RSVD_M_SIZE 0x0009
+
+
+/** VCCH desc:
+  */
+
+#define VCCH_PCIE_CFG_REG                (0x00000280U)
+
+typedef union {
+  struct {
+    UINT32 cid : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} VCCH_PCIE_CFG_STRUCT;
+
+#define VCCH_PCIE_CFG_WIDTH 32
+#define VCCH_PCIE_CFG_DEFAULT 0x00000000U
+#define VCCH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define VCCH_PCIE_CFG_CID_LSB 0x0000
+#define VCCH_PCIE_CFG_CID_SIZE 0x0010
+#define VCCH_PCIE_CFG_CV_LSB 0x0010
+#define VCCH_PCIE_CFG_CV_SIZE 0x0004
+#define VCCH_PCIE_CFG_NCO_LSB 0x0014
+#define VCCH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+
+/** PVCCR1 desc:
+  */
+
+#define PVCCR1_PCIE_CFG_REG              (0x00000284U)
+
+typedef union {
+  struct {
+    UINT32 evcc : 3;
+    UINT32 rsvd_0 : 1;
+    UINT32 lpevcc : 3;
+    UINT32 rsvd_1 : 1;
+    UINT32 rc : 2;
+    UINT32 fares : 2;
+    UINT32 rsvd_m : 20;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PVCCR1_PCIE_CFG_STRUCT;
+
+#define PVCCR1_PCIE_CFG_WIDTH 32
+#define PVCCR1_PCIE_CFG_DEFAULT 0x00000000U
+#define PVCCR1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PVCCR1_PCIE_CFG_EVCC_LSB 0x0000
+#define PVCCR1_PCIE_CFG_EVCC_SIZE 0x0003
+#define PVCCR1_PCIE_CFG_LPEVCC_LSB 0x0004
+#define PVCCR1_PCIE_CFG_LPEVCC_SIZE 0x0003
+#define PVCCR1_PCIE_CFG_RC_LSB 0x0008
+#define PVCCR1_PCIE_CFG_RC_SIZE 0x0002
+#define PVCCR1_PCIE_CFG_FARES_LSB 0x000a
+#define PVCCR1_PCIE_CFG_FARES_SIZE 0x0002
+#define PVCCR1_PCIE_CFG_RSVD_M_LSB 0x000c
+#define PVCCR1_PCIE_CFG_RSVD_M_SIZE 0x0014
+
+
+/** V0VCRC desc:
+  */
+
+#define V0VCRC_PCIE_CFG_REG              (0x00000290U)
+
+typedef union {
+  struct {
+    UINT32 fac : 8;
+    UINT32 rsvd_0 : 8;
+    UINT32 mts : 7;
+    UINT32 rsvd_1 : 1;
+    UINT32 fato : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} V0VCRC_PCIE_CFG_STRUCT;
+
+#define V0VCRC_PCIE_CFG_WIDTH 32
+#define V0VCRC_PCIE_CFG_DEFAULT 0x00000000U
+#define V0VCRC_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define V0VCRC_PCIE_CFG_FAC_LSB 0x0000
+#define V0VCRC_PCIE_CFG_FAC_SIZE 0x0008
+#define V0VCRC_PCIE_CFG_MTS_LSB 0x0010
+#define V0VCRC_PCIE_CFG_MTS_SIZE 0x0007
+#define V0VCRC_PCIE_CFG_FATO_LSB 0x0018
+#define V0VCRC_PCIE_CFG_FATO_SIZE 0x0008
+
+
+/** V0CTL desc:
+  */
+
+#define V0CTL_PCIE_CFG_REG               (0x00000294U)
+
+typedef union {
+  struct {
+    UINT32 tvmt0 : 1;
+    UINT32 tvm : 7;
+    UINT32 rsvd_0 : 2;
+    UINT32 etvm : 6;
+    UINT32 lfat : 1;
+    UINT32 fas : 3;
+    UINT32 rsvd_1 : 4;
+    UINT32 id : 3;
+    UINT32 rsvd_2 : 4;
+    UINT32 en : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} V0CTL_PCIE_CFG_STRUCT;
+
+#define V0CTL_PCIE_CFG_WIDTH 32
+#define V0CTL_PCIE_CFG_DEFAULT 0x80000001U
+#define V0CTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define V0CTL_PCIE_CFG_TVMT0_LSB 0x0000
+#define V0CTL_PCIE_CFG_TVMT0_SIZE 0x0001
+#define V0CTL_PCIE_CFG_TVM_LSB 0x0001
+#define V0CTL_PCIE_CFG_TVM_SIZE 0x0007
+#define V0CTL_PCIE_CFG_ETVM_LSB 0x000a
+#define V0CTL_PCIE_CFG_ETVM_SIZE 0x0006
+#define V0CTL_PCIE_CFG_LFAT_LSB 0x0010
+#define V0CTL_PCIE_CFG_LFAT_SIZE 0x0001
+#define V0CTL_PCIE_CFG_FAS_LSB 0x0011
+#define V0CTL_PCIE_CFG_FAS_SIZE 0x0003
+#define V0CTL_PCIE_CFG_ID_LSB 0x0018
+#define V0CTL_PCIE_CFG_ID_SIZE 0x0003
+#define V0CTL_PCIE_CFG_EN_LSB 0x001f
+#define V0CTL_PCIE_CFG_EN_SIZE 0x0001
+
+
+/** V1VCRC desc:
+  */
+
+#define V1VCRC_PCIE_CFG_REG              (0x0000029cU)
+
+typedef union {
+  struct {
+    UINT32 fac : 8;
+    UINT32 rsvd_0 : 8;
+    UINT32 mts : 7;
+    UINT32 rsvd_1 : 1;
+    UINT32 fato : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} V1VCRC_PCIE_CFG_STRUCT;
+
+#define V1VCRC_PCIE_CFG_WIDTH 32
+#define V1VCRC_PCIE_CFG_DEFAULT 0x00000000U
+#define V1VCRC_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define V1VCRC_PCIE_CFG_FAC_LSB 0x0000
+#define V1VCRC_PCIE_CFG_FAC_SIZE 0x0008
+#define V1VCRC_PCIE_CFG_MTS_LSB 0x0010
+#define V1VCRC_PCIE_CFG_MTS_SIZE 0x0007
+#define V1VCRC_PCIE_CFG_FATO_LSB 0x0018
+#define V1VCRC_PCIE_CFG_FATO_SIZE 0x0008
+
+
+/** V1CTL desc:
+  */
+
+#define V1CTL_PCIE_CFG_REG               (0x000002a0U)
+
+typedef union {
+  struct {
+    UINT32 rsvd_0 : 1;
+    UINT32 tvm : 7;
+    UINT32 rsvd_1 : 2;
+    UINT32 etvm : 6;
+    UINT32 lfat : 1;
+    UINT32 fas : 3;
+    UINT32 rsvd_2 : 4;
+    UINT32 id : 4;
+    UINT32 rsvd_3 : 3;
+    UINT32 en : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} V1CTL_PCIE_CFG_STRUCT;
+
+#define V1CTL_PCIE_CFG_WIDTH 32
+#define V1CTL_PCIE_CFG_DEFAULT 0x00000000U
+#define V1CTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define V1CTL_PCIE_CFG_TVM_LSB 0x0001
+#define V1CTL_PCIE_CFG_TVM_SIZE 0x0007
+#define V1CTL_PCIE_CFG_ETVM_LSB 0x000a
+#define V1CTL_PCIE_CFG_ETVM_SIZE 0x0006
+#define V1CTL_PCIE_CFG_LFAT_LSB 0x0010
+#define V1CTL_PCIE_CFG_LFAT_SIZE 0x0001
+#define V1CTL_PCIE_CFG_FAS_LSB 0x0011
+#define V1CTL_PCIE_CFG_FAS_SIZE 0x0003
+#define V1CTL_PCIE_CFG_ID_LSB 0x0018
+#define V1CTL_PCIE_CFG_ID_SIZE 0x0004
+#define V1CTL_PCIE_CFG_EN_LSB 0x001f
+#define V1CTL_PCIE_CFG_EN_SIZE 0x0001
+
+
+/** PCIERTP1 desc:
+  */
+
+#define PCIERTP1_PCIE_CFG_REG            (0x00000300U)
+
+typedef union {
+  struct {
+    UINT8 g1x4 : 4;
+    UINT8 rsvd_0 : 4;
+  }     Bits;
+  UINT8 Data;
+} PCIERTP1_PCIE_CFG_STRUCT;
+
+#define PCIERTP1_PCIE_CFG_WIDTH 8
+#define PCIERTP1_PCIE_CFG_DEFAULT 0x06U
+#define PCIERTP1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCIERTP1_PCIE_CFG_G1X4_LSB 0x0000
+#define PCIERTP1_PCIE_CFG_G1X4_SIZE 0x0004
+
+
+
+/** G4L0SCTL desc:
+  */
+
+#define G4L0SCTL_PCIE_CFG_REG            (0x00000310U)
+
+typedef union {
+  struct {
+    UINT32 g4ccnfts : 8;
+    UINT32 g4ucnfts : 8;
+    UINT32 rsvd_0 : 6;
+    UINT32 g4l0sic : 2;
+    UINT32 g4asl0spl : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} G4L0SCTL_PCIE_CFG_STRUCT;
+
+#define G4L0SCTL_PCIE_CFG_WIDTH 32
+#define G4L0SCTL_PCIE_CFG_DEFAULT 0x0c00281eU
+#define G4L0SCTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define G4L0SCTL_PCIE_CFG_G4CCNFTS_LSB 0x0000
+#define G4L0SCTL_PCIE_CFG_G4CCNFTS_SIZE 0x0008
+#define G4L0SCTL_PCIE_CFG_G4UCNFTS_LSB 0x0008
+#define G4L0SCTL_PCIE_CFG_G4UCNFTS_SIZE 0x0008
+#define G4L0SCTL_PCIE_CFG_G4L0SIC_LSB 0x0016
+#define G4L0SCTL_PCIE_CFG_G4L0SIC_SIZE 0x0002
+#define G4L0SCTL_PCIE_CFG_G4ASL0SPL_LSB 0x0018
+#define G4L0SCTL_PCIE_CFG_G4ASL0SPL_SIZE 0x0008
+
+
+
+/** PCIENFTS desc:
+  */
+
+#define PCIENFTS_PCIE_CFG_REG            (0x00000314U)
+
+typedef union {
+  struct {
+    UINT32 g1ccnfts : 8;
+    UINT32 g1ucnfts : 8;
+    UINT32 g2ccnfts : 8;
+    UINT32 g2ucnfts : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PCIENFTS_PCIE_CFG_STRUCT;
+
+#define PCIENFTS_PCIE_CFG_WIDTH 32
+#define PCIENFTS_PCIE_CFG_DEFAULT 0x54262a13U
+#define PCIENFTS_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCIENFTS_PCIE_CFG_G1CCNFTS_LSB 0x0000
+#define PCIENFTS_PCIE_CFG_G1CCNFTS_SIZE 0x0008
+#define PCIENFTS_PCIE_CFG_G1UCNFTS_LSB 0x0008
+#define PCIENFTS_PCIE_CFG_G1UCNFTS_SIZE 0x0008
+#define PCIENFTS_PCIE_CFG_G2CCNFTS_LSB 0x0010
+#define PCIENFTS_PCIE_CFG_G2CCNFTS_SIZE 0x0008
+#define PCIENFTS_PCIE_CFG_G2UCNFTS_LSB 0x0018
+#define PCIENFTS_PCIE_CFG_G2UCNFTS_SIZE 0x0008
+
+
+
+/** PCIEL0SC desc:
+  */
+
+#define PCIEL0SC_PCIE_CFG_REG            (0x00000318U)
+
+typedef union {
+  struct {
+    UINT32 g1l0sic : 2;
+    UINT32 g2l0sic : 2;
+    UINT32 txl0srxexit : 2;
+    UINT32 txl0srxentry : 1;
+    UINT32 anftsen : 1;
+    UINT32 anftso : 8;
+    UINT32 g1asl0spl : 8;
+    UINT32 g2asl0spl : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PCIEL0SC_PCIE_CFG_STRUCT;
+
+#define PCIEL0SC_PCIE_CFG_WIDTH 32
+#define PCIEL0SC_PCIE_CFG_DEFAULT 0x0c0c0000U
+#define PCIEL0SC_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCIEL0SC_PCIE_CFG_G1L0SIC_LSB 0x0000
+#define PCIEL0SC_PCIE_CFG_G1L0SIC_SIZE 0x0002
+#define PCIEL0SC_PCIE_CFG_G2L0SIC_LSB 0x0002
+#define PCIEL0SC_PCIE_CFG_G2L0SIC_SIZE 0x0002
+#define PCIEL0SC_PCIE_CFG_TXL0SRXEXIT_LSB 0x0004
+#define PCIEL0SC_PCIE_CFG_TXL0SRXEXIT_SIZE 0x0002
+#define PCIEL0SC_PCIE_CFG_TXL0SRXENTRY_LSB 0x0006
+#define PCIEL0SC_PCIE_CFG_TXL0SRXENTRY_SIZE 0x0001
+#define PCIEL0SC_PCIE_CFG_ANFTSEN_LSB 0x0007
+#define PCIEL0SC_PCIE_CFG_ANFTSEN_SIZE 0x0001
+#define PCIEL0SC_PCIE_CFG_ANFTSO_LSB 0x0008
+#define PCIEL0SC_PCIE_CFG_ANFTSO_SIZE 0x0008
+#define PCIEL0SC_PCIE_CFG_G1ASL0SPL_LSB 0x0010
+#define PCIEL0SC_PCIE_CFG_G1ASL0SPL_SIZE 0x0008
+#define PCIEL0SC_PCIE_CFG_G2ASL0SPL_LSB 0x0018
+#define PCIEL0SC_PCIE_CFG_G2ASL0SPL_SIZE 0x0008
+
+
+
+/** PCIECFG2 desc:
+  */
+
+#define PCIECFG2_PCIE_CFG_REG            (0x00000320U)
+
+typedef union {
+  struct {
+    UINT32 laangc : 3;
+    UINT32 lafgc : 3;
+    UINT32 latgc : 3;
+    UINT32 g12skposl : 11;
+    UINT32 pmet : 2;
+    UINT32 crsren : 1;
+    UINT32 rsvd_0 : 2;
+    UINT32 rpagc : 1;
+    UINT32 rsvd_1 : 1;
+    UINT32 rllg3r : 1;
+    UINT32 lsieid : 1;
+    UINT32 rrcp : 1;
+    UINT32 rsvd_2 : 1;
+    UINT32 g3l0sedp : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PCIECFG2_PCIE_CFG_STRUCT;
+
+#define PCIECFG2_PCIE_CFG_WIDTH 32
+#define PCIECFG2_PCIE_CFG_DEFAULT 0x220960dbU
+#define PCIECFG2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCIECFG2_PCIE_CFG_LAANGC_LSB 0x0000
+#define PCIECFG2_PCIE_CFG_LAANGC_SIZE 0x0003
+#define PCIECFG2_PCIE_CFG_LAFGC_LSB 0x0003
+#define PCIECFG2_PCIE_CFG_LAFGC_SIZE 0x0003
+#define PCIECFG2_PCIE_CFG_LATGC_LSB 0x0006
+#define PCIECFG2_PCIE_CFG_LATGC_SIZE 0x0003
+#define PCIECFG2_PCIE_CFG_G12SKPOSL_LSB 0x0009
+#define PCIECFG2_PCIE_CFG_G12SKPOSL_SIZE 0x000b
+#define PCIECFG2_PCIE_CFG_PMET_LSB 0x0014
+#define PCIECFG2_PCIE_CFG_PMET_SIZE 0x0002
+#define PCIECFG2_PCIE_CFG_CRSREN_LSB 0x0016
+#define PCIECFG2_PCIE_CFG_CRSREN_SIZE 0x0001
+#define PCIECFG2_PCIE_CFG_RPAGC_LSB 0x0019
+#define PCIECFG2_PCIE_CFG_RPAGC_SIZE 0x0001
+#define PCIECFG2_PCIE_CFG_RLLG3R_LSB 0x001b
+#define PCIECFG2_PCIE_CFG_RLLG3R_SIZE 0x0001
+#define PCIECFG2_PCIE_CFG_LSIEID_LSB 0x001c
+#define PCIECFG2_PCIE_CFG_LSIEID_SIZE 0x0001
+#define PCIECFG2_PCIE_CFG_RRCP_LSB 0x001d
+#define PCIECFG2_PCIE_CFG_RRCP_SIZE 0x0001
+#define PCIECFG2_PCIE_CFG_G3L0SEDP_LSB 0x001f
+#define PCIECFG2_PCIE_CFG_G3L0SEDP_SIZE 0x0001
+
+
+
+/** PCIEDBG desc:
+  */
+
+#define PCIEDBG_PCIE_CFG_REG             (0x00000324U)
+
+typedef union {
+  struct {
+    UINT32 sncd : 1;
+    UINT32 crcd : 1;
+    UINT32 scmbb : 1;
+    UINT32 dmil1edm : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 spce : 1;
+    UINT32 cmplrx : 1;
+    UINT32 sqol0 : 1;
+    UINT32 repid : 1;
+    UINT32 dsb : 1;
+    UINT32 irfelb : 1;
+    UINT32 nedlbe : 1;
+    UINT32 g3csos : 1;
+    UINT32 ldswqrp : 1;
+    UINT32 ctonfae : 1;
+    UINT32 reutflpbkme : 1;
+    UINT32 tals : 8;
+    UINT32 rsvd_1 : 4;
+    UINT32 reutlpbkme : 1;
+    UINT32 txnftsadd : 3;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PCIEDBG_PCIE_CFG_STRUCT;
+
+#define PCIEDBG_PCIE_CFG_WIDTH 32
+#define PCIEDBG_PCIE_CFG_DEFAULT 0x00002000U
+#define PCIEDBG_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCIEDBG_PCIE_CFG_SNCD_LSB 0x0000
+#define PCIEDBG_PCIE_CFG_SNCD_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_CRCD_LSB 0x0001
+#define PCIEDBG_PCIE_CFG_CRCD_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_SCMBB_LSB 0x0002
+#define PCIEDBG_PCIE_CFG_SCMBB_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_DMIL1EDM_LSB 0x0003
+#define PCIEDBG_PCIE_CFG_DMIL1EDM_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_SPCE_LSB 0x0005
+#define PCIEDBG_PCIE_CFG_SPCE_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_CMPLRX_LSB 0x0006
+#define PCIEDBG_PCIE_CFG_CMPLRX_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_SQOL0_LSB 0x0007
+#define PCIEDBG_PCIE_CFG_SQOL0_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_REPID_LSB 0x0008
+#define PCIEDBG_PCIE_CFG_REPID_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_DSB_LSB 0x0009
+#define PCIEDBG_PCIE_CFG_DSB_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_IRFELB_LSB 0x000a
+#define PCIEDBG_PCIE_CFG_IRFELB_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_NEDLBE_LSB 0x000b
+#define PCIEDBG_PCIE_CFG_NEDLBE_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_G3CSOS_LSB 0x000c
+#define PCIEDBG_PCIE_CFG_G3CSOS_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_LDSWQRP_LSB 0x000d
+#define PCIEDBG_PCIE_CFG_LDSWQRP_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_CTONFAE_LSB 0x000e
+#define PCIEDBG_PCIE_CFG_CTONFAE_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_REUTFLPBKME_LSB 0x000f
+#define PCIEDBG_PCIE_CFG_REUTFLPBKME_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_TALS_LSB 0x0010
+#define PCIEDBG_PCIE_CFG_TALS_SIZE 0x0008
+#define PCIEDBG_PCIE_CFG_REUTLPBKME_LSB 0x001c
+#define PCIEDBG_PCIE_CFG_REUTLPBKME_SIZE 0x0001
+#define PCIEDBG_PCIE_CFG_TXNFTSADD_LSB 0x001d
+#define PCIEDBG_PCIE_CFG_TXNFTSADD_SIZE 0x0003
+
+
+
+/** PCIESTS1 desc:
+  */
+
+#define PCIESTS1_PCIE_CFG_REG            (0x00000328U)
+
+typedef union {
+  struct {
+    UINT32 nxttxseqnum : 12;
+    UINT32 rsvd_0 : 4;
+    UINT32 dllretry : 1;
+    UINT32 replaynum : 2;
+    UINT32 lnkstat : 4;
+    UINT32 rsvd_1 : 1;
+    UINT32 ltsmstate : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PCIESTS1_PCIE_CFG_STRUCT;
+
+#define PCIESTS1_PCIE_CFG_WIDTH 32
+#define PCIESTS1_PCIE_CFG_DEFAULT 0x00000000U
+#define PCIESTS1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCIESTS1_PCIE_CFG_NXTTXSEQNUM_LSB 0x0000
+#define PCIESTS1_PCIE_CFG_NXTTXSEQNUM_SIZE 0x000c
+#define PCIESTS1_PCIE_CFG_DLLRETRY_LSB 0x0010
+#define PCIESTS1_PCIE_CFG_DLLRETRY_SIZE 0x0001
+#define PCIESTS1_PCIE_CFG_REPLAYNUM_LSB 0x0011
+#define PCIESTS1_PCIE_CFG_REPLAYNUM_SIZE 0x0002
+#define PCIESTS1_PCIE_CFG_LNKSTAT_LSB 0x0013
+#define PCIESTS1_PCIE_CFG_LNKSTAT_SIZE 0x0004
+#define PCIESTS1_PCIE_CFG_LTSMSTATE_LSB 0x0018
+#define PCIESTS1_PCIE_CFG_LTSMSTATE_SIZE 0x0008
+
+
+
+/** PCIEALC desc:
+  */
+
+#define PCIEALC_PCIE_CFG_REG             (0x00000338U)
+
+typedef union {
+  struct {
+    UINT32 g3skposl : 9;
+    UINT32 acknakgh : 1;
+    UINT32 lpadllpgd : 1;
+    UINT32 onpraspml1p : 1;
+    UINT32 obtmrtnal1r : 2;
+    UINT32 rsvd_0 : 2;
+    UINT32 clg3fe : 4;
+    UINT32 pdsp : 1;
+    UINT32 rtd3pdsp : 1;
+    UINT32 rrptlpc : 1;
+    UINT32 ssrrs : 1;
+    UINT32 ssrld : 1;
+    UINT32 blkdqdasd : 1;
+    UINT32 blkdqda : 1;
+    UINT32 blkpapc : 1;
+    UINT32 illrcld : 1;
+    UINT32 itlrcld : 1;
+    UINT32 dpchserm : 1;
+    UINT32 cssaif : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PCIEALC_PCIE_CFG_STRUCT;
+
+#define PCIEALC_PCIE_CFG_WIDTH 32
+#define PCIEALC_PCIE_CFG_DEFAULT 0x00000172U
+#define PCIEALC_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCIEALC_PCIE_CFG_G3SKPOSL_LSB 0x0000
+#define PCIEALC_PCIE_CFG_G3SKPOSL_SIZE 0x0009
+#define PCIEALC_PCIE_CFG_ACKNAKGH_LSB 0x0009
+#define PCIEALC_PCIE_CFG_ACKNAKGH_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_LPADLLPGD_LSB 0x000a
+#define PCIEALC_PCIE_CFG_LPADLLPGD_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_ONPRASPML1P_LSB 0x000b
+#define PCIEALC_PCIE_CFG_ONPRASPML1P_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_OBTMRTNAL1R_LSB 0x000c
+#define PCIEALC_PCIE_CFG_OBTMRTNAL1R_SIZE 0x0002
+#define PCIEALC_PCIE_CFG_CLG3FE_LSB 0x0010
+#define PCIEALC_PCIE_CFG_CLG3FE_SIZE 0x0004
+#define PCIEALC_PCIE_CFG_PDSP_LSB 0x0014
+#define PCIEALC_PCIE_CFG_PDSP_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_RTD3PDSP_LSB 0x0015
+#define PCIEALC_PCIE_CFG_RTD3PDSP_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_RRPTLPC_LSB 0x0016
+#define PCIEALC_PCIE_CFG_RRPTLPC_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_SSRRS_LSB 0x0017
+#define PCIEALC_PCIE_CFG_SSRRS_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_SSRLD_LSB 0x0018
+#define PCIEALC_PCIE_CFG_SSRLD_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_BLKDQDASD_LSB 0x0019
+#define PCIEALC_PCIE_CFG_BLKDQDASD_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_BLKDQDA_LSB 0x001a
+#define PCIEALC_PCIE_CFG_BLKDQDA_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_BLKPAPC_LSB 0x001b
+#define PCIEALC_PCIE_CFG_BLKPAPC_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_ILLRCLD_LSB 0x001c
+#define PCIEALC_PCIE_CFG_ILLRCLD_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_ITLRCLD_LSB 0x001d
+#define PCIEALC_PCIE_CFG_ITLRCLD_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_DPCHSERM_LSB 0x001e
+#define PCIEALC_PCIE_CFG_DPCHSERM_SIZE 0x0001
+#define PCIEALC_PCIE_CFG_CSSAIF_LSB 0x001f
+#define PCIEALC_PCIE_CFG_CSSAIF_SIZE 0x0001
+
+
+
+/** PTMECFG desc:
+  */
+
+#define PTMECFG_PCIE_CFG_REG             (0x000003b0U)
+
+typedef union {
+  struct {
+    UINT32 iosfmadp : 4;
+    UINT32 ptmrnopad : 2;
+    UINT32 ptmrpae : 1;
+    UINT32 tgtscf : 1;
+    UINT32 pgtscfe : 1;
+    UINT32 pgtscff : 3;
+    UINT32 gtfspc : 1;
+    UINT32 gtffc : 2;
+    UINT32 gtfrc : 3;
+    UINT32 pltlff : 3;
+    UINT32 ptmmmc : 2;
+    UINT32 rsvd_m : 9;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PTMECFG_PCIE_CFG_STRUCT;
+
+#define PTMECFG_PCIE_CFG_WIDTH 32
+#define PTMECFG_PCIE_CFG_DEFAULT 0x00000000U
+#define PTMECFG_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PTMECFG_PCIE_CFG_IOSFMADP_LSB 0x0000
+#define PTMECFG_PCIE_CFG_IOSFMADP_SIZE 0x0004
+#define PTMECFG_PCIE_CFG_PTMRNOPAD_LSB 0x0004
+#define PTMECFG_PCIE_CFG_PTMRNOPAD_SIZE 0x0002
+#define PTMECFG_PCIE_CFG_PTMRPAE_LSB 0x0006
+#define PTMECFG_PCIE_CFG_PTMRPAE_SIZE 0x0001
+#define PTMECFG_PCIE_CFG_TGTSCF_LSB 0x0007
+#define PTMECFG_PCIE_CFG_TGTSCF_SIZE 0x0001
+#define PTMECFG_PCIE_CFG_PGTSCFE_LSB 0x0008
+#define PTMECFG_PCIE_CFG_PGTSCFE_SIZE 0x0001
+#define PTMECFG_PCIE_CFG_PGTSCFF_LSB 0x0009
+#define PTMECFG_PCIE_CFG_PGTSCFF_SIZE 0x0003
+#define PTMECFG_PCIE_CFG_GTFSPC_LSB 0x000c
+#define PTMECFG_PCIE_CFG_GTFSPC_SIZE 0x0001
+#define PTMECFG_PCIE_CFG_GTFFC_LSB 0x000d
+#define PTMECFG_PCIE_CFG_GTFFC_SIZE 0x0002
+#define PTMECFG_PCIE_CFG_GTFRC_LSB 0x000f
+#define PTMECFG_PCIE_CFG_GTFRC_SIZE 0x0003
+#define PTMECFG_PCIE_CFG_PLTLFF_LSB 0x0012
+#define PTMECFG_PCIE_CFG_PLTLFF_SIZE 0x0003
+#define PTMECFG_PCIE_CFG_PTMMMC_LSB 0x0015
+#define PTMECFG_PCIE_CFG_PTMMMC_SIZE 0x0002
+#define PTMECFG_PCIE_CFG_RSVD_M_LSB 0x0017
+#define PTMECFG_PCIE_CFG_RSVD_M_SIZE 0x0009
+
+
+
+/** LTROVR desc:
+  */
+
+#define LTROVR_PCIE_CFG_REG              (0x00000400U)
+
+typedef union {
+  struct {
+    UINT32 ltrslovrv : 10;
+    UINT32 ltrslsovrv : 3;
+    UINT32 rsvd_0 : 2;
+    UINT32 ltrsrovr : 1;
+    UINT32 ltrnslovrv : 10;
+    UINT32 ltrnslsovrv : 3;
+    UINT32 rsvd_1 : 2;
+    UINT32 ltrnsrovr : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LTROVR_PCIE_CFG_STRUCT;
+
+#define LTROVR_PCIE_CFG_WIDTH 32
+#define LTROVR_PCIE_CFG_DEFAULT 0x00000000U
+#define LTROVR_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LTROVR_PCIE_CFG_LTRSLOVRV_LSB 0x0000
+#define LTROVR_PCIE_CFG_LTRSLOVRV_SIZE 0x000a
+#define LTROVR_PCIE_CFG_LTRSLSOVRV_LSB 0x000a
+#define LTROVR_PCIE_CFG_LTRSLSOVRV_SIZE 0x0003
+#define LTROVR_PCIE_CFG_LTRSROVR_LSB 0x000f
+#define LTROVR_PCIE_CFG_LTRSROVR_SIZE 0x0001
+#define LTROVR_PCIE_CFG_LTRNSLOVRV_LSB 0x0010
+#define LTROVR_PCIE_CFG_LTRNSLOVRV_SIZE 0x000a
+#define LTROVR_PCIE_CFG_LTRNSLSOVRV_LSB 0x001a
+#define LTROVR_PCIE_CFG_LTRNSLSOVRV_SIZE 0x0003
+#define LTROVR_PCIE_CFG_LTRNSROVR_LSB 0x001f
+#define LTROVR_PCIE_CFG_LTRNSROVR_SIZE 0x0001
+
+
+
+/** LTROVR2 desc:
+  */
+
+#define LTROVR2_PCIE_CFG_REG             (0x00000404U)
+
+typedef union {
+  struct {
+    UINT8 ltrsovren : 1;
+    UINT8 ltrnsovren : 1;
+    UINT8 rsvd_0 : 1;
+    UINT8 ltrovrplcy : 1;
+    UINT8 dvltrrpl1p0 : 1;
+    UINT8 dvltrrpl1p1 : 1;
+    UINT8 dvltrrpl1p2 : 1;
+    UINT8 rsvd_m : 1;
+  }     Bits;
+  UINT8 Data;
+} LTROVR2_PCIE_CFG_STRUCT;
+
+#define LTROVR2_PCIE_CFG_WIDTH 8
+#define LTROVR2_PCIE_CFG_DEFAULT 0x00U
+#define LTROVR2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LTROVR2_PCIE_CFG_LTRSOVREN_LSB 0x0000
+#define LTROVR2_PCIE_CFG_LTRSOVREN_SIZE 0x0001
+#define LTROVR2_PCIE_CFG_LTRNSOVREN_LSB 0x0001
+#define LTROVR2_PCIE_CFG_LTRNSOVREN_SIZE 0x0001
+#define LTROVR2_PCIE_CFG_LTROVRPLCY_LSB 0x0003
+#define LTROVR2_PCIE_CFG_LTROVRPLCY_SIZE 0x0001
+#define LTROVR2_PCIE_CFG_DVLTRRPL1P0_LSB 0x0004
+#define LTROVR2_PCIE_CFG_DVLTRRPL1P0_SIZE 0x0001
+#define LTROVR2_PCIE_CFG_DVLTRRPL1P1_LSB 0x0005
+#define LTROVR2_PCIE_CFG_DVLTRRPL1P1_SIZE 0x0001
+#define LTROVR2_PCIE_CFG_DVLTRRPL1P2_LSB 0x0006
+#define LTROVR2_PCIE_CFG_DVLTRRPL1P2_SIZE 0x0001
+#define LTROVR2_PCIE_CFG_RSVD_M_LSB 0x0007
+#define LTROVR2_PCIE_CFG_RSVD_M_SIZE 0x0001
+
+
+
+/** PHYCTL4 desc:
+  */
+
+#define PHYCTL4_PCIE_CFG_REG             (0x00000408U)
+
+typedef union {
+  struct {
+    UINT32 g12ctsdp : 1;
+    UINT32 g3ctsdp : 1;
+    UINT32 g4ctsdp : 1;
+    UINT32 ltssmpcoe : 1;
+    UINT32 ltssmpcod : 1;
+    UINT32 aartle : 1;
+    UINT32 rcvdpdsp : 1;
+    UINT32 aatrle : 1;
+    UINT32 arcfuncfl : 1;
+    UINT32 rsvd_0 : 18;
+    UINT32 sqdis : 1;
+    UINT32 rsvd_m : 4;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PHYCTL4_PCIE_CFG_STRUCT;
+
+#define PHYCTL4_PCIE_CFG_WIDTH 32
+#define PHYCTL4_PCIE_CFG_DEFAULT 0x00000000U
+#define PHYCTL4_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PHYCTL4_PCIE_CFG_G12CTSDP_LSB 0x0000
+#define PHYCTL4_PCIE_CFG_G12CTSDP_SIZE 0x0001
+#define PHYCTL4_PCIE_CFG_G3CTSDP_LSB 0x0001
+#define PHYCTL4_PCIE_CFG_G3CTSDP_SIZE 0x0001
+#define PHYCTL4_PCIE_CFG_G4CTSDP_LSB 0x0002
+#define PHYCTL4_PCIE_CFG_G4CTSDP_SIZE 0x0001
+#define PHYCTL4_PCIE_CFG_LTSSMPCOE_LSB 0x0003
+#define PHYCTL4_PCIE_CFG_LTSSMPCOE_SIZE 0x0001
+#define PHYCTL4_PCIE_CFG_LTSSMPCOD_LSB 0x0004
+#define PHYCTL4_PCIE_CFG_LTSSMPCOD_SIZE 0x0001
+#define PHYCTL4_PCIE_CFG_AARTLE_LSB 0x0005
+#define PHYCTL4_PCIE_CFG_AARTLE_SIZE 0x0001
+#define PHYCTL4_PCIE_CFG_RCVDPDSP_LSB 0x0006
+#define PHYCTL4_PCIE_CFG_RCVDPDSP_SIZE 0x0001
+#define PHYCTL4_PCIE_CFG_AATRLE_LSB 0x0007
+#define PHYCTL4_PCIE_CFG_AATRLE_SIZE 0x0001
+#define PHYCTL4_PCIE_CFG_ARCFUNCFL_LSB 0x0008
+#define PHYCTL4_PCIE_CFG_ARCFUNCFL_SIZE 0x0001
+#define PHYCTL4_PCIE_CFG_SQDIS_LSB 0x001b
+#define PHYCTL4_PCIE_CFG_SQDIS_SIZE 0x0001
+#define PHYCTL4_PCIE_CFG_RSVD_M_LSB 0x001c
+#define PHYCTL4_PCIE_CFG_RSVD_M_SIZE 0x0004
+
+
+
+/** STRPFUSECFG2 desc:
+  */
+
+#define STRPFUSECFG2_PCIE_CFG_REG        (0x00000414U)
+
+typedef union {
+  struct {
+    UINT32 ltlppdis : 1;
+    UINT32 cpusel : 1;
+    UINT32 dmitxswing : 1;
+    UINT32 fdsv : 3;
+    UINT32 vtdte : 1;
+    UINT32 rsvd_0 : 7;
+    UINT32 ebm : 1;
+    UINT32 forcel : 3;
+    UINT32 fcsl : 2;
+    UINT32 pcieslf : 3;
+    UINT32 rsvd_1 : 1;
+    UINT32 pciesl : 3;
+    UINT32 rsvd_2 : 1;
+    UINT32 ebmg3 : 1;
+    UINT32 rsvd_m : 3;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} STRPFUSECFG2_PCIE_CFG_STRUCT;
+
+#define STRPFUSECFG2_PCIE_CFG_WIDTH 32
+#define STRPFUSECFG2_PCIE_CFG_DEFAULT 0x000c0000U
+#define STRPFUSECFG2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define STRPFUSECFG2_PCIE_CFG_LTLPPDIS_LSB 0x0000
+#define STRPFUSECFG2_PCIE_CFG_LTLPPDIS_SIZE 0x0001
+#define STRPFUSECFG2_PCIE_CFG_CPUSEL_LSB 0x0001
+#define STRPFUSECFG2_PCIE_CFG_CPUSEL_SIZE 0x0001
+#define STRPFUSECFG2_PCIE_CFG_DMITXSWING_LSB 0x0002
+#define STRPFUSECFG2_PCIE_CFG_DMITXSWING_SIZE 0x0001
+#define STRPFUSECFG2_PCIE_CFG_FDSV_LSB 0x0003
+#define STRPFUSECFG2_PCIE_CFG_FDSV_SIZE 0x0003
+#define STRPFUSECFG2_PCIE_CFG_VTDTE_LSB 0x0006
+#define STRPFUSECFG2_PCIE_CFG_VTDTE_SIZE 0x0001
+#define STRPFUSECFG2_PCIE_CFG_EBM_LSB 0x000e
+#define STRPFUSECFG2_PCIE_CFG_EBM_SIZE 0x0001
+#define STRPFUSECFG2_PCIE_CFG_FORCEL_LSB 0x000f
+#define STRPFUSECFG2_PCIE_CFG_FORCEL_SIZE 0x0003
+#define STRPFUSECFG2_PCIE_CFG_FCSL_LSB 0x0012
+#define STRPFUSECFG2_PCIE_CFG_FCSL_SIZE 0x0002
+#define STRPFUSECFG2_PCIE_CFG_PCIESLF_LSB 0x0014
+#define STRPFUSECFG2_PCIE_CFG_PCIESLF_SIZE 0x0003
+#define STRPFUSECFG2_PCIE_CFG_PCIESL_LSB 0x0018
+#define STRPFUSECFG2_PCIE_CFG_PCIESL_SIZE 0x0003
+#define STRPFUSECFG2_PCIE_CFG_EBMG3_LSB 0x001c
+#define STRPFUSECFG2_PCIE_CFG_EBMG3_SIZE 0x0001
+#define STRPFUSECFG2_PCIE_CFG_RSVD_M_LSB 0x001d
+#define STRPFUSECFG2_PCIE_CFG_RSVD_M_SIZE 0x0003
+
+
+
+/** TNPT desc:
+  */
+
+#define TNPT_PCIE_CFG_REG                (0x00000418U)
+
+typedef union {
+  struct {
+    UINT32 dtxlte : 1;
+    UINT32 drxlte : 1;
+    UINT32 ttg : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 tsl0m : 2;
+    UINT32 tsl1m : 2;
+    UINT32 tsl2m : 2;
+    UINT32 tsl3m : 2;
+    UINT32 rsvd_1 : 4;
+    UINT32 tt : 8;
+    UINT32 tp : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} TNPT_PCIE_CFG_STRUCT;
+
+#define TNPT_PCIE_CFG_WIDTH 32
+#define TNPT_PCIE_CFG_DEFAULT 0x00000930U
+#define TNPT_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define TNPT_PCIE_CFG_DTXLTE_LSB 0x0000
+#define TNPT_PCIE_CFG_DTXLTE_SIZE 0x0001
+#define TNPT_PCIE_CFG_DRXLTE_LSB 0x0001
+#define TNPT_PCIE_CFG_DRXLTE_SIZE 0x0001
+#define TNPT_PCIE_CFG_TTG_LSB 0x0002
+#define TNPT_PCIE_CFG_TTG_SIZE 0x0001
+#define TNPT_PCIE_CFG_TSL0M_LSB 0x0004
+#define TNPT_PCIE_CFG_TSL0M_SIZE 0x0002
+#define TNPT_PCIE_CFG_TSL1M_LSB 0x0006
+#define TNPT_PCIE_CFG_TSL1M_SIZE 0x0002
+#define TNPT_PCIE_CFG_TSL2M_LSB 0x0008
+#define TNPT_PCIE_CFG_TSL2M_SIZE 0x0002
+#define TNPT_PCIE_CFG_TSL3M_LSB 0x000a
+#define TNPT_PCIE_CFG_TSL3M_SIZE 0x0002
+#define TNPT_PCIE_CFG_TT_LSB 0x0010
+#define TNPT_PCIE_CFG_TT_SIZE 0x0008
+#define TNPT_PCIE_CFG_TP_LSB 0x0018
+#define TNPT_PCIE_CFG_TP_SIZE 0x0008
+
+
+
+/** PCIEPMECTL desc:
+  */
+
+#define PCIEPMECTL_PCIE_CFG_REG          (0x00000420U)
+
+typedef union {
+  struct {
+    UINT32 l1fsoe : 1;
+    UINT32 rsvd_0 : 2;
+    UINT32 l1snzcrewd : 1;
+    UINT32 l1ltrtlv : 10;
+    UINT32 l1ltrtlsv : 3;
+    UINT32 l1le : 1;
+    UINT32 poffwt : 2;
+    UINT32 ipacpe : 1;
+    UINT32 ipiep : 1;
+    UINT32 l1offmrt : 2;
+    UINT32 l1ormrt : 2;
+    UINT32 rsvd_1 : 2;
+    UINT32 l1ocrewd : 1;
+    UINT32 dlsuldlsd : 1;
+    UINT32 dlsulppge : 1;
+    UINT32 fdppge : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PCIEPMECTL_PCIE_CFG_STRUCT;
+
+#define PCIEPMECTL_PCIE_CFG_WIDTH 32
+#define PCIEPMECTL_PCIE_CFG_DEFAULT 0x02ac8140U
+#define PCIEPMECTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCIEPMECTL_PCIE_CFG_L1FSOE_LSB 0x0000
+#define PCIEPMECTL_PCIE_CFG_L1FSOE_SIZE 0x0001
+#define PCIEPMECTL_PCIE_CFG_L1SNZCREWD_LSB 0x0003
+#define PCIEPMECTL_PCIE_CFG_L1SNZCREWD_SIZE 0x0001
+#define PCIEPMECTL_PCIE_CFG_L1LTRTLV_LSB 0x0004
+#define PCIEPMECTL_PCIE_CFG_L1LTRTLV_SIZE 0x000a
+#define PCIEPMECTL_PCIE_CFG_L1LTRTLSV_LSB 0x000e
+#define PCIEPMECTL_PCIE_CFG_L1LTRTLSV_SIZE 0x0003
+#define PCIEPMECTL_PCIE_CFG_L1LE_LSB 0x0011
+#define PCIEPMECTL_PCIE_CFG_L1LE_SIZE 0x0001
+#define PCIEPMECTL_PCIE_CFG_POFFWT_LSB 0x0012
+#define PCIEPMECTL_PCIE_CFG_POFFWT_SIZE 0x0002
+#define PCIEPMECTL_PCIE_CFG_IPACPE_LSB 0x0014
+#define PCIEPMECTL_PCIE_CFG_IPACPE_SIZE 0x0001
+#define PCIEPMECTL_PCIE_CFG_IPIEP_LSB 0x0015
+#define PCIEPMECTL_PCIE_CFG_IPIEP_SIZE 0x0001
+#define PCIEPMECTL_PCIE_CFG_L1OFFMRT_LSB 0x0016
+#define PCIEPMECTL_PCIE_CFG_L1OFFMRT_SIZE 0x0002
+#define PCIEPMECTL_PCIE_CFG_L1ORMRT_LSB 0x0018
+#define PCIEPMECTL_PCIE_CFG_L1ORMRT_SIZE 0x0002
+#define PCIEPMECTL_PCIE_CFG_L1OCREWD_LSB 0x001c
+#define PCIEPMECTL_PCIE_CFG_L1OCREWD_SIZE 0x0001
+#define PCIEPMECTL_PCIE_CFG_DLSULDLSD_LSB 0x001d
+#define PCIEPMECTL_PCIE_CFG_DLSULDLSD_SIZE 0x0001
+#define PCIEPMECTL_PCIE_CFG_DLSULPPGE_LSB 0x001e
+#define PCIEPMECTL_PCIE_CFG_DLSULPPGE_SIZE 0x0001
+#define PCIEPMECTL_PCIE_CFG_FDPPGE_LSB 0x001f
+#define PCIEPMECTL_PCIE_CFG_FDPPGE_SIZE 0x0001
+
+
+
+/** PCIEPMECTL2 desc:
+  */
+
+#define PCIEPMECTL2_PCIE_CFG_REG         (0x00000424U)
+
+typedef union {
+  struct {
+    UINT32 sl1oee : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 l1otcmrp : 1;
+    UINT32 dspm : 1;
+    UINT32 l1scpge : 1;
+    UINT32 disscpge : 1;
+    UINT32 l23rdyscpge : 1;
+    UINT32 detscpge : 1;
+    UINT32 fdcpge : 1;
+    UINT32 l1sphydlpge : 1;
+    UINT32 rsvd_1 : 1;
+    UINT32 phyclpge : 1;
+    UINT32 cpgenh : 2;
+    UINT32 cpgexh : 2;
+    UINT32 mexl1pgltrtlv : 10;
+    UINT32 l1sppge : 1;
+    UINT32 cpmcsre : 1;
+    UINT32 pgcbbld : 1;
+    UINT32 mexl1pgltrtlsv : 3;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PCIEPMECTL2_PCIE_CFG_STRUCT;
+
+#define PCIEPMECTL2_PCIE_CFG_WIDTH 32
+#define PCIEPMECTL2_PCIE_CFG_DEFAULT 0x0000d000U
+#define PCIEPMECTL2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCIEPMECTL2_PCIE_CFG_SL1OEE_LSB 0x0000
+#define PCIEPMECTL2_PCIE_CFG_SL1OEE_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_L1OTCMRP_LSB 0x0002
+#define PCIEPMECTL2_PCIE_CFG_L1OTCMRP_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_DSPM_LSB 0x0003
+#define PCIEPMECTL2_PCIE_CFG_DSPM_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_L1SCPGE_LSB 0x0004
+#define PCIEPMECTL2_PCIE_CFG_L1SCPGE_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_DISSCPGE_LSB 0x0005
+#define PCIEPMECTL2_PCIE_CFG_DISSCPGE_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_L23RDYSCPGE_LSB 0x0006
+#define PCIEPMECTL2_PCIE_CFG_L23RDYSCPGE_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_DETSCPGE_LSB 0x0007
+#define PCIEPMECTL2_PCIE_CFG_DETSCPGE_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_FDCPGE_LSB 0x0008
+#define PCIEPMECTL2_PCIE_CFG_FDCPGE_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_L1SPHYDLPGE_LSB 0x0009
+#define PCIEPMECTL2_PCIE_CFG_L1SPHYDLPGE_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_PHYCLPGE_LSB 0x000b
+#define PCIEPMECTL2_PCIE_CFG_PHYCLPGE_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_CPGENH_LSB 0x000c
+#define PCIEPMECTL2_PCIE_CFG_CPGENH_SIZE 0x0002
+#define PCIEPMECTL2_PCIE_CFG_CPGEXH_LSB 0x000e
+#define PCIEPMECTL2_PCIE_CFG_CPGEXH_SIZE 0x0002
+#define PCIEPMECTL2_PCIE_CFG_MEXL1PGLTRTLV_LSB 0x0010
+#define PCIEPMECTL2_PCIE_CFG_MEXL1PGLTRTLV_SIZE 0x000a
+#define PCIEPMECTL2_PCIE_CFG_L1SPPGE_LSB 0x001a
+#define PCIEPMECTL2_PCIE_CFG_L1SPPGE_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_CPMCSRE_LSB 0x001b
+#define PCIEPMECTL2_PCIE_CFG_CPMCSRE_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_PGCBBLD_LSB 0x001c
+#define PCIEPMECTL2_PCIE_CFG_PGCBBLD_SIZE 0x0001
+#define PCIEPMECTL2_PCIE_CFG_MEXL1PGLTRTLSV_LSB 0x001d
+#define PCIEPMECTL2_PCIE_CFG_MEXL1PGLTRTLSV_SIZE 0x0003
+
+
+
+/** PCE desc:
+  */
+
+#define PCE_PCIE_CFG_REG                 (0x00000428U)
+
+typedef union {
+  struct {
+    UINT8 pmcre : 1;
+    UINT8 rsvd_0 : 2;
+    UINT8 se : 1;
+    UINT8 rsvd_1 : 1;
+    UINT8 hae : 1;
+    UINT8 rsvd_m : 2;
+  }     Bits;
+  UINT8 Data;
+} PCE_PCIE_CFG_STRUCT;
+
+#define PCE_PCIE_CFG_WIDTH 8
+#define PCE_PCIE_CFG_DEFAULT 0x09U
+#define PCE_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCE_PCIE_CFG_PMCRE_LSB 0x0000
+#define PCE_PCIE_CFG_PMCRE_SIZE 0x0001
+#define PCE_PCIE_CFG_SE_LSB 0x0003
+#define PCE_PCIE_CFG_SE_SIZE 0x0001
+#define PCE_PCIE_CFG_HAE_LSB 0x0005
+#define PCE_PCIE_CFG_HAE_SIZE 0x0001
+#define PCE_PCIE_CFG_RSVD_M_LSB 0x0006
+#define PCE_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** PCIEPMECTL3 desc:
+  */
+
+#define PCIEPMECTL3_PCIE_CFG_REG         (0x00000434U)
+
+typedef union {
+  struct {
+    UINT32 pmreqcpgexh : 2;
+    UINT32 osccgh : 2;
+    UINT32 l1pgautopgen : 1;
+    UINT32 rsvd_rw : 27;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PCIEPMECTL3_PCIE_CFG_STRUCT;
+
+#define PCIEPMECTL3_PCIE_CFG_WIDTH 32
+#define PCIEPMECTL3_PCIE_CFG_DEFAULT 0x0000000bU
+#define PCIEPMECTL3_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PCIEPMECTL3_PCIE_CFG_PMREQCPGEXH_LSB 0x0000
+#define PCIEPMECTL3_PCIE_CFG_PMREQCPGEXH_SIZE 0x0002
+#define PCIEPMECTL3_PCIE_CFG_OSCCGH_LSB 0x0002
+#define PCIEPMECTL3_PCIE_CFG_OSCCGH_SIZE 0x0002
+#define PCIEPMECTL3_PCIE_CFG_L1PGAUTOPGEN_LSB 0x0004
+#define PCIEPMECTL3_PCIE_CFG_L1PGAUTOPGEN_SIZE 0x0001
+#define PCIEPMECTL3_PCIE_CFG_RSVD_RW_LSB 0x0005
+#define PCIEPMECTL3_PCIE_CFG_RSVD_RW_SIZE 0x001b
+
+
+
+/** EQCFG1 desc:
+  */
+
+#define EQCFG1_PCIE_CFG_REG              (0x00000450U)
+
+typedef union {
+  struct {
+    UINT32 rupp : 1;
+    UINT32 tupp : 1;
+    UINT32 mflntl : 1;
+    UINT32 leqp01tcsp : 1;
+    UINT32 meqsmmflntl : 1;
+    UINT32 hapccpie : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 eqts2irrc : 1;
+    UINT32 rwtneve : 4;
+    UINT32 haed : 1;
+    UINT32 hpcmqe : 1;
+    UINT32 lerscie : 1;
+    UINT32 rtpcoe : 1;
+    UINT32 rtlepceb : 1;
+    UINT32 lep3b : 1;
+    UINT32 lep23b : 1;
+    UINT32 leb : 1;
+    UINT32 reic : 1;
+    UINT32 lersmie : 1;
+    UINT32 qg : 1;
+    UINT32 reifece : 1;
+    UINT32 rec : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} EQCFG1_PCIE_CFG_STRUCT;
+
+#define EQCFG1_PCIE_CFG_WIDTH 32
+#define EQCFG1_PCIE_CFG_DEFAULT 0x00001102U
+#define EQCFG1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define EQCFG1_PCIE_CFG_RUPP_LSB 0x0000
+#define EQCFG1_PCIE_CFG_RUPP_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_TUPP_LSB 0x0001
+#define EQCFG1_PCIE_CFG_TUPP_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_MFLNTL_LSB 0x0002
+#define EQCFG1_PCIE_CFG_MFLNTL_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_LEQP01TCSP_LSB 0x0003
+#define EQCFG1_PCIE_CFG_LEQP01TCSP_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_MEQSMMFLNTL_LSB 0x0004
+#define EQCFG1_PCIE_CFG_MEQSMMFLNTL_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_HAPCCPIE_LSB 0x0005
+#define EQCFG1_PCIE_CFG_HAPCCPIE_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_EQTS2IRRC_LSB 0x0007
+#define EQCFG1_PCIE_CFG_EQTS2IRRC_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_RWTNEVE_LSB 0x0008
+#define EQCFG1_PCIE_CFG_RWTNEVE_SIZE 0x0004
+#define EQCFG1_PCIE_CFG_HAED_LSB 0x000c
+#define EQCFG1_PCIE_CFG_HAED_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_HPCMQE_LSB 0x000d
+#define EQCFG1_PCIE_CFG_HPCMQE_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_LERSCIE_LSB 0x000e
+#define EQCFG1_PCIE_CFG_LERSCIE_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_RTPCOE_LSB 0x000f
+#define EQCFG1_PCIE_CFG_RTPCOE_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_RTLEPCEB_LSB 0x0010
+#define EQCFG1_PCIE_CFG_RTLEPCEB_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_LEP3B_LSB 0x0011
+#define EQCFG1_PCIE_CFG_LEP3B_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_LEP23B_LSB 0x0012
+#define EQCFG1_PCIE_CFG_LEP23B_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_LEB_LSB 0x0013
+#define EQCFG1_PCIE_CFG_LEB_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_REIC_LSB 0x0014
+#define EQCFG1_PCIE_CFG_REIC_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_LERSMIE_LSB 0x0015
+#define EQCFG1_PCIE_CFG_LERSMIE_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_QG_LSB 0x0016
+#define EQCFG1_PCIE_CFG_QG_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_REIFECE_LSB 0x0017
+#define EQCFG1_PCIE_CFG_REIFECE_SIZE 0x0001
+#define EQCFG1_PCIE_CFG_REC_LSB 0x0018
+#define EQCFG1_PCIE_CFG_REC_SIZE 0x0008
+
+
+
+/** RTPCL1 desc:
+  */
+
+#define RTPCL1_PCIE_CFG_REG              (0x00000454U)
+
+typedef union {
+  struct {
+    UINT32 rtprecl0pl0 : 6;
+    UINT32 rtpostcl0pl1 : 6;
+    UINT32 rtprecl1pl2 : 6;
+    UINT32 rtpostcl1pl3 : 6;
+    UINT32 rtprecl2pl4 : 6;
+    UINT32 rsvd_0 : 1;
+    UINT32 pcm : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} RTPCL1_PCIE_CFG_STRUCT;
+
+#define RTPCL1_PCIE_CFG_WIDTH 32
+#define RTPCL1_PCIE_CFG_DEFAULT 0x00000000U
+#define RTPCL1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define RTPCL1_PCIE_CFG_RTPRECL0PL0_LSB 0x0000
+#define RTPCL1_PCIE_CFG_RTPRECL0PL0_SIZE 0x0006
+#define RTPCL1_PCIE_CFG_RTPOSTCL0PL1_LSB 0x0006
+#define RTPCL1_PCIE_CFG_RTPOSTCL0PL1_SIZE 0x0006
+#define RTPCL1_PCIE_CFG_RTPRECL1PL2_LSB 0x000c
+#define RTPCL1_PCIE_CFG_RTPRECL1PL2_SIZE 0x0006
+#define RTPCL1_PCIE_CFG_RTPOSTCL1PL3_LSB 0x0012
+#define RTPCL1_PCIE_CFG_RTPOSTCL1PL3_SIZE 0x0006
+#define RTPCL1_PCIE_CFG_RTPRECL2PL4_LSB 0x0018
+#define RTPCL1_PCIE_CFG_RTPRECL2PL4_SIZE 0x0006
+#define RTPCL1_PCIE_CFG_PCM_LSB 0x001f
+#define RTPCL1_PCIE_CFG_PCM_SIZE 0x0001
+
+
+
+/** RTPCL2 desc:
+  */
+
+#define RTPCL2_PCIE_CFG_REG              (0x00000458U)
+
+typedef union {
+  struct {
+    UINT32 rtpostcl2pl5 : 6;
+    UINT32 rtprecl3pl6 : 6;
+    UINT32 rtpostcl3pl7 : 6;
+    UINT32 rtprecl4pl8 : 6;
+    UINT32 rtpostcl4pl9 : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} RTPCL2_PCIE_CFG_STRUCT;
+
+#define RTPCL2_PCIE_CFG_WIDTH 32
+#define RTPCL2_PCIE_CFG_DEFAULT 0x00000000U
+#define RTPCL2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define RTPCL2_PCIE_CFG_RTPOSTCL2PL5_LSB 0x0000
+#define RTPCL2_PCIE_CFG_RTPOSTCL2PL5_SIZE 0x0006
+#define RTPCL2_PCIE_CFG_RTPRECL3PL6_LSB 0x0006
+#define RTPCL2_PCIE_CFG_RTPRECL3PL6_SIZE 0x0006
+#define RTPCL2_PCIE_CFG_RTPOSTCL3PL7_LSB 0x000c
+#define RTPCL2_PCIE_CFG_RTPOSTCL3PL7_SIZE 0x0006
+#define RTPCL2_PCIE_CFG_RTPRECL4PL8_LSB 0x0012
+#define RTPCL2_PCIE_CFG_RTPRECL4PL8_SIZE 0x0006
+#define RTPCL2_PCIE_CFG_RTPOSTCL4PL9_LSB 0x0018
+#define RTPCL2_PCIE_CFG_RTPOSTCL4PL9_SIZE 0x0006
+#define RTPCL2_PCIE_CFG_RSVD_M_LSB 0x001e
+#define RTPCL2_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** FOMS desc:
+  */
+
+#define FOMS_PCIE_CFG_REG                (0x00000464U)
+
+typedef union {
+  struct {
+    UINT32 fomsv : 24;
+    UINT32 ln : 5;
+    UINT32 idx : 3;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} FOMS_PCIE_CFG_STRUCT;
+
+#define FOMS_PCIE_CFG_WIDTH 32
+#define FOMS_PCIE_CFG_DEFAULT 0x00000000U
+#define FOMS_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define FOMS_PCIE_CFG_FOMSV_LSB 0x0000
+#define FOMS_PCIE_CFG_FOMSV_SIZE 0x0018
+#define FOMS_PCIE_CFG_LN_LSB 0x0018
+#define FOMS_PCIE_CFG_LN_SIZE 0x0005
+#define FOMS_PCIE_CFG_IDX_LSB 0x001d
+#define FOMS_PCIE_CFG_IDX_SIZE 0x0003
+
+
+
+/** HAEQ desc:
+  */
+
+#define HAEQ_PCIE_CFG_REG                (0x00000468U)
+
+typedef union {
+  struct {
+    UINT32 sfomfm : 8;
+    UINT32 dl : 8;
+    UINT32 sl : 3;
+    UINT32 macfomc : 1;
+    UINT32 fomem : 8;
+    UINT32 hapccpi : 4;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} HAEQ_PCIE_CFG_STRUCT;
+
+#define HAEQ_PCIE_CFG_WIDTH 32
+#define HAEQ_PCIE_CFG_DEFAULT 0xa0080e00U
+#define HAEQ_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define HAEQ_PCIE_CFG_SFOMFM_LSB 0x0000
+#define HAEQ_PCIE_CFG_SFOMFM_SIZE 0x0008
+#define HAEQ_PCIE_CFG_DL_LSB 0x0008
+#define HAEQ_PCIE_CFG_DL_SIZE 0x0008
+#define HAEQ_PCIE_CFG_SL_LSB 0x0010
+#define HAEQ_PCIE_CFG_SL_SIZE 0x0003
+#define HAEQ_PCIE_CFG_MACFOMC_LSB 0x0013
+#define HAEQ_PCIE_CFG_MACFOMC_SIZE 0x0001
+#define HAEQ_PCIE_CFG_FOMEM_LSB 0x0014
+#define HAEQ_PCIE_CFG_FOMEM_SIZE 0x0008
+#define HAEQ_PCIE_CFG_HAPCCPI_LSB 0x001c
+#define HAEQ_PCIE_CFG_HAPCCPI_SIZE 0x0004
+
+
+
+/** LTCO1 desc:
+  */
+
+#define LTCO1_PCIE_CFG_REG               (0x00000470U)
+
+typedef union {
+  struct {
+    UINT32 l0tpreco : 6;
+    UINT32 l0tpostco : 6;
+    UINT32 l1tpreco : 6;
+    UINT32 l1tpostco : 6;
+    UINT32 l0tcoe : 1;
+    UINT32 l1tcoe : 1;
+    UINT32 rsvd_m : 6;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LTCO1_PCIE_CFG_STRUCT;
+
+#define LTCO1_PCIE_CFG_WIDTH 32
+#define LTCO1_PCIE_CFG_DEFAULT 0x00000000U
+#define LTCO1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LTCO1_PCIE_CFG_L0TPRECO_LSB 0x0000
+#define LTCO1_PCIE_CFG_L0TPRECO_SIZE 0x0006
+#define LTCO1_PCIE_CFG_L0TPOSTCO_LSB 0x0006
+#define LTCO1_PCIE_CFG_L0TPOSTCO_SIZE 0x0006
+#define LTCO1_PCIE_CFG_L1TPRECO_LSB 0x000c
+#define LTCO1_PCIE_CFG_L1TPRECO_SIZE 0x0006
+#define LTCO1_PCIE_CFG_L1TPOSTCO_LSB 0x0012
+#define LTCO1_PCIE_CFG_L1TPOSTCO_SIZE 0x0006
+#define LTCO1_PCIE_CFG_L0TCOE_LSB 0x0018
+#define LTCO1_PCIE_CFG_L0TCOE_SIZE 0x0001
+#define LTCO1_PCIE_CFG_L1TCOE_LSB 0x0019
+#define LTCO1_PCIE_CFG_L1TCOE_SIZE 0x0001
+#define LTCO1_PCIE_CFG_RSVD_M_LSB 0x001a
+#define LTCO1_PCIE_CFG_RSVD_M_SIZE 0x0006
+
+
+
+/** G3L0SCTL desc:
+  */
+
+#define G3L0SCTL_PCIE_CFG_REG            (0x00000478U)
+
+typedef union {
+  struct {
+    UINT32 g3ccnfts : 8;
+    UINT32 g3ucnfts : 8;
+    UINT32 rsvd_0 : 6;
+    UINT32 g3l0sic : 2;
+    UINT32 g3asl0spl : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} G3L0SCTL_PCIE_CFG_STRUCT;
+
+#define G3L0SCTL_PCIE_CFG_WIDTH 32
+#define G3L0SCTL_PCIE_CFG_DEFAULT 0x0c00281eU
+#define G3L0SCTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define G3L0SCTL_PCIE_CFG_G3CCNFTS_LSB 0x0000
+#define G3L0SCTL_PCIE_CFG_G3CCNFTS_SIZE 0x0008
+#define G3L0SCTL_PCIE_CFG_G3UCNFTS_LSB 0x0008
+#define G3L0SCTL_PCIE_CFG_G3UCNFTS_SIZE 0x0008
+#define G3L0SCTL_PCIE_CFG_G3L0SIC_LSB 0x0016
+#define G3L0SCTL_PCIE_CFG_G3L0SIC_SIZE 0x0002
+#define G3L0SCTL_PCIE_CFG_G3ASL0SPL_LSB 0x0018
+#define G3L0SCTL_PCIE_CFG_G3ASL0SPL_SIZE 0x0008
+
+
+
+/** EQCFG2 desc:
+  */
+
+#define EQCFG2_PCIE_CFG_REG              (0x0000047cU)
+
+typedef union {
+  struct {
+    UINT32 rewmet : 8;
+    UINT32 rewmetm : 2;
+    UINT32 mpeme : 1;
+    UINT32 nteme : 1;
+    UINT32 hapcsb : 4;
+    UINT32 pcet : 4;
+    UINT32 ntss : 3;
+    UINT32 emd : 1;
+    UINT32 ntic : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} EQCFG2_PCIE_CFG_STRUCT;
+
+#define EQCFG2_PCIE_CFG_WIDTH 32
+#define EQCFG2_PCIE_CFG_DEFAULT 0x0000a001U
+#define EQCFG2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define EQCFG2_PCIE_CFG_REWMET_LSB 0x0000
+#define EQCFG2_PCIE_CFG_REWMET_SIZE 0x0008
+#define EQCFG2_PCIE_CFG_REWMETM_LSB 0x0008
+#define EQCFG2_PCIE_CFG_REWMETM_SIZE 0x0002
+#define EQCFG2_PCIE_CFG_MPEME_LSB 0x000a
+#define EQCFG2_PCIE_CFG_MPEME_SIZE 0x0001
+#define EQCFG2_PCIE_CFG_NTEME_LSB 0x000b
+#define EQCFG2_PCIE_CFG_NTEME_SIZE 0x0001
+#define EQCFG2_PCIE_CFG_HAPCSB_LSB 0x000c
+#define EQCFG2_PCIE_CFG_HAPCSB_SIZE 0x0004
+#define EQCFG2_PCIE_CFG_PCET_LSB 0x0010
+#define EQCFG2_PCIE_CFG_PCET_SIZE 0x0004
+#define EQCFG2_PCIE_CFG_NTSS_LSB 0x0014
+#define EQCFG2_PCIE_CFG_NTSS_SIZE 0x0003
+#define EQCFG2_PCIE_CFG_EMD_LSB 0x0017
+#define EQCFG2_PCIE_CFG_EMD_SIZE 0x0001
+#define EQCFG2_PCIE_CFG_NTIC_LSB 0x0018
+#define EQCFG2_PCIE_CFG_NTIC_SIZE 0x0008
+
+
+
+/** MM desc:
+  */
+
+#define MM_PCIE_CFG_REG                  (0x00000480U)
+
+typedef union {
+  struct {
+    UINT32 mss : 8;
+    UINT32 msst : 24;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} MM_PCIE_CFG_STRUCT;
+
+#define MM_PCIE_CFG_WIDTH 32
+#define MM_PCIE_CFG_DEFAULT 0x00000000U
+#define MM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define MM_PCIE_CFG_MSS_LSB 0x0000
+#define MM_PCIE_CFG_MSS_SIZE 0x0008
+#define MM_PCIE_CFG_MSST_LSB 0x0008
+#define MM_PCIE_CFG_MSST_SIZE 0x0018
+
+
+
+/** CDM desc:
+  */
+
+#define CDM_PCIE_CFG_REG                 (0x00000484U)
+
+typedef union {
+  struct {
+    UINT32 mcs : 4;
+    UINT32 mss : 4;
+    UINT32 rsvd_m : 24;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} CDM_PCIE_CFG_STRUCT;
+
+#define CDM_PCIE_CFG_WIDTH 32
+#define CDM_PCIE_CFG_DEFAULT 0x00000000U
+#define CDM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define CDM_PCIE_CFG_MCS_LSB 0x0000
+#define CDM_PCIE_CFG_MCS_SIZE 0x0004
+#define CDM_PCIE_CFG_MSS_LSB 0x0004
+#define CDM_PCIE_CFG_MSS_SIZE 0x0004
+#define CDM_PCIE_CFG_RSVD_M_LSB 0x0008
+#define CDM_PCIE_CFG_RSVD_M_SIZE 0x0018
+
+
+
+/** EQCFG4 desc:
+  */
+
+#define EQCFG4_PCIE_CFG_REG              (0x0000048cU)
+
+typedef union {
+  struct {
+    UINT32 px16gmflntl : 1;
+    UINT32 px16gmeqsmmflntl : 1;
+    UINT32 px16ghapccpie : 1;
+    UINT32 px16ghapccpi : 4;
+    UINT32 px16geqts2irrc : 1;
+    UINT32 px16grwtneve : 4;
+    UINT32 px16ghaed : 1;
+    UINT32 rsvd_0 : 2;
+    UINT32 px16grtpcoe : 1;
+    UINT32 px16grtlepceb : 1;
+    UINT32 px16glep3b : 1;
+    UINT32 px16glep23b : 1;
+    UINT32 rsvd_1 : 1;
+    UINT32 px16greic : 1;
+    UINT32 fomscp : 3;
+    UINT32 px8gtswlpce : 3;
+    UINT32 px16gtswlpce : 3;
+    UINT32 seqwpeqt2p : 1;
+    UINT32 rsvd_m : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} EQCFG4_PCIE_CFG_STRUCT;
+
+#define EQCFG4_PCIE_CFG_WIDTH 32
+#define EQCFG4_PCIE_CFG_DEFAULT 0x00001150U
+#define EQCFG4_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define EQCFG4_PCIE_CFG_PX16GMFLNTL_LSB 0x0000
+#define EQCFG4_PCIE_CFG_PX16GMFLNTL_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_PX16GMEQSMMFLNTL_LSB 0x0001
+#define EQCFG4_PCIE_CFG_PX16GMEQSMMFLNTL_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_PX16GHAPCCPIE_LSB 0x0002
+#define EQCFG4_PCIE_CFG_PX16GHAPCCPIE_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_PX16GHAPCCPI_LSB 0x0003
+#define EQCFG4_PCIE_CFG_PX16GHAPCCPI_SIZE 0x0004
+#define EQCFG4_PCIE_CFG_PX16GEQTS2IRRC_LSB 0x0007
+#define EQCFG4_PCIE_CFG_PX16GEQTS2IRRC_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_PX16GRWTNEVE_LSB 0x0008
+#define EQCFG4_PCIE_CFG_PX16GRWTNEVE_SIZE 0x0004
+#define EQCFG4_PCIE_CFG_PX16GHAED_LSB 0x000c
+#define EQCFG4_PCIE_CFG_PX16GHAED_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_PX16GRTPCOE_LSB 0x000f
+#define EQCFG4_PCIE_CFG_PX16GRTPCOE_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_PX16GRTLEPCEB_LSB 0x0010
+#define EQCFG4_PCIE_CFG_PX16GRTLEPCEB_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_PX16GLEP3B_LSB 0x0011
+#define EQCFG4_PCIE_CFG_PX16GLEP3B_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_PX16GLEP23B_LSB 0x0012
+#define EQCFG4_PCIE_CFG_PX16GLEP23B_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_PX16GREIC_LSB 0x0014
+#define EQCFG4_PCIE_CFG_PX16GREIC_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_FOMSCP_LSB 0x0015
+#define EQCFG4_PCIE_CFG_FOMSCP_SIZE 0x0003
+#define EQCFG4_PCIE_CFG_PX8GTSWLPCE_LSB 0x0018
+#define EQCFG4_PCIE_CFG_PX8GTSWLPCE_SIZE 0x0003
+#define EQCFG4_PCIE_CFG_PX16GTSWLPCE_LSB 0x001b
+#define EQCFG4_PCIE_CFG_PX16GTSWLPCE_SIZE 0x0003
+#define EQCFG4_PCIE_CFG_SEQWPEQT2P_LSB 0x001e
+#define EQCFG4_PCIE_CFG_SEQWPEQT2P_SIZE 0x0001
+#define EQCFG4_PCIE_CFG_RSVD_M_LSB 0x001f
+#define EQCFG4_PCIE_CFG_RSVD_M_SIZE 0x0001
+
+
+
+/** CTRL2 desc:
+  */
+
+#define CTRL2_PCIE_CFG_REG               (0x000004a4U)
+
+typedef union {
+  struct {
+    UINT16 rsvd_0 : 6;
+    UINT16 pmetofd : 1;
+    UINT16 rsvd_1 : 7;
+    UINT16 ltlpped : 1;
+    UINT16 rsvd_2 : 1;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} CTRL2_PCIE_CFG_STRUCT;
+
+#define CTRL2_PCIE_CFG_WIDTH 16
+#define CTRL2_PCIE_CFG_DEFAULT 0x0000U
+#define CTRL2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define CTRL2_PCIE_CFG_PMETOFD_LSB 0x0006
+#define CTRL2_PCIE_CFG_PMETOFD_SIZE 0x0001
+#define CTRL2_PCIE_CFG_LTLPPED_LSB 0x000e
+#define CTRL2_PCIE_CFG_LTLPPED_SIZE 0x0001
+
+
+
+/** PX16GRTPCL1 desc:
+  */
+
+#define PX16GRTPCL1_PCIE_CFG_REG         (0x000004dcU)
+
+typedef union {
+  struct {
+    UINT32 rtprecl0pl0 : 6;
+    UINT32 rtpostcl0pl1 : 6;
+    UINT32 rtprecl1pl2 : 6;
+    UINT32 rtpostcl1pl3 : 6;
+    UINT32 rtprecl2pl4 : 6;
+    UINT32 rsvd_0 : 1;
+    UINT32 pcm : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PX16GRTPCL1_PCIE_CFG_STRUCT;
+
+#define PX16GRTPCL1_PCIE_CFG_WIDTH 32
+#define PX16GRTPCL1_PCIE_CFG_DEFAULT 0x00000000U
+#define PX16GRTPCL1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PX16GRTPCL1_PCIE_CFG_RTPRECL0PL0_LSB 0x0000
+#define PX16GRTPCL1_PCIE_CFG_RTPRECL0PL0_SIZE 0x0006
+#define PX16GRTPCL1_PCIE_CFG_RTPOSTCL0PL1_LSB 0x0006
+#define PX16GRTPCL1_PCIE_CFG_RTPOSTCL0PL1_SIZE 0x0006
+#define PX16GRTPCL1_PCIE_CFG_RTPRECL1PL2_LSB 0x000c
+#define PX16GRTPCL1_PCIE_CFG_RTPRECL1PL2_SIZE 0x0006
+#define PX16GRTPCL1_PCIE_CFG_RTPOSTCL1PL3_LSB 0x0012
+#define PX16GRTPCL1_PCIE_CFG_RTPOSTCL1PL3_SIZE 0x0006
+#define PX16GRTPCL1_PCIE_CFG_RTPRECL2PL4_LSB 0x0018
+#define PX16GRTPCL1_PCIE_CFG_RTPRECL2PL4_SIZE 0x0006
+#define PX16GRTPCL1_PCIE_CFG_PCM_LSB 0x001f
+#define PX16GRTPCL1_PCIE_CFG_PCM_SIZE 0x0001
+
+
+
+/** EQCFG5 desc:
+  */
+
+#define EQCFG5_PCIE_CFG_REG              (0x000004f8U)
+
+typedef union {
+  struct {
+    UINT32 rewmet : 8;
+    UINT32 rewmetm : 2;
+    UINT32 mpeme : 1;
+    UINT32 nteme : 1;
+    UINT32 hapcsb : 4;
+    UINT32 pcet : 4;
+    UINT32 ntss : 3;
+    UINT32 emd : 1;
+    UINT32 ntic : 8;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} EQCFG5_PCIE_CFG_STRUCT;
+
+#define EQCFG5_PCIE_CFG_WIDTH 32
+#define EQCFG5_PCIE_CFG_DEFAULT 0x0000a001U
+#define EQCFG5_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define EQCFG5_PCIE_CFG_REWMET_LSB 0x0000
+#define EQCFG5_PCIE_CFG_REWMET_SIZE 0x0008
+#define EQCFG5_PCIE_CFG_REWMETM_LSB 0x0008
+#define EQCFG5_PCIE_CFG_REWMETM_SIZE 0x0002
+#define EQCFG5_PCIE_CFG_MPEME_LSB 0x000a
+#define EQCFG5_PCIE_CFG_MPEME_SIZE 0x0001
+#define EQCFG5_PCIE_CFG_NTEME_LSB 0x000b
+#define EQCFG5_PCIE_CFG_NTEME_SIZE 0x0001
+#define EQCFG5_PCIE_CFG_HAPCSB_LSB 0x000c
+#define EQCFG5_PCIE_CFG_HAPCSB_SIZE 0x0004
+#define EQCFG5_PCIE_CFG_PCET_LSB 0x0010
+#define EQCFG5_PCIE_CFG_PCET_SIZE 0x0004
+#define EQCFG5_PCIE_CFG_NTSS_LSB 0x0014
+#define EQCFG5_PCIE_CFG_NTSS_SIZE 0x0003
+#define EQCFG5_PCIE_CFG_EMD_LSB 0x0017
+#define EQCFG5_PCIE_CFG_EMD_SIZE 0x0001
+#define EQCFG5_PCIE_CFG_NTIC_LSB 0x0018
+#define EQCFG5_PCIE_CFG_NTIC_SIZE 0x0008
+
+
+/** L0P0P1PCM desc:
+  */
+
+#define L0P0P1PCM_PCIE_CFG_REG           (0x00000500U)
+
+typedef union {
+  struct {
+    UINT32 p0cc : 6;
+    UINT32 p0precc : 6;
+    UINT32 p0pstcc : 6;
+    UINT32 p1cc : 6;
+    UINT32 p1precc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L0P0P1PCM_PCIE_CFG_STRUCT;
+
+#define L0P0P1PCM_PCIE_CFG_WIDTH 32
+#define L0P0P1PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define L0P0P1PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L0P0P1PCM_PCIE_CFG_P0CC_LSB 0x0000
+#define L0P0P1PCM_PCIE_CFG_P0CC_SIZE 0x0006
+#define L0P0P1PCM_PCIE_CFG_P0PRECC_LSB 0x0006
+#define L0P0P1PCM_PCIE_CFG_P0PRECC_SIZE 0x0006
+#define L0P0P1PCM_PCIE_CFG_P0PSTCC_LSB 0x000c
+#define L0P0P1PCM_PCIE_CFG_P0PSTCC_SIZE 0x0006
+#define L0P0P1PCM_PCIE_CFG_P1CC_LSB 0x0012
+#define L0P0P1PCM_PCIE_CFG_P1CC_SIZE 0x0006
+#define L0P0P1PCM_PCIE_CFG_P1PRECC_LSB 0x0018
+#define L0P0P1PCM_PCIE_CFG_P1PRECC_SIZE 0x0006
+#define L0P0P1PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define L0P0P1PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** L0P1P2P3PCM desc:
+  */
+
+#define L0P1P2P3PCM_PCIE_CFG_REG         (0x00000504U)
+
+typedef union {
+  struct {
+    UINT32 p1pstcc : 6;
+    UINT32 p2cc : 6;
+    UINT32 p2precc : 6;
+    UINT32 p2pstcc : 6;
+    UINT32 p3cc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L0P1P2P3PCM_PCIE_CFG_STRUCT;
+
+#define L0P1P2P3PCM_PCIE_CFG_WIDTH 32
+#define L0P1P2P3PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define L0P1P2P3PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L0P1P2P3PCM_PCIE_CFG_P1PSTCC_LSB 0x0000
+#define L0P1P2P3PCM_PCIE_CFG_P1PSTCC_SIZE 0x0006
+#define L0P1P2P3PCM_PCIE_CFG_P2CC_LSB 0x0006
+#define L0P1P2P3PCM_PCIE_CFG_P2CC_SIZE 0x0006
+#define L0P1P2P3PCM_PCIE_CFG_P2PRECC_LSB 0x000c
+#define L0P1P2P3PCM_PCIE_CFG_P2PRECC_SIZE 0x0006
+#define L0P1P2P3PCM_PCIE_CFG_P2PSTCC_LSB 0x0012
+#define L0P1P2P3PCM_PCIE_CFG_P2PSTCC_SIZE 0x0006
+#define L0P1P2P3PCM_PCIE_CFG_P3CC_LSB 0x0018
+#define L0P1P2P3PCM_PCIE_CFG_P3CC_SIZE 0x0006
+#define L0P1P2P3PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define L0P1P2P3PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** L0P3P4PCM desc:
+  */
+
+#define L0P3P4PCM_PCIE_CFG_REG           (0x00000508U)
+
+typedef union {
+  struct {
+    UINT32 p3precc : 6;
+    UINT32 p3pstcc : 6;
+    UINT32 p4cc : 6;
+    UINT32 p4precc : 6;
+    UINT32 p4pstcc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L0P3P4PCM_PCIE_CFG_STRUCT;
+
+#define L0P3P4PCM_PCIE_CFG_WIDTH 32
+#define L0P3P4PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define L0P3P4PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L0P3P4PCM_PCIE_CFG_P3PRECC_LSB 0x0000
+#define L0P3P4PCM_PCIE_CFG_P3PRECC_SIZE 0x0006
+#define L0P3P4PCM_PCIE_CFG_P3PSTCC_LSB 0x0006
+#define L0P3P4PCM_PCIE_CFG_P3PSTCC_SIZE 0x0006
+#define L0P3P4PCM_PCIE_CFG_P4CC_LSB 0x000c
+#define L0P3P4PCM_PCIE_CFG_P4CC_SIZE 0x0006
+#define L0P3P4PCM_PCIE_CFG_P4PRECC_LSB 0x0012
+#define L0P3P4PCM_PCIE_CFG_P4PRECC_SIZE 0x0006
+#define L0P3P4PCM_PCIE_CFG_P4PSTCC_LSB 0x0018
+#define L0P3P4PCM_PCIE_CFG_P4PSTCC_SIZE 0x0006
+#define L0P3P4PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define L0P3P4PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** L0P5P6PCM desc:
+  */
+
+#define L0P5P6PCM_PCIE_CFG_REG           (0x0000050cU)
+
+typedef union {
+  struct {
+    UINT32 p5cc : 6;
+    UINT32 p5precc : 6;
+    UINT32 p5pstcc : 6;
+    UINT32 p6cc : 6;
+    UINT32 p6precc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L0P5P6PCM_PCIE_CFG_STRUCT;
+
+#define L0P5P6PCM_PCIE_CFG_WIDTH 32
+#define L0P5P6PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define L0P5P6PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L0P5P6PCM_PCIE_CFG_P5CC_LSB 0x0000
+#define L0P5P6PCM_PCIE_CFG_P5CC_SIZE 0x0006
+#define L0P5P6PCM_PCIE_CFG_P5PRECC_LSB 0x0006
+#define L0P5P6PCM_PCIE_CFG_P5PRECC_SIZE 0x0006
+#define L0P5P6PCM_PCIE_CFG_P5PSTCC_LSB 0x000c
+#define L0P5P6PCM_PCIE_CFG_P5PSTCC_SIZE 0x0006
+#define L0P5P6PCM_PCIE_CFG_P6CC_LSB 0x0012
+#define L0P5P6PCM_PCIE_CFG_P6CC_SIZE 0x0006
+#define L0P5P6PCM_PCIE_CFG_P6PRECC_LSB 0x0018
+#define L0P5P6PCM_PCIE_CFG_P6PRECC_SIZE 0x0006
+#define L0P5P6PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define L0P5P6PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** L0P6P7P8PCM desc:
+  */
+
+#define L0P6P7P8PCM_PCIE_CFG_REG         (0x00000510U)
+
+typedef union {
+  struct {
+    UINT32 p6pstcc : 6;
+    UINT32 p7cc : 6;
+    UINT32 p7precc : 6;
+    UINT32 p7pstcc : 6;
+    UINT32 p8cc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L0P6P7P8PCM_PCIE_CFG_STRUCT;
+
+#define L0P6P7P8PCM_PCIE_CFG_WIDTH 32
+#define L0P6P7P8PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define L0P6P7P8PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L0P6P7P8PCM_PCIE_CFG_P6PSTCC_LSB 0x0000
+#define L0P6P7P8PCM_PCIE_CFG_P6PSTCC_SIZE 0x0006
+#define L0P6P7P8PCM_PCIE_CFG_P7CC_LSB 0x0006
+#define L0P6P7P8PCM_PCIE_CFG_P7CC_SIZE 0x0006
+#define L0P6P7P8PCM_PCIE_CFG_P7PRECC_LSB 0x000c
+#define L0P6P7P8PCM_PCIE_CFG_P7PRECC_SIZE 0x0006
+#define L0P6P7P8PCM_PCIE_CFG_P7PSTCC_LSB 0x0012
+#define L0P6P7P8PCM_PCIE_CFG_P7PSTCC_SIZE 0x0006
+#define L0P6P7P8PCM_PCIE_CFG_P8CC_LSB 0x0018
+#define L0P6P7P8PCM_PCIE_CFG_P8CC_SIZE 0x0006
+#define L0P6P7P8PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define L0P6P7P8PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** L0P8P9PCM desc:
+  */
+
+#define L0P8P9PCM_PCIE_CFG_REG           (0x00000514U)
+
+typedef union {
+  struct {
+    UINT32 p8precc : 6;
+    UINT32 p8pstcc : 6;
+    UINT32 p9cc : 6;
+    UINT32 p9precc : 6;
+    UINT32 p9pstcc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L0P8P9PCM_PCIE_CFG_STRUCT;
+
+#define L0P8P9PCM_PCIE_CFG_WIDTH 32
+#define L0P8P9PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define L0P8P9PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L0P8P9PCM_PCIE_CFG_P8PRECC_LSB 0x0000
+#define L0P8P9PCM_PCIE_CFG_P8PRECC_SIZE 0x0006
+#define L0P8P9PCM_PCIE_CFG_P8PSTCC_LSB 0x0006
+#define L0P8P9PCM_PCIE_CFG_P8PSTCC_SIZE 0x0006
+#define L0P8P9PCM_PCIE_CFG_P9CC_LSB 0x000c
+#define L0P8P9PCM_PCIE_CFG_P9CC_SIZE 0x0006
+#define L0P8P9PCM_PCIE_CFG_P9PRECC_LSB 0x0012
+#define L0P8P9PCM_PCIE_CFG_P9PRECC_SIZE 0x0006
+#define L0P8P9PCM_PCIE_CFG_P9PSTCC_LSB 0x0018
+#define L0P8P9PCM_PCIE_CFG_P9PSTCC_SIZE 0x0006
+#define L0P8P9PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define L0P8P9PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** L0P10PCM desc:
+  */
+
+#define L0P10PCM_PCIE_CFG_REG            (0x00000518U)
+
+typedef union {
+  struct {
+    UINT32 p10cc : 6;
+    UINT32 p10precc : 6;
+    UINT32 p10pstcc : 6;
+    UINT32 rsvd_m : 14;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L0P10PCM_PCIE_CFG_STRUCT;
+
+#define L0P10PCM_PCIE_CFG_WIDTH 32
+#define L0P10PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define L0P10PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L0P10PCM_PCIE_CFG_P10CC_LSB 0x0000
+#define L0P10PCM_PCIE_CFG_P10CC_SIZE 0x0006
+#define L0P10PCM_PCIE_CFG_P10PRECC_LSB 0x0006
+#define L0P10PCM_PCIE_CFG_P10PRECC_SIZE 0x0006
+#define L0P10PCM_PCIE_CFG_P10PSTCC_LSB 0x000c
+#define L0P10PCM_PCIE_CFG_P10PSTCC_SIZE 0x0006
+#define L0P10PCM_PCIE_CFG_RSVD_M_LSB 0x0012
+#define L0P10PCM_PCIE_CFG_RSVD_M_SIZE 0x000e
+
+
+
+/** L0LFFS desc:
+  */
+
+#define L0LFFS_PCIE_CFG_REG              (0x0000051cU)
+
+typedef union {
+  struct {
+    UINT32 lplfv : 6;
+    UINT32 rsvd_0 : 2;
+    UINT32 lpfsv : 6;
+    UINT32 rsvd_1 : 2;
+    UINT32 rplfv : 6;
+    UINT32 rsvd_2 : 2;
+    UINT32 rpfsv : 6;
+    UINT32 rsvd_3 : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L0LFFS_PCIE_CFG_STRUCT;
+
+#define L0LFFS_PCIE_CFG_WIDTH 32
+#define L0LFFS_PCIE_CFG_DEFAULT 0x00000000U
+#define L0LFFS_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L0LFFS_PCIE_CFG_LPLFV_LSB 0x0000
+#define L0LFFS_PCIE_CFG_LPLFV_SIZE 0x0006
+#define L0LFFS_PCIE_CFG_LPFSV_LSB 0x0008
+#define L0LFFS_PCIE_CFG_LPFSV_SIZE 0x0006
+#define L0LFFS_PCIE_CFG_RPLFV_LSB 0x0010
+#define L0LFFS_PCIE_CFG_RPLFV_SIZE 0x0006
+#define L0LFFS_PCIE_CFG_RPFSV_LSB 0x0018
+#define L0LFFS_PCIE_CFG_RPFSV_SIZE 0x0006
+
+
+
+/** PX16GP0P1PCM desc:
+  */
+
+#define PX16GP0P1PCM_PCIE_CFG_REG        (0x00000520U)
+
+typedef union {
+  struct {
+    UINT32 p0cc : 6;
+    UINT32 p0precc : 6;
+    UINT32 p0pstcc : 6;
+    UINT32 p1cc : 6;
+    UINT32 p1precc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PX16GP0P1PCM_PCIE_CFG_STRUCT;
+
+#define PX16GP0P1PCM_PCIE_CFG_WIDTH 32
+#define PX16GP0P1PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define PX16GP0P1PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PX16GP0P1PCM_PCIE_CFG_P0CC_LSB 0x0000
+#define PX16GP0P1PCM_PCIE_CFG_P0CC_SIZE 0x0006
+#define PX16GP0P1PCM_PCIE_CFG_P0PRECC_LSB 0x0006
+#define PX16GP0P1PCM_PCIE_CFG_P0PRECC_SIZE 0x0006
+#define PX16GP0P1PCM_PCIE_CFG_P0PSTCC_LSB 0x000c
+#define PX16GP0P1PCM_PCIE_CFG_P0PSTCC_SIZE 0x0006
+#define PX16GP0P1PCM_PCIE_CFG_P1CC_LSB 0x0012
+#define PX16GP0P1PCM_PCIE_CFG_P1CC_SIZE 0x0006
+#define PX16GP0P1PCM_PCIE_CFG_P1PRECC_LSB 0x0018
+#define PX16GP0P1PCM_PCIE_CFG_P1PRECC_SIZE 0x0006
+#define PX16GP0P1PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define PX16GP0P1PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** PX16GP1P2P3PCM desc:
+  */
+
+#define PX16GP1P2P3PCM_PCIE_CFG_REG      (0x00000524U)
+
+typedef union {
+  struct {
+    UINT32 p1pstcc : 6;
+    UINT32 p2cc : 6;
+    UINT32 p2precc : 6;
+    UINT32 p2pstcc : 6;
+    UINT32 p3cc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PX16GP1P2P3PCM_PCIE_CFG_STRUCT;
+
+#define PX16GP1P2P3PCM_PCIE_CFG_WIDTH 32
+#define PX16GP1P2P3PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define PX16GP1P2P3PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PX16GP1P2P3PCM_PCIE_CFG_P1PSTCC_LSB 0x0000
+#define PX16GP1P2P3PCM_PCIE_CFG_P1PSTCC_SIZE 0x0006
+#define PX16GP1P2P3PCM_PCIE_CFG_P2CC_LSB 0x0006
+#define PX16GP1P2P3PCM_PCIE_CFG_P2CC_SIZE 0x0006
+#define PX16GP1P2P3PCM_PCIE_CFG_P2PRECC_LSB 0x000c
+#define PX16GP1P2P3PCM_PCIE_CFG_P2PRECC_SIZE 0x0006
+#define PX16GP1P2P3PCM_PCIE_CFG_P2PSTCC_LSB 0x0012
+#define PX16GP1P2P3PCM_PCIE_CFG_P2PSTCC_SIZE 0x0006
+#define PX16GP1P2P3PCM_PCIE_CFG_P3CC_LSB 0x0018
+#define PX16GP1P2P3PCM_PCIE_CFG_P3CC_SIZE 0x0006
+#define PX16GP1P2P3PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define PX16GP1P2P3PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** PX16GP3P4PCM desc:
+  */
+
+#define PX16GP3P4PCM_PCIE_CFG_REG        (0x00000528U)
+
+typedef union {
+  struct {
+    UINT32 p3precc : 6;
+    UINT32 p3pstcc : 6;
+    UINT32 p4cc : 6;
+    UINT32 p4precc : 6;
+    UINT32 p4pstcc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PX16GP3P4PCM_PCIE_CFG_STRUCT;
+
+#define PX16GP3P4PCM_PCIE_CFG_WIDTH 32
+#define PX16GP3P4PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define PX16GP3P4PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PX16GP3P4PCM_PCIE_CFG_P3PRECC_LSB 0x0000
+#define PX16GP3P4PCM_PCIE_CFG_P3PRECC_SIZE 0x0006
+#define PX16GP3P4PCM_PCIE_CFG_P3PSTCC_LSB 0x0006
+#define PX16GP3P4PCM_PCIE_CFG_P3PSTCC_SIZE 0x0006
+#define PX16GP3P4PCM_PCIE_CFG_P4CC_LSB 0x000c
+#define PX16GP3P4PCM_PCIE_CFG_P4CC_SIZE 0x0006
+#define PX16GP3P4PCM_PCIE_CFG_P4PRECC_LSB 0x0012
+#define PX16GP3P4PCM_PCIE_CFG_P4PRECC_SIZE 0x0006
+#define PX16GP3P4PCM_PCIE_CFG_P4PSTCC_LSB 0x0018
+#define PX16GP3P4PCM_PCIE_CFG_P4PSTCC_SIZE 0x0006
+#define PX16GP3P4PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define PX16GP3P4PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** PX16GP5P6PCM desc:
+  */
+
+#define PX16GP5P6PCM_PCIE_CFG_REG        (0x0000052cU)
+
+typedef union {
+  struct {
+    UINT32 p5cc : 6;
+    UINT32 p5precc : 6;
+    UINT32 p5pstcc : 6;
+    UINT32 p6cc : 6;
+    UINT32 p6precc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PX16GP5P6PCM_PCIE_CFG_STRUCT;
+
+#define PX16GP5P6PCM_PCIE_CFG_WIDTH 32
+#define PX16GP5P6PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define PX16GP5P6PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PX16GP5P6PCM_PCIE_CFG_P5CC_LSB 0x0000
+#define PX16GP5P6PCM_PCIE_CFG_P5CC_SIZE 0x0006
+#define PX16GP5P6PCM_PCIE_CFG_P5PRECC_LSB 0x0006
+#define PX16GP5P6PCM_PCIE_CFG_P5PRECC_SIZE 0x0006
+#define PX16GP5P6PCM_PCIE_CFG_P5PSTCC_LSB 0x000c
+#define PX16GP5P6PCM_PCIE_CFG_P5PSTCC_SIZE 0x0006
+#define PX16GP5P6PCM_PCIE_CFG_P6CC_LSB 0x0012
+#define PX16GP5P6PCM_PCIE_CFG_P6CC_SIZE 0x0006
+#define PX16GP5P6PCM_PCIE_CFG_P6PRECC_LSB 0x0018
+#define PX16GP5P6PCM_PCIE_CFG_P6PRECC_SIZE 0x0006
+#define PX16GP5P6PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define PX16GP5P6PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** PX16GP6P7P8PCM desc:
+  */
+
+#define PX16GP6P7P8PCM_PCIE_CFG_REG      (0x00000530U)
+
+typedef union {
+  struct {
+    UINT32 p6pstcc : 6;
+    UINT32 p7cc : 6;
+    UINT32 p7precc : 6;
+    UINT32 p7pstcc : 6;
+    UINT32 p8cc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PX16GP6P7P8PCM_PCIE_CFG_STRUCT;
+
+#define PX16GP6P7P8PCM_PCIE_CFG_WIDTH 32
+#define PX16GP6P7P8PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define PX16GP6P7P8PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PX16GP6P7P8PCM_PCIE_CFG_P6PSTCC_LSB 0x0000
+#define PX16GP6P7P8PCM_PCIE_CFG_P6PSTCC_SIZE 0x0006
+#define PX16GP6P7P8PCM_PCIE_CFG_P7CC_LSB 0x0006
+#define PX16GP6P7P8PCM_PCIE_CFG_P7CC_SIZE 0x0006
+#define PX16GP6P7P8PCM_PCIE_CFG_P7PRECC_LSB 0x000c
+#define PX16GP6P7P8PCM_PCIE_CFG_P7PRECC_SIZE 0x0006
+#define PX16GP6P7P8PCM_PCIE_CFG_P7PSTCC_LSB 0x0012
+#define PX16GP6P7P8PCM_PCIE_CFG_P7PSTCC_SIZE 0x0006
+#define PX16GP6P7P8PCM_PCIE_CFG_P8CC_LSB 0x0018
+#define PX16GP6P7P8PCM_PCIE_CFG_P8CC_SIZE 0x0006
+#define PX16GP6P7P8PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define PX16GP6P7P8PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** PX16GP8P9PCM desc:
+  */
+
+#define PX16GP8P9PCM_PCIE_CFG_REG        (0x00000534U)
+
+typedef union {
+  struct {
+    UINT32 p8precc : 6;
+    UINT32 p8pstcc : 6;
+    UINT32 p9cc : 6;
+    UINT32 p9precc : 6;
+    UINT32 p9pstcc : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PX16GP8P9PCM_PCIE_CFG_STRUCT;
+
+#define PX16GP8P9PCM_PCIE_CFG_WIDTH 32
+#define PX16GP8P9PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define PX16GP8P9PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PX16GP8P9PCM_PCIE_CFG_P8PRECC_LSB 0x0000
+#define PX16GP8P9PCM_PCIE_CFG_P8PRECC_SIZE 0x0006
+#define PX16GP8P9PCM_PCIE_CFG_P8PSTCC_LSB 0x0006
+#define PX16GP8P9PCM_PCIE_CFG_P8PSTCC_SIZE 0x0006
+#define PX16GP8P9PCM_PCIE_CFG_P9CC_LSB 0x000c
+#define PX16GP8P9PCM_PCIE_CFG_P9CC_SIZE 0x0006
+#define PX16GP8P9PCM_PCIE_CFG_P9PRECC_LSB 0x0012
+#define PX16GP8P9PCM_PCIE_CFG_P9PRECC_SIZE 0x0006
+#define PX16GP8P9PCM_PCIE_CFG_P9PSTCC_LSB 0x0018
+#define PX16GP8P9PCM_PCIE_CFG_P9PSTCC_SIZE 0x0006
+#define PX16GP8P9PCM_PCIE_CFG_RSVD_M_LSB 0x001e
+#define PX16GP8P9PCM_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+
+
+/** PX16GP10PCM desc:
+  */
+
+#define PX16GP10PCM_PCIE_CFG_REG         (0x00000538U)
+
+typedef union {
+  struct {
+    UINT32 p10cc : 6;
+    UINT32 p10precc : 6;
+    UINT32 p10pstcc : 6;
+    UINT32 rsvd_m : 14;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PX16GP10PCM_PCIE_CFG_STRUCT;
+
+#define PX16GP10PCM_PCIE_CFG_WIDTH 32
+#define PX16GP10PCM_PCIE_CFG_DEFAULT 0x00000000U
+#define PX16GP10PCM_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PX16GP10PCM_PCIE_CFG_P10CC_LSB 0x0000
+#define PX16GP10PCM_PCIE_CFG_P10CC_SIZE 0x0006
+#define PX16GP10PCM_PCIE_CFG_P10PRECC_LSB 0x0006
+#define PX16GP10PCM_PCIE_CFG_P10PRECC_SIZE 0x0006
+#define PX16GP10PCM_PCIE_CFG_P10PSTCC_LSB 0x000c
+#define PX16GP10PCM_PCIE_CFG_P10PSTCC_SIZE 0x0006
+#define PX16GP10PCM_PCIE_CFG_RSVD_M_LSB 0x0012
+#define PX16GP10PCM_PCIE_CFG_RSVD_M_SIZE 0x000e
+
+
+
+/** PX16GLFFS desc:
+  */
+
+#define PX16GLFFS_PCIE_CFG_REG           (0x0000053cU)
+
+typedef union {
+  struct {
+    UINT32 lplfv : 6;
+    UINT32 rsvd_0 : 2;
+    UINT32 lpfsv : 6;
+    UINT32 rsvd_1 : 2;
+    UINT32 rplfv : 6;
+    UINT32 rsvd_2 : 2;
+    UINT32 rpfsv : 6;
+    UINT32 rsvd_m : 2;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PX16GLFFS_PCIE_CFG_STRUCT;
+
+#define PX16GLFFS_PCIE_CFG_WIDTH 32
+#define PX16GLFFS_PCIE_CFG_DEFAULT 0x00000000U
+#define PX16GLFFS_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PX16GLFFS_PCIE_CFG_LPLFV_LSB 0x0000
+#define PX16GLFFS_PCIE_CFG_LPLFV_SIZE 0x0006
+#define PX16GLFFS_PCIE_CFG_LPFSV_LSB 0x0008
+#define PX16GLFFS_PCIE_CFG_LPFSV_SIZE 0x0006
+#define PX16GLFFS_PCIE_CFG_RPLFV_LSB 0x0010
+#define PX16GLFFS_PCIE_CFG_RPLFV_SIZE 0x0006
+#define PX16GLFFS_PCIE_CFG_RPFSV_LSB 0x0018
+#define PX16GLFFS_PCIE_CFG_RPFSV_SIZE 0x0006
+#define PX16GLFFS_PCIE_CFG_RSVD_M_LSB 0x001e
+#define PX16GLFFS_PCIE_CFG_RSVD_M_SIZE 0x0002
+
+/** COCTL desc:
+  */
+
+#define COCTL_PCIE_CFG_REG               (0x00000594U)
+
+typedef union {
+  struct {
+    UINT32 pwce : 1;
+    UINT32 ddce : 1;
+    UINT32 ct : 8;
+    UINT32 cte : 1;
+    UINT32 roaop : 1;
+    UINT32 magparcd : 1;
+    UINT32 pclm : 2;
+    UINT32 npclm : 2;
+    UINT32 ccsm : 1;
+    UINT32 chainbarbe : 1;
+    UINT32 rsvd_m : 13;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} COCTL_PCIE_CFG_STRUCT;
+
+#define COCTL_PCIE_CFG_WIDTH 32
+#define COCTL_PCIE_CFG_DEFAULT 0x00001000U
+#define COCTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define COCTL_PCIE_CFG_PWCE_LSB 0x0000
+#define COCTL_PCIE_CFG_PWCE_SIZE 0x0001
+#define COCTL_PCIE_CFG_DDCE_LSB 0x0001
+#define COCTL_PCIE_CFG_DDCE_SIZE 0x0001
+#define COCTL_PCIE_CFG_CT_LSB 0x0002
+#define COCTL_PCIE_CFG_CT_SIZE 0x0008
+#define COCTL_PCIE_CFG_CTE_LSB 0x000a
+#define COCTL_PCIE_CFG_CTE_SIZE 0x0001
+#define COCTL_PCIE_CFG_ROAOP_LSB 0x000b
+#define COCTL_PCIE_CFG_ROAOP_SIZE 0x0001
+#define COCTL_PCIE_CFG_MAGPARCD_LSB 0x000c
+#define COCTL_PCIE_CFG_MAGPARCD_SIZE 0x0001
+#define COCTL_PCIE_CFG_PCLM_LSB 0x000d
+#define COCTL_PCIE_CFG_PCLM_SIZE 0x0002
+#define COCTL_PCIE_CFG_NPCLM_LSB 0x000f
+#define COCTL_PCIE_CFG_NPCLM_SIZE 0x0002
+#define COCTL_PCIE_CFG_CCSM_LSB 0x0011
+#define COCTL_PCIE_CFG_CCSM_SIZE 0x0001
+#define COCTL_PCIE_CFG_CHAINBARBE_LSB 0x0012
+#define COCTL_PCIE_CFG_CHAINBARBE_SIZE 0x0001
+#define COCTL_PCIE_CFG_RSVD_M_LSB 0x0013
+#define COCTL_PCIE_CFG_RSVD_M_SIZE 0x000d
+
+
+
+/** ADVMCTRL desc:
+  */
+
+#define ADVMCTRL_PCIE_CFG_REG            (0x000005bcU)
+
+typedef union {
+  struct {
+    UINT32 pl1mit : 3;
+    UINT32 rtd3perst : 1;
+    UINT32 rtd3pfetdis : 1;
+    UINT32 pmreqblkpgrspt : 3;
+    UINT32 lmeqce : 1;
+    UINT32 lmeqts1e : 1;
+    UINT32 rllg12r : 1;
+    UINT32 rrllcl : 1;
+    UINT32 stlprs : 1;
+    UINT32 g3stfer : 1;
+    UINT32 clkreqsm : 1;
+    UINT32 rxl0dc : 1;
+    UINT32 pmreqcwc : 3;
+    UINT32 eiosmaskrx : 1;
+    UINT32 eiosdisds : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 inrxl0ctrl : 1;
+    UINT32 ccbe : 1;
+    UINT32 f10btse : 1;
+    UINT32 i8gteqts2tpv : 1;
+    UINT32 cttvs : 1;
+    UINT32 rsvd_rw2 : 5;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} ADVMCTRL_PCIE_CFG_STRUCT;
+
+#define ADVMCTRL_PCIE_CFG_WIDTH 32
+#define ADVMCTRL_PCIE_CFG_DEFAULT 0x00006300U
+#define ADVMCTRL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define ADVMCTRL_PCIE_CFG_PL1MIT_LSB 0x0000
+#define ADVMCTRL_PCIE_CFG_PL1MIT_SIZE 0x0003
+#define ADVMCTRL_PCIE_CFG_RTD3PERST_LSB 0x0003
+#define ADVMCTRL_PCIE_CFG_RTD3PERST_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_RTD3PFETDIS_LSB 0x0004
+#define ADVMCTRL_PCIE_CFG_RTD3PFETDIS_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_PMREQBLKPGRSPT_LSB 0x0005
+#define ADVMCTRL_PCIE_CFG_PMREQBLKPGRSPT_SIZE 0x0003
+#define ADVMCTRL_PCIE_CFG_LMEQCE_LSB 0x0008
+#define ADVMCTRL_PCIE_CFG_LMEQCE_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_LMEQTS1E_LSB 0x0009
+#define ADVMCTRL_PCIE_CFG_LMEQTS1E_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_RLLG12R_LSB 0x000a
+#define ADVMCTRL_PCIE_CFG_RLLG12R_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_RRLLCL_LSB 0x000b
+#define ADVMCTRL_PCIE_CFG_RRLLCL_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_STLPRS_LSB 0x000c
+#define ADVMCTRL_PCIE_CFG_STLPRS_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_G3STFER_LSB 0x000d
+#define ADVMCTRL_PCIE_CFG_G3STFER_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_CLKREQSM_LSB 0x000e
+#define ADVMCTRL_PCIE_CFG_CLKREQSM_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_RXL0DC_LSB 0x000f
+#define ADVMCTRL_PCIE_CFG_RXL0DC_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_PMREQCWC_LSB 0x0010
+#define ADVMCTRL_PCIE_CFG_PMREQCWC_SIZE 0x0003
+#define ADVMCTRL_PCIE_CFG_EIOSMASKRX_LSB 0x0013
+#define ADVMCTRL_PCIE_CFG_EIOSMASKRX_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_EIOSDISDS_LSB 0x0014
+#define ADVMCTRL_PCIE_CFG_EIOSDISDS_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_INRXL0CTRL_LSB 0x0016
+#define ADVMCTRL_PCIE_CFG_INRXL0CTRL_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_CCBE_LSB 0x0017
+#define ADVMCTRL_PCIE_CFG_CCBE_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_F10BTSE_LSB 0x0018
+#define ADVMCTRL_PCIE_CFG_F10BTSE_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_I8GTEQTS2TPV_LSB 0x0019
+#define ADVMCTRL_PCIE_CFG_I8GTEQTS2TPV_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_CTTVS_LSB 0x001a
+#define ADVMCTRL_PCIE_CFG_CTTVS_SIZE 0x0001
+#define ADVMCTRL_PCIE_CFG_RSVD_RW2_LSB 0x001b
+#define ADVMCTRL_PCIE_CFG_RSVD_RW2_SIZE 0x0005
+
+
+
+/** PGTHRES desc:
+  */
+
+#define PGTHRES_PCIE_CFG_REG             (0x000005c0U)
+
+typedef union {
+  struct {
+    UINT32 l1pgltren : 1;
+    UINT32 rsvd_0 : 15;
+    UINT32 l1pgltrtlv : 10;
+    UINT32 rsvd_1 : 3;
+    UINT32 l1pgltrtlsv : 3;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PGTHRES_PCIE_CFG_STRUCT;
+
+#define PGTHRES_PCIE_CFG_WIDTH 32
+#define PGTHRES_PCIE_CFG_DEFAULT 0x00000000U
+#define PGTHRES_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PGTHRES_PCIE_CFG_L1PGLTREN_LSB 0x0000
+#define PGTHRES_PCIE_CFG_L1PGLTREN_SIZE 0x0001
+#define PGTHRES_PCIE_CFG_L1PGLTRTLV_LSB 0x0010
+#define PGTHRES_PCIE_CFG_L1PGLTRTLV_SIZE 0x000a
+#define PGTHRES_PCIE_CFG_L1PGLTRTLSV_LSB 0x001d
+#define PGTHRES_PCIE_CFG_L1PGLTRTLSV_SIZE 0x0003
+
+
+
+/** HWSNR desc:
+  */
+
+#define HWSNR_PCIE_CFG_REG               (0x000005f0U)
+
+typedef union {
+  struct {
+    UINT32 bepw : 4;
+    UINT32 repw : 4;
+    UINT32 eeh : 2;
+    UINT32 ready4pg : 1;
+    UINT32 rsvd_m : 21;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} HWSNR_PCIE_CFG_STRUCT;
+
+#define HWSNR_PCIE_CFG_WIDTH 32
+#define HWSNR_PCIE_CFG_DEFAULT 0x00000217U
+#define HWSNR_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define HWSNR_PCIE_CFG_BEPW_LSB 0x0000
+#define HWSNR_PCIE_CFG_BEPW_SIZE 0x0004
+#define HWSNR_PCIE_CFG_REPW_LSB 0x0004
+#define HWSNR_PCIE_CFG_REPW_SIZE 0x0004
+#define HWSNR_PCIE_CFG_EEH_LSB 0x0008
+#define HWSNR_PCIE_CFG_EEH_SIZE 0x0002
+#define HWSNR_PCIE_CFG_READY4PG_LSB 0x000a
+#define HWSNR_PCIE_CFG_READY4PG_SIZE 0x0001
+#define HWSNR_PCIE_CFG_RSVD_M_LSB 0x000b
+#define HWSNR_PCIE_CFG_RSVD_M_SIZE 0x0015
+
+
+
+/** PGCTRL desc:
+  */
+
+#define PGCTRL_PCIE_CFG_REG              (0x000005f4U)
+
+typedef union {
+  struct {
+    UINT32 pmreqblkrspt : 3;
+    UINT32 pmreqblkrsptm : 2;
+    UINT32 rsvd_m : 27;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PGCTRL_PCIE_CFG_STRUCT;
+
+#define PGCTRL_PCIE_CFG_WIDTH 32
+#define PGCTRL_PCIE_CFG_DEFAULT 0x00000000U
+#define PGCTRL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PGCTRL_PCIE_CFG_PMREQBLKRSPT_LSB 0x0000
+#define PGCTRL_PCIE_CFG_PMREQBLKRSPT_SIZE 0x0003
+#define PGCTRL_PCIE_CFG_PMREQBLKRSPTM_LSB 0x0003
+#define PGCTRL_PCIE_CFG_PMREQBLKRSPTM_SIZE 0x0002
+#define PGCTRL_PCIE_CFG_RSVD_M_LSB 0x0005
+#define PGCTRL_PCIE_CFG_RSVD_M_SIZE 0x001b
+
+
+
+/** PX16GLTCO1 desc:
+  */
+
+#define PX16GLTCO1_PCIE_CFG_REG          (0x00000600U)
+
+typedef union {
+  struct {
+    UINT32 l0tpreco : 6;
+    UINT32 l0tpostco : 6;
+    UINT32 l1tpreco : 6;
+    UINT32 l1tpostco : 6;
+    UINT32 l0tcoe : 1;
+    UINT32 l1tcoe : 1;
+    UINT32 rsvd_m : 6;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PX16GLTCO1_PCIE_CFG_STRUCT;
+
+#define PX16GLTCO1_PCIE_CFG_WIDTH 32
+#define PX16GLTCO1_PCIE_CFG_DEFAULT 0x00000000U
+#define PX16GLTCO1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PX16GLTCO1_PCIE_CFG_L0TPRECO_LSB 0x0000
+#define PX16GLTCO1_PCIE_CFG_L0TPRECO_SIZE 0x0006
+#define PX16GLTCO1_PCIE_CFG_L0TPOSTCO_LSB 0x0006
+#define PX16GLTCO1_PCIE_CFG_L0TPOSTCO_SIZE 0x0006
+#define PX16GLTCO1_PCIE_CFG_L1TPRECO_LSB 0x000c
+#define PX16GLTCO1_PCIE_CFG_L1TPRECO_SIZE 0x0006
+#define PX16GLTCO1_PCIE_CFG_L1TPOSTCO_LSB 0x0012
+#define PX16GLTCO1_PCIE_CFG_L1TPOSTCO_SIZE 0x0006
+#define PX16GLTCO1_PCIE_CFG_L0TCOE_LSB 0x0018
+#define PX16GLTCO1_PCIE_CFG_L0TCOE_SIZE 0x0001
+#define PX16GLTCO1_PCIE_CFG_L1TCOE_LSB 0x0019
+#define PX16GLTCO1_PCIE_CFG_L1TCOE_SIZE 0x0001
+#define PX16GLTCO1_PCIE_CFG_RSVD_M_LSB 0x001a
+#define PX16GLTCO1_PCIE_CFG_RSVD_M_SIZE 0x0006
+
+
+
+/** GDR desc:
+  */
+
+#define GDR_PCIE_CFG_REG                 (0x00000690U)
+
+typedef union {
+  struct {
+    UINT32 rsvd_0 : 10;
+    UINT32 gpioald : 1;
+    UINT32 vgpioalde : 1;
+    UINT32 ldvwmidx : 8;
+    UINT32 ldvwmbitloc : 3;
+    UINT32 ldvwmdestid : 8;
+    UINT32 rsvd_m : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} GDR_PCIE_CFG_STRUCT;
+
+#define GDR_PCIE_CFG_WIDTH 32
+#define GDR_PCIE_CFG_DEFAULT 0x00000000U
+#define GDR_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define GDR_PCIE_CFG_GPIOALD_LSB 0x000a
+#define GDR_PCIE_CFG_GPIOALD_SIZE 0x0001
+#define GDR_PCIE_CFG_VGPIOALDE_LSB 0x000b
+#define GDR_PCIE_CFG_VGPIOALDE_SIZE 0x0001
+#define GDR_PCIE_CFG_LDVWMIDX_LSB 0x000c
+#define GDR_PCIE_CFG_LDVWMIDX_SIZE 0x0008
+#define GDR_PCIE_CFG_LDVWMBITLOC_LSB 0x0014
+#define GDR_PCIE_CFG_LDVWMBITLOC_SIZE 0x0003
+#define GDR_PCIE_CFG_LDVWMDESTID_LSB 0x0017
+#define GDR_PCIE_CFG_LDVWMDESTID_SIZE 0x0008
+#define GDR_PCIE_CFG_RSVD_M_LSB 0x001f
+#define GDR_PCIE_CFG_RSVD_M_SIZE 0x0001
+
+
+
+/** ACRG3 desc:
+  */
+
+#define ACRG3_PCIE_CFG_REG               (0x000006ccU)
+
+typedef union {
+  struct {
+    UINT32 uphlrcfg : 1;
+    UINT32 blkrxdsa : 1;
+    UINT32 ltsmstateosc : 5;
+    UINT32 rsvd_0 : 3;
+    UINT32 adeskew_dis : 1;
+    UINT32 lnrstctl : 3;
+    UINT32 rsvd_1 : 5;
+    UINT32 pasv : 1;
+    UINT32 sasv : 1;
+    UINT32 cbgm : 1;
+    UINT32 cpgwakectrl : 2;
+    UINT32 rsvd_2 : 1;
+    UINT32 vspfscg : 1;
+    UINT32 vspfb : 1;
+    UINT32 rrxdme : 1;
+    UINT32 rrxc : 3;
+    UINT32 cpudmiudecmsic : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} ACRG3_PCIE_CFG_STRUCT;
+
+#define ACRG3_PCIE_CFG_WIDTH 32
+#define ACRG3_PCIE_CFG_DEFAULT 0x00000000U
+#define ACRG3_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define ACRG3_PCIE_CFG_UPHLRCFG_LSB 0x0000
+#define ACRG3_PCIE_CFG_UPHLRCFG_SIZE 0x0001
+#define ACRG3_PCIE_CFG_BLKRXDSA_LSB 0x0001
+#define ACRG3_PCIE_CFG_BLKRXDSA_SIZE 0x0001
+#define ACRG3_PCIE_CFG_LTSMSTATEOSC_LSB 0x0002
+#define ACRG3_PCIE_CFG_LTSMSTATEOSC_SIZE 0x0005
+#define ACRG3_PCIE_CFG_ADESKEW_DIS_LSB 0x000a
+#define ACRG3_PCIE_CFG_ADESKEW_DIS_SIZE 0x0001
+#define ACRG3_PCIE_CFG_LNRSTCTL_LSB 0x000b
+#define ACRG3_PCIE_CFG_LNRSTCTL_SIZE 0x0003
+#define ACRG3_PCIE_CFG_PASV_LSB 0x0013
+#define ACRG3_PCIE_CFG_PASV_SIZE 0x0001
+#define ACRG3_PCIE_CFG_SASV_LSB 0x0014
+#define ACRG3_PCIE_CFG_SASV_SIZE 0x0001
+#define ACRG3_PCIE_CFG_CBGM_LSB 0x0015
+#define ACRG3_PCIE_CFG_CBGM_SIZE 0x0001
+#define ACRG3_PCIE_CFG_CPGWAKECTRL_LSB 0x0016
+#define ACRG3_PCIE_CFG_CPGWAKECTRL_SIZE 0x0002
+#define ACRG3_PCIE_CFG_VSPFSCG_LSB 0x0019
+#define ACRG3_PCIE_CFG_VSPFSCG_SIZE 0x0001
+#define ACRG3_PCIE_CFG_VSPFB_LSB 0x001a
+#define ACRG3_PCIE_CFG_VSPFB_SIZE 0x0001
+#define ACRG3_PCIE_CFG_RRXDME_LSB 0x001b
+#define ACRG3_PCIE_CFG_RRXDME_SIZE 0x0001
+#define ACRG3_PCIE_CFG_RRXC_LSB 0x001c
+#define ACRG3_PCIE_CFG_RRXC_SIZE 0x0003
+#define ACRG3_PCIE_CFG_CPUDMIUDECMSIC_LSB 0x001f
+#define ACRG3_PCIE_CFG_CPUDMIUDECMSIC_SIZE 0x0001
+
+
+
+/** DPCECH desc:
+  */
+
+#define DPCECH_PCIE_CFG_REG              (0x00000a00U)
+
+typedef union {
+  struct {
+    UINT32 cid : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} DPCECH_PCIE_CFG_STRUCT;
+
+#define DPCECH_PCIE_CFG_WIDTH 32
+#define DPCECH_PCIE_CFG_DEFAULT 0x00000000U
+#define DPCECH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define DPCECH_PCIE_CFG_CID_LSB 0x0000
+#define DPCECH_PCIE_CFG_CID_SIZE 0x0010
+#define DPCECH_PCIE_CFG_CV_LSB 0x0010
+#define DPCECH_PCIE_CFG_CV_SIZE 0x0004
+#define DPCECH_PCIE_CFG_NCO_LSB 0x0014
+#define DPCECH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+/** DPCCAPR desc:
+  */
+
+#define DPCCAPR_PCIE_CFG_REG             (0x00000a04U)
+
+typedef union {
+  struct {
+    UINT16 dpcimn : 5;
+    UINT16 rpefdpc : 1;
+    UINT16 ptlpebs : 1;
+    UINT16 dpcsts : 1;
+    UINT16 rppiols : 4;
+    UINT16 dlaecss : 1;
+    UINT16 rsvd_m : 3;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} DPCCAPR_PCIE_CFG_STRUCT;
+
+#define DPCCAPR_PCIE_CFG_WIDTH 16
+#define DPCCAPR_PCIE_CFG_DEFAULT 0x14e0U
+#define DPCCAPR_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define DPCCAPR_PCIE_CFG_DPCIMN_LSB 0x0000
+#define DPCCAPR_PCIE_CFG_DPCIMN_SIZE 0x0005
+#define DPCCAPR_PCIE_CFG_RPEFDPC_LSB 0x0005
+#define DPCCAPR_PCIE_CFG_RPEFDPC_SIZE 0x0001
+#define DPCCAPR_PCIE_CFG_PTLPEBS_LSB 0x0006
+#define DPCCAPR_PCIE_CFG_PTLPEBS_SIZE 0x0001
+#define DPCCAPR_PCIE_CFG_DPCSTS_LSB 0x0007
+#define DPCCAPR_PCIE_CFG_DPCSTS_SIZE 0x0001
+#define DPCCAPR_PCIE_CFG_RPPIOLS_LSB 0x0008
+#define DPCCAPR_PCIE_CFG_RPPIOLS_SIZE 0x0004
+#define DPCCAPR_PCIE_CFG_DLAECSS_LSB 0x000c
+#define DPCCAPR_PCIE_CFG_DLAECSS_SIZE 0x0001
+#define DPCCAPR_PCIE_CFG_RSVD_M_LSB 0x000d
+#define DPCCAPR_PCIE_CFG_RSVD_M_SIZE 0x0003
+
+
+/** SPEECH desc:
+  */
+
+#define SPEECH_PCIE_CFG_REG              (0x00000a30U)
+
+typedef union {
+  struct {
+    UINT32 pcieecid : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} SPEECH_PCIE_CFG_STRUCT;
+
+#define SPEECH_PCIE_CFG_WIDTH 32
+#define SPEECH_PCIE_CFG_DEFAULT 0x00000000U
+#define SPEECH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define SPEECH_PCIE_CFG_PCIEECID_LSB 0x0000
+#define SPEECH_PCIE_CFG_PCIEECID_SIZE 0x0010
+#define SPEECH_PCIE_CFG_CV_LSB 0x0010
+#define SPEECH_PCIE_CFG_CV_SIZE 0x0004
+#define SPEECH_PCIE_CFG_NCO_LSB 0x0014
+#define SPEECH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+/** LCTL3 desc:
+  */
+
+#define LCTL3_PCIE_CFG_REG               (0x00000a34U)
+
+typedef union {
+  struct {
+    UINT32 pe : 1;
+    UINT32 lerie : 1;
+    UINT32 rsvd_0 : 7;
+    UINT32 elsosgv : 7;
+    UINT32 rsvd_m : 16;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LCTL3_PCIE_CFG_STRUCT;
+
+#define LCTL3_PCIE_CFG_WIDTH 32
+#define LCTL3_PCIE_CFG_DEFAULT 0x00000000U
+#define LCTL3_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LCTL3_PCIE_CFG_PE_LSB 0x0000
+#define LCTL3_PCIE_CFG_PE_SIZE 0x0001
+#define LCTL3_PCIE_CFG_LERIE_LSB 0x0001
+#define LCTL3_PCIE_CFG_LERIE_SIZE 0x0001
+#define LCTL3_PCIE_CFG_ELSOSGV_LSB 0x0009
+#define LCTL3_PCIE_CFG_ELSOSGV_SIZE 0x0007
+#define LCTL3_PCIE_CFG_RSVD_M_LSB 0x0010
+#define LCTL3_PCIE_CFG_RSVD_M_SIZE 0x0010
+
+
+/** L01EC desc:
+  */
+
+#define L01EC_PCIE_CFG_REG               (0x00000a3cU)
+
+typedef union {
+  struct {
+    UINT32 dpl0tp : 4;
+    UINT32 dpl0rph : 3;
+    UINT32 rsvd_0 : 1;
+    UINT32 upl0tp : 4;
+    UINT32 upl0rph : 3;
+    UINT32 rsvd_1 : 1;
+    UINT32 dpl1tp : 4;
+    UINT32 dpl1rph : 3;
+    UINT32 rsvd_2 : 1;
+    UINT32 upl1tp : 4;
+    UINT32 upl1rph : 3;
+    UINT32 rsvd_m : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} L01EC_PCIE_CFG_STRUCT;
+
+#define L01EC_PCIE_CFG_WIDTH 32
+#define L01EC_PCIE_CFG_DEFAULT 0x7f7f7f7fU
+#define L01EC_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define L01EC_PCIE_CFG_DPL0TP_LSB 0x0000
+#define L01EC_PCIE_CFG_DPL0TP_SIZE 0x0004
+#define L01EC_PCIE_CFG_DPL0RPH_LSB 0x0004
+#define L01EC_PCIE_CFG_DPL0RPH_SIZE 0x0003
+#define L01EC_PCIE_CFG_UPL0TP_LSB 0x0008
+#define L01EC_PCIE_CFG_UPL0TP_SIZE 0x0004
+#define L01EC_PCIE_CFG_UPL0RPH_LSB 0x000c
+#define L01EC_PCIE_CFG_UPL0RPH_SIZE 0x0003
+#define L01EC_PCIE_CFG_DPL1TP_LSB 0x0010
+#define L01EC_PCIE_CFG_DPL1TP_SIZE 0x0004
+#define L01EC_PCIE_CFG_DPL1RPH_LSB 0x0014
+#define L01EC_PCIE_CFG_DPL1RPH_SIZE 0x0003
+#define L01EC_PCIE_CFG_UPL1TP_LSB 0x0018
+#define L01EC_PCIE_CFG_UPL1TP_SIZE 0x0004
+#define L01EC_PCIE_CFG_UPL1RPH_LSB 0x001c
+#define L01EC_PCIE_CFG_UPL1RPH_SIZE 0x0003
+#define L01EC_PCIE_CFG_RSVD_M_LSB 0x001f
+#define L01EC_PCIE_CFG_RSVD_M_SIZE 0x0001
+
+
+/** DLFECH desc:
+  */
+
+#define DLFECH_PCIE_CFG_REG              (0x00000a90U)
+
+typedef union {
+  struct {
+    UINT32 pciecid : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} DLFECH_PCIE_CFG_STRUCT;
+
+#define DLFECH_PCIE_CFG_WIDTH 32
+#define DLFECH_PCIE_CFG_DEFAULT 0x00000000U
+#define DLFECH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define DLFECH_PCIE_CFG_PCIECID_LSB 0x0000
+#define DLFECH_PCIE_CFG_PCIECID_SIZE 0x0010
+#define DLFECH_PCIE_CFG_CV_LSB 0x0010
+#define DLFECH_PCIE_CFG_CV_SIZE 0x0004
+#define DLFECH_PCIE_CFG_NCO_LSB 0x0014
+#define DLFECH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+/** DLFCAP desc:
+  */
+
+#define DLFCAP_PCIE_CFG_REG              (0x00000a94U)
+
+typedef union {
+  struct {
+    UINT32 lsfcs : 1;
+    UINT32 lfs : 22;
+    UINT32 rsvd_0 : 8;
+    UINT32 dlfee : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} DLFCAP_PCIE_CFG_STRUCT;
+
+#define DLFCAP_PCIE_CFG_WIDTH 32
+#define DLFCAP_PCIE_CFG_DEFAULT 0x80000001U
+#define DLFCAP_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define DLFCAP_PCIE_CFG_LSFCS_LSB 0x0000
+#define DLFCAP_PCIE_CFG_LSFCS_SIZE 0x0001
+#define DLFCAP_PCIE_CFG_LFS_LSB 0x0001
+#define DLFCAP_PCIE_CFG_LFS_SIZE 0x0016
+#define DLFCAP_PCIE_CFG_DLFEE_LSB 0x001f
+#define DLFCAP_PCIE_CFG_DLFEE_SIZE 0x0001
+
+
+/** PL16GECH desc:
+  */
+
+#define PL16GECH_PCIE_CFG_REG            (0x00000a9cU)
+
+typedef union {
+  struct {
+    UINT32 pciecid : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PL16GECH_PCIE_CFG_STRUCT;
+
+#define PL16GECH_PCIE_CFG_WIDTH 32
+#define PL16GECH_PCIE_CFG_DEFAULT 0x00000000U
+#define PL16GECH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PL16GECH_PCIE_CFG_PCIECID_LSB 0x0000
+#define PL16GECH_PCIE_CFG_PCIECID_SIZE 0x0010
+#define PL16GECH_PCIE_CFG_CV_LSB 0x0010
+#define PL16GECH_PCIE_CFG_CV_SIZE 0x0004
+#define PL16GECH_PCIE_CFG_NCO_LSB 0x0014
+#define PL16GECH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+/** PL16S desc:
+  */
+
+#define PL16S_PCIE_CFG_REG               (0x00000aa8U)
+
+typedef union {
+  struct {
+    UINT32 eqg4 : 1;
+    UINT32 eqp1sg4 : 1;
+    UINT32 eqp2sg4 : 1;
+    UINT32 eqp3sg4 : 1;
+    UINT32 lerg4 : 1;
+    UINT32 rsvd_m : 27;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PL16S_PCIE_CFG_STRUCT;
+
+#define PL16S_PCIE_CFG_WIDTH 32
+#define PL16S_PCIE_CFG_DEFAULT 0x00000000U
+#define PL16S_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PL16S_PCIE_CFG_EQG4_LSB 0x0000
+#define PL16S_PCIE_CFG_EQG4_SIZE 0x0001
+#define PL16S_PCIE_CFG_EQP1SG4_LSB 0x0001
+#define PL16S_PCIE_CFG_EQP1SG4_SIZE 0x0001
+#define PL16S_PCIE_CFG_EQP2SG4_LSB 0x0002
+#define PL16S_PCIE_CFG_EQP2SG4_SIZE 0x0001
+#define PL16S_PCIE_CFG_EQP3SG4_LSB 0x0003
+#define PL16S_PCIE_CFG_EQP3SG4_SIZE 0x0001
+#define PL16S_PCIE_CFG_LERG4_LSB 0x0004
+#define PL16S_PCIE_CFG_LERG4_SIZE 0x0001
+#define PL16S_PCIE_CFG_RSVD_M_LSB 0x0005
+#define PL16S_PCIE_CFG_RSVD_M_SIZE 0x001b
+
+
+/** PL16L01EC desc:
+  */
+
+#define PL16L01EC_PCIE_CFG_REG           (0x00000abcU)
+
+typedef union {
+  struct {
+    UINT16 dp16l0tp : 4;
+    UINT16 up16l0tp : 4;
+    UINT16 dp16l1tp : 4;
+    UINT16 up16l1tp : 4;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} PL16L01EC_PCIE_CFG_STRUCT;
+
+#define PL16L01EC_PCIE_CFG_WIDTH 16
+#define PL16L01EC_PCIE_CFG_DEFAULT 0xffffU
+#define PL16L01EC_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PL16L01EC_PCIE_CFG_DP16L0TP_LSB 0x0000
+#define PL16L01EC_PCIE_CFG_DP16L0TP_SIZE 0x0004
+#define PL16L01EC_PCIE_CFG_UP16L0TP_LSB 0x0004
+#define PL16L01EC_PCIE_CFG_UP16L0TP_SIZE 0x0004
+#define PL16L01EC_PCIE_CFG_DP16L1TP_LSB 0x0008
+#define PL16L01EC_PCIE_CFG_DP16L1TP_SIZE 0x0004
+#define PL16L01EC_PCIE_CFG_UP16L1TP_LSB 0x000c
+#define PL16L01EC_PCIE_CFG_UP16L1TP_SIZE 0x0004
+
+
+/** G5ECH desc:
+  */
+
+#define G5ECH_PCIE_CFG_REG               (0x00000adcU)
+
+typedef union {
+  struct {
+    UINT32 ecid : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} G5ECH_PCIE_CFG_STRUCT;
+
+#define G5ECH_PCIE_CFG_WIDTH 32
+#define G5ECH_PCIE_CFG_DEFAULT 0x0000002aU
+#define G5ECH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define G5ECH_PCIE_CFG_ECID_LSB 0x0000
+#define G5ECH_PCIE_CFG_ECID_SIZE 0x0010
+#define G5ECH_PCIE_CFG_CV_LSB 0x0010
+#define G5ECH_PCIE_CFG_CV_SIZE 0x0004
+#define G5ECH_PCIE_CFG_NCO_LSB 0x0014
+#define G5ECH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+/** G5CAP desc:
+  */
+
+#define G5CAP_PCIE_CFG_REG               (0x00000ae0U)
+
+typedef union {
+  struct {
+    UINT32 eqbypsup : 1;
+    UINT32 noeqsup : 1;
+    UINT32 rsvd_0 : 6;
+    UINT32 modtsusgmd0sup : 1;
+    UINT32 modtsusgmd1sup : 1;
+    UINT32 modtsusgmd2sup : 1;
+    UINT32 modtsusgmdrsvrvd : 5;
+    UINT32 rsvd_m : 16;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} G5CAP_PCIE_CFG_STRUCT;
+
+#define G5CAP_PCIE_CFG_WIDTH 32
+#define G5CAP_PCIE_CFG_DEFAULT 0x00000100U
+#define G5CAP_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define G5CAP_PCIE_CFG_EQBYPSUP_LSB 0x0000
+#define G5CAP_PCIE_CFG_EQBYPSUP_SIZE 0x0001
+#define G5CAP_PCIE_CFG_NOEQSUP_LSB 0x0001
+#define G5CAP_PCIE_CFG_NOEQSUP_SIZE 0x0001
+#define G5CAP_PCIE_CFG_MODTSUSGMD0SUP_LSB 0x0008
+#define G5CAP_PCIE_CFG_MODTSUSGMD0SUP_SIZE 0x0001
+#define G5CAP_PCIE_CFG_MODTSUSGMD1SUP_LSB 0x0009
+#define G5CAP_PCIE_CFG_MODTSUSGMD1SUP_SIZE 0x0001
+#define G5CAP_PCIE_CFG_MODTSUSGMD2SUP_LSB 0x000a
+#define G5CAP_PCIE_CFG_MODTSUSGMD2SUP_SIZE 0x0001
+#define G5CAP_PCIE_CFG_MODTSUSGMDRSVRVD_LSB 0x000b
+#define G5CAP_PCIE_CFG_MODTSUSGMDRSVRVD_SIZE 0x0005
+#define G5CAP_PCIE_CFG_RSVD_M_LSB 0x0010
+#define G5CAP_PCIE_CFG_RSVD_M_SIZE 0x0010
+
+
+/** G5CTL desc:
+  */
+
+#define G5CTL_PCIE_CFG_REG               (0x00000ae4U)
+
+typedef union {
+  struct {
+    UINT32 eqbypdis : 1;
+    UINT32 noeqdis : 1;
+    UINT32 rsvd_0 : 6;
+    UINT32 modtsusgsel : 3;
+    UINT32 rsvd_m : 21;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} G5CTL_PCIE_CFG_STRUCT;
+
+#define G5CTL_PCIE_CFG_WIDTH 32
+#define G5CTL_PCIE_CFG_DEFAULT 0x00000002U
+#define G5CTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define G5CTL_PCIE_CFG_EQBYPDIS_LSB 0x0000
+#define G5CTL_PCIE_CFG_EQBYPDIS_SIZE 0x0001
+#define G5CTL_PCIE_CFG_NOEQDIS_LSB 0x0001
+#define G5CTL_PCIE_CFG_NOEQDIS_SIZE 0x0001
+#define G5CTL_PCIE_CFG_MODTSUSGSEL_LSB 0x0008
+#define G5CTL_PCIE_CFG_MODTSUSGSEL_SIZE 0x0003
+#define G5CTL_PCIE_CFG_RSVD_M_LSB 0x000b
+#define G5CTL_PCIE_CFG_RSVD_M_SIZE 0x0015
+
+
+/** G5STS desc:
+  */
+
+#define G5STS_PCIE_CFG_REG               (0x00000ae8U)
+
+typedef union {
+  struct {
+    UINT32 eq32cmplt : 1;
+    UINT32 eq32ph1succ : 1;
+    UINT32 eq32ph2succ : 1;
+    UINT32 eq32ph3succ : 1;
+    UINT32 lerg5 : 1;
+    UINT32 modtsrcvd : 1;
+    UINT32 rcvdelbctl : 2;
+    UINT32 txprecodeo : 1;
+    UINT32 txprecoder : 1;
+    UINT32 noeqr : 1;
+    UINT32 rsvd_m : 21;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} G5STS_PCIE_CFG_STRUCT;
+
+#define G5STS_PCIE_CFG_WIDTH 32
+#define G5STS_PCIE_CFG_DEFAULT 0x00000000U
+#define G5STS_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define G5STS_PCIE_CFG_EQ32CMPLT_LSB 0x0000
+#define G5STS_PCIE_CFG_EQ32CMPLT_SIZE 0x0001
+#define G5STS_PCIE_CFG_EQ32PH1SUCC_LSB 0x0001
+#define G5STS_PCIE_CFG_EQ32PH1SUCC_SIZE 0x0001
+#define G5STS_PCIE_CFG_EQ32PH2SUCC_LSB 0x0002
+#define G5STS_PCIE_CFG_EQ32PH2SUCC_SIZE 0x0001
+#define G5STS_PCIE_CFG_EQ32PH3SUCC_LSB 0x0003
+#define G5STS_PCIE_CFG_EQ32PH3SUCC_SIZE 0x0001
+#define G5STS_PCIE_CFG_LERG5_LSB 0x0004
+#define G5STS_PCIE_CFG_LERG5_SIZE 0x0001
+#define G5STS_PCIE_CFG_MODTSRCVD_LSB 0x0005
+#define G5STS_PCIE_CFG_MODTSRCVD_SIZE 0x0001
+#define G5STS_PCIE_CFG_RCVDELBCTL_LSB 0x0006
+#define G5STS_PCIE_CFG_RCVDELBCTL_SIZE 0x0002
+#define G5STS_PCIE_CFG_TXPRECODEO_LSB 0x0008
+#define G5STS_PCIE_CFG_TXPRECODEO_SIZE 0x0001
+#define G5STS_PCIE_CFG_TXPRECODER_LSB 0x0009
+#define G5STS_PCIE_CFG_TXPRECODER_SIZE 0x0001
+#define G5STS_PCIE_CFG_NOEQR_LSB 0x000a
+#define G5STS_PCIE_CFG_NOEQR_SIZE 0x0001
+#define G5STS_PCIE_CFG_RSVD_M_LSB 0x000b
+#define G5STS_PCIE_CFG_RSVD_M_SIZE 0x0015
+
+
+/** G5LANEEQCTL_0 desc:
+  */
+
+#define G5LANEEQCTL_0_PCIE_CFG_REG       (0x00000afcU)
+
+typedef union {
+  struct {
+    UINT32 l0dptp : 4;
+    UINT32 l0uptp : 4;
+    UINT32 l1dptp : 4;
+    UINT32 l1uptp : 4;
+    UINT32 l2dptp : 4;
+    UINT32 l2uptp : 4;
+    UINT32 l3dptp : 4;
+    UINT32 l3uptp : 4;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} G5LANEEQCTL_0_PCIE_CFG_STRUCT;
+
+#define G5LANEEQCTL_0_PCIE_CFG_WIDTH 32
+#define G5LANEEQCTL_0_PCIE_CFG_DEFAULT 0xffffffffU
+#define G5LANEEQCTL_0_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define G5LANEEQCTL_0_PCIE_CFG_L0DPTP_LSB 0x0000
+#define G5LANEEQCTL_0_PCIE_CFG_L0DPTP_SIZE 0x0004
+#define G5LANEEQCTL_0_PCIE_CFG_L0UPTP_LSB 0x0004
+#define G5LANEEQCTL_0_PCIE_CFG_L0UPTP_SIZE 0x0004
+#define G5LANEEQCTL_0_PCIE_CFG_L1DPTP_LSB 0x0008
+#define G5LANEEQCTL_0_PCIE_CFG_L1DPTP_SIZE 0x0004
+#define G5LANEEQCTL_0_PCIE_CFG_L1UPTP_LSB 0x000c
+#define G5LANEEQCTL_0_PCIE_CFG_L1UPTP_SIZE 0x0004
+#define G5LANEEQCTL_0_PCIE_CFG_L2DPTP_LSB 0x0010
+#define G5LANEEQCTL_0_PCIE_CFG_L2DPTP_SIZE 0x0004
+#define G5LANEEQCTL_0_PCIE_CFG_L2UPTP_LSB 0x0014
+#define G5LANEEQCTL_0_PCIE_CFG_L2UPTP_SIZE 0x0004
+#define G5LANEEQCTL_0_PCIE_CFG_L3DPTP_LSB 0x0018
+#define G5LANEEQCTL_0_PCIE_CFG_L3DPTP_SIZE 0x0004
+#define G5LANEEQCTL_0_PCIE_CFG_L3UPTP_LSB 0x001c
+#define G5LANEEQCTL_0_PCIE_CFG_L3UPTP_SIZE 0x0004
+
+
+/** ACGR3S2 desc:
+  */
+
+#define ACGR3S2_PCIE_CFG_REG             (0x00000c50U)
+
+typedef union {
+  struct {
+    UINT32 lstptls : 4;
+    UINT32 drxtermdq : 1;
+    UINT32 srt : 1;
+    UINT32 g1ebm : 1;
+    UINT32 g2ebm : 1;
+    UINT32 g3ebm : 1;
+    UINT32 g4ebm : 1;
+    UINT32 clkreqmsgtxvlmdestid : 8;
+    UINT32 rxadtrecrxmrge : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 g5ebm : 1;
+    UINT32 g6ebm_rsvd : 1;
+    UINT32 rtd3wrphrp : 1;
+    UINT32 pg5tprcc : 1;
+    UINT32 cfgsllncp : 1;
+    UINT32 ltatgce : 1;
+    UINT32 rsvd_rw1 : 1;
+    UINT32 rsvd_1 : 1;
+    UINT32 rsvd_rw : 3;
+    UINT32 rsvd_m : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} ACGR3S2_PCIE_CFG_STRUCT;
+
+#define ACGR3S2_PCIE_CFG_WIDTH 32
+#define ACGR3S2_PCIE_CFG_DEFAULT 0x00000014U
+#define ACGR3S2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define ACGR3S2_PCIE_CFG_LSTPTLS_LSB 0x0000
+#define ACGR3S2_PCIE_CFG_LSTPTLS_SIZE 0x0004
+#define ACGR3S2_PCIE_CFG_DRXTERMDQ_LSB 0x0004
+#define ACGR3S2_PCIE_CFG_DRXTERMDQ_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_SRT_LSB 0x0005
+#define ACGR3S2_PCIE_CFG_SRT_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_G1EBM_LSB 0x0006
+#define ACGR3S2_PCIE_CFG_G1EBM_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_G2EBM_LSB 0x0007
+#define ACGR3S2_PCIE_CFG_G2EBM_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_G3EBM_LSB 0x0008
+#define ACGR3S2_PCIE_CFG_G3EBM_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_G4EBM_LSB 0x0009
+#define ACGR3S2_PCIE_CFG_G4EBM_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_CLKREQMSGTXVLMDESTID_LSB 0x000a
+#define ACGR3S2_PCIE_CFG_CLKREQMSGTXVLMDESTID_SIZE 0x0008
+#define ACGR3S2_PCIE_CFG_RXADTRECRXMRGE_LSB 0x0012
+#define ACGR3S2_PCIE_CFG_RXADTRECRXMRGE_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_G5EBM_LSB 0x0014
+#define ACGR3S2_PCIE_CFG_G5EBM_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_G6EBM_RSVD_LSB 0x0015
+#define ACGR3S2_PCIE_CFG_G6EBM_RSVD_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_RTD3WRPHRP_LSB 0x0016
+#define ACGR3S2_PCIE_CFG_RTD3WRPHRP_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_PG5TPRCC_LSB 0x0017
+#define ACGR3S2_PCIE_CFG_PG5TPRCC_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_CFGSLLNCP_LSB 0x0018
+#define ACGR3S2_PCIE_CFG_CFGSLLNCP_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_LTATGCE_LSB 0x0019
+#define ACGR3S2_PCIE_CFG_LTATGCE_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_RSVD_RW1_LSB 0x001a
+#define ACGR3S2_PCIE_CFG_RSVD_RW1_SIZE 0x0001
+#define ACGR3S2_PCIE_CFG_RSVD_RW_LSB 0x001c
+#define ACGR3S2_PCIE_CFG_RSVD_RW_SIZE 0x0003
+#define ACGR3S2_PCIE_CFG_RSVD_M_LSB 0x001f
+#define ACGR3S2_PCIE_CFG_RSVD_M_SIZE 0x0001
+
+
+
+/** LTRSUBL1STD desc:
+  */
+
+#define LTRSUBL1STD_PCIE_CFG_REG         (0x00000c5cU)
+
+typedef union {
+  struct {
+    UINT32 ltrslsubv : 10;
+    UINT32 ltrslssubv : 3;
+    UINT32 rsvd_rw1 : 2;
+    UINT32 ltrslsuben : 1;
+    UINT32 ltrnslsubv : 10;
+    UINT32 ltrnslssubv : 3;
+    UINT32 rsvd_rw2 : 2;
+    UINT32 ltrnslsuben : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LTRSUBL1STD_PCIE_CFG_STRUCT;
+
+#define LTRSUBL1STD_PCIE_CFG_WIDTH 32
+#define LTRSUBL1STD_PCIE_CFG_DEFAULT 0x00000000U
+#define LTRSUBL1STD_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LTRSUBL1STD_PCIE_CFG_LTRSLSUBV_LSB 0x0000
+#define LTRSUBL1STD_PCIE_CFG_LTRSLSUBV_SIZE 0x000a
+#define LTRSUBL1STD_PCIE_CFG_LTRSLSSUBV_LSB 0x000a
+#define LTRSUBL1STD_PCIE_CFG_LTRSLSSUBV_SIZE 0x0003
+#define LTRSUBL1STD_PCIE_CFG_RSVD_RW1_LSB 0x000d
+#define LTRSUBL1STD_PCIE_CFG_RSVD_RW1_SIZE 0x0002
+#define LTRSUBL1STD_PCIE_CFG_LTRSLSUBEN_LSB 0x000f
+#define LTRSUBL1STD_PCIE_CFG_LTRSLSUBEN_SIZE 0x0001
+#define LTRSUBL1STD_PCIE_CFG_LTRNSLSUBV_LSB 0x0010
+#define LTRSUBL1STD_PCIE_CFG_LTRNSLSUBV_SIZE 0x000a
+#define LTRSUBL1STD_PCIE_CFG_LTRNSLSSUBV_LSB 0x001a
+#define LTRSUBL1STD_PCIE_CFG_LTRNSLSSUBV_SIZE 0x0003
+#define LTRSUBL1STD_PCIE_CFG_RSVD_RW2_LSB 0x001d
+#define LTRSUBL1STD_PCIE_CFG_RSVD_RW2_SIZE 0x0002
+#define LTRSUBL1STD_PCIE_CFG_LTRNSLSUBEN_LSB 0x001f
+#define LTRSUBL1STD_PCIE_CFG_LTRNSLSUBEN_SIZE 0x0001
+
+
+
+/** LTRSUBL11 desc:
+  */
+
+#define LTRSUBL11_PCIE_CFG_REG           (0x00000c60U)
+
+typedef union {
+  struct {
+    UINT32 ltrslsubv : 10;
+    UINT32 ltrslssubv : 3;
+    UINT32 rsvd_rw1 : 2;
+    UINT32 ltrslsuben : 1;
+    UINT32 ltrnslsubv : 10;
+    UINT32 ltrnslssubv : 3;
+    UINT32 rsvd_rw2 : 2;
+    UINT32 ltrnslsuben : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LTRSUBL11_PCIE_CFG_STRUCT;
+
+#define LTRSUBL11_PCIE_CFG_WIDTH 32
+#define LTRSUBL11_PCIE_CFG_DEFAULT 0x00000000U
+#define LTRSUBL11_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LTRSUBL11_PCIE_CFG_LTRSLSUBV_LSB 0x0000
+#define LTRSUBL11_PCIE_CFG_LTRSLSUBV_SIZE 0x000a
+#define LTRSUBL11_PCIE_CFG_LTRSLSSUBV_LSB 0x000a
+#define LTRSUBL11_PCIE_CFG_LTRSLSSUBV_SIZE 0x0003
+#define LTRSUBL11_PCIE_CFG_RSVD_RW1_LSB 0x000d
+#define LTRSUBL11_PCIE_CFG_RSVD_RW1_SIZE 0x0002
+#define LTRSUBL11_PCIE_CFG_LTRSLSUBEN_LSB 0x000f
+#define LTRSUBL11_PCIE_CFG_LTRSLSUBEN_SIZE 0x0001
+#define LTRSUBL11_PCIE_CFG_LTRNSLSUBV_LSB 0x0010
+#define LTRSUBL11_PCIE_CFG_LTRNSLSUBV_SIZE 0x000a
+#define LTRSUBL11_PCIE_CFG_LTRNSLSSUBV_LSB 0x001a
+#define LTRSUBL11_PCIE_CFG_LTRNSLSSUBV_SIZE 0x0003
+#define LTRSUBL11_PCIE_CFG_RSVD_RW2_LSB 0x001d
+#define LTRSUBL11_PCIE_CFG_RSVD_RW2_SIZE 0x0002
+#define LTRSUBL11_PCIE_CFG_LTRNSLSUBEN_LSB 0x001f
+#define LTRSUBL11_PCIE_CFG_LTRNSLSUBEN_SIZE 0x0001
+
+
+
+/** LTRSUBL12 desc:
+  */
+
+#define LTRSUBL12_PCIE_CFG_REG           (0x00000c64U)
+
+typedef union {
+  struct {
+    UINT32 ltrslsubv : 10;
+    UINT32 ltrslssubv : 3;
+    UINT32 rsvd_rw1 : 2;
+    UINT32 ltrslsuben : 1;
+    UINT32 ltrnslsubv : 10;
+    UINT32 ltrnslssubv : 3;
+    UINT32 rsvd_rw2 : 2;
+    UINT32 ltrnslsuben : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LTRSUBL12_PCIE_CFG_STRUCT;
+
+#define LTRSUBL12_PCIE_CFG_WIDTH 32
+#define LTRSUBL12_PCIE_CFG_DEFAULT 0x00000000U
+#define LTRSUBL12_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LTRSUBL12_PCIE_CFG_LTRSLSUBV_LSB 0x0000
+#define LTRSUBL12_PCIE_CFG_LTRSLSUBV_SIZE 0x000a
+#define LTRSUBL12_PCIE_CFG_LTRSLSSUBV_LSB 0x000a
+#define LTRSUBL12_PCIE_CFG_LTRSLSSUBV_SIZE 0x0003
+#define LTRSUBL12_PCIE_CFG_RSVD_RW1_LSB 0x000d
+#define LTRSUBL12_PCIE_CFG_RSVD_RW1_SIZE 0x0002
+#define LTRSUBL12_PCIE_CFG_LTRSLSUBEN_LSB 0x000f
+#define LTRSUBL12_PCIE_CFG_LTRSLSUBEN_SIZE 0x0001
+#define LTRSUBL12_PCIE_CFG_LTRNSLSUBV_LSB 0x0010
+#define LTRSUBL12_PCIE_CFG_LTRNSLSUBV_SIZE 0x000a
+#define LTRSUBL12_PCIE_CFG_LTRNSLSSUBV_LSB 0x001a
+#define LTRSUBL12_PCIE_CFG_LTRNSLSSUBV_SIZE 0x0003
+#define LTRSUBL12_PCIE_CFG_RSVD_RW2_LSB 0x001d
+#define LTRSUBL12_PCIE_CFG_RSVD_RW2_SIZE 0x0002
+#define LTRSUBL12_PCIE_CFG_LTRNSLSUBEN_LSB 0x001f
+#define LTRSUBL12_PCIE_CFG_LTRNSLSUBEN_SIZE 0x0001
+
+
+
+/** LTRSUBL11NPG desc:
+  */
+
+#define LTRSUBL11NPG_PCIE_CFG_REG        (0x00000c68U)
+
+typedef union {
+  struct {
+    UINT32 ltrslsubv : 10;
+    UINT32 ltrslssubv : 3;
+    UINT32 rsvd_rw1 : 2;
+    UINT32 ltrslsuben : 1;
+    UINT32 ltrnslsubv : 10;
+    UINT32 ltrnslssubv : 3;
+    UINT32 rsvd_rw2 : 2;
+    UINT32 ltrnslsuben : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LTRSUBL11NPG_PCIE_CFG_STRUCT;
+
+#define LTRSUBL11NPG_PCIE_CFG_WIDTH 32
+#define LTRSUBL11NPG_PCIE_CFG_DEFAULT 0x00000000U
+#define LTRSUBL11NPG_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LTRSUBL11NPG_PCIE_CFG_LTRSLSUBV_LSB 0x0000
+#define LTRSUBL11NPG_PCIE_CFG_LTRSLSUBV_SIZE 0x000a
+#define LTRSUBL11NPG_PCIE_CFG_LTRSLSSUBV_LSB 0x000a
+#define LTRSUBL11NPG_PCIE_CFG_LTRSLSSUBV_SIZE 0x0003
+#define LTRSUBL11NPG_PCIE_CFG_RSVD_RW1_LSB 0x000d
+#define LTRSUBL11NPG_PCIE_CFG_RSVD_RW1_SIZE 0x0002
+#define LTRSUBL11NPG_PCIE_CFG_LTRSLSUBEN_LSB 0x000f
+#define LTRSUBL11NPG_PCIE_CFG_LTRSLSUBEN_SIZE 0x0001
+#define LTRSUBL11NPG_PCIE_CFG_LTRNSLSUBV_LSB 0x0010
+#define LTRSUBL11NPG_PCIE_CFG_LTRNSLSUBV_SIZE 0x000a
+#define LTRSUBL11NPG_PCIE_CFG_LTRNSLSSUBV_LSB 0x001a
+#define LTRSUBL11NPG_PCIE_CFG_LTRNSLSSUBV_SIZE 0x0003
+#define LTRSUBL11NPG_PCIE_CFG_RSVD_RW2_LSB 0x001d
+#define LTRSUBL11NPG_PCIE_CFG_RSVD_RW2_SIZE 0x0002
+#define LTRSUBL11NPG_PCIE_CFG_LTRNSLSUBEN_LSB 0x001f
+#define LTRSUBL11NPG_PCIE_CFG_LTRNSLSUBEN_SIZE 0x0001
+
+
+
+/** VNNREMCTL desc:
+  */
+
+#define VNNREMCTL_PCIE_CFG_REG           (0x00000c70U)
+
+typedef union {
+  struct {
+    UINT32 lrslfvnnre : 2;
+    UINT32 isplfvnnre : 2;
+    UINT32 ldvnnre : 1;
+    UINT32 rtd3vnnre : 1;
+    UINT32 dnpvnnre : 1;
+    UINT32 hpvnnre : 1;
+    UINT32 fdvnnre : 1;
+    UINT32 rsvd : 22;
+    UINT32 remetmd : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} VNNREMCTL_PCIE_CFG_STRUCT;
+
+#define VNNREMCTL_PCIE_CFG_WIDTH 32
+#define VNNREMCTL_PCIE_CFG_DEFAULT 0x00000001U
+#define VNNREMCTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define VNNREMCTL_PCIE_CFG_LRSLFVNNRE_LSB 0x0000
+#define VNNREMCTL_PCIE_CFG_LRSLFVNNRE_SIZE 0x0002
+#define VNNREMCTL_PCIE_CFG_ISPLFVNNRE_LSB 0x0002
+#define VNNREMCTL_PCIE_CFG_ISPLFVNNRE_SIZE 0x0002
+#define VNNREMCTL_PCIE_CFG_LDVNNRE_LSB 0x0004
+#define VNNREMCTL_PCIE_CFG_LDVNNRE_SIZE 0x0001
+#define VNNREMCTL_PCIE_CFG_RTD3VNNRE_LSB 0x0005
+#define VNNREMCTL_PCIE_CFG_RTD3VNNRE_SIZE 0x0001
+#define VNNREMCTL_PCIE_CFG_DNPVNNRE_LSB 0x0006
+#define VNNREMCTL_PCIE_CFG_DNPVNNRE_SIZE 0x0001
+#define VNNREMCTL_PCIE_CFG_HPVNNRE_LSB 0x0007
+#define VNNREMCTL_PCIE_CFG_HPVNNRE_SIZE 0x0001
+#define VNNREMCTL_PCIE_CFG_FDVNNRE_LSB 0x0008
+#define VNNREMCTL_PCIE_CFG_FDVNNRE_SIZE 0x0001
+#define VNNREMCTL_PCIE_CFG_RSVD_LSB 0x0009
+#define VNNREMCTL_PCIE_CFG_RSVD_SIZE 0x0016
+#define VNNREMCTL_PCIE_CFG_REMETMD_LSB 0x001f
+#define VNNREMCTL_PCIE_CFG_REMETMD_SIZE 0x0001
+
+
+/** AECR1G3 desc:
+  */
+
+#define AECR1G3_PCIE_CFG_REG             (0x00000c80U)
+
+typedef union {
+  struct {
+    UINT32 dcdcctdt : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 crmtdde : 1;
+    UINT32 crmtddt : 2;
+    UINT32 lesrrp : 1;
+    UINT32 l1offrdyhewten : 1;
+    UINT32 l1offrdyhewt : 3;
+    UINT32 tpse : 1;
+    UINT32 haedg3s : 1;
+    UINT32 haedg4s : 1;
+    UINT32 acedskrmd : 1;
+    UINT32 dtcgcm : 1;
+    UINT32 rxadcem : 1;
+    UINT32 clearblkdllp : 1;
+    UINT32 rsvd_rw : 1;
+    UINT32 rsvd_1 : 1;
+    UINT32 vc1rxccqnm : 3;
+    UINT32 rsvd_2 : 1;
+    UINT32 fcptodis : 1;
+    UINT32 ilppstwfd : 1;
+    UINT32 tdtmtsfud : 1;
+    UINT32 enptmrc : 1;
+    UINT32 rsvd_rw3 : 2;
+    UINT32 ifc2cup : 1;
+    UINT32 ifc1cap : 1;
+    UINT32 reqtmbof : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} AECR1G3_PCIE_CFG_STRUCT;
+
+#define AECR1G3_PCIE_CFG_WIDTH 32
+#define AECR1G3_PCIE_CFG_DEFAULT 0x60000000U
+#define AECR1G3_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define AECR1G3_PCIE_CFG_DCDCCTDT_LSB 0x0000
+#define AECR1G3_PCIE_CFG_DCDCCTDT_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_CRMTDDE_LSB 0x0002
+#define AECR1G3_PCIE_CFG_CRMTDDE_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_CRMTDDT_LSB 0x0003
+#define AECR1G3_PCIE_CFG_CRMTDDT_SIZE 0x0002
+#define AECR1G3_PCIE_CFG_LESRRP_LSB 0x0005
+#define AECR1G3_PCIE_CFG_LESRRP_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_L1OFFRDYHEWTEN_LSB 0x0006
+#define AECR1G3_PCIE_CFG_L1OFFRDYHEWTEN_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_L1OFFRDYHEWT_LSB 0x0007
+#define AECR1G3_PCIE_CFG_L1OFFRDYHEWT_SIZE 0x0003
+#define AECR1G3_PCIE_CFG_TPSE_LSB 0x000a
+#define AECR1G3_PCIE_CFG_TPSE_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_HAEDG3S_LSB 0x000b
+#define AECR1G3_PCIE_CFG_HAEDG3S_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_HAEDG4S_LSB 0x000c
+#define AECR1G3_PCIE_CFG_HAEDG4S_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_ACEDSKRMD_LSB 0x000d
+#define AECR1G3_PCIE_CFG_ACEDSKRMD_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_DTCGCM_LSB 0x000e
+#define AECR1G3_PCIE_CFG_DTCGCM_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_RXADCEM_LSB 0x000f
+#define AECR1G3_PCIE_CFG_RXADCEM_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_CLEARBLKDLLP_LSB 0x0010
+#define AECR1G3_PCIE_CFG_CLEARBLKDLLP_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_RSVD_RW_LSB 0x0011
+#define AECR1G3_PCIE_CFG_RSVD_RW_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_VC1RXCCQNM_LSB 0x0013
+#define AECR1G3_PCIE_CFG_VC1RXCCQNM_SIZE 0x0003
+#define AECR1G3_PCIE_CFG_FCPTODIS_LSB 0x0017
+#define AECR1G3_PCIE_CFG_FCPTODIS_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_ILPPSTWFD_LSB 0x0018
+#define AECR1G3_PCIE_CFG_ILPPSTWFD_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_TDTMTSFUD_LSB 0x0019
+#define AECR1G3_PCIE_CFG_TDTMTSFUD_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_ENPTMRC_LSB 0x001a
+#define AECR1G3_PCIE_CFG_ENPTMRC_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_RSVD_RW3_LSB 0x001b
+#define AECR1G3_PCIE_CFG_RSVD_RW3_SIZE 0x0002
+#define AECR1G3_PCIE_CFG_IFC2CUP_LSB 0x001d
+#define AECR1G3_PCIE_CFG_IFC2CUP_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_IFC1CAP_LSB 0x001e
+#define AECR1G3_PCIE_CFG_IFC1CAP_SIZE 0x0001
+#define AECR1G3_PCIE_CFG_REQTMBOF_LSB 0x001f
+#define AECR1G3_PCIE_CFG_REQTMBOF_SIZE 0x0001
+
+
+
+/** AECR2G3 desc:
+  */
+
+#define AECR2G3_PCIE_CFG_REG             (0x00000c84U)
+
+typedef union {
+  struct {
+    UINT32 rsvd_rw : 2;
+    UINT32 ptmrrptrsplbugfixdis : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 tqrofd : 1;
+    UINT32 rsvd_1 : 1;
+    UINT32 iosfmpagc : 2;
+    UINT32 rsvd_rw2 : 23;
+    UINT32 rsvd_2 : 1;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} AECR2G3_PCIE_CFG_STRUCT;
+
+#define AECR2G3_PCIE_CFG_WIDTH 32
+#define AECR2G3_PCIE_CFG_DEFAULT 0x00000000U
+#define AECR2G3_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define AECR2G3_PCIE_CFG_RSVD_RW_LSB 0x0000
+#define AECR2G3_PCIE_CFG_RSVD_RW_SIZE 0x0002
+#define AECR2G3_PCIE_CFG_PTMRRPTRSPLBUGFIXDIS_LSB 0x0002
+#define AECR2G3_PCIE_CFG_PTMRRPTRSPLBUGFIXDIS_SIZE 0x0001
+#define AECR2G3_PCIE_CFG_TQROFD_LSB 0x0004
+#define AECR2G3_PCIE_CFG_TQROFD_SIZE 0x0001
+#define AECR2G3_PCIE_CFG_IOSFMPAGC_LSB 0x0006
+#define AECR2G3_PCIE_CFG_IOSFMPAGC_SIZE 0x0002
+#define AECR2G3_PCIE_CFG_RSVD_RW2_LSB 0x0008
+#define AECR2G3_PCIE_CFG_RSVD_RW2_SIZE 0x0017
+
+
+
+/** LPCRE desc:
+  */
+
+#define LPCRE_PCIE_CFG_REG               (0x00000c88U)
+
+typedef union {
+  struct {
+    UINT32 ipcl : 1;
+    UINT32 rsvd_0 : 7;
+    UINT32 ipvccapl : 1;
+    UINT32 rsvd_1 : 7;
+    UINT32 rsvd_rwo2 : 1;
+    UINT32 rsvd_2 : 7;
+    UINT32 rsvd_rwo3 : 1;
+    UINT32 rsvd_m : 7;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LPCRE_PCIE_CFG_STRUCT;
+
+#define LPCRE_PCIE_CFG_WIDTH 32
+#define LPCRE_PCIE_CFG_DEFAULT 0x00000000U
+#define LPCRE_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LPCRE_PCIE_CFG_IPCL_LSB 0x0000
+#define LPCRE_PCIE_CFG_IPCL_SIZE 0x0001
+#define LPCRE_PCIE_CFG_IPVCCAPL_LSB 0x0008
+#define LPCRE_PCIE_CFG_IPVCCAPL_SIZE 0x0001
+#define LPCRE_PCIE_CFG_RSVD_RWO2_LSB 0x0010
+#define LPCRE_PCIE_CFG_RSVD_RWO2_SIZE 0x0001
+#define LPCRE_PCIE_CFG_RSVD_RWO3_LSB 0x0018
+#define LPCRE_PCIE_CFG_RSVD_RWO3_SIZE 0x0001
+#define LPCRE_PCIE_CFG_RSVD_M_LSB 0x0019
+#define LPCRE_PCIE_CFG_RSVD_M_SIZE 0x0007
+
+
+
+/** LPCR desc:
+  */
+
+#define LPCR_PCIE_CFG_REG                (0x00000c8cU)
+
+typedef union {
+  struct {
+    UINT32 srl : 1;
+    UINT32 rsvd_0 : 7;
+    UINT32 serl : 1;
+    UINT32 rsvd_1 : 7;
+    UINT32 ltrcfglock : 1;
+    UINT32 rsvd_2 : 7;
+    UINT32 didovr_lock : 1;
+    UINT32 rsvd_m : 7;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} LPCR_PCIE_CFG_STRUCT;
+
+#define LPCR_PCIE_CFG_WIDTH 32
+#define LPCR_PCIE_CFG_DEFAULT 0x00000000U
+#define LPCR_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define LPCR_PCIE_CFG_SRL_LSB 0x0000
+#define LPCR_PCIE_CFG_SRL_SIZE 0x0001
+#define LPCR_PCIE_CFG_SERL_LSB 0x0008
+#define LPCR_PCIE_CFG_SERL_SIZE 0x0001
+#define LPCR_PCIE_CFG_LTRCFGLOCK_LSB 0x0010
+#define LPCR_PCIE_CFG_LTRCFGLOCK_SIZE 0x0001
+#define LPCR_PCIE_CFG_DIDOVR_LOCK_LSB 0x0018
+#define LPCR_PCIE_CFG_DIDOVR_LOCK_SIZE 0x0001
+#define LPCR_PCIE_CFG_RSVD_M_LSB 0x0019
+#define LPCR_PCIE_CFG_RSVD_M_SIZE 0x0007
+
+
+
+/** RXMC1 desc:
+  */
+
+#define RXMC1_PCIE_CFG_REG               (0x00000c90U)
+
+typedef union {
+  struct {
+    UINT32 miess : 1;
+    UINT32 miudvms : 1;
+    UINT32 milrts : 1;
+    UINT32 mvs : 1;
+    UINT32 mmnols : 5;
+    UINT32 msrm : 1;
+    UINT32 rsvd_0 : 1;
+    UINT32 vmslop : 2;
+    UINT32 tmslop : 2;
+    UINT32 recfnmrg : 1;
+    UINT32 bpecrrxmrgna : 1;
+    UINT32 wfecrfcelc : 1;
+    UINT32 rsvd : 2;
+    UINT32 msrts : 6;
+    UINT32 msrvs : 6;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} RXMC1_PCIE_CFG_STRUCT;
+
+#define RXMC1_PCIE_CFG_WIDTH 32
+#define RXMC1_PCIE_CFG_DEFAULT 0x00000000U
+#define RXMC1_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define RXMC1_PCIE_CFG_MIESS_LSB 0x0000
+#define RXMC1_PCIE_CFG_MIESS_SIZE 0x0001
+#define RXMC1_PCIE_CFG_MIUDVMS_LSB 0x0001
+#define RXMC1_PCIE_CFG_MIUDVMS_SIZE 0x0001
+#define RXMC1_PCIE_CFG_MILRTS_LSB 0x0002
+#define RXMC1_PCIE_CFG_MILRTS_SIZE 0x0001
+#define RXMC1_PCIE_CFG_MVS_LSB 0x0003
+#define RXMC1_PCIE_CFG_MVS_SIZE 0x0001
+#define RXMC1_PCIE_CFG_MMNOLS_LSB 0x0004
+#define RXMC1_PCIE_CFG_MMNOLS_SIZE 0x0005
+#define RXMC1_PCIE_CFG_MSRM_LSB 0x0009
+#define RXMC1_PCIE_CFG_MSRM_SIZE 0x0001
+#define RXMC1_PCIE_CFG_VMSLOP_LSB 0x000b
+#define RXMC1_PCIE_CFG_VMSLOP_SIZE 0x0002
+#define RXMC1_PCIE_CFG_TMSLOP_LSB 0x000d
+#define RXMC1_PCIE_CFG_TMSLOP_SIZE 0x0002
+#define RXMC1_PCIE_CFG_RECFNMRG_LSB 0x000f
+#define RXMC1_PCIE_CFG_RECFNMRG_SIZE 0x0001
+#define RXMC1_PCIE_CFG_BPECRRXMRGNA_LSB 0x0010
+#define RXMC1_PCIE_CFG_BPECRRXMRGNA_SIZE 0x0001
+#define RXMC1_PCIE_CFG_WFECRFCELC_LSB 0x0011
+#define RXMC1_PCIE_CFG_WFECRFCELC_SIZE 0x0001
+#define RXMC1_PCIE_CFG_RSVD_LSB 0x0012
+#define RXMC1_PCIE_CFG_RSVD_SIZE 0x0002
+#define RXMC1_PCIE_CFG_MSRTS_LSB 0x0014
+#define RXMC1_PCIE_CFG_MSRTS_SIZE 0x0006
+#define RXMC1_PCIE_CFG_MSRVS_LSB 0x001a
+#define RXMC1_PCIE_CFG_MSRVS_SIZE 0x0006
+
+
+
+/** RXMC2 desc:
+  */
+
+#define RXMC2_PCIE_CFG_REG               (0x00000c94U)
+
+typedef union {
+  struct {
+    UINT32 mmvos : 6;
+    UINT32 mnovss : 7;
+    UINT32 mmtos : 6;
+    UINT32 mnotss : 6;
+    UINT32 rsvd_m : 7;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} RXMC2_PCIE_CFG_STRUCT;
+
+#define RXMC2_PCIE_CFG_WIDTH 32
+#define RXMC2_PCIE_CFG_DEFAULT 0x00000000U
+#define RXMC2_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define RXMC2_PCIE_CFG_MMVOS_LSB 0x0000
+#define RXMC2_PCIE_CFG_MMVOS_SIZE 0x0006
+#define RXMC2_PCIE_CFG_MNOVSS_LSB 0x0006
+#define RXMC2_PCIE_CFG_MNOVSS_SIZE 0x0007
+#define RXMC2_PCIE_CFG_MMTOS_LSB 0x000d
+#define RXMC2_PCIE_CFG_MMTOS_SIZE 0x0006
+#define RXMC2_PCIE_CFG_MNOTSS_LSB 0x0013
+#define RXMC2_PCIE_CFG_MNOTSS_SIZE 0x0006
+#define RXMC2_PCIE_CFG_RSVD_M_LSB 0x0019
+#define RXMC2_PCIE_CFG_RSVD_M_SIZE 0x0007
+
+
+
+/** EINJCTL desc:
+  */
+
+#define EINJCTL_PCIE_CFG_REG             (0x00000ca8U)
+
+typedef union {
+  struct {
+    UINT32 einjdis : 1;
+    UINT32 injrcverr : 1;
+    UINT32 injctoerr : 1;
+    UINT32 rsvd_m : 29;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} EINJCTL_PCIE_CFG_STRUCT;
+
+#define EINJCTL_PCIE_CFG_WIDTH 32
+#define EINJCTL_PCIE_CFG_DEFAULT 0x00000000U
+#define EINJCTL_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define EINJCTL_PCIE_CFG_EINJDIS_LSB 0x0000
+#define EINJCTL_PCIE_CFG_EINJDIS_SIZE 0x0001
+#define EINJCTL_PCIE_CFG_INJRCVERR_LSB 0x0001
+#define EINJCTL_PCIE_CFG_INJRCVERR_SIZE 0x0001
+#define EINJCTL_PCIE_CFG_INJCTOERR_LSB 0x0002
+#define EINJCTL_PCIE_CFG_INJCTOERR_SIZE 0x0001
+#define EINJCTL_PCIE_CFG_RSVD_M_LSB 0x0003
+#define EINJCTL_PCIE_CFG_RSVD_M_SIZE 0x001d
+
+
+
+/** PL16MECH desc:
+  */
+
+#define PL16MECH_PCIE_CFG_REG            (0x00000edcU)
+
+typedef union {
+  struct {
+    UINT32 pciecid : 16;
+    UINT32 cv : 4;
+    UINT32 nco : 12;
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} PL16MECH_PCIE_CFG_STRUCT;
+
+#define PL16MECH_PCIE_CFG_WIDTH 32
+#define PL16MECH_PCIE_CFG_DEFAULT 0x00010027U
+#define PL16MECH_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PL16MECH_PCIE_CFG_PCIECID_LSB 0x0000
+#define PL16MECH_PCIE_CFG_PCIECID_SIZE 0x0010
+#define PL16MECH_PCIE_CFG_CV_LSB 0x0010
+#define PL16MECH_PCIE_CFG_CV_SIZE 0x0004
+#define PL16MECH_PCIE_CFG_NCO_LSB 0x0014
+#define PL16MECH_PCIE_CFG_NCO_SIZE 0x000c
+
+
+/** PL16MPCPSB01 desc:
+  */
+
+#define PL16MPCPSB01_PCIE_CFG_REG        (0x00000ee0U)
+
+typedef union {
+  struct {
+    UINT16 margindrisw : 1;
+    UINT16 rsvd_m : 15;
+  }     Bits;
+  UINT16 Data;
+  UINT8  Data8[2];
+} PL16MPCPSB01_PCIE_CFG_STRUCT;
+
+#define PL16MPCPSB01_PCIE_CFG_WIDTH 16
+#define PL16MPCPSB01_PCIE_CFG_DEFAULT 0x0000U
+#define PL16MPCPSB01_PCIE_CFG_ENDPOINT PCIE_CFG
+
+#define PL16MPCPSB01_PCIE_CFG_MARGINDRISW_LSB 0x0000
+#define PL16MPCPSB01_PCIE_CFG_MARGINDRISW_SIZE 0x0001
+#define PL16MPCPSB01_PCIE_CFG_RSVD_M_LSB 0x0001
+#define PL16MPCPSB01_PCIE_CFG_RSVD_M_SIZE 0x000f
+
+
+//************************************************ /RegisterStructs
+#endif      // _PCIE_CFG_h

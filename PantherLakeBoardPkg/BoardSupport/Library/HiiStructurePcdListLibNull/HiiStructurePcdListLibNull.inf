@@ -1,0 +1,77 @@
+## @file
+# Library instance to list all structure PCD platform consumes.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = StructurePcdListLibNull
+  FILE_GUID                      = 5B95A7F2-0115-4C24-80B3-C10D31C2368D
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = BASE
+  LIBRARY_CLASS                  = NULL
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[LibraryClasses]
+  BaseLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[Sources]
+  HiiStructurePcdListLibNull.c
+
+[Pcd]
+  #
+  # Below structure PCDs are not consumed by this library directly but they are needed to be
+  # defined in INF to ensure all of them can be built into PCD database for setup defaults.
+  #
+  gStructPcdTokenSpaceGuid.PcdAmtMacPassThroughConfig
+  gStructPcdTokenSpaceGuid.PcdAmtPetInitConfig
+  gStructPcdTokenSpaceGuid.PcdCnvSetup
+  gStructPcdTokenSpaceGuid.PcdComAttributes
+  gStructPcdTokenSpaceGuid.PcdCpuSetup
+  gStructPcdTokenSpaceGuid.PcdCrashLogVariable
+  gStructPcdTokenSpaceGuid.PcdCrashLogCtlVariable
+  gStructPcdTokenSpaceGuid.PcdDebugConfigData
+  gStructPcdTokenSpaceGuid.PcdDptfConfig
+  gStructPcdTokenSpaceGuid.PcdLpeSetup
+  gStructPcdTokenSpaceGuid.PcdRpeSetup
+  gStructPcdTokenSpaceGuid.PcdMeSetup
+  gStructPcdTokenSpaceGuid.PcdMipiCamConfig
+  gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable
+  gStructPcdTokenSpaceGuid.PcdNvmeSetup
+  gStructPcdTokenSpaceGuid.PcdPchSetup
+  gStructPcdTokenSpaceGuid.PcdPlatformEraseVariable
+  gStructPcdTokenSpaceGuid.PcdSaSetup
+  gStructPcdTokenSpaceGuid.PcdSetup
+  gStructPcdTokenSpaceGuid.PcdSiSetup
+  gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable
+  gStructPcdTokenSpaceGuid.PcdTCG2_CONFIGURATION
+  gStructPcdTokenSpaceGuid.PcdTCG2_VERSION
+  gStructPcdTokenSpaceGuid.PcdVtioCfg
+  gStructPcdTokenSpaceGuid.PcdXmlCli
+  gStructPcdTokenSpaceGuid.PcdBoardInfoSetup
+  gStructPcdTokenSpaceGuid.PcdFspVSetup

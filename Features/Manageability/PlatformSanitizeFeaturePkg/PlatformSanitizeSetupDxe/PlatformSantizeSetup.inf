@@ -1,0 +1,77 @@
+## @file
+#  Platform Sanitize setup driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010007
+  BASE_NAME                      = PlatformSanitizeSetupDxe
+  FILE_GUID                      = 4DC59D38-922C-4066-B8D6-29EE873BF71C
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = PlatformSanitizeSetupEntryPoint
+
+[Sources]
+  PlatformSanitizeSetup.c
+  PlatformSanitizeSetup.h
+  PlatformSanitizeSetupVfr.vfr
+  PlatformSanitizeSetup.uni
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  PlatformSanitizeFeaturePkg/PlatformSanitizeFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  UefiDriverEntryPoint
+  MemoryAllocationLib
+  BaseMemoryLib
+  DebugLib
+  HiiLib
+  DevicePathLib
+  UefiLib
+  HobLib
+  PcdLib
+  PsCsmeAccessRpeLib
+  DxeAmtSupportLib
+
+[Protocols]
+  gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
+  gEfiDevicePathProtocolGuid                    ## CONSUMES
+  gStorageSanitizeNotifyProtocolGuid            ## CONSUMES
+
+[Guids]
+  gEfiIfrFrontPageGuid                          ## CONSUMES
+  gEfiIfrTianoGuid                              ## CONSUMES
+  gPsPlatformEraseVariableGuid                  ## CONSUMES
+  gPsLpeSetupVariableGuid                       ## CONSUMES
+  gPsRpeSetupVariableGuid                       ## CONSUMES
+
+[FixedPcd]
+  gPsFeatureModuleTokenSpaceGuid.PcdPsSetupConfiguration                ## CONSUMES
+  gPsFeatureModuleTokenSpaceGuid.PcdPsSupportCapabilities               ## CONSUMES
+  gPsFeatureModuleTokenSpaceGuid.PcdPlatformSanitizeRpeSupport          ## CONSUMES
+  gPsFeatureModuleTokenSpaceGuid.PcdPsSimulationSupport                 ## CONSUMES
+
+[Depex]
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid   AND
+  gEfiHiiDatabaseProtocolGuid

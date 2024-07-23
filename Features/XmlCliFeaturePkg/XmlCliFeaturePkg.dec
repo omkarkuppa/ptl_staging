@@ -1,0 +1,106 @@
+## @file
+#
+# DEC file for XmlCliFeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2021 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+DEC_SPECIFICATION = 0x00010017
+PACKAGE_NAME      = XmlCliFeaturePkg
+PACKAGE_VERSION   = 0.1
+PACKAGE_GUID      = 1C49A7E1-CAAC-483E-A6F1-518F3E40B22E
+
+[Includes]
+  Include
+  XmlCliCommon
+  LibraryPrivate/XmlCliCommonLib
+
+[LibraryClasses]
+  #######################################
+  # Edk2 Packages
+  #######################################
+  BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
+  BaseMemoryLib|MdePkg/Library/BaseMemoryLibRepStr/BaseMemoryLibRep
+  DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+  PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
+  TimerLib|MdePkg/Library/BaseTimerLibNullTemplate/BaseTimerLibNullTemplate.inf
+  IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
+
+[LibraryClasses.common.DXE_DRIVER, LibraryClasses.common.UEFI_DRIVER]
+  #######################################
+  # Edk2 Packages
+  #######################################
+  DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
+  MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
+  UefiBootServicesTableLib|MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
+  UefiDriverEntryPoint|MdePkg/Library/UefiDriverEntryPoint/UefiDriverEntryPoint.inf
+  PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
+  UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
+  UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
+  HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
+
+[Guids]
+  gXmlCliFeaturePkgTokenSpaceGuid       =  {0x3c19cd7b, 0x217a, 0x4cd7, {0x98, 0x55, 0xf7, 0x6e, 0x5c, 0x4d, 0x53, 0x5c}}
+  gDramSharedMailBoxGuid                =  {0x9d99a394, 0x1878, 0x4d2c, {0x98, 0xe9, 0xc1, 0x6b, 0x8e, 0xc4, 0x79, 0x33}}
+  gBiosKnobsDataBinGuid                 =  {0x615E6021, 0x603D, 0x4124, {0xB7, 0xEA, 0xC4, 0x8A, 0x37, 0x37, 0xBA, 0xCD}}
+  gXmlCliVarGuid                        =  {0x580db3ee, 0x900e, 0x44ca, {0x84, 0x46, 0x8f, 0x09, 0x2e, 0x02, 0x33, 0x4f}}
+  gXmlCliSetupGuid                      =  {0xeac04db0, 0xc87d, 0x40c7, {0x85, 0x82, 0x78, 0x58, 0x1a, 0xe1, 0x44, 0x4b}}
+  gXmlCliInterfaceBufferGuid            =  {0xa8cbbbea, 0xf37c, 0x4da4, {0x5e, 0x81, 0x68, 0x4f, 0x6f, 0xc5, 0x12, 0x49}}
+  gXmlCliCommonMmCommunicationGuid      =  {0x140aca08, 0xb882, 0x45b6, {0xa0, 0xe3, 0x02, 0xc4, 0x06, 0x5c, 0xd6, 0x83}}
+  gXmlCliMmCommunicationGuid            =  {0x78ab94c0, 0x7ded, 0x45b3, {0x9e, 0xce, 0x79, 0x10, 0x2a, 0x66, 0x7e, 0xce}}
+
+[Protocols]
+  gXmlCliCommonGuid                     =  {0xbf030b10, 0x2d9b, 0x4e71, {0xa0, 0xc4, 0xbc, 0x99, 0x10, 0x57, 0x9d, 0x40}}
+  gDxeCliApiGuid                        =  {0xdec8004d, 0xf386, 0x4c40, {0x81, 0xc,  0xb4, 0x62, 0xd2, 0x2,  0xbe, 0x51}}
+  gSmmCliApiGuid                        =  {0x67f98821, 0xeb72, 0x4194, {0x93, 0xeb, 0x47, 0xe3, 0xe2, 0xfb, 0xc1, 0x24}}
+  gXmlCliProtocolGuid                   =  {0xe3e49b8d, 0x1987, 0x48d0, {0x9a, 0x1,  0xed, 0xa1, 0x79, 0xca, 0xb,  0xd6}}
+  gXmlCliInterfaceReadyGuid             =  {0x79b6c484, 0x4e88, 0x49e7, {0xae, 0xd6, 0xbe, 0x1d, 0x75, 0x4e, 0x54, 0xe1}}
+  gXmlCliDxeDummyProtocolGuid           =  {0x1582ff76, 0x8d7f, 0x453e, {0xb0, 0xcc, 0x15, 0x96, 0x4e, 0x70, 0x22, 0x12}}
+
+  #######################
+  # SiPkg.dec
+  #######################
+  gPchSpiProtocolGuid                   =  {0xc7d289,   0x1347, 0x4de0, {0xbf, 0x42, 0xe, 0x26, 0x9d, 0xe,  0xf3, 0x4a}}
+  gPchSmmSpiProtocolGuid                =  {0x56521f06, 0xa62,  0x4822, {0x99, 0x63, 0xdf, 0x1, 0x9d, 0x72, 0xc7, 0xe1}}
+
+[PcdsFeatureFlag]
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdXmlCliFeatureEnable|TRUE|BOOLEAN|0xA0000001
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdStandaloneMmXmlCliEnable|FALSE|BOOLEAN|0xA0000026
+
+[PcdsFixedAtBuild]
+  # XmlCli Feature Package Token Space defining Setup Values
+
+  # PCD value to determine Platform type and toggle some specific reserve allocation, refer README for more details
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdPlatformXmlCli|0x0|UINT8|0xA0000002
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdDramPublishToCmos|0x0|UINT8|0xA0000003
+
+  # PCD values for setting default values for setup knobs
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdXmlCliSupport|0x1|UINT8|0xA0000011
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdPublishSetupPgPtr|0x1|UINT8|0xA0000012
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdEnableXmlCliLite|0x0|UINT8|0xA0000013
+
+  # PCD values for reserving memory size
+
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdGbtXmlReserved|0x800000|UINT32|0xA0000021
+  # 0.75 MB reserved, 0x5A000 binary data + 0x64000 KB Dram Shared MB
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdLiteXmlReserved|0x0|UINT32|0xA0000022
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdKnobsEntriesSize|0x40000|UINT32|0xA0000023
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdKnobValueMapSize|0x40000|UINT32|0xA0000024
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdKnobPatchDataBufferSize|0x40000|UINT32|0xA0000025

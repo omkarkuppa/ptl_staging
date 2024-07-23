@@ -1,0 +1,64 @@
+## @file
+#  This driver will construct and publish the SMBIOS TPM Device Information (Type 43) record.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2019 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = SmbiosTpmDeviceInfo
+  FILE_GUID                      = 0250D7AB-AADE-4691-8909-8DC184822D1D
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = DXE_DRIVER
+  ENTRY_POINT                    = SmbiosTpmDeviceInfoEntryPoint
+
+[LibraryClasses]
+  DebugLib
+  UefiLib
+  UefiDriverEntryPoint
+  UefiRuntimeServicesTableLib
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  PcdLib
+  PrintLib
+  Tpm2DeviceLib
+  Tpm2CommandLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  SecurityPkg/SecurityPkg.dec
+
+[Sources]
+  SmbiosTpmDeviceInfo.h
+  SmbiosTpmDeviceInfo.c
+
+[Protocols]
+  gEfiTcgProtocolGuid                              ## CONSUMES
+  gEfiSmbiosProtocolGuid                           ## CONSUMES
+
+[Guids]
+  gEfiTpmDeviceInstanceNoneGuid                    ## CONSUMES
+  gEfiTpmDeviceInstanceTpm20DtpmGuid               ## CONSUMES
+
+[Pcd]
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpmInstanceGuid ## CONSUMES
+
+[Depex]
+  gEfiSmbiosProtocolGuid AND
+  gEfiTcg2ProtocolGuid

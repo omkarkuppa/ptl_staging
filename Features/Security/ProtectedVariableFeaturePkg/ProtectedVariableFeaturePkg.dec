@@ -1,0 +1,49 @@
+## @file
+# Declaration (DEC) file for Protected Variable Feature.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME      = ProtectedVariableFeaturePkg
+  PACKAGE_GUID      = 6C1F37DC-BFBB-4AC9-A814-319137016060
+  PACKAGE_VERSION   = 0.1
+
+[Includes]
+  Include
+
+[Guids]
+  gProtectedVariableFeaturePkgTokenSpaceGuid = {0xed0ee9b5, 0x9e5d, 0x47dc, {0xb3, 0x1f, 0xc6, 0x75, 0x7f, 0x72, 0xc3, 0x24}}
+  gKeyServiceTrustedChannelHobGuid           = {0x3e0b4d19, 0x0df8, 0x4111, {0x87, 0x45, 0xf5, 0x76, 0x07, 0xc3, 0x58, 0xf3}}
+
+[Ppis]
+  gKeyServicePpiGuid                         = {0x583592f6, 0xEC34, 0x4CED, {0x8E, 0x81, 0xC8, 0xD1, 0x36, 0x93, 0x04, 0x27}}
+
+[PcdsFixedAtBuild]
+  # UEFI Variable Protection Feature Support
+  gProtectedVariableFeaturePkgTokenSpaceGuid.PcdProtectedVariableEnable|FALSE|BOOLEAN|0xF0000001
+
+[PcdsDynamic, PcdsDynamicEx]
+  #
+  # Dynamic PCD to be updated by runtime driver to indicate
+  # RPMC support is detected or not.
+  # FALSE - Rpmc hardware is not detected
+  # TRUE  - Rpmc hardware is detected
+  #
+  gProtectedVariableFeaturePkgTokenSpaceGuid.PcdRpmcSupported|FALSE|BOOLEAN|0xF0000002

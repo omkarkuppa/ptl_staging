@@ -1,0 +1,110 @@
+## @file
+#  Provide FSP wrapper hob process related function.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2014 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#@par Specification
+##
+
+################################################################################
+#
+# Defines Section - statements that will be processed to create a Makefile.
+#
+################################################################################
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiFspWrapperHobProcessLib
+  FILE_GUID                      = 4EEA862A-2A23-43CD-BC78-A93E93C5F6EE
+  MODULE_TYPE                    = SEC
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = FspWrapperHobProcessLib
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+################################################################################
+#
+# Sources Section - list of files that are required for the build to succeed.
+#
+################################################################################
+
+[Sources]
+  FspWrapperHobProcessLib.c
+
+
+################################################################################
+#
+# Package Dependency Section - list of Package files that are required for
+#                              this module.
+#
+################################################################################
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  FspWrapperFeaturePkg/FspWrapperFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  HobLib
+  DebugLib
+  FspWrapperPlatformLib
+  PeiServicesLib
+  PeiServicesTablePointerLib
+  PcdLib
+  FspCommonLib
+  FspErrorInfoLib
+  MemoryAllocationLib
+  FspWrapperApiLib
+
+[Pcd]
+  gIntelFsp2WrapperTokenSpaceGuid.PcdPeiMinMemSize              ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdPeiRecoveryMinMemSize      ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress
+  gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspmUpdDataAddress64       ## PRODUCES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection           ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspsBaseAddress            ## CONSUMES
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuProcTraceMemSize              ## CONSUMES
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress            ## CONSUMES
+
+[FixedPcd]
+  gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperCapsuleImageMaxSize  ## CONSUMES
+
+[Guids]
+  gFspReservedMemoryResourceHobGuid                       ## CONSUMES ## HOB
+  gEfiMemoryTypeInformationGuid                           ## CONSUMES ## GUID
+  gPcdDataBaseHobGuid
+  gZeroGuid
+  gEfiGraphicsInfoHobGuid
+  gSiMemoryInfoDataGuid                                   ## CONSUMES
+  gSmbiosCacheInfoHobGuid                                 ## CONSUMES
+  gSmbiosProcessorInfoHobGuid                             ## CONSUMES
+  gSiConfigHobGuid
+  gEfiGraphicsDeviceInfoHobGuid                           ## CONSUMES
+  gMeDidSentHobGuid                                       ## CONSUMES
+  gEdkiiMigratedFvInfoGuid                                ## CONSUMES
+
+[Ppis]
+  gEfiPeiCapsulePpiGuid                                   ## CONSUMES

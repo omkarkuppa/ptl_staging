@@ -1,0 +1,121 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2014 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+
+   //
+   // Statements that include other files
+   //
+
+#include "Lpit.h"
+
+   //
+   // Low Power Idle Table
+   // Please modify all values in Lpit.h only.
+   //
+
+ACPI_LOW_POWER_IDLE_TABLE Lpit = {
+  //
+  // Header
+  //
+  {
+    EFI_ACPI_6_5_LOW_POWER_IDLE_TABLE_STRUCTURE_SIGNATURE,
+    sizeof (ACPI_LOW_POWER_IDLE_TABLE),
+    EFI_ACPI_LOW_POWER_IDLE_TABLE_REVISION,
+
+    //
+    // Checksum will be updated at runtime
+    //
+    0x00,
+
+    //
+    // It is expected that these values will be updated at runtime
+    //
+    { ' ', ' ', ' ', ' ', ' ', ' ' },
+    0,
+    ACPI_OEM_LPIT_REVISION,
+    0,
+    0
+  },
+  //
+  // Descriptor
+  //
+  {
+    {
+      ACPI_LPI_STRUCTURE_TYPE_NATIVE_CSTATE,
+      sizeof(ACPI_LPI_NATIVE_CSTATE_DESCRIPTOR),
+      ACPI_LPI_C10_ID,
+      {0,0},
+      ACPI_LOW_POWER_IDLE_DEFAULT_FLAG,       // Flags
+      ACPI_LPI_TRIGGER,                       // EntryTrigger
+      ACPI_LPI_MIN_RES,                       // Residency
+      ACPI_LPI_LATENCY,                       // Latency
+      ACPI_LPI_RES_C10_COUNTER,               // ResidencyCounter
+      ACPI_LOW_POWER_IDLE_RES_FREQ_TSC        // Residency counter frequency
+    },
+    {
+      ACPI_LPI_STRUCTURE_TYPE_NATIVE_CSTATE,
+      sizeof(ACPI_LPI_NATIVE_CSTATE_DESCRIPTOR),
+      ACPI_LPI_SLP_S0_ID,
+      {0,0},
+      ACPI_LOW_POWER_IDLE_DEFAULT_FLAG,       // Flags
+      ACPI_LPI_TRIGGER,                       // EntryTrigger
+      ACPI_LPI_MIN_RES,                       // Residency
+      ACPI_LPI_LATENCY,                       // Latency
+      ACPI_LPI_RES_SLP_S0_COUNTER,            // ResidencyCounter
+      ACPI_LOW_POWER_IDLE_RES_FREQ_TSC        // Residency counter frequency
+    },
+    {
+      ACPI_LPI_STRUCTURE_TYPE_NATIVE_CSTATE,
+      sizeof(ACPI_LPI_NATIVE_CSTATE_DESCRIPTOR),
+      ACPI_LPI_PS_ON_ID,
+      {0,0},
+      ACPI_LOW_POWER_IDLE_DEFAULT_FLAG,       // Flags
+      ACPI_LPI_TRIGGER,                       // EntryTrigger
+      ACPI_LPI_MIN_RES,                       // Residency
+      ACPI_LPI_LATENCY,                       // Latency
+      ACPI_LPI_RES_PS_ON_COUNTER,             // ResidencyCounter
+      ACPI_LOW_POWER_IDLE_RES_FREQ_TSC        // Residency counter frequency
+    }
+  }
+
+};
+
+#if defined (__GNUC__)
+VOID*
+ReferenceAcpiTable (
+ VOID
+ )
+
+{
+ //
+ // Reference the table being generated to prevent the optimizer from removing the
+ // data structure from the exeutable
+ //
+ return (VOID*)&Lpit;
+}
+#else
+VOID
+main (
+ VOID
+ )
+
+{
+}
+#endif

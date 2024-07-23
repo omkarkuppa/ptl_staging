@@ -1,0 +1,77 @@
+### @file
+#  Instance of Debug Library.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2017 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+# @par Glossary:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = DebugLibDebugPort
+  FILE_GUID                      = 4BAB968C-A7E7-47F6-938C-F827F3CE58B9
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = DebugLib|SEC PEI_CORE PEIM
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  DebugLibDebugPort.c
+
+[Sources.IA32]
+  Ia32/DebugLibDebugPort.nasm
+
+[Sources.X64]
+  X64/DebugLibDebugPort.nasm
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugPrintErrorLevelLib
+  FspCommonLib
+  PcdLib
+  PrintLib
+  ReportStatusCodeLib
+  SerialPortLib
+  TraceHubDebugLib
+  FspSerialIoUartDebugHelperLib
+
+
+[Ppis]
+  gFspDebugServicePpiGuid                               ## SOMETIMES_CONSUMES
+  gFsptUpdLocationPpiGuid                               ## CONSUMES
+
+[Protocols]
+  gEfiSerialIoProtocolGuid                         ## CONSUMES
+
+[Guids]
+  gEfiStatusCodeDataTypeStringGuid                      ## PRODUCES
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdDebugClearMemoryValue         ## SOMETIMES_CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask             ## CONSUMES
+  gEfiMdePkgTokenSpaceGuid.PcdFixedDebugPrintErrorLevel     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer ## CONSUMES

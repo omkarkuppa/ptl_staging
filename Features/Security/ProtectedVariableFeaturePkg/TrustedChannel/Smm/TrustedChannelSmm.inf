@@ -1,0 +1,66 @@
+## @file
+#  Trusted Channel HECI Services SMM Module
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = TrustedChannelSmm
+  FILE_GUID                      = 6F1B1FA2-561D-47C3-A22D-DBDC21246D8F
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  PI_SPECIFICATION_VERSION       = 0x0001000A
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = TrustedChannelSmmEntry
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  TrustedChannelSmm.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  CryptoPkg/CryptoPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  ProtectedVariableFeaturePkg/ProtectedVariableFeaturePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseCryptLib
+  BaseMemoryLib
+  DebugLib
+  HobLib
+  MemoryAllocationLib
+  SmmServicesTableLib
+  UefiDriverEntryPoint
+  PciSegmentLib
+
+[Guids]
+  gMeBiosPayloadHobGuid               ## CONSUMES
+  gKeyServiceTrustedChannelHobGuid    ## CONSUMES
+
+[Protocols]
+  gHeciTrustedChannelProtocolGuid     ## PRODUCES
+
+[Depex]
+  TRUE

@@ -1,0 +1,79 @@
+/** @file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2016 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+// Name:        CnvVfrSetupMenu.uni
+//
+// Description: CNV Menu Setup Form String Definitions.
+//
+//**********************************************************************
+//**********************************************************************
+//
+
+#langdef en-US "English"
+
+#string STR_STANDARD_DEFAULT_PROMPT                    #language en-US "Reset to Standard Default"
+#string STR_ENABLED                                    #language en-US "Enabled"
+#string STR_DISABLED                                   #language en-US "Disabled"
+#string STR_EMPTY                                      #language en-US ""
+
+//---------------------------------------------------------------------------
+// Connectivity Configuration Strings
+//---------------------------------------------------------------------------
+
+#string STR_CONNECTIVITY_CONFIGURATION                 #language en-US "Connectivity Configuration"
+#string STR_CONNECTIVITY_HELP                          #language en-US "Configure WiFi and BT related options"
+
+//---------------------------------------------------------------------------
+// CNVi Configuration Strings
+//---------------------------------------------------------------------------
+#string STR_CNVI_STATE                                 #language en-US "CNVi CRF Present"
+#string STR_CNVI_HELP                                  #language en-US "[Yes] means CNVi is the active Connectivity Solution, [No] means CNVi was not discovered"
+#string STR_CNVI_CURRENT_STATE                         #language en-US "No"
+#string STR_CNVI_IS_NOT_PRESENT_PATTERN                #language en-US "No"
+#string STR_CNVI_CONFIG                                #language en-US "CNVi Configuration"
+#string STR_CNVI_MODE                                  #language en-US "  CNVi Mode"
+#string STR_CNVI_MODE_HELP                             #language en-US "This option configures Connectivity. \n[Auto Detection] means that if Discrete solution is discovered it will be enabled by default. Otherwise Integrated solution (CNVi) will be enabled; \n[Disable Integrated] disables Integrated Solution. \nNOTE: When CNVi is present, the GPIO pins that are used for radio interface cannot be assigned to the other native function."
+#string STR_CNVI_AUTO                                  #language en-US "Auto Detection"
+#string STR_CNVI_DISABLE                               #language en-US "Disable Integrated"
+#string STR_CNVI_WIFI_CORE                             #language en-US "  Wi-Fi Core"
+#string STR_CNVI_WIFI_CORE_HELP                        #language en-US "This is an option intended to Enable/Disable Wi-Fi Core in CNVi"
+#string STR_CNVI_BT_CORE                               #language en-US "  BT Core"
+#string STR_CNVI_BT_CORE_HELP                          #language en-US "This is an option intended to Enable/Disable BT Core in CNVi"
+#string STR_CNVI_BT_INTERFACE                          #language en-US "  BT Interface"
+#string STR_CNVI_BT_INTERFACE_HELP                     #language en-US "This is an option to select BT interface as USB or PCI device"
+#string STR_CNVI_BT_USB                                #language en-US "USB"
+#string STR_CNVI_BT_PCI                                #language en-US "PCI"
+
+#string STR_CNVD_SKIP_VDID_CHECK_PROMPT                #language en-US "Skip VDID Check"
+#string STR_CNVD_SKIP_VDID_CHECK_HELP                  #language en-US "This is an option to Enable/Disable Skip VDID Check for CNVd"
+
+#string STR_CNV_BT_AUDIO_OFFLOAD                       #language en-US "BT Audio Offload"
+#string STR_CNV_BT_AUDIO_OFFLOAD_HELP                  #language en-US "This is an option to Enable/Disable BT Audio Offload which enables audio input from BT device to the audio DSP and enables power efficient audio output to BT device."
+#string STR_CNV_BT_AUDIO_OFFLOAD_INTERFACE             #language en-US "  BT Audio Offload Interface"
+#string STR_CNV_BT_AUDIO_OFFLOAD_INTERFACE_HELP        #language en-US "This is an option to select interface for BT Audio Offload."
+#string STR_CNV_BT_AUDIO_OFFLOAD_INTERFACE_I2S         #language en-US "I2S"
+#string STR_CNV_BT_AUDIO_OFFLOAD_INTERFACE_SOUNDWIRE   #language en-US "SoundWire"
+
+#string STR_BT_INTERFACE                               #language en-US "Discrete Bluetooth Interface"
+#string STR_BT_INTERFACE_HELP                          #language en-US "This is an option to Enable/Disable Discrete Bluetooth interface over USB"
+#string STR_BT_USB                                     #language en-US "USB"
+#string STR_PREBOOT_BLE_PROMPT                         #language en-US "Preboot BLE"
+#string STR_PREBOOT_BLE_HELP                           #language en-US "This will be used to enable Preboot Bluetooth function"

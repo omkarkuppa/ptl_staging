@@ -1,0 +1,51 @@
+/**@file
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2018 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+//
+// Name: PchSetup.uni
+//
+// Description: IntelPCH Form String Definitions.
+//
+//**********************************************************************
+/=#
+
+#include "VFR.uni"
+
+#string STR_PCH_PCIE                            #language en-US "PCH PCIE"
+#string STR_CPU_PCIE                            #language en-US "SA PCIE"
+
+//
+// PCH Devices
+//
+#string STR_PCIE_FORM                           #language en-US "PCIE Configuration"
+#string STR_PCIE_FORM_HELP                      #language en-US "PCIE Parameters"
+string STR_PCIE_IMR_CONFIG                      #language en-US "IMR Configuration"
+
+#string STR_PCIE_IMR_PROMPT                     #language en-US  "PCIe IMR"
+#string STR_PCIE_IMR_HELP                       #language en-US  "Enable/Disable PCIe IMR"
+#string STR_PCIE_IMR_SIZE_PROMPT                #language en-US  "PCIe IMR Size"
+#string STR_PCIE_IMR_SIZE_HELP                  #language en-US  "PCIe Reserved Memory Size to be requested in MB.\nMaximum value of 1024 MB"
+#string STR_PCIE_IMR_RP_LOCATION_PROMPT         #language en-US  "PCIe RP Location for IMR"
+#string STR_PCIE_IMR_RP_LOCATION_HELP           #language en-US  "Select SA or PCH root port associated with IMR"
+#string STR_PCIE_RP_IMR_INDEX                   #language en-US  "RP index for IMR"
+#string STR_PCIE_RP_IMR_INDEX_HELP              #language en-US  "Selects which root port will be associated with IMR"
+
+#string STR_PCIE_RESIZABLE_BAR_SUPPORT_PROMPT   #language en-US "PCIE Resizable BAR Support"
+#string STR_PCIE_RESIZABLE_BAR_SUPPORT_HELP     #language en-US "Enable/Disable PCIE Resizable BAR Support"

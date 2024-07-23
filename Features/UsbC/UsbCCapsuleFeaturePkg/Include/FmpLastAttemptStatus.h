@@ -1,0 +1,106 @@
+/** @file
+  Defines private last attempt status codes used in FmpDevicePkg.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2023 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+
+**/
+
+#ifndef __FMP_LAST_ATTEMPT_STATUS_LIB_H__
+#define __FMP_LAST_ATTEMPT_STATUS_LIB_H__
+
+///
+/// The TBT Retimer value allowed for FMP device library errors.
+///
+#define LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_CODE_VALUE             0x1900
+
+///
+/// The Discrete Thunderbolt value allowed for FMP device library errors.
+///
+#define LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_CODE_VALUE                    0x1980
+
+///
+/// Last attempt status codes defined for additional granularity in FmpDevicePkg components.
+///
+/// These codes are defined within the last attempt status FMP device library range which extends from
+/// LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE to LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE.
+///
+/// The following last attempt status code ranges are currently defined for the corresponding component:
+///   * LAST_ATTEMPT_STATUS_DEVICE_LIBRARY - FMP device library
+///
+/// Future last attempt status code additions in FmpDevicePkg should be added as follows:
+///   * FMP devoce library: Onto the end of the LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_ERROR range
+///   * Other components: Add a new range onto the end of the last existing range in the enum within the limits of
+///     [LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE,LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE]
+///
+/// The value of pre-existing last attempt status codes should never be modified to ensure the values remain
+/// consistent over time.
+///
+enum LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_EXPANDED_ERROR_LIST
+{
+  ///
+  /// Last attempt status codes used in FMP device library
+  ///
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_ERROR_GET_FMP_HEADER                              = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE,
+
+  ///
+  /// Last attempt status codes used in FMP TBT Retimer device library
+  ///
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_IMAGE_TABLE_NOT_PROVIDED                    = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_CODE_VALUE,
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_IMAGE_PARAMETER_IS_NULL                     , // 0X1901
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_SIGNATURE_IS_NOT_DETECTED                   , // 0X1902
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_RETIMER_COUNT_HEADER_IS_ZERO                , // 0X1903
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_OVER_ONE_RETIMER_COUNT                      , // 0X1904
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_PAYLOAD_SIZE_TOO_SMALL                      , // 0X1905
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS                    , // 0X1906
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_IMAGE_NOT_PROVIDED                          , // 0X1907
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_PROGRESS_CALLBACK_ERROR                     , // 0X1908
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_USBC_RETIMER_PROTOCOL_NOT_FOUND             , // 0X1909
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_DRIVE_TBT_MODE_FAILED                       , // 0X190A
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_USB2HC_PROTOCOL_NOT_FOUND                   , // 0X190B
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS_2                  , // 0X190C
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_UNSUPPORT_FIRMWARE_TYPE                     , // 0X190D
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_INITIALIZATION_FAILED                       , // 0X190E
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_RESTORE_ORIGINAL_MODE_FAILED                , // 0X190F
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_UPDATE_FAILED                               , // 0X1910
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_DEVICE_HANDLE_NOT_FOUND                     , // 0X1911
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_TOO_FEW_RETIMER_INSTANCES                   , // 0X1912
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_SEND_OFFLINE_MODE_FAILED                    , // 0X1913
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_USBC_RETIMER_FORCE_POWER_PROTOCOL_NOT_FOUND , // 0X1914
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_ASSERT_RETIMER_FORCE_POWER_FAILED           , // 0X1915
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_DEASSERT_RETIMER_FORCE_POWER_FAILED         , // 0X1916
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_USBC_PROGRESS_CODE_PROTOCOL_NOT_FOUND       , // 0X1917
+  ///
+  /// Last attempt status codes used in FMP Discrete Thunderbolt device library
+  ///
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_IMAGE_TABLE_NOT_PROVIDED        = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_CODE_VALUE,
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_IMAGE_PARAMETER_IS_NULL         , // 0X1981
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_SIGNATURE_IS_NOT_DETECTED       , // 0X1982
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_RETIMER_COUNT_HEADER_IS_ZERO    , // 0X1983
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_OVER_ONE_RETIMER_COUNT          , // 0X1984
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_PAYLOAD_SIZE_TOO_SMALL          , // 0X1985
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS        , // 0X1986
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_IMAGE_NOT_PROVIDED              , // 0X1987
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_PROGRESS_CALLBACK_ERROR         , // 0X1988
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_USB2HC_PROTOCOL_NOT_FOUND       , // 0X1989
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS_2      , // 0X198A
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_UNSUPPORT_FIRMWARE_TYPE         , // 0X198B
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_INITIALIZATION_FAILED           , // 0X198C
+  LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_UPDATE_FAILED                     // 0X198D
+};
+
+#endif

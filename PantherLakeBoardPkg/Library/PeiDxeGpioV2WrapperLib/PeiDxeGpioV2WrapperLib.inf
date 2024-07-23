@@ -1,0 +1,49 @@
+## @file
+# Component description file for PeiDxeGpioV2WrapperLib
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+##
+
+
+[Defines]
+INF_VERSION                    = 0x00010017
+BASE_NAME                      = PeiDxeGpioV2WrapperLib
+FILE_GUID                      = 738A9EF8-8E3C-47B9-BFC8-194F341385FA
+VERSION_STRING                 = 1.0
+MODULE_TYPE                    = BASE
+LIBRARY_CLASS                  = GpioV2WrapperLib
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[Sources]
+  PeiDxeGpioV2WrapperLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  GpioV2AccessLib
+  PtlPcdInfoLib
+

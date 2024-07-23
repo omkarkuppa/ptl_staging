@@ -1,0 +1,54 @@
+## @file
+# Platform Hook Library instance for PantherLake Mobile/Desktop CRB.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = BasePlatformHookLib
+  FILE_GUID                      = E22ADCC6-ED90-4A90-9837-C8E7FF9E963D
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = BASE
+  LIBRARY_CLASS                  = PlatformHookLib
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[LibraryClasses]
+  BaseLib
+  IoLib
+  PciSegmentLib
+  MmPciLib
+  PciLib
+  PchCycleDecodingLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdLpcIoDecodeRange                     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpcIoEnableDecoding                  ## CONSUMES
+
+[Sources]
+  BasePlatformHookLib.c

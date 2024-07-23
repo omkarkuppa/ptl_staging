@@ -1,0 +1,40 @@
+/** @file
+  String definitions for BdsPlatform formset.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2004 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+
+/=#
+
+#langdef   en-US "English"
+#langdef   fr-FR "Français"
+
+#string STR_BM_BANNER                  #language en-US  "Boot Manager Menu"
+                                       #language fr-FR  "Boot Manager Menu"
+#string STR_HELP_FOOTER                #language en-US  "Use the <↑> and <↓> keys to choose a boot option, the <Enter> key to select a boot option, and the <Esc> key to exit the Boot Manager Menu."
+                                       #language fr-FR  "<↑> pour <↓> changer l'option, <ENTRER> choisir une option, <ESC> pour sortir"
+#string STR_AND                        #language en-US  " and "
+                                       #language fr-FR  " et "
+#string STR_BOOT_OPTION_BANNER         #language en-US  "Boot Manager Menu"
+                                       #language fr-FR  "le Menu d'Option de Botte"
+#string STR_ANY_KEY_CONTINUE           #language en-US  "Press any key to continue..."
+                                       #language fr-FR  "Appuie n'importe quelle pour continuer..."
+#string STR_LAST_STRING                #language en-US  ""
+                                       #language fr-FR  ""
+

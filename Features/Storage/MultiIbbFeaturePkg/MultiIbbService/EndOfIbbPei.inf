@@ -1,0 +1,48 @@
+### @file
+# Component information file for Multi IBB callback function at the end of every IBB
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2022 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010017
+  BASE_NAME                      = EndOfIbbPei
+  FILE_GUID                      = 66253D4C-4729-4D40-BA30-18B612C300D0
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  ENTRY_POINT                    = EndOfIbbEntryPoint
+
+[LibraryClasses]
+  DebugLib
+  BaseLib
+  PeimEntryPoint
+  PeiServicesLib
+
+[Packages]
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+  MultiIbbFeaturePkg/MultiIbbFeaturePkg.dec
+
+[Sources]
+  EndOfIbbPei.c
+
+[Ppis]
+  gEfiEndOfIbbSignalPpiGuid         ## PRODUCES
+
+[Depex]
+  gPeiFirmwareVolumeVerifyHashFvPpiGuid

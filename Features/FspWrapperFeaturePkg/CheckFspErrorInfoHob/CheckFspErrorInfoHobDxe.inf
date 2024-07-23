@@ -1,0 +1,62 @@
+## @file
+# Check notify phase FSP_ERROR_INFO HOB from FSP Wrapper.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2019 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = CheckFspErrorInfoHobDxe
+  FILE_GUID                      = E0D172D7-1D81-4B39-90AE-FF45D5732483
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = CheckFspErrorInfoHobDxeEntryPoint
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  CheckFspErrorInfoHobDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  FspWrapperFeaturePkg/FspWrapperFeaturePkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  UefiBootServicesTableLib
+  DebugLib
+  BaseMemoryLib
+  UefiLib
+  HobLib
+  FspErrorInfoLib
+
+[Protocols]
+  gEfiPciEnumerationCompleteProtocolGuid            ## CONSUMES
+
+[Guids]
+  gEfiEventExitBootServicesGuid                     ## CONSUMES ## Event
+  gFspHobGuid                                       ## CONSUMES ## HOB
+
+[Depex]
+  TRUE

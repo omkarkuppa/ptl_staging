@@ -1,0 +1,50 @@
+## @file
+# Component description file for the PeiDxeSmmPciExpressHelpersLib
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2008 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+
+[Defines]
+  INF_VERSION = 0x00010017
+  BASE_NAME = PeiDxeSmmPciExpressHelpersLib
+  FILE_GUID = 07E3F76D-6D26-419d-9053-58696A15B519
+  VERSION_STRING = 1.0
+  MODULE_TYPE = BASE
+  LIBRARY_CLASS = PciExpressHelpersLib
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[LibraryClasses]
+  BasePcieHelperLib
+  BaseMemoryLib
+  PciSegmentLib
+  DebugLib
+  PchInfoLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[Sources]
+  PciExpressHelpersLibrary.c
+  PciExpressHelpersLibrary.h

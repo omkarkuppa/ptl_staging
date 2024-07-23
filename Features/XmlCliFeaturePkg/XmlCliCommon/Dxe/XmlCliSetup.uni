@@ -1,0 +1,45 @@
+/** @file
+ XmlCli Setup configuration
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2021 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#langdef en-US "English"
+
+
+#string STR_EMPTY                        #language en-US  ""
+
+#string STR_ENABLED                      #language en-US  "Enabled"
+#string STR_DISABLED                     #language en-US  "Disabled"
+
+#string STR_STANDARD_DEFAULT_PROMPT      #language en-US  "Standard Default"
+
+#string STR_XMLCLI_FORM                  #language en-US  "XmlCli"
+#string STR_XMLCLI_FORM_HELP             #language en-US  "BIOS XmlCli Setup Options"
+
+#string STR_XML_CLI_SUPPORT_PROMPT       #language en-US  "Xml Cli Support"
+#string STR_XML_CLI_SUPPORT_HELP         #language en-US  "Enable Disable Xml Cli Support in BIOS"
+
+#string STR_PUBLISH_SETUP_PG_PTR_PROMPT  #language en-US  "Publish Setup page Pointer"
+#string STR_PUBLISH_SETUP_PG_PTR_HELP    #language en-US  "Publish Setup page Pointer in BIOS Knobs section of the Xml File"
+
+#string STR_XML_CLI_LITE_PROMPT          #language en-US  "XmlCli Lite"
+#string STR_XML_CLI_LITE_HELP            #language en-US  "Enable Disable XmlCli Lite Feature for limited and optimized operations"
+
+#string STR_STANDARD_DEFAULT_PROMPT       #language en-US "Standard Default"
+#string STR_MANUFACTURE_DEFAULT_PROMPT    #language en-US "Manufacture Default"

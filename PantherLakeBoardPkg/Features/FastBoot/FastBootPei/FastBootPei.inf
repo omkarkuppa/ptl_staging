@@ -1,0 +1,68 @@
+## @file
+#  Fast Boot Related HOB Creation.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification Reference:
+##
+
+[Defines]
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = FastBootPei
+  FILE_GUID                      = A66F4F33-3A40-4975-A7AC-A48925F5ACEB
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  ENTRY_POINT                    = FastBootPeiEntryPoint
+
+[LibraryClasses]
+  PeiServicesLib
+  PeimEntryPoint
+  DebugLib
+  BaseMemoryLib
+  HobLib
+  PmcLib
+  PcdLib
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[Sources]
+  FastBootPei.c
+
+[Ppis]
+  gEfiPeiReadOnlyVariable2PpiGuid               ## CONSUMES
+  gSiPreMemPolicyReadyPpiGuid                   ## NOTIFY
+  gEfiEndOfPeiSignalPpiGuid                     ## NOTIFY
+
+[Guids]
+  gCpuSetupVariableGuid                         ## CONSUMES ## Variable
+  gSetupVariableGuid                            ## CONSUMES ## Variable
+  gEfiGlobalVariableGuid                        ## CONSUMES ## Variable
+  gAttemptUsbFirstHotkeyInfoHobGuid             ## CONSUMES ## HOB
+  gFastBootFunctionEnabledHobGuid               ## PRODUCES ## HOB
+  gFastBootExceptionInfoHobGuid                 ## PRODUCES ## HOB
+  gOcSetupVariableGuid                          ## CONSUMES ## Variable
+
+[Pcd]
+
+[FixedPcd]
+gSiPkgTokenSpaceGuid.PcdOverclockEnable ## CONSUMES
+
+[Depex]
+  gEfiPeiReadOnlyVariable2PpiGuid
