@@ -433,8 +433,6 @@ FvNameGuid         = A881D567-6CB0-4eee-8435-2E72D33E45B5
 INF  MdeModulePkg/Universal/ResetSystemRuntimeDxe/ResetSystemRuntimeDxe.inf
 INF  MdeModulePkg/Universal/DriverHealthManagerDxe/DriverHealthManagerDxe.inf
 
-INF  BoardModulePkg/BoardBdsHookDxe/BoardBdsHookDxe.inf
-
 INF $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/DxeSmm/GpioV2PtlPcdProtocolInitDxe.inf
 
 
@@ -490,29 +488,6 @@ FILE FV_IMAGE = 9E21FD93-9C72-4c15-8C4B-E77F1DB2D792 {
          SECTION FV_IMAGE = FvUefiBootUncompact
        }
      }
-
-[FV.FvPplBdsUncompact]
-BlockSize          = $(FLASH_BLOCK_SIZE)
-FvForceRebase      = FALSE
-FvAlignment        = 16
-ERASE_POLARITY     = 1
-MEMORY_MAPPED      = TRUE
-STICKY_WRITE       = TRUE
-LOCK_CAP           = TRUE
-LOCK_STATUS        = TRUE
-WRITE_DISABLED_CAP = TRUE
-WRITE_ENABLED_CAP  = TRUE
-WRITE_STATUS       = TRUE
-WRITE_LOCK_CAP     = TRUE
-WRITE_LOCK_STATUS  = TRUE
-READ_DISABLED_CAP  = TRUE
-READ_ENABLED_CAP   = TRUE
-READ_STATUS        = TRUE
-READ_LOCK_CAP      = TRUE
-READ_LOCK_STATUS   = TRUE
-FvNameGuid         = 819C9DB2-17CE-412D-B19C-1AAA39241A9E
-
-INF  MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
 
 [FV.FvUpl]
 BlockSize          = $(FLASH_BLOCK_SIZE)

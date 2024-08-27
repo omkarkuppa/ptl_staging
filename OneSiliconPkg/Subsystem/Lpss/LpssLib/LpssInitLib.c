@@ -220,7 +220,7 @@ LpssInterruptSet (
 
   DataAnd = ~(UINT32) (B_LPSS_PCR_PCICFGCTR1_IPIN1 | B_LPSS_PCR_PCICFGCTR1_PCI_IRQ1 | B_LPSS_PCR_PCICFGCTR1_ACPI_IRQ1);
 
-  if (LpssDev->Mode == ModePci) {
+  if (LpssDev->Mode == ModePci || LpssDev->Mode == ModeSkipInit || LpssDev->Mode == ModeDisabled) {
     DataOr = LpssDev->InterruptPin << N_LPSS_PCR_PCICFGCTR1_IPIN1 | LpssDev->Irq << N_LPSS_PCR_PCICFGCTR1_PCI_IRQ1;
   } else if (LpssDev->Mode == ModeAcpi || LpssDev->Mode == ModeCom) {
     DataOr = LpssDev->InterruptPin << N_LPSS_PCR_PCICFGCTR1_IPIN1 | LpssDev->Irq << N_LPSS_PCR_PCICFGCTR1_ACPI_IRQ1;
@@ -329,7 +329,10 @@ LpssInit (
         break;
       case ModeDisabled:
         LpssBar1Disable (LpssSubsystem->PcrAccess, Dev);
+        break;
       case ModeSkipInit:
+        LpssInterruptSet (LpssSubsystem->PcrAccess, Dev);
+        break;
       default:
         break;
     }
@@ -406,6 +409,7 @@ LpssFabricFunctionDisable (
           }
         } else {
           // Don't disable the device in PSF if thare are other devices in multi-function PCIe device
+          LpssInterruptSet (LpssSubsystem->PcrAccess, Dev);
           DEBUG ((DEBUG_INFO, "Keep LPSS %a Device PSF enabled (PCI Function 0 is required)\n", Dev->Name));
         }
       }

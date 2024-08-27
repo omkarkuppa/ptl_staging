@@ -203,7 +203,7 @@ MrcUcExecuteGreen (
   MrcPrintBuf               PrintBuf;
   INT32                     Temperature;
   UINT32                    Address;
-  UINT32                    SmbusStatus;
+  RETURN_STATUS             SmbusStatus;
 
   Outputs = &MrcData->Outputs;
   Debug   = &Outputs->Debug;
@@ -212,16 +212,9 @@ MrcUcExecuteGreen (
 
   MrcCall->MrcSetMem ((UINT8 *)&CommBuffer, sizeof (CommBuffer), 0);
 
-  // If Green is called from Interpreter, pass the start/stop POST codes
-  // cannot clear the Outputs variables as they will be overwritten when Blue writes back Green
-  if (Outputs->IsInterpreterCommand) {
-    CommBuffer.Misc.Bits.ExecutingCommand = Outputs->IsInterpreterCommand;
-    CommBuffer.TaskControl.PostCodes.Start = Outputs->PostCodeStart;
-    CommBuffer.TaskControl.PostCodes.Stop = Outputs->PostCodeStop;
-  } else {
-    // else load the initial CMOS breakpoint.
+  CommBuffer.Misc.Bits.ExecutingCommand = Outputs->IsInterpreterCommand;
+    // Load the initial CMOS breakpoint.
     CommBuffer.TaskControl.PostCodes.Stop = (MrcCall->MrcRtcCmos (MRC_POST_CODE_HIGH_BYTE_ADDR) << 8) | MrcCall->MrcRtcCmos (MRC_POST_CODE_LOW_BYTE_ADDR);
-  }
 
   BlueMrcWriteUcCommBuffer (MrcData, &CommBuffer);
   Status = BlueMrcSetXtensaFwDownloadDone (MrcData);
@@ -365,24 +358,33 @@ MrcUpdateDataFromUc (
 {
   MrcSave       *Save;
   MrcOutput     *Output;
+  MrcInput      *Inputs;
   MrcVersion    *Version;
+  UINT64        *TscTimeBase;
   UINT32        SaveOffset;
   UINT32        VersionOffset;
+  UINT32        InputOffset;
   UINT32        SaveSizeToCopy;
   UINT32        OutputSizeToCopy;
+  UINT32        InputSizeToCopy;
 
   Save        = &MrcData->Save;
   Output      = &MrcData->Outputs;
+  Inputs      = &MrcData->Inputs;
   Version     = &Output->Version;
+  TscTimeBase = &Inputs->TscTimeBase;
 
   SaveOffset      = gUcMrcDataAddress  + OFFSET_OF (MrcParameters, Save);
   VersionOffset   = gUcMrcDataAddress  + OFFSET_OF (MrcParameters, Outputs) + OFFSET_OF (MrcOutput, Version);
+  InputOffset     = gUcMrcDataAddress  + OFFSET_OF (MrcParameters, Inputs) + OFFSET_OF (MrcInput, TscTimeBase);
 
   SaveSizeToCopy   = OFFSET_OF (MrcSaveData, RegSaveCommon); // Last part of MrcSave is not used in Green MRC, hence do not copy it (RegSaveCommon, SaGvRegSave, Controller and SaGvOutputs)
   OutputSizeToCopy = OFFSET_OF (MrcOutput, RegisterCache) - OFFSET_OF (MrcOutput, Version); // Skipped past debug member, Stop at register cache
+  InputSizeToCopy  = OFFSET_OF (MrcInput, Call) - sizeof (Inputs->ExtInputs); // Do not copy the ExtInputs pointer, Stop at Inputs->Call
 
-  BlueMrcReadUcData (MrcData, SaveOffset,      (UINT32 *) Save,      SaveSizeToCopy);
-  BlueMrcReadUcData (MrcData, VersionOffset,   (UINT32 *) Version,   OutputSizeToCopy);
+  BlueMrcReadUcData (MrcData, SaveOffset,      (UINT32 *) Save,        SaveSizeToCopy);
+  BlueMrcReadUcData (MrcData, VersionOffset,   (UINT32 *) Version,     OutputSizeToCopy);
+  BlueMrcReadUcData (MrcData, InputOffset,     (UINT32 *) TscTimeBase, InputSizeToCopy);
   MrcInvalidateRegisterCachedData (MrcData);
 
   // check errors reported to UCSS during Data Read

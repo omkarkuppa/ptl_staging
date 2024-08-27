@@ -40,7 +40,6 @@
   DebugLib
   PeiServicesLib
   MeLib
-  SpiLib
   PeiSpiLib
   HobLib
   MemoryAllocationLib

@@ -122,6 +122,8 @@ Method (_DOD,0)
 {
   If (LAnd (LNotEqual (DIDL, 0x0), LNotEqual (DDL2, 0x0)))
   {
+    DID1 = 0x80010400
+    DID2 = 0x80010401
     If (LEqual (IPTP,1))
     {
       //
@@ -136,6 +138,7 @@ Method (_DOD,0)
   }
   ElseIf (LAnd (LNotEqual (DIDL, 0x0), LEqual (DDL2, 0x0)))
   {
+    DID1 = 0x80010400
     If (LEqual (IPTP,1)) {
       //
       // IGFX need report IPUA as GFX0 child
@@ -158,6 +161,60 @@ Method (_DOD,0)
     Return (Package () {0x80023480})
   }
   Return (Package () {0x00000400})
+}
+
+Device (DD01)
+{
+  //
+  // Return Unique ID.
+  //
+  Method (_ADR,0,Serialized)
+  {
+    If (LEqual (And (0x0F00,DID1),0x400))
+    {
+      Store (0x1, EDPV)
+      Store (DID1, DIDX)
+      Return (1)
+    }
+    If (LEqual (DID1,0))
+    {
+      Return (1)
+    }
+    Else
+    {
+      Return (And (0xFFFF,DID1))
+    }
+  }
+}
+
+Device (DD02)
+{
+  //
+  // Return Unique ID.
+  //
+  Method (_ADR,0,Serialized)
+  {
+    If (LEqual (And (0x0F00,DID2),0x400))
+    {
+      If (LEqual (And (0xF,DID2),0x1))
+      {
+        Store (0x2, EDPV)
+        Store (DID2, DIDY)
+        Return (2)
+      }
+      Store (0x2, EDPV)
+      Store (DID2, DIDX)
+      Return (2)
+    }
+    If (LEqual (DID2,0))
+    {
+      Return (2)
+    }
+    Else
+    {
+      Return (And (0xFFFF,DID2))
+    }
+  }
 }
 
 //

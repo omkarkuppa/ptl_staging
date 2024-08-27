@@ -59,16 +59,6 @@ GetLpssUartFixedMmioAddress (
   IN UINT8       UartNumber
   );
 
-/**
-  Gets Fixed Address used for Pci Config Space manipulation
 
-  @param[in] UartNumber              Serial IO device UART number
-
-  @retval                            Pci Config Address
-**/
-UINT32
-GetLpssUartFixedPciCfgAddress (
-  IN UINT8       UartNumber
-  );
   
 #endif

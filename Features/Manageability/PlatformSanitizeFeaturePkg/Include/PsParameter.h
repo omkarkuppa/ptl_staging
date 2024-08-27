@@ -78,7 +78,8 @@
                                                   PS_TPM_CLEAR | \
                                                   PS_OEM_CUSTOM_ACTION | \
                                                   PS_CLEAR_ALL_BIOS_NVM_VARIABLE_REGION | \
-                                                  PS_BIOS_RELOAD_GOLDEN_CONFIG  \
+                                                  PS_BIOS_RELOAD_GOLDEN_CONFIG | \
+                                                  PS_CSME_UNCONFIGURE \
                                                   )
 
 //

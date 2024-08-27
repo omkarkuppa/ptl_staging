@@ -30,7 +30,7 @@ Scope (\_SB)
     Name (_HID, EISAID ("PNP0C02"))
     Name (_UID, "SOCCLK")
 
-    OperationRegion (CKOR, SystemMemory, Add(SBRG, Add(ShiftLeft(ICKP, 16), R_ICLK_PCR_CAMERA1)), 0x40)
+    OperationRegion (CKOR, SystemMemory, Add(SBRG, Add(ShiftLeft(ICKP, 16), R_ISCLK_PCR_CAMERA1)), 0x40)
     Field(CKOR,AnyAcc,Lock,Preserve) {
       CLK0, 8,
       Offset(0x0C),
@@ -59,15 +59,15 @@ Scope (\_SB)
       Switch(ToInteger(Arg0)) {
         Case (0) {
           Store(CLK0, Local0)
-          Store(Or(And(Local0, Not(B_ICLK_PCR_CAMERA1_CAM1_CLK_EN)), ShiftLeft(Arg1, 2)), CLK0)
+          Store(Or(And(Local0, Not(B_ISCLK_PCR_CAMERA1_CAM1_CLK_EN)), ShiftLeft(Arg1, 2)), CLK0)
         }
         Case (1) {
           Store(CLK1, Local0)
-          Store(Or(And(Local0, Not(B_ICLK_PCR_CAMERA1_CAM1_CLK_EN)), ShiftLeft(Arg1, 2)), CLK1)
+          Store(Or(And(Local0, Not(B_ISCLK_PCR_CAMERA1_CAM1_CLK_EN)), ShiftLeft(Arg1, 2)), CLK1)
         }
         Case (2) {
           Store(CLK2, Local0)
-          Store(Or(And(Local0, Not(B_ICLK_PCR_CAMERA1_CAM1_CLK_EN)), ShiftLeft(Arg1, 2)), CLK2)
+          Store(Or(And(Local0, Not(B_ISCLK_PCR_CAMERA1_CAM1_CLK_EN)), ShiftLeft(Arg1, 2)), CLK2)
         }
       }
     }
@@ -87,15 +87,15 @@ Scope (\_SB)
       Switch(ToInteger(Arg0)) {
         Case (0) {
           Store(CLK0, Local0)
-          Store(Or(And(Local0, Not(B_ICLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), And(Arg1, B_ICLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), CLK0)
+          Store(Or(And(Local0, Not(B_ISCLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), And(Arg1, B_ISCLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), CLK0)
         }
         Case (1) {
           Store(CLK1, Local0)
-          Store(Or(And(Local0, Not(B_ICLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), And(Arg1, B_ICLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), CLK1)
+          Store(Or(And(Local0, Not(B_ISCLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), And(Arg1, B_ISCLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), CLK1)
         }
         Case (2) {
           Store(CLK2, Local0)
-          Store(Or(And(Local0, Not(B_ICLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), And(Arg1, B_ICLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), CLK2)
+          Store(Or(And(Local0, Not(B_ISCLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), And(Arg1, B_ISCLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0)), CLK2)
         }
       }
     }

@@ -71,7 +71,14 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu
   gCnvFeaturePkgTokenSpaceGuid.PcdCnviPresence
   gCnvFeaturePkgTokenSpaceGuid.PcdGlobalCnvDlvrRfim
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvGuidLockStatus 
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvGuidLockStatus
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport
+  gCnvFeaturePkgTokenSpaceGuid.PcdBtUsbInterfaceSupport
+  gCnvFeaturePkgTokenSpaceGuid.PcdBtAudioOffloadSupport
+  gCnvFeaturePkgTokenSpaceGuid.PcdBtDsmSupport
+  gCnvFeaturePkgTokenSpaceGuid.PcdWifiDsmSupport
+  gCnvFeaturePkgTokenSpaceGuid.PcdSkipVidDidCheck
 
 [Protocols]
   gCnvNvsAreaProtocolGuid                      ## PRODUCES

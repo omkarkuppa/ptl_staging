@@ -265,7 +265,7 @@ typedef union {
 
 typedef union {
   struct {
-    UINT64 sai_mask; /**< Control Policy */
+    UINT64 sai_mask : 64; /**< Control Policy */
 
                             /* Bits[63:0], Access Type=RW, default=0x4000100021B*/
 
@@ -300,7 +300,7 @@ typedef union {
 
 typedef union {
   struct {
-    UINT64 sai_mask; /**< Write Access Control Policy */
+    UINT64 sai_mask : 64; /**< Write Access Control Policy */
 
                             /* Bits[63:0], Access Type=RW, default=0xC000100021B*/
 

@@ -219,6 +219,18 @@
   # Coin-less mode
   gBoardModuleTokenSpaceGuid.PcdCoinlessSpiNorClearGpio        ## PRODUCES
 
+  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio                               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                               ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpio                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable                              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanFullCardPowerOffGpioPolarity            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpioPolarity                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanSourceClock                             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanRootPortNumber                          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanModemBaseBandResetGpio                  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdWwanWakeGpio                                ## CONSUMES
+
   ##
   ## VPD Pcd's
   ##
@@ -257,6 +269,17 @@
   gBoardModuleTokenSpaceGuid.VpdPcdVdd2lPowerRailPresent                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCUcmMode                               ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdGopConfigSoftwareId                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpio                  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpio                             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio                             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdWwanWakeGpio                              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpioPolarity                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdWwanSourceClock                           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdwwanPowerEnableGpio                       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdWwanModemBaseBandResetGpio                ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdWwanRootPortNumber                        ## CONSUMES
 
   gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable                   ## CONSUMES
 

@@ -68,7 +68,8 @@ QuickSpiInitialize (
       QUICK_SPI_DEFAULT_WRITE_OPCODE,
       QUICK_SPI_DEFAULT_DUAL_WRITE_OPCODE,
       QUICK_SPI_DEFAULT_QUAD_WRITE_OPCODE,
-      QUICK_SPI_DEFAULT_QPI_WRITE_OPCODE
+      QUICK_SPI_DEFAULT_QPI_WRITE_OPCODE,
+      QUICK_SPI_DEFAULT_MAX_PACKET_SIZE
      );
     Frequency = QUICK_SPI_DEFAULT_FREQUENCY;
   } else { // consume policy
@@ -84,7 +85,8 @@ QuickSpiInitialize (
       (UINT8) HidOverSpi->WriteOpcode,
       (UINT8) HidOverSpi->WriteOpcode,
       (UINT8) HidOverSpi->WriteOpcode,
-      (UINT8) HidOverSpi->WriteOpcode
+      (UINT8) HidOverSpi->WriteOpcode,
+      (UINT8) HidOverSpi->LimitPacketSize
       );
     Frequency = HidOverSpi->Frequency;
   }
@@ -704,8 +706,9 @@ QuickSpiDmaReadRx2 (
   EFI_STATUS                 Status;
   UINT8                      CurrentPrdTable;
 
-  while ((CurrentCBWritePointer & POINTER_MASK) != (CurrentCBReadPointer & POINTER_MASK)) {
-    CurrentPrdTable = (UINT8) (CurrentCBWritePointer & POINTER_MASK);
+  while (((CurrentCBWritePointer & POINTER_MASK) != (CurrentCBReadPointer & POINTER_MASK)) ||  // CB Not Empty
+    (CurrentCBWritePointer == CurrentCBReadPointer)) {
+    CurrentPrdTable = (UINT8) (CurrentCBWritePointer & POINTER_MASK);                                         // CB Full  CurrentPrdTable = (UINT8) (CurrentCBWritePointer & POINTER_MASK);
     THC_LOCAL_DEBUG(L"PrdTable %d CBWritePointer %d CBReadPointer %d CB 0x%X \n",
                      CurrentPrdTable,
                      CurrentCBWritePointer & POINTER_MASK,
@@ -1065,7 +1068,8 @@ QuickSpiPolling (
       QuickSpiDev->LastWritePointer = (UINT8) ReadDmaCntrl2.Fields.QuickSpiPrdCbWritePointer;
       return;
     }
-    while (((UINT8) (ReadDmaCntrl2.Fields.QuickSpiPrdCbWritePointer  & POINTER_MASK)) != ((UINT8) (ReadDmaCntrl2.Fields.QuickSpiPrdCbReadPointer & POINTER_MASK))) {
+    while ((((UINT8) (ReadDmaCntrl2.Fields.QuickSpiPrdCbWritePointer  & POINTER_MASK)) != ((UINT8) (ReadDmaCntrl2.Fields.QuickSpiPrdCbReadPointer & POINTER_MASK))) ||
+      ((UINT8) ReadDmaCntrl2.Fields.QuickSpiPrdCbWritePointer == (UINT8) ReadDmaCntrl2.Fields.QuickSpiPrdCbReadPointer)) {                                             // CB Full  
       QuickSpiDev->ReadDone = FALSE;
       QuickSpiDmaReadRx2 (QuickSpiDev, (UINT8) ReadDmaCntrl2.Fields.QuickSpiPrdCbWritePointer, (UINT8) ReadDmaCntrl2.Fields.QuickSpiPrdCbReadPointer);
       ReadDmaCntrl2.Data = QuickSpiLibGetReadRx2Data (QuickSpiDev->PciBar0);

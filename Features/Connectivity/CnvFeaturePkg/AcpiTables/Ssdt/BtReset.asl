@@ -19,6 +19,7 @@
 @par Specification
 **/
 
+External (\_SB.BTRK, MethodObj)
 External (\CNMT, MutexObj)
 External (BRMT, IntObj)
 External (CBTC, IntObj)

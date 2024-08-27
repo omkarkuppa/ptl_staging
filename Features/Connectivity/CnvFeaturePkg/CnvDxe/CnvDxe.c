@@ -337,15 +337,42 @@ CnvAcpiEndOfDxeCallback (
 }
 
 /**
-  This function Update Platform PCD Into NVRAM for Setup option Display control use.
+  This function updates variable.
 
 **/
 VOID
 EFIAPI
-CnvUpdateNvramVariable (
+CnvUpdateVariable (
   VOID
   )
 {
+  EFI_STATUS  Status;
+  UINTN       DataSize;
+  UINT32      VariableAttr;
+
+  //
+  // 1. Assign defaults to mCnvSetup by FixedAtBuild PCD
+  //
+  mCnvSetup.SkipVidDidCheck = FixedPcdGetBool (PcdSkipVidDidCheck);
+
+  //
+  // 2. GetVariable - gCnvFeatureSetupGuid
+  //
+  // EFI_SUCCESS    - mCnvSetup will be overridden by setup variable in flash or Hii structure PCD default
+  // Others         - mCnvSetup will be untouched and hold the values assigned by step 1
+  //
+  DataSize = sizeof (CNV_VFR_CONFIG_SETUP);
+  Status   = gRT->GetVariable (
+                    CNV_SETUP_VARIABLE_NAME,
+                    &gCnvFeatureSetupGuid,
+                    &VariableAttr,
+                    &DataSize,
+                    &mCnvSetup
+                    );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Get gCnvFeatureSetupGuid failed\n"));
+    return;
+  }
 }
 
 /**
@@ -700,8 +727,6 @@ CnvDxeEntryPoint (
   EFI_STATUS  Status;
   EFI_HANDLE  Handle;
   EFI_EVENT   EndOfDxeEvent;
-  UINTN       DataSize;
-  UINT32      VariableAttr;
   EFI_EVENT   EventExitBootServices;
 
   Status                = EFI_SUCCESS;
@@ -710,8 +735,6 @@ CnvDxeEntryPoint (
   EventExitBootServices = NULL;
 
   DEBUG ((DEBUG_INFO, "CnvDxeEntryPoint START\n"));
-
-  CnvUpdateNvramVariable (); // Update Platform PCD Into NVRAM
 
   //
   // Get CNV Pcd Data Structure
@@ -723,34 +746,15 @@ CnvDxeEntryPoint (
     return EFI_NOT_FOUND;
   }
 
-  DataSize = sizeof (CNV_VFR_CONFIG_SETUP);
-  Status   = gRT->GetVariable (
-                  CNV_SETUP_VARIABLE_NAME,
-                  &gCnvFeatureSetupGuid,
-                  &VariableAttr,
-                  &DataSize,
-                  &mCnvSetup
-                  );
-  ASSERT_EFI_ERROR (Status);
-
   //
-  // Update CNV setup variable revision
+  // This function updates variable.
   //
-  mCnvSetup.Revision = CNV_SETUP_REVISION;
-
-  Status = gRT->SetVariable (
-                  CNV_SETUP_VARIABLE_NAME,
-                  &gCnvFeatureSetupGuid,
-                  VariableAttr,
-                  DataSize,
-                  &mCnvSetup
-                  );
-  ASSERT_EFI_ERROR (Status);
+  CnvUpdateVariable ();
 
   //
   // Initialize CNV NVS Area
   //
-  CnvNvsAreaInit ((VOID **)&mCnvNvsAreaProtocol.Area);
+  CnvNvsAreaInit ((VOID **) &mCnvNvsAreaProtocol.Area);
 
   //
   // Install CNV Global NVS ACPI table

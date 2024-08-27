@@ -49,6 +49,7 @@
   DmarAcpiFeaturePkg/DmarAcpiFeaturePkg.dec
   Usb4FeaturePkg/Usb4FeaturePkg.dec
   UefiCpuPkg/UefiCpuPkg.dec
+  CnvFeaturePkg/CnvFeaturePkg.dec
 
 [LibraryClasses]
   UefiBootServicesTableLib
@@ -113,3 +114,4 @@
   gPchSetupVariableGuid                         ## CONSUMES
   gPchPcieRpDxeConfigGuid                       ## CONSUMES
   gCpuSmmGuid                                   ## CONSUMES
+  gCnvFeatureSetupGuid                          ## CONSUMES

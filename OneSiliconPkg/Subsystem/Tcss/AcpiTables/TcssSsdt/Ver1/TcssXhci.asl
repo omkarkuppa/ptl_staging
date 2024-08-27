@@ -212,9 +212,9 @@
 
       Name (_ADR, 0x02)
 
-      If (CondRefOf (U4SE))
+      If (CondRefOf (U4CM))
       {
-        If (LAnd (LEqual (U4SE, 1), LEqual (DME0, 1)))
+        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME0, 1)))
         {
           Method (_DSD, 0) {
             ADBG ("XHC SS01 _DSD")
@@ -275,9 +275,9 @@
     {
       Name (_ADR, 0x03)
 
-      If (CondRefOf (U4SE))
+      If (CondRefOf (U4CM))
       {
-        If (LAnd (LEqual (U4SE, 1), LEqual (DME0, 1)))
+        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME0, 1)))
         {
           Method (_DSD, 0) {
             ADBG ("XHC SS02 _DSD")
@@ -338,9 +338,9 @@
     {
       Name (_ADR, 0x04)
 
-      If (CondRefOf (U4SE))
+      If (CondRefOf (U4CM))
       {
-        If (LAnd (LEqual (U4SE, 1), LEqual (DME1, 1)))
+        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME1, 1)))
         {
           Method (_DSD, 0) {
             ADBG ("XHC SS03 _DSD")
@@ -401,9 +401,9 @@
     {
       Name (_ADR, 0x05)
 
-      If (CondRefOf (U4SE))
+      If (CondRefOf (U4CM))
       {
-        If (LAnd (LEqual (U4SE, 1), LEqual (DME1, 1)))
+        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME1, 1)))
         {
           Method (_DSD, 0) {
             ADBG ("XHC SS04 _DSD")

@@ -142,7 +142,6 @@ SiCreateConfigBlocks (
   TotalBlockSize += ScsGetConfigBlockTotalSize ();
   TotalBlockSize += UsbGetConfigBlockTotalSize ();
   TotalBlockSize += ThcGetConfigBlockTotalSize ();
-  TotalBlockSize += PchDmiGetConfigBlockTotalSize ();
   TotalBlockSize += EspiGetConfigBlockTotalSize ();
   TotalBlockSize += IehGetConfigBlockTotalSize ();
   TotalBlockSize += GetInterruptConfigBlockTotalSize ();
@@ -269,6 +268,9 @@ SiCreateConfigBlocks (
   Status = LpssI2cAddConfigBlock (SiPolicy);
   ASSERT_EFI_ERROR (Status);
 
+  if (SiPolicy->TableHeader.AvailableSize != 0) {
+    DEBUG ((DEBUG_ERROR, "The size of allocated pool should be equal to config block size. Remain AvailableSize = 0x%x\n", SiPolicy->TableHeader.AvailableSize));
+  }
   //
   // Assignment for returning SaInitPolicy config block base address
   //

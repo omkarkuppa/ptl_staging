@@ -84,7 +84,7 @@ GetSerialIoUartPciCfg (
   }
 
   if (IsSerialIoUartHidden (UartNumber)) {
-    return GetSerialIoUartFixedPciCfgAddress (UartNumber);
+    return GetLpssUartFixedBar1 (UartNumber);
   }
   return LpssUartPciCfgBase (UartNumber);
 }

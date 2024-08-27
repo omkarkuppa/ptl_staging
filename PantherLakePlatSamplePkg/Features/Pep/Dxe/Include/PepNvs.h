@@ -68,6 +68,7 @@ typedef struct {
   UINT8    PepEmmc;                                 ///< Offset 34
   UINT8    PepSdxc;                                 ///< Offset 35
   UINT8    PepOsse;                                 ///< Offset 36
+  UINT8    PepEse;                                  ///< Offset 37
 } PEP_NVS_AREA;
 
 #pragma pack(pop)

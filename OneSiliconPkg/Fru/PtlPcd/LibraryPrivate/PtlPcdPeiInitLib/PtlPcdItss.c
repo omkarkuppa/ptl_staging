@@ -48,6 +48,7 @@ extern PCH_DEV_INT_INFO       mSocPDeviceInterruptInfo[];
 extern UINT32                 mSocPDeviceInterruptInfoSize;
 extern PCH_DEV_INT_INFO       mSocHDeviceInterruptInfo[];
 extern UINT32                 mSocHDeviceInterruptInfoSize;
+
 /**
   Get Interrupt Info data
 
@@ -64,8 +65,8 @@ GetInterruptInfoData (
     *Size = mSocPDeviceInterruptInfoSize;
     return mSocPDeviceInterruptInfo;
   } else {
-    *Size = mSocHDeviceInterruptInfoSize;
-    return mSocHDeviceInterruptInfo;
+      *Size = mSocHDeviceInterruptInfoSize;
+      return mSocHDeviceInterruptInfo;
   }
 }
 
@@ -124,7 +125,6 @@ ItssCheckGpioConflicts (
   BOOLEAN           GpiIe;
   UINT32            GpioIrqNumber;
   EFI_STATUS        Status;
-
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));

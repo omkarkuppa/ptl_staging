@@ -57,6 +57,11 @@ typedef struct {
   REGISTER_ACCESS   *PcrAccess;
 
   /*
+    Maximum posible controller number
+  */
+  UINT8             MaxCtrlNumber;
+
+  /*
     List of controllers integrated in CAN Subsytem
   */
   CAN_CTRL          *Controllers;

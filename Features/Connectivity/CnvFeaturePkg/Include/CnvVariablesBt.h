@@ -142,12 +142,12 @@ typedef struct {
 //
 // IntelUefiCnvBtPpagSupport Main Data Structure
 // ppagModesU32 - provides the ability to control PPAG feature feature enablement. If set to zero, the feature is disabled. Default is zero.
-//                Bit 0 – If set ‘1’ , enables PPAG for Bluetooth core in EU countries in LB/HB
-//                Bit 1 – If set ‘1’ , enables PPAG for Bluetooth core  in China Mainland in LB/HB
-//                Bit 2 – If set ‘1’ , enables PPAG for Bluetooth core  in EU UHB
-//                Bit 3 – If set ‘1’ , enables PPAG for Bluetooth core  in FCC UHB
-//                Bit 4 – If set ‘1’ , enables PPAG for Bluetooth core  in ISED UHB
-//                Bits 5:31 – reserved and shall be zeroed.
+//                Bit 0 If set 1 , enables PPAG for Bluetooth core in EU countries in LB/HB
+//                Bit 1 If set 1 , enables PPAG for Bluetooth core  in China Mainland in LB/HB
+//                Bit 2 If set 1 , enables PPAG for Bluetooth core  in EU UHB
+//                Bit 3 If set 1 , enables PPAG for Bluetooth core  in FCC UHB
+//                Bit 4 If set 1 , enables PPAG for Bluetooth core  in ISED UHB
+//                Bits 5:31 reserved and shall be zeroed.
 //
 typedef struct {
   CNV_UEFI_VAR_HEADER    Header;
@@ -162,8 +162,8 @@ typedef struct {
 #define CNV_UEFI_EBRD_BT_SAR_VALUES_EXT  3
 
 typedef struct {
-  BT_SAR_POWER_LIMITS   BtSarPowerAntA;
-  BT_SAR_POWER_LIMITS   BtSarPowerAntB;
+  UINT8   BtSarPowerAntA;
+  UINT8   BtSarPowerAntB;
 } BT_SAR_LIMITS_EXT_DCMB;
 
 typedef struct {

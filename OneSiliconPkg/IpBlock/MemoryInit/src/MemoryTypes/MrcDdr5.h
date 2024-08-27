@@ -247,6 +247,8 @@
 #define MRC_DDR5_tADC_8000_MAX (118)
 #define MRC_DDR5_tADC_8400_MIN (8)
 #define MRC_DDR5_tADC_8400_MAX (120)
+#define MRC_DDR5_tADC_8800_MIN (5)
+#define MRC_DDR5_tADC_8800_MAX (123)
 
 /// tDQSOffset(min) -.5tck = -128 * .5
 /// tDQSOffset(max) .5tck = 128 * .5
@@ -379,15 +381,10 @@ typedef union {
 // -----------------------------
 //   644uS  |   429uS  |   322uS
 // -----------------------------
-#define MRC_DDR5_tECSinit_16GB_US  644
-#define MRC_DDR5_tECSinit_24GB_US  429
-#define MRC_DDR5_tECSinit_32GB_US  322
+#define MRC_DDR5_tECSinit_16Gb_US  644
+#define MRC_DDR5_tECSinit_24Gb_US  429
+#define MRC_DDR5_tECSinit_32Gb_US  322
 
-// tREFI configuration from DDR Jedec spec / MC arch
-// Table 71 - tREFI parameters for REFaband REFsb Commands
-#define MRC_DDR5_tREFI_32GB_NS  1950  // 1.95usec - Defined in nsec to avoid usage of floating-point numbers
-#define MRC_DDR5_tREFI_16GB_NS  7800  // 4 * 1.95usec
-#define MRC_DDR5_tREFI_24GB_NS  3900  // 2 * 1.95usec
 
 /**
   This function is used to get the timing parameter tRX_DQS2DQ Min or Max.
@@ -1047,6 +1044,7 @@ MrcGetDdr5RowHammeringData (
   OUT UINT32* REF_SUB,
   OUT UINT32* NORMAL_REF_SUB
   );
+
 /**
   This function will either read MR32[6] directly from devices or if already read, get the data from the MR array.
 

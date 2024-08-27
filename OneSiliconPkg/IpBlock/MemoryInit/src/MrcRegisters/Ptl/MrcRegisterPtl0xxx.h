@@ -2708,13 +2708,14 @@
 #define DATA0CH0_CR_DDRCRRXEQTAP01_DEF                                 (0x00000000)
 #define DATA0CH0_CR_DDRCRRXEQTAP01_VOLATILE_BITFIELDS_MSK              (0x00000000)
 
+  // Manual edit - 2's complement field
   #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap0_OFF                 ( 0)
   #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap0_WID                 ( 6)
   #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap0_MSK                 (0x0000003F)
-  #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap0_MIN                 (0)
-  #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap0_MAX                 (63) // 0x0000003F
+  #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap0_MIN                 (-32)
+  #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap0_MAX                 (31) // 0x0000001F
   #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap0_DEF                 (0x00000000)
-  #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap0_HSH                 (0x06000108)
+  #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap0_HSH                 (0x86000108)
 
   #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap1_OFF                 ( 6)
   #define DATA0CH0_CR_DDRCRRXEQTAP01_RxEqRank0Tap1_WID                 ( 6)
@@ -2760,13 +2761,14 @@
 #define DATA0CH0_CR_DDRCRRXEQTAP_DEF                                   (0x00000000)
 #define DATA0CH0_CR_DDRCRRXEQTAP_VOLATILE_BITFIELDS_MSK                (0x00000000)
 
+  // Manual edit - 2's complement field
   #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap0_OFF                   ( 0)
   #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap0_WID                   ( 6)
   #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap0_MSK                   (0x0000003F)
-  #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap0_MIN                   (0)
-  #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap0_MAX                   (63) // 0x0000003F
+  #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap0_MIN                   (-32)
+  #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap0_MAX                   (31) // 0x0000001F
   #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap0_DEF                   (0x00000000)
-  #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap0_HSH                   (0x0600010C)
+  #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap0_HSH                   (0x8600010C)
 
   #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap1_OFF                   ( 6)
   #define DATA0CH0_CR_DDRCRRXEQTAP_RxEqRank1Tap1_WID                   ( 6)

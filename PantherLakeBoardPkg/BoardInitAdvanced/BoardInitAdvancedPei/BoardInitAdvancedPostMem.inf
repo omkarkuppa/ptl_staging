@@ -96,10 +96,7 @@
   gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemBaseAddr              ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                          ## CONSUMES
 
-
   gBoardModuleTokenSpaceGuid.PcdPlatformFlavor                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableCnvd
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableCnvdSize
 
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress               ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdPciReservedIobase              ## CONSUMES

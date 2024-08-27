@@ -129,9 +129,7 @@ EnableSmbusGpio (
     DEBUG ((DEBUG_ERROR, "%a: NULL pointer detected!\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
   }
-
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "SMBUS: Failed to Configure SMBUS Pins\n"));
     return Status;
@@ -163,9 +161,7 @@ EnableSmbusAlert (
     DEBUG ((DEBUG_ERROR, "%a: NULL pointer detected!\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
   }
-
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "SMBUS: Failed to Configure SMBUS Pins\n"));
     return Status;

@@ -68,7 +68,8 @@ Method (PESB, 1, Serialized)
         If (LEqual (\_SB.PC00.TDM0.SCME, 1)) {
           Store (Arg0, Local0)
         }
-      } ElseIf (CondRefOf (\_SB.PC00.TDM1)) {
+      }
+      If (CondRefOf (\_SB.PC00.TDM1)) {  // check DMA1
         If (LEqual (\_SB.PC00.TDM1.SCME, 1)) {
           Store (Arg0, Local0)
         }

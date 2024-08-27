@@ -165,7 +165,15 @@ typedef struct {
     0x1000000      : 16MB for Debug build
   **/
   UINT32  TsegSize;
-  UINT8 Rsvd2[3];
+
+  /**
+    Enable or disable SmmRelocation. For Coreboot customer it must be disabled.
+      -    0: Disable
+      -    1: Enable (Default)
+  **/
+  UINT8 SmmRelocationEnable;
+
+  UINT8 Rsvd2[2];
 } CPU_INIT_PREMEM_CONFIG;
 
 #pragma pack (pop)

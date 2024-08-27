@@ -74,18 +74,18 @@ enum {
 };
 GLOBAL_REMOVE_IF_UNREFERENCED PPM_PLX_PROFILE mPtlPlx[] = {
   //
-  // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow
-  // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1
-  {  1500,  5400,  5400,     5400,     5400,     14200,        0,        28}, // ProfilePtlU15W40
-  {  1500,  5400,  5400,     5400,     5400,     14200,        0,        28}, // ProfilePtlU15W20
-  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28}, // ProfilePtlH12Xe25W48
-  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28}, // ProfilePtlH12Xe25W44
-  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28}, // ProfilePtlH12Xe25W28
-  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28}, // ProfilePtlH12Xe25W24
-  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28}, // ProfilePtlH4Xe25W48
-  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28}, // ProfilePtlH4Xe25W44
-  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28}, // ProfilePtlH4Xe25W28
-  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28}  // ProfilePtlH4Xe25W24
+  // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow  IsysL1Tau  IsysLimitL1  IsysLimitL2  VsysMax
+  // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1            Sec        1/8A         1/8A       mV
+  {  1500,  5400,  5400,     5400,     5400,     14200,        0,        28,            28,         48,         120,     24000}, // ProfilePtlU15W40
+  {  1500,  5400,  5400,     5400,     5400,     14200,        0,        28,            28,         48,         120,     24000}, // ProfilePtlU15W20
+  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH12Xe25W48
+  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH12Xe25W44
+  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH12Xe25W28
+  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH12Xe25W24
+  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH4Xe25W48
+  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH4Xe25W44
+  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH4Xe25W28
+  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH4Xe25W24
 };
 //
 // Catch the mismatch of number of profile enum IDs and number of profiles.

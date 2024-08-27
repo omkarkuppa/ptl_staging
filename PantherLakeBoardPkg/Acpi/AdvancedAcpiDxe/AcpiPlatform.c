@@ -3043,6 +3043,7 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->Rtd3SensorHub              = mSystemConfiguration.Rtd3SensorHub;
   mPlatformNvsAreaProtocol.Area->Rtd3TouchPanelDelay        = mSystemConfiguration.Rtd3TouchPanelDelay;
   mPlatformNvsAreaProtocol.Area->Rtd3TouchPadDelay          = mSystemConfiguration.Rtd3TouchPadDelay;
+  mPlatformNvsAreaProtocol.Area->TouchpadIrqGpioPolarity    = PcdGetBool(PcdTouchpadIrqGpioPolarity);
   mPlatformNvsAreaProtocol.Area->VRRampUpDelay              = mSystemConfiguration.VRRampUpDelay;
   mPlatformNvsAreaProtocol.Area->PstateCapping              = mSystemConfiguration.PstateCapping;
   mPlatformNvsAreaProtocol.Area->SensorStandby              = mSystemConfiguration.SensorStandby;
@@ -3590,6 +3591,9 @@ InstallAcpiPlatform (
   if (Usb4PlatformInfo != NULL) {
     mPlatformNvsAreaProtocol.Area->EnablePcieTunnelingOverUsb4 = Usb4PlatformInfo->PcieOverUsb4En;
   }
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+  mPlatformNvsAreaProtocol.Area->TbtRTD3En                   = mSystemConfiguration.DTbtRtd3;
+#endif
   DEBUG ((DEBUG_INFO, "PreBootCmMode = 0x%x, CmTbtMask = 0x%x, Usb4CmSwitchEnable = 0x%x\n",
           mPlatformNvsAreaProtocol.Area->PreBootCmMode,
           mPlatformNvsAreaProtocol.Area->CmTbtMask,

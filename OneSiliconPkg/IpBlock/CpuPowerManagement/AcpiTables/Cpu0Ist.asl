@@ -31,7 +31,7 @@ DefinitionBlock (
   )
 {
   External (\_SB.OSCP, IntObj)
-  External (\CCNT, FieldUnitObj)
+  External (\TCNT, FieldUnitObj)
   External (\_SB.CPPC, FieldUnitObj)
   External (\_SB.PR00, DeviceObj)
 

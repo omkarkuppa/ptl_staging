@@ -33,7 +33,7 @@
 #include <Library/SpiInitLib.h>
 #include <Library/IocLib.h>
 #include <IndustryStandard/Pci30.h>
-#include <Library/SpiSocLib.h>
+#include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdSpiSocLib.h>
 #include <SpiHandle.h>
 #include <Library/PeiServicesLib.h>
 #include <PiPei.h>
@@ -65,7 +65,7 @@ PtlPcdExtendedBiosDecodeRangeInit (
   UINT16          DecodeTarget;
   SPI_HANDLE      SpiHandle;
 
-  Status = GetSpiHandle (&SpiHandle, SiPolicy);
+  Status = PtlPcdGetSpiHandle (&SpiHandle, SiPolicy);
   if (EFI_ERROR (Status)) {
     DEBUG ((
       DEBUG_ERROR,

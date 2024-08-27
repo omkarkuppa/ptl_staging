@@ -654,6 +654,7 @@ MrcFinalizeMrSeq (
         if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
           continue;
         }
+        MRC_DEBUG_MSG (Debug, DebugLevel, "MC%u.C%u.R%u\tData\tDelay\n", Controller, Channel, Rank);
         for (Index = 0; Index < MrSeqLen; Index++) {
           // Get MR value from host structure and store it in the GEN_FSM array.
           CurMrAddr = SagvMrSeq[Index];
@@ -662,16 +663,14 @@ MrcFinalizeMrSeq (
           if (MrIndex < MAX_MR_IN_DIMM) {
             GenMrsFsmMr = &MrData[Controller][Channel][Rank][Index];
             Data = Outputs->Controller[Controller].Channel[Channel].Dimm[dDIMM0].Rank[Rank % MAX_RANK_IN_DIMM].MR[MrIndex];
-            if (Outputs->IsLpddr5 && (CurMrAddr == mrMR16)) {
+            if (Outputs->IsLpddr5 && (CurMrAddr == mrMR16)) { // Cover mrMR16 and mrMR16FspOp cases
               // Always keep VRCG enabled because it is enabled before this MR sequence, and disabled after.
               Mr16Lp5->Bits.Vrcg = 1;
-              if (Index == 0) {
-                GenMrsFsmMr->FspWrToggle = TRUE;
-              } else {
+              if (SagvMrSeq[Index] == mrMR16FspOp) {
                 GenMrsFsmMr->FspOpToggle = TRUE;
-                if (SagvMrSeq[Index] == mrMR16FspOp) {
-                  GenMrsFsmMr->FreqSwitchPoint = TRUE;
-                }
+                GenMrsFsmMr->FreqSwitchPoint = TRUE;
+              } else {  // First mrMR16
+                GenMrsFsmMr->FspWrToggle = TRUE;
               }
             }
             if (Outputs->IsLpddr5 && (CurMrAddr == mrMR28) && Outputs->IsDvfsqEnabled) {
@@ -697,8 +696,8 @@ MrcFinalizeMrSeq (
               GenMrsFsmMr->CmdType = GmfCmdMpc;
             }
             MrcGetGmfDelayTiming (MrcData, MrDelay[Index], &Delay);
-            MRC_DEBUG_MSG (Debug, DebugLevel, "MC%d.C%d.R%d MR%d: 0x%X Delay: %u Valid: %u FspWrToggle:%u FspOpToggle:%u\n",
-              Controller, Channel, Rank, CurMrAddr, Data, Delay, GenMrsFsmMr->Valid, GenMrsFsmMr->FspWrToggle, GenMrsFsmMr->FspOpToggle);
+            MRC_DEBUG_MSG (Debug, DebugLevel, " MR%u:\t\t0x%02X\t%3u\t%s%s\n", CurMrAddr, Data, Delay,
+              GenMrsFsmMr->FspWrToggle ? "FspWrToggle" : "", GenMrsFsmMr->FspOpToggle ? " FspOpToggle" : "");
           } else {
             MRC_DEBUG_MSG (Debug, DebugLevel, "MR index(%d) exceeded MR array length(%d)\n", MrIndex, MAX_MR_IN_DIMM);
             return mrcWrongInputParameter;
@@ -767,6 +766,7 @@ PrintDqDqsTable (
   IN OUT MrcParameters *const   MrcData
 )
 {
+#ifdef MRC_DEBUG_PRINT
   MrcInput            *Inputs;
   MrcOutput           *Outputs;
   MrcDebug            *Debug;
@@ -780,20 +780,18 @@ PrintDqDqsTable (
   UINT8               Iteration;
   UINT8               Bit;
   UINT8               BytesPerChannel;
-#ifdef MRC_DEBUG_PRINT
+
   static const char PrintBorder[]    = "\n*************************************\n";
-#endif
 
   Outputs         = &MrcData->Outputs;
   Inputs          = &MrcData->Inputs;
   Debug           = &Outputs->Debug;
   BytesPerChannel = Outputs->IsLpddr ? MAX_BYTE_IN_LP_CHANNEL : MAX_BYTE_IN_DDR5_CHANNEL;
 
-#ifdef MRC_DEBUG_PRINT
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s", PrintBorder);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s   DQDQS SWIZZLING   %s", "*****", "*****");
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s", PrintBorder);
-#endif
+
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     ControllerIn = &Inputs->Controller[Controller];
     for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
@@ -823,6 +821,7 @@ PrintDqDqsTable (
     } // Channel
   } // Controller
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
+#endif // MRC_DEBUG_PRINT
 }
 
 /**
@@ -938,7 +937,6 @@ MrcCalcCccPartition (
    DDRPHY_MISC_PMA_SAUG_CR_PMCFG.PChannelEn     = 1 (0 for TC)
    PMA_MCMISCSSAUG_CR_PMMESSAGE.SkipRestoreCR   = 1
    PMA_MCMISCSSAUG_CR_PMMESSAGE.SkipRetentionCR = 1
-   DDRPHY_MISC_SAUG_CR_PHYPMOVRD.VccClkFFCRWait = 0
   Set the following bit right after PLL is locked
    SAXG_Enable
    and poll for saxgpwrgood
@@ -983,7 +981,6 @@ MrcPmCfgCrAccess (
       MrcGetSetNoScope (MrcData, GsmPChannelEn, WriteCached | PrintValue, &GetSetEn);
       MrcGetSetNoScope (MrcData, GsmSkipRestoreCR,      WriteCached | PrintValue, &GetSetEn);
       MrcGetSetNoScope (MrcData, GsmSkipRetentionCR,    WriteCached | PrintValue, &GetSetEn);
-      MrcGetSetNoScope (MrcData, GsmIocVccClkFFCRWait,  WriteCached | PrintValue, &GetSetDis);
     } else {
       MrcGetSetNoScope (MrcData, GsmSaxgEnable, WriteCached | PrintValue, &GetSetEn);
       MrcWait (MrcData, 10);
@@ -1002,7 +999,6 @@ MrcPmCfgCrAccess (
     }
   } else {
     MrcGetSetNoScope (MrcData, GsmSkipRetentionCR,    WriteCached | PrintValue, &GetSetDis);
-    MrcGetSetNoScope (MrcData, GsmIocVccClkFFCRWait,  WriteCached | PrintValue, &GetSetEn);
 
     if (!Inputs->IsKeepUcssPostMrc) {
       // Disable MPTU
@@ -1157,7 +1153,7 @@ MrcCkeOverrideProgramming (
   INT32         Channel;
   UINT32        Controller;
   UINT32        ValidRankMask;
-
+ 
   Outputs = &MrcData->Outputs;
 
   if (Outputs->IsLpddr) {
@@ -1180,7 +1176,7 @@ MrcCkeOverrideProgramming (
       }
     }
   } else {
-    GetSetVal = MC0_CH0_CR_REUT_CH_MISC_CKE_CS_CTRL_CKE_Override_MAX;
+    MrcGetMcConfigGroupLimits (MrcData, GsmMccCkeOverride, NULL, &GetSetVal, NULL);
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkeOverride, WriteCached, &GetSetVal);
   }
 }

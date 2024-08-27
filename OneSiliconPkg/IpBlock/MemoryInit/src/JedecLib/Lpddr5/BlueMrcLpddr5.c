@@ -507,35 +507,31 @@ MrcJedecInitLpddr5 (
   MrcModeRegister         CurMrAddr;
   UINT32                  Channel;
   UINT32                  Controller;
+  UINT8                   FspPoint;
   UINT32                  Rank;
   UINT32                  OutIdx;
   UINT16                  CurDelay;
   UINT8                   *DataPtr;
   UINT8                   MrIndex;
   UINT8                   Index;
-  LPDDR_FSP_OP_TYPE       Mr16FspOp;
+  UINT8                   FspWrite;
   GmfLpddr5DelayType      CurDelayType;
   MRC_GEN_MRS_FSM_MR_TYPE *GenMrsFsmMr;
   MRC_GEN_MRS_FSM_MR_TYPE MrData[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL][MAX_MR_GEN_FSM];
+
   static const UINT8  MrAddress[] = {
-    // List of MRs that need to be set from FSP1 for FSP0
     mrMR16,
 #ifndef HVM_MODE
     mrMR13,
 #endif
-    mrMR20, mrMR25, mrMR18, mrMR3, mrMR2, mrMR21,
-    // List of MRs that need to be set from FSP0 for FSP1
-    mrMR16,
-#ifndef HVM_MODE
-    mrMR13,
-#endif
-    mrMR20, mrMR17, mrMR25, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14,
-    mrMR15, mrMR18, mrMR3,  mrMR1,  mrMR2,  mrMR19, mrMR21, mrMR28, mrMR30, mrMR69, mrMR37, mrMR41, mrMR24
-    };
+    mrMR20, mrMR17, mrMR25, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15,
+    mrMR18, mrMR3,  mrMR1,  mrMR2,  mrMR19, mrMR21, mrMR28, mrMR30, mrMR69, mrMR37, mrMR41, mrMR24, mrMR58
+  };
 
   // Due to the 6400 boundary crossing rule in LP5 JEDEC spec, MRs cannot be updated from the current FSP.
   // Hence JEDEC Init should program each FSP point from the opposite point.
   // E.g. FSP0 MR's are programmed from FSP1, and then FSP1 MR's are programmed from FSP0.
+  //
   //  The sequence is:
   //  After JEDEC RESET MR16 contains default values: FSP-OP = 0, FSP-WR = 0, VRCG = 0
   //  1. Send MR16: FSP-OP = 1, FSP-WR = 0, VRCG = 1 (FSP switch), wait tFC
@@ -556,87 +552,87 @@ MrcJedecInitLpddr5 (
     MrcSetFspVrcg (MrcData, ALL_RANK_MASK, LpVrcgHighCurrent, MRC_IGNORE_ARG_8, MRC_IGNORE_ARG_8);
   }
 
-  // Clear out our array
-  MrcCall->MrcSetMem ((UINT8 *) MrData, sizeof (MrData), 0);
+  // First FSP1, then FSP0
+  for (FspPoint = 1; FspPoint != 0xFF; FspPoint--) {
+    // Clear out our array
+    MrcCall->MrcSetMem ((UINT8 *) MrData, sizeof (MrData), 0);
 
-  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-      ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
-      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
-        if (MrcRankExist (MrcData, Controller, Channel, Rank) == 0) {
-          continue;
-        }
-        Mr16FspOp = LpFspOpPoint1; // Start with FSP-OP=1
-        // Build array based on MR value in host structure.
-        // @todo - Support to switching over to FSM for frequency switch?
-        for (Index = 0, OutIdx = 0; Index < ARRAY_COUNT (MrAddress); Index++) {
-          CurMrAddr = MrAddress[Index];
-          if ((CurMrAddr == mrMR12b) && (!Outputs->LpByteMode)) {
+    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+        ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
+        for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+          if (MrcRankExist (MrcData, Controller, Channel, Rank) == 0) {
             continue;
           }
-          MrIndex = MrcMrAddrToIndex (MrcData, &CurMrAddr);
-          if (MrIndex < MAX_MR_IN_DIMM) {
-            Status = Lpddr5GmfDelayType (MrcData, CurMrAddr, &CurDelayType, Index == (ARRAY_COUNT (MrAddress) - 1));
-            if (Status != mrcSuccess) {
+          // Build array based on MR value in host structure.
+          // @todo - Support to switching over to FSM for frequency switch?
+          for (Index = 0, OutIdx = 0; Index < ARRAY_COUNT (MrAddress); Index++) {
+            CurMrAddr = MrAddress[Index];
+            if ((CurMrAddr == mrMR12b) && (!Outputs->LpByteMode)) {
+              continue;
+            }
+
+            MrIndex = MrcMrAddrToIndex (MrcData, &CurMrAddr);
+            if (MrIndex < MAX_MR_IN_DIMM) {
+              Status = Lpddr5GmfDelayType (
+                MrcData,
+                CurMrAddr,
+                &CurDelayType,
+                Index == (ARRAY_COUNT (MrAddress) - 1)
+              );
+              if (Status != mrcSuccess) {
+                break;
+              }
+
+              DataPtr = &ChannelOut->Dimm[dDIMM0].Rank[Rank % MAX_RANK_IN_DIMM].MR[MrIndex];
+
+              if (CurMrAddr == mrMR16) {
+                FspWrite = (FspPoint == 0) ? LpFspWePoint1 : LpFspWePoint0;
+                MrcLpddr5SetMr16 (MrcData, FspWrite, FspPoint, MRC_IGNORE_ARG_8, MRC_IGNORE_ARG_8, MRC_IGNORE_ARG_8, DataPtr);
+                CurDelayType = (UINT16)GmfLpddr5Delay_tFC;
+              }
+
+              GenMrsFsmMr = &MrData[Controller][Channel][Rank][OutIdx];
+              GenMrsFsmMr->PdaMr = FALSE;
+              GenMrsFsmMr->MrData = *DataPtr;
+              GenMrsFsmMr->MrAddr = CurMrAddr;
+              GenMrsFsmMr->Valid  = TRUE;
+              GenMrsFsmMr->DelayIndex = (GmfTimingIndex) CurDelayType;
+              MrcGetGmfDelayTiming (MrcData, GenMrsFsmMr->DelayIndex, &CurDelay);
+              MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, (!Outputs->JedecInitDone) ? "MC%d.C%d.R%d MR%d: 0x%X Delay: %u\n" : "", Controller, Channel, Rank, CurMrAddr, *DataPtr, CurDelay);
+            } else {
+              MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "MR index(%d) exceeded MR array length(%d)\n", MrIndex, MAX_MR_IN_DIMM);
+              Status = mrcWrongInputParameter;
               break;
             }
-
-            DataPtr = &ChannelOut->Dimm[dDIMM0].Rank[Rank % MAX_RANK_IN_DIMM].MR[MrIndex];
-
-            // First MR16 of JEDEC Init should always have FSP-OP=1 to set MRs which need to be set from FPS1.
-            // Second MR16 of JEDEC Init should always have FSP-OP=0 to set MRs which need to be set from FPS0.
-            if (CurMrAddr == mrMR16) {
-              if (Mr16FspOp == LpFspOpPoint1) {
-                // Set FSP-OP=1, FSP-WE=0
-                MrcLpddr5SetMr16 (MrcData, LpFspWePoint0, LpFspOpPoint1, MRC_IGNORE_ARG_8, MRC_IGNORE_ARG_8, MRC_IGNORE_ARG_8, DataPtr);
-              } else {
-                // Set FSP-OP=0, FSP-WE=1
-                MrcLpddr5SetMr16 (MrcData, LpFspWePoint1, LpFspOpPoint0, MRC_IGNORE_ARG_8, MRC_IGNORE_ARG_8, MRC_IGNORE_ARG_8, DataPtr);
-              }
-              CurDelayType = (UINT16)GmfLpddr5Delay_tFC;
-              Mr16FspOp = LpFspOpPoint0;
-            }
-
-            GenMrsFsmMr = &MrData[Controller][Channel][Rank][OutIdx];
-            GenMrsFsmMr->PdaMr = FALSE;
-            GenMrsFsmMr->MrData = *DataPtr;
-            GenMrsFsmMr->MrAddr = CurMrAddr;
-            GenMrsFsmMr->Valid  = TRUE;
-            GenMrsFsmMr->DelayIndex = (GmfTimingIndex) CurDelayType;
-            MrcGetGmfDelayTiming (MrcData, GenMrsFsmMr->DelayIndex, &CurDelay);
-            MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, (!Outputs->JedecInitDone) ? "MC%d.C%d.R%d MR%d: 0x%X Delay: %u\n" : "", Controller, Channel, Rank, CurMrAddr, *DataPtr, CurDelay);
-          } else {
-            MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "MR index(%d) exceeded MR array length(%d)\n", MrIndex, MAX_MR_IN_DIMM);
-            Status = mrcWrongInputParameter;
+            OutIdx++;
+          } // Index
+          if (Status != mrcSuccess) {
             break;
           }
-          OutIdx++;
-        } // Index
+        } // Rank
         if (Status != mrcSuccess) {
           break;
         }
-      } // Rank
+      } // Channel
       if (Status != mrcSuccess) {
         break;
       }
-    } // Channel
-    if (Status != mrcSuccess) {
-      break;
+    } // Controller
+
+    // Program Generic MRS FSM Per Controller/Channel
+    Status = MrcGenMrsFsmConfig (MrcData, MrData, FALSE, NULL);
+    if(Status != mrcSuccess) {
+      return Status;
     }
-  } // Controller
 
-  // Program Generic MRS FSM Per Controller/Channel
-  Status = MrcGenMrsFsmConfig (MrcData, MrData, FALSE, NULL);
-  if(Status != mrcSuccess) {
-    return Status;
-  }
-
-  // Run Generic FSM
-  // Since we use the MRS FSM, we've configured it to send ZQ at the end of the sequence.
-  Status = MrcGenMrsFsmRun (MrcData);
-  if (Status != mrcSuccess) {
-    return Status;
-  }
+    // Run Generic FSM
+    // Since we use the MRS FSM, we've configured it to send ZQ at the end of the sequence.
+    Status = MrcGenMrsFsmRun (MrcData);
+    if (Status != mrcSuccess) {
+      return Status;
+    }
+  } //FspPoint
 
   return Status;
 }

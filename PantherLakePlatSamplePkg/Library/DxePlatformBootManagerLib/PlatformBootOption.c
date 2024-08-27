@@ -538,20 +538,21 @@ RegisterDefaultBootOption (
   // Check BootState variable, NULL means it's the first boot after reflashing
   // Shell
   if (!IsBootStatePresent()) {
+    ShellDataSize = 0;
+    ShellDataPtr = ShellData;
+    SetMemN( ShellDataPtr, MAX_SHELL_INPUT_SIZE, 0);
+    StrCpyS( ShellDataPtr ,MAX_SHELL_INPUT_SIZE / 2, L"");
+
+    if (PcdGetBool (PcdReducedShellEntryTime)) {
+      StrCatS( ShellDataPtr ,MAX_SHELL_INPUT_SIZE/2, L" -delay 1");
+    }
+
+    if (!PcdGetBool (PcdShellEntryMapPrint)) {
+      StrCatS( ShellDataPtr, MAX_SHELL_INPUT_SIZE/2, L" -nomap");
+    }
+    ShellDataSize = (UINT32) StrSize (ShellDataPtr);
+
     if (PcdGetBool(PcdUefiShellEnable)) {
-      ShellDataSize = 0;
-      ShellDataPtr = ShellData;
-      SetMemN( ShellDataPtr, MAX_SHELL_INPUT_SIZE, 0);
-      StrCpyS( ShellDataPtr ,MAX_SHELL_INPUT_SIZE / 2, L"");
-
-      if (PcdGetBool (PcdReducedShellEntryTime)) {
-        StrCatS( ShellDataPtr ,MAX_SHELL_INPUT_SIZE/2, L" -delay 1");
-      }
-
-      if (!PcdGetBool (PcdShellEntryMapPrint)) {
-        StrCatS( ShellDataPtr, MAX_SHELL_INPUT_SIZE/2, L" -nomap");
-      }
-      ShellDataSize = (UINT32) StrSize (ShellDataPtr);
       RegisterFvBootOption (&gUefiShellFileGuid, INTERNAL_UEFI_SHELL_NAME, (UINTN) -1, LOAD_OPTION_ACTIVE, (UINT8 *)ShellDataPtr, ShellDataSize);
     }
     //

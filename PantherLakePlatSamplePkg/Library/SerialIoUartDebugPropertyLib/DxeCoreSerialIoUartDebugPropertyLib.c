@@ -22,7 +22,7 @@
 #include <Uefi/UefiBaseType.h>
 #include <Protocol/SerialIo.h>
 #include <Library/HobLib.h>
-#include <Library/SerialIoUartDebugPropertyPcdLib.h>
+#include <Library/LpssUartDebugPropertyPcdLib.h>
 #include <Setup.h>
 
 /**
@@ -32,7 +32,7 @@
 **/
 VOID
 SerialIoUartDebugGetAttributes (
-  IN OUT SERIAL_IO_UART_ATTRIBUTES *UartAttributes
+  IN OUT LPSS_UART_ATTRIBUTES *UartAttributes
   )
 {
   EFI_HOB_GUID_TYPE            *GuidHob;
@@ -56,7 +56,7 @@ SerialIoUartDebugGetAttributes (
   //
   // Unable to obtain data from the HOB, returning data from Pcd
   //
-  SerialIoUartDebugPcdGetAttributes (UartAttributes);
+  LpssUartDebugPcdGetAttributes (UartAttributes);
 }
 
 /**
@@ -87,7 +87,7 @@ SerialIoUartDebugGetControllerNumber (
     //
     // Unable to obtain data from the HOB, returning data from PcdLib
     //
-    return SerialIoUartDebugPcdGetControllerNumber ();
+    return LpssUartDebugPcdGetControllerNumber ();
   }
 
   return ControllerNumber;
@@ -103,7 +103,7 @@ SerialIoUartDebugGetPciDefaultMmioBase (
   VOID
   )
 {
-  return SerialIoUartDebugPcdGetPciDefaultMmioBase ();
+  return LpssUartDebugPcdGetPciDefaultMmioBase ();
 }
 
 /**
@@ -116,5 +116,5 @@ SerialIoUartDebugGetDefaultPciCfgBase (
   VOID
   )
 {
-  return SerialIoUartDebugPcdGetDefaultPciCfgBase ();
+  return LpssUartDebugPcdGetDefaultPciCfgBase ();
 }

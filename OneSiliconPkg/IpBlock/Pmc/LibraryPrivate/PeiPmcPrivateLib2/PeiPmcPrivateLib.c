@@ -471,6 +471,9 @@ PmcConfigureLpmS0ixSupport (
   }
 
   switch (PmcSocConfig->LpmInterfaceVersion) {
+  case 4:
+    RegisterOffset = R_PMC_PWRM_LPM_EN_V4;
+    break;
   case 3:
     RegisterOffset = R_PMC_PWRM_LPM_EN_V3;
     break;
@@ -496,6 +499,9 @@ PmcConfigureLpmS0ixSupport (
   //
   if (PmcSocConfig->LpmPriorityConfigurable) {
     switch (PmcSocConfig->LpmInterfaceVersion) {
+    case 4:
+      RegisterOffset = R_PMC_PWRM_LPM_PRI_V4;
+      break;
     case 3:
       RegisterOffset = R_PMC_PWRM_LPM_PRI_V3;
       break;
@@ -533,6 +539,7 @@ PmcConfigureLpm (
 
   if (PmConfig->S0ixAutoDemotion) {
     switch (PmcSocConfig->LpmInterfaceVersion) {
+    case 4:
     case 3:
       RegisterOffset = R_PMC_PWRM_LPM_ADEM_HOST_CTRL_V3;
       break;

@@ -86,7 +86,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT64 SupportedHdaDidValue[] = {
   0xE32C,
   0xE32D,
   0xE32E,
-  0xE32F
+  0xE32F,
+  0x4D28,
+  0x4D29,
+  0x4D2A,
+  0x4D2B,
+  0x4D2C,
+  0x4D2D,
+  0x4D2E,
+  0x4D2F
 };
 
 /**
@@ -203,7 +211,6 @@ StatusPolling16 (
   return EFI_SUCCESS;
 }
 
-
 /**
   Checks HD Audio Controller reset state.
 
@@ -265,7 +272,6 @@ GetDspOutOfReset (
   return EFI_SUCCESS;
 }
 
-
 /**
   Function resets DSP and confirms that DSP is in reset state
 
@@ -326,7 +332,6 @@ EnableHdaMmioAccess (
   DEBUG ((DEBUG_INFO, "%a () - Start\n", __FUNCTION__));
 
   *IsTemporaryBar = FALSE;
-
 
   PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, PCI_DEVICE_ID_OFFSET, 1, &Reg16);
   if (Reg16 == 0xFFFF) {

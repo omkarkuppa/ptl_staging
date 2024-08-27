@@ -47,7 +47,7 @@
 #include <Register/DiccRegs.h>
 #include <Register/PchRegs.h>
 #include <Library/WdtCommonLib.h>
-#include <Library/SpiSocLib.h>
+#include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdSpiSocLib.h>
 #include <Library/EspiPrivateLib.h>
 #include <Library/PeiLpcLib.h>
 #include <Library/PchPcrLib.h>
@@ -62,7 +62,6 @@
 #include <Register/SpiRegs.h>
 #include <Register/PchRegs.h>
 #include <Register/Ptl/Cpu/CpuSbInfo.h>
-#include <Register/PchRegsPsf.h>
 #include <Defines/PcdPchBdfAssignment.h>
 #include <Library/CpuRegbarAccessLib.h>
 
@@ -144,41 +143,6 @@ GetEspiP2SbAccess (
   BuildP2SbSidebandAccess (P2SbController, P2SBPid.PortId.LocalPid, 0, P2SbPrivateConfig, P2SbMmioAccess, FALSE, P2SbSidebandAccess);
 }
 
-VOID
-ProgramSocSouthPsfGlobalConfig(
-  IN UINT32    AndData32,
-  IN UINT32    OrData32
-) {
-  PSF_SEGMENT_TABLE *PsfTable;
-  UINT32          PsfTableIndex;
-  PSF_DEV         *PsfDev;
-
-  PsfTable = PtlPcdPsfGetSegmentTable();
-  //
-  // There in an ordering requirement to program enTCG before enLCG.
-  //
-  for (PsfTableIndex = 0; PsfTableIndex < PsfTable->Size; PsfTableIndex++) {
-    PsfDev = PsfTable->Data[PsfTableIndex].PsfDev;
-    PsfDev->Access->AndThenOr32 (PsfDev->Access, R_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG, AndData32, OrData32);
-  }
-}
-
-VOID
-ProgramSocNorthPsfGlobalConfig(
-  IN UINT32    AndData32,
-  IN UINT32    OrData32
-) {
-  UINT8   PsfSocSouth[] =
-    {CPU_SB_PID_PSF0, CPU_SB_PID_PSF1, CPU_SB_PID_PSF2};
-  UINT8   Index;
-  UINT8   PsfNumber;
-  PsfNumber = sizeof (PsfSocSouth) / sizeof (PsfSocSouth[0]);
-
-  for (Index = 0; Index < PsfNumber; Index++) {
-    CpuRegbarAndThenOr32(SOC_DIE, PsfSocSouth[Index], 0x0,R_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG, AndData32, OrData32);
-  }
-}
-
 /**
   Workaround for SPI DMA. Disable Power and Clock gating to prevent the bug.
   Use this function before you use SPI-DMA
@@ -223,23 +187,14 @@ PtlPcdSpiDmaWaStart (
                                R_SPI_PCR_SPI_CLK_PWR_GATE_CNTRL);
   DEBUG ((DEBUG_ERROR, "SPI Clock Power Gate Control After WA: 0x%x\n", Data32));
 
-  // Disable/clear bit-12(Trunk Clock Gating)/4(Local Clock Gating)/3(Partition Clock Gating) ->
-  AndData32 = (UINT32)~(
-    BIT12 |
-    BIT4  |
-    BIT3
-    );
-
-  OrData32 = 0;
-  ProgramSocSouthPsfGlobalConfig(AndData32, OrData32);
-  ProgramSocNorthPsfGlobalConfig(AndData32, OrData32);
+  PtlPcdPsfDisableClockGating ();
 
   // PSF Power Gate Config
-  AndData32 = (UINT32)(0);
+  AndData32 = ~(UINT32)(0xF);
 
-  // Set to 0xA0000086
-  OrData32 = (UINT32)(0xA0000086);
-  MmioAndThenOr32(PCH_PWRM_BASE_ADDRESS+R_PMC_PWRM_FAB_PG_CTL_PSF, AndData32, OrData32);
+  // Set to 0x80000006h
+  OrData32 = (UINT32)(0x80000006);
+  MmioAndThenOr32 (PmcGetPwrmBase () + R_PMC_PWRM_FAB_PG_CTL_PSF, AndData32, OrData32);
 }
 
 /**
@@ -287,29 +242,14 @@ PtlPcdSpiDmaWaEnd (
                                R_SPI_PCR_SPI_CLK_PWR_GATE_CNTRL);
   DEBUG ((DEBUG_INFO, "SPI Clock Power Gate Control After WA: 0x%x\n", Data32));
 
-  // re-enable/set bit-12(Trunk Clock Gating)/4(Local Clock Gating)/3(Partition Clock Gating)
-  AndData32 = (UINT32)~(0);
-
-  OrData32 = (UINT32)(
-    BIT12 |
-    BIT4  |
-    BIT3
-    );
-  ProgramSocSouthPsfGlobalConfig(AndData32, OrData32);
-
-  OrData32 = (UINT32)(
-    BIT12 |
-    BIT4  |
-    BIT3
-    );
-  ProgramSocNorthPsfGlobalConfig(AndData32, OrData32);
+  PtlPcdPsfEnableClockGating ();
 
   // PSF Power Gate Config
-  AndData32 = (UINT32)(0);
-  // Set to 0x20000082
-  OrData32 = (UINT32)(0x20000082);
+  AndData32 = ~(UINT32)(0xF);
+  // Set to 0x80000002
+  OrData32 = (UINT32)(0x80000002);
 
-  MmioAndThenOr32(PCH_PWRM_BASE_ADDRESS+R_PMC_PWRM_FAB_PG_CTL_PSF, AndData32, OrData32 );
+  MmioAndThenOr32 (PmcGetPwrmBase () + R_PMC_PWRM_FAB_PG_CTL_PSF, AndData32, OrData32 );
 }
 
 VOID
@@ -452,6 +392,7 @@ PtlPcdOnPolicyInstalled (
   LpcOnPolicyConfigure (SiPreMemPolicyPpi);
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_PREMEM_INIT_CNVI);
+
   PtlPcdCnviPreMemInit (SiPreMemPolicyPpi);
 
   PtlPcdAcePreMemInit (SiPreMemPolicyPpi);
@@ -569,7 +510,7 @@ SpiEspiDisableEiss (
   SPI_HANDLE  SpiHandle;
   EFI_STATUS  Status;
 
-  Status = GetSpiHandle (&SpiHandle, NULL);
+  Status = PtlPcdGetSpiHandle (&SpiHandle, NULL);
   ASSERT_EFI_ERROR (Status);
 
   SpiDisableEiss (&SpiHandle);

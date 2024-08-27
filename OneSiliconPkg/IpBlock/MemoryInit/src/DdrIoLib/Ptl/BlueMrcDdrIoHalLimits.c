@@ -16,7 +16,6 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification Reference:
 **/
 
 // Include files
@@ -183,19 +182,43 @@ MrcGetDdrIoGroupLimits (
       break;
 
     case TxR2RDqsEq:
-    case TxR2RDqEq:
-    case TxR2RDqsPi:
-    case TxR2RDqPi:
       Min = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDQSDelayForEq_MIN;
       Max = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDQSDelayForEq_MAX;
       break;
 
+    case TxR2RDqEq:
+      Min = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDQDelayForEq_MIN;
+      Max = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDQDelayForEq_MAX;
+      break;
+
+    case TxR2RDqsPi:
+      Min = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDQSDelayForPi_MIN;
+      Max = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDQSDelayForPi_MAX;
+      break;
+
+    case TxR2RDqPi:
+      Min = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDQDelayForPi_MIN;
+      Max = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDQDelayForPi_MAX;
+      break;
+
     case RxR2RDqsOff:
-    case RxR2RDqOff:
-    case RxR2RRxPi:
-    case RxR2RRcvEn:
       Min = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDelayForDqsOffset_MIN;
       Max = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDelayForDqsOffset_MAX;
+      break;
+
+    case RxR2RDqOff:
+      Min = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDelayForDqOffset_MIN;
+      Max = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDelayForDqOffset_MAX;
+      break;
+
+    case RxR2RRxPi:
+      Min = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDelayForRxPi_MIN;
+      Max = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDelayForRxPi_MAX;
+      break;
+
+    case RxR2RRcvEn:
+      Min = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDelayForRcvEn_MIN;
+      Max = DATA0CH0_CR_DDRCRRANKMUXDELAY_R2RDelayForRcvEn_MAX;
       break;
 
     case TxDqBitDelay:
@@ -234,9 +257,13 @@ MrcGetDdrIoGroupLimits (
       break;
 
     case WrRetrainDeltaPiCode:
-    case RdRetrainDeltaPiCode:
       Min = DATA0CH0_CR_DDRCRWRRETRAINDELTARANK_DeltaPiCodeR0_MIN;
       Max = DATA0CH0_CR_DDRCRWRRETRAINDELTARANK_DeltaPiCodeR0_MAX;
+      break;
+
+    case RdRetrainDeltaPiCode:
+      Min = DATA0CH0_CR_DDRCRRDRETRAINDELTARANK_DeltaPiCodeR0_MIN;
+      Max = DATA0CH0_CR_DDRCRRDRETRAINDELTARANK_DeltaPiCodeR0_MAX;
       break;
 
     case RxCompDqsDelayP:
@@ -344,9 +371,13 @@ MrcGetDdrIoGroupLimits (
       break;
 
     case TxRonUp:
-    case TxRonDn:
       Min = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_RcompDrvUp_MIN;
       Max = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_RcompDrvUp_MAX;
+      break;
+
+    case TxRonDn:
+      Min = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_RcompDrvDown_MIN;
+      Max = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_RcompDrvDown_MAX;
       break;
 
     case TxDqTco:
@@ -355,7 +386,6 @@ MrcGetDdrIoGroupLimits (
       break;
 
     case TxDqsTcoPFallNRise:
-    case TxDqsTcoPRiseNFall:
       Min = DATA0CH0_CR_DDRDATADQSRANK0_DqsPfNrTcoDelay_MIN;
       Max = DATA0CH0_CR_DDRDATADQSRANK0_DqsPfNrTcoDelay_MAX;
       break;
@@ -475,14 +505,20 @@ MrcGetDdrIoCfgGroupLimits (
       break;
 
     case GsmDataDccRankEn:
-    case GsmClkDccRankEn:
-    case GsmWckDccRankEn:
       Min = DATA0CH0_CR_DCCFSMCONTROL_RankEn_MIN;
       Max = DATA0CH0_CR_DCCFSMCONTROL_RankEn_MAX;
       break;
 
-    case GsmDataVccDdqTarget:
-    case GsmCccVccDdqTarget:
+    case GsmClkDccRankEn:
+      Min = CH0CCC_CR_DCCFSMCONTROL_RankEn_MIN;
+      Max = CH0CCC_CR_DCCFSMCONTROL_RankEn_MAX;
+      break;
+
+    case GsmWckDccRankEn:
+      Min = DDRDATA_SHARED0_CR_WCKDCCFSMCONTROL_RankEn_MIN;
+      Max = DDRDATA_SHARED0_CR_WCKDCCFSMCONTROL_RankEn_MAX;
+      break;
+
     case GsmCompVccDdqTarget:
       Min = DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCDDQCONTROL_WP0_Target_MIN;
       Max = DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCDDQCONTROL_WP0_Target_MAX;
@@ -494,15 +530,23 @@ MrcGetDdrIoCfgGroupLimits (
       break;
 
     case GsmWorkPointAuxClk:
+      Min = DDRPHY_DDRCOMP_SBMEM_CR_WORKPOINT0_AuxClkRatio_MIN;
+      Max = DDRPHY_DDRCOMP_SBMEM_CR_WORKPOINT0_AuxClkRatio_MAX;
+      break;
+
     case GsmWorkPointRatio:
       Min = DDRPHY_DDRCOMP_SBMEM_CR_WORKPOINT0_QClkRatio_MIN;
       Max = DDRPHY_DDRCOMP_SBMEM_CR_WORKPOINT0_QClkRatio_MAX;
       break;
 
     case GsmIocAuxClkOffAuxClk:
+      Min = DDRPHY_DDRCOMP_SBMEM_CR_DDRCRCOMPAUXCLK0CAL2_OffsetCal0_spare_MIN;
+      Max = DDRPHY_DDRCOMP_SBMEM_CR_DDRCRCOMPAUXCLK0CAL2_OffsetCal0_spare_MAX;
+      break;
+
     case GsmIocQClkCalOff:
-      Min = DDRPHY_DDRCOMP_SBMEM_CR_DDRCRCOMPAUXCLK0CAL0_OffsetCal0_spare_MIN;
-      Max = DDRPHY_DDRCOMP_SBMEM_CR_DDRCRCOMPAUXCLK0CAL0_OffsetCal0_spare_MAX;
+      Min = DDRPHY_DDRCOMP_SBMEM_CR_DDRCRCOMPQCLK0CAL0_OffsetCal0_spare_MIN;
+      Max = DDRPHY_DDRCOMP_SBMEM_CR_DDRCRCOMPQCLK0CAL0_OffsetCal0_spare_MAX;
       break;
 
     case GsmIocRetrainSwizzleCtlRetrainEn:
@@ -624,4 +668,3 @@ MrcGetDdrIoCfgGroupLimits (
 
   return Status;
 }
-

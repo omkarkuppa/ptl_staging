@@ -355,10 +355,6 @@ AmtGetSolDevicePath (
   SetDevicePathNodeLength (&VendorDP, sizeof (VENDOR_DEVICE_PATH));
 
   switch (PcdGet8 (PcdSolTerminalType)) {
-    case OEM_CAPS_2_TERMINAL_EMULATION_VT100PLUS:
-      CopyGuid (&VendorDP.Guid, &gEfiVT100PlusGuid);
-      break;
-
     case OEM_CAPS_2_TERMINAL_EMULATION_PCANSI:
       CopyGuid (&VendorDP.Guid, &gEfiPcAnsiGuid);
       break;

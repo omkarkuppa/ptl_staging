@@ -138,7 +138,6 @@ Usb4PlatformInfoQuery (
   Usb4PlatformInfo->CmModeOption         = SetupData->Usb4CmMode;
   Usb4PlatformInfo->PcieOverUsb4En       = SetupData->EnablePcieTunnelingOverUsb4;
   Usb4PlatformInfo->Usb4DebugLevel       = SetupData->Usb4DebugLevel;
-  Usb4PlatformInfo->CmSwitchSupport      = FALSE;
   Usb4PlatformInfo->Usb4HrCount          = 0;
   Usb4PlatformInfo->Usb4HrMask           = 0;
   Usb4PlatformInfo->Usb4MaxTopologyDepth = QueryUsb4MaxTopologyDepth();
@@ -162,7 +161,7 @@ Usb4PlatformInfoQuery (
     DEBUG ((DEBUG_ERROR, "Usb4PlatformInfoQuery: Fail to query discrete USB4 host router information, %r\n", Status));
   }
 #endif
-
+  Usb4PlatformInfo->CmSwitchSupport      = FALSE;
   DEBUG ((DEBUG_INFO, "Platform Enabled USB4 HR count     = %d\n", Usb4PlatformInfo->Usb4HrCount));
   DEBUG ((DEBUG_INFO, "Platform Enabled USB4 HR mask      = 0x%0X\n", Usb4PlatformInfo->Usb4HrMask));
   DEBUG ((DEBUG_INFO, "Platform Setup USB4 CM Option      = 0x%0X\n", Usb4PlatformInfo->CmModeOption));

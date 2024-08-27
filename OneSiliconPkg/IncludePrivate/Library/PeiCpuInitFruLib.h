@@ -190,6 +190,20 @@ PeiCpuSetSeamrrRegion (
   );
 
 /**
+  Set Seamldr SVN in BIOS_SE_SVN MSR.
+
+  @param SeamldrSeSvn SeamldrSvn value to be set.
+
+  @retval RETURN_SUCCESS            MSR is set successfully.
+  @retval RETURN_SECURITY_VIOLATION SeamldrSeSvn is lower than value in the MSR
+*/
+RETURN_STATUS
+EFIAPI
+PeiCpuSetSeamldrSeSvn (
+  UINT8 SeamldrSeSvn
+  );
+
+/**
   Configure DFD.
 
   @param[in] DfdEnable. TRUE, DFD enabled; FALSE, DFD disabled

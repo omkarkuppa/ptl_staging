@@ -70,9 +70,9 @@ SetChannelDimmConfig (
   );
 
 /**
-  Map SDRAM Index value to MC Density register value.
+  Map SDRAM Density Index to MC Subch Density register value.
 
-  @param[in] Index   - SDRAM Index value.
+  @param[in] Index   - SDRAM Density Index value.
   @param[in] IsLpddr - is LPDDR.
 
   @retval Result - MC Density register value

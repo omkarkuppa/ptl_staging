@@ -129,12 +129,12 @@ ThermalConfiguration (
       );
   } else {
     ///
-    /// Set TL + 1520h[28:20] = 114
-    /// Set TL + 1520h[18:10] = 111
-    /// Set TL + 1520h[8:0] = 108
+    /// Set TL + 1520h[28:20] = 100
+    /// Set TL + 1520h[18:10] = 97
+    /// Set TL + 1520h[8:0] = 94
     /// Set TL + 1520h[31:29] = 101b in separate write
     ///
-    PchTTLevels = ((114 << 20) | (111 << 10) | (108));
+    PchTTLevels = ((100 << 20) | (97 << 10) | (94));
     MmioWrite32 (ThermalHandle->PwrmBase + R_PMC_PWRM_THERMAL_TL, PchTTLevels);
     MmioOr32 (ThermalHandle->PwrmBase + R_PMC_PWRM_THERMAL_TL, B_PMC_PWRM_THERMAL_TL_TLLOCK | B_PMC_PWRM_THERMAL_TL_TTEN);
   }

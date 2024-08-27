@@ -688,7 +688,8 @@ typedef struct {
                                                     ///< Offset 2843    DTBT2 USB3 Port2 Type for _UPC
   UINT8    Dtbt2Usb3PortCapability[2];              ///< Offset 2844    DTBT2 USB3 Port1 Capability for _UPC
                                                     ///< Offset 2845    DTBT2 USB3 Port2 Capability for _UPC
-  UINT32   IpfEnable;                               ///< Offset 2846    Ipf Enable
+  UINT8    TbtRTD3En;                               ///< Offset 2846    DTBT RTD3 enable status (should set to 1 when enable TBT RTD3)
+  UINT32   IpfEnable;                               ///< Offset 2847    Ipf Enable
 } PLATFORM_NVS_AREA;
 
 #pragma pack(pop)

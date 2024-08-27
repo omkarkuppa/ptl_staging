@@ -64,7 +64,7 @@ MrcJedecInitDdr5 (
   UINT32    Controller;
   UINT32    Channel;
   UINT32    Offset;
-  UINT64    MrsFsmCtlSave;
+  UINT32    MrsFsmCtlSave;
   MC0_CH0_CR_MRS_FSM_CONTROL_STRUCT MrsFsmCtl;
 
   Inputs = &MrcData->Inputs;
@@ -81,7 +81,7 @@ MrcJedecInitDdr5 (
           MrsFsmCtl.Data = MrcReadCR (MrcData, Offset);
           MrsFsmCtlSave = MrsFsmCtl.Data;                     // MRS_FSM_CONTROL has the same value on all channels, hence backup from any channel
           MrsFsmCtl.Bits.do_dq_osc_start = 0;
-          MrcWriteCR64 (MrcData, Offset, MrsFsmCtl.Data);
+          MrcWriteCR (MrcData, Offset, MrsFsmCtl.Data);
         }
       }
     }
@@ -138,7 +138,7 @@ MrcJedecInitDdr5 (
       for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
         if (MrcChannelExist (MrcData, Controller, Channel)) {
           Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_MRS_FSM_CONTROL_REG, MC1_CH0_CR_MRS_FSM_CONTROL_REG, Controller, MC0_CH1_CR_MRS_FSM_CONTROL_REG, Channel);
-          MrcWriteCR64 (MrcData, Offset, MrsFsmCtlSave);
+          MrcWriteCR (MrcData, Offset, MrsFsmCtlSave);
         }
       }
     }
@@ -221,12 +221,14 @@ MrcPdaEnumeration (
   INT64         GetSetDis;
   INT64         tCWL4TxDqFifoRdEnSave[MAX_CONTROLLER][MAX_CHANNEL];
   INT64         tCWL4TxDqFifoWrEnSave[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64         TxPiPwrDnDis;
   UINT32        tCWL4TxDqFifoRdEn;
   UINT32        tCWL4TxDqFifoWrEn;
   INT64         TcwlSave;
   INT64         TcwlDecSave[MAX_CONTROLLER][MAX_CHANNEL];
   INT64         TcwlAddSave[MAX_CONTROLLER][MAX_CHANNEL];
   INT64         TxDqsSave[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL][MAX_BYTE_IN_DDR5_CHANNEL];
+  INT64         TxDqsOffsetSave[MAX_CONTROLLER][MAX_CHANNEL][MAX_BYTE_IN_DDR5_CHANNEL];
   INT64         OdtParkModeSave;
   INT64         ForceOdtOnSave;
   INT64         ForceRxOnSave;
@@ -272,6 +274,7 @@ MrcPdaEnumeration (
   // Save OdtForceQDrvEn and ForceRxOn
   MrcGetSetChStrb (MrcData, FirstController, FirstChannel, 0, GsmIocForceOdtOn,   ReadCached, &ForceOdtOnSave);
   MrcGetSetChStrb (MrcData, FirstController, FirstChannel, 0, GsmIocForceRxAmpOn, ReadCached, &ForceRxOnSave);
+  MrcGetSetChStrb (MrcData, FirstController, FirstChannel, 0, GsmIocTxPiPwrDnDis, ReadCached, &TxPiPwrDnDis);
   // Set OdtForceQDrvEn = 0 and ForceRxOn = 0 during PDA enumeration
   MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocForceOdtOn,   ForceWriteCached, &GetSetDis);
   MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocForceRxAmpOn, ForceWriteCached, &GetSetDis);
@@ -284,13 +287,14 @@ MrcPdaEnumeration (
   MrcCall->MrcSetMem ((UINT8 *) TcwlDecSave, sizeof (TcwlDecSave), 0);
   MrcCall->MrcSetMem ((UINT8 *) TcwlAddSave, sizeof (TcwlAddSave), 0);
   MrcCall->MrcSetMem ((UINT8 *) TxDqsSave, sizeof (TxDqsSave), 0);
+  MrcCall->MrcSetMem ((UINT8 *) TxDqsOffsetSave, sizeof (TxDqsOffsetSave), 0);
 
   MrcGetSetChStrb (MrcData, FirstController, FirstChannel, 0, GsmIocDataDqsOdtParkMode, ReadCached, &OdtParkModeSave);
   // Drive DQS low
   GetSetVal = MrcGetEnDqsOdtParkModeValue();
   MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDataDqsOdtParkMode, WriteToCache, &GetSetVal);
 
-  MrcGetSetNoScope (MrcData, GsmIocDfiCmdDecoderEn, WriteToCache | PrintValue, &GetSetDis);
+  MrcGetSetNoScope (MrcData, GsmIocDfiCmdDecoderEn, WriteToCache, &GetSetDis);
 
   // Set DQ Pins HIGH, to a known state
   GetSetVal = 0xFF;
@@ -325,9 +329,10 @@ MrcPdaEnumeration (
       MrcGetSetMcCh (MrcData, Controller, Channel, TxDqFifoRdEnTcwlDelay, WriteToCache, &GetSetVal);
       GetSetVal = tCWL4TxDqFifoWrEn;
       MrcGetSetMcCh (MrcData, Controller, Channel, TxDqFifoWrEnTcwlDelay, WriteToCache, &GetSetVal);
-      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
-        if (MrcRankExist (MrcData, Controller, Channel, Rank)) {
-          for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+      for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+        MrcGetSetChStrb (MrcData, Controller, Channel, Byte, TxDqsOffset, ReadFromCache, &TxDqsOffsetSave[Controller][Channel][Byte]);
+        for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+          if (MrcRankExist (MrcData, Controller, Channel, Rank)) {
             MrcGetSetStrobe (MrcData, Controller, Channel, Rank, Byte, TxDqsDelay, ReadFromCache, &TxDqsSave[Controller][Channel][Rank][Byte]);
           }
         }
@@ -335,6 +340,7 @@ MrcPdaEnumeration (
     }
   }
 
+  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, TxDqsOffset, WriteToCache, &GetSetDis);
   MrcGetSetStrobe (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MAX_SDRAM_IN_DIMM, TxDqsDelay, WriteToCache, &GetSetDis);
   GetSetVal = TcwlCalc;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctCWL, WriteToCache, &GetSetVal);
@@ -431,8 +437,8 @@ MrcPdaEnumeration (
 
         //Exit PDA Enumerate ID
         Status = MrcIssueMpc (MrcData, Controller, Channel, Rank, DDR5_MPC_EXIT_PDA_ENUM_PROG_MODE, MRC_PRINTS_OFF);
-        if(Status != mrcSuccess) {
-            return Status;
+        if (Status != mrcSuccess) {
+          return Status;
         }
       }
     }
@@ -442,7 +448,7 @@ MrcPdaEnumeration (
   MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDqOverrideEn,   WriteToCache, &GetSetDis);
   MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDqOverrideData, WriteToCache, &GetSetDis);
 
-  MrcGetSetNoScope (MrcData, GsmIocDfiCmdDecoderEn, WriteToCache | PrintValue, &GetSetEn);
+  MrcGetSetNoScope (MrcData, GsmIocDfiCmdDecoderEn, WriteToCache, &GetSetEn);
 
   // Restore ODTParkMode
   MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDataDqsOdtParkMode, WriteToCache, &OdtParkModeSave);
@@ -456,17 +462,18 @@ MrcPdaEnumeration (
       }
       MrcGetSetMcCh (MrcData, Controller, Channel, TxDqFifoRdEnTcwlDelay, WriteToCache, &tCWL4TxDqFifoRdEnSave[Controller][Channel]);
       MrcGetSetMcCh (MrcData, Controller, Channel, TxDqFifoWrEnTcwlDelay, WriteToCache, &tCWL4TxDqFifoWrEnSave[Controller][Channel]);
-      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
-        if (MrcRankExist (MrcData, Controller, Channel, Rank)) {
-          for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+      for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+        for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+          if (MrcRankExist (MrcData, Controller, Channel, Rank)) {
             MrcGetSetStrobe (MrcData, Controller, Channel, Rank, Byte, TxDqsDelay, WriteToCache, &TxDqsSave[Controller][Channel][Rank][Byte]);
           }
         }
+        MrcGetSetChStrb (MrcData, Controller, Channel, Byte, TxDqsOffset, WriteToCache, &TxDqsOffsetSave[Controller][Channel][Byte]);
       }
     }
   }
 
-  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocTxPiPwrDnDis, WriteToCache, &GetSetDis);
+  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocTxPiPwrDnDis, WriteToCache, &TxPiPwrDnDis);
 
   MrcFlushRegisterCachedData (MrcData);
 
@@ -1043,7 +1050,7 @@ MrcJedecResetDdr5 (
   // Even though there is no CKE pin on DDR5, CKE override is used
   // to prevent power down entry in all technologies.
   MrcCkeOnProgramming (MrcData);
-  GetSetVal = MC0_CH0_CR_REUT_CH_MISC_CKE_CS_CTRL_CKE_Override_MAX;
+  MrcGetMcConfigGroupLimits (MrcData, GsmMccCkeOverride, NULL, &GetSetVal, NULL);
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkeOverride, WriteCached, &GetSetVal);
 
   // CA Tristate is diabled in MrcMcConfiguration
@@ -1483,7 +1490,7 @@ MrcDdr5VoltageCheckAndSwitch (
   UINT8             SpdAddress;
   UINT8             Value;
   UINT32            Offset;
-  UINT32            Status;
+  RETURN_STATUS     Status;
 
   //Below are used to check duplicate configuration as
   //one Ddr5 dimm is plugged into 2 channels

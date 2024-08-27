@@ -640,7 +640,6 @@ OcrMain (
                 &VariableSize,
                 &OcrConfig
                 );
-
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -652,11 +651,19 @@ OcrMain (
   DeleteOcrBootOption ();
 
   // Check for a pending OCR request and set it up
+  mOcrBootOption = AllocateZeroPool (sizeof (OCR_BOOT_OPTION));
+  if (mOcrBootOption == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
   Status = OcrBootOptionRequest (OcrConfig, &mAmtUefiBootOption, mOcrBootOption);
 
   // If OCR boot is setup, skip syncing available boot options and boot states
   if (EFI_ERROR (Status)) {
-    SetUefiBootOptionsState (OcrConfig, mOcrCap);
+    Status = SetUefiBootOptionsState (OcrConfig, mOcrCap);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "SetUefiBootOptionsState Status = %r\n", Status));
+    }
 
 
     // Allocate Boot Options list
@@ -670,12 +677,18 @@ OcrMain (
     // Add PBA Boot Options
     NumOfUefiBootOptions = 0;
     if (OcrConfig.OcrConfigBootPba && mOcrCap.Bits.OcrBootPba) {
-      AddPbaBootOptions (mBootOptionsList, UefiBootOptions, &NumOfUefiBootOptions);
+      Status = AddPbaBootOptions (mBootOptionsList, UefiBootOptions, &NumOfUefiBootOptions);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "AddPbaBootOptions Status = %r\n", Status));
+      }
     }
 
     // Add WinRe Boot Options
     if (OcrConfig.OcrConfigBootWinRe && mOcrCap.Bits.OcrBootWinRe) {
-      AddWinReBootOptions (UefiBootOptions, &NumOfUefiBootOptions);
+      Status = AddWinReBootOptions (UefiBootOptions, &NumOfUefiBootOptions);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "AddWinReBootOptions Status = %r\n", Status));
+      }
     }
 
     Status = AsfUpdateUefiBootOptions (UefiBootOptions, NumOfUefiBootOptions);
@@ -707,10 +720,16 @@ OcrSaveUefiBootOption (
   EFI_STATUS                      Status;
 
   // Disable Secure Boot if requested
-  OcrDisableSecureBootState (AsfBootOptions);
+  Status = OcrDisableSecureBootState (AsfBootOptions);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "OcrDisableSecureBootState Status = %r\n", Status));
+  }
 
   // Get Asf UEFI Boot Option
   Status = AsfGetUefiBootParameters (&mAmtUefiBootOption);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "AsfGetUefiBootParameters Status = %r\n", Status));
+  }
 
   if (AsfBootOptions.BootOptionsMaskByte2 & FORCE_PROGRESS_EVENTS) {
     SendOcrPetEvent (ASF_EVENT_OFFSET_ONE_CLICK_RECOVERY_PROGRESS, ASF_OCR_EVENT_DATA3_BOOT_PARAMETER_RECEIVED, 0);

@@ -2020,18 +2020,21 @@ SipLinkEqualizeInit (
   /// Program Link Capabilities register 0x004C
   Lcap.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri,  LCAP_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
   PcieSpeed = (IP_PCIE_SPEED) Lcap.Bits.mls;
-  PRINT_LEVEL1 ("For Gen3\n");
-  PcieSipPrintEqConfig (pInst, PcieGen3LinkEqSettings);
-  if (PcieSpeed >= IpPcieGen4) {
-    PRINT_LEVEL1 ("For Gen4\n");
-    PcieSipPrintEqConfig (pInst, PcieGen4LinkEqSettings);
-  }
-  if (PcieSpeed >= IpPcieGen5) {
-    PRINT_LEVEL1 ("For Gen5\n");
-    PcieSipPrintEqConfig (pInst, PcieGen5LinkEqSettings);
-  }
-  SipClearEqRegisters (pInst);
 
+  if (!pInst->PrivateConfig.RootPortDisable) {
+    PRINT_LEVEL1 ("For Gen3\n");
+    PcieSipPrintEqConfig (pInst, PcieGen3LinkEqSettings);
+    if (PcieSpeed >= IpPcieGen4) {
+      PRINT_LEVEL1 ("For Gen4\n");
+      PcieSipPrintEqConfig (pInst, PcieGen4LinkEqSettings);
+    }
+    if (PcieSpeed >= IpPcieGen5) {
+      PRINT_LEVEL1 ("For Gen5\n");
+      PcieSipPrintEqConfig (pInst, PcieGen5LinkEqSettings);
+    }
+  }
+
+  SipClearEqRegisters (pInst);
   SipConfigurePresetToCoefficientMapping (pInst, PcieGen3LinkEqSettings, PcieGen4LinkEqSettings, PcieGen5LinkEqSettings, PcieSpeed);
   PRINT_LEVEL1 ("%s End \n", __FUNCTION__);
 }

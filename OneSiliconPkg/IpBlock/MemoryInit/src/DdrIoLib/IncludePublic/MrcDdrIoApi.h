@@ -25,6 +25,7 @@
 #include "MrcDdrIoDefines.h"
 #include "MrcDdrIoUtils.h"
 #include "MrcRegisterStruct.h"
+#include "MrcCommon.h"
 
 extern const char *GlobalCompOffsetStr[];
 
@@ -259,13 +260,10 @@ typedef enum {
   DCC_VCDL
 } DCC_COMPONENT;
 
-#define MRC_DACCODE_HI        (0x400) // 1024 * 0.5; 10-bit DAC on VccClkMv, default to 0.5*VccClk
+#define MRC_DACCODE_HI        (1200) // 1024 * 0.5; 10-bit DAC on VccClkMv, default to 0.5*VccClk
 #define MRC_DACCODE_TARG      (0x2CC) // 10-bit DAC on VccClkMv, default to 0.35*VccClk
-#define MRC_DACCODE_LOW       (0x19A) // 10-bit DAC on VccClkMv, default 0.20*vccclk need high enough voltage to account for temp drift, can be very low (0.05) if temp==hot
-#define MRC_DACCODE_HI_NTC    (0x200)
-#define MRC_DACCODE_LOW_NTC   (0xCD)
-#define MRC_DACCODE_TARG_NTC  (0x166)
-#define MRC_FUNC_LOCK_TIMEOUT (1)
+#define MRC_DACCODE_LOW       (410) // 10-bit DAC on VccClkMv, default 0.20*vccclk need high enough voltage to account for temp drift, can be very low (0.05) if temp==hot
+
 #define BW_SEL_ENABLE         (TRUE)
 #define BW_SEL_DISABLE        (FALSE)
 #define MRC_NO_VALID_BWSEL    (0xFF)
@@ -326,14 +324,6 @@ typedef enum {
 #else
 #define MRC_PRINT_DDR_IO_GROUP( MrcData, Socket, Controller, Channel, Rank, Strobe, Bit, FreqIndex, Group)
 #endif
-
-typedef enum {
-  PartData,
-  PartCcc,
-  PartDataShared,
-  PartCccShared,
-  PartMax
-} PART2CH_PART_TYPE;
 
 /// Functions
 
@@ -600,7 +590,7 @@ MrcRxDqsDcc (
 MrcStatus
 MrcSetPartitionLaneMax (
   IN OUT MrcParameters *const MrcData,
-  IN     PARTITION_BLOCKS     Partition,
+  IN     PARTITION_TYPE       Partition,
   OUT    UINT32               *LaneMax
   );
 
@@ -821,18 +811,19 @@ MrcLargeChangeResetSetup (
   );
 
 /**
-  This function calculates the DQRodt value using DqOdtVrefUp formula:
-  DqOdtVrefUp = Rnd(((PadV / VrefRail)*386-1) /2 ). PadV = VccDDQ*(100 Ohms / (100 Ohms + IF(ODTSingleSegEn,1,2)*DQRodt));
+  This function calculates the Dq Rtarg_pup value using Vref_pupcode formula:
+  Vref_pupcode = 193 * (Rext / (Rext + Rtarg_pup))
+  Rtarg_pup = Rext * ((193 / Vref_pupcode) - 1)
 
   @param[in] MrcData          - All the MRC global data.
-  @param[in] DqOdtVrefUpValue - The DqOdtVrefUp value.
+  @param[in] DqVrefUpValue    - The DqVrefUp value.
 
-  @returns DQRodt value
+  @retval Returns Dq Rtarg_pup value
 **/
 UINT32
 CalcDQRodtValueFromDqOdtVrefUp (
   IN MrcParameters *const MrcData,
-  IN UINT32  DqOdtVrefUpValue
+  IN UINT32  DqVrefUpValue
   );
 
 /**
@@ -1649,6 +1640,22 @@ WrRetrainRankOffset (
   );
 
 /**
+  This function returns the offset to access specific Channel/Strobe of RETRAININITRANK[0..3].
+
+  @params[in]  Channel - 0-based index of Channel to access.
+  @params[in]  Rank    - 0-based index of Rank to access.
+  @params[in]  Strobe  - 0-based index of Strobe to access.
+
+  @retval UINT32 - CR offset
+**/
+UINT32
+RetrainRankOffset(
+  IN  UINT32  const Channel,
+  IN  UINT32  const Rank,
+  IN  UINT32  const Strobe
+);
+
+/**
   This function returns the offset to access specific Channel/Strobe of WrRetrainControlStatus.
 
   @param[in]  Channel - 0-based index of Channel to access.
@@ -1868,17 +1875,6 @@ QclkCalOffOffset (
   OUT UINT64_STRUCT  *const VolatileMask
   );
 
-/**
-  This function returns CCC Partition configuration (LP5 / DDR5 NIL / DDR5 IL).
-
-  @param[in] MrcData - MRC global data.
-
-  @returns the CCC partition type.
-**/
-MRC_PARTITION_TYPE
-MrcGetCccPartitionConfiguration (
-  IN MrcParameters *const MrcData
-  );
 
 /**
   This function translates HW CCC Partition instance to RAL instance based on interleave configuration.
@@ -1918,7 +1914,7 @@ MrcAdcGlobalOverride (
 UINT32
 MrcGetAdcCount (
   IN MrcParameters *const MrcData,
-  IN PARTITION_BLOCKS     Partition,
+  IN PARTITION_TYPE       Partition,
   IN UINT32               BaseReg,
   IN UINT8                Channel,
   IN UINT8                Byte
@@ -2619,24 +2615,6 @@ PhaseWacAMoleAlgo (
   IN BOOLEAN     DebugPrint
   );
 
-/**
-  Determine if the partition exists with the current channel population.
-
-  @param[in]  MrcData      - Pointer to global MRC data.
-  @param[in]  PartType     - The partition type to look up.
-  @param[in]  PartInstance - The partition instance to look up.
-  @param[in]  PartChannel  - The partition channel to look up. Only used by the Data
-                             Partitions as there are two "bytes" in 1 Data Instance.
-
-  @return whether partition exists or not.
-**/
-BOOLEAN
-MrcGetPartitionExists (
-  IN     MrcParameters      *MrcData,
-  IN     PART2CH_PART_TYPE  PartType,
-  IN     UINT32             PartInstance,
-  IN     UINT32             PartChannel
-  );
 
 /**
   This function does the refpi control register init.
@@ -2789,6 +2767,54 @@ VOID
 MrcUpdateDdr5Pll (
   IN MrcParameters *const MrcData,
   IN BOOLEAN        const Enable
+  );
+
+/**
+  This function does Rload compensation to calibrate the rload template pulldown resistance.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @retval MrcStatus
+**/
+MrcStatus
+MrcRloadCompensation (
+  IN MrcParameters* const MrcData
+  );
+
+
+/**
+  This function returns the RankMask to be used for this particular OptParam.
+  @param[in]  MrcData      - Pointer to MRC global data.
+  @param[in]  OptParam     - OptParam being tested.
+  @param[in]  Controller   - Controller to review.
+  @param[in]  Channel      - Channel to review.
+  @param[in, out] RankMask - RankMask for use for this OptParam specific to this Controller/Channel.
+**/
+VOID
+MrcRankMaskDqTargetR (
+  IN     MrcParameters *const MrcData,
+  IN     TOptParamOffset  OptParam,
+  IN     UINT32  Controller,
+  IN     UINT32  Channel,
+  IN OUT UINT8   *RankMask
+  );
+
+
+/**
+  This function configures the DDRIO to drive WCK according to the JEDEC Spec before Entering, or
+  after exiting Command Bus Training Mode.
+
+  For Entry, WCK will be driven static low while idle and prepare for WCK to toggle indefinitely when the pulse is started.
+  For Exit, the pulse will be stopped; WCK force to idle will be removed allowing to return back to Tristate; and the pulse
+    configuration will be cleared.
+
+  @param[in] MrcData - Pointer to global MRC data.
+  @param[in] IsCbtEnter - Defines if the call is for a CBT enter (TRUE) or CBT exit (FALSE)
+**/
+VOID
+MrcDdrIoLpddrCbtWckMode (
+  IN MrcParameters* const MrcData,
+  IN BOOLEAN              IsCbtEnter
   );
 
 #endif //MRC_DDR_IO_API_H_

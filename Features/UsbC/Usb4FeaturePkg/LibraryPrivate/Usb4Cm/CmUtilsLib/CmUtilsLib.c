@@ -80,14 +80,14 @@ CmAllocMmio (
   EFI_STATUS              Status;
   PHYSICAL_ADDRESS        BaseAddr;
 
-  if ((ImageHandle == (EFI_HANDLE)0) || (MmioAddr == NULL)) {
+  if ((ImageHandle == (EFI_HANDLE) 0) || (MmioAddr == NULL)) {
     Status = EFI_INVALID_PARAMETER;
     goto Exit;
   }
 
-  BaseAddr = 0xFFFFFFFF;
+  BaseAddr = *MmioAddr;
   Status = gDS->AllocateMemorySpace (
-                  EfiGcdAllocateMaxAddressSearchBottomUp,
+                  EfiGcdAllocateMaxAddressSearchTopDown,
                   EfiGcdMemoryTypeMemoryMappedIo,
                   MMIO_ALIGNMENT_1MB, // 2^20: 1M Alignment
                   MmioLength,

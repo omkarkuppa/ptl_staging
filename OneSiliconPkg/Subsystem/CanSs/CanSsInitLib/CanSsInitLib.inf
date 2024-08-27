@@ -24,12 +24,11 @@
   BASE_NAME      = CanInitLib
   FILE_GUID      = CF8A9138-0D1B-4324-800F-FCE156F95ABB
   VERSION_STRING = 1.0
-  MODULE_TYPE    = PEIM
+  MODULE_TYPE    = BASE
   LIBRARY_CLASS  = CanInitLib
 
 [LibraryClasses]
   DebugLib
-  IoLib
 
 [Packages]
   MdePkg/MdePkg.dec

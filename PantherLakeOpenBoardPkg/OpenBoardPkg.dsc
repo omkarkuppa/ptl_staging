@@ -194,7 +194,6 @@
 
   SiliconPolicyInitLib|$(PLATFORM_PACKAGE)/PlatformInit/Library/SiliconPolicyInitLibNull/SiliconPolicyInitLibNull.inf
   SiliconPolicyUpdateLib|$(PLATFORM_BOARD_PACKAGE)/Policy/Library/DxeSiliconPolicyUpdateLib/DxeSiliconPolicyUpdateLib.inf
-  BoardBdsHookLib|BoardModulePkg/Library/BoardBdsHookLib/BoardBdsHookLib.inf
   BoardBootManagerLib|BoardModulePkg/Library/BoardBootManagerLib/BoardBootManagerLib.inf
 
   #
@@ -307,9 +306,6 @@
   # Common
   #
   !include $(PLATFORM_BOARD_PACKAGE)/Include/Dsc/CoreDxeInclude.dsc
-
-
-  BoardModulePkg/BoardBdsHookDxe/BoardBdsHookDxe.inf
 
   #
   # Silicon

@@ -228,17 +228,6 @@ CpuSpecificFeaturesLibConstructor (
                );
     ASSERT_EFI_ERROR (Status);
   }
-  if (IsCpuFeatureSupported (CPU_FEATURE_APIC_TPR_UPDATE_MESSAGE)) {
-    Status = RegisterCpuFeature (
-               "APIC Tpr Update Message",
-               NULL,
-               NULL,
-               ApicTprUpdateMessageInitialize,
-               CPU_FEATURE_APIC_TPR_UPDATE_MESSAGE,
-               CPU_FEATURE_END
-               );
-    ASSERT_EFI_ERROR (Status);
-  }
   if (IsCpuFeatureSupported (CPU_FEATURE_THREE_STRIKE_COUNTER)) {
     Status = RegisterCpuFeature (
                "Three Strike Counter",

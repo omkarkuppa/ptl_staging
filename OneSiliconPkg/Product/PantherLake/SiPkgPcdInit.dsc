@@ -44,6 +44,7 @@
   gSiPkgTokenSpaceGuid.PcdIpuEnable                    |TRUE
   gSiPkgTokenSpaceGuid.PcdVtdEnable                    |TRUE
   gSiPkgTokenSpaceGuid.PcdBiosGuardEnable              |TRUE  #BiosGuardModule.bin
+  gSiPkgTokenSpaceGuid.PcdBiosGuardLegacyAcpi          |TRUE
   gSiPkgTokenSpaceGuid.PcdTdxEnable                    |TRUE
   gSiPkgTokenSpaceGuid.PcdOptimizeCompilerEnable       |TRUE
   gSiPkgTokenSpaceGuid.PcdPeiDisplayEnable             |TRUE
@@ -70,9 +71,9 @@
   gSiPkgTokenSpaceGuid.PcdSiliconSegment               |0x0
   gSiPkgTokenSpaceGuid.PcdFspSku                       |0x0
   gSiPkgTokenSpaceGuid.PcdFspYear                      |0x24
-  gSiPkgTokenSpaceGuid.PcdFspBuildVer                  |0x2702
+  gSiPkgTokenSpaceGuid.PcdFspBuildVer                  |0x3420
   gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress             |0x0000EFA0
-  gSiPkgTokenSpaceGuid.PcdSpiDmaEnable                 |FALSE
+  gSiPkgTokenSpaceGuid.PcdSpiDmaEnable                 |TRUE
   gIntelSiliconPkgTokenSpaceGuid.PcdVTdPeiDmaBufferSize|0x00600000
   gIntelSiliconPkgTokenSpaceGuid.PcdVTdPeiDmaBufferSizeS3|0x00600000
   gSiPkgTokenSpaceGuid.PcdSafBarBaseAddress            |0xFA000000

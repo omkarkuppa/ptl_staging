@@ -34,7 +34,6 @@
 #!include $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/PeiLib.dsc
 #
 
-  SpiLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/Library/PeiSpiLib/PeiSpiLib.inf
   PeiSpiDmaLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/LibraryPrivate/PeiSpiDmaLibNull/PeiSpiDmaLibNull.inf
   GpioHelpersLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Gpio/LibraryPrivate/PeiGpioHelpersLib/PeiGpioHelpersLib.inf
 

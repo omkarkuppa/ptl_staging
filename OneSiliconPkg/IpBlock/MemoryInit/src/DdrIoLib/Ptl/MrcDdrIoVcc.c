@@ -377,15 +377,9 @@ SetVccClk (
   DdrFrequency = Outputs->Frequency;
 
   if (IsDdr5) {
-    if (DdrFrequency <= f3200) {
-      VccClk = 600;
-    } else {
-      VccClk = 750;
-    }
+    VccClk = 750;
   } else {
-    if (DdrFrequency <= f3200) {
-      VccClk = 600;
-    } else if (DdrFrequency > f3200 && DdrFrequency <= f8533) {
+    if (DdrFrequency <= f8533) {
       VccClk = 750;
     } else {
       VccClk = 850;

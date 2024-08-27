@@ -56,6 +56,9 @@
   gEfiHiiConfigAccessProtocolGuid                       ## CONSUMES
   gEdkiiPlatformSpecificResetFilterProtocolGuid         ## CONSUMES
 
+[Guids]
+  gVtioSetupGuid
+
 [Pcd]
   gVtioFeaturePkgTokenSpaceGuid.PcdVtioSetupDataPtr                 ## PRODUCES
 

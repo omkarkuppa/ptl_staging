@@ -191,7 +191,7 @@ PcieUpdateRegCntxt (
   RegInfo                  = (IP_WR_REG_INFO*)(UINTN) pInst->RegCntxt_Prvt_Cfg;
 
   RegInfo->AccessType    = IpWrRegAccessSb;
-  RegInfo->AccessSubType = IpWrRegSubTypeNone;
+  RegInfo->AccessSubType = IpWrRegAccessP2Sb;
   //
   // Update P2SB Config
   //
@@ -217,7 +217,7 @@ PcieUpdateRegCntxt (
   // environment.
   //
   RegInfo->RegType.MmioBase                      = PCH_PCR_BASE_ADDRESS;
-  RegInfo->RegType.P2Sb.AccessMethod             = IpWrP2SbMmioAccess;
+  RegInfo->RegType.P2Sb.AccessMethod             = IpWrP2SbMsgAccess;
   RegInfo->RegType.P2Sb.PostedWrites             = FALSE;
   //
   // SideBand Access
@@ -797,7 +797,7 @@ DomainPcieInstSingleInit (
   pInst->PrivateConfig.RootPortDisable = FALSE;
 
   if (PcieIsRpOwningLanes (pInst) == FALSE ||
-      !PcieSipIsRpEnabledInController (pInst, pInst->PrivateConfig.RootPortIndexInController)) {
+      !PcieSipIsRpEnabledInController (pInst->ControllerInst, pInst->PrivateConfig.RootPortIndexInController)) {
     pInst->PrivateConfig.RootPortDisable = TRUE;
   }
 

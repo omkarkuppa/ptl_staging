@@ -27,7 +27,9 @@
 #include "PciHotPlugHelpers.h"
 
 #include <Protocol/ITbtPolicy.h>
-
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+#include <Protocol/DxeDTbtPolicy.h>
+#endif
 #include <Library/PchPcieRpLib.h>
 #include <Library/TbtCommonLib.h>
 #include <Defines/HostBridgeDefines.h>
@@ -36,6 +38,9 @@
 #include <Library/TcssInfoLib.h>
 #include <Library/PchInfoLib.h>
 #include <TcssDataHob.h>
+#include <PcieRegs.h>
+#include <Register/PchRegs.h>
+#include <Library/PciExpressLib.h>
 
 #define ITBT_CONTROLLER                   0x80
 #define INVALID_RP_CONTROLLER_TYPE        0xFF
@@ -263,33 +268,67 @@ InitializeRootHpc (
 /**
   Selects the proper TBT Root port to assign resources
 
-  @param[in]  RpIndex  ITBT PCIE Root Port Index
-  @param[in]  TbtType  ITBT_CONTROLLER or INVALID_RP_CONTROLLER_TYPE
+  @param[in]  SetupData          Pointer to Setup data
+  @param[in]  RpIndex            TBT PCIe Root Port Index
+  @param[in]  TbtType            TBT Root Port Type
 
-  @retval  TbtSelectorChosen  Rootport number.
+  @retval     TbtSelectorChosen  Root port number.
 **/
 UINT8
-GetRootPortToSetResourcesForITbt (
+GetRootPortToSetResourcesForTbt (
+  IN SETUP_DATA *SetupData,
   IN UINTN      RpIndex,
   IN UINT8      TbtType
   )
 {
   UINT8              TbtSelectorChosen;
   TCSS_DATA_HOB      *TcssHob;
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+  UINT8              Index;
+  DTBT_INFO_HOB      *DTbtInfoHob;
+#endif
 
   TbtSelectorChosen = 0xFF;
 
   TcssHob = (TCSS_DATA_HOB *) GetFirstGuidHob (&gTcssHobGuid);
   if (TcssHob == NULL) {
-    DEBUG ((DEBUG_ERROR, "GetRootPortToSetResourcesForITbt(): Fail to get TCSS data HOB\n"));
-    return TbtSelectorChosen;
-  }
-
-  if (TbtType == ITBT_CONTROLLER) {
-    if (TcssHob->TcssData.ItbtPcieRpEn[RpIndex]) {
-      TbtSelectorChosen = (UINT8) RpIndex;
+    DEBUG ((DEBUG_ERROR, "GetRootPortToSetResourcesForTbt(): Failed to get TCSS data HOB\n"));
+  } else {
+    if (TbtType == ITBT_CONTROLLER && RpIndex < MAX_ITBT_PCIE_PORT) {
+      if (TcssHob->TcssData.ItbtPcieRpEn[RpIndex]) {
+        TbtSelectorChosen = (UINT8) RpIndex;
+      }
     }
   }
+
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+  //
+  // Get DTBT INFO HOB
+  //
+  DTbtInfoHob = (DTBT_INFO_HOB *) GetFirstGuidHob (&gDTbtInfoHobGuid);
+  if (DTbtInfoHob == NULL) {
+    DEBUG ((DEBUG_ERROR, "DTbtInfoHob not found!!\n"));
+  } else {
+    if (TbtType == PCIE_RP_TYPE_CPU) {
+      for (Index = 0; Index < MAX_DTBT_CONTROLLER_NUMBER; Index++) {
+        if (DTbtInfoHob->DTbtControllerConfig[Index].DTbtControllerEn == 1) {
+          //
+          // Check if root port type is PCH or CPU PCIe
+          //
+          if (DTbtInfoHob->DTbtControllerConfig[Index].RpType == TbtType) {
+            //
+            // Check if Controller is Enabled or not.
+            //
+            if ((SetupData->DTbtController[Index] == 0x01) && ((DTbtInfoHob->DTbtControllerConfig[Index].PcieRpNumber - 1) == (UINT8) RpIndex)) {
+              TbtSelectorChosen = Index;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+#endif
 
   DEBUG ((DEBUG_INFO, "TbtSelectorChosen = %x\n", TbtSelectorChosen));
 
@@ -359,6 +398,35 @@ UpdateP2pbResourceRecord (
 }
 
 /**
+  Get Root Port physical Number by CPU or PCH Pcie Root Port Device and Function Number
+
+  @param[in]  RpDev                 Root port device number.
+  @param[in]  RpFun                 Root port function number.
+  @param[out] RpNumber              Return corresponding physical Root Port index (0-based)
+**/
+VOID
+GetPcieRpNumber (
+  IN  UINTN   RpDev,
+  IN  UINTN   RpFun,
+  OUT UINTN   *RpNumber
+  )
+{
+  UINT64   RpBase;
+  UINT8    RpPcieCapPtr;
+  UINT32   RegVal32;
+
+  *RpNumber = 0xFF;
+  RpBase = PCI_SEGMENT_LIB_ADDRESS (DEFAULT_PCI_SEGMENT_NUMBER_PCH, DEFAULT_PCI_BUS_NUMBER_PCH, RpDev, RpFun, 0);
+  if (PciSegmentRead32 (RpBase + PCI_VENDOR_ID_OFFSET) != 0xFFFFFFFF) {
+    RpPcieCapPtr = PcieBaseFindCapId (RpBase, EFI_PCI_CAPABILITY_ID_PCIEXP);
+    if (RpPcieCapPtr != 0) {
+      RegVal32 = PciSegmentRead32 (RpBase + RpPcieCapPtr + R_PCIE_LCAP_OFFSET);
+      *RpNumber = ((PCI_REG_PCIE_LINK_CAPABILITY *) &RegVal32)->Bits.PortNumber - 1;
+    }
+  }
+}
+
+/**
   Handle the Resource Padding For RootPort
 
   @param[in] *HpcDevicePath       The Device Path to the HPC that is being initialized.
@@ -383,22 +451,30 @@ HandleResourcePaddingForRootPort (
   OUT    UINT8                           *RsvdPcieKiloIo
   )
 {
-  EFI_STATUS                        Status;
-  PCH_SETUP                         PchSetup;
-  SETUP_DATA                        SetupData;
-  UINTN                             VariableSize;
-  UINTN                             RpIndex;
-  UINTN                             RpBus;
-  UINTN                             RpDev;
-  UINTN                             RpFunc;
-  UINT8                             TbtController;
-  UINT8                             TbtType = INVALID_RP_CONTROLLER_TYPE;
-  ITBT_POLICY_PROTOCOL              *ITbtPolicy;
-  DXE_ITBT_CONFIG                   *DxeITbtConfig;
+  EFI_STATUS                Status;
+  PCH_SETUP                 PchSetup;
+  SETUP_DATA                SetupData;
+  UINTN                     VariableSize;
+  UINTN                     RpIndex;
+  UINTN                     RpBus;
+  UINTN                     RpDev;
+  UINTN                     RpFunc;
+  UINT8                     PcieRpType;
+  UINT8                     TbtController;
+  ITBT_POLICY_PROTOCOL      *ITbtPolicy;
+  DXE_ITBT_CONFIG           *DxeITbtConfig;
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+  DXE_DTBT_POLICY_PROTOCOL  *DxeDTbtConfig;
+#endif
 
-  RpIndex = 0;
+  RpIndex         = 0xFF;
+  PcieRpType      = INVALID_RP_CONTROLLER_TYPE;
+  *RsvdPcieKiloIo = 0; // Do not assign any IO Resource for any RP by default.
+
   Status = gBS->LocateProtocol (&gITbtPolicyProtocolGuid, NULL, (VOID **) &ITbtPolicy);
+  ASSERT_EFI_ERROR (Status);
   Status = GetConfigBlock ((VOID *) ITbtPolicy, &gDxeITbtConfigGuid, (VOID *) &DxeITbtConfig);
+  ASSERT_EFI_ERROR (Status);
 
   //
   // Check if PCIe Root HPC Controller need to reserve bus for docking downstream P2P hotplug
@@ -436,23 +512,27 @@ HandleResourcePaddingForRootPort (
   // Get the actual Rootport no corresponding to the device/function no provided
   if (RpDev == GetITbtPcieDevNumber ()) {
     GetItbtPciePortIndex (gItbtSegment, RpBus, RpDev, RpFunc, &RpIndex);
-    TbtType = ITBT_CONTROLLER;
+    PcieRpType = ITBT_CONTROLLER;
     DEBUG ((DEBUG_INFO, "GetResourcePadding : ITBT Rootport no %02d Bus 0x%x, Device 0x%x, Function 0x%x \n", RpIndex, RpBus, RpDev, RpFunc));
+  } else if ((RpBus == 0) && ((RpDev == PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_1) || (RpDev == PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_9))) {
+    // CPU PCIe
+    PcieRpType = PCIE_RP_TYPE_CPU;
+    GetPcieRpNumber (RpDev, RpFunc, &RpIndex);
+    DEBUG ((DEBUG_INFO, "GetResourcePadding : CPU PCIe root port# %02d Bus 0x%x, Device 0x%x, Function 0x%x \n", RpIndex, RpBus, RpDev, RpFunc));
+    if (RpIndex < GetPchMaxPciePortNum ()) {
+      *RsvdExtraBusNum = PchSetup.PcieExtraBusRsvd[RpIndex];
+      *RsvdPcieMegaMem = PchSetup.PcieMemRsvd[RpIndex];
+      *RsvdPcieKiloIo  = PchSetup.PcieIoRsvd[RpIndex];
+    }
   } else {
     // Non-Rootport
     DEBUG ((DEBUG_INFO, "GetResourcePadding : Non-Rootport no %02d Bus 0x%x, Device 0x%x, Function 0x%x \n", RpIndex, RpBus, RpDev, RpFunc));
   }
 
-  if (TbtType == INVALID_RP_CONTROLLER_TYPE) {
-    // Do not assign any IO Resource for this kind of Invalid RP.
-    *RsvdPcieKiloIo  = 0;
-  }
-
-  if (SetupData.IntegratedTbtSupport == 1) {
-    TbtController = GetRootPortToSetResourcesForITbt (RpIndex, TbtType);
+  if (SetupData.EnablePcieTunnelingOverUsb4 == 1) {
+    TbtController = GetRootPortToSetResourcesForTbt (&SetupData, RpIndex, PcieRpType);
     if ((SetupData.IntegratedTbtSupport == 1)
-        && (TbtType == ITBT_CONTROLLER)
-        && (SetupData.EnablePcieTunnelingOverUsb4 == 1))
+        && (PcieRpType == ITBT_CONTROLLER))
     {
       if (TbtController < MAX_ITBT_PCIE_PORT) {
         if (DxeITbtConfig == NULL) {
@@ -467,13 +547,35 @@ HandleResourcePaddingForRootPort (
         *RsvdPcieKiloIo     = 0;
       }
     }
-  } else {
-     if ((RpBus == 0) && ((RpDev == PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_1) || (RpDev == PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_9) || (RpDev == PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_17))){
-      // PCH
-      *RsvdExtraBusNum = PchSetup.PcieExtraBusRsvd[RpIndex];
-      *RsvdPcieMegaMem = PchSetup.PcieMemRsvd[RpIndex];
-      *RsvdPcieKiloIo  = PchSetup.PcieIoRsvd[RpIndex];
+
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+    if ((SetupData.DiscreteTbtSupport == 1) &&
+        (PcieRpType == PCIE_RP_TYPE_CPU)) {
+      if (TbtController < MAX_DTBT_CONTROLLER_NUMBER) {
+        Status = gBS->LocateProtocol(
+                        &gDxeDTbtPolicyProtocolGuid,
+                        NULL,
+                        (VOID **) &DxeDTbtConfig
+                        );
+        ASSERT_EFI_ERROR (Status);
+        if (DxeDTbtConfig == NULL) {
+          DEBUG ((DEBUG_ERROR, "DxeDTbtConfig is NULL \n"));
+          return;
+        }
+        *RsvdExtraBusNum    = DxeDTbtConfig->DTbtResourceConfig[TbtController].TbtPcieExtraBusRsvd;
+        *RsvdPcieMegaMem    = DxeDTbtConfig->DTbtResourceConfig[TbtController].TbtPcieMemRsvd;
+        *PcieMemAddrRngMax  = DxeDTbtConfig->DTbtResourceConfig[TbtController].TbtPcieMemAddrRngMax;
+        *RsvdPciePMegaMem   = DxeDTbtConfig->DTbtResourceConfig[TbtController].TbtPciePMemRsvd;
+        if (SetupData.DTbthostRouterPortNumber[TbtController] == 2) {
+          // For BR Controller only, reserved PciePMem memory is set by port
+          // For 2 ports, the memory reservation is twice the value used for one port.
+          *RsvdPciePMegaMem = 2 * DxeDTbtConfig->DTbtResourceConfig[TbtController].TbtPciePMemRsvd;
+        }
+        *PciePMemAddrRngMax = DxeDTbtConfig->DTbtResourceConfig[TbtController].TbtPciePMemAddrRngMax;
+        *RsvdPcieKiloIo     = 0;
+      }
     }
+#endif
   }
 }
 

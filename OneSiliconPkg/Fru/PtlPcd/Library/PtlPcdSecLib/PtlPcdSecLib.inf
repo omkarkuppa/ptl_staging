@@ -37,14 +37,13 @@
 [LibraryClasses]
   PchCycleDecodingLib
   PchPcrLib
-  SerialIoUartLib
   PmcPrivateLib
   PrintLib
   PchPciBdfLib
   SecFspSiliconLib
   PeiLpssI2cInitLib
   LpssI2cSocInitLib
-  LpssUartPrivateLib
+  LpssUartLib
   SecLpssUartInitLib
 
 

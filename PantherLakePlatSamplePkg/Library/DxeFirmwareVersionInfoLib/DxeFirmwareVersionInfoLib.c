@@ -25,6 +25,7 @@
 #include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/DebugLib.h>
+#include <Library/PrintLib.h>
 #include <Library/DevicePathLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
@@ -78,6 +79,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED FVI_DATA mPlatformFviData[] = {
   FVI_VERSION (PLATFORM_VERSION),
   FVI_VERSION (USBC_PD0_VERSION),
   FVI_VERSION (USBC_PD1_VERSION),
+  FVI_VERSION (USBC_PD2_VERSION),
   FVI_VERSION (USBC_RETIMER0_VERSION),
   FVI_VERSION (USBC_RETIMER1_VERSION),
   FVI_VERSION (USBC_RETIMER2_VERSION),
@@ -97,8 +99,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED FVI_STRINGS mPlatformFviStrings[] = {
   { GOP_FVI_STRING,              NULL, },
   { ROYALPARK_FVI_STRING,        NULL, },
   { PLATFORM_FVI_STRING,         NULL, },
-  { USBC_PD0_FVI_STRING,         NULL, },
-  { USBC_PD1_FVI_STRING,         NULL, },
+  { USBC_PD0_FVI_STRING,         USBC_PD0_DEFAULT_VERSION_STRING, },
+  { USBC_PD1_FVI_STRING,         USBC_PD1_DEFAULT_VERSION_STRING, },
+  { USBC_PD2_FVI_STRING,         USBC_PD2_DEFAULT_VERSION_STRING, },
   { USBC_RETIMER0_FVI_STRING,    NULL, },
   { USBC_RETIMER1_FVI_STRING,    NULL, },
   { USBC_RETIMER2_FVI_STRING,    NULL, },
@@ -115,6 +118,9 @@ ReadUsbCPdVersion (VOID)
   USBC_PD_SETUP         UsbCPdSetup;
   UINT32                VarAttributes;
   UINTN                 VarSize;
+  UINT8                 PdNumber;
+  UINT8                 Index;
+  UINT64                TempPdVersion;
 
   DEBUG ((DEBUG_INFO, "ReadUsbCPdVersion - Start\n"));
 
@@ -133,27 +139,37 @@ ReadUsbCPdVersion (VOID)
 
   Status = EFI_NOT_READY;
 
-  SetMem (DataBuffer, 8, 0);
-  Status = GetPDFwVersion (0, DataBuffer);
-  if (Status == EFI_SUCCESS) {
-    UsbCPdSetup.UsbCPd0Version = LShiftU64 (DataBuffer[7], 56) + LShiftU64 (DataBuffer[6], 48) \
-                               + LShiftU64 (DataBuffer[5], 40) + LShiftU64 (DataBuffer[4], 32) \
-                               + LShiftU64 (DataBuffer[3], 24) + LShiftU64 (DataBuffer[2], 16) \
-                               + LShiftU64 (DataBuffer[1], 8) + DataBuffer[0];
-  } else {
-    UsbCPdSetup.UsbCPd0Version = 0;
+  PdNumber = PcdGet8 (PcdUsbCPdNumber);
+  if (PdNumber > MAX_PD_NUMBER) {
+    DEBUG ((DEBUG_ERROR, "PcdUsbCPdNumber is invalid\n"));
+    return;
   }
 
-  SetMem (DataBuffer, 8, 0);
-  Status = GetPDFwVersion (1, DataBuffer);
-  if (Status == EFI_SUCCESS) {
-    UsbCPdSetup.UsbCPd1Version = LShiftU64 (DataBuffer[7], 56) + LShiftU64 (DataBuffer[6], 48) \
-                               + LShiftU64 (DataBuffer[5], 40) + LShiftU64 (DataBuffer[4], 32) \
-                               + LShiftU64 (DataBuffer[3], 24) + LShiftU64 (DataBuffer[2], 16) \
-                               + LShiftU64 (DataBuffer[1], 8) + DataBuffer[0];
-  } else {
-    UsbCPdSetup.UsbCPd1Version = 0;
+  for (Index = 0; Index < PdNumber; Index++) {
+    SetMem (DataBuffer, 8, 0);
+    Status = GetPDFwVersion (Index, DataBuffer);
+    if (Status == EFI_SUCCESS) {
+      TempPdVersion = LShiftU64 (DataBuffer[7], 56) + LShiftU64 (DataBuffer[6], 48) \
+                    + LShiftU64 (DataBuffer[5], 40) + LShiftU64 (DataBuffer[4], 32) \
+                    + LShiftU64 (DataBuffer[3], 24) + LShiftU64 (DataBuffer[2], 16) \
+                    + LShiftU64 (DataBuffer[1], 8) + DataBuffer[0];
+    } else {
+      TempPdVersion = 0;
+    }
+
+    switch (Index) {
+      case 0:
+        UsbCPdSetup.UsbCPd0Version = TempPdVersion;
+        break;
+      case 1:
+        UsbCPdSetup.UsbCPd1Version = TempPdVersion;
+        break;
+      case 2:
+        UsbCPdSetup.UsbCPd2Version = TempPdVersion;
+        break;
+    }
   }
+
   VarAttributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE;
   Status = gRT->SetVariable (
                   USBC_PD_NAME,
@@ -173,13 +189,60 @@ ReadUsbCPdVersion (VOID)
 VOID
 UpdateUsbCPdVersion (VOID)
 {
-  EFI_STATUS            Status;
-  UINT64                UsbCPdVersion;
-  USBC_PD_SETUP         UsbCPdSetup;
-  UINT32                VarAttributes;
-  UINTN                 VarSize;
+  EFI_STATUS     Status;
+  UINT64         UsbCPdVersion;
+  SETUP_DATA     SetupData;
+  USBC_PD_SETUP  UsbCPdSetup;
+  UINT32         VarAttributes;
+  UINTN          VarSize;
+  UINT32         FwVersion;
+  UINT32         SubFwVersion;
+  UINT8          PdNumber;
+  UINT8          Index;
+  CHAR8          Pd0VersionString[18];
+  CHAR8          Pd1VersionString[18];
+  CHAR8          Pd2VersionString[18];
 
   DEBUG ((DEBUG_INFO, "UpdateUsbCPdVersion - Start\n"));
+
+  PdNumber = PcdGet8 (PcdUsbCPdNumber);
+  if (PdNumber > MAX_PD_NUMBER) {
+    DEBUG ((DEBUG_ERROR, "PcdUsbCPdNumber is invalid\n"));
+    goto Exit;
+  }
+
+  ZeroMem (&SetupData, sizeof (SETUP_DATA));
+  VarSize = sizeof (SETUP_DATA);
+  Status = gRT->GetVariable (
+                  L"Setup",
+                  &gSetupVariableGuid,
+                  &VarAttributes,
+                  &VarSize,
+                  &SetupData
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to get setup variable\n"));
+    goto Exit;
+  }
+
+  if (SetupData.UsbCPdNumber != PdNumber) {
+    //
+    // Update UsbCPdNumber for show number of PDs.
+    //
+    VarAttributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE;
+    SetupData.UsbCPdNumber = PdNumber;
+    Status = gRT->SetVariable (
+                    L"Setup",
+                    &gSetupVariableGuid,
+                    VarAttributes,
+                    VarSize,
+                    &SetupData
+                    );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "Failed to set setup variable\n"));
+      goto Exit;
+    }
+  }
 
   ZeroMem (&UsbCPdSetup, sizeof (USBC_PD_SETUP));
   VarSize = sizeof (USBC_PD_SETUP);
@@ -195,44 +258,34 @@ UpdateUsbCPdVersion (VOID)
     goto Exit;
   }
 
-  UsbCPdVersion = UsbCPdSetup.UsbCPd0Version;
-  if (UsbCPdVersion != 0) {
-    switch (PcdGet8 (VpdPcdUsbCPdVendor)) {
-      case UsbCPdTypeCypress:
-        mPlatformFviData[USBC_PD0_VER].Version.MajorVersion = (UINT8)  ((UsbCPdVersion >> 28) & 0x0F);
-        mPlatformFviData[USBC_PD0_VER].Version.MinorVersion = (UINT8)  ((UsbCPdVersion >> 24) & 0x0F);
-        mPlatformFviData[USBC_PD0_VER].Version.Revision     = (UINT8)  ((UsbCPdVersion >> 56) & 0xFF);
-        mPlatformFviData[USBC_PD0_VER].Version.BuildNum     = (UINT16) ((UsbCPdVersion >> 48) & 0xFFFF);
+  for (Index = 0; Index < PdNumber; Index++) {
+    switch (Index) {
+      case 0:
+        UsbCPdVersion = UsbCPdSetup.UsbCPd0Version;
+        if (UsbCPdVersion != 0) {
+          FwVersion    = (UINT32) (UsbCPdVersion & 0xFFFFFFFF);
+          SubFwVersion = (UINT32) ((UsbCPdVersion >> 32) & 0xFFFFFFFF);
+          AsciiSPrint (Pd0VersionString, sizeof (Pd0VersionString), "%08x.%08x", FwVersion, SubFwVersion);
+          mPlatformFviStrings[USBC_PD0_VER].VersionString = (CHAR8 *) &Pd0VersionString;
+        }
         break;
-      case UsbCPdTypeTi:
-        mPlatformFviData[USBC_PD0_VER].Version.MajorVersion = (UINT8)  (UsbCPdVersion >> 24);
-        mPlatformFviData[USBC_PD0_VER].Version.MinorVersion = (UINT8)  ((UsbCPdVersion >> 16) & 0xFF);
-        mPlatformFviData[USBC_PD0_VER].Version.Revision     = (UINT8)  ((UsbCPdVersion >> 8) & 0xFF);
-        mPlatformFviData[USBC_PD0_VER].Version.BuildNum     = (UINT16) (UsbCPdVersion & 0xFF);
+      case 1:
+        UsbCPdVersion = UsbCPdSetup.UsbCPd1Version;
+        if (UsbCPdVersion != 0) {
+          FwVersion    = (UINT32) (UsbCPdVersion & 0xFFFFFFFF);
+          SubFwVersion = (UINT32) ((UsbCPdVersion >> 32) & 0xFFFFFFFF);
+          AsciiSPrint (Pd1VersionString, sizeof (Pd1VersionString), "%08x.%08x", FwVersion, SubFwVersion);
+          mPlatformFviStrings[USBC_PD1_VER].VersionString = (CHAR8 *) &Pd1VersionString;
+        }
         break;
-      default:
-        DEBUG ((DEBUG_WARN, "PD type unknown\n"));
-        break;
-    }
-  }
-
-  UsbCPdVersion = UsbCPdSetup.UsbCPd1Version;
-  if (UsbCPdVersion != 0) {
-    switch (PcdGet8 (VpdPcdUsbCPdVendor)) {
-      case UsbCPdTypeCypress:
-        mPlatformFviData[USBC_PD1_VER].Version.MajorVersion = (UINT8)  ((UsbCPdVersion >> 28) & 0x0F);
-        mPlatformFviData[USBC_PD1_VER].Version.MinorVersion = (UINT8)  ((UsbCPdVersion >> 24) & 0x0F);
-        mPlatformFviData[USBC_PD1_VER].Version.Revision     = (UINT8)  ((UsbCPdVersion >> 56) & 0xFF);
-        mPlatformFviData[USBC_PD1_VER].Version.BuildNum     = (UINT16) ((UsbCPdVersion >> 48) & 0xFFFF);
-        break;
-      case UsbCPdTypeTi:
-        mPlatformFviData[USBC_PD1_VER].Version.MajorVersion = (UINT8)  (UsbCPdVersion >> 24);
-        mPlatformFviData[USBC_PD1_VER].Version.MinorVersion = (UINT8)  ((UsbCPdVersion >> 16) & 0xFF);
-        mPlatformFviData[USBC_PD1_VER].Version.Revision     = (UINT8)  ((UsbCPdVersion >> 8) & 0xFF);
-        mPlatformFviData[USBC_PD1_VER].Version.BuildNum     = (UINT16) (UsbCPdVersion & 0xFF);
-        break;
-      default:
-        DEBUG ((DEBUG_WARN, "PD type unknown\n"));
+      case 2:
+        UsbCPdVersion = UsbCPdSetup.UsbCPd2Version;
+        if (UsbCPdVersion != 0) {
+          FwVersion    = (UINT32) (UsbCPdVersion & 0xFFFFFFFF);
+          SubFwVersion = (UINT32) ((UsbCPdVersion >> 32) & 0xFFFFFFFF);
+          AsciiSPrint (Pd2VersionString, sizeof (Pd2VersionString), "%08x.%08x", FwVersion, SubFwVersion);
+          mPlatformFviStrings[USBC_PD2_VER].VersionString = (CHAR8 *) &Pd2VersionString;
+        }
         break;
     }
   }

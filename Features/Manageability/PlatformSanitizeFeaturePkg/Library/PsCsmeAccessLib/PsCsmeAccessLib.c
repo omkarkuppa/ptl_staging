@@ -125,8 +125,8 @@ PsSummaryReportToPsr (
       PsReportToPsr.EraseSource = 0;
   }
 
-  PsReportToPsr.EraseActionsAttempted = PsBootParameters->PsStatus.PsAttempted;
-  PsReportToPsr.EraseActionsStatus    = PsBootParameters->PsStatus.PsAttemptResult;
+  PsReportToPsr.EraseActionsAttempted = PsBootParameters->PsStatus.PsAttempted & PSR_LOGGING_SUPPORT;
+  PsReportToPsr.EraseActionsStatus    = PsBootParameters->PsStatus.PsAttemptResult & PSR_LOGGING_SUPPORT;
   CopyMem (&(PsReportToPsr.EraseFailureReason),  &(PsBootParameters->PsStatus.PsFailReason), (sizeof (UINT8) * 32));
 
   DEBUG ((DEBUG_INFO, "PS:Reporting Platform Sanitize Summary to CSME...\n"));

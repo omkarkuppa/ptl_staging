@@ -45,35 +45,6 @@ SetVddq (
 }
 
 /**
-  This function programs the VccDdq voltage to all LVR Targets.
-
-  @param[in] MrcData          - All the MRC global data.
-  @param[in] VccddqVoltageMv  - Voltage in mV.
-
-  @retval Nothing
-**/
-VOID
-SetVddqLvrTarget (
-  IN MrcParameters *const MrcData,
-  IN UINT32   VccddqVoltageMv
- )
-{
-  MrcSaGvPoint      SaGvPoint;
-  MrcOutput         *Outputs;
-  INT64             GetSetTarget;
-  UINT32            VccDdq;
-
-  Outputs    = &MrcData->Outputs;
-  SaGvPoint  = Outputs->SaGvPoint;
-  VccDdq     = VccddqVoltageMv;
-
-  GetSetTarget  = (INT64) GetVddqControlTarget (MrcData, VccDdq);
-  MrcGetSetIndexSagv (MrcData, MRC_DATA_MOBILE_NUM, SaGvPoint, GsmDataVccDdqTarget, WriteCached | PrintValue, &GetSetTarget);
-  MrcGetSetIndexSagv (MrcData, MRC_CCC_SHARED_MOBILE_NUM, SaGvPoint, GsmCccVccDdqTarget, WriteCached | PrintValue, &GetSetTarget);
-  MrcGetSetIndexSagv (MrcData, MRC_COMP_NUM, SaGvPoint, GsmCompVccDdqTarget, WriteCached | PrintValue, &GetSetTarget);
-}
-
-/**
   This function calculates the VddqControl Target value based on VccddqVoltage in Outputs structure
   @param[in] MrcData - All the MRC global data.
   @param[in] VccddqVoltageMv  - Voltage in mV

@@ -254,7 +254,7 @@ Scope (\_SB.PC00.TCPU) // SA Thermal Device
     Method (SPUR,1,,,IntObj)
     {
       ADBG (Concatenate ("SPUR, Arg0=",ToDecimalString (Arg0)))
-      If (LLessEqual (Arg0,\CCNT)) { // bounds check the argument
+      If (LLessEqual (Arg0,\TCNT)) { // bounds check the argument
         If (LEqual (\_SB.PAGD._STA, 0x0F)) { // check if _PUR is enabled
           Store (Arg0, Index (\_SB.PAGD._PUR, 1))
           Notify (\_SB.PAGD, 0x80)

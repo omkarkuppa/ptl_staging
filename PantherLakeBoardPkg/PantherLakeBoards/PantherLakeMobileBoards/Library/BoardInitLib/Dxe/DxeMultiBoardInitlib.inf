@@ -54,6 +54,7 @@
 [Packages]
   MinPlatformPkg/MinPlatformPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   OneSiliconPkg/SiPkg.dec

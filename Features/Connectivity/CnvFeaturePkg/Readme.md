@@ -60,7 +60,17 @@ Provide the implementation of BIOS requirements needed for Intel Connectivity.
 * Set gCnvFeaturePkgTokenSpaceGuid.PcdMaxRootPortNumber to the number of PCIe root port supported by platform.
 * Set gCnvFeaturePkgTokenSpaceGuid.PcdMaxUsb2PortNumber to the number of USB2 port supported by platform.
 * Remove gCnvFeaturePkgTokenSpaceGuid.PcdCnvLegacyAcpiTables, due to un-support CNV legacy ACPI tables.
-* Set gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenuConfig to determine formset display location,
+* Set gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenuConfig to determine formset display location
+* Set gCnvFeaturePkgTokenSpaceGuid.PcdWifiDsmSupport to TRUE to enable Wifi DSM support.
+* Set gCnvFeaturePkgTokenSpaceGuid.PcdBtDsmSupport to TRUE to enable BT DSM support.
+* Set gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport to TRUE to enable integrated CNV support.
+* Set gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport to TRUE to enable discrete CNV support.
+* Set gCnvFeaturePkgTokenSpaceGuid.PcdBtAudioOffloadSupport to TRUE to enable BT AudiOffload support.
+* Set gCnvFeaturePkgTokenSpaceGuid.PcdPrebootBleSupport to TRUE to enable Preboot BLE support.
+* Set gCnvFeaturePkgTokenSpaceGuid.PcdDynamicSarSupport to TRUE to enable Dynamic SAR support.
+* Set gCnvFeaturePkgTokenSpaceGuid.PcdBtUsbInterfaceSupport to TRUE to enable BT USB interface support.
+* Set gCnvFeaturePkgTokenSpaceGuid.PcdSkipVidDidCheck to FALSE for SkipVidDidCheck variable .
+
 For **client platform**. The definition of each field is listed below:
   - Bit 31    --- Whether to show formset, 1 - show, 0 - hide
   - Bit 30:24 --- Reserved

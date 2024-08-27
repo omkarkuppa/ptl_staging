@@ -214,30 +214,6 @@ call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOpt
 @if %errorlevel% NEQ 0 (
   @goto FspBuildEnd
 )
-
-@if %FSP_SIGNED% EQU TRUE (
-  @echo call FspoPatch to patch FSPO
-  @call %PYTHON_COMMAND% %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FspoPatcher\FspoPatcher.py ^
-      -f %WORKSPACE_FSP_BIN%\PantherLakeFspBinPkg\Fsp.fd
-  @if %errorlevel% NEQ 0 (
-    @echo !!! ERROR:Patch FSP-O failed!!!
-    set SCRIPT_ERROR=1
-  )
-
-  @echo call FbmGen to generate FBM
-  @call %PYTHON_COMMAND% %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmGen.py ^
-    -c %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmConfig.txt ^
-    -o %WORKSPACE%\Build\%FSP_PKG_NAME%\%FSP_TARGET%_%TOOL_CHAIN_TAG%\FV ^
-    -f %WORKSPACE_FSP_BIN%\PantherLakeFspBinPkg\Fsp.fd ^
-    --ltsign-tool-path %WORKSPACE_BINARIES%\Tools\ltsign\ltsign.exe ^
-    --openssl-tool-path %WORKSPACE_BINARIES%\Tools\OpenSSL\openssl.exe
-
-  @if %errorlevel% NEQ 0 (
-    @echo !!! ERROR:Generate FBM failed!!!
-    set SCRIPT_ERROR=1
-  )
-)
-
 @goto FspBuildEnd
 
 :FspSilent
@@ -250,6 +226,28 @@ call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOpt
   set SCRIPT_ERROR=1
   goto :BldFail
 ) else (
+  @if %FSP_SIGNED% EQU TRUE (
+    @echo call FspoPatch to patch FSPO
+    @call %PYTHON_COMMAND% %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FspoPatcher\FspoPatcher.py ^
+        -f %WORKSPACE_FSP_BIN%\PantherLakeFspBinPkg\Fsp.fd
+    @if %errorlevel% NEQ 0 (
+      @echo !!! ERROR:Patch FSP-O failed!!!
+      set SCRIPT_ERROR=1
+    )
+
+    @echo call FbmGen to generate FBM
+    @call %PYTHON_COMMAND% %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmGen.py ^
+      -c %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmConfig.txt ^
+      -o %WORKSPACE%\Build\%FSP_PKG_NAME%\%FSP_TARGET%_%TOOL_CHAIN_TAG%\FV ^
+      -f %WORKSPACE_FSP_BIN%\PantherLakeFspBinPkg\Fsp.fd ^
+      --ltsign-tool-path %WORKSPACE_BINARIES%\Tools\ltsign\ltsign.exe ^
+      --openssl-tool-path %WORKSPACE_BINARIES%\Tools\OpenSSL\openssl.exe
+
+    @if %errorlevel% NEQ 0 (
+      @echo !!! ERROR:Generate FBM failed!!!
+      set SCRIPT_ERROR=1
+    )
+  )
   @echo FSP build has succeeded
   @echo FSP build has succeeded >> %WORKSPACE%\Build.log 2>&1
   @set FSPBINARYTIMESTAMP=%FSPBINARYTIMESTAMP% -%time%

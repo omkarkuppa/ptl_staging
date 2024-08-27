@@ -43,6 +43,7 @@
   PantherLakePlatSamplePkg/PlatformPkg.dec
   UefiCpuPkg/UefiCpuPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
 
 [LibraryClasses]
   ConfigBlockLib

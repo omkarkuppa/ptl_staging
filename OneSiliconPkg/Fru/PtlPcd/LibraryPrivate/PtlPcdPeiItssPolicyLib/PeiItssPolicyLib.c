@@ -93,7 +93,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED PCH_DEVICE_INTERRUPT_CONFIG mPcdDevIntConfig [] = 
   { 21, 1, PchIntB, 28}, // SerialIo I2C Controller #1
   { 21, 2, PchIntC, 29}, // SerialIo I2C Controller #2
   { 21, 3, PchIntD, 30}, // SerialIo I2C Controller #3
-  // {21, 7, PchNoInt, 0},  // Northpeak Phantom (ACPI) Function
   { 20, 0, PchIntA, 16}, // USB 3.0 xHCI Controller
   { 20, 1, PchIntB, 17}, // USB Device Controller (OTG)
   // {20, 2, PchNoInt, 0},  // Shared SRAM
@@ -110,7 +109,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED PCH_DEVICE_INTERRUPT_CONFIG mPcdDevIntConfig [] = 
   // {18, 2, PchNoInt, 0},  // CSME: PMT Phantom (ACPI) function
   // {18, 3, PchNoInt, 0},  // IEH 16-bit
   // {18, 4, PchNoInt, 0},  // CSME: fTPM DMA Phantom (ACPI) function
-  // {18, 5, PchNoInt, 0},  // AON Vision (AVB)
   // {18, 6, PchNoInt, 0},  // SerialIo: SPI #2 - disabled
   { 17, 0, PchIntA, 31}, // SerialIo I3C Controller #1
   { 17, 1, PchIntB, 32}, // SerialIo I3C Controller #2
@@ -118,9 +116,14 @@ GLOBAL_REMOVE_IF_UNREFERENCED PCH_DEVICE_INTERRUPT_CONFIG mPcdDevIntConfig [] = 
   { 16, 0, PchIntA, 23}, // THC #0
   { 16, 1, PchIntB, 22}, // THC #1
   //{ 13, 0, PchNoInt, 0}, // TCSS xHCI Controller
+  //{ 13, 1, PchNoInt, 0}, // TCSS XDCI
   //{ 13, 2, PchNoInt, 0}, // TCSS TBT DMA0
   //{ 13, 3, PchNoInt, 0}, // TCSS TBT DMA1
   // {13, 7, PchNoInt, 0},  // TCSS XHCI VTIO Phantom (ACPI) Function
+  // {  7, 0, PchNoInt, 0}, // TCSS PCI Express Port 21
+  // {  7, 1, PchNoInt, 0}, // TCSS PCI Express Port 22
+  // {  7, 2, PchNoInt, 0}, // TCSS PCI Express Port 23
+  // {  7, 3, PchNoInt, 0}, // TCSS PCI Express Port 24
   {  6, 0, PchIntA, 16}, // PCI Express Root Port #9
   {  6, 1, PchIntB, 17}, // PCI Express Root Port #10
 };
@@ -133,8 +136,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED PCH_DEVICE_INTERRUPT_CONFIG mPcdPDevIntConfig[] = 
 // mPcdHDevIntConfig table contains data pertaining to the INTx->PIRQy mapping for devices that exist on PCD-H
 //
 GLOBAL_REMOVE_IF_UNREFERENCED PCH_DEVICE_INTERRUPT_CONFIG mPcdHDevIntConfig[] = {
-  {  6, 2, PchIntC, 18}, // PCI Express Root Port #9
-  {  6, 3, PchIntD, 19}, // PCI Express Root Port #10
+  // {17, 3, PchNoInt, 0},  // LPSS Reserved #1
+  // {17, 4, PchNoInt, 0},  // LPSS Reserved #2
+  { 6, 2, PchIntC, 18}, // PCI Express Root Port #11
+  { 6, 3, PchIntD, 19}, // PCI Express Root Port #12
 };
 
 /**
@@ -154,28 +159,28 @@ LoadDeviceInterruptConfig (
 {
   UINT8                 IntConfigTableEntries;
 
-    IntConfigTableEntries = ARRAY_SIZE (mPcdDevIntConfig);
-    CopyMem (
-      DevIntConfig,
-      mPcdDevIntConfig,
-      sizeof (mPcdDevIntConfig)
-    );
-  ASSERT (IntConfigTableEntries <= PCH_MAX_DEVICE_INTERRUPT_CONFIG);
-  *NumOfDevIntConfig = IntConfigTableEntries;
+      IntConfigTableEntries = ARRAY_SIZE (mPcdDevIntConfig);
+      CopyMem (
+        DevIntConfig,
+        mPcdDevIntConfig,
+        sizeof (mPcdDevIntConfig)
+      );
+    ASSERT (IntConfigTableEntries <= PCH_MAX_DEVICE_INTERRUPT_CONFIG);
+    *NumOfDevIntConfig = IntConfigTableEntries;
 
-  if (PtlIsPcdP ()) {
-    CopyMem (
-      &DevIntConfig[*NumOfDevIntConfig],
-      mPcdPDevIntConfig,
-      sizeof (mPcdPDevIntConfig)
-    );
-    *NumOfDevIntConfig += ARRAY_SIZE(mPcdPDevIntConfig);
-  } else {
-    CopyMem(
-      &DevIntConfig[*NumOfDevIntConfig],
-      mPcdHDevIntConfig,
-      sizeof(mPcdHDevIntConfig)
-    );
-    *NumOfDevIntConfig += ARRAY_SIZE(mPcdHDevIntConfig);
-  }
+    if (PtlIsPcdP ()) {
+      CopyMem (
+        &DevIntConfig[*NumOfDevIntConfig],
+        mPcdPDevIntConfig,
+        sizeof (mPcdPDevIntConfig)
+      );
+      *NumOfDevIntConfig += ARRAY_SIZE(mPcdPDevIntConfig);
+    } else {
+      CopyMem(
+        &DevIntConfig[*NumOfDevIntConfig],
+        mPcdHDevIntConfig,
+        sizeof(mPcdHDevIntConfig)
+      );
+      *NumOfDevIntConfig += ARRAY_SIZE(mPcdHDevIntConfig);
+    }
 }

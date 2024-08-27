@@ -39,7 +39,8 @@ FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
   FSP_VERIFY_API_WRAPPER_STRUCTURE_ID,
   VerifyFspm,
   VerifyFsps,
-  VerifyBsp
+  VerifyBsp,
+  VerifyFspVersion
 };
 
 /**

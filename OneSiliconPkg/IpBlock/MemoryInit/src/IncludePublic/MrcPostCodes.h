@@ -49,8 +49,7 @@
 #define MRC_DDRCOMP_CAL_PRE             (0xDD14)
 #define MRC_DCC_DATA_DQ                 (0xDD15)
 #define MRC_READ_VREF_DECAP             (0xDD16)
-//Place Holder
-// #define MRC_                         (0xDD17)
+#define MRC_DIMM_RX_OFFSET              (0xDD17)
 #define MRC_TXDQTCO_COMP_TRAINING       (0xDD18)
 #define MRC_MARGIN_LIMIT_CHECK          (0xDD19)
 #define MRC_DCC_PI_CODE_LUT             (0xDD1A)

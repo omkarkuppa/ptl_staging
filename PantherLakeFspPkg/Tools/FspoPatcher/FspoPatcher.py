@@ -163,7 +163,8 @@ def FindAndPatchFSPO (Buffer):
     # Structure is identified by FSP Verification API signature '__FVA__'
     #
     ApiWrapperSignature = b'__FVA__'
-    ApiWrapperSize = struct.calcsize ('<4Q')
+    ApiWrapperSize = struct.calcsize ('<5Q')
+    print("ApiWrapperSize %i:" %ApiWrapperSize)
     FspLoaderPeim = Buffer[FspLoaderPeim_Offset : FspLoaderPeim_Offset + FspLoaderPeim_Size]
     index = FspLoaderPeim.find (ApiWrapperSignature)
     if index == -1:

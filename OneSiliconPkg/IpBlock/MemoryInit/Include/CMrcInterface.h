@@ -650,6 +650,7 @@ typedef enum {
   OemUcExecuteGreen,        ///< before Green MRC begins executing
   OemDbi,                   ///< before DBI training
   OemDvfsqVoltageRamp,      ///< before DVFSQ asks Blue to ramp VDDQ voltage down to 0.3V
+  OemDimmRxOffsetCal,       ///< before checking Dimm Rx Offset Calibration
   OemMcDeswizzleRegisters,  ///< before MrcMcProgramDeswizzleRegisters
   OemIsDramSupportsDvfsc,   ///< Check if DRAM supports E-DVFSC before finishing SAGV0 training flow
   OemEmphasisTraining,      ///< before Pre-Emphasis LP5 Training
@@ -695,10 +696,10 @@ typedef UINT8        (EFIAPI *MRC_MMIO_WRITE_8)            (UINT64 Address, UINT
 typedef UINT16       (EFIAPI *MRC_MMIO_WRITE_16)           (UINT64 Address, UINT16 Value);
 typedef UINT32       (EFIAPI *MRC_MMIO_WRITE_32)           (UINT64 Address, UINT32 Value);
 typedef UINT64       (EFIAPI *MRC_MMIO_WRITE_64)           (UINT64 Address, UINT64 Value);
-typedef UINT8        (EFIAPI *MRC_SMBUS_READ_8)            (UINT32 Address, UINT32 *Status);
-typedef UINT16       (EFIAPI *MRC_SMBUS_READ_16)           (UINT32 Address, UINT32 *Status);
-typedef UINT8        (EFIAPI *MRC_SMBUS_WRITE_8)           (UINT32 Address, UINT8 Value, UINT32 *Status);
-typedef UINT16       (EFIAPI *MRC_SMBUS_WRITE_16)          (UINT32 Address, UINT16 Value, UINT32 *Status);
+typedef UINT8        (EFIAPI *MRC_SMBUS_READ_8)            (UINT32 Address, RETURN_STATUS *Status);
+typedef UINT16       (EFIAPI *MRC_SMBUS_READ_16)           (UINT32 Address, RETURN_STATUS *Status);
+typedef UINT8        (EFIAPI *MRC_SMBUS_WRITE_8)           (UINT32 Address, UINT8 Value, RETURN_STATUS *Status);
+typedef UINT16       (EFIAPI *MRC_SMBUS_WRITE_16)          (UINT32 Address, UINT16 Value, RETURN_STATUS *Status);
 typedef UINT32       (EFIAPI *MRC_GET_PCI_DEVICE_ADDRESS)  (UINT8 Bus, UINT8 Device, UINT8 Function, UINT8 Offset);
 typedef UINT32       (EFIAPI *MRC_GET_PCIE_DEVICE_ADDRESS) (UINT8 Bus, UINT8 Device, UINT8 Function, UINT8 Offset);
 typedef void         (EFIAPI *MRC_GET_RTC_TIME)            (UINT8 *Second, UINT8 *Minute, UINT8 *Hour, UINT8 *Day, UINT8 *Month, UINT16 *Year);
@@ -1309,32 +1310,29 @@ typedef enum {
 
 /// Define the IP Segment.
 typedef enum {
-  ipSegULX_ULT,      ///< P/M
-  ipSegDT_HALO,      ///< DT/HALO
-  ipSegMax
+  IpSegmentDesktop,      ///< DT/HALO
+  IpSegmentMobile = 3,   ///< P/M
 } MrcIpSegment;
 
 #define MC_PTLPUH_IP_SEGMENT 0xA8
 #define DDRIO_PTLPUH_IP_SEGMENT 0x3
 
+#define DDRIO_NVLPUH_IP_SEGMENT 0x3
+#define DDRIO_NVLDT_IP_SEGMENT 0x1
+
 /// Define the Version of IP for DDRIO.
 typedef enum {
   ipVerDdrIoMtl = 7,         ///< Gen7: MeteorLake
-  ipVerDdrIoLnlPtl = 8       ///< Gen8: LunarLake / PantherLake
+  ipVerDdrIoLnlPtl = 8,      ///< Gen8: LunarLake / PantherLake
+  ipVerDdrIoNvl = 10         ///< Gen10: NovaLake
 } MrcDdrIoIpVer;
 
 /// Define the Version of IP for MC.
 typedef enum {
   ipVerMcMtl = 9,       ///< Gen9: MeteorLake
   ipVerMcLnlPtl = 10,   ///< Gen10: LunarLake/PantherLake
+  ipVerMcNvl = 11,      ///< Gen11: NovaLake
 } MrcMcIpVer;
-
-/// Define the CPU stepping number.
-typedef enum {
-  ipStepA0 = 0,
-  ipStepLast = 0,
-  ipStepB0 = 1
-} MrcIpStepping;
 
 /// Define the MRC Test Environment
 typedef enum {
@@ -2004,7 +2002,7 @@ typedef struct {
   MRC_CKD_BUFFER      CkdBuffer[MAX_DIMMS_IN_SYSTEM];
 #if MRC_ENABLE_STATS
   MrcStatsTracker     StatsTracker;                ///< Used to record the data for the stats and telemetry framework
-#endif // MRC_ENABLE_STATS
+#endif // MRC_ENABLE_STATS && MRC_DEBUG_PRINT
   MrcOdtPowerSaving   OdtPowerSavingData;          ///< ODT power savings data.
   UINT16              Qclkps;                      ///< QCLK period in pS, this is internal MC/DDRIO clock which is impacted by Gear
   UINT16              Dclkps;                      ///< DCLK period in pS, this is internal MC/DDRIO clock which is impacted by Gear
@@ -2082,6 +2080,8 @@ typedef struct {
   BOOLEAN             UpmPwrRetrainFlag;           ///< A flag that indicates if training with higher UPM/PWR limits.
   BOOLEAN             PdaEnable;                   ///< Current status of PDA - if true all the Mr6 operations need to use PDA mode.
   BOOLEAN             IsLastGvPoint;               ///<  Indicate to Green CTE Env that Green excecutble and connection can be closed
+  BOOLEAN             IsPhyDqDeswizzleNeeded;      ///< Used to deswizzle DataTrainFeedback value, whenever DTF used in Per-Lane mode
+  UINT8               ReservedBytesAlign2[3];      ///< Reserved Bytes for 32-Bits aligned.
   UINT8               tMAC;                        ///< Maximum Activate Count for pTRR.
   UINT8               MaxChannels;                 ///< Maximum number of channels supported by the controller.  Varies per technology.
   UINT8               SdramCount;                  ///< The number of SDRAM components on a DIMM.
@@ -2201,6 +2201,7 @@ typedef struct {
   UINT32            RsvdBits1:31;
   UINT32            ErrorCountForFail;              ///< Error count for last-pass margin failure
   UINT8             BER;                            ///< Use BER margining in MRC
+  BOOLEAN           IsDdrphyx64;                    ///< Identifies that the current CPU SKU is x64 (PHY)
   BOOLEAN           IsMcDtHalo;                     ///< Identifies that the current CPU SKU is Desktop / Halo (MC)
   BOOLEAN           IsDdrIoDtHalo;                  ///< Identifies that the current CPU SKU is Desktop / Halo (PHY)
   BOOLEAN           IsMcUlxUlt;                     ///< Identifies that the current CPU SKU is ULX / ULT (MC)
@@ -2242,6 +2243,7 @@ typedef struct {
   BOOLEAN           IsApplyMrCommandDelays;        ///< TRUE: MRC will explicitly wait Jedec defined MR Command delays FALSE: MRC assumes Jedec MR delays are satsisfied by hardware and no additional delay is needed
   BOOLEAN           IsCaDeselectStress;            ///< TRUE: Run LFSR stress on CA bus during deselect cycles
   BOOLEAN           IsIOTestAddressRandom;         ///< TRUE: randomize CA address during IO test
+  BOOLEAN           IsDdr5Crc;                     ///< DFX feature
   UINT8             GenerateNewTmeKey;             ///< Indicates if a new TME key is to be generated
   UINT8             IsXMP3Revision12Supported;     ///< Indicates whether the SPD data supports XMP1.2 version
   UINT8             MemoryProfileSave;             ///< Save MemoryProfile. Used when DMB/RMF is enabled.
@@ -2277,6 +2279,7 @@ typedef struct {
   UINT32  SaMemCfgCrcForSave; ///< Save current MEMORY_CONFIGURATION crc after a few fields of MemConfig are overwritten. Used for saving CRC during saving training values.
   PLATFORM_DATA_PTR PlatformDataPtr; ///< Aligned pointer to optional platform-specific data.
   BOOLEAN LockUiDiv6Flow;     ///< LockUI Calibration flow uses Div6 mode
+  UINT16  RloadTarget;        ///< Rload target value for Rload compensation
   UINT8   ReservedForDwordAlignment[3];
 } MrcInput;
 

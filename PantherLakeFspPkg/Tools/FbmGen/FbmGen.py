@@ -54,10 +54,10 @@ MINIMAL_TO_SIGN_DATA_SIZE: int = 786
 
 #
 # Currently FSP region include FSP-M and FSP-S
-# The OEM Config space of FSP-O is [4G-4K, 4G - 16] in 4G space
+# The OEM Config space of FSP-O is [4G-4K, 4G - 64] in 4G space
 #
 FSP_REGIONS_NUM_EXCEPT_FSPT_AND_O: int = 0x2
-FSPO_OEM_CONFIG_REGION_UPPER_ADDR: int = 0x10
+FSPO_OEM_CONFIG_REGION_UPPER_ADDR: int = 0x40
 FSPO_OEM_CONFIG_REGION_LOWER_ADDR: int = 0x1000
 
 #
@@ -85,6 +85,7 @@ FBM_COMPONENT_ID = {
     "TO": 0x0,
     "M" : 0X1,
     "S" : 0x2,
+    "VS": 0xF,
     }
 
 def AlignPtr (offset, alignment = 8) -> int:
@@ -213,7 +214,9 @@ class FSP_INFORMATION_HEADER(Structure):
         ('NotifyPhaseEntryOffset',    c_uint32),
         ('FspMemoryInitEntryOffset',  c_uint32),
         ('TempRamExitEntryOffset',    c_uint32),
-        ('FspSiliconInitEntryOffset', c_uint32)
+        ('FspSiliconInitEntryOffset', c_uint32),
+        ('FspMultiPhaseSiInitEntryOffset', c_uint32),
+        ('ExtendedImageRevision',     c_uint16)
     ]
 
 class FSP_COMMON_HEADER(Structure):
@@ -512,6 +515,22 @@ class FspRegionDigest:
         self.OpenSslCommand = OpenSslCommand
         self.header = FspRegionDigestHeader()
 
+    def CalFspVersionDigestList(self, fspVersionData) -> None:
+        """
+        Calculate the digest list for FSP Version.
+
+        Args:
+            fspVersionData (FspObject): The FSP version object.
+
+        """
+        self.header.FspComponentId = FBM_COMPONENT_ID["VS"]
+
+        for t in HASH_TYPE_VALUE:
+            self.digestList.append(HashStruct(t, self.OpenSslCommand, fspVersionData))
+
+        self.header.Count = len(self.digestList)
+        self.header.Size = self.GetFspDigestListLen()
+
     def CalFspTAndODigestList(self, fspT, fspO, excludeUpd) -> None:
         """
         Calculate the digest list for FSP-T and FSP-O.
@@ -631,10 +650,7 @@ class FspBootManifestHead(Structure):
         ('StructVersion',       c_uint8),
         ('Reserved1',           c_uint24),
         ('KeySignatureOffset',  c_uint16),
-        ('FspVersion',          c_uint16),
-        ('FspSvn',              c_uint8),
-        ('Reserved2',           ARRAY(c_uint8, 1)),
-        ('Flags',               c_uint32),
+        ('FspVersion',          ARRAY(c_uint8, 6)),
     ]
 
     def DumpFbmHead(self) -> None:
@@ -650,25 +666,53 @@ class FspBootManifestHead(Structure):
             exit(1)
 
         width = 22
-        FspVersionStr = hex(self.FspVersion >> 8)[2:]
-        FspVersionStr += '.' + hex(self.FspVersion & 0xff)[2:]
+        FspVersionStr = hex(self.FspVersion [5])[2:]
+        FspVersionStr += '.' + hex(self.FspVersion [4])[2:]
+        FspVersionStr += '.' + hex((self.FspVersion [3] << 8) | (self.FspVersion [2]))[2:]
+        FspVersionStr += '.' + hex((self.FspVersion [1] << 8) | (self.FspVersion [0]))[2:]
         print("{:<{width}} {}".format("Structure Id:", StructureIdStr, width=width))
         print("{:<{width}} {}".format("Struct Version:", hex(self.StructVersion), width=width))
         print("{:<{width}} {}".format("Key Signature Offset:", hex(self.KeySignatureOffset), width=width))
         print("{:<{width}} {}".format("Fsp Version:", FspVersionStr, width=width))
-        print("{:<{width}} {}".format("Fsp SVN:", hex(self.FspSvn), width=width))
-        print("{:<{width}} {}".format("Flags:", self.Flags, width=width))
+
+class FspBootManifestHeadContinue(Structure):
+    _pack_ = 1
+    _fields_ = [
+        ('FspSvn',              c_uint8),
+        ('Flags',               c_uint32),
+        ('CompCnt',             c_uint8),
+    ]
+
+    def DumpFbmHeadContinue(fbmBin, offset) -> int:
+        fbmHeaderContinue = FspBootManifestHeadContinue.from_buffer(fbmBin, offset)
+        width = 22
+        print("{:<{width}} {}".format("Fsp SVN:", hex(fbmHeaderContinue.FspSvn), width=width))
+        print("{:<{width}} {}".format("Flags:", fbmHeaderContinue.Flags, width=width))
+        print("{:<{width}} {}".format("CompCnt:", fbmHeaderContinue.CompCnt, width=width))
+        offset += sizeof(FspBootManifestHeadContinue)
+
+        return offset
 
 class FspBootManifestFixedField(Structure):
     _pack_ = 1
     _fields_ = [
         ('FBMHeader',       FspBootManifestHead),
-        ('CompCnt',         c_uint8),
     ]
 
     # Convert FBM common Header fields in C format to bytes array
     def serialize(self) -> bytes:
         binData = bytes(self.FBMHeader)
+        return binData
+
+class FspBootManifestFixedFieldContinue(Structure):
+    _pack_ = 1
+    _fields_ = [
+        ('FBMHeaderContinue',       FspBootManifestHeadContinue),
+    ]
+
+    # Convert FBM common Header fields in C format to bytes array
+    def serialize(self) -> bytes:
+        binData = bytes(self.FBMHeaderContinue)
         return binData
 
 def ConvertVersionStrToHex(versionStr) -> int:
@@ -846,6 +890,8 @@ class KEY_AND_SIGNATURE_STRUCT():
 class FspBootManifest():
     def __init__(self, fbmDir: str, ltSignPath: str) -> None:
         self.fbmFixedField = FspBootManifestFixedField()
+        self.FspVersionDigests = None
+        self.fbmFixedFieldContinue = FspBootManifestFixedFieldContinue()
         self.ComponentDigests_0 = None
         self.ComponentDigestsList = []
         self.FspRegions_0 = None
@@ -858,6 +904,7 @@ class FspBootManifest():
         self.outputFile = None
         self.signFbm = SignFbm(fbmDir, ltSignPath)
         self.keyPairFilePath = None
+        self.CodeCacheSize = None
 
     def CalFspMOrSRegionInfo(self, fspType : str) -> None:
         """
@@ -921,6 +968,23 @@ class FspBootManifest():
                 self.FspRegionsList.append(copy.deepcopy(fspRegion))
                 break
 
+    def CalFspVersionInfo(self) -> None:
+        """
+        Calculate FSP version information.
+
+        Args:
+            fspType (str): The type of FSP ("M" for FSP-M, "S" for FSP-S).
+
+        """
+        for fsp in self.fd.FspList:
+            if fsp.Type == "M":
+                self.fbmFixedField.FBMHeader.FspVersion[0] = int(fsp.Fih.ImageRevision & 0xff)
+                self.fbmFixedField.FBMHeader.FspVersion[1] = int(fsp.Fih.ExtendedImageRevision & 0xff)
+                self.fbmFixedField.FBMHeader.FspVersion[2] = int((fsp.Fih.ImageRevision & 0xff00) >> 8)
+                self.fbmFixedField.FBMHeader.FspVersion[3] = int((fsp.Fih.ExtendedImageRevision & 0xff00) >> 8)
+                self.fbmFixedField.FBMHeader.FspVersion[4] = int((fsp.Fih.ImageRevision & 0x00ff0000) >> 16)
+                self.fbmFixedField.FBMHeader.FspVersion[5] = int((fsp.Fih.ImageRevision & 0xff000000) >> 24)
+
     def CalFspTAndORegionInfo(self) -> None:
         """
         The function is used to calculate Fsp Region information for FSP-T and FSP-O.
@@ -946,49 +1010,54 @@ class FspBootManifest():
         fspRegion = FspRegionInfo()
         fspRegion.ComponentID = FBM_COMPONENT_ID["TO"]
 
+        seg0 = REGION_SEGMENT()
+        seg0.Base = 0x100000000 - self.CodeCacheSize
+        seg0.Size = self.CodeCacheSize - fspT.Fih.ImageSize - fspO.Fih.ImageSize
+        seg0.Flags = 0x3
+        fspRegion.SegmentArray.append(seg0)
         #
         # FSP-T region
         #
-        seg0 = REGION_SEGMENT()
-        seg0.Base = 0x0
-        seg0.Size = fspT.Fih.ImageSize
-        seg0.Flags = 0x0
-        fspRegion.SegmentArray.append(seg0)
+        seg1 = REGION_SEGMENT()
+        seg1.Base = 0x100000000 - fspT.Fih.ImageSize - fspO.Fih.ImageSize
+        seg1.Size = fspT.Fih.ImageSize
+        seg1.Flags = 0x2
+        fspRegion.SegmentArray.append(seg1)
 
         if self.excludeUpd == True:
             #
             # FSP-O region before the OEM config data region
             #
-            seg1 = REGION_SEGMENT()
-            seg1.Base = fspT.Fih.ImageSize
-            seg1.Size = fspO.Fih.ImageSize - FSPO_OEM_CONFIG_REGION_LOWER_ADDR
-            seg1.Flags = 0x0
-            fspRegion.SegmentArray.append(seg1)
+            seg2 = REGION_SEGMENT()
+            seg2.Base = seg1.Base + fspT.Fih.ImageSize
+            seg2.Size = fspO.Fih.ImageSize - FSPO_OEM_CONFIG_REGION_LOWER_ADDR
+            seg2.Flags = 0x2
+            fspRegion.SegmentArray.append(seg2)
 
             #
             # OEM config data region
             #
-            seg2 = REGION_SEGMENT()
-            seg2.Base = fspO.Fih.ImageSize - FSPO_OEM_CONFIG_REGION_LOWER_ADDR + fspT.Fih.ImageSize
-            seg2.Size = FSPO_OEM_CONFIG_REGION_LOWER_ADDR - FSPO_OEM_CONFIG_REGION_UPPER_ADDR
-            seg2.Flags = 0x1
-            fspRegion.SegmentArray.append(seg2)
+            seg3 = REGION_SEGMENT()
+            seg3.Base = seg1.Base + fspO.Fih.ImageSize - FSPO_OEM_CONFIG_REGION_LOWER_ADDR + fspT.Fih.ImageSize
+            seg3.Size = FSPO_OEM_CONFIG_REGION_LOWER_ADDR - FSPO_OEM_CONFIG_REGION_UPPER_ADDR
+            seg3.Flags = 0x3
+            fspRegion.SegmentArray.append(seg3)
 
             #
             # FSP-O region after the OEM config data region
             #
-            seg3 = REGION_SEGMENT()
-            seg3.Base = fspO.Fih.ImageSize - FSPO_OEM_CONFIG_REGION_UPPER_ADDR + fspT.Fih.ImageSize
-            seg3.Size = FSPO_OEM_CONFIG_REGION_UPPER_ADDR
-            seg3.Flags = 0x0
-            fspRegion.SegmentArray.append(seg3)
+            seg4 = REGION_SEGMENT()
+            seg4.Base = seg1.Base + fspO.Fih.ImageSize - FSPO_OEM_CONFIG_REGION_UPPER_ADDR + fspT.Fih.ImageSize
+            seg4.Size = FSPO_OEM_CONFIG_REGION_UPPER_ADDR
+            seg4.Flags = 0x2
+            fspRegion.SegmentArray.append(seg4)
 
         else:
-            seg1 = REGION_SEGMENT()
-            seg1.Base = fspT.Fih.ImageSize
-            seg1.Size = fspO.Fih.ImageSize
-            seg1.Flags = 0x0
-            fspRegion.SegmentArray.append(seg1)
+            seg2 = REGION_SEGMENT()
+            seg2.Base = seg1.Base + fspT.Fih.ImageSize
+            seg2.Size = fspO.Fih.ImageSize
+            seg2.Flags = 0x2
+            fspRegion.SegmentArray.append(seg2)
 
         fspRegion.head.SegmentCnt = len(fspRegion.SegmentArray)
         self.FspRegions_0 = fspRegion
@@ -1019,6 +1088,8 @@ class FspBootManifest():
         self.outputFile = outputFile
 
         self.ParseConfigFile()
+        self.CalFspVersionInfo()
+        self.CalFSPVersionDigest()
         self.CalFspSOrMRegionDigest()
         self.CalFSPTAndORegionDigest()
         self.CalFspMOrSRegionInfo("M")
@@ -1063,6 +1134,8 @@ class FspBootManifest():
         """
         fbmSize = 0
         fbmSize += sizeof(FspBootManifestFixedField)
+        fbmSize += self.FspVersionDigests.GetFspDigestListLen()
+        fbmSize += sizeof(FspBootManifestFixedFieldContinue)
         fbmSize += self.ComponentDigests_0.GetFspDigestListLen()
 
         for fspc in self.ComponentDigestsList:
@@ -1081,6 +1154,21 @@ class FspBootManifest():
             self.fbmFixedField.FBMHeader.KeySignatureOffset = fbmSize
         print("Set Signature Offset to {}".format(self.fbmFixedField.FBMHeader.KeySignatureOffset))
 
+    def CalFSPVersionDigest(self) -> None:
+        """
+        Calculate digest list for FSP Version.
+
+        Returns:
+            None
+        """
+        self.FspVersionDigests = FspRegionDigest(self.fdDir, self.OpenSslCommand)
+
+        if self.fbmFixedField.FBMHeader.FspVersion != None:
+            self.FspVersionDigests.CalFspVersionDigestList(self.fbmFixedField.FBMHeader.FspVersion)
+        else:
+            print("Error! FSP version is none")
+            sys.exit(1)
+
     def CalFSPTAndORegionDigest(self) -> None:
         """
         Calculate digest list for FSP-O and FSP-T components.
@@ -1098,7 +1186,7 @@ class FspBootManifest():
                 fspO = fsp
         if fspO != None and fspT != None:
             self.ComponentDigests_0.CalFspTAndODigestList(fspT, fspO, self.excludeUpd)
-            self.fbmFixedField.CompCnt += 1
+            self.fbmFixedFieldContinue.FBMHeaderContinue.CompCnt += 1
         else:
             print("Error! FSP-O or FSP-T is none")
             sys.exit(1)
@@ -1134,7 +1222,7 @@ class FspBootManifest():
             print("Error! FSP-S is None")
             sys.exit(1)
 
-        self.fbmFixedField.CompCnt += len(self.ComponentDigestsList)
+        self.fbmFixedFieldContinue.FBMHeaderContinue.CompCnt += len(self.ComponentDigestsList)
 
     def ParseConfigFile(self) -> None:
         """
@@ -1153,14 +1241,14 @@ class FspBootManifest():
         tmpStr = parser.get('FBMConfig', 'StructVersion')
         self.fbmFixedField.FBMHeader.StructVersion = int(tmpStr, 16)
 
-        tmpStr = parser.get('FBMConfig', 'FspVersion')
-        self.fbmFixedField.FBMHeader.FspVersion = ConvertVersionStrToHex(tmpStr)
+        tmpStr = parser.get('FBMConfig', 'CodeCacheSize')
+        self.CodeCacheSize = int(tmpStr, 16)
 
         tmpStr = parser.get('FBMConfig', 'FspSvn')
-        self.fbmFixedField.FBMHeader.FspSvn = int(tmpStr, 16)
+        self.fbmFixedFieldContinue.FBMHeaderContinue.FspSvn = int(tmpStr, 16)
 
         tmpStr = parser.get('FBMConfig', 'Flags')
-        self.fbmFixedField.FBMHeader.Flags = int(tmpStr, 16)
+        self.fbmFixedFieldContinue.FBMHeaderContinue.Flags = int(tmpStr, 16)
 
         excludeUpdStr = parser.get('FBMConfig', 'ExcludeUpd')
         if excludeUpdStr.upper() == 'FALSE':
@@ -1176,7 +1264,8 @@ class FspBootManifest():
             None
         """
         binData = self.fbmFixedField.serialize()
-        binData += struct.pack('<B', self.fbmFixedField.CompCnt)
+        binData += self.FspVersionDigests.SerializeToBin()
+        binData += self.fbmFixedFieldContinue.serialize()
         binData += self.ComponentDigests_0.SerializeToBin()
 
         for fspComponentDigests in self.ComponentDigestsList:
@@ -1216,9 +1305,10 @@ def DumpInfo(imagePath: str) -> None:
     fbmHeader.DumpFbmHead()
     offset = sizeof(FspBootManifestHead)
 
-    CompCnt = c_uint8.from_buffer(fbmData, offset).value
-    print("FSP component Number:", '{:>2}'.format(CompCnt))
-    offset += sizeof(c_uint8)
+    print("FSP Version Digest List")
+    offset = DumpFspRegionDigest(fbmData, offset, 4)
+    offset = FspBootManifestHeadContinue.DumpFbmHeadContinue(fbmData, offset)
+    CompCnt = c_uint8.from_buffer(fbmData, (offset - 1)).value
 
     print("FSP-T and FSP-O component Digest List")
     offset = DumpFspRegionDigest(fbmData, offset, 4)

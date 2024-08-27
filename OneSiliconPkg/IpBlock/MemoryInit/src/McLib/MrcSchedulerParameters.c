@@ -301,9 +301,6 @@ MrcSchedulerParametersConfig (
         GetSetVal = tWCK_STOP;
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctWckDfiStop,     WriteToCache | PrintValue, &GetSetVal);
         WckDfiOffset = 4;
-        if (Outputs->IpModel == MrcTestEnvMc) { // MC_IP model
-          WckDfiOffset = 0;
-        }
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctWckDfiOffset,   WriteToCache | PrintValue, &WckDfiOffset);
         tCSLCK = MrcGetTcsclk (MrcData);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcttCSLCK,   WriteToCache | PrintValue, &tCSLCK);

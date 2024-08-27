@@ -175,7 +175,13 @@ SetTcPreActOdt (
 
 
   AddTcwl = 0;
-  DecTcwl = 7;
+
+  if (IsLpddr5) {
+    DecTcwl = 7;
+  } else { // DDR5
+    // 7 for (2N && Gear2), otherwise 5
+    DecTcwl = ((MrcGetNMode (MrcData) == CA_2_NMODE) && (Outputs->GearMode == 0)) ? 7 : 5;
+  }
 
   tRDA2ACT = MAX (tRAS - tRP, tRDPRE) + tRP;
   tWRA2ACT = MAX (tRAS - tRP, tWRPRE) + tRP;
@@ -436,9 +442,6 @@ MrcTimingConfiguration (
   }
   // Setup turnaround timings
   SetTurnAroundTiming (MrcData, TRUE);
-
-  // SETUP Error Check and Scrub (ECS) REFab delay timing
-  MrcEcsClean (MrcData);
 
   // Check RawCard Types and adjust Read ODT if needed
   //RdOdtStretch (MrcData);

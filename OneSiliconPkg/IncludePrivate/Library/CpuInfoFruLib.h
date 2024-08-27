@@ -41,14 +41,18 @@
 /// Non-cTDP parts would have '0' data for TDP level information.
 ///
 typedef struct {
-  UINTN  MsrPowerLimit1;
-  UINTN  MsrPowerLimit2;
-  UINTN  CtdpUpPowerLimit2;
-  UINTN  CtdpNominalPowerLimit2;
-  UINTN  CtdpDownPowerLimit2;
-  UINTN  MsrPowerLimit4;
-  UINTN  MsrPowerLimit4DisableFvm;
+  UINT32  MsrPowerLimit1;
+  UINT32  MsrPowerLimit2;
+  UINT32  CtdpUpPowerLimit2;
+  UINT32  CtdpNominalPowerLimit2;
+  UINT32  CtdpDownPowerLimit2;
+  UINT32  MsrPowerLimit4;
+  UINT32  MsrPowerLimit4DisableFvm;
   UINT8  MsrPowerLimit1TimeWindow;
+  UINT8  IsysCurrentL1Tau;
+  UINT16 IsysCurrentLimitL1;
+  UINT16 IsysCurrentLimitL2;
+  UINT16 VsysMax;
 } PPM_PLX_PROFILE;
 
 typedef struct {

@@ -62,7 +62,8 @@ CnvFormPlatformCallback (
   SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE     SndwDevTopologyConfigurationVariable;
   UINT32                                       SndwDevTopologyConfigurationVariableAttr;
   UINTN                                        SndwDevTopologyConfigurationVariableSize;
-  CNV_FORM_PLATFORM_PROTOCOL                   *CnvFormPlatformProtocol;
+  CNV_VFR_CONFIG_SETUP                         CnvSetupData;
+  UINTN                                        CnvSetupVarSize;
 
   DEBUG ((DEBUG_INFO, "%a Entry\n", __FUNCTION__));
 
@@ -72,11 +73,13 @@ CnvFormPlatformCallback (
   SndwDevTopologyNeedUpdate = FALSE;
   PchVariableAttr = 0;
   PchVariableVarSize = sizeof (PCH_SETUP);
+  CnvSetupVarSize = sizeof (CNV_VFR_CONFIG_SETUP);
   NhltConfigurationVariableAttr = 0;
   NhltConfigurationVariableSize = sizeof (NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE);
   SndwDevTopologyConfigurationVariableAttr = 0;
   SndwDevTopologyConfigurationVariableSize = sizeof (SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE);
   ZeroMem (&PchSetup, PchVariableVarSize);
+  ZeroMem (&CnvSetupData, CnvSetupVarSize);
   ZeroMem (&NhltConfiguration, NhltConfigurationVariableSize);
   ZeroMem (&SndwDevTopologyConfigurationVariable, SndwDevTopologyConfigurationVariableSize);
 
@@ -102,7 +105,7 @@ CnvFormPlatformCallback (
       KeyValue == PCH_HDAUDIO_DBT_OFFLOAD_ACTION_KEY || KeyValue == KEY_CNV_BT_CNVI_MODE) {
 
     // Inform DSP features submenu about the change
-    if (Action == EFI_BROWSER_ACTION_CHANGED || Action == EFI_BROWSER_ACTION_SUBMITTED) {
+    if (Action == EFI_BROWSER_ACTION_CHANGED) {
       mCnvFormChanged = 1;
     }
     //
@@ -111,12 +114,17 @@ CnvFormPlatformCallback (
     if (Action != EFI_BROWSER_ACTION_SUBMITTED) {
       return EFI_UNSUPPORTED;
     }
-    //
-    // Locate gCnvFormPlatformProtocolGuid to get the latest CNV setup data.
-    //
-    Status = gBS->LocateProtocol (&gCnvFormPlatformProtocolGuid, NULL, (VOID **) &CnvFormPlatformProtocol);
+    mCnvFormChanged = 0;
+
+    Status = gRT->GetVariable (
+                    L"CnvSetup",
+                    &gCnvFeatureSetupGuid,
+                    NULL,
+                    &CnvSetupVarSize,
+                    &CnvSetupData
+                    );
     if (EFI_ERROR (Status)) {
-      return EFI_NOT_FOUND;
+      return Status;
     }
 
     Status = gRT->GetVariable (
@@ -151,10 +159,10 @@ CnvFormPlatformCallback (
       return EFI_NOT_FOUND;
     }
 
-    // Don't make any changes if BT module is not present or disabled
+    // Make the changes when a integrated/discrete BT module is present and enabled
     if ((PchSetup.HdaDiscBtOffEnabled ||
-       (CnviCrfModuleIsPresent () && CnvFormPlatformProtocol->CnvFormData.CnviMode != 0)) &&
-       CnvFormPlatformProtocol->CnvFormData.CnviBtAudioOffload) {
+       (CnviCrfModuleIsPresent () && CnvSetupData.CnviMode != 0)) &&
+       CnvSetupData.CnviBtAudioOffload) {
       // BT Sideband support
       if (PchSetup.PchHdAudioFeature[1] != TRUE) {
         PchSetup.PchHdAudioFeature[1] = TRUE;
@@ -171,12 +179,12 @@ CnvFormPlatformCallback (
         PchNeedUpdate = TRUE;
       }
       // BT Intel LE
-      if (PchSetup.PchHdAudioFeature[9] != FALSE) {
-        PchSetup.PchHdAudioFeature[9] = FALSE;
+      if (PchSetup.PchHdAudioFeature[9] != TRUE) {
+        PchSetup.PchHdAudioFeature[9] = TRUE;
         PchNeedUpdate = TRUE;
       }
       // SoundWire interface enable
-      if (CnvFormPlatformProtocol->CnvFormData.CnviBtAudioOffloadInterface == 1) {
+      if (CnvSetupData.CnviBtAudioOffloadInterface == 1) {
         // Audio DSP NHLT Endpoints Configuration - Bluetooth
         if (NhltConfiguration.NhltBluetoothEnabled != FALSE) {
           NhltConfiguration.NhltBluetoothEnabled = FALSE;
@@ -247,7 +255,6 @@ CnvFormPlatformCallback (
       }
     }
 
-
     if (PchNeedUpdate) {
       Status = gRT->SetVariable (
                       L"PchSetup",
@@ -289,8 +296,6 @@ CnvFormPlatformCallback (
   return Status;
 }
 
-
-
 /**
   Callback executed when user enters the DSP Features submenu of HD-Configuration form.
   Changes visibility and settings of other options according to the changes in CNV setup.
@@ -311,119 +316,128 @@ DspFeaturesCnvSetupCallback (
   UINTN                                        PchVarSize;
   EFI_STRING                                   RequestString;
   EFI_STRING                                   TmpString;
-  EFI_STATUS                                   Status;
-  CNV_FORM_PLATFORM_PROTOCOL                   *CnvFormPlatformProtocol;
   UINTN                                        NhltConfigurationVariableSize;
   NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE  NhltConfiguration;
+  CNV_VFR_CONFIG_SETUP                         CnvSetupData;
+  UINTN                                        CnvSetupVarSize;
+  EFI_STATUS                                   Status;
 
   DEBUG ((DEBUG_INFO, "%a () enter, Action = 0x%x\n", __FUNCTION__, Action));
 
-  //
-  // Check if there is any change in CNV setup when entering Advanced setup.
-  //
-  if (mCnvFormChanged || Action == EFI_BROWSER_ACTION_CHANGED) {
-    mCnvFormChanged = 0;
-    //
-    // Locate gCnvFormPlatformProtocolGuid to get the latest CNV setup data.
-    //
-    Status = gBS->LocateProtocol (&gCnvFormPlatformProtocolGuid, NULL, (VOID **) &CnvFormPlatformProtocol);
+  PchVarSize      = sizeof (PCH_SETUP);
+  CnvSetupVarSize = sizeof (CNV_VFR_CONFIG_SETUP);
+  ZeroMem (&CnvSetupData, CnvSetupVarSize);
+
+  // Pull the correct data depending on whether the changes in the CNV setup are saved or not
+  if (mCnvFormChanged) {
+    if (!HiiGetBrowserData (&gCnvFeatureSetupGuid, CNV_SETUP_VARIABLE_NAME, CnvSetupVarSize, (UINT8 *) &CnvSetupData)) {
+      return EFI_NOT_FOUND;
+    }
+  } else {
+    CnvSetupVarSize = sizeof (CNV_VFR_CONFIG_SETUP);
+    Status = gRT->GetVariable (
+                    L"CnvSetup",
+                    &gCnvFeatureSetupGuid,
+                    NULL,
+                    &CnvSetupVarSize,
+                    &CnvSetupData
+                    );
     if (EFI_ERROR (Status)) {
-      return EFI_NOT_FOUND;
+      return Status;
     }
-
-    PchVarSize = sizeof (PCH_SETUP);
-    if (!HiiGetBrowserData (&gPchSetupVariableGuid, L"PchSetup", PchVarSize, (UINT8 *) &PchSetup)) {
-      return EFI_NOT_FOUND;
-    }
-
-    NhltConfigurationVariableSize = sizeof (NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE);
-    if (!HiiGetBrowserData (
-           &gNhltEndpointsTableConfigurationVariableGuid,
-           NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_NAME,
-           NhltConfigurationVariableSize,
-           (UINT8 *) &NhltConfiguration)) {
-      return EFI_NOT_FOUND;
-    }
-
-    if ((PchSetup.HdaDiscBtOffEnabled  ||
-       (CnviCrfModuleIsPresent () && CnvFormPlatformProtocol->CnvFormData.CnviMode != 0)) &&
-       CnvFormPlatformProtocol->CnvFormData.CnviBtAudioOffload) {
-        // BT Sideband support
-        PchSetup.PchHdAudioFeature[1] = TRUE;
-        // BT Intel HFP SCO
-        PchSetup.PchHdAudioFeature[5] = TRUE;
-        // BT Intel A2DP
-        PchSetup.PchHdAudioFeature[6] = TRUE;
-        // BT Intel LE
-        PchSetup.PchHdAudioFeature[9] = TRUE;
-        // SoundWire interface enable
-        if (CnvFormPlatformProtocol->CnvFormData.CnviBtAudioOffloadInterface == 1) {
-          // Audio DSP NHLT Endpoints Configuration - Bluetooth
-          NhltConfiguration.NhltBluetoothEnabled = FALSE;
-        } else { //I2S (legacy) interface is used
-          // Audio DSP NHLT Endpoints Configuration - Bluetooth
-          NhltConfiguration.NhltBluetoothEnabled = TRUE;
-        }
-    } else {
-      // Audio DSP NHLT Endpoints Configuration - Bluetooth
-      NhltConfiguration.NhltBluetoothEnabled = FALSE;
-      // BT Sideband support
-      PchSetup.PchHdAudioFeature[1] = FALSE;
-      // BT Intel HFP SCO
-      PchSetup.PchHdAudioFeature[5] = FALSE;
-      // BT Intel A2DP
-      PchSetup.PchHdAudioFeature[6] = FALSE;
-      // BT Intel LE
-      PchSetup.PchHdAudioFeature[9] = FALSE;
-    }
-
-    //
-    // Update NHLT browser data
-    //
-    RequestString = NULL;
-    TmpString = NULL;
-    RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE, NhltBluetoothEnabled), sizeof (NhltConfiguration.NhltBluetoothEnabled));
-    if (RequestString == NULL) {
-      goto ExitNoSpace;
-    }
-
-    if (!HiiSetBrowserData (&gNhltEndpointsTableConfigurationVariableGuid, NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_NAME, NhltConfigurationVariableSize, (UINT8 *) &NhltConfiguration, RequestString)) {
-      goto ExitNotFound;
-    }
-    FreePool (RequestString);
-
-    //
-    // Update PCH browser data
-    //
-    RequestString = NULL;
-    RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (PCH_SETUP, PchHdAudioFeature[1]), sizeof (PchSetup.PchHdAudioFeature[1]));
-    if (RequestString == NULL) {
-      goto ExitNoSpace;
-    }
-
-    TmpString = RequestString;
-    RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (PCH_SETUP, PchHdAudioFeature[5]), sizeof (PchSetup.PchHdAudioFeature[5]));
-    if (RequestString == NULL) {
-      goto ExitNoSpace;
-    }
-
-    TmpString = RequestString;
-    RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (PCH_SETUP, PchHdAudioFeature[6]), sizeof (PchSetup.PchHdAudioFeature[6]));
-    if (RequestString == NULL) {
-      goto ExitNoSpace;
-    }
-
-    TmpString = RequestString;
-    RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (PCH_SETUP, PchHdAudioFeature[9]), sizeof (PchSetup.PchHdAudioFeature[9]));
-    if (RequestString == NULL) {
-      goto ExitNoSpace;
-    }
-
-    if (!HiiSetBrowserData (&gPchSetupVariableGuid, L"PchSetup", PchVarSize, (UINT8 *) &PchSetup, RequestString)) {
-      goto ExitNotFound;
-    }
-    FreePool (RequestString);
   }
+
+  if (!HiiGetBrowserData (&gPchSetupVariableGuid, L"PchSetup", PchVarSize, (UINT8 *) &PchSetup)) {
+    return EFI_NOT_FOUND;
+  }
+
+  NhltConfigurationVariableSize = sizeof (NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE);
+  if (!HiiGetBrowserData (
+          &gNhltEndpointsTableConfigurationVariableGuid,
+          NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_NAME,
+          NhltConfigurationVariableSize,
+          (UINT8 *) &NhltConfiguration)) {
+    return EFI_NOT_FOUND;
+  }
+
+  if ((PchSetup.HdaDiscBtOffEnabled  ||
+      (CnviCrfModuleIsPresent () && CnvSetupData.CnviMode != 0)) &&
+      CnvSetupData.CnviBtAudioOffload) {
+      // BT Sideband support
+      PchSetup.PchHdAudioFeature[1] = TRUE;
+      // BT Intel HFP SCO
+      PchSetup.PchHdAudioFeature[5] = TRUE;
+      // BT Intel A2DP
+      PchSetup.PchHdAudioFeature[6] = TRUE;
+      // BT Intel LE
+      PchSetup.PchHdAudioFeature[9] = TRUE;
+      // SoundWire interface enable
+      if (CnvSetupData.CnviBtAudioOffloadInterface == 1) {
+        // Audio DSP NHLT Endpoints Configuration - Bluetooth
+        NhltConfiguration.NhltBluetoothEnabled = FALSE;
+      } else { //I2S (legacy) interface is used
+        // Audio DSP NHLT Endpoints Configuration - Bluetooth
+        NhltConfiguration.NhltBluetoothEnabled = TRUE;
+      }
+  } else {
+    // Audio DSP NHLT Endpoints Configuration - Bluetooth
+    NhltConfiguration.NhltBluetoothEnabled = FALSE;
+    // BT Sideband support
+    PchSetup.PchHdAudioFeature[1] = FALSE;
+    // BT Intel HFP SCO
+    PchSetup.PchHdAudioFeature[5] = FALSE;
+    // BT Intel A2DP
+    PchSetup.PchHdAudioFeature[6] = FALSE;
+    // BT Intel LE
+    PchSetup.PchHdAudioFeature[9] = FALSE;
+  }
+
+  //
+  // Update NHLT browser data
+  //
+  RequestString = NULL;
+  TmpString = NULL;
+  RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE, NhltBluetoothEnabled), sizeof (NhltConfiguration.NhltBluetoothEnabled));
+  if (RequestString == NULL) {
+    goto ExitNoSpace;
+  }
+
+  if (!HiiSetBrowserData (&gNhltEndpointsTableConfigurationVariableGuid, NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_NAME, NhltConfigurationVariableSize, (UINT8 *) &NhltConfiguration, RequestString)) {
+    goto ExitNotFound;
+  }
+  FreePool (RequestString);
+
+  //
+  // Update PCH browser data
+  //
+  RequestString = NULL;
+  RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (PCH_SETUP, PchHdAudioFeature[1]), sizeof (PchSetup.PchHdAudioFeature[1]));
+  if (RequestString == NULL) {
+    goto ExitNoSpace;
+  }
+
+  TmpString = RequestString;
+  RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (PCH_SETUP, PchHdAudioFeature[5]), sizeof (PchSetup.PchHdAudioFeature[5]));
+  if (RequestString == NULL) {
+    goto ExitNoSpace;
+  }
+
+  TmpString = RequestString;
+  RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (PCH_SETUP, PchHdAudioFeature[6]), sizeof (PchSetup.PchHdAudioFeature[6]));
+  if (RequestString == NULL) {
+    goto ExitNoSpace;
+  }
+
+  TmpString = RequestString;
+  RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (PCH_SETUP, PchHdAudioFeature[9]), sizeof (PchSetup.PchHdAudioFeature[9]));
+  if (RequestString == NULL) {
+    goto ExitNoSpace;
+  }
+
+  if (!HiiSetBrowserData (&gPchSetupVariableGuid, L"PchSetup", PchVarSize, (UINT8 *) &PchSetup, RequestString)) {
+    goto ExitNotFound;
+  }
+  FreePool (RequestString);
 
   return EFI_SUCCESS;
 

@@ -168,6 +168,9 @@ TouchPanelGpioInit (
     case BoardIdPtlUHLp5Rvp3:
     case BoardIdPtlUHDdr5Rvp4:
     case BoardIdPtlUHCammDTbTRvp2:
+    case BoardIdPtlHLp5Gcs1:
+    case BoardIdPtlHLp5Gcs2:
+    case BoardIdPtlUHLp5Aep:
       //
       // Verify if THC0 or THC1 panels are enabled before changing GPIO configuration
       //
@@ -310,35 +313,6 @@ PtlBoardMiscInit (
   PcdSet32S (PcdPcieSlot3HoldRstGpioNo, GpioVpd->GpioPad);
   PcdSetBoolS (PcdPcieSlot3HoldRstGpioPolarity, PcdGetBool (VpdPcdPcieSlot3HoldRstGpioPolarity));
   PcdSet8S (PcdPcieSlot3RootPort, PcdGet8 (VpdPcdPcieSlot3RootPort));
-  //
-  // Configure WWAN Full Card Power Off and reset pins
-  //
-  GpioVpd = PcdGetPtr (VpdPcdWwanFullCardPowerOffGpio);
-  PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
-  GpioVpd = PcdGetPtr (VpdPcdWwanBbrstGpio);
-  PcdSet32S (PcdWwanBbrstGpio, GpioVpd->GpioPad);
-  GpioVpd = PcdGetPtr (VpdPcdWwanPerstGpio);
-  PcdSet32S (PcdWwanPerstGpio, GpioVpd->GpioPad);
-  GpioVpd = PcdGetPtr (VpdPcdWwanWakeGpio);
-  PcdSet32S (PcdWwanWakeGpio, GpioVpd->GpioPad);
-  PcdSetBoolS (PcdWwanPerstGpioPolarity, PcdGetBool (VpdPcdWwanPerstGpioPolarity));
-  PcdSetBoolS (PcdWwanFullCardPowerOffGpioPolarity, PcdGetBool (VpdPcdWwanFullCardPowerOffGpioPolarity));
-  PcdSetBoolS (PcdWwanBbrstGpioPolarity, PcdGetBool (VpdPcdWwanBbrstGpioPolarity));
-  PcdSet8S (PcdWwanSourceClock, PcdGet8 (VpdPcdWwanSourceClock));
-  PcdSet8S (PcdWwanRootPortNumber, PcdGet8 (VpdPcdWwanRootPortNumber));
-  if ((mSetupData.WwanEnable == 0)) {
-    // When WWAN is disabled in setup use WWAN PWREN enable pin
-    GpioVpd = PcdGetPtr (VpdPcdwwanPowerEnableGpio);
-    PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
-  } else {
-    // When WWAN is enabled in setup power enable pin  use WWAN FCP pin
-    GpioVpd = PcdGetPtr (VpdPcdWwanFullCardPowerOffGpio);
-    PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
-  }
-
-  GpioVpd = PcdGetPtr (VpdPcdWwanModemBaseBandResetGpio);
-  PcdSet32S(PcdWwanModemBaseBandResetGpio, GpioVpd->GpioPad);                   // WWAN/Modem Base Band Reset pin
-
   Status = PeiServicesNotifyPpi (&mEndOfPeiNotifyList);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR , "ConfigurePciHostBridgePcdsEndOfPei  Notify PPI Failed - %r\n", Status));

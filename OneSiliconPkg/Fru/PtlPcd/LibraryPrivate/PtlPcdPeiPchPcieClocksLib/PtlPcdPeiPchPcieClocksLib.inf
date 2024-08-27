@@ -52,3 +52,5 @@
 
 [Sources]
   PeiPchPcieClocksLibPtl.c
+
+[Pcd]

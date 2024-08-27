@@ -537,11 +537,11 @@ GetDdrIoPartitionOffsets (
       Offset = GetDdrIoCompOffsets (MrcData, Group, Lane, VolatileMask);
       break;
 
-    case PartitionData:
+    case PartitionDataShared:
       Offset = GetDdrIoDataOffsets (MrcData, Group, Set, Lane, FreqIndex, VolatileMask);
       break;
 
-    case PartitionCcc:
+    case PartitionCccShared:
       Offset = GetDdrIoCccOffsets (MrcData, Group, Set, Lane, FreqIndex, VolatileMask);
       break;
 

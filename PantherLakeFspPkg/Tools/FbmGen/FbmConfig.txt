@@ -5,6 +5,13 @@ FspVersion:    2.4
 FspSvn:    1
 
 #
+# CodeCacheSize indicates how much NEM, ACM must allocate for IBB Execution.
+# Products must carefully choose this value based on the Cache that is supported
+# by the particular segment/SKU
+#
+CodeCacheSize:    0x600000
+
+#
 # Flags 0 indicates pre-production key
 #       1 indicates production key
 #

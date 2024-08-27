@@ -256,6 +256,9 @@ InternalUpdateRvpBoardConfig (
     case BoardIdPtlUHLp5Rvp3:
     case BoardIdPtlUHDdr5Rvp4:
     case BoardIdPtlUHCammDTbTRvp2:
+    case BoardIdPtlHLp5Gcs1:
+    case BoardIdPtlHLp5Gcs2:
+    case BoardIdPtlUHLp5Aep:
       BoardType = BoardTypeRvp;
       PlatformType = TypeUltUlx;
       PlatformFlavor = FlavorMobile;

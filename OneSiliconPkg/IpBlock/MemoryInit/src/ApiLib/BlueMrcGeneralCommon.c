@@ -133,19 +133,12 @@ MrcSetNormalMode (
     }
   }
   GetSetVal = IsNormalMode ? GetSetDis : GetSetEn;
-  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteToCache, &GetSetVal);
   // This ensures equal backpressure on WPQ / RPQ which is needed for CPGC test.
   // This bit is set to 1 during training and 0 at the end of MRC (Normal Mode)
   MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmMccInOrderIngress, WriteToCache, &GetSetVal);
-  MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmDisAllCplInterleave, WriteToCache, &GetSetVal);
   MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmDisVc1CplInterleave, WriteToCache, &GetSetDis);
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccBlockXarb, WriteToCache, &GetSetDis);  // Unblock XARB
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccBlockCke,  WriteToCache, &GetSetDis);  // Unblock CKE
-
-  if (IsLpddr) {
-    MrcModifyRdRdTimings (MrcData, !IsNormalMode);
-  }
-
   MrcFlushRegisterCachedData (MrcData);
 
   if (IsCpgcActive) {
@@ -342,6 +335,7 @@ MrcEnableTelemetry (
   MiscSurvivabilityControl.Bits.TELEMETRY_CNTRS_EN = Val;
   MrcWriteCR (MrcData, MEMSS_PMA_CR_SURVIVABILITY_MISC_REG, MiscSurvivabilityControl.Data);
 }
+
 /**
   Performs Geardown entry flow during Normal Mode enabling.
 
@@ -476,7 +470,9 @@ MrcNormalMode (
   MemInSr   = (BootMode == bmWarm) || (BootMode == bmS3);
   IsLpddr   = Outputs->IsLpddr;
 
+
   MrcEnableTelemetry (MrcData);
+
   if (Outputs->EccSupport) {
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
@@ -486,12 +482,13 @@ MrcNormalMode (
         MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ECC support\n");
         GetSetVal = Outputs->EccSupport;
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccEccMode, WriteCached | PrintValue, &GetSetVal);
-
-        // Enable LPMode
-        GetSetVal = 1;
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccPdwnLpmodeEnable, WriteToCache, &GetSetVal);
       }
     }
+  }
+
+  if (ExtInputs->LpMode || ExtInputs->LpMode4) {
+    GetSetVal = 1;
+    MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccPdwnLpmodeEnable, WriteCached, &GetSetVal);
   }
 
   if (SaveData->IsCs2NEver && !MemInSr && !Outputs->IsCs2NEnabled) {
@@ -1137,6 +1134,7 @@ MrcSetSafeModeOverrides (
     ExtInputs->TrainingEnables3.DCCPISERIALCAL = 0;
     ExtInputs->TrainingEnables3.PHASECLKCAL    = 0;
     ExtInputs->TrainingEnables3.EMPHASIS       = 0;
+    ExtInputs->TrainingEnables3.DIMMRXOFFSET   = 0;
     ExtInputs->TrainingEnables2.DCCLP5READDCA  = 0;
 
     // Safe Mode Enabling Stage D
@@ -1830,10 +1828,14 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tDramRfmMode: %u\n"
     "\tTargetedRowRefreshMode: %u\n"
-    "\tDrfmBrc: %u\n",
+    "\tDrfmBrc: %u\n"
+    "\tSpineGatePerLpmode: %Xh\n"
+    "\tPhclkGatePerLpmode: %Xh\n",
     ExtInputs->DramRfmMode,
     ExtInputs->TargetedRowRefreshMode,
-    ExtInputs->DrfmBrc
+    ExtInputs->DrfmBrc,
+    ExtInputs->SpineGatePerLpmode,
+    ExtInputs->PhclkGatePerLpmode
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tLfsr0Mask: %u\n"
@@ -1974,14 +1976,8 @@ MrcPrintInputParameters (
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
-    "\tReplicateSagv: %u\n"
-    "\tSpineAndPhclkGateControl: %u\n"
-    "\tSpineGatePerLpmode: %Xh\n"
-    "\tPhclkGatePerLpmode: %Xh\n",
-    ExtInputs->ReplicateSagv,
-    ExtInputs->SpineAndPhclkGateControl,
-    ExtInputs->SpineGatePerLpmode,
-    ExtInputs->PhclkGatePerLpmode
+    "\tReplicateSagv: %u\n",
+    ExtInputs->ReplicateSagv
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
@@ -2025,7 +2021,7 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "UNMATCHEDWRTC1D: %u\nWRTC1D: %u\nWRVC1D: %u\nRDTC1D: %u\n",  TrainingSteps->UNMATCHEDWRTC1D, TrainingSteps->WRTC1D,    TrainingSteps->WRVC1D,      TrainingSteps->RDTC1D);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RDVC1D: %u\nWRTC2D: %u\nRDTC2D: %u\nWRVC2D: %u\n",           TrainingSteps->RDVC1D,          TrainingSteps->WRTC2D,    TrainingSteps->RDTC2D,      TrainingSteps->WRVC2D);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RDVC2D: %u\nWRDSEQT: %u\nDQSRF: %u\n",                       TrainingSteps->RDVC2D,          TrainingSteps->WRDSEQT,   TrainingSteps->DQSRF);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RDDQSODTT: %u\nRDDQODTT: %u\nRDCTLET: %u\n",                   TrainingSteps->RDDQSODTT,       TrainingSteps3->RDDQODTT, TrainingSteps3->RDCTLET);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RDDQSODTT: %u\nRDDQODTT: %u\nRDCTLET: %u\n",                 TrainingSteps->RDDQSODTT,       TrainingSteps3->RDDQODTT, TrainingSteps3->RDCTLET);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RDEQT: %u\nDUNITC: %u\nCMDVC: %u\nLCT: %u\n",                TrainingSteps->RDEQT,           TrainingSteps->DUNITC,    TrainingSteps->CMDVC,       TrainingSteps->LCT);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RTL: %u\nTAT: %u\nRMT: %u\nRMTEVENODD: %u\n",                TrainingSteps->RTL,             TrainingSteps->TAT,       TrainingSteps->RMT,         TrainingSteps->RMTEVENODD);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ALIASCHK: %u\nRCVENC1D: %u\nRMC: %u\nPRETRAIN: %u\n",        TrainingSteps->ALIASCHK,        TrainingSteps->RCVENC1D,  TrainingSteps->RMC,         TrainingSteps->PRETRAIN);
@@ -2039,11 +2035,11 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DDR5XTALK: %u\nDCCLP5WCKDCA: %u\nRXUNMATCHEDCAL: %u\n",              TrainingSteps2->DDR5XTALK,      TrainingSteps2->DCCLP5WCKDCA, TrainingSteps2->RXUNMATCHEDCAL);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WRTDIMMDFE: %u\nDCCLP5READDCA: %u\n",                                TrainingSteps2->WRTDIMMDFE,     TrainingSteps2->DCCLP5WCKDCA);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s3:\n", "TrainingEnables");
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RXDQSDCC: %u\nDIMMNTODT: %u\nRXVREFPERBIT: %u\n",                    TrainingSteps3->RXDQSDCC,       TrainingSteps3->DIMMNTODT,    TrainingSteps3->RXVREFPERBIT);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RXDQSDCC: %u\nDIMMNTODT: %u\nRXVREFPERBIT: %u\n",                            TrainingSteps3->RXDQSDCC,       TrainingSteps3->DIMMNTODT,    TrainingSteps3->RXVREFPERBIT);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR: %u\nLVRAUTOTRIM: %u\nPWRMETER: %u\nOPTIMIZECOMP: %u\n",                 TrainingSteps3->PPR,            TrainingSteps3->LVRAUTOTRIM,  TrainingSteps3->PWRMETER,       TrainingSteps3->OPTIMIZECOMP);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WRTRETRAIN: %u\nDDRPRECOMP: %u\nJEDECRESET: %u\n",                           TrainingSteps3->WRTRETRAIN,     TrainingSteps3->DDRPRECOMP,   TrainingSteps3->JEDECRESET);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ROUNDTRIPMATCH: %u\nTLINECLKCAL: %u\nDCCPISERIALCAL: %u\nPHASECLKCAL: %u\n", TrainingSteps3->ROUNDTRIPMATCH, TrainingSteps3->TLINECLKCAL,  TrainingSteps3->DCCPISERIALCAL, TrainingSteps3->PHASECLKCAL);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WCKPADDCCCAL: %u\n",                                                         TrainingSteps3->WCKPADDCCCAL);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WCKPADDCCCAL: %u\nEMPHASIS: %u\nDIMMRXOFFSET: %u\n",                         TrainingSteps3->WCKPADDCCCAL,   TrainingSteps3->EMPHASIS,     TrainingSteps3->DIMMRXOFFSET);  
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MCREGOFFSET: %u\n", ExtInputs->MCREGOFFSET);
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DFETap1StepSize: %u\nDFETap2StepSize: %u\n", ExtInputs->DFETap1StepSize, ExtInputs->DFETap2StepSize);
@@ -2213,6 +2209,7 @@ MrcVersionCheck (
   if (Inputs->UcPayloadAddress == 0) {
     MRC_DEBUG_ASSERT (FALSE, Debug, "Green MRC payload not found!\n");
   }
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "UcPayloadAddress: 0x%08X\n", (UINT32) Inputs->UcPayloadAddress);
 
   // skip version check for Simics to bypass CI test-verified runs
   if (ExtInputs->SimicsFlag) {

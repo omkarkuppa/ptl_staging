@@ -45,8 +45,9 @@ SECTION .text
 ;
 ; MSRs
 ;
-%define IA32_MISC_ENABLE     0x1A0
-%define IA32_EFER_MSR        0xC0000080
+%define IA32_MISC_ENABLE       0x1A0
+%define IA32_EFER_MSR          0xC0000080
+%define MSR_IA32_TME_ACTIVATE  0x982
 ;
 ; MTRRs
 ;
@@ -341,13 +342,32 @@ LaunchBiosAcm_SaveNextMtrr:
     ;  MTRR_PHYS_MASK_HIGH = 00000000Fh  For 36 bit addressing
     ;  MTRR_PHYS_MASK_HIGH = 0000000FFh  For 40 bit addressing
     ;
-    mov     eax, 80000008h            ; Address sizes leaf
+    xor     eax, eax                    ; EAX = 0 cpuid instruction to check number of supported leaf instructions
+    xor     esi, esi
     cpuid
-    sub     al, 32
+    cmp     al, 7h                      ; Check if sub lead 7 is supported
+    jb      lbl
+    xor     ecx, ecx
+    mov     eax, 7h                     ; EAX = 7, cpuid instructions for structured extended feature flags
+    cpuid
+    test    ecx, 2000h                  ; ECX:BIT13 => 1, TME supported MSR 0x981 & 0x982 accessible
+    jz      lbl                         ; ECX:BIT13 => 0, TME not enabled
+    mov     rcx, MSR_IA32_TME_ACTIVATE
+    rdmsr
+    test    al, BIT1                    ; MSR 982:BIT1 =1 => TME enable bit  AND with BIT1 - TME_EN Bit
+    jZ      lbl                         ; MSR 982:BIT1 =0 = > TME not enabled
+    and     edx, 0Fh                    ; BIT[35:32] = # keyId bits allocated for MkTmeKeyIdBits and TdxKeyIdBits
+    mov     esi, edx
+lbl:
+    mov     eax, 80000008h              ; Address sizes leaf
+    cpuid
+    add     esi, 32
+    mov     ebx, esi
+    sub     al, bl                      ; xxxx xxxx - 10 0000
     movzx   eax, al
-    xor     rsi, rsi
+    xor     esi, esi
     bts     esi, eax
-    dec     esi                       ; esi <- MTRR_PHYS_MASK_HIGH
+    dec     esi                         ; esi <- MTRR_PHYS_MASK_HIGH
     movd    MTRR_PHYS_MASK_HIGH, esi
 
     ;

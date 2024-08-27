@@ -876,11 +876,6 @@ MrcGetMcConfigGroupLimits (
       Max = MC0_MAD_DRAM_HASH_0_bg0hash_MAX;
       break;
 
-    case GsmScPbrEcsRefabEnable:
-      Min = MC0_CH0_CR_SC_PBR_ECS_REFab_Enable_MIN;
-      Max = MC0_CH0_CR_SC_PBR_ECS_REFab_Enable_MAX;
-      break;
-
     case GsmScPbrEcsRefabPeriod:
       Min = MC0_CH0_CR_SC_PBR_ECS_REFab_Period_MIN;
       Max = MC0_CH0_CR_SC_PBR_ECS_REFab_Period_MAX;
@@ -891,6 +886,12 @@ MrcGetMcConfigGroupLimits (
       Max = MC0_CH0_CR_SPID_LOW_POWER_CTL_selfrefresh_length_MAX;
       break;
 
+    case GsmMccMcMntsSpareRw:
+      Min = MC0_CH0_CR_MCMNTS_SPARE_Spare_RW_MIN;
+      Max = MC0_CH0_CR_MCMNTS_SPARE_Spare_RW_MAX;
+      break;
+
+    case GsmScPbrEcsRefabEnable:
     case GsmMccEnSrxWrRetraining:
     case GsmMccEnWrRetraining:
     case GsmMccEnRdRetraining:
@@ -925,7 +926,6 @@ MrcGetMcConfigGroupLimits (
     case GsmMccPureSrx:
     case GsmMccMcSrx:
     case GsmMccEnRefTypeDisplay:
-    case GsmMcctRefiPulseStaggerDis:
     case GsmMccPbrDis:
     case GsmMccRrdValidTrigger:
     case GsmMccRrdValidOverflow:

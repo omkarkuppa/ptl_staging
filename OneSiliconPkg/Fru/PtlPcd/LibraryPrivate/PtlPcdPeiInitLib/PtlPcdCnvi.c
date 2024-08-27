@@ -256,7 +256,6 @@ PtlPcdCnviBtCore (
   DEBUG ((DEBUG_INFO, "%a () - Start\n", __FUNCTION__));
 
   CnviConfig = CnviHandle->Config;
-
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "GpioServices don't get successfully\n"));

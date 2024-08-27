@@ -113,6 +113,9 @@ SetVoltageFrequencyItem (
   /// Write the v/f Settings to the OC Mailbox
   ///
   Status = OcMailboxWrite (VfMsg.Interface.InterfaceData, VfMsg.Data, MailboxStatus);
+  if (Status != EFI_SUCCESS) {
+      DEBUG ((DEBUG_ERROR, "(OC) Mailbox Write command failed. MailboxStatus = %r \n", MailboxStatus));
+  }
 
   return Status;
 }

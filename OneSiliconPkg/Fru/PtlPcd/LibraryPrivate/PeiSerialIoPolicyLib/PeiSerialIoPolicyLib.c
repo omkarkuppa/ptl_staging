@@ -23,7 +23,6 @@
 #include <Library/ConfigBlockLib.h>
 #include <Library/PchInfoLib.h>
 #include <Library/SocInfoLib.h>
-#include <Library/SerialIoUartDebugPropertyPcdLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Ppi/SiPolicy.h>
 #include <SerialIoConfig.h>
@@ -38,13 +37,9 @@ PtlPcdSerialIoLoadConfigDefault (
   IN VOID          *ConfigBlockPointer
   )
 {
-  UINT8                  Index;
-  UINT8                  CsIndex;
-  SERIAL_IO_CONFIG       *SerialIoConfig;
-  SERIAL_IO_UART_CONFIG  UartDeviceConfig;
-  UINT8                  SerialIoUartNumber;
-
-  ZeroMem (&UartDeviceConfig, sizeof (SERIAL_IO_UART_CONFIG));
+  UINT8                    Index;
+  UINT8                    CsIndex;
+  SERIAL_IO_CONFIG         *SerialIoConfig;
   SerialIoConfig = ConfigBlockPointer;
 
   DEBUG ((DEBUG_INFO, "SerialIoConfig->Header.GuidHob.Name = %g\n", &SerialIoConfig->Header.GuidHob.Name));
@@ -60,32 +55,6 @@ PtlPcdSerialIoLoadConfigDefault (
 
   for (Index = 0; Index < GetMaxI2cInterfacesNum (); Index++) {
     SerialIoConfig->I2cDeviceConfig[Index].Mode = SerialIoI2cPci;
-  }
-
-  for (Index = 0; Index < GetMaxUartInterfacesNum (); Index++) {
-    if (Index == 0) {
-      SerialIoConfig->UartDeviceConfig[Index].Mode                = SerialIoUartHidden;
-    } else {
-      SerialIoConfig->UartDeviceConfig[Index].Mode                = SerialIoUartDisabled;
-    }
-    SerialIoConfig->UartDeviceConfig[Index].DBG2                = FALSE;
-    SerialIoConfig->UartDeviceConfig[Index].DmaEnable           = TRUE;
-    SerialIoConfig->UartDeviceConfig[Index].Attributes.BaudRate = 115200;
-    SerialIoConfig->UartDeviceConfig[Index].Attributes.Parity   = 1;
-    SerialIoConfig->UartDeviceConfig[Index].Attributes.DataBits = 8;
-    SerialIoConfig->UartDeviceConfig[Index].Attributes.StopBits = 1;
-    SerialIoConfig->UartDeviceConfig[Index].Attributes.AutoFlow = 0;
-    SerialIoConfig->UartDeviceConfig[Index].PowerGating         = SerialIoUartPgAuto;
-  }
-
-  if (SerialIoUartDebugPcdGetDebugEnable () > 0) {
-    SerialIoUartDebugPcdGetDeviceConfig (&UartDeviceConfig, &SerialIoUartNumber);
-    SerialIoConfig->UartDeviceConfig[SerialIoUartNumber].Mode                = UartDeviceConfig.Mode;
-    SerialIoConfig->UartDeviceConfig[SerialIoUartNumber].Attributes.BaudRate = UartDeviceConfig.Attributes.BaudRate;
-    SerialIoConfig->UartDeviceConfig[SerialIoUartNumber].Attributes.Parity   = UartDeviceConfig.Attributes.Parity;
-    SerialIoConfig->UartDeviceConfig[SerialIoUartNumber].Attributes.DataBits = UartDeviceConfig.Attributes.DataBits;
-    SerialIoConfig->UartDeviceConfig[SerialIoUartNumber].Attributes.StopBits = UartDeviceConfig.Attributes.StopBits;
-    SerialIoConfig->UartDeviceConfig[SerialIoUartNumber].Attributes.AutoFlow = UartDeviceConfig.Attributes.AutoFlow;
   }
 
   for (Index = 0; Index < GetMaxI3cInterfacesNum (); Index++) {

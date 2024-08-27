@@ -226,8 +226,6 @@ MrcDimmDFETraining (
   IN MrcParameters *const MrcData
   );
 
-
-
 /**
   DIMM DFE training for LPDDR5 / DDR5
 
@@ -435,7 +433,7 @@ UpdateOptParamOffset (
   IN     const UINT8          Byte,
   IN     const UINT8          Bit,
   IN           UINT8          OptParam,
-  IN           INT32          Off,
+  IN           INT16          Off,
   IN     const UINT8          UpdateHost
   );
 
@@ -1349,6 +1347,41 @@ DimmOdtTrainingLP5(
 **/
 MrcStatus
 DimmOdtTrainingDDR5(
+  IN MrcParameters* const MrcData
+  );
+
+/**
+  This function implements Lpddr5 DimmRx Offset Calibration training.
+
+  @param[in] MrcData - Include all MRC global data.
+  
+  @retval MrcStatus - If it succeeds return mrcSuccess
+**/
+MrcStatus
+MrcDimmRxOffsetCalibration(
+  IN MrcParameters* const MrcData
+  );
+/**
+  This function implements RttPark 1D only training for Ddr5
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] OptParam - RttPark, DQS_Rtt_Park or any similar.
+
+**/
+MrcStatus
+Ddr5RttPark1D (
+  IN MrcParameters* const MrcData,
+  IN UINT8          OptParam
+  );
+
+/**
+  This function implements RttWr vs NT_Rtt only training for Ddr5
+
+  @param[in] MrcData - Include all MRC global data.
+
+**/
+MrcStatus
+Ddr5RttWr_RttNT_1dpc (
   IN MrcParameters* const MrcData
   );
 #endif // _MrcCrosser_h_

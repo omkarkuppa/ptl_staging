@@ -26,9 +26,9 @@
   LIBRARY_CLASS                  = SerialIoUartDebugHelperLib
 
 [LibraryClasses]
-  SerialIoUartLib
+  LpssUartLib
+  LpssUartDebugPropertyPcdLib
   SerialIoAccessLib
-  SerialIoUartDebugPropertyLib
   BaseMemoryLib
 
 [Packages]

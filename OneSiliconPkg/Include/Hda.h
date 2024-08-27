@@ -70,6 +70,20 @@ typedef enum {
 } HDAUDIO_SNDW_MULTILANE_SELECT;
 
 typedef enum {
+  HdaSndwDataOnDelay3ClockPeriods = 0,
+  HdaSndwDataOnDelay4ClockPeriods = 1,
+  HdaSndwDataOnDelayInvalid
+} HDAUDIO_SNDW_DATA_ON_DELAY;
+
+typedef enum {
+  HdaSndwDataOnActiveIntervalSelect3ClockPeriods  = 0,
+  HdaSndwDataOnActiveIntervalSelect4ClockPeriods  = 1,
+  HdaSndwDataOnActiveIntervalSelect5ClockPeriods  = 2,
+  HdaSndwDataOnActiveIntervalSelect6ClockPeriods =  3,
+  HdaSndwDataOnActiveIntervalSelectInvalid
+} HDAUDIO_SNDW_DATA_ON_ACTIVE_INTERVAL_SELECT;
+
+typedef enum {
   HdaNoMicrophonePrivacySupport  = 0,
   HdaHwManagedMicrophonePrivacy  = 1,
   HdaFwManagedMicrophonePrivacy  = 2,

@@ -926,6 +926,25 @@ MrcMptuExist (
   );
 
 /**
+  Determine if the partition exists with the current channel population.
+
+  @param[in]  MrcData      - Pointer to global MRC data.
+  @param[in]  PartType     - The partition type to look up.
+  @param[in]  PartInstance - The partition instance to look up.
+  @param[in]  PartChannel  - The partition channel to look up. Only used by the Data
+                             Partitions as there are two "bytes" in 1 Data Instance.
+
+  @return whether partition exists or not.
+**/
+BOOLEAN
+MrcGetPartitionExists (
+  IN     MrcParameters      *MrcData,
+  IN     PARTITION_TYPE     PartType,
+  IN     UINT32             PartInstance,
+  IN     UINT32             PartChannel
+  );
+
+/**
   This function disable channel parameters.
   After this function the MRC don't use with the channel.
 
@@ -3338,7 +3357,6 @@ GetNtRankSelection (
    DDRPHY_MISC_PMA_SAUG_CR_PMCFG.PChannelEn     = 1 (0 for TC)
    PMA_MCMISCSSAUG_CR_PMMESSAGE.SkipRestoreCR   = 1
    PMA_MCMISCSSAUG_CR_PMMESSAGE.SkipRetentionCR = 1
-   DDRPHY_MISC_SAUG_CR_PHYPMOVRD.VccClkFFCRWait = 0
   Set the following bit right after PLL is locked
    SAXG_Enable
    and poll for saxgpwrgood
@@ -4024,16 +4042,6 @@ MrcIsDramEmphasisSupported(
 );
 
 /**
-  Increase TAT timing by 1tCK.
-
-  @param[in] TatPtr - pointer for the timing to increase.
- */
-VOID
-MrctRdRdIncrease (
-  IN UINT32                   *TatPtr
-);
-
-/**
   This function returns the scope of the group type
 
   @param[in] MrcData - Include all MRC global data.
@@ -4060,6 +4068,20 @@ MrcSetFailingChannelBitMask (
   IN      UINT32        const   Controller,
   IN      UINT32        const   Channel,
   IN      UINT32        const   Dimm
+  );
+
+/**
+  This function sets the bit of InternalClocksOn in DataControl0 struct.
+
+  @param[in out] DataControl0  - Pointer to DATA0CH0_CR_DDRCRDATACONTROL0_STRUCT.
+  @param[in]     Enable        - Bit value.
+
+  @retval mrcSuccess - If Write was successful
+**/
+MrcStatus
+MrcSetInternalClocksOn (
+  IN OUT DATA0CH0_CR_DDRCRDATACONTROL0_STRUCT *DataControl0,
+  IN BOOLEAN Enable
   );
 
 #endif //_MrcCommon_h_

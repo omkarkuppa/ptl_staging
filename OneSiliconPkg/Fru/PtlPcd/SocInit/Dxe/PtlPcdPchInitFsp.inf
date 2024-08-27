@@ -64,6 +64,7 @@ LpssI2cPrivateLib
 LpssControllerInfoLib
 LpssI2cSocLib
 P2sbPrivateLib
+GpioV2AccessLib
 
 
 [Packages]

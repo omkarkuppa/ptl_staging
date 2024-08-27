@@ -50,6 +50,7 @@
 #include <IGpuDataHob.h>
 #include <Library/TdxFruLib.h>
 #include <Library/TdxDataHob.h>
+#include <Library/MemorySubSystemInfoLib.h>
 
 
 //
@@ -372,8 +373,8 @@ SetNocImrExclusion (
   TraceHubDataHob        = NULL;
   TelemetryPreMemConfig  = NULL;
   TdxDataHobPtr          = NULL;
-  SizeAbove4Gb = 0;
-  UpperBase             = 0;
+  SizeAbove4Gb           = 0;
+  UpperBase              = 0;
 
   DEBUG ((DEBUG_INFO, "SetNocImrExclusion Start\n"));
 
@@ -443,6 +444,7 @@ SetNocImrExclusion (
 
   if ((IsTdxSupported () == TRUE) && (TdxEnabled == TRUE) && (TotalPhysicalMemorySize > 0x1000)) {
     SizeAbove4Gb += LShiftU64((UINT64)SeamrrSize, 20);
+    SizeAbove4Gb = NaturalAlignment (SizeAbove4Gb, SIZE_32MB);
   }
   LimitAbove4Gb = BaseAbove4Gb + SizeAbove4Gb;
 

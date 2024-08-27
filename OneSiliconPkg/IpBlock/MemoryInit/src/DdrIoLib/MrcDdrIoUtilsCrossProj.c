@@ -42,6 +42,19 @@ const char *GlobalCompOffsetStr[TGlobalCompOffsetMax] = {
 const INT8 DdrioChDelta[MAX_SYS_CHANNEL] = {0, 0, -1, -1, -2, -2, -1, -1};
 const INT8 DdrioChDeltaCccIL[MAX_SYS_CHANNEL] = {0, 0, 0, 0, -1, -1, -1, -1};
 
+static const UINT32 DataPartitionToLogicalCh[MrcPartitionTypeMax][MRC_DATA_MOBILE_NUM * MRC_DATA_CH_NUM] = {
+// D0Ch0 D0Ch1 D1Ch0 D1Ch1 D2Ch0 D2Ch1 D3Ch0 D3Ch1 D4Ch0 D4Ch1 D5Ch0 D5Ch1 D6Ch0 D6Ch1 D7Ch0 D7Ch1
+  {0,    0,    0,    0,    1,    1,    1,    1,    2,    2,    2,    2,    3,    3,    3,    3},  // DDR5 NIL
+  {0,    1,    0,    1,    2,    3,    2,    3,    4,    5,    4,    5,    6,    7,    6,    7},  // LPDDR5 NIL
+  {0,    1,    0,    1,    0,    1,    0,    1,    2,    3,    2,    3,    2,    3,    2,    3}   // DDR5 IL
+};
+
+static const UINT32 CccPartitionToLogicalCh[MrcPartitionTypeMax][MRC_CCC_NUM] = {
+// CCC0 CCC1 CCC2 CCC3 CCC4 CCC5 CCC6 CCC7
+  {0,   0,   1,   1,   2,   2,   3,   3}, // DDR5 NIL
+  {0,   1,   2,   3,   4,   5,   6,   7}, // LPDDR5 NIL
+  {0,   1,   0,   1,   2,   3,   2,   3}  // DDR5 IL
+};
 
 /**
   This function calculates Guardband for drift in Rd DQS timing over time
@@ -192,109 +205,6 @@ WrappedForceRcomp (
 }
 
 /**
-  This function sets DDRIO IP Version, Derivative, Segment, Stepping based on DDRPHY_MISC_SAUG_CR_IPVERSION_REG.
-
-  @param[in]  MrcData     - Include all MRC global data.
-
-  @retval Nothing.
-**/
-MrcStatus
-MrcSetupDdrIoIpInfo (
-  OUT MrcParameters *const MrcData
-  )
-{
-  MrcInput             *Inputs;
-  MrcDebug             *Debug;
-  MrcStatus            Status;
-  MrcDdrIoIpVersion    *IpVersion;
-  BOOLEAN              IsIpSegmentS;
-  DDRPHY_MISC_SAUG_CR_IPVERSION_STRUCT   DdrMiscIpVersion;
-  const char           *StepStr;
-
-  Inputs          = &MrcData->Inputs;
-  Debug           = &MrcData->Outputs.Debug;
-  IpVersion       = &Inputs->DdrIoIpVersion;
-  Status          = mrcSuccess;
-  IsIpSegmentS    = FALSE;
-  StepStr         = NULL;
-
-  DdrMiscIpVersion.Data = MrcReadCR (MrcData, DDRPHY_MISC_SAUG_CR_IPVERSION_REG);
-  IpVersion->Bits.Version    = (UINT8)DdrMiscIpVersion.Bits.Version;
-  IpVersion->Bits.Derivative = (UINT8)DdrMiscIpVersion.Bits.Derivative;
-  IpVersion->Bits.Segment    = (UINT8)DdrMiscIpVersion.Bits.Segment;
-  IpVersion->Bits.Stepping   = (UINT8)DdrMiscIpVersion.Bits.Subversion;
-
-  if (IpVersion->Bits.Stepping > ipStepLast) {
-    IpVersion->Bits.Stepping = ipStepLast;
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "\n%s DDRIO IP: %s = %d\n", gWarnString, gMrcIpSteppingStr, ipStepLast);
-  }
-
-  if (IpVersion->Bits.Version != ipVerDdrIoLnlPtl) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "\n%s DDRIO IP: %s\n", gWarnString, gMrcIpVersionStr);
-      Status  = mrcFail;
-  }
-
-  switch (IpVersion->Bits.Segment) {
-    case ipSegDT_HALO:
-      Inputs->IsDdrIoDtHalo = TRUE;
-      IsIpSegmentS = TRUE;
-      switch (IpVersion->Bits.Stepping) {
-        default:
-        case ipStepA0:
-          Inputs->IsDdrIoDtA0 = TRUE;
-          StepStr = "A0";
-          break;
-      }
-      break;
-
-    case DDRIO_PTLPUH_IP_SEGMENT:
-      Inputs->IsDdrIoUlxUlt = TRUE;
-      IsIpSegmentS = FALSE;
-      switch (IpVersion->Bits.Stepping) {
-        case ipStepB0:
-          StepStr = "B0";
-          Inputs->IsDdrIoMbB0 = TRUE;
-          break;
-
-        default:
-        case ipStepA0:
-          StepStr = "A0";
-          Inputs->IsDdrIoMbA0 = TRUE;
-          break;
-      }
-      break;
-
-    default:
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "\n%s DDRIO IP: %s\n", gWarnString, gMrcIpSegmentStr);
-      if (Inputs->ExtInputs.Ptr->SimicsFlag)
-      {
-        StepStr = "A0";
-        Inputs->IsDdrIoMbA0 = TRUE;
-      }
-      else
-      {
-        Status  = mrcFail;
-      }
-      break;
-  }
-
-  if (Status == mrcSuccess) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s%s\n", "PantherLake-", IsIpSegmentS ? "S" : "M" );
-    MRC_DEBUG_MSG (
-      Debug,
-      MSG_LEVEL_NOTE,
-      "\nPHY IP Version: %d.%d.%d %s\n",
-      IpVersion->Bits.Derivative,
-      IpVersion->Bits.Segment,
-      IpVersion->Bits.Version,
-      (StepStr == NULL) ? "Unknown" : StepStr
-    );
-  }
-
-  return Status;
-}
-
-/**
   Get the max CMD Groups per channel associated with the current memory technology
 
   @param[in] MrcData  - Pointer to global MRC data.
@@ -307,6 +217,25 @@ MrcGetCmdGroupMax (
   )
 {
   return (MrcData->Outputs.IsDdr5) ? MRC_DDR5_CMD_GRP_MAX: 1;
+}
+
+/**
+  This function gets the max partition number for DataShared partitions.
+
+  @param[in]  MrcData   - Pointer to global data.
+
+  @retval Correct number of data shared partitions based on ECC and Memory technology.
+**/
+UINT8
+GetDataSharedPartitionMax (
+  IN  MrcParameters *const  MrcData
+  )
+{
+  MrcOutput *Outputs;
+
+  Outputs = &MrcData->Outputs;
+
+  return (Outputs->IsDdr5 && Outputs->EccSupport) ? MRC_DATA_SHARED_NUM : MRC_DATA_MOBILE_NUM;
 }
 
 
@@ -470,79 +399,6 @@ FreqSwitchComp (
   MrcWriteCrMulticast (MrcData, DATASHARED_CR_DDRCRCOMPDQSDELAYCONTROL_REG, CompDqsDelayControl.Data);
 }
 
-
-/**
-  This routine computes the read/write fifo pointer delays
-
-  @param[in]  MrcData           - Pointer to MRC global data.
-  @param[in]  tCWL              - Write Latency for current channel
-  @param[in]  Controller        - Current Controller
-  @param[in]  Channel           - Current Channel
-  @param[out] tCWL4TxDqFifoWrEn - Pointer to the write TX DQ fifo delay
-  @param[out] tCWL4TxDqFifoRdEn - Pointer to the read TX DQ fifo delay
-
-  @retval N/A.
-**/
-VOID
-MrcGetTxDqFifoDelay (
-  IN OUT MrcParameters *const MrcData,
-  IN     UINT8         tCWL,
-  IN     UINT8         Controller,
-  IN     UINT8         Channel,
-  OUT    UINT32        *tCWL4TxDqFifoWrEn,
-  OUT    UINT32        *tCWL4TxDqFifoRdEn
-  )
-{
-  MrcOutput  *Outputs;
-  MrcInput   *Inputs;
-  UINT8      Index;
-  UINT8      WrPreambleT;
-  UINT8      WrPreambleLow;
-  UINT8      WrPreambleVar;
-  BOOLEAN    IsGear4;
-  BOOLEAN    IsLpddr;
-
-  Outputs = &MrcData->Outputs;
-  Inputs = &MrcData->Inputs;
-  IsLpddr = Outputs->IsLpddr;
-  IsGear4 = (Outputs->GearMode) ? 1 : 0;
-  MrcGetPrePostamble (MrcData, GetTimingWrite, &WrPreambleT, &WrPreambleLow, NULL);
-
-  *tCWL4TxDqFifoWrEn = tCWL;  // @todo_lnl should also include a programmable delay from Dunit
-  *tCWL4TxDqFifoRdEn = tCWL;
-
-  // tcwl4txdqfifowren = ((tech==DDRPHY_LPDDR5) ? ((gears==2 ? ((cwls*4)-'h8) : ((cwls*2)-8)) -4):
-  //                       ((gears==2)?(cwls-6):(cwls/2-6))-4)
-  // tcwl4txdqfifowren = (tcwl4txdqfifowren) + (tcwl4txdqfifowren%2);
-  //
-  // wr_preamble = WrPreambleT + WrPreambleLow - 1
-  // tcwl4txdqfiforden = (tech==DDRPHY_LPDDR5) ? ((gears==2)? (Write_latency*4-7) : (write_latency*2-7)) :
-  //                      ((gears==2) ? ((write_latency-'h7)-(wr_preamble) ): (write_latency/2-'h7-((wr_preamble+1)/2) ));
-  //
-  if (IsLpddr) {
-    Index = (Controller * MAX_CHANNEL) + Channel;
-    *tCWL4TxDqFifoWrEn *= (IsGear4 ? 2 : 4);
-    *tCWL4TxDqFifoWrEn -= 12;
-
-    *tCWL4TxDqFifoRdEn *= (IsGear4 ? 2 : 4);
-    *tCWL4TxDqFifoRdEn -= 7;
-
-    *tCWL4TxDqFifoRdEn += ((Index >= 6) ? 1 : 0);
-  } else { // Ddr5
-    Index = (Controller * MAX_CHANNEL) + (Channel * 2);
-    *tCWL4TxDqFifoWrEn /= (IsGear4 ? 2 : 1);
-    *tCWL4TxDqFifoWrEn -= 6;
-    *tCWL4TxDqFifoWrEn -= 4;
-
-    WrPreambleVar = WrPreambleT + WrPreambleLow - 1;
-    *tCWL4TxDqFifoRdEn /= (IsGear4 ? 2 : 1);
-    *tCWL4TxDqFifoRdEn -= 7;
-    *tCWL4TxDqFifoRdEn -= IsGear4 ? ((WrPreambleVar + 1) / 2) : WrPreambleVar;
-    *tCWL4TxDqFifoRdEn += (Outputs->Frequency == f3200) ? (IsGear4 ? 1 : 0) : 0;
-  }
-  *tCWL4TxDqFifoWrEn += *tCWL4TxDqFifoWrEn % 2;
-  *tCWL4TxDqFifoRdEn += Inputs->ExtInputs.Ptr->CccPinsInterleaved ?  DdrioChDeltaCccIL[Index] : DdrioChDelta[Index];
-}
 
 /**
   Display MR value from the host struct
@@ -1055,3 +911,119 @@ DdrIoCs2NEnableOrDisable (
   }
 }
 
+/**
+  This function returns CCC Partition configuration (LP5 / DDR5 NIL / DDR5 IL).
+
+  @param[in] MrcData - MRC global data.
+
+  @retval CCC partition type.
+**/
+MRC_PARTITION_TYPE
+MrcGetCccPartitionConfiguration (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcInput  *Inputs;
+  MrcOutput *Outputs;
+  MRC_PARTITION_TYPE PartitionType;
+
+  Inputs  = &MrcData->Inputs;
+  Outputs = &MrcData->Outputs;
+
+  if (Inputs->ExtInputs.Ptr->CccPinsInterleaved) {
+    PartitionType = Ddr5Il;
+  } else if (Outputs->IsLpddr5) {
+    PartitionType = Lpddr5Nil;
+  } else {
+    PartitionType = Ddr5Nil;
+  }
+  return PartitionType;
+}
+
+/**
+  Return the channel mask associated with the input Partition type and the input Partition Instance.
+
+  @param[in]  MrcData      - Pointer to global MRC data.
+  @param[in]  PartType     - The partition type to look up.
+  @param[in]  PartInstance - The partition instance to look up.
+  @param[in]  PartChannel  - The partition channel to look up. Only used by the Data
+                             Partitions as there are two "bytes" in 1 Data Instance.
+
+  @return channel mask output buffer.
+**/
+UINT32
+MrcGetPartition2ChMask (
+  IN     MrcParameters      *MrcData,
+  IN     PARTITION_TYPE     PartType,
+  IN     UINT32             PartInstance,
+  IN     UINT32             PartChannel
+  )
+{
+  MrcOutput    *Outputs;
+  MrcInput     *Inputs;
+  UINT32       Partition2Ch;
+  UINT32 const *PartToLogicalCh;
+  BOOLEAN      IsLpddr5;
+  MRC_PARTITION_TYPE CccPartitionType;
+  MrcDebug      *Debug;
+
+  Outputs = &MrcData->Outputs;
+  Inputs  = &MrcData->Inputs;
+  Debug   = &Outputs->Debug;
+
+  IsLpddr5 = Outputs->IsLpddr5;
+
+  switch (PartType) {
+    case PartitionData:
+      if (Inputs->ExtInputs.Ptr->DqPinsInterleaved) {
+        PartToLogicalCh = DataPartitionToLogicalCh[Ddr5Il];
+      } else {
+        if (IsLpddr5) {
+          PartToLogicalCh = DataPartitionToLogicalCh[Lpddr5Nil];
+        } else {
+          PartToLogicalCh = DataPartitionToLogicalCh[Ddr5Nil];
+        }
+      }
+      Partition2Ch = 1 << PartToLogicalCh[(PartInstance * MRC_DATA_CH_NUM) + PartChannel];
+      break;
+
+    case PartitionCcc:
+      CccPartitionType = MrcGetCccPartitionConfiguration (MrcData);
+      PartToLogicalCh = CccPartitionToLogicalCh[CccPartitionType];
+      Partition2Ch = 1 << PartToLogicalCh[PartInstance];
+      break;
+
+    case PartitionDataShared:
+      if (Inputs->ExtInputs.Ptr->DqPinsInterleaved) {
+        Partition2Ch = 3 << ((PartInstance / 4) + ((PartInstance > 3) ? 1 : 0));
+      }
+      else {
+        if (IsLpddr5) {
+          Partition2Ch = 3 << (PartInstance & ~MRC_BIT0);
+        } else {
+          Partition2Ch = 1 << (PartInstance / 2);
+        }
+      }
+      break;
+
+    case PartitionCccShared:
+      CccPartitionType =  MrcGetCccPartitionConfiguration (MrcData);
+      if (CccPartitionType == Ddr5Il) {
+        Partition2Ch = 3 << (PartInstance & ~MRC_BIT0);
+      } else {
+        if (IsLpddr5) {
+          Partition2Ch = 3 << (PartInstance * 2);
+        } else {
+          Partition2Ch = 1 << PartInstance;
+        }
+      }
+      break;
+
+    default:
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Unexpected partition type: %d\n", PartType);
+      Partition2Ch = 0;
+      break;
+  }
+
+  return Partition2Ch;
+}

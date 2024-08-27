@@ -32,4 +32,18 @@ MrcMcLpmodeSelfRefreshLength (
   IN  MrcParameters *const  MrcData
   );
 
+/**
+  Disable Full Rank Block if TRR is used and DRFM is not enabled.
+
+  @param[in] MrcData      - The MRC general data
+  @param[in] Controller   - MC index
+  @param[in] Channel      - Channel index
+**/
+VOID
+MrcFullRankBlockOptimization (
+  IN MrcParameters *const MrcData,
+  IN UINT8                Controller,
+  IN UINT8                Channel
+  );
+
 #endif //_MrcMcSiSpecific_h_

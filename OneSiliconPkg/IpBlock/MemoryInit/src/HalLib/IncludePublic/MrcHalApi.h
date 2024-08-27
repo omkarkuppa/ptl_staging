@@ -544,7 +544,7 @@ UINT8
 MrcSmbusRead (
   IN  MrcParameters *const  MrcData,
   IN  UINT32         const  Address,
-  OUT UINT32        *const  Status
+  OUT RETURN_STATUS *const  Status
   );
 
 /**
@@ -561,7 +561,21 @@ MrcSmbusWrite (
   IN  MrcParameters *const  MrcData,
   IN  UINT32         const  Address,
   IN  UINT8                 Value,
-  OUT UINT32        *const  Status
+  OUT RETURN_STATUS *const  Status
+  );
+
+/**
+  Function to translate Bit/Lane number using internal PhyDqSwizzling if needed.
+
+  @param[in]  Strobe - Dqs data group within the rank (0-based).
+  @param[in]  Bit    - Bit value within the data group (0-based).
+
+  @retval Translated value
+**/
+UINT32
+TranslateDqBitThroughPhyDqSwizzling (
+  IN UINT32 Strobe,
+  IN UINT32 Bit
   );
 
 #endif // _MrcHalApi_h_

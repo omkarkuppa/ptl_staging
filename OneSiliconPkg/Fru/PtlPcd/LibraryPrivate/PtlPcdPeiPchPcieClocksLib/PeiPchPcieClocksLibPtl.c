@@ -23,6 +23,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/DebugLib.h>
+#include <Library/PcdLib.h>
 #include <Register/PchRegsClk.h>
 #include <Library/PeiPchPcieClocksLib.h>
 #include <Library/P2SbSidebandAccessLib.h>
@@ -84,7 +85,7 @@ DisableClockBufferProgramming (
     FALSE,
     &IsClkAccess
     );
-  IsClkAccess.Access.AndThenOr32 (&IsClkAccess.Access, R_ICLK_PCR_BIOS_BUFFEN, ~(BIT0 << ClockNumber), 0);
+  IsClkAccess.Access.AndThenOr32 (&IsClkAccess.Access, R_ISCLK_PCR_BIOS_BUFFEN_H, ~(BIT0 << ClockNumber), 0);
 }
 
 /**

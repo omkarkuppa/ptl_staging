@@ -54,6 +54,16 @@ MrcRhPrevention (
   );
 
 /**
+  Configure Row Hammer Ptrr Lfsr, should be called for any boot mode
+  
+  @param[in] MrcData - The MRC general data.
+**/
+VOID
+MrcRhPtrrLfsrConfig (
+  IN MrcParameters *const MrcData
+  );
+
+/**
   Configure Pseudo Targeted Row Refresh (pTRR) on the given controller / channel
 
    @param[in]  MrcData      - Pointer to global MRC data.

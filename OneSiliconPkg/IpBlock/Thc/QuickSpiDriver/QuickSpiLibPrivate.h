@@ -423,7 +423,8 @@ QuickSpiLibConfigure (
   IN UINT8   SioWriteOpCode,
   IN UINT8   DioWriteOpCode,
   IN UINT8   QioWriteOpCode,
-  IN UINT8   QpioWriteOpCode
+  IN UINT8   QpioWriteOpCode,
+  IN UINT8   LimitPacketSize
   );
 
 /**

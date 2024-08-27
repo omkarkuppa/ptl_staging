@@ -70,6 +70,8 @@ UpdatePeiTbtPolicyFromPcd (
     PeiDTbtConfig->DTbtControllerConfig[Index].DTbtControllerEn = 1;
     PeiDTbtConfig->DTbtControllerConfig[Index].RpType           = DtbtBoardConfigTable->DTbtBoardConfig[Index].DTbtPcieRpType;
     PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpNumber     = DtbtBoardConfigTable->DTbtBoardConfig[Index].DTbtPcieRpSocketNumber;
+    PeiDTbtConfig->DTbtControllerConfig[Index].RpAcpiNumber     = DtbtBoardConfigTable->DTbtBoardConfig[Index].DTbtPcieRpSocketNumber;
+    PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpBus        = DtbtBoardConfigTable->DTbtBoardConfig[Index].DTbtPcieRpBusNumber;
     PeiDTbtConfig->DTbtControllerConfig[Index].WakeGpioPin      = DtbtBoardConfigTable->DTbtBoardConfig[Index].DTbtWakeGpioPin;
     PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpMps        = DtbtBoardConfigTable->DTbtBoardConfig[Index].DTbtPcieRpMps;
 

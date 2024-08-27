@@ -44,7 +44,7 @@
               EFI_NOT_FOUND         - Didn't find SPI Config Block
 **/
 EFI_STATUS
-GetSpiHandle (
+PtlPcdGetSpiHandle (
   IN OUT  SPI_HANDLE       *SpiHandle,
   IN      SI_POLICY_PPI    *SiPolicy
   )
@@ -90,34 +90,4 @@ GetSpiHandle (
   }
 
   return EFI_SUCCESS;
-}
-
-/**
-  Clears BIOS Write Protect Disable bit
-**/
-VOID
-SocSpiClearBiosWriteProtectDisable (
-  VOID
-  )
-{
-  SPI_HANDLE    SpiHandle;
-  EFI_STATUS    Status;
-
-  Status = GetSpiHandle (&SpiHandle, NULL);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "%a - cannot get SPI controller handle, aborting\n",
-      __FUNCTION__
-      ));
-    return;
-  }
-
-  //
-  // Disable BIOSWE bit to protect BIOS
-  //
-  PciSegmentAnd8 (
-    SpiHandle.PciCfgBase + R_SPI_CFG_BIOS_SPI_BC,
-    (UINT8) ~B_SPI_CFG_BIOS_SPI_BC_WPD
-    );
 }

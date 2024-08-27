@@ -690,10 +690,6 @@ MrcGetMcConfigHash (
     HashPtr->Data = MC0_CH0_CR_MC_REFRESH_STAGGER_En_Ref_Type_Display_HSH;
     break;
 
-  case GsmMcctRefiPulseStaggerDis:
-    HashPtr->Data = MC0_CH0_CR_MC_REFRESH_STAGGER_Trefipulse_Stagger_Disable_HSH;
-    break;
-
   case GsmMccHashMask:
     HashPtr->Data = MC0_MAD_CHANNEL_HASH_HASH_MASK_HSH;
     break;
@@ -1199,6 +1195,10 @@ MrcGetMcConfigHash (
 
     case GsmMccEccCorrectionDisable:
       HashPtr->Data = MC0_CH0_CR_ECC_DFT_ECC_correction_disable_HSH;
+      break;
+
+    case GsmMccMcMntsSpareRw:
+      HashPtr->Data = MC0_CH0_CR_MCMNTS_SPARE_Spare_RW_HSH;
       break;
 
     default:

@@ -23,6 +23,7 @@
 #include <Base.h>
 #include <Uefi/UefiBaseType.h>
 #include <Library/BaseLib.h>
+#include <Library/PcdLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PcdGpioTopologyLib.h>
@@ -74,7 +75,6 @@ SecGetNativePadByFunction (
     GpioInterface.ChipsetId                  = GPIOV2_PTL_PCD_CHIPSET_ID;
     GpioInterface.CommunitiesNum             = PtlPcdGpioGetCommunitiesNum ();
     GpioInterface.Communities                = PtlPcdGpioGetCommunities ();
-
   //
   // Iterate through all signals which are defined in *GpioV2PadData.c file
   //

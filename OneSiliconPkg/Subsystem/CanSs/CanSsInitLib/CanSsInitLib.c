@@ -69,6 +69,7 @@ CanConfigureInterrupts (
 
   @retval    EFI_SUCCESS            Initialization completed successfully
   @retval    EFI_INVALID_PARAMETER  Null pointer passed to the function
+  @retval    EFI_ABORTED            Controller number out of the range
 **/
 EFI_STATUS
 CanSubsystemInit (
@@ -98,6 +99,10 @@ CanSubsystemInit (
   Index = 0;
   while (Ctrl != NULL) {
     DEBUG ((DEBUG_INFO, "Initilize CAN Device %d/%d:\n", Index, Ctrl->CtrlIndex));
+    if (Index >= CanSubsystem->MaxCtrlNumber) {
+      DEBUG ((DEBUG_ERROR, "CanSubsystemInit: Controller number out of the range.\n"));
+      return EFI_ABORTED;
+    }
     CanSsPrintCtrlSettings (Ctrl);
     CanConfigureInterrupts (CanSubsystem->PcrAccess, Ctrl);
     Index++;

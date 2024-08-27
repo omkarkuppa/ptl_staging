@@ -50,7 +50,7 @@
 !endif
   OneClickRecoveryFeaturePkg/OneClickRecoveryFeaturePkg.dec
   PlatformSanitizeFeaturePkg/PlatformSanitizeFeaturePkg.dec
-  MemoryHealthInsightsFeaturePkg/MemoryHealthInsightsFeaturePkg.dec
+  MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
 
 [PcdsFeatureFlag]
   ## This PCD specified whether ACPI SDT protocol is installed.
@@ -96,8 +96,6 @@
 
   gPsrFeatureModuleTokenSpaceGuid.PcdPlatformServiceRecordSupport|FALSE
 
-  # Connectivity
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable|TRUE
   gCrashLogFeaturePkgTokenSpaceGuid.PcdCrashLogFeatureEnable|TRUE
 
   gVtioFeaturePkgTokenSpaceGuid.PcdVtioFeatureEnable|FALSE
@@ -495,9 +493,22 @@
   gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdOneClickRecoveryEnable|TRUE
   gOneClickRecoveryFeaturePkgTokenSpaceGuid.PcdWifiProfileSyncEnable|TRUE
 
-  # Memory Health Insights Feature Enablement PCD
-  gMemoryHealthInsightsFeaturePkgTokenSpaceGuid.PcdMhiEnabled|TRUE
-  gMemoryHealthInsightsFeaturePkgTokenSpaceGuid.PcdPprCapability|TRUE
+  # Memory Telemetry Feature Enablement PCD
+  gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled|TRUE
+  gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdPprCapability|TRUE
+
+  # Connectivity
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable     |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport   |TRUE
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable == TRUE
+  #
+  # Connectivity Advanced Feature Default Settings
+  #
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu         |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables        |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables     |TRUE
+!endif
 
   # PCD value to determine formset display location
   #
@@ -717,9 +728,3 @@
       0                      // BtIrqGpio
     }
   })}
-#
-# Connectivity Advanced Feature Default Settings
-#
-!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable == TRUE
-  !include CnvFeaturePkg/CnvFeaturePkgPcdInit.dsc
-!endif

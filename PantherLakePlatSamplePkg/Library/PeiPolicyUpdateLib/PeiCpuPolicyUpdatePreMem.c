@@ -42,6 +42,7 @@
 #include <PolicyUpdateMacro.h>
 #include <Library/PeiVrDomainLib.h>
 #include <Library/PayloadResiliencySupportLib.h>
+#include <Library/Tpm2CommandLib.h>
 
 #define GET_OCCUPIED_SIZE(ActualSize, Alignment) \
   ((ActualSize) + (((Alignment) - ((ActualSize) & ((Alignment) - 1))) & ((Alignment) - 1)))
@@ -384,15 +385,15 @@ BiosGuardHobInit (
 }
 
 /**
-  Get the BIOS Guard Module pointer.
+  Get the ACTM ACM Module pointer.
 
   @param[in, out] ModulePtr  - Input is a NULL pointer,
-                               and output points BIOS Guard module address if found.
-  @param[out]     ModuleSize - UINT32 Input Output the BIOS Guard module size
+                               and output points ACTM module address if found.
+  @param[out]     ModuleSize - UINT32 Input Output the ACTM module size
 
-  @retval EFI_SUCCESS        - BIOS Guard Module found.
-  @retval EFI_NOT_FOUND      - BIOS Guard Module size and/or Address equal to 0.
-  @retval Others             - BIOS Guard Module not found.
+  @retval EFI_SUCCESS        - ACTM ACM Module found.
+  @retval EFI_NOT_FOUND      - ACTM ACM Module size and/or Address equal to 0.
+  @retval Others             - ACTM ACM Module not found.
 **/
 EFI_STATUS
 UpdateTdxActmModulePtr (
@@ -513,11 +514,14 @@ UpdatePeiCpuPolicyPreMem (
   MSR_CORE_THREAD_COUNT_REGISTER  MsrCoreThreadCount;
   UINT16                          MaxNumVrs;
 
-  EFI_PHYSICAL_ADDRESS            ModulePtr;
-  UINT32                          ModuleSize;
   UINT8                           PowerSourceType;
   BOOLEAN                         IsAcPluggedIn;
   EFI_STATUS                      PowerSourceStatus;
+
+#if FixedPcdGetBool (PcdTdxEnable) == 1
+  EFI_PHYSICAL_ADDRESS            ModulePtr  = 0;
+  UINT32                          ModuleSize = 0; 
+#endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   UINT32                          MicrocodeBaseAddress;
@@ -534,8 +538,6 @@ UpdatePeiCpuPolicyPreMem (
   BiosSize                    = 0;
   BiosMemSizeInMb             = 0;
   BiosGuardToolsInterface     = FALSE;
-  ModulePtr                   = 0;
-  ModuleSize                  = 0;
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuSecurityPreMemConfigGuid, (VOID *) &CpuSecurityPreMemConfig);
   ASSERT_EFI_ERROR (Status);
@@ -601,15 +603,15 @@ UpdatePeiCpuPolicyPreMem (
   Status = PeiServicesGetBootMode (&BootMode);
   ASSERT_EFI_ERROR (Status);
 
-  //
-  // Update TDx Policy
-  //
-  COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TdxEnable, CpuSetup.TdxEnable);
-
-  //
-  // Get the ACTM address and ACTM Base and update the policy
-  //
   #if FixedPcdGetBool (PcdTdxEnable) == 1
+    //
+    // Update TDx Policy
+    //
+    COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TdxEnable, CpuSetup.TdxEnable);
+
+    //
+    // Get the ACTM address and ACTM Base and update the policy
+    //
     UpdateTdxActmModulePtr (&ModulePtr, &ModuleSize);
     COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TdxActmModuleAddr, ModulePtr);
     COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TdxActmModuleSize, ModuleSize);
@@ -648,9 +650,13 @@ UpdatePeiCpuPolicyPreMem (
   CreateSysG3StateHob ();
 
   //
-  // Check PWR FLR
+  // Check PWR FLR and clear it if it's set.
+  // This will be handled by ModularUsbCIoPei driver when Modular USBC IO is supported.
+  // The reason behind this is that ModularUsbCIoPei driver won't be able to detect G3
+  // when there is reset happened prior to the G3 detection in ModularUsbCIoPei driver
+  // during pre-mem.
   //
-  if (PmcIsPowerFailureDetected ()) {
+  if (((PcdGet64 (PcdPlatformModularUsbCIoConfig) == 0) || (BootMode == BOOT_ON_S3_RESUME)) && PmcIsPowerFailureDetected ()) {
     PmcClearPowerFailureStatus ();
   }
 
@@ -870,9 +876,8 @@ UpdatePeiCpuPolicyPreMem (
   // VR Acoustic Noise Mitigation
   //
   COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->AcousticNoiseMitigation, CpuSetup.AcousticNoiseMitigation);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->PreWake,                 CpuSetup.PreWake                );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->RampUp,                  CpuSetup.RampUp                 );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->RampDown,                CpuSetup.RampDown               );
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->PcoreHysteresisWindow,   CpuSetup.PcoreHysteresisWindow  );
+  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->EcoreHysteresisWindow,   CpuSetup.EcoreHysteresisWindow  );
 
   //
   // When overclocking is enabled, we need to ensure the VR defaults are

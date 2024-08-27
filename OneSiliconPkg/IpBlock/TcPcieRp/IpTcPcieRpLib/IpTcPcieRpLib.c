@@ -22,7 +22,7 @@
 
 #include <IpCsi.h>
 #include <IpWrapper.h>
-
+#include <IpWrapperCntxtInfoClient.h>
 #include <IpTcPcieRp.h>
 #include <Register/TcPcieRpRegs.h>
 #include "IpTcPcieRpPrivate.h"
@@ -562,10 +562,11 @@ IpTcPciePowerManagementInit (
 
   ///
   /// Optimized Buffer Flush/Fill Supported (OBFFS) 0x64  19:18 10b
+  /// 10-Bit Tag Completer Supported (PX10BTCS) 0x64  16 1
   /// LTR Mechanism Supported (LTRMS) 0x64  11 1
   ///
   Data32And = ~ (UINT32) (B_TC_PCIE_RP_CFG_DCAP2_OBFFS | B_TC_PCIE_RP_CFG_DCAP2_LTRMS);
-  Data32Or  = 0;
+  Data32Or  = B_TC_PCIE_RP_CFG_DCAP2_PX10BTCS;
   if (PcieRootPortPolicy->LtrEnable) {
     Data32Or |= B_TC_PCIE_RP_CFG_DCAP2_LTRMS;
   }
@@ -643,7 +644,8 @@ SIP15 PCI Express Root Port BIOS Requirement Rev 0.9
 **/
 void
 IpTcPciePowerGatingRegisterInit (
-  IP_WR_REG_CNTXT     CfgCntxt
+  IP_WR_REG_CNTXT     CfgCntxt,
+  TCSS_VER            TcssVersion
   )
 {
   UINT32  Data32And;
@@ -701,6 +703,9 @@ IpTcPciePowerGatingRegisterInit (
   ///
   Data32And = ~ ((UINT32) (B_TC_PCIE_RP_CFG_PCE_HAE | B_TC_PCIE_RP_CFG_PCE_SE));
   Data32Or = B_TC_PCIE_RP_CFG_PCE_PMCRE;
+  if (TcssVersion == TcssNewH) {
+    Data32Or |= B_TC_PCIE_RP_CFG_PCE_SE;
+  }
   Data32 = (UINT32) IpWrRegRead (CfgCntxt, R_TC_PCIE_RP_CFG_PCE, IpWrRegFlagSize8Bits);
   Data32 &= Data32And;
   Data32 |= Data32Or;
@@ -709,6 +714,11 @@ IpTcPciePowerGatingRegisterInit (
   Data32 = (UINT32) IpWrRegRead (CfgCntxt, R_TC_PCIE_RP_CFG_AECR1G3, IpWrRegFlagSize32Bits);
   Data32 |= B_TC_PCIE_RP_CFG_AECR1G3_DTCGCM;
   IpWrRegWrite (CfgCntxt, R_TC_PCIE_RP_CFG_AECR1G3, Data32, IpWrRegFlagSize32Bits);
+
+  /// Program TVM to 0x7F
+  Data32 = (UINT32) IpWrRegRead (CfgCntxt, R_TC_PCIE_RP_CFG_V0CTL, IpWrRegFlagSize32Bits);
+  Data32 |= B_TC_PCIE_RP_CFG_V0CTL_TVM;  // [7:1] = 0x7F
+  IpWrRegWrite (CfgCntxt, R_TC_PCIE_RP_CFG_V0CTL, Data32, IpWrRegFlagSize32Bits);
 
   ///
   /// Bank Enable Pulse Width (BEPW) 0x5F0  3:0 "0101"
@@ -740,6 +750,7 @@ IpTcPciePowerGatingRegisterInit (
   Data32Or = (0x06 << N_TC_PCIE_RP_CFG_ADVMCTRL_PMREQCWC)      |
              (0x5 << N_TC_PCIE_RP_CFG_ADVMCTRL_PMREQBLKPGRSPT) |
              B_TC_PCIE_RP_CFG_ADVMCTRL_G3STFER                 |
+             B_TC_PCIE_RP_CFG_ADVMCTRL_EIOSMASKRX              |
              B_TC_PCIE_RP_CFG_ADVMCTRL_EIOSDISDS               |
              B_TC_PCIE_RP_CFG_ADVMCTRL_INRXL0CTRL;
   RegVal = (UINT32) IpWrRegRead (CfgCntxt, R_TC_PCIE_RP_CFG_ADVMCTRL, IpWrRegFlagSize32Bits);
@@ -819,11 +830,12 @@ SIP15 PCI Express Root Port BIOS Requirement Rev 0.9
 void
 IpTcPciePortEarlyinit (
   IP_WR_REG_CNTXT       CfgCntxt,
-  IP_TC_PCIE_RP_CONFIG  *PcieRootPortPolicy
+  IP_TC_PCIE_RP_CONFIG  *PcieRootPortPolicy,
+  TCSS_VER              TcssVersion
   )
 {
   IpTcPciePowerManagementInit (CfgCntxt, PcieRootPortPolicy);
-  IpTcPciePowerGatingRegisterInit (CfgCntxt);
+  IpTcPciePowerGatingRegisterInit (CfgCntxt, TcssVersion);
   if (PcieRootPortPolicy->PtmEnabled) {
     IpTcPciePtmInit (CfgCntxt);
   }
@@ -887,7 +899,7 @@ IpTcPcieRpIpInit (
       ///
       /// Main PCIe Root Port initialization
       ///
-      IpTcPciePortEarlyinit (PciRootPort->PrimCfgAccess, &pInst->PciRootPortList->PcieRpConfig);
+      IpTcPciePortEarlyinit (PciRootPort->PrimCfgAccess, &pInst->PciRootPortList->PcieRpConfig, pInst->TcssVersion);
 
       RegVal = (UINT32)IpWrRegRead (PciRootPort->PrimCfgAccess, R_TC_PCIE_RP_CFG_STRPFUSECFG, IpWrRegFlagSize32Bits);
       RegVal &= (UINT32) ~B_TC_PCIE_RP_CFG_STRPFUSECFG_PXIP;
@@ -1039,6 +1051,7 @@ IpTcPcieRpSetFunctionMap (
   UINT8                   ItbtPcieFunctionNumber[MAX_ITBT_PCIE_PORT];
   UINT32                  PcieFuncMap;
   IP_PCIE_ROOT_PORT       *PciRootPort;
+  IP_WR_REG_INFO          *RegInfo;
 
   TC_PCIE_RP_API_ENTRY ();
 
@@ -1073,12 +1086,14 @@ IpTcPcieRpSetFunctionMap (
   }
 
   PciRootPort = pInst->PciRootPortList;
-  for (Index = 0; PciRootPort != NULL; Index++) {
+  for (Index = 0; Index < MAX_ITBT_PCIE_PORT && PciRootPort != NULL; Index++) {
     ///
     /// Program RP0FN for each iTBT PCIE Root Port if it is enabled then lock the register.
     /// Since currently we only defined PortId for PCIe0 ~ PCIe3, so we only program it for these 4 ports.
     ///
     IpWrRegWrite (PciRootPort->PcrAccess, R_TC_PCIE_RP_PCR_PCD, ItbtPcieFunctionNumber[Index], IpWrRegFlagSize32Bits);
+    RegInfo = (IP_WR_REG_INFO*)(UINTN)PciRootPort->PrimCfgAccess;
+    RegInfo->RegType.Pci.Fun = ItbtPcieFunctionNumber[Index];
     PciRootPort = PciRootPort->Next;
   }
 

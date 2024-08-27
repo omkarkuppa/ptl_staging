@@ -31,6 +31,7 @@
 #include "MrcDdr5.h"
 #include "MrcLpddr5.h"
 #include "MrcReset.h"
+#include "MrcGeneral.h"
 
 UINT64 AmtCacheLine1[8] = {
   0x5555555555555555, 0x5555555555555555,
@@ -1269,7 +1270,7 @@ PprCleanup (
   UINT32          Mode3Max;
 
   Outputs = &MrcData->Outputs;
-  DefaultRefreshMask = MC0_CH0_CR_REUT_CH_MISC_REFRESH_CTRL_Refresh_Rank_Mask_DEF;
+  MrcGetMcConfigGroupLimits (MrcData, GsmMccRefreshRankMask, NULL, &DefaultRefreshMask, NULL);
   StopOnRaster = MC0_CH0_CR_CPGC2_RASTER_REPO_CONFIG_StopOnRaster_DEF;
   RasterRepoClear = 1;
   RasterRepoMode = MC0_CH0_CR_CPGC2_RASTER_REPO_CONFIG_RasterRepoMode_DEF;
@@ -1519,13 +1520,11 @@ DispositionFailRangesWithPprFlow (
   UINT32              NumRepairsSuccessful;
   UINT8               McChRowTestBitMask;
   INT64               DisableRefreshMask;
-
-
+ 
   Outputs = &MrcData->Outputs;
   ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
   MaxChDdr = Outputs->MaxChannels;
-  DisableRefreshMask = MC0_CH0_CR_REUT_CH_MISC_REFRESH_CTRL_Refresh_Rank_Mask_MAX;
-
+  MrcGetMcConfigGroupLimits (MrcData, GsmMccRefreshRankMask, NULL, &DisableRefreshMask, NULL);
   MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "DispositionFailRangesWithPprFlow Starts:  McChBitMask=0x%x\n", McChBitMask);
 
   // Inspect test results for given rank and bank
@@ -2365,6 +2364,12 @@ MrcPostPackageRepairEnable (
     return mrcSuccess;
   }
 
+  MrcModifyRdRdTimings (MrcData, TRUE);
+
+  GetSetVal = 1;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);
+  MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmDisAllCplInterleave, WriteCached, &GetSetVal);
+
   Outputs->PprRunningState = PPR_IS_RUNNING;
 
   Outputs->PprDetectedErrors = 0;
@@ -2518,6 +2523,11 @@ Done:
     }
   }
 
+  MrcModifyRdRdTimings (MrcData, FALSE);
+
+  GetSetVal = 0;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);
+  MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmDisAllCplInterleave, WriteCached, &GetSetVal);
 
   Outputs->PprRunningState = PPR_IS_DONE;
 

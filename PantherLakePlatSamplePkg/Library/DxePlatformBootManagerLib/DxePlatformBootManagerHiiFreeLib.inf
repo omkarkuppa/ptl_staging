@@ -83,6 +83,7 @@
   OneSiliconPkg/SiPkg.dec
   MinPlatformPkg/MinPlatformPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   UserAuthFeaturePkg/UserAuthFeaturePkg.dec
   IntelSiliconPkg/IntelSiliconPkg.dec
   CnvFeaturePkg/CnvFeaturePkg.dec

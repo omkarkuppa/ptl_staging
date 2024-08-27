@@ -1308,6 +1308,9 @@ IGpuGetFlatCcsSizeInMb (
   UINT32                  FlatCcsSizeInMb;
   EFI_HOB_GUID_TYPE       *GuidHob;
   IP_IGPU_INST            *IGpuInst;
+  UINT64                  Remainder;
+
+  Remainder = 0;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
@@ -1327,6 +1330,16 @@ IGpuGetFlatCcsSizeInMb (
   if (IGpuIsSupported () && (IGpuInst->IGpuPreMemConfig.MemoryBandwidthCompression == 1)) {
     Touud = GetHostBridgeRegisterData (HostBridgeTouud, HostBridgeTouudBase);
     Touud = RShiftU64 (Touud, 20);
+
+    //
+    // Consider the Touud to GB aligned address so that CCS will not miss out the remaining portion of graphics allocation in DRAM while dividing by 512
+    //
+    DivU64x64Remainder (Touud, 1024, &Remainder);
+    if (Remainder != 0) {
+      Touud += (1024 - Remainder);
+      DEBUG ((DEBUG_INFO, "Considered TOUUD for CCS Calulation = 0x%lx\n", Touud));
+    }
+
     FlatCcsSizeInMb = (UINT32) (Touud / 512);
 
     if ((FlatCcsSizeInMb % 2) == 1) {

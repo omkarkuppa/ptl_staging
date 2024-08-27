@@ -97,6 +97,13 @@
       flags         = 0,
       key           = 0;
 
+    text
+      help          = STRING_TOKEN (STR_VR_VOLTAGE_LIMIT_INFO_HELP),
+      text          = STRING_TOKEN (STR_VR_VOLTAGE_LIMIT_INFO_STRING),
+      text          = STRING_TOKEN (CONCATENATE2 (STR_VR_VOLTAGE_LIMIT_INFO_VALUE, VR_INDEX)),
+      flags         = 0,
+      key           = 0;
+
     numeric varid   = CPU_SETUP.AcLoadline[VR_INDEX],
       prompt        = STRING_TOKEN (STR_AC_LOADLINE),
       help          = STRING_TOKEN (STR_AC_LOADLINE_HELP),
@@ -146,7 +153,7 @@
       minimum       = 0,
       maximum       = 512,
       step          = 1,
-      default       = 80,
+      default       = 0,// PTL PO temp WA TODO :: Revisit and move to POR
     endnumeric;
 
     numeric varid   = CPU_SETUP.Ps2Threshold[VR_INDEX],
@@ -156,7 +163,7 @@
       minimum       = 0,
       maximum       = 512,
       step          = 1,
-      default       = 20,
+      default       = 0,// PTL PO temp WA TODO :: Revisit and move to POR
     endnumeric;
 
     numeric varid   = CPU_SETUP.Ps3Threshold[VR_INDEX],
@@ -166,7 +173,7 @@
       minimum       = 0,
       maximum       = 512,
       step          = 1,
-      default       = 4,
+      default       = 0,// PTL PO temp WA TODO :: Revisit and move to POR
     endnumeric;
 
     oneof varid     = CPU_SETUP.Ps3Enable[VR_INDEX],
@@ -325,16 +332,14 @@
       option text   = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       option text   = STRING_TOKEN (STR_ENABLED) , value = 1, flags = RESET_REQUIRED;
     endoneof;
-
   endif; // supressif TDC Enable
 
-  suppressif TRUE;
-#if  (VR_INDEX < 2)
+#if (VR_INDEX < 4) && (VR_INDEX != 2)
     oneof varid   = CPU_SETUP.FastPkgCRampDisable[VR_INDEX],
       prompt      = STRING_TOKEN (STR_FAST_PKG_C_RAMP_DISABLE),
       help        = STRING_TOKEN (STR_FAST_PKG_C_RAMP_DISABLE_HELP),
       option text = STRING_TOKEN (STR_TRUE),  value = 1, flags = RESET_REQUIRED;
-      option text = STRING_TOKEN (STR_FALSE), value = 0, flags = DEFAULT | MANUFACTURING |RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_FALSE), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
     endoneof;
 
     grayoutif ideqval CPU_SETUP.FastPkgCRampDisable[VR_INDEX] == 0;
@@ -344,8 +349,6 @@
         help        = STRING_TOKEN (STR_IA_SLOW_SLEW_RATE_CONFIG_HELP),
         option text = STRING_TOKEN (STR_FAST_2),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         option text = STRING_TOKEN (STR_FAST_4),  value = 1, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN (STR_FAST_8),  value = 2, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN (STR_FAST_16), value = 3, flags = RESET_REQUIRED;
 #endif
 #if VR_INDEX == 1
         help        = STRING_TOKEN (STR_GT_SLOW_SLEW_RATE_CONFIG_HELP),
@@ -353,8 +356,12 @@
         option text = STRING_TOKEN(STR_FAST_4),  value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_FAST_8),  value = 2, flags = RESET_REQUIRED;
 #endif
+#if VR_INDEX == 3
+        help        = STRING_TOKEN (STR_ATOM_SLOW_SLEW_RATE_CONFIG_HELP),
+        option text = STRING_TOKEN(STR_FAST_2),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_FAST_4),  value = 1, flags = RESET_REQUIRED;
+#endif
       endoneof;
     endif; // grayoutif FastPkgCRampDisable Disable
 #endif
-  endif;
 endif;

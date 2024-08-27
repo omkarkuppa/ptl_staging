@@ -31,7 +31,7 @@
                                                               // BIT5:4 - Reserved
                                                               // BIT6   - Lid State (Lid Open = 1)
                                                               // BIT7   - Reserved
-#define MESSAGE_IN_00                                 0x04    // PPM->OPM Message In, 128 bits, 16 bytes
+#define MESSAGE_IN_00                                 0x04    // PPM->OPM Message In, 160 bits, 20 bytes
 #define MESSAGE_IN_01                                 0x05
 #define MESSAGE_IN_02                                 0x06
 #define MESSAGE_IN_03                                 0x07
@@ -46,27 +46,31 @@
 #define MESSAGE_IN_0C                                 0x10
 #define MESSAGE_IN_0D                                 0x11
 #define MESSAGE_IN_0E                                 0x12
-#define MESSAGE_IN_0F                                 0x13    // OPM->PPM Message Out, 128 bits, 16 bytes
-#define MESSAGE_OUT_00                                0x14
-#define MESSAGE_OUT_01                                0x15
-#define MESSAGE_OUT_02                                0x16
-#define MESSAGE_OUT_03                                0x17
-#define MESSAGE_OUT_04                                0x18
-#define MESSAGE_OUT_05                                0x19
-#define MESSAGE_OUT_06                                0x1A
-#define MESSAGE_OUT_07                                0x1B
-#define MESSAGE_OUT_08                                0x1C
-#define MESSAGE_OUT_09                                0x1D
-#define MESSAGE_OUT_0A                                0x1E
-#define MESSAGE_OUT_0B                                0x1F
-#define MESSAGE_OUT_0C                                0x20
-#define MESSAGE_OUT_0D                                0x21
-#define MESSAGE_OUT_0E                                0x22
-#define MESSAGE_OUT_0F                                0x23
-#define CCI_INDICATOR_00                              0x24    // PPM->OPM CCI indicator, 4 bytes
-#define CCI_INDICATOR_01                              0x25
-#define CCI_INDICATOR_02                              0x26
-#define CCI_INDICATOR_03                              0x27
+#define MESSAGE_IN_0F                                 0x13
+#define MESSAGE_IN_10                                 0x14
+#define MESSAGE_IN_11                                 0x15
+#define MESSAGE_IN_12                                 0x16
+#define MESSAGE_IN_13                                 0x17
+#define MESSAGE_OUT_00                                0x18   // OPM->PPM Message Out, 128 bits, 16 bytes
+#define MESSAGE_OUT_01                                0x19
+#define MESSAGE_OUT_02                                0x1A
+#define MESSAGE_OUT_03                                0x1B
+#define MESSAGE_OUT_04                                0x1C
+#define MESSAGE_OUT_05                                0x1D
+#define MESSAGE_OUT_06                                0x1E
+#define MESSAGE_OUT_07                                0x1F
+#define MESSAGE_OUT_08                                0x20
+#define MESSAGE_OUT_09                                0x21
+#define MESSAGE_OUT_0A                                0x22
+#define MESSAGE_OUT_0B                                0x23
+#define MESSAGE_OUT_0C                                0x24
+#define MESSAGE_OUT_0D                                0x25
+#define MESSAGE_OUT_0E                                0x26
+#define MESSAGE_OUT_0F                                0x27
+#define CCI_INDICATOR_00                              0x28    // PPM->OPM CCI indicator, 4 bytes
+#define CCI_INDICATOR_01                              0x29
+#define CCI_INDICATOR_02                              0x2A
+#define CCI_INDICATOR_03                              0x2B
 
 #define EC_CRITICAL_TEMPERATURE                       0x2F    // EC Critical Temperature
 #define DEVICE_STATE_02                               0x30    // Device State 02:

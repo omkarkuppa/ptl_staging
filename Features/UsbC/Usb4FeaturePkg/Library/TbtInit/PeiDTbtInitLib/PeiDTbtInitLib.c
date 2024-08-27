@@ -66,9 +66,8 @@ RetrieveDTbtRpBdf (
 
   for (Index = 0; Index < MAX_DTBT_CONTROLLER_NUMBER; Index++) {
     if (PeiDTbtConfig->DTbtControllerConfig[Index].DTbtControllerEn == 1) {
-      Status = GetDTbtRpDevFun (PeiDTbtConfig->DTbtControllerConfig[Index].RpType,
-                                PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpNumber,
-                                &PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpBus,
+      Status = GetDTbtRpDevFun (PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpNumber,
+                                PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpBus,
                                 &PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpDev,
                                 &PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpFunc);
     }

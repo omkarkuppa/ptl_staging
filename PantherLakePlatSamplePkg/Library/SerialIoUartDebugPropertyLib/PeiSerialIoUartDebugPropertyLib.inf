@@ -30,7 +30,7 @@
   BaseLib
   HobLib
   PeiServicesLib
-  SerialIoUartDebugPropertyPcdLib
+  LpssUartDebugPropertyPcdLib
 
 [Packages]
   MdePkg/MdePkg.dec

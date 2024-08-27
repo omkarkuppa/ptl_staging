@@ -530,6 +530,17 @@ PsSimulateSanitizeActions (
   }
 
   //
+  // Delete Boot Parameter NVM Variable
+  //
+  Status = gRT->SetVariable(
+      PS_NVM_VARIABLE_BOOT_PARAM,
+      &gPsNvmBootParametersGuid,
+      0,
+      0,
+      NULL
+  );
+
+  //
   // Issue Cold Reset
   //
   PsIssueReset (EfiResetCold);

@@ -77,6 +77,8 @@
 #include <ConfigBlock/PchGeneralConfig.h>
 #include <HsioConfig.h>
 #include <RtcConfig.h>
+#include <GpioV2Pad.h>
+#include <Library/PcdInfoLib.h>
 
 #if FixedPcdGetBool (PcdDTbtEnable) == 1
 #include <Ppi/PeiDTbtPolicy.h>
@@ -413,16 +415,20 @@ UpdateSerialIoConfig (
   // Serial IO I2C Pin Mux tbd
   for (Index = 0; Index < GetMaxI2cInterfacesNum (); Index++) {
     COMPARE_UPDATE_POLICY_ARRAY (SerialIoConfig->I2cDeviceConfig[Index].Mode, (UINT8)(SERIAL_IO_I2C_MODE)PchSetup->PchSerialIoI2c[Index], Index);
+    UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[Index].PinMux.Sda, 0x0);
+    UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[Index].PinMux.Scl, 0x0);
     UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[Index].PadTermination, GetSerialIoI2cPadsTerminationFromPcd (Index));
   }
-  UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[2].PinMux.Sda, 0x0);
-  UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[2].PinMux.Scl, 0x0);
-  UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[3].PinMux.Sda, 0x0);
-  UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[3].PinMux.Scl, 0x0);
-  UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[4].PinMux.Sda, 0x0);
-  UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[4].PinMux.Scl, 0x0);
-  UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[5].PinMux.Sda, 0x0);
-  UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[5].PinMux.Scl, 0x0);
+  if (PtlIsPcdH () || PtlIsPcdP ()) {
+    UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[2].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_H_4__I2C2_SDA);
+    UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[2].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_H_5__I2C2_SCL);
+    UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[3].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_H_6__I2C3_SDA);
+    UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[3].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_H_7__I2C3_SCL);
+    UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[4].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_E_13__I2C4_SDA);
+    UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[4].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_E_12__I2C4_SCL);
+    UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[5].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_F_13__I2C5_SDA);
+    UPDATE_POLICY (SerialIoConfig->I2cDeviceConfig[5].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_F_12__I2C5_SCL);
+  }
 }
 
 /**
@@ -457,6 +463,10 @@ UpdateLpssI3cConfig (
     UPDATE_POLICY (I3cConfig->I3cDeviceConfig[Index].Scl.PinMux, 0x0);
     UPDATE_POLICY (I3cConfig->I3cDeviceConfig[Index].SclFb.PinMux, 0x0);
   }
+  if (PtlIsPcdH () || PtlIsPcdP ()) {
+    UPDATE_POLICY (I3cConfig->I3cDeviceConfig[1].Sda.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_21__I3C1_SDA);
+    UPDATE_POLICY (I3cConfig->I3cDeviceConfig[1].Scl.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_22__I3C1_SCL);
+  }
 }
 
 /**
@@ -487,13 +497,18 @@ UpdateLpssSpiConfig (
   //
   for (Index = 0; Index < GetMaxSpiInterfacesNum (); Index++) {
     COMPARE_UPDATE_POLICY_ARRAY (LpssSpiConfig->SpiDeviceConfig[Index].Mode, (UINT8)(SERIAL_IO_SPI_MODE) PchSetup->PchSerialIoSpi[Index], Index);
+    UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[Index].PinMux.Cs[0], 0x0);
+    UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[Index].PinMux.Clk, 0x0);
+    UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[Index].PinMux.Miso, 0x0);
+    UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[Index].PinMux.Mosi, 0x0);
   }
-
   // Lpss SPI Pin Mux tbd
-  UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[0].PinMux.Cs[0], 0x0);
-  UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[0].PinMux.Clk, 0x0);
-  UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[0].PinMux.Miso, 0x0);
-  UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[0].PinMux.Mosi, 0x0);
+  if (PtlIsPcdH () || PtlIsPcdP ()) {
+    UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[0].PinMux.Cs[0], GPIOV2_PTL_PCD_MUXING__XXGPP_E_17__GSPI0_CS0_B);
+    UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[0].PinMux.Clk, GPIOV2_PTL_PCD_MUXING__XXGPP_E_11__GSPI0_CLK);
+    UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[0].PinMux.Miso, GPIOV2_PTL_PCD_MUXING__XXGPP_E_13__GSPI0_MISO);
+    UPDATE_POLICY (LpssSpiConfig->SpiDeviceConfig[0].PinMux.Mosi, GPIOV2_PTL_PCD_MUXING__XXGPP_E_12__GSPI0_MOSI);
+  }
 
   for (Index = 0; Index < GetMaxSpiInterfacesNum (); Index++) {
     for (CsIndex = 0; CsIndex < PCH_MAX_SERIALIO_SPI_CHIP_SELECTS; CsIndex++) {
@@ -541,6 +556,16 @@ UpdateLpssI2cConfig (
     UPDATE_POLICY (I2cConfig->I2cDeviceConfig[Index].PinMux.Scl, 0x0);
     UPDATE_POLICY (I2cConfig->I2cDeviceConfig[Index].PadTermination, GetSerialIoI2cPadsTerminationFromPcd (Index));
   }
+  if (PtlIsPcdH () || PtlIsPcdP ()) {
+    UPDATE_POLICY (I2cConfig->I2cDeviceConfig[2].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_H_4__I2C2_SDA);
+    UPDATE_POLICY (I2cConfig->I2cDeviceConfig[2].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_H_5__I2C2_SCL);
+    UPDATE_POLICY (I2cConfig->I2cDeviceConfig[3].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_H_6__I2C3_SDA);
+    UPDATE_POLICY (I2cConfig->I2cDeviceConfig[3].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_H_7__I2C3_SCL);
+    UPDATE_POLICY (I2cConfig->I2cDeviceConfig[4].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_E_13__I2C4_SDA);
+    UPDATE_POLICY (I2cConfig->I2cDeviceConfig[4].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_E_12__I2C4_SCL);
+    UPDATE_POLICY (I2cConfig->I2cDeviceConfig[5].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_F_13__I2C5_SDA);
+    UPDATE_POLICY (I2cConfig->I2cDeviceConfig[5].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_F_12__I2C5_SCL);
+  }
 }
 
 /**
@@ -579,10 +604,12 @@ UpdateLpssUartConfig (
     COMPARE_UPDATE_POLICY_ARRAY (LpssUartConfig->UartDeviceConfig[Index].PowerGating,         PchSetup->PchUartPowerGating[Index],                          Index);
     COMPARE_UPDATE_POLICY_ARRAY (LpssUartConfig->UartDeviceConfig[Index].DmaEnable,           PchSetup->PchUartDmaEnable[Index],                            Index);
   }
-
   UPDATE_POLICY (LpssUartConfig->UartDeviceConfig[1].PinMux.Rx, 0x0);
   UPDATE_POLICY (LpssUartConfig->UartDeviceConfig[1].PinMux.Tx, 0x0);
-
+  if (PtlIsPcdH () || PtlIsPcdP ()) {
+    UPDATE_POLICY (LpssUartConfig->UartDeviceConfig[1].PinMux.Rx, GPIOV2_PTL_PCD_MUXING__XXGPP_H_6__UART1_RXD);
+    UPDATE_POLICY (LpssUartConfig->UartDeviceConfig[1].PinMux.Tx, GPIOV2_PTL_PCD_MUXING__XXGPP_H_7__UART1_TXD);
+  }
   //
   // UART1 has no RTS and CTS pins available.
   //
@@ -1211,7 +1238,7 @@ UpdatePcieRpConfig (
           //
           // Get DTBT PCIe root port number
           //
-          TbtSelector = PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpNumber;
+          TbtSelector = PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpNumber - 1;
 
           //
           // Set DTBT PCIe root port maximum payload size (MPS)
@@ -1470,17 +1497,30 @@ UpdateIshConfig (
   UPDATE_POLICY (IshConfig->Spi[0].PinConfig.Mosi.PinMux, 0x0);
   UPDATE_POLICY (IshConfig->Uart[1].PinConfig.Rx.PinMux, 0x0);
   UPDATE_POLICY (IshConfig->Uart[1].PinConfig.Tx.PinMux, 0x0);
-
   UPDATE_POLICY (IshConfig->I2c[2].PinConfig.Sda.PinMux, 0x0);
   UPDATE_POLICY (IshConfig->I2c[2].PinConfig.Scl.PinMux, 0x0);
-
   UPDATE_POLICY (IshConfig->Gp[5].PinConfig.PinMux, 0x0);
   UPDATE_POLICY (IshConfig->Gp[6].PinConfig.PinMux, 0x0);
   UPDATE_POLICY (IshConfig->Gp[8].PinConfig.PinMux, 0x0);
   UPDATE_POLICY (IshConfig->Gp[9].PinConfig.PinMux, 0x0);
   UPDATE_POLICY (IshConfig->Gp[10].PinConfig.PinMux, 0x0);
   UPDATE_POLICY (IshConfig->Gp[11].PinConfig.PinMux, 0x0);
-
+  if (PtlIsPcdH () || PtlIsPcdP ()) {
+    UPDATE_POLICY (IshConfig->Spi[0].PinConfig.Cs[0].PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_5__ISH_SPI_CS_B);
+    UPDATE_POLICY (IshConfig->Spi[0].PinConfig.Clk.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_6__ISH_SPI_CLK);
+    UPDATE_POLICY (IshConfig->Spi[0].PinConfig.Miso.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_7__ISH_SPI_MISO);
+    UPDATE_POLICY (IshConfig->Spi[0].PinConfig.Mosi.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_8__ISH_SPI_MOSI);
+    UPDATE_POLICY (IshConfig->Uart[1].PinConfig.Rx.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_14__ISH_UART1_RXD);
+    UPDATE_POLICY (IshConfig->Uart[1].PinConfig.Tx.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_15__ISH_UART1_TXD);
+    UPDATE_POLICY (IshConfig->I2c[2].PinConfig.Sda.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_18__ISH_I2C2_SDA);
+    UPDATE_POLICY (IshConfig->I2c[2].PinConfig.Scl.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_19__ISH_I2C2_SCL);
+    UPDATE_POLICY (IshConfig->Gp[5].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_22__ISH_GP_5);
+    UPDATE_POLICY (IshConfig->Gp[6].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_23__ISH_GP_6);
+    UPDATE_POLICY (IshConfig->Gp[8].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_20__ISH_GP_8);
+    UPDATE_POLICY (IshConfig->Gp[9].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_21__ISH_GP_9);
+    UPDATE_POLICY (IshConfig->Gp[10].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_E_2__ISH_GP_10);
+    UPDATE_POLICY (IshConfig->Gp[11].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_F_9__ISH_GP_11);
+  }
 }
 
 /**

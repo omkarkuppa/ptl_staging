@@ -29,24 +29,24 @@
 
 // provide stub/null/inline stats functions
 
-static inline MrcStatus
+static inline void
 MrcStatsAddToData (
   IN OUT MrcParameters  *const MrcData,
   IN MRC_STATISTIC Key,
   IN UINT32 Value
   )
 {
-  return mrcSuccess;
+  return;
 }
 
 
-static inline MrcStatus
+static inline void
 MrcStatsIncrementData (
   IN OUT MrcParameters  *const MrcData,
   IN MRC_STATISTIC Key
   )
 {
-  return mrcSuccess;
+  return;
 }
 
 static inline void
@@ -67,23 +67,23 @@ MrcStatsBeginCustomPhase (
   // this function intentionally left mostly blank :-)
 }
 
-static inline MrcStatus
+static inline void
 MrcStatsEndPhase (
   IN OUT MrcParameters  *const MrcData,
   IN MRC_STATISTIC_PHASE       Phase,
   IN     char                  *TaskString
   )
 {
-  return mrcSuccess;
+  return;
 }
 
-static inline MrcStatus
+static inline void
 MrcStatsEndCustomPhase (
   IN OUT MrcParameters *const MrcData,
   IN     MRC_STATISTIC_PHASE  Phase
   )
 {
-  return mrcSuccess;
+  return;
 }
 
 static inline void
@@ -103,23 +103,23 @@ MrcStatsEndCallTablePhase (
   return;
 }
 
-static inline MrcStatus
+static inline void
 MrcStatsStartTimer (
   IN OUT MrcParameters *const MrcData,
   IN MRC_STATISTIC Key
   )
 {
-  return mrcSuccess;
+  return;
 }
 
 
-static inline MrcStatus
+static inline void
 MrcStatsEndTimer (
   IN OUT MrcParameters *const MrcData,
   IN MRC_STATISTIC Key
   )
 {
-  return mrcSuccess;
+  return;
 }
 
 static inline void
@@ -130,12 +130,12 @@ MrcStatsInitAndPause (
   return;
 }
 
-static inline MrcStatus
+static inline void
 MrcStatsInit (
   IN OUT MrcParameters  *const MrcData
   )
 {
-  return mrcSuccess;
+  return;
 }
 
 static inline void
@@ -170,11 +170,8 @@ MrcStatsContinueTracking (
   @param[in, out] MrcData Pointer to MRC global data.
   @param[in] Key The statistic to update for all active phases.
   @param[in] Value Amount to increment.
-
-  @retval mrcSuccess Counts for stats were updated.
-  @retval mrcFail No stats updated, Key is not valid or stats tracking is paused.
 **/
-MrcStatus
+void
 MrcStatsAddToData (
   IN OUT MrcParameters  *const MrcData,
   IN MRC_STATISTIC Key,
@@ -187,10 +184,8 @@ MrcStatsAddToData (
 
   @param[in, out] MrcData Pointer to MRC global data.
   @param[in] Key The statistic to update for all active phases.
-
-  @return same as MrcStatsAddToData().
 **/
-MrcStatus
+void
 MrcStatsIncrementData (
   IN OUT MrcParameters  *const MrcData,
   IN MRC_STATISTIC Key
@@ -229,12 +224,8 @@ MrcStatsBeginCustomPhase (
   @param[in, out] MrcData Pointer to MRC global data.
   @param[in] Phase The phase to end.
   @param[in] TaskString Pointer to task string from the call table.
-
-  @retval mrcSuccess successfully ended the phase specified.
-  @retval mrcFail tracking is paused, phase is not valid, or phase is not active.  No changes made to the stats
-  framework.
 **/
-MrcStatus
+void
 MrcStatsEndPhase (
   IN OUT MrcParameters  *const MrcData,
   IN MRC_STATISTIC_PHASE       Phase,
@@ -246,11 +237,8 @@ MrcStatsEndPhase (
 
   @param[in,out] MrcData Pointer to MRC global data.
   @param[in] Phase The phase to end.
-
-  @retval mrcFail Phase is not a custom phase.
-  @return return status from MrcStatsEndPhase().
 **/
-MrcStatus
+void
 MrcStatsEndCustomPhase (
   IN OUT MrcParameters *const MrcData,
   IN     MRC_STATISTIC_PHASE  Phase
@@ -285,12 +273,8 @@ MrcStatsEndCallTablePhase (
 
   @param[in, out] MrcData Pointer to MRC global data.
   @param[in] Key Key for timer to start.
-
-  @retval mrcSuccess Successfully started the timer.
-  @retval mrcFail repeated call without call to MrcStatsEndTimer(), stats tracking is paused,
-          stats not properly initialized, or buffer is full.
 **/
-MrcStatus
+void
 MrcStatsStartTimer (
   IN OUT MrcParameters *const MrcData,
   IN MRC_STATISTIC Key
@@ -302,12 +286,8 @@ MrcStatsStartTimer (
 
   @param[in, out] MrcData Pointer to MRC global data.
   @param[in] Key Timer to end.
-
-  @retval mrcSuccess Succesfully ended timer.
-  @retval mrcFail specified timer is not running, stats tracking is paused, or stats framework is not
-          initialized.
 **/
-MrcStatus
+void
 MrcStatsEndTimer (
   IN OUT MrcParameters *const MrcData,
   IN MRC_STATISTIC Key
@@ -338,10 +318,8 @@ MrcStatsInitAndPause (
   Initialize the data structures and start the global phase.
 
   @param[in, out] MrcData Pointer to MRC global data.
-
-  @retval mrcSuccess Stats framework initialized.
 **/
-MrcStatus
+void
 MrcStatsInit (
   IN OUT MrcParameters  *const MrcData
   );

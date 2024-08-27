@@ -51,7 +51,6 @@
   External (\_GPE.SLCA, MethodObj)
   External (\_GPE.SLCB, MethodObj)
 
-  External (\_SB.PC00.LPCB.WKEC, MethodObj)
   External (\_GPE.SLA0, MethodObj)
   External (\_GPE.SLA1, MethodObj)
   External (\_GPE.SLC0, MethodObj)
@@ -133,18 +132,6 @@ Scope (\_GPE)
     ADBG ("L62 Event")
     // Clear GPE status bit.
     Store (0,GPEC)
-  }
-
-  //
-  // GPP_E_16 = EC WAKETIME SCI
-  //
-  Method (_L50)
-  {
-    ADBG ("L50 Event")
-
-    \_SB.PC00.LPCB.WKEC ()
-
-    Return ()
   }
 
   Name (PRES, 1) // keep last PCH PwrBtn status, 0=press, 1=release

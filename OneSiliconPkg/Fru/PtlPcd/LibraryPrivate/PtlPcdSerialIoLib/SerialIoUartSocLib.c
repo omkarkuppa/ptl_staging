@@ -23,10 +23,19 @@
 
 #include <Base.h>
 #include <Uefi/UefiBaseType.h>
-#include <Library/PchInfoLib.h>
-#include <Library/PchPciBdfLib.h>
-#include <Library/PcdInfoLib.h>
 #include <Defines/PchReservedResources.h>
+
+
+typedef struct {
+  UINT32 Bar0;
+  UINT32 Bar1;
+} LPSS_CONTROLLER_DESCRIPTOR;
+
+GLOBAL_REMOVE_IF_UNREFERENCED LPSS_CONTROLLER_DESCRIPTOR mPtlPcdLpssUartFixedOffset [] = {
+  {PCH_SERIAL_IO_BASE_ADDRESS + 0xC000,   PCH_SERIAL_IO_BASE_ADDRESS + 0xD000},
+  {PCH_SERIAL_IO_BASE_ADDRESS + 0xE000,   PCH_SERIAL_IO_BASE_ADDRESS + 0xF000},
+  {PCH_SERIAL_IO_BASE_ADDRESS + 0x10000,  PCH_SERIAL_IO_BASE_ADDRESS + 0x11000}
+};
 
 /**
   Gets Fixed Base Address used for BAR0
@@ -36,10 +45,13 @@
   @retval                            Config control offset
 **/
 UINT32
-GetSerialIoUartFixedMmioAddress (
+GetLpssUartFixedBar0 (
   IN UINT8       UartNumber
   )
 {
+if (UartNumber < ARRAY_SIZE (mPtlPcdLpssUartFixedOffset)) {
+    return mPtlPcdLpssUartFixedOffset[UartNumber].Bar0;
+  }
   return 0x0;
 }
 
@@ -51,40 +63,13 @@ GetSerialIoUartFixedMmioAddress (
   @retval                            Pci Config Address
 **/
 UINT32
-GetSerialIoUartFixedPciCfgAddress (
+GetLpssUartFixedBar1 (
   IN UINT8       UartNumber
   )
 {
+  if (UartNumber < ARRAY_SIZE (mPtlPcdLpssUartFixedOffset)) {
+    return mPtlPcdLpssUartFixedOffset[UartNumber].Bar1;
+  }
   return 0x0;
 }
 
-/**
-  Gets Serial IO Uart Number based on its PciCfgSpace adrress
-
-  @param[in]  PciCfgBase     PCI Config Base address
-
-  @retval    UartNumber      Serial IO device UART number
-                             0xFF is returned if no match was found
-**/
-UINT8
-GetSerialIoUartNumber (
-  IN UINT64            PciCfgBase
-  )
-{
-  return 0xFF;
-}
-
-/**
-  Gets Uarts Device Id
-
-  @param[in] UartNumbe               Serial IO device UART number
-
-  @retval                            Device Id
-**/
-UINT16
-GetSerialIoUartDeviceId (
-  IN UINT8       UartNumber
-  )
-{
-  return 0xFFFF;
-}

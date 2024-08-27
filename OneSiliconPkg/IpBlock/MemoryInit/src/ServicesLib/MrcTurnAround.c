@@ -296,14 +296,16 @@ GetDdr5DramTA (
   UINT32 tDQSCK;
   UINT32 tDQSCKi;
   UINT32 ChFlightTime;
-  UINT32 ExtWLTxDqs;
-  UINT32 ExtWLTxDqsDelta;
+  UINT32 WLTxDqs;
+  UINT32 MaxWL;
+  UINT32 MinWL;
   UINT32 ChFlightTimePI;
   UINT32 tCCD_L;
   UINT32 tCCD_S;
   UINT32 tCCD_L_WR;
   UINT32 tWTR_S;
   UINT32 tWTR_L;
+  INT64  TxDqs;
   INT32  tDQSSMax;
   INT32  tDQSSMin;
   INT32  TA1;
@@ -311,8 +313,6 @@ GetDdr5DramTA (
   INT32  TA3;
   UINT16 tCL;
   UINT16 tCWL;
-  UINT16 MaxExtWL;
-  UINT16 MinExtWL;
   UINT8  MaxChannel;
   UINT8  Guardband;
   UINT8  RdPreambleT;
@@ -374,7 +374,7 @@ GetDdr5DramTA (
       tWTR_S = Timing->tWTR_S;
       tWTR_L = Timing->tWTR_L;
       tCCD_L_WR = Timing->tCCD_L_WR;
-      ExtWLTxDqs = 0;
+      WLTxDqs = 0;
       if (IsPreFuncTraining) {
         // Assume the worst case ODT Offsets
         MinOdtWrOn  = -4;
@@ -416,23 +416,23 @@ GetDdr5DramTA (
         MaxOdtRdOff = MAX (OdtRdOff, MaxOdtRdOff);
       }
       for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
-        MaxExtWL = 0;
-        MinExtWL = MRC_UINT16_MAX;
+        MaxWL = 0;
+        MinWL = MRC_UINT32_MAX;
         for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
           if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
             continue;
           }
-          MaxExtWL = MAX (Outputs->ExtWLTxDqs[Controller][Channel][Rank][Byte], MaxExtWL);
-          MinExtWL = MIN (Outputs->ExtWLTxDqs[Controller][Channel][Rank][Byte], MinExtWL);
+          MrcGetSetStrobe (MrcData, Controller, Channel, Rank, Byte, TxDqsDelay, ReadCached, &TxDqs);
+          MaxWL = MAX ((UINT32) TxDqs, MaxWL);
+          MinWL = MIN ((UINT32) TxDqs, MinWL);
         }
-        // CK2CK = Delta of External Write Leveling TxDqs
-        ExtWLTxDqsDelta = MaxExtWL - MinExtWL;
-        ExtWLTxDqs = MAX (ExtWLTxDqsDelta, ExtWLTxDqs);
+        // CK2CK = Delta of Write Leveling TxDqs
+        WLTxDqs = MAX (WLTxDqs, MaxWL - MinWL);
       }
       if (IsPreFuncTraining) {
         CK2CK = 16; // Safe Value for Mc Init
       } else {
-        CK2CK = ExtWLTxDqs;
+        CK2CK = WLTxDqs;
       }
 
       // DeltaPiCode = Delta of RcvEn
@@ -709,7 +709,6 @@ SetTurnAroundTiming (
   TxPathMinMax TxPathResults;
   RxPathMinMax RxPathResults;
   McTurnAroundTimings TAT;
-  MRC_LP5_BANKORG Lp5BGOrg;
 
   Outputs = &MrcData->Outputs;
   Inputs = &MrcData->Inputs;
@@ -718,8 +717,6 @@ SetTurnAroundTiming (
   MrcCall = Inputs->Call.Func;
   IsLpddr5 = Outputs->IsLpddr5;
   MaxChannel = Outputs->MaxChannels;
-
-  Lp5BGOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
 
   // The order of TAT knobs needs to align to the TAT order within the structure McTurnAroundTimings
   static const GSM_GT TATKnobs[TAT_COUNT] = { GsmMctRDRDsg, GsmMctRDRDdg, GsmMctWRWRsg, GsmMctWRWRdg,
@@ -815,12 +812,6 @@ SetTurnAroundTiming (
 
         if (TATDeltaInputs[TatIndex] != 0) {
           *TatPtr += (TATDeltaInputs[TatIndex] - 128);
-        }
-
-        if (!IsPreFuncTraining && IsLpddr5 && (TatIndex == 0 || TatIndex == 1)) {
-          if (!(TatIndex == 0 && Lp5BGOrg == MrcLp5BgMode)) {
-            MrctRdRdIncrease (TatPtr);
-          }
         }
 
         if (IsLpddr5) {

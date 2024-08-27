@@ -33,6 +33,7 @@
   IpuInitLib
   GpioV2AccessLib
   PtlPcdGpioNativeLib
+  PcdLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -40,3 +41,5 @@
 
 [Sources]
   PeiIpuInitFruLib.c
+
+[Pcd]

@@ -31,7 +31,7 @@ LIBRARY_CLASS  = SecLpssUartInitLib | SEC PEI_CORE PEIM
 IoLib
 DebugLib
 PciSegmentLib
-LpssUartPrivateLib
+LpssUartLib
 PtlPcdSecGpioInitLib
 LpssInitLib
 

@@ -137,10 +137,10 @@ PtlTcssInitPostMem (
   // Tables below only needed in PostMem since that's when USB3 will be initialized
   IP_CSI_TUNING_PARAM_ENTRY  PtlUsb3TuningList[] = {
     { IpCsiTuningParamIdReleaseInfo,                0x20230124 },
-    { IpUsb3TuningParamIdCp13Deemphasis,            0x00000E45 },
-    { IpUsb3TuningParamIdCp14Deemphasis,            0x00008D80 },
-    { IpUsb3TuningParamIdCp15Deemphasis,            0x00008C45 },
-    { IpUsb3TuningParamIdCp16Deemphasis,            0x00000F80 },
+    { IpUsb3TuningParamIdCp13Deemphasis,            0x00000A86 },
+    { IpUsb3TuningParamIdCp14Deemphasis,            0x00007A40 },
+    { IpUsb3TuningParamIdCp15Deemphasis,            0x00007944 },
+    { IpUsb3TuningParamIdCp16Deemphasis,            0x00000C00 },
     { IpUsb3TuningParamIdLinkPollingMinTime,        0x2 },
     { IpUsb3TuningParamIdGapTimeAfterLsTx,          0x16 },
     { IpUsb3TuningParamIdU2ExitLatency,             0x3E8 },

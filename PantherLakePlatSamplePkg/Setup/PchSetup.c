@@ -37,6 +37,7 @@
 #include <Library/PchPciBdfLib.h>
 #include <Library/PchInfoHob.h>
 #include <Library/CnviLib.h>
+#include <CnvVfrSetupMenuHii.h>
 #include <ChipsetInfoHob.h>
 #include <PcieRegs.h>
 #include <Register/PchRegs.h>
@@ -386,6 +387,9 @@ PchSetupHdAudio (
   VOID                          *HobPtr;
   PCH_INFO_HOB                  *PchInfoHob;
   BOOLEAN                       UpdatePchSetup;
+  CNV_VFR_CONFIG_SETUP          CnvSetup;
+  UINTN                         VarDataSize;
+  EFI_STATUS                    Status;
 
   UpdatePchSetup = FALSE;
 
@@ -416,8 +420,20 @@ PchSetupHdAudio (
     SetupVolatileData->AudioSndwMultilaneSupported[Index] = PchInfoHob->SndwMultilaneSupport[Index];
   }
 
+  VarDataSize = sizeof (CNV_VFR_CONFIG_SETUP);
+  Status = gRT->GetVariable (
+                  L"CnvSetup",
+                  &gCnvFeatureSetupGuid,
+                  NULL,
+                  &VarDataSize,
+                  &CnvSetup
+                  );
+  if (EFI_ERROR (Status)) {
+    return FALSE;
+  }
+
   // if BT is not present or disabled, disable DSP BT related knobs
-  if ((!CnviCrfModuleIsPresent () || PchSetup->CnviMode == 0) && !PchSetup->HdaDiscBtOffEnabled) {
+  if ((!CnviCrfModuleIsPresent () || CnvSetup.CnviMode == 0) && !PchSetup->HdaDiscBtOffEnabled) {
     // BT Intel HFP SCO
     PchSetup->PchHdAudioFeature[5] = FALSE;
     // BT Intel A2DP
@@ -740,7 +756,6 @@ InitSBStrings (
     PchSetupPSOn (&VolatileData);
     PchSetupCrid (&VolatileData);
 
-
     VolatileData.PchSeries = PchSeries ();
 
     // Send PDT Unlock Message to ISH
@@ -795,4 +810,3 @@ InitSBStrings (
     DisplaySpiInformation(HiiHandle);
   } // MAIN_FORM_SET_CLASS
 }
-

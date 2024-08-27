@@ -818,12 +818,14 @@
     prompt  = STRING_TOKEN(STR_SYS_FW_UPDATE_CONFIG_FORM),
     help    = STRING_TOKEN(STR_SYS_FW_UPDATE_CONFIG_FORM_HELP);
 
-  goto
-    formsetguid = VTIO_FORM_SET_GUID,
-    formid      = PLATFORM_VTIO_FORM_ID,
-    question    = 0,
-    prompt      = STRING_TOKEN(STR_PLATFORM_VTIO_FORM),
-    help        = STRING_TOKEN(STR_PLATFORM_VTIO_FORM_HELP);
+  grayoutif ideqval SA_SETUP.EnableVtd == 0;
+    goto
+      formsetguid = VTIO_FORM_SET_GUID,
+      formid      = PLATFORM_VTIO_FORM_ID,
+      question    = 0,
+      prompt      = STRING_TOKEN(STR_PLATFORM_VTIO_FORM),
+      help        = STRING_TOKEN(STR_PLATFORM_VTIO_FORM_HELP);
+  endif;
 
   goto PLATFORM_TCSS_FORM_ID,
     prompt  = STRING_TOKEN(STR_PLATFORM_TCSS_FORM),
@@ -1055,8 +1057,8 @@
         prompt   = STRING_TOKEN(STR_UCM_SELECTION),
         help     = STRING_TOKEN(STR_UCM_SELECTION_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_UCSI_1_2), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_UCSI_2_X), value = 2, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_UCSI_1_2), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_UCSI_2_X), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       suppressif (ideqval SETUP_DATA.AuxOriOverrideSupport == 0);
@@ -1153,24 +1155,9 @@
       //
       // PD0
       //
-      SEPARATOR
-      SUBTITLE(STRING_TOKEN(STR_PD_INFORMATION))
-
-      suppressif NOT ideqval SETUP_VOLATILE_DATA.TcssPdType == UsbCPdTypeCypress;
-        text
-          help  = STRING_TOKEN(STR_PD0_APPLICATION_NAME_HELP),
-          text  = STRING_TOKEN(STR_PD0_APPLICATION_NAME_NAME),
-          text  = STRING_TOKEN(STR_PD0_APPLICATION_NAME_VALUE),
-          flags = 0,
-          key   = 0;
-
-        text
-          help  = STRING_TOKEN(STR_PD0_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_HELP),
-          text  = STRING_TOKEN(STR_PD0_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_NAME),
-          text  = STRING_TOKEN(STR_PD0_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_VALUE),
-          flags = 0,
-          key   = 0;
-      endif;
+      suppressif NOT ideqval SETUP_DATA.UsbCPdNumber > 0;
+        SEPARATOR
+        SUBTITLE(STRING_TOKEN(STR_PD_INFORMATION))
 
       text
         help  = STRING_TOKEN(STR_PD0_VERSION_HELP),
@@ -1178,32 +1165,31 @@
         text  = STRING_TOKEN(STR_PD0_VERSION_VALUE),
         flags = 0,
         key   = 0;
+      endif;
 
       //
       // PD1
       //
-      suppressif NOT ideqval SETUP_VOLATILE_DATA.TcssPdType == UsbCPdTypeCypress;
+      suppressif NOT ideqval SETUP_DATA.UsbCPdNumber > 1;
         text
-          help  = STRING_TOKEN(STR_PD1_APPLICATION_NAME_HELP),
-          text  = STRING_TOKEN(STR_PD1_APPLICATION_NAME_NAME),
-          text  = STRING_TOKEN(STR_PD1_APPLICATION_NAME_VALUE),
-          flags = 0,
-          key   = 0;
-
-        text
-          help  = STRING_TOKEN(STR_PD1_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_HELP),
-          text  = STRING_TOKEN(STR_PD1_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_NAME),
-          text  = STRING_TOKEN(STR_PD1_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_VALUE),
+          help  = STRING_TOKEN(STR_PD1_VERSION_HELP),
+          text  = STRING_TOKEN(STR_PD1_VERSION_NAME),
+          text  = STRING_TOKEN(STR_PD1_VERSION_VALUE),
           flags = 0,
           key   = 0;
       endif;
 
-      text
-        help  = STRING_TOKEN(STR_PD1_VERSION_HELP),
-        text  = STRING_TOKEN(STR_PD1_VERSION_NAME),
-        text  = STRING_TOKEN(STR_PD1_VERSION_VALUE),
-        flags = 0,
-        key   = 0;
+      //
+      // PD2
+      //
+      suppressif NOT ideqval SETUP_DATA.UsbCPdNumber > 2;
+        text
+          help  = STRING_TOKEN(STR_PD2_VERSION_HELP),
+          text  = STRING_TOKEN(STR_PD2_VERSION_NAME),
+          text  = STRING_TOKEN(STR_PD2_VERSION_VALUE),
+          flags = 0,
+          key   = 0;
+      endif;
 
       suppressif NOT ideqval SETUP_DATA.UsbCRetimerNumber > 0;
         SEPARATOR

@@ -31,13 +31,6 @@
 [LibraryClasses]
   BaseLib
   BaseMemoryLib
-  PchInfoLib
-  P2SbSidebandAccessLib
-  PeiItssLib
-  PchPciBdfLib
-  PsfSocLib
-  DebugLib
-  PtlPcdSerialIoGpioAccessLib
 
 [Packages]
   MdePkg/MdePkg.dec

@@ -244,8 +244,8 @@
     oneof varid  = PCH_SETUP.PchEnergyReport,
       prompt   = STRING_TOKEN(STR_PCH_ENERGY_REPORTING_PROMPT),
       help     = STRING_TOKEN(STR_PCH_ENERGY_REPORTING_HELP),
-       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;// PTL PO temp WA TODO :: Revisit and move to POR
+       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
     endoneof;
 
     oneof varid  = PCH_SETUP.PmcLpmS0i2p0En,
@@ -974,7 +974,7 @@ endform; //End of SerialIo Options Form ID
     SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C0_FORM_TITLE))
       numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C0],
         prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
-        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        help        = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE_HELP),
         minimum  = 0,
         maximum  = 0xFF,
         default  = 0,
@@ -1188,7 +1188,7 @@ endform;
     SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C1_FORM_TITLE))
       numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C1],
         prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
-        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        help        = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE_HELP),
         minimum  = 0,
         maximum  = 0xFF,
         default  = 0,
@@ -1267,7 +1267,7 @@ endform;
     SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C2_FORM_TITLE))
       numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C2],
         prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
-        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        help        = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE_HELP),
         minimum  = 0,
         maximum  = 0xFF,
         default  = 0,
@@ -1345,7 +1345,7 @@ endform;
     SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C3_FORM_TITLE))
       numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C3],
         prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
-        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        help        = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE_HELP),
         minimum  = 0,
         maximum  = 0xFF,
         default  = 0,
@@ -1423,7 +1423,7 @@ endform;
     SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C4_FORM_TITLE))
       numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C4],
         prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
-        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        help        = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE_HELP),
         minimum  = 0,
         maximum  = 0xFF,
         default  = 0,
@@ -1501,7 +1501,7 @@ endform;
     SUBTITLE(STRING_TOKEN(STR_SERIAL_IO_I2C5_FORM_TITLE))
       numeric varid = SETUP_DATA.PchI2cSensorDevicePort[SERIAL_IO_I2C5],
         prompt      = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE),
-        help        = STRING_TOKEN(STR_PCH_SENSOR_DEVICE_HELP),
+        help        = STRING_TOKEN(STR_PCH_I2C_SENSOR_DEVICE_HELP),
         minimum  = 0,
         maximum  = 0xFF,
         default  = 0,
@@ -2195,7 +2195,7 @@ endform;
 
 form formid = AUTO_ID (PMC_CONFIGURATION_FORM_ID),
   title = STRING_TOKEN (STR_PMC_CONFIGURATION_FORM_TITLE);
-  
+
    SEPARATOR
 
     oneof varid     = PCH_SETUP.PmcWdtTimerEn,

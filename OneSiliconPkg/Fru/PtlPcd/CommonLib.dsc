@@ -87,28 +87,24 @@ IoTrapSocLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdIoTrapLib/Pt
 PchCycleDecodingLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdPeiDxeSmmPchCycleDecodingLib/PtlPcdPeiDxeSmmPchCycleDecodingLib.inf
 HsioSocLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdHsioLib/PtlPcdHsioLib.inf
 ChipsetInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Hsio/LibraryPrivate/ChipsetInitLib/ChipsetInitLib.inf
-SerialIoUartPrivateLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/Uart/LibraryPrivate/PeiDxeSmmSerialIoUartPrivateLib/PeiDxeSmmSerialIoUartPrivateLib.inf
-SerialIoUartLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/Uart/Library/PeiDxeSmmSerialIoUartLib/PeiDxeSmmSerialIoUartLib.inf
 SerialIoAccessLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/Library/PeiDxeSmmSerialIoAccessLib/PeiDxeSmmSerialIoAccessLib.inf
 SerialIoPrivateLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/LibraryPrivate/PeiDxeSmmSerialIoPrivateLib/PeiDxeSmmSerialIoPrivateLib.inf
-SerialIoUartDebugPropertyPcdLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/Uart/Library/SerialIoUartDebugPropertyPcdLib/SerialIoUartDebugPropertyPcdLib.inf
 SerialIoI2cMasterCommonLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/I2c/LibraryPrivate/PeiDxeSerialIoI2cMasterCommonLib/PeiDxeSerialIoI2cMasterCommonLib.inf
 SerialIoI2cLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/I2c/Library/BaseSerialIoI2cLib/BaseSerialIoI2cLib.inf
 SerialIoI2cPrivateLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/I2c/LibraryPrivate/SerialIoI2cPrivateLib/SerialIoI2cPrivateLib.inf
 SerialIoSpiLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/Spi/Library/BaseSerialIoSpiLib/BaseSerialIoSpiLib.inf
 SpiSocLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdSpiLib/PtlPcdSpiLib.inf
 SpiInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/LibraryPrivate/SpiInitLib/SpiInitLib.inf
-SpiLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/Library/PeiSpiLib/BaseSpiLib.inf
 
 #
 # LPSS
 #
 LpssInitLib|$(PLATFORM_SI_PACKAGE)/Subsystem/Lpss/LpssLib/LpssInitLib.inf
-LpssUartPrivateLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/LibraryPrivate/LpssUartPrivateLib/LpssUartPrivateLib.inf
+LpssUartLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/LpssUartLib/PeiLpssUartLib.inf
 LpssI3cPrivateLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssI3c/LibraryPrivate/PeiDxeSmmI3cPrivateLib/PeiDxeSmmI3cPrivateLib.inf
 LpssControllerInfoLib | $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/LpssControllerInfoLib/PtlPcdLpssControllerInfoLib.inf
 LpssSpiBaseLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssSpi/LibraryPrivate/LpssSpiBaseLib/LpssSpiBaseLib.inf
-LpssUartDebugPropertyPcdLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/LibraryPrivate/LpssUartDebugPropertyPcdLib/LpssUartDebugPropertyPcdLib.inf
+LpssUartDebugPropertyPcdLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/LpssUartDebugPropertyPcdLib/LpssUartDebugPropertyPcdLib.inf
 LpssI2cPrivateLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssI2c/LibraryPrivate/PeiDxeSmmLpssI2cPrivateLib/PeiDxeSmmLpssI2cPrivateLib.inf
 
 #

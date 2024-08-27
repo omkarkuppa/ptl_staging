@@ -37,7 +37,17 @@
 #include <Library/PcieInitLib.h>
 #include <Library/BootGuardLib.h>
 #include <IntelRcStatusCode.h>
+#include <Library/PeiServicesLib.h>
 
+
+/**
+  PPI to clean FastBoot flags.
+**/
+static EFI_PEI_PPI_DESCRIPTOR mPeiTxtCleanResetNotificationPpi = {
+  (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  &gPeiTxtCleanResetNotificationPpiGuid,
+  NULL
+};
 
 /**
   This routine checks if List ID match is found
@@ -1029,6 +1039,9 @@ DoAcmLaunch (
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_ENTRY); //PostCode (0x9901)
   if (func == TXT_LAUNCH_CLEAR_SECRETS) {
+    DEBUG ((DEBUG_INFO, "Trigger FastBootFlagStatusCallback to clean FastBoot Status\n"));
+    Status = PeiServicesInstallPpi (&mPeiTxtCleanResetNotificationPpi);
+    ASSERT_EFI_ERROR (Status);
     LaunchBiosAcmClearSecrets ();
   } else if (func == TXT_LAUNCH_ACHECK) {
     LaunchBiosAcmAcheck ();
@@ -1246,9 +1259,12 @@ TxtUnlockMemory (
   EstablishmentBitAsserted = TxtIsEstablishmentBitAsserted (TxtInfoHob);
 
   ///
-  /// Memory is never locked, no need to unlock
+  /// Need to read FED40000 before unlocking memory
   ///
-  if (EstablishmentBitAsserted) {
+  if (!EstablishmentBitAsserted) {
+    DEBUG ((DEBUG_INFO, "TXTPEI::Unlock memory\n"));
+    AsmWriteMsr64 (MSR_LT_UNLOCK_MEMORY, 0);
+  } else {
     ///
     /// Lunch SCLEAN if wake error bit is set.
     ///

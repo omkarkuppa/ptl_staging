@@ -130,7 +130,7 @@ PeiCpuStrapSetActiveCores (
   }
 
   ///
-  /// Check if the configuration of "Active Small Cores" matches the BIOS Setup option.
+  /// Check if the configuration of "Active Ecores on ring" matches the BIOS Setup option.
   ///
   if (CpuStrapSet->NumberOfNonLpAtomCores != ActiveSmallCoreCount) {
     DEBUG ((
@@ -144,7 +144,7 @@ PeiCpuStrapSetActiveCores (
   }
 
   ///
-  /// Check if the configuration of "Active LP Cores" matches the BIOS Setup option.
+  /// Check if the configuration of "Active LP ECores off ring" matches the BIOS Setup option.
   ///
   if (CpuStrapSet->NumberOfLpAtomCores != ActiveLpAtomCoreCount) {
     DEBUG ((
@@ -383,6 +383,31 @@ PeiCpuSetSeamrrRegion (
   RETURN_STATUS Status;
   DEBUG ((DEBUG_INFO, "[TDX] Inside %a \n", __FUNCTION__));
   Status = SetSeamrrMsr (SeamrrBase, SeamrrSize);
+  return Status;
+}
+
+
+/**
+  Set Seamldr SVN in BIOS_SE_SVN MSR.
+
+  @param SeamldrSeSvn SeamldrSvn value to be set.
+
+  @retval RETURN_SUCCESS            MSR is set successfully.
+  @retval RETURN_SECURITY_VIOLATION SeamldrSeSvn is lower than value in the MSR
+*/
+RETURN_STATUS
+EFIAPI
+PeiCpuSetSeamldrSeSvn (
+  UINT8 SeamldrSeSvn
+  )
+{
+  RETURN_STATUS Status;
+  MSR_BIOS_SE_SVN_REGISTER BiosSeSvnMsr;
+
+  BiosSeSvnMsr.Uint64 = 0;
+  BiosSeSvnMsr.Bits.SeamldrSeSvn = SeamldrSeSvn;
+
+  Status = SetBiosSeSvnMsr (BiosSeSvnMsr.Uint64);
   return Status;
 }
 

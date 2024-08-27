@@ -313,7 +313,7 @@ IsAudioInterfaceSupported (
         return FALSE;
       }
     case HdaSsp:
-      if (AudioLinkIndex < PCH_MAX_HDA_SSP_LINK_NUM) {
+      if (AudioLinkIndex < PCH_MAX_HDA_SSP_LINK_NUM - PCH_MAX_HDA_SSP_EXTENDED_LINK_NUM) {
         return TRUE;
       } else {
         return FALSE;

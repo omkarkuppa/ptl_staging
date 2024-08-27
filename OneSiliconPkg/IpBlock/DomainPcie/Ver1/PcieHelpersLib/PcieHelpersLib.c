@@ -1466,6 +1466,7 @@ SetEpErroreFlags (
     EpPcieCapPtr = PcieBaseFindCapId (EpBase, EFI_PCI_CAPABILITY_ID_PCIEXP);
   }
 
+  DctlCfg.Data = PciSegmentRead16 (EpBase + EpPcieCapPtr + R_PCIE_DCTL_OFFSET);
   DctlCfg.Bits.ure = 1;
   DctlCfg.Bits.fee = 1;
   DctlCfg.Bits.nfe = 1;
@@ -1545,6 +1546,7 @@ Get10BitTagCaps (
 
   Capabilities.Bits.RequesterSupported = !!(CapsRegister & B_PCIE_DCAP2_PX10BTRS);
   Capabilities.Bits.CompleterSupported = !!(CapsRegister & B_PCIE_DCAP2_PX10BTCS);
+  DEBUG ((DEBUG_INFO, "PX10BTRS: %d PX10BTCS: %d\n", Capabilities.Bits.RequesterSupported, Capabilities.Bits.CompleterSupported));
   return Capabilities;
 }
 
@@ -1561,27 +1563,27 @@ Set10BitTag (
   TENBITTAG_CAPS TenBitTag
   )
 {
-  UINT16    CtrlRegister;
-  UINT16    Ctrl2Register;
-  UINT32    CapRegister;
-
-  CtrlRegister = 0;
-  Ctrl2Register = 0;
-  CapRegister = 0;
+  DCAP_PCIE_CFG_STRUCT  Dcap;
+  DCTL_PCIE_CFG_STRUCT  Dctl;
+  DCTL2_PCIE_CFG_STRUCT Dctl2;
+  UINT64                Base;
 
   if (Sbdf.PcieCap == 0) {
     return;
   }
+  Base = SbdfToBase (Sbdf);
+  DEBUG ((DEBUG_INFO, "Set10BitTag %x:%x:%x\n", Sbdf.Bus, Sbdf.Dev, Sbdf.Func));
 
-  CapRegister =   PciSegmentRead32 (SbdfToBase (Sbdf) + Sbdf.PcieCap + R_PCIE_DCAP_OFFSET);
-
-  if (CapRegister & B_PCIE_DCAP_ETFS) {
-  CtrlRegister |= B_PCIE_DCTL_ETFE;
-  PciSegmentWrite16 (SbdfToBase (Sbdf) + Sbdf.PcieCap + R_PCIE_DCTL_OFFSET, CtrlRegister);
+  Dcap.Data = PciSegmentRead32 (Base + Sbdf.PcieCap + R_PCIE_DCAP_OFFSET);
+  if (Dcap.Bits.etfs) {
+    Dctl.Data = PciSegmentRead16 (Base + Sbdf.PcieCap + R_PCIE_DCTL_OFFSET);
+    Dctl.Bits.etfe = 1;
+    PciSegmentWrite16 (Base + Sbdf.PcieCap + R_PCIE_DCTL_OFFSET, Dctl.Data);
   }
 
-  Ctrl2Register |= B_PCIE_DCTL2_PX10BTRE;
-  PciSegmentWrite16 (SbdfToBase (Sbdf) + Sbdf.PcieCap + R_PCIE_DCTL2_OFFSET, Ctrl2Register);
+  Dctl2.Data = PciSegmentRead16 (Base + Sbdf.PcieCap + R_PCIE_DCTL2_OFFSET);
+  Dctl2.Bits.px10btre = 1;
+  PciSegmentWrite16 (Base + Sbdf.PcieCap + R_PCIE_DCTL2_OFFSET, Dctl2.Data);
 }
 
 /**
@@ -1652,7 +1654,13 @@ EnableMultiVc (
   VcCtrlReg = VC0_CTRL_REG;
   for (VcIndex = 0; VcIndex < VC_MAX_NUM && VcIndex < (LinkVcCount + 1); VcIndex++) {
     VcCtrlReg += VcIndex * VCX_CTRL_REG_OFFSET;
-    PciSegmentWrite8 (PcieBase + ExtVc.CapOffset + VcCtrlReg, TcVcMap->TcVcMap[VcIndex]);
+    if (LinkVcCount == 0) {
+      DEBUG ((DEBUG_INFO, "LinkVcCount = 0 \n"));
+      PciSegmentWrite8 (PcieBase + ExtVc.CapOffset + VcCtrlReg, 0xFE);
+    } else {
+      DEBUG ((DEBUG_INFO, "LinkVcCount != 0 \n"));
+      PciSegmentWrite8 (PcieBase + ExtVc.CapOffset + VcCtrlReg, TcVcMap->TcVcMap[VcIndex]);
+    }
     DEBUG ((DEBUG_INFO, "TcVc[%d] = %X\n", VcIndex, PciSegmentRead8 (PcieBase + VcCtrlReg)));
     if (VcIndex != 0) {
       PciSegmentAndThenOr32 (PcieBase + ExtVc.CapOffset + VcCtrlReg, (UINT32) ~(VC_ID), (VcIndex << 24) | VC_EN);
@@ -1863,12 +1871,7 @@ PcieRpDownstreamConfiguration (
     }
   }
 
-  if (HasChildBus (RpSbdf, &ChildSbdf)) {
-    DevType = GetDeviceType (RpSbdf);
-    if (FindNextPcieChild (DevType, &ChildSbdf)) {
-      Recursive10BitTagConfiguration (ChildSbdf);
-    }
-  }
+  Recursive10BitTagConfiguration (RpSbdf);
 
   ClearBusFromTable (&BridgeCleanupList);
   return IpCsiStsSuccess;

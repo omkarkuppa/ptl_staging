@@ -30,7 +30,7 @@
 #include <Library/FspSwitchStackLib.h>
 #include <Library/GetFsptApiParameter.h>
 #include <Library/PcdLib.h>
-#include <Library/SerialIoUartDebugPropertyPcdLib.h>
+#include <Library/LpssUartDebugPropertyPcdLib.h>
 #include <LpssI2cConfig.h>
 #include <LpssUartConfig.h>
 #include <Library/LpssUartDebugPropertyPcdLib.h>

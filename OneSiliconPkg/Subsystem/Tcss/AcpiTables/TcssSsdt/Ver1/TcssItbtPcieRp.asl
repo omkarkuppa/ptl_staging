@@ -444,9 +444,9 @@
     ADBG ("TBT RP _DSD")
     ADBG (Concatenate ("TUID = ", ToHexString (TUID)))
 
-    If (CondRefOf (U4SE))
+    If (CondRefOf (U4CM))
     {
-      If (LEqual (U4SE, 0))
+      If (LEqual (And (U4CM, 0x07), 0))
       {
         Return (
           Package () {

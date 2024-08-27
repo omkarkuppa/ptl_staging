@@ -28,7 +28,7 @@
 
 [LibraryClasses]
   BaseLib
-  SerialIoUartDebugPropertyPcdLib
+  LpssUartDebugPropertyPcdLib
 
 [Packages]
   MdePkg/MdePkg.dec

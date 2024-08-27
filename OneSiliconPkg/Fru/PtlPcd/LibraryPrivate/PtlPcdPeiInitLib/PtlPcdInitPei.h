@@ -433,11 +433,13 @@ PtlPcdSseInit (
   );
 
 /**
-  Initialize CAN IP for PTL SOC
+  Initialize CAN Subsystem for PTL SOC
 
-  @param[in] SiPolicy  Pointer to SI_POLICY_PPI
+  @param[in] SiPolicy     Pointer to SI_POLICY_PPI
+
+  @retval    EFI_SUCCESS  The function completed successfully.
 **/
-VOID
+EFI_STATUS
 PtlPcdCanInit (
   IN  SI_POLICY_PPI *SiPolicyPpi
   );

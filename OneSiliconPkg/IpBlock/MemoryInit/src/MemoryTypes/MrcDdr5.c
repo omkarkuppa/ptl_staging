@@ -84,7 +84,7 @@ const MrcModeRegister JedecInitSequenceMultiCycle[] = {
   // PDA MR's start here
   // IMPORTANT note: the order of the MR's here should be opposite to their training order in MRC call table
   // For example, MR3 is trained as PDA before MR10.
-  mrMR129, // DFE Tap1 DQL[0] 
+  mrMR129, // DFE Tap1 DQL[0]
   mrMR130, // DFE Tap2 DQL[0]
   mrMR131, // DFE Tap3 DQL[0]
   mrMR132, // DFE Tap4 DQL[0]
@@ -563,6 +563,10 @@ MrcModeRegister Ddr5MrInitList [] = {
   mrMR130,
   mrMR131,
   mrMR132,
+  mrMR193,
+  mrMR194,
+  mrMR195,
+  mrMR196,
   mpcMR32a0,
   mpcMR32a1,
   mpcMR32b0,
@@ -947,6 +951,12 @@ Ddr5JedecInitVal (
 
     case mrMR40:
       Mr40->Bits.ReadDqsOffsetTiming = Outputs->EarlyDqs;
+      if (TimingPtr->tCL <= 30 ) {
+        if ((Outputs->ReadPreamble + Outputs->EarlyDqs) >= 5) {
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s When CL <= 30, tRPRE + Read DQS Offset >= 5 Clocks cannot be supported, ReadPreamble %d  EarlyDqs %d\n", gErrString, Outputs->ReadPreamble, Outputs->EarlyDqs);
+          Status = mrcWrongInputParameter;
+        }
+      }
       break;
 
     case mrMR45:
@@ -1412,6 +1422,7 @@ MrcDdr5GetGmfAttributes (
       break;
 
     case mrPreAll:
+      CmdType = GmfCmdPreAll;
       DelayType = GmfDdr5Delay_tPreAll;
       break;
 
@@ -1686,6 +1697,7 @@ PerformGenericMrsFsmSequence (
   UINT32        DimmRank;
   UINT32        Rank;
   UINT32        OutIdx;
+  UINT16        Delay;
   UINT8         Data;
   UINT32        MrIndex;
   UINT32        Index;
@@ -1702,6 +1714,7 @@ PerformGenericMrsFsmSequence (
   MRC_GEN_MRS_FSM_MR_TYPE MrData[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL][MAX_MR_GEN_FSM];
   BOOLEAN Isx8DramWidth;
   BOOLEAN Isx16DramWidthSameChannel;
+  MrcDebugMsgLevel DebugLevel;
 
   // These MR's can be trained per rank and hence should be marked per Rank in Gen MRS FSM for runtime
   static const MrcModeRegister SagvMrPerRankDdr5[] = {
@@ -1796,6 +1809,8 @@ PerformGenericMrsFsmSequence (
   Outputs = &MrcData->Outputs;
   Debug   = &Outputs->Debug;
   MrcCall = Inputs->Call.Func;
+  Delay   = 0;
+  DebugLevel = ((SagvConfig) ? MSG_LEVEL_ERROR : MSG_LEVEL_NONE);
 
   // Clear out our array
   MrcCall->MrcSetMem ((UINT8 *) MrData, sizeof (MrData), 0);
@@ -1818,6 +1833,7 @@ PerformGenericMrsFsmSequence (
         DimmRank = Rank % MAX_RANK_IN_DIMM;
         MrPtr = ChannelOut->Dimm[Dimm].Rank[DimmRank].MR;
         OutIdx = 0;
+        MRC_DEBUG_MSG (Debug, DebugLevel, "MC%u.C%u.R%u\tData\tDelay\n", Controller, Channel, Rank);
         // Pass on the list twice. First pass: non-PDA, second pass: PDA
         for (ConfigSeq = GenericFsmConfigNonPdaMrs; ConfigSeq <= GenericFsmConfigPdaMrs; ConfigSeq++) {
           for (Index = 0; Sequence[Index] != mrEndOfSequence; Index++) {
@@ -1893,6 +1909,11 @@ PerformGenericMrsFsmSequence (
               GenMrsFsmMr->Valid   = TRUE;
               GenMrsFsmMr->DelayIndex = (GmfTimingIndex) DelayType;
               GenMrsFsmMr->CmdType = CurCmdType;
+              if (DebugLevel) {
+                // Needed only for debug print
+                MrcGetGmfDelayTiming (MrcData, (GmfTimingIndex) DelayType, &Delay);
+              }
+              MRC_DEBUG_MSG (Debug, DebugLevel, " MR%3u:\t\t0x%02X\t%3u\n", CurMrAddr, Data, Delay);
             } else {
               MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "MR index(%d) exceeded MR array length(%d)\n", MrIndex, MAX_MR_IN_DIMM);
               Status = mrcWrongInputParameter;
@@ -4827,7 +4848,6 @@ MrcGetDdr5Tadc (
   OUT       UINT8         *tADCmax
   )
 {
-
   if (Frequency <= f5600) {
     *tADCmin = MRC_DDR5_tADC_5600_MIN;
     *tADCmax = MRC_DDR5_tADC_5600_MAX;
@@ -4843,9 +4863,12 @@ MrcGetDdr5Tadc (
   } else if (Frequency <= f8000) {
     *tADCmin = MRC_DDR5_tADC_8000_MIN;
     *tADCmax = MRC_DDR5_tADC_8000_MAX;
-  } else {
+  } else if (Frequency <= f8400) {
     *tADCmin = MRC_DDR5_tADC_8400_MIN;
     *tADCmax = MRC_DDR5_tADC_8400_MAX;
+  } else {
+    *tADCmin = MRC_DDR5_tADC_8800_MIN;
+    *tADCmax = MRC_DDR5_tADC_8800_MAX;
   }
 }
 

@@ -20,6 +20,7 @@
 **/
 
 #include <Library/DebugLib.h>
+#include <Library/PcdLib.h>
 #include <Ppi/SiPolicy.h>
 #include <Library/PchLimits.h>
 #include <ConfigBlock/PchGeneralConfig.h>
@@ -315,7 +316,6 @@ IshSocSetGpio (
   EFI_STATUS       Status;
 
   DEBUG ((DEBUG_INFO, "%a() Start\n", __FUNCTION__));
-
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "ISH: Failed to Configure ISH Pins\n"));

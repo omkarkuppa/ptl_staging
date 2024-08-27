@@ -49,7 +49,6 @@
   PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   IntelSiliconPkg/IntelSiliconPkg.dec
   MinPlatformPkg/MinPlatformPkg.dec
-  PantherLakeBoardPkg/BoardPkg.dec
 
 [LibraryClasses]
   PcdLib

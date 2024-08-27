@@ -32,10 +32,15 @@
 #define FSP_REGION_TYPE_FSPOT       0
 #define FSP_REGION_TYPE_FSPM        1
 #define FSP_REGION_TYPE_FSPS        2
+#define FSP_REGION_TYPE_FSPVERSION        15
+
+#define VERSION_DIGEST_PTR(Fbm)  \
+  (FSP_REGION_DIGEST *)((UINT8 *)(Fbm) + sizeof (FSP_BOOT_MANIFEST_STRUCTURE) - \
+  4 * sizeof (FSP_REGION_DIGEST) - 7 * sizeof (UINT8))
 
 #define COMPONENT_DIGEST0_PTR(Fbm)  \
   (FSP_REGION_DIGEST *)((UINT8 *)(Fbm) + sizeof (FSP_BOOT_MANIFEST_STRUCTURE) - \
-  3 * sizeof (FSP_REGION_DIGEST) - sizeof (UINT8))
+  3 * sizeof (FSP_REGION_DIGEST))
 
 #define FSP_REGION0_PTR(Fbm)  \
   (FSP_REGION_STRUCTURE *)((UINT8 *)(Fbm) + sizeof (FSP_BOOT_MANIFEST_STRUCTURE))
@@ -66,7 +71,8 @@ typedef struct {
   UINT8                         Reserved1[3];          // UINT32 Alignment
 
   UINT16                        KeySignatureOffset;
-  UINT16                        FspVersion;
+  UINT8                         FspVersion[6];
+  FSP_REGION_DIGEST             FspVersionDigests;    // digest for FSP version
   UINT8                         FspSvn;
   UINT8                         Reserved2;
   UINT32                        Flags;                 // UINT32 Alignment

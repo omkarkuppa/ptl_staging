@@ -33,6 +33,7 @@
 #include "Usb4Hr.h"
 #include "Usb4IhrPci.h"
 #include "Usb4DhrPci.h"
+#include <Library/PciHostBridgeLib.h>
 
 extern EFI_USB4_DEBUG_PROTOCOL   *mUsb4Log;
 
@@ -393,6 +394,9 @@ Usb4HrCreate (
   EFI_STATUS          Status;
   USB4_HR_INSTANCE    *HrInst;
   PHYSICAL_ADDRESS    MmioBase;
+  PCI_ROOT_BRIDGE     *PciRootBridge;
+  UINTN               PciRootBridgeCount;
+  UINTN               Index;
 
   DEBUG ((DEBUG_INFO, "Usb4HrCreate entry\n"));
   Usb4LogWrite (mUsb4Log, USB4_DBG_INFO, USB4_EVT_CODE_HR_CREATE_ENTRY, 0, 0);
@@ -416,7 +420,21 @@ Usb4HrCreate (
   //
   // Set host router information.
   //
-  CmCopyMem (&(HrInst->HrInfo), HrInfo, sizeof(USB4_HR_INFO));
+  CmCopyMem (&(HrInst->HrInfo), HrInfo, sizeof (USB4_HR_INFO));
+
+  //
+  // Allocate MMIO range within Root Bridge resource window.
+  //
+  MmioBase = 0xFFFFFFFF;
+  PciRootBridge = PciHostBridgeGetRootBridges (&PciRootBridgeCount);
+  if (PciRootBridge != NULL) {
+    for (Index = 0; Index < PciRootBridgeCount; Index++) {
+      if (HrInfo->Rp.Bdf.Bus == PciRootBridge[Index].Bus.Base) {
+        MmioBase = PciRootBridge[Index].Mem.Limit;
+        break;
+      }
+    }
+  }
 
   //
   // Allocated MMIO space for the programming interface of Tx/Rx Ring access.

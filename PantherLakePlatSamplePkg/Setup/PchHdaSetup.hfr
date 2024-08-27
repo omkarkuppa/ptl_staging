@@ -493,7 +493,7 @@
 
     grayoutif ideqval PCH_SETUP.PchHdAudioFeature[1] == 0x0 OR
 #if FixedPcdGetBool (PcdCnvSetupMenu) == 1
-              ((ideqval CNV_VFR_CONFIG_SETUP.CnviIsPresent == 0 OR ideqval PCH_SETUP.CnviMode == 0) AND
+              ((ideqval CNV_VFR_CONFIG_SETUP.CnviIsPresent == 0 OR ideqval CNV_VFR_CONFIG_SETUP.CnviMode == 0) AND
               ideqval PCH_SETUP.HdaDiscBtOffEnabled == 0);
 #else
               ideqval PCH_SETUP.HdaDiscBtOffEnabled == 0;
@@ -821,7 +821,8 @@
       endoneof;
     endif;
 
-    suppressif NOT ideqval  PCH_SETUP.PchHdaMicPrivacyMode == 1; // HW mode
+    suppressif NOT ideqval  PCH_SETUP.PchHdaMicPrivacyMode == 1 AND // HW mode
+               NOT ideqval  PCH_SETUP.PchHdaMicPrivacyMode == 3; // Force Mute Mode
     SEPARATOR
     SUBTITLE(STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_HW_MODE_LINK_PROMPT))
 
@@ -878,10 +879,9 @@
         help        = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_TIMEOUT_HELP),
         flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
         minimum     = 0,
-        maximum     = 0x3E8,
+        maximum     = 0x7FF,
         step        = 1,
-        default     = 0x64,
+        default     = 0x28,
       endnumeric;
     endif;
     endform; //End of STR_HDAUDIO_MIC_PRIVACY_FORM_TITLE
-

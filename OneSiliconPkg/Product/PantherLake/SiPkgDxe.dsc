@@ -47,7 +47,7 @@
 
   $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/Dxe/PtlPcdPchInitDxe.inf
   $(PLATFORM_SI_PACKAGE)/IpBlock/LpssI2c/I2cDriver/LpssI2cDriver.inf
-  $(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/Uart/UartDriver/SerialIoUartDriver.inf
+  $(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/LpssUartDriver/LpssUartDriver.inf
   $(PLATFORM_SI_PACKAGE)/Pch/SmmControl/RuntimeDxe/SmmControl.inf
 
   $(PLATFORM_SI_PACKAGE)/Pch/PchSmiDispatcher/Smm/PchSmiDispatcher.inf{
@@ -95,8 +95,10 @@
   }
 
 !if gSiPkgTokenSpaceGuid.PcdBiosGuardEnable == TRUE
+!if gSiPkgTokenSpaceGuid.PcdBiosGuardLegacyAcpi == FALSE
   $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Dxe/BiosGuardAcpiInit.inf
   $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/AcpiTables/BiosGuardAcpiTables.inf
+!endif
   $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Smm/BiosGuardServices.inf
 !endif
 

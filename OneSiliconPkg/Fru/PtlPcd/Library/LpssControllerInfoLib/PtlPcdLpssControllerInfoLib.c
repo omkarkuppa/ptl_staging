@@ -36,17 +36,7 @@
 #include <LpssSpiController.h>
 #include <LpssUartController.h>
 #include <Defines/PchReservedResources.h>
-
-typedef struct {
-  UINT32 Bar0;
-  UINT32 Bar1;
-} LPSS_CONTROLLER_DESCRIPTOR;
-
-GLOBAL_REMOVE_IF_UNREFERENCED LPSS_CONTROLLER_DESCRIPTOR mPtlPcdLpssUartFixedOffset [] = {
-  { 0xC000,   0xD000},
-  { 0xE000,   0xF000},
-  { 0x10000,  0x11000}
-};
+#include <Library/SerialIoUartSocLib.h>
 
 /**
   Get I2C Controller device instance
@@ -288,8 +278,8 @@ PtlPcdLpssUartGetController (
   // MMIO Base Address
   //
   UartCtrl->MmioTmpBar = PcdGet32 (PcdSiliconInitTempMemBaseAddr);
-  UartCtrl->FixedMmioPciCfgBaseAddr = PCH_SERIAL_IO_BASE_ADDRESS + mPtlPcdLpssUartFixedOffset[UartControllerIndex].Bar1;
-  UartCtrl->FixedMmio = PCH_SERIAL_IO_BASE_ADDRESS + mPtlPcdLpssUartFixedOffset[UartControllerIndex].Bar0;
+  UartCtrl->FixedMmioPciCfgBaseAddr = GetLpssUartFixedBar1 (UartControllerIndex);
+  UartCtrl->FixedMmio = GetLpssUartFixedBar0 (UartControllerIndex);
 
   //
   // UART Controller - PCIe Configuration Space registers access
@@ -317,6 +307,12 @@ PtlPcdLpssUartControllerFree (
   IN LPSS_UART_CONTROLLER *UartController
   )
 {
-  FreePool (UartController->PcieCfgAccess);
-  FreePool (UartController);
+  if (UartController != NULL) {
+    if (UartController->PcieCfgAccess != NULL) {
+      FreePool (UartController->PcieCfgAccess);
+      UartController->PcieCfgAccess = NULL;
+    }
+    FreePool (UartController);
+    UartController = NULL;
+  }
 }

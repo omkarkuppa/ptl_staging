@@ -38,6 +38,7 @@
   SsdtRtd3/PtlUHLp5SsdRtd3.asl
   SsdtRtd3/PtlUHRvp34Rtd3.asl
   SsdtRtd3/PtlUPHSsdt34Rtd3.asl
+  SsdtRtd3/PtlUHLp5AepRtd3.asl
 
 ################################################################################
 #
@@ -90,6 +91,7 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi9        ## CONSUMES
   gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi10       ## CONSUMES
   gCnvFeaturePkgTokenSpaceGuid.PcdMaxRootPortNumber     ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdDynamicSarSupport     ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdVmdEnable                     ## CONSUMES
 
 ################################################################################

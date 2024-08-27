@@ -82,67 +82,72 @@ AceConfigureMicPrivacy (
 
   HwModeLinkMask = 0;
 
-  if ((HdaConfig->MicPrivacy.Mode == HdaHwManagedMicrophonePrivacy) || (HdaConfig->MicPrivacy.Mode == HdaFwManagedMicrophonePrivacy)) {
+  if (HdaConfig->MicPrivacy.Mode != HdaNoMicrophonePrivacySupport) {
+    if ((HdaConfig->MicPrivacy.Mode == HdaHwManagedMicrophonePrivacy) || (HdaConfig->MicPrivacy.Mode == HdaFwManagedMicrophonePrivacy)) {
+      //
+      // Program the time-out duration to wait before forcing the actual microphone privacy DMA data zeroing.
+      // Unit in number of RTC clocks.
+      // Valid and static when DDZE = 10. For DDZE = 0x or 11 case, time-out is not necessary as it will not be enabled or force mic disable statically.
+      // Locked when DDZPL = 1.
+      //
+      MmioAndThenOr32 (
+        HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP,
+        (UINT32) (~B_ACE_MEM_DFMICPVCP_DDZWT),
+        (UINT32) ((HdaConfig->MicPrivacy.Timeout * 32) & B_ACE_MEM_DFMICPVCP_DDZWT) // timeout (ms) * RTC clock (32kHz)
+        );
+      DEBUG ((DEBUG_INFO, "Microphone privacy timeout value: %d.\n", MmioRead32 (HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP) & B_ACE_MEM_DFMICPVCP_DDZWT));
+    }
+
+    if ((HdaConfig->MicPrivacy.Deglitch == TRUE)) {
+      //
+      // De-glitcher enable for privacy signaling GPIO input running on resume clock domain.
+      // Locked when DDZPL = 1.
+      //
+      MmioOr32 (HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP, (UINT32) B_ACE_MEM_DFMICPVCP_DGE);
+      DEBUG ((DEBUG_INFO, "Microphone privacy: De-glitcher enabled.\n"));
+    }
+
+    if (HdaConfig->MicPrivacy.Mode == HdaHwManagedMicrophonePrivacy || HdaConfig->MicPrivacy.Mode == HdaForceMicrophoneMute) {
+      //
+      // Select 1 or more audio link to apply the microphone privacy DMA Data Zeroing. 1 bit per audio link.
+      // [6:0]: SoundWire link segment
+      // [7]: DMIC
+      // Valid and static when DDZE = 1x.
+      // Locked when DDZPL = 1.
+      //
+      HwModeLinkMask = (((!!HdaConfig->MicPrivacy.HwModeSoundWire0) << MIC_PRIVACY_MASK_SNDW0) |
+                        ((!!HdaConfig->MicPrivacy.HwModeSoundWire1) << MIC_PRIVACY_MASK_SNDW1) |
+                        ((!!HdaConfig->MicPrivacy.HwModeSoundWire2) << MIC_PRIVACY_MASK_SNDW2) |
+                        ((!!HdaConfig->MicPrivacy.HwModeSoundWire3) << MIC_PRIVACY_MASK_SNDW3) |
+                        ((!!HdaConfig->MicPrivacy.HwModeSoundWire4) << MIC_PRIVACY_MASK_SNDW4) |
+                        ((!!HdaConfig->MicPrivacy.HwModeDmic) << MIC_PRIVACY_MASK_DMIC));
+
+      DEBUG ((DEBUG_INFO, "Microphone privacy link mask: %d.\n", HwModeLinkMask));
+      MmioAndThenOr32 (
+        HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP,
+        (UINT32) (~B_ACE_MEM_DFMICPVCP_DDZLS),
+        (UINT32) ((HwModeLinkMask << N_ACE_MEM_DFMICPVCP_DDZLS) & B_ACE_MEM_DFMICPVCP_DDZLS)
+        );
+    }
+
     //
-    // Program the time-out duration to wait before forcing the actual microphone privacy DMA data zeroing.
-    // Unit in number of RTC clocks.
-    // Valid and static when DDZE = 10. For DDZE = 0x or 11 case, time-out is not necessary as it will not be enabled or force mic disable statically.
+    // Indicates the policy setting for HW to force the microphone privacy DMA data zeroing.
+    // 00: Disabled (Default)
+    // 10: Enabled (Microphone disable dynamically depending on privacy signaling input)
+    // 11: Enabled (Force microphone disable statically)
     // Locked when DDZPL = 1.
     //
-    MmioAndThenOr32 (
-      HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP,
-      (UINT32) (~B_ACE_MEM_DFMICPVCP_DDZWT),
-      (UINT32) (HdaConfig->MicPrivacy.Timeout & B_ACE_MEM_DFMICPVCP_DDZWT));
-    DEBUG ((DEBUG_INFO, "Microphone privacy timeout value: %d.\n", MmioRead32 (HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP) & B_ACE_MEM_DFMICPVCP_DDZWT));
-  }
-
-  if ((HdaConfig->MicPrivacy.Deglitch == TRUE)) {
-    //
-    // De-glitcher enable for privacy signaling GPIO input running on resume clock domain.
-    // Locked when DDZPL = 1.
-    //
-    MmioOr32 (HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP, (UINT32) B_ACE_MEM_DFMICPVCP_DGE);
-    DEBUG ((DEBUG_INFO, "Microphone privacy: De-glitcher enabled.\n"));
-  }
-
-  //
-  // Select 1 or more audio link to apply the microphone privacy DMA Data Zeroing. 1 bit per audio link.
-  // [6:0]: SoundWire link segment
-  // [7]: DMIC
-  // Valid and static when DDZE = 1x.
-  // Locked when DDZPL = 1.
-  //
-  HwModeLinkMask = (((!!HdaConfig->MicPrivacy.HwModeSoundWire0) << MIC_PRIVACY_MASK_SNDW0) |
-                   ((!!HdaConfig->MicPrivacy.HwModeSoundWire1) << MIC_PRIVACY_MASK_SNDW1) |
-                   ((!!HdaConfig->MicPrivacy.HwModeSoundWire2) << MIC_PRIVACY_MASK_SNDW2) |
-                   ((!!HdaConfig->MicPrivacy.HwModeSoundWire3) << MIC_PRIVACY_MASK_SNDW3) |
-                   ((!!HdaConfig->MicPrivacy.HwModeSoundWire4) << MIC_PRIVACY_MASK_SNDW4) |
-                   ((!!HdaConfig->MicPrivacy.HwModeDmic) << MIC_PRIVACY_MASK_DMIC));
-
-  DEBUG ((DEBUG_INFO, "Microphone privacy link mask: %d.\n", HwModeLinkMask));
-
-  MmioAndThenOr32 (
-    HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP,
-    (UINT32) (~B_ACE_MEM_DFMICPVCP_DDZLS),
-    (UINT32) ((HwModeLinkMask << N_ACE_MEM_DFMICPVCP_DDZLS) & B_ACE_MEM_DFMICPVCP_DDZLS));
-
-  //
-  // Indicates the policy setting for HW to force the microphone privacy DMA data zeroing.
-  // 00: Disabled (Default)
-  // 10: Enabled (Microphone disable dynamically depending on privacy signaling input)
-  // 11: Enabled (Force microphone disable statically)
-  // Locked when DDZPL = 1.
-  //
-  if ((HdaConfig->MicPrivacy.Mode == HdaHwManagedMicrophonePrivacy) || (HdaConfig->MicPrivacy.Mode == HdaFwManagedMicrophonePrivacy)) {
-    //
-    // Microphone disable dynamically depending on privacy signaling input.
-    //
-    MmioAndThenOr32 (HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP, (UINT32) ~B_ACE_MEM_DFMICPVCP_DDZE, (UINT32) (2 << N_ACE_MEM_DFMICPVCP_DDZE));
-  } else if (HdaConfig->MicPrivacy.Mode == HdaForceMicrophoneMute) {
-    //
-    // Force microphone disable statically.
-    //
-    MmioAndThenOr32 (HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP, (UINT32) ~B_ACE_MEM_DFMICPVCP_DDZE, (UINT32) (3 << N_ACE_MEM_DFMICPVCP_DDZE));
+    if ((HdaConfig->MicPrivacy.Mode == HdaHwManagedMicrophonePrivacy) || (HdaConfig->MicPrivacy.Mode == HdaFwManagedMicrophonePrivacy)) {
+      //
+      // Microphone disable dynamically depending on privacy signaling input.
+      //
+      MmioAndThenOr32 (HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP, (UINT32) ~B_ACE_MEM_DFMICPVCP_DDZE, (UINT32) (2 << N_ACE_MEM_DFMICPVCP_DDZE));
+    } else if (HdaConfig->MicPrivacy.Mode == HdaForceMicrophoneMute) {
+      //
+      // Force microphone disable statically.
+      //
+      MmioAndThenOr32 (HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP, (UINT32) ~B_ACE_MEM_DFMICPVCP_DDZE, (UINT32) (3 << N_ACE_MEM_DFMICPVCP_DDZE));
+    }
   }
 
   if (HdaConfig->MicPrivacy.Mode != HdaFwManagedMicrophonePrivacy) {
@@ -777,6 +782,12 @@ AceDetectAndInitializeHdaCodecs (
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_ENDOFPEI_INIT_HDA_CODECS);
 
+  if ((!HdaPreMemConfig->AudioLinkHda.SdiEnable[0] && !HdaPreMemConfig->AudioLinkHda.SdiEnable[1]) ||
+       !HdaPreMemConfig->AudioLinkHda.Enable) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Function disabled through policy.\n", __FUNCTION__));
+    return EFI_SUCCESS;
+  }
+
   ///
   /// Detect active HDA codecs
   ///
@@ -1159,7 +1170,6 @@ AceSetIDisplayAudioTmode (
     (UINT32) Data32);
 }
 
-
 /**
   This function enables IDisplay Codec.
 
@@ -1274,14 +1284,16 @@ AceConfigureDispAudioCodec (
   Configures Audio Link Mode
 
   @param[in] HdaCallbacks         Pointer to Hda callbacks structure
-  @param[in] HdaPreMemConfig      Hda PreMem Configuration
-  @param[in] HdaPrivateConfig     Hda Private Configuration
+  @param[in] HdaPreMemConfig      Pointer to Hda PreMem Configuration
+  @param[in] HdaPrivateConfig     Pointer to Hda Private Configuration
+  @param[in] HdaConfig            Pointer to Hda Configuration
 **/
 VOID
 AceConfigureAudioLinks (
   IN HDA_CALLBACK            *HdaCallbacks,
   IN HDAUDIO_PREMEM_CONFIG   *HdaPreMemConfig,
-  IN HDA_PRIVATE_CONFIG      *HdaPrivateConfig
+  IN HDA_PRIVATE_CONFIG      *HdaPrivateConfig,
+  IN HDAUDIO_CONFIG          *HdaConfig
   )
 {
   UINT32                     Index;
@@ -1359,6 +1371,14 @@ AceConfigureAudioLinks (
     }
   }
 
+  if (HdaConfig->MicPrivacy.Mode != HdaNoMicrophonePrivacySupport) {
+    if (HdaCallbacks->HdaConfigureMicrophonePrivacy != NULL) {
+      HdaCallbacks->HdaConfigureMicrophonePrivacy ();
+    } else {
+      DEBUG ((DEBUG_WARN, "HdaConfigureMicrophonePrivacy () not defined!\n"));
+    }
+  }
+
   DEBUG ((DEBUG_INFO, "%a () - End.\n", __FUNCTION__));
 }
 
@@ -1385,7 +1405,6 @@ AceConfigureController (
   EFI_STATUS              Status;
   UINT32                  Data32AndFncfg;
   UINT32                  Data32OrFncfg;
-
 
   Data32AndFncfg = (UINT32) ~0;
   Data32OrFncfg  = (UINT32) 0;
@@ -1532,7 +1551,7 @@ AceConfigureController (
   ///
   /// GPIOs configuration for Audio Links
   ///
-  AceConfigureAudioLinks (HdaCallbacks, HdaPreMemConfig, HdaPrivateConfig);
+  AceConfigureAudioLinks (HdaCallbacks, HdaPreMemConfig, HdaPrivateConfig, HdaConfig);
 
   AceConfigureDispAudioCodec (HdaController, HdaCallbacks, HdaPreMemConfig, HdaPrivateConfig);
 
@@ -1598,7 +1617,6 @@ AceConfigureController (
   @param[in] HdaController      Pointer to Hda device structure
   @param[in] HdaCallbacks       Pointer to Hda callbacks structure
   @param[in] HdaPreMemConfig    Pointer to Hda PreMem Configuration
-
 
   @retval EFI_SUCCESS             Controller disabled successfully
 **/

@@ -77,6 +77,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_INIT_CONFIG              *mCpuInitConfig      
 GLOBAL_REMOVE_IF_UNREFERENCED CPU_INIT_PREMEM_CONFIG       *mCpuInitPreMemConfig       = NULL;
 GLOBAL_REMOVE_IF_UNREFERENCED VTD_CONFIG                   *mVtdConfig                 = NULL;
 GLOBAL_REMOVE_IF_UNREFERENCED SI_PREMEM_CONFIG             *mSiPreMemConfig            = NULL;
+GLOBAL_REMOVE_IF_UNREFERENCED CPU_SECURITY_PREMEM_CONFIG   *mCpuSecurityPreMemConfig   = NULL;
 
 //
 // MCHECK BIOS Parameter Structure per MCHECK 0.5.002 CORE SAS
@@ -504,7 +505,6 @@ SetPcdCpuFeaturesSetting (
   if (mCpuTestConfig->MlcSpatialPrefetcher) {
     AddCpuFeaturesConfiguration (CPU_FEATURE_MLC_SPATIAL_PREFETCHER, CpuConfiguration, CpuConfigurationSize);
   }
-  AddCpuFeaturesConfiguration (CPU_FEATURE_APIC_TPR_UPDATE_MESSAGE, CpuConfiguration, CpuConfigurationSize);
   if (mCpuTestConfig->ThreeStrikeCounter) {
     AddCpuFeaturesConfiguration (CPU_FEATURE_THREE_STRIKE_COUNTER, CpuConfiguration, CpuConfigurationSize);
   }
@@ -955,6 +955,7 @@ ProgramProcessorFeature (
   )
 {
   MSR_MTRRCAP_REGISTER           MtrrCap;
+  MSR_PIC_MSG_CONTROL_REGISTER   ApicTprMsr;
 
   ///
   /// Get Trace Hub Acpi Base address for BSP
@@ -975,14 +976,14 @@ ProgramProcessorFeature (
   //
   // Set PMON Address to MSR
   //
-  if ((BOOLEAN)mCpuInitConfig->PmonEnable) {
+  if ((BOOLEAN) mCpuInitConfig->PmonEnable) {
     MsrSetPmonAddress (mCpuInitConfig->PmonAddress);
   }
   //
   // Enable or disable Crashlog, Gprs dump on CPU Core by MSR
   //
-  EnableCpuCrashLog ((BOOLEAN)(mCpuInitPreMemConfig->CrashLogEnable));
-  MsrSetCrashLogGprsMask ((BOOLEAN)(mCpuInitPreMemConfig->CrashLogEnable), (UINT8)(mCpuInitPreMemConfig->CrashLogGprs));
+  EnableCpuCrashLog ((BOOLEAN) (mCpuInitPreMemConfig->CrashLogEnable));
+  MsrSetCrashLogGprsMask ((BOOLEAN) (mCpuInitPreMemConfig->CrashLogEnable), (UINT8)(mCpuInitPreMemConfig->CrashLogGprs));
 
   //
   // Same MSR offset definition MSR_IA32_MTRRCAP 0x000000FE in ArchitecturalMsr.h
@@ -1000,6 +1001,10 @@ ProgramProcessorFeature (
     /// Initialize Core SEAMRRs.
     ///
     SyncSeamrrMsr (IsBsp);
+  }
+
+  if (IsBsp && IsTdxEnabled ()) {
+    PeiCpuSetSeamldrSeSvn (mCpuSecurityPreMemConfig->TdxSeamldrSvn);
   }
 
   if (IsTmeEnabled () == TRUE) {
@@ -1028,6 +1033,23 @@ ProgramProcessorFeature (
     && mCpuTestConfig->ProcessorTraceMemSize <= RtitTopaMemorySize128M) {
     SetProcTraceOutput (mCpuTestConfig, IsBsp);
   }
+
+  //
+  // Disable local APIC software-enabled bit before clearing TPR_MSG_OFF
+  //
+  InitializeLocalApicSoftwareEnable (FALSE);
+
+  //
+  // Set TPR_MSG_OFF to 0 (TPR messages on) before any future APIC state changes(enabled)
+  //
+  ApicTprMsr.Uint64 = AsmReadMsr64 (MSR_PIC_MSG_CONTROL);
+  ApicTprMsr.Bits.TprMsgOff = 0;
+  AsmWriteMsr64 (MSR_PIC_MSG_CONTROL, ApicTprMsr.Uint64);
+
+  //
+  // Enable local APIC software-enabled bit after clearing TPR_MSG_OFF
+  //
+  InitializeLocalApicSoftwareEnable (TRUE);
 
   return;
 }
@@ -1463,6 +1485,9 @@ CpuInit (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gVtdConfigGuid, (VOID *) &mVtdConfig);
   ASSERT_EFI_ERROR (Status);
 
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuSecurityPreMemConfigGuid, (VOID *) &mCpuSecurityPreMemConfig);
+  ASSERT_EFI_ERROR (Status);
+
   ///
   /// Locate CpuMpCpu MpService Ppi
   ///
@@ -1563,12 +1588,16 @@ CpuInit (
   //
   ProgramBiosParamsForMcheck ();
 
-  //
-  // Smm Relocation Initialize.
-  //
-  Status = SmmRelocationInit (mMpServices2Ppi);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "CpuInit: Not able to execute Smm Relocation Init.  Status: %r\n", Status));
+  if (mCpuInitPreMemConfig->SmmRelocationEnable) {
+    //
+    // Smm Relocation Initialize.
+    //
+    Status = SmmRelocationInit (mMpServices2Ppi);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_WARN, "CpuInit: Not able to execute Smm Relocation Init. Status: %r\n", Status));
+    }
+  } else {
+    DEBUG ((DEBUG_INFO, "%a: Skip Smm Relocation Init by CpuInitPreMemConfig.\n", __func__));
   }
 
   DEBUG ((DEBUG_INFO, "CpuInit Done \n"));

@@ -45,6 +45,7 @@
   PantherLakePlatSamplePkg/PlatformPkg.dec
   OneSiliconPkg/SiPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   CmosFeaturePkg/CmosFeaturePkg.dec
 
 [Pcd]
@@ -67,6 +68,7 @@
   gEfiPeiMasterBootModePpiGuid                  ## PRODUCES
   gEfiPeiBootInRecoveryModePpiGuid              ## PRODUCES
   gEfiPeiReadOnlyVariable2PpiGuid               ## CONSUMES
+  gPeiTxtCleanResetNotificationPpiGuid          ## NOTIFY
 
 [Guids]
   gFastBootExceptionInfoHobGuid                 ## CONSUMES

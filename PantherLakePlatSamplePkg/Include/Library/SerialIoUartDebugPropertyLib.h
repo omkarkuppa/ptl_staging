@@ -21,7 +21,7 @@
 #ifndef _SERAIL_IO_DEBUG_PROPERTY_LIB_H_
 #define _SERAIL_IO_DEBUG_PROPERTY_LIB_H_
 
-#include <SerialIoDevices.h>
+#include <Library/LpssUartDebugPropertyPcdLib.h>
 
 /**
   Returns UART's attributes
@@ -30,7 +30,7 @@
 **/
 VOID
 SerialIoUartDebugGetAttributes (
-  IN OUT SERIAL_IO_UART_ATTRIBUTES *UartAttributes
+  IN OUT LPSS_UART_ATTRIBUTES *UartAttributes
   );
 
 /**

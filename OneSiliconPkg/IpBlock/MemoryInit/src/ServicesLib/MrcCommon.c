@@ -20,6 +20,7 @@
 **/
 
 #include "MrcCommon.h"
+#include "MrcCommonPrivate.h"
 #include "MrcMemoryApi.h"
 #include "MrcHalRegisterAccess.h"
 #include "MrcDdrIoUtils.h"
@@ -191,6 +192,41 @@ MrcChannelExist (
   }
   return FALSE;
 }
+
+/**
+  Determine if the partition exists with the current channel population.
+
+  @param[in]  MrcData      - Pointer to global MRC data.
+  @param[in]  PartType     - The partition type to look up.
+  @param[in]  PartInstance - The partition instance to look up.
+  @param[in]  PartChannel  - The partition channel to look up. Only used by the Data
+                             Partitions as there are two "bytes" in 1 Data Instance.
+
+  @return whether partition exists or not.
+**/
+BOOLEAN
+MrcGetPartitionExists (
+  IN     MrcParameters      *MrcData,
+  IN     PARTITION_TYPE     PartType,
+  IN     UINT32             PartInstance,
+  IN     UINT32             PartChannel
+  )
+{
+  MrcOutput    *Outputs;
+  UINT32       Partition2Ch;
+
+  Outputs = &MrcData->Outputs;
+
+  Partition2Ch = MrcGetPartition2ChMask (
+    MrcData,
+    PartType,
+    PartInstance,
+    PartChannel
+    );
+
+  return ((Outputs->ValidChBitMask & Partition2Ch) != 0);
+}
+
 
 /**
   This function disable channel parameters.
@@ -1357,6 +1393,10 @@ MrcMrAddrToIndex (
 
     case mrMR57:
       MrIndex = mrIndexMR57;
+      break;
+
+    case mrMR58:
+      MrIndex = mrIndexMR58;
       break;
 
     case mrMR69:
@@ -2533,6 +2573,7 @@ MrcPrintHeaderTestScope (
   IN     BOOLEAN              ErrCount
   )
 {
+#ifdef MRC_DEBUG_PRINT
   MrcDebug  *Debug;
   MrcOutput *Outputs;
   UINT32    Index;
@@ -2723,6 +2764,9 @@ MrcPrintHeaderTestScope (
 
   MRC_DEBUG_MSG (Debug, DebugLevel, "\tChunk Error\n");
   return mrcSuccess;
+#else
+  return mrcSuccess;
+#endif // MRC_DEBUG_PRINT
 }
 
 /**
@@ -2751,6 +2795,7 @@ MrcPrintHeader (
   IN     BOOLEAN              ErrCount
   )
 {
+#ifdef MRC_DEBUG_PRINT
   return MrcPrintHeaderTestScope (
     MrcData,
     DebugLevel,
@@ -2761,6 +2806,9 @@ MrcPrintHeader (
     1,
     ErrCount
   );
+#else
+  return mrcSuccess;
+#endif // MRC_DEBUG_PRINT
 }
 
 /**
@@ -2829,7 +2877,7 @@ MrcCkdBufferRead (
   IN const UINT32  Offset
   )
 {
-  UINT32              Status;
+  RETURN_STATUS       Status;
   MRC_CKD_BUFFER      *CkdBuffer;
   UINT32               Index;
 
@@ -2869,7 +2917,8 @@ MrcCkdBufferWrite (
   )
 {
   MrcDebug            *Debug;
-  UINT32              Status;
+  MrcStatus           Status;
+  RETURN_STATUS       SmbusStatus;
   MRC_CKD_BUFFER      *CkdBuffer;
   UINT8               Index;
 
@@ -2887,7 +2936,7 @@ MrcCkdBufferWrite (
         CkdBuffer->Data[Index].IsDirty = TRUE;
       }
       if (((Mode & GSM_FORCE_WRITE) != 0) || ((Mode & GSM_CACHE_ONLY) == 0)) {
-        MrcSmbusWrite (MrcData, CkdBuffer->CkdAddress | (Offset << 8), Value, &Status);
+        MrcSmbusWrite (MrcData, CkdBuffer->CkdAddress | (Offset << 8), Value, &SmbusStatus);
       }
     } else {
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Attempted to write to a Read-Only Register\n");
@@ -2908,12 +2957,10 @@ MrcFlushCkdBuffer (
   )
 {
   MRC_CKD_BUFFER      *CkdBuffer;
-  UINT32              Status;
+  RETURN_STATUS       Status;
   UINT8               Index;
   UINT8               CkdDimm;
   UINT8               Offset;
-
-  Status       = mrcSuccess;
 
   for (CkdDimm = 0; CkdDimm < MAX_DIMMS_IN_SYSTEM; CkdDimm++) {
     CkdBuffer = &MrcData->Outputs.CkdBuffer[CkdDimm];

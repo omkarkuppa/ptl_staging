@@ -72,7 +72,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gFitStructureGuid                     =  {0x7336a6b9, 0x1d6e, 0x4059, {0x80, 0x31, 0x4d, 0x87, 0x4f, 0x8c, 0xdb, 0x82}}
   gNemMapStructureGuid                  =  {0x73d3e816, 0xfc83, 0x4638, {0xbf, 0x2b, 0xbe, 0x25, 0x19, 0x7d, 0x35, 0xd6}}
   gNemMapStructureHobGuid               =  {0xfa209db2, 0xf3db, 0x437c, {0x8a, 0xb1, 0x7c, 0xc8, 0x44, 0x72, 0xc6, 0xf3}}
-  gPmaxAcpiTableStorageGuid             =  {0x66E6C2E4, 0x0245, 0x4545, {0x81, 0x65, 0x12, 0x32, 0x24, 0x80, 0xAF, 0x31}}
+  gPmaxAcpiTableStorageGuid             =  {0x9DF7F2FD, 0x853C, 0x4566, {0xAF, 0x18, 0x24, 0xDE, 0xA3, 0x8B, 0x6F, 0x7C}}
 
   gVpdFfsGuid                           =  {0xFF7DB236, 0xF856, 0x4924, {0x90, 0xF8, 0xCD, 0xF1, 0x2F, 0xB8, 0x75, 0xF3}}
 
@@ -221,8 +221,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedSize|0x00000000|UINT32|0x20000065
   gBoardModuleTokenSpaceGuid.PcdFlashAllExtendAreaSize|0x00000000|UINT32|0x20000100
   gBoardModuleTokenSpaceGuid.PcdFlashExtendAreaBaseAddress|0x00000000|UINT32|0x20000101
-
-  gBoardModuleTokenSpaceGuid.PcdPolicyDefaultChkEnable|FALSE|BOOLEAN|0x20000A64
 
   # PCDs for Usb2 Port Number, Pch Usb3 Port Number
   gBoardModuleTokenSpaceGuid.PcdMaxPchUsb2PortNumber     |0x00       |UINT8  |0x20000A65
@@ -592,8 +590,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio|0x0|UINT32|0x0010122F
   gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity|0|BOOLEAN|0x00101230
   gBoardModuleTokenSpaceGuid.PcdDimmPopulationError|FALSE|BOOLEAN|0x00100221
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableCnvd|0|UINT64|0x00101231
-  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableCnvdSize|0|UINT16|0x00101232
 
   # TPM PCD
   ## The PCD is used to specify whether or not send HierarchyChangeAuth command for Platform Hierarchy.
@@ -851,16 +847,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     PantherLakeBoardPkg/BoardPkg.dec
   }
 
-  # SBC SPD DATA
-  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData           |{0}|SPD_DATA|0x50000026 {
-  <HeaderFiles>
-    PlatformBoardConfig.h
-  <Packages>
-    MdePkg/MdePkg.dec
-    PantherLakePlatSamplePkg/PlatformPkg.dec
-    PantherLakeBoardPkg/BoardPkg.dec
-  }
-
   # SBC MRC SLOTMAP
   gBoardModuleTokenSpaceGuid.VpdPcdMrcNoOfDimmSlot|{0}|MRC_SLOTMAP|0x5000003C {
     <HeaderFiles>
@@ -963,9 +949,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   # MRC Ddr Frequency Limit
   gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit       |0x0|UINT16|0x00001131
-
-  # Mrc Spd Data Size
-  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdDataSize       |0x0|UINT16|0x00001132
 
   # Mrc Spd Address Table
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable   |{0}|VPD_MRC_SPD_ADDRESS_TABLE|0x00001133 {
@@ -1113,13 +1096,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   # Lch Gpio Table
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableLch    |{0}|GPIOV2_INIT_CONFIG[]|0x0000119A {
-  <HeaderFiles>
-    Register/GpioV2PcdPins.h
-    GpioV2Config.h
-  }
-
-  #Cnvd Gpio Table
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableCnvd|{0}|GPIOV2_INIT_CONFIG[]|0x0000119B{
   <HeaderFiles>
     Register/GpioV2PcdPins.h
     GpioV2Config.h
@@ -1467,8 +1443,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   # USB Type-C PD Information Present : FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent|0|BOOLEAN|0x00001260
-  # USB Type-C PD Vendor : Definitions 1 to 3 are supported.
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor                       |0x0|UINT8|0x00001261
 
   # USB Type-C Retimer Information Present : FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent|0|BOOLEAN|0x00001263

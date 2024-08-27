@@ -25,7 +25,6 @@
 #include <Register/EspiRegs.h>
 #include <Library/SpiInitLib.h>
 #include <Library/PchPciBdfLib.h>
-#include <Library/SpiSocLib.h>
 #include <Library/PcdEspiLib.h>
 #include <PchConfigHobCommon.h>
 
@@ -35,6 +34,7 @@
 GLOBAL_REMOVE_IF_UNREFERENCED PCH_TCO_SMI_DISPATCH_PROTOCOL     *mPchTcoSmiDispatchProtocol;
 GLOBAL_REMOVE_IF_UNREFERENCED PCH_ESPI_SMI_DISPATCH_PROTOCOL    *mEspiSmmDispatchProtocol;
 GLOBAL_REMOVE_IF_UNREFERENCED UINT64                            mLpcRegBase;
+GLOBAL_REMOVE_IF_UNREFERENCED UINT64                            mSpiRegBase;
 
 /**
   This hardware SMI handler will be run every time the BIOS Write Enable bit is set.
@@ -47,7 +47,10 @@ PchSpiBiosWpCallback (
   IN  EFI_HANDLE                              DispatchHandle
   )
 {
-  SocSpiClearBiosWriteProtectDisable ();
+  PciSegmentAnd8 (
+    mSpiRegBase + R_SPI_CFG_BIOS_SPI_BC,
+    (UINT8) ~B_SPI_CFG_BIOS_SPI_BC_WPD
+    );
 }
 
 /**
@@ -102,6 +105,7 @@ InstallPchBiosWriteProtect (
   }
 
   mLpcRegBase = LpcPciCfgBase ();
+  mSpiRegBase = SpiPciCfgBase ();
 
   DEBUG ((DEBUG_INFO, "Installing BIOS Write Protect SMI handler\n"));
   //

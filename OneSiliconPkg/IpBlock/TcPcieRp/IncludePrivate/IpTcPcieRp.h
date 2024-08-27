@@ -27,7 +27,7 @@
 
 #define VERSION_HW_TC_PCIE_RP              0x00010001
 #define VERSION_HW_CUSTOM_TC_PCIE_RP       0x00000001
-#define VERSION_FW_TC_PCIE_RP              0x00000002
+#define VERSION_FW_TC_PCIE_RP              0x00000003
 #define VERSION_IPFWINTF_TC_PCIE_RP        0x05230102
 #define VERSION_IPFWINTFEXT_TC_PCIE_RP     0x00000002
 #define VERSION_UNKNOWN_TC_PCIE_RP         0
@@ -56,6 +56,15 @@ typedef struct {
   // The programming must be executed in proper order and moment.
   PCIE_RP_DOWNSTREAM_PORT_CONFIG  PcieRpDownStreamConfig;
 } IP_PCIE_CALLBACKS;
+
+#ifndef _TCSS_VER
+#define _TCSS_VER
+typedef enum {
+  TcssOld   = 0,
+  TcssNew   = 1,
+  TcssNewH  = 2
+} TCSS_VER;
+#endif // _TCSS_VER
 
 typedef union {
   UINT32      DevEn;            ///< Maps to bits in TCSS DEVEN register
@@ -110,6 +119,7 @@ struct _IP_TC_PCIE_RP_INST {
   UINT32                  BusMin;
   UINT32                  BusMax;
   IP_PCIE_CALLBACKS       *Callbacks;
+  TCSS_VER                TcssVersion;
 };
 
 /**

@@ -51,7 +51,6 @@ typedef struct {
   UINT8 MngState;
   UINT8 FwUpdEnabled;
   UINT8 MeStateControl;
-  UINT8 PttState;
   UINT8 DelayedAuthenticationMode;
   UINT8 FipsModeSelect;
   UINT8 InvokeArbSvnCommit;

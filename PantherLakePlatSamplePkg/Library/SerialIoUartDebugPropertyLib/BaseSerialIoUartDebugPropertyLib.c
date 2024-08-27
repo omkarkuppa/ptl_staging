@@ -20,7 +20,7 @@
 
 #include <ConfigBlock.h>
 #include <SerialIoDevices.h>
-#include <Library/SerialIoUartDebugPropertyPcdLib.h>
+#include <Library/LpssUartDebugPropertyPcdLib.h>
 
 /**
   Returns UART's attributes
@@ -29,10 +29,10 @@
 **/
 VOID
 SerialIoUartDebugGetAttributes (
-  IN OUT SERIAL_IO_UART_ATTRIBUTES *UartAttributes
+  IN OUT LPSS_UART_ATTRIBUTES *UartAttributes
   )
 {
-  SerialIoUartDebugPcdGetAttributes (UartAttributes);
+  LpssUartDebugPcdGetAttributes (UartAttributes);
 }
 
 /**
@@ -45,7 +45,7 @@ SerialIoUartDebugGetControllerNumber (
   VOID
   )
 {
-  return SerialIoUartDebugPcdGetControllerNumber ();
+  return LpssUartDebugPcdGetControllerNumber ();
 }
 
 /**
@@ -58,7 +58,7 @@ SerialIoUartDebugGetPciDefaultMmioBase (
   VOID
   )
 {
-  return SerialIoUartDebugPcdGetPciDefaultMmioBase ();
+  return LpssUartDebugPcdGetPciDefaultMmioBase ();
 }
 
 /**
@@ -71,5 +71,5 @@ SerialIoUartDebugGetDefaultPciCfgBase (
   VOID
   )
 {
-  return SerialIoUartDebugPcdGetDefaultPciCfgBase ();
+  return LpssUartDebugPcdGetDefaultPciCfgBase ();
 }

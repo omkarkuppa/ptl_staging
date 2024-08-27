@@ -32,7 +32,7 @@ DefinitionBlock (
 {
   External (\_SB.OSCP, IntObj)
   External (\PF00, IntObj)
-  External (\CCNT, FieldUnitObj)
+  External (\TCNT, FieldUnitObj)
   External (\_SB.CTPC, IntObj)
   External (\_SB.CFGD, FieldUnitObj)
   External (\_SB.PR00, DeviceObj)
@@ -213,7 +213,7 @@ DefinitionBlock (
             0,                // Revision.
             0,                // Domain #.
             0xFD,             // Coord Type- SW_ANY
-            CCNT              // # processors.
+            TCNT              // # processors.
           }
         })
       }

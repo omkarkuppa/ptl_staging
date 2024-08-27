@@ -197,17 +197,18 @@ UpdateOemCapabilities2 (
   OUT UINT8    *OemCapabilities2
   )
 {
-  UINT8  TerminalType;
+  switch (PcdGet8 (PcdSolTerminalType)) {
+    case OEM_CAPS_2_TERMINAL_EMULATION_PCANSI:
+      *OemCapabilities2 |= OEM_CAPS_2_TERMINAL_EMULATION_PCANSI;
+      break;
 
-  TerminalType = PcdGet8 (PcdSolTerminalType);
-  if (TerminalType < OEM_CAPS_2_TERMINAL_EMULATION_VT100PLUS ||
-      TerminalType > OEM_CAPS_2_TERMINAL_EMULATION_PCANSI) {
-    //
-    // Set recommended type
-    //
-    *OemCapabilities2 |= OEM_CAPS_2_TERMINAL_EMULATION_VTUTF8;
-  } else {
-    *OemCapabilities2 |= TerminalType;
+    case OEM_CAPS_2_TERMINAL_EMULATION_VTUTF8:
+    default:
+      //
+      // Set recommended type
+      //
+      *OemCapabilities2 |= OEM_CAPS_2_TERMINAL_EMULATION_VTUTF8;
+      break;
   }
 }
 

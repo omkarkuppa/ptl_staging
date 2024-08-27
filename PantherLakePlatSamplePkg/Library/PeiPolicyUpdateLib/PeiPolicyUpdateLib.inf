@@ -49,7 +49,6 @@
   PtlPcdPolicyLib
   CpuInitLib
   BiosGuardLib
-  SpiLib
   PeiSpiLib
   VtdInfoLib
   PeiVrDomainLib
@@ -164,6 +163,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable   ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdTcssPortCapMap       ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardId              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformModularUsbCIoConfig       ## CONSUMES
 
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardStackUp   ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardTopology  ## CONSUMES

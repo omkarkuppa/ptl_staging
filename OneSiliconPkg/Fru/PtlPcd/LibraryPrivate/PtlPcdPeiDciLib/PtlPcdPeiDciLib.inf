@@ -40,3 +40,5 @@ OneSiliconPkg/SiPkg.dec
 
 [Sources]
 PeiDciSocLib.c
+
+[Pcd]

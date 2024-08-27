@@ -34,6 +34,7 @@
   MdeModulePkg/MdeModulePkg.dec
   OneSiliconPkg/SiPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   PantherLakePlatSamplePkg/PlatformPkg.dec
   EcFeaturePkg/EcFeaturePkg.dec
   UcsiFeaturePkg/UcsiFeaturePkg.dec

@@ -47,7 +47,6 @@ typedef union {
 #define MKHI_PWD_GROUP_ID     0x02
 #define MKHI_FWCAPS_GROUP_ID  0x03
 #define MKHI_HMRFPO_GROUP_ID  0x05
-#define MKHI_DNX_GROUP_ID     0x0D
 #define MKHI_GEN_GROUP_ID     0xFF
 
 
@@ -81,11 +80,6 @@ typedef union {
 #define HMRFPO_GET_STATUS_CMD_ID          0x03
 
 ///
-/// Defines for DNX_GROUP Command
-///
-#define DNX_REQ_SET_CMD                   0x01
-#define DNX_REQ_CLEAR_CMD                 0x02
-///
 /// Defines for GEN_GROUP Command
 ///
 #define GEN_GET_MKHI_VERSION_CMD                  0x01
@@ -116,6 +110,7 @@ typedef enum {
   MkhiStatusInvalidState,
   MkhiStatusMessageSkipped,
   MkhiStatusSizeError       = 0x5,
+  MkhiStatusNotFound        = 0x81,
   MkhiStatusInvalidAccess   = 0x84,
   MkhiStatusInvalidParams   = 0x85,
   MkhiStatusNotReady        = 0x88,
@@ -126,6 +121,8 @@ typedef enum {
   MkhiStatusInvalidResource = 0xE4,
   MkhiStatusResourceInUse   = 0xE5,
   MkhiStatusNoResource      = 0xE6,
+  MkhiStatusDuplicated      = 0xE8,
+  MkhiStatusRetry           = 0xFE,
   MkhiStatusGeneralError    = 0xFF
 } MKHI_RESULT;
 
@@ -430,24 +427,19 @@ typedef union {
     UINT32  OCR             : 1;      ///< [3] One Click Recovery (OCR)
     UINT32  RPE             : 1;      ///< [4] Remote Platform Erase (RPE)
     UINT32  PSR             : 1;      ///< [5] Platform Service Record Support (PSR)
-    UINT32  IntelCLS        : 1;      ///< [6] IntelR Capability Licensing Service (CLS)
-    UINT32  Reserved1       : 3;      ///< [9:7] Reserved
+    UINT32  Reserved1       : 4;      ///< [9:6] Reserved
     UINT32  ISH             : 1;      ///< [10] IntelR Sensor Hub
-    UINT32  Reserved2       : 1;      ///< [11] Reserved
-    UINT32  PAVP            : 1;      ///< [12] Protected Audio Video Path (PAVP)
-    UINT32  Reserved3       : 4;      ///< [16:13] Reserved
+    UINT32  Reserved2       : 6;      ///< [16:11] Reserved
     UINT32  IPV6            : 1;      ///< [17] IPV6
     UINT32  KVM             : 1;      ///< [18] KVM Remote Control (KVM)
-    UINT32  Reserved4       : 1;      ///< [19] Reserved
-    UINT32  DAL             : 1;      ///< [20] Dynamic Application Loader (DAL)
+    UINT32  Reserved3       : 2;      ///< [20:19] Reserved
     UINT32  TLS             : 1;      ///< [21] Cipher Transport Layer (TLS)
-    UINT32  Reserved5       : 1;      ///< [22] Reserved
+    UINT32  Reserved4       : 1;      ///< [22] Reserved
     UINT32  WLAN            : 1;      ///< [23] Wireless LAN (WLAN)
-    UINT32  Reserved6       : 3;      ///< [26:24] Reserved
+    UINT32  Reserved5       : 3;      ///< [26:24] Reserved
     UINT32  TbtDock         : 1;      ///< [27] TBT Dock
     UINT32  Upid            : 1;      ///< [28] UPID
-    UINT32  PTT             : 1;      ///< [29] Platform Trust Technology (PTT)
-    UINT32  Reserved8       : 2;      ///< [31:30] Reserved
+    UINT32  Reserved6       : 3;      ///< [31:29] Reserved
   } Fields;
 } MEFWCAPS_SKU;
 
@@ -672,44 +664,6 @@ typedef union {
   SET_FILE_REQUEST    Request;
   SET_FILE_RESPONSE   Response;
 } SET_FILE_BUFFER;
-
-//
-// MKHI_DNX_GROUP_ID Definitions
-//
-
-///
-/// DNX Request Set
-///
-typedef struct {
-  MKHI_MESSAGE_HEADER MkhiHeader;
-} DNX_REQ_SET_REQUEST;
-
-typedef struct {
-  MKHI_MESSAGE_HEADER MkhiHeader;
-  UINT32              BiosAction;
-} DNX_REQ_SET_RESPONSE;
-
-typedef union {
-  DNX_REQ_SET_REQUEST   Request;
-  DNX_REQ_SET_RESPONSE  Response;
-} DNX_REQ_SET_BUFFER;
-
-///
-/// DNX Request Clear
-///
-typedef struct {
-  MKHI_MESSAGE_HEADER  MkhiHeader;
-  UINT32               Flag;
-} DNX_REQ_CLEAR_REQUEST;
-
-typedef struct {
-  MKHI_MESSAGE_HEADER MkhiHeader;
-} DNX_REQ_CLEAR_RESPONSE;
-
-typedef union {
-  DNX_REQ_CLEAR_REQUEST   Request;
-  DNX_REQ_CLEAR_RESPONSE  Response;
-} DNX_REQ_CLEAR_BUFFER;
 
 //
 // MKHI_GEN_GROUP_ID Definitions

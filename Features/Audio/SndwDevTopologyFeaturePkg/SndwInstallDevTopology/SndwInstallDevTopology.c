@@ -192,15 +192,15 @@ ReplacePathStringInSsdtTable (
   DEBUG ((DEBUG_INFO, "Current device path: %a.\n", OldPathString));
   DEBUG ((DEBUG_INFO, "New device path %a.\n", NewPathString));
 
-  TablePtr  = (UINT8 *) *Table + sizeof (EFI_ACPI_DESCRIPTION_HEADER);
-  TableSize = (*Table)->Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER);
+  TablePtr = (UINT8 *) *Table;
+  TableSize = (*Table)->Length;
   StartCopyTablePtr = TablePtr;
   ResultTableSize = 0;
   ResultTablePtr = NULL;
   StartCopyResultTablePtr = ResultTablePtr;
   AdditionalSize = 0;
 
-  for (Index = 0; Index < TableSize; Index++) {
+  for (Index = sizeof (EFI_ACPI_DESCRIPTION_HEADER); Index < TableSize; Index++) {
     if (CompareMem (&TablePtr[Index], OldPathString, AsciiStrLen (OldPathString)) == 0) {
 
       AdditionalSize = (&TablePtr[Index] - StartCopyTablePtr) + AsciiStrLen (NewPathString);

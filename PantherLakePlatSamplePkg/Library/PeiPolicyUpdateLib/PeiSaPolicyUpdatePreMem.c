@@ -844,6 +844,7 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.Ddr5AutoPrechargeEnable, SaSetup.Ddr5AutoPrechargeEnable                           );
     COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.Lp5SplitACTEnable,       SaSetup.Lp5SplitACTEnable                                 );
     COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.RetrainToWorkingChannel, SaSetup.RetrainToWorkingChannel                           );
+    COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.SubChHashOverride,       SaSetup.SubChHashOverride                                 );
     COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.ProbelessTrace,          SaSetup.ProbelessTrace                                    );
     COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.ChHashInterleaveBit,     SaSetup.ChHashInterleaveBit                               );
 
@@ -1101,6 +1102,8 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.BoardDetails.BoardTopology,  PcdGet8(VpdPcdMrcBoardTopology)                        );
 
     COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.DprLock,                     SetupData.TestLtDprLock         );
+    COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.SubChHashMask,               SaSetup.SubChHashMask           );
+    COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.SubChHashInterleaveBit,      SaSetup.SubChHashInterleaveBit  );
     COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.MimicWcDisaplayInIpq,        SaSetup.MimicWcDisaplayInIpq    );
     COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.FakeSagv,                    SaSetup.FakeSagv                );
     COMPARE_AND_UPDATE_POLICY (MemConfig->ExternalInputs.DisableZq,                   SaSetup.DisableZq               );

@@ -706,7 +706,7 @@ UINT8
 MrcSmbusRead (
   IN  MrcParameters *const  MrcData,
   IN  UINT32         const  Address,
-  OUT UINT32        *const  Status
+  OUT RETURN_STATUS *const  Status
 )
 {
   const MRC_FUNCTION  *MrcCall;
@@ -729,7 +729,7 @@ MrcSmbusWrite (
   IN  MrcParameters *const  MrcData,
   IN  UINT32         const  Address,
   IN  UINT8                 Value,
-  OUT UINT32        *const  Status
+  OUT RETURN_STATUS *const  Status
 )
 {
   const MRC_FUNCTION  *MrcCall;

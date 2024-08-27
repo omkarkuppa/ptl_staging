@@ -39,7 +39,7 @@ ScsUfsInitMmioRegisters (
   //
   // Configure UFS REF_CLK
   //
-  MmioWrite32 (MmioBase + R_SCS_MEM_UFS_REF_CLK, V_SCS_MEM_UFS_REF_CLK);
+  MmioWrite32 (MmioBase + R_UFS_MEM_REF_CLK, V_UFS_MEM_REF_CLK);
   ScsControllerDisableMmio (PciBaseAddress);
 }
 

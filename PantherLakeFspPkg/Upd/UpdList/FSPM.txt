@@ -16,6 +16,7 @@ CpuRatio
 VmxEnable
 InternalGfx
 FClkFrequency
+SmmRelocationEnable
 BiosGuardToolsInterface
 TxtHeapMemorySize
 TxtDprMemorySize
@@ -318,6 +319,7 @@ CccHalfFrequency
 Ddr5AutoPrechargeEnable
 Lp5SplitACTEnable
 RetrainToWorkingChannel
+SubChHashOverride
 DisableMc0Ch0
 DisableMc0Ch1
 DisableMc0Ch2
@@ -541,6 +543,8 @@ PprRepairRank
 PprRepairBankGroup
 PprRepairBank
 PprForceRepair
+SubChHashInterleaveBit
+SubChHashMask
 MimicWcDisaplayInIpq
 FakeSagv
 DisableZq

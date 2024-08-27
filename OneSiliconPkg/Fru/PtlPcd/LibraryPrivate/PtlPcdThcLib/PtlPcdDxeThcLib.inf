@@ -40,3 +40,5 @@ OneSiliconPkg/SiPkg.dec
 
 [Sources]
 DxeThcSocLib.c
+
+[Pcd]

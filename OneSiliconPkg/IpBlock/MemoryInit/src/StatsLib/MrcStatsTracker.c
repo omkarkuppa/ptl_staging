@@ -58,16 +58,19 @@ static const char *PhaseNames[] = {PHASES};
 **/
 INT32
 MrcStatsCustomKeyEnumToArrayIdx (
+  IN MrcParameters *MrcData,
   IN     MRC_STATISTIC Key
   )
 {
   INT32 Result;
 
-  if (Key >= GLOBAL_PHASE_TIME + 1 && Key < KEY_COUNT) {
-    Result = Key - GLOBAL_PHASE_TIME - 1;
-  } else {
-    Result = -1;
+  if (Key <= GLOBAL_PHASE_TIME || Key >= KEY_COUNT) {
+    MRC_DEBUG_ASSERT (Key < KEY_COUNT && Key > GLOBAL_PHASE_TIME,
+      &MrcData->Outputs.Debug, "Key (%d) out of range [%d..%d]", Key, GLOBAL_PHASE_TIME + 1, KEY_COUNT - 1);
+    return -1;
   }
+
+  Result = Key - GLOBAL_PHASE_TIME - 1;
 
   return Result;
 }
@@ -143,10 +146,8 @@ MrcStatsIsPhaseValid (
   @param[in] Key The statistic to update for all active phases.
   @param[in] Value Amount to increment.
 
-  @retval mrcSuccess Counts for stats were updated.
-  @retval mrcFail No stats updated, Key is not valid or stats tracking is paused.
 **/
-MrcStatus
+void
 MrcStatsAddToData (
   IN OUT MrcParameters *const MrcData,
   IN MRC_STATISTIC Key,
@@ -156,20 +157,29 @@ MrcStatsAddToData (
   MrcStatsTracker   *StatsTracker;
   MrcOutput         *Outputs;
   UINT8              Phase;
-  const INT32 IndexForKey = MrcStatsCustomKeyEnumToArrayIdx (Key);
+  const INT32 IndexForKey = MrcStatsCustomKeyEnumToArrayIdx (MrcData, Key);
 
   Outputs             = &MrcData->Outputs;
   StatsTracker        = &Outputs->StatsTracker;
 
   if (!MrcStatsAreInitialized (MrcData)) {
-    return mrcFail;
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "stats are not initialized at line %d", __LINE__);
+    return;
   }
   if (StatsTracker->PauseStatsTracking) {
-    return mrcFail;
+    return;
   }
-  if (IndexForKey < 0 || IndexForKey >= ARRAY_COUNT (StatsTracker->PerPhaseData[0])) {
-    return mrcFail;
+  if (IndexForKey < 0) {
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "%s%s invalid index %d",
+                      gErrString, __func__, IndexForKey);
+    return;
   }
+  if (IndexForKey >= ARRAY_COUNT (StatsTracker->PerPhaseData[0])) {
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "%s%s invalid index %d",
+                      gErrString, __func__, IndexForKey);
+    return;
+  }
+
   /* Increment key for all active phases.
 
      Special handling for end of phase (as signaled by Key == TIMER_KEYS_MARKER),
@@ -191,7 +201,7 @@ MrcStatsAddToData (
 
   if (Key == TIMER_KEYS_MARKER) {
     StatsTracker->PhaseTime = Value;
-    return mrcSuccess;
+    return;
   }
   for (Phase = 0; Phase < TOTAL_PHASES; Phase++) {
     if (!MrcStatsIsPhaseActive (MrcData, Phase)) {
@@ -200,8 +210,6 @@ MrcStatsAddToData (
 
     StatsTracker->PerPhaseData[Phase][IndexForKey] += Value;
   }
-
-  return mrcSuccess;
 }
 
 
@@ -210,10 +218,8 @@ MrcStatsAddToData (
 
   @param[in, out] MrcData Pointer to MRC global data.
   @param[in] Key The statistic to update for all active phases.
-
-  @return same as MrcStatsAddToData().
 **/
-MrcStatus
+void
 MrcStatsIncrementData (
   IN OUT MrcParameters *const MrcData,
   IN MRC_STATISTIC Key
@@ -221,7 +227,7 @@ MrcStatsIncrementData (
 {
   // since this function just wraps another public interface, we will let the called function check that the
   // framework is properly initialized.
-  return MrcStatsAddToData (MrcData, Key, 1);
+  MrcStatsAddToData (MrcData, Key, 1);
 }
 
 
@@ -246,12 +252,20 @@ MrcStatsBeginPhase (
   PhaseKey        = Phase; // avoid an to enum to enum conversion
 
   if (!MrcStatsAreInitialized (MrcData)) {
+    MRC_DEBUG_ASSERT(FALSE, &MrcData->Outputs.Debug, "Stats not initialized");
     return;
   }
+
   // check if phase valid and not already active
-  if (StatsTracker->PauseStatsTracking ||
-      !MrcStatsIsPhaseValid (Phase) ||
-      MrcStatsIsPhaseActive (MrcData, Phase)) {
+  if (StatsTracker->PauseStatsTracking) {
+    return;
+  }
+  if (!MrcStatsIsPhaseValid (Phase)) {
+    MRC_DEBUG_ASSERT(FALSE, &MrcData->Outputs.Debug, "Invalid phase: %d",  Phase);
+    return;
+  }
+  if (MrcStatsIsPhaseActive (MrcData, Phase)) {
+    MRC_DEBUG_ASSERT(FALSE, &MrcData->Outputs.Debug, "Phase already started");
     return;
   }
 
@@ -275,6 +289,7 @@ MrcStatsBeginCustomPhase (
   )
 {
   if (Phase == GLOBAL_PHASE || Phase == CALL_TABLE_PHASE || Phase == BETWEEN_CALL_TABLE) {
+    MRC_DEBUG_ASSERT(FALSE, &MrcData->Outputs.Debug, "not a custom phase");
     return;
   }
 
@@ -311,7 +326,7 @@ MrcStatsPrintPhaseStats (
   // since this is a private function, we assume that the caller has ensured that the stats framework is properly
   // initialized.
   StatsTracker = &MrcData->Outputs.StatsTracker;
-  TimerKeysMarkerArrIdx = MrcStatsCustomKeyEnumToArrayIdx (TIMER_KEYS_MARKER);
+  TimerKeysMarkerArrIdx = MrcStatsCustomKeyEnumToArrayIdx (MrcData, TIMER_KEYS_MARKER);
 
   MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_TIME, "<%s Name=\"%s\" %s=\"%u%s\">\n",
                                                            PhaseStr,
@@ -370,12 +385,8 @@ MrcStatsResetPhase (
   @param[in, out] MrcData Pointer to MRC global data.
   @param[in] Phase The phase to end.
   @param[in] TaskString Pointer to task string from the call table.
-
-  @retval mrcSuccess successfully ended the phase specified.
-  @retval mrcFail tracking is paused, phase is not valid, or phase is not active.  No changes made to the stats
-  framework.
 **/
-MrcStatus
+void
 MrcStatsEndPhase (
   IN OUT MrcParameters *const MrcData,
   IN     MRC_STATISTIC_PHASE  Phase,
@@ -385,41 +396,46 @@ MrcStatsEndPhase (
   MrcOutput            *Outputs;
   MrcStatsTracker      *StatsTracker;
   UINT32               PhaseKey;
-  MrcStatus Status;
 
   Outputs           = &MrcData->Outputs;
   StatsTracker      = &Outputs->StatsTracker;
   PhaseKey          = Phase;
 
   if (!MrcStatsAreInitialized (MrcData)) {
-    return mrcFail;
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "Trying to end phase when stats are not initialized");
+    return;
   }
+
   // check if phase valid and not already inactive
-  if (StatsTracker->PauseStatsTracking ||
-      !MrcStatsIsPhaseValid (Phase) ||
-      !MrcStatsIsPhaseActive (MrcData, Phase)) {
-    return mrcFail;
+  if (StatsTracker->PauseStatsTracking) {
+    return;
+  }
+  if (!MrcStatsIsPhaseValid (Phase)) {
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "Invalid phase: %d", Phase);
+    return;
+  }
+  if (!MrcStatsIsPhaseActive (MrcData, Phase)) {
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "Phase %d is inactive", Phase);
+    return;
   }
 
   // End the current timer for the phase, and fail if there is an issue as that would be an indicator
   // that someone had messed with the timer for the phase so the data would be invalid.
   // Error handling strategy is to report the issue, set the phase's time to 0, and to proceed normally.
   // This causes the phase to be marked inactive so that a later start of the phase will work.
-  if (MrcStatsEndTimer (MrcData, PhaseKey) != mrcSuccess) {
-    StatsTracker->PhaseTime = 0;
-    MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "%s%s Failed to end timer (0x%x) when ending same phase\n",
-                   gErrString, __func__, Phase);
-    Status = mrcFail;
-  } else {
-    Status = mrcSuccess;
-  }
+
+
+  // Set PhaseTime to zero to cover unlikely case that MrcStatsEndTimer() fails but the MRC_DEBUG_ASSERT does not
+  // terminate execution.
+  StatsTracker->PhaseTime = 0;
+  MrcStatsEndTimer (MrcData, PhaseKey);
   if ((Phase != BETWEEN_CALL_TABLE) || MRC_PRINT_BETWEEN_CALL_TABLE_PHASE) {
     MrcStatsPrintPhaseStats (MrcData, Phase, TaskString);
   }
   MrcStatsResetPhase (MrcData, Phase);
   StatsTracker->PhaseActive[Phase] = FALSE;
 
-  return Status;
+  return;
 }
 
 
@@ -428,23 +444,22 @@ MrcStatsEndPhase (
 
   @param[in, out] MrcData Pointer to MRC global data.
   @param[in] Phase The phase to end.
-
-  @retval mrcFail the specified phase is not a custom phase.
-  @return return status from MrcStatsEndPhase().
 **/
-MrcStatus
+void
 MrcStatsEndCustomPhase (
   IN OUT MrcParameters *const MrcData,
   IN     MRC_STATISTIC_PHASE  Phase
   )
 {
   if (Phase == GLOBAL_PHASE || Phase == CALL_TABLE_PHASE || Phase == BETWEEN_CALL_TABLE) {
-    return mrcFail;
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "Trying to end invalid custom phase: %d", Phase);
+    return;
   }
 
   // Since this function just wraps another public function, let the called function check stats framework is properly
   // initialized.
-  return MrcStatsEndPhase (MrcData, Phase, NULL);
+  MrcStatsEndPhase (MrcData, Phase, NULL);
+  return;
 }
 
 
@@ -458,7 +473,7 @@ MrcStatsEndCustomPhase (
   @retval mrcFail repeated call without call to MrcStatsEndTimer(), stats tracking is paused,
           stats not properly initialized, or buffer is full.
 **/
-MrcStatus
+void
 MrcStatsStartTimer (
   IN OUT MrcParameters *const MrcData,
   IN MRC_STATISTIC Key
@@ -475,17 +490,19 @@ MrcStatsStartTimer (
   MrcCall           = (&MrcData->Inputs)->Call.Func;
 
   if (!MrcStatsAreInitialized (MrcData)) {
-    return mrcFail;
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "%s%s Stats framework is not initialized",
+                      gErrString, __func__);
+    return;
   }
 
   if (StatsTracker->PauseStatsTracking) {
-    return mrcFail;
+    return;
   }
 
   if ((Key & 0xff) != Key) {
-    MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "%s%s Timer value (0x%x) does not fit in 8 bits\n",
-                   gErrString, __func__, Key);
-    return mrcFail;
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "%s%s Timer value (0x%x) does not fit in 8 bits\n",
+                      gErrString, __func__, Key);
+    return;
   }
 
   // linearly search through the whole buffer to find the first open slot and to ensure that the timer for this key hasn't already been started
@@ -496,17 +513,21 @@ MrcStatsStartTimer (
 
     // has timer already been started for this key?
     if (StatsTracker->TimeStampBuffer[Index].TimeStartKey == Key) {
-      return mrcFail;
+      MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "%s%s timer is already running",
+                        gErrString, __func__);
+      return;
     }
   }
 
-  if (OpenSlotIdx != 0xFF) {
-    StatsTracker->TimeStampBuffer[OpenSlotIdx].TimeStartKey = Key;
-    StatsTracker->TimeStampBuffer[OpenSlotIdx].TimeStartValue = MrcCall->MrcGetCpuTimeUs (MrcData);
-    return mrcSuccess;
+  if (OpenSlotIdx == 0xFF) {
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "%s%s failed to find timer in TimeStampBuffer\n",
+                      gErrString, __func__);
+    return;
   }
 
-  return mrcFail;
+  StatsTracker->TimeStampBuffer[OpenSlotIdx].TimeStartKey = Key;
+  StatsTracker->TimeStampBuffer[OpenSlotIdx].TimeStartValue = MrcCall->MrcGetCpuTimeUs (MrcData);
+  return;
 }
 
 
@@ -515,12 +536,8 @@ MrcStatsStartTimer (
 
   @param[in, out] MrcData Pointer to MRC global data.
   @param[in] Key Timer to end.
-
-  @retval mrcSuccess Succesfully ended timer.
-  @retval mrcFail specified timer is not running, stats tracking is paused, or stats framework is not
-          initialized.
 **/
-MrcStatus
+void
 MrcStatsEndTimer (
   IN OUT MrcParameters *const MrcData,
   IN     MRC_STATISTIC        Key
@@ -537,10 +554,12 @@ MrcStatsEndTimer (
   MrcCall           = (&MrcData->Inputs)->Call.Func;
 
   if (!MrcStatsAreInitialized (MrcData)) {
-    return mrcFail;
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "%s%s stats not intialized",
+                      gErrString, __func__);
+    return;
   }
   if (StatsTracker->PauseStatsTracking) {
-    return mrcFail;
+    return;
   }
 
   // linearly search for the matching Key
@@ -558,10 +577,12 @@ MrcStatsEndTimer (
       // reset struct
       StatsTracker->TimeStampBuffer[Index].TimeStartKey = KEY_NOT_TRACKED;
       StatsTracker->TimeStampBuffer[Index].TimeStartValue = 0;
-      return mrcSuccess;
+      return;
     }
   }
-  return mrcFail;
+  MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "%s%s failed to find timer in TimeStampBuffer\n",
+                    gErrString, __func__);
+  return;
 }
 
 
@@ -596,10 +617,7 @@ MrcStatsEndCallTablePhase (
 {
   // Defer checking that framework is initialized to the called function since this is a wrapper calling
   // another public API.
-  if (MrcStatsEndPhase (MrcData, CALL_TABLE_PHASE, TaskString) != mrcSuccess) {
-    MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "%s MrcStatsEndPhase(%s) failed\n",
-                   gErrString, TaskString == NULL ? "<NULL>" : TaskString);
-  }
+  MrcStatsEndPhase (MrcData, CALL_TABLE_PHASE, TaskString);
   MrcStatsBeginPhase (MrcData, BETWEEN_CALL_TABLE);
 }
 
@@ -656,11 +674,13 @@ MrcStatsInitAndPause (
     StatsTracker->PhaseActive[Phase] = FALSE;
   }
 
+  // Must initialize signature before calling MrcStatsPauseTracking() otherwise stats will not be paused
+  StatsTracker->Signature = STATS_SIGNATURE_INIT;
+
   // no need to initialize PauseStatsTracking directly in this function,
   // call to MrcStatsPauseTracking() does that
   MrcStatsPauseTracking (MrcData);
 
-  StatsTracker->Signature = STATS_SIGNATURE_INIT;
   // No need to initialize DWordAlignmentBuffer[], it exists solely to pad the structure to a 4 byte boundary
 }
 
@@ -669,10 +689,8 @@ MrcStatsInitAndPause (
   Initialize the data structures and start the global phase.
 
   @param[in, out] MrcData Pointer to MRC global data.
-
-  @retval mrcSuccess Stats framework initialized.
 **/
-MrcStatus
+void
 MrcStatsInit (
   IN OUT MrcParameters  *const MrcData
   )
@@ -689,7 +707,7 @@ MrcStatsInit (
   MrcStatsBeginPhase (MrcData, GLOBAL_PHASE);
   MrcStatsBeginPhase (MrcData, BETWEEN_CALL_TABLE);
 
-  return mrcSuccess;
+  return;
 }
 
 
@@ -715,9 +733,6 @@ MrcStatsFinalize (
     "%s %s %s is active at end of MRC.  Data will not be accurately reported.  Ensure the %s is properly ended.\n";
   static const char * const Timer = "Timer key";
   static const char * const Phase = "Phase";
-  static const char * const FailedToEndPhase = "%s failed to end the %s\n";
-  static const char * const GlobalPhase = "GLOBAL_PHASE";
-  static const char * const BetweenCallTable = "BETWEEN_CALL_TABLE";
 
   Outputs      = &MrcData->Outputs;
   Debug        = &Outputs->Debug;
@@ -725,8 +740,7 @@ MrcStatsFinalize (
 
 
   if (!MrcStatsAreInitialized (MrcData)) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s %s: signature %x corrupt\n",
-      gWarnString, __func__, StatsTracker->Signature);
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "stats not initialized");
     return;
   }
 
@@ -734,17 +748,9 @@ MrcStatsFinalize (
       Side effect of stopping a call table phase is that the BETWEEN_CALL_TABLE phase
       is started.  So BETWEEN_CALL_TABLE should be active
   */
-  if (MrcStatsEndPhase(MrcData, BETWEEN_CALL_TABLE, NULL) != mrcSuccess) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR,
-        FailedToEndPhase,
-        gWarnString, BetweenCallTable);
-  }
+  MrcStatsEndPhase(MrcData, BETWEEN_CALL_TABLE, NULL);
 
-  if (MrcStatsEndPhase(MrcData, GLOBAL_PHASE, NULL) != mrcSuccess) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR,
-        FailedToEndPhase,
-        gWarnString, GlobalPhase);
-  }
+  MrcStatsEndPhase(MrcData, GLOBAL_PHASE, NULL);
 
   // check if there are still active keys in the time stamp buffer
   for (Index = 0; Index < TOTAL_TIMERS; Index++) {
@@ -785,6 +791,8 @@ MrcStatsPauseTracking (
   )
 {
   if (!MrcStatsAreInitialized (MrcData)) {
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "%s%s stats not initialized",
+                      gErrString, __func__);
     return;
   }
   MrcData->Outputs.StatsTracker.PauseStatsTracking = TRUE;
@@ -802,6 +810,8 @@ MrcStatsContinueTracking (
   )
 {
   if (!MrcStatsAreInitialized (MrcData)) {
+    MRC_DEBUG_ASSERT (FALSE, &MrcData->Outputs.Debug, "%s%s stats not initialized",
+                      gErrString, __func__);
     return;
   }
   MrcData->Outputs.StatsTracker.PauseStatsTracking = FALSE;

@@ -89,6 +89,7 @@ MrcEccClean (
   INT64                 DisPageTableIdleTimerSave[MAX_CONTROLLER][MAX_CHANNEL];
   INT64                 PowerDownEnableSave[MAX_CONTROLLER][MAX_CHANNEL];
   INT64                 SelfRefreshEnableSave[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64                 MccIdleEnable[MAX_CONTROLLER][MAX_CHANNEL];
   INT64                 RetrainPeriodSave[MAX_CONTROLLER][MAX_CHANNEL];
   INT64                 MR4PeriodSave[MAX_CONTROLLER][MAX_CHANNEL];
   UINT32                Offset;
@@ -146,9 +147,12 @@ MrcEccClean (
     // IBECC scrubbing is done using HW FSM
     return mrcSuccess;
   }
-  if (Inputs->IsMcMbA0) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Scrubbing is skipped\n");
-  }
+
+  MrcModifyRdRdTimings (MrcData, TRUE);
+
+  GetSetVal = 1;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);
+  MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmDisAllCplInterleave, WriteCached, &GetSetVal);
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Scrubbing Memory due to %s\n", EccEnabled ? SourceStr[0] : (Ibecc ? SourceStr[3] : (TxtClean ? SourceStr[2] : SourceStr[1])));
 
@@ -200,8 +204,10 @@ MrcEccClean (
         // Clear out SPID Low Power Ctl Enables during scrubbing
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccPowerDownEnable, ReadCached, &PowerDownEnableSave[Controller][Channel]);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSelfRefreshEnable, ReadFromCache, &SelfRefreshEnableSave[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccIdleEnable, ReadFromCache, &MccIdleEnable[Controller][Channel]);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccPowerDownEnable, WriteToCache, &GetSetDis);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSelfRefreshEnable, WriteToCache, &GetSetDis);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccIdleEnable, WriteToCache, &GetSetDis);
       }
       Status |= MrcCpgcModifyReadCredits (MrcData, Controller, TRUE, &SavedCpgc20Credits[Controller]);
 
@@ -339,6 +345,7 @@ MrcEccClean (
         // Restore SPID Low Power Ctl Enables after scrubbing
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccPowerDownEnable, WriteToCache, &PowerDownEnableSave[Controller][Channel]);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSelfRefreshEnable, WriteToCache, &SelfRefreshEnableSave[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccIdleEnable, WriteToCache, &MccIdleEnable[Controller][Channel]);
       }
       // Restore RD_CPL_CREDITS_INIT
       Status |= MrcCpgcModifyReadCredits (MrcData, Controller, FALSE, &SavedCpgc20Credits[Controller]);
@@ -358,6 +365,12 @@ MrcEccClean (
       Outputs->TxtScrubSuccess = 1;
     }
   }
+
+  MrcModifyRdRdTimings (MrcData, FALSE);
+
+  GetSetVal = 0;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);
+  MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmDisAllCplInterleave, WriteCached, &GetSetVal);
 
   Outputs->IsSkipIoReset = FALSE;
 
@@ -599,79 +612,4 @@ MrcAliasCheck (
   }
 
   return Status;
-}
-
-/**
-  This function provides Error Check and Scrub (ECS) implementation.
-
-  DDR5 ECS mode allows the DRAM to internally read, correct single bit errors, and write back corrected data bits to the array (scrub errors)
-  while providing transparency to error counts.
-  PTL MC only supports the automatic mode (Manual mode is not supported): The operation is done internal to DRAM.
-
-  Enable "error scrubbing" DDR5 feature done by configuring the follwoing registers:
-    rfp_0_0_0_mchbar.ecs_refab_enable
-    rfp_0_0_0_mchbar.ecs_refab_period
-
-  @param[in] MrcData - Include all MRC global data.
-
-  @retval Nothing.
-**/
-VOID
-MrcEcsClean (
-  IN     MrcParameters* const MrcData
-)
-{
-  MrcOutput*             Outputs;
-  BOOLEAN                IsDdr5;
-  INT64                  GetSetVal;
-  MrcControllerOut*      ControllerOut;
-  MrcChannelOut*         ChannelOut;
-  MrcDimmOut*            DimmOut;
-  UINT8                  Controller;
-  UINT8                  Channel;
-  UINT8                  Dimm;
-  UINT32                 TEcsInit;
-  UINT32                 Trefi;
-
-  Outputs = &MrcData->Outputs;
-  IsDdr5 = Outputs->IsDdr5;
-
-  if (IsDdr5) {
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
-          DimmOut = &ChannelOut->Dimm[Dimm];
-          if (DIMM_PRESENT != DimmOut->Status) {
-            continue;
-          }
-          GetSetVal = 1;
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmScPbrEcsRefabEnable, WriteCached | PrintValue, &GetSetVal);
-
-          switch (DimmOut->DensityIndex) {
-          case MrcDensity16Gb:
-            TEcsInit = MRC_DDR5_tECSinit_16GB_US;
-            Trefi = MRC_DDR5_tREFI_16GB_NS;
-            break;
-          case MrcDensity24Gb:
-            TEcsInit = MRC_DDR5_tECSinit_24GB_US;
-            Trefi = MRC_DDR5_tREFI_24GB_NS;
-            break;
-          case MrcDensity32Gb:
-            TEcsInit = MRC_DDR5_tECSinit_32GB_US;
-            Trefi = MRC_DDR5_tREFI_32GB_NS;
-            break;
-          default:  // Default value required by MC arch
-            TEcsInit = MRC_DDR5_tECSinit_32GB_US;
-            Trefi = MRC_DDR5_tREFI_32GB_NS;
-            break;
-          }
-
-          GetSetVal = ((INT64)(DIVIDEFLOOR(TEcsInit*1000, Trefi))) - 9;
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmScPbrEcsRefabPeriod, WriteCached | PrintValue, &GetSetVal);
-        } //Dimm
-      } //Channel
-    } //Controller
-  }
 }

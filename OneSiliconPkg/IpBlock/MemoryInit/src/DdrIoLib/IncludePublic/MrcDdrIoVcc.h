@@ -25,6 +25,7 @@
 #include "CMrcInterface.h"  // for MrcParameters
 
 #define MAX_VCCDDQCONTROL_TARGET  (383)
+#define SBCLOCK_DEFAULT           (1000000 / 400)
 
 /**
   Set the final VccIog value into Outputs->VccIogVoltage
@@ -48,6 +49,23 @@ SetVccClk (
   );
 
 /**
+  This function calculates the WakeInc
+  LVRRamp*(SBClock/1000) / (BGRef/512*5/(5-FBDivider) )
+
+  @param[in] MrcData - All the MRC global data.
+  @param[in] SBClock
+  @param[in] FBDivider
+
+  @return calculated value for WakeInc
+**/
+UINT32
+GetWakeInc (
+  IN MrcParameters *const MrcData,
+  IN UINT32   SBClock,
+  IN UINT32   FBDivider
+);
+
+/**
   This function programs the Vcc LVR registers
 
   @param[in, out] MrcData - All the MRC global data.
@@ -69,20 +87,6 @@ VOID
 SetVddq (
   IN MrcParameters *const MrcData,
   IN UINT32               Vccddq
-  );
-
-/**
-  This function programs the VccDdq voltage to all LVR Targets.
-
-  @param[in] MrcData          - All the MRC global data.
-  @param[in] VccddqVoltageMv  - Voltage in mV.
-
-  @retval Nothing
-**/
-VOID
-SetVddqLvrTarget (
-  IN MrcParameters *const MrcData,
-  IN UINT32   VccddqVoltageMv
   );
 
 /**

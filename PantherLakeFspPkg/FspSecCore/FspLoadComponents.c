@@ -30,6 +30,7 @@ FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
   FSP_VERIFY_API_WRAPPER_STRUCTURE_ID,
   NULL,  // To be patched post FSP build
   NULL,  // To be patched post FSP build
+  NULL,  // To be patched post FSP build
   NULL   // To be patched post FSP build
 };
 
@@ -262,7 +263,11 @@ DataStackAlign (
   EffCacheSize    = 0;
   EffWayCacheSize = 0;
   GetEffCacheSize (&EffCacheSize, &EffWayCacheSize);
-  ASSERT (EffWayCacheSize != 0);
+
+  if (EffWayCacheSize == 0) {
+    DEBUG ((DEBUG_ERROR, "Invalid Way Cache Size\n"));
+    return;
+  }
 
   *DataStackBase = FixedPcdGet32 (PcdTemporaryRamBase);
   if (*DataStackBase % EffWayCacheSize != 0) {
@@ -320,6 +325,7 @@ FspLoadComponents (
   UINT32                         DataStackBase;
   UINT32                         DataStackSize;
   FLASH_REGION_LIST              FlashRegionList;
+  UINT8                          AvailableMemoryBuffer[HASH_CTX_LEN_MAX];
 
   Bspm = LocateBspm ();
   if (Bspm == NULL) {
@@ -340,11 +346,24 @@ FspLoadComponents (
   //
   InitializeFlashRegionList (&FlashRegionList);
 
+  Fbm = LocateFbm ();
+
+  if (TRUE) { // To-do : check if FSP-O/T is verified or not
+    if (mFspVerifyApiWrapper.VerifyFspVersionApiWrapper == NULL) {
+      DEBUG ((DEBUG_INFO, "VerifyFspVersionApiWrapper is NULL ...\n"));
+      return;
+    }
+    DEBUG ((DEBUG_INFO, "FSP verifies FSP Version ...\n"));
+    Status = mFspVerifyApiWrapper.VerifyFspVersionApiWrapper (Bspm, Fbm, AvailableMemoryBuffer);
+    if (EFI_ERROR (Status)) {
+      CpuDeadLoop ();
+    }
+  }
+
   //
   // Load FSP-M
   //
   if ((Bspm->FspmLoadingPolicy & BIT0) == LOADING_FSPM) {
-    Fbm = LocateFbm ();
     //
     // Todo: Get FbmValidationStatus from ACM published register
     // if (FBM not valid) Fbm = NULL;

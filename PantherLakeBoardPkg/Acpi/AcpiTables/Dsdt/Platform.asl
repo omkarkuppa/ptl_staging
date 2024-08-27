@@ -76,12 +76,9 @@ External (MDBG, MethodObj)
 External (\_SB.PC00.GTSN.TADL, IntObj)
 External (\_SB.PC00.GTSN.TADH, IntObj)
 #endif
-External (TBTD, MethodObj)
-External (TBTF, MethodObj)
+
 External (MMRP, MethodObj)
 External (MMTB, MethodObj)
-External (TBFF, MethodObj)
-External (FFTB, MethodObj)
 External (PG3S, FieldUnitObj)
 External (\PG3C, MethodObj)
 External (\_SB.TCWK, MethodObj)
@@ -95,6 +92,7 @@ External (\_SB.PC00.TDM1, DeviceObj)
 External (\_SB.PC00.TDM0.STCM, MethodObj)
 External (\_SB.PC00.TDM1.STCM, MethodObj)
 
+External (\DSCE, IntObj)
 // OS supported USB4 version. 0 - USB4 Ver1, 1 - USB4 Ver2, 0xFF - Uninitialized.
 Name (OU4V, 0xFF)
 
@@ -920,9 +918,8 @@ Scope (\_SB)
   // Arg1 - Capability DWORD of _OSC Arg3
   // Return : USB4 capability support status (0 = Accept _OSC USB4 request, 0xFF = USB4 capability bit should be cleared)
   //
-  // Local0 - CM apply status (0 = CM mode is applied to host router, 0xFF = CM mode is not applied to any host router)
+  // Local0 - Local variable for return status
   // Local1 - DOCM method returned value
-  // Local2 - CM mode setup option
   //
 
   Method (U4FN, 2, Serialized)
@@ -930,27 +927,53 @@ Scope (\_SB)
     ADBG (Concatenate ("U4FN: _OSC STS = ", ToHexString (Arg0)))
     ADBG (Concatenate ("U4FN: _OSC CAP = ", ToHexString (Arg1)))
 
-
     If (LEqual (U4SE, 0))
     {
-      Store (0, OSCM)
+      //
+      // Platform don't support CM mode switch
+      //
+      If (LEqual (And (U4CM, 0x07), 1)) {
+        //
+        // Platform only support SW CM
+        //
+        ADBG ("U4FN: Platform only support SW CM")
+        Store (1, OSCM)
 
-      //
-      // Check OS natvie USB4 capability support
-      //
-      If (And (Arg1, 0x40000))
-      {
-        //
-        // OS supports native USB4 capability, but platform doesn't support
-        // Return 1 to indicate USB4 capability bit should be cleared
-        //
-        ADBG ("U4FN: USB4 capability bit should be cleared since platform doesn't support")
-        Return (0xFF)
-      }
-      Else
-      {
-        ADBG ("U4FN: OS and platform doesn't support native USB4")
+#if FixedPcdGetBool (PcdTcssSupport) == 1
+        If (LAnd (CondRefOf (\_SB.PC00.TDM0.STCM), And (CMSK, CM_MASK_ITBT_0))) {
+          \_SB.PC00.TDM0.STCM (1, U4CM)
+        }
+        If (LAnd (CondRefOf (\_SB.PC00.TDM1.STCM), And (CMSK, CM_MASK_ITBT_1))) {
+          \_SB.PC00.TDM1.STCM (1, U4CM)
+        }
+#endif  // #if FixedPcdGetBool (PcdTcssSupport) == 1
+
+        If (CondRefOf (DSCE)) {
+          ADBG ("U4FN: DSCE is present")
+          Store (1, DSCE)
+        }
         Return (0)
+
+      } Else {
+        //
+        // Platform only support FW CM
+        //
+        Store (0, OSCM)
+
+        //
+        // Check OS natvie USB4 capability support
+        //
+        If (And (Arg1, 0x40000)) {
+          //
+          // OS supports native USB4 capability, but platform doesn't support
+          // Return 0xFF to indicate USB4 capability bit should be cleared
+          //
+          ADBG ("U4FN: USB4 capability bit should be cleared since platform doesn't support")
+          Return (0xFF)
+        } Else {
+          ADBG ("U4FN: OS and platform doesn't support native USB4")
+          Return (0)
+        }
       }
     } Else {
 

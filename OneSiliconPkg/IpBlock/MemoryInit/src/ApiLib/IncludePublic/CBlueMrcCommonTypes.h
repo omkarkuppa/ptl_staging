@@ -196,8 +196,6 @@ typedef enum {
   GsmClkDccRankEn,
   GsmWckDccRankEn,
   GsmWckDccLaneEn,
-  GsmDataVccDdqTarget,
-  GsmCccVccDdqTarget,
   GsmCompVccDdqTarget,
   GsmInitCompleteOvrd,
   GsmInitCompleteOvrdVal,
@@ -376,7 +374,6 @@ typedef enum {
   GsmMccRankOccupancy,
   GsmMccMcSrx,
   GsmMccEnRefTypeDisplay,       ///< Displays refresh type on BA address pins.
-  GsmMcctRefiPulseStaggerDis,
   GsmMccHashMask,               ///< Bits set for channel XOR function.
   GsmMccLsbMaskBit,             ///< MC channel interleave bit.
   GsmMccPbrDis,                 ///< Boolean control for Per Bank Refresh.  1 = Disable, 0 = Enable.
@@ -491,6 +488,7 @@ typedef enum {
   GsmMccDdr5CkdEnable,
   GsmMccDisLpddr5RdwrInterleaving,
   GsmMccEccCorrectionDisable,
+  GsmMccMcMntsSpareRw,
   EndOfMccMarker,               ///< End of MC Configuration Group.
   GsmPmaEnableMc,
   GsmPmaEnableIbecc,

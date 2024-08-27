@@ -68,4 +68,5 @@
   PTEM, 8,  // Offset(34),
   PTSD, 8,  // Offset(35),
   POSE, 8,  // Offset(36),
+  PESE, 8,  // Offset(37),
   }

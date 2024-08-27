@@ -392,41 +392,6 @@
 
           Return (TCAP)
         }
-      } ElseIf (LEqual (Arg0, ToUUID ("1B425232-154C-4F34-7B9E-B65C946494A3"))) {
-        Switch (ToInteger (Arg2)) {
-          //
-          // Function Index 0: Return supported functions, based on revision
-          // one bit for each function index, starting with zero.
-          // Bit 0 - Indicates whether there is support for any functions other than function 0 for the specified UUID and Revision ID.
-          // Bit 1 - Indicates support to get DMA buffer address(size: 4MB) for TCSS DMA0/1
-          //
-          case (0) {
-            ADBG (Concatenate ("TBT DMA _DSM DUID:", ToHexString (DUID)))
-            switch (ToInteger (Arg1)) {
-              // revision 1: functions 1 are supported
-              case (1) {
-                return (Buffer () {0x3})
-              }
-            }
-            // no functions are supported other than revision 1
-            ADBG ("return buffer 0x00")
-            Return (Buffer () {0})
-          }
-
-          //
-          // Function Index 1: Return 512KB DMA buffer address for WiAMT
-          //
-          Case (1) {
-            ADBG (Concatenate ("TBT DMA _DSM Func 1 DUID:", ToHexString (DUID)))
-            If (Lequal (DUID, 1)) {
-              ADBG (Concatenate ("ITM1:", ToHexString (ITM1)))
-              Return (ITM1)
-            } Else {
-              ADBG (Concatenate ("ITM0:", ToHexString (ITM0)))
-              Return (ITM0)
-            }
-          }
-        } // End - Switch (ToInteger (Arg2))
       }
       Return (Buffer () {0})
     }

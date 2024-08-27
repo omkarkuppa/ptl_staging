@@ -24,6 +24,7 @@
 #include <Uefi/UefiBaseType.h>
 #include <Library/DebugLib.h>
 #include <Library/PcdInfoLib.h>
+#include <Library/PcdLib.h>
 #include <GpioV2Functionalities.h>
 #include <Library/GpioV2AccessLib.h>
 #include <Library/PcdGpioNativeLib.h>
@@ -101,7 +102,6 @@ SerialIoI2cGpioEnable (
   if (GpioOverrideLevel1Enabled ()) {
     return;
   }
-
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a - failed to get GpioV2Access\n", __FUNCTION__));
@@ -230,6 +230,6 @@ SerialIoI3cGpioEnable (
   //  SCL_FB
   //
   PtlPcdGpioSetNativePadByFunction (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL_FB (I3cNumber), I3cDeviceConfig->SclFb.PinMux);
-  GpioServices->SetTerminationConfig (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL_FB (I3cNumber), I3cDeviceConfig->Scl.PinMux), I3cDeviceConfig->SclFb.PadTermination);
-  GpioServices->SetInputInversion (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL_FB (I3cNumber), I3cDeviceConfig->Scl.PinMux), GpioV2InputInversionDisable);
+  GpioServices->SetTerminationConfig (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL_FB (I3cNumber), I3cDeviceConfig->SclFb.PinMux), I3cDeviceConfig->SclFb.PadTermination);
+  GpioServices->SetInputInversion (GpioServices, PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_LPSS_I3C_SCL_FB (I3cNumber), I3cDeviceConfig->SclFb.PinMux), GpioV2InputInversionDisable);
 }

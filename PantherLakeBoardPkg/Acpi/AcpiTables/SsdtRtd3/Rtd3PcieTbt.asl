@@ -240,7 +240,10 @@ Method (PPS3, 0, Serialized) { // Platform specific PCIe root port _PS3 Hook Fun
   TSCH ()
 }
 
-Method (_DSD, 0) {
+//
+// Alternate DSD
+//
+Method (ADSD, 0) {
   ADBG (Concatenate ("[dTBT] Root port _DSD - dTBT ", ToHexString (TUID)))
   Return (
     Package () {

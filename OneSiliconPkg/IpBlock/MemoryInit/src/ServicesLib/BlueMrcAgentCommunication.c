@@ -591,6 +591,7 @@ BlueMrcCheckXtStatusRegs (
 
   return Status;
 }
+
 /**
   Check the Green MRC print log and print any contents.
 
@@ -605,6 +606,7 @@ BlueMrcPrintGreenLog (
   IN UINT32               LogSize
   )
 {
+#ifdef MRC_DEBUG_PRINT
   MrcDebug    *Debug;
   MrcDebugMsgLevel Lvl;
   UINT8       LocalBuffer[MRC_GREEN_LOG_SIZE + 1];
@@ -660,6 +662,8 @@ BlueMrcPrintGreenLog (
   MRC_DEBUG_MSG(Debug, Lvl, "%s", LocalBuffer);
 
   return mrcSuccess;
-}
-
+#else
+    return mrcSuccess;
+#endif // MRC_DEBUG_PRINT
+  }
 #endif // FULL_HEADLESS

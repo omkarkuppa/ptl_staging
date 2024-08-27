@@ -20,7 +20,8 @@
 **/
 
 #include <IndustryStandard/Tpm20.h>
-
+#include <PiPei.h>
+#include <FspEas.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -36,6 +37,119 @@ Sha384Verify (
   IN REGION_SEGMENT              *IbbSegments
   );
 
+/**
+  Find FSP header pointer.
+
+  @param[in] FlashFvFspBase Flash address of FSP FV.
+
+  @return FSP header pointer.
+**/
+FSP_INFO_HEADER *
+EFIAPI
+FspFindFspHeader (
+  IN EFI_PHYSICAL_ADDRESS  FlashFvFspBase
+  )
+{
+  UINT8  *CheckPointer;
+
+  CheckPointer = (UINT8 *)(UINTN) FlashFvFspBase;
+
+  if (((EFI_FIRMWARE_VOLUME_HEADER *) CheckPointer)->Signature != EFI_FVH_SIGNATURE) {
+    return NULL;
+  }
+
+  if (((EFI_FIRMWARE_VOLUME_HEADER *) CheckPointer)->ExtHeaderOffset != 0) {
+    CheckPointer = CheckPointer + ((EFI_FIRMWARE_VOLUME_HEADER *)CheckPointer)->ExtHeaderOffset;
+    CheckPointer = CheckPointer + ((EFI_FIRMWARE_VOLUME_EXT_HEADER *)CheckPointer)->ExtHeaderSize;
+    CheckPointer = (UINT8 *)ALIGN_POINTER (CheckPointer, 8);
+  } else {
+    CheckPointer = CheckPointer + ((EFI_FIRMWARE_VOLUME_HEADER *)CheckPointer)->HeaderLength;
+  }
+
+  CheckPointer = CheckPointer + sizeof (EFI_FFS_FILE_HEADER);
+
+  if (((EFI_RAW_SECTION *)CheckPointer)->Type != EFI_SECTION_RAW) {
+    return NULL;
+  }
+
+  CheckPointer = CheckPointer + sizeof (EFI_RAW_SECTION);
+
+  return (FSP_INFO_HEADER *)CheckPointer;
+}
+
+/**
+  Verify FSP Version information in BSSS(BSPM) and FBM.
+  FSP Version digest information is kept in FBM, FSP will only verify the SHA384 digest.
+
+  @param[in]   Bsss      BSSS(BSPM) structure found in BPM.
+  @param[in]   Fbm       FSP Boot Manifest which keeps FSP-M digest and IBB information.
+  @param[in]   Buffer    Memory buffer for hash verification.
+
+  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
+  @retval EFI_ACCESS_DENIED       Verification Fail.
+  @retval EFI_SUCCESS             Verification Pass.
+
+**/
+EFI_STATUS
+EFIAPI
+VerifyFspVersion (
+  IN BSPM_ELEMENT                   *Bsss,
+  IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
+  IN VOID                           *Buffer
+  )
+{
+  FSP_REGION_DIGEST       *FspDigest;
+  VOID                    *HashCtx;
+  UINT8                   FspVersion [6];
+  REGION_SEGMENT          Segment;
+  FSP_INFO_HEADER         *FspInfoHeader;
+
+  DEBUG ((DEBUG_INFO, "FSP Version Verification ...\n"));
+  if (Bsss == NULL || Fbm == NULL || Buffer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  HashCtx = (VOID *) Buffer;
+
+  FspDigest  = VERSION_DIGEST_PTR (Fbm);
+  if (FspDigest->ComponentID != FSP_REGION_TYPE_FSPVERSION) {
+    return EFI_INVALID_PARAMETER;
+  }
+  DEBUG ((DEBUG_INFO, "FSP Version Digest is Found!\n"));
+  FspInfoHeader = (FSP_INFO_HEADER *) FspFindFspHeader ((UINT32) Bsss->FspmBaseAddress);
+
+  FspVersion[0] = FspInfoHeader->ImageRevision & 0xff;
+  FspVersion[1] = FspInfoHeader->ExtendedImageRevision & 0xff;
+  FspVersion[2] = (FspInfoHeader->ImageRevision & 0xff00) >> 8;
+  FspVersion[3] = (FspInfoHeader->ExtendedImageRevision & 0xff00) >> 8;
+  FspVersion[4] = (UINT8)((FspInfoHeader->ImageRevision & 0x00ff0000) >> 16);
+  FspVersion[5] = (UINT8)((FspInfoHeader->ImageRevision & 0xff000000) >> 24);
+
+  Segment.Reserved = 0;
+  Segment.Flags    = 0;
+  Segment.Base     = 0;
+  Segment.Size     = sizeof (FspVersion);
+
+  DEBUG ((DEBUG_INFO,
+          "FSP Version : %02x.%02x.%04x.%04x\n",
+          FspVersion[5],
+          FspVersion[4],
+          (FspVersion[3] << 8) | (FspVersion[2]),
+          (FspVersion[1] << 8) | (FspVersion[0])
+        ));
+
+  if (FspDigest->ComponentDigests.Sha384Digest.Size != 0) {
+    if (Sha384Verify (HashCtx, &FspDigest->ComponentDigests.Sha384Digest,
+      (UINTN) &FspVersion, 1, &Segment) == TRUE)
+    {
+      DEBUG ((DEBUG_INFO, "FSP Version Verification Pass.\n"));
+      return EFI_SUCCESS;
+    }
+  }
+
+  DEBUG ((DEBUG_INFO, "FSP Version Verification Fail!\n"));
+  return EFI_ACCESS_DENIED;
+}
 /**
   Verify FSP-M with the information in BSSS(BSPM) and FBM.
   FSP-M digest information is kept in FBM, FSP will only verify the SHA384 digest.

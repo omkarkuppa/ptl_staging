@@ -42,9 +42,13 @@ External (USB2_PORT_PATH (16), DeviceObj)
 If (CondRefOf (USB2_PORT_PATH (01))) {
   Scope (USB2_PORT_PATH (01)) {
     If (LOr (LEqual (DUBP, 1), LEqual (IUBP, 1))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -54,9 +58,13 @@ If (CondRefOf (USB2_PORT_PATH (01))) {
 If (CondRefOf (USB2_PORT_PATH (02))) {
   Scope (USB2_PORT_PATH (02)) {
     If (LOr (LEqual (DUBP, 2), LEqual (IUBP, 2))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -66,9 +74,13 @@ If (CondRefOf (USB2_PORT_PATH (02))) {
 If (CondRefOf (USB2_PORT_PATH (03))) {
   Scope (USB2_PORT_PATH (03)) {
     If (LOr (LEqual (DUBP, 3), LEqual (IUBP, 3))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -78,9 +90,13 @@ If (CondRefOf (USB2_PORT_PATH (03))) {
 If (CondRefOf (USB2_PORT_PATH (04))) {
   Scope (USB2_PORT_PATH (04)) {
     If (LOr (LEqual (DUBP, 4), LEqual (IUBP, 4))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -90,9 +106,13 @@ If (CondRefOf (USB2_PORT_PATH (04))) {
 If (CondRefOf (USB2_PORT_PATH (05))) {
   Scope (USB2_PORT_PATH (05)) {
     If (LOr (LEqual (DUBP, 5), LEqual (IUBP, 5))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -102,9 +122,13 @@ If (CondRefOf (USB2_PORT_PATH (05))) {
 If (CondRefOf (USB2_PORT_PATH (06))) {
   Scope (USB2_PORT_PATH (06)) {
     If (LOr (LEqual (DUBP, 6), LEqual (IUBP, 6))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -114,9 +138,13 @@ If (CondRefOf (USB2_PORT_PATH (06))) {
 If (CondRefOf (USB2_PORT_PATH (07))) {
   Scope (USB2_PORT_PATH (07)) {
     If (LOr (LEqual (DUBP, 7), LEqual (IUBP, 7))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -126,9 +154,13 @@ If (CondRefOf (USB2_PORT_PATH (07))) {
 If (CondRefOf (USB2_PORT_PATH (08))) {
   Scope (USB2_PORT_PATH (08)) {
     If (LOr (LEqual (DUBP, 8), LEqual (IUBP, 8))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -138,9 +170,14 @@ If (CondRefOf (USB2_PORT_PATH (08))) {
 If (CondRefOf (USB2_PORT_PATH (09))) {
   Scope (USB2_PORT_PATH (09)) {
     If (LOr (LEqual (DUBP, 9), LEqual (IUBP, 9))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
+      Include ("GuidLockIndicator.asl")
     }
   }
 }
@@ -149,9 +186,13 @@ If (CondRefOf (USB2_PORT_PATH (09))) {
 If (CondRefOf (USB2_PORT_PATH (10))) {
   Scope (USB2_PORT_PATH (10)) {
     If (LOr (LEqual (DUBP, 10), LEqual (IUBP, 10))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -161,9 +202,13 @@ If (CondRefOf (USB2_PORT_PATH (10))) {
 If (CondRefOf (USB2_PORT_PATH (11))) {
   Scope (USB2_PORT_PATH (11)) {
     If (LOr (LEqual (DUBP, 11), LEqual (IUBP, 11))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -173,9 +218,13 @@ If (CondRefOf (USB2_PORT_PATH (11))) {
 If (CondRefOf (USB2_PORT_PATH (12))) {
   Scope (USB2_PORT_PATH (12)) {
     If (LOr (LEqual (DUBP, 12), LEqual (IUBP, 12))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -185,9 +234,13 @@ If (CondRefOf (USB2_PORT_PATH (12))) {
 If (CondRefOf (USB2_PORT_PATH (13))) {
   Scope (USB2_PORT_PATH (13)) {
     If (LOr (LEqual (DUBP, 13), LEqual (IUBP, 13))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -197,9 +250,13 @@ If (CondRefOf (USB2_PORT_PATH (13))) {
 If (CondRefOf (USB2_PORT_PATH (14))) {
   Scope (USB2_PORT_PATH (14)) {
     If (LOr (LEqual (DUBP, 14), LEqual (IUBP, 14))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -209,9 +266,13 @@ If (CondRefOf (USB2_PORT_PATH (14))) {
 If (CondRefOf (USB2_PORT_PATH (15))) {
   Scope (USB2_PORT_PATH (15)) {
     If (LOr (LEqual (DUBP, 15), LEqual (IUBP, 15))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }
@@ -221,9 +282,13 @@ If (CondRefOf (USB2_PORT_PATH (15))) {
 If (CondRefOf (USB2_PORT_PATH (16))) {
   Scope (USB2_PORT_PATH (16)) {
     If (LOr (LEqual (DUBP, 16), LEqual (IUBP, 16))) {
+#if FixedPcdGetBool (PcdBtDsmSupport) == 1
       Include ("BtDsm.asl")
+#endif
       Include ("BtReset.asl")
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
       Include ("BtAudioOffload.asl")
+#endif
       Include ("GuidLockIndicator.asl")
     }
   }

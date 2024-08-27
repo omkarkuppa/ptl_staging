@@ -220,8 +220,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmClkDccRankEn",
   "GsmWckDccRankEn",
   "GsmWckDccLaneEn",
-  "GsmDataVccDdqTarget",
-  "GsmCccVccDdqTarget",
   "GsmCompVccDdqTarget",
   "GsmInitCompleteOvrd",
   "GsmInitCompleteOvrdVal",
@@ -400,7 +398,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccRankOccupancy",
   "GsmMccMcSrx",
   "GsmMccEnRefTypeDisplay",
-  "GsmMcctRefiPulseStaggerDis",
   "GsmMccHashMask",
   "GsmMccLsbMaskBit",
   "GsmMccPbrDis",
@@ -515,6 +512,7 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccDdr5CkdEnable",
   "GsmMccDisLpddr5RdwrInterleaving",
   "GsmMccEccCorrectionDisable",
+  "GsmMccMcMntsSpareRw",
   "EndOfMccMarker",
   "GsmPmaEnableMc",
   "GsmPmaEnableIbecc",
@@ -555,6 +553,97 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
 };
 #endif // MCR_DEBUG_PRINT
 
+static const UINT8 DqMirroringTable[MAX_BITS] = {7, 5, 6, 4, 3, 1, 2, 0};
+
+/**
+  Function to translate DQ Bitmask within GetSet value using internal PhyDqSwizzling if needed.
+  Assumes DQ bitmask on bits[7:0].
+
+  @param[in]  Strobe - Dqs data group within the rank (0-based).
+  @param[in]  Value  - Get/Set value to operate on.
+
+  @retval Translated GetSet value
+**/
+INT64
+TranslateDqBitmaskThroughPhyDqSwizzling (
+  IN UINT32 Strobe,
+  IN INT64  Value
+  )
+{
+  INT64 DeswizzledValue;
+  UINT8 TranslatedDqBitMask;
+  UINT8 Index;
+
+  // PHY Data swizzling applies only for DATA1/3/5/7 instances.
+  // Check if internal swizzling applies to given partition.
+  if ((Strobe % 2) == 1) {
+    DeswizzledValue = (Value & ~MRC_UINT8_MAX); // clear DQ bits[7:0]
+    TranslatedDqBitMask = 0;
+    for (Index = 0; Index < MAX_BITS; Index++) {
+      if ((((UINT8)Value >> Index) & 0x1) == 0x1) {
+        // If the bit is set, move it to the new (translated) bit position
+        TranslatedDqBitMask |= (1 << DqMirroringTable[Index]);
+      }
+    }
+    DeswizzledValue |= TranslatedDqBitMask; // fill bits[7:0] with translated value
+  } else {
+    DeswizzledValue = Value;
+  }
+
+  return DeswizzledValue;
+}
+
+/**
+  Function to translate Bit/Lane number using internal PhyDqSwizzling if needed.
+
+  @param[in]  Strobe - Dqs data group within the rank (0-based).
+  @param[in]  Bit    - Bit value within the data group (0-based).
+
+  @retval Translated value
+**/
+UINT32
+TranslateDqBitThroughPhyDqSwizzling (
+  IN UINT32 Strobe,
+  IN UINT32 Bit
+  )
+{
+  UINT32 TranslatedBit;
+
+  // PHY Data swizzling applies only for DATA1/3/5/7 instances.
+  // Check if internal swizzling applies to given partition.
+  if (((Strobe % 2) == 1) && (Bit < MAX_BITS)) {
+    TranslatedBit = DqMirroringTable[Bit];
+  } else {
+    TranslatedBit = Bit;
+  }
+
+  return TranslatedBit;
+}
+
+/**
+  Function to translate specific GetSet value (bitmask or bit number) using internal PhyDqSwizzling if needed.
+
+  @param[in]      Group  - DDRIO group to access.
+  @param[in]      Strobe - Dqs data group within the rank (0-based).
+  @param[in,out]  Value  - Pointer to value for Get/Set to operate on.
+**/
+VOID
+TranslateGetSetValueThroughPhyDqSwizzling (
+  IN     GSM_GT Group,
+  IN     UINT32 Strobe,
+  IN OUT INT64  *Value
+  )
+{
+  switch (Group) {
+    case GsmIocDqOverrideData:
+    case GsmIocDqOverrideEn:
+      *Value = TranslateDqBitmaskThroughPhyDqSwizzling (Strobe, *Value);
+      break;
+
+    default:
+      break;
+  }
+}
 
 /**
 Top level function used to interact with SOC.
@@ -1034,6 +1123,10 @@ MrcGetSet (
   Status = MrcTranslateSystemToIp (MrcData, &TransController, &TransChannel, &TransRank, &TransStrobe, &TransLane, Group);
 
   if (Status == mrcSuccess) {
+    if (!ReadOnly) {
+      // Translate write value for specific Groups
+      TranslateGetSetValueThroughPhyDqSwizzling (Group, Strobe, Value);
+    }
     Status = GetSet (MrcData, Socket, TransController, TransChannel, Dimm, TransRank, TransStrobe, TransLane, FreqIndex, Level, Group, Mode, Value);
 
     if (!ReadOnly) {
@@ -1064,7 +1157,7 @@ MrcGetSet (
 **/
 UINT32
 GetPartitionMax (
-  IN PARTITION_BLOCKS Partition,
+  IN PARTITION_TYPE   Partition,
   IN BOOLEAN          UlxUlt
   )
 {
@@ -1075,16 +1168,12 @@ GetPartitionMax (
       PartitionMax = MRC_PG_NUM;
       break;
 
-    case PartitionVccClk:
-      PartitionMax = (UlxUlt) ? MRC_VCCCLK_MOBILE_NUM : MRC_VCCCLK_DT_NUM;
+    case PartitionDataShared:
+      PartitionMax = MRC_DATA_SHARED_NUM;
       break;
 
-      case PartitionData:
-      PartitionMax = (UlxUlt) ? MRC_DATA_MOBILE_NUM : MRC_DATA_DT_NUM;
-      break;
-
-    case PartitionCcc:
-      PartitionMax = (UlxUlt) ? MRC_CCC_SHARED_MOBILE_NUM : MRC_CCC_SHARED_DT_NUM;
+    case PartitionCccShared:
+      PartitionMax = MRC_CCC_SHARED_NUM;
       break;
 
     case PartitionComp:
@@ -1128,10 +1217,6 @@ MrcGetSetParamMaxAdjust (
   MRC_DEBUG_ASSERT (LaneMax != 0, &MrcData->Outputs.Debug, "%s %s", gNullPtrErrStr, __FUNCTION__);
 
   switch (Group) {
-    case GsmCccVccDdqTarget:
-      *LaneMax = MRC_CCC_SHARED_NUM;
-      break;
-
     case GsmCompVccDdqTarget:
       *LaneMax = MRC_COMP_NUM;
       break;
@@ -1716,8 +1801,6 @@ MrcCheckGroupSupported (
     case GsmClkDccRankEn:
     case GsmWckDccLaneEn:
     case GsmWckDccRankEn:
-    case GsmDataVccDdqTarget:
-    case GsmCccVccDdqTarget:
     case GsmCompVccDdqTarget:
     case GsmInitCompleteOvrd:
     case GsmInitCompleteOvrdVal:
@@ -1845,7 +1928,6 @@ MrcCheckGroupSupported (
     case GsmMccRankOccupancy:
     case GsmMccMcSrx:
     case GsmMccEnRefTypeDisplay:
-    case GsmMcctRefiPulseStaggerDis:
     case GsmMccHashMask:
     case GsmMccLsbMaskBit:
     case GsmMctCPDED:
@@ -1959,6 +2041,7 @@ MrcCheckGroupSupported (
     case GsmMccDdr5CkdEnable:
     case GsmMccDisLpddr5RdwrInterleaving:
     case GsmMccEccCorrectionDisable:
+    case GsmMccMcMntsSpareRw:
     case GsmPmaEnableMc:
     case GsmPmaEnableIbecc:
     case GsmPmaEnableCce:
@@ -2370,6 +2453,34 @@ IsClkGrp (
 }
 
 /**
+  Check if the input group is a per-bit control fub.
+
+  @param[in] Group - DDRIO group to access.
+
+  @retval TRUE  - The input group is a per-bit control fub.
+  @retval FALSE - The input group is not a per-bit control fub.
+**/
+BOOLEAN
+IsPerBitGrp (
+  IN GSM_GT const Group
+  )
+{
+  BOOLEAN IsInputPerBit;
+
+  if ((Group == TxDqBitDelay) ||
+      (Group == RxDqsBitDelay) ||
+      (Group == RxDqsBitOffset) ||
+      (Group == RxDqVref) ||
+      (Group == RxVocRise) ||
+      (Group == TxDqTco)) {
+    IsInputPerBit = TRUE;
+  } else {
+    IsInputPerBit = FALSE;
+  }
+  return IsInputPerBit;
+}
+
+/**
   Converting controller, channel, rank, strobe number from System to IP register architecture.
 
   @param[in]      MrcData     - Pointer to global data structure.
@@ -2593,6 +2704,9 @@ MrcTranslateSystemToIp (
         TransStrobe += *Strobe / 2;
       } else { // LPDDR5
         TransStrobe = (*Controller * MAX_CHANNEL) + *Channel;
+      }
+      if (IsPerBitGrp (Group)) {
+        TransLane = TranslateDqBitThroughPhyDqSwizzling (*Strobe, *Lane);
       }
       break;
 

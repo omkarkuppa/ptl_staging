@@ -286,7 +286,6 @@
   )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent|*|FALSE # USB Type-C PD Information Present : TRUE - Enable
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor|*|0x02
 
   # USB Type-C Retimer Information Present : FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent|*|FALSE

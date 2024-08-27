@@ -170,6 +170,12 @@ TxtInit (
     ///
     DEBUG ((DEBUG_INFO, "TXTPEI::Entering SCLEAN\n"));
 
+  } else {
+    ///
+    /// Unlock memory, and then continue running
+    ///
+    DEBUG ((DEBUG_INFO, "TXTPEI::EstablishmentBit not asserted - Unlock Memory\n"));
+    AsmWriteMsr64 (MSR_LT_UNLOCK_MEMORY, 0);
   }
 
   //

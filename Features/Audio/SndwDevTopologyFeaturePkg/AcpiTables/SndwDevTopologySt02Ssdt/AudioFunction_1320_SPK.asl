@@ -19,1110 +19,3400 @@
 @par Specification Reference:
 **/
 
-Device(AF04) {
-	Name(_ADR, 04)
+// Device(AF04) {
+// 	Name(_ADR, 04)
 
-	Name(_DSD, Package() {
+	Name(_DSD, Package()
+	{
         ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdw-sw-interface-revision", 0x00020000}, // v2.0
-		   Package(2) {"mipi-sdw-sdca-interface-revision", 0x1000}, // v1.0
-		   Package(2) {"mipi-sdw-wake-up-unavailable", 0}, // support wakeup
-		   Package(2) {"mipi-sdw-test-mode-supported", 1}, // Integer/Boolean
-		   Package (2) {"mipi-sdca-function-topology-features", 0x8000000000042D},
-		   // Secondary Transducer,Ultrasound Render,Sense Capture, Reference Stream, Companion Data Output, Security / Privacy
-           //Package (2) {"mipi-sdca-function-topology-features", 0xB00},
-           //Package (2) {"mipi-sdca-control-list", 0x01F0}, // Bitmap: 0x4, 0x5, 0x6, 0x7, 0x8 - Function level controls
-		   Package (2) {"mipi-sdca-control-list", 0x301F2}, // Bitmap: 0x0, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11 - Function level controls
-           Package (2) {"mipi-sdca-entity-id-list",
-           Package() {0x0, 0x33, 0x27, 0x3, 0x26, 0x31, 0x29, 0x40, 0x21, 0x28, 0x22, 0x24, 0x50, 0x4, 0x6, 0x51, 0x20, 0x36, 0x13, 0x14, 0x15, 0x17, 0x38, 0x52} },
+        Package()
+		{
+			Package(2) {"mipi-sdw-sw-interface-revision", 0x00020001}, // v2.1
+			//Package(2) {"mipi-sdw-sdca-interface-revision", 0x1000}, // v1.0r00, this is peripheral device property
+			Package(2) {"mipi-sdw-wake-up-unavailable", 0}, // support wakeup
+			Package(2) {"mipi-sdw-test-mode-supported", 1}, // Integer/Boolean
+			//Package(2) {"mipi-sdca-function-topology-features", 0x8000000000042D},	// Security/Privacy(55), Companion Data Output(10), Reference Stream(5), Sense Capture(3), Ultrasound Render(2), Secondary Transducer(0)
+			Package(2) {"mipi-sdca-function-topology-features", 0x002C},	// Reference Stream(5), Sense Capture(3), Ultrasound Render(2)
+			Package(2) {"mipi-sdca-control-list", 0x301F2}, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11 - Function level controls
+			// All entities
+				// Package(2) {"mipi-sdca-entity-id-list",
+				// 	Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24, 0x38, 0x66, 0x63, 0x62, 0x27, 0x17, 0x61, 0x60, 0x51} },
+			// No Security/Privacy (0x51)
+				// Package(2) {"mipi-sdca-entity-id-list",
+				// 	Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24, 0x38, 0x66, 0x63, 0x62, 0x27, 0x17, 0x61, 0x60} },
+			// No Security/Privacy (0x51), no secondary transducer (0x27, 0x17, 0x61, 0x60)
+				// Package(2) {"mipi-sdca-entity-id-list",
+				// 	Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24, 0x38, 0x66, 0x63, 0x62} },
+			// No Security/Privacy (0x51), no secondary transducer (0x17, 0x61, 0x60), no companion data output (0x38, 0x66, 0x63, 0x62)
+			Package(2) {"mipi-sdca-entity-id-list",
+				Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24} },
+			// Cluster Library
+			Package(2) {"mipi-sdca-cluster-id-list",
+				Package() {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x10, 0x11, 0x12, 0x13, 0x20, 0x21, 0x22, 0x23, 0x41, 0x42} },
         },
         ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x8-subproperties", "C008"},
-           Package (2) {"mipi-sdca-control-0x7-subproperties", "C007"},
-           Package (2) {"mipi-sdca-control-0x6-subproperties", "C006"},
-           Package (2) {"mipi-sdca-control-0x5-subproperties", "C005"},
-           Package (2) {"mipi-sdca-control-0x4-subproperties", "C004"},
-		   Package (2) {"mipi-sdca-control-0x1-subproperties", "C042"},
-           Package (2) {"mipi-sdca-control-0x10-subproperties", "C043"},
-           Package (2) {"mipi-sdca-control-0x11-subproperties", "C044"},
-           Package (2) {"mipi-sdca-entity-id-0x0-subproperties", "E000"},
-           Package (2) {"mipi-sdca-entity-id-0x33-subproperties", "E051"},
-           Package (2) {"mipi-sdca-entity-id-0x27-subproperties", "E039"},
-           Package (2) {"mipi-sdca-entity-id-0x3-subproperties", "E003"},
-           Package (2) {"mipi-sdca-entity-id-0x26-subproperties", "E038"},
-           Package (2) {"mipi-sdca-entity-id-0x31-subproperties", "E049"},
-           Package (2) {"mipi-sdca-entity-id-0x29-subproperties", "E041"},
-           Package (2) {"mipi-sdca-entity-id-0x40-subproperties", "E064"},
-           Package (2) {"mipi-sdca-entity-id-0x21-subproperties", "E033"},
-           Package (2) {"mipi-sdca-entity-id-0x28-subproperties", "E040"},
-           Package (2) {"mipi-sdca-entity-id-0x22-subproperties", "E034"},
-           Package (2) {"mipi-sdca-entity-id-0x24-subproperties", "E036"},
-           Package (2) {"mipi-sdca-entity-id-0x50-subproperties", "E080"},
-           Package (2) {"mipi-sdca-entity-id-0x4-subproperties", "E004"},
-           Package (2) {"mipi-sdca-entity-id-0x6-subproperties", "E006"},
-           Package (2) {"mipi-sdca-entity-id-0x51-subproperties", "E081"},
-           Package (2) {"mipi-sdca-entity-id-0x20-subproperties", "E032"},
-           Package (2) {"mipi-sdca-entity-id-0x36-subproperties", "E054"},
-           Package (2) {"mipi-sdca-entity-id-0x13-subproperties", "E019"},
-           Package (2) {"mipi-sdca-entity-id-0x14-subproperties", "E020"},
-           Package (2) {"mipi-sdca-entity-id-0x15-subproperties", "E021"},
-           Package (2) {"mipi-sdca-entity-id-0x17-subproperties", "E023"},
-           Package (2) {"mipi-sdca-entity-id-0x38-subproperties", "E056"},
-		   Package (2) {"mipi-sdca-entity-id-0x52-subproperties", "E082"},
+        Package()
+		{
+			Package(2) {"mipi-sdca-control-0x1-subproperties", "C042"},
+			Package(2) {"mipi-sdca-control-0x4-subproperties", "C004"},
+			Package(2) {"mipi-sdca-control-0x5-subproperties", "C005"},
+			Package(2) {"mipi-sdca-control-0x6-subproperties", "C006"},
+			Package(2) {"mipi-sdca-control-0x7-subproperties", "C007"},
+			Package(2) {"mipi-sdca-control-0x8-subproperties", "C008"},
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C043"},
+			Package(2) {"mipi-sdca-control-0x11-subproperties", "C044"},
+			Package(2) {"mipi-sdca-entity-id-0x40-subproperties", "EN40"},
+			Package(2) {"mipi-sdca-entity-id-0x33-subproperties", "EN33"},
+			Package(2) {"mipi-sdca-entity-id-0x13-subproperties", "EN13"},
+			Package(2) {"mipi-sdca-entity-id-0x43-subproperties", "EN43"},
+			Package(2) {"mipi-sdca-entity-id-0x42-subproperties", "EN42"},
+			Package(2) {"mipi-sdca-entity-id-0x50-subproperties", "EN50"},
+			Package(2) {"mipi-sdca-entity-id-0x29-subproperties", "EN29"},
+			Package(2) {"mipi-sdca-entity-id-0x22-subproperties", "EN22"},
+			Package(2) {"mipi-sdca-entity-id-0x31-subproperties", "EN31"},
+			Package(2) {"mipi-sdca-entity-id-0x3-subproperties", "EN03"},
+			Package(2) {"mipi-sdca-entity-id-0x4-subproperties", "EN04"},
+			Package(2) {"mipi-sdca-entity-id-0x20-subproperties", "EN20"},
+			Package(2) {"mipi-sdca-entity-id-0x21-subproperties", "EN21"},
+			Package(2) {"mipi-sdca-entity-id-0x52-subproperties", "EN52"},
+			Package(2) {"mipi-sdca-entity-id-0x15-subproperties", "EN15"},
+			Package(2) {"mipi-sdca-entity-id-0x44-subproperties", "EN44"},
+			Package(2) {"mipi-sdca-entity-id-0x26-subproperties", "EN26"},
+			Package(2) {"mipi-sdca-entity-id-0x32-subproperties", "EN32"},
+			Package(2) {"mipi-sdca-entity-id-0x6-subproperties", "EN06"},
+			Package(2) {"mipi-sdca-entity-id-0x36-subproperties", "EN36"},
+			Package(2) {"mipi-sdca-entity-id-0x28-subproperties", "EN28"},
+			Package(2) {"mipi-sdca-entity-id-0x14-subproperties", "EN14"},
+			Package(2) {"mipi-sdca-entity-id-0x67-subproperties", "EN67"},
+			Package(2) {"mipi-sdca-entity-id-0x24-subproperties", "EN24"},
+			//Package(2) {"mipi-sdca-entity-id-0x38-subproperties", "EN38"},
+			//Package(2) {"mipi-sdca-entity-id-0x66-subproperties", "EN66"},
+			//Package(2) {"mipi-sdca-entity-id-0x63-subproperties", "EN63"},
+			//Package(2) {"mipi-sdca-entity-id-0x62-subproperties", "EN62"},
+			//Package(2) {"mipi-sdca-entity-id-0x27-subproperties", "EN27"},
+			//Package(2) {"mipi-sdca-entity-id-0x17-subproperties", "EN17"},
+			//Package(2) {"mipi-sdca-entity-id-0x61-subproperties", "EN61"},
+			//Package(2) {"mipi-sdca-entity-id-0x60-subproperties", "EN60"},
+			//Package(2) {"mipi-sdca-entity-id-0x51-subproperties", "EN51"},
+			Package(2) {"mipi-sdca-function-expansion-subproperties", "EXT0"},
+			// Cluster ID subproperties
+			Package(2) {"mipi-sdca-cluster-id-0x1-subproperties", "CL01"}, // ClusterID=01, For IT 21
+			Package(2) {"mipi-sdca-cluster-id-0x2-subproperties", "CL02"}, // ClusterID=02, For IT 26
+			Package(2) {"mipi-sdca-cluster-id-0x3-subproperties", "CL03"}, // ClusterID=03, For UDMPU 23
+			Package(2) {"mipi-sdca-cluster-id-0x4-subproperties", "CL04"}, // ClusterID=04, For UDMPU 27
+			Package(2) {"mipi-sdca-cluster-id-0x5-subproperties", "CL05"}, // ClusterID=05, For UDMPU 127
+			Package(2) {"mipi-sdca-cluster-id-0x6-subproperties", "CL06"}, // ClusterID=06, For UDMPU 25
+			Package(2) {"mipi-sdca-cluster-id-0x10-subproperties", "CL10"}, // ClusterID=10, For PPU21 posture number #1
+			Package(2) {"mipi-sdca-cluster-id-0x11-subproperties", "CL11"}, // ClusterID=11, For PPU21 posture number #2
+			Package(2) {"mipi-sdca-cluster-id-0x12-subproperties", "CL12"}, // ClusterID=12, For PPU21 posture number #3
+			Package(2) {"mipi-sdca-cluster-id-0x13-subproperties", "CL13"}, // ClusterID=13, For PPU21 posture number #4
+			Package(2) {"mipi-sdca-cluster-id-0x20-subproperties", "CL20"}, // ClusterID=20, For PPU26 posture number #1
+			Package(2) {"mipi-sdca-cluster-id-0x21-subproperties", "CL21"}, // ClusterID=21, For PPU26 posture number #2
+			Package(2) {"mipi-sdca-cluster-id-0x22-subproperties", "CL22"}, // ClusterID=22, For PPU26 posture number #3
+			Package(2) {"mipi-sdca-cluster-id-0x23-subproperties", "CL23"}, // ClusterID=23, For PPU26 posture number #4
+			Package(2) {"mipi-sdca-cluster-id-0x41-subproperties", "CL41"}, // ClusterID=0x41, For IT 29
+			Package(2) {"mipi-sdca-cluster-id-0x42-subproperties", "CL42"}, // ClusterID=0x42, For IT 29
 		},
-		   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-function-initialization-table","BUF0"},
-						Package(2) {"mipi-sdca-function-supported-postures", "BUF1"},
-					}
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-function-initialization-table","BUF0"},
+			//Package(2) {"mipi-sdca-function-supported-postures", "BUF1"},
+		}
 
 	}) //End AF04._DSD
 
 	Name(BUF0, Buffer()
-				{
-				//ALC1320 Blind Write Commands
-				}) //End AF04.BUF0
-	Name(C008, Package() {
-	   				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{
-						// Function_Version = 0x1, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x1},
-					}
-	}) //End AF04.C008
+	{
+		//ALC1320 Blind Write Commands
+		0x03, 0xC0, 0x00, 0x00, 0xE0,  // 0x0000C003, 0xE0
+		0x1B, 0xC0, 0x00, 0x00, 0xFC,  // 0x0000C01B, 0xFC
+		0xC3, 0xC5, 0x00, 0x00, 0xF2,  // 0x0000C5C3, 0xF2
+		0xC2, 0xC5, 0x00, 0x00, 0x00,  // 0x0000C5C2, 0x00
+		0xC6, 0xC5, 0x00, 0x00, 0x10,  // 0x0000C5C6, 0x10
+		0xC4, 0xC5, 0x00, 0x00, 0x12,  // 0x0000C5C4, 0x12
+		0xC8, 0xC5, 0x00, 0x00, 0x03,  // 0x0000C5C8, 0x03
+		0xD8, 0xC5, 0x00, 0x00, 0x0A,  // 0x0000C5D8, 0x0A
+		0xF7, 0xC5, 0x00, 0x00, 0x22,  // 0x0000C5F7, 0x22
+		0xF6, 0xC5, 0x00, 0x00, 0x22,  // 0x0000C5F6, 0x22
+		0xD0, 0xC5, 0x00, 0x00, 0x0F,  // 0x0000C5D0, 0x0F
+		0x57, 0xC0, 0x00, 0x00, 0x51,  // 0x0000C057, 0x51
+		0x54, 0xC0, 0x00, 0x00, 0x35,  // 0x0000C054, 0x35
+		0x53, 0xC0, 0x00, 0x00, 0x55,  // 0x0000C053, 0x55
+		0x52, 0xC0, 0x00, 0x00, 0x55,  // 0x0000C052, 0x55
+		0x51, 0xC0, 0x00, 0x00, 0x13,  // 0x0000C051, 0x13
+		0x50, 0xC0, 0x00, 0x00, 0x15,  // 0x0000C050, 0x15
+		0x60, 0xC0, 0x00, 0x00, 0x77,  // 0x0000C060, 0x77
+		0x61, 0xC0, 0x00, 0x00, 0x55,  // 0x0000C061, 0x55
+		0x63, 0xC0, 0x00, 0x00, 0x55,  // 0x0000C063, 0x55
+		0x65, 0xC0, 0x00, 0x00, 0xA5,  // 0x0000C065, 0xA5
+		0x6B, 0xC0, 0x00, 0x00, 0x0A,  // 0x0000C06B, 0x0A
+		0x05, 0xCA, 0x00, 0x00, 0xD6,  // 0x0000CA05, 0xD6
+		0x25, 0xCA, 0x00, 0x00, 0xD6,  // 0x0000CA25, 0xD6
+		0x00, 0xCD, 0x00, 0x00, 0x05,  // 0x0000CD00, 0x05
+		0x04, 0xC6, 0x00, 0x00, 0x40,  // 0x0000C604, 0x40
+		0x09, 0xC6, 0x00, 0x00, 0x40,  // 0x0000C609, 0x40
+		0x46, 0xC0, 0x00, 0x00, 0xFF,  // 0x0000C046, 0xFF
+		0x45, 0xC0, 0x00, 0x00, 0xFF,  // 0x0000C045, 0xFF
+		0x44, 0xC0, 0x00, 0x00, 0xFF,  // 0x0000C044, 0xFF
+		0x43, 0xC0, 0x00, 0x00, 0xFF,  // 0x0000C043, 0xFF
+		0x42, 0xC0, 0x00, 0x00, 0xFF,  // 0x0000C042, 0xFF
+		0x41, 0xC0, 0x00, 0x00, 0xFF,  // 0x0000C041, 0xFF
+		0x40, 0xC0, 0x00, 0x00, 0xFF,  // 0x0000C040, 0xFF
+		0x10, 0xCC, 0x00, 0x00, 0x01,  // 0x0000CC10, 0x01
+		0x00, 0xC7, 0x00, 0x00, 0xF0,  // 0x0000C700, 0xF0
+		0x01, 0xC7, 0x00, 0x00, 0x13,  // 0x0000C701, 0x13
+		0x01, 0xC9, 0x00, 0x00, 0x04,  // 0x0000C901, 0x04
+		0x00, 0xC9, 0x00, 0x00, 0x73,  // 0x0000C900, 0x73
+		0x03, 0xDE, 0x00, 0x00, 0x05,  // 0x0000DE03, 0x05
+                0x0B, 0xDD, 0x00, 0x00, 0x0E,  // 0x0000DD0B, 0x0D to 0E     2024/5/17 update increase output power
+		0x0A, 0xDD, 0x00, 0x00, 0x30,  // 0x0000DD0A, 0xFF to 30     2024/5/17 update increase output power
+		0x09, 0xDD, 0x00, 0x00, 0x0E,  // 0x0000DD09, 0x0D to 0E     2024/5/17 update increase output power
+		0x08, 0xDD, 0x00, 0x00, 0x30,  // 0x0000DD08, 0xFF to 30     2024/5/17 update increase output power
+		0x70, 0xC5, 0x00, 0x00, 0x08,  // 0x0000C570, 0x08
+		0x03, 0xE8, 0x00, 0x00, 0xBE,  // 0x0000E803, 0xBE
+		0x03, 0xC0, 0x00, 0x00, 0xC0,  // 0x0000C003, 0xC0
+		0x81, 0xC0, 0x00, 0x00, 0xFE,  // 0x0000C081, 0xFE
+		0x31, 0xCE, 0x00, 0x00, 0x0D,  // 0x0000CE31, 0x0D
+		0x30, 0xCE, 0x00, 0x00, 0xAE,  // 0x0000CE30, 0xAE
+		0x37, 0xCE, 0x00, 0x00, 0x0B,  // 0x0000CE37, 0x0B
+		0x36, 0xCE, 0x00, 0x00, 0xD2,  // 0x0000CE36, 0xD2
+		0x39, 0xCE, 0x00, 0x00, 0x04,  // 0x0000CE39, 0x04
+		0x38, 0xCE, 0x00, 0x00, 0x80,  // 0x0000CE38, 0x80
+		0x3F, 0xCE, 0x00, 0x00, 0x00,  // 0x0000CE3F, 0x00
+		0x3E, 0xCE, 0x00, 0x00, 0x00,  // 0x0000CE3E, 0x00
+		0x70, 0xD4, 0x00, 0x00, 0x8B,  // 0x0000D470, 0x8B
+		0x71, 0xD4, 0x00, 0x00, 0x18,  // 0x0000D471, 0x18
+		0x19, 0xC0, 0x00, 0x00, 0x10,  // 0x0000C019, 0x10
+		0x87, 0xD4, 0x00, 0x00, 0x3F,  // 0x0000D487, 0x3F
+		0x86, 0xD4, 0x00, 0x00, 0xC3,  // 0x0000D486, 0xC3
 
-	Name(C007, Package() {
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{
-						// Function_ID = 0x1320 (Device specific), Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x1320},
-					}
-	}) //End AF04.C007
+		//MCU Patch code
+		0x00 ,0x70 ,0x00 ,0x10 ,0x37,  // 0x10007000, 0x37
+		0x01 ,0x70 ,0x00 ,0x10 ,0x77,  // 0x10007001, 0x77
+		0x02 ,0x70 ,0x00 ,0x10 ,0x00,  // 0x10007002, 0x00
+		0x03 ,0x70 ,0x00 ,0x10 ,0x10,  // 0x10007003, 0x10
+		0x04 ,0x70 ,0x00 ,0x10 ,0xB7,  // 0x10007004, 0xB7
+		0x05 ,0x70 ,0x00 ,0x10 ,0xE7,  // 0x10007005, 0xE7
+		0x06 ,0x70 ,0x00 ,0x10 ,0x00,  // 0x10007006, 0x00
+		0x07 ,0x70 ,0x00 ,0x10 ,0x10,  // 0x10007007, 0x10
+		0x08 ,0x70 ,0x00 ,0x10 ,0x13,  // 0x10007008, 0x13
+		0x09 ,0x70 ,0x00 ,0x10 ,0x07,  // 0x10007009, 0x07
+		0x0A ,0x70 ,0x00 ,0x10 ,0x07,  // 0x1000700A, 0x07
+		0x0B ,0x70 ,0x00 ,0x10 ,0x40,  // 0x1000700B, 0x40
+		0x0C ,0x70 ,0x00 ,0x10 ,0x23,  // 0x1000700C, 0x23
+		0x0D ,0x70 ,0x00 ,0x10 ,0xAE,  // 0x1000700D, 0xAE
+		0x0E ,0x70 ,0x00 ,0x10 ,0xE7,  // 0x1000700E, 0xE7
+		0x0F ,0x70 ,0x00 ,0x10 ,0xDA,  // 0x1000700F, 0xDA
+		0x10 ,0x70 ,0x00 ,0x10 ,0x37,  // 0x10007010, 0x37
+		0x11 ,0x70 ,0x00 ,0x10 ,0x77,  // 0x10007011, 0x77
+		0x12 ,0x70 ,0x00 ,0x10 ,0x00,  // 0x10007012, 0x00
+		0x13 ,0x70 ,0x00 ,0x10 ,0x10,  // 0x10007013, 0x10
+		0x14 ,0x70 ,0x00 ,0x10 ,0x13,  // 0x10007014, 0x13
+		0x15 ,0x70 ,0x00 ,0x10 ,0x07,  // 0x10007015, 0x07
+		0x16 ,0x70 ,0x00 ,0x10 ,0x47,  // 0x10007016, 0x47
+		0x17 ,0x70 ,0x00 ,0x10 ,0x54,  // 0x10007017, 0x54
+		0x18 ,0x70 ,0x00 ,0x10 ,0x23,  // 0x10007018, 0x23
+		0x19 ,0x70 ,0x00 ,0x10 ,0xA4,  // 0x10007019, 0xA4
+		0x1A ,0x70 ,0x00 ,0x10 ,0xE7,  // 0x1000701A, 0xE7
+		0x1B ,0x70 ,0x00 ,0x10 ,0xDE,  // 0x1000701B, 0xDE
+		0x1C ,0x70 ,0x00 ,0x10 ,0x37,  // 0x1000701C, 0x37
+		0x1D ,0x70 ,0x00 ,0x10 ,0x77,  // 0x1000701D, 0x77
+		0x1E ,0x70 ,0x00 ,0x10 ,0x00,  // 0x1000701E, 0x00
+		0x1F ,0x70 ,0x00 ,0x10 ,0x10,  // 0x1000701F, 0x10
+		0x20 ,0x70 ,0x00 ,0x10 ,0x13,  // 0x10007020, 0x13
+		0x21 ,0x70 ,0x00 ,0x10 ,0x07,  // 0x10007021, 0x07
+		0x22 ,0x70 ,0x00 ,0x10 ,0x07,  // 0x10007022, 0x07
+		0x23 ,0x70 ,0x00 ,0x10 ,0x52,  // 0x10007023, 0x52
+		0x24 ,0x70 ,0x00 ,0x10 ,0x23,  // 0x10007024, 0x23
+		0x25 ,0x70 ,0x00 ,0x10 ,0xAE,  // 0x10007025, 0xAE
+		0x26 ,0x70 ,0x00 ,0x10 ,0xE7,  // 0x10007026, 0xE7
+		0x27 ,0x70 ,0x00 ,0x10 ,0xDE,  // 0x10007027, 0xDE
+		0x28 ,0x70 ,0x00 ,0x10 ,0x37,  // 0x10007028, 0x37
+		0x29 ,0x70 ,0x00 ,0x10 ,0x77,  // 0x10007029, 0x77
+		0x2A ,0x70 ,0x00 ,0x10 ,0x00,  // 0x1000702A, 0x00
+		0x2B ,0x70 ,0x00 ,0x10 ,0x10,  // 0x1000702B, 0x10
+		0x2C ,0x70 ,0x00 ,0x10 ,0x13,  // 0x1000702C, 0x13
+		0x2D ,0x70 ,0x00 ,0x10 ,0x07,  // 0x1000702D, 0x07
+		0x2E ,0x70 ,0x00 ,0x10 ,0xC7,  // 0x1000702E, 0xC7
+		0x2F ,0x70 ,0x00 ,0x10 ,0x64,  // 0x1000702F, 0x64
+		0x30 ,0x70 ,0x00 ,0x10 ,0x23,  // 0x10007030, 0x23
+		0x31 ,0x70 ,0x00 ,0x10 ,0xA2,  // 0x10007031, 0xA2
+		0x32 ,0x70 ,0x00 ,0x10 ,0xE7,  // 0x10007032, 0xE7
+		0x33 ,0x70 ,0x00 ,0x10 ,0xE8,  // 0x10007033, 0xE8
+		0x34 ,0x70 ,0x00 ,0x10 ,0x23,  // 0x10007034, 0x23
+		0x35 ,0x70 ,0x00 ,0x10 ,0xA4,  // 0x10007035, 0xA4
+		0x36 ,0x70 ,0x00 ,0x10 ,0xE7,  // 0x10007036, 0xE7
+		0x37 ,0x70 ,0x00 ,0x10 ,0xE8,  // 0x10007037, 0xE8
+		0x38 ,0x70 ,0x00 ,0x10 ,0x67,  // 0x10007038, 0x67
+		0x39 ,0x70 ,0x00 ,0x10 ,0x80,  // 0x10007039, 0x80
+		0x3A ,0x70 ,0x00 ,0x10 ,0x00,  // 0x1000703A, 0x00
+		0x3B ,0x70 ,0x00 ,0x10 ,0x00,  // 0x1000703B, 0x00
+		0x00 ,0x74 ,0x00 ,0x10 ,0x37,  // 0x10007400, 0x37
+		0x01 ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x10007401, 0xD7
+		0x02 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007402, 0x00
+		0x03 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007403, 0x00
+		0x04 ,0x74 ,0x00 ,0x10 ,0x83,  // 0x10007404, 0x83
+		0x05 ,0x74 ,0x00 ,0x10 ,0x27,  // 0x10007405, 0x27
+		0x06 ,0x74 ,0x00 ,0x10 ,0x47,  // 0x10007406, 0x47
+		0x07 ,0x74 ,0x00 ,0x10 ,0x56,  // 0x10007407, 0x56
+		0x08 ,0x74 ,0x00 ,0x10 ,0xB7,  // 0x10007408, 0xB7
+		0x09 ,0x74 ,0x00 ,0x10 ,0x06,  // 0x10007409, 0x06
+		0x0A ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000740A, 0x00
+		0x0B ,0x74 ,0x00 ,0x10 ,0x02,  // 0x1000740B, 0x02
+		0x0C ,0x74 ,0x00 ,0x10 ,0xB3,  // 0x1000740C, 0xB3
+		0x0D ,0x74 ,0x00 ,0x10 ,0xF7,  // 0x1000740D, 0xF7
+		0x0E ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x1000740E, 0xD7
+		0x0F ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000740F, 0x00
+		0x10 ,0x74 ,0x00 ,0x10 ,0x63,  // 0x10007410, 0x63
+		0x11 ,0x74 ,0x00 ,0x10 ,0x8A,  // 0x10007411, 0x8A
+		0x12 ,0x74 ,0x00 ,0x10 ,0x07,  // 0x10007412, 0x07
+		0x13 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007413, 0x00
+		0x14 ,0x74 ,0x00 ,0x10 ,0x93,  // 0x10007414, 0x93
+		0x15 ,0x74 ,0x00 ,0x10 ,0x06,  // 0x10007415, 0x06
+		0x16 ,0x74 ,0x00 ,0x10 ,0x10,  // 0x10007416, 0x10
+		0x17 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007417, 0x00
+		0x18 ,0x74 ,0x00 ,0x10 ,0x23,  // 0x10007418, 0x23
+		0x19 ,0x74 ,0x00 ,0x10 ,0x83,  // 0x10007419, 0x83
+		0x1A ,0x74 ,0x00 ,0x10 ,0xD1,  // 0x1000741A, 0xD1
+		0x1B ,0x74 ,0x00 ,0x10 ,0x44,  // 0x1000741B, 0x44
+		0x1C ,0x74 ,0x00 ,0x10 ,0x93,  // 0x1000741C, 0x93
+		0x1D ,0x74 ,0x00 ,0x10 ,0x07,  // 0x1000741D, 0x07
+		0x1E ,0x74 ,0x00 ,0x10 ,0xF0,  // 0x1000741E, 0xF0
+		0x1F ,0x74 ,0x00 ,0x10 ,0xFF,  // 0x1000741F, 0xFF
+		0x20 ,0x74 ,0x00 ,0x10 ,0x23,  // 0x10007420, 0x23
+		0x21 ,0x74 ,0x00 ,0x10 ,0x22,  // 0x10007421, 0x22
+		0x22 ,0x74 ,0x00 ,0x10 ,0xF7,  // 0x10007422, 0xF7
+		0x23 ,0x74 ,0x00 ,0x10 ,0x56,  // 0x10007423, 0x56
+		0x24 ,0x74 ,0x00 ,0x10 ,0x37,  // 0x10007424, 0x37
+		0x25 ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x10007425, 0xD7
+		0x26 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007426, 0x00
+		0x27 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007427, 0x00
+		0x28 ,0x74 ,0x00 ,0x10 ,0x83,  // 0x10007428, 0x83
+		0x29 ,0x74 ,0x00 ,0x10 ,0x27,  // 0x10007429, 0x27
+		0x2A ,0x74 ,0x00 ,0x10 ,0x47,  // 0x1000742A, 0x47
+		0x2B ,0x74 ,0x00 ,0x10 ,0x58,  // 0x1000742B, 0x58
+		0x2C ,0x74 ,0x00 ,0x10 ,0x93,  // 0x1000742C, 0x93
+		0x2D ,0x74 ,0x00 ,0x10 ,0xF7,  // 0x1000742D, 0xF7
+		0x2E ,0x74 ,0x00 ,0x10 ,0x17,  // 0x1000742E, 0x17
+		0x2F ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000742F, 0x00
+		0x30 ,0x74 ,0x00 ,0x10 ,0x63,  // 0x10007430, 0x63
+		0x31 ,0x74 ,0x00 ,0x10 ,0x86,  // 0x10007431, 0x86
+		0x32 ,0x74 ,0x00 ,0x10 ,0x07,  // 0x10007432, 0x07
+		0x33 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007433, 0x00
+		0x34 ,0x74 ,0x00 ,0x10 ,0x93,  // 0x10007434, 0x93
+		0x35 ,0x74 ,0x00 ,0x10 ,0x07,  // 0x10007435, 0x07
+		0x36 ,0x74 ,0x00 ,0x10 ,0x10,  // 0x10007436, 0x10
+		0x37 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007437, 0x00
+		0x38 ,0x74 ,0x00 ,0x10 ,0x23,  // 0x10007438, 0x23
+		0x39 ,0x74 ,0x00 ,0x10 ,0x22,  // 0x10007439, 0x22
+		0x3A ,0x74 ,0x00 ,0x10 ,0xF7,  // 0x1000743A, 0xF7
+		0x3B ,0x74 ,0x00 ,0x10 ,0x58,  // 0x1000743B, 0x58
+		0x3C ,0x74 ,0x00 ,0x10 ,0xB7,  // 0x1000743C, 0xB7
+		0x3D ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x1000743D, 0xD7
+		0x3E ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000743E, 0x00
+		0x3F ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000743F, 0x00
+		0x40 ,0x74 ,0x00 ,0x10 ,0x03,  // 0x10007440, 0x03
+		0x41 ,0x74 ,0x00 ,0x10 ,0xA7,  // 0x10007441, 0xA7
+		0x42 ,0x74 ,0x00 ,0x10 ,0x47,  // 0x10007442, 0x47
+		0x43 ,0x74 ,0x00 ,0x10 ,0x58,  // 0x10007443, 0x58
+		0x44 ,0x74 ,0x00 ,0x10 ,0xB7,  // 0x10007444, 0xB7
+		0x45 ,0x74 ,0x00 ,0x10 ,0x07,  // 0x10007445, 0x07
+		0x46 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007446, 0x00
+		0x47 ,0x74 ,0x00 ,0x10 ,0x04,  // 0x10007447, 0x04
+		0x48 ,0x74 ,0x00 ,0x10 ,0x33,  // 0x10007448, 0x33
+		0x49 ,0x74 ,0x00 ,0x10 ,0x77,  // 0x10007449, 0x77
+		0x4A ,0x74 ,0x00 ,0x10 ,0xF7,  // 0x1000744A, 0xF7
+		0x4B ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000744B, 0x00
+		0x4C ,0x74 ,0x00 ,0x10 ,0x93,  // 0x1000744C, 0x93
+		0x4D ,0x74 ,0x00 ,0x10 ,0x07,  // 0x1000744D, 0x07
+		0x4E ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000744E, 0x00
+		0x4F ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000744F, 0x00
+		0x50 ,0x74 ,0x00 ,0x10 ,0x63,  // 0x10007450, 0x63
+		0x51 ,0x74 ,0x00 ,0x10 ,0x0E,  // 0x10007451, 0x0E
+		0x52 ,0x74 ,0x00 ,0x10 ,0x07,  // 0x10007452, 0x07
+		0x53 ,0x74 ,0x00 ,0x10 ,0x04,  // 0x10007453, 0x04
+		0x54 ,0x74 ,0x00 ,0x10 ,0x37,  // 0x10007454, 0x37
+		0x55 ,0x74 ,0x00 ,0x10 ,0x07,  // 0x10007455, 0x07
+		0x56 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007456, 0x00
+		0x57 ,0x74 ,0x00 ,0x10 ,0x11,  // 0x10007457, 0x11
+		0x58 ,0x74 ,0x00 ,0x10 ,0x03,  // 0x10007458, 0x03
+		0x59 ,0x74 ,0x00 ,0x10 ,0x47,  // 0x10007459, 0x47
+		0x5A ,0x74 ,0x00 ,0x10 ,0x87,  // 0x1000745A, 0x87
+		0x5B ,0x74 ,0x00 ,0x10 ,0x0E,  // 0x1000745B, 0x0E
+		0x5C ,0x74 ,0x00 ,0x10 ,0x93,  // 0x1000745C, 0x93
+		0x5D ,0x74 ,0x00 ,0x10 ,0x06,  // 0x1000745D, 0x06
+		0x5E ,0x74 ,0x00 ,0x10 ,0x40,  // 0x1000745E, 0x40
+		0x5F ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000745F, 0x00
+		0x60 ,0x74 ,0x00 ,0x10 ,0x13,  // 0x10007460, 0x13
+		0x61 ,0x74 ,0x00 ,0x10 ,0x77,  // 0x10007461, 0x77
+		0x62 ,0x74 ,0x00 ,0x10 ,0xF7,  // 0x10007462, 0xF7
+		0x63 ,0x74 ,0x00 ,0x10 ,0x0F,  // 0x10007463, 0x0F
+		0x64 ,0x74 ,0x00 ,0x10 ,0x63,  // 0x10007464, 0x63
+		0x65 ,0x74 ,0x00 ,0x10 ,0x02,  // 0x10007465, 0x02
+		0x66 ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x10007466, 0xD7
+		0x67 ,0x74 ,0x00 ,0x10 ,0x0A,  // 0x10007467, 0x0A
+		0x68 ,0x74 ,0x00 ,0x10 ,0x93,  // 0x10007468, 0x93
+		0x69 ,0x74 ,0x00 ,0x10 ,0x06,  // 0x10007469, 0x06
+		0x6A ,0x74 ,0x00 ,0x10 ,0x70,  // 0x1000746A, 0x70
+		0x6B ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000746B, 0x00
+		0x6C ,0x74 ,0x00 ,0x10 ,0x63,  // 0x1000746C, 0x63
+		0x6D ,0x74 ,0x00 ,0x10 ,0x10,  // 0x1000746D, 0x10
+		0x6E ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x1000746E, 0xD7
+		0x6F ,0x74 ,0x00 ,0x10 ,0x04,  // 0x1000746F, 0x04
+		0x70 ,0x74 ,0x00 ,0x10 ,0x93,  // 0x10007470, 0x93
+		0x71 ,0x74 ,0x00 ,0x10 ,0x07,  // 0x10007471, 0x07
+		0x72 ,0x74 ,0x00 ,0x10 ,0x60,  // 0x10007472, 0x60
+		0x73 ,0x74 ,0x00 ,0x10 ,0x06,  // 0x10007473, 0x06
+		0x74 ,0x74 ,0x00 ,0x10 ,0x37,  // 0x10007474, 0x37
+		0x75 ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x10007475, 0xD7
+		0x76 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007476, 0x00
+		0x77 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x10007477, 0x00
+		0x78 ,0x74 ,0x00 ,0x10 ,0x83,  // 0x10007478, 0x83
+		0x79 ,0x74 ,0x00 ,0x10 ,0x46,  // 0x10007479, 0x46
+		0x7A ,0x74 ,0x00 ,0x10 ,0x77,  // 0x1000747A, 0x77
+		0x7B ,0x74 ,0x00 ,0x10 ,0xA6,  // 0x1000747B, 0xA6
+		0x7C ,0x74 ,0x00 ,0x10 ,0x93,  // 0x1000747C, 0x93
+		0x7D ,0x74 ,0x00 ,0x10 ,0xE6,  // 0x1000747D, 0xE6
+		0x7E ,0x74 ,0x00 ,0x10 ,0x06,  // 0x1000747E, 0x06
+		0x7F ,0x74 ,0x00 ,0x10 ,0xF8,  // 0x1000747F, 0xF8
+		0x80 ,0x74 ,0x00 ,0x10 ,0x93,  // 0x10007480, 0x93
+		0x81 ,0x74 ,0x00 ,0x10 ,0xF6,  // 0x10007481, 0xF6
+		0x82 ,0x74 ,0x00 ,0x10 ,0xF6,  // 0x10007482, 0xF6
+		0x83 ,0x74 ,0x00 ,0x10 ,0x0F,  // 0x10007483, 0x0F
+		0x84 ,0x74 ,0x00 ,0x10 ,0xA3,  // 0x10007484, 0xA3
+		0x85 ,0x74 ,0x00 ,0x10 ,0x03,  // 0x10007485, 0x03
+		0x86 ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x10007486, 0xD7
+		0x87 ,0x74 ,0x00 ,0x10 ,0xA6,  // 0x10007487, 0xA6
+		0x88 ,0x74 ,0x00 ,0x10 ,0x83,  // 0x10007488, 0x83
+		0x89 ,0x74 ,0x00 ,0x10 ,0x46,  // 0x10007489, 0x46
+		0x8A ,0x74 ,0x00 ,0x10 ,0x77,  // 0x1000748A, 0x77
+		0x8B ,0x74 ,0x00 ,0x10 ,0xA8,  // 0x1000748B, 0xA8
+		0x8C ,0x74 ,0x00 ,0x10 ,0x93,  // 0x1000748C, 0x93
+		0x8D ,0x74 ,0x00 ,0x10 ,0xE6,  // 0x1000748D, 0xE6
+		0x8E ,0x74 ,0x00 ,0x10 ,0x06,  // 0x1000748E, 0x06
+		0x8F ,0x74 ,0x00 ,0x10 ,0xF8,  // 0x1000748F, 0xF8
+		0x90 ,0x74 ,0x00 ,0x10 ,0x93,  // 0x10007490, 0x93
+		0x91 ,0x74 ,0x00 ,0x10 ,0xF6,  // 0x10007491, 0xF6
+		0x92 ,0x74 ,0x00 ,0x10 ,0xF6,  // 0x10007492, 0xF6
+		0x93 ,0x74 ,0x00 ,0x10 ,0x0F,  // 0x10007493, 0x0F
+		0x94 ,0x74 ,0x00 ,0x10 ,0xA3,  // 0x10007494, 0xA3
+		0x95 ,0x74 ,0x00 ,0x10 ,0x03,  // 0x10007495, 0x03
+		0x96 ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x10007496, 0xD7
+		0x97 ,0x74 ,0x00 ,0x10 ,0xA8,  // 0x10007497, 0xA8
+		0x98 ,0x74 ,0x00 ,0x10 ,0xB7,  // 0x10007498, 0xB7
+		0x99 ,0x74 ,0x00 ,0x10 ,0xC6,  // 0x10007499, 0xC6
+		0x9A ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000749A, 0x00
+		0x9B ,0x74 ,0x00 ,0x10 ,0x00,  // 0x1000749B, 0x00
+		0x9C ,0x74 ,0x00 ,0x10 ,0x23,  // 0x1000749C, 0x23
+		0x9D ,0x74 ,0x00 ,0x10 ,0x84,  // 0x1000749D, 0x84
+		0x9E ,0x74 ,0x00 ,0x10 ,0xF6,  // 0x1000749E, 0xF6
+		0x9F ,0x74 ,0x00 ,0x10 ,0x06,  // 0x1000749F, 0x06
+		0xA0 ,0x74 ,0x00 ,0x10 ,0xA3,  // 0x100074A0, 0xA3
+		0xA1 ,0x74 ,0x00 ,0x10 ,0x84,  // 0x100074A1, 0x84
+		0xA2 ,0x74 ,0x00 ,0x10 ,0xF6,  // 0x100074A2, 0xF6
+		0xA3 ,0x74 ,0x00 ,0x10 ,0x06,  // 0x100074A3, 0x06
+		0xA4 ,0x74 ,0x00 ,0x10 ,0xB7,  // 0x100074A4, 0xB7
+		0xA5 ,0x74 ,0x00 ,0x10 ,0x06,  // 0x100074A5, 0x06
+		0xA6 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074A6, 0x00
+		0xA7 ,0x74 ,0x00 ,0x10 ,0x04,  // 0x100074A7, 0x04
+		0xA8 ,0x74 ,0x00 ,0x10 ,0x23,  // 0x100074A8, 0x23
+		0xA9 ,0x74 ,0x00 ,0x10 ,0x22,  // 0x100074A9, 0x22
+		0xAA ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x100074AA, 0xD7
+		0xAB ,0x74 ,0x00 ,0x10 ,0x58,  // 0x100074AB, 0x58
+		0xAC ,0x74 ,0x00 ,0x10 ,0x37,  // 0x100074AC, 0x37
+		0xAD ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x100074AD, 0xD7
+		0xAE ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074AE, 0x00
+		0xAF ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074AF, 0x00
+		0xB0 ,0x74 ,0x00 ,0x10 ,0x03,  // 0x100074B0, 0x03
+		0xB1 ,0x74 ,0x00 ,0x10 ,0x27,  // 0x100074B1, 0x27
+		0xB2 ,0x74 ,0x00 ,0x10 ,0x47,  // 0x100074B2, 0x47
+		0xB3 ,0x74 ,0x00 ,0x10 ,0x58,  // 0x100074B3, 0x58
+		0xB4 ,0x74 ,0x00 ,0x10 ,0xB7,  // 0x100074B4, 0xB7
+		0xB5 ,0x74 ,0x00 ,0x10 ,0x06,  // 0x100074B5, 0x06
+		0xB6 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074B6, 0x00
+		0xB7 ,0x74 ,0x00 ,0x10 ,0x08,  // 0x100074B7, 0x08
+		0xB8 ,0x74 ,0x00 ,0x10 ,0x33,  // 0x100074B8, 0x33
+		0xB9 ,0x74 ,0x00 ,0x10 ,0x77,  // 0x100074B9, 0x77
+		0xBA ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x100074BA, 0xD7
+		0xBB ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074BB, 0x00
+		0xBC ,0x74 ,0x00 ,0x10 ,0x63,  // 0x100074BC, 0x63
+		0xBD ,0x74 ,0x00 ,0x10 ,0x04,  // 0x100074BD, 0x04
+		0xBE ,0x74 ,0x00 ,0x10 ,0x07,  // 0x100074BE, 0x07
+		0xBF ,0x74 ,0x00 ,0x10 ,0x04,  // 0x100074BF, 0x04
+		0xC0 ,0x74 ,0x00 ,0x10 ,0x37,  // 0x100074C0, 0x37
+		0xC1 ,0x74 ,0x00 ,0x10 ,0x07,  // 0x100074C1, 0x07
+		0xC2 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074C2, 0x00
+		0xC3 ,0x74 ,0x00 ,0x10 ,0x11,  // 0x100074C3, 0x11
+		0xC4 ,0x74 ,0x00 ,0x10 ,0x03,  // 0x100074C4, 0x03
+		0xC5 ,0x74 ,0x00 ,0x10 ,0x47,  // 0x100074C5, 0x47
+		0xC6 ,0x74 ,0x00 ,0x10 ,0xC7,  // 0x100074C6, 0xC7
+		0xC7 ,0x74 ,0x00 ,0x10 ,0x0E,  // 0x100074C7, 0x0E
+		0xC8 ,0x74 ,0x00 ,0x10 ,0x93,  // 0x100074C8, 0x93
+		0xC9 ,0x74 ,0x00 ,0x10 ,0x06,  // 0x100074C9, 0x06
+		0xCA ,0x74 ,0x00 ,0x10 ,0x40,  // 0x100074CA, 0x40
+		0xCB ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074CB, 0x00
+		0xCC ,0x74 ,0x00 ,0x10 ,0x13,  // 0x100074CC, 0x13
+		0xCD ,0x74 ,0x00 ,0x10 ,0x77,  // 0x100074CD, 0x77
+		0xCE ,0x74 ,0x00 ,0x10 ,0xF7,  // 0x100074CE, 0xF7
+		0xCF ,0x74 ,0x00 ,0x10 ,0x0F,  // 0x100074CF, 0x0F
+		0xD0 ,0x74 ,0x00 ,0x10 ,0x63,  // 0x100074D0, 0x63
+		0xD1 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074D1, 0x00
+		0xD2 ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x100074D2, 0xD7
+		0xD3 ,0x74 ,0x00 ,0x10 ,0x04,  // 0x100074D3, 0x04
+		0xD4 ,0x74 ,0x00 ,0x10 ,0x93,  // 0x100074D4, 0x93
+		0xD5 ,0x74 ,0x00 ,0x10 ,0x06,  // 0x100074D5, 0x06
+		0xD6 ,0x74 ,0x00 ,0x10 ,0x70,  // 0x100074D6, 0x70
+		0xD7 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074D7, 0x00
+		0xD8 ,0x74 ,0x00 ,0x10 ,0x63,  // 0x100074D8, 0x63
+		0xD9 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074D9, 0x00
+		0xDA ,0x74 ,0x00 ,0x10 ,0xD7,  // 0x100074DA, 0xD7
+		0xDB ,0x74 ,0x00 ,0x10 ,0x04,  // 0x100074DB, 0x04
+		0xDC ,0x74 ,0x00 ,0x10 ,0x63,  // 0x100074DC, 0x63
+		0xDD ,0x74 ,0x00 ,0x10 ,0x84,  // 0x100074DD, 0x84
+		0xDE ,0x74 ,0x00 ,0x10 ,0x07,  // 0x100074DE, 0x07
+		0xDF ,0x74 ,0x00 ,0x10 ,0x02,  // 0x100074DF, 0x02
+		0xE0 ,0x74 ,0x00 ,0x10 ,0xB7,  // 0x100074E0, 0xB7
+		0xE1 ,0x74 ,0x00 ,0x10 ,0xD6,  // 0x100074E1, 0xD6
+		0xE2 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074E2, 0x00
+		0xE3 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074E3, 0x00
+		0xE4 ,0x74 ,0x00 ,0x10 ,0x03,  // 0x100074E4, 0x03
+		0xE5 ,0x74 ,0x00 ,0x10 ,0xC7,  // 0x100074E5, 0xC7
+		0xE6 ,0x74 ,0x00 ,0x10 ,0x56,  // 0x100074E6, 0x56
+		0xE7 ,0x74 ,0x00 ,0x10 ,0xA4,  // 0x100074E7, 0xA4
+		0xE8 ,0x74 ,0x00 ,0x10 ,0x13,  // 0x100074E8, 0x13
+		0xE9 ,0x74 ,0x00 ,0x10 ,0x67,  // 0x100074E9, 0x67
+		0xEA ,0x74 ,0x00 ,0x10 ,0x07,  // 0x100074EA, 0x07
+		0xEB ,0x74 ,0x00 ,0x10 ,0xF8,  // 0x100074EB, 0xF8
+		0xEC ,0x74 ,0x00 ,0x10 ,0x13,  // 0x100074EC, 0x13
+		0xED ,0x74 ,0x00 ,0x10 ,0x77,  // 0x100074ED, 0x77
+		0xEE ,0x74 ,0x00 ,0x10 ,0xF7,  // 0x100074EE, 0xF7
+		0xEF ,0x74 ,0x00 ,0x10 ,0x0F,  // 0x100074EF, 0x0F
+		0xF0 ,0x74 ,0x00 ,0x10 ,0xA3,  // 0x100074F0, 0xA3
+		0xF1 ,0x74 ,0x00 ,0x10 ,0x82,  // 0x100074F1, 0x82
+		0xF2 ,0x74 ,0x00 ,0x10 ,0xE6,  // 0x100074F2, 0xE6
+		0xF3 ,0x74 ,0x00 ,0x10 ,0xA4,  // 0x100074F3, 0xA4
+		0xF4 ,0x74 ,0x00 ,0x10 ,0x37,  // 0x100074F4, 0x37
+		0xF5 ,0x74 ,0x00 ,0x10 ,0xC7,  // 0x100074F5, 0xC7
+		0xF6 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074F6, 0x00
+		0xF7 ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074F7, 0x00
+		0xF8 ,0x74 ,0x00 ,0x10 ,0x23,  // 0x100074F8, 0x23
+		0xF9 ,0x74 ,0x00 ,0x10 ,0x02,  // 0x100074F9, 0x02
+		0xFA ,0x74 ,0x00 ,0x10 ,0xF7,  // 0x100074FA, 0xF7
+		0xFB ,0x74 ,0x00 ,0x10 ,0x06,  // 0x100074FB, 0x06
+		0xFC ,0x74 ,0x00 ,0x10 ,0xB7,  // 0x100074FC, 0xB7
+		0xFD ,0x74 ,0x00 ,0x10 ,0x07,  // 0x100074FD, 0x07
+		0xFE ,0x74 ,0x00 ,0x10 ,0x00,  // 0x100074FE, 0x00
+		0xFF ,0x74 ,0x00 ,0x10 ,0x08,  // 0x100074FF, 0x08
+		0x00 ,0x75 ,0x00 ,0x10 ,0x23,  // 0x10007500, 0x23
+		0x01 ,0x75 ,0x00 ,0x10 ,0xA2,  // 0x10007501, 0xA2
+		0x02 ,0x75 ,0x00 ,0x10 ,0xF6,  // 0x10007502, 0xF6
+		0x03 ,0x75 ,0x00 ,0x10 ,0x58,  // 0x10007503, 0x58
+		0x04 ,0x75 ,0x00 ,0x10 ,0x67,  // 0x10007504, 0x67
+		0x05 ,0x75 ,0x00 ,0x10 ,0x80,  // 0x10007505, 0x80
+		0x06 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007506, 0x00
+		0x07 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007507, 0x00
+		0x08 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x10007508, 0x93
+		0x09 ,0x75 ,0x00 ,0x10 ,0x07,  // 0x10007509, 0x07
+		0x0A ,0x75 ,0x00 ,0x10 ,0x80,  // 0x1000750A, 0x80
+		0x0B ,0x75 ,0x00 ,0x10 ,0x08,  // 0x1000750B, 0x08
+		0x0C ,0x75 ,0x00 ,0x10 ,0x6F,  // 0x1000750C, 0x6F
+		0x0D ,0x75 ,0x00 ,0x10 ,0xF0,  // 0x1000750D, 0xF0
+		0x0E ,0x75 ,0x00 ,0x10 ,0x9F,  // 0x1000750E, 0x9F
+		0x0F ,0x75 ,0x00 ,0x10 ,0xF6,  // 0x1000750F, 0xF6
+		0x10 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x10007510, 0x93
+		0x11 ,0x75 ,0x00 ,0x10 ,0x07,  // 0x10007511, 0x07
+		0x12 ,0x75 ,0x00 ,0x10 ,0x80,  // 0x10007512, 0x80
+		0x13 ,0x75 ,0x00 ,0x10 ,0x08,  // 0x10007513, 0x08
+		0x14 ,0x75 ,0x00 ,0x10 ,0x6F,  // 0x10007514, 0x6F
+		0x15 ,0x75 ,0x00 ,0x10 ,0xF0,  // 0x10007515, 0xF0
+		0x16 ,0x75 ,0x00 ,0x10 ,0xDF,  // 0x10007516, 0xDF
+		0x17 ,0x75 ,0x00 ,0x10 ,0xFC,  // 0x10007517, 0xFC
+		0x18 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x10007518, 0x93
+		0x19 ,0x75 ,0x00 ,0x10 ,0x07,  // 0x10007519, 0x07
+		0x1A ,0x75 ,0x00 ,0x10 ,0x60,  // 0x1000751A, 0x60
+		0x1B ,0x75 ,0x00 ,0x10 ,0x06,  // 0x1000751B, 0x06
+		0x1C ,0x75 ,0x00 ,0x10 ,0x6F,  // 0x1000751C, 0x6F
+		0x1D ,0x75 ,0x00 ,0x10 ,0xF0,  // 0x1000751D, 0xF0
+		0x1E ,0x75 ,0x00 ,0x10 ,0x5F,  // 0x1000751E, 0x5F
+		0x1F ,0x75 ,0x00 ,0x10 ,0xFC,  // 0x1000751F, 0xFC
+		0x20 ,0x75 ,0x00 ,0x10 ,0x37,  // 0x10007520, 0x37
+		0x21 ,0x75 ,0x00 ,0x10 ,0xD7,  // 0x10007521, 0xD7
+		0x22 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007522, 0x00
+		0x23 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007523, 0x00
+		0x24 ,0x75 ,0x00 ,0x10 ,0x83,  // 0x10007524, 0x83
+		0x25 ,0x75 ,0x00 ,0x10 ,0x27,  // 0x10007525, 0x27
+		0x26 ,0x75 ,0x00 ,0x10 ,0x07,  // 0x10007526, 0x07
+		0x27 ,0x75 ,0x00 ,0x10 ,0x53,  // 0x10007527, 0x53
+		0x28 ,0x75 ,0x00 ,0x10 ,0xB7,  // 0x10007528, 0xB7
+		0x29 ,0x75 ,0x00 ,0x10 ,0x06,  // 0x10007529, 0x06
+		0x2A ,0x75 ,0x00 ,0x10 ,0x02,  // 0x1000752A, 0x02
+		0x2B ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000752B, 0x00
+		0x2C ,0x75 ,0x00 ,0x10 ,0xB3,  // 0x1000752C, 0xB3
+		0x2D ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x1000752D, 0xF7
+		0x2E ,0x75 ,0x00 ,0x10 ,0xD7,  // 0x1000752E, 0xD7
+		0x2F ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000752F, 0x00
+		0x30 ,0x75 ,0x00 ,0x10 ,0x63,  // 0x10007530, 0x63
+		0x31 ,0x75 ,0x00 ,0x10 ,0x88,  // 0x10007531, 0x88
+		0x32 ,0x75 ,0x00 ,0x10 ,0x07,  // 0x10007532, 0x07
+		0x33 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007533, 0x00
+		0x34 ,0x75 ,0x00 ,0x10 ,0x13,  // 0x10007534, 0x13
+		0x35 ,0x75 ,0x00 ,0x10 ,0x06,  // 0x10007535, 0x06
+		0x36 ,0x75 ,0x00 ,0x10 ,0xA0,  // 0x10007536, 0xA0
+		0x37 ,0x75 ,0x00 ,0x10 ,0x05,  // 0x10007537, 0x05
+		0x38 ,0x75 ,0x00 ,0x10 ,0x23,  // 0x10007538, 0x23
+		0x39 ,0x75 ,0x00 ,0x10 ,0xA8,  // 0x10007539, 0xA8
+		0x3A ,0x75 ,0x00 ,0x10 ,0xC1,  // 0x1000753A, 0xC1
+		0x3B ,0x75 ,0x00 ,0x10 ,0x56,  // 0x1000753B, 0x56
+		0x3C ,0x75 ,0x00 ,0x10 ,0x23,  // 0x1000753C, 0x23
+		0x3D ,0x75 ,0x00 ,0x10 ,0x28,  // 0x1000753D, 0x28
+		0x3E ,0x75 ,0x00 ,0x10 ,0xD7,  // 0x1000753E, 0xD7
+		0x3F ,0x75 ,0x00 ,0x10 ,0x52,  // 0x1000753F, 0x52
+		0x40 ,0x75 ,0x00 ,0x10 ,0x67,  // 0x10007540, 0x67
+		0x41 ,0x75 ,0x00 ,0x10 ,0x80,  // 0x10007541, 0x80
+		0x42 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007542, 0x00
+		0x43 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007543, 0x00
+		0x44 ,0x75 ,0x00 ,0x10 ,0x13,  // 0x10007544, 0x13
+		0x45 ,0x75 ,0x00 ,0x10 ,0x01,  // 0x10007545, 0x01
+		0x46 ,0x75 ,0x00 ,0x10 ,0x01,  // 0x10007546, 0x01
+		0x47 ,0x75 ,0x00 ,0x10 ,0xFF,  // 0x10007547, 0xFF
+		0x48 ,0x75 ,0x00 ,0x10 ,0x23,  // 0x10007548, 0x23
+		0x49 ,0x75 ,0x00 ,0x10 ,0x26,  // 0x10007549, 0x26
+		0x4A ,0x75 ,0x00 ,0x10 ,0x11,  // 0x1000754A, 0x11
+		0x4B ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000754B, 0x00
+		0x4C ,0x75 ,0x00 ,0x10 ,0x23,  // 0x1000754C, 0x23
+		0x4D ,0x75 ,0x00 ,0x10 ,0x24,  // 0x1000754D, 0x24
+		0x4E ,0x75 ,0x00 ,0x10 ,0x81,  // 0x1000754E, 0x81
+		0x4F ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000754F, 0x00
+		0x50 ,0x75 ,0x00 ,0x10 ,0x37,  // 0x10007550, 0x37
+		0x51 ,0x75 ,0x00 ,0x10 ,0xC7,  // 0x10007551, 0xC7
+		0x52 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007552, 0x00
+		0x53 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007553, 0x00
+		0x54 ,0x75 ,0x00 ,0x10 ,0x83,  // 0x10007554, 0x83
+		0x55 ,0x75 ,0x00 ,0x10 ,0x47,  // 0x10007555, 0x47
+		0x56 ,0x75 ,0x00 ,0x10 ,0x07,  // 0x10007556, 0x07
+		0x57 ,0x75 ,0x00 ,0x10 ,0x56,  // 0x10007557, 0x56
+		0x58 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x10007558, 0x93
+		0x59 ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x10007559, 0xF7
+		0x5A ,0x75 ,0x00 ,0x10 ,0x17,  // 0x1000755A, 0x17
+		0x5B ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000755B, 0x00
+		0x5C ,0x75 ,0x00 ,0x10 ,0x63,  // 0x1000755C, 0x63
+		0x5D ,0x75 ,0x00 ,0x10 ,0x98,  // 0x1000755D, 0x98
+		0x5E ,0x75 ,0x00 ,0x10 ,0x07,  // 0x1000755E, 0x07
+		0x5F ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000755F, 0x00
+		0x60 ,0x75 ,0x00 ,0x10 ,0x83,  // 0x10007560, 0x83
+		0x61 ,0x75 ,0x00 ,0x10 ,0x47,  // 0x10007561, 0x47
+		0x62 ,0x75 ,0x00 ,0x10 ,0x07,  // 0x10007562, 0x07
+		0x63 ,0x75 ,0x00 ,0x10 ,0x56,  // 0x10007563, 0x56
+		0x64 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x10007564, 0x93
+		0x65 ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x10007565, 0xF7
+		0x66 ,0x75 ,0x00 ,0x10 ,0x27,  // 0x10007566, 0x27
+		0x67 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007567, 0x00
+		0x68 ,0x75 ,0x00 ,0x10 ,0x63,  // 0x10007568, 0x63
+		0x69 ,0x75 ,0x00 ,0x10 ,0x82,  // 0x10007569, 0x82
+		0x6A ,0x75 ,0x00 ,0x10 ,0x07,  // 0x1000756A, 0x07
+		0x6B ,0x75 ,0x00 ,0x10 ,0x08,  // 0x1000756B, 0x08
+		0x6C ,0x75 ,0x00 ,0x10 ,0x37,  // 0x1000756C, 0x37
+		0x6D ,0x75 ,0x00 ,0x10 ,0xD4,  // 0x1000756D, 0xD4
+		0x6E ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000756E, 0x00
+		0x6F ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000756F, 0x00
+		0x70 ,0x75 ,0x00 ,0x10 ,0x83,  // 0x10007570, 0x83
+		0x71 ,0x75 ,0x00 ,0x10 ,0x47,  // 0x10007571, 0x47
+		0x72 ,0x75 ,0x00 ,0x10 ,0x14,  // 0x10007572, 0x14
+		0x73 ,0x75 ,0x00 ,0x10 ,0x47,  // 0x10007573, 0x47
+		0x74 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x10007574, 0x93
+		0x75 ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x10007575, 0xF7
+		0x76 ,0x75 ,0x00 ,0x10 ,0x27,  // 0x10007576, 0x27
+		0x77 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x10007577, 0x00
+		0x78 ,0x75 ,0x00 ,0x10 ,0x63,  // 0x10007578, 0x63
+		0x79 ,0x75 ,0x00 ,0x10 ,0x8A,  // 0x10007579, 0x8A
+		0x7A ,0x75 ,0x00 ,0x10 ,0x07,  // 0x1000757A, 0x07
+		0x7B ,0x75 ,0x00 ,0x10 ,0x06,  // 0x1000757B, 0x06
+		0x7C ,0x75 ,0x00 ,0x10 ,0x93,  // 0x1000757C, 0x93
+		0x7D ,0x75 ,0x00 ,0x10 ,0x05,  // 0x1000757D, 0x05
+		0x7E ,0x75 ,0x00 ,0x10 ,0x10,  // 0x1000757E, 0x10
+		0x7F ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000757F, 0x00
+		0x80 ,0x75 ,0x00 ,0x10 ,0x13,  // 0x10007580, 0x13
+		0x81 ,0x75 ,0x00 ,0x10 ,0x05,  // 0x10007581, 0x05
+		0x82 ,0x75 ,0x00 ,0x10 ,0x20,  // 0x10007582, 0x20
+		0x83 ,0x75 ,0x00 ,0x10 ,0x10,  // 0x10007583, 0x10
+		0x84 ,0x75 ,0x00 ,0x10 ,0xEF,  // 0x10007584, 0xEF
+		0x85 ,0x75 ,0x00 ,0x10 ,0xA0,  // 0x10007585, 0xA0
+		0x86 ,0x75 ,0x00 ,0x10 ,0x8F,  // 0x10007586, 0x8F
+		0x87 ,0x75 ,0x00 ,0x10 ,0xA7,  // 0x10007587, 0xA7
+		0x88 ,0x75 ,0x00 ,0x10 ,0x37,  // 0x10007588, 0x37
+		0x89 ,0x75 ,0x00 ,0x10 ,0x05,  // 0x10007589, 0x05
+		0x8A ,0x75 ,0x00 ,0x10 ,0x01,  // 0x1000758A, 0x01
+		0x8B ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000758B, 0x00
+		0x8C ,0x75 ,0x00 ,0x10 ,0x93,  // 0x1000758C, 0x93
+		0x8D ,0x75 ,0x00 ,0x10 ,0x05,  // 0x1000758D, 0x05
+		0x8E ,0x75 ,0x00 ,0x10 ,0x00,  // 0x1000758E, 0x00
+		0x8F ,0x75 ,0x00 ,0x10 ,0x01,  // 0x1000758F, 0x01
+		0x90 ,0x75 ,0x00 ,0x10 ,0x13,  // 0x10007590, 0x13
+		0x91 ,0x75 ,0x00 ,0x10 ,0x05,  // 0x10007591, 0x05
+		0x92 ,0x75 ,0x00 ,0x10 ,0xB5,  // 0x10007592, 0xB5
+		0x93 ,0x75 ,0x00 ,0x10 ,0xA0,  // 0x10007593, 0xA0
+		0x94 ,0x75 ,0x00 ,0x10 ,0xEF,  // 0x10007594, 0xEF
+		0x95 ,0x75 ,0x00 ,0x10 ,0xA0,  // 0x10007595, 0xA0
+		0x96 ,0x75 ,0x00 ,0x10 ,0x8F,  // 0x10007596, 0x8F
+		0x97 ,0x75 ,0x00 ,0x10 ,0xA6,  // 0x10007597, 0xA6
+		0x98 ,0x75 ,0x00 ,0x10 ,0x83,  // 0x10007598, 0x83
+		0x99 ,0x75 ,0x00 ,0x10 ,0x47,  // 0x10007599, 0x47
+		0x9A ,0x75 ,0x00 ,0x10 ,0x24,  // 0x1000759A, 0x24
+		0x9B ,0x75 ,0x00 ,0x10 ,0xE0,  // 0x1000759B, 0xE0
+		0x9C ,0x75 ,0x00 ,0x10 ,0x13,  // 0x1000759C, 0x13
+		0x9D ,0x75 ,0x00 ,0x10 ,0x05,  // 0x1000759D, 0x05
+		0x9E ,0x75 ,0x00 ,0x10 ,0x80,  // 0x1000759E, 0x80
+		0x9F ,0x75 ,0x00 ,0x10 ,0x3E,  // 0x1000759F, 0x3E
+		0xA0 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x100075A0, 0x93
+		0xA1 ,0x75 ,0x00 ,0x10 ,0x05,  // 0x100075A1, 0x05
+		0xA2 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x100075A2, 0x00
+		0xA3 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x100075A3, 0x00
+		0xA4 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x100075A4, 0x93
+		0xA5 ,0x75 ,0x00 ,0x10 ,0xE7,  // 0x100075A5, 0xE7
+		0xA6 ,0x75 ,0x00 ,0x10 ,0x07,  // 0x100075A6, 0x07
+		0xA7 ,0x75 ,0x00 ,0x10 ,0xF8,  // 0x100075A7, 0xF8
+		0xA8 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x100075A8, 0x93
+		0xA9 ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x100075A9, 0xF7
+		0xAA ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x100075AA, 0xF7
+		0xAB ,0x75 ,0x00 ,0x10 ,0x0F,  // 0x100075AB, 0x0F
+		0xAC ,0x75 ,0x00 ,0x10 ,0x23,  // 0x100075AC, 0x23
+		0xAD ,0x75 ,0x00 ,0x10 ,0x01,  // 0x100075AD, 0x01
+		0xAE ,0x75 ,0x00 ,0x10 ,0xF4,  // 0x100075AE, 0xF4
+		0xAF ,0x75 ,0x00 ,0x10 ,0xE0,  // 0x100075AF, 0xE0
+		0xB0 ,0x75 ,0x00 ,0x10 ,0x83,  // 0x100075B0, 0x83
+		0xB1 ,0x75 ,0x00 ,0x10 ,0x47,  // 0x100075B1, 0x47
+		0xB2 ,0x75 ,0x00 ,0x10 ,0x24,  // 0x100075B2, 0x24
+		0xB3 ,0x75 ,0x00 ,0x10 ,0xE0,  // 0x100075B3, 0xE0
+		0xB4 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x100075B4, 0x93
+		0xB5 ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x100075B5, 0xF7
+		0xB6 ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x100075B6, 0xF7
+		0xB7 ,0x75 ,0x00 ,0x10 ,0x0F,  // 0x100075B7, 0x0F
+		0xB8 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x100075B8, 0x93
+		0xB9 ,0x75 ,0x00 ,0x10 ,0xE7,  // 0x100075B9, 0xE7
+		0xBA ,0x75 ,0x00 ,0x10 ,0x07,  // 0x100075BA, 0x07
+		0xBB ,0x75 ,0x00 ,0x10 ,0x04,  // 0x100075BB, 0x04
+		0xBC ,0x75 ,0x00 ,0x10 ,0x23,  // 0x100075BC, 0x23
+		0xBD ,0x75 ,0x00 ,0x10 ,0x01,  // 0x100075BD, 0x01
+		0xBE ,0x75 ,0x00 ,0x10 ,0xF4,  // 0x100075BE, 0xF4
+		0xBF ,0x75 ,0x00 ,0x10 ,0xE0,  // 0x100075BF, 0xE0
+		0xC0 ,0x75 ,0x00 ,0x10 ,0xEF,  // 0x100075C0, 0xEF
+		0xC1 ,0x75 ,0x00 ,0x10 ,0xE0,  // 0x100075C1, 0xE0
+		0xC2 ,0x75 ,0x00 ,0x10 ,0x8F,  // 0x100075C2, 0x8F
+		0xC3 ,0x75 ,0x00 ,0x10 ,0xC6,  // 0x100075C3, 0xC6
+		0xC4 ,0x75 ,0x00 ,0x10 ,0x83,  // 0x100075C4, 0x83
+		0xC5 ,0x75 ,0x00 ,0x10 ,0x47,  // 0x100075C5, 0x47
+		0xC6 ,0x75 ,0x00 ,0x10 ,0x34,  // 0x100075C6, 0x34
+		0xC7 ,0x75 ,0x00 ,0x10 ,0xE0,  // 0x100075C7, 0xE0
+		0xC8 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x100075C8, 0x93
+		0xC9 ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x100075C9, 0xF7
+		0xCA ,0x75 ,0x00 ,0x10 ,0x07,  // 0x100075CA, 0x07
+		0xCB ,0x75 ,0x00 ,0x10 ,0x02,  // 0x100075CB, 0x02
+		0xCC ,0x75 ,0x00 ,0x10 ,0xE3,  // 0x100075CC, 0xE3
+		0xCD ,0x75 ,0x00 ,0x10 ,0x9C,  // 0x100075CD, 0x9C
+		0xCE ,0x75 ,0x00 ,0x10 ,0x07,  // 0x100075CE, 0x07
+		0xCF ,0x75 ,0x00 ,0x10 ,0xFE,  // 0x100075CF, 0xFE
+		0xD0 ,0x75 ,0x00 ,0x10 ,0x37,  // 0x100075D0, 0x37
+		0xD1 ,0x75 ,0x00 ,0x10 ,0x05,  // 0x100075D1, 0x05
+		0xD2 ,0x75 ,0x00 ,0x10 ,0x01,  // 0x100075D2, 0x01
+		0xD3 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x100075D3, 0x00
+		0xD4 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x100075D4, 0x93
+		0xD5 ,0x75 ,0x00 ,0x10 ,0x05,  // 0x100075D5, 0x05
+		0xD6 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x100075D6, 0x00
+		0xD7 ,0x75 ,0x00 ,0x10 ,0x00,  // 0x100075D7, 0x00
+		0xD8 ,0x75 ,0x00 ,0x10 ,0x13,  // 0x100075D8, 0x13
+		0xD9 ,0x75 ,0x00 ,0x10 ,0x05,  // 0x100075D9, 0x05
+		0xDA ,0x75 ,0x00 ,0x10 ,0xB5,  // 0x100075DA, 0xB5
+		0xDB ,0x75 ,0x00 ,0x10 ,0xA0,  // 0x100075DB, 0xA0
+		0xDC ,0x75 ,0x00 ,0x10 ,0xEF,  // 0x100075DC, 0xEF
+		0xDD ,0x75 ,0x00 ,0x10 ,0xA0,  // 0x100075DD, 0xA0
+		0xDE ,0x75 ,0x00 ,0x10 ,0x0F,  // 0x100075DE, 0x0F
+		0xDF ,0x75 ,0x00 ,0x10 ,0xA2,  // 0x100075DF, 0xA2
+		0xE0 ,0x75 ,0x00 ,0x10 ,0x83,  // 0x100075E0, 0x83
+		0xE1 ,0x75 ,0x00 ,0x10 ,0x47,  // 0x100075E1, 0x47
+		0xE2 ,0x75 ,0x00 ,0x10 ,0x14,  // 0x100075E2, 0x14
+		0xE3 ,0x75 ,0x00 ,0x10 ,0x47,  // 0x100075E3, 0x47
+		0xE4 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x100075E4, 0x93
+		0xE5 ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x100075E5, 0xF7
+		0xE6 ,0x75 ,0x00 ,0x10 ,0xD7,  // 0x100075E6, 0xD7
+		0xE7 ,0x75 ,0x00 ,0x10 ,0x0F,  // 0x100075E7, 0x0F
+		0xE8 ,0x75 ,0x00 ,0x10 ,0xA3,  // 0x100075E8, 0xA3
+		0xE9 ,0x75 ,0x00 ,0x10 ,0x08,  // 0x100075E9, 0x08
+		0xEA ,0x75 ,0x00 ,0x10 ,0xF4,  // 0x100075EA, 0xF4
+		0xEB ,0x75 ,0x00 ,0x10 ,0x46,  // 0x100075EB, 0x46
+		0xEC ,0x75 ,0x00 ,0x10 ,0x03,  // 0x100075EC, 0x03
+		0xED ,0x75 ,0x00 ,0x10 ,0xA7,  // 0x100075ED, 0xA7
+		0xEE ,0x75 ,0x00 ,0x10 ,0x01,  // 0x100075EE, 0x01
+		0xEF ,0x75 ,0x00 ,0x10 ,0x57,  // 0x100075EF, 0x57
+		0xF0 ,0x75 ,0x00 ,0x10 ,0x93,  // 0x100075F0, 0x93
+		0xF1 ,0x75 ,0x00 ,0x10 ,0x07,  // 0x100075F1, 0x07
+		0xF2 ,0x75 ,0x00 ,0x10 ,0xA0,  // 0x100075F2, 0xA0
+		0xF3 ,0x75 ,0x00 ,0x10 ,0x05,  // 0x100075F3, 0x05
+		0xF4 ,0x75 ,0x00 ,0x10 ,0x63,  // 0x100075F4, 0x63
+		0xF5 ,0x75 ,0x00 ,0x10 ,0x14,  // 0x100075F5, 0x14
+		0xF6 ,0x75 ,0x00 ,0x10 ,0xF7,  // 0x100075F6, 0xF7
+		0xF7 ,0x75 ,0x00 ,0x10 ,0x04,  // 0x100075F7, 0x04
+		0xF8 ,0x75 ,0x00 ,0x10 ,0x37,  // 0x100075F8, 0x37
+		0xF9 ,0x75 ,0x00 ,0x10 ,0x07,  // 0x100075F9, 0x07
+		0xFA ,0x75 ,0x00 ,0x10 ,0x00,  // 0x100075FA, 0x00
+		0xFB ,0x75 ,0x00 ,0x10 ,0x11,  // 0x100075FB, 0x11
+		0xFC ,0x75 ,0x00 ,0x10 ,0x83,  // 0x100075FC, 0x83
+		0xFD ,0x75 ,0x00 ,0x10 ,0x47,  // 0x100075FD, 0x47
+		0xFE ,0x75 ,0x00 ,0x10 ,0x07,  // 0x100075FE, 0x07
+		0xFF ,0x75 ,0x00 ,0x10 ,0x01,  // 0x100075FF, 0x01
+		0x00 ,0x76 ,0x00 ,0x10 ,0x13,  // 0x10007600, 0x13
+		0x01 ,0x76 ,0x00 ,0x10 ,0x06,  // 0x10007601, 0x06
+		0x02 ,0x76 ,0x00 ,0x10 ,0x30,  // 0x10007602, 0x30
+		0x03 ,0x76 ,0x00 ,0x10 ,0x00,  // 0x10007603, 0x00
+		0x04 ,0x76 ,0x00 ,0x10 ,0x93,  // 0x10007604, 0x93
+		0x05 ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x10007605, 0xF7
+		0x06 ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x10007606, 0xF7
+		0x07 ,0x76 ,0x00 ,0x10 ,0x0F,  // 0x10007607, 0x0F
+		0x08 ,0x76 ,0x00 ,0x10 ,0x63,  // 0x10007608, 0x63
+		0x09 ,0x76 ,0x00 ,0x10 ,0x9A,  // 0x10007609, 0x9A
+		0x0A ,0x76 ,0x00 ,0x10 ,0xC7,  // 0x1000760A, 0xC7
+		0x0B ,0x76 ,0x00 ,0x10 ,0x02,  // 0x1000760B, 0x02
+		0x0C ,0x76 ,0x00 ,0x10 ,0x03,  // 0x1000760C, 0x03
+		0x0D ,0x76 ,0x00 ,0x10 ,0x47,  // 0x1000760D, 0x47
+		0x0E ,0x76 ,0x00 ,0x10 ,0x87,  // 0x1000760E, 0x87
+		0x0F ,0x76 ,0x00 ,0x10 ,0x01,  // 0x1000760F, 0x01
+		0x10 ,0x76 ,0x00 ,0x10 ,0x13,  // 0x10007610, 0x13
+		0x11 ,0x76 ,0x00 ,0x10 ,0x77,  // 0x10007611, 0x77
+		0x12 ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x10007612, 0xF7
+		0x13 ,0x76 ,0x00 ,0x10 ,0x0F,  // 0x10007613, 0x0F
+		0x14 ,0x76 ,0x00 ,0x10 ,0x63,  // 0x10007614, 0x63
+		0x15 ,0x76 ,0x00 ,0x10 ,0x14,  // 0x10007615, 0x14
+		0x16 ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x10007616, 0xF7
+		0x17 ,0x76 ,0x00 ,0x10 ,0x02,  // 0x10007617, 0x02
+		0x18 ,0x76 ,0x00 ,0x10 ,0x37,  // 0x10007618, 0x37
+		0x19 ,0x76 ,0x00 ,0x10 ,0xD7,  // 0x10007619, 0xD7
+		0x1A ,0x76 ,0x00 ,0x10 ,0x00,  // 0x1000761A, 0x00
+		0x1B ,0x76 ,0x00 ,0x10 ,0x00,  // 0x1000761B, 0x00
+		0x1C ,0x76 ,0x00 ,0x10 ,0x83,  // 0x1000761C, 0x83
+		0x1D ,0x76 ,0x00 ,0x10 ,0x47,  // 0x1000761D, 0x47
+		0x1E ,0x76 ,0x00 ,0x10 ,0x37,  // 0x1000761E, 0x37
+		0x1F ,0x76 ,0x00 ,0x10 ,0x54,  // 0x1000761F, 0x54
+		0x20 ,0x76 ,0x00 ,0x10 ,0x93,  // 0x10007620, 0x93
+		0x21 ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x10007621, 0xF7
+		0x22 ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x10007622, 0xF7
+		0x23 ,0x76 ,0x00 ,0x10 ,0x0F,  // 0x10007623, 0x0F
+		0x24 ,0x76 ,0x00 ,0x10 ,0x93,  // 0x10007624, 0x93
+		0x25 ,0x76 ,0x00 ,0x10 ,0xE7,  // 0x10007625, 0xE7
+		0x26 ,0x76 ,0x00 ,0x10 ,0x07,  // 0x10007626, 0x07
+		0x27 ,0x76 ,0x00 ,0x10 ,0x02,  // 0x10007627, 0x02
+		0x28 ,0x76 ,0x00 ,0x10 ,0xA3,  // 0x10007628, 0xA3
+		0x29 ,0x76 ,0x00 ,0x10 ,0x01,  // 0x10007629, 0x01
+		0x2A ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x1000762A, 0xF7
+		0x2B ,0x76 ,0x00 ,0x10 ,0x54,  // 0x1000762B, 0x54
+		0x2C ,0x76 ,0x00 ,0x10 ,0x83,  // 0x1000762C, 0x83
+		0x2D ,0x76 ,0x00 ,0x10 ,0x47,  // 0x1000762D, 0x47
+		0x2E ,0x76 ,0x00 ,0x10 ,0x37,  // 0x1000762E, 0x37
+		0x2F ,0x76 ,0x00 ,0x10 ,0x54,  // 0x1000762F, 0x54
+		0x30 ,0x76 ,0x00 ,0x10 ,0x93,  // 0x10007630, 0x93
+		0x31 ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x10007631, 0xF7
+		0x32 ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x10007632, 0xF7
+		0x33 ,0x76 ,0x00 ,0x10 ,0x0D,  // 0x10007633, 0x0D
+		0x34 ,0x76 ,0x00 ,0x10 ,0xA3,  // 0x10007634, 0xA3
+		0x35 ,0x76 ,0x00 ,0x10 ,0x01,  // 0x10007635, 0x01
+		0x36 ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x10007636, 0xF7
+		0x37 ,0x76 ,0x00 ,0x10 ,0x54,  // 0x10007637, 0x54
+		0x38 ,0x76 ,0x00 ,0x10 ,0x23,  // 0x10007638, 0x23
+		0x39 ,0x76 ,0x00 ,0x10 ,0xA8,  // 0x10007639, 0xA8
+		0x3A ,0x76 ,0x00 ,0x10 ,0x01,  // 0x1000763A, 0x01
+		0x3B ,0x76 ,0x00 ,0x10 ,0x56,  // 0x1000763B, 0x56
+		0x3C ,0x76 ,0x00 ,0x10 ,0x83,  // 0x1000763C, 0x83
+		0x3D ,0x76 ,0x00 ,0x10 ,0x20,  // 0x1000763D, 0x20
+		0x3E ,0x76 ,0x00 ,0x10 ,0xC1,  // 0x1000763E, 0xC1
+		0x3F ,0x76 ,0x00 ,0x10 ,0x00,  // 0x1000763F, 0x00
+		0x40 ,0x76 ,0x00 ,0x10 ,0x03,  // 0x10007640, 0x03
+		0x41 ,0x76 ,0x00 ,0x10 ,0x24,  // 0x10007641, 0x24
+		0x42 ,0x76 ,0x00 ,0x10 ,0x81,  // 0x10007642, 0x81
+		0x43 ,0x76 ,0x00 ,0x10 ,0x00,  // 0x10007643, 0x00
+		0x44 ,0x76 ,0x00 ,0x10 ,0x13,  // 0x10007644, 0x13
+		0x45 ,0x76 ,0x00 ,0x10 ,0x01,  // 0x10007645, 0x01
+		0x46 ,0x76 ,0x00 ,0x10 ,0x01,  // 0x10007646, 0x01
+		0x47 ,0x76 ,0x00 ,0x10 ,0x01,  // 0x10007647, 0x01
+		0x48 ,0x76 ,0x00 ,0x10 ,0x67,  // 0x10007648, 0x67
+		0x49 ,0x76 ,0x00 ,0x10 ,0x80,  // 0x10007649, 0x80
+		0x4A ,0x76 ,0x00 ,0x10 ,0x00,  // 0x1000764A, 0x00
+		0x4B ,0x76 ,0x00 ,0x10 ,0x00,  // 0x1000764B, 0x00
+		0x4C ,0x76 ,0x00 ,0x10 ,0x13,  // 0x1000764C, 0x13
+		0x4D ,0x76 ,0x00 ,0x10 ,0x01,  // 0x1000764D, 0x01
+		0x4E ,0x76 ,0x00 ,0x10 ,0x01,  // 0x1000764E, 0x01
+		0x4F ,0x76 ,0x00 ,0x10 ,0xFF,  // 0x1000764F, 0xFF
+		0x50 ,0x76 ,0x00 ,0x10 ,0x23,  // 0x10007650, 0x23
+		0x51 ,0x76 ,0x00 ,0x10 ,0x26,  // 0x10007651, 0x26
+		0x52 ,0x76 ,0x00 ,0x10 ,0x11,  // 0x10007652, 0x11
+		0x53 ,0x76 ,0x00 ,0x10 ,0x00,  // 0x10007653, 0x00
+		0x54 ,0x76 ,0x00 ,0x10 ,0xEF,  // 0x10007654, 0xEF
+		0x55 ,0x76 ,0x00 ,0x10 ,0xD0,  // 0x10007655, 0xD0
+		0x56 ,0x76 ,0x00 ,0x10 ,0x0F,  // 0x10007656, 0x0F
+		0x57 ,0x76 ,0x00 ,0x10 ,0xA3,  // 0x10007657, 0xA3
+		0x58 ,0x76 ,0x00 ,0x10 ,0x83,  // 0x10007658, 0x83
+		0x59 ,0x76 ,0x00 ,0x10 ,0xC7,  // 0x10007659, 0xC7
+		0x5A ,0x76 ,0x00 ,0x10 ,0x11,  // 0x1000765A, 0x11
+		0x5B ,0x76 ,0x00 ,0x10 ,0x42,  // 0x1000765B, 0x42
+		0x5C ,0x76 ,0x00 ,0x10 ,0x63,  // 0x1000765C, 0x63
+		0x5D ,0x76 ,0x00 ,0x10 ,0x86,  // 0x1000765D, 0x86
+		0x5E ,0x76 ,0x00 ,0x10 ,0x07,  // 0x1000765E, 0x07
+		0x5F ,0x76 ,0x00 ,0x10 ,0x00,  // 0x1000765F, 0x00
+		0x60 ,0x76 ,0x00 ,0x10 ,0x03,  // 0x10007660, 0x03
+		0x61 ,0x76 ,0x00 ,0x10 ,0xC7,  // 0x10007661, 0xC7
+		0x62 ,0x76 ,0x00 ,0x10 ,0x01,  // 0x10007662, 0x01
+		0x63 ,0x76 ,0x00 ,0x10 ,0x42,  // 0x10007663, 0x42
+		0x64 ,0x76 ,0x00 ,0x10 ,0x63,  // 0x10007664, 0x63
+		0x65 ,0x76 ,0x00 ,0x10 ,0x10,  // 0x10007665, 0x10
+		0x66 ,0x76 ,0x00 ,0x10 ,0x07,  // 0x10007666, 0x07
+		0x67 ,0x76 ,0x00 ,0x10 ,0x02,  // 0x10007667, 0x02
+		0x68 ,0x76 ,0x00 ,0x10 ,0x83,  // 0x10007668, 0x83
+		0x69 ,0x76 ,0x00 ,0x10 ,0xC6,  // 0x10007669, 0xC6
+		0x6A ,0x76 ,0x00 ,0x10 ,0x21,  // 0x1000766A, 0x21
+		0x6B ,0x76 ,0x00 ,0x10 ,0x41,  // 0x1000766B, 0x41
+		0x6C ,0x76 ,0x00 ,0x10 ,0x13,  // 0x1000766C, 0x13
+		0x6D ,0x76 ,0x00 ,0x10 ,0x07,  // 0x1000766D, 0x07
+		0x6E ,0x76 ,0x00 ,0x10 ,0xF0,  // 0x1000766E, 0xF0
+		0x6F ,0x76 ,0x00 ,0x10 ,0x01,  // 0x1000766F, 0x01
+		0x70 ,0x76 ,0x00 ,0x10 ,0x13,  // 0x10007670, 0x13
+		0x71 ,0x76 ,0x00 ,0x10 ,0x05,  // 0x10007671, 0x05
+		0x72 ,0x76 ,0x00 ,0x10 ,0xF0,  // 0x10007672, 0xF0
+		0x73 ,0x76 ,0x00 ,0x10 ,0x01,  // 0x10007673, 0x01
+		0x74 ,0x76 ,0x00 ,0x10 ,0x63,  // 0x10007674, 0x63
+		0x75 ,0x76 ,0x00 ,0x10 ,0x98,  // 0x10007675, 0x98
+		0x76 ,0x76 ,0x00 ,0x10 ,0xE6,  // 0x10007676, 0xE6
+		0x77 ,0x76 ,0x00 ,0x10 ,0x02,  // 0x10007677, 0x02
+		0x78 ,0x76 ,0x00 ,0x10 ,0x63,  // 0x10007678, 0x63
+		0x79 ,0x76 ,0x00 ,0x10 ,0x8A,  // 0x10007679, 0x8A
+		0x7A ,0x76 ,0x00 ,0x10 ,0x07,  // 0x1000767A, 0x07
+		0x7B ,0x76 ,0x00 ,0x10 ,0x02,  // 0x1000767B, 0x02
+		0x7C ,0x76 ,0x00 ,0x10 ,0x83,  // 0x1000767C, 0x83
+		0x7D ,0x76 ,0x00 ,0x10 ,0xC7,  // 0x1000767D, 0xC7
+		0x7E ,0x76 ,0x00 ,0x10 ,0x01,  // 0x1000767E, 0x01
+		0x7F ,0x76 ,0x00 ,0x10 ,0x42,  // 0x1000767F, 0x42
+		0x80 ,0x76 ,0x00 ,0x10 ,0x63,  // 0x10007680, 0x63
+		0x81 ,0x76 ,0x00 ,0x10 ,0x86,  // 0x10007681, 0x86
+		0x82 ,0x76 ,0x00 ,0x10 ,0x07,  // 0x10007682, 0x07
+		0x83 ,0x76 ,0x00 ,0x10 ,0x02,  // 0x10007683, 0x02
+		0x84 ,0x76 ,0x00 ,0x10 ,0x83,  // 0x10007684, 0x83
+		0x85 ,0x76 ,0x00 ,0x10 ,0xC7,  // 0x10007685, 0xC7
+		0x86 ,0x76 ,0x00 ,0x10 ,0x31,  // 0x10007686, 0x31
+		0x87 ,0x76 ,0x00 ,0x10 ,0x42,  // 0x10007687, 0x42
+		0x88 ,0x76 ,0x00 ,0x10 ,0x63,  // 0x10007688, 0x63
+		0x89 ,0x76 ,0x00 ,0x10 ,0x86,  // 0x10007689, 0x86
+		0x8A ,0x76 ,0x00 ,0x10 ,0x07,  // 0x1000768A, 0x07
+		0x8B ,0x76 ,0x00 ,0x10 ,0x00,  // 0x1000768B, 0x00
+		0x8C ,0x76 ,0x00 ,0x10 ,0x83,  // 0x1000768C, 0x83
+		0x8D ,0x76 ,0x00 ,0x10 ,0xC7,  // 0x1000768D, 0xC7
+		0x8E ,0x76 ,0x00 ,0x10 ,0x21,  // 0x1000768E, 0x21
+		0x8F ,0x76 ,0x00 ,0x10 ,0x42,  // 0x1000768F, 0x42
+		0x90 ,0x76 ,0x00 ,0x10 ,0x63,  // 0x10007690, 0x63
+		0x91 ,0x76 ,0x00 ,0x10 ,0x9E,  // 0x10007691, 0x9E
+		0x92 ,0x76 ,0x00 ,0x10 ,0x07,  // 0x10007692, 0x07
+		0x93 ,0x76 ,0x00 ,0x10 ,0x00,  // 0x10007693, 0x00
+		0x94 ,0x76 ,0x00 ,0x10 ,0x03,  // 0x10007694, 0x03
+		0x95 ,0x76 ,0x00 ,0x10 ,0xC7,  // 0x10007695, 0xC7
+		0x96 ,0x76 ,0x00 ,0x10 ,0x21,  // 0x10007696, 0x21
+		0x97 ,0x76 ,0x00 ,0x10 ,0x41,  // 0x10007697, 0x41
+		0x98 ,0x76 ,0x00 ,0x10 ,0x93,  // 0x10007698, 0x93
+		0x99 ,0x76 ,0x00 ,0x10 ,0x07,  // 0x10007699, 0x07
+		0x9A ,0x76 ,0x00 ,0x10 ,0xB0,  // 0x1000769A, 0xB0
+		0x9B ,0x76 ,0x00 ,0x10 ,0x01,  // 0x1000769B, 0x01
+		0x9C ,0x76 ,0x00 ,0x10 ,0x63,  // 0x1000769C, 0x63
+		0x9D ,0x76 ,0x00 ,0x10 ,0x08,  // 0x1000769D, 0x08
+		0x9E ,0x76 ,0x00 ,0x10 ,0xF7,  // 0x1000769E, 0xF7
+		0x9F ,0x76 ,0x00 ,0x10 ,0x00,  // 0x1000769F, 0x00
+		0xA0 ,0x76 ,0x00 ,0x10 ,0x13,  // 0x100076A0, 0x13
+		0xA1 ,0x76 ,0x00 ,0x10 ,0x05,  // 0x100076A1, 0x05
+		0xA2 ,0x76 ,0x00 ,0x10 ,0xB0,  // 0x100076A2, 0xB0
+		0xA3 ,0x76 ,0x00 ,0x10 ,0x01,  // 0x100076A3, 0x01
+		0xA4 ,0x76 ,0x00 ,0x10 ,0xEF,  // 0x100076A4, 0xEF
+		0xA5 ,0x76 ,0x00 ,0x10 ,0xD0,  // 0x100076A5, 0xD0
+		0xA6 ,0x76 ,0x00 ,0x10 ,0x8F,  // 0x100076A6, 0x8F
+		0xA7 ,0x76 ,0x00 ,0x10 ,0xEB,  // 0x100076A7, 0xEB
+		0xA8 ,0x76 ,0x00 ,0x10 ,0xEF,  // 0x100076A8, 0xEF
+		0xA9 ,0x76 ,0x00 ,0x10 ,0xD0,  // 0x100076A9, 0xD0
+		0xAA ,0x76 ,0x00 ,0x10 ,0x0F,  // 0x100076AA, 0x0F
+		0xAB ,0x76 ,0x00 ,0x10 ,0xC1,  // 0x100076AB, 0xC1
+		0xAC ,0x76 ,0x00 ,0x10 ,0x83,  // 0x100076AC, 0x83
+		0xAD ,0x76 ,0x00 ,0x10 ,0x20,  // 0x100076AD, 0x20
+		0xAE ,0x76 ,0x00 ,0x10 ,0xC1,  // 0x100076AE, 0xC1
+		0xAF ,0x76 ,0x00 ,0x10 ,0x00,  // 0x100076AF, 0x00
+		0xB0 ,0x76 ,0x00 ,0x10 ,0x13,  // 0x100076B0, 0x13
+		0xB1 ,0x76 ,0x00 ,0x10 ,0x07,  // 0x100076B1, 0x07
+		0xB2 ,0x76 ,0x00 ,0x10 ,0x10,  // 0x100076B2, 0x10
+		0xB3 ,0x76 ,0x00 ,0x10 ,0x00,  // 0x100076B3, 0x00
+		0xB4 ,0x76 ,0x00 ,0x10 ,0xA3,  // 0x100076B4, 0xA3
+		0xB5 ,0x76 ,0x00 ,0x10 ,0x89,  // 0x100076B5, 0x89
+		0xB6 ,0x76 ,0x00 ,0x10 ,0xE1,  // 0x100076B6, 0xE1
+		0xB7 ,0x76 ,0x00 ,0x10 ,0x40,  // 0x100076B7, 0x40
+		0xB8 ,0x76 ,0x00 ,0x10 ,0x13,  // 0x100076B8, 0x13
+		0xB9 ,0x76 ,0x00 ,0x10 ,0x01,  // 0x100076B9, 0x01
+		0xBA ,0x76 ,0x00 ,0x10 ,0x01,  // 0x100076BA, 0x01
+		0xBB ,0x76 ,0x00 ,0x10 ,0x01,  // 0x100076BB, 0x01
+		0xBC ,0x76 ,0x00 ,0x10 ,0x67,  // 0x100076BC, 0x67
+		0xBD ,0x76 ,0x00 ,0x10 ,0x80,  // 0x100076BD, 0x80
+		0xBE ,0x76 ,0x00 ,0x10 ,0x00,  // 0x100076BE, 0x00
+		0xBF ,0x76 ,0x00 ,0x10 ,0x00,  // 0x100076BF, 0x00
+		0xC7 ,0xBF ,0xC2 ,0x3F ,0x00,  // 0x3FC2BFC7, 0x00
+		0xC6 ,0xBF ,0xC2 ,0x3F ,0x00,  // 0x3FC2BFC6, 0x00
+		0xC5 ,0xBF ,0xC2 ,0x3F ,0x00,  // 0x3FC2BFC5, 0x00
+		0xC4 ,0xBF ,0xC2 ,0x3F ,0x01,  // 0x3FC2BFC4, 0x01
+		0x86 ,0xD4 ,0x00 ,0x00 ,0x43,  // 0x0000D486, 0x43
+		0x00 ,0xDB ,0x00 ,0x10 ,0x02,  // 0x1000DB00, 0x02
+		0x01 ,0xDB ,0x00 ,0x10 ,0x00,  // 0x1000DB01, 0x00
+		0x02 ,0xDB ,0x00 ,0x10 ,0x11,  // 0x1000DB02, 0x11
+		0x03 ,0xDB ,0x00 ,0x10 ,0x00,  // 0x1000DB03, 0x00
+		0x04 ,0xDB ,0x00 ,0x10 ,0x00,  // 0x1000DB04, 0x00
+		0x05 ,0xDB ,0x00 ,0x10 ,0x82,  // 0x1000DB05, 0x82
+		0x06 ,0xDB ,0x00 ,0x10 ,0x04,  // 0x1000DB06, 0x04
+		0x07 ,0xDB ,0x00 ,0x10 ,0xF1,  // 0x1000DB07, 0xF1
+		0x08 ,0xDB ,0x00 ,0x10 ,0x00,  // 0x1000DB08, 0x00
+		0x09 ,0xDB ,0x00 ,0x10 ,0x00,  // 0x1000DB09, 0x00
+		0x0A ,0xDB ,0x00 ,0x10 ,0x40,  // 0x1000DB0A, 0x40
+		0x40 ,0xD5 ,0x00 ,0x00 ,0x01,  // 0x0000D540, 0x01
+	}) //End AF04.BUF0
 
-	Name(C006, Package() {
-	   				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x025d},
-					}
-	}) //End AF04.C006
+	// Name(BUF1, Buffer()
+	// {
+	// 	0x0, 0x00,  // NotRotated, 0x00, OT23=ICN1, OT27=ICN2
+	// 	0x1, 0x08,  // 90DegreesCounterClockwise, 0x08, OT23=(ICN1+ICN2)/2, OT27=(ICN1+ICN2)/2
+	// 	0x2, 0x01,  // 180DegreesCounterClockwise, 0x01, OT23=ICN2, OT27=ICN1
+	// 	0x3, 0x08,  // 270DegreesCounterClockwise, 0x08, OT23=(ICN1+ICN2)/2, OT27=(ICN1+ICN2)/2
+	// 	0x4, 0x00,  // Close lid, 0x00, OT23=ICN1, OT27=ICN2
+	// }) //End AF04.BUF1
 
-	Name(C005, Package() {
-	   				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{
-						// Function_Topology = 0x1 Smart-Amp, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x1},
-					}
-	}) //End AF04.C005
-
-	Name(C004, Package() {
-	   				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{
-						// Function_SDCA_Version = 1.0, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x10},
-					}
-	}) //End AF04.C004
-
-	Name(C042, Package() {
-	   	   			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{
-						//Commit_Group_Mask
-						Package(2) {"mipi-sdca-control-access-layer", 4 }, //Access Layer = Class
-						Package(2) {"mipi-sdca-control-access-mode", 0x0}, //Read-Write
-					}
-
-	}) //End AF04.C042
-
-	Name(C043, Package() {
-	   	   	   		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{
-						//Function_Action
-						Package(2) {"mipi-sdca-control-access-layer", 4 }, //Access Layer = Class
-						Package(2) {"mipi-sdca-control-access-mode", 0x10}, //Read-and-Write-1-to-Set
-					}
-	}) //End AF04.C043
-
-	Name(C044, Package() {
-	   	   	   		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{
-						//Function_Status
-						Package (2) {"mipi-sdca-control-interrupt-position", 1}, //IntStat_SDCA_1
-					}
-	}) //End AF04.C044
-
-
-	Name(E000, Package() {
-	}) //End AF04.E000
-
-	Name(E051, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x11},
-           Package (2) {"mipi-sdca-entity-label", "PDE 23"},
-           Package (2) {"mipi-sdca-control-list", 0x10002},
-           Package (2) {
-							"mipi-sdca-powerdomain-managed-list",
-							Package() {0x13}, //OT23
-						},
-		   Package(2)
-						{
-							"mipi-sdca-powerdomain-transition-typical-delay",
-							Package()
-							{
-								3, 0, 500000,
-								0, 3, 500000,
-							},
-						},
-		   Package(2)
-						{
-							"mipi-sdca-powerdomain-transition-max-delay",
-							Package()
-							{
-								3, 0, 800000,
-								0, 3, 800000,
-							},
-						},
-					},
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x1-subproperties", "C001"}, //PDE23 Request PS0
-		   Package (2) {"mipi-sdca-control-0x10-subproperties", "C016"}, //PDE23 Actual PS0
-
-        }
-	}) //End AF04.E051
-
-	Name(C001, Package() {
+	Name(C004, Package()
+	{
 		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-				Package()
-					{  // Requested_PS, Class, R/W
-						Package(2) {"mipi-sdca-control-access-layer", 4},
-						Package(2) {"mipi-sdca-control-access-mode", 0},
-					},
-					ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package ()
-					{
-						Package (2) {"mipi-sdca-control-range", "PDER"},
-					}
-	}) //End AF04.C001
-	Name(PDER, Buffer()
-			{
-				0x01, 0x00, // Range type 0x0001
-				0x02, 0x00, // Count of ranges = 0x2
-				0x00, 0x00, 0x00, 0x00, // PS0
-				0x03, 0x00, 0x00, 0x00, // PS3
-			}) //End PDER
-	Name(C016, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-control-access-layer", 0x4},
-           Package (2) {"mipi-sdca-control-access-mode", 0x3},
-        }
-	}) //End AF04.C016
-
-	Name(E039, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-			Package (2) {"mipi-sdca-entity-type", 0x11},
-			Package (2) {"mipi-sdca-entity-label", "PDE 27"},
-			Package (2) {"mipi-sdca-control-list", 0x10002},
-			Package (2) {
-							"mipi-sdca-powerdomain-managed-list",
-							Package() {0x17}, //OT27
-						},
-						Package(2)
-						{
-							"mipi-sdca-powerdomain-transition-typical-delay",
-							Package()
-							{
-								3, 0, 500000,
-								0, 3, 500000,
-							},
-						},
-						Package(2)
-						{
-							"mipi-sdca-powerdomain-transition-max-delay",
-							Package()
-							{
-								3, 0, 800000,
-								0, 3, 800000,
-							},
-						},
-					},
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x1-subproperties", "C002"}, //PDE27 Request PS0
-		   Package (2) {"mipi-sdca-control-0x10-subproperties", "C017"}, //PDE27 Actual PS0
-
-        }
-	}) //End AF04.E039
-
-	Name(C002, Package() {
-	   	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-				Package()
-					{  // Requested_PS, Class, R/W
-						Package(2) {"mipi-sdca-control-access-layer", 4},
-						Package(2) {"mipi-sdca-control-access-mode", 0},
-					},
-					ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package ()
-					{
-						Package (2) {"mipi-sdca-control-range", "PDER"},
-					}
-	}) //End AF04.C002
-
-	Name(C017, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-control-access-layer", 0x4},
-           Package (2) {"mipi-sdca-control-access-mode", 0x3},
-        }
-	}) //End AF04.C017
-
-	Name(E003, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x07},
-           Package (2) {"mipi-sdca-entity-label", "FU 21"},
-           Package (2) {"mipi-sdca-control-list", 0x406},
-           Package (2) {"mipi-sdca-input-pin-list", 0x02},
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x2-subproperties", "C003"}, //User FU Volume
-           Package (2) {"mipi-sdca-control-0x1-subproperties", "C009"}, //User FU Mute
-           Package (2) {"mipi-sdca-control-0xA-subproperties", "C010"}, //User FU Loudness
-           Package (2) {"mipi-sdca-input-pin-1", "E004"},
-        }
-	}) //End AF04.E003
-
-	Name(C003, Package() {
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{  // Volume, User, RW
-						Package(2) {"mipi-sdca-control-access-layer", 1 },
-						Package(2) {"mipi-sdca-control-access-mode", 0},
-						//Package(2) {"mipi-sdca-control-default-value", 0x0000},
-						Package(2) {"mipi-sdca-control-fixed-value", 0x0000},
-						//Package(2) {"mipi-sdca-control-cn-list", Package() {0x1, 0x2} },
-						Package(2) {"mipi-sdca-control-cn-list", 0x6},
-					},
-					ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-control-range","BUF3"},
-					}
-	}) //End AF04.C003
-	Name(BUF3, Buffer()
-				{
-					0x03, 0x00,  // Range type 0x0003 (Triples)
-					0x01, 0x00,  // Count of ranges = 0x1
-					0xC0, 0xA0, 0x00, 0x00,  // Min =0x0000A0C0
-					0x00, 0x00, 0x00, 0x00,  // Max =0x00000000
-					0xC0, 0x00, 0x00, 0x00,  // Step =0x000000C0, -0.75dB/step
-				}) //End AF04.BUF3
-
-	Name(C009, Package() {
-	   				ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{  // Mute, User, RW
-						Package(2) {"mipi-sdca-control-access-layer", 1 },
-						Package(2) {"mipi-sdca-control-access-mode", 0},
-						//Package(2) {"mipi-sdca-control-cn-list", Package() {0x1, 0x2} },
-						Package(2) {"mipi-sdca-control-cn-list", 0x6},
-					}
-	}) //End AF04.C009
-
-	Name(C010, Package() {
-	}) //End AF04.C010
-
-	Name(E038, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x07},
-           Package (2) {"mipi-sdca-entity-label", "FU 26"},
-           Package (2) {"mipi-sdca-control-list", 0x802},
-           Package (2) {"mipi-sdca-input-pin-list", 0x02},
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x1-subproperties", "C011"}, //Platform FU Mute
-           Package (2) {"mipi-sdca-control-0xB-subproperties", "C012"}, //Platform FU Volume
-           Package (2) {"mipi-sdca-input-pin-1", "E006"},
-        }
-	}) //End AF04.E038
-
-	Name(C011, Package() {
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{  // Mute, Platform, RW
-						Package(2) {"mipi-sdca-control-access-layer", 1 },
-						Package(2) {"mipi-sdca-control-access-mode", 0},
-						//Package(2) {"mipi-sdca-control-cn-list", Package() {0x1, 0x2} },
-						Package(2) {"mipi-sdca-control-cn-list", 0x6},
-					}
-	}) //End AF04.C011
-
-	Name(C012, Package() {
-	   					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{  // Volume, User, RW
-						Package(2) {"mipi-sdca-control-access-layer", 1 },
-						Package(2) {"mipi-sdca-control-access-mode", 0},
-						//Package(2) {"mipi-sdca-control-default-value", 0x0000},
-						Package(2) {"mipi-sdca-control-fixed-value", 0x0000},
-						//Package(2) {"mipi-sdca-control-cn-list", Package() {0x1, 0x2} },
-						Package(2) {"mipi-sdca-control-cn-list", 0x6},
-					},
-					ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-control-range","BUF7"},
-					}
-	}) //End AF04.C012
-	Name(BUF7, Buffer()
-				{
-					0x03, 0x00,  // Range type 0x0003 (Triples)
-					0x01, 0x00,  // Count of ranges = 0x1
-					0x7F, 0xBF, 0x00, 0x00,  // Min =0x0000BF7F
-					0x00, 0x00, 0x00, 0x00,  // Max =0x00000000
-					0xC0, 0x00, 0x00, 0x00,  // Step =0x000000C0, -0.75dB/step
-				}) //End AF04.BUF7
-
-
-	Name(E049, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-			Package (2) {"mipi-sdca-entity-type", 0x22},
-			Package (2) {"mipi-sdca-entity-label", "MFPU 21"},
-			Package (2) {"mipi-sdca-control-list", 0x1000000000230},
-			Package (2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-			Package (2) {"mipi-sdca-input-pin-1", "E003"},// Input Pin 1 connected to FU 21
-			Package (2) {"mipi-sdca-control-0x30-subproperties", "C048"}, //Bypass
-			Package (2) {"mipi-sdca-control-0x5-subproperties", "C013"}, //Algorithm_Enable
-			Package (2) {"mipi-sdca-control-0x4-subproperties", "C014"}, //Algorithm_Ready
-			Package (2) {"mipi-sdca-control-0x9-subproperties", "C015"}, //Algorithm_Prepare
-
-        }
-	}) //End AF04.E049
-
-	Name(C048, Package() {
-		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-			Package ()
-			{
-			// Bypass, Class, DC:1 (Null MFPU)
-			Package (2) {"mipi-sdca-control-access-layer", 0x4},
-			Package (2) {"mipi-sdca-control-access-mode", 5},
-			Package (2) {"mipi-sdca-control-dc-value", 1},
-			}
-	}) //End AF04.C048
-
-	Name(C013, Package() {
-	}) //End AF04.C013
-
-	Name(C014, Package() {
-	}) //End AF04.C014
-
-	Name(C015, Package() {
-	}) //End AF04.C015
-
-	Name(E041, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x24},
-           Package (2) {"mipi-sdca-entity-label", "SAPU 29"},
-           Package (2) {"mipi-sdca-control-list", 0x30000},
-           Package (2) {"mipi-sdca-input-pin-list", 0x6},
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x11-subproperties", "C018"}, //Protection_Status
-           Package (2) {"mipi-sdca-control-0x10-subproperties", "C019"}, //Protection_Mode
-		   Package (2) {"mipi-sdca-input-pin-1", "E034"}, // Input Pin 1 connected to XU22
-           Package (2) {"mipi-sdca-input-pin-2", "E082"}, // Input Pin 2 connected to IT29
-
-        }
-	}) //End AF04.E041
-
-	Name(C018, Package() {
-		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{   // Protection_Status, Class, RO
-						Package(2) {"mipi-sdca-control-access-layer", 4},
-						//Package (2) {"mipi-sdca-control-access-mode", 3},
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0},
-					}
-	}) //End AF04.C018
-
-	Name(C019, Package() {
-	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{   // Protection_Mode, Class, RO
-						Package(2) {"mipi-sdca-control-access-layer", 4},
-						Package(2) {"mipi-sdca-control-interrupt-position", 0},  // SDCA Interrupt Bit 0
-						Package(2) {"mipi-sdca-control-access-mode", 3},
-					}
-	}) //End AF04.C019
-
-	Name(E064, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x30},
-           Package (2) {"mipi-sdca-entity-label", "TG 23"},
-           Package (2) {"mipi-sdca-control-list", 0x10000}, // Class Divider
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x10-subproperties", "C020"},
-		   Package (2) {"mipi-sdca-terminal-clock-connection", "E033"},
-        }
-	}) //End AF04.E064
-
-	Name(C020, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-control-access-layer", 0x4},
-           Package (2) {"mipi-sdca-control-access-mode", 0x0},
-        }
-	}) //End AF04.C020
-
-	Name(E033, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x0b},
-           Package (2) {"mipi-sdca-entity-label", "CS 21"},
-           Package (2) {"mipi-sdca-control-list", 0x10000},
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x10-subproperties", "C021"},
-        }
-	}) //End AF04.E033
-
-	Name(C021, Package() {
-	   			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // Sample_Freq_Index, Class, RW
-						Package(2) {"mipi-sdca-control-access-layer", 4},
-						Package(2) {"mipi-sdca-control-access-mode", 0},
-					},
-					ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-control-range","BUF5"},
-					}
-	}) //End AF04.C021
-
-				Name(BUF5, Buffer()
-				{
-					0x02, 0x00,  // Range type 0x0002 (Pairs)
-					0x02, 0x00,  // Count of ranges = 0x2
-					0x04, 0x00, 0x00, 0x00, 0x80, 0x3E, 0x00, 0x00, // 0x00000004, 0x00003E80(16000)
-					0x07, 0x00, 0x00, 0x00, 0x00, 0x7D, 0x00, 0x00, // 0x00000007, 0x00007D00(32000)
-					0x08, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // 0x00000008, 0x0000AC44(44100)
-					0x09, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // 0x00000009, 0x0000BB80(48000)
-					0x0B, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // 0x0000000B, 0x00017700(96000)
-					0x0d, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // 0x0000000d, 0x0002EE00(192000)
-				}) //End AF04.BUF5
-
-	Name(E040, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x0b},
-           Package (2) {"mipi-sdca-entity-label", "CS 26"},
-           Package (2) {"mipi-sdca-control-list", 0x10000},
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x10-subproperties", "C022"},
-        }
-	}) //End AF04.E040
-
-	Name(C022, Package() {
-	   	   			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // Sample_Freq_Index, Class, RW
-						Package(2) {"mipi-sdca-control-access-layer", 4},
-						Package(2) {"mipi-sdca-control-access-mode", 0},
-					},
-					ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-control-range","BUF9"},
-					}
-	}) //End AF04.C022
-   				Name(BUF9, Buffer()
-				{
-					0x02, 0x00,  // Range type 0x0002 (Pairs)
-					0x02, 0x00,  // Count of ranges = 0x2
-					0x04, 0x00, 0x00, 0x00, 0x80, 0x3E, 0x00, 0x00, // 0x00000004, 0x00003E80(16000)
-					0x07, 0x00, 0x00, 0x00, 0x00, 0x7D, 0x00, 0x00, // 0x00000007, 0x00007D00(32000)
-					0x08, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // 0x00000008, 0x0000AC44(44100)
-					0x09, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // 0x00000009, 0x0000BB80(48000)
-					0x0B, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // 0x0000000B, 0x00017700(96000)
-					0x0d, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // 0x0000000d, 0x0002EE00(192000)
-				}) //End AF04.BUF9
-
-	Name(E034, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-            Package (2) {"mipi-sdca-entity-type", 0x0a},
-            Package (2) {"mipi-sdca-entity-label", "XU 22"},
-            Package (2) {"mipi-sdca-control-list", 0x7D0002},
-		    Package (2) {"mipi-sdca-input-pin-list", 0x6},
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-			Package (2) { "mipi-sdca-input-pin-1", "E049"},   // Input Pin 1 connected to MFPU 21
-			Package (2) {"mipi-sdca-input-pin-2", "E082"},   // Input Pin 2 connected to IT 29
-            Package (2) {"mipi-sdca-control-0x16-subproperties", "C023"}, //FDL_Host_Request
-            Package (2) {"mipi-sdca-control-0x15-subproperties", "C024"}, //FDL_Set_Index
-            Package (2) {"mipi-sdca-control-0x14-subproperties", "C025"}, //FDL_Status
-            Package (2) {"mipi-sdca-control-0x13-subproperties", "C026"}, //FDL_MessageLength
-            Package (2) {"mipi-sdca-control-0x12-subproperties", "C027"}, //FDL_MessageOffset
-            Package (2) {"mipi-sdca-control-0x10-subproperties", "C028"}, //FDL_CurrentOwner
-            Package (2) {"mipi-sdca-control-0x1-subproperties", "C029"}, //Bypass
-        }
-	}) //End AF04.E034
-
-	Name(C023, Package() {
-	}) //End AF04.C023
-
-	Name(C024, Package() {
-	}) //End AF04.C024
-
-	Name(C025, Package() {
-	}) //End AF04.C025
-
-	Name(C026, Package() {
-	}) //End AF04.C026
-
-	Name(C027, Package() {
-	}) //End AF04.C027
-
-	Name(C028, Package() {
-        Package () { // FDL_CurrentOwner, Class, RW1C
-            Package (2) {"mipi-sdca-control-access-layer", 4},
-            Package (2) {"mipi-sdca-control-interrupt-position", 2}, //IntStat_SDCA_2
-            Package (2) {"mipi-sdca-control-access-mode", 2},  // RW1C
-		}
-	}) //End AF04.C028
-
-	Name(C029, Package() {
-	}) //End AF04.C029
-
-	Name(E036, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x0a},
-           Package (2) {"mipi-sdca-entity-label", "XU 24"},
-           Package (2) {"mipi-sdca-control-list", 0x2},
-		   Package (2) {"mipi-sdca-input-pin-list", 0x2},
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-			Package(2) { "mipi-sdca-input-pin-1", "E082"},   // Input Pin 1 connected to IT 29
-            Package (2) {"mipi-sdca-control-0x1-subproperties", "C030"},
-        }
-	}) //End AF04.E036
-
-	Name(C030, Package() {
-	}) //End AF04.C030
-
-	Name(E080, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x05},
-           Package (2) {"mipi-sdca-entity-label", "MU 26"},
-           Package (2) {"mipi-sdca-control-list", 0x2},
-		   Package (2) {"mipi-sdca-input-pin-list", 0x6},
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-			Package(2) { "mipi-sdca-input-pin-1", "E041"},   // Input Pin 1 connected to SAPU 29
-			Package(2) {"mipi-sdca-input-pin-2", "E038"},   // Input Pin 2 connected to FU 26
-            Package (2) {"mipi-sdca-control-0x1-subproperties", "C031"},
-        }
-	}) //End AF04.E080
-
-	Name(C031, Package() {
-	}) //End AF04.C031
-
-	Name(E004, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-			Package (2) {"mipi-sdca-entity-type", 0x25},
-			Package (2) {"mipi-sdca-entity-label", "PPU 21"},
-			Package (2) {"mipi-sdca-control-list", 0xD0000},
-			Package (2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-			Package	(2) {"mipi-sdca-input-pin-1", "E032" },   // Input Pin 1 connected to IT21
-			Package (2) {"mipi-sdca-control-0x12-subproperties", "C032"},
-			Package (2) {"mipi-sdca-control-0x10-subproperties", "C034"},
-			Package (2) {"mipi-sdca-control-0x13-subproperties", "C033"},
-        }
-	}) //End AF04.E004
-
-	Name(C032, Package() {
-	}) //End AF04.C032
-
-	Name(C034, Package() {
-	}) //End AF04.C034
-
-	Name(C033, Package() {
-	}) //End AF04.C033
-
-	Name(E006, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-			Package (2) {"mipi-sdca-entity-type", 0x25},
-			Package (2) {"mipi-sdca-entity-label", "PPU 26"},
-			Package (2) {"mipi-sdca-control-list", 0xD0000},
-			Package (2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-			Package	(2) {"mipi-sdca-input-pin-1", "E054" },   // Input Pin 1 connected to IT26
-			Package (2) {"mipi-sdca-control-0x13-subproperties", "C035"},
-			Package (2) {"mipi-sdca-control-0x12-subproperties", "C036"},
-			Package (2) {"mipi-sdca-control-0x10-subproperties", "C037"},
-        }
-	}) //End AF04.E006
-
-	Name(C035, Package() {
-	}) //End AF04.C035
-
-	Name(C036, Package() {
-	}) //End AF04.C036
-
-	Name(C037, Package() {
-	}) //End AF04.C037
-
-	Name(E081, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x13},
-           Package (2) {"mipi-sdca-entity-label", "SPE 199"},
-           Package (2) {"mipi-sdca-control-list", 0x1E},
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x4-subproperties", "C038"}, //Privacy_Owner
-           Package (2) {"mipi-sdca-control-0x3-subproperties", "C039"}, //Privacy_LockState
-           Package (2) {"mipi-sdca-control-0x2-subproperties", "C040"}, //Privacy_Policy
-           Package (2) {"mipi-sdca-control-0x1-subproperties", "C041"}, //Private
-        }
-   }) //End AF04.E081
-
-   Name(C038, Package() {
-   }) //End AF04.C038
-
-   Name(C039, Package() {
-   }) //End AF04.C039
-
-   Name(C040, Package() {
-   }) //End AF04.C040
-
-   Name(C041, Package() {
-   }) //End AF04.C041
-
-   Name(E032, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x02},
-           Package (2) {"mipi-sdca-entity-label", "IT 21"}, //Speaker render stream
-           Package (2) {"mipi-sdca-terminal-type", 0x0101},
-		   Package (2) {"mipi-sdca-control-list", 0x00030110},  // Bitmap: 0x4 - Usage, 0x8 - Latency, 0x10 - ClusterIndex, 0x11 - DataPortIndex
-		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-control-0x4-subproperties", "C104" },
-						Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00" },
-						Package(2) {"mipi-sdca-control-0x10-subproperties", "C110"},
-						Package(2) {"mipi-sdca-control-0x11-subproperties", "C111"},
-						Package(2) {"mipi-sdca-terminal-clock-connection", "E033"},
-					},
-		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-terminal-dp-numbers","BUF2"},
-					}
-        }
-   }) //End AF04.E032
-	Name(BUF2, Buffer()
-				{
-					0x0, 0x1, // DP_Index: 0x0 DP_Num: 0x1
-				}) //End AF04.BUF2
-
-	Name(C104, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // Usage, Class, DC
-						Package(2) { "mipi-sdca-control-access-layer", 0x4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x1AE}, // Usage CBN, 430 (0x1ae) Full band and Near-ultrasound
-					}
-				}) //End AF04.C104
-
-	Name(C110, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // ClusterIndex, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 1},
-					}
-				}) //End AF04.C110
-
-	Name(C111, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // DataPortIndex, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 1},
-					}
-				}) //End AF04.C111
-
-   Name(E054, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-			Package (2) {"mipi-sdca-entity-type", 0x02},
-			Package (2) {"mipi-sdca-entity-label", "IT 26"}, //Ultrasound render stream
-			Package (2) {"mipi-sdca-terminal-type", 0x180},
-			Package (2) {"mipi-sdca-control-list", 0x00030110},  // Bitmap: 0x4 - Usage, 0x8 - Latency, 0x10 - ClusterIndex, 0x11 - DataPortIndex
-			ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-control-0x4-subproperties", "C204" },
-						Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00" },
-						Package(2) {"mipi-sdca-control-0x10-subproperties", "C210"},
-						Package(2) {"mipi-sdca-control-0x11-subproperties", "C211"},
-						Package(2) {"mipi-sdca-terminal-clock-connection", "E040"},
-					},
-			ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-terminal-dp-numbers","BUF4"},
-					}
-        }
-   }) //End AF04.E054
-	Name(BUF4, Buffer()
-				{
-					0x0, 0x5, // DP_Index: 0x0 DP_Num: 0x5
-				}) //End AF04.BUF4
-
-	Name(C204, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // Usage, Class, DC
-						Package(2) { "mipi-sdca-control-access-layer", 0x4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x1B8}, // Usage CBN, 440 (0x1b8) Full Band & Ultrasound40
-					}
-				}) //End AF04.C204
-
-	Name(C210, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // ClusterIndex, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 1},
-					}
-				}) //End AF04.C210
-
-	Name(C211, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // DataPortIndex, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 1},
-					}
-				}) //End AF04.C211
-
-
-	Name(E082, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x02},
-           Package (2) {"mipi-sdca-entity-label", "IT 29"},
-           Package (2) {"mipi-sdca-control-list", 0x10100}, // Bitmap: 0x8 - Latency, 0x10 - ClusterIndex
-           Package (2) {"mipi-sdca-terminal-type", 0x0280},
-        },
-        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-        Package () {
-           Package (2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
-		   Package (2) {"mipi-sdca-control-0x10-subproperties", "C045"},
-
-        }
-	}) //End AF04.E082
-
-	Name(C045, Package() {
-			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
 		Package()
 		{
-			// ClusterIndex, Class, DC:1
-			Package(2) {"mipi-sdca-control-access-layer", 4},
+			// Function_SDCA_Version = 1.0, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0x10},
+		}
+	}) //End AF04.C004
+
+	Name(C005, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Function_Topology = 0x1 Smart-Amp, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0x1},
+		}
+	}) //End AF04.C005
+
+	Name(C006, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Function_Manufacturer_ID = 0x025d, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0x025d},
+		}
+	}) //End AF04.C006
+
+	Name(C007, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Function_ID = 0x1320 (Device specific), Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0x1320},
+		}
+	}) //End AF04.C007
+
+	Name(C008, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Function_Version = 0x1, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0x1},
+		}
+	}) //End AF04.C008
+
+	Name(C042, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			//Commit_Group_Mask, Class, RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 0},
+		}
+	}) //End AF04.C042
+
+	Name(C043, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			//Function_Status, Class, RW1C
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 2},
+			Package(2) {"mipi-sdca-control-interrupt-position", 1}, //IntStat_SDCA_1
+		}
+	}) //End AF04.C043
+
+	Name(C044, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			//Function_Action, Class, RW1S
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 4},
+		}
+	}) //End AF04.C044
+
+	Name(EN40, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x30},
+			Package(2) {"mipi-sdca-entity-label", "TG 23"},
+			Package(2) {"mipi-sdca-control-list", 0x10000}, // Bitmap: 0x10-Tone Divider
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C020"},
+		}
+	}) //End AF04.EN40
+
+	Name(C020, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Tone Divider, Class, RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 0},
+		}
+	}) //End AF04.C020
+
+	Name(EN33, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x11},
+			Package(2) {"mipi-sdca-entity-label", "PDE 23"},
+			Package(2) {"mipi-sdca-control-list", 0x10002},
+			Package(2) {"mipi-sdca-powerdomain-managed-list", Package() {0x13} }, // OT23
+			Package(2)
+			{
+				"mipi-sdca-powerdomain-transition-typical-delay",
+				Package()
+				{
+					3, 0, 500000,
+					0, 3, 500000,
+				},
+			},
+			Package(2)
+			{
+				"mipi-sdca-powerdomain-transition-max-delay",
+				Package()
+				{
+					3, 0, 800000,
+					0, 3, 800000,
+				},
+			},
+		},
+        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+        Package()
+		{
+           Package(2) {"mipi-sdca-control-0x1-subproperties", "C001"}, // PDE23 Request PS0
+		   Package(2) {"mipi-sdca-control-0x10-subproperties", "C016"}, // PDE23 Actual PS0
+        }
+	}) //End AF04.EN33
+
+	Name(C001, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Requested_PS, Class, RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 0},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "PDER"},
+		}
+	}) //End AF04.C001
+
+	Name(PDER, Buffer()
+	{
+		0x01, 0x00, // Range type 0x0001
+		0x02, 0x00, // Count of ranges = 0x2
+		0x00, 0x00, 0x00, 0x00, // PS0
+		0x03, 0x00, 0x00, 0x00, // PS3
+	}) //End PDER
+
+	Name(C016, Package()
+	{
+        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Actual_PS, Class, RO
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 3},
+		}
+	}) //End AF04.C016
+
+	Name(EN13, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x03},
+			Package(2) {"mipi-sdca-entity-label", "OT 23"},
+			Package(2) {"mipi-sdca-terminal-type", 0x380}, // Primary full-range or woofer speaker transducer
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+			Package(2) {"mipi-sdca-control-list", 0x110 },  // Bitmap: 0x4-Usage, 0x8-Latency
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN43"}, // Input Pin 1 connected to FU 23
+			Package(2) {"mipi-sdca-control-0x4-subproperties", "C054"},
+			Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
+		}
+	}) //End AF04.EN13
+
+	Name(C054, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Usage, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "USG0"},
+		}
+	}) //End AF04.C054
+
+	Name(USG0, Buffer()
+	{
+		0x07, 0x00,  // Range type 0x0007 (Septuples)
+		0x01, 0x00,  // Count of ranges = 0x1
+		0x01, 0x00, 0x00, 0x00, // Usage Number
+		0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1AE) Full band and Near-ultrasound
+		0x00, 0x00, 0x00, 0x00, // Sample Rate, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Sample Width, 0 not report
+		0x00, 0x80, 0x00, 0x00, // Full Scale, -128.0dB (0x8000) not report actual value
+		0x00, 0x80, 0x00, 0x00, // Noise Floor, -128.0dB (0x8000) not report actual value
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+	}) //End USG0
+
+	Name(LC00, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Latency, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0},
+		}
+	}) //End AF04.LC00
+
+	Name(EN43, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x07},
+			Package(2) {"mipi-sdca-entity-label", "FU 23"},
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+			Package(2) {"mipi-sdca-control-list", 0x00010000}, // Bitmap: 0x10-Latency
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN42"}, // Input Pin 1 connected to UDMPU 23
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "LC00"},
+		}
+	}) //End EN43
+
+	Name(EN42, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x21},
+			Package(2) {"mipi-sdca-entity-label", "UDMPU 23"},
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+			Package(2) {"mipi-sdca-control-list", 0x00010040}, // Bitmap: 0x6-Latency, 0x10-ClusterIndex
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN50"}, // Input Pin 1 connected to MU 26
+			Package(2) {"mipi-sdca-control-0x6-subproperties", "LC00"},
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C4C1"},
+		}
+	}) //End EN42
+
+	Name(C4C1, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// ClusterIndex, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "CLM0"},
+		}
+	}) //End C4C1
+
+	Name(CLM0, Buffer()
+	{
+		0x02, 0x00,  // Range type 2 parameters
+		0x01, 0x00,  // Count of ranges = 0x1
+		0x01, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, // Cluster Index = 0x1,  Cluster ID = 0x03
+	}) //End CLM0
+
+	Name(EN50, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x05},
+			Package(2) {"mipi-sdca-entity-label", "MU 26"},
+			Package(2) {"mipi-sdca-control-list", 0x2},
+			Package(2) {"mipi-sdca-input-pin-list", 0x6},  // Input Pin 1,2 connected
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN29"},   // Input Pin 1 connected to SAPU 29
+			Package(2) {"mipi-sdca-input-pin-2", "EN26"},   // Input Pin 2 connected to FU 26
+			Package(2) {"mipi-sdca-control-0x1-subproperties", "C031"},
+		}
+	}) //End AF04.EN50
+
+	Name(C031, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Mixer, Class, DC, The Q7.8dB format used for MU Controls represents the gain range −128 dB to +127.996 dB
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-cn-0-dc-value", 0x0000},	// Input Pin 1, Ch 1 => Output Pin 1, Ch 1 => 0dB unmute
+			Package(2) {"mipi-sdca-control-cn-1-dc-value", 0x8000},	// Input Pin 1, Ch 1 => Output Pin 1, Ch 2 => -128dB mute
+			Package(2) {"mipi-sdca-control-cn-2-dc-value", 0x8000},	// Input Pin 1, Ch 2 => Output Pin 1, Ch 1 => -128dB mute
+			Package(2) {"mipi-sdca-control-cn-3-dc-value", 0x0000},	// Input Pin 1, Ch 2 => Output Pin 1, Ch 2 => 0dB unmute
+			Package(2) {"mipi-sdca-control-cn-4-dc-value", 0x0000},	// Input Pin 2, Ch 1 => Output Pin 1, Ch 1 => 0dB unmute
+			Package(2) {"mipi-sdca-control-cn-5-dc-value", 0x8000},	// Input Pin 2, Ch 1 => Output Pin 1, Ch 2 => -128dB mute
+			Package(2) {"mipi-sdca-control-cn-6-dc-value", 0x8000},	// Input Pin 2, Ch 2 => Output Pin 1, Ch 1 => -128dB mute
+			Package(2) {"mipi-sdca-control-cn-7-dc-value", 0x0000},	// Input Pin 2, Ch 2 => Output Pin 1, Ch 2 => 0dB unmute
+		}
+	}) //End AF04.C031
+
+	Name(EN29, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x24},
+			Package(2) {"mipi-sdca-entity-label", "SAPU 29"},
+			Package(2) {"mipi-sdca-control-list", 0x30000},
+			Package(2) {"mipi-sdca-input-pin-list", 0x6}, // Input Pin 1,2 connected
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-0x11-subproperties", "C018"}, // Protection_Status
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C019"}, // Protection_Mode
+			Package(2) {"mipi-sdca-input-pin-1", "EN22"}, // Input Pin 1 connected to XU22
+			Package(2) {"mipi-sdca-input-pin-2", "EN52"}, // Input Pin 2 connected to IT29
+		}
+	}) //End AF04.EN29
+
+	Name(C018, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Protection_Status, Class, RO
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 3},
+		}
+	}) //End AF04.C018
+
+	Name(C019, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Protection_Mode, Class, RO
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 3},
+			Package(2) {"mipi-sdca-control-interrupt-position", 0},  // SDCA Interrupt Bit 0
+		}
+	}) //End AF04.C019
+
+	Name(EN22, Package()
+	{
+        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+        Package()
+		{
+            Package(2) {"mipi-sdca-entity-type", 0x0A},
+            Package(2) {"mipi-sdca-entity-label", "XU 22"},
+            //Package(2) {"mipi-sdca-control-list", 0x7D0002},
+            Package(2) {"mipi-sdca-control-list", 0x0002},
+		    Package(2) {"mipi-sdca-input-pin-list", 0x6}, // Input Pin 1,2 connected
+        },
+        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+        Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN31"},   // Input Pin 1 connected to MFPU 21
+			Package(2) {"mipi-sdca-input-pin-2", "EN52"},   // Input Pin 2 connected to IT 29
+            Package(2) {"mipi-sdca-control-0x1-subproperties", "C023"}, //Bypass
+            // Package(2) {"mipi-sdca-control-0x10-subproperties", "C024"}, //FDL_CurrentOwner
+            // Package(2) {"mipi-sdca-control-0x12-subproperties", "C025"}, //FDL_MessageOffset
+            // Package(2) {"mipi-sdca-control-0x13-subproperties", "C026"}, //FDL_MessageLength
+            // Package(2) {"mipi-sdca-control-0x14-subproperties", "C027"}, //FDL_Status
+            // Package(2) {"mipi-sdca-control-0x15-subproperties", "C028"}, //FDL_Set_Index
+            // Package(2) {"mipi-sdca-control-0x16-subproperties", "C029"}, //FDL_Host_Request
+        }
+	}) //End AF04.EN22
+
+	Name(C023, Package()
+	{	//Bypass
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Bypass, Class, R/W
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 0},
+		}
+	}) //End AF04.C023
+
+	// Name(C024, Package()
+	// {	//FDL_CurrentOwner
+	// 	Package()
+	// 	{   // FDL_CurrentOwner, Class, RW1C
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 2},
+	// 		Package(2) {"mipi-sdca-control-interrupt-position", 2}, //IntStat_SDCA_2
+	// 	}
+	// }) //End AF04.C024
+
+	// Name(C025, Package()
+	// {	//FDL_MessageOffset
+	// }) //End AF04.C025
+
+	// Name(C026, Package()
+	// {	//FDL_MessageLength
+	// }) //End AF04.C026
+
+	// Name(C027, Package()
+	// {	//FDL_Status
+	// }) //End AF04.C027
+
+	// Name(C028, Package()
+	// {	//FDL_Set_Index
+	// }) //End AF04.C028
+
+	// Name(C029, Package()
+	// {	//FDL_Host_Request
+	// }) //End AF04.C029
+
+	Name(EN31, Package()
+	{
+        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+        Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x22},
+			Package(2) {"mipi-sdca-entity-label", "MFPU 21"},
+			//Package(2) {"mipi-sdca-control-list", 0x10232}, // for Full MFPU, 0x1-Bypass, 0x4-Algorithm_Ready, 0x5-Algorithm_Enable, 0x9-Algorithm_Prepare, 0x10-ClusterIndex
+			Package(2) {"mipi-sdca-control-list", 0x2}, // for Null MFPU, 0x1-Bypass
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+        },
+        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+        Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN03"}, // Input Pin 1 connected to FU 21
+			Package(2) {"mipi-sdca-control-0x1-subproperties", "C048"}, // Bypass
+			// Package(2) {"mipi-sdca-control-0x4-subproperties", "C013"}, // Algorithm_Ready
+			// Package(2) {"mipi-sdca-control-0x5-subproperties", "C014"}, // Algorithm_Enable
+			// Package(2) {"mipi-sdca-control-0x9-subproperties", "C015"}, // Algorithm_Prepare
+			// Package(2) {"mipi-sdca-control-0x10-subproperties", "CXXX"}, // ClusterIndex
+        }
+	}) //End AF04.EN31
+
+	Name(C048, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Bypass, Class, DC:1 (Null MFPU)
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
 			Package(2) {"mipi-sdca-control-access-mode", 5},
 			Package(2) {"mipi-sdca-control-dc-value", 1},
 		}
+	}) //End AF04.C048
+
+	// Name(C048, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// Bypass, Class, RW (Full MFPU)
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 0},
+	// 	}
+	// }) //End AF04.C048
+
+	// Name(C013, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// Algorithm_Ready, Class, RO (Full MFPU)
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 3},
+	// 	}
+	// }) //End AF04.C013
+
+	// Name(C014, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// Algorithm_Enable, Class, RW (Full MFPU)
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 0},
+	// 	}
+	// }) //End AF04.C014
+
+	// Name(C015, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// Algorithm_Prepare, Class, RW (Full MFPU)
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 0},
+	// 	}
+	// }) //End AF04.C015
+
+	Name(EN03, Package()
+	{
+        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+        Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x07},
+			Package(2) {"mipi-sdca-entity-label", "FU 21"},
+			//Package(2) {"mipi-sdca-control-list", 0x406}, // Bitmap: 0x1-Mute, 0x2-Volume, 0xA-Loudness
+			Package(2) {"mipi-sdca-control-list", 0x06}, // Bitmap: 0x1-Mute, 0x2-Volume
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+        },
+        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+        Package()
+		{
+			Package(2) {"mipi-sdca-control-0x1-subproperties", "C009"}, //User FU Mute
+			Package(2) {"mipi-sdca-control-0x2-subproperties", "C003"}, //User FU Volume
+			//Package(2) {"mipi-sdca-control-0xA-subproperties", "C010"}, //User FU Loudness
+			Package(2) {"mipi-sdca-input-pin-1", "EN04"},
+        }
+	}) //End AF04.EN03
+
+	Name(C009, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Mute, User, Dual-ranked RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x1},
+			Package(2) {"mipi-sdca-control-access-mode", 1},
+			Package(2) {"mipi-sdca-control-cn-list", 0x6},
+		}
+	}) //End AF04.C009
+
+	Name(C003, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Volume, User, Dual-ranked RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x1},
+			Package(2) {"mipi-sdca-control-access-mode", 1},
+			Package(2) {"mipi-sdca-control-default-value", 0x0000},
+			//Package(2) {"mipi-sdca-control-fixed-value", 0x0000},
+			Package(2) {"mipi-sdca-control-cn-list", 0x6},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range","BUF2"},
+		}
+	}) //End AF04.C003
+
+	Name(BUF2, Buffer()
+	{
+		0x03, 0x00,  // Range type 0x0003 (Triples)
+		0x01, 0x00,  // Count of ranges = 0x1
+		0xC0, 0xBE, 0x00, 0x00,  // Min =0x0000BEC0, -65.25dB
+		0x00, 0x00, 0x00, 0x00,  // Max =0x00000000, 0dB
+		0xC0, 0x00, 0x00, 0x00,  // Step =0x000000C0, -0.75dB/step
+	}) //End AF04.BUF2
+
+	// Name(C010, Package()
+	// {	// Loudness
+	// }) //End AF04.C010
+
+	Name(EN04, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x25},
+			Package(2) {"mipi-sdca-entity-label", "PPU 21"},
+			//Package(2) {"mipi-sdca-control-list", 0xD0000}, // Bitmap: 0x10-PostureNumber, 0x12-HorizontalBalance, 0x13-VerticalBalance
+			Package(2) {"mipi-sdca-control-list", 0x10000}, // Bitmap: 0x10-PostureNumber
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN20" },   // Input Pin 1 connected to IT21
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C032"}, // PostureNumber
+			//Package(2) {"mipi-sdca-control-0x12-subproperties", "C033"}, // HorizontalBalance
+			//Package(2) {"mipi-sdca-control-0x13-subproperties", "C034"}, // VerticalBalance
+		}
+	}) //End AF04.EN04
+
+	Name(C032, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// PostureNumber, Class, Dual-ranked RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 1},
+			//Package(2) {"mipi-sdca-control-dc-value", 1},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "PSM1"},
+		}
+	}) //End AF04.C032
+
+	Name(PSM1, Buffer()
+	{
+		0x0B, 0x00,  // Range type 0x000B (Septuples)
+		0x04, 0x00,  // Count of ranges = 0x4 (4-posture number)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Pitch Min (0), Pitch Max (359)
+		0x3C, 0x01, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, // Roll Min (316), Roll Max (45)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
+		0x00, 0x00, 0x00, 0x00, // System Extension Value
+		0x00, 0x00, 0x00, 0x00, // Posture Number = 0x00 (L, R)
+		0x10, 0x00, 0x00, 0x00, // Cluster ID
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Pitch Min (0), Pitch Max (359)
+		0x2E, 0x00, 0x00, 0x00, 0x87, 0x00, 0x00, 0x00, // Roll Min (46), Roll Max (135)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
+		0x00, 0x00, 0x00, 0x00, // System Extension Value
+		0x08, 0x00, 0x00, 0x00, // Posture Number = 0x08 (L+R/2)
+		0x11, 0x00, 0x00, 0x00, // Cluster ID
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Pitch Min (0), Pitch Max (359)
+		0x88, 0x00, 0x00, 0x00, 0xE1, 0x00, 0x00, 0x00, // Roll Min (136), Roll Max (225)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
+		0x00, 0x00, 0x00, 0x00, // System Extension Value
+		0x01, 0x00, 0x00, 0x00, // Posture Number = 0x01 (R, L)
+		0x12, 0x00, 0x00, 0x00, // Cluster ID
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Pitch Min (0), Pitch Max (359)
+		0xE2, 0x00, 0x00, 0x00, 0x3B, 0x01, 0x00, 0x00, // Roll Min (226), Roll Max (315)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
+		0x00, 0x00, 0x00, 0x00, // System Extension Value
+		0x08, 0x00, 0x00, 0x00, // Posture Number = 0x08 (L+R/2)
+		0x13, 0x00, 0x00, 0x00, // Cluster ID
+	}) //End PSM1
+
+	// Name(C033, Package()
+	// {	// HorizontalBalance
+	// }) //End AF04.C033
+
+	// Name(C034, Package()
+	// {	// VerticalBalance
+	// }) //End AF04.C034
+
+	Name(EN20, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x02},
+			Package(2) {"mipi-sdca-entity-label", "IT 21"}, //Speaker render stream
+			Package(2) {"mipi-sdca-terminal-type", 0x0101}, // Generic Sink Data Port
+			Package(2) {"mipi-sdca-control-list", 0x00030110},  // Bitmap: 0x4-Usage, 0x8-Latency, 0x10-ClusterIndex, 0x11-DataPortIndex
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-0x4-subproperties", "C104"},
+			Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C110"},
+			Package(2) {"mipi-sdca-control-0x11-subproperties", "C111"},
+			Package(2) {"mipi-sdca-terminal-clock-connection", "EN21"},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-terminal-dp-numbers","BUF3"},
+		}
+	}) //End AF04.EN20
+
+	Name(BUF3, Buffer()
+	{
+		0x0, 0x1, // DP_Index: 0x0 DP_Num: 0x1
+	}) //End AF04.BUF3
+
+	Name(C104, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Usage, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "USG1"},
+		}
+	}) //End AF04.C104
+
+	Name(USG1, Buffer()
+	{
+		0x07, 0x00,  // Range type 0x0007 (Septuples)
+		0x04, 0x00,  // Count of ranges = 0x4
+		0x01, 0x00, 0x00, 0x00, // Usage Number
+		0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1ae) Full band and Near-ultrasound
+		0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
+		0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
+		0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+                0x01, 0x00, 0x00, 0x00, // Usage Number
+		0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1ae) Full band and Near-ultrasound
+		0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
+		0x10, 0x00, 0x00, 0x00, // Sample Width, 16-bits (0x10)
+		0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+		// add the others if we want to support a different usage
+		// this table must be sync'd up with Usage table of OT 24 and the Sample rate index table of CS 21
+		0x01, 0x00, 0x00, 0x00, // Usage Number
+		0xe0, 0x01, 0x00, 0x00, // Usage CBN, 480 (0x1e0) HiFi Full band & Ultrasound40
+		0x00, 0x77, 0x01, 0x00, // Sample Rate, 96000Hz (0x17700)
+		0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
+		0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+		0x01, 0x00, 0x00, 0x00, // Usage Number
+		0xe0, 0x01, 0x00, 0x00, // Usage CBN, 480 (0x1e0) HiFi Full band & Ultrasound40
+		0x00, 0x77, 0x01, 0x00, // Sample Rate, 96000Hz (0x17700)
+		0x10, 0x00, 0x00, 0x00, // Sample Width, 16-bits (0x10)
+		0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+	}) //End USG1
+
+	Name(C110, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// ClusterIndex, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "CLM1"},
+		}
+	}) //End AF04.C110
+
+	Name(CLM1, Buffer()
+	{
+		0x02, 0x00,  // Range type 2 parameters
+		0x01, 0x00,  // Count of ranges = 0x1
+		0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, // Cluster Index = 0x01,  Cluster ID = 0x01
+	}) //End CLM1
+
+	Name(C111, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// DataPortIndex, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0},
+		}
+	}) //End AF04.C111
+
+	Name(EN21, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x0b},
+			Package(2) {"mipi-sdca-entity-label", "CS 21"},
+			Package(2) {"mipi-sdca-cs-type", 0},
+			Package(2) {"mipi-sdca-control-list", 0x10000},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C021"},
+		}
+	}) //End AF04.EN21
+
+	Name(C021, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Sample_Freq_Index, Class, RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 0},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range","BUF4"},
+		}
+	}) //End AF04.C021
+
+	Name(BUF4, Buffer()
+	{
+		0x02, 0x00,  // Range type 0x0002 (Pairs)
+		0x02, 0x00,  // Count of ranges = 0x2
+		//0x08, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // 0x00000008, 0x0000AC44(44100)
+		0x09, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // 0x00000009, 0x0000BB80(48000)
+		0x0B, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // 0x0000000B, 0x00017700(96000)
+		//0x0d, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // 0x0000000d, 0x0002EE00(192000)
+	}) //End AF04.BUF4
+
+	Name(EN52, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x02},
+			Package(2) {"mipi-sdca-entity-label", "IT 29"},
+			Package(2) {"mipi-sdca-control-list", 0x10110}, // Bitmap: 0x4-Usage, 0x8-Latency, 0x10-ClusterIndex
+			Package(2) {"mipi-sdca-terminal-type", 0x0280},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-0x4-subproperties", "C680"},
+			Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C045"},
+
+		}
+	}) //End AF04.EN52
+
+	Name(C680, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Usage, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "USG2"},
+		}
+	}) //End C680
+
+	Name(USG2, Buffer()
+	{
+		0x07, 0x00,  // Range type 0x0007 (Septuples)
+		0x01, 0x00,  // Count of ranges = 0x1
+		0x01, 0x00, 0x00, 0x00, // Usage Number
+		0x64, 0x02, 0x00, 0x00, // Usage CBN, 612 (0x264) IV-Sense (2 Transducer)
+		0x00, 0x00, 0x00, 0x00, // Sample Rate, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Sample Width, 0 not report
+		0x00, 0x80, 0x00, 0x00, // Full Scale, -128.0dB (0x8000) not report actual value
+		0x00, 0x80, 0x00, 0x00, // Noise Floor, -128.0dB (0x8000) not report actual value
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+	}) //End USG2
+
+	Name(C045, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// ClusterIndex, Class, DC:1
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "CLM2"},
+		}
 	}) //End AF04.C045
 
+	Name(CLM2, Buffer()
+	{
+		0x02, 0x00,  // Range type 2 parameters
+		0x03, 0x00,  // Count of ranges = 0x3
+		0x01, 0x00, 0x00, 0x00, 0x41, 0x00, 0x00, 0x00, // Cluster Index = 0x01,  Cluster ID = 0x41
+		0x23, 0x00, 0x00, 0x00, 0x41, 0x00, 0x00, 0x00, // Cluster Index = 0x23,  Cluster ID = 0x41
+		0x24, 0x00, 0x00, 0x00, 0x42, 0x00, 0x00, 0x00, // Cluster Index = 0x24,  Cluster ID = 0x42
+	}) //End CLM2
 
-	Name(E019, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x03},
-           Package (2) {"mipi-sdca-entity-label", "OT 23"}, //Primary transducer
-           Package (2) {"mipi-sdca-terminal-type", 0x380},
-		   Package (2) {"mipi-sdca-input-pin-list", 0x2},
-		   Package (2) {"mipi-sdca-control-list", 0x110 },  // Bitmap: 0x4-Usage, 0x8-Latency
-		   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-input-pin-1", "E080"}, //MU 26
-						Package(2) {"mipi-sdca-powerdomain-entity", "E051"}, //PDE 23
-						Package(2) {"mipi-sdca-control-0x4-subproperties", "C054"},
-						Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
-					}
-        }
-	}) //End AF04.E019
-
-	Name(C054, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // Usage, Class, DC:60h
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x60},
-					}
-				}) //End AF04.C054
-
-	Name(E023, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x03},
-           Package (2) {"mipi-sdca-entity-label", "OT 27"}, //Secondery transducer
-           Package (2) {"mipi-sdca-terminal-type", 0x189},
-		   Package (2) {"mipi-sdca-input-pin-list", 0x2},
-		   Package (2) {"mipi-sdca-control-list", 0x110 },  // Bitmap: 0x4-Usage, 0x8-Latency
+	Name(EN15, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x03},
+			Package(2) {"mipi-sdca-entity-label", "OT 25"}, //Reference stream
+			Package(2) {"mipi-sdca-terminal-type", 0x0188}, // Reference Stream Source Data Port
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+			Package(2) {"mipi-sdca-control-list", 0x00020110}, // Bitmap: 0x4-Usage, 0x8-Latency, 0x11-DataPortIndex
+		},
 		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-input-pin-1", "E080"}, //MU 26
-						Package(2) {"mipi-sdca-powerdomain-entity", "E039"}, //PDE 27
-						Package(2) {"mipi-sdca-control-0x4-subproperties", "C154"},
-						Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
-					},
-        }
-	}) //End AF04.E023
-
-	Name(C154, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // Usage, Class, DC:60h
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x60},
-					}
-				}) //End AF04.C154
-
-
-	Name(E020, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x03},
-           Package (2) {"mipi-sdca-entity-label", "OT 24"}, //Speaker Sense
-           Package (2) {"mipi-sdca-terminal-type", 0x280},
-		   Package (2) {"mipi-sdca-input-pin-list", 0x2},
-		   Package (2) {"mipi-sdca-control-list", 0x00020110}, // Bitmap: 0x4 - Usage, 0x8 - Latency, 0x11 - DataPortIndex
-		   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-input-pin-1", "E082"}, //IT 29
-						Package(2) {"mipi-sdca-control-0x4-subproperties", "C340"},
-						Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
-						Package(2) {"mipi-sdca-control-0x11-subproperties", "C341"},
-					},
-			ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-terminal-dp-numbers","BUFA"},
-					}
-        }
-	}) //End AF04.E020
-
-	Name(BUFA, Buffer()
-				{
-					0x0, 0x2, // DP_Index: 0x0 DP_Num: 0x2
-				}) //End AF04.BUFA
-
-	Name(C340, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // Usage, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x264}, // Usage CBN, 612 (0x264) IV-Sense (2 Transducer)
-					}
-				}) //End AF04.C340
-
-	Name(C341, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // DataPortIndex, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 1},
-					}
-				}) //End AF04.C341
-
-	Name(E021, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x03},
-           Package (2) {"mipi-sdca-entity-label", "OT 25"}, //Reference stream
-           Package (2) {"mipi-sdca-terminal-type", 0x0188},
-		   Package (2) {"mipi-sdca-input-pin-list", 0x2},
-		   Package (2) {"mipi-sdca-control-list", 0x00020110}, // Bitmap: 0x4 - Usage, 0x8 - Latency, 0x11 - DataPortIndex
-		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-input-pin-1", "E080"}, //MU 26
-						Package(2) {"mipi-sdca-terminal-clock-connection", "E033"},
-						Package(2) {"mipi-sdca-control-0x4-subproperties", "C440"},
-						Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
-						Package(2) {"mipi-sdca-control-0x11-subproperties", "C441"},
-					},
+		Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN44"}, // Input Pin 1 connected to UDMPU 25
+			Package(2) {"mipi-sdca-terminal-clock-connection", "EN21"},
+			Package(2) {"mipi-sdca-control-0x4-subproperties", "C440"},
+			Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
+			Package(2) {"mipi-sdca-control-0x11-subproperties", "C441"},
+		},
 		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-terminal-dp-numbers","BUF8"},
-					}
-        }
-	}) //End AF04.E021
+		Package()
+		{
+			Package(2) {"mipi-sdca-terminal-dp-numbers","BUF5"},
+		}
+	}) //End AF04.EN15
 
-	Name(BUF8, Buffer()
-				{
-					0x0, 0x4, // DP_Index: 0x0 DP_Num: 0x4
-				}) //End AF04.BUF8
+	Name(BUF5, Buffer()
+	{
+		0x0, 0x4, // DP_Index: 0x0 DP_Num: 0x4
+	}) //End AF04.BUF5
 
 	Name(C440, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // Usage, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x2BC}, // Usage CBN, 700 (0x2BC) Reference Stream
-					}
-				}) //End AF04.C440
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Usage, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1}, // Usage CBN, 700 (0x2BC) Reference Stream
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "USG3"},
+		}
+	}) //End AF04.C440
+
+	Name(USG3, Buffer()
+	{
+		0x07, 0x00,  // Range type 0x0007 (Septuples)
+		0x04, 0x00,  // Count of ranges = 0x4
+		0x01, 0x00, 0x00, 0x00, // Usage Number
+		0xBC, 0x02, 0x00, 0x00, // Usage CBN, 700 (0x2BC) Reference Stream
+		0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
+		0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
+		0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+                0x01, 0x00, 0x00, 0x00, // Usage Number
+		0xBC, 0x02, 0x00, 0x00, // Usage CBN, 700 (0x2BC) Reference Stream
+		0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
+		0x10, 0x00, 0x00, 0x00, // Sample Width, 16-bits (0x10)
+		0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+		// add the others if we want to support a different usage
+		// this table must be sync'd up with Usage table of OT 21 and the Sample rate index table of CS 21
+		0x01, 0x00, 0x00, 0x00, // Usage Number
+		0xBC, 0x02, 0x00, 0x00, // Usage CBN, 700 (0x2BC) Reference Stream
+		0x00, 0x77, 0x01, 0x00, // Sample Rate, 96000Hz (0x17700)
+		0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
+		0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+                0x01, 0x00, 0x00, 0x00, // Usage Number
+		0xBC, 0x02, 0x00, 0x00, // Usage CBN, 700 (0x2BC) Reference Stream
+		0x00, 0x77, 0x01, 0x00, // Sample Rate, 96000Hz (0x17700)
+		0x10, 0x00, 0x00, 0x00, // Sample Width, 16-bits (0x10)
+		0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+	}) //End USG3
 
 	Name(C441, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // DataPortIndex, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 1},
-					}
-				}) //End AF04.C441
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// DataPortIndex, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0},
+		}
+	}) //End AF04.C441
 
-	Name(E056, Package() {
-        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-        Package () {
-           Package (2) {"mipi-sdca-entity-type", 0x03},
-           Package (2) {"mipi-sdca-entity-label", "OT 127"}, //Companion Data Output
-           Package (2) {"mipi-sdca-terminal-type", 0x192},
-		   Package (2) {"mipi-sdca-input-pin-list", 0x2},
-		   Package (2) {"mipi-sdca-control-list", 0x00020110}, // Bitmap: 0x4 - Usage, 0x8 - Latency, 0x11 - DataPortIndex
+	Name(EN44, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x21},
+			Package(2) {"mipi-sdca-entity-label", "UDMPU 25"},
+			//Package(2) {"mipi-sdca-input-pin-list", 0x6}, // Input Pin 1/2 connected
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+			//Package(2) {"mipi-sdca-control-list", Package() {0x6, 0x10} }, // Latency, ClusterIndex
+			Package(2) {"mipi-sdca-control-list", 0x00010040}, // Bitmap: 0x6-Latency, 0x10-ClusterIndex
+		},
 		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-input-pin-1", "E080"}, //MU 26
-						Package(2) {"mipi-sdca-control-0x4-subproperties", "C540"},
-						Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
-						Package(2) {"mipi-sdca-control-0x11-subproperties", "C541"},
-					},
+		Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN43"}, // Input Pin 1 connected to FU 23
+			//Package(2) {"mipi-sdca-input-pin-2", "EN61"}, // Input Pin 2 connected to FU 27
+			//Package(2) {"mipi-sdca-input-pin-2", "EN63"}, // Input Pin 2 connected to FU 127
+			Package(2) {"mipi-sdca-control-0x6-subproperties", "LC00"},
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C4C4"},
+		}
+	}) //End EN44
+
+	Name(C4C4, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// ClusterIndex, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1},
+		},
 		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-					Package()
-					{
-						Package(2) {"mipi-sdca-terminal-dp-numbers","BUF6"},
-					}
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "CLM3"},
+		}
+	}) //End C4C4
+
+	Name(CLM3, Buffer()
+	{
+		0x02, 0x00,  // Range type 2 parameters
+		0x01, 0x00,  // Count of ranges = 0x1
+		0x01, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, // Cluster Index = 0x1,  Cluster ID = 0x06
+	}) //End CLM3
+
+	Name(EN26, Package()
+	{
+        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+        Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x07},
+			Package(2) {"mipi-sdca-entity-label", "FU 26"},
+			Package(2) {"mipi-sdca-control-list", 0x802}, // Bitmap: 0x1-Mute, 0xB-Channel Gain
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+        },
+        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+        Package()
+		{
+			Package(2) {"mipi-sdca-control-0x1-subproperties", "C011"}, // Platform FU Mute
+			Package(2) {"mipi-sdca-control-0xB-subproperties", "C012"}, // Platform FU Channel Gain
+			Package(2) {"mipi-sdca-input-pin-1", "EN32"}, // Input Pin 1 connected to MFPU 26
         }
-	}) //End AF04.E056
+	}) //End AF04.EN26
+
+	Name(C011, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Mute, Platform, RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x8},
+			Package(2) {"mipi-sdca-control-access-mode", 0},
+			Package(2) {"mipi-sdca-control-fixed-value", 0x0000},
+			Package(2) {"mipi-sdca-control-cn-list", 0x6},
+		}
+	}) //End AF04.C011
+
+	Name(C012, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Channel Gain, Platform, RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x8},
+			Package(2) {"mipi-sdca-control-access-mode", 0},
+			//Package(2) {"mipi-sdca-control-default-value", 0x0000},
+			Package(2) {"mipi-sdca-control-fixed-value", 0x0000},
+			Package(2) {"mipi-sdca-control-cn-list", 0x6},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range","BUF6"},
+		}
+	}) //End AF04.C012
+
 	Name(BUF6, Buffer()
-				{
-					0x0, 0x6, // DP_Index: 0x0 DP_Num: 0x6
-				}) //End AF04.BUF6
+	{
+		0x03, 0x00,  // Range type 0x0003 (Triples)
+		0x01, 0x00,  // Count of ranges = 0x1
+		0xC0, 0xBE, 0x00, 0x00,  // Min =0x0000BEC0, -65.25dB
+		0x00, 0x00, 0x00, 0x00,  // Max =0x00000000, 0dB
+		0xC0, 0x00, 0x00, 0x00,  // Step =0x000000C0, -0.75dB/step
+	}) //End AF04.BUF6
 
-	Name(C540, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // Usage, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0x32A}, // Usage CBN, 810 (0x32A) Companion Amp Data Out
-					}
-				}) //End AF04.C540
+	Name(EN32, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x22},
+			Package(2) {"mipi-sdca-entity-label", "MFPU 26"},
+			Package(2) {"mipi-sdca-control-list", 0x00000002}, // Bitmap: 0x1-Bypass
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+        Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN06"}, // Input Pin 1 connected to PPU 26
+			Package(2) {"mipi-sdca-control-0x1-subproperties", "C049"}, //Bypass
+		}
+	}) //End AF04.EN32
 
-	Name(C541, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // DataPortIndex, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 1},
-					}
-				}) //End AF04.C541
+	Name(C049, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Bypass, Class, DC:1 (Null MFPU)
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1},
+		}
+	}) //End AF04.C049
 
-	Name(LC00, Package()
-				{
-					ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-					Package()
-					{ // Latency, Class, DC
-						Package(2) {"mipi-sdca-control-access-layer", 4 },
-						Package(2) {"mipi-sdca-control-access-mode", 5},
-						Package(2) {"mipi-sdca-control-dc-value", 0},
-					}
-	}) //End AF04.LC00
-}
+	Name(EN06, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x25},
+			Package(2) {"mipi-sdca-entity-label", "PPU 26"},
+			//Package(2) {"mipi-sdca-control-list", 0xD0000}, // Bitmap: 0x10-PostureNumber, 0x12-HorizontalBalance, 0x13-VerticalBalance
+			Package(2) {"mipi-sdca-control-list", 0x10000}, // Bitmap: 0x10-PostureNumber
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN36" },   // Input Pin 1 connected to IT26
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C035"}, // PostureNumber
+			//Package(2) {"mipi-sdca-control-0x12-subproperties", "C036"}, // HorizontalBalance
+			//Package(2) {"mipi-sdca-control-0x13-subproperties", "C037"}, // VerticalBalance
+		}
+	}) //End AF04.EN06
+
+	Name(C035, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// PostureNumber, Class, Dual-ranked RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 1},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "PSM2"},
+		}
+	}) //End AF04.C035
+
+	Name(PSM2, Buffer()
+	{
+		0x0B, 0x00,  // Range type 0x000B (Septuples)
+		0x04, 0x00,  // Count of ranges = 0x4 (4-posture number)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Pitch Min (0), Pitch Max (359)
+		0x3C, 0x01, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, // Roll Min (316), Roll Max (45)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
+		0x00, 0x00, 0x00, 0x00, // System Extension Value
+		0x00, 0x00, 0x00, 0x00, // Posture Number = 0x00 (L, R)
+		0x20, 0x00, 0x00, 0x00, // Cluster ID
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Pitch Min (0), Pitch Max (359)
+		0x2E, 0x00, 0x00, 0x00, 0x87, 0x00, 0x00, 0x00, // Roll Min (46), Roll Max (135)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
+		0x00, 0x00, 0x00, 0x00, // System Extension Value
+		0x08, 0x00, 0x00, 0x00, // Posture Number = 0x08 (L+R/2)
+		0x21, 0x00, 0x00, 0x00, // Cluster ID
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Pitch Min (0), Pitch Max (359)
+		0x88, 0x00, 0x00, 0x00, 0xE1, 0x00, 0x00, 0x00, // Roll Min (136), Roll Max (225)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
+		0x00, 0x00, 0x00, 0x00, // System Extension Value
+		0x01, 0x00, 0x00, 0x00, // Posture Number = 0x01 (R, L)
+		0x22, 0x00, 0x00, 0x00, // Cluster ID
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Pitch Min (0), Pitch Max (359)
+		0xE2, 0x00, 0x00, 0x00, 0x3B, 0x01, 0x00, 0x00, // Roll Min (226), Roll Max (315)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // Yaw Min (0), Yaw Max (359)
+		0x00, 0x00, 0x00, 0x00, 0x67, 0x01, 0x00, 0x00, // HingeAngle Min (0), HingeAngle Max (359)
+		0x00, 0x00, 0x00, 0x00, // System Extension Value
+		0x08, 0x00, 0x00, 0x00, // Posture Number = 0x08 (L+R/2)
+		0x23, 0x00, 0x00, 0x00, // Cluster ID
+	}) //End PSM2
+
+	// Name(C036, Package()
+	// {	// HorizontalBalance
+	// }) //End AF04.C036
+
+	// Name(C037, Package()
+	// {	// VerticalBalance
+	// }) //End AF04.C037
+
+	Name(EN36, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x02},
+			Package(2) {"mipi-sdca-entity-label", "IT 26"}, //Ultrasound render stream
+			Package(2) {"mipi-sdca-terminal-type", 0x180}, // Ultrasound Sink Data Port
+			Package(2) {"mipi-sdca-control-list", 0x00030110},  // Bitmap: 0x4-Usage, 0x8-Latency, 0x10-ClusterIndex, 0x11-DataPortIndex
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-0x4-subproperties", "C204"},
+			Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C210"},
+			Package(2) {"mipi-sdca-control-0x11-subproperties", "C211"},
+			Package(2) {"mipi-sdca-terminal-clock-connection", "EN28"},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-terminal-dp-numbers","BUF7"},
+		},
+	}) //End AF04.EN36
+
+	Name(BUF7, Buffer()
+	{
+		0x0, 0x5, // DP_Index: 0x0 DP_Num: 0x5
+	}) //End AF04.BUF7
+
+	Name(C204, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Usage, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "USG4"},
+		}
+	}) //End AF04.C204
+
+	Name(USG4, Buffer()
+	{
+		0x07, 0x00,  // Range type 0x0007 (Septuples)
+		0x01, 0x00,  // Count of ranges = 0x1
+		0x01, 0x00, 0x00, 0x00, // Usage Number
+		0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1ae) Full band and Near-ultrasound
+		0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
+		0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
+		0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+		// 0x01, 0x00, 0x00, 0x00, // Usage Number
+		// 0xe0, 0x01, 0x00, 0x00, // Usage CBN, 480 (0x1e0) HiFi Full band & Ultrasound40
+		// 0x00, 0x77, 0x01, 0x00, // Sample Rate, 96000Hz (0x17700)
+		// 0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
+		// 0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		// 0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		// 0x00, 0x00, 0x00, 0x00, // Usage Tag
+	}) //End USG4
+
+	Name(C210, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// ClusterIndex, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "CLM4"},
+		}
+	}) //End AF04.C210
+
+	Name(CLM4, Buffer()
+	{
+		0x02, 0x00,  // Range type 2 parameters
+		0x01, 0x00,  // Count of ranges = 0x1
+		0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, // Cluster Index = 0x01,  Cluster ID = 0x02
+	}) //End CLM4
+
+	Name(C211, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// DataPortIndex, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0},
+		}
+	}) //End AF04.C211
+
+	Name(EN28, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x0b},
+			Package(2) {"mipi-sdca-entity-label", "CS 26"},
+			Package(2) {"mipi-sdca-cs-type", 0},
+			Package(2) {"mipi-sdca-control-list", 0x10000}, // Bitmap: 0x10-SampleFreqIndex
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C022"},
+		}
+	}) //End AF04.EN28
+
+	Name(C022, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// SampleFreqIndex, Class, RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 0},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range","BUF8"},
+		}
+	}) //End AF04.C022
+
+	Name(BUF8, Buffer()
+	{
+		0x02, 0x00,  // Range type 0x0002 (Pairs)
+		0x02, 0x00,  // Count of ranges = 0x2
+		//0x08, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // 0x00000008, 0x0000AC44(44100)
+		0x09, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // 0x00000009, 0x0000BB80(48000)
+		0x0B, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // 0x0000000B, 0x00017700(96000)
+		//0x0d, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // 0x0000000d, 0x0002EE00(192000)
+	}) //End AF04.BUF8
+
+	Name(EN14, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x03},
+			Package(2) {"mipi-sdca-entity-label", "OT 24"}, //Speaker Sense
+			Package(2) {"mipi-sdca-terminal-type", 0x189}, // Sense Capture Stream Data Port
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+			Package(2) {"mipi-sdca-control-list", 0x00020110}, // Bitmap: 0x4-Usage, 0x8-Latency, 0x11-DataPortIndex
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN24"}, // Input Pin 1 connected to XU 24
+			Package(2) {"mipi-sdca-terminal-clock-connection", "EN67"}, //CS 24
+			Package(2) {"mipi-sdca-control-0x4-subproperties", "C340"},
+			Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
+			Package(2) {"mipi-sdca-control-0x11-subproperties", "C341"},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-terminal-dp-numbers","BUF9"},
+		}
+	}) //End AF04.EN14
+
+	Name(BUF9, Buffer()
+	{
+		0x0, 0x2, // DP_Index: 0x0 DP_Num: 0x2
+	}) //End AF04.BUF9
+
+	Name(C340, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Usage, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 1}, // Usage CBN, 612 (0x264) IV-Sense (2 Transducer)
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range", "USG5"},
+		}
+	}) //End AF04.C340
+
+	Name(USG5, Buffer()
+	{
+		0x07, 0x00,  // Range type 0x0007 (Septuples)
+		0x01, 0x00,  // Count of ranges = 0x1
+		0x01, 0x00, 0x00, 0x00, // Usage Number
+		0x64, 0x02, 0x00, 0x00, // Usage CBN, 612 (0x264) IV-Sense (2 Transducer)
+		0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
+		0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
+		0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+		0x00, 0x00, 0x00, 0x00, // Usage Tag
+	}) //End USG5
+
+	Name(C341, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// DataPortIndex, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0},
+		}
+	}) //End AF04.C341
+
+	Name(EN67, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x0b},
+			Package(2) {"mipi-sdca-entity-label", "CS 24"},
+			Package(2) {"mipi-sdca-cs-type", 0},
+			Package(2) {"mipi-sdca-control-list", 0x10000}, // Bitmap: 0x10-SampleFreqIndex
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-0x10-subproperties", "C121"},
+		}
+	}) //End AF04.EN67
+
+	Name(C121, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// SampleFreqIndex, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 9},
+		},
+		ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-control-range","BUFA"},
+		}
+	}) //End AF04.C121
+
+	Name(BUFA, Buffer()
+	{
+		0x02, 0x00,  // Range type 0x0002 (Pairs)
+		0x01, 0x00,  // Count of ranges = 0x1
+		//0x04, 0x00, 0x00, 0x00, 0x80, 0x3E, 0x00, 0x00, // 0x00000004, 0x00003E80(16000)
+		//0x07, 0x00, 0x00, 0x00, 0x00, 0x7D, 0x00, 0x00, // 0x00000007, 0x00007D00(32000)
+		//0x08, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // 0x00000008, 0x0000AC44(44100)
+		0x09, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // 0x00000009, 0x0000BB80(48000)
+		//0x0B, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // 0x0000000B, 0x00017700(96000)
+		//0x0d, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // 0x0000000d, 0x0002EE00(192000)
+	}) //End AF04.BUFA
+
+	Name(EN24, Package()
+	{
+        ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+        Package()
+		{
+			Package(2) {"mipi-sdca-entity-type", 0x0a},
+			Package(2) {"mipi-sdca-entity-label", "XU 24"},
+			Package(2) {"mipi-sdca-control-list", 0x0002}, // Bitmap: 0x1-Bypass
+			Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+        },
+        ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+        Package()
+		{
+			Package(2) {"mipi-sdca-input-pin-1", "EN52"},   // Input Pin 1 connected to IT 29
+			Package(2) {"mipi-sdca-control-0x1-subproperties", "C030"},
+        }
+	}) //End AF04.EN24
+
+	Name(C030, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			// Bypass, Class, R/W
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 0},
+		}
+	}) //End AF04.C030
+
+	// Name(EN38, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-entity-type", 0x03},
+	// 		Package(2) {"mipi-sdca-entity-label", "OT 127"}, // Companion Data Output
+	// 		Package(2) {"mipi-sdca-terminal-type", 0x192}, // Companion Data for Secondary Transducers
+	// 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+	// 		Package(2) {"mipi-sdca-control-list", 0x00020110}, // Bitmap: 0x4-Usage, 0x8-Latency, 0x11-DataPortIndex
+	// 	},
+	// 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-input-pin-1", "EN63"}, // Input Pin 1 connected to FU 127
+	// 		Package(2) {"mipi-sdca-control-0x4-subproperties", "C540"},
+	// 		Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
+	// 		Package(2) {"mipi-sdca-control-0x11-subproperties", "C541"},
+	// 		Package(2) {"mipi-sdca-terminal-clock-connection", "EN66"},	// CS 127
+	// 	},
+	// 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-terminal-dp-numbers","BUFB"},
+	// 	}
+	// }) //End AF04.EN38
+
+	// Name(BUFB, Buffer()
+	// {
+	// 	0x0, 0x6, // DP_Index: 0x0 DP_Num: 0x6
+	// }) //End AF04.BUFB
+
+	// Name(C540, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// Usage, Class, DC
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 5},
+	// 		Package(2) {"mipi-sdca-control-dc-value", 1},
+	// 	},
+	// 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-control-range", "USG6"},
+	// 	}
+	// }) //End AF04.C540
+
+	// Name(USG6, Buffer()
+	// {
+	// 	0x07, 0x00,  // Range type 0x0007 (Septuples)
+	// 	0x01, 0x00,  // Count of ranges = 0x1
+	// 	0x01, 0x00, 0x00, 0x00, // Usage Number
+	// 	0x2a, 0x03, 0x00, 0x00, // Usage CBN, 810 (0x32a) Companion Amp Data Out
+	// 	0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
+	// 	0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
+	// 	0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+	// 	0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+	// 	0x00, 0x00, 0x00, 0x00, // Usage Tag
+	// 	// add the others if we want to support a different usage
+	// }) //End USG6
+
+	// Name(C541, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// DataPortIndex, Class, DC
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 5},
+	// 		Package(2) {"mipi-sdca-control-dc-value", 0},
+	// 	}
+	// }) //End AF04.C541
+
+	// Name(EN66, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-entity-type", 0x0b},
+	// 		Package(2) {"mipi-sdca-entity-label", "CS 127"},
+	// 		Package(2) {"mipi-sdca-cs-type", 0},
+	// 		Package(2) {"mipi-sdca-control-list", 0x10000}, // Bitmap: 0x10-SampleFreqIndex
+	// 	},
+	// 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-control-0x10-subproperties", "C122"},
+	// 	}
+	// }) //End AF04.EN66
+
+	// Name(C122, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// SampleFreqIndex, Class, DC
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 5},
+	// 		Package(2) {"mipi-sdca-control-dc-value", 9},
+	// 	},
+	// 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-control-range","BUFC"},
+	// 	}
+	// }) //End AF04.C122
+
+	// Name(BUFC, Buffer()
+	// {
+	// 	0x02, 0x00,  // Range type 0x0002 (Pairs)
+	// 	0x01, 0x00,  // Count of ranges = 0x1
+	// 	//0x04, 0x00, 0x00, 0x00, 0x80, 0x3E, 0x00, 0x00, // 0x00000004, 0x00003E80(16000)
+	// 	//0x07, 0x00, 0x00, 0x00, 0x00, 0x7D, 0x00, 0x00, // 0x00000007, 0x00007D00(32000)
+	// 	//0x08, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // 0x00000008, 0x0000AC44(44100)
+	// 	0x09, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // 0x00000009, 0x0000BB80(48000)
+	// 	//0x0B, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // 0x0000000B, 0x00017700(96000)
+	// 	//0x0d, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // 0x0000000d, 0x0002EE00(192000)
+	// }) //End AF04.BUFC
+
+	// Name(EN63, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-entity-type", 0x07},
+	// 		Package(2) {"mipi-sdca-entity-label", "FU 127"},
+	// 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+	// 		Package(2) {"mipi-sdca-control-list", 0x00010000}, // Bitmap: 0x10-Latency
+	// 	},
+	// 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-input-pin-1", "EN62"}, // Input Pin 1 connected to UDMPU 127
+	// 		Package(2) {"mipi-sdca-control-0x10-subproperties", "LC00"},
+	// 	}
+	// }) //End EN63
+
+	// Name(EN62, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-entity-type", 0x21},
+	// 		Package(2) {"mipi-sdca-entity-label", "UDMPU 127"},
+	// 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+	// 		Package(2) {"mipi-sdca-control-list", 0x00010040}, // Bitmap: 0x6-Latency, 0x10-ClusterIndex
+	// 	},
+	// 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-input-pin-1", "EN50"}, // Input Pin 1 connected to MU 26
+	// 		Package(2) {"mipi-sdca-control-0x6-subproperties", "LC00"},
+	// 		Package(2) {"mipi-sdca-control-0x10-subproperties", "C4C3"},
+	// 	}
+	// }) //End EN62
+
+	// Name(C4C3, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// ClusterIndex, Class, DC
+	// 		Package(2) {"mipi-sdca-control-access-layer", 4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 5},
+	// 		Package(2) {"mipi-sdca-control-dc-value", 1},
+	// 	},
+	// 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-control-range", "CLM5"},
+	// 	}
+	// }) //End C4C3
+
+	// Name(CLM5, Buffer()
+	// {
+	// 	0x02, 0x00,  // Range type 2 parameters
+	// 	0x01, 0x00,  // Count of ranges = 0x1
+	// 	0x01, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, // Cluster Index = 0x1,  Cluster ID = 0x05
+	// }) //End CLM5
+
+	// Name(EN27, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-entity-type", 0x11},
+	// 		Package(2) {"mipi-sdca-entity-label", "PDE 27"},
+	// 		Package(2) {"mipi-sdca-control-list", 0x10002}, // Bitmap: 0x1-Request_PS, 0x10-Actual_PS
+	// 		Package(2) {"mipi-sdca-powerdomain-managed-list", Package() {0x17}, }, //OT27
+	// 		Package(2)
+	// 		{
+	// 			"mipi-sdca-powerdomain-transition-typical-delay",
+	// 			Package()
+	// 			{
+	// 				3, 0, 500000,
+	// 				0, 3, 500000,
+	// 			},
+	// 		},
+	// 		Package(2)
+	// 		{
+	// 			"mipi-sdca-powerdomain-transition-max-delay",
+	// 			Package()
+	// 			{
+	// 				3, 0, 800000,
+	// 				0, 3, 800000,
+	// 			},
+	// 		},
+	// 	},
+	// 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-control-0x1-subproperties", "C002"},
+	// 		Package(2) {"mipi-sdca-control-0x10-subproperties", "C017"},
+	// 	}
+	// }) //End AF04.EN27
+
+	// Name(C002, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// Requested_PS, Class, R/W
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 0},
+	// 	},
+	// 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-control-range", "PDER"},
+	// 	}
+	// }) //End AF04.C002
+
+	// Name(C017, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// Actual_PS, Class, RO
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 3},
+	// 	}
+	// }) //End AF04.C017
+
+	// Name(EN17, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-entity-type", 0x03},
+	// 		Package(2) {"mipi-sdca-entity-label", "OT 27"}, //Secondery transducer
+	// 		Package(2) {"mipi-sdca-terminal-type", 0x390}, // Secondary Full-range or Woofer Speaker Transducer
+	// 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+	// 		Package(2) {"mipi-sdca-control-list", 0x110 },  // Bitmap: 0x4-Usage, 0x8-Latency
+	// 	},
+	// 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-input-pin-1", "EN61"}, // Input Pin 1 connected to FU 27
+	// 		//Package(2) {"mipi-sdca-powerdomain-entity", "EN27"}, //PDE 27
+	// 		Package(2) {"mipi-sdca-control-0x4-subproperties", "C154"},
+	// 		Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
+	// 	},
+	// }) //End AF04.EN17
+
+	// Name(C154, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// Usage, Class, DC
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 5},
+	// 		Package(2) {"mipi-sdca-control-dc-value", 1},
+	// 	},
+	// 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-control-range", "USG7"},
+	// 	}
+	// }) //End AF04.C154
+
+	// Name(USG7, Buffer()
+	// {
+	// 	0x07, 0x00,  // Range type 0x0007 (Septuples)
+	// 	0x01, 0x00,  // Count of ranges = 0x1
+	// 	0x01, 0x00, 0x00, 0x00, // Usage Number
+	// 	0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1AE) Full band and Near-ultrasound
+	// 	0x00, 0x00, 0x00, 0x00, // Sample Rate, 0 not report
+	// 	0x00, 0x00, 0x00, 0x00, // Sample Width, 0 not report
+	// 	0x00, 0x80, 0x00, 0x00, // Full Scale, -128.0dB (0x8000) not report actual value
+	// 	0x00, 0x80, 0x00, 0x00, // Noise Floor, -128.0dB (0x8000) not report actual value
+	// 	0x00, 0x00, 0x00, 0x00, // Usage Tag
+	// }) //End USG7
+
+	// Name(EN61, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-entity-type", 0x07},
+	// 		Package(2) {"mipi-sdca-entity-label", "FU 27"},
+	// 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+	// 		Package(2) {"mipi-sdca-control-list", 0x00010000}, // Bitmap: 0x10-Latency
+	// 	},
+	// 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-input-pin-1", "EN60"}, // Input Pin 1 connected to UDMPU 27
+	// 		Package(2) {"mipi-sdca-control-0x10-subproperties", "LC00"},
+	// 	}
+	// }) //End EN61
+
+	// Name(EN60, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-entity-type", 0x21},
+	// 		Package(2) {"mipi-sdca-entity-label", "UDMPU 27"},
+	// 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+	// 		//Package(2) {"mipi-sdca-control-list", Package() {0x6, 0x10} }, // Latency, ClusterIndex
+	// 		Package(2) {"mipi-sdca-control-list", 0x00010040}, // Bitmap: 0x6-Latency, 0x10-ClusterIndex
+	// 	},
+	// 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-input-pin-1", "EN50"}, // Input Pin 1 connected to MU 26
+	// 		Package(2) {"mipi-sdca-control-0x6-subproperties", "LC00"},
+	// 		Package(2) {"mipi-sdca-control-0x10-subproperties", "C4C2"},
+	// 	}
+	// }) //End EN60
+
+	// Name(C4C2, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		// ClusterIndex, Class, DC
+	// 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+	// 		Package(2) {"mipi-sdca-control-access-mode", 5},
+	// 		Package(2) {"mipi-sdca-control-dc-value", 1},
+	// 	},
+	// 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-control-range", "CLM6"},
+	// 	}
+	// }) //End C4C2
+
+	// Name(CLM6, Buffer()
+	// {
+	// 	0x02, 0x00,  // Range type 2 parameters
+	// 	0x01, 0x00,  // Count of ranges = 0x1
+	// 	0x01, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, // Cluster Index = 0x1,  Cluster ID = 0x04
+	// }) //End CLM6
+
+	// Name(EN51, Package()
+	// {
+	// 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-entity-type", 0x13},
+	// 		Package(2) {"mipi-sdca-entity-label", "SPE 199"},
+	// 		Package(2) {"mipi-sdca-control-list", 0x1E}, // Bitmap: 0x1-Private, 0x2-Privacy_Policy, 0x3-Privacy_LockState, 0x4-Privacy_Owner
+	// 	},
+	// 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+	// 	Package()
+	// 	{
+	// 		Package(2) {"mipi-sdca-control-0x1-subproperties", "C041"}, // Private
+	// 		Package(2) {"mipi-sdca-control-0x2-subproperties", "C040"}, // Privacy_Policy
+	// 		Package(2) {"mipi-sdca-control-0x3-subproperties", "C039"}, // Privacy_LockState
+	// 		Package(2) {"mipi-sdca-control-0x4-subproperties", "C038"}, // Privacy_Owner
+	// 	}
+	// }) //End AF04.EN51
+
+	// Name(C038, Package()
+	// {	// Private
+	// }) //End AF04.C038
+
+	// Name(C039, Package()
+	// {	// Privacy_Policy
+	// }) //End AF04.C039
+
+	// Name(C040, Package()
+	// {	// Privacy_LockState
+	// }) //End AF04.C040
+
+	// Name(C041, Package()
+	// {	// Privacy_Owner
+	// }) //End AF04.C041
+
+	Name(EXT0, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-function-expansion-subsystem-id", 0x1234},
+			Package(2) {"mipi-sdca-function-expansion-subsystem-revision-id", 0x1234},
+		}
+	}) //End EXT0
+
+	// Start of CL01 (IT 21)
+	Name(CL01, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH11"},	// channel 1, Generic Audio, Generic-Left
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH12"},	// channel 2, Generic Audio, Generic-Right
+		}
+	}) //End CL01
+
+	Name(CH11, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x02}, 	// Generic-Left
+		}
+	}) //End CH11
+
+	Name(CH12, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x03}, 	// Generic-Right
+		}
+	}) //End CH12
+
+	// Start of CL02 (IT 26)
+	Name(CL02, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH21"},	// channel 1, ultrasound, Generic-Left
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH22"},	// channel 2, ultrasound, Generic-Right
+		}
+	}) //End CL01
+
+	Name(CH21, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x06}, 		// Ultrasound
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x02}, 	// Generic-Left
+		}
+	}) //End CH21
+
+	Name(CH22, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x06}, 		// Ultrasound
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x03}, 	// Generic-Right
+		}
+	}) //End CH22
+
+	// Start of CL03 (UDMPU 23)
+	Name(CL03, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH31"},	// channel 1 (Imp-Def), Generic Audio, Primary Transducer
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH32"},	// channel 2 (Imp-Def), Generic Audio, Primary Transducer
+		}
+	}) //End CL03
+
+	Name(CH31, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1 (Imp-Def)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x50}, 	// Primary Transducer
+		}
+	}) //End CH31
+
+	Name(CH32, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2 (Imp-Def)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x50}, 	// Primary Transducer
+		}
+	}) //End CH32
+
+	// Start of CL04 (UDMPU 27)
+	Name(CL04, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH41"},	// channel 1 (Imp-Def), Generic Audio, Secondary Transducer
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH42"},	// channel 2 (Imp-Def), Generic Audio, Secondary Transducer
+		}
+	}) //End CL04
+
+	Name(CH41, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1 (Imp-Def)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51}, 	// Secondary Transducer
+		}
+	}) //End CH41
+
+	Name(CH42, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2 (Imp-Def)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51}, 	// Secondary Transducer
+		}
+	}) //End CH42
+
+	// Start of CL04 (UDMPU 127)
+	Name(CL05, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH51"},	// channel 1 (Imp-Def), Generic Audio, Companion Data Output for Secondary Transducer
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH52"},	// channel 2 (Imp-Def), Generic Audio, Companion Data Output for Secondary Transducer
+		}
+	}) //End CL05
+
+	Name(CH51, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1 (Imp-Def)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51}, 	// Companion Data Output for Secondary Transducer
+		}
+	}) //End CH51
+
+	Name(CH52, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2 (Imp-Def)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51}, 	// Companion Data Output for Secondary Transducer
+		}
+	}) //End CH52
+
+	// Start of CL06 (OT 25)
+	Name(CL06, Package()	// 2-ch-ref-2-speaker-1/2
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH61"},	// channel 101, EchoRef-1, Reference
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH62"},	// channel 102, EchoRef-2, Reference
+		}
+	}) //End CL06
+
+	Name(CH61, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 101}, 				// channel 101
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x05}, 		// Reference
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x71}, 	// EchoRef-1
+		}
+	}) //End CH61
+
+	Name(CH62, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 102}, 				// channel 102
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x05}, 		// Reference
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x72}, 	// EchoRef-2
+		}
+	}) //End CH62
+
+
+	// Start of CL10 (PPU 21, Posture number = 0x00, mapping to OT23 ch1 = Left, ch2 = Right)
+	Name(CL10, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH91"},	// channel 1 User-Left, Generic Audio, Equipment-Left
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH92"},	// channel 2 User-Right, Generic Audio, Equipment-Right
+		}
+	}) //End CL10
+
+	// Start of CL11 (PPU 21, Posture number = 0x08, mapping to OT23 ch1 = (L+R)/2, ch2 = (L+R)/2)
+	Name(CL11, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH93"},	// channel 255 User-Single, Generic Audio, Equipment-Combined
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH93"},	// channel 255 User-Single, Generic Audio, Equipment-Combined
+		}
+	}) //End CL11
+
+	// Start of CL12 (PPU 21, Posture number = 0x01, mapping to OT23 ch1 = Right, ch2 = Left)
+	Name(CL12, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH92"},	// channel 2 User-Right, Generic Audio, Equipment-Right
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH91"},	// channel 1 User-Left, Generic Audio, Equipment-Left
+		}
+	}) //End CL12
+
+	// Start of CL13 (PPU 21, Posture number = 0x08, mapping to OT23 ch1 = (L+R)/2, ch2 = (L+R)/2)
+	Name(CL13, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH93"},	// channel 255 User-Single, Generic Audio, Equipment-Combined
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH93"},	// channel 255 User-Single, Generic Audio, Equipment-Combined
+		}
+	}) //End CL13
+
+	// Start of CL20 (PPU 26, Posture number = 0x00, mapping to OT23 ch1 = Left, ch2 = Right)
+	Name(CL20, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH94"},	// channel 1 User-Left, ultrasound, Equipment-Left
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH95"},	// channel 2 User-Right, ultrasound, Equipment-Right
+		}
+	}) //End CL20
+
+	// Start of CL21 (PPU 26, Posture number = 0x08, mapping to OT23 ch1 = (L+R)/2, ch2 = (L+R)/2)
+	Name(CL21, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH96"},	// channel 255 User-Single, ultrasound, Equipment-Combined
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH96"},	// channel 255 User-Single, ultrasound, Equipment-Combined
+		}
+	}) //End CL21
+
+	// Start of CL22 (PPU 26, Posture number = 0x01, mapping to OT23 ch1 = Right, ch2 = Left)
+	Name(CL22, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH95"},	// channel 2 User-Right, ultrasound, Equipment-Right
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH94"},	// channel 1 User-Left, ultrasound, Equipment-Left
+		}
+	}) //End CL22
+
+	// Start of CL23 (PPU 26, Posture number = 0x08, mapping to OT23 ch1 = (L+R)/2, ch2 = (L+R)/2)
+	Name(CL23, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CH96"},	// channel 255 User-Single, ultrasound, Equipment-Combined
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CH96"},	// channel 255 User-Single, ultrasound, Equipment-Combined
+		}
+	}) //End CL23
+
+	Name(CH91, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1 (User Left)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x1}, 			// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x2}, 	// Equipment-Left
+		}
+	}) //End CH91
+
+	Name(CH92, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2 (User Right)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x1}, 			// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x3}, 	// Equipment-Right
+		}
+	}) //End CH92
+
+	Name(CH93, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 255}, 				// channel 255 (User Single)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x1}, 			// Generic Audio
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x47}, 	// Equipment-Combined
+		}
+	}) //End CH93
+
+	Name(CH94, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 1},				// channel 1 (User Left)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x6},			// 0x06: ultrasound
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x2},	// 0x02: Equipment-Left
+		}
+	}) //End CH94
+
+	Name(CH95, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 2},				// channel 2 (User Right)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x6},			// 0x06: ultrasound
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x3},	// 0x03: Equipment-Right
+		}
+	}) //End CH95
+
+	Name(CH96, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 255},				// channel 255 (User Single)
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x6},			// 0x06: ultrasound
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x47},	// 0x47: Equipment-Combined
+		}
+	}) //End CH96
+
+	Name(CL41, Package()	// 2T, 2ch, Transducer Priority, LI/LV/RI/RV
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},					// 2 channels
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CHA1"},	// channel 1, SV1, T12i
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CHA2"},	// channel 2, SV2, T12i
+		}
+	}) //End CL41
+
+	Name(CL42, Package()	// 2T, 2ch, Variable Priority, LI/RI/LV/RV
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-count", 2},					// 2 channels
+		},
+		ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-channel-1-subproperties", "CHA3"},	// channel 1, SV12i, T1
+			Package(2) {"mipi-sdca-channel-2-subproperties", "CHA4"},	// channel 2, SV12i, T2
+		}
+	}) //End CL42
+
+	Name(CHA1, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 1},				// channel 1
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x09},		// 0x09: SV1
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x5A},	// 0x5A: T12i
+		}
+	}) //End CHA1
+
+	Name(CHA2, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 2},				// channel 2
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x0A},		// 0x0A: SV2
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x5A},	// 0x5A: T12i
+		}
+	}) //End CHA2
+
+	Name(CHA3, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 1},				// channel 1
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x10},		// 0x09: SV12i
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x58},	// 0x58: T1
+		}
+	}) //End CHA3
+
+	Name(CHA4, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			Package(2) {"mipi-sdca-cluster-channel-id", 2},				// channel 2
+			Package(2) {"mipi-sdca-cluster-channel-purpose", 0x10},		// 0x0A: SV12i
+			Package(2) {"mipi-sdca-cluster-channel-relationship", 0x59},	// 0x5A: T2
+		}
+	}) //End CHA4
+
+// }

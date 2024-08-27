@@ -152,4 +152,15 @@ NeedIgnoreXmp (
   IN MrcParameters *const MrcData,
   IN MrcProfile           Profile
   );
+
+/**
+  This function calculates the DDR5 timings tCL which takes into account SOC requirements
+
+  @param[in]     MrcData      - Include all MRC global data.
+**/
+
+VOID
+MrcUpdateDdr5MintCL (
+  IN MrcParameters *const MrcData
+  );
 #endif // BlueMrcSpdProcessing_h_

@@ -68,12 +68,6 @@ MrcPreTraining (
   Outputs       = &MrcData->Outputs;
   Debug         = &Outputs->Debug;
 
-  if (Inputs->BootMode == bmFast) {
-    // Clear out SPID Low Power Control register
-    // Only needed on restore flows where MrcEccClean runs
-    MrcMcLowPowerMode (MrcData, MRC_DISABLE);
-  }
-
   MrcSetNormalMode (MrcData, FALSE); // Go to CPGC mode
   Outputs->CpgcModeLocked = TRUE; // Locking CPGC mode until NormalMode executed in MRC flow
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "CPGC Mode locked\n");
@@ -733,7 +727,7 @@ MrcGenMrsFsmConfig (
       } else {
         MrsFsmCtl.Bits.do_zqcl = 0;
       }
-      MrcWriteCR64 (MrcData, Offset, MrsFsmCtl.Data);
+      MrcWriteCR (MrcData, Offset, MrsFsmCtl.Data);
     }
   }
   return mrcSuccess;

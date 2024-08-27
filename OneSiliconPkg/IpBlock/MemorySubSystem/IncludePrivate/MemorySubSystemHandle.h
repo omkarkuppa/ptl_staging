@@ -200,7 +200,8 @@ VOID
   IN VOID   *TdxPolicy,
   IN MrcParameters *CONST MrcData,
   IN UINTN  TdxActmModuleAddr,
-  IN UINT32 TdxActmModuleSize
+  IN UINT32 TdxActmModuleSize,
+  IN UINT8  TdxSeamldrSeSvn
   );
 
 /**

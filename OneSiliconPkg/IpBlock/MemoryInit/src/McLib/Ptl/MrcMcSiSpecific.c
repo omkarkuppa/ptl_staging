@@ -21,6 +21,7 @@
 
 #include "MrcMcSiSpecific.h"
 #include "MrcHalApi.h"
+#include "CMcAddress.h"
 
 /**
   This function sets minimum time allowed in self refresh mode.
@@ -39,5 +40,43 @@ MrcMcLpmodeSelfRefreshLength (
   if (Inputs->IsMcMbA0) {
     GetSetVal = 0xF;
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSelfRefreshLength, WriteCached | PrintValue, &GetSetVal);
+  }
+}
+
+/**
+  Disable Full Rank Block if TRR is used and DRFM is not enabled.
+
+  @param[in] MrcData      - The MRC general data
+  @param[in] Controller   - MC index
+  @param[in] Channel      - System Channel index
+**/
+VOID
+MrcFullRankBlockOptimization (
+  IN MrcParameters *const MrcData,
+  IN UINT8                Controller,
+  IN UINT8                Channel
+  )
+{
+  MrcInput             *Inputs;
+  MrcDdrIoIpVersion    *IpVersion;
+  INT64                GetSetVal;
+
+  MC0_CH0_CR_RH_TRR_CONTROL_STRUCT RhTrrControlStruct;
+
+  Inputs              = &MrcData->Inputs;
+  IpVersion           = &Inputs->DdrIoIpVersion;
+
+  if (IpVersion->Bits.Derivative == ipDerivativeWcl ||
+     (IpVersion->Bits.Derivative == ipDerivativePtl && IpVersion->Bits.Stepping == ipStepB0)) {
+    MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhDrfmEnable, ReadCached, &GetSetVal);
+    RhTrrControlStruct.Bits.DRFM_Enabled = (UINT32) GetSetVal;
+    MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhTRRDimmEnable, ReadCached, &GetSetVal);
+    RhTrrControlStruct.Bits.TRR_DRFM_Dimm_Enabled = (UINT32) GetSetVal;
+
+    if (RhTrrControlStruct.Bits.TRR_DRFM_Dimm_Enabled && !RhTrrControlStruct.Bits.DRFM_Enabled) {
+      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMcMntsSpareRw, ReadCached, &GetSetVal);
+      GetSetVal |= MRC_BIT3;
+      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMcMntsSpareRw, WriteCached, &GetSetVal);
+    }
   }
 }

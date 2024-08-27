@@ -114,16 +114,16 @@ SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbSize                  = 0x004000
 ## Build script checks the requirement.
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesOffset       = 0x00C00000  # Flash addr (0xFFC00000)
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000A0000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00CA0000  # Flash addr (0xFFCA0000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00020000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00CC0000  # Flash addr (0xFFCC0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00080000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00D40000  # Flash addr (0xFFD40000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00060000  #
 # When FSP Signing enabled, FSPM and FvPreMemory must be loaded to different NEM Buffers. Guard Band will be
 # added between NEM Buffers, leave enough space between FSPM and FvPreMemory to avoid overlap.
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00CA0000  # Flash addr (0xFFCA0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00DA0000  # Flash addr (0xFFDA0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x000F0000  #
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00D90000  # Flash addr (0xFFD90000)
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00020000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00DB0000  # Flash addr (0xFFDB0000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00080000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00E30000  # Flash addr (0xFFE30000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00060000  #
 !if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00E90000  # Flash addr (0xFFE90000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x00010000  #
@@ -232,16 +232,16 @@ SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbSize                  = 0x004000
 ## Build script checks the requirement.
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesOffset       = 0x00C00000  # Flash addr (0xFFC00000)
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000A0000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00CA0000  # Flash addr (0xFFCA0000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00010000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00CB0000  # Flash addr (0xFFCB0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00080000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00D30000  # Flash addr (0xFFD30000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00060000  #
 # When FSP Signing enabled, FSPM and FvPreMemory must be loaded to different NEM Buffers. Guard Band will be
 # added between NEM Buffers, leave enough space between FSPM and FvPreMemory to avoid overlap.
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00CA0000  # Flash addr (0xFFCA0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00D90000  # Flash addr (0xFFD90000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x000F0000  #
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00D90000  # Flash addr (0xFFD90000)
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00010000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00DA0000  # Flash addr (0xFFDA0000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00080000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00E20000  # Flash addr (0xFFE20000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00060000  #
 !if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00E80000  # Flash addr (0xFFE80000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x00010000  #

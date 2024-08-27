@@ -48,7 +48,6 @@
   PreSiliconEnvDetectLib
   CpuInitLib
   BiosGuardLib
-  SpiLib
   PeiSpiLib
   PeiTsnFvLib
   BmpSupportLib
@@ -165,6 +164,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable   ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdTcssPortCapMap       ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardId              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformModularUsbCIoConfig       ## CONSUMES
 
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamBase              ## CONSUMES
   gIntelFsp2PkgTokenSpaceGuid.PcdFspTemporaryRamSize           ## CONSUMES

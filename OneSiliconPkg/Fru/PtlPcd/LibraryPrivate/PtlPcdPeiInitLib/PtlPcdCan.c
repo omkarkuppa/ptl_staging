@@ -18,13 +18,18 @@
 
 @par Specification Reference:
 **/
-#include "PtlPcdInitPei.h"
-#include <Library/BaseLib.h>
+
+#include <Uefi/UefiBaseType.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/DebugLib.h>
 #include <Library/CanSsInitLib.h>
 #include <Library/PchPciBdfLib.h>
+#include <Library/PeiItssLib.h>
 #include <Library/P2SbSidebandAccessLib.h>
 #include <Library/P2SbSocLib.h>
 #include <Library/PcdInfoLib.h>
+#include <Ppi/SiPolicy.h>
 #include <Register/PchRegs.h>
 #include <Register/CanRegs.h>
 #include <PtlPcdSbPortIds.h>
@@ -72,9 +77,11 @@ CanAddTailList (
 /**
   Initialize CAN Subsystem for PTL SOC
 
-  @param[in] SiPolicy  Pointer to SI_POLICY_PPI
+  @param[in] SiPolicy     Pointer to SI_POLICY_PPI
+
+  @retval    EFI_SUCCESS  The function completed successfully.
 **/
-VOID
+EFI_STATUS
 PtlPcdCanInit (
   IN  SI_POLICY_PPI *SiPolicyPpi
   )
@@ -97,6 +104,8 @@ PtlPcdCanInit (
   BuildP2SbSidebandAccess (&P2SbController, P2SBPid.PortId.LocalPid, 0, P2SbPrivateConfig, P2SbMmioAccess, FALSE, &CanPcrAccess);
   CanSubsystem.PcrAccess = (REGISTER_ACCESS *) &CanPcrAccess;
 
+  CanSubsystem.MaxCtrlNumber = PtlPcdGetCanCtrlNum ();
+
   //
   // CAN Controllers list
   //
@@ -114,5 +123,5 @@ PtlPcdCanInit (
       );
   }
 
-  CanSubsystemInit (&CanSubsystem);
+  return CanSubsystemInit (&CanSubsystem);
 }

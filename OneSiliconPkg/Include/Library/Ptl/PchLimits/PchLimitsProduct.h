@@ -92,7 +92,8 @@
 // HDA limits
 //
 #define PCH_MAX_HDA_SDI                       2
-#define PCH_MAX_HDA_SSP_LINK_NUM              3
+#define PCH_MAX_HDA_SSP_LINK_NUM              7
+#define PCH_MAX_HDA_SSP_EXTENDED_LINK_NUM     4
 #define PCH_MAX_HDA_DMIC_LINK_NUM             2
 #define PCH_MAX_HDA_SNDW_LINK_NUM             5
 #define PCH_MAX_HDA_SNDW_MULTILANE_NUM        2
@@ -110,5 +111,10 @@
 #define SETUP_MAX_USB2_PORTS                16
 #define SETUP_MAX_USB3_PORTS                10
 #define PCH_MAX_ADR_SOURCE_NUMBER           25
+
+//
+// Number of TSN controllers
+//
+#define PCH_MAX_TSN_PORT                    4
 
 #endif

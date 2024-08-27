@@ -510,6 +510,7 @@ typedef struct {
   UINT16  ReservePMemoryPerSlot;
   UINT8   ReserveIoPerSlot;
   UINT8   UsbCRetimerNumber;
+  UINT8   UsbCPdNumber;
 
   UINT8   IccLockRegisters;
   UINT8   IccProfile;
@@ -736,7 +737,7 @@ typedef struct {
   UINT16  M21aAssembled;
   UINT16  WifiPlatCurrentConsumption;
   UINT8   MtlPSDetected;
-  UINT8  GbeFwUpdateEnable;
+  UINT8   GbeFwUpdateEnable;
 
   //
   // DMI EQ Remote Transmitter Coefficient/Preset Override
@@ -978,13 +979,6 @@ typedef struct {
   UINT8   CoreVrDcLLOverrideEnable;
   UINT8   CoreDcLoadline;
 
-  //
-  // Acoustic Noise Mitigation Range for Dynamic Periodicity Alteration (DPA)Tuning
-  //
-  UINT8   PreWake;
-  UINT8   RampUp;
-  UINT8   RampDown;
-
   UINT8   AvxDisable;
 
   //
@@ -1047,6 +1041,11 @@ typedef struct {
   UINT8   AcousticNoiseMitigation;
   UINT8   FastPkgCRampDisable[MAX_VR_NUM];
   UINT8   SlowSlewRate[MAX_VR_NUM];
+  //
+  // Hysteresis window for Acoustic Noise Mitigation
+  //
+  UINT8   PcoreHysteresisWindow;
+  UINT8   EcoreHysteresisWindow;
 
   UINT8   HwpInterruptControl;
 
@@ -1082,7 +1081,7 @@ typedef struct {
   UINT8   TseEnable;
   UINT8   CompareCtdpRatio;
   UINT8   CompareCtdpRatio2;
-  UINT8   Reserved[1];
+  UINT8   Reserved[2];
   //
   // Select Core(s) and RING DLVR Mode
   //
@@ -1411,7 +1410,6 @@ typedef struct {
   UINT8   FpbEnable;
   UINT8   WrDqDqsReTraining;
   UINT8   PllOffsetCal;
-  UINT8   VccLvrAutoTrim;
   //
   // DdrRfim
   //
@@ -1456,6 +1454,7 @@ typedef struct {
   UINT8   Ddr5AutoPrechargeEnable;
   UINT8   Lp5SplitACTEnable;
   UINT8   RetrainToWorkingChannel;
+  UINT8   SubChHashOverride;
   UINT8   DisableMc0Ch0;
   UINT8   DisableMc0Ch1;
   UINT8   DisableMc0Ch2;
@@ -1696,6 +1695,9 @@ typedef struct {
   UINT8   PprRepairBank;
   UINT8   PprForceRepair;
   UINT8   BoardTopology;
+
+  UINT16  SubChHashMask;
+  UINT8   SubChHashInterleaveBit;
 
   UINT8   MimicWcDisaplayInIpq;
   UINT8   FakeSagv;

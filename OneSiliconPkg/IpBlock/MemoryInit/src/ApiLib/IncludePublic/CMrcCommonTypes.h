@@ -212,11 +212,12 @@ typedef enum {
 typedef enum {
   PartitionPll,
   PartitionPg,
-  PartitionVccClk,
+  PartitionDataShared,
   PartitionData,
+  PartitionCccShared,
   PartitionCcc,
   PartitionComp,
   MaxPartition
-} PARTITION_BLOCKS;
+} PARTITION_TYPE;
 #endif // MRC_COMMON_TYPES_H_
 

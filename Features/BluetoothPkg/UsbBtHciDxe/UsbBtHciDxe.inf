@@ -23,7 +23,7 @@
 [Defines]
   INF_VERSION                    = 0x00010005
   BASE_NAME                      = UsbBtHciDxe
-  FILE_GUID                      = B2D52FB6-6C9D-4190-B8AA-7CF7F23B343A
+  FILE_GUID                      = 7DE9DF83-2D2A-4448-A9B1-7DA75158562A
   MODULE_TYPE                    = UEFI_DRIVER
   VERSION_STRING                 = 1.0
   ENTRY_POINT                    = USBBtHciDriverBindingEntryPoint

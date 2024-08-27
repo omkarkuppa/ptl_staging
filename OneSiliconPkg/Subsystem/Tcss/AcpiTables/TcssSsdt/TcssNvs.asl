@@ -43,23 +43,21 @@
   TPA2, 32, // Offset(15),    TCSS ItbtPcie Root Port address 2
   TPA3, 32, // Offset(19),    TCSS ItbtPcie Root Port address 3
   TRTD, 8,  // Offset(23),    TCSS RTD3
-  ITM0, 32, // Offset(24),    TCSS DMA0 RMRR address
-  ITM1, 32, // Offset(28),    TCSS DMA1 RMRR address
-  LTE0, 8,  // Offset(32),    Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
-  LTE1, 8,  // Offset(33),    Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
-  LTE2, 8,  // Offset(34),    Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
-  LTE3, 8,  // Offset(35),    Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
-  PSL0, 16, // Offset(36),    PCIE LTR max snoop Latency 0
-  PSL1, 16, // Offset(38),    PCIE LTR max snoop Latency 1
-  PSL2, 16, // Offset(40),    PCIE LTR max snoop Latency 2
-  PSL3, 16, // Offset(42),    PCIE LTR max snoop Latency 3
-  PNS0, 16, // Offset(44),    PCIE LTR max no snoop Latency 0
-  PNS1, 16, // Offset(46),    PCIE LTR max no snoop Latency 1
-  PNS2, 16, // Offset(48),    PCIE LTR max no snoop Latency 2
-  PNS3, 16, // Offset(50),    PCIE LTR max no snoop Latency 3
-  IMRY, 8,  // Offset(52),    IOM Ready
-  TIVS, 8,  // Offset(53),    TCSS IOM VccSt
-  REGO, 16, // Offset(54),    MCH RegBar Offset
-  IOMB, 64, // Offset(56),    Iom RegBar Base
-  RTBM, 8,  // Offset(64),    USBC Retimer Mapping.
+  LTE0, 8,  // Offset(24),    Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
+  LTE1, 8,  // Offset(25),    Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
+  LTE2, 8,  // Offset(26),    Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
+  LTE3, 8,  // Offset(27),    Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
+  PSL0, 16, // Offset(28),    PCIE LTR max snoop Latency 0
+  PSL1, 16, // Offset(30),    PCIE LTR max snoop Latency 1
+  PSL2, 16, // Offset(32),    PCIE LTR max snoop Latency 2
+  PSL3, 16, // Offset(34),    PCIE LTR max snoop Latency 3
+  PNS0, 16, // Offset(36),    PCIE LTR max no snoop Latency 0
+  PNS1, 16, // Offset(38),    PCIE LTR max no snoop Latency 1
+  PNS2, 16, // Offset(40),    PCIE LTR max no snoop Latency 2
+  PNS3, 16, // Offset(42),    PCIE LTR max no snoop Latency 3
+  IMRY, 8,  // Offset(44),    IOM Ready
+  TIVS, 8,  // Offset(45),    TCSS IOM VccSt
+  REGO, 16, // Offset(46),    MCH RegBar Offset
+  IOMB, 64, // Offset(48),    Iom RegBar Base
+  RTBM, 8,  // Offset(56),    USBC Retimer Mapping.
   }

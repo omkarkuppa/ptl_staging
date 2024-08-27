@@ -250,7 +250,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdMemoryThermalSensorGpioDPmsyncEnable
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamGpioEnable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdTcssWaitRetimerDeviceReady
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCRetimerFlash

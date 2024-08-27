@@ -402,8 +402,7 @@ DisablePendingSmis (
                 B_ACPI_IO_GPE0_STS_127_96_PME_STS |
                 B_ACPI_IO_GPE0_STS_127_96_BATLOW_STS |
                 B_ACPI_IO_GPE0_STS_127_96_ISH_STS |
-                B_ACPI_IO_GPE0_STS_127_96_SWGPE_STS |
-                B_ACPI_IO_GPE0_STS_127_96_NAC_SX_WAKE_STS)
+                B_ACPI_IO_GPE0_STS_127_96_SWGPE_STS )
       );
     //
     // Disable WADT_EN by default can avoid the WADT SMI during POST time when the WADT_STS is set as a wake source.

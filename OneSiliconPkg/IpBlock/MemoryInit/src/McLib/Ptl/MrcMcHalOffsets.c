@@ -511,6 +511,12 @@ MrcGetMcConfigRegOffset (
       }
       break;
 
+    case GsmMccMcMntsSpareRw:
+      if (Channel < MaxChannel) {
+        Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_MCMNTS_SPARE_REG, MC1_CH0_CR_MCMNTS_SPARE_REG, Controller, MC0_CH1_CR_MCMNTS_SPARE_REG, Channel);
+      }
+      break;
+
     case GsmDisVc1CplInterleave:
     case GsmDisAllCplInterleave:
       Offset = OFFSET_CALC_CH (MC0_MC_CFI_CONTROL_REG, MC1_MC_CFI_CONTROL_REG, Controller);
@@ -650,7 +656,6 @@ MrcGetMcConfigRegOffset (
       break;
 
     case GsmMccEnRefTypeDisplay:
-    case GsmMcctRefiPulseStaggerDis:
       if (Channel < MaxChannel) {
         Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_MC_REFRESH_STAGGER_REG, MC1_CH0_CR_MC_REFRESH_STAGGER_REG, Controller, MC0_CH1_CR_MC_REFRESH_STAGGER_REG, Channel);
       }
@@ -908,8 +913,9 @@ MrcGetMcConfigRegOffset (
 
     case GsmScPbrEcsRefabEnable:
     case GsmScPbrEcsRefabPeriod:
-      Offset = OFFSET_CALC_CH(MC0_CH0_CR_SC_PBR_REG, MC1_CH0_CR_SC_PBR_REG, Controller);
-      VolatileMask->Data = MC0_CH0_CR_SC_PBR_VOLATILE_BITFIELDS_MSK;
+      if (Channel < MaxChannel) {
+        Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SC_PBR_REG, MC1_CH0_CR_SC_PBR_REG, Controller, MC0_CH1_CR_SC_PBR_REG, Channel);
+      }
       break;
 
     default:

@@ -2357,58 +2357,6 @@ HeciHmrfpoGetStatus (
 }
 
 //
-// MKHI_DNX_GROUP_ID = 0x0D
-//
-
-/**
-  Send Dnx Request Clear message.
-
-  @param[in] Flag                 Flag indicating the type of clear operation:
-                                    0 - cancel DNX Operation
-                                    1 - Global reset
-                                    2 - CSE reset
-                                    3 - Cold reset
-
-  @retval EFI_UNSUPPORTED         Current ME mode doesn't support this function
-  @retval EFI_SUCCESS             Command succeeded
-  @retval EFI_DEVICE_ERROR        HECI Device error, command aborts abnormally
-  @retval EFI_TIMEOUT             HECI does not return the buffer before timeout
-  @retval EFI_BUFFER_TOO_SMALL    Message Buffer is too small for the Acknowledge
-**/
-EFI_STATUS
-HeciDnxReqClear (
-  IN UINT32            Flag
-  )
-{
-  EFI_STATUS              Status;
-  DNX_REQ_CLEAR_BUFFER    DnxReqClear;
-  UINT32                  MeMode;
-  UINT32                  RecvLength;
-
-  Status = MeBiosGetMeMode (&MeMode);
-  if (EFI_ERROR (Status) || (MeMode != ME_MODE_NORMAL)) {
-    return EFI_UNSUPPORTED;
-  }
-
-  DnxReqClear.Request.MkhiHeader.Data           = 0;
-  DnxReqClear.Request.MkhiHeader.Fields.GroupId = MKHI_DNX_GROUP_ID;
-  DnxReqClear.Request.MkhiHeader.Fields.Command = DNX_REQ_CLEAR_CMD;
-  DnxReqClear.Request.Flag                      = Flag;
-  RecvLength                                    = sizeof (DNX_REQ_CLEAR_RESPONSE);
-
-  Status = HeciWrapperSendWithAck (
-             BIOS_FIXED_HOST_ADDR,
-             HECI_MKHI_MESSAGE_ADDR,
-             (UINT32 *) &DnxReqClear.Request,
-             (UINT32) sizeof (DNX_REQ_CLEAR_REQUEST),
-             (UINT32 *) &DnxReqClear.Response,
-             &RecvLength
-             );
-
-  return Status;
-}
-
-//
 // MKHI_COMMON_GROUP_ID = 0xF0
 //
 

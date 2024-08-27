@@ -324,7 +324,7 @@
 #string  STR_HDAUDIO_MIC_PRIVACY_HW_MODE_HELP                              #language en-US "Microphone privacy mask configuration in HW mode."
 #string  STR_HDAUDIO_MIC_PRIVACY_FW_MODE_HELP                              #language en-US "Microphone privacy mask configuration in Audio FW mode."
 #string  STR_HDAUDIO_MIC_PRIVACY_TIMEOUT_PROMPT                            #language en-US "Timeout"
-#string  STR_HDAUDIO_MIC_PRIVACY_TIMEOUT_HELP                              #language en-US "Indicates the time-out duration to wait before forcing the actual microphone privacy DMA data zeroing."
+#string  STR_HDAUDIO_MIC_PRIVACY_TIMEOUT_HELP                              #language en-US "Indicates the time-out duration in milliseconds to wait before forcing the actual microphone privacy DMA data zeroing."
 
 #string STR_PCH_CRID_PROMPT                     #language en-US "Compatible Revision ID"
 #string STR_PCH_CRID_HELP                       #language en-US "Enable/Disable the PCH Compatible Revision ID feature"

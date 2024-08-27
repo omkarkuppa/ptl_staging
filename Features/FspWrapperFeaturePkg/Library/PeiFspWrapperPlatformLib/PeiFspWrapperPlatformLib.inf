@@ -70,7 +70,6 @@
   MemoryAllocationLib
   FspWrapperApiLib
   OcWdtLib
-  SpiLib
   PeiSpiLib
   PeiServicesTablePointerLib
 

@@ -43,6 +43,11 @@
 #include "PeiPchPolicyUpdate.h"
 #include <Library/CpuPlatformLib.h>
 
-#define MAX_MICROCODE_PATCH_SIZE 0x20000
+#define MAX_MICROCODE_PATCH_SIZE      0x20000
+#define SEAMLDR_SE_SVN_NV_BYTE_OFFSET 1
+#define SEAMLDR_TPM_NV_INDEX_SIZE     8
+#define SEAMLDR_SE_SVN_DEFAULT_VALUE  0xFF
+#define OS_BIOS_ACM_HANDOFF           0x1C10104
+
 
 #endif

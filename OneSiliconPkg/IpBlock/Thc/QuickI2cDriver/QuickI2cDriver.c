@@ -1433,7 +1433,8 @@ QuickI2cDmaReadRx2 (
   EFI_STATUS                  Status;
   UINT8                       CurrentPrdTable;
 
-  while ((CurrentCBWritePointer & POINTER_MASK) != (CurrentCBReadPointer & POINTER_MASK)) {
+  while (((CurrentCBWritePointer & POINTER_MASK) != (CurrentCBReadPointer & POINTER_MASK)) ||  // CB Not Empty
+      (CurrentCBWritePointer == CurrentCBReadPointer)) {                                       // CB Full
     CurrentPrdTable = (UINT8) (CurrentCBWritePointer & POINTER_MASK);
     THC_LOCAL_DEBUG (L"PrdTable %d CBWritePointer 0x%x CBReadPointer 0x%x \n",
                      CurrentPrdTable,
@@ -1963,33 +1964,36 @@ QuickI2cPolling (
     //
     // Read RxDma2
     //
-    while (((UINT8) (ReadDmaCntrl2.Fields.QuickI2cPrdCbWritePointer & POINTER_MASK)) != ((UINT8) (ReadDmaCntrl2.Fields.QuickI2cPrdCbReadPointer & POINTER_MASK))) {
-      QuickI2cDev->ReadDone = FALSE;
-      THC_LOCAL_DEBUG (L"RxDma2 Read Interrupt >> 0x%x >> 0x%x \n", ReadDmaCntrl2.Fields.QuickI2cPrdCbWritePointer, ReadDmaCntrl2.Fields.QuickI2cPrdCbReadPointer);
+    if (!QuickI2cDev->SwDmaActive) {
+      while ((((UINT8) (ReadDmaCntrl2.Fields.QuickI2cPrdCbWritePointer  & POINTER_MASK)) != ((UINT8) (ReadDmaCntrl2.Fields.QuickI2cPrdCbReadPointer & POINTER_MASK))) ||
+        ((UINT8) ReadDmaCntrl2.Fields.QuickI2cPrdCbWritePointer == (UINT8) ReadDmaCntrl2.Fields.QuickI2cPrdCbReadPointer)) {                                           // CB Full
+        QuickI2cDev->ReadDone = FALSE;
+        THC_LOCAL_DEBUG (L"RxDma2 Read Interrupt >> 0x%x >> 0x%x \n", ReadDmaCntrl2.Fields.QuickI2cPrdCbWritePointer, ReadDmaCntrl2.Fields.QuickI2cPrdCbReadPointer);
 
-      QuickI2cDmaReadRx2 (QuickI2cDev, (UINT8) ReadDmaCntrl2.Fields.QuickI2cPrdCbWritePointer, (UINT8) ReadDmaCntrl2.Fields.QuickI2cPrdCbReadPointer);
-      ReadDmaCntrl2.Data = QuickI2cLibGetReadRx2Data (QuickI2cDev->PciBar0);
-      ReadDmaIntSts2.Data32 = QuickI2cLibGetReadRx2IntSts (QuickI2cDev->PciBar0);
-      if (ReadDmaIntSts2.Fields.StallSts == 1) {
-        DEBUG ((DEBUG_ERROR, "QuickI2cPolling Stall while detected ! ReadDmaIntSts2: 0x%X\n", ReadDmaIntSts2.Data32));
-        THC_LOCAL_DEBUG (L"QuickI2cPollingStall while detected ! ReadDmaIntSts2: 0x%X\n", ReadDmaIntSts2.Data32);
-        QuickI2cLibClearReadRx2IntSts (QuickI2cDev->PciBar0);
-        QuickI2cDev->ReadDone = TRUE;
-        return;
+        QuickI2cDmaReadRx2 (QuickI2cDev, (UINT8) ReadDmaCntrl2.Fields.QuickI2cPrdCbWritePointer, (UINT8) ReadDmaCntrl2.Fields.QuickI2cPrdCbReadPointer);
+        ReadDmaCntrl2.Data = QuickI2cLibGetReadRx2Data (QuickI2cDev->PciBar0);
+        ReadDmaIntSts2.Data32 = QuickI2cLibGetReadRx2IntSts (QuickI2cDev->PciBar0);
+        if (ReadDmaIntSts2.Fields.StallSts == 1) {
+          DEBUG ((DEBUG_ERROR, "QuickI2cPolling Stall while detected ! ReadDmaIntSts2: 0x%X\n", ReadDmaIntSts2.Data32));
+          THC_LOCAL_DEBUG (L"QuickI2cPollingStall while detected ! ReadDmaIntSts2: 0x%X\n", ReadDmaIntSts2.Data32);
+          QuickI2cLibClearReadRx2IntSts (QuickI2cDev->PciBar0);
+          QuickI2cDev->ReadDone = TRUE;
+          return;
+        }
+        if (((UINT8) (ReadDmaCntrl2.Fields.QuickI2cPrdCbWritePointer & POINTER_MASK)) == ((UINT8) (ReadDmaCntrl2.Fields.QuickI2cPrdCbReadPointer & POINTER_MASK))) {
+          QuickI2cDev->ReadDone = TRUE;
+        }
+        if (Timeout == 0) {
+          DEBUG ((DEBUG_ERROR, "QuickI2cPolling Timeout while reading DMA, possible interrupt storm\n"));
+          ASSERT (FALSE);
+          // Clear interrupt status
+          QuickI2cLibClearReadRx2IntSts (QuickI2cDev->PciBar0);
+          QuickI2cDev->ReadDone = TRUE;
+          return;
+        }
+        MicroSecondDelay (10);
+        Timeout -= 10;
       }
-      if (((UINT8) (ReadDmaCntrl2.Fields.QuickI2cPrdCbWritePointer & POINTER_MASK)) == ((UINT8) (ReadDmaCntrl2.Fields.QuickI2cPrdCbReadPointer & POINTER_MASK))) {
-        QuickI2cDev->ReadDone = TRUE;
-      }
-      if (Timeout == 0) {
-        DEBUG ((DEBUG_ERROR, "QuickI2cPolling Timeout while reading DMA, possible interrupt storm\n"));
-        ASSERT (FALSE);
-        // Clear interrupt status
-        QuickI2cLibClearReadRx2IntSts (QuickI2cDev->PciBar0);
-        QuickI2cDev->ReadDone = TRUE;
-        return;
-      }
-      MicroSecondDelay (10);
-      Timeout -= 10;
     }
   }
 }
@@ -2065,10 +2069,14 @@ QuickI2cReadHidDescriptor (
   Wbc                 = sizeof (QuickI2cDev->DeviceDescriptor.wReportDescRegister);
   Address             = QuickI2cDev->DeviceDescriptor.wReportDescRegister;
 
+  THC_LOCAL_DEBUG(L"QuickI2cReadHidDescriptor: QuickI2c SwDma Active !\n")
+  QuickI2cDev->SwDmaActive = TRUE;
+
   Status = QuickI2cSwDma (QuickI2cDev, NULL, RxDlenEn, Wbc, Address);
   THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor QuickI2cSwDma: %r\n", Status)
   if (EFI_ERROR (Status)) {
-    FreeAlignedPages (QuickI2cDev->HidBuffer, EFI_SIZE_TO_PAGES (THC_MAX_HID_BUFFER_SIZE));
+    QuickI2cDev->SwDmaActive = FALSE;
+    THC_LOCAL_DEBUG(L"QuickI2cReadHidDescriptor: QuickI2c SwDma End\n")
     return Status;
   }
 
@@ -2097,6 +2105,8 @@ QuickI2cReadHidDescriptor (
       //
       QuickI2cCompleteSwdma (QuickI2cDev->PciBar0);
       QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);
+      QuickI2cDev->SwDmaActive = FALSE;
+      THC_LOCAL_DEBUG(L"QuickI2cReadHidDescriptor: QuickI2c SwDma End\n")
       return EFI_TIMEOUT;
     }
   }
@@ -2128,9 +2138,8 @@ QuickI2cReadHidDescriptor (
   // Reset PRD table settings
   //
   QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);
-
-  THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor End\n")
-
+  QuickI2cDev->SwDmaActive = FALSE;
+  THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor SwDmaActive End\n")
   return EFI_SUCCESS;
 }
 
@@ -2159,8 +2168,8 @@ QuickI2cTouchEnable (
   THC_LOCAL_DEBUG (L"QuickI2cTouchEnable\n")
 
   if ((QuickI2cDev->HidSolutionFlag == ElanHidProtocol) || (QuickI2cDev->InputReportTable.TouchPad)) {
-    THC_LOCAL_DEBUG (L"QuickI2cTouchEnable: For Elan Touch Panel/THAT Touch Pad Skipping it !!\n")
-    DEBUG ((DEBUG_INFO, "QuickI2cTouchEnable: For Elan Touch Panel/THAT Touch Pad Skipping it !!\n"));
+    THC_LOCAL_DEBUG (L"QuickI2cTouchEnable: Skipping it !!\n")
+    DEBUG ((DEBUG_INFO, "QuickI2cTouchEnable: Skipping it !!\n"));
     return EFI_SUCCESS;
   }
 
@@ -2401,7 +2410,7 @@ QuickI2cGetFeatureViaSwDma (
     THC_LOCAL_DEBUG(L"QuickI2cGetFeatureViaSwDma: FeatureReportAvailable = %d not available \n", QuickI2cDev->ReportPacket.FeatureReportAvailable)
     return EFI_SUCCESS;
   }
-  DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma: FeatureReportAvailable = %d for ReportId = %d\n", QuickI2cDev->ReportPacket.FeatureReportAvailable, QuickI2cDev->ReportPacket.ReportId));
+  DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma: For ReportId = 0x%x\n", QuickI2cDev->ReportPacket.ReportId));
 
   QuickI2cDev->HidDataAvailable = FALSE;
   QuickI2cDev->HidActive        = TRUE;
@@ -2416,7 +2425,7 @@ QuickI2cGetFeatureViaSwDma (
   Quick2cGetFeatureRequest.Fields.Low.ReportType  = QuickI2cReportTypeFeature;
   Quick2cGetFeatureRequest.Fields.Low.Reserved    = 0b00;
 
-  //need to check reportID value to determine if the third optional byte is needed and also determine the write-byte-size
+  // need to check reportID value to determine if the third optional byte is needed and also determine the write-byte-size
   if (QuickI2cDev->ReportPacket.ReportId < QUICKI_I2C_THC_SWDMA_WRITE_BYTE_SIZE_LIMIT) {
     Quick2cGetFeatureRequest.Fields.Low.ReportID  = (UINT8)QuickI2cDev->ReportPacket.ReportId;
     RxDlenEn = QUICK_I2C_THC_SWDMA_I2C_RX_DLEN_EN_1;
@@ -2433,10 +2442,12 @@ QuickI2cGetFeatureViaSwDma (
   }
 
   THC_LOCAL_DEBUG(L"QuickI2cGetFeatureViaSwDma: RxDlenEn = %d, Wbc = %d, WriteDataHeader= 0x%x, Data= 0x%x\n", RxDlenEn, Wbc, WriteDataHeader, Data)
+  THC_LOCAL_DEBUG(L"QuickI2cGetFeatureViaSwDma: QuickI2c SwDma Active !\n")
+  QuickI2cDev->SwDmaActive = TRUE;
   Status = QuickI2cSwDma (QuickI2cDev, &Data, RxDlenEn, Wbc, WriteDataHeader);
-  DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma QuickI2cSwDma: %r\n", Status));
   if (EFI_ERROR (Status)) {
-    return Status;
+    DEBUG ((DEBUG_ERROR, "QuickI2cGetFeatureViaSwDma QuickI2cSwDma return Status: %r\n", Status));
+    // return status is optional
   }
 
   Timeout = HidResponseTimeout;
@@ -2448,6 +2459,7 @@ QuickI2cGetFeatureViaSwDma (
     DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma Waiting for Response \n"));
     do {
       if (QuickI2cDev->HidDataAvailable == TRUE && QuickI2cDev->ReadDone == TRUE) {
+        THC_LOCAL_DEBUG (L"QuickI2cGetFeatureViaSwDma Response received\n")
         DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma Response received\n"));
         Status = EFI_SUCCESS;
         break;
@@ -2457,14 +2469,9 @@ QuickI2cGetFeatureViaSwDma (
     } while (Timeout > 0);
 
     if (Timeout == 0) {
-      THC_LOCAL_DEBUG (L"QuickI2cGetFeatureViaSwDma Response Timeout\n")
-      DEBUG ((DEBUG_ERROR, "QuickI2cGetFeatureViaSwDma Response Timeout\n"));
-      //
-      // Even for error case need to clear out everything
-      //
-      QuickI2cCompleteSwdma (QuickI2cDev->PciBar0);
-      QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);
-      return EFI_TIMEOUT;
+      THC_LOCAL_DEBUG (L"QuickI2cGetFeatureViaSwDma Response Timeout might be optional\n")
+      DEBUG ((DEBUG_ERROR, "QuickI2cGetFeatureViaSwDma Response Timeout might be optional\n"));
+      // return status is optional
     }
   }
 
@@ -2478,6 +2485,7 @@ QuickI2cGetFeatureViaSwDma (
   QuickI2cDev->SwDmaMessageLength = 0;
 
   QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);
-  DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma End\n"));
+  QuickI2cDev->SwDmaActive = FALSE;
+  DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma SwDmaActive End\n"));
   return EFI_SUCCESS;
 }

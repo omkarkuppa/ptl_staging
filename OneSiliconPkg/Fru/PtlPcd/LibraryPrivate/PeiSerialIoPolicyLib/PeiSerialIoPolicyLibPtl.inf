@@ -32,7 +32,6 @@
   DebugLib
   ConfigBlockLib
   SiConfigBlockLib
-  SerialIoUartDebugPropertyPcdLib
   PchInfoLib
   SocInfoLib
   BaseMemoryLib

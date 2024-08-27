@@ -96,9 +96,11 @@
   # GPIO Table WwanOff
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOffEarlyPreMem| * |{CODE(
   {
-    { GPIOV2_PTL_PCD_XXGPP_A_9,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,     GpioV2IntDis,                GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,  GpioV2Unlock }},  // M.2_WWAN_FCP_OFF_N
-    { GPIOV2_PTL_PCD_XXGPP_B_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,     GpioV2IntDis,                GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,  GpioV2Unlock }},  // M.2_WWAN_RST_N
-    { GPIOV2_PTL_PCD_XXGPP_D_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,     GpioV2IntDis,                GpioV2ResetHost,      GpioV2TermNone,  GpioV2Lock,  GpioV2Unlock }},  // M.2_WWAN_PERST_GPIO_N
+    { GPIOV2_PTL_PCD_XXGPP_H_16, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_PWREN
+    { GPIOV2_PTL_PCD_XXGPP_A_9,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // M.2_WWAN_FCP_OFF_N
+    { GPIOV2_PTL_PCD_XXGPP_B_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // M.2_WWAN_RST_N
+    { GPIOV2_PTL_PCD_XXGPP_D_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // M.2_WWAN_PERST_GPIO_N
+    { GPIOV2_PTL_PCD_XXGPP_E_2,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirInInv,  GpioV2StateDefault,  GpioV2IntLevel|GpioV2IntSci, GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Unlock, GpioV2Lock   }},  // WWAN_WAKE_GPIO_N
     { 0x0 }
   })}
 
@@ -365,6 +367,9 @@
   # Thermal Sensor Gpio D Pmsync Enable
   gBoardModuleTokenSpaceGuid.VpdPcdMemoryThermalSensorGpioDPmsyncEnable|*|FALSE
 
+  # M.2 Gen4 SSD (NIST)
+  gBoardModuleTokenSpaceGuid.VpdPcdNvmeRecoveryPrimarySlotPortNumber|*|0x5
+
   # PCIE SLOT 1 - X2 CONNECTOR RTD3
   gBoardModuleTokenSpaceGuid.VpdPcdPcieSlot1RootPort|*|0x1
   gBoardModuleTokenSpaceGuid.VpdPcdPcieSlot1PwrEnableGpioNo|*|{CODE(
@@ -414,9 +419,6 @@
 
   # USB Type-C PD Information Present : FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent|*|TRUE
-
-  # USB Type-C PD Vendor : Definitions 1 to 3 are supported.
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor|*|0x02
 
   # USB Type-C Retimer Information Present : FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent|*|TRUE
@@ -621,13 +623,10 @@
     {GPIOV2_PTL_PCD_XXGPP_E_3,    {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHost,  GpioV2TermDefault}},  // M2_GEN5_SSD_RESET_N
 
   //
-  // M.2 WLAN
+  // CNVi (WLAN)
   //
-    {GPIOV2_PTL_PCD_XXGPP_F_6,    {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirIn,     GpioV2StateDefault, GpioV2IntDis,                 GpioV2ResetHost,      GpioV2TermDefault}}, // WLAN_WWAN_COEX3
-    {GPIOV2_PTL_PCD_XXGPP_A_12,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirInInv,  GpioV2StateDefault, GpioV2IntLevel|GpioV2IntSci,  GpioV2ResetHostDeep,  GpioV2TermDefault,  GpioV2Unlock,  GpioV2Lock}}, // WIFI_WAKE_N
-    {GPIOV2_PTL_PCD_XXGPP_A_16,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHostDeep,  GpioV2TermDefault}}, // BT_RF_KILL_N
-    {GPIOV2_PTL_PCD_XXGPP_A_17,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHostDeep,  GpioV2TermDefault}}, // WIFI_RF_KILL_N
-    {GPIOV2_PTL_PCD_XXGPP_A_11,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHost,      GpioV2TermDefault}}, // WLAN_RST_N
+    {GPIOV2_PTL_PCD_XXGPP_A_16,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHostDeep,  GpioV2TermDefault}}, // BT_RF_KILL_N
+    {GPIOV2_PTL_PCD_XXGPP_A_17,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHostDeep,  GpioV2TermDefault}}, // WIFI_RF_KILL_N
 
   //
   // Camera Conn 1
@@ -741,11 +740,11 @@
     {
       0,                            // Revision
       0,                            // WlanRootPortNumber
-      8,                            // DiscreteUsbBtPortNumber
+      0,                            // DiscreteUsbBtPortNumber
       8,                            // IntegratedUsbBtPortNumber
       GPIOV2_PTL_PCD_XXGPP_A_17,    // WlanRfKillGpio
-      GPIOV2_PTL_PCD_XXGPP_A_12,    // WlanWakeGpio
-      GPIOV2_PTL_PCD_XXGPP_A_11,    // WlanRstGpio
+      0,                            // WlanWakeGpio
+      0,                            // WlanRstGpio
       GPIOV2_PTL_PCD_XXGPP_A_16,    // BtRfKillGpio
       0                             // BtIrqGpio
     }
@@ -758,16 +757,14 @@
   )}
 
 [PcdsDynamicHii.common.SkuIdPtlUHDdr5Rvp4.STANDARD]
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[0]|0x2                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[3]|0x1                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[4]|0x2                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[5]|0x3                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cTouchPadType|0x7                                           # THAT Touch Pad
+  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[5]|0x1                                    # Connected device
   gStructPcdTokenSpaceGuid.PcdSetup.TelemetryDeviceEnable|0x1                                        # Enable Telemetry
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x0                               # DMIC #0
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x0                               # DMIC #1
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI2cEnable[1]|0x0                                        # I2C1
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshSpiEnable[0]|0x1                                        # SPI_0
+  gStructPcdTokenSpaceGuid.PcdSetup.ControlIommu|0x0                                                 # Pre-boot DMA Protection // PTL PO temp WA TODO :: Revisit and move to POR
+  gStructPcdTokenSpaceGuid.PcdSaSetup.MemoryBandwidthCompression|0x0                                 # Disable MemoryBandwidthCompression // PTL PO temp WA TODO :: Revisit and move to POR
 
 #####################################################################
 #  PTL UH DDR5 T3 - RVP4 BOM

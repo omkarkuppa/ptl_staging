@@ -159,6 +159,7 @@
 #define B_SMBUS_PCR_GC_FD                 BIT0                        ///< Function Disable
 #define B_SMBUS_PCR_GC_SMBSCGE            BIT2                        ///< SMB Static Clock Gating Enable
 #define R_SMBUS_PCR_PCE                   0x10                        ///< Power Control Enable
+#define B_SMBUS_PCR_PCE_PMCRE             BIT0                        ///< PMCRE bit
 #define B_SMBUS_PCR_PCE_HAE               BIT5                        ///< Hardware Autonomous Enable
 #define B_SMBUS_PCR_GC_SMBSLV             BIT8                        ///< SMB Target Device Support
                                                                       /*

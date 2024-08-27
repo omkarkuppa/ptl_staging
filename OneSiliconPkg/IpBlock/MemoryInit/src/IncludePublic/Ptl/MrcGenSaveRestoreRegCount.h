@@ -24,18 +24,18 @@
 #ifndef MRC_GEN_SAVE_RESTORE_REG_COUNTS
 #define MRC_GEN_SAVE_RESTORE_REG_COUNTS
 
-// Total Registers including hardcoded MrsFsmCtrl regs: 3536
+// Total Registers including hardcoded MrsFsmCtrl regs: 3006
 // PHY Common 32 Bit Registers: 68
 // PHY Common 64 Bit Registers: 0
-// MC Common 32 Bit Registers: 736
-// MC Common 64 Bit Registers: 28
+// MC Common 32 Bit Registers: 742
+// MC Common 64 Bit Registers: 24
 
-// PHY SaGv 32 Bit Registers: 2520
+// PHY SaGv 32 Bit Registers: 2033
 // PHY SaGv 64 Bit Registers: 0
-// MC SaGv 32 Bit Registers: 144
+// MC SaGv 32 Bit Registers: 100
 // MC SaGv 64 Bit Registers: 40
 
-#define MRC_REGISTER_COUNT_COMMON  ((3216+(112*2)) / sizeof (UINT32))
-#define MRC_REGISTER_COUNT_SAGV    ((10656+(160*2)) / sizeof (UINT32))
+#define MRC_REGISTER_COUNT_COMMON  (3412 / sizeof (UINT32))
+#define MRC_REGISTER_COUNT_SAGV    (8824 / sizeof (UINT32))
 
 #endif // MRC_GEN_SAVE_RESTORE_REG_COUNTS

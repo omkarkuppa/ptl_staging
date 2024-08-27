@@ -23,8 +23,8 @@
 #include <Uefi/UefiBaseType.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/SerialIoAccessLib.h>
-#include <Library/SerialIoUartLib.h>
-#include <Library/SerialIoUartDebugPropertyLib.h>
+#include <Library/LpssUartLib.h>
+#include <Library/LpssUartDebugPropertyPcdLib.h>
 
 /**
   Initialize SerialIo UART for debug.
@@ -36,71 +36,7 @@ SerialIoUartDebugInit (
   VOID
   )
 {
-  UINT64                    PciCfgBase;
-  UINT64                    Bar0;
-  SERIAL_IO_UART_ATTRIBUTES UartAttributes;
-  UINT8                     *UartNumber;
-  UINT8                      UartNumFromPcd;
-  EFI_STATUS                Status;
-
-  UartNumber = NULL;
-  UartNumFromPcd = SerialIoUartDebugGetControllerNumber ();
-
-  if (UartNumFromPcd == 0xFF) {
-    PciCfgBase = SerialIoUartDebugGetDefaultPciCfgBase ();
-  } else {
-    UartNumber = &UartNumFromPcd;
-    PciCfgBase = GetSerialIoUartPciCfg (*UartNumber);
-  }
-  Bar0       = GetSerialIoBar (PciCfgBase);
-  SetMem (&UartAttributes, sizeof (SERIAL_IO_UART_ATTRIBUTES), 0);
-  SerialIoUartDebugGetAttributes (&UartAttributes);
-
-  //
-  // Check BAR0 whether is assigned value in either Hidden or PCI Mode.
-  //
-  if ((Bar0 !=  0x0) && (Bar0 != 0xFFFFF000)) {
-    SerialIoUartSetAttributes (
-      (UINTN) PciCfgBase,
-      UartNumber,
-      UartAttributes.BaudRate,
-      UartAttributes.Parity,
-      UartAttributes.DataBits,
-      UartAttributes.StopBits,
-      UartAttributes.AutoFlow
-      );
-    return;
-  }
-
-  //
-  // Assign MMIO for HS-UART used in PCI Mode.
-  //
-  if (!IsSerialIoUartInPciMode ((UINTN) PciCfgBase, UartNumber)) {
-    return;
-  }
-  Bar0 = SerialIoUartDebugGetPciDefaultMmioBase ();
-  Status = SerialIoUartSetMmioInPciMode ((UINTN) PciCfgBase, UartNumber, Bar0);
-  if (Status == EFI_UNSUPPORTED) {
-    return;
-  }
-
-  //
-  // UART Reset
-  //
-  SerialIoUartGetOutOfReset (Bar0);
-
-  //
-  // Initialize UART Attributes
-  //
-  SerialIoUartSetAttributes (
-    (UINTN) PciCfgBase,
-    UartNumber,
-    UartAttributes.BaudRate,
-    UartAttributes.Parity,
-    UartAttributes.DataBits,
-    UartAttributes.StopBits,
-    UartAttributes.AutoFlow
-    );
+  return;
 }
 
 /**
@@ -121,12 +57,5 @@ SerialIoUartDebugWrite (
   IN UINTN            NumberOfBytes
   )
 {
-  UINT8  UartIndex;
-
-  UartIndex = SerialIoUartDebugGetControllerNumber ();
-  if (UartIndex == 0xFF) {
-    return SerialIoUartWrite ((UINTN) SerialIoUartDebugGetDefaultPciCfgBase (), NULL, Buffer, NumberOfBytes);
-  } else {
-    return SerialIoUartWrite (0, &UartIndex, Buffer, NumberOfBytes);
-  }
+  return LpssUartWrite (LpssUartDebugPcdGetPciDefaultMmioBase (),  Buffer, NumberOfBytes);
 }

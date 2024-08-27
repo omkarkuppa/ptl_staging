@@ -39,6 +39,7 @@
   PciIoLib
   PmcLib
   MeFruInitLib
+  SerialIoUartSocLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -50,6 +51,7 @@
   EarlyDxeDevices.c
 
 [Guids]
+gPchLpssUartConfigHobGuid            ## CONSUMES
 
 [Protocols]
   gEfiPciIoProtocolGuid               ## PRODUCES

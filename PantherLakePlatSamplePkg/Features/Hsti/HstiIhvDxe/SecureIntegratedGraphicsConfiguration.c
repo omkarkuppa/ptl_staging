@@ -671,11 +671,6 @@ CheckSecureIntegratedGraphicsConfiguration (
       );
     Result = FALSE;
   }
-  //
-  // Enable Idle mode for GT and Media.
-  //
-  IGpuIdleGt ();
-  IGpuIdleMedia ();
 
   DEBUG ((DEBUG_INFO, "      L3LOCKMSGREG locked Tests\n"));
 
@@ -701,7 +696,11 @@ CheckSecureIntegratedGraphicsConfiguration (
     Result = FALSE;
   }
 
-
+  //
+  // Enable Idle mode for GT and Media.
+  //
+  IGpuIdleGt ();
+  IGpuIdleMedia ();
 
   //
   // ALL PASS

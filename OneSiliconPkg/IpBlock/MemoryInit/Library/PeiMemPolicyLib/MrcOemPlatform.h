@@ -299,9 +299,9 @@ IsvtCheckPoint (
 UINT32
 EFIAPI
 CheckPoint (
-  VOID   *GlobalData,
-  UINT32 Command,
-  VOID   *Pointer
+  IN VOID        *GlobalData,
+  IN UINT32      Command,
+  IN VOID        *Pointer
   );
 
 /**

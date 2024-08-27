@@ -126,14 +126,14 @@ SmbusPostMemConfigure (
       );
 
     ///
-    /// Set SMBUS PCR 0x10h [5] = 1 and clear [2,1,0] = 0
+    ///Enable PMCRE bit and Set SMBUS PCR 0x10h [5] = 1 and clear [2,1] = 0
     ///
-    Data32And = ~(UINT32) (BIT2 | BIT1 | BIT0);
+    Data32And = ~(UINT32) (BIT2 | BIT1);
     Data32Or = 0;
     if (SmbusHandle->Config->DynamicPowerGating) {
-      Data32Or = (UINT32) B_SMBUS_PCR_PCE_HAE;
+      Data32Or = (UINT32) (B_SMBUS_PCR_PCE_HAE | B_SMBUS_PCR_PCE_PMCRE);
     } else {
-      Data32And &= ~((UINT32) B_SMBUS_PCR_PCE_HAE);
+      Data32And &= ~((UINT32) (B_SMBUS_PCR_PCE_HAE | B_SMBUS_PCR_PCE_PMCRE));
     }
     SmbusHandle->SmbusSbAccessMmio->AndThenOr32 (SmbusHandle->SmbusSbAccessMmio, R_SMBUS_PCR_PCE, Data32And, Data32Or);
   }

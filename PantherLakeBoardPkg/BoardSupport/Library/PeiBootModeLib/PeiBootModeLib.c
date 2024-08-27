@@ -172,6 +172,47 @@ PreMemUpdateCapsuleBootMode (
 }
 
 /**
+  Update boot progress bit for TxtClean reset.
+**/
+EFI_STATUS
+EFIAPI
+UpdateFastBootFlagStatusCallback (
+  IN EFI_PEI_SERVICES           **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
+  IN VOID                       *Ppi
+  );
+
+/**
+  Notification on reset for TxtClean.
+**/
+static EFI_PEI_NOTIFY_DESCRIPTOR mPeiTxtCleanResetNotificationNotifyList = {
+  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  &gPeiTxtCleanResetNotificationPpiGuid,
+  UpdateFastBootFlagStatusCallback
+};
+
+/**
+  Update boot progress bit for TxtClean reset.
+  @param[in] PeiServices          General purpose services available to every PEIM.
+  @param[in] NotifyDescriptor     The notification structure this PEIM registered on install.
+  @param[in] Ppi                  The gPeiTxtCleanResetNotificationPpiGuid PPI. Not used.
+**/
+EFI_STATUS
+EFIAPI
+UpdateFastBootFlagStatusCallback (
+  IN EFI_PEI_SERVICES           **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
+  IN VOID                       *Ppi
+  )
+{
+  DEBUG ((DEBUG_INFO, "FastBootCallback Entry.\n"));
+  // Clear Boot Progress bit [bit0]
+  UpdateFastBootFlagStatus (GetFastBootFlagStatus () & ~BIT0);
+
+  return EFI_SUCCESS;
+}
+
+/**
   Check fast boot is enabled or not
 
   @retval  FastBootEnabledStatus  TRUE means fast boot is enabled
@@ -276,6 +317,7 @@ PreMemUpdateBootMode (
       FastBootRegData = GetFastBootFlagStatus ();
       FastBootRegData |= FAST_BOOT_OR_MASK;
       UpdateFastBootFlagStatus (FastBootRegData);
+      PeiServicesNotifyPpi(&mPeiTxtCleanResetNotificationNotifyList);
     }
   }
 

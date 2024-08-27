@@ -50,25 +50,9 @@
 #ifndef _PCH_REGS_ICLK_H_
 #define _PCH_REGS_ICLK_H_
 
-#define R_ICLK_PCR_CMU_ONE_DWORD25                      0x22E4
-#define R_ICLK_PCR_CMU_ONE_DWORD26                      0x22E8
-#define S_ICLK_PCR_MUXSEL_BITS_PER_FIELD                4      // CLKREQ number is encoded in 4 bits
-#define B_ICLK_PCR_MUXSEL_BITS_PER_FIELD                0xF    // CLKREQ number is encoded in 4 bits
-#define S_ICLK_PCR_MUXSEL_FIELDS_PER_REG                8      // each CMU_ONE_DWORD register contains bitfields for 8 CLK_SRC
-
-#define R_ICLK_PCR_CAMERA1                              0x8000
-#define B_ICLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0            (BIT0 | BIT1)
-#define B_ICLK_PCR_CAMERA1_CAM1_CLK_EN                  BIT2
-#define R_ICLK_PCR_BIOS_BUFFEN                          0x8080
-#define N_ICLK_PCR_BIOS_BUFFEN_SRC0                     2
-#define R_ICLK_PCR_BIOS_BUFFEN_H                        0x8084
-#define N_ICLK_PCR_BIOS_BUFFEN_H_SRC7                   1
-#define R_ICLK_PCR_SRC_MUXSEL                           0x8104
-#define R_ICLK_PCR_SRC_MUXSEL_26                        0x8108
-#define R_ICLK_PCR_SRC_MUXSEL_34                        0x810C
-#define R_ICLK_PCR_SRC_MUXSEL_42                        0x8110
-#define R_ICLK_PCR_SRC_MUXSEL_50                        0x8114
-#define S_ICLK_PCR_SRC_MUXSEL_FIELDS_PER_REG            4
-#define B_ICLK_PCR_SRC_MUXSEL_BITS_PER_FIELD            0x1F
+#define R_ISCLK_PCR_CAMERA1                              0x8000
+#define B_ISCLK_PCR_CAMERA1_CAM1_FREQ_SEL_1_0            (BIT0 | BIT1)
+#define B_ISCLK_PCR_CAMERA1_CAM1_CLK_EN                  BIT2
+#define R_ISCLK_PCR_BIOS_BUFFEN_H                        0x8080
 
 #endif // _PCH_REGS_ICLK_H_

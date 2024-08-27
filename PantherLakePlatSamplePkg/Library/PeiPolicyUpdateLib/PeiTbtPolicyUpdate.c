@@ -74,13 +74,11 @@ UpdatePeiTbtPolicy (
   UINT8                            InitSetupFlag;
 #if FixedPcdGetBool (PcdDTbtEnable) == 1
   UINT8                            Index;
+  PEI_DTBT_POLICY                  *PeiDTbtConfig;
 #endif
 #if FixedPcdGetBool (PcdTcssSupport) == 1
   SA_SETUP                         SaSetup;
   PEI_ITBT_CONFIG                  *PeiITbtConfig;
-#endif
-#if FixedPcdGetBool (PcdDTbtEnable) == 1
-  PEI_DTBT_POLICY                  *PeiDTbtConfig;
 #endif
 
   DEBUG ((DEBUG_INFO, "Update PeiTbtPolicyUpdate Pos-Mem Start\n"));

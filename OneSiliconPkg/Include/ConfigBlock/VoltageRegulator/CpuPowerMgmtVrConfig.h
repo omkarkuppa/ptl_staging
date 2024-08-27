@@ -86,9 +86,8 @@ typedef struct {
   UINT8  FivrSpectrumEnable;                      ///< Enable or Disable FIVR Spread Spectrum 0: Disable; <b> 1: Enable.</b>
   UINT8  DlvrSpreadSpectrumPercentage;            ///< PCODE MMIO Mailbox: Encoded DLVR SSC value. 0x0 = Disabled. u3.2 value from 0% - 7.75%.
   UINT8  DlvrRfiEnable;                           ///< PCODE MMIO Mailbox: Enable/Disable RFI frequency hopping. 0: Disable; <b>1: Enable.</b>
-  UINT8  PreWake;                                 ///< PCODE MMIO Mailbox: Acoustic Noise Mitigation Range. This can be programmed only if AcousticNoiseMitigation is enabled.<b>Default Value = 0 micro ticks</b> Defines the max pre-wake randomization time in micro ticks. Range is 0-255.
-  UINT8  RampUp;                                  ///< PCODE MMIO Mailbox: Acoustic Noise Mitigation Range. This can be programmed only if AcousticNoiseMitigation is enabled.<b>Default Value = 0 micro ticks</b> Defines the max ramp up randomization time in micro ticks. Range is 0-255.
-  UINT8  RampDown;                                ///< PCODE MMIO Mailbox: Acoustic Noise Mitigation Range. This can be programmed only if AcousticNoiseMitigation is enabled.<b>Default Value = 0 micro ticks</b> Defines the max ramp down randomization time in micro ticks. Range is 0-255.
+  UINT8  PcoreHysteresisWindow;                   ///< PCODE MMIO Mailbox: Pcore VR Hysteresis time window. This can be programmed only if AcousticNoiseMitigation is enabled.<b>Default Value = 0 </b> Range is 0-50ms.
+  UINT8  EcoreHysteresisWindow;                   ///< PCODE MMIO Mailbox: Ecore VR Hysteresis time window. This can be programmed only if AcousticNoiseMitigation is enabled.<b>Default Value = 0 </b> Range is 0-50ms.
   UINT16 DlvrRfiFrequency;                        ///< PCODE MMIO Mailbox: DLVR clock frequency in MHz.
   UINT8  PS1toPS0DynamicCutoffEnable[MAX_NUM_VRS];///< Enable/Disable PS1 to PS0 Dynamic Cutoff; <b>0: Disable</b>; 1: Enable.
   UINT8  PS2toPS1DynamicCutoffEnable[MAX_NUM_VRS];///< Enable/Disable:PS2 to PS1 Dynamic Cutoff; <b>0: Disable</b>; 1: Enable.
@@ -141,7 +140,7 @@ typedef struct {
   UINT8  VsysAssertionDeglitchExponent;
   UINT8  VsysDeassertionDeglitchMantissa;
   UINT8  VsysDeassertionDeglitchExponent;
-  UINT8  Rsvd2;
+  UINT8  Rsvd2[2];
   /**
     PCODE VR Mailbox: Voltage Regulator Fast Vmode ICC Limit.
     This value represents the current threshold where the VR would initiate reactive protection if Fast Vmode is enabled.
@@ -156,10 +155,10 @@ typedef struct {
   **/
   UINT8  EnableFastVmode[MAX_NUM_VRS];
   /**
-  Set Vsys/Pysy Critical [0x4A]
-  Write to 0x4A to program Vsys Critical Threshold which is a linear fractional value of the Vsys input full scale voltage
-  where minimun is 0 and maximum is 255000mv
-  For example: Vsys_Crit (0x4A) = (Critical Threshold/Full Scale) * 0xFF
+    Set Vsys/Pysy Critical [0x4A]
+    Write to 0x4A to program Vsys Critical Threshold which is a linear fractional value of the Vsys input full scale voltage
+    where minimun is 0 and maximum is 255000mv
+    For example: Vsys_Crit (0x4A) = (Critical Threshold/Full Scale) * 0xFF
   **/
   UINT32 VsysFullScale;
   UINT32 VsysCriticalThreshold;

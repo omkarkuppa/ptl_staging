@@ -172,6 +172,8 @@
   0x00060001|SkuIdPtlUHLp5Rvp1Bom|SkuIdPtlUHLp5Rvp1
   0x00010003|SkuIdPtlUHLp5MemSdRvp3|SkuIdPtlUHLp5Rvp3
   0x00020003|SkuIdPtlUHLp5MemSktPnpRvp3|SkuIdPtlUHLp5Rvp3
+  0x00000011|SkuIdPtlHLp5Gcs1
+  0x00000012|SkuIdPtlHLp5Gcs2
   0x00000004|SkuIdPtlUHDdr5Rvp4
   0x01000004|SkuIdPtlUHDdr5Rvp4Dp|SkuIdPtlUHDdr5Rvp4
   0x00050004|SkuIdPtlUHDdr5Rvp4PpvBom|SkuIdPtlUHDdr5Rvp4
@@ -182,6 +184,8 @@
   0x01060004|SkuIdPtlUHDdr5Rvp4DpBom|SkuIdPtlUHDdr5Rvp4Dp
   0x00040004|SkuIdPtlUHDdr5Rvp4Chrome|SkuIdPtlUHDdr5Rvp4
   0x01040004|SkuIdPtlUHDdr5Rvp4DpChrome|SkuIdPtlUHDdr5Rvp4Dp
+  0x00010007|SkuIdPtlUHLp5AepBom
+  0x00000007|SkuIdPtlUHLp5Aep|SkuIdPtlUHLp5AepBom
 
 # Keeping this section as an example to define SKUs that can inherit parent
 # properties and define a section by its own identifier as well.
@@ -332,11 +336,11 @@
 !endif
 
 #
-# Memory Health Insights Feature
+# Memory Telemetry Feature
 #
-!if gMemoryHealthInsightsFeaturePkgTokenSpaceGuid.PcdMhiEnabled == TRUE
-  !include  MemoryHealthInsightsFeaturePkg/Include/MemoryHealthInsightsFeaturePkg.dsc
-!endif  # PcdMhiEnabled
+!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
+  !include  MemoryTelemetryFeaturePkg/Include/MemoryTelemetryFeaturePkg.dsc
+!endif  # PcdMemoryTelemetryEnabled
 
 ################################################################################
 #
@@ -1752,8 +1756,8 @@ $(PLATFORM_FULL_PACKAGE)/Platform/PciPlatform/Dxe/PciPlatform.inf {
     <LibraryClasses>
 !if $(TARGET) == DEBUG
       # It can't use PeiDxeDebugLibReportStatusCode as DebugLib, otherwise some forward DXE log will not shown.
-    DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-      SerialIoUartLib|OneSiliconPkg/IpBlock/SerialIo/Uart/Library/PeiDxeSmmSerialIoUartLib/DxeRuntimeSerialIoUartLib.inf
+      DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
+      LpssUartLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/LpssUartLib/DxeRuntimeLpssUartLib.inf
 !endif
 !if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
     DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf
@@ -1771,10 +1775,10 @@ $(PLATFORM_FULL_PACKAGE)/Platform/PciPlatform/Dxe/PciPlatform.inf {
 
 $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/RuntimeDxe/PlatformStatusCodeHandlerRuntimeDxe.inf {
     <LibraryClasses>
-      SerialIoUartLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/Uart/Library/PeiDxeSmmSerialIoUartLib/DxeRuntimeSerialIoUartLib.inf
+      LpssUartLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/LpssUartLib/DxeRuntimeLpssUartLib.inf
 !if $(TARGET) == DEBUG
     DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
-    SerialIoUartDebugPropertyLib|$(PLATFORM_FULL_PACKAGE)/Library/SerialIoUartDebugPropertyLib/DxeSmmSerialIoUartDebugPropertyLib.inf
+    LpssUartDebugPropertyPcdLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/LpssUartDebugPropertyPcdLib/LpssUartDebugPropertyPcdLib.inf
 !else
 !if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
     DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibTraceHubCatalog/BaseDebugLibTraceHubCatalog.inf

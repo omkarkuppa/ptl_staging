@@ -32,7 +32,7 @@
 // Arg0 - clock index
 //
 Method (CLKD, 1) {
-  P2SB_DEV.PCRA (PID, R_ICLK_PCR_BIOS_BUFFEN, Not (ShiftLeft (1, Arg0)))
+  P2SB_DEV.PCRA (PID, R_ISCLK_PCR_BIOS_BUFFEN_H, Not (ShiftLeft (1, Arg0)))
 }
 
 //
@@ -40,5 +40,5 @@ Method (CLKD, 1) {
 // Arg0 - clock index
 //
 Method (CLKE, 1) {
-  P2SB_DEV.PCRO (PID, R_ICLK_PCR_BIOS_BUFFEN, (ShiftLeft (1, Arg0)))
+  P2SB_DEV.PCRO (PID, R_ISCLK_PCR_BIOS_BUFFEN_H, (ShiftLeft (1, Arg0)))
 }

@@ -24,16 +24,6 @@
 
 #include <Library/PsfLib.h>
 #include <Ppi/SiPolicy.h>
-#include <IncludePrivate/PtlPcdSbPortIds.h>
-/**
-  Get table of supported PSF segments
-
-  @return  PsfSegmentTable   Table of supported PSF segments
-**/
-PSF_SEGMENT_TABLE*
-PtlPcdPsfGetSegmentTable (
-  VOID
-  );
 
 /**
   Disable LPSS I2C at PSF level
@@ -580,6 +570,24 @@ VOID
 PtlPcdPsfSetPcieRpFunction (
   IN UINT32  RpIndex,
   IN UINT32  NewFunction
+  );
+
+/**
+  Disable Trunk Clock Gating, Local Clock Gating and Partition Clock Gating
+  for all PSFs in PSF topology
+**/
+VOID
+PtlPcdPsfDisableClockGating (
+  VOID
+  );
+
+/**
+  Enable Trunk Clock Gating, Local Clock Gating and Partition Clock Gating
+  for all PSFs in PSF topology
+**/
+VOID
+PtlPcdPsfEnableClockGating (
+  VOID
   );
 
 /**

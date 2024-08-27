@@ -51,10 +51,12 @@
   EcMiscLib
   TbtNvmRetimerUpdateLib
   PmcLib
+  PrintLib
 
 [Packages]
   PantherLakePlatSamplePkg/PlatformPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   MdePkg/MdePkg.dec
   OneSiliconPkg/SiPkg.dec
   MinPlatformPkg/MinPlatformPkg.dec
@@ -74,7 +76,6 @@
   gBoardModuleTokenSpaceGuid.PcdEcPlatformMajorRevision                  ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdEcBuildRevision                          ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent               ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor                          ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber                   ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportRetimerInfoPresent          ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber         ## CONSUMES

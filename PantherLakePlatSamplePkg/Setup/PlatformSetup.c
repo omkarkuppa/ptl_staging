@@ -498,10 +498,14 @@ UpdatePDInformation (
 {
   EFI_STATUS            Status;
   UINT64                UsbCPdVersion;
-  UINT8                 DataBuffer [8];
   USBC_PD_SETUP         UsbCPdSetup;
   UINT32                VarAttributes;
   UINTN                 VarSize;
+  UINT32                FwVersion;
+  UINT32                SubFwVersion;
+  UINT8                 PdNumber;
+  UINT8                 Index;
+  EFI_STRING_ID         TokenToUpdate;
 
   DEBUG ((DEBUG_INFO, "<UpdatePDInformation> - Start\n"));
 
@@ -518,150 +522,45 @@ UpdatePDInformation (
     DEBUG ((DEBUG_ERROR, "Failed to get UsbCPdSetup variable with return Status = (%r).\n", Status));
     goto Exit;
   }
-  //
-  // PD 0
-  //
-  SetMem (DataBuffer, 8, 0);
 
-  UsbCPdVersion = UsbCPdSetup.UsbCPd0Version;
-
-  //
-  // if success then update string
-  //
-  if (UsbCPdVersion != 0) {
-    DataBuffer[0] = (UINT8) (UsbCPdVersion & 0xFF);
-    DataBuffer[1] = (UINT8) ((UsbCPdVersion >> 8) & 0xFF);
-    DataBuffer[2] = (UINT8) ((UsbCPdVersion >> 16) & 0xFF);
-    DataBuffer[3] = (UINT8) ((UsbCPdVersion >> 24) & 0xFF);
-    DataBuffer[4] = (UINT8) ((UsbCPdVersion >> 32) & 0xFF);
-    DataBuffer[5] = (UINT8) ((UsbCPdVersion >> 40) & 0xFF);
-    DataBuffer[6] = (UINT8) ((UsbCPdVersion >> 48) & 0xFF);
-    DataBuffer[7] = (UINT8) (UsbCPdVersion >> 56);
-
-    DEBUG ((DEBUG_INFO, "VpdPcdUsbCPdVendor = %x\n", PcdGet8 (VpdPcdUsbCPdVendor)));
-    switch (PcdGet8 (VpdPcdUsbCPdVendor)) {
-      case UsbCPdTypeCypress:
-        // Update information for Cypress USBC PD
-        InitString (
-          HiiHandle,
-          STRING_TOKEN (STR_PD0_APPLICATION_NAME_VALUE),
-          L"%c%c",
-          DataBuffer [1],
-          DataBuffer [0]
-          );
-
-        InitString (
-          HiiHandle,
-          STRING_TOKEN (STR_PD0_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_VALUE),
-          L"%d",
-          DataBuffer [2]
-          );
-
-        InitString (
-          HiiHandle,
-          STRING_TOKEN (STR_PD0_VERSION_VALUE),
-          L"%d.%d_%02X_%02X_%02X%02X",
-          ((DataBuffer [3] >> 4) & 0x0F),
-          (DataBuffer [3] & 0x0F),
-          DataBuffer [7],
-          DataBuffer [6],
-          DataBuffer [5],
-          DataBuffer [4]
-          );
-        break;
-      case UsbCPdTypeTi:
-        // Update information for TI USBC PD
-        InitString (
-          HiiHandle,
-          STRING_TOKEN (STR_PD0_VERSION_VALUE),
-          L"%02X%02X.%02X.%02X_%02X_%02X_%02X%02X",
-          DataBuffer [3],
-          DataBuffer [2],
-          DataBuffer [1],
-          DataBuffer [0],
-          DataBuffer [7],
-          DataBuffer [6],
-          DataBuffer [5],
-          DataBuffer [4]
-          );
-        break;
-      default:
-        break;
-    }
+  PdNumber = PcdGet8 (PcdUsbCPdNumber);
+  if (PdNumber > MAX_PD_NUMBER) {
+    DEBUG ((DEBUG_ERROR, "PcdUsbCPdNumber is invalid\n"));
+    goto Exit;
   }
 
-  //
-  // PD 1
-  //
-  SetMem (DataBuffer, 8, 0);
-
-  UsbCPdVersion = UsbCPdSetup.UsbCPd0Version;
-
-  //
-  // if success then update string
-  //
-  if (UsbCPdVersion != 0) {
-    DataBuffer[0] = (UINT8) (UsbCPdVersion & 0xFF);
-    DataBuffer[1] = (UINT8) ((UsbCPdVersion >> 8) & 0xFF);
-    DataBuffer[2] = (UINT8) ((UsbCPdVersion >> 16) & 0xFF);
-    DataBuffer[3] = (UINT8) ((UsbCPdVersion >> 24) & 0xFF);
-    DataBuffer[4] = (UINT8) ((UsbCPdVersion >> 32) & 0xFF);
-    DataBuffer[5] = (UINT8) ((UsbCPdVersion >> 40) & 0xFF);
-    DataBuffer[6] = (UINT8) ((UsbCPdVersion >> 48) & 0xFF);
-    DataBuffer[7] = (UINT8) (UsbCPdVersion >> 56);
-
-    DEBUG ((DEBUG_INFO, "VpdPcdUsbCPdVendor = %x\n", PcdGet8 (VpdPcdUsbCPdVendor)));
-    switch (PcdGet8 (VpdPcdUsbCPdVendor)) {
-      case UsbCPdTypeCypress:
-        // Update information for Cypress USBC PD
-        InitString (
-          HiiHandle,
-          STRING_TOKEN (STR_PD1_APPLICATION_NAME_VALUE),
-          L"%c%c",
-          DataBuffer [1],
-          DataBuffer [0]
-          );
-
-        InitString (
-          HiiHandle,
-          STRING_TOKEN (STR_PD1_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_VALUE),
-          L"%d",
-          DataBuffer [2]
-          );
-
-        InitString (
-          HiiHandle,
-          STRING_TOKEN (STR_PD1_VERSION_VALUE),
-          L"%d.%d_%02X_%02X_%02X%02X",
-          ((DataBuffer [3] >> 4) & 0x0F),
-          (DataBuffer [3] & 0x0F),
-          DataBuffer [7],
-          DataBuffer [6],
-          DataBuffer [5],
-          DataBuffer [4]
-          );
+  for (Index = 0; Index < PdNumber; Index++) {
+    switch (Index) {
+      case 0:
+        UsbCPdVersion = UsbCPdSetup.UsbCPd0Version;
+        TokenToUpdate = STRING_TOKEN (STR_PD0_VERSION_VALUE);
         break;
-      case UsbCPdTypeTi:
-        // Update information for TI USBC PD
-        InitString (
-          HiiHandle,
-          STRING_TOKEN (STR_PD1_VERSION_VALUE),
-          L"%02X%02X.%02X.%02X_%02X_%02X_%02X%02X",
-          DataBuffer [3],
-          DataBuffer [2],
-          DataBuffer [1],
-          DataBuffer [0],
-          DataBuffer [7],
-          DataBuffer [6],
-          DataBuffer [5],
-          DataBuffer [4]
-          );
+      case 1:
+        UsbCPdVersion = UsbCPdSetup.UsbCPd1Version;
+        TokenToUpdate = STRING_TOKEN (STR_PD1_VERSION_VALUE);
         break;
-      default:
+      case 2:
+        UsbCPdVersion = UsbCPdSetup.UsbCPd2Version;
+        TokenToUpdate = STRING_TOKEN (STR_PD2_VERSION_VALUE);
         break;
     }
-  } else {
-    DEBUG ((DEBUG_INFO, "[USBC] PD Version is not found.\n"));
+    //
+    // if success then update string
+    //
+    if (UsbCPdVersion != 0) {
+      FwVersion    = (UINT32) (UsbCPdVersion & 0xFFFFFFFF);
+      SubFwVersion = (UINT32) ((UsbCPdVersion >> 32) & 0xFFFFFFFF);
+
+      InitString (
+        HiiHandle,
+        TokenToUpdate,
+        L"%08X.%08X",
+        FwVersion,
+        SubFwVersion
+        );
+    } else {
+      DEBUG ((DEBUG_INFO, "[USBC] PD%d Version is not found.\n", Index));
+    }
   }
 
 Exit:
@@ -705,7 +604,7 @@ UpdateRetimerInformation (
   }
 
   UsbCRetimerNumber = PcdGet8 (PcdUsbCRetimerFlashNumber);
-  for (Index =0; Index < UsbCRetimerNumber; Index++) {
+  for (Index = 0; Index < UsbCRetimerNumber; Index++) {
     switch (Index) {
       case 0:
         InitStringRetimerValue = STR_RETIMER0_VERSION_VALUE;
@@ -1330,15 +1229,7 @@ PlatformReset (
   //
   // Change boot mode for critical setup questions.
   //
-  if ((SetupData.EfiNetworkSupport != CurrentData.EfiNetworkSupport)
-     ) {
-    //
-    // Delete BootState variable to force next boot is FullConfiguration boot
-    // Boot option enumeration only happens in FullConfiguration boot
-    //
-    UnsetBootState();
 
-  }
 
   if ((SaSetup.EnableVtd != SaCurrentData.EnableVtd) ||
       (PchSetup.PchHdAudio != PchCurrentData.PchHdAudio) ||

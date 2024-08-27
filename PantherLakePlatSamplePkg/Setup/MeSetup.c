@@ -808,7 +808,6 @@ MeExtractConfig (
     MeSetupStorage.MngState = 1;
     MeSetupStorage.FwUpdEnabled = 1;
     MeSetupStorage.MeStateControl = 0;
-    MeSetupStorage.PttState = 0;
     MeSetupStorage.DelayedAuthenticationMode = 0;
     MeSetupStorage.FipsModeSelect = 0;
     MeSetupStorage.AmtState = 1;
@@ -857,7 +856,6 @@ MeExtractConfig (
   Status = HeciGetFwFeatureStateMsg (&CurrentFeatures);
   if (!EFI_ERROR (Status)) {
     MeSetupStorage.MngState   = !!CurrentFeatures.Fields.Amt;
-    MeSetupStorage.PttState   = !!CurrentFeatures.Fields.PTT;
   }
 
   Status = HeciGetUserCapabilitiesState (&UserCapabilities);
@@ -969,12 +967,11 @@ MeExtractConfig (
   ASSERT_EFI_ERROR (Status);
 
   // Since DEBUG() only allow max 12 format parameters, so call it twice.
-  DEBUG ((DEBUG_INFO, "%a %d %d %d %d %d %d %d %d %d %d %d",
+  DEBUG ((DEBUG_INFO, "%a %d %d %d %d %d %d %d %d %d %d",
     __FUNCTION__,
     MeSetupStorage.MngState,
     MeSetupStorage.FwUpdEnabled,
     MeSetupStorage.MeStateControl,
-    MeSetupStorage.PttState,
     MeSetupStorage.DelayedAuthenticationMode,
     MeSetupStorage.FipsModeSelect,
     MeSetupStorage.AmtState,

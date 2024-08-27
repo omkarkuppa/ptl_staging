@@ -73,7 +73,6 @@ PeiTcssPolicyLib
 PeiTsnPolicyLib
 PeiTelemetryPolicyLib
 PeiHybridGraphicsPolicyLib
-PeiSerialIoPolicyLib
 PeiHostBridgePolicyLib
 CpuPlatformLib
 PeiSpiPolicyLib

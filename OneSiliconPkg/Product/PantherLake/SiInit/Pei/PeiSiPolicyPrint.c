@@ -51,7 +51,6 @@
 #include <Library/PeiNpuPolicyLib.h>
 #include <Library/PeiVmdPolicyLib.h>
 #include <Library/PeiIaxPolicyLib.h>
-#include <Library/PeiSerialIoPolicyLib.h>
 #include <Library/CpuPowerManagementPolicyLib.h>
 #include <Library/PeiTcssPolicyLib.h>
 #include <Library/PeiITbtPolicyLib.h>

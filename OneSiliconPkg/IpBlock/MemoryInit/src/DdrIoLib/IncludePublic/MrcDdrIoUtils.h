@@ -131,6 +131,18 @@ MrcGetCmdGroupMax (
   );
 
 /**
+  This function gets the max partition number for DataShared partitions.
+
+  @param[in]  MrcData   - Pointer to global data.
+
+  @retval Correct number of data shared partitions based on ECC and Memory technology.
+**/
+UINT8
+GetDataSharedPartitionMax (
+  IN  MrcParameters *const  MrcData
+  );
+
+/**
   This function caclulates the IoChNotPop mask based on the PHY
   DdrMiscControl0.Channel_Not_Populated register field definition.
 
@@ -249,6 +261,26 @@ MrcGetTxDqFifoDelay (
   OUT    UINT32        *tCWL4TxDqFifoWrEn,
   OUT    UINT32        *tCWL4TxDqFifoRdEn
   );
+
+/**
+  This routine computes DDRPHY delay parameters for Read command
+
+  @param[in]  MrcData           - Pointer to MRC global data
+  @param[in]  tCL               - Read Latency for current channel
+  @param[in]  Index             - Current Index
+  @param[out] tCL4RcvEn         - Pointer to tCL delay for RcvEn
+  @param[out] tCL4RxDqFifoRdEn  - Pointer to tCL delay for RX DQ FIFO read enable
+
+  @retval N/A.
+**/
+VOID
+MrcGetRxDqFifoDelay(
+    IN OUT MrcParameters* const MrcData,
+    IN     UINT8          tCL,
+    IN     UINT32         Index,
+    OUT    UINT32*        tCL4RcvEn,
+    OUT    INT32*         tCL4RxDqFifoRdEn
+);
 
 /**
   Display MR value from the host struct
@@ -394,18 +426,6 @@ MrcCalcCurrentRxBitDelay (
   OUT      INT32         *const BitDelayRxDqs,
   OUT      INT32         *const BitOffsetRxDqs,
   IN const UINT8                Sign
-  );
-
-/**
-  This function calculates the DDR5 timings tCL which takes into account SOC requirments
-  @param[in]     MrcData      - Include all MRC global data.
-  @param[in,out] tCL          - Minimal tCL accepted by SOC
-**/
-
-VOID
-MrcGetDdr5MinitCL (
-  IN      MrcParameters *const MrcData,
-  IN OUT  UINT32              *tCL
   );
 
 /**
@@ -563,5 +583,37 @@ MrcDccPHClkPhaseEn (
   IN OUT MrcParameters *const   MrcData,
   IN     INT64                  DccPHClkPhaseEn
   );
+
+/**
+  This function returns CCC Partition configuration (LP5 / DDR5 NIL / DDR5 IL).
+
+  @param[in] MrcData - MRC global data.
+
+  @returns the CCC partition type.
+**/
+MRC_PARTITION_TYPE
+MrcGetCccPartitionConfiguration (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  Return the channel mask associated with the input Partition type and the input Partition Instance.
+
+  @param[in]  MrcData      - Pointer to global MRC data.
+  @param[in]  PartType     - The partition type to look up.
+  @param[in]  PartInstance - The partition instance to look up.
+  @param[in]  PartChannel  - The partition channel to look up. Only used by the Data
+                             Partitions as there are two "bytes" in 1 Data Instance.
+
+  @return channel mask output buffer.
+**/
+UINT32
+MrcGetPartition2ChMask (
+  IN     MrcParameters      *MrcData,
+  IN     PARTITION_TYPE     PartType,
+  IN     UINT32             PartInstance,
+  IN     UINT32             PartChannel
+  );
+
 
 #endif // _MrcDdrIoUtils_h_

@@ -84,7 +84,7 @@
 
 // TrainingEnables
 #define MRC_EXT_INPUTS_INIT_VAL_ECT                    (1)
-#define MRC_EXT_INPUTS_INIT_VAL_SOT                    (1)
+#define MRC_EXT_INPUTS_INIT_VAL_SOT                    (0)
 #define MRC_EXT_INPUTS_INIT_VAL_ERDMPRTC2D             (1)
 #define MRC_EXT_INPUTS_INIT_VAL_RDMPRT                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RCVET                  (1)
@@ -109,7 +109,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_LCT                    (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RTL                    (0)
 #define MRC_EXT_INPUTS_INIT_VAL_TAT                    (1)
-#define MRC_EXT_INPUTS_INIT_VAL_RMT                    (0)
+#define MRC_EXT_INPUTS_INIT_VAL_RMT                    (1)
 #define MRC_EXT_INPUTS_INIT_VAL_RMTEVENODD             (0)
 #define MRC_EXT_INPUTS_INIT_VAL_ALIASCHK               (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RCVENC1D               (0)
@@ -159,13 +159,14 @@
 #define MRC_EXT_INPUTS_INIT_VAL_RSVDBIT10              (0)
 #define MRC_EXT_INPUTS_INIT_VAL_JEDECRESET             (1)
 #define MRC_EXT_INPUTS_INIT_VAL_ROUNDTRIPMATCH         (1)
-#define MRC_EXT_INPUTS_INIT_VAL_TLINECLKCAL            (0)
+#define MRC_EXT_INPUTS_INIT_VAL_TLINECLKCAL            (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DCCPISERIALCAL         (0)
 #define MRC_EXT_INPUTS_INIT_VAL_PHASECLKCAL            (0)
 #define MRC_EXT_INPUTS_INIT_VAL_WCKPADDCCCAL           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RDCTLET                (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RDDQODTT               (0)
 #define MRC_EXT_INPUTS_INIT_VAL_EMPHASIS               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DIMMRXOFFSET           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_ReservedBits           (0)
 
 #define MRC_EXT_INPUTS_INIT_VAL_MrcTimeMeasure         (0)
@@ -203,7 +204,7 @@
 
 #define MRC_EXT_INPUTS_INIT_VAL_SrefCfgIdleTmr         (0x200)
 #define MRC_EXT_INPUTS_INIT_VAL_ChHashMask             (0x830)
-#define MRC_EXT_INPUTS_INIT_VAL_DdrFreqLimit           (3200)
+#define MRC_EXT_INPUTS_INIT_VAL_DdrFreqLimit           (6400)
 #define MRC_EXT_INPUTS_INIT_VAL_ThrtCkeMinTmr          (0)
 #define MRC_EXT_INPUTS_INIT_VAL_ThrtCkeMinTmrLpddr     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_SaGvWpMask             (MRC_SAGV_MASK_0_1_2_3)
@@ -243,7 +244,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_SafeModeOverride                (0xFF)
 #define MRC_EXT_INPUTS_INIT_VAL_DdrSafeMode                     (0)
 
-#define MRC_EXT_INPUTS_INIT_VAL_McSafeMode                      (0x3)
+#define MRC_EXT_INPUTS_INIT_VAL_McSafeMode                      (0x2)
 #define MRC_EXT_INPUTS_INIT_VAL_Reserved169                     {0,0}
 #define MRC_EXT_INPUTS_INIT_VAL_LpMode                          (0)
 #define MRC_EXT_INPUTS_INIT_VAL_LpMode4                         (0)
@@ -361,7 +362,8 @@
 #define MRC_INT_INPUTS_INIT_VAL_MinAllowedNModeOvrd                     (0)
 #define MRC_INT_INPUTS_INIT_VAL_SenseAtRxDll                            (1)
 #define MRC_INT_INPUTS_INIT_VAL_LockUiDiv6Flow                          (0)
-#define MRC_INT_INPUTS_INIT_VAL_MptuPropagationErrorFlow                (1)
+#define MRC_INT_INPUTS_INIT_VAL_MptuPropagationErrorFlow                (0)
+#define MRC_INT_INPUTS_INIT_VAL_RloadTarget                             (1000)
 #endif
 
 MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
@@ -510,6 +512,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
       MRC_EXT_INPUTS_INIT_VAL_RDCTLET,
       MRC_EXT_INPUTS_INIT_VAL_RDDQODTT,
       MRC_EXT_INPUTS_INIT_VAL_EMPHASIS,
+      MRC_EXT_INPUTS_INIT_VAL_DIMMRXOFFSET,
       MRC_EXT_INPUTS_INIT_VAL_ReservedBits,
     },
     MRC_EXT_INPUTS_INIT_VAL_MrcTimeMeasure,
@@ -710,6 +713,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_INT_INPUTS_INIT_VAL_SenseAtRxDll,
     MRC_INT_INPUTS_INIT_VAL_LockUiDiv6Flow,
     MRC_INT_INPUTS_INIT_VAL_MptuPropagationErrorFlow,
+    MRC_INT_INPUTS_INIT_VAL_RloadTarget,
   },
 #endif
   MRC_INPUT_BINARY_BLOCK_END
@@ -760,6 +764,7 @@ MrcInternalInputsDefaultInit (
   Inputs->SenseAtRxDll             = MainInputs.InternalInputs.SenseAtRxDll;
   Inputs->LockUiDiv6Flow           = MainInputs.InternalInputs.LockUiDiv6Flow;
   Inputs->MptuPropagationErrorFlow = MainInputs.InternalInputs.MptuPropagationErrorFlow;
+  Inputs->RloadTarget              = MainInputs.InternalInputs.RloadTarget;
 }
 
 /**

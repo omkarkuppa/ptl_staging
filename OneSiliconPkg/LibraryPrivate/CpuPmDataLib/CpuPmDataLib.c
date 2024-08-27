@@ -141,13 +141,17 @@ CreateCpuPmDataHob (
   } else {
     BasicData->PmData.MsrPowerLimit1 = (UINT32)PackageTdp * 100;
   }
-  BasicData->PmData.MsrPowerLimit2           = (UINT32)PpmOverrideTable[PpmIndex].Plx->MsrPowerLimit2;
-  BasicData->PmData.CtdpUpPowerLimit2        = (UINT32)PpmOverrideTable[PpmIndex].Plx->CtdpUpPowerLimit2;
-  BasicData->PmData.CtdpNominalPowerLimit2   = (UINT32)PpmOverrideTable[PpmIndex].Plx->CtdpNominalPowerLimit2;
-  BasicData->PmData.CtdpDownPowerLimit2      = (UINT32)PpmOverrideTable[PpmIndex].Plx->CtdpDownPowerLimit2;
-  BasicData->PmData.MsrPowerLimit4           = (UINT32)PpmOverrideTable[PpmIndex].Plx->MsrPowerLimit4;
-  BasicData->PmData.MsrPowerLimit4DisableFvm = (UINT32)PpmOverrideTable[PpmIndex].Plx->MsrPowerLimit4DisableFvm;
-  BasicData->PmData.MsrPowerLimit1TimeWindow = (UINT8)PpmOverrideTable[PpmIndex].Plx->MsrPowerLimit1TimeWindow;
+  BasicData->PmData.MsrPowerLimit2           = (UINT32) PpmOverrideTable[PpmIndex].Plx->MsrPowerLimit2;
+  BasicData->PmData.CtdpUpPowerLimit2        = (UINT32) PpmOverrideTable[PpmIndex].Plx->CtdpUpPowerLimit2;
+  BasicData->PmData.CtdpNominalPowerLimit2   = (UINT32) PpmOverrideTable[PpmIndex].Plx->CtdpNominalPowerLimit2;
+  BasicData->PmData.CtdpDownPowerLimit2      = (UINT32) PpmOverrideTable[PpmIndex].Plx->CtdpDownPowerLimit2;
+  BasicData->PmData.MsrPowerLimit4           = (UINT32) PpmOverrideTable[PpmIndex].Plx->MsrPowerLimit4;
+  BasicData->PmData.MsrPowerLimit4DisableFvm = (UINT32) PpmOverrideTable[PpmIndex].Plx->MsrPowerLimit4DisableFvm;
+  BasicData->PmData.MsrPowerLimit1TimeWindow = (UINT8) PpmOverrideTable[PpmIndex].Plx->MsrPowerLimit1TimeWindow;
+  BasicData->PmData.IsysCurrentL1Tau         = (UINT8) PpmOverrideTable[PpmIndex].Plx->IsysCurrentL1Tau;
+  BasicData->PmData.IsysCurrentLimitL1       = (UINT16) PpmOverrideTable[PpmIndex].Plx->IsysCurrentLimitL1;
+  BasicData->PmData.IsysCurrentLimitL2       = (UINT16) PpmOverrideTable[PpmIndex].Plx->IsysCurrentLimitL2;
+  BasicData->PmData.VsysMax                  = (UINT16) PpmOverrideTable[PpmIndex].Plx->VsysMax;
 
   GetVrOverridesFru (CpuIdentifier, BasicData->VrDataCount, (VOLTAGE_REGULATOR_PARAM *)BasicData->VrData);
 

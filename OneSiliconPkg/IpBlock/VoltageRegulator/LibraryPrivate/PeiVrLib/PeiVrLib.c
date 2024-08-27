@@ -102,12 +102,16 @@ SetVrCommon (
   MAILBOX_DATA_FORMAT_VSYS          VsysData;
   SI_PREMEM_POLICY_PPI*             SiPreMemPolicyPpi;
   CPU_POWER_DELIVERY_CONFIG         *CpuPowerDeliveryConfig;
-  MAILBOX_DATA_ACOUSTIC_MITIGATION_RANGE  AcousticMailboxData;
   MAILBOX_DATA_PMON_CONFIG          PmonMailboxData;
   MAILBOX_DATA_PMON_PMAX            PmonPmaxMailboxData;
   MAILBOX_DATA_VSYS_MAX             VsysMaxMailboxData;
+  EFI_HOB_GUID_TYPE                 *GuidHob;
+  CPU_PM_DATA                       *CpuPmData;
+  MAILBOX_DATA_FORMAT_HYSTERESIS    HysteresisWindowData;
 
   SiPreMemPolicyPpi = NULL;
+  GuidHob           = NULL;
+  CpuPmData         = NULL;
 
   Status = PeiServicesLocatePpi (&gSiPreMemPolicyPpiGuid, 0, NULL, (VOID **) &SiPreMemPolicyPpi);
   ASSERT_EFI_ERROR (Status);
@@ -248,19 +252,28 @@ SetVrCommon (
   }
 
   if (CpuPowerDeliveryConfig->ThETAIbattEnable) {
+    GuidHob = GetFirstGuidHob (&gCpuPmDataGuid);
+    ASSERT (GuidHob != NULL);
+    if (GuidHob == NULL) {
+      DEBUG ((DEBUG_ERROR, "Get CpuPmData failed\n"));
+      return;
+    }
+
+    CpuPmData = (CPU_PM_DATA *) (GET_GUID_HOB_DATA (GuidHob));
+    ASSERT (CpuPmData != NULL);
     ///
     /// Vsys Max
     /// -VsysMax is defined as U16.10.6 fixed point
     /// -VsysMax is defined in 1/1000 increments
     ///
     VsysMaxMailboxData.Data32 = 0;
-    VsysMaxMailboxData.Fields.VsysMax = ToUnsignedFixedPoint16 (CpuPowerDeliveryConfig->VsysMax, 1000, 10, 6, NULL);
+    VsysMaxMailboxData.Fields.VsysMax = CpuPowerDeliveryConfig->VsysMax ? ToUnsignedFixedPoint16 (CpuPowerDeliveryConfig->VsysMax, 1000, 10, 6, NULL) : ToUnsignedFixedPoint16 (CpuPmData->PmData.VsysMax, 1000, 10, 6, NULL);
     MailboxCommand.InterfaceData = 0;
     MailboxCommand.Fields.Command = MAILBOX_VR_CMD_SVID_VR_HANDLER;
     MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SVID_SET_VSYS_MAX;
     MailboxCommand.Fields.Param2 = 0;
     DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Write Command = MAILBOX_VR_SUBCMD_SVID_SET_VSYS_MAX\n"));
-    DEBUG ((DEBUG_INFO, "(MAILBOX) VsysMax = %d (1/1000)\n", CpuPowerDeliveryConfig->VsysMax));
+    DEBUG ((DEBUG_INFO, "(MAILBOX) VsysMax = %d (1/1000)\n", VsysMaxMailboxData.Fields.VsysMax));
     Status = MailboxWrite (MailboxCommand.InterfaceData, VsysMaxMailboxData.Data32, &MailboxStatus);
     if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
       DEBUG ((DEBUG_ERROR, "VR: Error Writing Vsys Maximum value. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
@@ -272,20 +285,38 @@ SetVrCommon (
   ///
   if (CpuPowerMgmtVrConfig->AcousticNoiseMitigation) {
     ///
-    /// PreWake, Ramp Up and Ramp Down times programming for Acoustic Noise Mitigation.
+    /// Hysteresis Window programming for Pcore Acoustic Noise Mitigation.
     ///
-    MailboxCommand.InterfaceData  = 0;
-    MailboxCommand.Fields.Command = MAILBOX_PCODE_CMD_WRITE_ACOUSTIC_MITIGATION_RANGE;
-    AcousticMailboxData.Fields.PreWake  = CpuPowerMgmtVrConfig->PreWake;
-    AcousticMailboxData.Fields.RampUp   = CpuPowerMgmtVrConfig->RampUp;
-    AcousticMailboxData.Fields.RampDown = CpuPowerMgmtVrConfig->RampDown;
-    DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Write Command = DPA - WRITE_ACOUSTIC_MITIGATION_RANGE\n"));
-    DEBUG ((DEBUG_INFO, "(MAILBOX) PreWake               = %d ms\n", CpuPowerMgmtVrConfig->PreWake));
-    DEBUG ((DEBUG_INFO, "(MAILBOX) RampUp                = %d ms\n", CpuPowerMgmtVrConfig->RampUp));
-    DEBUG ((DEBUG_INFO, "(MAILBOX) RampDown              = %d ms\n", CpuPowerMgmtVrConfig->RampDown));
-    Status = MailboxWrite (MailboxCommand.InterfaceData, AcousticMailboxData.Data32, &MailboxStatus);
-    if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
-      DEBUG ((DEBUG_ERROR, "Error Writing Acoustic Mitigation Range. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
+    if (CpuPowerMgmtVrConfig->PcoreHysteresisWindow != 0) {
+      HysteresisWindowData.MailboxData = 0;
+      MailboxCommand.InterfaceData  = 0;
+      MailboxCommand.Fields.Command = MAILBOX_VR_CMD_ACOUSTIC_MITIGATION_CONFIG;
+      MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SET_HYST_WINDOW_PARAMS;
+      MailboxCommand.Fields.Param2 = HYSTERESIS_PCORE;
+      HysteresisWindowData.Fields.Window = CpuPowerMgmtVrConfig->PcoreHysteresisWindow;
+      DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Write Command = PCORE - MAILBOX_VR_SUBCMD_SET_HYST_WINDOW_PARAMS\n"));
+      DEBUG ((DEBUG_INFO, "(MAILBOX) Hysteresis Window Mailboxdata for Pcore = %d ms\n", HysteresisWindowData.Fields.Window));
+      Status = MailboxWrite (MailboxCommand.InterfaceData, HysteresisWindowData.MailboxData, &MailboxStatus);
+      if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
+        DEBUG ((DEBUG_ERROR, "Error Writing Hysteresis Window. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
+      }
+    }
+    ///
+    /// Hysteresis Window programming for Ecore Acoustic Noise Mitigation.
+    ///
+    if (CpuPowerMgmtVrConfig->EcoreHysteresisWindow != 0) {
+      HysteresisWindowData.MailboxData = 0;
+      MailboxCommand.InterfaceData  = 0;
+      MailboxCommand.Fields.Command = MAILBOX_VR_CMD_ACOUSTIC_MITIGATION_CONFIG;
+      MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SET_HYST_WINDOW_PARAMS;
+      MailboxCommand.Fields.Param2 = HYSTERESIS_ECORE;
+      HysteresisWindowData.Fields.Window = CpuPowerMgmtVrConfig->EcoreHysteresisWindow;
+      DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Write Command = ECORE - MAILBOX_VR_SUBCMD_SET_HYST_WINDOW_PARAMS\n"));
+      DEBUG ((DEBUG_INFO, "(MAILBOX) Hysteresis Window Mailboxdata for Ecore = %d ms\n", HysteresisWindowData.Fields.Window));
+      Status = MailboxWrite (MailboxCommand.InterfaceData, HysteresisWindowData.MailboxData, &MailboxStatus);
+      if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
+        DEBUG ((DEBUG_ERROR, "Error Writing Hysteresis Window. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
+      }
     }
   }
 
@@ -560,9 +591,9 @@ SetVrNonOverrideValues (
   }
 
   ///
-  /// Only Core and GT domains support Slow Slew Rate and Fast Pkg Ramp features
+  /// Core, GT and Atom domains support Slow Slew Rate and Fast Pkg Ramp features
   ///
-  if (VrIndex < 2) {
+  if ((VrIndex < 2) || (VrIndex == 3)) {
     ///
     /// Set Fast and Slow Slew Rate for Deep Package C States.
     ///
@@ -648,10 +679,12 @@ UpdateVrOverrides (
   GuidHob = GetFirstGuidHob (&gCpuPmDataGuid);
   ASSERT (GuidHob != NULL);
   if (GuidHob == NULL) {
+    DEBUG ((DEBUG_ERROR, "Get CpuPmData failed\n"));
     return EFI_NOT_FOUND;
   }
 
-  CpuPmData = (CPU_PM_DATA *)(GET_GUID_HOB_DATA (GuidHob));
+  CpuPmData = (CPU_PM_DATA *) (GET_GUID_HOB_DATA (GuidHob));
+  ASSERT (CpuPmData != NULL);
 
   ASSERT (CpuPmData->VrDataCount <= MAX_NUM_VRS);
   for (Index = 0; Index < CpuPmData->VrDataCount; Index++) {

@@ -53,8 +53,8 @@
 //
 // UFS Mmio Registers
 //
-#define R_SCS_MEM_UFS_REF_CLK                            0x85C                      ///< Ref Clock Register
-#define V_SCS_MEM_UFS_REF_CLK                            0x3
+#define R_UFS_MEM_REF_CLK                                0x85C                      ///< Ref Clock Register
+#define V_UFS_MEM_REF_CLK                                0x3
 
 //
 // MMP_UFS registers

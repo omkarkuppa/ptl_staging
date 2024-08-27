@@ -35,17 +35,22 @@
 ///
 /// PCODE Mailbox Commands
 ///
-#define MAILBOX_PCODE_CMD_READ_ACOUSTIC_MITIGATION_RANGE                   0x00000007
-#define MAILBOX_PCODE_CMD_WRITE_ACOUSTIC_MITIGATION_RANGE                  0x00000008
+#define MAILBOX_VR_CMD_ACOUSTIC_MITIGATION_CONFIG                          0x0A
+#define MAILBOX_VR_SUBCMD_GET_HYST_WINDOW_PARAMS                           0x01
+#define MAILBOX_VR_SUBCMD_SET_HYST_WINDOW_PARAMS                           0x00
+///
+/// Hysteresis window
+///
 typedef union {
+  UINT32 MailboxData;
   struct {
-    UINT32  PreWake                  :8;   ///< [7:0]   : Defines the maximum pre-wake randomization time in us ticks
-    UINT32  RampUp                   :8;   ///< [15:8]  : Defines the maximum ramp up randomization time in us ticks
-    UINT32  RampDown                 :8;   ///< [23:16] : Defines the maximum ramp down randomization time in us ticks
-    UINT32  Reserved                 :8;   ///< [31:24] : Reserved
+    UINT32 Window      : 8;
+    UINT32 Reserved1   : 24;
   } Fields;
-  UINT32    Data32;
-} MAILBOX_DATA_ACOUSTIC_MITIGATION_RANGE;
+} MAILBOX_DATA_FORMAT_HYSTERESIS;
+
+#define HYSTERESIS_PCORE  0
+#define HYSTERESIS_ECORE  1
 
 #define MAILBOX_PCODE_CMD_READ_AUTONOMOUS_PARAMS                           0x00000010
 #define MAILBOX_PCODE_CMD_WRITE_AUTONOMOUS_PARAMS                          0x00000011
@@ -355,7 +360,7 @@ typedef union {
 #define MAILBOX_VR_SUBCMD_SVID_SET_DISABLE_FAST_PKGC_RAMP                  0x0000000D
 typedef union {
   struct {
-    UINT32 FastPkgcRampDisable      :1;  ///< [0:0] 0: Fast PKGC Ramp is Enabled (Default), 1: Fast PKGC Ramp is Disabled 
+    UINT32 FastPkgcRampDisable      :1;  ///< [0:0] 0: Fast PKGC Ramp is Enabled (Default), 1: Fast PKGC Ramp is Disabled
     UINT32 Reserved                 :31; ///< [31:21 Reserved
   } Fields;
   UINT32 Data32;

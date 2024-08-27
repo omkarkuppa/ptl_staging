@@ -143,6 +143,7 @@ Conventions:
 
 #define R_TC_PCIE_RP_CFG_DCAP2                0x00000064U      ///< Device Capabilities 2
 #define B_TC_PCIE_RP_CFG_DCAP2_LTRMS          BIT11            ///< LTR Mechanism Supported
+#define B_TC_PCIE_RP_CFG_DCAP2_PX10BTCS       BIT16            ///< 10-Bit Tag Completer Supported
 #define B_TC_PCIE_RP_CFG_DCAP2_OBFFS          ( BIT19 | BIT18 ) ///< Optimized Buffer Flush/Fill Supported
 #define N_TC_PCIE_RP_CFG_DCAP2_OBFFS          18
 
@@ -197,6 +198,9 @@ Conventions:
 
 #define R_TC_PCIE_RP_CFG_ACSCAPR              0x00000224U      ///< ACS Capability Register
 #define B_TC_PCIE_RP_CFG_ACSCAPR_U            BIT4             ///< ACS Upstream Forwarding
+
+#define R_TC_PCIE_RP_CFG_V0CTL                0x00000294U      ///< Virtual Channel 0 Resource Control
+#define B_TC_PCIE_RP_CFG_V0CTL_TVM            ( BIT7 | BIT6 | BIT5 | BIT4 | BIT3 | BIT2 | BIT1 ) ///< Transaction Class / Virtual Channel Map
 
 #define R_TC_PCIE_RP_CFG_PCIERTP1             0x00000300U      ///< PCI Express Replay Timer Policy 1
 #define B_TC_PCIE_RP_CFG_PCIERTP1_G1X4        ( BIT3 | BIT2 | BIT1 | BIT0 ) ///< Gen 1 x4
@@ -309,6 +313,7 @@ Conventions:
 #define B_TC_PCIE_RP_CFG_ADVMCTRL_G3STFER     BIT13            ///< Gen3 Short TLP Framing Error Reporting
 #define B_TC_PCIE_RP_CFG_ADVMCTRL_PMREQCWC    ( BIT18 | BIT17 | BIT16 ) ///< PM_REQ Clock Wake Control
 #define N_TC_PCIE_RP_CFG_ADVMCTRL_PMREQCWC    16
+#define B_TC_PCIE_RP_CFG_ADVMCTRL_EIOSMASKRX  BIT19            ///< EIOS Mask Receiver Datapath    
 #define B_TC_PCIE_RP_CFG_ADVMCTRL_EIOSDISDS   BIT20            ///< EIOS Disable DeSkew
 #define B_TC_PCIE_RP_CFG_ADVMCTRL_INRXL0CTRL  BIT22            ///< InRxL0 Control
 

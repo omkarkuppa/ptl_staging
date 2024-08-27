@@ -70,6 +70,7 @@ gSiPkgTokenSpaceGuid.PcdSiPciExpressBaseAddress
 gEfiEndOfPeiSignalPpiGuid          ## CONSUMES
 gSiPolicyPpiGuid                   ## CONSUMES
 gSiPreMemPolicyPpiGuid             ## CONSUMES
+gPeiTxtCleanResetNotificationPpiGuid ## NOTIFY
 gEdkiiPeiMpServices2PpiGuid
 
 [Guids]

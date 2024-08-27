@@ -87,11 +87,15 @@
             If (LEqual (And (PCRR (\PCNV, R_CNVI_ACPI_PLRB), B_CNVI_PCR_CNVI_PLDR_ABORT_CNVI_PLDR_ABORT_REQUEST), Zero)) {
               ADBG ("ABORT_REQUEST = 0, previous PLDR completed")
 
-              // If BT RF-Kill deasserted, assert BT RF-Kill and wait for 160 ms
-              If (LEqual (\_SB.GBTR (), 1)) {
-                \_SB.BTRK (0x00) // assert W_DISABLE2#
-                Sleep (160)
-                Store (1, Local2)
+              if (LNotEqual (CBTI, 2)) {
+                // If BT RF-Kill deasserted, assert BT RF-Kill and wait for 160 ms
+                If (LEqual (\_SB.GBTR (), 1)) {
+                  \_SB.BTRK (0x00) // assert W_DISABLE2#
+                  Sleep (160)
+                  Store (1, Local2)
+                }
+              } Else {
+                PC_ROOT.BTPC.CFLR ()
               }
 
               // Enable CNVi PLDR request and wait
@@ -105,15 +109,19 @@
               If (LAnd (LEqual (And (Local1, B_CNVI_PCR_CNVI_PLDR_ABORT_CNVI_PLDR_ABORT_REQUEST), 0), And (Local1, B_CNVI_PCR_CNVI_PLDR_ABORT_SCU_CNVB_CNVI_READY))) {
                 ADBG ("WiFi Product Reset Completed")
                 Store (2, PRRS) // Set Product PLDR Completed successfully
-                // Deassert BT RF-Kill and wait for 160 ms
-                If (LEqual (Local2, 1)) {
-                  \_SB.BTRK (0x01) // deassert W_DISABLE2#
-                  Sleep (160)
+                if (LNotEqual (CBTI, 2)) {
+                  // Deassert BT RF-Kill and wait for 160 ms
+                  If (LEqual (Local2, 1)) {
+                    \_SB.BTRK (0x01) // deassert W_DISABLE2#
+                    Sleep (160)
+                  }
                 }
               } Else {
                 // PLDR timeout
                 Store (4, PRRS) // Set Product PLDR timeout
-                \_SB.BTRK (0x01) // deassert W_DISABLE2#
+                if (LNotEqual (CBTI, 2)) {
+                  \_SB.BTRK (0x01) // deassert W_DISABLE2#
+                }
               }
             } Else {
               // Previous PLDR not completed

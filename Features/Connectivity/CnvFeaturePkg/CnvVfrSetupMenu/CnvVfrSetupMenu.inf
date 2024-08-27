@@ -58,6 +58,10 @@
 [Pcd]
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenuConfig
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport
+  gCnvFeaturePkgTokenSpaceGuid.PcdBtAudioOffloadSupport
+  gCnvFeaturePkgTokenSpaceGuid.PcdPrebootBleSupport
 
 [Guids]
   gCnvFeatureSetupGuid

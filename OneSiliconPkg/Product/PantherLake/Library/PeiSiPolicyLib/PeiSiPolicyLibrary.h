@@ -63,7 +63,6 @@
 #include <Library/PeiVtdPolicyLib.h>
 #include <Library/PeiTcssPolicyLib.h>
 #include <Library/PeiVmdPolicyLib.h>
-#include <Library/PeiSerialIoPolicyLib.h>
 #include <Library/PeiTelemetryPolicyLib.h>
 #include <Library/PeiHybridGraphicsPolicyLib.h>
 #include <Library/PeiFusaPolicyLib.h>

@@ -52,6 +52,7 @@
   Usb4DebugLib
   Usb4CsLib
   CmEvtLib
+  PciHostBridgeLib
 
 [Packages]
   MdePkg/MdePkg.dec

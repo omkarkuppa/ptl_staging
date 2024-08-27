@@ -27,6 +27,7 @@
 #include "MrcLpddr5.h"
 #include "MrcMcApi.h"
 #include "BlueMrcJedecApi.h"  // for MrcGetTrfm()
+#include "MrcSpdProcessingDefs.h"
 
 /**
   This function configures refresh parameters:
@@ -240,7 +241,6 @@ MrcRefreshConfiguration (
       MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctSR, WriteToCache | PrintValue, &tSR);
 
       MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccEnRefTypeDisplay,     WriteToCache | PrintValue, &GetSetEn);
-      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcctRefiPulseStaggerDis, WriteToCache | PrintValue, &GetSetEn);
     }
 //    MrcGetSetMc (MrcData, Controller, GsmMctSrIdleTimer, WriteToCache | PrintValue, &SrIdleCount);
 
@@ -248,6 +248,7 @@ MrcRefreshConfiguration (
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkeOverride, WriteToCache, &GetSetVal);
   }
   MrcFlushRegisterCachedData (MrcData);
+  // MrcEcsConfig (MrcData);
 }
 
 /**
@@ -312,36 +313,89 @@ MrcSelfRefreshExit (
   IN BOOLEAN              IsSrxResetSet
   )
 {
-  const MrcOutput *Outputs;
-  UINT32          IpChannel;
-  UINT32          Channel;
-  UINT32          Controller;
-  BOOLEAN         IsLpddr;
   INT64           GetSetVal;
   INT64           GetSetDisable;
 
-  GetSetDisable = 0;
-  Outputs = &MrcData->Outputs;
-  IsLpddr = Outputs->IsLpddr;
   GetSetVal = IsSrxResetSet ? 1 : 0;
 
-
   if ((IsSrxResetSet) && (MrcGetBootMode (MrcData) == bmWarm)) {
+    GetSetDisable = 0;
     MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmMccCpgcActive, ForceWriteCached | PrintValue, &GetSetDisable);
   }
 
-  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-      if (!MrcChannelExist (MrcData, Controller, Channel)) {
-        continue;
-      }
-
-      IpChannel = LP_IP_CH (IsLpddr, Channel);
-      // Indicate to MC that we are going to exit Self Refresh when we go to Normal Mode
-      MrcGetSetMcCh (MrcData, Controller, IpChannel, GsmMccMcSrx, ForceWriteCached | PrintValue, &GetSetVal);
-    } // for Channel
-  } // for Controller
+  // Indicate to MC that we are going to exit Self Refresh when we go to Normal Mode
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccMcSrx, ForceWriteCached | PrintValue, &GetSetVal);
 
   return mrcSuccess;
 }
 
+#if 0
+/**
+  This function provides DDR5 Error Check and Scrub (ECS) implementation.
+
+  DDR5 ECS mode allows the DRAM to internally read, correct single bit errors, and write back corrected data bits to the array (scrub errors)
+  while providing transparency to error counts.
+  PTL MC only supports the automatic mode (Manual mode is not supported): The operation is done internal to DRAM.
+
+  Enable "error scrubbing" DDR5 feature done by configuring the following registers:
+    rfp_0_0_0_mchbar.ecs_refab_enable
+    rfp_0_0_0_mchbar.ecs_refab_period
+
+  @param[in] MrcData - Include all MRC global data.
+**/
+VOID
+MrcEcsConfig (
+  IN     MrcParameters* const MrcData
+  )
+{
+  const MRC_EXT_INPUTS_TYPE *ExtInputs;
+  const MrcOutput           *Outputs;
+  const MrcControllerOut    *ControllerOut;
+  const MrcChannelOut       *ChannelOut;
+  const MrcDimmOut          *DimmOut;
+  BOOLEAN                   IsDdr5;
+  INT64                     GetSetVal;
+  UINT32                    Controller;
+  UINT32                    Channel;
+  UINT32                    Dimm;
+  UINT32                    TEcsInit;
+  UINT32                    tRefi;
+
+  ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
+  Outputs   = &MrcData->Outputs;
+  IsDdr5    = Outputs->IsDdr5;
+
+  if (IsDdr5) {
+    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+      ControllerOut = &Outputs->Controller[Controller];
+      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+        ChannelOut = &ControllerOut->Channel[Channel];
+        for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
+          DimmOut = &ChannelOut->Dimm[Dimm];
+          if (DIMM_PRESENT != DimmOut->Status) {
+            continue;
+          }
+          GetSetVal = 1;
+          MrcGetSetMcCh (MrcData, Controller, Channel, GsmScPbrEcsRefabEnable, WriteCached | PrintValue, &GetSetVal);
+
+          switch (DimmOut->DensityIndex) {
+            case MrcDensity16Gb:
+              TEcsInit = MRC_DDR5_tECSinit_16Gb_US;
+              break;
+            case MrcDensity24Gb:
+              TEcsInit = MRC_DDR5_tECSinit_24Gb_US;
+              break;
+            case MrcDensity32Gb:
+            default:  // Default value required by MC arch
+              TEcsInit = MRC_DDR5_tECSinit_32Gb_US;
+              break;
+          }
+          tRefi = ChannelOut->Timing[ExtInputs->MemoryProfile].tREFI;   // in tCK units
+          GetSetVal = (TEcsInit * 1000 * 1000) / (tRefi * Outputs->tCKps) - 9;
+          MrcGetSetMcCh (MrcData, Controller, Channel, GsmScPbrEcsRefabPeriod, WriteCached | PrintValue, &GetSetVal);
+        } // Dimm
+      } // Channel
+    } // Controller
+  }
+}
+#endif

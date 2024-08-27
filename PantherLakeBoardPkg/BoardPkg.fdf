@@ -264,16 +264,13 @@ gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesBase|gBoardModuleTokenSpace
 FV = FvFwBinaries
 !endif
 
-!if gSiPkgTokenSpaceGuid.PcdEnableFspmCompression == TRUE
-gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize
-gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize
-# FSP_M Section
-FV = FvFspM
-!else
-gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize
-gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize
-# FSP_M Section
-FILE = $(PLATFORM_FSP_BIN_PACKAGE)/Fsp_Rebased_M.fd
+#
+# Indicates the additional IBBs (other than IBB0 a.k.a. common IBB) used in Multi-IBB mode.
+#
+!if gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable == TRUE
+  gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Offset|gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Size
+  gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Base|gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Size
+  FV = FvIbb1
 !endif
 
 gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset|gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size
@@ -292,13 +289,16 @@ gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSBase|gMinPlatformPkgTokenSpaceGuid.P
 # FSP_S Section
 FV = FvFspS
 
-#
-# Indicates the additional IBBs (other than IBB0 a.k.a. common IBB) used in Multi-IBB mode.
-#
-!if gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable == TRUE
-  gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Offset|gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Size
-  gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Base|gBoardModuleTokenSpaceGuid.PcdFlashFvIbb1Size
-  FV = FvIbb1
+!if gSiPkgTokenSpaceGuid.PcdEnableFspmCompression == TRUE
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize
+# FSP_M Section
+FV = FvFspM
+!else
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize
+gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize
+# FSP_M Section
+FILE = $(PLATFORM_FSP_BIN_PACKAGE)/Fsp_Rebased_M.fd
 !endif
 
 !if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == TRUE
@@ -660,11 +660,11 @@ FILE FV_IMAGE = 9B9C7C89-5FC4-4C29-9942-E33DCFE2058F  {
 !endif
 
 #
-# Memory Health Insights Pre-Mem Feature
+# Memory Telemetry Pre-Mem Feature
 #
-!if gMemoryHealthInsightsFeaturePkgTokenSpaceGuid.PcdMhiEnabled == TRUE
-  !include MemoryHealthInsightsFeaturePkg/Include/PreMemory.fdf
-!endif # PcdMhiEnabled
+!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
+  !include MemoryTelemetryFeaturePkg/Include/PreMemory.fdf
+!endif # PcdMemoryTelemetryEnabled
 
 [FV.FvPostMemoryUncompact]
 BlockSize          = $(FLASH_BLOCK_SIZE)
@@ -1739,7 +1739,7 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/Bdat/Dxe/BdatAccessHandler.inf
 
 INF  $(PLATFORM_FULL_PACKAGE)/Platform/PciPlatform/Dxe/PciPlatform.inf
 
-$(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/Uart/UartDriver/SerialIoUartDriver.inf
+$(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/LpssUartDriver/LpssUartDriver.inf
 
 !if gWatchdogTimerFeaturePkgTokenSpaceGuid.PcdWatchdogTimerFeatureEnable == TRUE
   !include WatchdogTimerFeaturePkg/Include/PostMemory.fdf
@@ -1841,8 +1841,10 @@ INF RuleOverride = ACPITABLE EcFeaturePkg/AcpiTables/EcAcpiTables.inf
 !endif
 
 !if gSiPkgTokenSpaceGuid.PcdBiosGuardEnable == TRUE
+!if gSiPkgTokenSpaceGuid.PcdBiosGuardLegacyAcpi == FALSE
 INF $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Dxe/BiosGuardAcpiInit.inf
 INF RuleOverride = ACPITABLE $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/AcpiTables/BiosGuardAcpiTables.inf
+!endif
 $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Smm/BiosGuardServices.inf
 !endif
 
@@ -1898,11 +1900,11 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Smm/BiosGuardServi
 !endif
 
 #
-# Memory Health Insights Post-Mem Feature
+# Memory Telemetry Post-Mem Feature
 #
-!if gMemoryHealthInsightsFeaturePkgTokenSpaceGuid.PcdMhiEnabled == TRUE
-  !include MemoryHealthInsightsFeaturePkg/Include/PostMemory.fdf
-!endif # PcdMhiEnabled
+!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
+  !include MemoryTelemetryFeaturePkg/Include/PostMemory.fdf
+!endif # PcdMemoryTelemetryEnabled
 
 [FV.FvAdvanced]
 BlockSize          = $(FLASH_BLOCK_SIZE)

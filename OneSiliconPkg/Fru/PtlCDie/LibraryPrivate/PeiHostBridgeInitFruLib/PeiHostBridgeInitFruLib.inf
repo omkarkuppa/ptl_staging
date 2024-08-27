@@ -44,6 +44,7 @@ BaseIGpuInfoLib
 TdxInfoLib
 PeiTdxLib
 TdxFruLib
+PeiMemorySubSystemInfoLib
 
 [Packages]
 MdePkg/MdePkg.dec

@@ -24,6 +24,7 @@
 
 #include "CMrcTypes.h"
 #include "CMrcApi.h"
+#include "MrcMcSiSpecific.h"
 #include "MrcCommon.h"
 #include "MrcRowHammer.h"
 #include "MrcRowHammerPrivate.h"
@@ -615,27 +616,17 @@ MrcConfigPtrr (
   IN UINT8                DimmMap
   )
 {
-  MrcInput            *Inputs;
-  const MRC_FUNCTION  *MrcCall;
-  INT64               GetSetVal;
-  UINT32              RandomNumber;
-  UINT32              MA1Swizzle;
-  UINT32              MA2Swizzle;
-  UINT8               Dimm;
+  MrcInput             *Inputs;
+  INT64                GetSetVal;
+  UINT32               MA1Swizzle;
+  UINT32               MA2Swizzle;
+  UINT8                Dimm;
   MRC_EXT_INPUTS_TYPE  *ExtInputs;
 
   Inputs     = &MrcData->Inputs;
   ExtInputs  = Inputs->ExtInputs.Ptr;
-  MrcCall    = Inputs->Call.Func;
   MA2Swizzle = 0;
   MA1Swizzle = 0;
-
-  MrcCall->MrcGetRandomNumber (&RandomNumber);
-  GetSetVal = RandomNumber;
-  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhLfsr0, WriteCached | PrintValue, &GetSetVal);
-  MrcCall->MrcGetRandomNumber (&RandomNumber);
-  GetSetVal = RandomNumber;
-  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhLfsr1, WriteCached | PrintValue, &GetSetVal);
 
   GetSetVal = 0x3;  // Both DIMMs should be configured to the same value
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhTRRDimmEnable, WriteToCache | PrintValue, &GetSetVal);
@@ -672,6 +663,46 @@ MrcConfigPtrr (
 }
 
 /**
+  Configure Row Hammer Ptrr Lfsr, should be called for any boot mode
+  @param[in] MrcData - The MRC general data.
+**/
+VOID
+MrcRhPtrrLfsrConfig (
+  IN MrcParameters *const MrcData
+  )
+{
+  const MrcInput      *Inputs;
+  const MRC_FUNCTION  *MrcCall;
+  MrcOutput           *Outputs;
+  UINT32              RandomNumber;
+  UINT32              Controller;
+  UINT32              Channel;
+  INT64               LfsrSeed;
+  BOOLEAN             IsLpddr;
+
+  Outputs     = &MrcData->Outputs;
+  IsLpddr     = Outputs->IsLpddr;
+  Inputs      = &MrcData->Inputs;
+  MrcCall     = Inputs->Call.Func;
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+      if (!(MrcChannelExist (MrcData, Controller, Channel)) || IS_MC_SUB_CH (IsLpddr, Channel)) {
+        continue;
+      }
+
+      MrcCall->MrcGetRandomNumber (&RandomNumber);
+      LfsrSeed = RandomNumber;
+      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhLfsr0, WriteNoCache | PrintValue, &LfsrSeed);
+
+      MrcCall->MrcGetRandomNumber (&RandomNumber);
+      LfsrSeed = RandomNumber;
+      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhLfsr1, WriteNoCache | PrintValue, &LfsrSeed);
+    } // for Channel
+  } // for Controller
+}
+
+/**
   Configure Row Hammer mitigation modes if they are supported and enabled
 
   @param[in] MrcData - The MRC general data.
@@ -704,6 +735,7 @@ MrcRhPrevention (
   INT64                PanicWm;
   INT64                HpWm;
   MRC_RFM_SETUP_CONFIG RfmSetupConfig;
+
   const MRC_EXT_INPUTS_TYPE *ExtInputs;
 
   Status              = mrcSuccess;
@@ -868,6 +900,9 @@ MrcRhPrevention (
         MrcConfigRfm (MrcData, Controller, IpChannel, &RfmSetupConfig);
         MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RFM Configured\n");
       }
+
+      MrcFullRankBlockOptimization (MrcData, Controller, IpChannel);
+
     } // for Channel
   }  // for Controler
 

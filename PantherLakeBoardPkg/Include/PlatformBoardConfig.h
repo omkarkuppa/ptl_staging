@@ -26,7 +26,7 @@
 #include <Usb2PhyConfig.h>
 #include <MemoryConfig.h>
 #include <TcssInfo.h>
-#include "../../PantherLakeOpenBoardPkg/Include/PlatformOpenBoardConfig.h" // @todo - Need to be corrected once no conflict between OpenBoardPkg.dec and BoardPkg.dec.
+#include <PlatformOpenBoardConfig.h>
 
 //
 // VendorGuid: {89ED4FC1-4234-47BC-9081-7A6510A5E8A9}

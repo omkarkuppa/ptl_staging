@@ -43,25 +43,23 @@ typedef struct {
                                                     ///< Offset 15      TCSS ItbtPcie Root Port address 2
                                                     ///< Offset 19      TCSS ItbtPcie Root Port address 3
   UINT8    TcssRtd3;                                ///< Offset 23      TCSS RTD3
-  UINT32   TcssDma0RmrrAddr;                        ///< Offset 24      TCSS DMA0 RMRR address
-  UINT32   TcssDma1RmrrAddr;                        ///< Offset 28      TCSS DMA1 RMRR address
-  UINT8    LtrEnable[4];                            ///< Offset 32      Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
-                                                    ///< Offset 33      Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
-                                                    ///< Offset 34      Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
-                                                    ///< Offset 35      Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
-  UINT16   PcieLtrMaxSnoopLatency[4];               ///< Offset 36      PCIE LTR max snoop Latency 0
-                                                    ///< Offset 38      PCIE LTR max snoop Latency 1
-                                                    ///< Offset 40      PCIE LTR max snoop Latency 2
-                                                    ///< Offset 42      PCIE LTR max snoop Latency 3
-  UINT16   PcieLtrMaxNoSnoopLatency[4];             ///< Offset 44      PCIE LTR max no snoop Latency 0
-                                                    ///< Offset 46      PCIE LTR max no snoop Latency 1
-                                                    ///< Offset 48      PCIE LTR max no snoop Latency 2
-                                                    ///< Offset 50      PCIE LTR max no snoop Latency 3
-  UINT8    IomReady;                                ///< Offset 52      IOM Ready
-  UINT8    TcssIomVccSt;                            ///< Offset 53      TCSS IOM VccSt
-  UINT16   RegBarOffset;                            ///< Offset 54      MCH RegBar Offset
-  UINT64   IomBase;                                 ///< Offset 56      Iom RegBar Base
-  UINT8    RetimerMap;                              ///< Offset 64      USBC Retimer Mapping.
+  UINT8    LtrEnable[4];                            ///< Offset 24      Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
+                                                    ///< Offset 25      Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
+                                                    ///< Offset 26      Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
+                                                    ///< Offset 27      Latency Tolerance Reporting Mechanism. <b>0: Disable</b>; 1: Enable.
+  UINT16   PcieLtrMaxSnoopLatency[4];               ///< Offset 28      PCIE LTR max snoop Latency 0
+                                                    ///< Offset 30      PCIE LTR max snoop Latency 1
+                                                    ///< Offset 32      PCIE LTR max snoop Latency 2
+                                                    ///< Offset 34      PCIE LTR max snoop Latency 3
+  UINT16   PcieLtrMaxNoSnoopLatency[4];             ///< Offset 36      PCIE LTR max no snoop Latency 0
+                                                    ///< Offset 38      PCIE LTR max no snoop Latency 1
+                                                    ///< Offset 40      PCIE LTR max no snoop Latency 2
+                                                    ///< Offset 42      PCIE LTR max no snoop Latency 3
+  UINT8    IomReady;                                ///< Offset 44      IOM Ready
+  UINT8    TcssIomVccSt;                            ///< Offset 45      TCSS IOM VccSt
+  UINT16   RegBarOffset;                            ///< Offset 46      MCH RegBar Offset
+  UINT64   IomBase;                                 ///< Offset 48      Iom RegBar Base
+  UINT8    RetimerMap;                              ///< Offset 56      USBC Retimer Mapping.
 } TCSS_NVS_AREA;
 
 #pragma pack(pop)

@@ -31,7 +31,7 @@ DefinitionBlock (
   )
 {
   External (\PF00, IntObj)
-  External (\CCNT, FieldUnitObj)
+  External (\TCNT, FieldUnitObj)
   External (\_SB.CFGD, FieldUnitObj)
   External (\_SB.PR00, DeviceObj)
   External (HTRO)
@@ -91,8 +91,8 @@ DefinitionBlock (
           Store (Arg1, Index (DerefOf (Index (HPSD, 0)), 2)) // Domain
           Store (Arg1, Index (DerefOf (Index (SPSD, 0)), 2)) // Domain
         } Else {
-          Store (CCNT, Index (DerefOf (Index (HPSD, 0)), 4))
-          Store (CCNT, Index (DerefOf (Index (SPSD, 0)), 4))
+          Store (TCNT, Index (DerefOf (Index (HPSD, 0)), 4))
+          Store (TCNT, Index (DerefOf (Index (SPSD, 0)), 4))
         }
       }
       If (And (PF00,0x0800))

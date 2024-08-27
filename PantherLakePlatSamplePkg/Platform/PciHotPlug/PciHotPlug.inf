@@ -53,6 +53,7 @@
   MdePkg/MdePkg.dec
   OneSiliconPkg/SiPkg.dec
   PantherLakePlatSamplePkg/PlatformPkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
 
 [Sources]
   PciHotPlug.c
@@ -63,6 +64,7 @@
 [Protocols]
   gEfiPciHotPlugInitProtocolGuid                ## PRODUCES
   gITbtPolicyProtocolGuid                       ## CONSUMES
+  gDxeDTbtPolicyProtocolGuid                    ## CONSUMES
 
 [Guids]
   gEfiHobListGuid                               ## CONSUMES
@@ -71,5 +73,10 @@
   gPchSetupVariableGuid                         ## CONSUMES
   gDxeITbtConfigGuid                            ## CONSUMES
   gITbtInfoHobGuid                              ## CONSUMES
+  gDTbtInfoHobGuid                              ## CONSUMES
+
+[Pcd]
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable
+
 [Depex]
   gITbtPolicyProtocolGuid

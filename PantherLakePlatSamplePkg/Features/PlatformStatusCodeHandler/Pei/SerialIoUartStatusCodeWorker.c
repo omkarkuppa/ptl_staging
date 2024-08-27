@@ -28,6 +28,8 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/PrintLib.h>
 #include <Library/DebugPrintErrorLevelLib.h>
+#include <Library/SerialIoUartDebugPropertyLib.h>
+#include <Library/LpssUartLib.h>
 
 /**
   Convert status code value and extended data to readable ASCII string, send string to SerialIoUart device.
@@ -72,11 +74,7 @@ SerialIoUartStatusCodeReportWorker (
   UINTN           CharCount;
   BASE_LIST       Marker;
   UINT32          DebugPrintErrorLevel;
-  UINT8           *UartNumber;
-  UINT8           UartNumFromPcd;
-  UINT32          PciCfgBase;
-
-  UartNumber = NULL;
+  UINTN           MmioBase;
 
   if (!(GetDebugInterface () & STATUS_CODE_USE_SERIALIO)) {
     return RETURN_ABORTED;
@@ -95,17 +93,10 @@ SerialIoUartStatusCodeReportWorker (
     //
     // Print String Data.
     //
-    UartNumFromPcd = SerialIoUartDebugGetControllerNumber ();
-    if (UartNumFromPcd == 0xFF) {
-      PciCfgBase = SerialIoUartDebugGetDefaultPciCfgBase ();
-    } else {
-      PciCfgBase = SerialIoUartDebugGetPciDefaultMmioBase ();
-      UartNumber = &UartNumFromPcd;
-    }
+    MmioBase = SerialIoUartDebugGetPciDefaultMmioBase ();
 
-    SerialIoUartWrite (
-      (UINTN) PciCfgBase,
-      UartNumber,
+    LpssUartWrite (
+      MmioBase,
       (UINT8 *) (((EFI_STATUS_CODE_STRING_DATA *) Data)->String.Ascii),
       ((EFI_STATUS_CODE_STRING_DATA *) Data)->DataHeader.Size
       );

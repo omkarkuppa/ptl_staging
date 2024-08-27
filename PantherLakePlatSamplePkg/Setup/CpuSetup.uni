@@ -680,6 +680,13 @@
 #string STR_VR_TDC_CURRENT_LIMIT_INFO_VALUE2    #language en-US ""
 #string STR_VR_TDC_CURRENT_LIMIT_INFO_VALUE3    #language en-US ""
 
+#string STR_VR_VOLTAGE_LIMIT_INFO_HELP          #language en-US "Current Voltage Limit"
+#string STR_VR_VOLTAGE_LIMIT_INFO_STRING        #language en-US "Current Voltage Limit"
+#string STR_VR_VOLTAGE_LIMIT_INFO_VALUE0        #language en-US ""
+#string STR_VR_VOLTAGE_LIMIT_INFO_VALUE1        #language en-US ""
+#string STR_VR_VOLTAGE_LIMIT_INFO_VALUE2        #language en-US ""
+#string STR_VR_VOLTAGE_LIMIT_INFO_VALUE3        #language en-US ""
+
 #string STR_VR_CONFIG_ENABLE                    #language en-US "VR Config Enable"
 #string STR_VR_CONFIG_ENABLE_HELP               #language en-US "VR Config Enable"
 
@@ -737,25 +744,25 @@
 #string STR_NEGATIVE_SIGN                       #language en-US "-"
 
 #string STR_ISYS_CURRENT_LIMIT_L1               #language en-US "ISYS Current Limit L1"
-#string STR_ISYS_CURRENT_LIMIT_L1_HELP          #language en-US "This field indicated the current limitation of L1. Units of measurements are 1/8 A. For a 6.5 A, enter 52 (0x34)."
+#string STR_ISYS_CURRENT_LIMIT_L1_HELP          #language en-US "This field indicated the current limitation of L1. Units of measurements are 1/8 A. For a 6.5 A, enter 52 (0x34). 0 = AUTO/HW default."
 
 #string STR_ISYS_CURRENT_LIMIT_L1_ENABLE        #language en-US "ISYS Current Limit L1 Enable"
 #string STR_ISYS_CURRENT_LIMIT_L1_ENABLE_HELP   #language en-US "This bits enables disables ISYS_CURRENT_LIMIT_L1 algorithm"
 
 #string STR_ISYS_CURRENT_L1_TAU                 #language en-US "ISYS Current Limit L1 Tau"
-#string STR_ISYS_CURRENT_L1_TAU_HELP            #language en-US "Isys L1 time window value in seconds. The value may vary from 0 to 128. 0 = default values. Specifies the time window used to calculate average current for ISYS_L1."
+#string STR_ISYS_CURRENT_L1_TAU_HELP            #language en-US "Isys L1 time window value in seconds. The value may vary from 0 to 128. 0 = AUTO/HW default. Specifies the time window used to calculate average current for ISYS_L1."
 
 #string STR_THETA_IBATT                         #language en-US "ThETA Ibatt Feature"
 #string STR_THETA_IBATT_HELP                    #language en-US "Enable/Disable ThETA Ibatt Feature"
 
 #string STR_ISYS_CURRENT_LIMIT_L2               #language en-US "ISYS Current Limit L2"
-#string STR_ISYS_CURRENT_LIMIT_L2_HELP          #language en-US "This field indicated the current limitation of L2. Units of measurements are 1/8 A. For a 6.5 A, enter 52 (0x34)."
+#string STR_ISYS_CURRENT_LIMIT_L2_HELP          #language en-US "This field indicated the current limitation of L2. Units of measurements are 1/8 A. For a 6.5 A, enter 52 (0x34). 0 = AUTO/HW default."
 
 #string STR_ISYS_CURRENT_LIMIT_L2_ENABLE        #language en-US "ISYS Current Limit L2 Enable"
 #string STR_ISYS_CURRENT_LIMIT_L2_ENABLE_HELP   #language en-US "This bits enables disables ISYS_CURRENT_LIMIT_L2 algorithm"
 
 #string STR_VSYS_MAX                            #language en-US "Vsys Max"
-#string STR_VSYS_MAX_HELP                       #language en-US "Vsys Max defined in 1/1000 increments. Range is 0-65535. For a 1.25 voltage, enter 1250."
+#string STR_VSYS_MAX_HELP                       #language en-US "Vsys Max defined in 1/1000 increments. Range is 0-65535. For a 1.25 voltage, enter 1250. 0 = AUTO/HW default."
 
 #string STR_PSYS_SLOPE                          #language en-US "PSYS Slope"
 #string STR_PSYS_SLOPE_HELP                     #language en-US "PSYS Slope defined in 1/100 increments. Range is 0-200. For a 1.25 slope, enter 125. 0 = AUTO."
@@ -792,19 +799,18 @@
 #string STR_FALSE                               #language en-US "False"
 #string STR_TRUE                                #language en-US "True"
 
-#string STR_PRE_WAKE                            #language en-US "Pre Wake Time"
-#string STR_PRE_WAKE_HELP                       #language en-US "Set the maximum Pre Wake randomization time in micro ticks. Range is 0-255. This is for acoustic noise mitigation Dynamic Periodicity Alteration (DPA) tuning."
-#string STR_RAMP_UP                             #language en-US "Ramp Up Time"
-#string STR_RAMP_UP_HELP                        #language en-US "Set the maximum Ramp Up randomization time in micro ticks. Range is 0-255. This is for acoustic noise mitigation Dynamic Periodicity Alteration (DPA) tuning."
-#string STR_RAMP_DOWN                           #language en-US "Ramp Down Time"
-#string STR_RAMP_DOWN_HELP                      #language en-US "Set the maximum Ramp Down randomization time in micro ticks. Range is 0-255. This is for acoustic noise mitigation Dynamic Periodicity Alteration (DPA) tuning."
+#string STR_HYST_WINDOW_PCORE                   #language en-US "Pcore Hysteresis Window"
+#string STR_HYST_WINDOW_PCORE_HELP              #language en-US "Set the Hysteresis time in miliseconds. Range is 0-50ms. Pcode will clip any number above max and return success"
+#string STR_HYST_WINDOW_ECORE                   #language en-US "Ecore Hysteresis Window"
+#string STR_HYST_WINDOW_ECORE_HELP              #language en-US "Set the Hysteresis time in miliseconds. Range is 0-50ms. Pcode will clip any number above max and return success"
 
 #string STR_FAST_PKG_C_RAMP_DISABLE             #language en-US "Disable Fast PKG C State Ramp"
 #string STR_FAST_PKG_C_RAMP_DISABLE_HELP        #language en-US "This option needs to be configured to reduce acoustic noise during deeper C states. False: Don't disable Fast ramp during deeper C states; True: Disable Fast ramp during deeper C state"
 
 #string STR_SLOW_SLEW_RATE_CONFIG               #language en-US "Slow Slew Rate"
-#string STR_IA_SLOW_SLEW_RATE_CONFIG_HELP       #language en-US "Set VR Core Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4, 8, 16 to slow down the slew rate to help minimize acoustic noise"
+#string STR_IA_SLOW_SLEW_RATE_CONFIG_HELP       #language en-US "Set VR Core Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4 to slow down the slew rate to help minimize acoustic noise; divide by 8 and 16 are disabled"
 #string STR_GT_SLOW_SLEW_RATE_CONFIG_HELP       #language en-US "Set VR GT Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4, 8 to slow down the slew rate to help minimize acoustic noise; divide by 16 is disabled"
+#string STR_ATOM_SLOW_SLEW_RATE_CONFIG_HELP     #language en-US "Set VR ATOM Slow Slew Rate for Deep Package C State ramp time; Slow slew rate equals to Fast divided by number, the number is 2, 4 to slow down the slew rate to help minimize acoustic noise; divide by 8 and 16 are disabled"
 
 #string STR_FAST_2                              #language en-US "Fast/2"
 #string STR_FAST_4                              #language en-US "Fast/4"

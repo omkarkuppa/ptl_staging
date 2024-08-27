@@ -89,7 +89,14 @@
   # !BSF NAME:{SerialIoUartDebugCtsPinMux - FSPM} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select SerialIo Uart used for debug Cts pin muxing. Refer to GPIO_*_MUXING_SERIALIO_UARTx_CTS* for possible values.}
   gPlatformFspPkgTokenSpaceGuid.SerialIoUartDebugCtsPinMux          | * | 0x04 | 0x0
+  # !BSF NAME:{Serial Io Uart Debug Pci Base} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF HELP:{Specify PciCfgBase address. Allows for SerialIO UART functionality outside Bus 0}
+  gPlatformFspPkgTokenSpaceGuid.SerialIoUartDebugPciCfgBase         | * | 0x04 | 0x0
 
+  # !BSF NAME:{SerialIo Uart PowerGating} TYPE:{Combo}
+  # !BSF OPTION:{0:Disabled, 1:Enabled, 2:Auto}
+  # !BSF HELP:{Select SerialIo Uart Powergating mode}
+  gPlatformFspPkgTokenSpaceGuid.SerialIoUartPowerGating             | * | 0x01 | 0x02
 
   ## SERIAL_IO_UART_CONFIG End
 
@@ -167,6 +174,10 @@
 
 
   ## DEBUG_CONFIG_DATA_HOB End
+
+  # !BSF NAME:{Serial Io Uart Debug Mmio Base} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF HELP:{Select SerialIo Uart default MMIO resource in SEC/PEI phase when PcdSerialIoUartMode = SerialIoUartPci.}
+  gPlatformFspPkgTokenSpaceGuid.SerialIoUartDebugMmioBase           | * | 0x04 | 0xFE02C000
 
   # !BSF NAME:{ISA Serial Base selection} TYPE:{Combo}
   # !BSF OPTION:{0:0x3F8, 1:0x2F8}

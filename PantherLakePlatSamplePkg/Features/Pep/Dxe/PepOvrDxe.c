@@ -312,6 +312,10 @@ PepNvsAreaUpdate (
   PepNvsAreaProtocol->Area->PepXhci        = SetupData->PepXhci;
   PepNvsAreaProtocol->Area->PepCsme        = SetupData->PepCsme;
   PepNvsAreaProtocol->Area->PepOsse        = SetupData->PepOsse;
+  //
+  // Pep constraint will be added on ese controller based on the Device ID check
+  //
+  PepNvsAreaProtocol->Area->PepEse         = 1;
   PepNvsAreaProtocol->Area->PepHeci3       = SetupData->PepHeci3;
   PepNvsAreaProtocol->Area->PepGbe         = SetupData->PepGbe;
   PepNvsAreaProtocol->Area->PepThc0        = SetupData->PepThc0;

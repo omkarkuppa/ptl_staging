@@ -19,57 +19,76 @@
 @par Specification Reference:
 **/
 
+External (UCMS, IntObj)
+
 /**
   RPOI        Get PPM->OPM message in and CCI indicator.
 
   @param      None.
-  @retval     Return the PPM->OPM message in and CCI indicator in buffer object (20 bytes):
-              Index0      - MGI0
-              Index1      - MGI1
-              Index2      - MGI2
-              Index3      - MGI3
-              Index4      - MGI4
-              Index5      - MGI5
-              Index6      - MGI6
-              Index7      - MGI7
-              Index8      - MGI8
-              Index9      - MGI9
-              Index10     - MGIA
-              Index11     - MGIB
-              Index12     - MGIC
-              Index13     - MGID
-              Index14     - MGIE
-              Index15     - MGIF
-              Index16     - CCI0
-              Index17     - CCI1
-              Index18     - CCI2
-              Index19     - CCI3
+  @retval     Return the PPM->OPM message in and CCI indicator in buffer object (24 bytes):
+              Index0      - MI00
+              Index1      - MI01
+              Index2      - MI02
+              Index3      - MI03
+              Index4      - MI04
+              Index5      - MI05
+              Index6      - MI06
+              Index7      - MI07
+              Index8      - MI08
+              Index9      - MI09
+              Index10     - MI0A
+              Index11     - MI0B
+              Index12     - MI0C
+              Index13     - MI0D
+              Index14     - MI0E
+              Index15     - MI0F
+              Index16     - MI10
+              Index17     - MI11
+              Index18     - MI12
+              Index19     - MI13
+              Index20     - CCI0
+              Index21     - CCI1
+              Index22     - CCI2
+              Index23     - CCI3
 
 **/
 Method (RPOI)
 {
-  Name (PMBF, Buffer (20) {})
-  Store (ECRD (RefOf (MGI0)), Index (PMBF, 0))
-  Store (ECRD (RefOf (MGI1)), Index (PMBF, 1))
-  Store (ECRD (RefOf (MGI2)), Index (PMBF, 2))
-  Store (ECRD (RefOf (MGI3)), Index (PMBF, 3))
-  Store (ECRD (RefOf (MGI4)), Index (PMBF, 4))
-  Store (ECRD (RefOf (MGI5)), Index (PMBF, 5))
-  Store (ECRD (RefOf (MGI6)), Index (PMBF, 6))
-  Store (ECRD (RefOf (MGI7)), Index (PMBF, 7))
-  Store (ECRD (RefOf (MGI8)), Index (PMBF, 8))
-  Store (ECRD (RefOf (MGI9)), Index (PMBF, 9))
-  Store (ECRD (RefOf (MGIA)), Index (PMBF, 10))
-  Store (ECRD (RefOf (MGIB)), Index (PMBF, 11))
-  Store (ECRD (RefOf (MGIC)), Index (PMBF, 12))
-  Store (ECRD (RefOf (MGID)), Index (PMBF, 13))
-  Store (ECRD (RefOf (MGIE)), Index (PMBF, 14))
-  Store (ECRD (RefOf (MGIF)), Index (PMBF, 15))
-  Store (ECRD (RefOf (CCI0)), Index (PMBF, 16))
-  Store (ECRD (RefOf (CCI1)), Index (PMBF, 17))
-  Store (ECRD (RefOf (CCI2)), Index (PMBF, 18))
-  Store (ECRD (RefOf (CCI3)), Index (PMBF, 19))
-  Return (PMBF)
+  Name (PMBF, Buffer (24) {})
+  Store (ECRD (RefOf (MI00)), Index (PMBF, 0))
+  Store (ECRD (RefOf (MI01)), Index (PMBF, 1))
+  Store (ECRD (RefOf (MI02)), Index (PMBF, 2))
+  Store (ECRD (RefOf (MI03)), Index (PMBF, 3))
+  Store (ECRD (RefOf (MI04)), Index (PMBF, 4))
+  Store (ECRD (RefOf (MI05)), Index (PMBF, 5))
+  Store (ECRD (RefOf (MI06)), Index (PMBF, 6))
+  Store (ECRD (RefOf (MI07)), Index (PMBF, 7))
+  Store (ECRD (RefOf (MI08)), Index (PMBF, 8))
+  Store (ECRD (RefOf (MI09)), Index (PMBF, 9))
+  Store (ECRD (RefOf (MI0A)), Index (PMBF, 10))
+  Store (ECRD (RefOf (MI0B)), Index (PMBF, 11))
+  Store (ECRD (RefOf (MI0C)), Index (PMBF, 12))
+  Store (ECRD (RefOf (MI0D)), Index (PMBF, 13))
+  Store (ECRD (RefOf (MI0E)), Index (PMBF, 14))
+  Store (ECRD (RefOf (MI0F)), Index (PMBF, 15))
+  If (CondRefOf (UCMS)) {
+    If (LEqual (UCMS, 1)) {
+      Store (ECRD (RefOf (CCI0)), Index (PMBF, 16))
+      Store (ECRD (RefOf (CCI1)), Index (PMBF, 17))
+      Store (ECRD (RefOf (CCI2)), Index (PMBF, 18))
+      Store (ECRD (RefOf (CCI3)), Index (PMBF, 19))
+      Return (PMBF) // UCSI 1.2
+    }
+  }
+  Store (ECRD (RefOf (MI10)), Index (PMBF, 16))
+  Store (ECRD (RefOf (MI11)), Index (PMBF, 17))
+  Store (ECRD (RefOf (MI12)), Index (PMBF, 18))
+  Store (ECRD (RefOf (MI13)), Index (PMBF, 19))
+  Store (ECRD (RefOf (CCI0)), Index (PMBF, 20))
+  Store (ECRD (RefOf (CCI1)), Index (PMBF, 21))
+  Store (ECRD (RefOf (CCI2)), Index (PMBF, 22))
+  Store (ECRD (RefOf (CCI3)), Index (PMBF, 23))
+  Return (PMBF) // UCSI 2.x
 }
 
 /**

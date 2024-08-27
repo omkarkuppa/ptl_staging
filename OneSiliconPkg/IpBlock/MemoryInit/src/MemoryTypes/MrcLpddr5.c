@@ -921,7 +921,7 @@ InitMrwLpddr5 (
             Status  = mrcWrongInputParameter;
           }
         }
-        DqVrefMv = (UINT16) (Outputs->VccddqVoltage / 4) + 40;
+        DqVrefMv = (UINT16) (Outputs->VccddqVoltage / 4) + 10;
         CaVrefMv = (UINT16) MrcCalcIdealVref (MrcData, CaDrvStrength, 0, CaOdt, CmdV, TRUE);
         CaVrefMv = CheckVrefLimits (MrcData, CaVrefMv, CmdV);
         VrefToOffset (MrcData, DqVrefMv, &Offset);
@@ -1540,7 +1540,7 @@ MrcSagvMrSeqLpddr5 (
 {
   static const MrcModeRegister SagvMrOrder[] = {
     mrPreAll, mrREFab, mrMR127, mrMR16, mrMR17, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15,
-    mrMR18, mrMR3, mrMR1, mrMR2, mrMR19, mrMR30, mrMR69, mrMR37, mrMR41, mrMR24, mrMR16FspOp, mrREFab
+    mrMR18, mrMR3, mrMR1, mrMR2, mrMR19, mrMR30, mrMR69, mrMR37, mrMR41, mrMR24, mrMR58, mrMR16FspOp, mrREFab
     };
   MrcModeRegister    CurMrAddr;
   MrcOutput          *Outputs;

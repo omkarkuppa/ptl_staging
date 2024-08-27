@@ -109,8 +109,6 @@ IpIGpuGtInit (
   GAMCNTRL_CTRL_GAMCTRL_3D_GT_STRUCT          GamCntrl;
   GAMCTRLLOCK_GAMCTRL_3D_GT_STRUCT            GamCtrlLock;
   BOOLEAN                                     IsFlatCcsCompressionEnable;
-  OAG_OACONTROL_GT_STRUCT                     OagControl;
-  GMD_ID_STRUCT                               GtGmdId;
 
   PRINT_LEVEL1 ("%s Start\n", __FUNCTION__);
 
@@ -348,18 +346,6 @@ IpIGpuGtInit (
     ///
     IpWrRegWrite (pInst->MmioAccess, RP_CTRL_GPM_GRP_GCD_GT_REG, 0x00000400, IpWrRegFlagSize32Bits);
     IpIGpuPrintRegData (pInst, NULL, RP_CTRL_GPM_GRP_GCD_GT_REG, 0x00000400, (UINT32) IpWrRegRead (pInst->MmioAccess, RP_CTRL_GPM_GRP_GCD_GT_REG, IpWrRegFlagSize32Bits));
-
-    //
-    // 8e. OA Control
-    //
-    if (pInst->XeVersion >= IpIGpuXe3p) {
-      GtGmdId.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, MIRROR_GMD_ID_RPM_GCD_GT_REG, IpWrRegFlagSize32Bits);
-      if ((pInst->IGpuPrivateConfig.IsEom == TRUE) && (GtGmdId.Bits.GMDArchitecture >= GMD_GT_ARCH_35)) {
-        OagControl.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, OAG_OACONTROL_GT_REG, IpWrRegFlagSize32Bits);
-        OagControl.Bits.security_lock_bit = TRUE;
-        IpWrRegWrite (pInst->MmioAccess, OAG_OACONTROL_GT_REG, OagControl.Data, IpWrRegFlagSize32Bits);
-      }
-    }
 
     //
     // 9a. TLB register Programming

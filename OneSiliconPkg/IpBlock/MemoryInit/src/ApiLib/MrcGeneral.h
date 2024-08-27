@@ -294,7 +294,7 @@ MrcSetPrjOverrides (
 
 /**
   Modify tRDRDdg and tRDRDsg timings by 1tCK. Does not apply modification to tRDRDsg
-  in BG mode. Expects caller to flush cache.
+  in BG mode.
 
   @param[in, out] MrcData - All the MRC global data.
   @param[in]      Enable  - TRUE to add 1tCK, FALSE to subtract.

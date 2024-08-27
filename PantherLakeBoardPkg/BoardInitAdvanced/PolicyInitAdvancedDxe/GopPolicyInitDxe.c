@@ -53,20 +53,20 @@ GetPlatformLidStatus (
   GpioLidStatus = GpioV2StateHigh;
   GpioVpd = NULL;
 
-  DEBUG ((DEBUG_INFO, "LidStatus Entry\n"));
+  DEBUG ((DEBUG_VERBOSE, "LidStatus Entry\n"));
 
   //
   // If the platform does not support a lid, the function must return EFI_UNSUPPORTED
   //
   if (PcdGet8 (PcdPlatformType) == TypeTrad && PcdGet8 (PcdPlatformFlavor) == FlavorDesktop) {
-    DEBUG ((DEBUG_INFO, "Returning Lid status as unsupported to GOP for DT/AIO board\n"));
+    DEBUG ((DEBUG_VERBOSE, "Returning Lid status as unsupported to GOP for DT/AIO board\n"));
     return EFI_UNSUPPORTED;
   } else {
     GpioVpd = PcdGetPtr(VpdPcdGpioLidStatus);
     if (GpioVpd->GpioPad != 0x0) {
       Status = GpioV2GetRx (GpioVpd->GpioPad, &GpioLidStatus);
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_INFO, "Invalid Lid GPIO: %x\n", GpioVpd->GpioPad));
+        DEBUG ((DEBUG_ERROR, "Invalid Lid GPIO: %x\n", GpioVpd->GpioPad));
         return EFI_UNSUPPORTED;
       }
       if (GpioLidStatus == GpioV2StateHigh) {
@@ -74,12 +74,12 @@ GetPlatformLidStatus (
       } else {
         *CurrentLidStatus = LidClosed;
       }
-      DEBUG ((DEBUG_INFO, "LidStatus Exit\n"));
+      DEBUG ((DEBUG_VERBOSE, "LidStatus Exit\n"));
       return EFI_SUCCESS;
     }
   }
 
-  DEBUG ((DEBUG_INFO, "LidStatus UnSupported\n"));
+  DEBUG ((DEBUG_VERBOSE, "LidStatus UnSupported\n"));
   return EFI_UNSUPPORTED;
 }
 /**

@@ -300,7 +300,6 @@
   )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent|*|FALSE # USB Type-C PD Information Present : TRUE - Enable
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor|*|0x01
 
   # USB Type-C Retimer Information Present : FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent|*|TRUE
@@ -464,6 +463,7 @@
   gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[0]|0x2                                    # Connected device
   gStructPcdTokenSpaceGuid.PcdSetup.AcpiDebug|0x1                                                    # ACPI Debug
   gStructPcdTokenSpaceGuid.PcdSetup.SerialPortAcpiDebug|0x1                                          # Print to Serial Port
+  gStructPcdTokenSpaceGuid.PcdSetup.TcssUcmDevice|0x1                                                # USBC connector manager selection
 !if gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable == TRUE
   gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic0|0
   gStructPcdTokenSpaceGuid.PcdMipiCamConfig.MipiCam_ControlLogic1|0

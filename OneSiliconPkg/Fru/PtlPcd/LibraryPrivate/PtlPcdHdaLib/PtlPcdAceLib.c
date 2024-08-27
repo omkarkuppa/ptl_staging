@@ -68,7 +68,6 @@ PtlPcdHdaConfigureHdaLink (
     DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
     return;
   }
-
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
@@ -140,7 +139,6 @@ PtlPcdHdaConfigureDmicLinks (
     DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
     return;
   }
-
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
@@ -287,7 +285,6 @@ PtlPcdHdaConfigureSndwLinks (
   if (SndwIndex == 4) {
     return;
   }
-
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
@@ -417,7 +414,6 @@ PtlPcdConfigureSndwMultilane (
     DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
     return EFI_SUCCESS;
   }
-
    Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
@@ -461,6 +457,45 @@ PtlPcdConfigureSndwMultilane (
   }
 
   DEBUG ((DEBUG_INFO, "HDA: Multilane#%d on Sndw#%d with config 0x%x - GPIOs programmed successfully\n", MultilaneIndex, SndwInterface, SndwMultilaneSelect));
+
+  return EFI_SUCCESS;
+}
+
+/*
+  Configure GPIO pins related to Microphone Privacy
+*/
+EFI_STATUS
+PtlPcdConfigureMicrophonePrivacy (
+  VOID
+  )
+{
+  GPIOV2_SERVICES                  *GpioServices;
+  EFI_STATUS                       Status;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    DEBUG ((DEBUG_INFO, "%a () - End. Gpio Override Enabled, skipped GPIO configuration.\n", __FUNCTION__));
+    return EFI_SUCCESS;
+  }
+
+   Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices failed (Status: %d)\n", __FUNCTION__, Status));
+    return Status;
+  }
+
+  Status = PtlPcdGpioSetNativePadByFunction (GpioServices, GPIOV2_SIGNAL_MISC_MIC_MUTE, 0);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "HDA: Microphone Privacy Mic Mute, Status = %r.\n", Status));
+    return Status;
+  }
+
+  Status = PtlPcdGpioSetNativePadByFunction (GpioServices, GPIOV2_SIGNAL_MISC_MIC_MUTE_LED, 0);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "HDA: Microphone Privacy Mic Mute Led, Status = %r.\n", Status));
+    return Status;
+  }
+
+  DEBUG ((DEBUG_INFO, "HDA: Microphone Privacy - GPIOs programmed successfully\n"));
 
   return EFI_SUCCESS;
 }
@@ -530,6 +565,7 @@ PtlPcdCreateHdaHandle (
     HdaCallback->HdaPcrPidDspRead32                   = NULL;
     HdaCallback->HdaIsAudioIDispTmodeSupported        = &PtlPcdAceIsAudioIDispTmodeSupported;
     HdaCallback->HdaConfigureSndwMultilane            = &PtlPcdConfigureSndwMultilane;
+    HdaCallback->HdaConfigureMicrophonePrivacy        = &PtlPcdConfigureMicrophonePrivacy;
   }
 
   if (HdaPrivateConfig != NULL) {

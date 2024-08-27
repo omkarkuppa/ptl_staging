@@ -44,6 +44,7 @@
   PantherLakePlatSamplePkg/PlatformPkg.dec
   OneSiliconPkg/SiPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   IntelSiliconPkg/IntelSiliconPkg.dec
   DptfFeaturePkg/DptfFeaturePkg.dec
   FspWrapperFeaturePkg/FspWrapperFeaturePkg.dec
@@ -140,6 +141,7 @@
 
   gBoardModuleTokenSpaceGuid.PcdWwanModemBaseBandResetGpio                  ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdTouchpadIrqGpio                             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdTouchpadIrqGpioPolarity                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdTouchpanelIrqGpio                           ## CONSUMES
 
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCUcmMode                              ## CONSUMES
@@ -242,6 +244,7 @@
   gPlatformModuleTokenSpaceGuid.PcdS3AcpiReservedMemorySize
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
   gSiPkgTokenSpaceGuid.PcdVmdEnable
+  gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                     ## CONSUMES

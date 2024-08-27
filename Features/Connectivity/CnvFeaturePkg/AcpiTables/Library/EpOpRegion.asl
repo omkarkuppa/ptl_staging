@@ -24,6 +24,7 @@
 External (\GMIO, MethodObj)
 External (RPXX, OpRegionObj)
 External (FLDR, OpRegionObj)
+External (PBRR, OpRegionObj)
 External (PCIE_ROOT_PORT.PBNU, IntObj)
 External (WDCO, IntObj)
 
@@ -56,19 +57,21 @@ If (LEqual (CondRefOf (FLDR), 0)) {
   }
 }
 
-If (LAnd (CondRefOf (\GMIO), CondRefOf (PCIE_ROOT_PORT.PBNU))) {
-  If (LAnd (CondRefOf (PCIE_ROOT_PORT._ADR), CondRefOf (PCIE_ROOT_PORT.PXSX._ADR))) {
-    OperationRegion (PBRR, SystemMemory, GMIO (PCIE_ROOT_PORT.PBNU, PCIE_ROOT_PORT._ADR, PCIE_ROOT_PORT.PXSX._ADR), 0x2B8)
-    Field (PBRR, AnyAcc, NoLock, Preserve)
-    {
-      Offset (CNVD_MAX_NO_SNOOP_LATENCY_REG_OFFSET),
-      MSNL, 32,         // Max No-Snoop Latency, Max Snoop Latency
-      Offset (CNVD_L1_PM_SUB_STATES_CONTROL1_REG_OFFSET),
-      L1C1, 32,         // L1 PM Substates Control 1 Register
-      Offset (CNVD_L1_PM_SUB_STATES_CONTROL2_REG_OFFSET),
-      L1C2, 32,         // L1 PM Substates Control 2 Register
-      Offset (CNVD_PTM_REG_OFFSET),
-      PTMR, 32,         // PTM
+If (LEqual (CondRefOf (PBRR), 0)) {
+  If (LAnd (CondRefOf (\GMIO), CondRefOf (PCIE_ROOT_PORT.PBNU))) {
+    If (LAnd (CondRefOf (PCIE_ROOT_PORT._ADR), CondRefOf (PCIE_ROOT_PORT.PXSX._ADR))) {
+      OperationRegion (PBRR, SystemMemory, GMIO (PCIE_ROOT_PORT.PBNU, PCIE_ROOT_PORT._ADR, PCIE_ROOT_PORT.PXSX._ADR), 0x2B8)
+      Field (PBRR, AnyAcc, NoLock, Preserve)
+      {
+        Offset (CNVD_MAX_NO_SNOOP_LATENCY_REG_OFFSET),
+        MSNL, 32,         // Max No-Snoop Latency, Max Snoop Latency
+        Offset (CNVD_L1_PM_SUB_STATES_CONTROL1_REG_OFFSET),
+        L1C1, 32,         // L1 PM Substates Control 1 Register
+        Offset (CNVD_L1_PM_SUB_STATES_CONTROL2_REG_OFFSET),
+        L1C2, 32,         // L1 PM Substates Control 2 Register
+        Offset (CNVD_PTM_REG_OFFSET),
+        PTMR, 32,         // PTM
+      }
     }
   }
 }

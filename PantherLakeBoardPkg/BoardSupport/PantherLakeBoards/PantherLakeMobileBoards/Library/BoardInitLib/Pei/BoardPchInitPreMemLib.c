@@ -34,6 +34,9 @@
 #include <Library/PchInfoLib.h>
 #include <Library/PlatformUsbConfigLib.h>
 #include <Library/PcdInfoLib.h>
+#include <SetupVariable.h>
+#include <Ppi/ReadOnlyVariable2.h>
+#include <Library/PeiServicesLib.h>
 
 /**
   Board Root Port Clock Info configuration init function for PEI pre-memory phase.
@@ -171,7 +174,64 @@ PtlGpioTablePreMemInit (
 {
   GPIOV2_INIT_CONFIG  *GpioTable = (GPIOV2_INIT_CONFIG*)NULL;
   UINT16            GpioCount = 0;
+  VPD_GPIO_PAD      *GpioVpd;
 
+  GpioVpd = NULL;
+
+  SETUP_DATA                       Setup;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI* VariableServices;
+  EFI_STATUS                       Status;
+  UINTN                            VariableSize;
+
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiReadOnlyVariable2PpiGuid,  // GUID
+             0,                                 // INSTANCE
+             NULL,                              // EFI_PEI_PPI_DESCRIPTOR
+             (VOID **) &VariableServices        // PPI
+             );
+  ASSERT_EFI_ERROR (Status);
+
+  VariableSize = sizeof (SETUP_DATA);
+  Status = VariableServices->GetVariable (
+                               VariableServices,
+                               L"Setup",
+                               &gSetupVariableGuid,
+                               NULL,
+                               &VariableSize,
+                               &Setup
+                               );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to get setup variable \n"));
+  }
+
+  //
+  // Configure WWAN Full Card Power Off and reset pins
+  //
+  GpioVpd = PcdGetPtr (VpdPcdWwanFullCardPowerOffGpio);
+  PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
+  GpioVpd = PcdGetPtr (VpdPcdWwanBbrstGpio);
+  PcdSet32S (PcdWwanBbrstGpio, GpioVpd->GpioPad);
+  GpioVpd = PcdGetPtr (VpdPcdWwanPerstGpio);
+  PcdSet32S (PcdWwanPerstGpio, GpioVpd->GpioPad);
+  GpioVpd = PcdGetPtr (VpdPcdWwanWakeGpio);
+  PcdSet32S (PcdWwanWakeGpio, GpioVpd->GpioPad);
+  PcdSetBoolS (PcdWwanPerstGpioPolarity, PcdGetBool (VpdPcdWwanPerstGpioPolarity));
+  PcdSetBoolS (PcdWwanFullCardPowerOffGpioPolarity, PcdGetBool (VpdPcdWwanFullCardPowerOffGpioPolarity));
+  PcdSetBoolS (PcdWwanBbrstGpioPolarity, PcdGetBool (VpdPcdWwanBbrstGpioPolarity));
+  PcdSet8S (PcdWwanSourceClock, PcdGet8 (VpdPcdWwanSourceClock));
+  PcdSet8S (PcdWwanRootPortNumber, PcdGet8 (VpdPcdWwanRootPortNumber));
+  if ((Setup.WwanEnable == 0)) {
+    // When WWAN is disabled in setup use WWAN PWREN enable pin
+    GpioVpd = PcdGetPtr (VpdPcdwwanPowerEnableGpio);
+    PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
+  } else {
+    // When WWAN is enabled in setup power enable pin use WWAN FCP pin
+    GpioVpd = PcdGetPtr (VpdPcdWwanFullCardPowerOffGpio);
+    PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
+  }
+
+  GpioVpd = PcdGetPtr (VpdPcdWwanModemBaseBandResetGpio);
+  PcdSet32S(PcdWwanModemBaseBandResetGpio, GpioVpd->GpioPad); // WWAN/Modem Base Band Reset pin
   //
   // GPIO Table Init, Update WwanOn PreMem GPIO table to PcdBoardGpioTableWwanOnEarlyPreMem
   //

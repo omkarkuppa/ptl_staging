@@ -174,7 +174,7 @@ PtlPcdSecGpioGetDw0RegOffset (
 
   Community = PtlPcdSecGpioGetCommunity (CommunityIndex);
 
-  *RegisterOffset = Community->Groups[GroupIndex].DW0RegisterOffset + 0x08 + PadIndex * 0x10;
+  *RegisterOffset = Community->Groups[GroupIndex].DW0RegisterOffset + PadIndex * 0x10;
   return EFI_SUCCESS;
 }
 

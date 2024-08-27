@@ -23,12 +23,6 @@
 #include "MrcMcApi.h"
 #include "MrcSpdProcessingDefs.h"
 
-// DDR5 Auto Precharge Enable BIOS knob defines input values as:
-// 0 = Auto, 1 = Disable, 2 = Enable
-// To map the BIOS input values to values expected by the AUTO_PRE_EN field
-// we can use an offset of -1.
-#define AUTO_PRE_EN_OFFSET (-1)
-
 /**
   This function configures the zone configuration registers MAD-CR and MAD-ZR-CR.
 
@@ -201,9 +195,9 @@ MrcEnableExtendedBankHashing (
 }
 
 /**
-  Map SDRAM Index value to MC Density register value.
+  Map SDRAM Density Index to MC Subch Density register value.
 
-  @param[in] Index   - SDRAM Index value.
+  @param[in] Index   - SDRAM Density Index value.
   @param[in] IsLpddr - is LPDDR.
 
   @retval Result - MC Density register value
@@ -236,7 +230,6 @@ MapSdramDensityIndex (
     default:
       Result = 0;
   }
-
   return Result;
 }
 
@@ -256,7 +249,6 @@ SetChannelDimmConfig (
   IN const UINT32         Channel
   )
 {
-  MrcInput            *Inputs;
   MrcOutput           *Outputs;
   MrcChannelOut       *ChannelOut;
   MrcControllerOut    *ControllerOut;
@@ -265,48 +257,51 @@ SetChannelDimmConfig (
   INT64               GetSetVal;
   INT64               Dimm0RankCount;
   INT64               Dimm1RankCount;
+  INT64               AutoPrecharge;
   const MRC_EXT_INPUTS_TYPE  *ExtInputs;
 
-  Inputs            = &MrcData->Inputs;
   Outputs           = &MrcData->Outputs;
   ControllerOut     = &Outputs->Controller[Controller];
   ChannelOut        = &ControllerOut->Channel[Channel];
-  ExtInputs         = Inputs->ExtInputs.Ptr;
+  ExtInputs         = MrcData->Inputs.ExtInputs.Ptr;
 
   Dimm0Out = &ChannelOut->Dimm[dDIMM0];
   // If we are in EnhancedChannelMode (LP5) treat LPDDR Ch 1/3 as the second DIMM in the MC Channel.
   // Otherwise (DDR5) use DIMM1 in the same struct.
-  Dimm1Out = Outputs->EnhancedChannelMode ? &ControllerOut->Channel[Channel + 1].Dimm[dDIMM0] : &ChannelOut->Dimm[dDIMM1];
+  Dimm1Out = Outputs->IsLpddr5 ? &ControllerOut->Channel[Channel + 1].Dimm[dDIMM0] : &ChannelOut->Dimm[dDIMM1];
 
   if (Dimm0Out->Status == DIMM_PRESENT) {
-    Dimm0RankCount = Dimm0Out->RankInDimm - 1;      // SUBCH_0_RANKS: 0x0 - 1 Rank, 0x1 - 2 Ranks
+    Dimm0RankCount = (Dimm0Out->RankInDimm == 2) ? 1 : 0;      // SUBCH_0_RANKS: 0x0 - 1 Rank, 0x1 - 2 Ranks
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0RankCnt,   WriteToCache | PrintValue, &Dimm0RankCount);
-    GetSetVal = Dimm0Out->SdramWidth == 8 ? 1 : 0;  // SUBCH_0_WIDTH: 0x0 - x16, 0x1 - 0x8
+
+    GetSetVal = (Dimm0Out->SdramWidth == 8) ? 1 : 0;           // SUBCH_0_WIDTH: 0x0 - x16, 0x1 - 0x8
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0SdramWidth, WriteToCache | PrintValue, &GetSetVal);
+
+    GetSetVal = MapSdramDensityIndex (Dimm0Out->DensityIndex, Outputs->IsLpddr5);
+    MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0Density, WriteToCache | PrintValue, &GetSetVal);
   }
 
   if (Dimm1Out->Status == DIMM_PRESENT) {
-    Dimm1RankCount = Dimm1Out->RankInDimm - 1;      // SUBCH_0_RANKS: 0x0 - 1 Rank, 0x1 - 2 Ranks
+    Dimm1RankCount = (Dimm1Out->RankInDimm == 2) ? 1 : 0;      // SUBCH_0_RANKS: 0x0 - 1 Rank, 0x1 - 2 Ranks
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1RankCnt,   WriteToCache | PrintValue, &Dimm1RankCount);
-    GetSetVal = Dimm1Out->SdramWidth == 8 ? 1 : 0;  // SUBCH_0_WIDTH: 0x0 - x16, 0x1 - 0x8
+
+    GetSetVal = (Dimm1Out->SdramWidth == 8) ? 1 : 0;           // SUBCH_0_WIDTH: 0x0 - x16, 0x1 - 0x8
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1SdramWidth, WriteToCache | PrintValue, &GetSetVal);
+
+    GetSetVal = MapSdramDensityIndex (Dimm1Out->DensityIndex, Outputs->IsLpddr5);
+    MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1Density, WriteToCache | PrintValue, &GetSetVal);
   }
 
-  if (Outputs->IsDdr5 == MRC_DDR_TYPE_DDR5) {
-    if (ExtInputs->Ddr5AutoPrechargeEnable) {
-      // If Ddr5AutoPrechargeEnable == 1: set AUTO_PRE_CONTROL.AUTO_PRE_EN = 0
-      // If Ddr5AutoPrechargeEnable == 2: set AUTO_PRE_CONTROL.AUTO_PRE_EN = 1
-      GetSetVal = ExtInputs->Ddr5AutoPrechargeEnable + AUTO_PRE_EN_OFFSET;
-    } else {
-      GetSetVal = Dimm0Out->SdramWidth == 16 ? 0 : 1;
+  if (Outputs->IsDdr5) {
+    if (ExtInputs->Ddr5AutoPrechargeEnable == 0) { // 0 - Auto
+      AutoPrecharge = ((Dimm0Out->SdramWidth) == 16 || (Dimm1Out->SdramWidth == 16)) ? 0 : 1;
+    } else { // 1 - Disabled, 2 - Enabled
+      AutoPrecharge = (ExtInputs->Ddr5AutoPrechargeEnable == 1) ? 0 : 1;
     }
-    MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccAutoPrechargeEn, WriteToCache | PrintValue, &GetSetVal);
+  } else {
+    AutoPrecharge = 0;
   }
-
-  GetSetVal = MapSdramDensityIndex (Dimm0Out->DensityIndex, Dimm0Out->DdrType == MRC_DDR_TYPE_LPDDR5);
-  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0Density, WriteToCache | PrintValue, &GetSetVal);
-  GetSetVal = MapSdramDensityIndex (Dimm1Out->DensityIndex, Dimm1Out->DdrType == MRC_DDR_TYPE_LPDDR5);
-  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1Density, WriteToCache | PrintValue, &GetSetVal);
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccAutoPrechargeEn, WriteToCache | PrintValue, &AutoPrecharge);
 
   MrcFlushRegisterCachedData (MrcData);
 }

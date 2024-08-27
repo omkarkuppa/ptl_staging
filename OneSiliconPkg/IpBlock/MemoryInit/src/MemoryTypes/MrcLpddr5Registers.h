@@ -447,7 +447,7 @@ typedef union {
 typedef union {
   struct {
     UINT8 Dfeql : 3;  ///< Bits 2:0 - DFE Quantity for Lower Byte
-    UINT8       : 1;  ///< Bits 3:3
+    UINT8 Rdcas : 1;  ///< Bits 3:3 - Read DCA support
     UINT8 Dfequ : 3;  ///< Bits 6:4 - DFE Quantity for Upper Byte
     UINT8 Dfes  : 1;  ///< Bits 7:7 - DFE support
   } Bits;

@@ -24,6 +24,7 @@
 #include <Library/ConfigBlockLib.h>
 #include <Protocol/PchPolicy.h>
 #include <HdAudioConfig.h>
+#include <Hda.h>
 
 /**
   Print HDAUDIO_DXE_CONFIG and serial out.
@@ -71,11 +72,22 @@ HdaDxeLoadConfigDefault (
   IN VOID          *ConfigBlockPointer
   )
 {
+  UINT32              Index;
   HDAUDIO_DXE_CONFIG  *HdAudioDxeConfig;
+
   HdAudioDxeConfig = ConfigBlockPointer;
 
   DEBUG ((DEBUG_INFO, "HdaDxeConfig->Header.GuidHob.Name = %g\n", &HdAudioDxeConfig->Header.GuidHob.Name));
   DEBUG ((DEBUG_INFO, "HdaDxeConfig->Header.GuidHob.Header.HobLength = 0x%x\n", HdAudioDxeConfig->Header.GuidHob.Header.HobLength));
+
+  for (Index = 0; Index < PCH_MAX_HDA_SNDW_LINK_NUM; Index++) {
+    HdAudioDxeConfig->SndwConfig[Index].DataOnDelaySelect             = HdaSndwDataOnDelay4ClockPeriods;
+    HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalSelect    = HdaSndwDataOnActiveIntervalSelect6ClockPeriods;
+    HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalExtSelect = TRUE;
+  }
+
+  // WoV; BT Sideband; BT Intel HFP, A2DP, LE; ACX/SDCA and speaker aggregation
+  HdAudioDxeConfig->DspFeatureMask = (BIT0 | BIT1 | BIT5 | BIT6 | BIT9);
 }
 
 STATIC COMPONENT_BLOCK_ENTRY  mHdaBlocks = {

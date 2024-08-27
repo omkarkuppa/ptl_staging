@@ -27,6 +27,7 @@
 
 // PPOE is the BIOS setting for PD PS_ON Enable
 External (PPOE, IntObj)
+External (UCMS, IntObj)
 External (UAXL, MethodObj)
 External (\_SB.PC00.LPCB.NRTS, MethodObj)
 Mutex (HLDI, 0) // Hold indicator: 0- No one accessing the Power State 1- Someone else is accessing the Power State
@@ -399,53 +400,72 @@ Method (RADR)
 
 /**
   RPOI        Get PPM->OPM message in and CCI indicator.
+
   @param      None.
-  @retval     Return the PPM->OPM message in and CCI indicator in buffer object (20 bytes):
-              Index0      - MGI0
-              Index1      - MGI1
-              Index2      - MGI2
-              Index3      - MGI3
-              Index4      - MGI4
-              Index5      - MGI5
-              Index6      - MGI6
-              Index7      - MGI7
-              Index8      - MGI8
-              Index9      - MGI9
-              Index10     - MGIA
-              Index11     - MGIB
-              Index12     - MGIC
-              Index13     - MGID
-              Index14     - MGIE
-              Index15     - MGIF
-              Index16     - CCI0
-              Index17     - CCI1
-              Index18     - CCI2
-              Index19     - CCI3
+  @retval     Return the PPM->OPM message in and CCI indicator in buffer object (24 bytes):
+              Index0      - MI00
+              Index1      - MI01
+              Index2      - MI02
+              Index3      - MI03
+              Index4      - MI04
+              Index5      - MI05
+              Index6      - MI06
+              Index7      - MI07
+              Index8      - MI08
+              Index9      - MI09
+              Index10     - MI0A
+              Index11     - MI0B
+              Index12     - MI0C
+              Index13     - MI0D
+              Index14     - MI0E
+              Index15     - MI0F
+              Index16     - MI10
+              Index17     - MI11
+              Index18     - MI12
+              Index19     - MI13
+              Index20     - CCI0
+              Index21     - CCI1
+              Index22     - CCI2
+              Index23     - CCI3
+
 **/
 Method (RPOI)
 {
-  Name (PMBF, Buffer (20) {})
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGI0)), Index (PMBF, 0))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGI1)), Index (PMBF, 1))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGI2)), Index (PMBF, 2))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGI3)), Index (PMBF, 3))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGI4)), Index (PMBF, 4))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGI5)), Index (PMBF, 5))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGI6)), Index (PMBF, 6))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGI7)), Index (PMBF, 7))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGI8)), Index (PMBF, 8))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGI9)), Index (PMBF, 9))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGIA)), Index (PMBF, 10))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGIB)), Index (PMBF, 11))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGIC)), Index (PMBF, 12))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGID)), Index (PMBF, 13))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGIE)), Index (PMBF, 14))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MGIF)), Index (PMBF, 15))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI0)), Index (PMBF, 16))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI1)), Index (PMBF, 17))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI2)), Index (PMBF, 18))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI3)), Index (PMBF, 19))
-  Return (PMBF)
+  Name (PMBF, Buffer (24) {})
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI00)), Index (PMBF, 0))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI01)), Index (PMBF, 1))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI02)), Index (PMBF, 2))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI03)), Index (PMBF, 3))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI04)), Index (PMBF, 4))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI05)), Index (PMBF, 5))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI06)), Index (PMBF, 6))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI07)), Index (PMBF, 7))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI08)), Index (PMBF, 8))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI09)), Index (PMBF, 9))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI0A)), Index (PMBF, 10))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI0B)), Index (PMBF, 11))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI0C)), Index (PMBF, 12))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI0D)), Index (PMBF, 13))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI0E)), Index (PMBF, 14))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI0F)), Index (PMBF, 15))
+  If (CondRefOf (UCMS)) {
+    If (LEqual (UCMS, 1)) {
+      Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI0)), Index (PMBF, 16))
+      Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI1)), Index (PMBF, 17))
+      Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI2)), Index (PMBF, 18))
+      Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI3)), Index (PMBF, 19))
+      Return (PMBF) // UCSI 1.2
+    }
+  }
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI10)), Index (PMBF, 16))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI11)), Index (PMBF, 17))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI12)), Index (PMBF, 18))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.MI13)), Index (PMBF, 19))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI0)), Index (PMBF, 20))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI1)), Index (PMBF, 21))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI2)), Index (PMBF, 22))
+  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CCI3)), Index (PMBF, 23))
+  Return (PMBF) // UCSI 2.x
 }
 
 /**

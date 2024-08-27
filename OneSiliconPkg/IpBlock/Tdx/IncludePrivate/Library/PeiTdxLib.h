@@ -119,6 +119,7 @@ typedef struct {
   @param[in] MrcData             - MRC Parameter Structure
   @param[in] TdxActmModuleAddr   - Tdx Actm Module address
   @param[in] TdxActmModuleSize   - Tdx Actm Module Size
+  @param[in] TdxSeamldrSeSvn     - Tdx SeamldrSvn value from TPM NV storage
 
   @retval VOID              - No value to return
 **/
@@ -127,7 +128,8 @@ TdxInit (
   IN VOID          *TdxPolicy,
   IN MrcParameters *CONST MrcData,
   IN UINTN         TdxActmModuleAddr,
-  IN UINT32        TdxActmModuleSize
+  IN UINT32        TdxActmModuleSize,
+  IN UINT8         TdxSeamldrSeSvn
   );
 
 /**

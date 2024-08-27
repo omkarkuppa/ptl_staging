@@ -31,7 +31,6 @@
   FspSwitchStackLib
   PcdLib
   SecGetFsptApiParameterLib
-  SerialIoUartDebugPropertyPcdLib
   LpssUartDebugPropertyPcdLib
 
 [Packages]

@@ -44,7 +44,7 @@ DefinitionBlock (
   )
 {
   External (\PF00, IntObj)
-  External (\CCNT, FieldUnitObj)
+  External (\TCNT, FieldUnitObj)
   External (\_SB.CFGD, FieldUnitObj)
   External (\_SB.PR00.GPSD, MethodObj)
   External (DI01)

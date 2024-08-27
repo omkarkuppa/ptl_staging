@@ -205,6 +205,15 @@ BOOLEAN
   IN HDAUDIO_IDISP_TMODE Tmode
   );
 
+/*
+  Configure Microphone Privacy related options that are platform specific
+*/
+typedef
+EFI_STATUS
+(*HDA_CONFIGURE_MICROPHONE_PRIVACY) (
+  VOID
+  );
+
 /**
   HDA callbacks
   List of function pointers can be passed to the IP Block driver
@@ -225,6 +234,7 @@ typedef struct {
   HDA_IS_AUDIO_INTERFACE_SUPPORTED         HdaIsAudioInterfaceSupported;
   HDA_IS_AUDIO_IDISP_TMODE_SUPPORTED       HdaIsAudioIDispTmodeSupported;
   HDA_CONFIGURE_SNDW_MULTILANE             HdaConfigureSndwMultilane;
+  HDA_CONFIGURE_MICROPHONE_PRIVACY         HdaConfigureMicrophonePrivacy;
 } HDA_CALLBACK;
 
 /**

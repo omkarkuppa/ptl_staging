@@ -66,6 +66,7 @@
   IntelSiliconPkg/IntelSiliconPkg.dec
   MdeModulePkg/MdeModulePkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   PantherLakeBinPkg/PantherLakeBinPkg.dec
   IntelFsp2Pkg/IntelFsp2Pkg.dec
   IntelFsp2WrapperPkg/IntelFsp2WrapperPkg.dec

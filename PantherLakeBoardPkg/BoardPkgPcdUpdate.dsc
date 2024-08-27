@@ -65,7 +65,6 @@
   gAmtMacPassThroughFeaturePkgTokenSpaceGuid.PcdAmtMacPassThroughFeatureEnable|TRUE
   gAmtPetInitFeaturePkgTokenSpaceGuid.PcdAmtPetInitFeatureEnable|TRUE
   gPsrFeatureModuleTokenSpaceGuid.PcdPlatformServiceRecordSupport|TRUE
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable|TRUE
   gVtioFeaturePkgTokenSpaceGuid.PcdVtioFeatureEnable|TRUE
   gTmeFeaturePkgTokenSpaceGuid.PcdTmeFeatureEnable|TRUE
   gTseFeaturePkgTokenSpaceGuid.PcdTseFeatureEnable|TRUE
@@ -259,7 +258,13 @@
   gSiPkgTokenSpaceGuid.PcdPpamEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdStatusCodeUseTraceHub|TRUE
+
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable|TRUE
 !endif #PcdAdvancedFeatureEnable
+
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport == FALSE && gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport == FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable|FALSE
+!endif
 
   gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable|FALSE
   ## This flag is used to initialize debug output interface.
@@ -332,6 +337,11 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdMaxRootPortNumber    |6
   gCnvFeaturePkgTokenSpaceGuid.PcdMaxUsb2PortNumber    |gBoardModuleTokenSpaceGuid.PcdMaxPchUsb2PortNumber
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion    |3
+!else
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu         |FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables        |FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables     |FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion    |0
 !endif
 
 #

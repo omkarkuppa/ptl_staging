@@ -29,6 +29,7 @@
 #include "MrcPmaApiCrossProj.h"
 #include "MrcDdr5.h"
 #include "MrcChipRouting.h"
+#include "MrcRowHammer.h"
 
 extern MrcFrequency Lp5SupportedFrequencies[];
 extern MrcFrequency Ddr5SupportedFrequencies[];
@@ -295,24 +296,19 @@ MrcSaGvSwitch (
   )
 {
   MrcDebug            *Debug;
-  MrcSaveData         *SaveData;
   MrcOutput           *Outputs;
   MrcStatus           Status;
-  INT64               GetSetVal;
   UINT32              SBClock;
   MRC_EXT_INPUTS_TYPE *ExtInputs;
   DDRPHY_MISC_SAUG_CR_PHYPMOVRD_STRUCT  PhyPmOvrd;
 
-  SaveData    = &MrcData->Save.Data;
   Outputs     = &MrcData->Outputs;
   ExtInputs   = MrcData->Inputs.ExtInputs.Ptr;
   Debug       = &Outputs->Debug;
   Status      = mrcSuccess;
 
-  if (SaveData->IsLpddr5) {
-    GetSetVal = 1;
-    MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDisableTxDqs, WriteCached, &GetSetVal);
-    MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDataDisableTxDqs, WriteCached, &GetSetVal);
+  if (ExtInputs->TargetedRowRefreshMode < TrrDisabled || ExtInputs->DramRfmMode < DramRfmDisabled) {
+    MrcRhPtrrLfsrConfig (MrcData);
   }
 
   // Send PM14 to initiate save MC reg values to MC's SRAM
@@ -421,7 +417,8 @@ MrcSaGvFinal (
   }
 
   if (IsOptimizeTxp) {
-    GetSetVal = MrcGetTxp (Outputs->DdrType, Outputs->MemoryClock);
+    // This is supported only for LP5, in MC tXP is in nWCK uints so we need convert nCK to nWCK
+    GetSetVal = MrcGetTxp (Outputs->DdrType, Outputs->MemoryClock) * WCK_TO_CK_RATIO;
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctXP, WriteCached, &GetSetVal);
   }
   // Update DDR5 MR4[OP3] Refresh Interval Rate Indicator if supported by DRAM

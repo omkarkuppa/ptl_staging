@@ -110,9 +110,7 @@ External (PNS1) // PCIE LTR max no snoop Latency 1
 External (PNS2) // PCIE LTR max no snoop Latency 2
 External (PNS3) // PCIE LTR max no snoop Latency 3
 
-External (ITM0)
-External (ITM1)
-External (\U4SE, IntObj)
+External (\U4CM, IntObj)
 External (\GP1E, IntObj)
 External(\_SB.PC00.TDM0.SCME)
 External(\_SB.PC00.TDM1.SCME)

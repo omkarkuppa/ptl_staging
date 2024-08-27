@@ -68,24 +68,15 @@ typedef union {
 #define MBP_ITEM_FW_CAPABILITIES             MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdFwCapabilities)
 #define MBP_ITEM_FW_BIOS_PLATFORM_KEY        MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdBiosPlatformKey)
 #define MBP_ITEM_CSE_PLATFORM_TYPE           MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdCsePlatformType)
-#define MBP_ITEM_ID_MFS_INTEGRITY            MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdMsfIntegrity)
-#define MBP_ITEM_ID_PERF_DATA                MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdPerformanceData)
 #define MBP_ITEM_UNCONFIG_ON_RTC             MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdUnconfigOnRtc)
 #define MBP_ITEM_SHIP_STATE                  MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdShipState)
-#define MBP_ITEM_ID_FW_SECURITY_VER          MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdFwSecurityVer)
 #define MBP_ITEM_ID_FW_ARB_SVN               MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdFwArbSvn)
 #define MBP_ITEM_ID_MEASURED_BOOT            MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdMeasuredBoot)
-#define MBP_ITEM_PERF_DATA_EX                MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdPerfDataEx)
-#define MBP_ITEM_ID_KEY_REVOCATION           MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdKeyRevocation)
 #define MBP_ITEM_ID_PSR                      MBP_ITEM_ID(MbpAppIdPsr,    MbpItemIdPsr)
 #define MBP_ITEM_OEM_NPHY_DATA               MBP_ITEM_ID(MbpAppIdIpl,    MbpItemIdOemNphyData)
 #define MBP_ITEM_OEM_SPHY_DATA               MBP_ITEM_ID(MbpAppIdIpl,    MbpItemIdOemSphyData)
 #define MBP_ITEM_HWA_MTU                     MBP_ITEM_ID(MbpAppIdHwa,    MbpItemIdHwaMtu)
-#define MBP_ITEM_ID_ICC_PROFILE              MBP_ITEM_ID(MbpAppIdIcc,    MbpItemIdIccProfile)
-#define MBP_ITEM_ID_ICC_NONCE                MBP_ITEM_ID(MbpAppIdIcc,    MbpItemIdIccNonce)
 #define MBP_ITEM_CHIPSET_INIT_VER            MBP_ITEM_ID(MbpAppIdIcc,    MbpItemIdMphyData)
-#define MBP_ITEM_OEM_PHY_DATA                MBP_ITEM_ID(MbpAppIdIcc,    MbpItemIdOemPhyData)
-#define MBP_ITEM_ID_CURRENT_BOOT_MEDIA       MBP_ITEM_ID(MbpAppIdNvm,    MbpItemIdCurrentBootMedia)
 
 //
 // Enum for AppId
@@ -95,9 +86,7 @@ typedef enum {
   MbpAppIdPsr            = 2,
   MbpAppIdIpl            = 3,
   MbpAppIdHwa            = 4,
-  MbpAppIdIcc            = 5,
-  MbpAppIdDnx            = 7,
-  MbpAppIdNvm            = 8
+  MbpAppIdIcc            = 5
 } MBP_APPLICATION_ID;
 
 //
@@ -108,15 +97,10 @@ typedef enum {
   MbpItemIdFwCapabilities             = 2,
   MbpItemIdBiosPlatformKey            = 4,
   MbpItemIdCsePlatformType            = 5,
-  MbpItemIdMsfIntegrity               = 6,
-  MbpItemIdPerformanceData            = 7,
   MbpItemIdUnconfigOnRtc              = 8,
   MbpItemIdShipState                  = 9,
-  MbpItemIdFwSecurityVer              = 10,
-  MbpItemIdPerfDataEx                 = 13,
   MbpItemIdFwArbSvn                   = 14,
-  MbpItemIdMeasuredBoot               = 15,
-  MbpItemIdKeyRevocation              = 16
+  MbpItemIdMeasuredBoot               = 15
 } MBP_KERNEL_ITEM_ID;
 
 typedef enum {
@@ -134,16 +118,8 @@ typedef enum {
 } MBP_HWA_ITEM_ID;
 
 typedef enum {
-  MbpItemIdIccProfile = 1,
-  MbpItemIdIccNonce   = 2,
-  MbpItemIdMphyData   = 3,
-  MbpItemIdOemPhyData = 4
+  MbpItemIdMphyData   = 3
 } MBP_ICC_ITEM_ID;
-
-typedef enum {
-  MbpItemIdCurrentBootMedia  = 1
-} MBP_NVM_ITEM_ID;
-
 
 //
 // Enum for Flags
@@ -218,15 +194,6 @@ typedef struct {
   UINT8                       Reserved[3];
 } MBP_ARB_SVN_STATE;
 
-///
-/// MBP IFWI DNX request structure containing IFWI Dnx request data
-///
-typedef struct {
-  UINT32      EnterRecovery;
-  BOOLEAN     Available;
-  UINT8       Reserved[3];
-} MBP_IFWI_DNX_REQUEST;
-
 typedef struct {
   UINT32 MeasuredBoot   : 1;
   UINT32 Reserved       : 31;
@@ -238,21 +205,43 @@ typedef struct {
   UINT8                       Reserved[3];
 } MBP_MEASURED_BOOT_SUPPORT;
 
+///
+/// PSR AppId
+///
+//
+// PSR data:
+//
+// BIT[0] Chassis intrusion event : 0 - Do not send the event from BIOS to CSME, 1 - Send the event from BIOS to CSME
+// BIT[1] PSR state : 0- Logging not started, 1- Logging started
+// BIT[2:31] Reserved for future use.
+//
 typedef struct {
-  UINT32 TimeStamp0;
-  UINT16 TimeStamp1;
-  UINT16 TimeStamp2;
-  UINT16 TimeStamp3;
-  UINT16 TimeStamp4;
-  UINT16 TimeStamp5;
-  UINT16 TimeStamp6;
-} MBP_PERF_DATA;
+  UINT32 ChassisIntrusionEvent : 1;  ///< Indicator to send the event from BIOS to CSME
+  UINT32 PsrLogState           : 1;  ///< Indicator for PSR Log State
+  UINT32 Reserved              : 30; ///< Reserved for future usages. Should be 0.
+} MBP_PSR_DATA;
 
 typedef struct {
-  MBP_PERF_DATA Data;
-  BOOLEAN       Available;
-  UINT8         Reserved[3];
-} MBP_PERF_DATA_EX;
+  MBP_PSR_DATA             PsrData;
+  UINT32                   PsrCapabilities;
+  BOOLEAN                  Available;
+  UINT8                    Reserved[3];
+} MBP_PSR;
+
+///
+/// IPL AppId
+///
+typedef struct {
+  UINT64  Data;
+  BOOLEAN Available;
+  UINT8   Reserved[3];
+} MBP_OEM_SPHY_DATA;
+
+typedef struct {
+  UINT64  Data;
+  BOOLEAN Available;
+  UINT8   Reserved[3];
+} MBP_OEM_NPHY_DATA;
 
 ///
 /// HWA AppId
@@ -280,38 +269,6 @@ typedef struct {
   UINT8   Reserved[3];
 } MBP_MPHY_DATA;
 
-typedef struct {
-  UINT64  Data;
-  BOOLEAN Available;
-  UINT8   Reserved[3];
-} MBP_OEM_SPHY_DATA;
-
-typedef struct {
-  UINT64  Data;
-  BOOLEAN Available;
-  UINT8   Reserved[3];
-} MBP_OEM_NPHY_DATA;
-
-//
-// PSR data:
-//
-// BIT[0] Chassis intrusion event : 0 - Do not send the event from BIOS to CSME, 1 - Send the event from BIOS to CSME
-// BIT[1] PSR state : 0- Logging not started, 1- Logging started
-// BIT[2:31] Reserved for future use.
-//
-typedef struct {
-  UINT32 ChassisIntrusionEvent : 1;  ///< Indicator to send the event from BIOS to CSME
-  UINT32 PsrLogState           : 1;  ///< Indicator for PSR Log State
-  UINT32 Reserved              : 30; ///< Reserved for future usages. Should be 0.
-} MBP_PSR_DATA;
-
-typedef struct {
-  MBP_PSR_DATA             PsrData;
-  UINT32                   PsrCapabilities;
-  BOOLEAN                  Available;
-  UINT8                    Reserved[3];
-} MBP_PSR;
-
 ///
 /// ME BIOS Payload structure containing insensitive data only
 ///
@@ -326,9 +283,7 @@ typedef struct {
   MBP_MPHY_DATA              MphyData;
   MBP_OEM_SPHY_DATA          OemSphyData;
   MBP_OEM_NPHY_DATA          OemNphyData;
-  MBP_IFWI_DNX_REQUEST       IfwiDnxRequest;
   MBP_MEASURED_BOOT_SUPPORT  MeasuredBootSupport;
-  MBP_PERF_DATA_EX           PerfDataEx;
   MBP_PSR                    Psr;
 } ME_BIOS_PAYLOAD;
 

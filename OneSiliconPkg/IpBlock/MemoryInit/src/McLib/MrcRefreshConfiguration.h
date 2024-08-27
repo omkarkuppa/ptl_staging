@@ -95,4 +95,22 @@ MrcSelfRefreshExitPostDfi (
   IN MrcParameters *const MrcData
   );
 
+/**
+  This function provides DDR5 Error Check and Scrub (ECS) implementation.
+
+  DDR5 ECS mode allows the DRAM to internally read, correct single bit errors, and write back corrected data bits to the array (scrub errors)
+  while providing transparency to error counts.
+  PTL MC only supports the automatic mode (Manual mode is not supported): The operation is done internal to DRAM.
+
+  Enable "error scrubbing" DDR5 feature done by configuring the following registers:
+    rfp_0_0_0_mchbar.ecs_refab_enable
+    rfp_0_0_0_mchbar.ecs_refab_period
+
+  @param[in] MrcData - Include all MRC global data.
+**/
+VOID
+MrcEcsConfig (
+  IN     MrcParameters* const MrcData
+  );
+
 #endif

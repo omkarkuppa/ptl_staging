@@ -90,7 +90,9 @@ Dusb4PlatformInfoQuery (
   //
   Usb4PlatformInfo->CmMode = (PeiDTbtConfig->DTbtGenericConfig.Usb4CmMode & 0x07);
 
-  if (PeiDTbtConfig->DTbtGenericConfig.Usb4CmMode & USB4_CM_MODE_SWITCH_UNSUPPORTED) {
+  if (PeiDTbtConfig->DTbtGenericConfig.Usb4CmMode & USB4_CM_MODE_SWITCH_UNSUPPORTED &&
+      (PeiDTbtConfig->DTbtControllerConfig[0].DTbtControllerEn == 1 ||
+      PeiDTbtConfig->DTbtControllerConfig[1].DTbtControllerEn == 1)) {
     DEBUG ((DEBUG_INFO, "Dusb4PlatformInfoQuery: USB4 CM mode switch is not supported in platform!\n"));
     Usb4PlatformInfo->CmSwitchSupport = FALSE;
   } else {
@@ -112,10 +114,10 @@ Dusb4PlatformInfoQuery (
   {
     if (PeiDTbtConfig->DTbtControllerConfig[Index].DTbtControllerEn != 0) {
       DEBUG ((DEBUG_INFO, "Discrete USB4 host router %d : RpType = %d, PCIe RP number = %d\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].RpType, PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpNumber));
+      RpBus = PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpBus;
       Status = GetDTbtRpDevFun (
-            PeiDTbtConfig->DTbtControllerConfig[Index].RpType,
             PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpNumber,
-            &RpBus,
+            RpBus,
             &RpDev,
             &RpFunc);
       if (Status != EFI_SUCCESS) {
@@ -146,7 +148,7 @@ Dusb4PlatformInfoQuery (
         //
         // Query Device ID of discrete USB4 host router to determine SW CM version of host router.
         //
-        RpAddr = PCI_SEGMENT_LIB_ADDRESS (0, 0, RpDev, RpFunc, 0);
+        RpAddr = PCI_SEGMENT_LIB_ADDRESS (0, RpBus, RpDev, RpFunc, 0);
         RpOrgBusConfig = PciSegmentRead32 (RpAddr + PCI_BRIDGE_PRIMARY_BUS_REGISTER_OFFSET);
         //
         // Set Sec/Sub buses to a temporary value for upstream port PCI access
@@ -203,9 +205,9 @@ Dusb4PlatformInfoQuery (
       //
       // Root port information
       //
-      Usb4HrInfo->Rp.Bdf.Bus  = (UINT8) RpBus;
-      Usb4HrInfo->Rp.Bdf.Dev  = (UINT8) RpDev;
-      Usb4HrInfo->Rp.Bdf.Func = (UINT8) RpFunc;
+      Usb4HrInfo->Rp.Bdf.Bus  = RpBus;
+      Usb4HrInfo->Rp.Bdf.Dev  = RpDev;
+      Usb4HrInfo->Rp.Bdf.Func = RpFunc;
       Usb4HrInfo->Rp.PriBus   = 0;
       Usb4HrInfo->Rp.SecBus   = TbtTempBus;
       Usb4HrInfo->Rp.SubBus   = TbtTempBus + 2;

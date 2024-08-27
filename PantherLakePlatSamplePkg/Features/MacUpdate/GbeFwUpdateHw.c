@@ -936,10 +936,7 @@ WriteEepromImage (
   EFI_STATUS  Status = EFI_SUCCESS;
   UINT16 Offset = 0;
   UINT16 Data [PSS_CHIP_MAC_ADDRESS_LENGTH / 2];
-  UINT16 Data_normalorder [PSS_CHIP_MAC_ADDRESS_LENGTH / 2];
   UINT16 EepromSizeData [PSS_CHIP_MAC_ADDRESS_LENGTH / 2];
-  UINT16 EepromSizeData_normalorder [PSS_CHIP_MAC_ADDRESS_LENGTH / 2];
-  UINT16 length = PSS_CHIP_MAC_ADDRESS_LENGTH / 2;
 
   do {
     // If WriteMacAddress is FALSE, we need to keep the existing MAC address.
@@ -961,8 +958,6 @@ WriteEepromImage (
     //
     // Byte swapping
     //
-    Status = ByteSwapping_call(EepromSizeData, length, EepromSizeData_normalorder);
-    DEBUG((DEBUG_INFO, "Read before update (Default MAC in normal order) : %x %x %x\n", EepromSizeData_normalorder[0],  EepromSizeData_normalorder[1], EepromSizeData_normalorder[2]));
     DEBUG((DEBUG_INFO, "Read before update (Default MAC in GBE Region) : %x %x %x\n", EepromSizeData[0],  EepromSizeData[1], EepromSizeData[2]));
     gBS->Stall (100);
     for (; Offset < ImageToWriteSize; Offset++) {
@@ -986,8 +981,6 @@ WriteEepromImage (
         // where the 1st read after a write fails.
 
         ReadNVM (&Adapter->Hw, 0x00, 3, Data);
-        Status = ByteSwapping_call(Data, length, Data_normalorder);
-        DEBUG ((DEBUG_INFO, "Read after update in Normal order: %x %x %x\n",Data_normalorder[0], Data_normalorder[1], Data_normalorder[2]));
         DEBUG ((DEBUG_INFO, "Read after update in GBE region order: %x %x %x\n",Data[0], Data[1], Data[2]));
       }
     }

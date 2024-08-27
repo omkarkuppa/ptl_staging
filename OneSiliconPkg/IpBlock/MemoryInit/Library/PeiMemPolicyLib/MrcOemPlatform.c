@@ -288,12 +288,13 @@ GetSpdData (
   Status = DoSpdRead (Address, &Buffer[SPD_SDRAM_TYPE_OFFSET], SPD_SDRAM_TYPE_OFFSET, 1, &Page, Spd5);
   if (RETURN_SUCCESS == Status) {
     switch (Buffer[SPD_SDRAM_TYPE_OFFSET]) {
-      case SPD_DDR5_SDRAM_TYPE_NUMBER:
+      case MRC_SPD_DDR5_SDRAM_TYPE_NUMBER:
         TableSelect = (SPD_OFFSET_TABLE *) SpdDdr5Table;
         Stop = (SpdDdr5TableSize / sizeof (SPD_OFFSET_TABLE));
         break;
 
-      case SPD_LPDDR5_SDRAM_TYPE_NUMBER:
+      case MRC_SPD_LPDDR5_SDRAM_TYPE_NUMBER:
+      case MRC_SPD_LPDDR5X_SDRAM_TYPE_NUMBER:
         TableSelect = (SPD_OFFSET_TABLE *) SpdLpddrTable;
         Stop = (SpdLpddrTableSize / sizeof (SPD_OFFSET_TABLE));
         break;
@@ -728,17 +729,17 @@ SetMemDword (
   This function is used by the OEM to do a dedicated task during the MRC.
 
   @param[in] GlobalData        - include all the MRC data
-  @param[in] OemStatusCommand  - A command that indicates the task to perform.
+  @param[in] Command           - A command that indicates the task to perform.
   @param[in] Pointer           - general ptr for general use.
 
   @retval The status of the task.
 **/
-MrcStatus
+UINT32
 EFIAPI
 CheckPoint (
-  IN VOID                *GlobalData,
-  IN MrcOemStatusCommand OemStatusCommand,
-  IN VOID                *Pointer
+  IN VOID        *GlobalData,
+  IN UINT32      Command,
+  IN VOID        *Pointer
   )
 {
   MrcParameters                *MrcData;
@@ -766,7 +767,7 @@ CheckPoint (
   SiPreMemPolicyPpi = (SI_PREMEM_POLICY_PPI *)(UINTN) Inputs->SiPreMemPolicyPpi;
   Status              = mrcSuccess;
 
-  switch (OemStatusCommand) {
+  switch (Command) {
     default:
       break;
   }

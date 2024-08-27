@@ -44,6 +44,7 @@ IsProbeConnectedOverrideSoc (
   P2SBPid.Pid16bit = PTL_SID_F2_PID_EXI;
   PtlPcdGetP2SbController (&P2SbController, P2SBPid);
   BuildP2SbSidebandAccess (&P2SbController, P2SBPid.PortId.LocalPid, 0, P2SbPrivateConfig, P2SbMmioAccess, FALSE, &DciPcrAccess);
+
   P2SBPid.Pid16bit = PTL_SID_F2_PID_BPK;
   PtlPcdGetP2SbController (&P2SbController, P2SBPid);
   BuildP2SbSidebandAccess (&P2SbController, P2SBPid.PortId.LocalPid, 0, P2SbPrivateConfig, P2SbMmioAccess, FALSE, &BpkPcrAccess);

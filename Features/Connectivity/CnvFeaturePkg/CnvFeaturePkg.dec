@@ -41,45 +41,51 @@
   ##
   ## CnvCompatibility Guids
   ##
-  gCnvCompatibilityGuid             = {0x74614485, 0x7F16, 0x4297, {0xAA, 0x36, 0x2F, 0x20, 0x35, 0x99, 0x02, 0x4D}}
+  gCnvCompatibilityGuid             = {0xB23E7388, 0x9953, 0x45C7, {0x92, 0x01, 0x04, 0x73, 0xDD, 0xE5, 0x48, 0x7A}}
   gCnvExternalGuid                  = {0x07BD652E, 0x9C84, 0x4F06, {0xAB, 0xBC, 0x47, 0xDD, 0xDB, 0x73, 0xF1, 0x8E}}
 
-[PcdsFeatureFlag]
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable     |TRUE       |BOOLEAN|0x20000001
-
 [PcdsFixedAtBuild]
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc1    |TRUE       |BOOLEAN|0x30000001
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc2    |TRUE       |BOOLEAN|0x30000002
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc4    |TRUE       |BOOLEAN|0x30000004
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc5    |TRUE       |BOOLEAN|0x30000005
-  gCnvFeaturePkgTokenSpaceGuid.PcdOemWifiDsmFunc11     |TRUE       |BOOLEAN|0x30000031
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc1      |TRUE       |BOOLEAN|0x30001001
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc2      |TRUE       |BOOLEAN|0x30001002
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc3      |TRUE       |BOOLEAN|0x30001003
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc4      |TRUE       |BOOLEAN|0x30001004
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc5      |TRUE       |BOOLEAN|0x30001005
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc6      |TRUE       |BOOLEAN|0x30001006
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc7      |TRUE       |BOOLEAN|0x30001007
-  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtTileDsmFunc1  |TRUE       |BOOLEAN|0x30001021
-  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi1       |0x25268086 |UINT32 |0x30002001
-  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi2       |0x271B8086 |UINT32 |0x30002002
-  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi3       |0x27238086 |UINT32 |0x30002003
-  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi4       |0x27258086 |UINT32 |0x30002004
-  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi5       |0x272B8086 |UINT32 |0x30002005
-  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi6       |0          |UINT32 |0x30002006
-  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi7       |0          |UINT32 |0x30002007
-  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi8       |0          |UINT32 |0x30002008
-  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi9       |0          |UINT32 |0x30002009
-  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi10      |0          |UINT32 |0x3000200A
-  gCnvFeaturePkgTokenSpaceGuid.PcdMaxRootPortNumber    |0x00       |UINT8  |0x30000060
-  gCnvFeaturePkgTokenSpaceGuid.PcdMaxUsb2PortNumber    |0x00       |UINT8  |0x30000061
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu         |TRUE       |BOOLEAN|0x30000070
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables        |FALSE      |BOOLEAN|0x30000071
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables     |TRUE       |BOOLEAN|0x30000073
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion    |0x0002     |UINT16 |0x30000074
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenuConfig   |0x0        |UINT32 |0x30000075
-  ## This PCD hold a list GUIDs
-  gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids    |{0x0}      |VOID*  |0x3000007D
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable       |TRUE       |BOOLEAN|0x20000001
+  gCnvFeaturePkgTokenSpaceGuid.PcdWifiDsmSupport         |TRUE       |BOOLEAN|0x30000082
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc1      |TRUE       |BOOLEAN|0x30000001
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc2      |TRUE       |BOOLEAN|0x30000002
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc4      |TRUE       |BOOLEAN|0x30000004
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelWifiDsmFunc5      |TRUE       |BOOLEAN|0x30000005
+  gCnvFeaturePkgTokenSpaceGuid.PcdOemWifiDsmFunc11       |TRUE       |BOOLEAN|0x30000031
+  gCnvFeaturePkgTokenSpaceGuid.PcdBtDsmSupport           |TRUE       |BOOLEAN|0x30001022
+  gCnvFeaturePkgTokenSpaceGuid.PcdBtUsbInterfaceSupport  |TRUE       |BOOLEAN|0x30001023
+  gCnvFeaturePkgTokenSpaceGuid.PcdBtAudioOffloadSupport  |TRUE       |BOOLEAN|0x30001024
+  gCnvFeaturePkgTokenSpaceGuid.PcdPrebootBleSupport      |TRUE       |BOOLEAN|0x30001025
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc1        |TRUE       |BOOLEAN|0x30001001
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc2        |TRUE       |BOOLEAN|0x30001002
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc3        |TRUE       |BOOLEAN|0x30001003
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc4        |TRUE       |BOOLEAN|0x30001004
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc5        |TRUE       |BOOLEAN|0x30001005
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc6        |TRUE       |BOOLEAN|0x30001006
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtDsmFunc7        |TRUE       |BOOLEAN|0x30001007
+  gCnvFeaturePkgTokenSpaceGuid.PcdIntelBtTileDsmFunc1    |TRUE       |BOOLEAN|0x30001021
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi1         |0x25268086 |UINT32 |0x30002001
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi2         |0x271B8086 |UINT32 |0x30002002
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi3         |0x27238086 |UINT32 |0x30002003
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi4         |0x27258086 |UINT32 |0x30002004
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi5         |0x272B8086 |UINT32 |0x30002005
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi6         |0          |UINT32 |0x30002006
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi7         |0          |UINT32 |0x30002007
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi8         |0          |UINT32 |0x30002008
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi9         |0          |UINT32 |0x30002009
+  gCnvFeaturePkgTokenSpaceGuid.PcdSupportedWifi10        |0          |UINT32 |0x3000200A
+  gCnvFeaturePkgTokenSpaceGuid.PcdMaxRootPortNumber      |0x00       |UINT8  |0x30000060
+  gCnvFeaturePkgTokenSpaceGuid.PcdMaxUsb2PortNumber      |0x00       |UINT8  |0x30000061
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu           |TRUE       |BOOLEAN|0x30000070
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables          |FALSE      |BOOLEAN|0x30000071
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables       |TRUE       |BOOLEAN|0x30000073
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion      |0x0002     |UINT16 |0x30000074
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenuConfig     |0x0        |UINT32 |0x30000075
+  gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids      |{0x0}      |VOID*  |0x3000007D   ## This PCD hold a list GUIDs
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport   |TRUE       |BOOLEAN|0x30003000
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport     |TRUE       |BOOLEAN|0x30003001
+  gCnvFeaturePkgTokenSpaceGuid.PcdDynamicSarSupport      |TRUE       |BOOLEAN|0x30000080
+  gCnvFeaturePkgTokenSpaceGuid.PcdSkipVidDidCheck        |FALSE      |BOOLEAN|0x30000081
 
 [PcdsDynamic]
   gCnvFeaturePkgTokenSpaceGuid.PcdGlobalCnvDlvrRfim    |1          |UINT8  |0x30000079

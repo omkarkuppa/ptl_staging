@@ -37,7 +37,13 @@ DefinitionBlock (
   }
 
   Include ("CnvPkgNvs.asl")
+#if FixedPcdGetBool (PcdCnvIntegratedSupport) == 1
   Include ("Connectivity.asl")      // CNVi WiFi and PCI BT
+#endif
+#if FixedPcdGetBool (PcdCnvDiscreteSupport) == 1
   Include ("WifiRpPxsxWrapper.asl") // CNVd WiFi
+#endif
+#if FixedPcdGetBool (PcdBtUsbInterfaceSupport) == 1
   Include ("BtUsbPortWrapper.asl")  // CNVi/d USB BT
+#endif
 }

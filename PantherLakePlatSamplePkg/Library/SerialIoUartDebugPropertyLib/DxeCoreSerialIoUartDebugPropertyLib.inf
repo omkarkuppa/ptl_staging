@@ -29,7 +29,7 @@
 [LibraryClasses]
   BaseLib
   HobLib
-  SerialIoUartDebugPropertyPcdLib
+  LpssUartDebugPropertyPcdLib
 
 [Packages]
   MdePkg/MdePkg.dec

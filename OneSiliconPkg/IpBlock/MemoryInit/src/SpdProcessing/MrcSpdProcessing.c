@@ -28,7 +28,9 @@
 #include "MrcChipApi.h"
 #include "MrcPmaApiCrossProj.h"
 #include "MrcSagv.h"
-#include "MrcDdrIoUtils.h"
+#if defined(FULL_HEADLESS) && !defined(NEW_STUB)
+#include "StubMrcUcManagement.h" // for MrcStubWriteMrcData()
+#endif
 
 #ifdef MRC_DEBUG_PRINT
 const char  UnknownString[]    = "unknown";
@@ -2443,7 +2445,7 @@ GetChannelDimmtAA (
             if (Calculated < 22) {
               Calculated = 22;     // 22 is the smallest valid CL in DDR5
             }
-            MrcGetDdr5MinitCL(MrcData, &Calculated);
+
             if ((Profile == CUSTOM_PROFILE1) && ((Calculated % 2) != 0)) {
               Calculated++;        // JEDEC spec only allows even numbers
             }
@@ -2551,6 +2553,8 @@ GetChannelDimmtAA (
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n  Memory clock = %ufs\n  Memory Frequency = %u\n", Outputs->MemoryClock, Outputs->Frequency);
 #endif
+
+  MrcUpdateDdr5MintCL (MrcData);
 
   return (Status);
 }
@@ -2823,6 +2827,8 @@ GetChannelDimmtFAW (
   UINT16                PageSize;
   MRC_LP5_BANKORG       Lp5BGOrg;
   UINT32                Index;
+  UINT32                tFAWNs;
+  UINT32                tFAWNCk;
 
   const SPD_EXTREME_MEMORY_PROFILE_HEADER_3_0 *Header5;
   Inputs  = &MrcData->Inputs;
@@ -2884,8 +2890,75 @@ GetChannelDimmtFAW (
                             DimmOut->ColumnSize,
                             DimmOut->SdramWidth
                             );
-                // DDR5 tFAW is defined in the spec
-                Calculated = (PageSize >= 2048) ? 40 : 32;
+                if (PageSize < 2048) {
+                  tFAWNCk = 32;
+                  if (Outputs->Frequency <= f3200) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_3200_MIN;
+                  } else if (Outputs->Frequency <= f3600) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_3600_MIN;
+                  } else if (Outputs->Frequency <= f4000) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_4000_MIN;
+                  } else if (Outputs->Frequency <= f4400) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_4400_MIN;
+                  } else if (Outputs->Frequency <= f4800) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_4800_MIN;
+                  } else if (Outputs->Frequency <= f5200) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_5200_MIN;
+                  } else if (Outputs->Frequency <= f5600) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_5600_MIN;
+                  } else if (Outputs->Frequency <= f6000) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_6000_MIN;
+                  } else if (Outputs->Frequency <= f6400) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_6400_MIN;
+                  } else if (Outputs->Frequency <= f6800) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_6800_MIN;
+                  } else if (Outputs->Frequency <= f7200) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_7200_MIN;
+                  } else if (Outputs->Frequency <= f7600) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_7600_MIN;
+                  } else if (Outputs->Frequency <= f8000) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_8000_MIN;
+                  } else if (Outputs->Frequency <= f8400) {
+                    tFAWNs = MRC_DDR5_TFAW_1K_8400_MIN;
+                  } else {
+                    tFAWNs = MRC_DDR5_TFAW_1K_8800_MIN;
+                  }
+                } else {
+                  tFAWNCk = 40;
+                  if (Outputs->Frequency <= f3200) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_3200_MIN;
+                  } else if (Outputs->Frequency <= f3600) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_3600_MIN;
+                  } else if (Outputs->Frequency <= f4000) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_4000_MIN;
+                  } else if (Outputs->Frequency <= f4400) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_4400_MIN;
+                  } else if (Outputs->Frequency <= f4800) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_4800_MIN;
+                  } else if (Outputs->Frequency <= f5200) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_5200_MIN;
+                  } else if (Outputs->Frequency <= f5600) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_5600_MIN;
+                  } else if (Outputs->Frequency <= f6000) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_6000_MIN;
+                  } else if (Outputs->Frequency <= f6400) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_6400_MIN;
+                  } else if (Outputs->Frequency <= f6800) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_6800_MIN;
+                  } else if (Outputs->Frequency <= f7200) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_7200_MIN;
+                  } else if (Outputs->Frequency <= f7600) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_7600_MIN;
+                  } else if (Outputs->Frequency <= f8000) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_8000_MIN;
+                  } else if (Outputs->Frequency <= f8400) {
+                    tFAWNs = MRC_DDR5_TFAW_2K_8400_MIN;
+                  } else {
+                    tFAWNs = MRC_DDR5_TFAW_2K_8800_MIN;
+                  }
+                }
+                Calculated = PicoSecondsToClocks (tFAWNs, tCKmin);
+                Calculated = MAX (tFAWNCk, Calculated);
               } else if (tCKmin > 0) {
                 Lp5BGOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
                 if ((DimmOut->DdrType == MRC_DDR_TYPE_LPDDR5) && Lp5BGOrg != MrcLp58Bank) {
@@ -3645,11 +3718,11 @@ GetChannelDimmtRFC (
                   Calculated = PicoSecondsToClocks (Spd->Ddr5.Base.tRFC1min.Bits.tRFC1min * 1000, tCKmin);
                 } else {
                   TimingMTB = Spd->Lpddr.Base.tRFCab.Bits.tRFCab;
-                  Calculated = ((MediumTimebase * TimingMTB) - (tCKmin / 100) + (tCKmin - 1)) / tCKmin;
                   if (Outputs->IsDvfscEnabled) {
                     DeviceCapacity = SdramCapacityTable[DimmOut->DensityIndex] * 8;
-                    Calculated = MrcGetLpddr5Trfcab (DeviceCapacity);
+                    TimingMTB = MrcGetLpddr5Trfcab (DeviceCapacity) * NS_TO_MTB_FACTOR;
                   }
+                  Calculated = ((MediumTimebase * TimingMTB) - (tCKmin / 100) + (tCKmin - 1)) / tCKmin;
                 }
               }
               break;
@@ -3781,11 +3854,11 @@ GetChannelDimmtRFCpb (
               if (tCKmin > 0) {
                 if (MRC_DDR_TYPE_LPDDR5 == DimmOut->DdrType) {
                   TimingMTB = Spd->Lpddr.Base.tRFCpb.Bits.tRFCpb;
-                  Calculated = ((MediumTimebase * TimingMTB) - (tCKmin / 100) + (tCKmin - 1)) / tCKmin;
                   if (Outputs->IsDvfscEnabled) {
                     DeviceCapacity = SdramCapacityTable[DimmOut->DensityIndex] * 8;
-                    Calculated = MrcGetLpddr5Trfcpb (DeviceCapacity);
+                    TimingMTB = MrcGetLpddr5Trfcpb (DeviceCapacity) * NS_TO_MTB_FACTOR;
                   }
+                  Calculated = ((MediumTimebase * TimingMTB) - (tCKmin / 100) + (tCKmin - 1)) / tCKmin;
                 } else if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
                   // DDR5 SPD tRFCsbmin is in units of nanoseconds
                   Calculated = PicoSecondsToClocks (Spd->Ddr5.Base.tRFCsbmin.Bits.tRFCsbmin * 1000, tCKmin);
@@ -4514,6 +4587,7 @@ GetChannelDimmtRRD_L (
   UINT32                Actual[MAX_PROFILE];
   UINT32                Calculated;
   UINT32                Index;
+  UINT32                tRDRD_LNs;
 
   const SPD_EXTREME_MEMORY_PROFILE_HEADER_3_0 *Header5;
   Inputs  = &MrcData->Inputs;
@@ -4572,8 +4646,21 @@ GetChannelDimmtRRD_L (
             case STD_PROFILE:
             default:
               if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
-                // DDR5 tRRD_L = MAX (8nCK, 5ns)
-                Calculated = PicoSecondsToClocks (MRC_TRRD_L_MIN_DDR5, tCKmin);
+                if (Outputs->Frequency <= f6400) {
+                  // DDR5 tRRD_L = MAX (8nCK, 5ns)
+                  tRDRD_LNs = MRC_DDR5_TRRD_L_6400_MIN;
+                } else if (Outputs->Frequency <= f6800) {
+                  tRDRD_LNs = MRC_DDR5_TRRD_L_6800_MIN;
+                } else if (Outputs->Frequency <= f7200) {
+                  tRDRD_LNs = MRC_DDR5_TRRD_L_7200_MIN;
+                } else if (Outputs->Frequency <= f7600) {
+                  tRDRD_LNs = MRC_DDR5_TRRD_L_7600_MIN;
+                } else if (Outputs->Frequency <= f8400) {
+                  tRDRD_LNs = MRC_DDR5_TRRD_L_8000_8400_MIN;
+                } else {
+                  tRDRD_LNs = MRC_DDR5_TRRD_L_8800_MIN;
+                }
+                Calculated = PicoSecondsToClocks (tRDRD_LNs, tCKmin);
                 Calculated = MAX (8, Calculated);
               }
               break;
@@ -7378,6 +7465,10 @@ MrcSpdProcessingCalc (
     Outputs->ValidChBitMask
   );
 
+#if defined(FULL_HEADLESS) && !defined(NEW_STUB)
+  MrcStubWriteMrcData (MrcData); // sending data early for sync-server.exe
+#endif
+
   // Disable CkdSupport to have CKD DIMM as default bypass mode if system contains mixture of CKD and non CKD DIMMs
   if (Outputs->IsCkdSupported && IsNonCkd) {
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Disabling CKD due to not all DIMMs are CKD supported\n");
@@ -7412,4 +7503,68 @@ MrcSpdProcessingCalc (
   Status = MrcCheckInputParams (MrcData);
 
   return Status;
+}
+
+/**
+  This function calculates the DDR5 timings tCL which takes into account SOC requirements
+
+  @param[in]     MrcData      - Include all MRC global data.
+**/
+VOID
+MrcUpdateDdr5MintCL (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput        *Outputs;
+  MrcDebug         *Debug;
+  MrcControllerOut *ControllerOut;
+  MrcChannelOut    *ChannelOut;
+  MrcDimmOut       *DimmOut;
+  MrcProfile       Profile;
+  UINT32           Controller;
+  UINT32           Channel;
+  UINT32           Dimm;
+  BOOLEAN          IsGear4;
+  BOOLEAN          IsUpdated;
+
+  Outputs = &MrcData->Outputs;
+  Debug   = &Outputs->Debug;
+  IsGear4 = (Outputs->GearMode == 1);
+
+  if (!Outputs->IsDdr5) {
+    return;
+  }
+  // MRC must ensure the smallest RL in DDR5 Gear4 is 28.
+  // This RL can occur in 3200 and 3600 JEDEC bins.
+  // DDR5-3600 doesn't have 28 in official JEDEC speed bins, hence limit to 30
+  if (IsGear4 && ((Outputs->Frequency == f3200) || (Outputs->Frequency == f3600))) {
+    for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
+      if (NeedIgnoreXmp (MrcData, Profile)) {
+        continue;
+      }
+      for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+        ControllerOut = &Outputs->Controller[Controller];
+        for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+          ChannelOut = &ControllerOut->Channel[Channel];
+          for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
+            DimmOut = &ChannelOut->Dimm[Dimm];
+            if (DIMM_PRESENT == DimmOut->Status) {
+              IsUpdated = FALSE;
+              if ((Outputs->Frequency == f3200) && (ChannelOut->Timing[Profile].tCL < 28)) {
+                 ChannelOut->Timing[Profile].tCL = 28;     // 28 is the smallest valid CL in DDR5 3200G4.
+                 IsUpdated = TRUE;
+              }
+              if ((Outputs->Frequency == f3600) && (ChannelOut->Timing[Profile].tCL < 30)) {
+                 ChannelOut->Timing[Profile].tCL = 30;     // 30 is the smallest valid CL in DDR5 3600G4.
+                 IsUpdated = TRUE;
+              }
+              if (IsUpdated) {
+                 MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  Profile:%d MC%u.C%u.D%u: New tCL: %u\n", Profile, Controller, Channel, Dimm, ChannelOut->Timing[Profile].tCL);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

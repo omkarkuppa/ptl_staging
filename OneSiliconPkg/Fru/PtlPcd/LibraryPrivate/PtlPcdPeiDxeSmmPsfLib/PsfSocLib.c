@@ -925,6 +925,7 @@ UINT16 mPtlPcdPsfScsUfsRegs[] =
 };
 
 
+
 /**
   Disable SCS UFS at PSF level
 
@@ -990,6 +991,7 @@ PSF_PCIE_PORT_DATA_TABLE mPtlPchPHPsfPciePortData = PSF_PCIE_PORT_DATA_TABLE_INI
   { 4, 0, R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F6_OFFSET66, 0, R_PTL_PCD_P_H_PSF_0_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F6_OFFSET66, R_PTL_PCD_P_H_PSF_4_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F6_OFFSET66, 0, R_PTL_PCD_P_H_PSF_0_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F6_OFFSET66 },
   { 4, 0, R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F7_OFFSET67, 0, R_PTL_PCD_P_H_PSF_0_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F7_OFFSET67, R_PTL_PCD_P_H_PSF_4_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F7_OFFSET67, 0, R_PTL_PCD_P_H_PSF_0_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F7_OFFSET67 }
 );
+
 
 
 /**
@@ -1085,7 +1087,7 @@ PtlPcdMctpTargetsTable (
   TargetNum = 0;
   ZeroMem (TargetIdTable, sizeof(PSF_PORT_DEST_ID) * MaxTableSize);
 
-  if ((UINT32)(GetPchMaxPciePortNum ()) > MaxTableSize) {
+  if ((UINT32)(GetPchMaxPciePortNum ()) + 1 > MaxTableSize) {
     DEBUG ((DEBUG_ERROR, "Cannot create PtlPcdMctpTargetsTable - table size is too small!\n"));
     return 0;
   }
@@ -1108,11 +1110,20 @@ PtlPcdMctpTargetsTable (
   return TargetNum;
 }
 
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_PORT_DEST_ID mPtlPcdPHRpDestId[] =
+GLOBAL_REMOVE_IF_UNREFERENCED PSF_PORT_DEST_ID mPtlPcdPRpDestId[] =
 {
   {0x68000}, {0x68002}, {0x68004}, {0x68006}, // PXPA: PSF6, PortID = 0, PortGroupID = 1
   {0x48100}, {0x48102}, {0x48104}, {0x48106}, // PXPB: PSF4, PortID = 1, PortGroupID = 1
   {0x48000}, {0x48002}                        // PXPC: PSF4, PortID = 0, PortGroupID = 1
+};
+
+STATIC PSF_PORT_DEST_ID mPtlPcdHRpDestId[] =
+{
+  { 0x68000 },  { 0x68002 },  { 0x68004 },  { 0x68006 },  // PXPA: PSF6, PortGroupId = 1, PortId = 0
+  { 0x48100 },  { 0x48102 },  { 0x48104 },  { 0x48106 },  // PXPB: PSF4, PortGroupId = 1, PortId = 1
+  { 0x48000 },  { 0x48002 },                              // PXPC: PSF4, PortID = 0, PortGroupID = 1
+  { 0x58000 },                                            // PXPD: PSF5, PortGroupId = 1, PortId = 0
+  { 0x58100 }                                             // PXPD: PSF5, PortGroupId = 1, PortId = 0
 };
 
 
@@ -1128,10 +1139,15 @@ PtlPcdPsfPcieDestinationId (
   IN UINT32  RpIndex
   )
 {
-    if (RpIndex < ARRAY_SIZE (mPtlPcdPHRpDestId)) {
-      return mPtlPcdPHRpDestId[RpIndex];
+  if (PtlIsPcdP ()) {
+    if (RpIndex < ARRAY_SIZE (mPtlPcdPRpDestId)) {
+      return mPtlPcdPRpDestId[RpIndex];
     }
-
+  } else if (PtlIsPcdH ()) {
+    if (RpIndex < ARRAY_SIZE (mPtlPcdHRpDestId)) {
+      return mPtlPcdHRpDestId[RpIndex];
+    }
+  }
   ASSERT (FALSE);
   return (PSF_PORT_DEST_ID){0};
 }
@@ -1145,7 +1161,6 @@ PtlPcdPsfDisableCnvi (
   )
 {
   PSF_PORT CnviPort;
-
   CnviPort.PsfDev = &Psf6Dev;
     CnviPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_WIFI_RS0_D20_F3_OFFSET34;
 
@@ -1161,7 +1176,6 @@ PtlPcdPsfDisableCnviBt (
   )
 {
   PSF_PORT BtPort;
-
   BtPort.PsfDev = &Psf6Dev;
     BtPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_BT_RS0_D20_F7_OFFSET30;
 
@@ -1535,7 +1549,7 @@ PtlPcdPsfProgramDWB (
   NonxHCIEn = PsfConfig->DwbConfigNonxHCIEn;
   OBFFEn = PsfConfig->DwbConfigOBFFEn;
   DWBEn = PsfConfig->DwbConfigDWBEn;
-    DwbConfigRegOffset = R_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0;
+  DwbConfigRegOffset = R_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0;
 
   Psf6Dev.Access->AndThenOr32 (
     Psf6Dev.Access,
@@ -1781,6 +1795,7 @@ PTL_PCD_GRANT_COUNT_REG_DATA mPxpaGrantCountRegs = {
 };
 
 
+
 PTL_PCD_GRANT_COUNT_REG_DATA mPxpbGrantCountRegs = {
   .Channels = 4,
   .DevGntCntUpstreamReg = {
@@ -2005,6 +2020,69 @@ PtlPcdPsfEnableRpEoiTarget (
   )
 {
   PsfEnableEoiTarget (PtlPcdPsfPcieDestinationId (RpIndex), PtlPcdPsfGetSegmentTable(), PtlPcdPsfGetEoiRegDataTable ());
+}
+
+STATIC
+VOID
+PtlPcdPsfProgramPsfGlobalConfig (
+  IN UINT32    AndData32,
+  IN UINT32    OrData32
+  )
+{
+  PSF_SEGMENT_TABLE *PsfTable;
+  UINT32            PsfTableIndex;
+  PSF_DEV           *PsfDev;
+
+  PsfTable = PtlPcdPsfGetSegmentTable ();
+
+  for (PsfTableIndex = 0; PsfTableIndex < PsfTable->Size; PsfTableIndex++) {
+    PsfDev = PsfTable->Data[PsfTableIndex].PsfDev;
+    PsfDev->Access->AndThenOr32 (PsfDev->Access, R_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG, AndData32, OrData32);
+  }
+}
+
+/**
+  Disable Trunk Clock Gating, Local Clock Gating and Partition Clock Gating
+  for all PSFs in PSF topology
+**/
+VOID
+PtlPcdPsfDisableClockGating (
+  VOID
+  )
+{
+  UINT32                         AndData32;
+  UINT32                         OrData32;
+
+  AndData32 = (UINT32)~(
+    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENPCG |
+    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENTCG  |
+    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENLCG
+    );
+
+  OrData32 = 0;
+  PtlPcdPsfProgramPsfGlobalConfig (AndData32, OrData32);
+}
+
+/**
+  Enable Trunk Clock Gating, Local Clock Gating and Partition Clock Gating
+  for all PSFs in PSF topology
+**/
+VOID
+PtlPcdPsfEnableClockGating (
+  VOID
+  )
+{
+  UINT32                         AndData32;
+  UINT32                         OrData32;
+
+  AndData32 = (UINT32)~(0);
+
+  OrData32 = (UINT32)(
+    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENPCG |
+    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENTCG  |
+    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENLCG
+    );
+  PtlPcdPsfProgramPsfGlobalConfig (AndData32, OrData32);
 }
 
 /**

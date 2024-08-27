@@ -53,6 +53,29 @@ BlueMrcClearXtensaDramTop (
 }
 
 /**
+  This function sets the bit of InternalClocksOn in DataControl0 struct.
+
+  @param[in out] DataControl0  - Pointer to DATA0CH0_CR_DDRCRDATACONTROL0_STRUCT.
+  @param[in]     Enable        - Bit value.
+
+  @retval mrcSuccess - If Write was successful
+**/
+MrcStatus
+MrcSetInternalClocksOn (
+  IN OUT DATA0CH0_CR_DDRCRDATACONTROL0_STRUCT *DataControl0,
+  IN BOOLEAN Enable
+  )
+{
+  if (DataControl0 == NULL) {
+    return mrcWrongInputParameter;
+  }
+
+  DataControl0->Bits.InternalClocksOn = Enable ? 1 : 0;
+
+  return mrcSuccess;
+}
+
+/**
   This function gets the LaneEn value for data partition.
 
   @param[in] MrcData    - Include all MRC global data.

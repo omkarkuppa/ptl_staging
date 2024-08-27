@@ -73,6 +73,7 @@ PtlPcdLpssSpiGpioConfigure (
   EFI_STATUS         Status;
 
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
+
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "HDA: Failed to Configure HDA Pins\n"));
     return;
@@ -486,6 +487,9 @@ AddUartDevices (
       case LpssUartCom:
         LpssDev->Mode = ModeCom;
         break;
+      case LpssUartSkipInit:
+        LpssDev->Mode = ModeSkipInit;
+        break;
       case LpssUartDisabled:
       default:
         LpssDev->Mode = ModeDisabled;
@@ -501,7 +505,7 @@ AddUartDevices (
 }
 
 /**
-  Congigures GPIO ping for I2C devices
+  Configures GPIO ping for I2C devices
 
   @param[in] LpssI2cConfig   I2C Config Block
 **/
@@ -516,7 +520,7 @@ GpioI2cInit (
 
   DEBUG ((DEBUG_INFO, "%a\n", __FUNCTION__));
 
-  for (Index = 0; Index < GetMaxUartInterfacesNum (); Index++) {
+  for (Index = 0; Index < GetMaxI2cInterfacesNum (); Index++) {
     I2cDeviceConfig = &LpssI2cConfig->I2cDeviceConfig[Index];
     if (I2cDeviceConfig->Mode != LpssI2cDisabled) {
       SerialIoI2cGpioEnable (Index, I2cDeviceConfig);
@@ -525,7 +529,7 @@ GpioI2cInit (
 }
 
 /**
-  Congigures GPIO ping for I3C devices
+  Configures GPIO ping for I3C devices
 
   @param[in] LpssI3cConfig   I3C Config Block
 **/
@@ -540,7 +544,7 @@ GpioI3cInit (
 
   DEBUG ((DEBUG_INFO, "%a\n", __FUNCTION__));
 
-  for (Index = 0; Index < GetMaxUartInterfacesNum (); Index++) {
+  for (Index = 0; Index < GetMaxI3cInterfacesNum (); Index++) {
     I3cDeviceConfig = &LpssI3cConfig->I3cDeviceConfig[Index];
     if (I3cDeviceConfig->Mode != I3cDisabled) {
       SerialIoI3cGpioEnable (Index, I3cDeviceConfig);
@@ -549,7 +553,7 @@ GpioI3cInit (
 }
 
 /**
-  Congigures GPIO ping for SPI devices
+  Configures GPIO ping for SPI devices
 
   @param[in] LpssSpiConfig   SPI Config Block
 **/
@@ -564,7 +568,7 @@ GpioSpiInit (
 
   DEBUG ((DEBUG_INFO, "%a\n", __FUNCTION__));
 
-  for (Index = 0; Index < GetMaxUartInterfacesNum (); Index++) {
+  for (Index = 0; Index < GetMaxSpiInterfacesNum (); Index++) {
     SpiDeviceConfig = &LpssSpiConfig->SpiDeviceConfig[Index];
     if (SpiDeviceConfig->Mode != LpssSpiDisabled) {
       PtlPcdLpssSpiGpioConfigure (Index, SpiDeviceConfig);
@@ -573,7 +577,7 @@ GpioSpiInit (
 }
 
 /**
-  Congigures GPIO ping for UART devices
+  Configures GPIO ping for UART devices
 
   @param[in] LpssUartConfig   UART Config Block
 **/

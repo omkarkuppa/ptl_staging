@@ -616,25 +616,17 @@
 // TCSS: PD Information
 //
 #string STR_PD_INFORMATION                               #language en-US "PD Information"
-#string STR_PD0_APPLICATION_NAME_HELP                    #language en-US "PD0 Application name"
-#string STR_PD0_APPLICATION_NAME_NAME                    #language en-US "PD0 Application name"
-#string STR_PD0_APPLICATION_NAME_VALUE                   #language en-US "N/A"
-#string STR_PD0_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_HELP   #language en-US "PD0 External Circuit Specific Version"
-#string STR_PD0_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_NAME   #language en-US "PD0 External Circuit Specific Version"
-#string STR_PD0_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_VALUE  #language en-US "N/A"
 #string STR_PD0_VERSION_HELP                             #language en-US "PD0 Version"
 #string STR_PD0_VERSION_NAME                             #language en-US "PD0 Version"
 #string STR_PD0_VERSION_VALUE                            #language en-US "N/A"
 
-#string STR_PD1_APPLICATION_NAME_HELP                    #language en-US "PD1 Application name"
-#string STR_PD1_APPLICATION_NAME_NAME                    #language en-US "PD1 Application name"
-#string STR_PD1_APPLICATION_NAME_VALUE                   #language en-US "N/A"
-#string STR_PD1_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_HELP   #language en-US "PD1 External Circuit Specific Version"
-#string STR_PD1_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_NAME   #language en-US "PD1 External Circuit Specific Version"
-#string STR_PD1_EXTERNAL_CIRCUIT_SPECIFIC_VERSION_VALUE  #language en-US "N/A"
 #string STR_PD1_VERSION_HELP                             #language en-US "PD1 Version"
 #string STR_PD1_VERSION_NAME                             #language en-US "PD1 Version"
 #string STR_PD1_VERSION_VALUE                            #language en-US "N/A"
+
+#string STR_PD2_VERSION_HELP                             #language en-US "PD2 Version"
+#string STR_PD2_VERSION_NAME                             #language en-US "PD2 Version"
+#string STR_PD2_VERSION_VALUE                            #language en-US "N/A"
 
 //
 // TCSS: Retimer Information

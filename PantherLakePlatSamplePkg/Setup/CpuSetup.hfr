@@ -29,7 +29,8 @@
   SUBTITLE(STRING_TOKEN (STR_CPU_FORM))
   SEPARATOR
 
-  grayoutif ideqval CPU_SETUP.AllSmallCoreCount == 0;
+  grayoutif ideqval CPU_SETUP.AllSmallCoreCount == 0 AND
+            ideqval CPU_SETUP.AllLpAtomCoreCount == 0;
     goto CPU_ATOM_CORE_FORM_ID,
       prompt = STRING_TOKEN (STR_CPU_ATOM_CORE_FORM_TITLE),
       help   = STRING_TOKEN (STR_CPU_ATOM_CORE_FORM_HELP);
@@ -123,7 +124,7 @@
       minimum     = 0,
       maximum     = 63,
       step        = 0,
-      default     = 20,
+      default     = 15,
     endnumeric;
   endif; // grayoutif
 
@@ -133,8 +134,8 @@
         questionid  = AUTO_ID(VT_QUESTION_ID),
         prompt      = STRING_TOKEN (STR_VT_PROMPT),
         help        = STRING_TOKEN (STR_VT_PROMPT_HELP),
-        option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
-        option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED | INTERACTIVE;
       endoneof;
   SUPPRESS_GRAYOUT_ENDIF
 
@@ -337,7 +338,7 @@
               OR ideqval CPU_SETUP.VT == 0
               OR ideqval SA_SETUP.EnableVtd == 0
               OR ideqval CPU_SETUP.Txt == 0
-              OR NOT (ideqval CPU_SETUP.ActiveCoreCount == 0xFF AND ideqval CPU_SETUP.ActiveSmallCoreCount == 0xFF);
+              OR NOT (ideqval CPU_SETUP.ActiveCoreCount == 0xFF AND ideqval CPU_SETUP.ActiveSmallCoreCount == 0xFF AND ideqval CPU_SETUP.ActiveLpAtomCoreCount == 0xFF);
       numeric varid = CPU_SETUP.DprSize,
         prompt      = STRING_TOKEN (STR_PROCESSOR_DPR_STRING),
         help        = STRING_TOKEN (STR_PROCESSOR_DPR_HELP),
@@ -425,8 +426,8 @@
       oneof varid   = CPU_SETUP.X2ApicEnable,
         prompt      = STRING_TOKEN (STR_X2APIC_ENABLE_PROMPT),
         help        = STRING_TOKEN (STR_X2APIC_ENABLE_HELP),
-        option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED), value = 1, flags = RESET_REQUIRED;
       endoneof;
     SUPPRESS_GRAYOUT_ENDIF
 
@@ -796,15 +797,15 @@
         oneof varid       = CPU_SETUP.CStateAutoDemotion,
               prompt      = STRING_TOKEN (STR_CST_AUTO_DEMOTION),
               help        = STRING_TOKEN (STR_CST_AUTO_DEMOTION_HELP),
-              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-              option text = STRING_TOKEN (STR_C1_AUTO_DEMOTION), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;// PTL PO temp WA TODO :: Revisit and move to POR
+              option text = STRING_TOKEN (STR_C1_AUTO_DEMOTION), value = 1, flags = RESET_REQUIRED;
         endoneof;
 
         oneof varid       = CPU_SETUP.CStateUnDemotion,
               prompt      = STRING_TOKEN (STR_CST_UNDEMOTION),
               help        = STRING_TOKEN (STR_CST_UNDEMOTION_HELP),
-              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-              option text = STRING_TOKEN (STR_C1_AUTO_DEMOTION), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;// PTL PO temp WA TODO :: Revisit and move to POR
+              option text = STRING_TOKEN (STR_C1_AUTO_DEMOTION), value = 1, flags = RESET_REQUIRED;
         endoneof;
 
         oneof varid       = CPU_SETUP.PkgCStateDemotion,
@@ -849,8 +850,8 @@
       oneof varid   = CPU_SETUP.EnableThermalMonitor,
         prompt      = STRING_TOKEN (STR_THERMAL_MONITOR_PROMPT),
         help        = STRING_TOKEN (STR_THERMAL_MONITOR_PROMPT_HELP),
-        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;// PTL PO temp WA TODO :: Revisit and move to POR
+        option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
       endoneof;
 
       oneof varid = CPU_SETUP.InterruptRedirectMode,
@@ -1754,10 +1755,10 @@
     SEPARATOR
 
     //
-    // All small cores are disabled, hide the options.
+    // All small cores(both Ecores and LP-Ecores) are disabled, hide the options.
     //
-    suppressif ideqval CPU_SETUP.ActiveSmallCoreCount == 0 OR ideqval CPU_SETUP.AllSmallCoreCount == 0;
-
+    suppressif ((ideqval CPU_SETUP.ActiveSmallCoreCount == 0 OR ideqval CPU_SETUP.AllSmallCoreCount == 0) AND
+                (ideqval CPU_SETUP.ActiveLpAtomCoreCount == 0 OR ideqval CPU_SETUP.AllLpAtomCoreCount == 0));
       text
         help   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE0_HELP),
         text   = STRING_TOKEN(STR_ATOM_TURBO_RATIO_LIMIT_NUMCORE0_STRING),
@@ -2038,9 +2039,10 @@
     endif; // suppressif
 
     //
-    // All small cores are disabled, hide the options.
+    // All small cores(both Ecores and LP-Ecores) are disabled, hide the options.
     //
-    suppressif ideqval CPU_SETUP.ActiveSmallCoreCount == 0 OR ideqval CPU_SETUP.AllSmallCoreCount == 0;
+    suppressif ((ideqval CPU_SETUP.ActiveSmallCoreCount == 0 OR ideqval CPU_SETUP.AllSmallCoreCount == 0) AND
+                (ideqval CPU_SETUP.ActiveLpAtomCoreCount == 0 OR ideqval CPU_SETUP.AllLpAtomCoreCount == 0));
 
       numeric varid   = CPU_SETUP.AtomRatioLimitNumCore[0],
               prompt  = STRING_TOKEN(STR_ATOM_RATIO_LIMIT_NUMCORE0),
@@ -2218,7 +2220,7 @@
               default = 0,
       endnumeric;
 
-    endif; // suppressif ideqval CPU_SETUP.ActiveSmallCoreCount
+    endif; // suppressif
 
   endform; // CPU_TURBO_RATIO_LIMIT_FORM_ID
 
@@ -2812,11 +2814,9 @@
         default = 2,
       endnumeric;
 
-  suppressif TRUE;
       goto CPU_ACOUSTIC_NOISE_FORM_ID,
         prompt = STRING_TOKEN (STR_CPU_ACOUSTIC_NOISE_FORM_TITLE),
         help = STRING_TOKEN (STR_CPU_ACOUSTIC_NOISE_FORM_TITLE_HELP);
-  endif;
 
       suppressif ideqval CPU_SETUP_VOLATILE_DATA.CoreVrLocked == 1;
         goto CPU_IA_VR_OPTIONS_FORM_ID,
@@ -2862,36 +2862,22 @@ endform; // CPU_VR_SETTINGS
       endoneof;
 
       grayoutif ideqval CPU_SETUP.AcousticNoiseMitigation == 0;
-
-          ///
-          /// Pre Wake, Ramp Up and Ramp Down times programming.
-          ///
-          numeric varid = CPU_SETUP.PreWake,
-            prompt  = STRING_TOKEN (STR_PRE_WAKE),
-            help    = STRING_TOKEN (STR_PRE_WAKE_HELP),
+          numeric varid = CPU_SETUP.PcoreHysteresisWindow,
+            prompt  = STRING_TOKEN (STR_HYST_WINDOW_PCORE),
+            help    = STRING_TOKEN (STR_HYST_WINDOW_PCORE_HELP),
             flags   = RESET_REQUIRED,
             minimum = 0,
-            maximum = 255,
+            maximum = 50,
             step    = 1,
             default = 0,
           endnumeric;
 
-          numeric varid = CPU_SETUP.RampUp,
-            prompt  = STRING_TOKEN (STR_RAMP_UP),
-            help    = STRING_TOKEN (STR_RAMP_UP_HELP),
+          numeric varid = CPU_SETUP.EcoreHysteresisWindow,
+            prompt  = STRING_TOKEN (STR_HYST_WINDOW_ECORE),
+            help    = STRING_TOKEN (STR_HYST_WINDOW_ECORE_HELP),
             flags   = RESET_REQUIRED,
             minimum = 0,
-            maximum = 255,
-            step    = 1,
-            default = 0,
-          endnumeric;
-
-          numeric varid = CPU_SETUP.RampDown,
-            prompt  = STRING_TOKEN (STR_RAMP_DOWN),
-            help    = STRING_TOKEN (STR_RAMP_DOWN_HELP),
-            flags   = RESET_REQUIRED,
-            minimum = 0,
-            maximum = 255,
+            maximum = 50,
             step    = 1,
             default = 0,
           endnumeric;

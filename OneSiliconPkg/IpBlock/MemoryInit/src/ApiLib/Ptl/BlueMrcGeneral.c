@@ -36,7 +36,7 @@ MrcSetPrjOverrides (
 
 /**
   Modify tRDRDdg and tRDRDsg timings by 1tCK. Does not apply modification to tRDRDsg
-  in BG mode. Expects caller to flush cache.
+  in BG mode.
 
   @param[in, out] MrcData - All the MRC global data.
   @param[in]      Enable  - TRUE to add 1tCK, FALSE to subtract.
@@ -48,41 +48,22 @@ MrcModifyRdRdTimings (
   )
 {
   MrcOutput       *Outputs;
-  BOOLEAN          IsLpddr;
-  MRC_LP5_BANKORG  Lp5BGOrg;
-
-  UINT32 Channel;
-  UINT32 Controller;
-
-  INT64 tRdRdsg;
-  INT64 tRdRddg;
-  INT64 GetSetVal;
+  MRC_LP5_BANKORG Lp5BGOrg;
+  INT64           tRdRdOffset;
+  INT64           RdWrInterleaving;
 
   Outputs  = &MrcData->Outputs;
-  IsLpddr  = Outputs->IsLpddr;
   Lp5BGOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
+  RdWrInterleaving = Enable ? 1 : 0;
+  tRdRdOffset = Enable ? + 4 : -4;
 
-  GetSetVal = Enable ? 1 : 0;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctRDRDdg, WriteOffsetCached, &tRdRdOffset);
 
-  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    if (MrcControllerExist (MrcData, Controller)) {
-      for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
-        if (MrcChannelExist (MrcData, Controller, Channel) && (!IS_MC_SUB_CH (IsLpddr, Channel))) {
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdg, ReadCached, &tRdRddg);
-          tRdRddg = Enable ? (tRdRddg + 4) : (tRdRddg - 4);
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdg, WriteToCache, &tRdRddg);
+  if (Lp5BGOrg == MrcLp516Bank) {
+    MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctRDRDsg, WriteOffsetCached, &tRdRdOffset);
+  }
 
-          if (Lp5BGOrg == MrcLp516Bank) {
-            MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDsg, ReadCached, &tRdRdsg);
-            tRdRdsg = Enable ? (tRdRdsg + 4) : (tRdRdsg - 4);
-            MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDsg, WriteToCache, &tRdRdsg);
-          }
-
-          if (Lp5BGOrg == MrcLp5BgMode) {
-            MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccDisLpddr5RdwrInterleaving, WriteToCache, &GetSetVal);
-          }
-        }
-      }
-    }
+  if (Lp5BGOrg == MrcLp5BgMode) {
+    MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccDisLpddr5RdwrInterleaving, WriteCached, &RdWrInterleaving);
   }
 }

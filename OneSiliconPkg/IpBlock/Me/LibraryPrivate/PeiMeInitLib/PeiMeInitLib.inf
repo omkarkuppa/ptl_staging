@@ -40,7 +40,6 @@ TimerLib
 PerformanceLib
 HobLib
 BaseMemoryLib
-SpiLib
 PeiSpiLib
 SpiAccessLib
 PcdLib

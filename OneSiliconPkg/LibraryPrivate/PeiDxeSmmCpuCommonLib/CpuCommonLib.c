@@ -424,6 +424,40 @@ LockSeamrrMsr (
 }
 
 /**
+  Configures SE_SVN_MSR.
+
+  @param SeSvnMsr                   Value of SeSvn Msr to program.
+
+  @retval RETURN_SUCCESS            SeSvn MSR are set successfully.
+  @retval RETURN_SECURITY_VIOLATION SeSvn MSR cannot be programmed.
+*/
+RETURN_STATUS
+EFIAPI
+SetBiosSeSvnMsr (
+  UINT64 SeSvn
+  )
+{
+  MSR_BIOS_SE_SVN_REGISTER MsrSeSvnToProgram;
+  MSR_BIOS_SE_SVN_REGISTER MsrSeSvn;
+
+  MsrSeSvn.Uint64 = SeSvn;
+  MsrSeSvnToProgram.Uint64 = AsmReadMsr64 (MSR_BIOS_SE_SVN);
+
+  // Checking now is only for SeamldrSvn
+  if ((MsrSeSvnToProgram.Bits.SeamldrSeSvn != 0xFF) && (MsrSeSvn.Bits.SeamldrSeSvn < MsrSeSvnToProgram.Bits.SeamldrSeSvn)) {
+    DEBUG ((DEBUG_ERROR, "SeamldrSeSvn in msr (%x) is bigger than value to program (%x) Aborting!\n", MsrSeSvnToProgram.Bits.SeamldrSeSvn, MsrSeSvn.Bits.SeamldrSeSvn));
+    return RETURN_SECURITY_VIOLATION;
+  }
+
+  MsrSeSvnToProgram.Bits.SeamldrSeSvn = MsrSeSvn.Bits.SeamldrSeSvn;
+  AsmWriteMsr64 (MSR_BIOS_SE_SVN, MsrSeSvnToProgram.Uint64);
+
+  DEBUG ((DEBUG_INFO, "MsrSeSvn = %llx \n", MsrSeSvnToProgram.Uint64));
+
+  return RETURN_SUCCESS;
+}
+
+/**
   Detect if Hetero Core is supported.
 
   @retval TRUE - Processor support HeteroCore

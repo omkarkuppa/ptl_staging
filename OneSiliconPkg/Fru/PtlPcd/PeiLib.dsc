@@ -109,7 +109,7 @@
   PeiTraceHubInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/TraceHub/LibraryPrivate/PeiTraceHubInitLib/PeiTraceHubInitLib.inf
   TraceHubHookLib|$(SILICON_PRODUCT_PATH)/Library/TraceHubHookLib/PeiTraceHubHookLib.inf
   PeiCnviInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Cnvi/LibraryPrivate/PeiCnviInitLib/PeiCnviInitLib.inf
-  PeiCnviPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Cnvi/LibraryPrivate/PeiCnviPolicyLib/PeiCnviPolicyLib.inf
+    PeiCnviPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Cnvi/LibraryPrivate/PeiCnviPolicyLib/PeiCnviPolicyLib.inf
   PeiGbeInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Gbe/LibraryPrivate/PeiGbeInitLib/PeiGbeInitLib.inf
   PeiGbePolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Gbe/LibraryPrivate/PeiGbePolicyLib/PeiGbePolicyLib.inf
   PeiTraceHubPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/TraceHub/LibraryPrivate/PeiTraceHubPolicyLib/PeiTraceHubPolicyLib.inf
@@ -131,7 +131,6 @@
   PeiFusaLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaLibNull/PeiFusaLibNull.inf
   PeiFusaPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Fusa/LibraryPrivate/PeiFusaPolicyLibNull/PeiFusaPolicyLibNull.inf
   PchInitPreMemFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdPeiPchInitPreMemFruLib/PtlPcdPeiPchInitPreMemFruLib.inf
-  PeiSerialIoPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/SerialIo/LibraryPrivate/PeiSerialIoPolicyLib/PeiSerialIoPolicyLib.inf
   PeiLpssI3cPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssI3c/LibraryPrivate/PeiI3cPolicyLib/PeiI3cPolicyLib.inf
   PeiLpssSpiPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssSpi/LibraryPrivate/PeiLpssSpiPolicyLib/PeiLpssSpiPolicyLib.inf
   PeiLpssUartPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/LibraryPrivate/PeiLpssUartPolicyLib/PeiLpssUartPolicyLib.inf

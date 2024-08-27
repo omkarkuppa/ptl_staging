@@ -34,6 +34,7 @@ typedef struct {
   MC0_CH0_CR_MRS_FSM_CONTROL_STRUCT                   MrsFsmCtlSave[MAX_CONTROLLER][MAX_CHANNEL_SHARE_REGS];
   GENERIC_MRS_FSM_CONTROL_STRUCT                      GenMrsFsmCtlSave[MAX_CONTROLLER][MAX_CHANNEL_SHARE_REGS][MAX_MR_GEN_FSM];
   GENERIC_MRS_FSM_STORAGE_VALUES_STRUCT               GenMrsFsmValSave[MAX_CONTROLLER][MAX_CHANNEL_SHARE_REGS][MAX_STORAGE_GEN_FSM];
+  GENERIC_MRS_FSM_TIMING_STORAGE_STRUCT               GenMrsFsmTimeSave[MAX_CONTROLLER][MAX_CHANNEL_SHARE_REGS][MAX_TIMING_GEN_FSM];
 } JEDECRESET_SAVERESTORE;
 
 /**
@@ -96,12 +97,13 @@ IoReset (
 /**
   This function will save and restore the generic mrs fsm register values.
 
-  @param[in]  MrcData          - Pointer to MRC global data.
-  @param[in]  SaveValue        - Save the value if true.
-  @param[in]  RestoreValue     - Restore the value if true.
-  @param[in]  MrsFsmCtlSave    - Storage for saving and restoring MrsFsmCtl.
-  @param[in]  GenMrsFsmCtlSave - Storage for saving and restoring GenMrsFsmCtl.
-  @param[in]  GenMrsFsmValSave - Storage for saving and restoring GenMrsFsmVal.
+  @param[in]  MrcData           - Pointer to MRC global data.
+  @param[in]  SaveValue         - Save the value if true.
+  @param[in]  RestoreValue      - Restore the value if true.
+  @param[in]  MrsFsmCtlSave     - Storage for saving and restoring MrsFsmCtl.
+  @param[in]  GenMrsFsmCtlSave  - Storage for saving and restoring GenMrsFsmCtl.
+  @param[in]  GenMrsFsmValSave  - Storage for saving and restoring GenMrsFsmVal.
+  @param[in]  GenMrsFsmTimeSave - Storage for saving and restoring GenMrsFsmTime.
 
   @retval MrcStatus - mrcSuccess if successful, else an error status.
 **/
@@ -112,7 +114,8 @@ MrcSaveRestoreGenericMrsFsm (
   IN  BOOLEAN               RestoreValue,
   IN  MC0_CH0_CR_MRS_FSM_CONTROL_STRUCT      MrsFsmCtlSave[MAX_CONTROLLER][MAX_CHANNEL_SHARE_REGS],
   IN  GENERIC_MRS_FSM_CONTROL_STRUCT         GenMrsFsmCtlSave[MAX_CONTROLLER][MAX_CHANNEL_SHARE_REGS][MAX_MR_GEN_FSM],
-  IN  GENERIC_MRS_FSM_STORAGE_VALUES_STRUCT  GenMrsFsmValSave[MAX_CONTROLLER][MAX_CHANNEL_SHARE_REGS][MAX_STORAGE_GEN_FSM]
+  IN  GENERIC_MRS_FSM_STORAGE_VALUES_STRUCT  GenMrsFsmValSave[MAX_CONTROLLER][MAX_CHANNEL_SHARE_REGS][MAX_STORAGE_GEN_FSM],
+  IN  GENERIC_MRS_FSM_TIMING_STORAGE_STRUCT  GenMrsFsmTimeSave[MAX_CONTROLLER][MAX_CHANNEL_SHARE_REGS][MAX_TIMING_GEN_FSM]
   )
 {
   const MrcInput* Inputs;
@@ -149,6 +152,10 @@ MrcSaveRestoreGenericMrsFsm (
             GenericMrsFsmMailboxAccess (MrcData, Controller, IpChannel, GmfMailboxRead, GmfMailboxTypeStorage, ControlRegIdx, &Data);
             GenMrsFsmValSave[Controller][IpChannel][ControlRegIdx].Data = Data;
           }
+          for (ControlRegIdx = 0; ControlRegIdx < MAX_TIMING_GEN_FSM; ControlRegIdx++) {
+            GenericMrsFsmMailboxAccess (MrcData, Controller, IpChannel, GmfMailboxRead, GmfMailboxTypeTiming, ControlRegIdx, &Data);
+            GenMrsFsmTimeSave[Controller][IpChannel][ControlRegIdx].Data = Data;
+          }
         }
       } // bmFast
     } // Channel
@@ -165,7 +172,7 @@ MrcSaveRestoreGenericMrsFsm (
         if ((!IS_MC_SUB_CH (Outputs->IsLpddr5, Channel))) {
           IpChannel = LP_IP_CH (Outputs->IsLpddr5, Channel);
           Offset = MrcGetMrsFsmCtlOffset (MrcData, Controller, IpChannel);
-          MrcWriteCR64(MrcData, Offset, MrsFsmCtlSave[Controller][IpChannel].Data);
+          MrcWriteCR (MrcData, Offset, MrsFsmCtlSave[Controller][IpChannel].Data);
           for (ControlRegIdx = 0; ControlRegIdx < MAX_MR_GEN_FSM; ControlRegIdx++) {
             Data = GenMrsFsmCtlSave[Controller][IpChannel][ControlRegIdx].Data;
             GenericMrsFsmMailboxAccess (MrcData, Controller, IpChannel, GmfMailboxWrite, GmfMailboxTypeControl, ControlRegIdx, &Data);
@@ -173,6 +180,10 @@ MrcSaveRestoreGenericMrsFsm (
           for (ControlRegIdx = 0; ControlRegIdx < MAX_STORAGE_GEN_FSM; ControlRegIdx++) {
             Data = GenMrsFsmValSave[Controller][IpChannel][ControlRegIdx].Data;
             GenericMrsFsmMailboxAccess (MrcData, Controller, IpChannel, GmfMailboxWrite, GmfMailboxTypeStorage, ControlRegIdx, &Data);
+          }
+          for (ControlRegIdx = 0; ControlRegIdx < MAX_TIMING_GEN_FSM; ControlRegIdx++) {
+            Data = GenMrsFsmTimeSave[Controller][IpChannel][ControlRegIdx].Data;
+            GenericMrsFsmMailboxAccess (MrcData, Controller, IpChannel, GmfMailboxWrite, GmfMailboxTypeTiming, ControlRegIdx, &Data);
           }
         }
       } // for Channel
@@ -207,7 +218,6 @@ MrcResetSequencePrivate (
   INT64                 CmdTristateSave;
   UINT32                Controller;
   UINT32                Channel;
-  BOOLEAN               IsDdr5;
 
   Inputs     = &MrcData->Inputs;
   Outputs    = &MrcData->Outputs;
@@ -215,7 +225,6 @@ MrcResetSequencePrivate (
   IsFastBoot = (Inputs->BootMode == bmFast);
   Print      = Outputs->EctDone;
   MrcCall    = Inputs->Call.Func;
-  IsDdr5 = (Outputs->DdrType == MRC_DDR_TYPE_DDR5);
   Status     = mrcSuccess;
 
   if (SaveBuffer != NULL) {
@@ -256,9 +265,9 @@ MrcResetSequencePrivate (
       }
     }
 
-    if (IsFastBoot && (IsDdr5)) {
+    if (IsFastBoot) {
       // Save the generic mrs fsm
-      MrcSaveRestoreGenericMrsFsm (MrcData, TRUE, FALSE, SaveBuffer->MrsFsmCtlSave, SaveBuffer->GenMrsFsmCtlSave, SaveBuffer->GenMrsFsmValSave);
+      MrcSaveRestoreGenericMrsFsm (MrcData, TRUE, FALSE, SaveBuffer->MrsFsmCtlSave, SaveBuffer->GenMrsFsmCtlSave, SaveBuffer->GenMrsFsmValSave, SaveBuffer->GenMrsFsmTimeSave);
       MrcGenMrsFsmClean (MrcData, SaveBuffer->MrData, TRUE);
     }
 
@@ -271,9 +280,9 @@ MrcResetSequencePrivate (
       Status = MrcJedecInit (MrcData);
     }
 
-    if (IsFastBoot && (IsDdr5)) {
+    if (IsFastBoot) {
       // Restore the generic mrs fsm value
-      MrcSaveRestoreGenericMrsFsm (MrcData, FALSE, TRUE, SaveBuffer->MrsFsmCtlSave, SaveBuffer->GenMrsFsmCtlSave, SaveBuffer->GenMrsFsmValSave);
+      MrcSaveRestoreGenericMrsFsm (MrcData, FALSE, TRUE, SaveBuffer->MrsFsmCtlSave, SaveBuffer->GenMrsFsmCtlSave, SaveBuffer->GenMrsFsmValSave, SaveBuffer->GenMrsFsmTimeSave);
     }
 
     if (IsLpddr && (Status == mrcSuccess)) {

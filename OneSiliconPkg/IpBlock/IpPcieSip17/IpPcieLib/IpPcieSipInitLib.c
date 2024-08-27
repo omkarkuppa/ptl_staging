@@ -815,14 +815,13 @@ SipInitCapabilityList (
     PRINT_LEVEL1 ("Virtual Channel Extended Capability Header\n");
     PRINT_LEVEL1 ( "NextCap = %x \t Capability ID = %x\n", NextCap, V_EX_VCCH_CID);
     NextCap = (UINT16) VCCH_PCIE_CFG_REG;
+    Pvccr1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PVCCR1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+    Pvccr1.Bits.evcc = pInst->PrivateConfig.NumOfVcs;
+    IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, PVCCR1_PCIE_CFG_REG, Pvccr1.Data, IpWrRegFlagSize32Bits);
   } else {
     Vcch.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, VCCH_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
   }
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, VCCH_PCIE_CFG_REG, Vcch.Data, IpWrRegFlagSize32Bits);
-
-  Pvccr1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PVCCR1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-  Pvccr1.Bits.evcc = pInst->PrivateConfig.NumOfVcs;
-  IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, PVCCR1_PCIE_CFG_REG, Pvccr1.Data, IpWrRegFlagSize32Bits);
 
   /*
   g. If support PTM
@@ -2093,13 +2092,11 @@ SipInitRootPort (
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, IPCS_PCIE_CFG_REG, Ipcs.Data, IpWrRegFlagSize32Bits);
 
   V0Ctl.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, V0CTL_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-  V0Ctl.Bits.tvm   = 0;
+  V0Ctl.Bits.tvm   = 0x7F;
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, V0CTL_PCIE_CFG_REG, V0Ctl.Data, IpWrRegFlagSize32Bits);
 
   V1Ctl.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, V1CTL_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
   V1Ctl.Bits.id = V_VC1CTL_ID_ONE;
-  V1Ctl.Bits.en = 0x1;
-  V1Ctl.Bits.tvm = 0x7F;
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, V1CTL_PCIE_CFG_REG, V1Ctl.Data, IpWrRegFlagSize32Bits);
 
   Dcap2.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, DCAP2_PCIE_CFG_REG, IpWrRegFlagSize32Bits);

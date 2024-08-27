@@ -270,6 +270,9 @@ SearchPcdeElement:
   jmp    SearchPcdeElement
 PcdeElementFound:
   add    esi, PlatformConfigDataElement.PlatformConfigData
+  xor    rax, rax
+  mov    ax, word [esi + PlatformConfigDataElement.PlatformConfigElementSize]
+  add    edi, eax
   ; Bsss is part of PlatformConfigData and search for BSIS
   ; signature
 SearchBsisSegment:

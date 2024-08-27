@@ -182,40 +182,6 @@ PpamSmmConfigurationTableInit (
 }
 
 /**
-  Debug log output of SMM Entry Data information as per its size.
-
-  @param[in] Data  Points to the Data offset.
-  @param[in] Size  Size of Data.
-**/
-VOID
-DumpDataWithSize (
-  IN VOID *Data,
-  IN UINTN Size
-  )
-{
-  switch (Size) {
-  case 1:
-    DEBUG ((DEBUG_INFO, "0x%02x", *(UINT8 *)Data));
-    break;
-  case 2:
-    DEBUG ((DEBUG_INFO, "0x%04x", *(UINT16 *)Data));
-    break;
-  case 4:
-    DEBUG ((DEBUG_INFO, "0x%08x", *(UINT32 *)Data));
-    break;
-  case 6:
-    DEBUG ((DEBUG_INFO, "0x%04x%08x", *(UINT16 *)((UINT8 *)Data + 4), *(UINT32 *)Data));
-    break;
-  case 8:
-    DEBUG ((DEBUG_INFO, "0x%016lx", *(UINT64 *)Data));
-    break;
-  case 10:
-    DEBUG ((DEBUG_INFO, "0x%04x%016lx", *(UINT16 *)((UINT8 *)Data + 8), *(UINT64 *)Data));
-    break;
-  }
-}
-
-/**
   Copies the data into SMM Entry Info Table
 
   @param[in] SmmEntryPointHeader  Points to the SMM Entry Point Header.
@@ -234,23 +200,20 @@ PatchSmmEntryPoint (
 {
   SMM_ENTRY_POINT_INFORMATION_ENTRY  *SmmInfoEntry;
 
-  DEBUG ((DEBUG_INFO, "SMM INFO TABLE\n"));
   // Add 1 to SMM Entry Info Table to point to Info Entry
   SmmInfoEntry = (VOID *)(mSmmDgrEntryPointInfoTable + 1);
 
+  //
+  // Note: Do not include debug messages in the for loop while copying the data.
+  // Printing debug messages during this time will cause exception due to parallel 
+  // processing of multi processor SMM Initialization
+  //
   for (; ; SmmInfoEntry++) {
     if (SmmInfoEntry->Type == SMM_ENTRY_POINT_INFO_END) {
       break;
     }
     if (SmmInfoEntry->Type == Type) {
       ASSERT (SmmInfoEntry->DataSize == DataSize);
-      DEBUG ((DEBUG_INFO, "Entry Address: 0x%llx\n", (UINT64) SmmInfoEntry));
-      DEBUG ((DEBUG_INFO, "Patch: [Type:0x%x] [Size:0x%x] Offset: 0x%x (", SmmInfoEntry->Type, SmmInfoEntry->DataSize, SmmInfoEntry->DataOffset));
-      DumpDataWithSize ((UINT8 *) SmmEntryPointHeader + SmmInfoEntry->DataOffset, SmmInfoEntry->DataSize);
-      DEBUG ((DEBUG_INFO, ") <- ("));
-      DumpDataWithSize (Data, SmmInfoEntry->DataSize);
-      DEBUG ((DEBUG_INFO, ")\n"));
-
       CopyMem ((UINT8 *) SmmEntryPointHeader + SmmInfoEntry->DataOffset, Data, SmmInfoEntry->DataSize);
       break;
     }

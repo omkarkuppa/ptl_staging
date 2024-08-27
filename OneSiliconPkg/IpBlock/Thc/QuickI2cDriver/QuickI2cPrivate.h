@@ -991,6 +991,7 @@ typedef struct {
   UINT8                          LastWritePointer;
   UINT8                          HidSolutionFlag;
   HID_GET_REPORT_FORMAT          ReportPacket;
+  BOOLEAN                        SwDmaActive;
 } QUICK_I2C_DEV;
 
 #endif

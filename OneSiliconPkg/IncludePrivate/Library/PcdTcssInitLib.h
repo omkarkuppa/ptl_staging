@@ -1,5 +1,5 @@
 /** @file
-  Private header file for TCSS initialization library for PTL and NVL
+  Private header file for TCSS initialization library for PTL
 
   @copyright
   INTEL CONFIDENTIAL

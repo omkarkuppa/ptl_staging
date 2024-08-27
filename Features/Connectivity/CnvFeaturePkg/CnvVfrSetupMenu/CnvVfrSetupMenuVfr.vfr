@@ -61,6 +61,7 @@ formset
       flags  = 0,
       key    = 0;
 
+#if FixedPcdGetBool (PcdCnvIntegratedSupport) == 1
     oneof varid   = CNV_VFR_CONFIG_SETUP.CnviMode,
       questionid  = KEY_CNV_BT_CNVI_MODE,
       prompt      = STRING_TOKEN(STR_CNVI_MODE),
@@ -98,8 +99,10 @@ formset
         endif;
       endif;
     endif;
+#endif
 
 #if FixedPcdGetBool (PcdCnvUefiVarVersion) == 3
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
     oneof varid   = CNV_VFR_CONFIG_SETUP.CnviBtAudioOffload,
       questionid  = KEY_CNV_BT_AUDIO_OFFLOAD,
       prompt      = STRING_TOKEN(STR_CNV_BT_AUDIO_OFFLOAD),
@@ -108,7 +111,10 @@ formset
       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED | INTERACTIVE;
     endoneof;
 #endif
+#endif
 
+#if FixedPcdGetBool (PcdCnvIntegratedSupport) == 1
+#if FixedPcdGetBool (PcdBtAudioOffloadSupport) == 1
     suppressif ideqval CNV_VFR_CONFIG_SETUP.CnviBtAudioOffload == 0;
       oneof varid   = CNV_VFR_CONFIG_SETUP.CnviBtAudioOffloadInterface,
         questionid  = KEY_CNV_BT_AUDIO_OFFLOAD_INTERFACE,
@@ -120,14 +126,19 @@ formset
         endif;
       endoneof;
     endif;
+#endif
+#endif
 
+#if FixedPcdGetBool (PcdCnvDiscreteSupport) == 1
     oneof varid   = CNV_VFR_CONFIG_SETUP.SkipVidDidCheck,
       prompt      = STRING_TOKEN(STR_CNVD_SKIP_VDID_CHECK_PROMPT),
       help        = STRING_TOKEN(STR_CNVD_SKIP_VDID_CHECK_HELP),
       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
     endoneof;
+#endif
 
+#if FixedPcdGetBool (PcdPrebootBleSupport) == 1
     subtitle text = STRING_TOKEN(STR_EMPTY);
     oneof varid   = CNV_VFR_CONFIG_SETUP.PrebootBleEnable,
       prompt      = STRING_TOKEN(STR_PREBOOT_BLE_PROMPT),
@@ -136,7 +147,9 @@ formset
       option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
     endoneof;
     SEPARATOR
+#endif
 
+#if FixedPcdGetBool (PcdCnvDiscreteSupport) == 1
     oneof varid  = CNV_VFR_CONFIG_SETUP.DiscreteBtModule,
       prompt   = STRING_TOKEN(STR_BT_INTERFACE),
       help     = STRING_TOKEN(STR_BT_INTERFACE_HELP),
@@ -145,7 +158,7 @@ formset
     endoneof;
 
     SEPARATOR
-    
-    
+#endif
+
   endform;
 endformset;

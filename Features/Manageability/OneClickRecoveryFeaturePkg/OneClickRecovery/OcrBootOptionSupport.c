@@ -181,6 +181,8 @@ CancelOcrBootOption (
   OCR_BOOT_SETTINGS OcrBootSettings;
   EFI_STATUS        Status;
 
+  DEBUG ((DEBUG_INFO, "[%a] - Enter\n", __FUNCTION__));
+
   FreeOcrBootOption (OcrBootOption);
   Status = ReportBiosStatus (AsfRbsGeneralFailure);
   if (EFI_ERROR (Status)) {
@@ -582,7 +584,7 @@ Exit:
 
   @param[in]      OcrConfig            OCR Setup Configuration
   @param[in]      AmtUefiBootOption    OCR AMT provided boot options
-  @param[out]     OcrBootOption        OCR boot options
+  @param[in,out]  OcrBootOption        OCR boot options
 
   @retval EFI_SUCCESS             OCR Boot Option is setup.
   @retval EFI_NOT_FOUND           OCR Boot was not requested.
@@ -594,7 +596,7 @@ EFI_STATUS
 OcrBootOptionRequest (
   IN     OCR_CONFIG                   OcrConfig,
   IN     UEFI_BOOT_OPTION_PARAMETER   *AmtUefiBootOption,
-  OUT    OCR_BOOT_OPTION              *OcrBootOption
+  IN OUT OCR_BOOT_OPTION              *OcrBootOption
   )
 {
   EFI_STATUS                      Status;
@@ -607,10 +609,9 @@ OcrBootOptionRequest (
   // report in progress Bios Status to AMT
   Status = ReportBiosStatus (AsfRbsInProgress);
 
-  OcrBootOption = AllocateZeroPool (sizeof (OCR_BOOT_OPTION));
   if (OcrBootOption == NULL) {
     CancelOcrBootOption (OcrBootOption);
-    return EFI_OUT_OF_RESOURCES;
+    return EFI_INVALID_PARAMETER;
   }
 
   // Check that system supports requested OCR boot option
@@ -663,7 +664,10 @@ OcrBootOptionRequest (
     return Status;
   }
 
-  AddProxyBootOption (OcrBootOption);
+  Status = AddProxyBootOption (OcrBootOption);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "AddProxyBootOption Status = %r\n", Status));
+  }
 
   if (AsfIsFwProgressEnabled ()) {
     Status = SendOcrPetEvent (

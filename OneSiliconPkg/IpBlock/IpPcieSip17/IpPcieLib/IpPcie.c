@@ -410,14 +410,15 @@ IpPciePreLinkActiveProgramming (
         pInst->PrivateConfig.RootPortDisable = TRUE;
       }
     }
-    if (SipGetMaxLinkSpeed (pInst) >= 3) {
-      if (pInst->PcieRpCommonConfig.OverrideEqualizationDefaults) {
-        IpWrMemcpy (pInst->MemCntxt, &pInst->PrivateConfig.Gen3EqSettings.PlatformSettings, &pInst->PcieRpCommonConfig.PcieGen3LinkEqPlatformSettings, sizeof (IP_PCIE_LINK_EQ_PLATFORM_SETTINGS));
-        IpWrMemcpy (pInst->MemCntxt, &pInst->PrivateConfig.Gen4EqSettings.PlatformSettings, &pInst->PcieRpCommonConfig.PcieGen4LinkEqPlatformSettings, sizeof (IP_PCIE_LINK_EQ_PLATFORM_SETTINGS));
-        IpWrMemcpy (pInst->MemCntxt, &pInst->PrivateConfig.Gen5EqSettings.PlatformSettings, &pInst->PcieRpCommonConfig.PcieGen5LinkEqPlatformSettings, sizeof (IP_PCIE_LINK_EQ_PLATFORM_SETTINGS));
-      }
-      SipLinkEqualizeInit (pInst, &pInst->PrivateConfig.Gen3EqSettings, &pInst->PrivateConfig.Gen4EqSettings, &pInst->PrivateConfig.Gen5EqSettings);
+  }
+
+  if (SipGetMaxLinkSpeed (pInst) >= 3) {
+    if (pInst->PcieRpCommonConfig.OverrideEqualizationDefaults) {
+      IpWrMemcpy (pInst->MemCntxt, &pInst->PrivateConfig.Gen3EqSettings.PlatformSettings, &pInst->PcieRpCommonConfig.PcieGen3LinkEqPlatformSettings, sizeof (IP_PCIE_LINK_EQ_PLATFORM_SETTINGS));
+      IpWrMemcpy (pInst->MemCntxt, &pInst->PrivateConfig.Gen4EqSettings.PlatformSettings, &pInst->PcieRpCommonConfig.PcieGen4LinkEqPlatformSettings, sizeof (IP_PCIE_LINK_EQ_PLATFORM_SETTINGS));
+      IpWrMemcpy (pInst->MemCntxt, &pInst->PrivateConfig.Gen5EqSettings.PlatformSettings, &pInst->PcieRpCommonConfig.PcieGen5LinkEqPlatformSettings, sizeof (IP_PCIE_LINK_EQ_PLATFORM_SETTINGS));
     }
+    SipLinkEqualizeInit (pInst, &pInst->PrivateConfig.Gen3EqSettings, &pInst->PrivateConfig.Gen4EqSettings, &pInst->PrivateConfig.Gen5EqSettings);
   }
 
   //

@@ -32,6 +32,7 @@
 #include <Protocol/SmbusHc.h>
 #include <Protocol/MemInfo.h>
 #include <Protocol/GopPolicy.h>
+#include <VtioSetup.h>
 #if FixedPcdGetBool(PcdTcssSupport) == 1
 #include "TcssDataHob.h"
 #endif
@@ -1531,6 +1532,8 @@ VtdCallBackFunction (
   EFI_STATUS              Status;
   SA_SETUP                *SaSetup;
   CPU_SETUP               *CpuSetup;
+  VTIO_SETUP_DATA_STRUCT  *VtioSetup;
+  UINT32                  VariableAttr;
   UINTN                   SaSize;
   UINTN                   VarSize;
   EFI_STRING              RequestString;
@@ -1629,6 +1632,52 @@ VtdCallBackFunction (
     }
 
     FreePool (CpuSetup);
+
+    // Disable VTIO when VTd is Disabled
+    VarSize   = sizeof (VTIO_SETUP_DATA_STRUCT);
+    VtioSetup  = AllocatePool (VarSize);
+    ASSERT (VtioSetup != NULL);
+
+    if (VtioSetup == NULL) {
+      DEBUG ((DEBUG_ERROR, "VtdCallBackFunction: Out of resources allocating VtioSetup!\n"));
+      return EFI_OUT_OF_RESOURCES;
+    }
+
+    Status  = gRT->GetVariable (
+                L"VtioCfg",
+                &gVtioSetupGuid,
+                &VariableAttr,
+                &VarSize,
+                VtioSetup
+                );
+
+    if (EFI_ERROR(Status)) {
+      FreePool (VtioSetup);
+      DEBUG ((DEBUG_ERROR, "VtdCallBackFunction: Unable to get Vtio variable!\n"));
+      return EFI_NOT_FOUND;
+    }
+
+    // check to see if VtioSupport is 1, if it is then set it to 0
+    if (VtioSetup->VtioSupport == 1) {
+      VtioSetup->VtioSupport = 0;
+    }
+
+    Status = gRT->SetVariable (
+                L"VtioCfg",
+                &gVtioSetupGuid,
+                VariableAttr,
+                VarSize,
+                VtioSetup
+                );
+
+    if (EFI_ERROR(Status)) {
+      FreePool (VtioSetup);
+      DEBUG ((DEBUG_ERROR, "VtdCallBackFunction: Unable to set Vtio variable!\n"));
+      return EFI_NOT_FOUND;
+    }
+
+    FreePool(VtioSetup);
+
 ///
 ///
   }

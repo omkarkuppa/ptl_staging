@@ -606,8 +606,8 @@ MiscTurboConfig (
     }
 
     if (ConfigChanged) {
-      OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, MiscTurboControl.Data, &MailboxStatus);
-      if (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS) {
+      Status = OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, MiscTurboControl.Data, &MailboxStatus);
+      if ((Status != EFI_SUCCESS) || (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS)) {
         DEBUG ((DEBUG_ERROR, "(OC) Set Misc Turbo Config failed, mailbox status = 0x%x\n", MailboxStatus));
       }
     }
@@ -1484,8 +1484,8 @@ AvxRatioControl (
       ///
       /// Set the requested AVX ratio to OC mailbox
       ///
-      OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, AvxControl.Data, &MailboxStatus);
-      if (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS) {
+      Status = OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, AvxControl.Data, &MailboxStatus);
+      if ((Status != EFI_SUCCESS) || (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS)) {
         DEBUG ((DEBUG_ERROR, "(OC) Set AVX Ratio offset failed. , Mailbox Status = %r\n", MailboxStatus));
       }
     }
@@ -1557,8 +1557,8 @@ AvxVoltageGuardbandScaleFactor (
     if (CurrentAvx2VoltageScale != RequestedAvx2VoltageScale) {
       DEBUG ((DEBUG_INFO, "(OC) Requested values of Avx Voltage Guardband Scaling in U1.7 format is RequestedAvx2VoltageScale = %d\n", RequestedAvx2VoltageScale));
       AvxVoltageScale.Fields.Avx2VoltageScaleFactor = RequestedAvx2VoltageScale;
-      OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, AvxVoltageScale.Data, &MailboxStatus);
-      if (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS) {
+      Status = OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, AvxVoltageScale.Data, &MailboxStatus);
+      if ((Status != EFI_SUCCESS) || (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS)) {
         DEBUG ((DEBUG_ERROR, "(OC) Get Avx Voltage Guardband Scaling Factor failed, Mailbox Status = %r\n", MailboxStatus));
       }
     }
@@ -1615,8 +1615,8 @@ MiscGlobalConfig (
     }
 
     if (ConfigChanged) {
-      OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, MiscGlobalConfig.Data, &MailboxStatus);
-      if (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS) {
+      Status = OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, MiscGlobalConfig.Data, &MailboxStatus);
+      if ((Status != EFI_SUCCESS) || (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS)) {
         DEBUG ((DEBUG_ERROR, "(OC) Set Misc Global Config Failed. Mailbox Status = %r\n", MailboxStatus));
       }
     }
@@ -2815,6 +2815,7 @@ MailboxWriteRatioValue (
   PROCESSOR_MAILBOX_DATA       *EachProcessorRatioOverride;
   MSR_FLEX_RATIO_REGISTER      FlexRatioMsr;
   OC_MAILBOX_INTERFACE         MailboxCommand;
+  EFI_STATUS                   Status;
 
   //
   // Initialize
@@ -2838,11 +2839,14 @@ MailboxWriteRatioValue (
   //
   MailboxCommand.InterfaceData = 0;
   MailboxCommand.Fields.CommandCompletion = MAILBOX_OC_CMD_WRITE_PER_CORE_RATIO_LIMITS_CMD;
-  OcMailboxWrite (
+  Status = OcMailboxWrite (
     MailboxCommand.InterfaceData,
     EachProcessorRatioOverride->MailboxData,
     (UINT32 *) &EachProcessorRatioOverride->MailboxStatus
     );
+    if (Status != EFI_SUCCESS) {
+      DEBUG ((DEBUG_ERROR, "(OC) Mailbox Write command failed. MailboxStatus = %x \n", EachProcessorRatioOverride->MailboxStatus));
+    }
 }
 
 /**
@@ -3152,8 +3156,8 @@ ProgramTvbThresholdsPerCcp (
         if (UpdateTvbFlag == 1) {
           // Write the new parameters
           DEBUG ((DEBUG_INFO, "(OC) New TVB Config for Module Index %d and Threshold %d is = 0x%x\n",ModuleIndex, Threshold, TvbCommand.Data));
-          OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, TvbCommand.Data, &MailboxStatus);
-          if (MailboxStatus != EFI_SUCCESS) {
+          Status =  OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, TvbCommand.Data, &MailboxStatus);
+          if ((Status != EFI_SUCCESS) || (MailboxStatus != EFI_SUCCESS)) {
             DEBUG ((DEBUG_INFO, "(OC) Thermal Velocity Boost downbin message failed, mailbox status = 0x%x\n", MailboxStatus));
           } else {
             Status = OcMailboxRead (OcMailboxReadCommand.InterfaceData, &TvbCommand.Data, &MailboxStatus);
@@ -3244,7 +3248,7 @@ ProgramTvbThresholdsPerPcoreGroup (
         if (UpdateTvbFlag == 1) {
           // Write the new parameters
           DEBUG ((DEBUG_INFO, "(OC) New TVB Config for Group Index %d and Threshold %d is = 0x%x\n",GroupIndex, Threshold, TvbCommand.Data));
-          OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, TvbCommand.Data, &MailboxStatus);
+          Status = OcMailboxWrite (OcMailboxWriteCommand.InterfaceData, TvbCommand.Data, &MailboxStatus);
           if ((Status != EFI_SUCCESS) || (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS)) {
             DEBUG ((DEBUG_INFO, "(OC) Thermal Velocity Boost downbin message failed, mailbox status = 0x%x\n", MailboxStatus));
           } else {
@@ -3452,8 +3456,8 @@ PerCoreVfOverrides (
       MiscGlobalConfig.Fields.PerCoreVfOverride |= OverClockingConfig->CoreVfConfigScope;
       MailboxWriteCommand.InterfaceData = 0;
       MailboxWriteCommand.Fields.CommandCompletion = MAILBOX_OC_CMD_SET_MISC_GLOBAL_CONFIG;
-      OcMailboxWrite (MailboxWriteCommand.InterfaceData, MiscGlobalConfig.Data, &MailboxStatus);
-      if (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS) {
+      Status = OcMailboxWrite (MailboxWriteCommand.InterfaceData, MiscGlobalConfig.Data, &MailboxStatus);
+      if ((Status != EFI_SUCCESS) || (MailboxStatus != MAILBOX_OC_COMPLETION_CODE_SUCCESS)) {
         DEBUG ((DEBUG_ERROR, "(OC) Update MISC GLOBAL CONFIG setting failed, mailbox status = %r\n", MailboxStatus));
         return;
       }

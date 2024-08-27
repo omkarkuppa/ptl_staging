@@ -362,21 +362,19 @@ GbeFwUpdate (
   UINTN             HandleCount;
   SETUP_DATA        SystemConfiguration;
   UINTN             VarSize;
-  UINT16            Image_Pss[PSS_CHIP_MAC_ADDRESS_LENGTH / 2];
   UINT16            Image[PSS_CHIP_MAC_ADDRESS_LENGTH / 2];
   UINTN             ImageSize;
-  UINT16            ReadData_Pss[PSS_CHIP_MAC_ADDRESS_LENGTH / 2];
   UINT16            ReadData[PSS_CHIP_MAC_ADDRESS_LENGTH / 2];
   UINT32            VariableAttributes;
   I2C_PLATFORM_SECURE_STORAGE_PROTOCOL  *I2cPssProtocol;
   EFI_I2C_IO_PROTOCOL           *I2cIoProtocol;
   PSS_MONZA_PRIVATE_CONTEXT     *PssMonzaContext;
-  UINT16 length = PSS_CHIP_MAC_ADDRESS_LENGTH / 2;
   UINT32            RAH0[PSS_CHIP_MAC_ADDRESS_LENGTH / 2];
   UINT64            GbeBar;
   UINT32            Value;
 
-  DEBUG ((DEBUG_INFO, "\nGbeFwUpdateEntryPoint\n"));
+  DEBUG ((DEBUG_INFO, "GbeFwUpdateEntryPoint\n"));
+
   SystemConfiguration.GbeFwUpdateEnable = TRUE;
   Status = gBS->LocateProtocol (
                 &gI2cPssProtocolGuid,
@@ -415,10 +413,9 @@ GbeFwUpdate (
         //
         // Byte swapping
         //
-        Status = ByteSwapping_call(Image, length, Image_Pss);
 
         if (!EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_INFO,"Mac Address from PSS Chip start (Normal order): %x %x %x\n",Image_Pss[0], Image_Pss[1], Image_Pss[2]));
+          DEBUG ((DEBUG_INFO,"Mac Address from PSS Chip start (Normal order): %x %x %x\n",Image[0], Image[1], Image[2]));
         } else {
           DEBUG ((DEBUG_ERROR,"Reading PSS Data Failed\n"));
           return;
@@ -431,138 +428,136 @@ GbeFwUpdate (
         DEBUG ((DEBUG_ERROR, "PSS detect Failed : %r\n", Status));
         return;
     }
- }
 
-  Status = gBS->LocateHandleBuffer (
-           ByProtocol,
-           &gEfiPciIoProtocolGuid,
-           NULL,
-           &HandleCount,
-           &Handles
-           );
-  if (EFI_ERROR(Status)) {
-    DEBUG ((DEBUG_INFO, "LocateHandleBuffer of gEfiPciIoProtocolGuid failed, Status=%r\n", Status));
-    return;
-  }
-  Adapter = AllocateRuntimeZeroPool(sizeof(ADAPTER_INFO));
-  if (!Adapter) {
-    Status = EFI_OUT_OF_RESOURCES;
-    DEBUG ((DEBUG_INFO, "AllocateRuntimeZeroPool failed, Status=%r\n", Status));
-    return;
-  }
-  Status = InitAdapterHandle (&HandleCount, Handles, Adapter);
-  if (EFI_ERROR(Status)) {
-    DEBUG ((DEBUG_ERROR, "Init Adapter Handle failed, Status=%r\n", Status));
-    goto free_pool;
-  }
-
-  DEBUG ((DEBUG_INFO,"GbeFwUpdateSupport\n"));
-  ReadNVM (&Adapter->Hw,
-          0x00,//offset 0 has value 8888, offset 1 has 8888 and offset 2 has 8887
-          3,
-          ReadData
-          );
-  //
-  // Byte swapping
-  //
-  Status = ByteSwapping_call(ReadData, length, ReadData_Pss);
-
-  DEBUG ((DEBUG_INFO, "SystemConfiguration.GbeFwUpdateEnable %x\n",SystemConfiguration.GbeFwUpdateEnable));
-  if (SystemConfiguration.GbeFwUpdateEnable == TRUE) {
-    DEBUG ((DEBUG_INFO,"Default Mac from NVM in normal order %x %x %x\n",ReadData_Pss[0], ReadData_Pss[1], ReadData_Pss[2]));
-    DEBUG ((DEBUG_INFO,"Default Mac from NVM in reverse order %x %x %x\n",ReadData[0], ReadData[1], ReadData[2]));
-    if (Image[0] == ReadData[0] && Image[1] == ReadData[1] && Image[2] == ReadData[2]){
-      //check if the data is same as existing data
-      DEBUG ((DEBUG_INFO, "The data read from the PSS Chip is same as the data existing in it\n"));
+    Status = gBS->LocateHandleBuffer (
+             ByProtocol,
+             &gEfiPciIoProtocolGuid,
+             NULL,
+             &HandleCount,
+             &Handles
+             );
+    if (EFI_ERROR(Status)) {
+      DEBUG ((DEBUG_INFO, "LocateHandleBuffer of gEfiPciIoProtocolGuid failed, Status=%r\n", Status));
+      return;
+    }
+    Adapter = AllocateRuntimeZeroPool(sizeof(ADAPTER_INFO));
+    if (!Adapter) {
+      Status = EFI_OUT_OF_RESOURCES;
+      DEBUG ((DEBUG_INFO, "AllocateRuntimeZeroPool failed, Status=%r\n", Status));
+      return;
+    }
+    Status = InitAdapterHandle (&HandleCount, Handles, Adapter);
+    if (EFI_ERROR(Status)) {
+      DEBUG ((DEBUG_ERROR, "Init Adapter Handle failed, Status=%r\n", Status));
       goto free_pool;
     }
 
-    if (Image[0] == 0 && Image[1] == 0 && Image[2] == 0){
-      //check if it is equal to 0
-      DEBUG ((DEBUG_INFO, "The data read from PSS Chip is equal to 0\n"));
+    DEBUG ((DEBUG_INFO,"GbeFwUpdateSupport\n"));
+    ReadNVM (&Adapter->Hw,
+            0x00,//offset 0 has value 8888, offset 1 has 8888 and offset 2 has 8887
+            3,
+            ReadData
+            );
+    //
+    // Byte swapping
+    //
+
+    DEBUG ((DEBUG_INFO, "SystemConfiguration.GbeFwUpdateEnable %x\n",SystemConfiguration.GbeFwUpdateEnable));
+    if (SystemConfiguration.GbeFwUpdateEnable == TRUE) {
+      DEBUG ((DEBUG_INFO,"Default Mac from NVM in reverse order %x %x %x\n",ReadData[0], ReadData[1], ReadData[2]));
+      if (Image[0] == ReadData[0] && Image[1] == ReadData[1] && Image[2] == ReadData[2]){
+        //check if the data is same as existing data
+        DEBUG ((DEBUG_INFO, "The data read from the PSS Chip is same as the data existing in it\n"));
+        goto free_pool;
+      }
+
+      if (Image[0] == 0 && Image[1] == 0 && Image[2] == 0){
+        //check if it is equal to 0
+        DEBUG ((DEBUG_INFO, "The data read from PSS Chip is equal to 0\n"));
+        goto free_pool;
+      }
+    }
+
+    //
+    // Defining size of Pss data as 3 words
+    //
+    ImageSize = sizeof (Image) / sizeof (UINT16);
+    DEBUG ((DEBUG_INFO, "Size of the Image %x\n", ImageSize));
+    Status = WriteEepromImage (Adapter, Image, ImageSize, TRUE);
+    if(Status){
+      DEBUG ((DEBUG_INFO,"Flashing EEPROM Failed\n"));
       goto free_pool;
     }
-  }
+    SystemConfiguration.GbeFwUpdateEnable = FALSE;
+    VarSize = sizeof(SETUP_DATA);
+    Status = gRT->SetVariable (
+             L"Setup",
+             &gSetupVariableGuid,
+             VariableAttributes,
+             VarSize,
+             &SystemConfiguration
+             );
+    DEBUG ((DEBUG_INFO, "SystemConfiguration.GbeFwUpdateEnable %x\n",SystemConfiguration.GbeFwUpdateEnable));
 
-  //
-  // Defining size of Pss data as 3 words
-  //
-  ImageSize = sizeof (Image_Pss) / sizeof (UINT16);
-  DEBUG ((DEBUG_INFO, "Size of the Image %x\n", ImageSize));
-  Status = WriteEepromImage (Adapter, Image, ImageSize, TRUE);
-  if(Status){
-    DEBUG ((DEBUG_INFO,"Flashing EEPROM Failed\n"));
-    goto free_pool;
-  }
-  SystemConfiguration.GbeFwUpdateEnable = FALSE;
-  VarSize = sizeof(SETUP_DATA);
-  Status = gRT->SetVariable (
-           L"Setup",
-           &gSetupVariableGuid,
-           VariableAttributes,
-           VarSize,
-           &SystemConfiguration
-           );
-  DEBUG ((DEBUG_INFO, "SystemConfiguration.GbeFwUpdateEnable %x\n",SystemConfiguration.GbeFwUpdateEnable));
-
-  //
-  // Calling UpdateNVM to ensure we are on valid bank i.e bank 1
-  // So the data can be updated to GBE region
-  //
-  Status = UpdateNVM (&Adapter->Hw);
-  if (Status) {
-    goto free_pool;
-  }
-
-  // Updating the RAL0 and RAH0 registers for CSME to get intrrupt and read the MAC address.
-  //
-
-  DEBUG((DEBUG_INFO, "Reading the data present in RAL0 and RAH0\n"));
-
-  if (PciSegmentRead32 (GbePciCfgBase ()) != 0xFFFFFFFF) {
-    GbeBar = PciSegmentRead32 (GbePciCfgBase () + PCI_BASE_ADDRESSREG_OFFSET) & 0xFFFFFFF0;
-    if ((PciSegmentRead32 (GbePciCfgBase () + PCI_BASE_ADDRESSREG_OFFSET) & B_PCI_BAR_MEMORY_TYPE_MASK) == B_PCI_BAR_MEMORY_TYPE_64) {
-      GbeBar += LShiftU64 (PciSegmentRead32 (GbePciCfgBase () + (PCI_BASE_ADDRESSREG_OFFSET + 4)), 32);
-    }
-    DEBUG ((DEBUG_INFO, "GbeBar = 0x%x\n", GbeBar));
-    if (GbeBar == 0) {
-      DEBUG ((DEBUG_ERROR, "MMIO Bar for GbE device isn't programmed\n"));
+    //
+    // Calling UpdateNVM to ensure we are on valid bank i.e bank 1
+    // So the data can be updated to GBE region
+    //
+    Status = UpdateNVM (&Adapter->Hw);
+    if (Status) {
       goto free_pool;
     }
 
+    // Updating the RAL0 and RAH0 registers for CSME to get intrrupt and read the MAC address.
     //
-    // Write to Gbe register RAL0
-    //
-    Value = (Image[1] << 16) + Image[0];
-    MmioWrite32 (GbeBar + R_GBE_MEM_RAL_0, Value);
 
-    //
-    // Write to Gbe register RAH0
-    //
-    RAH0[0] = MmioRead32 (GbeBar + R_GBE_MEM_RAH_0);
-    DEBUG((DEBUG_INFO, "Data present in RAH0 %x\n", RAH0[0]));
+    DEBUG((DEBUG_INFO, "Reading the data present in RAL0 and RAH0\n"));
 
-    Value = RAH0[0] & 0xFFFF0000;
-    Value = Value | Image[2];
-    DEBUG ((DEBUG_INFO,"Value %x\n", Value));
-    MmioWrite32 (GbeBar + R_GBE_MEM_RAH_0, Value);
+    if (PciSegmentRead32 (GbePciCfgBase ()) != 0xFFFFFFFF) {
+      GbeBar = PciSegmentRead32 (GbePciCfgBase () + PCI_BASE_ADDRESSREG_OFFSET) & 0xFFFFFFF0;
+      if ((PciSegmentRead32 (GbePciCfgBase () + PCI_BASE_ADDRESSREG_OFFSET) & B_PCI_BAR_MEMORY_TYPE_MASK) == B_PCI_BAR_MEMORY_TYPE_64) {
+        GbeBar += LShiftU64 (PciSegmentRead32 (GbePciCfgBase () + (PCI_BASE_ADDRESSREG_OFFSET + 4)), 32);
+      }
+      DEBUG ((DEBUG_INFO, "GbeBar = 0x%x\n", GbeBar));
+      if (GbeBar == 0) {
+        DEBUG ((DEBUG_ERROR, "MMIO Bar for GbE device isn't programmed\n"));
+        goto free_pool;
+      }
 
-    //
-    // Read the gbe register RAL0.
-    //
-    DEBUG ((DEBUG_INFO, "Data present in RAL0 after write to registers %x\n", MmioRead32 (GbeBar + R_GBE_MEM_RAL_0)));
+      //
+      // Write to Gbe register RAL0
+      //
+      Value = (Image[1] << 16) + Image[0];
+      MmioWrite32 (GbeBar + R_GBE_MEM_RAL_0, Value);
 
-    //
-    // Read the gbe register RAH0.
-    //
-    DEBUG ((DEBUG_INFO, "Data present in RAH0 after write to  registers %x\n", MmioRead32 (GbeBar + R_GBE_MEM_RAH_0)));
+      //
+      // Write to Gbe register RAH0
+      //
+      RAH0[0] = MmioRead32 (GbeBar + R_GBE_MEM_RAH_0);
+      DEBUG((DEBUG_INFO, "Data present in RAH0 %x\n", RAH0[0]));
+
+      Value = RAH0[0] & 0xFFFF0000;
+      Value = Value | Image[2];
+      DEBUG ((DEBUG_INFO,"Value %x\n", Value));
+      MmioWrite32 (GbeBar + R_GBE_MEM_RAH_0, Value);
+
+      //
+      // Read the gbe register RAL0.
+      //
+      DEBUG ((DEBUG_INFO, "Data present in RAL0 after write to registers %x\n", MmioRead32 (GbeBar + R_GBE_MEM_RAL_0)));
+
+      //
+      // Read the gbe register RAH0.
+      //
+      DEBUG ((DEBUG_INFO, "Data present in RAH0 after write to  registers %x\n", MmioRead32 (GbeBar + R_GBE_MEM_RAH_0)));
+    }
+    free_pool:
+      FreePool (Adapter);
+      FreePool (Handles);
+      return;
   }
+  DEBUG ((DEBUG_INFO, "%a() End\n", __FUNCTION__));
 
-
-free_pool:
-  FreePool (Adapter);
-  FreePool (Handles);
-  return;
 }
 
 /**
@@ -596,31 +591,4 @@ GbeFwUpdateEntryPoint (
     );
 
   return EFI_SUCCESS;
-}
-
-/**
-  This function is used to swap the bytes.
-
-  @param[in]    MacData              Pointer to the MAC address read from NVM region or PSS chip.
-  @param[in]    length               The length of the MAC address.
-  @param[out]   Mac_NormalOrder      Pointer to the Mac address to be printed in normal order.
-
-  @return       Status                   The return status for this function.
-*/
-EFI_STATUS
-ByteSwapping_call (
-  IN UINT16  *MacData ,
-  IN UINT16   length,
-  OUT UINT16 *Mac_NormalOrder
-  )
-{
-  UINT16 i = 0;
-  EFI_STATUS   Status = EFI_SUCCESS;
-  //
-  // Byte swapping
-  //
-  for (i = 0; i < length; i++) {
-    Mac_NormalOrder[i] = ((MacData[i] << 8) & 0xff00) | ((MacData[i] >> 8) & 0x00ff);
-  }
-  return Status;
 }

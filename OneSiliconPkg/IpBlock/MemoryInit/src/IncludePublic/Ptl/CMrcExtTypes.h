@@ -145,7 +145,8 @@ typedef struct {
   UINT32 RDCTLET : 1;       ///< BIT17 - Read CTLE Training
   UINT32 RDDQODTT : 1;      ///< BIT18 - Read DQ ODT Training
   UINT32 EMPHASIS : 1;      ///< BIT19 - Pre-Emphasis LP5 Training
-  UINT32 ReservedBits : 12;   ///< BIT20-31 - Reserved
+  UINT32 DIMMRXOFFSET : 1;  ///< BIT20 - DRAM Rx Offset Calibration Training
+  UINT32 ReservedBits : 11; ///< BIT21-31 - Reserved
 } TrainingStepsEn3;
 
 typedef struct {

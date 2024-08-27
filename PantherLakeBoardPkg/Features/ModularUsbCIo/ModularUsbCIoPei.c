@@ -529,6 +529,13 @@ ModularUsbCIoPostMemCallback (
   CseModularUsbCIoConfig = ConvertModularUsbIoConfig ((EC_MODULAR_IO_CONFIG *) &PlatformModularUsbCIoConfig);
   DEBUG ((DEBUG_INFO, "[TCSS] Expected ModularIoConfig = 0x%08x\n", CseModularUsbCIoConfig));
 
+  //
+  // Check PWR FLR and clear it if it's set.
+  //
+  if (PmcIsPowerFailureDetected ()) {
+    PmcClearPowerFailureStatus ();
+  }
+
   Status = PeiServicesLocatePpi (
            &gEfiPeiReadOnlyVariable2PpiGuid,
            0,
@@ -565,6 +572,7 @@ ModularUsbCIoPostMemCallback (
       if (CurrentTcssStrapConfigPtr != NULL) {
         if (*CurrentTcssStrapConfigPtr != CseModularUsbCIoConfig) {
           SetStrapOverrideIsNeeded = TRUE;
+          VariableUpdateIsNeeded   = TRUE;
         }
       } else {
         SetStrapOverrideIsNeeded = TRUE;

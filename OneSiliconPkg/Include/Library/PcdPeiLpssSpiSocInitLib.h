@@ -1,5 +1,5 @@
 /** @file
-  Lpss SPI SoC PEI Initialization library for PTL, NVL PCD.
+  Lpss SPI SoC PEI Initialization library for PTL PCD.
   All function in this library is available for PEI.
 
   @copyright

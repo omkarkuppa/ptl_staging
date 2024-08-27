@@ -217,7 +217,7 @@ PtlPcdInitMeHandle (
 
   @retval EFI_SUCCESS                The ME Handle and its PPI descriptor were successfully initialized and allocated.
   @retval EFI_OUT_OF_RESOURCES       Memory allocation failed for the ME Handle, its callbacks, or the PPI descriptor.
-  @retval EFI_NOT_FOUND              The NVL PCH configuration HOB could not be found when the PCH is attached.
+  @retval EFI_NOT_FOUND              The PCH configuration HOB could not be found when the PCH is attached.
 **/
 EFI_STATUS
 InitializeMeHandlePpi (

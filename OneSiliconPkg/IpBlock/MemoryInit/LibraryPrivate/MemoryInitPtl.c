@@ -557,6 +557,8 @@ PeimMemoryInit (
   VOID                         *S3DataPtr;
   BOOLEAN                      IsLastBasicMemoryTestPass;
   BOOLEAN                      DidPreviousTrainingFail;
+  UINT8                        Controller;
+  UINT8                        Channel;
 
   UINT32                       ImrsSize;
   UINT32                       Alignment;
@@ -765,6 +767,13 @@ DEBUG_CODE_END();
       DEBUG ((DEBUG_ERROR, "ERROR: DDRIO IP VERSION/SEGMENT/STEPPING %Xh.%Xh.%Xh is not supported:\n",
         Inputs->DdrIoIpVersion.Bits.Version, Inputs->DdrIoIpVersion.Bits.Segment, Inputs->DdrIoIpVersion.Bits.Stepping));
       ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
+  }
+
+  if (Inputs->IsDdrphyx64) {
+    Controller = 1;
+    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+      ExtInputs->DisableChannel[Controller][Channel] = 1;
+    }
   }
 
 #ifndef MDEPKG_NDEBUG
@@ -1210,6 +1219,14 @@ DEBUG_CODE_END();
         Inputs->TsegSize = SavedTsegSize * (MemConfigNoCrc->RetryCount + 1);
         DEBUG ((DEBUG_INFO, "Reserving Failed Tseg in Tseg region, Inputs->TsegSize = 0x%X\n", Inputs->TsegSize));
       }
+    }
+  }
+
+  if (Inputs->TxtClean) {
+    if (Outputs->TxtScrubSuccess) {
+      // Clear the sticky scratchpad to indicate that MRC is finished,
+      // so that we can run Fast flow on the next boot
+      MrcWmRegClrBits (MrcData, SSKPD_PCU_SKPD_MRC_RUNNING);
     }
   }
 
@@ -1927,7 +1944,7 @@ RetrieveRequiredMemorySize (
   EFI_STATUS                  Status;
   EFI_PEI_HOB_POINTERS        Hob;
   EFI_MEMORY_TYPE_INFORMATION *MemoryData;
-  UINT8                       Index;
+  UINT32                      Index;
   UINTN                       TempPageNum;
   UINT32                      NoOfEntries;
 
@@ -2635,7 +2652,6 @@ MrcSetupMrcData (
   MRC_FUNCTION                        *MrcCall;
   MrcControllerIn                     *ControllerIn;
   MrcChannelIn                        *ChannelIn;
-  MrcDimmSts                          Status;
   UINT8                               Dimm;
   MrcDimmIn                           *DimmIn;
   UINT8                               SpdNum;
@@ -2656,6 +2672,7 @@ MrcSetupMrcData (
   SIMICS_MEMFLOW_STRUCT               Memflows1;
   SIMICS_MEMFLOW2_STRUCT              Memflows2;
   CPU_MEMORY_INIT_CONFIG              CpuMemoryInitConfig;
+  BOOLEAN                             IsDdr5;
 
   Inputs  = &MrcData->Inputs;
   MrcCall = Inputs->Call.Func;
@@ -2664,6 +2681,7 @@ MrcSetupMrcData (
   Ddr5DoubleSize1Dpc = FALSE;
   Ddr5DoubleSize2Dpc = FALSE;
   Lpddr5CammPresent  = FALSE;
+  IsDdr5 = FALSE;
 
   if (ExtInputs->RetrainToWorkingChannel && (BootMode == bmCold)) {
     if (MrcDisableFailingChannels (MrcData, READ_RESTORE_FROM_SCRATCHPAD)) {
@@ -2678,7 +2696,6 @@ MrcSetupMrcData (
   DEBUG ((DEBUG_WARN, "RcompTarget offset = 0x%x\n", (UINTN)ExtInputs->RcompTarget ));
 
   Inputs->MaxVrefSamplesOvrd  = 0;
-  Status                      = DIMM_NOT_PRESENT;
 
   //
   // Force standard profile when system boot mode indicates. Usually means some has cleared CMOS.
@@ -2819,10 +2836,12 @@ DEBUG_CODE_END();
   Inputs->Lp5NZQCount = 0;
   Inputs->IsXtensaEccDisabled = TRUE;
   Inputs->SenseAtRxDll = TRUE;
-  Inputs->MptuPropagationErrorFlow = TRUE;
+
+  Inputs->MptuPropagationErrorFlow = FALSE;
+
+  Inputs->RloadTarget = 1000;
 
   ExtInputs->MemoryProfile = STD_PROFILE;
-
 
   SpdCount = 0;
   MrcCall->MrcSetMem ((UINT8 *) SpdMatched, sizeof (SpdMatched), 0);
@@ -2919,11 +2938,14 @@ DEBUG_CODE_END();
                 SpdMatched[SpdCount].Channel = Channel;
                 SpdMatched[SpdCount].Dimm = Dimm;
                 SpdCount++;
+              } else { // bmWarm, bmS3
+                IsDdr5 = SaveData->IsDdr5;
               }
             } else {
               MrcCall->MrcCopyMem ((UINT8*) &DimmIn->Spd.Data, (UINT8*) &MemConfigNoCrc->SpdData->SpdData[Controller][Channel][Dimm][0], sizeof (MrcSpd));
             }
             if (DimmIn->Spd.Data.Ddr5.Base.DramDeviceType.Bits.Type == MRC_SPD_DDR5_SDRAM_TYPE_NUMBER) {
+              IsDdr5 = TRUE;
               if ((DimmIn->Spd.Data.Ddr5.Base.ModuleType.Bits.ModuleType == CammMemoryPackage) &&
                  (DimmIn->Spd.Data.Ddr5.ModuleCommon.ModuleOrganization.Bits.RankCount <= 1)) {
                 Ddr5DoubleSize1Dpc = TRUE;
@@ -2945,6 +2967,10 @@ DEBUG_CODE_END();
       } // for Dimm
     } // for Channel
   } // for Controller
+  if (IsDdr5) {
+    ExtInputs->SaGv = 0;
+    Inputs->FreqMax = f3200;
+  }
 
   Inputs->Lpddr5Camm = Lpddr5CammPresent;
 
@@ -3043,6 +3069,7 @@ DEBUG_CODE_END();
       ExtInputs->TrainingEnables3.PHASECLKCAL    = 0;
       ExtInputs->TrainingEnables3.WCKPADDCCCAL   = 0;
       ExtInputs->TrainingEnables3.EMPHASIS       = 0;
+      ExtInputs->TrainingEnables3.DIMMRXOFFSET   = 0;
     }
   }
 

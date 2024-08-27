@@ -42,7 +42,6 @@
 extern UINT8 VtioSetupVfrBin[];
 extern UINT8 VtioSetupStrings[];
 
-EFI_GUID                         gVtioFormSetGuid               = VTIO_FORMSET_GUID;
 VTIO_SETUP_DATA_STRUCT           gVtioSetupData                 = {0};
 EFI_HII_CONFIG_ACCESS_PROTOCOL   gVtioSetupMenuCallbackProtocol = {0};
 EFI_HII_CONFIG_ROUTING_PROTOCOL  *mHiiConfigRouting             = NULL;
@@ -251,7 +250,7 @@ SdevXhciAcpiPathNameUpdate (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Status = HiiGetBrowserData (&gVtioFormSetGuid, VTIO_CFG_VARIABLE_NAME, VarSize, (UINT8 *) CurrentUserSetupData);
+  Status = HiiGetBrowserData (&gVtioSetupGuid, VTIO_CFG_VARIABLE_NAME, VarSize, (UINT8 *) CurrentUserSetupData);
   ASSERT_EFI_ERROR (Status);
   if (Status != TRUE) {
     FreePool (CurrentUserSetupData);
@@ -282,7 +281,7 @@ SdevXhciAcpiPathNameUpdate (
 
   if (RequestString != NULL) {
     VarSize = sizeof (VTIO_SETUP_DATA_STRUCT);
-    Status = HiiSetBrowserData (&gVtioFormSetGuid, VTIO_CFG_VARIABLE_NAME, VarSize, (UINT8 *) CurrentUserSetupData, RequestString);
+    Status = HiiSetBrowserData (&gVtioSetupGuid, VTIO_CFG_VARIABLE_NAME, VarSize, (UINT8 *) CurrentUserSetupData, RequestString);
     ASSERT_EFI_ERROR (Status);
     FreePool (RequestString);
     if (Status != TRUE) {
@@ -361,7 +360,7 @@ VtioFormCallBack (
   ///
   /// GetBrowserData by VarStore Name (VtioCfg)
   ///
-  Status = HiiGetBrowserData (&gVtioFormSetGuid, VTIO_CFG_VARIABLE_NAME, VarSize, (UINT8 *) CurrentUserSetupData);
+  Status = HiiGetBrowserData (&gVtioSetupGuid, VTIO_CFG_VARIABLE_NAME, VarSize, (UINT8 *) CurrentUserSetupData);
   ASSERT_EFI_ERROR (Status);
   if (Status != TRUE) {
     FreePool (CurrentUserSetupData);
@@ -393,7 +392,7 @@ VtioFormCallBack (
       RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (VTIO_SETUP_DATA_STRUCT, SdevXhciAcpiPathNameDevice1), sizeof (CurrentUserSetupData->SdevXhciAcpiPathNameDevice1));
       if (RequestString != NULL) {
         VarSize = sizeof (VTIO_SETUP_DATA_STRUCT);
-        Status = HiiSetBrowserData (&gVtioFormSetGuid, VTIO_CFG_VARIABLE_NAME, VarSize, (UINT8 *) CurrentUserSetupData, RequestString);
+        Status = HiiSetBrowserData (&gVtioSetupGuid, VTIO_CFG_VARIABLE_NAME, VarSize, (UINT8 *) CurrentUserSetupData, RequestString);
         ASSERT_EFI_ERROR (Status);
         FreePool (RequestString);
         if (Status != TRUE) {
@@ -428,7 +427,7 @@ VtioFormCallBack (
       RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (VTIO_SETUP_DATA_STRUCT, SdevXhciAcpiPathNameDevice2), sizeof (CurrentUserSetupData->SdevXhciAcpiPathNameDevice2));
       if (RequestString != NULL) {
         VarSize = sizeof (VTIO_SETUP_DATA_STRUCT);
-        Status = HiiSetBrowserData (&gVtioFormSetGuid, VTIO_CFG_VARIABLE_NAME, VarSize, (UINT8 *) CurrentUserSetupData, RequestString);
+        Status = HiiSetBrowserData (&gVtioSetupGuid, VTIO_CFG_VARIABLE_NAME, VarSize, (UINT8 *) CurrentUserSetupData, RequestString);
         ASSERT_EFI_ERROR (Status);
         FreePool (RequestString);
         if (Status != TRUE) {
@@ -499,7 +498,7 @@ VtioFormExtractConfig (
 
   Status = gRT->GetVariable (
                 VTIO_CFG_VARIABLE_NAME,
-                &gVtioFormSetGuid,
+                &gVtioSetupGuid,
                 NULL,
                 &BufferSize,
                 &lVtioSetupData
@@ -515,7 +514,7 @@ VtioFormExtractConfig (
     DEBUG ((DEBUG_INFO, "Overriding defaults if VTIO was previously enabled\n"));
     // Check routing data in <ConfigHdr>.
     // Note: if only one Storage is used, then this checking could be skipped.
-    if (!HiiIsConfigHdrMatch (Request, &gVtioFormSetGuid, NULL)) {
+    if (!HiiIsConfigHdrMatch (Request, &gVtioSetupGuid, NULL)) {
       return EFI_NOT_FOUND;
     }
     // Set Request to the unified request string.
@@ -583,7 +582,7 @@ VtioFormRouteConfig (
   VtioSetupVarAttr = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE;
   Status = gRT->SetVariable (
                   VTIO_CFG_VARIABLE_NAME,
-                  &gVtioFormSetGuid,
+                  &gVtioSetupGuid,
                   VtioSetupVarAttr,
                   VariableSize,
                   &gVtioSetupData
@@ -628,7 +627,7 @@ VtioSetupEntry (
   // Check if VtioSetup variable present in EFI variables
   Status = gRT->GetVariable (
                   VTIO_CFG_VARIABLE_NAME,
-                  &gVtioFormSetGuid,
+                  &gVtioSetupGuid,
                   &VtioSetupVarAttr,
                   &VariableSize,
                   &gVtioSetupData
@@ -641,7 +640,7 @@ VtioSetupEntry (
     VariableSize = sizeof (VTIO_SETUP_DATA_STRUCT);
     Status = gRT->SetVariable (
                     VTIO_CFG_VARIABLE_NAME,
-                    &gVtioFormSetGuid,
+                    &gVtioSetupGuid,
                     VtioSetupVarAttr,
                     VariableSize,
                     &gVtioSetupData
@@ -690,7 +689,7 @@ VtioSetupEntry (
   // Publish our HII data
   //
   VtioHiiHandle = HiiAddPackages (
-                     &gVtioFormSetGuid,
+                     &gVtioSetupGuid,
                      DriverHandle,
                      VtioSetupStrings,
                      VtioSetupVfrBin,

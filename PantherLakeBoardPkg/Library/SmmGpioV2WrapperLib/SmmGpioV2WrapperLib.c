@@ -1051,6 +1051,9 @@ GpioV2LockAll (
     DEBUG ((DEBUG_ERROR, "Failed to get GPIO Services with HID %a\n", GPIO_HID_PTL_PCD_P));
   } else {
     Status = GpioServices->LockAll (GpioServices);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "Failed to set Lock and LockTx registers as enabled for all GpioPads\n"));
+    }
   }
 
   return Status;

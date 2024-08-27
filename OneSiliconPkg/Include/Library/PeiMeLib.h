@@ -186,28 +186,6 @@ PeiHeciSetUnconfigOnRtcClearDisableMsg (
   );
 
 //
-// MKHI_DNX_GROUP_ID = 0x0D
-//
-
-/**
-  Send DNX Request Set message.
-
-  @param[out] BiosAction          Requested Bios Action:
-                                    0 - Continue Post
-                                    1 - Reset Required
-
-  @retval EFI_SUCCESS             Command succeeded
-  @retval EFI_INVALID_PARAMETER   Invalid input parameter
-  @retval EFI_UNSUPPORTED         Current ME mode doesn't support this function
-  @retval EFI_DEVICE_ERROR        HECI Device error, command aborts abnormally
-  @retval EFI_TIMEOUT             HECI does not return the buffer before timeout
-**/
-EFI_STATUS
-PeiHeciDnxReqSet (
-  OUT UINT32         *BiosAction
-  );
-
-//
 // MKHI_GEN_GROUP_ID = 0xFF
 //
 

@@ -49,6 +49,10 @@ typedef struct {
   UINT32    MsrPowerLimit4;
   UINT32    MsrPowerLimit4DisableFvm;
   UINT8     MsrPowerLimit1TimeWindow;
+  UINT8     IsysCurrentL1Tau;
+  UINT16    IsysCurrentLimitL1;
+  UINT16    IsysCurrentLimitL2;
+  UINT16    VsysMax;
 } POWER_MANAGEMENT_PARAM;
 
 typedef struct {

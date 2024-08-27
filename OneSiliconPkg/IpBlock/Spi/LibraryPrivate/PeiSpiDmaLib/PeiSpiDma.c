@@ -34,6 +34,7 @@
 #include <Ppi/FirmwareVolumeShadowPpi.h>
 #include <Library/PchInfoLib.h>
 #include <Library/SpiAccessLib.h>
+#include <Library/PreSiliconEnvDetectLib.h>
 
 
 
@@ -500,7 +501,7 @@ PeiSpiDmaRead (
         Remainder
         );
     }
-    return Status;
+    return EFI_SUCCESS;
   } else {
     CopyMem (Destination, FlashAddress, ReadSize);
   }
@@ -601,9 +602,11 @@ DmaServiceInit (
   EDKII_PEI_FIRMWARE_VOLUME_SHADOW_PPI *FvShadowPpi;
 
   Status = EFI_SUCCESS;
+  if (IsSimicsEnvironment () || IsHSLEEnvironment ()){
+    return Status;
+  }
   // Detect SPI DMA presence on the platform.
   if (IsSpiDmaSupported ()){
-
     Status = PeiServicesLocatePpi (
                &gEdkiiPeiFirmwareVolumeShadowPpiGuid,
                0,

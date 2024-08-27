@@ -42,7 +42,7 @@ DefinitionBlock (
   External (\P8XH, MethodObj)
   External (\TSOD, IntObj)
   External (\PNHM, IntObj)
-  External (\CCNT, IntObj)
+  External (\TCNT, IntObj)
   External (\PWRS, IntObj)
   External (\CRTT, IntObj)
   External (\ACTT, IntObj)

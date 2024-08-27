@@ -556,6 +556,7 @@ Method (NTIR, 1, Serialized)
   @param  None.
   @retval None.
 **/
+/*
 Method (WKEC, 0, Serialized)
 {
   If (CondRefOf (\_SB.PC00.LPCB.H_EC)) {
@@ -590,6 +591,7 @@ Method (WKEC, 0, Serialized)
     }
   }
 }
+*/
 
 /**
   XDAT: XDCI device attach/detach

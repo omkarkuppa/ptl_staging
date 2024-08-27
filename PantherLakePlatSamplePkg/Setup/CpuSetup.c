@@ -264,7 +264,7 @@ InitTurboRatioDefault (
       mCpuSetup.RatioLimitNumCore[Index] = mCpuSetup.RatioLimitNumCoreDefault[Index];
     }
 
-    if (mCpuSetup.ActiveSmallCoreCount != 0) {
+    if ((mCpuSetup.ActiveSmallCoreCount != 0) || (mCpuSetup.ActiveLpAtomCoreCount != 0)) {
       AtomMsrTurboRatioLimitRatio.Uint64 = AsmReadMsr64 (MSR_ATOM_TURBO_RATIO_LIMIT);
       mCpuSetup.AtomRatioLimitRatioDefault[0] = (UINT8) AtomMsrTurboRatioLimitRatio.Bits.RatioLimit0;
       mCpuSetup.AtomRatioLimitRatioDefault[1] = (UINT8) AtomMsrTurboRatioLimitRatio.Bits.RatioLimit1;
@@ -613,6 +613,12 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_STRING_ID mTdcCurrentLimitInfoStr[] = {
   STRING_TOKEN(STR_VR_TDC_CURRENT_LIMIT_INFO_VALUE2),
   STRING_TOKEN(STR_VR_TDC_CURRENT_LIMIT_INFO_VALUE3)
 };
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_STRING_ID mVoltageLimitInfoStr[] = {
+  STRING_TOKEN(STR_VR_VOLTAGE_LIMIT_INFO_VALUE0),
+  STRING_TOKEN(STR_VR_VOLTAGE_LIMIT_INFO_VALUE1),
+  STRING_TOKEN(STR_VR_VOLTAGE_LIMIT_INFO_VALUE2),
+  STRING_TOKEN(STR_VR_VOLTAGE_LIMIT_INFO_VALUE3)
+};
 
 /**
   Display the CPU VR menu programmed defaults.
@@ -622,24 +628,26 @@ InitCpuVrConfig (
   VOID
   )
 {
-  EFI_STATUS                  Status;
-  UINT32                      MailboxStatus;
-  UINT64                      TempAcLoadline;
-  UINT64                      TempDcLoadline;
-  INT64                       ConvertedImonOffset;
-  UINT64                      ConvertedImonSlope;
-  UINT8                       TempVrAddress;
-  UINTN                       VrIndex;
-  UINTN                       VariableSize;
-  UINT32                      Attributes;
-  BOOLEAN                     SvidEnabled;
-  PCODE_MAILBOX_INTERFACE     MailboxCommand;
-  MAILBOX_DATA_VR_TDC_CONFIG  VrTdcMailboxData;
-  MAILBOX_DATA_IMON_CONFIG    ImonMailboxData;
-  MAILBOX_DATA_PS_CUTOFF      PsCutoffMailboxData;
-  MAILBOX_DATA_ACDC_LOADLINE  AcDcLoadlineMailboxData;
-  MAILBOX_DATA_ICC_MAX        IccMaxMailboxData;
+  EFI_STATUS                         Status;
+  UINT32                             MailboxStatus;
+  UINT64                             TempAcLoadline;
+  UINT64                             TempDcLoadline;
+  INT64                              ConvertedImonOffset;
+  UINT64                             ConvertedImonSlope;
+  UINT8                              TempVrAddress;
+  UINTN                              VrIndex;
+  UINTN                              VariableSize;
+  UINT32                             Attributes;
+  BOOLEAN                            SvidEnabled;
+  PCODE_MAILBOX_INTERFACE            MailboxCommand;
+  MAILBOX_DATA_VR_TDC_CONFIG         VrTdcMailboxData;
+  MAILBOX_DATA_IMON_CONFIG           ImonMailboxData;
+  MAILBOX_DATA_PS_CUTOFF             PsCutoffMailboxData;
+  MAILBOX_DATA_ACDC_LOADLINE         AcDcLoadlineMailboxData;
+  MAILBOX_DATA_ICC_MAX               IccMaxMailboxData;
   MAILBOX_DATA_FAST_VMODE_ICC_LIMIT  FastVIccMaxMailboxData;
+  MAILBOX_DATA_VOLTAGE_LIMIT         VrVoltageLimitMailboxData;
+  UINT64                             ConvertedVoltageLimit;
 
   VariableSize = sizeof (CPU_SETUP);
   Status = gRT->GetVariable (
@@ -873,6 +881,29 @@ InitCpuVrConfig (
         (UINT16) (VrTdcMailboxData.Fields.CurrentLimit)
         );
       DEBUG ((DEBUG_INFO, "VR: TDC[%x] = %d\n", VrIndex, (UINT16)(VrTdcMailboxData.Fields.CurrentLimit)));
+
+      ///
+      /// VR Voltage Limit
+      /// -Mailbox Voltage Limit defined as U16.3.13, Range 0-7.999V
+      /// -Policy defined in mV, Range 0-7999mV
+      ///
+      MailboxCommand.InterfaceData = 0;
+      MailboxCommand.Fields.Command = MAILBOX_VR_CMD_SVID_VR_HANDLER;
+      MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SVID_GET_VOLTAGE_LIMIT;
+      MailboxCommand.Fields.Param2 = (TempVrAddress & VR_ADDRESS_MASK);
+      VrVoltageLimitMailboxData.Data32 = 0;
+      Status = MailboxRead (MailboxCommand.InterfaceData, &VrVoltageLimitMailboxData.Data32, &MailboxStatus);
+      if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
+        DEBUG ((DEBUG_ERROR, "VR: Error Reading VR Voltage Config. EFI_STATUS = %r, Mailbox Status = %X\n", Status, MailboxStatus));
+      }
+      FromUnsignedFixedPoint16 ((UINT16) (VrVoltageLimitMailboxData.Fields.VoltageLimit), 1000, 3, 13, &ConvertedVoltageLimit, NULL);
+      InitString (
+        gHiiHandle,
+        mVoltageLimitInfoStr[VrIndex],
+        L"%d",
+        (UINT16) ConvertedVoltageLimit
+        );
+      DEBUG ((DEBUG_INFO, "VR: Voltage Limit[%x] = %d\n", VrIndex, (UINT16) ConvertedVoltageLimit));
     }
   }
 

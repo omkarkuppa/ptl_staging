@@ -23,19 +23,9 @@
 
 #include <Base.h>
 #include <Uefi/UefiBaseType.h>
-#include <Library/BaseLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/DebugLib.h>
-#include <Library/PchInfoLib.h>
-#include <GpioV2Functionalities.h>
-#include <Library/P2SbSidebandAccessLib.h>
-#include <Library/PeiItssLib.h>
-#include <Library/PchPciBdfLib.h>
-#include <Library/SerialIoUartSocLib.h>
 #include <Ppi/SiPolicy.h>
-#include <Register/SerialIoPciConfigControlRegs.h>
-#include <Register/PchRegs.h>
-
+#include <SerialIoConfig.h>
+#include <Library/SerialIoUartSocLib.h>
 /**
   Initialize the Uart controller
 

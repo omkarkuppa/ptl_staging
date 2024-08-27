@@ -24,7 +24,6 @@
 #include <Library/ConfigBlockLib.h>
 #include <Library/PchInfoLib.h>
 #include <Library/SocInfoLib.h>
-#include <Library/SerialIoUartDebugPropertyPcdLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Ppi/SiPolicy.h>
 #include <Library/PchLimits.h>

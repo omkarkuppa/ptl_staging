@@ -43,6 +43,18 @@ const UINT8 Lp5ReadLatencyDvfscEnabledSet0[6] = { 3, 5, 7, 8, 10, 12 };
 const UINT8 Lp5ReadLatencyDvfscEnabledSet1[6] = { 3, 5, 7, 8, 10, 12 };
 const UINT8 Lp5ReadLatencyDvfscEnabledSet2[6] = { 3, 5, 7, 10, 12, 14 };
 
+// This table is used for LPDDR MR5 decoding
+struct {
+  UINT8   VendorId;
+  UINT16  JedecId;
+  char    *VendorName;
+} DramVendorList [] = {
+  { 1,    0xCE00, "Samsung" },
+  { 3,    0xFE02, "Elpida"  },
+  { 6,    0xAD00, "Hynix"   },
+  { 0xFF, 0x2C00, "Micron"  },
+};
+
 /**
   Calculate the tCL value for LPDDR5.
 
@@ -670,4 +682,128 @@ McFrequencySet (
   InitCompleteOverride (MrcData, LpJedecFreqSwitch, FALSE, &InitCompleteOvdValSave);
 
   return Status;
+}
+
+/**
+  Read LPDDR information from MR5 and MR8 and print to the debug log.
+  Also update the Manufacturer's ID in the SPD table, for BIOS Setup and SMBIOS table.
+
+  @param[in] MrcData - include all the MRC general data.
+
+  @retval none
+**/
+void
+ShowLpddrInfo (
+  IN  MrcParameters *const MrcData
+  )
+{
+  MrcInput        *Inputs;
+  MrcDebug        *Debug;
+  MrcOutput       *Outputs;
+  MrcSpd          *SpdIn;
+  UINT32          Controller;
+  UINT32          Channel;
+  UINT32          Rank;
+  UINT8           MrrResult[MRC_MRR_ARRAY_SIZE];
+  UINT32          MrAddr;
+  UINT32          Device;
+  UINT32          DeviceMax;
+  UINT32          Index;
+  BOOLEAN         VendorFound;
+  UINT16          JedecId;
+#ifdef MRC_DEBUG_PRINT
+  UINT8           MrrResult2[MRC_MRR_ARRAY_SIZE];
+  MrcDimmOut      *DimmOut;
+  LPDDR5_MODE_REGISTER_8_TYPE  Mr8;
+  static const UINT8 DensityMap[] = { 2, 3, 4, 6, 8, 12, 16, 24, 32 };
+#endif
+
+  Inputs      = &MrcData->Inputs;
+  Outputs     = &MrcData->Outputs;
+  Debug       = &Outputs->Debug;
+
+  VendorFound  = FALSE;
+  Index        = 0;
+
+  if (Inputs->BootMode != bmCold) {
+    // Full deswizzle table is not present on non-cold flows, so cannot parse MR read.
+    return;
+  }
+
+  // LPDDR: Read MR5 and MR8
+  // DDR5:  Read MR0 and MR1
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+        if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
+          continue;
+        }
+
+        if (Outputs->IsLpddr) {
+          DeviceMax = (Outputs->LpByteMode) ? 2 : 1;
+          // MR5 - Manufacturer ID
+          MrAddr = mrMR5;
+          MrcIssueMrr (MrcData, Controller, Channel, Rank, MrAddr, MrrResult);
+          for (Device = 0; Device < DeviceMax; Device++) {
+            MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\tDevice[%u]= 0x%02X", Device, MrrResult[Device]);
+            VendorFound = FALSE;
+            for (Index = 0; Index < sizeof (DramVendorList) / sizeof (DramVendorList[0]); Index++) {
+              if (DramVendorList[Index].VendorId == MrrResult[Device]) {
+                MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %s\n", DramVendorList[Index].VendorName);
+                VendorFound = TRUE;
+                break;
+              }
+            }
+            if (!VendorFound) {
+              MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " Unknown\n");
+            }
+          }
+
+          if (VendorFound) {
+            // Patch SPD data with vendor ID code.
+            // This is consumed by BIOS Setup and SMBIOS Type 17 table creation code.
+            // If SAGV enabled, only do this on the last point.
+            if ((!MrcIsSaGvEnabled (MrcData)) || (Outputs->SaGvPoint == Outputs->SaGvLast)) {
+              JedecId = DramVendorList[Index].JedecId;
+              SpdIn = &Inputs->Controller[Controller].Channel[Channel].Dimm[dDIMM0].Spd.Data;
+              SpdIn->Lpddr.ManufactureInfo.ModuleId.IdCode.Data = JedecId;
+              SpdIn->Lpddr.ManufactureInfo.DramIdCode.Data      = JedecId;
+            }
+          }
+
+#ifdef MRC_DEBUG_PRINT
+          // MR8 - I/O Width, Density, Type
+          MrAddr = mrMR8;
+          MrcIssueMrr (MrcData, Controller, Channel, Rank, MrAddr, MrrResult);
+          for (Device = 0; Device < DeviceMax; Device++) {
+            Mr8.Data8 = MrrResult[Device];
+            MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\tDevice[%u]= 0x%02X - LP5%c %s %uGb\n", Device, MrrResult[Device],
+              (Mr8.Bits.Type == 1) ? 'X' : ' ',
+              (Mr8.Bits.IoWidth == 1) ? "x8" : "x16",
+              (Mr8.Bits.Density < ARRAY_COUNT (DensityMap)) ? DensityMap[Mr8.Bits.Density] : 0
+              );
+          }
+#endif // #ifdef MRC_DEBUG_PRINT
+        } else { // DDR5
+#ifdef MRC_DEBUG_PRINT
+          DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER (Rank)];
+          // Channel Width (ddr5 = 32 Bytes) / SdramWidth (x8 or x16)
+          DeviceMax = DimmOut->PrimaryBusWidth / DimmOut->SdramWidth;
+          MrcIssueMrr (MrcData, Controller, Channel, Rank, mrMR0, MrrResult);
+          MrcIssueMrr (MrcData, Controller, Channel, Rank, mrMR1, MrrResult2);
+          for (Device = 0; Device < DeviceMax; Device++) {
+            if (DimmOut->SdramWidth == 16) {
+              Index = Device * 2;
+            } else {
+              Index = Device;
+            }
+            MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\tDevice[%u]: MR0=0x%02X MR1=0x%02X\n", Device, MrrResult[Index], MrrResult2[Index]);
+          }
+#endif // #ifdef MRC_DEBUG_PRINT
+        }
+      } // for Rank
+    } // for Channel
+  } // for Controller
+
+  MrcWait (MrcData, 100 * MRC_TIMER_1NS);
 }

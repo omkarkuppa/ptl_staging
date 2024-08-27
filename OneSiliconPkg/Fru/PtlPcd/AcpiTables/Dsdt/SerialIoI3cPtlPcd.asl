@@ -106,7 +106,7 @@ Scope (\_SB.PC00) {
 
   Device (I3C2) {
 
-    OperationRegion (PXC2, SystemMemory, \_SB.PC00.PC2M (0x00110002, 0), 0x100)
+    OperationRegion (PXC2, SystemMemory, \_SB.PC00.PC2M (0x00110001, 0), 0x100)
     Field (PXC2,AnyAcc, NoLock, Preserve)
     {
       Offset (0),

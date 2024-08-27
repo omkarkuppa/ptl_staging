@@ -17,7 +17,6 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification Reference:
 **/
 
 #include "MrcDdrIoApi.h" // for function prototypes and interface definitions
@@ -34,7 +33,7 @@
   @params[in]  Rank    - 0-based index of Rank to access.
   @params[in]  IsDdr5  - If system is DDR5 or not
 
-  @retval UINT32 - CR offset
+  @retval CR offset
 */
 UINT32
 ClkDccFsmControl (
@@ -44,7 +43,6 @@ ClkDccFsmControl (
   )
 {
   UINT32 Offset;
-//  UINT32 CalcChannel;
 
   Offset = MRC_UINT32_MAX;
 
@@ -367,7 +365,7 @@ GetDdrIoPgOffsets (
         break;
     }
   }
-    return Offset;
+  return Offset;
 }
 
 /**
@@ -733,14 +731,6 @@ MrcGetDdrIoConfigOffsets (
       Offset = ClkDccFsmControl (Channel, Rank, IsDdr5);
       break;
 
-    case GsmDataVccDdqTarget:
-      Offset = DataVccDdqTargetOffset (Lane, FreqIndex, VolatileMask);
-      break;
-
-    case GsmCccVccDdqTarget:
-      Offset = CccVccDdqTargetOffset (Lane, FreqIndex, VolatileMask);
-      break;
-
     case GsmCompVccDdqTarget:
       Offset = OFFSET_CALC_INDEX (DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCDDQCONTROL_WP0_REG, DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCDDQCONTROL_WP1_REG, FreqIndex);
       VolatileMask->Data = DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCDDQCONTROL_WP0_VOLATILE_BITFIELDS_MSK;
@@ -1036,7 +1026,7 @@ MrcGetDdrIoRegOffset (
   @params[in]  Rank    - 0-based index of Rank to access.
   @params[in]  Strobe  - 0-based index of Strobe to access.
 
-  @retval UINT32 - CR offset
+  @retval CR offset
 **/
 UINT32
 WrRetrainRankOffset (
@@ -1046,6 +1036,7 @@ WrRetrainRankOffset (
   )
 {
   UINT32 Offset;
+
   Offset = DATA0CH0_CR_DDRCRWRRETRAININITRANK1_REG +
          ((DATA0CH1_CR_DDRCRWRRETRAININITRANK1_REG - DATA0CH0_CR_DDRCRWRRETRAININITRANK1_REG) * Channel) +
          ((DATA0CH0_CR_DDRCRWRRETRAININITRANK0_REG - DATA0CH0_CR_DDRCRWRRETRAININITRANK1_REG) * (1 - Rank)) +

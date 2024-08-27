@@ -24,6 +24,7 @@
 #include <Library/TimerLib.h>
 #include <Library/S3BootScriptLib.h>
 #include <Library/HobLib.h>
+#include <Library/PcdLib.h>
 
 #include "PchInit.h"
 #include <PchPolicyCommon.h>
@@ -46,7 +47,7 @@
 #include <Library/PchPciBdfLib.h>
 #include <Library/PchInfoLib.h>
 #include <Library/DciPrivateLib.h>
-#include <Library/SpiSocLib.h>
+#include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdSpiSocLib.h>
 #include <Library/SpiInitLib.h>
 #include <Library/DxeEspiPrivateLib.h>
 #include <Library/P2SbSidebandAccessLib.h>
@@ -231,7 +232,7 @@ ProcessAllLocks (
   //
   PmcLockFunctionDisableConfigWithS3BootScript ();
 
-  Status = GetSpiHandle (&SpiHandle, NULL);
+  Status = PtlPcdGetSpiHandle (&SpiHandle, NULL);
   if (!EFI_ERROR (Status)) {
     //
     // Lock SPI register before boot.

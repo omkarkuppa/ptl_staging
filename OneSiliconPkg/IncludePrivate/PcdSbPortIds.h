@@ -1,6 +1,6 @@
 /** @file
   This file includes Header files for IOSF Sideband EndPoint Port IDs
-  for NVL-H and NVL-H_S and NVL-S, PTL-P_H
+  for PTL-P_H
 
   @copyright
   INTEL CONFIDENTIAL

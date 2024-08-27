@@ -250,7 +250,7 @@ typedef union {
     UINT32 ManufacturingLock  : 1;  ///< 21 - Manufacturing variables lock state, 0 - Not locked; 1 - Locked
     UINT32 Reserved2          : 8;  ///< 29:22 - Reserved
     UINT32 FpfSocConfigLock   : 1;  ///< 30 - Field Programmable Fuses (FPF) SOC Configuration Lock
-    UINT32 SxResumeType       : 1;  ///< 31 - Sx Resume Type, 0- S4, S5 or G3; 1 S3, deep S3 for Intel Rapid Start Tech.
+    UINT32 Reserved3          : 1;  ///< 31 - Reserved
   } r;
 } HECI_FW_STS6_REGISTER;
 

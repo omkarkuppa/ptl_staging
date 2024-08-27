@@ -84,9 +84,8 @@ CpuPowerMgmtVrConfigPrint (
   DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : PsysOffset : 0x%X\n", CpuPowerMgmtVrConfig->PsysOffset));
   DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : PsysPmax : 0x%X\n", CpuPowerMgmtVrConfig->PsysPmax));
   DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : AcousticNoiseMitigation : 0x%X\n", CpuPowerMgmtVrConfig->AcousticNoiseMitigation));
-  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : PreWake : 0x%X\n", CpuPowerMgmtVrConfig->PreWake));
-  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : RampUp : 0x%X\n", CpuPowerMgmtVrConfig->RampUp));
-  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : RampDown : 0x%X\n", CpuPowerMgmtVrConfig->RampDown));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : PcoreHysteresisWindow : 0x%X\n", CpuPowerMgmtVrConfig->PcoreHysteresisWindow));
+  DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : EcoreHysteresisWindow : 0x%X\n", CpuPowerMgmtVrConfig->EcoreHysteresisWindow));
   DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : DlvrSpreadSpectrumPercentage : 0x%X\n", CpuPowerMgmtVrConfig->DlvrSpreadSpectrumPercentage));
   DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : DlvrRfiFrequency : 0x%X\n", CpuPowerMgmtVrConfig->DlvrRfiFrequency));
   DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : DlvrPhaseSsc : 0x%X\n", CpuPowerMgmtVrConfig->DlvrPhaseSsc));

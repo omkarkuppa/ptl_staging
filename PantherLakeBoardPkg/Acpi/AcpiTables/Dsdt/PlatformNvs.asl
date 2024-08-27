@@ -706,5 +706,6 @@
   J2TP, 8,  // Offset(2843),  DTBT2 USB3 Port2 Type for _UPC
   J1CP, 8,  // Offset(2844),  DTBT2 USB3 Port1 Capability for _UPC
   J2CP, 8,  // Offset(2845),  DTBT2 USB3 Port2 Capability for _UPC
-  IPFE, 32, // Offset(2846),  Ipf Enable
+  TBD3, 8,  // Offset(2846),  DTBT RTD3 enable status (should set to 1 when enable TBT RTD3)
+  IPFE, 32, // Offset(2847),  Ipf Enable
   }

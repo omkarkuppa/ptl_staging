@@ -20,16 +20,3 @@
 **/
 // Include files
 #include "MrcCommon.h"
-
-/**
-  Increase TAT timing by 1tCK.
-
-  @param[in] TatPtr - pointer for the timing to increase.
- */
-VOID
-MrctRdRdIncrease (
-  IN UINT32                   *TatPtr
-  )
-{
-  *TatPtr += 4;
-}

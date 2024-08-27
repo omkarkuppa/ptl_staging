@@ -22,55 +22,13 @@
 #include <Library/DebugLib.h>
 #include <IndustryStandard/Pci30.h>
 #include <Register/LpssUartRegs.h>
-#include <Library/LpssUartPrivateLib.h>
+#include <Library/LpssUartLib.h>
 #include <Library/PchPciBdfLib.h>
 #include <Register/LpssRegs.h>
 #include <Library/PciSegmentLib.h>
 #include <Defines/PchReservedResources.h>
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdSecGpioInitLib.h>
 #include <Library/PchInfoLib.h>
-
-typedef struct {
-  UINT32 Bar0;
-  UINT32 Bar1;
-} LPSS_CONTROLLER_DESCRIPTOR;
-
-GLOBAL_REMOVE_IF_UNREFERENCED LPSS_CONTROLLER_DESCRIPTOR mPtlPcdLpssUartFixedOffsetSec [] = {
-  { 0xC000,   0xD000},
-  { 0xE000,   0xF000},
-  { 0x10000,  0x11000}
-};
-
-/**
-  Gets Fixed Base Address used for BAR0
-
-  @param[in] UartNumber              LPSS device UART number
-
-  @retval                            Config control offset
-**/
-UINT32
-GetLpssUartFixedMmioAddress (
-  IN UINT8       UartNumber
-  )
-{
-  return PCH_SERIAL_IO_BASE_ADDRESS + mPtlPcdLpssUartFixedOffsetSec[UartNumber].Bar0;
-}
-
-/**
-  Gets Fixed Address used for Pci Config Space manipulation
-
-  @param[in] UartNumber              LPSS device UART number
-
-  @retval                            Pci Config Address
-**/
-UINT32
-GetLpssUartFixedPciCfgAddress (
-  IN UINT8       UartNumber
-  )
-{
-  return PCH_SERIAL_IO_BASE_ADDRESS + mPtlPcdLpssUartFixedOffsetSec[UartNumber].Bar1;
-}
-
 
 /**
   Allows memory access
@@ -98,15 +56,8 @@ SecLpssUartGetOutOfReset (
   IN UINTN            MmioBaseAddress
   )
 {
-  UINT16 ResetOffset;
 
-  ResetOffset = R_LPSS_UART_MEM_RESETS;
-
-  if (MmioRead32 (MmioBaseAddress + R_LPSS_UART_MEM_CTR) != UART_COMPONENT_IDENTIFICATION_CODE) {
-    ResetOffset = R_LPSS_UART_MEM_RESETS/4; // Requires 8 bit offset
-  }
-
-  MmioOr8 (MmioBaseAddress + ResetOffset, B_LPSS_UART_MEM_RESETS_RESET_IP | B_LPSS_UART_MEM_RESETS_RESET_DMA);
+  MmioOr8 (MmioBaseAddress + R_LPSS_UART_MEM_RESETS, B_LPSS_UART_MEM_RESETS_RESET_IP | B_LPSS_UART_MEM_RESETS_RESET_DMA);
 }
 
 /**
@@ -161,18 +112,17 @@ SecLpssUartConfiguration (
   IN LPSS_UART_DEVICE_CONFIG      *UartDeviceConfig                     
   )
 {
-
   //
   // This is to prevent from overflow of array access.
+  //
   if (UartNumber >= GetMaxUartInterfacesNum()) {
     return;
   }
-  // Override previous UART configuration
-  //
+
   SecLpssPciSetFixedMmio (LpssUartPciCfgBase (UartNumber), GetLpssUartFixedMmioAddress (UartNumber));
-  SecLpssUartGetOutOfReset (GetLpssUartFixedMmioAddress(UartNumber));
+  SecLpssUartGetOutOfReset (GetLpssUartFixedMmioAddress (UartNumber));
   LpssUartSetAttributes (
-    GetLpssUartFixedMmioAddress(UartNumber),
+    GetLpssUartFixedMmioAddress (UartNumber),
     UartDeviceConfig->Attributes.BaudRate,
     UartDeviceConfig->Attributes.Parity,
     UartDeviceConfig->Attributes.DataBits,

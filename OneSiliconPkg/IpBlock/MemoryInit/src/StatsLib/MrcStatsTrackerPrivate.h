@@ -51,6 +51,7 @@ MrcStatsAreInitialized (
   Convert the Key parameter into a value that is appropriate to use as the second subscript of the PerPhaseData
   array.  Return -1 to indicate that the key has no appropriate value.
 
+  @param[in] MrcData pointer to global MRC variables
   @param[in] Key Key to convert to array index.
 
   @retval -1 the provided key is out of range.
@@ -58,6 +59,7 @@ MrcStatsAreInitialized (
 **/
 INT32
 MrcStatsCustomKeyEnumToArrayIdx (
+  IN MrcParameters *MrcData,
   IN     MRC_STATISTIC Key
   );
 

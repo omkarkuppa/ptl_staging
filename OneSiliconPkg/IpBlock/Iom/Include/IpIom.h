@@ -119,9 +119,7 @@ typedef union {
     UINT32    TcssXhciEn   : 1;  /// XHCI GENX
     UINT32    Rsvd         : 1;
     UINT32    Usb4HrEn     : 4;
-    UINT32    Rsrvd1       : 1;
-    UINT32    XhciGenTEn   : 1;  /// GENT
-    UINT32 : 16;
+    UINT32 : 18;
   } TcssDevEnBit;
 } IOM_DEVEN_CONFIG;
 

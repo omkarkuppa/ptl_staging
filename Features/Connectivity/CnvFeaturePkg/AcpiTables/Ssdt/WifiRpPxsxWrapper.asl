@@ -109,6 +109,35 @@ External (WIFI_EP_PATH (26)._ADR, EP_ADR_OBJ_TYPE)
 External (WIFI_EP_PATH (27)._ADR, EP_ADR_OBJ_TYPE)
 External (WIFI_EP_PATH (28)._ADR, EP_ADR_OBJ_TYPE)
 
+External (WIFI_RP_PATH (01).SLOT, IntObj)
+External (WIFI_RP_PATH (02).SLOT, IntObj)
+External (WIFI_RP_PATH (03).SLOT, IntObj)
+External (WIFI_RP_PATH (04).SLOT, IntObj)
+External (WIFI_RP_PATH (05).SLOT, IntObj)
+External (WIFI_RP_PATH (06).SLOT, IntObj)
+External (WIFI_RP_PATH (07).SLOT, IntObj)
+External (WIFI_RP_PATH (08).SLOT, IntObj)
+External (WIFI_RP_PATH (09).SLOT, IntObj)
+External (WIFI_RP_PATH (10).SLOT, IntObj)
+External (WIFI_RP_PATH (11).SLOT, IntObj)
+External (WIFI_RP_PATH (12).SLOT, IntObj)
+External (WIFI_RP_PATH (13).SLOT, IntObj)
+External (WIFI_RP_PATH (14).SLOT, IntObj)
+External (WIFI_RP_PATH (15).SLOT, IntObj)
+External (WIFI_RP_PATH (16).SLOT, IntObj)
+External (WIFI_RP_PATH (17).SLOT, IntObj)
+External (WIFI_RP_PATH (18).SLOT, IntObj)
+External (WIFI_RP_PATH (19).SLOT, IntObj)
+External (WIFI_RP_PATH (20).SLOT, IntObj)
+External (WIFI_RP_PATH (21).SLOT, IntObj)
+External (WIFI_RP_PATH (22).SLOT, IntObj)
+External (WIFI_RP_PATH (23).SLOT, IntObj)
+External (WIFI_RP_PATH (24).SLOT, IntObj)
+External (WIFI_RP_PATH (25).SLOT, IntObj)
+External (WIFI_RP_PATH (26).SLOT, IntObj)
+External (WIFI_RP_PATH (27).SLOT, IntObj)
+External (WIFI_RP_PATH (28).SLOT, IntObj)
+
 #if FixedPcdGet8 (PcdMaxRootPortNumber) > 0
 If (CondRefOf (WIFI_EP_PATH (01))) {
   Scope (WIFI_EP_PATH (01))
@@ -118,8 +147,8 @@ If (CondRefOf (WIFI_EP_PATH (01))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -137,8 +166,8 @@ If (CondRefOf (WIFI_EP_PATH (02))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -156,8 +185,8 @@ If (CondRefOf (WIFI_EP_PATH (03))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -175,8 +204,8 @@ If (CondRefOf (WIFI_EP_PATH (04))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -194,8 +223,8 @@ If (CondRefOf (WIFI_EP_PATH (05))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -213,8 +242,8 @@ If (CondRefOf (WIFI_EP_PATH (06))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -232,8 +261,8 @@ If (CondRefOf (WIFI_EP_PATH (07))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -251,8 +280,8 @@ If (CondRefOf (WIFI_EP_PATH (08))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -270,8 +299,8 @@ If (CondRefOf (WIFI_EP_PATH (09))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -289,8 +318,8 @@ If (CondRefOf (WIFI_EP_PATH (10))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -308,8 +337,8 @@ If (CondRefOf (WIFI_EP_PATH (11))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -327,8 +356,8 @@ If (CondRefOf (WIFI_EP_PATH (12))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -346,8 +375,8 @@ If (CondRefOf (WIFI_EP_PATH (13))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -365,8 +394,8 @@ If (CondRefOf (WIFI_EP_PATH (14))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -384,8 +413,8 @@ If (CondRefOf (WIFI_EP_PATH (15))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -403,8 +432,8 @@ If (CondRefOf (WIFI_EP_PATH (16))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -422,8 +451,8 @@ If (CondRefOf (WIFI_EP_PATH (17))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -441,8 +470,8 @@ If (CondRefOf (WIFI_EP_PATH (18))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -460,8 +489,8 @@ If (CondRefOf (WIFI_EP_PATH (19))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -479,8 +508,8 @@ If (CondRefOf (WIFI_EP_PATH (20))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -498,8 +527,8 @@ If (CondRefOf (WIFI_EP_PATH (21))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -517,8 +546,8 @@ If (CondRefOf (WIFI_EP_PATH (22))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -536,8 +565,8 @@ If (CondRefOf (WIFI_EP_PATH (23))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -555,8 +584,8 @@ If (CondRefOf (WIFI_EP_PATH (24))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -574,8 +603,8 @@ If (CondRefOf (WIFI_EP_PATH (25))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -593,8 +622,8 @@ If (CondRefOf (WIFI_EP_PATH (26))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -612,8 +641,8 @@ If (CondRefOf (WIFI_EP_PATH (27))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }
@@ -631,8 +660,8 @@ If (CondRefOf (WIFI_EP_PATH (28))) {
     //
     // Load WLAN tables only when WLAN has found on this RP
     //
-    If (CondRefOf (SLOT)) {
-      If (LEqual (WLRP,SLOT)) {
+    If (CondRefOf (PCIE_ROOT_PORT.SLOT)) {
+      If (LEqual (WLRP, PCIE_ROOT_PORT.SLOT)) {
         Include ("WifiFeature.asl")
         Include ("GuidLockIndicator.asl")
       }

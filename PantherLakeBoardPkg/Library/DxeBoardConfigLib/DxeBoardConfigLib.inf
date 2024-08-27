@@ -39,6 +39,7 @@
   OneSiliconPkg/SiPkg.dec
   PantherLakePlatSamplePkg/PlatformPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   DptfFeaturePkg/DptfFeaturePkg.dec
   MipiCamFeaturePkg/MipiCamFeaturePkg.dec
 

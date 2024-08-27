@@ -130,6 +130,9 @@ PsGetLpeSanitizeParameter (
     if (mLpeSetupData.LpeCsmeUnconfigure == 0x0) {
       RequestedEraseMask = RequestedEraseMask & (~PS_CSME_UNCONFIGURE);
     }
+    if (mLpeSetupData.LpeStorageEraseVerify == 0x0) {
+      RequestedEraseMask = RequestedEraseMask & (~PS_VERIFY_STORAGE_MEDIA);
+    }
   } else {
     RequestedEraseMask |= ((mLpeSetupData.LpeEraseSSD ? (PS_ERASE_STORAGE_MEDIA | PS_GENERATE_SANITIZE_REPORT) : 0) |
                            (mLpeSetupData.LpeStorageEraseVerify ? PS_VERIFY_STORAGE_MEDIA : 0) |

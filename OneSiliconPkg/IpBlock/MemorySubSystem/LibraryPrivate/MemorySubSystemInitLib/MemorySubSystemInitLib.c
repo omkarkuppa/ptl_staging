@@ -88,7 +88,8 @@ InitializeSecurityPolicy (
   OUT TME_POLICY           *TmePolicy,
   OUT TDX_POLICY           *TdxPolicy,
   OUT UINTN                *TdxActmModuleAddr,
-  OUT UINT32               *TdxActmModuleSize
+  OUT UINT32               *TdxActmModuleSize,
+  OUT UINT8                *TdxSeamldrSvn
   )
 {
   EFI_STATUS Status = EFI_SUCCESS;
@@ -99,7 +100,8 @@ InitializeSecurityPolicy (
   if (TmePolicy == NULL ||
       TdxPolicy == NULL ||
       TdxActmModuleAddr == NULL ||
-      TdxActmModuleSize == NULL) {
+      TdxActmModuleSize == NULL ||
+      TdxSeamldrSvn == NULL) {
     Status = EFI_INVALID_PARAMETER;
     return Status;
   }
@@ -120,6 +122,7 @@ InitializeSecurityPolicy (
   TdxPolicy->VtdEnable            = FALSE;
   *TdxActmModuleAddr              = 0;
   *TdxActmModuleSize              = 0;
+  *TdxSeamldrSvn                  = 0xFF;
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuInitPreMemConfigGuid, (VOID *) &CpuInitPreMemConfig);
   if (EFI_ERROR (Status)) {
@@ -149,6 +152,7 @@ InitializeSecurityPolicy (
       TdxPolicy->VmxEnable = CpuInitPreMemConfig->VmxEnable;
       *TdxActmModuleAddr   = CpuSecurityPreMemConfig->TdxActmModuleAddr;
       *TdxActmModuleSize   = CpuSecurityPreMemConfig->TdxActmModuleSize;
+      *TdxSeamldrSvn       = CpuSecurityPreMemConfig->TdxSeamldrSvn;
     }
   }
 
@@ -243,6 +247,7 @@ PeiMemoryMapInit (
   MrcMemoryMap               *MemoryMapData;
   UINT32                     SeamrrSize;
   BOOLEAN                    IsDdr5;
+  UINT8                      TdxSeamldrSvn;
 
   DEBUG ((DEBUG_INFO, "%a - Start...\n", __FUNCTION__));
 
@@ -255,7 +260,7 @@ PeiMemoryMapInit (
   MeStolenSize = Inputs->MeStolenSize;
   TotalPhysicalMemorySize = MemoryMapData->TotalPhysicalMemorySize;
 
-  Status = InitializeSecurityPolicy (SiPreMemPolicyPpi, Inputs, &TmePolicy, &TdxPolicy, &TdxActmModuleAddr, &TdxActmModuleSize);
+  Status = InitializeSecurityPolicy (SiPreMemPolicyPpi, Inputs, &TmePolicy, &TdxPolicy, &TdxActmModuleAddr, &TdxActmModuleSize, &TdxSeamldrSvn);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "InitializeSecurityPolicy () Status = %r\n", Status));
     ASSERT_EFI_ERROR (Status);
@@ -355,7 +360,7 @@ PeiMemoryMapInit (
   //
   // This function programs Tdx IP
   //
-  MemorySubSystemCallback.TdxInit ((VOID *)&TdxPolicy, MrcData, TdxActmModuleAddr, TdxActmModuleSize);
+  MemorySubSystemCallback.TdxInit ((VOID *)&TdxPolicy, MrcData, TdxActmModuleAddr, TdxActmModuleSize, TdxSeamldrSvn);
 
   ///
   /// Call TXT related functions here

@@ -112,6 +112,20 @@ LockSeamrrMsr (
   );
 
 /**
+  Configures SE_SVN_MSR.
+
+  @param SeSvnMsr                   Value of SeSvn Msr to program.
+
+  @retval RETURN_SUCCESS            SeSvn MSR are set successfully.
+  @retval RETURN_SECURITY_VIOLATION SeSvn MSR cannot be programmed.
+*/
+RETURN_STATUS
+EFIAPI
+SetBiosSeSvnMsr (
+  UINT64 SeSvn
+  );
+
+/**
   Detect if Hetero Core is supported.
 
   @retval TRUE - Processor Support HeteroCore

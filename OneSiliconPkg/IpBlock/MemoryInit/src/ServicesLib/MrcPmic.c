@@ -38,7 +38,7 @@ MrcPmicClearGlobalStatus (
   )
 {
   PMIC_REG_14_STRUCT  Reg14;
-  UINT32              Status;
+  RETURN_STATUS       Status;
 
   Reg14.Data = 0;
   Reg14.Bits.global_clear_status = 1;
@@ -65,7 +65,7 @@ MrcPmicGetPwrGoodOutTime (
   UINT8               R2DSwcDecode;
   PMIC_REG_2C_STRUCT  Reg2C;
   PMIC_REG_2D_STRUCT  Reg2D;
-  UINT32              Status;
+  RETURN_STATUS       Status;
 
   Reg2C.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (PMIC_REG_2C << 8), &Status);
   Reg2D.Data = MrcCall->MrcSmbusRead8 (PmicAddress | (PMIC_REG_2D << 8), &Status);
@@ -111,7 +111,7 @@ MrcEnableDimmPmic (
   UINT8                 PmicAddress;
   UINT8                 Value;
   UINT32                Offset;
-  UINT32                Status;
+  RETURN_STATUS         Status;
   UINT32                PwrGoodOutTime;
   PMIC_REG_2F_STRUCT    Reg2F;
   PMIC_REG_32_STRUCT    Reg32;
@@ -227,7 +227,7 @@ MrcDefaultSetMemoryPmicVoltage (
   MrcVddSelect          Data;
   MrcVddSelect          Current;
   MrcVddSelect          NewVoltage;
-  UINT32                Status;
+  RETURN_STATUS         Status;
   UINT32                SWAStepSize;
   UINT32                SWBStepSize;
   UINT32                SWCStepSize;

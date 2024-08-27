@@ -36,11 +36,96 @@
 #include <Protocol/DevicePath.h>
 #include <HiddenDevices.h>
 #include <Defines/PcdPchBdfAssignment.h>
+#include <LpssUartConfig.h>
+#include <IndustryStandard/Pci30.h>
+#include <Library/DevicePathLib.h>
+#include <Library/IoLib.h>
+#include <Library/SerialIoUartSocLib.h>
+#include <Library/PchInfoLib.h>
+#include <LpssUartConfigHob.h>
+
+#define mPciRootBridge {{ACPI_DEVICE_PATH, ACPI_DP, {(UINT8)(sizeof (ACPI_HID_DEVICE_PATH)), 0}}, EISA_PNP_ID (0x0A03), 0}
+#define mAcpiDev {{ACPI_DEVICE_PATH, ACPI_EXTENDED_DP, {(UINT8)(sizeof (ACPI_EXTENDED_HID_DEVICE_PATH) + (sizeof(CHAR8) * 8) + sizeof (UINTN) + sizeof (UINT16)  + sizeof (UINT8)), 0}},0,0,0}
+#define mEndEntire {END_DEVICE_PATH_TYPE, END_ENTIRE_DEVICE_PATH_SUBTYPE, {END_DEVICE_PATH_LENGTH, 0}}
+
+GLOBAL_REMOVE_IF_UNREFERENCED LPSS_UART_CONFIG_HOB     *mPchLpssUartConfigHob;
 
 typedef struct {
   INTC_ACPI_EXTENDED_DEVICE_PATH    Intc;
   EFI_DEVICE_PATH_PROTOCOL          End;
 } HIDDEN_DEV_PATH;
+
+#pragma pack (1)
+typedef struct {
+  ACPI_HID_DEVICE_PATH            RootPort;
+  ACPI_EXTENDED_HID_DEVICE_PATH   AcpiExtendedPath;
+  CHAR8                           HidString[8];
+  UINTN                           FixedMmio;
+  UINT16                          DeviceId;
+  UINT8                           UartIndex;
+  EFI_DEVICE_PATH_PROTOCOL        End;
+} LPSS_UART_ACPI_EXTENDED_DEVICE_PATH;
+#pragma pack ()
+
+GLOBAL_REMOVE_IF_UNREFERENCED LPSS_UART_ACPI_EXTENDED_DEVICE_PATH mLpssUartPath = {
+  mPciRootBridge,
+  mAcpiDev,
+  "UART\0\0\0",
+  0xFFFFFFFF,
+  0xFFFF,
+  0xFF,
+  mEndEntire
+};
+
+/**
+  Add LPSS UART Hidden Handles
+**/
+VOID
+CreateLpssUartHiddenHandle (
+  VOID
+  )
+{
+  EFI_HANDLE               NewHandle;
+  EFI_DEVICE_PATH_PROTOCOL *NewPath;
+  EFI_STATUS               Status;
+  UINT8                    Index;
+  UINT16                   DeviceId;
+  UINTN                    FixedMmio;
+  EFI_PEI_HOB_POINTERS     HobPtr;
+
+  DEBUG ((DEBUG_INFO, "CreateLpssUartHiddenHandle\n"));
+  //
+  //
+  //
+  // Get LPSS UART HOB
+  //
+  HobPtr.Guid   = GetFirstGuidHob (&gPchLpssUartConfigHobGuid);
+  ASSERT (HobPtr.Guid != NULL);
+  mPchLpssUartConfigHob = (LPSS_UART_CONFIG_HOB *) GET_GUID_HOB_DATA (HobPtr.Guid);
+
+  for (Index = 0; Index < GetMaxUartInterfacesNum (); Index++) {
+    DEBUG ((DEBUG_INFO, "UART Index: %d Mode: %d\n", Index, mPchLpssUartConfigHob->UartDeviceConfig[Index].Mode));
+    if (mPchLpssUartConfigHob->UartDeviceConfig[Index].Mode == LpssUartHidden || mPchLpssUartConfigHob->UartDeviceConfig[Index].Mode == LpssUartCom) {
+      NewHandle = NULL;
+      DeviceId = MmioRead16 (GetLpssUartFixedBar1 (Index) + PCI_DEVICE_ID_OFFSET);
+      FixedMmio = (UINTN) GetLpssUartFixedBar0 (Index);
+      DEBUG ((DEBUG_INFO, "Creating Handle for UART DEVICE_ID: 0x%X \n", DeviceId));
+      mLpssUartPath.AcpiExtendedPath.HID            = 0x5432 + (Index << 16); //UAR
+      mLpssUartPath.HidString[4]                    = (CHAR8)('0' + Index);
+      mLpssUartPath.DeviceId                        = DeviceId;
+      mLpssUartPath.FixedMmio                       = FixedMmio;
+      mLpssUartPath.UartIndex                       = Index;
+      NewPath = DuplicateDevicePath ((EFI_DEVICE_PATH_PROTOCOL*) &mLpssUartPath);
+      Status = gBS->InstallMultipleProtocolInterfaces (
+                      &NewHandle,
+                      &gEfiDevicePathProtocolGuid,
+                      NewPath,
+                      NULL
+                      );
+      DEBUG ((DEBUG_INFO, "CreateLpssUartHiddenHandle Status: %r\n", Status));
+    }
+  }
+}
 
 VOID
 InstallHiddenPmcDevice (
@@ -204,6 +289,7 @@ EarlyDevicesEntryPoint (
   //
   InstallHiddenPmcDevice (PmcGetPwrmBase (), PmcGetAcpiBase (), PMC_PCD_UID);
   InstallHiddenP2SbDevice (PCH_PCR_BASE_ADDRESS, P2SB_PCD_UID);
+  CreateLpssUartHiddenHandle ();
 
   InstallMeHandle ();
 

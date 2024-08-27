@@ -68,6 +68,8 @@ Include
   gBoardModuleTokenSpaceGuid.PcdFlashFvUplOffset|0x00000000|UINT32|0x20000067
   gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize|0x00000000|UINT32|0x20000068
 
+  gBoardModuleTokenSpaceGuid.PcdPolicyDefaultChkEnable|FALSE|BOOLEAN|0x20000A64
+
 [PcdsDynamic]
   # SA Misc Configuration
   gBoardModuleTokenSpaceGuid.PcdSaMiscMmioSizeAdjustment|0|UINT16|0x00000067
@@ -184,6 +186,18 @@ Include
 
   #BIOS Guard
   gBoardModuleTokenSpaceGuid.VpdPcdBiosGuard|0|UINT8|0x00001191
+
+  # SBC SPD DATA
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData           |{0}|SPD_DATA|0x50000026 {
+  <HeaderFiles>
+    PlatformOpenBoardConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  }
+
+  # Mrc Spd Data Size
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdDataSize       |0x0|UINT16|0x00001132
 
 [PcdsPatchableInModule]
 

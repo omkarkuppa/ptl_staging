@@ -321,7 +321,9 @@ typedef enum {
   TrainedParamReadEQTraining,
   TrainedParamReadCTLETraining,
   TrainedParamReadVoltageCentering2D,
-  TrainedParamTurnAroundTiming
+  TrainedParamTurnAroundTiming,
+  TrainedParamEmphasisTraining,
+  TrainedParamDimmRxOffsetTraining
 } TrainedGroupTypesPrintIndex;
 
 #define PRINT_MAX_PARAM     8

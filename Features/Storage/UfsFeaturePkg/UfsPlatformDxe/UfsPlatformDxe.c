@@ -34,10 +34,15 @@
 #include <Protocol/UfsHostControllerPlatform.h>
 
 #define UFS_PLATFORM_INTEL_VENDOR_ID       0x8086
-#define UFS_PLATFORM_INTEL_MTLM_DEV_ID     0x7E47
-#define UFS_PLATFORM_INTEL_ARLM_DEV_ID     0x7747
-#define UFS_PLATFORM_INTEL_LNLM_DEV_ID     0xA847
-#define UFS_PLATFORM_INTEL_PTLPCDP_DEV_ID  0xE447
+
+GLOBAL_REMOVE_IF_UNREFERENCED UINT16 mUfsSupportedDeviceId [] = {
+  0x7E47,
+  0x7747,
+  0xA847,
+  0xE447,
+  0x4D47,
+  0x67C7,
+};
 
 #define UFS_UIC_TIMEOUT                 5000
 
@@ -546,6 +551,30 @@ IsIntelUfsDevice (
   } else {
     return FALSE;
   }
+}
+
+/**
+  Checks if given UFS Device Id is supported.
+
+  @param[in] DeviceId     Device Id
+
+  @retval TRUE   Device is Supported
+  @retval FALSE  Device is not Supported
+**/
+STATIC
+BOOLEAN
+IsScsUfsDeviceIdSupported (
+  UINT16  DeviceId
+  )
+{
+  UINT8 Index = 0;
+
+  for (Index = 0; Index < ARRAY_SIZE (mUfsSupportedDeviceId); Index++) {
+    if (mUfsSupportedDeviceId[Index] == DeviceId) {
+        return TRUE;
+    }
+  }
+  return FALSE;
 }
 
 /**
@@ -1265,11 +1294,7 @@ UfsHcPlatformPreHce (
     DEBUG ((DEBUG_ERROR, "PciData Read, BaseClass=0x%x SubClass=%x\n", PciData.Hdr.ClassCode[2], PciData.Hdr.ClassCode[1]));
   }
 
-  if (((PciData.Hdr.DeviceId == UFS_PLATFORM_INTEL_MTLM_DEV_ID) ||
-       (PciData.Hdr.DeviceId == UFS_PLATFORM_INTEL_ARLM_DEV_ID) ||
-       (PciData.Hdr.DeviceId == UFS_PLATFORM_INTEL_LNLM_DEV_ID) ||
-       (PciData.Hdr.DeviceId == UFS_PLATFORM_INTEL_PTLPCDP_DEV_ID)))
-  {
+  if (IsScsUfsDeviceIdSupported(PciData.Hdr.DeviceId)) {
     gEdkiiUfsHcPlatformProtocol.RefClkFreq = EdkiiUfsCardRefClkFreq38p4Mhz;
   }
   DEBUG ((DEBUG_INFO, "RefClkFreq=%x\n  0 -> 19.2 Mhz\n  1 -> 26 Mhz\n  2 -> 38.4 Mhz\n  3 -> Obsolete \n", gEdkiiUfsHcPlatformProtocol.RefClkFreq));

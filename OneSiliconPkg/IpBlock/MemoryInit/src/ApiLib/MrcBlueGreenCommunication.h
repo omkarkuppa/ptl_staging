@@ -90,7 +90,6 @@ typedef struct {
 extern volatile MrcBlueGreenCommunication gCommBuffer;
 
 // CR-based communication details
-#define MRC_PRINT_BUF_CR_REG    DDRMCMISC_CR_DDRVDD2POWER_REG
 #define MRC_CR_BASED_MRC_DONE   0xFF
 #define MRC_CR_BASED_HIT_ENTER  0xFE
 

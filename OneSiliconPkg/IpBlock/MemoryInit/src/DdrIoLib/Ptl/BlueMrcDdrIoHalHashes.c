@@ -16,7 +16,6 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification Reference:
 **/
 
 // Include files
@@ -65,7 +64,6 @@ MrcGetDdrIoHash (
   UINT32      CrOffset;
   UINT32      LogicalIndex;
   UINT32      ChMod2;
-  //BOOLEAN     IsDdr5;
   BOOLEAN     IsLpddr5;
   MRC_REGISTER_HASH_STRUCT *HashPtr;
 
@@ -92,7 +90,6 @@ MrcGetDdrIoHash (
   CrOffset  = MRC_UINT32_MAX;
   Outputs   = &MrcData->Outputs;
   IsLpddr5  = Outputs->IsLpddr5;
-  //IsDdr5  = Outputs->IsDdr5;
   ChMod2    = Channel % 2;
 
   switch (Group) {
@@ -645,7 +642,6 @@ MrcGetDdrIoCfgHash (
       }
       break;
 
-
    case GsmIocQClkCalOff:
      switch (FreqIndex) {
        case MrcSaGvPoint0:
@@ -676,12 +672,13 @@ MrcGetDdrIoCfgHash (
       break;
 
     case GsmClkDccRankEn:
+      HashPtr->Data = CH0CCC_CR_DCCFSMCONTROL_RankEn_HSH;
+      break;
+      
     case GsmWckDccRankEn:
       HashPtr->Data = DDRDATA_SHARED0_CR_WCKDCCFSMCONTROL_RankEn_HSH;
       break;
 
-    case GsmDataVccDdqTarget:
-    case GsmCccVccDdqTarget:
     case GsmCompVccDdqTarget:
       HashPtr->Data = DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCDDQCONTROL_WP0_Target_HSH;
       break;

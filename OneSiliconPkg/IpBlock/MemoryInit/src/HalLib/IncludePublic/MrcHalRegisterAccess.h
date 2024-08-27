@@ -513,6 +513,19 @@ MrcCheckGroupUnSupported (
   );
 
 /**
+ Helper function to get max partition number.
+
+ @param[in] Partition - Partition type.
+ @param[in] UlxUlt    - Whether CPU SKU is ULX / ULT (PHY).
+
+**/
+UINT32
+GetPartitionMax (
+  IN PARTITION_TYPE   Partition,
+  IN BOOLEAN          UlxUlt
+  );
+
+/**
   Variable Max Limits for parameters.
 
   @param[in]  MrcData   - Pointer to global data.

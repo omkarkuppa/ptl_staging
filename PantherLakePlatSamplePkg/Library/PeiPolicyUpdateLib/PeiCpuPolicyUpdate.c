@@ -319,6 +319,49 @@ GetSecPlatformInformationInfoInFormat2 (
 #endif
 
 /**
+ Read Seamldr svn from TpmNv Index and update the policy
+
+ @param[out] SeamldrSvn - UINT8 Seamldr Svn value
+
+ @retval None
+**/
+VOID
+UpdateTdxSeamldrSeSvn (
+  UINT8 *SeamldrSvn
+  )
+{
+  EFI_STATUS       Status = EFI_SUCCESS;
+  TPM2B_MAX_BUFFER TpmNvSvnData;
+  TPMI_RH_NV_AUTH  AuthHandle = OS_BIOS_ACM_HANDOFF;
+
+  DEBUG ((DEBUG_INFO, "%a Begin\n", __func__));
+
+  ZeroMem (&TpmNvSvnData, sizeof (TpmNvSvnData));
+
+  // 1. Set buffer size to 1 byte
+  TpmNvSvnData.size = 1;
+
+    //2. read the index
+  Status = Tpm2NvRead (
+    AuthHandle,
+    (TPMI_RH_NV_INDEX) OS_BIOS_ACM_HANDOFF,
+    NULL,
+    SEAMLDR_TPM_NV_INDEX_SIZE,
+    0,
+    &TpmNvSvnData
+  );
+  if (Status == EFI_SUCCESS) {
+    *SeamldrSvn = TpmNvSvnData.buffer[SEAMLDR_SE_SVN_NV_BYTE_OFFSET];
+    DEBUG ((DEBUG_INFO, "SeamldrSeSvn found in NV area = %x\n", *SeamldrSvn));
+  } else {
+    *SeamldrSvn = SEAMLDR_SE_SVN_DEFAULT_VALUE; // Default value
+    DEBUG ((DEBUG_INFO, "SeamldrSeSvn is not found in NV area, setting to default value = %x\n", *SeamldrSvn));
+  }
+
+  DEBUG ((DEBUG_INFO, "%a End (%r)\n", __func__, Status));
+}
+
+/**
   This function performs CPU PEI Policy initialization.
 
   @param[in] SiPreMemPolicyPpi     The RC PREMEM Policy PPI instance
@@ -343,6 +386,9 @@ UpdatePeiCpuPolicy (
 #endif
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   EFI_SEC_PLATFORM_INFORMATION_RECORD2 *SecPlatformInformation2;
+#endif
+#if FixedPcdGetBool (PcdTdxEnable) == 1
+  UINT8 SeamldrSvn = 0;
 #endif
   EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariableServices;
   CPU_INIT_CONFIG                  *CpuInitConfig;
@@ -482,6 +528,14 @@ UpdatePeiCpuPolicy (
 #endif
 
   COMPARE_AND_UPDATE_POLICY (CpuInitConfig->X2ApicEnable, CpuSetup.X2ApicEnable);
+
+#if FixedPcdGetBool (PcdTdxEnable) == 1
+    //
+    // Update TdxSeamldrSvn Policy
+    //
+    UpdateTdxSeamldrSeSvn (&SeamldrSvn);
+    COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TdxSeamldrSvn, SeamldrSvn);
+#endif
 
   return EFI_SUCCESS;
 }

@@ -714,7 +714,7 @@ Scope (\_SB.PC00)
     } ElseIf (LEqual (PCHS, PCHX)) {
       Return (SAR0) // APIC mode buffer for PCD S
     } Else {
-      Return (HAR0) // APIC mode buffer for PCD H
+      Return (HAR0) // APIC mode buffer for PTL PCD H
     }
   }
 

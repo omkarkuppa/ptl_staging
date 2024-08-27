@@ -34,7 +34,7 @@ DefinitionBlock (
 
 ACPI_DEBUG_EXTERNAL_REFERENCE
 External (\_SB.PR00, DeviceObj)
-External (\CCNT, FieldUnitObj)
+External (\TCNT, FieldUnitObj)
 External (\_SB.HWPV, IntObj)
 External (\_SB.CFGD, IntObj)
 External (\_SB.OSCP, IntObj)

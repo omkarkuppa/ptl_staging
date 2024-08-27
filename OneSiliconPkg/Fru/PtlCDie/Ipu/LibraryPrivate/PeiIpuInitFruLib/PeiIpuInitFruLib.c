@@ -25,6 +25,7 @@
 #include <Library/DebugLib.h>
 #include <Register/GpioAcpiDefines.h>
 #include <GpioV2Services.h>
+#include <Library/PcdLib.h>
 
 /**
   Configure IMGUCLK

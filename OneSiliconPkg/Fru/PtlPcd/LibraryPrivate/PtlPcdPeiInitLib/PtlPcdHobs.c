@@ -49,6 +49,7 @@
 #include <PchPcieRpConfigHob.h>
 #include <LpssI2cConfigHob.h>
 #include <SerialIoConfig.h>
+#include <LpssUartConfig.h>
 
 /**
   The function update pch info hob in the end of PchInit.
@@ -58,15 +59,15 @@ BuildPchInfoHob (
   VOID
   )
 {
-  EFI_STATUS  Status;
-  PCH_INFO_HOB *PchInfoHob;
-  BOOLEAN     CridSupport;
-  UINT8       OrgRid;
-  UINT8       NewRid;
-  UINT8       Index;
-  UINT8                       LpssUartDbg2ControllerIndex;
-  SI_POLICY_PPI               *SiPolicy;
-  SERIAL_IO_CONFIG            *SerialIoConfig;
+  EFI_STATUS          Status;
+  PCH_INFO_HOB        *PchInfoHob;
+  BOOLEAN             CridSupport;
+  UINT8               OrgRid;
+  UINT8               NewRid;
+  UINT8               Index;
+  UINT8               LpssUartDbg2ControllerIndex;
+  SI_POLICY_PPI       *SiPolicy;
+  LPSS_UART_CONFIG    *LpssUartConfig;
 
   PchInfoHob = BuildGuidHob (&gPchInfoHobGuid, sizeof (PCH_INFO_HOB));
   ASSERT (PchInfoHob != 0);
@@ -84,7 +85,7 @@ BuildPchInfoHob (
   if (EFI_ERROR (Status) || (SiPolicy == NULL)) {
     return ;
   }
-  Status = GetConfigBlock ((VOID *) SiPolicy, &gSerialIoConfigGuid, (VOID *) &SerialIoConfig);
+  Status = GetConfigBlock ((VOID*)SiPolicy, &gLpssUartConfigGuid, (VOID*)&LpssUartConfig);
   ASSERT_EFI_ERROR (Status);
 
   PchInfoHob->Revision = PCH_INFO_HOB_REVISION;
@@ -137,7 +138,7 @@ BuildPchInfoHob (
 
   LpssUartDbg2ControllerIndex = 0;
   for (Index = 0; Index < GetMaxUartInterfacesNum (); Index++) {
-    if ((SerialIoConfig->UartDeviceConfig[Index].Mode == SerialIoUartHidden) && (SerialIoConfig->UartDeviceConfig[Index].DBG2 == TRUE)) {
+    if ((LpssUartConfig->UartDeviceConfig[Index].Mode == LpssUartHidden) && (LpssUartConfig->UartDeviceConfig[Index].DBG2 == TRUE)) {
       LpssUartDbg2ControllerIndex = Index + 1;
       break;
     }

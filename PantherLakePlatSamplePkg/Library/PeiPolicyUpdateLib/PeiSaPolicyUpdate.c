@@ -48,9 +48,7 @@
 #include <PlatformBoardConfig.h>
 #include <SiliconPolicyHob.h>
 #include <Library/PeiLib.h>
-
-#define TCSS_IS_VALIDATE_PCH_USB_PORT_NUMBER(PORT)\
-  (((PORT > 0) && (PORT < 0x10)) ? TRUE : FALSE)
+#include <Library/PchInfoLib.h>
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
 EFI_STATUS
@@ -130,7 +128,7 @@ EFI_PEI_NOTIFY_DESCRIPTOR  mPeiGfxPlatformPolicyNotifyList = {
 
   @param[in] UINT8       TcssXhciPortIndex
 
-  @retval UINT8          PchUsb2PortNumber.
+  @retval UINT8          PchUsb2PortNumber (1-based)
 **/
 UINT8
 EFIAPI
@@ -147,13 +145,13 @@ TcssGetPchUsb2PortNoMappedWithTypeATcssXhciPort (
   UsbConnectorHobPtr      = GetUsbConnectorHobData ();
   UsbConnectorBoardConfig = UsbConnectorHobPtr->UsbConnectorBoardConfig;
 
-  for (ConnectorIndex = 0; ConnectorIndex < UsbConnectorHobPtr->NumberOfUsbConnectors; UsbConnectorHobPtr++) {
+  for (ConnectorIndex = 0; ConnectorIndex < UsbConnectorHobPtr->NumberOfUsbConnectors; ConnectorIndex++) {
     if (UsbConnectorBoardConfig[ConnectorIndex].ConnectorConnectable == CONNECTABLE &&
         UsbConnectorBoardConfig[ConnectorIndex].Usb3Controller == TCSS_USB3 &&
         UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum == TcssXhciPortIndex &&
         UsbConnectorBoardConfig[ConnectorIndex].Usb2Controller == PCH_USB2 &&
         UsbConnectorBoardConfig[ConnectorIndex].ConnectorType == USB_TYPE_A) {
-      PchUsb2PortNum = (UINT8) UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum;
+      PchUsb2PortNum = (UINT8) UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum + 1;
       DEBUG((DEBUG_INFO, "Found PchUsb2 Port#%d mapped with USBA TcssUsb3 Port%d.\n", PchUsb2PortNum, TcssXhciPortIndex));
     }
   }
@@ -555,7 +553,7 @@ UpdatePeiSaPolicy (
     // If the Port type isn't CPU Type-A, then the PchUsb2PortNo get '0'.
     //
     PchUsb2PortNo = TcssGetPchUsb2PortNoMappedWithTypeATcssXhciPort (Index);
-    if (TCSS_IS_VALIDATE_PCH_USB_PORT_NUMBER (PchUsb2PortNo)) {
+    if ((PchUsb2PortNo > 0) && (PchUsb2PortNo <= GetPchXhciMaxUsb2PortNum())) {
       //
       // The PchUsb2PortNo is validate that means the PcdUsbCPort#Properties Port Type is to Type-A.
       // So that the Enable field set to '1'.

@@ -1,0 +1,59 @@
+## @file
+#  Sub Region Update Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+# @par Glossary:
+###
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = SubRegionUpdateLib
+  FILE_GUID                      = A623AACF-65C9-4645-95C3-82D30672B90F
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SubRegionUpdateLib
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  SubRegionUpdateLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
+
+[LibraryClasses]
+  PcdLib
+  DebugLib
+  PlatformFlashAccessLib
+  BiosUpdateHelpersLib
+  ExtractGuidedSectionLib
+  FvImageExtractionLib
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress      ## CONSUMES
+
+[Guids]
+  gLzmaCustomDecompressGuid  ## CONSUMES

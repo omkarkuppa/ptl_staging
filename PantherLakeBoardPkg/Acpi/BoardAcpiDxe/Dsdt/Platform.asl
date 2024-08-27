@@ -84,12 +84,8 @@ External (\_SB.PC00.TRP1.PMSX, IntObj)
 External (\_SB.PC00.TRP2.PMSX, IntObj)
 External (\_SB.PC00.TRP3.PMSX, IntObj)
 
-External (TBTD, MethodObj)
-External (TBTF, MethodObj)
 External (MMRP, MethodObj)
 External (MMTB, MethodObj)
-External (TBFF, MethodObj)
-External (FFTB, MethodObj)
 
 include ("ITbt.asl")
 

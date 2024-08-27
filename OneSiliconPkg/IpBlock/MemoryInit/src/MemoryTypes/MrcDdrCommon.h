@@ -262,4 +262,17 @@ MrcSetIntervalTimerMr (
   IN      UINT8                 DqioDuration
   );
 
+/**
+  Read LPDDR information from MR5 and MR8 and print to the debug log.
+  Also update the Manufacturer's ID in the SPD table, for BIOS Setup and SMBIOS table.
+
+  @param[in] MrcData - include all the MRC general data.
+
+  @retval none
+**/
+void
+ShowLpddrInfo (
+  IN  MrcParameters *const MrcData
+  );
+
 #endif // MRC_DDR_COMMON_H_

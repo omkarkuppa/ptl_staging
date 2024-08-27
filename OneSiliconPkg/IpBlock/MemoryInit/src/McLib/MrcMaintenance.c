@@ -188,6 +188,7 @@ MrcProbelessConfig (
         Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_PL_AGENT_CFG_DTF_REG, MC1_CH0_CR_PL_AGENT_CFG_DTF_REG, Controller, MC0_CH1_CR_PL_AGENT_CFG_DTF_REG, IpChannel);
         PlAgentCfg.Data = MrcReadCR (MrcData, Offset);
         PlAgentCfg.Bits.data_trace_mode = 0;
+        PlAgentCfg.Bits.DDRPL_Activate = ExtInputs->ProbelessTrace;
         //If ECC is enabled, set ECC_EN to 1.
         PlAgentCfg.Bits.ECC_EN = Outputs->EccSupport;
         MrcWriteCR (MrcData, Offset, PlAgentCfg.Data);
@@ -317,6 +318,10 @@ MrcMcProgramDeswizzleRegisters (
     }
   }
 #endif // MRC_DEBUG_PRINT
+
+  // Read some MR values using MC after MC deswizzle registers are programmed
+  ShowLpddrInfo (MrcData);
+
   return mrcSuccess;
 }
 

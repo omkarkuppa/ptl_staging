@@ -61,7 +61,6 @@ PsfSocLib
 PmcLib
 PmcPrivateLib
 PeiPmcPrivateLib
-SpiLib
 PeiSpiLib
 MtrrLib
 PchDmiLib
@@ -215,6 +214,8 @@ gLpssI2cConfigGuid              ## CONSUMES
 gSerialIoConfigGuid             ## CONSUMES
 gLpssSpiConfigGuid              ## CONSUMES
 gLpssUartConfigGuid             ## CONSUMES
+gCnviPreMemConfigGuid           ## CONSUMES
+gCnviConfigGuid                 ## CONSUMES
 
 [Pcd]
 gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress            ## CONSUMES

@@ -23,45 +23,47 @@
 #define _TSN_CONFIG_H_
 
 #include <ConfigBlock.h>
-
-#define TSN_CONFIG_REVISION 2
-extern EFI_GUID gTsnConfigGuid;
-
-#pragma pack (push,1)
-
-typedef struct {
-  UINT32  MacAddr[2]; ///< MAC Address
-} TSN_MAC_ADDR_PORT;
+#include <Library/PchLimits.h>
 
 /**
   The TSN_CONFIG block describes policies related to Time Sensitive Networking(TSN)
-
   <b>Revision 1</b>:
   - Initial version.
   <b>Revision 2</b>:
   - Added MultiVcEnable
   <b>Revision 3</b>:
-  - Added MAC Address Port values for both TSN devices
+  - Added Config
+  <b>Revision 4</b>:
+  - Created MAC Addr Array for each port
+  - Created Enable Array for each port
+
+**/
+
+#define TSN_CONFIG_REVISION 4
+extern EFI_GUID gTsnConfigGuid;
+
+#pragma pack (push,1)
+
+//
+// This struct will be consumes by TSN
+//
+typedef struct {
+  UINT32                MacAddr[2];             // MAC address associated with this port
+} TSN_MAC_ADDR;
+
+/**
+  TSN Config settings.
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER   Header;  ///< Config Block Header
   /**
     Determines if enable PCH internal TSN, 0: Disable; <b>1: Enable</b>.
   **/
-  UINT8             Enable;
-  UINT8             TsnLinkSpeed;           ///< Refer to "TSN_LINK_SPEED_OPTIONS". Default is <b> TSN_LINK_SPEED_2_5G_34MHZ</b>
-  UINT8             MultiVcEnable;          ///< Enable Multi-Vc via Tc to DMA mapping. Deafult is </b> 0:disable</b>
-  UINT8             Rsvd0;                  ///< Reserved bytes, align to multiple 4.
-  TSN_MAC_ADDR_PORT Port[2];                ///< MAC Address
+  UINT8                 Enable[PCH_MAX_TSN_PORT];
+  UINT8                 MultiVcEnable;              ///< Enable Multi-Vc via Tc to DMA mapping. Deafult is </b> 0:disable</b>
+  TSN_MAC_ADDR          Port[PCH_MAX_TSN_PORT];     ///< MAC Address Data Structure
 } TSN_CONFIG;
 
 #pragma pack (pop)
-
-typedef enum {
-  TSN_LINK_SPEED_2_5G_24MHZ = 0,
-  TSN_LINK_SPEED_1G_24MHZ,
-  TSN_LINK_SPEED_2_5G_34MHZ,
-  TSN_LINK_SPEED_1G_34MHZ
-} TSN_LINK_SPEED_OPTIONS;
 
 #endif

@@ -58,6 +58,7 @@ CpuInitPreMemConfigPrint (
   DEBUG ((DEBUG_INFO, " PrmrrSize = 0x%x\n", CpuInitPreMemConfig->PrmrrSize));
   DEBUG ((DEBUG_INFO, " OcLock = 0x%x\n", CpuInitPreMemConfig->OcLock));
   DEBUG ((DEBUG_INFO, " TsegSize: 0x%x\n", CpuInitPreMemConfig->TsegSize));
+  DEBUG ((DEBUG_INFO, " SmmRelocationEnable: 0x%x\n", CpuInitPreMemConfig->SmmRelocationEnable));
   DEBUG ((DEBUG_INFO, "------------------ CPU_INIT_PREMEM_CONFIG End ------------------\n"));
 }
 
@@ -135,6 +136,8 @@ LoadCpuInitPreMemConfigDefault (
   CpuInitPreMemConfig->TmeEnable                = PeiCpuTmeDefaultSetting ();
   CpuInitPreMemConfig->TmeBypassCapability      = CPU_FEATURE_DISABLE;
   CpuInitPreMemConfig->TsegSize                 = PcdGet32 (PcdTsegSize);
+
+  CpuInitPreMemConfig->SmmRelocationEnable      = CPU_FEATURE_ENABLE;
 }
 
 

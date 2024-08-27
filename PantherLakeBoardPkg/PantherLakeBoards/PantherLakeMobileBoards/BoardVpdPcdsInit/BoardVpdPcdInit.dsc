@@ -23,10 +23,13 @@
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlSimics/SkuIdPtlSimics.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlHfpga.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5Rvp1.dsc
+!include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/Xep/PtlUH/SkuIdPtlUHLp5Aep.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHHmpRvp.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5Rvp3.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHDdr5Rvp4.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHCammDTbTRvp2.dsc
+!include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlHLp5Gcs1.dsc
+!include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlHLp5Gcs2.dsc
 
 [Packages]
   PantherLakeBoardPkg/BoardPkg.dec
@@ -222,7 +225,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamGpioEnable|*|0x0
 
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent|*|FALSE
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor|*|0x0
 
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|*|FALSE

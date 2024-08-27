@@ -53,4 +53,3 @@
 [Protocols]
   gEfiPciIoProtocolGuid              ## CONSUMES
   gEdkiiUfsHcPlatformProtocolGuid    ## PRODUCES
-

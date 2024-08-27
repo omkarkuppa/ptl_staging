@@ -174,9 +174,8 @@ FindPcieCap (
 /**
   Get Pch/Peg Pcie Root Port Device and Function Number for TBT by Root Port physical Number
 
-  @param[in]  Type                  PCIE_RP_TYPE_PCH (0x02) or PCIE_RP_TYPE_CPU (0x04)
   @param[in]  RpNumber              Root port physical number. (0-based)
-  @param[out] RpBus                 Return corresponding root port bus number.
+  @param[in]  RpBus                 Root port bus number.
   @param[out] RpDev                 Return corresponding root port device number.
   @param[out] RpFun                 Return corresponding root port function number.
 
@@ -186,9 +185,8 @@ FindPcieCap (
 EFI_STATUS
 EFIAPI
 GetDTbtRpDevFun (
-  IN  UINT8   Type,
   IN  UINT8   RpNumber,
-  OUT UINT8   *RpBus,
+  IN  UINT8   RpBus,
   OUT UINT8   *RpDev,
   OUT UINT8   *RpFunc
   )
@@ -199,7 +197,6 @@ GetDTbtRpDevFun (
   UINT32                         RegVal32;
   UINT16                         RegVal16;
   UINT8                          RegVal8;
-  UINT8                          Bus;
   UINT8                          Dev;
   UINT8                          Func;
   UINT32                         OrgBus;
@@ -207,37 +204,24 @@ GetDTbtRpDevFun (
   BOOLEAN                        Found;
   UINT8                          TempBusNumber;
 
-  if ((RpBus == NULL) || (RpDev == NULL) || (RpFunc == NULL)) {
+  if ((RpDev == NULL) || (RpFunc == NULL)) {
     DEBUG ((DEBUG_ERROR, "GetDTbtRpDevFunc: Invalid parameter (%p, %p, %p)\n", RpBus, RpDev, RpFunc));
     return EFI_INVALID_PARAMETER;
   }
 
   Found  = FALSE;
   IsPresence = FALSE;
-  *RpBus  = 0;
   *RpDev  = 0;
   *RpFunc = 0;
-  Bus     = 0;
 
-  DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] Type = %x RpNum = %d\n", Type, RpNumber));
-
-  //
-  // Retrieved RB bus number
-  //
-  if (Type == PCIE_RP_TYPE_CPU) {
-    Bus = 0;
-  }
-  else if (Type == PCIE_RP_TYPE_PCH) {
-    // @todo Currently no PCH BR support
-    // MeGetPchBusNumber ();
-  }
+  DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] RpNum = %d\n", RpNumber));
 
   //
   // Scan all RP to find PCI BDF for dTBT used
   //
   for (Dev = 0; Dev <= PCI_MAX_DEVICE && Found == FALSE; Dev++) {
     for (Func = 0; Func <= PCI_MAX_FUNC; Func++) {
-      PcieAddress = PCI_SEGMENT_LIB_ADDRESS (0, Bus, Dev, Func, 0);
+      PcieAddress = PCI_SEGMENT_LIB_ADDRESS (0, RpBus, Dev, Func, 0);
       PciSegmentReadBuffer (PcieAddress, sizeof (Hdr), (VOID *) &Hdr);
       if (IsSkipCheckDevice (&Hdr, &IsPresence)) {
         if ((!IsPresence && Func == 0) || (IsPresence && !IS_PCI_SUPPORT_MULTI_FUNC (&Hdr))) {
@@ -249,63 +233,61 @@ GetDTbtRpDevFun (
       //
       // Retrieve pcie capability pointer
       //
-      PcieAddress = PCI_SEGMENT_LIB_ADDRESS (0, Bus, Dev, Func, PCI_CAPBILITY_POINTER_OFFSET);
+      PcieAddress = PCI_SEGMENT_LIB_ADDRESS (0, RpBus, Dev, Func, PCI_CAPBILITY_POINTER_OFFSET);
       RegVal8 = PciSegmentRead8 (PcieAddress);
-      // DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] B[%x]D[%x]F[%x]  cap offset %x\n", Bus, Dev, Func, RegVal8));
+      // DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] B[%x]D[%x]F[%x]  cap offset %x\n", RpBus, Dev, Func, RegVal8));
 
       //
       // Find pcie capability
       //
       RegVal16 = (UINT16) RegVal8;
-      Status = FindPcieCap ((UINT8) Bus, Dev, Func, &RegVal16);
+      Status = FindPcieCap ((UINT8) RpBus, Dev, Func, &RegVal16);
 
       //
       // Check RP number from pcie link capability (offset: 0xc)
       //
       if (!EFI_ERROR (Status)) {
-        PcieAddress = PCI_SEGMENT_LIB_ADDRESS (0, Bus, Dev, Func, RegVal16 + 0xc);
+        PcieAddress = PCI_SEGMENT_LIB_ADDRESS (0, RpBus, Dev, Func, RegVal16 + 0xc);
         RegVal32 = PciSegmentRead32 (PcieAddress);
         if (((PCI_REG_PCIE_LINK_CAPABILITY *) &RegVal32)->Bits.PortNumber == RpNumber) {
           DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] Found RP = %d \n", RpNumber));
           Found = TRUE;
-        }
-        else {
+        } else {
           //
           // Not specific RP
           //
           continue;
         }
-      }
-      else {
+      } else {
         //
         // Not found pci-e capability
         //
         continue;
       }
-      OrgBus = PciSegmentRead32 (PCI_SEGMENT_LIB_ADDRESS (0, Bus, Dev, Func, PCI_BRIDGE_PRIMARY_BUS_REGISTER_OFFSET));
-      // DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] B[%x]D[%x]F[%x]  pBus %x\n", Bus, Dev, Func, OrgBus));
+      OrgBus = PciSegmentRead32 (PCI_SEGMENT_LIB_ADDRESS (0, RpBus, Dev, Func, PCI_BRIDGE_PRIMARY_BUS_REGISTER_OFFSET));
+      // DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] B[%x]D[%x]F[%x]  pBus %x\n", RpBus, Dev, Func, OrgBus));
 
       //
       // Set Sec/Sub buses to a temporary value and prevent bus number over 225 since above 225 is usage
       //
       TempBusNumber = 0x28;
-      //if ((Bus + TempBusNumber) > 225) {
-      //  TempBusNumber -= ((UINT8) Bus + TempBusNumber) - 225 - 16;
+      //if ((RpBus + TempBusNumber) > 225) {
+      //  TempBusNumber -= ((UINT8) RpBus + TempBusNumber) - 225 - 16;
       //}
-      PciSegmentWrite32 (PCI_SEGMENT_LIB_ADDRESS (0, Bus, Dev, Func, PCI_BRIDGE_PRIMARY_BUS_REGISTER_OFFSET),
-        (UINT32) (((Bus + TempBusNumber) << 16) | ((Bus + TempBusNumber) << 8) | Bus));
+      PciSegmentWrite32 (PCI_SEGMENT_LIB_ADDRESS (0, RpBus, Dev, Func, PCI_BRIDGE_PRIMARY_BUS_REGISTER_OFFSET),
+        (UINT32) (((RpBus + TempBusNumber) << 16) | ((RpBus + TempBusNumber) << 8) | RpBus));
 
       //
       // Check if exists TBT DP
       //
-      PcieAddress = PCI_SEGMENT_LIB_ADDRESS (0, Bus + TempBusNumber, 0, 0, PCI_DEVICE_ID_OFFSET);
+      PcieAddress = PCI_SEGMENT_LIB_ADDRESS (0, RpBus + TempBusNumber, 0, 0, PCI_DEVICE_ID_OFFSET);
       RegVal16 = PciSegmentRead16 (PcieAddress);
-      // DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] B[%x]D[%x]F[%x]  DS dev id %x\n", Bus + TempBusNumber, 0, 0, RegVal16));
+      // DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] B[%x]D[%x]F[%x]  DS dev id %x\n", RpBus + TempBusNumber, 0, 0, RegVal16));
 
       //
       // Reset Sec/Sub buses to original value
       //
-      PciSegmentWrite32 (PCI_SEGMENT_LIB_ADDRESS (0, Bus, Dev, Func, PCI_BRIDGE_PRIMARY_BUS_REGISTER_OFFSET), OrgBus);
+      PciSegmentWrite32 (PCI_SEGMENT_LIB_ADDRESS (0, RpBus, Dev, Func, PCI_BRIDGE_PRIMARY_BUS_REGISTER_OFFSET), OrgBus);
 
       //
       // Confirm if exists TBT PPb under RP
@@ -320,10 +302,9 @@ GetDTbtRpDevFun (
       // Found RP bus/dev/function number
       //
       if (Found) {
-        *RpBus  = Bus;
         *RpDev  = Dev;
         *RpFunc = Func;
-        DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] Found RP = %d RpBus = %x, RpDev = %X, RpFunc = %X \n", RpNumber, *RpBus, *RpDev, *RpFunc));
+        DEBUG ((DEBUG_INFO, "[GetDTbtRpDevFun] Found RP = %d RpBus = %x, RpDev = %x, RpFunc = %x \n", RpNumber, RpBus, *RpDev, *RpFunc));
         return EFI_SUCCESS;
       }
     }

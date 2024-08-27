@@ -38,6 +38,31 @@ Name(_DSD, Package() {
     }
 }) //End _DSD
 
+Name(AC00, Package() {    // This package is shared by all DSP devices in this composition table
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
+    Package () {
+       Package (2) {"msft-acx-factory-circuit", One},    // Is an ACX Factory
+       Package (2) {"msft-acx-core-circuit", Zero},    // Not an ACX Core circuit
+    }
+}) //End AC00
+
+Name(AC01, Package() {    // This package is shared by all aggregated Codec devices in this composition table
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
+    Package () {
+       Package (2) {"msft-acx-factory-circuit", Zero},    // Not an ACX Factory
+       Package (2) {"msft-acx-core-circuit", One},    // ACX Core circuit
+       Package (2) {"msft-acx-aggregated-circuit", One},
+    }
+}) //End AC01
+
+Name(AC02, Package() {    // This package is shared by all Codec devices in this composition table
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
+    Package () {
+       Package (2) {"msft-acx-factory-circuit", Zero},    // Not an ACX Factory
+       Package (2) {"msft-acx-core-circuit", One},    // ACX Core circuit
+    }
+}) //End AC02
+
 Name(EP00, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
@@ -80,14 +105,6 @@ Name(CC00, Package() {
     }
 }) //End CC00
 
-Name(AC00, Package() {    // This package is shared by all DSP devices in this composition table
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-    Package () {
-       Package (2) {"msft-acx-factory-circuit", One},    // Is an ACX Factory
-       Package (2) {"msft-acx-core-circuit", Zero},    // Not an ACX Core circuit
-    }
-}) //End AC00
-
 Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creation. Contents of this package are proprietary.
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
@@ -99,8 +116,8 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
           Buffer()
           {
              0x01,
-             0x00, 0x01, 0x00, 0x00,
-             0x01, 0x20, 0x13, 0x5D, 0x02, 0x30, 0x01, 0x00,
+             0x00, 0x02, 0x00, 0x00,
+             0x00, 0x20, 0x13, 0x5D, 0x02, 0x30, 0x02, 0x00,
              0x01
           }
        },
@@ -108,8 +125,8 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
           Buffer()
           {
              0x01,
-             0x00, 0x02, 0x00, 0x00,
-             0x01, 0x20, 0x13, 0x5D, 0x02, 0x32, 0x02, 0x00,
+             0x00, 0x01, 0x00, 0x00,
+             0x00, 0x20, 0x13, 0x5D, 0x02, 0x31, 0x01, 0x00,
              0x01
           }
        },
@@ -118,8 +135,8 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
           Buffer()
           {
              0x02,
-             0x00, 0x01, 0x00, 0x00,
-             0x01, 0x20, 0x13, 0x5D, 0x02, 0x30, 0x01, 0x00,
+             0x00, 0x02, 0x00, 0x00,
+             0x00, 0x20, 0x13, 0x5D, 0x02, 0x30, 0x02, 0x00,
              0x04, 0x03
           }
        },
@@ -127,8 +144,8 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
           Buffer()
           {
              0x02,
-             0x00, 0x02, 0x00, 0x00,
-             0x01, 0x20, 0x13, 0x5D, 0x02, 0x32, 0x02, 0x00,
+             0x00, 0x01, 0x00, 0x00,
+             0x00, 0x20, 0x13, 0x5D, 0x02, 0x31, 0x01, 0x00,
              0x04, 0x0C
           }
        },
@@ -151,27 +168,10 @@ Name(AG00, Package() {
     }
 }) //End AG00
 
-Name(AC01, Package() {    // This package is shared by all aggregated Codec devices in this composition table
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-    Package () {
-       Package (2) {"msft-acx-factory-circuit", Zero},    // Not an ACX Factory
-       Package (2) {"msft-acx-core-circuit", One},    // ACX Core circuit
-       Package (2) {"msft-acx-aggregated-circuit", One},
-    }
-}) //End AC01
-
-Name(AC02, Package() {    // This package is shared by all Codec devices in this composition table
-    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-    Package () {
-       Package (2) {"msft-acx-factory-circuit", Zero},    // Not an ACX Factory
-       Package (2) {"msft-acx-core-circuit", One},    // ACX Core circuit
-    }
-}) //End AC02
-
 Name(CC01, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD1.AF04"},
+       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDB.AF04"},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0x13},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -185,7 +185,7 @@ Name(CC01, Package() {
 Name(CC02, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD2.AF04"},
+       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDC.AF04"},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0x13},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -250,7 +250,7 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
          {
             0x02,
             0x00, 0x03, 0x00, 0x00,
-            0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+            0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
             0x08
          }
       },
@@ -260,7 +260,7 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
          {
             0x02,
             0x00, 0x03, 0x00, 0x00,
-            0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+            0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
             0x0A,                   // dataport
             0xFE, 0xFF,             // wFormatTag
             0x02, 0x00,             // nChannels
@@ -280,7 +280,7 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 Name(CC11, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD0.AF02"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDA.AF02"},
       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
       Package (2) {"acpi-acd-sdca-terminal-id", 0x26},    // Entity id of the Analog terminal used for this endpoint
       Package (2) {"acpi-acd-sdca-terminal-type", 0x0205},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -345,7 +345,7 @@ Name(VN02, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x01,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x01
                         }
                   },
@@ -355,7 +355,7 @@ Name(VN02, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 Name(CC21, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD0.AF01"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDA.AF01"},
       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
       Package (2) {"acpi-acd-sdca-terminal-id", 0x6},    // Entity id of the Analog terminal used for this endpoint
       Package (2) {"acpi-acd-sdca-terminal-type", 0x06c0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -420,7 +420,7 @@ Name(VN03, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x01,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x01
                         }
                   },
@@ -430,7 +430,7 @@ Name(VN03, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 Name(CC31, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD0.AF01"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDA.AF01"},
       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
       Package (2) {"acpi-acd-sdca-terminal-id", 0x7},    // Entity id of the Analog terminal used for this endpoint
       Package (2) {"acpi-acd-sdca-terminal-type", 0x0690},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -495,7 +495,7 @@ Name(VN04, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x01,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x01
                         }
                   },
@@ -505,7 +505,7 @@ Name(VN04, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 Name(CC41, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD0.AF01"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDA.AF01"},
       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
       Package (2) {"acpi-acd-sdca-terminal-id", 0x48},    // Entity id of the Analog terminal used for this endpoint
       Package (2) {"acpi-acd-sdca-terminal-type", 0x06d0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -570,7 +570,7 @@ Name(VN05, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x02,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x04
                         }
                   },
@@ -580,7 +580,7 @@ Name(VN05, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 Name(CC51, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD0.AF01"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDA.AF01"},
       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
       Package (2) {"acpi-acd-sdca-terminal-id", 0x8},    // Entity id of the Analog terminal used for this endpoint
       Package (2) {"acpi-acd-sdca-terminal-type", 0x06a0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -645,7 +645,7 @@ Name(VN06, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x02,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x04
                         }
                   },
@@ -655,7 +655,7 @@ Name(VN06, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 Name(CC61, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD0.AF01"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDA.AF01"},
       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
       Package (2) {"acpi-acd-sdca-terminal-id", 0x9},    // Entity id of the Analog terminal used for this endpoint
       Package (2) {"acpi-acd-sdca-terminal-type", 0x0680},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -720,7 +720,7 @@ Name(VN07, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x02,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x04
                         }
                   },
@@ -730,7 +730,7 @@ Name(VN07, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 Name(CC71, Package() {
    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
    Package () {
-      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD0.AF01"},
+      Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDA.AF01"},
       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
       Package (2) {"acpi-acd-sdca-terminal-id", 0x43},    // Entity id of the Analog terminal used for this endpoint
       Package (2) {"acpi-acd-sdca-terminal-type", 0x06d0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function

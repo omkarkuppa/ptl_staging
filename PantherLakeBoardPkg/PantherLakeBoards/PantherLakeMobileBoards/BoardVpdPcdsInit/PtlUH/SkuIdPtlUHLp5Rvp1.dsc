@@ -96,9 +96,11 @@
   # GPIO Table WwanOff
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOffEarlyPreMem| * |{CODE(
   {
-    { GPIOV2_PTL_PCD_XXGPP_A_9,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,     GpioV2IntDis,                GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,  GpioV2Unlock }},  // M.2_WWAN_FCP_OFF_N
-    { GPIOV2_PTL_PCD_XXGPP_B_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,     GpioV2IntDis,                GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,  GpioV2Unlock }},  // M.2_WWAN_RST_N
-    { GPIOV2_PTL_PCD_XXGPP_D_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,     GpioV2IntDis,                GpioV2ResetHost,      GpioV2TermNone,  GpioV2Lock,  GpioV2Unlock }},  // M.2_WWAN_PERST_GPIO_N
+    { GPIOV2_PTL_PCD_XXGPP_H_16, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_PWREN
+    { GPIOV2_PTL_PCD_XXGPP_A_9,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // M.2_WWAN_FCP_OFF_N
+    { GPIOV2_PTL_PCD_XXGPP_B_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // M.2_WWAN_RST_N
+    { GPIOV2_PTL_PCD_XXGPP_D_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // M.2_WWAN_PERST_GPIO_N
+    { GPIOV2_PTL_PCD_XXGPP_E_2,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirInInv,  GpioV2StateDefault,  GpioV2IntLevel|GpioV2IntSci, GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Unlock, GpioV2Lock   }},  // WWAN_WAKE_GPIO_N
     { 0x0 }
   })}
 
@@ -126,21 +128,21 @@
   # Mrc Spd Address Table
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable| * |{CODE(
   { 16,
-    { 0xA0 ,   // Port 0
+    { 0xA8 ,   // Port 0
       0x00 ,   // Port 1
-      0xA0 ,   // Port 2
+      0xA8 ,   // Port 2
       0x00 ,   // Port 3
-      0xA0 ,   // Port 4
+      0xA8 ,   // Port 4
       0x00 ,   // Port 5
-      0xA0 ,   // Port 6
+      0xA8 ,   // Port 6
       0x00 ,   // Port 7
-      0xA4 ,   // Port 8
+      0xA8 ,   // Port 8
       0x00 ,   // Port 9
-      0xA4 ,   // Port 10
+      0xA8 ,   // Port 10
       0x00 ,   // Port 11
-      0xA4 ,   // Port 12
+      0xA8 ,   // Port 12
       0x00 ,   // Port 13
-      0xA4 ,   // Port 14
+      0xA8 ,   // Port 14
       0x00     // Port 15
     }
   })}
@@ -366,6 +368,9 @@
   # Thermal Sensor Gpio D Pmsync Enable
   gBoardModuleTokenSpaceGuid.VpdPcdMemoryThermalSensorGpioDPmsyncEnable|*|FALSE
 
+  # M.2 Gen4 SSD (NIST)
+  gBoardModuleTokenSpaceGuid.VpdPcdNvmeRecoveryPrimarySlotPortNumber|*|0x5
+
 # PCIE SLOT 1 - X1 CONNECTOR RTD3
   gBoardModuleTokenSpaceGuid.VpdPcdPcieSlot1RootPort|*|0x3
   gBoardModuleTokenSpaceGuid.VpdPcdPcieSlot1PwrEnableGpioNo|*|{CODE(
@@ -415,9 +420,6 @@
 
   # USB Type-C PD Information Present : FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent|*|TRUE
-
-  # USB Type-C PD Vendor : Definitions 1 to 3 are supported.
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor|*|0x02
 
   # USB Type-C Retimer Information Present : FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent|*|TRUE
@@ -907,11 +909,7 @@
   )}
 
 [PcdsDynamicHii.common.SkuIdPtlUHLp5Rvp1.STANDARD]
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[0]|0x2                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[3]|0x1                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[4]|0x2                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[5]|0x3                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cTouchPadType|0x7                                           # THAT Touch Pad
+  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[5]|0x1                                    # Connected device
   gStructPcdTokenSpaceGuid.PcdSetup.TelemetryDeviceEnable|0x1                                        # Enable Telemetry
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x0                               # DMIC #0
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x0                               # DMIC #1

@@ -32,7 +32,7 @@
 #include <Library/DebugPrintErrorLevelLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PciHostBridgeLib.h>
-#include <Library/SerialIoUartDebugPropertyPcdLib.h>
+#include <Library/LpssUartDebugPropertyPcdLib.h>
 #include <Library/TraceHubHookLib.h>
 #include <Protocol/DevicePath.h>
 #include <UniversalPayload/SerialPortInfo.h>
@@ -309,7 +309,7 @@ UpdateUniversalPayloadSerialPortLpss (
   Status              = EFI_SUCCESS;
   DebugConfigData     = NULL;
   SerialPortInfo      = NULL;
-  LpssUartDebugEnable = SerialIoUartDebugPcdGetDebugEnable ();
+  LpssUartDebugEnable = LpssUartDebugPcdGetDebugEnable ();
 
   DEBUG ((DEBUG_INFO, "%a start\n", __FUNCTION__));
 

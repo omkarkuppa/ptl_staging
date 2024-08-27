@@ -22,7 +22,6 @@
 
 #ifndef _SERIAL_IO_UART_SOC_LIB_H_
 #define _SERIAL_IO_UART_SOC_LIB_H_
-
 #include <UartCtrl.h>
 #include <Library/PchLimits.h>
 #include <ConfigBlock.h>
@@ -48,9 +47,9 @@ typedef struct {
 **/
 typedef
 VOID
-(EFIAPI *SERIAL_IO_UART_GPIO_ENABLE) (
+(EFIAPI* SERIAL_IO_UART_GPIO_ENABLE) (
   IN UINT8                  UartNumber,
-  IN SERIAL_IO_UART_CONFIG  *UartDeviceConfig
+  IN SERIAL_IO_UART_CONFIG* UartDeviceConfig
   );
 
 /**
@@ -63,7 +62,7 @@ typedef
 VOID
 (*SERIAL_IO_UART_GPIO_IO_STANDBY_CONFIGURE) (
   IN UINT8                   UartNumber,
-  IN SERIAL_IO_UART_CONFIG   *UartDeviceConfig
+  IN SERIAL_IO_UART_CONFIG* UartDeviceConfig
   );
 
 /**
@@ -74,7 +73,7 @@ VOID
 typedef
 VOID
 (*SERIAL_IO_UART_DISABLE_PG) (
-  IN  SERIAL_IO_UART_CONTROLLER    *UartController
+  IN  SERIAL_IO_UART_CONTROLLER* UartController
   );
 
 /**
@@ -99,26 +98,8 @@ typedef struct {
   UINT8                           UartCount;
   UINT8                           ControllerId;
 } SERIAL_IO_UART_HANDLE;
+
 #pragma pack ()
-
-/**
-  Build SerialIo UART Handle with all Callbacks and Soc Private Config
-
-  @param[in, out] UartHandle        The SerialIo UART Handle instance
-  @param[in]      UartDeviceConfig  SerialIo UART Config
-  @param[in]      PciCfgBase        PCI Config Base address
-  @param[in]      UartNumber        UART Number
-
-  @retval     EFI_SUCCESS           Completed successfully
-              EFI_UNSUPPORTED       SOC is not supported
-**/
-EFI_STATUS
-SerialIoUartBuildHandle (
-  IN OUT SERIAL_IO_UART_HANDLE   *UartHandle,
-  IN     SERIAL_IO_UART_CONFIG   *UartDeviceConfig,
-  IN     UINT64                  UartPciCfgBase,
-  IN     UINT8                   *UartNumber     OPTIONAL
-  );
 
 /**
   Initialize the Uart controller
@@ -129,57 +110,32 @@ SerialIoUartBuildHandle (
 **/
 VOID
 SerialIoUartSocInit (
-  IN OUT SERIAL_IO_UART_HANDLE   *UartHandle,
-  IN     SI_POLICY_PPI           *SiPolicy,
-  IN     SERIAL_IO_CONFIG        *SerialIoConfig
-  );
-
-/**
-  Gets Serial IO Uart Number based on its PciCfgSpace adrress
-
-  @param[in]  PciCfgBase     PCI Config Base address
-
-  @retval    UartNumber      Serial IO device UART number
-                             0xFF is returned if no match was found
-**/
-UINT8
-GetSerialIoUartNumber (
-  IN UINT64            PciCfgBase
-  );
-
-/**
-  Gets Uarts Device Id
-
-  @param[in] UartNumbe               Serial IO device UART number
-
-  @retval                            Device Id
-**/
-UINT16
-GetSerialIoUartDeviceId (
-  IN UINT8       UartNumber
+  IN OUT SERIAL_IO_UART_HANDLE* UartHandle,
+  IN     SI_POLICY_PPI* SiPolicy,
+  IN     SERIAL_IO_CONFIG* SerialIoConfig
   );
 
 /**
   Gets Fixed Base Address used for BAR0
 
-  @param[in] UartNumber              Serial IO device UART number
+  @param[in] UartNumber              Lpss device UART number
 
   @retval                            Config control offset
 **/
 UINT32
-GetSerialIoUartFixedMmioAddress (
+GetLpssUartFixedBar0 (
   IN UINT8       UartNumber
   );
 
 /**
   Gets Fixed Address used for Pci Config Space manipulation
 
-  @param[in] UartNumber              Serial IO device UART number
+  @param[in] UartNumber              Lpss device UART number
 
   @retval                            Pci Config Address
 **/
 UINT32
-GetSerialIoUartFixedPciCfgAddress (
+GetLpssUartFixedBar1 (
   IN UINT8       UartNumber
   );
 

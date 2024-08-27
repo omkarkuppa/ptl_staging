@@ -20,6 +20,7 @@
 **/
 
 External (\_SB.SGOV, MethodObj)
+External (\_SB.BTRK, MethodObj)
 External (\CNMT, MutexObj)
 External (BRMT, IntObj)
 External (FDEL, IntObj)

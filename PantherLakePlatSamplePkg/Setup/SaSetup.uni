@@ -225,6 +225,15 @@
 #string STR_CH_HASH_OVERRIDE_PROMPT             #language en-US "Ch Hash Override"
 #string STR_CH_HASH_OVERRIDE_HELP               #language en-US "Select if Channel Hash setting values will be taken from input parameters or automatically chosen based on DRAM type detected."
 
+#string STR_SUBCH_HASH_OVERRIDE_SUPPORT_PROMPT  #language en-US "SubCh Hash Override enable"
+#string STR_SUBCH_HASH_OVERRIDE_SUPPORT_HELP    #language en-US "Enable/Disable SubChannel Hash Support. NOTE: ONLY if Memory interleaved Mode"
+
+#string STR_SUBCH_HASH_MASK_SUPPORT_PROMPT      #language en-US "SubCh Hash Mask"
+#string STR_SUBCH_HASH_MASK_SUPPORT_HELP        #language en-US "Set the BIT(s) to be included in the XOR function. NOTE BIT mask corresponds to BITS [19:6}"
+
+#string STR_SUBCH_HASH_INTLVED_BIT_SUPPORT_PROMPT  #language en-US "SubCh Hash Interleaved Bit"
+#string STR_SUBCH_HASH_INTLVED_BIT_SUPPORT_HELP    #language en-US "Select the BIT to be used for SubChannel Interleaved mode. NOTE: BIT7 will interlave the channels at a 2 cacheline granularity, BIT8 at 4 and BIT9 at 8"
+
 #string STR_EXTENDED_BANK_HASHING_PROMPT        #language en-US "Extended Bank Hashing"
 #string STR_EXTENDED_BANK_HASHING_HELP          #language en-US "Enable/disable Extended Bank Hashing."
 
@@ -305,13 +314,10 @@
                                                 [3] Enable Training Algorithm (TrainingEnables) safe mode override, [4] Enable SaGv safe mode override"
 
 #string STR_MC_SAFEMODE_PROMPT                  #language en-US "MC Safe Mode Support"
-#string STR_MC_SAFEMODE_HELP                    #language en-US "Safe Mode options enabled via bitmask. SafeMode[0]: Clk Gate / BGF, SafeMode[1]: CKE Pdwn, SafeMode[2]: Tristate,
-                                                SafeMode[3]: PHY Power States / Clock Spine, SafeMode[4]: Same Rank TA, SafeMode[5]: Different Rank TA, SafeMode[6]: MR4_Period / ZQCAL_Period
-                                                SafeMode[7]: LP5 Wck Mode SafeMode[8]: Self Refresh, SafeMode[9]: WR/RD Retraining, SafeMode[10]: Power Saving"
+#string STR_MC_SAFEMODE_HELP                    #language en-US "Safe mode options for MC"
 
 #string STR_DDR_SAFEMODE_PROMPT                 #language en-US "DDR PHY Safe Mode Support"
-#string STR_DDR_SAFEMODE_HELP                   #language en-US "Safe Mode options enabled via bitmask. Bit 0: Basic PM Features, Bit 1: Spine Gating,
-                                                  Bit 2: Advanced DCC, Bit 3: R2R Training, Bit 4: Transformer Mode, Bit 5: PLL Operation, Bit 6: Safe ODT"
+#string STR_DDR_SAFEMODE_HELP                   #language en-US "Safe mode options for DDR PHY"
 
 #string STR_LPMODE_PROMPT                       #language en-US "LpMode"
 #string STR_LPMODE_HELP                         #language en-US "LpMode options enabled via bitmask. Bit 0: Lpmode0p5 (Idle_enable), Bit 1: Lpmode2 (PowerDown_enable), Bit 2: Enable Lpmode3 (Selfrefresh_enable), Bit 7: Auto"
@@ -1202,22 +1208,12 @@
 #string STR_SAGV_FOURTH_FREQ                    #language en-US "Fourth Point Frequency"
 #string STR_SAGV_FOURTH_GEAR                    #language en-US "Fourth Point Gear"
 #string STR_SAGV_FREQ_HELP                      #language en-US "Specify the frequency for the given point.  0 - MRC auto, Else a specific frequency as an integer: 1333"
-#string STR_SAGV_GEAR_HELP                      #language en-US "Selection for the Gear Ratio of the SAGV point"
-#string STR_GEAR_NO_SAGV_PROMPT                 #language en-US "Sets the gear ratio when SAGV is disabled"
+#string STR_SAGV_GEAR_HELP                      #language en-US "Gear ratio for this SAGV point."
+#string STR_GEAR_NO_SAGV_PROMPT                 #language en-US "Gear Ratio"
+#string STR_GEAR_NO_SAGV_HELP                   #language en-US "Gear ratio when SAGV is disabled."
 
-#string STR_FIXED_LOW_STRING                    #language en-US "Fixed Low"
-#string STR_FIXED_MID_STRING                    #language en-US "Fixed Mid"
-#string STR_FIXED_HIGH_STRING                   #language en-US "Fixed High"
-#string STR_SA_GV_LOW_PROMPT                    #language en-US "SA GV Low Freq"
-#string STR_SA_GV_LOW_HELP                      #language en-US "System Agent Geyserville. Set frequency for low point. Default 1067 for LPDDR4, 1333 for DDR4.  Must be the lowest frequency."
-#string STR_SA_GV_MID_PROMPT                    #language en-US "SA GV Mid Freq"
-#string STR_SA_GV_MID_HELP                      #language en-US "System Agent Geyserville. Set frequency for mid point. Default 1867.  Must be Low <= Mid <= High"
-
-#string STR_DDR_SPEED_CONTROL_PROMPT            #language en-US "DDR Speed Control"
-#string STR_DDR_SPEED_CONTROL_HELP              #language en-US "DDR Frequency and Gear1 / Gear2 control for all SAGV points"
-
-#string STR_GEAR1_STRING                        #language en-US "Gear1"
 #string STR_GEAR2_STRING                        #language en-US "Gear2"
+#string STR_GEAR4_STRING                        #language en-US "Gear4"
 
 #string STR_PROBELESS_TRACE_PROMPT              #language en-US "Probeless Trace"
 #string STR_PROBELESS_TRACE_HELP                #language en-US "Enable/Disable capacity to activate Probeless Trace feature."

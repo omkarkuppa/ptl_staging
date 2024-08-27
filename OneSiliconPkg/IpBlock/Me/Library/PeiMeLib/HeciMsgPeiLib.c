@@ -389,69 +389,6 @@ PeiHeciSetUnconfigOnRtcClearDisableMsg (
 }
 
 //
-// MKHI_DNX_GROUP_ID = 0x0D
-//
-
-/**
-  Send DNX Request Set message.
-
-  @param[out] BiosAction          Requested Bios Action:
-                                    0 - Continue Post
-                                    1 - Reset Required
-
-  @retval EFI_SUCCESS             Command succeeded
-  @retval EFI_INVALID_PARAMETER   Invalid input parameter
-  @retval EFI_UNSUPPORTED         Current ME mode doesn't support this function
-  @retval EFI_DEVICE_ERROR        HECI Device error, command aborts abnormally
-  @retval EFI_TIMEOUT             HECI does not return the buffer before timeout
-**/
-EFI_STATUS
-PeiHeciDnxReqSet (
-  OUT UINT32         *BiosAction
-  )
-{
-  EFI_STATUS         Status;
-  DNX_REQ_SET_BUFFER DnxReqSet;
-  UINT32             MeMode;
-  UINT32             Length;
-  UINT32             RecvLength;
-
-  if (BiosAction == NULL) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  Status = MeBiosGetMeMode (&MeMode);
-  if (EFI_ERROR (Status) || (MeMode != ME_MODE_NORMAL)) {
-    return EFI_UNSUPPORTED;
-  }
-
-  DnxReqSet.Request.MkhiHeader.Data           = 0;
-  DnxReqSet.Request.MkhiHeader.Fields.GroupId = MKHI_DNX_GROUP_ID;
-  DnxReqSet.Request.MkhiHeader.Fields.Command = DNX_REQ_SET_CMD;
-  Length                                      = sizeof (DNX_REQ_SET_REQUEST);
-  RecvLength                                  = sizeof (DNX_REQ_SET_RESPONSE);
-
-  Status = HeciWrapperSendWithAck (
-             BIOS_FIXED_HOST_ADDR,
-             HECI_MKHI_MESSAGE_ADDR,
-             (UINT32 *) &DnxReqSet,
-             Length,
-             (UINT32 *) &DnxReqSet,
-             &RecvLength
-             );
-
-  if (!EFI_ERROR (Status) &&
-      (DnxReqSet.Response.MkhiHeader.Fields.Command == DNX_REQ_SET_CMD) &&
-      (DnxReqSet.Response.MkhiHeader.Fields.IsResponse == 1) &&
-      (DnxReqSet.Response.MkhiHeader.Fields.Result == MkhiStatusSuccess)) {
-    *BiosAction = DnxReqSet.Response.BiosAction;
-  }
-
-  return Status;
-}
-
-
-//
 // MKHI_GEN_GROUP_ID = 0xFF
 //
 

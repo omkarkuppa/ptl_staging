@@ -31,10 +31,6 @@
       #
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageIdName|L"MAC Address Sub Region"
 
-      #
-      # ESRT and FMP Lowest Support Version for this capsule update module
-      gPlatformModuleTokenSpaceGuid.PcdSystemFirmwareFmpLowestSupportedVersion|0
-
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressWatchdogTimeInSeconds|0
 
       #
@@ -42,27 +38,10 @@
       #
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressColor|0x000000FF
 
-      #
-      # Certificates used to authenticate capsule update image
-      #
-      !include $(PLATFORM_FEATURES_PATH)/CapsuleUpdate/FmpCertificate.dsc
-
     <LibraryClasses>
-      #
-      # Generic libraries that are used "as is" by all FMP modules
-      #
-      FmpPayloadHeaderLib|FmpDevicePkg/Library/FmpPayloadHeaderLibV1/FmpPayloadHeaderLibV1.inf
-      FmpAuthenticationLib|SecurityPkg/Library/FmpAuthenticationLibPkcs7/FmpAuthenticationLibPkcs7.inf
-      FmpDependencyLib|FmpDevicePkg/Library/FmpDependencyLib/FmpDependencyLib.inf
-      #
-      # Platform specific capsule policy library
-      #
-      CapsuleUpdatePolicyLib|$(PLATFORM_FEATURES_PATH)/CapsuleUpdate/Library/CapsuleUpdatePolicyLib/CapsuleUpdatePolicyLib.inf
       #
       # Platform specific library that processes a capsule and updates the FW storage device
       #
-      FmpDeviceLib|$(PLATFORM_FEATURES_PATH)/CapsuleUpdate/Library/FmpDeviceLibTsnMacAddr/FmpDeviceLibTsnMacAddr.inf
-      SubRegionUpdateLib|$(PLATFORM_FEATURES_PATH)/CapsuleUpdate/Library/SubRegionUpdateLib/SubRegionUpdateLib.inf
-      FmpDependencyCheckLib|FmpDevicePkg/Library/FmpDependencyCheckLibNull/FmpDependencyCheckLibNull.inf
-      FmpDependencyDeviceLib|FmpDevicePkg/Library/FmpDependencyDeviceLibNull/FmpDependencyDeviceLibNull.inf
+      FmpDeviceLib|CapsuleFeaturePkg/Library/FmpDeviceLibTsnMacAddr/FmpDeviceLibTsnMacAddr.inf
+      SubRegionUpdateLib|CapsuleFeaturePkg/Library/SubRegionUpdateLib/SubRegionUpdateLib.inf
   }

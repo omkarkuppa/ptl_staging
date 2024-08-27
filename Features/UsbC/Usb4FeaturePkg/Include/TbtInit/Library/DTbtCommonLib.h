@@ -127,9 +127,8 @@ IsTbtHostRouter (
 /**
   Get Pch/Peg Pcie Root Port Device and Function Number for TBT by Root Port physical Number
 
-  @param[in]  Type                  PCIE_RP_TYPE_PCH (0x02) or PCIE_RP_TYPE_CPU (0x04)
   @param[in]  RpNumber              Root port physical number. (0-based)
-  @param[out] RpBus                 Return corresponding root port bus number.
+  @param[in]  RpBus                 Root port bus number.
   @param[out] RpDev                 Return corresponding root port device number.
   @param[out] RpFun                 Return corresponding root port function number.
 
@@ -138,9 +137,8 @@ IsTbtHostRouter (
 EFI_STATUS
 EFIAPI
 GetDTbtRpDevFun(
-  IN  UINT8   Type,
   IN  UINT8   RpNumber,
-  OUT UINT8   *RpBus,
+  IN  UINT8   RpBus,
   OUT UINT8   *RpDev,
   OUT UINT8   *RpFunc
   );

@@ -1020,30 +1020,6 @@ HeciHmrfpoGetStatus (
   );
 
 //
-// MKHI_DNX_GROUP_ID = 0x0D
-//
-
-/**
-  Send Dnx Request Clear message.
-
-  @param[in] Flag                 Flag indicating the type of clear operation:
-                                    0 - cancel DNX Operation
-                                    1 - Global reset
-                                    2 - CSE reset
-                                    3 - Cold reset
-
-  @retval EFI_UNSUPPORTED         Current ME mode doesn't support this function
-  @retval EFI_SUCCESS             Command succeeded
-  @retval EFI_DEVICE_ERROR        HECI Device error, command aborts abnormally
-  @retval EFI_TIMEOUT             HECI does not return the buffer before timeout
-  @retval EFI_BUFFER_TOO_SMALL    Message Buffer is too small for the Acknowledge
-**/
-EFI_STATUS
-HeciDnxReqClear (
-  IN UINT32            Flag
-  );
-
-//
 // MKHI_GEN_GROUP_ID = 0xF0
 //
 

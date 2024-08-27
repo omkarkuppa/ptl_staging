@@ -30,7 +30,7 @@ Name(_DSD, Package()
 		Package (2) {"mipi-sdw-sdca-interface-revision", 0x0801}, // Integer: SDCA 0.8r01
 
         Package(2) {"mipi-sdw-sdca-interrupt-register-list", 0xF},            // Bitmap
-        Package(2) {"mipi-sdw-commit-register-supported", 0},                 // Boolean
+        Package(2) {"mipi-sdw-commit-register-supported", 1},                 // Boolean
 
 		Package (2) {"mipi-sdw-wake-up-unavailable", 0}, // support wakeup
 		Package (2) {"mipi-sdw-test-mode-supported", 1}, // Integer/Boolean

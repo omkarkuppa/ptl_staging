@@ -94,6 +94,11 @@ Defines Platform BoardIds
 #define BoardIdPtlUHDdr5Rvp4               0x04
   #define BomIdPtlUHLp5PpvRvp              0x05
 #define BoardIdPtlUHCammDTbTRvp2           0x02
+#define BoardIdPtlUHLp5Aep                 0x07
+  #define BomIdPtlUHLp5Aep                 0x01
+
+#define BoardIdPtlHLp5Gcs1                 0x11
+#define BoardIdPtlHLp5Gcs2                 0x12
 
 #define BoardIdUnknown1                   0xffff
 
@@ -108,6 +113,8 @@ Defines Platform BoardIds
 #define SkuIdPtlUHLp5MemSktChromeRvp1     0x00040001
 #define SkuIdPtlUHLp5MemSdChromeRvp1      0x00050001
 #define SkuIdPtlUHLp5Rvp1Bom              0x00060001
+#define SkuIdPtlUHLp5Aep                  0x00000007
+#define SkuIdPtlUHLp5AepBom               0x00010007
 
 #define SkuIdPtlUHCammDTbTRvp2            0x00000002
 #define SkuIdPtlUHCammDTbTRvp2Bom         0x00010002
@@ -116,6 +123,8 @@ Defines Platform BoardIds
 #define SkuIdPtlUHLp5MemSdRvp3            0x00010003
 #define SkuIdPtlUHLp5MemSktPnpRvp3        0x00020003
 #define SkuIdPtlUHLp5Rvp3Bom              0x00060003
+#define SkuIdPtlHLp5Gcs1                  0x00000011
+#define SkuIdPtlHLp5Gcs2                  0x00000012
 
 #define SkuIdPtlUHDdr5Rvp4                0x00000004
 #define SkuIdPtlUHDdr5Rvp4Bom             0x00060004

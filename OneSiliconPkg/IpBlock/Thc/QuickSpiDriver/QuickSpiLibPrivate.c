@@ -1001,7 +1001,8 @@ QuickSpiLibConfigure (
   IN UINT8   SioWriteOpCode,
   IN UINT8   DioWriteOpCode,
   IN UINT8   QioWriteOpCode,
-  IN UINT8   QpioWriteOpCode
+  IN UINT8   QpioWriteOpCode,
+  IN UINT8   LimitPacketSize
   )
 {
   THC_M_PRT_SPI_ICRRD_OPCODE  IcrrdOpCode;
@@ -1054,7 +1055,7 @@ QuickSpiLibConfigure (
   MmioWrite32 (MmioBase + R_THC_MEM_PRT_DEVINT_CFG_2, DevIntCfg2.Data32);
 
   SpiCfg.Data32 = MmioRead32 (MmioBase + R_THC_MEM_PRT_SPI_CFG);
-  SpiCfg.Fields.SpiRdMps = QUICK_SPI_DEFAULT_MAX_PACKET_SIZE;
+  SpiCfg.Fields.SpiRdMps = LimitPacketSize ?  QUICK_SPI_DEFAULT_MAX_PACKET_SIZE_MIN : QUICK_SPI_DEFAULT_MAX_PACKET_SIZE;
   SpiCfg.Fields.SpiWrMps = QUICK_SPI_DEFAULT_MAX_PACKET_SIZE_MIN;
   MmioWrite32 (MmioBase + R_THC_MEM_PRT_SPI_CFG, SpiCfg.Data32);
 }

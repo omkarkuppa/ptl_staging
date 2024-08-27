@@ -73,7 +73,7 @@ typedef enum {
 } MrhCasOpcode;
 
 /// MC Safe Modes
-#define MC_SAFE_DFI_LP_MODES                (MRC_BIT0)
+#define MC_SAFE_RESERVED                    (MRC_BIT0)
 #define MC_SAFE_OPP_SR                      (MRC_BIT1)
 
 ///
@@ -794,6 +794,20 @@ VOID MrcGetDdrPhyWeights (
 VOID
 MrcStaticPma1PlatformSpecific (
   IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  This function configures the Power Metering weights.
+
+  @param[in out]  MrValue     - MR value.
+  @param[in]      BusValue     - The filed bus value to be programmed.
+
+  @retval Nothing.
+**/
+VOID
+MrcSetBusCmdType (
+  IN UINT32         *MrValue,
+  IN UINT32         BusValue
   );
 
 #endif // MRC_MC_API_H_

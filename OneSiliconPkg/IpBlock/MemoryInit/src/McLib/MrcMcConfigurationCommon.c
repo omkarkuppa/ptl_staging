@@ -122,12 +122,6 @@ MrcMcFinalize (
   // Configure LPModes
   MrcLpMode4Enable (MrcData);
 
-  if ((ExtInputs->DdrSafeMode & DDR_SAFE_SPINEGATE) == 0) {
-    // lp_ctrl_en: 0x7 - LPModes (0.5, 2, 3) enabled, but LPMode4 is disabled.
-    GetSetVal = 0x7;
-    MrcGetSetNoScope (MrcData, GsmIocLpCtrlEn, WriteCached | PrintValue, &GetSetVal);
-  }
-
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     if (!(MrcControllerExist (MrcData, Controller))) {
       continue;
@@ -484,10 +478,6 @@ MrcMcApplySafeConfig (
   McSafeMode = Inputs->ExtInputs.Ptr->McSafeMode;
   GetSetDis = 0;
 
-  if (McSafeMode & MC_SAFE_DFI_LP_MODES) {
-    MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccPdwnLpmodeEnable, WriteToCache, &GetSetDis);
-  }
-
   if (McSafeMode & MC_SAFE_OPP_SR) {
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccOppSrefEnable, WriteToCache, &GetSetDis);
   }
@@ -510,20 +500,48 @@ MrcLpMode4Enable (
   INT64     GetSetVal;
   INT64     GetSetEn;
   MRC_EXT_INPUTS_TYPE *ExtInputs;
+  UINT8     Controller;
+  UINT32    PmOppSrPolicyOffset0;
+  UINT32    PmOppSrPolicyOffset1;
+  MC0_PM_OPP_SR_POLICY_0_STRUCT PmOppSrPolicy;
 
   Outputs   = &MrcData->Outputs;
   ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
   GetSetEn  = 0x1;
 
   if (ExtInputs->LpMode4 != 0) {
-    // lp_ctrl_en: 0xF - all LPModes (0.5, 2, 3, 4) enabled
-    GetSetVal = 0xF;
-    MrcGetSetNoScope (MrcData, GsmIocLpCtrlEn,      WriteCached | PrintValue, &GetSetVal);
     MrcGetSetNoScope (MrcData, GsmIocEnableLpMode4, WriteCached | PrintValue, &GetSetEn);
   }
 
-  GetSetVal = ExtInputs->LpMode4; // 0=Disabled 1=Enabled 2=Dynamic with threshold2 3=Dynamic with threshold3
-  MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmMccLpMode4En, WriteCached | PrintValue, &GetSetVal);
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    if (!MrcControllerExist (MrcData, Controller)) {
+      continue;
+    }
+
+    PmOppSrPolicyOffset0 = OFFSET_CALC_CH (MC0_PM_OPP_SR_POLICY_0_REG, MC1_PM_OPP_SR_POLICY_0_REG, Controller);
+    PmOppSrPolicyOffset1 = OFFSET_CALC_CH (MC0_PM_OPP_SR_POLICY_1_REG, MC1_PM_OPP_SR_POLICY_1_REG, Controller);
+    // PM_OPP_SR_POLICY_0_0_0_MCHBAR[0] (light)
+    //  READ_DELAY=0x0
+    //  READ_REQ=0x1
+    //  WRITE_REQ=0x1
+    //  LPMODE4_EN=0x0
+    //  DELAY_LP_VC1=0x0
+    // PM_OPP_SR_POLICY_0_0_0_MCHBAR[1] (aggressive) - keep at default values
+    PmOppSrPolicy.Data = 0;
+    PmOppSrPolicy.Bits.read_delay   = 0;
+    PmOppSrPolicy.Bits.read_req     = 1;
+    PmOppSrPolicy.Bits.write_req    = 1;
+    PmOppSrPolicy.Bits.LPMode4_EN   = 0;
+    PmOppSrPolicy.Bits.delay_lp_vc1 = 0;
+    MrcWriteCR (MrcData, PmOppSrPolicyOffset0, PmOppSrPolicy.Data);
+
+    PmOppSrPolicy.Data = MrcReadCR (MrcData, PmOppSrPolicyOffset1);
+    PmOppSrPolicy.Bits.read_delay = 1;
+    PmOppSrPolicy.Bits.read_req   = 1;
+    PmOppSrPolicy.Bits.write_req  = 8;
+    PmOppSrPolicy.Bits.LPMode4_EN = ExtInputs->LpMode4;
+    MrcWriteCR (MrcData, PmOppSrPolicyOffset1, PmOppSrPolicy.Data);
+  }
 
   // Configuring SrxDelay according to timing specified in mip-master
   SrxDelay = DIVIDECEIL (MRC_LPMODE4_SRX_DELAY_PS, Outputs->Dclkps);

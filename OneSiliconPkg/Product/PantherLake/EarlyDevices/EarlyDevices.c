@@ -55,7 +55,7 @@ PtlPcdBuildHeciDeviceConfigHobs (
   VOID
   );
 
-GLOBAL_REMOVE_IF_UNREFERENCED UINT32 mPtlPcdLpssUartFixedOffset [] = {
+GLOBAL_REMOVE_IF_UNREFERENCED UINT32 mPtlPcdLpssUartFixedBar0Offset [] = {
   0xC000,
   0xE000,
   0x10000
@@ -212,7 +212,7 @@ EarlyDevicesEntryPoint (
     if (GuidHob == NULL) {
 
       UartNumber = LpssUartDebugPcdGetControllerNumber ();
-      FixedMmioBaseAddress = PCH_SERIAL_IO_BASE_ADDRESS + mPtlPcdLpssUartFixedOffset[UartNumber];
+      FixedMmioBaseAddress = PCH_SERIAL_IO_BASE_ADDRESS + mPtlPcdLpssUartFixedBar0Offset[UartNumber];
       LpssUartDebugPcdGetAttributes (&LpssUartDeviceConfig.Attributes);
 
       SerialPortInfoHob = BuildGuidHob (&gUniversalPayloadSerialPortInfoGuid, sizeof (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO));

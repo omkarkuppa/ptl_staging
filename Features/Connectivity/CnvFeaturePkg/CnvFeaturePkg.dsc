@@ -78,6 +78,26 @@
 #       generated for it, but the binary will not be put into any firmware volume.
 #
 ################################################################################
+
+[PcdsDynamicExDefault.common.DEFAULT]
+  #
+  # Table for Structural PCD Of CNV Board Configuration
+  #
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvBoardConfig|{CODE(
+  {
+    {
+      0,                     // Revision
+      0,                     // WlanRootPortNumber
+      0,                     // DiscreteUsbBtPortNumber
+      0,                     // IntegratedUsbBtPortNumber
+      0,                     // WlanRfKillGpio
+      0,                     // WlanWakeGpio
+      0,                     // WlanRstGpio
+      0,                     // BtRfKillGpio
+      0                      // BtIrqGpio
+    }
+  })}
+
 [PcdsFixedAtBuild]
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu|TRUE
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables|TRUE

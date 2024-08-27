@@ -156,22 +156,20 @@ GetDebugInterfaceFlags (
   UINT8           DebugInterfaceFlags;
   FSP_GLOBAL_DATA *FspData;
 
-  DebugInterfaceFlags = 0;
+  DebugInterfaceFlags = (UINT8) PcdGet8 (PcdStatusCodeFlags);
 
   FsptUpd = FspGetFsptUpdLocPpi ();
   if (FsptUpd != NULL) {
-    DebugInterfaceFlags = FsptUpd->FsptConfig.PcdDebugInterfaceFlags;
+    DebugInterfaceFlags &= FsptUpd->FsptConfig.PcdDebugInterfaceFlags;
   }
 
   FspData = GetFspGlobalDataPointer ();
   if ((UINTN)FspData != 0x00 && (UINTN)FspData != 0xFFFFFFFF && (FspData->Signature == FSP_GLOBAL_DATA_SIGNATURE)) {
     if ((FspData->FspMode == FSP_IN_API_MODE) && (FspData->MemoryInitUpdPtr != NULL)) { // FSP_MODE_CHECK
       FspmUpd = FspData->MemoryInitUpdPtr;
-      DebugInterfaceFlags = FspmUpd->FspmConfig.PcdDebugInterfaceFlags;
+      DebugInterfaceFlags &= FspmUpd->FspmConfig.PcdDebugInterfaceFlags;
     }
   }
-
-  DebugInterfaceFlags &= (UINT8) PcdGet8 (PcdStatusCodeFlags);
 
   return DebugInterfaceFlags;
 }

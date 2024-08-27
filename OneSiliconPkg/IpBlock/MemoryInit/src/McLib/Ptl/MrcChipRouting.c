@@ -35,7 +35,6 @@ MrcStaticPma1PlatformSpecific (
   )
 {
   MrcOutput *Outputs;
-  DDRPHY_MISC_PMA_SAUG_CR_PMAOVRD_STRUCT PmaOvrd;
   DDRPHY_MISC_SAUG_CR_PHYPMOVRD4_STRUCT PhyPmovrd4;
   DDRPHY_MISC_SAUG_CR_PHYPMOVRD3_STRUCT PhyPmOvrd3;
 
@@ -53,11 +52,6 @@ MrcStaticPma1PlatformSpecific (
   PhyPmOvrd3.Data = MrcReadCR (MrcData, DDRPHY_MISC_SAUG_CR_PHYPMOVRD3_REG);
   PhyPmOvrd3.Bits.pgddr5mode = Outputs->IsDdr5 ? 1 : 0;
   MrcWriteCR (MrcData, DDRPHY_MISC_SAUG_CR_PHYPMOVRD3_REG, PhyPmOvrd3.Data);
-
-  PmaOvrd.Data = MrcReadCR (MrcData, DDRPHY_MISC_PMA_SAUG_CR_PMAOVRD_REG);
-  PmaOvrd.Bits.pmsb_sbclk_gate_disable = 0;
-  PmaOvrd.Bits.upma_sbclk_gate_disable = 0;
-  MrcWriteCR (MrcData, DDRPHY_MISC_PMA_SAUG_CR_PMAOVRD_REG, PmaOvrd.Data);
 }
 
 /**

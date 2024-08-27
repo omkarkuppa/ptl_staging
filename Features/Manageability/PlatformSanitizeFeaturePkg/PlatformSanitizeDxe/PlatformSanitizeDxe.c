@@ -96,6 +96,12 @@ IsPlatformSanitizeRequested (
   } else if (CsmeUnConfigViaCdr) {
     DEBUG ((DEBUG_INFO, "PS: Remote CSME Unconfiguration Triggered.\n"));
     mPsBootParameters->TriggerSource = BootConfigDataReset;
+  } else if (IsPreviousBootSanitizeContinuation()) {
+      // Config Data Reset gets cleared on reset. Hence checking with Pending list.
+      if (mPsBootParameters->PsPendingList & PS_CSME_UNCONFIGURE) {
+        DEBUG((DEBUG_INFO, "PS: Remote CSME Unconfiguration Triggered.\n"));
+        mPsBootParameters->TriggerSource = BootConfigDataReset;
+      }
   } else {
     DEBUG ((DEBUG_INFO, "PS: Not Triggered.\n"));
   }
@@ -176,6 +182,14 @@ GetSanitizeParameters (
   //
   mPsBootParameters->PsRequestedList &= PS_PERFORM_ACTION_MASK;
   mPsBootParameters->PsPendingList = mPsBootParameters->PsRequestedList;
+
+  DEBUG((DEBUG_INFO, "PS: Boot Parameters list, after getting from triggered source:\n"));
+  DEBUG((DEBUG_INFO, "PS: TriggerSource    0x%x \n", mPsBootParameters->TriggerSource));
+  DEBUG((DEBUG_INFO, "PS: PsRequestedList  0x%x \n", mPsBootParameters->PsRequestedList));
+  DEBUG((DEBUG_INFO, "PS: PsPendingList    0x%x \n", mPsBootParameters->PsPendingList));
+  DEBUG((DEBUG_INFO, "PS: IsSanitizeSummaryDisplayed   0x%x \n", mPsBootParameters->IsSanitizeSummaryDisplayed));
+  DEBUG((DEBUG_INFO, "PS: PsAttempted      0x%x \n", mPsBootParameters->PsStatus.PsAttempted));
+  DEBUG((DEBUG_INFO, "PS: PsAttemptResult  0x%x \n", mPsBootParameters->PsStatus.PsAttemptResult));
 
   if (Status == EFI_SUCCESS) {
     // Update the PsBootParameters at NVM Variable.

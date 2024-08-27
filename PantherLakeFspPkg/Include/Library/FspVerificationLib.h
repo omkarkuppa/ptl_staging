@@ -29,6 +29,28 @@
 #define  HASH_CTX_LEN_MAX    256
 
 /**
+  Verify FSP Version information in BSSS(BSPM) and FBM.
+  FSP Version digest information is kept in FBM, FSP will only verify the SHA384 digest.
+
+
+  @param[in]   Bsss      BSSS(BSPM) structure found in BPM.
+  @param[in]   Fbm       FSP Boot Manifest which keeps FSP-M digest and IBB information.
+  @param[in]   Buffer    Memory buffer for hash verification.
+
+  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
+  @retval EFI_ACCESS_DENIED       Verification Fail.
+  @retval EFI_SUCCESS             Verification Pass.
+
+**/
+EFI_STATUS
+EFIAPI
+VerifyFspVersion (
+  IN BSPM_ELEMENT                   *Bsss,
+  IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
+  IN VOID                           *Buffer
+  );
+
+/**
   Verify FSP-M with the information in BSSS(BSPM) and FBM.
   FSP-M digest information is kept in FBM, FSP will only verify the SHA384 digest.
   FSP-M IBB region information is kept in FBM, only hashed IBB (indicate by flag) should be taken
@@ -133,11 +155,20 @@ EFI_STATUS
   IN VOID                           *Buffer
   );
 
+typedef
+EFI_STATUS
+(EFIAPI *VERIFY_FSPVERSION_API_WRAPPER) (
+  IN BSPM_ELEMENT                   *Bsss,
+  IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
+  IN VOID                           *Buffer
+  );
+
 struct _FSP_VERIFY_API_WRAPPER {
   CHAR8                              Signature[8];  // Must be FSP Verification API Signature "__FVA__"
   VERIFY_FSPM_API_WRAPPER            VerifyFspmApiWrapper;
   VERIFY_FSPS_API_WRAPPER            VerifyFspsApiWrapper;
   VERIFY_BSP_API_WRAPPER             VerifyBspApiWrapper;
+  VERIFY_FSPVERSION_API_WRAPPER      VerifyFspVersionApiWrapper;
 };
 
 #endif

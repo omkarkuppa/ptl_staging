@@ -362,7 +362,7 @@ PsGraphicsOutputCallback (
   InitUiLib ();
 
   if (mPsBootParameters->PsRequestedList & PS_CSME_UNCONFIGURE) {
-    ResetType = EfiResetPlatformSpecific;
+    ResetType = EfiResetWarm;
   }
 
   PrintSanitizeSummary ();

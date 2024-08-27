@@ -561,9 +561,13 @@ TsnDevNumber (
 {
   switch (TsnIndex) {
     case 0:
-      return CheckAndReturn (PCI_DEVICE_NUMBER_PCH_TSN);
+      return CheckAndReturn (PCI_DEVICE_NUMBER_PCH_TSN1);
     case 1:
       return CheckAndReturn (PCI_DEVICE_NUMBER_PCH_TSN2);
+    case 2:
+      return CheckAndReturn (PCI_DEVICE_NUMBER_PCH_TSN3);
+    case 3:
+      return CheckAndReturn (PCI_DEVICE_NUMBER_PCH_TSN4);
     default:
       ASSERT (FALSE);
       return 0xFF;
@@ -584,9 +588,13 @@ TsnFuncNumber (
 {
   switch (TsnIndex) {
     case 0:
-      return CheckAndReturn (PCI_FUNCTION_NUMBER_PCH_TSN);
+      return CheckAndReturn (PCI_FUNCTION_NUMBER_PCH_TSN1);
     case 1:
       return CheckAndReturn (PCI_FUNCTION_NUMBER_PCH_TSN2);
+    case 2:
+      return CheckAndReturn (PCI_FUNCTION_NUMBER_PCH_TSN3);
+    case 3:
+      return CheckAndReturn (PCI_FUNCTION_NUMBER_PCH_TSN4);
     default:
       ASSERT (FALSE);
       return 0xFF;

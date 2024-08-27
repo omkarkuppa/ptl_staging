@@ -55,8 +55,10 @@
   DebugPrintErrorLevelLib
   PcdLib
   Usb3DebugPortLib
-  SerialPortParameterLib
+  LpssUartLib
+  SerialIoUartDebugPropertyLib
   SerialIoUartDebugHelperLib
+  SerialPortParameterLib
   FspErrorInfoLib
 
 [Guids]

@@ -27,6 +27,7 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/PchInfoLib.h>
 #include <Library/CnviLib.h>
+#include <CnvVfrSetupMenuHii.h>
 #include <Protocol/PchPolicy.h>
 #include <HdAudioConfig.h>
 #include <PchPcieRpConfig.h>
@@ -138,9 +139,23 @@ UpdateHdAudioDxePolicy (
   EFI_STATUS              Status;
   UINT32                  Index;
   HDAUDIO_DXE_CONFIG      *HdAudioDxeConfig;
+  CNV_VFR_CONFIG_SETUP    CnvSetup;
+  UINTN                   VarDataSize;
 
   Status = GetConfigBlock ((VOID *)PchPolicy, &gHdAudioDxeConfigGuid, (VOID *)&HdAudioDxeConfig);
   ASSERT_EFI_ERROR (Status);
+
+  VarDataSize = sizeof (CNV_VFR_CONFIG_SETUP);
+  Status = gRT->GetVariable (
+                  L"CnvSetup",
+                  &gCnvFeatureSetupGuid,
+                  NULL,
+                  &VarDataSize,
+                  &CnvSetup
+                  );
+  if (EFI_ERROR (Status)) {
+    return;
+  }
 
   for (Index = 0; Index < PCH_MAX_HDA_SNDW_LINK_NUM; Index++) {
     HdAudioDxeConfig->SndwConfig[Index].AutonomousClockStop            = PchSetup->PchHdaAutonomousClockStopSndw[Index];
@@ -160,7 +175,7 @@ UpdateHdAudioDxePolicy (
   }
 
   // if BT is not present or disabled, disable DSP BT related features
-  if ((!CnviCrfModuleIsPresent () || PchSetup->CnviMode == 0) && !PchSetup->HdaDiscBtOffEnabled) {
+  if ((!CnviCrfModuleIsPresent () || CnvSetup.CnviMode == 0) && !PchSetup->HdaDiscBtOffEnabled) {
     // BT Intel HFP SCO, A2DP, LE
     HdAudioDxeConfig->DspFeatureMask &= ~(BIT5 | BIT6 | BIT9);
   }

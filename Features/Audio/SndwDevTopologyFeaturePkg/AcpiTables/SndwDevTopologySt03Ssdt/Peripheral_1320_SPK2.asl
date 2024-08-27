@@ -27,7 +27,7 @@
 		    Package(2) {"mipi-sdw-sw-interface-revision", 0x00020001}, // v2.1
 
             // Peripheral Device configuration
-		    Package(2) {"mipi-sdw-sdca-interface-revision", 0x0901}, // v0.9r01
+		    Package(2) {"mipi-sdw-sdca-interface-revision", 0x1000}, // v1.0r00
 
             Package(2) {"mipi-sdw-sdca-interrupt-register-list", 0xF},            // Bitmap
             Package(2) {"mipi-sdw-commit-register-supported", 1},                 // Boolean
@@ -42,7 +42,8 @@
             Package(2) {"mipi-sdw-bank-delay-supported", 0}, // Integer/Boolean
             Package(2) {"mipi-sdw-port15-read-behavior", 1}, // Integer
             Package(2) {"mipi-sdw-manager-list", 0x0}, // Integer
-
+			// Lane mapping
+			// Package (2) {"mipi-sdw-lane-1-mapping", "mipi-sdw-manager-lane-1"},
             // Data Port configuration
             Package(2) {"mipi-sdw-source-port-list", 0x554}, // Bitmap: DP2, DP4, DP6, DP8, DP10
             Package(2) {"mipi-sdw-sink-port-list", 0x22}, // Bitmap: DP1, DP5
@@ -76,7 +77,8 @@
             Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}}, // only stereo channel are used
             Package(2) {"mipi-sdw-modes-supported", 0x0F},
             Package(2) {"mipi-sdw-max-async-buffer", 0x08 }, // need to confirm with designers
-            Package(2) {"mipi-sdw-port-encoding-type", 0x02}
+            Package(2) {"mipi-sdw-port-encoding-type", 0x02},
+			// Package(2) {"mipi-sdw-lane-list", Package() {0, 1}},
         }
     }) // End P1SP
 
@@ -96,7 +98,8 @@
             Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}}, // only stereo channel are used
             Package(2) {"mipi-sdw-modes-supported", 0x0F},
             Package(2) {"mipi-sdw-max-async-buffer", 0x08 }, // need to confirm with designers
-            Package(2) {"mipi-sdw-port-encoding-type", 0x02}
+            Package(2) {"mipi-sdw-port-encoding-type", 0x02},
+			// Package(2) {"mipi-sdw-lane-list", Package() {0, 1}},
         }
     }) // End P5SP
 
@@ -116,7 +119,8 @@
             Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}}, // only stereo channel are used
             Package(2) {"mipi-sdw-modes-supported", 0x0F},
             Package(2) {"mipi-sdw-max-async-buffer", 0x08 }, // need to confirm with designers
-            Package(2) {"mipi-sdw-port-encoding-type", 0x02}
+            Package(2) {"mipi-sdw-port-encoding-type", 0x02},
+			// Package(2) {"mipi-sdw-lane-list", Package() {0, 1}},
         }
     }) // End P2SP
 
@@ -136,7 +140,8 @@
             Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}}, // only stereo channel are used
             Package(2) {"mipi-sdw-modes-supported", 0x0F},
             Package(2) {"mipi-sdw-max-async-buffer", 0x08 }, // need to confirm with designers
-            Package(2) {"mipi-sdw-port-encoding-type", 0x02}
+            Package(2) {"mipi-sdw-port-encoding-type", 0x02},
+			// Package(2) {"mipi-sdw-lane-list", Package() {0, 1}},
         }
     }) // End P4SP
 
@@ -156,7 +161,8 @@
             Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}}, // only stereo channel are used
             Package(2) {"mipi-sdw-modes-supported", 0x0F},
             Package(2) {"mipi-sdw-max-async-buffer", 0x08 }, // need to confirm with designers
-            Package(2) {"mipi-sdw-port-encoding-type", 0x02}
+            Package(2) {"mipi-sdw-port-encoding-type", 0x02},
+			// Package(2) {"mipi-sdw-lane-list", Package() {0, 1}},
         }
     }) // End P6SP
 
@@ -176,7 +182,8 @@
             Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}}, // only stereo channel are used
             Package(2) {"mipi-sdw-modes-supported", 0x0F},
             Package(2) {"mipi-sdw-max-async-buffer", 0x08 }, // need to confirm with designers
-            Package(2) {"mipi-sdw-port-encoding-type", 0x02}
+            Package(2) {"mipi-sdw-port-encoding-type", 0x02},
+			// Package(2) {"mipi-sdw-lane-list", Package() {1, 0}},
         }
     }) // End P8SP
 
@@ -196,7 +203,8 @@
             Package(2) {"mipi-sdw-channel-combination-list", Package() {0x3}}, // only stereo channel are used
             Package(2) {"mipi-sdw-modes-supported", 0x0F},
             Package(2) {"mipi-sdw-max-async-buffer", 0x08 }, // need to confirm with designers
-            Package(2) {"mipi-sdw-port-encoding-type", 0x02}
+            Package(2) {"mipi-sdw-port-encoding-type", 0x02},
+			// Package(2) {"mipi-sdw-lane-list", Package() {1, 0}},
         }
     }) // End PASP
 

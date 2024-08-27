@@ -112,10 +112,6 @@ IpIGpuMediaInit (
   GAMCTRLLOCK_GAMCTRL_MEDIA_MEDIA_STRUCT        GamCtrlLock;
   MIRROR_GMD_ID_RPM_MEDIA_MEDIA_STRUCT          GmdIdStruct;
   BOOLEAN                                       IsFlatCcsCompressionEnable;
-  OAM_CONTROL_MEDIA_SLICE_SAG_OA_MEDIA_STRUCT   OamControlSag;
-  OAM_CONTROL_MEDIA_SCMI0_OA_MEDIA_STRUCT       OamControlScmi0;
-  OAM_CONTROL_MEDIA_SCMI1_OA_MEDIA_STRUCT       OamControlScmi1;
-  GMD_ID_STRUCT                                 MediaGmdId;
 
   PRINT_LEVEL1 ("%s Begin\n", __FUNCTION__);
 
@@ -349,25 +345,6 @@ IpIGpuMediaInit (
     IpWrRegWrite (pInst->MmioAccess, RP_CTRL_GPM_GRP_MEDIA_MEDIA_REG, 0x00000400, IpWrRegFlagSize32Bits);
     IpIGpuPrintRegData (pInst, NULL, RP_CTRL_GPM_GRP_MEDIA_MEDIA_REG, 0x00000400, (UINT32) IpWrRegRead (pInst->MmioAccess, RP_CTRL_GPM_GRP_MEDIA_MEDIA_REG, IpWrRegFlagSize32Bits));
 
-    ///
-    /// 8e. OA Control
-    ///
-    if (pInst->XeVersion >= IpIGpuXe3p) {
-      MediaGmdId.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, MIRROR_GMD_ID_RPM_MEDIA_MEDIA_REG, IpWrRegFlagSize32Bits);
-      if ((pInst->IGpuPrivateConfig.IsEom == TRUE)  && (MediaGmdId.Bits.GMDArchitecture >= GMD_MEDIA_ARCH_35)) {
-        OamControlSag.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, OAM_CONTROL_MEDIA_SLICE_SAG_OA_MEDIA_REG, IpWrRegFlagSize32Bits);
-        OamControlSag.Bits.security_lock_bit = TRUE;
-        IpWrRegWrite (pInst->MmioAccess, OAM_CONTROL_MEDIA_SLICE_SAG_OA_MEDIA_REG, OamControlSag.Data, IpWrRegFlagSize32Bits);
-
-        OamControlScmi0.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, OAM_CONTROL_MEDIA_SCMI0_OA_MEDIA_REG, IpWrRegFlagSize32Bits);
-        OamControlScmi0.Bits.security_lock_bit = TRUE;
-        IpWrRegWrite (pInst->MmioAccess, OAM_CONTROL_MEDIA_SCMI0_OA_MEDIA_REG, OamControlScmi0.Data, IpWrRegFlagSize32Bits);
-
-        OamControlScmi1.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, OAM_CONTROL_MEDIA_SCMI1_OA_MEDIA_REG, IpWrRegFlagSize32Bits);
-        OamControlScmi1.Bits.security_lock_bit = TRUE;
-        IpWrRegWrite (pInst->MmioAccess, OAM_CONTROL_MEDIA_SCMI1_OA_MEDIA_REG, OamControlScmi1.Data, IpWrRegFlagSize32Bits);
-      }
-    }
     //
     // 9a. TLB register Programming
     //

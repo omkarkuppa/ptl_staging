@@ -89,7 +89,6 @@ PrepareMeBiosPayload (
   UINT32              MbpItemLength;
   UINT32              *MbpItems;
   UINT32              MbpItemId;
-  BOOLEAN             CopyData;
   VOID                *DestPtr;
 
   DEBUG ((DEBUG_INFO, "%a() - Start\n", __FUNCTION__));
@@ -111,8 +110,6 @@ PrepareMeBiosPayload (
   MbpItemHeader = (MBP_ITEM_HEADER *) MbpItems;
 
   for (CurrentMbpItem = 0; CurrentMbpItem < MbpItemsCount; CurrentMbpItem++) {
-    CopyData = TRUE; // By default copy data to MBP structure
-
     MbpItemId = MBP_ITEM_ID (MbpItemHeader->Fields.AppId, MbpItemHeader->Fields.ItemId);
     //
     // Item length includes Item Header - need to substract it and convert length to bytes
@@ -160,22 +157,16 @@ PrepareMeBiosPayload (
         MbpPtr->ArbSvnState.Available = TRUE;
         break;
 
-      case MBP_ITEM_HWA_MTU:
-        DestSize = sizeof (MbpPtr->HwaRequest.Data);
-        DestPtr = &MbpPtr->HwaRequest.Data;
-        MbpPtr->HwaRequest.Available = TRUE;
-        break;
-
       case MBP_ITEM_ID_MEASURED_BOOT:
         DestSize = sizeof (MbpPtr->MeasuredBootSupport.MeasuredBootData);
         DestPtr = &MbpPtr->MeasuredBootSupport.MeasuredBootData;
         MbpPtr->MeasuredBootSupport.Available = TRUE;
         break;
 
-      case MBP_ITEM_PERF_DATA_EX:
-        DestSize = sizeof (MbpPtr->PerfDataEx.Data);
-        DestPtr = &MbpPtr->PerfDataEx.Data;
-        MbpPtr->PerfDataEx.Available = TRUE;
+      case MBP_ITEM_HWA_MTU:
+        DestSize = sizeof (MbpPtr->HwaRequest.Data);
+        DestPtr = &MbpPtr->HwaRequest.Data;
+        MbpPtr->HwaRequest.Available = TRUE;
         break;
 
       case MBP_ITEM_ID_PSR:
@@ -202,18 +193,6 @@ PrepareMeBiosPayload (
         MbpPtr->OemNphyData.Available = TRUE;
         break;
 
-      // These MBP items are currently not used and should not be added to MBP structure, but still should be parsed.
-      case MBP_ITEM_ID_MFS_INTEGRITY:
-      case MBP_ITEM_ID_PERF_DATA:
-      case MBP_ITEM_ID_FW_SECURITY_VER:
-      case MBP_ITEM_ID_ICC_PROFILE:
-      case MBP_ITEM_ID_ICC_NONCE:
-      case MBP_ITEM_ID_KEY_REVOCATION:
-      case MBP_ITEM_ID_CURRENT_BOOT_MEDIA:
-        CopyData = FALSE;  // Do not copy data into MBP structure
-        DestSize = MbpItemLength;
-        break;
-
       default:
         DEBUG ((DEBUG_WARN, "Unknown MBP Item %d header: %08x\n", CurrentMbpItem, MbpItemHeader->Data));
         MbpItemHeader += MbpItemHeader->Fields.Length;
@@ -225,9 +204,7 @@ PrepareMeBiosPayload (
       DEBUG_CODE (
         ShowBuffer (((UINT8 *)(UINTN)(MbpItemHeader + 1)), MbpItemLength);
         );
-      if (CopyData) {
-        CopyMem (DestPtr, (MbpItemHeader + 1), MbpItemLength);
-      }
+      CopyMem (DestPtr, (MbpItemHeader + 1), MbpItemLength);
     } else {
       DEBUG ((DEBUG_INFO, "Data size is larger than destination buffer. This item has not been copied.\n"));
     }

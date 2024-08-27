@@ -51,17 +51,13 @@ PrintMbpData (
     DEBUG ((DEBUG_INFO, " OCR             : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.OCR));
     DEBUG ((DEBUG_INFO, " RPE             : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.RPE));
     DEBUG ((DEBUG_INFO, " PSR             : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.PSR));
-    DEBUG ((DEBUG_INFO, " IntelCLS        : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.IntelCLS));
     DEBUG ((DEBUG_INFO, " ISH             : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.ISH));
-    DEBUG ((DEBUG_INFO, " PAVP            : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.PAVP));
     DEBUG ((DEBUG_INFO, " IPV6            : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.IPV6));
     DEBUG ((DEBUG_INFO, " KVM             : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.KVM));
-    DEBUG ((DEBUG_INFO, " DAL             : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.DAL));
     DEBUG ((DEBUG_INFO, " TLS             : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.TLS));
     DEBUG ((DEBUG_INFO, " WLAN            : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.WLAN));
     DEBUG ((DEBUG_INFO, " TbtDock         : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.TbtDock));
     DEBUG ((DEBUG_INFO, " Upid            : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.Upid));
-    DEBUG ((DEBUG_INFO, " PTT             : 0x%x\n", MbpHob->MeBiosPayload.FwCapsSku.FwCapabilities.Fields.PTT));
   }
 
   if (MbpHob->MeBiosPayload.FwFeaturesState.Available == TRUE) {
@@ -72,17 +68,13 @@ PrintMbpData (
     DEBUG ((DEBUG_INFO, " OCR             : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.OCR));
     DEBUG ((DEBUG_INFO, " RPE             : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.RPE));
     DEBUG ((DEBUG_INFO, " PSR             : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.PSR));
-    DEBUG ((DEBUG_INFO, " IntelCLS        : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.IntelCLS));
     DEBUG ((DEBUG_INFO, " ISH             : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.ISH));
-    DEBUG ((DEBUG_INFO, " PAVP            : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.PAVP));
     DEBUG ((DEBUG_INFO, " IPV6            : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.IPV6));
     DEBUG ((DEBUG_INFO, " KVM             : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.KVM));
-    DEBUG ((DEBUG_INFO, " DAL             : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.DAL));
     DEBUG ((DEBUG_INFO, " TLS             : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.TLS));
     DEBUG ((DEBUG_INFO, " WLAN            : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.WLAN));
     DEBUG ((DEBUG_INFO, " TbtDock         : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.TbtDock));
     DEBUG ((DEBUG_INFO, " Upid            : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.Upid));
-    DEBUG ((DEBUG_INFO, " PTT             : 0x%x\n", MbpHob->MeBiosPayload.FwFeaturesState.FwFeatures.Fields.PTT));
   }
 
   if (MbpHob->MeBiosPayload.FwPlatType.Available == TRUE) {
@@ -125,19 +117,8 @@ PrintMbpData (
     DEBUG ((DEBUG_INFO, " MeasuredBoot : 0x%x\n", MbpHob->MeBiosPayload.MeasuredBootSupport.MeasuredBootData.MeasuredBoot));
   }
 
-  if (MbpHob->MeBiosPayload.PerfDataEx.Available == TRUE) {
-    DEBUG ((DEBUG_INFO, "MeBiosPayload PerfDataEx ---\n"));
-    DEBUG ((DEBUG_INFO, " TimeStamp0    : %d\n", MbpHob->MeBiosPayload.PerfDataEx.Data.TimeStamp0));
-    DEBUG ((DEBUG_INFO, " TimeStamp1    : %d\n", MbpHob->MeBiosPayload.PerfDataEx.Data.TimeStamp1));
-    DEBUG ((DEBUG_INFO, " TimeStamp2    : %d\n", MbpHob->MeBiosPayload.PerfDataEx.Data.TimeStamp2));
-    DEBUG ((DEBUG_INFO, " TimeStamp3    : %d\n", MbpHob->MeBiosPayload.PerfDataEx.Data.TimeStamp3));
-    DEBUG ((DEBUG_INFO, " TimeStamp4    : %d\n", MbpHob->MeBiosPayload.PerfDataEx.Data.TimeStamp4));
-    DEBUG ((DEBUG_INFO, " TimeStamp5    : %d\n", MbpHob->MeBiosPayload.PerfDataEx.Data.TimeStamp5));
-    DEBUG ((DEBUG_INFO, " TimeStamp6    : %d\n", MbpHob->MeBiosPayload.PerfDataEx.Data.TimeStamp6));
-  }
-
   if (MbpHob->MeBiosPayload.Psr.Available == TRUE) {
-    DEBUG ((DEBUG_INFO, "MeBiosPayload Psr ---\n"));
+    DEBUG ((DEBUG_INFO, "MeBiosPayload Platform Service Record ---\n"));
     DEBUG ((DEBUG_INFO, " ChassisIntrusionEvent : 0x%x\n", MbpHob->MeBiosPayload.Psr.PsrData.ChassisIntrusionEvent));
     DEBUG ((DEBUG_INFO, " PsrLogState           : 0x%x\n", MbpHob->MeBiosPayload.Psr.PsrData.PsrLogState));
     DEBUG ((DEBUG_INFO, " PsrCapabilities       : 0x%x\n", MbpHob->MeBiosPayload.Psr.PsrCapabilities));

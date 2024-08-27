@@ -29,9 +29,9 @@ CHAR16 *mBoardIdIndex[] = {
   L"PTL-UH DDR5 T3 RVP4",                   // 0x04
   L"TBD",                                   // 0x05
   L"TBD",                                   // 0x06
-  L"TBD",                                   // 0x07
+  L"PTL-H AEP",                             // 0x07
   L"TBD",                                   // 0x08
-  L"PTL-UH HMP RVP",                         // 0x09
+  L"PTL-UH HMP RVP",                        // 0x09
   L"TBD",                                   // 0x0A
   L"TBD",                                   // 0x0B
   L"TBD",                                   // 0x0C
@@ -39,8 +39,8 @@ CHAR16 *mBoardIdIndex[] = {
   L"TBD",                                   // 0x0E
   L"TBD",                                   // 0x0F
   L"TBD",                                   // 0x10
-  L"TBD",                                   // 0x11
-  L"TBD",                                   // 0x12
+  L"PTL-H LP5 GCS1",                        // 0x11
+  L"PTL-H LP5 GCS2",                        // 0x12
   L"TBD",                                   // 0x13
   L"TBD",                                   // 0x14
   L"TBD",                                   // 0x15

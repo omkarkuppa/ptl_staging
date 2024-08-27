@@ -57,8 +57,8 @@ const TOdtValueCccDdr5 Ddr5CccOdtTable1Dpc[MAX_DIMMS_IN_CHANNEL][MAX_DDR5_1SPC_O
 // DDR5 Dimm DFE values in this order { Tap1, Tap2, Tap3, Tap4 }
 const TDFEValueDdr5 Ddr5DFETable[MAX_DDR5_CHANNEL][MAX_DIMMS_IN_CHANNEL] = {
   //DIMM 0
-  {{ -40, -10, 0, 0 }}, // CHANNEL 0
-  {{ -40, -10, 0, 0 }}, // CHANNEL 1
+  {{ -8, -2, 0, 0 }}, // CHANNEL 0
+  {{ -8, -2, 0, 0 }}, // CHANNEL 1
 };
 
 /**

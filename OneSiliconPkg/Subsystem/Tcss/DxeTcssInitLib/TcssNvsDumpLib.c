@@ -68,8 +68,6 @@ DumpTcssVariable (
   DEBUG ((DEBUG_INFO, "ItbtPcieRpAddress [3]        : 0x%X\n", TcssNvsAreaProtocol->Area->ItbtPcieRpAddress[3]));
   DEBUG ((DEBUG_INFO, "IomReady                     : 0x%X\n", TcssNvsAreaProtocol->Area->IomReady));
   DEBUG ((DEBUG_INFO, "TcssRtd3                     : 0x%X\n", TcssNvsAreaProtocol->Area->TcssRtd3));
-  DEBUG ((DEBUG_INFO, "TcssDma0RmrrAddr             : 0x%X\n", TcssNvsAreaProtocol->Area->TcssDma0RmrrAddr));
-  DEBUG ((DEBUG_INFO, "TcssDma1RmrrAddr             : 0x%X\n", TcssNvsAreaProtocol->Area->TcssDma1RmrrAddr));
   DEBUG ((DEBUG_INFO, "LtrEnable [0]                : 0x%X\n", TcssNvsAreaProtocol->Area->LtrEnable[0]));
   DEBUG ((DEBUG_INFO, "LtrEnable [1]                : 0x%X\n", TcssNvsAreaProtocol->Area->LtrEnable[1]));
   DEBUG ((DEBUG_INFO, "LtrEnable [2]                : 0x%X\n", TcssNvsAreaProtocol->Area->LtrEnable[2]));

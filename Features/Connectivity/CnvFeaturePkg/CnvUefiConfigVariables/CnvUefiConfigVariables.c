@@ -229,16 +229,12 @@ CnvUefiConfigVariables (
   EFI_STATUS                         Status;
   CNV_UEFI_VARIABLE_CONFIG_PROTOCOL  *CnvUefiVariableConfig;
   UEFI_CNV_CONFIG                    *UefiCnvConfig;
-  UINTN                              DataSize;
-  UINT32                             VariableAttr;
-  CNV_VFR_CONFIG_SETUP               *CnvSetup;
   EFI_EVENT                          EndOfDxeEvent;
 
   DEBUG ((DEBUG_INFO, "CnvUefiConfigVariables entry\n"));
 
   Handle        = NULL;
   UefiCnvConfig = NULL;
-  CnvSetup      = NULL;
 
   Status = gBS->LocateProtocol (&gCnvUefiVariableConfigProtocolGuid, NULL, (VOID **)&CnvUefiVariableConfig);
 
@@ -256,28 +252,6 @@ CnvUefiConfigVariables (
     ASSERT (CnvUefiVariableConfig != NULL);
     UefiCnvConfig = &CnvUefiVariableConfig->UefiCnvConfig;
   }
-
-  DataSize = sizeof (CNV_VFR_CONFIG_SETUP);
-  CnvSetup = AllocatePool (DataSize);
-  if (CnvSetup == NULL) {
-    goto Done;
-  }
-
-  ASSERT (CnvSetup != NULL);
-
-  Status = gRT->GetVariable (
-                  CNV_SETUP_VARIABLE_NAME,
-                  &gCnvFeatureSetupGuid,
-                  &VariableAttr,
-                  &DataSize,
-                  CnvSetup
-                  );
-  ASSERT_EFI_ERROR (Status);
-
-  //
-  // Update Guid lock
-  //
-  DEBUG ((DEBUG_INFO, "[CNV] PCD CnvGuidLockStatus : %d \n", PcdGet8 (PcdCnvGuidLockStatus)));
 
   Status = InstallCnvUefiVariables (UefiCnvConfig);
   if (EFI_ERROR (Status)) {
@@ -321,6 +295,5 @@ Done:
 
   DEBUG ((DEBUG_ERROR, "CnvUefiConfigVariables status: %r\n", Status));
   ASSERT (!EFI_ERROR (Status));
-  FreePool (CnvSetup);
   return Status;
 }

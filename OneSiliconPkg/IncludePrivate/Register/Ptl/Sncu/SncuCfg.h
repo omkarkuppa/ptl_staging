@@ -1524,7 +1524,7 @@ typedef union {
                                of bits [3:1] in this register.
                             */
 
-    UINT32 admsk1024 : 1;
+    UINT64 admsk1024 : 1;
 
                             /* Bits[30:30], Access Type=RW, default=0x00000000*/
 

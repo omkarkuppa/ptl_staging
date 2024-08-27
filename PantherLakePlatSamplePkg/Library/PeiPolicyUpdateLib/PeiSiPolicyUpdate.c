@@ -26,7 +26,7 @@
 #include <Library/PcdLib.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/PeiSiPolicyUpdateLib.h>
-#include <Library/SerialIoUartDebugPropertyPcdLib.h>
+#include <Library/LpssUartDebugPropertyPcdLib.h>
 #include <Library/SerialPortParameterLib.h>
 #include <Library/SiPolicyLib.h>
 #include <Ppi/ReadOnlyVariable2.h>

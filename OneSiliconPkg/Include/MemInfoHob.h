@@ -283,6 +283,7 @@ typedef struct _PPR_RESULT_COLUMNS_HOB {
   UINT8  BankGroup;
   UINT8  Bank;
   UINT32 Row;
+  UINT8  Device;
 } PPR_RESULT_COLUMNS_HOB;
 
 /**

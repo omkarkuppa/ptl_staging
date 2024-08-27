@@ -1131,38 +1131,13 @@ InstallEbrd (
   EbrdVar.Header.Revision = CNV_UEFI_EBRD_REVISION_1;
   EbrdVar.BtDynamicSarMode      = 0x00;
   EbrdVar.BtDynamicSarRangeSets = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntA.subBand2G4       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntA.subBand5G2       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntA.subBand5G85G9    = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntA.subBand6G1       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntA.subBand6G3       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntB.subBand2G4       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntB.subBand5G2       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntB.subBand5G85G9    = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntB.subBand6G1       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntB.subBand6G3       = 0x00;
+  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntA       = 0x00;
+  EbrdVar.BtDynamicSarValues2G4Ext[0].BtSarPowerAntB       = 0x00;
+  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntA       = 0x00;
+  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntB       = 0x00;
+  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntA       = 0x00;
+  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntB       = 0x00;
 
-  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntA.subBand2G4       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntA.subBand5G2       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntA.subBand5G85G9    = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntA.subBand6G1       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntA.subBand6G3       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntB.subBand2G4       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntB.subBand5G2       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntB.subBand5G85G9    = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntB.subBand6G1       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[1].BtSarPowerAntB.subBand6G3       = 0x00;
-
-  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntA.subBand2G4       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntA.subBand5G2       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntA.subBand5G85G9    = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntA.subBand6G1       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntA.subBand6G3       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntB.subBand2G4       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntB.subBand5G2       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntB.subBand5G85G9    = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntB.subBand6G1       = 0x00;
-  EbrdVar.BtDynamicSarValues2G4Ext[2].BtSarPowerAntB.subBand6G3       = 0x00;
 
   Status = UpdateVariables (
              sizeof (CNV_UEFI_VAR_EBRD),

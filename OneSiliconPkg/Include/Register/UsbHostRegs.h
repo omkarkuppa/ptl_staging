@@ -184,6 +184,8 @@
 #define R_XHCI_MEM_HOST_CTRL_SUS_LINK_PORT_REG  0x81F8    ///< Host Controller SUS Link Port Reg
 #define R_XHCI_MEM_HOST_CTRL_EARLY_DBG_REG      0x81FC    ///< HOST CTRL EARLY DBG REG
 #define R_XHCI_MEM_MULT_IN_SCH_POLICY           0x82A0    ///< Multiple_in Scheduler Policy Register
+#define R_XHCI_MEM_TRB_PRF_CTRL_REG4            0x82F0
+#define B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS    BIT1
 #define R_XHCI_MEM_HOST_CTRL_ENG_MISC_REG3      0x82FC
 #define R_XHCI_MEM_GRP0_SAI_WAC_POLICY_LO       0x8308    ///< Group0 SAI Write Access Control Policy Register Low
 #define R_XHCI_MEM_GRP0_SAI_RAC_POLICY_LO       0x8310    ///< Group0 SAI Read Access Control Policy Low

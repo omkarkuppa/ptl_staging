@@ -366,6 +366,9 @@
   # Thermal Sensor Gpio D Pmsync Enable
   gBoardModuleTokenSpaceGuid.VpdPcdMemoryThermalSensorGpioDPmsyncEnable|*|FALSE
 
+  # M.2 Gen5 SSD (NIST)
+  gBoardModuleTokenSpaceGuid.VpdPcdNvmeRecoveryPrimarySlotPortNumber|*|0x9
+
 # PCIE SLOT 1 - X1 CONNECTOR RTD3
   gBoardModuleTokenSpaceGuid.VpdPcdPcieSlot1RootPort|*|0x3
   gBoardModuleTokenSpaceGuid.VpdPcdPcieSlot1PwrEnableGpioNo|*|{CODE(
@@ -415,9 +418,6 @@
 
   # USB Type-C PD Information Present : FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent|*|TRUE
-
-  # USB Type-C PD Vendor : Definitions 1 to 3 are supported.
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor|*|0x02
 
   # USB Type-C Retimer Information Present : FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent|*|TRUE
@@ -881,11 +881,7 @@
   )}
 
 [PcdsDynamicHii.common.SkuIdPtlUHCammDTbTRvp2.STANDARD]
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[0]|0x2                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[3]|0x1                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[4]|0x2                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[5]|0x3                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cTouchPadType|0x7                                           # THAT Touch Pad
+  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[5]|0x1                                    # Connected device
   gStructPcdTokenSpaceGuid.PcdSetup.TelemetryDeviceEnable|0x1                                        # Enable Telemetry
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x0                               # DMIC #0
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x0                               # DMIC #1

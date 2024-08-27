@@ -78,7 +78,7 @@ InternalGpioInterfaceConstructor (
   GpioInterface->Private.CommunityAccess            = (P2SB_SIDEBAND_REGISTER_ACCESS *) AllocateZeroPool (sizeof (P2SB_SIDEBAND_REGISTER_ACCESS) * GpioInterface->Private.CommunitiesNum);
   GpioInterface->Private.GpioV2PadOwnRegRev         = GpioV2PadOwnRegRev1;
   GpioInterface->Private.PadCfgLockCntrlGrpIndex    = GPIOV2_ACCESS_CONTROL_SAI_GROUPSMMACC_LOCK_REGISTERS;
-  
+
   if (GpioInterface->Private.CommunityAccess == NULL) {
     DEBUG ((DEBUG_ERROR, "[GPIOV2]: Allocating memory for CommunityAccess failed\n"));
     ASSERT (FALSE);

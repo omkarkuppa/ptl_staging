@@ -449,7 +449,8 @@ TdxInit (
   IN VOID *TdxPolicy,
   IN MrcParameters *CONST MrcData,
   IN UINTN  TdxActmModuleAddr,
-  IN UINT32 TdxActmModuleSize
+  IN UINT32 TdxActmModuleSize,
+  IN UINT8  TdxSeamldrSeSvn
   )
 {
 
@@ -593,11 +594,12 @@ PeiTdxMemoryAllocation(
   OUT EFI_PHYSICAL_ADDRESS         *BaseAddress
   )
 {
-  EFI_STATUS                         Status;
-  UINT32                             SeamrrSize;
-  EFI_PHYSICAL_ADDRESS               SeamRrBaseAddress;
-  EFI_RESOURCE_TYPE                  ResourceType;
-  EFI_RESOURCE_ATTRIBUTE_TYPE        ResourceAttribute;
+  EFI_STATUS                  Status;
+  UINT32                      SeamrrSize;
+  EFI_PHYSICAL_ADDRESS        SeamRrBaseAddress;
+  EFI_RESOURCE_TYPE           ResourceType;
+  EFI_RESOURCE_ATTRIBUTE_TYPE ResourceAttribute;
+  UINT64                      MemoryHoleLength = 0;
 
   // Program Seamrr Base and Mask MSR's
   if (IsTdxEnabled ()) {
@@ -622,17 +624,19 @@ PeiTdxMemoryAllocation(
       //
       SeamRrBaseAddress = NaturalAlignment (*TopUseableMemAddr, SIZE_32MB);
       if (SeamRrBaseAddress != *TopUseableMemAddr) {
+        MemoryHoleLength = SeamRrBaseAddress - *TopUseableMemAddr;
         BuildResourceDescriptorHob (
-            ResourceType,                            // MemoryType,
-            ResourceAttribute,                       // MemoryAttribute
-            *TopUseableMemAddr,                       // MemoryBegin
-            (SeamRrBaseAddress - *TopUseableMemAddr)  // MemoryLength
+          ResourceType,         // MemoryType,
+          ResourceAttribute,    // MemoryAttribute
+          *TopUseableMemAddr,   // MemoryBegin
+          MemoryHoleLength      // MemoryLength
           );
-          BuildMemoryAllocationHob (
-            *TopUseableMemAddr,
-            (SeamRrBaseAddress - *TopUseableMemAddr),
-            EfiReservedMemoryType
+        BuildMemoryAllocationHob (
+          *TopUseableMemAddr,
+          MemoryHoleLength,
+          EfiReservedMemoryType
           );
+        *Touud -= MemoryHoleLength;
       }
 
       BuildResourceDescriptorHob (
@@ -651,7 +655,7 @@ PeiTdxMemoryAllocation(
       *BaseAddress = SeamRrBaseAddress;
 
       *TopUseableMemAddr = SeamRrBaseAddress + (SeamrrSize << 20);
-      *Touud -= LShiftU64 ((UINT64) SeamrrSize, 20);
+      *Touud -= ((UINT64)SeamrrSize << 20);
       DEBUG ((DEBUG_INFO, "SEAMRR BASE = 0x%016lx SIZE = 0x%x\n", SeamRrBaseAddress, SeamrrSize));
 
       Status = PeiCpuSetSeamrrRegion (SeamRrBaseAddress, (SeamrrSize << 20));

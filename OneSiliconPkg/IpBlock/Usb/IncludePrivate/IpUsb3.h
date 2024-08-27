@@ -68,7 +68,8 @@ typedef enum {
   IpUsb3FeatIdReadAfterWriteDelay,            // Controls delay of MMIO read after MMIO write
   IpUsb3FeatIdHSAsyncActiveExposure,          // Controls if HS Async Active Exposure is propagated to PMC
   IpUsb3FeatIdSoftErrorTriggerRecalibration,  // Controls if xHCI uses soft error as an indicator for recalibration
-  IpUsb3FeatIdDbcTraceInEp                    // Controls inclusion of DbC.Trace into PMREQ Response and Wake Wire
+  IpUsb3FeatIdDbcTraceInEp,                   // Controls inclusion of DbC.Trace into PMREQ Response and Wake Wire
+  IpUsb3FeatIdLtrNdeEnhancedSsIsochInEp       // Controls LTR/NDE behaviour for Enhanced SS Isoch IN Endpoints whose TRBs are prefetched
 } IP_USB3_FEAT_ID;
 
 //
@@ -124,6 +125,10 @@ typedef enum {
   // IpUsb3FeatIdDbcTraceInEp
   IpUsb3FeatValDbcTraceInEpDis = 0,
   IpUsb3FeatValDbcTraceInEpEn  = 1,
+
+  // IpUsb3FeatIdLtrNdeEnhancedSsIsochInEp
+  IpUsb3FeatValLtrNdeEnhancedSsIsochInEpDis = 0,
+  IpUsb3FeatValLtrNdeEnhancedSsIsochInEpEn  = 1,
 } IP_USB3_FEAT_VAL;
 
 //

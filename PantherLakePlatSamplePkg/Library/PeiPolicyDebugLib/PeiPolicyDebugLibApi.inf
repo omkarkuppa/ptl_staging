@@ -45,6 +45,7 @@
   PantherLakeFspBinPkg/PantherLakeFspBinPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
   IntelSiliconPkg/IntelSiliconPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
 
 [LibraryClasses]
   CpuPlatformLib

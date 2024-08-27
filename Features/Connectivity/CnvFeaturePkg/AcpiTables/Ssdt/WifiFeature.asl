@@ -20,6 +20,10 @@
 **/
 
 Include ("EpOpRegion.asl")
-Include ("DiscreteWifiReset.asl")
+#if FixedPcdGetBool (PcdWifiDsmSupport) == 1
 Include ("WifiDsmWrapper.asl")
+#endif
+#if FixedPcdGetBool (PcdCnvDiscreteSupport) == 1
+Include ("DiscreteWifiReset.asl")
 Include ("VsecOpRegion.asl")
+#endif

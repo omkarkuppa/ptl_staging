@@ -44,3 +44,5 @@
 
 [Sources]
   SocInfoLib.c
+
+[Pcd]

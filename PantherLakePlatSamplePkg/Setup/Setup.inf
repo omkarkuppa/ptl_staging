@@ -164,6 +164,7 @@
   EcFeaturePkg/EcFeaturePkg.dec
   PantherLakePlatSamplePkg/PlatformPkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   OneSiliconPkg/SiPkg.dec
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
@@ -193,7 +194,8 @@
   Usb4FeaturePkg/Usb4FeaturePkg.dec
   UcsiFeaturePkg/UcsiFeaturePkg.dec
   AmtPetInitFeaturePkg/AmtPetInitFeaturePkg.dec
-  MemoryHealthInsightsFeaturePkg/MemoryHealthInsightsFeaturePkg.dec
+  MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
+  VtioFeaturePkg/VtioFeaturePkg.dec
 
 [LibraryClasses]
   UefiDriverEntryPoint
@@ -309,6 +311,7 @@
   gDTbtInfoHobGuid                              ## CONSUMES
   gBiosPayloadVarGuid                           ## CONSUMES
   gTpmErrorHobGuid                              ## CONSUMES
+  gVtioSetupGuid                                ## CONSUMES
 
 [Protocols]
   gEfiHiiConfigAccessProtocolGuid               ## PRODUCES
@@ -326,6 +329,7 @@
   gEfiSmbiosProtocolGuid                        ## CONSUMES
   gBdsAllDriversConnectedProtocolGuid           ## CONSUMES
   gEfiUsbIoProtocolGuid                         ## CONSUMES
+  gGopPolicyProtocolGuid                        ## CONSUMES
   gPlatformConfigChangeProtocolGuid             ## SOMETIMES_PRODUCES
   gEdkiiPlatformSpecificResetFilterProtocolGuid ## CONSUMES
   gEfiMpServiceProtocolGuid                     ## CONSUMES
@@ -335,6 +339,8 @@
   gCnvFormPlatformProtocolGuid                  ## PRODUCES
   gUsbCRetimerProtocolGuid                      ## CONSUMES
   gMemoryAddressEncodeDecodeProtocolGuid        ## CONSUMES
+  gEfiGraphicsOutputProtocolGuid                ## CONSUMES
+  gEfiSimpleTextOutProtocolGuid                 ## CONSUMES
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                      ## CONSUMES
@@ -348,7 +354,14 @@
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
   gBoardModuleTokenSpaceGuid.PcdEcEspiFlashSharingMode
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent               ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCPdVendor                          ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutColumn                    ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutRow                       ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow                            ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn                         ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution       ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution         ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution            ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution              ## CONSUMES
 
   gPlatformModuleTokenSpaceGuid.PcdTpmEnable
   gSiPkgTokenSpaceGuid.PcdTxtEnable                                     ## CONSUMES
@@ -364,6 +377,7 @@
   gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable                    ## CONSUMES
   gEcFeaturePkgTokenSpaceGuid.PcdEcPeciMode                             ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTsnSupport                                    ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber                  ## CONSUMES
 
   # SA USB Config
   gBoardModuleTokenSpaceGuid.PcdTcssPortCapMap                          ## CONSUMES

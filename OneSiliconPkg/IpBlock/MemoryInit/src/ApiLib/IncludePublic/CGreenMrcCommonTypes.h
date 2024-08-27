@@ -76,6 +76,9 @@ typedef enum {
   ParkOdt,                      ///< Resistance setting within a set of possible resistances, which may be a different set of values per product. Indexed by integer values.
   TxDqTco,                      ///< TCO Comp Code for DQ
   TxXtalk,                      ///<
+  DqsEqLegs,                    ///<
+  DqsEqRes,                     ///<
+  DqsEqCap,                     ///<
   RxCtleR,                      ///< Rx Equalization Resistance control.
   RxCtleC,                      ///< Rx Equalization Capacitance control.
   RxCtleEn,                     ///< Rx CTLE En control.
@@ -196,6 +199,7 @@ typedef enum {
   CompRcompOdtDn,               ///< The resistive value of the pull-dn block of on die termination
   CompRcompDrvUp,               ///< The resistive value (aka driving strength) of the pull-up block of the transmitter
   CompRcompDrvDn,               ///< The resistive value (aka driving strength) of the pull-down block of the transmitter
+  RloadCompCode,
   RxVocFall,
   RxVocFallDbi,
   TxDqDccOffset,
@@ -211,7 +215,7 @@ typedef enum {
   MiscPerBitCcc,
   WrRetrainDeltaPiCode,
   RdRetrainDeltaPiCode,
-  RefPiFsmRun,          
+  RefPiFsmRun,
   RefPiFsmInvFsmFB,
   RefPiFsmParam,
   RefPiFsmMaxVal,
@@ -356,6 +360,8 @@ typedef enum {
   GsmIocTxPiPwrDnDis,
   GsmIocTxDisable,              ///< Ignore Write commands for this data byte
   GsmIocCompClkOn,
+  GsmIocRLoadNumSegs,
+  GsmIocRLoadDqsVrefCode,
   GsmIocSinStep,
   GsmIocSinStepAdv,
   GsmIocDllSegmentDisable,
@@ -399,7 +405,6 @@ typedef enum {
   GsmIocInternalClocksOn,           ///< Force on all the PI enables
   GsmIocInternalTxClocksOn,         ///< Enable Internal Tx Clocks
   GsmIocInternalRxClocksOn,         ///< Enable Internal Rx Clocks
-  GsmIocTxPiOn,
   GsmIocDataRunRefPiFsm,            ///< Start the RefPi FSM in DATA
   GsmIocCccRunRefPiFsm,             ///< Start the RefPi FSM in CCC
   GsmIocDqsMaskPulseCnt,            ///< Controls the number of masked DQS pulses sent by the DDR IO during CMD VREF update in LP4 CBT
@@ -499,16 +504,12 @@ typedef enum {
   GsmWckDccLargeChangeEnable,
   GsmWckDccLargeChangeReset,
   GsmWckDccTargetDutyCycle,
-  GsmDataVccDdqTarget,
   GsmDataVccDdqOCDivider,
-  GsmDataVccIoTarget,
   GsmDataLvrAutoTrimSelLvr,
   GsmDataLvrAutoTrimDelay,
   GsmDataLvrAutoTrimRunBusy,
   GsmDataLvrAutoTrimOffsetIOG,
   GsmDataLvrAutoTrimOffsetClk,
-  GsmCccVccDdqTarget,
-  GsmCccVccIoTarget,
   GsmCccLvrAutoTrimSelLvr,
   GsmCccLvrAutoTrimDelay,
   GsmCccLvrAutoTrimRunBusy,
@@ -520,7 +521,6 @@ typedef enum {
   GsmCompLvrAutoTrimDelay,
   GsmCompLvrAutoTrimRunBusy,
   GsmCompLvrAutoTrimOffsetIOG,
-  GsmCompLvrAutoTrimOffsetClk,
   GsmCompLvrAutoTrimOffsetIOGGV,
   GsmCompLvrAutoTrimOffsetDist,
   GsmLvrAutoTrimRunBusy,
@@ -543,6 +543,8 @@ typedef enum {
   GsmInitCompleteOvrdVal,
   GsmIOGGVLVROvrdModeEn,
   GsmIOGLVREnableOvrd,
+  GsmIOGLVROvrdModeEn,
+  GsmIOGLVRVrefEnOvrd,
   GsmCriClkGateDis,
   GsmIocVccClkFFCRWait,
   GsmVccClkVccF0,
@@ -588,6 +590,7 @@ typedef enum {
   GsmPHClkTarget,
   GsmPhDcc,
   GsmDccPhResult,
+  GsmDLEn,
   GsmDccPhDelay,
   GsmPhaseDrvGPMEn,
   GsmDccPiLutFine,

@@ -307,6 +307,20 @@ MrcCaParityVaIoMode (
   );
 
 /**
+  Align all CS Center of the channel into same cycle after getting the BestSample
+  @param[in]      MrcData            - Include all MRC global data.
+  @param[in]      BestEyeWidth       - EyeWidth of the BestSample
+  @param[in, out] BestSampleOffset   - Final Center
+  @retval Nothing
+**/
+void
+MrcCstmNormalize (
+  IN MrcParameters *const MrcData,
+  IN UINT16          BestEyeWidth[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL],
+  IN OUT INT16       BestSampleOffset[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL]
+  );
+
+/**
   Early CS Training for DDR5
 
   Trains for optimal CtlGrpPi and DRAM VrefCS.

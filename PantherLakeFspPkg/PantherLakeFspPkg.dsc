@@ -318,7 +318,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
 !else
   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 !endif
-  FspSerialIoUartDebugHelperLib|$(SILICON_FSP_PATH)/Library/FspSerialIoUartDebugHelperLib/FspSerialIoUartDebugHelperLibNull.inf
+  FspSerialIoUartDebugHelperLib|$(SILICON_FSP_PATH)/Library/FspSerialIoUartDebugHelperLib/FspSerialIoUartDebugHelperLib.inf
   MicrocodeLib|UefiCpuPkg/Library/MicrocodeLib/MicrocodeLib.inf
   RngLib|MdePkg/Library/BaseRngLib/BaseRngLib.inf
 !if gSiPkgTokenSpaceGuid.PcdFspVEnable == TRUE
@@ -359,10 +359,10 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   CcExitLib|UefiCpuPkg/Library/CcExitLibNull/CcExitLibNull.inf
   CpuPageTableLib|UefiCpuPkg/Library/CpuPageTableLib/CpuPageTableLib.inf
 
-  NemConfigLib|$(PLATFORM_SI_PACKAGE)/Library/BaseNemConfigLib/BaseNemConfigLib.inf
 
 [LibraryClasses.IA32.SEC, LibraryClasses.X64.SEC]
-  BaseCryptLib|CryptoPkg/Library/BaseCryptLibNull/BaseCryptLibNull.inf
+  NemConfigLib|$(PLATFORM_SI_PACKAGE)/Library/BaseNemConfigLibNull/BaseNemConfigLibNull.inf
+  BaseCryptLib|CryptoPkg/Library/BaseCryptLib/SecCryptLib.inf
   MmPciLib|$(SILICON_FSP_PATH)/Library/MmPciCf8Lib/MmPciCf8Lib.inf
   PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
   TimerLib|UefiCpuPkg/Library/CpuTimerLib/BaseCpuTimerLib.inf
@@ -573,7 +573,11 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   #
   $(FSP_PACKAGE)/FspLoaderPeim/FspLoaderPeim.inf {
     <LibraryClasses>
-      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+!if $(TARGET) == DEBUG
+      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+!endif
+    <PcdsFixedAtBuild>
+      gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer|FALSE
   }
 
   #

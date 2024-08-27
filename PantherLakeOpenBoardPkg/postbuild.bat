@@ -105,17 +105,6 @@ for /f "usebackq tokens=3" %%i in (`FINDSTR /b /c:"VERSION_MAJOR" %BIOS_ID_FILE%
 @REM UPL Post Build Process Begin
 @REM
 @set UPL_BUILD_DIR=Build\UefiPayloadPkgX64
-@REM
-@REM Invoke UniversalPayloadBuild.py again to replace specified FV in UniversalPayload.elf.
-@REM
-%PYTHON_COMMAND% %WORKSPACE_CORE%\UefiPayloadPkg\UniversalPayloadBuild.py ^
-  -sk ^
-  -af bds_fv=%WORKSPACE%\%BUILD_DIR%\FV\FVPPLBDSUNCOMPACT.Fv ^
-  -pb %WORKSPACE%\Build\UefiPayloadPkgX64\UniversalPayload.elf
-@if %ERRORLEVEL% NEQ 0 (
-  @echo !!! ERROR !!! Failed to replace specified FV in UniversalPayload.elf. !!!
-  goto :EndBuild
-)
 
 call %EDK_TOOLS_BIN%\GenSec ^
   -s EFI_SECTION_RAW ^

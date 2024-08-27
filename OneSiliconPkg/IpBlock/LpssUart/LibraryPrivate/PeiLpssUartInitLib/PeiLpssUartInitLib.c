@@ -24,7 +24,7 @@
 #include <Ppi/SiPolicy.h>
 #include <LpssUartHandle.h>
 #include <Register/LpssUartRegs.h>
-#include <Library/LpssUartPrivateLib.h>
+#include <Library/LpssUartLib.h>
 
 /**
   Enable MMIO access to LPSS Uart
@@ -135,13 +135,16 @@ LpssUartSetFixedMmio (
   //
   LpssUartController->PcieCfgAccess->And32 (LpssUartController->PcieCfgAccess,
                                           R_LPSS_UART_CFG_PMECTRLSTATUS,
-                                          B_LPSS_UART_CFG_PMECTRLSTATUS_POWERSTATE);
+                                          (UINT32)~(B_LPSS_UART_CFG_PMECTRLSTATUS_POWERSTATE));
   //
   // Enable MSE
   //
   LpssUartController->PcieCfgAccess->Or16 (LpssUartController->PcieCfgAccess, PCI_COMMAND_OFFSET, EFI_PCI_COMMAND_MEMORY_SPACE);
 
-  DEBUG ((DEBUG_INFO, "LPSS Uart Hidden Mode VID: 0x%X, DID: 0x%x.\n", MmioRead16 (LpssUartController->FixedMmioPciCfgBaseAddr), MmioRead16 (LpssUartController->FixedMmioPciCfgBaseAddr + PCI_DEVICE_ID_OFFSET)));
+  //
+  // Get controller out of reset
+  //
+  MmioOr8 (LpssUartController->FixedMmio + R_LPSS_UART_MEM_RESETS, B_LPSS_UART_MEM_RESETS_RESET_IP | B_LPSS_UART_MEM_RESETS_RESET_DMA);
 }
 
 /**
@@ -197,6 +200,11 @@ LpssUartPciSetFixedMmio (
                                           ~(UINT32)B_LPSS_UART_CFG_PMECTRLSTATUS_POWERSTATE);
 
   LpssUartController->PcieCfgAccess->Or16 (LpssUartController->PcieCfgAccess, PCI_COMMAND_OFFSET, EFI_PCI_COMMAND_MEMORY_SPACE);
+
+  //
+  // Get controller out of reset
+  //
+  MmioOr8 (LpssUartController->FixedMmio + R_LPSS_UART_MEM_RESETS, B_LPSS_UART_MEM_RESETS_RESET_IP | B_LPSS_UART_MEM_RESETS_RESET_DMA);
 }
 
 /**
@@ -362,7 +370,7 @@ LpssUartInit (
 
   if (LpssUartDeviceConfig->Mode == LpssUartSkipInit) {
     DEBUG ((DEBUG_INFO, "Lpss Uart initialization skipped. %a - End.\n", __FUNCTION__));
-    return EFI_INVALID_PARAMETER;
+    return EFI_SUCCESS;
   }
 
   LpssUartController->TempBar = FALSE;

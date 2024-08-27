@@ -45,7 +45,8 @@
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdPsfSocLib.h>
 #include <IncludePrivate/PtlPcdSbPortIds.h>
 #include <Library/SecLpssUartInitLib.h>
-#include <Library/LpssUartPrivateLib.h>
+#include <Library/LpssUartLib.h>
+#include <Register/TcoRegs.h>
 
 /**
   Serial Io Uart Debug Configuration Wrapper
@@ -154,23 +155,23 @@ LpssUartDebugConfiguration (
   )
 {
   LPSS_UART_DEVICE_CONFIG  UartDeviceConfig;
-  UINT8                    LpssUartUartDebugEnable;
-  UINT8                    LpssUartUartNumber;
-  UINT32                   LpssUartUartPciMmioBase;
+  UINT8                    LpssUartDebugEnable;
+  UINT8                    LpssUartNumber;
+  UINT32                   LpssUartPciMmioBase;
   CHAR8                    CarInitBuffer[32];
 
   AsciiSPrint (CarInitBuffer, sizeof (CarInitBuffer), "FSP-T: CAR Init\n");
-  LpssUartDebugConfigurationWrapper (&UartDeviceConfig, &LpssUartUartDebugEnable, &LpssUartUartNumber, &LpssUartUartPciMmioBase);
+  LpssUartDebugConfigurationWrapper (&UartDeviceConfig, &LpssUartDebugEnable, &LpssUartNumber, &LpssUartPciMmioBase);
   UartDeviceConfig.DBG2      = FALSE;
   UartDeviceConfig.DmaEnable = FALSE;
 
   //
   // Initialize LpssUart UART for debug message
   //
-  if (LpssUartUartDebugEnable == 1) {
-    SecLpssUartConfiguration (LpssUartUartNumber, &UartDeviceConfig);
+  if (LpssUartDebugEnable == 1) {
+    SecLpssUartConfiguration (LpssUartNumber, &UartDeviceConfig);
     LpssUartWrite (
-        GetLpssUartFixedMmioAddress (LpssUartUartNumber), 
+        GetLpssUartFixedMmioAddress (LpssUartNumber),
         (UINT8 *)CarInitBuffer, 
         AsciiStrLen (CarInitBuffer));
   }
@@ -239,6 +240,11 @@ EarlyCycleDecoding (
   // Program and Enable TCO Base
   //
   PchTcoBaseSet (PcdGet16 (PcdTcoBaseAddress));
+
+  ///
+  /// Halt the TCO timer as early as possible
+  ///
+  IoWrite16 (PcdGet16 (PcdTcoBaseAddress) + R_TCO_IO_TCTL1, B_TCO_IO_TCTL1_TCO_TMR_HALT);
 
   SmbusBase = SmbusPciCfgBase ();
   //

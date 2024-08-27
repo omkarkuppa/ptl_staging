@@ -1707,11 +1707,13 @@ ConfigureIsysControl (
   SI_POLICY_PPI                  *SiPolicyPpi;
   UINT64                         MchBar;
   THETA_IBATT_MMIO_REGISTER      IsysControlRegister;
+  CPU_PM_DATA                    *CpuPmData;
 
   SiPolicyPpi              = NULL;
   IsysControlRegister.Data = 0;
+  CpuPmData                = NULL;
 
-  Status = PeiServicesLocatePpi(&gSiPolicyPpiGuid, 0, NULL, (VOID**)&SiPolicyPpi);
+  Status = PeiServicesLocatePpi (&gSiPolicyPpiGuid, 0, NULL, (VOID**) &SiPolicyPpi);
   ASSERT_EFI_ERROR(Status);
 
   //
@@ -1727,9 +1729,13 @@ ConfigureIsysControl (
   //
 
   if (CpuPowerDeliveryConfig->ThETAIbattEnable) {
+    Status = GetCpuPmData (&CpuPmData);
+    ASSERT_EFI_ERROR(Status);
+    ASSERT (CpuPmData != NULL);
+
     if (CpuPowerDeliveryConfig->IsysCurrentLimitL1Enable) {
-      IsysControlRegister.Fields.IsysCurrentLimitL1 = CpuPowerDeliveryConfig->IsysCurrentLimitL1;
-      IsysControlRegister.Fields.IsysCurrentL1Tau   = (UINT32) GetConvertedTime (CpuPowerDeliveryConfig->IsysCurrentL1Tau * 1000);
+      IsysControlRegister.Fields.IsysCurrentLimitL1 = CpuPowerDeliveryConfig->IsysCurrentLimitL1 ? CpuPowerDeliveryConfig->IsysCurrentLimitL1 : CpuPmData->PmData.IsysCurrentLimitL1;
+      IsysControlRegister.Fields.IsysCurrentL1Tau = CpuPowerDeliveryConfig->IsysCurrentL1Tau ? (UINT32) GetConvertedTime (CpuPowerDeliveryConfig->IsysCurrentL1Tau * 1000) : (UINT32) GetConvertedTime (CpuPmData->PmData.IsysCurrentL1Tau * 1000);
       if (!CpuPowerDeliveryConfig->AcDcPowerState) {
         IsysControlRegister.Fields.IsysCurrentLimitL1Enable = TRUE;
       } else {
@@ -1738,7 +1744,7 @@ ConfigureIsysControl (
     }
 
     if (CpuPowerDeliveryConfig->IsysCurrentLimitL2Enable) {
-      IsysControlRegister.Fields.IsysCurrentLimitL2 = CpuPowerDeliveryConfig->IsysCurrentLimitL2;
+      IsysControlRegister.Fields.IsysCurrentLimitL2 = CpuPowerDeliveryConfig->IsysCurrentLimitL2 ? CpuPowerDeliveryConfig->IsysCurrentLimitL2 : CpuPmData->PmData.IsysCurrentLimitL2;
       if (!CpuPowerDeliveryConfig->AcDcPowerState) {
         IsysControlRegister.Fields.IsysCurrentLimitL2Enable = TRUE;
       } else {

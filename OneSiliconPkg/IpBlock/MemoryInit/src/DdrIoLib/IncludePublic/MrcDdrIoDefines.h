@@ -28,7 +28,7 @@ This file contains Memory Controller specific defines.
 #define MRC_COMP_NUM                (1)   ///< # of COMP Partitions
 #define MRC_DATA_CH_NUM             (2)   ///< # of Channels in the DATA Partitions
 #define MRC_CCC_SHARED_MOBILE_NUM   (4)   ///< # of CCC_SHARED Partitions in Mobile
-#define MRC_CCC_SHARED_DT_NUM       (8)   ///< # of CCC_SHARED Partitions in Desktop
+#define MRC_CCC_SHARED_DT_NUM       (4)   ///< # of CCC_SHARED Partitions in Desktop
 // DATA_SHARED is a CR partition which is shared across the two bytes in the partition.
 // The number of DATA_SHARED is the same as the number of DATA partitions.
 // So the same define is used to avoid duplication and proper scaling in DT.
@@ -36,7 +36,6 @@ This file contains Memory Controller specific defines.
 #define MRC_DATA_MOBILE_NUM   (8)   ///< # of DATA Partitions in Mobile
 #define MRC_DATA_SHARED_NUM_WITH_ECC   (10)   ///< # of DATA_SHARED Partitions
 #define MRC_PG_NUM            (12)  ///< # of PG Partitions: DDRPG[0..9], DDRPGTERM[0..1]
-#define MRC_PG_CR_NUM         (10)  ///< # of PG Partitions: DDRPG[0..9]
 #define MRC_PG_DT_NUM         (13)  ///< # of PG Partitions in Desktop
 #define MRC_VCCCLK_DT_NUM     (3)   ///< # of VCCCLK Partitions in Desktop
 #define MRC_VCCCLK_MOBILE_NUM (2)   ///< # of VCCCLK Partitions in Mobile
@@ -66,6 +65,15 @@ This file contains Memory Controller specific defines.
 #define DDR_SAFE_PERIODIC_RXDQSCOMP  (MRC_BIT17)
 #define DDR_SAFE_WAKEUP3             (MRC_BIT18)
 #define DDR_SAFE_PHCLK               (MRC_BIT19)
+#define DDR_SAFE_CLOCKING            (MRC_BIT20)
+#define DDR_SAFE_VSXHI               (MRC_BIT21)
+#define DDR_SAFE_DLL_PI              (MRC_BIT22)
+#define DDR_SAFE_GRACE               (MRC_BIT23)
+#define DDR_SAFE_DATAPATH            (MRC_BIT24)
+#define DDR_SAFE_LVR                 (MRC_BIT25)
+#define DDR_SAFE_PLL                 (MRC_BIT26)
+#define DDR_SAFE_MCQCLK              (MRC_BIT27)
+#define DDR_SAFE_ROUNDTRIP           (MRC_BIT28)
 
 /// Rank to Rank Mux
 #define MRC_PICODELUT_PARTITION (2) // DATASHARED, CCCSHARED
@@ -96,6 +104,9 @@ This file contains Memory Controller specific defines.
 #define MRC_COMP_VTARG_CALCULATION_VALUE  (384)
 #define MRC_COMP_VREF_CALCULATION_VALUE   (386)
 #define MRC_COMP_VREF_STEP_SIZE   (191)
+
+/// RCOMP Vref calculation value for the following: DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
+#define MRC_RCOMP_VREF_CALCULATION_VALUE  (193)
 
 /// Solving for PadV in formula: XYZ = Rnd(((PadV/VrefRail)*386-1) /2 ) without Rounding
 #define PADV_CALC(VREF, RAIL) (((RAIL) * (2 * (VREF) + 1)) / MRC_COMP_VREF_CALCULATION_VALUE)

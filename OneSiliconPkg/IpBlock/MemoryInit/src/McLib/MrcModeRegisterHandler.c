@@ -436,7 +436,7 @@ WrappedMrcRunMrh (
         SpidCmdType = MRC_MRH_DDR5_SPID_CMD_WR_CMD;
       }
 
-      MrCommand.Bits.SPID_cmd_type = SpidCmdType;
+      MrcSetBusCmdType (&(MrCommand.Data), SpidCmdType);
       MrCommand.Bits.Rank          = TargetRanksBitmask;
       MrCommand.Bits.Busy          = 1;
       MrCommand.Bits.Assume_idle   = 0;

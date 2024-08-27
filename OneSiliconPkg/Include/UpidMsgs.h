@@ -75,7 +75,11 @@ typedef enum {
   UpidStatusInvalidInputParameter,
   UpidStatusInternalError,
   UpidStatusNotAllowedAfterEop,
+  UpidStatusNotAllowedAfterManufLock,
   UpidStatusMaxCountersExceeded,
+  UpidStatusInvalidState,
+  UpidStatusReserved2,
+  UpidStatusNotAllowedAfterCbd,
 } UPID_STATUS;
 
 ///

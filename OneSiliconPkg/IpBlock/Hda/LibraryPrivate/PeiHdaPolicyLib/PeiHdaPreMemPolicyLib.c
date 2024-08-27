@@ -82,40 +82,36 @@ HdaPreMemLoadConfigDefault (
   IN VOID          *ConfigBlockPointer
   )
 {
+  UINT32                 Index;
   HDAUDIO_PREMEM_CONFIG  *HdaPreMemConfig;
+
   HdaPreMemConfig = ConfigBlockPointer;
 
   DEBUG ((DEBUG_INFO, "HdaPreMemConfig->Header.GuidHob.Name = %g\n", &HdaPreMemConfig->Header.GuidHob.Name));
   DEBUG ((DEBUG_INFO, "HdaPreMemConfig->Header.GuidHob.Header.HobLength = 0x%x\n", HdaPreMemConfig->Header.GuidHob.Header.HobLength));
-  HdaPreMemConfig->Enable                  = 1;
-  HdaPreMemConfig->DspEnable               = TRUE;
 
-  if (IsAdlPch () && (IsPchP () || IsPchN ())) {
-    HdaPreMemConfig->AudioLinkHda.Enable     = FALSE;
-    HdaPreMemConfig->AudioLinkDmic[0].Enable = FALSE;
-    HdaPreMemConfig->AudioLinkDmic[1].Enable = FALSE;
-    HdaPreMemConfig->AudioLinkSndw[0].Enable = TRUE;
-    HdaPreMemConfig->AudioLinkSndw[1].Enable = TRUE;
-  } else {
-    HdaPreMemConfig->AudioLinkHda.Enable     = TRUE;
-    HdaPreMemConfig->AudioLinkDmic[0].Enable = TRUE;
-    HdaPreMemConfig->AudioLinkDmic[1].Enable = TRUE;
-    HdaPreMemConfig->AudioLinkSndw[0].Enable = FALSE;
-    HdaPreMemConfig->AudioLinkSndw[1].Enable = FALSE;
-  }
-
-  HdaPreMemConfig->AudioLinkDmic[0].DmicClockSelect = HdaDmicClockSelectClkA;
-  HdaPreMemConfig->AudioLinkDmic[1].DmicClockSelect = HdaDmicClockSelectClkA;
-
-  /********************************
-    HD-Audio configuration
-  ********************************/
-  HdaPreMemConfig->IDispLinkFrequency        = HdaLinkFreq96MHz;
+  HdaPreMemConfig->Enable                    = TRUE;
+  HdaPreMemConfig->DspEnable                 = TRUE;
+  HdaPreMemConfig->AudioLinkHda.Enable       = FALSE;
   HdaPreMemConfig->AudioLinkHda.SdiEnable[0] = TRUE;
   HdaPreMemConfig->AudioLinkHda.SdiEnable[1] = FALSE;
-  HdaPreMemConfig->IDispLinkTmode            = HdaIDispMode8T;
-  HdaPreMemConfig->PowerGatingSupported      = TRUE;
-  HdaPreMemConfig->ResetWaitTimer            = 600; // Must be at least 521us (25 frames)
+
+  for (Index = 0; Index < PCH_MAX_HDA_DMIC_LINK_NUM; Index++) {
+    HdaPreMemConfig->AudioLinkDmic[Index].Enable = TRUE;
+    HdaPreMemConfig->AudioLinkDmic[Index].DmicClockSelect = HdaDmicClockSelectClkA;
+  }
+
+  HdaPreMemConfig->AudioLinkSndw[0].Enable = FALSE;
+  HdaPreMemConfig->AudioLinkSndw[1].Enable = TRUE;
+  HdaPreMemConfig->AudioLinkSndw[2].Enable = FALSE;
+  HdaPreMemConfig->AudioLinkSndw[3].Enable = FALSE;
+  HdaPreMemConfig->SndwMultilane[0].Enable = FALSE;
+  HdaPreMemConfig->SndwMultilane[1].Enable = HdaSndwMultilaneThreeDataLanes;
+  HdaPreMemConfig->DspUaaCompliance        = FALSE;
+  HdaPreMemConfig->IDispLinkFrequency      = HdaLinkFreq96MHz;
+  HdaPreMemConfig->IDispLinkTmode          = HdaIDispMode8T;
+  HdaPreMemConfig->PowerGatingSupported    = TRUE;
+  HdaPreMemConfig->ResetWaitTimer          = 600; // Must be at least 521us (25 frames)
 }
 
 STATIC COMPONENT_BLOCK_ENTRY  mHdaPreMemBlocks = {

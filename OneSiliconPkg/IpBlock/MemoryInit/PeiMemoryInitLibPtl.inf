@@ -206,7 +206,7 @@ src/ApiLib/MrcSaveRestore.h
 src/StatsLib/MrcStatsTracker.c
 src/StatsLib/IncludePublic/CMrcStatsTracker.h
 src/DdrIoLib/IncludePublic/MrcDdrIoDefines.h
-src/DdrIoLib/Ptl/MrcDdrIoUtils.c
+src/DdrIoLib/Ptl/MrcDdrIoUtilsSiSpecific.c
 src/DdrIoLib/IncludePublic/MrcDdrIoUtils.h
 src/DdrIoLib/IncludePublic/MrcDdrIoRefPi.h
 src/DdrIoLib/MrcDdrIoUtilsPrivate.h
@@ -246,6 +246,7 @@ src/CPGC/Cpgc20/Cpgc20.h
 src/CPGC/Cpgc20/Cpgc20Patterns.c
 src/CPGC/Cpgc20/Cpgc20Patterns.h
 src/CPGC/Cpgc20/Cpgc20TestCtl.c
+src/CPGC/Cpgc20/Ptl/Cpgc20TestCtlProject.c
 src/CPGC/Cpgc20/Cpgc20TestCtl.h
 src/CPGC/MrcCpgcApi.c
 src/CPGC/MrcCpgcApi.h

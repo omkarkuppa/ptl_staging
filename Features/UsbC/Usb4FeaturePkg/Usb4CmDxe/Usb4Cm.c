@@ -46,98 +46,6 @@ UINT32              mUsb4HrCount = 0;
 GLOBAL_REMOVE_IF_UNREFERENCED UINT8     mUsb4TopologyDepth = 2;
 
 /**
-  USB4 CM execution for USB4 host routers in the platform.
-
-  @param[in] ImageHandle      - ImageHandle of the loaded driver.
-  @param[in] Usb4PlatformInfo - Pointer to the platform USB4 host router information.
-
-  @retval EFI_SUCCESS           - Software CM execution success.
-  @retval EFI_UNSUPPORTED       - General USB4 CM execution failure.
-  @retval EFI_OUT_OUT_RESOURCES - Insufficient resources to execute CM.
-  @retval EFI_INVALID_PARAMETER - Invalid parameter.
-**/
-EFI_STATUS
-Usb4CmExecute (
-  IN EFI_HANDLE            ImageHandle,
-  IN USB4_PLATFORM_INFO    *Usb4PlatformInfo
-  )
-{
-  EFI_STATUS                Status;
-  USB4_HR_INSTANCE          *Usb4Hr;
-  UINT32                    HrIndex;
-  UINT32                    HrCount;
-  PCI_DEV_BDF               *Bdf;
-
-  DEBUG ((DEBUG_INFO, "Usb4CmExecute entry\n"));
-  Usb4LogWrite (mUsb4Log, USB4_DBG_INFO, USB4_EVT_CODE_CM_EXECUTE_ENTRY, 0, 0);
-
-  Status = EFI_UNSUPPORTED;
-
-  if ((ImageHandle == NULL) || (Usb4PlatformInfo == NULL)) {
-    DEBUG ((DEBUG_ERROR, "Usb4CmExecute: Invalid parameter (%p, %p)\n", ImageHandle, Usb4PlatformInfo));
-    Status = EFI_INVALID_PARAMETER;
-    goto Exit;
-  }
-
-  //
-  // Check if the USB4 HR count exceeds the maximum HR count.
-  //
-  HrCount = Usb4PlatformInfo->Usb4HrCount;
-  if (HrCount > USB4_HR_SUPPORT_MAX) {
-    DEBUG ((DEBUG_ERROR, "USB4 HR count = %d, only %d HRs can be supported\n", HrCount, USB4_HR_SUPPORT_MAX));
-    HrCount = USB4_HR_SUPPORT_MAX;
-  }
-
-  //
-  // Update Maximum Depth of Tocology
-  //
-  mUsb4TopologyDepth = Usb4PlatformInfo->Usb4MaxTopologyDepth;
-  if (mUsb4TopologyDepth > USB4_MAX_TOPOLOGY_DEPTH) {
-    DEBUG ((DEBUG_ERROR, "USB4 Maximum Topology Depth = %d, only %d levels can be supported\n", mUsb4TopologyDepth, USB4_MAX_TOPOLOGY_DEPTH));
-    mUsb4TopologyDepth = USB4_MAX_TOPOLOGY_DEPTH;
-  }
-
-  //
-  // Create USB4 host router instance and connection manager for each USB4 host router on platform.
-  //
-  for (HrIndex = 0; HrIndex < HrCount; HrIndex++) {
-    Bdf = &(Usb4PlatformInfo->Usb4Hr[HrIndex].NhiBdf);
-    DEBUG ((DEBUG_INFO, "Create USB4 HR instance for BDF (0x%02x/0x%02x/0x%02x)\n", Bdf->Bus, Bdf->Dev, Bdf->Func));
-    //
-    // Create and initialize USB4 host router instance for USB4 host interface implementation.
-    //
-    Status = Usb4HrCreate (ImageHandle,  &(Usb4PlatformInfo->Usb4Hr[HrIndex]), &Usb4Hr);
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Usb4CmExecute: Create USB4 HR failure, %r\n", Status));
-      goto Exit;
-    }
-
-    mUsb4HrInst[mUsb4HrCount] = Usb4Hr;
-    mUsb4HrCount++;
-
-    //
-    // Build domain topology on USB4 host router
-    //
-    Status = Usb4HrBuildTopology (Usb4Hr);
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Usb4CmExecute: Fail to build domain topology for USB4 HR, %r\n", Status));
-      goto Exit;
-    }
-
-    Usb4Hr->CmStart = TRUE;
-  }
-
-Exit:
-  if (EFI_ERROR (Status)) {
-    Usb4LogWrite (mUsb4Log, USB4_DBG_ERROR, USB4_EVT_CODE_CM_DESTROY_ERROR, (UINT32) Status, 0);
-    Usb4CmDestroy ();
-  }
-  Usb4LogWrite (mUsb4Log, USB4_DBG_INFO, USB4_EVT_CODE_CM_EXECUTE_EXIT, (UINT32) Status, 0);
-  DEBUG ((DEBUG_INFO, "Usb4CmExecute exit\n"));
-  return Status;
-}
-
-/**
   Unpower USB4 host router in platform.
 **/
 VOID Usb4CmUnpowerHr (
@@ -269,4 +177,96 @@ Usb4CmDestroy (
   }
 
   DEBUG ((DEBUG_INFO, "Usb4CmDestroy exit\n"));
+}
+
+/**
+  USB4 CM execution for USB4 host routers in the platform.
+
+  @param[in] ImageHandle      - ImageHandle of the loaded driver.
+  @param[in] Usb4PlatformInfo - Pointer to the platform USB4 host router information.
+
+  @retval EFI_SUCCESS           - Software CM execution success.
+  @retval EFI_UNSUPPORTED       - General USB4 CM execution failure.
+  @retval EFI_OUT_OUT_RESOURCES - Insufficient resources to execute CM.
+  @retval EFI_INVALID_PARAMETER - Invalid parameter.
+**/
+EFI_STATUS
+Usb4CmExecute (
+  IN EFI_HANDLE            ImageHandle,
+  IN USB4_PLATFORM_INFO    *Usb4PlatformInfo
+  )
+{
+  EFI_STATUS                Status;
+  USB4_HR_INSTANCE          *Usb4Hr;
+  UINT32                    HrIndex;
+  UINT32                    HrCount;
+  PCI_DEV_BDF               *Bdf;
+
+  DEBUG ((DEBUG_INFO, "Usb4CmExecute entry\n"));
+  Usb4LogWrite (mUsb4Log, USB4_DBG_INFO, USB4_EVT_CODE_CM_EXECUTE_ENTRY, 0, 0);
+
+  Status = EFI_UNSUPPORTED;
+
+  if ((ImageHandle == NULL) || (Usb4PlatformInfo == NULL)) {
+    DEBUG ((DEBUG_ERROR, "Usb4CmExecute: Invalid parameter (%p, %p)\n", ImageHandle, Usb4PlatformInfo));
+    Status = EFI_INVALID_PARAMETER;
+    goto Exit;
+  }
+
+  //
+  // Check if the USB4 HR count exceeds the maximum HR count.
+  //
+  HrCount = Usb4PlatformInfo->Usb4HrCount;
+  if (HrCount > USB4_HR_SUPPORT_MAX) {
+    DEBUG ((DEBUG_ERROR, "USB4 HR count = %d, only %d HRs can be supported\n", HrCount, USB4_HR_SUPPORT_MAX));
+    HrCount = USB4_HR_SUPPORT_MAX;
+  }
+
+  //
+  // Update Maximum Depth of Tocology
+  //
+  mUsb4TopologyDepth = Usb4PlatformInfo->Usb4MaxTopologyDepth;
+  if (mUsb4TopologyDepth > USB4_MAX_TOPOLOGY_DEPTH) {
+    DEBUG ((DEBUG_ERROR, "USB4 Maximum Topology Depth = %d, only %d levels can be supported\n", mUsb4TopologyDepth, USB4_MAX_TOPOLOGY_DEPTH));
+    mUsb4TopologyDepth = USB4_MAX_TOPOLOGY_DEPTH;
+  }
+
+  //
+  // Create USB4 host router instance and connection manager for each USB4 host router on platform.
+  //
+  for (HrIndex = 0; HrIndex < HrCount; HrIndex++) {
+    Bdf = &(Usb4PlatformInfo->Usb4Hr[HrIndex].NhiBdf);
+    DEBUG ((DEBUG_INFO, "Create USB4 HR instance for BDF (0x%02x/0x%02x/0x%02x)\n", Bdf->Bus, Bdf->Dev, Bdf->Func));
+    //
+    // Create and initialize USB4 host router instance for USB4 host interface implementation.
+    //
+    Status = Usb4HrCreate (ImageHandle, &(Usb4PlatformInfo->Usb4Hr[HrIndex]), &Usb4Hr);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "Usb4CmExecute: Create USB4 HR failure, %r\n", Status));
+      continue;
+    }
+
+    mUsb4HrInst[mUsb4HrCount] = Usb4Hr;
+    mUsb4HrCount++;
+
+    //
+    // Build domain topology on USB4 host router
+    //
+    Status = Usb4HrBuildTopology (Usb4Hr);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "Usb4CmExecute: Fail to build domain topology for USB4 HR, %r\n", Status));
+      Usb4LogWrite (mUsb4Log, USB4_DBG_ERROR, USB4_EVT_CODE_CM_DESTROY_ERROR, (UINT32) Status, 0);
+      CmDestroy (Usb4Hr);
+      mUsb4HrInst[mUsb4HrCount] = NULL;
+      mUsb4HrCount--;
+      continue;
+    }
+
+    Usb4Hr->CmStart = TRUE;
+  }
+
+Exit:
+  Usb4LogWrite (mUsb4Log, USB4_DBG_INFO, USB4_EVT_CODE_CM_EXECUTE_EXIT, (UINT32) Status, 0);
+  DEBUG ((DEBUG_INFO, "Usb4CmExecute exit\n"));
+  return Status;
 }

@@ -103,8 +103,6 @@
 #define B_ACPI_IO_PM1_TMR_TMR_VAL                0xFFFFFF                               ///< Timer Value
 #define V_ACPI_IO_PM1_TMR_MAX_VAL                0x1000000                              ///< The timer is 24 bit overflow
 
-#define R_ACPI_IO_THERM_TIMER_DELAY              0x20                                   ///< Therm Timer Delay Register
-
 #define R_ACPI_IO_SMI_EN                                  0x30                          ///< SMI Control and Enable
 #define S_ACPI_IO_SMI_EN                                  4
 #define B_ACPI_IO_SMI_EN_ESPI_SMI_EN                      BIT28                         ///< eSPI SMI Enable
@@ -189,7 +187,6 @@
 #define R_ACPI_IO_GPE0_STS_31_0                         0x60                            ///< General Purpose Event 0 Status [31:0]
 #define R_ACPI_IO_GPE0_STS_127_96                       0x6C                            ///< General Purpose Event 0 Status [127:96]
 #define S_ACPI_IO_GPE0_STS_127_96                       4
-#define B_ACPI_IO_GPE0_STS_127_96_NAC_SX_WAKE_STS       BIT20
 #define B_ACPI_IO_GPE0_STS_127_96_WADT_STS              BIT18                           ///< Wake Alarm Device Timer Status
 #define B_ACPI_IO_GPE0_STS_127_96_USB_CON_DSX_STS       BIT17                           ///< USB Connection in/after DeepSx Status
 #define B_ACPI_IO_GPE0_STS_127_96_LANWAKE_STS           BIT16                           ///< GPIO[27] Status
@@ -212,7 +209,6 @@
 #define S_ACPI_IO_GPE0_EN_127_96                      4
 #define B_ACPI_IO_GPE0_EN_127_96_TC_HOT_PLUG_EN       BIT23                             ///< TCSS Hot Plug Enable
 #define B_ACPI_IO_GPE0_EN_127_96_TC_PCI_EXP_EN        BIT22                             ///< TC PCI Express Enable
-#define B_ACPI_IO_GPE0_EN_127_96_NAC_SX_WAKE_EN       BIT20
 #define B_ACPI_IO_GPE0_EN_127_96_TCSS_SX_WAKE_EN      BIT19                             ///< TCSS SX Wake Enable
 #define B_ACPI_IO_GPE0_EN_127_96_WADT_EN              BIT18                             ///< Wake Alarm Device Timer Enable
 #define B_ACPI_IO_GPE0_EN_127_96_USB_CON_DSX_EN       BIT17                             ///< USB Connection in/after DeepSx Enable
@@ -584,10 +580,6 @@
 
 #define R_PMC_PWRM_GBLRST_CAUSE1                            0X1928                      ///< Global Reset Causes 1
 
-#define R_PMC_PWRM_GBLRST_CAUSE0_V2                         0x1A88                      ///< Global Reset Causes 0
-
-#define R_PMC_PWRM_GBLRST_CAUSE1_V2                         0X1A8C                      ///< Global Reset Causes 1
-
 #define R_PMC_PWRM_HPR_CAUSE0                               0x192C                      ///< Host Partition Reset Causes
 #define B_PMC_PWRM_HPR_CAUSE0_GBL_TO_HOST                   BIT15                       ///< Global Reset Converted to Host Reset
 #define B_PMC_PWRM_HPR_CAUSE0_AWR                           BIT0                        ///< Asynchronous Warm Reset Status
@@ -662,11 +654,13 @@
 #define R_PMC_PWRM_LPM_EN                                   0x1C78                      ///< Low Power Mode Enable
 #define R_PMC_PWRM_LPM_EN_V2                                0x179C                      ///< Low Power Mode Enable- version 2
 #define R_PMC_PWRM_LPM_EN_V3                                0x1798                      ///< Low Power Mode Enable
+#define R_PMC_PWRM_LPM_EN_V4                                0x17A0                      ///< Low Power Mode Enable - version 4
 #define V_PMC_PWRM_LPM_EN                                   0x7FFFFFFF                  ///< LPM_EN bitmask
 #define R_PMC_PWRM_LPM_PRI                                  0x1C7C                      ///< Low Power Mode Priority
 #define V_PMC_PWRM_LPM_PRI_MASK                             0x00000FFF                  ///< LPM_PRI bitmask
 #define R_PMC_PWRM_LPM_PRI_V2                               0x17A0
 #define R_PMC_PWRM_LPM_PRI_V3                               0x179C                      ///< Low Power Mode Priority
+#define R_PMC_PWRM_LPM_PRI_V4                               0x17A4                      ///< Low Power Mode Priority -version 4
 
 #define R_PMC_PWRM_HSWPGCR1                                 0x1DD0                      ///< Host SW PG Control Register 1
 #define B_PMC_PWRM_HSWPGCR1_SW_PG_CTRL_LOCK                           BIT31             ///< SW PG Req Control Lock
@@ -683,10 +677,6 @@
 
 #define R_PMC_PWRM_ST_PG_FDIS_PMC_2                         0x1E24                      ///< Static Function Disable Control Register 2
 #define R_PMC_PWRM_ST_PG_FDIS_PMC_2_V2                      0x1E28                      ///< ST_PG_FDIS_PMC - Register 2
-
-#define R_PMC_PWRM_BCLK_CFG                                 0x1F60                      ///< BCLK PLLs Configuration
-#define B_PMC_PWRM_BCLK_CFG_SOC_BCLK_CFG_OVR_VAL            BIT2                        ///< SOC_BCLK_CFG_OVR_VAL
-#define B_PMC_PWRM_BCLK_CFG_SOC_BCLK_CFG_OVR_EN             BIT3                        ///< SOC_BCLK_CFG_OVR_EN
 
 #define R_PMC_PWRM_CPU_EPOC2                                0x1F64                      ///< CPU Early Power-on Configuration 2
 
@@ -788,6 +778,7 @@ typedef union {
 } DSW_SPARE_GCR_0_STRUCT;
 
 #define R_PMC_PWRM_PMC_SOFT_STRAP_7                                           0x091C                    ///< PMC_SOFT_STRAP_7 Register
-#define B_PMC_PWRM_PMC_SOFT_STRAP_7_DEF_CPU_BCLK_CFG                          (BIT15 | BIT14)           ///< This value is used to tell the CPU how it should configure the CPU BCLK PLL.
+#define B_PMC_PWRM_PMC_SOFT_STRAP_7_DEF_CPU_BCLK_CFG                          BIT14                     ///< This value is used to tell the CPU how it should configure the CPU BCLK PLL.
+#define B_PMC_PWRM_PMC_SOFT_STRAP_7_DEF_SOC_BCLK_CFG                          BIT15
 #define V_PMC_PWRM_PMC_SOFT_STRAP_7_DEF_CPU_BCLK_CFG_INTEGRATED               (0x00008000)              ///< BIT[15:14] = {10b}, BCLK source is integrated. BIT[15:14] = {00b}, BCLK source is external.
 #endif

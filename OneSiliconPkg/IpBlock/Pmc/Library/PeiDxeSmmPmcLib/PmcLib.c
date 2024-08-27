@@ -1091,7 +1091,7 @@ PmcDetectIntegratedClockSource (
     return TRUE;
   }
 
-  if ((Rbuf.Buf0 & B_PMC_PWRM_PMC_SOFT_STRAP_7_DEF_CPU_BCLK_CFG) == V_PMC_PWRM_PMC_SOFT_STRAP_7_DEF_CPU_BCLK_CFG_INTEGRATED) {
+  if ((Rbuf.Buf0 & (B_PMC_PWRM_PMC_SOFT_STRAP_7_DEF_CPU_BCLK_CFG | B_PMC_PWRM_PMC_SOFT_STRAP_7_DEF_SOC_BCLK_CFG)) == V_PMC_PWRM_PMC_SOFT_STRAP_7_DEF_CPU_BCLK_CFG_INTEGRATED) {
     return TRUE;
   }
 
@@ -1409,9 +1409,9 @@ PmcIsWarmBoot (
   PmconA = MmioRead32 (PmcGetPwrmBase () + R_PMC_PWRM_GEN_PMCON_A);
 
   //
-  // If Host Reset Status bits are set, return TRUE (warm boot)
+  // If Host Reset Status and Memory self-refresh bits are set, return TRUE (warm boot)
   //
-  if ((PmconA & B_PMC_PWRM_GEN_PMCON_A_HOST_RST_STS) != 0) {
+  if (((PmconA & B_PMC_PWRM_GEN_PMCON_A_HOST_RST_STS) != 0) && ((PmconA & B_PMC_PWRM_GEN_PMCON_A_MEM_SR) != 0)) {
     return TRUE;
   } else {
     return FALSE;

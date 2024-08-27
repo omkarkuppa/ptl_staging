@@ -76,5 +76,11 @@ Scope (\_SB.PC00) {
 
   } // End Device OSE1
 
+  //
+  // Essential Security Engine 0 - Device 24, Function 0 (#HEC1)
+  //
+  Device (ESE0) {
+    Name (_ADR, 0x00180000)
+  }
 }
 

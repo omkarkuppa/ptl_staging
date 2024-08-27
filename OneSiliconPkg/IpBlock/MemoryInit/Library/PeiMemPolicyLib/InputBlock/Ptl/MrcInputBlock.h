@@ -48,6 +48,7 @@ typedef struct {
   BOOLEAN             SenseAtRxDll;
   BOOLEAN             LockUiDiv6Flow;
   BOOLEAN             MptuPropagationErrorFlow;
+  UINT16              RloadTarget;
 } MRC_INT_INPUTS_TYPE;
 #endif
 

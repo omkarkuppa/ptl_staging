@@ -26,6 +26,7 @@
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/PcdLib.h>
 #include <Library/PcdGpioNativeLib.h>
 #include <Library/GpioHelpersLib.h>
 #include <Library/SocInfoLib.h>
@@ -401,7 +402,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED GPIOV2_PAD mPtlPcdVCnviBtI2sGpioPad[][PCH_GPIO_CNV
   }
 };
 
-
 //
 // vSSP for Bluetooth
 //
@@ -455,10 +455,8 @@ PtlPcdGpioConfigureCnviBtI2sConnection (
   if (GpioOverrideLevel1Enabled ()) {
     return EFI_SUCCESS;
   }
-
     VCnviBtI2sGpioPadSize = ARRAY_SIZE (mPtlPcdVCnviBtI2sGpioPad);
     VSspForCnviBtGpioPadSize = ARRAY_SIZE (mPtlPcdVSspForCnviBtGpioPad);
-
   if ((ConnectionIndex < VCnviBtI2sGpioPadSize) && (ConnectionIndex < VSspForCnviBtGpioPadSize)) {
     switch (ConnectionType) {
       case GpioV2CnviBtI2sToSsp0:
@@ -756,7 +754,6 @@ PtlPcdGpioEnableTbtLsxOeInterface (
   TbtLsxOePinIndex = TbtLsxOePort - GpioV2TbtLsxOe0;
     TbtLsxOeInterfacePins = mPtlPcdTbtLsxOeInterfacePins;
     TbtLsxOePinsSize = ARRAY_SIZE (mPtlPcdTbtLsxOeInterfacePins);
-
   if (TbtLsxOePinIndex < TbtLsxOePinsSize) {
     Status = GpioServices->SetPadMode (GpioServices, TbtLsxOeInterfacePins[TbtLsxOePinIndex].Pad, TbtLsxOeInterfacePins[TbtLsxOePinIndex].Mode);
     if (EFI_ERROR (Status)) {
@@ -801,9 +798,7 @@ PtlPcdGpioSetDebounceTimerforPwrBtn (
   BOOLEAN           IsValid;
   GPIOV2_PAD_OWN    Ownership;
   GPIOV2_PAD        PwrBtnPad;
-
     PwrBtnPad = GPIOV2_PTL_PCD_XXGPP_V_3;
-
   GpioServices->IsPadValid (GpioServices, PwrBtnPad , &IsValid);
   if (!IsValid) {
     return EFI_INVALID_PARAMETER;
@@ -827,7 +822,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED GPIOV2_PAD_NATIVE_FUNCTION mPtlPcdTimeSyncToGpioMa
   {GPIOV2_PTL_PCD_MUXING__XXGPP_B_23__TIME_SYNC_1, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame}
 };
 
-
 /**
   This function sets Time Sync Gpio into native mode
 
@@ -849,10 +843,8 @@ PtlPcdGpioEnableTimeSync (
   if (GpioOverrideLevel1Enabled ()) {
     return EFI_SUCCESS;
   }
-
     TimeSyncToGpioMap = mPtlPcdTimeSyncToGpioMap;
     TimeSyncToGpioMapSize = ARRAY_SIZE (mPtlPcdTimeSyncToGpioMap);
-
   if (Index < TimeSyncToGpioMapSize) {
     Status = GpioServices->SetPadMode (GpioServices, TimeSyncToGpioMap[Index].Pad, TimeSyncToGpioMap[Index].Mode);
     if (EFI_ERROR (Status)) {
@@ -874,7 +866,6 @@ PtlPcdGpioEnableTimeSync (
 // CPU_C10_GATE pin
 //
 GLOBAL_REMOVE_IF_UNREFERENCED GPIOV2_PAD_NATIVE_FUNCTION mPtlPcdCpuC10GatePin = {GPIOV2_PTL_PCD_XXGPP_H_13, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame};
-
 /**
   This function sets CPU C10 Gate pins into native mode
 
@@ -893,9 +884,7 @@ PtlPcdGpioEnableCpuC10GatePin (
   if (GpioOverrideLevel1Enabled ()) {
     return EFI_SUCCESS;
   }
-
     CpuC10GateGpio = mPtlPcdCpuC10GatePin;
-
   Status = GpioServices->SetPadMode (GpioServices, CpuC10GateGpio.Pad, CpuC10GateGpio.Mode);
   if (EFI_ERROR(Status)) {
     return Status;
@@ -931,9 +920,7 @@ PtlPcdGpioEnableVrAlert (
   if (GpioOverrideLevel1Enabled ()) {
     return EFI_SUCCESS;
   }
-
     VrAlertbPin = mPtlPcdVrAlertbPin;
-
   Status = GpioServices->SetPadMode (GpioServices, VrAlertbPin.Pad, VrAlertbPin.Mode);
   if (EFI_ERROR(Status)) {
     return Status;
@@ -1338,7 +1325,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED GPIOV2_PAD mPtlPcdThcWotGpioPad[] = {
   GPIOV2_PTL_PCD_VGPIO_THC1
 };
 
-
 /**
   This function provides GPIO Native Pad with encoded Wake on Touch native function for a given THC index
 
@@ -1701,7 +1687,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED GPIOV2_VWOC_FUNCTION mPtlPcdUsbVwOcGpioPins[] =
   {GPIOV2_PTL_PCD_VGPIO_USB_6, GPIOV2_PTL_PCD_VGPIO_USB_7}    // USB_VW_OC_PIN_3
 };
 
-
 /**
   This procedure will Enable USB Virtual Wire Overcurrent pin by cycling NAF_VWE bit
 
@@ -1791,7 +1776,6 @@ PtlPcdGpioEnableUsbOverCurrent (
   if (GpioOverrideLevel1Enabled ()) {
     return EFI_SUCCESS;
   }
-
     PhysicalPinTableSize = ARRAY_SIZE (mPtlPcdUsbOcGpioPins);
     VirtualPinTableSize  = ARRAY_SIZE (mPtlPcdUsbVwOcGpioPins);
 
@@ -1807,7 +1791,6 @@ PtlPcdGpioEnableUsbOverCurrent (
   }
 
     UsbOcSignal = mPtlPcdUsbOcGpioPins[OcPinNumber];
-
   // Set NafVweBit for PhysicalOcPin if NativeActiveFlag is TRUE
   if (NativeActiveFlag) {
     GpioPad = PtlPcdGpioGetNativePadByFunction (GpioServices, UsbOcSignal);
@@ -1852,232 +1835,6 @@ PtlPcdGpioEnablePchHot (
   return EFI_SUCCESS;
 }
 
-  GLOBAL_REMOVE_IF_UNREFERENCED UINT32 mPtlPcdGpioIoStandby[] =
-{
-  GPIOV2_SIGNAL_PWR_AC_PRESENT,
-  GPIOV2_SIGNAL_PMC_ALERT_B,
-  GPIOV2_SIGNAL_ESPI_ALERT(0),
-  GPIOV2_SIGNAL_ESPI_ALERT(1),
-  GPIOV2_SIGNAL_ESPI_ALERT(2),
-  GPIOV2_SIGNAL_ESPI_ALERT(3),
-  GPIOV2_SIGNAL_VR_ALERT,
-  GPIOV2_SIGNAL_PANEL_AVDD_EN2,
-  GPIOV2_SIGNAL_PWR_BATLOW,
-  GPIOV2_SIGNAL_PANEL_BKLTCTL2,
-  GPIOV2_SIGNAL_PANEL_BKLTEN2,
-  GPIOV2_SIGNAL_PWR_BOOTHALT,
-  GPIOV2_SIGNAL_CPU_C10_GATE,
-  GPIOV2_SIGNAL_PWR_CATERR,
-  GPIOV2_SIGNAL_ESPI_CLK,
-  GPIOV2_SIGNAL_PTI_TRACE_CLK(0),
-  GPIOV2_SIGNAL_PTI_TRACE_CLK(1),
-  GPIOV2_SIGNAL_SPI_CLK,
-  GPIOV2_SIGNAL_VISA2CH1_CLK,
-  GPIOV2_SIGNAL_VISA2CH2_CLK,
-  GPIOV2_SIGNAL_VISA2CH3_CLK,
-  GPIOV2_SIGNAL_VISA2CH4_CLK,
-  GPIOV2_SIGNAL_VISAFUSECH1_CLK,
-  GPIOV2_SIGNAL_VISAOSSEFUSECH1_CLK,
-  GPIOV2_SIGNAL_HDA_CPU_BCLK,
-  GPIOV2_SIGNAL_HDA_CPU_SDI,
-  GPIOV2_SIGNAL_HDA_CPU_SDO,
-  GPIOV2_SIGNAL_ESPI_CS(0),
-  GPIOV2_SIGNAL_ESPI_CS(1),
-  GPIOV2_SIGNAL_ESPI_CS(2),
-  GPIOV2_SIGNAL_ESPI_CS(3),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(0),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(1),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(2),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(3),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(4),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(5),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(6),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(7),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(8),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(9),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(10),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(11),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(12),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(13),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(14),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(15),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(16),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(17),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(18),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(19),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(20),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(21),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(22),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(23),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(24),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(25),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(26),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(27),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(28),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(29),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(30),
-  GPIOV2_SIGNAL_PTI_TRACE_DATA(31),
-  GPIOV2_SIGNAL_VISA2CH1_DATA(0),
-  GPIOV2_SIGNAL_VISA2CH1_DATA(1),
-  GPIOV2_SIGNAL_VISA2CH1_DATA(2),
-  GPIOV2_SIGNAL_VISA2CH1_DATA(3),
-  GPIOV2_SIGNAL_VISA2CH1_DATA(4),
-  GPIOV2_SIGNAL_VISA2CH1_DATA(5),
-  GPIOV2_SIGNAL_VISA2CH1_DATA(6),
-  GPIOV2_SIGNAL_VISA2CH1_DATA(7),
-  GPIOV2_SIGNAL_VISA2CH2_DATA(0),
-  GPIOV2_SIGNAL_VISA2CH2_DATA(1),
-  GPIOV2_SIGNAL_VISA2CH2_DATA(2),
-  GPIOV2_SIGNAL_VISA2CH2_DATA(3),
-  GPIOV2_SIGNAL_VISA2CH2_DATA(4),
-  GPIOV2_SIGNAL_VISA2CH2_DATA(5),
-  GPIOV2_SIGNAL_VISA2CH2_DATA(6),
-  GPIOV2_SIGNAL_VISA2CH2_DATA(7),
-  GPIOV2_SIGNAL_VISA2CH3_DATA(0),
-  GPIOV2_SIGNAL_VISA2CH3_DATA(1),
-  GPIOV2_SIGNAL_VISA2CH3_DATA(2),
-  GPIOV2_SIGNAL_VISA2CH3_DATA(3),
-  GPIOV2_SIGNAL_VISA2CH3_DATA(4),
-  GPIOV2_SIGNAL_VISA2CH3_DATA(5),
-  GPIOV2_SIGNAL_VISA2CH3_DATA(6),
-  GPIOV2_SIGNAL_VISA2CH3_DATA(7),
-  GPIOV2_SIGNAL_VISA2CH4_DATA(0),
-  GPIOV2_SIGNAL_VISA2CH4_DATA(1),
-  GPIOV2_SIGNAL_VISA2CH4_DATA(2),
-  GPIOV2_SIGNAL_VISA2CH4_DATA(3),
-  GPIOV2_SIGNAL_VISA2CH4_DATA(4),
-  GPIOV2_SIGNAL_VISA2CH4_DATA(5),
-  GPIOV2_SIGNAL_VISA2CH4_DATA(6),
-  GPIOV2_SIGNAL_VISA2CH4_DATA(7),
-  GPIOV2_SIGNAL_VISAFUSECH1_DATA(0),
-  GPIOV2_SIGNAL_VISAFUSECH1_DATA(1),
-  GPIOV2_SIGNAL_VISAFUSECH1_DATA(2),
-  GPIOV2_SIGNAL_VISAFUSECH1_DATA(3),
-  GPIOV2_SIGNAL_VISAFUSECH1_DATA(4),
-  GPIOV2_SIGNAL_VISAFUSECH1_DATA(5),
-  GPIOV2_SIGNAL_VISAFUSECH1_DATA(6),
-  GPIOV2_SIGNAL_VISAFUSECH1_DATA(7),
-  GPIOV2_SIGNAL_VISAOSSEFUSECH1_DATA(0),
-  GPIOV2_SIGNAL_VISAOSSEFUSECH1_DATA(1),
-  GPIOV2_SIGNAL_VISAOSSEFUSECH1_DATA(2),
-  GPIOV2_SIGNAL_VISAOSSEFUSECH1_DATA(3),
-  GPIOV2_SIGNAL_VISAOSSEFUSECH1_DATA(4),
-  GPIOV2_SIGNAL_VISAOSSEFUSECH1_DATA(5),
-  GPIOV2_SIGNAL_VISAOSSEFUSECH1_DATA(6),
-  GPIOV2_SIGNAL_VISAOSSEFUSECH1_DATA(7),
-  GPIOV2_SIGNAL_CNVI_DEBUG_A(0),
-  GPIOV2_SIGNAL_CNVI_DEBUG_A(1),
-  GPIOV2_SIGNAL_CNVI_DEBUG_A(2),
-  GPIOV2_SIGNAL_CNVI_DEBUG_A(3),
-  GPIOV2_SIGNAL_CNVI_DEBUG_A(4),
-  GPIOV2_SIGNAL_CNVI_DEBUG_A(5),
-  GPIOV2_SIGNAL_CNVI_DEBUG_A(6),
-  GPIOV2_SIGNAL_CNVI_DEBUG_A(7),
-  GPIOV2_SIGNAL_CNVI_DEBUG(0),
-  GPIOV2_SIGNAL_CNVI_DEBUG(1),
-  GPIOV2_SIGNAL_CNVI_DEBUG(2),
-  GPIOV2_SIGNAL_CNVI_DEBUG(3),
-  GPIOV2_SIGNAL_CNVI_DEBUG(4),
-  GPIOV2_SIGNAL_CNVI_DEBUG(5),
-  GPIOV2_SIGNAL_CNVI_DEBUG(6),
-  GPIOV2_SIGNAL_CNVI_DEBUG(7),
-  GPIOV2_SIGNAL_MISC_DNX_FORCE_RELOAD,
-  GPIOV2_SIGNAL_PWR_EPD_ON,
-  GPIOV2_SIGNAL_SPI_FLASH_CS(0),
-  GPIOV2_SIGNAL_SPI_FLASH_CS(1),
-  GPIOV2_SIGNAL_PWR_FORCEPR,
-  GPIOV2_SIGNAL_MISC_FUSA_DIAGTEST_EN,
-  GPIOV2_SIGNAL_MISC_FUSA_DIAGTEST_MODE,
-  GPIOV2_SIGNAL_CPU_GP(0),
-  GPIOV2_SIGNAL_CPU_GP(1),
-  GPIOV2_SIGNAL_CPU_GP(2),
-  GPIOV2_SIGNAL_CPU_GP(3),
-  GPIOV2_SIGNAL_DDSP_HPDALV,
-  GPIOV2_SIGNAL_PMC_I2C_SCL,
-  GPIOV2_SIGNAL_PMC_I2C_SDA,
-  GPIOV2_SIGNAL_MISC_IEH_CORR_ERR,
-  GPIOV2_SIGNAL_MISC_IEH_FATAL_ERR,
-  GPIOV2_SIGNAL_MISC_IEH_NONFATAL_ERR,
-  GPIOV2_SIGNAL_ESPI_IO(0),
-  GPIOV2_SIGNAL_ESPI_IO(1),
-  GPIOV2_SIGNAL_ESPI_IO(2),
-  GPIOV2_SIGNAL_ESPI_IO(3),
-  GPIOV2_SIGNAL_SPI_IO(2),
-  GPIOV2_SIGNAL_SPI_IO(3),
-  GPIOV2_SIGNAL_PWR_LANPHYPC,
-  GPIOV2_SIGNAL_PCIE_LNK_DOWN,
-  GPIOV2_SIGNAL_JTAG_MBPB(0),
-  GPIOV2_SIGNAL_JTAG_MBPB(1),
-  GPIOV2_SIGNAL_JTAG_MBPB(2),
-  GPIOV2_SIGNAL_JTAG_MBPB(3),
-  GPIOV2_SIGNAL_I2S_MCLK,
-  GPIOV2_SIGNAL_MISC_MIC_MUTE_LED,
-  GPIOV2_SIGNAL_MISC_MIC_MUTE,
-  GPIOV2_SIGNAL_DISP_MISC_A,
-  GPIOV2_SIGNAL_DISP_MISC(1),
-  GPIOV2_SIGNAL_DISP_MISC(2),
-  GPIOV2_SIGNAL_DISP_MISC(3),
-  GPIOV2_SIGNAL_DISP_MISC(4),
-  GPIOV2_SIGNAL_SPI_MISO,
-  GPIOV2_SIGNAL_SPI_MOSI,
-  GPIOV2_SIGNAL_CNVI_PA_BLANKING,
-  GPIOV2_SIGNAL_PWR_PLTRST,
-  GPIOV2_SIGNAL_JTAG_PRDY_B,
-  GPIOV2_SIGNAL_JTAG_PREQ_B,
-  GPIOV2_SIGNAL_PWR_PRIACK,
-  GPIOV2_SIGNAL_PWR_PRIPWRDNACK,
-  GPIOV2_SIGNAL_PWR_PWRBTN,
-  GPIOV2_SIGNAL_UFS_REFCLK,
-  GPIOV2_SIGNAL_ESPI_RESET,
-  GPIOV2_SIGNAL_PWR_SLP_A,
-  GPIOV2_SIGNAL_PWR_SLP_DRAM,
-  GPIOV2_SIGNAL_PWR_SLP_LAN,
-  GPIOV2_SIGNAL_PWR_SLP(0),
-  GPIOV2_SIGNAL_PWR_SLP(3),
-  GPIOV2_SIGNAL_PWR_SLP(4),
-  GPIOV2_SIGNAL_PWR_SLP(5),
-  GPIOV2_SIGNAL_PWR_SLP_WLAN,
-  GPIOV2_SIGNAL_OSSE_SMLALERT_B,
-  GPIOV2_SIGNAL_OSSE_SMLCLK,
-  GPIOV2_SIGNAL_USBC_SMLCLK,
-  GPIOV2_SIGNAL_OSSE_SMLDATA,
-  GPIOV2_SIGNAL_USBC_SMLDATA,
-  GPIOV2_SIGNAL_SMB_SML_ALERT(0),
-  GPIOV2_SIGNAL_SMB_SML_ALERT(1),
-  GPIOV2_SIGNAL_SMB_SML_BALERT(0),
-  GPIOV2_SIGNAL_SMB_SML_BCLK(0),
-  GPIOV2_SIGNAL_SMB_SML_BDATA(0),
-  GPIOV2_SIGNAL_SMB_SML_CLK(0),
-  GPIOV2_SIGNAL_SMB_SML_CLK(1),
-  GPIOV2_SIGNAL_SMB_SML_DATA(0),
-  GPIOV2_SIGNAL_SMB_SML_DATA(1),
-  GPIOV2_SIGNAL_PWR_SOC_WAKE,
-  GPIOV2_SIGNAL_PCIE_SRCCLKREQ(0),
-  GPIOV2_SIGNAL_PCIE_SRCCLKREQ(1),
-  GPIOV2_SIGNAL_PCIE_SRCCLKREQ(2),
-  GPIOV2_SIGNAL_PCIE_SRCCLKREQ(3),
-  GPIOV2_SIGNAL_PCIE_SRCCLKREQ(4),
-  GPIOV2_SIGNAL_PCIE_SRCCLKREQ(5),
-  GPIOV2_SIGNAL_PCIE_SRCCLKREQ(6),
-  GPIOV2_SIGNAL_PCIE_SRCCLKREQ(7),
-  GPIOV2_SIGNAL_PCIE_SRCCLKREQ(8),
-  GPIOV2_SIGNAL_PWR_SUSCLK,
-  GPIOV2_SIGNAL_PWR_SX_HOLDOFF,
-  GPIOV2_SIGNAL_TIME_SYNC(0),
-  GPIOV2_SIGNAL_TIME_SYNC(1),
-  GPIOV2_SIGNAL_PWR_SYS_PWROK,
-  GPIOV2_SIGNAL_PWR_SYS_RESET,
-  GPIOV2_SIGNAL_JTAG_TCK,
-  GPIOV2_SIGNAL_JTAG_TDI,
-  GPIOV2_SIGNAL_JTAG_TDO,
-  GPIOV2_SIGNAL_PWR_THERMTRIP,
-  GPIOV2_SIGNAL_JTAG_TMS,
-  GPIOV2_SIGNAL_SPI_TPM_CS,
-  GPIOV2_SIGNAL_JTAG_TRST_B,
-  GPIOV2_SIGNAL_PWR_VCCST,
-  GPIOV2_SIGNAL_PWR_VDD2_PWRGD,
-  GPIOV2_SIGNAL_PWR_WAKE
-};
 
 /**
   This function performs initial IO Standby State related configurations
@@ -2087,16 +1844,15 @@ PtlPcdGpioConfigureIoStandbyState (
   VOID
   )
 {
-  UINT16                  Index;
-  GPIOV2_IOSTANDBY_STATE  IosState;
-  GPIOV2_IOSTANDBY_TERM   IosTerm;
-  GPIOV2_PAD              GpioPad;
+  UINT8                   SignalIndex;
+  UINT32                  NativeSignalIndex;
   GPIOV2_PAD_MODE         GpioPadMode;
-  GPIOV2_PAD_MODE         SignalPadMode;
   EFI_STATUS              Status;
   GPIOV2_SERVICES         *GpioServices;
-  UINT32                  *GpioIostandbyTable;
-  UINT16                  TableSize;
+  GPIOV2_INTERFACE        *GpioInterface;
+  UINT32                  CommunityIndex;
+  UINT32                  GroupIndex;
+  UINT32                  PadIndex;
 
   if (GpioOverrideLevel1Enabled ()) {
     return;
@@ -2107,30 +1863,36 @@ PtlPcdGpioConfigureIoStandbyState (
       DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices(%a) failed (Status: %d)\n", __FUNCTION__, GPIO_HID_PTL_PCD_P, Status));
       return;
     }
-    GpioIostandbyTable = mPtlPcdGpioIoStandby;
-    TableSize = ARRAY_SIZE (mPtlPcdGpioIoStandby);
 
-  for (Index = 0; Index < TableSize; Index++) {
-    GpioPad = PtlPcdGpioGetNativePadByFunction (GpioServices, GpioIostandbyTable[Index]);
-    Status = GpioServices->GetPadMode (GpioServices, GpioPad, &GpioPadMode);
-    if (EFI_ERROR (Status)) {
-      continue;
-    }
-    Status = GpioServices->GetPadModeForPad (GpioServices, GpioPad, GpioIostandbyTable[Index], &SignalPadMode);
-    if (EFI_ERROR (Status)) {
-        continue;
-    }
-    if (GpioPadMode == SignalPadMode) {
-      Status = PtlPcdGpioGetFunctionIoStandbyConfig (GpioServices, GpioIostandbyTable[Index], &IosState, &IosTerm);
-      if (EFI_ERROR (Status)) {
-        continue;
+  GpioInterface = GPIOV2_INTERFACE_FROM_PUBLIC (GpioServices);
+
+  for (CommunityIndex = 0; CommunityIndex < GpioInterface->Private.CommunitiesNum; CommunityIndex++) {
+    for (GroupIndex = 0; GroupIndex < GpioInterface->Private.Communities[CommunityIndex].GroupsNum; GroupIndex++) {
+      for (PadIndex = 0; PadIndex < GpioInterface->Private.Communities[CommunityIndex].Groups[GroupIndex].PadsNum; PadIndex++) {
+        GpioInterface->Public.GetPadMode (&(GpioInterface->Public), GpioInterface->Private.Communities[CommunityIndex].Groups[GroupIndex].Pads[PadIndex], &GpioPadMode);
+        if (GpioPadMode == GpioV2PadModeGpio) {
+          continue;
+        }
+        for (SignalIndex = 0; SignalIndex < GpioInterface->Private.Communities[CommunityIndex].Groups[GroupIndex].PadDataArray[PadIndex].PadSignalsNum; SignalIndex++) {
+          if (GpioPadMode == GpioInterface->Private.Communities[CommunityIndex].Groups[GroupIndex].PadDataArray[PadIndex].PadSignals[SignalIndex].PadMode) {
+            for (NativeSignalIndex = 0; NativeSignalIndex < GpioInterface->Private.NativeSignalDataNum; NativeSignalIndex++) {
+              if (GpioInterface->Private.Communities[CommunityIndex].Groups[GroupIndex].PadDataArray[PadIndex].PadSignals[SignalIndex].Signal.Value == GpioInterface->Private.NativeSignalData[NativeSignalIndex].Signal.Value) {
+                if (GpioInterface->Private.NativeSignalData[NativeSignalIndex].IosState == GpioV2IosStateDefault){
+                  break;
+                }
+                GpioInterface->Public.SetIostandbyConfig (
+                  &(GpioInterface->Public),
+                  GpioInterface->Private.Communities[CommunityIndex].Groups[GroupIndex].Pads[PadIndex],
+                  GpioInterface->Private.NativeSignalData[NativeSignalIndex].IosState,
+                  GpioInterface->Private.NativeSignalData[NativeSignalIndex].IosTerm
+                );
+                break;
+              }
+            }
+            break;
+          }
+        }
       }
-      GpioServices->SetIostandbyConfig (
-                      GpioServices,
-                      GpioPad,
-                      IosState,
-                      IosTerm
-                      );
     }
   }
 }
@@ -2220,7 +1982,6 @@ PtlPcdTcssLsxPinEnable (
   EFI_STATUS           Status;
 
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to Configure Display GPIO's\n"));
     return;
@@ -2249,7 +2010,6 @@ PtlPcdTcssLsxOePinEnable (
   EFI_STATUS       Status;
 
     Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
-
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to Configure LSx_OE GPIOs\n"));
     return;

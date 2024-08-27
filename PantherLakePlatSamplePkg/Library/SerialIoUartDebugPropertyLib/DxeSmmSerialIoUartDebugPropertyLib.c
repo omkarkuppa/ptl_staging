@@ -21,13 +21,13 @@
 #include <Base.h>
 #include <Uefi/UefiBaseType.h>
 #include <Protocol/SerialIo.h>
-#include <Library/SerialIoUartDebugPropertyPcdLib.h>
+#include <Library/LpssUartDebugPropertyPcdLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Pi/PiBootMode.h>
 #include <Pi/PiHob.h>
 #include <Setup.h>
 
-GLOBAL_REMOVE_IF_UNREFERENCED SERIAL_IO_UART_ATTRIBUTES mSerialIoAttributes;
+GLOBAL_REMOVE_IF_UNREFERENCED LPSS_UART_ATTRIBUTES mSerialIoAttributes;
 GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN                   mDataReady = FALSE;
 GLOBAL_REMOVE_IF_UNREFERENCED UINT8                     mDebugControllerNumber = 0xFF;
 
@@ -154,7 +154,7 @@ DxeSmmSerialIoUartDebugPropertyLibConstructor  (
 **/
 VOID
 SerialIoUartDebugGetAttributes (
-  IN OUT SERIAL_IO_UART_ATTRIBUTES *UartAttributes
+  IN OUT LPSS_UART_ATTRIBUTES *UartAttributes
   )
 {
   if (mDataReady == TRUE) {
@@ -166,7 +166,7 @@ SerialIoUartDebugGetAttributes (
     return;
   }
 
-  SerialIoUartDebugPcdGetAttributes (UartAttributes);
+  LpssUartDebugPcdGetAttributes (UartAttributes);
 }
 
 /**
@@ -183,7 +183,7 @@ SerialIoUartDebugGetControllerNumber (
     return mDebugControllerNumber;
   }
 
-  return SerialIoUartDebugPcdGetControllerNumber ();
+  return LpssUartDebugPcdGetControllerNumber ();
 }
 
 /**
@@ -196,7 +196,7 @@ SerialIoUartDebugGetPciDefaultMmioBase (
   VOID
   )
 {
-  return SerialIoUartDebugPcdGetPciDefaultMmioBase ();
+  return LpssUartDebugPcdGetPciDefaultMmioBase ();
 }
 
 /**
@@ -209,5 +209,5 @@ SerialIoUartDebugGetDefaultPciCfgBase (
   VOID
   )
 {
-  return SerialIoUartDebugPcdGetDefaultPciCfgBase ();
+  return LpssUartDebugPcdGetDefaultPciCfgBase ();
 }

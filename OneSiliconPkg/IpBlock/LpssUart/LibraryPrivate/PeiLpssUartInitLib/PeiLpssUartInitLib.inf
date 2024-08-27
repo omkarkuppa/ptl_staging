@@ -33,7 +33,7 @@ DebugLib
 TimerLib
 PeiHdaLib
 PciSegmentLib
-LpssUartPrivateLib
+LpssUartLib
 
 [Packages]
 MdePkg/MdePkg.dec

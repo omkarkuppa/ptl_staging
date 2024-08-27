@@ -73,8 +73,9 @@ DefinitionBlock (
       //
       // Message Data Structure Size (MGBS)
       // Returns USB Type-C Message Data Structure Size
+      // Arg0 : Data Structure Type 1: MGO Data Structure, 0: MGI Data Structure
       //
-      Method (MGBS, 0, Serialized) {
+      Method (MGBS, 1, Serialized) {
         If (LEqual (UCMS, 0x2)) {
           //
           // UCSI 2.0 MGI and MGO Data Structure size is 0 - 0xFF (0x100)
@@ -82,9 +83,14 @@ DefinitionBlock (
           Store (0x100, Local0)
         } else {
           //
-          // USCI 1.0 MGI and MGO Data Structure size is 0 - 0xF (0x10)
+          // USCI 1.0 MGI Data Structure size is 0 - 0x13 (0x14)
+          // MGO Data Structure size is 0 - 0xF (0x10)
           //
-          Store (0x10, Local0)
+          If (LEqual (Arg0, 1)) {
+            Store (0x10, Local0)   // MGO Data Structure size
+          } Else {
+            Store (0x14, Local0)   // MGI Data Structure size
+          }
         }
         ADBG (Concatenate ("USBC.MGBS", ToHexString (Local0)))
         Return (Local0)
@@ -100,7 +106,7 @@ DefinitionBlock (
         // UCSI Input Data Structure offset = USB Type C Opregion base address + UCSI Controller Data Structure Length (0x10)
         Store (Add (UBCB, Local0), Local1)
         ADBG (Concatenate ("UBTC", ToHexString (UBCB)))
-        ADBG (Concatenate ("UBTC.UCMI", ToHexString (Local1)))
+        ADBG (Concatenate ("UCSI Input Data Structure offset:", ToHexString (Local1)))
         Return (Local1)
       }
 
@@ -110,12 +116,12 @@ DefinitionBlock (
       //
       Method (UCMO, 0, Serialized) {
         // Get USB Type-C Message In Data Structure Length
-        Store (MGBS (), Local0)
+        Store (MGBS (0), Local0)
         // USB Type-C Message In Data Structure Length + UCSI Controller Data Structure (VERSION+RESERVED+CCI+CONTROL) Length (0x10)
         Store (Add (Local0, 0x10), Local0)
         // UCSI Output Data Structure offset = USB Type C Opregion base address + USB Type-C Message In Data Structure Length + UCSI Controller Data Structure (0x10)
         Store (Add (UBCB, Local0), Local1)
-        ADBG (Concatenate ("UBTC.UCMO", ToHexString (Local1)))
+        ADBG (Concatenate ("UCSI Output Data Structure offset:", ToHexString (Local1)))
         Return (Local1)
       }
 
@@ -152,32 +158,36 @@ DefinitionBlock (
       //
       // USB Type-C Message In Data Structure
       //
-      OperationRegion (USCI, SystemMemory, UCMI (), MGBS ())
+      OperationRegion (USCI, SystemMemory, UCMI (), MGBS (0))
       Field (USCI, ByteAcc, Lock, Preserve)
       {
         // USB Type C Mailbox Interface
-        MGI0, 8,  //  PPM->OPM Message In
-        MGI1, 8,
-        MGI2, 8,
-        MGI3, 8,
-        MGI4, 8,
-        MGI5, 8,
-        MGI6, 8,
-        MGI7, 8,
-        MGI8, 8,
-        MGI9, 8,
-        MGIA, 8,
-        MGIB, 8,
-        MGIC, 8,
-        MGID, 8,
-        MGIE, 8,
-        MGIF, 8,
+        MI00, 8,  //  PPM->OPM Message In
+        MI01, 8,
+        MI02, 8,
+        MI03, 8,
+        MI04, 8,
+        MI05, 8,
+        MI06, 8,
+        MI07, 8,
+        MI08, 8,
+        MI09, 8,
+        MI0A, 8,
+        MI0B, 8,
+        MI0C, 8,
+        MI0D, 8,
+        MI0E, 8,
+        MI0F, 8,
+        MI10, 8,
+        MI11, 8,
+        MI12, 8,
+        MI13, 8,
       }
 
       //
       // USB Type-C Message Out Data Structure
       //
-      OperationRegion (UCSO, SystemMemory, UCMO (), MGBS ())
+      OperationRegion (UCSO, SystemMemory, UCMO (), MGBS (1))
       Field (UCSO, ByteAcc, Lock, Preserve)
       {
         MGO0, 8,  //  OPM->PPM Message Out
@@ -389,27 +399,40 @@ DefinitionBlock (
 
             Case (2)  // OPM read from EC
             {
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 0)), MGI0 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 1)), MGI1 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 2)), MGI2 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 3)), MGI3 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 4)), MGI4 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 5)), MGI5 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 6)), MGI6 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 7)), MGI7 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 8)), MGI8 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 9)), MGI9 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 10)), MGIA )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 11)), MGIB )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 12)), MGIC )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 13)), MGID )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 14)), MGIE )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 15)), MGIF )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 0)), MI00 )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 1)), MI01 )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 2)), MI02 )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 3)), MI03 )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 4)), MI04 )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 5)), MI05 )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 6)), MI06 )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 7)), MI07 )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 8)), MI08 )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 9)), MI09 )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 10)), MI0A )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 11)), MI0B )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 12)), MI0C )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 13)), MI0D )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 14)), MI0E )
+              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 15)), MI0F )
+              If (LEqual (UCMS, 1)) {
+                // UCSI 1.2
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 16)), CCI0 )
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 17)), CCI1 )
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 18)), CCI2 )
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 19)), CCI3 )
+              } Else {
+                // UCSI 2.x
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 16)), MI10 )
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 17)), MI11 )
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 18)), MI12 )
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 19)), MI13 )
 
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 16)), CCI0 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 17)), CCI1 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 18)), CCI2 )
-              Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 19)), CCI3 )
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 20)), CCI0 )
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 21)), CCI1 )
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 22)), CCI2 )
+                Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 23)), CCI3 )
+              }
             }
 
             Case (3) //xDCI FN EN/DIS Status

@@ -777,9 +777,11 @@ HidParseInput (
         }
 
       }
+      FreePool (LastOutput);
       return EFI_SUCCESS;
     }
   }
+  FreePool (LastOutput);
   return EFI_NOT_FOUND;
 }
 

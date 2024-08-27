@@ -36,4 +36,18 @@
 #define TICK_CODE_DELTA              31
 #define DCC_INIT_FIRST               -16
 #define DCC_INIT_SECOND              15
+#define MRC_PRINT_BUF_CR_REG         DDRMCMISC_CR_DDRVDD2POWER_REG
+
+/// Define the CPU stepping number.
+typedef enum {
+  ipStepA0 = 0,
+  ipStepLast = 0,
+  ipStepB0 = 1
+} MrcIpStepping;
+
+typedef enum {
+  ipDerivativePtl = 1,
+  ipDerivativeWcl = 2
+} MrcIpDerivative;
+
 #endif

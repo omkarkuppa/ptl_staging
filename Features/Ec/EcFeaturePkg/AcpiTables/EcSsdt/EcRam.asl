@@ -19,6 +19,8 @@
 @par Specification
 **/
 
+External (UCMS, IntObj)
+
 OperationRegion (ECF2, EmbeddedControl, 0, 0xFF)
 Field (ECF2, ByteAcc, Lock, Preserve)
 {
@@ -31,42 +33,26 @@ CFAN, 1,      // 3.3        CPU Fan (Fan On = 1)
     , 2,      // 3.5:4      Reserved
 LSTE, 1,      // 3.6        Lid State (Lid Open = 1)
     , 1,      // 3.7        Reserved
-MGI0, 8,      // 4          PPM->OPM Message In, 128 bits, 16 bytes
-MGI1, 8,
-MGI2, 8,
-MGI3, 8,
-MGI4, 8,
-MGI5, 8,
-MGI6, 8,
-MGI7, 8,
-MGI8, 8,
-MGI9, 8,
-MGIA, 8,
-MGIB, 8,
-MGIC, 8,
-MGID, 8,
-MGIE, 8,
-MGIF, 8,
-MGO0, 8,      // 20         OPM->PPM Message Out, 128 bits, 16 bytes
-MGO1, 8,
-MGO2, 8,
-MGO3, 8,
-MGO4, 8,
-MGO5, 8,
-MGO6, 8,
-MGO7, 8,
-MGO8, 8,
-MGO9, 8,
-MGOA, 8,
-MGOB, 8,
-MGOC, 8,
-MGOD, 8,
-MGOE, 8,
-MGOF, 8,
-CCI0, 8,      // 36         PPM->OPM CCI indicator, 4 bytes,
-CCI1, 8,
-CCI2, 8,
-CCI3, 8,
+MI00, 8,      // 4          PPM->OPM Message In, 160 bits, 20 bytes
+MI01, 8,
+MI02, 8,
+MI03, 8,
+MI04, 8,
+MI05, 8,
+MI06, 8,
+MI07, 8,
+MI08, 8,
+MI09, 8,
+MI0A, 8,
+MI0B, 8,
+MI0C, 8,
+MI0D, 8,
+MI0E, 8,
+MI0F, 8,
+MI10, 8,
+MI11, 8,
+MI12, 8,
+MI13, 8,
 Offset(47),
 CTMP, 8,      // 47         EC Critical Temperature
     , 1,      // 48.0       Virtual Dock Status
@@ -265,4 +251,42 @@ VBNL, 16,     // 247, 248   Battery No-Load Voltage
 CMPP, 16,     // 249, 250   Battery Maximum peak current
 Offset(251),
 UVTH, 16,     // 251, 252   Under Voltage Threshold
+}
+
+//
+// Get EC MGO Base (MOBS)
+// Returns EC MGO Base
+//
+Method (MOBS) {
+  If (CondRefOf (UCMS)) {
+    If (LEqual (UCMS, 1)) {
+      Return (20) // UCSI 1.2
+    }
+  }
+  Return (24) // UCSI 2.x
+}
+
+OperationRegion (ECF4, EmbeddedControl, MOBS (), 0x14)
+Field (ECF4, ByteAcc, Lock, Preserve)
+{
+MGO0, 8,      // 24         OPM->PPM Message Out, 128 bits, 16 bytes
+MGO1, 8,
+MGO2, 8,
+MGO3, 8,
+MGO4, 8,
+MGO5, 8,
+MGO6, 8,
+MGO7, 8,
+MGO8, 8,
+MGO9, 8,
+MGOA, 8,
+MGOB, 8,
+MGOC, 8,
+MGOD, 8,
+MGOE, 8,
+MGOF, 8,
+CCI0, 8,      // 40         PPM->OPM CCI indicator, 4 bytes,
+CCI1, 8,
+CCI2, 8,
+CCI3, 8,
 }

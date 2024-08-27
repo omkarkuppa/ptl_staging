@@ -33,7 +33,46 @@
 #define TREFIMIN_LPDDR            3904000   /// Average periodic refresh interval, in picoseconds (3.904 us for LPDDR5)
 #define TREFIMIN_DDR5             1950000   /// Average periodic refresh interval, in picoseconds (1.95 us for DDR5)
 #define TREFIMULTIPLIER           1000      /// tREFI value defined in XMP 1.3 spec is actually in thousands of MTB units.
-#define MRC_TRRD_L_MIN_DDR5       5000      /// tRRD_L min timing, in picoseconds (5 ns for DDR5)
+
+/// DDR5 tRRD_L min timing in picoseconds
+#define MRC_DDR5_TRRD_L_6400_MIN        (5000)
+#define MRC_DDR5_TRRD_L_6800_MIN        (4705)
+#define MRC_DDR5_TRRD_L_7200_MIN        (4444)
+#define MRC_DDR5_TRRD_L_7600_MIN        (4210)
+#define MRC_DDR5_TRRD_L_8000_8400_MIN   (4000)
+#define MRC_DDR5_TRRD_L_8800_MIN        (3863)
+
+// DDR5 tFAW min timing in picoseconds
+#define MRC_DDR5_TFAW_1K_3200_MIN       (20000)
+#define MRC_DDR5_TFAW_2K_3200_MIN       (25000)
+#define MRC_DDR5_TFAW_1K_3600_MIN       (17777)
+#define MRC_DDR5_TFAW_2K_3600_MIN       (22222)
+#define MRC_DDR5_TFAW_1K_4000_MIN       (16000)
+#define MRC_DDR5_TFAW_2K_4000_MIN       (20000)
+#define MRC_DDR5_TFAW_1K_4400_MIN       (14545)
+#define MRC_DDR5_TFAW_2K_4400_MIN       (18181)
+#define MRC_DDR5_TFAW_1K_4800_MIN       (13333)
+#define MRC_DDR5_TFAW_2K_4800_MIN       (16666)
+#define MRC_DDR5_TFAW_1K_5200_MIN       (12307)
+#define MRC_DDR5_TFAW_2K_5200_MIN       (15384)
+#define MRC_DDR5_TFAW_1K_5600_MIN       (11428)
+#define MRC_DDR5_TFAW_2K_5600_MIN       (14285)
+#define MRC_DDR5_TFAW_1K_6000_MIN       (10666)
+#define MRC_DDR5_TFAW_2K_6000_MIN       (13333)
+#define MRC_DDR5_TFAW_1K_6400_MIN       (10000)
+#define MRC_DDR5_TFAW_2K_6400_MIN       (12500)
+#define MRC_DDR5_TFAW_1K_6800_MIN       (9411)
+#define MRC_DDR5_TFAW_2K_6800_MIN       (11764)
+#define MRC_DDR5_TFAW_1K_7200_MIN       (8888)
+#define MRC_DDR5_TFAW_2K_7200_MIN       (11111)
+#define MRC_DDR5_TFAW_1K_7600_MIN       (8421)
+#define MRC_DDR5_TFAW_2K_7600_MIN       (10526)
+#define MRC_DDR5_TFAW_1K_8000_MIN       (8000)
+#define MRC_DDR5_TFAW_2K_8000_MIN       (10000)
+#define MRC_DDR5_TFAW_1K_8400_MIN       (7619)
+#define MRC_DDR5_TFAW_2K_8400_MIN       (9523)
+#define MRC_DDR5_TFAW_1K_8800_MIN       (7272)
+#define MRC_DDR5_TFAW_2K_8800_MIN       (9090)
 
 #define MRC_FREQUENCY_MTB_OFFSET  1000000
 #define MRC_FREQUENCY_FTB_OFFSET  1000
@@ -158,6 +197,9 @@
 #define MICRON_DRAM_ID                      (0x2C80)
 #define SAMSUNG_DRAM_ID                     (0xCE80)
 #define SKHYNIX_DRAM_ID                     (0xAD80)
+
+// MTB in units of 0.125ns
+#define NS_TO_MTB_FACTOR                    (8)
 
 typedef enum {
   MrcDensity256Mb = MRC_SPD_SDRAM_DENSITY_256Mb,
