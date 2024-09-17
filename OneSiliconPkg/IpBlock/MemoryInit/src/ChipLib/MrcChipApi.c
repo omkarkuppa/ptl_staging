@@ -1231,6 +1231,7 @@ SetCa2N (
   UINT32     MpcOpCode;
   INT64      GetSetVal;
   BOOLEAN    IsPrint;
+  UINT8      Group;
 
   IsPrint = TRUE;
   MpcOpCode = (IsEnable) ? DDR5_MPC_SET_2N_COMMAND_TIMING : DDR5_MPC_SET_1N_COMMAND_TIMING;
@@ -1239,6 +1240,11 @@ SetCa2N (
 
   GetSetVal = (IsEnable) ? 1 : 0;
   MrcGetSetNoScope (MrcData, GsmIocDdr52NMode, WriteCached, &GetSetVal);
+
+  for (Group = 0; Group < MRC_DDR5_CMD_GRP_MAX; Group++) {
+    GetSetVal = (IsEnable) ? (-64) : 64;
+    MrcGetSetCcc (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MRC_IGNORE_ARG, Group, CmdGrpPi, ForceWriteOffsetCached, &GetSetVal);
+  }
 
   McCa2NEnableOrDisable (MrcData, IsEnable);
 
@@ -1309,5 +1315,6 @@ SetWorkPointData (
   )
 {
   SetWorkPointDataForMc(MrcData);
-  return SetWorkPointDataForPhy(MrcData);
+  MrcSetWorkPointDataForPhy(MrcData);
+  return MrcSetWorkpointCR(MrcData);
 }

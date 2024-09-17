@@ -25,6 +25,12 @@
 #include <PiPei.h>
 #include <Uefi.h>
 
+///
+/// MRC Memory Types API matching definitions
+///
+#define NOREPAIR_PPR  0
+#define HARD_PPR      2
+
 /**
   Entry point of the Memory Telemetry PEIM
   Checks the AMT PPR enable variable status, will update memory config accordingly.

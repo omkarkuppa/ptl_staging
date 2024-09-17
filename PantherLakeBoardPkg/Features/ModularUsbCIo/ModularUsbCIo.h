@@ -52,8 +52,12 @@
 #define DDI_PORT_B_CONFIG_OFFSET          1
 #define TCP0_DDI_HPD_CONFIG_OFFSET        5
 
-#define MODULE_IO_VBT_HDMI                (BIT0 | BIT3)
-#define MODULE_IO_VBT_DP                  (BIT3)
+//
+// GOP_CONFIG_DRIVER_HOB ModuleTypeCId
+//
+#define MODULE_IO_VBT_EDP                 (BIT3)
+#define MODULE_IO_VBT_DP                  (BIT0 | BIT3)
+#define MODULE_IO_VBT_HDMI                (BIT1 | BIT3)
 
 #define MODULAR_IO_CONNECTOR_TYPE_USBA    0x1
 #define MODULAR_IO_CONNECTOR_TYPE_USBC    0x2

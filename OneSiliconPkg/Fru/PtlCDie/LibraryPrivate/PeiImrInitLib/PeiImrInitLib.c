@@ -50,7 +50,8 @@ STATIC IMR_ENTRY mImrTable[IMR_MAX] = {
   { IMR_1M_DSM,       V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR1M3BASE_IMPH_IOC_MCHBAR_REG),       KEEP_SI_DEFAULT_VALUE}, //DSM is IMR1M3 register
   { IMR_1M_CCS,       B_GT_SAI | B_DISPLAY_SAI,           B_GT_SAI | B_DISPLAY_SAI,           GET_NOC_EFFECTIVE_ADDRESS(IMR1M6BASE_IMPH_IOC_MCHBAR_REG),       KEEP_SI_DEFAULT_VALUE}, //CCS is IMR1M6 register
   { IMR_1M_DPR,       V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR1M9BASE_IMPH_IOC_MCHBAR_REG),       INVALID_CP_OFFSET},     //DPR is IMR1M9 register
-  { IMR_1M_TSEG,      V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR1M10BASE_IMPH_IOC_MCHBAR_REG),      INVALID_CP_OFFSET}      //TSEG is IMR1M10 register
+  { IMR_1M_TSEG,      V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR1M10BASE_IMPH_IOC_MCHBAR_REG),      INVALID_CP_OFFSET},     //TSEG is IMR1M10 register
+  { IMR_1M_IMR11,     V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR1M11BASE_IMPH_IOC_MCHBAR_REG),      INVALID_CP_OFFSET}      //IMR1M11 register
 };
 
 /**

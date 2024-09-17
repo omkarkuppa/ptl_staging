@@ -18,7 +18,7 @@
 
 @par Specification Reference:
 **/
-#include <PiPei.h>
+
 #include "PeiMemoryTelemetry.h"
 
 #include <MemoryConfig.h>
@@ -102,9 +102,9 @@ UpdatePprMrcPolicy (
 
   // Update the PPR enabled and PPR Test policies
   if (AmtPprVariable->Bits.AmtEnabled && AmtPprVariable->Bits.PprEnabled) {
-    MemConfig->ExternalInputs.PprRepairType = 2;
+    MemConfig->ExternalInputs.PprRepairType = HARD_PPR;
   } else {
-    MemConfig->ExternalInputs.PprRepairType = 0;
+    MemConfig->ExternalInputs.PprRepairType = NOREPAIR_PPR;
   }
   return EFI_SUCCESS;
 }

@@ -199,6 +199,36 @@ GetRankCount (
 
 
 /**
+  Transcode SPD Raw Value to Actual Value for SdramDensityPerDie. Used by JEDEC Spec LP CAMM (CAMM2). Units are in Gigabytes.
+
+    @param[in, out] MrcData - Pointer to MrcData data structure.
+    @param[in, out] SdramDensityPerDie - Die Density from the SPD data.
+
+    @retval Size of each subchannel in MBytes.
+**/
+UINT8
+TranscodeJedecSpecLPCammSdramDensityPerDie (
+  IN OUT MrcParameters* const MrcData,
+  IN UINT8 const SdramDensityPerDie
+  );
+
+
+/**
+  Calculate the size of JEDEC Spec Compliant CAMM. Size is module size per sub-channel in MegaBytes
+
+    @param[in, out] MrcData - Pointer to MrcData data structure.
+    @param[in, out] DimmOut - Pointer to structure containing DIMM information.
+
+    @retval Size of each subchannel in MBytes.
+**/
+UINT32
+GetJedecSpecLPCammSize (
+  IN OUT MrcParameters* const MrcData,
+  IN OUT MrcDimmOut* const DimmOut
+  );
+
+
+/**
   Calculate the size of the DIMM, in MBytes.
 
     @param[in, out] MrcData - Pointer to MrcData data structure.

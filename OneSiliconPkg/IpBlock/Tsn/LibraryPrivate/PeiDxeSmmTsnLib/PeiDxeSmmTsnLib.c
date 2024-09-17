@@ -19,18 +19,16 @@
 @par Specification Reference:
 **/
 
-#include <Register/TsnRegs.h>
-#include <Library/TsnLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PciSegmentLib.h>
 #include <TsnHandle.h>
+#include <Register/TsnRegs.h>
 
 /**
-  Check whether TSN controller is present in the PCH and Straps enable
-  if device present, then the function
+  Check whether TSN controller is enabled in the platform.
 
-  @retval TRUE                    TSN GbE Controller is present.
-  @retval FALSE                   TSN GbE Controller is not present.
+  @retval TRUE    TSN GbE Controller is present.
+  @retval FALSE   TSN GbE Controller is not present.
 **/
 BOOLEAN
 IsTsnDevicePresent (
@@ -39,9 +37,10 @@ IsTsnDevicePresent (
 {
 #if FixedPcdGet8(PcdTsnSupport) == 0x1
   REGISTER_ACCESS *TsnPcrAccess;
-  TsnPcrAccess = TsnHandle->TsnPcrAccess;
 
-  //Present return 0x8086, not present return 0xFFFFFFFF
+  TsnPcrAccess = TsnHandle->Controller->TsnPcrAccess;
+
+  // Check if TSN is available
   if (TsnPcrAccess->Read32 (TsnPcrAccess, R_TSN_PCR_PCICFGCTRL) != 0xFFFFFFFF) {
     DEBUG((DEBUG_INFO, "[TSN] Controller Present!\n"));
     return TRUE;

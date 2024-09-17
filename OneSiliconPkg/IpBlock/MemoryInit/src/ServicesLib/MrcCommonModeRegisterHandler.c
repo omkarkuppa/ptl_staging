@@ -216,11 +216,9 @@ MrcMrSequencer (
 {
   MrcStatus     Status;
   MrcOutput     *Outputs;
-  MrcDebug      *Debug;
   UINT32        Channel;
   UINT32        Controller;
   UINT32        Rank;
-  UINT32        MrIndex;
   UINT32        Index;
   UINT16        MrWait;
   GmfCmdType    CurCmdType;
@@ -228,10 +226,7 @@ MrcMrSequencer (
   MrcModeRegister  CurMrAddr;
   MrcModeRegister  NextMrAddr;
 
-  Status = mrcSuccess;
-
   Outputs    = &MrcData->Outputs;
-  Debug      = &Outputs->Debug;
   Status     = mrcSuccess;
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
@@ -252,15 +247,12 @@ MrcMrSequencer (
           if (CurCmdType == GmfCmdIndexMax) {
             continue;
           }
-          MrIndex = MrcMrAddrToIndex (MrcData, &CurMrAddr);
-          if (MrIndex >=  MAX_MR_IN_DIMM) {
-            MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "MR index(%d) exceeded MR array length(%d)\n", MrIndex, MAX_MR_IN_DIMM);
-            Status = mrcWrongInputParameter;
-            return Status;
-          }
 
           // Send Command, Data sent is within MrData Host Struct
-          MrcIssueMrCommand (MrcData, Controller, Channel, Rank, CurMrAddr, CurCmdType);
+          Status = MrcIssueMrCommand (MrcData, Controller, Channel, Rank, CurMrAddr, CurCmdType);
+          if (Status != mrcSuccess) {
+            return Status;
+          }
 
           if (MrcData->Inputs.IsApplyMrCommandDelays) {
             NextMrAddr = Sequence[Index+1];

@@ -52,17 +52,22 @@ UpdatePeiMePolicy (
   ME_SETUP                        MeSetup;
   EFI_PEI_READ_ONLY_VARIABLE2_PPI *Variable;
   UINTN                           VariableSize;
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   ME_PEI_CONFIG                   *MePeiConfig;
-
+#endif
   DEBUG ((DEBUG_INFO, "%a()\n", __FUNCTION__));
-
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+#else
   MePeiConfig = NULL;
-
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gMePeiConfigGuid, (VOID *) &MePeiConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return Status;
   }
+#endif
 
   Status = PeiServicesLocatePpi (
              &gEfiPeiReadOnlyVariable2PpiGuid,
@@ -84,19 +89,19 @@ UpdatePeiMePolicy (
                        &MeSetup
                        );
   if (!EFI_ERROR (Status)) {
-    COMPARE_AND_UPDATE_POLICY (MePeiConfig->EndOfPostMessage,           MeSetup.EndOfPostMessage         );
-    COMPARE_AND_UPDATE_POLICY (MePeiConfig->MeUnconfigOnRtcClear,       MeSetup.MeUnconfigOnRtcClear     );
-    COMPARE_AND_UPDATE_POLICY (MePeiConfig->MctpBroadcastCycle,         MeSetup.MctpBroadcastCycle       );
-    COMPARE_AND_UPDATE_POLICY (MePeiConfig->CseDataResilience,          MeSetup.CseDataResilience        );
-    COMPARE_AND_UPDATE_POLICY (MePeiConfig->SseCommunication,           MeSetup.SseCommunication         );
-    COMPARE_AND_UPDATE_POLICY (MePeiConfig->PseEomFlowEnable,           MeSetup.PseEomFlowEnable         );
-    COMPARE_AND_UPDATE_POLICY (MePeiConfig->DisableD0I3SettingForHeci,  MeSetup.DisableD0I3SettingForHeci);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EndOfPostMessage, MePeiConfig->EndOfPostMessage, MeSetup.EndOfPostMessage);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MeUnconfigOnRtcClear, MePeiConfig->MeUnconfigOnRtcClear, MeSetup.MeUnconfigOnRtcClear);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MctpBroadcastCycle, MePeiConfig->MctpBroadcastCycle, MeSetup.MctpBroadcastCycle);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CseDataResilience, MePeiConfig->CseDataResilience, MeSetup.CseDataResilience);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SseCommunication, MePeiConfig->SseCommunication, MeSetup.SseCommunication);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PseEomFlowEnable, MePeiConfig->PseEomFlowEnable, MeSetup.PseEomFlowEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.DisableD0I3SettingForHeci, MePeiConfig->DisableD0I3SettingForHeci, MeSetup.DisableD0I3SettingForHeci);
   }
   if (!PmcIsRtcBatteryGood ()) {
     //
     // For non coin battery design, this can be skipped.
     //
-    UPDATE_POLICY (MePeiConfig->MeUnconfigOnRtcClear, 2);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MeUnconfigOnRtcClear, MePeiConfig->MeUnconfigOnRtcClear, 2);
   }
 
   return Status;

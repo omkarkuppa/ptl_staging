@@ -32,9 +32,7 @@ LIBRARY_CLASS = PeiItssPolicyLib
 [LibraryClasses]
 BaseMemoryLib
 DebugLib
-ConfigBlockLib
 PtlPcdInfoLib
-SiConfigBlockLib
 
 [Packages]
 MdePkg/MdePkg.dec

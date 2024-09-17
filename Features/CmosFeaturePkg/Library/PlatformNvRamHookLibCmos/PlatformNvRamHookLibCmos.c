@@ -182,7 +182,7 @@ GetTxtAliasCheckAndReset(
   //
   // ACheck Request needs to be reset since we do not want system to run ACheck in the same boot sequence
   //
-  CmosWrite8(CMOS_TXT_REG, (UINT8)0);
+  CmosWrite8(CMOS_TXT_REG, (UINT8) (TxtACheck & TXT_ACHECK_REQ_CLEAR_MASK));
   return TxtACheck;
 }
 
@@ -200,12 +200,36 @@ SaveTxtAliasCheck(
 }
 
 /**
-  Save the TXT Memory Powerdown Request.
+  Get TXT Powerdown Request and Reset it.
+
+  @retval TXT Powerdown Request
+**/
+UINT8
+GetTxtPowerdownRequest(
+  VOID
+  )
+{
+  UINT8 TxtPowerDownReq;
+
+  TxtPowerDownReq =  CmosRead8 (CMOS_TXT_REG);
+  //
+  // TXT Powerdown Request needs to be reset since we do not want system to go to Powerdown state once again
+  //
+  CmosWrite8(CMOS_TXT_REG, (UINT8)(TxtPowerDownReq & TXT_POWERDOWN_REQ_CLEAR_MASK));
+  TxtPowerDownReq = (TxtPowerDownReq & 2) >> 1;
+
+  return TxtPowerDownReq;
+}
+
+/**
+  Save the TXT Memory Powerdown Request in Cmos.
 
   @param [in] PowerdownRequest   Request of TXT Memory Powerdown (PD_Request).
                           000b   No request
                           001b   MRC scrubbing error
-                          010b   Set by BIOS Setup
+                          010b   Set by BIOS Setup via CMOS
+                          011b   MOR Interface
+                          100b   Set by BIOS Setup via TPM
 **/
 VOID
 SaveTxtPowerdown(
@@ -213,11 +237,19 @@ SaveTxtPowerdown(
   )
 {
   UINT8 RegVal;
+  UINT8 TxtPowerDownReq = 0;
 
   if ((PowerdownRequest == 1) || (PowerdownRequest == 2)) {
-    RegVal = CmosRead8(CMOS_TXT_POWERDOWN_REQUEST);
+    // Cmos case
+    RegVal = CmosRead8 (CMOS_TXT_POWERDOWN_REQUEST);
     RegVal |= (PowerdownRequest & 7);  // update bits[2:0] in CMOS
-    CmosWrite8(CMOS_TXT_POWERDOWN_REQUEST, RegVal);
+    CmosWrite8 (CMOS_TXT_POWERDOWN_REQUEST, RegVal);
+  } else if (PowerdownRequest == 4 ) {
+    // TPM case
+    TxtPowerDownReq = 2;
+    RegVal = CmosRead8 (CMOS_TXT_REG);
+    RegVal |= TxtPowerDownReq;         // update Cmos 2nd Bit
+    CmosWrite8 (CMOS_TXT_REG, RegVal);
   }
 
   return;

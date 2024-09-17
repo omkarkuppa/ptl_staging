@@ -130,6 +130,16 @@ SaveTxtAliasCheck(
   );
 
 /**
+  Get TXT Powerdown Request and Reset it.
+
+  @retval TXT Powerdown Request
+**/
+UINT8
+GetTxtPowerdownRequest(
+  VOID
+  );
+
+/**
   Save the TXT Memory Powerdown Request.
   @param [in] PowerdownRequest   Request of TXT Memory Powerdown Request.
 **/

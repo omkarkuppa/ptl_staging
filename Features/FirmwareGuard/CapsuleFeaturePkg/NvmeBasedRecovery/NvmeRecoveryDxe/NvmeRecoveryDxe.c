@@ -1303,6 +1303,11 @@ ConstructNvmeRecoveryDescriptorAndData (
                         &CsmeRestoreImage,
                         &Mapping
                         );
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "Fail to map TempBufferCsme, Status = [%r].\n", Status));
+        goto Exit;
+      }
+
       //
       // call CSME FWU API to get CSME restore image
       //

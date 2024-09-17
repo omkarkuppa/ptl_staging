@@ -155,8 +155,11 @@ if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\FspProducerDataHeader.h 
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\Fsp*Upd.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\Fsp*Upd.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\HobUsageDataHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\HobUsageDataHob.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MemInfoHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MemInfoHob.h
+if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MrcGlobalDefinitions.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MrcGlobalDefinitions.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosCacheInfoHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosCacheInfoHob.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosProcessorInfoHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosProcessorInfoHob.h
+if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Config.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Config.h
+if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Pad.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Pad.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\FspPkgPcdShare.dsc del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\FspPkgPcdShare.dsc
 if exist %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Fsp\Include\Fsp*Upd.h del %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Fsp\Include\Fsp*Upd.h
 if exist %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Fsp\Include\MemInfoHob.h del %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Fsp\Include\MemInfoHob.h
@@ -327,6 +330,14 @@ if "%ERRORLEVEL%"=="256" (
     if exist "%WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Fsp\Include\FspProducerDataHeader.h" (
       copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Fsp\Include\FspProducerDataHeader.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
       )
+    if exist %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Config.h  attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Config.h
+    if exist "%WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Config.h" (
+      copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Config.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
+      )
+    if exist %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Pad.h  attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Pad.h
+    if exist "%WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Pad.h" (
+      copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Pad.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
+      )
 )
 
 :PreBuildRet
@@ -452,6 +463,10 @@ if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MemInfoHob.h attrib -r %
 if exist "%WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\MemInfoHob.h" (
   copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\MemInfoHob.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
   )
+if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MrcGlobalDefinitions.h attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MrcGlobalDefinitions.h
+if exist "%WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\IpBlock\MemoryInit\src\IncludePublic\Ptl\MrcGlobalDefinitions.h" (
+  copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\IpBlock\MemoryInit\src\IncludePublic\Ptl\MrcGlobalDefinitions.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
+  )
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosCacheInfoHob.h attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosCacheInfoHob.h
 if exist "%WORKSPACE_COMMON%\%PLATFORM_SI_PACKAGE%\Include\SmbiosCacheInfoHob.h" (
   copy /y %WORKSPACE_COMMON%\%PLATFORM_SI_PACKAGE%\Include\SmbiosCacheInfoHob.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
@@ -463,6 +478,14 @@ if exist "%WORKSPACE_COMMON%\%PLATFORM_SI_PACKAGE%\Include\SmbiosProcessorInfoHo
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\HobUsageDataHob.h attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\HobUsageDataHob.h
 if exist %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\HobUsageDataHob.h (
   copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\HobUsageDataHob.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
+  )
+if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Config.h attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Config.h
+if exist %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Config.h (
+  copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Config.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
+  )
+if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Pad.h attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Pad.h
+if exist %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Pad.h (
+  copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Pad.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
   )
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\FspPkgPcdShare.dsc attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\FspPkgPcdShare.dsc
 if exist %WORKSPACE_SILICON%\%FSP_PKG_NAME%\FspPkgPcdShare.dsc (

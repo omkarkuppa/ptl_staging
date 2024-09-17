@@ -174,7 +174,7 @@
 
   !if gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable == TRUE
     gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber|0x1
-    gUsb4FeaturePkgTokenSpaceGuid.PcdIoeDTbtRpSupport|0x00000004
+    gUsb4FeaturePkgTokenSpaceGuid.PcdIoeDTbtRpSupport|0x00000020
     gUsb4FeaturePkgTokenSpaceGuid.PcdPchDTbtRpSupport|0x00000000
   !endif
 
@@ -262,10 +262,6 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable|TRUE
 !endif #PcdAdvancedFeatureEnable
 
-!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport == FALSE && gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport == FALSE
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable|FALSE
-!endif
-
   gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable|FALSE
   ## This flag is used to initialize debug output interface.
   #  BIT0 - RAM debug interface.
@@ -334,14 +330,27 @@
 # Connectivity Advanced Feature Settings
 #
 !if gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable == TRUE
-  gCnvFeaturePkgTokenSpaceGuid.PcdMaxRootPortNumber    |6
-  gCnvFeaturePkgTokenSpaceGuid.PcdMaxUsb2PortNumber    |gBoardModuleTokenSpaceGuid.PcdMaxPchUsb2PortNumber
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion    |3
+  gCnvFeaturePkgTokenSpaceGuid.PcdMaxRootPortNumber     |6
+  gCnvFeaturePkgTokenSpaceGuid.PcdMaxUsb2PortNumber     |gBoardModuleTokenSpaceGuid.PcdMaxPchUsb2PortNumber
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion     |3
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu          |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables         |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables      |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport  |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport    |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdBtAudioOffloadSupport |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdPrebootBleSupport     |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdDynamicSarSupport     |TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenuConfig    |0x80021001
 !else
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu         |FALSE
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables        |FALSE
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables     |FALSE
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion    |0
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu          |FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables         |FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables      |FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport  |FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport    |FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdBtAudioOffloadSupport |FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdPrebootBleSupport     |FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdDynamicSarSupport     |FALSE
 !endif
 
 #
@@ -428,7 +437,7 @@
     #
     # FSP API mode will only establish separate Heap.
     #
-      gIntelFsp2PkgTokenSpaceGuid.PcdFspTemporaryRamSize|0x00080000
+      gIntelFsp2PkgTokenSpaceGuid.PcdFspTemporaryRamSize|0x00020000
   !else
     #
     # FSP Dispatch mode will not establish separate Stack or Heap.

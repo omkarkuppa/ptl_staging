@@ -21,6 +21,7 @@
 [Defines]
 
 !include $(BOARD_PTL_BOARDS)/BoardVpdPcdsInit/PtlSimics/SkuIdPtlSimics.dsc
+!include $(BOARD_PTL_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5Rvp1.dsc
 
 ##
 #####################################################################

@@ -498,17 +498,7 @@
   gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdPprCapability|TRUE
 
   # Connectivity
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable     |TRUE
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport |TRUE
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport   |TRUE
-!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable == TRUE
-  #
-  # Connectivity Advanced Feature Default Settings
-  #
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenu         |TRUE
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables        |TRUE
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables     |TRUE
-!endif
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable|FALSE
 
   # PCD value to determine formset display location
   #
@@ -528,10 +518,6 @@
   #|                                     | Platform Service Record  0x02 |
   #|                                     |                               |
   #|----------------------------------------------------------------------
-!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable == TRUE
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSetupMenuConfig|0x80021001
-!endif
-
   gPsFeatureModuleTokenSpaceGuid.PcdPsSetupConfiguration|0x80011018
   gPsrFeatureModuleTokenSpaceGuid.PcdPsrSetupConfiguration|0x80021018
 

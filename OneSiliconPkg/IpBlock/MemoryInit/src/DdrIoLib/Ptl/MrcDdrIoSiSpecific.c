@@ -149,3 +149,18 @@ MrcOverrideTerDcd (
   MrcGetSetChStrb (MrcData, Controller, Channel, Byte, GsmIocITerdcdselovren,  WriteCached, &OvrEn);
   MrcGetSetChStrb (MrcData, Controller, Channel, Byte, GsmDccDllDcdTargetSel,  WriteCached, &TargetSel);
 }
+
+/**
+  Enable running Voc Search in seseamp offset training or not
+
+  @param[in] MrcData    - Include all MRC global data.
+
+  @returns TRUE
+**/
+BOOLEAN
+EnableSenseAmpOffsetVocSearch (
+  IN OUT MrcParameters *const MrcData
+  )
+{
+  return TRUE;
+}

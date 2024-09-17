@@ -84,3 +84,5 @@
   gUsbCRetimerSetupGuid                    ## CONSUMES
   gDTbtInfoHobGuid                         ## CONSUMES
   gUsb4PlatformHobGuid                     ## CONSUMES
+  gAllTbtRetimerDeviceGuid                 ## CONSUMES
+  gUsbCRetimerProtocolCapabilityGuid       ## CONSUMES

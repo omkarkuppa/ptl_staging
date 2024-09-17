@@ -53,6 +53,14 @@
 #define V_ACE_PI_UAA_DSP_EN            0x80
 
 GLOBAL_REMOVE_IF_UNREFERENCED UINT64 SupportedHdaDidValue[] = {
+  0x67A8,
+  0x67A9,
+  0x67AA,
+  0x67AB,
+  0x67AC,
+  0x67AD,
+  0x67AE,
+  0x67AF,
   0x7E28,
   0x7E29,
   0x7E2A,

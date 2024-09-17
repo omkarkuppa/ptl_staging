@@ -36,6 +36,7 @@ External (\ODBG, MethodObj) // OEM specific platform callback, implemented by OE
 External (SWAK, MethodObj)
 External (NHPG, MethodObj)
 External (NPME, MethodObj)
+External (\MSUB)
 
 Device (MC)
 {
@@ -374,14 +375,23 @@ Method (_CRS,0,Serialized)
   CreateWordField (BUF0, ^PB00._LEN, PBLN)
   CreateWordField (BUF0, ^PB00._MIN, PBMN)
 
-  Store (\_SB.PC00.GPCL (),Local0)
-  Store (Subtract (ShiftRight (Local0,20),2), PBMX)
-  Store (Subtract (ShiftRight (Local0,20),1), PBLN)
-  If (CondRefOf (\VMDE)) {
-    If (LAnd (LEqual (\VMDE,1),LGreater (PBMX, MAX_OS_VISIBLE_BUSES_WITH_VMD))) {
-      Store (MAX_OS_VISIBLE_BUSES_WITH_VMD, PBMX)
-      Store (MAX_OS_VISIBLE_BUS_LENGTH_WITH_VMD, PBLN)
-      ADBG (Concatenate ("[ASL]VMD is enabled, restricting Bus numbers to -", ToHexString (PBMX)))
+  Store (\_SB.PC00.GPCL (), Local0)
+  Store (Subtract (ShiftRight (Local0, 20), 2), PBMX)
+  Store (Subtract (ShiftRight (Local0, 20), 1), PBLN)
+  If (CondRefOf (\MSUB)) {
+    If (LNotEqual (PBMX, MSUB)) {
+      Store (\MSUB, PBMX)
+      Store (Add (\MSUB, 1), PBLN)
+      ADBG (Concatenate ("Update PciHost visible Bus numbers to ", ToHexString (PBMX)))
+      ADBG (Concatenate ("Update PciHost visible Bus length ", ToHexString (PBLN)))
+    } Else {
+      If (CondRefOf (\VMDE)) {
+        If (LAnd (LEqual (\VMDE, 1), LGreater (PBMX, MAX_OS_VISIBLE_BUSES_WITH_VMD))) {
+          Store (MAX_OS_VISIBLE_BUSES_WITH_VMD, PBMX)
+          Store (MAX_OS_VISIBLE_BUS_LENGTH_WITH_VMD, PBLN)
+          ADBG (Concatenate ("VMD is enabled, restricting Bus numbers to ", ToHexString (PBMX)))
+        }
+      }
     }
   }
   //

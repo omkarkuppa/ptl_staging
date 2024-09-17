@@ -807,8 +807,6 @@
     {0x0}  // terminator
   })}
 
-  gBoardModuleTokenSpaceGuid.VpdPcdGopConfigSoftwareId|*|0x0
-
   gBoardModuleTokenSpaceGuid.VpdPcdTcssEnable|*|1
 
   gBoardModuleTokenSpaceGuid.VpdPcdPmicIdMap|*|0x0

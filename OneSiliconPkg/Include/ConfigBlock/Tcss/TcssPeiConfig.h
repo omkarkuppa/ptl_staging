@@ -143,4 +143,15 @@ typedef struct {
 
 #pragma pack (pop)
 
+/**
+  Print TCSS_PEI_CONFIG and serial out.
+
+  @param[in] TcssPeiConfig            Pointer to a TCSS_PEI_CONFIG
+**/
+
+VOID
+TcssConfigDump (
+  IN TCSS_PEI_CONFIG           *TcssPeiConfig
+  );
+
 #endif /* _TCSS_PEI_CONFIG_H_ */

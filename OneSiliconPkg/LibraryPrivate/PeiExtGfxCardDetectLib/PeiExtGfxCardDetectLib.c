@@ -244,8 +244,19 @@ CheckOffboardPcieVga (
   UINT32                             MmioLength;
   IMR_CONFIG_HOB                     *ImrConfigHob;
   VOID                               *HobPtr;
+  IGPU_DATA_HOB                      *IGpuDataHob;
 
   MmioLength = 0;
+  IGpuDataHob = NULL;
+  //
+  // Get the HOB for Gfx Data
+  //
+  IGpuDataHob = (IGPU_DATA_HOB *) GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob == NULL) {
+    DEBUG ((DEBUG_ERROR, "IGPU Data Hob Not Found\n"));
+    ASSERT (FALSE);
+    return;
+  }
 
   ///
   /// Initialize Secondary and Subordinate bus number for first Pcie root port
@@ -342,6 +353,7 @@ CheckOffboardPcieVga (
         if (PciSegmentRead16 (PCI_SEGMENT_LIB_ADDRESS (DEFAULT_PCI_SEGMENT_NUMBER_PCH, Bus, Dev, Func, R_PCI_SCC_OFFSET)) == 0x0300) {
           if (CardDetect != TRUE) {
             *PrimaryDisplay = DISPLAY_PCI;
+            IGpuDataHob->PrimaryDisplayDetection = DISPLAY_PCI;
             DEBUG ((DEBUG_INFO, "PCH PCIe Graphics Card enabled.\n"));
             CardDetect = TRUE;
           }

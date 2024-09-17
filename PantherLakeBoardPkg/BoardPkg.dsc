@@ -157,33 +157,31 @@
   0x00050031|SkuIdPtlHsleNull|SkuIdPtlSimics
   0x00000009|SkuIdPtlUHHmpRvp
   0x00000001|SkuIdPtlUHLp5Rvp1
-  0x00060001|SkuIdPtlUHLp5Rvp1Bom|SkuIdPtlUHLp5Rvp1
   0x00010001|SkuIdPtlUHLp5MemSdRvp1|SkuIdPtlUHLp5Rvp1
-  0x00070001|SkuIdPtlUHLp5MemSdMeccRvp1|SkuIdPtlUHLp5Rvp1
-  0x00030001|SkuIdPtlUHLp5MemSdEpsRvp1|SkuIdPtlUHLp5Rvp1
   0x00020001|SkuIdPtlUHLp5MemSktPnpRvp1|SkuIdPtlUHLp5Rvp1
+  0x00030001|SkuIdPtlUHLp5MemSdEpsRvp1|SkuIdPtlUHLp5Rvp1
   0x00040001|SkuIdPtlUHLp5MemSktChromeRvp1|SkuIdPtlUHLp5Rvp1
   0x00050001|SkuIdPtlUHLp5MemSdChromeRvp1|SkuIdPtlUHLp5Rvp1
-  0x00000002|SkuIdPtlUHCammdTbTRvp2
-  0x00010002|SkuIdPtlUHCammDTbTRvp2Bom|SkuIdPtlUHCammDTbTRvp2
-  0x00000003|SkuIdPtlUHLp5Rvp3
-  0x00060003|SkuIdPtlUHLp5Rvp3Bom|SkuIdPtlUHLp5Rvp3
-  0x00050003|SkuIdPtlUHLp5Rvp3PpvBom|SkuIdPtlUHLp5Rvp3
   0x00060001|SkuIdPtlUHLp5Rvp1Bom|SkuIdPtlUHLp5Rvp1
+  0x00070001|SkuIdPtlUHLp5MemSdMeccRvp1|SkuIdPtlUHLp5Rvp1
+  0x00000002|SkuIdPtlUHCammdTbTRvp2
+  0x00010002|SkuIdPtlUHCammDTbTExtGfxRvp2|SkuIdPtlUHCammDTbTRvp2
+  0x00060002|SkuIdPtlUHCammDTbTRvp2Bom|SkuIdPtlUHCammDTbTRvp2
+  0x00000003|SkuIdPtlUHLp5Rvp3
   0x00010003|SkuIdPtlUHLp5MemSdRvp3|SkuIdPtlUHLp5Rvp3
   0x00020003|SkuIdPtlUHLp5MemSktPnpRvp3|SkuIdPtlUHLp5Rvp3
+  0x00050003|SkuIdPtlUHLp5Rvp3PpvBom|SkuIdPtlUHLp5Rvp3
+  0x00060003|SkuIdPtlUHLp5Rvp3Bom|SkuIdPtlUHLp5Rvp3
+  0x00000004|SkuIdPtlUHDdr5Rvp4
+  0x00040004|SkuIdPtlUHDdr5Rvp4Chrome|SkuIdPtlUHDdr5Rvp4
+  0x00050004|SkuIdPtlUHDdr5Rvp4PpvBom|SkuIdPtlUHDdr5Rvp4
+  0x00060004|SkuIdPtlUHDdr5Rvp4Bom|SkuIdPtlUHDdr5Rvp4
+  0x01000004|SkuIdPtlUHDdr5Rvp4Dp|SkuIdPtlUHDdr5Rvp4
+  0x01040004|SkuIdPtlUHDdr5Rvp4DpChrome|SkuIdPtlUHDdr5Rvp4Chrome
+  0x01050004|SkuIdPtlUHDdr5Rvp4DpPpvBom|SkuIdPtlUHDdr5Rvp4PpvBom
+  0x01060004|SkuIdPtlUHDdr5Rvp4DpBom|SkuIdPtlUHDdr5Rvp4Bom
   0x00000011|SkuIdPtlHLp5Gcs1
   0x00000012|SkuIdPtlHLp5Gcs2
-  0x00000004|SkuIdPtlUHDdr5Rvp4
-  0x01000004|SkuIdPtlUHDdr5Rvp4Dp|SkuIdPtlUHDdr5Rvp4
-  0x00050004|SkuIdPtlUHDdr5Rvp4PpvBom|SkuIdPtlUHDdr5Rvp4
-  0x01050004|SkuIdPtlUHDdr5Rvp4DpPpvBom|SkuIdPtlUHDdr5Rvp4Dp
-  0x00000002|SkuIdPtlUHCammdTbTRvp2
-  0x00060002|SkuIdPtlUHCammDTbTRvp2Bom|SkuIdPtlUHCammDTbTRvp2
-  0x00060004|SkuIdPtlUHDdr5Rvp4Bom|SkuIdPtlUHDdr5Rvp4
-  0x01060004|SkuIdPtlUHDdr5Rvp4DpBom|SkuIdPtlUHDdr5Rvp4Dp
-  0x00040004|SkuIdPtlUHDdr5Rvp4Chrome|SkuIdPtlUHDdr5Rvp4
-  0x01040004|SkuIdPtlUHDdr5Rvp4DpChrome|SkuIdPtlUHDdr5Rvp4Dp
   0x00010007|SkuIdPtlUHLp5AepBom
   0x00000007|SkuIdPtlUHLp5Aep|SkuIdPtlUHLp5AepBom
 
@@ -567,7 +565,7 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   TlsLib|CryptoPkg/Library/BaseCryptLibOnProtocolPpi/PeiCryptLib.inf
 !endif
 
-  FspWrapperPlatformMultiPhaseLib|$(PLATFORM_BSP_PATH)/Policy/Library/PeiFspWrapperPlatformMultiPhaseLib/PeiFspWrapperPlatformMultiPhaseLib.inf
+  FspWrapperPlatformMultiPhaseLib|IntelFsp2WrapperPkg/Library/BaseFspWrapperPlatformMultiPhaseLibNull/BaseFspWrapperPlatformMultiPhaseLibNull.inf
 
   SmmControlLib|IntelSiliconPkg/Feature/SmmControl/Library/PeiSmmControlLib/PeiSmmControlLib.inf
 
@@ -686,8 +684,9 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
 
 [LibraryClasses.common.DXE_SMM_DRIVER]
 !if gBoardModuleTokenSpaceGuid.PcdModularCryptoEnable == TRUE
-  BaseCryptLib|CryptoPkg/Library/BaseCryptLibOnProtocolPpi/SmmCryptLib.inf
-  TlsLib|CryptoPkg/Library/BaseCryptLibOnProtocolPpi/SmmCryptLib.inf
+  BaseCryptLib|CryptoPkg/Library/BaseCryptLibMbedTls/SmmCryptLib.inf
+  TlsLib|CryptoPkg/Library/TlsLibNull/TlsLibNull.inf
+  MbedTlsLib|CryptoPkg/Library/MbedTlsLib/MbedTlsLib.inf
 !endif
 
 [LibraryClasses.IA32.PEIM, LibraryClasses.IA32.PEI_CORE, LibraryClasses.X64.PEIM, LibraryClasses.X64.PEI_CORE]
@@ -886,6 +885,12 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
 !endif
 
   ResetSystemLib|$(PLATFORM_SI_PACKAGE)/Pch/Library/BaseResetSystemLib/BaseResetSystemLib.inf
+
+!if gBoardModuleTokenSpaceGuid.PcdModularCryptoEnable == TRUE
+  BaseCryptLib|CryptoPkg/Library/BaseCryptLibMbedTls/RuntimeCryptLib.inf
+  TlsLib|CryptoPkg/Library/TlsLibNull/TlsLibNull.inf
+  MbedTlsLib|CryptoPkg/Library/MbedTlsLib/MbedTlsLib.inf
+!endif  # gBoardModuleTokenSpaceGuid.PcdModularCryptoEnable
 
 #
 # UEFI Variable Protection
@@ -1245,6 +1250,7 @@ $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/Pei/PlatformStatusCodeHandle
       Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2DeviceLibDTpm.inf
       Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
       Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibRouter/Tpm2DeviceLibRouterPei.inf
+      NULL|$(PLATFORM_FULL_PACKAGE)/Library/PeiTxtPowerdownReqLib/PeiTxtPowerdownReqLib.inf
       NULL|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2InstanceLibDTpm.inf
       NULL|$(PLATFORM_FULL_PACKAGE)/Library/PeiBootGuardEventLogLib/PeiBootGuardEventLogLib.inf
 !if gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
@@ -1338,8 +1344,6 @@ $(PLATFORM_BOARD_PACKAGE)/Features/ModularUsbCIo/ModularUsbCIoPei.inf
 !endif
 !endif
 !endif
-
-
 
 !if gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable == TRUE
   MdeModulePkg/Universal/Acpi/FirmwarePerformanceDataTablePei/FirmwarePerformancePei.inf
@@ -1490,6 +1494,7 @@ $(PLATFORM_SI_PACKAGE)/Product/PantherLake/EarlyDevices/EarlyDxeDevices.inf
 !if gSiPkgTokenSpaceGuid.PcdVmdEnable == TRUE
   $(PLATFORM_FEATURES_PATH)/Rst/RstUefiDriverSupport/RstUefiDriverSupport.inf
 !endif
+
 
 #
 # VTd Iommu Security
@@ -1723,7 +1728,6 @@ $(PLATFORM_FULL_PACKAGE)/Platform/PciPlatform/Dxe/PciPlatform.inf {
 !if gPlatformModuleTokenSpaceGuid.PcdVirtualKeyboardEnable == TRUE
   VirtualKeyboardFeaturePkg/VirtualKeyboardDxe/VirtualKeyboardDxe.inf
 !endif
-
 
 !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
   $(PLATFORM_FEATURES_PATH)/LifeCycleState/LifeCycleState.inf

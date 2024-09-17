@@ -47,6 +47,7 @@
 #include <IGpuDataHob.h>
 #include <Library/PeiVtdInitFruLib.h>
 #include <Register/B2pMailbox.h>
+#include <Library/TdxDataHob.h>
 
 /**
   Updates MemorySubSystem Data Hob
@@ -93,6 +94,7 @@ InitializeSecurityPolicy (
   )
 {
   EFI_STATUS Status = EFI_SUCCESS;
+  TDX_DATA_HOB        *TdxDataHobPtr;
   CPU_INIT_PREMEM_CONFIG     *CpuInitPreMemConfig = NULL;
   CPU_SECURITY_PREMEM_CONFIG *CpuSecurityPreMemConfig = NULL;
   VTD_CONFIG                 *VtdConfig = NULL;
@@ -153,6 +155,15 @@ InitializeSecurityPolicy (
       *TdxActmModuleAddr   = CpuSecurityPreMemConfig->TdxActmModuleAddr;
       *TdxActmModuleSize   = CpuSecurityPreMemConfig->TdxActmModuleSize;
       *TdxSeamldrSvn       = CpuSecurityPreMemConfig->TdxSeamldrSvn;
+    }
+  }
+
+  if(TdxPolicy->TdxEnable == TRUE) {
+    Status = TdxHobInit (&TdxDataHobPtr);
+
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "[TDX] Error creating TDX HOB, Status = %r\n", Status));
+      return Status; 
     }
   }
 

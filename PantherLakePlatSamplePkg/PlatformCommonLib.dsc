@@ -63,7 +63,7 @@
   SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
 !endif
 
-!if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
+!if gSiPkgTokenSpaceGuid.PcdTsnSupport == 0x1
   PeiSubRegionLib|$(PLATFORM_FEATURES_PATH)/SubRegion/PeiSubRegionLib/PeiSubRegionLib.inf
   PeiTsnFvLib|$(PLATFORM_FEATURES_PATH)/Tsn/PeiTsnFvLib/PeiTsnFvLib.inf
 !else

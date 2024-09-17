@@ -42,7 +42,7 @@ VmdDetectPcieStorageDevices (
 **/
 
 VOID
-InitRootBus1 (
+VmdInitFruApi (
   IN     VMD_INFO_HOB          *VmdInfoHob,
   IN OUT VMCONFIG_IOC_VMD_STRUCT *VmConfig
 );

@@ -18,8 +18,8 @@
 
 @par Specification Reference:
 **/
-#ifndef __MEMORY_TELEMETRY_TEST_CASE__
-#define __MEMORY_TELEMETRY_TEST_CASE__
+#ifndef _MEMORY_TELEMETRY_TEST_CASE_
+#define _MEMORY_TELEMETRY_TEST_CASE_
 
 #include <Uefi.h>
 #include <DxeMemoryTelemetry.h>
@@ -65,4 +65,4 @@ VerifyUpdateMemoryTelemetryTable(
   IN UNIT_TEST_CONTEXT  Context
   );
 
-#endif // __MEMORY_TELEMETRY_TEST_CASE__
+#endif // _MEMORY_TELEMETRY_TEST_CASE_

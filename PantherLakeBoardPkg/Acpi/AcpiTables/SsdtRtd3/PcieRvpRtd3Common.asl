@@ -169,7 +169,7 @@ External (P3RN)
   If (CondRefOf(PCIE_SLOT_ROOT_PORT.WAKG)) { \
     If (LNotEqual(PCIE_SLOT_ROOT_PORT.WAKG, 0)) { \
       If (\_SB.ISME (PCIE_SLOT_ROOT_PORT.WAKG)) { \
-        ADBG (Concatenate (" Wake event  ", PCIE_SLOT_ROOT_PORT)) \
+        ADBG (Concatenate (" Wake event  ", PCIE_SLOT_ROOT_PORT.WAKG)) \
         \_SB.SHPO (PCIE_SLOT_ROOT_PORT.WAKG, 1) \
         Notify (PCIE_SLOT_ROOT_PORT, 0x02) \
         \_SB.CAGS (PCIE_SLOT_ROOT_PORT.WAKG) \

@@ -190,42 +190,51 @@ DefinitionBlock (
       Buffer (0x14) {
         0x82, 0x00, 0x00, 0x00, // Revision 2, Ignore color width and height is not required as this is an embedded connector
         0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, // Not user visible
+        0x00, 0x80, 0x80, 0x00, // Not user visible
+        0x00, 0x00, 0x00, 0x00,
         0xFF, 0xFF, 0xFF, 0xFF  // Not ejectable
       }
     })
 
     Method (A5UP, 0, Serialized) {
-      Store (0, Index (PUPP, 0)) // Set UPC package default to invalid
+      Store (PUPP, Local0)
+      Store (0, Index (Local0, 0)) // Set UPC package default to invalid
       If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
-        If (LOr (LEqual (SXP1, 5), LEqual (SXP2, 5))) { // This entry will expose only when Root Port Number is 5 // This enrty will expose only when Expose "XHCI SDEV Entry" is enabled
+        If (LOr (LEqual (SXP1, 5), LEqual (SXP2, 5))) { // This entry will expose only when Root Port Number is 5
+          Store (1, Index (Local0, 0)) // Set UPC package to valid
         }
       }
-      Return (PUPP)
+      Return (Local0)
     }
     Method (A5PL, 0, serialized) {
-      Store (0, Index (PPLP, 0)) // Set PLD package default to invalid
+      Store (PPLP, Local0)
+      Store (0, Index (Local0, 0)) // Set PLD package default to invalid
       If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
-        If (LOr (LEqual (SXP1, 5), LEqual (SXP2, 5))) { // This entry will expose only when Root Port Number is 5 // This enrty will expose only when Expose "XHCI SDEV Entry" is enabled
+        If (LOr (LEqual (SXP1, 5), LEqual (SXP2, 5))) { // This entry will expose only when Root Port Number is 5
+          Store (1, Index (Local0, 0)) // Set PLD package to valid
         }
       }
-      Return (PPLP)
+      Return (Local0)
     }
     Method (A6UP, 0, Serialized) {
-      Store (0, Index (PUPP, 0)) // Set PLD package default to invalid
+      Store (PUPP, Local0)
+      Store (0, Index (Local0, 0)) // Set PLD package default to invalid
       If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
-        If (LOr (LEqual (SXP1, 6), LEqual (SXP2, 6))) { // This entry will expose only when Root Port Number is 6 // This enrty will expose only when Expose "XHCI SDEV Entry" is enabled
+        If (LOr (LEqual (SXP1, 6), LEqual (SXP2, 6))) { // This entry will expose only when Root Port Number is 6
+          Store (1, Index (Local0, 0)) // Set UPC package to valid
         }
       }
-      Return (PUPP)
+      Return (Local0)
     }
     Method (A6PL, 0, serialized) {
-      Store (0, Index (PPLP, 0)) // Set PLD package default to invalid
+      Store (PPLP, Local0)
+      Store (0, Index (Local0, 0)) // Set PLD package default to invalid
       If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
-        If (LOr (LEqual (SXP1, 6), LEqual (SXP2, 6))) { // This entry will expose only when Root Port Number is 6 // This enrty will expose only when Expose "XHCI SDEV Entry" is enabled
+        If (LOr (LEqual (SXP1, 6), LEqual (SXP2, 6))) { // This entry will expose only when Root Port Number is 6
+          Store (1, Index (Local0, 0)) // Set PLD package to valid
         }
       }
-      Return (PPLP)
+      Return (Local0)
     }
   }
 

@@ -33,6 +33,7 @@
   #
 !if gPlatformModuleTokenSpaceGuid.PcdNetworkEnable == TRUE
   NetworkPkg/WifiConnectionManagerDxe/WifiConnectionManagerDxe.inf
+  SecurityPkg/Hash2DxeCrypto/Hash2DxeCrypto.inf
 !endif # gPlatformModuleTokenSpaceGuid.PcdNetworkEnable
 
 !if gI2cFeaturePkgTokenSpaceGuid.PcdI2cFeatureEnable == TRUE

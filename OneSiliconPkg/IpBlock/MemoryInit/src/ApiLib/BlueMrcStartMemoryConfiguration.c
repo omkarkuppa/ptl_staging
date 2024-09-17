@@ -97,12 +97,13 @@ const CallTableEntry  MrcCallTable[] = {
   {MrcRhPrevention,                 MRC_RH_PREVENTION,             OemMrcRhPrevention,     1, MF_COLD                             | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Row Hammer Prevention", TrainedParamNoPrint)},
   {MrcMcFinalize,                   MRC_MC_FINALIZE,               OemMrcMcFinalize,       1, MF_COLD                             | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("MRC MC Finalize", TrainedParamNoPrint)},
   {MrcSaGvFinal,                    MRC_MR_FILL,                   OemSagvFinalize,        1, MF_COLD                             | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("SAGV Finalization", TrainedParamNoPrint)},
-  {MrcIbecc,                        MRC_IBECC,                     OemIbecc,               1, MF_COLD | MF_WARM         | MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK ("MRC In-band ECC", TrainedParamNoPrint)},
+  {MrcIbecc,                        MRC_IBECC,                     OemIbecc,               1, MF_COLD                                                         | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK ("MRC In-band ECC", TrainedParamNoPrint)},
   {MrcAliasCheck,                   MRC_ALIAS_CHECK,               OemAliasCheck,          1, MF_COLD                                                         | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("MRC Memory alias check", TrainedParamNoPrint)},
   {MrcEccClean,                     MRC_ECC_CLEAN_START,           OemHwMemInit,           1, MF_COLD                                                         | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("MRC Memory Scrubbing", TrainedParamNoPrint)},
   {MrcSaveMCValues,                 MRC_SAVE_MC_VALUES,            OemSaveMCValues,        1, MF_COLD                             | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Save MC Values", TrainedParamNoPrint)},
   {MrcNormalMode,                   MRC_NORMAL_MODE,               OemNormalMode,          1, MF_COLD                                                         | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Normal Operation", TrainedParamNoPrint)},
   {MrcUpdateSavedMCValues,          MRC_UPDATE_SAVE_MC_VALUES,     OemUpdateSaveMCValues,  1,                             MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Update MC Values in Fast flow", TrainedParamNoPrint)},
+  {MrcIbecc,                        MRC_IBECC,                     OemIbecc,               1,           MF_WARM         | MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK ("MRC In-band ECC", TrainedParamNoPrint)},
   {MrcEccClean,                     MRC_ECC_CLEAN_START,           OemHwMemInit,           1,                             MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("MRC Memory Scrubbing", TrainedParamNoPrint)},
   {MrcNormalMode,                   MRC_NORMAL_MODE,               OemNormalMode,          1,                             MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Normal Operation For Fast flow", TrainedParamNoPrint)},
   {MrcEccClean,                     MRC_ECC_CLEAN_START,           OemHwMemInit,           1,           MF_WARM                                               | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("MRC Memory Scrubbing", TrainedParamNoPrint)},
@@ -282,6 +283,7 @@ MrcSaveStaticSpdData (
   StaticSpdData->OutIsLpddr             = Outputs->IsLpddr;
   StaticSpdData->OutIsLpddr5            = Outputs->IsLpddr5;
   StaticSpdData->OutIsDdr5              = Outputs->IsDdr5;
+  StaticSpdData->OutIsLP5Camm2          = Outputs->IsLP5Camm2;
   StaticSpdData->OutSystemDimmCount     = Outputs->SystemDimmCount;
   StaticSpdData->OutVdd2Mv              = Outputs->Vdd2Mv;
   StaticSpdData->OutBurstLength         = Outputs->BurstLength;
@@ -343,6 +345,7 @@ MrcSaveStaticSpdData (
         StaticSpdData->DimmOutReferenceRawCard[Controller][Channel][Dimm]        = DimmOut->ReferenceRawCard;
         StaticSpdData->DimmOutXmpSupport[Controller][Channel][Dimm]              = DimmOut->XmpSupport;
         StaticSpdData->DimmOutCkdSupport[Controller][Channel][Dimm]              = DimmOut->IsCkdSupport;
+        StaticSpdData->DimmOutDeviceDensity[Controller][Channel][Dimm]           = DimmOut->DeviceDensity;
       } // for Dimm
     } // for Channel
   } // for Controller
@@ -381,6 +384,7 @@ MrcRestoreStaticSpdData (
   Outputs->IsLpddr             = StaticSpdData->OutIsLpddr;
   Outputs->IsLpddr5            = StaticSpdData->OutIsLpddr5;
   Outputs->IsDdr5              = StaticSpdData->OutIsDdr5;
+  Outputs->IsLP5Camm2          = StaticSpdData->OutIsLP5Camm2;
   Outputs->SystemDimmCount     = StaticSpdData->OutSystemDimmCount;
   Outputs->Vdd2Mv              = StaticSpdData->OutVdd2Mv;
   Outputs->BurstLength         = StaticSpdData->OutBurstLength;
@@ -442,6 +446,7 @@ MrcRestoreStaticSpdData (
         DimmOut->ReferenceRawCard        = StaticSpdData->DimmOutReferenceRawCard[Controller][Channel][Dimm];
         DimmOut->XmpSupport              = StaticSpdData->DimmOutXmpSupport[Controller][Channel][Dimm];
         DimmOut->IsCkdSupport            = StaticSpdData->DimmOutCkdSupport[Controller][Channel][Dimm];
+        DimmOut->DeviceDensity           = StaticSpdData->DimmOutDeviceDensity[Controller][Channel][Dimm];
       } // for Dimm
     } // for Channel
   } // for Controller
@@ -595,6 +600,7 @@ MrcWrappedStartMemoryConfiguration (
     Outputs->DdrType = MrcData->Save.Data.DdrType;
     Outputs->IsDdr5 = MrcData->Save.Data.IsDdr5;
     Outputs->IsLpddr5 = MrcData->Save.Data.IsLpddr5;
+    Outputs->IsLP5Camm2 = MrcData->Save.Data.IsLP5Camm2;
     Outputs->Is2RankDdr5 = MrcData->Save.Data.Is2RankDdr5;
   }
 

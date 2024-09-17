@@ -72,6 +72,7 @@ gSiPolicyPpiGuid                   ## CONSUMES
 gSiPreMemPolicyPpiGuid             ## CONSUMES
 gPeiTxtCleanResetNotificationPpiGuid ## NOTIFY
 gEdkiiPeiMpServices2PpiGuid
+gEfiPeiMemoryDiscoveredPpiGuid     ## CONSUMES
 
 [Guids]
 gDprInfoHobGuid

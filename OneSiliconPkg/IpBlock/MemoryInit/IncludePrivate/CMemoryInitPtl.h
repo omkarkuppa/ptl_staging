@@ -19,3 +19,29 @@
 @par Specification Reference:
 @todo code cleanup for txt memoryinit overlap
 **/
+
+#include <CMrcInterface.h>
+#include <Ppi/SiPolicy.h>
+#include <Library/CpuInitPreMem.h>
+
+/**
+  Determine whether a cold reset of the platform is required.
+  Note that the memory configuration saved data must be valid.
+
+  @param[in] MrcData                 - The MRC "global data" area.
+  @param[in] MemConfig               - MEMORY_CONFIGURATION structure.
+  @param[in] CpuMemoryInitConfig     - The Cpu Memory Init config.
+  @param[in] MrcBootMode             - Current MRC boot mode.
+  @param[out] IsEfiResetColdRequired - TRUE if a power cycle is required.
+
+  @retval TRUE if cold reset is required, otherwise returns FALSE.
+**/
+extern
+BOOLEAN
+ColdBootRequired (
+  IN MrcParameters                *CONST  MrcData,
+  IN MEMORY_CONFIGURATION         *MemConfig,
+  IN CPU_MEMORY_INIT_CONFIG       *CpuMemoryInitConfig,
+  IN MRC_BOOT_MODE                MrcBootMode,
+  OUT BOOLEAN                     *IsEfiResetColdRequired
+  );

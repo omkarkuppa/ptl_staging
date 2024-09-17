@@ -217,14 +217,24 @@ PtlPcdGbeInit (
   IN  SI_POLICY_PPI  *SiPolicy
   );
 
-/*
+/**
+  Initialize the TSN devices
+
+  @param[in] SiPolicy   The Silicon Policy PPI instance
+**/
+VOID
+PtlPcdTsnInit (
+  IN  SI_POLICY_PPI  *SiPolicy
+  );
+
+/**
   Performs USB Controllers initialization
 
-  @param[in] SiPolicy     The Silicon Policy PPI instance
-*/
+  @param[in] SiPolicy   The Silicon Policy PPI instance
+**/
 VOID
 PtlPcdUsbInit (
-  IN  SI_POLICY_PPI               *SiPolicy
+  IN  SI_POLICY_PPI  *SiPolicy
   );
 
 

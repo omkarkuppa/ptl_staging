@@ -446,7 +446,6 @@ DefinitionBlock (
     }
 
     If (LEqual (PCHS, PCHH)) {
-
       //
       // _LB8 - Hot Plug Event for PXPD
       //

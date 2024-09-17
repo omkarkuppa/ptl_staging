@@ -35,12 +35,12 @@
 #include <PolicyUpdateMacro.h>
 #include <FspVSetup.h>
 #include <Library/MemoryAllocationLib.h>
-
 #if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
 #include <FspsUpd.h>
-#include <Library/FspCommonLib.h>
 #endif
+#include <Library/FspCommonLib.h>
+
 
 /**
   This function performs FspV Post-Mem PEI Policy initialization.
@@ -63,14 +63,20 @@ UpdatePeiFspVPolicy (
   UINTN                            VariableSize;
   FSPV_SETUP                       FspVSetup;
   EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariableServices;
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   FSPV_POSTMEM_CONFIG              *FspVUpdateConfig;
-
+#endif
   DEBUG ((DEBUG_INFO, "Update PeiFspVPolicyUpdate Post-Mem Start\n"));
 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+#else
   FspVUpdateConfig        = NULL;
 
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gFspVConfigGuid, (VOID *) &FspVUpdateConfig);
   ASSERT_EFI_ERROR (Status);
+#endif
 
   //
   // Make sure ReadOnlyVariablePpi is available
@@ -102,7 +108,7 @@ UpdatePeiFspVPolicy (
     return EFI_NOT_FOUND;
   }
 
-  UPDATE_POLICY (FspVUpdateConfig->TestId, FspVSetup.FspSVTestCaseId);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.FspvTestId, FspVUpdateConfig->TestId, FspVSetup.FspSVTestCaseId);
 
   return EFI_SUCCESS;
 }
@@ -124,14 +130,20 @@ UpdatePeiFspVPolicyPreMem (
   UINTN                            VariableSize;
   FSPV_SETUP                       FspVSetup;
   EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariableServices;
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   FSPV_PREMEM_CONFIG              *FspVUpdatePreMemConfig;
-
+#endif
   DEBUG ((DEBUG_INFO, "Update PeiFspVPolicyUpdate Pre-Mem Start\n"));
 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspmUpd;
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+#else
   FspVUpdatePreMemConfig  = NULL;
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gFspVPreMemConfigGuid, (VOID *) &FspVUpdatePreMemConfig);
   ASSERT_EFI_ERROR (Status);
+#endif
 
   //
   // Make sure ReadOnlyVariablePpi is available
@@ -158,11 +170,12 @@ UpdatePeiFspVPolicyPreMem (
                                &FspVSetup
                                );
   }
+
   if (EFI_ERROR ((Status))) {
     ASSERT_EFI_ERROR (Status);
     return EFI_NOT_FOUND;
   }
 
-  UPDATE_POLICY (FspVUpdatePreMemConfig->TestId, FspVSetup.FspMVTestCaseId);
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.FspvTestId, FspVUpdatePreMemConfig->TestId, FspVSetup.FspMVTestCaseId);
   return EFI_SUCCESS;
 }

@@ -1,4 +1,4 @@
-/** @filenvlpchpcibdflibpri
+/** @filepchpcibdflibpri
   PCI SBDF definition
 
   @copyright

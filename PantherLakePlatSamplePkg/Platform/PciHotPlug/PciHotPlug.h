@@ -46,10 +46,6 @@
 #include <DTbtInfoHob.h>
 #include <DTbtDefinition.h>
 
-#ifndef PCIE_RP_TYPE_CPU
-#define PCIE_RP_TYPE_CPU                  0x02
-#endif // PCIE_RP_TYPE_CPU
-
 #define PCI_HOT_PLUG_DRIVER_PRIVATE_SIGNATURE SIGNATURE_32 ('G', 'U', 'L', 'P')
 #define MAX_P2PB_OF_TBT_DAISY_CHAIN ((MAX_DTBT_CONTROLLER_NUMBER + MAX_ITBT_PCIE_PORT) * 64)
 #define PCI_ROOT_0_STRING           L"PciRoot(0x0)"

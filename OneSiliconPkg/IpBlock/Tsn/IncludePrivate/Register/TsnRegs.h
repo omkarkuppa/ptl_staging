@@ -54,22 +54,16 @@
 // TSN Controller Registers
 //
 
-// TSN PCI Configuration Space Registers
-#define R_TSN_CFG_BAR0_LOW                    0x10
-#define R_TSN_CFG_BAR0_HIGH                   0x14
-#define R_TSN_CFG_BAR1_LOW                    0x18
-#define R_TSN_CFG_BAR1_HIGH                   0x1C
-#define B_TSN_CFG_BAR0_MASK                   0x0FFF
-#define V_TSN_CFG_BAR0_SIZE                   0x2000
-#define N_TSN_CFG_BAR0_ALIGNMENT              21
-
 // TSN MEM Space Registers Offset
-#define R_TSN_MEM_MAC_MDIO_ADDRESS           0x200        // MAC MDIO Address
-#define R_TSN_MEM_MAC_MDIO_DATA              0x204        // MAC MDIO Data
-#define R_TSN_MEM_MAC_ADDRESS0_HIGH          0x300        // MAC Address 0 High
-#define R_TSN_MEM_MAC_ADDRESS0_LOW           0x304        // MAC Address 0 Low
-#define B_TSN_MEM_ADDRESS_ENABLE             0x80000000
-#define B_TSN_MEM_MAC_ADDRESS_HIGH_MASK      0xFFFF
+#define R_TSN_MEM_MAC_EXTENDED_CONFIGURATION       0x140        // The MAC Extended Configuration register establishes the operating mode of the MAC transmitter
+#define B_TSN_MEM_MAC_EXTENDED_CONFIGURATION_MA0IE BIT28        // MAC Address 0 Input Enable
+
+#define R_TSN_MEM_MAC_MDIO_ADDRESS                 0x200        // MAC MDIO Address
+#define R_TSN_MEM_MAC_MDIO_DATA                    0x204        // MAC MDIO Data
+#define R_TSN_MEM_MAC_ADDRESS0_HIGH                0x300        // MAC Address 0 High
+#define R_TSN_MEM_MAC_ADDRESS0_LOW                 0x304        // MAC Address 0 Low
+#define B_TSN_MEM_ADDRESS_ENABLE                   0x80000000
+#define B_TSN_MEM_MAC_ADDRESS_HIGH_MASK            0xFFFF
 
 #define B_TSN_MEM_MAC_MDIO_ADDRESS_MASK            B_TSN_MEM_MAC_MDIO_PHYAD | B_TSN_MEM_MAC_MDIO_REGAD  | B_TSN_MEM_MAC_MDIO_CLK_TRAIL | B_TSN_MEM_MAC_MDIO_CLK_CSR | B_TSN_MEM_MAC_MDIO_GMII_GOC_1_0 | B_TSN_MEM_MAC_MDIO_CLAUSE45_PHY // MAC MDIO Mask related for Link Mode speed setup
 #define B_TSN_MEM_MAC_MDIO_REGAD                   0x001F0000   // MAC MDIO 5-bit PHY Data Register Address (REGAD)[20:16] for IEEE 802.3 Standard Caluse 22

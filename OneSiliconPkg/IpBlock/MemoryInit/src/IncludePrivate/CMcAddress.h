@@ -49,7 +49,9 @@ typedef union {
     UINT64 MRC_RUNNING                 : 1;  // Bits 1:1
     UINT64 MEM_BASICMEMORYTEST_FAIL    : 1;  // Bits 2:2
     UINT64 MrcDisableChannel           : 8;  // Bits 10:3
-    UINT64 Reserved                    : 53; // Bits 63:11
+    UINT64 Reserved11to23              : 13; // Bits 23:11
+    UINT64 LastIbeccOpMode             : 2;  // Bits 25:24
+    UINT64 Reserved26to63              : 38; // Bits 63:26
   } Bits;
   UINT64 Data;
   UINT32 Data32[2];

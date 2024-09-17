@@ -720,12 +720,12 @@ UpdateVrOverrides (
     ///
     if (OverrideIccLimit[Index] == 0) {
       if ((FastVmodeSupported) &&
-          (VrData->IccMaxFvm != 0) &&
+          (VrData->IccItripFvm != 0) &&
           (CpuPowerMgmtVrConfig->EnableFastVmode[Index] == 1)) {
         //
         // Override the IccLimit to the default defined in VR.
         //
-        OverrideIccLimit[Index] = VrData->IccMaxFvm;
+        OverrideIccLimit[Index] = VrData->IccItripFvm;
       }
     }
 

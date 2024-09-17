@@ -247,6 +247,7 @@ ProcessAllLocks (
       (BOOLEAN) mPchLockDownConfigHob->BiosInterface,
       (BOOLEAN) mPchLockDownConfigHob->SpiEiss
       );
+    SpiBiosDecodeEnableLockWithS3BootScript (&SpiHandle);
   }
   //
   // Set BiosLock amd BIOS interface lock
@@ -258,6 +259,7 @@ ProcessAllLocks (
     (BOOLEAN) mPchLockDownConfigHob->BiosInterface,
     (BOOLEAN) mPchLockDownConfigHob->SpiEiss
     );
+  EspiBiosDecodeEnableLockWithS3BootScript (EspiPciBase);
 
   ///
   /// Additional Power Management Programming

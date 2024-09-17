@@ -38,11 +38,16 @@
 [LibraryClasses]
   BaseLib
   DebugLib
+  UefiLib
   UefiDriverEntryPoint
   UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
   PcdLib
   GpioV2WrapperLib
   ReportStatusCodeLib
+  EcTcssLib
+  Usb4DebugLib
+  UsbcCapsuleDebugLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -52,9 +57,14 @@
   PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   PantherLakePlatSamplePkg/PlatformPkg.dec
   UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  EcFeaturePkg/EcFeaturePkg.dec
 
 [Sources]
   UsbCRetimerSupport.c
+
+[Guids]
+  gEfiEventExitBootServicesGuid       ## CONSUMES
+  gUsbCRetimerProtocolCapabilityGuid  ## CONSUMES
 
 [Protocols]
   gUsbCRetimerProtocolGuid                   ## PRODUCES
@@ -65,4 +75,4 @@
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable  ## COMSUMES
 
 [Depex]
-  gUsbCRetimerProtocolGuid
+  TRUE

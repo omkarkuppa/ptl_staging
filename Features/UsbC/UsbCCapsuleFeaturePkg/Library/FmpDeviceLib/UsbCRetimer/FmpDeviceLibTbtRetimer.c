@@ -1021,7 +1021,7 @@ FmpDeviceSetImageWithStatus (
   DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - Drive all TBT ports to TBT mode...\n"));
 
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_PD_DRIVE);
-  Status = UsbCRetimerProtocol->Drive (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
+  Status = DriveToFwUpdateMode (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
   WaitForRetimerReadyToUpdate = (UINTN) PcdGet32 (PcdTcssWaitRetimerDeviceReady);
 
   if (EFI_ERROR (Status)) {
@@ -1130,7 +1130,7 @@ RestorePdPowerMode:
   // Brings all TBT ports back to the original mode
   //
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_PD_RESTORE);
-  RestoreStatus = UsbCRetimerProtocol->Restore (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
+  RestoreStatus = RestoreToOriginalMode (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
   if (EFI_ERROR (RestoreStatus)) {
     DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Restore to TBT ports to original mode (%r).\n", RestoreStatus));
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_RESTORE_ORIGINAL_MODE_FAILED;

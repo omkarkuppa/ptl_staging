@@ -545,8 +545,6 @@ PmcSsramPciCfgBase (
             );
 }
 
-#if FixedPcdGet8(PcdTsnSupport) == 0x1
-
 /**
   Get TSN controller PCIe Device Number
 
@@ -621,7 +619,6 @@ TsnPciCfgBase (
             0
             );
 }
-#endif
 
 /**
   Returns PCH SPI Device number

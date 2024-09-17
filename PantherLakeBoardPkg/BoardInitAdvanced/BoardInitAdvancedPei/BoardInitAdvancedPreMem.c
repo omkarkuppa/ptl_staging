@@ -358,6 +358,11 @@ EarlyPlatformPchInit (
   TCO_WDT_HOB  *TcoWdtHobPtr;
   EFI_STATUS   Status;
 
+  //
+  // Halt the TCO timer as early as possible
+  //
+  TcoHaltTimer (PcdGet16 (PcdTcoBaseAddress));
+
   if (TcoSecondToHappened (PcdGet16 (PcdTcoBaseAddress))) {
     TcoRebootHappened = 1;
     DEBUG ((DEBUG_INFO, "PlatformInitPreMem - TCO Second TO status bit is set. This might be a TCO reboot\n"));

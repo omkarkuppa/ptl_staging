@@ -81,7 +81,7 @@ TsnDeviceGpioInitEndOfPei (
     return Status;
   }
 
-  if (PchSetup.PchTsnEnable == 1) {
+  if (PchSetup.PchTsnEnable [0] == 1 || PchSetup.PchTsnEnable [1] == 1 || PchSetup.PchTsnEnable [2] == 1 || PchSetup.PchTsnEnable [3] == 1 ) {
     DEBUG ((DEBUG_INFO, "TSN Device GpioInit\n"));
     Status = GpioV2ConfigurePads (
                (GPIOV2_INIT_CONFIG *) (UINTN) PcdGet32 (PcdBoardGpioTableTsnDevice),

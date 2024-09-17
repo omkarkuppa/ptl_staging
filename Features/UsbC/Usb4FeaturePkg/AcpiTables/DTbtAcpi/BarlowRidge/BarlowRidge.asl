@@ -59,7 +59,7 @@ Scope(DTBT_US_PORT)
   // PCIe downstream port 2 - connecting XHCI controller in downstream
   //
   Device (TBDU) {
-    Name (_ADR, 0x0020000)
+    Name (_ADR, 0x00020000)
     Include ("DTbtXhci.asl")
   }
 

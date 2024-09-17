@@ -92,6 +92,7 @@
   VmdInfoLib
   PlatformUsbConfigLib
   UefiLib
+  BasePcieHelperLib
 
 [Pcd]
   gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength                    ## CONSUMES

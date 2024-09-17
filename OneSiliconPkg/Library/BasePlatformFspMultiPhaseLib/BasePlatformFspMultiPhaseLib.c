@@ -76,17 +76,14 @@ FspMultiPhasePlatformGetNumberOfPhases (
   FSPM_UPD                     *FspmUpd;
   FSPS_UPD                     *FspsUpd;
   FSPS_ARCH_UPD                *FspsArchUpdPtr;
-  UINT32                       SupportedPhases;
 
   FspGlobalData = GetFspGlobalDataPointer ();
   FspmUpd = (FSPM_UPD *) FspGlobalData->MemoryInitUpdPtr;
   FspsUpd = (FSPS_UPD *) FspGlobalData->SiliconInitUpdPtr;
-  SupportedPhases = 1; // Policy Init
 
   if (ApiIdx == FspMultiPhaseMemInitApiIndex) {
-    //
-    // for future use
-    //
+    *NumberOfPhasesSupported = 0;
+    return TRUE;
   }
   if (ApiIdx == FspMultiPhaseSiInitApiIndex) {
     if (FspsUpd != NULL) {
@@ -94,17 +91,20 @@ FspMultiPhasePlatformGetNumberOfPhases (
       if ((FspmUpd != NULL) && (FspmUpd->FspUpdHeader.Signature == FSPM_UPD_SIGNATURE)) {
         if (FspsArchUpdPtr->Revision >= 2) {
           if (FspmUpd->FspmConfig.TcssXhciEn) {
-            SupportedPhases += 1;
+            *NumberOfPhasesSupported = 1;
+          } else {
+            *NumberOfPhasesSupported = 0;
           }
+          return TRUE;
         } else {
-          SupportedPhases += (FspsArchUpdPtr->EnableMultiPhaseSiliconInit && FspmUpd->FspmConfig.TcssXhciEn) ? 1:0;
+          *NumberOfPhasesSupported = (FspsArchUpdPtr->EnableMultiPhaseSiliconInit && FspmUpd->FspmConfig.TcssXhciEn) ? 1:0;
+          return TRUE;
         }
       }
     }
   }
 
-  *NumberOfPhasesSupported = SupportedPhases;
-  return TRUE;
+  return FALSE;
 }
 
 /**

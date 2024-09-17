@@ -72,32 +72,39 @@ UpdatePeiTbtPolicy (
   UINT8                            Usb4CmMode;
   UINT8                            OsCmMode;
   UINT8                            InitSetupFlag;
+  SA_SETUP                         SaSetup;
 #if FixedPcdGetBool (PcdDTbtEnable) == 1
   UINT8                            Index;
   PEI_DTBT_POLICY                  *PeiDTbtConfig;
 #endif
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+#else
 #if FixedPcdGetBool (PcdTcssSupport) == 1
-  SA_SETUP                         SaSetup;
   PEI_ITBT_CONFIG                  *PeiITbtConfig;
 #endif
+#endif //FSPMode Check
 
   DEBUG ((DEBUG_INFO, "Update PeiTbtPolicyUpdate Pos-Mem Start\n"));
 
-#if FixedPcdGetBool (PcdTcssSupport) == 1
-  PeiITbtConfig = NULL;
-#endif
 #if FixedPcdGetBool (PcdDTbtEnable) == 1
   PeiDTbtConfig = NULL;
 #endif
   Status       = EFI_NOT_FOUND;
 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+#else
   //
   // Get requisite IP Config Blocks which needs to be used here
   //
 #if FixedPcdGetBool (PcdTcssSupport) == 1
+  PeiITbtConfig = NULL;
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gPeiITbtConfigGuid, (VOID *) &PeiITbtConfig);
   ASSERT_EFI_ERROR (Status);
 #endif
+#endif //FSPMode Check
 
 #if FixedPcdGetBool (PcdDTbtEnable) == 1
   Status = PeiServicesLocatePpi (
@@ -201,10 +208,10 @@ UpdatePeiTbtPolicy (
     return Status;
   }
 
-  COMPARE_AND_UPDATE_POLICY (PeiITbtConfig->ITbtGenericConfig.Usb4CmMode,                     Usb4CmMode                                        );
-  COMPARE_AND_UPDATE_POLICY (PeiITbtConfig->ITbtGenericConfig.ITbtForcePowerOnTimeoutInMs,    SystemConfiguration.ITbtForcePowerOnTimeoutInMs   );
-  COMPARE_AND_UPDATE_POLICY (PeiITbtConfig->ITbtGenericConfig.ITbtConnectTopologyTimeoutInMs, SystemConfiguration.ITbtConnectTopologyTimeoutInMs);
-  COMPARE_AND_UPDATE_POLICY (PeiITbtConfig->ITbtGenericConfig.ITbtPcieTunnelingForUsb4,       SystemConfiguration.EnablePcieTunnelingOverUsb4   );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.Usb4CmMode,                    PeiITbtConfig->ITbtGenericConfig.Usb4CmMode,                     Usb4CmMode                                        );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ITbtForcePowerOnTimeoutInMs,   PeiITbtConfig->ITbtGenericConfig.ITbtForcePowerOnTimeoutInMs,    SystemConfiguration.ITbtForcePowerOnTimeoutInMs   );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ITbtConnectTopologyTimeoutInMs,PeiITbtConfig->ITbtGenericConfig.ITbtConnectTopologyTimeoutInMs, SystemConfiguration.ITbtConnectTopologyTimeoutInMs);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ITbtPcieTunnelingForUsb4,      PeiITbtConfig->ITbtGenericConfig.ITbtPcieTunnelingForUsb4,       SystemConfiguration.EnablePcieTunnelingOverUsb4   );
 #endif
 #if FixedPcdGetBool (PcdDTbtEnable) == 1
   //

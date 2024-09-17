@@ -594,6 +594,14 @@ MrcGetMcConfigHash (
     HashPtr->Data = MC0_MAD_INTER_CHANNEL_DDR_TYPE_HSH;
     break;
 
+  case GsmMccCh0Size:
+    HashPtr->Data = MC0_MAD_INTER_CHANNEL_CH_0_SIZE_HSH;
+    break;
+
+  case GsmMccCh1Size:
+    HashPtr->Data = MC0_MAD_INTER_CHANNEL_CH_1_SIZE_HSH;
+    break;
+
   case GsmMccCpgcActive:
     HashPtr->Data = MC0_MC_CPGC_CONTROL_cpgc_active_HSH;
     break;

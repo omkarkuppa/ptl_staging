@@ -40,7 +40,6 @@
 #include <Library/CpuPlatformLib.h>
 #include <Library/PlatformFspMultiPhaseLib.h>
 #include <Library/PcdLib.h>
-#include <SiliconPolicyHob.h>
 
 extern EFI_GUID gFspSiliconFvGuid;
 extern EFI_GUID gFspPerformanceDataGuid;
@@ -558,14 +557,10 @@ FspInitPreMemEntryPoint (
   EFI_PEI_PPI_DESCRIPTOR                *FspmArchConfigPpiDesc;
   PEI_PREMEM_SI_DEFAULT_POLICY_INIT_PPI *PeiPreMemSiDefaultPolicyInitPpi;
   PEI_PREMEM_SI_DEFAULT_POLICY_INIT_PPI *PeiPreMemPchDefaultPolicyInitPpi;
-  SILICON_POLICY_HOB                    *SiliconPolicyHob;
-  VOID                                  **HobListPtr;
-  FSP_GLOBAL_DATA                       *FspData;
 
   DEBUG ((DEBUG_INFO, "FspInitPreMemEntryPoint\n"));
   PeiPreMemSiDefaultPolicyInitPpi = NULL;
   PeiPreMemPchDefaultPolicyInitPpi = NULL;
-  FspData = GetFspGlobalDataPointer ();
 
   //MemoryInit Phase Postcode set
   SetPhaseStatusCode (0xD000);
@@ -600,20 +595,6 @@ FspInitPreMemEntryPoint (
     ///
     Status = InstallStallPpi();
     ASSERT_EFI_ERROR (Status);
-
-    //
-    // Build the FSP Policy HOB
-    //
-    SiliconPolicyHob = BuildGuidHob (&gSiliconPolicyHobGuid, sizeof (SILICON_POLICY_HOB));
-
-    if (SiliconPolicyHob == NULL) {
-      ASSERT_EFI_ERROR (EFI_OUT_OF_RESOURCES);
-      return EFI_OUT_OF_RESOURCES;
-    }
-    DEBUG ((DEBUG_INFO, "SiliconPolicyHob = 0x%x\n", SiliconPolicyHob));
-
-    ZeroMem (SiliconPolicyHob, sizeof (SILICON_POLICY_HOB));
-
 
     FspmUpdDataPtr = NULL;
 
@@ -669,11 +650,6 @@ FspInitPreMemEntryPoint (
     Status = PeiServicesInstallPpi (FspmArchConfigPpiDesc);
     ASSERT_EFI_ERROR (Status);
 
-    Status = FspMultiPhaseMemInitPlatformWorker ();
-    if (EFI_ERROR (Status)) {
-      ASSERT_EFI_ERROR (Status);
-    }
-
     //
     // Locate Policy init PPI to install default PCH policy
     //
@@ -697,13 +673,10 @@ FspInitPreMemEntryPoint (
                  NULL,
                  (VOID **) &PchPreMemPolicyPpi
                  );
-
-        SiliconPolicyHob->PchPreMemPolicyPpi = (EFI_PHYSICAL_ADDRESS) (UINTN) PchPreMemPolicyPpi;
         ASSERT_EFI_ERROR (Status);
-      }
-      if (EFI_ERROR (Status)) {
-        ASSERT_EFI_ERROR (Status);
-        return Status;
+        if ((Status == EFI_SUCCESS) && (PchPreMemPolicyPpi != NULL)) {
+          FspUpdatePeiAttachedPchPolicyPreMem (PchPreMemPolicyPpi, FspmUpdDataPtr);
+        }
       }
     }
 
@@ -727,29 +700,37 @@ FspInitPreMemEntryPoint (
                    NULL,
                    (VOID **) &SiPreMemPolicyPpi
                    );
-        SiliconPolicyHob->SiPreMemPolicyPpi = (EFI_PHYSICAL_ADDRESS) (UINTN) SiPreMemPolicyPpi;
         ASSERT_EFI_ERROR (Status);
 
-        HobListPtr = (VOID **)FspData->FspHobListPtr;
-        if (HobListPtr != NULL) {
-          *HobListPtr = (VOID *)GetHobList ();
-        }
-
-        SetFspApiReturnStatus (EFI_SUCCESS);
-        Pei2LoaderSwitchStack ();
-        DEBUG ((DEBUG_INFO, "Return from BL After FspSiliconPolicyInit done\n"));
-
         if ((Status == EFI_SUCCESS) && (SiPreMemPolicyPpi != NULL)) {
+          FspUpdatePeiPchPolicyPreMem (SiPreMemPolicyPpi, FspmUpdDataPtr);
+          FspUpdatePeiCpuPolicyPreMem (SiPreMemPolicyPpi, FspmUpdDataPtr);
+#if FixedPcdGetBool(PcdOverclockEnable) == 1
+          FspUpdatePeiOcPolicyPreMem (SiPreMemPolicyPpi, FspmUpdDataPtr);
+#endif
+          FspUpdatePeiSecurityPolicyPreMem (SiPreMemPolicyPpi, FspmUpdDataPtr); //Security Policy also needs to be updated before CpuInstallPolicyPpi
+          FspUpdatePeiMePolicyPreMem (SiPreMemPolicyPpi, FspmUpdDataPtr);
+          FspUpdatePeiSaPolicyPreMem (SiPreMemPolicyPpi, FspmUpdDataPtr);
+          FspUpdatePeiSiPolicyPreMem (SiPreMemPolicyPpi, FspmUpdDataPtr);
+#if FixedPcdGetBool (PcdFspVEnable) == 1
+            FspUpdatePeiFspVPolicyPreMem (SiPreMemPolicyPpi, FspmUpdDataPtr);
+#endif
           //
           // In FSP API mode, no policy update from boot loader so FSP should install
           // PolicyReady PPI to trigger silicon initialization OnPolicy callbacks.
           //
+
           Status = SiPreMemInstallPolicyReadyPpi ();
           if (EFI_ERROR (Status)) {
             ASSERT_EFI_ERROR (Status);
           }
         }
       }
+    }
+
+    Status = FspMultiPhaseMemInitPlatformWorker ();
+    if (EFI_ERROR (Status)) {
+      ASSERT_EFI_ERROR (Status);
     }
   }
 

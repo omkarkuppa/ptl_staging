@@ -135,6 +135,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdMrcCaVrefConfig|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdMrcCmdMirror|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdVdd2lPowerRailPresent|*|0x0
+  gBoardModuleTokenSpaceGuid.VpdPcdGopConfigSoftwareId|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdDisplayDdiConfigTable| * |{CODE(
   {  16,
      { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,

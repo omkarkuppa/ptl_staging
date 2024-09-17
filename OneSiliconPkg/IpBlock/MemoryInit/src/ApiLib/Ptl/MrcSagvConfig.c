@@ -158,7 +158,7 @@ MrcCalcSagvTypeConfig (
     break;
 
   case MidBwSaGv:
-    Freq = f4800;
+    Freq = f3200;
     Gear = 4;
     break;
 
@@ -177,6 +177,7 @@ MrcCalcSagvTypeConfig (
   case RfiLowLatencySaGv:
     LowLatencyFreq = 2 * MaxQclkFreq;
     Freq = MrcGetNextSupportedFreq (MrcData, LowLatencyFreq);
+    Freq = MIN (f3200, Freq);
     Gear = 2;
     break;
 
@@ -186,9 +187,15 @@ MrcCalcSagvTypeConfig (
   }
 
   if (SaGvType == RfiHighBwSaGv || SaGvType == RfiLowLatencySaGv) {
-    // Recalculate Freq - 1 bin
-    Freq = Freq - 1;
-    Freq = MrcGetNextSupportedFreq (MrcData, Freq);
+    if (IsLpddr5) {
+      Freq = f4800;
+    } else if (IsDdr5) {
+      Freq = f3200;
+    } else {
+      // Recalculate Freq - 1 bin
+      Freq = Freq - 1;
+      Freq = MrcGetNextSupportedFreq (MrcData, Freq);
+    }
   }
 
   if (FreqOut != NULL) {

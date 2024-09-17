@@ -28,7 +28,7 @@
 GLOBAL_REMOVE_IF_UNREFERENCED TXT_DXE_LIB_CONTEXT mTxtDxeCtx;
 
 /**
-  This function gets registered as a callback to run the SCHECK function
+  This function gets registered as a callback to run the LockConfigCallback function
   from the TXT BIOS ACM as a result of Boot Events.
 
   @param[in]  Event    A pointer to the Event that triggered the callback.
@@ -36,7 +36,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED TXT_DXE_LIB_CONTEXT mTxtDxeCtx;
   **/
 VOID
 EFIAPI
-ScheckCallback (
+LockConfigCallback (
   IN EFI_EVENT Event,
   IN VOID      *Context
   )
@@ -54,8 +54,8 @@ ScheckCallback (
   }
 
 
-  DEBUG ((DEBUG_INFO, "TXTDXE::Running of DoScheck\n"));
-  DoScheck (&mTxtDxeCtx);
+  DEBUG ((DEBUG_INFO, "TXTDXE::Running of LockConfig\n"));
+  DoLockConfig (&mTxtDxeCtx);
 
   ///
   /// Closed the event to avoid call twice when launch shell
@@ -170,7 +170,7 @@ TxtDxeReadyToBoot (
   This is the entry point to the TXT DXE Driver.  This routine checks to see if
   the platform should be configured for TXT and if so, configures the platform
   by reserving and initializing TXT Configuration Space and TXT Device Memory and
-  registering a callback to run SCHECK from the TXT BIOS ACM prior to boot.
+  registering a callback to run LockConfigCallback from the TXT BIOS ACM prior to boot.
 
   If the platform should not be configured for TXT, this routine checks the
   establishment bit in the TPM and resets it if it is asserted.
@@ -251,12 +251,12 @@ DriverEntry (
     InitializeTxtAcpi (ImageHandle);
 
     ///
-    /// Create callback to run SCHECK; this should execute before global SMI enable is locked
+    /// Create callback to run LcokConfig; this should execute before global SMI enable is locked
     ///
     EfiCreateProtocolNotifyEvent (
       &gEfiPciEnumerationCompleteProtocolGuid,
       TPL_CALLBACK,
-      ScheckCallback,
+      LockConfigCallback,
       NULL,
       &Registration
       );

@@ -219,6 +219,19 @@ FindBpmIbb (
 }
 
 /**
+  Find BPM Pcd element
+  @param[in] Bpm           BPM address
+  @return BPM Pcd element
+**/
+VOID *
+FindBpmPcde (
+  IN BOOT_POLICY_MANIFEST_HEADER              *Bpm
+  )
+{
+  return FindBpmElement (Bpm, BOOT_POLICY_MANIFEST_PLATFORM_CONFIG_DATA_ELEMENT_STRUCTURE_ID);
+}
+
+/**
   Check if this NPW ACM
 
   @retval TRUE  This is NPW ACM

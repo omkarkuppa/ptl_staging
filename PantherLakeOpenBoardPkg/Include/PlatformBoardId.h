@@ -29,10 +29,11 @@
 // BoardId Reserved for PCD Default SkuId usage
 // SkuId = PcdDisplayId << 24 | PcdBoardBomId << 16 | PcdBoardRev << 8 | PcdBoardId
 #define SkuIdPtlSimics                        0x00000031
+#define SkuIdPtlUHLp5Rvp1                     0x00000001
 
 
 #define BoardIdPtlSimics                      0x31
-#define BoardIdPtlUHLp5Rvp1                    0x01
+#define BoardIdPtlUHLp5Rvp1                   0x01
 
 
 #endif // _PLATFORM_BOARD_ID_H_

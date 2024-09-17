@@ -1010,6 +1010,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     GpioV2Config.h
     PlatformBoardConfig.h
   }
+
   # Recovery Mode Gpio
   # BoardGpioTypePch,BoardGpioTypeExpander,BoardGpioTypeNotSupported
   gBoardModuleTokenSpaceGuid.VpdPcdRecoveryModeGpio           |0|PCD64_BLOB|0x00001180{
@@ -1840,7 +1841,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   #   UINT32 DmaPortNum            : 1;
   #   /**
   #   PCIe Root Port Type for dTBT
-  #   0 - Unsupported, 1 - PCH, 2 - CPU
+  #   0 - PCH, 1 - CPU
   #   **/
   #   UINT32 PcieRootPortType      : 1;
   #   /**

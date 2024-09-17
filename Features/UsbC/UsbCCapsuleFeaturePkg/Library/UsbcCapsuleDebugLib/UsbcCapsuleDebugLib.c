@@ -19,49 +19,11 @@
 @par Specification Reference:
 **/
 #include <Uefi.h>
-#include <Library/PcdLib.h>
 #include <Library/DebugLib.h>
 #include <Library/UsbcCapsuleDebugLib.h>
 #include <Library/Usb4DebugLib.h>
+#include <Library/UefiBootServicesTableLib.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
-#include <UsbCCapsuleDebug/UsbCCapsuleLogMappingTable.h>
-
-//
-// Pointer to Capsule Debug Protocol instance
-//
-EFI_USB4_DEBUG_PROTOCOL   *mRetimerCapsuleLog = NULL;
-
-/**
-  Install USBC Capsule Debug Protocol.
-**/
-VOID
-InstallCapsuleDebugProtocol (
-  VOID
-  )
-{
-  EFI_STATUS   Status;
-
-  if (PcdGet8 (PcdUsbCCapsuleDebugLevel) != USB4_DBG_DISABLED) {
-    Status = InstallUsb4DebugProtocol (
-                   &gEfiUsbCCapsuleDebugProtocolGuid,
-                   PcdGet8 (PcdUsbCCapsuleDebugLevel),
-                   mUsbCCapsuleLogMappingTable,
-                   mUsbCCapsuleLogMappingEntries,
-                   &mRetimerCapsuleLog
-                   );
-    if (!EFI_ERROR(Status) && mRetimerCapsuleLog != NULL) {
-      if (mRetimerCapsuleLog->Usb4LogWrite != NULL) {
-        DEBUG ((DEBUG_INFO, "Install USBC Capsule Debug Protocol - Debug Level = %d\n", PcdGet8 (PcdUsbCCapsuleDebugLevel)));
-      } else {
-        DEBUG ((DEBUG_ERROR, "NULL Log Write function in USBC Capsule Debug Protocol\n"));
-        mRetimerCapsuleLog = NULL;
-      }
-    } else {
-      DEBUG ((DEBUG_ERROR, "NULL USBC Capsule Debug Protocol is returned\n"));
-      mRetimerCapsuleLog = NULL;
-    }
-  }
-}
 
 /**
   Write Log data to the next available Log entry in Log buffer
@@ -75,6 +37,7 @@ InstallCapsuleDebugProtocol (
   @retval EFI_SUCCESS           - Write Log data to Log buffer successfully
   @retval EFI_UNSUPPORTED       - Unable to support log write
   @retval EFI_OUT_OF_RESOURCES  - Log buffer is full
+
 **/
 EFI_STATUS
 EFIAPI
@@ -85,13 +48,14 @@ CapsuleLogWrite (
   IN UINT32                     EvtArg1
   )
 {
-  if (mRetimerCapsuleLog == NULL) {
-    return EFI_UNSUPPORTED;
+  EFI_STATUS               Status;
+  EFI_USB4_DEBUG_PROTOCOL  *Usb4DebugProtocol;
+
+  Status = gBS->LocateProtocol (&gEfiUsbCCapsuleDebugProtocolGuid, NULL, (VOID**) &Usb4DebugProtocol);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to locate gEfiUsbCCapsuleDebugProtocolGuid (%r).\n", Status));
+    return Status;
   }
 
-  if (mRetimerCapsuleLog->Usb4LogWrite == NULL) {
-    DEBUG ((DEBUG_ERROR, "NULL Log Write function in USBC Capsule Debug Protocol\n"));
-    return EFI_UNSUPPORTED;
-  }
-  return mRetimerCapsuleLog->Usb4LogWrite (mRetimerCapsuleLog, LogLevel, EventCode, EvtArg0, EvtArg1);
+  return Usb4DebugProtocol->Usb4LogWrite (Usb4DebugProtocol, LogLevel, EventCode, EvtArg0, EvtArg1);
 }

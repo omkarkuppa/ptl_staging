@@ -64,6 +64,10 @@ SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvBase   = $(gSiPkgTokenSpac
 
 !if gBoardModuleTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == TRUE
   SET gBoardModuleTokenSpaceGuid.PcdFspWrapperBfvforResetVectorInFsp = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset)
+  # In FSP at Reset enabled case, FSPO and FSPT should be put right below 4G location.
+  SET gBoardModuleTokenSpaceGuid.PcdFlashFvFspOBase      = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gSiPkgTokenSpaceGuid.PcdBiosSize) - $(gBoardModuleTokenSpaceGuid.PcdFlashFvFspOSize)
+  SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTBase   = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gSiPkgTokenSpaceGuid.PcdBiosSize) - $(gBoardModuleTokenSpaceGuid.PcdFlashFvFspOSize) - $(gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize)
+  SET gIntelFsp2WrapperTokenSpaceGuid.PcdFsptBaseAddress = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gSiPkgTokenSpaceGuid.PcdBiosSize) - $(gBoardModuleTokenSpaceGuid.PcdFlashFvFspOSize) - $(gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize)
 !endif
 
 ################################################################################
@@ -215,7 +219,6 @@ FV = FvPreMemory
 # module statements.
 #
 ################################################################################
-
 [FV.FvMicrocode]
 BlockSize          = $(FLASH_BLOCK_SIZE)
 FvAlignment        = 16
@@ -262,10 +265,10 @@ READ_LOCK_STATUS   = TRUE
   #     2. For Resiliency BIOS, IBB only has space for one microcode for debug build, and doesn't support compatibility.
   #        Please always place the latest stepping uCode patch in the first priority.
   #
-  #  m_07_b06d0_00000001.pdb
+  #  m_07_b06d0_00000004.pdb
   #
   FILE RAW = gIntelMicrocodeArrayFfsBinGuid {
-      Align=4K $(PLATFORM_BIN_PACKAGE)/Binaries/Microcode/m_07_b06d0_00000001.pdb # PTL-UH dummy ucode
+    Align=4K $(PLATFORM_BIN_PACKAGE)/Binaries/Microcode/m_90_c06c0_00000004.pdb # PTL-P
   }
 !endif
 

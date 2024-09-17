@@ -62,15 +62,27 @@ gStructPcdTokenSpaceGuid.PcdCrashLogCtlVariable.CpuClear|0x0
 # Alphabet sort the following Pcd for easy maintainability
 gStructPcdTokenSpaceGuid.PcdAmtMacPassThroughConfig.AmtMacPassThroughState|0x0                     # MAC Pass Through
 gStructPcdTokenSpaceGuid.PcdAmtPetInitConfig.FwProgress|0x1                                        # PET Events Progress
-gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtAudioOffload|0x1                                        # BT Audio Offload
-gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtAudioOffloadInterface|0x0                               # BT Audio Offload Interface
-gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtCore|0x1                                                # BT Core
-gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtInterface|0x1                                           # BT Interface
-gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviMode|0x1                                                  # CNVi Mode
-gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviWifiCore|0x1                                              # Wi-Fi Core
-gStructPcdTokenSpaceGuid.PcdCnvSetup.DiscreteBtModule|0x1                                          # Discrete Bluetooth Interface
-gStructPcdTokenSpaceGuid.PcdCnvSetup.PrebootBleEnable|0x0                                          # Preboot BLE
-gStructPcdTokenSpaceGuid.PcdCnvSetup.SkipVidDidCheck|0x0                                           # Skip VDID Check
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport == 0x1
+  gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviMode|0x1                                                  # CNVi Mode
+  gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviWifiCore|0x1                                              # Wi-Fi Core
+  gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtCore|0x1                                                # BT Core
+  gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtInterface|0x1                                           # BT Interface
+!if gCnvFeaturePkgTokenSpaceGuid.PcdBtAudioOffloadSupport == 0x1
+  gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtAudioOffloadInterface|0x0                               # BT Audio Offload Interface
+!endif
+!endif
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion == 0x3
+  !if gCnvFeaturePkgTokenSpaceGuid.PcdBtAudioOffloadSupport == 0x1
+    gStructPcdTokenSpaceGuid.PcdCnvSetup.CnviBtAudioOffload|0x1                                        # BT Audio Offload
+  !endif
+!endif
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport == 0x1
+  gStructPcdTokenSpaceGuid.PcdCnvSetup.SkipVidDidCheck|0x0                                           # Skip VDID Check
+  gStructPcdTokenSpaceGuid.PcdCnvSetup.DiscreteBtModule|0x1                                          # Discrete Bluetooth Interface
+!endif
+!if gCnvFeaturePkgTokenSpaceGuid.PcdPrebootBleSupport == 0x1
+  gStructPcdTokenSpaceGuid.PcdCnvSetup.PrebootBleEnable|0x0                                          # Preboot BLE
+!endif
 gStructPcdTokenSpaceGuid.PcdComAttributes.PortAttributes[0].BaudRate|0x1c200                       # Set COM Baud Rate
 gStructPcdTokenSpaceGuid.PcdComAttributes.PortAttributes[0].ComTag.ComNum|0x0                      # Set COM Tag
 gStructPcdTokenSpaceGuid.PcdComAttributes.PortAttributes[0].DataBits|0x8                           # Set COM Data Bits
@@ -117,9 +129,9 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.AvxDisable|0x0                             
 gStructPcdTokenSpaceGuid.PcdCpuSetup.BistOnReset|0x0                                               # BIST
 gStructPcdTokenSpaceGuid.PcdCpuSetup.BootFrequency|0x2                                             # Boot performance mode
 gStructPcdTokenSpaceGuid.PcdCpuSetup.BootMaxFrequency|0x1                                          # Boot Max Frequency
-gStructPcdTokenSpaceGuid.PcdCpuSetup.CStateAutoDemotion|0x0                                        # C-State Auto Demotion
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.CStateAutoDemotion|0x0                                        # C-State Auto Demotion
 gStructPcdTokenSpaceGuid.PcdCpuSetup.CStatePreWake|0x1                                             # CState Pre-Wake
-gStructPcdTokenSpaceGuid.PcdCpuSetup.CStateUnDemotion|0x0                                          # C-State Un-demotion
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.CStateUnDemotion|0x0                                          # C-State Un-demotion
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ConfigTdpBios|0x0                                             # CTDP BIOS control
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ConfigTdpLevel|0x0                                            # Configurable Base Power Boot Mode
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ConfigTdpLock|0x0                                             # Configurable Base Power Lock
@@ -158,7 +170,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwp|0x1                              
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwpAutoEppGrouping|0x1                                  # HwP Autonomous EPP Grouping
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwpAutoPerCorePstate|0x1                                # HwP Autonomous Per Core P State
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableRp|0x0                                                  # Resource Priority Feature
-gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableThermalMonitor|0x0                                      # Thermal Monitor
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableThermalMonitor|0x0                                      # Thermal Monitor
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableVsysCritical|0x0                                        # Vsys/Psys Critical
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnergyEfficientPState|0x1                                     # Energy Efficient P-state
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnergyEfficientTurbo|0x1                                      # Energy Efficient Turbo
@@ -265,22 +277,22 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceEnable|0x0                   
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceMemSize|0xff                                    # Processor trace memory allocation
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceOutputScheme|0x0                                # Processor Trace OutPut Scheme
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceTimingPacket|0x0                                # Processor Trace Timing Packet
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[0]|0x0                                           # PS1 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[1]|0x0                                           # PS1 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[2]|0x0                                           # PS1 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[3]|0x0                                           # PS1 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[0]|0x0                                           # PS2 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[1]|0x0                                           # PS2 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[2]|0x0                                           # PS2 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[3]|0x0                                           # PS2 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[0]|0x0                                           # PS1 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[1]|0x0                                           # PS1 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[2]|0x0                                           # PS1 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[3]|0x0                                           # PS1 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[0]|0x0                                           # PS2 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[1]|0x0                                           # PS2 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[2]|0x0                                           # PS2 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[3]|0x0                                           # PS2 Current Threshold
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Enable[0]|0x1                                              # PS3 Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Enable[1]|0x1                                              # PS3 Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Enable[2]|0x1                                              # PS3 Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Enable[3]|0x1                                              # PS3 Enable
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[0]|0x0                                           # PS3 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[1]|0x0                                           # PS3 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[2]|0x0                                           # PS3 Current Threshold
-gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[3]|0x0                                           # PS3 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[0]|0x0                                           # PS3 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[1]|0x0                                           # PS3 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[2]|0x0                                           # PS3 Current Threshold
+  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[3]|0x0                                           # PS3 Current Threshold
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps4Enable[0]|0x1                                              # PS4 Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps4Enable[1]|0x1                                              # PS4 Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps4Enable[2]|0x1                                              # PS4 Enable
@@ -398,7 +410,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.TseEnable|0x0                              
 gStructPcdTokenSpaceGuid.PcdCpuSetup.TurboMode|0x1                                                 # Turbo Mode
 gStructPcdTokenSpaceGuid.PcdCpuSetup.TurboPowerLimitLock|0x0                                       # Package Power Limit MSR Lock
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Txt|0x0                                                       # Intel Trusted Execution Technology
-gStructPcdTokenSpaceGuid.PcdCpuSetup.VT|0x0                                                        # Intel (VMX) Virtualization Technology
+gStructPcdTokenSpaceGuid.PcdCpuSetup.VT|0x1                                                        # Intel (VMX) Virtualization Technology
 gStructPcdTokenSpaceGuid.PcdCpuSetup.VrConfigEnable[0]|0x1                                         # VR Config Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.VrConfigEnable[1]|0x1                                         # VR Config Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.VrConfigEnable[2]|0x1                                         # VR Config Enable
@@ -409,7 +421,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.VsysCriticalThreshold|0x1770               
 gStructPcdTokenSpaceGuid.PcdCpuSetup.VsysDeassertionDeglitchExponent|0x2                           # De assertion Deglitch Exponent
 gStructPcdTokenSpaceGuid.PcdCpuSetup.VsysDeassertionDeglitchMantissa|0xd                           # De assertion Deglitch Mantissa
 gStructPcdTokenSpaceGuid.PcdCpuSetup.VsysFullScale|0x5dc0                                          # Vsys/Psys Full Scale
-gStructPcdTokenSpaceGuid.PcdCpuSetup.X2ApicEnable|0x0                                              # X2APIC Enable
+gStructPcdTokenSpaceGuid.PcdCpuSetup.X2ApicEnable|0x1                                              # X2APIC Enable
 gStructPcdTokenSpaceGuid.PcdFspVSetup.FspMVTestCaseId|0xFFFF                                       # FspM Validation Test Case ID
 gStructPcdTokenSpaceGuid.PcdFspVSetup.FspSVTestCaseId|0xFFFF                                       # FspS Validation Test Case ID
 gStructPcdTokenSpaceGuid.PcdCrashLogVariable.CpuClear|0x0                                          # CrashLog Clear Enable
@@ -1279,7 +1291,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.KeepEarlyTrace|0x0                         
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchAdditionalSerialIoDevices|0x0                              # Additional Serial IO devices
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchBiosLock|0x1                                               # BIOS Lock
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchCrid|0x0                                                   # Compatible Revision ID
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchEnergyReport|0x0                                           # PCH Energy Reporting
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchEnergyReport|0x0                                           # PCH Energy Reporting
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchEspiHostC10ReportEnable|0x0                                # HOST_C10 reporting to Target
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchEspiLgmrEnable|0x0                                         # LGMR
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchGpioIrqRoute|0xe                                           # GPIO IRQ Route
@@ -1420,9 +1432,9 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshGpEnable[9]|0x0                      
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshGpEnable[10]|0x0                                        # GP_10
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshGpEnable[11]|0x1                                        # GP_11
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI2cEnable[0]|0x1                                        # I2C0
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI2cEnable[1]|0x1                                        # I2C1
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI2cEnable[1]|0x0                                        # I2C1
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI2cEnable[2]|0x1                                        # I2C2
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI3cEnable[0]|0x1                                        # I3C0
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI3cEnable[0]|0x0                                        # I3C0
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI3cEnable[1]|0x1                                        # I3C1
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshMsiInterrupt|0x1                                        # MSI Interrupts
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshPdtUnlock|0x0                                           # PDT Unlock Message
@@ -3323,6 +3335,14 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.ThcCustomizedSsdid[1]|0x7270               
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcCustomizedSsvid[0]|0x8086                                   # Customized SubSytem Vendor ID
 gStructPcdTokenSpaceGuid.PcdPchSetup.ThcCustomizedSsvid[1]|0x8086                                   # Customized SubSytem Vendor ID
 gStructPcdTokenSpaceGuid.PcdPchSetup.UnlockGpioPads|0x0                                            # Force unlock on all GPIO pads
+
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchTsnEnable[0]|0x0                                         # PCH TSN LAN Controller1
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchTsnEnable[1]|0x0                                         # PCH TSN LAN Controller2
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchTsnEnable[2]|0x0                                         # PCH TSN LAN Controller3
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchTsnEnable[3]|0x0                                         # PCH TSN LAN Controller4
+  gStructPcdTokenSpaceGuid.PcdPchSetup.TsnPcsEnabled|0x0                                           # Enable Timed TSN PCS
+  gStructPcdTokenSpaceGuid.PcdPchSetup.TsnMultiVcEnable|0x0                                        # PCH TSN Multi-Vc
+
 gStructPcdTokenSpaceGuid.PcdPlatformEraseVariable.PlatformEraseSimulation|0x0                      # Simulation Mode
 gStructPcdTokenSpaceGuid.PcdPlatformEraseVariable.SanitizeOrder|{0x03,0x04,0x02,0x01}              # Erase Method Priority
 gStructPcdTokenSpaceGuid.PcdSaSetup.BdatEnable|0x0                                                 # BDAT ACPI Table Support
@@ -3341,6 +3361,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DmaControlGuarantee|0x1                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnableMediaStandby|0x1                                         # MC6(Media Standby)
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnableRenderStandby|0x1                                        # RC6(Render Standby)
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnableVtd|0x1                                                  # VT-d
+gStructPcdTokenSpaceGuid.PcdSaSetup.GopConfigEnable|0x1                                            # GOP Config Driver Enable
 gStructPcdTokenSpaceGuid.PcdSaSetup.IgdDvmt50PreAlloc|0x2                                          # DVMT Pre-Allocated
 gStructPcdTokenSpaceGuid.PcdSaSetup.InternalGraphics|0x2                                           # Internal Graphics
 gStructPcdTokenSpaceGuid.PcdSaSetup.LpddrMemWriteLatencySet|0x1                                    # Lpddr Mem WL Set
@@ -3541,7 +3562,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.CMDDSEQ|0x0                                 
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMODTCA|0x0                                                  #           BIT7 - DIMM CA ODT Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.DDR5ODTTIMING|0x1                                              #           BIT8 - DDR5 ODT Timing Config
 gStructPcdTokenSpaceGuid.PcdSaSetup.DBI|0x0                                                        #           BIT9 - DBI
-gStructPcdTokenSpaceGuid.PcdSaSetup.DLLDCC|0x0                                                     #           BIT10 - DLL DCC Calibration
+gStructPcdTokenSpaceGuid.PcdSaSetup.DLLDCC|0x1                                                     #           BIT10 - DLL DCC Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DLLBWSEL|0x1                                                   #           BIT11 - DLL BW Select Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDVREFDC|0x0                                                   #           BIT12 - Read Vref Decap Training*
 gStructPcdTokenSpaceGuid.PcdSaSetup.VDDQT|0x0                                                      #           BIT13 - Vddq Training
@@ -3572,7 +3593,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DDRPRECOMP|0x0                              
 gStructPcdTokenSpaceGuid.PcdSaSetup.TLINECLKCAL|0x1                                                #           BIT13 - Tline Clk Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPISERIALCAL|0x0                                             #           BIT14 - DCC PI Serializer Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.PHASECLKCAL|0x0                                                #           BIT15 - DCC Phase Clk Calibration
-gStructPcdTokenSpaceGuid.PcdSaSetup.WCKPADDCCCAL|0x0                                               #           BIT16 - Wck Pad DCC Calibration
+gStructPcdTokenSpaceGuid.PcdSaSetup.WCKPADDCCCAL|0x1                                               #           BIT16 - Wck Pad DCC Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDCTLET|0x0                                                    #           BIT17 - Read CTLE Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDDQODTT|0x0                                                   #           BIT18 - Read DQ ODT Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.EMPHASIS|0x0                                                   #           BIT19 - Pre-Emphasis LP5 Training
@@ -3604,7 +3625,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.Disable2CycleBypass|0x0                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.OCSafeMode|0x1                                                 #           Bit 30 OverClocking Safe Mode
 gStructPcdTokenSpaceGuid.PcdSaSetup.SrefCfgIdleTmr|0x200                                           # Offset 68 SelfRefresh IdleTimer
 gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashMask|0x830                                               # Offset 70 Ch Hash Mask
-gStructPcdTokenSpaceGuid.PcdSaSetup.DdrFreqLimit|6400                                              # Offset 72 Maximum Memory Frequency
+gStructPcdTokenSpaceGuid.PcdSaSetup.DdrFreqLimit|0                                                 # Offset 72 Maximum Memory Frequency. 0 - Auto
 gStructPcdTokenSpaceGuid.PcdSaSetup.ThrtCkeMinTmr|0x0                                              # Offset 74 Throttler CKEMin Timer
 gStructPcdTokenSpaceGuid.PcdSaSetup.ThrtCkeMinTmrLpddr|0x0                                         # Offset 75 For LPDDR Only: Throttler CKEMin Timer
 gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvWpMask|0xf                                                 # Offset 76 SA GV Mask
@@ -3614,16 +3635,16 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.PowerDownMode|0xff                          
 gStructPcdTokenSpaceGuid.PcdSaSetup.PwdwnIdleCounter|0x0                                           # Offset 80 Pwr Down Idle Timer
 gStructPcdTokenSpaceGuid.PcdSaSetup.RMTLoopCount|0x0                                               # Offset 88 Rank Margin Tool Loop Count
 gStructPcdTokenSpaceGuid.PcdSaSetup.GearRatio|0x0                                                  # Offset 90 Gear Selection for SAGV Disabled. 0 - Auto, 2-Gear 2, 4-Gear 4
-gStructPcdTokenSpaceGuid.PcdSaSetup.DdrOneDpc|0x0                                                  # Offset 91 DDR_1DPC
+gStructPcdTokenSpaceGuid.PcdSaSetup.DdrOneDpc|0x3                                                  # Offset 91 DDR_1DPC
 gStructPcdTokenSpaceGuid.PcdSaSetup.VddqVoltageOverride|0x0                                        # Offset 92 Vddq Voltage Override
 gStructPcdTokenSpaceGuid.PcdSaSetup.VccIogVoltageOverride|0x0                                      # Offset 94 VccIog Voltage Override
 gStructPcdTokenSpaceGuid.PcdSaSetup.VccClkVoltageOverride|0x0                                      # Offset 96 VccClk Voltage Override
 gStructPcdTokenSpaceGuid.PcdSaSetup.LpddrRttWr|0x0                                                 # Offset 98 LPDDR ODT RttWr
 gStructPcdTokenSpaceGuid.PcdSaSetup.LpddrRttCa|0x0                                                 # Offset 99 LPDDR ODT RttCa
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[0]|0xC80                                              # Offset 100 First Point Frequency
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[1]|0xC80                                              # Offset 102 Second Point Frequency
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[2]|0x12C0                                             # Offset 104 Third Point Frequency
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[3]|0x1900                                             # Offset 106 Fourth Point Frequency
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[0]|0                                                  # Offset 100 First Point Frequency. 0 - Auto
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[1]|0                                                  # Offset 102 Second Point Frequency. 0 - Auto
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[2]|0                                                  # Offset 104 Third Point Frequency. 0 - Auto
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[3]|0                                                  # Offset 106 Fourth Point Frequency. 0 - Auto
 gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[0]|0x0                                                # Offset 108 First Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
 gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[1]|0x0                                                # Offset 109 Second Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
 gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[2]|0x0                                                # Offset 110 Third Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
@@ -3663,10 +3684,10 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DramRfmMode|0x4                             
 gStructPcdTokenSpaceGuid.PcdSaSetup.TargetedRowRefreshMode|0x2                                     # Offset 160 Row Hammer Mode: Targeted Row Refresh Mode
 gStructPcdTokenSpaceGuid.PcdSaSetup.DrfmBrc|0x2                                                    # Offset 161 Row Hammer: Directed Refresh Management Blast Radius Configuration
 gStructPcdTokenSpaceGuid.PcdSaSetup.SafeModeOverride|0xFF                                          # Offset 163 MRC Safe Mode Override
-gStructPcdTokenSpaceGuid.PcdSaSetup.DdrSafeMode|0x0                                                # Offset 164 DDR PHY Safe Mode Support
-gStructPcdTokenSpaceGuid.PcdSaSetup.McSafeMode|0x2                                                 # Offset 168 MC Safe Mode Support
-gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode|0x0                                                     # Offset 171 LpMode bit mask
-gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode4|0x0                                                    # Offset 172 LpMode4
+gStructPcdTokenSpaceGuid.PcdSaSetup.DdrSafeMode|0x4                                                # Offset 164 DDR PHY Safe Mode Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.McSafeMode|0x0                                                 # Offset 168 MC Safe Mode Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode|0x7                                                     # Offset 171 LpMode bit mask
+gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode4|0x1                                                    # Offset 172 LpMode4
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.tRFCpb|0x0                                                     # Offset 174 User defined Memory Timing tRFCpb value,  valid when SpdProfileSelected is CUSTOM_PROFILE
 gStructPcdTokenSpaceGuid.PcdSaSetup.tRFC2|0x0                                                      # Offset 176 User defined Memory Timing tRFC2 value,  valid when SpdProfileSelected is CUSTOM_PROFILE
@@ -4097,6 +4118,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.SkipHIIUpdate|0x1                             
 gStructPcdTokenSpaceGuid.PcdSetup.SkipObbHashVerification|0x2                                      # Skip OBB HASH Verify
 gStructPcdTokenSpaceGuid.PcdSetup.GbeFwUpdateEnable|0x1                                            # GBE Firmware Update Support
 gStructPcdTokenSpaceGuid.PcdSetup.StorageRtd3Support|0x1                                           # D3 Setting for Storage
+gStructPcdTokenSpaceGuid.PcdSetup.StorageDynamicLinkManagement|0x0                                 # StorageDynamicLinkManagement
 gStructPcdTokenSpaceGuid.PcdSetup.SysFwUpdateLoadDefault|0x0                                       # Restore Setup Default
 gStructPcdTokenSpaceGuid.PcdSetup.SysFwUpdateSkipPowerCheck|0x0                                    # Skip Power Check
 gStructPcdTokenSpaceGuid.PcdSetup.SystemTimeAndAlarmSource|0x0                                     # System Time and Alarm Source

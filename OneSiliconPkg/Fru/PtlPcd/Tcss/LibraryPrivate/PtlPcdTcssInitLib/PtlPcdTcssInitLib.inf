@@ -50,6 +50,7 @@ PeiSiSsidLib
 IpUsb3Lib
 PtlPcdTcssPmcLib
 RngLib
+PeiServicesLib
 
 [Packages]
 MdePkg/MdePkg.dec

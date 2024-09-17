@@ -37,6 +37,8 @@ UpdatePeiPchPolicyBoardConfig (
   IN SI_POLICY_PPI          *SiPolicyPpi
   )
 {
+
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   EFI_STATUS                         Status;
   PCH_GENERAL_CONFIG                 *PchGeneralConfig;
 
@@ -48,4 +50,8 @@ UpdatePeiPchPolicyBoardConfig (
   ASSERT_EFI_ERROR (Status);
 
   return Status;
+#else
+  return EFI_SUCCESS;
+#endif
+
 }

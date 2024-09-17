@@ -599,6 +599,12 @@ MrcGetMcConfigGroupLimits (
       Max = MC0_MAD_INTER_CHANNEL_DDR_TYPE_MAX;
       break;
 
+    case GsmMccCh0Size:
+    case GsmMccCh1Size:
+      Min = MC0_MAD_INTER_CHANNEL_CH_0_SIZE_MIN;
+      Max = MC0_MAD_INTER_CHANNEL_CH_0_SIZE_MAX;
+      break;
+
     case GsmMccWCKDiffLowInIdle:
       Min = MC0_CH0_CR_SC_GS_CFG_wckdifflowinidle_MIN;
       Max = MC0_CH0_CR_SC_GS_CFG_wckdifflowinidle_MAX;

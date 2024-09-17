@@ -36,6 +36,9 @@
 extern EFI_COMPONENT_NAME_PROTOCOL  mLpssUartDriverComponentName;
 
 GLOBAL_REMOVE_IF_UNREFERENCED UINT16 mLpssUartSupportedDeviceId [] = {
+  0x67A5,
+  0x67A6,
+  0x67D2,
   0x7F28,
   0x7F29,
   0x7F5C,

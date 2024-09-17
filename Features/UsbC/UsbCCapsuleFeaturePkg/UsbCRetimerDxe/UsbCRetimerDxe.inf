@@ -38,37 +38,25 @@
 [LibraryClasses]
   BaseLib
   DebugLib
+  PcdLib
   UefiDriverEntryPoint
-  UefiBootServicesTableLib
-  EcTcssLib
   Usb4DebugLib
   UsbcCapsuleDebugLib
 
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  EcFeaturePkg/EcFeaturePkg.dec
-  OneSiliconPkg/SiPkg.dec
   Usb4FeaturePkg/Usb4FeaturePkg.dec
   UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
 
 [Sources]
   UsbCRetimerDxe.c
-  TbtPdRetimerDevice.c
 
 [Protocols]
-  gUsbCRetimerProtocolGuid                      ## PRODUCE
   gEfiUsbCCapsuleDebugProtocolGuid              ## PRODUCES
 
-[Guids]
-  gEfiEventExitBootServicesGuid                 ## CONSUMES
-  gAllTbtRetimerDeviceGuid                      ## CONSUMES
-
 [Pcd]
-  #
-  # Retimer Device For Capsule Update Support
-  #
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber       ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleDebugLevel
 
 [Depex]
   TRUE

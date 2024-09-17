@@ -42,6 +42,65 @@
 #undef OR_POLICY
 #endif
 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+
+
+#define UPDATE_POLICY_V2(UpdField, ConfigField, Value)  UpdField = Value;
+#define COPY_POLICY_V2(UpdField, ConfigField, Value, Size)  CopyMem (UpdField, Value, Size);
+#define GET_POLICY_V2(UpdField, ConfigField, Value)  Value = UpdField;
+#define AND_POLICY_V2(UpdField, ConfigField, Value)  UpdField &= Value;
+#define OR_POLICY_V2(UpdField, ConfigField, Value)  UpdField |= Value;
+
+#define POLICY_DEBUG_WARNING_V2(UpdField, ConfigField, SetupField)  {\
+  DEBUG ((DEBUG_INFO, ""#UpdField"= 0x%x mismatch with "#SetupField"= 0x%x\n", UpdField, SetupField));\
+}
+
+#define COMPARE_AND_UPDATE_POLICY_V2(UpdField, ConfigField, Value) {\
+  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+}
+#define COMPARE_UPDATE_POLICY_ARRAY_V2(UpdField, ConfigField, Value, ArrayIndex) {\
+  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+}
+
+#else
+
+#define UPDATE_POLICY_V2(UpdField, ConfigField, Value)  ConfigField = Value;
+#define COPY_POLICY_V2(UpdField, ConfigField, Value, Size)  CopyMem (ConfigField, Value, Size);
+#define GET_POLICY_V2(UpdField, ConfigField, Value)  Value = ConfigField;
+#define AND_POLICY_V2(UpdField, ConfigField, Value)  ConfigField &= Value;
+#define OR_POLICY_V2(UpdField, ConfigField, Value)  ConfigField |= Value;
+
+#define POLICY_DEBUG_WARNING_V2(UpdField, ConfigField, SetupField)  {\
+  DEBUG ((DEBUG_INFO, ""#ConfigField"= 0x%x mismatch with "#SetupField"= 0x%x\n", ConfigField, SetupField));\
+}
+
+#if ((!defined(MDEPKG_NDEBUG)) && (FixedPcdGetBool(PcdPolicyDefaultChkEnable) == 1))
+#define COMPARE_AND_UPDATE_POLICY_V2(UpdField, ConfigField, Value) {\
+  if ((ConfigField != Value) && (IsPolicyDefaultCheckRequired())) {\
+    POLICY_DEBUG_WARNING_V2(UpdField, ConfigField, Value);\
+  }\
+  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+}
+
+#define COMPARE_UPDATE_POLICY_ARRAY_V2(UpdField, ConfigField, Value, ArrayIndex) {\
+  if ((ConfigField != Value) && (IsPolicyDefaultCheckRequired())) {\
+    POLICY_DEBUG_WARNING_V2(UpdField, ConfigField, Value);\
+    DEBUG ((DEBUG_INFO, "Index= 0x%x\n", ArrayIndex));\
+  }\
+  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+}
+
+#else
+#define COMPARE_AND_UPDATE_POLICY_V2(UpdField, ConfigField, Value) {\
+  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+}
+#define COMPARE_UPDATE_POLICY_ARRAY_V2(UpdField, ConfigField, Value, ArrayIndex) {\
+  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+}
+#endif
+
+#endif
+
 #define UPDATE_POLICY(ConfigField, Value)  ConfigField = Value;
 #define COPY_POLICY(ConfigField, Value, Size)  CopyMem (ConfigField, Value, Size);
 #define GET_POLICY(ConfigField, Value)  Value = ConfigField;
@@ -76,7 +135,5 @@
   UPDATE_POLICY(ConfigField, Value);\
 }
 #endif
-
-
 
 #endif //_POLICY_UPDATE_MACRO_H_

@@ -53,6 +53,7 @@ typedef struct {
 
 #define V_INTEL_VENDOR_ID   0x8086
 QUICKI2C_DEVICEIDS SupportedDeviceIds[] = {
+  {0x67C8, 0x67CA},
   {0xA848, 0xA84A},
   {0x7A50, 0x7A51},
   {0xE348, 0xE34A},

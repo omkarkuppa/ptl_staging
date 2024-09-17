@@ -26,7 +26,7 @@
 #define VMD_MAX_DEVICES   31
 #define MAX_OS_VISIBLE_BUSES_WITH_VMD       223  // OS visible range is 0-223. Bus range from 225 to 255 is reserved for VMD when it is enabled.
 #define MAX_OS_VISIBLE_BUS_LENGTH_WITH_VMD  224  // Buses 0 to 223
-#define VMD_DUMMY_DEVICE_ID                 (0x09AB) // Dummy Function DID
+#define VMD_DUMMY_DEVICE_ID                 (0xB07F) // Dummy Function DID
 
 //
 //VMD device will be assigned with (Segment/Bus/Device/Function) equals to (0/0/14/0)

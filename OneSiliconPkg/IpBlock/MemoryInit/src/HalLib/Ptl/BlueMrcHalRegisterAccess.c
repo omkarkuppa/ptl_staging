@@ -83,6 +83,8 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "WrLvlDelay",
   "TxDqsDelay",
   "TxDqDelay",
+  "CtlDrvVrefUp",
+  "CtlDrvVrefDn",
   "TxVref",
   "TxDqBitDelay",
   "TxDbiDelay",
@@ -208,6 +210,7 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmIocDqsPulseCnt",
   "GsmIocDqOverrideData",
   "GsmIocDqOverrideEn",
+  "GsmIocDqsOvrdToggle",
   "GsmIocRankOverrideEn",
   "GsmIocRankOverrideVal",
   "GsmIocDataDisableTxDqs",
@@ -215,6 +218,7 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmIocDataInvertNibble",
   "GsmIocEnableLpMode4",
   "GsmIocLpCtrlEn",
+  "GsmIocWrEnViewDrv",
   "GsmDataDccRankEn",
   "GsmDataDccLaneEn",
   "GsmClkDccRankEn",
@@ -374,6 +378,8 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccExtendedBankHash",
   "GsmMccBg0Hash",
   "GsmMccAddrDecodeDdrType",
+  "GsmMccCh0Size",
+  "GsmMccCh1Size",
   "GsmMccCpgcActive",
   "GsmMccInOrderIngress",
   "GsmMccSubch0SdramWidth",
@@ -706,11 +712,11 @@ GetSet (
   CHAR8         *p;
 
   Debug = &MrcData->Outputs.Debug;
+#endif // MRC_DEBUG_PRINT
 #ifdef MRC_DISABLE_CACHING
   Mode &= ~GSM_CACHE_ONLY;
   Mode |= GSM_READ_CSR;
-#endif
-#endif // MRC_DEBUG_PRINT
+#endif // MRC_DISABLE_CACHING
 
   ReadOnly = (Mode & GSM_READ_ONLY) == GSM_READ_ONLY;
   VolatileMask.Data = 0;
@@ -1885,6 +1891,8 @@ MrcCheckGroupSupported (
     case GsmMccSubch1SdramWidth:
     case GsmMccSubch1RankCnt:
     case GsmMccSubch1Density:
+    case GsmMccCh0Size:
+    case GsmMccCh1Size:
     case GsmMccEnableRefresh:
     case GsmMccSrState:
     case GsmMccForceSreWithFreqChange:
@@ -2721,7 +2729,7 @@ MrcTranslateSystemToIp (
       break;
 
       // DATA_SHARED
-      // DQ slave Instance |   LP5   | DDR NIL | DDR5 IL | RAL Name
+      // DQ HW Instance    |   LP5   | DDR NIL | DDR5 IL | RAL Name
       // ------------------|---------|---------|---------|----------
       //       DATA0       | CH0/CH1 |   CH0   | CH0/CH1 | ddrdata_shared0
       //       DATA1       | CH0/CH1 |   CH0   | CH0/CH1 | ddrdata_shared1

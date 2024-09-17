@@ -143,7 +143,7 @@ MrcEccClean (
     // Memory clean is not needed if none of the (Ibecc || EccEnabled || CleanMemory || TxtClean) bit is set
     // In WarmRest, only TxtClean needs to preform this EccClean function, not required for EccEnabled or CleanMemory
     return mrcSuccess;
-  } else if (Outputs->IsIbeccInitFsm) {
+  } else if (Outputs->IsIbeccInitFsm && (!TxtClean)) {
     // IBECC scrubbing is done using HW FSM
     return mrcSuccess;
   }
@@ -448,7 +448,7 @@ MrcAliasCheck (
           SdramAddressingCapacity *= DimmOut->Banks;
           SdramAddressingCapacity *= DimmOut->BankGroups;
           SdramAddressingCapacity *= DimmOut->SdramWidth;
-          if (IsLpddr) {
+          if (IsLpddr && !Outputs->IsLP5Camm2) {
             // SPD Density is per die, but SdramWidth is per LP4 channel, so need to multiple by number of channels per die
             SdramAddressingCapacity *= DimmOut->ChannelsPerSdramPackage;
           }

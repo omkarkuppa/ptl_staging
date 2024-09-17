@@ -119,6 +119,17 @@ MrcSetupDdrIoIpInfo (
   );
 
 /**
+  This function returns channel bit mask of the channels that hardware exists even though it may not be populated
+  @param[in] MrcData - Pointer to MRC global data.
+
+  @returns channel bit mask that exists in hardware.
+**/
+UINT8
+MrcGetValidHwChBitMask (
+  IN MrcParameters *const MrcData
+  );
+
+/**
   Get the max CMD Groups per channel associated with the current memory technology
 
   @param[in] MrcData  - Pointer to global MRC data.
@@ -161,26 +172,36 @@ MrcCalcIoChNotPopMask (
 
 
 /**
-  This function sets workpoint data including Qclk/PHClk ratio, Gear, and AuxClk ratio for PHY.
+  This function programs the WorkPoint CR, including enforcing any fuse limits to avoid HW from NACKing PLLLock Requests.
 
   @param[in, out] MrcData - MRC global data.
 
-  @retval MrcStatus - mrcSuccess if workpoint data is set correctly, otherwise an error status.
+  @retval MrcStatus - mrcSuccess if Workpoint CR is set correctly, otherwise mrcFail.
 **/
 MrcStatus
-SetWorkPointDataForPhy (
+MrcSetWorkpointCR (
   IN OUT MrcParameters *const MrcData
   );
 
 /**
-  This function calculates the WP2LCPLL value based on the data rate.
+  This function programs PHClkRatio, WP2LCPLL and LCPLLWPSel during LP5 frequency switch operation.
 
   @param[in, out] MrcData - MRC global data.
-
-  @return Returns WP2LCPLL value.
+  @param[in]      NewFreq - The new frequency to lock MC PLL.
 **/
-UINT8
-GetWP2LCPLL (
+VOID
+MrcProgramLCPLLKeysForFreqSwitch (
+  IN OUT MrcParameters *const MrcData,
+  IN  MrcFrequency            NewFreq
+  );
+
+/**
+  This function sets workpoint data including Qclk/PHClk ratio, Gear, and AuxClk ratio for PHY.
+
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+MrcSetWorkPointDataForPhy (
   IN OUT MrcParameters *const MrcData
   );
 
@@ -615,5 +636,17 @@ MrcGetPartition2ChMask (
   IN     UINT32             PartChannel
   );
 
+/**
+  Setup DQ override and enable/disable DQS continuous toggle mode.
+
+  @param[in, out] MrcData         - Include all MRC global data.
+  @param[in]      IsEnabled       - If set to TRUE, programs dq pins high and enables DQS continuous toggle mode.
+                                    If set to FALSE, disables DQ override and DQS continuous toggle mode.
+**/
+VOID
+MrcConfigureDqPins (
+  IN OUT MrcParameters *const   MrcData,
+  BOOLEAN                       IsEnabled
+ );
 
 #endif // _MrcDdrIoUtils_h_

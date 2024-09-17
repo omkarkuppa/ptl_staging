@@ -19,6 +19,7 @@
 **/
 
 
+#include "MrcCommon.h"
 #include "MrcDdrIoUtils.h"  // for prototypes
 #include "MrcDebugPrint.h"  // for MRC_DEBUG_MSG()
 #include "MrcHalApi.h"  // for MrcGetSetChStrb()
@@ -40,6 +41,16 @@ UINT8 AuxClkRef100[] = { 33,  33,  27,  28,  27,  30,  33,  28,  33,  32,  33,  
                         123, 124,  68, 126, 126, 128, 126, 129, 129};
 
 
+static const UINT8 HwChBitMasks[][MAX_MRC_DDR_TYPE] = {
+    [ipDerivativeWcl] = {
+      [MRC_DDR_TYPE_LPDDR5] = 0x0F,
+      [MRC_DDR_TYPE_DDR5]   = 0x03,
+    },
+    [ipDerivativePtl] = {
+      [MRC_DDR_TYPE_LPDDR5] = 0xFF,
+      [MRC_DDR_TYPE_DDR5]   = 0x0F,
+    },
+  };
 
 #define DQS_PARK_DIFF_LOW_WHEN_LPM0_NO_ODT_NO_DRVEN_TXANALOGEN   2
 
@@ -212,47 +223,45 @@ MrcSetupDdrIoIpInfo (
       Status  = mrcFail;
   }
 
-  switch (IpVersion->Bits.Segment) {
-    case IpSegmentDesktop:
-      Inputs->IsDdrIoDtHalo = TRUE;
-      IsIpSegmentS = TRUE;
-      switch (IpVersion->Bits.Stepping) {
-        default:
-        case ipStepA0:
-          Inputs->IsDdrIoDtA0 = TRUE;
-          StepStr = "A0";
-          break;
-      }
-      break;
+  if (Inputs->ExtInputs.Ptr->SimicsFlag && IpVersion->Bits.Derivative != ipDerivativeWcl) {
+    StepStr = "A0";
+    Inputs->IsDdrIoMbA0 = TRUE;
+    IpVersion->Bits.Derivative = ipDerivativePtl;
+  } else {
+    switch (IpVersion->Bits.Segment) {
+      case IpSegmentDesktop:
+        Inputs->IsDdrIoDtHalo = TRUE;
+        IsIpSegmentS = TRUE;
+        switch (IpVersion->Bits.Stepping) {
+          default:
+          case ipStepA0:
+            Inputs->IsDdrIoDtA0 = TRUE;
+            StepStr = "A0";
+            break;
+        }
+        break;
 
-    case IpSegmentMobile:
-      Inputs->IsDdrIoUlxUlt = TRUE;
-      switch (IpVersion->Bits.Stepping) {
-        case ipStepB0:
-          StepStr = "B0";
-          Inputs->IsDdrIoMbB0 = TRUE;
-          break;
+      case IpSegmentMobile:
+        Inputs->IsDdrIoUlxUlt = TRUE;
+        switch (IpVersion->Bits.Stepping) {
+          case ipStepB0:
+            StepStr = "B0";
+            Inputs->IsDdrIoMbB0 = TRUE;
+            break;
 
-        default:
-        case ipStepA0:
-          StepStr = "A0";
-          Inputs->IsDdrIoMbA0 = TRUE;
-          break;
-      }
-      break;
+          default:
+          case ipStepA0:
+            StepStr = "A0";
+            Inputs->IsDdrIoMbA0 = TRUE;
+            break;
+        }
+        break;
 
-    default:
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "\n%s DDRIO IP: %s\n", gWarnString, gMrcIpSegmentStr);
-      if (Inputs->ExtInputs.Ptr->SimicsFlag)
-      {
-        StepStr = "A0";
-        Inputs->IsDdrIoMbA0 = TRUE;
-      }
-      else
-      {
+      default:
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "\n%s DDRIO IP: %s\n", gWarnString, gMrcIpSegmentStr);
         Status  = mrcFail;
-      }
-      break;
+        break;
+    }
   }
 
   if (IpVersion->Bits.Derivative == ipDerivativeWcl) {
@@ -276,14 +285,27 @@ MrcSetupDdrIoIpInfo (
 }
 
 /**
-  This function sets workpoint data including Qclk ratio, Gear, and AuxClk ratio
+  This function programs the WorkPoint CR, including enforcing any fuse limits to avoid HW from NACKing PLLLock Requests.
 
   @param[in, out] MrcData - MRC global data.
 
-  @retval MrcStatus - mrcSuccess if workpoint data is set correctly, otherwise an error status.
+  @retval MrcStatus - mrcSuccess if Workpoint CR is set correctly, otherwise mrcFail.
 **/
 MrcStatus
-SetWorkPointDataForPhy (
+MrcSetWorkpointCR (
+  IN OUT MrcParameters *const MrcData
+  )
+{
+  return mrcSuccess;
+}
+
+/**
+  This function sets workpoint data including Qclk ratio, Gear, and AuxClk ratio
+
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+MrcSetWorkPointDataForPhy (
   IN OUT MrcParameters *const MrcData
   )
 {
@@ -310,25 +332,7 @@ SetWorkPointDataForPhy (
   MrcGetSetFreqIndex (MrcData, SaGvPoint, GsmWorkPointGear4, WriteToCache | PrintValue, &GetSetVal);
 
   MrcFlushRegisterCachedData (MrcData);
-
-  return mrcSuccess;
 }
-
-/**
-  This function calculates the WP2LCPLL value based on the data rate.
-
-  @param[in, out] MrcData - MRC global data.
-
-  @return Returns WP2LCPLL value.
-**/
-UINT8
-GetWP2LCPLL (
-  IN OUT MrcParameters *const MrcData
-  )
-{
-  return MRC_UINT8_MAX;
-}
-
 
 /**
   This function calculates the AuxClkRatio based on QClkRatio.
@@ -384,6 +388,9 @@ MrcBlockTrainResetToggle (
   Value = (BlockTrainReset) ? 1 : 0;
 
   for (Index = 0; Index < (MAX_SYS_CHANNEL / MRC_NUM_PAR_PER_SHARED); Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_REG, DDRCCC_SHARED1_CR_DDRCRCCCPINCONTROLS_REG, Index);
     CccPinControls.Data = MrcReadCR (MrcData, Offset);
     if (CccPinControls.Bits.BlockTrainRst == Value) {
@@ -699,12 +706,18 @@ ToggleDllReset (
 
   // Issue DLL Reset
   for (Index = 0; Index < MRC_CCC_SHARED_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRTXDLLCONTROL1_REG, DDRCCC_SHARED1_CR_DDRCRTXDLLCONTROL1_REG, Index);
     CccTxDllControl1.Data = MrcReadCR (MrcData, Offset);
     CccTxDllControl1.Bits.ForceDLLReset = Value;
     MrcWriteCR (MrcData, Offset, CccTxDllControl1.Data);
   }
   for (Index = 0; Index < MRC_DATA_SHARED_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRTXDLLCONTROL1_REG, DDRDATA_SHARED1_CR_DDRCRTXDLLCONTROL1_REG, Index);
     DataTxDllControl1.Data = MrcReadCR (MrcData, Offset);
     DataTxDllControl1.Bits.ForceDLLReset = Value;
@@ -741,6 +754,9 @@ ResetVctlInit (
   DdrFrequency = Outputs->Frequency;
 
   for (DataIdx = 0; DataIdx < MRC_DATA_MOBILE_NUM; DataIdx++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, DataIdx, MRC_IGNORE_ARG))) {
+      continue;
+    }
     for (ChIdx = 0; ChIdx < MRC_DATA_CH_NUM; ChIdx++) {
       Offset = MrcGetDataOffset (MrcData, DATA0CH0_CR_DDRCRDLLCONTROL0_REG, MRC_IGNORE_ARG, ChIdx, DataIdx);
       DllControl0.Data = MrcReadCR (MrcData, Offset);
@@ -754,6 +770,9 @@ ResetVctlInit (
   }
 
   for (Index = 0; Index < MRC_CCC_SHARED_MOBILE_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRTXDLLCONTROL0_REG, DDRCCC_SHARED1_CR_DDRCRTXDLLCONTROL0_REG, Index);
     DdrCccTxDllControl0.Data = MrcReadCR (MrcData, Offset);
     DdrCccTxDllControl0.Bits.VctlInit = (DdrFrequency < f3200) ? 0 : ((DdrFrequency < f3600) ? 1 : ((DdrFrequency < f4400) ? 2 : 3));
@@ -809,6 +828,9 @@ ToggleDllDacCodeFreeze (
   ToggleRxDllDacCodeFreeze (MrcData, Value);
 
   for (Index = 0; Index < MRC_DATA_MOBILE_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRTXDLLCONTROL0_REG, DDRDATA_SHARED1_CR_DDRCRTXDLLCONTROL0_REG, Index);
     TxDllControl0.Data = MrcReadCR (MrcData, Offset);
     TxDllControl0.Bits.DllDacCodeFreeze = Value;
@@ -816,6 +838,9 @@ ToggleDllDacCodeFreeze (
   }
 
   for (Index = 0; Index < MRC_CCC_SHARED_MOBILE_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRTXDLLCONTROL0_REG, DDRCCC_SHARED1_CR_DDRCRTXDLLCONTROL0_REG, Index);
     DdrCccTxDllControl0.Data = MrcReadCR (MrcData, Offset);
     DdrCccTxDllControl0.Bits.DllDacCodeFreeze = Value;
@@ -1121,6 +1146,9 @@ MrcDdrIoResetRefPiFsmCtl (
 
   // CCC Partitions
   for (Index = 0; Index < MRC_CCC_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionCcc, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     Offset = OFFSET_CALC_CH (CH0CCC_CR_REFPIFSMCONTROL_REG, CH1CCC_CR_REFPIFSMCONTROL_REG, Index);
     RefPiFsmCtrl.Data = MrcDdrIoInitRefPiFsmCtl (MrcData, FsmStage, Offset, (Index==0 ? MRC_PRINT_CURRENT_TASK : MRC_SKIP_PRINT));
     MrcWriteCR (MrcData, Offset, RefPiFsmCtrl.Data);
@@ -1128,6 +1156,9 @@ MrcDdrIoResetRefPiFsmCtl (
 
   // DATA Partitions
   for (DataIdx = 0; DataIdx < DataMax; DataIdx++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, DataIdx, MRC_IGNORE_ARG))) {
+      continue;
+    }
     for (ChIdx = 0; ChIdx < MRC_DATA_CH_NUM; ChIdx++) {
       Offset = MrcGetDataOffset (MrcData, DATA0CH0_CR_REFPIFSMCONTROL_REG, MRC_IGNORE_ARG, ChIdx, DataIdx);
       RefPiFsmCtrl.Data = MrcDdrIoInitRefPiFsmCtl (MrcData, FsmStage, Offset, (DataIdx==0 ? MRC_PRINT_CURRENT_TASK : MRC_SKIP_PRINT));
@@ -1416,4 +1447,55 @@ MrcGetTxDqFifoDelay(
   }
   *tCWL4TxDqFifoWrEn += *tCWL4TxDqFifoWrEn % 2;
   *tCWL4TxDqFifoRdEn += Inputs->ExtInputs.Ptr->CccPinsInterleaved ? DdrioChDeltaCccIL[Index] : DdrioChDelta[Index];
+}
+
+/**
+  This function returns channel bit mask of the channels that hardware exists even though it may not be populated.
+
+  @param[in] MrcData - Pointer to MRC global data.
+
+  @returns channel bit mask that exists in hardware.
+**/
+UINT8
+MrcGetValidHwChBitMask (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput *Outputs = &MrcData->Outputs;
+  MrcIpDerivative IpDerivative = MrcData->Inputs.DdrIoIpVersion.Bits.Derivative;
+  MrcDdrType DdrType = Outputs->DdrType;
+
+  MRC_DEBUG_ASSERT (DdrType == MRC_DDR_TYPE_DDR5 || DdrType == MRC_DDR_TYPE_LPDDR5,
+                    &Outputs->Debug,
+                    "Invalid DdrType (%d) which is not supported\n", DdrType);
+  MRC_DEBUG_ASSERT (IpDerivative == ipDerivativeWcl || IpDerivative == ipDerivativePtl,
+                    &Outputs->Debug,
+                    "Invalid DdrioIpDerivative (%d) which is not supported\n", IpDerivative);
+
+  return HwChBitMasks[IpDerivative][DdrType];
+}
+
+/**
+  Setup DQ override.
+
+  @param[in, out] MrcData         - Include all MRC global data.
+  @param[in]      IsEnabled       - If set to TRUE, programs dq pins high.
+                                    If set to FALSE, disables DQ override.
+**/
+VOID
+MrcConfigureDqPins (
+  IN OUT MrcParameters *const   MrcData,
+  BOOLEAN                       IsEnabled
+  )
+{
+  INT64   GetSetVal;
+
+  if (IsEnabled) {
+    GetSetVal = 0xFF;
+  } else {
+    GetSetVal = 0x0;
+  }
+
+  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDqOverrideData, WriteCached, &GetSetVal);
+  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDqOverrideEn,   WriteCached, &GetSetVal);
 }

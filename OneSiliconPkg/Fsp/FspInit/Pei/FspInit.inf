@@ -66,6 +66,7 @@
   PeimEntryPoint
   CpuPowerManagementPolicyLib
   MmPciLib
+  PeiPolicyUpdateLib
   FspCommonLib
   SiPolicyLib
   SmbusLib
@@ -85,7 +86,6 @@
   gMePeiConfigGuid                             ## CONSUMES
   gEdkiiS3SmmInitDoneGuid                      ## PRODUCES
   gIGpuDataHobGuid                             ## CONSUMES
-  gSiliconPolicyHobGuid                        ## CONSUMES
 
 [Protocols]
   gEfiPciEnumerationCompleteProtocolGuid       ## CONSUMES

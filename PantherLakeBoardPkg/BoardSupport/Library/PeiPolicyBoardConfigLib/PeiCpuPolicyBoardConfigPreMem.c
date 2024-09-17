@@ -25,6 +25,7 @@
 #include <TxtConfig.h>
 #include <PolicyUpdateMacro.h>
 #include <IndustryStandard/FirmwareInterfaceTable.h>
+#include <FspmUpd.h>
 
 #define TXT_SINIT_MEMORY_SIZE  0x50000
 #define TXT_HEAP_MEMORY_SIZE   0xF0000
@@ -210,15 +211,22 @@ UpdatePeiCpuPolicyBoardConfigPreMem (
   UINT32                          *BiosAcmBase;
   CPUID_VERSION_INFO_ECX          Ecx;
   UINT32                          TxtCapableChipset;
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspmUpd;
+#else
   TXT_PREMEM_CONFIG               *TxtPreMemConfig;
   CPU_SECURITY_PREMEM_CONFIG      *CpuSecurityPreMemConfig;
+#endif
 
   DEBUG ((DEBUG_INFO, "Updating CPU Policy by board config in Pre-Mem\n"));
-
   BiosAcmBase = NULL;
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+  ASSERT (FspmUpd != NULL);
+#else
   TxtPreMemConfig      = NULL;
   CpuSecurityPreMemConfig = NULL;
-
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTxtPreMemConfigGuid, (VOID *) &TxtPreMemConfig);
   ASSERT_EFI_ERROR(Status);
 
@@ -226,18 +234,20 @@ UpdatePeiCpuPolicyBoardConfigPreMem (
   ASSERT_EFI_ERROR(Status);
 
   CpuSecurityPreMemConfig->TxtAcheckRequest = GetTxtAliasCheckAndReset () & 1;
+  CpuSecurityPreMemConfig->TxtPowerdownRequest = GetTxtPowerdownRequest () & 1;
+#endif // FspMode check
 
   AsmCpuid (CPUID_VERSION_INFO, NULL, NULL, &Ecx.Uint32, NULL);
   TxtCapableChipset = CheckSmxCapabilities ();
 
   Status = FindBiosAcmFromFit (&BiosAcmBase);
   if (!EFI_ERROR (Status)) {
-    UPDATE_POLICY (TxtPreMemConfig->BiosAcmBase,   (UINTN) BiosAcmBase);
-    UPDATE_POLICY (CpuSecurityPreMemConfig->BiosSize, (UINT16) RShiftU64 (FixedPcdGet32 (PcdBiosSize), 10));
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosAcmBase, TxtPreMemConfig->BiosAcmBase, (UINTN) BiosAcmBase);
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosSize, CpuSecurityPreMemConfig->BiosSize, (UINT16) RShiftU64 (FixedPcdGet32 (PcdBiosSize), 10));
   }
   if ((Ecx.Bits.SMX == 1) && (TxtCapableChipset & BIT0)) {
-    UPDATE_POLICY (TxtPreMemConfig->SinitMemorySize, TXT_SINIT_MEMORY_SIZE);
-    UPDATE_POLICY (TxtPreMemConfig->TxtHeapMemorySize, TXT_HEAP_MEMORY_SIZE);
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SinitMemorySize, TxtPreMemConfig->SinitMemorySize, TXT_SINIT_MEMORY_SIZE);
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TxtHeapMemorySize, TxtPreMemConfig->TxtHeapMemorySize, TXT_HEAP_MEMORY_SIZE);
   }
   return EFI_SUCCESS;
 }

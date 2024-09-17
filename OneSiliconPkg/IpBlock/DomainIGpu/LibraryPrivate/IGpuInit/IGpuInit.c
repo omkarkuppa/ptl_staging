@@ -490,9 +490,13 @@ CreateIGpuDataHob (
   DEBUG ((DEBUG_INFO, "IGpuDataHob->EfiHobGuidType.Name: %g\n", &IGpuDataHob->EfiHobGuidType.Name));
   ZeroMem (&(IGpuDataHob->FlatCcsBaseAddr), sizeof (IGPU_DATA_HOB) - sizeof (EFI_HOB_GUID_TYPE));
 
+  IGpuDataHob->PrimaryDisplayDetection = DISPLAY_IGD;
+
   DEBUG ((DEBUG_INFO, "IGpuDataHob @ %X\n", IGpuDataHob));
   DEBUG ((DEBUG_INFO, "IGpuDataHobSize - HobHeader: %X\n", sizeof (IGPU_DATA_HOB) - sizeof (EFI_HOB_GUID_TYPE)));
   DEBUG ((DEBUG_INFO, "IGpuDataHobSize: %X\n", sizeof (IGPU_DATA_HOB)));
+  DEBUG ((DEBUG_INFO, "PrimaryDisplayDetection: 0x%x\n", IGpuDataHob->PrimaryDisplayDetection));
+
 
   DEBUG ((DEBUG_INFO, "IGPU HOBs installed\n"));
 

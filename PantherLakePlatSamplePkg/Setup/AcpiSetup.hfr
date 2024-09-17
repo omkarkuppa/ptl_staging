@@ -156,6 +156,13 @@ form formid = AUTO_ID(ACPI_FORM_ID),
       endif;
     endoneof;
 
+    oneof varid   = SETUP_DATA.StorageDynamicLinkManagement,
+      prompt      = STRING_TOKEN(STR_DLRM_STORAGE),
+      help        = STRING_TOKEN(STR_DLRM_STORAGE_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
   grayoutif ideqval SETUP_VOLATILE_DATA.IsS3Supported == 0;
     oneof varid   = SETUP_DATA.LowPowerS0Idle,
       questionid  = KEY_LOW_POWER_S0_IDLE,

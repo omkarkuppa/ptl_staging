@@ -437,7 +437,9 @@ if [ "$PTL_BUILD" = "TRUE" ]; then
 fi
 
 
-if [ -d $BUILD_X64/$PLATFORM_SI_PACKAGE/Pch ]; then
+# ---Create ROM images---
+if [ -f $WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Tools/InternalOnly/RomImage/SetupRomDirs.sh ]; then
   . $WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Tools/InternalOnly/RomImage/SetupRomDirs.sh
-  #@todo: BuildBGUP.bat
+else
+  . $WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Tools/ToolScripts/RomImage/SetupRomDirs.sh
 fi

@@ -27,6 +27,7 @@
 #include <MemoryConfig.h>
 #include <TcssInfo.h>
 #include <PlatformOpenBoardConfig.h>
+#include <TbtMailBoxCmdDefinition.h>
 
 //
 // VendorGuid: {89ED4FC1-4234-47BC-9081-7A6510A5E8A9}
@@ -206,10 +207,19 @@
 #define DMA_PORT2        1
 
 //
+// Port# on dTBT NHI controller
+//
+#define NHI_PORTA        0
+#define NHI_PORTB        1
+
+//
 // PCIe Root Port Type for dTBT
 //
-#define PCH_RP           1
-#define CPU_RP           2
+#define PCH_RP           0
+#define CPU_RP           1
+
+#define MPS_128          PCIE2TBT_MAX_PAYLOAD_SIZE_DATA_128
+#define MPS_256          PCIE2TBT_MAX_PAYLOAD_SIZE_DATA_256
 
 //
 // PCIe Root Port# for dTBT
@@ -514,7 +524,7 @@ typedef struct {
   UINT32 DmaPortNum            : 1;
   /**
   PCIe Root Port Type for dTBT
-  0 - Unsupported, 1 - PCH, 2 - CPU
+  0 - PCH, 1 - CPU
   **/
   UINT32 PcieRootPortType      : 1;
   /**

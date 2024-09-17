@@ -253,8 +253,13 @@ cd %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%
 @rem Create Simics image
 @rem
 @set PLATFORM_BIN_PACKAGE=PantherLakeBinPkg
-@set IFWI_PATCHER=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\IfwiPatcher\IfwiPatcher.py
-@set IFWI_BIN=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\PreSiIfwi\PTL_P_IFWI.bin
+if exist %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\IfwiPatcher\IfwiPatcher.py (
+  @set IFWI_PATCHER=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\IfwiPatcher\IfwiPatcher.py
+  @set IFWI_BIN=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\PreSiIfwi\PTL_P_IFWI.bin
+) else (
+  @set IFWI_PATCHER=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\SimicsImage\IfwiPatcher\IfwiPatcher.py
+  @set IFWI_BIN=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\SimicsImage\PreSiIfwi\PTL_P_IFWI.bin
+)
 @set OUTPUT_SIMICS_BIN=%WORKSPACE%\RomImages\PantherLakeOpenBoardSimics\IFWI_%BIOS_BUILD_TAG%_Simics.bin
 @if exist %IFWI_PATCHER% (
   @REM

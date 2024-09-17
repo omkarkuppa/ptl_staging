@@ -38,8 +38,11 @@ FvAdvanced
 
 ## Libraries
 
-   FmpDeviceLibTbtRetimer - Library instance to support UsbC Retimer Capsule update
-   TbtNvmRetimerUpdateLib - Library serves FmpDeviceLibTbtRetimer to update Retimer NVM.
+   FmpDeviceLibTbtRetimer  - Library instance to support UsbC Retimer Capsule update
+   FmpDeviceLibDiscreteTbt - Library instance to support Discrete TBT update
+   TbtNvmRetimerUpdateLib  - Library serves FmpDeviceLibTbtRetimer to update Retimer NVM.
+   UsbcCapsuleDebugLib     - Library support retimer diagnostic tool in release BIOS.
+
 
 ## Key Functions
 
@@ -47,19 +50,32 @@ gUsbCRetimerProtocolGuid - Platform need to install this protocol interface to d
                            FwUpdate mode for supporting Retimer FW update.
 
 //
-// Interface structure for the TBT retimer Protocol
+// Interface structure for the UsbC retimer Protocol
 //
 struct _UsbC_RETIMER_PROTOCOL {
-  UsbC_RETIMER_INFO                   GetRetimerInfo;   ///< Get UsbC Retimer Device info
-  FW_UPDATE_MODE_ENTRY                Drive;            ///< Drive UsbC retimer device into FW Update mode.
-  FW_UPDATE_MODE_EXIT                 Restore;          ///< Restore UsbC retimer device into original mode.
+  GET_PD_CONTROLLER_MODE   GetPdControllerMode;   ///  Get PD controller Fw Update Mode.
+  SET_PD_CONTROLLER_MODE   SetPdControllerMode;   ///  Set PD controller Fw Update Mode.
+  CONTROL_RETIMER_FP_GPIO  RetimerFP;             ///  Control Retimer FP GPIO
+};
+
+gEfiUsbCCapsuleDebugProtocolGuid          - Support retimer diagnostic tool in release BIOS
+
+gUsbCCapsuleDebugProgressCodeProtocolGuid - Show UsbCCapsuleFeaturePkg related progress code.
+                                            The detail of status code format define in UsbCProgressCodeProtocol.h
+
+struct _USBC_PROGRESS_CODE_PROTOCOL {
+  SHOW_PROGRESS_CODE  ShowProgressCode;  ///  Show Capsule Debug Progress Code
 };
 
 
 ## Configuration
 
 PcdUsbCPdNumber - Platform should configure the number of PD based on its board. layout.
-
+PcdUsbCRetimerFlashNumber - The number of retimer flash part from the configuration table
+PcdUsbCCapabilityParsingTimeDelay - Time delay to handle TBT controller responding after first read register attempt
+PcdTcssWaitRetimerDeviceReady - Time delay to make sure retimer is ready for communication after Drive to TBT mode.
+PcdUsbCRetimerConfigTable - The table of retimer addresses configuration
+PcdUsbCCapsuleDebugLevel - To determine what level of debug message needs to be stored via gEfiUsbCCapsuleDebugProtocolGuid
 
 ## Data Flows
 Architecturally defined data structures and flows for the feature.
@@ -70,7 +86,7 @@ Architecturally defined data structures and flows for the feature.
 No special tools are required to build this feature.
 
 ## Capsule Files Build Flows
-Please refer to the ReadMe.txt under CapsuleBuild directory.
+Please refer to the ReadMe.txt under UsbCCapsuleFileBuildSample directory.
 
 ## Test Point Results
 The FMP devices with below GUID will be installed and observed in ESRT table:
@@ -78,7 +94,7 @@ The FMP devices with below GUID will be installed and observed in ESRT table:
   DEFINE FMP_CLIENT_PLATFORM_DISCRETE_TBT         = 86A885EE-D71E-2ED6-0FC1-9D6CCC9677EB
 
 ## Functional Exit Criteria
-Capsule update is triggered successfuly and the version and status is correctly reported in ESRT.
+Capsule update is triggered successfully and the version and status is correctly reported in ESRT.
 
 ## Feature Enabling Checklist
 1. Retimer Capsule update:
@@ -86,7 +102,7 @@ Capsule update is triggered successfuly and the version and status is correctly 
 
 ## Performance Impact
 Minor impact. Most could happen in FmpDeviceGetVersion() to get FW version since it's invoked every POST.
-If in the future Retimer FW version is read from Retimer FW during every POST, needs to reevalute performance impact.
+If in the future Retimer FW version is read from Retimer FW during every POST, needs to reevaluate performance impact.
 
 ## Common Optimizations
 Common size or performance tuning options for this feature.

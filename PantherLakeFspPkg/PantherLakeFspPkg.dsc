@@ -95,6 +95,9 @@
 #
   PeiServicesTablePointerLib|MdePkg/Library/PeiServicesTablePointerLibIdt/PeiServicesTablePointerLibIdt.inf
   PeiServicesLib|MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
+  PeiPolicyUpdatePreMemLib|$(FSP_PACKAGE)/Library/PeiPolicyUpdatePreMemLib/PeiPolicyUpdatePreMemLib.inf
+  PeiPolicyUpdateLib|$(FSP_PACKAGE)/Library/PeiPolicyUpdateLib/PeiPolicyUpdateLib.inf
+
 #
 # Generic Modules
 #
@@ -554,7 +557,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
       NULL|$(PLATFORM_SI_PACKAGE)/Library/BasePlatformFspMultiPhaseLib/BasePlatformFspMultiPhaseLib.inf
     <PcdsFixedAtBuild>
       gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer|FALSE
-      gIntelFsp2PkgTokenSpaceGuid.PcdMultiPhaseNumberOfPhases|1
+      gIntelFsp2PkgTokenSpaceGuid.PcdMultiPhaseNumberOfPhases|0
   }
   IntelFsp2Pkg/FspSecCore/Fsp24SecCoreS.inf {
     <LibraryClasses>

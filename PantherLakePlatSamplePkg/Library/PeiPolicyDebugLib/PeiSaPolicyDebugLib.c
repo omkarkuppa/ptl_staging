@@ -28,6 +28,7 @@
 #include <Platform.h>
 #include <Library/PchInfoLib.h>
 #include <PolicyUpdateMacro.h>
+#include <FspmUpd.h>
 
 /**
   This function performs SA PEI Debug PreMem Policy initialization.
@@ -47,15 +48,23 @@ UpdatePeiSaPolicyDebugPreMem (
   EFI_PEI_READ_ONLY_VARIABLE2_PPI *VariableServices;
   SA_SETUP                        SaSetup;
   UINTN                           VarSize;
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspmUpd;
+#else
   IGPU_PEI_PREMEM_CONFIG          *IGpuPreMemConfig;
+#endif
 
   DEBUG ((DEBUG_INFO, "Update PeiSaPolicyDebug Pre-Mem Start\n"));
 
-  IGpuPreMemConfig      = NULL;
-
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+  ASSERT (FspmUpd != NULL);
+#else
+  IGpuPreMemConfig = NULL;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
   ASSERT_EFI_ERROR (Status);
-
+#endif
   //
   // Locate system configuration variable
   //
@@ -84,12 +93,16 @@ UpdatePeiSaPolicyDebugPreMem (
     //
     // Initialize the Graphics configuration
     //
-    UPDATE_POLICY (IGpuPreMemConfig->PanelPowerEnable, SaSetup.PanelPowerEnable);
+    UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PanelPowerEnable, IGpuPreMemConfig->PanelPowerEnable, SaSetup.PanelPowerEnable);
     //
     // Disable PanelPowerEnable if there is eDP present on DDI-A & B.
     //
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+    if ((((FSPM_UPD *)FspmUpd)->FspmConfig.DdiPortAConfig != DdiPortEdp) && (((FSPM_UPD *)FspmUpd)->FspmConfig.DdiPortBConfig!= DdiPortEdp)) {
+#else
     if ((IGpuPreMemConfig->DdiConfiguration.DdiPortAConfig != DdiPortEdp) && (IGpuPreMemConfig->DdiConfiguration.DdiPortBConfig != DdiPortEdp)) {
-      UPDATE_POLICY (IGpuPreMemConfig->PanelPowerEnable, 0x0);
+#endif
+      UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PanelPowerEnable, IGpuPreMemConfig->PanelPowerEnable, 0x0);
     }
   }
 

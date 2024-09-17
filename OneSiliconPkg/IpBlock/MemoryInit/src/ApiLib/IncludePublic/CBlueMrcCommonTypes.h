@@ -59,6 +59,8 @@ typedef enum {
   WrLvlDelay,                   ///< Linear delay (PI ticks), where the positive increment moves both the TX DQS and TX DQ signals later in time relative to all other bus signals.
   TxDqsDelay,                   ///< Linear delay (PI ticks), where the positive increment moves the TX DQS strobe later in time relative to all other bus signals.
   TxDqDelay,                    ///< Linear delay (PI ticks), where the positive increment moves the TX DQ byte/nibble/bitlane later in time relative to all other bus signals.
+  CtlDrvVrefUp,
+  CtlDrvVrefDn,
   TxVref,                       ///< Linear increment (Vref ticks), where the positive increment moves the byte/nibble/bitlane TX Vref to a higher voltage. (Assuming this will abstract away from the range specifics for DDR4, for example.)
   TxDqBitDelay,                 ///< Linear delay (PI ticks), where the positive increment moves the TX DQ bitlane later in time relative to all other bus signals.
   TxDbiDelay,                   ///< Linear delay (PI ticks), where the positive increment moves the TX DBI bitlane later in time relative to all other bus signals.
@@ -184,6 +186,7 @@ typedef enum {
   GsmIocDqsPulseCnt,                ///< Controls the number of unmasked DQS pulses sent by the DDR IO during CMD VREF update in LP4 CBT
   GsmIocDqOverrideData,             ///< DQ value override to latch CMD VREF to the DRAM during LP4 CBT. This field is used to drive DQ7 High during LP5 ECT.
   GsmIocDqOverrideEn,               ///< Enables the DDR IO to force static DQ value to latch CMD VREF to the DRAM during LP4 CBT. This field is used to drive DQ7 High during LP5 ECT.
+  GsmIocDqsOvrdToggle,
   GsmIocRankOverrideEn,             ///< Configures the DDRIO to override the delay values used for the target rank.
   GsmIocRankOverrideVal,            ///< Specified which rank to pull the delay values from.
   GsmIocDataDisableTxDqs,
@@ -191,6 +194,7 @@ typedef enum {
   GsmIocDataInvertNibble,
   GsmIocEnableLpMode4,
   GsmIocLpCtrlEn,
+  GsmIocWrEnViewDrv,
   GsmDataDccRankEn,
   GsmDataDccLaneEn,
   GsmClkDccRankEn,
@@ -350,6 +354,8 @@ typedef enum {
   GsmMccExtendedBankHash,
   GsmMccBg0Hash,
   GsmMccAddrDecodeDdrType,
+  GsmMccCh0Size,
+  GsmMccCh1Size,
   GsmMccCpgcActive,
   GsmMccInOrderIngress,
   GsmMccSubch0SdramWidth,         ///< This field defines the L DIMM device width: x4, x8, x16, x32, x64

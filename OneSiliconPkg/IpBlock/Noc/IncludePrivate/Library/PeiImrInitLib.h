@@ -100,7 +100,8 @@ typedef enum {
   IMR_1M_CCS,          // 7
   IMR_1M_DPR,          // 8
   IMR_1M_TSEG,         // 9
-  IMR_MAX              // 10
+  IMR_1M_IMR11,        // 10
+  IMR_MAX              // 11
 } IMR_ID;
 
 //

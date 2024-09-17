@@ -23,6 +23,22 @@
 #define _MrcHalCore_h_
 
 #include "MrcHalRegisterAccess.h"
+#include "MrcCommon.h"
+
+/**
+  This function gets block partition index range for the specified partition type and index.
+  If index is multicast then the range is for all instances of the partition.
+
+  @param[in] PartitionType - The partition type.
+  @param[in] Index         - The partition index.
+
+  @returns The partition index range.
+**/
+MRC_RANGE
+MrcGetPartitionIndexRange (
+  IN const PARTITION_TYPE PartitionType,
+  IN const UINT32         Index
+  );
 
 /**
   This function will determine if the group access is signed or unsigned and take care of sign extension.

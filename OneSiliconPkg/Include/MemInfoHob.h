@@ -36,8 +36,7 @@ extern EFI_GUID gSiMemoryPlatformDataGuid;
 #define MAX_DDR5_CH     2
 #define MAX_DIMM        2
 
-#include <Ptl/MrcGlobalDefinitions.h>
-
+#include <MrcGlobalDefinitions.h>
 
 // Must match definitions in
 // Intel\OneSiliconPkg\IpBlock\MemoryInit\Mtl\Include\MrcInterface.h
@@ -227,6 +226,7 @@ typedef struct {
   UINT8            MdSocket;                ///< MdSocket: 0 = Memory Down, 1 = Socketed. Needed for SMBIOS structure creation.
   UINT8            Banks;                   ///< Number of banks the DIMM contains.
   UINT8            BankGroups;              ///< Number of bank groups the DIMM contains.
+  UINT8            DeviceDensity;           ///< Device Density in Gb
 } DIMM_INFO;
 
 typedef struct {

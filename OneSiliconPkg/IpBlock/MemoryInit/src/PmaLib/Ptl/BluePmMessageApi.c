@@ -219,6 +219,18 @@ MrcMcCapabilityPreSpd (
     FreqMax = MaxFreq;
   }
   Outputs->FreqMax = ((Inputs->FreqMax > fNoInit) && (Inputs->FreqMax < fInvalid)) ? Inputs->FreqMax : FreqMax;
+  if (Inputs->FreqMax == fNoInit) {
+    Status = MrcBoardDesignFreqCheck (MrcData); // Limit Outputs->FreqMax by board layout if needed
+    if (Status != mrcSuccess) {
+      return Status;
+    }
+    if (Outputs->IsLpddr5) {
+      Outputs->FreqMax = MIN (Outputs->FreqMax, f6400); // Default SAGV: 2400, 3200, 4800, 6400 (all G4)
+    } else { // DDR5
+      Outputs->FreqMax = MIN (Outputs->FreqMax, f4800); // Default SAGV: 3200/G4, 3200/G4, 4800/G4, 3200/G2
+    }
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Auto FreqMax resolved to: %u\n", Outputs->FreqMax);
+  }
 
   if (!OverclockCapable) {
     // Use the ratio limit from PMA to determine the MaxFreq
@@ -233,14 +245,6 @@ MrcMcCapabilityPreSpd (
   // Check if the max DIMM frequency is the limiter
   if (Outputs->MaxDimmFreq < Outputs->FreqMax) {
     Outputs->FreqMax = Outputs->MaxDimmFreq;
-  }
-
-  // If there is not user inputted frequency, check the board.
-  if (Inputs->FreqMax == fNoInit) {
-    Status = MrcBoardDesignFreqCheck (MrcData);
-    if (Status != mrcSuccess) {
-      return Status;
-    }
   }
 
   if (MrcIsSaGvEnabled (MrcData) && ((ExtInputs->MemoryProfile == STD_PROFILE) || ((ExtInputs->SafeModeOverride & MRC_SAFE_OVERRIDE_SAGV) != 0))) {

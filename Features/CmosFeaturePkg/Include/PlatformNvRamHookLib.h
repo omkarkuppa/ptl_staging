@@ -27,6 +27,9 @@
 #define DEFAULT_VALUE         0
 #endif
 
+#define TXT_ACHECK_REQ_CLEAR_MASK     0xFE
+#define TXT_POWERDOWN_REQ_CLEAR_MASK  0xFD
+
 /**
   Test to see if Checksum is bad.
 
@@ -126,6 +129,16 @@ GetTxtAliasCheckAndReset(
 VOID
 SaveTxtAliasCheck(
   UINT8  ACheckRequest
+  );
+
+/**
+  Get TXT Powerdown Request and Reset it.
+
+  @retval TXT Powerdown Request
+**/
+UINT8
+GetTxtPowerdownRequest(
+  VOID
   );
 
 /**

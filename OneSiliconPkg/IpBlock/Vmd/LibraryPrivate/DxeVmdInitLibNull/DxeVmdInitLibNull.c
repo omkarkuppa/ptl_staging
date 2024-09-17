@@ -30,18 +30,3 @@ VmdNvsInit (
 {
   return;
 }
-
-
-/**
-  ClearVmdTempBars: Clear VMD temporary bars assigned during PEI phase.
-
-  @retval VOID
-**/
-VOID
-EFIAPI
-ClearVmdTempBars (
-  VOID
-  )
-{
-  return;
-}

@@ -74,7 +74,7 @@ MrcStaticPma1 (
 
   UgbControl.Data = MrcReadCR (MrcData, DDRPHY_DDRCOMP_SBMEM_CR_UGBCONTROL_REG);
   UgbControl.Bits.UGBRampUpDelay  = 0;
-  UgbControl.Bits.BGBiasTrim      = 4;
+  UgbControl.Bits.BGBiasTrim      = 0;
   MrcWriteCR (MrcData, DDRPHY_DDRCOMP_SBMEM_CR_UGBCONTROL_REG, UgbControl.Data);
 
   PgCtrl1.Data = MrcReadCR (MrcData, DDRPHY_MISC_SAUG_CR_PG_CTRL1_REG);

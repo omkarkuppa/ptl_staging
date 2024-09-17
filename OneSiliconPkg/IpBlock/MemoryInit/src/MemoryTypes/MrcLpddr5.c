@@ -846,8 +846,8 @@ InitMrwLpddr5 (
   Debug = &Outputs->Debug;
   Profile = ExtInputs->MemoryProfile;
   Status = mrcSuccess;
-  SocOdt = ExtInputs->RcompTarget[RdOdt];
-  CaDrvStrength = ExtInputs->RcompTarget[WrDSCmd];
+  SocOdt = Outputs->RcompTarget[RdOdt];
+  CaDrvStrength = Outputs->RcompTarget[WrDSCmd];
   PdDrvStr = 40; // Ohms
   CsOdtEnc = 0;
 #ifdef HVM_MODE

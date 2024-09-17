@@ -74,7 +74,7 @@ SiliconPolicyUpdatePreMemAdvancedConfig (
     // Update and override all platform related and customized settings below.
     //
     UpdatePeiPciePolicyPreMem (SiPreMemPolicyPpi);
-    UpdatePeiPchPolicyPreMem (SiPreMemPolicyPpi, NULL);
+    UpdatePeiPchPolicyPreMem (SiPreMemPolicyPpi);
     UpdatePeiMePolicyPreMem (SiPreMemPolicyPpi);
     UpdatePeiSaPolicyPreMem (SiPreMemPolicyPpi);
     UpdatePeiCpuPolicyPreMem (SiPreMemPolicyPpi);

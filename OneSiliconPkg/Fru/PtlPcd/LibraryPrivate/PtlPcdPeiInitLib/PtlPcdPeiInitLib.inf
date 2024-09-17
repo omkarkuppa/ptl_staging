@@ -131,6 +131,7 @@ LpssInitLib
 PerformanceLib
 PeiVtdInitFruLib
 CanSsInitLib
+PeiTsnInitLib
 
 [Packages]
 MdePkg/MdePkg.dec
@@ -165,8 +166,7 @@ PtlPcdCnvi.c
 PtlPcdSse.c
 PtlPcdRtc.c
 PtlPcdLpssInit.c
-PtlPcdCan.c
-
+PtlPcdTsn.c
 
 [Ppis]
 gEfiPeiMemoryDiscoveredPpiGuid ## CONSUMES
@@ -216,6 +216,7 @@ gLpssSpiConfigGuid              ## CONSUMES
 gLpssUartConfigGuid             ## CONSUMES
 gCnviPreMemConfigGuid           ## CONSUMES
 gCnviConfigGuid                 ## CONSUMES
+gTsnConfigGuid                  ## CONSUMES
 
 [Pcd]
 gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress            ## CONSUMES
@@ -227,3 +228,4 @@ gSiPkgTokenSpaceGuid.PcdVtdEnable                  ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdSiIoApicBaseAddress        ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdPcieIpsdEnabled
 gSiPkgTokenSpaceGuid.PcdTcoBaseAddress             ## CONSUMES
+gSiPkgTokenSpaceGuid.PcdTsnSupport                 ## CONSUMES

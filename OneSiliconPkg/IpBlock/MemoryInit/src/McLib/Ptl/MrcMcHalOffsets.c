@@ -609,6 +609,8 @@ MrcGetMcConfigRegOffset (
 
     case GsmMccEccMode:
     case GsmMccAddrDecodeDdrType:
+    case GsmMccCh0Size:
+    case GsmMccCh1Size:
     // No Broadcast supported for this.
       Offset = OFFSET_CALC_CH (MC0_MAD_INTER_CHANNEL_REG, MC1_MAD_INTER_CHANNEL_REG, Controller);
       break;

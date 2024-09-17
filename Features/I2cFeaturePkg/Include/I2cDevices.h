@@ -39,8 +39,8 @@ typedef struct {
   UINT8    TouchPanelBusAddress;
   UINT8    TouchPanelSpeed;
   UINT16   TouchPanelHidAddress;
-  UINT32   Touchpanel0IrqGpio;
   UINT32   TouchpanelIrqGpio;
+  UINT32   Touchpanel1IrqGpio;
 
 }TOUCH_PANEL;
 

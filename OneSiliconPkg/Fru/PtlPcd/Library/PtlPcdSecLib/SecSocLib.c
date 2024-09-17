@@ -241,11 +241,6 @@ EarlyCycleDecoding (
   //
   PchTcoBaseSet (PcdGet16 (PcdTcoBaseAddress));
 
-  ///
-  /// Halt the TCO timer as early as possible
-  ///
-  IoWrite16 (PcdGet16 (PcdTcoBaseAddress) + R_TCO_IO_TCTL1, B_TCO_IO_TCTL1_TCO_TMR_HALT);
-
   SmbusBase = SmbusPciCfgBase ();
   //
   // Set SMBus PCI 0x64 = 0x0A0A0000

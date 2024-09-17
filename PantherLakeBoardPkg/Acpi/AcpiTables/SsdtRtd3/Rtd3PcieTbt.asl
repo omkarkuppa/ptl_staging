@@ -17,6 +17,7 @@
   in the License.
 
 **/
+
 /// @details
 /// Code in this file uses following variables:
 /// SCLK: ICC Clock number - optional
@@ -73,8 +74,8 @@ External(\TBD3, IntObj)
 Name (TBPE, 1) // Reflects RTD3_PWR_EN value
 Name (TOFF, 0) // Indicate whether system is entering Sx for POFF method
 
-Name(WKEN, 0) // WAKE enable on PCIe device.
-Name(TSTR, "                                ")    // dTBT identification string, reserved 32 characters
+Name (WKEN, 0) // WAKE enable on PCIe device.
+Name (TSTR, "                                ")    // dTBT identification string, reserved 32 characters
 Name (PWRR, 0) // PCIe core power removal
 
 If (LNot (CondRefOf (TUID))) {
@@ -132,7 +133,7 @@ Method (_S0W, 0, Serialized) {
       Return (0x4)
     }
   }
-  Return(0x4)
+  Return (0x4)
 }
 
 //
@@ -142,7 +143,7 @@ Method (TSCH, 0, Serialized) {
 
   Store (\MMTB (DSLT (PRTP, SLOT), PRTP), Local7)
   // TODO Make one generic copy
-  OperationRegion (TBDM, SystemMemory, Local7, 0x550)// TBT HR PCICFG MMIO
+  OperationRegion (TBDM, SystemMemory, Local7, 0x550) // TBT HR PCICFG MMIO
   Field (TBDM,DWordAcc, NoLock, Preserve) {
     DIVI, 32,
     CMDR, 32,
@@ -157,7 +158,7 @@ Method (TSCH, 0, Serialized) {
   ADBG (Concatenate ("[dTBT] Scan TBT topology at dTBT ", ToDecimalString (TUID)))
   ADBG (Concatenate ("[dTBT]   RP VDID = ", ToHexString(VDID)))
 
-  If(LNotEqual(VDID,0xFFFFFFFF)) {
+  If(LNotEqual (VDID,0xFFFFFFFF)) {
     ADBG (Concatenate ("[dTBT]   RP D3HT Power State = ", ToHexString (D3HT)))
     ADBG (Concatenate ("[dTBT]   RP PDCX Presence Detect Changed = ", ToHexString (PDCX)))
     ADBG (Concatenate ("[dTBT]   RP PDSX Presence Detect State = ", ToHexString (PDSX)))
@@ -175,7 +176,7 @@ Method (TSCH, 0, Serialized) {
   Add(Local7, 0x00108000, Local7)                   // Advance 1 Bus 1 Dev No. Bus N+1 Device 1
   ADBG (Concatenate ("[dTBT] TBT DS1 ECAM address = ", ToHexString (Local7)))
 
-  OperationRegion (TDS1, SystemMemory, Local7, 0x100)// TBT DS1 PCICFG MMIO
+  OperationRegion (TDS1, SystemMemory, Local7, 0x100) // TBT DS1 PCICFG MMIO
   Field (TDS1,DWordAcc, NoLock, Preserve) {
     Offset (0),
     P1ID, 32,
@@ -218,7 +219,7 @@ Method (TSCH, 0, Serialized) {
     ADBG (Concatenate ("[dTBT] TBT DS3 Device Presence = ", ToHexString (PDS3)))
   }
 
-  TVAL()
+  TVAL ()
   ADBG ("=============================================================")
 }
 
@@ -270,7 +271,7 @@ Method (_DSW, 3) {
   If (LGreaterEqual (Arg1, 1)) {
     /// If entering Sx, need to disable WAKE# from generating runtime PME also set 2 to TOFF.
     ADBG ("[dTBT] RP prepares to enter Sx state: Disable wake, TOFF = 2")
-    Store(0, WKEN)
+    Store (0, WKEN)
     Store (2, TOFF)
   } Else {
     /// If Staying in S0
@@ -300,16 +301,16 @@ If (CondRefOf (\TBD3)) {
     //
     // PCIe slot power resource definition
     //
-    PowerResource(PXP, 0, 0) {
-      Method(_STA, 0) {
+    PowerResource (PXP, 0, 0) {
+      Method (_STA, 0) {
         If (LEqual (VDID, 0xFFFFFFFF)) {
           ADBG (Concatenate ("[dTBT] _STA no RP - dTBT ", ToDecimalString (TUID)))
-          Return(0)
+          Return (0)
         }
         Return (PSTA ())
       }
 
-      Method(_ON) {
+      Method (_ON) {
         ADBG (Concatenate ("[dTBT] TBT _ON Start - dTBT ", ToDecimalString (TUID)))
         TSCH ()
         PON ()
@@ -317,14 +318,14 @@ If (CondRefOf (\TBD3)) {
         ADBG (Concatenate ("[dTBT] TBT _ON End - dTBT ", ToDecimalString (TUID)))
       }
 
-      Method(_OFF) {
+      Method (_OFF) {
         ADBG (Concatenate ("[dTBT] TBT _OFF Start - dTBT ", ToDecimalString (TUID)))
         TSCH ()
         POFF ()
         TSCH ()
         ADBG (Concatenate ("[dTBT] TBT _OFF End - dTBT ", ToDecimalString (TUID)))
       }
-    } // End of PowerResource(PXP, 0, 0)
+    } // End of PowerResource (PXP, 0, 0)
   } // End of (LNotEqual (\TBD3, 0))
 }
 
@@ -338,7 +339,7 @@ Method (PSTA, 0) {
   //
   If(\PIN.STA (RSTG)) {
     ADBG (Concatenate ("[dTBT] PCIe slot core power status (PSTA): OFF - dTBT ", ToDecimalString (TUID)))
-    Return(0)
+    Return (0)
   } Else {
     ADBG (Concatenate ("[dTBT] PCIe slot core power status (PSTA): ON - dTBT ", ToDecimalString (TUID)))
     Return (1)
@@ -403,7 +404,7 @@ Method (PON, 0, Serialized) /// Turn on core power to PCIe Slot
   If (LEqual (TBPE, 1)) {
     ADBG ("[dTBT] RTD3 power already ON, abort TBT PON")
     ADBG (Concatenate ("[dTBT] Turn on TBT core power (PON) End - dTBT", ToDecimalString (TUID)))
-    Return()
+    Return ()
   }
 
   //
@@ -456,16 +457,16 @@ Method (PON, 0, Serialized) /// Turn on core power to PCIe Slot
 
   /// De-Assert Reset Pin
   ADBG ("[dTBT] De-Assert RST")
-  \PIN.OFF(RSTG)
+  \PIN.OFF (RSTG)
 
-  Store(1, TBPE)
+  Store (1, TBPE)
   ADBG ("[dTBT]  L2/L3 exit Start")
-  L23D()
+  L23D ()
   ADBG ("[dTBT]  L2/L3 exit End")
 
   PSTA () // Check core power status
-  ADBG (Concatenate("[dTBT] Timestamp ", ToHexString(Timer())))
-  ADBG (Concatenate("[dTBT] Turn on TBT core power (PON) End - dTBT ", ToDecimalString (TUID)))
+  ADBG (Concatenate ("[dTBT] Timestamp ", ToHexString(Timer())))
+  ADBG (Concatenate ("[dTBT] Turn on TBT core power (PON) End - dTBT ", ToDecimalString (TUID)))
 } // End of ON
 
 Method (POFF, 0, Serialized) { /// Turn off core power to PCIe Slot
@@ -504,7 +505,7 @@ Method (POFF, 0, Serialized) { /// Turn off core power to PCIe Slot
   // Assert Reset Pin
   // Reset pin is mandatory for correct PCIe RTD3 flow
   ADBG ("[dTBT] Assert reset pin")
-  \PIN.ON(RSTG)
+  \PIN.ON (RSTG)
 
   //
   // On RTD3 entry, BIOS will instruct the PMC to disable source clocks.
@@ -534,13 +535,13 @@ Method (POFF, 0, Serialized) { /// Turn off core power to PCIe Slot
   Sleep (10)
 
   /// Power OFF for TBT
-  If (CondRefOf(PWRG)) {
+  If (CondRefOf (PWRG)) {
     //
     // Check power removal permission before power removal
     //
-    If (LEqual (GPPR(), 1)) {
+    If (LEqual (GPPR (), 1)) {
       ADBG ("[dTBT] RTD3 CIO power off")
-      \PIN.OFF(PWRG)
+      \PIN.OFF (PWRG)
     } Else {
       ADBG ("[dTBT] WAKE enable and keep CIO power on")
     }
@@ -587,9 +588,20 @@ Method (PCPR, 1, Serialized) {
     Store (1, PWRR) //Block slot Power Removal
     Return (2)
   } ElseIf (LEqual (Arg0, 0x0)) {
-    store (0, PWRR) // Allow slot power Removal
+    Store (0, PWRR) // Allow slot power Removal
     Return (1)
   } Else {
     Return (0)
+  }
+}
+
+If (CondRefOf (TBD3)) {
+  If (LEqual (TBD3, 1)) {
+    Method (_PR0) {
+      Return (Package () {DTBT_BR_PCIE_ROOT_PORT.PXP})
+    }
+    Method (_PR3) {
+      Return (Package () {DTBT_BR_PCIE_ROOT_PORT.PXP})
+    }
   }
 }

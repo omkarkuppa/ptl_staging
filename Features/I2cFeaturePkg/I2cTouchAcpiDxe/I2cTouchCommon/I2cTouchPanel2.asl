@@ -28,6 +28,7 @@
 #define NTRIG_SAMSUNG_PANEL           4
 #define NTRIG_SHARP_PANEL             5
 #define WACOM_PANEL                   6
+#define ELAN8E18_PANEL                8
 #define SERIAL_IO_TPL_CUSTOM_DEVICE   7 // Custom TouchPanel device
 
 //------------------------
@@ -36,24 +37,19 @@
 //------------------------
   Device (TPL1) {
     Name (HID2,0)
-    Name (TPGI, 0)
     Name (SBFB, ResourceTemplate () {I2cSerialBusV2 (0, ControllerInitiated, 400000, AddressingMode7Bit, "NULL", , , I2CB) })
-    Name (SBFG, ResourceTemplate () {
-      GpioInt (Level, ActiveLow, Exclusive, PullUp, 0x0000, "\\_SB.GPI0", 0x00, ResourceConsumer,INTG ) { 0 }
-    })
     Name (SBFI, ResourceTemplate () {
       Interrupt (ResourceConsumer, Level, ActiveLow, Exclusive,,,INTI) {0}
     })
     CreateWordField (SBFB,I2CB._ADR,BADR)
     CreateDWordField (SBFB,I2CB._SPE,SPED)
-    CreateWordField (SBFG,INTG._PIN,INT1)
     CreateDWordField (SBFI,INTI._INT,INT2)
     Method (_INI) {
-      Store(DeRefOf(Index(TPDI,2)), TPGI)
-      Store (GNUM (TPGI),INT1)
-      Store (INUM (TPGI),INT2)
+      ADBG("Touch Panel2 INI is getting called")
+      Store (INUM (DeRefOf(Index(TPDI,2))),INT2)
+      ADBG(Concatenate("TPLM PchI2cTouchPanelIrqMode", ToHexString(DeRefOf(Index(TPTD,2)))))
       If (LEqual (DeRefOf(Index(TPTD,1)),0)) {
-        SHPO (TPGI,1) // configure gpio pad in gpio driver mode
+        SHPO (DeRefOf(Index(TPDI,2)),1) // configure gpio pad in gpio driver mode
       }
       If (LEqual (DeRefOf(Index(TPTD,0)), ATMEL3432_PANEL)) {
         Store ("ATML3432",_HID)
@@ -99,6 +95,15 @@
         If (LEqual (DeRefOf(Index(TPTD,3)),2)) { Store (1000000,SPED) } // Fast mode
         Return
       }
+      If (LEqual (DeRefOf(Index(TPTD,0)), ELAN8E18_PANEL)) {
+        Store ("ELAN8E18",_HID)
+        Store (1,HID2)
+        Store (0x16,BADR)
+        If (LEqual (DeRefOf(Index(TPTD,3)),0)) { Store ( 100000,SPED) }
+        If (LEqual (DeRefOf(Index(TPTD,3)),1)) { Store ( 400000,SPED) }
+        If (LEqual (DeRefOf(Index(TPTD,3)),2)) { Store (1000000,SPED) }
+        Return
+      }
       If (LEqual (DeRefOf(Index(TPTD,0)), SERIAL_IO_TPL_CUSTOM_DEVICE)) { // Custom TouchPanel
         Store ("CUST0000",_HID)
         Store (DeRefOf(Index(TDPH,0)),HID2)
@@ -119,18 +124,23 @@
     Name (_S0W, 4)
     Method (_DSM, 0x4, Serialized) {
       If (LEqual (Arg0,HIDG)) { Return (HIDD (Arg0,Arg1,Arg2,Arg3,HID2)) }
-      If (LEqual (Arg0,TP7G)) { Return (TP7D (Arg0,Arg1,Arg2,Arg3,SBFB,SBFG)) }
+      If (LEqual (Arg0,TP7G)) { Return(TP7D (Arg0,Arg1,Arg2,Arg3,SBFB, G_IN (DeRefOf(Index(TPDI,2)), GPIO_INT_MOD_LEVEL, GPIO_INT_POL_ACTIVE_LOW, GPIO_INT_EXCLUSIVE, GPIO_PPI_PULL_DEFAULT, 0))) }
       Return (Buffer (1) {0})
     }
 
     Method (_STA, 0, NotSerialized) {
-      If (LAnd (LNotEqual (DeRefOf(Index(TPTD,0)),0),And ( I2CN, SERIAL_IO_I2C_TOUCHPANEL))) { Return (0x0F) }
+      ADBG(Concatenate("TPLT 2PchI2cTouchPanelType", ToHexString(DeRefOf(Index(TPTD,0)))))
+      ADBG(Concatenate("TPLH 2PchI2cTouchPanelHidAddress", ToHexString(DeRefOf(Index(TDPH,0)))))
+      ADBG(Concatenate("TPLB 2PchI2cTouchPanelBusAddress", ToHexString(DeRefOf(Index(TPTD,2)))))
+      ADBG(Concatenate("TPLS 2PchI2cTouchPanelSpeed", ToHexString(DeRefOf(Index(TPTD,3)))))
+      ADBG(Concatenate("TPDI Touchpanel2Irq", ToHexString(DeRefOf(Index(TPDI,2)))))
+      If (LAnd (LNotEqual (DeRefOf(Index(TPTD,0)),0),And ( I2CN, SERIAL_IO_I2C_TOUCHPANEL))) { Return (0x0F) }      
       Return (0x00)
     }
 
     Method (_CRS, 0, NotSerialized) {
-      If (LEqual (DeRefOf(Index(TPTD,1)),0)) { Return (ConcatenateResTemplate (I2CM (I2CX,BADR,SPED), SBFG)) }
-      Return (ConcatenateResTemplate (I2CM (I2CX,BADR,SPED), SBFI))
+      If (LEqual(DeRefOf(Index(TPTD,1)),0)) { Return (ConcatenateResTemplate(I2CM(I2CX,BADR,SPED), G_IN (DeRefOf(Index(TPDI,2)), GPIO_INT_MOD_LEVEL, GPIO_INT_POL_ACTIVE_LOW, GPIO_INT_EXCLUSIVE, GPIO_PPI_PULL_DEFAULT, 0))) }
+      Return (ConcatenateResTemplate(I2CM(I2CX,BADR,SPED), SBFI))
     }
   } // Device (TPL1)
 

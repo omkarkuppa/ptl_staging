@@ -586,4 +586,18 @@ PtlPcdTcssLsxOePinEnable (
   IN  UINT8            Index
   );
 
+/**
+  This function sets TSN0 into native mode
+
+  @param[in]  GpioServices   Gpio Services
+  @param[in]  GpioServices   TSN controller index
+
+  @retval Status
+**/
+EFI_STATUS
+PtlPcdGpioEnableTsnPins (
+  IN  GPIOV2_SERVICES   *GpioServices,
+  IN  UINT8             TsnIndex
+  );
+
 #endif // _PTL_PCD_GPIO_NATIVE_LIB_H_

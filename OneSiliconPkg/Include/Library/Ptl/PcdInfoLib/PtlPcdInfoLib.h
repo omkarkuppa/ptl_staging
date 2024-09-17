@@ -21,6 +21,8 @@
 #ifndef _PTL_SOC_INFO_LIB_H_
 #define _PTL_SOC_INFO_LIB_H_
 
+#include <Uefi/UefiBaseType.h>
+
 typedef UINT8 PTL_SOC_SERIES;
 typedef UINT8 PTL_SOC_STEPPING;
 
@@ -219,6 +221,16 @@ PtlPcdGetUsbrStoragePortNum (
 **/
 UINT8
 PtlPcdGetCanCtrlNum (
+  VOID
+  );
+
+/**
+  Get Maximum TSN controllers number
+
+  @retval Maximum TSN controllers number
+**/
+UINT8
+PtlPcdGetTsnMaxCtrlNum (
   VOID
   );
 

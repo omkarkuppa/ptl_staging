@@ -44,6 +44,7 @@
 #include <Library/HostBridgeDataLib.h>
 #include <Register/HostBridgeRegs.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/TcssNvsDumpLib.h>
 
 GLOBAL_REMOVE_IF_UNREFERENCED TCSS_NVS_AREA_PROTOCOL         mTcssNvsAreaProtocol;
 
@@ -239,6 +240,11 @@ UpdateTcssNVS (
   //
 
   TcssNvsAreaProtocol->Area->IomBase = TcssHob->TcssData.IomBase;
+
+  //
+  // Dump ACPI TCSS variable
+  //
+  DumpTcssVariable ();
 
 }
 

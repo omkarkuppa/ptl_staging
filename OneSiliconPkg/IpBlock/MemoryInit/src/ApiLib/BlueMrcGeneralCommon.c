@@ -38,6 +38,7 @@
 #include "MrcDdrCommon.h"
 #include "MrcSpdProcessingDefs.h" // for MRC_SPD_SDRAM_DENSITY_8Gb
 #include "MrcSaveRestore.h"
+#include "MrcGlobalDefinitions.h"
 #include "MrcUcPayloadData.h"
 
 // Number of "b" in y=mx+b linear calculation equation for VF curve, "m" is scaled to 100 due to decimal numbers usage
@@ -375,12 +376,12 @@ NormalModeCsGeardownEntryFlow (
   EnableDdr5MulticycleCs (MrcData);
 
   McCs2NEnableOrDisable (MrcData, MRC_ENABLE);
-  DdrIoCs2NEnableOrDisable (MrcData, MRC_ENABLE);
 
   Status = Ddr5EnableCsGearDown (MrcData);
   if (Status != mrcSuccess) {
     return Status;
   }
+  DdrIoCs2NEnableOrDisable (MrcData, MRC_ENABLE);
 
   if (MultiCycCmd == 0) {
     DisableMcMulticycleCs (MrcData, FALSE);
@@ -651,11 +652,11 @@ MrcConfigureIbeccTomMinusEdsr (
 }
 
 /**
-  Enables IBECC if supported
+  Enables IBECC if supported by CPU, and if memory controller population is symmetric
 
-  @param[in] *MrcData - Pointer to the MRC Debug structure.
+  @param[in] MrcData - Pointer to the MRC Debug structure.
 
-  @retval Returns mrcSuccess if the Ibecc is enabled
+  @retval mrcSuccess Ibecc task completed
 **/
 MrcStatus
 MrcIbecc (
@@ -673,6 +674,7 @@ MrcIbecc (
   UINT8                                         ControllerCount;
   BOOLEAN                                       IsDdr5;
   INT64                                         GetSetEnable;
+  IbeccOpMode                                   IbeccOperationMode;
   MC0_IBECC_CONTROL_STRUCT                      IbeccControl;
   MC0_IBECC_MEMORY_INIT_CONTROL_STRUCT          IbeccMemInit;
   MC0_IBECC_ACTIVATE_STRUCT                     IbeccActivate;
@@ -686,9 +688,13 @@ MrcIbecc (
   ExtInputs = Inputs->ExtInputs.Ptr;
   IsDdr5    = Outputs->IsDdr5;
   ControllerCount       = 0;
-  GetSetEnable = 1;
+  GetSetEnable          = 1;
+  TomMinusEdsr          = 0;
 
-  if (ExtInputs->Ibecc) {
+  IbeccOperationMode = (ExtInputs->Ibecc && !Inputs->IsIbeccEnabled) ? IbeccNonProtect : ExtInputs->IbeccOperationMode;
+  Outputs->FinalIbeccOperationMode = IbeccOperationMode;
+
+  if (ExtInputs->Ibecc && MrcIsIbeccSymmetric (MrcData)) {
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       if (MrcControllerExist (MrcData, Controller)) {
         ControllerCount++;
@@ -706,18 +712,20 @@ MrcIbecc (
       MrcGetSetNoScope(MrcData, GsmMccEccGranularity, WriteCached, &GetSetEnable);
     }
 
-    TomMinusEdsr = MrcConfigureIbeccTomMinusEdsr (MrcData);
+    if (IbeccOperationMode != IbeccNonProtect) {
+      TomMinusEdsr = MrcConfigureIbeccTomMinusEdsr (MrcData);
+    }
 
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       if (MrcControllerExist (MrcData, Controller)) {
         Offset = OFFSET_CALC_CH (MC0_IBECC_CONTROL_REG, MC1_IBECC_CONTROL_REG, Controller);
         IbeccControl.Data = MrcReadCR (MrcData, Offset);
         IbeccControl.Bits.RSB_ENABLE = 1;
-        IbeccControl.Bits.OPERATION_MODE = ExtInputs->IbeccOperationMode;
+        IbeccControl.Bits.OPERATION_MODE = IbeccOperationMode;
         MrcWriteCR (MrcData, Offset, IbeccControl.Data);
         MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MC%d:\n", Controller);
         MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IbeccControl OPERATION_MODE: %d\n", IbeccControl.Bits.OPERATION_MODE);
-        if (ExtInputs->IbeccOperationMode == IbeccAllProtect) {
+        if (IbeccOperationMode == IbeccAllProtect) {
           // When IBECC is configured to protect all of memory, the ECC_STORAGE_ADDR_RANGE_0 will be used for indicating the start address of the protected range
           Offset = OFFSET_CALC_CH (MC0_IBECC_ECC_STORAGE_ADDR_RANGE_0_REG, MC1_IBECC_ECC_STORAGE_ADDR_RANGE_0_REG, Controller);
           EccStorage.Data = MrcReadCR (MrcData, Offset);
@@ -726,7 +734,7 @@ MrcIbecc (
           MrcWriteCR (MrcData, Offset, EccStorage.Data);
           MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "EccStorage ADDRESS: 0x%x\n", EccStorage.Bits.ADDRESS);
 
-        } else if (ExtInputs->IbeccOperationMode == IbeccPartialProtect) {
+        } else if (IbeccOperationMode == IbeccPartialProtect) {
           for (IbeccRegion = 0; IbeccRegion < MAX_IBECC_REGIONS; IbeccRegion++) {
             // Specifies the Address Space that is reserved to store ECC data for all protected ranges
             Offset = OFFSET_CALC_CH (MC0_IBECC_ECC_STORAGE_ADDR_RANGE_0_REG, MC1_IBECC_ECC_STORAGE_ADDR_RANGE_0_REG, Controller);
@@ -765,7 +773,16 @@ MrcIbecc (
           MrcWriteCR (MrcData, Offset, IbeccAddrHash.Data);
           MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IbeccAddrHash: 0x%x\n", IbeccAddrHash.Data);
         }
-        if ((Inputs->BootMode != bmWarm) && (Inputs->BootMode != bmS3)) {
+
+        // Do not run the IBECC Init Ranges FSM when:
+        // - The current MC IP stepping is Mobile A0 or Desktop A0
+        // - The Boot Mode is bmWarm and the IbeccOperationMode has not changed
+        // - The IbeccOperationMode is Bypass Mode (IbeccNonProtect)
+        Outputs->IsIbeccInitRangesRequired = !Inputs->IsMcMbA0 && !Inputs->IsMcDtA0 &&
+          (Inputs->BootMode != bmWarm || (Inputs->BootMode == bmWarm && IbeccOperationMode != Inputs->LastIbeccOperationMode)) &&
+          IbeccOperationMode != IbeccNonProtect;
+
+        if (Outputs->IsIbeccInitRangesRequired) {
           Offset = OFFSET_CALC_CH (MC0_IBECC_MEMORY_INIT_CONTROL_REG, MC1_IBECC_MEMORY_INIT_CONTROL_REG, Controller);
           IbeccMemInit.Data = MrcReadCR (MrcData, Offset);
           IbeccMemInit.Bits.INIT_ALL_RANGES = 1;
@@ -775,6 +792,8 @@ MrcIbecc (
         }
       }
     } // Controller
+  } else {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IBECC is disabled and/or memory is not symmetrical\n");
   }
 
   return mrcSuccess;
@@ -802,31 +821,40 @@ MrcPollIbeccFSMInit (
   UINT64                                EndTime;
   BOOLEAN                               Done;
   MC0_IBECC_MEMORY_INIT_CONTROL_STRUCT  IbeccMemInit;
+  const MrcInput                        *Inputs;
 
+  Inputs    = &MrcData->Inputs;
   Outputs   = &MrcData->Outputs;
   Debug     = &Outputs->Debug;
   MrcCall   = MrcData->Inputs.Call.Func;
   StartTime = MrcCall->MrcGetCpuTime ();
   Timeout = StartTime + 15000;  // 15 sec timeout
   Done = FALSE;
-  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    if (MrcControllerExist (MrcData, Controller)) {
-      Offset = OFFSET_CALC_CH (MC0_IBECC_MEMORY_INIT_CONTROL_REG, MC1_IBECC_MEMORY_INIT_CONTROL_REG, Controller);
-      do {
-        IbeccMemInit.Data = MrcReadCR (MrcData, Offset);
-        Done = (IbeccMemInit.Bits.INIT_ALL_RANGES == 0);
-      } while (!Done && (MrcCall->MrcGetCpuTime () < Timeout));
+  if (Outputs->IsIbeccInitRangesRequired && !Inputs->IsMcMbA0 && !Inputs->IsMcDtA0) {
+    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+      if (MrcControllerExist (MrcData, Controller)) {
+        Offset = OFFSET_CALC_CH (MC0_IBECC_MEMORY_INIT_CONTROL_REG, MC1_IBECC_MEMORY_INIT_CONTROL_REG, Controller);
+        do {
+          IbeccMemInit.Data = MrcReadCR (MrcData, Offset);
+          Done = (IbeccMemInit.Bits.INIT_ALL_RANGES == 0);
+        } while (!Done && (MrcCall->MrcGetCpuTime () < Timeout));
+      }
     }
-  }
-  EndTime = MrcCall->MrcGetCpuTime ();
 
-  if (!Done) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s %s Timeout!\n", gErrString, "IbeccMemInit.INIT_ALL_RANGES");
-    return mrcTimeout;
+    EndTime = MrcCall->MrcGetCpuTime ();
+
+    if (!Done) {
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s %s Timeout!\n", gErrString, "IbeccMemInit.INIT_ALL_RANGES");
+      return mrcTimeout;
+    } else {
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s took %u ms\n", "IbeccMemInit.INIT_ALL_RANGES", (UINT32) (EndTime - StartTime));
+      return mrcSuccess;
+    }
   } else {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s took %u ms\n", "IbeccMemInit.INIT_ALL_RANGES", (UINT32) (EndTime - StartTime));
-    return mrcSuccess;
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IBECC ranges initialization is NOT required\n");
   }
+
+  return mrcSuccess;
 }
 
 /**
@@ -1158,6 +1186,7 @@ MrcSetSafeModeOverrides (
     ExtInputs->TrainingEnables3.DIMMNTODT      = 0;
     ExtInputs->TrainingEnables3.RXVREFPERBIT   = 0;
     ExtInputs->TrainingEnables3.WCKPADDCCCAL   = 0;
+    ExtInputs->TrainingEnables3.QCLKDCC        = 0;
     ExtInputs->MarginLimitCheck = 0;
   }
 
@@ -1201,8 +1230,6 @@ MrcSetOverrides (
   UINT32          Channel;
   UINT32          Dimm;
   MrcFrequency    LowFreq;
-  UINT16          ReqRdOdt;
-  UINT16          ValidRdOdt;
   UINT8           Index;
   UINT8           MemoryProfile;
   BOOLEAN         lDramDqOdtEn;
@@ -1239,7 +1266,7 @@ MrcSetOverrides (
   // Configure LowFrequency
   switch (DdrType) {
     case MRC_DDR_TYPE_LPDDR5:
-      LowFreq = f2133;
+      LowFreq = LP5_LOW_FREQ_INIT;
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "LPDDR Low Frequency: %d\n", LowFreq);
       break;
 
@@ -1267,8 +1294,10 @@ MrcSetOverrides (
 #endif // MRC_DEBUG_PRINT
   for (Index = 0; Index < MAX_RCOMP_TARGETS; Index++) {
     if ((ExtInputs->RcompTarget[Index] == 0) && (RcompTarget != NULL)) {
-      ExtInputs->RcompTarget[Index] = RcompTarget[Index];
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " RcompTarget[%s]: %u\n", GlobalCompOffsetStr[Index], ExtInputs->RcompTarget[Index]);
+      Outputs->RcompTarget[Index] = RcompTarget[Index];
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " RcompTarget[%s]: %u\n", GlobalCompOffsetStr[Index], Outputs->RcompTarget[Index]);
+    } else {
+      Outputs->RcompTarget[Index] = ExtInputs->RcompTarget[Index];
     }
   }
 
@@ -1291,14 +1320,6 @@ MrcSetOverrides (
     }
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DDRIO ODT Mode: %s\n", gIoOdtModeStr[Outputs->OdtMode]);
-
-  // If we are LPDDR5, we need to check that the request CPU ODT matches one of the MR values for SOC_ODT.
-  ReqRdOdt  = ExtInputs->RcompTarget[RdOdt];
-  ValidRdOdt = MrcCheckForSocOdtEnc (MrcData, ReqRdOdt);
-  if (ValidRdOdt != ReqRdOdt) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "RdOdt target of %d is not supported by the memory.  Updated to %d.  Please Update RcompTarget[RdOdt] to a correct value\n", ReqRdOdt, ValidRdOdt);
-    ExtInputs->RcompTarget[RdOdt] = ValidRdOdt;
-  }
 
   // If we have ECT disabled, set the ECT done flag so Reset Flows will behave normally for DDR5 and LPDDR systems.
   if ((ExtInputs->TrainingEnables.ECT == 0) || (ExtInputs->SimicsFlag == 1)) {
@@ -1688,12 +1709,14 @@ MrcPrintInputParameters (
     "\tDdrIoIpSegment: %Xh\n"
     "\tDdrIoIpStepping: %Xh\n"
     "\tBootMode: %Xh\n"
+    "\tTxtClean: %Xh\n"
     "\tSimicsFlag: %Xh\n",
     Inputs->DdrIoIpVersion.Bits.Version,
     Inputs->DdrIoIpVersion.Bits.Derivative,
     Inputs->DdrIoIpVersion.Bits.Segment,
     Inputs->DdrIoIpVersion.Bits.Stepping,
     Inputs->BootMode,
+    Inputs->TxtClean,
     ExtInputs->SimicsFlag
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
@@ -1805,11 +1828,13 @@ MrcPrintInputParameters (
     "\tEccSupport: %Xh\n"
     "\tCleanMemory: %u\n"
     "\tIbecc: %Xh\n"
+    "\tIsIbeccEnabled: %d\n"
     "\tIbeccOperationMode: 0x%X\n"
     "\tIbeccParity: 0x%X\n",
     ExtInputs->EccSupport,
     Inputs->CleanMemory,
     ExtInputs->Ibecc,
+    Inputs->IsIbeccEnabled,
     ExtInputs->IbeccOperationMode,
     ExtInputs->IbeccParity
     );
@@ -2038,8 +2063,8 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RXDQSDCC: %u\nDIMMNTODT: %u\nRXVREFPERBIT: %u\n",                            TrainingSteps3->RXDQSDCC,       TrainingSteps3->DIMMNTODT,    TrainingSteps3->RXVREFPERBIT);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR: %u\nLVRAUTOTRIM: %u\nPWRMETER: %u\nOPTIMIZECOMP: %u\n",                 TrainingSteps3->PPR,            TrainingSteps3->LVRAUTOTRIM,  TrainingSteps3->PWRMETER,       TrainingSteps3->OPTIMIZECOMP);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WRTRETRAIN: %u\nDDRPRECOMP: %u\nJEDECRESET: %u\n",                           TrainingSteps3->WRTRETRAIN,     TrainingSteps3->DDRPRECOMP,   TrainingSteps3->JEDECRESET);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ROUNDTRIPMATCH: %u\nTLINECLKCAL: %u\nDCCPISERIALCAL: %u\nPHASECLKCAL: %u\n", TrainingSteps3->ROUNDTRIPMATCH, TrainingSteps3->TLINECLKCAL,  TrainingSteps3->DCCPISERIALCAL, TrainingSteps3->PHASECLKCAL);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WCKPADDCCCAL: %u\nEMPHASIS: %u\nDIMMRXOFFSET: %u\n",                         TrainingSteps3->WCKPADDCCCAL,   TrainingSteps3->EMPHASIS,     TrainingSteps3->DIMMRXOFFSET);  
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ROUNDTRIPMATCH: %u\nTLINECLKCAL: %u\nDCCPISERIALCAL: %u\nPHASECLKCAL: %u\nQCLKDCC: %u\n", TrainingSteps3->ROUNDTRIPMATCH, TrainingSteps3->TLINECLKCAL,  TrainingSteps3->DCCPISERIALCAL, TrainingSteps3->PHASECLKCAL, TrainingSteps3->QCLKDCC);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WCKPADDCCCAL: %u\nEMPHASIS: %u\nDIMMRXOFFSET: %u\nVIEWPINCAL: %u\n",         TrainingSteps3->WCKPADDCCCAL,   TrainingSteps3->EMPHASIS,     TrainingSteps3->DIMMRXOFFSET, TrainingSteps3->VIEWPINCAL);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MCREGOFFSET: %u\n", ExtInputs->MCREGOFFSET);
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DFETap1StepSize: %u\nDFETap2StepSize: %u\n", ExtInputs->DFETap1StepSize, ExtInputs->DFETap2StepSize);
@@ -2264,4 +2289,55 @@ MrcVersionPrint (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "** Blue Build number is:           %2u                               **\n", Version->Build);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "**********************************************************************\n");
 #endif
+}
+
+/**
+  Check for symmetric memory controller population
+
+  @param[in] MrcData - Pointer to the MRC Debug structure.
+
+  @retval TRUE memory controller is symmetric
+  @retval FALSE memory controller is not symmetric
+**/
+BOOLEAN
+MrcIsIbeccSymmetric (
+  IN MrcParameters *MrcData
+  )
+{
+  const MRC_FUNCTION *MrcCall;
+  MrcInput           *Inputs;
+  MrcOutput          *Outputs;
+  MrcDebug           *Debug;
+  UINT8              Controller;
+  INT64              Ch0Size;
+  INT64              Ch1Size;
+  UINT16             ControllerSize[MAX_CONTROLLER];
+  BOOLEAN            ControllerSymmetrical;
+
+  Inputs  = &MrcData->Inputs;
+  MrcCall = Inputs->Call.Func;
+  Outputs = &MrcData->Outputs;
+  Debug   = &Outputs->Debug;
+
+  MrcCall->MrcSetMem ((UINT8 *) ControllerSize, sizeof (ControllerSize), 0);
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    if (MrcControllerExist (MrcData, Controller)){
+      MrcGetSetMc (MrcData, Controller, GsmMccCh0Size, ReadUncached, &Ch0Size);
+      MrcGetSetMc (MrcData, Controller, GsmMccCh1Size, ReadUncached, &Ch1Size);
+      ControllerSize[Controller] = (UINT8) Ch0Size + (UINT8) Ch1Size;
+    }
+  }
+
+  // Symmetric only if all of the below is true:
+  // - MC/Slice sizes are equal, or only one exists:
+  //   MC0 capacity == MC1 capacity ||
+  //   MC0 capacity == 0 ||
+  //   MC1 capacity == 0
+  ControllerSymmetrical = ((ControllerSize[0] == ControllerSize[1]) || (ControllerSize[0] == 0) || (ControllerSize[1] == 0));
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IBECC Symmetrical: MC/Slice: %s, Controller[0] Size: %u%sGB ",
+    ControllerSymmetrical ? "yes" : "no", ControllerSize[0] >> 1, ControllerSize[0] % 2 ? ".5" : ".0");
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Controller[1] Size: %u%sGB\n", ControllerSize[1] >> 1 , ControllerSize[1] % 2 ? ".5" : ".0");
+
+  return ControllerSymmetrical;
 }

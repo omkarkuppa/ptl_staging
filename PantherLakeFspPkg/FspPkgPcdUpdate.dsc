@@ -66,6 +66,7 @@
   gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress|0xFF200000
   gSiPkgTokenSpaceGuid.PcdBiosSize|0x0E00000
 
+
 [PcdsPatchableInModule]
 !if $(TARGET) == DEBUG
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042

@@ -113,4 +113,16 @@ typedef struct {
 
 #pragma pack (pop)
 
+/**
+  Print TCSS_PEI_PREMEM_CONFIG and serial out.
+
+  @param[in] TcssPeiPreMemConfig          Pointer to a TCSS_PEI_PREMEM_CONFIG
+  @param[in] MaxTcssPortNumber            Max number of TCSS Root Ports
+**/
+VOID
+TcssPreMemConfigDump (
+  IN TCSS_PEI_PREMEM_CONFIG     *TcssPeiPreMemConfig,
+  IN UINT8                      MaxTcssPortNumber
+  );
+
 #endif /* _TCSS_PEI_PREMEM_CONFIG_VER1_H_ */

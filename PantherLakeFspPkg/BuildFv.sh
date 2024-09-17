@@ -62,6 +62,9 @@ function Clean(){
   if [ -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MemInfoHob.h ]; then
     rm -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MemInfoHob.h
   fi
+  if [ -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MrcGlobalDefinitions.h ]; then
+    rm -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MrcGlobalDefinitions.h
+  fi
   if [ -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/SmbiosCacheInfoHob.h ]; then
     rm -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/SmbiosCacheInfoHob.h
   fi
@@ -79,6 +82,12 @@ function Clean(){
   done
   if [ -f $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Fsp/Include/MemInfoHob.h ]; then
     rm -f $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Fsp/Include/MemInfoHob.h
+  fi
+  if [ -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioV2Config.h ]; then
+    rm -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioV2Config.h
+  fi
+  if [ -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioV2Pad.h ]; then
+    rm -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioV2Pad.h
   fi
   WORKSPACE=
   EDK_TOOLS_PATH=
@@ -108,9 +117,17 @@ function  PreBuildFail(){
 }
 
 function PreBuild(){
-  cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Pch/Include/GpioConfig.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioConfig.h
+  if [ ! -d $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include ]; then
+    mkdir $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include
+  fi
+
+  cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Include/GpioV2Config.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioV2Config.h
+
+  cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Include/GpioV2Pad.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioV2Pad.h
 
   cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Include/MemInfoHob.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MemInfoHob.h
+
+  cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/IpBlock/MemoryInit/src/IncludePublic/Ptl/MrcGlobalDefinitions.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MrcGlobalDefinitions.h
 
   cp $WORKSPACE_SILICON/$FSP_PKG_NAME/FspPkgPcdShare.dsc $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/FspPkgPcdShare.dsc
 

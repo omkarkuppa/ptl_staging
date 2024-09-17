@@ -43,6 +43,9 @@ PtlRootPortClkInfoInit (
   PCD64_BLOB Clock[PCH_MAX_PCIE_CLOCKS];
   UINT32 Index;
 
+  PCIE_CLOCKS_USAGE *PcieClocks;
+  PcieClocks = NULL;
+
   //
   //The default clock assignment will be NOT_USED, which corresponds to PchClockUsageNotUsed. This will prevent clocks drawing Power by default.
   //If Platform code doesn't contain port-clock map for a given board, the clocks will be NOT_USED, preventing PCIe devices not to operate.
@@ -60,6 +63,19 @@ PtlRootPortClkInfoInit (
   /// For S,  Set 0 - 17
   /// Note that if GbE is enabled, ClkReq assigned to GbE will not be available for Root Port.
   ///
+
+  PcieClocks = PcdGetPtr (VpdPcdPcieClkUsageMap);
+  if (PcieClocks == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  Clock[0].PcieClock.ClockUsage  = PcieClocks->ClockUsage[0];
+  Clock[1].PcieClock.ClockUsage  = PcieClocks->ClockUsage[1];
+  Clock[2].PcieClock.ClockUsage  = PcieClocks->ClockUsage[2];
+  Clock[3].PcieClock.ClockUsage  = PcieClocks->ClockUsage[3];
+  Clock[4].PcieClock.ClockUsage  = PcieClocks->ClockUsage[4];
+  Clock[5].PcieClock.ClockUsage  = PcieClocks->ClockUsage[5];
+  Clock[6].PcieClock.ClockUsage  = PcieClocks->ClockUsage[6];
 
   PcdSet64S (PcdPcieClock0,  Clock[ 0].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over
   PcdSet64S (PcdPcieClock1,  Clock[ 1].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over

@@ -42,7 +42,6 @@ typedef enum {
 typedef enum {
   IpIGpuDdiPortDisabled   = 0x00,
   IpIGpuDdiPortEdp        = 0x01,
-  IpIGpuDdiPortEdpOverTcp = 0x02,
 } IGPU_DDI_PORT_SETTINGS;
 
 //

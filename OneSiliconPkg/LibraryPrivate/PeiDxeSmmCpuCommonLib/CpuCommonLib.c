@@ -385,8 +385,8 @@ SetSeamrrMsr (
     MsrSeamrrMask.Uint64 = AsmReadMsr64 (MSR_SEAMRR_MASK);
     MsrSeamrrBase.Uint64 = AsmReadMsr64 (MSR_SEAMRR_BASE);
 
-    DEBUG ((DEBUG_INFO, "[TDX] MSR Read Seamrr Base %X \n", MsrSeamrrBase.Uint64));
-    DEBUG ((DEBUG_INFO, "[TDX] MSR Read Seamrr Mask %X \n", MsrSeamrrMask.Uint64));
+    DEBUG ((DEBUG_INFO, "[TDX] MSR Read Seamrr Base %lX \n", MsrSeamrrBase.Uint64));
+    DEBUG ((DEBUG_INFO, "[TDX] MSR Read Seamrr Mask %lX \n", MsrSeamrrMask.Uint64));
   }
   return RETURN_SUCCESS;
 }

@@ -43,9 +43,9 @@ extern EFI_GUID gAmtPprEnableVariableGuid;
 //
 typedef union {
   struct {
-    UINT8 Reserved      : 6;
     UINT8 AmtEnabled    : 1;
     UINT8 PprEnabled    : 1;
+    UINT8 Reserved      : 6;
   } Bits;
 } AMT_PPR_ENABLE;
 

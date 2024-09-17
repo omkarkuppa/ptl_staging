@@ -31,6 +31,7 @@ typedef enum {
 } MrcSaGvPoint;
 
 #define EXT_MAX_DIMMS_IN_CHANNEL  (2)       ///< The maximum number of DIMMs per channel for external MRC input block
+#define MAX_MPTU                  (2)       ///< The maximum number of MPTU blocks in PHY
 #define MAX_CONTROLLER            (2)       ///< The maximum number of memory controllers per CPU socket.
 #define MAX_CHANNEL               (4)       ///< The maximum number of channels per memory controller.
 #define MAX_IBECC_REGIONS         (8)       ///< Maximum number of protection regions handled by IBECC
@@ -54,6 +55,7 @@ typedef struct {
   UINT8 VrefOffset;
   UINT8 CntrlrMask;
   UINT8 ChMask;
+  UINT8 RsvdBytes[2]; ///< Added to keep UINT32 alignment in McRegOffsets
 } McRegOffsets;
 
 typedef struct {
@@ -146,7 +148,9 @@ typedef struct {
   UINT32 RDDQODTT : 1;      ///< BIT18 - Read DQ ODT Training
   UINT32 EMPHASIS : 1;      ///< BIT19 - Pre-Emphasis LP5 Training
   UINT32 DIMMRXOFFSET : 1;  ///< BIT20 - DRAM Rx Offset Calibration Training
-  UINT32 ReservedBits : 11; ///< BIT21-31 - Reserved
+  UINT32 VIEWPINCAL : 1;    ///< BIT21 - View Pin Calibration Training
+  UINT32 QCLKDCC : 1;       ///< BIT22 - QCLK DCC calibration
+  UINT32 ReservedBits : 9;  ///< BIT23-31 - Reserved
 } TrainingStepsEn3;
 
 typedef struct {

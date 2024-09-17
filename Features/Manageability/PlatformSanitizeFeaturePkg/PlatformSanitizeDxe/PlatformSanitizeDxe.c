@@ -219,7 +219,6 @@ PlatformSanitizeEntryPoint (
   )
 {
   EFI_STATUS                   Status;
-  EFI_EVENT                    Event;
 
   DEBUG ((DEBUG_INFO, "PS: Platform Sanitization Driver EntryPoint.\n"));
 
@@ -290,17 +289,9 @@ PlatformSanitizeEntryPoint (
     DEBUG ((DEBUG_INFO, "PS: Storage Erase Register Event Status = %r\n", Status));
   } else {
     //
-    // Register End Of Dxe event to perform Sanitize actions
+    // Perform Sanitize actions
     //
-    Status = gBS->CreateEventEx (
-                    EVT_NOTIFY_SIGNAL,
-                    TPL_CALLBACK,
-                    PerformSanitizeActions,
-                    NULL,
-                    &gEfiEndOfDxeEventGroupGuid,
-                    &Event
-                    );
-    ASSERT_EFI_ERROR (Status);
+    PerformSanitizeActions ();
   }
 
   DEBUG ((DEBUG_INFO, "PS: Platform Sanitization Driver Exit.\n"));

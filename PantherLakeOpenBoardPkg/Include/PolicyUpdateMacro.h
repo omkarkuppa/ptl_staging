@@ -41,10 +41,40 @@
 #undef OR_POLICY
 #endif
 
-#define UPDATE_POLICY(ConfigField, Value)  ConfigField = Value;
-#define COPY_POLICY(ConfigField, Value, Size)  CopyMem (ConfigField, Value, Size);
-#define GET_POLICY(ConfigField, Value)  Value = ConfigField;
-#define AND_POLICY(ConfigField, Value)  ConfigField &= Value;
-#define OR_POLICY(ConfigField, Value)  ConfigField |= Value;
+#define UPDATE_POLICY_V2(UpdField, ConfigField, Value)  UpdField = Value;
+#define COPY_POLICY_V2(UpdField, ConfigField, Value, Size)  CopyMem (UpdField, Value, Size);
+#define GET_POLICY_V2(UpdField, ConfigField, Value)  Value = UpdField;
+#define AND_POLICY_V2(UpdField, ConfigField, Value)  UpdField &= Value;
+#define OR_POLICY_V2(UpdField, ConfigField, Value)  UpdField |= Value;
+//
+// Compare Policy Default and Setup Default when FirstBoot and RvpSupport
+//
+#if ((!defined(MDEPKG_NDEBUG)))
+#define POLICY_DEBUG_WARNING_V2(ConfigField, SetupField)  {\
+  DEBUG ((DEBUG_INFO, ""#ConfigField"= 0x%x mismatch with "#SetupField"= 0x%x\n", ConfigField, SetupField));\
+}
+
+#define COMPARE_AND_UPDATE_POLICY_V2(UpdField, ConfigField, Value) {\
+  if ((ConfigField != Value)) {\
+    POLICY_DEBUG_WARNING_V2(UpdField, Value);\
+  }\
+  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+}
+
+#define COMPARE_UPDATE_POLICY_ARRAY_V2(UpdField, ConfigField, Value, ArrayIndex) {\
+  if ((ConfigField != Value) ) {\
+    POLICY_DEBUG_WARNING_V2(UpdField, Value);\
+    DEBUG ((DEBUG_INFO, "Index= 0x%x\n", ArrayIndex));\
+  }\
+  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+}
+#else
+#define COMPARE_AND_UPDATE_POLICY_V2(UpdField, ConfigField, Value) {\
+  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+}
+#define COMPARE_UPDATE_POLICY_ARRAY_V2(UpdField, ConfigField, Value, ArrayIndex) {\
+  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+}
+#endif
 
 #endif //_POLICY_UPDATE_MACRO_H_

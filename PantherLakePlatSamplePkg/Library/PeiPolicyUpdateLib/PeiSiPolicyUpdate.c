@@ -36,11 +36,9 @@
 #include <Setup.h>
 #include <SetupVariable.h>
 #include <SpiConfig.h>
-#if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
 #include <FspsUpd.h>
 #include <Ppi/DebugEventHandler.h>
-#endif
 
 /**
   Check if BIOS Update is going to happen during this boot.
@@ -119,16 +117,24 @@ UpdatePeiPciePolicyPreMem (
   EFI_PEI_READ_ONLY_VARIABLE2_PPI   *VariableServices;
   UINTN                             VariableSize;
   SI_SETUP                          SiSetup;
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspmUpd;
+#else
   SI_PREMEM_CONFIG                  *SiPreMemConfig;
   SPI_CONFIG                        *SpiConfig;
+#endif
 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+  ASSERT (FspmUpd != NULL);
+#else
   SiPreMemConfig = NULL;
-
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSpiConfigGuid, (VOID *) &SpiConfig);
   ASSERT_EFI_ERROR (Status);
-
+#endif
   //
   // Retrieve Setup variable
   //
@@ -152,12 +158,12 @@ UpdatePeiPciePolicyPreMem (
   ASSERT_EFI_ERROR (Status);
 
   if (Status == EFI_SUCCESS) {
-    COMPARE_AND_UPDATE_POLICY (SiPreMemConfig->PlatformDebugOption,      SiSetup.PlatformDebugOption );
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PlatformDebugOption, SiPreMemConfig->PlatformDebugOption, SiSetup.PlatformDebugOption );
   }
   //
   // Policy to prevent MRC modify the boot mode while in flash update
   //
-  UPDATE_POLICY (SiPreMemConfig->SkipOverrideBootModeWhenFwUpdate, (UINT8) FALSE);
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SiSkipOverrideBootModeWhenFwUpdate, SiPreMemConfig->SkipOverrideBootModeWhenFwUpdate, (UINT8) FALSE);
 
   return EFI_SUCCESS;
 }
@@ -187,7 +193,6 @@ UpdatePeiSiPolicyPreMem (
 
   DEBUG ((DEBUG_INFO, "Update PeiSiPolicyUpdate Pre-Mem Start\n"));
 
-  FspmUpd = NULL;
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
   if (FspmUpd == NULL) {
@@ -286,6 +291,11 @@ UpdateSsidPolicy (
   PCH_SETUP                       PchSetup;
   UINTN                           VarSize;
   EFI_PEI_READ_ONLY_VARIABLE2_PPI *VariableServices;
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                               *FspsUpd;
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+#endif
 
   EntryCount                    = 0;
   Status                        = EFI_SUCCESS;
@@ -353,9 +363,11 @@ UpdateSsidPolicy (
   ASSERT (EntryCount < SI_MAX_DEVICE_COUNT);
 
   // WA: UPDATE_POLICY () func fails to update pointer , as SiSsidTablePtr is different type in configblock and UPD
-  UPDATE_POLICY (SiConfig->SkipSsidProgramming,(UINT8) FALSE);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SiSkipSsidProgramming, SiConfig->SkipSsidProgramming, (UINT8) FALSE);
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   SiConfig->SsidTablePtr = (UINT32 *)mSsidTablePtr;
-  UPDATE_POLICY (SiConfig->NumberOfSsidTableEntry, (UINT16) EntryCount);
+#endif
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SiNumberOfSsidTableEntry, SiConfig->NumberOfSsidTableEntry, (UINT16) EntryCount);
 
 }
 
@@ -375,11 +387,11 @@ UpdatePeiSiPolicy (
   )
 {
   EFI_STATUS                         Status;
-  SI_CONFIG                          *SiConfig;
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                               *FspsUpd;
   DEBUG_EVENT_HANDLER_PPI            *DebugEventHandlerPpi;
 #endif
+  SI_CONFIG                          *SiConfig;
 
   DEBUG ((DEBUG_INFO, "Update PeiSiPolicyUpdate Pos-Mem Start\n"));
 
@@ -388,15 +400,13 @@ UpdatePeiSiPolicy (
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
-#endif
-
+#else
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gSiConfigGuid, (VOID *) &SiConfig);
   ASSERT_EFI_ERROR (Status);
-
+#endif
   UpdateSsidPolicy (
     SiConfig
     );
-
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   Status = PeiServicesLocatePpi (
            &gDebugEventHandlerPpiGuid,       // GUID
@@ -410,11 +420,11 @@ UpdatePeiSiPolicy (
 #endif
 
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
-  UPDATE_POLICY (SiConfig->SkipBiosDoneWhenFwUpdate, (UINT8) TRUE);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SiSkipBiosDoneWhenFwUpdate, SiConfig->SkipBiosDoneWhenFwUpdate, (UINT8) TRUE);
 #elif (FixedPcdGetBool (PcdTopSwapSmiSupport) == 0x0)
   if (IsBiosUpdateRequired ()) {
     DEBUG ((DEBUG_INFO, "Skip BiosDone MSR for BIOS Update Process\n"));
-    UPDATE_POLICY (SiConfig->SkipBiosDoneWhenFwUpdate, (UINT8) TRUE);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SiSkipBiosDoneWhenFwUpdate, SiConfig->SkipBiosDoneWhenFwUpdate, (UINT8) TRUE);
   }
 #endif
 

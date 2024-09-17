@@ -235,10 +235,3 @@ Method (_PRR) {
   Return (Package () {MRST})
 }
 
-Method (_DSM, 4, Serialized)
-{
-  Include ("WwanDsm.asl")
-
-  Return (Buffer () {0})
-} // _DSM
-

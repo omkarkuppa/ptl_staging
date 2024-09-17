@@ -83,6 +83,7 @@
   PeiOcInitLib
   CpuPmDataLib
   PerformanceLib
+  HobLib
 
 [Guids]
   ##
@@ -123,7 +124,6 @@
   gSiPkgTokenSpaceGuid.PcdOverclockEnable                  ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSiExtendedBiosRegionBaseAddress  ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSiExtendedBiosRegionSize         ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdTsnSupport                       ## CONSUMES
 
 [Depex]
   TRUE

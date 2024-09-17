@@ -31,6 +31,7 @@ extern EFI_GUID gIGpuDataHobGuid;
 **/
 typedef struct {
   EFI_HOB_GUID_TYPE           EfiHobGuidType;                           ///< Offset 0 - 23: GUID Hob type structure for gIGpuDataHobGuid
+  UINT8                       PrimaryDisplayDetection;                  ///< Primary Display - default is IGD. [IGD = 0; PEG = 1; PCIE = 2]
   UINT64                      FlatCcsBaseAddr;                          ///< Flat CCS Base Address
   UINT32                      FlatCcsMemSize;                           ///< Flat CCS Size in MB
   UINT32                      GraphicsConfigPtr;                        ///< Graphics Configuration Ptr.

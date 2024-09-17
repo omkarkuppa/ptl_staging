@@ -48,4 +48,4 @@ OneSiliconPkg/SiPkg.dec
 PchPciBdfLib.c
 
 [Pcd]
-gSiPkgTokenSpaceGuid.PcdTsnSupport                        ## CONSUMES
+gSiPkgTokenSpaceGuid.PcdTsnSupport          ## CONSUMES

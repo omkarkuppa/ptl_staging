@@ -38,55 +38,11 @@ TcssPrintConfigPreMem (
 {
   EFI_STATUS               Status;
   TCSS_PEI_PREMEM_CONFIG   *TcssPeiPreMemConfig;
-  UINTN                    Index;
-  UINT8                    PortPolicyData8;
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTcssPeiPreMemConfigGuid, (VOID *) &TcssPeiPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "----------------------- TCSS_PEI_PREMEM_CONFIG -----------------\n"));
-  DEBUG ((DEBUG_INFO, " Revision : %d\n", TcssPeiPreMemConfig->Header.Revision));
-
-  for (Index = 0; Index < MAX_IOM_AUX_BIAS_COUNT; Index++) {
-    DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomAuxPortPad[%x].ReceptacleSbu2BiasCtrl 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[Index].ReceptacleSbu2BiasCtrl));
-    DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomAuxPortPad[%x].ReceptacleSbu1BiasCtrl 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[Index].ReceptacleSbu1BiasCtrl));
-    DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomAuxPortPad[%x].AuxIsoCtrl 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[Index].AuxIsoCtrl));
-  }
-
-  DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomConfig.IomOverrides.AuxOri 0x%04X\n", TcssPeiPreMemConfig->IomConfig.IomOverrides.AuxOri));
-  DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomConfig.IomOverrides.HslOri 0x%04X\n", TcssPeiPreMemConfig->IomConfig.IomOverrides.HslOri));
-
-  for (Index = 0; Index < MAX_TCSS_USB3_PORTS; Index++) {
-    DEBUG ((DEBUG_INFO, "TcssPeiPreMemConfig->IomConfig.IomUsbCDpConfig[%d] 0x%08x\n", Index, TcssPeiPreMemConfig->IomConfig.IomUsbCDpConfig[Index]));
-  }
-
-  DEBUG ((DEBUG_INFO, " TCSS Feature Support Enabled Policy : %01x\n", TcssPeiPreMemConfig->TcssEnable));
-  DEBUG ((DEBUG_INFO, " TCSS Port Enabled Policy : %01x\n", TcssPeiPreMemConfig->UsbTcConfig.PortEnData32));
-
-  for (Index = 0; Index < GetPchMaxTypeCPortNum(); Index++) {
-    PortPolicyData8 = TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[Index];
-    DEBUG ((DEBUG_INFO, " TCSS Port[%d] Policy Configuration : ", Index));
-    switch (PortPolicyData8) {
-      case UsbCDisable:
-        DEBUG ((DEBUG_INFO, "No Function\n"));
-      break;
-      case DpOnly:
-        DEBUG ((DEBUG_INFO, "DP ALT and DP Tunneling\n"));
-      break;
-      case NoThunderbolt:
-        DEBUG ((DEBUG_INFO, "USB3 Native and DP ALT\n"));
-      break;
-      case NoPcie:
-        DEBUG ((DEBUG_INFO, "No PCIE\n"));
-      break;
-      case FullFunction:
-        DEBUG ((DEBUG_INFO, "Full Function\n"));
-      break;
-      default:
-        DEBUG ((DEBUG_INFO, "Unknown state\n"));
-      break;
-    }
-  }
+  TcssPreMemConfigDump (TcssPeiPreMemConfig, GetPchMaxTypeCPortNum());
 }
 
 /**

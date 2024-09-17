@@ -409,6 +409,28 @@ typedef struct {
   BIOS_SPECIFIC_IBB_STRUCTURE* Data2;           //Data2[SizeOfData2]  // BSIS
 } PLATFORM_CONFIG_DATA_ELEMENT;
 
+#define BPM_PDRS_ELEMENT_STRUCTURE_ID (*(UINT64 *)"__PDRS__")
+typedef struct {
+  UINT8               StructureId[8];
+  UINT8               StructVersion;   // 0x20
+  UINT8               Reserved;
+  UINT16              SizeOfData;
+  UINT8*              Data;
+} POWER_DOWN_REQUEST_STRUCTURE;
+
+#define PDR_MEDIA_TPM_12      0
+#define PDR_MEDIA_TPM_20      1
+#define PDR_MEDIA_PTT         2
+#define PDR_MEDIA_CMOS        3
+
+typedef struct {
+  UINT8               MediaType;
+  UINT32              NvIndex;
+  UINT8               BitfieldWidth;
+  UINT8               BitfieldPos;
+  UINT8               ByteOffset;
+} TPM_NV_ADDRESS_STRUCTURE;
+
 #define BOOT_POLICY_MANIFEST_PLATFORM_MANUFACTURER_ELEMENT_STRUCTURE_ID  (*(UINT64 *)"__PMDA__")
 #define BOOT_POLICY_MANIFEST_PLATFORM_MANUFACTURER_ELEMENT_VERSION_2_0       0x20
 typedef struct {
@@ -568,6 +590,18 @@ FindBpmElement (
 **/
 VOID *
 FindBpmIbb (
+  IN BOOT_POLICY_MANIFEST_HEADER              *Bpm
+  );
+
+/**
+  Find BPM Pcd element
+
+  @param[in] Bpm           BPM address
+
+  @return BPM Pcd element
+**/
+VOID *
+FindBpmPcde (
   IN BOOT_POLICY_MANIFEST_HEADER              *Bpm
   );
 

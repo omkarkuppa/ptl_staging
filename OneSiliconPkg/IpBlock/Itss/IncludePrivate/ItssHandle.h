@@ -53,6 +53,7 @@ typedef struct _ITSS_HANDLE ITSS_HANDLE;
 #define IRQ_UNIQUE_SCS      2  ///< SCS devices need unique IRQ
 #define IRQ_UNIQUE_OTG      3  ///< OTG device need unique IRQ
 #define IRQ_UNIQUE_ISH      4  ///< ISH device need unique IRQ
+#define IRQ_UNIQUE_CAN      5  ///< CAN device need unique IRQ
 
 //
 // Structure for storing mapping between device number and PIRx register

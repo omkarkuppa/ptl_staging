@@ -55,9 +55,6 @@
 #include <Library/PeiTelemetryFruLib.h>
 #include <Library/FspCommonLib.h>
 #include <FspStatusCode.h>
-#if FixedPcdGet8(PcdTsnSupport) == 0x1
-#include <Library/PeiTsnInitLib.h>
-#endif
 #include <Library/PmcPrivateLib.h>
 #include <Library/CpuPowerManagementLib.h>
 #include <Library/DomainIGpuInit.h>
@@ -588,13 +585,6 @@ SiInitPreMemOnPolicy (
     REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_TCSS_INIT_PREMEM); //PostCode (0xA09)
     PtlTcssInitPreMem (TcssPeiPreMemConfig, HostBridgePreMemConfig);
   }
-
-#if FixedPcdGet8(PcdTsnSupport) == 0x1
-  ///
-  /// Install TSN Info Hob
-  ///
-  InstallTsnInfoHob ();
-#endif
 
   DEBUG ((DEBUG_INFO, "Create IGPU Data Hob\n"));
   CreateIGpuDataHob (IGpuPreMemConfig);

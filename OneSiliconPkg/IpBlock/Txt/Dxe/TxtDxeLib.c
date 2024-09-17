@@ -609,11 +609,11 @@ SetupTxtDeviceMemory (
   @retval EFI_SUCCESS   - Always.
 **/
 EFI_STATUS
-DoScheck (
+DoLockConfig (
   IN TXT_DXE_LIB_CONTEXT *TxtDxeCtx
   )
 {
-  return TxtDxeLibLaunchBiosAcm (TxtDxeCtx, TXT_LAUNCH_SCHECK);
+  return TxtDxeLibLaunchBiosAcm (TxtDxeCtx, TXT_LAUNCH_LOCK_CONFIG);
 }
 
 /**

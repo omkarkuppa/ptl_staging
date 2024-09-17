@@ -113,4 +113,6 @@ SiliconPolicyUpdatePostMemAdvancedConfigApi (
   )
 {
 
+  SiliconPolicyUpdatePostMemAdvancedConfig (NULL, NULL);
+
 }

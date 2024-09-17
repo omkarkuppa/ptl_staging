@@ -24,7 +24,6 @@
 #include <Library/BaseLib.h>
 #include <Library/PeiHostBridgeIpStatusLib.h>
 #include <Defines/HostBridgeDefines.h>
-#include <Register/Ptl/Noc/HboMem.h>   // *HBO_MEM_REG
 #include <Library/NguInfoLib.h>    // GET_HBO_EFFECTIVE_ADDRESS
 #include <Protocol/MemAddrDecodeEncode.h>
 
@@ -50,8 +49,9 @@
 #define MC1_MAD_SUB_CHANNEL_HASH_REG                                   (0x0001D828)
 #define MC1_MAD_DRAM_HASH_0_REG                                        (0x0001D80C)
 #define MC1_MAD_DRAM_HASH_1_REG                                        (0x0001D810)
-
-
+#define REMAP_BASE_HBO_MEM_REG                                         (0x00000208U)
+#define REMAP_LIMIT_HBO_MEM_REG                                        (0x00000210U)
+#define MEMORY_SLICE_HASH_HBO_MEM_REG                                  (0x00000200U)
 
 VOID pa_decoder_so( //inputs
                    UINT64 remap_base,

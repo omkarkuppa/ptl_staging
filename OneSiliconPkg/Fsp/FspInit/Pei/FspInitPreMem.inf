@@ -37,6 +37,7 @@
   UefiCpuPkg/UefiCpuPkg.dec
   IntelFsp2Pkg/IntelFsp2Pkg.dec
   OneSiliconPkg/SiPkg.dec
+  PantherLakeFspPkg/PantherLakeFspPkg.dec
 
 [Ppis]
   gEfiPeiResetPpiGuid                       ## PRODUCES
@@ -55,7 +56,6 @@
   gFspSiliconFvGuid                         ## CONSUMES
   gFspPerformanceDataGuid                   ## CONSUMES
   gPchGlobalResetGuid                       ## CONSUMES
-  gSiliconPolicyHobGuid                     ## PRODUCES
 
 [Pcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdPeiCoreMaxPeiStackSize    ## CONSUMES
@@ -73,14 +73,18 @@
   ConfigBlockLib
   SiPolicyLib
   PeiMePolicyLib
+  PeiAmtPolicyLib
   SmbusLib
+  PeiPolicyUpdatePreMemLib
   FspSwitchStackLib
+  MeChipsetLib
   PciSegmentLib
   FspCommonLib
   PerformanceLib
   ResetSystemLib
   MemoryAllocationLib
   StallPpiLib
+  MeLib
   FiaSocLib
   ReportStatusCodeLib
 

@@ -840,6 +840,12 @@ MrcSaveMCValues (
           ChannelSave->DimmSpdSave[Dimm].CkdMfgID = SpdIn->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.ManufacturerId.Data;
           ChannelSave->DimmSpdSave[Dimm].CkdDeviceRev = SpdIn->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.DeviceRevision;
           ChannelSave->DimmSpdSave[Dimm].DramMfgID = SpdIn->Ddr5.ManufactureInfo.DramIdCode.Data;
+        } else if (Outputs->IsLP5Camm2) {
+          SpdBegin = (UINT8*)&SpdIn->JedecLpddr5.ManufactureInfo;
+          ChannelSave->DimmSpdSave[Dimm].SpdDramDeviceType = SpdIn->JedecLpddr5.Base.DramDeviceType.Data;
+          ChannelSave->DimmSpdSave[Dimm].SpdModuleType = SpdIn->JedecLpddr5.Base.ModuleType.Data;
+          ChannelSave->DimmSpdSave[Dimm].SpdModuleMemoryBusWidth = SpdIn->JedecLpddr5.Base.SystemChannelBusWidth.Data;
+          ChannelSave->DimmSpdSave[Dimm].DramMfgID = SpdIn->JedecLpddr5.ManufactureInfo.DramIdCode.Data;
         } else { // LP5
           SpdBegin = (UINT8 *) &SpdIn->Lpddr.ManufactureInfo;
           ChannelSave->DimmSpdSave[Dimm].SpdDramDeviceType = SpdIn->Lpddr.Base.DramDeviceType.Data;
@@ -892,6 +898,7 @@ MrcSaveMCValues (
   SaveData->IsLpddr                = Outputs->IsLpddr;
   SaveData->IsLpddr5               = Outputs->IsLpddr5;
   SaveData->IsDdr5                 = Outputs->IsDdr5;
+  SaveData->IsLP5Camm2             = Outputs->IsLP5Camm2;
   SaveData->LpX                    = Outputs->LpX;
   SaveData->LpByteMode             = Outputs->LpByteMode;
   SaveData->EnhancedChannelMode    = Outputs->EnhancedChannelMode;
@@ -906,6 +913,9 @@ MrcSaveMCValues (
   SaveData->FreqMax                = Outputs->FreqMax;
   SaveData->MaxDqBits              = Outputs->MaxDqBits;
   SaveData->IsCkdSupported         = Outputs->IsCkdSupported;
+  SaveData->PmaCceConfig           = (UINT8) Inputs->PmaCceConfig;
+  SaveData->TmeEnable              = (UINT8) Inputs->TmeEnable;
+  SaveData->Ibecc                  = (UINT8) Inputs->ExtInputs.Ptr->Ibecc;
 
   MrcCall->MrcCopyMem ((UINT8 *) &SaveData->OffsetKnobs, (UINT8 *) &Inputs->ExtInputs.Ptr->OffsetKnobs, sizeof (McRegOffsets));
   SaveData->SaMemCfgCrc = Inputs->SaMemCfgCrcForSave;
@@ -1036,6 +1046,12 @@ MrcRestoreNonTrainingValues (
             SpdIn->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.ManufacturerId.Data = ChannelSave->DimmSpdSave[Dimm].CkdMfgID;
             SpdIn->Ddr5.ModuleCommon.ModuleSpecific.Unbuffered.DeviceInfoRegister.DeviceRevision = ChannelSave->DimmSpdSave[Dimm].CkdDeviceRev;
             SpdIn->Ddr5.ManufactureInfo.DramIdCode.Data = ChannelSave->DimmSpdSave[Dimm].DramMfgID;
+          } else if (SaveData->IsLP5Camm2) {
+            SpdBegin = (UINT8*)&SpdIn->JedecLpddr5.ManufactureInfo;
+            SpdIn->JedecLpddr5.Base.DramDeviceType.Data = ChannelSave->DimmSpdSave[Dimm].SpdDramDeviceType;
+            SpdIn->JedecLpddr5.Base.ModuleType.Data = ChannelSave->DimmSpdSave[Dimm].SpdModuleType;
+            SpdIn->JedecLpddr5.Base.SystemChannelBusWidth.Data = ChannelSave->DimmSpdSave[Dimm].SpdModuleMemoryBusWidth;
+            SpdIn->JedecLpddr5.ManufactureInfo.DramIdCode.Data = ChannelSave->DimmSpdSave[Dimm].DramMfgID;
           } else { // LP5
             SpdBegin = (UINT8 *) &SpdIn->Lpddr.ManufactureInfo;
             SpdIn->Lpddr.Base.DramDeviceType.Data = ChannelSave->DimmSpdSave[Dimm].SpdDramDeviceType;
@@ -1082,6 +1098,7 @@ MrcRestoreNonTrainingValues (
   Outputs->IsLpddr                = SaveData->IsLpddr;
   Outputs->IsLpddr5               = SaveData->IsLpddr5;
   Outputs->IsDdr5                 = SaveData->IsDdr5;
+  Outputs->IsLP5Camm2             = SaveData->IsLP5Camm2;
   Outputs->EnhancedChannelMode    = SaveData->EnhancedChannelMode;
   Outputs->LpX                    = SaveData->LpX;
   Outputs->LpByteMode             = SaveData->LpByteMode;
@@ -1261,6 +1278,13 @@ MrcRestoreTrainingValues (
 
   // Clear CR Cache
   InitializeRegisterCache (MrcData);
+
+  // Perform DLL reset, followed by an IoReset
+  ToggleDllReset (MrcData, 1);
+  MrcWait (MrcData, MRC_TIMER_1NS * 100);
+  ToggleDllReset (MrcData, 0);
+  MrcWait (MrcData, MRC_TIMER_1US);
+  IoReset (MrcData);
 
   return mrcSuccess;
 }

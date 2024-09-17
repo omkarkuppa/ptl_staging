@@ -44,8 +44,8 @@ To provide discrete TBT functions on platform
 
 ## Configuration
 * Set gBoardModuleTokenSpaceGuid.VpdPcdDTbtBoardConfig in BoardVpdPcdInit.dsc of each board for passing platform data.
-* Set gDiscreteTbtFeaturePkgTokenSpaceGuid.PcdIoeDTbtRpSupport to reflect all possible dTBT Root Ports at IOE.
-* Set gDiscreteTbtFeaturePkgTokenSpaceGuid.PcdPchDTbtRpSupport to reflect all possible dTBT Root Ports at PCH.
+* Set gUsb4FeaturePkgTokenSpaceGuid.PcdIoeDTbtRpSupport to reflect all possible dTBT Root Ports at IOE.
+* Set gUsb4FeaturePkgTokenSpaceGuid.PcdPchDTbtRpSupport to reflect all possible dTBT Root Ports at PCH.
 * Define macro in BoardPkg.dsc to overwrite the following dTBT Root Port ACPI Path components:
 *   IOE_RP_PC: IOE Root Port PC segment. Default = PC00.
 *   IOE_RP_PREFIX: IOE Root Port ACPI name prefix. Default = RP.

@@ -2757,6 +2757,69 @@ SerialIoUartUpdateConsoleVariable (
   EfiBootManagerUpdateConsoleVariable (ConOut, DevicePath, NULL);
   FreePool (HandleBuffer);
 }
+
+
+/**
+   This function will delete additional igfx's device path in ConOut variable when external video controller
+   was set as primary display and internal graphics was forced to enable.
+   @param VarConOut    A pointer to ConOut variable.
+   @param IgfxDp       A pointer to igfx device path.
+**/
+STATIC
+VOID
+CheckPrimaryDisplay (
+  IN EFI_DEVICE_PATH_PROTOCOL  *VarConOut,
+  IN EFI_DEVICE_PATH_PROTOCOL  *IgfxDp
+  )
+{
+  UINTN                     IgfxDpSize;
+  UINTN                     DevicePathInstSize;
+  EFI_DEVICE_PATH_PROTOCOL  *VarConOutDp;
+  EFI_DEVICE_PATH_PROTOCOL  *DevicePathInst;
+  EFI_STATUS                Status;
+
+  DEBUG ((DEBUG_ERROR, "%a Start\n", __FUNCTION__));
+
+  VarConOutDp    = VarConOut;
+  DevicePathInst = GetNextDevicePathInstance (&VarConOutDp, &DevicePathInstSize);
+  IgfxDpSize     = GetDevicePathSize (IgfxDp);
+  //
+  // Abandon END device path node.
+  //
+  IgfxDpSize    -= sizeof (EFI_DEVICE_PATH_PROTOCOL);
+
+  //
+  // Go through ConOut with loop.
+  //
+  while (DevicePathInst != NULL) {
+    //
+    // Compare each device path instance in ConOut variable with igfx device path.
+    //
+    if (CompareMem (IgfxDp, DevicePathInst, IgfxDpSize) == 0) {
+      //
+      // Delete igfx device path instance in ConOut.
+      //
+      Status = EfiBootManagerUpdateConsoleVariable (ConOut, NULL, DevicePathInst);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "EfiBootManagerUpdateConsoleVariable() with status: %r\n", Status));
+        return;
+      }
+
+      break;
+    }
+
+    FreePool (DevicePathInst);
+    DevicePathInst = GetNextDevicePathInstance (&VarConOutDp, &DevicePathInstSize);
+  }
+
+  if (DevicePathInst != NULL) {
+    FreePool (DevicePathInst);
+  }
+
+  DEBUG ((DEBUG_ERROR, "%a End\n", __FUNCTION__));
+}
+
+
 /**
   Platform Bds init. Include the platform firmware vendor, revision
   and so crc check.
@@ -3160,6 +3223,21 @@ PlatformBootManagerBeforeConsole (
   }
   if (CnvSetup.PrebootBleEnable == 0) {
     UnloadDriver (&gBluetoothHciImageGuid, L"Intel BT Hci Driver");
+  }
+
+  //
+  // This handler is to avoid both igfx and external video controller were set as primary display
+  // when external video controller was choosed to be a primary display as well as Internal Graphics was forced to enabled.
+  // This handler should be prior to any connect device path and connect controller routine.
+  //
+  if ((mSaSetup.InternalGraphics == 1) && (IsIgd == FALSE)) {
+    Status = GetEfiGlobalVariable2 (L"ConOut", (VOID **)&VarConOut, NULL);
+    if (!EFI_ERROR (Status)) {
+      CheckPrimaryDisplay (VarConOut, (EFI_DEVICE_PATH_PROTOCOL *) &gPlatformIGDDevice);
+      if (VarConOut != NULL) {
+        FreePool (VarConOut);
+      }
+    }
   }
 
   if (FeaturePcdGet (PcdTpm2Enable) == TRUE) {

@@ -499,6 +499,7 @@ typedef struct {
 typedef enum {
   ROW_COL_2_BANK_2_RANK,
   BANK_2_ROW_COL_2_RANK,
+  BANK_2_COL_ROW_2_RANK,
   ROW_COL_2_RANK_2_BANK,
   RANK_2_ROW_COL_2_BANK,
   BANK_2_RANK_2_ROW_COL,
@@ -892,6 +893,22 @@ MrcControllerExist (
   );
 
 /**
+  Returns whether Controller HW exists even though it may not be populated.
+
+  @param[in] MrcData    - Pointer to MRC global data.
+  @param[in] Controller - Controller to test.
+
+  @retval BOOLEAN - TRUE if exists, FALSE otherwise.
+**/
+extern
+MRC_IRAM0_FUNCTION
+BOOLEAN
+MrcGetHwControllerExists (
+  IN MrcParameters *const MrcData,
+  IN const UINT32         Controller
+  );
+
+/**
   Returns whether Channel is or is not present.
 
   @param[in] MrcData    - Pointer to MRC global data.
@@ -942,6 +959,39 @@ MrcGetPartitionExists (
   IN     PARTITION_TYPE     PartType,
   IN     UINT32             PartInstance,
   IN     UINT32             PartChannel
+  );
+
+/**
+  Determine if the hardware for a partition exists within memory subsytem even though channel may not be populated.
+
+  @param[in]  MrcData      - Pointer to global MRC data.
+  @param[in]  PartType     - The partition type to look up.
+  @param[in]  PartInstance - The partition instance to look up.
+  @param[in]  PartChannel  - The partition channel to look up. Only used by the Data
+                             Partitions as there are two "bytes" in 1 Data Instance.
+
+  @return whether partition exists or not.
+**/
+BOOLEAN
+MrcGetHwPartitionExists (
+  IN     MrcParameters      *MrcData,
+  IN     PARTITION_TYPE     PartType,
+  IN     UINT32             PartInstance,
+  IN     UINT32             PartChannel
+  );
+
+/**
+  Determine if PHY Channel exists even though channel may not be populated.
+
+  @param[in]  MrcData      - Pointer to global MRC data.
+  @param[in]  PhyChannel   - PHY channel number.
+
+  @return whether PHY Channel exists or not.
+**/
+BOOLEAN
+MrcGetHwPhyChannelExists (
+  IN     MrcParameters      *MrcData,
+  IN     UINT32             PhyChannel
   );
 
 /**
@@ -4082,6 +4132,36 @@ MrcStatus
 MrcSetInternalClocksOn (
   IN OUT DATA0CH0_CR_DDRCRDATACONTROL0_STRUCT *DataControl0,
   IN BOOLEAN Enable
+  );
+
+/**
+  If there is a value match with any of the elements in the array, then the matched array index is returned.
+
+  @param[in]  Value     - Value to be matched.
+  @param[in]  Array     - Input array.
+  @param[in]  ArraySize - Size of Array.
+
+  @retval Array index if there is a value match else returns -1.
+**/
+INT8
+MrcFindIndex (
+  IN UINT16 Value,
+  IN UINT16 Array[],
+  IN UINT8 ArraySize
+  );
+
+/**
+  In a given 1D array, finds the maximum value and returns it.
+
+  @param[in]  Array - Input array.
+  @param[in]  ArraySize - Size of Array.
+
+  @retval Returns the maximum value from the input array.
+**/
+INT8
+MrcFindMaxVal (
+  IN INT8  Array[],
+  IN UINT8 ArraySize
   );
 
 #endif //_MrcCommon_h_

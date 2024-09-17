@@ -32,19 +32,6 @@ External (\_SB.PC00.GPCB, MethodObj)
 External (\_SB.PC00.PC2M, MethodObj)
 External (PBNU, IntObj)    // Bus Number
 
-External(\TP1T, IntObj)
-External(\TP1D, IntObj)
-External(\TP2T, IntObj)
-External(\TP2D, IntObj)
-External(\TP3T, IntObj)
-External(\TP3D, IntObj)
-External(\TP4T, IntObj)
-External(\TP4D, IntObj)
-External(\TP5T, IntObj)
-External(\TP5D, IntObj)
-External(\TP6T, IntObj)
-External(\TP6D, IntObj)
-
 //
 // Legacy implementation uses DSCE to indicate FW CM or SW CM running
 // 0 = SW CM Disabled (FW CM), 1 = SW CM Enabled
@@ -893,35 +880,5 @@ Method (DUCL, 1, Serialized)
   If (LEqual (RPN1, 1)) {
     ADBG (Concatenate ("[dTBT] Set dTBT1 Class Code, Arg = ", ToHexString (Local0)))
     DSCL (1, Local0)
-  }
-}
-
-//
-// Find Port supported or not(FPSP)
-// Method to find Port enabled or not (we have cases where only 1 port supported)
-// Arg0 : TBT Port number 1/2
-// Arg1 : Root port number of dTBT
-// Uses Name Space Object TURP to know the Current Root Port
-//
-Method(FPSP, 2, Serialized) {
-  // Create Propeties of the input Port to match with the Policy provided for Type C Connectors
-  // Shift left and or with 0x01(TBT Controller) which will give 0:1 Controller 2:7 Root port
-  // Shift right Policy by one Bit will give the same and compare both.
-  ShiftLeft(Arg1, 2, Local0)
-  Or(Local0, 0x01, Local0)
-  If (LAnd (LEqual(ShiftRight (TP1D,1), Local0),LEqual(Arg0, TP1T))) {
-    Return (1)
-  } ElseIf(LAnd (LEqual(ShiftRight (TP2D,1), Local0),LEqual(Arg0, TP2T))) {
-    Return (1)
-  } ElseIf(LAnd (LEqual(ShiftRight (TP3D,1), Local0),LEqual(Arg0, TP3T))) {
-    Return (1)
-  } ElseIf(LAnd (LEqual(ShiftRight (TP4D,1), Local0),LEqual(Arg0, TP4T))) {
-    Return (1)
-  } ElseIf(LAnd (LEqual(ShiftRight (TP5D,1), Local0),LEqual(Arg0, TP5T))) {
-    Return (1)
-  } ElseIf(LAnd (LEqual(ShiftRight (TP6D,1), Local0),LEqual(Arg0, TP6T))) {
-    Return (1)
-  } Else {
-    Return (0)
   }
 }

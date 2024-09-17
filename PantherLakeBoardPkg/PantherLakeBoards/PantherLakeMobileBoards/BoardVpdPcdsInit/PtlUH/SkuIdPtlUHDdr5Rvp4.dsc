@@ -117,7 +117,7 @@
   })}
 
   # MRC UserBd
-  gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|*|0x01
+  gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|*|0x05
 
   # MRC Ddr Frequency Limit
   gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit|*|0x0
@@ -257,6 +257,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdBoardRetimerForcePwrGpio|*|{CODE(
     { GPIOV2_PTL_PCD_XXGPP_B_21 }   // TCP_RETIMER_FORCE_PWR
   )}
+
   # Recovery Mode Gpio
   # BoardGpioTypePch,BoardGpioTypeExpander,BoardGpioTypeNotSupported
   gBoardModuleTokenSpaceGuid.VpdPcdRecoveryModeGpio|*|{CODE(
@@ -673,7 +674,7 @@
   //
   // Lid Switch Wake Gpio
   //
-    {GPIOV2_PTL_PCD_XXGPP_F_23, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirInInv,  GpioV2StateDefault,  GpioV2IntLevel|GpioV2IntSci, GpioV2ResetHostDeep,  GpioV2TermDefault}}, // SMC_LID
+    {GPIOV2_PTL_PCD_XXGPP_F_23, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirIn,  GpioV2StateDefault,  GpioV2IntDis, GpioV2ResetHostDeep,  GpioV2TermDefault}}, // SMC_LID
 
   //
   // Not Used pins set to High Impedance
@@ -682,11 +683,8 @@
     {GPIOV2_PTL_PCD_XXGPP_B_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_C_2,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_D_2,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_E_7,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_E_8,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_F_14, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_F_15, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_F_16, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_F_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_H_0,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_V_7,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
@@ -729,8 +727,6 @@
     {0x0}  // terminator
   })}
 
-  gBoardModuleTokenSpaceGuid.VpdPcdGopConfigSoftwareId|*|0x0
-
   gBoardModuleTokenSpaceGuid.VpdPcdTcssEnable|*|1
 
   gBoardModuleTokenSpaceGuid.VpdPcdPmicIdMap|*|0x0
@@ -758,19 +754,15 @@
 
 [PcdsDynamicHii.common.SkuIdPtlUHDdr5Rvp4.STANDARD]
   gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[5]|0x1                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.TelemetryDeviceEnable|0x1                                        # Enable Telemetry
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x0                               # DMIC #0
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x0                               # DMIC #1
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI2cEnable[1]|0x0                                        # I2C1
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshSpiEnable[0]|0x1                                        # SPI_0
-  gStructPcdTokenSpaceGuid.PcdSetup.ControlIommu|0x0                                                 # Pre-boot DMA Protection // PTL PO temp WA TODO :: Revisit and move to POR
-  gStructPcdTokenSpaceGuid.PcdSaSetup.MemoryBandwidthCompression|0x0                                 # Disable MemoryBandwidthCompression // PTL PO temp WA TODO :: Revisit and move to POR
-
 #####################################################################
 #  PTL UH DDR5 T3 - RVP4 BOM
 #     Board ID: 0x04 (BomIdPtlUHDdr5Rvp4)
-#   Display ID: 0x01
-#       SKU ID: 0x01060004 (SkuIdPtlUHDdr5Rvp4Bom)
+#   Display ID: 0x00
+#       SKU ID: 0x00060004 (SkuIdPtlUHDdr5Rvp4Bom)
 #####################################################################
 [PcdsDynamicExVpd.common.SkuIdPtlUHDdr5Rvp4Bom]
 

@@ -35,13 +35,9 @@ PeiServicesLib
 BaseMemoryLib
 MemoryAllocationLib
 ConfigBlockLib
-CpuMailboxLib
 SiConfigBlockLib
-RngLib
 PmcPrivateLib
-SmbusLib
 PreSiliconEnvDetectLib
-SmbusInfoLib
 BaseLib
 PciSegmentLib
 PostCodeLib
@@ -59,20 +55,9 @@ gSiPkgTokenSpaceGuid.PcdMchBaseAddress              ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
 
 [Sources]
-MrcOemPlatform.c
-MrcOemPlatform.h
 PeiMemPolicyLib.c
-PeiMemPolicyLibSample.c
 InputBlock/Ptl/MrcInputBlock.c
 InputBlock/Ptl/MrcInputBlock.h
-
-[Sources.IA32]
-Ia32/MrcOemPlatform.nasm
-Ia32/MrcOemPlatform.S
-
-[Sources.X64]
-X64/MrcOemPlatform.nasm
-X64/MrcOemPlatform.S
 
 [Ppis]
 gSiPreMemPolicyPpiGuid        ## CONSUMES
@@ -80,4 +65,3 @@ gSiPreMemPolicyPpiGuid        ## CONSUMES
 [Guids]
 gMemoryConfigNoCrcGuid
 gMemoryConfigGuid
-gTraceHubDataHobGuid

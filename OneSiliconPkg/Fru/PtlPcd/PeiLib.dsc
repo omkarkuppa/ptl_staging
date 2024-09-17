@@ -113,8 +113,8 @@
   PeiGbeInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Gbe/LibraryPrivate/PeiGbeInitLib/PeiGbeInitLib.inf
   PeiGbePolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Gbe/LibraryPrivate/PeiGbePolicyLib/PeiGbePolicyLib.inf
   PeiTraceHubPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/TraceHub/LibraryPrivate/PeiTraceHubPolicyLib/PeiTraceHubPolicyLib.inf
-  PeiTsnInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tsn/LibraryPrivate/PeiTsnInitLibNull/PeiTsnInitLibNull.inf
-  PeiTsnPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tsn/LibraryPrivate/PeiTsnPolicyLibNull/PeiTsnPolicyLibNull.inf
+  PeiTsnInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tsn/LibraryPrivate/PeiTsnInitLib/PeiTsnInitLib.inf
+  PeiTsnPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tsn/LibraryPrivate/PeiTsnPolicyLib/PeiTsnPolicyLib.inf
   !if gSiPkgTokenSpaceGuid.PcdAmtEnable == TRUE
     PeiAmtPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Amt/Library/PeiAmtPolicyLib/PeiAmtPolicyLib.inf
   !else

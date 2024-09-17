@@ -187,7 +187,7 @@ class _PlatformHook (object):
                 _PlatformHook.TOOLKIT_SIGNING_KEYS_PATH,
             ),
             (
-                JoinPath (_PlatformHook.PLAT_BIN_PKG_PATH, 'CapsuleUpdate', 'SigningKeys'),
+                JoinPath (_PlatformHook.PLAT_BIN_PKG_PATH, 'CapsuleUpdate', 'InternalOnly', 'SigningKeys'),
                 _PlatformHook.TOOLKIT_SIGNING_KEYS_PATH,
             ),
             #

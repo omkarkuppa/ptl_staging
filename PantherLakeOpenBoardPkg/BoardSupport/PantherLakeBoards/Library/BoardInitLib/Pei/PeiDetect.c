@@ -40,6 +40,8 @@ PtlBoardDetect (
   // @todo Needs external solution to detect different SKUs
   if (IsSimicsEnvironment()) {
     LibPcdSetSku (SkuIdPtlSimics);
+  } else {
+    LibPcdSetSku (SkuIdPtlUHLp5Rvp1);
   }
   DEBUG ((DEBUG_INFO, "SKU_ID: 0x%x\n", LibPcdGetSku()));
 

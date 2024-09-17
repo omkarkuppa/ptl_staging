@@ -212,10 +212,10 @@ typedef enum {
 typedef enum {
   PartitionPll,
   PartitionPg,
-  PartitionDataShared,
   PartitionData,
-  PartitionCccShared,
   PartitionCcc,
+  PartitionDataShared,
+  PartitionCccShared,
   PartitionComp,
   MaxPartition
 } PARTITION_TYPE;

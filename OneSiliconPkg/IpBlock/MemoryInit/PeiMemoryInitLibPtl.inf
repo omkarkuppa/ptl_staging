@@ -55,6 +55,7 @@ PrintLib
 ReportStatusCodeLib
 ConfigBlockLib
 CpuPlatformLib
+CpuMailboxLib
 PeiTxtLib
 TxtLib
 PciSegmentLib
@@ -78,6 +79,9 @@ PeiTelemetryFruLib
 NguInfoLib
 PeiCpuInitFruLib
 TdxInfoLib
+RngLib
+SmbusLib
+SmbusInfoLib
 PeiTdxLib
 BaseIGpuInfoLib
 PeiMemorySubSystemInfoLib
@@ -109,6 +113,7 @@ src/ApiLib/IncludePublic/CMrcCommonTypes.h
 src/ApiLib/IncludePublic/CBlueMrcCommonTypes.h
 LibraryPrivate/MemoryInitPtl.c
 LibraryPrivate/MemoryTest.c
+LibraryPrivate/MrcOemPlatform.c
 src/ApiLib/BlueMrcDebugPrint.c
 src/ApiLib/BlueMrcGeneralCommon.c
 src/ApiLib/MrcSagv.c
@@ -163,7 +168,8 @@ src/ApiLib/BlueMrcPmic.h
 src/ServicesLib/MrcTurnAround.h
 src/ServicesLib/MrcTurnAroundPrivate.h
 src/ServicesLib/MrcPpr.h
-src/JedecLib/Ddr5/BlueMrcDdr5.c
+src/JedecLib/Ddr5/BlueMrcDdr5CrossProj.c
+src/JedecLib/Ddr5/Ptl/BlueMrcDdr5SiSpecific.c
 src/JedecLib/Lpddr5/BlueMrcLpddr5.c
 src/ServicesLib/MrcAmt.c
 src/JedecLib/IncludePublic/BlueMrcJedecApi.h
@@ -327,6 +333,20 @@ src/ServicesLib/IncludePublic/MrcReset.h
 src/ServicesLib/IncludePublic/MrcIoTest.h
 src/SpdProcessing/MrcSpdProcessingDefs.h
 src/WriteTraining/MrcWriteDqDqs.h
+src/ServicesLib/MrcCommandTraining.h
+src/McLib/MrcTimingConfigurationPrivate.h
+src/McLib/MrcAddressDecodeConfigurationPrivate.h
+
+[Sources.IA32]
+LibraryPrivate/Ia32/MrcOemPlatform.nasm
+LibraryPrivate/Ia32/MrcOemPlatform.asm
+LibraryPrivate/Ia32/MrcOemPlatform.S
+
+
+[Sources.X64]
+LibraryPrivate/X64/MrcOemPlatform.nasm
+LibraryPrivate/X64/MrcOemPlatform.asm
+LibraryPrivate/X64/MrcOemPlatform.S
 
 [Ppis]
 gSiPolicyPpiGuid                        ## CONSUMES

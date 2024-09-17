@@ -57,7 +57,6 @@
   gSiPkgTokenSpaceGuid.PcdTraceHubCatalogEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdFspImageIdString|0x245053464C545024  #$PTLFSP$
   gSiPkgTokenSpaceGuid.PcdStatusCodeFlags|0x32
-  gSiPkgTokenSpaceGuid.PcdMultiPhaseSiInitNumberOfPhases|2
 
   gPantherLakeFspPkgTokenSpaceGuid.PcdMiniBiosEnable|FALSE
   gPantherLakeFspPkgTokenSpaceGuid.PcdCfgRebuild|FALSE
@@ -83,8 +82,8 @@
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize|0x000FF000
   gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase|0xFA000000
   gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize|0x00000000
-gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedMemoryLength|0x004B0000
-  gIntelFsp2PkgTokenSpaceGuid.PcdFspTemporaryRamSize|0x00080000
+gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedMemoryLength|0x00500000
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspTemporaryRamSize|0x00020000
   ## Specifies the FSP Header Spec Version
   gIntelFsp2PkgTokenSpaceGuid.PcdFspHeaderSpecVersion|0x24
   # This defines how much space will be used for heap in FSP temporary memory
@@ -92,7 +91,7 @@ gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedMemoryLength|0x004B0000
   # (100 - x) % of FSP temporary memory will be used for stack
   # 0 means FSP will share the same stack with bootloader
   #   In this case PcdFspTemporaryRamSize is used for Heap
-  gIntelFsp2PkgTokenSpaceGuid.PcdFspHeapSizePercentage|50
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspHeapSizePercentage|0
   # This is a platform specific global pointer used by FSP
   gIntelFsp2PkgTokenSpaceGuid.PcdGlobalDataPointerAddress|0xFED00148
   # Override PcdFspMaxPatchEntry to match FspHeader.aslc
@@ -128,6 +127,7 @@ gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedMemoryLength|0x004B0000
   gEfiMdeModulePkgTokenSpaceGuid.PcdEnableTraceHubDebugMsg|TRUE
   gEfiMdeModulePkgTokenSpaceGuid.PcdTraceHubDebugMmioAddress|0xFE270380
   gSiPkgTokenSpaceGuid.PcdSafBarBaseAddress|0xFA000000
+
 
 [PcdsPatchableInModule]
   gSiPkgTokenSpaceGuid.PcdRegBarBaseAddress|0xF0000000

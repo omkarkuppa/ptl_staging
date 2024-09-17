@@ -37,8 +37,6 @@ UpdatePeiSiPolicyBoardConfig (
   EFI_STATUS  Status;
   VOID        *MpServices2Ppi;
 
-  FspsUpd = NULL;
-
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
 

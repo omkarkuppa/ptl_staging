@@ -129,3 +129,8 @@
   gMinPlatformPkgTokenSpaceGuid.PcdAcpiSleepStatusRegisterBitWidth
   gBoardModuleTokenSpaceGuid.PcdFlashFvUplBase
   gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize
+  gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqsMapCpu2Dram
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqMapCpu2Dram
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcLp5CccConfig
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcCmdMirror

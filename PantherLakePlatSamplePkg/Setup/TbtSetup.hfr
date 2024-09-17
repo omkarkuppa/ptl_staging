@@ -53,7 +53,7 @@
       prompt      = STRING_TOKEN(STR_USB4_CM_MODE_PROMPT),
       help        = STRING_TOKEN(STR_USB4_CM_MODE_HELP),
       default     = 1, defaultstore = MyStandardDefault,
-    suppressif TRUE; 
+    suppressif TRUE;
       option text = STRING_TOKEN(STR_USB4_CM_MODE_FW), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
       option text = STRING_TOKEN(STR_USB4_CM_MODE_OS), value = 2, flags = RESET_REQUIRED | INTERACTIVE;
     endif;
@@ -82,7 +82,17 @@
       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED | INTERACTIVE;
     endoneof;
 
+    //
+    // Setup Options Specific to Integrated Tbt
+    //
+    suppressif ideqval SETUP_DATA.IntegratedTbtSupport == 0;
+      goto ITBT_FORM_ID,
+        prompt = STRING_TOKEN(STR_INTEGRATED_TBT_FORM),
+        help = STRING_TOKEN(STR_INTEGRATED_TBT_FORM_HELP);
+    endif;
+
 #if FixedPcdGetBool (PcdDTbtEnable) == 1
+    SEPARATOR
     oneof varid = SETUP_DATA.DiscreteTbtSupport,
       questionid = AUTO_ID(KEY_DTBT_SUPPORT),
       prompt   = STRING_TOKEN(STR_DISCRETE_TBT_SUPPORT_PROMPT),
@@ -91,16 +101,16 @@
       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED | INTERACTIVE;
     endoneof;
-#endif
-    //
-    // Setup Options Specific to Integrated Tbt
-    //
-    suppressif ideqval SETUP_DATA.IntegratedTbtSupport == 0;
 
-       goto ITBT_FORM_ID,
-          prompt = STRING_TOKEN(STR_INTEGRATED_TBT_FORM),
-          help = STRING_TOKEN(STR_INTEGRATED_TBT_FORM_HELP);
+    //
+    // Setup Options Specific to dTBT
+    //
+    suppressif ideqval SETUP_DATA.DiscreteTbtSupport == 0;
+      goto DTBT_FORM_ID,
+        prompt = STRING_TOKEN(STR_DISCRETE_TBT_FORM),
+        help = STRING_TOKEN(STR_DISCRETE_TBT_FORM_HELP);
     endif;
+#endif
     endform;  // TBT_FORM_ID
 
     //

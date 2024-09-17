@@ -45,11 +45,14 @@ typedef struct {
   0000    0000    0000    0000
   TCP4    TCP3    TCP2    TCP1
 
-  Each 4Bit will be decoded as below:
-  BIT0 : 0 = Module DP, 1 = Module HDMI
-  BIT1 : Rsvd for Future
-  BIT2 : Rsvd for Future
-  BIT3 : 0 = Not a Modular IO, 1 = Module IO (mostly HDMI)
+  Each 4Bit will be decoded as below: other combinations are not supported
+  --------------------------------------------
+  | BIT3 | BIT2 | BIT1 | BIT0 | Defination   |
+  --------------------------------------------
+  |   1  |   0  |   0  |   0  | eDP over TCP |
+  |   1  |   0  |   0  |   1  | Module DP    |
+  |   1  |   0  |   1  |   0  | Module HDMI  |
+  --------------------------------------------
 */
   UINT32   ModuleTypeCId;   // Used to identify the Modular Type C Type.
   UINT8    SoftwareId;      // extensibility for un-defined reworks.

@@ -408,14 +408,16 @@ InstallSmbiosType17 (
 
         switch (ModuleType & DDR_MTYPE_SPD_MASK) {
           case DDR_MTYPE_SODIMM:
-          case DDR_MTYPE_SO_UDIMM:
             /// Legacy non-JEDEC LPDDR3 SPD images use SODIMM module type which should be soldered down form factor.
             SmbiosTableType17Data.FormFactor = (DramDeviceType == DDR_DTYPE_LPDDR3) ? MemoryFormFactorRowOfChips : MemoryFormFactorSodimm;
             break;
 
           case DDR_MTYPE_RDIMM:
-          case DDR_MTYPE_MINI_RDIMM:
             SmbiosTableType17Data.FormFactor = MemoryFormFactorRimm;
+            break;
+
+          case DDR_MTYPE_CSODIMM:
+            SmbiosTableType17Data.FormFactor = MemoryFormFactorSodimm;
             break;
 
           case DDR_MTYPE_MEM_DOWN:
@@ -423,8 +425,10 @@ InstallSmbiosType17 (
             break;
 
           case DDR_MTYPE_UDIMM:
-          case DDR_MTYPE_MICRO_DIMM:
-          case DDR_MTYPE_MINI_UDIMM:
+          case DDR_MTYPE_LR_DIMM:
+          case DDR_MTYPE_CUDIMM:
+          case DDR_MTYPE_MRDIMM:
+          case DDR_MTYPE_DDIMM:
           default:
             SmbiosTableType17Data.FormFactor = MemoryFormFactorDimm;
             break;

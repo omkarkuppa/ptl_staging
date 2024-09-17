@@ -87,6 +87,9 @@
   PeiOcInitLib
   MemorySubSystemPolicyLib
   PeiThcInitSsidLib
+  ImrInitLib
+  VmdInfoLib
+  CpuLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -123,6 +126,7 @@
   gSiPkgTokenSpaceGuid.PcdBiosGuardEnable            ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdVmdEnable                  ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdFspConfigHobsEnable        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTsnSupport                 ## CONSUMES
 
 [Guids]
   gSiConfigHobGuid            ## CONSUMES

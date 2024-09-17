@@ -33,6 +33,26 @@ Scope (\_SB.PC00.RP01.PXSX)
   {
     Include ("Wwan.asl")
   }
+
+  //
+  // _DSM : Device Specific Method
+  //
+  // Arg0: UUID Unique function identifier
+  // Arg1: Integer Revision Level
+  // Arg2: Integer Function Index
+  // Arg3: Package Parameters
+  //
+  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+  {
+    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
+    {
+      // Compare passed in UUID to supported UUID.
+      Include ("WwanDsm.asl")
+      // If the code falls through to this point, just return a buffer of 0.
+      Return (Buffer () {0x00})
+    }  // End _DSM Method
+  }
+
 }
 
 Scope (\_SB.PC00.RP02.PXSX)
@@ -46,6 +66,25 @@ Scope (\_SB.PC00.RP02.PXSX)
   If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
   {
     Include ("Wwan.asl")
+  }
+
+  //
+  // _DSM : Device Specific Method
+  //
+  // Arg0: UUID Unique function identifier
+  // Arg1: Integer Revision Level
+  // Arg2: Integer Function Index
+  // Arg3: Package Parameters
+  //
+  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+  {
+    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
+    {
+      // Compare passed in UUID to supported UUID.
+      Include ("WwanDsm.asl")
+      // If the code falls through to this point, just return a buffer of 0.
+      Return (Buffer () {0x00})
+    }  // End _DSM Method
   }
 }
 
@@ -61,6 +100,25 @@ Scope (\_SB.PC00.RP03.PXSX)
   {
     Include ("Wwan.asl")
   }
+
+  //
+  // _DSM : Device Specific Method
+  //
+  // Arg0: UUID Unique function identifier
+  // Arg1: Integer Revision Level
+  // Arg2: Integer Function Index
+  // Arg3: Package Parameters
+  //
+  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+  {
+    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
+    {
+      // Compare passed in UUID to supported UUID.
+      Include ("WwanDsm.asl")
+      // If the code falls through to this point, just return a buffer of 0.
+      Return (Buffer () {0x00})
+    }  // End _DSM Method
+  }
 }
 
 Scope (\_SB.PC00.RP04.PXSX)
@@ -74,6 +132,25 @@ Scope (\_SB.PC00.RP04.PXSX)
   If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
   {
     Include ("Wwan.asl")
+  }
+
+  //
+  // _DSM : Device Specific Method
+  //
+  // Arg0: UUID Unique function identifier
+  // Arg1: Integer Revision Level
+  // Arg2: Integer Function Index
+  // Arg3: Package Parameters
+  //
+  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+  {
+    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
+    {
+      // Compare passed in UUID to supported UUID.
+      Include ("WwanDsm.asl")
+      // If the code falls through to this point, just return a buffer of 0.
+      Return (Buffer () {0x00})
+    }  // End _DSM Method
   }
 }
 
@@ -89,6 +166,62 @@ Scope (\_SB.PC00.RP05.PXSX)
   {
     Include ("Wwan.asl")
   }
+
+  //
+  // _DSM : Device Specific Method
+  //
+  // Arg0: UUID Unique function identifier
+  // Arg1: Integer Revision Level
+  // Arg2: Integer Function Index
+  // Arg3: Package Parameters
+  //
+  If (CondRefOf (\DLRM)) {
+    If (LNotEqual (\DLRM, 0))
+    {
+      Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
+      {
+        //
+        // DLRM support
+        //
+        If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4")))
+        {
+          If (LEqual (1, ToInteger (Arg1)))        // Revision 1.
+          {
+
+            Switch (ToInteger (Arg2))            // Switch to Function Index.
+            {
+              //
+              // Function 0, Query of supported functions.
+              //
+            Case (0)
+              {
+                Return (Buffer () {0x03})
+              }
+
+              //
+              // Function 1, DLRM Support for Storage to reduce active power usage in D3.
+              //
+              Case (1)
+              {
+                // Only return support if platform enabled DLRM via setup.
+                If (PNVM ()) {
+                  If (LNotEqual (\DLRM, 0)) {
+                    ADBG ("Enable DLRM for Storage")
+                    Return (1)
+                  } Else {
+                    ADBG ("Disable DLRM for Storage")
+                    Return (0)
+                  }
+                }
+              }
+            } // End Switch statement
+          }  // End Revision check
+        }  // End DLRM UUID check
+
+        Return (Buffer () {0x00})
+      }  // End _DSM Method
+    }
+  }
 }
 
 Scope (\_SB.PC00.RP06.PXSX)
@@ -102,5 +235,24 @@ Scope (\_SB.PC00.RP06.PXSX)
   If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
   {
     Include ("Wwan.asl")
+  }
+
+  //
+  // _DSM : Device Specific Method
+  //
+  // Arg0: UUID Unique function identifier
+  // Arg1: Integer Revision Level
+  // Arg2: Integer Function Index
+  // Arg3: Package Parameters
+  //
+  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+  {
+    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
+    {
+      // Compare passed in UUID to supported UUID.
+      Include ("WwanDsm.asl")
+      // If the code falls through to this point, just return a buffer of 0.
+      Return (Buffer () {0x00})
+    }  // End _DSM Method
   }
 }

@@ -183,7 +183,6 @@ UpdatePeiPchPolicy (
   This function performs PCH PEI Policy initialization.
 
   @param[in] SiPreMemPolicyPpi       The RC PREMEM Policy PPI instance
-  @param[in] PchPreMemPolicyPpi      The RC PCH PREMEM Policy PPI instance (OPTIONAL)
 
   @retval EFI_SUCCESS             The PPI is installed and initialized.
   @retval EFI ERRORS              The PPI is not successfully installed.
@@ -192,8 +191,7 @@ UpdatePeiPchPolicy (
 EFI_STATUS
 EFIAPI
 UpdatePeiPchPolicyPreMem (
-  IN SI_PREMEM_POLICY_PPI     *SiPreMemPolicyPpi,
-  IN PCH_PREMEM_POLICY_PPI    *PchPreMemPolicyPpi
+  IN SI_PREMEM_POLICY_PPI     *SiPreMemPolicyPpi
   );
 
 /**

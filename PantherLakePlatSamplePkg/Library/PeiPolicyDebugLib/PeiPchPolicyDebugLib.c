@@ -35,6 +35,9 @@
 #include <PchPcieRpConfig.h>
 #include <PchDmiConfig.h>
 #include <UsbConfig.h>
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+#include <FspsUpd.h>
+#endif
 
 /**
   Update USB debug policies.
@@ -49,16 +52,24 @@ UpdateUsbDebugPolicy (
   IN PCH_SETUP                 *PchSetup
   )
 {
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   USB_CONFIG                   *UsbConfig;
+#endif
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+#else
+  UsbConfig = NULL;
   EFI_STATUS                   Status;
-
   Status = GetConfigBlock ((VOID *) SiPolicy, &gUsbConfigGuid, (VOID *) &UsbConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return;
   }
+#endif
 
-  UPDATE_POLICY (UsbConfig->XhciOcLock, PchSetup->PchXhciOcLock);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciOcLock, UsbConfig->XhciOcLock, PchSetup->PchXhciOcLock);
 }
 
 /**
@@ -74,18 +85,27 @@ UpdatePmDebugPolicy (
   IN PCH_SETUP                 *PchSetup
   )
 {
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   PCH_PM_CONFIG                *PmConfig;
-  EFI_STATUS                   Status;
+#endif
 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+#else
+  EFI_STATUS                   Status;
+  PmConfig = NULL;
   Status = GetConfigBlock ((VOID *) SiPolicy, &gPmConfigGuid, (VOID *) &PmConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return;
   }
+#endif
 
-  UPDATE_POLICY (PmConfig->DisableEnergyReport, (PchSetup->PchEnergyReport == 1)? 0 : 1);
-  UPDATE_POLICY (PmConfig->PmErDebugMode, PchSetup->PchPmErDebugMode);
-  UPDATE_POLICY (PmConfig->LpmS0ixSubStateEnable.Val,  ((PchSetup->PmcLpmS0i2p0En << 0) |
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmDisableEnergyReport,     PmConfig->DisableEnergyReport, (PchSetup->PchEnergyReport == 1)? 0 : 1);
+  UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.PchPmErDebugMode,              PmConfig->PmErDebugMode, PchSetup->PchPmErDebugMode);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcLpmS0ixSubStateEnableMask, PmConfig->LpmS0ixSubStateEnable.Val,  ((PchSetup->PmcLpmS0i2p0En << 0) |
                                                                                                                              (PchSetup->PmcLpmS0i2p1En << 1) |
                                                                                                                              (PchSetup->PmcLpmS0i2p2En << 2) |
                                                                                                                              (PchSetup->PmcLpmS0i3p0En << 3) |
@@ -108,16 +128,24 @@ UpdateP2sbDebugPolicy (
   IN PCH_SETUP                 *PchSetup
   )
 {
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   PCH_P2SB_CONFIG                 *P2sbConfig;
+#endif
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+#else
   EFI_STATUS                      Status;
-
+  P2sbConfig = NULL;
   Status = GetConfigBlock ((VOID *) SiPolicy, &gP2sbConfigGuid, (VOID *) &P2sbConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return;
   }
+#endif
 
-  UPDATE_POLICY (P2sbConfig->SbAccessUnlock, PchSetup->PchSidebandLock ? 0 : 1);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSbAccessUnlock, P2sbConfig->SbAccessUnlock, PchSetup->PchSidebandLock ? 0 : 1);
 }
 
 /**

@@ -149,6 +149,13 @@ PtlPcdInit (
     PtlPcdGbeInit (SiPolicy);
   }
 
+#if FixedPcdGet8(PcdTsnSupport) == 0x1
+  //
+  // Configure Time Sensitive Networking devices
+  //
+  PtlPcdTsnInit (SiPolicy);
+#endif
+
   //
   // PchInfo HOB must be created before PCIe root port initialization, because
   // afterwards it cannot be determined which ports were fused off

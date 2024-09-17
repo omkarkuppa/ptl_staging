@@ -51,7 +51,7 @@
 
 [Pcd]
   gBoardModuleTokenSpaceGuid.VpdI2CRptable ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdTouchpanel0IrqGpio  ##CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdTouchpanel1IrqGpio  ##CONSUMES
   gBoardModuleTokenSpaceGuid.PcdTouchpanelIrqGpio
   gBoardModuleTokenSpaceGuid.PcdTouchpadIrqGpio
 

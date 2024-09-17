@@ -22,17 +22,16 @@
 #ifndef _PEI_TSN_INIT_LIB_H_
 #define _PEI_TSN_INIT_LIB_H_
 
-#include <Ppi/SiPolicy.h>
 #include <TsnHandle.h>
 
 /**
   Initialize the Intel TSN Controller
 
-  @param[in] TsnHandle        Pointer to Tsn Handle
+  @param[in] TsnHandle   Pointer to TSN Handle
 **/
 VOID
 TsnInit (
-  IN  TSN_HANDLE    *TsnHandle
+  IN  TSN_HANDLE   *TsnHandle
   );
 
 #endif

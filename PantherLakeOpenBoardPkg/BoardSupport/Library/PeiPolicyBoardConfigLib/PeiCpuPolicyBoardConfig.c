@@ -20,6 +20,7 @@
 **/
 
 #include "PeiPolicyBoardConfig.h"
+#include <FspsUpd.h>
 
 /**
   This function performs PEI CPU Policy update by board configuration.
@@ -39,11 +40,16 @@ UpdatePeiCpuPolicyBoardConfig (
 {
   EFI_STATUS                       Status;
   CPU_INIT_CONFIG                  *CpuInitConfig;
-
-  DEBUG ((DEBUG_INFO, "Updating CPU Policy by board config in Post-Mem\n"));
+  #if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd; 
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+  #endif
 
   Status                      = EFI_SUCCESS;
   CpuInitConfig               = NULL;
+
+  DEBUG ((DEBUG_INFO, "Updating CPU Policy by board config in Post-Mem\n"));
 
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gCpuInitConfigGuid, (VOID *) &CpuInitConfig);
   ASSERT_EFI_ERROR (Status);
@@ -52,12 +58,12 @@ UpdatePeiCpuPolicyBoardConfig (
   // Directly assign the microcode flash location to FSPS UPD (API mode) or CpuInitConfig (Dispatch mode)
   // The microcode copy from flash to memory will be done just before microcode reload.
   //
-  UPDATE_POLICY (
-    CpuInitConfig->MicrocodePatchAddress,
+  UPDATE_POLICY_V2 (
+    ((FSPS_UPD *)FspsUpd)->FspsConfig.MicrocodeRegionBase,CpuInitConfig->MicrocodePatchAddress,
     FixedPcdGet32 (PcdFlashFvMicrocodeBase) + FixedPcdGet32 (PcdMicrocodeOffsetInFv)
     );
-  UPDATE_POLICY (
-    CpuInitConfig->MicrocodePatchRegionSize,
+  UPDATE_POLICY_V2 (
+    ((FSPS_UPD *)FspsUpd)->FspsConfig.MicrocodeRegionSize,CpuInitConfig->MicrocodePatchRegionSize,
     FixedPcdGet32 (PcdFlashFvMicrocodeSize) - FixedPcdGet32 (PcdMicrocodeOffsetInFv)
     );
 

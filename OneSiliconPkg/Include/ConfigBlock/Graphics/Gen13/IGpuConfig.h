@@ -55,7 +55,6 @@ typedef enum {
 typedef enum {
   DdiPortDisabled   = 0x00,
   DdiPortEdp        = 0x01,
-  DdiPortEdpOverTcp = 0x02,
 } DDI_PORT_SETTINGS;
 
 /**

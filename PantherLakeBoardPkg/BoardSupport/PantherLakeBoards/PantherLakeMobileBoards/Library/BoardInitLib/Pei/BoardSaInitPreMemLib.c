@@ -88,27 +88,9 @@ PtlSaDisplayConfigInit (
   VOID
   )
 {
-  GOP_CONFIG_DRIVER_HOB  *GopConfigDriverHob;
   VPD_DISPLAY_DDI_CONFIG *SaDisplayDdiConfigTable;
-  EFI_HOB_GUID_TYPE      *GuidHob;
 
   DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
-
-  GuidHob = GetFirstGuidHob (&gGopConfigDriverHobGuid);
-  if (GuidHob != NULL) {
-    GopConfigDriverHob = (GOP_CONFIG_DRIVER_HOB *) GET_GUID_HOB_DATA (GuidHob);
-  } else {
-    GopConfigDriverHob = BuildGuidHob (&gGopConfigDriverHobGuid, sizeof (GOP_CONFIG_DRIVER_HOB));
-    ASSERT (GopConfigDriverHob != NULL);
-  }
-
-  if (GopConfigDriverHob != NULL) {
-    if (GuidHob == NULL) {
-      ZeroMem (GopConfigDriverHob, sizeof (GOP_CONFIG_DRIVER_HOB));
-    }
-    GopConfigDriverHob->SkuId = LibPcdGetSku ();
-    GopConfigDriverHob->SoftwareId = PcdGet8 (VpdPcdGopConfigSoftwareId);
-  }
 
   SaDisplayDdiConfigTable = PcdGetPtr(VpdPcdDisplayDdiConfigTable);
 
@@ -117,6 +99,28 @@ PtlSaDisplayConfigInit (
   DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 
   return;
+}
+
+/**
+  Build the GopConfig Driver Hob to modify the VBT Runtime based on the SKU ID
+**/
+VOID
+BuildGopConfigDriver (
+  VOID
+  )
+{
+  GOP_CONFIG_DRIVER_HOB  *GopConfigDriverHob;
+
+  GopConfigDriverHob = BuildGuidHob (&gGopConfigDriverHobGuid, sizeof (GOP_CONFIG_DRIVER_HOB));
+  DEBUG ((DEBUG_INFO, "GopConfigDriverHob = 0x%X\n", GopConfigDriverHob));
+  ASSERT (GopConfigDriverHob != NULL);
+  if (GopConfigDriverHob != NULL) {
+    ZeroMem (GopConfigDriverHob, sizeof (GOP_CONFIG_DRIVER_HOB));
+    GopConfigDriverHob->SkuId = LibPcdGetSku ();
+    GopConfigDriverHob->SoftwareId = PcdGet8 (VpdPcdGopConfigSoftwareId);
+    DEBUG ((DEBUG_INFO, "GopConfig SkuId = 0x%X\n", GopConfigDriverHob->SkuId));
+    DEBUG ((DEBUG_INFO, "GopConfig SoftwareId = 0x%X\n", GopConfigDriverHob->SoftwareId));
+  }
 }
 
 /**

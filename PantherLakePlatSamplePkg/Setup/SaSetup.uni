@@ -2073,7 +2073,8 @@
 #string STR_EQ_PH3_METHOD_SWEQ                  #language en-US "Adaptive Software Equalization"
 #string STR_EQ_PH3_METHOD_STATIC                #language en-US "Static Equalization"
 
-
+#string STR_GOP_CONFIG_ENABLE_PROMPT            #language en-US "GOP Config Driver Enable"
+#string STR_GOP_CONFIG_ENABLE_HELP              #language en-US "Enable/Disable GOP Config Driver"
 
 #string STR_EDRAMWA_PROMPT                      #language en-US "eDRAM Mode"
 #string STR_EDRAMWA_HELP                        #language en-US "SW Mode eDRAM On or eDRAM Off"
@@ -2400,3 +2401,4 @@
 
 #string STR_DMA_CONTROL_GUARANTEE_PROMPT        #language en-US "DMA Control Guarantee"
 #string STR_DMA_CONTROL_GUARANTEE_HELP          #language en-US "Enable/Disable DMA_CONTROL_GUARANTEE bit"
+

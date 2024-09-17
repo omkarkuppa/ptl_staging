@@ -49,6 +49,7 @@ typedef struct {
 
 #define V_INTEL_VENDOR_ID   0x8086
 THC_DEVICEIDS SupportedDeviceIds[] = {
+  {0x67C8, 0x67CA},
   {0x7E48, 0x7E4A},
   {0x7748, 0x774A},
   {0x7F58, 0x7F5A},

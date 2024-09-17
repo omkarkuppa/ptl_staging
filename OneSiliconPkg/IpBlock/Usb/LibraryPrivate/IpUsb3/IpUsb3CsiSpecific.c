@@ -478,7 +478,10 @@ IpUsb3SetControl (
       if (FeatureVal == IpUsb3FeatValLtrNdeEnhancedSsIsochInEpEn) {
         IP_WR_OR_32 (pInst->RegCntxtMem, R_XHCI_MEM_TRB_PRF_CTRL_REG4, B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS);
       } else if (FeatureVal == IpUsb3FeatValLtrNdeEnhancedSsIsochInEpDis) {
-        IP_WR_AND_32 (pInst->RegCntxtMem, R_XHCI_MEM_TRB_PRF_CTRL_REG4, ~(B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS));
+        IP_WR_AND_THEN_OR_32 (pInst->RegCntxtMem,
+                             R_XHCI_MEM_TRB_PRF_CTRL_REG4,
+                             ~(B_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK | B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS),
+                             (V_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK << N_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK));
       } else {
         PRINT_WARNING ("Invalid parameter provided to %s\n", __FUNCTION__);
         return IpCsiStsErrorBadParam;

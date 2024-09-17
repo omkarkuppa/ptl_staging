@@ -129,8 +129,14 @@ UpdateGraphics(
   UINTN                           Height;
   UINTN                           Width;
 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+#endif
+
   DEBUG((DEBUG_INFO, "\nUpdating SA Policy in Post Mem\n"));
-  UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.PeiGraphicsPeimInit, 1);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PeiGraphicsPeimInit, IGpuConfig->PeiDisplayConfig.PeiGraphicsPeimInit, 1);
 
   Size = 0;
   Buffer = NULL;
@@ -162,8 +168,8 @@ UpdateGraphics(
         return Status;
     }
 
-    UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.LogoPixelWidth, (UINT32)Width);
-    UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.LogoPixelHeight, (UINT32)Height);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.LogoPixelWidth, IGpuConfig->PeiDisplayConfig.LogoPixelWidth, (UINT32)Width);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.LogoPixelHeight, IGpuConfig->PeiDisplayConfig.LogoPixelHeight, (UINT32)Height);
 
     IGpuConfig->PeiDisplayConfig.BltBufferAddress = (VOID *) Blt;
 
@@ -194,10 +200,11 @@ UpdatePeiSaPolicyBoardConfig (
   IN SI_POLICY_PPI          *SiPolicyPpi
   )
 {
+  DEBUG ((DEBUG_INFO, "Updating SA Policy by board config in Post-Mem\n"));
+
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   EFI_STATUS          Status;
   IGPU_PEI_CONFIG     *IGpuConfig;
-
-  DEBUG ((DEBUG_INFO, "Updating SA Policy by board config in Post-Mem\n"));
 
   Status           = EFI_SUCCESS;
   IGpuConfig         = NULL;
@@ -209,6 +216,7 @@ UpdatePeiSaPolicyBoardConfig (
   // Update UPD: VBT
   //
   UpdateGraphics(IGpuConfig);
+#endif
 
   return EFI_SUCCESS;
 }

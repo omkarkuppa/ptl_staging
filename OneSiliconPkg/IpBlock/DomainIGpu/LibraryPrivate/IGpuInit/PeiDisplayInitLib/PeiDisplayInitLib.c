@@ -20,6 +20,7 @@
 **/
 
 #include <IGpuDisplay.h>
+#include <IGpuDataHob.h>
 
 
 CONST EFI_PEI_PPI_DESCRIPTOR gIGpuDisplayInitPreMemDonePpi = {
@@ -85,7 +86,7 @@ ProgramDisplayNativeGpioInit (
     DEBUG ((DEBUG_INFO, "HPD Status = %r\n", Status));
   }
 
-  if ((IGpuPreMemConfig->DdiConfiguration.DdiPortBConfig == DdiPortEdp) || (IGpuPreMemConfig->DdiConfiguration.DdiPortBConfig == DdiPortEdpOverTcp)) {
+  if (IGpuPreMemConfig->DdiConfiguration.DdiPortBConfig == DdiPortEdp) {
     DEBUG ((DEBUG_INFO, "Configure GPIOs for eDP on DDI-B \n"));
     Status = ConfigureDisplayGpio (GPIOV2_SIGNAL_PANEL_AVDD_EN2, 0);
     DEBUG ((DEBUG_INFO, "VDD EN Status = %r\n", Status));
@@ -622,8 +623,19 @@ IGpuPeiDisplayInit (
   )
 {
   EFI_STATUS             Status;
+  IGPU_DATA_HOB          *IGpuDataHob;
 
   DEBUG ((DEBUG_INFO, "%a Begin\n", __FUNCTION__));
+  IGpuDataHob = NULL;
+
+  //
+  // Get the HOB for Gfx Data
+  //
+  IGpuDataHob = (IGPU_DATA_HOB *) GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob == NULL) {
+    DEBUG ((DEBUG_ERROR, "IGpu Data Hob not found\n"));
+    return EFI_NOT_FOUND;
+  }
 
   ///
   /// Return if Graphics not supported or not enabled
@@ -647,6 +659,13 @@ IGpuPeiDisplayInit (
 
   if (IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr == NULL) {
     DEBUG ((DEBUG_INFO, "Bad VBT Pointer passed\n"));
+    return EFI_SUCCESS;
+  }
+
+  ///
+  /// Return if Primary Display is  not set IGfx and External Gfx not connected
+  ///
+  if (IGpuPreMemConfig->PrimaryDisplay != DISPLAY_IGD && IGpuDataHob->PrimaryDisplayDetection == DISPLAY_PCI) {
     return EFI_SUCCESS;
   }
 

@@ -169,6 +169,31 @@ MrcControllerExist (
 }
 
 /**
+  Returns whether Controller HW exists even though it may not be populated.
+
+  @param[in] MrcData    - Pointer to MRC global data.
+  @param[in] Controller - Controller to test.
+
+  @retval BOOLEAN - TRUE if exists, FALSE otherwise.
+**/
+extern
+MRC_IRAM0_FUNCTION
+BOOLEAN
+MrcGetHwControllerExists (
+  IN MrcParameters *const MrcData,
+  IN const UINT32         Controller
+  )
+{
+  MrcOutput *Outputs = &MrcData->Outputs;
+  UINT8 MaxChannels = Outputs->MaxChannels;
+  BOOLEAN IsDdr5 = Outputs->IsDdr5;
+
+  UINT8 FullControllerMask = IsDdr5 ? 0x03 : 0xF;
+
+  return (MrcGetValidHwChBitMask (MrcData) & (FullControllerMask << (Controller * MaxChannels))) != 0;
+}
+
+/**
   Returns whether Channel is or is not present.
 
   @param[in] MrcData    - Pointer to MRC global data.
@@ -227,6 +252,63 @@ MrcGetPartitionExists (
   return ((Outputs->ValidChBitMask & Partition2Ch) != 0);
 }
 
+/**
+  Determine if the hardware for a partition exists within memory subsytem even though channel may not be populated.
+
+  @param[in]  MrcData      - Pointer to global MRC data.
+  @param[in]  PartType     - The partition type to look up.
+  @param[in]  PartInstance - The partition instance to look up.
+  @param[in]  PartChannel  - The partition channel to look up. Only used by the Data
+                             Partitions as there are two "bytes" in 1 Data Instance.
+
+  @return whether partition exists or not.
+**/
+BOOLEAN
+MrcGetHwPartitionExists (
+  IN     MrcParameters      *MrcData,
+  IN     PARTITION_TYPE     PartType,
+  IN     UINT32             PartInstance,
+  IN     UINT32             PartChannel
+  )
+{
+  UINT32       Partition2Ch;
+
+  Partition2Ch = MrcGetPartition2ChMask (
+    MrcData,
+    PartType,
+    PartInstance,
+    PartChannel
+    );
+
+  return ((MrcGetValidHwChBitMask (MrcData) & Partition2Ch) != 0);
+}
+
+/**
+  Determine if PHY Channel exists even though channel may not be populated.
+
+  @param[in]  MrcData      - Pointer to global MRC data.
+  @param[in]  PhyChannel   - PHY channel number.
+
+  @return whether PHY Channel exists or not.
+**/
+BOOLEAN
+MrcGetHwPhyChannelExists (
+  IN     MrcParameters      *MrcData,
+  IN     UINT32             PhyChannel
+  )
+{
+  MrcOutput *Outputs = &MrcData->Outputs;
+  UINT8 MaxChannels = Outputs->MaxChannels;
+  BOOLEAN IsDdr5 = Outputs->IsDdr5;
+  UINT32 SysController = PhyChannel / MAX_CHANNEL;
+  UINT32 SysChannel = PhyChannel % MAX_CHANNEL;
+
+  if (IsDdr5) {
+    SysChannel = SysChannel / MAX_SUB_CHANNEL;
+  }
+
+  return ((MrcGetValidHwChBitMask (MrcData) & (1 << (SysController * MaxChannels + SysChannel))) != 0);
+}
 
 /**
   This function disable channel parameters.
@@ -3014,17 +3096,17 @@ MrcFlushCkdBuffer (
 
   Mobile:
   Controller   Channel   Rank | CKD DIMM   CKD Pin
-      0      |    0    |  0   |     0    |    2
-      0      |    0    |  1   |     0    |    3
+      0      |    0    |  0   |     0    |    0
+      0      |    0    |  1   |     0    |    1
   ___________|_________|______|__________|__________
-      0      |    1    |  0   |     0    |    0
-      0      |    1    |  1   |     0    |    1
+      0      |    1    |  0   |     0    |    2
+      0      |    1    |  1   |     0    |    3
   ___________|_________|______|__________|__________
-      1      |    0    |  0   |     2    |    2
-      1      |    0    |  1   |     2    |    3
+      1      |    0    |  0   |     2    |    0
+      1      |    0    |  1   |     2    |    1
   ___________|_________|______|__________|__________
-      1      |    1    |  0   |     2    |    0
-      1      |    1    |  1   |     2    |    1
+      1      |    1    |  0   |     2    |    2
+      1      |    1    |  1   |     2    |    3
   ___________|_________|______|__________|__________
 **/
 VOID
@@ -3051,7 +3133,7 @@ MrcCalcCkdDimmPin (
       Dimm = MAX_RANK_IN_DIMM;
     }
   } else {
-    if (Channel == 0) {
+    if (Channel == 1) {
       Pin = MAX_RANK_IN_DIMM;
     }
     if (Controller == 1) {
@@ -3403,4 +3485,59 @@ MrcMrIsPda (
   }
 
   return FALSE;
+}
+
+/**
+  If there is a value match with any of the elements in the array, then the matched array index is returned.
+
+  @param[in]  Value     - Value to be matched.
+  @param[in]  Array     - Input array.
+  @param[in]  ArraySize - Size of Array.
+
+  @retval Array index if there is a value match else returns -1.
+**/
+INT8
+MrcFindIndex (
+  IN UINT16 Value,
+  IN UINT16 Array[],
+  IN UINT8 ArraySize
+  )
+{
+  INT8 Index;
+
+  for (Index = 0; Index < ArraySize; Index++) {
+    if (Value == Array[Index]) {
+      return Index;
+    }
+  }
+
+  return -1;
+}
+
+/**
+  In a given 1D array, finds the maximum value and returns it.
+
+  @param[in]  Array - Input array.
+  @param[in]  ArraySize - Size of Array.
+
+  @retval Returns the maximum value from the input array.
+**/
+INT8
+MrcFindMaxVal (
+  IN INT8  Array[],
+  IN UINT8 ArraySize
+  )
+{
+  UINT32 Index;
+  INT8   MaxVal;
+
+  MaxVal = -1;
+
+  for (Index = 0; Index < ArraySize; Index++) {
+    if (MaxVal < Array[Index]) {
+      MaxVal = Array[Index];
+    }
+  }
+
+  return MaxVal;
 }

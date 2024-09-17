@@ -76,6 +76,11 @@ PtlBoardInitAfterMemoryInit (
   VOID
   );
 
+VOID
+BuildGopConfigDriver (
+  VOID
+  );
+
 EFI_STATUS
 EFIAPI
 ResetMemoryAddress (
@@ -387,6 +392,8 @@ PtlMultiBoardDetect (
 
   PcdSet8S (PcdSkuType, PcdGet8 (VpdPcdSkuType));
   DEBUG ((DEBUG_INFO, "SKU Type: %x , %x \n", PcdGet8 (PcdSkuType), PcdGet8 (VpdPcdSkuType)));
+
+  BuildGopConfigDriver ();
 
   PeiServicesInstallPpi (&mBoardDetectedPpi);
 

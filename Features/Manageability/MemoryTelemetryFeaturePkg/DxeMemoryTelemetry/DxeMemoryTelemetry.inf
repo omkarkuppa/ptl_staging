@@ -62,4 +62,5 @@
   gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdPprCapability  ## PRODUCES
 
 [Depex]
-  TRUE
+  gEfiVariableArchProtocolGuid        AND
+  gEfiVariableWriteArchProtocolGuid

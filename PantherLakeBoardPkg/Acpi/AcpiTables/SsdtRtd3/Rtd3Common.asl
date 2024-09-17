@@ -194,6 +194,11 @@ External (SPCO,MethodObj) // Clock Req Enable/Disable
 
 External (\_SB.PCLK.SPCO, MethodObj)
 
+External (\DTFS, IntObj)
+External (\DTRO, IntObj)
+External (\DTRC, IntObj)
+External (\DTRD, IntObj)
+
 //
 // GPIO states mapping
 //

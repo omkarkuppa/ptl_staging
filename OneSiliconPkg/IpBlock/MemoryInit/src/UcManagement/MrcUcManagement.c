@@ -110,7 +110,7 @@ MrcUcLoadGreenCode (
   for (Index = StartSection; Index < EndSection; Index++) {
     if (IsSaGvAndNotFirst && (gUcPayloadSections[Index].Address < XTENSA_FESRAM_BASE)) {
       // No need to download NE SRAM on subsequent SAGV points
-      continue;
+      // continue;
     }
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Loading Green MRC segment %2d to SRAM address 0x%08x size 0x%08x\n", Index, gUcPayloadSections[Index].Address, gUcPayloadSections[Index].Size);
     BlueMrcWriteUcData (
@@ -356,7 +356,7 @@ MrcUpdateDataFromUc (
   IN MrcParameters *const MrcData
   )
 {
-  MrcSave       *Save;
+  MrcSaveData   *Save;
   MrcOutput     *Output;
   MrcInput      *Inputs;
   MrcVersion    *Version;
@@ -368,13 +368,13 @@ MrcUpdateDataFromUc (
   UINT32        OutputSizeToCopy;
   UINT32        InputSizeToCopy;
 
-  Save        = &MrcData->Save;
+  Save        = &MrcData->Save.Data;
   Output      = &MrcData->Outputs;
   Inputs      = &MrcData->Inputs;
   Version     = &Output->Version;
   TscTimeBase = &Inputs->TscTimeBase;
 
-  SaveOffset      = gUcMrcDataAddress  + OFFSET_OF (MrcParameters, Save);
+  SaveOffset      = gUcMrcDataAddress  + OFFSET_OF (MrcParameters, Save.Data);
   VersionOffset   = gUcMrcDataAddress  + OFFSET_OF (MrcParameters, Outputs) + OFFSET_OF (MrcOutput, Version);
   InputOffset     = gUcMrcDataAddress  + OFFSET_OF (MrcParameters, Inputs) + OFFSET_OF (MrcInput, TscTimeBase);
 

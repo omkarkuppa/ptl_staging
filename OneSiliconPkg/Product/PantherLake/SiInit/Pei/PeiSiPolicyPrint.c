@@ -102,7 +102,9 @@ PeiSiPolicyPrint (
     RtcPrintConfig (SiPolicyPpi);
     CnviPrintConfig (SiPolicyPpi);
     GbePrintConfig (SiPolicyPpi);
+  #if FixedPcdGet8(PcdTsnSupport) == 0x1
     TsnPrintConfig (SiPolicyPpi);
+  #endif
     HdaPrintConfig (SiPolicyPpi);
     IshPrintConfig (SiPolicyPpi);
     EspiPrintConfig (SiPolicyPpi);

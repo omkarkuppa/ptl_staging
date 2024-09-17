@@ -76,7 +76,8 @@ typedef struct {
      -    1: generate
   **/
   UINT32              GenerateNewTmeKey       : 1;
-  UINT32              RsvdBits                : 23;
+  UINT32              TxtPowerdownRequest     : 1; ///< <b>(Test)</b> PowerRequest <b>0: Disabled</b>, 1: Enabled. When Enabled, it will set Powerdown request in TPM and reset the platform
+  UINT32              RsvdBits                : 22;
 
   //
   // There are 36 bytes in this structure above this line.

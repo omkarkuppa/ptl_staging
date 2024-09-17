@@ -366,8 +366,8 @@ VmdInit (
   // Select bus numbers 225 to 255 for VMD
   VmConfig.Bits.bus_restrictions = 0x2;
 
-  // Initialize RootBus1 configurations if supported
-  InitRootBus1(VmdInfoHob, &VmConfig);
+  // Initialize platform specific configurations
+  VmdInitFruApi(VmdInfoHob, &VmConfig);
 
   DEBUG((DEBUG_INFO, "DidAssign value is 0x%x\n", VmConfig.Bits.did_assign));
   // program VMConfig to lock VMD registers

@@ -46,6 +46,7 @@
 #include <Library/PchCycleDecodingLib.h>
 
 #include <IndustryStandard/HighPrecisionEventTimerTable.h>
+#include <IndustryStandard/MemoryMappedConfigurationSpaceAccessTable.h>
 #include <Library/DxeAcpiGnvsInitLib.h>
 
 #include <Register/PchRegs.h>

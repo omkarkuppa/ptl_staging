@@ -115,6 +115,7 @@ InitializeTxtPeiLib (
   DEBUG ((DEBUG_INFO, "TXTPEI: ProcessorIsTxtCapable = %x\n", (*TxtInfoHob)->Data.ProcessorIsTxtCapable));
   DEBUG ((DEBUG_INFO, "TXTPEI: TxtMode               = %x\n", (*TxtInfoHob)->Data.TxtMode));
   DEBUG ((DEBUG_INFO, "TXTPEI: TxtAcheckRequest      = %x\n", (*TxtInfoHob)->Data.TxtAcheckRequest));
+  DEBUG ((DEBUG_INFO, "TXTPEI: TxtPowerdownRequest   = %x\n", (*TxtInfoHob)->Data.TxtPowerdownRequest));
   DEBUG ((DEBUG_INFO, "TXTPEI: ResetAux              = %x\n", (*TxtInfoHob)->Data.ResetAux));
   DEBUG ((DEBUG_INFO, "TXTPEI: AcpiBase              = %x\n", (*TxtInfoHob)->Data.AcpiBase));
   DEBUG ((DEBUG_INFO, "TXTPEI: SinitMemorySize       = %x\n", (*TxtInfoHob)->Data.SinitMemorySize));
@@ -388,20 +389,21 @@ CreateTxtInfoHob (
   }
 
 
-  (*TxtInfoHob)->Data.AcpiBase           = PmcGetAcpiBase ();
-  (*TxtInfoHob)->Data.TxtAcheckRequest   = (BOOLEAN) CpuSecurityPreMemConfig->TxtAcheckRequest;
-  (*TxtInfoHob)->Data.ResetAux           = (BOOLEAN) CpuSecurityPreMemConfig->ResetAux;
-  (*TxtInfoHob)->Data.SinitMemorySize    = (UINT64) TxtPreMemConfig->SinitMemorySize;
-  (*TxtInfoHob)->Data.TxtHeapMemorySize  = (UINT64) TxtPreMemConfig->TxtHeapMemorySize;
-  (*TxtInfoHob)->Data.TxtDprMemoryBase   = TxtPreMemConfig->TxtDprMemoryBase;
-  (*TxtInfoHob)->Data.TxtDprMemorySize   = (UINT64) TxtPreMemConfig->TxtDprMemorySize;
-  (*TxtInfoHob)->Data.BiosAcmBase        = TxtPreMemConfig->BiosAcmBase;
-  (*TxtInfoHob)->Data.BiosAcmSize        = (UINT64) TxtPreMemConfig->BiosAcmSize;
-  (*TxtInfoHob)->Data.TgaSize            = (UINT64) TxtPreMemConfig->TgaSize;
-  (*TxtInfoHob)->Data.TxtLcpPdBase       = TxtPreMemConfig->TxtLcpPdBase;
-  (*TxtInfoHob)->Data.TxtLcpPdSize       = TxtPreMemConfig->TxtLcpPdSize;
-  (*TxtInfoHob)->Data.ApStartupBase      = TxtPreMemConfig->ApStartupBase;
-  (*TxtInfoHob)->Data.Flags             |= (UINT64)TxtPreMemConfig->IsTPMPresence;
+  (*TxtInfoHob)->Data.AcpiBase            = PmcGetAcpiBase ();
+  (*TxtInfoHob)->Data.TxtAcheckRequest    = (BOOLEAN) CpuSecurityPreMemConfig->TxtAcheckRequest;
+  (*TxtInfoHob)->Data.TxtPowerdownRequest = (BOOLEAN) CpuSecurityPreMemConfig->TxtPowerdownRequest;
+  (*TxtInfoHob)->Data.ResetAux            = (BOOLEAN) CpuSecurityPreMemConfig->ResetAux;
+  (*TxtInfoHob)->Data.SinitMemorySize     = (UINT64) TxtPreMemConfig->SinitMemorySize;
+  (*TxtInfoHob)->Data.TxtHeapMemorySize   = (UINT64) TxtPreMemConfig->TxtHeapMemorySize;
+  (*TxtInfoHob)->Data.TxtDprMemoryBase    = TxtPreMemConfig->TxtDprMemoryBase;
+  (*TxtInfoHob)->Data.TxtDprMemorySize    = (UINT64) TxtPreMemConfig->TxtDprMemorySize;
+  (*TxtInfoHob)->Data.BiosAcmBase         = TxtPreMemConfig->BiosAcmBase;
+  (*TxtInfoHob)->Data.BiosAcmSize         = (UINT64) TxtPreMemConfig->BiosAcmSize;
+  (*TxtInfoHob)->Data.TgaSize             = (UINT64) TxtPreMemConfig->TgaSize;
+  (*TxtInfoHob)->Data.TxtLcpPdBase        = TxtPreMemConfig->TxtLcpPdBase;
+  (*TxtInfoHob)->Data.TxtLcpPdSize        = TxtPreMemConfig->TxtLcpPdSize;
+  (*TxtInfoHob)->Data.ApStartupBase       = TxtPreMemConfig->ApStartupBase;
+  (*TxtInfoHob)->Data.Flags              |= (UINT64)TxtPreMemConfig->IsTPMPresence;
 
   if ((*TxtInfoHob)->Data.BiosAcmBase != 0) {
     //

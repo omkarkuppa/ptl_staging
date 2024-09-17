@@ -194,8 +194,12 @@ typedef enum {
 ///
 ///  CPU Mailbox Related Definitions
 ///
+#ifndef PCODE_MAILBOX_INTERFACE_OFFSET
 #define PCODE_MAILBOX_INTERFACE_OFFSET  BIOS_MAILBOX_INTERFACE_PCU_REG
+#endif
+#ifndef PCODE_MAILBOX_DATA_OFFSET
 #define PCODE_MAILBOX_DATA_OFFSET       BIOS_MAILBOX_DATA_PCU_REG
+#endif
 #define OC_MAILBOX_MSR                  0x00000150
 
 //
@@ -242,7 +246,9 @@ typedef union {
 //
 // CPU Mailbox Completion Codes
 //
+#ifndef PCODE_MAILBOX_CC_SUCCESS
 #define PCODE_MAILBOX_CC_SUCCESS            0
+#endif
 
 //
 // MSR definitions

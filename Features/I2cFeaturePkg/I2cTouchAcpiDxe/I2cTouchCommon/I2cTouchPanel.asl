@@ -133,6 +133,11 @@
     }
 
     Method (_STA, 0, NotSerialized) {
+      ADBG(Concatenate("TPLT 1PchI2cTouchPanelType", ToHexString(DeRefOf(Index(TPTD,0)))))
+      ADBG(Concatenate("TPLH 1PchI2cTouchPanelHidAddress", ToHexString(DeRefOf(Index(TDPH,0)))))
+      ADBG(Concatenate("TPLB 1PchI2cTouchPanelBusAddress", ToHexString(DeRefOf(Index(TPTD,2)))))
+      ADBG(Concatenate("TPLS 1PchI2cTouchPanelSpeed", ToHexString(DeRefOf(Index(TPTD,3)))))
+      ADBG(Concatenate("TPDI Touchpanel1Irq", ToHexString(DeRefOf(Index(TPDI,1)))))
       If (LAnd (LNotEqual (DeRefOf(Index(TPTD,0)),0),And ( I2CN, SERIAL_IO_I2C_TOUCHPANEL))) { Return (0x0F) }
       ADBG(Concatenate("TPLT PchI2cTouchPanelType", ToHexString(DeRefOf(Index(TPTD,0)))))
       Return (0x00)

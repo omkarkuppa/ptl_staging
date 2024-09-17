@@ -20,15 +20,12 @@
 **/
 #include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/SiConfigBlockLib.h>
-#include <Library/ConfigBlockLib.h>
 #include <Library/PcdInfoLib.h>
 #include <Library/PeiItssLib.h>
 #include <Library/PeiItssPolicyCommonLib.h>
 #include <Ppi/SiPolicy.h>
 #include <InterruptConfig.h>
 #include <IoApicConfig.h>
-#include <ConfigBlock.h>
 
 /**
   The IRQ values for devices which use ITSS INTx->PIRQx mapping need to be set in a way
@@ -158,7 +155,6 @@ LoadDeviceInterruptConfig (
   )
 {
   UINT8                 IntConfigTableEntries;
-
       IntConfigTableEntries = ARRAY_SIZE (mPcdDevIntConfig);
       CopyMem (
         DevIntConfig,

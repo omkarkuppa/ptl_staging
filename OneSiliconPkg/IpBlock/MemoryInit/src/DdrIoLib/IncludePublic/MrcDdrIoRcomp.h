@@ -39,4 +39,16 @@ MrcGetDefaultRcompTarget (
   IN     MrcProfile Profile
   );
 
+/**
+  This function runs View Pin Calibration
+
+  @param[in, out] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - mrcSuccess if successful or an error status.
+**/
+MrcStatus
+MrcViewPinCal (
+  IN OUT MrcParameters* const MrcData
+  );
+
 #endif // _MrcDdrIoRcomp_h_

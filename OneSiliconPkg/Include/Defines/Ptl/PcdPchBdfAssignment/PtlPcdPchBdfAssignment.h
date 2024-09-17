@@ -1,5 +1,5 @@
 /** @file
-  Header file for MeteorLake SOC + IOE devices PCI Bus Device Function map.
+  Header file for PantherLake devices PCI Bus Device Function map.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -409,18 +409,6 @@
 //
 #define PCI_DEVICE_NUMBER_PCH_DMA_SMBUS               NOT_PRESENT
 #define PCI_FUNCTION_NUMBER_PCH_DMA_SMBUS             NOT_PRESENT
-
-//
-// TSN GbE Controller
-//
-#define PCI_DEVICE_NUMBER_PCH_TSN                     NOT_PRESENT
-#define PCI_FUNCTION_NUMBER_PCH_TSN                   NOT_PRESENT
-
-//
-// TSN GbE Controller 2
-//
-#define PCI_DEVICE_NUMBER_SOC_TSN2                    NOT_PRESENT
-#define PCI_FUNCTION_NUMBER_SOC_TSN2                  NOT_PRESENT
 
 //
 // LPC Controller (D31:F0)

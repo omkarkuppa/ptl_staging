@@ -66,6 +66,7 @@
   # Include PCD configuration for this board.
   #
   !include OpenBoardPkgPcdInit.dsc
+  !include $(PLATFORM_BIN_PACKAGE)/Include/Dsc/PantherLakeBinPkgPcdInit.dsc
 
 
 ################################################################################
@@ -75,6 +76,7 @@
 ################################################################################
 [SkuIds]
   0|DEFAULT              # 0|DEFAULT is reserved and always required.
+  0x00000001|SkuIdPtlUHLp5Rvp1
   0x00000031|SkuIdPtlSimics
 
 
@@ -320,7 +322,10 @@
   #
   # Platform
   #
-  $(PLATFORM_PACKAGE)/PlatformInit/PlatformInitDxe/PlatformInitDxe.inf
+  $(PLATFORM_PACKAGE)/PlatformInit/PlatformInitDxe/PlatformInitDxe.inf{
+    <LibraryClasses>
+      NULL|$(PLATFORM_BOARD_PACKAGE)/PantherLakeBoards/Library/BoardInitLib/Dxe/DxeMultiBoardInitlib.inf
+  }
 !if gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1
   IntelFsp2WrapperPkg/FspWrapperNotifyDxe/FspWrapperNotifyDxe.inf
 !endif

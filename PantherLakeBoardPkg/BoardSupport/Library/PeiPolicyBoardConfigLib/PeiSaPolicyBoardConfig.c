@@ -24,11 +24,9 @@
 #include <TcssPeiConfig.h>
 #include <PlatformBoardConfig.h>
 #include <Library/PlatformUsbConfigLib.h>
-#endif
-#include <PlatformBoardId.h>
-#if FixedPcdGetBool(PcdTcssSupport) == 1
 #include <TcssInfo.h>
 #endif
+#include <PlatformBoardId.h>
 #include <PolicyUpdateMacro.h>
 
 
@@ -49,30 +47,50 @@ UpdatePeiSaPolicyBoardConfig (
   )
 {
   EFI_STATUS                         Status;
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+  VOID                            *FspmUpd;
+  
+#endif
+
+  TCSS_PEI_CONFIG     *TcssConfig;
+  TcssConfig          = NULL;
 #if FixedPcdGetBool(PcdTcssSupport) == 1
-  TCSS_PEI_PREMEM_CONFIG             *TcssPeiPreMemConfig;
-  TCSS_PEI_CONFIG                    *TcssConfig;
+    TCSS_PEI_PREMEM_CONFIG             *TcssPeiPreMemConfig;
+    TcssPeiPreMemConfig = NULL;
+#endif
+
+#if FixedPcdGetBool(PcdTcssSupport) == 1
   UINT8                              PortIndex;
   USB_CONNECTOR_BOARD_CONFIG         *UsbConnectorBoardConfig;
   UINT8                              ConnectorIndex;
   USB_CONNECTOR_HOB_DATA             *UsbConnectorHobDataPtr;
 #endif
+ 
   EFI_PEI_READ_ONLY_VARIABLE2_PPI    *VariableServices;
   UINTN                              VariableSize;
   SETUP_DATA                         SetupData;
-
+  
   DEBUG ((DEBUG_INFO, "Updating SA Policy by board config in Post-Mem\n"));
-
   Status = EFI_SUCCESS;
 
-#if FixedPcdGetBool(PcdTcssSupport) == 1
-  TcssPeiPreMemConfig = NULL;
-  TcssConfig          = NULL;
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+  if (FspsUpd == NULL){
+    return EFI_NOT_FOUND;
+  }
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+  ASSERT (FspmUpd != NULL);
+  if (FspmUpd == NULL){
+    return EFI_NOT_FOUND;
+  }
+#else
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTcssPeiPreMemConfigGuid, (VOID *) &TcssPeiPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gTcssPeiConfigGuid, (VOID *) &TcssConfig);
   ASSERT_EFI_ERROR (Status);
-#endif
+#endif // FspMode Check
 
   Status = PeiServicesLocatePpi (
              &gEfiPeiReadOnlyVariable2PpiGuid,
@@ -107,7 +125,7 @@ UpdatePeiSaPolicyBoardConfig (
       if (UsbConnectorBoardConfig != NULL) {
         // Initialize TCSS USB3 OC Config
         for (PortIndex = 0; PortIndex < MAX_USB3_PORTS; PortIndex++) {
-          UPDATE_POLICY (TcssConfig->UsbConfig.PortUsb30[PortIndex].OverCurrentPin, USB_OC_SKIP);
+          UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CpuUsb3OverCurrentPin[PortIndex], TcssConfig->UsbConfig.PortUsb30[PortIndex].OverCurrentPin, USB_OC_SKIP);
         }
 
         // Update TCSS USB3 USB OC Config
@@ -118,7 +136,8 @@ UpdatePeiSaPolicyBoardConfig (
               if (UsbConnectorBoardConfig->UsbOcPinType != 0) {
                 if (UsbConnectorBoardConfig->UsbOcPinType <= USB_OC_MAX_TYPE &&
                     UsbConnectorBoardConfig->UsbOcPin < USB_OC_MAX_PINS) {
-                  UPDATE_POLICY (
+                  UPDATE_POLICY_V2 (
+                    ((FSPS_UPD *) FspsUpd)->FspsConfig.CpuUsb3OverCurrentPin[UsbConnectorBoardConfig->Usb3PortNum],
                     TcssConfig->UsbConfig.PortUsb30[UsbConnectorBoardConfig->Usb3PortNum].OverCurrentPin,
                     (UINT8) GET_USB3_OCM_REG (UsbConnectorBoardConfig->UsbOcPinType, UsbConnectorBoardConfig->UsbOcPin)
                     );
@@ -141,7 +160,7 @@ UpdatePeiSaPolicyBoardConfig (
     }
 
     for (PortIndex = 0; PortIndex < MAX_TCSS_USB3_PORTS; PortIndex++) {
-      UPDATE_POLICY (TcssConfig->UsbConfig.PortUsb30[PortIndex].Enable, IS_TC_PORT_USB_SUPPORTED (TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[PortIndex]));
+      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb30Enable[PortIndex], TcssConfig->UsbConfig.PortUsb30[PortIndex].Enable, IS_TC_PORT_USB_SUPPORTED (TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[PortIndex]));
     }
   }
 #endif  // PcdTcssSupport

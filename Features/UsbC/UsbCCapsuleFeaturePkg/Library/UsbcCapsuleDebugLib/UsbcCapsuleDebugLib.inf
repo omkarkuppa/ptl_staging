@@ -31,7 +31,6 @@
   BaseLib
   UefiLib
   DebugLib
-  PcdLib
   Usb4DebugLib
 
 [Packages]
@@ -46,6 +45,3 @@
 
 [Protocols]
   gEfiUsbCCapsuleDebugProtocolGuid                     ## PRODUCES
-
-[Pcd]
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleDebugLevel

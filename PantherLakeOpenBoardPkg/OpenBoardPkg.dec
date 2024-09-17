@@ -94,6 +94,8 @@ Include
   gBoardModuleTokenSpaceGuid.PcdPcieClock16|0|UINT64|0x000000AE
   gBoardModuleTokenSpaceGuid.PcdPcieClock17|0|UINT64|0x000000AF
 
+  # MRC Config
+  gBoardModuleTokenSpaceGuid.PcdSpdPresent|FALSE|BOOLEAN|0x00101012
 
   # CPU
   gBoardModuleTokenSpaceGuid.PcdCpuRatio|0x0|UINT8|0x00000200
@@ -175,10 +177,39 @@ Include
   #MRC UserBd
   gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|0|UINT8|0x00001130
 
+  # MRC Ddr Frequency Limit
+  gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit       |0x0|UINT16|0x00001131
+
+  # Mrc Cmd Mirror Configuration
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcCmdMirror                   |0x0|UINT8|0x0000113B
+
+  # Mrc LP5 CCC Configuration
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcLp5CccConfig                |0x0|UINT8|0x00001139
+
   #Mrc Spd Address Table
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable|{0}|VPD_MRC_SPD_ADDRESS_TABLE|0x00001133 {
   <HeaderFiles>
     PlatformOpenBoardConfig.h
+  }
+
+  # SBC MRC DQS MAPPING
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqsMapCpu2Dram    |{0}|MRC_DQS|0x50000028 {
+  <HeaderFiles>
+    PlatformOpenBoardConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  }
+
+  # SBC MRC DQ MAPPING
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqMapCpu2Dram     |{0}|MRC_DQ|0x50000027 {
+  <HeaderFiles>
+    PlatformOpenBoardConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   }
 
   #VPD PCD Ratio

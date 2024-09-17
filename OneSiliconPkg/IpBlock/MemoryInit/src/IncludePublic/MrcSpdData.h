@@ -29,6 +29,7 @@
 #define MAX_XMP3_PROFILES     (5)
 #define SPD5_MANUF_SIZE   (SPD5_MANUF_END - SPD5_MANUF_START + 1)   ///< The size of the SPD manufacturing data.
 #define SPDLP_MANUF_SIZE  (SPDLP_MANUF_END - SPDLP_MANUF_START + 1) ///< The size of the SPD manufacutring data.
+#define SPDLP_JEDEC_SPEC_MANUF_SIZE (SPDLP_JEDEC_SPEC_MANUF_END - SPDLP_JEDEC_SPEC_MANUF_START + 1) ///< The size of the SPD manufacturing data.
 #define XMP_PROFILE1_SUPPORT_MASK             MRC_BIT0
 #define XMP_PROFILE2_SUPPORT_MASK             MRC_BIT1
 #define XMP_PROFILE3_SUPPORT_MASK             MRC_BIT2
@@ -1124,8 +1125,178 @@ typedef struct {
 } SPD_LPDDR_MANUFACTURING_DATA;
 
 typedef union {
+  struct {
+    UINT8  BetaLevel3                          :  4; ///< Bits 3:0
+    UINT8  SPDBytesTotal                       :  3; ///< Bits 6:4
+    UINT8  BetaLevel4                          :  1; ///< Bits 7:7
+  } Bits;
+  UINT8  Data;
+} SPD_JEDEC_SPEC_BYTE_NUMBER_BETA_LEVEL;
+
+typedef union {
+  struct {
+    UINT8  BaseModuleType                      :  4; ///< Bits 3:0
+    UINT8  HybridMedia                         :  3; ///< Bits 6:4
+    UINT8  Hybrid                              :  1; ///< Bits 7:7
+  } Bits;
+  UINT8  Data;
+} SPD_JEDEC_SPEC_MODULE_TYPE_STRUCT;
+
+typedef union {
+  struct {
+    UINT8  SignalLoadingIndex                  :  1; ///< Bits 0:0
+    UINT8  TotalPkgDqsOverDieDataWidth         :  3; ///< Bits 3:1
+    UINT8  DiePerSdramPkg                      :  3; ///< Bits 6:4
+    UINT8  SdramPkgType                        :  1; ///< Bits 7:7
+  } Bits;
+  UINT8  Data;
+} SPD_LPDDR_JEDEC_SPEC_SDRAM_PACKAGE_TYPE_STRUCT;
+
+typedef union {
+  struct {
+    UINT8                                      : 5; ///< Bits 4:0
+    UINT8  SoftPPR                             : 1; ///< Bits 5:5
+    UINT8  PostPackageRepair                   : 2; ///< Bits 7:6
+  } Bits;
+  UINT8 Data;
+} SPD_LPDDR_JEDEC_SPEC_OPTIONAL_SDRAM_FEATURES;
+
+typedef union {
+  struct {
+    UINT8  SdramDeviceWidth                    :  3; ///< Bits 2:0
+    UINT8  PackageRanksPerSubChannel           :  3; ///< Bits 5:3
+    UINT8  ByteModeIdentification              :  1; ///< Bits 6:6
+    UINT8                                      :  1; ///< Bits 7:7
+  } Bits;
+  UINT8  Data;
+} SPD_JEDEC_SPEC_MODULE_ORGANIZATION_STRUCT;
+
+typedef union {
+  struct {
+    UINT8  SystemSubChannelBusWidth            :  3; ///< Bits 2:0
+    UINT8                                      :  5; ///< Bits 7:3
+  } Bits;
+  UINT8  Data;
+} SPD_JEDEC_SPEC_MODULE_MEMORY_BUS_WIDTH_STRUCT;
+
+typedef union {
+  struct {
+    UINT8  ChipSelectLoading                   :  3; ///< Bits 2:0
+    UINT8  ClockLoading                        :  3; ///< Bits 5:3
+    UINT8  MaskLoading                         :  2; ///< Bits 7:6
+  } Bits;
+  UINT8  Data;
+} SPD_LPDDR_JEDEC_SPEC_SIGNAL_LOADING_STRUCT;
+
+typedef struct {
+  SPD_JEDEC_SPEC_BYTE_NUMBER_BETA_LEVEL          NumberOfBytes;            ///< 0       Number of Bytes in SPD device/Beta level
+  SPD_REVISION_STRUCT                            Revision;                 ///< 1       SPD Revision
+  SPD_DRAM_DEVICE_TYPE_STRUCT                    DramDeviceType;           ///< 2       DRAM Device Type
+  SPD_JEDEC_SPEC_MODULE_TYPE_STRUCT              ModuleType;               ///< 3       Module Type
+  SPD4_SDRAM_DENSITY_BANKS_STRUCT                SdramDensityAndBanks;     ///< 4       SDRAM Density and Banks
+  SPD_SDRAM_ADDRESSING_STRUCT                    SdramAddressing;          ///< 5       SDRAM Addressing
+  SPD_LPDDR_JEDEC_SPEC_SDRAM_PACKAGE_TYPE_STRUCT SdramPackageType;         ///< 6       SDRAM Package Type
+  UINT8                                          Reserved0[8 - 7 + 1];     ///< 7-8     Reserved
+  SPD_LPDDR_JEDEC_SPEC_OPTIONAL_SDRAM_FEATURES   OptionalSdramFeatures;    ///< 9       Optional Sdram Features (PPR)
+  UINT8                                          Reserved1[11 - 10 + 1];   ///< 10-11   Reserved
+  SPD_JEDEC_SPEC_MODULE_ORGANIZATION_STRUCT      ModuleOrganization;       ///< 12      Module Organization
+  SPD_JEDEC_SPEC_MODULE_MEMORY_BUS_WIDTH_STRUCT  SystemChannelBusWidth;    ///< 13      Module Memory Bus Width
+  UINT8                                          Reserved2[15 - 14 + 1];   ///< 14-15   Reserved
+  SPD_LPDDR_JEDEC_SPEC_SIGNAL_LOADING_STRUCT     SignalLoading;            ///< 16      Signal Loading
+  SPD4_TIMEBASE_STRUCT                           Timebase;                 ///< 17      Timebases
+  SPD_TCK_MIN_MTB_STRUCT                         tCKmin;                   ///< 18      SDRAM Minimum Cycle Time (tCKmin)
+  SPD4_TCK_MAX_MTB_STRUCT                        tCKmax;                   ///< 19      SDRAM Maximum Cycle Time (tCKmax)
+  UINT8                                          Reserved3[23 - 20 + 1];   ///< 20-23   Reserved
+  SPD_TAA_MIN_MTB_STRUCT                         tAAmin;                   ///< 24      Minimum CAS Latency Time (tAAmin)
+  UINT8                                          Reserved4;                ///< 25      Reserved
+  SPD_TRCD_MIN_MTB_STRUCT                        tRCDmin;                  ///< 26      Minimum RAS# to CAS# Delay Time (tRCDmin)
+  SPD_TRP_AB_MTB_STRUCT                          tRPab;                    ///< 27      Minimum Row Precharge Delay Time (tRPab), all banks
+  SPD_TRP_PB_MTB_STRUCT                          tRPpb;                    ///< 28      Minimum Row Precharge Delay Time (tRPpb), per bank
+  SPD_TRFC_AB_MTB_STRUCT                         tRFCab;                   ///< 29-30   Minimum Refresh Recovery Delay Time (tRFCab), all banks
+  SPD_TRFC_PB_MTB_STRUCT                         tRFCpb;                   ///< 31-32   Minimum Refresh Recovery Delay Time (tRFCpb), per bank
+  UINT8                                          Reserved5[119 - 33 + 1];  ///< 33-119  Reserved
+  SPD_TRP_PB_FTB_STRUCT                          tRPpbFine;                ///< 120     Fine Offset for Minimum Row Precharge Delay Time (tRPpb), per bank
+  SPD_TRP_AB_FTB_STRUCT                          tRPabFine;                ///< 121     Fine Offset for Minimum Row Precharge Delay Time (tRPab), all ranks
+  SPD_TRCD_MIN_FTB_STRUCT                        tRCDminFine;              ///< 122     Fine Offset for Minimum RAS# to CAS# Delay Time (tRCDmin)
+  SPD_TAA_MIN_FTB_STRUCT                         tAAminFine;               ///< 123     Fine Offset for Minimum CAS Latency Time (tAAmin)
+  SPD4_TCK_MAX_FTB_STRUCT                        tCKmaxFine;               ///< 124     Fine Offset for SDRAM Maximum Cycle Time (tCKmax)
+  SPD_TCK_MIN_FTB_STRUCT                         tCKminFine;               ///< 125     Fine Offset for SDRAM Minimum Cycle Time (tCKmin)
+  UINT8                                          Reserved6[127 - 126 + 1]; ///< 126-127 Reserved
+} SPD_LPDDR_JEDEC_SPEC_BASE_SECTION;
+
+typedef union {
   UINT8                                   Reserved0[511 - 384 + 1]; ///< 384-511 End User Programmable
 } SPD_LPDDR_END_USER_SECTION;
+
+typedef union {
+  struct {
+    UINT8  SerialNumber                        :  3; ///< Bits 1:0
+    UINT8                                      :  5; ///< Bits 7:3
+  } Bits;
+  UINT8  Data;
+} LP5_JEDEC_SPEC_HASHING_SEQUENCE;
+
+typedef union {
+  struct {
+    UINT8  DramRowCount                        :  2; ///< Bits 1:0
+    UINT8  HeatSpreader                        :  1; ///< Bits 2:2
+    UINT8                                      :  1; ///< Bits 3:3
+    UINT8  OperatingTempRange                  :  4; ///< Bits 7:4
+  } Bits;
+  UINT8  Data;
+} LP5_JEDEC_SPEC_DIMM_ATTRIBUTES;
+
+typedef union {
+  struct {
+    UINT8                                      :  3; ///< Bits 2:0
+    UINT8  NumOfPackageRanksperSubChannel      :  3; ///< Bits 5:3
+    UINT8  RankMix                             :  1; ///< Bits 6:6
+    UINT8                                      :  1; ///< Bits 7:7
+  } Bits;
+  UINT8  Data;
+} LP5_JEDEC_SPEC_MODULE_ORGANIZATION;
+
+typedef union {
+  struct {
+    UINT8  PrimaryBusWidthPerSubChannel                     :  3; ///< Bits 2:0
+    UINT8  BusWidthExtensionPerSubChannel                   :  2; ///< Bits 4:3
+    UINT8  NumOfSubChannelsPerDimm                          :  3; ///< Bits 7:5
+  } Bits;
+  UINT8  Data;
+} LP5_JEDEC_SPEC_MODULE_MEMORY_BUS_WIDTH;
+
+typedef struct {
+  SPD_REVISION_STRUCT                          Revision;                 ///< 192     SPD Revision for SPD bytes 192-447
+  LP5_JEDEC_SPEC_HASHING_SEQUENCE              HashingSequence;          ///< 193     Hashing Sequence for device serial numbers
+  SPD5_DEVICE_INFO                             DeviceInfoSpd;            ///< 194-197 SPD Device Information
+  SPD5_DEVICE_INFO                             DeviceInfoPmic[3];        ///< 198-209 PMIC Device Information
+  SPD5_THERM_DEVICE_INFO                       DeviceInfoThermalSensor;  ///< 210-213 Thermal Sensor Device Information
+  UINT8                                        Reserved1[229 - 214 + 1]; ///< 214-229 Reserved
+  SPD5_MODULE_NOMINAL_HEIGHT                   ModuleNominalHeight;      ///< 230     Module Nominal Height
+  SPD5_MODULE_MAXIMUM_THICKNESS                ModuleMaximumThickness;   ///< 231     Module Maximum Thickness
+  SPD5_REFERENCE_RAW_CARD                      ReferenceRawCardUsed;     ///< 232     Reference Raw Card Used
+  LP5_JEDEC_SPEC_DIMM_ATTRIBUTES               DimmAttributes;           ///< 233     DIMM Attributes
+  LP5_JEDEC_SPEC_MODULE_ORGANIZATION           ModuleOrganization;       ///< 234     Module Organization
+  LP5_JEDEC_SPEC_MODULE_MEMORY_BUS_WIDTH       ModuleMemoryBusWidth;     ///< 235     Memory Channel Bus Width
+  UINT8                                        Reserved2[447 - 236 + 1]; ///< 236-447 Reserved
+} SPD_LPDDR_JEDEC_SPEC_COMMON;
+
+typedef struct {
+  UINT8                                   ManufactureSpecificData[639 - 555 + 1]; ///< 555-639 Manufacture Specific Data
+} SPD_LPDDR_JEDEC_SPEC_MANUFACTURE_SPECIFIC;
+
+typedef struct {
+  SPD_UNIQUE_MODULE_ID                      ModuleId;                 ///< 512-520 Unique Module ID
+  SPD4_MODULE_PART_NUMBER                   ModulePartNumber;         ///< 521-550 Module Part Number
+  SPD4_MODULE_REVISION_CODE                 ModuleRevisionCode;       ///< 551     Module Revision Code
+  SPD_MANUFACTURER_ID_CODE                  DramIdCode;               ///< 552-553 Dram Manufacturer ID Code
+  SPD4_DRAM_STEPPING                        DramStepping;             ///< 554     Dram Stepping
+  SPD_LPDDR_JEDEC_SPEC_MANUFACTURE_SPECIFIC ManufactureSpecificData;  ///< 555-639 Manufacturer Specific Data
+} SPD_LPDDR_JEDEC_SPEC_MANUFACTURING_INFO;
+
+typedef union {
+  UINT8                                   Reserved0[1023 - 640 + 1]; ///< 640-1023 End User Programmable 
+} SPD_LPDDR_JEDEC_SPEC_END_USER_SECTION;
 
 typedef struct {
   SPD_LPDDR_BASE_SECTION                  Base;                     ///< 0-127   Base Configuration and DRAM Parameters
@@ -1134,6 +1305,16 @@ typedef struct {
   SPD_LPDDR_MANUFACTURING_DATA            ManufactureInfo;          ///< 320-383 Manufacturing Information
   SPD_LPDDR_END_USER_SECTION              EndUser;                  ///< 384-511 End User Programmable
 } MrcSpdLpddr;
+
+typedef struct {
+  SPD_LPDDR_JEDEC_SPEC_BASE_SECTION       Base;                     ///< 0-127 Base Configuration and DRAM Parameters
+  UINT8                                   Reserved0[191 - 128 + 1]; ///< 128-191  Reserved for future use
+  SPD_LPDDR_JEDEC_SPEC_COMMON             ModuleCommon;             ///< 192-447  Module Specific-Section
+  UINT8                                   Reserved1[509 - 448 + 1]; ///< 448-509  Reserved for future use
+  UINT16                                  Crc;                      ///< 510-511  Cyclical Redundancy Code (CRC)
+  SPD_LPDDR_JEDEC_SPEC_MANUFACTURING_INFO ManufactureInfo;          ///< 512-639  Manufacturing Information
+  SPD_LPDDR_JEDEC_SPEC_END_USER_SECTION   EndUser;                  ///< 640-1023 End User Programmable
+} MrcSpdJedecSpecLpddr;
 
 ///
 /// DDR5 Serial Presence Detect structure
@@ -1150,6 +1331,7 @@ typedef struct {
 typedef union {
   MrcSpdDdr5  Ddr5;
   MrcSpdLpddr Lpddr;
+  MrcSpdJedecSpecLpddr JedecLpddr5;
 } MrcSpd;
 
 

@@ -81,6 +81,11 @@
 #include <Library/PcdTcssInitLib.h>
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdPsfSocLib.h>
 #include <Library/PeiPcdInitLib.h>
+#include <Library/PeiImrInitLib.h>
+#include <Library/VmdInfoLib.h>
+#include <Register/CpuGenInfoRegs.h>
+#include <Library/CpuLib.h>
+#include <Pi/PiHob.h>
 
 EFI_PEI_PPI_DESCRIPTOR mEndOfSiInit = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
@@ -545,6 +550,10 @@ SiInitPostMemOnPolicy (
   NPU_PEI_CONFIG              *NpuPeiConfig;
 #if FixedPcdGetBool(PcdVmdEnable) == 1
   VMD_PEI_CONFIG              *VmdPeiConfig;
+  VOID                        *BaseAddressImr11;
+  UINT32                      CpuFamilyId;
+  EFI_RESOURCE_TYPE           ResourceType;
+  EFI_RESOURCE_ATTRIBUTE_TYPE ResourceAttribute;
 #endif
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
   OVERCLOCKING_PREMEM_CONFIG  *OverClockingConfig;
@@ -556,12 +565,14 @@ SiInitPostMemOnPolicy (
   PEI_ITBT_CONFIG             *PeiITbtConfig;
   HOST_BRIDGE_PREMEM_CONFIG   *HostBridgePreMemConfig;
 
+
   DEBUG ((DEBUG_INFO, "SiInit () - Start\n"));
 
   SiPreMemPolicyPpi      = NULL;
   SiPolicy               = NULL;
 #if FixedPcdGetBool(PcdVmdEnable) == 1
   VmdPeiConfig           = NULL;
+  BaseAddressImr11       = NULL;
 #endif
   HostBridgePeiConfig    = NULL;
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
@@ -759,6 +770,46 @@ SiInitPostMemOnPolicy (
   UpdateHostBridgeHobPostMem (HostBridgePeiConfig);
 
 #if (FixedPcdGetBool(PcdVmdEnable) == 1)
+  if ((IsVmdEnabled() == TRUE) && (VmdPeiConfig->VmdEnable)) {
+    CpuFamilyId = GetCpuFamilyModel ();
+    if (((GetCpuSteppingId () == EnumPtlHA0) || (GetCpuSteppingId () == EnumPtlUA0)) && (CpuFamilyId == CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE)) {
+      //
+      // Allocating 1MB for IMR11
+      //
+      BaseAddressImr11 = AllocateAlignedPages ((EFI_SIZE_TO_PAGES (SIZE_1MB)), SIZE_1MB);
+      ASSERT (BaseAddressImr11 != NULL);
+      DEBUG ((DEBUG_INFO, "BaseAddressImr11 = %lx\n",BaseAddressImr11));
+
+      //
+      // Program IMR11 with same BaseAddress
+      //
+      Status = SetImr (IMR_1M_IMR11, (UINT64) BaseAddressImr11, (UINT64) SIZE_1MB);
+      if (Status != EFI_SUCCESS) {
+        DEBUG ((DEBUG_ERROR, "Fail to program IMR11\n"));
+      }
+
+      ResourceType = EFI_RESOURCE_MEMORY_RESERVED;
+
+      ResourceAttribute = \
+        EFI_RESOURCE_ATTRIBUTE_PRESENT |
+        EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+        EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE;
+
+      BuildResourceDescriptorHob (
+        ResourceType,                                // MemoryType,
+        ResourceAttribute,                           // MemoryAttribute
+        (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
+        SIZE_1MB                                     // MemoryLength
+        );
+
+      BuildMemoryAllocationHob (
+        (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
+        SIZE_1MB,                                    // MemoryLength
+        EfiReservedMemoryType
+        );
+
+    }
+  }
   ///
   /// VMD Initializations if the VMD IP is Supported
   ///

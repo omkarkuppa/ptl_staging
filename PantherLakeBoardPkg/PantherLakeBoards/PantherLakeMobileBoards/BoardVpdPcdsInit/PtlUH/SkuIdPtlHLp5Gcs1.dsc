@@ -331,12 +331,12 @@
   // Connectable,   Visibility, ConnectorType, UsbOcPinType, UsbOcPin, Usb2Controller, Usb2PortNum, Usb3Controller, Usb3PortNum
     {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN0,  PCH_USB2,       PORT1,       TCSS_USB3,      PORT1}, // TCP0
     {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN1,  PCH_USB2,       PORT2,       TCSS_USB3,      PORT2}, // TCP1
-    {UNCONNECTABLE, VISIBLE,    0x00,          0,            0,        PCH_USB2,       PORT3,       0,              0    }, // Cam Conn
+    {CONNECTABLE,   VISIBLE,    0x00,          0,            0,        PCH_USB2,       PORT3,       0,              0    }, // Cam Conn
     {UNCONNECTABLE, INVISIBLE,  0x00,          0,            0,        0,              0,           0,              0    }, // NA
     {CONNECTABLE,   VISIBLE,    0x00,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT5,       PCH_USB3,       PORT1}, // Debug Connector
     {CONNECTABLE,   VISIBLE,    0x00,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT6,       PCH_USB3,       PORT2}, // Type-A
     {UNCONNECTABLE, INVISIBLE,  0x00,          0,            0,        0,              0,           0,              0    }, // NA
-    {UNCONNECTABLE, VISIBLE,    0x00,          0,            0,        PCH_USB2,       PORT8,       0,              0    }, // M.2 WLAN
+    {CONNECTABLE,   VISIBLE,    0x00,          0,            0,        PCH_USB2,       PORT8,       0,              0    }, // M.2 WLAN
     {0x0}  // terminator
   })}
 
@@ -345,8 +345,6 @@
   // ModularIoSupported, EdpModularIoSupported, RetimerCount, PcieSupported, DpAltModeSupported, Usb4Supported, Tbt3Supported, PdNum,    AuxDpMode, TbtControllerType, TbtControllerNum, DmaPortNum, PcieType, PcieRootPortNum
     {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT1,  0,        0}, // TCP0
     {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD2, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT2,  0,        0}, // TCP1
-    {FIXED_IO,           0,                     0,            0,             0,                  0,             0,             0,        0,         0,                 0,                0,          0,        0}, // TCP2
-    {FIXED_IO,           0,                     0,            0,             0,                  0,             0,             0,        0,         0,                 0,                0,          0,        0}, // TCP3
     {0x0}  // terminator
   })}
 
@@ -418,7 +416,7 @@
 
   # LID status for gop
   gBoardModuleTokenSpaceGuid.VpdPcdGpioLidStatus|*|{CODE(
-   { 0 }
+   { 0x0 }
   )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdSkuType|*|0x2
@@ -453,6 +451,21 @@
     NOT_USED
   }}
   )}
+
+  # PCIE CLOCK USGAGE for PTL-P
+  gBoardModuleTokenSpaceGuid.VpdPcdPPcieClkUsageMap|*|{CODE(
+    {{
+      NOT_USED,
+      PCIE_PCH + 8,   // Gen5 SSD
+      NOT_USED,
+      LAN_CLOCK,      // GBE LAN
+      PCIE_PCH + 3,   // M.2 WLAN
+      NOT_USED,
+      NOT_USED,
+      NOT_USED,
+      NOT_USED
+    }}
+    )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTable|*|{CODE(
   {
@@ -731,8 +744,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTablePreMem|*|{CODE({
     {0x0}  // terminator
   })}
-
-  gBoardModuleTokenSpaceGuid.VpdPcdGopConfigSoftwareId|*|0x0
 
   gBoardModuleTokenSpaceGuid.VpdPcdTcssEnable|*|1
 

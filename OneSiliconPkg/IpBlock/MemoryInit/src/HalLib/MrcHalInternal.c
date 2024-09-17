@@ -22,6 +22,47 @@
 // Include files
 #include "MrcHalInternal.h" // for function prototypes and interface definitions
 
+#define MUTLICAST_NOT_SUPPORTED (0)
+
+static const UINT8 BlockPartitionMaxRange[MaxPartition] = {
+  [PartitionDataShared] = MRC_DATA_SHARED_NUM,
+  [PartitionData]       = MRC_DATA_MOBILE_NUM * MRC_DATA_CH_NUM,
+  [PartitionCcc]        = MRC_CCC_NUM,
+  [PartitionCccShared]  = MRC_CCC_SHARED_NUM,
+};
+
+/**
+  This function gets block partition index range for the specified partition type and index.
+  If index is multicast then the range is for all instances of the partition.
+
+  @param[in] PartitionType - The partition type.
+  @param[in] Index         - The partition index.
+
+  @returns The partition index range.
+**/
+MRC_RANGE
+MrcGetPartitionIndexRange (
+  IN const PARTITION_TYPE PartitionType,
+  IN const UINT32         Index
+  )
+{
+  MRC_RANGE Range = {.Start = MRC_IGNORE_ARG_8, .End = MRC_IGNORE_ARG_8};
+  BOOLEAN IsPartitionSupported = (BlockPartitionMaxRange[PartitionType] != MUTLICAST_NOT_SUPPORTED);
+
+  if (IsPartitionSupported) {
+    if (BlockPartitionMaxRange[PartitionType] == Index) {
+      // This is multicast
+      Range.Start = 0;
+      Range.End = BlockPartitionMaxRange[PartitionType];
+    } else {
+      Range.Start = Index;
+      Range.End   = Index + 1;
+    }
+  }
+
+  return Range;
+}
+
 /**
   This function sets the specified register bit field.
 

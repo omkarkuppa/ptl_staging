@@ -241,8 +241,8 @@ SendRpePetAlert (
   RpePetAlert.EventOffset                      = RpeOperationStatus;
 
   Status = HeciWrapperSend (
-             BIOS_FIXED_HOST_ADDR,
-             HECI_HBM_MESSAGE_ADDR,
+             BIOS_ASF_HOST_ADDR,
+             HECI_ASF_MESSAGE_ADDR,
              (UINT32 *) &RpePetAlert,
              sizeof (PET_ALERT)
              );

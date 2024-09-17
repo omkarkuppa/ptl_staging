@@ -25,6 +25,7 @@
 #define MAX_DIMMS_IN_CHANNEL      (2)         ///< The maximum number of DIMMs per channel
 #define MAX_BYTE_IN_DDR5_CHANNEL  (4)         ///< Max number of Bytes in a DDR5 Channel
 #define SUPPORT_ECC               UNSUPPORT   ///< SUPPORT means ECC is suppported, else UNSUPPORT.
+#define LP5_LOW_FREQ_INIT         f2133
 // DDR5 CA Training Guardband
 #define MRC_CA_PARITY_DDR5_GUARDBAND (4)
 #define MRC_DATA_NUM                 MRC_DATA_MOBILE_NUM
@@ -49,5 +50,20 @@ typedef enum {
   ipDerivativePtl = 1,
   ipDerivativeWcl = 2
 } MrcIpDerivative;
+
+///
+/// Refresh watermarks constraints
+///
+#define REFRESH_WM_LOW            0
+#define REFRESH_WM_HIGH           1
+
+#define REFRESH_PANIC_WM_LOW      3
+#define REFRESH_PANIC_WM_HIGH     7
+
+#define REFRESH_HP_WM_LOW         1
+#define REFRESH_HP_WM_HIGH        6
+
+// Configure RefreshAbrRelease with the same value like RefreshHpWm
+#define REFRESH_ABR_RELEASE       REFRESH_HP_WM_HIGH
 
 #endif

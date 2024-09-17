@@ -26,6 +26,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/PreSiliconEnvDetectLib.h>
 #include <Library/RngLib.h>
+#include <Library/PeiServicesLib.h>
 
 #include <Register/PchRegs.h>
 #include <Defines/PcdPchBdfAssignment.h>
@@ -155,8 +156,12 @@ TcssInstInitOnCreate (
   HOST_BRIDGE_PREMEM_CONFIG *HostBridgePreMemConfig
   )
 {
-  UINT8  Index;
+  UINT8          Index;
+  EFI_BOOT_MODE  BootMode;
+  EFI_STATUS     Status;
 
+  Status = PeiServicesGetBootMode (&BootMode);
+  ASSERT_EFI_ERROR (Status);
   TcssInst->Callbacks->LsxPinsConfigure         = PtlPcdTcssLsxPinEnable;
   TcssInst->Callbacks->LsxOePinsConfigure       = PtlPcdTcssLsxOePinEnable;
   TcssInst->Callbacks->GetTcssDeven             = PtlIpIocTcssGetDevEn;
@@ -169,7 +174,7 @@ TcssInstInitOnCreate (
   TcssInst->Config->PortEnData.PortEnData32 = TcssPeiPreMemConfig->UsbTcConfig.PortEnData32;
   TcssInst->Config->CridEnable       = HostBridgePreMemConfig->CridEnable;
   TcssInst->Config->MaxTcssUsb3Ports = MAX_TCSS_USB3_PORTS;
-  TcssInst->Config->BootMode         = 0; // Shall be overriden later
+  TcssInst->Config->BootMode         = (UINT32) BootMode;
 
   if (TcssPeiConfig == NULL) {
     // Pre-Mem phase

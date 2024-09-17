@@ -41,7 +41,7 @@
 #define MRC_UNMATCHED_RX_CAL_PRE        (0xDD0C)
 #define MRC_DCC_LPDDR5_WCK              (0xDD0D)
 #define MRC_DATA_PI_LINEARITY           (0xDD0E)
-// #define MRC_                         (0xDD0F)
+#define MRC_VIEW_PIN_CAL                (0xDD0F)
 #define MRC_RESET_SEQUENCE_BLUE         (0xDD10)
 #define MRC_FREQ_LOCK                   (0xDD11)
 #define MRC_DDRIO_INIT                  (0xDD12)
@@ -57,8 +57,7 @@
 #define MRC_RESTORE_NON_TRAINING        (0xDD1C)
 #define MRC_PRINT_INPUT_PARAMS          (0xDD1D)
 #define MRC_DUNIT_CONFIG                (0xDD1E)
-//Place Holder
-//#define MRC_                            (0xDD1F)
+#define MRC_QCLK_DCC                    (0xDD1F)
 #define MRC_SPD_PROCESSING_STATIC       (0xDD20)
 #define MRC_SET_OVERRIDES               (0xDD21)
 #define MRC_MC_CAPABILITY               (0xDD22)

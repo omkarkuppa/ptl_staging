@@ -2132,3 +2132,21 @@ ConfigureDisplayGpio (
   Status = PtlPcdGpioSetNativePadByFunction (GpioServices, PadFunction, PinMux);
   return Status;
 }
+
+/**
+  This function sets TSN0 into native mode
+
+  @param[in]  GpioServices   Gpio Services
+  @param[in]  GpioServices   TSN controller index
+
+  @retval Status
+**/
+EFI_STATUS
+PtlPcdGpioEnableTsnPins (
+  IN  GPIOV2_SERVICES   *GpioServices,
+  IN  UINT8             TsnIndex
+  )
+{
+
+  return EFI_SUCCESS;
+}

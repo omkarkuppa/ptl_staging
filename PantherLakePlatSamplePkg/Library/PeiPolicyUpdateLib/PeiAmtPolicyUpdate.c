@@ -89,15 +89,20 @@ UpdatePeiAmtPolicy (
   EFI_PEI_READ_ONLY_VARIABLE2_PPI *VariableServices;
   UINTN                           VariableSize;
   ME_SETUP                        MeSetup;
-  AMT_PEI_CONFIG                  *AmtPeiConfig;
   MEBX_DATA                       MebxData;
-
+#if FixedPcdGet8(PcdFspModeSelection) == 0
+  AMT_PEI_CONFIG                  *AmtPeiConfig;
+#endif
   DEBUG ((DEBUG_INFO, "Update PeiAmtPolicyUpdate Pos-Mem Start\n"));
-
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+#else
   AmtPeiConfig = NULL;
-
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gAmtPeiConfigGuid, (VOID *) &AmtPeiConfig);
   ASSERT_EFI_ERROR (Status);
+#endif
 
   //
   // Locate Variable Ppi
@@ -122,14 +127,12 @@ UpdatePeiAmtPolicy (
                                &VariableSize,
                                &MeSetup
                                );
-
   if (!EFI_ERROR (Status)) {
-    COMPARE_AND_UPDATE_POLICY (AmtPeiConfig->AmtEnabled,        MeSetup.Amt              );
-    COMPARE_AND_UPDATE_POLICY (AmtPeiConfig->WatchDogEnabled,   MeSetup.WatchDogEnabled  );
-    COMPARE_AND_UPDATE_POLICY (AmtPeiConfig->WatchDogTimerBios, MeSetup.WatchDogTimerBios);
-    COMPARE_AND_UPDATE_POLICY (AmtPeiConfig->WatchDogTimerOs,   MeSetup.WatchDogTimerOs  );
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.AmtEnabled,        AmtPeiConfig->AmtEnabled,        MeSetup.Amt              );
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogEnabled,   AmtPeiConfig->WatchDogEnabled,   MeSetup.WatchDogEnabled  );
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerBios, AmtPeiConfig->WatchDogTimerBios, MeSetup.WatchDogTimerBios);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerOs,   AmtPeiConfig->WatchDogTimerOs,   MeSetup.WatchDogTimerOs  );
   }
-
   VariableSize  = sizeof (MEBX_DATA);
 
   Status = VariableServices->GetVariable (
@@ -141,19 +144,22 @@ UpdatePeiAmtPolicy (
                                &MebxData
                                );
   if (!EFI_ERROR (Status)) {
-    UPDATE_POLICY (AmtPeiConfig->AmtSolEnabled, MebxData.AmtSol);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.AmtSolEnabled, AmtPeiConfig->AmtSolEnabled, MebxData.AmtSol);
   } else {
     DEBUG ((DEBUG_WARN, "Failed to retrieve Variable:\"MebxData\", Status = %r\n", Status));
   }
-
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  if (((FSPS_UPD *) FspsUpd)->FspsConfig.AmtEnabled == 0) {
+#else
   if (AmtPeiConfig->AmtEnabled == 0) {
+#endif
     //
     // Disable below settings since they have dependency on AMT.
     //
-    UPDATE_POLICY (AmtPeiConfig->WatchDogEnabled,   0);
-    UPDATE_POLICY (AmtPeiConfig->WatchDogTimerBios, 0);
-    UPDATE_POLICY (AmtPeiConfig->WatchDogTimerOs,   0);
-    UPDATE_POLICY (AmtPeiConfig->AmtSolEnabled,     0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogEnabled, AmtPeiConfig->WatchDogEnabled,   0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerBios, AmtPeiConfig->WatchDogTimerBios, 0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerOs, AmtPeiConfig->WatchDogTimerOs,   0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.AmtSolEnabled, AmtPeiConfig->AmtSolEnabled,     0);
   }
 
   InstallAmtForcePushPetPolicy ();

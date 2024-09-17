@@ -27,6 +27,10 @@
 #include <Library/TbtNvmRetimerDrvHelpers.h>
 #include <Protocol/TbtNvmDrvDef.h>
 #include <UsbCRetimerSetup.h>
+#include <Library/UsbcCapsuleDebugLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
 
 UPDATE_TARGET_TYPE gUpdateTargetType;    // TARGET_TBT_HOST or TARGET_RETIMER
 
@@ -41,6 +45,7 @@ UPDATE_TARGET_TYPE gUpdateTargetType;    // TARGET_TBT_HOST or TARGET_RETIMER
 
   @retval EFI_SUCCESS                      Host Router Instance is created successfully and is ready to accept commands.
   @retval Others                           An error occurred attempting to access the Retimer device.
+
 **/
 EFI_STATUS
 EFIAPI
@@ -114,19 +119,19 @@ CreateHrDevInstance (
 EFI_STATUS
 EFIAPI
 CreateRetimerDevInstance (
-  IN   UINT8                                          FirmwareType,
-  IN   UINT8                                          PcieRpType,
-  IN   UINT8                                          PcieRootPort,
-  IN   RETIMER_DEV_ADDRESS                            *DevAddress,
-  OUT  RETIMER_DEV_INSTANCE                           *RetimerDevice
+  IN   UINT8                 FirmwareType,
+  IN   UINT8                 PcieRpType,
+  IN   UINT8                 PcieRootPort,
+  IN   RETIMER_DEV_ADDRESS   *DevAddress,
+  OUT  RETIMER_DEV_INSTANCE  *RetimerDevice
   )
 {
-  EFI_STATUS           Status;
-  TBT_RETIMER          *Device;
-  PCIE_BDF             *TbtDmaPciLocation;
-  TBT_PORT             TBT_TARGET_PORT;
-  PCIE_RP_CONFIG       *PcieRpConfig;
-  FORCE_PWR_HR         ForcePwrFunc;
+  EFI_STATUS      Status;
+  TBT_RETIMER     *Device;
+  PCIE_BDF        *TbtDmaPciLocation;
+  TBT_PORT        TBT_TARGET_PORT;
+  PCIE_RP_CONFIG  *PcieRpConfig;
+  FORCE_PWR_HR    ForcePwrFunc;
 
   if ((DevAddress == NULL) || (RetimerDevice == NULL)) {
     ASSERT (DevAddress != NULL);
@@ -170,7 +175,7 @@ CreateRetimerDevInstance (
 
   if (FirmwareType == INTEGRATED_TBT_RETIMER) {
     ForcePwrFunc = TbtNvmDrvYflForcePwrFunc;
-  } else{
+  } else {
     ForcePwrFunc = NULL;
   }
 
@@ -204,6 +209,7 @@ CreateRetimerDevInstance (
 
   @retval EFI_SUCCESS   indicate operation success
   @retval Others        Fail to send RETIMER_OFFLINE_MODE to the specified port on the HR.
+
 **/
 EFI_STATUS
 EFIAPI
@@ -237,14 +243,14 @@ TbtSendOfflineMode (
 EFI_STATUS
 EFIAPI
 CreateTBTDevInstance (
-  IN   UINT8                                          FirmwareType,
-  IN   UINT8                                          PcieRpType,
-  IN   UINT8                                          PcieRootPort,
-  OUT  DISCRETE_TBT_DEV_INSTANCE                      *DiscreteTbtDevice
+  IN   UINT8                      FirmwareType,
+  IN   UINT8                      PcieRpType,
+  IN   UINT8                      PcieRootPort,
+  OUT  DISCRETE_TBT_DEV_INSTANCE  *DiscreteTbtDevice
   )
 {
-  TBT_HOST_ROUTER   *HrPtr;
-  PCIE_RP_CONFIG    *PcieRpConfig;
+  TBT_HOST_ROUTER  *HrPtr;
+  PCIE_RP_CONFIG   *PcieRpConfig;
 
   if (DiscreteTbtDevice == NULL) {
     ASSERT (DiscreteTbtDevice != NULL);
@@ -274,7 +280,7 @@ CreateTBTDevInstance (
     return EFI_DEVICE_ERROR;
   }
 
-  *DiscreteTbtDevice = (VOID *)HrPtr;
+  *DiscreteTbtDevice = (VOID *) HrPtr;
   return EFI_SUCCESS;
 }
 
@@ -291,10 +297,10 @@ CreateTBTDevInstance (
 EFI_STATUS
 EFIAPI
 DestroyRetimerDevInstance (
-  IN  RETIMER_DEV_INSTANCE                            RetimerDevice
+  IN  RETIMER_DEV_INSTANCE  RetimerDevice
   )
 {
-  TBT_RETIMER        *Device;
+  TBT_RETIMER  *Device;
 
   Device = (TBT_RETIMER *) RetimerDevice;
 
@@ -318,10 +324,10 @@ DestroyRetimerDevInstance (
 EFI_STATUS
 EFIAPI
 DestroyTbtDevInstance (
-  IN  DISCRETE_TBT_DEV_INSTANCE    DiscreteTbtDevice
+  IN  DISCRETE_TBT_DEV_INSTANCE  DiscreteTbtDevice
   )
 {
-  TBT_HOST_ROUTER        *Device;
+  TBT_HOST_ROUTER  *Device;
 
   Device = (TBT_HOST_ROUTER *) DiscreteTbtDevice;
 
@@ -349,17 +355,17 @@ DestroyTbtDevInstance (
 EFI_STATUS
 EFIAPI
 ReadRetimerNvmVersion (
-  IN   RETIMER_DEV_INSTANCE                           RetimerDevice,
-  OUT  UINT32                                         *Version
+  IN   RETIMER_DEV_INSTANCE  RetimerDevice,
+  OUT  UINT32                *Version
   )
 {
-  EFI_STATUS           Status;
-  TBT_RETIMER          *Device;
-  UINT32               RetimerVersion;
-  UINT8                PlatformVersion;
-  UINT8                MajorVersion;
-  UINT8                MinorVersion;
-  UINT8                OfficialNvm;
+  EFI_STATUS   Status;
+  TBT_RETIMER  *Device;
+  UINT32       RetimerVersion;
+  UINT8        PlatformVersion;
+  UINT8        MajorVersion;
+  UINT8        MinorVersion;
+  UINT8        OfficialNvm;
 
   if (Version == NULL) {
     ASSERT (FALSE);
@@ -376,7 +382,7 @@ ReadRetimerNvmVersion (
   }
 
   RetimerVersion = RetimerVersion & TBT_NVM_VERSION_MASK;
-  PlatformVersion = (RetimerVersion & 0xFF) ;                           // Per platform per retimer (BBR/HBR).
+  PlatformVersion = (RetimerVersion & 0xFF);                            // Per platform per retimer.
   MajorVersion    = ((RetimerVersion >> 16) & 0xFF);                    // The major version of retimer NVM.
   MinorVersion    = ((RetimerVersion >> 8)  & 0x3F);                    // The minor version of retimer NVM.
   OfficialNvm     = ((RetimerVersion >> 15) & 0x1);                     // The official NVM indication, should be set in official NVMs.
@@ -400,11 +406,11 @@ ReadRetimerNvmVersion (
 **/
 VOID
 UpdateRetimerNvmInformation (
-  IN   UINT8                                          FirmwareType,
-  IN   UINT8                                          PcieRpType,
-  IN   UINT8                                          PcieRootPort,
-  IN   RETIMER_DEV_ADDRESS                            *DevAddress,
-  IN   UINT32                                         RetimerVersion
+  IN   UINT8                FirmwareType,
+  IN   UINT8                PcieRpType,
+  IN   UINT8                PcieRootPort,
+  IN   RETIMER_DEV_ADDRESS  *DevAddress,
+  IN   UINT32               RetimerVersion
   )
 {
   EFI_STATUS              Status;
@@ -504,7 +510,7 @@ UpdateRetimerNvmInformation (
 EFI_STATUS
 EFIAPI
 InitRetimerHW (
-  IN  RETIMER_DEV_INSTANCE          RetimerDevice
+  IN  RETIMER_DEV_INSTANCE  RetimerDevice
   )
 {
   EFI_STATUS   Status;
@@ -520,7 +526,7 @@ InitRetimerHW (
   Device = (TBT_RETIMER *) RetimerDevice;
 
   DEBUG ((DEBUG_INFO, "InitRetimerHW START\n"));
-  TbtStatus = Device->InitHW(Device);
+  TbtStatus = Device->InitHW (Device);
 
   if (TBT_STATUS_ERR (TbtStatus)) {
     Status = EFI_DEVICE_ERROR;
@@ -536,16 +542,16 @@ InitRetimerHW (
 /**
   Terminate Retimer HW on given RetimerDevice.
 
-  @param[in]  RetimerDevice       Retimer device instance corresponding to DevAddress.
+  @param[in]  RetimerDevice  Retimer device instance corresponding to DevAddress.
 
-  @retval EFI_SUCCESS             Terminate retimer successfully.
-  @retval Others                  An error occurred attempting to access the Retimer firmware
+  @retval  EFI_SUCCESS       Terminate retimer successfully.
+  @retval  Others            An error occurred attempting to access the Retimer firmware
 
 **/
 EFI_STATUS
 EFIAPI
 TerminateRetimerHW (
-  IN  RETIMER_DEV_INSTANCE          RetimerDevice
+  IN  RETIMER_DEV_INSTANCE  RetimerDevice
   )
 {
   EFI_STATUS   Status;
@@ -601,19 +607,19 @@ UpdateRetimerNvmFirmware (
   IN  RETIMER_DEV_INSTANCE                           RetimerDevice,
   IN  UINT8                                          *RetimerImage,
   IN  UINTN                                          ImageSize,
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,          OPTIONAL
+  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress, OPTIONAL
   IN  UINTN                                          StartPercentage,
   IN  UINTN                                          EndPercentage
   )
 {
-  EFI_STATUS           Status;
-  UINT32               *BufferPointer;
-  TBT_RETIMER          *Device;
-  UINT32               Offset;
-  TBT_STATUS           TbtStatus;
-  UINT32               RecoveryCount;
-  UINT8                WriteLength;
-  UINTN                DisplayLength;
+  EFI_STATUS   Status;
+  UINT32       *BufferPointer;
+  TBT_RETIMER  *Device;
+  UINT32       Offset;
+  TBT_STATUS   TbtStatus;
+  UINT32       RecoveryCount;
+  UINT8        WriteLength;
+  UINTN        DisplayLength;
 
   if ((RetimerDevice == NULL) || (RetimerImage == NULL) || (EndPercentage < StartPercentage)) {
     ASSERT (RetimerDevice != NULL);
@@ -677,12 +683,11 @@ UpdateRetimerNvmFirmware (
       }
     }
 
-    if (!TBT_STATUS_ERR (TbtStatus)) {  // If got here without errors => Success
+    if (!TBT_STATUS_ERR (TbtStatus)) {
       DEBUG ((DEBUG_INFO, "Image write finished.\n"));
       Status = EFI_SUCCESS;
       break;
-    }
-    else {
+    } else {
       DEBUG ((DEBUG_ERROR, "Got an error while writing the image. As a recovery, starting again\n"));
     }
   }
@@ -738,19 +743,19 @@ UpdateDiscreteTbtNvmFirmware (
   IN  DISCRETE_TBT_DEV_INSTANCE                      DiscreteTbtDevice,
   IN  UINT8                                          *DiscreteTbtImage,
   IN  UINTN                                          ImageSize,
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,          OPTIONAL
+  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress, OPTIONAL
   IN  UINTN                                          StartPercentage,
   IN  UINTN                                          EndPercentage
   )
 {
-  EFI_STATUS           Status;
-  UINT32               *BufferPointer;
-  TBT_HOST_ROUTER      *Device;
-  UINT32               Offset;
-  TBT_STATUS           TbtStatus;
-  UINT32               RecoveryCount;
-  UINT8                WriteLength;
-  UINTN                DisplayLength;
+  EFI_STATUS       Status;
+  UINT32           *BufferPointer;
+  TBT_HOST_ROUTER  *Device;
+  UINT32           Offset;
+  TBT_STATUS       TbtStatus;
+  UINT32           RecoveryCount;
+  UINT8            WriteLength;
+  UINTN            DisplayLength;
 
   if ((DiscreteTbtDevice == NULL) || (DiscreteTbtImage == NULL) || (EndPercentage < StartPercentage)) {
     ASSERT (DiscreteTbtDevice != NULL);
@@ -814,7 +819,7 @@ UpdateDiscreteTbtNvmFirmware (
       }
     }
 
-    if (!TBT_STATUS_ERR (TbtStatus)) {  // If got here without errors => Success
+    if (!TBT_STATUS_ERR (TbtStatus)) {
       DEBUG ((DEBUG_INFO, "Image write finished.\n"));
       Status = EFI_SUCCESS;
       break;
@@ -845,5 +850,304 @@ finish_set_image:
     Progress (EndPercentage);
   }
 
+  return Status;
+}
+
+/**
+  Change Tbt Retimer PD controller FW Update Mode.
+
+  @param[in]  This                The UsbC RETIMER PROTOCOL Instance.
+  @param[in]  PdControllerMode    Mode of PD Controller to SET.
+  @param[in]  PdNumber            Number of PD Controllers
+
+  @retval  EFI_SUCCESS            Successfully Mode is Changed to FW Update Mode.
+  @retval  EFI_INVALID_PARAMETER  Invalid GUID from ESRT Table is Passed.
+  @retval  EFI_UNSUPPORTED        This driver does not support.
+  @retval  EFI_DEVICE_ERROR       This driver cannot be started due to device Error.
+  @retval  EFI_ALREADY_STARTED    This driver has been started. This is applicable for PD Fw Update Mode Entry.
+  @retval  EFI_NOT_STARTED        This driver has not been started. This is applicable for PD Fw Update Mode Exit.
+  @retval  EFI_TIMEOUT            Mode Change Command timeout Happen.
+
+**/
+EFI_STATUS
+TbtPdRetimerFwUpdateModeChange (
+  IN  USBC_RETIMER_PROTOCOL  *This,
+  IN  UINT8                  PdControllerMode,
+  IN  UINT8                  PdNumber
+  )
+{
+  EFI_STATUS  Status;
+  UINT8       DeviceMode;
+  UINT8       EcPdTempBuffer;
+  CHAR16      *String = NULL;
+
+  String = ((PdControllerMode == RetimerFwUpdateEnableMode) ? L"Enable" : L"Disable");
+
+  //
+  // Initialize DeviceMode with Invalid Data before getting PD Controller Mode
+  //
+  DeviceMode     = INVALID_DEVICE_MODE;
+  EcPdTempBuffer = 0;
+
+  //
+  // Check the PD Controller Mode before setting PdControllerMode
+  //
+  Status = This->GetPdControllerMode (&DeviceMode, &EcPdTempBuffer, PdNumber);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller GET MODE Not Responding. Returning with Status = %r\n", String, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_SECOND_GET_MODE_FAIL, (UINT32) Status, 0);
+    return Status;
+  }
+
+  if (PdControllerMode == RetimerFwUpdateEnableMode) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_FIRST_GET_MODE_EC_STATUS, (UINT32) EcPdTempBuffer, 0);
+  }
+
+  if (PdControllerMode == RetimerFwUpdateDisableMode) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_FIRST_GET_MODE_EC_STATUS, (UINT32) EcPdTempBuffer, 0);
+  }
+
+  //
+  // Check if PD controller is in or not in FW Update mode already.
+  //
+  if (DeviceMode == PdControllerMode) {
+    if (PdControllerMode == RetimerFwUpdateEnableMode) {
+      DEBUG ((DEBUG_INFO, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller is already in FW Update Mode\n", String));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_ALREADY_IN_UPDATE_MODE, 0, 0);
+      Status = EFI_ALREADY_STARTED;
+    }
+
+    if (PdControllerMode == RetimerFwUpdateDisableMode) {
+      DEBUG ((DEBUG_INFO, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller is already exited FW Update Mode.\n", String));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_ALREADY_IN_UPDATE_MODE, 0, 0);
+      Status = EFI_NOT_STARTED;
+    }
+
+    return Status;
+  }
+
+  //
+  // Send command to EC instruct to PD Controller to either enter or exit FW Update Mode
+  //
+  Status = This->SetPdControllerMode (PdControllerMode);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller SET MODE Not Responding. Returning with Status = %r\n", String, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_SET_MODE_FAIL, (UINT32) Status, 0);
+    return Status;
+  }
+
+  //
+  // Initialize DeviceMode with Invalid Data before getting PD Controller Mode
+  //
+  DeviceMode     = INVALID_DEVICE_MODE;
+  EcPdTempBuffer = 0;
+
+  Status = This->GetPdControllerMode (&DeviceMode, &EcPdTempBuffer, PdNumber);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller GET MODE Not Responding. Returning with Status = %r\n", String, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_SECOND_GET_MODE_FAIL, (UINT32) Status, 0);
+    return Status;
+  }
+
+  if (PdControllerMode == RetimerFwUpdateEnableMode) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_SECOND_GET_MODE_EC_STATUS, (UINT32) EcPdTempBuffer, 0);
+  }
+
+  if (PdControllerMode == RetimerFwUpdateDisableMode) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_SECOND_GET_MODE_EC_STATUS, (UINT32) EcPdTempBuffer, 0);
+  }
+
+  //
+  // Check the PD Controller Mode after setting PdControllerMode
+  //
+  if (DeviceMode != PdControllerMode) {
+    Status = EFI_TIMEOUT;
+    DEBUG ((DEBUG_ERROR, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller SET MODE is not Completed. Returning with Status = %r\n", String, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_SET_MODE_NOT_COMPLETE, (UINT32) Status, 0);
+    return Status;
+  }
+
+  if (PdControllerMode == RetimerFwUpdateEnableMode) {
+    //
+    // Now PD Controller Successfully Enter Into FW Update Mode.
+    //
+    DEBUG ((DEBUG_INFO, "\nTbtPdRetimerFwUpdateMode.Drive: "));
+    DEBUG ((DEBUG_INFO, "PD Controller Enter Into FW Update Mode with Status = %r\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_ENTER_FW_UPDATE_MODE, 0, 0);
+  }
+
+  if (PdControllerMode == RetimerFwUpdateDisableMode) {
+    //
+    // Now PD Controller Successfully EXIT From FW Update Mode.
+    //
+    DEBUG ((DEBUG_INFO, "\nTbtPdRetimerFwUpdateMode.Restore: "));
+    DEBUG ((DEBUG_INFO, "PD Controller Exit from FW Update Mode with Status = %r\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_ENTER_FW_UPDATE_MODE, 0, 0);
+  }
+
+  return EFI_SUCCESS;
+}
+
+/**
+  Drive UsbC Retimer Controller into FW Update Mode.
+
+  @param[in]  This                The UsbC RETIMER PROTOCOL Instance.
+  @param[in]  RetimerGuid         GUID from ESRT ACPI Table.
+
+  @retval  EFI_SUCCESS            Successfully Mode is Changed to FW Update Mode.
+  @retval  EFI_INVALID_PARAMETER  Invalid GUID from ESRT Table is Passed.
+  @retval  EFI_UNSUPPORTED        This driver does not support.
+  @retval  EFI_DEVICE_ERROR       This driver cannot be started due to device Error.
+  @retval  EFI_ALREADY_STARTED    This driver has been started.
+  @retval  EFI_TIMEOUT            DriveToFwUpdateMode Command timeout Happen.
+  @retval  EFI_NOT_READY          Board Retimer PCD is not ready or Not Available.
+
+**/
+EFI_STATUS
+EFIAPI
+DriveToFwUpdateMode (
+  IN  USBC_RETIMER_PROTOCOL  *This,
+  IN  EFI_GUID               RetimerGuid ///< GUID from ESRT ACPI Table
+  )
+{
+  EFI_STATUS                        Status;
+  USBC_RETIMER_PROTOCOL_CAPABILITY  RetimerProtocolCapability;
+  UINT8                             TotalCountOfPdController;
+  UINT32                            VarAttributes;
+  UINTN                             VarSize;
+
+  Status = EFI_SUCCESS;
+
+  DEBUG ((DEBUG_INFO, "\n%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "  RetimerGuid = %g\n", RetimerGuid));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_PD_DRIVE_START, 0, 0);
+
+  TotalCountOfPdController = PcdGet8 (PcdUsbCPdNumber);
+  DEBUG ((DEBUG_INFO, "Total count of PD Controller number = %d\n", TotalCountOfPdController));
+  if (TotalCountOfPdController == 0) {
+    DEBUG ((DEBUG_ERROR, "\n%a: Retimer Capsule Update is not supported as no PD Controller available. Returning with Status = %r\n", __FUNCTION__, Status));
+    return Status;
+  }
+
+  //
+  // Check if Valid Guid is passed or Not.
+  //
+  if (!CompareGuid (&RetimerGuid, &gAllTbtRetimerDeviceGuid)) {
+    Status = EFI_INVALID_PARAMETER;
+    DEBUG ((DEBUG_ERROR, "\n%a : Invalid Retimer Guid Passed for UsbCRetimer. Returning with Status = %r\n", __FUNCTION__, Status));
+    return Status;
+  }
+
+  //
+  // Check if Usb Type-C Retimer is not supported
+  //
+  VarSize = sizeof (USBC_RETIMER_PROTOCOL_CAPABILITY);
+  Status  = gRT->GetVariable (
+                   USBC_RETIMER_PROTOCOL_CAPABILITY_NAME,
+                   &gUsbCRetimerProtocolCapabilityGuid,
+                   &VarAttributes,
+                   &VarSize,
+                   &RetimerProtocolCapability
+                   );
+  if (!EFI_ERROR (Status)) {
+    Status = EFI_UNSUPPORTED;
+    DEBUG ((DEBUG_ERROR, "\n%a: Usb Type-C Retimer is not supported. Returning with Status = %r\n", __FUNCTION__, Status));
+    return Status;
+  }
+
+  //
+  // Change the PD Controller Mode
+  //
+  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateEnableMode, TotalCountOfPdController);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "\n%a : Failed to Enable Retimer FW Update Mode with Status = %r\n", __FUNCTION__, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_CHANGE_MODE_FAIL, (UINT32) Status, 0);
+    return Status;
+  }
+
+  DEBUG ((DEBUG_INFO, "\n%a : End\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_PD_DRIVE_END, 0, 0);
+  return Status;
+}
+
+/**
+  Restore TBT PD Controller into original mode.
+
+  @param[in]  This                The UsbC RETIMER PROTOCOL Instance.
+  @param[in]  RetimerGuid         GUID from ESRT ACPI Table.
+
+  @retval  EFI_SUCCESS            Successfully Mode is Restore.
+  @retval  EFI_INVALID_PARAMETER  Invalid GUID from ESRT Table is Passed.
+  @retval  EFI_UNSUPPORTED        This driver does not support.
+  @retval  EFI_DEVICE_ERROR       This driver cannot be started due to device Error.
+  @retval  EFI_NOT_STARTED        This driver has not been started.
+  @retval  EFI_TIMEOUT            RestoreToOriginalMode Command timeout Happen.
+  @retval  EFI_NOT_READY          Board Retimer PCD is not ready or Not Available.
+
+**/
+EFI_STATUS
+EFIAPI
+RestoreToOriginalMode (
+  IN USBC_RETIMER_PROTOCOL  *This,
+  IN EFI_GUID               RetimerGuid ///< GUID from ESRT ACPI Table
+  )
+{
+  EFI_STATUS                        Status;
+  USBC_RETIMER_PROTOCOL_CAPABILITY  RetimerProtocolCapability;
+  UINT8                             TotalCountOfPdController;
+  UINT32                            VarAttributes;
+  UINTN                             VarSize;
+
+  Status = EFI_SUCCESS;
+
+  DEBUG ((DEBUG_INFO, "\n%a Start\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "  RetimerGuid = %g\n", RetimerGuid));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_PD_RESTORE_START, 0, 0);
+
+  TotalCountOfPdController = PcdGet8 (PcdUsbCPdNumber);
+  DEBUG ((DEBUG_INFO, "Total count of PD Controller number = %d\n", TotalCountOfPdController));
+  if (TotalCountOfPdController == 0) {
+    DEBUG ((DEBUG_ERROR, "\n%a: Retimer Capsule Update is not supported as no PD Controller available. Returning with Status = %r\n", __FUNCTION__, Status));
+    return Status;
+  }
+
+  //
+  // Check if Valid Guid is passed or Not.
+  //
+  if (!CompareGuid (&RetimerGuid, &gAllTbtRetimerDeviceGuid)) {
+    Status = EFI_INVALID_PARAMETER;
+    DEBUG ((DEBUG_ERROR, "\n%a : Invalid Retimer Guid Passed for UsbCRetimer. Returning with Status = %r\n", __FUNCTION__, Status));
+    return Status;
+  }
+
+  //
+  // Check if Usb Type-C Retimer is not supported
+  //
+  VarSize = sizeof (USBC_RETIMER_PROTOCOL_CAPABILITY);
+  Status  = gRT->GetVariable (
+                   USBC_RETIMER_PROTOCOL_CAPABILITY_NAME,
+                   &gUsbCRetimerProtocolCapabilityGuid,
+                   &VarAttributes,
+                   &VarSize,
+                   &RetimerProtocolCapability
+                   );
+  if (!EFI_ERROR (Status)) {
+    Status = EFI_UNSUPPORTED;
+    DEBUG ((DEBUG_ERROR, "\n%a: Usb Type-C Retimer is not supported. Returning with Status = %r\n", __FUNCTION__, Status));
+    return Status;
+  }
+
+  //
+  // Change the PD Controller Mode
+  //
+  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateDisableMode, TotalCountOfPdController);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "\n%a : Failed to Exit Retimer FW Update Mode For PD Controller with Status = %r\n", __FUNCTION__, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_CHANGE_MODE_FAIL, (UINT32) Status, 0);
+    return Status;
+  }
+
+  DEBUG ((DEBUG_INFO, "\n%a : End\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_PD_RESTORE_END, 0, 0);
   return Status;
 }

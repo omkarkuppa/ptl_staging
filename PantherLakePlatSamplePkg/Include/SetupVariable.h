@@ -159,9 +159,10 @@
   <b>Revision 3</b>:  - Add IpfEnable
   <b>Revision 4</b>:  - Remove ECBaseCsPwrPolicy.
   <b>Revision 5</b>:  - Add OSSE Pep constraint
+  <b>Revision 6</b>:  - Added StorageDynamicLinkManagement
 **/
 
-#define SETUP_DATA_REVISION 5
+#define SETUP_DATA_REVISION 6
 
 typedef struct {
   UINT8   Revision;
@@ -797,6 +798,8 @@ typedef struct {
   UINT8   SafeLoadingBiosEnable;
   UINT8   TsegReallocateEnableCount;
   UINT8   PepOsse;
+
+  UINT8   StorageDynamicLinkManagement;
 } SETUP_DATA;
 
 /**
@@ -1273,6 +1276,7 @@ typedef struct {
   UINT8   ConfigureMedia;
   UINT8   PeiGraphicsPeimInit;
   UINT8   PavpEnable;
+  UINT8   GopConfigEnable;
   UINT8   RC1pGtFreqEnable;
   UINT8   RC1pMediaFreqEnable;
   //
@@ -2297,8 +2301,7 @@ typedef struct {
   //
   // TSN
   //
-  UINT8   PchTsnEnable;
-  UINT8   PchTsnLinkSpeed;
+  UINT8   PchTsnEnable[PCH_MAX_TSN_PORT];
   UINT8   TsnPcsEnabled;
 
   // FUSA

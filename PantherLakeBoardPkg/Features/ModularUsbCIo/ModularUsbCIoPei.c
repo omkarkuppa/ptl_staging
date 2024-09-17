@@ -58,7 +58,7 @@ STATIC UINT8 mDpConnector2IomDpMap[] = {
 STATIC DDI_CONFIG mDdiConfig[] = {
   {DdiHpdEnable,  DdiDdcEnable}, // HDMI
   {DdiHpdEnable,  DdiDisable},   // DP
-  {DdiHpdDisable, DdiDisable}    // eDP
+  {DdiHpdEnable,  DdiDisable}    // eDP
 };
 
 
@@ -142,7 +142,7 @@ UpdateDdiConfig (
     DisplayDdiConfigTableSize = ((VPD_DISPLAY_DDI_CONFIG *) GET_GUID_HOB_DATA (Hob))->Size;
   }
 
-  if (TcssPort == 0 && DdiPortConfig == DdiPortEdpOverTcp) {
+  if (TcssPort == 0 && DdiPortConfig == DdiPortEdp) {
     DisplayDdiConfigTable[DDI_PORT_B_CONFIG_OFFSET] = DdiPortConfig;
   }
   if ((TcssPort + TCP0_DDI_HPD_CONFIG_OFFSET + 7) < DisplayDdiConfigTableSize) {
@@ -326,8 +326,11 @@ UpdateUsbCProperties (
                                    mDdiConfig[ConnectorType - 3].DdiDdc);
                 } else {
                   if (PortIndex == 0) {
+                    if (GopConfigDriverHob != NULL) {
+                      GopConfigDriverHob->ModuleTypeCId |= (MODULE_IO_VBT_EDP << (PortIndex * MAX_MODULAR_IO_PORT_INDEX));
+                    }
                     UpdateDdiConfig (PortIndex,
-                                     DdiPortEdpOverTcp,
+                                     DdiPortEdp,
                                      mDdiConfig[ConnectorType - 3].DdiHpd,
                                      mDdiConfig[ConnectorType - 3].DdiDdc);
                   } else {

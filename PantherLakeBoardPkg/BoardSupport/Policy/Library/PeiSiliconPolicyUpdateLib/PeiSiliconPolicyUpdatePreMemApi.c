@@ -76,6 +76,15 @@ SiliconPolicyUpdatePreMem (
   Policy = NULL;
 
   SiliconPolicyUpdatePreMemLoadDefaultUpd ();
+  //
+  // Update essential policies by board configuration
+  //
+  UpdatePeiPolicyBoardConfigPreMem (Policy);
+
+  //
+  // Update advanced policies
+  //
+  SiliconPolicyUpdatePreMemAdvancedConfig (Policy);
 
   //
   // Update advanced policies

@@ -158,15 +158,16 @@ DefinitionBlock (
     //
     // x8 slot wake
     //
-      If (CondRefOf (\_SB.PC00.RP11.WAKG)) {
-        If (LNotEqual(\_SB.PC00.RP11.WAKG, 0)) {
-          Method (_L38) {
-            ADBG("_L38 RP11 SLOT")
-            \_SB.SHPO(\_SB.PC00.RP11.WAKG, 1) // set gpio ownership to driver(0=ACPI mode, 1=GPIO mode)
-            Notify(\_SB.PC00.RP11, 0x02)   // Device wake
-          }
+    If (CondRefOf (\_SB.PC00.RP11.WAKG)) {
+      If (LNotEqual(\_SB.PC00.RP11.WAKG, 0)) {
+        Method (_L38) {
+          ADBG("_L38 RP11 SLOT")
+          \_SB.SHPO(\_SB.PC00.RP11.WAKG, 1) // set gpio ownership to driver(0=ACPI mode, 1=GPIO mode)
+          Notify(\_SB.PC00.RP11, 0x02)   // Device wake
         }
       }
+    }
+
     //
     //  X4 slot wake
     //
@@ -174,7 +175,7 @@ DefinitionBlock (
       If (LNotEqual(\_SB.PC00.RP12.WAKG, 0)) {
         Method (_L39) {
           ADBG("_L39 RP12 SLOT")
-          \_SB.SHPO(RW12, 1) // set gpio ownership to driver(0=ACPI mode, 1=GPIO mode)
+          \_SB.SHPO(\_SB.PC00.RP12.WAKG, 1) // set gpio ownership to driver(0=ACPI mode, 1=GPIO mode)
           Notify(\_SB.PC00.RP12, 0x02)   // Device wake
         }
       }

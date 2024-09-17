@@ -71,21 +71,42 @@
 
     SEPARATOR
 
-  #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  #if FixedPcdGet8(PcdTsnSupport) == 0x1
     suppressif ideqval SETUP_VOLATILE_DATA.TsnSupportByPch == 0;
         //
         // Tsn Region present
         //
       suppressif ideqval SETUP_VOLATILE_DATA.TsnAvailable == 0;
-        oneof varid = PCH_SETUP.PchTsnEnable,
-          prompt   = STRING_TOKEN(STR_PCH_TSN_CONTROLLER),
-          help     = STRING_TOKEN(STR_PCH_TSN_CONTROLLER_HELP),
+        oneof varid = PCH_SETUP.PchTsnEnable[0],
+          prompt   = STRING_TOKEN(STR_PCH_TSN_CONTROLLER1),
+          help     = STRING_TOKEN(STR_PCH_TSN_CONTROLLER1_HELP),
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        endoneof;
+
+        oneof varid = PCH_SETUP.PchTsnEnable[1],
+          prompt   = STRING_TOKEN(STR_PCH_TSN_CONTROLLER2),
+          help     = STRING_TOKEN(STR_PCH_TSN_CONTROLLER2_HELP),
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        endoneof;
+
+        oneof varid = PCH_SETUP.PchTsnEnable[2],
+          prompt   = STRING_TOKEN(STR_PCH_TSN_CONTROLLER3),
+          help     = STRING_TOKEN(STR_PCH_TSN_CONTROLLER3_HELP),
+          option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        endoneof;
+
+        oneof varid = PCH_SETUP.PchTsnEnable[3],
+          prompt   = STRING_TOKEN(STR_PCH_TSN_CONTROLLER4),
+          help     = STRING_TOKEN(STR_PCH_TSN_CONTROLLER4_HELP),
           option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
         endoneof;
       endif;
 
-      grayoutif ideqval PCH_SETUP.PchTsnEnable == 0;
+      grayoutif ideqval PCH_SETUP.PchTsnEnable[0] == 0 AND ideqval PCH_SETUP.PchTsnEnable[1] == 0 AND ideqval PCH_SETUP.PchTsnEnable[2] == 0 AND ideqval PCH_SETUP.PchTsnEnable[3] == 0;
         oneof varid   = PCH_SETUP.TsnPcsEnabled,
           prompt      = STRING_TOKEN(STR_ENABLE_TSN_PCS),
           help        = STRING_TOKEN(STR_ENABLE_TSN_PCS_HELP),
@@ -94,16 +115,7 @@
         endoneof;
       endif;
 
-      suppressif ideqval PCH_SETUP.PchTsnEnable == 0 OR ideqval SETUP_VOLATILE_DATA.TsnAvailable == 0;
-
-        oneof varid = PCH_SETUP.PchTsnLinkSpeed,
-          prompt   = STRING_TOKEN(STR_PCH_TSN_LINKSPEED_PROMPT),
-          help     = STRING_TOKEN(STR_PCH_TSN_LINKSPEED_HELP),
-          option text = STRING_TOKEN(STR_TSN_SPEED_24MHZ_2_5G_STRING), value = 0, flags = RESET_REQUIRED;
-          option text = STRING_TOKEN(STR_TSN_SPEED_24MHZ_1G_STRING), value = 1, flags = RESET_REQUIRED;
-          option text = STRING_TOKEN(STR_TSN_SPEED_38_4MHZ_2_5G_STRING), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-          option text = STRING_TOKEN(STR_TSN_SPEED_38_4MHZ_1G_STRING), value = 3, flags = RESET_REQUIRED;
-        endoneof;
+      suppressif (ideqval PCH_SETUP.PchTsnEnable[0] == 0 AND ideqval PCH_SETUP.PchTsnEnable[1] == 0 AND ideqval PCH_SETUP.PchTsnEnable[2] == 0 AND ideqval PCH_SETUP.PchTsnEnable[3] == 0 ) OR ideqval SETUP_VOLATILE_DATA.TsnAvailable == 0;
 
         oneof varid = PCH_SETUP.TsnMultiVcEnable,
           questionid  = AUTO_ID(PCH_TSN_MULTI_VC_QUESTION_ID),
@@ -244,8 +256,8 @@
     oneof varid  = PCH_SETUP.PchEnergyReport,
       prompt   = STRING_TOKEN(STR_PCH_ENERGY_REPORTING_PROMPT),
       help     = STRING_TOKEN(STR_PCH_ENERGY_REPORTING_HELP),
-       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;// PTL PO temp WA TODO :: Revisit and move to POR
-       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;// PTL PO temp WA TODO :: Revisit and move to POR
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
     endoneof;
 
     oneof varid  = PCH_SETUP.PmcLpmS0i2p0En,
@@ -1864,7 +1876,7 @@ endform;
         #undef I2C_INDEX
 
         #define I2C_INDEX 1
-        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #define CHECKBOX_VALUE 0
         #include "PchSetupIshI2c.hfr"
         #undef CHECKBOX_VALUE
         #undef I2C_INDEX
@@ -1876,7 +1888,7 @@ endform;
         #undef I2C_INDEX
 
         #define I3C_INDEX 0
-        #define CHECKBOX_VALUE CHECKBOX_DEFAULT
+        #define CHECKBOX_VALUE 0
         #include "PchSetupIshI3c.hfr"
         #undef CHECKBOX_VALUE
         #undef I3C_INDEX

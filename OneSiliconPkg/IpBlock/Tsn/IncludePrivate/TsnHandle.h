@@ -29,57 +29,37 @@
 typedef struct _TSN_HANDLE TSN_HANDLE;
 
 /**
-  Configure TSN GPIOs
-
-**/
-typedef
-VOID
-(*TSN_ENABLE_GPIO) (
-  VOID
-  );
-
-/**
-  Tsn callbacks
-  List of function pointers can passed to IB Block driver
-**/
-typedef struct {
-  TSN_ENABLE_GPIO   TsnEnableGpio;
-} TSN_CALLBACKS;
-
-/**
-  Tsn Private Config data structure
+  TSN Private Config data structure
 **/
 typedef struct {
   UINT8          InterruptPin;
   UINT8          Irq;
-  BOOLEAN        IsFiaLanePchTsnOwned;
-  UINT8          PchTsnLane;
-  UINT8          ModPhyPortId;
+  TSN_MAC_ADDR   *Port;   // MAC Address of the current port
 } TSN_PRIVATE_CONFIG;
 
 /**
-  Tsn controller structure
+  TSN controller structure
   Stores information required to access to controller registers
   like PCI config space address, BARs and S:B:D:F
 **/
 typedef struct {
-  UINT64    PciCfgBaseAddr;
-  UINT8     Segment;
-  UINT8     Bus;
-  UINT8     Device;
-  UINT8     Function;
+  UINT64            PciCfgBaseAddr;
+  UINT8             Segment;
+  UINT8             Bus;
+  UINT8             Device;
+  UINT8             Function;
+  UINTN             Mmio;
+  REGISTER_ACCESS   *TsnPcrAccess;
 } TSN_CONTROLLER;
 
 /**
-  Tsn handle structure
-  Stores all data necessary to initialize Tsn
+  TSN handle structure
+  Stores all data necessary to initialize TSN
 **/
 struct _TSN_HANDLE {
-  TSN_CONTROLLER        Controller;       // Tsn controller structure
-  TSN_CONFIG            *Config;          // Describes SoC specific config
-  TSN_PRIVATE_CONFIG    PrivateConfig;    // Tsn private config variables
-  TSN_CALLBACKS         Callbacks;        // Set of SoC callbacks
-  REGISTER_ACCESS*      TsnPcrAccess;     // Pcr register access
+  TSN_CONTROLLER       *Controller;      // TSN controller structure
+  TSN_CONFIG           *Config;          // Describes SoC specific config
+  TSN_PRIVATE_CONFIG   *PrivateConfig;   // TSN private config variables
 };
 
-#endif // _TSN_HANDLE_H_s
+#endif // _TSN_HANDLE_H_

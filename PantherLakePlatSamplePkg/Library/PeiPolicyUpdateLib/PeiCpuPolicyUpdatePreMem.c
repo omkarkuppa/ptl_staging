@@ -24,6 +24,7 @@
 #include <Library/CpuPlatformLib.h>
 #include <Library/HobLib.h>
 #include <Library/PchCycleDecodingLib.h>
+#include <Library/Ptl/PcdInfoLib/PtlPcdInfoLib.h>
 #include <Library/PciSegmentLib.h>
 #include <Library/PeiSiPolicyUpdateLib.h>
 #include <Library/PmcLib.h>
@@ -43,6 +44,9 @@
 #include <Library/PeiVrDomainLib.h>
 #include <Library/PayloadResiliencySupportLib.h>
 #include <Library/Tpm2CommandLib.h>
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+#include <FspmUpd.h>
+#endif
 
 #define GET_OCCUPIED_SIZE(ActualSize, Alignment) \
   ((ActualSize) + (((Alignment) - ((ActualSize) & ((Alignment) - 1))) & ((Alignment) - 1)))
@@ -500,11 +504,7 @@ UpdatePeiCpuPolicyPreMem (
   CRASHLOG_VARIABLE               CrashLogVariable;
   CPU_SETUP                       CpuSetup;
   EFI_BOOT_MODE                   BootMode;
-  TXT_PREMEM_CONFIG               *TxtPreMemConfig;
-  CPU_SECURITY_PREMEM_CONFIG      *CpuSecurityPreMemConfig;
-  CPU_POWER_DELIVERY_CONFIG       *CpuPowerDeliveryConfig;
-  CPU_POWER_MGMT_VR_CONFIG        *CpuPowerMgmtVrConfig;
-  CPU_INIT_PREMEM_CONFIG          *CpuInitPreMemConfig;
+
   UINT16                          Index;
   UINT32                          MaxLogicProcessors;
   BIOSGUARD_HOB                   *BiosGuardHobPtr;
@@ -518,26 +518,38 @@ UpdatePeiCpuPolicyPreMem (
   BOOLEAN                         IsAcPluggedIn;
   EFI_STATUS                      PowerSourceStatus;
 
-#if FixedPcdGetBool (PcdTdxEnable) == 1
-  EFI_PHYSICAL_ADDRESS            ModulePtr  = 0;
-  UINT32                          ModuleSize = 0; 
-#endif
-
-#if FixedPcdGet8(PcdFspModeSelection) == 0
-  UINT32                          MicrocodeBaseAddress;
-#endif
-
-  DEBUG ((DEBUG_INFO, "Update PeiCpuPolicyUpdate Pre-Mem Start\n"));
-
-  TxtPreMemConfig             = NULL;
-  CpuSecurityPreMemConfig     = NULL;
-  CpuPowerDeliveryConfig      = NULL;
-  CpuPowerMgmtVrConfig        = NULL;
-  CpuInitPreMemConfig         = NULL;
   BiosGuardHobPtr             = NULL;
   BiosSize                    = 0;
   BiosMemSizeInMb             = 0;
   BiosGuardToolsInterface     = FALSE;
+
+#if FixedPcdGetBool (PcdTdxEnable) == 1
+  EFI_PHYSICAL_ADDRESS            ModulePtr  = 0;
+  UINT32                          ModuleSize = 0;
+#endif
+
+  DEBUG ((DEBUG_INFO, "Update PeiCpuPolicyUpdate Pre-Mem Start\n"));
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+ VOID                            *FspmUpd;
+#else
+  UINT32                          MicrocodeBaseAddress;
+  TXT_PREMEM_CONFIG               *TxtPreMemConfig;
+  CPU_POWER_DELIVERY_CONFIG       *CpuPowerDeliveryConfig;
+  CPU_INIT_PREMEM_CONFIG          *CpuInitPreMemConfig;
+  CPU_SECURITY_PREMEM_CONFIG      *CpuSecurityPreMemConfig;
+  CPU_POWER_MGMT_VR_CONFIG        *CpuPowerMgmtVrConfig;
+#endif
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+  ASSERT (FspmUpd != NULL);
+#else
+  TxtPreMemConfig             = NULL;
+  CpuPowerDeliveryConfig      = NULL;
+  CpuInitPreMemConfig         = NULL;
+  CpuSecurityPreMemConfig     = NULL;
+  CpuPowerMgmtVrConfig        = NULL;
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuSecurityPreMemConfigGuid, (VOID *) &CpuSecurityPreMemConfig);
   ASSERT_EFI_ERROR (Status);
@@ -549,7 +561,7 @@ UpdatePeiCpuPolicyPreMem (
   ASSERT_EFI_ERROR (Status);
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuPowerDeliveryConfigGuid, (VOID *) &CpuPowerDeliveryConfig);
   ASSERT_EFI_ERROR (Status);
-
+#endif
   //
   // Make sure ReadOnlyVariablePpi is available
   //
@@ -607,14 +619,14 @@ UpdatePeiCpuPolicyPreMem (
     //
     // Update TDx Policy
     //
-    COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TdxEnable, CpuSetup.TdxEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdxEnable, CpuSecurityPreMemConfig->TdxEnable, CpuSetup.TdxEnable);
 
     //
     // Get the ACTM address and ACTM Base and update the policy
     //
     UpdateTdxActmModulePtr (&ModulePtr, &ModuleSize);
-    COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TdxActmModuleAddr, ModulePtr);
-    COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TdxActmModuleSize, ModuleSize);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdxActmModuleAddr, CpuSecurityPreMemConfig->TdxActmModuleAddr, ModulePtr);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdxActmModuleSize, CpuSecurityPreMemConfig->TdxActmModuleSize, ModuleSize);
   #endif
 
   ///
@@ -628,17 +640,17 @@ UpdatePeiCpuPolicyPreMem (
   // Set TME exclude base and size to 0
   // Set GenerateNewTmeKey to disable
   //
-  COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TmeExcludeBase, 0);
-  COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TmeExcludeSize, 0);
-  COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->GenerateNewTmeKey, CPU_FEATURE_DISABLE);
-
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TmeExcludeBase, CpuSecurityPreMemConfig->TmeExcludeBase, 0);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TmeExcludeSize, CpuSecurityPreMemConfig->TmeExcludeSize, 0);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.GenerateNewTmeKey, CpuSecurityPreMemConfig->GenerateNewTmeKey, CPU_FEATURE_DISABLE);
   //
   // Update TXT Platform Policy
   //
-  COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TseEnable, CpuSetup.TseEnable                  );
-  COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->Txt,       CpuSetup.Txt                        );
-  COMPARE_AND_UPDATE_POLICY (TxtPreMemConfig->TxtDprMemorySize,  (UINTN)(CpuSetup.DprSize * 0x100000));
-  UPDATE_POLICY (TxtPreMemConfig->TxtDprMemorySize, CpuSetup.DprSize * 0x100000);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TseEnable, CpuSecurityPreMemConfig->TseEnable, CpuSetup.TseEnable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Txt, CpuSecurityPreMemConfig->Txt, CpuSetup.Txt);
+
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TxtDprMemorySize, TxtPreMemConfig->TxtDprMemorySize, (UINTN)(CpuSetup.DprSize * 0x100000));
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TxtDprMemorySize, TxtPreMemConfig->TxtDprMemorySize, CpuSetup.DprSize * 0x100000);
 
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   TxtPreMemConfig->TxtImplemented = 0;
@@ -669,15 +681,15 @@ UpdatePeiCpuPolicyPreMem (
   }
 
   if (CpuSetup.SkipStopPbet == 1) {
-    UPDATE_POLICY (CpuSecurityPreMemConfig->SkipStopPbet, TRUE);
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SkipStopPbet, CpuSecurityPreMemConfig->SkipStopPbet, TRUE);
   } else {
-    UPDATE_POLICY (CpuSecurityPreMemConfig->SkipStopPbet, FALSE);
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SkipStopPbet, CpuSecurityPreMemConfig->SkipStopPbet, FALSE);
   }
 
   ///
   /// Set BIOS Guard Tools Interface policy
   ///
-  COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->BiosGuardToolsInterface, CPU_FEATURE_ENABLE);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosGuardToolsInterface, CpuSecurityPreMemConfig->BiosGuardToolsInterface, CPU_FEATURE_ENABLE);
 
   SpiServiceInit ();
 
@@ -690,24 +702,33 @@ UpdatePeiCpuPolicyPreMem (
     // Todo: Enable Bios Guard when it is supported on SIMICS and HFPGA
     //
     DEBUG ((DEBUG_INFO, "BiG: Disable Bios Guard on SIMICS and HFPGA\n"));
-    UPDATE_POLICY (CpuSecurityPreMemConfig->BiosGuard, FALSE);
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosGuard, CpuSecurityPreMemConfig->BiosGuard, FALSE);
   } else {
     DEBUG ((DEBUG_INFO, "BiG: Enable Bios Guard\n"));
-    UPDATE_POLICY (CpuSecurityPreMemConfig->BiosGuard, CPU_FEATURE_ENABLE);
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosGuard, CpuSecurityPreMemConfig->BiosGuard, CPU_FEATURE_ENABLE);
   }
 
 
-      if (CpuSecurityPreMemConfig->BiosGuard == TRUE) {
-        Status = BiosGuardHobInit ();
-        ASSERT_EFI_ERROR (Status);
-      }
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  if (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosGuard== TRUE) {
+#else
+  if (CpuSecurityPreMemConfig->BiosGuard == TRUE) {
+#endif
+    Status = BiosGuardHobInit ();
+    ASSERT_EFI_ERROR (Status);
+  }
 
       BiosGuardHobPtr = GetFirstGuidHob (&gBiosGuardHobGuid);
       if (BiosGuardHobPtr == NULL) {
         DEBUG ((DEBUG_ERROR, "BIOS Guard HOB not available\n"));
       }else {
+#if FixedPcdGet8(PcdFspModeSelection) == 1 // #if API Mode
+        BiosSize = ((FSPM_UPD *) FspmUpd)->FspmConfig.BiosSize;
+        BiosGuardToolsInterface |= (UINT8)(((FSPM_UPD *) FspmUpd)->FspmConfig.BiosGuardToolsInterface);
+#else // Dispatch Mode
         BiosSize = CpuSecurityPreMemConfig->BiosSize;
         BiosGuardToolsInterface |= (UINT8)CpuSecurityPreMemConfig->BiosGuardToolsInterface;
+#endif // #endif API Mode
 
         ///
         /// Check if BiosGuardToolsInterface policy is enabled
@@ -749,64 +770,65 @@ UpdatePeiCpuPolicyPreMem (
   //
   // Update CpuConfigLibPreMem Config Block data
   //
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->BootMaxFrequency,             CpuSetup.BootMaxFrequency      );
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->ActiveCoreCount,              CpuSetup.ActiveCoreCount       );
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->ActiveSmallCoreCount,         CpuSetup.ActiveSmallCoreCount  );
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->ActiveLpAtomCoreCount,        CpuSetup.ActiveLpAtomCoreCount);
-  UPDATE_POLICY (CpuInitPreMemConfig->TsegSize,              PcdGet32 (PcdTsegSize));
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BootMaxFrequency, CpuInitPreMemConfig->BootMaxFrequency, CpuSetup.BootMaxFrequency);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ActiveCoreCount, CpuInitPreMemConfig->ActiveCoreCount, CpuSetup.ActiveCoreCount);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ActiveSmallCoreCount, CpuInitPreMemConfig->ActiveSmallCoreCount, CpuSetup.ActiveSmallCoreCount);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ActiveLpAtomCoreCount, CpuInitPreMemConfig->ActiveLpAtomCoreCount, CpuSetup.ActiveLpAtomCoreCount);
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TsegSize, CpuInitPreMemConfig->TsegSize, PcdGet32 (PcdTsegSize));
 
   //
   // If EpocFclkFreq is AUTO, then to load policy based on Silicon default
   //
   if (CpuSetup.EpocFclkFreq != EPOCFCLKFREQ_AUTO_VALUE) {
-    UPDATE_POLICY (CpuInitPreMemConfig->FClkFrequency,           CpuSetup.EpocFclkFreq          );
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.FClkFrequency, CpuInitPreMemConfig->FClkFrequency, CpuSetup.EpocFclkFreq);
   }
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->BistOnReset,             CpuSetup.BistOnReset           );
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->VmxEnable,               CpuSetup.VT                    );
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->TmeEnable,               CpuSetup.TmeEnable             );
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->CrashLogEnable,          CrashLogVariable.EnableCrashLog);
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->CrashLogGprs,            CpuSetup.CrashLogGprs          );
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->DebugInterfaceEnable,    CpuSetup.DebugInterfaceEnable  );
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->DfdEnable,               CpuSetup.DfdEnable             );
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->OcLock,                  CpuSetup.OverclockingLock      );
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->TmeBypassCapability,     CpuSetup.TmeBypassCapability   );
-
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BistOnReset, CpuInitPreMemConfig->BistOnReset, CpuSetup.BistOnReset);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VmxEnable, CpuInitPreMemConfig->VmxEnable, CpuSetup.VT);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TmeEnable, CpuInitPreMemConfig->TmeEnable, CpuSetup.TmeEnable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CpuCrashLogEnable, CpuInitPreMemConfig->CrashLogEnable, CrashLogVariable.EnableCrashLog);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CrashLogGprs, CpuInitPreMemConfig->CrashLogGprs, CpuSetup.CrashLogGprs);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DebugInterfaceEnable, CpuInitPreMemConfig->DebugInterfaceEnable, CpuSetup.DebugInterfaceEnable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DfdEnable, CpuInitPreMemConfig->DfdEnable, CpuSetup.DfdEnable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CpuRatio, CpuInitPreMemConfig->OcLock, CpuSetup.OverclockingLock);
+#if FixedPcdGet8(PcdFspModeSelection) == 0
+  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->TmeBypassCapability, CpuSetup.TmeBypassCapability);
+#endif
   if (BiosGuardHobPtr != NULL) {
     if (IsBiosGuardModuleDebugSigned2 (BiosGuardHobPtr->BiosGuardModulePtr)) {
-      UPDATE_POLICY (CpuInitPreMemConfig->DebugInterfaceEnable, CPU_FEATURE_ENABLE);
+      UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DebugInterfaceEnable, CpuInitPreMemConfig->DebugInterfaceEnable, CPU_FEATURE_ENABLE);
     }
   }
-  COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->DebugInterfaceLockEnable, CpuSetup.DebugInterfaceLockEnable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DebugInterfaceLockEnable, CpuInitPreMemConfig->DebugInterfaceLockEnable, CpuSetup.DebugInterfaceLockEnable);
   if (CpuSetup.CpuRatioOverride) {
-    COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->CpuRatio, CpuSetup.CpuRatio);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CpuRatio, CpuInitPreMemConfig->CpuRatio, CpuSetup.CpuRatio);
   } else {
-    UPDATE_POLICY (CpuInitPreMemConfig->CpuRatio, 0);
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CpuRatio, CpuInitPreMemConfig->CpuRatio, 0);
   }
 
   //
   // VR Configuration
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->PsysSlope, CpuSetup.PsysSlope);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->PsysPmax,  CpuSetup.PsysPmax );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->PsysOffset, (INT32)CpuSetup.PsysOffset *((CpuSetup.PsysOffsetPrefix == 1) ? -1 : 1));
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysSlope, CpuPowerMgmtVrConfig->PsysSlope, CpuSetup.PsysSlope);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysPmax, CpuPowerMgmtVrConfig->PsysPmax,  CpuSetup.PsysPmax );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysOffset, CpuPowerMgmtVrConfig->PsysOffset, (INT32) CpuSetup.PsysOffset *((CpuSetup.PsysOffsetPrefix == 1) ? -1 : 1));
 
-  UPDATE_POLICY (CpuPowerMgmtVrConfig->DlvrSpreadSpectrumPercentage, CpuSetup.DlvrSpreadSpectrumPercentage);
-  UPDATE_POLICY (CpuPowerMgmtVrConfig->DlvrRfiFrequency,             CpuSetup.DlvrRfiFrequency);
-  UPDATE_POLICY (CpuPowerMgmtVrConfig->DlvrRfiEnable,                CpuSetup.DlvrRfiEnable);
-  UPDATE_POLICY (CpuPowerMgmtVrConfig->DlvrPhaseSsc,                 CpuSetup.DlvrPhaseSsc);
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DlvrSpreadSpectrumPercentage, CpuPowerMgmtVrConfig->DlvrSpreadSpectrumPercentage, CpuSetup.DlvrSpreadSpectrumPercentage);
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DlvrRfiFrequency, CpuPowerMgmtVrConfig->DlvrRfiFrequency, CpuSetup.DlvrRfiFrequency);
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DlvrRfiEnable, CpuPowerMgmtVrConfig->DlvrRfiEnable, CpuSetup.DlvrRfiEnable);
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DlvrPhaseSsc, CpuPowerMgmtVrConfig->DlvrPhaseSsc, CpuSetup.DlvrPhaseSsc);
 
   //
   // Vsys Critical
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->EnableVsysCritical,              CpuSetup.EnableVsysCritical             );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->VsysFullScale,                   CpuSetup.VsysFullScale                  );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->VsysCriticalThreshold,           CpuSetup.VsysCriticalThreshold          );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->PsysFullScale,                   CpuSetup.PsysFullScale                  );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->PsysCriticalThreshold,           CpuSetup.PsysCriticalThreshold          );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->VsysAssertionDeglitchMantissa,   CpuSetup.VsysAssertionDeglitchMantissa  );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->VsysAssertionDeglitchExponent,   CpuSetup.VsysAssertionDeglitchExponent  );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->VsysDeassertionDeglitchMantissa, CpuSetup.VsysDeassertionDeglitchMantissa);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->VsysDeassertionDeglitchExponent, CpuSetup.VsysDeassertionDeglitchExponent);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.EnableVsysCritical, CpuPowerMgmtVrConfig->EnableVsysCritical, CpuSetup.EnableVsysCritical);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VsysFullScale, CpuPowerMgmtVrConfig->VsysFullScale, CpuSetup.VsysFullScale);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VsysCriticalThreshold, CpuPowerMgmtVrConfig->VsysCriticalThreshold, CpuSetup.VsysCriticalThreshold);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysFullScale, CpuPowerMgmtVrConfig->PsysFullScale, CpuSetup.PsysFullScale);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysCriticalThreshold, CpuPowerMgmtVrConfig->PsysCriticalThreshold, CpuSetup.PsysCriticalThreshold);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VsysAssertionDeglitchMantissa, CpuPowerMgmtVrConfig->VsysAssertionDeglitchMantissa, CpuSetup.VsysAssertionDeglitchMantissa);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VsysAssertionDeglitchExponent, CpuPowerMgmtVrConfig->VsysAssertionDeglitchExponent, CpuSetup.VsysAssertionDeglitchExponent);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VsysDeassertionDeglitchMantissa, CpuPowerMgmtVrConfig->VsysDeassertionDeglitchMantissa, CpuSetup.VsysDeassertionDeglitchMantissa);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VsysDeassertionDeglitchExponent, CpuPowerMgmtVrConfig->VsysDeassertionDeglitchExponent, CpuSetup.VsysDeassertionDeglitchExponent);
 
   ///
   /// Define Maximum Number of Voltage Regulator Domains.
@@ -818,66 +840,70 @@ UpdatePeiCpuPolicyPreMem (
     // Only update if the user wants to override VR settings
     //
     if (CpuSetup.VrConfigEnable[Index] != 0) {
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->VrConfigEnable[Index], CpuSetup.VrConfigEnable[Index],    Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->Ps1Threshold[Index],   CpuSetup.Ps1Threshold[Index],      Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->Ps2Threshold[Index],   CpuSetup.Ps2Threshold[Index],      Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->Ps3Threshold[Index],   CpuSetup.Ps3Threshold[Index],      Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->Ps3Enable[Index],      CpuSetup.Ps3Enable[Index],         Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->Ps4Enable[Index],      CpuSetup.Ps4Enable[Index],         Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->ImonSlope[Index],      CpuSetup.ImonSlope[Index],         Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->ImonOffset[Index],     (INT32) CpuSetup.ImonOffset[Index] * ((CpuSetup.ImonOffsetPrefix[Index] == 1) ? -1 : 1), Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->EnableFastVmode[Index],CpuSetup.EnableFastVmode[Index],   Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VrConfigEnable[Index], CpuPowerMgmtVrConfig->VrConfigEnable[Index], CpuSetup.VrConfigEnable[Index],    Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps1Threshold[Index], CpuPowerMgmtVrConfig->Ps1Threshold[Index],   CpuSetup.Ps1Threshold[Index],      Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps2Threshold[Index], CpuPowerMgmtVrConfig->Ps2Threshold[Index],   CpuSetup.Ps2Threshold[Index],      Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps3Threshold[Index], CpuPowerMgmtVrConfig->Ps3Threshold[Index],   CpuSetup.Ps3Threshold[Index],      Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps3Enable[Index], CpuPowerMgmtVrConfig->Ps3Enable[Index],      CpuSetup.Ps3Enable[Index],         Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps4Enable[Index], CpuPowerMgmtVrConfig->Ps4Enable[Index],      CpuSetup.Ps4Enable[Index],         Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ImonSlope[Index], CpuPowerMgmtVrConfig->ImonSlope[Index],      CpuSetup.ImonSlope[Index],         Index);
+#if FixedPcdGet8(PcdFspModeSelection) == 0
+      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->ImonOffset[Index], (INT32)CpuSetup.ImonOffset[Index] * ((CpuSetup.ImonOffsetPrefix[Index] == 1) ? -1 : 1), Index);
+#endif
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.EnableFastVmode[Index], CpuPowerMgmtVrConfig->EnableFastVmode[Index],CpuSetup.EnableFastVmode[Index],   Index);
 
       //
       // Only update if IccMax is non-zero. This is to distinguish between the default EDS override.
       //
       if (CpuSetup.IccMax[Index] != 0) {
-        COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->IccMax[Index], CpuSetup.IccMax[Index], Index);
+        COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IccMax[Index], CpuPowerMgmtVrConfig->IccMax[Index], CpuSetup.IccMax[Index], Index);
       }
       //
       // Only update if IccLimit is non-zero. This is to distinguish between the default EDS override.
       //
       if (CpuSetup.EnableFastVmode[Index] == 1 && CpuSetup.IccLimit[Index] != 0) {
-        COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->IccLimit[Index], CpuSetup.IccLimit[Index], Index);
+        COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IccLimit[Index], CpuPowerMgmtVrConfig->IccLimit[Index], CpuSetup.IccLimit[Index], Index);
       }
       //
       // Only update if Vr Voltage Limit is non-zero.
       //
       if (CpuSetup.VrVoltageLimit[Index] != 0) {
-        COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->VrVoltageLimit[Index], CpuSetup.VrVoltageLimit[Index], Index);
+        COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VrVoltageLimit[Index], CpuPowerMgmtVrConfig->VrVoltageLimit[Index], CpuSetup.VrVoltageLimit[Index], Index);
       }
       // Only update TDC if current limit is non-zero. TDC Lock should be separated to allow
       // locking of TDC feature.
       //
       if (CpuSetup.TdcCurrentLimit[Index] != 0) {
-        COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->TdcCurrentLimit[Index], CpuSetup.TdcCurrentLimit[Index], Index);
-        COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->TdcTimeWindow[Index],  CpuSetup.TdcTimeWindow[Index],   Index);
+        COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcCurrentLimit[Index], CpuPowerMgmtVrConfig->TdcCurrentLimit[Index], CpuSetup.TdcCurrentLimit[Index], Index);
+#if FixedPcdGet8(PcdFspModeSelection) == 0
+        COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->TdcTimeWindow[Index], CpuSetup.TdcTimeWindow[Index],   Index);
+#endif
       }
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->TdcMode[Index],   CpuSetup.TdcMode[Index],   Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->TdcEnable[Index], CpuSetup.TdcEnable[Index], Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->TdcLock[Index],   CpuSetup.TdcLock[Index],   Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcMode[Index], CpuPowerMgmtVrConfig->TdcMode[Index], CpuSetup.TdcMode[Index],   Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcEnable[Index], CpuPowerMgmtVrConfig->TdcEnable[Index], CpuSetup.TdcEnable[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcLock[Index], CpuPowerMgmtVrConfig->TdcLock[Index], CpuSetup.TdcLock[Index],   Index);
     }
     // Need to check if the user intends to override through CpuSetup to distinguish
     // between the default EDS override.
     if (CpuSetup.AcLoadline[Index] != 0) {
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->AcLoadline[Index], CpuSetup.AcLoadline[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.AcLoadline[Index], CpuPowerMgmtVrConfig->AcLoadline[Index], CpuSetup.AcLoadline[Index], Index);
     }
     if (CpuSetup.DcLoadline[Index] != 0) {
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->DcLoadline[Index], CpuSetup.DcLoadline[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DcLoadline[Index], CpuPowerMgmtVrConfig->DcLoadline[Index], CpuSetup.DcLoadline[Index], Index);
     }
     //
     // Slew rate option only support Core and GT domain
     //
-    COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->SlowSlewRate[Index], CpuSetup.SlowSlewRate[Index], Index);
-    COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->FastPkgCRampDisable[Index], CpuSetup.FastPkgCRampDisable[Index], Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SlowSlewRate[Index], CpuPowerMgmtVrConfig->SlowSlewRate[Index], CpuSetup.SlowSlewRate[Index], Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.FastPkgCRampDisable[Index], CpuPowerMgmtVrConfig->FastPkgCRampDisable[Index], CpuSetup.FastPkgCRampDisable[Index], Index);
   }
 
   //
   // VR Acoustic Noise Mitigation
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->AcousticNoiseMitigation, CpuSetup.AcousticNoiseMitigation);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->PcoreHysteresisWindow,   CpuSetup.PcoreHysteresisWindow  );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtVrConfig->EcoreHysteresisWindow,   CpuSetup.EcoreHysteresisWindow  );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.AcousticNoiseMitigation, CpuPowerMgmtVrConfig->AcousticNoiseMitigation, CpuSetup.AcousticNoiseMitigation);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PcoreHysteresisWindow, CpuPowerMgmtVrConfig->PcoreHysteresisWindow,   CpuSetup.PcoreHysteresisWindow  );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.EcoreHysteresisWindow, CpuPowerMgmtVrConfig->EcoreHysteresisWindow,   CpuSetup.EcoreHysteresisWindow  );
 
   //
   // When overclocking is enabled, we need to ensure the VR defaults are
@@ -889,82 +915,80 @@ UpdatePeiCpuPolicyPreMem (
       //
       // Disable VR TDC for all VR domains
       //
-      UPDATE_POLICY (CpuPowerMgmtVrConfig->TdcCurrentLimit[Index], 0);
-      UPDATE_POLICY (CpuPowerMgmtVrConfig->TdcEnable[Index], 0);
+      UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcCurrentLimit[Index], CpuPowerMgmtVrConfig->TdcCurrentLimit[Index], 0);
+      UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcEnable[Index], CpuPowerMgmtVrConfig->TdcEnable[Index], 0);
 
       //
       // Disable noise mitigation and keep fast slew rate
       //
-      UPDATE_POLICY (CpuPowerMgmtVrConfig->FastPkgCRampDisable[Index], 0);
+      UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.FastPkgCRampDisable[Index], CpuPowerMgmtVrConfig->FastPkgCRampDisable[Index], 0);
 #endif
   //
   // Update Cpu Power Delivery policy
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->DisableVrThermalAlert,       CpuSetup.DisableVrThermalAlert);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->ThermalMonitor,              CpuSetup.EnableThermalMonitor);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->ConfigTdpLevel,              CpuSetup.ConfigTdpLevel);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableVrThermalAlert, CpuPowerDeliveryConfig->DisableVrThermalAlert, CpuSetup.DisableVrThermalAlert);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ThermalMonitor, CpuPowerDeliveryConfig->ThermalMonitor, CpuSetup.EnableThermalMonitor);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ConfigTdpLevel, CpuPowerDeliveryConfig->ConfigTdpLevel, CpuSetup.ConfigTdpLevel);
 
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->TccActivationOffset,        CpuSetup.TCCActivationOffset);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->TccOffsetLock,              CpuSetup.TccOffsetLock      );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TccActivationOffset, CpuPowerDeliveryConfig->TccActivationOffset, CpuSetup.TCCActivationOffset);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TccOffsetLock, CpuPowerDeliveryConfig->TccOffsetLock, CpuSetup.TccOffsetLock);
 
-  if (CpuSetup.ConfigTdpLock == 1
-#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
-  || SetupData.IpfEnable == 1
-#endif
-  ) {
-    UPDATE_POLICY (CpuPowerDeliveryConfig->ConfigTdpBios, 0);
+  if (CpuSetup.ConfigTdpLock == 1 || SetupData.IpfEnable == 1) {
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ConfigTdpBios, CpuPowerDeliveryConfig->ConfigTdpBios, 0);
   } else {
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->ConfigTdpBios, CpuSetup.ConfigTdpBios);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ConfigTdpBios, CpuPowerDeliveryConfig->ConfigTdpBios, CpuSetup.ConfigTdpBios);
   }
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit2,                                        CpuSetup.PowerLimit2                             );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->ConfigTdpLock,                                      CpuSetup.ConfigTdpLock                           );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->CustomPowerLimit1,          (UINT16) (CpuSetup.CustomPowerLimit1Power / 125));
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->CustomPowerLimit2,          (UINT16) (CpuSetup.CustomPowerLimit2Power / 125));
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->CustomPowerLimit1Time,      CpuSetup.CustomPowerLimit1Time                  );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->CustomTurboActivationRatio, CpuSetup.CustomTurboActivationRatio             );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit2, CpuPowerDeliveryConfig->PowerLimit2, CpuSetup.PowerLimit2);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ConfigTdpLock, CpuPowerDeliveryConfig->ConfigTdpLock,CpuSetup.ConfigTdpLock);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Custom1PowerLimit1, CpuPowerDeliveryConfig->CustomPowerLimit1, (UINT16) (CpuSetup.CustomPowerLimit1Power / 125));
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Custom1PowerLimit2, CpuPowerDeliveryConfig->CustomPowerLimit2, (UINT16) (CpuSetup.CustomPowerLimit2Power / 125));
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit1, CpuPowerDeliveryConfig->CustomPowerLimit1Time,  CpuSetup.CustomPowerLimit1Time);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit1, CpuPowerDeliveryConfig->CustomTurboActivationRatio, CpuSetup.CustomTurboActivationRatio);
 
   //
   // Turbo Mode setting
   //
   if (CpuSetup.LongDurationPwrLimitOverride) {
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit1,     (UINT16) (CpuSetup.PowerLimit1 / 125));
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit1Time, CpuSetup.PowerLimit1Time             );
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit1, CpuPowerDeliveryConfig->PowerLimit1, (UINT16) (CpuSetup.PowerLimit1 / 125));
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit1Time, CpuPowerDeliveryConfig->PowerLimit1Time, CpuSetup.PowerLimit1Time);
   }
 
   if (CpuSetup.PowerLimit2) {
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit2Power,    (UINT16) (CpuSetup.PowerLimit2Power / 125));
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit2Power, CpuPowerDeliveryConfig->PowerLimit2Power, (UINT16) (CpuSetup.PowerLimit2Power / 125));
   }
 
   if (CpuSetup.PowerLimit3Override) {
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit3,          (UINT16) (CpuSetup.PowerLimit3 / 125) );
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit3Time,       CpuSetup.PowerLimit3Time             );
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit3DutyCycle,  CpuSetup.PowerLimit3DutyCycle        );
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit3Lock,       CpuSetup.PowerLimit3Lock             );
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->ResponseMode,          CpuSetup.ResponseMode                );
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit3, CpuPowerDeliveryConfig->PowerLimit3, (UINT16) (CpuSetup.PowerLimit3 / 125) );
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit3Time, CpuPowerDeliveryConfig->PowerLimit3Time, CpuSetup.PowerLimit3Time);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit3DutyCycle, CpuPowerDeliveryConfig->PowerLimit3DutyCycle, CpuSetup.PowerLimit3DutyCycle);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit3Lock, CpuPowerDeliveryConfig->PowerLimit3Lock, CpuSetup.PowerLimit3Lock);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ResponseMode, CpuPowerDeliveryConfig->ResponseMode, CpuSetup.ResponseMode);
   }
 
   if (CpuSetup.PowerLimit4Override) {
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit4,          (UINT16) (CpuSetup.PowerLimit4 / 125)   );
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit4Lock,      CpuSetup.PowerLimit4Lock                );
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit4, CpuPowerDeliveryConfig->PowerLimit4, (UINT16) (CpuSetup.PowerLimit4 / 125));
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit4Lock, CpuPowerDeliveryConfig->PowerLimit4Lock, CpuSetup.PowerLimit4Lock);
   }
 
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PowerLimit4Boost,         (UINT16) (CpuSetup.PowerLimit4Boost / 125)        );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PsysPowerLimit1,          CpuSetup.PlatformPowerLimit1Enable                );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PsysPowerLimit2,          CpuSetup.PlatformPowerLimit2Enable                );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PsysPowerLimit1Power,     (UINT16) (CpuSetup.PlatformPowerLimit1Power / 125));
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PsysPowerLimit1Time ,     CpuSetup.PlatformPowerLimit1Time                  );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PsysPowerLimit2Power,     (UINT16) (CpuSetup.PlatformPowerLimit2Power / 125));
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit4Boost, CpuPowerDeliveryConfig->PowerLimit4Boost, (UINT16) (CpuSetup.PowerLimit4Boost / 125));
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysPowerLimit1, CpuPowerDeliveryConfig->PsysPowerLimit1, CpuSetup.PlatformPowerLimit1Enable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysPowerLimit2, CpuPowerDeliveryConfig->PsysPowerLimit2, CpuSetup.PlatformPowerLimit2Enable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysPowerLimit1Power, CpuPowerDeliveryConfig->PsysPowerLimit1Power, (UINT16) (CpuSetup.PlatformPowerLimit1Power / 125));
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysPowerLimit1Time, CpuPowerDeliveryConfig->PsysPowerLimit1Time ,  CpuSetup.PlatformPowerLimit1Time                  );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysPowerLimit2Power, CpuPowerDeliveryConfig->PsysPowerLimit2Power,  (UINT16) (CpuSetup.PlatformPowerLimit2Power / 125));
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PlatformAtxTelemetryUnit, CpuSetup.PlatformAtxTelemetryUnit                 );
+#endif
   //
   // Isys parameters
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->ThETAIbattEnable, CpuSetup.ThETAIbattEnable);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->IsysCurrentLimitL1, CpuSetup.IsysCurrentLimitL1);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->IsysCurrentLimitL1Enable, CpuSetup.IsysCurrentLimitL1Enable);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->IsysCurrentL1Tau, CpuSetup.IsysCurrentL1Tau);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->IsysCurrentLimitL2, CpuSetup.IsysCurrentLimitL2);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->IsysCurrentLimitL2Enable, CpuSetup.IsysCurrentLimitL2Enable);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->VsysMax, CpuSetup.VsysMax);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ThETAIbattEnable, CpuPowerDeliveryConfig->ThETAIbattEnable, CpuSetup.ThETAIbattEnable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IsysCurrentLimitL1, CpuPowerDeliveryConfig->IsysCurrentLimitL1, CpuSetup.IsysCurrentLimitL1);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IsysCurrentLimitL1Enable, CpuPowerDeliveryConfig->IsysCurrentLimitL1Enable, CpuSetup.IsysCurrentLimitL1Enable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IsysCurrentL1Tau, CpuPowerDeliveryConfig->IsysCurrentL1Tau, CpuSetup.IsysCurrentL1Tau);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IsysCurrentLimitL2, CpuPowerDeliveryConfig->IsysCurrentLimitL2, CpuSetup.IsysCurrentLimitL2);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IsysCurrentLimitL2Enable, CpuPowerDeliveryConfig->IsysCurrentLimitL2Enable, CpuSetup.IsysCurrentLimitL2Enable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VsysMax, CpuPowerDeliveryConfig->VsysMax, CpuSetup.VsysMax);
 
   //
   // Check If power state is AC or DC.
@@ -986,41 +1010,37 @@ UpdatePeiCpuPolicyPreMem (
     }
   }
 
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->AcDcPowerState, IsAcPluggedIn);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.AcDcPowerState, CpuPowerDeliveryConfig->AcDcPowerState, IsAcPluggedIn);
 
   //
   // Skin Temperature Control MMIO registers
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->SkinTempControl, CpuSetup.SkinTempControl);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.SkinTempControl, CpuPowerDeliveryConfig->SkinTempControl, CpuSetup.SkinTempControl);
 
   if (CpuSetup.SkinTempControl) {
     for (Index = 0; Index < SKIN_TEMP_CONTROL_SENSOR; Index++) {
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerDeliveryConfig->SkinTargetTemp[Index],           CpuSetup.SkinTargetTemp[Index],          Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerDeliveryConfig->SkinTempControlEnable[Index],    CpuSetup.SkinTempControlEnable[Index],   Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerDeliveryConfig->SkinControlLoopGain[Index],      CpuSetup.SkinControlLoopGain[Index],     Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerDeliveryConfig->SkinTempOverrideEnable[Index],   CpuSetup.SkinTempOverrideEnable[Index],  Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerDeliveryConfig->SkinMinPerformanceLevel[Index],  CpuSetup.SkinMinPerformanceLevel[Index], Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerDeliveryConfig->SkinTempOverride[Index],         CpuSetup.SkinTempOverride[Index],        Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.SkinTargetTemp[Index], CpuPowerDeliveryConfig->SkinTargetTemp[Index],           CpuSetup.SkinTargetTemp[Index],          Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.SkinTempControlEnable[Index], CpuPowerDeliveryConfig->SkinTempControlEnable[Index],    CpuSetup.SkinTempControlEnable[Index],   Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.SkinControlLoopGain[Index], CpuPowerDeliveryConfig->SkinControlLoopGain[Index],      CpuSetup.SkinControlLoopGain[Index],     Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.SkinTempOverrideEnable[Index], CpuPowerDeliveryConfig->SkinTempOverrideEnable[Index],   CpuSetup.SkinTempOverrideEnable[Index],  Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.SkinMinPerformanceLevel[Index], CpuPowerDeliveryConfig->SkinMinPerformanceLevel[Index],  CpuSetup.SkinMinPerformanceLevel[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.SkinTempOverride[Index], CpuPowerDeliveryConfig->SkinTempOverride[Index],         CpuSetup.SkinTempOverride[Index],        Index);
     }
   }
 
   //
   // Applies TDP to non-cTDP or cTDP
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->ApplyConfigTdp, CpuSetup.ApplyConfigTdp);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.ApplyConfigTdp, CpuPowerDeliveryConfig->ApplyConfigTdp, CpuSetup.ApplyConfigTdp);
 
   //
   // Dual Tau Boost
   //
-#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
   if (SetupData.IpfEnable == 1) {
-    UPDATE_POLICY (CpuPowerDeliveryConfig->DualTauBoost, 0);
+    UPDATE_POLICY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.DualTauBoost, CpuPowerDeliveryConfig->DualTauBoost, 0);
   } else {
-    COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->DualTauBoost, CpuSetup.DualTauBoost);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD*) FspmUpd)->FspmConfig.DualTauBoost, CpuPowerDeliveryConfig->DualTauBoost, CpuSetup.DualTauBoost);
   }
-#else
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->DualTauBoost, CpuSetup.DualTauBoost);
-#endif
 
   ///
   /// Set PcdCpuMaxLogicalProcessorNumber to max number of logical processors enabled

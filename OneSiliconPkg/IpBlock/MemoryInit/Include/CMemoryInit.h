@@ -303,38 +303,16 @@ MrcUpdateBdatHobIds (
   );
 
 /**
-  Determine whether a cold reset of the platform is required.
-  Note that the memory configuration saved data must be valid.
-
-  @param[in] MrcData             - The MRC "global data" area.
-  @param[in] MemConfig           - MEMORY CONFIGURATION structure.
-  @param[in] MrcBootMode         - Current MRC boot mode.
-
-  @retval TRUE if cold reset is required, otherwise returns FALSE.
-**/
-extern
-BOOLEAN
-ColdBootRequired (
-  IN MrcParameters                *CONST  MrcData,
-  IN MEMORY_CONFIGURATION         *MemConfig,
-  IN MRC_BOOT_MODE                MrcBootMode
-  );
-
-/**
   Set up the MRC OEM data structure.
 
   @param[in, out] MrcData            - Pointer to the MRC global data structure.
   @param[in]     MemConfig           - MEMORY CONFIGURATION structure.
-  @param[in]     MemConfigNoCrc      - MEMORY CONFIG NO CRC structure.
-
-  @retval Nothing.
 **/
 extern
 void
 MrcSetupOem (
   IN OUT MrcParameters          *CONST   MrcData,
-  IN    MEMORY_CONFIGURATION    *MemConfig,
-  IN    MEMORY_CONFIG_NO_CRC    *MemConfigNoCrc
+  IN    MEMORY_CONFIGURATION    *MemConfig
   );
 
 /**
@@ -382,7 +360,6 @@ CheckForTimingOverride (
   IN OUT MrcInput               *CONST  Inputs,
   IN     MEMORY_CONFIGURATION   *MemConfig
   );
-
 
 /**
   Build S3 memory data HOB
@@ -493,4 +470,30 @@ VOID
 MrcGetSaGvPointBeforeReset (
   IN OUT  MrcParameters *const MrcData
   );
+
+/**
+  Check Status of the last IBECC operation mode
+
+  @param[in out]  MrcData - All the MRC global data
+
+  @return The last IBECC operation mode setting
+**/
+UINT8
+GetLastIbeccOpMode (
+  IN OUT  MrcParameters *const MrcData
+  );
+
+/**
+  Set the status of the current IBECC operation mode to the SSKPD_PCU register.
+  This status will survive a warm reset.
+
+  @param[in]  IbeccOpMode - The last configured IBECC Operation Mode
+
+  @return The last IBECC operation mode setting
+**/
+VOID
+SetLastIbeccOpMode (
+  IN      UINT8  IbeccOpMode
+  );
+
 #endif

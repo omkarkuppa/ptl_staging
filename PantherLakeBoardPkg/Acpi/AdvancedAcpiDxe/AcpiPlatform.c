@@ -61,7 +61,7 @@
 #include <UcsiNvs.h>
 #include <UsbPortMapNvs.h>
 #include <Library/UefiLib.h>
-
+#include <Library/PcieHelperLib.h>
 //
 // Global variables
 //
@@ -2243,6 +2243,199 @@ PlatformUpdateTables (
   return EFI_SUCCESS;
 }
 
+/**
+  Update available PCI BUS resource boundary to ACPI MCFG table
+
+  @param[in]      SubBusBoundary     available PCI bus resource boundary
+**/
+VOID
+UpdateMcfgAcpiTable (
+  IN UINT8 SubBusBoundary
+  )
+{
+  EFI_STATUS               Status;
+  UINTN                    Handle;
+  EFI_ACPI_TABLE_PROTOCOL  *AcpiTable;
+  EFI_ACPI_MEMORY_MAPPED_CONFIGURATION_BASE_ADDRESS_TABLE_HEADER *McfgTable;
+  EFI_ACPI_MEMORY_MAPPED_ENHANCED_CONFIGURATION_SPACE_BASE_ADDRESS_ALLOCATION_STRUCTURE *Segment;
+
+  Handle = 0;
+
+  //
+  // Find the Acpi Table protocol
+  //
+  Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **) &AcpiTable);
+  ASSERT_EFI_ERROR (Status);
+
+  Status = LocateAcpiTableBySignature (
+              EFI_ACPI_6_5_PCI_EXPRESS_MEMORY_MAPPED_CONFIGURATION_SPACE_BASE_ADDRESS_DESCRIPTION_TABLE_SIGNATURE,
+              (EFI_ACPI_DESCRIPTION_HEADER **) &McfgTable,
+              &Handle
+              );
+  if (!EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "Found existing MCFG table\n"));
+    Segment = (VOID *)(McfgTable + 1);
+    //
+    // Update SubBusBoundary to ACPI MCFG table
+    //
+    Segment[0].EndBusNumber = SubBusBoundary;
+
+    if (Handle != 0) {
+      Status = AcpiTable->UninstallAcpiTable (AcpiTable, Handle);
+      if (EFI_ERROR (Status)) {
+        FreePool (McfgTable);
+        return;
+      }
+    }
+  } else {
+    DEBUG ((DEBUG_ERROR, "No existing MCFG table and failed to update available PCI BUS resource boundary.\n"));
+    return;
+  }
+
+  ///
+  /// Update ACPI MCFG table
+  ///
+  Status = AcpiTable->InstallAcpiTable (
+                        AcpiTable,
+                        McfgTable,
+                        McfgTable->Header.Length,
+                        &Handle
+                        );
+  FreePool (McfgTable);
+}
+
+/**
+  This function will report available PCI BUS resource boundary to ACPI MCFG table.
+**/
+VOID
+UpdateMcfgPciBusBoundary (
+  VOID
+  )
+{
+  EFI_STATUS                Status;
+  UINTN                     HandleCount;
+  EFI_HANDLE                *HandleBuffer;
+  UINTN                     Index;
+  EFI_PCI_IO_PROTOCOL       *PciIo;
+  UINT8                     PciBaseClass;
+  UINT8                     PciSubClass;
+  PCI_REG_PCIE_CAPABILITY   PcieCap;
+  UINT8                     SubBusBoundary;
+  UINT8                     SubBus;
+  UINTN                     Seg;
+  UINTN                     Bus;
+  UINTN                     Dev;
+  UINTN                     Fun;
+  UINT64                    PciBaseAdr;
+  UINT8                     CapHeaderOffset;
+
+  HandleCount  = 0;
+  HandleBuffer = NULL;
+  SubBusBoundary = 0;
+  Seg = 0;
+
+  DEBUG ((DEBUG_INFO, "UpdateMcfgPciBusBoundary Start\n"));
+
+  Status = gBS->LocateHandleBuffer (
+                  ByProtocol,
+                  &gEfiPciIoProtocolGuid,
+                  NULL,
+                  &HandleCount,
+                  &HandleBuffer
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_WARN, "No available PciIo devices\n"));
+    return;
+  }
+
+  //
+  // To determine maximum valid subordinate bus number among P2P bridges (RP)
+  //
+  for (Index = 0; Index < HandleCount; Index++) {
+    Status = gBS->HandleProtocol (
+                    HandleBuffer[Index],
+                    &gEfiPciIoProtocolGuid,
+                    (VOID **) &PciIo
+                    );
+    if (EFI_ERROR (Status)) {
+      //
+      // Skip this PciIo handle
+      //
+      continue;
+    }
+
+    Status = PciIo->GetLocation (PciIo, (UINTN *) &Seg, (UINTN *) &Bus, (UINTN *) &Dev, (UINTN *) &Fun);
+    if (EFI_ERROR (Status)) {
+      continue;
+    }
+    if (Bus != 0) {
+      //
+      // P2P bridge is located at Bus 0 only
+      //
+      continue;
+    }
+
+    PciBaseAdr = PCI_SEGMENT_LIB_ADDRESS (Seg, Bus, Dev, Fun, 0);
+
+    //
+    // Get PCI device's class code (0xB)
+    //
+    PciBaseClass = PciSegmentRead8 (PciBaseAdr + PCI_CLASSCODE_OFFSET + 2);
+    if (PciBaseClass == PCI_CLASS_BRIDGE) {
+      //
+      // Get PCI device's sub-class code (0xA)
+      //
+      PciSubClass = PciSegmentRead8 (PciBaseAdr + PCI_CLASSCODE_OFFSET + 1);
+      if (PciSubClass == PCI_CLASS_BRIDGE_P2P) {
+        CapHeaderOffset = PcieFindCapId ((UINT8) Seg, (UINT8) Bus, (UINT8) Dev, (UINT8) Fun, EFI_PCI_CAPABILITY_ID_PCIEXP);
+        PciSegmentReadBuffer (PciBaseAdr + CapHeaderOffset + OFFSET_OF (PCI_CAPABILITY_PCIEXP, Capability), sizeof (UINT16), &PcieCap);
+        if (PcieCap.Bits.DevicePortType != PCIE_DEVICE_PORT_TYPE_ROOT_PORT) {
+          //
+          // Skip non RootPort type
+          //
+          continue;
+        }
+        DEBUG ((DEBUG_INFO, "Bus: 0x%x, Dev: 0x%x, Fun:0x%x is P2P bridge (type: RootPort)\n", Bus, Dev, Fun));
+        //
+        // Get subordinate bus number (0x1A)
+        //
+        SubBus = PciSegmentRead8 (PciBaseAdr + PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET);
+        DEBUG ((DEBUG_INFO, "Subordinate bus number: 0x%x\n", SubBus));
+        //
+        // Initial SubBusBoundary to a meaningful value only one time
+        //
+        if (SubBus > SubBusBoundary) {
+          SubBusBoundary = SubBus;
+        }
+      }
+    }
+  }
+
+  //
+  // Check if max sub bus exceeds 224 when VMD enabled
+  //
+  if (IsVmdEnabled ()) {
+    if (SubBusBoundary > MAX_OS_VISIBLE_BUSES_WITH_VMD) {
+      DEBUG ((DEBUG_WARN, "Subordiante bus number is not allowed to exceed 224 when VMD enabled !\n"));
+      SubBusBoundary = MAX_OS_VISIBLE_BUSES_WITH_VMD;
+    }
+  }
+
+  mPlatformNvsAreaProtocol.Area->SubBusBoundary = SubBusBoundary;
+  DEBUG ((DEBUG_INFO, "Valid Subordinate bus: 0x%x\n",mPlatformNvsAreaProtocol.Area->SubBusBoundary));
+
+  //
+  // Update MCFG table
+  //
+  UpdateMcfgAcpiTable (SubBusBoundary);
+
+  if (HandleBuffer != NULL) {
+    FreePool ((VOID*)HandleBuffer);
+  }
+
+  DEBUG ((DEBUG_INFO, "UpdateMcfgPciBusBoundary End\n"));
+}
+
 EFI_STATUS
 PublishAcpiTablesFromFv (
   IN EFI_GUID gEfiAcpiMultiTableStorageGuid
@@ -2691,6 +2884,11 @@ AcpiEndOfDxeEvent (
   InstallSocAcpiTable (&gSocCmnSsdtAcpiTableStorageGuid, SIGNATURE_64 ('S', 'o', 'c', 'C', 'm', 'n', ' ', 0));
 
   //
+  // This function updates PCI BUS resource boundary to ACPI MCFG table
+  //
+  UpdateMcfgPciBusBoundary ();
+
+  //
   // Reserve memory for S3 resume
   //
   ReserveS3Memory ();
@@ -3008,11 +3206,7 @@ InstallAcpiPlatform (
   //
   // BIOS only version of CTDP. (CTDP without using Intel(R) Dynamic Tuning Technology)
   //
-  if (CpuSetup.ConfigTdpLock == 1
-#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
-     || mSystemConfiguration.IpfEnable == 1
-#endif
-     ) {
+  if (CpuSetup.ConfigTdpLock == 1 || mSystemConfiguration.IpfEnable == 1) {
     mPlatformNvsAreaProtocol.Area->ConfigTdpBios      = 0;
   } else {
     mPlatformNvsAreaProtocol.Area->ConfigTdpBios      = CpuSetup.ConfigTdpBios;
@@ -3050,6 +3244,7 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->Rtd3Config0                = ((mSystemConfiguration.WwanEnable && (mSystemConfiguration.Rtd3WWAN != 0) ? 1:0) << 7)
                                                               | (mSystemConfiguration.Rtd3I2CTouchPanel << 4); // Applicable for SKL SDS RTD3 SIP only
   mPlatformNvsAreaProtocol.Area->StorageRtd3Support           = mSystemConfiguration.StorageRtd3Support;
+  mPlatformNvsAreaProtocol.Area->StorageDynamicLinkManagement = mSystemConfiguration.StorageDynamicLinkManagement;
   //
   // Enable PowerState
   //

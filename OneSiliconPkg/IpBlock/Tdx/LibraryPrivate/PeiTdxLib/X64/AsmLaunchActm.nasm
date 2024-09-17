@@ -388,11 +388,6 @@ AsmLaunchActmAfterRestoreCs:
   wrmsr
 
   ;--------------------------------
-  ; Write back and invalidate cache
-  ;--------------------------------
-  wbinvd
-
-  ;--------------------------------
   ; Store ActmStatus in mm0
   ;--------------------------------
   mov rax, r9 ; rax := r9

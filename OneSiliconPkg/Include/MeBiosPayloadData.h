@@ -66,7 +66,6 @@ typedef union {
 
 #define MBP_ITEM_FW_VERSION_NAME             MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdFwVerName)
 #define MBP_ITEM_FW_CAPABILITIES             MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdFwCapabilities)
-#define MBP_ITEM_FW_BIOS_PLATFORM_KEY        MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdBiosPlatformKey)
 #define MBP_ITEM_CSE_PLATFORM_TYPE           MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdCsePlatformType)
 #define MBP_ITEM_UNCONFIG_ON_RTC             MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdUnconfigOnRtc)
 #define MBP_ITEM_SHIP_STATE                  MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdShipState)
@@ -95,7 +94,6 @@ typedef enum {
 typedef enum {
   MbpItemIdFwVerName                  = 1,
   MbpItemIdFwCapabilities             = 2,
-  MbpItemIdBiosPlatformKey            = 4,
   MbpItemIdCsePlatformType            = 5,
   MbpItemIdUnconfigOnRtc              = 8,
   MbpItemIdShipState                  = 9,

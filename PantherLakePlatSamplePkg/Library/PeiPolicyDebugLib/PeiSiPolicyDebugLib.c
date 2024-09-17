@@ -28,6 +28,9 @@
 #include <Library/PeiServicesLib.h>
 #include <Ppi/SiPolicy.h>
 #include <PolicyUpdateMacro.h>
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+#include <FspsUpd.h>
+#endif
 
 /**
   This function performs SI PEI Debug Policy initialization.

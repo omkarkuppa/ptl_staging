@@ -2817,4 +2817,16 @@ MrcDdrIoLpddrCbtWckMode (
   IN BOOLEAN              IsCbtEnter
   );
 
+/**
+  Enable running Voc Search in seseamp offset training or not
+
+  @param[in] MrcData    - Include all MRC global data.
+
+  @returns TRUE or FALSE
+**/
+BOOLEAN
+EnableSenseAmpOffsetVocSearch (
+  IN OUT MrcParameters *const MrcData
+  );
+
 #endif //MRC_DDR_IO_API_H_

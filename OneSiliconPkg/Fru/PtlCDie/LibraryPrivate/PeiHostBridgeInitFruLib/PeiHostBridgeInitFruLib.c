@@ -396,7 +396,7 @@ SetNocImrExclusion (
   }
   if (TotalPhysicalMemorySize <= 0x1000) {
     if ((IsTdxSupported () == TRUE) && (TdxEnabled == TRUE)) {
-      BaseBelow4Gb  = (UINT32) (TdxDataHobPtr->SeamRrBaseAddress << 20);
+      BaseBelow4Gb  = (UINT32) (TdxDataHobPtr->SeamRrBaseAddress);
     }
   } else if (TseDataHobPtr->TseDramMemBase != 0) {
     BaseBelow4Gb  = (UINT32) TseDataHobPtr->TseDramMemBase;
@@ -601,13 +601,13 @@ SetBiosResetCpl (
   VOID
 )
 {
-  UINT64_STRUCT          MchBar;
+  UINT64         MchBar;
 
-  MchBar.Data = GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase);
+  MchBar = GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase);
 
   DEBUG ((DEBUG_INFO, "Set BIOS_RESET_CPL to indicate all configurations complete\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_SET_BIOS_RESET_CPL); //PostCode (0xA61)
-  MmioOr8 ((UINTN) MchBar.Data + BIOS_RESET_CPL_PCU_PUNIT_MCHBAR_REG, BIT0 | BIT1);
+  MmioOr8 ((UINTN) MchBar + BIOS_RESET_CPL_PCU_PUNIT_MCHBAR_REG, BIT0 | BIT1);
 }
 
 /**

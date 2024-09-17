@@ -159,14 +159,14 @@ SetupTxtDeviceMemory (
   );
 
 /**
-  Invokes TxtDxeLibLaunchBiosAcm to execute the SCHECK function.
+  Invokes TxtDxeLibLaunchBiosAcm to execute the LockConfig function.
 
   @param[in]  TxtDxeCtx    A pointer to an initialized TXT DXE Context data structure
 
   @retval     EFI_SUCCESS  Always.
 **/
 EFI_STATUS
-DoScheck (
+DoLockConfig (
   IN TXT_DXE_LIB_CONTEXT *TxtDxeCtx
   );
 

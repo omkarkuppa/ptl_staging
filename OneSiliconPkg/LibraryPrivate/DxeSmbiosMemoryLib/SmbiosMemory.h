@@ -81,12 +81,12 @@
 #define DDR_MTYPE_RDIMM       0x01  ///< Registered DIMM Memory
 #define DDR_MTYPE_UDIMM       0x02  ///< Unbuffered DIMM Memory
 #define DDR_MTYPE_SODIMM      0x03  ///< Small Outline DIMM Memory
-#define DDR_MTYPE_MICRO_DIMM  0x04  ///< Micro-DIMM Memory
-#define DDR_MTYPE_MINI_RDIMM  0x05  ///< Mini Registered DIMM Memory
-#define DDR_MTYPE_MINI_UDIMM  0x06  ///< Mini Unbuffered DIMM Memory
-#define DDR_MTYPE_LPDIMM      0x07  ///< LP DIMM Memory
-#define DDR_MTYPE_SO_UDIMM    0x09  ///< Small Outline Unbuffered DIMM Memory, 72-bit data bus
-#define DDR_MTYPE_MEM_DOWN    0x0E  ///< Soldered Down Memory
+#define DDR_MTYPE_LR_DIMM     0x04  ///< LR-DIMM Memory
+#define DDR_MTYPE_CUDIMM      0x05  ///< CU DIMM Memory
+#define DDR_MTYPE_CSODIMM     0x06  ///< CSO DIMM Memory
+#define DDR_MTYPE_MRDIMM      0x07  ///< MR DIMM Memory
+#define DDR_MTYPE_DDIMM       0x0A  ///< Small Outline Unbuffered DIMM Memory, 72-bit data bus
+#define DDR_MTYPE_MEM_DOWN    0x0B  ///< Soldered Down Memory
 
 ///
 /// Memory device type definition in DDR3 SPD Data

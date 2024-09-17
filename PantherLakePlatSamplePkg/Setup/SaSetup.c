@@ -619,7 +619,6 @@ InitSaStrings (
       Timing->tRCDtRP,
       Timing->tRAS
       );
-
   } // if ADVANCED_FORM_SET_CLASS
 
 

@@ -33,20 +33,16 @@ External (\_SB.H2PL, MethodObj)
 External (\_SB.J1PL, MethodObj)
 External (\_SB.J2PL, MethodObj)
 
-If(LEqual(FPSP(1, DTBT_RP_INDEX), 1)) {
   Device(HS01)
   {
     Name(_ADR, 0x01)
   } // End of Device(HS01)
-}
-If(LEqual(FPSP(2, DTBT_RP_INDEX), 1)) {
+
   Device(HS02)
   {
     Name(_ADR, 0x02)
   } // End of Device(HS02)
-}
 
-If(LEqual(FPSP(1, DTBT_RP_INDEX), 1)) {
   Device(SS01)
   {
     Name(_ADR, 0x03)
@@ -90,8 +86,8 @@ If(LEqual(FPSP(1, DTBT_RP_INDEX), 1)) {
               Return (Package (4) { 0x0, 0xFF, 0x0, 0x0 })
             }
           } Else {
-            If (CondRefOf (\_SB.H2UP)) {
-              Return (\_SB.H2UP ())
+            If (CondRefOf (\_SB.J1UP)) {
+              Return (\_SB.J1UP ())
             }
             Else {
               Return (Package (4) { 0x0, 0xFF, 0x0, 0x0 })
@@ -107,8 +103,8 @@ If(LEqual(FPSP(1, DTBT_RP_INDEX), 1)) {
               Return (Package (1) { Buffer (0x14) { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }})
             }
           } Else {
-            If (CondRefOf (\_SB.H2PL)) {
-              Return (\_SB.H2PL ())
+            If (CondRefOf (\_SB.J1PL)) {
+              Return (\_SB.J1PL ())
             }
             Else {
               Return (Package (1) { Buffer (0x14) { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }})
@@ -120,9 +116,7 @@ If(LEqual(FPSP(1, DTBT_RP_INDEX), 1)) {
       ADBG ("[dTBT] DTBT_US_PORT.DTID is not present in XhciUsbPorts!")
     }
   } // End of Device(SS01)
-}
 
-If(LEqual(FPSP(2, DTBT_RP_INDEX), 1)) {
   Device(SS02)
   {
     Name(_ADR, 0x04)
@@ -159,8 +153,8 @@ If(LEqual(FPSP(2, DTBT_RP_INDEX), 1)) {
 
         Method (_UPC, 0, Serialized) {
           If (LEqual (DTBT_US_PORT.DTID, 0)) {
-            If (CondRefOf (\_SB.J1UP)) {
-              Return (\_SB.J1UP ())
+            If (CondRefOf (\_SB.H2UP)) {
+              Return (\_SB.H2UP ())
             }
             Else {
               Return (Package (4) { 0x0, 0xFF, 0x0, 0x0 })
@@ -176,8 +170,8 @@ If(LEqual(FPSP(2, DTBT_RP_INDEX), 1)) {
         }
         Method (_PLD, 0, Serialized) {
           If (LEqual (DTBT_US_PORT.DTID, 0)) {
-            If (CondRefOf (\_SB.J1PL)) {
-              Return (\_SB.J1PL ())
+            If (CondRefOf (\_SB.H2PL)) {
+              Return (\_SB.H2PL ())
             }
             Else {
               Return (Package (1) { Buffer (0x14) { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }})
@@ -196,4 +190,3 @@ If(LEqual(FPSP(2, DTBT_RP_INDEX), 1)) {
       ADBG ("[dTBT] DTBT_US_PORT.DTID is not present in XhciUsbPorts!")
     }
   } // End of Device(SS02)
-}

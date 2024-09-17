@@ -386,7 +386,7 @@ Scope (\_SB.PC00.I2C5) {
     Store (SERIAL_IO_I2C5, I2CX)
   }
   Include ("I2cTouchPad.asl")
-  Include ("I2cTouchPanel.asl")
+  Include ("I2cTouchPanel2.asl")
   Include ("SerialIoI2cLtr.asl")
 }
 

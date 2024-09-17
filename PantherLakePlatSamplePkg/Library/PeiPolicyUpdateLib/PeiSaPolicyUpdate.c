@@ -42,6 +42,8 @@
 #include <TcssPeiPreMemConfig.h>
 #if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <Ppi/IGpuPlatformPolicyPpi.h>
+#include <FspsUpd.h>
+#include <FspmUpd.h>
 #endif
 #include <TelemetryPeiConfig.h>
 
@@ -60,20 +62,14 @@ PeiGraphicsPlatformPolicyNotifyCallback (
   )
 {
   EFI_STATUS                        Status;
+  VOID                              *FspsUpd;
   PEI_IGPU_PLATFORM_POLICY_PPI      *IGpuPlatformPolicyPpi;
   LID_STATUS                        CurrentLidStatus;
-  VOID                              *FspHobListPtr;
-  SI_POLICY_PPI                     *SiPolicyPpi;
-  IGPU_PEI_CONFIG                   *IGpuConfig;
-  EFI_HOB_GUID_TYPE                 *FspGuidHob;
-  EFI_HOB_GUID_TYPE                 *GuidHob;
-  SILICON_POLICY_HOB                *SiliconPolicyHob;
-  EFI_PEI_HOB_POINTERS              Hob;
 
   DEBUG ((DEBUG_INFO, "PeiGraphicsPlatformPolicyNotifyCallback Entry\n"));
-  GuidHob = NULL;
-  IGpuConfig = NULL;
 
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
   ///
   /// Locate IGpuPlatformPolicyPpi
   ///
@@ -85,31 +81,8 @@ PeiGraphicsPlatformPolicyNotifyCallback (
 
   Status = IGpuPlatformPolicyPpi->GetPlatformLidStatus (&CurrentLidStatus);
   ASSERT_EFI_ERROR (Status);
-  ///
-  /// Locate IGpuConfig
-  ///
-  FspGuidHob = GetFirstGuidHob (&gFspHobGuid);
-  ASSERT (FspGuidHob != NULL);
-  if (FspGuidHob == NULL) {
-    return EFI_NOT_FOUND;
-  }
-  FspHobListPtr = *(VOID **)GET_GUID_HOB_DATA (FspGuidHob);
-  Hob.Raw = (UINT8 *)(UINTN)FspHobListPtr;
-  GuidHob = GetNextGuidHob (&gSiliconPolicyHobGuid, Hob.Raw);
-  ASSERT (GuidHob != NULL);
-  if (GuidHob == NULL) {
-    return EFI_NOT_FOUND;
-  }
-
-  SiliconPolicyHob = (SILICON_POLICY_HOB *) GET_GUID_HOB_DATA (GuidHob);
-  SiPolicyPpi = (SI_POLICY_PPI *) SiliconPolicyHob->SiPolicyPpi;
-  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gGraphicsPeiConfigGuid, (VOID *) &IGpuConfig);
-  ASSERT_EFI_ERROR (Status);
-  if (IGpuConfig == NULL) {
-    return Status;
-  }
-  IGpuConfig->PeiDisplayConfig.LidStatus = CurrentLidStatus;
-  DEBUG ((DEBUG_INFO, "LidStatus from GetPlatformLidStatus is 0x%x\n", IGpuConfig->PeiDisplayConfig.LidStatus));
+  ((FSPS_UPD *) FspsUpd)->FspsConfig.LidStatus = (UINT8) CurrentLidStatus;
+  DEBUG ((DEBUG_INFO, "LidStatus from GetPlatformLidStatus is 0x%x\n", ((FSPS_UPD *) FspsUpd)->FspsConfig.LidStatus));
   DEBUG ((DEBUG_INFO, "PeiGraphicsPlatformPolicyNotifyCallback Exit\n"));
 
   return Status;
@@ -146,13 +119,16 @@ TcssGetPchUsb2PortNoMappedWithTypeATcssXhciPort (
   UsbConnectorBoardConfig = UsbConnectorHobPtr->UsbConnectorBoardConfig;
 
   for (ConnectorIndex = 0; ConnectorIndex < UsbConnectorHobPtr->NumberOfUsbConnectors; ConnectorIndex++) {
-    if (UsbConnectorBoardConfig[ConnectorIndex].ConnectorConnectable == CONNECTABLE &&
-        UsbConnectorBoardConfig[ConnectorIndex].Usb3Controller == TCSS_USB3 &&
-        UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum == TcssXhciPortIndex &&
-        UsbConnectorBoardConfig[ConnectorIndex].Usb2Controller == PCH_USB2 &&
-        UsbConnectorBoardConfig[ConnectorIndex].ConnectorType == USB_TYPE_A) {
-      PchUsb2PortNum = (UINT8) UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum + 1;
-      DEBUG((DEBUG_INFO, "Found PchUsb2 Port#%d mapped with USBA TcssUsb3 Port%d.\n", PchUsb2PortNum, TcssXhciPortIndex));
+    if (UsbConnectorBoardConfig[ConnectorIndex].Usb3Controller == TCSS_USB3 &&
+        UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum == TcssXhciPortIndex) {
+      if (UsbConnectorBoardConfig[ConnectorIndex].ConnectorConnectable == CONNECTABLE &&
+          UsbConnectorBoardConfig[ConnectorIndex].Usb2Controller == PCH_USB2 &&
+          UsbConnectorBoardConfig[ConnectorIndex].ConnectorType == USB_TYPE_A) {
+        PchUsb2PortNum = (UINT8) UsbConnectorBoardConfig[ConnectorIndex].Usb2PortNum + 1;
+        DEBUG((DEBUG_INFO, "Found PchUsb2 Port#%d mapped with USBA TcssUsb3 Port%d.\n", PchUsb2PortNum - 1, TcssXhciPortIndex));
+      } else {
+        break;
+      }
     }
   }
   return PchUsb2PortNum;
@@ -223,18 +199,25 @@ UpdatePeiSaPolicy (
   EFI_PEI_READ_ONLY_VARIABLE2_PPI *VariableServices;
   EFI_BOOT_MODE                   BootMode;
   PCH_SETUP                       PchSetup;
-#if FixedPcdGetBool(PcdVmdEnable) == 1
-  VOID                            *VmdVariablePtr;
-#endif
-  IGPU_PEI_CONFIG                 *IGpuConfig;
+  UINT8                           CapPolicy;
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+  VOID                            *FspmUpd;
+#else
   NPU_PEI_CONFIG                  *NpuPeiConfig;
   HOST_BRIDGE_PEI_CONFIG          *HostBridgePeiConfig;
   TCSS_PEI_CONFIG                 *TcssPeiConfig;
-  TCSS_PEI_PREMEM_CONFIG          *TcssPeiPreMemConfig;
   TELEMETRY_PEI_CONFIG            *TelemetryPeiConfig;
+  TCSS_PEI_PREMEM_CONFIG          *TcssPeiPreMemConfig;
+  IGPU_PEI_CONFIG                 *IGpuConfig;
+#if FixedPcdGetBool(PcdVmdEnable) == 1
+  VOID                            *VmdVariablePtr;
+  VMD_PEI_CONFIG                  *VmdPeiConfig;
+#endif
+#endif //FSPMode Check
 #if FixedPcdGetBool(PcdVmdEnable) == 1
   UINT8                           VmdDevIndex;
-  VMD_PEI_CONFIG                  *VmdPeiConfig;
 #endif
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL   *Blt;
   UINTN                           BltSize;
@@ -256,16 +239,23 @@ UpdatePeiSaPolicy (
   TcssPortConvProperties.Data8 = 0;
 #endif
 
-  IGpuConfig              = NULL;
+  Buffer     = NULL;
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+  ASSERT (FspmUpd != NULL);
+#else
   NpuPeiConfig          = NULL;
   HostBridgePeiConfig   = NULL;
   TcssPeiConfig         = NULL;
-  TcssPeiPreMemConfig   = NULL;
   TelemetryPeiConfig    = NULL;
+  TcssPeiPreMemConfig   = NULL;
+  IGpuConfig            = NULL;
 #if FixedPcdGetBool(PcdVmdEnable) == 1
   VmdPeiConfig          = NULL;
 #endif
-  Buffer     = NULL;
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTcssPeiPreMemConfigGuid, (VOID *) &TcssPeiPreMemConfig);
   ASSERT_EFI_ERROR(Status);
@@ -289,6 +279,7 @@ UpdatePeiSaPolicy (
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gVmdPeiConfigGuid, (VOID *) &VmdPeiConfig);
   ASSERT_EFI_ERROR(Status);
 #endif
+#endif //FSPMode Check
 
   Status = PeiServicesGetBootMode (&BootMode);
   ASSERT_EFI_ERROR (Status);
@@ -321,7 +312,7 @@ UpdatePeiSaPolicy (
   ASSERT_EFI_ERROR (Status);
 
   if (!EFI_ERROR (Status)) {
-    COMPARE_AND_UPDATE_POLICY (TcssPeiConfig->UsbConfig.OverCurrentEnable, PchSetup.PchUsbOverCurrentEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchUsbOverCurrentEnable,TcssPeiConfig->UsbConfig.OverCurrentEnable, PchSetup.PchUsbOverCurrentEnable);
   }
 
   VarSize = sizeof (SETUP_DATA);
@@ -347,14 +338,27 @@ UpdatePeiSaPolicy (
 
 #if FixedPcdGetBool (PcdTcssSupport) == 1
   for (Index = 0; Index < MAX_TCSS_USB3_PORTS; Index ++) {
-    if (!IS_TC_PORT_USB_SUPPORTED (TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[Index])) {
+#if FixedPcdGet8(PcdFspModeSelection) == 0
+    CapPolicy = TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[Index];
+#else
+    if (Index == 0) {
+      CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort0;
+    } else if (Index == 1) {
+      CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort1;
+    } else if (Index == 2) {
+      CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort2;
+    } else if (Index == 3) {
+      CapPolicy = ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort3;
+    }
+#endif
+    if (!IS_TC_PORT_USB_SUPPORTED (CapPolicy)) {
       //
       // Update policy while USBC Port native USB3 unsupported
       //
-      UPDATE_POLICY (TcssPeiConfig->UsbConfig.PortUsb30[Index].Enable, FALSE);
-      UPDATE_POLICY (TcssPeiConfig->UsbConfig.PortUsb30[Index].OverCurrentPin, USB_OC_SKIP);
-      UPDATE_POLICY (TcssPeiConfig->UsbConfig.PdoProgramming, TRUE);
-      UPDATE_POLICY (TcssPeiConfig->UsbConfig.UaolEnable, TRUE);
+      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb30Enable[Index],      TcssPeiConfig->UsbConfig.PortUsb30[Index].Enable, FALSE);
+      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CpuUsb3OverCurrentPin[Index],TcssPeiConfig->UsbConfig.PortUsb30[Index].OverCurrentPin, USB_OC_SKIP);
+      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.TcssCpuUsbPdoProgramming,    TcssPeiConfig->UsbConfig.PdoProgramming, TRUE);
+      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciUaolEnable,           TcssPeiConfig->UsbConfig.UaolEnable, TRUE);
     }
   }
 #endif
@@ -362,15 +366,15 @@ UpdatePeiSaPolicy (
   CopyMem (&BmpImageGuid, PcdGetPtr(PcdIntelGraphicsVbtFileGuid), sizeof(BmpImageGuid));
 
   if (!EFI_ERROR (Status)) {
-    COMPARE_AND_UPDATE_POLICY (IGpuConfig->PavpEnable,                           SaSetup.PavpEnable         );
-    COMPARE_AND_UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.PeiGraphicsPeimInit, SaSetup.PeiGraphicsPeimInit);
-    COMPARE_AND_UPDATE_POLICY (IGpuConfig->PeiGtConfig.RC1pGtFreqEnable,         SaSetup.RC1pGtFreqEnable   );
-    COMPARE_AND_UPDATE_POLICY (IGpuConfig->PeiMediaConfig.RC1pMediaFreqEnable,   SaSetup.RC1pMediaFreqEnable);
-    COMPARE_AND_UPDATE_POLICY (IGpuConfig->RenderStandby,                        SaSetup.EnableRenderStandby);
-    COMPARE_AND_UPDATE_POLICY (IGpuConfig->MediaStandby,                         SaSetup.EnableMediaStandby );
-    COMPARE_AND_UPDATE_POLICY (IGpuConfig->PeiGtConfig.ConfigureGT,       SaSetup.ConfigureGT);
-    COMPARE_AND_UPDATE_POLICY (IGpuConfig->PeiMediaConfig.ConfigureMedia, SaSetup.ConfigureMedia);
-    UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.SkipFspGop,          FixedPcdGetBool(PcdFspPeiGopDisable));
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PavpEnable, IGpuConfig->PavpEnable, SaSetup.PavpEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PeiGraphicsPeimInit, IGpuConfig->PeiDisplayConfig.PeiGraphicsPeimInit, SaSetup.PeiGraphicsPeimInit);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.RC1pGtFreqEnable, IGpuConfig->PeiGtConfig.RC1pGtFreqEnable, SaSetup.RC1pGtFreqEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.RC1pMediaFreqEnable, IGpuConfig->PeiMediaConfig.RC1pMediaFreqEnable, SaSetup.RC1pMediaFreqEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.RenderStandby, IGpuConfig->RenderStandby, SaSetup.EnableRenderStandby);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MediaStandby, IGpuConfig->MediaStandby, SaSetup.EnableMediaStandby );
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ConfigureGT, IGpuConfig->PeiGtConfig.ConfigureGT, SaSetup.ConfigureGT);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ConfigureMedia, IGpuConfig->PeiMediaConfig.ConfigureMedia, SaSetup.ConfigureMedia);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SkipFspGop, IGpuConfig->PeiDisplayConfig.SkipFspGop, FixedPcdGetBool(PcdFspPeiGopDisable));
 
     if (SaSetup.PeiGraphicsPeimInit == 1) {
       Buffer = NULL;
@@ -382,12 +386,21 @@ UpdatePeiSaPolicy (
       }
 
       if (BootMode == BOOT_ON_S3_RESUME) {
-        UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr, NULL);
+        #if FixedPcdGet8(PcdFspModeSelection) == 1
+          ((FSPS_UPD *) FspsUpd)->FspsConfig.GraphicsConfigPtr = (UINT64) NULL;
+        #else
+          IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr = (VOID *) NULL;
+        #endif
       } else {
-        COMPARE_AND_UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr, Buffer);
-        DEBUG ((DEBUG_INFO, "Vbt Pointer from PeiGetSectionFromFv is 0x%x\n", IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr));
+        #if FixedPcdGet8(PcdFspModeSelection) == 1
+          ((FSPS_UPD *) FspsUpd)->FspsConfig.GraphicsConfigPtr = (UINT64) Buffer;
+          DEBUG ((DEBUG_INFO, "Vbt Pointer from PeiGetSectionFromFv is 0x%x\n", ((FSPS_UPD *) FspsUpd)->FspsConfig.GraphicsConfigPtr));
+        #else
+          IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr = (VOID *) Buffer;
+          DEBUG ((DEBUG_INFO, "Vbt Pointer from PeiGetSectionFromFv is 0x%x\n", IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr));
+        #endif
       }
-      COMPARE_AND_UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.VbtSize, (UINT32)Size);
+      COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.VbtSize, IGpuConfig->PeiDisplayConfig.VbtSize, (UINT32)Size);
       DEBUG ((DEBUG_INFO, "Vbt Size from PeiGetSectionFromFv is 0x%x\n", Size));
 
       Buffer = NULL;
@@ -402,8 +415,8 @@ UpdatePeiSaPolicy (
       //
       // OEM can modify the position of PEI logo, default is center.
       //
-      UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.HorizontalResolution, 0);
-      UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.VerticalResolution,   0);
+      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.HorizontalResolution, IGpuConfig->PeiDisplayConfig.HorizontalResolution, 0);
+      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.VerticalResolution, IGpuConfig->PeiDisplayConfig.VerticalResolution, 0);
     }
 
     if (Buffer != NULL) {
@@ -436,33 +449,41 @@ UpdatePeiSaPolicy (
       //
       // Initialize Blt, BltSize, LogoPixel Height and Width
       //
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+      ((FSPS_UPD *) FspsUpd)->FspsConfig.BltBufferAddress = (UINTN) Blt;
+#else
       IGpuConfig->PeiDisplayConfig.BltBufferAddress = Blt;
-      UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.LogoPixelHeight, (UINT32) Height);
-      UPDATE_POLICY (IGpuConfig->PeiDisplayConfig.LogoPixelWidth,  (UINT32) Width);
+#endif
+      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.LogoPixelHeight,  IGpuConfig->PeiDisplayConfig.LogoPixelHeight, (UINT32) Height);
+      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.LogoPixelWidth,  IGpuConfig->PeiDisplayConfig.LogoPixelWidth,  (UINT32) Width);
     }
 
     // Initialize Misc SA Configuration
-#if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
+
     //
-    // Intel(R) Dynamic Tuning Technology might need SA thermal device to be enabled.
+    // Intel Platform Framework needs Camarillo device to be enabled.
     //
-    COMPARE_AND_UPDATE_POLICY (HostBridgePeiConfig->Device4Enable, SetupData.IpfEnable);
-#endif
-    COMPARE_AND_UPDATE_POLICY (NpuPeiConfig->NpuEnable,            SaSetup.NpuEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.Device4Enable, HostBridgePeiConfig->Device4Enable, SetupData.IpfEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.NpuEnable, NpuPeiConfig->NpuEnable, SaSetup.NpuEnable);
   }
 
 #if FixedPcdGetBool(PcdVmdEnable) == 1
   //
   // VMD related settings from setup variable
   //
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   COMPARE_AND_UPDATE_POLICY (VmdPeiConfig->VmdEnable,                       SaSetup.VmdEnable);
   COMPARE_AND_UPDATE_POLICY (VmdPeiConfig->VmdGlobalMapping,                SaSetup.VmdGlobalMapping);
+#endif
   for (VmdDevIndex = 0; VmdDevIndex < VMD_MAX_DEVICES; ++VmdDevIndex) {
+#if FixedPcdGet8(PcdFspModeSelection) == 0
     COMPARE_AND_UPDATE_POLICY (VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpEnable,   SaSetup.VmdPort[VmdDevIndex]);
+#endif
     //Update dev and Fuc
-    COMPARE_AND_UPDATE_POLICY (VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpDevice,   SaSetup.VmdPortDev[VmdDevIndex]);
-    COMPARE_AND_UPDATE_POLICY (VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpFunction, SaSetup.VmdPortFunc[VmdDevIndex]);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdPortDev[Index], VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpDevice, SaSetup.VmdPortDev[VmdDevIndex]);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdPortFunc[Index], VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpFunction, SaSetup.VmdPortFunc[VmdDevIndex]);
   }
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   UPDATE_POLICY (VmdPeiConfig->VmdCfgBarBase,  (UINTN)PcdGet32(PcdVmdCfgBarBase));
   UPDATE_POLICY (VmdPeiConfig->VmdMemBar1Base, (UINTN)PcdGet32(PcdVmdMemBar1Base));
   UPDATE_POLICY (VmdPeiConfig->VmdMemBar2Base, (UINTN)PcdGet32(PcdVmdMemBar2Base));
@@ -498,6 +519,7 @@ UpdatePeiSaPolicy (
   VmdPeiConfig->VmdVariablePtr = VmdVariablePtr;
   DEBUG ((DEBUG_INFO, "VmdVariablePtr from PeiGetSectionFromFv is 0x%x\n", VmdPeiConfig->VmdVariablePtr));
 #endif
+#endif
 
 #if FixedPcdGetBool (PcdTcssSupport) == 1
   //
@@ -507,39 +529,39 @@ UpdatePeiSaPolicy (
     //
     // Wake Capability is S3
     //
-    COMPARE_AND_UPDATE_POLICY (TcssPeiConfig->IomConfig.IomInterface.VccSt,        0);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.VccSt, TcssPeiConfig->IomConfig.IomInterface.VccSt, 0);
   } else {
-    COMPARE_AND_UPDATE_POLICY (TcssPeiConfig->IomConfig.IomInterface.VccSt,        SaSetup.TcssVccstStatus);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.VccSt,TcssPeiConfig->IomConfig.IomInterface.VccSt, SaSetup.TcssVccstStatus);
   }
-  COMPARE_AND_UPDATE_POLICY (TcssPeiConfig->IomConfig.IomInterface.D3ColdEnable,   SaSetup.TcssD3ColdEnable);
-  UPDATE_POLICY (TcssPeiConfig->IomConfig.TcStateLimit,                            SaSetup.TcStateLimit);
-  UPDATE_POLICY (TcssPeiConfig->IomConfig.TcNotifyIgd,                             SaSetup.TcNotifyIgd);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.D3ColdEnable, TcssPeiConfig->IomConfig.IomInterface.D3ColdEnable, SaSetup.TcssD3ColdEnable);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.TcCstateLimit, TcssPeiConfig->IomConfig.TcStateLimit, SaSetup.TcStateLimit);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.TcNotifyIgd, TcssPeiConfig->IomConfig.TcNotifyIgd, SaSetup.TcNotifyIgd);
 
   //
   // Itbt PCI Root Port Policy Initialization
   //
   for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index++) {
-    COMPARE_AND_UPDATE_POLICY (TcssPeiConfig->PciePolicy.PciePortPolicy[Index].PtmEnabled, SaSetup.PtmEnabled[Index]);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.PtmEnabled[Index], TcssPeiConfig->PciePolicy.PciePortPolicy[Index].PtmEnabled, SaSetup.PtmEnabled[Index]);
     ///
     /// LTR Settings
     ///
-    COMPARE_UPDATE_POLICY_ARRAY (TcssPeiConfig->PciePolicy.PciePortPolicy[Index].LtrEnable,                         SaSetup.SaPcieItbtLtrEnable[Index],                         Index);
-    COMPARE_UPDATE_POLICY_ARRAY (TcssPeiConfig->PciePolicy.PciePortPolicy[Index].SnoopLatencyOverrideMode,          SaSetup.SaPcieItbtSnoopLatencyOverrideMode[Index],          Index);
-    COMPARE_UPDATE_POLICY_ARRAY (TcssPeiConfig->PciePolicy.PciePortPolicy[Index].SnoopLatencyOverrideMultiplier,    SaSetup.SaPcieItbtSnoopLatencyOverrideMultiplier[Index],    Index);
-    COMPARE_UPDATE_POLICY_ARRAY (TcssPeiConfig->PciePolicy.PciePortPolicy[Index].SnoopLatencyOverrideValue,         SaSetup.SaPcieItbtSnoopLatencyOverrideValue[Index],         Index);
-    COMPARE_UPDATE_POLICY_ARRAY (TcssPeiConfig->PciePolicy.PciePortPolicy[Index].NonSnoopLatencyOverrideMode,       SaSetup.SaPcieItbtNonSnoopLatencyOverrideMode[Index],       Index);
-    COMPARE_UPDATE_POLICY_ARRAY (TcssPeiConfig->PciePolicy.PciePortPolicy[Index].NonSnoopLatencyOverrideMultiplier, SaSetup.SaPcieItbtNonSnoopLatencyOverrideMultiplier[Index], Index);
-    COMPARE_UPDATE_POLICY_ARRAY (TcssPeiConfig->PciePolicy.PciePortPolicy[Index].NonSnoopLatencyOverrideValue,      SaSetup.SaPcieItbtNonSnoopLatencyOverrideValue[Index],      Index);
-    COMPARE_UPDATE_POLICY_ARRAY (TcssPeiConfig->PciePolicy.PciePortPolicy[Index].ForceLtrOverride,                  SaSetup.SaPcieItbtForceLtrOverride[Index],                  Index);
-    COMPARE_UPDATE_POLICY_ARRAY (TcssPeiConfig->PciePolicy.PciePortPolicy[Index].LtrConfigLock,                     SaSetup.SaPcieItbtLtrConfigLock[Index],                     Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.SaPcieItbtRpLtrEnable[Index],                         TcssPeiConfig->PciePolicy.PciePortPolicy[Index].LtrEnable,                         SaSetup.SaPcieItbtLtrEnable[Index],                         Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.SaPcieItbtRpSnoopLatencyOverrideMode[Index],           TcssPeiConfig->PciePolicy.PciePortPolicy[Index].SnoopLatencyOverrideMode,          SaSetup.SaPcieItbtSnoopLatencyOverrideMode[Index],          Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.SaPcieItbtRpSnoopLatencyOverrideMultiplier[Index],     TcssPeiConfig->PciePolicy.PciePortPolicy[Index].SnoopLatencyOverrideMultiplier,    SaSetup.SaPcieItbtSnoopLatencyOverrideMultiplier[Index],    Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.SaPcieItbtRpSnoopLatencyOverrideValue[Index],         TcssPeiConfig->PciePolicy.PciePortPolicy[Index].SnoopLatencyOverrideValue,         SaSetup.SaPcieItbtSnoopLatencyOverrideValue[Index],         Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.SaPcieItbtRpNonSnoopLatencyOverrideMode[Index],       TcssPeiConfig->PciePolicy.PciePortPolicy[Index].NonSnoopLatencyOverrideMode,       SaSetup.SaPcieItbtNonSnoopLatencyOverrideMode[Index],       Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.SaPcieItbtRpNonSnoopLatencyOverrideMultiplier[Index], TcssPeiConfig->PciePolicy.PciePortPolicy[Index].NonSnoopLatencyOverrideMultiplier, SaSetup.SaPcieItbtNonSnoopLatencyOverrideMultiplier[Index], Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.SaPcieItbtRpNonSnoopLatencyOverrideValue[Index],      TcssPeiConfig->PciePolicy.PciePortPolicy[Index].NonSnoopLatencyOverrideValue,      SaSetup.SaPcieItbtNonSnoopLatencyOverrideValue[Index],      Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.SaPcieItbtRpForceLtrOverride[Index],                  TcssPeiConfig->PciePolicy.PciePortPolicy[Index].ForceLtrOverride,                  SaSetup.SaPcieItbtForceLtrOverride[Index],                  Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.SaPcieItbtRpLtrConfigLock[Index],                     TcssPeiConfig->PciePolicy.PciePortPolicy[Index].LtrConfigLock,                     SaSetup.SaPcieItbtLtrConfigLock[Index],                     Index);
   }
   //
   // BIOS-PMC Interaction policy update
   //
   if ((SetupData.UsbcBiosTcssHandshake == 1) && (PcdGetBool (VpdPcdTcssPmcPdEnable))) {
-    COMPARE_AND_UPDATE_POLICY (TcssPeiConfig->IomConfig.PmcInterface.PmcPdEnable, SetupData.UsbcBiosTcssHandshake);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcPdEnable, TcssPeiConfig->IomConfig.PmcInterface.PmcPdEnable, SetupData.UsbcBiosTcssHandshake);
   } else {
-    UPDATE_POLICY (TcssPeiConfig->IomConfig.PmcInterface.PmcPdEnable, 0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcPdEnable, TcssPeiConfig->IomConfig.PmcInterface.PmcPdEnable, 0);
   }
 
   //
@@ -562,7 +584,8 @@ UpdatePeiSaPolicy (
       TcssPortConvProperties.Field.Orientational = TcssGetPortOrientationSetting (Index);
       TcssPortConvProperties.Field.MappingPchXhciUsb2 = PchUsb2PortNo;
 
-      COMPARE_UPDATE_POLICY_ARRAY (\
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (\
+      ((FSPS_UPD *) FspsUpd)->FspsConfig.EnableTcssCovTypeA[Index],\
         TcssPeiConfig->MiscConfig.TcssConvUsbA[Index].Data8,\
         TcssPortConvProperties.Data8,\
         Index\

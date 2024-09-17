@@ -116,6 +116,12 @@ typedef struct {
 #define USB2_OC_MAX_PINS 16
 #define USB3_OC_MAX_PINS 10
 
+// Do not change the encoding. It must correspond with PCH_PCIE_CLOCK_USAGE from PCH RC.
+#define FREE_RUNNING 0x80
+#define LAN_CLOCK    0x70
+#define PCIE_PEG     0x40
+#define PCIE_PCH     0x00
+
 #pragma pack()
 
 #endif // _PLATFORM_OPEN_BOARD_CONFIG_H_

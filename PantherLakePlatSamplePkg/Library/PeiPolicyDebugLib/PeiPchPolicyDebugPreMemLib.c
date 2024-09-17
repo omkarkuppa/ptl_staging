@@ -36,6 +36,7 @@
 #include <LpcConfig.h>
 #include <ConfigBlock/PchGeneralConfig.h>
 #include <WatchDogConfig.h>
+#include <FspmUpd.h>
 
 /**
   Update Smbus Debug Pre Mem Policy.
@@ -50,16 +51,24 @@ UpdateSmbusDebugPreMemPolicy (
   IN PCH_SETUP                 *PchSetup
   )
 {
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspmUpd;
+#else
   PCH_SMBUS_PREMEM_CONFIG         *SmbusPreMemConfig;
-  EFI_STATUS                      Status;
+#endif
 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+  ASSERT (FspmUpd != NULL);
+#else
+  EFI_STATUS                      Status;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSmbusPreMemConfigGuid, (VOID *) &SmbusPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return;
   }
-
-  UPDATE_POLICY (SmbusPreMemConfig->SpdWriteDisable, PchSetup->SmbusSpdWriteDisable);
+#endif
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SmbusSpdWriteDisable, SmbusPreMemConfig->SpdWriteDisable, PchSetup->SmbusSpdWriteDisable);
 }
 
 /**

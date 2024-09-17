@@ -73,10 +73,13 @@ typedef enum {
   tcs2GB    ///< 2 GB
 } MrcTotalChannelSize;
 
+///
+/// IBECC OPERATION MODE, see MC0_IBECC_CONTROL_STRUCT.OPERATION_MODE
+///
 typedef enum {
-  IbeccPartialProtect,
-  IbeccNonProtect,
-  IbeccAllProtect,
+  IbeccPartialProtect,    ///< Functional Mode (performs range checks)
+  IbeccNonProtect,        ///< Makes all requests Non protected and ignore range checks
+  IbeccAllProtect,        ///< Makes all requests protected and ignore range checks
 } IbeccOpMode;
 
 extern const MrcFrequency SagvFreqPor[CALC_MRC_DDR_TYPE_MAX (MAX_MRC_DDR_TYPE)][MAX_SAGV_POINTS];
@@ -113,11 +116,11 @@ MrcNormalMode (
   );
 
 /**
-  Enables IBECC if supported
+  Enables IBECC if supported by CPU, and if memory controller population is symmetric
 
-  @param[in] *MrcData - Pointer to the MRC Debug structure.
+  @param[in] MrcData - Pointer to the MRC Debug structure.
 
-  @retval Returns mrcSuccess if the Ibecc is enabled
+  @retval mrcSuccess Ibecc task completed
 **/
 MrcStatus
 MrcIbecc (
@@ -324,6 +327,19 @@ MrcAdjustWckMode (
 BOOLEAN
 MrcIsSaGvEnabled (
   IN  MrcParameters *const MrcData
+  );
+
+/**
+  Check for symmetric memory controller population
+
+  @param[in] MrcData - Pointer to the MRC Debug structure.
+
+  @retval TRUE memory controller is symmetric
+  @retval FALSE memory controller is not symmetric
+**/
+BOOLEAN
+MrcIsIbeccSymmetric (
+  IN MrcParameters *MrcData
   );
 
 #endif // _MrcGeneral_h_

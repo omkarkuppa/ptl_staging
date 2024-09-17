@@ -759,7 +759,7 @@ UpdateUsbCRetimerInfoResetCallback (
     }
 
     UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_PD_DRIVE);
-    Status = UsbCRetimerProtocol->Drive (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
+    Status = DriveToFwUpdateMode (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
     WaitForRetimerReadyToUpdate = (UINTN) PcdGet32 (PcdTcssWaitRetimerDeviceReady);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "UpdateUsbCRetimerInfoResetCallback - Failed to drive ports to TBT mode (%r).\n", Status));
@@ -857,7 +857,7 @@ UpdateUsbCRetimerInfoResetCallback (
     // Restore all TBT ports back to its original mode after communicating with Retimer.
     //
     UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_PD_RESTORE);
-    Status = UsbCRetimerProtocol->Restore (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
+    Status = RestoreToOriginalMode (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "Failed to restore to TBT ports to original mode (%r).\n", Status));
     }

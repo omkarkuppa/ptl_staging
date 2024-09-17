@@ -82,3 +82,19 @@ MrcGetDefaultRcompTarget (
 
   return RcompTarget;
 }
+
+/**
+  This function runs View Pin Calibration
+
+  @param[in, out] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - mrcSuccess if successful or an error status.s
+**/
+MrcStatus
+MrcViewPinCal (
+  IN OUT MrcParameters* const MrcData
+  )
+{
+  // Not currently enabled for PTL
+  return mrcSuccess;
+}

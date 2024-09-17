@@ -59,6 +59,144 @@ FspSecPlatformInformation2 (
      OUT EFI_SEC_PLATFORM_INFORMATION_RECORD2 *PlatformInformationRecord2
   );
 
+/**
+  This function performs Active Management PEI Policy update.
+
+  @param[in, out] SiPolicyPpi   The Si Policy PPI instance
+  @param[in]      FspsUpd       The pointer of FspsUpd
+
+  @retval EFI_SUCCESS  The function completed successfully
+**/
+EFI_STATUS
+EFIAPI
+FspUpdatePeiAmtPolicy (
+  IN OUT SI_POLICY_PPI    *SiPolicyPpi,
+  IN     FSPS_UPD         *FspsUpd
+  );
+
+/**
+  This function performs CPU PEI Policy initialization.
+
+  @param[in] SiPolicyPpi           The SI Policy PPI instance
+  @param[in] FspsUpd               The pointer of FspsUpd
+
+  @retval EFI_SUCCESS              The PPI is installed and initialized.
+  @retval EFI ERRORS               The PPI is not successfully installed.
+  @retval EFI_OUT_OF_RESOURCES     Do not have enough resources to initialize the driver
+**/
+EFI_STATUS
+EFIAPI
+FspUpdatePeiCpuPolicy (
+  IN OUT SI_POLICY_PPI        *SiPolicyPpi,
+  IN     FSPS_UPD             *FspsUpd
+  );
+
+/**
+This function performs Security PEI Policy initialization.
+
+@param[in] SiPolicyPpi           The SI Policy PPI instance
+@param[in] FspsUpd               The pointer of FspsUpd
+
+@retval EFI_SUCCESS              The PPI is installed and initialized.
+@retval EFI ERRORS               The PPI is not successfully installed.
+@retval EFI_OUT_OF_RESOURCES     Do not have enough resources to initialize the driver
+**/
+EFI_STATUS
+EFIAPI
+FspUpdatePeiSecurityPolicy (
+  IN OUT SI_POLICY_PPI        *SiPolicyPpi,
+  IN     FSPS_UPD             *FspsUpd
+);
+
+/**
+  This function performs ME PEI Policy update.
+
+  @param[in] SiPolicy       The SI Policy PPI instance
+  @param[in] FspsUpd        The pointer of FspsUpd
+
+  @retval EFI_SUCCESS  The function completed successfully
+**/
+EFI_STATUS
+EFIAPI
+FspUpdatePeiMePolicy (
+  IN OUT SI_POLICY_PPI    *SiPolicy,
+  IN     FSPS_UPD         *FspsUpd
+  );
+
+/**
+  This function performs PCH PEI Policy update.
+
+  @param[in, out] SiPolicy      The SI Policy PPI instance
+  @param[in]      FspsUpd       The pointer of FspsUpd
+
+  @retval EFI_SUCCESS  The function completed successfully
+**/
+EFI_STATUS
+EFIAPI
+FspUpdatePeiPchPolicy (
+  IN OUT SI_POLICY_PPI    *SiPolicy,
+  IN     FSPS_UPD         *FspsUpd
+  );
+
+/**
+  This function performs PCH PEI Policy update.
+
+  @param[in, out] PchPolicy     The PCH Policy PPI instance
+  @param[in]      FspsUpd       The pointer of FspsUpd
+
+  @retval EFI_SUCCESS  The function completed successfully
+**/
+EFI_STATUS
+EFIAPI
+FspUpdatePeiAttachedPchPolicy (
+  IN OUT SI_POLICY_PPI    *PchPolicy,
+  IN     FSPS_UPD         *FspsUpd
+  );
+
+/**
+  This function performs SA PEI Policy update.
+
+  @param[in out] SiPolicy          SI_POLICY_PPI PPI
+  @param[in]     FspsUpd           The pointer of FspsUpd
+
+  @retval EFI_SUCCESS              The policy is installed and initialized.
+**/
+EFI_STATUS
+FspUpdatePeiSaPolicy (
+  IN OUT SI_POLICY_PPI   *SiPolicy,
+  IN     FSPS_UPD        *FspsUpd
+  );
+
+/**
+  This function performs TBT PEI Policy update.
+
+  @param[in] SiPolicy       The SI Policy PPI instance
+  @param[in] FspsUpd        The pointer of FspsUpd
+
+  @retval EFI_SUCCESS  The function completed successfully
+**/
+EFI_STATUS
+EFIAPI
+FspUpdatePeiTbtPolicy (
+  IN OUT SI_POLICY_PPI    *SiPolicy,
+  IN     FSPS_UPD         *FspsUpd
+  );
+
+/**
+  This function performs Silicon PEI Policy initialization.
+
+  @param[in] SiPolicy       The Silicon Policy PPI instance
+  @param[in] FspsUpd        The pointer of FspsUpd
+
+  @retval EFI_SUCCESS  The function completed successfully
+**/
+EFI_STATUS
+EFIAPI
+FspUpdatePeiSiPolicy (
+  IN OUT SI_POLICY_PPI  *SiPolicy,
+  IN     FSPS_UPD       *FspsUpd
+  );
+
 EFI_STATUS
 EFIAPI
 InstallMonoStatusCode (
@@ -135,4 +273,10 @@ MpWrapperStartupAllCPUs (
   IN  VOID                       *ProcedureArgument      OPTIONAL
   );
 
+EFI_STATUS
+EFIAPI
+FspUpdatePeiFspVPolicy (
+  IN OUT SI_POLICY_PPI  *SiPolicy,
+  IN     FSPS_UPD       *FspsUpd
+  );
 #endif

@@ -399,6 +399,13 @@ Scope (\_SB_.PC00) {
   //
   include ("Fru/PtlPcd/AcpiTables/Dsdt/PtlPcdGbe.asl")
 
+#if FixedPcdGet8(PcdTsnSupport) == 0x1
+  //
+  // TSN Controllers
+  //
+  include ("Fru/PtlPcd/AcpiTables/Dsdt/PtlPcdTsn.asl")
+#endif
+
   //
   // xHCI Controller - Device 20, Function 0
   //

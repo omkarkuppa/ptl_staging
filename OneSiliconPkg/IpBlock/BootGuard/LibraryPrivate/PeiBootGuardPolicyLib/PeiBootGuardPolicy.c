@@ -44,6 +44,7 @@ CpuSecurityPreMemConfigPrint (
   DEBUG ((DEBUG_INFO, " SkipStopPbet = 0x%x\n", CpuSecurityPreMemConfig->SkipStopPbet));
   DEBUG ((DEBUG_INFO, " ResetAux = 0x%x\n", CpuSecurityPreMemConfig->ResetAux));
   DEBUG ((DEBUG_INFO, " TxtAcheckRequest = 0x%x\n", CpuSecurityPreMemConfig->TxtAcheckRequest));
+  DEBUG ((DEBUG_INFO, " TxtPowerdownRequest = 0x%x\n", CpuSecurityPreMemConfig->TxtPowerdownRequest));
   DEBUG ((DEBUG_INFO, " TseEnable = 0x%x\n", CpuSecurityPreMemConfig->TseEnable));
   DEBUG ((DEBUG_INFO, " TdxActmModuleAddr = 0x%x\n", CpuSecurityPreMemConfig->TdxActmModuleAddr));
   DEBUG ((DEBUG_INFO, " TdxActmModuleSize = 0x%x\n", CpuSecurityPreMemConfig->TdxActmModuleSize));

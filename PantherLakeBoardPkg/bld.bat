@@ -235,9 +235,15 @@ call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOpt
       set SCRIPT_ERROR=1
     )
 
+    if %PTL_BUILD% EQU TRUE (
+      @set FBM_CONFIG_TXT=%WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmConfig.txt
+    ) else (
+      @set FBM_CONFIG_TXT=%WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmConfig_wcl.txt
+    )
+
     @echo call FbmGen to generate FBM
     @call %PYTHON_COMMAND% %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmGen.py ^
-      -c %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmConfig.txt ^
+      -c %FBM_CONFIG_TXT% ^
       -o %WORKSPACE%\Build\%FSP_PKG_NAME%\%FSP_TARGET%_%TOOL_CHAIN_TAG%\FV ^
       -f %WORKSPACE_FSP_BIN%\PantherLakeFspBinPkg\Fsp.fd ^
       --ltsign-tool-path %WORKSPACE_BINARIES%\Tools\ltsign\ltsign.exe ^
@@ -408,7 +414,8 @@ set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% %UPL_BUILD_OPTION_PCD%
 :SkipUefiPayload
 @if %SILENT_MODE% EQU TRUE goto BldSilent
 @set BUILDTIMESTAMP=%time%
-set EXT_BUILD_FLAGS=%EXT_BUILD_FLAGS% -y %WORKSPACE%\Build\%PLATFORM_BOARD_PACKAGE%\BoardPkgReport.log
+set EXT_BUILD_FLAGS=%EXT_BUILD_FLAGS%
+@REM  -y %WORKSPACE%\Build\%PLATFORM_BOARD_PACKAGE%\BoardPkgReport.log
 call build  %SI_BUILD_OPTION_PCD% %BUILD_OPTION_PCD% -n %NUMBER_OF_PROCESSORS% %REBUILD_MODE% %EXT_BUILD_FLAGS%
 
 @echo %CD%

@@ -509,7 +509,7 @@ MrcLpMode4Enable (
   ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
   GetSetEn  = 0x1;
 
-  if (ExtInputs->LpMode4 != 0) {
+  if (ExtInputs->LpMode4 != 0 && Outputs->IsLpddr5) {
     MrcGetSetNoScope (MrcData, GsmIocEnableLpMode4, WriteCached | PrintValue, &GetSetEn);
   }
 
@@ -539,7 +539,7 @@ MrcLpMode4Enable (
     PmOppSrPolicy.Bits.read_delay = 1;
     PmOppSrPolicy.Bits.read_req   = 1;
     PmOppSrPolicy.Bits.write_req  = 8;
-    PmOppSrPolicy.Bits.LPMode4_EN = ExtInputs->LpMode4;
+    PmOppSrPolicy.Bits.LPMode4_EN = Outputs->IsLpddr5 ? ExtInputs->LpMode4 : 0;
     MrcWriteCR (MrcData, PmOppSrPolicyOffset1, PmOppSrPolicy.Data);
   }
 
@@ -547,9 +547,4 @@ MrcLpMode4Enable (
   SrxDelay = DIVIDECEIL (MRC_LPMODE4_SRX_DELAY_PS, Outputs->Dclkps);
   GetSetVal = SrxDelay;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctLpMode4SrxDelay, WriteCached | PrintValue, &GetSetVal);
-  GetSetVal = DIVIDECEIL (MRC_WR_OSCL_RUNTIME_PS, Outputs->Dclkps);
-  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctWrOsclRuntime, WriteToCache | PrintValue, &GetSetVal);
-  GetSetVal = DIVIDECEIL (MRC_RD_OSCL_RUNTIME_PS, Outputs->Dclkps);
-  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctRdOsclRuntime, WriteToCache | PrintValue, &GetSetVal);
-
 }

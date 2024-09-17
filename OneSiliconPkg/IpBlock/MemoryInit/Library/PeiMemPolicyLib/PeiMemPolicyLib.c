@@ -164,9 +164,7 @@ MrcAddConfigBlocksPreMem (
 
   DEBUG ((DEBUG_INFO, "MrcAddConfigBlocksPreMem: sizeof (MEMORY_CONFIGURATION): %u, sizeof (MEMORY_CONFIG_NO_CRC): %u\n", sizeof (MEMORY_CONFIGURATION), sizeof (MEMORY_CONFIG_NO_CRC)));
   Status = AddComponentConfigBlocks(ConfigBlockTableAddress, &mMrcIpBlocksPreMem[0], sizeof (mMrcIpBlocksPreMem) / sizeof (COMPONENT_BLOCK_ENTRY));
-  if (Status == EFI_SUCCESS) {
-    MrcLoadSamplePolicyPreMem(ConfigBlockTableAddress);
-  }
+
   return Status;
 }
 

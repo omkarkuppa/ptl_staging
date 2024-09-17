@@ -107,35 +107,36 @@ Defines Platform BoardIds
 
 #define SkuIdPtlUHLp5Rvp1                 0x00000001
 #define SkuIdPtlUHLp5MemSdRvp1            0x00010001
-#define SkuIdPtlUHLp5MemSdMeccRvp1        0x00070001
-#define SkuIdPtlUHLp5MemSdEpsRvp1         0x00030001
 #define SkuIdPtlUHLp5MemSktPnpRvp1        0x00020001
+#define SkuIdPtlUHLp5MemSdEpsRvp1         0x00030001
 #define SkuIdPtlUHLp5MemSktChromeRvp1     0x00040001
 #define SkuIdPtlUHLp5MemSdChromeRvp1      0x00050001
 #define SkuIdPtlUHLp5Rvp1Bom              0x00060001
-#define SkuIdPtlUHLp5Aep                  0x00000007
-#define SkuIdPtlUHLp5AepBom               0x00010007
+#define SkuIdPtlUHLp5MemSdMeccRvp1        0x00070001
 
 #define SkuIdPtlUHCammDTbTRvp2            0x00000002
-#define SkuIdPtlUHCammDTbTRvp2Bom         0x00010002
+#define SkuIdPtlUHCammDTbTExtGfxRvp2      0x00010002
+#define SkuIdPtlUHCammDTbTRvp2Bom         0x00060002
 
 #define SkuIdPtlUHLp5Rvp3                 0x00000003
 #define SkuIdPtlUHLp5MemSdRvp3            0x00010003
 #define SkuIdPtlUHLp5MemSktPnpRvp3        0x00020003
+#define SkuIdPtlUHLp5Rvp3PpvBom           0x00050003
 #define SkuIdPtlUHLp5Rvp3Bom              0x00060003
+
+#define SkuIdPtlUHDdr5Rvp4                0x00000004
+#define SkuIdPtlUHDdr5Rvp4Chrome          0x00040004
+#define SkuIdPtlUHDdr5Rvp4PpvBom          0x00050004
+#define SkuIdPtlUHDdr5Rvp4Bom             0x00060004
+#define SkuIdPtlUHDdr5Rvp4Dp              0x01000004
+#define SkuIdPtlUHDdr5Rvp4DpChrome        0x01040004
+#define SkuIdPtlUHDdr5Rvp4DpPpvBom        0x01050004
+#define SkuIdPtlUHDdr5Rvp4DpBom           0x01060004
+
 #define SkuIdPtlHLp5Gcs1                  0x00000011
 #define SkuIdPtlHLp5Gcs2                  0x00000012
 
-#define SkuIdPtlUHDdr5Rvp4                0x00000004
-#define SkuIdPtlUHDdr5Rvp4Bom             0x00060004
-#define SkuIdPtlUHDdr5Rvp4Chrome          0x00040004
-#define SkuIdPtlUHDdr5Rvp4Dp              0x01000004
-#define SkuIdPtlUHCammDTbTRvp2            0x00000002
-#define SkuIdPtlUHLp5Rvp3Bom              0x00060003
-#define SkuIdPtlUHLp5Rvp3PpvBom           0x00050003
-#define SkuIdPtlUHDdr5Rvp4PpvBom          0x00050004
-#define SkuIdPtlUHDdr5Rvp4DpPpvBom        0x01050004
-#define SkuIdPtlUHDdr5Rvp4DpChrome        0x01040004
-#define SkuIdPtlUHDdr5Rvp4DpBom           0x01060004
+#define SkuIdPtlUHLp5Aep                  0x00000007
+#define SkuIdPtlUHLp5AepBom               0x00010007
 
 #endif // _PLATFORM_BOARD_ID_H_

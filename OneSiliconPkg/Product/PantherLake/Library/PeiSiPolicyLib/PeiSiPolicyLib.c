@@ -137,7 +137,9 @@ SiCreateConfigBlocks (
   TotalBlockSize += CnviGetConfigBlockTotalSize ();
   TotalBlockSize += GbeGetConfigBlockTotalSize ();
   TotalBlockSize += HdaGetConfigBlockTotalSize ();
+#if FixedPcdGet8(PcdTsnSupport) == 0x1
   TotalBlockSize += TsnGetConfigBlockTotalSize ();
+#endif
   TotalBlockSize += PtlPcdIshGetConfigBlockTotalSize ();
   TotalBlockSize += ScsGetConfigBlockTotalSize ();
   TotalBlockSize += UsbGetConfigBlockTotalSize ();
@@ -205,7 +207,9 @@ SiCreateConfigBlocks (
   ASSERT_EFI_ERROR (Status);
   Status = GbeAddConfigBlock (SiPolicy);
   ASSERT_EFI_ERROR (Status);
+#if FixedPcdGet8(PcdTsnSupport) == 0x1
   Status = TsnAddConfigBlock (SiPolicy);
+#endif
   ASSERT_EFI_ERROR (Status);
   Status = HdaAddConfigBlock (SiPolicy);
   ASSERT_EFI_ERROR (Status);

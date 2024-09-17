@@ -57,6 +57,8 @@
   DxeVmdInitFruLib
   RtcAccessLib
   MemoryAddressDecodeEncodeLib
+  CpuLib
+  VmdInfoLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -80,6 +82,7 @@
   gIgdOpRegionProtocolGuid                     ## PRODUCES
   gEfiFirmwareVolume2ProtocolGuid              ## CONSUMES
   gTopSwapControlProtocolGuid                  ## PRODUCES
+  gEfiMpServiceProtocolGuid                    ## CONSUMES
 
 [Guids]
   gEfiEndOfDxeEventGroupGuid                   ## CONSUMES

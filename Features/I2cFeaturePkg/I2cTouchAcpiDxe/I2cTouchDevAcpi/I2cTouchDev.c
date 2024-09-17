@@ -156,7 +156,7 @@ PatchI2cDevicesBuffer(
             Operation = I2CStartPointer + 18;
             if(*Operation == AML_DWORD_PREFIX){ 
                 DataPtr = I2CStartPointer + 19;
-                CopyMem (DataPtr, &I2cTPTD->TouchPanelNvsVar.Touchpanel0IrqGpio,sizeof (UINT32));
+                CopyMem (DataPtr, &I2cTPTD->TouchPanelNvsVar.Touchpanel1IrqGpio,sizeof (UINT32));
             }
         }
         break;

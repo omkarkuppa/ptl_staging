@@ -29,8 +29,6 @@
 #include <Library/FspSwitchStackLib.h>
 #include <Ppi/IGpuPlatformPolicyPpi.h>
 #include <Library/PlatformFspMultiPhaseLib.h>
-#include <SiliconPolicyHob.h>
-#include <IGpuConfig.h>
 
 extern EDKII_PEI_MP_SERVICES2_PPI            mMpServices2WrapperPpi;
 
@@ -93,33 +91,17 @@ GetVbtData (
   OUT UINT32               *VbtSize
 )
 {
-  EFI_STATUS            Status;
-  IGPU_PEI_CONFIG       *IGpuConfig;
-  SI_POLICY_PPI         *SiPolicyPpi;
+  IGPU_DATA_HOB         *IGpuDataHob;
 
-  IGpuConfig = NULL;
-  SiPolicyPpi = NULL;
-  ///
-  /// Locate IGpuConfig
-  ///
-  Status = PeiServicesLocatePpi (
-                &gSiPolicyPpiGuid,
-                0,
-                NULL,
-                (VOID **) &SiPolicyPpi
-                );
-  ASSERT_EFI_ERROR (Status);
-  if (SiPolicyPpi == NULL) {
-    return Status;
-  }
-  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gGraphicsPeiConfigGuid, (VOID *) &IGpuConfig);
-  ASSERT_EFI_ERROR (Status);
-  if (IGpuConfig == NULL) {
-    return Status;
-  }
+  IGpuDataHob = (IGPU_DATA_HOB *) GetFirstGuidHob (&gIGpuDataHobGuid);
 
-  *VbtAddress = (UINT32)(UINTN) IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr;
-  *VbtSize    = IGpuConfig->PeiDisplayConfig.VbtSize;
+  if (IGpuDataHob != NULL) {
+    *VbtAddress = IGpuDataHob->GraphicsConfigPtr;
+    *VbtSize    = IGpuDataHob->VbtSize;
+  } else {
+    DEBUG ((EFI_D_ERROR, "IGpu Data Hob not found\n"));
+    return EFI_NOT_FOUND;
+  }
 
   return EFI_SUCCESS;
 }
@@ -130,31 +112,15 @@ GetPeiPlatformLidStatus (
   OUT LID_STATUS  *CurrentLidStatus
 )
 {
-  EFI_STATUS            Status;
-  IGPU_PEI_CONFIG       *IGpuConfig;
-  SI_POLICY_PPI         *SiPolicyPpi;
+  IGPU_DATA_HOB                *IGpuDataHob;
 
-  IGpuConfig = NULL;
-  SiPolicyPpi = NULL;
-  ///
-  /// Locate IGpuConfig
-  ///
-  Status = PeiServicesLocatePpi (
-                &gSiPolicyPpiGuid,
-                0,
-                NULL,
-                (VOID **) &SiPolicyPpi
-                );
-  ASSERT_EFI_ERROR (Status);
-  if (SiPolicyPpi == NULL) {
-    return Status;
+  IGpuDataHob = (IGPU_DATA_HOB *) GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob != NULL) {
+    *CurrentLidStatus = IGpuDataHob->LidStatus;
+  } else {
+    DEBUG ((EFI_D_ERROR, "IGpu Data Hob not found\n"));
+    return EFI_NOT_FOUND;
   }
-  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gGraphicsPeiConfigGuid, (VOID *) &IGpuConfig);
-  ASSERT_EFI_ERROR (Status);
-  if (IGpuConfig == NULL) {
-    return Status;
-  }
-  *CurrentLidStatus = IGpuConfig->PeiDisplayConfig.LidStatus;
 
   return EFI_SUCCESS;
 }
@@ -351,28 +317,16 @@ FspApiModePolicyInitUpdateDone (
   )
 {
   EFI_STATUS                     Status;
+  FSPS_UPD                       *FspsUpd;
   SI_POLICY_PPI                  *SiPolicyPpi;
   PEI_SI_DEFAULT_POLICY_INIT_PPI *PeiSiDefaultPolicyInitPpi;
   SI_POLICY_PPI                  *PchPolicyPpi;
-  EFI_HOB_GUID_TYPE              *GuidHob;
-  SILICON_POLICY_HOB             *SiliconPolicyHob;
-  SI_PREMEM_POLICY_PPI           *SiPreMemPolicyPpi;
 
   DEBUG ((DEBUG_INFO, "Updating SiPolicy according to FSPS_UPD...\n"));
-
-  GuidHob = GetFirstGuidHob (&gSiliconPolicyHobGuid);
-  if (GuidHob == NULL) {
-    ASSERT_EFI_ERROR (FALSE);
-    CpuDeadLoop ();
-  }
-  SiliconPolicyHob = (SILICON_POLICY_HOB *) GET_GUID_HOB_DATA (GuidHob);
-
-  Status = PeiServicesLocatePpi (&gSiPreMemPolicyPpiGuid, 0, NULL, (VOID **) &SiPreMemPolicyPpi);
-  ASSERT_EFI_ERROR (Status);
-
-  SiliconPolicyHob->SiPreMemPolicyPpi = (EFI_PHYSICAL_ADDRESS) (UINTN) SiPreMemPolicyPpi;
+  FspsUpd = GetFspSiliconInitUpdDataPointer ();
 
   PeiSiDefaultPolicyInitPpi = NULL;
+  PchPolicyPpi = NULL;
   Status = PeiServicesLocatePpi (
             &gPchDefaultPolicyInitPpiGuid,
             0,
@@ -389,8 +343,10 @@ FspApiModePolicyInitUpdateDone (
                 NULL,
                 (VOID **) &PchPolicyPpi
                 );
-      SiliconPolicyHob->PchPolicyPpi = (EFI_PHYSICAL_ADDRESS) (UINTN) PchPolicyPpi;
       ASSERT_EFI_ERROR (Status);
+      if ((Status == EFI_SUCCESS) && (PchPolicyPpi != NULL)) {
+        FspUpdatePeiAttachedPchPolicy (PchPolicyPpi, FspsUpd);
+      }
     }
   }
 
@@ -417,11 +373,24 @@ FspApiModePolicyInitUpdateDone (
                   );
       ASSERT_EFI_ERROR (Status);
 
-      SiliconPolicyHob->SiPolicyPpi = (EFI_PHYSICAL_ADDRESS) (UINTN) SiPolicyPpi;
-
-      SetFspApiReturnStatus (EFI_SUCCESS);
-      Pei2LoaderSwitchStack ();
-      DEBUG ((DEBUG_INFO, "Return from BL After FspSiliconPolicyInit done\n"));
+      if ((Status == EFI_SUCCESS) && (SiPolicyPpi != NULL)) {
+        FspUpdatePeiPchPolicy (SiPolicyPpi, FspsUpd);
+        FspUpdatePeiCpuPolicy (SiPolicyPpi, FspsUpd);
+        //
+        // Update Security Policy before install CpuPolicyPpi
+        //
+        FspUpdatePeiSecurityPolicy (SiPolicyPpi, FspsUpd);
+        FspUpdatePeiMePolicy (SiPolicyPpi, FspsUpd);
+        FspUpdatePeiSaPolicy (SiPolicyPpi, FspsUpd);
+#if FixedPcdGetBool(PcdAmtEnable) == 1
+        FspUpdatePeiAmtPolicy (SiPolicyPpi, FspsUpd);
+#endif
+        FspUpdatePeiTbtPolicy (SiPolicyPpi, FspsUpd);
+        FspUpdatePeiSiPolicy (SiPolicyPpi, FspsUpd);
+#if FixedPcdGetBool (PcdFspVEnable) == 1
+        FspUpdatePeiFspVPolicy (SiPolicyPpi, FspsUpd);
+#endif
+      }
     }
 
   }
@@ -459,6 +428,7 @@ FspInitEntryPoint (
   EFI_PEI_PPI_DESCRIPTOR         *PpiDescriptor;
   EFI_BOOT_MODE                  BootMode;
   MSR_CORE_THREAD_COUNT_REGISTER MsrCoreThreadCount;
+  IGPU_DATA_HOB                  *IGpuDataHob;
 
   //
   // Silicon code will produce Default Policy Init PPI in PrePolicy phase,
@@ -509,6 +479,14 @@ FspInitEntryPoint (
     MsrCoreThreadCount.Uint64 = AsmReadMsr64 (MSR_CORE_THREAD_COUNT);
     DEBUG ((DEBUG_INFO, "MaxLogicProcessors = %d\n", MsrCoreThreadCount.Bits.Threadcount));
     PcdSet32S (PcdCpuMaxLogicalProcessorNumber, (UINT32) MsrCoreThreadCount.Bits.Threadcount);
+
+    IGpuDataHob = (IGPU_DATA_HOB *) GetFirstGuidHob (&gIGpuDataHobGuid);
+    if (IGpuDataHob != NULL) {
+      DEBUG ((DEBUG_INFO, "Update LidStatus, VbtData to Hob\n"));
+      IGpuDataHob->LidStatus         = FspsUpd->FspsConfig.LidStatus;
+      IGpuDataHob->GraphicsConfigPtr = (UINT32) FspsUpd->FspsConfig.GraphicsConfigPtr;
+      IGpuDataHob->VbtSize           = FspsUpd->FspsConfig.VbtSize;
+    }
 
     //
     // For FSP API mode, Install PEI_IGPU_PLATFORM_POLICY_PPI.

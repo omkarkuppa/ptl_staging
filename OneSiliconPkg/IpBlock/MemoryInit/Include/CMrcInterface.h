@@ -24,6 +24,9 @@
 #include "MrcSpdData.h"
 #include "CMrcInterfaceGlobalTypes.h"
 
+#include <Ptl/CMrcExtTypes.h>
+
+
 #include <Ptl/MrcGenSaveRestoreRegCount.h>
 
 
@@ -336,7 +339,9 @@ typedef enum {
 #define MAX_DDR5_16Gb_x8_BANKS    (32)      ///< Max Number of Banks in DDR5 16Gb x8.  This is a combination of BankGroup and Bank.
 #define MAX_DDR5_16Gb_x16_BANKS   (16)      ///< Max Number of Banks in DDR5 16Gb x16.  This is a combination of BankGroup and Bank.
 #define MAX_DDR5_BANK_GROUPS      (8)       ///< Max Number of Bank Groups for DDR5.
+#define MAX_DDR5_BANK_GROUPS      (8)       ///< Max Number of Bank Groups for DDR5
 #define MAX_DDR5_BANKS_PER_BG     (4)       ///< Max Number of Banks per-BG for DDR5.
+#define MIN_DDR5_BANK_MODES       (2)       ///< Min Number of Banks for DDR5 Org.
 #define MAX_SYS_SDRAM             (MAX_CONTROLLER * MAX_SDRAM_IN_DIMM) ///< The maximum number of SDRAMs per CPU socket when ECC is enabled.
 #define MAX_BYTE_IN_LP_CHANNEL    (2)       ///< Max number of Bytes in a LPDDR Channel
 #define MAX_LPDDR5_BANKS          (16)      ///< Max Number of Banks for LPDDR5 (not in BG mode)
@@ -482,6 +487,8 @@ typedef enum {
 #define SPD5_DRAM_MFG_END      553         ///< The ending point for the SPD DRAM manufacturing data.
 #define SPDLP_MANUF_START      320         ///< The starting point for the SPD manufacturing data.
 #define SPDLP_MANUF_END        328         ///< The ending point for the SPD manufacturing data.
+#define SPDLP_JEDEC_SPEC_MANUF_START   512 ///< The starting point for the SPD manufacturing data.
+#define SPDLP_JEDEC_SPEC_MANUF_END     520 ///< The ending point for the SPD manufacturing data.
 
 #define SSKPD_PCU_SKPD_MRC_RUNNING              0x2ULL // BIT1
 #define SSKPD_PCU_SKPD_MEM_BASICMEMORYTEST_FAIL 0x4ULL // BIT2
@@ -507,6 +514,8 @@ typedef enum {
 #define PPR_REPAIR_STATUS_FAIL                  (0)
 #define PPR_REPAIR_STATUS_UNCORRECTABLE         (1)
 #define PPR_REPAIR_STATUS_SUCCESS               (2)
+
+#define NUM_LCPLL 2
 
 #pragma pack (push, 1)
 
@@ -639,6 +648,7 @@ typedef enum {
   OemDccPiSerializerCal,    ///< before DCC PI Seriallizer Calibration
   OemVccLvrAutoTrim,        ///< before Vcc LVR Auto Trim
   OemDccTlineClkCal,        ///< before Tline CLK calibration
+  OemQClkDcc,             ///< before QCLK DCC calibration
   OemMrcDdr5RxXTalk,        ///< before Ddr5 Rx Cross-Talk Cancellation
   OemMarginLimitCheck,      ///< before Margin Limit Check
   OemTestMtgRegAccess,      ///< before MrcTestMtgRegAccess
@@ -717,8 +727,6 @@ typedef BOOLEAN      (EFIAPI *MRC_GET_SPD_DATA)            (UINT8 BootMode, UINT
 typedef BOOLEAN      (EFIAPI *MRC_GET_RANDOM_NUMBER)       (UINT32 *Rand);
 typedef UINT32       (EFIAPI *MRC_CPU_MAILBOX_READ)        (UINT32 Command, UINT32 *Value, UINT32 *Status);
 typedef UINT32       (EFIAPI *MRC_CPU_MAILBOX_WRITE)       (UINT32 Command, UINT32 Value, UINT32 *Status);
-typedef UINT32       (EFIAPI *MRC_GET_MEMORY_VDD)          (void *MrcData, UINT32 DefaultVdd);
-typedef UINT32       (EFIAPI *MRC_SET_MEMORY_VDD)          (void *MrcData, UINT32 DefaultVdd, UINT32 Value);
 typedef UINT32       (EFIAPI *MRC_CHECKPOINT)              (void *MrcData, UINT32 CheckPoint, void *Status);
 typedef void         (EFIAPI *MRC_DEBUG_HOOK)              (void *GlobalData, UINT16 DisplayDebugNumber);
 #ifdef MRC_MINIBIOS_BUILD
@@ -733,16 +741,9 @@ typedef void         (EFIAPI *MRC_RETURN_FROM_SMC)         (void *GlobalData, UI
 typedef void         (EFIAPI *MRC_DRAM_RESET)              (UINT32 PciEBaseAddress, UINT32 ResetValue);
 typedef void         (EFIAPI *MRC_DELAY_NS)                (void *MrcData, UINT32 DelayNs);
 typedef RETURN_STATUS(EFIAPI *MRC_SET_LOCK_PRMRR)          (UINT64 PrmrrBase, UINT32 PrmrrSize);
-typedef void         (EFIAPI *MRC_TME_INIT)                (UINT32 TmeEnable, UINT64 TmeExcludeBase, UINT64 TmeExcludeSize);
-typedef void         (EFIAPI *MRC_MEMORY_MAP_INIT)         (void *MrcData);
-typedef void         (EFIAPI *MRC_MEMORY_MAP_LOCK)         (void);
-typedef void         (EFIAPI *MRC_SET_IA_IMR_EXCLUSION)      (UINT32 ImrExcBase, UINT32 ImrExcLimit);
-typedef void         (EFIAPI *MRC_SET_IA_IMR_EXCLUSION_LOCK) (void);
-typedef void         (EFIAPI *MRC_SET_GFX_MEM_MAP)         (void);
 
-/// Function calls that are called external to the MRC.
-///   This structure needs to be aligned with SA_FUNCTION_CALLS.  All functions that are
-///   not a part of SA_FUNCTION_CALLS need to be at the end of the structure.
+/// These functions are implemented outside of the MRC Core.
+/// They can be modified by OEM as needed.
 typedef struct {
   MRC_IO_READ_8               MrcIoRead8;
   MRC_IO_READ_16              MrcIoRead16;
@@ -787,10 +788,7 @@ typedef struct {
   MRC_MSR_WRITE_64            MrcWriteMsr64;
   MRC_RETURN_FROM_SMC         MrcReturnFromSmc;
   MRC_DELAY_NS                MrcDelayNs;
-  // End of synchronization to SA_FUNCTION_CALLS
   MRC_SET_LOCK_PRMRR          MrcSetLockPrmrr;
-  MRC_SET_IA_IMR_EXCLUSION      MrcSetIaImrExclusion;
-  MRC_SET_IA_IMR_EXCLUSION_LOCK MrcSetIaImrExclusionLock;
 } MRC_FUNCTION;
 
 typedef union {
@@ -1324,14 +1322,12 @@ typedef enum {
 typedef enum {
   ipVerDdrIoMtl = 7,         ///< Gen7: MeteorLake
   ipVerDdrIoLnlPtl = 8,      ///< Gen8: LunarLake / PantherLake
-  ipVerDdrIoNvl = 10         ///< Gen10: NovaLake
 } MrcDdrIoIpVer;
 
 /// Define the Version of IP for MC.
 typedef enum {
   ipVerMcMtl = 9,       ///< Gen9: MeteorLake
   ipVerMcLnlPtl = 10,   ///< Gen10: LunarLake/PantherLake
-  ipVerMcNvl = 11,      ///< Gen11: NovaLake
 } MrcMcIpVer;
 
 /// Define the MRC Test Environment
@@ -1399,18 +1395,6 @@ typedef enum {
   RetrainLimit,
   MarginLimitMax
 } MRC_MARGIN_LIMIT_TYPE;
-
-///
-/// Refresh watermarks constraints
-///
-#define REFRESH_WM_LOW            0
-#define REFRESH_WM_HIGH           1
-
-#define REFRESH_PANIC_WM_LOW      3
-#define REFRESH_PANIC_WM_HIGH     7
-
-#define REFRESH_HP_WM_LOW         1
-#define REFRESH_HP_WM_HIGH        6
 
 typedef enum {
   Rfm,             // Default RFM
@@ -1571,6 +1555,8 @@ typedef struct {
   UINT64     SeamrrBase;   ///< Holds the Seamrr base
   MemoryMapHole  MemoryHoles[MEMORY_MAP_MAX_HOLE];
   UINT32     SharedMailboxBase;
+  UINT64     TopUseableMemAddr;
+  UINT64     TopUseableMemSize;
 } MrcMemoryMap;
 
 /// DIMM timings
@@ -1751,6 +1737,7 @@ typedef struct {
   UINT8          SdramWidth;              ///< DIMM SDRAM width.
   UINT8          SdramWidthIndex;         ///< DIMM SDRAM width index (0 = x4, 1 = x8, 2 = x16, 3 = x32).
   UINT8          DensityIndex;            ///< Total SDRAM capacity index (0 = 256Mb, 1 = 512Mb, 2 = 1Gb, etc).
+  UINT8          DeviceDensity;           ///< Device density in Gb
   UINT8          tMAC;                    ///< Maximum Activate Count for pTRR.
   UINT8          ReferenceRawCard;        ///< Indicates which JEDEC reference design raw card was used as the basis for the module assembly.
   UINT8          XmpSupport;              ///< Indicates if XMP profiles are supported. 0 = None, 1 = XMP1 only, 2 = XMP2 only, 3 = All.
@@ -1914,7 +1901,8 @@ typedef struct {
   BOOLEAN           IsXmpSagvEnabled;              ///< TRUE if Dynamic Memory Boost feature or Realtime Memory Frequency feature has been enabled and trained
   McRegOffsets      OffsetKnobs;                              ///< Options for MC Register Offset settings
   BOOLEAN           DynamicMemoryBoostTrainingFailed;         ///< TRUE if Dynamic Memory Boost failed to train
-  UINT8             UsedForArrayAlign[2];                     ///< Ensure that the variables contained in InternalOnly are also aligned, otherwise an error may occur on external build
+  BOOLEAN           IsLP5Camm2;                                ///< TRUE if current memory is JEDEC spec LP5 CAMM
+  UINT8             UsedForArrayAlign[3];                     ///< Ensure that the variables contained in InternalOnly are also aligned, otherwise an error may occur on external build
   UINT32            SaMemCfgCrcNoOffsetKnobs;                 ///< The CRC32 of the SA memory configuration without OffsetKnobs.
   UINT8             ValidRankMask;                 ///< Rank bit map.  Includes both channels across memory controllers.
   UINT8             ValidChBitMask;                ///< Channel bit map of the populated channels
@@ -1928,8 +1916,8 @@ typedef struct {
   BOOLEAN           MrXPdaDfeTap2Enabled;          ///< Defines if MRs of DFE TAP2 is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap3Enabled;          ///< Defines if MRs of DFE TAP3 is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap4Enabled;          ///< Defines if MRs of DFE TAP4 is required as PDA for this channel.
-  BOOLEAN           IsDdr5Hynix;                  ///< TRUE if any DDR5 Hynix DIMM is detected otherwise FALSE
-  UINT8             ReservedBytesAlign2[2];        ///< Align to 4 bytes for MrcSavedata
+  BOOLEAN           IsDdr5Hynix;                   ///< TRUE if any DDR5 Hynix DIMM is detected otherwise FALSE
+  UINT8             ReservedBytesAlign2[1];        ///< Align to 4 bytes for MrcSavedata
   /// Cmd and Ctl Pi Code for Low frequency. This is required to track for LP5 Frequency switching.
   UINT32            LowFCtlPiCode[MAX_SAGV_POINTS][MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL]; ///< Cmd and Ctl Pi Code for Low frequency. It will be used for Jedec Reset for Lp5
   UINT32            LowFCmdPiCode[MAX_SAGV_POINTS][MAX_CONTROLLER][MAX_CHANNEL]; ///< Cmd and Ctl Pi Code for Low frequency. It will be used for Jedec Reset for Lp5
@@ -1945,6 +1933,9 @@ typedef struct {
   MrcVddSelect      VddqVoltage[MAX_PROFILE];     ///< The voltage (VDDQ) setting for all DIMMs in the system, per profile.
   MrcVddSelect      VppVoltage[MAX_PROFILE];      ///< The voltage (VPP) setting for all DIMMs in the system, per profile.
   MrcFrequency      MemFrequency[MAX_PROFILE];    ///< Every Profile's Frequency
+  UINT8             Ibecc;
+  UINT8             TmeEnable;
+  UINT8             PmaCceConfig;
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back
   //
@@ -1952,6 +1943,10 @@ typedef struct {
   UINT32          SaGvRegSave[MAX_SAGV_POINTS][MRC_REGISTER_COUNT_SAGV]; ///< The MC registers for each SA GV point.
   MrcContSave     Controller[MAX_CONTROLLER];               ///< The following are controller level definitions.
   MrcSaGvOutput   SaGvOutputs;                    ///< Per-SaGv Point output data
+  UINT16          VCO[NUM_LCPLL][MAX_SAGV_POINTS];          ///< Tracks which VCO frequencies have been allocated in each LCPLL
+  INT8            LCPLLWPSel[NUM_LCPLL][MAX_SAGV_POINTS];   ///< Tracks which workpoints have been allocated in each LCPLL
+  UINT8           WP2LCPLL;                                 ///< Tracks which LCPLL (0/1) has been selected for the current workpoint
+  INT8            LCPLLWPSelLowFreq;                        ///< It will be used for LP5 low frequency initialization during JEDEC Reset
 } MrcSaveData;
 
 // MrcOutputs needs to be DWORD aligned
@@ -2017,6 +2012,7 @@ typedef struct {
   UINT16              MaxRdDataValid;              ///< Used to track the maximum RdDataValid delay across all Frequency Points, (Sub)Channels, and Ranks.
   UINT16              PostCodeStart;               ///< Green Start POST code for the interpreter
   UINT16              PostCodeStop;                ///< Green Stop  POST code for the interpreter
+  UINT16              RcompTarget[MAX_RCOMP_TARGETS]; ///< RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
   UINT8               ReservedBytesAlign[3];       ///< Reserved Bytes for 32-Bits aligned.
   MrcClockRatio       Ratio;                       ///< Request for this memory controller to use this clock ratio.
   MrcDimmStatus       FailingChannelBitMask;       ///< BitMask to detect failing Channels and disable them
@@ -2081,7 +2077,9 @@ typedef struct {
   BOOLEAN             PdaEnable;                   ///< Current status of PDA - if true all the Mr6 operations need to use PDA mode.
   BOOLEAN             IsLastGvPoint;               ///<  Indicate to Green CTE Env that Green excecutble and connection can be closed
   BOOLEAN             IsPhyDqDeswizzleNeeded;      ///< Used to deswizzle DataTrainFeedback value, whenever DTF used in Per-Lane mode
-  UINT8               ReservedBytesAlign2[3];      ///< Reserved Bytes for 32-Bits aligned.
+  BOOLEAN             IsLP5Camm2;                  ///< Detects if the current JEDEC 1.0 Spec LP5 module uses the CAMM form factor
+  BOOLEAN             IsIbeccInitRangesRequired;   ///< Flag to indicate that the IBECC Init Ranges FSM must be run
+  UINT8               FinalIbeccOperationMode;     ///< Output to BIOS on the state of IBECC
   UINT8               tMAC;                        ///< Maximum Activate Count for pTRR.
   UINT8               MaxChannels;                 ///< Maximum number of channels supported by the controller.  Varies per technology.
   UINT8               SdramCount;                  ///< The number of SDRAM components on a DIMM.
@@ -2107,9 +2105,10 @@ typedef struct {
   UINT8               PsmiHandlerSize;             ///< PSMI handler size for reservation
   UINT8               ReadPreamble;                ///< Total Read Preamble for DDR5, Read Preamble Toggle for LPDDR5
   UINT8               EvenOddUIErr;                ///< Select if RMT will be run for all UI errors : 0 - All, 1 : Odd UI Errs, 2: EvenUI Errs
-  UINT8               CmosConfig0;                ///< Data of MRC_DEBUG_CONFIG0_CMOS_ADDR
-  UINT8               CmosConfig1;                ///< Data of MRC_DEBUG_CONFIG1_CMOS_ADDR
-  UINT8               CmosConfig2;                ///< Data of MRC_DEBUG_CONFIG2_CMOS_ADDR
+  UINT8               CmosConfig0;                 ///< Data of MRC_DEBUG_CONFIG0_CMOS_ADDR
+  UINT8               CmosConfig1;                 ///< Data of MRC_DEBUG_CONFIG1_CMOS_ADDR
+  UINT8               CmosConfig2;                 ///< Data of MRC_DEBUG_CONFIG2_CMOS_ADDR
+  UINT8               BankIncOrder[MAX_MPTU];      ///< Used to program BankIncOrder in Ddr5 for each Dunit
   MrcIpTestEnv        IpModel;
   MrcDdrType          DdrType;                     ///< Current memory type: DDR5, LPDDR5
   MrcSaGvPoint        SaGvFirst;                   ///< First SaGv Point to be trained
@@ -2214,7 +2213,7 @@ typedef struct {
   BOOLEAN           IsDdrIoDtA0;                    ///< Identified that the current CPU stepping is Desktop A0 (PHY)
   BOOLEAN           IsDdrIoTc;                      ///< Identified that the current CPU is a test chip (PHY)
   BOOLEAN           NonTargetOdtEn;                 ///< Enables Non-Target ODT for LPDDR5
-  BOOLEAN           TxtClean;                       ///< TRUE if we require to perform TxtClean
+  BOOLEAN           TxtClean;                       ///< TRUE if we require to perform TxtClean when Trusted eXecution Technology flow enabled.
   UINT8             TatDelta;                       ///< Used to increase Turnaround values in Safe mode
   BOOLEAN           Mbist;                          ///< TRUE if we require to perform Memory BIST
   BOOLEAN           EnablePda;                      ///< TRUE MRs will be configured per PDA.
@@ -2247,11 +2246,13 @@ typedef struct {
   UINT8             GenerateNewTmeKey;             ///< Indicates if a new TME key is to be generated
   UINT8             IsXMP3Revision12Supported;     ///< Indicates whether the SPD data supports XMP1.2 version
   UINT8             MemoryProfileSave;             ///< Save MemoryProfile. Used when DMB/RMF is enabled.
+  BOOLEAN           IsIbeccEnabled;                ///< Overrides the ext inputs Ibecc field so that Ibecc inputs do not trigger a cold boot.
   BOOLEAN           RxDqVrefPerBit;                ///< Enable or disable RX DQ VREF Per Bit
   BOOLEAN           FourToggleReadPreamble;        ///< Enable or disable Four Toggle Read Preamble
   BOOLEAN           PprEnable;                     ///< Effective PPR configuration for the current boot
   BOOLEAN           SenseAtRxDll;                  ///< Boolean variable to enable or disable RxDqsDcc SenseAtRxDll
-  UINT8             Reserved[3];                   ///< Reserved to ensure config block size is a multiple of DWORDs
+  UINT8             LastIbeccOperationMode;        ///< Input from BIOS indicating the last IBECC operation mode. Valid only on warm boot.
+  UINT8             Reserved;                      ///< Reserved to ensure config block size is a multiple of DWORDs
   UINT32            SaMemCfgCrcNoOffsetKnobs;      ///< The CRC32 of the SA memory configuration without OffsetKnobs.
   /**
    Sets the serial debug message level\n

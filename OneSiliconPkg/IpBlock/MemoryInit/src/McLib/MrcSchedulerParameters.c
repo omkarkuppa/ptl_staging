@@ -609,10 +609,8 @@ MrcMcOneDpcConfig (
         MrcWriteCR (MrcData, Offset, RoundTripDelayReg.Data);
 
         // DDR5 Keep same DIMM atributes for both "SUBCH0/1"
-        if (Outputs->IsDdr5) {
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0SdramWidth, ReadCached, &SubchSdramWidth);
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1SdramWidth, WriteToCache, &SubchSdramWidth);
-        }
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0SdramWidth, ReadCached, &SubchSdramWidth);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1SdramWidth, WriteToCache, &SubchSdramWidth);
 
         // When MRH is used (DDR_MR_COMMNAD_0_0_0_MCHBAR), it should be programmed to access either rank 0 or rank 3 (and not 1 or 2).
         // See WrappedMrcRunMrh() which calls GetMrhFsmRankMaskDdr5()

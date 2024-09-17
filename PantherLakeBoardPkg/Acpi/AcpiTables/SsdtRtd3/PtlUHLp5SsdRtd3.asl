@@ -140,18 +140,20 @@ DefinitionBlock (
     //
     // For wlan port there is no WAKG variable so checking for RW04 variable
     //
-
-    If (LNotEqual(RW04, 0)) {
+    If (CondRefOf (RW04)) {
+      If (LNotEqual(RW04, 0)) {
         Method (_L4C) {
           ADBG("_L4C RP04 SLOT")
           \_SB.SHPO(RW04, 1) // set gpio ownership to driver(0=ACPI mode, 1=GPIO mode)
           Notify(\_SB.PC00.RP04, 0x02)   // Device wake
         }
       }
+    }
 
     //
     // On Rework the GEN5 M.2 SSD converted to x4 slot
     //
+
     If (CondRefOf (\_SB.PC00.RP09.WAKG)) {
       If (LNotEqual(\_SB.PC00.RP09.WAKG, 0)) {
         Method (_L39) {

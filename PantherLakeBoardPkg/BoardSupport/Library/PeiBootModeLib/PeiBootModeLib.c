@@ -761,7 +761,10 @@ IsCoinlessSpiNorClear (
   EFI_STATUS       Status;
 
   CoinlessSpiNorClearGpioState = GpioV2StateLow;
-
+  if(PcdGet32 (PcdCoinlessSpiNorClearGpio) == 0){
+    DEBUG ((DEBUG_INFO, "Spi Nor Clear GPIO not present\n"));
+    return FALSE;
+  }
   Status = GpioV2GetRx (PcdGet32 (PcdCoinlessSpiNorClearGpio), &CoinlessSpiNorClearGpioState);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Invalid Coinless Spi Nor Clear GPIO: %x\n", PcdGet32 (PcdCoinlessSpiNorClearGpio)));

@@ -33,6 +33,9 @@
 #include <Library/NguInfoLib.h>
 #include <Library/TdxInfoLib.h>
 #include <Library/PeiTdxLib.h>
+#include <Library/CpuMailboxLib.h>
+#include <Library/RngLib.h>
+#include <Library/SmbusLib.h>
 #include <MemorySubSystemConfig.h>
 #include <Library/PeiImrInitLib.h>
 #include <Library/CpuInitPreMem.h>
@@ -59,6 +62,7 @@
 #include "CMemoryInit.h"
 #include "MrcGeneral.h"
 #include "MrcPostCodes.h"
+#include "MrcOemPlatform.h"
 #include <Library/PerformanceLib.h>
 #include <CMemoryTest.h>
 #include <IndustryStandard/SmBios.h>
@@ -91,14 +95,8 @@
 #include <Library/MemorySubSystemInfoLib.h>
 #include <Library/CapsulePpiProcessLib.h>
 
-
 #define CMOS_ADDR_PORT  0x70  // Defined in CmosMap.h
 #define CMOS_DATA_PORT  0x71  // Defined in CmosMap.h
-
-//
-// Driver GUID Definitions
-//
-
 
 #ifndef MDEPKG_NDEBUG
 GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 BootStringFc[]  = "WITH_FULL_CONFIGURATION";
@@ -148,8 +146,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED const SPD_OFFSET_TABLE SpdLpddrTable[] = {
   {   2,               3,               (1 << SpdCold) | (1 << SpdFast),},
   {   4,              32,               (1 << SpdCold),},
   { 120,             130,               (1 << SpdCold),},
+  { 230,             232,               (1 << SpdCold),},
+  { 234,             235,               (1 << SpdCold),},
   { SPDLP_MANUF_START, SPDLP_MANUF_END, (1 << SpdCold) | (1 << SpdFast),},
-  { 329,             383,               (1 << SpdCold),}
+  { 336,             383,               (1 << SpdCold),},
+  { 510,             511,               (1 << SpdCold),},
+  { SPDLP_JEDEC_SPEC_MANUF_START, SPDLP_JEDEC_SPEC_MANUF_END, (1 << SpdCold) | (1 << SpdFast),},
+  { 521,             639,               (1 << SpdCold),}
 };
 
 ///
@@ -369,9 +372,11 @@ SetSerialDebugLevel (
 
 /**
   Check Status of RetrainToWorkingChannel and disable failing channel
+
   @param[in out]  MrcData - All the MRC global data.
   @param[in]      SskpdSaveRestore - If set to TRUE, saves disabled channel status to scratchpad register.
                                      If set to FALSE, restores disabled channel status from scratchpad register.
+
   @retval         TRUE if All Channels are passing,
                   FALSE if all Channels are not passing and MRC needs reset after disabling failing channels
 **/
@@ -521,6 +526,7 @@ PeimMemoryInit (
   MEMORY_CONFIGURATION         *MemConfig;
   MEMORY_CONFIG_NO_CRC         *MemConfigNoCrc;
   MEMORY_PLATFORM_DATA_HOB     *Hob;
+  CPU_MEMORY_INIT_CONFIG       CpuMemoryInitConfig;
   PLATFORM_DATA                PlatformData;
   MRC_BDAT_SCHEMA_LIST_HOB     *BdatSchemaListPointer;
   // The next line is telling Coverity to ignore the STACK_USE checker failure due to MrcParameters size
@@ -559,6 +565,7 @@ PeimMemoryInit (
   BOOLEAN                      DidPreviousTrainingFail;
   UINT8                        Controller;
   UINT8                        Channel;
+  BOOLEAN                      IsEfiResetColdRequired;
 
   UINT32                       ImrsSize;
   UINT32                       Alignment;
@@ -590,6 +597,7 @@ PeimMemoryInit (
   InterpeterTrainingDone                   = FALSE;
   IsLastBasicMemoryTestPass                = TRUE;
   DidPreviousTrainingFail                  = FALSE;
+  IsEfiResetColdRequired                   = FALSE;
 
   // Print MRC Interface Structure Sizes before the execution of the MRC.
   DEBUG_CODE_BEGIN();
@@ -634,6 +642,9 @@ PeimMemoryInit (
     return EFI_INVALID_PARAMETER;
   }
 
+  ZeroMem (&CpuMemoryInitConfig, sizeof (CPU_MEMORY_INIT_CONFIG));
+  CpuGetMemoryInitConfig (&CpuMemoryInitConfig);
+
   Inputs->ExtInputs.Ptr = &MemConfig->ExternalInputs;
 
   ASSERT (Inputs->ExtInputs.Ptr != NULL);
@@ -675,7 +686,7 @@ PeimMemoryInit (
 
   Inputs->PciEBaseAddress   = (UINT32) PcdGet64 (PcdSiPciExpressBaseAddress);
 
-  MrcSetupOem (MrcData, MemConfig, MemConfigNoCrc);
+  MrcSetupOem (MrcData, MemConfig);
 
   //
   // Obtain boot mode.
@@ -857,6 +868,7 @@ DEBUG_CODE_END();
   }
 
   Inputs->TxtClean = IsTxtSecretsSet ();
+  Inputs->IsIbeccEnabled = ExtInputs->Ibecc && !IsTxtACheckRequested();
 
   //
   // MrcBootMode can ONLY be bmCold, bmWarm or bmS3 at this point.
@@ -868,7 +880,7 @@ DEBUG_CODE_END();
       if ((SaveDataValid == TRUE) &&
           (ExtInputs->MrcFastBoot > 0) &&
           (SskpdValue == 0) &&
-          (ColdBootRequired (MrcData, MemConfig, MrcBootMode) == FALSE)
+          (ColdBootRequired (MrcData, MemConfig, &CpuMemoryInitConfig, MrcBootMode, &IsEfiResetColdRequired) == FALSE)
           ) {
         MrcBootMode = bmFast;
         DEBUG ((DEBUG_INFO, "Fast boot is possible, so forcing it\n"));
@@ -893,7 +905,7 @@ DEBUG_CODE_END();
         MrcBootMode = bmCold;
         break;
       } else {
-        if (ColdBootRequired (MrcData, MemConfig, MrcBootMode) == TRUE) {
+        if (ColdBootRequired (MrcData, MemConfig, &CpuMemoryInitConfig, MrcBootMode, &IsEfiResetColdRequired) == TRUE) {
           DEBUG ((
             DEBUG_WARN,
             "Platform settings or configuration have changed, forcing a cold boot\n"
@@ -942,6 +954,13 @@ DEBUG_CODE_END();
             break;
           }
         }
+        Inputs->LastIbeccOperationMode = GetLastIbeccOpMode (MrcData);
+        if (Inputs->IsIbeccEnabled && Inputs->LastIbeccOperationMode == IbeccNonProtect) {
+          DEBUG ((DEBUG_INFO, "Previous boot cycle recorded IBECC IP in Bypass Mode, change to Fast Boot\n"));
+          // System Transitioned from IBECC IP Enabled in Bypass Mode to Enabled in FullProtectMode on warm boot
+          MrcBootMode = bmFast;
+          break;
+        }
       }
       DEBUG ((DEBUG_INFO, (MrcBootMode == bmS3) ? "Resume from S3\n" : "Warm reset\n"));
       break;
@@ -953,6 +972,10 @@ DEBUG_CODE_END();
       break;
   }
 
+  if (IsEfiResetColdRequired) {
+    DEBUG ((DEBUG_WARN, "Forcing a power cycle..\n"));
+    (*PeiServices)->ResetSystem2 (EfiResetCold, EFI_SUCCESS, 0, NULL);
+  }
   if (MrcBootMode == bmFast && ExtInputs->MrcFastBoot == 0) {
     DEBUG ((DEBUG_WARN, "Fast Boot Possible But Disabled\n"));
     MrcBootMode = bmCold;
@@ -1222,6 +1245,9 @@ DEBUG_CODE_END();
     }
   }
 
+  // Set the last IBECC operation mode
+  SetLastIbeccOpMode (Outputs->FinalIbeccOperationMode);
+
   if (Inputs->TxtClean) {
     if (Outputs->TxtScrubSuccess) {
       // Clear the sticky scratchpad to indicate that MRC is finished,
@@ -1244,7 +1270,7 @@ DEBUG_CODE_END();
     ASSERT_EFI_ERROR(Status);
   }
 
-  if (ExtInputs->Ibecc && (Inputs->BootMode != bmWarm) && (Inputs->BootMode != bmS3)) {
+  if (Inputs->BootMode != bmS3) {
     // Polling For IBECC_MEMORY_INIT_CONTROL.INIT_ALL_RANGES
     MrcStatus = MrcPollIbeccFSMInit (MrcData);
     if (Status != mrcSuccess) {
@@ -2156,18 +2182,6 @@ GetMemoryMap (
   }
 
   //
-  // TSE IMR
-  //
-  if (MemoryMapData->TseImrSize > 0) {
-    MemoryMap[*NumRanges].RowNumber       = Index;
-    MemoryMap[*NumRanges].PhysicalAddress = (MemoryMapData->TseImrBase << 20);
-    MemoryMap[*NumRanges].CpuAddress      = (MemoryMapData->TseImrBase << 20);
-    MemoryMap[*NumRanges].RangeLength     = (MemoryMapData->TseImrSize << 20);
-    MemoryMap[*NumRanges].Type            = DualChannelDdrReservedWriteBackMemory;
-    (*NumRanges)++;
-  }
-
-  //
   // PRMRR
   //
   if (Inputs->PrmrrSize > 0) {
@@ -2430,29 +2444,65 @@ MrcUpdateBdatHobIds (
 }
 
 /**
+  Determine the current valid state of PmaCce.
+
+  @param[in] CpuMemoryInitConfig   - The Cpu Memory Init config.
+  @param[in] CurrTmeEnable         - TmeEnable state.
+
+  @retval PmaCce status.
+**/
+MRC_CCE_CONFIG
+GetPmaCceConfig (
+  IN CPU_MEMORY_INIT_CONFIG* CpuMemoryInitConfig,
+  IN UINT32                  CurrTmeEnable
+  )
+{
+  MRC_CCE_CONFIG  CurrPmaCceConfig;
+  if (CurrTmeEnable) {
+    // Check which controller is populated and program CCE accordingly
+    CurrPmaCceConfig = MrcCceEnablePerMc; // This case handles setting either CCE0 or CCE1 or CCE0+CCE1
+  } else if (CpuMemoryInitConfig->PrmrrSize > 0 && (IsKeyLockerSupported () || CpuMemoryInitConfig->TdxEnable)) {
+    CurrPmaCceConfig = MrcCceEnSingle;
+  } else {
+    // Disable CCE
+    CurrPmaCceConfig = MrcCceDisable;
+  }
+  return CurrPmaCceConfig;
+}
+
+/**
   Determine whether a cold reset of the platform is required.
   Note that the memory configuration saved data must be valid.
 
-  @param[in] MrcData             - The MRC "global data" area.
-  @param[in] MemConfig           - MEMORY_CONFIGURATION structure.
-  @param[in] MrcBootMode         - Current MRC boot mode.
+  @param[in] MrcData                 - The MRC "global data" area.
+  @param[in] MemConfig               - MEMORY_CONFIGURATION structure.
+  @param[in] CpuMemoryInitConfig     - The Cpu Memory Init config.
+  @param[in] MrcBootMode             - Current MRC boot mode.
+  @param[out] IsEfiResetColdRequired - TRUE if a power cycle is required.
 
   @retval TRUE if cold reset is required, otherwise returns FALSE.
 **/
 BOOLEAN
 ColdBootRequired (
-  IN MrcParameters       *const MrcData,
-  IN MEMORY_CONFIGURATION       *MemConfig,
-  IN MRC_BOOT_MODE              MrcBootMode
+  IN MrcParameters                *CONST  MrcData,
+  IN MEMORY_CONFIGURATION         *MemConfig,
+  IN CPU_MEMORY_INIT_CONFIG       *CpuMemoryInitConfig,
+  IN MRC_BOOT_MODE                MrcBootMode,
+  OUT BOOLEAN                     *IsEfiResetColdRequired
   )
 {
   MrcInput             *Inputs;
   MrcSaveData          *SaveData;
   MrcVersion           Version;
   McRegOffsets         TempOffsets;
+  UINT32               CurrPmaCceConfig;
+  UINT32               CurrTmeEnable;
+  BOOLEAN              RetVal;
+  BOOLEAN              IsPowerCycleNeeded;
 
   Inputs    = &MrcData->Inputs;
   SaveData  = &MrcData->Save.Data;
+  RetVal = FALSE;
 
   MrcVersionGet (MrcData, &Version);
   if ((Version.Major != SaveData->Version.Major) ||
@@ -2471,7 +2521,7 @@ ColdBootRequired (
       Version.Rev,
       Version.Build
       ));
-    return TRUE;
+    RetVal = TRUE;
   }
   if (Inputs->DdrIoIpVersion.Data != SaveData->DdrIoIpVersion.Data) {
     DEBUG ((
@@ -2486,7 +2536,7 @@ ColdBootRequired (
       Inputs->DdrIoIpVersion.Bits.Segment,
       Inputs->DdrIoIpVersion.Bits.Stepping
       ));
-    return TRUE;
+    RetVal = TRUE;
   }
   if (MrcBootMode != bmS3) {
     if (MrcData->Inputs.SaMemCfgCrc != SaveData->SaMemCfgCrc) {
@@ -2498,7 +2548,7 @@ ColdBootRequired (
         ));
 
       if (Inputs->SaMemCfgCrc != Inputs->SaMemCfgCrcForSave) {
-        return TRUE;
+        RetVal = TRUE;
       }
 
       // Check if McRegisterOffset is the only input parameter change if McRegisterOffset training function is enabled.
@@ -2516,13 +2566,49 @@ ColdBootRequired (
           DEBUG_INFO,
           "Only McOffsetKnob inputs changed...ignoring SA input parameter CRC (i.e. try not to retrain).\n"
           ));
-          return FALSE;
+        } else {
+          RetVal = TRUE;
         }
       }
-      return TRUE;
+    } // CRC mismatch
+  } // MrcBootMode != bmS3
+
+  // If IBECC / CCE / TME policy is changed on a non-Cold reset, we need to invoke a power cycle
+  IsPowerCycleNeeded = FALSE;
+
+  if (MemConfig->ExternalInputs.Ibecc != SaveData->Ibecc) {
+    DEBUG ((DEBUG_INFO, "%a policy has changed: old: %u, new: %u\n", "Ibecc", SaveData->Ibecc, MemConfig->ExternalInputs.Ibecc));
+    RetVal = TRUE;
+    if (MrcBootMode != bmCold) {
+      IsPowerCycleNeeded = TRUE;
     }
   }
-  return FALSE;
+
+  if (CpuMemoryInitConfig != NULL) {
+    CurrTmeEnable = (CpuMemoryInitConfig->TmeEnable == 1);
+    if (CurrTmeEnable != SaveData->TmeEnable) {
+      DEBUG ((DEBUG_INFO, "%a policy has changed: old: %u, new: %u\n", "TmeEnable", SaveData->TmeEnable, CurrTmeEnable));
+      RetVal = TRUE;
+      if (MrcBootMode != bmCold) {
+        IsPowerCycleNeeded = TRUE;
+      }
+    }
+
+    CurrPmaCceConfig = GetPmaCceConfig (CpuMemoryInitConfig, CurrTmeEnable);
+    if (CurrPmaCceConfig != SaveData->PmaCceConfig) {
+      DEBUG ((DEBUG_INFO, "%a policy has changed: old: %u, new: %u\n", "PmaCceConfig", SaveData->PmaCceConfig, CurrPmaCceConfig));
+      RetVal = TRUE;
+      if (MrcBootMode != bmCold) {
+        IsPowerCycleNeeded = TRUE;
+      }
+    }
+  }
+
+  if (IsEfiResetColdRequired != NULL) {
+    *IsEfiResetColdRequired = IsPowerCycleNeeded;
+    DEBUG ((DEBUG_INFO, "EfiResetCold is%a required\n", (IsPowerCycleNeeded) ? "": " not"));
+  }
+  return RetVal;
 }
 
 /**
@@ -2530,78 +2616,63 @@ ColdBootRequired (
 
   @param[in, out] MrcData             - Pointer to the MRC global data structure.
   @param[in]      MemConfig           - MEMORY_CONFIGURATION structure.
-  @param[in]      MemConfigNoCrc      - MEMORY_CONFIG_NO_CRC  structure.
 **/
 void
 MrcSetupOem (
   IN OUT MrcParameters          *CONST MrcData,
-  IN    MEMORY_CONFIGURATION    *MemConfig,
-  IN    MEMORY_CONFIG_NO_CRC    *MemConfigNoCrc
+  IN    MEMORY_CONFIGURATION    *MemConfig
   )
 {
-  SA_FUNCTION_CALLS    *SaCall;
-  SA_MEMORY_FUNCTIONS  *MemCall;
-  MrcInput             *Inputs;
-  MRC_FUNCTION         *MrcCall;
+  MrcInput      *Inputs;
+  MRC_FUNCTION  *MrcCall;
 
-  SaCall         = &MemConfigNoCrc->SaCall;
-  MemCall        = &MemConfigNoCrc->MrcCall;
-  Inputs         = &MrcData->Inputs;
-  MrcCall        = Inputs->Call.Func;
+  Inputs  = &MrcData->Inputs;
+  MrcCall = Inputs->Call.Func;
 
-  MrcGetCoreFunction (
-    (UINTN *) &MemCall->MrcChannelExist,
-    (UINTN *) &MemCall->MrcPrintf,
-    (UINTN *) &MemCall->MrcSignExtend
-  );
-
-#if 1
-  // ASSERT if the synchronized sections do not match
-  ASSERT (OFFSET_OF(SA_FUNCTION_CALLS, MrcDelayNs) == OFFSET_OF(MRC_FUNCTION, MrcDelayNs));
-  ((MRC_MEMORY_COPY) (SaCall->CopyMem)) ((UINT8 *) MrcCall, (UINT8 *) SaCall, sizeof (SA_FUNCTION_CALLS));
-  MrcCall->MrcSetLockPrmrr             = (MRC_SET_LOCK_PRMRR) (&PeiCpuSetPrmrrRegion);
-#else
-  MrcCall->MrcIoRead8              = (MRC_IO_READ_8) (SaCall->IoRead8);
-  MrcCall->MrcIoRead16             = (MRC_IO_READ_16) (SaCall->IoRead16);
-  MrcCall->MrcIoRead32             = (MRC_IO_READ_32) (SaCall->IoRead32);
-  MrcCall->MrcIoWrite8             = (MRC_IO_WRITE_8) (SaCall->IoWrite8);
-  MrcCall->MrcIoWrite16            = (MRC_IO_WRITE_16) (SaCall->IoWrite16);
-  MrcCall->MrcIoWrite32            = (MRC_IO_WRITE_32) (SaCall->IoWrite32);
-  MrcCall->MrcMmioRead8            = (MRC_MMIO_READ_8) (SaCall->MmioRead8);
-  MrcCall->MrcMmioRead16           = (MRC_MMIO_READ_16) (SaCall->MmioRead16);
-  MrcCall->MrcMmioRead32           = (MRC_MMIO_READ_32) (SaCall->MmioRead32);
-  MrcCall->MrcMmioRead64           = (MRC_MMIO_READ_64) (SaCall->MmioRead64);
-  MrcCall->MrcMmioWrite8           = (MRC_MMIO_WRITE_8) (SaCall->MmioWrite8);
-  MrcCall->MrcMmioWrite16          = (MRC_MMIO_WRITE_16) (SaCall->MmioWrite16);
-  MrcCall->MrcMmioWrite32          = (MRC_MMIO_WRITE_32) (SaCall->MmioWrite32);
-  MrcCall->MrcMmioWrite64          = (MRC_MMIO_WRITE_64) (SaCall->MmioWrite64);
-  MrcCall->MrcSmbusRead8           = (MRC_SMBUS_READ_8) (SaCall->SmbusRead8);
-  MrcCall->MrcSmbusRead16          = (MRC_SMBUS_READ_16) (SaCall->SmbusRead16);
-  MrcCall->MrcSmbusWrite8          = (MRC_SMBUS_WRITE_8) (SaCall->SmbusWrite8);
-  MrcCall->MrcSmbusWrite16         = (MRC_SMBUS_WRITE_16) (SaCall->SmbusWrite16);
-  MrcCall->MrcGetPciDeviceAddress  = (MRC_GET_PCI_DEVICE_ADDRESS) (SaCall->GetPciDeviceAddress);
-  MrcCall->MrcGetPcieDeviceAddress = (MRC_GET_PCIE_DEVICE_ADDRESS) (SaCall->GetPcieDeviceAddress);
-  MrcCall->MrcGetRtcTime           = (MRC_GET_RTC_TIME) (SaCall->GetRtcTime);
-  MrcCall->MrcGetCpuTime           = (MRC_GET_CPU_TIME) (SaCall->GetCpuTime);
-  MrcCall->MrcCopyMem              = (MRC_MEMORY_COPY) (SaCall->CopyMem);
-  MrcCall->MrcGetCpuTimeUs         = (MRC_GET_CPU_TIME_US) (SaCall->GetCpuTimeMicroSec);
-  MrcCall->MrcSetMem               = (MRC_MEMORY_SET_BYTE) (SaCall->SetMem);
-  MrcCall->MrcSetMemWord           = (MRC_MEMORY_SET_WORD) (SaCall->SetMemWord);
-  MrcCall->MrcSetMemDword          = (MRC_MEMORY_SET_DWORD) (SaCall->SetMemDword);
-  MrcCall->MrcLeftShift64          = (MRC_LEFT_SHIFT_64) (SaCall->LeftShift64);
-  MrcCall->MrcRightShift64         = (MRC_RIGHT_SHIFT_64) (SaCall->RightShift64);
-  MrcCall->MrcMultU64x32           = (MRC_MULT_U64_U32) (SaCall->MultU64x32);
-  MrcCall->MrcDivU64x64            = (MRC_DIV_U64_U64) (SaCall->DivU64x64);
-  MrcCall->MrcGetSpdData           = (MRC_GET_SPD_DATA) (SaCall->GetSpdData);
-  MrcCall->MrcGetRandomNumber      = (MRC_GET_RANDOM_NUMBER) (SaCall->GetRandomNumber);
-  MrcCall->MrcCpuMailboxRead       = (MRC_CPU_MAILBOX_READ) (SaCall->CpuMailboxRead);
-  MrcCall->MrcCpuMailboxWrite      = (MRC_CPU_MAILBOX_WRITE) (SaCall->CpuMailboxWrite);
-  MrcCall->MrcCheckpoint           = (MRC_CHECKPOINT) (SaCall->CheckPoint);
-  MrcCall->MrcDebugHook            = (MRC_DEBUG_HOOK) (SaCall->DebugHook);
-  MrcCall->MrcPrintString          = (MRC_PRINT_STRING) (SaCall->DebugPrint);
-  MrcCall->MrcMsrRead64            = (MRC_MSR_READ_64) (SaCall->ReadMsr64);
-  MrcCall->MrcMsrWrite64           = (MRC_MSR_WRITE_64) (SaCall->WriteMsr64);
-#endif
+  // Populate MRC_FUNCTION pointers
+  MrcCall->MrcIoRead8              = (MRC_IO_READ_8) &IoRead8;
+  MrcCall->MrcIoRead16             = (MRC_IO_READ_16) &IoRead16;
+  MrcCall->MrcIoRead32             = (MRC_IO_READ_32) &IoRead32;
+  MrcCall->MrcIoWrite8             = (MRC_IO_WRITE_8) &IoWrite8;
+  MrcCall->MrcIoWrite16            = (MRC_IO_WRITE_16) &IoWrite16;
+  MrcCall->MrcIoWrite32            = (MRC_IO_WRITE_32) &IoWrite32;
+  MrcCall->MrcMmioRead8            = (MRC_MMIO_READ_8) &MmioRead8;
+  MrcCall->MrcMmioRead16           = (MRC_MMIO_READ_16) &MmioRead16;
+  MrcCall->MrcMmioRead32           = (MRC_MMIO_READ_32) &MmioRead32;
+  MrcCall->MrcMmioRead64           = (MRC_MMIO_READ_64) &SaMmioRead64;
+  MrcCall->MrcMmioWrite8           = (MRC_MMIO_WRITE_8) &MmioWrite8;
+  MrcCall->MrcMmioWrite16          = (MRC_MMIO_WRITE_16) &MmioWrite16;
+  MrcCall->MrcMmioWrite32          = (MRC_MMIO_WRITE_32) &MmioWrite32;
+  MrcCall->MrcMmioWrite64          = (MRC_MMIO_WRITE_64) &SaMmioWrite64;
+  MrcCall->MrcSmbusRead8           = (MRC_SMBUS_READ_8) &SmBusReadDataByte;
+  MrcCall->MrcSmbusRead16          = (MRC_SMBUS_READ_16) &SmBusReadDataWord;
+  MrcCall->MrcSmbusWrite8          = (MRC_SMBUS_WRITE_8) &SmBusWriteDataByte;
+  MrcCall->MrcSmbusWrite16         = (MRC_SMBUS_WRITE_16) &SmBusWriteDataWord;
+  MrcCall->MrcGetPciDeviceAddress  = (MRC_GET_PCI_DEVICE_ADDRESS) &GetPciDeviceAddress;
+  MrcCall->MrcGetPcieDeviceAddress = (MRC_GET_PCIE_DEVICE_ADDRESS) &GetPcieDeviceAddress;
+  MrcCall->MrcGetRtcTime           = (MRC_GET_RTC_TIME) &GetRtcTime;
+  MrcCall->MrcGetCpuTime           = (MRC_GET_CPU_TIME) &GetCpuTime;
+  MrcCall->MrcCopyMem              = (MRC_MEMORY_COPY) &CopyMem;
+  MrcCall->MrcSetMem               = (MRC_MEMORY_SET_BYTE) &SetMem;
+  MrcCall->MrcSetMemWord           = (MRC_MEMORY_SET_WORD) &SetMemWord;
+  MrcCall->MrcSetMemDword          = (MRC_MEMORY_SET_DWORD) &SetMemDword;
+  MrcCall->MrcLeftShift64          = (MRC_LEFT_SHIFT_64) &LShiftU64;
+  MrcCall->MrcRightShift64         = (MRC_RIGHT_SHIFT_64) &RShiftU64;
+  MrcCall->MrcMultU64x32           = (MRC_MULT_U64_U32) &MultU64x32;
+  MrcCall->MrcDivU64x64            = (MRC_DIV_U64_U64) &DivU64x64Remainder;
+  MrcCall->MrcGetSpdData           = (MRC_GET_SPD_DATA) &GetSpdData;
+  MrcCall->MrcGetRandomNumber      = (MRC_GET_RANDOM_NUMBER) &GetRandomNumber32;
+  MrcCall->MrcCpuMailboxRead       = (MRC_CPU_MAILBOX_READ) &MailboxRead;
+  MrcCall->MrcCpuMailboxWrite      = (MRC_CPU_MAILBOX_WRITE) &MailboxWrite;
+  MrcCall->MrcCheckpoint           = (MRC_CHECKPOINT) &CheckPoint;
+  MrcCall->MrcDebugHook            = (MRC_DEBUG_HOOK) &DebugHook;
+  MrcCall->MrcPrintString          = (MRC_PRINT_STRING) &SaDebugPrint;
+  MrcCall->MrcRtcCmos              = (MRC_GET_RTC_CMOS) &PeiRtcRead;
+  MrcCall->MrcReadMsr64            = (MRC_MSR_READ_64) &AsmReadMsr64;
+  MrcCall->MrcWriteMsr64           = (MRC_MSR_WRITE_64) &AsmWriteMsr64;
+  MrcCall->MrcReturnFromSmc        = (MRC_RETURN_FROM_SMC) &ReturnFromSmc;
+  MrcCall->MrcDelayNs              = (MRC_DELAY_NS) &DelayNs;
+  MrcCall->MrcSetLockPrmrr         = (MRC_SET_LOCK_PRMRR) &PeiCpuSetPrmrrRegion;
 
   return;
 }
@@ -2672,7 +2743,6 @@ MrcSetupMrcData (
   SIMICS_MEMFLOW_STRUCT               Memflows1;
   SIMICS_MEMFLOW2_STRUCT              Memflows2;
   CPU_MEMORY_INIT_CONFIG              CpuMemoryInitConfig;
-  BOOLEAN                             IsDdr5;
 
   Inputs  = &MrcData->Inputs;
   MrcCall = Inputs->Call.Func;
@@ -2681,7 +2751,6 @@ MrcSetupMrcData (
   Ddr5DoubleSize1Dpc = FALSE;
   Ddr5DoubleSize2Dpc = FALSE;
   Lpddr5CammPresent  = FALSE;
-  IsDdr5 = FALSE;
 
   if (ExtInputs->RetrainToWorkingChannel && (BootMode == bmCold)) {
     if (MrcDisableFailingChannels (MrcData, READ_RESTORE_FROM_SCRATCHPAD)) {
@@ -2691,9 +2760,12 @@ MrcSetupMrcData (
 
   // ASSERT if the Config block is not DWORD Aligned.
   ASSERT (sizeof(MEMORY_CONFIGURATION) % sizeof(UINT32) == 0);
+
   // ASSERT if the RcompTarget Array is not UINT16 Aligned.
-  DEBUG ((DEBUG_WARN, "MrcInput offset = 0x%x\n", (UINTN)Inputs ));
-  DEBUG ((DEBUG_WARN, "RcompTarget offset = 0x%x\n", (UINTN)ExtInputs->RcompTarget ));
+  DEBUG ((DEBUG_INFO, "ExtInputs: 0x%lx, RcompTarget: 0x%lx\n", (UINTN)ExtInputs, (UINTN)ExtInputs->RcompTarget));
+  ASSERT ((OFFSET_OF(MRC_EXT_INPUTS_TYPE, RcompTarget) % sizeof(UINT16)) == 0);
+  DEBUG ((DEBUG_INFO, "Outputs:   0x%lx, RcompTarget: 0x%lx\n", (UINTN)&MrcData->Outputs, (UINTN)MrcData->Outputs.RcompTarget));
+  ASSERT ((OFFSET_OF(MrcOutput, RcompTarget) % sizeof(UINT16)) == 0);  
 
   Inputs->MaxVrefSamplesOvrd  = 0;
 
@@ -2755,15 +2827,8 @@ MrcSetupMrcData (
   // whether to generate a new TME key
   //
   Inputs->GenerateNewTmeKey = CpuMemoryInitConfig.GenerateNewTmeKey;
-  if (Inputs->TmeEnable) {
-    // Check which controller is populated and program CCE accordingly
-    Inputs->PmaCceConfig = MrcCceEnablePerMc; // This case handles setting either CCE0 or CCE1 or CCE0+CCE1
-  } else if (Inputs->PrmrrSize > 0 && (IsKeyLockerSupported () || CpuMemoryInitConfig.TdxEnable)) {
-    Inputs->PmaCceConfig = MrcCceEnSingle;
-  } else {
-    // Disable CCE
-    Inputs->PmaCceConfig = MrcCceDisable;
-  }
+
+  Inputs->PmaCceConfig = GetPmaCceConfig (&CpuMemoryInitConfig, Inputs->TmeEnable);
 
   Inputs->SkuType   = MrcGetSkuType ();
 
@@ -2938,14 +3003,11 @@ DEBUG_CODE_END();
                 SpdMatched[SpdCount].Channel = Channel;
                 SpdMatched[SpdCount].Dimm = Dimm;
                 SpdCount++;
-              } else { // bmWarm, bmS3
-                IsDdr5 = SaveData->IsDdr5;
               }
             } else {
               MrcCall->MrcCopyMem ((UINT8*) &DimmIn->Spd.Data, (UINT8*) &MemConfigNoCrc->SpdData->SpdData[Controller][Channel][Dimm][0], sizeof (MrcSpd));
             }
             if (DimmIn->Spd.Data.Ddr5.Base.DramDeviceType.Bits.Type == MRC_SPD_DDR5_SDRAM_TYPE_NUMBER) {
-              IsDdr5 = TRUE;
               if ((DimmIn->Spd.Data.Ddr5.Base.ModuleType.Bits.ModuleType == CammMemoryPackage) &&
                  (DimmIn->Spd.Data.Ddr5.ModuleCommon.ModuleOrganization.Bits.RankCount <= 1)) {
                 Ddr5DoubleSize1Dpc = TRUE;
@@ -2967,10 +3029,6 @@ DEBUG_CODE_END();
       } // for Dimm
     } // for Channel
   } // for Controller
-  if (IsDdr5) {
-    ExtInputs->SaGv = 0;
-    Inputs->FreqMax = f3200;
-  }
 
   Inputs->Lpddr5Camm = Lpddr5CammPresent;
 
@@ -3057,6 +3115,7 @@ DEBUG_CODE_END();
 
       ExtInputs->TrainingEnables3.LVRAUTOTRIM    = 0;
       ExtInputs->TrainingEnables3.TLINECLKCAL    = 0;
+      ExtInputs->TrainingEnables3.QCLKDCC        = 0;
       ExtInputs->TrainingEnables3.DDRPRECOMP     = 0;
       ExtInputs->TrainingEnables3.WRTRETRAIN     = 0;
       ExtInputs->TrainingEnables3.OPTIMIZECOMP   = 0;
@@ -3070,6 +3129,7 @@ DEBUG_CODE_END();
       ExtInputs->TrainingEnables3.WCKPADDCCCAL   = 0;
       ExtInputs->TrainingEnables3.EMPHASIS       = 0;
       ExtInputs->TrainingEnables3.DIMMRXOFFSET   = 0;
+      ExtInputs->TrainingEnables3.VIEWPINCAL     = 0;
     }
   }
 
@@ -3173,7 +3233,6 @@ CheckForTimingOverride (
 
   return;
 }
-
 
 /**
   Build S3 memory data HOB
@@ -3380,6 +3439,7 @@ BuildMemoryInfoDataHob (
         DimmInfo->MdSocket = Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Spd.Flag.Bit.MdSocket;
         DimmInfo->Banks = DimmOut->Banks;
         DimmInfo->BankGroups = DimmOut->BankGroups;
+        DimmInfo->DeviceDensity = DimmOut->DeviceDensity;
 
         if (Outputs->IsDdr5) {
           Spd = &Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Spd.Data;
@@ -3426,16 +3486,16 @@ BuildMemoryInfoDataHob (
             /// SPD Offset 8 Bits [2:0] DataWidth aka Primary Bus Width
             ///
             MemoryInfo->DataWidth = 8 * (1 << (DimmInfo->SpdModuleMemoryBusWidth & 0x07));
-            DEBUG ((DEBUG_INFO, "Manufacturer Id of Channel %x Dimm %x is : 0x%x \n", Channel, Dimm, DimmInfo->MfgId));
-            DEBUG ((DEBUG_INFO, "Module Part Number of Channel %x Dimm %x is : ", Channel, Dimm));
+            DEBUG ((DEBUG_INFO, "MC%u C%u D%u:\n DeviceDensity: %uGb, MfgId: 0x%X\n", Controller, Channel, Dimm, DimmInfo->DeviceDensity, DimmInfo->MfgId));
+            DEBUG ((DEBUG_INFO, " Module Part Number: "));
             for (ModulePartLength = 0; ModulePartLength < sizeof (SPD4_MODULE_PART_NUMBER); ModulePartLength++) {
               DEBUG ((DEBUG_INFO, "%x ", DimmInfo->ModulePartNum[ModulePartLength]));
             }
+            DEBUG ((DEBUG_INFO, "\n"));
             if (!IsChannelPopulated) {
               IsChannelPopulated = TRUE;
               NumChannelsPopulated += 1;
             }
-            DEBUG ((DEBUG_INFO, "\n"));
           } else {// DDR5 Channel 1
             // Mark DDR5 DIMM on channel 1 as not present and zero size, it is reported above as part of ch0
             DimmInfo->Status = DIMM_NOT_PRESENT;
@@ -3521,8 +3581,7 @@ BuildMemoryPlatformDataHob (
 /**
   Read the last SAGV point before Warm / S3 entry from a PMC register
 
-  @param[in out]  MrcData - All the MRC global data.
-
+  @param[in, out]  MrcData - All the MRC global data.
 
 **/
 VOID
@@ -3535,4 +3594,48 @@ MrcGetSaGvPointBeforeReset (
   Inputs = &MrcData->Inputs;
 
   PmcReadSaGvPointBeforeReset (&Inputs->SaGvBeforeReset);
+}
+
+/**
+  Check Status of the last IBECC operation mode
+
+  @param[in, out]  MrcData - All the MRC global data.
+
+  @return The last IBECC operation mode setting
+**/
+UINT8
+GetLastIbeccOpMode (
+  IN OUT  MrcParameters *const MrcData
+  )
+{
+  M_PCU_CR_SSKPD_PCU_STRUCT SskpdData64 = {0};
+
+  SskpdData64.Data = MrcWmRegGet (MrcData);
+  return (UINT8) SskpdData64.Bits.LastIbeccOpMode;
+}
+
+/**
+  Set the status of the current IBECC operation mode to the SSKPD_PCU register.
+  This status will survive a warm reset.
+
+  @param[in]  IbeccOpMode - The last configured IBECC Operation Mode
+**/
+VOID
+SetLastIbeccOpMode (
+  IN UINT8  IbeccOpMode
+  )
+{
+  M_PCU_CR_SSKPD_PCU_STRUCT SskpdData64 = {0};
+  UINTN                     MchBar;
+
+  MchBar = (UINT32) GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBaseLow);
+
+  SskpdData64.Data = MmioRead64 (MchBar + SSKPD_PCU_REG);
+  DEBUG ((DEBUG_INFO, "%a SSKPD_PCU R = 0x%llx\n", __FUNCTION__, SskpdData64.Data));
+  SskpdData64.Bits.LastIbeccOpMode = IbeccOpMode;
+  MmioWrite64 (
+    MchBar + SSKPD_PCU_REG,
+    SskpdData64.Data
+    );
+  DEBUG ((DEBUG_INFO, "%a SSKPD_PCU W = 0x%llx\n", __FUNCTION__, SskpdData64.Data));
 }

@@ -114,13 +114,13 @@ PtlPcdPcieRpGetSbiFid(
   IN UINTN  RpIndex
   )
 {
-    if (RpIndex < 8) {
-      return (UINT16)(RpIndex % PCH_PCIE_CONTROLLER_PORTS);
-    } else if (RpIndex < 10) {
-      return (UINT16)(RpIndex % PEG_PCIE_CONTROLLER_PORTS);
-    } else {
-      return 0;
-    }
+      if (RpIndex < 8) {
+        return (UINT16)(RpIndex % PCH_PCIE_CONTROLLER_PORTS);
+      } else if (RpIndex < 10) {
+        return (UINT16)(RpIndex % PEG_PCIE_CONTROLLER_PORTS);
+      } else {
+        return 0;
+      }
 }
 
 /**
@@ -850,13 +850,8 @@ PcieUpdatePrivateConfig (
 
   pInst->PrivateConfig.PayLoadConfig.Uprs             = 0x7;
   pInst->PrivateConfig.PayLoadConfig.Imps             = 0x7;
-  if (PtlIsPcdP ()) {
-    pInst->PrivateConfig.PayLoadConfig.Unrs             = 0x1;
-    pInst->PrivateConfig.PayLoadConfig.Imrs             = 0x1;
-  } else {
-    pInst->PrivateConfig.PayLoadConfig.Unrs             = 0x7;
-    pInst->PrivateConfig.PayLoadConfig.Imrs             = 0x2;
-  }
+  pInst->PrivateConfig.PayLoadConfig.Unrs             = 0x1;
+  pInst->PrivateConfig.PayLoadConfig.Imrs             = 0x1;
   pInst->PrivateConfig.BlockChainTimer                = V_PGCTRL_PMREQBLKRSPT_25US;
 
   if (PtlIsPcdH () && (pInst->RpIndex == 10 || pInst->RpIndex == 11)){

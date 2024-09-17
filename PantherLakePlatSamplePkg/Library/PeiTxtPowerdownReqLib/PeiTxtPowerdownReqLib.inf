@@ -1,0 +1,67 @@
+## @file
+#
+#  This library is responsible for signaling the TXT Power Down request
+#  by writing into the TPM NV index.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification
+##
+
+[Defines]
+INF_VERSION                    = 0x00010017
+BASE_NAME                      = PeiTxtPowerdownReqLib
+FILE_GUID                      = 7D1621EF-285F-4D3B-9BE9-DA5572C47F86
+VERSION_STRING                 = 1.0
+MODULE_TYPE                    = PEIM
+LIBRARY_CLASS                  = NULL
+CONSTRUCTOR                    = PeiTxtPowerDownRequestConstructor
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+# VALID_ARCHITECTURES = IA32 X64 IPF EBC
+#
+
+[Sources]
+  PeiTxtPowerdownReqLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  SecurityPkg/SecurityPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[LibraryClasses]
+  HobLib
+  PeimEntryPoint
+  PeiServicesLib
+  BaseMemoryLib
+  DebugLib
+  PeiServicesTablePointerLib
+  BpmAccessLib
+  Tpm2CommandLib
+  Tpm2DeviceLib
+
+[Guids]
+  gPchGlobalResetGuid            ## CONSUMES
+  gTxtInfoHobGuid                ## CONSUMES
+
+[Ppis]
+  gEfiPeiMemoryDiscoveredPpiGuid ## CONSUMES
+
+[Pcd]

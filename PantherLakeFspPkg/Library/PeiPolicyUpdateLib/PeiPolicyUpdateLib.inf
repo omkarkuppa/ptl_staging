@@ -1,0 +1,122 @@
+## @file
+# #  Module Infomation file for PEI PolicyUpdateLib Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PeiPolicyUpdateLib
+  FILE_GUID                      = 6EA9585C-3C15-47da-9FFC-25E9E4EA4D0C
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PeiPolicyUpdateLib|PEIM PEI_CORE SEC
+
+[Sources]
+  PeiPchPolicyUpdate.c
+  PeiCpuPolicyUpdate.c
+  PeiSecurityPolicyUpdate.c
+  PeiSaPolicyUpdate.c
+  PeiMePolicyUpdate.c
+  PeiSiPolicyUpdate.c
+  PeiAmtPolicyUpdate.c
+  PeiTbtPolicyUpdate.c
+  PeiFspVPolicyUpdate.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  PantherLakeFspPkg/PantherLakeFspPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
+
+[Pcd]
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuApLoopMode                ## PRODUCES
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuMicrocodePatchAddress     ## PRODUCES
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuMicrocodePatchRegionSize  ## PRODUCES
+  gSiPkgTokenSpaceGuid.PcdEmbeddedEnable                    ## CONSUMES
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdTcssSupport                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdVmdEnable                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTsnSupport                        ## CONSUMES
+
+[LibraryClasses]
+  ConfigBlockLib
+  FspCommonLib
+  MemoryAllocationLib
+  PeiServicesLib
+  PchInfoLib
+  PcdLib
+  HobLib
+  PtlPcdPolicyLib
+  PeiVrDomainLib
+
+[Guids]
+  gGbeConfigGuid              ## CONSUMES
+  gTsnConfigGuid              ## CONSUMES
+  gHdAudioConfigGuid          ## CONSUMES
+  gUfsConfigGuid              ## CONSUMES
+  gIshConfigGuid              ## CONSUMES
+  gSpiConfigGuid              ## CONSUMES
+  gSataConfigGuid             ## CONSUMES
+  gUsbConfigGuid              ## CONSUMES
+  gUsb2PhyConfigGuid          ## CONSUMES
+  gUsb3HsioConfigGuid         ## CONSUMES
+  gSerialIoConfigGuid         ## CONSUMES
+  gInterruptConfigGuid        ## CONSUMES
+  gLockDownConfigGuid         ## CONSUMES
+  gPchPcieConfigGuid          ## CONSUMES
+  gMePeiConfigGuid            ## CONSUMES
+  gAmtPeiConfigGuid           ## CONSUMES
+  gPchDmiConfigGuid           ## CONSUMES
+  gFlashProtectionConfigGuid  ## CONSUMES
+  gIoApicConfigGuid           ## CONSUMES
+  gPmConfigGuid               ## CONSUMES
+  gP2sbConfigGuid             ## CONSUMES
+  gPchGeneralConfigGuid       ## CONSUMES
+  gThermalConfigGuid          ## CONSUMES
+  gGraphicsPeiConfigGuid      ## CONSUMES
+  gVtdConfigGuid              ## CONSUMES
+  gThcConfigGuid              ## CONSUMES
+  gIehConfigGuid              ## CONSUMES
+  gFusaConfigGuid             ## CONSUMES
+  gCpuInitConfigGuid                  ## CONSUMES
+  gBiosGuardConfigGuid                ## CONSUMES
+  gCpuPowerMgmtBasicConfigGuid        ## CONSUMES
+  gCpuPowerMgmtVrConfigGuid           ## CONSUMES
+  gCpuPowerMgmtCustomConfigGuid       ## CONSUMES
+  gCpuTestConfigGuid                  ## CONSUMES
+  gCpuPowerMgmtTestConfigGuid         ## CONSUMES
+  gSiConfigGuid                       ## CONSUMES
+  gTcssPeiConfigGuid                  ## CONSUMES
+  gFivrConfigGuid                     ## CONSUMES
+  gPeiITbtConfigGuid                  ## CONSUMES
+  gTcssHobGuid                        ## CONSUMES
+  gRtcConfigGuid                      ## CONSUMES
+  gTelemetryPeiConfigGuid             ## CONSUMES
+  gHostBridgePeiConfigGuid            ## CONSUMES
+  gFiaConfigGuid                      ## CONSUMES
+  gVmdPeiConfigGuid                   ## CONSUMES
+  gLpssI3cConfigGuid                  ## CONSUMES
+  gLpssUartConfigGuid                 ## CONSUMES
+  gLpssSpiConfigGuid                  ## CONSUMES
+  gLpssI2cConfigGuid                  ## CONSUMES
+  gAdrConfigGuid                      ## CONSUMES

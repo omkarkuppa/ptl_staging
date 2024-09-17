@@ -41,7 +41,6 @@
 
 typedef enum {
   EnumCpuPtl        = 0,
-  EnumCpuNvl,
   EnumCpuUnknown
 } CPU_FAMILY;
 

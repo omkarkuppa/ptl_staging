@@ -70,6 +70,7 @@ typedef struct {
   BOOLEAN        OutIsLpddr;
   BOOLEAN        OutIsLpddr5;
   BOOLEAN        OutIsDdr5;
+  BOOLEAN        OutIsLP5Camm2;
   UINT32         OutSystemDimmCount;
   UINT32         OutVdd2Mv;
   UINT8          OutBurstLength;
@@ -93,6 +94,7 @@ typedef struct {
   BOOLEAN        OutIsSoDimm;
   BOOLEAN        OutIs2RankDdr5;
   MRC_CKD_BUFFER OutCkdBuffer[MAX_DIMMS_IN_SYSTEM];
+  UINT8          Reserved[3];
   // Begin DimmOut Save Data
   MrcDimmSts     DimmOutStatus[MAX_CONTROLLER][MAX_CHANNEL][MAX_DIMMS_IN_CHANNEL];
   MrcDdrType     DimmOutDdrType[MAX_CONTROLLER][MAX_CHANNEL][MAX_DIMMS_IN_CHANNEL];
@@ -125,6 +127,7 @@ typedef struct {
   UINT32         ChannelOutDimmCount[MAX_CONTROLLER][MAX_CHANNEL];
   BOOLEAN        OutLpX;
   BOOLEAN        DimmOutCkdSupport[MAX_CONTROLLER][MAX_CHANNEL][MAX_DIMMS_IN_CHANNEL];
+  UINT8          DimmOutDeviceDensity[MAX_CONTROLLER][MAX_CHANNEL][MAX_DIMMS_IN_CHANNEL];
 } STATIC_SPD_DATA;
 
 #pragma pack(pop)

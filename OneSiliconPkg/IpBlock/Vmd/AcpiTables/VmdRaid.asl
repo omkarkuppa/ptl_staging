@@ -61,6 +61,7 @@ External (\_SB.PC00.VMD0.VLOF, MethodObj)
 External (D3CV, MethodObj)
 
 External(\ZPPB, FieldUnitObj) // Bitmask of port support zpodd
+External(\DLRM, FieldUnitObj)
 
 //
 // Store the volume package sent by the RST driver
@@ -95,6 +96,31 @@ Method (SVRP, 3) {
 // Arg3 - Rtd3AcpiVmdDevList : ACPI address for PCIe device or ACPI address for SATA device is stored
 //
 Method (_DSM, 4, Serialized,,, {BuffObj, IntObj, IntObj, PkgObj}) {
+  //
+  // DLRM support
+  //
+  If (CondRefOf (\DLRM)) {
+    If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4"))) {
+      If (LEqual (1, ToInteger (Arg1))) {
+        Switch (ToInteger (Arg2)) {
+          Case (0) {
+            // Standard query - A bitmask of functions supported
+            // Supports function 0-1
+            Return (Buffer () {0x03})
+          }
+          Case (1) {
+            // Only return support if platform enabled DLRM via setup.
+            If (LNotEqual (\DLRM, 0)) {
+              Return (1)
+            } Else {
+              Return (0)
+            }
+          }
+        } // End Switch statement
+      }  // End Revision check
+    }  // End DLRM UUID check
+  }
+
   If (LEqual (Arg0, ToUUID ("9CD9CDDD-8845-4AFD-8392-31C4EB87CABD"))) {
     Switch (ToInteger (Arg2)) {
       Case (0) {

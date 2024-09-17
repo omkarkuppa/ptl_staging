@@ -2551,6 +2551,55 @@ UpdatePcdsForSmbios (
   return EFI_SUCCESS;
 }
 
+EFI_STATUS
+EFIAPI
+UpdateSerialNumberOnExistingSmbiosType1AndType2 (
+  IN CHAR8* PssSerialNum
+  )
+{
+  EFI_SMBIOS_PROTOCOL        *SmbiosProtocol;
+  EFI_SMBIOS_HANDLE          SmbiosHandle;
+  EFI_SMBIOS_TABLE_HEADER    *SmbiosRecord;
+  EFI_STATUS                 Status;
+  EFI_SMBIOS_TYPE            Type;
+  UINTN                      StringNumber;
+
+  DEBUG ((DEBUG_INFO, "%a %a\n", __FUNCTION__, PssSerialNum));
+
+  Status = gBS->LocateProtocol (
+                  &gEfiSmbiosProtocolGuid,
+                  NULL,
+                  (VOID **) &SmbiosProtocol
+                  );
+  DEBUG ((DEBUG_INFO, "Locate SmbiosProtocol - %r\n", Status));
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+  StringNumber = 4;     // Serial Number is the 4th string.
+
+  Type = SMBIOS_TYPE_SYSTEM_INFORMATION;
+  SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
+  Status = SmbiosProtocol->GetNext (SmbiosProtocol, &SmbiosHandle, &Type, &SmbiosRecord, NULL);
+  DEBUG ((DEBUG_INFO, "Get existing SMBIOS Type 1 - %r\n", Status));
+  if (!EFI_ERROR (Status)) {
+    Status = SmbiosProtocol->UpdateString (SmbiosProtocol, &SmbiosHandle, &StringNumber, PssSerialNum);
+    DEBUG ((DEBUG_INFO, "Update SMBIOS Type 1 Serial Number String - %r\n", Status));
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+  }
+
+  Type = SMBIOS_TYPE_BASEBOARD_INFORMATION;
+  SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
+  Status = SmbiosProtocol->GetNext (SmbiosProtocol, &SmbiosHandle, &Type, &SmbiosRecord, NULL);
+  DEBUG ((DEBUG_INFO, "Get existing SMBIOS Type 2 - %r\n", Status));
+  if (!EFI_ERROR (Status)) {
+    Status = SmbiosProtocol->UpdateString (SmbiosProtocol, &SmbiosHandle, &StringNumber, PssSerialNum);
+    DEBUG ((DEBUG_INFO, "Update SMBIOS Type 2 Serial Number String - %r\n", Status));
+  }
+  return Status;
+}
+
 /**
   This is the callback function to hook SmbiosPlatformEntryPoint to get I2cPssProtocol correctly.
 
@@ -2693,6 +2742,8 @@ I2cPssProtocolInstallCallBack (
 
       mDefaultSmbiosPlatformInfo[BaseBoardManufacturer].Strings = UpdBaseBoardStrings;
       DEBUG ((DEBUG_INFO, "%a: Base Board Info Type 2 is updated\n", __FUNCTION__));
+
+      UpdateSerialNumberOnExistingSmbiosType1AndType2 ((CHAR8 *)&PssSerialNum);
     } else {
       DEBUG ((DEBUG_INFO, "%a: I2cPssGetSerialNumber Fail. Status = %r\n", __FUNCTION__, Status));
     }

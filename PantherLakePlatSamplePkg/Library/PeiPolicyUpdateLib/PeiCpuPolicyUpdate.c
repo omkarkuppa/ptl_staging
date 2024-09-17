@@ -36,11 +36,9 @@
 #include <DptfConfig.h>
 #endif
 
-#if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
 #include <FspsUpd.h>
 #include <Library/FspCommonLib.h>
-#endif
 
 /**
   Update Cpu Power Management Policy settings according to the related BIOS Setup options
@@ -67,82 +65,90 @@ InitCpuPmConfigBySetupValues (
   UINT8                            Index;
   UINT8                            MaxBusRatio;
   UINT8                            MinBusRatio;
-  EFI_STATUS                       Status;
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+#else
   CPU_POWER_MGMT_BASIC_CONFIG      *CpuPowerMgmtBasicConfig;
   CPU_POWER_MGMT_CUSTOM_CONFIG     *CpuPowerMgmtCustomConfig;
-
-  Status = EFI_SUCCESS;
-  CpuPowerMgmtBasicConfig = NULL;
-  CpuPowerMgmtCustomConfig = NULL;
+  EFI_STATUS                       Status;
+#endif
 
   MaxBusRatio = 0;
   MinBusRatio = 0;
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+#else
+  CpuPowerMgmtBasicConfig = NULL;
+  CpuPowerMgmtCustomConfig = NULL;
+  Status = EFI_SUCCESS;
 
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gCpuPowerMgmtBasicConfigGuid, (VOID *) &CpuPowerMgmtBasicConfig);
   ASSERT_EFI_ERROR (Status);
 
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gCpuPowerMgmtCustomConfigGuid, (VOID *) &CpuPowerMgmtCustomConfig);
   ASSERT_EFI_ERROR (Status);
-
+#endif
   ///
   /// Get Maximum Non-Turbo bus ratio (HFM) from Platform Info MSR Bits[15:8]
   /// Get Maximum Efficiency bus ratio (LFM) from Platform Info MSR Bits[47:40]
   ///
   GetBusRatio (&MaxBusRatio, &MinBusRatio);
 
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->TurboMode, CpuSetup->TurboMode);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.TurboMode, CpuPowerMgmtBasicConfig->TurboMode, CpuSetup->TurboMode);
 
   if (CpuSetup->BootMaxFrequency == 1) {
-    COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->BootFrequency, CpuSetup->BootFrequency);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.BootFrequency, CpuPowerMgmtBasicConfig->BootFrequency, CpuSetup->BootFrequency);
   } else {
-    UPDATE_POLICY (CpuPowerMgmtBasicConfig->BootFrequency, 0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.BootFrequency, CpuPowerMgmtBasicConfig->BootFrequency, 0);
   }
 
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->TurboPowerLimitLock, CpuSetup->TurboPowerLimitLock             );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.TurboPowerLimitLock, CpuPowerMgmtBasicConfig->TurboPowerLimitLock, CpuSetup->TurboPowerLimitLock);
 
   //
   // Intel Speed Shift Technology
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->Hwp,                 CpuSetup->EnableHwp          );
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->HwpInterruptControl, CpuSetup->HwpInterruptControl);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->HwpLock,             CpuSetup->HwpLock            );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.Hwp, CpuPowerMgmtBasicConfig->Hwp, CpuSetup->EnableHwp);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.HwpInterruptControl, CpuPowerMgmtBasicConfig->HwpInterruptControl, CpuSetup->HwpInterruptControl);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.HwpLock, CpuPowerMgmtBasicConfig->HwpLock, CpuSetup->HwpLock);
 
   //
   // Resource Priority Feature
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->EnableRp, CpuSetup->EnableRp);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableRp, CpuPowerMgmtBasicConfig->EnableRp, CpuSetup->EnableRp);
 
   //
   // HwP Misc Functions
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->EnableHwpAutoPerCorePstate, CpuSetup->EnableHwpAutoPerCorePstate);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping,   CpuSetup->EnableHwpAutoEppGrouping  );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableHwpAutoPerCorePstate, CpuPowerMgmtBasicConfig->EnableHwpAutoPerCorePstate, CpuSetup->EnableHwpAutoPerCorePstate);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableHwpAutoEppGrouping, CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping, CpuSetup->EnableHwpAutoEppGrouping);
 
   //
   // Power Floor Survivability controls
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->PowerFloorManagement,        CpuSetup->PowerFloorManagement);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->PowerFloorDisplayDisconnect, CpuSetup->PowerFloorDisplayDisconnect);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade,  CpuSetup->PowerFloorPcieGenDowngrade);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PowerFloorManagement,        CpuPowerMgmtBasicConfig->PowerFloorManagement,        CpuSetup->PowerFloorManagement);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PowerFloorDisplayDisconnect, CpuPowerMgmtBasicConfig->PowerFloorDisplayDisconnect, CpuSetup->PowerFloorDisplayDisconnect);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PowerFloorPcieGenDowngrade,  CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade,  CpuSetup->PowerFloorPcieGenDowngrade);
 
   //
   // Custom VID table
   //
   if (CpuSetup->StateRatio[0] < MinBusRatio) {
-    UPDATE_POLICY (CpuPowerMgmtCustomConfig->CustomRatioTable.MaxRatio, MinBusRatio);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MaxRatio, CpuPowerMgmtCustomConfig->CustomRatioTable.MaxRatio, MinBusRatio);
   } else {
-    COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtCustomConfig->CustomRatioTable.MaxRatio, CpuSetup->StateRatio[0]);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MaxRatio, CpuPowerMgmtCustomConfig->CustomRatioTable.MaxRatio, CpuSetup->StateRatio[0]);
   }
 
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtCustomConfig->CustomRatioTable.NumberOfEntries, CpuSetup->NumOfCustomPStates);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.NumberOfEntries, CpuPowerMgmtCustomConfig->CustomRatioTable.NumberOfEntries, CpuSetup->NumOfCustomPStates);
 
   for (Index = 0; Index < CpuSetup->NumOfCustomPStates; Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtCustomConfig->CustomRatioTable.StateRatio[Index], CpuSetup->StateRatio[Index], Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.StateRatio[Index], CpuPowerMgmtCustomConfig->CustomRatioTable.StateRatio[Index], CpuSetup->StateRatio[Index], Index);
   }
 
   if (CpuSetup->NumOfCustomPStates > MAX_16_CUSTOM_RATIO_TABLE_ENTRIES) {
     for (Index = 0; Index < MAX_16_CUSTOM_RATIO_TABLE_ENTRIES; Index++) {
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtCustomConfig->CustomRatioTable.StateRatioMax16[Index], CpuSetup->StateRatioMax16[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.StateRatioMax16[Index], CpuPowerMgmtCustomConfig->CustomRatioTable.StateRatioMax16[Index], CpuSetup->StateRatioMax16[Index], Index);
     }
   }
 
@@ -151,18 +157,18 @@ InitCpuPmConfigBySetupValues (
   //
   if (CpuSetup->IsTurboRatioDefaultsInitialized != 0) {
     for (Index = 0; Index < TURBO_RATIO_LIMIT_ARRAY_SIZE; Index++) {
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index],     CpuSetup->RatioLimitNumCore[Index],     Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index],       CpuSetup->RatioLimitRatio[Index],       Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[Index], CpuSetup->AtomRatioLimitNumCore[Index], Index);
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[Index],   CpuSetup->AtomRatioLimitRatio[Index],   Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.TurboRatioLimitNumCore[Index],     CpuPowerMgmtBasicConfig->TurboRatioLimitNumCore[Index],     CpuSetup->RatioLimitNumCore[Index],     Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.TurboRatioLimitRatio[Index],       CpuPowerMgmtBasicConfig->TurboRatioLimitRatio[Index],       CpuSetup->RatioLimitRatio[Index],       Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.AtomTurboRatioLimitNumCore[Index], CpuPowerMgmtBasicConfig->AtomTurboRatioLimitNumCore[Index], CpuSetup->AtomRatioLimitNumCore[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.AtomTurboRatioLimitRatio[Index],   CpuPowerMgmtBasicConfig->AtomTurboRatioLimitRatio[Index],   CpuSetup->AtomRatioLimitRatio[Index],   Index);
     }
   }
 
   //
   // Update Ring Ratio limits
   //
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->MinRingRatioLimit,    CpuSetup->MinRingRatioLimit);
-  COMPARE_AND_UPDATE_POLICY (CpuPowerMgmtBasicConfig->MaxRingRatioLimit,    CpuSetup->MaxRingRatioLimit);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MinRingRatioLimit, CpuPowerMgmtBasicConfig->MinRingRatioLimit, CpuSetup->MinRingRatioLimit);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MaxRingRatioLimit, CpuPowerMgmtBasicConfig->MaxRingRatioLimit, CpuSetup->MaxRingRatioLimit);
 
   return EFI_SUCCESS;
 }
@@ -381,6 +387,7 @@ UpdatePeiCpuPolicy (
   UINTN                            VariableSize;
   SETUP_DATA                       SetupData;
   CPU_SETUP                        CpuSetup;
+  UINT32                           MicrocodeBaseAddress;
 #if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
   DPTF_CONFIG                      DptfConfig;
 #endif
@@ -391,13 +398,24 @@ UpdatePeiCpuPolicy (
   UINT8 SeamldrSvn = 0;
 #endif
   EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariableServices;
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+ VOID                            *FspsUpd;
+ VOID                            *FspmUpd;
+#else
   CPU_INIT_CONFIG                  *CpuInitConfig;
   CPU_POWER_MGMT_BASIC_CONFIG      *CpuPowerMgmtBasicConfig;
   CPU_SECURITY_PREMEM_CONFIG       *CpuSecurityPreMemConfig;
-  UINT32                           MicrocodeBaseAddress;
+#endif
 
   DEBUG ((DEBUG_INFO, "Update PeiCpuPolicyUpdate Pos-Mem Start\n"));
 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+  ASSERT (FspsUpd != NULL);
+#else
   CpuInitConfig           = NULL;
   CpuPowerMgmtBasicConfig = NULL;
   CpuSecurityPreMemConfig = NULL;
@@ -410,7 +428,7 @@ UpdatePeiCpuPolicy (
 
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gCpuPowerMgmtBasicConfigGuid, (VOID *) &CpuPowerMgmtBasicConfig);
   ASSERT_EFI_ERROR (Status);
-
+#endif
   //
   // Make sure ReadOnlyVariablePpi is available
   //
@@ -460,21 +478,21 @@ UpdatePeiCpuPolicy (
   ASSERT_EFI_ERROR (Status);
 #endif
 
-  COMPARE_AND_UPDATE_POLICY (CpuInitConfig->AesEnable, CpuSetup.AES);
-  COMPARE_AND_UPDATE_POLICY (CpuInitConfig->TxtEnable, CpuSetup.Txt);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.AesEnable, CpuInitConfig->AesEnable, CpuSetup.AES);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.TxtEnable, CpuInitConfig->TxtEnable, CpuSetup.Txt);
 
   if (CpuSetup.PpinSupport == 0) {
     // Update value is related with Setup value, Need to check Policy Default
-    COMPARE_AND_UPDATE_POLICY (CpuInitConfig->PpinSupport, 0); ///< reference code policy is disabled
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PpinSupport, CpuInitConfig->PpinSupport, 0); ///< reference code policy is disabled
   } else if ((CpuSetup.PpinSupport == 1) && (CpuSetup.PpinEnableMode == 0)) {
     // Update value is related with Setup value, Need to check Policy Default
-    COMPARE_AND_UPDATE_POLICY (CpuInitConfig->PpinSupport, 2); ///< reference code policy is set to Auto. The feature is disabled if End of Manufacturing flag is set.
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PpinSupport, CpuInitConfig->PpinSupport, 2); ///< reference code policy is set to Auto. The feature is disabled if End of Manufacturing flag is set.
   } else if ((CpuSetup.PpinSupport == 1) && (CpuSetup.PpinEnableMode == 1)) {
     //Update value is related with Setup value, Need to check Policy Default
-    COMPARE_AND_UPDATE_POLICY (CpuInitConfig->PpinSupport, 1); ///< reference code policy is enabled
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PpinSupport, CpuInitConfig->PpinSupport, 1); ///< reference code policy is enabled
   }
 
-  COMPARE_AND_UPDATE_POLICY (CpuInitConfig->AvxDisable,  CpuSetup.AvxDisable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.AvxDisable, CpuInitConfig->AvxDisable,  CpuSetup.AvxDisable);
 
   //
   // Directly assign the microcode flash location to FSPS UPD (API mode) or CpuInitConfig (Dispatch mode)
@@ -484,10 +502,10 @@ UpdatePeiCpuPolicy (
   if (MicrocodeBaseAddress == 0) {
     MicrocodeBaseAddress = FixedPcdGet32 (PcdFlashFvMicrocodeBase);
   }
-  UPDATE_POLICY (CpuInitConfig->MicrocodePatchAddress,
+  UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.MicrocodeRegionBase, CpuInitConfig->MicrocodePatchAddress,
     MicrocodeBaseAddress + FixedPcdGet32 (PcdMicrocodeOffsetInFv)
     );
-  UPDATE_POLICY (CpuInitConfig->MicrocodePatchRegionSize,
+  UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.MicrocodeRegionSize, CpuInitConfig->MicrocodePatchRegionSize,
     FixedPcdGet32 (PcdFlashFvMicrocodeSize) - FixedPcdGet32 (PcdMicrocodeOffsetInFv)
     );
 
@@ -524,17 +542,17 @@ UpdatePeiCpuPolicy (
     //
     // AC Split Lock
     //
-    COMPARE_AND_UPDATE_POLICY (CpuInitConfig->AcSplitLock, CpuSetup.AcSplitLock);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.AcSplitLock, CpuInitConfig->AcSplitLock, CpuSetup.AcSplitLock);
 #endif
 
-  COMPARE_AND_UPDATE_POLICY (CpuInitConfig->X2ApicEnable, CpuSetup.X2ApicEnable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.X2ApicEnable, CpuInitConfig->X2ApicEnable, CpuSetup.X2ApicEnable);
 
 #if FixedPcdGetBool (PcdTdxEnable) == 1
     //
     // Update TdxSeamldrSvn Policy
     //
     UpdateTdxSeamldrSeSvn (&SeamldrSvn);
-    COMPARE_AND_UPDATE_POLICY (CpuSecurityPreMemConfig->TdxSeamldrSvn, SeamldrSvn);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdxSeamldrSvn, CpuSecurityPreMemConfig->TdxSeamldrSvn, SeamldrSvn);
 #endif
 
   return EFI_SUCCESS;

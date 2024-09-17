@@ -59,7 +59,9 @@
 #                           that this module uses or produces.
 #
 ################################################################################
-
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdAcpiDebugEnableFlag                             ## CONSUMES
+  
 [FixedPcd]
   gDptfFeaturePkgTokenSpaceGuid.PcdDttFan1Participant                     ## CONSUMES
   gDptfFeaturePkgTokenSpaceGuid.PcdDttFan2Participant                     ## CONSUMES

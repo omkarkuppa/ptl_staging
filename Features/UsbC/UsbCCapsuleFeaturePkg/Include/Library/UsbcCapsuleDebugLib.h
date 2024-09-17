@@ -25,7 +25,6 @@
 #include <Usb4Debug/Usb4DebugProtocol.h>
 #include <Usb4Debug/Usb4LogEvents.h>
 
-
 /**
   Write Log data to the next available Log entry in Log buffer
   Protocol DebugLevel controls what level of Log data can be written to Log buffer
@@ -46,14 +45,6 @@ CapsuleLogWrite (
   IN UINT16                     EventCode,
   IN UINT32                     EvtArg0,
   IN UINT32                     EvtArg1
-  );
-
-/**
-  Install USBC Capsule Debug Protocol.
-**/
-VOID
-InstallCapsuleDebugProtocol (
-  VOID
   );
 
 #endif

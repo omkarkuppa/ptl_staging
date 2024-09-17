@@ -21,6 +21,7 @@
 
 #include "PeiPolicyBoardConfig.h"
 #include <PchPcieRpConfig.h>
+#include <FspmUpd.h>
 
 VOID
 UpdatePcieClockInfo (
@@ -30,12 +31,17 @@ UpdatePcieClockInfo (
   )
 {
   PCD64_BLOB Pcd64;
+  #if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspmUpd;
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+  ASSERT (FspmUpd != NULL);
+  #endif
 
   Pcd64.Blob = Data;
   DEBUG ((DEBUG_INFO, "UpdatePcieClockInfo ClkIndex %x ClkUsage %x, Supported %x\n", Index, Pcd64.PcieClock.ClockUsage, Pcd64.PcieClock.ClkReqSupported));
 
-  UPDATE_POLICY (PcieRpPreMemConfig->PcieClock[Index].Usage, (UINT8)Pcd64.PcieClock.ClockUsage);
-  UPDATE_POLICY (PcieRpPreMemConfig->PcieClock[Index].ClkReq, Pcd64.PcieClock.ClkReqSupported ? (UINT8)Index : 0xFF);
+  UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[Index], PcieRpPreMemConfig->PcieClock[Index].Usage, (UINT8)Pcd64.PcieClock.ClockUsage);
+  UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcClkReq[Index], PcieRpPreMemConfig->PcieClock[Index].ClkReq, Pcd64.PcieClock.ClkReqSupported ? (UINT8)Index : 0xFF);
 }
 
 /**
@@ -60,8 +66,10 @@ UpdatePeiPchPolicyBoardConfigPreMem (
   Status = EFI_SUCCESS;
   PcieRpPreMemConfig = NULL;
 
+#if FixedPcdGet8(PcdFspModeSelection) == 0
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gPcieRpPreMemConfigGuid, (VOID *) &PcieRpPreMemConfig);
   ASSERT_EFI_ERROR (Status);
+#endif
 
   UpdatePcieClockInfo (PcieRpPreMemConfig, 0, PcdGet64  (PcdPcieClock0));
   UpdatePcieClockInfo (PcieRpPreMemConfig, 1, PcdGet64  (PcdPcieClock1));

@@ -51,4 +51,17 @@ typedef struct _TDX_DATA {
 
 #pragma pack(pop)
 
+/**
+   Create TDX DATA HOB
+
+   @param[out] TdxDataHobPtr  - Pointer to the TDX Data HOB structure
+
+   @retval  EFI_SUCCESS  TdxDataHobPtr has been initialized successfully.
+   @retval  Others       HOB creation failed.
+**/
+EFI_STATUS
+TdxHobInit (
+  OUT TDX_DATA_HOB **TdxDataHobPtr
+  );
+
 #endif // _TDX_DATA_HOB_H_

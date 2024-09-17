@@ -690,6 +690,8 @@ typedef struct {
                                                     ///< Offset 2845    DTBT2 USB3 Port2 Capability for _UPC
   UINT8    TbtRTD3En;                               ///< Offset 2846    DTBT RTD3 enable status (should set to 1 when enable TBT RTD3)
   UINT32   IpfEnable;                               ///< Offset 2847    Ipf Enable
+  UINT8    SubBusBoundary;                          ///< Offset 2851    PCI BUS resource occupied boundary
+  UINT8    StorageDynamicLinkManagement;            ///< Offset 2852    Storage Dynamic Link (PCIe) Rate management (DLRM) Support
 } PLATFORM_NVS_AREA;
 
 #pragma pack(pop)

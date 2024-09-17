@@ -148,8 +148,8 @@ BoardConfigData (
   I2cTPTD->TouchPanelNvsVar.TouchPanelBusAddress = SetupData->PchI2cTouchPanelBusAddress;
   I2cTPTD->TouchPanelNvsVar.TouchPanelSpeed = SetupData->PchI2cTouchPanelSpeed;
   I2cTPTD->TouchPanelNvsVar.TouchPanelHidAddress = SetupData->PchI2cTouchPanelHidAddress ;
-  I2cTPTD->TouchPanelNvsVar.Touchpanel0IrqGpio = PcdGet32(PcdTouchpanel0IrqGpio);
   I2cTPTD->TouchPanelNvsVar.TouchpanelIrqGpio = PcdGet32(PcdTouchpanelIrqGpio);
+  I2cTPTD->TouchPanelNvsVar.Touchpanel1IrqGpio = PcdGet32(PcdTouchpanel1IrqGpio);
   I2cTPTD->TouchPadNvsVar.TouchPadType = SetupData->PchI2cTouchPadType;
   I2cTPTD->TouchPadNvsVar.TouchPadIrqMode = SetupData->PchI2cTouchPadIrqMode;
   I2cTPTD->TouchPadNvsVar.TouchPadBusAddress = SetupData->PchI2cTouchPadBusAddress;

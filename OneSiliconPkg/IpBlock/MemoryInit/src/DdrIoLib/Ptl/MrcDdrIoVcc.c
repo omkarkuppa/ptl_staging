@@ -220,6 +220,9 @@ SetVccLvr (
   MrcWriteCR (MrcData, Offset, WorkPoint0.Data);
 
   for (Index = 0; Index < DataParMax; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     // VccClk Data
     Offset = OFFSET_CALC_MC_CH (DDRDATA_SBMEM0_CR_DDRCRVCCCLK_WP0_REG, DDRDATA_SBMEM1_CR_DDRCRVCCCLK_WP0_REG, Index,
                                 DDRDATA_SBMEM0_CR_DDRCRVCCCLK_WP1_REG, SaGvPoint);
@@ -240,6 +243,9 @@ SetVccLvr (
   }
 
   for (Index = 0; Index < MRC_CCC_SHARED_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     // VccClk CCC
     Offset = OFFSET_CALC_MC_CH (DDRCCC_SBMEM0_CR_DDRCRVCCCLK_WP0_REG, DDRCCC_SBMEM1_CR_DDRCRVCCCLK_WP0_REG, Index,
                                 DDRCCC_SBMEM0_CR_DDRCRVCCCLK_WP1_REG, SaGvPoint);
@@ -287,6 +293,9 @@ SetVccLvr (
   MrcWriteCR (MrcData, DDRPHY_MISC_SAUG_CR_LVR_CTRL1_REG, LvrCtrl1.Data);
 
   for (Index = 0; Index < MRC_CCC_SHARED_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     Offset = OFFSET_CALC_CH (DDRCCC_SBMEM0_CR_PM_MISC_CTRL_REG, DDRCCC_SBMEM1_CR_PM_MISC_CTRL_REG, Index);
     PmMiscCtrl.Data = MrcReadCR (MrcData, Offset);
     PmMiscCtrl.Bits.EnIOGDDQGLpMode4Mask = 1;
@@ -296,6 +305,9 @@ SetVccLvr (
   }
 
   for (Index = 0; Index < DataParMax; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
     Offset = OFFSET_CALC_CH (DDRDATA_SBMEM0_CR_DDRCRDLLCBTUNE0_REG, DDRDATA_SBMEM1_CR_DDRCRDLLCBTUNE0_REG, Index);
     DllCbTune0.Data = MrcReadCR (MrcData, Offset);
     DllCbTune0.Bits.bw4 = 9;
@@ -308,6 +320,9 @@ SetVccLvr (
   }
 
   for (Index = 0; Index < MRC_VCCCLK_MOBILE_NUM; Index++) {
+    if (!MrcGetHwControllerExists (MrcData, Index)) {
+      continue;
+    }
     Offset = OFFSET_CALC_MC_CH (DDRVCCCLK_SBMEM0_CR_DDRRPTCHCRMISC_WP0_REG, DDRVCCCLK_SBMEM1_CR_DDRRPTCHCRMISC_WP0_REG, Index,
                                 DDRVCCCLK_SBMEM0_CR_DDRRPTCHCRMISC_WP1_REG, SaGvPoint);
     RptChCrMisc.Data = MrcReadCR (MrcData, Offset);

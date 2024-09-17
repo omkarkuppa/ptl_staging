@@ -58,8 +58,9 @@ typedef struct _TXT_INFO_DATA {
   UINT32               TxtMode:1;               ///< Value is set to 1 if Intel TXT mode is enabled in BIOS Setup.
   UINT32               ResetAux:1;              ///< Value is set to 1 if reset Aux is enabled in BIOS Setup.
   UINT32               TxtAcheckRequest:1;      ///< Value is set to 1 if TXT Acheck Request is enabled in BIOS Setup.
+  UINT32               TxtPowerdownRequest:1;   ///< Value is set to 1 if TXT Powerdown Request is enabled in BIOS Setup.
   UINT32               ProcessorIsTxtCapable:1; ///< Value is set to 1 if processor is Intel TXT capable.
-  UINT32               Reserved:11;             ///< Reserved for future use
+  UINT32               Reserved:10;             ///< Reserved for future use
 
   UINT8                AcmMajorVersion;         ///< BIOSACM binary major version
   UINT8                AcmMinorVersion;         ///< BIOSACM binary minor version

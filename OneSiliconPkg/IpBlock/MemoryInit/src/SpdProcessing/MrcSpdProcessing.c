@@ -776,6 +776,7 @@ ValidDimm (
           ModuleTypeString = Ddr5CammString;
 #endif // MRC_DEBUG_PRINT
         } else if (IsLpddr) {
+          Outputs->IsLP5Camm2 = TRUE;
 #ifdef MRC_DEBUG_PRINT
           ModuleTypeString = Lpddr5CammString;
 #endif // MRC_DEBUG_PRINT
@@ -981,7 +982,9 @@ ValidSdramDeviceWidth (
   } else {
     DimmOut->SdramWidthIndex = Spd->Lpddr.Base.ModuleOrganization.Bits.SdramDeviceWidth;
     DimmOut->DiePerSdramPackage = Spd->Lpddr.Base.SdramPackageType.Bits.DiePerSdramPkg + 1;
-    ChPerSdramPkg = Spd->Lpddr.Base.SdramPackageType.Bits.ChannelsPerPkg;
+    if (!Outputs->IsLP5Camm2) {
+      ChPerSdramPkg = Spd->Lpddr.Base.SdramPackageType.Bits.ChannelsPerPkg;
+    }
   }
 
   switch (DimmOut->SdramWidthIndex) {
@@ -1022,7 +1025,7 @@ ValidSdramDeviceWidth (
       return FALSE;
   }
 
-  if (IsLpddr) {
+  if (IsLpddr && !Outputs->IsLP5Camm2) {
     switch (ChPerSdramPkg) {
       case MRC_SPD_CH_PER_SDRAM_PKG_1:
         ChPerSdramPkg = 1;
@@ -1271,6 +1274,35 @@ ValidPrimaryWidth (
 
   if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
     Width = Spd->Ddr5.ModuleCommon.ModuleMemoryBusWidth.Bits.PrimaryBusWidth;
+  } else if (Outputs->IsLP5Camm2) {
+    Width = MRC_SPD_PRIMARY_BUS_WIDTH_16;//Hardcoded
+    //translate from SPD Raw values to encoding
+    switch (Spd->JedecLpddr5.ModuleCommon.ModuleMemoryBusWidth.Bits.NumOfSubChannelsPerDimm) {
+      case 0:
+        NumberOfChannels = 1;
+        break;
+
+      case 1:
+        NumberOfChannels = 2;
+        break;
+
+      case 2:
+        NumberOfChannels = 4;
+        break;
+
+      case 3:
+        NumberOfChannels = 8;
+        break;
+
+      default:
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "LP CAMM2 NumOfSubchannelsPerDimm %s%d\n", SpdValString, Spd->JedecLpddr5.ModuleCommon.ModuleMemoryBusWidth.Bits.NumOfSubChannelsPerDimm);
+        return FALSE;
+        break;
+    }
+    if (Width == MRC_SPD_PRIMARY_BUS_WIDTH_16) {
+      Outputs->EnhancedChannelMode = TRUE;
+    }
+    IsLpddr = TRUE;
   } else {  // LPDDR5
     IsLpddr = TRUE;
     NumberOfChannels = 1;//Hardcoded
@@ -1399,6 +1431,12 @@ ValidBank (
     BankGroup             = Spd->Lpddr.Base.SdramDensityAndBanks.Bits.BankGroup;
   }
 
+  // Get the DRAM density in Gbit
+  // Less than 1Gb density is not POR, smaller values would be invalid and reported as 0
+  if (DimmOut->DensityIndex < ARRAY_COUNT (SdramCapacityTable)) {
+    DimmOut->DeviceDensity = (UINT8) ((8 * SdramCapacityTable[DimmOut->DensityIndex]) / 1024);
+  }
+
   ValidCheckStep = TRUE;
   if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
     switch (BankAddress) {
@@ -1512,11 +1550,15 @@ GetRankCount (
   )
 {
   MrcDebug     *Debug;
+  MrcOutput    *Outputs;
   UINT8        RankCount;
 
-  Debug = &MrcData->Outputs.Debug;
+  Outputs = &MrcData->Outputs;
+  Debug = &Outputs->Debug;
   if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
     RankCount = Spd->Ddr5.ModuleCommon.ModuleOrganization.Bits.RankCount;
+  } else if (Outputs->IsLP5Camm2) {
+    RankCount = Spd->JedecLpddr5.ModuleCommon.ModuleOrganization.Bits.NumOfPackageRanksperSubChannel;
   } else {
     RankCount = Spd->Lpddr.Base.ModuleOrganization.Bits.RankCount;
   }
@@ -1536,6 +1578,88 @@ GetRankCount (
   }
 
   return TRUE;
+}
+
+/**
+  Transcode SPD Raw Value to Actual Value for SdramDensityPerDie. Used by JEDEC Spec LP CAMM (CAMM2). Units are in Gigabytes.
+
+    @param[in, out] MrcData - Pointer to MrcData data structure.
+    @param[in, out] SdramDensityPerDie - Die Density from the SPD data.
+
+    @retval Size of each subchannel in MBytes.
+**/
+UINT8
+TranscodeJedecSpecLPCammSdramDensityPerDie (
+  IN OUT MrcParameters* const MrcData,
+  IN UINT8 const SdramDensityPerDie
+  ) 
+{
+  MrcDebug   *Debug;
+  Debug = &MrcData->Outputs.Debug;
+  switch (SdramDensityPerDie) {
+    case 2:  
+      return 1;
+
+    case 3:
+      return 2;
+
+    case 4:
+      return 4;
+
+    case 5:
+      return 8;
+
+    case 6:
+      return 16;
+
+    case 7:
+      return 32;
+
+    case 8:
+      return 12;
+
+    case 9:
+      return 24;
+
+    case 10:
+      return 3;
+
+    case 11:
+      return 6;
+
+    default:
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Invalid LP CAMM2 SdramDensityPerDie %s%d\n", SpdValString, SdramDensityPerDie);
+      return MRC_UINT8_MAX;
+  }
+}
+
+/**
+  Calculate the size of JEDEC Spec Compliant CAMM. Size is module size per sub-channel in MegaBytes
+
+    @param[in, out] MrcData - Pointer to MrcData data structure.
+    @param[in, out] DimmOut - Pointer to structure containing DIMM information.
+
+    @retval Size of each subchannel in MBytes.
+**/
+UINT32
+GetJedecSpecLPCammSize (
+  IN OUT MrcParameters* const MrcData,
+  IN OUT MrcDimmOut* const DimmOut
+  ) 
+{
+  UINT16     SdramDensityPerDie;
+  UINT32     TotalSizeMBytes;
+
+  TotalSizeMBytes = 0;
+
+  SdramDensityPerDie = TranscodeJedecSpecLPCammSdramDensityPerDie (MrcData, DimmOut->DensityIndex);
+  SdramDensityPerDie *= 1024;//Scale to not lose precision on non power of two values for SdramDensityPerDie.
+ 
+  //The following is straight from the 1.0 JEDEC LP CAMM2 Spec for total size:
+  //  DimmSize (GB) = NumOfSubchannelsPerDimm * (PrimaryBusWidthPerSubCh / SdramDieDataWidth) * (SdramDensityPerDie / 8) * PackageRanksPerSubCh
+  TotalSizeMBytes = (DimmOut->PrimaryBusWidth / DimmOut->SdramWidth) * (SdramDensityPerDie / 8) * DimmOut->RankInDimm;
+  
+  return TotalSizeMBytes;
 }
 
 /**
@@ -1571,7 +1695,9 @@ GetDimmSize (
   IsLpddr      = (Outputs->IsLpddr);
 
   if ((DimmOut->SdramWidth > 0) && (DensityIndex < ARRAY_COUNT (SdramCapacityTable))) {
-    if (IsLpddr) {
+    if (Outputs->IsLP5Camm2) {
+      DimmSize = GetJedecSpecLPCammSize (MrcData, DimmOut);
+    } else if (IsLpddr) {
       DimmSize = (SdramCapacityTable[DensityIndex] * DimmOut->DiePerSdramPackage * DimmOut->PrimaryBusWidth * DimmOut->NumLpSysChannel) / (DimmOut->SdramWidth * DimmOut->ChannelsPerSdramPackage);
       if (ExtInputs->ForceSingleRank && (Spd->Lpddr.Base.ModuleOrganization.Bits.RankCount == 1)) {
         DimmSize = DimmSize / 2;
@@ -1627,13 +1753,17 @@ ValidEccSupport (
 #if (SUPPORT_ECC == SUPPORT)
   UINT8        BusWidthExtension;
 #endif // SUPPORT_ECC
+  MrcOutput       *Outputs;
   MrcDebug        *Debug;
 
-  Debug = &MrcData->Outputs.Debug;
+  Outputs = &MrcData->Outputs;
+  Debug = &Outputs->Debug;
 
 #if (SUPPORT_ECC == SUPPORT)
   if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
     BusWidthExtension = Spd->Ddr5.ModuleCommon.ModuleMemoryBusWidth.Bits.BusWidthExtension;
+  } else if (Outputs->IsLP5Camm2) {
+    BusWidthExtension = Spd->JedecLpddr5.ModuleCommon.ModuleMemoryBusWidth.Bits.BusWidthExtensionPerSubChannel;
   } else {
     BusWidthExtension = Spd->Lpddr.Base.ModuleMemoryBusWidth.Bits.BusWidthExtension;
   }
@@ -1731,12 +1861,14 @@ GetThermalRefreshSupport (
 {
   MrcDebug        *Debug;
   const MrcInput  *Inputs;
+  MrcOutput       *Outputs;
 
   Inputs = &MrcData->Inputs;
-  Debug  = &MrcData->Outputs.Debug;
+  Outputs = &MrcData->Outputs;
+  Debug  = &Outputs->Debug;
 
   DimmOut->PartialSelfRefresh    = 0;
-  if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
+  if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType || Outputs->IsLP5Camm2) {
     DimmOut->OnDieThermalSensor = Spd->Ddr5.ModuleCommon.DeviceInfoThermalSensor.DeviceType.Bits.DevicesInstalledTS0 |
                                   Spd->Ddr5.ModuleCommon.DeviceInfoThermalSensor.DeviceType.Bits.DevicesInstalledTS1;
   } else {
@@ -1794,7 +1926,7 @@ GetpTRRsupport (
   Outputs = &MrcData->Outputs;
   Debug   = &Outputs->Debug;
 
-  if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
+  if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType || Outputs->IsLP5Camm2) {
     tMAC = MRC_TMAC_UNTESTED;
   } else {
     tMAC = Spd->Lpddr.Base.pTRRsupport.Bits.tMACencoding;
@@ -1865,10 +1997,12 @@ GetReferenceRawCardSupport (
   IN OUT MrcDimmOut      *const DimmOut
   )
 {
+  MrcOutput *Outputs;
   MrcDebug  *Debug;
 
-  Debug = &MrcData->Outputs.Debug;
-  if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
+  Outputs = &MrcData->Outputs;
+  Debug = &Outputs->Debug;
+  if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType || Outputs->IsLP5Camm2) {
     DimmOut->ReferenceRawCard = Spd->Ddr5.ModuleCommon.ReferenceRawCardUsed.Bits.Card;
   } else {
     DimmOut->ReferenceRawCard = (Spd->Lpddr.Module.LpDimm.ReferenceRawCardUsed.Bits.Extension << MRC_SPD_REF_RAW_CARD_SIZE) |
@@ -6763,6 +6897,9 @@ MrcSpdCrcArea (
   if (MRC_SPD_DDR5_SDRAM_TYPE_NUMBER == DdrType) {
     CrcStart = (void *) &DimmIn->Spd.Data.Ddr5.ManufactureInfo;
     *CrcSize = SPD5_MANUF_SIZE;
+  } else if (MrcData->Outputs.IsLP5Camm2) {
+    CrcStart = (void*) &DimmIn->Spd.Data.JedecLpddr5.ManufactureInfo;
+    *CrcSize = SPDLP_JEDEC_SPEC_MANUF_SIZE;
   } else if ((MRC_SPD_LPDDR5_SDRAM_TYPE_NUMBER == DdrType) || (MRC_SPD_LPDDR5X_SDRAM_TYPE_NUMBER == DdrType)) {
     CrcStart = (void *) &DimmIn->Spd.Data.Lpddr.ManufactureInfo;
     *CrcSize = SPDLP_MANUF_SIZE;
@@ -7034,16 +7171,7 @@ MrcGetSpdDdrTypeParams (
              break;
           }
         }
-        if (Outputs->DdrType != MRC_DDR_TYPE_UNKNOWN) {
-          break;
-        }
       }
-      if (Outputs->DdrType != MRC_DDR_TYPE_UNKNOWN) {
-        break;
-      }
-    }
-    if (Outputs->DdrType != MRC_DDR_TYPE_UNKNOWN) {
-      break;
     }
   }
 

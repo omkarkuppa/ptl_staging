@@ -467,3 +467,16 @@ PtlPcdGetCanCtrlNum (
 {
   return 0;
 }
+
+/**
+  Get maximum TSN controllers number
+
+  @retval Maximum TSN controllers number
+**/
+UINT8
+PtlPcdGetTsnMaxCtrlNum (
+  VOID
+  )
+{
+  return 0;
+}

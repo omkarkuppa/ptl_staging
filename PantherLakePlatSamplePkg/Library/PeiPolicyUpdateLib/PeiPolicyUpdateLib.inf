@@ -82,6 +82,7 @@
   SecurityPkg/SecurityPkg.dec
   CryptoPkg/CryptoPkg.dec
   IntelSiliconPkg/IntelSiliconPkg.dec
+  IntelFsp2Pkg/IntelFsp2Pkg.dec
   PantherLakeBoardPkg/BoardPkg.dec
   PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   MinPlatformPkg/MinPlatformPkg.dec
@@ -132,6 +133,7 @@
   gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber                  ## CONSUMES
   gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                                 ## CONSUMES
 
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress  ## CONSUMES
@@ -279,6 +281,8 @@
 
   gSiPkgTokenSpaceGuid.PcdHgSubSystemId                        ## CONSUMES
 
+  gSiPkgTokenSpaceGuid.PcdTsnSupport                           ## CONSUMES
+
 [Sources]
   PeiPchPolicyUpdatePreMem.c
   PeiPchPolicyUpdate.c
@@ -397,3 +401,4 @@
   gDisplayDdiConfigHobGuid                      ## CONSUMES
   gGopConfigDriverHobGuid                       ## CONSUMES
   gTishDataHobGuid                              ## CONSUMES
+  gCnviPreMemConfigGuid                         ## CONSUMES

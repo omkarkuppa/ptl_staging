@@ -21,6 +21,7 @@
 
 #include "PeiPolicyBoardConfig.h"
 #include <Register/GenerationMsr.h>
+ #include <FspmUpd.h>
 
 /**
   This function performs PEI CPU Pre-Memory Policy update by board configuration.
@@ -37,11 +38,20 @@ UpdatePeiCpuPolicyBoardConfigPreMem (
   )
 {
   EFI_STATUS                      Status;
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspmUpd;
+#else
   CPU_INIT_PREMEM_CONFIG          *CpuInitPreMemConfig;
   CPU_SECURITY_PREMEM_CONFIG      *CpuSecurityPreMemConfig;
+#endif
 
   DEBUG ((DEBUG_INFO, "Updating CPU Policy by board config in Pre-Mem\n"));
 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
+  ASSERT (FspmUpd != NULL);
+#else
   CpuInitPreMemConfig     = NULL;
   CpuSecurityPreMemConfig = NULL;
 
@@ -50,13 +60,13 @@ UpdatePeiCpuPolicyBoardConfigPreMem (
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuSecurityPreMemConfigGuid, (VOID *) &CpuSecurityPreMemConfig);
   ASSERT_EFI_ERROR(Status);
-
+#endif
   //
   //  Cpu Config Lib policies
   //
-  UPDATE_POLICY (CpuInitPreMemConfig->CpuRatio, PcdGet8 (PcdCpuRatio));
-  UPDATE_POLICY (CpuSecurityPreMemConfig->BiosGuard, PcdGet8 (PcdBiosGuard));
-  UPDATE_POLICY (CpuInitPreMemConfig->TsegSize,  PcdGet32 (PcdTsegSize));
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CpuRatio, CpuInitPreMemConfig->CpuRatio, PcdGet8 (PcdCpuRatio));
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosGuard, CpuSecurityPreMemConfig->BiosGuard, PcdGet8 (PcdBiosGuard));
+  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TsegSize, CpuInitPreMemConfig->TsegSize, PcdGet32 (PcdTsegSize));
 
   return EFI_SUCCESS;
 }

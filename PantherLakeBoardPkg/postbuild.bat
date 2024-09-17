@@ -60,6 +60,11 @@ setlocal ENABLEDELAYEDEXPANSION
   @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeExtended_autogen.fdf
 ) else (
     @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapInclude.fdf
+  @REM Multi-IBB support
+  @REM
+  if %MULTI_IBB_BUILD% EQU TRUE (
+    @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeMultiIbb.fdf
+  )
 )
 @echo Flash Map File %FLASHMAP_FDF%
 
@@ -931,11 +936,15 @@ IF exist %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\InternalOnly\ToolScripts\B
 
 if not exist %WORKSPACE_ROM% mkdir %WORKSPACE_ROM%
 
-@echo ---Create ROM and Simics images---
-call %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\SetupRomDirs.bat
+@echo ---Create ROM images---
+if exist %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\SetupRomDirs.bat (
+  call %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\SetupRomDirs.bat
+) else (
+  call %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\ToolScripts\RomImage\SetupRomDirs.bat
+)
 
 @if %errorlevel% NEQ 0 (
-  @echo !!! ERROR !!! Create ROM and Simics images !!!
+  @echo !!! ERROR !!! Create ROM images !!!
   set SCRIPT_ERROR=1
   goto EndPostBuild
 )

@@ -709,7 +709,6 @@ FvNameGuid         = 7C4DCFC6-AECA-4707-85B9-FD4B2EEA49E7
     }
 !endif # PcdPeiDisplayEnable
 
-
 !if gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable == TRUE
   INF $(PLATFORM_BOARD_PACKAGE)/Features/MipiCam/MipiCamInitPei/MipiCamInitPei.inf
 !endif
@@ -938,7 +937,6 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Spi/RuntimeDxe/SpiRuntime.in
       SECTION UI = "GopConfigDriverDxe"
     }
 !endif # gSiPkgTokenSpaceGuid.PcdIgdEnable
-
 
 !if gBoardModuleTokenSpaceGuid.PcdAdvancedFeatureEnable == TRUE
 !if gSiPkgTokenSpaceGuid.PcdAcpiEnable == TRUE
@@ -1401,18 +1399,10 @@ FILE DRIVER = FEA01457-E381-4135-9475-C6AFD0076C61 {
     SECTION DXE_DEPEX = $(COMMON_BIN_PACKAGE)/CryptoLibWPA3/Depex/CryptoDxe.depex
     SECTION PE32      = $(COMMON_BIN_PACKAGE)/CryptoLibWPA3/Debug/CryptoDxe.efi
   }
-FILE SMM = 391B853F-F488-479B-A3D6-870766C7A38F {
-    SECTION SMM_DEPEX = $(COMMON_BIN_PACKAGE)/CryptoLib/Depex/CryptoSmm.depex
-    SECTION PE32      = $(COMMON_BIN_PACKAGE)/CryptoLib/Debug/CryptoSmm.efi
-  }
 !else
 FILE DRIVER = FEA01457-E381-4135-9475-C6AFD0076C61 {
     SECTION DXE_DEPEX = $(COMMON_BIN_PACKAGE)/CryptoLibWPA3/Depex/CryptoDxe.depex
     SECTION PE32      = $(COMMON_BIN_PACKAGE)/CryptoLibWPA3/Release/CryptoDxe.efi
-  }
-FILE SMM = 391B853F-F488-479B-A3D6-870766C7A38F {
-    SECTION SMM_DEPEX = $(COMMON_BIN_PACKAGE)/CryptoLib/Depex/CryptoSmm.depex
-    SECTION PE32      = $(COMMON_BIN_PACKAGE)/CryptoLib/Release/CryptoSmm.efi
   }
 !endif
 
@@ -1780,6 +1770,7 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Amt/Sol/Dxe/SerialOverLan.in
   INF  $(PLATFORM_FULL_PACKAGE)/Platform/PciHotPlug/PciHotPlug.inf
 !endif
 
+
 !if gPlatformModuleTokenSpaceGuid.PcdVirtualKeyboardEnable == TRUE
 INF VirtualKeyboardFeaturePkg/VirtualKeyboardDxe/VirtualKeyboardDxe.inf
 !endif
@@ -1990,6 +1981,7 @@ FvNameGuid         = 33C702B0-459E-4AB8-9014-493B9A99BF26
 
 !include $(PLATFORM_BIN_PACKAGE)/Include/Fdf/FvWifiDxeUnCompact.fdf
 
+INF  SecurityPkg/Hash2DxeCrypto/Hash2DxeCrypto.inf
 # Temporary workaround for GCC and Xcode build due to these drivers causes system hang.
 !if ("MSFT" in $(FAMILY)) || ($(TOOL_CHAIN_TAG) == "CLANGPDB")
 INF NetworkPkg/WifiConnectionManagerDxe/WifiConnectionManagerDxe.inf

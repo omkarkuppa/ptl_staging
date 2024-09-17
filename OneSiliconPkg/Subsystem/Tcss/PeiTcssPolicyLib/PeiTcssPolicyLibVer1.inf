@@ -42,6 +42,8 @@ OneSiliconPkg/SiPkg.dec
 CsiApiPkg/CsiApiPkg.dec
 
 [Sources]
+PeiTcssPolicyDump.c
+PeiTcssPreMemPolicyDump.c
 PeiTcssPolicyPreMemLibVer1.c
 PeiTcssPolicyLib.c
 

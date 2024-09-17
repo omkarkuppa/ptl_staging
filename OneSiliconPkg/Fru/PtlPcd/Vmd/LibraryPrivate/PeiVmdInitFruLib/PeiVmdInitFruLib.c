@@ -36,6 +36,8 @@
 #include <Register/VmdRegs.h>
 #include <Library/PeiVmdInitFruLib.h>
 
+#define VMD_DEVICE_ID        (0xB06F)
+
 /**
   This function enumerate all downstream bridge.
 
@@ -296,10 +298,18 @@ VmdDetectPcieStorageDevices (
 **/
 
 VOID
-InitRootBus1 (
+VmdInitFruApi (
   IN      VMD_INFO_HOB *VmdInfoHob,
   IN OUT  VMCONFIG_IOC_VMD_STRUCT *VmConfig
   )
 {
+  UINT16                                 VmdDid;
+  VmdDid = PciSegmentRead16 (PCI_SEGMENT_LIB_ADDRESS (SA_SEG_NUM, VMD_BUS_NUM, VMD_DEV_NUM, VMD_FUN_NUM,0) + PCI_DEVICE_ID_OFFSET);
+  DEBUG((DEBUG_INFO, "VMD DID value is 0x%x\n", VmdDid));
+  if (VmdDid != VMD_DEVICE_ID) {
+    DEBUG ((DEBUG_INFO, "VMD: Programming DID Assign\n"));
+    VmConfig->Bits.did_assign = VMD_DEVICE_ID;
+  }
+
   return;
 }

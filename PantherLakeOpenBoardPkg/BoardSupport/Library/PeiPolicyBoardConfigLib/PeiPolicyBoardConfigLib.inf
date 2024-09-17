@@ -58,6 +58,7 @@
   BaseMemoryLib
   BmpSupportLib
   PchInfoLib
+  PreSiliconEnvDetectLib
 
 [Guids]
   gVmdPeiConfigGuid                       ## CONSUMES
@@ -78,6 +79,7 @@
   gMePeiConfigGuid                        ## CONSUMES
   gCpuInitConfigGuid                      ## CONSUMES
   gMemorySubSystemConfigGuid              ## CONSUMES
+  gMemoryConfigGuid                       ## CONSUMES
 
 [Ppis]
   gFspmArchConfigPpiGuid
@@ -94,8 +96,13 @@
 
   # SA Misc Config
   gBoardModuleTokenSpaceGuid.PcdSaMiscMmioSizeAdjustment       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdSpdPresent                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData                  ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdDataSize              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqsMapCpu2Dram           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcDqMapCpu2Dram            ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcLp5CccConfig             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcCmdMirror                ## CONSUMES
 
   # SPD Address Table
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable          ## CONSUMES

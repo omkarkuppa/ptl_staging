@@ -91,7 +91,8 @@ SetTcRfpRftpReg (
   GetSetVal = Outputs->RefreshHpWm;
   GetSetVal = MIN (REFRESH_HP_WM_HIGH, GetSetVal);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRefreshHpWm, WriteToCache | PrintValue, &GetSetVal);
-   // Configure RefreshAbrRelease with the same value like RefreshHpWm
+  GetSetVal = Outputs->RefreshHpWm;
+  GetSetVal = MIN (REFRESH_ABR_RELEASE, GetSetVal);
   MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRefreshAbrRelease, WriteToCache | PrintValue, &GetSetVal);
 
   GetSetVal = Outputs->RefreshPanicWm;

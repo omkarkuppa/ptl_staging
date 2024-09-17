@@ -61,7 +61,7 @@ copy /y /b %IBB_HASH_TMP_FOLDER%\CLIENTBIOS.fd %WORKSPACE%\%BUILD_DIR%\FV\CLIENT
 @rem Keep Digest.bin for checking
 copy /y /b %IBB_HASH_TMP_FOLDER%\FvIbbnp1Digest.bin %WORKSPACE%\%BUILD_DIR%\FV\FvIbbnp1Digest.bin
 
-if %MULTI_IBB_BUILD% EQU TRUE (
+if %MULTI_IBB_BUILD% EQU FALSE goto SkipMultiIbbHashGeneration
     @rem
     @rem Generate digest for IBB1, IBB2, ... IBBn, then replace the dummy one
     @rem
@@ -80,18 +80,18 @@ if %MULTI_IBB_BUILD% EQU TRUE (
     @rem Multi-IBB: Fsp case, to generate FspM.bin. Calculate FspM size and offset for splitting BIOS ROM
     @rem
     @for /f "tokens=4" %%i in ('@findstr /c:"gMinPlatformPkgTokenSpaceGuid\.PcdFlashFvFspMOffset" %FLASHMAP_FDF%') do (
-        set FLASH_FSPM_OFFSET=%%i
-        if /I "%TARGET%" == "DEBUG" goto :continue
+        @set FLASH_FSPM_OFFSET=%%i
+        @if /I "%TARGET%" == "DEBUG" goto :continue
     )
     :continue
-    echo %FLASH_FSPM_OFFSET%
+    @echo FLASH_FSPM_OFFSET=%FLASH_FSPM_OFFSET%
 
     @for /f "tokens=4" %%i in ('@findstr /c:"gMinPlatformPkgTokenSpaceGuid\.PcdFlashFvFspMSize" %FLASHMAP_FDF%') do (
-        set FLASH_FSPM_SIZE=%%i
-        if /I "%TARGET%" == "DEBUG" goto :continue
+        @set FLASH_FSPM_SIZE=%%i
+        @if /I "%TARGET%" == "DEBUG" goto :continue
     )
     :continue
-    echo %FLASH_FSPM_SIZE%
+    @echo FLASH_FSPM_SIZE=%FLASH_FSPM_SIZE%
 
     @set TEMP_OFFSET=
     @set /a TEMP_OFFSET="!FLASH_FSPM_OFFSET!+!FLASH_FSPM_SIZE!"
@@ -136,7 +136,8 @@ if %MULTI_IBB_BUILD% EQU TRUE (
     @rem Keep Digest.bin for checking
     copy /y /b %IBB_HASH_TMP_FOLDER%\FvIbb1Digest.bin %WORKSPACE%\%BUILD_DIR%\FV\FvIbb1Digest.bin
     copy /y /b %IBB_HASH_TMP_FOLDER%\FvFspMDigest.bin %WORKSPACE%\%BUILD_DIR%\FV\FvFspMDigest.bin
-)
+:SkipMultiIbbHashGeneration
+
 if exist %IBB_HASH_TMP_FOLDER% rmdir /q /s %IBB_HASH_TMP_FOLDER%
 @rem
 @rem Digest generation completed

@@ -22,7 +22,11 @@
 #include <Library/IpuLib.h>
 #include <ImrConfigHob.h>
 #include <PchConfigHobCommon.h>
-
+#include <Register/CpuGenInfoRegs.h>
+#include <Protocol/MpService.h>
+#include <Pi/PiMultiPhase.h>
+#include <Library/CpuLib.h>
+#include <Library/VmdInfoLib.h>
 //
 // Module-wide global variables
 //
@@ -124,7 +128,17 @@ SiInitEndOfDxe (
 
   return;
 }
-
+/**
+  Update the Core Infomation for Small Core and Big Core
+  This is executed across all threads
+**/
+VOID
+UpdateVmdBarAllocation (
+  VOID
+  )
+{
+  IoRead8 (0x75);
+}
 /**
   This function handles PlatformInit task on Pci Enumeration completion
 
@@ -138,8 +152,10 @@ SiInitOnPciEnumComplete (
   IN VOID         *Context
   )
 {
-  EFI_STATUS          Status;
-  VOID                *ProtocolPointer;
+  EFI_STATUS                Status;
+  VOID                      *ProtocolPointer;
+  EFI_MP_SERVICES_PROTOCOL  *MpService;
+  UINT32                    CpuFamilyId;
 
   DEBUG ((DEBUG_INFO, "SiInitOnPciEnumComplete Start\n"));
   ///
@@ -163,7 +179,39 @@ SiInitOnPciEnumComplete (
 
   Status = IGpuUpdateOpRegion ();
   ASSERT_EFI_ERROR (Status);
+  if (IsVmdEnabled ()) {
+    CpuFamilyId = GetCpuFamilyModel ();
+    if (((GetCpuSteppingId () == EnumPtlHA0) || (GetCpuSteppingId () == EnumPtlUA0)) && (CpuFamilyId == CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE)) {
+      DEBUG ((DEBUG_INFO, "Read Port 0x75 to let Core Knows VmdBar has updated value"));
+      Status = gBS->LocateProtocol (
+                    &gEfiMpServiceProtocolGuid,
+                    NULL,
+                    (VOID **) &MpService
+                    );
+      ASSERT_EFI_ERROR (Status);
+      if (EFI_SUCCESS != Status) {
+        return;
+      }
 
+      //
+      // Do 1st IO Read to inform the BSP
+      //
+      IoRead8 (0x75);
+
+      //
+      // Trigger the IO Read on all other cores
+      //
+      MpService->StartupAllAPs (
+                  MpService,         // This
+                  (EFI_AP_PROCEDURE) UpdateVmdBarAllocation, // Procedure
+                  TRUE,               // SingleThread
+                  NULL,               // WaitEvent
+                  0,                  // TimeoutInMicrosecsond
+                  NULL,               // ProcedureArgument
+                  NULL                // FailedCpuList
+                  );
+    }
+  }
   DEBUG ((DEBUG_INFO, "SiInitOnPciEnumComplete End\n"));
 }
 

@@ -69,7 +69,6 @@
   gPsBoardOemProtocolGuid
 
 [Guids]
-  gEfiEndOfDxeEventGroupGuid                    ## CONSUMES
   gPchGlobalResetGuid                           ## CONSUMES
   gPsLpeSetupVariableGuid                       ## CONSUMES
   gPsRpeSetupVariableGuid

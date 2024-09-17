@@ -128,3 +128,4 @@ gSiPreMemPolicyReadyPpiGuid   ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdTcssSupport       ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdFspVEnable        ## CONSUMES
 gSiPkgTokenSpaceGuid.PcdOverclockEnable   ## CONSUMES
+gSiPkgTokenSpaceGuid.PcdTsnSupport        ## CONSUMES

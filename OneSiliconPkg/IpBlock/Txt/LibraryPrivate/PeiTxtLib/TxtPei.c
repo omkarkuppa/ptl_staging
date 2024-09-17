@@ -67,7 +67,6 @@ STATIC EFI_PEI_NOTIFY_DESCRIPTOR mNotifyDesc2 = {
 
 extern EFI_GUID gDprInfoHobGuid;
 
-
 /**
   TPM detected callback module, must have TPM hardware initialized of detected none
 
@@ -146,6 +145,11 @@ TxtInit (
       TxtInfoHob->Data.TxtMode = 0;
       goto Done;
     }
+  }
+
+  // Handle BIOS knob Memory Powerdown Request
+  if (TxtInfoHob->Data.TxtPowerdownRequest == 1) {
+    SetPowerDownRequest (2);
   }
 
   Data32 = MmioRead32 (TXT_PUBLIC_BASE + TXT_CRASHCODE_REG_OFF);
@@ -262,42 +266,6 @@ AliasCheck (
 }
 
 /**
-  This function gets registered as a callback to run the SCHECK function
-  from the TXT BIOS ACM as a result of Boot Events.
-
-  @param[in]  Event    A pointer to the Event that triggered the callback.
-  @param[in]  Context  A pointer to private data registered with the callback function.
-  **/
-EFI_STATUS
-EFIAPI
-ScheckCallback (
-    IN EFI_PEI_SERVICES          **PeiServices,
-    IN EFI_PEI_NOTIFY_DESCRIPTOR *NotifyDescriptor,
-    IN VOID                      *Ppi
-  )
-{
-  TXT_INFO_HOB        *TxtInfoHob = NULL;
-  EFI_STATUS          Status      = EFI_SUCCESS;
-  EFI_BOOT_MODE       BootMode;
-  UINT64              TxtBootMode = 0;
-
-  DEBUG ((DEBUG_INFO, "TXTPEI::Running of ScheckCallback\n"));
-
-  TxtInfoHob = GetFirstGuidHob (&gTxtInfoHobGuid);
-  if (TxtInfoHob == NULL) {
-    DEBUG ((DEBUG_ERROR, "TXTPEI::TxtInfoHob not found.... Unloading\n"));
-    return EFI_NOT_FOUND;
-  }
-
-  Status = PeiServicesGetBootMode (&BootMode);
-  if ((Status == EFI_SUCCESS) && (BootMode == BOOT_ON_S3_RESUME)) {
-    TxtBootMode = S3_RESUME_PATH;
-  }
-  Status = DoPeiLaunchAcm (PeiServices,TxtInfoHob,TXT_LAUNCH_SCHECK,TxtBootMode);
-  return Status;
-}
-
-/**
   Perform TXT configuration part 1
 
   @param[in] PeiServices          General purpose services available to every PEIM.
@@ -399,9 +367,9 @@ ConfigureTxtPart2 (
     DEBUG ((DEBUG_INFO, "TXTPEI::TXT Enabled\n"));
 
     //
-    // Invoke TXT SCHECK during S3 resume
+    // Invoke TXT LockConfig during S3 resume
     //
-    Status = DoPeiLaunchAcm (PeiServices, TxtInfoHob, TXT_LAUNCH_SCHECK, S3_RESUME_PATH);
+    Status = DoPeiLaunchAcm (PeiServices, TxtInfoHob, TXT_LAUNCH_LOCK_CONFIG, S3_RESUME_PATH);
     if (EFI_ERROR (Status)) {
       TxtInfoHob->Data.TxtMode = 0;
       return Status;
@@ -523,8 +491,8 @@ SetPowerDownRequest (
   UINT8 PdrSrc
   )
 {
-  EFI_STATUS          Status      = EFI_SUCCESS;
-  TXT_INFO_HOB        *TxtInfoHob = NULL;
+  EFI_STATUS                     Status      = EFI_SUCCESS;
+  TXT_INFO_HOB                   *TxtInfoHob = NULL;
 
   DEBUG ((DEBUG_INFO, "TXTPEI::SetPowerDownRequest\n"));
 
@@ -534,14 +502,13 @@ SetPowerDownRequest (
     return EFI_NOT_FOUND;
   }
 
-  ///
-  /// TODO:  Create PD_Request, to communicate with Startup ACM
-  ///
+  DEBUG ((DEBUG_INFO, "TXTPEI::PdrSrc = %d\n", PdrSrc));
 
-  ///
-  /// Reset platform
-  ///
-  ///IssueGlobalReset();
+  //
+  // Set signal in TxtInfoHob to be consumed by request handler.
+  //
+  TxtInfoHob->Data.TxtPowerdownRequest = 1;
+  DEBUG ((DEBUG_INFO, "TXTPEI::TxtInfoHob->Data.TxtPowerdownRequest = %d\n", TxtInfoHob->Data.TxtPowerdownRequest));
 
   return Status;
 }

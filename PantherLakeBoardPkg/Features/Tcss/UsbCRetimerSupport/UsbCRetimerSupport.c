@@ -25,13 +25,18 @@
 #include <Protocol/UsbCProgressCodeProtocol.h>
 #include <Library/PcdLib.h>
 #include <Library/DebugLib.h>
+#include <Library/UefiLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/GpioV2WrapperLib.h>
 #include <Library/ReportStatusCodeLib.h>
 #include <PlatformBoardConfig.h>
 #include <IntelRcStatusCode.h>
+#include <Library/EcTcssLib.h>
 
 GLOBAL_REMOVE_IF_UNREFERENCED USBC_PROGRESS_CODE_PROTOCOL  mUsbCProgressCodeProtocol;
+GLOBAL_REMOVE_IF_UNREFERENCED USBC_RETIMER_PROTOCOL        mUsbCRetimerProtocol;
 
 /**
   Show UsbC Capsule Progress Code
@@ -47,6 +52,61 @@ UsbCCapsuleShowProgressCode (
 }
 
 /**
+  Get UsbC Retimer Controller info and Capability.
+
+  @param[in]   This               The UsbC RETIMER PROTOCOL Instance.
+  @param[in]   RetimerGuid        GUID from ESRT ACPI Table.
+
+  @retval  EFI_SUCCESS            Successfully Get Info of Retimer Controller.
+  @retval  EFI_INVALID_PARAMETER  Invalid GUID from ESRT Table is Passed.
+  @retval  EFI_NOT_READY          Board Retimer PCD is not ready or Not Available.
+  @retval  EFI_UNSUPPORTED        This driver does not support.
+
+**/
+EFI_STATUS
+EFIAPI
+GetRetimerInfo (
+  IN USBC_RETIMER_PROTOCOL  *This,
+  IN EFI_GUID               RetimerGuid  ///< GUID from ESRT ACPI Table
+  )
+{
+  return EFI_UNSUPPORTED;
+}
+
+/**
+  This event will be registered on ReadyToBoot to remove Protocol Service
+  to make sure this protocol will not be used by any UEFI Application
+  running in EDK Shell.
+
+  @param[in]  Event    The Event that is being processed.
+  @param[in]  Context  The Event Context.
+
+**/
+VOID
+EFIAPI
+UsbCRetimerSupportReadyToBootEvent (
+  IN  EFI_EVENT  Event,
+  IN  VOID       *Context
+  )
+{
+  USBC_RETIMER_PROTOCOL_CAPABILITY  RetimerProtocolCapability;
+  RetimerProtocolCapability.RetimerSupport = FALSE;
+
+  gRT->SetVariable (
+         USBC_RETIMER_PROTOCOL_CAPABILITY_NAME,
+         &gUsbCRetimerProtocolCapabilityGuid,
+         EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+         sizeof (USBC_RETIMER_PROTOCOL_CAPABILITY),
+         &RetimerProtocolCapability
+         );
+
+  //
+  // Only one successful install
+  //
+  gBS->CloseEvent (Event);
+}
+
+/**
   Control Retimer FP GPIO by given output state
 
   @param[in] OutputState          RETIMER_FORCE_POWER_GPIO_LOW
@@ -54,6 +114,7 @@ UsbCCapsuleShowProgressCode (
 
   @retval  EFI_SUCCESS            Successfully assert/de-assert retimer FP GPIO
   @retval  EFI_INVALID_PARAMETER  Invalid group or pad number
+
 **/
 EFI_STATUS
 EFIAPI
@@ -95,6 +156,7 @@ ControlRetimerForcePowerGpio (
   @retval  EFI_UNSUPPORTED       The chipset is unsupported by this driver.
   @retval  EFI_OUT_OF_RESOURCES  Do not have enough resources to initialize the driver.
   @retval  EFI_DEVICE_ERROR      Device error, driver exits abnormally.
+
 **/
 EFI_STATUS
 EFIAPI
@@ -104,17 +166,46 @@ UsbCRetimerSupportEntryPoint (
   )
 {
   EFI_STATUS             Status;
-  USBC_RETIMER_PROTOCOL  *UsbCRetimerProtocol;
+  EFI_EVENT              Event;
 
   DEBUG ((DEBUG_INFO, "%a: Start\n", __FUNCTION__));
 
-  Status = gBS->LocateProtocol (&gUsbCRetimerProtocolGuid, NULL, (VOID**) &UsbCRetimerProtocol);
+  //
+  // Initializing USBC_RETIMER_PROTOCOL
+  //
+  mUsbCRetimerProtocol.GetPdControllerMode = GetPdControllerMode;
+  mUsbCRetimerProtocol.SetPdControllerMode = SetPdControllerMode;
+  mUsbCRetimerProtocol.RetimerFP           = ControlRetimerForcePowerGpio;
+
+  //
+  // Install UsbC Retimer Protocol
+  //
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                  &ImageHandle,
+                  &gUsbCRetimerProtocolGuid,
+                  &mUsbCRetimerProtocol,
+                  NULL
+                  );
+  ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Failed to locate UsbCRetimerProtocol (%r).\n", __FUNCTION__, Status));
+    DEBUG ((DEBUG_ERROR, "%a: Failed to Install UsbC Retimer Protocol with Status = %r\n", __FUNCTION__, Status));
     return Status;
   }
 
-  UsbCRetimerProtocol->RetimerFP = ControlRetimerForcePowerGpio;
+  DEBUG ((DEBUG_INFO, "%a: UsbCRetimerProtocol is installed Successfully.\n", __FUNCTION__));
+  //
+  // Register the ReadyToBoot event to remove Protocol Service.
+  // This additional functionality to make sure this protocol will not be used by
+  // any UEFI Application running in EDK Shell.
+  //
+  Status = EfiCreateEventReadyToBootEx (
+             TPL_CALLBACK,
+             UsbCRetimerSupportReadyToBootEvent,
+             NULL,
+             &Event
+             );
+  ASSERT_EFI_ERROR (Status);
+  DEBUG ((DEBUG_INFO, "%a: UsbCRetimerSupportCloseEvent is Register with Status =%r\n", __FUNCTION__, Status));
 
   mUsbCProgressCodeProtocol.ShowProgressCode = UsbCCapsuleShowProgressCode;
   //

@@ -48,16 +48,11 @@ IsPreviousBootSanitizeContinuation (
   );
 
 /**
-  End of DXE CallBack event to Perform sanitize actions as per requested list from Parameter structure.
-
-  @param[in] Event      The event that triggered this notification function
-  @param[in] Context    Pointer to the notification functions context
+  Perform sanitize actions as per requested list from Parameter structure.
 **/
 VOID
-EFIAPI
 PerformSanitizeActions (
-  IN EFI_EVENT Event,
-  IN VOID *Context
+  VOID
   );
 
 /**

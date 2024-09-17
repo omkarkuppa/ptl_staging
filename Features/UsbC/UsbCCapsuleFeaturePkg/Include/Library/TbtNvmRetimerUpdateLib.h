@@ -25,6 +25,7 @@
 
 #include <TbtNvmRetimer.h>
 #include <Protocol/FirmwareManagement.h>
+#include <Protocol/UsbCRetimerProtocol.h>
 
 typedef VOID   *RETIMER_DEV_INSTANCE;
 typedef VOID   *HR_DEV_INSTANCE;
@@ -279,6 +280,50 @@ UpdateDiscreteTbtNvmFirmware (
   IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress,          OPTIONAL
   IN  UINTN                                          StartPercentage,
   IN  UINTN                                          EndPercentage
+  );
+
+/**
+  Drive UsbC Retimer Controller into FW Update Mode.
+
+  @param[in]  This                The UsbC RETIMER PROTOCOL Instance.
+  @param[in]  RetimerGuid         GUID from ESRT ACPI Table.
+
+  @retval  EFI_SUCCESS            Successfully Mode is Changed to FW Update Mode.
+  @retval  EFI_INVALID_PARAMETER  Invalid GUID from ESRT Table is Passed.
+  @retval  EFI_UNSUPPORTED        This driver does not support.
+  @retval  EFI_DEVICE_ERROR       This driver cannot be started due to device Error.
+  @retval  EFI_ALREADY_STARTED    This driver has been started.
+  @retval  EFI_TIMEOUT            DriveToFwUpdateMode Command timeout Happen.
+  @retval  EFI_NOT_READY          Board Retimer PCD is not ready or Not Available.
+
+**/
+EFI_STATUS
+EFIAPI
+DriveToFwUpdateMode (
+  IN  USBC_RETIMER_PROTOCOL  *This,
+  IN  EFI_GUID               RetimerGuid ///< GUID from ESRT ACPI Table
+  );
+
+/**
+  Restore TBT PD Controller into original mode.
+
+  @param[in]  This                The UsbC RETIMER PROTOCOL Instance.
+  @param[in]  RetimerGuid         GUID from ESRT ACPI Table.
+
+  @retval  EFI_SUCCESS            Successfully Mode is Restore.
+  @retval  EFI_INVALID_PARAMETER  Invalid GUID from ESRT Table is Passed.
+  @retval  EFI_UNSUPPORTED        This driver does not support.
+  @retval  EFI_DEVICE_ERROR       This driver cannot be started due to device Error.
+  @retval  EFI_NOT_STARTED        This driver has not been started.
+  @retval  EFI_TIMEOUT            RestoreToOriginalMode Command timeout Happen.
+  @retval  EFI_NOT_READY          Board Retimer PCD is not ready or Not Available.
+
+**/
+EFI_STATUS
+EFIAPI
+RestoreToOriginalMode (
+  IN USBC_RETIMER_PROTOCOL  *This,
+  IN EFI_GUID               RetimerGuid ///< GUID from ESRT ACPI Table
   );
 
 #endif

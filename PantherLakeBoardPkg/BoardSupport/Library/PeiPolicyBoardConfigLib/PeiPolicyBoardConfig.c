@@ -81,6 +81,8 @@ UpdatePeiPolicyBoardConfigApi (
   // Update policy by board configuration
   //
   UpdatePeiSiPolicyBoardConfig ();
+  UpdatePeiPolicyBoardConfig (NULL, NULL);
+
 }
 
 /**
