@@ -56,7 +56,7 @@
   SUPPORTED_ARCHITECTURES             = IA32|X64
   BUILD_TARGETS                       = DEBUG|RELEASE
 
-!if gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable == FALSE
+!if (gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable == FALSE) || ($(TARGET) == RELEASE)
   FLASH_DEFINITION                    = Intel/PantherLakePlatSamplePkg/PayloadManagement/FitPayloads/FitPayloadsPkg.fdf
 !else
   FLASH_DEFINITION                    = Intel/PantherLakePlatSamplePkg/PayloadManagement/FitPayloads/FitPayloadsResPkg.fdf

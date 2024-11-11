@@ -1,0 +1,57 @@
+/** @file
+  Free Space Skip Fv Copy Lib header
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2024 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
+
+#ifndef _FREE_SPACE_SKIP_FV_COPY_LIB_H_
+#define _FREE_SPACE_SKIP_FV_COPY_LIB_H_
+
+#include <Uefi.h>
+#include <Uefi/UefiBaseType.h>
+#include <PiPei.h>
+
+/**
+  Copy Firmware Volumes from Flash to Permanent Memory while skipping
+  Free Space
+
+  @param[in]  FvBuffer            Fv Destination Pointer
+  @param[in]  FvBase              Fv Source Pointer.
+  @param[in]  FvBufferLen         Fv Destination Buffer Length
+**/
+EFI_STATUS
+FreeSpaceSkipFvCopy (
+  IN VOID    *FvBuffer,
+  IN VOID    *FvBase,
+  IN UINTN   FvBufferLen
+);
+
+/**
+  This function Initializes FreeSpaceSkip services
+
+  @retval EFI_STATUS  Results of the installation of the SPI services
+**/
+EFI_STATUS
+EFIAPI
+FreeSpaceSkipEntryPoint (
+  IN       EFI_PEI_FILE_HANDLE  FileHandle,
+  IN CONST EFI_PEI_SERVICES     **PeiServices
+);
+
+#endif // _FREE_SPACE_SKIP_FV_COPY_LIB_H_

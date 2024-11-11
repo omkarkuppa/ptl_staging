@@ -36,8 +36,10 @@
 #include <Setup.h>
 #include <SetupVariable.h>
 #include <SpiConfig.h>
+#if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
 #include <FspsUpd.h>
+#endif
 #include <Ppi/DebugEventHandler.h>
 
 /**
@@ -119,7 +121,7 @@ UpdatePeiPciePolicyPreMem (
   SI_SETUP                          SiSetup;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspmUpd;
+  VOID                              *FspmUpd;
 #else
   SI_PREMEM_CONFIG                  *SiPreMemConfig;
   SPI_CONFIG                        *SpiConfig;

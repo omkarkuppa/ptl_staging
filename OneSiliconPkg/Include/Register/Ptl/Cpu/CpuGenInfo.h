@@ -27,6 +27,7 @@
 // Processor Definitions
 //
 #define CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE 0x000C06C0
+#define CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE 0x000D0650
 
 //
 // Processor Definitions
@@ -58,6 +59,12 @@ typedef enum {
   EnumPtlHA0  = 0,
   EnumPtlUA0  = 1,
   EnumPtlUHB0 = 2,
+  ///
+  /// WildCatLake Mobile Steppings
+  ///
+  EnumWclA0 = 0,
+  EnumWclB0 = 1,
+
   ///
   /// Max Stepping
   ///

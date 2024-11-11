@@ -1396,6 +1396,50 @@ Ddr5SpdToDensityIndex (
 }
 
 /**
+  Checks if current DRAM density index is valid for current technology/project. The index check follows the 
+  SdramCapacityTable defined by JEDEC spec.
+
+    @param[in] MrcDimmOut - Pointer to structure containing DIMM information.
+
+    @return TRUE if valid density for DDR technology, otherwise FALSE
+**/
+BOOLEAN
+ValidDramDensity (
+  IN MrcDimmOut     *const DimmOut
+)
+{
+  BOOLEAN Valid;
+
+  Valid = FALSE;
+
+  if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
+    switch (DimmOut->DensityIndex) {
+      case MrcDensity16Gb:
+      case MrcDensity24Gb:
+      case MrcDensity32Gb:
+        Valid = TRUE;
+        break;
+      default:
+        break;
+    }
+  } else {
+    switch (DimmOut->DensityIndex) {
+      case MrcDensity8Gb:
+      case MrcDensity12Gb:
+      case MrcDensity16Gb:
+      case MrcDensity24Gb:
+      case MrcDensity32Gb:
+        Valid = TRUE;
+        break;
+      default:
+        break;
+    }
+  }
+
+  return Valid;
+}
+
+/**
   Determines if the number of Bank are valid.
   Determines if the number of Bank Groups are valid.
 
@@ -1417,18 +1461,34 @@ ValidBank (
   UINT8        BankGroup;
   UINT8        ValidCheck;
   UINT8        ValidCheckStep;
+  UINT8        SpdDensity; 
 
   Debug       = &MrcData->Outputs.Debug;
   ValidCheck  = TRUE;
 
   if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
-    DimmOut->DensityIndex = Ddr5SpdToDensityIndex (Spd->Ddr5.Base.PrimarySdramDensityAndPackage.Bits.Density);
+    SpdDensity            = Spd->Ddr5.Base.PrimarySdramDensityAndPackage.Bits.Density;
+    DimmOut->DensityIndex = Ddr5SpdToDensityIndex (SpdDensity);
     BankAddress           = Spd->Ddr5.Base.PrimarySdramBankGroups.Bits.BanksPerBankGroup;
     BankGroup             = Spd->Ddr5.Base.PrimarySdramBankGroups.Bits.BankGroups;
   } else {
-    DimmOut->DensityIndex = Spd->Lpddr.Base.SdramDensityAndBanks.Bits.Density;
+    SpdDensity            = Spd->Lpddr.Base.SdramDensityAndBanks.Bits.Density;
+    DimmOut->DensityIndex = SpdDensity;
     BankAddress           = Spd->Lpddr.Base.SdramDensityAndBanks.Bits.BankAddress;
     BankGroup             = Spd->Lpddr.Base.SdramDensityAndBanks.Bits.BankGroup;
+  }
+
+  if (!ValidDramDensity (DimmOut)) {
+    MRC_DEBUG_MSG (
+      Debug,
+      MSG_LEVEL_ERROR,
+      "%sDRAM Density, %s%Xh, Index: %u\n",
+      ErrorString,
+      SpdValString,
+      SpdDensity,
+      DimmOut->DensityIndex
+      );
+    ValidCheck = FALSE;
   }
 
   // Get the DRAM density in Gbit
@@ -1816,7 +1876,12 @@ ValidCkdSupport (
     DimmOut->IsCkdSupport = FALSE;
   }
 
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  CKD is %ssupported\n", (DimmOut->IsCkdSupport == FALSE) ? "not " : "");
+  if ((DimmOut->IsCkdSupport == TRUE) && MrcData->Inputs.ExtInputs.Ptr->ForceCkdBypass) {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  CKD is supported but set to bypass\n");
+    DimmOut->IsCkdSupport = FALSE;
+  } else {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  CKD is %ssupported\n", (DimmOut->IsCkdSupport == FALSE) ? "not " : "");
+  }
   return TRUE;
 }
 
@@ -2281,13 +2346,8 @@ GetChannelDimmtCK (
     if (NeedIgnoreXmp (MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tCK = Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].tCK = Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -2450,7 +2510,6 @@ GetChannelDimmtAA (
   UINT8                 Dimm;
   UINT8                 SdramWidth;
   MRC_EXT_INPUTS_TYPE  *ExtInputs;
-  UINT64                SskpdValue;
 
   Inputs         = &MrcData->Inputs;
   Outputs        = &MrcData->Outputs;
@@ -2469,19 +2528,12 @@ GetChannelDimmtAA (
   // Set Outputs->IsDvfscEnabled based on Inputs->IsDvfscEnabled
   Outputs->IsDvfscEnabled = FALSE;
 
-  SskpdValue = MrcWmRegGet(MrcData);
-  if ((SskpdValue & SSKPD_PCU_SKPD_DRAM_NO_EDVFSC_SUPPORT) != 0) {
-    ExtInputs->DvfscEnabled = FALSE;
-    SskpdValue &= ~SSKPD_PCU_SKPD_DRAM_NO_EDVFSC_SUPPORT;
-    MrcWmRegSetBits(MrcData, SskpdValue);
-  }
-
   if (Outputs->IsLpddr5) {
     Outputs->Frequency = ConvertClock2Freq (MrcData, Outputs->MemoryClock, NULL);
     if ((ExtInputs->DvfscEnabled && (Outputs->Frequency <= f3200)) && ((Outputs->SaGvPoint == 0) || !MrcIsSaGvEnabled (MrcData))) {
       Outputs->IsDvfscEnabled = TRUE;
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DVFSC is Enabled\n");
     }
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IsDvfscEnabled: %u\n", Outputs->IsDvfscEnabled);
   }
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  %s:\n  %s tCL Mask\n", tAAString, HeaderString);
@@ -2507,6 +2559,7 @@ GetChannelDimmtAA (
     CustomProfile          = (Profile == CUSTOM_PROFILE1) && (ExtInputs->MemoryProfile == CUSTOM_PROFILE1);
     CommonCasMask[Profile] = MRC_UINT64_MAX;
     Actual[Profile]        = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -2520,7 +2573,6 @@ GetChannelDimmtAA (
             continue;
           }
           Spd            = &DimmIn->Spd.Data;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           MediumTimeBase = ChannelOut->TimeBase[Dimm][Profile].Mtb;
           FineTimeBase   = ChannelOut->TimeBase[Dimm][Profile].Ftb;
           CasMask        = 0;
@@ -2632,19 +2684,8 @@ GetChannelDimmtAA (
             Outputs->MemoryClock = tCKmin;
             Status = TRUE;
           }
-          for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-            ControllerOut = &Outputs->Controller[Controller];
-            for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-              ChannelOut = &ControllerOut->Channel[Channel];
-              for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
-                DimmOut = &ChannelOut->Dimm[Dimm];
-                if (DIMM_PRESENT == DimmOut->Status) {
-                  ChannelOut->Timing[Profile].tCL = (UINT16) Actual[Profile];
-                  ChannelOut->Timing[Profile].tCK = tCKmin;
-                } //if
-              } //for Dimm
-            } //for Channel
-          } //for Controller
+          Outputs->Timing[Profile].tCL = (UINT16) Actual[Profile];
+          Outputs->Timing[Profile].tCK = tCKmin;
           break;
         } //if
       } //for Actual[Profile]
@@ -2827,6 +2868,8 @@ GetChannelDimmtCWL (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
+    tCL            = Outputs->Timing[Profile].tCL;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -2839,8 +2882,6 @@ GetChannelDimmtCWL (
           if (DIMM_PRESENT != DimmOut->Status) {
             continue;
           }
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
-          tCL            = ChannelOut->Timing[Profile].tCL;
           Calculated     = 0;
           switch (Profile) {
             case XMP_PROFILE1:
@@ -2894,13 +2935,9 @@ GetChannelDimmtCWL (
     if (NeedIgnoreXmp (MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tCWL = (UINT16) Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tCWL = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -2978,6 +3015,7 @@ GetChannelDimmtFAW (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -2992,7 +3030,6 @@ GetChannelDimmtFAW (
             continue;
           }
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -3132,13 +3169,9 @@ GetChannelDimmtFAW (
     if (NeedIgnoreXmp (MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tFAW = (UINT16) Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tFAW = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -3190,6 +3223,7 @@ GetChannelDimmtRAS (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -3204,7 +3238,6 @@ GetChannelDimmtRAS (
           }
           Spd            = &DimmIn->Spd.Data;
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -3263,13 +3296,8 @@ GetChannelDimmtRAS (
     if (NeedIgnoreXmp (MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRAS = (UINT16) Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].tRAS = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -3328,6 +3356,7 @@ GetChannelDimmtRC (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -3342,7 +3371,6 @@ GetChannelDimmtRC (
           }
           Spd            = &DimmIn->Spd.Data;
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           TimeBase       = &ChannelOut->TimeBase[Dimm][Profile];
           MediumTimebase = TimeBase->Mtb;
           FineTimebase   = TimeBase->Ftb;
@@ -3398,15 +3426,11 @@ GetChannelDimmtRC (
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        if (ChannelOut->Timing[Profile].tRAS + ChannelOut->Timing[Profile].tRCDtRP < (UINT16) Actual[Profile]) {
-          MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "\nWARNING: tRC is bigger than tRAS+tRP !\n");
-        }
-      }
+
+    if (Outputs->Timing[Profile].tRAS + Outputs->Timing[Profile].tRCDtRP < (UINT16) Actual[Profile]) {
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "\nWARNING: tRC is bigger than tRAS+tRP !\n");
     }
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -3458,6 +3482,7 @@ GetChannelDimmtRCD (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -3472,7 +3497,6 @@ GetChannelDimmtRCD (
           }
           Spd            = &DimmIn->Spd.Data;
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -3534,13 +3558,9 @@ GetChannelDimmtRCD (
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRCDtRP = (UINT16) Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tRCDtRP = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -3592,6 +3612,7 @@ GetChannelDimmtREFI (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -3605,7 +3626,7 @@ GetChannelDimmtREFI (
             continue;
           }
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
+
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -3668,13 +3689,8 @@ GetChannelDimmtREFI (
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tREFI = Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tREFI = Actual[Profile];
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -3806,6 +3822,7 @@ GetChannelDimmtRFC (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -3820,7 +3837,7 @@ GetChannelDimmtRFC (
           }
           Spd            = &DimmIn->Spd.Data;
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
+
           TimeBase       = &ChannelOut->TimeBase[Dimm][Profile];
           MediumTimebase = TimeBase->Mtb;
           switch (Profile) {
@@ -3886,13 +3903,7 @@ GetChannelDimmtRFC (
     if (NeedIgnoreXmp (MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRFC = (UINT16) Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].tRFC = (UINT16) Actual[Profile];
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -3948,6 +3959,7 @@ GetChannelDimmtRFCpb (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -3962,7 +3974,6 @@ GetChannelDimmtRFCpb (
           }
           Spd            = &DimmIn->Spd.Data;
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           TimeBase       = &ChannelOut->TimeBase[Dimm][Profile];
           MediumTimebase = TimeBase->Mtb;
           switch (Profile) {
@@ -4028,13 +4039,7 @@ GetChannelDimmtRFCpb (
     if (NeedIgnoreXmp (MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRFCpb = (UINT16) Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].tRFCpb = (UINT16) Actual[Profile];
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -4086,6 +4091,7 @@ GetChannelDimmtRFC2 (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -4100,7 +4106,6 @@ GetChannelDimmtRFC2 (
           }
           Spd            = &DimmIn->Spd.Data;
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -4156,13 +4161,7 @@ GetChannelDimmtRFC2 (
     if (NeedIgnoreXmp (MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRFC2 = (UINT16) Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].tRFC2 = (UINT16) Actual[Profile];
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -4269,13 +4268,7 @@ GetChannelDimmtRFC4 (
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRFC4 = (UINT16) Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].tRFC4 = (UINT16) Actual[Profile];
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -4332,6 +4325,7 @@ GetChannelDimmtRP (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -4346,7 +4340,6 @@ GetChannelDimmtRP (
           }
           Spd            = &DimmIn->Spd.Data;
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           TimeBase       = &ChannelOut->TimeBase[Dimm][Profile];
           MediumTimebase = TimeBase->Mtb;
           FineTimebase   = TimeBase->Ftb;
@@ -4390,7 +4383,7 @@ GetChannelDimmtRP (
           // Take MAX of tRCD and tRP if they are different in SPD.
           // This assumes that GetChannelDimmtRCD() was already called.
           //
-          Actual[Profile] = MAX (Actual[Profile], ChannelOut->Timing[Profile].tRCDtRP);
+          Actual[Profile] = MAX (Actual[Profile], Outputs->Timing[Profile].tRCDtRP);
           MRC_DEBUG_MSG (
             Debug,
             MSG_LEVEL_NOTE,
@@ -4414,13 +4407,8 @@ GetChannelDimmtRP (
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRCDtRP = (UINT16) Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].tRCDtRP = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -4479,6 +4467,7 @@ GetChannelDimmtRPab (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -4491,7 +4480,6 @@ GetChannelDimmtRPab (
           if ((DIMM_PRESENT == DimmOut->Status) && IsLpddr) {
             Spd            = &DimmIn->Spd.Data;
             Calculated     = 0;
-            tCKmin         = ChannelOut->Timing[Profile].tCK;
             TimeBase       = &ChannelOut->TimeBase[Dimm][Profile];
             MediumTimebase = TimeBase->Mtb;
             FineTimebase   = TimeBase->Ftb;
@@ -4533,13 +4521,8 @@ GetChannelDimmtRPab (
       if (NeedIgnoreXmp (MrcData, Profile)) {
         continue;
       }
-      for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-        ControllerOut = &Outputs->Controller[Controller];
-        for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-          ChannelOut = &ControllerOut->Channel[Channel];
-          ChannelOut->Timing[Profile].tRPab = (UINT16) Actual[Profile];
-        }
-      }
+      Outputs->Timing[Profile].tRPab = (UINT16) Actual[Profile];
+
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
     }
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -4597,6 +4580,7 @@ GetChannelDimmtRRD (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -4610,7 +4594,6 @@ GetChannelDimmtRRD (
             continue;
           }
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -4677,13 +4660,9 @@ GetChannelDimmtRRD (
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRRD = (UINT16) Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tRRD = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -4738,6 +4717,7 @@ GetChannelDimmtRRD_L (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -4752,7 +4732,6 @@ GetChannelDimmtRRD_L (
             continue;
           }
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -4824,13 +4803,9 @@ GetChannelDimmtRRD_L (
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRRD_L = (UINT16) Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tRRD_L = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -4942,13 +4917,8 @@ GetChannelDimmtRRD_S (
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRRD_S = (UINT16) Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tRRD_S = (UINT16) Actual[Profile];
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -5160,6 +5130,7 @@ GetChannelDimmtRTP (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -5174,7 +5145,6 @@ GetChannelDimmtRTP (
             continue;
           }
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -5255,13 +5225,8 @@ GetChannelDimmtRTP (
     if (NeedIgnoreXmp (MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tRTP = (UINT16) Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].tRTP = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -5336,6 +5301,7 @@ GetChannelDimmtWR (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -5350,7 +5316,7 @@ GetChannelDimmtWR (
             continue;
           }
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
+
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -5412,13 +5378,9 @@ GetChannelDimmtWR (
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tWR = (UINT16) Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tWR = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -5478,6 +5440,7 @@ GetChannelDimmtWTR (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin         = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -5491,7 +5454,6 @@ GetChannelDimmtWTR (
             continue;
           }
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -5560,13 +5522,9 @@ GetChannelDimmtWTR (
     if (NeedIgnoreXmp (MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tWTR = (UINT16) Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tWTR = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -5628,6 +5586,7 @@ GetChannelDimmtWTR_L (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -5642,7 +5601,6 @@ GetChannelDimmtWTR_L (
             continue;
           }
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -5710,13 +5668,9 @@ GetChannelDimmtWTR_L (
     if (NeedIgnoreXmp (MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tWTR_L = (UINT16) Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tWTR_L = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -5774,6 +5728,7 @@ GetChannelDimmtWTR_S (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -5788,7 +5743,6 @@ GetChannelDimmtWTR_S (
             continue;
           }
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -5860,13 +5814,9 @@ GetChannelDimmtWTR_S (
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tWTR_S = (UINT16) Actual[Profile];
-      }
-    }
+
+    Outputs->Timing[Profile].tWTR_S = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -5920,6 +5870,7 @@ GetChannelDimmtCCD_L (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -5934,7 +5885,6 @@ GetChannelDimmtCCD_L (
             continue;
           }
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -5986,21 +5936,13 @@ GetChannelDimmtCCD_L (
     } //Controller
   } //Profile
 
-  //
-  // Set the best case timing for all controllers/channels/dimms, for each profile.
-  //
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "    %s%u:", BestCaseString, MAX_PROFILE - 1);
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tCCD_L  = (UINT16) Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].tCCD_L  = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -6057,6 +5999,7 @@ GetChannelDimmtCCD_L_WR (
       continue;
     }
     Actual[Profile] = 0;
+    tCKmin = Outputs->Timing[Profile].tCK;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       ControllerIn  = &Inputs->Controller[Controller];
       ControllerOut = &Outputs->Controller[Controller];
@@ -6072,7 +6015,6 @@ GetChannelDimmtCCD_L_WR (
           }
 
           Calculated     = 0;
-          tCKmin         = ChannelOut->Timing[Profile].tCK;
           switch (Profile) {
             case XMP_PROFILE1:
             case XMP_PROFILE2:
@@ -6123,21 +6065,13 @@ GetChannelDimmtCCD_L_WR (
     } //Controller
   } //Profile
 
-  //
-  // Set the best case timing for all controllers/channels/dimms, for each profile.
-  //
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "    %s%u:", BestCaseString, MAX_PROFILE - 1);
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].tCCD_L_WR  = (UINT16) Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].tCCD_L_WR  = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -6256,21 +6190,13 @@ GetChannelDimmNmode (
     } //Controller
   } //Profile
 
-  //
-  // Set the best case timing for all controllers/channels/dimms, for each profile.
-  //
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "    %s%u:", BestCaseString, MAX_PROFILE - 1);
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
     if (NeedIgnoreXmp(MrcData, Profile)) {
       continue;
     }
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      ControllerOut = &Outputs->Controller[Controller];
-      for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-        ChannelOut = &ControllerOut->Channel[Channel];
-        ChannelOut->Timing[Profile].NMode = (UINT16) Actual[Profile];
-      }
-    }
+    Outputs->Timing[Profile].NMode = (UINT16) Actual[Profile];
+
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %u", Actual[Profile]);
   }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
@@ -7645,19 +7571,14 @@ MrcUpdateDdr5MintCL (
 {
   MrcOutput        *Outputs;
   MrcDebug         *Debug;
-  MrcControllerOut *ControllerOut;
-  MrcChannelOut    *ChannelOut;
-  MrcDimmOut       *DimmOut;
   MrcProfile       Profile;
-  UINT32           Controller;
-  UINT32           Channel;
-  UINT32           Dimm;
   BOOLEAN          IsGear4;
   BOOLEAN          IsUpdated;
 
   Outputs = &MrcData->Outputs;
   Debug   = &Outputs->Debug;
   IsGear4 = (Outputs->GearMode == 1);
+  IsUpdated = FALSE;
 
   if (!Outputs->IsDdr5) {
     return;
@@ -7670,29 +7591,17 @@ MrcUpdateDdr5MintCL (
       if (NeedIgnoreXmp (MrcData, Profile)) {
         continue;
       }
-      for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-        ControllerOut = &Outputs->Controller[Controller];
-        for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-          ChannelOut = &ControllerOut->Channel[Channel];
-          for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
-            DimmOut = &ChannelOut->Dimm[Dimm];
-            if (DIMM_PRESENT == DimmOut->Status) {
-              IsUpdated = FALSE;
-              if ((Outputs->Frequency == f3200) && (ChannelOut->Timing[Profile].tCL < 28)) {
-                 ChannelOut->Timing[Profile].tCL = 28;     // 28 is the smallest valid CL in DDR5 3200G4.
-                 IsUpdated = TRUE;
-              }
-              if ((Outputs->Frequency == f3600) && (ChannelOut->Timing[Profile].tCL < 30)) {
-                 ChannelOut->Timing[Profile].tCL = 30;     // 30 is the smallest valid CL in DDR5 3600G4.
-                 IsUpdated = TRUE;
-              }
-              if (IsUpdated) {
-                 MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  Profile:%d MC%u.C%u.D%u: New tCL: %u\n", Profile, Controller, Channel, Dimm, ChannelOut->Timing[Profile].tCL);
-              }
-            }
-          }
-        }
-      }
+      if ((Outputs->Frequency == f3200) && (Outputs->Timing[Profile].tCL < 28)) {
+        Outputs->Timing[Profile].tCL = 28;     // 28 is the smallest valid CL in DDR5 3200G4.
+        IsUpdated = TRUE;
+       }
+       if ((Outputs->Frequency == f3600) && (Outputs->Timing[Profile].tCL < 30)) {
+         Outputs->Timing[Profile].tCL = 30;     // 30 is the smallest valid CL in DDR5 3600G4.
+         IsUpdated = TRUE;
+       }
+       if (IsUpdated) {
+         MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  Profile:%d New tCL: %u\n", Profile, Outputs->Timing[Profile].tCL);
+       }
     }
   }
 }

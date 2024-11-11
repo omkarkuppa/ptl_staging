@@ -48,6 +48,7 @@ FspUpdatePeiSiPolicyPreMem (
 
   SiPreMemConfig->PlatformDebugOption = FspmUpd->FspmConfig.PlatformDebugOption;
   SiPreMemConfig->SkipOverrideBootModeWhenFwUpdate = FspmUpd->FspmConfig.SiSkipOverrideBootModeWhenFwUpdate;
+  SiPreMemConfig->StaticContentSizeAt4Gb = FspmUpd->FspmConfig.StaticContentSizeAt4Gb;
 
   return EFI_SUCCESS;
 }

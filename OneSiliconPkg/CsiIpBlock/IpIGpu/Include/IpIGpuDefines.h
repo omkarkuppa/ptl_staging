@@ -53,6 +53,7 @@ typedef union {
 //
 // GMD_<IP>_Arch_Release
 //
+#define GMD_GT_30_0              0x07800000
 #define GMD_MEDIA_30_0           0x07800000
 #define GMD_GT_ARCH_35           35
 #define GMD_MEDIA_ARCH_35        35

@@ -34,6 +34,7 @@
 #define BANK_ADDRESS_BITS               2
 #define COLUMN_BITS                     10
 #define ROW_BITS                        16
+#define DIMM_DENSITY_24_GB              24
 
 //
 // Definitions for DIMM Manifest's header
@@ -147,13 +148,14 @@ CheckTdxDependancy (
   UINT32 MktmePolicy,
   UINT32 VtdPolicy,
   UINT32 VmxPolicy
- );
+  );
 
 /**
   Gets DIMM information from registers and fills DIMM manifest for
   Alias Check Trusted Module (ACTM).
 
   @param[in] MrcData        - MRC Parameter Structure
+  @param[in] WarmReset      - TRUE if WarmReset detected
 
   @retval EFI_SUCCESS if no error
   @retval EFI_ERROR if other operations fail
@@ -163,7 +165,8 @@ CheckTdxDependancy (
 EFI_STATUS
 EFIAPI
 PublishActmDimmManifest (
-  IN MrcParameters   *const MrcData
+  IN MrcParameters   *const MrcData,
+  IN BOOLEAN         WarmReset
   );
 
 /**
@@ -181,7 +184,7 @@ EFIAPI
 ActmPopulateDimmManifest (
   IN MrcParameters   *const MrcData,
   OUT ACTM_DIMM_MANIFEST     *ActmDimmManifest
- );
+  );
 
 /**
   Fills given Cmr array with CMR entries and sets NumCmrArrayEntries to a corresponding number of
@@ -283,20 +286,6 @@ PeiTdxMemoryAllocation(
   IN OUT UINT64                   *Touud,
   IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested,
   OUT EFI_PHYSICAL_ADDRESS        *BaseAddress
-  );
-
-/**
-  Reserve Tdx Memory
-
-  @param[in] SeamrrBase               Seamrr Base Address
-  @param[in] SeamrrSize               Seamrr Size
-  @param[in] ResourceAttributeTested  Memory tested attribute
-**/
-VOID
-PeiTdxMemoryAllocationV2 (
-  IN EFI_PHYSICAL_ADDRESS         SeamrrBase,
-  IN UINT64                       SeamrrSize,
-  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
   );
 
 /**

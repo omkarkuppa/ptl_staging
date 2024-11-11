@@ -83,8 +83,6 @@
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize           ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashFvFspOBase                   ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashFvFspOSize                   ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdFlashFvUplBase                    ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFspWrapperResetVectorInFsp
 
 [Sources]

@@ -52,8 +52,9 @@
 #include <BoardSaConfigPreMem.h>
 #include <IGpuConfig.h>
 #include <Library/PcdLib.h>
+#if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
-
+#endif
 #if FixedPcdGetBool (PcdTcssSupport) == 1
 #include <TcssPeiPreMemConfig.h>
 #endif
@@ -219,7 +220,7 @@ UpdatePeiSaPolicyPreMem (
   EFI_HOB_GUID_TYPE                               *GuidHob;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspmUpd;
+  VOID                                            *FspmUpd;
 #else
   IGPU_PEI_PREMEM_CONFIG                          *IGpuPreMemConfig;
   MEMORY_CONFIGURATION                            *MemConfig;
@@ -432,7 +433,7 @@ UpdatePeiSaPolicyPreMem (
     MemorySubSystemConfig->AcpiReservedMemorySize = S3MemVariable.AcpiReservedMemorySize;
 #endif
   }
-DEBUG ((DEBUG_INFO, " MorControl \n"));
+
   VariableSize = sizeof (MorControl);
   Status = VariableServices->GetVariable(
                                VariableServices,
@@ -449,7 +450,6 @@ DEBUG ((DEBUG_INFO, " MorControl \n"));
   //
   // Get System configuration variables
   //
-  DEBUG ((DEBUG_INFO, " Get System configuration \n"));
   VariableSize = sizeof (SI_SETUP);
   Status = VariableServices->GetVariable (
                                VariableServices,
@@ -492,7 +492,6 @@ DEBUG ((DEBUG_INFO, " MorControl \n"));
                                 &CpuSetup
                                 );
   ASSERT_EFI_ERROR(Status3);
-  DEBUG ((DEBUG_INFO, " gOcSetupVariableGuid \n"));
 
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
   VariableSize = sizeof (OC_SETUP);
@@ -532,8 +531,9 @@ DEBUG ((DEBUG_INFO, " MorControl \n"));
 
   if (((VPD_RCOM_TARGET *)PcdGetPtr (VpdPcdMrcRcompTarget))->RcompTarget) {
 #if FixedPcdGet8(PcdFspModeSelection) == 0
-    COPY_POLICY ((VOID *)RcompData->RcompTarget, (VOID *)(UINTN)(((VPD_RCOM_TARGET *)PcdGetPtr (VpdPcdMrcRcompTarget))->RcompTarget), sizeof (UINT16) * MRC_MAX_RCOMP_TARGETS);
-    //COPY_POLICY_V2 ((VOID *)(UINTN)((FSPM_UPD *) FspmUpd)->FspmConfig.RcompTarget[0], (VOID *)RcompData->RcompTarget[0], (VOID *)(UINTN)(((VPD_RCOM_TARGET *)PcdGetPtr (VpdPcdMrcRcompTarget))->RcompTarget), sizeof (UINT16) * MRC_MAX_RCOMP_TARGETS);
+    CopyMem ((VOID *)RcompData->RcompTarget, (VOID *)(UINTN)(((VPD_RCOM_TARGET *)PcdGetPtr (VpdPcdMrcRcompTarget))->RcompTarget), sizeof (UINT16) * MRC_MAX_RCOMP_TARGETS);
+#else
+    CopyMem (((FSPM_UPD *) FspmUpd)->FspmConfig.RcompTarget, (VOID *)(UINTN)(((VPD_RCOM_TARGET *)PcdGetPtr (VpdPcdMrcRcompTarget))->RcompTarget), sizeof (UINT16) * MRC_MAX_RCOMP_TARGETS);
 #endif
   }
 
@@ -653,7 +653,7 @@ DEBUG ((DEBUG_INFO, " MorControl \n"));
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableMc1Ch1, MemConfig->ExternalInputs.DisableChannel[1][1], SaSetup.DisableMc1Ch1);
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableMc1Ch2,MemConfig->ExternalInputs.DisableChannel[1][2], SaSetup.DisableMc1Ch2);
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableMc1Ch3, MemConfig->ExternalInputs.DisableChannel[1][3], SaSetup.DisableMc1Ch3);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.GearRatio, MemConfig->ExternalInputs.GearRatio,            SaSetup.GearRatio    );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.GearRatio, MemConfig->ExternalInputs.GearRatio, SaSetup.GearRatio);
 
   COPY_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SaGvGear, (VOID *) MemConfig->ExternalInputs.SaGvGear, (VOID *) SaSetup.SaGvGear, (MEM_MAX_SAGV_POINTS * sizeof(SaSetup.SaGvGear[0])));
   COPY_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SaGvFreq, (VOID *) MemConfig->ExternalInputs.SaGvFreq, (VOID *) SaSetup.SaGvFreq, (MEM_MAX_SAGV_POINTS * sizeof(SaSetup.SaGvFreq[0])));
@@ -666,7 +666,7 @@ DEBUG ((DEBUG_INFO, " MorControl \n"));
 #endif
     UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.MmioSizeAdjustment, HostBridgePreMemConfig->MmioSizeAdjustment, PcdGet16 (PcdSaMiscMmioSizeAdjustment));
     COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.EnableAbove4GBMmio, HostBridgePreMemConfig->EnableAbove4GBMmio, 1);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CridEnable, HostBridgePreMemConfig->CridEnable,SaSetup.CridEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CridEnable, HostBridgePreMemConfig->CridEnable, SaSetup.CridEnable);
 
     UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ApicLocalAddress, HostBridgePreMemConfig->ApicLocalAddress, PcdGet32 (PcdApicLocalAddress));
     UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.NvmeHcPeiMmioBase, HostBridgePreMemConfig->NvmeHcPeiMmioBase, PcdGet32 (PcdNvmeHcPeiMmioBase));
@@ -1147,6 +1147,7 @@ DEBUG ((DEBUG_INFO, " MorControl \n"));
     COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DprLock, MemConfig->ExternalInputs.DprLock,                     SetupData.TestLtDprLock         );
     COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SubChHashMask, MemConfig->ExternalInputs.SubChHashMask,               SaSetup.SubChHashMask           );
     COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SubChHashInterleaveBit, MemConfig->ExternalInputs.SubChHashInterleaveBit,      SaSetup.SubChHashInterleaveBit  );
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ForceCkdBypass, MemConfig->ExternalInputs.ForceCkdBypass,            SaSetup.ForceCkdBypass);
     COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.MimicWcDisaplayInIpq, MemConfig->ExternalInputs.MimicWcDisaplayInIpq,        SaSetup.MimicWcDisaplayInIpq    );
     COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.FakeSagv, MemConfig->ExternalInputs.FakeSagv,                    SaSetup.FakeSagv                );
     COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableZq, MemConfig->ExternalInputs.DisableZq,                   SaSetup.DisableZq               );

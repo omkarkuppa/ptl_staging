@@ -578,4 +578,48 @@ TranslateDqBitThroughPhyDqSwizzling (
   IN UINT32 Bit
   );
 
+/**
+  Get the DUNIT0_CR_PD2 REG offset
+
+  @param[in]      MrcData     - Pointer to global data structure.
+  @param[in]      Mptu        - Mptu number.
+
+  @retval Offset
+**/
+UINT32
+MrcGetDunitPd2Offset (
+  IN      MrcParameters *const  MrcData,
+  IN      UINT32        const   Mptu
+  );
+
+/**
+  Get the DUNIT0_CR_PD0 REG offset
+
+  @param[in]      MrcData     - Pointer to global data structure.
+  @param[in]      Mptu        - Mptu number.
+
+  @retval Offset
+**/
+UINT32
+MrcGetDunitPd0Offset (
+  IN      MrcParameters *const  MrcData,
+  IN      UINT32        const   Mptu
+  );
+
+/**
+  Get the DUNIT0_CR SR0 REG offset and volatile mask
+
+  @param[in]      MrcData     - Pointer to global data structure.
+  @param[in]      Mptu        - Mptu number.
+  @param[out]     VolatileMask - Pointer to a volatile mask
+
+  @retval Offset
+**/
+UINT32
+MrcGetDunitSr0OffsetAndMask (
+  IN      MrcParameters *const  MrcData,
+  IN      UINT32        const   Mptu,
+  OUT     UINT64_STRUCT *const  VolatileMask
+  );
+
 #endif // _MrcHalApi_h_

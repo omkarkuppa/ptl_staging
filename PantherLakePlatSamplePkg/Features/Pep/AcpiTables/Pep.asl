@@ -97,40 +97,6 @@ Scope (\_SB)
     {
       ADBG ("Pep _DSM!")
 
-      If (LEqual (Arg0,ToUUID ("11E00D56-CE64-47ce-837B-1F898F9AA461")))
-      {
-        // Number of Functions (including this one)
-        If (LEqual (Arg2, Zero))
-        {
-          Return (Buffer () {0x81, 0x01})
-        }
-
-        // Sleep Entry Notification
-        If (LEqual (Arg2, 0x7))
-        {
-          ADBG("PEP DSM F7")
-          If (CondRefOf (RPSG)) {
-            If (LNotEqual (RPSG, 0)) {
-              \_SB.SGOV (RPSG, 0)      // config Retimer Power State GPIO to 0
-              ADBG("RPSG 0")
-            }
-          }
-        }
-
-
-        // Sleep Exit Notification
-        If (LEqual (Arg2, 0x8))
-        {
-          ADBG("PEP DSM F8")
-          If (CondRefOf (RPSG)) {
-            If (LNotEqual (RPSG, 0)) {
-              \_SB.SGOV (RPSG, 1)      // config Retimer Power State GPIO to 1
-              ADBG("RPSG 1")
-            }
-          }
-        }
-      }
-
       If (LEqual (Arg0,ToUUID ("c4eb40a0-6cd2-11e2-bcfd-0800200c9a66")))
       {
         // Number of Functions (including this one)

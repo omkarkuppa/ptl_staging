@@ -36,22 +36,22 @@
   OneSiliconPkg/SiPkg.dec
 
 [Pcd]
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartNumber
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartMode
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartBaudRate
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartParity
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDataBits
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartStopBits
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartAutoFlow
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartRxPinMux
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartTxPinMux
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartRtsPinMux
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartCtsPinMux
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugMmioBase
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugPciCfgBase
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartPowerGating
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable
+  gSiPkgTokenSpaceGuid.PcdLpssUartNumber
+  gSiPkgTokenSpaceGuid.PcdLpssUartMode
+  gSiPkgTokenSpaceGuid.PcdLpssUartBaudRate
+  gSiPkgTokenSpaceGuid.PcdLpssUartParity
+  gSiPkgTokenSpaceGuid.PcdLpssUartDataBits
+  gSiPkgTokenSpaceGuid.PcdLpssUartStopBits
+  gSiPkgTokenSpaceGuid.PcdLpssUartAutoFlow
+  gSiPkgTokenSpaceGuid.PcdLpssUartRxPinMux
+  gSiPkgTokenSpaceGuid.PcdLpssUartTxPinMux
+  gSiPkgTokenSpaceGuid.PcdLpssUartRtsPinMux
+  gSiPkgTokenSpaceGuid.PcdLpssUartCtsPinMux
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugMmioBase
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugPciCfgBase
+  gSiPkgTokenSpaceGuid.PcdLpssUartPowerGating
 
 [Sources]
   LpssUartDebugPropertyPcdLib.c
-
+

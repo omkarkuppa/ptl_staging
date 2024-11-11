@@ -22,8 +22,6 @@
 #ifndef _NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_H_
 #define _NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_H_
 
-#define NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_VERSION 1
-
 #define NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_NAME  L"NhltEndpointsTableConfigurationVariable"
 
 #define NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_GUID \
@@ -38,28 +36,18 @@
  will need to maintain backward compatibility, bump up
  structure revision and update below history table\n
   <b>Revision 1</b>:  - Initial version.
+  <b>Revision 2</b>:  - Restructure so the NHLT for BT is second byte.
 **/
-#define NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_REVISION  1
+#define NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_REVISION  2
 
 typedef struct {
-  UINT8  Version;
-  /**
-   <b>NHLT config enablement</b>
-   0x0 : Disable;
-   0x1 : Clock 38_4MHz, Format 24b/48kHz;
-   0x2 : Clock 38_4MHz, Format 24b/96kHz;
-  **/
-  UINT8  NhltDmicMonoEnabled;
-  UINT8  NhltDmicStereoEnabled;
-  UINT8  NhltDmicQuadEnabled;
-  UINT8  NhltI2sAlc274Enabled;
-  /**
-   <b>Nhlt config enablement:</b>
-   0: Disable;
-   1: Enable;
-  **/
-  UINT8  NhltDmicStereoVpEnabled;
-  UINT8  NhltBluetoothEnabled;
+  UINT8  Revision;
+  UINT8  NhltBluetoothEnabled;      ///< Enablement of NHLT for BT. 0 : Disabled 1 : BT drives I2S clock for HFP 2 : DSP drives I2S clock for HFP
+  UINT8  NhltDmicMonoEnabled;       ///< Enablement of NHLT for DMIC Mono. 0 : Disabled 1 : Clock 38_4MHz, Format 24b/48kHz 2 : Clock 38_4MHz, Format 24b/96kHz
+  UINT8  NhltDmicStereoEnabled;     ///< Enablement of NHLT for DMIC Stereo. 0 : Disabled 1 : Clock 38_4MHz, Format 24b/48kHz 2 : Clock 38_4MHz, Format 24b/96kHz
+  UINT8  NhltDmicQuadEnabled;       ///< Enablement of NHLT for DMIC Quad. 0 : Disabled 1 : Clock 38_4MHz, Format 24b/48kHz 2 : Clock 38_4MHz, Format 24b/96kHz
+  UINT8  NhltI2sAlc274Enabled;      ///< Enablement of NHLT for Alc274. 0 : Disabled 1 : Clock 38_4MHz, Format 24b/48kHz 2 : Clock 38_4MHz, Format 24b/96kHz
+  UINT8  NhltDmicStereoVpEnabled;   ///< Enablement of NHLT for DMIC on VP platform. 0 : Disabled 1 : Enabled
 } NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE;
 #pragma pack ()
 

@@ -120,3 +120,4 @@
   gLpssSpiConfigGuid                  ## CONSUMES
   gLpssI2cConfigGuid                  ## CONSUMES
   gAdrConfigGuid                      ## CONSUMES
+  gFspVConfigGuid                     ## CONSUMES

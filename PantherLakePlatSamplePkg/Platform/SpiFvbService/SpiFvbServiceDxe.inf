@@ -50,7 +50,6 @@
   SpiAccessLib
   CpuPlatformLib
   DxeBootStateLib
-  PayloadResiliencySupportLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -101,6 +100,7 @@
 
 [Guids]
   gEfiFirmwareFileSystem2Guid                   ## CONSUMES
+  gEfiFirmwareFileSystem3Guid                   ## CONSUMES
   gEfiSystemNvDataFvGuid                        ## CONSUMES
   gEfiEventVirtualAddressChangeGuid             ## CONSUMES
   gBootStateGuid                                ## CONSUMES

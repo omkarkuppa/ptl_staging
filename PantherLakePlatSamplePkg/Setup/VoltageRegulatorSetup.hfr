@@ -153,7 +153,7 @@
       minimum       = 0,
       maximum       = 512,
       step          = 1,
-      default       = 0,// PTL PO temp WA TODO :: Revisit and move to POR
+      default       = 80,
     endnumeric;
 
     numeric varid   = CPU_SETUP.Ps2Threshold[VR_INDEX],
@@ -163,7 +163,7 @@
       minimum       = 0,
       maximum       = 512,
       step          = 1,
-      default       = 0,// PTL PO temp WA TODO :: Revisit and move to POR
+      default       = 20,
     endnumeric;
 
     numeric varid   = CPU_SETUP.Ps3Threshold[VR_INDEX],
@@ -173,7 +173,7 @@
       minimum       = 0,
       maximum       = 512,
       step          = 1,
-      default       = 0,// PTL PO temp WA TODO :: Revisit and move to POR
+      default       = 4,
     endnumeric;
 
     oneof varid     = CPU_SETUP.Ps3Enable[VR_INDEX],

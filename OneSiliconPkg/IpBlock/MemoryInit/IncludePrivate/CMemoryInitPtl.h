@@ -25,6 +25,30 @@
 #include <Library/CpuInitPreMem.h>
 
 /**
+  Determines whether or not the platform has executed a TXT launch by
+  examining the TPM Establishment bit.
+  @param[in] VOID
+  @retval TRUE        - If the TPM establishment bit is asserted.
+  @retval FALSE       - If the TPM establishment bit is unasserted.
+**/
+extern
+BOOLEAN
+IsEstablishmentBitAsserted (
+  VOID
+  );
+
+/**
+  Unlock memory when security is set and TxT is not enabled.
+  @param[in] MrcData     - Mrc global data.
+  @retval Nothing
+**/
+extern
+void
+UnlockMemory (
+  IN CONST MrcParameters    *CONST  MrcData
+  );
+  
+/**
   Determine whether a cold reset of the platform is required.
   Note that the memory configuration saved data must be valid.
 

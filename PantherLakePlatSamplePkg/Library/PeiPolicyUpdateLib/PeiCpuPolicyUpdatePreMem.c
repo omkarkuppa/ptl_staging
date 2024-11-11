@@ -33,6 +33,7 @@
 #include <Library/SpiAccessLib.h>
 #include <Library/SpiLib.h>
 #include <Library/TmeInfoLib.h>
+#include <TdxDataHob.h>
 #include <Ppi/Spi.h>
 #include <Register/GenerationMsr.h>
 #include <Register/PchRegs.h>
@@ -42,8 +43,8 @@
 #include <TxtConfig.h>
 #include <PolicyUpdateMacro.h>
 #include <Library/PeiVrDomainLib.h>
-#include <Library/PayloadResiliencySupportLib.h>
 #include <Library/Tpm2CommandLib.h>
+#include <Register/PmcRegs.h>
 #if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
 #endif
@@ -221,16 +222,16 @@ BiosGuardHobInit (
 
 #if FixedPcdGetBool(PcdExtendedBiosRegionSupport) == 0
   BiosGuardHobPtr->Bgpdt.LastSfam = 0;
-  BiosGuardHobPtr->Bgpdt.SfamData[0].FirstByte = BaseAddr + (FixedPcdGet32 (PcdFlashFvMicrocodeSize) + FixedPcdGet32 (PcdFlashNonFitPayloadSize)) + FixedPcdGet32 (PcdFlashNvStorageSize);
+  BiosGuardHobPtr->Bgpdt.SfamData[0].FirstByte = BaseAddr + FixedPcdGet32 (PcdFlashNonFitPayloadSize) + FixedPcdGet32 (PcdFlashNvStorageSize);
   BiosGuardHobPtr->Bgpdt.SfamData[0].LastByte  = (BaseAddr + RegionSize) - 1;
   BiosGuardHobPtr->Bgpdt.SfamData[1].FirstByte = BaseAddr;
-  BiosGuardHobPtr->Bgpdt.SfamData[1].LastByte  = (BaseAddr + FixedPcdGet32 (PcdFlashFvMicrocodeSize) + FixedPcdGet32 (PcdFlashNonFitPayloadSize)) - 1;
+  BiosGuardHobPtr->Bgpdt.SfamData[1].LastByte  = (BaseAddr + FixedPcdGet32 (PcdFlashNonFitPayloadSize)) - 1;
 #else
   BiosGuardHobPtr->Bgpdt.LastSfam = 1;
-  BiosGuardHobPtr->Bgpdt.SfamData[0].FirstByte = BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse) + (FixedPcdGet32 (PcdFlashFvMicrocodeSize) + FixedPcdGet32(PcdFlashNonFitPayloadSize)) + FixedPcdGet32 (PcdFlashNvStorageSize);
+  BiosGuardHobPtr->Bgpdt.SfamData[0].FirstByte = BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse) + FixedPcdGet32(PcdFlashNonFitPayloadSize) + FixedPcdGet32 (PcdFlashNvStorageSize);
   BiosGuardHobPtr->Bgpdt.SfamData[0].LastByte  = (BaseAddr + RegionSize) - 1;
   BiosGuardHobPtr->Bgpdt.SfamData[1].FirstByte = BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse);
-  BiosGuardHobPtr->Bgpdt.SfamData[1].LastByte  = (BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse) + FixedPcdGet32 (PcdFlashFvMicrocodeSize) + FixedPcdGet32 (PcdFlashNonFitPayloadSize)) - 1;
+  BiosGuardHobPtr->Bgpdt.SfamData[1].LastByte  = (BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse) + FixedPcdGet32 (PcdFlashNonFitPayloadSize)) - 1;
   BiosGuardHobPtr->Bgpdt.SfamData[2].FirstByte = BaseAddr;
   BiosGuardHobPtr->Bgpdt.SfamData[2].LastByte  = (BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse)) - 1;
 #endif
@@ -445,6 +446,108 @@ UpdateTdxActmModulePtr (
 }
 
 /**
+  Reports if detected reset type is warm or not
+  @retval TRUE  Reset type is a warm reset
+  @retval FALSE Other reset type
+**/
+BOOLEAN
+IsWarmReset (
+  VOID
+  )
+{
+  UINT32 RegisterVal32 = MmioRead32 (PmcGetPwrmBase () + R_PMC_PWRM_GEN_PMCON_A);
+
+  if ((((RegisterVal32 & B_PMC_PWRM_GEN_PMCON_A_MEM_SR) != 0) &&
+      ((RegisterVal32 & B_PMC_PWRM_GEN_PMCON_A_DISB) != 0))) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+  Get ACTM MAC from NVRAM and save in PCD.
+
+  @param [in] VariableServices - Pointer to VariableServices
+
+  @retval EFI_SUCCESS          - ACTM ACM Module found.
+  @retval EFI_NOT_FOUND        - ACTM ACM Module size and/or Address equal to 0.
+  @retval Others               - ACTM ACM Module not found.
+**/
+EFI_STATUS
+SaveActmMacInPcd (
+  IN EFI_PEI_READ_ONLY_VARIABLE2_PPI *VariableServices
+  )
+{
+  EFI_STATUS  Status = EFI_SUCCESS;
+  UINT8       *ActmMac = NULL;
+  UINTN       VarSize;
+  UINT64      Data;
+  UINT32      Offset;
+
+  DEBUG ((DEBUG_INFO, "[TDX] Get ACTM MAC from NVRAM and save in PCD.\n"));
+
+  ActmMac = AllocateZeroPool (SIZE_OF_MANIFEST_MAC);
+  if (ActmMac == NULL) {
+    DEBUG ((DEBUG_ERROR, "[TDX] ERROR: AllocateZeroPool failure!\n"));
+    return EFI_OUT_OF_RESOURCES;
+  }
+  VarSize = (UINTN)SIZE_OF_MANIFEST_MAC;
+
+  // 1. Get Actm Mac from Nv variable
+  Status = VariableServices->GetVariable (
+            VariableServices,
+            L"TdxActmMacNvVar",
+            &gTdxActmMacNvVarGuid,
+            NULL,
+            &VarSize,
+            (void *)ActmMac);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[TDX] ERROR: GetVariable() return %r\n", Status));
+    FreePool (ActmMac);
+    return Status;
+  }
+
+  // 2. Set PCD's with recovered ACTM MAC
+  CopyMem (&Data, ActmMac, sizeof (Data));
+  Status = PcdSetEx64S (&gSiPkgTokenSpaceGuid, PcdTdxActmMac0, Data);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[TDX] ERROR: PcdSetEx64S() return %r\n", Status));
+    FreePool (ActmMac);
+    return Status;
+  }
+
+  Offset = sizeof (Data);
+  CopyMem (&Data, &ActmMac[Offset], sizeof (Data));
+  Status = PcdSetEx64S (&gSiPkgTokenSpaceGuid, PcdTdxActmMac1, Data);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[TDX] ERROR: PcdSetEx64S() return %r\n", Status));
+    FreePool (ActmMac);
+    return Status;
+  }
+
+  Offset += sizeof (Data);
+  CopyMem (&Data, &ActmMac[Offset], sizeof (Data));
+  Status = PcdSetEx64S (&gSiPkgTokenSpaceGuid, PcdTdxActmMac2, Data);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[TDX] ERROR: PcdSetEx64S() return %r\n", Status));
+    FreePool (ActmMac);
+    return Status;
+  }
+
+  Offset += sizeof (Data);
+  CopyMem (&Data, &ActmMac[Offset], sizeof (Data));
+  Status = PcdSetEx64S (&gSiPkgTokenSpaceGuid, PcdTdxActmMac3, Data);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[TDX] ERROR: PcdSetEx64S() return %r\n", Status));
+    FreePool (ActmMac);
+    return Status;
+  }
+
+  return Status;
+}
+
+/**
   Create G3 State Hob
 **/
 VOID
@@ -517,6 +620,15 @@ UpdatePeiCpuPolicyPreMem (
   UINT8                           PowerSourceType;
   BOOLEAN                         IsAcPluggedIn;
   EFI_STATUS                      PowerSourceStatus;
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspmUpd;
+#else
+  TXT_PREMEM_CONFIG               *TxtPreMemConfig;
+  CPU_POWER_DELIVERY_CONFIG       *CpuPowerDeliveryConfig;
+  CPU_INIT_PREMEM_CONFIG          *CpuInitPreMemConfig;
+  CPU_SECURITY_PREMEM_CONFIG      *CpuSecurityPreMemConfig;
+  CPU_POWER_MGMT_VR_CONFIG        *CpuPowerMgmtVrConfig;
+#endif
 
   BiosGuardHobPtr             = NULL;
   BiosSize                    = 0;
@@ -529,17 +641,6 @@ UpdatePeiCpuPolicyPreMem (
 #endif
 
   DEBUG ((DEBUG_INFO, "Update PeiCpuPolicyUpdate Pre-Mem Start\n"));
-
-#if FixedPcdGet8(PcdFspModeSelection) == 1
- VOID                            *FspmUpd;
-#else
-  UINT32                          MicrocodeBaseAddress;
-  TXT_PREMEM_CONFIG               *TxtPreMemConfig;
-  CPU_POWER_DELIVERY_CONFIG       *CpuPowerDeliveryConfig;
-  CPU_INIT_PREMEM_CONFIG          *CpuInitPreMemConfig;
-  CPU_SECURITY_PREMEM_CONFIG      *CpuSecurityPreMemConfig;
-  CPU_POWER_MGMT_VR_CONFIG        *CpuPowerMgmtVrConfig;
-#endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
@@ -625,6 +726,14 @@ UpdatePeiCpuPolicyPreMem (
     // Get the ACTM address and ACTM Base and update the policy
     //
     UpdateTdxActmModulePtr (&ModulePtr, &ModuleSize);
+
+    //
+    // Get ACTM MAC from NVRAM and save in PCD on WarmReset
+    //
+    if (IsWarmReset ()) {
+      SaveActmMacInPcd (VariableServices);
+    }
+
     COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdxActmModuleAddr, CpuSecurityPreMemConfig->TdxActmModuleAddr, ModulePtr);
     COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdxActmModuleSize, CpuSecurityPreMemConfig->TdxActmModuleSize, ModuleSize);
   #endif
@@ -783,13 +892,14 @@ UpdatePeiCpuPolicyPreMem (
     UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.FClkFrequency, CpuInitPreMemConfig->FClkFrequency, CpuSetup.EpocFclkFreq);
   }
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BistOnReset, CpuInitPreMemConfig->BistOnReset, CpuSetup.BistOnReset);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ReduceXecores, CpuInitPreMemConfig->ReduceXecores, CpuSetup.ReduceXecores);
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VmxEnable, CpuInitPreMemConfig->VmxEnable, CpuSetup.VT);
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TmeEnable, CpuInitPreMemConfig->TmeEnable, CpuSetup.TmeEnable);
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CpuCrashLogEnable, CpuInitPreMemConfig->CrashLogEnable, CrashLogVariable.EnableCrashLog);
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CrashLogGprs, CpuInitPreMemConfig->CrashLogGprs, CpuSetup.CrashLogGprs);
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DebugInterfaceEnable, CpuInitPreMemConfig->DebugInterfaceEnable, CpuSetup.DebugInterfaceEnable);
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DfdEnable, CpuInitPreMemConfig->DfdEnable, CpuSetup.DfdEnable);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CpuRatio, CpuInitPreMemConfig->OcLock, CpuSetup.OverclockingLock);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.OcLock, CpuInitPreMemConfig->OcLock, CpuSetup.OverclockingLock);
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   COMPARE_AND_UPDATE_POLICY (CpuInitPreMemConfig->TmeBypassCapability, CpuSetup.TmeBypassCapability);
 #endif
@@ -840,17 +950,15 @@ UpdatePeiCpuPolicyPreMem (
     // Only update if the user wants to override VR settings
     //
     if (CpuSetup.VrConfigEnable[Index] != 0) {
-      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VrConfigEnable[Index], CpuPowerMgmtVrConfig->VrConfigEnable[Index], CpuSetup.VrConfigEnable[Index],    Index);
-      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps1Threshold[Index], CpuPowerMgmtVrConfig->Ps1Threshold[Index],   CpuSetup.Ps1Threshold[Index],      Index);
-      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps2Threshold[Index], CpuPowerMgmtVrConfig->Ps2Threshold[Index],   CpuSetup.Ps2Threshold[Index],      Index);
-      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps3Threshold[Index], CpuPowerMgmtVrConfig->Ps3Threshold[Index],   CpuSetup.Ps3Threshold[Index],      Index);
-      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps3Enable[Index], CpuPowerMgmtVrConfig->Ps3Enable[Index],      CpuSetup.Ps3Enable[Index],         Index);
-      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps4Enable[Index], CpuPowerMgmtVrConfig->Ps4Enable[Index],      CpuSetup.Ps4Enable[Index],         Index);
-      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ImonSlope[Index], CpuPowerMgmtVrConfig->ImonSlope[Index],      CpuSetup.ImonSlope[Index],         Index);
-#if FixedPcdGet8(PcdFspModeSelection) == 0
-      COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->ImonOffset[Index], (INT32)CpuSetup.ImonOffset[Index] * ((CpuSetup.ImonOffsetPrefix[Index] == 1) ? -1 : 1), Index);
-#endif
-      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.EnableFastVmode[Index], CpuPowerMgmtVrConfig->EnableFastVmode[Index],CpuSetup.EnableFastVmode[Index],   Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.VrConfigEnable[Index], CpuPowerMgmtVrConfig->VrConfigEnable[Index], CpuSetup.VrConfigEnable[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps1Threshold[Index], CpuPowerMgmtVrConfig->Ps1Threshold[Index], CpuSetup.Ps1Threshold[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps2Threshold[Index], CpuPowerMgmtVrConfig->Ps2Threshold[Index], CpuSetup.Ps2Threshold[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps3Threshold[Index], CpuPowerMgmtVrConfig->Ps3Threshold[Index], CpuSetup.Ps3Threshold[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps3Enable[Index], CpuPowerMgmtVrConfig->Ps3Enable[Index], CpuSetup.Ps3Enable[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Ps4Enable[Index], CpuPowerMgmtVrConfig->Ps4Enable[Index], CpuSetup.Ps4Enable[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ImonSlope[Index], CpuPowerMgmtVrConfig->ImonSlope[Index], CpuSetup.ImonSlope[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ImonOffset[Index], CpuPowerMgmtVrConfig->ImonOffset[Index], (INT32)CpuSetup.ImonOffset[Index] * ((CpuSetup.ImonOffsetPrefix[Index] == 1) ? -1 : 1), Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.EnableFastVmode[Index], CpuPowerMgmtVrConfig->EnableFastVmode[Index],CpuSetup.EnableFastVmode[Index], Index);
 
       //
       // Only update if IccMax is non-zero. This is to distinguish between the default EDS override.
@@ -875,13 +983,11 @@ UpdatePeiCpuPolicyPreMem (
       //
       if (CpuSetup.TdcCurrentLimit[Index] != 0) {
         COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcCurrentLimit[Index], CpuPowerMgmtVrConfig->TdcCurrentLimit[Index], CpuSetup.TdcCurrentLimit[Index], Index);
-#if FixedPcdGet8(PcdFspModeSelection) == 0
-        COMPARE_UPDATE_POLICY_ARRAY (CpuPowerMgmtVrConfig->TdcTimeWindow[Index], CpuSetup.TdcTimeWindow[Index],   Index);
-#endif
       }
-      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcMode[Index], CpuPowerMgmtVrConfig->TdcMode[Index], CpuSetup.TdcMode[Index],   Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcTimeWindow[Index], CpuPowerMgmtVrConfig->TdcTimeWindow[Index], CpuSetup.TdcTimeWindow[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcMode[Index], CpuPowerMgmtVrConfig->TdcMode[Index], CpuSetup.TdcMode[Index], Index);
       COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcEnable[Index], CpuPowerMgmtVrConfig->TdcEnable[Index], CpuSetup.TdcEnable[Index], Index);
-      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcLock[Index], CpuPowerMgmtVrConfig->TdcLock[Index], CpuSetup.TdcLock[Index],   Index);
+      COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TdcLock[Index], CpuPowerMgmtVrConfig->TdcLock[Index], CpuSetup.TdcLock[Index], Index);
     }
     // Need to check if the user intends to override through CpuSetup to distinguish
     // between the default EDS override.
@@ -939,11 +1045,11 @@ UpdatePeiCpuPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ConfigTdpBios, CpuPowerDeliveryConfig->ConfigTdpBios, CpuSetup.ConfigTdpBios);
   }
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit2, CpuPowerDeliveryConfig->PowerLimit2, CpuSetup.PowerLimit2);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ConfigTdpLock, CpuPowerDeliveryConfig->ConfigTdpLock,CpuSetup.ConfigTdpLock);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ConfigTdpLock, CpuPowerDeliveryConfig->ConfigTdpLock, CpuSetup.ConfigTdpLock);
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Custom1PowerLimit1, CpuPowerDeliveryConfig->CustomPowerLimit1, (UINT16) (CpuSetup.CustomPowerLimit1Power / 125));
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.Custom1PowerLimit2, CpuPowerDeliveryConfig->CustomPowerLimit2, (UINT16) (CpuSetup.CustomPowerLimit2Power / 125));
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit1, CpuPowerDeliveryConfig->CustomPowerLimit1Time,  CpuSetup.CustomPowerLimit1Time);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PowerLimit1, CpuPowerDeliveryConfig->CustomTurboActivationRatio, CpuSetup.CustomTurboActivationRatio);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CustomPowerLimit1Time, CpuPowerDeliveryConfig->CustomPowerLimit1Time, CpuSetup.CustomPowerLimit1Time);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CustomTurboActivationRatio, CpuPowerDeliveryConfig->CustomTurboActivationRatio, CpuSetup.CustomTurboActivationRatio);
 
   //
   // Turbo Mode setting
@@ -976,9 +1082,7 @@ UpdatePeiCpuPolicyPreMem (
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysPowerLimit1Power, CpuPowerDeliveryConfig->PsysPowerLimit1Power, (UINT16) (CpuSetup.PlatformPowerLimit1Power / 125));
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysPowerLimit1Time, CpuPowerDeliveryConfig->PsysPowerLimit1Time ,  CpuSetup.PlatformPowerLimit1Time                  );
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PsysPowerLimit2Power, CpuPowerDeliveryConfig->PsysPowerLimit2Power,  (UINT16) (CpuSetup.PlatformPowerLimit2Power / 125));
-#if FixedPcdGet8(PcdFspModeSelection) == 0
-  COMPARE_AND_UPDATE_POLICY (CpuPowerDeliveryConfig->PlatformAtxTelemetryUnit, CpuSetup.PlatformAtxTelemetryUnit                 );
-#endif
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PlatformAtxTelemetryUnit, CpuPowerDeliveryConfig->PlatformAtxTelemetryUnit, CpuSetup.PlatformAtxTelemetryUnit);
   //
   // Isys parameters
   //
@@ -1059,13 +1163,9 @@ UpdatePeiCpuPolicyPreMem (
   // Point PCD to microcode location in flash.
   // CpuMp PEIM will shadow the microcode to memory.
   //
-  MicrocodeBaseAddress = GetMicrocodeBaseAddressInRecovery ();
-  if (MicrocodeBaseAddress == 0) {
-    MicrocodeBaseAddress = FixedPcdGet32 (PcdFlashFvMicrocodeBase);
-  }
   PcdSetEx64S (
     &gUefiCpuPkgTokenSpaceGuid, PcdCpuMicrocodePatchAddress,
-    MicrocodeBaseAddress + FixedPcdGet32 (PcdMicrocodeOffsetInFv)
+    FixedPcdGet32 (PcdFlashFvMicrocodeBase) + FixedPcdGet32 (PcdMicrocodeOffsetInFv)
     );
   PcdSetEx64S (
     &gUefiCpuPkgTokenSpaceGuid, PcdCpuMicrocodePatchRegionSize,

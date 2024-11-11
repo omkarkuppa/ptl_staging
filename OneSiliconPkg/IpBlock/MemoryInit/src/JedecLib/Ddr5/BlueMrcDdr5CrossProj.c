@@ -192,46 +192,6 @@ MrcJedecInitDdr5 (
 }
 
 /**
-  This function returns type of DimmOdt for DDR5 based on OdtMatrix and Read/Write mode
-
-  Returns OptDimmOdtPark if OdtMatrix is 0
-          OptDimmOdtNomRd if OdtMatrix is 1 and OdtType is ReadOdt
-          OptDimmOdtNomWr if OdtMatrix is 1 and OdtType is WriteOdt
-
-  @param[in]      MrcData       - Include all MRC global data.
-  @param[in]      Controller    - Controller to setup
-  @param[in]      Channel       - Channel to setup
-  @param[in]      Rank          - Rank to setup
-  @param[in]      OdtType       - ReadOdt or WriteOdt
-  @param[in]      NtRank        - Non Target Rank
-
-  @retval OdtParam
-**/
-UINT8
-MrcGetOdtParam (
-  IN MrcParameters *const MrcData,
-  IN UINT32               Controller,
-  IN UINT32               Channel,
-  IN UINT32               Rank,
-  IN UINT8                OdtType,
-  IN UINT8                NtRank
-  )
-{
-  MrcOutput        *Outputs;
-  INT64            OdtMatrix;
-  UINT8            NtOdt;
-
-  Outputs = &MrcData->Outputs;
-
-  MRC_DEBUG_ASSERT (Outputs->IsDdr5, &Outputs->Debug, "Unsupported DRAM Type: %d\n", Outputs->DdrType);
-
-  MrcGetSetMcChRnk (MrcData, Controller, Channel, Rank, (OdtType == ReadOdt) ? GsmMccOdtMatrixRd : GsmMccOdtMatrixWr, ReadFromCache, &OdtMatrix);
-  NtOdt = ((UINT8) OdtMatrix >> NtRank) & (MRC_BIT0);
-
-  return ((NtOdt == 0) ? OptDimmOdtPark : ((OdtType == ReadOdt) ? OptDimmOdtNomRd : OptDimmOdtNomWr));
-}
-
-/**
   Override CS to the input CsOverrideVal value.
 
   @param[in] MrcData       - Pointer to MRC global data.
@@ -717,8 +677,6 @@ MrcJedecResetDdr5 (
   UINT32            CsOverrideDelay;
   UINT32            tXS;
   UINT32            tXPR;
-  UINT32            FirstController;
-  UINT8             FirstChannel;
   MrcProfile        Profile;
   static const MrcModeRegister JedecResetExitSequence[] = {
     mpcMR13,
@@ -730,10 +688,8 @@ MrcJedecResetDdr5 (
 
   Inputs            = &MrcData->Inputs;
   Outputs           = &MrcData->Outputs;
-  FirstController   = Outputs->FirstPopController;
-  FirstChannel      = Outputs->Controller[FirstController].FirstPopCh;
   Profile           = Inputs->ExtInputs.Ptr->MemoryProfile;
-  Timing            = &Outputs->Controller[FirstController].Channel[FirstChannel].Timing[Profile];
+  Timing            = &Outputs->Timing[Profile];
   tXS               = MrcGetTxsr (MrcData, Timing);
   Status            = mrcSuccess;
 
@@ -949,84 +905,6 @@ MrcFinalizeDdr5MrSeq (
   Status = PerformGenericMrsFsmSequence (MrcData, Ddr5SagvMrOrder, TRUE);
 
   return Status;
-}
-
-
-/**
-  This function decodes and returns the DDR5 ODT offsets from MR37, MR38, and MR39
-
-  @param[in]  MrcData          - Include all MRC global data.
-  @param[in]  Controller       - Current Controller
-  @param[in]  Channel          - Current Channel
-  @param[in]  Rank             - Current Rank
-  @param[in]  NtOdt_Wr         - TRUE if Non Target WR ODT is supported
-  @param[in] IsPreFuncTraining - TRUE if board flight delay impact from Read Leveling / Write Leveling is not known yet
-  @param[out] Odt_Wr_On        - Hold the value for Odt_Wr_On Offset
-  @param[out] Odt_Wr_Off       - Hold the value for Odt_Wr_Off Offset
-  @param[out] Odt_Rd_On        - Hold the value for Odt_Rd_On Offset
-  @param[out] Odt_Rd_Off       - Hold the value for Odt_Rd_Off Offset
-**/
-VOID
-GetDdr5OdtOffsets (
-  IN  MrcParameters* const MrcData,
-  IN  UINT32               Controller,
-  IN  UINT32               Channel,
-  IN  UINT32               Rank,
-  IN  BOOLEAN              NtOdt_Wr,
-  IN  BOOLEAN              IsPreFuncTraining,
-  OUT INT8                 *Odt_Wr_On,
-  OUT INT8                 *Odt_Wr_Off,
-  OUT INT8                 *Odt_Rd_On,
-  OUT INT8                 *Odt_Rd_Off
-  )
-{
-  MrcOutput      *Outputs;
-  MrcChannelOut  *ChannelOut;
-  UINT32 Dimm;
-  UINT32 DimmRank;
-  UINT8  *MR;
-  INT8 OdtlOnWrNtOffset;
-  INT8 OdtlOffWrNtOffset;
-  INT8 OdtlOnWrOffset;
-  INT8 OdtlOffWrOffset;
-  INT8 OdtlOnRdNtOffset;
-  INT8 OdtlOffRdNtOffset;
-  DDR5_MODE_REGISTER_37_TYPE Ddr5MR37;
-  DDR5_MODE_REGISTER_38_TYPE Ddr5MR38;
-  DDR5_MODE_REGISTER_39_TYPE Ddr5MR39;
-
-  Outputs    = &MrcData->Outputs;
-  ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
-  Dimm = RANK_TO_DIMM_NUMBER (Rank);
-  DimmRank = Rank % MAX_RANK_IN_DIMM;
-
-  MR = ChannelOut->Dimm[Dimm].Rank[DimmRank].MR;
-
-  Ddr5MR37.Data8 = MR[mrIndexMR37];
-  OdtlOnWrOffset    = IsPreFuncTraining ? OdtlOnWrOffsetMinus4 : Ddr5MR37.Bits.OdtlOnWrOffset;
-  OdtlOffWrOffset   = IsPreFuncTraining ? OdtlOffWrOffsetPlus4 : Ddr5MR37.Bits.OdtlOffWrOffset;
-
-  Ddr5MR38.Data8 = MR[mrIndexMR38];
-  OdtlOnWrNtOffset  = IsPreFuncTraining ? OdtlOnWrOffsetMinus4 : Ddr5MR38.Bits.OdtlOnWrNtOffset;
-  OdtlOffWrNtOffset = IsPreFuncTraining ? OdtlOffWrOffsetPlus4 : Ddr5MR38.Bits.OdtlOffWrNtOffset;
-
-  Ddr5MR39.Data8 = MR[mrIndexMR39];
-  OdtlOnRdNtOffset  = IsPreFuncTraining ? OdtlOnRdNtOffsetMinus3 : Ddr5MR39.Bits.OdtlOnRdNtOffset;
-  OdtlOffRdNtOffset = IsPreFuncTraining ? OdtlOffRdNtOffsetPlus3 : Ddr5MR39.Bits.OdtlOffRdNtOffset;
-
-  // The translation between MR unsigned value and signed value is calculated by DDR5_ODT_OFFSET_DECODER
-  if (Odt_Wr_On != NULL) {
-    *Odt_Wr_On = (NtOdt_Wr ? OdtlOnWrNtOffset : OdtlOnWrOffset) - DDR5_ODT_OFFSET_DECODER;
-  }
-  if (Odt_Wr_Off != NULL) {
-    *Odt_Wr_Off = DDR5_ODT_OFFSET_DECODER - (NtOdt_Wr ? OdtlOffWrNtOffset : OdtlOffWrOffset);
-  }
-  if (Odt_Rd_On != NULL) {
-    *Odt_Rd_On = OdtlOnRdNtOffset - DDR5_ODT_OFFSET_DECODER;
-  }
-  if (Odt_Rd_Off != NULL) {
-    *Odt_Rd_Off = DDR5_ODT_OFFSET_DECODER - OdtlOffRdNtOffset;
-  }
 }
 
 /**

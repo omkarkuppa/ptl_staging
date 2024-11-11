@@ -146,6 +146,11 @@ CnvInitPreMem (
       (CnvSetup.PrebootBleEnable == 1)) {
     Status = PeiServicesInstallPpi (mFvCnvDispatchFlagPpi);
     ASSERT_EFI_ERROR (Status);
+    #if FixedPcdGetBool (PcdCnvBinLoadFromESP) == 1
+      PcdSetBoolS (PcdCnvDispatch, TRUE);
+      PcdSetBoolS (PcdCnvUnloadRequirement, TRUE);
+      PcdSet16S   (PcdCnvDeviceId, PcdGet16 (VpdPcdCnvDeviceId));
+    #endif
   }
 
   return Status;

@@ -40,10 +40,7 @@ IsTdxSupported (
   VOID
   )
 {
-  if (IsSeamModeSupported () == FALSE) {
-    return FALSE;
-  }
-  return TRUE;
+  return FALSE;
 }
 
 /**

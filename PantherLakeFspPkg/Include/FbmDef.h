@@ -36,7 +36,7 @@
 
 #define VERSION_DIGEST_PTR(Fbm)  \
   (FSP_REGION_DIGEST *)((UINT8 *)(Fbm) + sizeof (FSP_BOOT_MANIFEST_STRUCTURE) - \
-  4 * sizeof (FSP_REGION_DIGEST) - 7 * sizeof (UINT8))
+  4 * sizeof (FSP_REGION_DIGEST) - 6 * sizeof (UINT8))
 
 #define COMPONENT_DIGEST0_PTR(Fbm)  \
   (FSP_REGION_DIGEST *)((UINT8 *)(Fbm) + sizeof (FSP_BOOT_MANIFEST_STRUCTURE) - \
@@ -74,7 +74,6 @@ typedef struct {
   UINT8                         FspVersion[6];
   FSP_REGION_DIGEST             FspVersionDigests;    // digest for FSP version
   UINT8                         FspSvn;
-  UINT8                         Reserved2;
   UINT32                        Flags;                 // UINT32 Alignment
 
   UINT8                         CompCnt;

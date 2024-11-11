@@ -43,7 +43,6 @@ FspUpdatePeiFspVPolicy (
 {
   EFI_STATUS           Status;
   FSPV_POSTMEM_CONFIG  *FspVPostMemConfig;
-  FSPV_POSTMEM_CONFIG  *FspVPostMemUpd;
 
   DEBUG ((DEBUG_INFO, "FspUpdatePeiFspVPolicyPostMem\n"));
 
@@ -53,8 +52,7 @@ FspUpdatePeiFspVPolicy (
     return EFI_NOT_FOUND;
   }
 
-  FspVPostMemUpd = (FSPV_POSTMEM_CONFIG *) (UINTN) FspsUpd->FspsConfig.FspsValidationPtr;
-  FspVPostMemConfig->TestId = FspVPostMemUpd->TestId;
+  FspVPostMemConfig = (FSPV_POSTMEM_CONFIG *) (UINTN) FspsUpd->FspsConfig.FspsValidationPtr;
 
   return EFI_SUCCESS;
 }

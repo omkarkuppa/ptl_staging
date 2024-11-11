@@ -84,6 +84,7 @@ class Basemap ():
         "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset",
         "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset",
         "gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset",
+        "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset",
         "gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesOffset",
         "gBoardModuleTokenSpaceGuid.PcdFlashFvRsvdOffset",
         "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbOffset",
@@ -97,12 +98,10 @@ class Basemap ():
         "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset",
         "gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressOffset",
         "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbROffset",
-        "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashFvMicrocodeROffset"
         ]
 
         # This list stores flashmap offset PCD names for NVS region and Payloads management region.
         self.nvs_offset_list = [
-        "gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset",
         "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset",
         "gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareOffset",
         "gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingOffset",

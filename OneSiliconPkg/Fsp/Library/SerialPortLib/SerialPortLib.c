@@ -230,7 +230,7 @@ UartInitialize (
     if ((FsptUpd == NULL) || !(FsptUpd->FsptConfig.PcdDebugInterfaceFlags & STATUS_CODE_USE_ISA_SERIAL)) {
       return EFI_SUCCESS;
     }
-    FspUpdBaudRateIndex = (UINT8) FsptUpd->FsptConfig.PcdSerialIoUartBaudRate;
+    FspUpdBaudRateIndex = (UINT8) FsptUpd->FsptConfig.PcdLpssUartBaudRate;
     BaudRateInited = TRUE;
   }
 

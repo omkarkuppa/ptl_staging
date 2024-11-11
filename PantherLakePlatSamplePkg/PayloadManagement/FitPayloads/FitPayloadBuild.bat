@@ -104,11 +104,7 @@ if not exist %BUILD_DIR_PATH% (
 
 :PayloadBuildBegin
 set ACTIVE_PLATFORM=%WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\PayloadManagement\FitPayloads\FitPayloadsPkg.dsc
-if %FIT_PAYLOAD_RESILIENCY_BUILD% EQU FALSE (
-    set ACTIVE_MICROCODE_FILE=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Include\Fdf\FvMicrocode.fdf
-) else (
-    set ACTIVE_MICROCODE_FILE=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Include\Fdf\FvMicrocodeDbgRes.fdf
-)
+  set MICROCODE_PADDING_FDF=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Include\Fdf\FvMicrocode.fdf
 
 @echo.
 @echo  Call this script to pad each Microcode patch under PantherLakeBinPkg\Binaries\Microcode\
@@ -120,7 +116,7 @@ if %FIT_PAYLOAD_RESILIENCY_BUILD% EQU FALSE (
   --lsv %LSV% ^
   --fw-version-string %FW_VERSION_STRING% ^
   --slotsize %SLOT_SIZE% ^
-  --fdf %ACTIVE_MICROCODE_FILE%
+  --fdf %MICROCODE_PADDING_FDF%
 @if %ERRORLEVEL% NEQ 0 (
   @echo !!! ERROR: microcode_padding.py execute failure !!!
   @echo py -3 microcode_padding.py --opt padding --fw-version %FW_VERSION% --lsv %LSV% --fw-version-string %FW_VERSION_STRING% --slotsize %SLOT_SIZE%
@@ -140,7 +136,7 @@ if ERRORLEVEL 1 (
 
 py -3 %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\PayloadManagement\FitPayloads\microcode_padding.py ^
   --opt revert ^
-  --fdf %ACTIVE_MICROCODE_FILE%
+  --fdf %MICROCODE_PADDING_FDF%
 
 @if %INTEGRATE_PAYLOAD_BUILD% EQU FALSE (
   @if not exist %WORKSPACE%\RomImages @mkdir %WORKSPACE%\RomImages\

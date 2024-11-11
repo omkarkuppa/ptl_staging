@@ -112,23 +112,6 @@ QuickI2cLibIsQuiesceEnabled (
   );
 
 /**
-  Power up device through RST GPIO
-
-  @param[in] QuickI2cDev        QuickI2c MMIO BAR0
-  @param[in] Timeout            [MILLISECONDS] Indicates how long driver waits for device to power up
-  @param[in] InstanceId         I2C instance id
-  @param[in] ResetPadTrigger    Reset Pad Trigger
-
-**/
-EFI_STATUS
-QuickI2cLibGetOutOfReset (
-  IN QUICK_I2C_DEV             *QuickI2cDev,
-  IN UINT32                    Timeout,
-  IN UINT8                     InstanceId,
-  IN UINT32                    ResetPadTrigger
-  );
-
-/**
   Waits for TOUCH_INT_CAUSE to return ResetOccurred
 
   @param[in]  MmioBase      QuickI2c MMIO BAR0
@@ -444,6 +427,23 @@ QuickI2cLibReadSubIpRegister (
   );
 
 /**
+  Perfomrs PIO read operation
+  @param[in]  MmioBase          QuickI2c MMIO BAR0
+  @param[in]  RegisterAddress   I2C register address
+  @param[in]  DataSize          Data Size
+  @param[out] Data              I2C register output data
+  @retval EFI_SUCCESS       Read was successful
+  @retval EFI_TIMEOUT       Timeout reached - might be expected
+**/
+EFI_STATUS
+QuickI2cLibPerformPioRead (
+  IN UINT64       MmioBase,
+  IN UINT32       RegisterAddress,
+  IN UINT16       DataSize,
+  IN OUT UINT32   *Data
+  );
+
+/**
   Writes to I2C Ip register
 
   @param[in]  MmioBase          QuickI2c MMIO BAR0
@@ -563,7 +563,7 @@ QuickI2cSwDmaConfigure (
 **/
 VOID
 QuickI2cCompleteSwdma (
-  IN UINT64   MmioBase
+    IN QUICK_I2C_DEV                      *QuickI2cDev
   );
 
 /**

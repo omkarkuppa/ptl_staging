@@ -2087,6 +2087,8 @@ endform;
         // ALPS Precision Touchpad (ClickPad)
         option text = STRING_TOKEN(STR_PCH_ALPS_PRECISION_TOUCHPAD),      value = 6, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_PCH_HYNITRON_THAT_TOUCHPAD),       value = 7, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SENSEL_FORCEPAD),              value = 8, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_PCH_SMART_C_COVER),                value = 9, flags = RESET_REQUIRED;
     endoneof;
 
     suppressif ideqval SETUP_DATA.PchI2cTouchPadType == 0 OR (

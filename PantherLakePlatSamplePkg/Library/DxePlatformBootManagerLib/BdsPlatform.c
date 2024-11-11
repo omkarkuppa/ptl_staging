@@ -1932,6 +1932,8 @@ ClearBootProgressBar (
   UINT32                                DisplayWidth;
   UINT32                                DisplayHeight;
   UINT32                                UpperBandHeight;
+  UINTN                                 BlockHeight;
+  UINTN                                 DestinationY;
 
   GraphicsOutput = NULL;
   DisplayWidth   = 0;
@@ -1950,6 +1952,13 @@ ClearBootProgressBar (
   if (GraphicsOutput != NULL) {
     DisplayWidth  = GraphicsOutput->Mode->Info->HorizontalResolution;
     DisplayHeight = GraphicsOutput->Mode->Info->VerticalResolution;
+
+    /*
+      Note :
+      These calulations are coming from BootLogoUpdateProgress BootLogoLib
+    */
+    BlockHeight   = DisplayHeight / 50;
+    DestinationY  = DisplayHeight * 48 / 50;
 
     ///
     /// Keep Upper Band cut-off screen Height lesser for FHD and lower resolution panels.
@@ -1983,11 +1992,11 @@ ClearBootProgressBar (
                               EfiBltVideoFill,
                               0,
                               0,
-                              0,                  ///< X
-                              DisplayHeight - 75, ///< Y
-                              DisplayWidth,       ///< Width
-                              75,                 ///< Height
-                              0
+                              0,                       ///< X
+                              DestinationY,            ///< Y
+                              DisplayWidth,            ///< Width
+                              BlockHeight,             ///< Height
+                              DisplayWidth * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
                               );
   }
 }

@@ -27,7 +27,6 @@
 #include <Library/PreSiliconEnvDetectLib.h>
 #include <Library/SpiAccessLib.h>
 #include <Library/CpuPlatformLib.h>
-#include <Library/PayloadResiliencySupportLib.h>
 #include <BootStateLib.h>
 
 EFI_EVENT  mSpiFvbServiceAddressChangeEvent = NULL;
@@ -234,7 +233,6 @@ FvbInitialize (
   UINT32                                BytesWritten;
   UINTN                                 BytesErased;
   UINTN                                 PlatformFvInfoCount;
-  UINT32                                MicrocodeBaseAddress;
 
   if (!IsSimicsEnvironment ()) {
     if (IsBiosGuardEnabled ()) {
@@ -276,19 +274,11 @@ FvbInitialize (
     }
   }
 
-  MicrocodeBaseAddress = GetMicrocodeBaseAddressInRecovery ();
-  if (MicrocodeBaseAddress == 0) {
-    MicrocodeBaseAddress = FixedPcdGet32 (PcdFlashFvMicrocodeBase);
-  }
-
   //
   // Make sure all FVB are valid and/or fix if possible
   //
   for (Idx = 0; Idx < PlatformFvInfoCount; Idx++) {
     BaseAddress = PlatformFvInfo[Idx].FvBase;
-    if (BaseAddress == FixedPcdGet32(PcdFlashFvMicrocodeBase)) {
-      BaseAddress = MicrocodeBaseAddress;
-    }
     FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) BaseAddress;
 
     if (!IsFvHeaderValid (BaseAddress, FvHeader)) {

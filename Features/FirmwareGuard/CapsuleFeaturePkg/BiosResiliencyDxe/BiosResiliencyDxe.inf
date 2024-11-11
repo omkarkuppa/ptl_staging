@@ -36,7 +36,6 @@
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   OneSiliconPkg/SiPkg.dec
-  IntelSiliconPkg/IntelSiliconPkg.dec
   MinPlatformPkg/MinPlatformPkg.dec
   CapsuleFeaturePkg/CapsuleFeaturePkg.dec
 
@@ -64,9 +63,6 @@
 [Pcd]
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase           ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize           ## CONSUMES
-  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase           ## CONSUMES
-  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset         ## CONSUMES
-  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize           ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset              ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbBase                ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbSize                ## CONSUMES
@@ -79,10 +75,6 @@
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashExtendOffset           ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashAllExtendedRegionSize  ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashExtendedRegionBase     ## CONSUMES
-  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashFvMicrocodeRBase       ## CONSUMES
-  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashFvMicrocodeROffset     ## CONSUMES
-  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashFvMicrocodeRSize       ## CONSUMES
-  gIntelSiliconPkgTokenSpaceGuid.PcdBiosAreaBaseAddress           ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset    ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadBase      ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadSize      ## CONSUMES
@@ -100,8 +92,6 @@
   gPayloadSha384HashFileGuid             ## CONSUMES
   gPlatformBeforeEndOfDxeEventGroupGuid  ## CONSUMES
   gEfiCapsuleReportGuid                  ## CONSUMES
-  gUcodeBgslFileGuid                     ## CONSUMES
-  gFitTableSyncBgslFileGuid              ## CONSUMES
 
 [Protocols]
   gEfiVariableWriteArchProtocolGuid      ## CONSUMES

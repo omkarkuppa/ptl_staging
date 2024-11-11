@@ -65,6 +65,11 @@
   gBoardModuleTokenSpaceGuid.PcdWwanPerstGpioPolarity                  ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPcieWwanEnable
   gBoardModuleTokenSpaceGuid.PcdWwanResetWorkaround
+  gBoardModuleTokenSpaceGuid.VpdPcdCnvDeviceId                         ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDispatch                          ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUnloadRequirement
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDeviceId                          ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP                 ## CONSUMES
 
 [Sources]
   ConnectivityPreMem.c

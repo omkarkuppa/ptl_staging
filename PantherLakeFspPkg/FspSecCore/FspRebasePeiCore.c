@@ -220,6 +220,8 @@ RebasePeiCoreTESection (
   UINT32                     RelocateRealOffset;
   UINT32                     *PtrForRebase;
   UINT32                     Index;
+  UINT32                     RelocSize;
+  UINT32                     RelocOffset;
 
   if (TeHeader == NULL) {
     DEBUG((DEBUG_ERROR, "TeHeader is NULL\n"));
@@ -229,39 +231,44 @@ RebasePeiCoreTESection (
   //
   // Calculate the offset of relocation offset data block
   //
-  BaseRelocOffset = sizeof (EFI_TE_IMAGE_HEADER) - TeHeader->StrippedSize + TeHeader->DataDirectory[0].VirtualAddress;
+  RelocSize = TeHeader->DataDirectory[0].Size;
+  RelocOffset = sizeof (EFI_TE_IMAGE_HEADER) - TeHeader->StrippedSize + TeHeader->DataDirectory[0].VirtualAddress;
+  BaseRelocOffset = RelocOffset;
 
-  //
-  // Read relocation offset data block header
-  //
-  BlockHeader = (VOID *)(FvHandle + BaseRelocOffset);
-  BaseRelocOffset += sizeof (EFI_IMAGE_BASE_RELOCATION);
-
-  //
-  // Read relocation offset data block length and nums
-  //
-  RelocateBlockLength = BlockHeader->SizeOfBlock - sizeof (EFI_IMAGE_BASE_RELOCATION);
-  RelocateNum = (UINT32)(RelocateBlockLength / sizeof (UINT16));
-
-  //
-  // Read relocation offset data block
-  //
-  RelocateData = (VOID *)(FvHandle + BaseRelocOffset);
-
-  for (Index = 0; Index < (UINT32)RelocateNum; Index++) {
+  while (BaseRelocOffset < (RelocOffset + RelocSize)) {
     //
-    // The low 12 bytes of each relocation data in relocation offset data block is relocation offset
+    // Read relocation offset data block header
     //
-    RelocateOffset = *((UINT16 *)((UINTN)RelocateData + Index * sizeof (UINT16))) & 0x0FFF;
+    BlockHeader = (VOID *)(FvHandle + BaseRelocOffset);
+    BaseRelocOffset += sizeof (EFI_IMAGE_BASE_RELOCATION);
 
     //
-    // Do section rebase at relocation address.
+    // Read relocation offset data block length and nums
     //
-    RelocateRealOffset = BlockHeader->VirtualAddress + RelocateOffset;
-    RelocateRealOffset += sizeof (EFI_TE_IMAGE_HEADER) - TeHeader->StrippedSize;
-    PtrForRebase = (VOID *)(FvHandle + RelocateRealOffset);
+    RelocateBlockLength = BlockHeader->SizeOfBlock - sizeof (EFI_IMAGE_BASE_RELOCATION);
+    RelocateNum = (UINT32)(RelocateBlockLength / sizeof (UINT16));
 
-    *PtrForRebase = (UINT32)(*(UINT32 *)PtrForRebase - Delta);
+    //
+    // Read relocation offset data block
+    //
+    RelocateData = (VOID *)(FvHandle + BaseRelocOffset);
+
+    for (Index = 0; Index < RelocateNum; Index++) {
+      //
+      // The low 12 bytes of each relocation data in relocation offset data block is relocation offset
+      //
+      RelocateOffset = *((UINT16 *)((UINTN)RelocateData + Index * sizeof (UINT16))) & 0x0FFF;
+
+      //
+      // Do section rebase at relocation address.
+      //
+      RelocateRealOffset = BlockHeader->VirtualAddress + RelocateOffset;
+      RelocateRealOffset += sizeof (EFI_TE_IMAGE_HEADER) - TeHeader->StrippedSize;
+      PtrForRebase = (VOID *)(FvHandle + RelocateRealOffset);
+
+      *PtrForRebase = (UINT32)(*PtrForRebase - Delta);
+    }
+    BaseRelocOffset += (RelocateNum * sizeof (UINT16));
   }
   //
   // Rebase Te section base in Te section header

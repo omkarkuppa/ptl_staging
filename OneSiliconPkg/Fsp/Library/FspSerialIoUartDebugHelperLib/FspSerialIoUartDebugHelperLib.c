@@ -122,6 +122,32 @@ GetFspmConfig (
 }
 
 /**
+  Returns Serial Io UART Controller Number used in Debug mode
+
+  @retval  ControllerNumber   UART Controller Number
+**/
+UINT8
+STATIC
+FspSerialIoUartDebugGetControllerNumber (
+  VOID
+  )
+{
+  FSP_M_CONFIG    *FspmConfig;
+  FSP_T_CONFIG    *FsptConfig;
+
+  FspmConfig = NULL;
+  FsptConfig = NULL;
+
+  if (GetFsptConfig (&FsptConfig)) {
+    return FsptConfig->PcdLpssUartNumber;
+  } else if (GetFspmConfig (&FspmConfig)) {
+    return FspmConfig->SerialIoUartDebugControllerNumber;
+  } else {
+    return LpssUartDebugPcdGetControllerNumber ();
+  }
+}
+
+/**
   Returns Serial Io UART MMIO Base Address in Debug mode
 
   @retval  MMIO Base Address by default in PCI Mode
@@ -140,7 +166,7 @@ FspSerialIoUartDebugGetPciDefaultMmioBase (
   FsptConfig = NULL;
 
   if (GetFsptConfig (&FsptConfig)) {
-    MmioBase = FsptConfig->PcdSerialIoUartDebugMmioBase;
+    MmioBase = FsptConfig->PcdLpssUartDebugMmioBase;
   } else if (GetFspmConfig (&FspmConfig)) {
     MmioBase = FspmConfig->SerialIoUartDebugMmioBase;
   } else {
@@ -182,5 +208,12 @@ SerialIoUartDebugWrite (
   IN UINTN            NumberOfBytes
   )
 {
-  return LpssUartWrite((UINTN)FspSerialIoUartDebugGetPciDefaultMmioBase (), Buffer, NumberOfBytes);
+  UINT8  UartIndex;
+
+  if (FspSerialIoUartDebugGetPciDefaultMmioBase () == 0x0) {
+    UartIndex = FspSerialIoUartDebugGetControllerNumber ();
+    return LpssUartWrite ((UINTN) GetLpssUartFixedMmioAddress (UartIndex), Buffer, NumberOfBytes);
+  }
+
+  return LpssUartWrite ((UINTN) FspSerialIoUartDebugGetPciDefaultMmioBase (), Buffer, NumberOfBytes);
 }

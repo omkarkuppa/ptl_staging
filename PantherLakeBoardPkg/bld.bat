@@ -35,17 +35,13 @@
   set PYTHON_COMMAND=py -3
 )
 
-@if %IBBSIGN% EQU TRUE (
-  @mkdir %WORKSPACE%\%BUILD_DIR%\FV
-  @set ClientBios=%WORKSPACE%\%BUILD_DIR%\FV\ClientBios.fd
-  goto IbbSignSetBiosPath
-)
-
 @set FLASHMAP_FDF=
 @if %RESILIENCY_BUILD% EQU TRUE (
-  @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeRes.fdf
-) else if %FSP_VALIDATION_BUILD% EQU TRUE (
-  @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeFspV.fdf
+  if %WCL_BUILD% EQU TRUE (
+    @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeResWcl.fdf
+  ) else (
+    @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeRes.fdf
+  )
 ) else (
     @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapInclude.fdf
 @REM Multi-IBB support
@@ -53,6 +49,12 @@
   if %MULTI_IBB_BUILD% EQU TRUE (
     @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeMultiIbb.fdf
   )
+)
+
+@if %IBBSIGN% EQU TRUE (
+  @mkdir %WORKSPACE%\%BUILD_DIR%\FV
+  @set ClientBios=%WORKSPACE%\%BUILD_DIR%\FV\ClientBios.fd
+  goto IbbSignSetBiosPath
 )
 
 @REM

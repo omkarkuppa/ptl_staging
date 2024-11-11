@@ -32,6 +32,7 @@
 [LibraryClasses]
   BaseLib
   PtlPcdSecGpioTopology
+  PtlPcdInfoLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -39,3 +40,5 @@
 
 [Sources]
   PtlPcdSecGpioInitLib.c
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdWclSupport

@@ -209,19 +209,4 @@ IGpuMemoryAllocation (
   IN OUT UINT64                       *Touud,
   IN EFI_RESOURCE_ATTRIBUTE_TYPE      ResourceAttributeTested
   );
-
-/**
-  Reserve IGPU Stolen Memory.
-
-  @param[in] FlatCcsBase                - FlatCcs Base Address
-  @param[in] FlatCcsSize                - Size of FlatCcs
-  @param[in] ResourceAttributeTested    - Resource attribute flag
-**/
-VOID
-EFIAPI
-IGpuMemoryAllocationV2 (
-  IN EFI_PHYSICAL_ADDRESS             FlatCcsBase,
-  IN UINT64                           FlatCcsSize,
-  IN EFI_RESOURCE_ATTRIBUTE_TYPE      ResourceAttributeTested
-  );
 #endif // __DOMAIN_IGPU_INIT_H__

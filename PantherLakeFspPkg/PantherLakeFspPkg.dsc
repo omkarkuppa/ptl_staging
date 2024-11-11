@@ -447,7 +447,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
 !else
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
 !endif
-  PostCodeLib|MdePkg/Library/BasePostCodeLibPort80/BasePostCodeLibPort80.inf
+  PostCodeLib|MdePkg/Library/BasePostCodeLibDebug/BasePostCodeLibDebug.inf
   ReportStatusCodeLib|$(PLATFORM_SI_PACKAGE)/Fsp/Library/Rsc2PostCodeReportStatusCodeLib/DxeReportStatusCodeLib/Rsc2PostCodeDxeReportStatusCodeLib.inf
   #
   # UEFI & PI
@@ -721,7 +721,7 @@ $(SILICON_FSP_PATH)/FspRsc2PostCodeMapInit/Pei/FspRsc2PostCodeMapServicePei.inf 
 
   $(SILICON_PRODUCT_PATH)/EarlyDevices/EarlyDevicesFsp.inf {
     <PcdsFixedAtBuild>
-      gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable|0
+      gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|0
     <LibraryClasses>
       NULL|$(SILICON_FSP_PATH)/Library/FspEmptyLib/FspEmptyLib.inf
   }

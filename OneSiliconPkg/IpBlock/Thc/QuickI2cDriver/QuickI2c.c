@@ -636,6 +636,7 @@ QuickI2cDriverBindingStart (
   QuickI2cDev->ReadDone                           = FALSE;
 
   QuickI2cDev->InputReportTable.Quantity          = 0;
+  QuickI2cDev->InitProcessDoneEnableInterrupt     = FALSE;
   QuickI2cDev->InputReportTable.Report            = NULL;
 
   AddUnicodeString2 ("eng", gQuickI2cDriverComponentName.SupportedLanguages,  &QuickI2cDev->ControllerNameTable, L"Intel Touch Host Controller QuickI2c Driver", TRUE);
@@ -654,6 +655,13 @@ QuickI2cDriverBindingStart (
                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "ERROR - QuickI2c failed to install ThcProtocol Status: %r\n", Status));
+    FreePool (QuickI2cDev);
+    return Status;
+  }
+
+  Status = QuickI2cDisableInterrupt (QuickI2cDev);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "ERROR - QuickI2c failed to disable interrupts Status: %r\n", Status));
     FreePool (QuickI2cDev);
     return Status;
   }
@@ -693,7 +701,7 @@ QuickI2cDriverBindingStart (
     goto THC_ERROR_EXIT;
   }
 
-  Status = QuickI2cTakeOutOfReset (QuickI2cDev, &mHidOverI2c[QuickI2cDev->InstanceId], &mThcReset[QuickI2cDev->InstanceId]);
+  Status = QuickI2cLibGetOutOfReset (QuickI2cDev);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to perform reset Device Status: %r\n", Status));
     goto THC_ERROR_EXIT;
@@ -728,6 +736,13 @@ QuickI2cDriverBindingStart (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to ConnectController Status: %r\n", Status));
     goto THC_ERROR_EXIT;
+  }
+
+  QuickI2cDev->InitProcessDoneEnableInterrupt = TRUE;
+  Status = QuickI2cEnableInterrupt (QuickI2cDev);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to QuickI2cEnableInterrupt Status: %r\n", Status));
+    //continue;
   }
 
   QuickI2cDev->Initialized = TRUE;

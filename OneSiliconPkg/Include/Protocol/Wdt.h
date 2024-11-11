@@ -66,7 +66,7 @@ UINT8
   @retval FALSE                   if WDT was not requested
 **/
 typedef
-UINT8
+BOOLEAN
 (EFIAPI *IS_WDT_REQUIRED) (
   VOID
   );
@@ -78,7 +78,7 @@ UINT8
   @retval FALSE                   if WDT is disabled
 **/
 typedef
-UINT8
+BOOLEAN
 (EFIAPI *IS_WDT_ENABLED) (
   VOID
   );

@@ -70,6 +70,9 @@ RetrieveDTbtRpBdf (
                                 PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpBus,
                                 &PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpDev,
                                 &PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpFunc);
+      if (Status == EFI_SUCCESS) {
+        PeiDTbtConfig->DTbtControllerConfig[Index].BdfValid = 1;
+      }
     }
   }
 
@@ -270,13 +273,7 @@ PassDTbtPolicyToHob (
     // Update DTBT Policy to Hob
     //
     for (Index = 0; Index < PcdGet8 (PcdBoardDTbtControllerNumber); Index++) {
-      DTbtInfoHob->DTbtControllerConfig[Index].DTbtControllerEn = PeiDTbtConfig->DTbtControllerConfig[Index].DTbtControllerEn;
-      DTbtInfoHob->DTbtControllerConfig[Index].RpType           = PeiDTbtConfig->DTbtControllerConfig[Index].RpType;
-      DTbtInfoHob->DTbtControllerConfig[Index].PcieRpNumber     = PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpNumber;
-      DTbtInfoHob->DTbtControllerConfig[Index].RpAcpiNumber     = PeiDTbtConfig->DTbtControllerConfig[Index].RpAcpiNumber;
-      DTbtInfoHob->DTbtControllerConfig[Index].PcieRpBus        = PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpBus;
-      DTbtInfoHob->DTbtControllerConfig[Index].PcieRpDev        = PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpDev;
-      DTbtInfoHob->DTbtControllerConfig[Index].PcieRpFunc       = PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpFunc;
+      CopyMem (&DTbtInfoHob->DTbtControllerConfig[Index], &PeiDTbtConfig->DTbtControllerConfig[Index], sizeof (DTBT_CONTROLLER_CONFIG));
     }
     DTbtInfoHob->DTbtGenericConfig.Usb4CmMode = PeiDTbtConfig->DTbtGenericConfig.Usb4CmMode;
     DTbtInfoHob->DTbtGenericConfig.Usb4ClassOption = PeiDTbtConfig->DTbtGenericConfig.Usb4ClassOption;

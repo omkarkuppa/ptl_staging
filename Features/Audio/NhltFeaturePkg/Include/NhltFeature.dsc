@@ -36,11 +36,7 @@
 ################################################################################
 [LibraryClasses]
   NhltLib|NhltFeaturePkg/LibraryPrivate/NhltLib/NhltLib.inf
-!if gNhltFeaturePkgTokenSpaceGuid.NhltConfigurationByPcdEnabled == TRUE
-  GetNhltConfigurationLib|NhltFeaturePkg/LibraryPrivate/GetNhltConfigurationPcdLib/GetNhltConfigurationPcdLib.inf
-!else
-  GetNhltConfigurationLib|NhltFeaturePkg/LibraryPrivate/GetNhltConfigurationEfiVariableLib/GetNhltConfigurationEfiVariableLib.inf
-!endif
+  GetNhltConfigurationLib|NhltFeaturePkg/LibraryPrivate/GetNhltConfigurationVariableLib/GetNhltConfigurationVariableLib.inf
 
 ################################################################################
 #

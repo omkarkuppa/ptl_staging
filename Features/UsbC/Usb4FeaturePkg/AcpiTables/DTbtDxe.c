@@ -176,7 +176,8 @@ InitializeDTbtSsdtAcpiTables (
         /// Locate the SSDT package
         ///
         CurrPtr = (UINT8 *) TbtAcpiTable + sizeof (EFI_ACPI_DESCRIPTION_HEADER);
-        EndPtr  = (UINT8 *) TbtAcpiTable + TbtAcpiTable->Length;
+        /// OperationRegion space (14 bytes) = 1 + sizeof (*Signature) + 2 + sizeof (UINT32) + 1 + sizeof(UINT16)
+        EndPtr  = (UINT8 *) TbtAcpiTable + TbtAcpiTable->Length - 14;
 
         for (; CurrPtr <= EndPtr; CurrPtr++) {
           Signature = (UINT32 *) (CurrPtr + 1);
@@ -514,7 +515,7 @@ DTbtAcpiEndOfDxeCallback (
 
           HostRouterBus = PciSegmentRead8 (PCI_SEGMENT_LIB_ADDRESS (0, RpBus, (UINT32) RpDev, (UINT32) RpFunc, PCI_BRIDGE_SECONDARY_BUS_REGISTER_OFFSET));
           RootPortSubordinateBus = PciSegmentRead8 (PCI_SEGMENT_LIB_ADDRESS (0, RpBus, (UINT32) RpDev, (UINT32) RpFunc, PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET));
-          DEBUG ((DEBUG_INFO, "Validating TBT 1 Controller HR for TBT PEP Constraint(), TBT_HR_BUS = 0x%x \n", HostRouterBus));
+          DEBUG ((DEBUG_INFO, "Validating dTBT %d Controller HR for TBT PEP Constraint(), TBT_HR_BUS = 0x%x \n", Index, HostRouterBus));
           DTbtControllerBus = HostRouterBus;
 
           if (HostRouterBus == 0 || HostRouterBus == 0xFF) {

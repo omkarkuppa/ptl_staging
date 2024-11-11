@@ -75,8 +75,8 @@ LpssUartDebugConfigurationWrapper (
 **/
 VOID
 Lpss2ndUartConfigurationWrapper (
-  OUT UINT8                    *UartEnable,
   OUT LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig,
+  OUT UINT8                    *UartEnable,
   OUT UINT8                    *LpssUartNumber,
   OUT UINT32                   *LpssUartPciMmioBase
   );
@@ -155,9 +155,13 @@ LpssUartDebugConfiguration (
   )
 {
   LPSS_UART_DEVICE_CONFIG  UartDeviceConfig;
+  LPSS_UART_DEVICE_CONFIG  Uart2ndDeviceConfig;
   UINT8                    LpssUartDebugEnable;
+  UINT8                    AdditionalUartEnabled;
   UINT8                    LpssUartNumber;
+  UINT8                    Lpss2ndUartNumber;
   UINT32                   LpssUartPciMmioBase;
+  UINT32                   Lpss2ndUartPciMmioBase;
   CHAR8                    CarInitBuffer[32];
 
   AsciiSPrint (CarInitBuffer, sizeof (CarInitBuffer), "FSP-T: CAR Init\n");
@@ -174,6 +178,12 @@ LpssUartDebugConfiguration (
         GetLpssUartFixedMmioAddress (LpssUartNumber),
         (UINT8 *)CarInitBuffer, 
         AsciiStrLen (CarInitBuffer));
+  }
+  Lpss2ndUartConfigurationWrapper (&Uart2ndDeviceConfig, &AdditionalUartEnabled, &Lpss2ndUartNumber, &Lpss2ndUartPciMmioBase);
+  Uart2ndDeviceConfig.DBG2      = FALSE;
+  Uart2ndDeviceConfig.DmaEnable = FALSE;
+  if (AdditionalUartEnabled == 1) {
+    SecLpssUartConfiguration (Lpss2ndUartNumber, &Uart2ndDeviceConfig);
   }
 }
 

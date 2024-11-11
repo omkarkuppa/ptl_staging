@@ -33,6 +33,7 @@
 VOID
 EFIAPI
 PtlPcdSecLpssUartGpioConfigure (
-  IN LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig
+  IN LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig,
+  IN UINT8                    UartInstance
   );
 #endif //_PTL_PCD_GPIO_INIT_LIB_H_

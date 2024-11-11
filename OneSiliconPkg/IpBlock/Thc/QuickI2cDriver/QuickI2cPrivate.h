@@ -288,6 +288,15 @@ typedef union {
   UINT16 Data;
 } QUICK_I2C_COMMAND_REQUEST;
 
+typedef union
+{
+  struct {
+    UINT16 MessageLength;
+    UINT16 HighWord;
+  } Fields;
+  UINT32 Data32;
+} RESET_RESPONSE_DATA;
+
 
 typedef union {
   struct {
@@ -992,6 +1001,7 @@ typedef struct {
   UINT8                          HidSolutionFlag;
   HID_GET_REPORT_FORMAT          ReportPacket;
   BOOLEAN                        SwDmaActive;
+  BOOLEAN                        InitProcessDoneEnableInterrupt;
 } QUICK_I2C_DEV;
 
 #endif

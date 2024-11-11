@@ -372,7 +372,7 @@ LedgerIslandSmmCallback (
   IN OUT UINTN      *CommBufferSize
   )
 {
-  CopyMem ((VOID *)(UINTN)gLedgerIslandBuffer, (VOID *)(UINTN)gSmmLedgerIslandBuffer, sizeof (PcdGet32 (PcdLedgerIslandBufferSize)));
+  CopyMem ((VOID *)(UINTN)gLedgerIslandBuffer, (VOID *)(UINTN)gSmmLedgerIslandBuffer, PcdGet32 (PcdLedgerIslandBufferSize));
   return EFI_SUCCESS;
 }
 
@@ -634,7 +634,7 @@ SpsConstructor (
     return;
   }
 
-  // Alocate Ledger Island SMM Buffer
+  // Allocate Ledger Island SMM Buffer
   gSmmLedgerIslandBuffer = (EFI_PHYSICAL_ADDRESS) (UINTN) SmmFeatureAllocateCodePagesDgr (EFI_SIZE_TO_PAGES (PcdGet32 (PcdLedgerIslandBufferSize)));
   if (gSmmLedgerIslandBuffer == (EFI_PHYSICAL_ADDRESS) NULL) {
     DEBUG ((DEBUG_ERROR, "Allocation of SMM buffer for Ledger Island failed.\n"));

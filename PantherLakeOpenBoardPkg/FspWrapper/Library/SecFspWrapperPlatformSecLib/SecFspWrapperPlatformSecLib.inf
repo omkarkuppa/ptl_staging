@@ -117,40 +117,40 @@
   gIntelFsp2WrapperTokenSpaceGuid.PcdFlashCodeCacheSize               ## CONSUMES
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress                  ## CONSUMES
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection                 ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable                     ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartNumber                          ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartMode                            ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartBaudRate                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartNumber                              ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartMode                                ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartBaudRate                            ## CONSUMES
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                   ## PRODUCES
   gSiPkgTokenSpaceGuid.PcdTemporaryPciExpressRegionLength             ## PRODUCES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartParity                          ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDataBits                        ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartStopBits                        ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartAutoFlow                        ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartRxPinMux                        ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartTxPinMux                        ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartRtsPinMux                       ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartCtsPinMux                       ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugMmioBase                   ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugPciCfgBase                 ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartParity                              ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartDataBits                            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartStopBits                            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartAutoFlow                            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartRxPinMux                            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartTxPinMux                            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartRtsPinMux                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartCtsPinMux                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugMmioBase                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugPciCfgBase                     ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdLpcUartDebugEnable                          ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdDebugInterfaceFlags                         ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSerialDebugLevel                            ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdIsaSerialUartBase                           ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartEnable                       ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartNumber                       ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartMode                         ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartBaudRate                     ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartParity                       ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartDataBits                     ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartStopBits                     ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartAutoFlow                     ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartRxPinMux                     ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartTxPinMux                     ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartRtsPinMux                    ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartCtsPinMux                    ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartMmioBase                     ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartPciCfgBase                   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndEnable                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndNumber                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndMode                             ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndBaudRate                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndParity                           ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndDataBits                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndStopBits                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndAutoFlow                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndRxPinMux                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndTxPinMux                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndRtsPinMux                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndCtsPinMux                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndMmioBase                         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndPciCfgBase                       ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTopMemoryCacheSize                          ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress                         ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                  ## CONSUMES

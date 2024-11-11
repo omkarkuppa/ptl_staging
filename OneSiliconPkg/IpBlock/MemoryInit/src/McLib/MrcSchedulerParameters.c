@@ -207,7 +207,7 @@ MrcSchedulerParametersConfig (
         continue;
       }
       ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
-      Timing = &ChannelOut->Timing[ExtInputs->MemoryProfile];
+      Timing = &Outputs->Timing[ExtInputs->MemoryProfile];
 
       IpChannel = LP_IP_CH (IsLpddr, Channel);
 
@@ -378,10 +378,6 @@ MrcSchedulerParametersConfig (
   GetSetVal = 1;
   MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmMccEnableDclk, WriteCached, &GetSetVal);
 
-  if (IsDdr5) {
-    MrcSetOdtMatrix (MrcData, 1);
-  }
-
   if (ExtInputs->Lp5SplitACTEnable) {
     // If Lp5SplitACTEnable == 1: set SCHED_THIRD_CBIT.disable_split_act = 1
     // If Lp5SplitACTEnable == 2: set SCHED_THIRD_CBIT.disable_split_act = 0
@@ -408,8 +404,11 @@ MrcSetOdtMatrix (
   MrcOutput     *Outputs;
   MrcInput      *Inputs;
   MrcChannelOut *ChannelOut;
+  MrcDimmOut    *DimmOut;
   INT64         EnableOdtMatrix;
   UINT32        Controller;
+  UINT32        Dimm;
+  UINT32        MaxDimm;
   UINT32        Offset;
   UINT8         Channel;
   MC0_CH0_CR_SC_ODT_MATRIX_STRUCT  OdtMatrix;
@@ -417,6 +416,11 @@ MrcSetOdtMatrix (
   Outputs       = &MrcData->Outputs;
   Inputs        = &MrcData->Inputs;
   Debug         = &Outputs->Debug;
+  MaxDimm       = Outputs->MaxDimm;
+
+  if (!Outputs->IsDdr5) {
+    return;
+  }
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
@@ -424,9 +428,8 @@ MrcSetOdtMatrix (
         continue;
       }
       ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
-
+      EnableOdtMatrix = 0;
       if (!Inputs->EnableOdtMatrix) {
-        EnableOdtMatrix = 0;
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccEnableOdtMatrix, WriteCached, &EnableOdtMatrix);
         continue;
       }
@@ -462,8 +465,17 @@ MrcSetOdtMatrix (
       Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SC_ODT_MATRIX_REG, MC1_CH0_CR_SC_ODT_MATRIX_REG, Controller, MC0_CH1_CR_SC_ODT_MATRIX_REG, Channel);
       MrcWriteCR (MrcData, Offset, OdtMatrix.Data);
 
-      EnableOdtMatrix = 1;
-      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccEnableOdtMatrix, WriteCached, &EnableOdtMatrix);
+      ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
+
+      for (Dimm = 0; Dimm < MaxDimm; Dimm++) {
+        DimmOut = &ChannelOut->Dimm[Dimm];
+        if (DimmOut->Status != DIMM_PRESENT) {
+          continue;
+        }
+        //enable_odt_matrix is 1 only 2R system
+        EnableOdtMatrix |= ((DimmOut->RankInDimm > 1) ? 1 : 0);
+      }
+      MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccEnableOdtMatrix, WriteCached | PrintValue, &EnableOdtMatrix);
     } // Channel
   } // Controller
 }

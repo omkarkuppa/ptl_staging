@@ -68,8 +68,8 @@
   gSiPkgTokenSpaceGuid.PcdSiIoApicBaseAddress         ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemBaseAddr  ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSiliconInitTempMemSize      ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugMmioBase   ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartMmioBase     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugMmioBase       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndMmioBase         ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdRegBarBaseAddress           ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSiPciExpressBaseAddress     ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength      ## CONSUMES

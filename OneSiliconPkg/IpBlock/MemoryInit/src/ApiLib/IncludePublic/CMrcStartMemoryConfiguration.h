@@ -179,8 +179,6 @@ MrcInternalCheckPoint (
 
   Get the number of call table entries.
 
-  @param[in, out] MrcData - Include all MRC global data.
-
   @retval The number of call table entries.
 
 **/

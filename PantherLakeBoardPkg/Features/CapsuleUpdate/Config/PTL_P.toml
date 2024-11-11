@@ -52,17 +52,17 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
     IsEnabled = true
 
     [Firmware.Bios.Offset.Normal.Debug.Default]
-      Obb  = { Offset = '0x00140000', Size = '0x00740000' }
-      Ibbr = { Offset = '0x00300000', Size = '0x00580000' }
-      Ibb  = { Offset = '0x00880000', Size = '0x00580000' }
+      Obb  = { Offset = '0x000C0000', Size = '0x00740000' }
+      Ibbr = { Offset = '0x00200000', Size = '0x00600000' }
+      Ibb  = { Offset = '0x00800000', Size = '0x00600000' }
 
     [Firmware.Bios.Offset.Normal.Release.Default]
-      Obb  = { Offset = '0x00140000', Size = '0x008C0000' }
+      Obb  = { Offset = '0x000C0000', Size = '0x00940000' }
       Ibbr = { Offset = '0x00600000', Size = '0x00400000' }
       Ibb  = { Offset = '0x00A00000', Size = '0x00400000' }
 
     [Firmware.Bios.Offset.Resiliency.Default]
-      Obb  = { Offset = '0x00140000', Size = '0x006C0000' }
+      Obb  = { Offset = '0x000C0000', Size = '0x00740000' }
       Ibbr = { Offset = '0x00800000', Size = '0x00400000' }
       Ibb  = { Offset = '0x00C00000', Size = '0x00400000' }
 
@@ -76,19 +76,19 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
 
     [Firmware.ExtendedBios.Offset.Normal.Debug.Default]
       Ext  = { Offset = '0x00000000', Size = '0x00100000' }
-      Obb  = { Offset = '0x00440000', Size = '0x00740000' }
-      Ibbr = { Offset = '0x00600000', Size = '0x00580000' }
-      Ibb  = { Offset = '0x00B80000', Size = '0x00580000' }
+      Obb  = { Offset = '0x003C0000', Size = '0x00740000' }
+      Ibbr = { Offset = '0x00500000', Size = '0x00600000' }
+      Ibb  = { Offset = '0x00B00000', Size = '0x00600000' }
 
     [Firmware.ExtendedBios.Offset.Normal.Release.Default]
       Ext  = { Offset = '0x00000000', Size = '0x00100000' }
-      Obb  = { Offset = '0x00440000', Size = '0x008C0000' }
+      Obb  = { Offset = '0x003C0000', Size = '0x00940000' }
       Ibbr = { Offset = '0x00900000', Size = '0x00400000' }
       Ibb  = { Offset = '0x00D00000', Size = '0x00400000' }
 
     [Firmware.ExtendedBios.Offset.Resiliency.Default]
       Ext  = { Offset = '0x00000000', Size = '0x00100000' }
-      Obb  = { Offset = '0x00240000', Size = '0x006C0000' }
+      Obb  = { Offset = '0x001C0000', Size = '0x00740000' }
       Ibbr = { Offset = '0x00900000', Size = '0x00400000' }
       Ibb  = { Offset = '0x00D00000', Size = '0x00400000' }
 
@@ -113,7 +113,7 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
     IsEnabled = true
 
     [Firmware.Btgacm.Offset.Normal.Debug.Default]
-      Fv = { Offset = '0x008C0000', Size = '0x00040000' }
+      Fv = { Offset = '0x00840000', Size = '0x00040000' }
 
     [Firmware.Btgacm.Offset.Normal.Release.Default]
       Fv = { Offset = '0x00A40000', Size = '0x00040000' }
@@ -157,13 +157,16 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
     IsEnabled = true
 
     [Firmware.Ucode.Offset.Normal.Debug.Default]
-      Fv = { Offset = '0x00000000', Size = '0x00080000' }
+      Fv = { Offset = '0x008D0000', Size = '0x00080000' }
 
     [Firmware.Ucode.Offset.Normal.Release.Default]
-      Fv = { Offset = '0x00000000', Size = '0x00080000' }
+      Fv = { Offset = '0x00AA0000', Size = '0x00080000' }
 
-    [Firmware.Ucode.Offset.Resiliency.Default]
-      Fv = { Offset = '0x00000000', Size = '0x00040000' }
+    [Firmware.Ucode.Offset.Resiliency.Debug.Default]
+      Fv = { Offset = '0x00CA0000', Size = '0x00040000' }
+
+    [Firmware.Ucode.Offset.Resiliency.Release.Default]
+      Fv = { Offset = '0x00CA0000', Size = '0x00080000' }
 
     [Firmware.Ucode.Slotsize]
       Default = '0x37000'

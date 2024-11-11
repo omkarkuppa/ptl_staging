@@ -34,11 +34,11 @@ LpssUartDebugPcdGetAttributes (
   IN OUT LPSS_UART_ATTRIBUTES  *Attributes
   )
 {
-  Attributes->BaudRate = (UINT64) PcdGet32 (PcdSerialIoUartBaudRate);
-  Attributes->DataBits = PcdGet8 (PcdSerialIoUartDataBits);
-  Attributes->StopBits = (EFI_STOP_BITS_TYPE) PcdGet8 (PcdSerialIoUartStopBits);
-  Attributes->Parity   = (EFI_PARITY_TYPE) PcdGet8 (PcdSerialIoUartParity);
-  Attributes->AutoFlow = PcdGet8 (PcdSerialIoUartAutoFlow);
+  Attributes->BaudRate = (UINT64) PcdGet32 (PcdLpssUartBaudRate);
+  Attributes->DataBits = PcdGet8 (PcdLpssUartDataBits);
+  Attributes->StopBits = (EFI_STOP_BITS_TYPE) PcdGet8 (PcdLpssUartStopBits);
+  Attributes->Parity   = (EFI_PARITY_TYPE) PcdGet8 (PcdLpssUartParity);
+  Attributes->AutoFlow = PcdGet8 (PcdLpssUartAutoFlow);
 }
 
 /**
@@ -51,7 +51,7 @@ LpssUartDebugPcdGetControllerNumber (
   VOID
   )
 {
-  return PcdGet8 (PcdSerialIoUartNumber);
+  return PcdGet8 (PcdLpssUartNumber);
 }
 
 /**
@@ -66,7 +66,7 @@ LpssUartDebugPcdGetDebugEnable (
   VOID
   )
 {
-  return PcdGet8 (PcdSerialIoUartDebugEnable);
+  return PcdGet8 (PcdLpssUartDebugEnable);
 }
 
 /**
@@ -79,7 +79,7 @@ LpssUartDebugPcdGetPciDefaultMmioBase (
   VOID
   )
 {
-  return PcdGet32 (PcdSerialIoUartDebugMmioBase);
+  return PcdGet32 (PcdLpssUartDebugMmioBase);
 }
 
 /**
@@ -92,7 +92,7 @@ LpssUartDebugPcdGetDefaultPciCfgBase (
   VOID
   )
 {
-  return PcdGet32 (PcdSerialIoUartDebugPciCfgBase);
+  return PcdGet32 (PcdLpssUartDebugPciCfgBase);
 }
 
 /**
@@ -110,10 +110,10 @@ LpssUartDebugPcdGetDeviceConfig (
 {
   *UartNumber = LpssUartDebugPcdGetControllerNumber ();
   LpssUartDebugPcdGetAttributes (&UartDeviceConfig->Attributes);
-  UartDeviceConfig->PinMux.Rx   = PcdGet32 (PcdSerialIoUartRxPinMux);
-  UartDeviceConfig->PinMux.Tx   = PcdGet32 (PcdSerialIoUartTxPinMux);
-  UartDeviceConfig->PinMux.Rts  = PcdGet32 (PcdSerialIoUartRtsPinMux);
-  UartDeviceConfig->PinMux.Cts  = PcdGet32 (PcdSerialIoUartCtsPinMux);
-  UartDeviceConfig->PowerGating = PcdGet8  (PcdSerialIoUartPowerGating);
-  UartDeviceConfig->Mode        = PcdGet8  (PcdSerialIoUartMode);
+  UartDeviceConfig->PinMux.Rx   = PcdGet32 (PcdLpssUartRxPinMux);
+  UartDeviceConfig->PinMux.Tx   = PcdGet32 (PcdLpssUartTxPinMux);
+  UartDeviceConfig->PinMux.Rts  = PcdGet32 (PcdLpssUartRtsPinMux);
+  UartDeviceConfig->PinMux.Cts  = PcdGet32 (PcdLpssUartCtsPinMux);
+  UartDeviceConfig->PowerGating = PcdGet8  (PcdLpssUartPowerGating);
+  UartDeviceConfig->Mode        = PcdGet8  (PcdLpssUartMode);
 }

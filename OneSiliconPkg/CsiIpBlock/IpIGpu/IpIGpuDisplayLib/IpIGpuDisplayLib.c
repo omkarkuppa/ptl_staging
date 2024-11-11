@@ -26,9 +26,9 @@
 #include <IGpuDisplayRegs.h>
 #include <IGpuCfg.h>
 
-#define TOTAL_T12_TIME           500      ///< 500us
-#define NO_DELAY                 0        ///< 0us
-#define MAX_DELAY                0xFFFF
+#define TOTAL_T12_TIME  500               ///< 500us
+#define NO_DELAY        0                 ///< 0us
+#define MAX_DELAY       0xFFFF
 
 #ifndef DIVIDEROUND
 #define DIVIDEROUND(a, b)  (((a) * (b) > 0) ? ((a) + (b) / 2) / (b) : ((a) - (b) / 2) / (b))
@@ -45,12 +45,12 @@
 STATIC
 UINT32
 ScaleMemoryDataRate (
-  UINT32      MemoryType,
-  UINT32      Tck
+  UINT32  MemoryType,
+  UINT32  Tck
   )
 {
-  UINT32 ConversionFactor;
-  UINT32 ScaledMemDataRate;
+  UINT32  ConversionFactor;
+  UINT32  ScaledMemDataRate;
 
   // Calculate the memory Data Rate in units of (DataRate / 16.6666)
   // using the reduced equation based on tCK in femtoseconds
@@ -59,6 +59,7 @@ ScaleMemoryDataRate (
     // tCK is 4:1 of the double data rate clock period on LP5
     ConversionFactor *= 4;
   }
+
   ScaledMemDataRate = DIVIDEROUND (ConversionFactor, Tck);
 
   return ScaledMemDataRate;
@@ -75,11 +76,11 @@ ScaleMemoryDataRate (
 STATIC
 UINT32
 ScaleMemoryTiming (
-  MEMORY_DEVICE_TYPE MemoryType,
-  UINT32             NckTiming
+  MEMORY_DEVICE_TYPE  MemoryType,
+  UINT32              NckTiming
   )
 {
-  UINT32 ScaledTiming;
+  UINT32  ScaledTiming;
 
   // Convert the input timing to units of ns * (Data Rate / 1000)
   // using the reduced requation based on the timing parameter in
@@ -107,10 +108,10 @@ IpIGpuCheckAndForceVddOn (
   UINT32        BootMode
   )
 {
-  PP_CONTROL_DISPLAY_MEM_STRUCT           DisplayPpControl;
-  PP_CONTROL_2_DISPLAY_MEM_STRUCT         DisplayPpControl2;
-  UINT32                                  DeltaT12TimeMicroSec;
-  NDE_RSTWRN_OPT_DISP_STRUCT              RstWrnOpt;
+  PP_CONTROL_DISPLAY_MEM_STRUCT    DisplayPpControl;
+  PP_CONTROL_2_DISPLAY_MEM_STRUCT  DisplayPpControl2;
+  UINT32                           DeltaT12TimeMicroSec;
+  NDE_RSTWRN_OPT_DISP_STRUCT       RstWrnOpt;
 
   DeltaT12TimeMicroSec = 0;
 
@@ -153,13 +154,14 @@ IpIGpuCheckAndForceVddOn (
     ///
     /// Skip if VDD Bit is already set
     ///
-    DisplayPpControl.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, PP_CONTROL_DISPLAY_MEM_REG, IpWrRegFlagSize32Bits);
-    DisplayPpControl2.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, PP_CONTROL_2_DISPLAY_MEM_REG, IpWrRegFlagSize32Bits);
+    DisplayPpControl.Data  = (UINT32)IpWrRegRead (pInst->MmioAccess, PP_CONTROL_DISPLAY_MEM_REG, IpWrRegFlagSize32Bits);
+    DisplayPpControl2.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, PP_CONTROL_2_DISPLAY_MEM_REG, IpWrRegFlagSize32Bits);
     if (((pInst->IGpuPreMemConfig.DdiConfiguration.DdiPortAConfig == IpIGpuDdiPortEdp) && (DisplayPpControl.Bits.vdd_override == FALSE)) || \
         ((pInst->IGpuPreMemConfig.DdiConfiguration.DdiPortBConfig == IpIGpuDdiPortEdp) && (DisplayPpControl2.Bits.vdd_override == FALSE))
-    ) {
+        )
+    {
       if ((BootMode == BOOT_ASSUMING_NO_CONFIGURATION_CHANGES) || (pInst->IGpuPreMemConfig.OemT12DelayOverride)) {
-        DeltaT12TimeMicroSec = (UINT32) pInst->IGpuPreMemConfig.DeltaT12PowerCycleDelay;
+        DeltaT12TimeMicroSec = (UINT32)pInst->IGpuPreMemConfig.DeltaT12PowerCycleDelay;
         if ((DeltaT12TimeMicroSec > NO_DELAY) && (DeltaT12TimeMicroSec < MAX_DELAY)) {
           PRINT_LEVEL1 ("Policy value based T12 Delay Added : %d us\n", DeltaT12TimeMicroSec);
           IpWrDelayFromTimeUs (pInst->TimeCntxt, 0, DeltaT12TimeMicroSec);
@@ -174,7 +176,7 @@ IpIGpuCheckAndForceVddOn (
     // Enable PCH Reset Handshake
     //
     if (pInst->XeVersion <= IpIGpuXe3) {
-      RstWrnOpt.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, NDE_RSTWRN_OPT_DISP_REG, IpWrRegFlagSize32Bits);
+      RstWrnOpt.Data                      = (UINT32)IpWrRegRead (pInst->MmioAccess, NDE_RSTWRN_OPT_DISP_REG, IpWrRegFlagSize32Bits);
       RstWrnOpt.Bits.rst_pch_handshake_en = TRUE;
       IpWrRegWrite (pInst->MmioAccess, NDE_RSTWRN_OPT_DISP_REG, RstWrnOpt.Data, IpWrRegFlagSize32Bits);
       PRINT_LEVEL1 ("PCH Reset Handshake = 0x%x\n", IpWrRegRead (pInst->MmioAccess, NDE_RSTWRN_OPT_DISP_REG, IpWrRegFlagSize32Bits));
@@ -258,8 +260,9 @@ IpIGpuDisplayMemSsInit (
     PRINT_LEVEL1 ("Returning from %s since Display Engine is not present.\n", __FUNCTION__);
     return IpCsiStsSuccess;
   }
-  MemoryType = pInst->IGpuPrivateConfig.MemoryInfoData.MemoryType;
-  MemSsInfoGlobalReg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, MEM_SS_INFO_GLOBAL_DISP_REG, IpWrRegFlagSize32Bits);
+
+  MemoryType              = pInst->IGpuPrivateConfig.MemoryInfoData.MemoryType;
+  MemSsInfoGlobalReg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, MEM_SS_INFO_GLOBAL_DISP_REG, IpWrRegFlagSize32Bits);
   switch (MemoryType) {
     case MemoryTypeDdr5:
       MemSsInfoGlobalReg.Bits.ddr_type = MEM_SS_INFO_GLOBAL_DDRTYPE_DDR5;
@@ -276,12 +279,16 @@ IpIGpuDisplayMemSsInit (
     default:
       return IpCsiStsError;
   }
+
   MemSsInfoGlobalReg.Bits.number_of_populated_channels = pInst->IGpuPrivateConfig.MemoryInfoData.NumPopulatedChannels;
   MemSsInfoGlobalReg.Bits.number_of_enabled_qgv_points = pInst->IGpuPrivateConfig.MemoryInfoData.SagvConfigInfo.NumSaGvPointsEnabled;
   IpWrRegWrite (pInst->MmioAccess, MEM_SS_INFO_GLOBAL_DISP_REG, MemSsInfoGlobalReg.Data, IpWrRegFlagSize32Bits);
-  PRINT_LEVEL1 ("MEM_SS_INFO_GLOBAL\n DdrType = %d \n NumberOfPopulatedChannels = %d\n NumberOfEnabledQgvPoints = %d\n", \
-                  MemSsInfoGlobalReg.Bits.ddr_type, MemSsInfoGlobalReg.Bits.number_of_populated_channels, \
-                  MemSsInfoGlobalReg.Bits.number_of_enabled_qgv_points);
+  PRINT_LEVEL1 (
+    "MEM_SS_INFO_GLOBAL\n DdrType = %d \n NumberOfPopulatedChannels = %d\n NumberOfEnabledQgvPoints = %d\n", \
+    MemSsInfoGlobalReg.Bits.ddr_type,
+    MemSsInfoGlobalReg.Bits.number_of_populated_channels, \
+    MemSsInfoGlobalReg.Bits.number_of_enabled_qgv_points
+    );
 
   for (SaGvPoint = 0; SaGvPoint < HOB_MAX_SAGV_POINTS; SaGvPoint++) {
     if ((pInst->IGpuPrivateConfig.MemoryInfoData.SagvConfigInfo.SaGvPointMask & (BIT0 << SaGvPoint)) == 0) {
@@ -289,111 +296,115 @@ IpIGpuDisplayMemSsInit (
     }
 
     SaGvTiming = &pInst->IGpuPrivateConfig.MemoryInfoData.SagvConfigInfo.SaGvTiming[SaGvPoint];
-    tCK = SaGvTiming->JedecTiming.tCK;
-    Dclk = ScaleMemoryDataRate (MemoryType, tCK);
-    TRP = ScaleMemoryTiming (MemoryType, SaGvTiming->JedecTiming.tRCDtRP);
-    TRDPRE = ScaleMemoryTiming (MemoryType, SaGvTiming->IpTiming.tRDPRE);
-    TRAS = ScaleMemoryTiming (MemoryType, SaGvTiming->JedecTiming.tRAS);
+    tCK        = SaGvTiming->JedecTiming.tCK;
+    Dclk       = ScaleMemoryDataRate (MemoryType, tCK);
+    TRP        = ScaleMemoryTiming (MemoryType, SaGvTiming->JedecTiming.tRCDtRP);
+    TRDPRE     = ScaleMemoryTiming (MemoryType, SaGvTiming->IpTiming.tRDPRE);
+    TRAS       = ScaleMemoryTiming (MemoryType, SaGvTiming->JedecTiming.tRAS);
     switch (SaGvPoint) {
       case 0:
-        MemSSInfoQgvPoint00.Data = 0;
-        MemSSInfoQgvPoint01.Data = 0;
+        MemSSInfoQgvPoint00.Data                                  = 0;
+        MemSSInfoQgvPoint01.Data                                  = 0;
         MemSSInfoQgvPoint00.Bits.dclk_in_multiples_of_16_6666_mhz = Dclk;
-        MemSSInfoQgvPoint00.Bits.trp_in_dclks = TRP;
-        MemSSInfoQgvPoint00.Bits.trcd_in_dclks = TRP;
-        MemSSInfoQgvPoint01.Bits.trdpre_in_dclks = TRDPRE;
-        MemSSInfoQgvPoint01.Bits.tras_in_dclks = TRAS;
+        MemSSInfoQgvPoint00.Bits.trp_in_dclks                     = TRP;
+        MemSSInfoQgvPoint00.Bits.trcd_in_dclks                    = TRP;
+        MemSSInfoQgvPoint01.Bits.trdpre_in_dclks                  = TRDPRE;
+        MemSSInfoQgvPoint01.Bits.tras_in_dclks                    = TRAS;
         IpWrRegWrite (pInst->MmioAccess, MEM_SS_INFO_QGV_POINT_0_0_DISP_REG, MemSSInfoQgvPoint00.Data, IpWrRegFlagSize32Bits);
         IpWrRegWrite (pInst->MmioAccess, MEM_SS_INFO_QGV_POINT_0_1_DISP_REG, MemSSInfoQgvPoint01.Data, IpWrRegFlagSize32Bits);
-        PRINT_LEVEL1 ("MEM_SS_INFO_QGV_POINT_%d\n"
-                      "  Dclk = %d\n"
-                      "  TRP = %d\n"
-                      "  TRCD = %d\n"
-                      "  TRDPRE = %d\n"
-                      "  TRAS = %d\n",
-                      SaGvPoint,
-                      MemSSInfoQgvPoint00.Bits.dclk_in_multiples_of_16_6666_mhz,
-                      MemSSInfoQgvPoint00.Bits.trp_in_dclks,
-                      MemSSInfoQgvPoint00.Bits.trcd_in_dclks,
-                      MemSSInfoQgvPoint01.Bits.trdpre_in_dclks,
-                      MemSSInfoQgvPoint01.Bits.tras_in_dclks
-                    );
+        PRINT_LEVEL1 (
+          "MEM_SS_INFO_QGV_POINT_%d\n"
+          "  Dclk = %d\n"
+          "  TRP = %d\n"
+          "  TRCD = %d\n"
+          "  TRDPRE = %d\n"
+          "  TRAS = %d\n",
+          SaGvPoint,
+          MemSSInfoQgvPoint00.Bits.dclk_in_multiples_of_16_6666_mhz,
+          MemSSInfoQgvPoint00.Bits.trp_in_dclks,
+          MemSSInfoQgvPoint00.Bits.trcd_in_dclks,
+          MemSSInfoQgvPoint01.Bits.trdpre_in_dclks,
+          MemSSInfoQgvPoint01.Bits.tras_in_dclks
+          );
         break;
 
       case 1:
-        MemSSInfoQgvPoint10.Data = 0;
-        MemSSInfoQgvPoint11.Data = 0;
+        MemSSInfoQgvPoint10.Data                                  = 0;
+        MemSSInfoQgvPoint11.Data                                  = 0;
         MemSSInfoQgvPoint10.Bits.dclk_in_multiples_of_16_6666_mhz = Dclk;
-        MemSSInfoQgvPoint10.Bits.trp_in_dclks = TRP;
-        MemSSInfoQgvPoint10.Bits.trcd_in_dclks = TRP;
-        MemSSInfoQgvPoint11.Bits.trdpre_in_dclks = TRDPRE;
-        MemSSInfoQgvPoint11.Bits.tras_in_dclks = TRAS;
+        MemSSInfoQgvPoint10.Bits.trp_in_dclks                     = TRP;
+        MemSSInfoQgvPoint10.Bits.trcd_in_dclks                    = TRP;
+        MemSSInfoQgvPoint11.Bits.trdpre_in_dclks                  = TRDPRE;
+        MemSSInfoQgvPoint11.Bits.tras_in_dclks                    = TRAS;
         IpWrRegWrite (pInst->MmioAccess, MEM_SS_INFO_QGV_POINT_1_0_DISP_REG, MemSSInfoQgvPoint10.Data, IpWrRegFlagSize32Bits);
         IpWrRegWrite (pInst->MmioAccess, MEM_SS_INFO_QGV_POINT_1_1_DISP_REG, MemSSInfoQgvPoint11.Data, IpWrRegFlagSize32Bits);
-        PRINT_LEVEL1 ("MEM_SS_INFO_QGV_POINT_%d\n"
-                      "  Dclk = %d\n"
-                      "  TRP = %d\n"
-                      "  TRCD = %d\n"
-                      "  TRDPRE = %d\n"
-                      "  TRAS = %d\n",
-                      SaGvPoint,
-                      MemSSInfoQgvPoint10.Bits.dclk_in_multiples_of_16_6666_mhz,
-                      MemSSInfoQgvPoint10.Bits.trp_in_dclks,
-                      MemSSInfoQgvPoint10.Bits.trcd_in_dclks,
-                      MemSSInfoQgvPoint11.Bits.trdpre_in_dclks,
-                      MemSSInfoQgvPoint11.Bits.tras_in_dclks
-                    );
+        PRINT_LEVEL1 (
+          "MEM_SS_INFO_QGV_POINT_%d\n"
+          "  Dclk = %d\n"
+          "  TRP = %d\n"
+          "  TRCD = %d\n"
+          "  TRDPRE = %d\n"
+          "  TRAS = %d\n",
+          SaGvPoint,
+          MemSSInfoQgvPoint10.Bits.dclk_in_multiples_of_16_6666_mhz,
+          MemSSInfoQgvPoint10.Bits.trp_in_dclks,
+          MemSSInfoQgvPoint10.Bits.trcd_in_dclks,
+          MemSSInfoQgvPoint11.Bits.trdpre_in_dclks,
+          MemSSInfoQgvPoint11.Bits.tras_in_dclks
+          );
         break;
 
       case 2:
-        MemSSInfoQgvPoint20.Data = 0;
-        MemSSInfoQgvPoint21.Data = 0;
+        MemSSInfoQgvPoint20.Data                                  = 0;
+        MemSSInfoQgvPoint21.Data                                  = 0;
         MemSSInfoQgvPoint20.Bits.dclk_in_multiples_of_16_6666_mhz = Dclk;
-        MemSSInfoQgvPoint20.Bits.trp_in_dclks = TRP;
-        MemSSInfoQgvPoint20.Bits.trcd_in_dclks = TRP;
-        MemSSInfoQgvPoint21.Bits.trdpre_in_dclks = TRDPRE;
-        MemSSInfoQgvPoint21.Bits.tras_in_dclks = TRAS;
+        MemSSInfoQgvPoint20.Bits.trp_in_dclks                     = TRP;
+        MemSSInfoQgvPoint20.Bits.trcd_in_dclks                    = TRP;
+        MemSSInfoQgvPoint21.Bits.trdpre_in_dclks                  = TRDPRE;
+        MemSSInfoQgvPoint21.Bits.tras_in_dclks                    = TRAS;
         IpWrRegWrite (pInst->MmioAccess, MEM_SS_INFO_QGV_POINT_2_0_DISP_REG, MemSSInfoQgvPoint20.Data, IpWrRegFlagSize32Bits);
         IpWrRegWrite (pInst->MmioAccess, MEM_SS_INFO_QGV_POINT_2_1_DISP_REG, MemSSInfoQgvPoint21.Data, IpWrRegFlagSize32Bits);
-        PRINT_LEVEL1 ("MEM_SS_INFO_QGV_POINT_%d\n"
-                      "  Dclk = %d\n"
-                      "  TRP = %d\n"
-                      "  TRCD = %d\n"
-                      "  TRDPRE = %d\n"
-                      "  TRAS = %d\n",
-                      SaGvPoint,
-                      MemSSInfoQgvPoint20.Bits.dclk_in_multiples_of_16_6666_mhz,
-                      MemSSInfoQgvPoint20.Bits.trp_in_dclks,
-                      MemSSInfoQgvPoint20.Bits.trcd_in_dclks,
-                      MemSSInfoQgvPoint21.Bits.trdpre_in_dclks,
-                      MemSSInfoQgvPoint21.Bits.tras_in_dclks
-                    );
+        PRINT_LEVEL1 (
+          "MEM_SS_INFO_QGV_POINT_%d\n"
+          "  Dclk = %d\n"
+          "  TRP = %d\n"
+          "  TRCD = %d\n"
+          "  TRDPRE = %d\n"
+          "  TRAS = %d\n",
+          SaGvPoint,
+          MemSSInfoQgvPoint20.Bits.dclk_in_multiples_of_16_6666_mhz,
+          MemSSInfoQgvPoint20.Bits.trp_in_dclks,
+          MemSSInfoQgvPoint20.Bits.trcd_in_dclks,
+          MemSSInfoQgvPoint21.Bits.trdpre_in_dclks,
+          MemSSInfoQgvPoint21.Bits.tras_in_dclks
+          );
         break;
 
       case 3:
       default:
-        MemSSInfoQgvPoint30.Data = 0;
-        MemSSInfoQgvPoint31.Data = 0;
+        MemSSInfoQgvPoint30.Data                                  = 0;
+        MemSSInfoQgvPoint31.Data                                  = 0;
         MemSSInfoQgvPoint30.Bits.dclk_in_multiples_of_16_6666_mhz = Dclk;
-        MemSSInfoQgvPoint30.Bits.trp_in_dclks = TRP;
-        MemSSInfoQgvPoint30.Bits.trcd_in_dclks = TRP;
-        MemSSInfoQgvPoint31.Bits.trdpre_in_dclks = TRDPRE;
-        MemSSInfoQgvPoint31.Bits.tras_in_dclks = TRAS;
+        MemSSInfoQgvPoint30.Bits.trp_in_dclks                     = TRP;
+        MemSSInfoQgvPoint30.Bits.trcd_in_dclks                    = TRP;
+        MemSSInfoQgvPoint31.Bits.trdpre_in_dclks                  = TRDPRE;
+        MemSSInfoQgvPoint31.Bits.tras_in_dclks                    = TRAS;
         IpWrRegWrite (pInst->MmioAccess, MEM_SS_INFO_QGV_POINT_3_0_DISP_REG, MemSSInfoQgvPoint30.Data, IpWrRegFlagSize32Bits);
         IpWrRegWrite (pInst->MmioAccess, MEM_SS_INFO_QGV_POINT_3_1_DISP_REG, MemSSInfoQgvPoint31.Data, IpWrRegFlagSize32Bits);
-        PRINT_LEVEL1 ("MEM_SS_INFO_QGV_POINT_%d\n"
-                      "  Dclk = %d\n"
-                      "  TRP = %d\n"
-                      "  TRCD = %d\n"
-                      "  TRDPRE = %d\n"
-                      "  TRAS = %d\n",
-                      SaGvPoint,
-                      MemSSInfoQgvPoint30.Bits.dclk_in_multiples_of_16_6666_mhz,
-                      MemSSInfoQgvPoint30.Bits.trp_in_dclks,
-                      MemSSInfoQgvPoint30.Bits.trcd_in_dclks,
-                      MemSSInfoQgvPoint31.Bits.trdpre_in_dclks,
-                      MemSSInfoQgvPoint31.Bits.tras_in_dclks
-                    );
+        PRINT_LEVEL1 (
+          "MEM_SS_INFO_QGV_POINT_%d\n"
+          "  Dclk = %d\n"
+          "  TRP = %d\n"
+          "  TRCD = %d\n"
+          "  TRDPRE = %d\n"
+          "  TRAS = %d\n",
+          SaGvPoint,
+          MemSSInfoQgvPoint30.Bits.dclk_in_multiples_of_16_6666_mhz,
+          MemSSInfoQgvPoint30.Bits.trp_in_dclks,
+          MemSSInfoQgvPoint30.Bits.trcd_in_dclks,
+          MemSSInfoQgvPoint31.Bits.trdpre_in_dclks,
+          MemSSInfoQgvPoint31.Bits.tras_in_dclks
+          );
         break;
     }
   }
@@ -434,14 +445,14 @@ IpIGpuProgramFlatCcsBaseForDisplay (
       return IpCsiStsSuccess;
     }
 
-    FlatCcsRange0.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_0_DISP_REG, IpWrRegFlagSize32Bits);
-    FlatCcsRange0.Bits.ccs_enable = TRUE;
-    FlatCcsRange0.Bits.flat_ccs_base_low = (UINT32) IpWrRShiftU64 (pInst->IGpuPrivateConfig.FlatCcsBaseAddr, FLATCCSBASEANDRANGE_0_DISP_FLAT_CCS_BASE_LOW_LSB);
+    FlatCcsRange0.Data                   = (UINT32)IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_0_DISP_REG, IpWrRegFlagSize32Bits);
+    FlatCcsRange0.Bits.ccs_enable        = TRUE;
+    FlatCcsRange0.Bits.flat_ccs_base_low = (UINT32)IpWrRShiftU64 (pInst->IGpuPrivateConfig.FlatCcsBaseAddr, FLATCCSBASEANDRANGE_0_DISP_FLAT_CCS_BASE_LOW_LSB);
     IpWrRegWrite (pInst->MmioAccess, FLATCCSBASEANDRANGE_0_DISP_REG, FlatCcsRange0.Data, IpWrRegFlagSize32Bits);
 
-    FlatCcsRange1.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_1_DISP_REG, IpWrRegFlagSize32Bits);
-    FlatCcsRange1.Bits.flat_ccs_base_high = (UINT32) IpWrRShiftU64 (pInst->IGpuPrivateConfig.FlatCcsBaseAddr, 32);
-    FlatCcsRange1.Bits.flat_ccs_size = (pInst->IGpuPrivateConfig.FlatCcsMemSize / 2);
+    FlatCcsRange1.Data                    = (UINT32)IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_1_DISP_REG, IpWrRegFlagSize32Bits);
+    FlatCcsRange1.Bits.flat_ccs_base_high = (UINT32)IpWrRShiftU64 (pInst->IGpuPrivateConfig.FlatCcsBaseAddr, 32);
+    FlatCcsRange1.Bits.flat_ccs_size      = (pInst->IGpuPrivateConfig.FlatCcsMemSize / 2);
     IpWrRegWrite (pInst->MmioAccess, FLATCCSBASEANDRANGE_1_DISP_REG, FlatCcsRange1.Data, IpWrRegFlagSize32Bits);
 
     PRINT_LEVEL1 ("FLATCCSBASEANDRANGE_0_DISP_REG = 0x%llx\n", IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_0_DISP_REG, IpWrRegFlagSize64Bits));
@@ -460,13 +471,12 @@ IpIGpuProgramFlatCcsBaseForDisplay (
 **/
 IP_CSI_STATUS
 IpIGpuPavpInit (
-  IP_IGPU_INST              *pInst
+  IP_IGPU_INST  *pInst
   )
 {
-
-  UINT32                        PcmBase;
-  PAVPC0_REG_IGPU_STRUCT        DiplayPavpc;
-  DEPAVPC_REG_0_DISP_STRUCT     DisplayMirrorPavpc;
+  UINT32                     PcmBase;
+  PAVPC0_REG_IGPU_STRUCT     DiplayPavpc;
+  DEPAVPC_REG_0_DISP_STRUCT  DisplayMirrorPavpc;
 
   if (IpIGpuIsInstValid (pInst) == FALSE) {
     return IpCsiStsErrorNullPtr;
@@ -480,8 +490,8 @@ IpIGpuPavpInit (
     return IpCsiStsErrorNotAllowed;
   }
 
-  DisplayMirrorPavpc.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, DEPAVPC_REG_0_DISP_REG, IpWrRegFlagSize32Bits);
-  DiplayPavpc.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
+  DisplayMirrorPavpc.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, DEPAVPC_REG_0_DISP_REG, IpWrRegFlagSize32Bits);
+  DiplayPavpc.Data        = (UINT32)IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
 
   if (!IpIGpuCmdRegEnabled (pInst)) {
     ///
@@ -497,15 +507,17 @@ IpIGpuPavpInit (
 
   PcmBase = 0;
   if (pInst->XeVersion >= IpIGpuXe2) {
-    PcmBase = ((UINT32) IpWrRShiftU64 (pInst->IGpuPrivateConfig.BdsmBase, 20) + pInst->IGpuPrivateConfig.DsmSize - WOPCM_TOTAL_SIZE_8_MB);
+    PcmBase = ((UINT32)IpWrRShiftU64 (pInst->IGpuPrivateConfig.BdsmBase, 20) + pInst->IGpuPrivateConfig.DsmSize - WOPCM_TOTAL_SIZE_8_MB);
   }
-  PRINT_LEVEL1 ("Initializing PcmBase %x\n",PcmBase);
+
+  PRINT_LEVEL1 ("Initializing PcmBase %x\n", PcmBase);
 
   DiplayPavpc.Bits.wopcmbase_0 = PcmBase;
   if (pInst->IGpuConfig.PavpEnable == 1) {
     DiplayPavpc.Bits.pavpe = TRUE;
   }
-  DiplayPavpc.Bits.pcme  = TRUE;
+
+  DiplayPavpc.Bits.pcme = TRUE;
 
   DiplayPavpc.Bits.kcr_reset_fix = TRUE;
 
@@ -522,13 +534,13 @@ IpIGpuPavpInit (
     //   SA Media WOPCM size is 000b = 1MB, 001b = 2MB, 010b = 4MB, 011b = 8MB, 100b = 6MB, 101b = 16MB, 110b = Reserved.
     //
     DiplayPavpc.Bits.sa_media_wopcm_size = 0x4;
-    DiplayPavpc.Bits.wopcm_size = 0x3;
+    DiplayPavpc.Bits.wopcm_size          = 0x3;
   }
 
   ///
   /// Lock PAVPC Register
   ///
-    DiplayPavpc.Bits.lock = TRUE;
+    DiplayPavpc.Bits.lock        = TRUE;
     DisplayMirrorPavpc.Bits.lock = TRUE;
 
   //

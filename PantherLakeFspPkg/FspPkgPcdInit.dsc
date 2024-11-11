@@ -52,7 +52,7 @@
   # SI
   #
   gSiPkgTokenSpaceGuid.PcdTseEnable|TRUE
-  gSiPkgTokenSpaceGuid.PcdTdxEnable|TRUE
+  gSiPkgTokenSpaceGuid.PcdTdxEnable|FALSE # TDX is not supported, PCD should be set to FALSE
   gSiPkgTokenSpaceGuid.PcdFspBinaryEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdTraceHubCatalogEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdFspImageIdString|0x245053464C545024  #$PTLFSP$

@@ -25,17 +25,6 @@
 
 #include <TianoCompress.h>
 
-//
-// Macro Definitions
-//
-#ifndef __GNUC__
-static BOOLEAN VerboseMode = FALSE;
-static BOOLEAN QuietMode = FALSE;
-#else
-BOOLEAN VerboseMode = FALSE;
-BOOLEAN QuietMode = FALSE;
-#endif
-
 #undef UINT8_MAX
 #define UINT8_MAX     0xff
 #define UINT8_BIT     8
@@ -68,17 +57,6 @@ BOOLEAN QuietMode = FALSE;
 //#define NPT NP
 //#endif
 
-//
-//  Global Variables
-//
-#ifndef __GNUC__
-STATIC BOOLEAN ENCODE = FALSE;
-STATIC BOOLEAN DECODE = FALSE;
-#else
-BOOLEAN ENCODE = FALSE;
-BOOLEAN DECODE = FALSE;
-#endif
-
 STATIC UINT8  *mSrc, *mDst, *mSrcUpperLimit, *mDstUpperLimit;
 STATIC UINT8  *mLevel, *mText, *mChildCount, *mBuf, mCLen[NC], mPTLen[NPT], *mLen;
 STATIC INT16  mHeap[NC + 1];
@@ -90,14 +68,6 @@ STATIC UINT16 *mFreq, *mSortPtr, mLenCnt[17], mLeft[2 * NC - 1], mRight[2 * NC -
   mCFreq[2 * NC - 1], mCCode[NC], mPFreq[2 * NP - 1], mPTCode[NPT], mTFreq[2 * NT - 1];
 
 STATIC NODE   mPos, mMatchPos, mAvail, *mPosition, *mParent, *mPrev, *mNext = NULL;
-
-#ifndef __GNUC__
-static  UINT64     DebugLevel;
-static  BOOLEAN    DebugMode;
-#else
-UINT64     DebugLevel;
-BOOLEAN    DebugMode;
-#endif
 
 //
 // functions

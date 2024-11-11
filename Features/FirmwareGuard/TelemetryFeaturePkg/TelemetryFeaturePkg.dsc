@@ -59,6 +59,7 @@
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
   PciCf8Lib|MdePkg/Library/BasePciCf8Lib/BasePciCf8Lib.inf
+  IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
 
   #
   # Misc
@@ -84,6 +85,7 @@
   #
   MeInfoLib|OneSiliconPkg/IpBlock/Me/Library/MeInfoLibNull/MeInfoLibNull.inf
   VmdInfoLib|TelemetryFeaturePkg/Library/VmdInfoLibNull/VmdInfoLibNull.inf
+  PmcLib|OneSiliconPkg/IpBlock/Pmc/Library/PeiDxeSmmPmcLib/PeiDxeSmmPmcLib.inf
 
   #
   # Telemetry
@@ -104,4 +106,3 @@
 
 [Components]
   !include Include/TelemetryFeature.dsc
-

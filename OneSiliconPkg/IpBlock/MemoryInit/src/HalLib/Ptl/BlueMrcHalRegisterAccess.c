@@ -64,6 +64,8 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "RxVrefDQS",
   "RxDqVref",
   "RxDbiVref",
+  "RxDqVrefByte",
+  "RxDqVrefBit",
   "RxEq",
   "RxDqBitDelay",
   "RxVocRise",
@@ -150,7 +152,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "RxR2RRxPi",
   "RxR2RRcvEn",
   "RxRankMuxDelay",
-  "RxFlybyDelay", // @todo Removed in ww38c crif
   "RxIoTclDelay",
   "RoundTripIoComp",
   "RxFifoRdEnFlybyDelay",
@@ -160,12 +161,12 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "TxDqsTcoPFallNRise",
   "TxDqsTcoPRiseNFall",
   "TxDqsTcoCode",
-  "CccPinDdr5",
   "DefDrvEnLow",
   "CmdTxEq",
   "CtlTxEq",
   "GsmIntCkOn",
   "RxVrefVddqDecap",
+  "RxVocFall",
   "WrRetrainDeltaPiCode",
   "RdRetrainDeltaPiCode",
   "RxCompDqsDelayP",
@@ -201,8 +202,12 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmIocRdRetrainOvrd",
   "GsmIocDdr52NMode",
   "GsmDdrReset",
+  "GsmIocDdr5CkdMode",
   "GsmIocDisableTxDqs",
   "GsmIocForceRxAmpOn",
+  "GsmIocForceRxOnDqs",
+  "GsmIocForceRxOnDqsMux",
+  "GsmIocForceRxOnDq",
   "GsmIocForceOdtOn",
   "GsmIocTxPiPwrDnDis",
   "GsmIocInternalClocksOn",
@@ -1761,8 +1766,6 @@ MrcCheckGroupSupported (
     case GsmIocRankOverrideEn:
     case GsmIocRankOverrideVal:
     case GsmIocDataDisableTxDqs:
-//    case GsmIocLeakerComp:
-//    case GsmIocRxPathBiasRcomp:
     case GsmIocDisableTxDqs:
     case GsmIocForceRxAmpOn:
     case GsmIocForceOdtOn:
@@ -3214,6 +3217,28 @@ MrcGetSetLimits (
 }
 
 /**
+  This function is the interface for the core of the MRC to get the limits of RxDqVref
+
+  @param[in]  MrcData   - Pointer to global data.
+  @param[out] MinVal    - Return pointer for Minimum Value supported.
+  @param[out] MaxVal    - Return pointer for Maximum Value supported.
+  @param[out] WaitTime  - Return pointer for settle time required in microseconds.
+
+  @retval MrcStatus - mrcSuccess if the parameter is found, otherwise mrcFail.
+**/
+MrcStatus
+MrcGetSetRxVrefLimits (
+  IN  MrcParameters *const MrcData,
+  OUT INT64   *const  MinVal,
+  OUT INT64   *const  MaxVal,
+  OUT UINT32  *const  WaitTime
+  )
+{
+  MrcGetSetLimits (MrcData, RxDqVref, 0, MinVal, MaxVal, NULL);
+  return mrcSuccess;
+}
+
+/**
   Update MRC Host Data Structure when GSM_UPDATE_HOST is set
   Currently only used for RxDqsBitDelay and TxDqBitDelay
 
@@ -3276,3 +3301,21 @@ MrcGetDividedValueTck (
 {
   return Value;
 }
+
+/**
+  This function programs WCK DCC registers to work in a cross-platform manner
+
+  @param[in] MrcData     - Include all MRC global data.
+  @param[in] GetSetGroup - WCK DCC GetSet Group
+  @param[in] GetSetVal   - WCK DCC Value
+**/
+VOID
+MrcSetWckDccCrossProj (
+  IN MrcParameters* const MrcData,
+  IN GSM_GT               GetSetGroup,
+  IN INT64                *GetSetVal
+  )
+{
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GetSetGroup, WriteCached, GetSetVal);
+}
+

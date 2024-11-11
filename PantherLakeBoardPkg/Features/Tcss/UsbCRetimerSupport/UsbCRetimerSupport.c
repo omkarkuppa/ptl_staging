@@ -74,9 +74,9 @@ GetRetimerInfo (
 }
 
 /**
-  This event will be registered on ReadyToBoot to remove Protocol Service
-  to make sure this protocol will not be used by any UEFI Application
-  running in EDK Shell.
+  This event will be registered on Exit Boot Services Event to remove
+  Protocol Service to make sure this protocol will not be used by any
+  UEFI Application running in EDK Shell.
 
   @param[in]  Event    The Event that is being processed.
   @param[in]  Context  The Event Context.
@@ -84,7 +84,7 @@ GetRetimerInfo (
 **/
 VOID
 EFIAPI
-UsbCRetimerSupportReadyToBootEvent (
+UsbCRetimerSupportExitBootServiceEvent (
   IN  EFI_EVENT  Event,
   IN  VOID       *Context
   )
@@ -194,16 +194,18 @@ UsbCRetimerSupportEntryPoint (
 
   DEBUG ((DEBUG_INFO, "%a: UsbCRetimerProtocol is installed Successfully.\n", __FUNCTION__));
   //
-  // Register the ReadyToBoot event to remove Protocol Service.
+  // Register the ExitBootService event to remove Protocol Service.
   // This additional functionality to make sure this protocol will not be used by
   // any UEFI Application running in EDK Shell.
   //
-  Status = EfiCreateEventReadyToBootEx (
-             TPL_CALLBACK,
-             UsbCRetimerSupportReadyToBootEvent,
-             NULL,
-             &Event
-             );
+  Status = gBS->CreateEventEx (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_CALLBACK,
+                  UsbCRetimerSupportExitBootServiceEvent,
+                  NULL,
+                  &gEfiEventExitBootServicesGuid,
+                  &Event
+                  );
   ASSERT_EFI_ERROR (Status);
   DEBUG ((DEBUG_INFO, "%a: UsbCRetimerSupportCloseEvent is Register with Status =%r\n", __FUNCTION__, Status));
 

@@ -130,7 +130,7 @@ MrcEccClean (
   Status      = mrcSuccess;
   EccEnabled  = (Outputs->EccSupport == TRUE);
   IsLpddr     = Outputs->IsLpddr;
-  tRFC        = 0;
+  tRFC        = Outputs->Timing[ExtInputs->MemoryProfile].tRFC;
   TxtClean    = Inputs->TxtClean;
   CleanMemory = (BOOLEAN) Inputs->CleanMemory;
   Ibecc       = (BOOLEAN) ((ExtInputs->Ibecc == TRUE) && ((ExtInputs->IbeccOperationMode == IbeccPartialProtect) || (ExtInputs->IbeccOperationMode == IbeccAllProtect)));
@@ -169,13 +169,12 @@ MrcEccClean (
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     if (MrcControllerExist (MrcData, Controller)) {
-      ControllerOut = &Outputs->Controller[Controller];
       for (Channel = 0; Channel < MaxChannels; Channel++) {
         if (!(MrcChannelExist (MrcData, Controller, Channel)) || IS_MC_SUB_CH (IsLpddr, Channel)) {
           continue;
         }
         MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MC%d.CH%d\n", Controller, Channel);
-        tRFC = ControllerOut->Channel[Channel].Timing[ExtInputs->MemoryProfile].tRFC;
+
         IpChannel = LP_IP_CH (IsLpddr, Channel);
         if (IsLpddr) {
           // Disable the DQS Osillator for LP5.

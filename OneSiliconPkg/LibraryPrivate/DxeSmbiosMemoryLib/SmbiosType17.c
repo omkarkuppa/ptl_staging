@@ -406,32 +406,45 @@ InstallSmbiosType17 (
           SmbiosTableType17Data.ExtendedSize = DimmMemorySizeInMB;
         }
 
-        switch (ModuleType & DDR_MTYPE_SPD_MASK) {
-          case DDR_MTYPE_SODIMM:
-            /// Legacy non-JEDEC LPDDR3 SPD images use SODIMM module type which should be soldered down form factor.
-            SmbiosTableType17Data.FormFactor = (DramDeviceType == DDR_DTYPE_LPDDR3) ? MemoryFormFactorRowOfChips : MemoryFormFactorSodimm;
-            break;
+        if (DramDeviceType == DDR_DTYPE_LPDDR5 || DramDeviceType == DDR_DTYPE_LPDDR5X) {
+          switch (ModuleType & DDR_MTYPE_SPD_MASK) {
+            case DDR_MTYPE_LPDIMM_LP5:
+              SmbiosTableType17Data.FormFactor = 0x11;
+              break;
 
-          case DDR_MTYPE_RDIMM:
-            SmbiosTableType17Data.FormFactor = MemoryFormFactorRimm;
-            break;
+            case DDR_MTYPE_MEM_DOWN_LP5:
+            default:
+              SmbiosTableType17Data.FormFactor = MemoryFormFactorRowOfChips;
+              break;
+          }
+        } else {
+          switch (ModuleType & DDR_MTYPE_SPD_MASK) {
+            case DDR_MTYPE_SODIMM:
+              /// Legacy non-JEDEC LPDDR3 SPD images use SODIMM module type which should be soldered down form factor.
+              SmbiosTableType17Data.FormFactor = (DramDeviceType == DDR_DTYPE_LPDDR3) ? MemoryFormFactorRowOfChips : MemoryFormFactorSodimm;
+              break;
 
-          case DDR_MTYPE_CSODIMM:
-            SmbiosTableType17Data.FormFactor = MemoryFormFactorSodimm;
-            break;
+            case DDR_MTYPE_RDIMM:
+              SmbiosTableType17Data.FormFactor = MemoryFormFactorRimm;
+              break;
 
-          case DDR_MTYPE_MEM_DOWN:
-            SmbiosTableType17Data.FormFactor = MemoryFormFactorRowOfChips;
-            break;
+            case DDR_MTYPE_CSODIMM:
+              SmbiosTableType17Data.FormFactor = MemoryFormFactorSodimm;
+              break;
 
-          case DDR_MTYPE_UDIMM:
-          case DDR_MTYPE_LR_DIMM:
-          case DDR_MTYPE_CUDIMM:
-          case DDR_MTYPE_MRDIMM:
-          case DDR_MTYPE_DDIMM:
-          default:
-            SmbiosTableType17Data.FormFactor = MemoryFormFactorDimm;
-            break;
+            case DDR_MTYPE_MEM_DOWN:
+              SmbiosTableType17Data.FormFactor = MemoryFormFactorRowOfChips;
+              break;
+
+            case DDR_MTYPE_UDIMM:
+            case DDR_MTYPE_LR_DIMM:
+            case DDR_MTYPE_CUDIMM:
+            case DDR_MTYPE_MRDIMM:
+            case DDR_MTYPE_DDIMM:
+            default:
+              SmbiosTableType17Data.FormFactor = MemoryFormFactorDimm;
+              break;
+          }
         }
 
         switch (DramDeviceType) {
@@ -448,6 +461,7 @@ InstallSmbiosType17 (
             break;
 
           case DDR_DTYPE_LPDDR5:
+          case DDR_DTYPE_LPDDR5X:
             SmbiosTableType17Data.MemoryType = (UINT8) MemoryTypeLpddr5;
             break;
 

@@ -666,7 +666,7 @@ MrcIbecc (
   MrcDebug                                      *Debug;
   const MrcInput                                *Inputs;
   MrcOutput                                     *Outputs;
-  const MRC_EXT_INPUTS_TYPE                     *ExtInputs;
+  MRC_EXT_INPUTS_TYPE                           *ExtInputs;
   UINT32                                        Offset;
   UINT32                                        TomMinusEdsr;
   UINT8                                         Controller;
@@ -704,12 +704,13 @@ MrcIbecc (
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ControllerCount: %d\n", ControllerCount);
 
     if (ExtInputs->EccCorrectionMode == 1) {
-      MrcGetSetNoScope(MrcData, GsmMccEcDis, WriteCached, &GetSetEnable);
-      MrcGetSetNoScope(MrcData, GsmMccEccCorrectionDisable, WriteCached, &GetSetEnable);
+      // 1 = ZECTED (Zero error correct triple error detect)
+      MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmMccEcDis, WriteCached, &GetSetEnable);
+      MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccEccCorrectionDisable, WriteCached, &GetSetEnable);
     }
 
     if (ExtInputs->EccGranularity32BEn == 1) {
-      MrcGetSetNoScope(MrcData, GsmMccEccGranularity, WriteCached, &GetSetEnable);
+      MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmMccEccGranularity, WriteCached, &GetSetEnable);
     }
 
     if (IbeccOperationMode != IbeccNonProtect) {
@@ -775,10 +776,9 @@ MrcIbecc (
         }
 
         // Do not run the IBECC Init Ranges FSM when:
-        // - The current MC IP stepping is Mobile A0 or Desktop A0
         // - The Boot Mode is bmWarm and the IbeccOperationMode has not changed
         // - The IbeccOperationMode is Bypass Mode (IbeccNonProtect)
-        Outputs->IsIbeccInitRangesRequired = !Inputs->IsMcMbA0 && !Inputs->IsMcDtA0 &&
+        Outputs->IsIbeccInitRangesRequired =
           (Inputs->BootMode != bmWarm || (Inputs->BootMode == bmWarm && IbeccOperationMode != Inputs->LastIbeccOperationMode)) &&
           IbeccOperationMode != IbeccNonProtect;
 
@@ -794,6 +794,22 @@ MrcIbecc (
     } // Controller
   } else {
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IBECC is disabled and/or memory is not symmetrical\n");
+    // Memory is not symmetrical use ByPass Ibecc by IbeccNonProtect mode and Enable it
+    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+      if (MrcControllerExist (MrcData, Controller)) {
+        Offset = OFFSET_CALC_CH (MC0_IBECC_CONTROL_REG, MC1_IBECC_CONTROL_REG, Controller);
+        IbeccControl.Data = MrcReadCR (MrcData, Offset);
+        IbeccControl.Bits.OPERATION_MODE = IbeccNonProtect;
+        MrcWriteCR (MrcData, Offset, IbeccControl.Data);
+
+        Offset = OFFSET_CALC_CH (MC0_IBECC_ACTIVATE_REG, MC1_IBECC_ACTIVATE_REG, Controller);
+        IbeccActivate.Data = MrcReadCR (MrcData, Offset);
+        IbeccActivate.Bits.IBECC_EN = 1;
+        MrcWriteCR (MrcData, Offset, IbeccActivate.Data);
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IbeccActivate IBECC_EN: %d\n", IbeccActivate.Bits.IBECC_EN);
+      }
+    }
+    ExtInputs->Ibecc = FALSE;
   }
 
   return mrcSuccess;
@@ -821,16 +837,14 @@ MrcPollIbeccFSMInit (
   UINT64                                EndTime;
   BOOLEAN                               Done;
   MC0_IBECC_MEMORY_INIT_CONTROL_STRUCT  IbeccMemInit;
-  const MrcInput                        *Inputs;
 
-  Inputs    = &MrcData->Inputs;
   Outputs   = &MrcData->Outputs;
   Debug     = &Outputs->Debug;
   MrcCall   = MrcData->Inputs.Call.Func;
   StartTime = MrcCall->MrcGetCpuTime ();
   Timeout = StartTime + 15000;  // 15 sec timeout
   Done = FALSE;
-  if (Outputs->IsIbeccInitRangesRequired && !Inputs->IsMcMbA0 && !Inputs->IsMcDtA0) {
+  if (Outputs->IsIbeccInitRangesRequired) {
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       if (MrcControllerExist (MrcData, Controller)) {
         Offset = OFFSET_CALC_CH (MC0_IBECC_MEMORY_INIT_CONTROL_REG, MC1_IBECC_MEMORY_INIT_CONTROL_REG, Controller);
@@ -1187,6 +1201,8 @@ MrcSetSafeModeOverrides (
     ExtInputs->TrainingEnables3.RXVREFPERBIT   = 0;
     ExtInputs->TrainingEnables3.WCKPADDCCCAL   = 0;
     ExtInputs->TrainingEnables3.QCLKDCC        = 0;
+    ExtInputs->TrainingEnables3.WCKCLKPREDCC   = 0;
+    ExtInputs->TrainingEnables3.DQSPADDCC      = 0;
     ExtInputs->MarginLimitCheck = 0;
   }
 
@@ -1236,7 +1252,6 @@ MrcSetOverrides (
   MRC_LP5_BANKORG Lp5BankOrg;
   INT32           Temperature;
   MRC_EXT_INPUTS_TYPE *ExtInputs;
-  UINT64          SskpdValue;
 
   Inputs      = &MrcData->Inputs;
   Outputs     = &MrcData->Outputs;
@@ -1248,6 +1263,7 @@ MrcSetOverrides (
   RcompTarget = NULL;
   Outputs->EccSupport = ExtInputs->EccSupport != 0;
   Outputs->VoltageDone = FALSE;
+  Outputs->CaDeselectStress = FALSE;
 
   Outputs->IpModel = MrcIpModelGet (MrcData);
   Lp5BankOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
@@ -1348,7 +1364,7 @@ MrcSetOverrides (
   MrcData->Save.Data.CpgcGlobalStart = TRUE;  // Start all CPGC engines together
 
   // Set Default Preamble
-  Outputs->ReadPreamble = Outputs->IsDdr5 ? tRPRE_ALL_FREQ_DDR5_2tCK : MRC_LP5_tRPRE_TOGGLE_2tWCK;
+  Outputs->ReadPreamble = Outputs->IsDdr5 ? ((Outputs->Frequency <= f4800) ? tRPRE_ALL_FREQ_DDR5_2tCK : tRPRE_ALL_FREQ_DDR5_4tCK) : MRC_LP5_tRPRE_TOGGLE_2tWCK;
 
 
 
@@ -1398,17 +1414,10 @@ MrcSetOverrides (
     Outputs->IsZqDisabled = FALSE;
     // Set Outputs->IsDvfscEnabled based on Inputs->IsDvfscEnable
     Outputs->IsDvfscEnabled = FALSE;
-
-    SskpdValue = MrcWmRegGet(MrcData);
-    if ((SskpdValue & SSKPD_PCU_SKPD_DRAM_NO_EDVFSC_SUPPORT) != 0) {
-      ExtInputs->DvfscEnabled = FALSE;
-      SskpdValue &= ~SSKPD_PCU_SKPD_DRAM_NO_EDVFSC_SUPPORT;
-      MrcWmRegSetBits(MrcData, SskpdValue);
-    }
-
     if ((ExtInputs->DvfscEnabled && (Outputs->Frequency <= f3200)) && ((Outputs->SaGvPoint == 0) || !MrcIsSaGvEnabled (MrcData))) {
       Outputs->IsDvfscEnabled = TRUE;
     }
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IsDvfscEnabled: %u\n", Outputs->IsDvfscEnabled);
 
     //
     // In Cold boot or Fast boot, start with 0.5V until after JEDEC Init. And after training, if applicable.
@@ -1452,6 +1461,14 @@ MrcSetOverrides (
   }
 
   Outputs->IsCmdNormalizationEnabled = FALSE;
+
+  if (ExtInputs->DqLoopbackTest) {
+    ExtInputs->TrainingEnables.ECT       = 0;
+    ExtInputs->TrainingEnables2.DQDQSSWZ = 0;
+    ExtInputs->TrainingEnables.JWRL      = 0;
+    ExtInputs->TrainingEnables3.RXDQSDCC = 0;
+    ExtInputs->ForceSingleRank = 1;
+  }
 
   return Status;
 }
@@ -1672,10 +1689,12 @@ MrcPrintInputParameters (
     "\tNumCL: %u\n"
     "\tLoopCount: %u\n"
     "\tPprTestType: %u\n"
+    "\tDqLoopbackTest: %u\n"
     "\tEnPeriodicComp: %u\n",
     Inputs->NumCL,
     Inputs->LoopCount,
     ExtInputs->PprTestType,
+    ExtInputs->DqLoopbackTest,
     ExtInputs->EnPeriodicComp
     );
 
@@ -1782,11 +1801,13 @@ MrcPrintInputParameters (
     "\tUcPayloadAddress: %llXh\n"
     "\tIsKeepUcssPostMrc: %u\n"
     "\tIsIOTestAddressRandom: %u\n"
+    "\tIsCaDeselectStress: %u\n"
     "\tRxDqVrefPerBit: %u\n"
     "\tFourToggleReadPreamble: %u\n",
     Inputs->UcPayloadAddress,
     Inputs->IsKeepUcssPostMrc,
     Inputs->IsIOTestAddressRandom,
+    Inputs->IsCaDeselectStress,
     Inputs->RxDqVrefPerBit,
     Inputs->FourToggleReadPreamble
     );
@@ -1907,11 +1928,13 @@ MrcPrintInputParameters (
     "\tNonTargetOdtEn: %u\n"
     "\tLpMode: %u\n"
     "\tLpMode4: %u\n"
+    "\tDvfscEnabled: %u\n"
     "\tDvfsqEnabled: %u\n",
     Inputs->DramDqOdt,
     Inputs->NonTargetOdtEn,
     ExtInputs->LpMode,
     ExtInputs->LpMode4,
+    ExtInputs->DvfscEnabled,
     ExtInputs->DvfsqEnabled
     );
 
@@ -2062,9 +2085,9 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s3:\n", "TrainingEnables");
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RXDQSDCC: %u\nDIMMNTODT: %u\nRXVREFPERBIT: %u\n",                            TrainingSteps3->RXDQSDCC,       TrainingSteps3->DIMMNTODT,    TrainingSteps3->RXVREFPERBIT);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR: %u\nLVRAUTOTRIM: %u\nPWRMETER: %u\nOPTIMIZECOMP: %u\n",                 TrainingSteps3->PPR,            TrainingSteps3->LVRAUTOTRIM,  TrainingSteps3->PWRMETER,       TrainingSteps3->OPTIMIZECOMP);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WRTRETRAIN: %u\nDDRPRECOMP: %u\nJEDECRESET: %u\n",                           TrainingSteps3->WRTRETRAIN,     TrainingSteps3->DDRPRECOMP,   TrainingSteps3->JEDECRESET);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WRTRETRAIN: %u\nDDRPRECOMP: %u\nJEDECRESET: %u\nDQSPADDCC: %u\n",            TrainingSteps3->WRTRETRAIN,     TrainingSteps3->DDRPRECOMP,   TrainingSteps3->JEDECRESET,     TrainingSteps3->DQSPADDCC);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ROUNDTRIPMATCH: %u\nTLINECLKCAL: %u\nDCCPISERIALCAL: %u\nPHASECLKCAL: %u\nQCLKDCC: %u\n", TrainingSteps3->ROUNDTRIPMATCH, TrainingSteps3->TLINECLKCAL,  TrainingSteps3->DCCPISERIALCAL, TrainingSteps3->PHASECLKCAL, TrainingSteps3->QCLKDCC);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WCKPADDCCCAL: %u\nEMPHASIS: %u\nDIMMRXOFFSET: %u\nVIEWPINCAL: %u\n",         TrainingSteps3->WCKPADDCCCAL,   TrainingSteps3->EMPHASIS,     TrainingSteps3->DIMMRXOFFSET, TrainingSteps3->VIEWPINCAL);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WCKPADDCCCAL: %u\nEMPHASIS: %u\nDIMMRXOFFSET: %u\nVIEWPINCAL: %u\nWCKCLKPREDCC: %u\n",    TrainingSteps3->WCKPADDCCCAL,   TrainingSteps3->EMPHASIS,     TrainingSteps3->DIMMRXOFFSET,   TrainingSteps3->VIEWPINCAL,  TrainingSteps3->WCKCLKPREDCC);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MCREGOFFSET: %u\n", ExtInputs->MCREGOFFSET);
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DFETap1StepSize: %u\nDFETap2StepSize: %u\n", ExtInputs->DFETap1StepSize, ExtInputs->DFETap2StepSize);

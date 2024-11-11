@@ -38,8 +38,8 @@ DEFINE FLASH_NUM_BLOCKS = 0x171          # The number of blocks               #
 #=============================================================================#
 #=============================================================================#
 SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x0000A000      #
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x000F6000      #
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0005F000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x000F7000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0005E000      #
 SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x00012000      #
 #=============================================================================#
 !if gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable == TRUE

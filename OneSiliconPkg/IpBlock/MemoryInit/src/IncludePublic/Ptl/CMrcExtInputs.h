@@ -245,7 +245,8 @@ typedef struct {
   MrcBoardInputs BoardDetails;      ///< Offset 316 The details of the board that help MRC determine top memory speed
   UINT8   SubChHashInterleaveBit;   ///< Offset 320 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)
   UINT16  SubChHashMask;            ///< Offset 321 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
-  UINT8   Reserved323[15];          ///< Offset 323 Reserved for future use
+  UINT8   ForceCkdBypass;           ///< Offset 323 Force CKD in Bypass Mode if CKD DIMM is detected: 0 = Single PLL mode (Default), 1 = Bypass mode.
+  UINT8   Reserved324[14];          ///< Offset 324 Reserved for future use
 
   // Below policies are used by SV
   UINT32  DprLock                   : 2;   ///< Bit 0-1    Lock DPR register. <b>0: Platform POR </b>; 1: Enable; 2: Disable
@@ -269,7 +270,8 @@ typedef struct {
                                            ///<            PhclkGatePerLpmode[3]  PhClkGating control at lpmode3
                                            ///<            PhclkGatePerLpmode[4]  PhClkGating control at lpmode4
   UINT32  DisableSwitchDfiToMc      : 1;   ///< Bit 24     keep the control of the DFI with the PHY/MPTU or switching it to MC (after cold boot) : <b>1=Enable, 0=Disable(Default)
-  UINT32  SvReservedBits            : 7;   ///< Bit 25-31  Reserved
+  UINT32  DqLoopbackTest            : 1;   ///< Bit 25     Control Dq Loopback test: 0: Disable, 1: Enable
+  UINT32  SvReservedBits            : 6;   ///< Bit 26-31  Reserved
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

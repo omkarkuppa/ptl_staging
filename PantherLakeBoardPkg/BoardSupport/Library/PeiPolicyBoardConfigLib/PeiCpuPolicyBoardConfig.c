@@ -69,10 +69,10 @@ UpdatePeiCpuPolicyBoardConfig (
   Status = GetConfigBlock ((VOID *)SiPreMemPolicyPpi, &gCpuSecurityPreMemConfigGuid, (VOID *) &CpuSecurityPreMemConfig);
   ASSERT_EFI_ERROR(Status);
 
-  #if FixedPcdGetBool(PcdBiosGuardEnable) == 1
+#if FixedPcdGetBool(PcdBiosGuardEnable) == 1
     Status = GetConfigBlock ((VOID *)SiPolicyPpi, &gBiosGuardConfigGuid, (VOID *) &BiosGuardConfig);
     ASSERT_EFI_ERROR(Status);
-  #endif
+#endif
 #endif // FspMode Check
 
   //

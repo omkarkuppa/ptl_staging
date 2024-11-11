@@ -59,4 +59,4 @@
   TelemetryFeaturePkg/HealthDriver/MrcHealthDxe/MrcHealthDxe.inf
   TelemetryFeaturePkg/HealthDriver/CsmeHealthDxe/CsmeHealthDxe.inf
   TelemetryFeaturePkg/DxeTelemetryAcpi/DxeTelemetryAcpi.inf
-
+  TelemetryFeaturePkg/ResetReasonDxe/ResetReasonDxe.inf

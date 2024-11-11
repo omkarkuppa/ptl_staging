@@ -25,10 +25,6 @@
   DEFINE FLASH_BLOCK_SIZE            = 0x00010000
   DEFINE FLASH_NUM_BLOCKS            = 0x00000006
 
-!if gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable == TRUE
-  DEFINE FLASH_BASE                  = 0xFF040000
-!endif
-
 [FD.NonFitPayloads]
 #
 # FD Tokens, BaseAddress, Size, ErasePolarity, BlockSize, and NumBlocks, cannot be

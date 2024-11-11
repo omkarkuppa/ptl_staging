@@ -1239,13 +1239,16 @@ MrcGetLpddr5Trrfpb (
     00 - Only DVFSC mode supported
     01 - Only E-DVFSC (Enhanced DVFSC) supported
     10 - DVFSC and E-DVFSC modes supported
+
   @param[in] MrcData - include all the MRC general data.
-  @retval mrcSuccess: E-DVFSC is supported, mrcColdBootRequired: E-DVFSC not supported
+
+  @retval mrcSuccess if E-DVFSC is supported
+  @retval mrcColdBootRequired if E-DVFSC not supported
 **/
 MrcStatus
-MrcIsDramEdvfscSupported(
-  IN MrcParameters* const MrcData
-);
+MrcIsDramEdvfscSupported (
+  IN MrcParameters *const MrcData
+  );
 
 /**
   Get tFC delay which depends on DDR data rate.
@@ -1258,4 +1261,95 @@ UINT32
 MrcGetLpddr5Tfc (
   MrcFrequency Frequency
 );
+
+/**
+  Calculate DqioDuration based on frequency and memory techmology
+
+  @param[in] MrcData               - Include all MRC global data
+  @param[out] *DqioDuration        - DqioDuration encoded to DDR5 MR45 / LPDDR5 MR37 definition
+  @param[out] *RunTimeClocksBy16   - DqioDuration in units of (tCK * 16)
+
+  @retval mrcSuccess               - if it success
+  @retval mrcUnsupportedTechnology - if the frequency doesn't match
+**/
+MrcStatus
+MrcGetDqioDuration (
+  IN     MrcParameters *const MrcData,
+  OUT    UINT8               *DqioDuration,
+  OUT    UINT16              *RunTimeClocksBy16
+  );
+
+/**
+  This function returns the tPRPDEN value for the specified Memory type.
+
+  @param[in] MrcData  - Include all MRC global data.
+  @param[in] DdrFreq  - The memory frequency.
+
+  @return The tPRPDEN value for the specified configuration.
+**/
+UINT32
+MrcGetTprpden (
+  IN       MrcParameters *const MrcData,
+  IN const MrcFrequency  DdrFreq
+  );
+
+/**
+  This function returns the tBPR2ACT value for the current Memory type.
+
+  @param[in] MrcData  - Include all MRC global data.
+
+  @retval The tBPR2ACT value for the specified configuration.
+**/
+UINT32
+MrcGetTbpr2act (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  This function calculates the LPDDR5 Read Drift
+
+  @param[in]  MrcData - Include all MRC global data.
+
+  @retval DramReadDriftPI - Read Drift in Pi ticks
+**/
+UINT32
+GetLpddr5ReadDrift (
+  IN  MrcParameters* const MrcData
+  );
+
+/**
+  This function returns tCCD_L for LPDDR.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @returns nWR_diff parameter.
+**/
+UINT32
+GetLpddrtCCDL (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  This function returns tCCD_S for LPDDR.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @returns nWR_diff parameter.
+**/
+UINT32
+GetLpddrtCCDS (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  This function calculates DRAM temp/voltage drift
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @retval UINT32 DramWriteDrift in pS
+**/
+UINT32
+MrcGetDramWriteDrift (
+  IN     MrcParameters *const MrcData
+  );
 #endif // _MRC_LPDDR5_H_

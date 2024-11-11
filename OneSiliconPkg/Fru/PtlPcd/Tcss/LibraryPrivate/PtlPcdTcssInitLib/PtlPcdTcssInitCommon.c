@@ -398,6 +398,9 @@ Usb3InstOnCreate (
 
     Usb3Inst->DisableHostController = !!TcssPeiConfig->UsbConfig.ControllerDisable;
   }
+
+  // Callbacks
+  Usb3Inst->cCalculateOcPin = CalculateOcPin;
 }
 
 STATIC

@@ -103,22 +103,24 @@ InstallTprInfoHob (
   TprInfoHob->InstanceArray[0].Tpr1BaseOffset  = MchBar + GET_NOC_EFFECTIVE_ADDRESS(IMR1M8BASE_IMPH_IOC_MCHBAR_REG);
   TprInfoHob->InstanceArray[0].Tpr1LimitOffset = MchBar + GET_NOC_EFFECTIVE_ADDRESS(IMR1M8BASE_IMPH_IOC_MCHBAR_REG) + RELATIVE_MASK_OFFSET;
 
-  // Program GCD Drain Control Data into Hob.
-  if (IGpuIsGtPresent ()) {
-    TprDrainCtrlCount++;
-    TprInfoHob->DrainControlArray.GtDrainControl = DRAIN_CTL_REGISTER_ADDRESS (CPU_SB_SID_GT_PB, CPU_SB_PID_GT_PB, DRAIN_CTL_OFFSET);
-  }
+  if (IGpuIsSupported ()) {
+    // Program GCD Drain Control Data into Hob.
+    if (IGpuIsGtPresent ()) {
+      TprDrainCtrlCount++;
+      TprInfoHob->DrainControlArray.GtDrainControl = DRAIN_CTL_REGISTER_ADDRESS (CPU_SB_SID_GT_PB, CPU_SB_PID_GT_PB, DRAIN_CTL_OFFSET);
+    }
 
-  // Program Media Drain Control Data into Hob.
-  if (IGpuIsMediaPresent ()) {
-    TprDrainCtrlCount++;
-    TprInfoHob->DrainControlArray.MediaDrainControl = DRAIN_CTL_REGISTER_ADDRESS (CPU_SB_SID_COMPUTE_MAIN, CPU_SB_PID_MEDIA_PB, DRAIN_CTL_OFFSET);
-  }
+    // Program Media Drain Control Data into Hob.
+    if (IGpuIsMediaPresent ()) {
+      TprDrainCtrlCount++;
+      TprInfoHob->DrainControlArray.MediaDrainControl = DRAIN_CTL_REGISTER_ADDRESS (CPU_SB_SID_COMPUTE_MAIN, CPU_SB_PID_MEDIA_PB, DRAIN_CTL_OFFSET);
+    }
 
-  // Program Media Drain Control Data into Hob.
-  if (IGpuIsDisplayPresent ()) {
-    TprDrainCtrlCount++;
-    TprInfoHob->DrainControlArray.DisplayDrainControl = DRAIN_CTL_REGISTER_ADDRESS (CPU_SB_SID_COMPUTE_MAIN, CPU_SB_PID_DNI2CFI, DRAIN_CTL_OFFSET);
+    // Program Media Drain Control Data into Hob.
+    if (IGpuIsDisplayPresent ()) {
+      TprDrainCtrlCount++;
+      TprInfoHob->DrainControlArray.DisplayDrainControl = DRAIN_CTL_REGISTER_ADDRESS (CPU_SB_SID_COMPUTE_MAIN, CPU_SB_PID_DNI2CFI, DRAIN_CTL_OFFSET);
+    }
   }
 
   if (IsIaxEnabled ()) {

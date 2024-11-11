@@ -22,6 +22,7 @@
 
 #include "CMrcTypes.h"  // for UINT32 (indirectly)
 #include "MrcDdrCommon.h"  // for MrcZqType
+#include "MrcDdrIoApi.h"
 
 ///
 /// Defines
@@ -75,6 +76,27 @@ typedef enum {
 /// MC Safe Modes
 #define MC_SAFE_RESERVED                    (MRC_BIT0)
 #define MC_SAFE_OPP_SR                      (MRC_BIT1)
+
+/// Structure to store turnaround timings
+typedef struct {
+  UINT32 tRdRdsg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdRddg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrWrsg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrWrdg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdWrsg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdWrdg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrRdsg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrRddg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdRddr[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdRddd[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrWrdr[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrWrdd[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdWrdr[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdWrdd[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrRddr[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrRddd[MAX_CONTROLLER][MAX_CHANNEL];
+} McTurnAroundTimings;
+
 
 ///
 /// Functions
@@ -808,6 +830,46 @@ VOID
 MrcSetBusCmdType (
   IN UINT32         *MrValue,
   IN UINT32         BusValue
+  );
+
+/**
+  Issue PREA command using MPTU, on all populated ranks / channels
+
+  @param[in] MrcData    - Include all MRC global data.
+
+  @retval mrcSuccess    - if command was sent successfully
+  @retval mrcFail       - if command was not sent successfully
+**/
+MrcStatus
+MrcIssuePrechargeAll (
+  IN MrcParameters* const MrcData
+  );
+
+/**
+  This function implements Turn Around Timing Optimization.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - If it succeeds return mrcSuccess.
+**/
+extern
+MrcStatus
+MrcTurnAroundTimingOptimization (
+  IN MrcParameters * const MrcData
+  );
+
+/**
+  This function calculates the Turnaround timings based on training results and DRAM Spec
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] IsMcInit - TRUE is calculating TAT values for Mc Init, FALSE if TAT Optimization
+
+  @retval MrcStatus - If it succeeds return mrcSuccess.
+**/
+MrcStatus
+SetTurnAroundTiming (
+  IN MrcParameters *const MrcData,
+  IN BOOLEAN              IsMcInit
   );
 
 #endif // MRC_MC_API_H_

@@ -223,9 +223,6 @@
   gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable             ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdPowerMeter
 
-  # Retimer Power State GPIO pin
-  gBoardModuleTokenSpaceGuid.VpdPcdRetimerPowerStateGpio          ## CONSUMES
-
   # Lch Gpio pin
   gBoardModuleTokenSpaceGuid.PcdLchIrqGpioPin                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdLchResetGpioPin                   ## CONSUMES

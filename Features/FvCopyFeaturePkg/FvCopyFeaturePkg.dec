@@ -1,0 +1,39 @@
+## @file
+#
+# DEC file for FirmwareVolumeCopyLibPkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+DEC_SPECIFICATION = 0x00010017
+PACKAGE_NAME = FvCopyFeaturePkg
+PACKAGE_VERSION = 0.1
+PACKAGE_GUID = 3DE489EA-82D1-4829-BD0A-6B91B154DE59
+
+[Includes]
+  Include
+
+[Guids]
+gFvCopyPkgTokenSpaceGuid = { 0x061FE057, 0x8C72, 0x4913, { 0x8B, 0x65, 0xB6, 0xB2, 0xD9, 0xEC, 0x15, 0xF7 } }
+
+[PcdsFixedAtBuild]
+  # Main feature PCD to support Fv Copy feature.
+  gFvCopyPkgTokenSpaceGuid.PcdFreeSpaceSkipFvCopyEnable|FALSE|BOOLEAN|0xA0000051
+

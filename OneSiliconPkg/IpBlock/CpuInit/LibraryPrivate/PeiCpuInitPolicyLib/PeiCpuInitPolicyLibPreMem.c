@@ -59,6 +59,7 @@ CpuInitPreMemConfigPrint (
   DEBUG ((DEBUG_INFO, " OcLock = 0x%x\n", CpuInitPreMemConfig->OcLock));
   DEBUG ((DEBUG_INFO, " TsegSize: 0x%x\n", CpuInitPreMemConfig->TsegSize));
   DEBUG ((DEBUG_INFO, " SmmRelocationEnable: 0x%x\n", CpuInitPreMemConfig->SmmRelocationEnable));
+  DEBUG ((DEBUG_INFO, " ReduceXecores: 0x%x\n", CpuInitPreMemConfig->ReduceXecores));
   DEBUG ((DEBUG_INFO, "------------------ CPU_INIT_PREMEM_CONFIG End ------------------\n"));
 }
 
@@ -120,6 +121,7 @@ LoadCpuInitPreMemConfigDefault (
   CpuInitPreMemConfig->CpuRatio                    = MaxNonTurboLimRatio;
   CpuInitPreMemConfig->BootMaxFrequency            = CPU_FEATURE_ENABLE;
   CpuInitPreMemConfig->OcLock                      = CPU_FEATURE_ENABLE;
+  CpuInitPreMemConfig->ReduceXecores               = CPU_FEATURE_ENABLE;
 
   ///
   /// DT/Halo FCLK = 1GHz

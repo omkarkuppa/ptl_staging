@@ -130,13 +130,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_PROFILE mPtlVr[] = {
 //  ICC MAX [1/4A]                                                                     TDC [1/8A, Sec]
 // {{Ia,     IaFvm, IaFvmItrip, Gt,  GtFvm, GtFvmItrip, Sa,  SaFvm, SaFvmItrip, Atom} {IaLimit, IaTimeLimit, IaIrmsLimit, IaIrmsTimeLimit, GtLimit, GtTimeLimit, SaLimit, SaTimeLimit, AtomLimit, AtomTimeLimit, AtomIrmsLimit, AtomIrmsTimeLimit} {IaVoltageLimit, GtVoltageLimit, SaVoltageLimit, AtomVoltageLimit}}
 //
-  {{  57*4,   79*4,   57*4,    38*4,  51*4,   38*4,    38*4, 52*4,     38*4,   26*4}, { 39*8,      1,             0,          28,          22*8,         1,       21*8,       1,         12*8,         1,              0,                0       },  {1520,               1520,           1520,          1520}}, // ProfileVrPtlU15W40
+  {{  66*4,   80*4,   62*4,    38*4,  51*4,   38*4,    38*4, 52*4,     38*4,   29*4}, { 37*8,      1,             0,          28,          22*8,         1,       21*8,       1,         12*8,         1,              0,                0       },  {1520,               1520,           1520,          1520}}, // ProfileVrPtlU15W40
   {{  57*4,   79*4,   57*4,    38*4,  51*4,   38*4,    38*4, 52*4,     38*4,   26*4}, { 39*8,      1,             0,          28,          22*8,         1,       21*8,       1,         12*8,         1,              0,                0       },  {1520,               1520,           1520,          1520}}, // ProfileVrPtlU15W20
-  {{  93*4,  113*4,   93*4,    83*4,  98*4,   83*4,    37*4, 52*4,     37*4,   22*4}, { 51*8,      1,             0,          28,          30*8,         1,       21*8,       1,         11*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH12Xe25W48
+  {{ 120*4,  148*4,  113*4,    83*4,  98*4,   83*4,    37*4, 52*4,     37*4,   30*4}, { 64*8,      1,             0,          28,          30*8,         1,       21*8,       1,         12*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH12Xe25W48
   {{  93*4,  113*4,   93*4,    83*4,  98*4,   83*4,    37*4, 52*4,     37*4,   22*4}, { 51*8,      1,             0,          28,          30*8,         1,       21*8,       1,         11*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH12Xe25W44
   {{  93*4,  113*4,   93*4,    83*4,  98*4,   83*4,    37*4, 52*4,     37*4,   22*4}, { 51*8,      1,             0,          28,          30*8,         1,       21*8,       1,         11*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH12Xe25W28
   {{  93*4,  113*4,   93*4,    83*4,  98*4,   83*4,    37*4, 52*4,     37*4,   22*4}, { 51*8,      1,             0,          28,          30*8,         1,       21*8,       1,         11*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH12Xe25W24
-  {{ 120*4,  149*4,  120*4,    38*4,  51*4,   38*4,    34*4, 52*4,     34*4,   28*4}, { 67*8,      1,             0,          28,          22*8,         1,       21*8,       1,         13*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe25W48
+  {{ 120*4,  148*4,  113*4,    38*4,  51*4,   38*4,    34*4, 52*4,     34*4,   30*4}, { 64*8,      1,             0,          28,          22*8,         1,       21*8,       1,         12*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe25W48
   {{ 120*4,  149*4,  120*4,    38*4,  51*4,   38*4,    34*4, 52*4,     34*4,   28*4}, { 67*8,      1,             0,          28,          22*8,         1,       21*8,       1,         13*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe25W44
   {{ 120*4,  149*4,  120*4,    38*4,  51*4,   38*4,    34*4, 52*4,     34*4,   28*4}, { 67*8,      1,             0,          28,          22*8,         1,       21*8,       1,         13*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe25W28
   {{ 120*4,  149*4,  120*4,    38*4,  51*4,   38*4,    34*4, 52*4,     34*4,   28*4}, { 67*8,      1,             0,          28,          22*8,         1,       21*8,       1,         13*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}, // ProfileVrPtlH4Xe25W24
@@ -181,6 +181,48 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_LOAD_LINE_PROFILE mPtlLoadLine[] = {
 //
 STATIC_ASSERT (ARRAY_SIZE (mPtlLoadLine) == ProfileLoadLinePtlMax, "Load Line Profile count mismatch!");
 
+//
+// VR Profile: WCL
+// Caution: The order of profile enum ID should match the order in profiles array.
+//
+enum {
+  ProfileVrWclU15W10,      //  WCL U      15W 1+0
+  ProfileVrWclU15W20,      //  WCL U      15W 2+0
+  ProfileVrWclMax
+};
+GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_PROFILE mWclVr[] = {
+//
+//  ICC MAX [1/4A]                                                                          TDC [1/8A, Sec]
+// {{Ia,     IaFvm, IaFvmItrip, Gt,  GtFvm, GtFvmItrip, Sa,  SaFvm, SaFvmItrip, Atom} {IaLimit, IaTimeLimit, IaIrmsLimit, IaIrmsTimeLimit, GtLimit, GtTimeLimit, SaLimit, SaTimeLimit, AtomLimit, AtomTimeLimit, AtomIrmsLimit, AtomIrmsTimeLimit} {IaVoltageLimit, GtVoltageLimit, SaVoltageLimit, AtomVoltageLimit}}
+//
+  {{     0,      0,      0,       0,     0,      0,       0,    0,        0,      0}, {    0,      0,             0,          0,             0,         1,          0,       0,            0,         1,              0,                0       },  {1600,               1520,           1520,          1520}},  // ProfileVrWclU15W10
+  {{  40*4,      0,      0,    40*4,     0,      0,    35*4,    0,        0,   25*4}, { 20*8,      1,             0,          0,          18*8,         1,       14*8,       0,         11*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}   // ProfileVrWclU15W20
+
+};
+//
+// Catch the mismatch of number of profile enum IDs and number of profiles.
+// But the order mismatch cannot be caught.
+//
+STATIC_ASSERT (ARRAY_SIZE (mWclVr) == ProfileVrWclMax, "VR Profile count mismatch!");
+
+enum {
+  ProfileLoadLineWclU15W10,      //  WCL U      15W 1+0
+  ProfileLoadLineWclU15W20,      //  WCL U      15W 2+0
+  ProfileLoadLineWclMax
+};
+GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_LOAD_LINE_PROFILE mWclLoadLine[] = {
+//
+//  IaAc   IaDc   GtAc   GtDc   SaAc   SaDc  AtomAc  AtomDc  [1/100mOhm]
+//
+  {   0,     0,      0,    0,     0,     0,     0,      0 }, // ProfileLoadLineWclU15W10
+  { 520,   520,    660,  660,   750,   750,     0,      0 }  // ProfileLoadLineWclU15W20
+};
+//
+// Catch the mismatch of number of profile enum IDs and number of profiles.
+// But the order mismatch cannot be caught.
+//
+STATIC_ASSERT (ARRAY_SIZE (mWclLoadLine) == ProfileLoadLineWclMax, "Load Line Profile count mismatch!");
+
 typedef struct {
   CPU_IDENTIFIER           CpuIdentifier;
 
@@ -203,7 +245,12 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_OVERRIDE_TABLE mCpuVrOverrideTable[] = {
   { EnumPtlH4Xe25Watt48CpuId,  &mPtlVr[ProfileVrPtlH4Xe25W48],  &mPtlLoadLine[ProfileLoadLinePtlH4Xe25W48]  },
   { EnumPtlH4Xe25Watt44CpuId,  &mPtlVr[ProfileVrPtlH4Xe25W44],  &mPtlLoadLine[ProfileLoadLinePtlH4Xe25W44]  },
   { EnumPtlH4Xe25Watt28CpuId,  &mPtlVr[ProfileVrPtlH4Xe25W28],  &mPtlLoadLine[ProfileLoadLinePtlH4Xe25W28]  },
-  { EnumPtlH4Xe25Watt24CpuId,  &mPtlVr[ProfileVrPtlH4Xe25W24],  &mPtlLoadLine[ProfileLoadLinePtlH4Xe25W24]  }
+  { EnumPtlH4Xe25Watt24CpuId,  &mPtlVr[ProfileVrPtlH4Xe25W24],  &mPtlLoadLine[ProfileLoadLinePtlH4Xe25W24]  },
+  //
+  //  WCL U
+  //
+  { EnumWclU15Watt10CpuId,     &mWclVr[ProfileVrWclU15W10],     &mWclLoadLine[ProfileLoadLineWclU15W10] },
+  { EnumWclU15Watt20CpuId,     &mWclVr[ProfileVrWclU15W20],     &mWclLoadLine[ProfileLoadLineWclU15W20] }
 };
 
 /**

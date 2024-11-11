@@ -330,6 +330,8 @@ MrcLpddr5IsDrfmSupported (
     // Checking MR1 reg to see if DRFM supported
     MrcIssueMrr (MrcData, Controller, Channel, Rank, mrMR1, MrrResult);
     Lpddr5MR1.Data8 = MrrResult[0];
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MR1: 0x%02X, MR1.DrfmSupprt: %u\n", Lpddr5MR1.Data8, Lpddr5MR1.Bits.DrfmSupport);
+
     if (!Lpddr5MR1.Bits.DrfmSupport) {
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DRFM is not supported\n");
     } else {
@@ -428,11 +430,13 @@ MrcLpddr5ConfigDrfm (
   MrcInput                      *Inputs;
   MRC_EXT_INPUTS_TYPE           *ExtInputs;
   MrcOutput                     *Outputs;
+  MrcChannelOut                 *ChannelOut;
   MrcDebug                      *Debug;
   UINT32                        Rank;
   UINT32                        RankInDimm;
   UINT8                         MrrResult[MRC_MRR_ARRAY_SIZE];
   LPDDR5_MODE_REGISTER_75_TYPE  Lpddr5MR75;
+  UINT8                         *MrPtr;
 
   Status  = mrcSuccess;
   Outputs = &MrcData->Outputs;
@@ -470,6 +474,24 @@ MrcLpddr5ConfigDrfm (
     if (Status != mrcSuccess) {
       return Status;
     }
+
+    // Update MR75 host struct
+    ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
+    MrPtr = ChannelOut->Dimm[dDIMM0].Rank[Rank % MAX_RANK_IN_DIMM].MR;
+    MrPtr[mrIndexMR75] = Lpddr5MR75.Data8;
+
+    // This routine is called on even Channels only
+    // Send MR75 on the corresponding odd channels and update host structure for them
+    if (MrcChannelExist (MrcData, Controller, Channel + 1)) { 
+      Status = MrcIssueMrw (MrcData, Controller, Channel + 1, Rank, mrMR75, Lpddr5MR75.Data8, TRUE);
+      if (Status != mrcSuccess) {
+        return Status;
+      }
+
+      ChannelOut = &Outputs->Controller[Controller].Channel[Channel + 1];
+      MrPtr = ChannelOut->Dimm[dDIMM0].Rank[Rank % MAX_RANK_IN_DIMM].MR;
+      MrPtr[mrIndexMR75] = Lpddr5MR75.Data8;
+    }
   }
 
   return Status;
@@ -504,6 +526,7 @@ MrcJedecInitLpddr5 (
   MrcChannelOut           *ChannelOut;
   MrcOutput               *Outputs;
   MrcDebug                *Debug;
+  MrcSaveData             *SaveData;
   MrcModeRegister         CurMrAddr;
   UINT32                  Channel;
   UINT32                  Controller;
@@ -524,8 +547,9 @@ MrcJedecInitLpddr5 (
 #ifndef HVM_MODE
     mrMR13,
 #endif
-    mrMR20, mrMR17, mrMR25, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15,
-    mrMR18, mrMR3,  mrMR1,  mrMR2,  mrMR19, mrMR21, mrMR28, mrMR30, mrMR69, mrMR37, mrMR41, mrMR24, mrMR58
+    mrMR20, mrMR17, mrMR25, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15, mrMR18, 
+    mrMR3,  mrMR1,  mrMR2,  mrMR19, mrMR21, mrMR28, mrMR30,  mrMR69, mrMR37, mrMR41, 
+    mrMR24, mrMR58, mrMR75
   };
 
   // Due to the 6400 boundary crossing rule in LP5 JEDEC spec, MRs cannot be updated from the current FSP.
@@ -540,11 +564,12 @@ MrcJedecInitLpddr5 (
   //  4. Send MR's to FSP1 (from FSP0)
   //  5. Switch FSP-OP to 1 (keep FSP-WR = 1, VRCG = 1) - this is done after this routine, in MrcLpddrSwitchToHigh()
 
-  Outputs = &MrcData->Outputs;
-  Debug   = &Outputs->Debug;
-  Inputs  = &MrcData->Inputs;
-  MrcCall = Inputs->Call.Func;
-  Status  = mrcSuccess;
+  Outputs  = &MrcData->Outputs;
+  Debug    = &Outputs->Debug;
+  Inputs   = &MrcData->Inputs;
+  SaveData = &MrcData->Save.Data;
+  MrcCall  = Inputs->Call.Func;
+  Status   = mrcSuccess;
 
   // In case this routine is used for Fast flow, need to enable VRCG first (as it may not be set in MR16 in the host struct)
   // In Cold flow, VRCG is set inside InitMrwLpddr5()
@@ -568,6 +593,11 @@ MrcJedecInitLpddr5 (
           // @todo - Support to switching over to FSM for frequency switch?
           for (Index = 0, OutIdx = 0; Index < ARRAY_COUNT (MrAddress); Index++) {
             CurMrAddr = MrAddress[Index];
+
+            if ((CurMrAddr == mrMR75) && (!SaveData->IsDrfmSupported)) {  // Do not program MR75 if DRFM is not supported
+              continue;
+            }
+
             if ((CurMrAddr == mrMR12b) && (!Outputs->LpByteMode)) {
               continue;
             }

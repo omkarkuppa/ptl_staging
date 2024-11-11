@@ -29,6 +29,7 @@ static const UINT8 BlockPartitionMaxRange[MaxPartition] = {
   [PartitionData]       = MRC_DATA_MOBILE_NUM * MRC_DATA_CH_NUM,
   [PartitionCcc]        = MRC_CCC_NUM,
   [PartitionCccShared]  = MRC_CCC_SHARED_NUM,
+  [PartitionPg]         = MRC_PG_NUM,
 };
 
 /**

@@ -1,5 +1,5 @@
 /** @file
-    This file contains definitions required for creation of TDX Data HOB.
+  This file contains definitions required for creation of TDX Data HOB.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -19,8 +19,8 @@
     @par Specification Reference:
 **/
 
-#ifndef _TDX_DATA_HOB_H_
-#define _TDX_DATA_HOB_H_
+#ifndef _TDX_DATA_HOB_PRIVATE_H_
+#define _TDX_DATA_HOB_PRIVATE_H_
 
 #include <Base.h>
 #include <Library/PeiTdxLib.h>
@@ -64,4 +64,4 @@ TdxHobInit (
   OUT TDX_DATA_HOB **TdxDataHobPtr
   );
 
-#endif // _TDX_DATA_HOB_H_
+#endif // _TDX_DATA_HOB_PRIVATE_H_

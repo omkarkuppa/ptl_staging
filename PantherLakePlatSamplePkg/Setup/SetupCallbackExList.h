@@ -61,9 +61,7 @@
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_CpuRatioLimit, CpuFormCallBackFunction),                                              \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_DTBT_SUPPORT,DTbtFormCallBackFunction),                                               \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_DTBT_CONTROLLER0_HOSTROUTER,DTbtFormCallBackFunction),                                \
-  ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_DTBT_CONTROLLER0,DTbtFormCallBackFunction),                                           \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_DTBT_CONTROLLER1_HOSTROUTER,DTbtFormCallBackFunction),                                \
-  ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_DTBT_CONTROLLER1, DTbtFormCallBackFunction),                                          \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_ITBT_SUPPORT, ITbtFormCallBackFunction),                                              \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_LOW_POWER_S0_IDLE, LowPowerS0IdleEnableCallback),                                     \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, MNG_STATE_KEY, MeFormCallBackFunction),                                                   \
@@ -113,4 +111,5 @@
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_SA_VMD_GLOBAL_MAPPING, VmdCallback),                                                  \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, PCH_HDAUDIO_DSP_FEATURES_FORM_ACTION_KEY, HdaDspCallBack),                                \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, PCH_HDAUDIO_DBT_OFFLOAD_ACTION_KEY, HdaDspCallBack),                                      \
+  ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, PCH_HDAUDIO_BT_SIDEBAND_ACTION_KEY, HdaDspCallBack),                                      \
   EVAL(OC_SETUP_ITEM_CALLBACK_LIST)

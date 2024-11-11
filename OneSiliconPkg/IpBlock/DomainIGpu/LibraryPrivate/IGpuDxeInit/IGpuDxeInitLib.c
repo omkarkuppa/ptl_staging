@@ -33,7 +33,7 @@
 #include <Library/AslUpdateLib.h>
 #include <Library/IGpuInfoLib.h>
 
-GLOBAL_REMOVE_IF_UNREFERENCED IGPU_NVS_AREA_PROTOCOL         mIGpuNvsAreaProtocol;
+GLOBAL_REMOVE_IF_UNREFERENCED IGPU_NVS_AREA_PROTOCOL  mIGpuNvsAreaProtocol;
 
 /**
   Update Igd NVS Area
@@ -41,17 +41,17 @@ GLOBAL_REMOVE_IF_UNREFERENCED IGPU_NVS_AREA_PROTOCOL         mIGpuNvsAreaProtoco
 **/
 VOID
 IGpuUpdateNvsArea (
-  IN IGPU_POLICY_PROTOCOL      *IGpuPolicy
+  IN IGPU_POLICY_PROTOCOL  *IGpuPolicy
   )
 {
-  EFI_STATUS                      Status;
-  IGPU_DXE_CONFIG                 *IGpuDxeConfig;
-  IGPU_NVS_AREA_PROTOCOL          *IGpuNvsAreaProtocol;
-  BOOLEAN                         IgdDevenStatus;
+  EFI_STATUS              Status;
+  IGPU_DXE_CONFIG         *IGpuDxeConfig;
+  IGPU_NVS_AREA_PROTOCOL  *IGpuNvsAreaProtocol;
+  BOOLEAN                 IgdDevenStatus;
 
-  Status      = EFI_SUCCESS;
+  Status = EFI_SUCCESS;
 
-  Status = GetConfigBlock ((VOID *) IGpuPolicy, &gIGpuDxeConfigGuid, (VOID *)&IGpuDxeConfig);
+  Status = GetConfigBlock ((VOID *)IGpuPolicy, &gIGpuDxeConfigGuid, (VOID *)&IGpuDxeConfig);
   ASSERT_EFI_ERROR (Status);
   ///
   /// Update IGD SA Global NVS
@@ -60,11 +60,10 @@ IGpuUpdateNvsArea (
   ///
   ///  Locate the IGPU NVS Protocol.
   ///
-  Status = gBS->LocateProtocol (&gIGpuNvsAreaProtocolGuid, NULL, (VOID **) &IGpuNvsAreaProtocol);
+  Status = gBS->LocateProtocol (&gIGpuNvsAreaProtocolGuid, NULL, (VOID **)&IGpuNvsAreaProtocol);
 
   if (Status == EFI_SUCCESS) {
-
-    IGpuNvsAreaProtocol->Area->AlsEnable                    = IGpuDxeConfig->AlsEnable;
+    IGpuNvsAreaProtocol->Area->AlsEnable = IGpuDxeConfig->AlsEnable;
     ///
     /// Initialize IGD state by checking if IGD Device 2 Function 0 is enabled in the chipset
     ///
@@ -74,8 +73,9 @@ IGpuUpdateNvsArea (
     } else {
       IGpuNvsAreaProtocol->Area->IgdState = 0;
     }
-    IGpuNvsAreaProtocol->Area->BrightnessPercentage         = 100;
-    IGpuNvsAreaProtocol->Area->EdpValid                     = 0;
+
+    IGpuNvsAreaProtocol->Area->BrightnessPercentage = 100;
+    IGpuNvsAreaProtocol->Area->EdpValid             = 0;
   } else {
     DEBUG ((DEBUG_INFO, " Failed to locate IGpuNvsAreaProtocol\n"));
   }
@@ -92,24 +92,24 @@ IGpuPatchNvsAreaAddress (
   VOID
   )
 {
-  EFI_STATUS                            Status;
-  UINT32                                Address;
-  UINT16                                Length;
-  IGPU_NVS_AREA_PROTOCOL               *IGpuNvsAreaProtocol;
+  EFI_STATUS              Status;
+  UINT32                  Address;
+  UINT16                  Length;
+  IGPU_NVS_AREA_PROTOCOL  *IGpuNvsAreaProtocol;
 
   ///
   ///  Locate the IGPU NVS Protocol.
   ///
-  Status = gBS->LocateProtocol (&gIGpuNvsAreaProtocolGuid, NULL, (VOID **) &IGpuNvsAreaProtocol);
+  Status = gBS->LocateProtocol (&gIGpuNvsAreaProtocolGuid, NULL, (VOID **)&IGpuNvsAreaProtocol);
   ASSERT_EFI_ERROR (Status);
 
-  Address = (UINT32) (UINTN) IGpuNvsAreaProtocol->Area;
-  Length  = (UINT16) sizeof (IGPU_NVS_AREA);
+  Address = (UINT32)(UINTN)IGpuNvsAreaProtocol->Area;
+  Length  = (UINT16)sizeof (IGPU_NVS_AREA);
   DEBUG ((DEBUG_INFO, "Patch IGPU NvsAreaAddress: IGPU NVS Address %x Length %x\n", Address, Length));
 
-  Status  = UpdateNameAslCode (SIGNATURE_32 ('I','G','N','B'), &Address, sizeof (Address));
+  Status = UpdateNameAslCode (SIGNATURE_32 ('I', 'G', 'N', 'B'), &Address, sizeof (Address));
   ASSERT_EFI_ERROR (Status);
-  Status  = UpdateNameAslCode (SIGNATURE_32 ('I','G','N','L'), &Length, sizeof (Length));
+  Status = UpdateNameAslCode (SIGNATURE_32 ('I', 'G', 'N', 'L'), &Length, sizeof (Length));
   ASSERT_EFI_ERROR (Status);
 
   return Status;
@@ -120,16 +120,16 @@ IGpuPatchNvsAreaAddress (
 **/
 VOID
 IGpuInstallNvsProtocol (
-  IN EFI_HANDLE         ImageHandle
+  IN EFI_HANDLE  ImageHandle
   )
 {
-  EFI_STATUS                Status;
+  EFI_STATUS  Status;
 
   DEBUG ((DEBUG_INFO, "Install IGPU NVS protocol\n"));
-  Status = (gBS->AllocatePool) (EfiACPIMemoryNVS, sizeof (IGPU_NVS_AREA), (VOID **) &mIGpuNvsAreaProtocol.Area);
+  Status = (gBS->AllocatePool)(EfiACPIMemoryNVS, sizeof (IGPU_NVS_AREA), (VOID **)&mIGpuNvsAreaProtocol.Area);
   ASSERT_EFI_ERROR (Status);
 
-  ZeroMem ((VOID *) mIGpuNvsAreaProtocol.Area, sizeof (IGPU_NVS_AREA));
+  ZeroMem ((VOID *)mIGpuNvsAreaProtocol.Area, sizeof (IGPU_NVS_AREA));
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &ImageHandle,
                   &gIGpuNvsAreaProtocolGuid,
@@ -137,7 +137,6 @@ IGpuInstallNvsProtocol (
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);
-
 }
 
 /**
@@ -150,12 +149,12 @@ IGpuInitOnPciEnumComplete (
   VOID
   )
 {
-  CHAR16                       *DriverVersion;
-  UINTN                        Index;
-  EFI_STATUS                   Status;
-  IGPU_DXE_CONFIG              *IGpuDxeConfig;
-  IGPU_POLICY_PROTOCOL         *IGpuPolicy;
-  GOP_COMPONENT_NAME2_PROTOCOL *GopComponentName2Protocol;
+  CHAR16                        *DriverVersion;
+  UINTN                         Index;
+  EFI_STATUS                    Status;
+  IGPU_DXE_CONFIG               *IGpuDxeConfig;
+  IGPU_POLICY_PROTOCOL          *IGpuPolicy;
+  GOP_COMPONENT_NAME2_PROTOCOL  *GopComponentName2Protocol;
 
   GopComponentName2Protocol = NULL;
 
@@ -171,12 +170,11 @@ IGpuInitOnPciEnumComplete (
   /// Get the platform setup policy.
   ///
   DriverVersion = NULL;
-  Status = gBS->LocateProtocol (&gIGpuPolicyProtocolGuid, NULL, (VOID **) &IGpuPolicy);
+  Status        = gBS->LocateProtocol (&gIGpuPolicyProtocolGuid, NULL, (VOID **)&IGpuPolicy);
   ASSERT_EFI_ERROR (Status);
 
-  Status = GetConfigBlock ((VOID *) IGpuPolicy, &gIGpuDxeConfigGuid, (VOID *)&IGpuDxeConfig);
+  Status = GetConfigBlock ((VOID *)IGpuPolicy, &gIGpuDxeConfigGuid, (VOID *)&IGpuDxeConfig);
   ASSERT_EFI_ERROR (Status);
-
 
   Status = gBS->LocateProtocol (&gGopComponentName2ProtocolGuid, NULL, (VOID **)&GopComponentName2Protocol);
   if (!EFI_ERROR (Status)) {
@@ -188,6 +186,7 @@ IGpuInitOnPciEnumComplete (
     if (!EFI_ERROR (Status)) {
       for (Index = 0; (DriverVersion[Index] != '\0'); Index++) {
       }
+
       Index = (Index+1)*2;
       CopyMem (IGpuDxeConfig->GopVersion, DriverVersion, Index);
     }
@@ -195,7 +194,6 @@ IGpuInitOnPciEnumComplete (
 
   return EFI_SUCCESS;
 }
-
 
 /**
   Initialize GT ACPI tables
@@ -206,7 +204,7 @@ IGpuInitOnPciEnumComplete (
 **/
 EFI_STATUS
 IGpuDxeInit (
-  IN IGPU_POLICY_PROTOCOL      *IGpuPolicy
+  IN IGPU_POLICY_PROTOCOL  *IGpuPolicy
   )
 {
   ///
@@ -226,84 +224,91 @@ IGpuSaveBarForS3 (
   VOID
   )
 {
-  UINT64      McD2BaseAddress;
-  UINT32      Data32;
+  UINT64  McD2BaseAddress;
+  UINT32  Data32;
+
   McD2BaseAddress = PCI_SEGMENT_LIB_ADDRESS (SA_SEG_NUM, IGD_BUS_NUM, IGD_DEV_NUM, IGD_FUN_NUM, 0);
-  Data32 = (PciSegmentRead32(McD2BaseAddress + IGpuGetGttMmAdrOffset())) & 0xFFFFFFF0;
+  Data32          = (PciSegmentRead32 (McD2BaseAddress + IGpuGetGttMmAdrOffset ())) & 0xFFFFFFF0;
   S3BootScriptSaveMemWrite (
     S3BootScriptWidthUint32,
     PcdGet64 (PcdSiPciExpressBaseAddress) + PCI_SEGMENT_LIB_ADDRESS (
-      SA_SEG_NUM,
-      IGD_BUS_NUM,
-      IGD_DEV_NUM,
-      IGD_FUN_NUM,
-      IGpuGetGttMmAdrOffset()),
+                                              SA_SEG_NUM,
+                                              IGD_BUS_NUM,
+                                              IGD_DEV_NUM,
+                                              IGD_FUN_NUM,
+                                              IGpuGetGttMmAdrOffset ()
+                                              ),
     1,
     &Data32
-  );
+    );
 
-  Data32 = PciSegmentRead32 (McD2BaseAddress + IGpuGetGttMmAdrOffset() + 4);
+  Data32 = PciSegmentRead32 (McD2BaseAddress + IGpuGetGttMmAdrOffset () + 4);
   S3BootScriptSaveMemWrite (
     S3BootScriptWidthUint32,
     PcdGet64 (PcdSiPciExpressBaseAddress) + PCI_SEGMENT_LIB_ADDRESS (
-      SA_SEG_NUM,
-      IGD_BUS_NUM,
-      IGD_DEV_NUM,
-      IGD_FUN_NUM,
-      IGpuGetGttMmAdrOffset() + 4),
+                                              SA_SEG_NUM,
+                                              IGD_BUS_NUM,
+                                              IGD_DEV_NUM,
+                                              IGD_FUN_NUM,
+                                              IGpuGetGttMmAdrOffset () + 4
+                                              ),
     1,
     &Data32
-  );
+    );
 
-  Data32 = PciSegmentRead32 (McD2BaseAddress + IGpuGetLMemBarOffset());
+  Data32 = PciSegmentRead32 (McD2BaseAddress + IGpuGetLMemBarOffset ());
   S3BootScriptSaveMemWrite (
     S3BootScriptWidthUint32,
     PcdGet64 (PcdSiPciExpressBaseAddress) + PCI_SEGMENT_LIB_ADDRESS (
-      SA_SEG_NUM,
-      IGD_BUS_NUM,
-      IGD_DEV_NUM,
-      IGD_FUN_NUM,
-      IGpuGetLMemBarOffset()),
+                                              SA_SEG_NUM,
+                                              IGD_BUS_NUM,
+                                              IGD_DEV_NUM,
+                                              IGD_FUN_NUM,
+                                              IGpuGetLMemBarOffset ()
+                                              ),
     1,
     &Data32
-  );
+    );
 
-  Data32 = PciSegmentRead32 (McD2BaseAddress + IGpuGetLMemBarOffset() + 4);
+  Data32 = PciSegmentRead32 (McD2BaseAddress + IGpuGetLMemBarOffset () + 4);
   S3BootScriptSaveMemWrite (
     S3BootScriptWidthUint32,
     PcdGet64 (PcdSiPciExpressBaseAddress) + PCI_SEGMENT_LIB_ADDRESS (
-      SA_SEG_NUM,
-      IGD_BUS_NUM,
-      IGD_DEV_NUM,
-      IGD_FUN_NUM,
-      IGpuGetLMemBarOffset() + 4),
+                                              SA_SEG_NUM,
+                                              IGD_BUS_NUM,
+                                              IGD_DEV_NUM,
+                                              IGD_FUN_NUM,
+                                              IGpuGetLMemBarOffset () + 4
+                                              ),
     1,
     &Data32
-  );
+    );
 
   Data32 = PciSegmentRead32 (McD2BaseAddress + R_SA_IGD_IOBAR);
   S3BootScriptSaveMemWrite (
     S3BootScriptWidthUint32,
-    PcdGet64(PcdSiPciExpressBaseAddress) + PCI_SEGMENT_LIB_ADDRESS (
-      SA_SEG_NUM,
-      IGD_BUS_NUM,
-      IGD_DEV_NUM,
-      IGD_FUN_NUM,
-      R_SA_IGD_IOBAR),
+    PcdGet64 (PcdSiPciExpressBaseAddress) + PCI_SEGMENT_LIB_ADDRESS (
+                                              SA_SEG_NUM,
+                                              IGD_BUS_NUM,
+                                              IGD_DEV_NUM,
+                                              IGD_FUN_NUM,
+                                              R_SA_IGD_IOBAR
+                                              ),
     1,
     &Data32
-  );
+    );
 
   Data32 = PciSegmentRead32 (McD2BaseAddress + PCI_COMMAND_OFFSET);
   S3BootScriptSaveMemWrite (
     S3BootScriptWidthUint32,
     PcdGet64 (PcdSiPciExpressBaseAddress) + PCI_SEGMENT_LIB_ADDRESS (
-      SA_SEG_NUM,
-      IGD_BUS_NUM,
-      IGD_DEV_NUM,
-      IGD_FUN_NUM,
-      PCI_COMMAND_OFFSET),
+                                              SA_SEG_NUM,
+                                              IGD_BUS_NUM,
+                                              IGD_DEV_NUM,
+                                              IGD_FUN_NUM,
+                                              PCI_COMMAND_OFFSET
+                                              ),
     1,
     &Data32
-  );
+    );
 }

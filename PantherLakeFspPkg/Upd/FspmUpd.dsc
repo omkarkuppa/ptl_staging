@@ -101,22 +101,6 @@
   # Pch Pre-Mem Block End
   #
 
-  #
-  # FspV Pre-Mem Test Config Start
-  #
-
-  # !BSF NAME:{FSP TestId} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
-  # !BSF HELP:{FSP TestId}
-  gPlatformFspPkgTokenSpaceGuid.FspvTestId    | * | 0x04 | 0x00
-
-  # !BSF NAME:{FSPS Validation} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
-  # !BSF HELP:{Point to FSPS Validation configuration structure}
-  gPlatformFspPkgTokenSpaceGuid.FspsValidationPtr                      | * | 0x08 | 0x00
-
-  #
-  # FspV Pre-Mem Test Config End
-  #
-
   ## PCH_DCI_PREMEM_CONFIG Start
 
   # !BSF NAME:{DCI Enable} TYPE:{Combo} OPTION:{$EN_DIS}
@@ -597,7 +581,7 @@
   # !BSF NAME:{DQS Rise/Fall}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable DQS Rise/Fall}
-  gPlatformFspPkgTokenSpaceGuid.DQSRF                    | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.DQSRF                    | * | 0x01 | 0x01
 
   # !BSF NAME:{DQS Rise/Fall}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -642,7 +626,7 @@
   # !BSF NAME:{DQ/DQS Swizzle Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable DQ/DQS Swizzle Training}
-  gPlatformFspPkgTokenSpaceGuid.DCCLP5READDCA                 | * | 0x04 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.DCCLP5READDCA                 | * | 0x04 | 0x01
 
   # !BSF NAME:{Functional Duty Cycle Correction for Data DQ}
   # !BSF TYPE:{Combo} OPTION:{0:Disable, 1:Enable}
@@ -654,14 +638,14 @@
   # !BSF HELP:{Select if SubChannel Hash setting values will be taken from input parameters or automatically taken from POR values depending on DRAM type detected. NOTE: ONLY if Memory interleaved Mode}
   gPlatformFspPkgTokenSpaceGuid.SubChHashOverride          | * | 0x01 | 0x00
 
-  # !BSF NAME:{Voltage Readout}
+  # !BSF NAME:{DDR5 Auto Precharge Enable}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enables/Disable Voltage Readout for VCCClk and PBias}
+  # !BSF HELP:{Auto Precharge Enable for DDR5: <b>O=Auto</b>, 1=Disable, 2=Enable}
   gPlatformFspPkgTokenSpaceGuid.Ddr5AutoPrechargeEnable               | * | 0x01 | 0x00
 
-  # !BSF NAME:{Voltage Readout}
+  # !BSF NAME:{ Lp5 SplitACT Enable}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enables/Disable Voltage Readout for VCCClk and PBias}
+  # !BSF HELP:{SplitACT enable for LP5: <b>0=Auto</b>, 1=Disable, 2=Enable}
   gPlatformFspPkgTokenSpaceGuid.Lp5SplitACTEnable               | * | 0x01 | 0x00
 
   # !BSF NAME:{CCC Half Frequency}
@@ -757,8 +741,8 @@
   # !BSF HELP:{PPR repair BankGroup: User chooses to force repair specifc address }
   gPlatformFspPkgTokenSpaceGuid.PprRepairBankGroup            | * | 0x01 | 0x0
 
-  # !BSF NAME:{PPR Repair BankGroup}  TYPE:{EditNum, HEX, (0x00,0xFF)}
-  # !BSF HELP:{PPR repair BankGroup: User chooses to force repair specifc address }
+  # !BSF NAME:{tCCD_L_WR}  TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Number of tCK cycles for the channel DIMM's minimum Write-to-Write delay for same bank groups }
   gPlatformFspPkgTokenSpaceGuid.tCCD_L_WR            | * | 0x02 | 0x0
 
   # !BSF NAME:{LVR Auto Trim}
@@ -799,21 +783,21 @@
   # !BSF NAME:{DCC Tline Serializer Calibration}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/disable DCC PI Serializer Calibratio}
-  gPlatformFspPkgTokenSpaceGuid.DCCPISERIALCAL              | * | 0x04 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.DCCPISERIALCAL              | * | 0x04 | 0x1
 
-  # !BSF NAME:{DCC Phase Clk Calibration}
+  # !BSF NAME:{RDDQODTT}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable/disable DCC Phase Clk Calibration}
-  gPlatformFspPkgTokenSpaceGuid.RDDQODTT              | * | 0x04 | 0x01
+  # !BSF HELP:{Enable/disable Read DQ ODT Training}
+  gPlatformFspPkgTokenSpaceGuid.RDDQODTT              | * | 0x04 | 0x00
 
   # !BSF NAME:{RDCTLET}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/disable Read CTLE Training}
   gPlatformFspPkgTokenSpaceGuid.RDCTLET              | * | 0x04 | 0x00
 
-  # !BSF NAME:{EMPHASIS}
+  # !BSF NAME:{RxVref Pre EMPHASIS Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable/disable DCC Tline Clk Calibration}
+  # !BSF HELP:{Enable/Disable Pre EMPHASIS Training}
   gPlatformFspPkgTokenSpaceGuid.EMPHASIS              | * | 0x01 | 0x01
 
   # !BSF NAME:{tRFC}
@@ -864,7 +848,7 @@
   # !BSF NAME:{DIMM DFE Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable DIMM DFE Training}
-  gPlatformFspPkgTokenSpaceGuid.WRTDIMMDFE                  | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.WRTDIMMDFE                  | * | 0x01 | 0x00
 
   # !BSF NAME:{DDR5 ODT Timing Config}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -909,16 +893,16 @@
   # !BSF NAME:{Early Write Time Centering 2D}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Early Write Time Centering 2D}
-  gPlatformFspPkgTokenSpaceGuid.EWRTC2D                  | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.EWRTC2D                  | * | 0x01 | 0x01
 
   # !BSF NAME:{Early Read Time Centering 2D}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Early Read Time Centering 2D}
-  gPlatformFspPkgTokenSpaceGuid.ERDTC2D                  | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.ERDTC2D                  | * | 0x01 | 0x01
 
-  # !BSF NAME:{Early Read Time Centering 2D}
+   # !BSF NAME:{Unmatched Write Time Centering 1D}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enables/Disable Early Read Time Centering 2D}
+  # !BSF HELP:{Enable/Disable Unmatched Write Time Centering 1D}
   gPlatformFspPkgTokenSpaceGuid.UNMATCHEDWRTC1D                  | * | 0x01 | 0x01
 
   # !BSF NAME:{Write Timing Centering 1D}
@@ -939,7 +923,7 @@
   # !BSF NAME:{Dimm ODT Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Dimm ODT Training}
-  gPlatformFspPkgTokenSpaceGuid.DIMMODTT                 | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.DIMMODTT                 | * | 0x01 | 0x01
 
   # !BSF NAME:{DIMM RON Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -949,12 +933,12 @@
   # !BSF NAME:{Write Drive Strength/Equalization 2D}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Write Drive Strength/Equalization 2D}
-  gPlatformFspPkgTokenSpaceGuid.WRDSEQT                  | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.WRDSEQT                  | * | 0x01 | 0x00
 
   # !BSF NAME:{Read Equalization Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Read Equalization Training}
-  gPlatformFspPkgTokenSpaceGuid.RDEQT                    | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.RDEQT                    | * | 0x01 | 0x01
 
   # !BSF NAME:{Write Timing Centering 2D}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -979,12 +963,12 @@
   # !BSF NAME:{Command Voltage Centering}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Command Voltage Centering}
-  gPlatformFspPkgTokenSpaceGuid.CMDVC                    | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.CMDVC                    | * | 0x01 | 0x00
 
   # !BSF NAME:{Late Command Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Late Command Training}
-  gPlatformFspPkgTokenSpaceGuid.LCT                      | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.LCT                      | * | 0x01 | 0x00
 
   # !BSF NAME:{Round Trip Latency Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -1119,7 +1103,7 @@
   # !BSF NAME:{Wck Pad DCC Calibration}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/disable Wck Pad DCC Calibration}
-  gPlatformFspPkgTokenSpaceGuid.WCKPADDCCCAL             | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.WCKPADDCCCAL             | * | 0x01 | 0x01
 
   # !BSF NAME:{DCC PI Code LUT Calibration}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -1134,12 +1118,12 @@
   # !BSF NAME:{TxDqTCO Comp Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable TxDqTCO Comp Training}
-  gPlatformFspPkgTokenSpaceGuid.TXTCO                   | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.TXTCO                   | * | 0x01 | 0x00
 
   # !BSF NAME:{ClkTCO Comp Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable ClkTCO Comp Training}
-  gPlatformFspPkgTokenSpaceGuid.CLKTCO                  | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.CLKTCO                  | * | 0x01 | 0x00
 
   # !BSF NAME:{CMD Slew Rate Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -1179,17 +1163,17 @@
   # !BSF NAME:{VccClk FF Offset Correction}
   # !BSF TYPE:{Combo} OPTION:{0:Disable, 1:Enable}
   # !BSF HELP:{Enable/Disable VccClk FF Offset Correction}
-  gPlatformFspPkgTokenSpaceGuid.VCCCLKFF                 | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.VCCCLKFF                 | * | 0x01 | 0x00
 
   # !BSF NAME:{Data PI Linearity Calibration}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable {Data PI Linearity Calibration}
-  gPlatformFspPkgTokenSpaceGuid.DATAPILIN              | * | 0x04 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.DATAPILIN              | * | 0x04 | 0x00
 
   # !BSF NAME:{Ddr5 Rx Cross-Talk Cancellation}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable {Ddr5 Rx Cross-Talk Cancellation}
-  gPlatformFspPkgTokenSpaceGuid.DDR5XTALK              | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.DDR5XTALK              | * | 0x01 | 0x00
 
   # !BSF PAGE:{MRC}
   # !BSF NAME:{Retrain On Working Channel}
@@ -1217,9 +1201,9 @@
   # !BSF HELP:{Set the BIT(s) to be included in the XOR function. NOTE BIT mask corresponds to BITS [19:6] Default is 0x30CC}
   gPlatformFspPkgTokenSpaceGuid.ChHashMask              | * | 0x02 | 0x830
 
-  # !BSF NAME:{Ch Hash Mask}
+  # !BSF NAME:{CccPinsInterleaved}
   # !BSF TYPE:{EditNum, HEX, (0x0000, 0x3FFF)}
-  # !BSF HELP:{Set the BIT(s) to be included in the XOR function. NOTE BIT mask corresponds to BITS [19:6] Default is 0x30CC}
+  # !BSF HELP:{Interleaving mode of CCC pins which depends on board routing: <b>0=Disable</b>, 1=Enable}
   gPlatformFspPkgTokenSpaceGuid.CccPinsInterleaved              | * | 0x02 | 0x00
 
   # !BSF NAME:{Throttler CKEMin Timer}
@@ -1363,9 +1347,9 @@
   # !BSF HELP:{Throttler CKE min timer for LPDDR: 0=Minimal, 0xFF=Maximum, <b>0x00=Default</b>}
   gPlatformFspPkgTokenSpaceGuid.ThrtCkeMinTmrLpddr      | * | 0x01 | 0x00
 
-  # !BSF NAME:{VccClk Voltage Override}
+  # !BSF NAME:{Margin limit check L2}
   # !BSF TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
-  # !BSF HELP:{# is multiple of 1mV where 0 means Auto.}
+  # !BSF HELP:{Margin limit check L2 threshold: <b>100=Default</b>}
   gPlatformFspPkgTokenSpaceGuid.MarginLimitL2      | * | 0x02 | 0x64
 
   # !BSF NAME:{Extended Bank Hashing}
@@ -1373,10 +1357,10 @@
   # !BSF HELP:{Eanble/Disable ExtendedBankHashing}
   gPlatformFspPkgTokenSpaceGuid.ExtendedBankHashing        | * | 0x01 | 0x01
 
-  # !BSF NAME:{Extended Bank Hashing}
-  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Eanble/Disable ExtendedBankHashing}
-  gPlatformFspPkgTokenSpaceGuid.DrfmBrc        | * | 0x01 | 0x01
+  # !BSF NAME:{DRFM Blast Radius Configuration}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0xFF)}}
+  # !BSF HELP:{Row Hammer DRFM Blast Radius Configuration determines number of victim rows around aggressor row targeted to send the DRFM sequence to: <b>0=BlastRadius 2</b>, 1=BlastRadius 3, 2=BlastRadius 4}
+  gPlatformFspPkgTokenSpaceGuid.DrfmBrc        | * | 0x01 | 0x00
 
   # !BSF NAME:{Command Pins Mapping}
   # !BSF TYPE:{EditNum, HEX, (0x00,0xFF)}
@@ -1421,7 +1405,7 @@
   # !BSF NAME:{Spd Address Table} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !HDR STRUCT:{UINT8}
   # !BSF HELP:{Specify SPD Address table for CH0D0/CH0D1/CH1D0&CH1D1. MemorySpdPtr will be used if SPD Address is 00}
-  gPlatformFspPkgTokenSpaceGuid.SpdAddressTable              | * | 0x10 | { 0x00, 0x0, 0x00, 0x0, 0xA0, 0x0, 0x00, 0x0, 0x00, 0x0, 0x00, 0x0, 0x00, 0x0, 0x00, 0x0 }
+  gPlatformFspPkgTokenSpaceGuid.SpdAddressTable              | * | 0x10 | { 0x00, 0x0, 0x00, 0x0, 0x00, 0x0, 0x00, 0x0, 0x00, 0x0, 0x00, 0x0, 0x00, 0x0, 0x00, 0x0 }
 
   # !BSF NAME:{Enable/Disable MRC TXT dependency} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{When enabled MRC execution will wait for TXT initialization to be done first. Disabled(0x0)(Default): MRC will not wait for TXT initialization, Enabled(0x1): MRC will wait for TXT initialization}
@@ -1556,8 +1540,8 @@
   # !BSF HELP:{Hda Disc Bt Off Enabled}
   gPlatformFspPkgTokenSpaceGuid.PchHdaDiscBtOffEnabled | * | 0x01 | 0x00
 
-  # !BSF NAME:{PCH HDA Codec Sx Wake Capability} TYPE:{$EN_DIS}
-  # !BSF HELP:{Capability to detect wake initiated by a codec in Sx}
+  # !BSF NAME:{PCH HDA Discrete BT Offload Ssp Link} TYPE:{$EN_DIS}
+  # !BSF HELP:{Discrete BT Offload Ssp Link}
   gPlatformFspPkgTokenSpaceGuid.PchHdaDiscBtOffSspLink | * | 0x04 | 0x00
 
   # !BSF NAME:{SSP<N> Sclk Pin Muxing (N - SSP Number)} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFF)}
@@ -1649,6 +1633,14 @@
 
   ## HDAUDIO_PREMEM_CONFIG End
 
+  ## PCH_LPC_PREMEM_CONFIG Start
+
+  # !BSF NAME:{PCH LPC Enhance the port 8xh decoding} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Original LPC only decodes one byte of port 80h.}
+  gPlatformFspPkgTokenSpaceGuid.PchLpcEnhancePort8xhDecoding        | * | 0x01 | 0x01
+
+  ## PCH_LPC_PREMEM_CONFIG End
+
   #
   # PCH_PCIE_RP_PREMEM_CONFIG Start
   #
@@ -1683,7 +1675,7 @@
   gPlatformFspPkgTokenSpaceGuid.PcdDebugInterfaceFlags                  | * | 0x01 | 0x32
 
   # !BSF NAME:{Serial Io Uart Debug Mmio Base} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
-  # !BSF HELP:{Select SerialIo Uart default MMIO resource in SEC/PEI phase when PcdSerialIoUartMode = SerialIoUartPci.}
+  # !BSF HELP:{Select SerialIo Uart default MMIO resource in SEC/PEI phase when PcdLpssUartMode = SerialIoUartPci.}
   gPlatformFspPkgTokenSpaceGuid.SerialIoUartDebugMmioBase           | * | 0x04 | 0xFE036000
 
   # !BSF NAME:{PcdSerialDebugLevel} TYPE:{Combo}
@@ -1724,8 +1716,9 @@
 
   ## IPU_PREMEM_CONFIG Start
 
-  # !BSF NAME:{Enable/Disable SA IPU} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable(Default): Enable SA IPU, Disable: Disable SA IPU}
+  # !BSF NAME:{IMGU CLKOUT Configuration}
+  # !BSF OPTION:{$EN_DIS}
+  # !BSF HELP:{The configuration of IMGU CLKOUT, 0: Disable;<b>1: Enable</b>.}
   gPlatformFspPkgTokenSpaceGuid.ImguClkOutEn                | * | 0x06 | {0x01, 0x01, 0x01, 0x01, 0x00,0x00}
 
   # !BSF NAME:{Enable/Disable SA IPU} TYPE:{Combo} OPTION:{$EN_DIS}
@@ -1999,7 +1992,7 @@
   # !BSF NAME:{Margin Limit Check}
   # !BSF TYPE:{Combo} OPTION:{0:Disable, 1:L1, 2:L2, 3:Both}
   # !BSF HELP:{Margin Limit Check. Choose level of margin check}
-  gPlatformFspPkgTokenSpaceGuid.MarginLimitCheck            | * | 0x01 | 0x64
+  gPlatformFspPkgTokenSpaceGuid.MarginLimitCheck            | * | 0x01 | 0x00
 
   # !BSF NAME:{Row Hammer pTRR LFSR1 Mask}
   # !BSF TYPE:{EditNum, HEX, (0x01, 0xF)}
@@ -2116,6 +2109,7 @@
   # !BSF NAME:{Soc Die SSC enable} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Dsiable Soc-Die SSC Configuration. 0(Default)=Disable, 1=Enable}
   gPlatformFspPkgTokenSpaceGuid.SocDieSscEnable             | * | 0x01 | 0x00
+
   # !BSF NAME:{Core Operating Point Reporting}
   # !BSF TYPE:{Combo} OPTION:{0:Disable, 1:Enable}
   # !BSF HELP:{Enables Core Operating point reporting. <b>0: Disable</b>; 1: Enable}
@@ -2192,8 +2186,8 @@
   # !BSF HELP:{Skip Stop PBET Timer; <b>0: Disable</b>; 1: Enable}
   gPlatformFspPkgTokenSpaceGuid.SkipStopPbet                | * | 0x01 | 0x00
 
-  # !BSF NAME:{TseEnable} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable/Disable. 0: Disable, Enable/Disable Tse feature, 1: enable}
+  # !BSF NAME:{Reset Auxiliary content} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Reset Auxiliary content, <b>0: Disabled</b>, 1: Enabled}
   gPlatformFspPkgTokenSpaceGuid.ResetAux                   | * | 0x01 | 0x00
 
   # !BSF NAME:{TseEnable} TYPE:{Combo} OPTION:{$EN_DIS}
@@ -2226,8 +2220,8 @@
   # !BSF HELP:{size of Tdx Actm module, used for launching the Actm}
   gPlatformFspPkgTokenSpaceGuid.TdxActmModuleSize                   | * | 0x04 | 0x00000000
 
-  # !BSF NAME:{Enable/Disable SA IPU} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable(Default): Enable SA IPU, Disable: Disable SA IPU}
+  # !BSF NAME:{TdxSeamldrSvn} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{TdxSeamldrSvn}
   gPlatformFspPkgTokenSpaceGuid.TdxSeamldrSvn                 | * | 0x01 | 0x0
 
   ## CPU_SECURITY_PREMEM_CONFIG End
@@ -2250,6 +2244,11 @@
   # !BSF NAME:{BIST on Reset} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable BIST (Built-In Self Test) on reset. <b>0: Disable</b>; 1: Enable.}
   gPlatformFspPkgTokenSpaceGuid.BistOnReset                 | * | 0x01 | 0x00
+
+  # !BSF NAME:{Reduce XeCores} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable Reduce XeCores. <b>0: Disable(strap=1) </b>; 1: Enable(strap=0.}
+
+  gPlatformFspPkgTokenSpaceGuid.ReduceXecores                 | * | 0x01 | 0x01
 
   # !BSF NAME:{Enable or Disable VMX} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable or Disable VMX, When enabled, a VMM can utilize the additional hardware capabilities provided by Vanderpool Technology. 0: Disable; <b>1: Enable</b>.}
@@ -2339,6 +2338,10 @@
   # !BSF TYPE:{EditNum, HEX, (0x00, 0x7FFF)}
   # !BSF HELP:{Platform Power Limit 1 Power in Milli Watts. BIOS will round to the nearest 1/8W when programming. Value set 120 = 15W. Any value can be programmed between Max and Min Power Limits. This setting will act as the new PL1 value for the Package RAPL algorithm. Units are based on POWER_MGMT_CONFIG.CustomPowerUnit. Valid Range 0 to 32767.}
   gPlatformFspPkgTokenSpaceGuid.PsysPowerLimit1Power        | * | 0x04 | 0x00
+
+  # !BSF NAME:{PlatformAtxTelemetryUnit Mode} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable PlatformAtxTelemetryUnit Mode.  <b>0: Disable</b> ; 1:Enable}
+  gPlatformFspPkgTokenSpaceGuid.PlatformAtxTelemetryUnit   | * | 0x04 | 0x00
 
   # !BSF NAME:{Platform PL1 power}
   # !BSF TYPE:{EditNum, HEX, (0x00, 0x7FFF)}
@@ -2450,6 +2453,13 @@
   # !BSF HELP:{Enables Assured Power (cTDP) control via runtime ACPI BIOS methods. This 'BIOS only' feature does not require EC or driver support. <b>0: Disable</b>; 1: Enable.}
   gPlatformFspPkgTokenSpaceGuid.ConfigTdpBios               | * | 0x01 | 0x00
 
+  # !BSF NAME:{CustomTurboActivationRatio} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Turbo Activation Ratio for custom cTDP level}
+  gPlatformFspPkgTokenSpaceGuid.CustomTurboActivationRatio   | * | 0x01 | 0x00
+
+  # !BSF NAME:{CustomPowerLimit1Time} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Short term Power Limit time window value for custom cTDP level.}
+  gPlatformFspPkgTokenSpaceGuid.CustomPowerLimit1Time        | * | 0x01 | 0x50
 
   # !BSF NAME:{PL1 Enable value} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable Platform Power Limit 1 programming. If this option is enabled, it activates the PL1 value to be used by the processor to limit the average power of given time window. <b>0: Disable</b>; 1: Enable.}
@@ -2604,8 +2614,8 @@
   # !BSF HELP:{Enabling this option will help mitigate acoustic noise on certain SKUs when the CPU is in deeper C state. <b>0: Disabled</b>; 1: Enabled}
   gPlatformFspPkgTokenSpaceGuid.AcousticNoiseMitigation     | * | 0x01 | 0x00
 
-  # !BSF NAME:{Enable/Disable BIOS configuration of VR}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFF)}
-  # !BSF HELP:{VR Config Enable. [0] for IA, [1] for GT, [2] for SA, [3] through [5] are Reserved. <b>0: Disable</b>; 1: Enable.}
+  # !BSF NAME:{RfiMitigation}  TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable or Disable RFI Mitigation. <b>0: Disable - DCM is the IO_N default</b>; 1: Enable - Enable IO_N DCM/CCM switching as RFI mitigation.}
   gPlatformFspPkgTokenSpaceGuid.RfiMitigation                   | * | 0x01 | 0x00
 
   # !BSF NAME:{Platform Psys slope correction}
@@ -2620,7 +2630,7 @@
 
   # !BSF NAME:{Thermal Design Current current limit} TYPE:{EditNum, HEX, (0x00,0x7FFF7FFF7FFF7FFF7FFF)}
   # !HDR STRUCT:{UINT16}
-  # !BSF HELP:{TDC Current Limit, defined in 1/8A increments. Range 0-32767. For a TDC Current Limit of 125A, enter 1000. 0 = 0 Amps. <b>0: Auto</b>. [0] for IA, [1] for GT, [2] for SA, [3] through [5] are Reserved.}
+  # !BSF HELP:{TDC Current Limit, defined in 1/8A increments. Range 0-32767. For a TDC Current Limit of 125A, enter 1000. 0 = 0 Amps. <b>0: Auto</b>. [0] for IA, [1] for GT, [2] for SA, [3] for atom, [4]-[5] are Reserved.}
   gPlatformFspPkgTokenSpaceGuid.TdcCurrentLimit             | * | 0xC | {0x0, 0x0, 0x0, 0x0, 0x0, 0x0}
 
   # !BSF NAME:{AcLoadline} TYPE:{EditNum, HEX, (0x00,0x0x18691869186918691869)}
@@ -2681,11 +2691,11 @@
   gPlatformFspPkgTokenSpaceGuid.VrConfigEnable              | * | 0x06 | {0x01, 0x01, 0x01, 0x01, 0x01, 0x01}
 
   # !BSF NAME:{Thermal Design Current enable/disable}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFF)}
-  # !BSF HELP:{Thermal Design Current enable/disable; <b>0: Disable</b>; 1: Enable. [0] for IA, [1] for GT, [2] for SA, [3] through [5] are Reserved.}
+  # !BSF HELP:{Thermal Design Current enable/disable; <b>0: Disable</b>; 1: Enable. [0] for IA, [1] for GT, [2] for SA, [3] for atom, [4]-[5] are Reserved.}
   gPlatformFspPkgTokenSpaceGuid.TdcEnable                   | * | 0x06 | {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 
   # !BSF NAME:{Thermal Design Current Lock}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFF)}
-  # !BSF HELP:{Thermal Design Current Lock; <b>0: Disable</b>; 1: Enable. For all VR Indexes}
+  # !BSF HELP:{Thermal Design Current Lock; <b>0: Disable</b>; 1: Enable. [0] for IA, [1] for GT, [2] for SA, [3] for atom, [4]-[5] are Reserved.}
   gPlatformFspPkgTokenSpaceGuid.TdcLock                     | * | 0x06 | {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 
   # !BSF NAME:{Disable Fast Slew Rate for Deep Package C States for VR domains}
@@ -2703,7 +2713,9 @@
   # !BSF HELP:{PSYS Offset defined in 1/1000 increments. <b>0 - Auto</b> This is an 32-bit signed value (2's complement). Units 1/1000, Range is [-128000, 127999]. For an offset of 25.348, enter 25348.}
   gPlatformFspPkgTokenSpaceGuid.PsysOffset                  | * | 0x04 | 0x00
 
-  # !BSF NAME:{Thermal Design Current time window} TYPE:{EditNum, HEX, (0x00,0x0006D6000006D6000006D6000006D6000006D600)} Auto = 0 1ms is default. Range of IA from 1ms to 448s, Range of GT/SA is 1ms to 10ms, except for 9ms. 9ms has no valid encoding in the MSR definition.}
+  # !BSF NAME:{Thermal Design Current time window} TYPE:{EditNum, HEX, (0x00,0x0006D6000006D6000006D6000006D6000006D600)}
+  # !HDR STRUCT:{UINT32}
+  # !BSF HELP:{Auto = 0 is default. Range is from 1ms to 448s. <b>0: Auto</b>. [0] for IA, [1] for GT, [2] for SA, [3] for atom, [4]-[5] are Reserved.}
   gPlatformFspPkgTokenSpaceGuid.TdcTimeWindow               | * | 0x18 | {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 
   # !BSF NAME:{TDC Mode}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFF)}
@@ -2915,8 +2927,8 @@
   # !BSF HELP:{The reference code will use this as Temporary Cfg Bar address space to access Cfg space of mapped devices. Platform should provide conflict free Temporary MMIO Range to (CfgBarAddr + 32MB MMIO).
   gPlatformFspPkgTokenSpaceGuid.VmdCfgBarBar                    | * | 0x4 | 0xA0000000
 
-  # !BSF NAME:{Enable/Disable SA CRID} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable: SA CRID, Disable (Default): SA CRID}
+  # !BSF NAME:{System Agent SafBar} TYPE:{EditNum, HEX, (0x00, 0xFFFFFFFF)}
+  # !BSF HELP:{Address of System Agent SafBar}
   gPlatformFspPkgTokenSpaceGuid.SafBar                  | * | 0x08 | 0xFA000000
 
   # !BSF NAME:{Enable above 4GB MMIO resource support} TYPE:{Combo} OPTION:{$EN_DIS}
@@ -2928,22 +2940,6 @@
   gPlatformFspPkgTokenSpaceGuid.CridEnable                  | * | 0x01 | 0x0
 
   ## HOST_BRIDGE_PREMEM_CONFIG End
-
-  ## TRACE_HUB_PREMEM_CONFIG Start
-
-  # !BSF NAME:{Enable or disable HPD of DDI port A} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{0(Default)=Disable, 1=Enable}
-  gPlatformFspPkgTokenSpaceGuid.MemReg0Size                 | * | 0x8 | 0x0
-
-  # !BSF NAME:{Enable or disable HPD of DDI port A} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{0(Default)=Disable, 1=Enable}
-  gPlatformFspPkgTokenSpaceGuid.MemReg1Size                 | * | 0x8 | 0x0
-
-  # !BSF NAME:{Enable or disable HPD of DDI port A} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{0(Default)=Disable, 1=Enable}
-  gPlatformFspPkgTokenSpaceGuid.EnableMode                 | * | 0x1 | 0x0
-
-  ## TRACE_HUB_PREMEM_CONFIG End
 
   #
   # SA Pre-Mem Block Start
@@ -2962,7 +2958,7 @@
   # !BSF HELP:{Enable or Disable CrashLog/Telemetry Device  0- Disable, <b>1- Enable</b>}
   gPlatformFspPkgTokenSpaceGuid.CpuCrashLogDevice   | * | 0x04 | 0x1
 
-  # !BSF NAME:{Enable/Disable CrashLog Device} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF NAME:{StreamTracer physical address} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
   # !BSF HELP:{StreamTracer physical address}
   gPlatformFspPkgTokenSpaceGuid.StreamTracerBase  | * | 0x08 | 0x0
 
@@ -2979,6 +2975,11 @@
   # !BSF NAME:{Skip override boot mode When Fw Update.} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{When set to TRUE and boot mode is BOOT_ON_FLASH_UPDATE, skip setting boot mode to BOOT_WITH_FULL_CONFIGURATION in PEI memory init.}
   gPlatformFspPkgTokenSpaceGuid.SiSkipOverrideBootModeWhenFwUpdate  | * | 0x01 | 0x00
+
+  # !BSF NAME:{Static Content at 4GB Location} TYPE:{Combo}
+  # !BSF OPTION:{0: No Allocation, 0x20:32MB, 0x40:64MB, 0x80:128MB, 0x100:256MB, 0x200:512MB, 0x400:1GB, 0x800:2GB, 0xC00:3GB, 0x1000:4GB, 0x2000:8GB}
+  # !BSF HELP:{0 (Default): No Allocation, 0x20:32MB, 0x40:64MB, 0x80:128MB, 0x100:256MB, 0x200:512MB, 0x400:1GB, 0x800:2GB, 0xC00:3GB, 0x1000:4GB, 0x2000:8GB}
+  gPlatformFspPkgTokenSpaceGuid.StaticContentSizeAt4Gb            | * | 0x2 | 0x0
 
   # !BSF NAME:{Platform Debug Option} TYPE:{Combo} OPTION:{0:Disabled, 2:Enabled Trace Active, 4:Enabled Trace Ready, 6:Enable Trace Power-Off, 7:Manual}
   # !BSF HELP:{Enabled Trace active: TraceHub is enabled and trace is active, blocks s0ix.\n\nEnabled Trace ready: TraceHub is enabled and allowed S0ix.\n\nEnabled Trace power off: TraceHub is powergated, provide setting close to functional low power state\n\nManual: user needs to configure Advanced Debug Settings manually, aimed at advanced users}
@@ -3134,7 +3135,6 @@
   # ToClean
   gPlatformFspPkgTokenSpaceGuid.TcssPort3                         | * | 0x01 | 0x00
 
-
   # !BSF NAME:{TypeC port GPIO setting} TYPE:{EditNum, HEX, (0, 0xFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
   # !BSF HELP:{GPIO Pin number for Type C Aux orientation setting, use the GpioPad that is defined in GpioPinsXXX.h as argument.(XXX is platform name, Ex: Ptl = PantherLake)}
@@ -3194,7 +3194,7 @@
   # !BSF NAME:{Asynchronous ODT}
   # !BSF TYPE:{Combo} OPTION:{0:Enabled, 1:Disabled}
   # !BSF HELP:{This option configures the Memory Controler Asynchronous ODT control}
-  gPlatformFspPkgTokenSpaceGuid.AsyncOdtDis              | * | 0x01 | 0x1
+  gPlatformFspPkgTokenSpaceGuid.AsyncOdtDis              | * | 0x01 | 0x0
 
   # !BSF NAME:{DLL Weak Lock Support}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -3206,14 +3206,14 @@
   # !BSF HELP:{Enables/Disable Fore Single Rank config}
   gPlatformFspPkgTokenSpaceGuid.ForceSingleRank          | * | 0x04 | 0x00
 
-  # !BSF NAME:{Fore Single Rank config}
+  # !BSF NAME:{DynamicMemoryBoost}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enables/Disable Fore Single Rank config}
+  # !BSF HELP:{Enable/Disable Dynamic Memory Boost Feature. Only valid if SpdProfileSelected is an XMP Profile; otherwise ignored. <b>0=Disabled</b>, 1=Enabled.}
   gPlatformFspPkgTokenSpaceGuid.DynamicMemoryBoost          | * | 0x04 | 0x00
 
-  # !BSF NAME:{Fore Single Rank config}
+  # !BSF NAME:{RealtimeMemoryFrequency}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enables/Disable Fore Single Rank config}
+  # !BSF HELP:{Enable/Disable Realtime Memory Frequency feature. Only valid if SpdProfileSelected is an XMP Profile; otherwise ignored. <b>0=Disabled</b>, 1=Enabled.}
   gPlatformFspPkgTokenSpaceGuid.RealtimeMemoryFrequency          | * | 0x04 | 0x00
 
   # !BSF NAME:{SelfRefresh IdleTimer}
@@ -3377,29 +3377,28 @@
   # !BSF HELP:{Fake SAGV: 0:Disabled, 1:Enabled}
   gPlatformFspPkgTokenSpaceGuid.FakeSagv                  | * | 0x04 | 0
 
-  # !BSF NAME:{Fake SAGV}
-  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Fake SAGV: 0:Disabled, 1:Enabled}
+  # !BSF NAME:{Lock DPR register}
+  # !BSF TYPE:{Combo} OPTION:{0:Platform POR, 1: Enable, 2: Disable}
+  # !BSF HELP:{Lock DPR register. <b>0: Platform POR </b>; 1: Enable; 2: Disable}
   gPlatformFspPkgTokenSpaceGuid.DprLock                  | * | 0x04 | 0
 
-  # !BSF NAME:{Fake SAGV}
-  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Fake SAGV: 0:Disabled, 1:Enabled}
+  # !BSF NAME:{Board Stack Up}
+  # !BSF TYPE:{Combo} OPTION:{0:Typical, 1:Freq Limited}
+  # !BSF HELP:{Board Stack Up: <b>0=Typical</b>, 1=Freq Limited}
   gPlatformFspPkgTokenSpaceGuid.BoardStackUp                  | * | 0x01 | 0
 
-  # !BSF NAME:{Fake SAGV}
+  # !BSF NAME:{PPR ForceRepair}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Fake SAGV: 0:Disabled, 1:Enabled}
+  # !BSF HELP:{When Eanble, PPR will force repair some rows many times (90)}
   gPlatformFspPkgTokenSpaceGuid.PprForceRepair                  | * | 0x01 | 0
 
-  # !BSF NAME:{Fake SAGV}
-  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Fake SAGV: 0:Disabled, 1:Enabled}
+  # !BSF NAME:{PPR Repair Bank}  TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{PPR repair Bank: User chooses to force repair specifc address }
   gPlatformFspPkgTokenSpaceGuid.PprRepairBank                  | * | 0x01 | 0
 
-  # !BSF NAME:{Fake SAGV}
-  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Fake SAGV: 0:Disabled, 1:Enabled}
+  # !BSF NAME:{Board Topology}
+  # !BSF TYPE:{Combo} OPTION:{0:Daisy Chain, 1:Tee}
+  # !BSF HELP:{Board Topology: <b>0=Daisy Chain</b>, 1=Tee.}
   gPlatformFspPkgTokenSpaceGuid.BoardTopology                  | * | 0x01 | 0
 
   # !BSF NAME:{SubCh Hash Interleaved Bit}
@@ -3410,7 +3409,12 @@
   # !BSF NAME:{SubCh Hash Mask}
   # !BSF TYPE:{EditNum, HEX, (0x0000, 0x3FFF)}
   # !BSF HELP:{Set the BIT(s) to be included in the XOR function. NOTE BIT mask corresponds to BITS [19:6] Default is 0x834}
-  gPlatformFspPkgTokenSpaceGuid.SubChHashMask              | * | 0x02 | 0x834
+  gPlatformFspPkgTokenSpaceGuid.SubChHashMask              | * | 0x02 | 0x838
+
+  # !BSF NAME:{Force CKD in Bypass Mode} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable Force CKD in Bypass Mode}
+  gPlatformFspPkgTokenSpaceGuid.ForceCkdBypass           | * | 0x01 | 0x00
 
   # !BSF NAME:{Disable Zq}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}

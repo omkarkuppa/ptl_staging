@@ -345,9 +345,20 @@ I2cConnectEndOfPciEnumerationEvent (
   UINTN                         PciIoHandleCount;
   EFI_HANDLE                    *PciIoHandleBuffer;
   UINT16                        Number;
+  VOID                          *Protocol;
 
   DEBUG ((DEBUG_INFO, "%a Connect I2C Protocol\n", __FUNCTION__));
-
+  //
+  // Check whether gEfiPciEnumerationCompleteProtocolGuid is installed, if not return
+  //
+  Status = gBS->LocateProtocol(
+                  &gEfiPciEnumerationCompleteProtocolGuid,
+                  NULL,
+                  &Protocol
+                  );
+  if (EFI_ERROR(Status)) {
+    return;
+  }
   Status = gBS->LocateHandleBuffer (
                   ByProtocol,
                   &gEfiPciIoProtocolGuid,
@@ -358,7 +369,6 @@ I2cConnectEndOfPciEnumerationEvent (
   if (EFI_ERROR (Status) || (PciIoHandleBuffer == NULL) || (PciIoHandleCount == 0)) {
     return;
   }
-
   for (Index = 0; Index < PciIoHandleCount; Index++) {
     if (!IsSerialIoI2cDeviceIdCp (GetPciDevId (PciIoHandleBuffer[Index]), &Number)) {
       continue;
@@ -368,7 +378,6 @@ I2cConnectEndOfPciEnumerationEvent (
   gBS->CloseEvent (Event);
   gBS->FreePool (PciIoHandleBuffer);
 }
-
 /**
   I2cPlatformDriverBindingSupported - Checks if this driver can install on device pointed to by Handle
   It will only install on I2c controllers
@@ -616,6 +625,5 @@ I2cPlatformEntryPoint (
              NULL
              );
   ASSERT_EFI_ERROR (Status);
-
   return EFI_SUCCESS;
 }

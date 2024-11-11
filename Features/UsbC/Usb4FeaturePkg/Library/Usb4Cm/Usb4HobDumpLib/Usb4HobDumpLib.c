@@ -68,6 +68,7 @@ DumpDtbtInfoHob (
     DEBUG ((DEBUG_INFO, "DTbtInfoHob->DTbtControllerConfig[%d].PcieRpBus          = 0x%x\n", Index, DTbtInfoHob->DTbtControllerConfig[Index].PcieRpBus));
     DEBUG ((DEBUG_INFO, "DTbtInfoHob->DTbtControllerConfig[%d].PcieRpDev          = 0x%x\n", Index, DTbtInfoHob->DTbtControllerConfig[Index].PcieRpDev));
     DEBUG ((DEBUG_INFO, "DTbtInfoHob->DTbtControllerConfig[%d].PcieRpFunc         = 0x%x\n", Index, DTbtInfoHob->DTbtControllerConfig[Index].PcieRpFunc));
+    DEBUG ((DEBUG_INFO, "DTbtInfoHob->DTbtControllerConfig[%d].BdfValid           = 0x%x\n", Index, DTbtInfoHob->DTbtControllerConfig[Index].BdfValid));
     DEBUG ((DEBUG_INFO, "DTbtInfoHob->DTbtControllerConfig[%d].WakeGpioPin        = 0x%x\n", Index, DTbtInfoHob->DTbtControllerConfig[Index].WakeGpioPin));
     DEBUG ((DEBUG_INFO, "DTbtInfoHob->DTbtControllerConfig[%d].PcieRpMps          = 0x%x\n", Index, DTbtInfoHob->DTbtControllerConfig[Index].PcieRpMps));
   }

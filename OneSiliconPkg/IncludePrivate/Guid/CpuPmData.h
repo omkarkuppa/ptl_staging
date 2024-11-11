@@ -53,6 +53,7 @@ typedef struct {
   UINT16    IsysCurrentLimitL1;
   UINT16    IsysCurrentLimitL2;
   UINT16    VsysMax;
+  UINT16    PsysPmax;
 } POWER_MANAGEMENT_PARAM;
 
 typedef struct {

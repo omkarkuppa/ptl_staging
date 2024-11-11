@@ -29,6 +29,7 @@
 #include <Protocol/SerialIo.h>
 #include <Ppi/SiPolicy.h>
 #include <Register/LpssUartRegs.h>
+#include <Library/LpssUartLib.h>
 #include <LpssSpiHandle.h>
 #include <LpssUartConfig.h>
 #include <LpssUartPriv.h>
@@ -144,6 +145,31 @@ typedef union {
 } LPSS_UART_CLOCK;
 
 /**
+  Polls a serial device to see if there is any data waiting or pending for read.
+  If there is data pending, then TRUE is returned.
+  If there is no data, then FALSE is returned.
+
+  @param[in]  MmioBaseAddress     MMIO Base address
+
+  @retval TRUE             Data is waiting to read from the serial device.
+  @retval FALSE            There is no data waiting to read from the serial device.
+**/
+BOOLEAN
+EFIAPI
+LpssUartPolling (
+  IN UINTN            MmioBaseAddress
+  )
+{
+  LPSS_UART_LSR        Lsr;
+
+  //
+  // Read the serial port status
+  //
+  Lsr.Data = LpssUartReadRegister (MmioBaseAddress, R_LPSS_UART_MEM_LSR);
+  return (BOOLEAN) Lsr.Fields.DR;
+}
+
+/**
   Register access helper. Depending on SerialIO UART mode,
   its registers are aligned to 1 or 4 bytes and have 8 or 32bit size
 
@@ -170,7 +196,7 @@ LpssUartWriteRegister (
   if (AccessMode == AccessMode32bit) {
     MmioWrite32 (MmioBaseAddress + Offset, Data);
   } else {
-    MmioWrite8 (MmioBaseAddress + Offset/4, Data);
+    MmioWrite8 (MmioBaseAddress + Offset / 4, Data);
   }
 }
 
@@ -201,7 +227,7 @@ LpssUartReadRegister (
   if (AccessMode == AccessMode32bit) {
     return (UINT8) (0xFF & MmioRead32 (MmioBaseAddress + Offset));
   }
-  return MmioRead8 (MmioBaseAddress + Offset/4);
+  return MmioRead8 (MmioBaseAddress + Offset / 4);
 }
 
 /**
@@ -737,7 +763,7 @@ LpssUartWrite (
   //
   // If Timeout is equal to 0, then timeout is disabled
   //
-  Timeout = PcdGet32 (PcdSerialIoUartTimeOut);
+  Timeout = PcdGet32 (PcdLpssUartTimeOut);
   if (Timeout == 0) {
      UseTimeout = FALSE;
   }
@@ -757,7 +783,7 @@ LpssUartWrite (
           // Disable AutoFlow Control if data did not come out of the FIFO in given time
           //
           LpssUartSetAutoFlow (MmioBaseAddress, FALSE);
-          Timeout = PcdGet32 (PcdSerialIoUartTimeOut);
+          Timeout = PcdGet32 (PcdLpssUartTimeOut);
         }
         MicroSecondDelay (LPSS_UART_TIMEOUT_DELAY_INTERVAL);
         Timeout -= LPSS_UART_TIMEOUT_DELAY_INTERVAL;

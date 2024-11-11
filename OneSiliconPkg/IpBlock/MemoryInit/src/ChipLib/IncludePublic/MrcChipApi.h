@@ -429,5 +429,16 @@ SetWorkPointData (
   IN OUT MrcParameters *const MrcData
   );
 
+/**
+  Set up DQ Loopback mode and run margin tests
+
+  @param[in] MrcData - Pointer to MRC global data.
+
+  @retval mrcSuccess - In case of success
+**/
+MrcStatus
+MrcDqLoopbackTest (
+  IN MrcParameters *const MrcData
+  );
 
 #endif // _MrcChipApi_h_

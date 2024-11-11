@@ -53,7 +53,8 @@ UpdateUsbDebugPolicy (
   )
 {
 #if FixedPcdGet8(PcdFspModeSelection) == 0
-  USB_CONFIG                   *UsbConfig;
+  USB_CONFIG                      *UsbConfig;
+  EFI_STATUS                      Status;
 #endif
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                            *FspsUpd;
@@ -61,7 +62,6 @@ UpdateUsbDebugPolicy (
   ASSERT (FspsUpd != NULL);
 #else
   UsbConfig = NULL;
-  EFI_STATUS                   Status;
   Status = GetConfigBlock ((VOID *) SiPolicy, &gUsbConfigGuid, (VOID *) &UsbConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -87,14 +87,14 @@ UpdatePmDebugPolicy (
 {
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   PCH_PM_CONFIG                *PmConfig;
+  EFI_STATUS                   Status;
 #endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspsUpd;
+  VOID                         *FspsUpd;
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
 #else
-  EFI_STATUS                   Status;
   PmConfig = NULL;
   Status = GetConfigBlock ((VOID *) SiPolicy, &gPmConfigGuid, (VOID *) &PmConfig);
   ASSERT_EFI_ERROR (Status);
@@ -130,13 +130,13 @@ UpdateP2sbDebugPolicy (
 {
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   PCH_P2SB_CONFIG                 *P2sbConfig;
+  EFI_STATUS                      Status;
 #endif
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                            *FspsUpd;
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
 #else
-  EFI_STATUS                      Status;
   P2sbConfig = NULL;
   Status = GetConfigBlock ((VOID *) SiPolicy, &gP2sbConfigGuid, (VOID *) &P2sbConfig);
   ASSERT_EFI_ERROR (Status);

@@ -81,9 +81,9 @@ PACKAGE_GUID = F9410F0E-3A9E-4E21-ACBE-E069A13354B7
 
 [PcdsFixedAtBuild, PcdsDynamic]
   ## NHLT config enablement
-  #  0x0 = Disable
-  #  0x1 = Clock 38_4MHz, Format 24b/48kHz
-  #  0x2 = Clock 38_4MHz, Format 24b/96kHz
+  #  0 = Disable
+  #  1 = Clock 38_4MHz, Format 24b/48kHz
+  #  2 = Clock 38_4MHz, Format 24b/96kHz
   gNhltFeaturePkgTokenSpaceGuid.NhltDmicMonoEnabled|0x0|UINT8|0xB0000002
   gNhltFeaturePkgTokenSpaceGuid.NhltDmicStereoEnabled|0x0|UINT8|0xB0000003
   gNhltFeaturePkgTokenSpaceGuid.NhltDmicQuadEnabled|0x1|UINT8|0xB0000005
@@ -91,7 +91,10 @@ PACKAGE_GUID = F9410F0E-3A9E-4E21-ACBE-E069A13354B7
   #  FALSE = Disable NHLT
   #  TRUE  = Enable NHLT
   gNhltFeaturePkgTokenSpaceGuid.NhltDmicStereoVpEnabled|FALSE|BOOLEAN|0xB0000004
-  gNhltFeaturePkgTokenSpaceGuid.NhltBluetoothEnabled|FALSE|BOOLEAN|0xB0000006
+  #  0 = Disable NHLT
+  #  1 = BT drives I2S clock for HFP
+  #  2 = DSP drives I2S clock for HFP
+  gNhltFeaturePkgTokenSpaceGuid.NhltBluetoothEnabled|0x0|UINT8|0xB0000006
 
 [PcdsFixedAtBuild]
   gNhltFeaturePkgTokenSpaceGuid.NhltConfigurationByPcdEnabled|TRUE|BOOLEAN|0xC0000001

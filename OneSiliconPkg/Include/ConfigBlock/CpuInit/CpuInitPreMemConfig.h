@@ -172,8 +172,13 @@ typedef struct {
       -    1: Enable (Default)
   **/
   UINT8 SmmRelocationEnable;
-
-  UINT8 Rsvd2[2];
+  /**
+    Enable or disable ReduceXecores.
+      -    0: Disable (Default)
+      -    1: Enable
+  **/
+  UINT8 ReduceXecores;
+  UINT8 Rsvd2[1];
 } CPU_INIT_PREMEM_CONFIG;
 
 #pragma pack (pop)

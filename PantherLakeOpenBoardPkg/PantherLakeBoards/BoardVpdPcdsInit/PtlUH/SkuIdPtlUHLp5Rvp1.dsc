@@ -39,9 +39,6 @@
   # MRC UserBd
   gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|*|0x05
 
-  # MRC Ddr Frequency Limit
-  gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit|*|0x0
-
   # Mrc Spd Data Size
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdDataSize|*|512
 
@@ -303,7 +300,7 @@ gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTable|*|{CODE(
   //
   // TCSS
   //
-    {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateHigh,   GpioV2IntDis,  GpioV2ResetHost,      GpioV2TermDefault}}, // TCP_RT_S0IX_ENTRY_EXIT_N
+    {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetResume,  GpioV2TermNone}}, // GPP_V17_TCP_RT_S0IX_ENTRY_EXIT_N
 
   //
   // Type-C , TBT Re-Timers

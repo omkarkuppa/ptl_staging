@@ -39,7 +39,8 @@ typedef enum {
   NhltDmicX4Format24Bit96kHzFreq38_4MHz     = 6,
   NhltI2sAlc274Format24Bit48kHzFreq38_4MHz  = 7,
   NhltI2sAlc274Format24Bit96kHzFreq38_4MHz  = 8,
-  NhltBtFreq38_4MHz                         = 9,
+  NhltBtFreq38_4MHzBtDrivesI2sClockHfp      = 9,
+  NhltBtFreq38_4MHzDspDrivesI2sClockHfp     = 10,
   NhltConfigurationMax
 } NHLT_CONFIGURATIONS;
 
@@ -52,11 +53,25 @@ typedef enum {
 } NHLT_CLOCK_SOURCE;
 
 typedef enum {
-  NhltDisabled                      = 0x0,
-  NhltClock38_4MHz_Format24b_48kHz  = 0x1,
-  NhltClock38_4MHz_Format24b_96kHz  = 0x2,
-  NhltFormatInvalid
-} NHLT_FORMAT_OPTIONS;
+  NhltDmicDisabled                      = 0x0,
+  NhltDmicClock38_4MHz_Format24b_48kHz  = 0x1,
+  NhltDmicClock38_4MHz_Format24b_96kHz  = 0x2,
+  NhltDmicFormatInvalid
+} NHLT_DMIC_FORMAT_OPTIONS;
+
+typedef enum {
+  NhltBtDisabled              = 0x0,
+  NhltBtClockDrivenByBtInHfp  = 0x1,
+  NhltBtClockDrivenByDspInHfp = 0x2,
+  NhltBtFormatInvalid
+} NHLT_BT_FORMAT_OPTIONS;
+
+typedef enum {
+  NhltI2sDisabled                      = 0x0,
+  NhltI2sClock38_4MHz_Format24b_48kHz  = 0x1,
+  NhltI2sClock38_4MHz_Format24b_96kHz  = 0x2,
+  NhltI2sFormatInvalid
+} NHLT_I2S_FORMAT_OPTIONS;
 
 #pragma pack (push, 1)
 

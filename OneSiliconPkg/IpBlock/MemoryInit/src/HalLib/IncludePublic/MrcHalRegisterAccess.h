@@ -254,6 +254,24 @@ MrcGetSetLimits (
   );
 
 /**
+  This function is the interface for the core of the MRC to get the limits of RxVref or RxDqVref.
+
+  @param[in]  MrcData   - Pointer to global data.
+  @param[out] MinVal    - Return pointer for Minimum Value supported.
+  @param[out] MaxVal    - Return pointer for Maximum Value supported.
+  @param[out] WaitTime  - Return pointer for settle time required in microseconds.
+
+  @retval MrcStatus - mrcSuccess if the parameter is found, otherwise mrcFail.
+**/
+MrcStatus
+MrcGetSetRxVrefLimits (
+  IN  MrcParameters *const MrcData,
+  OUT INT64   *const  MinVal,
+  OUT INT64   *const  MaxVal,
+  OUT UINT32  *const  WaitTime
+  );
+
+/**
   This function generates the hash used to execute the Get/Set function.
   The hash consists of: Register Offset, BitField start bit, BitField length.
 
@@ -433,6 +451,20 @@ MrcGetCccGroupLane (
   IN OUT  UINT32        *const  TransLane,
   IN OUT  UINT32        *const  TransRank,
   IN OUT  GSM_GT        *const  Group
+  );
+
+/**
+  This function programs WCK DCC registers to work in a cross-platform manner
+
+  @param[in] MrcData     - Include all MRC global data.
+  @param[in] GetSetGroup - WCK DCC GetSet Group
+  @param[in] GetSetVal   - WCK DCC Value
+**/
+VOID
+MrcSetWckDccCrossProj (
+  IN MrcParameters* const MrcData,
+  IN GSM_GT               GetSetGroup,
+  IN INT64                *GetSetVal
   );
 
 /**

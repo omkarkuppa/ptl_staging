@@ -111,9 +111,9 @@ MrcRefPiCalibration (
 
 /**
   This function configures the RefPI FSM control configuration for POR operation after calibration is complete.
-  
+
   @param[in]  MrcData     - Pointer to global MRC data
-  
+
   @retval MrcStatus
 **/
 MRC_IRAM0_FUNCTION
@@ -150,7 +150,7 @@ MrcDdrIoInitRefPiFsmCtl (
   Function has a 10 second timeout waiting for the FSM's to complete.
 
   @param[in]  MrcData        - Pointer to MRC global data.
-  
+
   @retval MrcStatus - mrcDeviceBusy: A partition status bit did not clear before the timeout.
                     - mrcSuccess: FSM's executed with no problems.
 **/
@@ -163,12 +163,12 @@ MrcRunRefPiFsm (
 /**
   This function accesses RefPi and RefP4Xover from the DDRIO based on the specific partition
   passed in ParInfo and stores the result in the output variable RefPiData.
-  
+
   @param[in]  MrcData   - Pointer to global MRC data.
   @param[in]  ParInfo   - Pointer to the partition definition that should be accessed.
   @param[out] RefPiData - Pointer to the storage variable for RefPi and RefPi4Xover.
   @param[out] SaveData  - Pointer to the buffer to store the RefPI CR data.
-  
+
   @retval MrcStatus - mrcWrongInputParameter if RefPiData or ParInfo is NULL;
                     - mrcFail if the ParType in ParInfo isn't supported
                     - mrcSuccess otherwise.
@@ -176,22 +176,22 @@ MrcRunRefPiFsm (
 MRC_IRAM0_FUNCTION
 MrcStatus
 MrcGetRefPiData (
-  IN        MrcParameters             *MrcData,
-  IN const  MRC_REFPI_PAR_ORDER_TYPE  *ParInfo,
-  OUT       MRC_REFPI_DATA_TYPE       *RefPiData,
-  OUT       MrcRefPiControl           *SaveData
+  IN        MrcParameters                 *MrcData,
+  IN const  MRC_REFPI_PAR_ORDER_TYPE      *ParInfo,
+  OUT       MRC_REFPI_DATA_TYPE           *RefPiData,
+  OUT       MRC_REF_PI_FREQ_SWITCH_DATA   *SaveData
   );
 
 /**
   This function checks to determine if the delays in a test list are valid based on acceptable limits
   for propagation between partitions.
-  
+
   @param[in]  MrcData     - Pointer to global MRC data.
   @param[in]  ParData     - Pointer to 1D array containing RefPi and RefPi4Xover data per partition.
   @param[in]  ParOrder    - Pointer to 1D array containing partition information and order.
   @param[in]  TestListIdx - Test index used to keep RefPiRelativeDelayLists in sync
   @param[in]  Length      - Pointer to 1D array containing the length of the test list.
-  
+
   @retval BOOLEAN - TRUE if delay is valid, otherwise FALSE.
 **/
 MRC_IRAM0_FUNCTION
@@ -210,12 +210,12 @@ MrcRefPiDelayCheck (
     For each partition - The delta between RefPi4Xover and RefPi should be within 20-100ps in terms of PI ticks.
     Across all paritions - The delta between the fastest and slowest partition for RefPi4Xover-RefPi should be <= 20ps.
     RefPi4Xover = (RefPi + RefPiOFfset + H-Tree) % MRC_REFPI_XOVER_DIVIDER
-    
+
     @param[in]  MrcData     - Pointer to global MRC data.
     @param[in]  ListData    - Pointer to 2D array containing RefPi and RefPi4Xover data per partition.
     @param[in]  TestListLen - Pointer to 1D array containing the length of the test list.
     @param[in]  Length      - Number of test lists in ListData.
-    
+
     @retval: MrcSuccess - mrcFail if either of the two constraints are violated, otherwise mrcSuccess.
 **/
 MRC_IRAM0_FUNCTION
@@ -234,14 +234,14 @@ MrcRefPi4XoverCheck (
     List i    RefPi RefPiOffset 4Xover  Delta
     Par1      w     x           y       z
     Par2      a     b           c       d
-  
+
   @param[in]  MrcData     - Pointer to global MRC data.
   @param[in]  ListData    - Pointer to 2D array containing RefPi and RefPi4Xover data per partition.
   @param[in]  ParLists    - Pointer to 2D array containing partition information and order.
   @param[in]  TestListLen - Pointer to 1D array containing the length of the test list.
   @param[in]  Length      - Number of test lists in ListData.
   @param[in]  PrintLevel  - The MrcDebugMsgLevel to use for the debug prints of this function.
-  
+
   @retval mrcSuccess if all existing RefPi / RefPi4Xover values are not zero otherwise mrcFail
 **/
 MRC_IRAM0_FUNCTION
@@ -338,6 +338,19 @@ MrcReadUpdateRefPiData (
   OUT       MRC_REFPI_DATA_TYPE       *RefPiData,
   OUT       UINT32                    *SaveCrPtr,
   IN        UINT32                     Offset
+  );
+
+/**
+  Wrap around the RefPi offset values if they fall outside the permitted range
+
+  @param[in, out] RefPiOffset       - pointer to RefPiOffset value
+  @param[in, out] RefPi4XoverOffset - pointer to RefPi4XoverOffset value
+**/
+MRC_IRAM0_FUNCTION
+VOID
+MrcRefPiOffsetWrapAround (
+  IN OUT INT32  *RefPiOffset,
+  IN OUT INT32  *RefPi4XoverOffset
   );
 
 #endif // _MrcDdrIoRefPi_h_

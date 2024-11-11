@@ -49,4 +49,4 @@
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultDataBits
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultParity
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultStopBits
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartTimeOut
+  gSiPkgTokenSpaceGuid.PcdLpssUartTimeOut

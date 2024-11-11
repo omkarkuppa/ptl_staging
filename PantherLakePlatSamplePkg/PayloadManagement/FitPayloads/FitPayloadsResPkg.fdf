@@ -54,6 +54,6 @@ NumBlocks     = $(FLASH_NUM_BLOCKS)
 #
 ################################################################################
 
-gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset|gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashFvMicrocodeRSize
+0|$(FLASH_SIZE)
 FV = FvMicrocode
   !include $(PLATFORM_BIN_PACKAGE)/Include/Fdf/FvMicrocodeDbgRes.fdf

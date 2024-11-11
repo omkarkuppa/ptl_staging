@@ -31,18 +31,17 @@
 **/
 VOID
 IGpuDxePolicyPrint (
-  IN  IGPU_POLICY_PROTOCOL      *IGpuPolicy
+  IN  IGPU_POLICY_PROTOCOL  *IGpuPolicy
   )
 {
-  EFI_STATUS                  Status;
-  IGPU_DXE_CONFIG             *IGpuDxeConfig;
+  EFI_STATUS       Status;
+  IGPU_DXE_CONFIG  *IGpuDxeConfig;
 
   //
   // Get requisite IP Config Blocks which needs to be used here
   //
-  Status = GetConfigBlock ((VOID *) IGpuPolicy, &gIGpuDxeConfigGuid, (VOID *)&IGpuDxeConfig);
+  Status = GetConfigBlock ((VOID *)IGpuPolicy, &gIGpuDxeConfigGuid, (VOID *)&IGpuDxeConfig);
   ASSERT_EFI_ERROR (Status);
-
 
   DEBUG_CODE_BEGIN ();
   DEBUG ((DEBUG_INFO, "IGPU Policy (DXE) print BEGIN\n"));
@@ -54,7 +53,6 @@ IGpuDxePolicyPrint (
   return;
 }
 
-
 /**
   This function Load default IGPU DXE policy.
 
@@ -62,11 +60,11 @@ IGpuDxePolicyPrint (
 **/
 VOID
 IGpuLoadDxeDefault (
-  IN VOID    *ConfigBlockPointer
+  IN VOID  *ConfigBlockPointer
   )
 {
-  IGPU_DXE_CONFIG            *IGpuDxeConfig;
-  UINT8                      Index;
+  IGPU_DXE_CONFIG  *IGpuDxeConfig;
+  UINT8            Index;
 
   IGpuDxeConfig = ConfigBlockPointer;
   DEBUG ((DEBUG_INFO, "IGpuDxeConfig->Header.GuidHob.Name = %g\n", &IGpuDxeConfig->Header.GuidHob.Name));
@@ -74,32 +72,32 @@ IGpuLoadDxeDefault (
   ///
   /// Initialize the IGPU configuration
   ///
-  IGpuDxeConfig->PlatformConfig           = 1;
-  IGpuDxeConfig->AlsEnable                = 2;
+  IGpuDxeConfig->PlatformConfig = 1;
+  IGpuDxeConfig->AlsEnable      = 2;
   ///
   /// <EXAMPLE> Create a static Backlight Brightness Level Duty cycle Mapping Table
   /// Possible 30 entries (example used 11), each 32 bits as follows:
   /// [31] = Field Valid bit, [30:23] = Reserved,  [22:16] = Level in Percentage (0-64h), [15:00] = Desired duty cycle (0 - FFFFh).
   ///
-  IGpuDxeConfig->BCM1[0] = (0x000000 + DWORD_FIELD_VALID_BIT);  ///< 0%
-  IGpuDxeConfig->BCM1[1] = (0x0A0019 + DWORD_FIELD_VALID_BIT);  ///< 10%
-  IGpuDxeConfig->BCM1[2] = (0x140033 + DWORD_FIELD_VALID_BIT);  ///< 20%
-  IGpuDxeConfig->BCM1[3] = (0x1E004C + DWORD_FIELD_VALID_BIT);  ///< 30%
-  IGpuDxeConfig->BCM1[4] = (0x280066 + DWORD_FIELD_VALID_BIT);  ///< 40%
-  IGpuDxeConfig->BCM1[5] = (0x32007F + DWORD_FIELD_VALID_BIT);  ///< 50%
-  IGpuDxeConfig->BCM1[6] = (0x3C0099 + DWORD_FIELD_VALID_BIT);  ///< 60%
-  IGpuDxeConfig->BCM1[7] = (0x4600B2 + DWORD_FIELD_VALID_BIT);  ///< 70%
-  IGpuDxeConfig->BCM1[8] = (0x5000CC + DWORD_FIELD_VALID_BIT);  ///< 80%
-  IGpuDxeConfig->BCM1[9] = (0x5A00E5 + DWORD_FIELD_VALID_BIT);  ///< 90%
-  IGpuDxeConfig->BCM1[10] = (0x6400FF + DWORD_FIELD_VALID_BIT);  ///< 100%
+  IGpuDxeConfig->BCM1[0]  = (0x000000 + DWORD_FIELD_VALID_BIT); ///< 0%
+  IGpuDxeConfig->BCM1[1]  = (0x0A0019 + DWORD_FIELD_VALID_BIT); ///< 10%
+  IGpuDxeConfig->BCM1[2]  = (0x140033 + DWORD_FIELD_VALID_BIT); ///< 20%
+  IGpuDxeConfig->BCM1[3]  = (0x1E004C + DWORD_FIELD_VALID_BIT); ///< 30%
+  IGpuDxeConfig->BCM1[4]  = (0x280066 + DWORD_FIELD_VALID_BIT); ///< 40%
+  IGpuDxeConfig->BCM1[5]  = (0x32007F + DWORD_FIELD_VALID_BIT); ///< 50%
+  IGpuDxeConfig->BCM1[6]  = (0x3C0099 + DWORD_FIELD_VALID_BIT); ///< 60%
+  IGpuDxeConfig->BCM1[7]  = (0x4600B2 + DWORD_FIELD_VALID_BIT); ///< 70%
+  IGpuDxeConfig->BCM1[8]  = (0x5000CC + DWORD_FIELD_VALID_BIT); ///< 80%
+  IGpuDxeConfig->BCM1[9]  = (0x5A00E5 + DWORD_FIELD_VALID_BIT); ///< 90%
+  IGpuDxeConfig->BCM1[10] = (0x6400FF + DWORD_FIELD_VALID_BIT); ///< 100%
   for (Index = 0; Index < MAX_BCLM_ENTRIES; Index++) {
     IGpuDxeConfig->BCM2[Index] = IGpuDxeConfig->BCM1[Index];
   }
 }
 
 static COMPONENT_BLOCK_ENTRY  mIGpuDxeIpBlocks = {
-  &gIGpuDxeConfigGuid, sizeof (IGPU_DXE_CONFIG), IGPU_DXE_CONFIG_REVISION, IGpuLoadDxeDefault};
-
+  &gIGpuDxeConfigGuid, sizeof (IGPU_DXE_CONFIG), IGPU_DXE_CONFIG_REVISION, IGpuLoadDxeDefault
+};
 
 /**
   Get DXE IGPU config block table total size.
@@ -126,10 +124,11 @@ IGpuGetDxeConfigBlockTotalSize (
 EFI_STATUS
 EFIAPI
 IGpuAddDxeConfigBlocks (
-  IN VOID           *ConfigBlockTableAddress
+  IN VOID  *ConfigBlockTableAddress
   )
 {
   EFI_STATUS  Status;
+
   Status = AddComponentConfigBlocks (ConfigBlockTableAddress, &mIGpuDxeIpBlocks, 1);
   return Status;
 }

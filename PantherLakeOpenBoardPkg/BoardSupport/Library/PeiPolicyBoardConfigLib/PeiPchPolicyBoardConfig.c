@@ -42,17 +42,17 @@ UpdateUsb2OverCurrentPolicy (
   IN UINT8                      Pin
 )
 {
-  #if FixedPcdGet8(PcdFspModeSelection) == 1
+#if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                            *FspsUpd;
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
-  #endif
+#endif
   if (PortIndex < MAX_USB2_PORTS && ((Pin < USB_OC_MAX_PINS) || (Pin == USB_OC_SKIP))) {
-      UPDATE_POLICY_V2 (
-        ((FSPS_UPD *)FspsUpd)->FspsConfig.Usb2OverCurrentPin[PortIndex],
-        UsbConfig->PortUsb20[PortIndex].OverCurrentPin,
-        Pin
-        );
+    UPDATE_POLICY_V2 (
+      ((FSPS_UPD *)FspsUpd)->FspsConfig.Usb2OverCurrentPin[PortIndex],
+      UsbConfig->PortUsb20[PortIndex].OverCurrentPin,
+      Pin
+      );
   } else {
     if (PortIndex >= MAX_USB2_PORTS) {
       DEBUG ((DEBUG_ERROR, "UpdateUsb2OverCurrentPolicy: USB2 port number %d is not a valid USB2 port number\n", PortIndex));
@@ -76,17 +76,17 @@ UpdateUsb3OverCurrentPolicy (
   IN UINT8                      Pin
 )
 {
-  #if FixedPcdGet8(PcdFspModeSelection) == 1
+#if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                            *FspsUpd;
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
-  #endif
+#endif
   if (PortIndex < MAX_USB3_PORTS && ((Pin < USB_OC_MAX_PINS) || (Pin == USB_OC_SKIP))) {
     UPDATE_POLICY_V2 (
-        ((FSPS_UPD *)FspsUpd)->FspsConfig.Usb3OverCurrentPin[PortIndex],
-        UsbConfig->PortUsb30[PortIndex].OverCurrentPin,
-        Pin
-        );
+      ((FSPS_UPD *)FspsUpd)->FspsConfig.Usb3OverCurrentPin[PortIndex],
+      UsbConfig->PortUsb30[PortIndex].OverCurrentPin,
+      Pin
+      );
   } else {
     if (PortIndex >= MAX_USB2_PORTS) {
       DEBUG ((DEBUG_ERROR, "UpdateUsb3OverCurrentPolicy: USB3 port number %d is not a valid USB3 port number\n", PortIndex));

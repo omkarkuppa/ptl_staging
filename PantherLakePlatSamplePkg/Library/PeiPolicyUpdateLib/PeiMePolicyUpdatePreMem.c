@@ -28,8 +28,9 @@
 
 #include <PolicyUpdateMacro.h>
 #include <SetupVariable.h>
-
+#if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
+#endif
 
 /**
   Update the ME Policy Library
@@ -79,11 +80,11 @@ UpdatePeiMePolicyPreMem (
                          &MeSetup
                          );
     if (!EFI_ERROR (Status)) {
-    #if FixedPcdGet8(PcdFspModeSelection) == 0
+#if FixedPcdGet8(PcdFspModeSelection) == 0
       MePeiPreMemConfig = NULL;
       Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMePeiPreMemConfigGuid, (VOID *) &MePeiPreMemConfig);
       ASSERT_EFI_ERROR (Status);
-    #endif
+#endif
       COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.HeciTimeouts,  MePeiPreMemConfig->HeciTimeouts, MeSetup.HeciTimeouts);
 
       //

@@ -583,7 +583,9 @@ SsTcssGetInfo (
   }
 
   Status = IpIomIsReady (pInst->IomInst, &Data32);
-  TCSS_RETURN_IF_ERROR (Status);
+  if (Status != IpCsiStsSuccess) {
+    PRINT_ERROR ("%a: IpIomIsReady error, Status = %r\n", __FUNCTION__, Status);
+  }
   pInst->Info->IOMReady = Data32;
 
   Status = IpIomGetTcssProductInfo (pInst->IomInst, &SkuId, &BaseSteppingId, &DashSteppingId);
@@ -594,34 +596,48 @@ SsTcssGetInfo (
   }
 
   Status = IpIomGetFwVersion (pInst->IomInst, &Data32);
-  TCSS_RETURN_IF_ERROR (Status);
+  if (Status != IpCsiStsSuccess) {
+    PRINT_ERROR ("%a: IpIomGetFwVersion error, Status = %r\n", __FUNCTION__, Status);
+  }
   pInst->Info->IomFwVersion = Data32;
 
   Status = IpIomGetFwEngrVersion (pInst->IomInst, &Data32);
-  TCSS_RETURN_IF_ERROR (Status);
+  if (Status != IpCsiStsSuccess) {
+    PRINT_ERROR ("%a: IpIomGetFwEngrVersion error, Status = %r\n", __FUNCTION__, Status);
+  }
   pInst->Info->IomFwEngrVersion = Data32;
 
   Status = IpIomGetImrTbtStatus (pInst->IomInst, &Data32);
-  TCSS_RETURN_IF_ERROR (Status);
+  if (Status != IpCsiStsSuccess) {
+    PRINT_ERROR ("%a: IpIomGetImrTbtStatus error, Status = %r\n", __FUNCTION__, Status);
+  }
   pInst->Info->TbtImrStatus.RegValue = Data32;
 
   Status = IpTcPcieRpGetFunctionMap (pInst->PcieInst, &Data32);
-  TCSS_RETURN_IF_ERROR (Status);
+  if (Status != IpCsiStsSuccess) {
+    PRINT_ERROR ("%a: IpTcPcieRpGetFunctionMap error, Status = %r\n", __FUNCTION__, Status);
+  }
   pInst->Info->ItbtPcieFuncMap = Data32;
 
   Status = IpIomGetImrMgStatus (pInst->IomInst, &Data32);
-  TCSS_RETURN_IF_ERROR (Status);
+  if (Status != IpCsiStsSuccess) {
+    PRINT_ERROR ("%a: IpIomGetImrMgStatus error, Status = %r\n", __FUNCTION__, Status);
+  }
   pInst->Info->MgImrStatus.RegValue = Data32;
 
   Status = IpIomGetSwConfigs (pInst->IomInst, &IomConfigLockData);
-  TCSS_RETURN_IF_ERROR (Status);
+  if (Status != IpCsiStsSuccess) {
+    PRINT_ERROR ("%a: IpIomGetSwConfigs error, Status = %r\n", __FUNCTION__, Status);
+  }
   pInst->Info->SwConfiguration1Lock = IomConfigLockData.Lock1;
   pInst->Info->SwConfiguration3Lock = IomConfigLockData.Lock3;
   pInst->Info->SwConfiguration4Lock = IomConfigLockData.Lock4;
   pInst->Info->MiscConfugurationLock = IomConfigLockData.Lock5;
 
   Status = IpIomGetDeepStTcState (pInst->IomInst, &Data32);
-  TCSS_RETURN_IF_ERROR (Status);
+  if (Status != IpCsiStsSuccess) {
+    PRINT_ERROR ("%a: IpIomGetDeepStTcState error, Status = %r\n", __FUNCTION__, Status);
+  }
   pInst->Info->DeepStTcState = Data32;
 
   return IpCsiStsSuccess;

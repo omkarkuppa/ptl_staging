@@ -118,6 +118,16 @@ SetVrCommon (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuPowerDeliveryConfigGuid, (VOID *) &CpuPowerDeliveryConfig);
   ASSERT_EFI_ERROR (Status);
 
+  GuidHob = GetFirstGuidHob (&gCpuPmDataGuid);
+  ASSERT (GuidHob != NULL);
+  if (GuidHob == NULL) {
+    DEBUG ((DEBUG_ERROR, "Get CpuPmData failed\n"));
+    return;
+  }
+
+  CpuPmData = (CPU_PM_DATA *) (GET_GUID_HOB_DATA (GuidHob));
+  ASSERT (CpuPmData != NULL);
+
   ///
   /// Configure Platform Level controls
   /// PSYS Config
@@ -151,9 +161,9 @@ SetVrCommon (
   /// -Mailbox Data PMax is defined as U16.10.6 fixed point
   /// -Policy Pmax is defined in 1/8 W increments
   ///
-  if (CpuPowerMgmtVrConfig->PsysPmax != 0) {
+  if ((CpuPowerMgmtVrConfig->PsysPmax != 0) || (CpuPmData->PmData.PsysPmax != 0)) {
     PmonPmaxMailboxData.Data32 = 0;
-    PmonPmaxMailboxData.Fields.PmonPmax = ToUnsignedFixedPoint16(CpuPowerMgmtVrConfig->PsysPmax, 8, 10, 6, NULL);
+    PmonPmaxMailboxData.Fields.PmonPmax = CpuPowerMgmtVrConfig->PsysPmax ? ToUnsignedFixedPoint16 (CpuPowerMgmtVrConfig->PsysPmax, 8, 10, 6, NULL) : ToUnsignedFixedPoint16 (CpuPmData->PmData.PsysPmax, 8, 10, 6, NULL);
     MailboxCommand.InterfaceData = 0;
     MailboxCommand.Fields.Command = MAILBOX_VR_CMD_SVID_VR_HANDLER;
     MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SVID_SET_PMON_PMAX;
@@ -252,15 +262,6 @@ SetVrCommon (
   }
 
   if (CpuPowerDeliveryConfig->ThETAIbattEnable) {
-    GuidHob = GetFirstGuidHob (&gCpuPmDataGuid);
-    ASSERT (GuidHob != NULL);
-    if (GuidHob == NULL) {
-      DEBUG ((DEBUG_ERROR, "Get CpuPmData failed\n"));
-      return;
-    }
-
-    CpuPmData = (CPU_PM_DATA *) (GET_GUID_HOB_DATA (GuidHob));
-    ASSERT (CpuPmData != NULL);
     ///
     /// Vsys Max
     /// -VsysMax is defined as U16.10.6 fixed point

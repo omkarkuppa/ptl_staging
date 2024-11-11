@@ -20,7 +20,9 @@
 **/
 #include <SiliconPolicyInitDxe.h>
 #include <Library/BaseLib.h>
+#if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspsUpd.h>
+#endif
 #include <IndustryStandard/FirmwareVersionInfo.h>
 
 DXE_SI_POLICY_PROTOCOL mSiPolicyData  = { 0 };
@@ -42,7 +44,7 @@ SiliconPolicyInitDxe (
   )
 {
   EFI_STATUS Status;
-  #if FixedPcdGet8(PcdFspModeSelection) == 1
+#if FixedPcdGet8(PcdFspModeSelection) == 1
     VOID       *FspsUpd;
     FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
     ASSERT (FspsUpd != NULL);
@@ -51,7 +53,7 @@ SiliconPolicyInitDxe (
     // after transition to DXE phase.
     //
     ((FSPS_UPD *) FspsUpd)->FspsArchUpd.FspEventHandler = 0;
-  #endif
+#endif
 
   mSiPolicyData.Revision                         = DXE_SI_POLICY_PROTOCOL_REVISION;
   mSiPolicyData.SmbiosOemTypeFirmwareVersionInfo = INTEL_FVI_SMBIOS_TYPE;

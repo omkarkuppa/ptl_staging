@@ -69,7 +69,6 @@
   PeiDTbtPolicyLib
   PeiLib
   TmeInfoLib
-  PayloadResiliencySupportLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -283,6 +282,12 @@
 
   gSiPkgTokenSpaceGuid.PcdTsnSupport                           ## CONSUMES
 
+  # TDX
+  gSiPkgTokenSpaceGuid.PcdTdxActmMac0                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTdxActmMac1                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTdxActmMac2                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTdxActmMac3                    ## CONSUMES
+
 [Sources]
   PeiPchPolicyUpdatePreMem.c
   PeiPchPolicyUpdate.c
@@ -311,6 +316,7 @@
   gPeiDTbtPolicyPpiGuid                         ## CONSUMES
 
 [Guids]
+  gTdxActmMacNvVarGuid
   gMebxDataGuid                                 ## CONSUMES
   gAmtForcePushPetPolicyGuid                    ## CONSUMES
   gEfiGlobalVariableGuid                        ## CONSUMES

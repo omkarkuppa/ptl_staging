@@ -100,6 +100,10 @@ PciHotPlug (
   ITBT_INFO_HOB                    *ITbtInfoHob;
   UINTN                            RpBus;
   UINTN                            RpSegment;
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+  DTBT_INFO_HOB                    *DTbtInfoHob;
+  UINTN                            ControllerIndex;
+#endif
 
   RpSegment = 0;
   RpDev = 0;
@@ -111,8 +115,20 @@ PciHotPlug (
   ITbtInfoHob = NULL;
   ITbtInfoHob = (ITBT_INFO_HOB *) GetFirstGuidHob (&gITbtInfoHobGuid);
   if (ITbtInfoHob == NULL) {
-    DEBUG ((DEBUG_INFO, "ITbtInfoHob not found\n"));
+    DEBUG ((DEBUG_WARN, "ITbtInfoHob not found\n"));
   }
+
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+  //
+  // Get DTBT INFO HOB
+  //
+  DTbtInfoHob = NULL;
+  DTbtInfoHob = (DTBT_INFO_HOB *) GetFirstGuidHob (&gDTbtInfoHobGuid);
+  if (DTbtInfoHob == NULL) {
+    DEBUG ((DEBUG_WARN, "PciHotPlug - DTbtInfoHob not found\n"));
+  }
+#endif
+
   ZeroMem (mP2pbResourceRecord, sizeof (mP2pbResourceRecord));
   ZeroMem (mNumOfHotPlugBridge, sizeof (mNumOfHotPlugBridge));
 
@@ -133,12 +149,11 @@ PciHotPlug (
   // PCH Rootports Hotplug device path creation
   //
   for (Index = 0; Index < GetPchMaxPciePortNum (); Index++) {
+    Status = GetPchPcieRpDevFun (Index, &RpDev, &RpFunc); // Get the actual device/function no corresponding to the Rootport no provided
+    if (EFI_ERROR (Status)) {
+      ASSERT_EFI_ERROR (Status);
+    }
     if (PchSetup.PcieRootPortHPE[Index]) { // Check the Rootport no's hotplug is set
-      Status = GetPchPcieRpDevFun (Index, &RpDev, &RpFunc); // Get the actual device/function no corresponding to the Rootport no provided
-      if (EFI_ERROR (Status)) {
-        ASSERT_EFI_ERROR (Status);
-      }
-
       HotplugPcieDevicePath = NULL;
       HotplugPcieDevicePath = AllocatePool (sizeof (PCIE_HOT_PLUG_DEVICE_PATH));
       ASSERT (HotplugPcieDevicePath != NULL);
@@ -153,8 +168,39 @@ PciHotPlug (
       mPcieLocation[mHpcCount].HpbDevicePath = (EFI_DEVICE_PATH_PROTOCOL *)HotplugPcieDevicePath;
       mHpcCount++;
 
-      DEBUG ((DEBUG_INFO, "(%02d) PciHotPlug (PCH RP#) : Bus 0x00, Device 0x%x, Function 0x%x is added to the Hotplug Device Path list \n", mHpcCount, RpDev, RpFunc));
+      DEBUG ((DEBUG_INFO, "(%02d) PciHotPlug (PCH RP#) : Bus 0x00, Device 0x%x, Function 0x%x is added to the Hotplug Device Path list.\n", mHpcCount, RpDev, RpFunc));
     }
+#if FixedPcdGetBool (PcdDTbtEnable) == 1
+    else {
+      //
+      // In case of CPU PCIe used for BR AIC, then we proceed
+      // with device path creation even when HPE is disabled.
+      //
+      for (ControllerIndex = 0; ControllerIndex < MAX_DTBT_CONTROLLER_NUMBER; ControllerIndex++) {
+        if ((DTbtInfoHob != NULL)
+          && (DTbtInfoHob->DTbtControllerConfig[ControllerIndex].DTbtControllerEn)
+          && (DTbtInfoHob->DTbtControllerConfig[ControllerIndex].RpType == PCIE_RP_TYPE_CPU)
+          && (DTbtInfoHob->DTbtControllerConfig[ControllerIndex].PcieRpNumber == Index + 1))
+        {
+          HotplugPcieDevicePath = NULL;
+          HotplugPcieDevicePath = AllocatePool (sizeof (PCIE_HOT_PLUG_DEVICE_PATH));
+          ASSERT (HotplugPcieDevicePath != NULL);
+          if (HotplugPcieDevicePath == NULL) {
+            return EFI_OUT_OF_RESOURCES;
+          }
+          CopyMem (HotplugPcieDevicePath, &mHotplugPcieDevicePathTemplate, sizeof (PCIE_HOT_PLUG_DEVICE_PATH));
+          HotplugPcieDevicePath->PciRootPortNode.Device = (UINT8) RpDev; // Update real Device no
+          HotplugPcieDevicePath->PciRootPortNode.Function = (UINT8) RpFunc; // Update real Function no
+
+          mPcieLocation[mHpcCount].HpcDevicePath = (EFI_DEVICE_PATH_PROTOCOL *)HotplugPcieDevicePath;
+          mPcieLocation[mHpcCount].HpbDevicePath = (EFI_DEVICE_PATH_PROTOCOL *)HotplugPcieDevicePath;
+          mHpcCount++;
+
+          DEBUG ((DEBUG_INFO, "(%02d) PciHotPlug (CPU RP#) : Bus 0x00, Device 0x%x, Function 0x%x is added to the Hotplug Device Path list.\n", mHpcCount, RpDev, RpFunc));
+        }
+      }
+    }
+#endif
   }
 
   for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index++) {
@@ -178,7 +224,7 @@ PciHotPlug (
       mPcieLocation[mHpcCount].HpbDevicePath = (EFI_DEVICE_PATH_PROTOCOL *)HotplugPcieDevicePath;
       mHpcCount++;
 
-      DEBUG ((DEBUG_INFO, "(%02d) CPU PCIe HotPlug (ITBT RP#) : Bus 0x00, Device 0x%x, Function 0x%x is added to the Hotplug Device Path list \n", mHpcCount, RpDev, RpFunc));
+      DEBUG ((DEBUG_INFO, "(%02d) TCSS PCIe HotPlug (ITBT RP#) : Bus 0x00, Device 0x%x, Function 0x%x is added to the Hotplug Device Path list.\n", mHpcCount, RpDev, RpFunc));
     }
   }
   PciHotPlug = AllocatePool (sizeof (PCI_HOT_PLUG_INSTANCE));
@@ -702,7 +748,6 @@ GetResourcePadding (
   UINT8                             PciePMemAddrRngMax = 1;
   UINT8                             RsvdPcieKiloIo = 4;
   UINTN                             RpBus;
-  CHAR16                            *DevicePathStr;
 
   PaddingResource = AllocatePool (PADDING_NUM * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
   ASSERT (PaddingResource != NULL);
@@ -711,21 +756,6 @@ GetResourcePadding (
   }
 
   *Padding = (VOID *) PaddingResource;
-
-  // Record the segment number in Bit[32] of HpcPciAddress.
-  DevicePathStr = ConvertDevicePathToText (HpcDevicePath, TRUE, TRUE);
-  if (DevicePathStr != NULL) {
-    if (StrnCmp (DevicePathStr, PCI_ROOT_0_STRING, StrLen (PCI_ROOT_0_STRING)) == 0) {
-      DEBUG ((DEBUG_INFO, "Segment0 \n"));
-      HpcPciAddress &= ~BIT32;
-    } else if (StrnCmp (DevicePathStr, PCI_ROOT_1_STRING, StrLen (PCI_ROOT_1_STRING)) == 0) {
-      DEBUG ((DEBUG_INFO, "Segment1 \n"));
-      HpcPciAddress |= BIT32;
-    }
-  } else {
-      return EFI_OUT_OF_RESOURCES;
-  }
-
   RpBus  = (UINTN) ((HpcPciAddress >> 24) & 0xFF);
 
   if (RpBus == 0x00) {

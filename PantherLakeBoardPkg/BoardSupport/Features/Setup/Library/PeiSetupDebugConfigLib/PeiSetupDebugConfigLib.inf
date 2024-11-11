@@ -59,6 +59,6 @@
 [Pcd]
   gPlatformModuleTokenSpaceGuid.PcdSerialPortEnable             ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdUsb3SerialStatusCodeEnable   ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartEnable                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartEnable                        ## CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdStatusCodeUseSerial         ## PRODUCES
   gAcpiDebugFeaturePkgTokenSpaceGuid.PcdAcpiDebugFeatureActive  ## PRODUCES

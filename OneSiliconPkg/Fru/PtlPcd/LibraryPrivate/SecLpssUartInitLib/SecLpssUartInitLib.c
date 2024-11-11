@@ -129,6 +129,6 @@ SecLpssUartConfiguration (
     UartDeviceConfig->Attributes.StopBits,
     UartDeviceConfig->Attributes.AutoFlow
   );
-  PtlPcdSecLpssUartGpioConfigure (UartDeviceConfig);
+  PtlPcdSecLpssUartGpioConfigure (UartDeviceConfig, UartNumber);
 }
 

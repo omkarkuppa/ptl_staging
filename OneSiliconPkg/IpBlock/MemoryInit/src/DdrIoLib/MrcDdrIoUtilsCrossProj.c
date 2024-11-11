@@ -18,7 +18,6 @@
 
 **/
 
-
 #include "MrcDdrIoUtils.h" // for prototypes
 #include "MrcDdrIoUtilsPrivate.h" // for WrappedForceRcomp()
 #include "CMrcStatsTracker.h" // for MrcStatsStartTimer()
@@ -28,7 +27,6 @@
 #include "MrcMemoryApi.h"  // for MrcGetTwpre()
 #include "MrcDdr5.h" // for GetDdr5tDQSSDram()
 #include "MrcDdrIoApi.h" // for PI_PER_TCK
-
 
 // Strings for TGlobalCompOffset decoding
 const char *GlobalCompOffsetStr[TGlobalCompOffsetMax] = {
@@ -55,6 +53,11 @@ static const UINT32 CccPartitionToLogicalCh[MrcPartitionTypeMax][MRC_CCC_NUM] = 
   {0,   1,   2,   3,   4,   5,   6,   7}, // LPDDR5 NIL
   {0,   1,   0,   1,   2,   3,   2,   3}  // DDR5 IL
 };
+
+static const UINT32 PgPartitionToLogicalCntrl[MRC_PG_NUM] =
+// PGTERM0 PG0 PG1 PG2 PG3 PG4 PG5 PG6 PG7 PG8 GP9 PGTERM1
+  {0,      0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1};
+
 
 /**
   This function calculates Guardband for drift in Rd DQS timing over time
@@ -328,78 +331,6 @@ MrcCalcIoChNotPopMask (
   return IoChNotPop;
 }
 
-
-
-
-
-/**
-  The function preforms a frequency switch Rcomp
-
-  @param[in, out] MrcData - MRC global data.
-**/
-VOID
-FreqSwitchComp (
-  IN OUT MrcParameters *const MrcData
-  )
-{
-  MrcOutput     *Outputs;
-  INT64  PHClkDutyCycleEnable;
-  INT64  PHClkPhaseEn;
-  INT64  DataDccRankEn;
-  INT64  ClkDccRankEn;
-  INT64  WckDccRankEn;
-  UINT32 Override;
-  INT64  GetSetDis;
-  UINT8  FirstController;
-  UINT8  FirstChannel;
-  UINT8  FirstRank[MAX_CONTROLLER][MAX_CHANNEL];
-  DDRDATA_SHARED0_CR_DDRCRCOMPDQSDELAYCONTROL_STRUCT CompDqsDelayControl;
-
-  Outputs           = &MrcData->Outputs;
-  GetSetDis = 0;
-  FirstController   = Outputs->FirstPopController;
-  FirstChannel      = Outputs->Controller[FirstController].FirstPopCh;
-  // Get the first rank index for each channel
-  // per-channel results will be stored at this index
-  GetFirstRank (MrcData, FirstRank);
-
-  // Save Data
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, ReadFromCache , &PHClkDutyCycleEnable);
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, ReadFromCache , &PHClkPhaseEn);
-  MrcGetSetChStrb (MrcData, FirstController, FirstChannel, 0, GsmDataDccRankEn, ReadFromCache , &DataDccRankEn);
-  MrcGetSetCcc (MrcData, FirstController, FirstChannel, FirstRank[FirstController][FirstChannel], MRC_IGNORE_ARG, GsmClkDccRankEn, ReadFromCache , &ClkDccRankEn);
-  MrcGetSetMcCh (MrcData, FirstController, FirstChannel, GsmWckDccRankEn, ReadFromCache , &WckDccRankEn);
-  CompDqsDelayControl.Data = MrcReadCR (MrcData, DDRDATA_SHARED0_CR_DDRCRCOMPDQSDELAYCONTROL_REG);
-  Override = CompDqsDelayControl.Bits.Override;
-
-  // Disable FSM's to reduce unnecessary change
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, WriteToCache, &GetSetDis);
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, WriteToCache, &GetSetDis);
-  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmDataDccRankEn, WriteToCache, &GetSetDis);
-  MrcGetSetCcc (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MRC_IGNORE_ARG, GsmClkDccRankEn, WriteToCache, &GetSetDis);
-  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmWckDccRankEn, WriteToCache, &GetSetDis);
-
-  MrcFlushRegisterCachedData (MrcData);
-
-  CompDqsDelayControl.Bits.Override = 1;
-  MrcWriteCrMulticast (MrcData, DATASHARED_CR_DDRCRCOMPDQSDELAYCONTROL_REG, CompDqsDelayControl.Data);
-
-  ForceRcomp (MrcData, FullComp);
-
-  // Restore Data
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, WriteToCache, &PHClkDutyCycleEnable);
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, WriteToCache, &PHClkPhaseEn);
-  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmDataDccRankEn, WriteToCache, &DataDccRankEn);
-  MrcGetSetCcc (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MRC_IGNORE_ARG, GsmClkDccRankEn, WriteToCache, &ClkDccRankEn);
-  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmWckDccRankEn, WriteToCache, &WckDccRankEn);
-
-  MrcFlushRegisterCachedData (MrcData);
-
-  CompDqsDelayControl.Bits.Override = Override;
-  MrcWriteCrMulticast (MrcData, DATASHARED_CR_DDRCRCOMPDQSDELAYCONTROL_REG, CompDqsDelayControl.Data);
-}
-
-
 /**
   Display MR value from the host struct
 
@@ -512,21 +443,15 @@ TxFifoLimitstCK (
 {
   MrcOutput *Outputs;
   MrcInput  *Inputs;
-  MrcChannelOut *ChannelOut;
   MrcTiming     *Timing;
   INT64     tCWL;
   UINT8     Twpre;
   UINT8     WrPreambleOffset;
-  UINT32    FirstController;
-  UINT32    FirstChannel;
   BOOLEAN   IsGear4;
 
   Outputs = &MrcData->Outputs;
   Inputs  = &MrcData->Inputs;
-  FirstController = Outputs->FirstPopController;
-  FirstChannel = Outputs->Controller[FirstController].FirstPopCh;
-  ChannelOut = &Outputs->Controller[FirstController].Channel[FirstChannel];
-  Timing  = &ChannelOut->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
+  Timing  = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
   IsGear4 = Outputs->GearMode ? 1 : 0;
 
   // Account for Write Preamble:
@@ -1018,6 +943,14 @@ MrcGetPartition2ChMask (
         }
       }
       break;
+
+    case PartitionPg:
+      if (IsLpddr5) {
+        Partition2Ch = 0xF << (PgPartitionToLogicalCntrl[PartInstance] * Outputs->MaxChannels);
+      } else {
+        Partition2Ch = 0x3 << (PgPartitionToLogicalCntrl[PartInstance] * Outputs->MaxChannels);
+      }
+    break;
 
     default:
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Unexpected partition type: %d\n", PartType);

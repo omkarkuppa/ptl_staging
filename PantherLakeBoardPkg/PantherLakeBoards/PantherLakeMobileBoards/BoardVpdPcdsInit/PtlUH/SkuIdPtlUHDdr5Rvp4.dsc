@@ -428,6 +428,9 @@
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCRetimerFlash| * |{CODE(
   {
    {0x1, 0x0, 0x1},
+   {0x2, 0x0, 0x1},
+   {0x1, 0x2, 0x7},
+   {0x1, 0x3, 0x7},
    {0x0}  // terminator
   })}
 
@@ -628,6 +631,7 @@
   //
     {GPIOV2_PTL_PCD_XXGPP_A_16,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHostDeep,  GpioV2TermDefault}}, // BT_RF_KILL_N
     {GPIOV2_PTL_PCD_XXGPP_A_17,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHostDeep,  GpioV2TermDefault}}, // WIFI_RF_KILL_N
+    {GPIOV2_PTL_PCD_XXGPP_F_6,    {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirIn,     GpioV2StateDefault, GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}}, // WLAN_WWAN_COEX3
 
   //
   // Camera Conn 1
@@ -664,12 +668,7 @@
   //
   // TCSS
   //
-    {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateHigh,   GpioV2IntDis,  GpioV2ResetHost,      GpioV2TermDefault}}, // TCP_RT_S0IX_ENTRY_EXIT_N
-
-  //
-  // Type-C , TBT Re-Timers
-  //
-    {GPIOV2_PTL_PCD_XXGPP_B_21, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateLow,    GpioV2IntDis,  GpioV2ResetHostDeep,  GpioV2TermDefault}},  // TCP_RETIMER_FORCE_PWR
+    {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetResume,  GpioV2TermNone}}, // GPP_V17_TCP_RT_S0IX_ENTRY_EXIT_N
 
   //
   // Lid Switch Wake Gpio
@@ -697,10 +696,6 @@
 
     {0x0}
   })}
-
-  gBoardModuleTokenSpaceGuid.VpdPcdRetimerPowerStateGpio|*|{CODE(
-    { GPIOV2_PTL_PCD_XXGPP_V_17 } // TCP_RT_S0IX_ENTRY_EXIT_N
-  )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData| * |{CODE(
     { 0x0 }

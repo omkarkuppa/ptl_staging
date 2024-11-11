@@ -575,7 +575,10 @@ IoTrapRegisterHelper (
                  &mIoTrapHandle
                  );
 
-      ASSERT_EFI_ERROR (Status);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "Error observed for PCH SMI record insertion\n"));
+        return Status;
+      }
       mIoTrapData.Entry[TrapHandlerNum].IoTrapHandle = mIoTrapHandle;
 
       //
@@ -1135,7 +1138,7 @@ IoTrapControlPause (
 
       return EFI_SUCCESS;
     }
-    
+
   }
   return EFI_INVALID_PARAMETER;
 }

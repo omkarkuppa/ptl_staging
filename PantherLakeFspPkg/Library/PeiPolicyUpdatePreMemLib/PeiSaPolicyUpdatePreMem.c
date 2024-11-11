@@ -393,6 +393,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.tRFCpb                  = FspmUpd->FspmConfig.tRFCpb;
   MemConfig->ExternalInputs.RealtimeMemoryFrequency = FspmUpd->FspmConfig.RealtimeMemoryFrequency;
   MemConfig->ExternalInputs.CmdMirror               = FspmUpd->FspmConfig.CmdMirror;
+  MemConfig->ExternalInputs.ForceCkdBypass          = FspmUpd->FspmConfig.ForceCkdBypass;
    if (IsSimicsEnvironment() || IsHfpgaEnvironment ()) {
      MemConfig->ExternalInputs.SimicsFlag = 1;
    } else {

@@ -29,7 +29,7 @@
 #include <Ppi/FirmwareVolumeInfoMeasurementExcluded.h>
 #include <Library/MemoryAllocationLib.h>
 
-#define BASE_FV_SIZE 10
+#define BASE_FV_SIZE 9
 
 #if FixedPcdGetBool (PcdFspWrapperResetVectorInFsp) == 1
   #define FSP_WRAPPER_FV_SIZE 4
@@ -78,13 +78,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED BIOS_INFO  mBiosInfo = {
       0x0100,
       FixedPcdGet32 (PcdFlashNvStorageVariableSize) + FixedPcdGet32 (PcdFlashNvStorageFtwWorkingSize) + FixedPcdGet32 (PcdFlashNvStorageFtwSpareSize),
       FixedPcdGet32 (PcdFlashNvStorageVariableBase)
-    },
-    {
-      FIT_TYPE_07_BIOS_STARTUP_MODULE,
-      BIOS_INFO_STRUCT_ATTRIBUTE_BIOS_POST_IBB,
-      0x0100,
-      FixedPcdGet32 (PcdFlashFvUplSize),
-      FixedPcdGet32 (PcdFlashFvUplBase)
     },
     {
       FIT_TYPE_07_BIOS_STARTUP_MODULE,

@@ -522,8 +522,6 @@
 #define DTBT_FORM_ID                              5076
 #define DTBT_CONTROLLER0_FORM_ID                  5077
 #define DTBT_CONTROLLER1_FORM_ID                  5078
-#define KEY_DTBT_CONTROLLER0                      5080
-#define KEY_DTBT_CONTROLLER1                      5081
 #define TBT_SETUP_VOLATILE_DATA_ID                5084
 #define KEY_DTBT_CONTROLLER0_HOSTROUTER           5085
 #define KEY_DTBT_CONTROLLER1_HOSTROUTER           5086
@@ -662,6 +660,7 @@
 #define PCH_HDAUDIO_MIC_PRIVACY_FORM_ID           5577
 #define PCH_HDAUDIO_DSP_FEATURES_FORM_ACTION_KEY  5579
 #define PCH_HDAUDIO_DBT_OFFLOAD_ACTION_KEY        5580
+#define PCH_HDAUDIO_BT_SIDEBAND_ACTION_KEY        5581
 
 #define OC_SETUP_VAR_ID                           5578
 #define I3C0_AUTO_ID                              5800

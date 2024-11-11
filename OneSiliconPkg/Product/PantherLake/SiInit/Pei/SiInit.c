@@ -548,8 +548,8 @@ SiInitPostMemOnPolicy (
   MEMORY_CONFIGURATION        *MemConfig;
   TELEMETRY_PEI_CONFIG        *TelemetryPeiConfig;
   NPU_PEI_CONFIG              *NpuPeiConfig;
-#if FixedPcdGetBool(PcdVmdEnable) == 1
   VMD_PEI_CONFIG              *VmdPeiConfig;
+#if FixedPcdGetBool(PcdVmdEnable) == 1
   VOID                        *BaseAddressImr11;
   UINT32                      CpuFamilyId;
   EFI_RESOURCE_TYPE           ResourceType;
@@ -570,8 +570,8 @@ SiInitPostMemOnPolicy (
 
   SiPreMemPolicyPpi      = NULL;
   SiPolicy               = NULL;
-#if FixedPcdGetBool(PcdVmdEnable) == 1
   VmdPeiConfig           = NULL;
+#if FixedPcdGetBool(PcdVmdEnable) == 1
   BaseAddressImr11       = NULL;
 #endif
   HostBridgePeiConfig    = NULL;
@@ -769,6 +769,15 @@ SiInitPostMemOnPolicy (
   ///
   UpdateHostBridgeHobPostMem (HostBridgePeiConfig);
 
+  ///
+  /// VMD Initializations if the VMD IP is supported. Disable it if the feature PCD is disabled.
+  ///
+  DEBUG ((DEBUG_INFO, "Initializing VMD\n"));
+  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_VMD_INIT); //PostCode (0xA33)
+  PERF_INMODULE_BEGIN ("VmdInit");
+  VmdInit(VmdPeiConfig);
+  PERF_INMODULE_END ("VmdInit");
+
 #if (FixedPcdGetBool(PcdVmdEnable) == 1)
   if ((IsVmdEnabled() == TRUE) && (VmdPeiConfig->VmdEnable)) {
     CpuFamilyId = GetCpuFamilyModel ();
@@ -810,14 +819,6 @@ SiInitPostMemOnPolicy (
 
     }
   }
-  ///
-  /// VMD Initializations if the VMD IP is Supported
-  ///
-  DEBUG ((DEBUG_INFO, "Initializing VMD\n"));
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_VMD_INIT); //PostCode (0xA33)
-  PERF_INMODULE_BEGIN ("VmdInit");
-  VmdInit(VmdPeiConfig);
-  PERF_INMODULE_END ("VmdInit");
 #endif
 
   /// PAVP Initialization

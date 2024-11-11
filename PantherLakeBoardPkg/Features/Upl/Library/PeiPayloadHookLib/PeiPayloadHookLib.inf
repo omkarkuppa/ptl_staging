@@ -247,6 +247,11 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvGuidLockStatus
   gCnvFeaturePkgTokenSpaceGuid.PcdCnviPresence
   gCnvFeaturePkgTokenSpaceGuid.PcdGlobalCnvDlvrRfim
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvPresent
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvCompatibilityGuid
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDeviceId
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDispatch
+  gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids
 
   # PlatSamplePkg
   gPlatformModuleTokenSpaceGuid.PcdAhciMaxPorts
@@ -294,7 +299,6 @@
   gBoardModuleTokenSpaceGuid.PcdTouchpanelRstGpioPolarity
   gBoardModuleTokenSpaceGuid.VpdI2CRptable
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable
-  gBoardModuleTokenSpaceGuid.VpdPcdRetimerPowerStateGpio
   gBoardModuleTokenSpaceGuid.PcdLchIrqGpioPin
   gBoardModuleTokenSpaceGuid.PcdLchResetGpioPin
   gBoardModuleTokenSpaceGuid.PcdM2Ssd2RstGpio
@@ -306,6 +310,7 @@
   gBoardModuleTokenSpaceGuid.PcdM2Ssd2PowerEnableGpio
   gBoardModuleTokenSpaceGuid.PcdM2Ssd2PowerEnableGpioPolarity
   gBoardModuleTokenSpaceGuid.PcdPcieSlot2RootPort
+  gBoardModuleTokenSpaceGuid.VpdPcdCnvDeviceId
 
   gBoardModuleTokenSpaceGuid.VpdPcdTelemetry
   gBoardModuleTokenSpaceGuid.PcdPcieSlot3HoldRstGpioNo

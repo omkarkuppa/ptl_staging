@@ -77,7 +77,6 @@ External (\_SB.PC00.GTSN.TADL, IntObj)
 External (\_SB.PC00.GTSN.TADH, IntObj)
 #endif
 
-External (MMRP, MethodObj)
 External (MMTB, MethodObj)
 External (PG3S, FieldUnitObj)
 External (\PG3C, MethodObj)

@@ -140,7 +140,9 @@ GetPmonPortSupport (
       return TRUE;
 
     case PMON_PORTID_MC1:
+    if (GetCpuFamilyModel () != CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE) {
       return TRUE;
+    }
   }
   return FALSE;
 }

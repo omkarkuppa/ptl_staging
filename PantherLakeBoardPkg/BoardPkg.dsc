@@ -180,6 +180,7 @@
   0x01040004|SkuIdPtlUHDdr5Rvp4DpChrome|SkuIdPtlUHDdr5Rvp4Chrome
   0x01050004|SkuIdPtlUHDdr5Rvp4DpPpvBom|SkuIdPtlUHDdr5Rvp4PpvBom
   0x01060004|SkuIdPtlUHDdr5Rvp4DpBom|SkuIdPtlUHDdr5Rvp4Bom
+  0x00000005|SkuIdPtlUHLp5MemSktmRvp
   0x00000011|SkuIdPtlHLp5Gcs1
   0x00000012|SkuIdPtlHLp5Gcs2
   0x00010007|SkuIdPtlUHLp5AepBom
@@ -256,6 +257,13 @@
 
 !if gTseFeaturePkgTokenSpaceGuid.PcdTseFeatureEnable == TRUE
   !include TseFeaturePkg/Include/TseFeature.dsc
+!endif
+
+#
+# TDX
+#
+!if gTdxFeaturePkgTokenSpaceGuid.PcdTdxFeatureEnable == TRUE
+  !include TdxFeaturePkg/Include/TdxFeature.dsc
 !endif
 !if gCapsuleFeaturePkgTokenSpaceGuid.PcdCapsuleFeatureEnable == TRUE
   [Defines]
@@ -920,7 +928,7 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
 
 $(SILICON_PRODUCT_PATH)/EarlyDevices/EarlyDevices.inf {
   <PcdsFixedAtBuild>
-    gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable|0
+    gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|0
 }
 $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpiInitPei.inf
 
@@ -953,7 +961,7 @@ $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpi
 !if gPlatformModuleTokenSpaceGuid.PcdBeepStatusCodeEnable == TRUE
       NULL|BeepDebugFeaturePkg/Library/BeepStatusCodeHandlerLib/PeiBeepStatusCodeHandlerLib.inf
 !endif
-!if gPlatformModuleTokenSpaceGuid.PcdPostCodeStatusCodeEnable == TRUE
+!if gPlatformModuleTokenSpaceGuid.PcdPostCodeStatusCodeEnable == TRUE && gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1
       NULL|PostCodeDebugFeaturePkg/Library/PostCodeStatusCodeHandlerLib/PeiPostCodeStatusCodeHandlerLib.inf
 !endif
 !if gPlatformModuleTokenSpaceGuid.PcdSerialPortEnable == TRUE
@@ -1146,6 +1154,9 @@ $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/Pei/PlatformStatusCodeHandle
   $(PLATFORM_BSP_PATH)/BiosInfo/BiosInfo.inf
 
   SecurityPkg/FvReportPei/FvReportPei.inf
+!if gFvCopyPkgTokenSpaceGuid.PcdFreeSpaceSkipFvCopyEnable == TRUE
+  !include FvCopyFeaturePkg/Include/FvCopyFeature.dsc
+!endif
   $(PLATFORM_PACKAGE)/Services/StallServicePei/StallServicePei.inf
 
   $(PLATFORM_PACKAGE)/PlatformInit/SiliconPolicyPei/SiliconPolicyPeiPreMem.inf {

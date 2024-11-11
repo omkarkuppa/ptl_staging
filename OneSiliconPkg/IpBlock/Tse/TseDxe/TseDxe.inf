@@ -53,10 +53,10 @@
   gTseProtocolGuid                              ## PRODUCES
 
 [Guids]
-  gEfiBlockIoCryptoAlgoAesXtsGuid  ## CONSUMES
   gTseDataHobGuid                  ## CONSUMES
   gEfiEventExitBootServicesGuid    ## CONSUMES
   gEfiEndOfDxeEventGroupGuid       ## CONSUMES
+  gTseBlockIoCryptoAlgoAesXtsGuid  ## CONSUMES
 
 [Depex]
   TRUE

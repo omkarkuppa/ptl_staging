@@ -611,6 +611,14 @@ PtlBoardInitBeforeMemoryInit (
   PtlGpioTablePreMemInit ();
 
   GpioInit (PcdGetPtr(PcdBoardGpioTableEarlyPreMem));
+  //
+  // According to PCIe SPEC., the delay is reuqired to ensure the delta time
+  // between dTBT CIO Power Enable and PERST of PCIe slot is greater than 10ms
+  // during power on. The VpdPcd can be zero for boards don't support dTBT.
+  //
+  if (PcdGet32 (VpdPcdMiniDeltaTimeFromEarlyPrememToPrememGpio) != 0) {
+    MicroSecondDelay (PcdGet32 (VpdPcdMiniDeltaTimeFromEarlyPrememToPrememGpio));
+  }
   PtlMrcConfigInit ();
   PtlSaGpioConfigInit ();
   PtlSaMiscConfigInit ();

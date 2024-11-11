@@ -68,6 +68,7 @@
   gVtioFeaturePkgTokenSpaceGuid.PcdVtioFeatureEnable|TRUE
   gTmeFeaturePkgTokenSpaceGuid.PcdTmeFeatureEnable|TRUE
   gTseFeaturePkgTokenSpaceGuid.PcdTseFeatureEnable|TRUE
+  gTdxFeaturePkgTokenSpaceGuid.PcdTdxFeatureEnable|TRUE
   gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyFeatureEnable|TRUE
   gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyIDispSndwSupported|TRUE
     gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyBtSndwSupported|TRUE
@@ -122,7 +123,6 @@
   gSiPkgTokenSpaceGuid.PcdBootGuardEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdTxtEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdTseEnable|TRUE
-  gSiPkgTokenSpaceGuid.PcdTdxEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable|FALSE
 
   gSiPkgTokenSpaceGuid.PcdMrcTraceMessageSupported|TRUE
@@ -131,7 +131,6 @@
   gPlatformModuleTokenSpaceGuid.PcdPostCodeStatusCodeEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdSourceDebugEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdBiosGuardEnable|TRUE
-  gSiPkgTokenSpaceGuid.PcdTdxEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdHgEnable|TRUE
   gBoardModuleTokenSpaceGuid.PcdS4Enable|TRUE
 
@@ -235,7 +234,7 @@
   !endif
 
   gSiPkgTokenSpaceGuid.PcdOcWdtEnable|TRUE
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartEnable|TRUE
+  gSiPkgTokenSpaceGuid.PcdLpssUartEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdIpuEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdIgdEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdPeiDisplayEnable|TRUE
@@ -260,6 +259,7 @@
   gSiPkgTokenSpaceGuid.PcdStatusCodeUseTraceHub|TRUE
 
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable|TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP|TRUE
 !endif #PcdAdvancedFeatureEnable
 
   gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable|FALSE
@@ -325,6 +325,11 @@
   gDptfFeaturePkgTokenSpaceGuid.PcdDttSen4Participant|TRUE
   gDptfFeaturePkgTokenSpaceGuid.PcdDttSen5Participant|TRUE
 !endif
+
+#
+# FV Copy Free Space Skip Feature Enable
+#
+  gFvCopyPkgTokenSpaceGuid.PcdFreeSpaceSkipFvCopyEnable|TRUE
 
 #
 # Connectivity Advanced Feature Settings
@@ -452,9 +457,9 @@
 !endif
 
 !if $(TARGET) == DEBUG
-  !if gSiPkgTokenSpaceGuid.PcdSerialIoUartEnable == TRUE
-    gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable|TRUE
-    gSiPkgTokenSpaceGuid.PcdSerialIoUartNumber|0
+  !if gSiPkgTokenSpaceGuid.PcdLpssUartEnable == TRUE
+    gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|TRUE
+    gSiPkgTokenSpaceGuid.PcdLpssUartNumber|0
     gPlatformModuleTokenSpaceGuid.PcdStatusCodeUseSerialIoUart|TRUE
   !endif
 !endif
@@ -474,6 +479,8 @@
   #  DENY_EXECUTE_ON_SECURITY_VIOLATION     0x00000004
   #  QUERY_USER_ON_SECURITY_VIOLATION       0x00000005
   gEfiSecurityPkgTokenSpaceGuid.PcdOptionRomImageVerificationPolicy|0x00000004
+  # Change PcdRsa2048Sha256PublicKeyBuffer's value to the content of
+  # BaseTools\Source\Python\Rsa2048Sha256Sign\TestSigningPublicKey.txt for TestSigningPrivateKey.pem
   gEfiSecurityPkgTokenSpaceGuid.PcdRsa2048Sha256PublicKeyBuffer|{0x8A, 0xF3, 0x87, 0x6B, 0x0F, 0xD4, 0xA3, 0x90, 0x15, 0xD7, 0x40, 0xC5, 0x3A, 0x94, 0x9B, 0xF4, 0xE0, 0x58, 0x53, 0x58, 0x87, 0x89, 0x67, 0x84, 0x60, 0xAF, 0x8E, 0xB4, 0x16, 0x1F, 0x52, 0x51}
 !endif
 
@@ -575,6 +582,15 @@
 
 !if gPlatformModuleTokenSpaceGuid.PcdNetworkEnable == TRUE
   gEfiNetworkPkgTokenSpaceGuid.PcdAllowHttpConnections|TRUE
+!endif
+
+#
+# UnloadDriver - AFP CnvCompatability
+#
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable == TRUE
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP == TRUE
+  gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids|{GUID(gUndiDriverBinGuid), GUID(gWlanDriverBinGuid), GUID(gBluetoothHciImageGuid)}
+!endif
 !endif
 
 #

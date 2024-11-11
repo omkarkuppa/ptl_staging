@@ -451,21 +451,49 @@ MrcGetSetPartitionBlockIndex (
   IN OUT  INT64         *const  Value
   )
 {
-  return MrcGetSet (
-    MrcData,
-    MRC_IGNORE_ARG,
-    MRC_IGNORE_ARG,
-    MRC_IGNORE_ARG,
-    MRC_IGNORE_ARG,
-    Index,
-    PartitionBlock,
-    (PartitionBlock == PartitionPll) ? MRC_IGNORE_ARG : BlockIndex,
-    MRC_IGNORE_ARG,
-    DdrLevel,
-    Group,
-    Mode,
-    Value
-  );
+  UINT32 PartIndex;
+  MrcStatus Status = mrcSuccess;
+  MRC_RANGE Range = MrcGetPartitionIndexRange (PartitionBlock, BlockIndex);
+  if (Range.Start != MRC_IGNORE_ARG_8) {
+    for (PartIndex = Range.Start; PartIndex < Range.End && Status == mrcSuccess; PartIndex++) {
+      if (!MrcGetHwPartitionExists (MrcData, PartitionBlock, PartIndex, MRC_IGNORE_ARG)) {
+        continue;
+      }
+
+      Status = MrcGetSet (
+        MrcData,
+        MRC_IGNORE_ARG,
+        MRC_IGNORE_ARG,
+        MRC_IGNORE_ARG,
+        MRC_IGNORE_ARG,
+        Index,
+        PartitionBlock,
+        PartIndex,
+        MRC_IGNORE_ARG,
+        DdrLevel,
+        Group,
+        Mode,
+        Value
+      );
+    }
+  } else {
+    Status = MrcGetSet (
+      MrcData,
+      MRC_IGNORE_ARG,
+      MRC_IGNORE_ARG,
+      MRC_IGNORE_ARG,
+      MRC_IGNORE_ARG,
+      Index,
+      PartitionBlock,
+      (PartitionBlock == PartitionPll) ? MRC_IGNORE_ARG : BlockIndex,
+      MRC_IGNORE_ARG,
+      DdrLevel,
+      Group,
+      Mode,
+      Value
+    );
+  }
+  return Status;
 }
 
 /**

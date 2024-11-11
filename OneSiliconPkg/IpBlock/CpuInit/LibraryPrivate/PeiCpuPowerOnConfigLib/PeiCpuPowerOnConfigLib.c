@@ -136,7 +136,7 @@ SetCpuStrapAndEarlyPowerOnConfig (
     DEBUG ((DEBUG_INFO, "Current CPU Strap Set 3 Low = 0x%08X\n", CpuStrapSet3Low));
     PeiCpuStrapSetActiveCores (&CpuStrapSet1High, (UINT8) CpuInitPreMemConfig->ActiveCoreCount, (UINT8) CpuInitPreMemConfig->ActiveSmallCoreCount, CpuInitPreMemConfig->ActiveLpAtomCoreCount, &ColdResetFlag, &WarmResetFlag);
     PeiCpuStrapBistEnableDisable (&CpuStrapSet1High, (UINT8) CpuInitPreMemConfig->BistOnReset, &ColdResetFlag, &WarmResetFlag);
-
+    PeiCpuStrapReduceXecoresEnableDisable (&CpuStrapSet1High, (UINT8) CpuInitPreMemConfig->ReduceXecores, &ColdResetFlag, &WarmResetFlag);
     ///
     /// Perform Flex Ratio if processor is fused to perform Flex Ratio
     ///

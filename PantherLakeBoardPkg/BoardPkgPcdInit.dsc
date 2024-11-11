@@ -51,6 +51,7 @@
   OneClickRecoveryFeaturePkg/OneClickRecoveryFeaturePkg.dec
   PlatformSanitizeFeaturePkg/PlatformSanitizeFeaturePkg.dec
   MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
+  TdxFeaturePkg/TdxFeaturePkg.dec
 
 [PcdsFeatureFlag]
   ## This PCD specified whether ACPI SDT protocol is installed.
@@ -104,6 +105,8 @@
   # Total Storage Encryption
   gTseFeaturePkgTokenSpaceGuid.PcdTseFeatureEnable|TRUE
 
+  # Tdx
+  gTdxFeaturePkgTokenSpaceGuid.PcdTdxFeatureEnable|TRUE
 
   # XmlCli: Initialize Feature Pcd
   gXmlCliFeaturePkgTokenSpaceGuid.PcdXmlCliFeatureEnable|FALSE
@@ -151,17 +154,16 @@
   gSiPkgTokenSpaceGuid.PcdBiosGuardLegacyAcpi|TRUE
   gSiPkgTokenSpaceGuid.PcdTdxEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdBootGuardEnable|FALSE
-  gSiPkgTokenSpaceGuid.PcdTdxEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdDtprEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdAtaEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdOcWdtEnable|FALSE
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartEnable|FALSE
+  gSiPkgTokenSpaceGuid.PcdLpssUartEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdIpuEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdPeiDisplayEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdVtdEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdDmiEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdPpmEnable|FALSE
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable|FALSE
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdPpamEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdSpaEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable|FALSE
@@ -499,6 +501,7 @@
 
   # Connectivity
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable|FALSE
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP|FALSE
 
   # PCD value to determine formset display location
   #

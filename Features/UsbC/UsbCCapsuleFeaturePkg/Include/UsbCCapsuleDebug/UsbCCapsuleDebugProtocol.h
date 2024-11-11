@@ -36,7 +36,9 @@
 //
 #define USBC_CAPSULE_DBG_DISABLED   0
 #define USBC_CAPSULE_DBG_ERROR      1
-#define USBC_CAPSULE_DBG_VERBOSE    2
+#define USBC_CAPSULE_DBG_WARN       2
+#define USBC_CAPSULE_DBG_INFO       3
+#define USBC_CAPSULE_DBG_VERBOSE    4
 
 extern EFI_GUID  gEfiUsbCCapsuleDebugProtocolGuid;
 #endif

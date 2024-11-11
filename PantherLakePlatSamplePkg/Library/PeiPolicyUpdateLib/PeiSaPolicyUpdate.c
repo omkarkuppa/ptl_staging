@@ -312,7 +312,7 @@ UpdatePeiSaPolicy (
   ASSERT_EFI_ERROR (Status);
 
   if (!EFI_ERROR (Status)) {
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchUsbOverCurrentEnable,TcssPeiConfig->UsbConfig.OverCurrentEnable, PchSetup.PchUsbOverCurrentEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchUsbOverCurrentEnable, TcssPeiConfig->UsbConfig.OverCurrentEnable, PchSetup.PchUsbOverCurrentEnable);
   }
 
   VarSize = sizeof (SETUP_DATA);
@@ -386,19 +386,19 @@ UpdatePeiSaPolicy (
       }
 
       if (BootMode == BOOT_ON_S3_RESUME) {
-        #if FixedPcdGet8(PcdFspModeSelection) == 1
-          ((FSPS_UPD *) FspsUpd)->FspsConfig.GraphicsConfigPtr = (UINT64) NULL;
-        #else
-          IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr = (VOID *) NULL;
-        #endif
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+        ((FSPS_UPD *) FspsUpd)->FspsConfig.GraphicsConfigPtr = (UINT64) NULL;
+#else
+        IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr = (VOID *) NULL;
+#endif
       } else {
-        #if FixedPcdGet8(PcdFspModeSelection) == 1
-          ((FSPS_UPD *) FspsUpd)->FspsConfig.GraphicsConfigPtr = (UINT64) Buffer;
-          DEBUG ((DEBUG_INFO, "Vbt Pointer from PeiGetSectionFromFv is 0x%x\n", ((FSPS_UPD *) FspsUpd)->FspsConfig.GraphicsConfigPtr));
-        #else
-          IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr = (VOID *) Buffer;
-          DEBUG ((DEBUG_INFO, "Vbt Pointer from PeiGetSectionFromFv is 0x%x\n", IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr));
-        #endif
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+        ((FSPS_UPD *) FspsUpd)->FspsConfig.GraphicsConfigPtr = (UINT64) Buffer;
+        DEBUG ((DEBUG_INFO, "Vbt Pointer from PeiGetSectionFromFv is 0x%x\n", ((FSPS_UPD *) FspsUpd)->FspsConfig.GraphicsConfigPtr));
+#else
+        IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr = (VOID *) Buffer;
+        DEBUG ((DEBUG_INFO, "Vbt Pointer from PeiGetSectionFromFv is 0x%x\n", IGpuConfig->PeiDisplayConfig.GraphicsConfigPtr));
+#endif
       }
       COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.VbtSize, IGpuConfig->PeiDisplayConfig.VbtSize, (UINT32)Size);
       DEBUG ((DEBUG_INFO, "Vbt Size from PeiGetSectionFromFv is 0x%x\n", Size));

@@ -179,18 +179,4 @@ PeiTraceHubMemoryAllocation(
   IN OUT UINT64                       *Touud
 );
 
-/**
-  Reserve Trace Hub Memory
-
-  @param[in] TraceHubMemBase              Trace Hub memory address
-  @param[in] TraceHubMemSize              Size of Trace Hub
-  @param[in] ResourceAttributeTested      Resource Attribute based on Boot Mode
-**/
-VOID
-PeiTraceHubMemoryAllocationV2 (
-  IN EFI_PHYSICAL_ADDRESS         TraceHubMemBase,
-  IN UINT64                       TraceHubMemSize,
-  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
-  );
-
 #endif // _PEI_TRACEHUB_INIT_LIB_H_

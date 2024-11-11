@@ -20,7 +20,24 @@
 
 #ifndef _LPSS_UART_LIB_H_
 #define _LPSS_UART_LIB_H_
+
 #include <Protocol/SerialIo.h>
+
+/**
+  Polls a serial device to see if there is any data waiting or pending for read.
+  If there is data pending, then TRUE is returned.
+  If there is no data, then FALSE is returned.
+
+  @param[in]  MmioBaseAddress     MMIO Base address
+
+  @retval TRUE             Data is waiting to read from the serial device.
+  @retval FALSE            There is no data waiting to read from the serial device.
+**/
+BOOLEAN
+EFIAPI
+LpssUartPolling (
+  IN UINTN            MmioBaseAddress
+  );
 
 /**
   Register access helper. Depending on SerialIO UART mode,
@@ -231,7 +248,6 @@ LpssUartWrite (
   IN UINTN            NumberOfBytes
   );
 
-
 /**
   Read data from serial device and save the data in buffer.
 
@@ -255,8 +271,6 @@ LpssUartRead (
   IN  BOOLEAN          WaitUntilBufferFull
   );
 
-
-
 /**
   Gets Fixed Base Address used for BAR0
 
@@ -268,4 +282,5 @@ UINT32
 GetLpssUartFixedMmioAddress (
   IN UINT8       UartNumber
   );
+
 #endif //_LPSS_UART_LIB_H_

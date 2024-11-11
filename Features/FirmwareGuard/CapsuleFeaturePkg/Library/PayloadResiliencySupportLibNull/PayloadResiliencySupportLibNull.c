@@ -38,17 +38,3 @@ IsPayloadBackupEnabled (
   DEBUG((DEBUG_INFO, "The Payloads management backup Feature is not enabled.\n"));
   return FALSE;
 }
-
-/**
-  Get the Microcode Address in recovery boot
-
-  @return       The Microcode Address value.
-
-**/
-UINT32
-EFIAPI
-GetMicrocodeBaseAddressInRecovery (
- )
-{
-  return 0;
-}

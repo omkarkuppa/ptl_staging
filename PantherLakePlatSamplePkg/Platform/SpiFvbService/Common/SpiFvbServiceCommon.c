@@ -570,11 +570,12 @@ IsFvHeaderValid (
   )
 {
   if (FvBase == PcdGet32(PcdFlashNvStorageVariableBase)) {
-    if (CompareMem (&FvHeader->FileSystemGuid, &gEfiSystemNvDataFvGuid, sizeof(EFI_GUID)) != 0 ) {
+    if (!CompareGuid (&FvHeader->FileSystemGuid, &gEfiSystemNvDataFvGuid)) {
       return FALSE;
     }
   } else {
-    if (CompareMem (&FvHeader->FileSystemGuid, &gEfiFirmwareFileSystem2Guid, sizeof(EFI_GUID)) != 0 ) {
+    if ((!CompareGuid (&FvHeader->FileSystemGuid, &gEfiFirmwareFileSystem2Guid)) &&
+        (!CompareGuid (&FvHeader->FileSystemGuid, &gEfiFirmwareFileSystem3Guid))) {
       return FALSE;
     }
   }

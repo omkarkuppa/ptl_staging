@@ -76,7 +76,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT8 mSmbusSTPRsvdAddresses[] = {
   Update PCH General pre mem policies.
 
   @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
   @param[in] PchSetup       Pointer to PCH_SETUP
   @param[in] SetupData      Pointer to SETUP_DATA
 **/
@@ -93,12 +92,12 @@ UpdatePchGeneralPreMemPolicy (
   VOID                            *FspmUpd;
 #else
   PCH_GENERAL_PREMEM_CONFIG       *PchGeneralPreMemConfig;
+  EFI_STATUS                      Status;
 #endif
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
 #else
-  EFI_STATUS                      Status;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gPchGeneralPreMemConfigGuid, (VOID *) &PchGeneralPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -117,7 +116,6 @@ UpdatePchGeneralPreMemPolicy (
   Update DCI pre mem policies.
 
   @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
   @param[in] PchSetup       Pointer to PCH_SETUP
 **/
 STATIC
@@ -131,13 +129,13 @@ UpdateDciPreMemPolicy (
   VOID                            *FspmUpd;
 #else
   PCH_DCI_PREMEM_CONFIG           *DciPreMemConfig;
+  EFI_STATUS                      Status;
 #endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
 #else
-  EFI_STATUS                      Status;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gDciPreMemConfigGuid, (VOID *) &DciPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -155,7 +153,6 @@ UpdateDciPreMemPolicy (
   Update TraceHub pre mem policies.
 
   @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
   @param[in] PchSetup       Pointer to PCH_SETUP
 **/
 STATIC
@@ -176,6 +173,8 @@ UpdateTraceHubPreMemPolicy (
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
+  ((FSPM_UPD *) FspmUpd)->FspmConfig.SocTraceHubMemReg0Size = PchSetup->SocTraceHubMemReg0Size;
+  ((FSPM_UPD *) FspmUpd)->FspmConfig.SocTraceHubMemReg1Size = PchSetup->SocTraceHubMemReg1Size;
 #else
   TraceHubPreMemConfig = NULL;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTraceHubPreMemConfigGuid, (VOID *) &TraceHubPreMemConfig);
@@ -186,15 +185,15 @@ UpdateTraceHubPreMemPolicy (
 
   TraceHubPreMemConfig->TraceHub[SocTraceHub].MemReg0Size = TRACEHUB_MEM_SIZE (PchSetup->SocTraceHubMemReg0Size);
   TraceHubPreMemConfig->TraceHub[SocTraceHub].MemReg1Size = TRACEHUB_MEM_SIZE (PchSetup->SocTraceHubMemReg1Size);
-  COMPARE_AND_UPDATE_POLICY (TraceHubPreMemConfig->TraceHub[SocTraceHub].EnableMode, PchSetup->SocTraceHubMode);
 #endif
+
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SocTraceHubMode, TraceHubPreMemConfig->TraceHub[SocTraceHub].EnableMode, PchSetup->SocTraceHubMode);
 }
 
 /**
   Update Smbus pre mem policies.
 
   @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
   @param[in] PchSetup       Pointer to PCH_SETUP
 **/
 STATIC
@@ -210,13 +209,13 @@ UpdateSmbusPreMemPolicy (
   VOID                            *FspmUpd;
 #else
   PCH_SMBUS_PREMEM_CONFIG         *SmbusPreMemConfig;
+  EFI_STATUS                      Status;
 #endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
 #else
-  EFI_STATUS                      Status;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSmbusPreMemConfigGuid, (VOID *) &SmbusPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -247,7 +246,6 @@ UpdateSmbusPreMemPolicy (
   Update Lpc pre mem policies.
 
   @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
   @param[in] PchSetup       Pointer to PCH_SETUP
 **/
 STATIC
@@ -261,29 +259,26 @@ UpdateLpcPreMemPolicy (
   VOID                            *FspmUpd;
 #else
   PCH_LPC_PREMEM_CONFIG           *LpcPreMemConfig;
+  EFI_STATUS                      Status;
 #endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
 #else
-  EFI_STATUS                      Status;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gLpcPreMemConfigGuid, (VOID *) &LpcPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return;
   }
 #endif
-#if FixedPcdGet8(PcdFspModeSelection) == 0
-  COMPARE_AND_UPDATE_POLICY (LpcPreMemConfig->EnhancePort8xhDecoding, PchSetup->EnhancePort8xhDecoding);
-#endif
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchLpcEnhancePort8xhDecoding, LpcPreMemConfig->EnhancePort8xhDecoding, PchSetup->EnhancePort8xhDecoding);
 }
 
 /**
   Update WatchDog pre mem policies.
 
   @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
   @param[in] PchSetup       Pointer to PCH_SETUP
 **/
 STATIC
@@ -298,13 +293,13 @@ UpdateWatchDogPreMemPolicy (
   VOID                            *FspmUpd;
 #else
   PCH_WDT_PREMEM_CONFIG           *WatchDogPreMemConfig;
+  EFI_STATUS                      Status;
 #endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
  #else
-  EFI_STATUS                      Status;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gWatchDogPreMemConfigGuid, (VOID *) &WatchDogPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -333,15 +328,14 @@ UpdatePcieClockInfo (
   DEBUG ((DEBUG_INFO, "UpdatePcieClockInfo ClkIndex %x ClkUsage %x, Supported %x\n", Index, Pcd64.PcieClock.ClockUsage, Pcd64.PcieClock.ClkReqSupported));
 
   if(Index < GetPchMaxPcieClockNum()) {
-    UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[Index],PcieRpPreMemConfig->PcieClock[Index].Usage, (UINT8)Pcd64.PcieClock.ClockUsage);
-    UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcClkReq[Index],PcieRpPreMemConfig->PcieClock[Index].ClkReq, Pcd64.PcieClock.ClkReqSupported ? (UINT8)Index : 0xFF);
+    UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[Index], PcieRpPreMemConfig->PcieClock[Index].Usage, (UINT8)Pcd64.PcieClock.ClockUsage);
+    UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcClkReq[Index], PcieRpPreMemConfig->PcieClock[Index].ClkReq, Pcd64.PcieClock.ClkReqSupported ? (UINT8)Index : 0xFF);
   }
 }
 /**
   Update PcieRp pre mem policies.
 
   @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
   @param[in] PchSetup       Pointer to PCH_SETUP
 **/
 STATIC
@@ -440,12 +434,12 @@ UpdatePcieRpPreMemPolicy (
 
   for (RpIndex = 0; RpIndex < GetPchMaxPcieClockNum(); RpIndex++) {
     if (PchSetup->PchPcieClkReqSupport[RpIndex] == 0xFF) {
-      UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcClkReq[RpIndex],PcieRpPreMemConfig->PcieClock[RpIndex].ClkReq, (UINT8)PCH_PCIE_NO_SUCH_CLOCK);
+      UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcClkReq[RpIndex], PcieRpPreMemConfig->PcieClock[RpIndex].ClkReq, (UINT8)PCH_PCIE_NO_SUCH_CLOCK);
     }
     if (PchSetup->PchPcieClockUsageOverride[RpIndex] == 1) {
       UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[RpIndex], PcieRpPreMemConfig->PcieClock[RpIndex].Usage, PchClockUsageUnspecified);
     } else if (PchSetup->PchPcieClockUsageOverride[RpIndex] == 2) {
-      UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[RpIndex],PcieRpPreMemConfig->PcieClock[RpIndex].Usage, PchClockUsageNotUsed);
+      UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[RpIndex], PcieRpPreMemConfig->PcieClock[RpIndex].Usage, PchClockUsageNotUsed);
     }
   }
 
@@ -454,7 +448,6 @@ UpdatePcieRpPreMemPolicy (
   Update HD Audio pre mem policies.
 
   @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
   @param[in] PchSetup       Pointer to PCH_SETUP
 **/
 STATIC
@@ -469,13 +462,13 @@ UpdateHdaPreMemPolicy (
   VOID                            *FspmUpd;
 #else
   HDAUDIO_PREMEM_CONFIG           *HdaPreMemConfig;
+  EFI_STATUS                      Status;
 #endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
 #else
-  EFI_STATUS                      Status;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gHdAudioPreMemConfigGuid, (VOID *) &HdaPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -551,7 +544,6 @@ UpdateHdaPreMemPolicy (
   Update ISH pre mem policies.
 
   @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
   @param[in] PchSetup       Pointer to PCH_SETUP
 **/
 STATIC
@@ -566,12 +558,12 @@ UpdateIshPreMemPolicy (
   VOID                            *FspmUpd;
 #else
   ISH_PREMEM_CONFIG               *IshPreMemConfig;
+  EFI_STATUS                      Status;
 #endif
-  #if FixedPcdGet8(PcdFspModeSelection) == 1
+#if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
-  #else
-  EFI_STATUS                      Status;
+#else
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gIshPreMemConfigGuid, (VOID *) &IshPreMemConfig);
   if (EFI_ERROR (Status)) {
     return;
@@ -585,7 +577,6 @@ UpdateIshPreMemPolicy (
   Update CNVi pre mem policies.
 
   @param[in] SiPreMemPolicy Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspsUpm        Pointer to FSPM_UPD
   @param[in] SaSetup        Pointer to Sa_SETUP
 **/
 STATIC
@@ -597,16 +588,16 @@ UpdateCnviPreMemPolicy (
 {
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspmUpd;
+  VOID                         *FspmUpd;
 #else
   CNVI_PREMEM_CONFIG           *CnviPreMemConfig;
+  EFI_STATUS                   Status;
 #endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
 #else
-  EFI_STATUS                   Status;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCnviPreMemConfigGuid, (VOID *) &CnviPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -622,7 +613,6 @@ UpdateCnviPreMemPolicy (
   Update SPI pre mem policies.
 
   @param[in] SiPreMemPolicy       Pointer to SI_PREMEM_POLICY_PPI
-  @param[in] FspmUpd              Pointer to FspmUpd structure
   @param[in] PchSetup             Pointer to PCH_SETUP buffer
 **/
 STATIC
@@ -675,7 +665,7 @@ UpdateSpiPreMemHob (
 
   if (SpiInfoHob != NULL) {
     SpiInfoHobData =  GET_GUID_HOB_DATA (SpiInfoHob);
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ExtendedBiosDecodeRange,SpiInfoHobData->ExtendedBiosDecodeRangeEnable, FixedPcdGetBool(PcdExtendedBiosRegionSupport));
+    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ExtendedBiosDecodeRange, SpiInfoHobData->ExtendedBiosDecodeRangeEnable, FixedPcdGetBool(PcdExtendedBiosRegionSupport));
     DEBUG ((DEBUG_INFO, "ExtendedBiosDecodeRange = 0x%x\n", SpiInfoHobData->ExtendedBiosDecodeRangeEnable));
   } else {
     DEBUG ((DEBUG_INFO, "SPI Info Hob not found\n"));

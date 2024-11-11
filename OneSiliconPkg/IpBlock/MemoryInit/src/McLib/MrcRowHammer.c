@@ -836,6 +836,8 @@ MrcRhPrevention (
 
         // Check if DRFM supported on each DIMM
         DrfmSupported = MrcIsDrfmSupported (MrcData, Controller, Channel, Dimm);
+        MrcData->Save.Data.IsDrfmSupported = DrfmSupported;
+
         if (DrfmSupported) {
           MrcSetDimmBit (MrcData, Channel, Dimm, &DrfmDimmSupportedMap);
         }

@@ -383,7 +383,7 @@ PeiSpiDmaRead (
     return EFI_UNSUPPORTED;
   }
 
-  if (ToRead >= SIZE_1KB && ((UINTN)FlashAddress > 0xFF000000)) {
+  if (ToRead >= SIZE_1KB && ((UINTN)FlashAddress >= PcdGet32(PcdBiosAreaBaseAddress))) {
     DEBUG ((DEBUG_INFO, "%a ReadSize   %08X\n", __FUNCTION__, ReadSize));
     DEBUG ((DEBUG_INFO, "%a FlashAddress %08X\n", __FUNCTION__, FlashAddress));
     DEBUG ((DEBUG_INFO, "%a Destination %08X\n", __FUNCTION__, Destination));

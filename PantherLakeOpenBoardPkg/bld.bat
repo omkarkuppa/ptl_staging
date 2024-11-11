@@ -133,16 +133,6 @@ copy /y /b %WORKSPACE_SILICON%\%PLATFORM_FSP_BIN_PACKAGE%\Fsp_Rebased_S.fd+%WORK
 @echo REBUILD_MODE         = %REBUILD_MODE%
 @echo EXT_BUILD_FLAGS      = %EXT_BUILD_FLAGS%
 
-@set UPLBUILDTIMESTAMP=%time%
-%PYTHON_COMMAND% %WORKSPACE_CORE%\UefiPayloadPkg\UniversalPayloadBuild.py ^
-  -t %TOOL_CHAIN_TAG% ^
-  -b %PrepRELEASE% ^
-  -D UNIVERSAL_PAYLOAD=TRUE ^
-  -D DISABLE_RESET_SYSTEM=TRUE ^
-  -D VARIABLE_SUPPORT=None ^
-  -D MEMORY_TEST=NULL
-if %ERRORLEVEL% NEQ 0 goto BldFail
-@set UPLBUILDTIMESTAMP=%UPLBUILDTIMESTAMP% -%time%
 @if %SILENT_MODE% EQU TRUE goto BldSilent
 @set BUILDTIMESTAMP=%time%
 call build -n %NUMBER_OF_PROCESSORS% %REBUILD_MODE% %EXT_BUILD_FLAGS%
@@ -154,8 +144,6 @@ call build -n %NUMBER_OF_PROCESSORS% %REBUILD_MODE% %EXT_BUILD_FLAGS%
 @if %ERRORLEVEL% NEQ 0 goto BldFail
 @set BUILDTIMESTAMP=%BUILDTIMESTAMP% -%time%
 
-call %PYTHON_COMMAND% %CD%\Upl\Tools\PcdCheck.py
-@if %ERRORLEVEL% NEQ 0 goto BldFail
 @set POSTBUILDTIMESTAMP=%time%
 @echo.
 @echo Running postbuild.bat to complete the build process.
@@ -221,7 +209,6 @@ cd %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%
 @echo -- timestamp ------------------------
 @echo   prep          %PREPTIMESTAMP%
 @echo   bld           %BLDTIMESTAMP%
-@echo   - upl binary  %UPLBUILDTIMESTAMP%
 @echo   - build       %BUILDTIMESTAMP%
 @echo   - postbuild   %POSTBUILDTIMESTAMP%
 @echo -------------------------------------

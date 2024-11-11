@@ -74,7 +74,7 @@
 #define SMBIOS_TYPE19_USE_EXTENDED_ADDRESSES     0xFFFFFFFF
 
 ///
-/// Memory module type definition in DDR3 SPD Data
+/// Memory module type definition in DDR5/LPCAMM2 SPD Data
 ///
 #define DDR_MTYPE_SPD_OFFSET  3     ///< Module type, offset 3, bits (3:0)
 #define DDR_MTYPE_SPD_MASK    0x0F  ///< Module Type mask
@@ -85,8 +85,14 @@
 #define DDR_MTYPE_CUDIMM      0x05  ///< CU DIMM Memory
 #define DDR_MTYPE_CSODIMM     0x06  ///< CSO DIMM Memory
 #define DDR_MTYPE_MRDIMM      0x07  ///< MR DIMM Memory
-#define DDR_MTYPE_DDIMM       0x0A  ///< Small Outline Unbuffered DIMM Memory, 72-bit data bus
+#define DDR_MTYPE_CAMM        0x08  ///< CAMM Memory
+#define DDR_MTYPE_DDIMM       0x0A  ///< Differential Dual In-Line Memory Module
 #define DDR_MTYPE_MEM_DOWN    0x0B  ///< Soldered Down Memory
+//
+// Memory module type definition in LP4/LP5 SPD Spec
+//
+#define DDR_MTYPE_LPDIMM_LP5      0x07  ///< LP DIMM Memory
+#define DDR_MTYPE_MEM_DOWN_LP5    0x0E  ///< Soldered Down Memory
 
 ///
 /// Memory device type definition in DDR3 SPD Data
@@ -96,6 +102,7 @@
 #define DDR_DTYPE_DDR4          12    ///< DDR4 memory type
 #define DDR_DTYPE_DDR5          18    ///< DDR5 memory type
 #define DDR_DTYPE_LPDDR5        19    ///< LPDDR5 memory type
+#define DDR_DTYPE_LPDDR5X       21    ///< LPDDR5X memory type
 #define DDR_DTYPE_LPDDR3        0xF1  ///< LPDDR3 memory type
 #define DDR_DTYPE_JEDEC_LPDDR3  0x0F  ///< LPDDR3 memory type, JEDEC SPD Specification
 

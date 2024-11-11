@@ -101,7 +101,9 @@ SetVccLvr (
 {
   MrcInput          *Inputs;
   MrcOutput         *Outputs;
+  MrcSaveData       *SaveData;
   MrcSaGvPoint      SaGvPoint;
+  MrcLvrSaveRestore *LvrSaveRestorePtr;
   UINT32            Offset;
   UINT32            TempVar1;
   UINT32            TempVar2;
@@ -109,13 +111,13 @@ SetVccLvr (
   UINT32            VrefSelClk;
   UINT32            VrefSelIog;
   BOOLEAN           EnOverclockingForLVR;
-  UINT32            DataParMax;
   UINT32            VccClk;
   UINT32            VccIog;
   UINT32            Index;
   UINT32            SBClock;
   BOOLEAN           IsLpddr5;
   UINT32            SelVdd2Ladder;
+  BOOLEAN           IsColdBoot;
   DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCIOGCONTROL_WP0_STRUCT VccIogControl;
   DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCDDQCONTROL_WP0_STRUCT VccDdqControl;
   DDRVCCCLK_SBMEM0_CR_DDRRPTCHCRMISC_WP0_STRUCT       RptChCrMisc;
@@ -134,23 +136,22 @@ SetVccLvr (
   DDRPHY_DDRCOMP_SBMEM_CR_PLLFUSEVIRTUAL_STRUCT       PllFuseVirtual;
   DDRDATA_SBMEM0_CR_DDRCRVSSHI_STRUCT                 DdrCrVssHi;
 
-  Inputs     = &MrcData->Inputs;
-  Outputs    = &MrcData->Outputs;
-  IsLpddr5   = Outputs->IsLpddr5;
-  SaGvPoint  = Outputs->SaGvPoint;
-  VccClk     = Outputs->VccClkVoltage;
-  VccIog     = Outputs->VccIogVoltage;
-  Offset     = 0;
+  Inputs            = &MrcData->Inputs;
+  Outputs           = &MrcData->Outputs;
+  SaveData          = &MrcData->Save.Data;
+  IsLpddr5          = Outputs->IsLpddr5;
+  SaGvPoint         = Outputs->SaGvPoint;
+  VccClk            = Outputs->VccClkVoltage;
+  VccIog            = Outputs->VccIogVoltage;
+  LvrSaveRestorePtr = &SaveData->LvrSaveRestore[SaGvPoint];
+  Offset            = 0;
   EnOverclockingForLVR = (Outputs->IsDdr5 && (Outputs->Frequency > f6400));
   SBClock              = 1000000 / 400;
-  if ((Inputs->IsDdrIoDtHalo)) {
-    DataParMax = MRC_DATA_DT_NUM;
-  } else {
-    // Mobile
-    DataParMax = MRC_DATA_MOBILE_NUM;
-  }
+  IsColdBoot = (Inputs->BootMode == bmCold);
 
-  SelVdd2Ladder = 0;
+  // vcciog/vccclk: SELVDD2LADDER = (VccTargMv + 50 < 1000) ? 0 : 1 ## VccTargMv can be as high as 800 * 5/4 = 1000 before Vref Saturation
+  // Using 50mV guardband 
+  SelVdd2Ladder = (VccClk + 50 < 1000) ? 0 : 1;
   VrefSelClk = CalculateVrefSel (MrcData, SelVdd2Ladder, VccClk);
   VrefSelIog = CalculateVrefSel (MrcData, SelVdd2Ladder, VccIog);
   MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "clklvr_vrefsel: %u\n, ioglvr_vrefsel: %u\n",  VrefSelClk, VrefSelIog);
@@ -211,15 +212,22 @@ SetVccLvr (
   Offset = OFFSET_CALC_CH (DDRPHY_DDRCOMP_SBMEM_CR_WORKPOINT0_REG, DDRPHY_DDRCOMP_SBMEM_CR_WORKPOINT1_REG, SaGvPoint);
   WorkPoint0.Data = MrcReadCR (MrcData, Offset);
 
-  WorkPoint0.Bits.DISTGLVRSelVdd2Ladder = 0; // 1: for Vccdd2_hv, 0: for Bgvref (0.8V)
+  // vccdist: SELVDD2LADDER = (VccTargMv + 50 < 1200) ? 0 : 1 ## VccTargMv can be as high as 800 * 3/2 = 1200 before Vref Saturation
+  // Using 50mV guardband 
+  WorkPoint0.Bits.DISTGLVRSelVdd2Ladder = (VccClk + 50 < 1200) ? 0 : 1; // 1: for Vccdd2_hv, 0: for Bgvref (0.8V)
 
-  VrefSel = CalculateVrefSelVccDist (MrcData, SelVdd2Ladder, VccClk);
-  WorkPoint0.Bits.DISTGLVRVrefSel = VrefSel + 4;  // GB 4
+  VrefSel = CalculateVrefSelVccDist (MrcData, WorkPoint0.Bits.DISTGLVRSelVdd2Ladder, VccClk);
+  if (IsColdBoot) {
+    WorkPoint0.Bits.DISTGLVRVrefSel = VrefSel + 4;  // GB 4
+    LvrSaveRestorePtr->WorkPointDISTGLVRVrefSel = (UINT8) WorkPoint0.Bits.DISTGLVRVrefSel;
+  } else {
+    WorkPoint0.Bits.DISTGLVRVrefSel = LvrSaveRestorePtr->WorkPointDISTGLVRVrefSel;
+  }
   WorkPoint0.Bits.Gear4 = Outputs->GearMode ? 1 : 0;
   MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "DISTGLVRVrefSel: %u\n", WorkPoint0.Bits.DISTGLVRVrefSel);
   MrcWriteCR (MrcData, Offset, WorkPoint0.Data);
 
-  for (Index = 0; Index < DataParMax; Index++) {
+  for (Index = 0; Index < MRC_DATA_MOBILE_NUM; Index++) {
     if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
       continue;
     }
@@ -228,9 +236,18 @@ SetVccLvr (
                                 DDRDATA_SBMEM0_CR_DDRCRVCCCLK_WP1_REG, SaGvPoint);
     DataVccClkWp0.Data = MrcReadCR (MrcData, Offset);
     DataVccClkWp0.Bits.clklvr_selvdd2_ladder = SelVdd2Ladder;
-    DataVccClkWp0.Bits.clklvr_vrefsel = VrefSelClk;
-    DataVccClkWp0.Bits.clklvr_rxdllb1vrefsel = VrefSelClk;
-    DataVccClkWp0.Bits.clklvr_rxdllb0vrefsel = VrefSelClk;
+    if (IsColdBoot) {
+      DataVccClkWp0.Bits.clklvr_vrefsel        = VrefSelClk;
+      DataVccClkWp0.Bits.clklvr_rxdllb1vrefsel = VrefSelClk;
+      DataVccClkWp0.Bits.clklvr_rxdllb0vrefsel = VrefSelClk;
+      LvrSaveRestorePtr->DataVccClkWpLvrVrefSel[Index]        = (UINT8) DataVccClkWp0.Bits.clklvr_vrefsel;
+      LvrSaveRestorePtr->DataVccClkWpLvrRxdllb1vrefsel[Index] = (UINT8) DataVccClkWp0.Bits.clklvr_rxdllb1vrefsel;
+      LvrSaveRestorePtr->DataVccClkWpLvrRxdllb0vrefsel[Index] = (UINT8) DataVccClkWp0.Bits.clklvr_rxdllb0vrefsel;
+    } else {
+      DataVccClkWp0.Bits.clklvr_vrefsel        = LvrSaveRestorePtr->DataVccClkWpLvrVrefSel[Index];
+      DataVccClkWp0.Bits.clklvr_rxdllb1vrefsel = LvrSaveRestorePtr->DataVccClkWpLvrRxdllb1vrefsel[Index];
+      DataVccClkWp0.Bits.clklvr_rxdllb0vrefsel = LvrSaveRestorePtr->DataVccClkWpLvrRxdllb0vrefsel[Index];
+    }
     MrcWriteCR (MrcData, Offset, DataVccClkWp0.Data);
 
     // VccIog Data
@@ -238,7 +255,12 @@ SetVccLvr (
                                 DDRDATA_SBMEM0_CR_DDRCRVCCIOG_WP1_REG, SaGvPoint);
     DataVccIogWp0.Data = MrcReadCR (MrcData, Offset);
     DataVccIogWp0.Bits.ioglvr_selvdd2_ladder = SelVdd2Ladder;
-    DataVccIogWp0.Bits.ioglvr_vrefsel = VrefSelIog;
+    if (IsColdBoot) {
+      DataVccIogWp0.Bits.ioglvr_vrefsel = VrefSelIog;
+      LvrSaveRestorePtr->DataVccIogWpLvrVrefSel[Index] = (UINT8) DataVccIogWp0.Bits.ioglvr_vrefsel;
+    } else {
+      DataVccIogWp0.Bits.ioglvr_vrefsel = LvrSaveRestorePtr->DataVccIogWpLvrVrefSel[Index];
+    }
     MrcWriteCR (MrcData, Offset, DataVccIogWp0.Data);
   }
 
@@ -251,15 +273,25 @@ SetVccLvr (
                                 DDRCCC_SBMEM0_CR_DDRCRVCCCLK_WP1_REG, SaGvPoint);
     CccVccClkWp0.Data = MrcReadCR (MrcData, Offset);
     CccVccClkWp0.Bits.clklvr_selvdd2_ladder = SelVdd2Ladder;
-    CccVccClkWp0.Bits.clklvr_vrefsel = VrefSelClk;
+    if (IsColdBoot) {
+      CccVccClkWp0.Bits.clklvr_vrefsel = VrefSelClk;
+      LvrSaveRestorePtr->CccVccClkWpLvrVrefSel[Index] = (UINT8) CccVccClkWp0.Bits.clklvr_vrefsel;
+    } else {
+      CccVccClkWp0.Bits.clklvr_vrefsel = LvrSaveRestorePtr->CccVccClkWpLvrVrefSel[Index];
+    }
     MrcWriteCR (MrcData, Offset, CccVccClkWp0.Data);
 
     // VccIog CCC
     Offset = OFFSET_CALC_MC_CH (DDRCCC_SBMEM0_CR_DDRCRVCCIOG_WP0_REG, DDRCCC_SBMEM1_CR_DDRCRVCCIOG_WP0_REG, Index,
-                                DDRCCC_SBMEM0_CR_DDRCRVCCIOG_WP0_REG, SaGvPoint);
+                                DDRCCC_SBMEM0_CR_DDRCRVCCIOG_WP1_REG, SaGvPoint);
     CccVccIogWp0.Data = MrcReadCR (MrcData, Offset);
     CccVccIogWp0.Bits.ioglvr_selvdd2_ladder = SelVdd2Ladder;
-    CccVccIogWp0.Bits.ioglvr_vrefsel = VrefSelIog;
+    if (IsColdBoot) {
+      CccVccIogWp0.Bits.ioglvr_vrefsel = VrefSelIog;
+      LvrSaveRestorePtr->CccVccIogWpLvrVrefSel[Index] = (UINT8) CccVccIogWp0.Bits.ioglvr_vrefsel;
+    } else {
+      CccVccIogWp0.Bits.ioglvr_vrefsel = LvrSaveRestorePtr->CccVccIogWpLvrVrefSel[Index];
+    }
     MrcWriteCR (MrcData, Offset, CccVccIogWp0.Data);
   }
 
@@ -267,13 +299,23 @@ SetVccLvr (
   Offset = OFFSET_CALC_CH (DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCIOG_WP0_REG, DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCIOG_WP1_REG, SaGvPoint);
   CompVccIogWp0.Data = MrcReadCR (MrcData, Offset);
   CompVccIogWp0.Bits.ioglvr_selvdd2_ladder = SelVdd2Ladder;
-  CompVccIogWp0.Bits.ioglvr_vrefsel = VrefSelIog;
+  if (IsColdBoot) {
+    CompVccIogWp0.Bits.ioglvr_vrefsel = VrefSelIog;
+    LvrSaveRestorePtr->CompVccIogWpLvrVrefSel = (UINT8) CompVccIogWp0.Bits.ioglvr_vrefsel;
+  } else {
+    CompVccIogWp0.Bits.ioglvr_vrefsel = LvrSaveRestorePtr->CompVccIogWpLvrVrefSel;
+  }
   MrcWriteCR (MrcData, Offset, CompVccIogWp0.Data);
 
   Offset = OFFSET_CALC_CH (DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCIOG40_WP0_REG, DDRPHY_DDRCOMP_SBMEM_CR_DDRCRVCCIOG40_WP1_REG, SaGvPoint);
   CompVccIog40Wp0.Data = MrcReadCR (MrcData, Offset);
   CompVccIog40Wp0.Bits.ioglvr_selvdd2_ladder = SelVdd2Ladder;
-  CompVccIog40Wp0.Bits.ioglvr_vrefsel = VrefSelIog;
+  if (IsColdBoot) {
+    CompVccIog40Wp0.Bits.ioglvr_vrefsel = VrefSelIog;
+    LvrSaveRestorePtr->CompVccIog40WpLvrVrefSel = (UINT8) CompVccIog40Wp0.Bits.ioglvr_vrefsel;
+  } else {
+    CompVccIog40Wp0.Bits.ioglvr_vrefsel = LvrSaveRestorePtr->CompVccIog40WpLvrVrefSel;
+  }
   MrcWriteCR (MrcData, Offset, CompVccIog40Wp0.Data);
 
   // Restore the overrides
@@ -304,7 +346,7 @@ SetVccLvr (
     MrcWriteCR (MrcData, Offset, PmMiscCtrl.Data);
   }
 
-  for (Index = 0; Index < DataParMax; Index++) {
+  for (Index = 0; Index < MRC_DATA_MOBILE_NUM; Index++) {
     if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
       continue;
     }

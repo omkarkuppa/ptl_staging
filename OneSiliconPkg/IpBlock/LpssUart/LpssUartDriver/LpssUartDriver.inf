@@ -53,6 +53,6 @@
   gEfiSerialIoProtocolGuid ## PRODUCES
 
 [Pcd]
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDriverIgnoreBaudRateSet ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdLpssUartDriverIgnoreBaudRateSet ## CONSUMES
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultReceiveFifoDepth ## CONSUMES
 

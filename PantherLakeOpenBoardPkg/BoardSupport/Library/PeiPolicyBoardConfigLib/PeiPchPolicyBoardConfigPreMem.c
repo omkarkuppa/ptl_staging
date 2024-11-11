@@ -21,7 +21,6 @@
 
 #include "PeiPolicyBoardConfig.h"
 #include <PchPcieRpConfig.h>
-#include <FspmUpd.h>
 
 VOID
 UpdatePcieClockInfo (
@@ -31,11 +30,11 @@ UpdatePcieClockInfo (
   )
 {
   PCD64_BLOB Pcd64;
-  #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspmUpd;
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID       *FspmUpd;
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
-  #endif
+#endif
 
   Pcd64.Blob = Data;
   DEBUG ((DEBUG_INFO, "UpdatePcieClockInfo ClkIndex %x ClkUsage %x, Supported %x\n", Index, Pcd64.PcieClock.ClockUsage, Pcd64.PcieClock.ClkReqSupported));
@@ -47,7 +46,7 @@ UpdatePcieClockInfo (
 /**
   This function performs PEI PCH Pre-Memory Policy update by board configuration.
 
-  @param[in] SiPreMemPolicyPpi         The RC PREMEM Policy PPI instance
+  @param[in] SiPreMemPolicyPpi    The RC PREMEM Policy PPI instance
 
   @retval EFI_SUCCESS             The SI Policy is successfully updated.
   @retval Others                  The SI Policy is not successfully updated.

@@ -38,9 +38,10 @@ typedef struct _DTBT_CONTROLLER_CONFIG {
   UINT8            PcieRpBus;          ///< RP number of Bus
   UINT8            PcieRpDev;          ///< RP number of Device
   UINT8            PcieRpFunc;         ///< RP number of Function
+  UINT8            BdfValid;           ///< Valid for RP number of Bus, Device, and Function
   UINT32           WakeGpioPin;        ///< Discrete Thunderbolt Controller Wake GPIO Pin.
   UINT8            PcieRpMps;          ///< The Max Payload Size of DTbt root port used, 0 : 128B, 1 : 256B.
-  UINT8            Reserved[4];        ///< Reserved for DWORD alignment
+  UINT8            Reserved[3];        ///< Reserved for DWORD alignment
 } DTBT_CONTROLLER_CONFIG;
 
 //
@@ -56,9 +57,6 @@ typedef struct _DTBT_GENERIC_CONFIG {
 
 #pragma pack(pop)
 
-#define IS_DTBT_RP_NUM_VALID(DTbtControllerConfig, Index)  \
-        DTbtControllerConfig[Index].PcieRpBus != 0 &&  \
-        DTbtControllerConfig[Index].PcieRpDev != 0 &&  \
-        DTbtControllerConfig[Index].PcieRpFunc != 0
+#define IS_DTBT_RP_NUM_VALID(DTbtControllerConfig, Index)  (DTbtControllerConfig[Index].BdfValid != 0)
 
 #endif

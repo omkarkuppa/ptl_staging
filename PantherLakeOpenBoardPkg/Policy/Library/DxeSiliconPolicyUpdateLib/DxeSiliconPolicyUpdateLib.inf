@@ -33,6 +33,7 @@
   UefiBootServicesTableLib
   DxeIGpuPolicyLib
   DxePchPolicyLib
+  BaseIGpuInfoLib
 
 [Packages]
   MdePkg/MdePkg.dec

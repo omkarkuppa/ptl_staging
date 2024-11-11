@@ -29,11 +29,35 @@
 #include <Library/MemoryAllocationLib.h>
 
 /**
+  Function that uses DEBUG() macros to display the contents of Buffer.
+
+  @param[in]  Buffer      A pointer to the Buffer.
+  @param[in]  BufferSize  buffer size.
+
+**/
+VOID
+PrintByteBuffer (
+  IN UINT8  *Buffer,
+  IN UINTN  BufferSize
+  )
+{
+  UINTN     Index;
+  UINT8     *Data8;
+
+  Data8 = (UINT8 *) Buffer;
+  for (Index = 0; Index < BufferSize; Index++) {
+    DEBUG ((DEBUG_INFO, " %02x ", *Data8++));
+  }
+  DEBUG ((DEBUG_INFO, "\n"));
+}
+
+/**
 
   Gets DIMM information from registers and fills DIMM manifest for
   Alias Check Trusted Module (ACTM).
 
   @param[in] MrcData        - MRC Parameter Structure
+  @param[in] WarmReset      - TRUE if WarmReset detected
 
   @retval EFI_SUCCESS if no error
   @retval EFI_ERROR if other operations fail
@@ -43,14 +67,17 @@
 EFI_STATUS
 EFIAPI
 PublishActmDimmManifest (
-  IN MrcParameters   *const MrcData
+  IN MrcParameters   *const MrcData,
+  IN BOOLEAN         WarmReset
   )
 {
   ACTM_HEADER_DESCRIPTION Header = { ACTM_UUID, ACTM_EMPTY_SIZE, ACTM_VERSION, ACTM_RESERVED_SPACE };
   TDX_DATA_HOB            *TdxDataHob;
   EFI_STATUS              Status;
+  UINT64                  Data;
+  UINT32                  Offset;
 
-  DEBUG ((DEBUG_ERROR, "Inside %a %d  \n", __FUNCTION__, __LINE__));
+  DEBUG ((DEBUG_INFO, "Inside %a %d  \n", __FUNCTION__, __LINE__));
 
   TdxDataHob = (TDX_DATA_HOB *) GetFirstGuidHob (&gTdxDataHobGuid);
   if (TdxDataHob == NULL) {
@@ -66,9 +93,29 @@ PublishActmDimmManifest (
     DEBUG ((DEBUG_INFO, "[TDX] Populating the Dimm Manifest is successful\n"));
   }
 
-  if (TdxDataHob) {
-    FreePool(TdxDataHob);
+  if (WarmReset) {
+    DEBUG ((DEBUG_INFO, "[TDX] Warm reset detected! Restore ACTM MAC.\n"));
+
+    Data = (UINT64)PcdGet64 (PcdTdxActmMac0);
+    Offset = TdxDataHob->ActmDimmManifest.Header.Size - SIZE_OF_MANIFEST_MAC;
+    CopyMem ((VOID*) &TdxDataHob->ActmDimmManifest.ManifestBlob[Offset], &Data, sizeof (Data));
+
+    Data = (UINT64)PcdGet64 (PcdTdxActmMac1);
+    Offset += sizeof (Data);
+    CopyMem ((VOID*) &TdxDataHob->ActmDimmManifest.ManifestBlob[Offset], &Data, sizeof (Data));
+
+    Data = (UINT64)PcdGet64 (PcdTdxActmMac2);
+    Offset += sizeof (Data);
+    CopyMem ((VOID*) &TdxDataHob->ActmDimmManifest.ManifestBlob[Offset], &Data, sizeof (Data));
+
+    Data = (UINT64)PcdGet64 (PcdTdxActmMac3);
+    Offset += sizeof (Data);
+    CopyMem ((VOID*) &TdxDataHob->ActmDimmManifest.ManifestBlob[Offset], &Data, sizeof (Data));
+
+    DEBUG ((DEBUG_INFO, "[TDX] Recovered ACTM MAC = "));
+    PrintByteBuffer (&TdxDataHob->ActmDimmManifest.ManifestBlob[TdxDataHob->ActmDimmManifest.Header.Size - SIZE_OF_MANIFEST_MAC], SIZE_OF_MANIFEST_MAC);
   }
+
   return Status;
 }
 
@@ -85,9 +132,9 @@ PublishActmDimmManifest (
 EFI_STATUS
 EFIAPI
 ActmPopulateDimmManifest (
-  IN MrcParameters   *const MrcData,
-  OUT ACTM_DIMM_MANIFEST     *ActmDimmManifest
- )
+  IN MrcParameters        *const MrcData,
+  OUT ACTM_DIMM_MANIFEST  *ActmDimmManifest
+  )
 {
   MrcOutput               *Outputs;
   MrcControllerOut        *ControllerOut;
@@ -101,7 +148,7 @@ ActmPopulateDimmManifest (
   DIMM_DESCRIPTION *      ActmDimmDescription = NULL;
 
   DEBUG ((DEBUG_INFO, "[TDX] Building dimm manifest..\n"));
-  Outputs   = &MrcData->Outputs;
+  Outputs = &MrcData->Outputs;
 
   ActmDimmDescription = (DIMM_DESCRIPTION *)ActmDimmManifest->ManifestBlob;
 
@@ -129,6 +176,7 @@ ActmPopulateDimmManifest (
           ActmDimmDescription[Index].BankAddressBits    = BANK_ADDRESS_BITS; // 2
           ActmDimmDescription[Index].ColumnBits         = COLUMN_BITS;       // 10
           ActmDimmDescription[Index].RowBits            = ROW_BITS;          // 16
+          ActmDimmDescription[Index].Asymmetric         = DimmOut->DeviceDensity == DIMM_DENSITY_24_GB ? TRUE : FALSE;  // 1 for 24Gb, 0 for rest
           ActmDimmDescription[Index].ModeRegister58     = 0;                 // MR58 is Ignored
           ActmDimmDescription[Index].ModeRegister59     = 0;                 // MR59 is Ignored
 
@@ -141,6 +189,7 @@ ActmPopulateDimmManifest (
           DEBUG ((DEBUG_INFO, "BankAddressBits          : %d\n", ActmDimmDescription[Index].BankAddressBits));
           DEBUG ((DEBUG_INFO, "ColumnBits               : %d\n", ActmDimmDescription[Index].ColumnBits));
           DEBUG ((DEBUG_INFO, "RowBits                  : %d\n", ActmDimmDescription[Index].RowBits));
+          DEBUG ((DEBUG_INFO, "Asymmetric               : %d\n", ActmDimmDescription[Index].Asymmetric));
           DEBUG ((DEBUG_INFO, "ModeRegister58           : %d\n", ActmDimmDescription[Index].ModeRegister58));
           DEBUG ((DEBUG_INFO, "ModeRegister59           : %d\n", ActmDimmDescription[Index].ModeRegister59));
           Index++;

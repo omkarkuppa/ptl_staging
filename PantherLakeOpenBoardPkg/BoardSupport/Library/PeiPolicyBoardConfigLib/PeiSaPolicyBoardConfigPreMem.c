@@ -24,7 +24,6 @@
 #include <Ppi/FspmArchConfigPpi.h>
 #include <VtdConfig.h>
 #include <MemorySubSystemConfig.h>
-#include <FspmUpd.h>
 #include <Library/PreSiliconEnvDetectLib.h>
 
 /**
@@ -45,7 +44,7 @@ UpdatePeiSaPolicyBoardConfigPreMem (
   BOOLEAN                            ExternalSpdPresent;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspmUpd;
+  VOID                               *FspmUpd;
 #else
   TCSS_PEI_PREMEM_CONFIG             *TcssPeiPreMemConfig;
   HOST_BRIDGE_PREMEM_CONFIG          *HostBridgePreMemConfig;
@@ -89,10 +88,6 @@ UpdatePeiSaPolicyBoardConfigPreMem (
   Status = GetConfigBlock((VOID *) SiPreMemPolicyPpi, &gMemoryConfigGuid, (VOID *) &MemConfig);
   ASSERT_EFI_ERROR(Status);
 #endif
-
-  if (IsSimicsEnvironment()) {
-    PcdSetBoolS (PcdSpdPresent, TRUE);
-  }
 
   // Assume internal SPD is used
   UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SpdAddressTable[0], MemConfigNoCrc->SpdAddressTable[0], 0);

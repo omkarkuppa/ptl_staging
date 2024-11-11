@@ -100,6 +100,7 @@ typedef enum {
   mrcPmMsgErr,
   mrcEyeWidthError,
   mrcPPRBankRowUnavailable,
+  mrcDramNotSupportEdvfsc,
   mrcStatusMax
 } MrcStatus;
 

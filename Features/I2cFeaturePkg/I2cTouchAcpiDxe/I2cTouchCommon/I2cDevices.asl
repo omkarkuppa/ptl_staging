@@ -78,6 +78,7 @@ External (SDS2)
 External (SDS3)
 External (SDS4)
 External (SDS5)
+External (TPDT)
 
 External (\_SB.PC00,DeviceObj)
 External (\_SB.PC02,DeviceObj)

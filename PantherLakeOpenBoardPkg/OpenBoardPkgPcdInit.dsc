@@ -98,8 +98,8 @@
   gBoardModuleTokenSpaceGuid.PcdFspWrapperResetVectorInFsp|TRUE
 
 !if $(TARGET) == DEBUG
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartNumber|0
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable|TRUE
+  gSiPkgTokenSpaceGuid.PcdLpssUartNumber|0
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|TRUE
 !endif
 
   gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress|0x0000EFA0
@@ -220,8 +220,8 @@
   ######################################
   gMinPlatformPkgTokenSpaceGuid.PcdMaxCpuSocketCount|1
 
-  gMinPlatformPkgTokenSpaceGuid.PcdPciReservedMemBase |0x80000000
-  gMinPlatformPkgTokenSpaceGuid.PcdPciReservedMemLimit|0xC0000000
+  gMinPlatformPkgTokenSpaceGuid.PcdPciReservedMemBase |0x80800000
+  gMinPlatformPkgTokenSpaceGuid.PcdPciReservedMemLimit|0xBFFFFFFF
   #
   # The PCDs are used to control the Windows SMM Security Mitigations Table - Protection Flags
   #

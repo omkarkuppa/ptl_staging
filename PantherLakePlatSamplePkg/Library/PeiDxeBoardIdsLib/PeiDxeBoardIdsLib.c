@@ -27,7 +27,7 @@ CHAR16 *mBoardIdIndex[] = {
   L"PTL-UH CAMM DTBT T3 RVP2",              // 0x02
   L"PTL-UH LP5 T4 RVP3",                    // 0x03
   L"PTL-UH DDR5 T3 RVP4",                   // 0x04
-  L"TBD",                                   // 0x05
+  L"PTL-UH LP5 T3 mRVP",                    // 0x05
   L"TBD",                                   // 0x06
   L"PTL-H AEP",                             // 0x07
   L"TBD",                                   // 0x08

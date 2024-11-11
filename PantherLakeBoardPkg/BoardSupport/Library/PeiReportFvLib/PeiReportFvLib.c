@@ -42,10 +42,9 @@
 #include <Library/PciSegmentLib.h>
 #include <Library/MeInfoLib.h>
 #include <Library/ResiliencySupportLib.h>
-#include <Library/PayloadResiliencySupportLib.h>
 
-#ifndef NUMBER_OF_OBB_FIRMWARE_VOLUMES
-  #define NUMBER_OF_OBB_FIRMWARE_VOLUMES 6
+#ifndef MAX_NUMBER_OF_OBB_FIRMWARE_VOLUMES
+  #define MAX_NUMBER_OF_OBB_FIRMWARE_VOLUMES 7
 #endif
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mPpiListBeforePostMemFvReport = {
@@ -295,7 +294,6 @@ CreateStoredHashFvPpiInfo (
   )
 {
   UINTN  FvNumber;
-  UINT32 MicrocodeBaseAddress;
 
   FvNumber = 0;
 
@@ -303,7 +301,7 @@ CreateStoredHashFvPpiInfo (
     return EFI_INVALID_PARAMETER;
   }
   //
-  // FVs taken into account (or hashed) for the OBB verification, must match the ones used by the BpmGen2 tool in the BPM generation
+  // FVs taken into account (or hashed) for the OBB verification, must match the ones used by the BpmGen2 tool in the BPM generation (bpmgen2_XXX.params)
   // The order of FVs get reported need to match the FV hash digest calculated. e.g. ObbDigetHash and PostIbbDigestHash
   //
 
@@ -361,20 +359,16 @@ CreateStoredHashFvPpiInfo (
                                               HASHED_FV_FLAG_REPORT_FV_INFO_PPI |
                                               CapsuleRecoveryFlag;
   FvNumber++;
+  ASSERT (FvNumber <= MAX_NUMBER_OF_OBB_FIRMWARE_VOLUMES);
 
   StoredHashFvPpi->FvNumber = FvNumber;
 
   if (BootMode != BOOT_ON_S3_RESUME) {
-    MicrocodeBaseAddress = GetMicrocodeBaseAddressInRecovery ();
-    if (MicrocodeBaseAddress == 0) {
-      MicrocodeBaseAddress = FixedPcdGet32 (PcdFlashFvMicrocodeBase);
-    }
-
     BuildFvHob (
-      (UINTN)MicrocodeBaseAddress,
+      (UINTN)FixedPcdGet32 (PcdFlashFvMicrocodeBase),
       (UINTN)FixedPcdGet32 (PcdFlashFvMicrocodeSize)
       );
-    DEBUG ((DEBUG_INFO, "Build FlashFvMicrocode Hob - 0x%x, 0x%x\n", MicrocodeBaseAddress, PcdGet32 (PcdFlashFvMicrocodeSize)));
+    DEBUG ((DEBUG_INFO, "Build FlashFvMicrocode Hob - 0x%x, 0x%x\n", PcdGet32 (PcdFlashFvMicrocodeBase), PcdGet32 (PcdFlashFvMicrocodeSize)));
 
     if (GetBiosResiliencyType () == SUPPORT_BIOS_RESILIENCY_RECOVERY) {
       BuildFvHob (
@@ -475,7 +469,7 @@ CreateAndInstallStoredHashFvPpi (
   }
   StoredHashFvPpi = AllocateZeroPool (
                       sizeof (EDKII_PEI_FIRMWARE_VOLUME_INFO_STORED_HASH_FV_PPI)
-                      + sizeof (HASHED_FV_INFO) * NUMBER_OF_OBB_FIRMWARE_VOLUMES
+                      + sizeof (HASHED_FV_INFO) * MAX_NUMBER_OF_OBB_FIRMWARE_VOLUMES
                       );
   ASSERT (StoredHashFvPpi != NULL);
   if (StoredHashFvPpi == NULL) {

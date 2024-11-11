@@ -44,6 +44,7 @@
 #include <Register/B2pMailbox.h>
 
 STATIC CONST CHAR8 mCpuFamilyString[] = "PantherLake";
+STATIC CONST CHAR8 mCpuFamilyStringWcl[] = "WildcatLake";
 typedef struct {
   UINT32  CPUID;
   CHAR8   String[16];
@@ -53,6 +54,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST CPU_REV  mProcessorRevisionTable[] = {
   {CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE    + EnumPtlHA0,    "A0"},
   {CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE    + EnumPtlUA0,    "A0"},
   {CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE    + EnumPtlUHB0,   "B0"},
+  {CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE    + EnumWclA0,     "A0"},
+  {CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE    + EnumWclB0,     "B0"}
 };
 
 //
@@ -72,26 +75,50 @@ enum {
   ProfilePtlH4Xe25W24,   // PTL H 4Xe  25W 2+4
   ProfilePtlMax
 };
+
+//
+// WCL PLX Profile
+// Caution: The order of profile enum ID should match the order in profiles array.
+//
+enum {
+  ProfileWclU15W10,     // WCL U      15W 1+0
+  ProfileWclU15W20,     // WCL U      15W 2+0
+  ProfileWclMax
+};
+
 GLOBAL_REMOVE_IF_UNREFERENCED PPM_PLX_PROFILE mPtlPlx[] = {
   //
-  // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow  IsysL1Tau  IsysLimitL1  IsysLimitL2  VsysMax
-  // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1            Sec        1/8A         1/8A       mV
-  {  1500,  5400,  5400,     5400,     5400,     14200,        0,        28,            28,         48,         120,     24000}, // ProfilePtlU15W40
-  {  1500,  5400,  5400,     5400,     5400,     14200,        0,        28,            28,         48,         120,     24000}, // ProfilePtlU15W20
-  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH12Xe25W48
-  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH12Xe25W44
-  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH12Xe25W28
-  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH12Xe25W24
-  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH4Xe25W48
-  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH4Xe25W44
-  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH4Xe25W28
-  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000}, // ProfilePtlH4Xe25W24
+  // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow  IsysL1Tau  IsysLimitL1  IsysLimitL2  VsysMax  PsysPmax
+  // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1            Sec        1/8A         1/8A       mV      1/8W
+  {  1500,  5500,  5500,     5500,     5500,     15200,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W40
+  {  1500,  5400,  5400,     5400,     5400,     14200,        0,        28,            28,         48,         120,     24000,       0}, // ProfilePtlU15W20
+  {  2500,  9500,  9500,     9500,     9500,     23900,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W48
+  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000,       0}, // ProfilePtlH12Xe25W44
+  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000,       0}, // ProfilePtlH12Xe25W28
+  {  2500,  6400,  6400,     6400,     6400,     15400,        0,        28,            28,         48,         120,     24000,       0}, // ProfilePtlH12Xe25W24
+  {  2500,  9500,  9500,     9500,     9500,     23900,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W48
+  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000,       0}, // ProfilePtlH4Xe25W44
+  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000,       0}, // ProfilePtlH4Xe25W28
+  {  2500,  8000,  8000,     8000,     8000,     24000,        0,        28,            28,         48,         120,     24000,       0}, // ProfilePtlH4Xe25W24
 };
 //
 // Catch the mismatch of number of profile enum IDs and number of profiles.
 // But the order mismatch cannot be caught.
 //
 STATIC_ASSERT (ARRAY_SIZE (mPtlPlx) == ProfilePtlMax, "PPM Profile count mismatch!");
+
+GLOBAL_REMOVE_IF_UNREFERENCED PPM_PLX_PROFILE mWclPlx[] = {
+  //
+  // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow
+  // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1
+  {  1500,     0,     0,        0,        0,        0,        0,       28},  // ProfileWclU15W10
+  {  1500,  3500,  3500,     3500,     3500,     3500,     4400,       28}   // ProfileWclU15W20
+};
+//
+// Catch the mismatch of number of profile enum IDs and number of profiles.
+// But the order mismatch cannot be caught.
+//
+STATIC_ASSERT (ARRAY_SIZE (mWclPlx) == ProfileWclMax, "PPM Profile count mismatch!");
 
 ///
 /// PowerLimits Override table for all SKUs. Non-cTDP parts would have '0' data for TDP level information.
@@ -112,7 +139,12 @@ GLOBAL_REMOVE_IF_UNREFERENCED PPM_OVERRIDE_TABLE mPowerLimitsOverrideTable[] = {
   { EnumPtlH4Xe25Watt48CpuId,  &mPtlPlx[ProfilePtlH4Xe25W48]  },
   { EnumPtlH4Xe25Watt44CpuId,  &mPtlPlx[ProfilePtlH4Xe25W44]  },
   { EnumPtlH4Xe25Watt28CpuId,  &mPtlPlx[ProfilePtlH4Xe25W28]  },
-  { EnumPtlH4Xe25Watt24CpuId,  &mPtlPlx[ProfilePtlH4Xe25W24]  }
+  { EnumPtlH4Xe25Watt24CpuId,  &mPtlPlx[ProfilePtlH4Xe25W24]  },
+  ///
+  /// WCL U
+  ///
+  { EnumWclU15Watt10CpuId,     &mWclPlx[ProfileWclU15W10] },
+  { EnumWclU15Watt20CpuId,     &mWclPlx[ProfileWclU15W20] }
 };
 
 typedef struct {
@@ -152,6 +184,16 @@ CPU_SKU_INFO mCpuSkuInfo[] = {
   { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE, PTL_H_4XE_NEX_SA_DEVICE_ID_2C_4A,  2, 4},  // PTL H 4Xe  2+4 (NEX)
 
 
+  //
+  // WCL
+  //
+  { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE, WCL_SA_DEVICE_ID_2C_4LP,      2, 0}, // WCL
+  { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE, WCL_SA_DEVICE_ID_2C_2LP,      2, 0}, // WCL
+  { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE, WCL_SA_DEVICE_ID_2C,          2, 0}, // WCL
+  { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE, WCL_SA_DEVICE_ID_1C_4LP,      1, 0}, // WCL
+  { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE, WCL_SA_DEVICE_ID_4LP,         0, 0}, // WCL
+  { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE, WCL_SA_DEVICE_ID_2C_4LP_NEX,  2, 0}, // WCL
+  { EnumCpuUlt, CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE, WCL_SA_DEVICE_ID_1C_4LP_NEX,  1, 0}  // WCL
 };
 
 /**
@@ -240,6 +282,15 @@ GetCpuFusedCoreCountFru (
   // PTL always has fuse 4 LP cores
   //
    *NumberOfFusedLpECore = 4;
+    if (GetCpuFamilyModel () == CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE) {
+      if (SaDeviceId == WCL_SA_DEVICE_ID_2C_2LP) {
+        *NumberOfFusedLpECore = 2;
+      } else if (SaDeviceId == WCL_SA_DEVICE_ID_2C) {
+        *NumberOfFusedLpECore = 0;
+      } else {
+        *NumberOfFusedLpECore = 4;
+      }
+    }
   }
 
   ///
@@ -372,6 +423,8 @@ GetFruGenerationString (
   switch (CpuFamilyId) {
     case CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE:
       return mCpuFamilyString;
+    case CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE:
+      return mCpuFamilyStringWcl;
     default:
       return NULL;
   }
@@ -574,6 +627,28 @@ GetCpuSkuIdentifier (
           } else if (PackageTdp == CPU_TDP_25_WATTS) {
             DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4Xe 2+4 25W\n"));
             CpuIdentifier = EnumPtlH4Xe25Watt24CpuId;
+          }
+          break;
+        case PTL_H_4XE_SA_DEVICE_ID_4C:
+          if (PackageTdp == CPU_TDP_15_WATTS) {
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4Xe 4+0 15W\n"));
+            CpuIdentifier = EnumPtlU15Watt40CpuId;
+          }
+          break;
+        ///
+        /// WCL U
+        ///
+        case WCL_SA_DEVICE_ID_1C_4LP:
+          if (PackageTdp == CPU_TDP_15_WATTS) {
+            DEBUG ((DEBUG_INFO, "CPU Identifier = WCL Pkg-U 1+0 15W\n"));
+            CpuIdentifier = EnumWclU15Watt10CpuId;
+          }
+          break;
+
+        case WCL_SA_DEVICE_ID_2C_4LP:
+          if (PackageTdp == CPU_TDP_15_WATTS) {
+            DEBUG ((DEBUG_INFO, "CPU Identifier = WCL Pkg-U 2+0 15W\n"));
+            CpuIdentifier = EnumWclU15Watt20CpuId;
           }
           break;
         default:

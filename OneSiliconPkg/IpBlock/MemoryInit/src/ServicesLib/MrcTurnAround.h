@@ -25,113 +25,214 @@
 // Include files
 //
 #include "MrcCommon.h"
+#include "MrcDdrIoUtils.h"
 
-#define DQFEEDBACKMASK   (0xFF)
-#define DQSFEEDBACKMASK  (0x200)
-#define PI_STEP_SIZE     (128)
 #define PI_PER_TCK       (128)
-#define PHCLK_DIVIDEND   (2000000)
 
 #define TAT_COUNT        (16)
 #define TAT_SG_DG_MAX    (8)
-#define MC_INIT_SAFE_OFFSET_DR (8)
-#define MC_INIT_SAFE_OFFSET_SR (4)
-#define ODT_TYPE_MAX     (2)
+#define TAT_SAFE_OFFSET_DR (8)
+#define TAT_SAFE_OFFSET_SR (4)
 
 /// CK2CK (pS)
-/// Gaurdband any flight time between 2 ranks
+/// Guardband any flight time between 2 ranks
 #define MRC_LP5_TCK2CK (50)
 
-/// Structure to store turnaround timings
-typedef struct {
-  UINT32 tRdRdsg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdRddg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrWrsg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrWrdg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdWrsg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdWrdg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrRdsg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrRddg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdRddr[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdRddd[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrWrdr[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrWrdd[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdWrdr[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdWrdd[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrRddr[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrRddd[MAX_CONTROLLER][MAX_CHANNEL];
-} McTurnAroundTimings;
-
 /**
-  This function calculates the Turnaround timings based on training results and DRAM Spec
+  This function calculates the tRdRd (sg,dg,dr,dd) for LPDDR5 based on Jedec specifications
 
-  @param[in] MrcData - Include all MRC global data.
-  @param[in] IsMcInit - TRUE is calculating TAT values for Mc Init, FALSE if TAT Optimization
-
-  @retval MrcStatus - If it succeeds return mrcSuccess.
+  @param[in] MrcData           - Include all MRC global data.
+  @param[in] DeltaRcvEnPiCode  - Largest Delta of RcvEnPiCode across Bytes across the Channel
+  @param[out] tRdRdsg          - Return calculated tRdRdsg Timing
+  @param[out] tRdRddg          - Return calculated tRdRddg Timing
+  @param[out] tRdRddr          - Return calculated tRdRddr Timing
+  @param[out] tRdRddd          - Return calculated tRdRddd Timing
 **/
-MrcStatus
-SetTurnAroundTiming (
-  IN MrcParameters *const MrcData,
-  IN BOOLEAN              IsMcInit
+VOID
+GetLpddr5tRdRd (
+  IN   MrcParameters *const MrcData,
+  IN   UINT32               DeltaRcvEnPiCode,
+  OUT  UINT32               *tRdRdsg,
+  OUT  UINT32               *tRdRddg,
+  OUT  UINT32               *tRdRddr,
+  OUT  UINT32               *tRdRddd
   );
 
 /**
-  This function implements Turn Around Timing Optimization.
+  This function calculates the tWRWR (sg,dg,dr,dd) for LPDDR5 based on Jedec specifications
 
-  @param[in] MrcData - Include all MRC global data.
-
-  @retval MrcStatus - If it succeeds return mrcSuccess.
+  @param[in] MrcData           - Include all MRC global data.
+  @param[out] tWrWrsg          - Return calculated tWRWRdg Timing
+  @param[out] tWrWrdg          - Return calculated tWRWRdg Timing
+  @param[out] tWrWrdr          - Return calculated tWRWRdr Timing
+  @param[out] tWrWrdd          - Return calculated tWRWRdd Timing
 **/
-extern
-MrcStatus
-MrcTurnAroundTimingOptimization (
-  IN MrcParameters * const MrcData
+VOID
+GetLpddr5tWrWr (
+  IN   MrcParameters *const MrcData,
+  OUT  UINT32               *tWrWrsg,
+  OUT  UINT32               *tWrWrdg,
+  OUT  UINT32               *tWrWrdr,
+  OUT  UINT32               *tWrWrdd
   );
 
 /**
-  Updates the value for following OptParamCliff variables:
-  drrd2rd=0, ddrd2rd=1, drwr2wr=2, ddwr2wr=3, drrd2wr=4, ddrd2wr=5, drwr2rd=6, ddwr2rd=7,
-  rdodtd=8, wrodtd=9, mcodts=10, mcodtd=11, rtl=12}
+  This function calculates the tRDWR (sg,dg,dr,dd) for LPDDR5 based on Jedec specifications
 
-  @param[in,out] MrcData    - Include all MRC global data.
-  @param[in]     Controller - Controller to update the specified parameter.
-  @param[in]     Channel    - Channel to update the specified parameter.
-  @param[in]     Byte       - Byte to update the specified parameter.
-  @param[in]     OptParam   - Parameter to update.
-  @param[in]     Off        - Value to offset the current setting.
-  @param[in]     UpdateHost - Switch to update the host structure with the new value.
-  @param[in]     SkipPrint  - Switch to skip debug prints.
-  @param[in]     RankMask   - Bit mask of Ranks to update.
-
-  @retval Nothing
+  @param[in] MrcData           - Include all MRC global data.
+  @param[out] tRdWrsg          - Return calculated tRDWRsg Timing
+  @param[out] tRdWrdg          - Return calculated tRDWRdg Timing
+  @param[out] tRdWrdr          - Return calculated tRDWRdr Timing
+  @param[out] tRdWrdd          - Return calculated tRDWRdd Timing
 **/
-extern
-void
-UpdateTAParamOffset (
-  IN OUT MrcParameters *const MrcData,
-  IN     const UINT32         Controller,
-  IN     const UINT32         Channel,
-  IN     const UINT8          Byte,
-  IN     const UINT8          OptParam,
-  IN     const INT8           Off,
-  IN     const UINT8          UpdateHost,
-  IN     const UINT8          SkipPrint,
-  IN     const UINT8          RankMask
+VOID
+GetLpddr5tRdWr (
+  IN   MrcParameters *const MrcData,
+  OUT  UINT32               *tRdWrsg,
+  OUT  UINT32               *tRdWrdg,
+  OUT  UINT32               *tRdWrdr,
+  OUT  UINT32               *tRdWrdd
   );
 
 /**
-  This function implements Turn Around Timing training.
-  Optimize TA ODT Delay and Duration
+  This function calculates the tWRRD (sg,dg,dr,dd) for LPDDR5 based on Jedec specifications
+
+  @param[in] MrcData           - Include all MRC global data.
+  @param[out] tWrRdsg          - Return calculated tWRRDsg Timing
+  @param[out] tWrRddg          - Return calculated tWRRDdg Timing
+  @param[out] tWrRddr          - Return calculated tWRRDdr Timing
+  @param[out] tWrRddd          - Return calculated tWRRDdd Timing
+**/
+VOID
+GetLpddr5tWrRd (
+  IN   MrcParameters *const MrcData,
+  OUT  UINT32               *tWrRdsg,
+  OUT  UINT32               *tWrRddg,
+  OUT  UINT32               *tWrRddr,
+  OUT  UINT32               *tWrRddd
+  );
+
+/**
+  This function calculates the tRdRd (sg,dg,dr,dd) for DDR5 based on Jedec specifications
+
+  @param[in] MrcData           - Include all MRC global data.
+  @param[in] DeltaRcvEnPiCode  - Largest Delta of RcvEnPiCode across Bytes across the Channel
+  @param[out] tRdRdsg          - Return calculated tRdRdsg Timing
+  @param[out] tRdRddg          - Return calculated tRdRddg Timing
+  @param[out] tRdRddr          - Return calculated tRdRddr Timing
+  @param[out] tRdRddd          - Return calculated tRdRddd Timing
+**/
+VOID
+GetDdr5tRdRd (
+  IN MrcParameters *const  MrcData,
+  IN  UINT32               DeltaRcvEnPiCode,
+  OUT  UINT32              *tRdRdsg,
+  OUT  UINT32              *tRdRddg,
+  OUT  UINT32              *tRdRddr,
+  OUT  UINT32              *tRdRddd
+  );
+
+/**
+  This function calculates the tWRWR (sg,dg,dr,dd) for DDR5 based on Jedec specifications
+
+  @param[in] MrcData           - Include all MRC global data.
+  @param[in] MaxOdtWrOff       - Max ODT WR Off Offset across all Ranks of a channel (MR37:OP[5:3])
+  @param[in] MinOdtWrOn        - Max ODT WR On Offset across all Ranks of a channel MR37:OP[2:0])
+  @param[out] tWrWrsg          - Return calculated tWRWRsg Timing
+  @param[out] tWrWrdg          - Return calculated tWRWRdg Timing
+  @param[out] tWrWrdr          - Return calculated tWRWRdr Timing
+  @param[out] tWrWrdd          - Return calculated tWRWRdd Timing
+**/
+VOID
+GetDdr5tWrWr (
+  IN MrcParameters *const  MrcData,
+  IN  UINT32               MaxOdtWrOff,
+  IN  UINT32               MinOdtWrOn,
+  OUT  UINT32              *tWrWrsg,
+  OUT  UINT32              *tWrWrdg,
+  OUT  UINT32              *tWrWrdr,
+  OUT  UINT32              *tWrWrdd
+  );
+
+/**
+  This function calculates the tRDWR (sg,dg,dr,dd) for DDR5 based on Jedec specifications
+
+  @param[in] MrcData           - Include all MRC global data.
+  @param[in] DeltaTxDqsPiCode  - Largest Delta of TxDqsPiCode across Bytes across the Channel
+  @param[in] MaxOdtRdOff       - Max ODT Rd Off Offset across all Ranks of a channel (MR39:OP[5:3])
+  @param[in] MinOdtWrOn        - Max ODT WR On Offset across all Ranks of a channel MR37:OP[2:0])
+  @param[out] NTODTRd          - TRUE if NT RD ODT is enabled on any ranks within the Channel
+  @param[out] tRDWRsg          - Return calculated tRDWRsg Timing
+  @param[out] tRDWRdg          - Return calculated tRDWRdg Timing
+  @param[out] tRDWRdr          - Return calculated tRDWRdr Timing
+  @param[out] tRDWRdd          - Return calculated tRDWRdd Timing
+**/
+VOID
+GetDdr5tRdWr (
+  IN MrcParameters *const  MrcData,
+  IN  UINT32               DeltaTxDqsPiCode,
+  IN  UINT32               MaxOdtRdOff,
+  IN  UINT32               MinOdtWrOn,
+  IN  BOOLEAN              NTODTRd,
+  OUT  UINT32              *tRdWrsg,
+  OUT  UINT32              *tRdWrdg,
+  OUT  UINT32              *tRdWrdr,
+  OUT  UINT32              *tRdWrdd
+  );
+
+/**
+  This function calculates the tWRRD (sg,dg,dr,dd) for DDR5 based on Jedec specifications
+
+  @param[in] MrcData           - Include all MRC global data.
+  @param[in] DeltaTxDqsPiCode  - Largest Delta of TxDqsPiCode across Bytes across the Channel
+  @param[in] MinOdtRdOn        - Max ODT Rd On Offset across all Ranks of a channel (MR39:OP[2:0])
+  @param[in] MaxOdtWrOff       - Max ODT WR Off Offset across all Ranks of a channel MR37:OP[5:3])
+  @param[out] NTODTRd          - TRUE if NT RD ODT is enabled on any ranks within the Channel
+  @param[out] tWRRDsg          - Return calculated tWRRDsg Timing
+  @param[out] tWRRDdg          - Return calculated tWRRDdg Timing
+  @param[out] tWRRDdr          - Return calculated tWRRDdr Timing
+  @param[out] tWRRDdd          - Return calculated tWRRDdd Timing
+**/
+VOID
+GetDdr5tWrRd (
+  IN MrcParameters *const  MrcData,
+  IN  UINT32               DeltaTxDqsPiCode,
+  IN  UINT32               MinOdtRdOn,
+  IN  UINT32               MaxOdtWrOff,
+  IN  BOOLEAN              NTODTRd,
+  OUT  UINT32              *tWrRdsg,
+  OUT  UINT32              *tWrRddg,
+  OUT  UINT32              *tWrRddr,
+  OUT  UINT32              *tWrRddd
+  );
+
+/**
+  This function calculates the Rd2Rd Tunraround timing based on training results
+  Phy constraint that tells us what the min value acceptable by phy
 
   @param[in] MrcData - Include all MRC global data.
-
-  @retval MrcStatus - If it succeeds return mrcSuccess.
+  @param[in] RxPathResults - Holds the max/min Rx Path margins for each Channel
+  @param[OUT] PHYRd2Rd_PI  - returns the Rd2Rd turnaround timings
 **/
-extern
-MrcStatus
-MrcTurnAroundTiming (
-  IN MrcParameters * const MrcData
+VOID
+GetPhyRd2RdTA (
+  IN  MrcParameters *const MrcData,
+  IN  RxPathMinMax  *const RxPathResults,
+  OUT UINT32              PHYRd2Rd_PI[MAX_CONTROLLER][MAX_CHANNEL]
+  );
+
+/**
+  This function calculates the Wr2Wr Tunraround timing based on training results
+
+  @param[in]  MrcData - Include all MRC global data.
+  @param[in]  TxPathMinMax - Holds the max/min Tx Path margins for each Channel
+  @param[OUT] PHYWr2Wr_PI - returns the Wr2Wr turnaround timings
+**/
+VOID
+GetPhyWr2WrTA (
+  IN  MrcParameters *const MrcData,
+  IN  TxPathMinMax  *const TxPathResults,
+  OUT UINT32               PHYWr2Wr_PI[MAX_CONTROLLER][MAX_CHANNEL]
   );
 
 #endif // _MrcTurnAround_h_

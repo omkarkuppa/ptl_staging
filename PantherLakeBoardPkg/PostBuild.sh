@@ -143,16 +143,16 @@ fi
 #
 export PAYLOAD_REGION_SIZE=$(grep "gMinPlatformPkgTokenSpaceGuid\.PcdFlashNvStorageOffset" $WORKSPACE/FlashMapInclude_Temp.fdf | awk '{print $4}' | sed 's/\r$//g')
 
-if [ "$TARGET" = "RELEASE" ]; then
-  . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/PayloadManagement/FitPayloads/FitPayloadBuild.sh IntegrateBuild r
-else
-    . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/PayloadManagement/FitPayloads/FitPayloadBuild.sh IntegrateBuild
-fi
-echo "Fit Payload build end..."
-if [ $? -ne 0 ]; then
-  echo "!!! ERROR: FitPayloadBuild execute failure !!!"
-  exit 1
-fi
+#if [ "$TARGET" = "RELEASE" ]; then
+#  . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/PayloadManagement/FitPayloads/FitPayloadBuild.sh IntegrateBuild r
+#else
+#    . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/PayloadManagement/FitPayloads/FitPayloadBuild.sh IntegrateBuild
+#fi
+#echo "Fit Payload build end..."
+#if [ $? -ne 0 ]; then
+#  echo "!!! ERROR: FitPayloadBuild execute failure !!!"
+#  exit 1
+#fi
 
 #
 # Call this script to generate Non-FIT Payload
@@ -175,8 +175,7 @@ export PAYLOAD_TEMP_DIR=$WORKSPACE/$BUILD_DIR/FV/PayloadBuild
 export PAYLOADS_BUILD_DIR=$WORKSPACE/Build/FitPayloadsPkg/${TARGET}_${TOOL_CHAIN_TAG}
 export NON_FIT_PAYLOADS_BUILD_DIR=$WORKSPACE/Build/NonFitPayloadsPkg/${TARGET}_${TOOL_CHAIN_TAG}
 Split -f $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd -s $PAYLOAD_REGION_SIZE -t $PAYLOAD_TEMP_DIR/CLIENTBIOS_ExcludePayloads.bin -o $PAYLOAD_TEMP_DIR/Buffer.bin
-cat $PAYLOADS_BUILD_DIR/FV/FITPAYLOADS.fd $NON_FIT_PAYLOADS_BUILD_DIR/FV/NONFITPAYLOADS.fd > $PAYLOAD_TEMP_DIR/Payloads.bin
-cat $PAYLOAD_TEMP_DIR/Payloads.bin $PAYLOAD_TEMP_DIR/CLIENTBIOS_ExcludePayloads.bin > $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd
+cat $NON_FIT_PAYLOADS_BUILD_DIR/FV/NONFITPAYLOADS.fd $PAYLOAD_TEMP_DIR/CLIENTBIOS_ExcludePayloads.bin > $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd
 rm -rf $PAYLOAD_TEMP_DIR
 
 # In FSP@Reset solution, FspO Fv will be located at 4G memory address.
@@ -389,8 +388,8 @@ if [ "$WCL_BUILD" = "TRUE" ]; then
   . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGenWcl/postbuildBpmGen.sh CLIENTBIOS CLIENTBIOS
   fi
 else
-  if [ -f $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/postbuildBpmGen.sh ]; then
-    . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/InternalOnly/ToolScripts/BpmGen/postbuildBpmGen.sh CLIENTBIOS CLIENTBIOS
+  if [ -f $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/BpmGen/postbuildBpmGen.sh ]; then
+    . $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/BpmGen/postbuildBpmGen.sh CLIENTBIOS CLIENTBIOS
   fi
 fi
   if [ $? -ne 0 ]; then
@@ -438,8 +437,4 @@ fi
 
 
 # ---Create ROM images---
-if [ -f $WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Tools/InternalOnly/RomImage/SetupRomDirs.sh ]; then
-  . $WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Tools/InternalOnly/RomImage/SetupRomDirs.sh
-else
-  . $WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Tools/ToolScripts/RomImage/SetupRomDirs.sh
-fi
+. $WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Tools/ToolScripts/RomImage/SetupRomDirs.sh

@@ -800,6 +800,12 @@ typedef struct {
   UINT8   PepOsse;
 
   UINT8   StorageDynamicLinkManagement;
+
+  //
+  // Static Content
+  //
+  UINT16  StaticContentSizeAt4Gb;
+
 } SETUP_DATA;
 
 /**
@@ -1109,6 +1115,7 @@ typedef struct {
   UINT8   SkinTempOverride[SKIN_TEMP_CONTROL_SENSOR];
   UINT8   SkinTempControl;
   UINT8   TdxEnable;
+  UINT8   ReduceXecores;
 } CPU_SETUP;
 
 typedef struct {
@@ -1702,6 +1709,7 @@ typedef struct {
 
   UINT16  SubChHashMask;
   UINT8   SubChHashInterleaveBit;
+  UINT8   ForceCkdBypass;
 
   UINT8   MimicWcDisaplayInIpq;
   UINT8   FakeSagv;

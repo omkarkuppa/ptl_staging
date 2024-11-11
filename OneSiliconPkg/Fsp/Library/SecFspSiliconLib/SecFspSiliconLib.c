@@ -171,19 +171,19 @@ LpssUartDebugConfigurationWrapper (
 
   FsptUpd = (FSPT_UPD *)((UINTN) (SecGetFsptApiParameter ()));
   if (FsptUpd != NULL) {
-    *LpssUartDebugEnable              = FsptUpd->FsptConfig.PcdSerialIoUartDebugEnable;
-    *LpssUartNumber                   = FsptUpd->FsptConfig.PcdSerialIoUartNumber;
-    *LpssUartPciMmioBase              = FsptUpd->FsptConfig.PcdSerialIoUartDebugMmioBase;
-    UartDeviceConfig->Mode                = FsptUpd->FsptConfig.PcdSerialIoUartMode;
-    UartDeviceConfig->Attributes.BaudRate = FsptUpd->FsptConfig.PcdSerialIoUartBaudRate;
-    UartDeviceConfig->Attributes.Parity   = FsptUpd->FsptConfig.PcdSerialIoUartParity;
-    UartDeviceConfig->Attributes.DataBits = FsptUpd->FsptConfig.PcdSerialIoUartDataBits;
-    UartDeviceConfig->Attributes.StopBits = FsptUpd->FsptConfig.PcdSerialIoUartStopBits;
-    UartDeviceConfig->Attributes.AutoFlow = FsptUpd->FsptConfig.PcdSerialIoUartAutoFlow;
-    UartDeviceConfig->PinMux.Rx           = FsptUpd->FsptConfig.PcdSerialIoUartRxPinMux;
-    UartDeviceConfig->PinMux.Tx           = FsptUpd->FsptConfig.PcdSerialIoUartTxPinMux;
-    UartDeviceConfig->PinMux.Rts          = FsptUpd->FsptConfig.PcdSerialIoUartRtsPinMux;
-    UartDeviceConfig->PinMux.Cts          = FsptUpd->FsptConfig.PcdSerialIoUartCtsPinMux;
+    *LpssUartDebugEnable              = FsptUpd->FsptConfig.PcdLpssUartDebugEnable;
+    *LpssUartNumber                   = FsptUpd->FsptConfig.PcdLpssUartNumber;
+    *LpssUartPciMmioBase              = FsptUpd->FsptConfig.PcdLpssUartDebugMmioBase;
+    UartDeviceConfig->Mode                = FsptUpd->FsptConfig.PcdLpssUartMode;
+    UartDeviceConfig->Attributes.BaudRate = FsptUpd->FsptConfig.PcdLpssUartBaudRate;
+    UartDeviceConfig->Attributes.Parity   = FsptUpd->FsptConfig.PcdLpssUartParity;
+    UartDeviceConfig->Attributes.DataBits = FsptUpd->FsptConfig.PcdLpssUartDataBits;
+    UartDeviceConfig->Attributes.StopBits = FsptUpd->FsptConfig.PcdLpssUartStopBits;
+    UartDeviceConfig->Attributes.AutoFlow = FsptUpd->FsptConfig.PcdLpssUartAutoFlow;
+    UartDeviceConfig->PinMux.Rx           = FsptUpd->FsptConfig.PcdLpssUartRxPinMux;
+    UartDeviceConfig->PinMux.Tx           = FsptUpd->FsptConfig.PcdLpssUartTxPinMux;
+    UartDeviceConfig->PinMux.Rts          = FsptUpd->FsptConfig.PcdLpssUartRtsPinMux;
+    UartDeviceConfig->PinMux.Cts          = FsptUpd->FsptConfig.PcdLpssUartCtsPinMux;
     return;
   }
   *LpssUartDebugEnable = LpssUartDebugPcdGetDebugEnable ();
@@ -202,8 +202,8 @@ LpssUartDebugConfigurationWrapper (
 **/
 VOID
 Lpss2ndUartConfigurationWrapper (
-  OUT UINT8                    *UartEnable,
   OUT LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig,
+  OUT UINT8                    *UartEnable,
   OUT UINT8                    *LpssUartNumber,
   OUT UINT32                   *LpssUartPciMmioBase
   )
@@ -212,22 +212,22 @@ Lpss2ndUartConfigurationWrapper (
 
   FsptUpd = (FSPT_UPD *)((UINTN) (SecGetFsptApiParameter ()));
   if (FsptUpd != NULL) {
-    *UartEnable                           = FsptUpd->FsptConfig.PcdSerialIo2ndUartEnable;
-    if (FsptUpd->FsptConfig.PcdSerialIo2ndUartEnable == 0) {
+    *UartEnable                           = FsptUpd->FsptConfig.PcdLpssUart2ndEnable;
+    if (FsptUpd->FsptConfig.PcdLpssUart2ndEnable == 0) {
       return;
     }
-    *LpssUartNumber                       = FsptUpd->FsptConfig.PcdSerialIo2ndUartNumber;
-    *LpssUartPciMmioBase                  = FsptUpd->FsptConfig.PcdSerialIo2ndUartMmioBase;
-    UartDeviceConfig->Mode                = FsptUpd->FsptConfig.PcdSerialIo2ndUartMode;
-    UartDeviceConfig->Attributes.BaudRate = FsptUpd->FsptConfig.PcdSerialIo2ndUartBaudRate;
-    UartDeviceConfig->Attributes.Parity   = FsptUpd->FsptConfig.PcdSerialIo2ndUartParity;
-    UartDeviceConfig->Attributes.DataBits = FsptUpd->FsptConfig.PcdSerialIo2ndUartDataBits;
-    UartDeviceConfig->Attributes.StopBits = FsptUpd->FsptConfig.PcdSerialIo2ndUartStopBits;
-    UartDeviceConfig->Attributes.AutoFlow = FsptUpd->FsptConfig.PcdSerialIo2ndUartAutoFlow;
-    UartDeviceConfig->PinMux.Rx           = FsptUpd->FsptConfig.PcdSerialIo2ndUartRxPinMux;
-    UartDeviceConfig->PinMux.Tx           = FsptUpd->FsptConfig.PcdSerialIo2ndUartTxPinMux;
-    UartDeviceConfig->PinMux.Rts          = FsptUpd->FsptConfig.PcdSerialIo2ndUartRtsPinMux;
-    UartDeviceConfig->PinMux.Cts          = FsptUpd->FsptConfig.PcdSerialIo2ndUartCtsPinMux;
+    *LpssUartNumber                       = FsptUpd->FsptConfig.PcdLpssUart2ndNumber;
+    *LpssUartPciMmioBase                  = FsptUpd->FsptConfig.PcdLpssUart2ndMmioBase;
+    UartDeviceConfig->Mode                = FsptUpd->FsptConfig.PcdLpssUart2ndMode;
+    UartDeviceConfig->Attributes.BaudRate = FsptUpd->FsptConfig.PcdLpssUart2ndBaudRate;
+    UartDeviceConfig->Attributes.Parity   = FsptUpd->FsptConfig.PcdLpssUart2ndParity;
+    UartDeviceConfig->Attributes.DataBits = FsptUpd->FsptConfig.PcdLpssUart2ndDataBits;
+    UartDeviceConfig->Attributes.StopBits = FsptUpd->FsptConfig.PcdLpssUart2ndStopBits;
+    UartDeviceConfig->Attributes.AutoFlow = FsptUpd->FsptConfig.PcdLpssUart2ndAutoFlow;
+    UartDeviceConfig->PinMux.Rx           = FsptUpd->FsptConfig.PcdLpssUart2ndRxPinMux;
+    UartDeviceConfig->PinMux.Tx           = FsptUpd->FsptConfig.PcdLpssUart2ndTxPinMux;
+    UartDeviceConfig->PinMux.Rts          = FsptUpd->FsptConfig.PcdLpssUart2ndRtsPinMux;
+    UartDeviceConfig->PinMux.Cts          = FsptUpd->FsptConfig.PcdLpssUart2ndCtsPinMux;
     return;
   }
   *UartEnable = 0;

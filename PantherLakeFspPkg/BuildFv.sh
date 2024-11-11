@@ -62,9 +62,6 @@ function Clean(){
   if [ -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MemInfoHob.h ]; then
     rm -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MemInfoHob.h
   fi
-  if [ -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MrcGlobalDefinitions.h ]; then
-    rm -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MrcGlobalDefinitions.h
-  fi
   if [ -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/SmbiosCacheInfoHob.h ]; then
     rm -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/SmbiosCacheInfoHob.h
   fi
@@ -126,8 +123,6 @@ function PreBuild(){
   cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Include/GpioV2Pad.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioV2Pad.h
 
   cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Include/MemInfoHob.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MemInfoHob.h
-
-  cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/IpBlock/MemoryInit/src/IncludePublic/Ptl/MrcGlobalDefinitions.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MrcGlobalDefinitions.h
 
   cp $WORKSPACE_SILICON/$FSP_PKG_NAME/FspPkgPcdShare.dsc $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/FspPkgPcdShare.dsc
 

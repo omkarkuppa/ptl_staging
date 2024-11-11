@@ -329,7 +329,6 @@
   gEfiSmbiosProtocolGuid                        ## CONSUMES
   gBdsAllDriversConnectedProtocolGuid           ## CONSUMES
   gEfiUsbIoProtocolGuid                         ## CONSUMES
-  gGopPolicyProtocolGuid                        ## CONSUMES
   gPlatformConfigChangeProtocolGuid             ## SOMETIMES_PRODUCES
   gEdkiiPlatformSpecificResetFilterProtocolGuid ## CONSUMES
   gEfiMpServiceProtocolGuid                     ## CONSUMES
@@ -339,8 +338,6 @@
   gCnvFormPlatformProtocolGuid                  ## PRODUCES
   gUsbCRetimerProtocolGuid                      ## CONSUMES
   gMemoryAddressEncodeDecodeProtocolGuid        ## CONSUMES
-  gEfiGraphicsOutputProtocolGuid                ## CONSUMES
-  gEfiSimpleTextOutProtocolGuid                 ## CONSUMES
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                      ## CONSUMES
@@ -354,14 +351,6 @@
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable
   gBoardModuleTokenSpaceGuid.PcdEcEspiFlashSharingMode
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent               ## CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutColumn                    ## CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupConOutRow                       ## CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow                            ## CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn                         ## CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution       ## CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution         ## CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution            ## CONSUMES
-  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution              ## CONSUMES
 
   gPlatformModuleTokenSpaceGuid.PcdTpmEnable
   gSiPkgTokenSpaceGuid.PcdTxtEnable                                     ## CONSUMES

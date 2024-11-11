@@ -49,7 +49,6 @@ SetTcPreActOdt (
 {
   const MrcInput    *Inputs;
   MrcOutput         *Outputs;
-  MrcChannelOut     *ChannelOut;
   MrcTiming         *Timing;
   INT64             tWRPRE;
   INT64             tRDPRE;
@@ -80,8 +79,7 @@ SetTcPreActOdt (
 
   Inputs      = &MrcData->Inputs;
   Outputs     = &MrcData->Outputs;
-  ChannelOut  = &Outputs->Controller[Controller].Channel[Channel];
-  Timing      = &ChannelOut->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
+  Timing      = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
   IsLpddr     = Outputs->IsLpddr;
   IsDdr5      = Outputs->IsDdr5;
   IsLpddr5    = Outputs->IsLpddr5;
@@ -314,7 +312,6 @@ SetTcPwrdwn (
 {
   const MrcInput  *Inputs;
   MrcOutput       *Outputs;
-  MrcChannelOut   *ChannelOut;
   MrcTiming       *Timing;
   MrcDdrType      DdrType;
   MrcFrequency    DdrFreq;
@@ -337,8 +334,7 @@ SetTcPwrdwn (
 
   Inputs      = &MrcData->Inputs;
   Outputs     = &MrcData->Outputs;
-  ChannelOut  = &Outputs->Controller[Controller].Channel[Channel];
-  Timing      = &ChannelOut->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
+  Timing      = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
   DdrType     = Outputs->DdrType;
   tCK         = Timing->tCK;
   IsLpddr5    = Outputs->IsLpddr5;

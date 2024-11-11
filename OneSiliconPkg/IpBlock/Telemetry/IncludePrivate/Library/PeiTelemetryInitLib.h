@@ -39,19 +39,4 @@ PeiTelemetryMemoryAllocation (
   OUT UINT32                          *StreamTracerMemSize,
   OUT UINT64                          *StreamTracerBaseAddr
 );
-
-/**
-  Reserve Memory for Telemetry
-
-  @param[in] StreamTracerBase             Base Address of Stream Tracer
-  @param[in] StreamTracerSize             Size of Stream Tracer
-  @param[in] ResourceAttributeTested      Resource Attribute based on Boot Mode
-**/
-VOID
-PeiTelemetryMemoryAllocationV2 (
-  IN EFI_PHYSICAL_ADDRESS         StreamTracerBase,
-  IN UINT64                       StreamTracerSize,
-  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
-  );
-
 #endif

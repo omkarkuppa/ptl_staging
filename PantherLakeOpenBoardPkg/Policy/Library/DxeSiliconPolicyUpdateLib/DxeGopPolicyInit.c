@@ -24,6 +24,7 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Protocol/FirmwareVolume2.h>
 #include <Protocol/GopPolicy.h>
+#include <Library/IGpuInfoLib.h>
 
 GLOBAL_REMOVE_IF_UNREFERENCED GOP_POLICY_PROTOCOL        mGOPPolicy;
 
@@ -147,6 +148,10 @@ GopPolicyInitDxe (
   )
 {
   EFI_STATUS         Status;
+
+  if (FALSE == IGpuIsSupported ()) {
+    return EFI_SUCCESS;
+  }
 
   //
   // Initialize the EFI Driver Library

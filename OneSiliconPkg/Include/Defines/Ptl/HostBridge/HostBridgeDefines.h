@@ -43,12 +43,14 @@
 #define PTL_U_SA_DEVICE_ID_2C               0xB003   ///< PantherLake U            (2+0+4)      SA DID
 #define PTL_H_12XE_SA_DEVICE_ID_4C_4A       0xB004   ///< PantherLake H 12Xe       (4+4+4+12Xe) SA DID
 #define PTL_H_4XE_SA_DEVICE_ID_4C_4A        0xB005   ///< PantherLake H 4Xe        (4+4+4+4Xe)  SA DID
-#define PTL_U_NEX_SA_DEVICE_ID_4C           0xB007   ///< PantherLake U      (NEX) (4+0+4)      SA DID
-#define PTL_H_12XE_NEX_SA_DEVICE_ID_4C_8A   0xB008   ///< PantherLake H 12Xe (NEX) (4+8+4+12Xe) SA DID
 #define PTL_H_12XE_SA_DEVICE_ID_2C_8A       0xB009   ///< PantherLake H 12Xe       (2+8+4+12Xe) SA DID
 #define PTL_H_12XE_SA_DEVICE_ID_2C_4A       0xB00A   ///< PantherLake H 12Xe       (2+4+4+12Xe) SA DID
 #define PTL_H_4XE_SA_DEVICE_ID_2C_8A        0xB00B   ///< PantherLake H 4Xe        (2+8+4+4Xe)  SA DID
 #define PTL_H_4XE_SA_DEVICE_ID_2C_4A        0xB00C   ///< PantherLake H 4Xe        (2+4+4+4Xe)  SA DID
+#define PTL_H_4XE_SA_DEVICE_ID_4C           0xB01A   ///< PantherLake H 4Xe        (4+0+4+4Xe)  SA DID
+
+#define PTL_U_NEX_SA_DEVICE_ID_4C           0xB007   ///< PantherLake U      (NEX) (4+0+4)      SA DID
+#define PTL_H_12XE_NEX_SA_DEVICE_ID_4C_8A   0xB008   ///< PantherLake H 12Xe (NEX) (4+8+4+12Xe) SA DID
 #define PTL_U_NEX_SA_DEVICE_ID_2C           0xB010   ///< PantherLake U      (NEX) (2+0+4)      SA DID
 #define PTL_H_12XE_NEX_SA_DEVICE_ID_4C_4A   0xB011   ///< PantherLake H 12Xe (NEX) (4+4+4+12Xe) SA DID
 #define PTL_H_12XE_NEX_SA_DEVICE_ID_2C_8A   0xB012   ///< PantherLake H 12Xe (NEX) (2+8+4+12Xe) SA DID
@@ -59,6 +61,16 @@
 #define PTL_H_4XE_NEX_SA_DEVICE_ID_2C_4A    0xB017   ///< PantherLake H 4Xe  (NEX) (2+4+4+4Xe)  SA DID
 
 
+//
+// WildcatLake CPU mobile SA Device IDs B0:D0:F0
+//
+#define WCL_SA_DEVICE_ID_2C_4LP         0xFD00   ///< WildcatLake (2+0+4) SA DID
+#define WCL_SA_DEVICE_ID_2C_2LP         0xFD01   ///< WildcatLake (2+0+2) SA DID
+#define WCL_SA_DEVICE_ID_2C             0xFD02   ///< WildcatLake (2+0+0) SA DID
+#define WCL_SA_DEVICE_ID_1C_4LP         0xFD03   ///< WildcatLake (1+0+4) SA DID
+#define WCL_SA_DEVICE_ID_4LP            0xFD04   ///< WildcatLake (0+0+4) SA DID
+#define WCL_SA_DEVICE_ID_2C_4LP_NEX     0xFD05   ///< WildcatLake (2+0+4) SA DID
+#define WCL_SA_DEVICE_ID_1C_4LP_NEX     0xFD06   ///< WildcatLake (1+0+4) SA DID
 
 //
 // Description of TMBAR (15:38)

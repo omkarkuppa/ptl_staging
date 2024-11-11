@@ -781,7 +781,7 @@ Ddr5JedecInitVal (
   Debug      = &Outputs->Debug;
   Profile    = Inputs->ExtInputs.Ptr->MemoryProfile;
   ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
-  TimingPtr  = &ChannelOut->Timing[Profile];
+  TimingPtr  = &Outputs->Timing[Profile];
   RetVal     = 0;
   CccRttValue = 0;
   DataRttValue = 0;
@@ -1468,8 +1468,6 @@ Ddr5GmfDelayTimings (
   MrcOutput*      Outputs;
   const MrcInput* Inputs;
   MrcTiming*      Timing;
-  UINT32          FirstController;
-  UINT32          FirstChannel;
 #ifdef MRC_DEBUG_PRINT
   MrcDebug  *Debug;
 
@@ -1478,9 +1476,7 @@ Ddr5GmfDelayTimings (
 
   Outputs = &MrcData->Outputs;
   Inputs = &MrcData->Inputs;
-  FirstController = Outputs->FirstPopController;
-  FirstChannel = Outputs->Controller[FirstController].FirstPopCh;
-  Timing = &Outputs->Controller[FirstController].Channel[FirstChannel].Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
+  Timing = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
 
 
   if (TimingNckOut == NULL) {
@@ -4001,17 +3997,13 @@ MrcGetDdr5tContExitDelay (
   MrcOutput  *Outputs;
   MrcInput   *Inputs;
   MrcTiming  *TimingProfile;
-  UINT8      FirstController;
-  UINT8      FirstChannel;
   UINT16     tCL;
   UINT32     tMRW;
   UINT32     tContExitDelay;
 
   Outputs = &MrcData->Outputs;
   Inputs  = &MrcData->Inputs;
-  FirstController = Outputs->FirstPopController;
-  FirstChannel    = Outputs->Controller[FirstController].FirstPopCh;
-  TimingProfile   = &Outputs->Controller[FirstController].Channel[FirstChannel].Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
+  TimingProfile   = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
   tCL  = TimingProfile->tCL;
   tMRW = MrcGetDdr5tMRW (Outputs->MemoryClock);
 
@@ -5098,7 +5090,7 @@ Ddr5ProgramPprGuardKey (
 
   Status  = mrcSuccess;
 
-  tRCD = Outputs->Controller[Controller].Channel[Channel].Timing[Inputs->ExtInputs.Ptr->MemoryProfile].tCL;
+  tRCD = Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile].tCL;
   tRCD *= Outputs->tCKps; // convert from nCK to ps
   tRCD /= 1000; //convert from ps to ns
 
@@ -5111,4 +5103,81 @@ Ddr5ProgramPprGuardKey (
   }
 
   return Status;
+}
+
+/**
+  This function decodes and returns the DDR5 ODT offsets from MR37, MR38, and MR39
+
+  @param[in]  MrcData           - Include all MRC global data.
+  @param[in]  Controller        - Current Controller
+  @param[in]  Channel           - Current Channel
+  @param[in]  Rank              - Current Rank
+  @param[in]  NtOdt_Wr          - TRUE if Non Target WR ODT is supported
+  @param[in]  IsPreFuncTraining - TRUE if board flight delay impact from Read Leveling / Write Leveling is not known yet
+  @param[out] Odt_Wr_On         - Hold the value for Odt_Wr_On Offset
+  @param[out] Odt_Wr_Off        - Hold the value for Odt_Wr_Off Offset
+  @param[out] Odt_Rd_On         - Hold the value for Odt_Rd_On Offset
+  @param[out] Odt_Rd_Off        - Hold the value for Odt_Rd_Off Offset
+**/
+VOID
+GetDdr5OdtOffsets (
+  IN  MrcParameters* const MrcData,
+  IN  UINT32               Controller,
+  IN  UINT32               Channel,
+  IN  UINT32               Rank,
+  IN  BOOLEAN              NtOdt_Wr,
+  IN  BOOLEAN              IsPreFuncTraining,
+  OUT INT8                 *Odt_Wr_On,
+  OUT INT8                 *Odt_Wr_Off,
+  OUT INT8                 *Odt_Rd_On,
+  OUT INT8                 *Odt_Rd_Off
+  )
+{
+  MrcOutput      *Outputs;
+  MrcChannelOut  *ChannelOut;
+  UINT32 Dimm;
+  UINT32 DimmRank;
+  UINT8  *MR;
+  INT8 OdtlOnWrNtOffset;
+  INT8 OdtlOffWrNtOffset;
+  INT8 OdtlOnWrOffset;
+  INT8 OdtlOffWrOffset;
+  INT8 OdtlOnRdNtOffset;
+  INT8 OdtlOffRdNtOffset;
+  DDR5_MODE_REGISTER_37_TYPE Ddr5MR37;
+  DDR5_MODE_REGISTER_38_TYPE Ddr5MR38;
+  DDR5_MODE_REGISTER_39_TYPE Ddr5MR39;
+
+  Outputs    = &MrcData->Outputs;
+  ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
+  Dimm = RANK_TO_DIMM_NUMBER (Rank);
+  DimmRank = Rank % MAX_RANK_IN_DIMM;
+
+  MR = ChannelOut->Dimm[Dimm].Rank[DimmRank].MR;
+
+  Ddr5MR37.Data8 = MR[mrIndexMR37];
+  OdtlOnWrOffset    = IsPreFuncTraining ? OdtlOnWrOffsetMinus4 : Ddr5MR37.Bits.OdtlOnWrOffset;
+  OdtlOffWrOffset   = IsPreFuncTraining ? OdtlOffWrOffsetPlus4 : Ddr5MR37.Bits.OdtlOffWrOffset;
+
+  Ddr5MR38.Data8 = MR[mrIndexMR38];
+  OdtlOnWrNtOffset  = IsPreFuncTraining ? OdtlOnWrOffsetMinus4 : Ddr5MR38.Bits.OdtlOnWrNtOffset;
+  OdtlOffWrNtOffset = IsPreFuncTraining ? OdtlOffWrOffsetPlus4 : Ddr5MR38.Bits.OdtlOffWrNtOffset;
+
+  Ddr5MR39.Data8 = MR[mrIndexMR39];
+  OdtlOnRdNtOffset  = IsPreFuncTraining ? OdtlOnRdNtOffsetMinus3 : Ddr5MR39.Bits.OdtlOnRdNtOffset;
+  OdtlOffRdNtOffset = IsPreFuncTraining ? OdtlOffRdNtOffsetPlus3 : Ddr5MR39.Bits.OdtlOffRdNtOffset;
+
+  // The translation between MR unsigned value and signed value is calculated by DDR5_ODT_OFFSET_DECODER
+  if (Odt_Wr_On != NULL) {
+    *Odt_Wr_On = (NtOdt_Wr ? OdtlOnWrNtOffset : OdtlOnWrOffset) - DDR5_ODT_OFFSET_DECODER;
+  }
+  if (Odt_Wr_Off != NULL) {
+    *Odt_Wr_Off = DDR5_ODT_OFFSET_DECODER - (NtOdt_Wr ? OdtlOffWrNtOffset : OdtlOffWrOffset);
+  }
+  if (Odt_Rd_On != NULL) {
+    *Odt_Rd_On = OdtlOnRdNtOffset - DDR5_ODT_OFFSET_DECODER;
+  }
+  if (Odt_Rd_Off != NULL) {
+    *Odt_Rd_Off = DDR5_ODT_OFFSET_DECODER - OdtlOffRdNtOffset;
+  }
 }

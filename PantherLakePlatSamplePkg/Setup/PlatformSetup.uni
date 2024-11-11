@@ -876,8 +876,10 @@
 
 #string STR_USBC_CAPSULE_DEBUG_LEVEL_PROMPT     #language en-US "USB4 Capsule Debug Level"
 #string STR_USBC_CAPSULE_DEBUG_LEVEL_HELP       #language en-US "Control the level of USBC Capsule Log data that can be written to Log buffer"
-#string STR_UUSBC_CAPSULE_DEBUG_LEVEL_DISABLED  #language en-US "DISABLED"
+#string STR_USBC_CAPSULE_DEBUG_LEVEL_DISABLED   #language en-US "DISABLED"
 #string STR_USBC_CAPSULE_DEBUG_LEVEL_ERROR      #language en-US "ERROR"
+#string STR_USBC_CAPSULE_DEBUG_LEVEL_WARN       #language en-US "WARNING"
+#string STR_USBC_CAPSULE_DEBUG_LEVEL_INFO       #language en-US "INFO"
 #string STR_USBC_CAPSULE_DEBUG_LEVEL_VERBOSE    #language en-US "VERBOSE"
 
 #string STR_SKIP_OBB_HASH_VERIFY                #language en-US "Skip OBB HASH Verify"

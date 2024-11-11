@@ -34,8 +34,6 @@ echo on
 @set SCRIPT_ERROR=0
 
 setlocal ENABLEDELAYEDEXPANSION
-@echo Flash Map File %FLASHMAP_FDF%
-@set PREMEM_FV_ADDRESS=
 
 @if not defined PYTHON_COMMAND (
   set PYTHON_COMMAND=py -3
@@ -47,28 +45,14 @@ setlocal ENABLEDELAYEDEXPANSION
   echo ClientBios %ClientBios% File size is %~z1.
 )
 
-setlocal ENABLEDELAYEDEXPANSION
-@if %RESILIENCY_BUILD% EQU TRUE (
-  if %EXTENDEDREGION_BUILD% EQU TRUE (
-    @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeExtended_autogen.fdf
-  ) else (
-    @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeRes.fdf
-  )
-) else if %FSP_VALIDATION_BUILD% EQU TRUE (
-    @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeFspV.fdf
-) else if %EXTENDEDREGION_BUILD% EQU TRUE (
-  @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeExtended_autogen.fdf
-) else (
-    @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapInclude.fdf
-  @REM Multi-IBB support
-  @REM
-  if %MULTI_IBB_BUILD% EQU TRUE (
-    @set FLASHMAP_FDF=%WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Include\Fdf\FlashMapIncludeMultiIbb.fdf
-  )
-)
 @echo Flash Map File %FLASHMAP_FDF%
-
-@set PREMEM_FV_ADDRESS=
+@if not defined FLASHMAP_FDF (
+    echo.
+    echo !!! ERROR !!! FLASHMAP_FDF must be defined before executing postbuild.bat !!!
+    echo.
+    set SCRIPT_ERROR=1
+    goto :EndPostBuild
+)
 
 @if not defined WORKSPACE (
     echo.
@@ -302,13 +286,13 @@ if "%TARGET%" == "RELEASE" (
    @set SCRIPT_ERROR=1
    goto EndPostBuild
 )
-  call %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\PayloadManagement\FitPayloads\FitPayloadBuild.bat %PAYLOAD_BUILD_FLAGS%
+@REM  call %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\PayloadManagement\FitPayloads\FitPayloadBuild.bat %PAYLOAD_BUILD_FLAGS%
 
-@if %errorlevel% NEQ 0 (
-  @echo ERROR: Failure in generating FitPayload
-  @set SCRIPT_ERROR=1
-  goto EndPostBuild
-)
+@REM@if %errorlevel% NEQ 0 (
+@REM  @echo ERROR: Failure in generating FitPayload
+@REM  @set SCRIPT_ERROR=1
+@REM  goto EndPostBuild
+@REM)
 
 @REM
 @REM Stitch Payloads and ClientBios together
@@ -323,16 +307,14 @@ setlocal ENABLEDELAYEDEXPANSION
 @if %EXTENDEDREGION_BUILD% EQU FALSE (
   @for /f "tokens=4" %%i in ('@findstr /c:"gMinPlatformPkgTokenSpaceGuid\.PcdFlashNvStorageOffset" %FLASHMAP_FDF%') do @set PAYLOAD_REGION_SIZE=%%i
   call split -f %BUILD_DIR%\FV\ClientBios.fd -s !PAYLOAD_REGION_SIZE! -t %BUILD_DIR%\FV\ClientBios_ExcludePayload.fd -o %BUILD_DIR%\FV\Buffer.bin
-  copy /y /b %PAYLOADS_BUILD_DIR%\FV\FITPAYLOADS.fd + %NONFIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd + %BUILD_DIR%\FV\ClientBios_ExcludePayload.fd %BUILD_DIR%\FV\ClientBios.fd
+  copy /y /b %NONFIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd + %BUILD_DIR%\FV\ClientBios_ExcludePayload.fd %BUILD_DIR%\FV\ClientBios.fd
   @del %BUILD_DIR%\FV\Buffer.bin
 ) else (
   @for /f "tokens=4" %%i in ('@findstr /c:"gBoardModuleTokenSpaceGuid\.PcdFlashAllExtendAreaSize" %FLASHMAP_FDF%') do @set EXTBIOS_REGION_SIZE=%%i
-  @for /f "tokens=4" %%i in ('@findstr /c:"gIntelSiliconPkgTokenSpaceGuid\.PcdFlashMicrocodeFvSize" %FLASHMAP_FDF%') do @set FIT_PAYLOAD_SIZE=%%i
-  @for /f "tokens=4" %%i in ('@findstr /c:"gCapsuleFeaturePkgTokenSpaceGuid\.PcdFlashNonFitPayloadSize" %FLASHMAP_FDF%') do @set NON_FIT_PAYLOAD_SIZE=%%i
-  set /a PAYLOAD_REGION_SIZE="!FIT_PAYLOAD_SIZE!" + "!NON_FIT_PAYLOAD_SIZE!"
+  @for /f "tokens=4" %%i in ('@findstr /c:"gCapsuleFeaturePkgTokenSpaceGuid\.PcdFlashNonFitPayloadSize" %FLASHMAP_FDF%') do @set PAYLOAD_REGION_SIZE=%%i
   call split -f %BUILD_DIR%\FV\ClientBios.fd -s !EXTBIOS_REGION_SIZE! -t %BUILD_DIR%\FV\ClientBios16M.fd -o %BUILD_DIR%\FV\ExtBiosRemaining.bin
   call split -f %BUILD_DIR%\FV\ClientBios16M.fd -s !PAYLOAD_REGION_SIZE! -t %BUILD_DIR%\FV\ClientBios_ExcludePayload.fd -o %BUILD_DIR%\FV\Buffer.bin
-  copy /y /b %BUILD_DIR%\FV\ExtBiosRemaining.bin + %PAYLOADS_BUILD_DIR%\FV\FITPAYLOADS.fd + %NONFIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd + %BUILD_DIR%\FV\ClientBios_ExcludePayload.fd %BUILD_DIR%\FV\ClientBios.fd
+  copy /y /b %BUILD_DIR%\FV\ExtBiosRemaining.bin + %NONFIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd + %BUILD_DIR%\FV\ClientBios_ExcludePayload.fd %BUILD_DIR%\FV\ClientBios.fd
   @del %BUILD_DIR%\FV\ExtBiosRemaining.bin
   @del %BUILD_DIR%\FV\Buffer.bin
 )
@@ -609,10 +591,6 @@ if exist %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Features\MultiIbbConfig\T
 @set IBB_BGSL_FILE_GUID=f53fc14b-025c-4477-9b48-7a1b19f80f30
 @rem gObbRBgslBinGuid
 @set OBB_BGSL_FILE_GUID=318d30b7-f669-4af2-ade1-e3f84d097bb3
-@rem gUcodeBgslFileGuid
-@set UCODE_BGSL_FILE_GUID=a503b9d8-d68c-4436-802d-0ac88af635bb
-@REM gFitTableSyncBgslFileGuid
-@set FIT_TABLE_SYNC_BGSL_FILE_GUID=55dbdd24-5d2e-53fe-d051-e0dc5e84f540
 @REM gNonFitPayloadBgslFileGuid
 @set PAYLOAD_BGSL_FILE_GUID=cb25fe33-8b2a-4770-85e7-1ee130e22789
 @set BGSL_TMP_FOLDER=%BUILD_DIR%\FV\BgslTmp
@@ -627,8 +605,6 @@ if exist %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Features\MultiIbbConfig\T
     -es %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_OBBR_template.bgsl ^
     -is %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_template_Pri_Sec_Sync.bgsl ^
     -os %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_OBBR_template.bgsl ^
-    -us %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_Ucode_template.bgsl ^
-    -fs %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_FIT_sync_template.bgsl ^
     -ns %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_OBBR_template.bgsl ^
     -t %PrepRELEASE% -m %FLASHMAP_FDF% -o %BIOS_GUARD_UPDATE_PACKAGE_PATH%
 
@@ -681,25 +657,6 @@ if %EXTENDEDREGION_BUILD% EQU TRUE (
 )
 
   @rem
-  @rem Generate Ucode <-> UcodeR BGUP.
-  @rem
-  call %BIOS_GUARD_UPDATE_PACKAGE_PATH%\BuildBGUP_SPI.bat -p script_BuildBGUP_Ucode.bgsl -v !BIOS_GUARD_SVN! -use_ftu false
-  call %PYTHON_COMMAND% %BIOS_GUARD_UPDATE_PACKAGE_PATH%\BiosGuardCapsule.py -i update_package.BIOS_Guard -o capsule_update_package.BIOS_Guard
-  copy /b capsule_update_package.BIOS_Guard + update_package_bgupc.biosguard %BGSL_TMP_FOLDER%\UcodeBgsl.bin
-  @REM Delete BGUP related build files
-  @del script.bin 1>NUL 2>&1
-  @del *update_package* 1>NUL 2>&1
-  @rem
-  @rem Generate Fit <-> FitR BGUP.
-  @rem
-  call %BIOS_GUARD_UPDATE_PACKAGE_PATH%\BuildBGUP_SPI.bat -p script_BuildBGUP_FIT_table_sync.bgsl -v !BIOS_GUARD_SVN! -use_ftu false
-  call %PYTHON_COMMAND% %BIOS_GUARD_UPDATE_PACKAGE_PATH%\BiosGuardCapsule.py -i update_package.BIOS_Guard -o capsule_update_package.BIOS_Guard
-  copy /b capsule_update_package.BIOS_Guard + update_package_bgupc.biosguard %BGSL_TMP_FOLDER%\FitTableSyncBgsl.bin
-  @REM Delete BGUP related build files
-  @del script.bin 1>NUL 2>&1
-  @del *update_package* 1>NUL 2>&1
-
-  @rem
   @rem Prepare IbbBgsl.ffs
   @rem
   call %EDK_TOOLS_BIN%\GenSec.exe -s EFI_SECTION_USER_INTERFACE -n "IbbBgsl" -o %BGSL_TMP_FOLDER%\IbbBgsl.ui
@@ -712,20 +669,6 @@ if %EXTENDEDREGION_BUILD% EQU TRUE (
   call %EDK_TOOLS_BIN%\GenSec.exe -s EFI_SECTION_USER_INTERFACE -n "ObbRBgsl" -o %BGSL_TMP_FOLDER%\ObbRBgsl.ui
   call %EDK_TOOLS_BIN%\GenSec.exe -s EFI_SECTION_RAW %BGSL_TMP_FOLDER%\ObbRBgsl.bin -o %BGSL_TMP_FOLDER%\ObbRBgsl.raw
   call %EDK_TOOLS_BIN%\GenFfs.exe -t EFI_FV_FILETYPE_FREEFORM -g %OBB_BGSL_FILE_GUID% -o %BGSL_TMP_FOLDER%\ObbRBgsl.ffs -i %BGSL_TMP_FOLDER%\ObbRBgsl.raw -i %BGSL_TMP_FOLDER%\ObbRBgsl.ui
-
-  @rem
-  @rem Prepare FitTableSyncBgsl.ffs
-  @rem
-  call %EDK_TOOLS_BIN%\GenSec.exe -s EFI_SECTION_USER_INTERFACE -n "FitTableSyncBgsl" -o %BGSL_TMP_FOLDER%\FitTableSyncBgsl.ui
-  call %EDK_TOOLS_BIN%\GenSec.exe -s EFI_SECTION_RAW %BGSL_TMP_FOLDER%\FitTableSyncBgsl.bin -o %BGSL_TMP_FOLDER%\FitTableSyncBgsl.raw
-  call %EDK_TOOLS_BIN%\GenFfs.exe -t EFI_FV_FILETYPE_FREEFORM -g %FIT_TABLE_SYNC_BGSL_FILE_GUID% -o %BGSL_TMP_FOLDER%\FitTableSyncBgsl.ffs -i %BGSL_TMP_FOLDER%\FitTableSyncBgsl.raw -i %BGSL_TMP_FOLDER%\FitTableSyncBgsl.ui
-
-  @rem
-  @rem Prepare UcodeBgsl.ffs
-  @rem
-  call %EDK_TOOLS_BIN%\GenSec.exe -s EFI_SECTION_USER_INTERFACE -n "UcodeBgsl" -o %BGSL_TMP_FOLDER%\UcodeBgsl.ui
-  call %EDK_TOOLS_BIN%\GenSec.exe -s EFI_SECTION_RAW %BGSL_TMP_FOLDER%\UcodeBgsl.bin -o %BGSL_TMP_FOLDER%\UcodeBgsl.raw
-  call %EDK_TOOLS_BIN%\GenFfs.exe -t EFI_FV_FILETYPE_FREEFORM -g %UCODE_BGSL_FILE_GUID% -o %BGSL_TMP_FOLDER%\UcodeBgsl.ffs -i %BGSL_TMP_FOLDER%\UcodeBgsl.raw -i %BGSL_TMP_FOLDER%\UcodeBgsl.ui
 
   @rem Prepare NonFitPayloadBgsl.ffs
   @rem
@@ -741,8 +684,6 @@ if %EXTENDEDREGION_BUILD% EQU TRUE (
   call %EDK_TOOLS_BINWRAPPERS%\FMMT -r %BUILD_DIR%\FV\ClientBios_Extended.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D ExtendedBgsl %BGSL_TMP_FOLDER%\ExtendedBgsl.ffs %BUILD_DIR%\FV\ClientBios.fd
 )
   call %EDK_TOOLS_BINWRAPPERS%\FMMT -r %BUILD_DIR%\FV\ClientBios.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D IbbBgsl %BGSL_TMP_FOLDER%\IbbBgsl.ffs %BGSL_TMP_FOLDER%\ClientBios_tmp.fd
-  call %EDK_TOOLS_BINWRAPPERS%\FMMT -r %BGSL_TMP_FOLDER%\ClientBios_tmp.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D FitTableSyncBgsl %BGSL_TMP_FOLDER%\FitTableSyncBgsl.ffs %BGSL_TMP_FOLDER%\ClientBios_tmp.fd
-  call %EDK_TOOLS_BINWRAPPERS%\FMMT -r %BGSL_TMP_FOLDER%\ClientBios_tmp.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D UcodeBgsl %BGSL_TMP_FOLDER%\UcodeBgsl.ffs %BGSL_TMP_FOLDER%\ClientBios_tmp.fd
   call %EDK_TOOLS_BINWRAPPERS%\FMMT -r %BGSL_TMP_FOLDER%\ClientBios_tmp.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D NonFitPayloadBgsl %BGSL_TMP_FOLDER%\NonFitPayloadBgsl.ffs %BGSL_TMP_FOLDER%\ClientBios_tmp.fd
   call %EDK_TOOLS_BINWRAPPERS%\FMMT -r %BGSL_TMP_FOLDER%\ClientBios_tmp.fd FC8FE6B5-CD9B-411E-BD8F-31824D0CDE3D ObbRBgsl %BGSL_TMP_FOLDER%\ObbRBgsl.ffs %BGSL_TMP_FOLDER%\ClientBios.fd
   copy /y /b %BGSL_TMP_FOLDER%\ClientBios.fd %BUILD_DIR%\FV\ClientBios.fd
@@ -896,22 +837,9 @@ setlocal ENABLEDELAYEDEXPANSION
 @REM
 
 @rem
-  if exist %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\InternalOnly\ToolScripts\BpmGen\postbuildBpmGen.bat (
-    call %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\InternalOnly\ToolScripts\BpmGen\postbuildBpmGen.bat ClientBios  ClientBios
-    if !SCRIPT_ERROR! NEQ 0 goto :NoAcm
-  )
-@if %RESILIENCY_BUILD% EQU TRUE (
-  @call %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\GenFitTableBackup\GenFitTableBackup.py ^
-  -i %BUILD_DIR%\FV\ClientBios.fd ^
-  -o %BUILD_DIR%\FV\ClientBios.fd ^
-  -T 0x!FIXED_FIT_LOCATION:~-6!
+call %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\BpmGen\postbuildBpmGen.bat ClientBios  ClientBios
+if !SCRIPT_ERROR! NEQ 0 goto :NoAcm
 
-  @if %errorlevel% NEQ 0 (
-    echo Error: GenFitTableBackup failure
-    set SCRIPT_ERROR=1
-    goto EndPostBuild
-  )
-)
 
 if exist %TempFlashMap% del %TempFlashMap%
 
@@ -937,11 +865,7 @@ IF exist %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\InternalOnly\ToolScripts\B
 if not exist %WORKSPACE_ROM% mkdir %WORKSPACE_ROM%
 
 @echo ---Create ROM images---
-if exist %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\SetupRomDirs.bat (
-  call %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\SetupRomDirs.bat
-) else (
-  call %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\ToolScripts\RomImage\SetupRomDirs.bat
-)
+call %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\ToolScripts\RomImage\SetupRomDirs.bat
 
 @if %errorlevel% NEQ 0 (
   @echo !!! ERROR !!! Create ROM images !!!

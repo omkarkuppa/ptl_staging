@@ -1648,6 +1648,8 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     MdePkg/MdePkg.dec
     Usb4FeaturePkg/Usb4FeaturePkg.dec
   }
+  # The minimum delta time between early premem and premem GPIO init (unit: micro second)
+  gBoardModuleTokenSpaceGuid.VpdPcdMiniDeltaTimeFromEarlyPrememToPrememGpio|0x0|UINT32|0x000012C5
 
   gBoardModuleTokenSpaceGuid.VpdPcdLidWakeGpioTable           |{0}|GPIOV2_INIT_CONFIG[]|0x000012C2 {
   <HeaderFiles>
@@ -1891,13 +1893,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     PlatformBoardConfig.h
   }
 
-  # Retimer Power State GPIO
-  gBoardModuleTokenSpaceGuid.VpdPcdRetimerPowerStateGpio        |{0}|VPD_GPIO_PAD|0x000012CE {
-    <HeaderFiles>
-      Register/GpioV2PcdPins.h
-      GpioV2Config.h
-      PlatformBoardConfig.h
-  }
+  gBoardModuleTokenSpaceGuid.VpdPcdCnvDeviceId|0x0|UINT16|0x000012CF
 
 #################################################################
 # VPD PCD's End #

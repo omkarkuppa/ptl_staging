@@ -944,4 +944,23 @@ MrcGetOdtlTiming (
   IN  LPDDR_ODTL_PARAM      OdtlParam
   );
 
+/**
+  This function determines if NT ODT for WR and/or RD are enabled on any ranks within a channel
+
+  @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - Current Controller
+  @param[in] Channel    - Current Channel
+  @param[out] NTODTWr   - TRUE if any rank within the channel supports NT WR ODT
+  @param[out] NTODTRd   - TRUE if any rank within the channel supports NT RD ODT
+**/
+VOID
+IsNtOdtSupported (
+  IN MrcParameters *const  MrcData,
+  IN UINT32                Controller,
+  IN UINT32                Channel,
+  OUT BOOLEAN              *NTODTWr,
+  OUT BOOLEAN              *NTODTRd
+  );
+
+
 #endif // _MRC_MEMORY_API_H_

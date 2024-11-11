@@ -20,9 +20,7 @@
 **/
 
 #include <Uefi.h>
-#include <Library/PcdLib.h>
 #include <Library/DebugLib.h>
-#include <Library/SpiAccessLib.h>
 #include <Library/PayloadResiliencySupportLib.h>
 
 /**
@@ -39,28 +37,4 @@ IsPayloadBackupEnabled (
 {
   DEBUG((DEBUG_INFO, "The Payloads management backup Feature is enabled.\n"));
   return TRUE;
-}
-
-/**
-  Get the Microcode Address in recovery boot
-
-  @return       The Microcode Address value.
-
-**/
-UINT32
-EFIAPI
-GetMicrocodeBaseAddressInRecovery (
- )
-{
-  UINT32 MicrocodeFvBaseAddress;
-
-  if (!SpiIsTopSwapEnabled ()) {
-    MicrocodeFvBaseAddress = FixedPcdGet32 (PcdFlashFvMicrocodeBase);
-  } else {
-    MicrocodeFvBaseAddress = FixedPcdGet32 (PcdFlashFvMicrocodeRBase);
-  }
-
-  DEBUG ((DEBUG_INFO, "GetMicrocodeBaseAddressInRecovery - 0x%x\n", MicrocodeFvBaseAddress));
-
-  return MicrocodeFvBaseAddress;
 }

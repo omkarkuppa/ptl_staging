@@ -31,7 +31,8 @@
 #include <Library/PeiImrInitLib.h>
 #include <Register/CpuGenRegs.h>
 #include <Register/B2pMailbox.h>
-
+#include <Register/CpuGenInfoRegs.h>
+#include <Library/CpuLib.h>
 /**
   Compare the number of active cores setup option against the CPU strap setting
   and in case of mismatch request a reset.
@@ -189,6 +190,45 @@ PeiCpuStrapBistEnableDisable (
     *WarmResetFlag = TRUE;
     return ;
   }
+}
+
+/**
+  Compare the Reduce XeCores setup option against the CPU strap setting
+  and in case of mismatch request a reset.
+
+  @param[in] CpuStrapSetData    - The current strap setting.
+  @param[in] ReduceXecores        ReduceXecores Policy
+  @param[out] ColdResetFlag     - Pointer to flag to indicate whether cold reset should be performed
+  @param[out] WarmResetFlag     - Pointer to flag to indicate whether warm reset should be performed
+
+**/
+VOID
+EFIAPI
+PeiCpuStrapReduceXecoresEnableDisable (
+  IN VOID              *CpuStrapSetData,
+  IN UINT8             ReduceXecores,
+  OUT BOOLEAN          *ColdResetFlag,
+  OUT BOOLEAN          *WarmResetFlag
+  )
+{  
+    UINT32                      CpuFamilyId;
+
+    CpuFamilyId = GetCpuFamilyModel ();
+
+  if (((GetCpuSteppingId () == EnumPtlHA0) || (GetCpuSteppingId () == EnumPtlUA0)) && (CpuFamilyId == CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE)) {
+
+    CPU_STRAP_SET     *CpuStrapSet;
+
+    CpuStrapSet = (CPU_STRAP_SET *) CpuStrapSetData;
+    if (CpuStrapSet->ReduceXecores != ReduceXecores) {
+      return;
+    } else {
+      CpuStrapSet->ReduceXecores = !ReduceXecores;
+      DEBUG ((DEBUG_INFO, "ReduceXecores configuration doesn't match the setup value\n"));
+      *ColdResetFlag = TRUE;
+      return;
+    }
+  } 
 }
 
 /**

@@ -1249,7 +1249,7 @@ FspUpdatePchGeneralPolicy (
     return;
   }
 
-  PchGeneralConfig->Crid              = FspsUpd->FspsConfig.PchCrid;
+  PchGeneralConfig->Crid               = FspsUpd->FspsConfig.PchCrid;
   PchGeneralConfig->LegacyIoLowLatency = FspsUpd->FspsConfig.PchLegacyIoLowLatency;
 }
 
@@ -1419,8 +1419,6 @@ FspUpdateFivrPolicy (
   } else {
     FivrConfig->ExtV1p05Rail.IccMaximum = FspsUpd->FspsConfig.PchFivrExtV1p05RailIccMaximum;
   }
-  // FivrConfig->ExtV1p05Rail.IccMaximum              = FspsUpd->FspsConfig.PchFivrExtV1p05RailIccMaximum;
-  // FivrConfig->ExtV1p05Rail.IccMax                  = FspsUpd->FspsConfig.PchFivrExtV1p05RailIccMax;
 
   FivrConfig->ExtV1p05Rail.CtrlRampTmr   = FspsUpd->FspsConfig.PchFivrExtV1p05RailCtrlRampTmr;
   FivrConfig->ExtVnnRail.EnabledStates          = FspsUpd->FspsConfig.PchFivrExtVnnRailEnabledStates;

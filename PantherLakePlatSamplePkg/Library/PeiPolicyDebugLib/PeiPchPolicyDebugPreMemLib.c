@@ -36,7 +36,9 @@
 #include <LpcConfig.h>
 #include <ConfigBlock/PchGeneralConfig.h>
 #include <WatchDogConfig.h>
+#if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
+#endif
 
 /**
   Update Smbus Debug Pre Mem Policy.
@@ -55,13 +57,13 @@ UpdateSmbusDebugPreMemPolicy (
   VOID                            *FspmUpd;
 #else
   PCH_SMBUS_PREMEM_CONFIG         *SmbusPreMemConfig;
+  EFI_STATUS                      Status;
 #endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
 #else
-  EFI_STATUS                      Status;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSmbusPreMemConfigGuid, (VOID *) &SmbusPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {

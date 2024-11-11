@@ -19,7 +19,6 @@
 @par Specification Reference:
 **/
 
-
 #include <Library/DebugLib.h>
 #include <Protocol/IGpuPolicy.h>
 #include <Library/IGpuDxePolicyLib.h>
@@ -37,7 +36,7 @@
 EFI_STATUS
 EFIAPI
 CreateIGpuDxeConfigBlocks (
-  IN OUT  IGPU_POLICY_PROTOCOL      **IGpuPolicy
+  IN OUT  IGPU_POLICY_PROTOCOL  **IGpuPolicy
   )
 {
   UINT16                TotalBlockSize;
@@ -54,7 +53,7 @@ CreateIGpuDxeConfigBlocks (
 
   RequiredSize = sizeof (CONFIG_BLOCK_TABLE_HEADER) + TotalBlockSize;
 
-  Status = CreateConfigBlockTable (RequiredSize, (VOID *) &IGpuInitPolicy);
+  Status = CreateConfigBlockTable (RequiredSize, (VOID *)&IGpuInitPolicy);
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -67,7 +66,7 @@ CreateIGpuDxeConfigBlocks (
   //
 
   // IGPU
-  Status = IGpuAddDxeConfigBlocks ((VOID *) IGpuInitPolicy);
+  Status = IGpuAddDxeConfigBlocks ((VOID *)IGpuInitPolicy);
   ASSERT_EFI_ERROR (Status);
 
   //
@@ -76,7 +75,6 @@ CreateIGpuDxeConfigBlocks (
   *IGpuPolicy = IGpuInitPolicy;
   return Status;
 }
-
 
 /**
   IGpuInstallPolicyProtocol installs IGPU Policy.
@@ -93,11 +91,11 @@ CreateIGpuDxeConfigBlocks (
 EFI_STATUS
 EFIAPI
 IGpuInstallPolicyProtocol (
-  IN  EFI_HANDLE                  ImageHandle,
-  IN  IGPU_POLICY_PROTOCOL        *IGpuPolicy
+  IN  EFI_HANDLE            ImageHandle,
+  IN  IGPU_POLICY_PROTOCOL  *IGpuPolicy
   )
 {
-  EFI_STATUS            Status;
+  EFI_STATUS  Status;
 
   ///
   /// Install protocol to to allow access to this Policy.
@@ -117,4 +115,3 @@ IGpuInstallPolicyProtocol (
 
   return Status;
 }
-

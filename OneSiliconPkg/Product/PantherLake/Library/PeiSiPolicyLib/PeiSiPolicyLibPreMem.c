@@ -303,6 +303,7 @@ SiPreMemPrintPolicyPpi (
   DEBUG ((DEBUG_INFO, "---------------------- Si Pre-Mem Config Block Print Begin -----------------\n"));
   DEBUG ((DEBUG_INFO, "PlatformDebugOption = %x\n", SiPreMemConfig->PlatformDebugOption));
   DEBUG ((DEBUG_INFO, "SkipOverrideBootModeWhenFwUpdate = %x\n", SiPreMemConfig->SkipOverrideBootModeWhenFwUpdate));
+  DEBUG ((DEBUG_INFO, "StaticContentSizeAt4Gb = %x\n", SiPreMemConfig->StaticContentSizeAt4Gb));
   DEBUG ((DEBUG_INFO, "---------------------- Si Pre-Mem Config Block Print End -------------------\n"));
   DEBUG_CODE_END ();
 }

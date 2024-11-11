@@ -28,16 +28,16 @@
 #include <Library/SiPolicyLib.h>
 #include <Library/Tpm12CommandLib.h>
 #include <Library/Tpm2CommandLib.h>
-#include <Library/PayloadResiliencySupportLib.h>
 #include <Ppi/SecPlatformInformation2.h>
 
 #include <PolicyUpdateMacro.h>
 #if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
 #include <DptfConfig.h>
 #endif
-
+#if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
 #include <FspsUpd.h>
+#endif
 #include <Library/FspCommonLib.h>
 
 /**
@@ -66,7 +66,7 @@ InitCpuPmConfigBySetupValues (
   UINT8                            MaxBusRatio;
   UINT8                            MinBusRatio;
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspsUpd;
+  VOID                             *FspsUpd;
 #else
   CPU_POWER_MGMT_BASIC_CONFIG      *CpuPowerMgmtBasicConfig;
   CPU_POWER_MGMT_CUSTOM_CONFIG     *CpuPowerMgmtCustomConfig;
@@ -387,7 +387,6 @@ UpdatePeiCpuPolicy (
   UINTN                            VariableSize;
   SETUP_DATA                       SetupData;
   CPU_SETUP                        CpuSetup;
-  UINT32                           MicrocodeBaseAddress;
 #if FixedPcdGetBool (PcdDptfFeatureEnable) == 1
   DPTF_CONFIG                      DptfConfig;
 #endif
@@ -400,8 +399,10 @@ UpdatePeiCpuPolicy (
   EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariableServices;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
- VOID                            *FspsUpd;
- VOID                            *FspmUpd;
+  VOID                             *FspsUpd;
+#if FixedPcdGetBool (PcdTdxEnable) == 1
+  VOID                             *FspmUpd;
+#endif // PcdTdxEnable
 #else
   CPU_INIT_CONFIG                  *CpuInitConfig;
   CPU_POWER_MGMT_BASIC_CONFIG      *CpuPowerMgmtBasicConfig;
@@ -413,8 +414,10 @@ UpdatePeiCpuPolicy (
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
+#if FixedPcdGetBool (PcdTdxEnable) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
-  ASSERT (FspsUpd != NULL);
+  ASSERT (FspmUpd != NULL);
+#endif // PcdTdxEnable
 #else
   CpuInitConfig           = NULL;
   CpuPowerMgmtBasicConfig = NULL;
@@ -498,12 +501,8 @@ UpdatePeiCpuPolicy (
   // Directly assign the microcode flash location to FSPS UPD (API mode) or CpuInitConfig (Dispatch mode)
   // The microcode copy from flash to memory will be done just before microcode reload.
   //
-  MicrocodeBaseAddress = GetMicrocodeBaseAddressInRecovery ();
-  if (MicrocodeBaseAddress == 0) {
-    MicrocodeBaseAddress = FixedPcdGet32 (PcdFlashFvMicrocodeBase);
-  }
   UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.MicrocodeRegionBase, CpuInitConfig->MicrocodePatchAddress,
-    MicrocodeBaseAddress + FixedPcdGet32 (PcdMicrocodeOffsetInFv)
+    FixedPcdGet32 (PcdFlashFvMicrocodeBase) + FixedPcdGet32 (PcdMicrocodeOffsetInFv)
     );
   UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.MicrocodeRegionSize, CpuInitConfig->MicrocodePatchRegionSize,
     FixedPcdGet32 (PcdFlashFvMicrocodeSize) - FixedPcdGet32 (PcdMicrocodeOffsetInFv)

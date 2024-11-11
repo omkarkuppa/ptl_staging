@@ -90,8 +90,8 @@ const char *gMrcSkuTypeStr[MrcSkuTypeMax] = {
   "MrcSkuTypeM",
   "MrcSkuTypeP",
   "MrcSkuTypeS",
-  "MrcSkuTypeU", 
-  "MrcSkuTypeH12Xe", 
+  "MrcSkuTypeU",
+  "MrcSkuTypeH12Xe",
   "MrcSkuTypeH4Xe"
 };
 
@@ -234,9 +234,8 @@ MrcStrToNumber (
 }
 
 /*++
-  Format string using specified format specifier. Limited support for sizes other than
-  unsigned 32-bit to save code space. Type overrides like {h | I | I64 | L}
-  are not supported.
+  Format string using specified format specifier.
+  Supporting up to 64-bit unsigned integer.
 
   @param[in] Format     - String containing characters to print and formatting data.
     %[flags][width]type
@@ -266,7 +265,7 @@ MrcStringFormatter (
   IN const MRC_FUNCTION     *const MrcCall,
   IN const char *const      Format,
   IN MrcVaList              Marker,
-  IN UINTN                 BufferSize,
+  IN UINTN                  BufferSize,
   IN OUT UINT8              *Buffer
   )
 {
@@ -277,8 +276,12 @@ MrcStringFormatter (
   UINT32      Width;
   UINT32      Flags;
   UINT32      CharCount;
+  UINT32      RetrunedStringSize;
+  char        LocalBuffer[21]; // Enough to hold all digits of UINT64 plus the null-terminator
 
-  CharCount = 0;
+  CharCount          = 0;
+  RetrunedStringSize = 0;
+
   if (Format != NULL) {
     for (p = (char *) Format; *p && (CharCount < BufferSize); p++) {
       if (*p != '%') {
@@ -354,7 +357,11 @@ MrcStringFormatter (
               ArgSize  = sizeof (UINT32);
               ArgValue = (UINT64) MRC_VA_ARG (Marker, UINT32);
             }
-            CharCount = CharCount + MrcUintnToStr (MrcCall, ArgValue, ArgSize, (char *) &Buffer[CharCount], Width, Flags, 10);
+
+            RetrunedStringSize = MrcUintnToStr (MrcCall, ArgValue, ArgSize, LocalBuffer, Width, Flags, 10);
+            for (UINT8 Index = 0; ((Index < RetrunedStringSize) && (CharCount < BufferSize)) ; Index++) {
+              MRC_PUTCC(Buffer, LocalBuffer[Index], CharCount);
+            }
             break;
 
           case 'x':
@@ -367,17 +374,23 @@ MrcStringFormatter (
               ArgSize  = sizeof (UINT32);
               ArgValue = (UINT64) MRC_VA_ARG (Marker, UINT32);
             }
-            CharCount = CharCount + MrcUintnToStr (MrcCall, ArgValue, ArgSize, (char *) &Buffer[CharCount], Width, Flags, 16);
+
+            RetrunedStringSize = MrcUintnToStr (MrcCall, ArgValue, ArgSize, LocalBuffer, Width, Flags, 16);
+            for (UINT8 Index = 0; ((Index < RetrunedStringSize) && (CharCount < BufferSize)) ; Index++) {
+              MRC_PUTCC(Buffer, LocalBuffer[Index], CharCount);
+            }
             break;
 
           case 'c':
             MRC_PUTCC (Buffer, (UINT8) MRC_VA_ARG (Marker, int), CharCount);
-            Buffer[CharCount] = '\0';
+            if (CharCount < BufferSize) {
+              Buffer[CharCount] = '\0';
+            }
             break;
 
           case 's':
             String = (char *) MRC_VA_ARG (Marker, char *);
-            while (*String != '\0') {
+            while ((*String != '\0') && (CharCount < BufferSize)) {
               if (*String == MRC_CHAR_LF) {
                 MRC_PUTCC (Buffer, MRC_CHAR_CR, CharCount);
               }

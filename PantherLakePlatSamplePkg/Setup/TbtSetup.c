@@ -72,22 +72,13 @@ DTbtFormCallBackFunction (
   )
 {
 #if FixedPcdGetBool (PcdDTbtEnable) == 1
-  SA_SETUP                    *SaSetup;
-  PCH_SETUP                   *PchSetup;
   SETUP_DATA                  *SetupData;
   UINTN                       VarSize;
   EFI_STATUS                  Status;
   EFI_STRING                  RequestString;
-  EFI_STRING                  SaRequestString;
-  EFI_STRING                  PchRequestString;
-  UINT8                       RootPortSelected;
-  UINT8                       Index;
 
   Status                  = EFI_SUCCESS;
   RequestString           = NULL;
-  SaRequestString         = NULL;
-  PchRequestString        = NULL;
-  RootPortSelected        = 0;
 
   DEBUG ((DEBUG_INFO, "DTbtFormCallBackFunction\n"));
 
@@ -111,28 +102,6 @@ DTbtFormCallBackFunction (
   }
   ASSERT_EFI_ERROR (Status);
 
-  VarSize = sizeof (SA_SETUP);
-  SaSetup = AllocatePool (VarSize);
-  ASSERT (SaSetup != NULL);
-  if (SaSetup == NULL) {
-    return EFI_OUT_OF_RESOURCES;
-  }
-  if (!HiiGetBrowserData (&gSaSetupVariableGuid, L"SaSetup", VarSize, (UINT8 *) SaSetup)) {
-    Status = EFI_NOT_FOUND;
-  }
-  ASSERT_EFI_ERROR (Status);
-
-  VarSize = sizeof (PCH_SETUP);
-  PchSetup = AllocatePool (VarSize);
-  ASSERT (PchSetup != NULL);
-  if (PchSetup == NULL) {
-    return EFI_OUT_OF_RESOURCES;
-  }
-  if (!HiiGetBrowserData (&gPchSetupVariableGuid, L"PchSetup", VarSize, (UINT8 *) PchSetup)) {
-    Status = EFI_NOT_FOUND;
-  }
-  ASSERT_EFI_ERROR (Status);
-
   IoWrite16(0x80, (UINT16)KeyValue);
 
   DEBUG ((DEBUG_INFO, "Discrete Thunderbolt(TM) call back actions begin\n"));
@@ -146,82 +115,6 @@ DTbtFormCallBackFunction (
       }
       RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (SETUP_DATA, DTbtController[0]), sizeof (SetupData->DTbtController[0]));
       RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (SETUP_DATA, DTbtController[1]), sizeof (SetupData->DTbtController[1]));
-      break;
-    case KEY_DTBT_CONTROLLER0:
-    case KEY_DTBT_CONTROLLER1:
-      DEBUG ((DEBUG_INFO, " KEY_TBT_CONTROLLER0 / KEY_TBT_CONTROLLER1  CallBack\n"));
-      Status = EfiGetSystemConfigurationTable (&gEfiHobListGuid, (VOID **) &gDTbtInfoHob);
-      if (!EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_INFO, "Searching Thunderbolt(TM) information Hob...\n"));
-        gDTbtInfoHob = GetNextGuidHob (&gDTbtInfoHobGuid, gDTbtInfoHob);
-      }
-      if (gDTbtInfoHob != NULL) {
-        for (Index = 0; Index < PcdGet8 (PcdBoardDTbtControllerNumber); Index++) {
-          if (SetupData->DTbtController[Index] != 0x01) {
-            continue;
-          }
-          RootPortSelected = (gDTbtInfoHob->DTbtControllerConfig[Index].PcieRpNumber - 1);
-          if ((RootPortSelected >= sizeof (PchSetup->PcieRootPortHPE) / sizeof (UINT8)) ||
-              (RootPortSelected >= sizeof (SaSetup->PegRootPortHPE) / sizeof (UINT8)) ||
-              (RootPortSelected >= sizeof (SaSetup->PegMaxPayload) / sizeof (UINT8)))
-          {
-            DEBUG ((DEBUG_ERROR, "%a - RootPortSelected (%d) is weird\n", __FUNCTION__, RootPortSelected));
-            continue;
-          }
-
-          if (gDTbtInfoHob->DTbtControllerConfig[Index].RpType == PCIE_RP_TYPE_PCH) {
-            //
-            //if PCH-Rootport is supported for TBT, check for the Port which is selected
-            //
-            if (SetupData->DiscreteTbtSupport == 1) {
-              PchSetup->PcieRootPortHPE[RootPortSelected] = 1;
-            } else {
-              PchSetup->PcieRootPortHPE[RootPortSelected] = 0;
-            }
-            PchRequestString = HiiConstructRequestString (PchRequestString, OFFSET_OF (PCH_SETUP, PcieRootPortHPE[RootPortSelected]), sizeof (PchSetup->PcieRootPortHPE[RootPortSelected]));
-          } else if (gDTbtInfoHob->DTbtControllerConfig[Index].RpType == PCIE_RP_TYPE_CPU) {
-            if (SetupData->DiscreteTbtSupport == 1) {
-              SaSetup->PegRootPortHPE[RootPortSelected] = 1;
-              SaSetup->PegMaxPayload[RootPortSelected] = 0;
-              if (RootPortSelected == 0) {
-                SaSetup->Peg0Enable = 1;
-                SaSetup->Peg0PowerDownUnusedLanes = 0;
-              } else if (RootPortSelected == 1) {
-                SaSetup->Peg1Enable = 1;
-                SaSetup->Peg1PowerDownUnusedLanes = 0;
-              } else if (RootPortSelected == 2) {
-                SaSetup->Peg2Enable = 1;
-                SaSetup->Peg2PowerDownUnusedLanes = 0;
-              } else if (RootPortSelected == 3) {
-                SaSetup->Peg3Enable = 1;
-                SaSetup->Peg3PowerDownUnusedLanes = 0;
-              }
-            } else {
-              SaSetup->PegRootPortHPE[RootPortSelected] = 0;
-              SaSetup->PegMaxPayload[RootPortSelected] = 1;
-              if (RootPortSelected == 0) {
-                SaSetup->Peg0Enable = 0;
-                SaSetup->Peg0PowerDownUnusedLanes = 1;
-              } else if (RootPortSelected == 1) {
-                SaSetup->Peg1Enable = 0;
-                SaSetup->Peg1PowerDownUnusedLanes = 1;
-              } else if (RootPortSelected == 2) {
-                SaSetup->Peg2Enable = 0;
-                SaSetup->Peg2PowerDownUnusedLanes = 1;
-              } else if (RootPortSelected == 3) {
-                SaSetup->Peg3Enable = 0;
-                SaSetup->Peg3PowerDownUnusedLanes = 1;
-              }
-            }
-            SaRequestString = HiiConstructRequestString (SaRequestString, OFFSET_OF (SA_SETUP, Peg0Enable), sizeof (SaSetup->Peg0Enable));
-            SaRequestString = HiiConstructRequestString (SaRequestString, OFFSET_OF (SA_SETUP, Peg1Enable), sizeof (SaSetup->Peg1Enable));
-            SaRequestString = HiiConstructRequestString (SaRequestString, OFFSET_OF (SA_SETUP, Peg2Enable), sizeof (SaSetup->Peg2Enable));
-            SaRequestString = HiiConstructRequestString (SaRequestString, OFFSET_OF (SA_SETUP, Peg3Enable), sizeof (SaSetup->Peg3Enable));
-            SaRequestString = HiiConstructRequestString (SaRequestString, OFFSET_OF (SA_SETUP, PegRootPortHPE[RootPortSelected]), sizeof (SaSetup->PegRootPortHPE[Index]));
-            SaRequestString = HiiConstructRequestString (SaRequestString, OFFSET_OF (SA_SETUP, Peg0PowerDownUnusedLanes), sizeof (SaSetup->Peg0PowerDownUnusedLanes));
-          }
-        }
-      }
       break;
     case KEY_DTBT_CONTROLLER0_HOSTROUTER:
       DEBUG ((DEBUG_INFO, "KEY_TBT_HOSTROUTER 0 CallBack\n"));
@@ -291,25 +184,8 @@ DTbtFormCallBackFunction (
     ASSERT_EFI_ERROR (Status);
     FreePool (RequestString);
   }
-  if (SaRequestString != NULL) {
-    VarSize = sizeof (SA_SETUP);
-    if (!HiiSetBrowserData (&gSaSetupVariableGuid, L"SaSetup", VarSize, (UINT8 *) SaSetup, SaRequestString)) {
-      Status = EFI_NOT_FOUND;
-    }
-    ASSERT_EFI_ERROR (Status);
-    FreePool (SaRequestString);
-  }
-  if (PchRequestString != NULL) {
-    VarSize = sizeof (PCH_SETUP);
-    if (!HiiSetBrowserData (&gPchSetupVariableGuid, L"PchSetup", VarSize, (UINT8 *) PchSetup, PchRequestString)) {
-      Status = EFI_NOT_FOUND;
-    }
-    ASSERT_EFI_ERROR (Status);
-    FreePool (PchRequestString);
-  }
+
   DEBUG ((DEBUG_INFO, "Thunderbolt(TM) call back - HiiSetBrowserData end\n"));
-  FreePool (SaSetup);
-  FreePool (PchSetup);
   FreePool (SetupData);
 
   *ActionRequest = EFI_BROWSER_ACTION_REQUEST_NONE;

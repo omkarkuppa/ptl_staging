@@ -86,6 +86,7 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvDiscreteSupport     |TRUE       |BOOLEAN|0x30003001
   gCnvFeaturePkgTokenSpaceGuid.PcdDynamicSarSupport      |TRUE       |BOOLEAN|0x30000080
   gCnvFeaturePkgTokenSpaceGuid.PcdSkipVidDidCheck        |FALSE      |BOOLEAN|0x30000081
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP      |TRUE       |BOOLEAN|0x30003002
 
 [PcdsDynamic]
   gCnvFeaturePkgTokenSpaceGuid.PcdGlobalCnvDlvrRfim    |1          |UINT8  |0x30000079

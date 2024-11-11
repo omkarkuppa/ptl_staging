@@ -451,21 +451,21 @@ CheckSupportedOption (
       OcrConfig->OcrConfigBootHttps == 1 &&
       OcrCap.Bits.OcrBootHttps) {
     // OCR HTTPS Boot was requested
-    Description = L" HTTPS";
+    StrCpyS(Description, MAX_UEFI_BOOT_OPTION_DESC_LENGTH, L" HTTPS");
     LoadOptionType->Bits.AmtTrigBootToHttps = 1;
   } else if (SpecialCommand == ASF_INTEL_OEM_FORCE_PBA_BOOT_CMD &&
              AmtUefiBootOption->UefiBootOptionType == Pba &&
              OcrConfig->OcrConfigBootPba == 1 &&
              OcrCap.Bits.OcrBootPba) {
     // OCR PBA Boot was requested
-    Description = L" PBA";
+    StrCpyS(Description, MAX_UEFI_BOOT_OPTION_DESC_LENGTH, L" PBA");
     LoadOptionType->Bits.AmtTrigBootToPba = 1;
   } else if (SpecialCommand == ASF_INTEL_OEM_FORCE_PBA_BOOT_CMD &&
              AmtUefiBootOption->UefiBootOptionType == WinRe &&
              OcrConfig->OcrConfigBootWinRe == 1 &&
              OcrCap.Bits.OcrBootWinRe) {
     // OCR Win Re Boot was requested
-    Description = L" WinRe";
+    StrCpyS(Description, MAX_UEFI_BOOT_OPTION_DESC_LENGTH, L" WinRe");
     LoadOptionType->Bits.AmtTrigBootToWinRe = 1;
 
     // add Optional Data to launch WinRe
@@ -600,9 +600,14 @@ OcrBootOptionRequest (
   )
 {
   EFI_STATUS                      Status;
-  CHAR16                          Description[MAX_UEFI_BOOT_OPTION_DESC_LENGTH];
+  CHAR16                          *Description = NULL;
   OCR_BOOT_SETTINGS               OcrBootSettings;
   AMT_BOOT_CONTROL                LoadOptionType;
+
+  Description = AllocateZeroPool(MAX_UEFI_BOOT_OPTION_DESC_LENGTH * sizeof(CHAR16));
+  if (Description == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   LoadOptionType.Uint32 = 0;
 

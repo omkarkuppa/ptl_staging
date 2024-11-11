@@ -29,10 +29,17 @@
 #endif
 #define MRC_FAST_PAYLOAD_START 0
 #define MRC_FAST_PAYLOAD_END MRC_GREEN_PAYLOAD_END
+#define MRC_UNCOMPRESSED_CHUNK_SIZE 16384
+#if (MRC_UNCOMPRESSED_CHUNK_SIZE == 0)
+#define DECOMP_BUFFER_SIZE 1
+#else
+#define DECOMP_BUFFER_SIZE MRC_UNCOMPRESSED_CHUNK_SIZE
+#endif
 
 typedef struct {
   UINT8 Tag[8];
   MrcVersion Version;
+  UINT32 ChunkSize; // 0 = uncompressed
 } MRC_PAYLOAD_HEADER;
 
 typedef struct {

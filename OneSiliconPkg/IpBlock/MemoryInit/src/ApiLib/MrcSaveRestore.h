@@ -32,6 +32,8 @@ typedef enum {
   PtCCC,
   PtGenFsm,
   PtDATAShared,
+  PtDATASbmem,
+  PtVccClk,
   PtCCCShared,
   PtPG,
   PtMax

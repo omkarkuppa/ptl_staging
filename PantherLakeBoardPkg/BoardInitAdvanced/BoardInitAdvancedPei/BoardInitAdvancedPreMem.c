@@ -490,6 +490,8 @@ PlatformInitPreMem (
   }
 #endif
 
+  UsbcRetimerComplianceModeConfig ();
+
 
   PcdSetBoolS (PcdGuidForward, SystemConfiguration.GuidForward);
 

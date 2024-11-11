@@ -196,7 +196,6 @@ MrcSetupDdrIoIpInfo (
   MrcDebug             *Debug;
   MrcStatus            Status;
   MrcDdrIoIpVersion    *IpVersion;
-  BOOLEAN              IsIpSegmentS;
   DDRPHY_MISC_SAUG_CR_IPVERSION_STRUCT   DdrMiscIpVersion;
   const char           *StepStr;
 
@@ -204,7 +203,6 @@ MrcSetupDdrIoIpInfo (
   Debug           = &MrcData->Outputs.Debug;
   IpVersion       = &Inputs->DdrIoIpVersion;
   Status          = mrcSuccess;
-  IsIpSegmentS    = FALSE;
   StepStr         = NULL;
 
   DdrMiscIpVersion.Data = MrcReadCR (MrcData, DDRPHY_MISC_SAUG_CR_IPVERSION_REG);
@@ -229,18 +227,6 @@ MrcSetupDdrIoIpInfo (
     IpVersion->Bits.Derivative = ipDerivativePtl;
   } else {
     switch (IpVersion->Bits.Segment) {
-      case IpSegmentDesktop:
-        Inputs->IsDdrIoDtHalo = TRUE;
-        IsIpSegmentS = TRUE;
-        switch (IpVersion->Bits.Stepping) {
-          default:
-          case ipStepA0:
-            Inputs->IsDdrIoDtA0 = TRUE;
-            StepStr = "A0";
-            break;
-        }
-        break;
-
       case IpSegmentMobile:
         Inputs->IsDdrIoUlxUlt = TRUE;
         switch (IpVersion->Bits.Stepping) {
@@ -269,7 +255,7 @@ MrcSetupDdrIoIpInfo (
   }
 
   if (Status == mrcSuccess) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s%s\n", "PantherLake-", IsIpSegmentS ? "S" : "M" );
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s\n", Inputs->IsDdrphyx64 ? "PantherLake" : "PantherLake" );
     MRC_DEBUG_MSG (
       Debug,
       MSG_LEVEL_NOTE,
@@ -798,6 +784,9 @@ ToggleRxDllDacCodeFreeze (
   DATA0CH0_CR_DDRCRDLLCONTROL0_STRUCT  DllControl0;
 
   for (DataIdx = 0; DataIdx < MRC_DATA_MOBILE_NUM; DataIdx++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, DataIdx, MRC_IGNORE_ARG))) {
+      continue;
+    }
     for (ChIdx = 0; ChIdx < MRC_DATA_CH_NUM; ChIdx++) {
       Offset = MrcGetDataOffset (MrcData, DATA0CH0_CR_DDRCRDLLCONTROL0_REG, MRC_IGNORE_ARG, ChIdx, DataIdx);
       DllControl0.Data = MrcReadCR (MrcData, Offset);
@@ -867,6 +856,9 @@ DllVcdlDccCodeUpdate (
   DATA0CH0_CR_DDRCRDLLCONTROL0_STRUCT  DllControl0;
 
   for (DataIdx = 0; DataIdx < MRC_DATA_MOBILE_NUM; DataIdx++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, DataIdx, MRC_IGNORE_ARG))) {
+      continue;
+    }
     for (ChIdx = 0; ChIdx < MRC_DATA_CH_NUM; ChIdx++) {
       Offset = MrcGetDataOffset (MrcData, DATA0CH0_CR_DDRCRDLLCONTROL0_REG, MRC_IGNORE_ARG, ChIdx, DataIdx);
       DllControl0.Data = MrcReadCR (MrcData, Offset);
@@ -929,8 +921,6 @@ MrcSetWckControl (
   MrcDebug      *Debug;
   MrcTiming     *TimingProfile;
   MrcFrequency  DdrFrequency;
-  UINT8         FirstController;
-  UINT8         FirstChannel;
   UINT8         tCL;
   UINT8         tCWL;
   UINT8         tWCKENL_RD;
@@ -948,15 +938,13 @@ MrcSetWckControl (
   DdrFrequency = Outputs->Frequency;
   IsGear4      = Outputs->GearMode ? 1 : 0;
   IsLpddr5     = Outputs->IsLpddr5;
-  FirstController   = (UINT8) Outputs->FirstPopController;
-  FirstChannel      = (UINT8) Outputs->Controller[FirstController].FirstPopCh;
   PHClk             = DIVIDECEIL (2000000, DdrFrequency);
   QClk              = IsGear4 ? (PHClk * 2) : PHClk;
   nCK               = IsLpddr5 ? (PHClk * 4) : PHClk;
 
   McMiscsWckControl.Data = 0;
   if (Outputs->IsLpddr5) {
-    TimingProfile = &Outputs->Controller[FirstController].Channel[FirstChannel].Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
+    TimingProfile = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
     tCL  = (UINT8) TimingProfile->tCL;
     tCWL = (UINT8) TimingProfile->tCWL;
     //tWCKENL_RD = RL + 1 - tWCKPRE_total_RD
@@ -1079,11 +1067,17 @@ MrcDdrIoInitRefPiFsmCtl (
   UINT32    PrintLevel;
   BOOLEAN   IsGear4;
   DATA0CH0_CR_REFPIFSMCONTROL_STRUCT  RefPiFsmControl;
+  MrcInput  *Inputs;
 
+  Inputs     = &MrcData->Inputs;
   Debug      = &MrcData->Outputs.Debug;
   IsGear4    = MrcData->Outputs.GearMode;
   PrintLevel = PrintTask ? MSG_LEVEL_ALGO : MSG_LEVEL_NONE;
-  MinWidth   = 6;
+  if (Inputs->IsDdrIoMbA0) {
+    MinWidth = 4;
+  } else {
+    MinWidth = 6;
+  }
   MaxWidth   = IsGear4 ? 256 : 128;
 
   if (FsmStage & MrcRefPi2XOverAlign) {
@@ -1272,6 +1266,72 @@ CbMixMuxConfig (
   MrcWriteCrMulticast (MrcData, DATASHARED_DDRRXDLL_CR_PICODELUT2_REG, PiCodeLUT2.Data);
 }
 
+/**
+  The function preforms a frequency switch Rcomp
+
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+FreqSwitchComp (
+  IN OUT MrcParameters *const MrcData
+  )
+{
+  MrcOutput     *Outputs;
+  INT64  PHClkDutyCycleEnable;
+  INT64  PHClkPhaseEn;
+  INT64  DataDccRankEn;
+  INT64  ClkDccRankEn;
+  INT64  WckDccRankEn;
+  UINT32 Override;
+  INT64  GetSetDis;
+  UINT8  FirstController;
+  UINT8  FirstChannel;
+  UINT8  FirstRank[MAX_CONTROLLER][MAX_CHANNEL];
+  DDRDATA_SHARED0_CR_DDRCRCOMPDQSDELAYCONTROL_STRUCT CompDqsDelayControl;
+
+  Outputs           = &MrcData->Outputs;
+  GetSetDis = 0;
+  FirstController   = Outputs->FirstPopController;
+  FirstChannel      = Outputs->Controller[FirstController].FirstPopCh;
+  // Get the first rank index for each channel
+  // per-channel results will be stored at this index
+  GetFirstRank (MrcData, FirstRank);
+
+  // Save Data
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, ReadFromCache , &PHClkDutyCycleEnable);
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, ReadFromCache , &PHClkPhaseEn);
+  MrcGetSetChStrb (MrcData, FirstController, FirstChannel, 0, GsmDataDccRankEn, ReadFromCache , &DataDccRankEn);
+  MrcGetSetCcc (MrcData, FirstController, FirstChannel, FirstRank[FirstController][FirstChannel], MRC_IGNORE_ARG, GsmClkDccRankEn, ReadFromCache , &ClkDccRankEn);
+  MrcGetSetMcCh (MrcData, FirstController, FirstChannel, GsmWckDccRankEn, ReadFromCache , &WckDccRankEn);
+  CompDqsDelayControl.Data = MrcReadCR (MrcData, DDRDATA_SHARED0_CR_DDRCRCOMPDQSDELAYCONTROL_REG);
+  Override = CompDqsDelayControl.Bits.Override;
+
+  // Disable FSM's to reduce unnecessary change
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, WriteToCache, &GetSetDis);
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, WriteToCache, &GetSetDis);
+  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmDataDccRankEn, WriteToCache, &GetSetDis);
+  MrcGetSetCcc (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MRC_IGNORE_ARG, GsmClkDccRankEn, WriteToCache, &GetSetDis);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmWckDccRankEn, WriteToCache, &GetSetDis);
+
+  MrcFlushRegisterCachedData (MrcData);
+
+  CompDqsDelayControl.Bits.Override = 1;
+  MrcWriteCrMulticast (MrcData, DATASHARED_CR_DDRCRCOMPDQSDELAYCONTROL_REG, CompDqsDelayControl.Data);
+
+  ForceRcomp (MrcData, FullComp);
+
+  // Restore Data
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, WriteToCache, &PHClkDutyCycleEnable);
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, WriteToCache, &PHClkPhaseEn);
+  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmDataDccRankEn, WriteToCache, &DataDccRankEn);
+  MrcGetSetCcc (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MRC_IGNORE_ARG, GsmClkDccRankEn, WriteToCache, &ClkDccRankEn);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmWckDccRankEn, WriteToCache, &WckDccRankEn);
+
+  MrcFlushRegisterCachedData (MrcData);
+
+  CompDqsDelayControl.Bits.Override = Override;
+  MrcWriteCrMulticast (MrcData, DATASHARED_CR_DDRCRCOMPDQSDELAYCONTROL_REG, CompDqsDelayControl.Data);
+}
 
 /**
   This function program OffsetCalCnt.
@@ -1498,4 +1558,112 @@ MrcConfigureDqPins (
 
   MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDqOverrideData, WriteCached, &GetSetVal);
   MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDqOverrideEn,   WriteCached, &GetSetVal);
+}
+
+/**
+  This function gets or sets the value for ForceRxOn.
+
+  @param[in]      MrcData               - Include all MRC global data.
+  @param[in]      UpdateMode            - The mode to be used for program.
+  @param[in]      GetSetMode            - The GetSet mode to be used for program.
+  @param[in, out] *ForceRxOnDqsOrAmpOn  - Value to be written / Saved for ForceRxOn.
+  @param[in, out] *ForceRxOnDqsMux      - Value not used for PTL.
+  @param[in, out] *ForceRxOnDq          - Value not used for PTL.
+
+  @retval NA
+**/
+VOID
+MrcGetSetForceRxOn (
+  IN     MrcParameters* const MrcData,
+  IN     UPDATE_MODE    UpdateMode,
+  IN     UINT32         GetSetMode,
+  IN OUT INT64          *ForceRxOnDqsOrAmpOn,
+  IN OUT INT64          *ForceRxOnDqsMux,
+  IN OUT INT64          *ForceRxOnDq
+  )
+{
+  MrcOutput       *Outputs;
+  UINT32          Mc;
+  UINT32          Ch;
+
+  Outputs = &MrcData->Outputs;
+
+  if (UpdateMode == SaveValue) {
+    Mc = Outputs->FirstPopController;
+    Ch = Outputs->Controller[Mc].FirstPopCh;
+
+    // Assumption made that value in ForceRxOnDqs is the same as in RxOnDqsMux and RxOnDq
+    MrcGetSetChStrb (MrcData, Mc, Ch, 0, GsmIocForceRxAmpOn, GetSetMode, ForceRxOnDqsOrAmpOn);
+  } else if (UpdateMode == UpdateValue) {
+    MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocForceRxAmpOn, GetSetMode, ForceRxOnDqsOrAmpOn);
+  }
+}
+
+/**
+  Find initial Cben and BwSel values based on the current Frequency and Gear mode
+
+  @param[in]  MrcData   - Pointer to global MRC data.
+  @param[out] BwSel - The BW code based on gear and frequency
+  @param[out] Cben  - The CB code based on gear and frequency
+*/
+VOID
+MrcBwSelCbenFreqSet (
+  IN  MrcParameters *const MrcData,
+  OUT UINT32               *BwSel,
+  OUT UINT32               *Cben
+  )
+{
+  MrcInput            *Inputs;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
+  MrcFrequency        Frequency;
+
+  Inputs    = &MrcData->Inputs;
+  ExtInputs = Inputs->ExtInputs.Ptr;
+  Frequency = MrcData->Outputs.Frequency;
+
+  if (ExtInputs->CccHalfFrequency) {
+    if (Frequency <= f2267) {
+      *BwSel = 1;
+    } else if (Frequency <= f3000) {
+      *BwSel = 2;
+    } else if (Frequency <= f4400) {
+      *BwSel = 5;
+    } else if (Frequency <= f8533) {
+      *BwSel = 9;
+    } else {
+      *BwSel = 8;
+    }
+
+    if (Frequency < f6267) {
+      *Cben = 3;
+    } else if (Frequency <= f9200) {
+      *Cben = 2;
+    } else {
+      *Cben = 1;
+    }
+  } else {
+    if (Frequency <= f2267) {
+      *BwSel = 5;
+    } else if (Frequency <= f4267) {
+      *BwSel = 9;
+    } else if (Frequency <= f6133) {
+      *BwSel = 8;
+    } else if (Frequency <= f8533) {
+      *BwSel = 4;
+    } else {
+      *BwSel = 7;
+    }
+
+    if (Frequency <= f3067) {
+      *Cben = 3;
+    } else if (Frequency <= f4267) {
+      *Cben = 2;
+    } else if (Frequency <= f6133) {
+      *Cben = 1;
+    } else if (Frequency <= f9200) {
+      *Cben = 0;
+    } else {
+      *Cben = 3;
+    }
+  }
 }

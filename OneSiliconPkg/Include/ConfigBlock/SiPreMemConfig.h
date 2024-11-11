@@ -53,14 +53,18 @@ typedef struct {
   **/
   UINT32    PlatformDebugOption   :  4;       /// offset 28 - 31
   UINT32    RsvdBits              : 28;
+
+  UINT16    StaticContentSizeAt4Gb;           /// offset 32 - 33
+  
   /**
     This is used to skip override boot mode during firmware update boot mode.
     When set to TRUE and boot mode is BOOT_ON_FLASH_UPDATE,
     skip setting boot mode to BOOT_WITH_FULL_CONFIGURATION in PEI memory init.
     <b>0: FALSE</b>, 1: TRUE
   **/
-  UINT8     SkipOverrideBootModeWhenFwUpdate; /// offset 32
-  UINT8     RsvdBytes[3];                     /// offset 33 - 35
+  UINT8     SkipOverrideBootModeWhenFwUpdate; /// offset 34
+  UINT8     RsvdBytes;                        /// offset 35
+
 } SI_PREMEM_CONFIG;
 
 #pragma pack (pop)

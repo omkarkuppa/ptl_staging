@@ -47,26 +47,25 @@ InstallCapsuleDebugProtocol (
 {
   EFI_STATUS   Status;
 
-  if (PcdGet8 (PcdUsbCCapsuleDebugLevel) != USB4_DBG_DISABLED) {
-    Status = InstallUsb4DebugProtocol (
-                   &gEfiUsbCCapsuleDebugProtocolGuid,
-                   PcdGet8 (PcdUsbCCapsuleDebugLevel),
-                   mUsbCCapsuleLogMappingTable,
-                   mUsbCCapsuleLogMappingEntries,
-                   &mRetimerCapsuleLog
-                   );
-    if (!EFI_ERROR (Status) && mRetimerCapsuleLog != NULL) {
-      if (mRetimerCapsuleLog->Usb4LogWrite != NULL) {
-        DEBUG ((DEBUG_INFO, "Install USBC Capsule Debug Protocol - Debug Level = %d\n", PcdGet8 (PcdUsbCCapsuleDebugLevel)));
-      } else {
-        DEBUG ((DEBUG_ERROR, "NULL Log Write function in USBC Capsule Debug Protocol\n"));
-        mRetimerCapsuleLog = NULL;
-      }
+  Status = InstallUsb4DebugProtocol (
+                  &gEfiUsbCCapsuleDebugProtocolGuid,
+                  PcdGet8 (PcdUsbCCapsuleDebugLevel),
+                  mUsbCCapsuleLogMappingTable,
+                  mUsbCCapsuleLogMappingEntries,
+                  &mRetimerCapsuleLog
+                  );
+  if (!EFI_ERROR (Status) && mRetimerCapsuleLog != NULL) {
+    if (mRetimerCapsuleLog->Usb4LogWrite != NULL) {
+      DEBUG ((DEBUG_INFO, "Install USBC Capsule Debug Protocol - Debug Level = %d\n", PcdGet8 (PcdUsbCCapsuleDebugLevel)));
     } else {
-      DEBUG ((DEBUG_ERROR, "NULL USBC Capsule Debug Protocol is returned\n"));
+      DEBUG ((DEBUG_ERROR, "NULL Log Write function in USBC Capsule Debug Protocol\n"));
       mRetimerCapsuleLog = NULL;
     }
+  } else {
+    DEBUG ((DEBUG_ERROR, "NULL USBC Capsule Debug Protocol is returned\n"));
+    mRetimerCapsuleLog = NULL;
   }
+
 }
 
 /**

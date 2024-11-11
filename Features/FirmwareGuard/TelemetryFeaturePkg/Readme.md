@@ -45,6 +45,8 @@ and the health status of key hareware components to user.
   <DxeTelemetryAcpi>
  * DxeTelemetryAcpi
  * DxeTelemetryHwErrRec
+  <ResetReasonDxe>
+ * ResetReasonDxe
   <Fdf Files>
  * TelemetryDxe.fdf includes 2 FviDxe drives and 4 Health Dxe drivers
 

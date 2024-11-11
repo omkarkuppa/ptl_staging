@@ -141,6 +141,7 @@ Usb4PlatformInfoQuery (
   Usb4PlatformInfo->Usb4HrCount          = 0;
   Usb4PlatformInfo->Usb4HrMask           = 0;
   Usb4PlatformInfo->Usb4MaxTopologyDepth = QueryUsb4MaxTopologyDepth();
+  Usb4PlatformInfo->CmVer2Support        = TRUE;
 
 #if FixedPcdGetBool (PcdTcssSupport) == 1
   //

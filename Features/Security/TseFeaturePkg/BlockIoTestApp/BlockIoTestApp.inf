@@ -68,6 +68,6 @@
   gEfiBlockIoCryptoProtocolGuid               ## SOMETIMES_CONSUMES
 
 [Guids]
-  gEfiBlockIoCryptoAlgoAesXtsGuid  ## CONSUMES
   gEfiGlobalVariableGuid           ## SOMETIMES_CONSUMES ## GUID
   gBlockIoTestAppHiiGuid
+  gTseBlockIoCryptoAlgoAesXtsGuid  ## CONSUMES

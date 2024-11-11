@@ -615,7 +615,7 @@ Ddr5PostPackageRepair (
   Inputs      = &MrcData->Inputs;
   ExtInputs   = Inputs->ExtInputs.Ptr;
   ChannelOut  = &Outputs->Controller[Controller].Channel[Channel];
-  Timing      = &ChannelOut->Timing[ExtInputs->MemoryProfile];
+  Timing      = &Outputs->Timing[ExtInputs->MemoryProfile];
   Debug       = &Outputs->Debug;
   Status      = mrcSuccess;
   GetSetEn    = 1;
@@ -623,7 +623,7 @@ Ddr5PostPackageRepair (
   tMpcNck     = MrcGetTmod (MrcData, Timing->tCK);
   tMpcNckFs   = tMpcNck * Outputs->MemoryClock;
   tMpcNs      = DIVIDECEIL (tMpcNckFs, FEMTOSECONDS_PER_NANOSECOND);
-  tRCD        = Outputs->Controller[Controller].Channel[Channel].Timing[0].tRCDtRP;
+  tRCD        = Timing->tRCDtRP;
   tRCD        *= Outputs->tCKps; // convert from nCK to ps
   tRCD        /= 1000; //convert from ps to ns
   IsSppr      = ExtInputs->PprRepairType == SOFT_PPR;
@@ -889,7 +889,7 @@ LpDdr5PostPackageRepair (
   //IsFreqSwitchRequired  = FALSE;
   BankMode              = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
   ChannelOut            = &Outputs->Controller[Controller].Channel[Channel];
-  Timing                = &ChannelOut->Timing[ExtInputs->MemoryProfile];
+  Timing                = &Outputs->Timing[ExtInputs->MemoryProfile];
   tMpcNck               = MrcGetTmod (MrcData, Timing->tCK);
   tMpcNckFs             = tMpcNck * Outputs->MemoryClock;
   tMpcNs                = DIVIDECEIL (tMpcNckFs, FEMTOSECONDS_PER_NANOSECOND);

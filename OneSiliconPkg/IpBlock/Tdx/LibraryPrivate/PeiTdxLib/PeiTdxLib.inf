@@ -39,6 +39,12 @@ PeiMemorySubSystemInfoLib
 TdxFruLib
 ReportStatusCodeLib
 
+[Pcd]
+gSiPkgTokenSpaceGuid.PcdTdxActmMac0     ## CONSUMES
+gSiPkgTokenSpaceGuid.PcdTdxActmMac1     ## CONSUMES
+gSiPkgTokenSpaceGuid.PcdTdxActmMac2     ## CONSUMES
+gSiPkgTokenSpaceGuid.PcdTdxActmMac3     ## CONSUMES
+
 [Packages]
 MdePkg/MdePkg.dec
 UefiCpuPkg/UefiCpuPkg.dec

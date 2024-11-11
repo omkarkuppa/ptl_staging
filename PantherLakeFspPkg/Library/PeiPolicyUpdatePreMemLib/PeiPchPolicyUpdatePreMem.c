@@ -270,6 +270,8 @@ FspUpdateLpcPreMemPolicy (
   if (EFI_ERROR (Status)) {
     return;
   }
+
+  LpcPreMemConfig->EnhancePort8xhDecoding = FspmUpd->FspmConfig.PchLpcEnhancePort8xhDecoding;
 }
 
 /**

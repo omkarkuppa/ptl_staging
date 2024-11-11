@@ -25,6 +25,7 @@
 #undef DTBT_IDX
 #undef DTBT_RPS
 #undef DTBT_RPT
+#undef DTBT_WAK
 
 // NHI ACPI device name
 #define DTBT_NHI    NHI0_DEV

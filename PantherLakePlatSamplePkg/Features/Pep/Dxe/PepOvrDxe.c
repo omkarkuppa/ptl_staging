@@ -166,7 +166,8 @@ InitializePepSsdtAcpiTables (
         /// Locate the SSDT package
         ///
         CurrPtr = (UINT8 *) PepAcpiTable + sizeof (EFI_ACPI_DESCRIPTION_HEADER);
-        EndPtr = (UINT8 *) PepAcpiTable + PepAcpiTable->Length;
+        /// OperationRegion space (14 bytes) = 1 + sizeof (*Signature) + 2 + sizeof (UINT32) + 1 + sizeof (UINT16)
+        EndPtr = (UINT8 *) PepAcpiTable + PepAcpiTable->Length - 14;
 
         for (; CurrPtr <= EndPtr; CurrPtr++) {
           Signature = (UINT32 *) (CurrPtr + 1);

@@ -20,6 +20,7 @@
 **/
 
 #include "QuickI2cPrivate.h"
+#include "QuickI2cDriver.h"
 
 /**
   AbsPtr protocol's WaitForInput (called when a consumer of AbsPtr protocol waits for new data)
@@ -53,8 +54,22 @@ AbsPtrReset (
   IN BOOLEAN                       ExtendedVerification
   )
 {
-  DEBUG ((DEBUG_INFO, "QuickI2c reset attempted\n"));
-  return EFI_UNSUPPORTED;
+  QUICK_I2C_DEV     *QuickI2cDev;
+
+  QuickI2cDev  = QUICK_I2C_CONTEXT_FROM_ABSPTR_PROTOCOL (This);
+
+  ZeroMem (
+    &(QuickI2cDev->AbsPtrTouchData),
+    sizeof (EFI_ABSOLUTE_POINTER_STATE)
+    );
+
+  ZeroMem (
+    &(QuickI2cDev->Report),
+    sizeof (SINGLE_FINGER_REPORT)
+    );
+
+  QuickI2cDev->AbsPtrDataAvailable = FALSE;
+  return EFI_SUCCESS;
 }
 
 /**

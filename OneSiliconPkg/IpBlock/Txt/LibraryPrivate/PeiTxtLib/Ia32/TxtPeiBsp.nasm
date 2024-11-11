@@ -120,6 +120,12 @@ SECTION .text
 ;-----------------------------------------------------------------------------
 global ASM_PFX(LaunchBiosAcmSclean)
 ASM_PFX(LaunchBiosAcmSclean):
+    ; START_FRAME
+    ; MAKE_LOCAL BIOS_GDT[2]:QWORD
+    ; MAKE_LOCAL BIOS_IDT[2]:QWORD
+    ; END_FRAME
+    enter 0x20,0
+
     ;
     ; Tell where we are
     ;
@@ -145,6 +151,12 @@ ASM_PFX(LaunchBiosAcmSclean):
 ;-----------------------------------------------------------------------------
 global ASM_PFX(LaunchBiosAcmClearSecrets)
 ASM_PFX(LaunchBiosAcmClearSecrets):
+    ; START_FRAME
+    ; MAKE_LOCAL BIOS_GDT[2]:QWORD
+    ; MAKE_LOCAL BIOS_IDT[2]:QWORD
+    ; END_FRAME
+    enter 0x20,0
+
     ;
     ; Tell where we are
     ;
@@ -170,6 +182,12 @@ ASM_PFX(LaunchBiosAcmClearSecrets):
 ;-----------------------------------------------------------------------------
 global ASM_PFX(LaunchBiosAcmAcheck)
 ASM_PFX(LaunchBiosAcmAcheck):
+    ; START_FRAME
+    ; MAKE_LOCAL BIOS_GDT[2]:QWORD
+    ; MAKE_LOCAL BIOS_IDT[2]:QWORD
+    ; END_FRAME
+    enter 0x20,0
+
     ;
     ; Tell where we are
     ;

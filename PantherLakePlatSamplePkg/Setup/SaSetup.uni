@@ -1483,6 +1483,9 @@
 #string STR_TIME_MEASURE_PROMPT                 #language en-US "Time Measure"
 #string STR_TIME_MEASURE_PROMPT_HELP            #language en-US "Enable/Disable printing of the time it takes to execute MRC."
 
+#string STR_FORCE_CKD_BYPASS_PROMPT             #language en-US "Force CKD Bypass"
+#string STR_FORCE_CKD_BYPASS_HELP               #language en-US "Force CKD in Bypass Mode if CKD DIMM is detected"
+
 #string STR_CCC_HALF_FREQUENCY_PROMPT           #language en-US "CCC Half Frequency"
 #string STR_CCC_HALF_FREQUENCY_PROMPT_HELP      #language en-US "Enable CCC Half Frequency (0 = Full Frequency, 1 = Half Frequency)"
 
@@ -1683,6 +1686,9 @@
 
 #string STR_RC1P_GT_SUPPORT                     #language en-US "GT RC1p Support"
 #string STR_RC1P_GT_SUPPORT_HELP                #language en-US "Enable/Disable RC1p support. If GT RC1p is enabled, send a RC1p frequency request to PMA if other conditions being met"
+
+#string STR_REDUCE_XECORES_SUPPORT              #language en-US "Reduce XeCores"
+#string STR_REDUCE_XECORES_HELP                 #language en-US "Enable/Disable Reduce XeCores"
 
 #string STR_RC1P_MEDIA_SUPPORT                  #language en-US "Media RC1p Support"
 #string STR_RC1P_MEDIA_SUPPORT_HELP             #language en-US "Enable/Disable RC1p support. If Media RC1p is enabled, send a RC1p frequency request to PMA if other conditions being met"

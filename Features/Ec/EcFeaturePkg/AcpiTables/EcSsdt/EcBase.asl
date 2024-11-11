@@ -62,7 +62,7 @@ Method (_DSM, 4, Serialized, 0, {IntObj, BuffObj}, {BuffObj, IntObj, IntObj, Pkg
           Case (0)
           {
             ADBG ("Revision 0: function 1 is supported")
-            Return (Buffer () {0x1})
+            Return (Buffer () {0x3})
           } // revision 0: function 1 is supported
         }
         ADBG ("Revision 1+: No function yet supported")

@@ -23,12 +23,12 @@
 ##
 
 [Defines]
-INF_VERSION = 0x00010017
-BASE_NAME = PeiSpiDmaLib
-FILE_GUID = 43B0A21D-3E85-4FCF-BF2E-0032341FDFC8
-VERSION_STRING = 1.0
-MODULE_TYPE = PEIM
-LIBRARY_CLASS = PeiSpiDmaLib
+  INF_VERSION = 0x00010017
+  BASE_NAME = PeiSpiDmaLib
+  FILE_GUID = 43B0A21D-3E85-4FCF-BF2E-0032341FDFC8
+  VERSION_STRING = 1.0
+  MODULE_TYPE = PEIM
+  LIBRARY_CLASS = PeiSpiDmaLib
 
 #
 # The following information is for reference only and not required by the build tools.
@@ -38,29 +38,32 @@ LIBRARY_CLASS = PeiSpiDmaLib
 #
 
 [LibraryClasses]
-BaseLib
-DebugLib
-PchPciBdfLib
-TimerLib
-PciSegmentLib
-MemoryAllocationLib
-PeiServicesLib
-PeiServicesTablePointerLib
-PchInfoLib
-SpiAccessLib
+  BaseLib
+  DebugLib
+  PchPciBdfLib
+  TimerLib
+  PciSegmentLib
+  MemoryAllocationLib
+  PeiServicesLib
+  PeiServicesTablePointerLib
+  PchInfoLib
+  SpiAccessLib
 
 [Packages]
-MdePkg/MdePkg.dec
-MdeModulePkg/MdeModulePkg.dec
-IntelSiliconPkg/IntelSiliconPkg.dec
-OneSiliconPkg/SiPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
+  OneSiliconPkg/SiPkg.dec
 
 [Sources]
-PeiSpiDma.c
-PeiSpiDmaReg.c
+  PeiSpiDma.c
+  PeiSpiDmaReg.c
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress   ## CONSUMES
 
 [Ppis]
-gSpiDmaReadPpiGuid                            ## PRODUCES
-gEdkiiPeiFirmwareVolumeShadowPpiGuid          ## PRODUCES
-gEdkiiIoMmuPpiGuid                            ## CONSUMES
-gEfiEndOfPeiSignalPpiGuid                     ## CONSUMES
+  gSpiDmaReadPpiGuid                            ## PRODUCES
+  gEdkiiPeiFirmwareVolumeShadowPpiGuid          ## PRODUCES
+  gEdkiiIoMmuPpiGuid                            ## CONSUMES
+  gEfiEndOfPeiSignalPpiGuid                     ## CONSUMES

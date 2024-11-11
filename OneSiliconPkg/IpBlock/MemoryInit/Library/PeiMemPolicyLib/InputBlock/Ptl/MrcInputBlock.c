@@ -85,13 +85,13 @@
 
 // TrainingEnables
 #define MRC_EXT_INPUTS_INIT_VAL_ECT                    (1)
-#define MRC_EXT_INPUTS_INIT_VAL_SOT                    (0)
+#define MRC_EXT_INPUTS_INIT_VAL_SOT                    (1)
 #define MRC_EXT_INPUTS_INIT_VAL_ERDMPRTC2D             (1)
 #define MRC_EXT_INPUTS_INIT_VAL_RDMPRT                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RCVET                  (1)
 #define MRC_EXT_INPUTS_INIT_VAL_JWRL                   (1)
-#define MRC_EXT_INPUTS_INIT_VAL_EWRTC2D                (0)
-#define MRC_EXT_INPUTS_INIT_VAL_ERDTC2D                (0)
+#define MRC_EXT_INPUTS_INIT_VAL_EWRTC2D                (1)
+#define MRC_EXT_INPUTS_INIT_VAL_ERDTC2D                (1)
 #define MRC_EXT_INPUTS_INIT_VAL_UNMATCHEDWRTC1D        (1)
 #define MRC_EXT_INPUTS_INIT_VAL_WRTC1D                 (1)
 #define MRC_EXT_INPUTS_INIT_VAL_WRVC1D                 (1)
@@ -102,11 +102,11 @@
 #define MRC_EXT_INPUTS_INIT_VAL_WRVC2D                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RDVC2D                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_WRDSEQT                (0)
-#define MRC_EXT_INPUTS_INIT_VAL_DQSRF                  (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DQSRF                  (1)
 #define MRC_EXT_INPUTS_INIT_VAL_RDDQSODTT              (0)
-#define MRC_EXT_INPUTS_INIT_VAL_RDEQT                  (0)
+#define MRC_EXT_INPUTS_INIT_VAL_RDEQT                  (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DUNITC                 (1)
-#define MRC_EXT_INPUTS_INIT_VAL_CMDVC                  (0)
+#define MRC_EXT_INPUTS_INIT_VAL_CMDVC                  (1)
 #define MRC_EXT_INPUTS_INIT_VAL_LCT                    (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RTL                    (0)
 #define MRC_EXT_INPUTS_INIT_VAL_TAT                    (1)
@@ -118,7 +118,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_PRETRAIN               (1)
 // TrainingEnables2
 #define MRC_EXT_INPUTS_INIT_VAL_DCCPICODELUT           (0)
-#define MRC_EXT_INPUTS_INIT_VAL_DIMMODTT               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DIMMODTT               (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMRONT               (0)
 #define MRC_EXT_INPUTS_INIT_VAL_TXTCO                  (0)
 #define MRC_EXT_INPUTS_INIT_VAL_CLKTCO                 (0)
@@ -134,17 +134,17 @@
 #define MRC_EXT_INPUTS_INIT_VAL_RMTBIT                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DQDQSSWZ               (1)
 #define MRC_EXT_INPUTS_INIT_VAL_REFPI                  (1)
-#define MRC_EXT_INPUTS_INIT_VAL_DCCLP5READDCA          (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DCCLP5READDCA          (1)
 #define MRC_EXT_INPUTS_INIT_VAL_VCCCLKFF               (0)
 #define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCDQS             (0)
 #define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCCLK             (0)
 #define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCWCK             (0)
 #define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCDQ              (0)
-#define MRC_EXT_INPUTS_INIT_VAL_DATAPILIN              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DATAPILIN              (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DDR5XTALK              (0)
-#define MRC_EXT_INPUTS_INIT_VAL_DCCLP5WCKDCA           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DCCLP5WCKDCA           (1)
 #define MRC_EXT_INPUTS_INIT_VAL_RXUNMATCHEDCAL         (1)
-#define MRC_EXT_INPUTS_INIT_VAL_WRTDIMMDFE             (0)
+#define MRC_EXT_INPUTS_INIT_VAL_WRTDIMMDFE             (1)
 #define MRC_EXT_INPUTS_INIT_VAL_SimicsReservedBit      (0)
 // TrainingEnables3
 #define MRC_EXT_INPUTS_INIT_VAL_RXDQSDCC               (0)
@@ -161,15 +161,17 @@
 #define MRC_EXT_INPUTS_INIT_VAL_JEDECRESET             (1)
 #define MRC_EXT_INPUTS_INIT_VAL_ROUNDTRIPMATCH         (1)
 #define MRC_EXT_INPUTS_INIT_VAL_TLINECLKCAL            (1)
-#define MRC_EXT_INPUTS_INIT_VAL_DCCPISERIALCAL         (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DCCPISERIALCAL         (1)
 #define MRC_EXT_INPUTS_INIT_VAL_PHASECLKCAL            (0)
 #define MRC_EXT_INPUTS_INIT_VAL_WCKPADDCCCAL           (1)
 #define MRC_EXT_INPUTS_INIT_VAL_RDCTLET                (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RDDQODTT               (0)
-#define MRC_EXT_INPUTS_INIT_VAL_EMPHASIS               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_EMPHASIS               (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMRXOFFSET           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_VIEWPINCAL             (0)
 #define MRC_EXT_INPUTS_INIT_VAL_QCLKDCC                (0)
+#define MRC_EXT_INPUTS_INIT_VAL_WCKCLKPREDCC           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DQSPADDCC              (0)
 #define MRC_EXT_INPUTS_INIT_VAL_ReservedBits           (0)
 
 #define MRC_EXT_INPUTS_INIT_VAL_MrcTimeMeasure         (0)
@@ -331,9 +333,10 @@
 #define MRC_EXT_INPUTS_INIT_VAL_BRDRESERVED                     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_BRDRESERVED1                    (0)
 #define MRC_EXT_INPUTS_INIT_VAL_SubChHashMask                   (0x838)
+#define MRC_EXT_INPUTS_INIT_VAL_ForceCkdBypass                  (0)
 #define MRC_EXT_INPUTS_INIT_VAL_SubChHashInterleaveBit          (3)
 
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved323                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved324                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 
 // Below policies are used by SV
 #define MRC_EXT_INPUTS_INIT_VAL_DprLock                  (0)
@@ -348,6 +351,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_SpineGatePerLpmode       (0)
 #define MRC_EXT_INPUTS_INIT_VAL_PhclkGatePerLpmode       (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DisableSwitchDfiToMc     (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DqLoopbackTest           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_SvReservedBits           (0)
 
 #ifdef MRC_MINIBIOS_BUILD
@@ -428,16 +432,16 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_Vdd2Mv,
     // TrainingEnables
     {
-      MRC_EXT_INPUTS_INIT_VAL_ECT,               // BIT0 
-      MRC_EXT_INPUTS_INIT_VAL_SOT,               // BIT1 
-      MRC_EXT_INPUTS_INIT_VAL_ERDMPRTC2D,        // BIT2 
-      MRC_EXT_INPUTS_INIT_VAL_RDMPRT,            // BIT3 
-      MRC_EXT_INPUTS_INIT_VAL_RCVET,             // BIT4 
-      MRC_EXT_INPUTS_INIT_VAL_JWRL,              // BIT5 
-      MRC_EXT_INPUTS_INIT_VAL_EWRTC2D,           // BIT6 
-      MRC_EXT_INPUTS_INIT_VAL_ERDTC2D,           // BIT7 
-      MRC_EXT_INPUTS_INIT_VAL_UNMATCHEDWRTC1D,   // BIT8 
-      MRC_EXT_INPUTS_INIT_VAL_WRTC1D,            // BIT9 
+      MRC_EXT_INPUTS_INIT_VAL_ECT,               // BIT0
+      MRC_EXT_INPUTS_INIT_VAL_SOT,               // BIT1
+      MRC_EXT_INPUTS_INIT_VAL_ERDMPRTC2D,        // BIT2
+      MRC_EXT_INPUTS_INIT_VAL_RDMPRT,            // BIT3
+      MRC_EXT_INPUTS_INIT_VAL_RCVET,             // BIT4
+      MRC_EXT_INPUTS_INIT_VAL_JWRL,              // BIT5
+      MRC_EXT_INPUTS_INIT_VAL_EWRTC2D,           // BIT6
+      MRC_EXT_INPUTS_INIT_VAL_ERDTC2D,           // BIT7
+      MRC_EXT_INPUTS_INIT_VAL_UNMATCHEDWRTC1D,   // BIT8
+      MRC_EXT_INPUTS_INIT_VAL_WRTC1D,            // BIT9
       MRC_EXT_INPUTS_INIT_VAL_WRVC1D,            // BIT10
       MRC_EXT_INPUTS_INIT_VAL_RDTC1D,            // BIT11
       MRC_EXT_INPUTS_INIT_VAL_RDVC1D,            // BIT12
@@ -463,16 +467,16 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     },
     // TrainingEnables2
     {
-      MRC_EXT_INPUTS_INIT_VAL_DCCPICODELUT,      // BIT0 
-      MRC_EXT_INPUTS_INIT_VAL_DIMMODTT,          // BIT1 
-      MRC_EXT_INPUTS_INIT_VAL_DIMMRONT,          // BIT2 
-      MRC_EXT_INPUTS_INIT_VAL_TXTCO,             // BIT3 
-      MRC_EXT_INPUTS_INIT_VAL_CLKTCO,            // BIT4 
-      MRC_EXT_INPUTS_INIT_VAL_CMDSR,             // BIT5 
-      MRC_EXT_INPUTS_INIT_VAL_CMDDSEQ,           // BIT6 
-      MRC_EXT_INPUTS_INIT_VAL_DIMMODTCA,         // BIT7 
-      MRC_EXT_INPUTS_INIT_VAL_DDR5ODTTIMING,     // BIT8 
-      MRC_EXT_INPUTS_INIT_VAL_DBI,               // BIT9 
+      MRC_EXT_INPUTS_INIT_VAL_DCCPICODELUT,      // BIT0
+      MRC_EXT_INPUTS_INIT_VAL_DIMMODTT,          // BIT1
+      MRC_EXT_INPUTS_INIT_VAL_DIMMRONT,          // BIT2
+      MRC_EXT_INPUTS_INIT_VAL_TXTCO,             // BIT3
+      MRC_EXT_INPUTS_INIT_VAL_CLKTCO,            // BIT4
+      MRC_EXT_INPUTS_INIT_VAL_CMDSR,             // BIT5
+      MRC_EXT_INPUTS_INIT_VAL_CMDDSEQ,           // BIT6
+      MRC_EXT_INPUTS_INIT_VAL_DIMMODTCA,         // BIT7
+      MRC_EXT_INPUTS_INIT_VAL_DDR5ODTTIMING,     // BIT8
+      MRC_EXT_INPUTS_INIT_VAL_DBI,               // BIT9
       MRC_EXT_INPUTS_INIT_VAL_DLLDCC,            // BIT10
       MRC_EXT_INPUTS_INIT_VAL_DLLBWSEL,          // BIT11
       MRC_EXT_INPUTS_INIT_VAL_RDVREFDC,          // BIT12
@@ -496,16 +500,16 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     },
     // TrainingEnables3
     {
-      MRC_EXT_INPUTS_INIT_VAL_RXDQSDCC,          // BIT0 
-      MRC_EXT_INPUTS_INIT_VAL_DIMMNTODT,         // BIT1 
-      MRC_EXT_INPUTS_INIT_VAL_ReservedBit2,      // BIT2 
-      MRC_EXT_INPUTS_INIT_VAL_RXVREFPERBIT,      // BIT3 
-      MRC_EXT_INPUTS_INIT_VAL_PPR,               // BIT4 
-      MRC_EXT_INPUTS_INIT_VAL_LVRAUTOTRIM,       // BIT5 
-      MRC_EXT_INPUTS_INIT_VAL_PWRMETER,          // BIT6 
-      MRC_EXT_INPUTS_INIT_VAL_OPTIMIZECOMP,      // BIT7 
-      MRC_EXT_INPUTS_INIT_VAL_WRTRETRAIN,        // BIT8 
-      MRC_EXT_INPUTS_INIT_VAL_DDRPRECOMP,        // BIT9 
+      MRC_EXT_INPUTS_INIT_VAL_RXDQSDCC,          // BIT0
+      MRC_EXT_INPUTS_INIT_VAL_DIMMNTODT,         // BIT1
+      MRC_EXT_INPUTS_INIT_VAL_ReservedBit2,      // BIT2
+      MRC_EXT_INPUTS_INIT_VAL_RXVREFPERBIT,      // BIT3
+      MRC_EXT_INPUTS_INIT_VAL_PPR,               // BIT4
+      MRC_EXT_INPUTS_INIT_VAL_LVRAUTOTRIM,       // BIT5
+      MRC_EXT_INPUTS_INIT_VAL_PWRMETER,          // BIT6
+      MRC_EXT_INPUTS_INIT_VAL_OPTIMIZECOMP,      // BIT7
+      MRC_EXT_INPUTS_INIT_VAL_WRTRETRAIN,        // BIT8
+      MRC_EXT_INPUTS_INIT_VAL_DDRPRECOMP,        // BIT9
       MRC_EXT_INPUTS_INIT_VAL_RSVDBIT10,         // BIT10
       MRC_EXT_INPUTS_INIT_VAL_JEDECRESET,        // BIT11
       MRC_EXT_INPUTS_INIT_VAL_ROUNDTRIPMATCH,    // BIT12
@@ -519,7 +523,9 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
       MRC_EXT_INPUTS_INIT_VAL_DIMMRXOFFSET,      // BIT20
       MRC_EXT_INPUTS_INIT_VAL_VIEWPINCAL,        // BIT21
       MRC_EXT_INPUTS_INIT_VAL_QCLKDCC,           // BIT22
-      MRC_EXT_INPUTS_INIT_VAL_ReservedBits,      // BIT23
+      MRC_EXT_INPUTS_INIT_VAL_WCKCLKPREDCC,      // BIT23
+      MRC_EXT_INPUTS_INIT_VAL_DQSPADDCC,         // BIT24
+      MRC_EXT_INPUTS_INIT_VAL_ReservedBits,      // BIT25
     },
     MRC_EXT_INPUTS_INIT_VAL_MrcTimeMeasure,
     MRC_EXT_INPUTS_INIT_VAL_MrcFastBoot,
@@ -684,7 +690,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     },
     MRC_EXT_INPUTS_INIT_VAL_SubChHashInterleaveBit,
     MRC_EXT_INPUTS_INIT_VAL_SubChHashMask,
-    MRC_EXT_INPUTS_INIT_VAL_Reserved323,
+    MRC_EXT_INPUTS_INIT_VAL_ForceCkdBypass,
+    MRC_EXT_INPUTS_INIT_VAL_Reserved324,
 
     // Below policies are used by SV
     MRC_EXT_INPUTS_INIT_VAL_DprLock,
@@ -699,6 +706,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_SpineGatePerLpmode,
     MRC_EXT_INPUTS_INIT_VAL_PhclkGatePerLpmode,
     MRC_EXT_INPUTS_INIT_VAL_DisableSwitchDfiToMc,
+    MRC_EXT_INPUTS_INIT_VAL_DqLoopbackTest,
     MRC_EXT_INPUTS_INIT_VAL_SvReservedBits,
   },
 #ifdef MRC_MINIBIOS_BUILD

@@ -49,37 +49,6 @@ QuickI2cLibConfigureDefaultPolicy (
   );
 
 /**
-  Perform SubIP reset process after initialization
-
-  @param[in]  QuickI2cDev      Context of QuickI2c device
-  @param[in]  HidOverI2c       Hid Over I2C policy data
-  @param[in]  Reset            Reset data
-
-  @retval EFI_SUCCESS     QuickI2c initialized successfully
-  @retval other           Error during initialization
-**/
-EFI_STATUS
-QuickI2cTakeOutOfReset (
-  IN QUICK_I2C_DEV                *QuickI2cDev,
-  IN THC_HID_OVER_I2C             *HidOverI2c,
-  IN THC_RESET                    *Reset
-  );
-
-/**
-  Perform SubIP reset process after initialization
-
-  @param[in]  QuickI2cDev      Context of QuickI2c device
-
-  @retval EFI_SUCCESS     QuickI2c initialized successfully
-  @retval other           Error during initialization
-**/
-EFI_STATUS
-QuickI2cPerformTouchIcReset (
-  IN QUICK_I2C_DEV                *QuickI2cDev,
-  THC_RESET              *Reset
-  );
-
-/**
   Power up device through RST GPIO
 
   @param[in] Timeout            [MILLISECONDS] Indicates how long driver waits for device to power up
@@ -87,7 +56,7 @@ QuickI2cPerformTouchIcReset (
   @param[in] ResetPadTrigger    Reset Pad Trigger
 
 **/
-VOID
+EFI_STATUS
 QuickI2cLibGpioGetOutOfReset (
   IN UINT32                    Timeout,
   IN UINT8                     InstanceId,
@@ -107,6 +76,28 @@ EFI_STATUS
 QuickI2cReadDeviceDescriptor (
   IN QUICK_I2C_DEV                *QuickI2cDev,
   IN THC_HID_OVER_I2C             *HidOverI2c
+  );
+
+/**
+  Perfomrs Interrupt disable
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @retval EFI_SUCCESS     QuickI2c initialized successfully
+  @retval other           Error during initialization
+**/
+EFI_STATUS
+QuickI2cDisableInterrupt (
+  IN QUICK_I2C_DEV      *QuickI2cDev
+  );
+
+/**
+  Perform enable interrupt
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @retval EFI_SUCCESS     QuickI2c initialized successfully
+  @retval other           Error during initialization
+**/
+EFI_STATUS
+QuickI2cEnableInterrupt (
+  IN QUICK_I2C_DEV      *QuickI2cDev
   );
 
 /**
@@ -395,6 +386,15 @@ QuickI2cEnableAfterReset (
 EFI_STATUS
 QuickI2cReadHidDescriptor (
   IN  QUICK_I2C_DEV              *QuickI2cDev
+  );
+
+/**
+  Power up device through RST GPIO
+  @param[in] QuickI2cDev        QuickI2c MMIO BAR0
+**/
+EFI_STATUS
+QuickI2cLibGetOutOfReset (
+  IN QUICK_I2C_DEV              *QuickI2cDev
   );
 
 /**

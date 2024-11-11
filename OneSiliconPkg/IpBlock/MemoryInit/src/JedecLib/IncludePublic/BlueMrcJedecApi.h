@@ -71,49 +71,6 @@ MrcGetSagvMrSeq (
   );
 
 /**
-  Calculate DqioDuration based on frequency and memory techmology
-
-  @param[in] MrcData               - Include all MRC global data
-  @param[out] *DqioDuration        - DqioDuration encoded to DDR5 MR45 / LPDDR5 MR37 definition
-  @param[out] *RunTimeClocksBy16   - DqioDuration in units of (tCK * 16)
-
-  @retval mrcSuccess               - if it success
-  @retval mrcUnsupportedTechnology - if the frequency doesn't match
-**/
-MrcStatus
-MrcGetDqioDuration (
-  IN     MrcParameters *const MrcData,
-  OUT    UINT8               *DqioDuration,
-  OUT    UINT16              *RunTimeClocksBy16
-  );
-
-/**
-  This function returns the tPRPDEN value for the specified Memory type.
-
-  @param[in] MrcData  - Include all MRC global data.
-  @param[in] DdrFreq  - The memory frequency.
-
-  @return The tPRPDEN value for the specified configuration.
-**/
-UINT32
-MrcGetTprpden (
-  IN       MrcParameters *const MrcData,
-  IN const MrcFrequency  DdrFreq
-  );
-
-/**
-  This function returns the tBPR2ACT value for the current Memory type.
-
-  @param[in] MrcData  - Include all MRC global data.
-
-  @retval The tBPR2ACT value for the specified configuration.
-**/
-UINT32
-MrcGetTbpr2act (
-  IN MrcParameters *const MrcData
-  );
-
-/**
   This function returns the tRFM in DCLKs.
   DDR5 timing is based on tRFMsb
   LPDDR5 timing is based on tRFMpb
@@ -129,32 +86,6 @@ MrcGetTrfm (
   IN MrcParameters *const MrcData,
   IN const UINT32         Controller,
   IN const UINT32         Channel
-  );
-
-
-/**
-  This function calculates DRAM temp/voltage drift
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @retval UINT32 DramWriteDrift in pS
-**/
-UINT32
-MrcGetDramWriteDrift (
-  IN     MrcParameters *const MrcData
-  );
-
-
-/**
-  This function calculates the LPDDR5 Read Drift
-
-  @param[in]  MrcData - Include all MRC global data.
-
-  @retval DramReadDriftPI - Read Drift in Pi ticks
-**/
-UINT32
-GetLpddr5ReadDrift (
-  IN  MrcParameters* const MrcData
   );
 
 /**
@@ -299,35 +230,6 @@ MrcDdr5ConfigDrfm (
   IN  UINT32  Channel,
   IN  UINT32  Dimm,
   OUT BOOLEAN *BrcSupported
-  );
-
-
-/**
-  This function decodes and returns the DDR5 ODT offsets from MR37, MR38, and MR39
-
-  @param[in]  MrcData    - Include all MRC global data.
-  @param[in]  Controller - Current Controller
-  @param[in]  Channel    - Current Channel
-  @param[in]  Rank       - Current Rank
-  @param[in]  NtOdt_Wr   - TRUE if Non Target WR ODT is supported
-  @param[in]  IsPreFuncTraining - TRUE if board flight delay impact from Read Leveling / Write Leveling is not known yet
-  @param[out] Odt_Wr_On  - Hold Write RTT Enable Offset
-  @param[out] Odt_Wr_Off - Hold Write RTT Disable Offset
-  @param[out] Odt_Rd_On  - Hold Non-Target Read RTT Enable Offset
-  @param[out] Odt_Rd_Off - Hold Non-Target Read RTT Disable Offset
-**/
-VOID
-GetDdr5OdtOffsets (
-  IN  MrcParameters* const MrcData,
-  IN  UINT32               Controller,
-  IN  UINT32               Channel,
-  IN  UINT32               Rank,
-  IN  BOOLEAN              NtOdt_Wr,
-  IN  BOOLEAN              IsPreFuncTraining,
-  OUT INT8                 *Odt_Wr_On,
-  OUT INT8                 *Odt_Wr_Off,
-  OUT INT8                 *Odt_Rd_On,
-  OUT INT8                 *Odt_Rd_Off
   );
 
 /**

@@ -171,6 +171,7 @@ DebugPrint (
   @param[in] NumberOfBytes       Size of string buffer
 
   @retval EFI_SUCCESS            The function completed successfully
+  @retval EFI_NOT_FOUND          If EFI Services not ready or ppi is not installed
 **/
 EFI_STATUS
 WriteToSerialIoPpi (
@@ -181,18 +182,19 @@ WriteToSerialIoPpi (
   EFI_STATUS                Status;
   EFI_SERIAL_IO_PROTOCOL    *SerialIoAccess;
 
-  Status = PeiServicesLocatePpi (
-             &gEfiSerialIoProtocolGuid,
-             0,
-             NULL,
-             (VOID **) &SerialIoAccess
-             );
-  if (EFI_ERROR (Status)) {
-    return Status;
+  Status = EFI_NOT_FOUND;
+  if (PcdGetBool (PcdFspValidatePeiServiceTablePointer)) {
+    Status = PeiServicesLocatePpi (
+               &gEfiSerialIoProtocolGuid,
+               0,
+               NULL,
+               (VOID **) &SerialIoAccess
+               );
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
   }
-
-  SerialIoAccess->Write (SerialIoAccess, &NumberOfBytes, Buffer);
-  return EFI_SUCCESS;
+  return Status;
 }
 
 /**
@@ -414,7 +416,10 @@ DebugVPrint (
 
     if (GetDebugInterfaceFlags () & STATUS_CODE_USE_SERIALIO) {
       if(PcdGetBool (PcdFspValidatePeiServiceTablePointer)){
-        WriteToSerialIoPpi ((UINT8 *)Buffer, AsciiStrLen (Buffer));
+        Status = WriteToSerialIoPpi ((UINT8 *) Buffer, AsciiStrLen (Buffer));
+        if (EFI_ERROR (Status)) {
+          SerialPortWrite ((UINT8 *) Buffer, AsciiStrLen (Buffer));
+        }
       }
     }
   }
@@ -467,6 +472,7 @@ DebugAssert (
   )
 {
   CHAR8           Buffer[MAX_DEBUG_MESSAGE_LENGTH];
+  EFI_STATUS      Status;
 
   //
   // Generate the ASSERT() message in Ascii format
@@ -482,7 +488,10 @@ DebugAssert (
 
   if (GetDebugInterfaceFlags() & STATUS_CODE_USE_SERIALIO) {
     if(PcdGetBool (PcdFspValidatePeiServiceTablePointer)){
-      WriteToSerialIoPpi ((UINT8 *)Buffer, AsciiStrLen (Buffer));
+      Status = WriteToSerialIoPpi ((UINT8 *) Buffer, AsciiStrLen (Buffer));
+      if (EFI_ERROR (Status)) {
+        SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
+      }
     }
   }
 

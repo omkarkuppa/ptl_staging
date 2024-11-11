@@ -120,6 +120,7 @@ src/ApiLib/MrcSagv.c
 src/ApiLib/MrcSagv.h
 src/ApiLib/Ptl/MrcSagvConfig.c
 src/ApiLib/BlueMrcStartMemoryConfiguration.c
+src/ApiLib/Ptl/BlueMrcStartMemoryConfigurationPtl.c
 src/BdatLib/MrcBdat.c
 src/BdatLib/IncludePublic/MrcBdat.h
 src/BdatLib/MrcBdatPrivate.h
@@ -189,6 +190,8 @@ src/UcManagement/MrcUcManagement.c
 src/UcManagement/MrcUcManagement.h
 src/UcManagement/Ptl/MrcUcPayloadData.c
 src/UcManagement/Ptl/MrcUcPayloadData.h
+src/DecompressLib/LzmaDec.c
+src/DecompressLib/LzmaDecompress.c
 src/WriteTraining/BlueMrcWriteDqDqs.c
 src/ApiLib/MrcBlueGreenCommunication.h
 src/IncludePublic/MrcPostCodes.h

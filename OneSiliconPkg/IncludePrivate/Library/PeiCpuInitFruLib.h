@@ -239,4 +239,22 @@ PeiCpuProgramIaExclusion (
   VOID
   );
 
+/**
+  Compare the BIST setup option against the CPU strap setting
+  and in case of mismatch request a reset.
+
+  @param[in] CpuStrapSetData    - The current strap setting.
+  @param[in] ReduceXecores        ReduceXecores Policy
+  @param[out] ColdResetFlag     - Pointer to flag to indicate whether cold reset should be performed
+  @param[out] WarmResetFlag     - Pointer to flag to indicate whether warm reset should be performed
+
+**/
+VOID
+EFIAPI
+PeiCpuStrapReduceXecoresEnableDisable (
+  IN VOID              *CpuStrapSetData,
+  IN UINT8             ReduceXecores,
+  OUT BOOLEAN          *ColdResetFlag,
+  OUT BOOLEAN          *WarmResetFlag
+  );
 #endif // _PEI_CPU_INIT_FRU_LIB_H_

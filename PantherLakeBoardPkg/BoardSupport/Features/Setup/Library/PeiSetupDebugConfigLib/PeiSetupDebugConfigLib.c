@@ -59,7 +59,7 @@ BuildDebugConfigDataHob (
   DebugConfigDataHob->Usb3DebugInterface     = (DebugConfigData->Usb3DebugInterface == 1 && FeaturePcdGet (PcdUsb3SerialStatusCodeEnable)) ? 1 : 0;
   DebugConfigDataHob->TraceHubDebugInterface = (DebugConfigData->TraceHubDebugInterface == 1) ? 1 : 0;
 
-  DebugConfigDataHob->SerialIoDebugInterface            = (DebugConfigData->SerialIoDebugInterface == 1 && FeaturePcdGet (PcdSerialIoUartEnable)) ? 1 : 0;
+  DebugConfigDataHob->SerialIoDebugInterface            = (DebugConfigData->SerialIoDebugInterface == 1 && FeaturePcdGet (PcdLpssUartEnable)) ? 1 : 0;
   DebugConfigDataHob->SerialIoUartDebugControllerNumber = DebugConfigData->SerialIoUartDebugControllerNumber;
   DebugConfigDataHob->SerialIoUartDebugBaudRate         = DebugConfigData->SerialIoUartDebugBaudRate;
   DebugConfigDataHob->SerialIoUartDebugStopBits         = DebugConfigData->SerialIoUartDebugStopBits;

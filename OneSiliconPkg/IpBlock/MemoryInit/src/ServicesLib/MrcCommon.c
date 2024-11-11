@@ -194,6 +194,30 @@ MrcGetHwControllerExists (
 }
 
 /**
+  Returns whether Channel HW exists even though it may not be populated.
+
+  @param[in] MrcData    - Pointer to MRC global data.
+  @param[in] Controller - Controller to test.
+  @param[in] Channel    - Channel to test.
+
+  @retval BOOLEAN - TRUE if exists, FALSE otherwise.
+**/
+extern
+MRC_IRAM0_FUNCTION
+BOOLEAN
+MrcGetHwChannelExists (
+  IN MrcParameters *const MrcData,
+  IN const UINT32         Controller,
+  IN const UINT32         Channel
+  )
+{
+  MrcOutput *Outputs = &MrcData->Outputs;
+  UINT8 MaxChannels = Outputs->MaxChannels;
+
+  return (MrcGetValidHwChBitMask (MrcData) & (1 << (Controller * MaxChannels + Channel))) != 0;
+}
+
+/**
   Returns whether Channel is or is not present.
 
   @param[in] MrcData    - Pointer to MRC global data.
@@ -2670,6 +2694,7 @@ MrcPrintHeaderTestScope (
   UINT8     SpaceCount;
   UINT8     SdramCount;
   UINT8     BaseSpaceSize;
+  UINT8     RankIndex;
   BOOLEAN   IsAdditionalSpace;
   char      PrintStr[MAX_STRING_LENGTH];
   char      BaseSpaceStr[20];
@@ -2714,6 +2739,9 @@ MrcPrintHeaderTestScope (
       StrPtr = PrintStr;
       StrPtr += MrcSPrintf (MrcData, StrPtr, sizeof (PrintStr) - (StrPtr - PrintStr), "%d", Controller) - 1;
       SpaceCount = 1 * MaxChInMc[Controller];
+      if (Scope == ChRankScope) {
+        SpaceCount *= MAX_RANK_IN_CHANNEL;
+      }
       if (Scope >= ByteScope) {
         SpaceCount *= SdramCount;
       }
@@ -2746,6 +2774,9 @@ MrcPrintHeaderTestScope (
   if (Scope >= ChScope) {
     MRC_DEBUG_MSG (Debug, DebugLevel, "\nChannel\t\t");
     SpaceCount = 1;
+    if (Scope == ChRankScope) {
+      SpaceCount *= MAX_RANK_IN_CHANNEL;
+    }
     if (Scope >= ByteScope) {
       SpaceCount *= SdramCount;
     }
@@ -2781,6 +2812,31 @@ MrcPrintHeaderTestScope (
       } // Controller
     } // NumTest
   } // ChScope
+
+  if (Scope == ChRankScope) {
+    MRC_DEBUG_MSG (Debug, DebugLevel, "\nRank\t\t");
+    for (Tests = 0; Tests < NumTests; Tests++) {
+      for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+        for (Channel = 0; Channel < MaxChannels; Channel++) {
+          if (MC_CH_MASK_CHECK (McChBitMask, Controller, Channel, MaxChannels) == 0) {
+            continue;
+          }
+          SpaceCount = 1;
+          for (RankIndex = 0; RankIndex < MAX_RANK_IN_CHANNEL; RankIndex++) {
+            StrPtr = PrintStr;
+            StrPtr += MrcSPrintf (MrcData, StrPtr, sizeof (PrintStr) - (StrPtr - PrintStr), "%d", RankIndex) - 1;
+            for (Index = 0; Index < SpaceCount; Index++) {
+              StrPtr += MrcSPrintf (MrcData, StrPtr, sizeof (PrintStr) - (StrPtr - PrintStr), ((Index == (UINT8) (SpaceCount - 1)) ? "%s" : "%s "), BaseSpaceStr) - 1;
+            }
+            if (IsAdditionalSpace) {
+              StrPtr += MrcSPrintf (MrcData, StrPtr, sizeof (PrintStr) - (StrPtr - PrintStr), " ") - 1;
+            }
+            MRC_DEBUG_MSG (Debug, DebugLevel, "%s", PrintStr);
+          } // Rank
+        } // Channel
+      } // Controller
+    } // NumTest
+  } // ChRank Scope
 
   if (Scope >= ByteScope) {
     MRC_DEBUG_MSG (Debug, DebugLevel, "\nByte\t\t");
@@ -2844,7 +2900,6 @@ MrcPrintHeaderTestScope (
     MRC_DEBUG_MSG (Debug, DebugLevel, "\n");
   }
 
-  MRC_DEBUG_MSG (Debug, DebugLevel, "\tChunk Error\n");
   return mrcSuccess;
 #else
   return mrcSuccess;
@@ -3293,6 +3348,45 @@ MrcGetDdr5ClkIndex (
   }
 
   return IsCkdDimm;
+}
+
+/**
+  Returns whether PHY Clock associated with given Controller,
+  Channel, Rank is enabled or not.
+
+  @param[in] MrcData    - Pointer to MRC global data.
+  @param[in] Controller - Controller to test.
+  @param[in] Channel    - Channel to test.
+  @param[in] Rank       - Rank to test.
+
+  @retval BOOLEAN - TRUE if enabled, FALSE otherwise.
+**/
+BOOLEAN
+MrcPhyClockExists (
+  IN MrcParameters *const MrcData,
+  IN UINT32         const Controller,
+  IN UINT32         const Channel,
+  IN UINT32         const Rank
+  )
+{
+  MrcOutput *Outputs;
+  UINT32 PhyController;
+  UINT32 PhyChannel;
+  UINT32 PhyRank;
+
+  Outputs = &MrcData->Outputs;
+
+  if (MrcRankExist (MrcData, Controller, Channel, Rank)) {
+    if (Outputs->IsCkdSupported) {
+      // For CKD DIMM, one PHY CLK source can be used to strobe different channels / ranks.
+      MrcGetDdr5ClkIndex (MrcData, Controller, Channel, Rank, &PhyController, &PhyChannel, &PhyRank);
+      if ((Controller != PhyController) || (Channel != PhyChannel) || (Rank != PhyRank)) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+  return FALSE;
 }
 
 /**

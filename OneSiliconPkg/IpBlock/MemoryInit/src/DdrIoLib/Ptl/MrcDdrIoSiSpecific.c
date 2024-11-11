@@ -20,6 +20,7 @@
 #include "MrcCommon.h"
 #include "MrcBlueGreenCommunication.h"
 #include "MrcDdrIoSiSpecific.h"
+#include "MrcCrosser.h"
 
 /**
   Clear the top 32KB of Xtensa DRAM0 region.
@@ -163,4 +164,121 @@ EnableSenseAmpOffsetVocSearch (
   )
 {
   return TRUE;
+}
+
+/**
+  Override NUI for SOT Vref Search
+
+  @param[in]      MrcData  - Include all MRC global data.
+  @param[in]      Enable   - Enable or disable the override
+  @param[in, out] Override - Save/restore struct
+**/
+VOID
+SenseAmpOffsetOverrideNui (
+  IN MrcParameters           *const MrcData,
+  IN BOOLEAN                        Enable,
+  IN OUT SenseAmpTrainingOverride   *Override
+  )
+{
+  MrcOutput *Outputs;
+  INT64     DqsOffsetNUI;
+  UINT32    FirstController;
+  UINT32    FirstChannel;
+  UINT32    Byte;
+
+  Outputs = &MrcData->Outputs;
+  FirstController = Outputs->FirstPopController;
+  FirstChannel    = Outputs->Controller[FirstController].FirstPopCh;
+  Byte = 0;
+
+
+  if (Enable) {
+    MrcGetSetChStrb (MrcData, FirstController, FirstChannel, Byte, RxCompDqsOffset, ReadCached, &Override->DqsOffsetNUI);
+    DqsOffsetNUI = 0;
+  } else { // Restore
+    DqsOffsetNUI = Override->DqsOffsetNUI;
+  }
+  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, RxCompDqsOffset, WriteCached, &DqsOffsetNUI);
+}
+
+/**
+  Use RxDqVrefOffsetR for VocFall
+
+  @param[in] MrcData  - Include all MRC global data.
+**/
+VOID
+SenseAmpOffsetUseVocRiseForFall (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput *Outputs;
+  UINT8     Controller;
+  UINT8     Channel;
+  UINT8     Byte;
+  UINT8     Lane;
+  UINT8     FirstRank[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT8     FirstPopulatedRank;
+  INT64     GetSetVal;
+
+  Outputs = &MrcData->Outputs;
+
+  if (!MrcData->Inputs.IsDdrIoMbA0) {
+    return;
+  }
+  // Get 1st populated Rank
+  GetFirstRank (MrcData, FirstRank);
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      if (!MrcChannelExist (MrcData, Controller, Channel)) {
+        continue;
+      }
+      FirstPopulatedRank = FirstRank[Controller][Channel];
+      for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+        for (Lane = 0; Lane < MAX_BITS_FOR_OFFSET_TRAINING; Lane++) {
+          MrcGetSetBit (MrcData, Controller, Channel, FirstPopulatedRank, Byte, Lane, RxVocFall, ReadCached,  &GetSetVal);
+          MrcGetSetBit (MrcData, Controller, Channel, FirstPopulatedRank, Byte, Lane, RxVocRise, WriteCached, &GetSetVal);
+        }
+      } // Byte
+    } // Channel
+  } // Controller
+}
+
+/**
+  Program Voc with the average of VocRise and VocFall
+
+  @param[in]      MrcData     - Include all MRC global data.
+  @param[in]      Controller  - Controller to work on
+  @param[in]      Channel     - Channel to work on
+  @param[in]      Byte        - Byte to work on
+  @param[in]      Bit         - Bit to work on
+  @param[in]      Rank        - Rank to work on
+  @param[in, out] VocRise     - VocRise value, will be updated with the average if needed
+  @param[in, out] VocFall     - VocFall value, will be updated with the average if needed
+**/
+VOID
+SenseAmpOffsetSetVocAverage (
+  IN MrcParameters *const MrcData,
+  IN UINT8                Controller,
+  IN UINT8                Channel,
+  IN UINT8                Byte,
+  IN UINT8                Bit,
+  IN UINT8                Rank,
+  IN OUT INT64            *VocRise,
+  IN OUT INT64            *VocFall
+  )
+{
+  INT64 VocAverage;
+
+  if (!MrcData->Inputs.IsDdrIoMbA0) {
+    return;
+  }
+
+  VocAverage = ((INT8) *VocRise + (INT8) *VocFall) / 2;
+  *VocRise = VocAverage;
+  *VocFall = VocAverage;
+  MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "\t%d", (INT8) VocAverage);
+  MrcGetSetBit (MrcData, Controller, Channel, Rank, Byte, Bit, RxVocRise, WriteToCache, &VocAverage);
+  MrcGetSetBit (MrcData, Controller, Channel, Rank, Byte, Bit, RxVocFall, WriteToCache, &VocAverage);
+  // CR Cache will be flushed by caller
 }

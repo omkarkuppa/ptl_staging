@@ -26,6 +26,7 @@
 #include "MrcDdrIoUtils.h"
 #include "MrcRegisterStruct.h"
 #include "MrcCommon.h"
+#include "MrcTurnAround.h"
 
 extern const char *GlobalCompOffsetStr[];
 
@@ -128,6 +129,10 @@ extern const char *GlobalCompOffsetStr[];
 
 // WakAMole constants
 #define NUMBER_PHASES (4)
+
+// Default Delta Picodes to use in initial TAT equations
+#define DEFAULT_DELTA_TXDQS_PICODE (16)
+#define DEFAULT_DELTA_RCVEN_PICODE (16)
 
 /// Structs
 typedef enum {
@@ -372,6 +377,16 @@ MrcPrintDdrIoGroup (
 MrcStatus
 MrcBwSelCal (
   IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  This function restores BWSel Calibration results
+
+  @param[in] MrcData  - Include all MRC global data.
+**/
+VOID
+MrcBwSelUpdate (
+  IN MrcParameters *const MrcData
   );
 
 /**
@@ -680,6 +695,22 @@ MrcCalcCccDccStepSize (
 UINT8
 MrcDccReadLargeChange (
   IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  This function reads from the StatusLargeChange field for WCK
+
+  @param[in, out] MrcData    - Include all MRC global data.
+  @param[in]      Controller - Controller to work on.
+  @param[in]      Channel    - Channel to work on.
+
+  @retval StatusLargeChange converted into a BOOLEAN data type
+**/
+BOOLEAN
+MrcDccReadWckStatusLargeChange (
+  IN OUT MrcParameters *const MrcData,
+  IN     UINT32               Controller,
+  IN     UINT32               Channel
   );
 
 /**
@@ -1078,6 +1109,19 @@ MrcCurrentSensorCounter (
   );
 
 /**
+  This function converges the PIClk Duty Cycle at TX Pre-Driver node to 50
+  percent for Clk and Wck.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - mrcSuccess
+**/
+MrcStatus
+MrcWckClkPreDriverDcc (
+  IN MrcParameters* const MrcData
+  );
+
+/**
   This function performs Wck Pad DCC calibration
 
   @param[in] MrcData    - Include all MRC global data.
@@ -1235,20 +1279,24 @@ MrcDccPISerializerCalibration (
   );
 
 /**
-  This function sets the value for ForceRxOn.
+  This function gets or sets the value for ForceRxOn.
 
-  @param[in]      MrcData     - Include all MRC global data.
-  @param[in]      UpdateMode  - The mode to be used for program.
-  @param[in]      GetSetMode  - The GetSet mode to be used for program.
-  @param[in, out] *Value      - Value to be written / Saved for ForceRxOn.
+  @param[in]      MrcData               - Include all MRC global data.
+  @param[in]      UpdateMode            - The mode to be used for program.
+  @param[in]      GetSetMode            - The GetSet mode to be used for program.
+  @param[in, out] *ForceRxOnDqsOrAmpOn  - Value to be written / Saved for ForceRxOnDqs [NVL] or ForceRxOn [PTL].
+  @param[in, out] *ForceRxOnDqsMux      - Value to be written / Saved for ForceRxOnDqsMux [NVL], not used in PTL.
+  @param[in, out] *ForceRxOnDq          - Value to be written / Saved for ForceRxOnDq [NVL], not used in PTL.
 **/
 MRC_IRAM1_FUNCTION
 VOID
-MrcSetForceRxOn (
+MrcGetSetForceRxOn (
   IN     MrcParameters* const MrcData,
   IN     UPDATE_MODE    UpdateMode,
   IN     UINT32         GetSetMode,
-  IN OUT INT64          *Value
+  IN OUT INT64          *ForceRxOnDqsOrAmpOn,
+  IN OUT INT64          *ForceRxOnDqsMux,
+  IN OUT INT64          *ForceRxOnDq
   );
 
 /**
@@ -2579,20 +2627,6 @@ GetDdrIoPartitionOffsets (
   );
 
 /**
-  Find initial Cben and BwSel values based on the current Frequency and CCC Half Frequency mode
-
-  @param[in]  MrcData   - Pointer to global MRC data.
-  @param[out] BwSelCcc  - The BwSel CCC value based on CccGear4
-  @param[out] CbenCcc   - The Cben CCC value based on CccGear4
-*/
-VOID
-MrcBwSelCbenFreqSet (
-  IN  MrcParameters *const MrcData,
-  OUT UINT32               *BwSelCcc,
-  OUT UINT32               *CbenCcc
-  );
-
-/**
   This function does PHCLK DCC sub function algorithm for fixing Min/Max outliers
 
   @param[in, out]     MrcData - Include all MRC global data.
@@ -2719,6 +2753,24 @@ MrcDccStepSizeLimitCheckFail (
   );
 
 /**
+  This function writes to critical DCC Controls regardless of population.
+
+  @param[in] MrcData        - Include all MRC global data.
+  @param[in] Controller     - Controller to work on.
+  @param[in] Channel        - Channel to work on.
+  @param[in] SubChBitmap    - Bitmap of Sub Channels for LPDDR5.
+  @param[in] IsEnableBitmap - If TRUE, OR bit from SubChannel to LaneEn register field
+**/
+void
+MrcEnableDisableWckRankLaneEn (
+  IN MrcParameters *const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT8                SubChBitmap,
+  IN BOOLEAN              IsEnableBitmap
+  );
+
+/**
   This function calculates the WCK DCC StepSize.
 
   @param[in] MrcData    - Include all MRC global data.
@@ -2801,6 +2853,28 @@ MrcRankMaskDqTargetR (
 
 
 /**
+  This function sums up the differences between Duty Cycle Accumulator Results
+  and then calculates Step Size for both PLL Partition and PLL Partition Phase.
+
+  @param[in]      MrcData          - Include all MRC global data.
+  @param[in]      ResultTotal      - Total phase result from Negative Duty Cycle Accumulator Results
+  @param[in, out] ResultTotal1     - Total phase result from Positive Duty Cycle Accumulator Results
+  @param[out]     DCCStepSizePll   - The DCC Step Size for PLL Partition
+  @param[out]     PhaseStepSizePll - The DCC Step Size for PLL Partition Phase
+
+  @retval mrcFail if the Sum of the Total Phase Results < 0 else mrcSuccess
+**/
+MrcStatus
+MrcDccTlineCalcStepSize (
+  IN     MrcParameters *const MrcData,
+  IN     INT64                ResultTotal[NUM_PLL],
+  IN OUT INT64                ResultTotal1[NUM_PLL],
+  OUT    INT64                *DCCStepSizePll,
+  OUT    INT64                *PhaseStepSizePll
+  );
+
+
+/**
   This function configures the DDRIO to drive WCK according to the JEDEC Spec before Entering, or
   after exiting Command Bus Training Mode.
 
@@ -2827,6 +2901,34 @@ MrcDdrIoLpddrCbtWckMode (
 BOOLEAN
 EnableSenseAmpOffsetVocSearch (
   IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  This function programs or saves the DqsRFTrainingMode for sense amp training.
+
+  @param[in]  MrcData     - Pointer to MRC global data.
+  @param[in]  UpdateMode  - It's to save or update the value.
+  @param[in]  Mode        - Get Set Mode.
+  @param[in out]  Value   - The value to be saved or programmed for DqsRFTrainingMode.
+
+  @retval None
+**/
+VOID
+MrcGetSetDqsRFTrainingModeInSenseAmp (
+  IN  MrcParameters *const MrcData,
+  IN  UPDATE_MODE          UpdateMode,
+  IN  UINT32               Mode,
+  IN OUT INT64             *Value
+);
+
+/**
+  This function configures and prints PHY registers for DQ Loopback test
+
+  @param[in] MrcData - Pointer to MRC global data.
+**/
+VOID
+MrcDqLoopbackTestPhySetup (
+  IN MrcParameters *const MrcData
   );
 
 #endif //MRC_DDR_IO_API_H_

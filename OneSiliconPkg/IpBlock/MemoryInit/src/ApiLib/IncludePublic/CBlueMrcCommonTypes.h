@@ -40,6 +40,8 @@ typedef enum {
   RxVrefDQS,                    ///< Read Vref Code for DQS: unsigned Integer with range 0-512. Does not affect DQ lanes
   RxDqVref,                     ///< Linear increment (Vref ticks), where the positive increment moves the bitlane RX Vref to a higher voltage.
   RxDbiVref,                    ///< Linear increment (Vref ticks), where the positive increment moves the DBI bitlane RX Vref to a higher voltage.
+  RxDqVrefByte,                 ///< Linear increment (Vref ticks), where the positive increment moves the byte RX Vref to a higher voltage.
+  RxDqVrefBit,                  ///< Linear increment (Vref ticks), where the positive increment moves the bitlane RX Vref to a higher voltage. It's an offset.
   RxEq,                         ///< RX CTLE setting indicating a set of possible resistances, capacitance, current steering, etc. values, which may be a different set of values per product. The setting combinations are indexed by integer values.
   RxDqBitDelay,                 ///< Linear delay (PI ticks), where the positive increment moves the RX DQ bitlane later in time relative to the RX DQS signal (i.e.closing the gap between DQ and DQS in the setup side of the eye).
   RxVocRise,                    ///< Monotonic increment (Sense Amp setting), where the positive increment moves the byte/nibble/bitlane's effective switching point to a lower Vref value.
@@ -126,7 +128,6 @@ typedef enum {
   RxR2RRxPi,                    ///< Offset added to RxRankMuxDelay for RxDqs{P,N}PICode
   RxR2RRcvEn,                   ///< Offset added to RxRankMuxDelay for RcvEnPICode
   RxRankMuxDelay,               ///< Rx rank mux delay to account for the I/O setting latching time vs. the receive enable
-  RxFlybyDelay,                 ///< Per Rank, per Channel value that defines the additive delay on the Receive Enable signal.  (Number of Clocks per step vary by design)
   RxIoTclDelay,                 ///< Per Channel value that defines the additive delay on the Receive Enable signal related to the tCL of the DRAM.  (Number of Clocks per step vary by design) ?CH_SUB
   RoundTripIoComp,              ///< Per Channel offset between Receive Enable is required and when data is ready to go from DDRIO to MC.
   RxFifoRdEnFlybyDelay,         ///< Per Rank, per Channel offset between Read FIFO read enable is required and when data is ready to go from DDRIO to MC. ?CH_SUB
@@ -136,12 +137,12 @@ typedef enum {
   TxDqsTcoPFallNRise,           ///< Provides an unsigned delay control to DqsP-Fall / DqsN-Rise TcoDelay.  Lower values slows down rise delay and higher values slow down fall delay.
   TxDqsTcoPRiseNFall,           ///< Provides an unsigned delay control to DqsP-Rise / DqsN-Fall TcoDelay.  Lower values slows down rise delay and higher values slow down fall delay.
   TxDqsTcoCode,
-  CccPinDdr5,                   ///< Forces CLK to Toggle by forcing into DDR5 CKD Mode
   DefDrvEnLow,                  ///< Defined TX behavior when DrvEn is low. {0: Force On, 1: HiZ, 2: Return to Termination (See CR_RTO), 3: Non-Return to Zero}
   CmdTxEq,                      ///< CA Equalization codes: {4} Controls ConstantZ (1) vs. NonConstantZ (0), {3:0}={0: 0 Static Legs / 12 Eq Legs, ... 12: 12 Static Legs / 0 Eq Legs, 13-15: rsvd}
   CtlTxEq,                      ///< CTL Equalization codes: {4} Controls ConstantZ (1) vs. NonConstantZ (0), {3:0}={0: 0 Static Legs / 12 Eq Legs, ... 12: 12 Static Legs / 0 Eq Legs, 13-15: rsvd}
   GsmIntCkOn,                   ///< Force PI enables in CCC
   RxVrefVddqDecap,              ///< Control Rx Vref coupling to Vddq.  0: No cap to Vddq  1-7 is cap control with 12.5% step size. Remaining cap will be to VSS
+  RxVocFall,
   WrRetrainDeltaPiCode,
   RdRetrainDeltaPiCode,
   RxCompDqsDelayP,
@@ -177,8 +178,12 @@ typedef enum {
   GsmIocRdRetrainOvrd,          ///< Override ReadRetrain check for initcomplete_read. This should be set when read retrain is not supported or not enabled.
   GsmIocDdr52NMode,
   GsmDdrReset,
+  GsmIocDdr5CkdMode,                ///< Forces CLK to Toggle by forcing into DDR5 CKD Mode
   GsmIocDisableTxDqs,
   GsmIocForceRxAmpOn,
+  GsmIocForceRxOnDqs,
+  GsmIocForceRxOnDqsMux,
+  GsmIocForceRxOnDq,
   GsmIocForceOdtOn,
   GsmIocTxPiPwrDnDis,
   GsmIocInternalClocksOn,           ///< Force on all the PI enables

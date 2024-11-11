@@ -458,8 +458,7 @@ typedef struct {
   UINT8    UCMS;                                    ///< Offset 2357    Option to select UCSI Version
   UINT32   UcmcPort1Gpio;                           ///< Offset 2358    Gpio for UCMC Port 1 Interrupt
   UINT32   UcmcPort2Gpio;                           ///< Offset 2362    Gpio for UCMC Port 2 Interrupt
-  UINT32   RetimerPowerStateGpio;                   ///< Offset 2366    Gpio for Retimer Power state
-  UINT8    Reserved17[7];                           ///< Offset 2370:2376
+  UINT8    Reserved17[11];                          ///< Offset 2366:2376
   UINT8    Ufp2DfpGlobalFlag;                       ///< Offset 2377    Upstream Facing port or Downstream Facing port Global Flag from LPC EC
   UINT8    Ufp2DfpUsbPort;                          ///< Offset 2378    Upstream Facing port or Downstream Facing port number from LPC EC
   UINT8    DbcGlobalFlag;                           ///< Offset 2379    Debug Mode Global Flag from LPC EC

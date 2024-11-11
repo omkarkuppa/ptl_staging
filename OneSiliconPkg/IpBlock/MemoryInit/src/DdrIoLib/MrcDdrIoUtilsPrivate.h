@@ -40,5 +40,31 @@ WrappedForceRcomp (
   IN     COMP_CYCLE_TYPE      CompType
   );
 
+/**
+  This function calculates lock threshold.
+
+  @param[in] MrcData - MRC global data.
+
+  @return Returns lock threshold value.
+**/
+UINT8
+MrcGetLockThresh (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  This function calculates cbmux value.
+
+  @param[in] MrcData - MRC global data.
+  @param[in] Partition - Partition type.
+
+  @return Returns cbmux value.
+**/
+UINT8
+MrcGetCbMux (
+  IN MrcParameters *const MrcData,
+  IN PARTITION_TYPE       PartitionType
+  );
+
 #endif // MRC_DDR_IO_UTILS_PRIVATE_H_
 

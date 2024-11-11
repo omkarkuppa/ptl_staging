@@ -63,16 +63,16 @@ UpdatePeiFspVPolicy (
   UINTN                            VariableSize;
   FSPV_SETUP                       FspVSetup;
   EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariableServices;
-#if FixedPcdGet8(PcdFspModeSelection) == 0
   FSPV_POSTMEM_CONFIG              *FspVUpdateConfig;
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                             *FspsUpd;
 #endif
   DEBUG ((DEBUG_INFO, "Update PeiFspVPolicyUpdate Post-Mem Start\n"));
+  FspVUpdateConfig                 = NULL;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspsUpd;
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
 #else
-  FspVUpdateConfig        = NULL;
 
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gFspVConfigGuid, (VOID *) &FspVUpdateConfig);
   ASSERT_EFI_ERROR (Status);
@@ -108,7 +108,15 @@ UpdatePeiFspVPolicy (
     return EFI_NOT_FOUND;
   }
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.FspvTestId, FspVUpdateConfig->TestId, FspVSetup.FspSVTestCaseId);
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  ((FSPS_UPD *)FspsUpd)->FspsConfig.FspsValidationPtr = (UINTN) (AllocateZeroPool (sizeof (FSPV_POSTMEM_CONFIG)));
+  FspVUpdateConfig = (FSPV_POSTMEM_CONFIG *) (UINTN) ((FSPS_UPD *)FspsUpd)->FspsConfig.FspsValidationPtr;
+  if (FspVUpdateConfig == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+#endif
+
+  UPDATE_POLICY_V2 (FspVUpdateConfig->TestId, FspVUpdateConfig->TestId, FspVSetup.FspSVTestCaseId);
 
   return EFI_SUCCESS;
 }
@@ -130,16 +138,16 @@ UpdatePeiFspVPolicyPreMem (
   UINTN                            VariableSize;
   FSPV_SETUP                       FspVSetup;
   EFI_PEI_READ_ONLY_VARIABLE2_PPI  *VariableServices;
-#if FixedPcdGet8(PcdFspModeSelection) == 0
   FSPV_PREMEM_CONFIG              *FspVUpdatePreMemConfig;
-#endif
-  DEBUG ((DEBUG_INFO, "Update PeiFspVPolicyUpdate Pre-Mem Start\n"));
-
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                            *FspmUpd;
+#endif
+  DEBUG ((DEBUG_INFO, "Update PeiFspVPolicyUpdate Pre-Mem Start\n"));
+  FspVUpdatePreMemConfig          = NULL;
+
+#if FixedPcdGet8(PcdFspModeSelection) == 1
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
 #else
-  FspVUpdatePreMemConfig  = NULL;
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gFspVPreMemConfigGuid, (VOID *) &FspVUpdatePreMemConfig);
   ASSERT_EFI_ERROR (Status);
@@ -176,6 +184,15 @@ UpdatePeiFspVPolicyPreMem (
     return EFI_NOT_FOUND;
   }
 
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.FspvTestId, FspVUpdatePreMemConfig->TestId, FspVSetup.FspMVTestCaseId);
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  ((FSPM_UPD *)FspmUpd)->FspmConfig.FspmValidationPtr = (UINTN) (AllocateZeroPool (sizeof (FSPV_PREMEM_CONFIG)));
+  FspVUpdatePreMemConfig = (FSPV_PREMEM_CONFIG *) (UINTN) ((FSPM_UPD *)FspmUpd)->FspmConfig.FspmValidationPtr;
+  if (FspVUpdatePreMemConfig == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+#endif
+
+  UPDATE_POLICY_V2 (FspVUpdatePreMemConfig->TestId, FspVUpdatePreMemConfig->TestId, FspVSetup.FspMVTestCaseId);
+
   return EFI_SUCCESS;
 }

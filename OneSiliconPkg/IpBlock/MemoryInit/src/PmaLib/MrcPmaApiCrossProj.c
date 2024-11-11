@@ -120,10 +120,12 @@ MrcMcCapability (
 
   // Check that current DDR type is allowed on this CPU
   StrDdrType = NULL;
-  if (IsLpddr5 && (PmaFuseTechEn.Bits.LPDDR5_EN == 0)) {
-    StrDdrType = gDdrTypeStr[MRC_DDR_TYPE_LPDDR5];
-  } else if (IsDdr5 && (PmaFuseTechEn.Bits.DDR5_EN == 0)) {
-    StrDdrType = gDdrTypeStr[MRC_DDR_TYPE_DDR5];
+  if (!(Inputs->IsDdrIoTc)) {
+    if (IsLpddr5 && (PmaFuseTechEn.Bits.LPDDR5_EN == 0)) {
+      StrDdrType = gDdrTypeStr[MRC_DDR_TYPE_LPDDR5];
+    } else if (IsDdr5 && (PmaFuseTechEn.Bits.DDR5_EN == 0)) {
+      StrDdrType = gDdrTypeStr[MRC_DDR_TYPE_DDR5];
+    }
   }
 
   if (StrDdrType != NULL) {
@@ -201,7 +203,7 @@ MrcMcCapability (
                 Controller,
                 Channel,
                 Dimm,
-                ChannelOut->Timing[Profile].NMode
+                Outputs->Timing[Profile].NMode
               );
               if (EccSupport == TRUE) {
                 if (DimmOut->EccSupport == FALSE) {
@@ -247,18 +249,13 @@ MrcMcCapability (
 
   // Make sure we have the same NMode limit on both channels
   Cmd2N = FALSE;
-  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    ControllerOut = &Outputs->Controller[Controller];
-    for (Channel = 0; Channel < MaxChannel; Channel++) {
-      if (ControllerOut->Channel[Channel].Timing[Profile].NMode == 2) {
-        Cmd2N = TRUE;
-        break;
-      }
-    }
-    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-      ControllerOut->Channel[Channel].Timing[Profile].NMode = (Cmd2N) ? 2 : 1;
-    }
+
+  if (Outputs->Timing[Profile].NMode == 2) {
+    Cmd2N = TRUE;
   }
+
+  Outputs->Timing[Profile].NMode = (Cmd2N) ? 2 : 1;
+
 
   // Update Final SdramCount
   // SdramCount = Number of bytes lanes per channel

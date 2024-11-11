@@ -42,6 +42,11 @@ typedef enum {
   EnumPtlH4Xe25Watt44CpuId  = 0x17,
   EnumPtlH4Xe25Watt28CpuId  = 0x18,
   EnumPtlH4Xe25Watt24CpuId  = 0x19,
+  ///
+  /// WCL U
+  ///
+  EnumWclU15Watt10CpuId     = 0x30,
+  EnumWclU15Watt20CpuId     = 0x31,
 } CPU_IDENTIFIER;
 
 /**

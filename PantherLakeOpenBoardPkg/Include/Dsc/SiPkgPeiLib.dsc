@@ -36,6 +36,14 @@
 
   PeiSpiDmaLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/LibraryPrivate/PeiSpiDmaLibNull/PeiSpiDmaLibNull.inf
   GpioHelpersLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Gpio/LibraryPrivate/PeiGpioHelpersLib/PeiGpioHelpersLib.inf
+  PtlPcdHeciDeviceConfigLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdHeciDeviceConfigLib/PtlPcdHeciDeviceConfigLib.inf
+  MeInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Me/LibraryPrivate/PeiMeInitLib/PeiMeInitLib.inf
+  MeFruInitLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdMeInitLib/PtlPcdPeiMeInitLib.inf
+  MeLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Me/Library/PeiMeLib/PeiMeLib.inf
+  PeiItssLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Itss/LibraryPrivate/PeiItssLib/PeiItssLib.inf
+  PeiSpiLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/Library/PeiSpiLib/PeiSpiLib.inf
+  HeciAsyncSupportLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Me/LibraryPrivate/PeiDxeHeciAsyncSupportLibNull/PeiDxeHeciAsyncSupportLibNull.inf
+  MeUtilsLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Me/Library/PeiDxeSmmMeUtilsLib/PeiMeUtilsLib.inf
 
 #
 # GPIOV2

@@ -117,6 +117,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdVpdBaseAddress64      ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable     ## CONSUMES
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdSpdPresent                ## CONSUMES
 
 [Guids]
   gFspNonVolatileStorageHobGuid

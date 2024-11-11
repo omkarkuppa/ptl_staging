@@ -204,10 +204,9 @@ MrcReadTemperature (
 
   @retval mrcSuccess
 **/
-extern
 MrcStatus
 MrcPrintInputParameters (
-  MrcParameters * const MrcData
+  IN MrcParameters *const MrcData
   );
 
 /**

@@ -38,6 +38,6 @@
   CnvFeaturePkg/CnvUefiConfigVariables/CnvUefiConfigVariablesVer2.inf
 !endif
 !endif
-!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion >= 4
+!if gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP == TRUE
   CnvFeaturePkg/CnvCompatibility/CnvCompatibilityDxe.inf
 !endif

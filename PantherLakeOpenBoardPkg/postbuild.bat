@@ -101,89 +101,6 @@ for /f "usebackq tokens=3" %%i in (`FINDSTR /b /c:"VERSION_MAJOR" %BIOS_ID_FILE%
 @set BIOS_PREFIX=PTL_P_OpenBoard
 @set BIOS_BUILD_TAG=%BIOS_PREFIX%_%BIOS_ROM_FILENAME_INTEXT%_%BIOS_MAJOR_VERSION%.%BIOS_MIN_VERSION%_%FSP_MODE%%ROM_FILENAME_SPECIAL_BUILD_TYPE%_%ROM_FILENAME_COMPILER%_%BUILD_TYPE%
 
-@REM
-@REM UPL Post Build Process Begin
-@REM
-@set UPL_BUILD_DIR=Build\UefiPayloadPkgX64
-
-call %EDK_TOOLS_BIN%\GenSec ^
-  -s EFI_SECTION_RAW ^
-  -o %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.raw ^
-     %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.elf
-
-@if %errorlevel% NEQ 0 (
-  echo GenSec: Generate RAW failure
-  @set SCRIPT_ERROR=1
-  goto:EOF
-)
-
-call %EDK_TOOLS_BIN%\GenSec ^
-  --sectionalign 16 ^
-  -o %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.align ^
-     %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.raw
-
-@if %errorlevel% NEQ 0 (
-  echo GenSec: section alignment failure
-  @set SCRIPT_ERROR=1
-  goto:EOF
-)
-
-call %EDK_TOOLS_BIN%\LzmaCompress ^
-  -e %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.align ^
-  -o %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.lzma
-
-@if %errorlevel% NEQ 0 (
-  echo LzmaCompress: failure to compress
-  @set SCRIPT_ERROR=1
-  goto:EOF
-)
-
-call %EDK_TOOLS_BIN%\GenSec ^
-  -s EFI_SECTION_GUID_DEFINED ^
-  -g EE4E5898-3914-4259-9D6E-DC7BD79403CF ^
-  -r PROCESSING_REQUIRED ^
-  -o %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.guid ^
-     %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.lzma
-
-@if %errorlevel% NEQ 0 (
-  echo GenSec: failure for processing EFI_SECTION_GUID_DEFINED
-  @set SCRIPT_ERROR=1
-  goto:EOF
-)
-
-call %EDK_TOOLS_BIN%\GenFfs ^
-  -t EFI_FV_FILETYPE_DXE_CORE ^
-  -g 728c3e86-88e7-447a-a146-8f99915ebafa ^
-  -o %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.ffs ^
-  -i %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.guid
-
-@if %errorlevel% NEQ 0 (
-  echo GenFfs: failure for processing EFI_SECTION_GUID_DEFINED
-  @set SCRIPT_ERROR=1
-  goto:EOF
-)
-
-call %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Upl\Tools\FvUplSizeCheck.py -c^
-     %WORKSPACE%\%BUILD_DIR%\FV\FVUPL.Fv.map ^
-     %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.ffs
-
-@if %errorlevel% NEQ 0 (
-  echo FvUplSizeCheck: failure to FvUplSizeCheck
-  @set SCRIPT_ERROR=1
-  goto:EOF
-)
-
-call %EDK_TOOLS_BINWRAPPERS%\FMMT -a ^
-  %BUILD_DIR%\FV\%BOARD%.fd ^
-  F69584D4-56F0-4D8E-A387-072A836CDD4E ^
-  %WORKSPACE%\%UPL_BUILD_DIR%\UniversalPayload.ffs ^
-  %BUILD_DIR%\FV\%BOARD%.fd
-
-@if %errorlevel% NEQ 0 (
-  echo FMMT: failure to add UniversalPayload.ffs
-  @set SCRIPT_ERROR=1
-  goto:EOF
-)
 
 @REM
 @REM Run FitGen tool to generate FIT
@@ -253,13 +170,8 @@ cd %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%
 @rem Create Simics image
 @rem
 @set PLATFORM_BIN_PACKAGE=PantherLakeBinPkg
-if exist %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\IfwiPatcher\IfwiPatcher.py (
-  @set IFWI_PATCHER=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\IfwiPatcher\IfwiPatcher.py
-  @set IFWI_BIN=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage\PreSiIfwi\PTL_P_IFWI.bin
-) else (
-  @set IFWI_PATCHER=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\SimicsImage\IfwiPatcher\IfwiPatcher.py
-  @set IFWI_BIN=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\SimicsImage\PreSiIfwi\PTL_P_IFWI.bin
-)
+@set IFWI_PATCHER=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\SimicsImage\IfwiPatcher\IfwiPatcher.py
+@set IFWI_BIN=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\SimicsImage\PreSiIfwi\PTL_P_IFWI.bin
 @set OUTPUT_SIMICS_BIN=%WORKSPACE%\RomImages\PantherLakeOpenBoardSimics\IFWI_%BIOS_BUILD_TAG%_Simics.bin
 @if exist %IFWI_PATCHER% (
   @REM
@@ -270,7 +182,7 @@ if exist %WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Tools\InternalOnly\RomImage
     echo "ERROR Simics IFWI image generation failed"
     exit /b 1
   )
+  @echo =========================================================================
+  @echo Simics IFWI image generated successfully !
+  @echo =========================================================================
 )
-@echo =========================================================================
-@echo Simics IFWI image generated successfully !
-@echo =========================================================================

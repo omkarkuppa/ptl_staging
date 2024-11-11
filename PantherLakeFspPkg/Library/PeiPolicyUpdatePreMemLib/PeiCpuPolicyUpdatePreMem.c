@@ -104,7 +104,7 @@ FspUpdatePeiCpuPolicyPreMem (
   CpuInitPreMemConfig->OcLock                      = FspmUpd->FspmConfig.OcLock;
   CpuInitPreMemConfig->TsegSize                    = FspmUpd->FspmConfig.TsegSize;
   CpuInitPreMemConfig->SmmRelocationEnable         = FspmUpd->FspmConfig.SmmRelocationEnable;
-
+  CpuInitPreMemConfig->ReduceXecores               = FspmUpd->FspmConfig.ReduceXecores;
   ///
   /// Define Maximum Number of Voltage Regulator Domains.
   ///
@@ -197,6 +197,7 @@ FspUpdatePeiCpuPolicyPreMem (
   CpuPowerDeliveryConfig->PsysPowerLimit2          = FspmUpd->FspmConfig.PsysPowerLimit2;
   CpuPowerDeliveryConfig->PsysPowerLimit1Power     = (UINT16) (FspmUpd->FspmConfig.PsysPowerLimit1Power);
   CpuPowerDeliveryConfig->PsysPowerLimit2Power     = (UINT16) (FspmUpd->FspmConfig.PsysPowerLimit2Power);
+  CpuPowerDeliveryConfig->PlatformAtxTelemetryUnit = FspmUpd->FspmConfig.PlatformAtxTelemetryUnit;
   CpuPowerDeliveryConfig->DisableVrThermalAlert    = FspmUpd->FspmConfig.DisableVrThermalAlert;
   CpuPowerDeliveryConfig->ThermalMonitor           = FspmUpd->FspmConfig.ThermalMonitor;
   CpuPowerDeliveryConfig->ConfigTdpLevel           = FspmUpd->FspmConfig.ConfigTdpLevel;

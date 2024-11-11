@@ -134,4 +134,14 @@ PtlEnablePciePmeEvents (
   VOID
   );
 
+/**
+  Calculates Overcurrent pin number to match USB3 OCM register bit map
+  @param[in]  pInst             IP_USB3_INST structure pointer
+  @param[in]  OcPin             Index of lane to check
+**/
+UINT32
+CalculateOcPin (
+  IP_USB3_INST  *pInst,
+  UINT32        OcPin
+  );
 #endif // _PTL_SOC_TCSS_INIT_PRIVATE_

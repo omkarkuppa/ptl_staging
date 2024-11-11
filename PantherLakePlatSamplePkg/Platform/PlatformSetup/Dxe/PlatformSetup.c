@@ -30,6 +30,7 @@
 #include <Register/GenerationMsr.h>
 #include <Library/TmeInfoLib.h>
 #include <Library/DgrInfoLib.h>
+#include <Library/TdxInfoLib.h>
 #if FixedPcdGetBool (PcdOverclockEnable) == 1
 #include <OcLimits.h>
 #endif
@@ -499,9 +500,9 @@ CpuSetupInitCallback (
   SetupCpuFeatures.TmeBypassSupported = (UINT8) IsTmeBypassSupported ();
 
   ///
-  /// Seam Mode support indicates TDX supported
+  /// Set TDX supported
   ///
-  SetupCpuFeatures.TdxSupported = (UINT8) IsSeamModeSupported ();
+  SetupCpuFeatures.TdxSupported = (UINT8) IsTdxSupported ();
 
   Status = gRT->SetVariable (
                   L"SetupCpuFeatures",

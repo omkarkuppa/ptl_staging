@@ -854,9 +854,9 @@ InitMrwLpddr5 (
   Inputs->NonTargetOdtEn = 1;
   CaOdtEnc = 0x3;
   if ((2 & Outputs->ValidRankMask) == 0) {
-      NtOdtEnc = 4;
+    NtOdtEnc = 4; // 1R: RZQ/4 = 60 Ohm
   } else {
-    NtOdtEnc = 2;
+    NtOdtEnc = 2; // 2R: RZQ/2 = 120 Ohm
   }
 #else
   NtOdtEnc = 0;
@@ -893,7 +893,7 @@ InitMrwLpddr5 (
         }
         ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
         MrPtr = ChannelOut->Dimm[dDIMM0].Rank[Rank % MAX_RANK_IN_DIMM].MR;
-        TimingPtr = &ChannelOut->Timing[Profile];
+        TimingPtr = &Outputs->Timing[Profile];
 
         if (ChannelOut->Dimm[dDIMM0].RankInDimm == 2) {
           CaOdt = Outputs->LpByteMode ? LpddrOdtTableIndex.RttCa2RByteMode : LpddrOdtTableIndex.RttCa;
@@ -1276,8 +1276,6 @@ Lpddr5GmfDelayTimings (
   const MRC_FUNCTION  *MrcCall;
   const MrcInput      *Inputs;
   MrcTiming*          Timing;
-  UINT32              FirstController;
-  UINT32              FirstChannel;
   UINT32              TimingNck;
   UINT32              tCK;
   UINT64              tZQCALfs;
@@ -1291,9 +1289,7 @@ Lpddr5GmfDelayTimings (
   Outputs = &MrcData->Outputs;
   Inputs  = &MrcData->Inputs;
   MrcCall = Inputs->Call.Func;
-  FirstController = Outputs->FirstPopController;
-  FirstChannel = Outputs->Controller[FirstController].FirstPopCh;
-  Timing = &Outputs->Controller[FirstController].Channel[FirstChannel].Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
+  Timing = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
 
   if (TimingNckOut == NULL) {
     return mrcWrongInputParameter;
@@ -3436,5 +3432,250 @@ MrcGetLpddr5Tfc (
   } else {
     Result = MRC_LP5_tFC_LONG_NS;
   }
+  return Result;
+}
+
+/**
+  Calculate DqioDuration based on frequency and memory techmology
+
+  @param[in] MrcData               - Include all MRC global data
+  @param[out] *DqioDuration        - DqioDuration encoded to DDR5 MR45 / LPDDR5 MR37 definition
+  @param[out] *RunTimeClocksBy16   - DqioDuration in units of (tCK * 16)
+
+  @retval mrcSuccess               - if it success
+  @retval mrcUnsupportedTechnology - if the frequency doesn't match
+**/
+MrcStatus
+MrcGetDqioDuration (
+  IN     MrcParameters *const MrcData,
+  OUT    UINT8               *DqioDuration,
+  OUT    UINT16              *RunTimeClocksBy16
+  )
+{
+  MrcStatus Status;
+  MrcOutput *Outputs;
+  UINT32    Duration;
+  Outputs = &MrcData->Outputs;
+  Status  = mrcSuccess;
+  Duration = DIVIDECEIL ((2047 * 2 * 300), (Outputs->tCKps * 16));
+  if (Duration > 511) {
+    *DqioDuration = (MRC_BIT7|MRC_BIT6);
+    *RunTimeClocksBy16 = 512; // 8192 clocks
+  } else if (Duration > 255) {
+    *DqioDuration = MRC_BIT7;
+    *RunTimeClocksBy16 = 256; // 4096 clocks
+  } else if (Duration > 127) {
+    *DqioDuration = MRC_BIT6;
+    *RunTimeClocksBy16 = 128; // 2048 clocks
+  } else if (Duration > 63) {
+    *DqioDuration = 63;
+    *RunTimeClocksBy16 = 63;  // 1008 clocks
+  } else {
+    *DqioDuration = (UINT8) Duration;
+    *RunTimeClocksBy16 = (UINT16) Duration;
+  }
+
+  return Status;
+}
+
+/**
+  This function returns the tPRPDEN value for the specified Memory type.
+
+  @param[in] MrcData  - Include all MRC global data.
+  @param[in] DdrFreq  - The memory frequency.
+
+  @retval The tPRPDEN value for the specified configuration.
+**/
+UINT32
+MrcGetTprpden (
+  IN       MrcParameters *const MrcData,
+  IN const MrcFrequency  DdrFreq
+  )
+{
+  MrcOutput       *Outputs;
+  MrcDdrType      DdrType;
+  UINT32          tPRPDEN;
+
+  Outputs = &MrcData->Outputs;
+  DdrType = Outputs->DdrType;
+
+  switch (DdrType) {
+    case MRC_DDR_TYPE_LPDDR5:
+      tPRPDEN = MRC_LP5_tCMDPD_MIN_NCK;
+      // Scale to WCK
+      tPRPDEN *= 4;
+      break;
+
+    default:
+    case MRC_DDR_TYPE_DDR5:
+      tPRPDEN = 2;
+      break;
+  } // end switch
+
+  // tPRPDEN must be programmed to a minimum of 4
+  tPRPDEN = MAX (tPRPDEN, MRC_tPRPDEN_MIN);
+
+  return tPRPDEN;
+}
+
+/**
+  This function returns the tBPR2ACT value for the current Memory type.
+
+  @param[in] MrcData  - Include all MRC global data.
+
+  @retval The tBPR2ACT value for the specified configuration.
+**/
+UINT32
+MrcGetTbpr2act (
+  IN MrcParameters *const MrcData
+  )
+{
+  MrcOutput       *Outputs;
+  UINT32          tBPR2ACT;
+  UINT32          MinDlySbRef2Act;
+  MRC_LP5_BANKORG Lp5BGOrg;
+  UINT32          TckPs;
+
+  Outputs = &MrcData->Outputs;
+  // Convert tCK from Femtoseconds to Picoseconds
+  TckPs   = DIVIDECEIL (Outputs->MemoryClock, 1000);
+
+  if (!Outputs->IsLpddr) {
+    return 0;
+  }
+
+  Lp5BGOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
+  MinDlySbRef2Act = (Lp5BGOrg == MrcLp58Bank ? MRC_LP5_tBPR2ACT_8B_PS : MRC_LP5_tBPR2ACT_PS);
+  MinDlySbRef2Act = MinDlySbRef2Act * 4; // Multiply by 4 for units of WCK per tCK
+  tBPR2ACT = DIVIDECEIL (MinDlySbRef2Act, TckPs);
+  tBPR2ACT += ((tBPR2ACT % 4) == 0 ? 0 : (4 - (tBPR2ACT % 4))); // Round to the next number divisible by 4
+
+  return tBPR2ACT;
+}
+
+/**
+  This function calculates DRAM temp/voltage drift
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @retval UINT32 DramWriteDrift in pS
+**/
+UINT32
+MrcGetDramWriteDrift (
+  IN     MrcParameters *const MrcData
+  )
+{
+  MrcOutput    *Outputs;
+  MrcFrequency DdrFrequency;
+  BOOLEAN      IsDdr5;
+  UINT32       Temp;
+  UINT32       Volt;
+  UINT32       DramWriteDrift;
+  UINT32       NomVdd2Mv;
+
+  Outputs         = &MrcData->Outputs;
+  IsDdr5          = Outputs->IsDdr5;
+  DdrFrequency    = Outputs->Frequency;
+
+  // Assume DRAM Voltage/Temp for different ranks in the same package is < 40 C and  <4% supply noise
+  // DramWriteDrift = (IamDDR5?0.85:((DataRate >= 3200 MTs)?((DataRate>=6400 MTs)?0.5:0.6):0.7))pS/C * 40 C +
+  //                  (IamDDR5?0.64:((DataRate >= 3200 MTs)?((DataRate>=6400 MTs)?0.4:0.5):1.0))pS/mV * Vdd2 * 0.04
+  if (IsDdr5) {
+    Temp = 850;
+    Volt = 640;
+  } else {
+    if (DdrFrequency < 3200) {
+      Temp = MRC_LP5_tWCK2DQI_TEMP_LF;
+      Volt = MRC_LP5_tWCK2DQI_VOLT_LF;
+    } else {
+      Temp = MRC_LP5_tWCK2DQI_TEMP_HF;
+      Volt = MRC_LP5_tWCK2DQI_VOLT_HF;
+    }
+  }
+
+  // Nominal Vdd2
+  NomVdd2Mv = IsDdr5 ? 1117 : 1065;
+
+  DramWriteDrift = (Temp * MAX_TEMP_DRIFT * HUNDRED_MULTIPLIER) + (Volt * NomVdd2Mv * MAX_NOISE_PERCENT);
+  DramWriteDrift = UDIVIDEROUND (DramWriteDrift, THOUSAND_MULTIPLIER * HUNDRED_MULTIPLIER);
+
+  return DramWriteDrift;
+
+}
+
+/**
+  This function calculates the LPDDR5 Read Drift
+
+  @param[in]  MrcData - Include all MRC global data.
+
+  @retval DramReadDriftPI - Read Drift in Pi ticks
+**/
+UINT32
+GetLpddr5ReadDrift (
+  IN  MrcParameters* const MrcData
+  )
+{
+  MrcOutput      *Outputs;
+  UINT32  TempDrift;
+  UINT32  VoltDrift;
+  UINT32  DramReadDrift;
+
+  Outputs = &MrcData->Outputs;
+
+  if (Outputs->Frequency < f3200) {
+    TempDrift = MRC_LP5_tWCK2DQO_TEMP_LF;
+    VoltDrift = MRC_LP5_tWCK2DQO_VOLT_LF;
+  } else {
+    TempDrift = MRC_LP5_tWCK2DQO_TEMP_HF;
+    VoltDrift = MRC_LP5_tWCK2DQO_VOLT_HF;
+  }
+
+  DramReadDrift = (TempDrift * MAX_TEMP_DRIFT * HUNDRED_MULTIPLIER) + (VoltDrift * 1065 * MAX_NOISE_PERCENT);
+  DramReadDrift = UDIVIDEROUND (DramReadDrift, THOUSAND_MULTIPLIER * HUNDRED_MULTIPLIER);
+
+  return DramReadDrift;
+}
+
+/**
+  This function returns tCCD_S for LPDDR.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @returns nWR_diff parameter.
+**/
+UINT32
+GetLpddrtCCDS (
+  IN MrcParameters *const MrcData
+  )
+{
+  UINT32 Result;
+  if (MrcData->Outputs.Frequency > f3200) {
+    Result = TCCD_S_LP5_GT3200;
+  } else {
+    Result = TCCD_LP5_FREQ;
+  }
+
+  return Result;
+}
+
+/**
+  This function returns tCCD_L for LPDDR.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @returns nWR_diff parameter.
+**/
+UINT32
+GetLpddrtCCDL (
+  IN MrcParameters *const MrcData
+  )
+{
+  UINT32 Result;
+  if (MrcData->Outputs.Frequency > f3200) {
+    Result = TCCD_L_LP5_GT3200;
+  } else {
+    Result = TCCD_LP5_FREQ;
+  }
+
   return Result;
 }

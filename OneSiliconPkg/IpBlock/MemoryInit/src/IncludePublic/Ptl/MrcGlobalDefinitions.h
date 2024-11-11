@@ -33,7 +33,7 @@
 #define NUM_PHASES                   (8)
 #define PH_DCC_SCALE_NUMERATOR       1
 #define PH_DCC_SCALE_DENOMINATOR     1
-#define PH_DCC_SAMPLES               (3)
+#define PH_DCC_SAMPLES               (7)
 #define TICK_CODE_DELTA              31
 #define DCC_INIT_FIRST               -16
 #define DCC_INIT_SECOND              15

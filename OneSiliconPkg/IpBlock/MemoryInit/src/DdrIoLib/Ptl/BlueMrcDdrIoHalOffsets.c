@@ -272,67 +272,6 @@ GetDdrIoCompOffsets (
   return MRC_UINT32_MAX;
 }
 
-
-/**
-  Get the offset of DDRPGCR0_CR_LVRVOLTAGESENSOR for a given partition.
-
-  @param[in]  Lane         - Lane index within the data group (0-based).
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @retval CR Offset.
-**/
-UINT32
-DdrIoPgLvrVoltageSensorOffset (
-  IN  UINT32                Lane,
-  OUT UINT64_STRUCT *const  VolatileMask
-  )
-{
-  UINT32  Offset;
-
-  Offset = MRC_UINT32_MAX;
-
-  if (Lane <= 9) {
-    // ddrpgcr[0..9]
-    Offset = OFFSET_CALC_CH (DDRPGCR0_CR_LVRVOLTAGESENSOR_REG, DDRPGCR1_CR_LVRVOLTAGESENSOR_REG, Lane);
-  } else if ((Lane >= 10) && (Lane <= 11)) {
-    // ddrpgtermcr[0..1]
-    Offset = OFFSET_CALC_CH (DDRPGTERMCR0_CR_LVRVOLTAGESENSOR_REG, DDRPGTERMCR1_CR_LVRVOLTAGESENSOR_REG, Lane - 10);
-  }
-  VolatileMask->Data = DDRPGTERMCR0_CR_LVRVOLTAGESENSOR_VOLATILE_BITFIELDS_MSK;
-
-  return Offset;
-}
-
-/**
-  Get the offset of DDRPGCR0_CR_LVRVOLTAGESENSORCOUNT for a given partition.
-
-  @param[in]  Lane         - Lane index within the data group (0-based).
-  @param[out] VolatileMask - Mask indicating which bits are volatile in register
-
-  @retval CR Offset.
-**/
-UINT32
-DdrIoPgLvrVoltageSensorCountOffset (
-  IN  UINT32                Lane,
-  OUT UINT64_STRUCT *const  VolatileMask
-  )
-{
-  UINT32  Offset;
-
-  Offset = MRC_UINT32_MAX;
-
-  if (Lane <= 9) {
-    // ddrpgcr[0..9]
-    Offset = OFFSET_CALC_CH (DDRPGCR0_CR_LVRVOLTAGESENSORCOUNT_REG, DDRPGCR1_CR_LVRVOLTAGESENSORCOUNT_REG, Lane);
-  } else if ((Lane >= 10) && (Lane <= 11)) {
-    // ddrpgtermcr[0..1]
-    Offset = OFFSET_CALC_CH (DDRPGTERMCR0_CR_LVRVOLTAGESENSORCOUNT_REG, DDRPGTERMCR1_CR_LVRVOLTAGESENSORCOUNT_REG, Lane - 10);
-  }
-  VolatileMask->Data = DDRPGTERMCR0_CR_LVRVOLTAGESENSORCOUNT_VOLATILE_BITFIELDS_MSK;
-
-  return Offset;
-}
-
 /**
   Function used to get the CR Offset for registers listed under PGx partitions.
 

@@ -155,7 +155,6 @@ if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\FspProducerDataHeader.h 
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\Fsp*Upd.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\Fsp*Upd.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\HobUsageDataHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\HobUsageDataHob.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MemInfoHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MemInfoHob.h
-if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MrcGlobalDefinitions.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MrcGlobalDefinitions.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosCacheInfoHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosCacheInfoHob.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosProcessorInfoHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosProcessorInfoHob.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Config.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Config.h
@@ -462,10 +461,6 @@ if exist "%OUT_DIR%\%FSP_PKG_NAME%\%BD_TARGET%_%TOOL_CHAIN_TAG%\FV\FspsUpd.h" (
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MemInfoHob.h attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MemInfoHob.h
 if exist "%WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\MemInfoHob.h" (
   copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\MemInfoHob.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
-  )
-if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MrcGlobalDefinitions.h attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MrcGlobalDefinitions.h
-if exist "%WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\IpBlock\MemoryInit\src\IncludePublic\Ptl\MrcGlobalDefinitions.h" (
-  copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\IpBlock\MemoryInit\src\IncludePublic\Ptl\MrcGlobalDefinitions.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
   )
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosCacheInfoHob.h attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosCacheInfoHob.h
 if exist "%WORKSPACE_COMMON%\%PLATFORM_SI_PACKAGE%\Include\SmbiosCacheInfoHob.h" (

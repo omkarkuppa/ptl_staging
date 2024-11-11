@@ -103,5 +103,6 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvAcpiTables|TRUE
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVariables|TRUE
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvUefiVarVersion|2
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP|TRUE
 
 !include CnvFeaturePkg/Include/CnvFeature.dsc

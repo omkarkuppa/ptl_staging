@@ -21,7 +21,6 @@
 
 #include "PeiPolicyBoardConfig.h"
 #include <Register/GenerationMsr.h>
- #include <FspmUpd.h>
 
 /**
   This function performs PEI CPU Pre-Memory Policy update by board configuration.

@@ -208,7 +208,7 @@ ReplacePathStringInSsdtTable (
   StartCopyResultTablePtr = ResultTablePtr;
   AdditionalSize = 0;
 
-  for (Index = sizeof (EFI_ACPI_DESCRIPTION_HEADER); Index < TableSize; Index++) {
+  for (Index = sizeof (EFI_ACPI_DESCRIPTION_HEADER); Index < TableSize - AsciiStrLen (OldPathString); Index++) {
     if (CompareMem (&TablePtr[Index], OldPathString, AsciiStrLen (OldPathString)) == 0) {
 
       AdditionalSize = (&TablePtr[Index] - StartCopyTablePtr) + AsciiStrLen (NewPathString);

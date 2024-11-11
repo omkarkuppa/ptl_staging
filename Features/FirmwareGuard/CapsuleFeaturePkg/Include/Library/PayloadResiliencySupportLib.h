@@ -22,12 +22,6 @@
 #ifndef __PAYLOAD_RESILIENCY_SUPPORT_LIB_H__
 #define __PAYLOAD_RESILIENCY_SUPPORT_LIB_H__
 
-//
-// FIT table backup is placed below the FIT table address at 0x200, with a size of 0x100.
-//
-#define FIT_TABLE_BACKUP_OFFSET 0x200
-#define FIT_TABLE_BACKUP_SIZE   0x100
-
 /**
   Check whether the Payloads management backup Feature is enabled.
 
@@ -38,17 +32,6 @@
 BOOLEAN
 EFIAPI
 IsPayloadBackupEnabled (
- );
-
-/**
-  Get the Microcode Address in recovery boot
-
-  @return       The Microcode Address value.
-
-**/
-UINT32
-EFIAPI
-GetMicrocodeBaseAddressInRecovery (
  );
 
 #endif

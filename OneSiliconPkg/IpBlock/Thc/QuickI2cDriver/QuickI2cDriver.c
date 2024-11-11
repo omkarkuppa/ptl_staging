@@ -550,121 +550,17 @@ QuickI2cInitialize (
   }
 
   //
-  // Step 14- Power up device through RST GPIO
+  // Step 14- Power up device through RST GPIO only for ResetPadTrigger LOW case
   //
-  Status = QuickI2cPerformTouchIcReset (QuickI2cDev, Reset);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "QuickI2cInitialize QuickI2cPerformTouchIcReset error status: %r\n", Status));
-    return Status;
-  }
-
-  return EFI_SUCCESS;
-}
-
-/**
-  Perform SubIP reset process after initialization
-
-  @param[in]  QuickI2cDev      Context of QuickI2c device
-  @param[in]  HidOverI2c       Hid Over I2C policy data
-  @param[in]  Reset            Reset data
-
-  @retval EFI_SUCCESS     QuickI2c initialized successfully
-  @retval other           Error during initialization
-**/
-EFI_STATUS
-QuickI2cTakeOutOfReset (
-  IN QUICK_I2C_DEV                *QuickI2cDev,
-  IN THC_HID_OVER_I2C             *HidOverI2c,
-  IN THC_RESET                    *Reset
-  )
-{
-  EFI_STATUS                      Status;
-
-  THC_LOCAL_DEBUG (L"QuickI2cTakeOutOfReset Start ()\n")
-
-  if (QuickI2cLibIsQuiesceDisabled (QuickI2cDev->PciBar0)) {
-    THC_LOCAL_DEBUG (L"QuickI2cTakeOutOfReset QuiesceDisabled \n")
-    Status = QuickI2cLibStartQuiesce (QuickI2cDev->PciBar0, StartQuiesceTimeout);
-    THC_LOCAL_DEBUG (L"QuickI2cTakeOutOfReset QuickI2cLibStartQuiesce Status: %r\n", Status)
+if (!Reset->ResetPadTrigger) {
+      //
+      // Power up device through RST GPIO, if not already by default RST line should be high
+      //
+    Status = QuickI2cLibGpioGetOutOfReset (Reset->ResetSequencingDelay, QuickI2cDev->InstanceId, Reset->ResetPadTrigger);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_WARN, "QuickI2cTakeOutOfReset QuickI2cLibStartQuiesce error, Status %r\n", Status));
+      DEBUG ((DEBUG_WARN, "QuickI2cInitialize QuickI2cLibGpioGetOutOfReset error status: %r\n", Status));
       return Status;
     }
-  }
-
-  //
-  // Power up device through I2C Power request and reset command
-  //
-  Status = QuickI2cLibGetOutOfReset (QuickI2cDev, Reset->ResetSequencingDelay, QuickI2cDev->InstanceId, Reset->ResetPadTrigger);
-  THC_LOCAL_DEBUG (L"QuickI2cTakeOutOfReset QuickI2cLibGetOutOfReset Status: %r\n", Status)
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "QuickI2cTakeOutOfReset QuickI2cTakeOutOfReset error, Status %r\n", Status));
-    return Status;
-  }
-
-  if (QuickI2cLibIsQuiesceEnabled (QuickI2cDev->PciBar0)) {
-    THC_LOCAL_DEBUG (L"QuickI2cTakeOutOfReset QuiesceEnabled \n")
-    Status = QuickI2cLibEndQuiesce (QuickI2cDev->PciBar0, EndQuiesceTimeout);
-    THC_LOCAL_DEBUG (L"QuickI2cTakeOutOfReset QuickI2cLibEndQuiesce Status: %r\n", Status)
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_WARN, "QuickI2cTakeOutOfReset QuickI2cLibEndQuiesce error, Status %r\n", Status));
-      return Status;
-    }
-  }
-
-  return EFI_SUCCESS;
-}
-
-
-/**
-  Perform SubIP reset/power up through RST GPIO
-
-  @param[in]  QuickI2cDev      Context of QuickI2c device
-  @param[in]  Reset            Context of Reset
-
-  @retval EFI_SUCCESS     QuickI2c initialized successfully
-  @retval other           Error during initialization
-**/
-EFI_STATUS
-QuickI2cPerformTouchIcReset (
-  IN QUICK_I2C_DEV       *QuickI2cDev,
-  THC_RESET              *Reset
-  )
-{
-  EFI_STATUS              Status;
-
-  THC_LOCAL_DEBUG (L"QuickI2cPerformTouchIcReset Start ()\n")
-
-  if (QuickI2cLibIsQuiesceDisabled (QuickI2cDev->PciBar0)) {
-    THC_LOCAL_DEBUG (L"QuickI2cPerformTouchIcReset QuiesceDisabled \n")
-    Status = QuickI2cLibStartQuiesce (QuickI2cDev->PciBar0, StartQuiesceTimeout);
-    THC_LOCAL_DEBUG (L"QuickI2cPerformTouchIcReset QuickI2cLibStartQuiesce Status: %r\n", Status)
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_WARN, "QuickI2cPerformTouchIcReset QuickI2cLibStartQuiesce error, Status %r\n", Status));
-      return Status;
-    }
-  }
-
-  //
-  // Power up device through RST GPIO, if not already by default RST line should be high
-  //
-  QuickI2cLibGpioGetOutOfReset (Reset->ResetSequencingDelay, QuickI2cDev->InstanceId, Reset->ResetPadTrigger);
-
-  if (QuickI2cLibIsQuiesceEnabled (QuickI2cDev->PciBar0)) {
-    THC_LOCAL_DEBUG (L"QuickI2cPerformTouchIcReset QuiesceEnabled \n")
-    Status = QuickI2cLibEndQuiesce (QuickI2cDev->PciBar0, EndQuiesceTimeout);
-    THC_LOCAL_DEBUG (L"QuickI2cPerformTouchIcReset QuickI2cLibEndQuiesce Status: %r\n", Status)
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_WARN, "QuickI2cPerformTouchIcReset QuickI2cLibEndQuiesce error, Status %r\n", Status));
-      return Status;
-    }
-  }
-
-  Status = QuickI2cLibWaitForResetOccured (QuickI2cDev->PciBar0, WaitForResetTimeout);
-  THC_LOCAL_DEBUG (L"QuickI2cPerformTouchIcReset QuickI2cLibWaitForResetOccured Status: %r\n", Status)
-  if (EFI_ERROR (Status)) {
-    // will go ahead with device descriptor read even for timeout, Timeout reached - might be expected
-    DEBUG ((DEBUG_INFO, "QuickI2cLibWaitForResetOccured <%r> Timeout reached - might be expected \n", Status));
   }
 
   return EFI_SUCCESS;
@@ -752,26 +648,75 @@ QuickI2cReadDeviceDescriptor (
   return Status;
 }
 
+
+/**
+  Perform disable interrupt
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @retval EFI_SUCCESS     QuickI2c initialized successfully
+  @retval other           Error during initialization
+**/
+EFI_STATUS
+QuickI2cDisableInterrupt (
+  IN QUICK_I2C_DEV      *QuickI2cDev
+  )
+{
+  EFI_STATUS            Status;
+  //
+  // Clear Global error and stall
+  //
+  if (QuickI2cLibIsQuiesceDisabled (QuickI2cDev->PciBar0)) {
+    THC_LOCAL_DEBUG (L"QuickI2cDisableInterrupt QuiesceDisabled \n")
+    Status = QuickI2cLibStartQuiesce (QuickI2cDev->PciBar0, StartQuiesceTimeout);
+    THC_LOCAL_DEBUG (L"QuickI2cDisableInterrupt QuickI2cLibStartQuiesce Status: %r\n", Status)
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_WARN, "QuickI2cDisableInterrupt QuickI2cLibStartQuiesce error, Status %r\n", Status));
+      return Status;
+    }
+  }
+  return EFI_SUCCESS;
+}
+
+/**
+  Perform enable interrupt
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @retval EFI_SUCCESS     QuickI2c initialized successfully
+  @retval other           Error during initialization
+**/
+EFI_STATUS
+QuickI2cEnableInterrupt (
+  IN QUICK_I2C_DEV      *QuickI2cDev
+  )
+{
+  EFI_STATUS            Status;
+
+  if (QuickI2cDev->InitProcessDoneEnableInterrupt) {
+    if (QuickI2cLibIsQuiesceEnabled (QuickI2cDev->PciBar0)) {
+      THC_LOCAL_DEBUG (L"QuickI2cEnableInterrupt QuiesceEnabled \n")
+      Status = QuickI2cLibEndQuiesce (QuickI2cDev->PciBar0, EndQuiesceTimeout);
+      THC_LOCAL_DEBUG (L"QuickI2cEnableInterrupt QuickI2cLibEndQuiesce Status: %r\n", Status)
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_WARN, "QuickI2cEnableInterrupt QuickI2cLibEndQuiesce error, Status %r\n", Status));
+        return Status;
+      }
+    }
+  }
+  return EFI_SUCCESS;
+}
+
 /**
   Power up device through I2C Power request and reset command
 
-  @param[in] QuickI2cDev        QuickI2c MMIO BAR0
-  @param[in] Timeout            [MILLISECONDS] Indicates how long driver waits for device to power up
-  @param[in] InstanceId         I2C instance id
-  @param[in] ResetPadTrigger    Reset Pad Trigger
+  @param[in] QuickI2cDev       QuickI2c MMIO BAR0
 
 **/
 EFI_STATUS
 QuickI2cLibGetOutOfReset (
-  IN QUICK_I2C_DEV             *QuickI2cDev,
-  IN UINT32                    Timeout,
-  IN UINT8                     InstanceId,
-  IN UINT32                    ResetPadTrigger
+  IN QUICK_I2C_DEV             *QuickI2cDev
   )
 {
   EFI_STATUS   Status;
 
-  THC_LOCAL_DEBUG (L"QuickI2cLibGetOutOfReset: Entry() InstanceId- %d\n", InstanceId)
+  THC_LOCAL_DEBUG (L"QuickI2cLibGetOutOfReset: Entry() InstanceId- %d\n", QuickI2cDev->InstanceId)
 
   Status = QuickI2cSendSetPowerRequest (QuickI2cDev, (UINT8) QuickI2cSubIpPowerStateOn);
   if (EFI_ERROR (Status)) {
@@ -1682,11 +1627,12 @@ QuickI2cSwDma (
   // Clear Global error and stall
   //
   if (QuickI2cLibIsQuiesceDisabled (QuickI2cDev->PciBar0)) {
-    THC_LOCAL_DEBUG (L"QuickI2cSwDma: QuiesceDisabled \n")
-    QuickI2cLibStartQuiesce (QuickI2cDev->PciBar0, StartQuiesceTimeout);
+    THC_LOCAL_DEBUG (L"QuickI2cSwDma QuiesceDisabled \n")
+    Status = QuickI2cLibStartQuiesce (QuickI2cDev->PciBar0, StartQuiesceTimeout);
+    THC_LOCAL_DEBUG (L"QuickI2cSwDma QuickI2cLibStartQuiesce Status: %r\n", Status)
     if (EFI_ERROR (Status)) {
-      THC_LOCAL_DEBUG (L"QuickI2cSwDma: QuickI2cLibStartQuiesce error, Status %r\n", Status)
-      // continue
+      DEBUG ((DEBUG_WARN, "QuickI2cSwDma QuickI2cLibStartQuiesce error, Status %r\n", Status));
+      return Status;
     }
   }
 
@@ -1790,7 +1736,6 @@ QuickI2cStop (
   QuickI2cResetDmaSettings (QuickI2cDev->PciBar0);
   QuickI2cResetSwdmaSettings (QuickI2cDev->PciBar0);
   QuickI2cStopAbsPtr (QuickI2cDev);
-  QuickI2cPerformTouchIcReset (QuickI2cDev, Reset);
   QuickI2cLibCleanUp (QuickI2cDev->PciBar0);
 
   //
@@ -2089,8 +2034,8 @@ QuickI2cReadHidDescriptor (
     THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor Waiting for Response \n")
     do {
       if (QuickI2cDev->HidDataAvailable == TRUE && QuickI2cDev->ReadDone == TRUE) {
-        THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor Response received\n")
         Status = EFI_SUCCESS;
+        THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor Response received %r\n", Status)
         break;
       }
       MicroSecondDelay (1000);
@@ -2103,7 +2048,11 @@ QuickI2cReadHidDescriptor (
       //
       // Even for error case need to clear out everything
       //
-      QuickI2cCompleteSwdma (QuickI2cDev->PciBar0);
+      QuickI2cCompleteSwdma (QuickI2cDev);
+
+      // Just to make sure interrupt is disabled since its init flow
+      THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor: QuickI2cDisableInterrupt\n")
+      QuickI2cDisableInterrupt (QuickI2cDev);
       QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);
       QuickI2cDev->SwDmaActive = FALSE;
       THC_LOCAL_DEBUG(L"QuickI2cReadHidDescriptor: QuickI2c SwDma End\n")
@@ -2132,14 +2081,17 @@ QuickI2cReadHidDescriptor (
   //
   // Complete the process
   //
-  QuickI2cCompleteSwdma (QuickI2cDev->PciBar0);
+  QuickI2cCompleteSwdma (QuickI2cDev);
+
+  // Just to make sure interrupt is disabled since its init flow, complete the flow
+  QuickI2cDisableInterrupt (QuickI2cDev);
   QuickI2cDev->SwDmaMessageLength = 0;
 
   // Reset PRD table settings
   //
   QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);
   QuickI2cDev->SwDmaActive = FALSE;
-  THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor SwDmaActive End\n")
+  THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor SwDmaActive %r End\n", Status)
   return EFI_SUCCESS;
 }
 
@@ -2315,14 +2267,14 @@ QuickI2cSendResetRequest (
   UINT32                          Timeout;
   QUICK_I2C_COMMAND_REQUEST       QuickI2cCommandRequest;
   QUICK_I2C_OUTPUT_REPORT_HEADER  OutputReportHeader;
+  THC_M_PRT_INT_STATUS            ThcIntStatus;
+  RESET_RESPONSE_DATA             ResetResponseData;
 
   THC_LOCAL_DEBUG (L"QuickI2cSendResetRequest Entry() \n");
 
-  QuickI2cDev->HidDataAvailable = FALSE;
-  QuickI2cDev->HidActive        = TRUE;
-
   SetMem (&QuickI2cCommandRequest, sizeof (QUICK_I2C_COMMAND_REQUEST), 0);
-  SetMem (&OutputReportHeader,sizeof (QUICK_I2C_OUTPUT_REPORT_HEADER), 0);
+  SetMem (&OutputReportHeader, sizeof (QUICK_I2C_OUTPUT_REPORT_HEADER), 0);
+  SetMem (&ResetResponseData, sizeof (RESET_RESPONSE_DATA), 0);
 
   OutputReportHeader.Fields.ReportType    = QuickI2cOutputReportCommandContent;
   OutputReportHeader.Fields.ContentLength = sizeof (QUICK_I2C_COMMAND_REQUEST);
@@ -2344,6 +2296,11 @@ QuickI2cSendResetRequest (
 
   Timeout = WaitForResetTimeout;
 
+   // Set other registers to clear INT status
+  ThcIntStatus.Data32 = MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS);
+  ThcIntStatus.Fields.DevRawIntSts = 1;
+  MmioWrite32 ((UINTN)(QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS), ThcIntStatus.Data32);
+  THC_LOCAL_DEBUG (L"Instance %d:, Before sending reset request DEV_RAW_INT_STS = 0x%X\n", QuickI2cDev->InstanceId, MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS))
   Status = QuickI2cDmaWriteTx (QuickI2cDev, OutputReportHeader, (UINT8 *) &QuickI2cCommandRequest);
   THC_LOCAL_DEBUG (L"QuickI2cSendResetRequest: QuickI2cDmaWriteTx Status %r\n", Status)
   if (EFI_ERROR (Status)) {
@@ -2354,13 +2311,28 @@ QuickI2cSendResetRequest (
   // Wait for Response
   //
   if (Timeout > 0) {
-    THC_LOCAL_DEBUG (L"QuickI2cSendResetRequest Waiting for Response \n")
-    DEBUG ((DEBUG_INFO, "QuickI2cSendResetRequest Waiting for Response \n"));
+    THC_LOCAL_DEBUG (L"QuickI2cSendResetRequest Waiting for Response DEV_RAW_INT_STS = 0x%X \n", MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS))
+    DEBUG ((DEBUG_INFO, "QuickI2cSendResetRequest Waiting for Response DEV_RAW_INT_STS = 0x%X\n", MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS)));
     do {
-      if (QuickI2cDev->HidDataAvailable == TRUE && QuickI2cDev->ReadDone == TRUE) {
-        THC_LOCAL_DEBUG (L"QuickI2cSendResetRequest Response received\n")
-        Status = EFI_SUCCESS;
-        break;
+      ThcIntStatus.Data32 = MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS);
+      if (ThcIntStatus.Fields.DevRawIntSts) {
+        Status = QuickI2cLibPerformPioRead (
+                  QuickI2cDev->PciBar0,
+                  QuickI2cDev->DeviceDescriptor.wInputRegister,
+                  sizeof (RESET_RESPONSE_DATA),
+                  &ResetResponseData.Data32
+                );
+        if (!EFI_ERROR (Status)) {
+          DEBUG ((DEBUG_INFO, "QuickI2cLibPerformPioRead: Complete, Status %r\n", Status));
+          //
+          // Clear int status bit
+          //
+          ThcIntStatus.Data32 = MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS);
+          ThcIntStatus.Fields.DevRawIntSts = 1;
+          MmioWrite32 ((UINTN)(QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS), ThcIntStatus.Data32);
+          Status = EFI_SUCCESS;
+          break;
+        }
       }
       MicroSecondDelay (1000);
       Timeout--;
@@ -2373,8 +2345,6 @@ QuickI2cSendResetRequest (
     }
   }
 
-  QuickI2cDev->HidDataAvailable = FALSE;
-  QuickI2cDev->HidActive        = FALSE;
 
   return EFI_SUCCESS;
 }
@@ -2481,7 +2451,7 @@ QuickI2cGetFeatureViaSwDma (
   //
   // complete the process
   //
-  QuickI2cCompleteSwdma (QuickI2cDev->PciBar0);
+  QuickI2cCompleteSwdma (QuickI2cDev);
   QuickI2cDev->SwDmaMessageLength = 0;
 
   QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);

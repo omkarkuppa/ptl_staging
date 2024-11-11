@@ -41,6 +41,9 @@
 #include <Uefi/UefiMultiPhase.h>
 #include <Library/TdxDataHob.h>
 #include <IntelRcStatusCode.h>
+#include <Register/PmcRegs.h>
+#include <Library/PmcLib.h>
+#include <Library/PcdLib.h>
 
 #define INITIALIZED_MEMORY_ATTRIBUTES (EFI_RESOURCE_ATTRIBUTE_PRESENT | \
                                        EFI_RESOURCE_ATTRIBUTE_INITIALIZED)
@@ -433,6 +436,25 @@ CheckTdxDependancy (
   return TRUE;
 }
 
+/**
+  Reports if detected reset type is warm or not
+  @retval TRUE  Reset type is a warm reset
+  @retval FALSE Other reset type
+**/
+BOOLEAN
+IsWarmReset (
+  VOID
+  )
+{
+  UINT32 RegisterVal32 = MmioRead32 (PmcGetPwrmBase () + R_PMC_PWRM_GEN_PMCON_A);
+
+  if ((((RegisterVal32 & B_PMC_PWRM_GEN_PMCON_A_MEM_SR) != 0) &&
+      ((RegisterVal32 & B_PMC_PWRM_GEN_PMCON_A_DISB) != 0))) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
 
 /**
   Perform Trust Domain Execution(Tdx) initialization.
@@ -453,7 +475,6 @@ TdxInit (
   IN UINT8  TdxSeamldrSeSvn
   )
 {
-
   TDX_DATA_HOB          *TdxDataHobPtr;
   EFI_STATUS            Status = EFI_SUCCESS;
   MrcOutput             *Outputs;
@@ -463,9 +484,11 @@ TdxInit (
   EFI_PHYSICAL_ADDRESS  TempRamPtr;
   UINT64                *ActmRelocPointer;
   MrcMemoryMap          *MemoryMapData;
+  BOOLEAN               WarmReset;
 
   Outputs = &MrcData->Outputs;
   MemoryMapData = &MrcData->Outputs.MemoryMapData;
+  WarmReset = IsWarmReset ();
 
   DEBUG ((DEBUG_INFO, "Trust Domain Extension (TDX) Initialization\n"));
 
@@ -517,7 +540,7 @@ TdxInit (
   // Register for MemoryDiscover notification.
   //
   DEBUG ((DEBUG_INFO, "[TDX] Notify the CMR event from Tdx init\n"));
-  Status = PeiServicesNotifyPpi(&mPpiPeiTdxMemoryNotifyList);
+  Status = PeiServicesNotifyPpi (&mPpiPeiTdxMemoryNotifyList);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "[TDX] PeiServicesNotifyPpi Failed (%r)\n", Status));
     return;
@@ -529,14 +552,20 @@ TdxInit (
   if (Outputs->DdrType == MRC_DDR_TYPE_DDR5) {
     DEBUG ((DEBUG_INFO, "[TDX] Memory Type is DDR5 %a %d\n", __FUNCTION__, __LINE__));
     DEBUG ((DEBUG_INFO, "[TDX] Building Dimm Manifest.....\n"));
-    Status = PublishActmDimmManifest(MrcData);
+    Status = PublishActmDimmManifest (MrcData, WarmReset);
     if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[TDX] Error building the Dimm Manifest Status = %r\n", Status));
-    return;
+      DEBUG ((DEBUG_ERROR, "[TDX] Error building the Dimm Manifest Status = %r. exiting!..\n", Status));
+      return;
     }
   } else {
     DEBUG ((DEBUG_INFO, "[TDX] Memory Type is LP5 %a %d\n", __FUNCTION__, __LINE__));
-    DEBUG ((DEBUG_INFO, "[TDX] Not Building Dimm Manifest.....\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Not Building Dimm Manifest. exiting!..\n"));
+    return;
+  }
+
+  if (WarmReset) {
+    DEBUG ((DEBUG_INFO, "[TDX] Warm reset detected\n"));
+    DEBUG ((DEBUG_INFO, "[TDX] Skip ACTM launch\n"));
     return;
   }
 
@@ -677,67 +706,6 @@ PeiTdxMemoryAllocation(
     Status = LockSeamrrMsr ();
     if (EFI_ERROR(Status) && Status != EFI_UNSUPPORTED) {
       DEBUG ((DEBUG_INFO, "Fail to program Seamrr Mask MSR's %a \n", __FUNCTION__));
-      ASSERT_EFI_ERROR (Status);
-    }
-  }
-}
-
-/**
-  Reserve Tdx Memory
-
-  @param[in] SeamrrBase               Seamrr Base Address
-  @param[in] SeamrrSize               Seamrr Size
-  @param[in] ResourceAttributeTested  Memory tested attribute
-**/
-VOID
-PeiTdxMemoryAllocationV2 (
-  IN EFI_PHYSICAL_ADDRESS         SeamrrBase,
-  IN UINT64                       SeamrrSize,
-  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
-  )
-{
-  EFI_STATUS                         Status;
-  EFI_RESOURCE_TYPE                  ResourceType;
-  EFI_RESOURCE_ATTRIBUTE_TYPE        ResourceAttribute;
-
-  // Program Seamrr Base and Mask MSR's
-  if (IsTdxEnabled ()) {
-    if ((SeamrrSize != 0) && (SeamrrBase != 0)) {
-      ResourceType      = EFI_RESOURCE_MEMORY_RESERVED;
-      ResourceAttribute = EFI_RESOURCE_ATTRIBUTE_PRESENT |
-                          EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-                          ResourceAttributeTested |
-                          EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
-                          EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
-                          EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
-                          EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE;
-
-      BuildResourceDescriptorHob (
-        ResourceType,           // MemoryType,
-        ResourceAttribute,      // MemoryAttribute
-        SeamrrBase,             // MemoryBegin
-        SeamrrSize              // MemoryLength
-      );
-
-      BuildMemoryAllocationHob (
-        SeamrrBase,
-        SeamrrSize,
-        EfiReservedMemoryType
-      );
-
-      Status = PeiCpuSetSeamrrRegion (SeamrrBase, (UINT32) SeamrrSize);
-      if (EFI_ERROR(Status)) {
-        DEBUG ((DEBUG_ERROR, "Fail to program Seamrr Base and Mask MSR's\n"));
-        ASSERT_EFI_ERROR (Status);
-      }
-    }
-  } else {
-    //
-    // Tdx is disabled, lock the SEAMRR region.
-    //
-    Status = LockSeamrrMsr ();
-    if (EFI_ERROR(Status) && Status != EFI_UNSUPPORTED) {
-      DEBUG ((DEBUG_INFO, "Fail to program Seamrr Mask MSR's\n"));
       ASSERT_EFI_ERROR (Status);
     }
   }

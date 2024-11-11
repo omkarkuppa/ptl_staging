@@ -35,12 +35,12 @@
   gSiPkgTokenSpaceGuid.PcdMrcTraceMessageSupported|TRUE
 !endif
 !if $(TARGET) == DEBUG
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable|1
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartNumber|0
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|1
+  gSiPkgTokenSpaceGuid.PcdLpssUartNumber|0
   gPantherLakeFspPkgTokenSpaceGuid.PcdMonoStatusCode|TRUE
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|7
 !else
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable|0
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|0
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|3
   gSiPkgTokenSpaceGuid.PcdTraceHubCatalogEnable|TRUE
 !endif

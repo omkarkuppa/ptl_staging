@@ -1,0 +1,37 @@
+## @file
+#
+#  DEC file for TdxFeaturePkg.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME = TdxFeaturePkg
+  PACKAGE_VERSION = 0.1
+  PACKAGE_GUID = 225DA32B-DD33-48F6-B999-36A817EC7EBD
+
+[Includes]
+  Include
+
+[Guids]
+  gTdxFeaturePkgTokenSpaceGuid                         = { 0x26c07365, 0xfebf, 0x4ea1, { 0x90, 0x14, 0xd6, 0xc0, 0xd7, 0x24, 0xb4, 0x95}}
+
+[PcdsFeatureFlag]
+  gTdxFeaturePkgTokenSpaceGuid.PcdTdxFeatureEnable     |TRUE|BOOLEAN|0x00000001

@@ -28,7 +28,7 @@
 #include <IGpuMediaRegs.h>
 #include <IpIGpuGtReg.h>
 
-#define GT_WAIT_TIMEOUT          3000000  ///< ~3 seconds
+#define GT_WAIT_TIMEOUT  3000000          ///< ~3 seconds
 
 /**
 InstInit for this version of IP
@@ -124,11 +124,11 @@ IpIGpuIsInstValid (
 **/
 UINT32
 IpIGpuGetVersion (
-  IP_IGPU_INST  *pInst,
+  IP_IGPU_INST   *pInst,
   IP_CSI_VER_ID  VerId
   )
 {
-  UINT32 ReturnData;
+  UINT32  ReturnData;
 
   ReturnData = 0;
 
@@ -141,11 +141,13 @@ IpIGpuGetVersion (
   switch (VerId) {
     case IpCsiVerIdCsi:
       ReturnData = VERSION_CSI;
-      PRINT_LEVEL1 ("%a(IpCsiVerIdCsi) = %x.%x (0x%x)\n",
-                    __FUNCTION__,
-                    IpWrRShiftU64 (ReturnData, 16),
-                    ReturnData & 0xFFFF,
-                    ReturnData);
+      PRINT_LEVEL1 (
+        "%a(IpCsiVerIdCsi) = %x.%x (0x%x)\n",
+        __FUNCTION__,
+        IpWrRShiftU64 (ReturnData, 16),
+        ReturnData & 0xFFFF,
+        ReturnData
+        );
       break;
     case IpCsiVerIdHwIp:
       ReturnData = 0;
@@ -153,30 +155,36 @@ IpIGpuGetVersion (
       break;
     case IpCsiVerIdIpFwIntf:
       ReturnData = VERSION_IPFWINTF_IGPU;
-      PRINT_LEVEL1 ("%a(IpCsiVerIdIpFwIntf) = Gen=%x Year=%x Qtr=%x Rev=%x (0x%x)\n",
-                    __FUNCTION__,
-                    (UINT8) IpWrRShiftU64 (ReturnData, 24),
-                    (UINT8) IpWrRShiftU64 (ReturnData, 16),
-                    (UINT8) IpWrRShiftU64 (ReturnData, 8),
-                    (UINT8) IpWrRShiftU64 (ReturnData, 0),
-                    ReturnData);
+      PRINT_LEVEL1 (
+        "%a(IpCsiVerIdIpFwIntf) = Gen=%x Year=%x Qtr=%x Rev=%x (0x%x)\n",
+        __FUNCTION__,
+        (UINT8)IpWrRShiftU64 (ReturnData, 24),
+        (UINT8)IpWrRShiftU64 (ReturnData, 16),
+        (UINT8)IpWrRShiftU64 (ReturnData, 8),
+        (UINT8)IpWrRShiftU64 (ReturnData, 0),
+        ReturnData
+        );
       break;
     case IpCsiVerIdIpFwIntfExt:
       ReturnData = VERSION_IPFWINTFEXT_IGPU;
-      PRINT_LEVEL1 ("%s(IpCsiVerIdIpFwIntfExt) = Major=%x (0x%x)\n",
-                    __FUNCTION__,
-                    (UINT8) IpWrRShiftU64 (ReturnData, 0),
-                    ReturnData);
+      PRINT_LEVEL1 (
+        "%s(IpCsiVerIdIpFwIntfExt) = Major=%x (0x%x)\n",
+        __FUNCTION__,
+        (UINT8)IpWrRShiftU64 (ReturnData, 0),
+        ReturnData
+        );
       break;
     case IpCsiVerIdIpFw:
       ReturnData = VERSION_IPFW_IGPU;
-      PRINT_LEVEL1 ("%s(IpCsiVerIdIpFw) = Year=%x WW=%x Day=%x Oops=%x (0x%x)\n",
-                    __FUNCTION__,
-                    (UINT8) IpWrRShiftU64 (ReturnData, 24),
-                    (UINT8) IpWrRShiftU64 (ReturnData, 16),
-                    (UINT8) IpWrRShiftU64 (ReturnData, 8),
-                    (UINT8) IpWrRShiftU64 (ReturnData, 0),
-                    ReturnData);
+      PRINT_LEVEL1 (
+        "%s(IpCsiVerIdIpFw) = Year=%x WW=%x Day=%x Oops=%x (0x%x)\n",
+        __FUNCTION__,
+        (UINT8)IpWrRShiftU64 (ReturnData, 24),
+        (UINT8)IpWrRShiftU64 (ReturnData, 16),
+        (UINT8)IpWrRShiftU64 (ReturnData, 8),
+        (UINT8)IpWrRShiftU64 (ReturnData, 0),
+        ReturnData
+        );
       break;
     case IpCsiVerIdHwIpCustom:
       ReturnData = 0;
@@ -229,6 +237,7 @@ IpIGpuGetCapability (
       if (pCsiSts != NULL) {
         *pCsiSts = IpCsiStsErrorUnknownId;
       }
+
       break;
   }
 
@@ -286,6 +295,7 @@ IpIGpuGetControl (
   if (pCsiSts != NULL) {
     *pCsiSts = IpCsiStsSuccess;
   }
+
   return IpIGpuFeatValDis;
 }
 
@@ -308,7 +318,7 @@ IpIGpuSetControl (
   UINT32           FeatureVal
   )
 {
-  IP_CSI_STATUS   Status;
+  IP_CSI_STATUS  Status;
 
   Status = IpCsiStsErrorNullPtr;
   if (IpIGpuIsInstValid (pInst) == FALSE) {
@@ -327,7 +337,6 @@ IpIGpuSetControl (
   return Status;
 }
 
-
 /**
   This function will check if Bus Initiator and Memory access on 0:2:0 is enabled or not
 
@@ -341,13 +350,13 @@ IpIGpuCmdRegEnabled (
   IP_IGPU_INST  *pInst
   )
 {
-  PCICMD_IGPU_STRUCT     PciCmd;
+  PCICMD_IGPU_STRUCT  PciCmd;
 
   if (IpIGpuIsInstValid (pInst) == FALSE) {
     return FALSE;
   }
 
-  PciCmd.Data = (UINT16) IpWrRegRead (pInst->PcieCfgAccess, PCICMD_IGPU_REG, IpWrRegFlagSize16Bits);
+  PciCmd.Data = (UINT16)IpWrRegRead (pInst->PcieCfgAccess, PCICMD_IGPU_REG, IpWrRegFlagSize16Bits);
 
   if ((PciCmd.Bits.mae == TRUE) && (PciCmd.Bits.bme == TRUE)) {
     return TRUE;
@@ -373,13 +382,12 @@ IpIGpuSupported (
     return FALSE;
   }
 
-  if ((UINT16) IpWrRegRead (pInst->PcieCfgAccess, VID2_IGPU_REG, IpWrRegFlagSize16Bits) == 0xFFFF) {
+  if ((UINT16)IpWrRegRead (pInst->PcieCfgAccess, VID2_IGPU_REG, IpWrRegFlagSize16Bits) == 0xFFFF) {
     return FALSE;
   }
 
   return TRUE;
 }
-
 
 /**
   This function will program the GttMmAdr
@@ -394,7 +402,7 @@ IpIGpuProgramGttMmAdr (
   IP_IGPU_INST  *pInst
   )
 {
-  UINT64    GttMmAdr;
+  UINT64  GttMmAdr;
 
   if (IpIGpuIsInstValid (pInst) == FALSE) {
     return IpCsiStsErrorNullPtr;
@@ -421,7 +429,7 @@ IpIGpuProgramGttMmAdr (
 **/
 UINT64
 IpIGpuGetGttMmAdr (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   )
 {
   if (IpIGpuIsInstValid (pInst) == FALSE) {
@@ -466,7 +474,7 @@ IpIGpuProgramLMemBar (
 **/
 UINT64
 IpIGpuGetLMemBar (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   )
 {
   if (IpIGpuIsInstValid (pInst) == FALSE) {
@@ -490,13 +498,13 @@ IpIGpuEnableCmdReg (
   IP_IGPU_INST  *pInst
   )
 {
-  PCICMD_IGPU_STRUCT     PciCmd;
+  PCICMD_IGPU_STRUCT  PciCmd;
 
   if (IpIGpuIsInstValid (pInst) == FALSE) {
     return IpCsiStsErrorNullPtr;
   }
 
-  PciCmd.Data = (UINT16) IpWrRegRead (pInst->PcieCfgAccess, PCICMD_IGPU_REG, IpWrRegFlagSize16Bits);
+  PciCmd.Data     = (UINT16)IpWrRegRead (pInst->PcieCfgAccess, PCICMD_IGPU_REG, IpWrRegFlagSize16Bits);
   PciCmd.Bits.bme = TRUE;
   PciCmd.Bits.mae = TRUE;
   IpWrRegWrite (pInst->PcieCfgAccess, PCICMD_IGPU_REG, PciCmd.Data, IpWrRegFlagSize16Bits);
@@ -520,7 +528,7 @@ IpIGpuGetVendorId (
     return 0xFFFF;
   }
 
-  return ((UINT16) IpWrRegRead (pInst->PcieCfgAccess, VID2_IGPU_REG, IpWrRegFlagSize16Bits));
+  return ((UINT16)IpWrRegRead (pInst->PcieCfgAccess, VID2_IGPU_REG, IpWrRegFlagSize16Bits));
 }
 
 /**
@@ -539,7 +547,7 @@ IpIGpuGetDeviceId (
     return 0xFFFF;
   }
 
-  return ((UINT16) IpWrRegRead (pInst->PcieCfgAccess, DID2_IGPU_REG, IpWrRegFlagSize16Bits));
+  return ((UINT16)IpWrRegRead (pInst->PcieCfgAccess, DID2_IGPU_REG, IpWrRegFlagSize16Bits));
 }
 
 /**
@@ -558,7 +566,7 @@ IpIGpuGetSubsystemVendorId (
     return 0xFFFF;
   }
 
-  return ((UINT16) IpWrRegRead (pInst->PcieCfgAccess, SVID2_IGPU_REG, IpWrRegFlagSize16Bits));
+  return ((UINT16)IpWrRegRead (pInst->PcieCfgAccess, SVID2_IGPU_REG, IpWrRegFlagSize16Bits));
 }
 
 /**
@@ -577,7 +585,7 @@ IpIGpuGetSubsystemId (
     return 0xFFFF;
   }
 
-  return ((UINT16) IpWrRegRead (pInst->PcieCfgAccess, SID2_IGPU_REG, IpWrRegFlagSize16Bits));
+  return ((UINT16)IpWrRegRead (pInst->PcieCfgAccess, SID2_IGPU_REG, IpWrRegFlagSize16Bits));
 }
 
 /**
@@ -592,14 +600,14 @@ IpIGpuGetRevisionId (
   IP_IGPU_INST  *pInst
   )
 {
-  RID2_CC_IGPU_STRUCT   RevisionId;
+  RID2_CC_IGPU_STRUCT  RevisionId;
 
   if (IpIGpuIsInstValid (pInst) == FALSE) {
     return 0xFF;
   }
 
-  RevisionId.Data = (UINT32) IpWrRegRead (pInst->PcieCfgAccess, RID2_CC_IGPU_REG, IpWrRegFlagSize32Bits);
-  return (UINT8) RevisionId.Bits.rid;
+  RevisionId.Data = (UINT32)IpWrRegRead (pInst->PcieCfgAccess, RID2_CC_IGPU_REG, IpWrRegFlagSize32Bits);
+  return (UINT8)RevisionId.Bits.rid;
 }
 
 /**
@@ -610,16 +618,16 @@ IpIGpuGetRevisionId (
 **/
 BOOLEAN
 IpIGpuIsL3BankLocked (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   )
 {
-  L3BANKLOCK_LBCF_GFX_GT_STRUCT       L3lockGt;
+  L3BANKLOCK_LBCF_GFX_GT_STRUCT  L3lockGt;
 
   if (IpIGpuIsInstValid (pInst) == FALSE) {
     return 0;
   }
 
-  L3lockGt.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, L3BANKLOCK_LBCF_GFX_GT_REG, IpWrRegFlagSize32Bits);
+  L3lockGt.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, L3BANKLOCK_LBCF_GFX_GT_REG, IpWrRegFlagSize32Bits);
   if (L3lockGt.Bits.lbcflockmsgreg_lock == 0) {
     return FALSE;
   } else {
@@ -635,16 +643,16 @@ IpIGpuIsL3BankLocked (
 **/
 BOOLEAN
 IpIGpuIsL3BankMediaLocked (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   )
 {
-  L3BANKLOCK_LBCF_MEDIA_MEDIA_STRUCT     L3lockMedia;
+  L3BANKLOCK_LBCF_MEDIA_MEDIA_STRUCT  L3lockMedia;
 
   if (IpIGpuIsInstValid (pInst) == FALSE) {
     return 0;
   }
 
-  L3lockMedia.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, L3BANKLOCK_LBCF_MEDIA_MEDIA_REG, IpWrRegFlagSize32Bits);
+  L3lockMedia.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, L3BANKLOCK_LBCF_MEDIA_MEDIA_REG, IpWrRegFlagSize32Bits);
   if (L3lockMedia.Bits.lbcflockmsgreg_lock == 0) {
     return FALSE;
   } else {
@@ -676,7 +684,7 @@ IpIGpuGetGttMmAdrSize (
     return 0;
   }
 
-  GttMmAdr.Data = (UINT32) IpWrRegRead (pInst->PcieCfgAccess, GTTMMADR0_IGPU_REG, IpWrRegFlagSize32Bits);
+  GttMmAdr.Data = (UINT32)IpWrRegRead (pInst->PcieCfgAccess, GTTMMADR0_IGPU_REG, IpWrRegFlagSize32Bits);
 
   if ((GttMmAdr.Data & (BIT1 + BIT2)) == PCI_BASE_ADDRESS_MEM_TYPE_64) {
     //
@@ -710,7 +718,7 @@ IpIGpuGetGttMmAdrSize (
     //
     // Read the GttMmAdr Size
     //
-    Data32 = (UINT32) IpWrRegRead (pInst->PcieCfgAccess, GTTMMADR0_IGPU_REG, IpWrRegFlagSize32Bits);
+    Data32 = (UINT32)IpWrRegRead (pInst->PcieCfgAccess, GTTMMADR0_IGPU_REG, IpWrRegFlagSize32Bits);
 
     GttMmAdrSize32 = ~(Data32 & 0xFFFFFFF0) + 1;
 
@@ -719,10 +727,9 @@ IpIGpuGetGttMmAdrSize (
     //
     IpWrRegWrite (pInst->PcieCfgAccess, GTTMMADR0_IGPU_REG, GttMmAdr.Data, IpWrRegFlagSize32Bits);
 
-    return (UINT64) GttMmAdrSize32;
+    return (UINT64)GttMmAdrSize32;
   }
 }
-
 
 /**
   This function will return LMem Bar Length
@@ -737,18 +744,18 @@ IpIGpuGetLMemBarSize (
   IP_IGPU_INST  *pInst
   )
 {
-  LMEMBAR0_IGPU_STRUCT   LMemBar;
-  UINT64                 SaveBar64;
-  UINT64                 Data64;
-  UINT64                 LMemBarSize64;
-  UINT32                 Data32;
-  UINT64                 LMemBarSize32;
+  LMEMBAR0_IGPU_STRUCT  LMemBar;
+  UINT64                SaveBar64;
+  UINT64                Data64;
+  UINT64                LMemBarSize64;
+  UINT32                Data32;
+  UINT64                LMemBarSize32;
 
   if (IpIGpuIsInstValid (pInst) == FALSE) {
     return 0;
   }
 
-  LMemBar.Data = (UINT32) IpWrRegRead (pInst->PcieCfgAccess, LMEMBAR0_IGPU_REG, IpWrRegFlagSize32Bits);
+  LMemBar.Data = (UINT32)IpWrRegRead (pInst->PcieCfgAccess, LMEMBAR0_IGPU_REG, IpWrRegFlagSize32Bits);
 
   if ((LMemBar.Data & (BIT1 + BIT2)) == PCI_BASE_ADDRESS_MEM_TYPE_64) {
     //
@@ -782,7 +789,7 @@ IpIGpuGetLMemBarSize (
     //
     // Read the LMemBar Size
     //
-    Data32 = (UINT32) IpWrRegRead (pInst->PcieCfgAccess, LMEMBAR0_IGPU_REG, IpWrRegFlagSize32Bits);
+    Data32 = (UINT32)IpWrRegRead (pInst->PcieCfgAccess, LMEMBAR0_IGPU_REG, IpWrRegFlagSize32Bits);
 
     LMemBarSize32 = ~(Data32 & 0xFFFFFFF0) + 1;
 
@@ -791,7 +798,7 @@ IpIGpuGetLMemBarSize (
     //
     IpWrRegWrite (pInst->PcieCfgAccess, LMEMBAR0_IGPU_REG, LMemBar.Data, IpWrRegFlagSize32Bits);
 
-    return (UINT64) LMemBarSize32;
+    return (UINT64)LMemBarSize32;
   }
 }
 
@@ -815,10 +822,10 @@ IpIGpuSaveGMDStatus (
     return IpCsiStsErrorNullPtr;
   }
 
-  GuCntl.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, GU_CNTL_PROTECTED_IGPU_REG, IpWrRegFlagSize32Bits);
-  pInst->IGpuPrivateConfig.IsDisplayPresent = (BOOLEAN) GuCntl.Bits.depresent;
-  pInst->IGpuPrivateConfig.IsMediaPresent = (BOOLEAN) GuCntl.Bits.impresent;
-  pInst->IGpuPrivateConfig.IsGtPresent = (BOOLEAN) GuCntl.Bits.gtpresent;
+  GuCntl.Data                               = (UINT32)IpWrRegRead (pInst->MmioAccess, GU_CNTL_PROTECTED_IGPU_REG, IpWrRegFlagSize32Bits);
+  pInst->IGpuPrivateConfig.IsDisplayPresent = (BOOLEAN)GuCntl.Bits.depresent;
+  pInst->IGpuPrivateConfig.IsMediaPresent   = (BOOLEAN)GuCntl.Bits.impresent;
+  pInst->IGpuPrivateConfig.IsGtPresent      = (BOOLEAN)GuCntl.Bits.gtpresent;
 
   return IpCsiStsSuccess;
 }
@@ -841,17 +848,16 @@ IpIGpuAdditionalStepToDisable (
     return IpCsiStsErrorNullPtr;
   }
 
-  GGC_IGPU_STRUCT   GgcStruct;
+  GGC_IGPU_STRUCT  GgcStruct;
 
-  GgcStruct.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, GGC_IGPU_REG, IpWrRegFlagSize32Bits);
-  GgcStruct.Bits.gms = 0;
-  GgcStruct.Bits.ivd = TRUE;
+  GgcStruct.Data       = (UINT32)IpWrRegRead (pInst->MmioAccess, GGC_IGPU_REG, IpWrRegFlagSize32Bits);
+  GgcStruct.Bits.gms   = 0;
+  GgcStruct.Bits.ivd   = TRUE;
   GgcStruct.Bits.vamen = TRUE;
   IpWrRegWrite (pInst->MmioAccess, GGC_IGPU_REG, GgcStruct.Data, IpWrRegFlagSize32Bits);
 
   return IpCsiStsSuccess;
 }
-
 
 /**
   Function to clear temporary Graphics BAR at end of PEI
@@ -905,7 +911,7 @@ IpIGpuPollReady (
   ///
   /// Register read
   ///
-  GtStatus = (UINT32) IpWrRegRead (pInst->MmioAccess, Offset, IpWrRegFlagSize32Bits);
+  GtStatus = (UINT32)IpWrRegRead (pInst->MmioAccess, Offset, IpWrRegFlagSize32Bits);
 
   while (((GtStatus & Mask) != Result) && (StallCount < GT_WAIT_TIMEOUT)) {
     ///
@@ -914,7 +920,7 @@ IpIGpuPollReady (
     IpWrDelayUs (pInst->TimeCntxt, 10);
     StallCount += 10;
 
-    GtStatus = (UINT32) IpWrRegRead (pInst->MmioAccess, Offset, IpWrRegFlagSize32Bits);
+    GtStatus = (UINT32)IpWrRegRead (pInst->MmioAccess, Offset, IpWrRegFlagSize32Bits);
   }
 
   if (StallCount < GT_WAIT_TIMEOUT) {
@@ -934,7 +940,7 @@ IpIGpuPollReady (
 **/
 IP_CSI_STATUS
 IpIGpuSetMemMap (
-  IP_IGPU_INST                *pInst
+  IP_IGPU_INST  *pInst
   )
 {
   DE_BDF_DISP_STRUCT             DisplayBdf;
@@ -979,15 +985,15 @@ IpIGpuSetMemMap (
   IpWrRegWrite (pInst->MmioAccess, DEGSMBASE_0_DISP_REG, pInst->IGpuPrivateConfig.BgsmBase, IpWrRegFlagSize64Bits);
 
   // DE BDF
-  DisplayBdf.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, DE_BDF_DISP_REG, IpWrRegFlagSize32Bits);
-  DisplayBdf.Bits.bus = 0x0;
-  DisplayBdf.Bits.device = 0x2;
+  DisplayBdf.Data          = (UINT32)IpWrRegRead (pInst->MmioAccess, DE_BDF_DISP_REG, IpWrRegFlagSize32Bits);
+  DisplayBdf.Bits.bus      = 0x0;
+  DisplayBdf.Bits.device   = 0x2;
   DisplayBdf.Bits.function = 0x0;
   IpWrRegWrite (pInst->MmioAccess, DE_BDF_DISP_REG, DisplayBdf.Data, IpWrRegFlagSize32Bits);
 
   if (pInst->XeVersion <= IpIGpuXe3) {
     // CSME BDF
-    CsmeBdf.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, CSMEBDF_IGPU_REG, IpWrRegFlagSize32Bits);
+    CsmeBdf.Data        = (UINT32)IpWrRegRead (pInst->MmioAccess, CSMEBDF_IGPU_REG, IpWrRegFlagSize32Bits);
     CsmeBdf.Bits.busnum = pInst->IGpuPrivateConfig.CsmeBusNum;
     CsmeBdf.Bits.devnum = pInst->IGpuPrivateConfig.CsmeDevNum;
     CsmeBdf.Bits.funnum = pInst->IGpuPrivateConfig.CsmeFuncNum;
@@ -996,14 +1002,13 @@ IpIGpuSetMemMap (
 
     IpWrRegWrite (pInst->MmioAccess, CSMEBDF_IGPU_REG, CsmeBdf.Data, IpWrRegFlagSize32Bits);
     IpWrRegWrite (pInst->MmioAccess, VDMBDFBARKVM_DISP_REG, CsmeBdf.Data, IpWrRegFlagSize32Bits);
-
   }
 
   if (pInst->XeVersion == IpIGpuXe3) {
-    MediaGmdId.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, MIRROR_GMD_ID_RPM_MEDIA_MEDIA_REG, IpWrRegFlagSize32Bits);
+    MediaGmdId.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, MIRROR_GMD_ID_RPM_MEDIA_MEDIA_REG, IpWrRegFlagSize32Bits);
     if (MediaGmdId.Bits.GMDRevId < GMD_MEDIA_REV_30_0_0_B0) {
       if ((MediaGmdId.Data & CLEAR_GMD_REVID_MASK) == GMD_MEDIA_30_0) {
-        GuCntl.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, GU_CNTL_PROTECTED_IGPU_REG, IpWrRegFlagSize32Bits);
+        GuCntl.Data                     = (UINT32)IpWrRegRead (pInst->MmioAccess, GU_CNTL_PROTECTED_IGPU_REG, IpWrRegFlagSize32Bits);
         GuCntl.Bits.stolen_mem_wipe_dis = TRUE;
         IpWrRegWrite (pInst->MmioAccess, GU_CNTL_PROTECTED_IGPU_REG, GuCntl.Data, IpWrRegFlagSize32Bits);
       }
@@ -1045,7 +1050,7 @@ IpIGpuGetRegistersData (
   FLAT_CCS_BASE_ADDR_GAMREQ_3D_GT_STRUCT        GtFlatCcsGamCfg;
   FLAT_CCS_BASE_ADDR_GAMREQ_MEDIA_MEDIA_STRUCT  MediaFlatCcsGamCfg;
 
-  UINT64                                        FlatCcsBase;
+  UINT64  FlatCcsBase;
 
   if (IpIGpuSupported (pInst) == FALSE) {
     return MAX_UINT64;
@@ -1054,120 +1059,120 @@ IpIGpuGetRegistersData (
   switch (RegisterName) {
     case GtRc6CtxLowMemReg:
       if (DataRequested == GtRc6CtxLowMemLock) {
-        GtRc6Ctx.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, RC6CTXBASE_RPM_GCD_0_GT_REG, IpWrRegFlagSize32Bits);
-        return (BOOLEAN) GtRc6Ctx.Bits.rc6memlock;
+        GtRc6Ctx.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, RC6CTXBASE_RPM_GCD_0_GT_REG, IpWrRegFlagSize32Bits);
+        return (BOOLEAN)GtRc6Ctx.Bits.rc6memlock;
       } else {
-        GtRc6Ctx.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, RC6CTXBASE_RPM_GCD_0_GT_REG, IpWrRegFlagSize32Bits);
+        GtRc6Ctx.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, RC6CTXBASE_RPM_GCD_0_GT_REG, IpWrRegFlagSize32Bits);
         return GtRc6Ctx.Bits.rc6membase << RC6CTXBASE_RPM_GCD_0_GT_RC6MEMBASE_LSB;
       }
 
     case DsmBaseReg:
-      DsmBaseCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, DSMBASE0_IGPU_REG, IpWrRegFlagSize32Bits);
+      DsmBaseCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, DSMBASE0_IGPU_REG, IpWrRegFlagSize32Bits);
       return (DsmBaseCfg.Bits.bdsm_0 << DSMBASE0_IGPU_BDSM_0_LSB);
 
     case GsmBaseReg:
-      GsmBaseCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, GSMBASE0_IGPU_REG, IpWrRegFlagSize32Bits);
+      GsmBaseCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, GSMBASE0_IGPU_REG, IpWrRegFlagSize32Bits);
       return (GsmBaseCfg.Bits.bgsm_lsb << GSMBASE0_IGPU_BGSM_LSB_LSB);
 
     case GgcIGpuSgReg:
-      GgcIGpuSgCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, GGC_IGPU_REG, IpWrRegFlagSize32Bits);
+      GgcIGpuSgCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, GGC_IGPU_REG, IpWrRegFlagSize32Bits);
       return GgcIGpuSgCfg.Data;
 
     case MediaPavpcReg:
       if (DataRequested == MediaPavpcBaseMB) {
-        MediaPavpcCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
-        return (UINT32) (MediaPavpcCfg.Bits.wopcmbase_0);
-      } else if (DataRequested == MediaPavpcLock){
-        MediaPavpcCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
-        return (BOOLEAN) MediaPavpcCfg.Bits.lock;
+        MediaPavpcCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
+        return (UINT32)(MediaPavpcCfg.Bits.wopcmbase_0);
+      } else if (DataRequested == MediaPavpcLock) {
+        MediaPavpcCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
+        return (BOOLEAN)MediaPavpcCfg.Bits.lock;
       } else if (DataRequested == MediaPavpcSize) {
-        MediaPavpcCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
+        MediaPavpcCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
         return MediaPavpcCfg.Bits.wopcm_size;
       } else if (DataRequested ==  MediaPavpcData) {
-        MediaPavpcCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
-        return (UINT32) MediaPavpcCfg.Data;
+        MediaPavpcCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
+        return (UINT32)MediaPavpcCfg.Data;
       } else {
-        MediaPavpcCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
-        return (UINT32) (MediaPavpcCfg.Bits.wopcmbase_0 << PAVPC0_REG_IGPU_WOPCMBASE_0_LSB);
+        MediaPavpcCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
+        return (UINT32)(MediaPavpcCfg.Bits.wopcmbase_0 << PAVPC0_REG_IGPU_WOPCMBASE_0_LSB);
       }
 
     case DispPavpcReg:
       if (DataRequested == DispPavpcBase) {
-        DisplPavpcCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, DEPAVPC_REG_0_DISP_REG, IpWrRegFlagSize32Bits);
-        return (UINT32) (DisplPavpcCfg.Bits.wopcmbase<< DEPAVPC_REG_0_DISP_WOPCMBASE_LSB);
+        DisplPavpcCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, DEPAVPC_REG_0_DISP_REG, IpWrRegFlagSize32Bits);
+        return (UINT32)(DisplPavpcCfg.Bits.wopcmbase<< DEPAVPC_REG_0_DISP_WOPCMBASE_LSB);
       } else {
-        DisplPavpcCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, DEPAVPC_REG_0_DISP_REG, IpWrRegFlagSize32Bits);
-        return (BOOLEAN) (DisplPavpcCfg.Bits.lock);
+        DisplPavpcCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, DEPAVPC_REG_0_DISP_REG, IpWrRegFlagSize32Bits);
+        return (BOOLEAN)(DisplPavpcCfg.Bits.lock);
       }
 
     case DispGgcReg:
-      DispGgcCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, DE_GGC_DISP_REG, IpWrRegFlagSize32Bits);
+      DispGgcCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, DE_GGC_DISP_REG, IpWrRegFlagSize32Bits);
       return DispGgcCfg.Data;
 
     case MediaFlatCcsReg:
-      MediaFlatCcsLowBase.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_LOWER_I_SAM_MEDIA_REG, IpWrRegFlagSize32Bits);
+      MediaFlatCcsLowBase.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_LOWER_I_SAM_MEDIA_REG, IpWrRegFlagSize32Bits);
       //
       // Clear the lower bits
       //
       MediaFlatCcsLowBase.Bits.ccsenable = FALSE;
-      MediaFlatCcsLowBase.Bits.rsvd_0 = 0;
+      MediaFlatCcsLowBase.Bits.rsvd_0    = 0;
 
-      MediaFlatCcsHighBase.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_UPPER_I_SAM_MEDIA_REG, IpWrRegFlagSize32Bits);
+      MediaFlatCcsHighBase.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_UPPER_I_SAM_MEDIA_REG, IpWrRegFlagSize32Bits);
       //
       // Clear the upper bits
       //
       MediaFlatCcsHighBase.Bits.flatccsize = 0;
-      MediaFlatCcsHighBase.Bits.rsvd_0 = 0;
-      MediaFlatCcsHighBase.Bits.rsvd_1 = 0;
+      MediaFlatCcsHighBase.Bits.rsvd_0     = 0;
+      MediaFlatCcsHighBase.Bits.rsvd_1     = 0;
 
-      FlatCcsBase = (UINT64) MediaFlatCcsLowBase.Data;
-      FlatCcsBase += IpWrLShiftU64 ((UINT64) MediaFlatCcsHighBase.Data, 32);
+      FlatCcsBase  = (UINT64)MediaFlatCcsLowBase.Data;
+      FlatCcsBase += IpWrLShiftU64 ((UINT64)MediaFlatCcsHighBase.Data, 32);
       return FlatCcsBase;
 
     case GtFlatCcsReg:
-      GtFlatCcsLowBase.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_LOWER_I_GCD_GT_REG, IpWrRegFlagSize32Bits);
+      GtFlatCcsLowBase.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_LOWER_I_GCD_GT_REG, IpWrRegFlagSize32Bits);
       //
       // Clear the lower bits
       //
       GtFlatCcsLowBase.Bits.ccsenable = FALSE;
-      GtFlatCcsLowBase.Bits.rsvd_0 = 0;
+      GtFlatCcsLowBase.Bits.rsvd_0    = 0;
 
-      GtFlatCcsHighBase.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_UPPER_I_GCD_GT_REG, IpWrRegFlagSize32Bits);
+      GtFlatCcsHighBase.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, FLATCCSBASEANDRANGE_UPPER_I_GCD_GT_REG, IpWrRegFlagSize32Bits);
       //
       // Clear the upper bits
       //
       GtFlatCcsHighBase.Bits.flatccsize = 0;
-      GtFlatCcsHighBase.Bits.rsvd_0 = 0;
-      GtFlatCcsHighBase.Bits.rsvd_1 = 0;
+      GtFlatCcsHighBase.Bits.rsvd_0     = 0;
+      GtFlatCcsHighBase.Bits.rsvd_1     = 0;
 
-      FlatCcsBase = (UINT64) GtFlatCcsLowBase.Data;
-      FlatCcsBase += IpWrLShiftU64 ((UINT64) GtFlatCcsHighBase.Data, 32);
+      FlatCcsBase  = (UINT64)GtFlatCcsLowBase.Data;
+      FlatCcsBase += IpWrLShiftU64 ((UINT64)GtFlatCcsHighBase.Data, 32);
       return FlatCcsBase;
 
     case GtFlatCcsGamReg:
-      GtFlatCcsGamCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, FLAT_CCS_BASE_ADDR_GAMREQ_3D_GT_REG, IpWrRegFlagSize32Bits);
+      GtFlatCcsGamCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, FLAT_CCS_BASE_ADDR_GAMREQ_3D_GT_REG, IpWrRegFlagSize32Bits);
       return GtFlatCcsGamCfg.Bits.flat_ccs_en;
 
     case MediaFlatCcsGamReg:
-      MediaFlatCcsGamCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, FLAT_CCS_BASE_ADDR_GAMREQ_MEDIA_MEDIA_REG, IpWrRegFlagSize32Bits);
+      MediaFlatCcsGamCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, FLAT_CCS_BASE_ADDR_GAMREQ_MEDIA_MEDIA_REG, IpWrRegFlagSize32Bits);
       return MediaFlatCcsGamCfg.Bits.flat_ccs_en;
 
     case MediaRc6CtxMemReg:
       if (DataRequested == MediaRc6CtxMemLock) {
-        MediaRc6Ctx.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, RC6CTXBASE_RPM_MEDIA_0_MEDIA_REG, IpWrRegFlagSize32Bits);
-        return (BOOLEAN) MediaRc6Ctx.Bits.rc6memlock;
+        MediaRc6Ctx.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, RC6CTXBASE_RPM_MEDIA_0_MEDIA_REG, IpWrRegFlagSize32Bits);
+        return (BOOLEAN)MediaRc6Ctx.Bits.rc6memlock;
       } else {
-        MediaRc6Ctx.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, RC6CTXBASE_RPM_MEDIA_0_MEDIA_REG, IpWrRegFlagSize32Bits);
+        MediaRc6Ctx.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, RC6CTXBASE_RPM_MEDIA_0_MEDIA_REG, IpWrRegFlagSize32Bits);
         return MediaRc6Ctx.Bits.rc6membase << RC6CTXBASE_RPM_MEDIA_0_MEDIA_RC6MEMBASE_LSB;
       }
 
     case DispDsmBaseReg:
-        DispDsmCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, DEDSMBASE_0_DISP_REG, IpWrRegFlagSize32Bits);
-        return (DispDsmCfg.Bits.bdsm << DEDSMBASE_0_DISP_BDSM_LSB);
+      DispDsmCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, DEDSMBASE_0_DISP_REG, IpWrRegFlagSize32Bits);
+      return (DispDsmCfg.Bits.bdsm << DEDSMBASE_0_DISP_BDSM_LSB);
 
     case DispGsmBaseReg:
-        DispGsmCfg.Data = (UINT32) IpWrRegRead (pInst->MmioAccess, DEGSMBASE_0_DISP_REG, IpWrRegFlagSize32Bits);
-        return (DispGsmCfg.Bits.bgsm_lsb << DEGSMBASE_0_DISP_BGSM_LSB_LSB);
+      DispGsmCfg.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, DEGSMBASE_0_DISP_REG, IpWrRegFlagSize32Bits);
+      return (DispGsmCfg.Bits.bgsm_lsb << DEGSMBASE_0_DISP_BGSM_LSB_LSB);
 
     default:
       break;
@@ -1189,24 +1194,26 @@ IpIGpuPrintConfigSpace (
   IP_IGPU_INST  *pInst
   )
 {
-  UINT8   i;
-  UINT8   j;
+  UINT8  i;
+  UINT8  j;
 
   if (IpIGpuSupported (pInst) == FALSE) {
     PRINT_LEVEL1 ("Returning from %s since IGD is not present\n", __FUNCTION__);
-    return ;
+    return;
   }
 
   PRINT_LEVEL1 ("\nPrinting PCI space for device 2\n  ");
   for (i = 0; i <= 0xF; i++) {
     PRINT_LEVEL1 ("  %2X", i);
   }
+
   for (i = 0; i <= 0xF; i++) {
     PRINT_LEVEL1 ("\n%2X", (i * 0x10));
     for (j = 0; j <= 0xF; j++) {
-      PRINT_LEVEL1 ("  %2X", (UINT8) IpWrRegRead (pInst->PcieCfgAccess, ((i * 0x10) + j), IpWrRegFlagSize8Bits));
+      PRINT_LEVEL1 ("  %2X", (UINT8)IpWrRegRead (pInst->PcieCfgAccess, ((i * 0x10) + j), IpWrRegFlagSize8Bits));
     }
   }
+
   PRINT_LEVEL1 ("\n");
 }
 
@@ -1223,13 +1230,13 @@ IpIGpuClearCmdReg (
   IP_IGPU_INST  *pInst
   )
 {
-  PCICMD_IGPU_STRUCT     PciCmd;
+  PCICMD_IGPU_STRUCT  PciCmd;
 
   if (IpIGpuIsInstValid (pInst) == FALSE) {
     return IpCsiStsErrorNullPtr;
   }
 
-  PciCmd.Data = (UINT16) IpWrRegRead (pInst->PcieCfgAccess, PCICMD_IGPU_REG, IpWrRegFlagSize16Bits);
+  PciCmd.Data     = (UINT16)IpWrRegRead (pInst->PcieCfgAccess, PCICMD_IGPU_REG, IpWrRegFlagSize16Bits);
   PciCmd.Bits.bme = FALSE;
   PciCmd.Bits.mae = FALSE;
   IpWrRegWrite (pInst->PcieCfgAccess, PCICMD_IGPU_REG, PciCmd.Data, IpWrRegFlagSize16Bits);
@@ -1249,7 +1256,7 @@ IpIGpuClearCmdReg (
 VOID
 IpIGpuPrintRegData (
   IP_IGPU_INST  *pInst,
-  CHAR8*        String,
+  CHAR8         *String,
   UINT32        Register,
   UINT64        Value,
   UINT64        Data

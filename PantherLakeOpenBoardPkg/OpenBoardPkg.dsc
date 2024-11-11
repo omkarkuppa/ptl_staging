@@ -57,16 +57,20 @@
   PCD_DYNAMIC_AS_DYNAMICEX = TRUE
 
   #
+  # Silicon On/Off feature are defined here
+  #
+  !include $(SILICON_PRODUCT_PATH)/SiPkgPcdInit.dsc
+
+  #
   # VPD PCD initialization
   #
   !include $(BOARD_PTL_BOARDS)/BoardVpdPcdsInit/OpenBoardVpdPcdInit.dsc
 
-
   #
   # Include PCD configuration for this board.
   #
-  !include OpenBoardPkgPcdInit.dsc
   !include $(PLATFORM_BIN_PACKAGE)/Include/Dsc/PantherLakeBinPkgPcdInit.dsc
+  !include OpenBoardPkgPcdInit.dsc
 
 
 ################################################################################
@@ -172,6 +176,7 @@
   TestPointCheckLib|$(PLATFORM_PACKAGE)/Test/Library/TestPointCheckLib/PeiTestPointCheckLib.inf
 !endif
   GpioV2WrapperLib|$(PLATFORM_BOARD_PACKAGE)/Library/PeiDxeGpioV2WrapperLib/PeiDxeGpioV2WrapperLib.inf
+  PciIoLib|$(PLATFORM_SI_PACKAGE)/LibraryPrivate/PciIoLib/PciIoLib.inf
 
 [LibraryClasses.IA32.SEC, LibraryClasses.IA32.PEIM, LibraryClasses.X64.SEC, LibraryClasses.X64.PEIM]
   FspWrapperPlatformLib|$(PLATFORM_PACKAGE)/FspWrapper/Library/PeiFspWrapperPlatformLib/PeiFspWrapperPlatformLib.inf
@@ -196,6 +201,7 @@
 
   SiliconPolicyInitLib|$(PLATFORM_PACKAGE)/PlatformInit/Library/SiliconPolicyInitLibNull/SiliconPolicyInitLibNull.inf
   SiliconPolicyUpdateLib|$(PLATFORM_BOARD_PACKAGE)/Policy/Library/DxeSiliconPolicyUpdateLib/DxeSiliconPolicyUpdateLib.inf
+  BoardBdsHookLib|BoardModulePkg/Library/BoardBdsHookLib/BoardBdsHookLib.inf
   BoardBootManagerLib|BoardModulePkg/Library/BoardBootManagerLib/BoardBootManagerLib.inf
 
   #
@@ -219,6 +225,12 @@
   # Common
   #
   !include $(PLATFORM_PACKAGE)/Include/Dsc/CorePeiInclude.dsc
+
+  $(SILICON_PRODUCT_PATH)/EarlyDevices/EarlyDevices.inf{
+    <PcdsFixedAtBuild>
+      gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|0
+  }
+
   #
   # FSP wrapper SEC Core
   #
@@ -294,22 +306,40 @@
 !endif
  MdeModulePkg/Universal/ResetSystemPei/ResetSystemPei.inf
 
-  #
-  # UPL Wrapper
-  #
-  UefiPayloadPkg/PayloadLoaderPeim/PayloadLoaderPeim.inf {
-    <LibraryClasses>
-      NULL|$(PLATFORM_BOARD_PACKAGE)/Upl/Library/PeiPayloadHookLib/PeiPayloadHookLib.inf
-  }
-
 [Components.X64]
 
   #
   # Common
   #
-  !include $(PLATFORM_BOARD_PACKAGE)/Include/Dsc/CoreDxeInclude.dsc
+
+    !include $(PLATFORM_PACKAGE)/Include/Dsc/CoreDxeInclude.dsc
 
   #
+  #UEFI Shell
+  #
+  ShellPkg/Application/Shell/Shell.inf {
+    <LibraryClasses>
+      NULL|ShellPkg/Library/UefiShellLevel2CommandsLib/UefiShellLevel2CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellLevel1CommandsLib/UefiShellLevel1CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellLevel3CommandsLib/UefiShellLevel3CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellDriver1CommandsLib/UefiShellDriver1CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellInstall1CommandsLib/UefiShellInstall1CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellDebug1CommandsLib/UefiShellDebug1CommandsLib.inf
+      NULL|ShellPkg/Library/UefiShellNetwork1CommandsLib/UefiShellNetwork1CommandsLib.inf
+
+    <PcdsFixedAtBuild>
+      gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
+  }
+
+  UefiCpuPkg/CpuDxe/CpuDxe.inf
+  MdeModulePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
+
+  MdeModulePkg/Bus/Pci/SataControllerDxe/SataControllerDxe.inf
+  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe.inf
+  MdeModulePkg/Universal/Console/GraphicsOutputDxe/GraphicsOutputDxe.inf
+  BoardModulePkg/BoardBdsHookDxe/BoardBdsHookDxe.inf
   # Silicon
   #
   !include $(PLATFORM_BOARD_PACKAGE)/Include/Dsc/SiPkgDxe.dsc
@@ -322,6 +352,7 @@
   #
   # Platform
   #
+  $(PLATFORM_PACKAGE)/PlatformInit/SiliconPolicyDxe/SiliconPolicyDxe.inf
   $(PLATFORM_PACKAGE)/PlatformInit/PlatformInitDxe/PlatformInitDxe.inf{
     <LibraryClasses>
       NULL|$(PLATFORM_BOARD_PACKAGE)/PantherLakeBoards/Library/BoardInitLib/Dxe/DxeMultiBoardInitlib.inf

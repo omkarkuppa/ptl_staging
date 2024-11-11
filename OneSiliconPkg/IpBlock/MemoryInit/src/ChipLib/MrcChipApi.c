@@ -905,14 +905,10 @@ MrcGetNMode (
   )
 {
   MrcOutput         *Outputs;
-  MrcChannelOut     *ChannelOut;
-  UINT32            FirstChannel;
 
   Outputs         = &MrcData->Outputs;
-  FirstChannel    = Outputs->Controller[Outputs->FirstPopController].FirstPopCh;
-  ChannelOut      = &Outputs->Controller[Outputs->FirstPopController].Channel[FirstChannel];
 
-  return ChannelOut->Timing[MrcData->Inputs.ExtInputs.Ptr->MemoryProfile].NMode;
+  return Outputs->Timing[MrcData->Inputs.ExtInputs.Ptr->MemoryProfile].NMode;
 }
 
 /**

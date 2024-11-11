@@ -380,7 +380,7 @@ LoadAcpiTables(
             /// We do this twice to remove PPCC from Processor and Memory participants.
             ///
             UpdateCounter = 2; // Number of Objects to invalidate.
-            for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); (CurrPtr <= ((UINT8 *) TableHeader + TableHeader->Length)) && (UpdateCounter !=0); CurrPtr++) {
+            for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); (CurrPtr <= ((UINT8 *) TableHeader + TableHeader->Length - sizeof(*Signature))) && (UpdateCounter !=0); CurrPtr++) {
               Signature = (UINT32 *) (CurrPtr + 1);
               if (*Signature == SIGNATURE_32 ('P', 'P', 'C', 'C')) {
                 *Signature = SIGNATURE_32 ('P', 'P', 'C', 'X');
@@ -395,7 +395,7 @@ LoadAcpiTables(
             /// Intel(R) Dynamic Tuning Technology validation needs a capability to enable or disable ACPI objects.
             ///
             UpdateCounter = 1; // Number of Objects to invalidate.
-            for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); (CurrPtr <= ((UINT8 *) TableHeader + TableHeader->Length)) && (UpdateCounter !=0); CurrPtr++) {
+            for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); (CurrPtr <= ((UINT8 *) TableHeader + TableHeader->Length- sizeof(*Signature))) && (UpdateCounter !=0); CurrPtr++) {
               Signature = (UINT32 *) (CurrPtr + 1);
               if (*Signature == SIGNATURE_32 ('A', 'R', 'T', 'G')) {
                 *Signature = SIGNATURE_32 ('A', 'R', 'T', 'X');
@@ -410,7 +410,7 @@ LoadAcpiTables(
             /// Intel(R) Dynamic Tuning Technology validation needs a capability to enable or disable ACPI objects.
             ///
             UpdateCounter = 1; // Number of Objects to invalidate.
-            for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); (CurrPtr <= ((UINT8 *) TableHeader + TableHeader->Length)) && (UpdateCounter !=0); CurrPtr++) {
+            for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); (CurrPtr <= ((UINT8 *) TableHeader + TableHeader->Length - sizeof(*Signature))) && (UpdateCounter !=0); CurrPtr++) {
               Signature = (UINT32 *) (CurrPtr + 1);
               if (*Signature == SIGNATURE_32 ('P', 'M', 'A', 'X')) {
                 *Signature = SIGNATURE_32 ('P', 'M', 'X', 'X');
@@ -419,19 +419,9 @@ LoadAcpiTables(
             }
           }
 
-          ///
-          /// Invalidate objects before loading the SSDT by changing their names.
-          /// Intel(R) Dynamic Tuning Technology validation needs a capability to enable or disable ACPI objects.
-          ///
-          for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); (CurrPtr <= ((UINT8 *) TableHeader + TableHeader->Length)) && (UpdateCounter !=0); CurrPtr++) {
-            Signature = (UINT32 *) (CurrPtr + 1);
-            if (*Signature == SIGNATURE_32 ('P', 'M', 'A', 'X')) {
-              *Signature = SIGNATURE_32 ('P', 'M', 'X', 'X');
-            }
-          }
-
           // Update the DptfNvs.asl Operation Region to the allocated address
-          for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); CurrPtr <= ((UINT8 *) TableHeader + TableHeader->Length); CurrPtr++) {
+          // OperationRegion space (14 bytes) = 1 + sizeof (*Signature) + 2 + sizeof (UINT32) + 1 + size of (UINT16)
+          for (CurrPtr = (UINT8 *) TableHeader + sizeof (EFI_ACPI_DESCRIPTION_HEADER); CurrPtr <= ((UINT8 *) TableHeader + TableHeader->Length - 14); CurrPtr++) {
             Signature = (UINT32 *) (CurrPtr + 1);
             if ((*CurrPtr == AML_EXT_REGION_OP) && (*Signature == SIGNATURE_32 ('D', 'N', 'V', 'S'))) {
               DEBUG ((DEBUG_INFO, "Intel(R) Dynamic Tuning Technology: Update NVS Area %X\n",*(UINT32 *) (CurrPtr + 1 + sizeof (*Signature) + 2) ));

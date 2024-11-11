@@ -52,6 +52,7 @@ typedef struct {
   INT64               RcompDrvDnOrig;
   INT64               RcompDrvUpOrig;
   INT64               InternalClockOnOrig;
+  INT64               DqsRFTrainingModeValue;
   UINT32              VcmTargetRatio;
   UINT32              VrefEdge[SOT_SELECT_RX][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS_FOR_OFFSET_TRAINING]; // serves as an output for the Vref search results. Used mainly for UTing
   INT32               VocEdge[SOT_SELECT_RX][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS_FOR_OFFSET_TRAINING]; // serves as an output for the Voc search results
@@ -143,29 +144,6 @@ SenseAmpOffsetSetRxVrefCodeAllLanes (
   IN     UINT8    Channel,
   IN     UINT8    Byte,
   IN     UINT32   LaneValue[MAX_BITS_FOR_OFFSET_TRAINING],
-  IN     BOOLEAN  MultiCast
-  );
-
-/**
-  Set the RxVref code for a specific lane.
-
-  @param[in,out] MrcData  - Include all MRC global data.
-  @param[in] Controller   - Controller to update
-  @param[in] Channel      - Channel to update
-  @param[in] Channel      - Byte to update
-  @param[in] VrefCode     - Vref code to set
-  @param[in] MultiCast    - Bool flag to enable/disable multicasting
-
-  @retval N/A
-**/
-VOID
-SenseAmpOffsetSetRxVrefCodeLane (
-  IN OUT MrcParameters *const MrcData,
-  IN     UINT8    Controller,
-  IN     UINT8    Channel,
-  IN     UINT8    Byte,
-  IN     UINT8    Bit,
-  IN     UINT32   VrefCode,
   IN     BOOLEAN  MultiCast
   );
 

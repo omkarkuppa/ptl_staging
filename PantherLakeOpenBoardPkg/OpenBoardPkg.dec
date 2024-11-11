@@ -63,11 +63,6 @@ Include
   gBoardModuleTokenSpaceGuid.PcdFspTopBase|0x00000000|UINT32|0x20000084
   gBoardModuleTokenSpaceGuid.PcdFspTopSize|0x00000000|UINT32|0x20000085
 
-  # UPL
-  gBoardModuleTokenSpaceGuid.PcdFlashFvUplBase|0x00000000|UINT32|0x20000066
-  gBoardModuleTokenSpaceGuid.PcdFlashFvUplOffset|0x00000000|UINT32|0x20000067
-  gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize|0x00000000|UINT32|0x20000068
-
   gBoardModuleTokenSpaceGuid.PcdPolicyDefaultChkEnable|FALSE|BOOLEAN|0x20000A64
 
 [PcdsDynamic]
@@ -176,9 +171,6 @@ Include
 
   #MRC UserBd
   gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|0|UINT8|0x00001130
-
-  # MRC Ddr Frequency Limit
-  gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit       |0x0|UINT16|0x00001131
 
   # Mrc Cmd Mirror Configuration
   gBoardModuleTokenSpaceGuid.VpdPcdMrcCmdMirror                   |0x0|UINT8|0x0000113B

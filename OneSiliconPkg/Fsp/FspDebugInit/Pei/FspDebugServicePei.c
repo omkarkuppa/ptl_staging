@@ -164,6 +164,7 @@ FspDebugPrint (
   FSPM_UPD                     *FspmUpd;
   EVENT_HANDLER_PARAMETER      FspEventHandlerParameter;
   BOOLEAN                      FspEventHandlerExecuted;
+  EFI_STATUS                   Status;
 
   FspGlobalData = NULL;
   FspEventHandlerParameter.FspEventHandler = NULL;
@@ -263,7 +264,10 @@ FspDebugPrint (
       SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
     }
     if (GetDebugInterfaceFlags () & STATUS_CODE_USE_SERIALIO) {
-      WriteToSerialIoPpi ((UINT8 *) Buffer, AsciiStrLen (Buffer));
+      Status = WriteToSerialIoPpi ((UINT8 *) Buffer, AsciiStrLen (Buffer));
+      if (EFI_ERROR (Status)) {
+        SerialPortWrite ((UINT8 *) Buffer, AsciiStrLen (Buffer));
+      }
     }
   }
   //
@@ -403,7 +407,8 @@ FspApiDebugAssert (
   IN UINT8        DebugPropertyMask
   )
 {
-  CHAR8  Buffer[MAX_DEBUG_MESSAGE_LENGTH];
+  CHAR8      Buffer[MAX_DEBUG_MESSAGE_LENGTH];
+  EFI_STATUS Status;
 
   //
   // Generate the ASSERT() message in Ascii format
@@ -414,7 +419,10 @@ FspApiDebugAssert (
   // Send the print string to the Console Output device
   //
   SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
-  WriteToSerialIoPpi ((UINT8 *)Buffer, AsciiStrLen (Buffer));
+  Status = WriteToSerialIoPpi ((UINT8 *) Buffer, AsciiStrLen (Buffer));
+  if (EFI_ERROR (Status)) {
+    SerialPortWrite ((UINT8 *) Buffer, AsciiStrLen (Buffer));
+  }
 
    //
    // Send the print string to Trace Hub

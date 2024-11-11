@@ -85,6 +85,7 @@ UsbcRetimerComplianceModeConfig (
   DEBUG ((DEBUG_INFO, "Retimer Force Power Gpio is : 0x%08x\n", GpioPad));
 
   if (GpioPad != 0) {
+    // Set retimer force power pin to GPO and output state is low by default
     ZeroMem (&GpioConfig, sizeof (GPIOV2_CONFIG));
     GpioConfig.PadMode = GpioV2PadModeGpio;
     GpioConfig.HostOwn = GpioV2HostOwnAcpi;
@@ -93,6 +94,8 @@ UsbcRetimerComplianceModeConfig (
     GpioConfig.ResetConfig = GpioV2ResetHost;
     GpioConfig.TerminationConfig = GpioV2TermNone;
     GpioConfig.LockTx = GpioV2Unlock;
+    GpioConfig.OutputState = GpioV2StateLow;
+    GpioV2ConfigurePad (GpioPad, &GpioConfig);
 
     if (SetupData.TypecRetimerTxComplianceModeEn != 0) {
       if (SetupData.TypecRetimerPD0 == 1) { //PD 0 Retimer enable

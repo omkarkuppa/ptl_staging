@@ -293,7 +293,7 @@ LpssUartDriverSetAttributes (
   // - Required to support redirection on higher BaudRates,
   //   also avoids reconfiguration done initaily by DebugLibrary.
   //
-  if (!PcdGetBool (PcdSerialIoUartDriverIgnoreBaudRateSet)) {
+  if (!PcdGetBool (PcdLpssUartDriverIgnoreBaudRateSet)) {
     LpssUartSetAttributes (
       UartDevice->FixedMmio,
       BaudRate,

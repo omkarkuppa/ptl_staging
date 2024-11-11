@@ -28,7 +28,9 @@
 #include <Platform.h>
 #include <Library/PchInfoLib.h>
 #include <PolicyUpdateMacro.h>
+#if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
+#endif
 
 /**
   This function performs SA PEI Debug PreMem Policy initialization.

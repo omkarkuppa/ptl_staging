@@ -30,6 +30,10 @@
   External (\_SB.E3UP, MethodObj)
   External (\_SB.E4PL, MethodObj)
   External (\_SB.E4UP, MethodObj)
+  External (\E1CP, IntObj)
+  External (\E2CP, IntObj)
+  External (\E3CP, IntObj)
+  External (\E4CP, IntObj)
 
   Method (BASE, 0)
   {
@@ -209,65 +213,64 @@
     //
     Device (SS01)
     {
-
       Name (_ADR, 0x02)
 
-      If (CondRefOf (U4CM))
-      {
-        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME0, 1)))
-        {
-          Method (_DSD, 0) {
-            ADBG ("XHC SS01 _DSD")
-            Return (
-              Package () {
-                ToUUID ("DAFFD814-6EBA-4D8C-8A91-BC9BBF4AA301"),
-                Package () {
-                  Package (2) {"usb4-host-interface", \_SB.PC00.TDM0},
-                  Package (2) {"usb4-port-number", 0}
-                }
+      If (CondRefOf (U4CM)) {
+        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME0, 1))) {
+          If (CondRefOf (E1CP)) {
+            If (LEqual (And (E1CP, 0x10), 0x10)) { // Check bit4 which indicates USB4 support
+              Method (_DSD, 0) {
+                ADBG ("XHC SS01 _DSD")
+                Return (
+                  Package () {
+                    ToUUID ("DAFFD814-6EBA-4D8C-8A91-BC9BBF4AA301"),
+                    Package () {
+                      Package (2) {"usb4-host-interface", \_SB.PC00.TDM0},
+                      Package (2) {"usb4-port-number", 0}
+                    }
+                  }
+                ) // End of Return ()
               }
-            ) // End of Return ()
+            }
           }
-          Method (_UPC, 0){
+          Method (_UPC, 0) {
             If (CondRefOf (\_SB.E1UP)) {
               Return (\_SB.E1UP ())
-            }
-            Else {
-              Return (Package (4) { 0x0, 0xFF, 0x0, 0x0 })
+            } Else {
+              Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
             }
           }
-          Method (_PLD, 0){
+          Method (_PLD, 0) {
             If (CondRefOf (\_SB.E1PL)) {
               Return (\_SB.E1PL ())
-            }
-            Else {
-              Return (Package (1) { Buffer (0x14) { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }})
+            } Else {
+              Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
             }
           }
         }
       }
 
       // USB Device-Specific Method
-      Method(_DSM, 4, NotSerialized) {
-        ADBG("TCSS XHCI SS01 _DSM")
-        If(LEqual(Arg0, ToUUID("ce2ee385-00e6-48cb-9f05-2edb927c4899"))) {
-          ADBG("TCSS XHCI SS01 GUID")
-          If(LEqual(Arg2, 0)) {
-            ADBG("TCSS XHCI SS01 F0")
-            Return (Buffer() {0x21})
+      Method (_DSM, 4, NotSerialized) {
+        ADBG ("TCSS XHCI SS01 _DSM")
+        If (LEqual (Arg0, ToUUID ("ce2ee385-00e6-48cb-9f05-2edb927c4899"))) {
+          ADBG ("TCSS XHCI SS01 GUID")
+          If (LEqual (Arg2, 0)) {
+            ADBG ("TCSS XHCI SS01 F0")
+            Return (Buffer () {0x21})
           }
-          If(LEqual(Arg2, 5)) {                             // Disable U1 and U2 transitions for a port
-            ADBG("TCSS XHCI SS01 F5")
-            If(LEqual(Arg1, 0)) {
-              If(LEqual(And (RTBM, 0x01), 0x01)) {
-                ADBG("XHC SS01 _DSM U1U2 disable")
-                Return(0x01)                                // U1 and U2 transitions will be disabled.
+          If (LEqual (Arg2, 5)) {                            // Disable U1 and U2 transitions for a port
+            ADBG ("TCSS XHCI SS01 F5")
+            If (LEqual (Arg1, 0)) {
+              If (LEqual (And (RTBM, 0x01), 0x01)) {
+                ADBG ("XHC SS01 _DSM U1U2 disable")
+                Return (0x01)                                // U1 and U2 transitions will be disabled.
               }
-              Return(0)
+              Return (0)
             }
           }
         }
-        Return (Buffer() {0})
+        Return (Buffer () {0})
       }
     }
 
@@ -275,58 +278,58 @@
     {
       Name (_ADR, 0x03)
 
-      If (CondRefOf (U4CM))
-      {
-        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME0, 1)))
-        {
-          Method (_DSD, 0) {
-            ADBG ("XHC SS02 _DSD")
-            Return (
-              Package () {
-                ToUUID ("DAFFD814-6EBA-4D8C-8A91-BC9BBF4AA301"),
-                Package () {
-                  Package (2) {"usb4-host-interface", \_SB.PC00.TDM0},
-                  Package (2) {"usb4-port-number", 1}
-                }
+      If (CondRefOf (U4CM)) {
+        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME0, 1))) {
+          If (CondRefOf (E2CP)) {
+            If (LEqual (And (E2CP, 0x10), 0x10)) { // Check bit4 which indicates USB4 support
+              Method (_DSD, 0) {
+                ADBG ("XHC SS02 _DSD")
+                Return (
+                  Package () {
+                    ToUUID ("DAFFD814-6EBA-4D8C-8A91-BC9BBF4AA301"),
+                    Package () {
+                      Package (2) {"usb4-host-interface", \_SB.PC00.TDM0},
+                      Package (2) {"usb4-port-number", 1}
+                    }
+                  }
+                ) // End of Return ()
               }
-            ) // End of Return ()
+            }
           }
-          Method (_UPC, 0){
+          Method (_UPC, 0) {
             If (CondRefOf (\_SB.E2UP)) {
               Return (\_SB.E2UP ())
-            }
-            Else {
-              Return (Package (4) { 0x0, 0xFF, 0x0, 0x0 })
+            } Else {
+              Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
             }
           }
-          Method (_PLD, 0){
+          Method (_PLD, 0) {
             If (CondRefOf (\_SB.E2PL)) {
               Return (\_SB.E2PL ())
-            }
-            Else {
-              Return (Package (1) { Buffer (0x14) { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }})
+            } Else {
+              Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
             }
           }
         }
       }
 
       // USB Device-Specific Method
-      Method(_DSM, 4, NotSerialized) {
-        ADBG("TCSS XHCI SS02 _DSM")
-        If(LEqual(Arg0, ToUUID("ce2ee385-00e6-48cb-9f05-2edb927c4899"))) {
-          ADBG("TCSS XHCI SS02 GUID")
-          If(LEqual(Arg2, 0)) {
-            ADBG("TCSS XHCI SS02 F0")
-            Return (Buffer() {0x21})
+      Method (_DSM, 4, NotSerialized) {
+        ADBG ("TCSS XHCI SS02 _DSM")
+        If (LEqual (Arg0, ToUUID ("ce2ee385-00e6-48cb-9f05-2edb927c4899"))) {
+          ADBG ("TCSS XHCI SS02 GUID")
+          If (LEqual (Arg2, 0)) {
+            ADBG ("TCSS XHCI SS02 F0")
+            Return (Buffer () {0x21})
           }
-          If(LEqual(Arg2, 5)) {                             // Disable U1 and U2 transitions for a port
-            ADBG("TCSS XHCI SS02 F5")
-            If(LEqual(Arg1, 0)) {
-              If(LEqual(And (RTBM, 0x02), 0x02)) {
-                ADBG("XHC SS02 _DSM U1U2 disable")
-                Return(0x01)                                // U1 and U2 transitions will be disabled.
+          If (LEqual (Arg2, 5)) {                            // Disable U1 and U2 transitions for a port
+            ADBG ("TCSS XHCI SS02 F5")
+            If (LEqual (Arg1, 0)) {
+              If (LEqual (And (RTBM, 0x02), 0x02)) {
+                ADBG ("XHC SS02 _DSM U1U2 disable")
+                Return (0x01)                                // U1 and U2 transitions will be disabled.
               }
-              Return(0)
+              Return (0)
             }
           }
         }
@@ -338,62 +341,62 @@
     {
       Name (_ADR, 0x04)
 
-      If (CondRefOf (U4CM))
-      {
-        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME1, 1)))
-        {
-          Method (_DSD, 0) {
-            ADBG ("XHC SS03 _DSD")
-            Return (
-              Package () {
-                ToUUID ("DAFFD814-6EBA-4D8C-8A91-BC9BBF4AA301"),
-                Package () {
-                  Package (2) {"usb4-host-interface", \_SB.PC00.TDM1},
-                  Package (2) {"usb4-port-number", 2}
-                }
+      If (CondRefOf (U4CM)) {
+        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME1, 1))) {
+          If (CondRefOf (E3CP)) {
+            If (LEqual (And (E3CP, 0x10), 0x10)) { // Check bit4 which indicates USB4 support
+              Method (_DSD, 0) {
+                ADBG ("XHC SS03 _DSD")
+                Return (
+                  Package () {
+                    ToUUID ("DAFFD814-6EBA-4D8C-8A91-BC9BBF4AA301"),
+                    Package () {
+                      Package (2) {"usb4-host-interface", \_SB.PC00.TDM1},
+                      Package (2) {"usb4-port-number", 2}
+                    }
+                  }
+                ) // End of Return ()
               }
-            ) // End of Return ()
+            }
           }
-          Method (_UPC, 0){
+          Method (_UPC, 0) {
             If (CondRefOf (\_SB.E3UP)) {
               Return (\_SB.E3UP ())
-            }
-            Else {
-              Return (Package (4) { 0x0, 0xFF, 0x0, 0x0 })
+            } Else {
+              Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
             }
           }
-          Method (_PLD, 0){
+          Method (_PLD, 0) {
             If (CondRefOf (\_SB.E3PL)) {
               Return (\_SB.E3PL ())
-            }
-            Else {
-              Return (Package (1) { Buffer (0x14) { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }})
+            } Else {
+              Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
             }
           }
         }
       }
 
       // USB Device-Specific Method
-      Method(_DSM, 4, NotSerialized) {
-        ADBG("TCSS XHCI SS03 _DSM")
-        If(LEqual(Arg0, ToUUID("ce2ee385-00e6-48cb-9f05-2edb927c4899"))) {
-          ADBG("TCSS XHCI SS03 GUID")
-          If(LEqual(Arg2, 0)) {
-            ADBG("TCSS XHCI SS03 F0")
-            Return (Buffer() {0x21})
+      Method (_DSM, 4, NotSerialized) {
+        ADBG ("TCSS XHCI SS03 _DSM")
+        If (LEqual (Arg0, ToUUID ("ce2ee385-00e6-48cb-9f05-2edb927c4899"))) {
+          ADBG ("TCSS XHCI SS03 GUID")
+          If (LEqual (Arg2, 0)) {
+            ADBG ("TCSS XHCI SS03 F0")
+            Return (Buffer () {0x21})
           }
-          If(LEqual(Arg2, 5)) {                             // Disable U1 and U2 transitions for a port
-            ADBG("TCSS XHCI SS03 F5")
-            If(LEqual(Arg1, 0)) {
-              If(LEqual(And (RTBM, 0x04), 0x04)) {
-                ADBG("XHC SS03 _DSM U1U2 disable")
-                Return(0x01)                                // U1 and U2 transitions will be disabled.
+          If (LEqual (Arg2, 5)) {                            // Disable U1 and U2 transitions for a port
+            ADBG ("TCSS XHCI SS03 F5")
+            If (LEqual (Arg1, 0)) {
+              If (LEqual (And (RTBM, 0x04), 0x04)) {
+                ADBG ("XHC SS03 _DSM U1U2 disable")
+                Return (0x01)                                // U1 and U2 transitions will be disabled.
               }
-              Return(0)
+              Return (0)
             }
           }
         }
-        Return (Buffer() {0})
+        Return (Buffer () {0})
       }
     }
 
@@ -401,62 +404,62 @@
     {
       Name (_ADR, 0x05)
 
-      If (CondRefOf (U4CM))
-      {
-        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME1, 1)))
-        {
-          Method (_DSD, 0) {
-            ADBG ("XHC SS04 _DSD")
-            Return (
-              Package () {
-                ToUUID ("DAFFD814-6EBA-4D8C-8A91-BC9BBF4AA301"),
-                Package () {
-                  Package (2) {"usb4-host-interface", \_SB.PC00.TDM1},
-                  Package (2) {"usb4-port-number", 3}
-                }
+      If (CondRefOf (U4CM)) {
+        If (LAnd (LEqual (And (U4CM, 0x07), 1), LEqual (DME1, 1))) {
+          If (CondRefOf (E4CP)) {
+            If (LEqual (And (E4CP, 0x10), 0x10)) { // Check bit4 which indicates USB4 support
+              Method (_DSD, 0) {
+                ADBG ("XHC SS04 _DSD")
+                Return (
+                  Package () {
+                    ToUUID ("DAFFD814-6EBA-4D8C-8A91-BC9BBF4AA301"),
+                    Package () {
+                      Package (2) {"usb4-host-interface", \_SB.PC00.TDM1},
+                      Package (2) {"usb4-port-number", 3}
+                    }
+                  }
+                ) // End of Return ()
               }
-            ) // End of Return ()
+            }
           }
-          Method (_UPC, 0){
+          Method (_UPC, 0) {
             If (CondRefOf (\_SB.E4UP)) {
               Return (\_SB.E4UP ())
-            }
-            Else {
-              Return (Package (4) { 0x0, 0xFF, 0x0, 0x0 })
+            } Else {
+              Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
             }
           }
-          Method (_PLD, 0){
+          Method (_PLD, 0) {
             If (CondRefOf (\_SB.E4PL)) {
               Return (\_SB.E4PL ())
-            }
-            Else {
-              Return (Package (1) { Buffer (0x14) { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }})
+            } Else {
+              Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
             }
           }
         }
       }
 
       // USB Device-Specific Method
-      Method(_DSM, 4, NotSerialized) {
-        ADBG("TCSS XHCI SS04 _DSM")
-        If(LEqual(Arg0, ToUUID("ce2ee385-00e6-48cb-9f05-2edb927c4899"))) {
-          ADBG("TCSS XHCI SS04 GUID")
-          If(LEqual(Arg2, 0)) {
-            ADBG("TCSS XHCI SS04 F0")
-            Return (Buffer() {0x21})
+      Method (_DSM, 4, NotSerialized) {
+        ADBG ("TCSS XHCI SS04 _DSM")
+        If (LEqual (Arg0, ToUUID ("ce2ee385-00e6-48cb-9f05-2edb927c4899"))) {
+          ADBG ("TCSS XHCI SS04 GUID")
+          If (LEqual (Arg2, 0)) {
+            ADBG ("TCSS XHCI SS04 F0")
+            Return (Buffer () {0x21})
           }
-          If(LEqual(Arg2, 5)) {                             // Disable U1 and U2 transitions for a port
-            ADBG("TCSS XHCI SS04 F5")
-            If(LEqual(Arg1, 0)) {
-              If(LEqual(And (RTBM, 0x08), 0x08)) {
-                ADBG("XHC SS04 _DSM U1U2 disable")
-                Return(0x01)                                // U1 and U2 transitions will be disabled.
+          If (LEqual (Arg2, 5)) {                            // Disable U1 and U2 transitions for a port
+            ADBG ("TCSS XHCI SS04 F5")
+            If (LEqual (Arg1, 0)) {
+              If (LEqual (And (RTBM, 0x08), 0x08)) {
+                ADBG ("XHC SS04 _DSM U1U2 disable")
+                Return (0x01)                                // U1 and U2 transitions will be disabled.
               }
-              Return(0)
+              Return (0)
             }
           }
         }
-        Return (Buffer() {0})
+        Return (Buffer () {0})
       }
     }
 

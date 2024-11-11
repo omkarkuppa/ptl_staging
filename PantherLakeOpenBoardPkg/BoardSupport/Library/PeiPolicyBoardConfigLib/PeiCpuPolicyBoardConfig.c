@@ -20,7 +20,6 @@
 **/
 
 #include "PeiPolicyBoardConfig.h"
-#include <FspsUpd.h>
 
 /**
   This function performs PEI CPU Policy update by board configuration.
@@ -40,11 +39,11 @@ UpdatePeiCpuPolicyBoardConfig (
 {
   EFI_STATUS                       Status;
   CPU_INIT_CONFIG                  *CpuInitConfig;
-  #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspsUpd; 
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                             *FspsUpd;
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
-  #endif
+#endif
 
   Status                      = EFI_SUCCESS;
   CpuInitConfig               = NULL;

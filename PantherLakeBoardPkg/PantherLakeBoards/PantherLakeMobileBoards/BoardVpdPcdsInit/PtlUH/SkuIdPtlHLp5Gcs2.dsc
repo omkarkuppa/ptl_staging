@@ -452,7 +452,7 @@
   }}
   )}
 
-  # PCIE CLOCK USGAGE for PTL-P
+  # PCIE CLOCK USAGE for PTL-P
   gBoardModuleTokenSpaceGuid.VpdPcdPPcieClkUsageMap|*|{CODE(
   {{
     NOT_USED,
@@ -472,43 +472,47 @@
   //
   // M.2 SSD Gen5
   //
-    {GPIOV2_PTL_PCD_XXGPP_B_16,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHost,  GpioV2TermDefault}}, // GEN5_SSD_PWREN
-    {GPIOV2_PTL_PCD_XXGPP_E_3,    {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHost,  GpioV2TermDefault}},  // M2_GEN5_SSD_RESET_N
+    {GPIOV2_PTL_PCD_XXGPP_B_16, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // GEN5_SSD_PWREN
+    {GPIOV2_PTL_PCD_XXGPP_E_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // M2_GEN5_SSD_RESET_N
 
   //
   // M.2 WLAN
   //
-    {GPIOV2_PTL_PCD_XXGPP_A_12,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirInInv,  GpioV2StateDefault, GpioV2IntLevel|GpioV2IntSci,  GpioV2ResetHostDeep,  GpioV2TermDefault,  GpioV2Unlock,  GpioV2Lock}},  // WIFI_WAKE_N
-    {GPIOV2_PTL_PCD_XXGPP_A_16,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHostDeep,  GpioV2TermDefault}},  // BT_RF_KILL_N
-    {GPIOV2_PTL_PCD_XXGPP_A_17,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHostDeep,  GpioV2TermDefault}},  // WIFI_RF_KILL_N
-    {GPIOV2_PTL_PCD_XXGPP_A_11,   {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHost,  GpioV2TermDefault}}, // WLAN_RST_N
+    {GPIOV2_PTL_PCD_XXGPP_A_12, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirInInv, GpioV2StateDefault, GpioV2IntLevel|GpioV2IntSci, GpioV2ResetHostDeep, GpioV2TermDefault,  GpioV2Unlock,  GpioV2Lock}},  // WIFI_WAKE_N
+    {GPIOV2_PTL_PCD_XXGPP_A_16, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHostDeep,  GpioV2TermDefault}},  // BT_RF_KILL_N
+    {GPIOV2_PTL_PCD_XXGPP_A_17, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHostDeep,  GpioV2TermDefault}},  // WIFI_RF_KILL_N
+    {GPIOV2_PTL_PCD_XXGPP_A_11, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // WLAN_RST_N
 
   //
-  // Camera Conn
+  // Camera Conn 1
   //
-    {GPIOV2_PTL_PCD_XXGPP_C_8,  {GpioV2PadModeGpio,   GpioV2HostOwnAcpi,  GpioV2DirOut,    GpioV2StateLow,    GpioV2IntDis,     GpioV2ResetHost,  GpioV2TermDefault}},  // IR_PWRDN
-    {GPIOV2_PTL_PCD_XXGPP_E_1,  {GpioV2PadModeGpio,   GpioV2HostOwnAcpi,  GpioV2DirOut,    GpioV2StateHigh,   GpioV2IntDis,      GpioV2ResetHost,  GpioV2TermDefault}},  // IR_RST_N
-    {GPIOV2_PTL_PCD_XXGPP_F_20,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,    GpioV2StateLow,     GpioV2IntDis,    GpioV2ResetHost,    GpioV2TermDefault}},  // GPP_PRIVACY_LED_CAM1_CVS_HST_WAKE
+    {GPIOV2_PTL_PCD_XXGPP_C_8,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateLow,     GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // IR_PWRDN
+    {GPIOV2_PTL_PCD_XXGPP_E_1,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // IR_RST_N
+    {GPIOV2_PTL_PCD_XXGPP_F_19, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateLow,     GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // IR_PLED_EN
+    {GPIOV2_PTL_PCD_XXGPP_H_1,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateLow,     GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // IR_LED_CTRL
+
+  //
+  // Camera Conn 2
+  //
+    {GPIOV2_PTL_PCD_XXGPP_C_5,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateLow,     GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // RGB_PWRDN
+    {GPIOV2_PTL_PCD_XXGPP_E_10, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // RGB_RST_N
+    {GPIOV2_PTL_PCD_XXGPP_F_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateLow,     GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // ALTEK_WAKE
+    {GPIOV2_PTL_PCD_XXGPP_E_6,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirIn,    GpioV2StateDefault, GpioV2IntLevel,    GpioV2ResetHost,      GpioV2TermDefault}},  // CAM_PRIVACY_SWITCH_INPUT
 
   //
   // TPM
   //
-    { GPIOV2_PTL_PCD_XXGPP_D_15, {GpioV2PadModeGpio, GpioV2HostOwnGpio,    GpioV2DirInInv,    GpioV2StateDefault,  GpioV2IntEdge|GpioV2IntSci,  GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2TermDefault}},  // SPI_TPM_INT_N
+    { GPIOV2_PTL_PCD_XXGPP_D_15,{GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirInInv, GpioV2StateDefault, GpioV2IntEdge|GpioV2IntSci,  GpioV2ResetHostDeep, GpioV2TermNone,     GpioV2TermDefault}},          // SPI_TPM_INT_N
 
   //
   // Touch pad
   //
-    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // GPP_F18_THC1_SPI2_INT_N
+    {GPIOV2_PTL_PCD_XXGPP_F_18, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirInInv, GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic, GpioV2ResetHost,     GpioV2TermNone,     GpioV2Unlock,  GpioV2Lock}},  // GPP_F18_THC1_SPI2_INT_N
 
   //
   // TCSS
   //
-    {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateHigh,   GpioV2IntDis,  GpioV2ResetHost,      GpioV2TermDefault}}, // GPP_V17_TCP_RT_S0IX_ENTRY_EXIT_N
-
-  //
-  // Type-C , TBT Re-Timers
-  //
-    {GPIOV2_PTL_PCD_XXGPP_B_21, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateLow,    GpioV2IntDis,  GpioV2ResetHostDeep,  GpioV2TermDefault}},  // TCP_RETIMER_FORCE_PWR
+    {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirOut, GpioV2StateHigh, GpioV2IntDis, GpioV2ResetHostDeep,  GpioV2TermDefault}}, // GPP_V17_TCP_RT_S0IX_ENTRY_EXIT_N
 
   //
   // Not Used pins set to High Impedance
@@ -581,10 +585,6 @@
     {GPIOV2_PTL_PCD_XXGPP_S_7,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {0x0}  // terminator
   })}
-
-  gBoardModuleTokenSpaceGuid.VpdPcdRetimerPowerStateGpio|*|{CODE(
-    { GPIOV2_PTL_PCD_XXGPP_V_17 } // TCP_RT_S0IX_ENTRY_EXIT_N
-  )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdMrcDqsMapCpu2Dram| * |{CODE({
   //

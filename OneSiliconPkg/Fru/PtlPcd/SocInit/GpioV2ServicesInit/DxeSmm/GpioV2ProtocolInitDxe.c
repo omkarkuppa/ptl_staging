@@ -92,6 +92,7 @@ GpioV2ProtocolDxeInitEntryPoint (
     if (Pwm != NULL) {
       FreePool (Pwm);
     }
+    return Status;
   }
 
   if (NULL != Pwm) {

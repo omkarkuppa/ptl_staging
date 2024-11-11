@@ -61,7 +61,7 @@ SetTcRfpRftpReg (
   ExtInputs = Inputs->ExtInputs.Ptr;
   Profile   = ExtInputs->MemoryProfile;
   Outputs   = &MrcData->Outputs;
-  TimingOut = &Outputs->Controller[Controller].Channel[Channel].Timing[Profile];
+  TimingOut = &Outputs->Timing[Profile];
 
   IsLpddr5  = Outputs->IsLpddr5;
   IsDdr5    = Outputs->IsDdr5;
@@ -148,7 +148,7 @@ SetTcSrftpReg (
   Inputs     = &MrcData->Inputs;
   Outputs    = &MrcData->Outputs;
   Frequency  = Outputs->Frequency;
-  Timing     = &Outputs->Controller[Controller].Channel[Channel].Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
+  Timing     = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
   TckWckScale = ((Outputs->IsLpddr5) ? 4 : 1);
 
   tMRD = MrcGetTmod (MrcData, Timing->tCK) * TckWckScale; // if LP5 Scale to WCK;
@@ -189,7 +189,7 @@ SetTcZqCalReg (
 
   Inputs   = &MrcData->Inputs;
   Outputs  = &MrcData->Outputs;
-  Timing   = &Outputs->Controller[Controller].Channel[Channel].Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
+  Timing   = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
 
   tZQCS       = MrcGetTzqcs (MrcData, Timing->tCK);
   ZQCSPeriod  = (Outputs->IsLpddr) ? ZQCS_PERIOD_LPDDR : ZQCS_PERIOD_DDR5;
@@ -391,7 +391,7 @@ MrcEcsConfig (
               TEcsInit = MRC_DDR5_tECSinit_32Gb_US;
               break;
           }
-          tRefi = ChannelOut->Timing[ExtInputs->MemoryProfile].tREFI;   // in tCK units
+          tRefi = Outputs->Timing[ExtInputs->MemoryProfile].tREFI;   // in tCK units
           GetSetVal = (TEcsInit * 1000 * 1000) / (tRefi * Outputs->tCKps) - 9;
           MrcGetSetMcCh (MrcData, Controller, Channel, GsmScPbrEcsRefabPeriod, WriteCached | PrintValue, &GetSetVal);
         } // Dimm

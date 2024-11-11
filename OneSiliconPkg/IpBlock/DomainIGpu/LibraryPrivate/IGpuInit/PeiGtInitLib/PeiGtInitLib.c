@@ -36,7 +36,7 @@ IGpuGtInit (
   IP_IGPU_INST  *pInst
   )
 {
-  EFI_STATUS   Status;
+  EFI_STATUS  Status;
 
   Status = IpIGpuGtInit (pInst);
 

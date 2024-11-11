@@ -30,6 +30,7 @@
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHCammDTbTRvp2.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlHLp5Gcs1.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlHLp5Gcs2.dsc
+!include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5MemSktmRvp.dsc
 
 [Packages]
   PantherLakeBoardPkg/BoardPkg.dec
@@ -293,6 +294,7 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdSkuType|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining|*|0x0
+  gBoardModuleTokenSpaceGuid.VpdPcdCnvDeviceId|*|0x0
 
   # MRC BoardStackUp
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardStackUp|*|0x0
@@ -370,11 +372,6 @@
   # OEM must set/clear these bits as per system support.
   #
   gPsrFeatureModuleTokenSpaceGuid.VpdPcdPsrSupportedCapabilities|*|0x1F
-
-
-  gBoardModuleTokenSpaceGuid.VpdPcdRetimerPowerStateGpio|*|{CODE(
-   { 0x0 }
-  )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdCnvBoardConfig| * |{CODE(
   {

@@ -267,7 +267,7 @@ UpdateMeByHeci (
   DEBUG ((DEBUG_INFO, "UpdateMeByHeci: FwUpdateApiStatus: 0x%x (%d).\n", FwUpdateApiStatus, FwUpdateApiStatus));
   DEBUG ((DEBUG_INFO, "UpdateMeByHeci: FwUpdateStatus   : 0x%x (%d).\n", FwUpdateStatus, FwUpdateStatus));
   DEBUG ((DEBUG_INFO, "UpdateMeByHeci: NeededResetType  : 0x%x.\n", NeededResetType));
-  if ((FwUpdateApiStatus != EFI_SUCCESS) || (FwUpdateStatus != EFI_SUCCESS)) {
+  if (EFI_ERROR (Status) || (FwUpdateApiStatus != EFI_SUCCESS) || (FwUpdateStatus != EFI_SUCCESS)) {
     Status = EFI_DEVICE_ERROR;
   } else {
     Status = EFI_SUCCESS;

@@ -231,11 +231,13 @@
 #string STR_NHLT_CONFIG_DMIC_QUAD_PROMPT        #language en-US " Dmic Quad"
 #string STR_NHLT_CONFIG_DMIC_QUAD_HELP          #language en-US "Enables/Disables 4 Mic Array Endpoint in NHLT ACPI table."
 #string STR_NHLT_CONFIG_BLUETOOTH_PROMPT        #language en-US " Bluetooth"
-#string STR_NHLT_CONFIG_BLUETOOTH_HELP          #language en-US "Enables/Disables Bluetooth Endpoint in NHLT ACPI table.\n"
+#string STR_NHLT_CONFIG_BLUETOOTH_HELP          #language en-US "Enables/Disables Bluetooth Endpoint in NHLT ACPI table.\nThe I2S clock is driven either by BT or DSP for the HFP interface."
 #string STR_NHLT_CONFIG_I2S_ALC274_PROMPT       #language en-US " I2S Alc274"
 #string STR_NHLT_CONFIG_I2S_ALC274_HELP         #language en-US "Enables/Disables I2S Endpoint for ALC274 in NHLT ACPI table."
 #string STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_48KHZ  #language en-US "Clock 38.4MHz, Format 24b/48kHz"
 #string STR_NHLT_CLOCK_38_4MHZ_FORMAT_24_96KHZ  #language en-US "Clock 38.4MHz, Format 24b/96kHz"
+#string STR_NHLT_BT_38_4MHZ_BT_DRIVES_CLOCK     #language en-US "BT drives I2S clock for HFP"
+#string STR_NHLT_BT_38_4MHZ_DSP_DRIVES_CLOCK    #language en-US "DSP drives I2S clock for HFP"
 
 #string STR_PCH_HDA_I2S_CODEC_SELECT_PROMPT     #language en-US " I2S Codec Select"
 #string STR_PCH_HDA_I2S_CODEC_SELECT_HELP       #language en-US "Selects I2S Audio Codec support.\nNote: SerialIo UART0 must be disabled to enable external I2S codec (due to GPIO pin muxing).\n"
@@ -2721,6 +2723,7 @@
 #string STR_PCH_SERIAL_IO_DEVICE_IRQ_MODE_HELP    #language en-US  "Selects different routing for interrupts from external device"
 #string STR_PCH_SYNAPTICS_FORCEPAD                #language en-US  "Synaptics Forcepad"
 #string STR_PCH_SENSEL_FORCEPAD                   #language en-US "Sensel Forcepad"
+#string STR_PCH_SMART_C_COVER                     #language en-US  "Smart C Cover"
 #string STR_PCH_SAR_SX9306                        #language en-US "SAR SX9306 Sensor"
 #string STR_PCH_SAR_SX9310                        #language en-US "SAR SX9310 Sensor"
 

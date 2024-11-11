@@ -382,7 +382,7 @@ QuickI2cLibReadComplete (
   @param[in] ResetPadTrigger    Reset Pad Trigger
 
 **/
-VOID
+EFI_STATUS
 QuickI2cLibGpioGetOutOfReset (
   IN UINT32                    Timeout,
   IN UINT8                     InstanceId,
@@ -398,20 +398,15 @@ QuickI2cLibGpioGetOutOfReset (
   Status = gBS->LocateProtocol (&gThcResetProtocolGuid, NULL, (VOID **) &ThcResetProtocol);
   if (EFI_ERROR (Status)) {
     ASSERT_EFI_ERROR (Status);
-    return;
+    return Status;
   }
 
   //
-  // Place TIC in Reset state
-  // Reset Assert
-  //
-  ThcResetProtocol->SetOutputValue (ThcResetProtocol, InstanceId, (ResetPadTrigger & BIT0));
-
-  gBS->Stall (EFI_TIMER_PERIOD_MILLISECONDS (Timeout));
-  //
-  // Reset DeAssert
+  // Place TIC in Reset state Reset Assert
   //
   ThcResetProtocol->SetOutputValue (ThcResetProtocol, InstanceId, !(ResetPadTrigger & BIT0));
+  gBS->Stall (EFI_TIMER_PERIOD_MILLISECONDS (Timeout));
+  return EFI_SUCCESS;
 }
 
 /**
@@ -719,32 +714,31 @@ QuickI2cStartWriteSwdma (
 **/
 VOID
 QuickI2cCompleteSwdma (
-  IN UINT64   MmioBase
+  IN QUICK_I2C_DEV        *QuickI2cDev
   )
 {
   EFI_STATUS Status;
 
   THC_LOCAL_DEBUG (L"QuickI2cCompleteSwdma()\n")
 
-  // wait for pause bit
-  Status = QuickI2cWaitForSwRxDMAPause (MmioBase);
-  if (EFI_ERROR (Status)) {
-    THC_LOCAL_DEBUG (L"QuickI2cCompleteSwdma: QuickI2cWaitForSwRxDMAPause error status - %r\n", Status)
-  }
-
   //
   // To complete SwDMA, need to reset DMA/SwDMA settings
   // Restart ReadRx2 process and enable interrupts
   //
-  QuickI2cResetDmaSettings (MmioBase);
-  QuickI2cResetSwdmaSettings (MmioBase);
-  QuickI2cLibSetReadRx2StartBit (MmioBase);
 
-  if (QuickI2cLibIsQuiesceEnabled (MmioBase)) {
-    THC_LOCAL_DEBUG (L"QuickI2cCompleteSwdma: QuiesceEnabled \n")
-    Status = QuickI2cLibEndQuiesce (MmioBase, EndQuiesceTimeout);
-    if (EFI_ERROR (Status)) {
-      THC_LOCAL_DEBUG (L"QuickI2cCompleteSwdma: QuickI2cLibEndQuiesce error status - %r\n", Status)
+  QuickI2cWaitForSwRxDMAPause (QuickI2cDev->PciBar0);
+  QuickI2cResetDmaSettings (QuickI2cDev->PciBar0);
+  QuickI2cResetSwdmaSettings (QuickI2cDev->PciBar0);
+  QuickI2cLibSetReadRx2StartBit (QuickI2cDev->PciBar0);
+  if (QuickI2cDev->InitProcessDoneEnableInterrupt) {
+    if (QuickI2cLibIsQuiesceEnabled (QuickI2cDev->PciBar0)) {
+      THC_LOCAL_DEBUG (L"QuickI2cCompleteSwdma QuiesceEnabled \n")
+      Status = QuickI2cLibEndQuiesce (QuickI2cDev->PciBar0, EndQuiesceTimeout);
+      THC_LOCAL_DEBUG (L"QuickI2cCompleteSwdma QuickI2cLibEndQuiesce Status: %r\n", Status)
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_WARN, "QuickI2cCompleteSwdma QuickI2cLibEndQuiesce error, Status %r\n", Status));
+        return;
+      }
     }
   }
 }
@@ -993,20 +987,24 @@ QuickI2cLiProgramSubIpRegisterToDefault (
   THC_M_PRT_SW_SEQ_I2C_WR_CNTRL   I2cWrCntrl;
   THC_M_PRT_WRITE_DMA_CNTRL       WriteDmaCntrl;
 
+  THC_LOCAL_DEBUG (L"%a: Entry \n", __FUNCTION__)
   // Set Port type as 00 = SPI default value
   PortControl.Data32 = MmioRead32 (MmioBase + R_THC_MEM_PRT_CONTROL);
   PortControl.Fields.PortType = 0x0;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_CONTROL), PortControl.Data32);
+  THC_LOCAL_DEBUG (L"%a:  R_THC_MEM_PRT_CONTROL- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_CONTROL))
 
   // Set Int Enable to default value
   ThcIntEn.Data32 = MmioRead32 (MmioBase + R_THC_MEM_PRT_INT_ENABLE);
   ThcIntEn.Data32 = THC_M_PRT_INT_EN_DEFAULT;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_INT_ENABLE), ThcIntEn.Data32);
+  THC_LOCAL_DEBUG (L"%a: R_THC_MEM_PRT_INT_ENABLE- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_INT_ENABLE))
 
   // Set other registers to default value i.e. 0
   ThcIntStatus.Data32 = MmioRead32 (MmioBase + R_THC_MEM_PRT_INT_STATUS);
   ThcIntStatus.Data32 = 0;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_INT_STATUS), ThcIntStatus.Data32);
+  THC_LOCAL_DEBUG (L"%a: R_THC_MEM_PRT_INT_STATUS- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_INT_STATUS))
 
   SwSeqSts.Data32 = MmioRead32 ((UINTN)(MmioBase + R_THC_MEM_PRT_SW_SEQ_STS));
   SwSeqSts.Data32 = 0;
@@ -1015,27 +1013,35 @@ QuickI2cLiProgramSubIpRegisterToDefault (
   SwSeqCntrl.Data = MmioRead32 ((UINTN)(MmioBase + R_THC_MEM_PRT_SW_SEQ_CNTRL));
   SwSeqCntrl.Data = 0x0;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_SW_SEQ_CNTRL), SwSeqCntrl.Data);
+  THC_LOCAL_DEBUG (L"%a: R_THC_MEM_PRT_SW_SEQ_CNTRL- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_SW_SEQ_CNTRL))
 
   ReadDmaIntSts2.Data32 = MmioRead32 ((UINTN)(MmioBase + R_THC_MEM_PRT_READ_DMA_INT_STS_2));
   ReadDmaIntSts2.Data32 = 0;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_READ_DMA_INT_STS_2), ReadDmaIntSts2.Data32);
+  THC_LOCAL_DEBUG (L"%a: R_THC_MEM_PRT_READ_DMA_INT_STS_2- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_READ_DMA_INT_STS_2))
+
 
   RprdCntrlSw.Data32 = MmioRead32 (MmioBase + R_THC_MEM_PRT_RPRD_CNTRL_SW);
   RprdCntrlSw.Fields.Pcd = 0;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_RPRD_CNTRL_SW), RprdCntrlSw.Data32);
+  THC_LOCAL_DEBUG (L"%a: R_THC_MEM_PRT_RPRD_CNTRL_SW- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_RPRD_CNTRL_SW))
+
 
   DmaPrdTableLen.Data32 = MmioRead32 (MmioBase + R_THC_MEM_PRT_SW_DMA_PRD_TABLE_LEN);
   DmaPrdTableLen.Data32 = 0;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_SW_DMA_PRD_TABLE_LEN), DmaPrdTableLen.Data32);
+  THC_LOCAL_DEBUG (L"%a: R_THC_MEM_PRT_SW_DMA_PRD_TABLE_LEN- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_SW_DMA_PRD_TABLE_LEN))
 
   I2cWrCntrl.Data32 = MmioRead32 ((UINTN)(MmioBase + R_THC_MEM_PRT_SW_SEQ_I2C_WR_CNTRL));
   I2cWrCntrl.Data32 = 0;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_SW_SEQ_I2C_WR_CNTRL), I2cWrCntrl.Data32);
+   THC_LOCAL_DEBUG (L"%a: R_THC_MEM_PRT_SW_SEQ_I2C_WR_CNTRL- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_SW_SEQ_I2C_WR_CNTRL))
 
   // Dma Ctr2 Bit6 IeEOF = 0
   ReadDmaCntrl2.Data = MmioRead32 (MmioBase + R_THC_MEM_PRT_READ_DMA_CNTRL_2);
   ReadDmaCntrl2.Fields.IeEof = 0;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_READ_DMA_CNTRL_2), ReadDmaCntrl2.Data);
+  THC_LOCAL_DEBUG (L"%a: R_THC_MEM_PRT_READ_DMA_CNTRL_2- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_READ_DMA_CNTRL_2))
 
   // 0x40000000 : BIT30 : Update HW status for SW rxdma
   ReadDmaCntrlSw.Data32 = MmioRead32 (MmioBase + R_THC_MEM_PRT_READ_DMA_CNTRL_SW);
@@ -1043,11 +1049,14 @@ QuickI2cLiProgramSubIpRegisterToDefault (
   ReadDmaCntrlSw.Fields.Soo = 0;
   ReadDmaCntrlSw.Fields.IeIoc = 0;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_READ_DMA_CNTRL_SW), ReadDmaCntrlSw.Data32);
+  THC_LOCAL_DEBUG (L"%a: R_THC_MEM_PRT_READ_DMA_CNTRL_SW- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_READ_DMA_CNTRL_SW))
+
 
   //0x00800000 -- > BIT 23 : Update HW Status for WRDMA (THC_WRDMA)
   WriteDmaCntrl.Data  = MmioRead32 (MmioBase + R_THC_MEM_PRT_WRITE_DMA_CNTRL);
   WriteDmaCntrl.Fields.QuickI2cWrDmaIeDmaCpl = 0;
   MmioWrite32 ((UINTN)(MmioBase + R_THC_MEM_PRT_WRITE_DMA_CNTRL), WriteDmaCntrl.Data);
+  THC_LOCAL_DEBUG (L"%a: R_THC_MEM_PRT_WRITE_DMA_CNTRL- 0x%x \n", __FUNCTION__, MmioRead32 (MmioBase + R_THC_MEM_PRT_WRITE_DMA_CNTRL))
 }
 
 /**
@@ -1312,10 +1321,10 @@ QuickI2cSubIpCleanUp (
 **/
 VOID
 QuickI2cLibCleanUp (
-  IN UINT64  MmioBase
+  IN UINT64       MmioBase
   )
 {
-  EFI_STATUS  Status;
+  EFI_STATUS      Status;
 
   THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp ()\n")
 
@@ -1333,15 +1342,20 @@ QuickI2cLibCleanUp (
   }
 
   QuickI2cLibSetLengthInPrd (MmioBase, 1, 1, 1, 1, 1);
-
+  //
+  // Clear Global error and stall
+  //
+  THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp Disable interrupt \n")
   if (QuickI2cLibIsQuiesceDisabled (MmioBase)) {
-    THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp: QuiesceDisabled \n")
-    QuickI2cLibStartQuiesce (MmioBase, StartQuiesceTimeout);
+    THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp QuiesceDisabled \n")
+    Status = QuickI2cLibStartQuiesce (MmioBase, StartQuiesceTimeout);
+    THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp QuickI2cLibStartQuiesce Status: %r\n", Status)
     if (EFI_ERROR (Status)) {
-      THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp: QuickI2cLibStartQuiesce error, Status %r\n", Status)
-      // continue
+      DEBUG ((DEBUG_WARN, "QuickI2cLibCleanUp QuickI2cLibStartQuiesce error, Status %r\n", Status));
+      return;
     }
   }
+
   QuickI2cLiProgramSubIpRegisterToDefault (MmioBase);
 }
 
@@ -1457,7 +1471,7 @@ QuickI2cLibClearReadRx2IntSts (
   if (QuickI2cLibIsQuiesceEnabled (MmioBase)) {
     Status = QuickI2cLibEndQuiesce (MmioBase, EndQuiesceTimeout);
     if (EFI_ERROR (Status)) {
-      THC_LOCAL_DEBUG (L"QuickI2cTakeOutOfReset QuickI2cLibEndQuiesce error Status: %r\n", Status)
+      THC_LOCAL_DEBUG (L"QuickI2cLibClearReadRx2IntSts QuickI2cLibEndQuiesce error Status: %r\n", Status)
       DEBUG ((DEBUG_WARN, "QuickI2cLibClearReadRx2IntSts QuickI2cLibEndQuiesce error, Status %r\n", Status));
       return;
     }
@@ -1516,6 +1530,53 @@ QuickI2cLibSetI2cPort (
   PortControl.Data32 = MmioRead32 (MmioBase + R_THC_MEM_PRT_CONTROL);
   PortControl.Fields.PortType = 0x1; // 01 = I2C
   MmioWrite32 (MmioBase + R_THC_MEM_PRT_CONTROL, PortControl.Data32);
+}
+
+/**
+  Perfomrs PIO read operation
+  @param[in]  MmioBase          QuickI2c MMIO BAR0
+  @param[in]  RegisterAddress   I2C register address
+  @param[in]  DataSize          Data Size
+  @param[out] Data              I2C register output data
+  @retval EFI_SUCCESS           Read was successful
+  @retval EFI_TIMEOUT           Timeout reached - might be expected
+**/
+EFI_STATUS
+QuickI2cLibPerformPioRead (
+  IN UINT64       MmioBase,
+  IN UINT32       RegisterAddress,
+  IN UINT16       DataSize,
+  IN OUT UINT32   *Data
+  )
+{
+  EFI_STATUS      Status;
+
+  THC_LOCAL_DEBUG (L"QuickI2cLibPerformPioRead: RegisterAddress- <0x%x>: \n", RegisterAddress)
+  Status = QuickI2cLibNoCyclesPending (MmioBase, CycleTimeout);
+  if (EFI_ERROR (Status)) {
+    THC_LOCAL_DEBUG (L"QuickI2cLibPerformPioRead error, Status %r\n", Status)
+    DEBUG ((DEBUG_WARN, "QuickI2cLibPerformPioRead error, Status %r\n", Status));
+    return Status;
+  }
+
+  QuickI2cLibPreparePioOperation (
+    QuickI2cReadDeviceCommand,
+    MmioBase,
+    DataSize,
+    RegisterAddress
+    );
+  QuickI2cLibGo (MmioBase);
+
+  Status = QuickI2cLibWaitCycleCompleted (MmioBase, CycleTimeout);
+  if (EFI_ERROR (Status)) {
+    THC_LOCAL_DEBUG (L"QuickI2cLibPerformPioRead error, Status %r\n", Status)
+    DEBUG ((DEBUG_WARN, "QuickI2cLibPerformPioRead error, Status %r\n", Status));
+    return Status;
+  }
+
+  QuickI2cLibReadComplete (MmioBase, Data);
+
+  return EFI_SUCCESS;
 }
 
 /**

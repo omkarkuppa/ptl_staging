@@ -28,6 +28,8 @@
 #define SERIAL_IO_TPD_CUSTOM_DEVICE   5 // Custom TouchPad device
 #define ALPS_PRECISION_TOUCHPAD       6
 #define HYNITRON_HFW68H_THAT_TOUCHPAD 7 // For THAT TouchPad Support
+#define SENSEL_FORCEPAD               8 // For Sensel ForcePad Support
+#define SMART_C_COVER                 9 // For smart C cover
 
 External(PPDI)
 
@@ -79,7 +81,19 @@ External(PPDI)
         If (LEqual (DeRefOf(Index(TPTD,7)), 0)) { Store ( 400000, SPED) }
         If (LEqual (DeRefOf(Index(TPTD,7)), 1)) { Store (1000000, SPED) }
         Return
-      }      
+      }
+      If (LEqual(TPDT, SENSEL_FORCEPAD)) { // Sensel ForcePad Support
+        Store ("SNSL0033", _HID)    // Hardware ID
+        Store (0x0001, HID2)        // HID descriptor address
+        Store (0x2C,   BADR)        // HID slave Address
+        Return
+      }
+      If (LEqual(TPDT, SMART_C_COVER)) { // Smart C Cover Support
+        Store ("PIXA0002", _HID)    // Hardware ID
+        Store (0x0020, HID2)        // HID descriptor address
+        Store (0x2C,   BADR)        // HID slave Address
+        Return
+      }
       If (LEqual (DeRefOf(Index(TPTD,4)), SERIAL_IO_TPD_CUSTOM_DEVICE)) { // Custom TouchPad
         Store (DeRefOf(Index(TDPH,1)), HID2)
         Store (DeRefOf(Index(TPTD,6)), BADR)

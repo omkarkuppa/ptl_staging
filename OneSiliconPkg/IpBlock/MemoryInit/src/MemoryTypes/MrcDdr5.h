@@ -135,6 +135,12 @@
 /// CAS-to-CAS delay for all frequencies in tCK
 #define MRC_DDR5_tCCD_ALL_FREQ (8)
 
+// Worst Case DDR5 ODT Offsets
+#define MRC_DDR5_WORST_CASE_ODT_WR_ON_OFFSET (-4)
+#define MRC_DDR5_WORST_CASE_ODT_RD_ON_OFFSET (-3)
+#define MRC_DDR5_WORST_CASE_ODT_WR_OFF_OFFSET (4)
+#define MRC_DDR5_WORST_CASE_ODT_RD_OFF_OFFSET (3)
+
 /// tRX_DQS2DQ (Units of 100UI for precision)
 #define MRC_DDR5_tRX_DQS2DQ_MIN  (114)
 #define MRC_DDR5_tRX_DQS2DQ_3200 (937)
@@ -239,7 +245,7 @@
 #define MRC_DDR5_tADC_5600_MAX (102)
 #define MRC_DDR5_tADC_6000_MIN (23)
 #define MRC_DDR5_tADC_6000_MAX (105)
-#define MRC_DDR5_tADC_6400_MIN (20)
+#define MRC_DDR5_tADC_6400_MIN (21)
 #define MRC_DDR5_tADC_6400_MAX (108)
 #define MRC_DDR5_tADC_7200_MIN (15)
 #define MRC_DDR5_tADC_7200_MAX (113)
@@ -1372,3 +1378,31 @@ MrcDdr5SetDfePDA (
   IN  UINT8                 OptParam,
   IN  INT16                 DfeValue
 );
+
+/**
+  This function decodes and returns the DDR5 ODT offsets from MR37, MR38, and MR39
+
+  @param[in]  MrcData    - Include all MRC global data.
+  @param[in]  Controller - Current Controller
+  @param[in]  Channel    - Current Channel
+  @param[in]  Rank       - Current Rank
+  @param[in]  NtOdt_Wr   - TRUE if Non Target WR ODT is supported
+  @param[in]  IsPreFuncTraining - TRUE if board flight delay impact from Read Leveling / Write Leveling is not known yet
+  @param[out] Odt_Wr_On  - Hold Write RTT Enable Offset
+  @param[out] Odt_Wr_Off - Hold Write RTT Disable Offset
+  @param[out] Odt_Rd_On  - Hold Non-Target Read RTT Enable Offset
+  @param[out] Odt_Rd_Off - Hold Non-Target Read RTT Disable Offset
+**/
+VOID
+GetDdr5OdtOffsets (
+  IN  MrcParameters* const MrcData,
+  IN  UINT32               Controller,
+  IN  UINT32               Channel,
+  IN  UINT32               Rank,
+  IN  BOOLEAN              NtOdt_Wr,
+  IN  BOOLEAN              IsPreFuncTraining,
+  OUT INT8                 *Odt_Wr_On,
+  OUT INT8                 *Odt_Wr_Off,
+  OUT INT8                 *Odt_Rd_On,
+  OUT INT8                 *Odt_Rd_Off
+  );

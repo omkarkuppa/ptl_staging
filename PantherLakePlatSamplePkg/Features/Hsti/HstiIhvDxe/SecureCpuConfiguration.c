@@ -657,7 +657,7 @@ CheckSecureCpuConfiguration (
     MsrSeamrrPhysMask.Uint64 = AsmReadMsr64 (MSR_SEAMRR_MASK);
     SeamrrEnabled = TRUE;
 
-    DEBUG ((DEBUG_INFO, "    PRMRR SAF IMR enabled test\n"));
+    DEBUG ((DEBUG_INFO, "    SEAMRR enabled test\n"));
     if ((MsrSeamrrPhysBase.Uint64 == 0) || ((MsrSeamrrPhysMask.Uint64 & BIT11) == 0) || ((MsrSeamrrPhysMask.Uint64 & B_SEAMRR_ADDR_MASK) == 0)) {
       DEBUG ((DEBUG_INFO, "        Unexpected Status: SEAMRR MSRs are not enabled\n"));
       SeamrrEnabled = FALSE;
@@ -1026,9 +1026,7 @@ CheckSecureCpuConfiguration (
     }
   }
 
-  //
-  // IA Exclusion Range is Consistent Test
-  //
+  DEBUG ((DEBUG_INFO, "      IA Exclusion Range is Consistent test \n"));
   RangeBase = MmioRead64 ((GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + GetExclusionRegisterOffset (IaExclusionRange, ExclusionOffsetBase)));
   RangeBase = RangeBase & IA_EXCLUSION_RANGE_BITFIELD;
   RangeSize = GetExclusionRegisterSize (IaExclusionRange);
@@ -1046,9 +1044,7 @@ CheckSecureCpuConfiguration (
     Result = FALSE;
   }
 
-  //
-  // IA Exclusion Range 1 is Consistent
-  //
+  DEBUG ((DEBUG_INFO, "      IA Exclusion Range 1 is Consistent test \n"));
   RangeBase = MmioRead64 ((GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase) + GetExclusionRegisterOffset (IaExclusionRange1, ExclusionOffsetBase)));
   RangeBase = RangeBase & IA_EXCLUSION_RANGE_BITFIELD;
   RangeSize = GetExclusionRegisterSize (IaExclusionRange1);

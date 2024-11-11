@@ -3050,11 +3050,9 @@ InstallAcpiPlatform (
   EFI_STATUS                    SetupStatus;
   UINTN                         VariableSize;
   UINT32                        SetupAttr;
-  VPD_GPIO_PAD                  *VpdGpioPad;
 
   Handle                     = NULL;
   Usb4PlatformInfo           = NULL;
-  VpdGpioPad                 = NULL;
   mUcsiNvsAreaProtocol       = NULL;
   mUsbPortMapNvsAreaProtocol = NULL;
 
@@ -3405,12 +3403,6 @@ InstallAcpiPlatform (
   for (Index = 0; (PcdRootPortPewakeConfig[Index] != 0xFFFFFFFF) && Index < 12; Index++) {
     mPlatformNvsAreaProtocol.Area->PewakePin[Index] = PcdRootPortPewakeConfig[Index];
   }
-
-  //
-  // Retimer Power State GPIO pin configuration
-  //
-  VpdGpioPad = PcdGetPtr (VpdPcdRetimerPowerStateGpio);
-  mPlatformNvsAreaProtocol.Area->RetimerPowerStateGpio = VpdGpioPad->GpioPad;
 
   //
   // Platform AUX power limit configuration

@@ -152,6 +152,7 @@ CreateCpuPmDataHob (
   BasicData->PmData.IsysCurrentLimitL1       = (UINT16) PpmOverrideTable[PpmIndex].Plx->IsysCurrentLimitL1;
   BasicData->PmData.IsysCurrentLimitL2       = (UINT16) PpmOverrideTable[PpmIndex].Plx->IsysCurrentLimitL2;
   BasicData->PmData.VsysMax                  = (UINT16) PpmOverrideTable[PpmIndex].Plx->VsysMax;
+  BasicData->PmData.PsysPmax                 = (UINT16) PpmOverrideTable[PpmIndex].Plx->PsysPmax;
 
   GetVrOverridesFru (CpuIdentifier, BasicData->VrDataCount, (VOLTAGE_REGULATOR_PARAM *)BasicData->VrData);
 

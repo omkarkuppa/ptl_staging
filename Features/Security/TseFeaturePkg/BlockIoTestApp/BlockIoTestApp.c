@@ -268,7 +268,7 @@ SetUefiTableCryptoConfiguration (
 
   NewConfiguration[0].CryptoKey = gCryptoKeyPtr;
 
-  NewConfiguration[0].Capability.Algorithm = gEfiBlockIoCryptoAlgoAesXtsGuid;
+  NewConfiguration[0].Capability.Algorithm = gTseBlockIoCryptoAlgoAesXtsGuid;
   NewConfiguration[0].Capability.KeySize = BIT8;
   NewConfiguration[0].Capability.CryptoBlockSizeBitMask = BIT9 | BIT12;
 

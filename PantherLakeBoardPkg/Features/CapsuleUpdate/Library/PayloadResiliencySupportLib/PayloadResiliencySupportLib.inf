@@ -39,17 +39,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  OneSiliconPkg/SiPkg.dec
-  MinPlatformPkg/MinPlatformPkg.dec
-  IntelSiliconPkg/IntelSiliconPkg.dec
   CapsuleFeaturePkg/CapsuleFeaturePkg.dec
 
 [LibraryClasses]
-  BaseLib
-  PcdLib
   DebugLib
-  SpiAccessLib
-
-[FixedPcd]
-  gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase          ## CONSUMES
-  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashFvMicrocodeRBase      ## CONSUMES

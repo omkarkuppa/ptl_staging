@@ -68,27 +68,6 @@ SYSTEM_FIRMWARE_UPDATE_PROGRESS          mPreviousProgress = {0};
 BOOLEAN                                  mBiosGuardEnabled = FALSE;
 
 /**
-  This function either flash FitPayloadR to FitPayload (restore) or FitPayload to FitPayloadR (back up)
-  according to input parameter Restore.
-
-  If Restore = TRUE, it means FitPayload is corrupted and system boot from FitPayloadR.
-  In this case FitPayload needs to be restored from FitPayloadR.
-
-  If Restore = FALSE, it means system boots fine from FitPayload.
-  In this case FitPayload needs to be backed up to FitPayloadR.
-
-  @param[in] Restore            If Restore = TRUE,  FitPayloadR -> FitPayload
-                                If Restore = FALSE, FitPayload  -> FitPayloadR
-
-  @retval Status                Return the status of FitPayloadRestoreOrBackUp function
-
-**/
-EFI_STATUS
-FitPayloadRestoreOrBackUp (
-  BOOLEAN                      Restore
-  );
-
-/**
   This function either flash NonFitPayload backup file to NonFitPayload SPI region (restore) or
   save NonFitPayload content on SPI to ESP (back up) according to input parameter Restore.
 
@@ -1089,10 +1068,6 @@ ResiliencyCallBackFunction (
     PopUpMsg (L"Resiliency rollback (TopSwap is enabled)", L"Restore Ibb from IbbR - Begin...", NULL);
     Status = IbbRestoreOrBackUp (TRUE);
     ASSERT_EFI_ERROR (Status);
-    if (IsPayloadBackupEnabled ()) {
-      Status = FitPayloadRestoreOrBackUp (TRUE);
-      ASSERT_EFI_ERROR (Status);
-    }
     PopUpMsg (L"Resiliency rollback (TopSwap is enabled)", L"Restore Ibb from IbbR - End", &Status);
 
     //
@@ -1101,10 +1076,12 @@ ResiliencyCallBackFunction (
     PopUpMsg (L"Resiliency rollback (TopSwap is enabled)", L"Restore Obb from ESP - Begin...", NULL);
     Status = ObbRestoreOrBackUp (TRUE);
     ASSERT_EFI_ERROR (Status);
-    if (IsPayloadBackupEnabled ()) {
-      Status = NonFitPayloadRestoreOrBackUp (TRUE);
-      ASSERT_EFI_ERROR (Status);
-    }
+//  @Todo: Temporarily disabled due to other depedency.
+//         Need to revert when enabling NonFitPayload update/recovery
+//    if (IsPayloadBackupEnabled ()) {
+//      Status = NonFitPayloadRestoreOrBackUp (TRUE);
+//      ASSERT_EFI_ERROR (Status);
+//    }
     PopUpMsg (L"Resiliency rollback (TopSwap is enabled)", L"Restore Obb from ESP - End", &Status);
 
 #if FixedPcdGetBool (PcdBiosExtenedRegionEnable) == 1
@@ -1154,11 +1131,6 @@ ResiliencyCallBackFunction (
       PopUpMsg (L"Resiliency backup", L"Backup Ibb to IbbR - End", &Status);
       ResetRequired = TRUE;
     }
-
-    if (IsPayloadBackupEnabled ()) {
-        Status = FitPayloadRestoreOrBackUp (FALSE);
-        ASSERT_EFI_ERROR (Status);
-      }
 
     //
     // 2. Save Obb content to a file on ESP

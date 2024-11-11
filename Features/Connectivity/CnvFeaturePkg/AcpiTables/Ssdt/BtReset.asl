@@ -25,6 +25,7 @@ External (BRMT, IntObj)
 External (CBTC, IntObj)
 External (CBTI, IntObj)
 External (RDLY, IntObj)
+External (WIST, MethodObj)
 External (WIFI_EP_PATH (01).BTIE, FieldUnitObj)
 External (WIFI_EP_PATH (02).BTIE, FieldUnitObj)
 External (WIFI_EP_PATH (03).BTIE, FieldUnitObj)
@@ -351,10 +352,17 @@ PowerResource (DBTR, 5, 0)
 } // End DBTR
 
 Method (_PRR) {
-  If (LAnd (CondRefOf (CBTC), CondRefOf (CBTI))) {
-    If (LAnd (LEqual (CBTC, 1), LEqual (CBTI, 1))) {
-      Return (Package () {BTRT})
+  //
+  // Check if a discrete WiFi device is present on the root port
+  //
+  If (CondRefOf (WIST)) {
+    If (WIST ()) {
+      Return (Package () {DBTR})
     }
   }
-  Return (Package () {DBTR})
+
+  //
+  // Default return CNVi BT power resource
+  //
+  Return (Package () {BTRT})
 }

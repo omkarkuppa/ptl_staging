@@ -283,6 +283,7 @@ StartSpiDma (
           EFI_ACCESS_DENIED - SPI Region was not available
 **/
 EFI_STATUS
+EFIAPI
 LockSpiDmaCallback (
   IN EFI_PEI_SERVICES           **PeiServices,
   IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,

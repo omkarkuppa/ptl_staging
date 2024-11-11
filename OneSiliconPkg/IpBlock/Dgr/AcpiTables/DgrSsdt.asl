@@ -64,12 +64,12 @@ DefinitionBlock (
           }
 
           //
-          // Name: GPBD
+          // Name: GPDB
           // Description: Trigger SMI to provide Ledger Island Buffer to IPF driver
           // Return : Buffer (Version, DataLen, DataBuffer)
           //
           //
-          Method (GPDB, 0, Serialized, 0,, BuffObj)
+          Method (GPDB, 0, Serialized, 0, BuffObj)
           {
             //
             // Trigger the SMI interrupt

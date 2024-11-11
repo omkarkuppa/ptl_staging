@@ -1142,10 +1142,11 @@
       oneof varid   = SETUP_DATA.UsbcCapsuleDebugLevel,
         prompt      = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_PROMPT),
         help        = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_HELP),
-        default     = 0, defaultstore = MyStandardDefault,
-        option text = STRING_TOKEN(STR_UUSBC_CAPSULE_DEBUG_LEVEL_DISABLED), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_DISABLED), value = 0, flags = RESET_REQUIRED | INTERACTIVE;
         option text = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_ERROR), value = 1, flags = RESET_REQUIRED | INTERACTIVE;
-        option text = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_VERBOSE), value = 2, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_WARN), value = 2, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_INFO), value = 3, flags = RESET_REQUIRED | INTERACTIVE;
+        option text = STRING_TOKEN(STR_USBC_CAPSULE_DEBUG_LEVEL_VERBOSE), value = 4, flags = RESET_REQUIRED | INTERACTIVE;
       endoneof;
 
       goto TBT_FORM_ID,

@@ -79,6 +79,11 @@ SpiSocLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdSpiLib/PtlPcdSp
 SpiInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Spi/LibraryPrivate/SpiInitLib/SpiInitLib.inf
 
 #
+# LPSS
+#
+LpssUartDebugPropertyPcdLib|$(PLATFORM_SI_PACKAGE)/IpBlock/LpssUart/Library/LpssUartDebugPropertyPcdLib/LpssUartDebugPropertyPcdLib.inf
+
+#
 # GPIOV2
 #
 GpioV2ServicesCommonLib|$(PLATFORM_SI_PACKAGE)/IpBlock/GpioV2/Library/GpioV2Services/Common/GpioV2ServicesCommonLib.inf
@@ -87,6 +92,15 @@ PtlPcdSecGpioTopology|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdGpioTopolo
 
 #!include $(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/CommonLib.dsc
 CpuInfoFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/BaseCpuInfoFruLib/BaseCpuInfoFruLib.inf
+
+#
+# ME
+#
+MeChipsetLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Me/Library/PeiDxeMeChipsetLib/PeiDxeMeChipsetLib.inf
+MeInfoLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Library/PtlPcdMeLib/PtlPcdMeLib.inf
+HeciInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Me/LibraryPrivate/PeiDxeHeciInitLib/PeiDxeHeciInitLib.inf
+MeFwStsLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Me/Library/BaseMeFwStsLib/BaseMeFwStsLib.inf
+MeShowBufferLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Me/Library/PeiDxeMeShowBufferLib/PeiDxeMeShowBufferLib.inf
 
 # #################################################################
 # # Uncore Start #
@@ -107,6 +121,19 @@ CpuInfoFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/BaseCpuInfoFruLi
 #
  PreSiliconEnvDetectLib|$(PLATFORM_SI_PACKAGE)/Library/BasePreSiliconEnvDetectLib/BasePreSiliconEnvDetectLib.inf
  MmPciLib|$(PLATFORM_SI_PACKAGE)/Library/PeiDxeSmmMmPciLib/PeiDxeSmmMmPciLib.inf
+ IpWrapperLib|$(PLATFORM_SI_PACKAGE)/LibraryPrivate/BaseIpWrapperLib/BaseIpWrapperLib.inf
+ IpWrapper64BitLib|$(PLATFORM_SI_PACKAGE)/LibraryPrivate/BaseIpWrapper64BitLib/BaseIpWrapper64BitLib.inf
+
+#
+# IGPU
+#
+BaseIGpuInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/DomainIGpu/Library/BaseIGpuInfoLib/BaseIGpuInfoLib.inf
+IpIGpuLib|$(PLATFORM_SI_PACKAGE)/CsiIpBlock/IpIGpu/IpIGpuLib.inf
+
+#
+# NOC
+#
+NguInfoLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/Library/NguInfoLib/NguInfoLib.inf
 
 #
 # Cpu

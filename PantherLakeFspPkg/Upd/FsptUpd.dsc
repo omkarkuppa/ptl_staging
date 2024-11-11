@@ -71,33 +71,33 @@
   # !HDR COMMENT:{FSP_T_CONFIG:Fsp T Configuration}
   # !HDR EMBED:{FSP_T_CONFIG:FsptConfig:START}
 
-  # !BSF NAME:{PcdSerialIoUartDebugEnable} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUartDebugEnable} TYPE:{Combo}
   # !BSF OPTION:{0:Disable, 1:Enable and Initialize, 2:Enable without Initializing}
   # !BSF HELP:{Enable SerialIo Uart debug library with/without initializing SerialIo Uart device in FSP. }
 !if $(TARGET) == DEBUG
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable           | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartDebugEnable           | * | 0x01 | 0x01
 !else
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartDebugEnable           | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartDebugEnable           | * | 0x01 | 0x00
 !endif
 
-  # !BSF NAME:{PcdSerialIoUartNumber} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUartNumber} TYPE:{Combo}
   # !BSF OPTION:{0:SerialIoUart0, 1:SerialIoUart1, 2:SerialIoUart2}
   # !BSF HELP:{Select SerialIo Uart Controller for debug. Note: If UART0 is selected as CNVi BT Core interface, it cannot be used for debug purpose.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartNumber                | * | 0x01 | 0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartNumber                | * | 0x01 | 0
 
-  # !BSF NAME:{PcdSerialIoUartMode - FSPT} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUartMode - FSPT} TYPE:{Combo}
   # !BSF OPTION:{0:SerialIoUartDisabled, 1:SerialIoUartPci, 2:SerialIoUartHidden, 3:SerialIoUartCom, 4:SerialIoUartSkipInit}
   # !BSF HELP:{Select SerialIo Uart Controller mode}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartMode                  | * | 0x01 | 0x02
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartMode                  | * | 0x01 | 0x02
 
-  # !BSF NAME:{PcdSerialIoUartPowerGating - FSPT} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUartPowerGating - FSPT} TYPE:{Combo}
   # !BSF OPTION:{0:Disabled, 1:Enabled, 2:Auto}
   # !BSF HELP:{Select SerialIo Uart Controller Powergating mode}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartPowerGating           | * | 0x01 | 0x02
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartPowerGating           | * | 0x01 | 0x02
 
-  # !BSF NAME:{PcdSerialIoUartBaudRate - FSPT} TYPE:{EditNum, DEC, (0,6000000)}
+  # !BSF NAME:{PcdLpssUartBaudRate - FSPT} TYPE:{EditNum, DEC, (0,6000000)}
   # !BSF HELP:{Set default BaudRate Supported from 0 - default to 6000000}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartBaudRate              | * | 0x4 | 115200
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartBaudRate              | * | 0x4 | 115200
 
   #
   # NOTE: If offset for PcdPciExpressBaseAddress & PcdPciExpressRegion is changed,
@@ -112,48 +112,48 @@
   # !BSF HELP:{Region Length to be programmed for Pci Express }
   gPlatformFspPkgTokenSpaceGuid.PcdPciExpressRegionLength            | * | 0x04 | 0x10000000
 
-  # !BSF NAME:{PcdSerialIoUartParity - FSPT} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUartParity - FSPT} TYPE:{Combo}
   # !BSF OPTION:{0: DefaultParity, 1: NoParity, 2: EvenParity, 3: OddParity}
   # !BSF HELP:{Set default Parity.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartParity                | * | 0x01 | 0x1
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartParity                | * | 0x01 | 0x1
 
-  # !BSF NAME:{PcdSerialIoUartDataBits - FSPT} TYPE:{EditNum, HEX, (0x0,0x08)}
+  # !BSF NAME:{PcdLpssUartDataBits - FSPT} TYPE:{EditNum, HEX, (0x0,0x08)}
   # !BSF HELP:{Set default word length. 0: Default, 5,6,7,8}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartDataBits              | * | 0x01 | 0x08
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartDataBits              | * | 0x01 | 0x08
 
-  # !BSF NAME:{PcdSerialIoUartStopBits - FSPT} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUartStopBits - FSPT} TYPE:{Combo}
   # !BSF OPTION:{0: DefaultStopBits, 1: OneStopBit, 2: OneFiveStopBits, 3: TwoStopBits}
   # !BSF HELP:{Set default stop bits.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartStopBits              | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartStopBits              | * | 0x01 | 0x01
 
-  # !BSF NAME:{PcdSerialIoUartAutoFlow - FSPT} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUartAutoFlow - FSPT} TYPE:{Combo}
   # !BSF OPTION:{0: Disable, 1:Enable}
   # !BSF HELP:{Enables UART hardware flow control, CTS and RTS lines.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartAutoFlow              | * | 0x01 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartAutoFlow              | * | 0x01 | 0x0
 
-  # !BSF NAME:{PcdSerialIoUartRxPinMux - FSPT} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
+  # !BSF NAME:{PcdLpssUartRxPinMux - FSPT} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Select RX pin muxing for SerialIo UART used for debug}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartRxPinMux              | * | 0x04 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartRxPinMux              | * | 0x04 | 0x0
 
-  # !BSF NAME:{PcdSerialIoUartTxPinMux - FSPT} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
+  # !BSF NAME:{PcdLpssUartTxPinMux - FSPT} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Select TX pin muxing for SerialIo UART used for debug}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartTxPinMux              | * | 0x04 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartTxPinMux              | * | 0x04 | 0x0
 
-  # !BSF NAME:{PcdSerialIoUartRtsPinMux - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF NAME:{PcdLpssUartRtsPinMux - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select SerialIo Uart used for debug Rts pin muxing. Refer to GPIO_*_MUXING_SERIALIO_UARTx_RTS* for possible values.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartRtsPinMux             | * | 0x04 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartRtsPinMux             | * | 0x04 | 0x0
 
-  # !BSF NAME:{PcdSerialIoUartCtsPinMux - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF NAME:{PcdLpssUartCtsPinMux - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select SerialIo Uart used for debug Cts pin muxing. Refer to GPIO_*_MUXING_SERIALIO_UARTx_CTS* for possible values.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartCtsPinMux             | * | 0x04 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartCtsPinMux             | * | 0x04 | 0x0
 
-  # !BSF NAME:{PcdSerialIoUartDebugMmioBase - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
-  # !BSF HELP:{Select SerialIo Uart default MMIO resource in SEC/PEI phase when PcdSerialIoUartMode = SerialIoUartPci.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoUartDebugMmioBase         | * | 0x04 | 0xFE02C000
+  # !BSF NAME:{PcdLpssUartDebugMmioBase - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF HELP:{Select SerialIo Uart default MMIO resource in SEC/PEI phase when PcdLpssUartMode = SerialIoUartPci.}
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUartDebugMmioBase         | * | 0x04 | 0xFE02C000
 
-  # !BSF NAME:{PcdSerialIoUartDebugPciCfgBase - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF NAME:{PcdLpssUartDebugPciCfgBase - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Specify PciCfgBase address. Allows for SerialIO UART functionality outside Bus 0}
-  gSiPkgTokenSpaceGuid.PcdSerialIoUartDebugPciCfgBase                | * | 0x04| 0x0
+  gSiPkgTokenSpaceGuid.PcdLpssUartDebugPciCfgBase                | * | 0x04| 0x0
 
   # !BSF NAME:{PcdLpcUartDebugEnable} TYPE:{Combo}
   # !BSF OPTION:{0:Disable, 1:Enable}
@@ -178,67 +178,69 @@
   # !BSF HELP:{Select ISA Serial Base address. Default is 0x3F8.}
   gPlatformFspPkgTokenSpaceGuid.PcdIsaSerialUartBase             | * | 0x01 | 0x00
 
-  # !BSF NAME:{PcdSerialIo2ndUartEnable} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUart2ndEnable} TYPE:{Combo}
   # !BSF OPTION:{0:Disable, 1:Enable and Initialize, 2:Enable without Initializing}
   # !BSF HELP:{Enable Additional SerialIo Uart device in FSP.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartEnable                | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndEnable                | * | 0x01 | 0x00
 
-  # !BSF NAME:{PcdSerialIo2ndUartNumber} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUart2ndNumber} TYPE:{Combo}
   # !BSF OPTION:{0:SerialIoUart0, 1:SerialIoUart1, 2:SerialIoUart2}
   # !BSF HELP:{Select SerialIo Uart Controller Number}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartNumber                | * | 0x01 | 0x02
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndNumber                | * | 0x01 | 0x02
 
-  # !BSF NAME:{PcdSerialIo2ndUartMode - FSPT} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUart2ndMode - FSPT} TYPE:{Combo}
   # !BSF OPTION:{0:SerialIoUartDisabled, 1:SerialIoUartPci, 2:SerialIoUartHidden, 3:SerialIoUartCom, 4:SerialIoUartSkipInit}
   # !BSF HELP:{Select SerialIo Uart Controller mode}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartMode                  | * | 0x01 | 0x02
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndMode                  | * | 0x01 | 0x02
 
-  # !BSF NAME:{PcdSerialIo2ndUartBaudRate - FSPT} TYPE:{EditNum, DEC, (0,6000000)}
+  gPlatformFspPkgTokenSpaceGuid.UnusedUpdSpace                         | * | 0x01 | 0x0
+
+  # !BSF NAME:{PcdLpssUart2ndBaudRate - FSPT} TYPE:{EditNum, DEC, (0,6000000)}
   # !BSF HELP:{Set default BaudRate Supported from 0 - default to 6000000}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartBaudRate              | * | 0x4 | 115200
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndBaudRate              | * | 0x4 | 115200
 
-  # !BSF NAME:{PcdSerialIo2ndUartParity - FSPT} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUart2ndParity - FSPT} TYPE:{Combo}
   # !BSF OPTION:{0: DefaultParity, 1: NoParity, 2: EvenParity, 3: OddParity}
   # !BSF HELP:{Set default Parity.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartParity                | * | 0x01 | 0x1
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndParity                | * | 0x01 | 0x1
 
-  # !BSF NAME:{PcdSerialIo2ndUartDataBits - FSPT} TYPE:{EditNum, HEX, (0x0,0x08)}
+  # !BSF NAME:{PcdLpssUart2ndDataBits - FSPT} TYPE:{EditNum, HEX, (0x0,0x08)}
   # !BSF HELP:{Set default word length. 0: Default, 5,6,7,8}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartDataBits              | * | 0x01 | 0x08
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndDataBits              | * | 0x01 | 0x08
 
-  # !BSF NAME:{PcdSerialIo2ndUartStopBits - FSPT} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUart2ndStopBits - FSPT} TYPE:{Combo}
   # !BSF OPTION:{0: DefaultStopBits, 1: OneStopBit, 2: OneFiveStopBits, 3: TwoStopBits}
   # !BSF HELP:{Set default stop bits.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartStopBits              | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndStopBits              | * | 0x01 | 0x01
 
-  # !BSF NAME:{PcdSerialIo2ndUartAutoFlow - FSPT} TYPE:{Combo}
+  # !BSF NAME:{PcdLpssUart2ndAutoFlow - FSPT} TYPE:{Combo}
   # !BSF OPTION:{0: Disable, 1:Enable}
   # !BSF HELP:{Enables UART hardware flow control, CTS and RTS lines.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartAutoFlow              | * | 0x01 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndAutoFlow              | * | 0x01 | 0x0
 
-  # !BSF NAME:{PcdSerialIo2ndUartRxPinMux - FSPT} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
+  # !BSF NAME:{PcdLpssUart2ndRxPinMux - FSPT} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Select RX pin muxing for SerialIo UART}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartRxPinMux              | * | 0x04 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndRxPinMux              | * | 0x04 | 0x0
 
-  # !BSF NAME:{PcdSerialIo2ndUartTxPinMux - FSPT} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
+  # !BSF NAME:{PcdLpssUart2ndTxPinMux - FSPT} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Select TX pin muxing for SerialIo UART}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartTxPinMux              | * | 0x04 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndTxPinMux              | * | 0x04 | 0x0
 
-  # !BSF NAME:{PcdSerialIo2ndUartRtsPinMux - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF NAME:{PcdLpssUart2ndRtsPinMux - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select SerialIo Uart Rts pin muxing. Refer to GPIO_*_MUXING_SERIALIO_UARTx_RTS* for possible values.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartRtsPinMux             | * | 0x04 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndRtsPinMux             | * | 0x04 | 0x0
 
-  # !BSF NAME:{PcdSerialIo2ndUartCtsPinMux - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF NAME:{PcdLpssUart2ndCtsPinMux - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select SerialIo Uart Cts pin muxing. Refer to GPIO_*_MUXING_SERIALIO_UARTx_CTS* for possible values.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartCtsPinMux             | * | 0x04 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndCtsPinMux             | * | 0x04 | 0x0
 
-  # !BSF NAME:{PcdSerialIo2ndUartMmioBase - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
-  # !BSF HELP:{Select SerialIo Uart default MMIO resource in SEC/PEI phase when PcdSerialIo2ndUartMode = SerialIoUartPci.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIo2ndUartMmioBase              | * | 0x04 | 0xFE034000
+  # !BSF NAME:{PcdLpssUart2ndMmioBase - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF HELP:{Select SerialIo Uart default MMIO resource in SEC/PEI phase when PcdLpssUart2ndMode = SerialIoUartPci.}
+  gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndMmioBase              | * | 0x04 | 0xFE030000
 
-  # !BSF NAME:{PcdSerialIo2ndUartPciCfgBase - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF NAME:{PcdLpssUart2ndPciCfgBase - FSPT} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Specify PciCfgBase address. Allows for SerialIO UART functionality outside Bus 0}
-  gSiPkgTokenSpaceGuid.PcdSerialIo2ndUartPciCfgBase                     | * | 0x04| 0x0
+  gSiPkgTokenSpaceGuid.PcdLpssUart2ndPciCfgBase                     | * | 0x04| 0x0
 
   #
   # NOTE: If offset for TopMemoryCacheSize is changed,

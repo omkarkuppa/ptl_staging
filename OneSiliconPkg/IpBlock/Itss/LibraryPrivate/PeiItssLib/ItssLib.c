@@ -783,6 +783,7 @@ ItssGetDevIntConfig (
   if (SiPolicy == NULL) {
     *IntPin = 0;
     *ApicIrq = 0;
+    return;
   }
 
   InterruptConfig = ItssGetIntConfigPolicy (SiPolicy);

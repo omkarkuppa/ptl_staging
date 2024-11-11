@@ -61,12 +61,15 @@ DTbtPrintPeiPolicyConfig (
   DEBUG ((DEBUG_INFO, "Revision : 0x%x\n", PEI_DTBT_POLICY_REVISION));
   for (Index = 0; Index < PcdGet8 (PcdBoardDTbtControllerNumber); Index++) {
     DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].DTbtControllerEn = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].DTbtControllerEn));
-    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].RpType = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].RpType));
+    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].RpType       = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].RpType));
     DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].PcieRpNumber = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpNumber));
     DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].RpAcpiNumber = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].RpAcpiNumber));
-    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].PcieRpBus  = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpBus));
-    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].PcieRpDev  = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpDev));
-    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].PcieRpFunc = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpFunc));
+    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].PcieRpBus    = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpBus));
+    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].PcieRpDev    = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpDev));
+    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].PcieRpFunc   = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpFunc));
+    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].BdfValid     = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].BdfValid));
+    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].WakeGpioPin  = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].WakeGpioPin));
+    DEBUG ((DEBUG_INFO, "PeiDTbtConfig->DTbtControllerConfig[%x].PcieRpMps    = %x\n", Index, PeiDTbtConfig->DTbtControllerConfig[Index].PcieRpMps));
   }
 
   //

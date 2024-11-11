@@ -75,7 +75,7 @@
 
 
 [Guids]
-  gEfiBlockIoCryptoAlgoAesXtsGuid
+  gTseBlockIoCryptoAlgoAesXtsGuid  ## CONSUMES
 
 [Protocols]
   gEfiPciIoProtocolGuid                       ## TO_START

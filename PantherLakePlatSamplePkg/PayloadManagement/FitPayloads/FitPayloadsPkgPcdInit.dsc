@@ -28,5 +28,4 @@
 [PcdsFixedAtBuild]
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize|0x00080000
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset|0x00000000
-  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashFvMicrocodeRSize|0x00040000
   gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable|FALSE

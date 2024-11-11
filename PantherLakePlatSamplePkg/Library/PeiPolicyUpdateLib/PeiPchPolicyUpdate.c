@@ -93,7 +93,6 @@
 #include <CnvVfrSetupMenuHii.h>
 #if FixedPcdGetBool(PcdCapsuleEnable) == 1
 #include <Guid/SysFwUpdateProgress.h>
-#include <Library/PayloadResiliencySupportLib.h>
 
 /**
   Return if input ImageGuid belongs to a FMP device which would perform BIOS update
@@ -242,54 +241,6 @@ Exit:
 }
 
 /**
-  Check if there is FitPayload region update in progress.
-  @retval TRUE        FitPayload region update is in progress.
-  @retval FALSE       Not in FitPayload region update progress.
-**/
-BOOLEAN
-IsUpdatingFitPayloadRegion (
-  VOID
-  )
-{
-  BOOLEAN                         IsUpdating;
-  EFI_STATUS                      Status;
-  UINTN                           VarSize;
-  EFI_PEI_READ_ONLY_VARIABLE2_PPI *VariableServices;
-
-  IsUpdating = FALSE;
-  VarSize    = 0;
-
-  if (GetBiosResiliencyType () == SUPPORT_BIOS_RESILIENCY_RECOVERY && IsPayloadBackupEnabled ()) {
-    //
-    // Retrieve FitPayloadStatus variable
-    //
-    Status = PeiServicesLocatePpi (
-              &gEfiPeiReadOnlyVariable2PpiGuid, // GUID
-              0,                                // INSTANCE
-              NULL,                             // EFI_PEI_PPI_DESCRIPTOR
-              (VOID **) &VariableServices       // PPI
-              );
-    ASSERT_EFI_ERROR (Status);
-
-    Status = VariableServices->GetVariable (
-                                VariableServices,
-                                L"InitSetupVariable",
-                                &gSetupVariableGuid,
-                                NULL,
-                                &VarSize,
-                                NULL
-                                );
-    DEBUG((DEBUG_INFO, "Get InitSetupVariable -- (%r)\n", Status));
-    if (Status == EFI_NOT_FOUND) {
-      DEBUG((DEBUG_INFO, "InitSetupVariable not found! -- (%r)\n", Status));
-      IsUpdating = TRUE;
-    }
-  }
-
-  return IsUpdating;
-}
-
-/**
   Check if BIOS Update is going to happen during this boot.
 
   This function checks:
@@ -317,8 +268,7 @@ IsBiosUpdateRequired (
 
   if (((GetBootModeHob () == BOOT_ON_FLASH_UPDATE) && IsFmpCapsuleForBiosUpdateDetected (&CapsuleComponent)) || \
       (SpiIsTopSwapEnabled ()) || \
-      (IsUpdatingBiosRegion ()) || \
-      (IsUpdatingFitPayloadRegion ())) {
+      (IsUpdatingBiosRegion ())) {
     //
     // Build gSkipBiosLockForSysFwUpdateGuid HOB if it does not exist.
     //
@@ -478,14 +428,14 @@ UpdateLpssI3cConfig (
   //
   // Serial IO I3C Pin Mux tbd
   for (Index = 0; Index < GetMaxI3cInterfacesNum (); Index++) {
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cMode[Index],I3cConfig->I3cDeviceConfig[Index].Mode, (UINT8)(SERIAL_IO_I3C_MODE)PchSetup->PchSerialIoI3c[Index]);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cSdaPinMux[Index],I3cConfig->I3cDeviceConfig[Index].Sda.PinMux, 0x0);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cSclPinMux[Index],I3cConfig->I3cDeviceConfig[Index].Scl.PinMux, 0x0);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cSclFbPadTermination[Index],I3cConfig->I3cDeviceConfig[Index].SclFb.PinMux, 0x0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cMode[Index], I3cConfig->I3cDeviceConfig[Index].Mode, (UINT8)(SERIAL_IO_I3C_MODE)PchSetup->PchSerialIoI3c[Index]);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cSdaPinMux[Index], I3cConfig->I3cDeviceConfig[Index].Sda.PinMux, 0x0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cSclPinMux[Index], I3cConfig->I3cDeviceConfig[Index].Scl.PinMux, 0x0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cSclFbPadTermination[Index], I3cConfig->I3cDeviceConfig[Index].SclFb.PinMux, 0x0);
   }
   if (PtlIsPcdH () || PtlIsPcdP ()) {
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cSdaPinMux[1],I3cConfig->I3cDeviceConfig[1].Sda.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_21__I3C1_SDA);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cSclPinMux[1],I3cConfig->I3cDeviceConfig[1].Scl.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_22__I3C1_SCL);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cSdaPinMux[1], I3cConfig->I3cDeviceConfig[1].Sda.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_21__I3C1_SDA);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI3cSclPinMux[1], I3cConfig->I3cDeviceConfig[1].Scl.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_22__I3C1_SCL);
   }
 }
 
@@ -549,7 +499,7 @@ UpdateLpssSpiConfig (
         DEBUG ((DEBUG_INFO, "Setup : PchSetup->PchSpiCsPolarity[0x%x] = 0x%x\n", (PCH_MAX_SERIALIO_SPI_CHIP_SELECTS * Index + CsIndex), PchSetup->PchSpiCsPolarity[PCH_MAX_SERIALIO_SPI_CHIP_SELECTS * Index + CsIndex]));
       }
 #endif
-      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiCsPolarity[Index],LpssSpiConfig->SpiDeviceConfig[Index].CsPolarity[CsIndex], PchSetup->PchSpiCsPolarity[PCH_MAX_SERIALIO_SPI_CHIP_SELECTS * Index + CsIndex]);
+      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoLpssSpiCsPolarity[Index], LpssSpiConfig->SpiDeviceConfig[Index].CsPolarity[CsIndex], PchSetup->PchSpiCsPolarity[PCH_MAX_SERIALIO_SPI_CHIP_SELECTS * Index + CsIndex]);
     }
   }
 }
@@ -589,20 +539,20 @@ UpdateLpssI2cConfig (
   //
   // Serial IO I2C Pin Mux tbd
   for (Index = 0; Index < GetMaxI2cInterfacesNum (); Index++) {
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI2cMode[Index],I2cConfig->I2cDeviceConfig[Index].Mode, (UINT8)(SERIAL_IO_I2C_MODE)PchSetup->PchSerialIoI2c[Index]);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[Index],I2cConfig->I2cDeviceConfig[Index].PinMux.Sda, 0x0);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[Index],I2cConfig->I2cDeviceConfig[Index].PinMux.Scl, 0x0);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cPadsTermination[Index],I2cConfig->I2cDeviceConfig[Index].PadTermination, GetSerialIoI2cPadsTerminationFromPcd (Index));
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI2cMode[Index], I2cConfig->I2cDeviceConfig[Index].Mode, (UINT8)(SERIAL_IO_I2C_MODE)PchSetup->PchSerialIoI2c[Index]);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[Index], I2cConfig->I2cDeviceConfig[Index].PinMux.Sda, 0x0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[Index], I2cConfig->I2cDeviceConfig[Index].PinMux.Scl, 0x0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cPadsTermination[Index], I2cConfig->I2cDeviceConfig[Index].PadTermination, GetSerialIoI2cPadsTerminationFromPcd (Index));
   }
   if (PtlIsPcdH () || PtlIsPcdP ()) {
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[2],I2cConfig->I2cDeviceConfig[2].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_H_4__I2C2_SDA);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[2],I2cConfig->I2cDeviceConfig[2].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_H_5__I2C2_SCL);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[3],I2cConfig->I2cDeviceConfig[3].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_H_6__I2C3_SDA);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[3],I2cConfig->I2cDeviceConfig[3].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_H_7__I2C3_SCL);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[4],I2cConfig->I2cDeviceConfig[4].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_E_13__I2C4_SDA);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[4],I2cConfig->I2cDeviceConfig[4].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_E_12__I2C4_SCL);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[5],I2cConfig->I2cDeviceConfig[5].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_F_13__I2C5_SDA);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[5],I2cConfig->I2cDeviceConfig[5].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_F_12__I2C5_SCL);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[2], I2cConfig->I2cDeviceConfig[2].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_H_4__I2C2_SDA);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[2], I2cConfig->I2cDeviceConfig[2].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_H_5__I2C2_SCL);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[3], I2cConfig->I2cDeviceConfig[3].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_H_6__I2C3_SDA);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[3], I2cConfig->I2cDeviceConfig[3].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_H_7__I2C3_SCL);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[4], I2cConfig->I2cDeviceConfig[4].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_E_13__I2C4_SDA);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[4], I2cConfig->I2cDeviceConfig[4].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_E_12__I2C4_SCL);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[5], I2cConfig->I2cDeviceConfig[5].PinMux.Sda, GPIOV2_PTL_PCD_MUXING__XXGPP_F_13__I2C5_SDA);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[5], I2cConfig->I2cDeviceConfig[5].PinMux.Scl, GPIOV2_PTL_PCD_MUXING__XXGPP_F_12__I2C5_SCL);
   }
 }
 
@@ -982,22 +932,20 @@ UpdateUsbConfig (
   )
 {
   UINTN           PortIndex;
-//#if FixedPcdGet8(PcdFspModeSelection) == 0
   USB_CONFIG      *UsbConfig;
-//#endif
   UINT8           Usb2PortCount;
   UINT8           Usb3PortCount;
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   EFI_STATUS      Status;
+#else
+  VOID            *FspsUpd;
 #endif
   UsbConfig = NULL;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID            *FspsUpd;
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
 #else
-//  UsbConfig = NULL;
   Status = GetConfigBlock ((VOID *) SiPolicy, &gUsbConfigGuid, (VOID *) &UsbConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
@@ -1010,7 +958,7 @@ UpdateUsbConfig (
 
   UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.UsbPdoProgramming, UsbConfig->PdoProgramming, PchSetup->PchUsbPdoProgramming);
   UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchUsbOverCurrentEnable, UsbConfig->OverCurrentEnable, PchSetup->PchUsbOverCurrentEnable);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciUaolEnable,UsbConfig->UaolEnable, !!PchSetup->PchXhciUaol);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciUaolEnable, UsbConfig->UaolEnable, !!PchSetup->PchXhciUaol);
 
   for (PortIndex = 0; PortIndex < Usb2PortCount; PortIndex++) {
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb20Enable[PortIndex], UsbConfig->PortUsb20[PortIndex].Enable, !!PchSetup->PchUsbHsPort[PortIndex]);
@@ -1637,54 +1585,54 @@ UpdateIshConfig (
 #endif //FSPMode Check
 
   for (Index = 0; Index < GetPchMaxIshSpiControllersNum (); Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshSpiEnable[Index],  IshConfig->Spi[Index].Enable,      PchSetup->PchIshSpiEnable[Index],    Index);
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshSpiCs0Enable[Index],  IshConfig->Spi[Index].CsEnable[0], PchSetup->PchIshSpiCs0Enable[Index], Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshSpiEnable[Index], IshConfig->Spi[Index].Enable, PchSetup->PchIshSpiEnable[Index], Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshSpiCs0Enable[Index], IshConfig->Spi[Index].CsEnable[0], PchSetup->PchIshSpiCs0Enable[Index], Index);
   }
   for (Index = 0; Index < GetPchMaxIshUartControllersNum (); Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshUartEnable[Index], IshConfig->Uart[Index].Enable,     PchSetup->PchIshUartEnable[Index],   Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshUartEnable[Index], IshConfig->Uart[Index].Enable, PchSetup->PchIshUartEnable[Index], Index);
   }
   for (Index = 0; Index < GetPchMaxIshI2cControllersNum (); Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshI2cEnable[Index], IshConfig->I2c[Index].Enable,      PchSetup->PchIshI2cEnable[Index],    Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshI2cEnable[Index], IshConfig->I2c[Index].Enable, PchSetup->PchIshI2cEnable[Index], Index);
   }
   for (Index = 0; Index < GetPchMaxIshI3cControllersNum (); Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshI3cEnable[Index], IshConfig->I3c[Index].Enable,      PchSetup->PchIshI3cEnable[Index],    Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshI3cEnable[Index], IshConfig->I3c[Index].Enable, PchSetup->PchIshI3cEnable[Index], Index);
   }
   for (Index = 0; Index < GetPchMaxIshGpNum (); Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshGpEnable[Index],  IshConfig->Gp[Index].Enable,       PchSetup->PchIshGpEnable[Index],     Index);
+    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshGpEnable[Index], IshConfig->Gp[Index].Enable, PchSetup->PchIshGpEnable[Index], Index);
   }
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshPdtUnlock, IshConfig->PdtUnlock,              PchSetup->PchIshPdtUnlock   );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshMsiInterrupt, IshConfig->MsiInterrupt,           PchSetup->PchIshMsiInterrupt);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshPdtUnlock, IshConfig->PdtUnlock, PchSetup->PchIshPdtUnlock   );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchIshMsiInterrupt, IshConfig->MsiInterrupt, PchSetup->PchIshMsiInterrupt);
 
   // ISH Pin MUX - TBD
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiCsPinMuxing[0],IshConfig->Spi[0].PinConfig.Cs[0].PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiClkPinMuxing[0],IshConfig->Spi[0].PinConfig.Clk.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiMisoPinMuxing[0],IshConfig->Spi[0].PinConfig.Miso.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiMosiPinMuxing[0],IshConfig->Spi[0].PinConfig.Mosi.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshUartRxPinMuxing[1],IshConfig->Uart[1].PinConfig.Rx.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshUartTxPinMuxing[1],IshConfig->Uart[1].PinConfig.Tx.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshI2cSdaPinMuxing[2],IshConfig->I2c[2].PinConfig.Sda.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshI2cSclPinMuxing[2],IshConfig->I2c[2].PinConfig.Scl.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[5],IshConfig->Gp[5].PinConfig.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[6],IshConfig->Gp[6].PinConfig.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[8],IshConfig->Gp[8].PinConfig.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[9],IshConfig->Gp[9].PinConfig.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[10],IshConfig->Gp[10].PinConfig.PinMux, 0x0);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[11],IshConfig->Gp[11].PinConfig.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiCsPinMuxing[0], IshConfig->Spi[0].PinConfig.Cs[0].PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiClkPinMuxing[0], IshConfig->Spi[0].PinConfig.Clk.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiMisoPinMuxing[0], IshConfig->Spi[0].PinConfig.Miso.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiMosiPinMuxing[0], IshConfig->Spi[0].PinConfig.Mosi.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshUartRxPinMuxing[1], IshConfig->Uart[1].PinConfig.Rx.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshUartTxPinMuxing[1], IshConfig->Uart[1].PinConfig.Tx.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshI2cSdaPinMuxing[2], IshConfig->I2c[2].PinConfig.Sda.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshI2cSclPinMuxing[2], IshConfig->I2c[2].PinConfig.Scl.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[5], IshConfig->Gp[5].PinConfig.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[6], IshConfig->Gp[6].PinConfig.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[8], IshConfig->Gp[8].PinConfig.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[9], IshConfig->Gp[9].PinConfig.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[10], IshConfig->Gp[10].PinConfig.PinMux, 0x0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[11], IshConfig->Gp[11].PinConfig.PinMux, 0x0);
   if (PtlIsPcdH () || PtlIsPcdP ()) {
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiCsPinMuxing[0],IshConfig->Spi[0].PinConfig.Cs[0].PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_5__ISH_SPI_CS_B);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiClkPinMuxing[0],IshConfig->Spi[0].PinConfig.Clk.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_6__ISH_SPI_CLK);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiMisoPinMuxing[0],IshConfig->Spi[0].PinConfig.Miso.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_7__ISH_SPI_MISO);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiMosiPinMuxing[0],IshConfig->Spi[0].PinConfig.Mosi.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_8__ISH_SPI_MOSI);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshUartRxPinMuxing[1],IshConfig->Uart[1].PinConfig.Rx.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_14__ISH_UART1_RXD);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshUartTxPinMuxing[1],IshConfig->Uart[1].PinConfig.Tx.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_15__ISH_UART1_TXD);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshI2cSdaPinMuxing[2],IshConfig->I2c[2].PinConfig.Sda.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_18__ISH_I2C2_SDA);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshI2cSclPinMuxing[2],IshConfig->I2c[2].PinConfig.Scl.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_19__ISH_I2C2_SCL);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[5],IshConfig->Gp[5].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_22__ISH_GP_5);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[6],IshConfig->Gp[6].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_23__ISH_GP_6);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[8],IshConfig->Gp[8].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_20__ISH_GP_8);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[9],IshConfig->Gp[9].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_21__ISH_GP_9);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[10],IshConfig->Gp[10].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_E_2__ISH_GP_10);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[11],IshConfig->Gp[11].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_F_9__ISH_GP_11);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiCsPinMuxing[0], IshConfig->Spi[0].PinConfig.Cs[0].PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_5__ISH_SPI_CS_B);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiClkPinMuxing[0], IshConfig->Spi[0].PinConfig.Clk.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_6__ISH_SPI_CLK);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiMisoPinMuxing[0], IshConfig->Spi[0].PinConfig.Miso.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_7__ISH_SPI_MISO);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshSpiMosiPinMuxing[0], IshConfig->Spi[0].PinConfig.Mosi.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_D_8__ISH_SPI_MOSI);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshUartRxPinMuxing[1], IshConfig->Uart[1].PinConfig.Rx.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_14__ISH_UART1_RXD);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshUartTxPinMuxing[1], IshConfig->Uart[1].PinConfig.Tx.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_H_15__ISH_UART1_TXD);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshI2cSdaPinMuxing[2], IshConfig->I2c[2].PinConfig.Sda.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_18__ISH_I2C2_SDA);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshI2cSclPinMuxing[2], IshConfig->I2c[2].PinConfig.Scl.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_19__ISH_I2C2_SCL);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[5], IshConfig->Gp[5].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_22__ISH_GP_5);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[6], IshConfig->Gp[6].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_23__ISH_GP_6);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[8], IshConfig->Gp[8].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_20__ISH_GP_8);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[9], IshConfig->Gp[9].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_B_21__ISH_GP_9);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[10], IshConfig->Gp[10].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_E_2__ISH_GP_10);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.IshGpGpioPinMuxing[11], IshConfig->Gp[11].PinConfig.PinMux, GPIOV2_PTL_PCD_MUXING__XXGPP_F_9__ISH_GP_11);
   }
 }
 
@@ -1860,9 +1808,9 @@ UpdateCnviConfig (
   }
 #endif //FSPMode Check
 
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviMode, CnviConfig->Mode,           CnvSetup->CnviMode          );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviWifiCore, CnviConfig->WifiCore,       CnvSetup->CnviWifiCore      );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviBtCore, CnviConfig->BtCore,         CnvSetup->CnviBtCore        );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviMode, CnviConfig->Mode, CnvSetup->CnviMode);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviWifiCore, CnviConfig->WifiCore, CnvSetup->CnviWifiCore);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviBtCore, CnviConfig->BtCore, CnvSetup->CnviBtCore);
 
   IsUsbOnly = CrfSupportUsbInterfaceOnly ();
   NeedUpdate = FALSE;
@@ -1939,7 +1887,7 @@ UpdateThermalConfig (
   }
 #endif //FSPMode Check
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchHotEnable,ThermalConfig->PchHotEnable, PcdGetBool (PcdPchThermalHotEnable));
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchHotEnable, ThermalConfig->PchHotEnable, PcdGetBool (PcdPchThermalHotEnable));
 
   //
   // Program Thermal Throttling Level
@@ -2023,7 +1971,7 @@ UpdateTsnConfig (
   UINT8                     TsnBusID;
   UINT8                     TsnPortIndex;
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                     *FspsUpd;
+  VOID                      *FspsUpd;
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
 #else
@@ -2226,12 +2174,12 @@ UpdatePmConfig (
   // M.2 WiFi/BT slot power needs to be kept during Sx for CNVi. Hence overriding PchPmWoWlanEnable to 1 when CNVi is present.
   //
   if (CnviCrfModuleIsPresent ()) {
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmWoWlanEnable,PmConfig->WakeConfig.WoWlanEnable, 1);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmWoWlanEnable, PmConfig->WakeConfig.WoWlanEnable, 1);
   } else {
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmWoWlanEnable,PmConfig->WakeConfig.WoWlanEnable, PchSetup->PchWakeOnWlan);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmWoWlanEnable, PmConfig->WakeConfig.WoWlanEnable, PchSetup->PchWakeOnWlan);
   }
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmSlpLanLowDc,PmConfig->SlpLanLowDc,                   PchSetup->SlpLanLowDc);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PsOnEnable,PmConfig->PsOnEnable,                    PchSetup->PsOnEnable );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmSlpLanLowDc, PmConfig->SlpLanLowDc, PchSetup->SlpLanLowDc);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PsOnEnable, PmConfig->PsOnEnable, PchSetup->PsOnEnable );
 
   // Power Button Override Period (PBOP): refer to EDS for detail
   // Encoding:
@@ -2239,32 +2187,32 @@ UpdatePmConfig (
   // 011b - 10 seconds
   // power button behavior will depend on this setting and other features
   // such as power button SMI which will shutdown system immediately when it is enabled in pre-OS.
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmPwrBtnOverridePeriod,PmConfig->PwrBtnOverridePeriod, !!SetupVariables->LowPowerS0Idle? 0x3 : 0);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmPwrBtnOverridePeriod, PmConfig->PwrBtnOverridePeriod, !!SetupVariables->LowPowerS0Idle? 0x3 : 0);
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmMeWakeSts, PmConfig->MeWakeSts,             TRUE);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmMeWakeSts, PmConfig->MeWakeSts, TRUE);
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcWdtTimerEn,PmConfig->PmcWdtTimerEn, PchSetup->PmcWdtTimerEn);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcWdtTimerEn, PmConfig->PmcWdtTimerEn, PchSetup->PmcWdtTimerEn);
 
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableTcoTimer,PmConfig->EnableTcoTimer,              PchSetup->EnableTcoTimer  );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableTcoTimer, PmConfig->EnableTcoTimer, PchSetup->EnableTcoTimer  );
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableTimedGpio0,PmConfig->EnableTimedGpio0,            PchSetup->EnableTimedGpio0);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableTimedGpio1,PmConfig->EnableTimedGpio1,            PchSetup->EnableTimedGpio1);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableTimedGpio0, PmConfig->EnableTimedGpio0, PchSetup->EnableTimedGpio0);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableTimedGpio1, PmConfig->EnableTimedGpio1, PchSetup->EnableTimedGpio1);
 #endif
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmVrAlert,PmConfig->VrAlert,               PcdGetBool (PcdVrAlertEnable));
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcCpuC10GatePinEnable, PmConfig->CpuC10GatePinEnable,   1);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcModPhySusPgEnable,PmConfig->ModPhySusPgEnable,     IsPchLp ());
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmVrAlert, PmConfig->VrAlert, PcdGetBool (PcdVrAlertEnable));
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcCpuC10GatePinEnable, PmConfig->CpuC10GatePinEnable, 1);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcModPhySusPgEnable, PmConfig->ModPhySusPgEnable, IsPchLp ());
   if (IsPchLp ()) {
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcUsb2PhySusPgEnable,PmConfig->Usb2PhySusPgEnable, PchSetup->PchUsb2SusWellPgEnable);
+    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcUsb2PhySusPgEnable, PmConfig->Usb2PhySusPgEnable, PchSetup->PchUsb2SusWellPgEnable);
   } else {
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcUsb2PhySusPgEnable,PmConfig->Usb2PhySusPgEnable, 0);
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcUsb2PhySusPgEnable, PmConfig->Usb2PhySusPgEnable, 0);
   }
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcOsIdleEnable,    PmConfig->OsIdleEnable,                  PchSetup->PchPmcOsIdleModeEnable          );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchS0ixAutoDemotion,PmConfig->S0ixAutoDemotion,              PchSetup->PchS0ixAutoDemotion             );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmLatchEventsC10Exit,PmConfig->LatchEventsC10Exit,            PchSetup->PchLatchEventsC10Exit           );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcC10DynamicThresholdAdjustment,PmConfig->C10DynamicThresholdAdjustment, PchSetup->PmcC10DynamicThresholdAdjustment);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcOsIdleEnable, PmConfig->OsIdleEnable, PchSetup->PchPmcOsIdleModeEnable);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchS0ixAutoDemotion, PmConfig->S0ixAutoDemotion, PchSetup->PchS0ixAutoDemotion);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmLatchEventsC10Exit, PmConfig->LatchEventsC10Exit, PchSetup->PchLatchEventsC10Exit);
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcC10DynamicThresholdAdjustment, PmConfig->C10DynamicThresholdAdjustment, PchSetup->PmcC10DynamicThresholdAdjustment);
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcV1p05PhyExtFetControlEn,PmConfig->V1p05PhyExtFetControlEn, TRUE);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcV1p05IsExtFetControlEn,PmConfig->V1p05IsExtFetControlEn,  FALSE);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcV1p05PhyExtFetControlEn, PmConfig->V1p05PhyExtFetControlEn, TRUE);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcV1p05IsExtFetControlEn, PmConfig->V1p05IsExtFetControlEn,  FALSE);
 }
 
 /**
@@ -2345,11 +2293,11 @@ UpdateHsioConfig (
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "Get ChipsetInit file info failed\n"));
     } else {
-      #if FixedPcdGet8(PcdFspModeSelection) == 1
-        ((FSPS_UPD *) FspsUpd)->FspsConfig.ChipsetInitBinPtr= (UINT64) OemCsiFileInfo.Buffer;
-      #else
-        HsioConfig->ChipsetInitBinPtr = (VOID *) OemCsiFileInfo.Buffer;
-      #endif
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+      ((FSPS_UPD *) FspsUpd)->FspsConfig.ChipsetInitBinPtr = (UINT64) OemCsiFileInfo.Buffer;
+#else
+      HsioConfig->ChipsetInitBinPtr = (VOID *) OemCsiFileInfo.Buffer;
+#endif
       UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ChipsetInitBinLen, HsioConfig->ChipsetInitBinLen, OemCsiFileInfo.BufferSize);
 
       DEBUG ((DEBUG_INFO, "OEM ChipsetInit binary location: %x\n", OemCsiFileInfo.Buffer));
@@ -2369,11 +2317,11 @@ UpdateHsioConfig (
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "Get Sphy file info failed\n"));
     } else {
-      #if FixedPcdGet8(PcdFspModeSelection) == 1
-        ((FSPS_UPD *) FspsUpd)->FspsConfig.SynpsPhyBinPtr = (UINT64) OemSphyFileInfo.Buffer;
-      #else
-        HsioConfig->SynpsPhyBinPtr = (VOID *) OemSphyFileInfo.Buffer;
-      #endif
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+      ((FSPS_UPD *) FspsUpd)->FspsConfig.SynpsPhyBinPtr = (UINT64) OemSphyFileInfo.Buffer;
+#else
+      HsioConfig->SynpsPhyBinPtr = (VOID *) OemSphyFileInfo.Buffer;
+#endif
       UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SynpsPhyBinLen, HsioConfig->SynpsPhyBinLen, OemSphyFileInfo.BufferSize);
 
       DEBUG ((DEBUG_INFO, "OEM Sphy binary location: %x\n", OemSphyFileInfo.Buffer));
@@ -2393,8 +2341,10 @@ UpdateHsioConfig (
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "Get Nphy file info failed\n"));
     } else {
-#if FixedPcdGet8(PcdFspModeSelection) == 0
-      UPDATE_POLICY (HsioConfig->NphyBinPtr, OemNphyFileInfo.Buffer);
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+      ((FSPS_UPD *) FspsUpd)->FspsConfig.NphyBinPtr = (UINT64) OemNphyFileInfo.Buffer;
+#else
+      HsioConfig->NphyBinPtr = (VOID *) OemNphyFileInfo.Buffer;
 #endif
       UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.NphyBinLen, HsioConfig->NphyBinLen, OemNphyFileInfo.BufferSize);
 
@@ -2497,7 +2447,7 @@ UpdateFlashProtectionConfig (
     // |--------------------------------------|
     // |NV Variable (Skip protection)         |
     // |--------------------------------------|
-    // |ProtectRange[1]: Fit/Non Fit Payload  |
+    // |ProtectRange[1]: Non Fit Payload      |
     // |--------------------------------------|
     // |ProtectRange[2]: Extended BIOS region |
     // |    (If Extended BIOS is enabled)     |
@@ -2508,7 +2458,7 @@ UpdateFlashProtectionConfig (
     //
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchWriteProtectionEnable[0], FlashProtectionConfig->ProtectRange[0].WriteProtectionEnable, TRUE);
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchReadProtectionEnable[0], FlashProtectionConfig->ProtectRange[0].ReadProtectionEnable, FALSE);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeBase[0], FlashProtectionConfig->ProtectRange[0].ProtectedRangeBase,  (UINT16)((BaseAddr + (FixedPcdGet32 (PcdFlashFvMicrocodeSize) + FixedPcdGet32 (PcdFlashNonFitPayloadSize)) + FixedPcdGet32 (PcdFlashNvStorageSize)) >> 12));
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeBase[0], FlashProtectionConfig->ProtectRange[0].ProtectedRangeBase,  (UINT16)((BaseAddr + FixedPcdGet32 (PcdFlashNonFitPayloadSize) + FixedPcdGet32 (PcdFlashNvStorageSize)) >> 12));
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeLimit[0], FlashProtectionConfig->ProtectRange[0].ProtectedRangeLimit, (UINT16)(((BaseAddr + RegionSize) - 1) >> 12));
     GET_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeBase[0], FlashProtectionConfig->ProtectRange[0].ProtectedRangeBase, ProtectedRangeBase);
     GET_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeLimit[0], FlashProtectionConfig->ProtectRange[0].ProtectedRangeLimit, ProtectedRangeLimit);
@@ -2519,7 +2469,7 @@ UpdateFlashProtectionConfig (
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchWriteProtectionEnable[1], FlashProtectionConfig->ProtectRange[1].WriteProtectionEnable, TRUE);
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchReadProtectionEnable[1], FlashProtectionConfig->ProtectRange[1].ReadProtectionEnable, FALSE);
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeBase[1], FlashProtectionConfig->ProtectRange[1].ProtectedRangeBase,  (UINT16)(BaseAddr >> 12));
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeLimit[1],  FlashProtectionConfig->ProtectRange[1].ProtectedRangeLimit, (UINT16)((BaseAddr + FixedPcdGet32 (PcdFlashFvMicrocodeSize) + FixedPcdGet32 (PcdFlashNonFitPayloadSize) - 1) >> 12));
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeLimit[1],  FlashProtectionConfig->ProtectRange[1].ProtectedRangeLimit, (UINT16)((BaseAddr + FixedPcdGet32 (PcdFlashNonFitPayloadSize) - 1) >> 12));
     GET_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeBase[1], FlashProtectionConfig->ProtectRange[1].ProtectedRangeBase, ProtectedRangeBase);
     GET_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeLimit[1], FlashProtectionConfig->ProtectRange[1].ProtectedRangeLimit, ProtectedRangeLimit);
     DEBUG ((DEBUG_INFO, "FlashProtectionConfig->ProtectRange[1].ProtectedRangeBase  %x\n", ProtectedRangeBase));
@@ -2530,7 +2480,7 @@ UpdateFlashProtectionConfig (
     //
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchWriteProtectionEnable[0], FlashProtectionConfig->ProtectRange[0].WriteProtectionEnable, TRUE);
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchReadProtectionEnable[0], FlashProtectionConfig->ProtectRange[0].ReadProtectionEnable, FALSE);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeBase[0], FlashProtectionConfig->ProtectRange[0].ProtectedRangeBase,  (UINT16)((BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse) + (FixedPcdGet32 (PcdFlashFvMicrocodeSize) + FixedPcdGet32 (PcdFlashNonFitPayloadSize)) + FixedPcdGet32 (PcdFlashNvStorageSize)) >> 12));
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeBase[0], FlashProtectionConfig->ProtectRange[0].ProtectedRangeBase,  (UINT16)((BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse) + FixedPcdGet32 (PcdFlashNonFitPayloadSize) + FixedPcdGet32 (PcdFlashNvStorageSize)) >> 12));
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeLimit[0], FlashProtectionConfig->ProtectRange[0].ProtectedRangeLimit, (UINT16)(((BaseAddr + RegionSize) - 1) >> 12));
     GET_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeBase[0], FlashProtectionConfig->ProtectRange[0].ProtectedRangeBase, ProtectedRangeBase);
     GET_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeLimit[0], FlashProtectionConfig->ProtectRange[0].ProtectedRangeLimit, ProtectedRangeLimit);
@@ -2541,7 +2491,7 @@ UpdateFlashProtectionConfig (
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchWriteProtectionEnable[1], FlashProtectionConfig->ProtectRange[1].WriteProtectionEnable, TRUE);
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchReadProtectionEnable[1], FlashProtectionConfig->ProtectRange[1].ReadProtectionEnable, FALSE);
     UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeBase[1], FlashProtectionConfig->ProtectRange[1].ProtectedRangeBase,  (UINT16)((BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse)) >> 12));
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeLimit[1], FlashProtectionConfig->ProtectRange[1].ProtectedRangeLimit, (UINT16)((BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse) + FixedPcdGet32 (PcdFlashFvMicrocodeSize) + FixedPcdGet32 (PcdFlashNonFitPayloadSize) - 1) >> 12));
+    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeLimit[1], FlashProtectionConfig->ProtectRange[1].ProtectedRangeLimit, (UINT16)((BaseAddr + FixedPcdGet32 (PcdFlashExtendRegionSizeInUse) + FixedPcdGet32 (PcdFlashNonFitPayloadSize) - 1) >> 12));
     GET_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeBase[1], FlashProtectionConfig->ProtectRange[1].ProtectedRangeBase, ProtectedRangeBase);
     GET_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchProtectedRangeLimit[1], FlashProtectionConfig->ProtectRange[1].ProtectedRangeLimit, ProtectedRangeLimit);
     DEBUG ((DEBUG_INFO, "FlashProtectionConfig->ProtectRange[1].ProtectedRangeBase  %x\n", ProtectedRangeBase));
@@ -2703,7 +2653,7 @@ UpdatePchGeneralConfig (
   }
 #endif //FSPMode Check
 
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchCrid, PchGeneralConfig->Crid,               PchSetup->PchCrid              );
+  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchCrid, PchGeneralConfig->Crid, PchSetup->PchCrid);
   COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchLegacyIoLowLatency, PchGeneralConfig->LegacyIoLowLatency, PchSetup->PchLegacyIoLowLatency);
 }
 
@@ -2846,24 +2796,22 @@ UpdatePeiPchPolicy (
   CNV_VFR_CONFIG_SETUP            CnvSetup;
   DEBUG_CONFIG_DATA               DebugConfigData;
   UINT32                          BiosGuardEnable;
-//#if FixedPcdGet8(PcdFspModeSelection) == 0
   CPU_SECURITY_PREMEM_CONFIG      *CpuSecurityPreMemConfig;
-//#endif
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+  VOID                            *FspsUpd;
+  VOID                            *FspmUpd;
+#endif
 
   CpuSecurityPreMemConfig = NULL;
 
   DEBUG ((DEBUG_INFO, "Update PeiPchPolicyUpdate Pos-Mem Start\n"));
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-  VOID                            *FspsUpd;
-  VOID                            *FspmUpd;
   FspmUpd = (FSPM_UPD *)(UINTN) PcdGet64 (PcdFspmUpdDataAddress64);
   ASSERT (FspmUpd != NULL);
   FspsUpd = (FSPS_UPD *)(UINTN) PcdGet64 (PcdFspsUpdDataAddress64);
   ASSERT (FspsUpd != NULL);
 #else
-//  CpuSecurityPreMemConfig = NULL;
-
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuSecurityPreMemConfigGuid, (VOID *) &CpuSecurityPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {

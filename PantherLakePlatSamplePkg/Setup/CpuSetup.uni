@@ -774,7 +774,7 @@
 #string STR_PSYS_OFFSET_PREFIX_HELP             #language en-US "Sets the offset value as positive or negative."
 
 #string STR_PSYS_MAX                            #language en-US "PSYS PMax Power"
-#string STR_PSYS_MAX_HELP                       #language en-US "Psys Pmax power, defined in 1/8 Watt or 1/8 Percent increments. For Watts, range is 0-8191 (ex. For 125W, enter 1000). For ATX12VO Percent, Range is 0-1600 (ex. For recommended value of 200%, enter 1600). Uses BIOS VR mailbox command 0xB."
+#string STR_PSYS_MAX_HELP                       #language en-US "Psys Pmax power, defined in 1/8 Watt or 1/8 Percent increments. For Watts, range is 0-8191 (ex. For 125W, enter 1000). For ATX12VO Percent, Range is 0-1600 (ex. For recommended value of 200%, enter 1600). Uses BIOS VR mailbox command 0xB. 0 = AUTO/HW default."
 
 #string STR_VSYS_PSYS_CRITICAL                  #language en-US "Vsys/Psys Critical"
 #string STR_VSYS_PSYS_CRITICAL_HELP             #language en-US "Vsys/Psys Critical Enable or disable"

@@ -29,9 +29,11 @@
 #include <GpioV2Signals.h>
 #include <GpioV2Pad.h>
 #include <LpssUartConfig.h>
-#include <Register/Ptl/GpioV2PcdPins/GpioV2PtlPcdPins.h>
+#include <Register/GpioV2PcdPins.h>
 #include <Library/IoLib.h>
 #include <Library/P2SbSidebandAccessLib.h>
+#include <Library/Ptl/PcdInfoLib/PtlPcdInfoLib.h>
+#define MAX_UART_INSTANCES 3
 
 typedef enum {
   GpioUartPinRx,
@@ -39,6 +41,16 @@ typedef enum {
   GpioUartPinRts,
   GpioUartPinCts
 } GPIOV2_SEC_UART_PIN_MUX;
+
+typedef struct {
+  GPIOV2_PAD UartTx;
+  GPIOV2_PAD UartRx;
+  GPIOV2_PAD UartRts;
+  GPIOV2_PAD UartCts;
+} UART_PIN;
+typedef struct {
+  UART_PIN UartPin[MAX_UART_INSTANCES];
+} UART_PIN_SET;
 
 /**
   This procedure does minimum Gpio Configuration required for Lpss Devices
@@ -92,34 +104,59 @@ SecLpssGpioConfigure (
   return EFI_SUCCESS;
 }
 
+// PTL Platform
+UART_PIN_SET PtlUartPinSet = {
+    {
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_H_9__UART0_TXD, GPIOV2_PTL_PCD_MUXING__XXGPP_H_8__UART0_RXD, GPIOV2_PTL_PCD_MUXING__XXGPP_H_10__UART0_RTS_B, GPIOV2_PTL_PCD_MUXING__XXGPP_H_11__UART0_CTS_B },
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_H_7__UART1_TXD, GPIOV2_PTL_PCD_MUXING__XXGPP_H_6__UART1_RXD, GPIOV2_PAD_NONE, GPIOV2_PAD_NONE },
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_F_2__UART2_TXD, GPIOV2_PTL_PCD_MUXING__XXGPP_F_1__UART2_RXD, GPIOV2_PTL_PCD_MUXING__XXGPP_F_0__UART2_RTS_B, GPIOV2_PTL_PCD_MUXING__XXGPP_F_3__UART2_CTS_B }
+    }
+};
+
+
+
+GPIOV2_PAD
+GetUartGpioPad (
+  UART_PIN_SET            *UartPinSet,
+  UINT8                   UartInstance,
+  GPIOV2_SEC_UART_PIN_MUX PinType
+  )
+{
+  switch (PinType) {
+    case GpioUartPinRx:
+      return UartPinSet->UartPin[UartInstance].UartRx;
+    case GpioUartPinTx:
+      return UartPinSet->UartPin[UartInstance].UartTx;
+    case GpioUartPinRts:
+      return UartPinSet->UartPin[UartInstance].UartRts;
+    case GpioUartPinCts:
+      return UartPinSet->UartPin[UartInstance].UartCts;
+    default:
+      return GPIOV2_PAD_NONE;
+  }
+}
 /**
   Gets GPIO PinMux value
   @param[in]  PinMux         Pin Mux value from PCD
+  @param[in]  UartInstance   UART instance (0 for UART0, 1 for UART1, 2 for UART2)
   @param[in]  PinType        LPSS Uart Pin Type
-
 **/
 GPIOV2_PAD
-PtlPcdSecGetUartGpioPad(
-  IN  UINT32                    PinMux,
-  IN  GPIOV2_SEC_UART_PIN_MUX   PinType
+PtlPcdSecGetUartGpioPad (
+  IN UINT32                  PinMux,
+  IN UINT8                   UartInstance,
+  IN GPIOV2_SEC_UART_PIN_MUX PinType
   )
 {
-  if(PinMux == 0) {
-    switch (PinType) {
-      case GpioUartPinRx:
-        return GPIOV2_PTL_PCD_MUXING__XXGPP_H_8__UART0_RXD;
-      case GpioUartPinTx:
-        return GPIOV2_PTL_PCD_MUXING__XXGPP_H_9__UART0_TXD;
-      case GpioUartPinRts:
-        return GPIOV2_PTL_PCD_MUXING__XXGPP_H_10__UART0_RTS_B;
-      case GpioUartPinCts:
-        return GPIOV2_PTL_PCD_MUXING__XXGPP_H_11__UART0_CTS_B;
-      default:
-        ASSERT (FALSE);
-        return GPIOV2_PAD_NONE;
+  if (PinMux == 0) {
+    if (PtlIsPcdP()) {
+      return GetUartGpioPad(&PtlUartPinSet, UartInstance, PinType);
     }
+
+
   }
-  return PinMux; 
+  
+  return PinMux;
 }
 
 /**
@@ -130,26 +167,27 @@ PtlPcdSecGetUartGpioPad(
 VOID
 EFIAPI
 PtlPcdSecLpssUartGpioConfigure (
-  IN LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig
+  IN LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig,
+  IN UINT8                    UartInstance
   )
 {
   GPIOV2_PAD        GpioPad;
 
-
-  GpioPad = PtlPcdSecGetUartGpioPad(UartDeviceConfig->PinMux.Rx, GpioUartPinRx);
+  // RX
+  GpioPad = PtlPcdSecGetUartGpioPad (UartDeviceConfig->PinMux.Rx, UartInstance, GpioUartPinRx);
   SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   // TX
-  GpioPad =  PtlPcdSecGetUartGpioPad(UartDeviceConfig->PinMux.Tx, GpioUartPinTx);
+  GpioPad = PtlPcdSecGetUartGpioPad (UartDeviceConfig->PinMux.Tx, UartInstance, GpioUartPinTx);
   SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   if (UartDeviceConfig->Attributes.AutoFlow) {
     // RTS
-    GpioPad =  PtlPcdSecGetUartGpioPad(UartDeviceConfig->PinMux.Rts, GpioUartPinRts);
+    GpioPad = PtlPcdSecGetUartGpioPad (UartDeviceConfig->PinMux.Rts, UartInstance, GpioUartPinRts);
     SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
     // CTS
-    GpioPad =  PtlPcdSecGetUartGpioPad(UartDeviceConfig->PinMux.Cts, GpioUartPinCts);
+    GpioPad = PtlPcdSecGetUartGpioPad (UartDeviceConfig->PinMux.Cts, UartInstance, GpioUartPinCts);
     SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
   }
 

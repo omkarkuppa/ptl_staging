@@ -28,8 +28,6 @@
 /// WAKP: Flag to indicate that power gating must not be performed if WAKE is enabled - optional
 /// @defgroup pcie_scope PCIe Root Port Scope
 
-External(\DSLT, MethodObj)
-External(\MMRP, MethodObj)
 External(\MMTB, MethodObj)
 External(\DSCE, IntObj)
 
@@ -88,32 +86,14 @@ If (CondRefOf (PRTP)) {
   ADBG ("[dTBT] PRTP is not present for identifying RP type")
 }
 
-//
-// Name: DSLT
-// Description: Function to return the SLOT number,
-//                PCH SLOT number start from 1,
-//                PEG SLOT number starts from 0,
-//                if coming from PEG, SLOT number need Increment
-// Input: Arg0 -> Current DTBT PCIE RP Type is assigned to PCH by default - 01: PCH / 02: CPU
-// Input: Arg1 -> Current SLOT number
-//
-Method (DSLT, 2, Serialized)
-{
-  Store (Arg1, Local0)
-  If (LEqual (Arg0, PCIE_RP_TYPE_CPU)){
-    Increment (Local0)
-  }
-  Return (Local0)
-} // End of Method (DSLT)
-
 If (LAnd (CondRefOf (TUID), CondRefOf (SLOT))) {
   If (CondRefOf (PRTP)) {
     If (LEqual (PRTP, PCIE_RP_TYPE_PCH)) {
-      Fprintf (TSTR, "dTBT %o (PCH-RP%o)", ToDecimalString (TUID), ToDecimalString (DSLT (PRTP, SLOT)))
+      Fprintf (TSTR, "dTBT %o (PCH-RP%o)", ToDecimalString (TUID), ToDecimalString (SLOT))
     } ElseIf (LEqual (PRTP, PCIE_RP_TYPE_CPU)) {
-      Fprintf (TSTR, "dTBT %o (CPU-RP%o)", ToDecimalString (TUID), ToDecimalString (DSLT (PRTP, SLOT)))
+      Fprintf (TSTR, "dTBT %o (CPU-RP%o)", ToDecimalString (TUID), ToDecimalString (SLOT))
     } Else {
-      Fprintf (TSTR, "dTBT %o (Type %o - RP%o)", ToDecimalString (TUID), ToDecimalString (PRTP), ToDecimalString (DSLT (PRTP, SLOT)))
+      Fprintf (TSTR, "dTBT %o (Type %o - RP%o)", ToDecimalString (TUID), ToDecimalString (PRTP), ToDecimalString (SLOT))
     }
     ADBG (Concatenate ("[dTBT] ", TSTR))
   }
@@ -141,15 +121,15 @@ Method (_S0W, 0, Serialized) {
 //
 Method (TSCH, 0, Serialized) {
 
-  Store (\MMTB (DSLT (PRTP, SLOT), PRTP), Local7)
+  Store (\MMTB (SLOT, PRTP), Local7)
   // TODO Make one generic copy
   OperationRegion (TBDM, SystemMemory, Local7, 0x550) // TBT HR PCICFG MMIO
-  Field (TBDM,DWordAcc, NoLock, Preserve) {
+  Field (TBDM, DWordAcc, NoLock, Preserve) {
     DIVI, 32,
     CMDR, 32,
-    Offset(0x84),
+    Offset (0x84),
     TBPS, 2, // PowerState of TBT
-    Offset(0x548),
+    Offset (0x548),
     TB2P, 32,
     P2TB, 32
   }
@@ -233,7 +213,7 @@ Method (TVAL, 0, Serialized) {
 
 Method (PPS0, 0, Serialized) { // Platform specific PCIe root port _PS0 Hook Function.
   ADBG (Concatenate ("[dTBT] PCIE RP PPS0 - dTBT ", ToDecimalString (TUID)))
-  TSCH()
+  TSCH ()
 }
 
 Method (PPS3, 0, Serialized) { // Platform specific PCIe root port _PS3 Hook Function.
@@ -570,7 +550,7 @@ Method (NFRP, 0, Serialized) { /// Notify root port
 
   If (LEqual (\DTFS, 0x01)) {// if Thunderbolt(TM) support is enabled
 
-    ADBG (Concatenate ("[dTBT] Notify OS of bus check and device wake event for RP SLOT -", ToHexString (DSLT (PRTP, SLOT))))
+    ADBG (Concatenate ("[dTBT] Notify OS of bus check and device wake event for RP SLOT ", ToHexString (SLOT)))
     Notify (^, 0)
     Notify (^, 2)
   }

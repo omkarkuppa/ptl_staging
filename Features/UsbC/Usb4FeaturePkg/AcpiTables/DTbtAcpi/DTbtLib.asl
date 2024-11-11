@@ -30,7 +30,7 @@
 //
 External (\_SB.PC00.GPCB, MethodObj)
 External (\_SB.PC00.PC2M, MethodObj)
-External (PBNU, IntObj)    // Bus Number
+External (\PBSB, FieldUnitObj) // PCH Bus Number
 
 //
 // Legacy implementation uses DSCE to indicate FW CM or SW CM running
@@ -621,9 +621,16 @@ Method(MMRP, 2, Serialized)
     // PC2M returns the system address by providing PCI device BDF
     // PC2M arg0 = PCI _ADR (Dev# in high word | Func# in low word)
     // PC2M arg1 = PCI bus number
-    // PBNU is defined for each PCI RP to indicate its bus number
     //
-    Store (\_SB.PC00.PC2M (Local1, PBNU), Local0)
+    Store (0, Local2)       // Set default PCI bus number to 0
+    If (LEqual (Arg1, PCIE_RP_TYPE_PCH)) {
+      If (CondRefOf (\PBSB)) {
+        Store (\PBSB, Local2)  // Update PCH PCI bus number based on PBSB
+      } Else {
+        ADBG ("[dTBT] PBSB IS NOT FOUND!!")
+      }
+    }
+    Store (\_SB.PC00.PC2M (Local1, Local2), Local0)
     ADBG (Concatenate ("[dTBT] RP _ADR = ", ToHexString (Local1)))
     ADBG (Concatenate ("[dTBT] RP ECAM address = ", ToHexString (Local0)))
   } Else {
@@ -654,9 +661,16 @@ Method(MMTB, 2, Serialized)
     // PC2M returns the system address by giving PCI device BDF
     // PC2M arg0 = PCI _ADR (Dev# in high word | Func# in low word)
     // PC2M arg1 = PCI bus number
-    // PBNU is defined for each PCI RP to indicate its bus number
     //
-    Store (\_SB.PC00.PC2M (Local1, PBNU), Local0)
+    Store (0, Local2)       // Set default PCI bus number to 0
+    If (LEqual (Arg1, PCIE_RP_TYPE_PCH)) {
+      If (CondRefOf (\PBSB)) {
+        Store (\PBSB, Local2)  // Update PCH PCI bus number based on PBSB
+      } Else {
+        ADBG ("[dTBT] PBSB IS NOT FOUND!!")
+      }
+    }
+    Store (\_SB.PC00.PC2M (Local1, Local2), Local0)
     ADBG (Concatenate ("[dTBT] RP ECAM address = ", ToHexString (Local0)))
   } Else {
     ADBG ("[dTBT] PC2M method is not present for base address calculation")

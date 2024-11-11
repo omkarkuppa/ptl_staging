@@ -36,6 +36,8 @@
 #include <Register/TraceHubRegs.h>
 #include <Library/TraceHubDebugLib.h>
 #include <Library/HobLib.h>
+#include "MrcBlueGreenCommunication.h"
+#include "BlueMrcAgentCommunication.h"
 
 #pragma pack (push, 1)
 typedef union {

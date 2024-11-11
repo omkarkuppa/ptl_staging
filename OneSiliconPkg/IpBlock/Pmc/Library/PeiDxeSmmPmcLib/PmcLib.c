@@ -1511,3 +1511,37 @@ PmcSendPrivacyConsent (
   }
   return Status;
 }
+
+/**
+  Returns the PMC register contents for PM CON, Global Reset, and HPR.
+
+  @param[in,out]  GenPmConA   - Gen PM Con A register value
+  @param[in,out]  HprCause0   - HPR Cause 0 register value
+  @param[in,out]  GblCause0   - Global Reset Cause 0 register value
+  @param[in,out]  GblCause1   - Global Reset Cause 1 register value
+**/
+VOID
+GetPmcResetRegisters (
+  IN OUT UINT32 GenPmConA,
+  IN OUT UINT32 HprCause0,
+  IN OUT UINT32 GblCause0,
+  IN OUT UINT32 GblCause1
+  )
+{
+  UINTN    PwrmBase;
+
+  // Get PM base addr based on platform
+  PwrmBase = PmcGetPwrmBase ();
+
+  // Get PMC PM CON A Register
+  GenPmConA = IoRead32 ((UINTN) PwrmBase + R_PMC_PWRM_GEN_PMCON_A);
+
+  // Get PMC HPR Cause0 Register
+  HprCause0 = MmioRead32 (PwrmBase + R_PMC_PWRM_HPR_CAUSE0);
+
+  // Get PMC Global Cause0 Register
+  GblCause0 = MmioRead32 (PwrmBase + R_PMC_PWRM_GBLRST_CAUSE0);
+
+  // Get PMC Global Cause1 Register
+  GblCause1 = MmioRead32 (PwrmBase + R_PMC_PWRM_GBLRST_CAUSE1);
+}

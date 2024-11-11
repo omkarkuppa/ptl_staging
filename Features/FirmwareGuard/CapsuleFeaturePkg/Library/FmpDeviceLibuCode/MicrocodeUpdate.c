@@ -32,7 +32,6 @@
 #include <Library/TopSwapSupportLib.h>
 #include "MicrocodeUpdate.h"
 #include <Library/ResiliencySupportLib.h>
-#include <Library/PayloadResiliencySupportLib.h>
 
 /**
   Check if input CPU index is in new uCode targeted CPU list.
@@ -80,10 +79,8 @@ GetMicrocodeRegion (
 {
   UINT32 MicrocodeBaseAddress;
 
-  MicrocodeBaseAddress = GetMicrocodeBaseAddressInRecovery ();
-  if (MicrocodeBaseAddress == 0) {
-    MicrocodeBaseAddress = PcdGet32 (PcdFlashFvMicrocodeBase);
-  }
+  MicrocodeBaseAddress = PcdGet32 (PcdFlashFvMicrocodeBase);
+
   //
   // Flash Block size alignment is not required for TopSwap Recovery storage selection
   // It is a requirement only when we use Mechanism 2 Option 1.

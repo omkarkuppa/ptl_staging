@@ -203,7 +203,8 @@ InitializeCnvSsdtAcpiTables (
         /// Locate the SSDT package
         ///
         CurrPtr = (UINT8 *) CnvAcpiTable + sizeof (EFI_ACPI_DESCRIPTION_HEADER);
-        EndPtr  = (UINT8 *) CnvAcpiTable + CnvAcpiTable->Length - sizeof (*Signature);
+        /// OperationRegion space (16 bytes) = 3 + sizeof (*Signature) + 2 + sizeof (UINT32) + 1 + size of (UINT16)
+        EndPtr  = (UINT8 *) CnvAcpiTable + CnvAcpiTable->Length - sizeof (*Signature) - 16;
 
         for ( ; CurrPtr <= EndPtr; CurrPtr++) {
           Signature = (UINT32 *)(CurrPtr + 3);

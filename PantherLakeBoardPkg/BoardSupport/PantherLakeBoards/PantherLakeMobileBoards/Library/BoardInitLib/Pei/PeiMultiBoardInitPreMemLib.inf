@@ -54,6 +54,7 @@
   NemMapLib
   PeiServicesLib
   HobLib
+  TimerLib
 
 [Packages]
   MinPlatformPkg/MinPlatformPkg.dec
@@ -288,6 +289,7 @@
 
   #Tbt config
   gUcsiFeaturePkgTokenSpaceGuid.PcdUsbCUcmMode            ## PRODUCES
+  gBoardModuleTokenSpaceGuid.VpdPcdMiniDeltaTimeFromEarlyPrememToPrememGpio  ## CONSUMES
 
   #MultiIBB
   gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable                 ## CONSUMES

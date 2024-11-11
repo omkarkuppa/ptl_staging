@@ -445,7 +445,8 @@
         prompt      = STRING_TOKEN(STR_NHLT_CONFIG_BLUETOOTH_PROMPT),
         help        = STRING_TOKEN(STR_NHLT_CONFIG_BLUETOOTH_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_NHLT_BT_38_4MHZ_BT_DRIVES_CLOCK), value = 1, flags = DEFAULT | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_NHLT_BT_38_4MHZ_DSP_DRIVES_CLOCK), value = 2, flags =  RESET_REQUIRED;
       endoneof;
 
       oneof varid   = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE.NhltI2sAlc274Enabled,
@@ -485,9 +486,10 @@
 
     // BT Sideband support
     checkbox varid  = PCH_SETUP.PchHdAudioFeature[1],
+      questionid  = PCH_HDAUDIO_BT_SIDEBAND_ACTION_KEY,
       prompt   = STRING_TOKEN(STR_PCH_HDA_FEATURE_1_PROMPT),
       help     = STRING_TOKEN(STR_PCH_HDA_FEATURE_HELP),
-      flags    = 0 | RESET_REQUIRED,
+      flags    = 0 | RESET_REQUIRED | INTERACTIVE,
       default  = TRUE, defaultstore = MyStandardDefault,
     endcheckbox;
 

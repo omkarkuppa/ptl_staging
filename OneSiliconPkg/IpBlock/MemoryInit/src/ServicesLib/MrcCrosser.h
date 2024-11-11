@@ -123,6 +123,10 @@ typedef struct {
 
 #pragma pack (pop)
 
+typedef struct {
+  INT64  DqsOffsetNUI;
+} SenseAmpTrainingOverride;
+
 /**
   This function implements Sense Amp Offset training.
   The algorithm sweeps Per-Bit Vref Offset and parks the SenseAmpOffset at the "last 1" setting before transitions to 0.
@@ -142,6 +146,54 @@ extern
 MrcStatus
 MrcSenseAmpOffsetTraining (
   IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  Override NUI for SOT Vref Search
+
+  @param[in]      MrcData  - Include all MRC global data.
+  @param[in]      Enable   - Enable or disable the override
+  @param[in, out] Override - Save/restore struct
+**/
+VOID
+SenseAmpOffsetOverrideNui (
+  IN MrcParameters           *const MrcData,
+  IN BOOLEAN                        Enable,
+  IN OUT SenseAmpTrainingOverride   *Override
+  );
+
+/**
+  Use RxDqVrefOffsetR for VocFall
+
+  @param[in] MrcData  - Include all MRC global data.
+**/
+VOID
+SenseAmpOffsetUseVocRiseForFall (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  Program Voc with the average of VocRise and VocFall
+
+  @param[in]      MrcData     - Include all MRC global data.
+  @param[in]      Controller  - Controller to work on
+  @param[in]      Channel     - Channel to work on
+  @param[in]      Byte        - Byte to work on
+  @param[in]      Bit         - Bit to work on
+  @param[in]      Rank        - Rank to work on
+  @param[in, out] VocRise     - VocRise value, will be updated with the average if needed
+  @param[in, out] VocFall     - VocFall value, will be updated with the average if needed
+**/
+VOID
+SenseAmpOffsetSetVocAverage (
+  IN MrcParameters *const MrcData,
+  IN UINT8                Controller,
+  IN UINT8                Channel,
+  IN UINT8                Byte,
+  IN UINT8                Bit,
+  IN UINT8                Rank,
+  IN OUT INT64            *VocRise,
+  IN OUT INT64            *VocFall
   );
 
 /**
@@ -1354,7 +1406,7 @@ DimmOdtTrainingDDR5(
   This function implements Lpddr5 DimmRx Offset Calibration training.
 
   @param[in] MrcData - Include all MRC global data.
-  
+
   @retval MrcStatus - If it succeeds return mrcSuccess
 **/
 MrcStatus
@@ -1384,5 +1436,30 @@ MrcStatus
 Ddr5RttWr_RttNT_1dpc (
   IN MrcParameters* const MrcData
   );
-#endif // _MrcCrosser_h_
 
+/**
+  This function provides Matrix Convolution calculation
+  Get an Matrix, perform convolution using Convolution matrix and update result matrix
+
+  @param[in]  InputArray  - Input array
+  @param[out] OutputArray - Output array
+  @param[in]  MatrixRow   - Number of rows in input/output arrays
+  @param[in]  MatrixCol   - Number of columns in input/output arrays
+  @param[in]  ColForSeek  - Number of columns that are actually used
+  @param[in]  lpfarr      - Low Pass Filter array
+  @param[in]  Size        - LPF array size
+
+  @retval None
+**/
+VOID
+MrcConvolution2D (
+  UINT16* InputArray,
+  UINT16* OutputArray,
+  UINT16  MatrixRow,
+  UINT16  MatrixCol,
+  UINT16  ColForSeek,
+  UINT8*  lpfarr,
+  UINT8   Size
+  );
+
+#endif // _MrcCrosser_h_

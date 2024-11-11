@@ -163,26 +163,6 @@ CnvFormPlatformCallback (
     if ((PchSetup.HdaDiscBtOffEnabled ||
        (CnviCrfModuleIsPresent () && CnvSetupData.CnviMode != 0)) &&
        CnvSetupData.CnviBtAudioOffload) {
-      // BT Sideband support
-      if (PchSetup.PchHdAudioFeature[1] != TRUE) {
-        PchSetup.PchHdAudioFeature[1] = TRUE;
-        PchNeedUpdate = TRUE;
-      }
-      // BT Intel HFP SCO
-      if (PchSetup.PchHdAudioFeature[5] != TRUE) {
-        PchSetup.PchHdAudioFeature[5] = TRUE;
-        PchNeedUpdate = TRUE;
-      }
-      // BT Intel A2DP
-      if (PchSetup.PchHdAudioFeature[6] != TRUE) {
-        PchSetup.PchHdAudioFeature[6] = TRUE;
-        PchNeedUpdate = TRUE;
-      }
-      // BT Intel LE
-      if (PchSetup.PchHdAudioFeature[9] != TRUE) {
-        PchSetup.PchHdAudioFeature[9] = TRUE;
-        PchNeedUpdate = TRUE;
-      }
       // SoundWire interface enable
       if (CnvSetupData.CnviBtAudioOffloadInterface == 1) {
         // Audio DSP NHLT Endpoints Configuration - Bluetooth
@@ -202,8 +182,8 @@ CnvFormPlatformCallback (
         }
       } else { //I2S (legacy) interface is used
         // Audio DSP NHLT Endpoints Configuration - Bluetooth
-        if (NhltConfiguration.NhltBluetoothEnabled != TRUE) {
-          NhltConfiguration.NhltBluetoothEnabled = TRUE;
+        if (NhltConfiguration.NhltBluetoothEnabled == FALSE) {
+          NhltConfiguration.NhltBluetoothEnabled = 1; // BT drives I2S in HFP
           NhltNeedUpdate = TRUE;
         }
         // BT Offload through SoundWire
@@ -363,14 +343,14 @@ DspFeaturesCnvSetupCallback (
   if ((PchSetup.HdaDiscBtOffEnabled  ||
       (CnviCrfModuleIsPresent () && CnvSetupData.CnviMode != 0)) &&
       CnvSetupData.CnviBtAudioOffload) {
-      // BT Sideband support
-      PchSetup.PchHdAudioFeature[1] = TRUE;
-      // BT Intel HFP SCO
-      PchSetup.PchHdAudioFeature[5] = TRUE;
-      // BT Intel A2DP
-      PchSetup.PchHdAudioFeature[6] = TRUE;
-      // BT Intel LE
-      PchSetup.PchHdAudioFeature[9] = TRUE;
+      if (PchSetup.PchHdAudioFeature[1] == FALSE) {
+        // BT Intel HFP SCO
+        PchSetup.PchHdAudioFeature[5] = FALSE;
+        // BT Intel A2DP
+        PchSetup.PchHdAudioFeature[6] = FALSE;
+        // BT Intel LE
+        PchSetup.PchHdAudioFeature[9] = FALSE;
+      }
       // SoundWire interface enable
       if (CnvSetupData.CnviBtAudioOffloadInterface == 1) {
         // Audio DSP NHLT Endpoints Configuration - Bluetooth

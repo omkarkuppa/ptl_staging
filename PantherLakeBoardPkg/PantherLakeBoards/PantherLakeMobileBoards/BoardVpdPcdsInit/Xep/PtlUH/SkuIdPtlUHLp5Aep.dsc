@@ -606,12 +606,7 @@
   //
   // TCSS
   //
-    {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateHigh,   GpioV2IntDis,  GpioV2ResetHost,      GpioV2TermDefault}}, // GPP_V17_TCP_RT_S0IX_ENTRY_EXIT_N
-
-  //
-  // Type-C , TBT Re-Timers
-  //
-    {GPIOV2_PTL_PCD_XXGPP_B_21, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateLow,    GpioV2IntDis,  GpioV2ResetHostDeep,  GpioV2TermDefault}},  // TCP_RETIMER_FORCE_PWR
+    {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetResume,  GpioV2TermNone}}, // GPP_V17_TCP_RT_S0IX_ENTRY_EXIT_N
 
   //
   // HDMI
@@ -644,10 +639,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdCoinlessSpiNorClearGpio|*|{CODE({
     {0x0}
   })}
-
-  gBoardModuleTokenSpaceGuid.VpdPcdRetimerPowerStateGpio|*|{CODE(
-    { GPIOV2_PTL_PCD_XXGPP_V_17 } // GPP_V17_TCP_RT_S0IX_ENTRY_EXIT_N
-  )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData|*|{CODE(
   {

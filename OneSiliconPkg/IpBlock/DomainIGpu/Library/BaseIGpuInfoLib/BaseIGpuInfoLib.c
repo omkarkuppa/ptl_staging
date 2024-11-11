@@ -35,13 +35,13 @@
 STATIC
 VOID
 IGpuCheckAndUpdateGttMmAdr (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   )
 {
-  IP_WR_REG_INFO      *RegInfo;
-  UINT64              CurrentGttMmAdr;
+  IP_WR_REG_INFO  *RegInfo;
+  UINT64          CurrentGttMmAdr;
 
-  RegInfo = (IP_WR_REG_INFO*)(UINTN) pInst->MmioAccess;
+  RegInfo         = (IP_WR_REG_INFO *)(UINTN)pInst->MmioAccess;
   CurrentGttMmAdr = IpIGpuGetGttMmAdr (pInst);
 
   if (CurrentGttMmAdr != RegInfo->RegType.MmioBase) {
@@ -68,7 +68,7 @@ IGpuIsSupported (
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -79,7 +79,7 @@ IGpuIsSupported (
     return FALSE;
   }
 
-  IgdEnable   = UncoreDevEnRead (Graphics, 0);
+  IgdEnable = UncoreDevEnRead (Graphics, 0);
   if (IgdEnable == FALSE) {
     DEBUG ((DEBUG_WARN, "IGPU is disabled from DevEn!\n"));
     return FALSE;
@@ -105,7 +105,7 @@ IGpuIsDisplayPresent (
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -116,7 +116,7 @@ IGpuIsDisplayPresent (
     return FALSE;
   }
 
-  return (BOOLEAN) IGpuInst->IGpuPrivateConfig.IsDisplayPresent;
+  return (BOOLEAN)IGpuInst->IGpuPrivateConfig.IsDisplayPresent;
 }
 
 /**
@@ -136,7 +136,7 @@ IGpuIsMediaPresent (
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -147,7 +147,7 @@ IGpuIsMediaPresent (
     return FALSE;
   }
 
-  return (BOOLEAN) IGpuInst->IGpuPrivateConfig.IsMediaPresent;
+  return (BOOLEAN)IGpuInst->IGpuPrivateConfig.IsMediaPresent;
 }
 
 /**
@@ -167,7 +167,7 @@ IGpuIsGtPresent (
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -178,7 +178,7 @@ IGpuIsGtPresent (
     return FALSE;
   }
 
-  return (BOOLEAN) IGpuInst->IGpuPrivateConfig.IsGtPresent;
+  return (BOOLEAN)IGpuInst->IGpuPrivateConfig.IsGtPresent;
 }
 
 /**
@@ -192,18 +192,20 @@ IGpuGetDsmSizeInBytes (
   VOID
   )
 {
-  UINT32                    DsmSizeSelector;
-  UINT32                    DsmSize;
+  UINT32  DsmSizeSelector;
+  UINT32  DsmSize;
+
   ///
   /// Return if Graphics not supported or not enabled
   ///
   if (!IGpuIsSupported ()) {
     return 0;
   }
+
   //
   // Get the GMS Value.
   //
-  DsmSizeSelector = (UINT16) GetHostBridgeRegisterData (HostBridgeGgcCfgReg, HostBridgeGgcDsmSizeSelector);
+  DsmSizeSelector = (UINT16)GetHostBridgeRegisterData (HostBridgeGgcCfgReg, HostBridgeGgcDsmSizeSelector);
 
   ///
   /// Graphics Stolen Size
@@ -213,14 +215,14 @@ IGpuGetDsmSizeInBytes (
   /// GMS values ranging from 240-254 correspond to sizes 4MB to 60MB (excluding 32MB) which is 4*(GSMValue-239)
   ///
   if (DsmSizeSelector < 240 ) {
-    DsmSize = (UINT32) DsmSizeSelector * 32;
+    DsmSize = (UINT32)DsmSizeSelector * 32;
   } else {
     DsmSize = 4 * (DsmSizeSelector - 239);
   }
 
   DEBUG ((DEBUG_INFO, "DsmSize = %d MB\n", DsmSize));
 
-  return ((UINT32) DsmSize * SIZE_1MB);
+  return ((UINT32)DsmSize * SIZE_1MB);
 }
 
 /**
@@ -240,11 +242,12 @@ IGpuGetLMemBarSize (
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return SIZE_256MB;
   }
+
   LMemBarSize = IpIGpuGetLMemBarSize (IGpuInst);
 
   return LMemBarSize;
@@ -260,13 +263,13 @@ IGpuGetGsmSizeInBytes (
   VOID
   )
 {
-  UINT32      GgsmSize;
-  UINT16      Ggms;
+  UINT32  GgsmSize;
+  UINT16  Ggms;
 
   //
   // Get the GGSM Value.
   //
-  Ggms = (UINT16) GetHostBridgeRegisterData (HostBridgeGgcCfgReg, HostBridgeGgcGgsmSize);
+  Ggms = (UINT16)GetHostBridgeRegisterData (HostBridgeGgcCfgReg, HostBridgeGgcGgsmSize);
   if (Ggms == V_SA_GGC_GGMS_8MB) {
     GgsmSize = SIZE_8MB;
   } else {
@@ -288,8 +291,8 @@ IGpuIsDsmBaseAndImrMemoryConsistent (
   VOID
   )
 {
-  UINT64      BdsmBase;
-  UINT64      ImrDsmBase;
+  UINT64  BdsmBase;
+  UINT64  ImrDsmBase;
 
   ///
   /// Return if Graphics not supported or not enabled
@@ -301,8 +304,8 @@ IGpuIsDsmBaseAndImrMemoryConsistent (
   //
   // Get BdsmBase in MB.
   //
-  BdsmBase = GetHostBridgeRegisterData(HostBridgeBdsm, HostBridgeBdsmBase);
-  ImrDsmBase = GetImrDsmBaseOffset();
+  BdsmBase   = GetHostBridgeRegisterData (HostBridgeBdsm, HostBridgeBdsmBase);
+  ImrDsmBase = GetImrDsmBaseOffset ();
 
   if (BdsmBase == ImrDsmBase) {
     return TRUE;
@@ -323,8 +326,8 @@ IGpuIsGsmBaseAndImrMemoryConsistent (
   VOID
   )
 {
-  UINT64         GsmBase;
-  UINT64         ImrGsmBase;
+  UINT64  GsmBase;
+  UINT64  ImrGsmBase;
 
   ///
   /// Return if Graphics not supported or not enabled
@@ -336,8 +339,8 @@ IGpuIsGsmBaseAndImrMemoryConsistent (
   //
   // Get BgsmBase in MB.
   //
-  GsmBase = GetHostBridgeRegisterData(HostBridgeBgsm, HostBridgeBgsmBase);
-  ImrGsmBase = GetImrGsmBaseOffset();
+  GsmBase    = GetHostBridgeRegisterData (HostBridgeBgsm, HostBridgeBgsmBase);
+  ImrGsmBase = GetImrGsmBaseOffset ();
 
   if (GsmBase == ImrGsmBase) {
     return TRUE;
@@ -359,24 +362,23 @@ IGpuIsGcdRc6RangeValid (
   VOID
   )
 {
-  UINT32                  Tolud;
-  UINT64                  GtRc6CtxBaseVal;
-  UINT32                  GtRc6CtxSize;
-  EFI_HOB_GUID_TYPE       *GuidHob;
-  IP_IGPU_INST            *IGpuInst;
-
+  UINT32             Tolud;
+  UINT64             GtRc6CtxBaseVal;
+  UINT32             GtRc6CtxSize;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   ///
   /// Return if Graphics not supported or not enabled or Media not present
   ///
-  if (!IGpuIsSupported () && !IGpuIsGtPresent ()){
-    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported or GT is not present.\n",__FUNCTION__));
+  if (!IGpuIsSupported () && !IGpuIsGtPresent ()) {
+    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported or GT is not present.\n", __FUNCTION__));
     return FALSE;
   }
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -386,6 +388,7 @@ IGpuIsGcdRc6RangeValid (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -397,7 +400,7 @@ IGpuIsGcdRc6RangeValid (
   //
   // Get ToludBase in MB.
   //
-  Tolud = (UINT32) GetHostBridgeRegisterData (HostBridgeTolud, HostBridgeToludBase);
+  Tolud        = (UINT32)GetHostBridgeRegisterData (HostBridgeTolud, HostBridgeToludBase);
   GtRc6CtxSize = SIZE_64KB;
 
   if (GtRc6CtxBaseVal == (Tolud - GtRc6CtxSize)) {
@@ -420,21 +423,21 @@ IGpuIsGcdRc6Locked (
   VOID
   )
 {
-  UINT64                 GtRc6CtxMemLockVal;
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  UINT64             GtRc6CtxMemLockVal;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   ///
   /// Return if Graphics not supported or not enabled
   ///
   if (!IGpuIsSupported () && !IGpuIsGtPresent ()) {
-    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported or GT is not present.\n",__FUNCTION__));
+    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported or GT is not present.\n", __FUNCTION__));
     return FALSE;
   }
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -444,6 +447,7 @@ IGpuIsGcdRc6Locked (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -469,9 +473,9 @@ IGpuIsMediaRc6Locked (
   VOID
   )
 {
-  UINT64                 MediaRc6CtxMemLockValue;
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  UINT64             MediaRc6CtxMemLockValue;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   ///
   /// Return if Graphics not supported or not enabled
@@ -483,7 +487,7 @@ IGpuIsMediaRc6Locked (
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -493,6 +497,7 @@ IGpuIsMediaRc6Locked (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -518,12 +523,12 @@ IGpuGetGttMmAdrBase (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE *GuidHob;
-  IP_IGPU_INST      *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0;
@@ -542,12 +547,12 @@ IGpuGetDsmBase (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE     *GuidHob;
-  IP_IGPU_INST          *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0;
@@ -557,12 +562,13 @@ IGpuGetDsmBase (
     ASSERT (FALSE);
     return 0;
   }
+
   //
   // Update GttMmAdr if not updated
   //
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
-  return (UINT32) IpIGpuGetRegistersData (IGpuInst, DsmBaseReg, DsmBaseAddr);
+  return (UINT32)IpIGpuGetRegistersData (IGpuInst, DsmBaseReg, DsmBaseAddr);
 }
 
 /**
@@ -575,12 +581,12 @@ IGpuGetGsmBase (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE     *GuidHob;
-  IP_IGPU_INST          *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0;
@@ -590,12 +596,13 @@ IGpuGetGsmBase (
     ASSERT (FALSE);
     return 0;
   }
+
   //
   // Update GttMmAdr if not updated
   //
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
-  return (UINT32) IpIGpuGetRegistersData (IGpuInst, GsmBaseReg, GsmBaseAddr);
+  return (UINT32)IpIGpuGetRegistersData (IGpuInst, GsmBaseReg, GsmBaseAddr);
 }
 
 /**
@@ -608,13 +615,13 @@ IGpuGetGgcSgData (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE     *GuidHob;
-  IP_IGPU_INST          *IGpuInst;
-  UINT32                GgcIGpuSgRegVal;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
+  UINT32             GgcIGpuSgRegVal;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0;
@@ -624,12 +631,13 @@ IGpuGetGgcSgData (
     ASSERT (FALSE);
     return 0;
   }
+
   //
   // Update GttMmAdr if not updated
   //
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
-  GgcIGpuSgRegVal = (UINT32) IpIGpuGetRegistersData (IGpuInst, GgcIGpuSgReg, GgcIGpuSgData);
+  GgcIGpuSgRegVal = (UINT32)IpIGpuGetRegistersData (IGpuInst, GgcIGpuSgReg, GgcIGpuSgData);
   return (GgcIGpuSgRegVal & B_SA_IGPU_GGC_MASK);
 }
 
@@ -643,12 +651,12 @@ IGpuPrintPciConfig (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return;
@@ -674,13 +682,13 @@ IGpuIsWoPcmRangeValid (
   VOID
   )
 {
-  UINT32                 PcmBase;
-  UINT32                 PcmSize;
-  UINT32                 PcmTop;
-  UINT32                 ToludBase;
-  UINT32                 PcmTotalSize;
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  UINT32             PcmBase;
+  UINT32             PcmSize;
+  UINT32             PcmTop;
+  UINT32             ToludBase;
+  UINT32             PcmTotalSize;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   if (!IGpuIsSupported ()) {
     return FALSE;
@@ -688,7 +696,7 @@ IGpuIsWoPcmRangeValid (
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -698,6 +706,7 @@ IGpuIsWoPcmRangeValid (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -706,8 +715,8 @@ IGpuIsWoPcmRangeValid (
   //
   // PCM Base (display) B0/D2/F0:R 10h (GTTMMADR), + 0x1082C0 (PAVPC0), bits[31:20]
   //
-  PcmBase = (UINT32) IpIGpuGetRegistersData (IGpuInst, MediaPavpcReg, MediaPavpcBaseMB);
-  PcmSize = (UINT32) IpIGpuGetRegistersData (IGpuInst, MediaPavpcReg, MediaPavpcSize);
+  PcmBase = (UINT32)IpIGpuGetRegistersData (IGpuInst, MediaPavpcReg, MediaPavpcBaseMB);
+  PcmSize = (UINT32)IpIGpuGetRegistersData (IGpuInst, MediaPavpcReg, MediaPavpcSize);
   //
   // PCM Total size in MB
   //
@@ -740,7 +749,7 @@ IGpuIsWoPcmRangeValid (
   // TOLUD (IOP B0/D0/F0:R BCh (TSEGMB), bits[31:20]
   // Get ToludBase in MB.
   //
-  ToludBase = (UINT32) GetHostBridgeRegisterData (HostBridgeTolud, HostBridgeToludBase);
+  ToludBase   = (UINT32)GetHostBridgeRegisterData (HostBridgeTolud, HostBridgeToludBase);
   ToludBase >>= 20;
 
   if (PcmTop == ToludBase) {
@@ -761,10 +770,10 @@ IsWopcmWithinStolenGfx (
   VOID
   )
 {
-  PAVPC0_REG_IGPU_STRUCT      PcmBasePavpc;
-  UINT32                      DsmBase;
-  EFI_HOB_GUID_TYPE           *GuidHob;
-  IP_IGPU_INST                *IGpuInst;
+  PAVPC0_REG_IGPU_STRUCT  PcmBasePavpc;
+  UINT32                  DsmBase;
+  EFI_HOB_GUID_TYPE       *GuidHob;
+  IP_IGPU_INST            *IGpuInst;
 
   if (!IGpuIsSupported ()) {
     return FALSE;
@@ -772,7 +781,7 @@ IsWopcmWithinStolenGfx (
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -782,17 +791,19 @@ IsWopcmWithinStolenGfx (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
-  PcmBasePavpc.Data = (UINT32) IpIGpuGetRegistersData (IGpuInst, MediaPavpcReg, MediaPavpcData);
-  DsmBase = IGpuGetDsmBase ();
+  PcmBasePavpc.Data = (UINT32)IpIGpuGetRegistersData (IGpuInst, MediaPavpcReg, MediaPavpcData);
+  DsmBase           = IGpuGetDsmBase ();
 
   if (PcmBasePavpc.Bits.pcme == 1) {
     if ((LShiftU64 (PcmBasePavpc.Bits.wopcmbase_0, 20) < DsmBase) ||
-        ((LShiftU64 (PcmBasePavpc.Bits.wopcmbase_0, 20) + SIZE_4MB) >= (DsmBase + IGpuGetDsmSizeInBytes ()))) {
+        ((LShiftU64 (PcmBasePavpc.Bits.wopcmbase_0, 20) + SIZE_4MB) >= (DsmBase + IGpuGetDsmSizeInBytes ())))
+    {
       DEBUG ((DEBUG_ERROR, "        WOPCM is Enabled but is not fully inside of DSM\n"));
       DEBUG ((DEBUG_INFO, "        PAVPC0 BASE: 0x%08x LIMIT: 0x%08x\n", PcmBasePavpc.Bits.wopcmbase_0, PcmBasePavpc.Bits.wopcmbase_0 + SIZE_4MB));
       DEBUG ((DEBUG_INFO, "        DSM BASE: 0x%08x LIMIT: 0x%08x\n", DsmBase, DsmBase + IGpuGetDsmSizeInBytes ()));
@@ -819,10 +830,10 @@ IGpuIsMediaCcsBaseAndImrMemoryConsistent (
   VOID
   )
 {
-  UINT64                 CcsBaseMedia;
-  UINT64                 ImrCcsBase;
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  UINT64             CcsBaseMedia;
+  UINT64             ImrCcsBase;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   ///
   /// Return if Graphics not supported or not enabled or Media not present
@@ -834,7 +845,7 @@ IGpuIsMediaCcsBaseAndImrMemoryConsistent (
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -844,6 +855,7 @@ IGpuIsMediaCcsBaseAndImrMemoryConsistent (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -853,7 +865,7 @@ IGpuIsMediaCcsBaseAndImrMemoryConsistent (
   // Get CcsBase in Media
   //
   CcsBaseMedia = IpIGpuGetRegistersData (IGpuInst, MediaFlatCcsReg, MediaFlatCcsBase);
-  ImrCcsBase = GetImrCcsBase ();
+  ImrCcsBase   = GetImrCcsBase ();
   if (CcsBaseMedia == ImrCcsBase) {
     return TRUE;
   }
@@ -874,12 +886,12 @@ IGpuIsMediaRc6RangeValid (
   VOID
   )
 {
-  UINT32                 MediaRc6CtxBaseVal;
-  UINT32                 Tolud;
-  UINT32                 GcdWoPcmsize;
-  UINT32                 MediaRc6CtxSize;
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  UINT32             MediaRc6CtxBaseVal;
+  UINT32             Tolud;
+  UINT32             GcdWoPcmsize;
+  UINT32             MediaRc6CtxSize;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   ///
   /// Return if Graphics not supported or not enabled
@@ -891,7 +903,7 @@ IGpuIsMediaRc6RangeValid (
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -901,19 +913,20 @@ IGpuIsMediaRc6RangeValid (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
   // Media RC6CTXBASE
-  MediaRc6CtxBaseVal = (UINT32) IpIGpuGetRegistersData (IGpuInst, MediaRc6CtxMemReg, MediaRc6CtxMemBase);
+  MediaRc6CtxBaseVal = (UINT32)IpIGpuGetRegistersData (IGpuInst, MediaRc6CtxMemReg, MediaRc6CtxMemBase);
 
   //
   // Get ToludBase in MB.
   //
-  Tolud = (UINT32) GetHostBridgeRegisterData (HostBridgeTolud, HostBridgeToludBase);
-  GcdWoPcmsize = GCD_WOPCM_SIZE_2_MB * SIZE_1MB;
+  Tolud           = (UINT32)GetHostBridgeRegisterData (HostBridgeTolud, HostBridgeToludBase);
+  GcdWoPcmsize    = GCD_WOPCM_SIZE_2_MB * SIZE_1MB;
   MediaRc6CtxSize = SIZE_64KB;
 
   if (MediaRc6CtxBaseVal == (Tolud - GcdWoPcmsize - MediaRc6CtxSize)) {
@@ -935,12 +948,12 @@ IGpuGetDisplayDsmBase (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -950,12 +963,13 @@ IGpuGetDisplayDsmBase (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
-  return (UINT32) IpIGpuGetRegistersData (IGpuInst, DispDsmBaseReg, DispDsmBaseAddr);
+  return (UINT32)IpIGpuGetRegistersData (IGpuInst, DispDsmBaseReg, DispDsmBaseAddr);
 }
 
 /**
@@ -969,12 +983,12 @@ IGpuGetDisplayGsmBase (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -984,12 +998,13 @@ IGpuGetDisplayGsmBase (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
-  return (UINT32) IpIGpuGetRegistersData (IGpuInst, DispGsmBaseReg, DispGsmBaseAddr);
+  return (UINT32)IpIGpuGetRegistersData (IGpuInst, DispGsmBaseReg, DispGsmBaseAddr);
 }
 
 /**
@@ -1003,13 +1018,13 @@ IGpuGetDisplayGgcData (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
-  UINT32                 DisplayGgc;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
+  UINT32             DisplayGgc;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0;
@@ -1019,12 +1034,13 @@ IGpuGetDisplayGgcData (
     ASSERT (FALSE);
     return 0;
   }
+
   //
   // Update GttMmAdr if not updated
   //
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
-  DisplayGgc = (UINT32) IpIGpuGetRegistersData (IGpuInst, DispGgcReg, DispGgcData);
+  DisplayGgc = (UINT32)IpIGpuGetRegistersData (IGpuInst, DispGgcReg, DispGgcData);
   return (DisplayGgc & B_SA_IGPU_GGC_MASK);
 }
 
@@ -1040,21 +1056,22 @@ IGpuIsWoPcmBaseRegistersConsistent (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE *GuidHob;
-  IP_IGPU_INST      *IGpuInst;
-  UINT32            PavpMediaPcmBase;
-  UINT32            PavpDisplayPcmBase;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
+  UINT32             PavpMediaPcmBase;
+  UINT32             PavpDisplayPcmBase;
+
   ///
   /// Return if Graphics not supported or not enabled
   ///
   if (!IGpuIsSupported ()) {
-    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported\n",__FUNCTION__));
+    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported\n", __FUNCTION__));
     return FALSE;
   }
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -1065,8 +1082,8 @@ IGpuIsWoPcmBaseRegistersConsistent (
   //
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
-  PavpMediaPcmBase   = (UINT32) IpIGpuGetRegistersData (IGpuInst, MediaPavpcReg, MediaPavpcBase);
-  PavpDisplayPcmBase = (UINT32) IpIGpuGetRegistersData (IGpuInst, DispPavpcReg, DispPavpcBase);
+  PavpMediaPcmBase   = (UINT32)IpIGpuGetRegistersData (IGpuInst, MediaPavpcReg, MediaPavpcBase);
+  PavpDisplayPcmBase = (UINT32)IpIGpuGetRegistersData (IGpuInst, DispPavpcReg, DispPavpcBase);
 
   if (PavpMediaPcmBase == PavpDisplayPcmBase) {
     return TRUE;
@@ -1074,7 +1091,6 @@ IGpuIsWoPcmBaseRegistersConsistent (
 
   DEBUG ((DEBUG_WARN, "WOPCM Base is not consistent\n"));
   return FALSE;
-
 }
 
 /**
@@ -1089,22 +1105,22 @@ IGpuIsPavpBitLocked (
   VOID
   )
 {
-  UINT32            MediaPavpcLockValue;
-  UINT32            DisplayPavpcLockValue;
-  EFI_HOB_GUID_TYPE *GuidHob;
-  IP_IGPU_INST      *IGpuInst;
+  UINT32             MediaPavpcLockValue;
+  UINT32             DisplayPavpcLockValue;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   ///
   /// Return if Graphics not supported or not enabled
   ///
   if (!IGpuIsSupported ()) {
-    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported\n",__FUNCTION__));
+    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported\n", __FUNCTION__));
     return FALSE;
   }
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -1114,13 +1130,14 @@ IGpuIsPavpBitLocked (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
-  MediaPavpcLockValue   = (UINT32) IpIGpuGetRegistersData (IGpuInst, MediaPavpcReg, MediaPavpcLock);
-  DisplayPavpcLockValue = (UINT32) IpIGpuGetRegistersData (IGpuInst, DispPavpcReg, DispPavpcLock);
+  MediaPavpcLockValue   = (UINT32)IpIGpuGetRegistersData (IGpuInst, MediaPavpcReg, MediaPavpcLock);
+  DisplayPavpcLockValue = (UINT32)IpIGpuGetRegistersData (IGpuInst, DispPavpcReg, DispPavpcLock);
 
   if ((MediaPavpcLockValue == 1) && (DisplayPavpcLockValue == 1)) {
     return TRUE;
@@ -1142,23 +1159,22 @@ IGpuIsGtCcsBaseAndImrMemoryConsistent (
   VOID
   )
 {
-  UINT64                  CcsBaseGt;
-  UINT64                  ImrCcsBase;
-  EFI_HOB_GUID_TYPE       *GuidHob;
-  IP_IGPU_INST            *IGpuInst;
-
+  UINT64             CcsBaseGt;
+  UINT64             ImrCcsBase;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   ///
   /// Return if Graphics not supported or not enabled or Media not present
   ///
-  if (!IGpuIsSupported () && !IGpuIsGtPresent ()){
-    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported or GT is not present.\n",__FUNCTION__));
+  if (!IGpuIsSupported () && !IGpuIsGtPresent ()) {
+    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported or GT is not present.\n", __FUNCTION__));
     return FALSE;
   }
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -1168,6 +1184,7 @@ IGpuIsGtCcsBaseAndImrMemoryConsistent (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -1176,7 +1193,7 @@ IGpuIsGtCcsBaseAndImrMemoryConsistent (
   //
   // Get CcsBase in Gt
   //
-  CcsBaseGt = IpIGpuGetRegistersData (IGpuInst, GtFlatCcsReg, GtFlatCcsBase);
+  CcsBaseGt  = IpIGpuGetRegistersData (IGpuInst, GtFlatCcsReg, GtFlatCcsBase);
   ImrCcsBase = GetImrCcsBase ();
 
   if (ImrCcsBase == CcsBaseGt) {
@@ -1199,21 +1216,21 @@ IGpuIsGtCcsEnabled (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE       *GuidHob;
-  IP_IGPU_INST            *IGpuInst;
-  UINT32                  FlatCcsEnable;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
+  UINT32             FlatCcsEnable;
 
   ///
   /// Return if Graphics not supported or not enabled or Media not present
   ///
-  if (!IGpuIsSupported () && !IGpuIsGtPresent ()){
-    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported or GT is not present.\n",__FUNCTION__));
+  if (!IGpuIsSupported () && !IGpuIsGtPresent ()) {
+    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported or GT is not present.\n", __FUNCTION__));
     return FALSE;
   }
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -1223,6 +1240,7 @@ IGpuIsGtCcsEnabled (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -1231,7 +1249,7 @@ IGpuIsGtCcsEnabled (
   ///
   /// CCS GAM (GT) B0/D2/F0:R 10h (GTTMMADR), + 0x4910 (FLAT_CCS_BASE_ADDR_GAMREQ_3D_GT_REG), bit[0]
   ///
-  FlatCcsEnable = (UINT32) IpIGpuGetRegistersData (IGpuInst, GtFlatCcsGamReg, GtFlatCcsEnable);
+  FlatCcsEnable = (UINT32)IpIGpuGetRegistersData (IGpuInst, GtFlatCcsGamReg, GtFlatCcsEnable);
   if (FlatCcsEnable) {
     return TRUE;
   }
@@ -1252,21 +1270,21 @@ IGpuIsMediaCcsEnabled (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE   *GuidHob;
-  IP_IGPU_INST        *IGpuInst;
-  UINT32              FlatCcsEnable;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
+  UINT32             FlatCcsEnable;
 
   ///
   /// Return if Graphics not supported or not enabled or Media not present
   ///
-  if (!IGpuIsSupported () && !IGpuIsMediaPresent ()){
-    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported or Media is not present.\n",__FUNCTION__));
+  if (!IGpuIsSupported () && !IGpuIsMediaPresent ()) {
+    DEBUG ((DEBUG_INFO, "Exiting %a since IGPU is not supported or Media is not present.\n", __FUNCTION__));
     return FALSE;
   }
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -1276,6 +1294,7 @@ IGpuIsMediaCcsEnabled (
     ASSERT (FALSE);
     return FALSE;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -1284,7 +1303,7 @@ IGpuIsMediaCcsEnabled (
   ///
   /// CCS GAM (GT)
   ///
-  FlatCcsEnable = (UINT32) IpIGpuGetRegistersData (IGpuInst, MediaFlatCcsGamReg, MediaFlatCcsEnable);
+  FlatCcsEnable = (UINT32)IpIGpuGetRegistersData (IGpuInst, MediaFlatCcsGamReg, MediaFlatCcsEnable);
   if (FlatCcsEnable) {
     return TRUE;
   }
@@ -1304,17 +1323,17 @@ IGpuGetFlatCcsSizeInMb (
   VOID
   )
 {
-  UINT64                  Touud;
-  UINT32                  FlatCcsSizeInMb;
-  EFI_HOB_GUID_TYPE       *GuidHob;
-  IP_IGPU_INST            *IGpuInst;
-  UINT64                  Remainder;
+  UINT64             Touud;
+  UINT32             FlatCcsSizeInMb;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
+  UINT64             Remainder;
 
   Remainder = 0;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0;
@@ -1324,6 +1343,7 @@ IGpuGetFlatCcsSizeInMb (
     ASSERT (FALSE);
     return 0;
   }
+
   //
   // Get the HOB for IGPU Data
   //
@@ -1340,7 +1360,7 @@ IGpuGetFlatCcsSizeInMb (
       DEBUG ((DEBUG_INFO, "Considered TOUUD for CCS Calulation = 0x%lx\n", Touud));
     }
 
-    FlatCcsSizeInMb = (UINT32) (Touud / 512);
+    FlatCcsSizeInMb = (UINT32)(Touud / 512);
 
     if ((FlatCcsSizeInMb % 2) == 1) {
       FlatCcsSizeInMb += 1;
@@ -1365,12 +1385,12 @@ IGpuGetVendorId (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0xFFFF;
@@ -1390,12 +1410,12 @@ IGpuGetSubsystemVendorId (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0xFFFF;
@@ -1415,12 +1435,12 @@ IGpuGetDeviceId (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0xFFFF;
@@ -1441,12 +1461,12 @@ IGpuCmdRegEnabled (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return FALSE;
@@ -1466,12 +1486,12 @@ IGpuGetLMemBar (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0;
@@ -1491,12 +1511,12 @@ IGpuGetSubsystemId (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0xFFFF;
@@ -1515,16 +1535,17 @@ IGpuEnableCmdReg (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return;
   }
+
   IpIGpuEnableCmdReg (IGpuInst);
 }
 
@@ -1539,16 +1560,17 @@ IGpuClearCmdReg (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return;
   }
+
   IpIGpuClearCmdReg (IGpuInst);
 }
 
@@ -1563,7 +1585,7 @@ IGpuGetDevNumber (
   VOID
   )
 {
-  return (UINT8) IGD_DEV_NUM;
+  return (UINT8)IGD_DEV_NUM;
 }
 
 /**
@@ -1577,7 +1599,7 @@ IGpuGetFuncNumber (
   VOID
   )
 {
-  return (UINT8) IGD_FUN_NUM;
+  return (UINT8)IGD_FUN_NUM;
 }
 
 /**
@@ -1591,7 +1613,7 @@ IGpuGetGttMmAdrOffset (
   VOID
   )
 {
-  return (UINT8) GTTMMADR0_IGPU_REG;
+  return (UINT8)GTTMMADR0_IGPU_REG;
 }
 
 /**
@@ -1605,7 +1627,7 @@ IGpuGetLMemBarOffset (
   VOID
   )
 {
-  return (UINT8) LMEMBAR0_IGPU_REG;
+  return (UINT8)LMEMBAR0_IGPU_REG;
 }
 
 /**
@@ -1615,15 +1637,15 @@ IGpuGetLMemBarOffset (
 **/
 BOOLEAN
 IGpuIsL3BankLocked (
-VOID
+  VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0;
@@ -1639,15 +1661,15 @@ VOID
 **/
 BOOLEAN
 IGpuIsL3BankMediaLocked (
-VOID
+  VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return 0;
@@ -1670,16 +1692,17 @@ IGpuForceWakeupGt (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -1702,16 +1725,17 @@ IGpuIdleGt (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -1734,16 +1758,17 @@ IGpuForceWakeupMedia (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return;
   }
+
   //
   // Update GttMmAdr if not updated
   //
@@ -1766,16 +1791,17 @@ IGpuIdleMedia (
   VOID
   )
 {
-  EFI_HOB_GUID_TYPE      *GuidHob;
-  IP_IGPU_INST           *IGpuInst;
+  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST       *IGpuInst;
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
-    IGpuInst = (IP_IGPU_INST *) GET_GUID_HOB_DATA (GuidHob);
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
   } else {
     ASSERT (FALSE);
     return;
   }
+
   //
   // Update GttMmAdr if not updated
   //

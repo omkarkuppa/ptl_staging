@@ -136,7 +136,7 @@
 #define MRC_DDR5_RX_XTALK               (0xDD5E)
 #define MRC_DLL_DCC_CAL                 (0xDD5F)
 #define MRC_LP5_DVFSQ_VOLTAGE_RAMP      (0xDD60)
-// #define MRC_                         (0xDD61)
+#define MRC_WCK_CLK_PRE_DRIVER_DCC      (0xDD61)
 #define MRC_CLKTCO_COMP_TRAINING        (0xDD62)
 #define MRC_DIMM_ODT_NT                 (0xDD63)
 #define MRC_DDR5_CKD_CONFIG             (0xDD64)
@@ -175,4 +175,6 @@
 #define MRC_LP5_DRAM_SUPPORT_DVFSC      (0xDD82)
 #define MRC_EMPHASIS                    (0xDD83)
 #define MRC_HVM_FINALIZE                (0xDD84)
+#define MRC_DQ_LOOPBACK_TEST            (0xDD85)
+#define MRC_DQS_PAD_DCC                 (0xDD86)
 #endif

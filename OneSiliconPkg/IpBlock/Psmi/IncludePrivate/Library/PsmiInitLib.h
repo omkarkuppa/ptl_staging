@@ -173,31 +173,4 @@ PeiPsmiMemoryAllocation (
   IN OUT UINT64                       *Touud,
   IN EFI_RESOURCE_ATTRIBUTE_TYPE       ResourceAttributeTested
   );
-
-/**
-  Reserve PSMI Memory Above 4GB.
-
-  @param[in] HandlerBaseAbove4G          - PSMI Handler Base Above 4G
-  @param[in] HandlerSize                 - PSMI Handler Size
-  @param[in] Region0Base                 - PSMI Trace Region 0 Base Address
-  @param[in] Trace0Size                  - PSMI Trace Region 0 Size
-  @param[in] Region1Base                 - PSMI Trace Region 1 Base Address
-  @param[in] Trace2Size                  - PSMI Trace Region 1 Size
-  @param[in] Region2Base                 - PSMI Trace Region 2 Base Address
-  @param[in] Trace2Size                  - PSMI Trace Region 2 Size
-  @param[in] ResourceAttributeTested    - Resource attribute flag
-**/
-VOID
-EFIAPI
-PeiPsmiMemoryAllocationV2 (
-  IN EFI_PHYSICAL_ADDRESS          HandlerBaseAbove4G,
-  IN UINT64                        HandlerSize,
-  IN EFI_PHYSICAL_ADDRESS          Region0Base,
-  IN UINT64                        Trace0Size,
-  IN EFI_PHYSICAL_ADDRESS          Region1Base,
-  IN UINT64                        Trace1Size,
-  IN EFI_PHYSICAL_ADDRESS          Region2Base,
-  IN UINT64                        Trace2Size,
-  IN EFI_RESOURCE_ATTRIBUTE_TYPE   ResourceAttributeTested
-  );
 #endif

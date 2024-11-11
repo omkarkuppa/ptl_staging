@@ -1969,3 +1969,52 @@ MrcGetTrrfsb (
 
   return tRRFsb;
 }
+
+/**
+  This function determines if NT ODT for WR and/or RD are enabled on any ranks within a channel
+
+  @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - Current Controller
+  @param[in] Channel    - Current Channel
+  @param[out] NTODTWr   - TRUE if any rank within the channel supports NT WR ODT
+  @param[out] NTODTRd   - TRUE if any rank within the channel supports NT RD ODT
+**/
+VOID
+IsNtOdtSupported (
+  IN  MrcParameters *const  MrcData,
+  IN  UINT32                Controller,
+  IN  UINT32                Channel,
+  OUT BOOLEAN               *NTODTWr,
+  OUT BOOLEAN               *NTODTRd
+  )
+{
+  UINT8  OdtTypeIndex;
+  UINT8  NtRankIndex;
+  UINT8  NtRankSelect[MaxNtOdt];
+  UINT8  OdtType[MaxOdtParamType] = {WriteOdt, ReadOdt};
+  UINT32 Rank;
+  UINT8  OdtParamSelect;
+
+  // Non Target Settings are assumed off, then determined if they should be enabled below
+  *NTODTWr = FALSE;
+  *NTODTRd = FALSE;
+  // Find Worst case ODT offsets among Ranks
+  for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+    if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
+      continue;
+    }
+    // Determine if Non Target ODT is supported on any Rank/Dimm
+    GetNtRankSelection (Rank, NtRankSelect);
+    for (OdtTypeIndex = 0; OdtTypeIndex < 2; OdtTypeIndex++) {
+      for (NtRankIndex = 0; NtRankIndex < MaxNtOdt; NtRankIndex++) {
+        OdtParamSelect = MrcGetOdtParam (MrcData, Controller, Channel, Rank, OdtType[OdtTypeIndex], NtRankSelect[NtRankIndex]);
+        // If any Rank / Dimm supports NTODT, then report NTODT as TRUE
+        if (OdtParamSelect == OptDimmOdtNomWr) {
+          *NTODTWr = TRUE;
+        } else if (OdtParamSelect == OptDimmOdtNomRd) {
+          *NTODTRd = TRUE;
+        }
+      }
+    }
+  }
+}

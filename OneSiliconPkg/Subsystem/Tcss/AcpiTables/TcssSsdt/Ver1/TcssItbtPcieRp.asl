@@ -269,14 +269,24 @@
     Store (0, Local0)
     Store (L23R, Local1)
     While (Local1) {
-      If (Lgreater (Local0, 20))
-      {
+      If (LGreater (Local0, 50)) {
         Break
+      }  // Max. timeout 50 ms
+
+      //
+      // ACPI spec recommend Stall () less than 100 us.
+      // Reading the link register by 1-2ms interval as well.
+      //
+      Store (0, Local2)
+      While (LLess (Local2, 10)) {
+        Stall (100)
+        Increment (Local2)
       }
-      Sleep (5)
+
       Increment (Local0)
       Store (L23R, Local1)
     }
+
     ADBG (Concatenate ("L23R -", ToHexString (L23R)))
     ADBG (Concatenate ("Loop -", ToHexString (Local0)))
     Store (0x1, STAT)
@@ -334,11 +344,20 @@
     Store (0, Local0)
     Store (L23E, Local1)
     While (Local1) {
-      If (Lgreater (Local0, 20))
-      {
+      If (LGreater (Local0, 50)) {
         Break
+      }  // Max. timeout 50 ms
+
+      //
+      // ACPI spec recommend Stall () less than 100 us.
+      // Reading the link register by 1-2ms interval as well.
+      //
+      Store (0, Local2)
+      While (LLess (Local2, 10)) {
+        Stall (100)
+        Increment (Local2)
       }
-      Sleep (5)
+
       Increment (Local0)
       Store (L23E, Local1)
     }

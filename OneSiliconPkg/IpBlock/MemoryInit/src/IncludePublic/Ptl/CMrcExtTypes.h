@@ -150,7 +150,9 @@ typedef struct {
   UINT32 DIMMRXOFFSET : 1;  ///< BIT20 - DRAM Rx Offset Calibration Training
   UINT32 VIEWPINCAL : 1;    ///< BIT21 - View Pin Calibration Training
   UINT32 QCLKDCC : 1;       ///< BIT22 - QCLK DCC calibration
-  UINT32 ReservedBits : 9;  ///< BIT23-31 - Reserved
+  UINT32 WCKCLKPREDCC : 1;  ///< BIT23 - Wck / Clk Pre-Driver DCC
+  UINT32 DQSPADDCC : 1;     ///< BIT24 - DQS DCC PAD Optimization
+  UINT32 ReservedBits : 7;  ///< BIT25-31 - Reserved
 } TrainingStepsEn3;
 
 typedef struct {

@@ -28,7 +28,9 @@
 #include <MemorySubSystemHandle.h>
 #include <Library/DebugLib.h>
 
-#define CONVERT_MB_TO_B 20
+#define BYTES_TO_MB_SHIFT 20
+#define CONVERT_MB_TO_B(x) ((x) << BYTES_TO_MB_SHIFT)
+#define CONVERT_B_TO_MB(x) ((x) >> BYTES_TO_MB_SHIFT)
 
 /**
   Calculate the SEAMRR size

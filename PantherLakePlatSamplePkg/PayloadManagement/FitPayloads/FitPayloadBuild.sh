@@ -154,11 +154,7 @@ function PayloadBuildClean {
 
 function PayloadBuild {
   ACTIVE_PLATFORM=$WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/PayloadManagement/FitPayloads/FitPayloadsPkg.dsc
-  if [ "$FIT_PAYLOAD_RESILIENCY_BUILD" = "FALSE" ]; then
-      ACTIVE_MICROCODE_FILE=$WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Include/Fdf/FvMicrocode.fdf
-  else
-      ACTIVE_MICROCODE_FILE=$WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Include/Fdf/FvMicrocodeDbgRes.fdf
-  fi
+    ACTIVE_MICROCODE_FILE=$WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Include/Fdf/FvMicrocode.fdf
 
   #
   # Call this script to pad each Microcode patch under $PLATFORM_BIN_PACKAGE/Binaries/Microcode

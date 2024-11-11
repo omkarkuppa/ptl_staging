@@ -456,13 +456,9 @@
   # FspV Pre-Mem Test Config Start
   #
 
-  # !BSF NAME:{FSP TestId} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
-  # !BSF HELP:{FSP TestId}
-  gPlatformFspPkgTokenSpaceGuid.FspvTestId    | * | 0x04 | 0x00
-
   # !BSF NAME:{FSPS Validation} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Point to FSPS Validation configuration structure}
-  gPlatformFspPkgTokenSpaceGuid.FspsValidationPtr                      | * | 0x08 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.FspsValidationPtr   | * | 0x08 | 0x00
 
   #
   # FspV Pre-Mem Test Config End
@@ -1459,9 +1455,9 @@
   # !BSF HELP:{Phase3 Gen3 EQ enable. Disabled(0x0)(Default): Disable phase 3, Enabled(0x1): Enable phase 3}
   gPlatformFspPkgTokenSpaceGuid.PcieRpGen3EqPh3Bypass         | * | 0xC | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
-  # !BSF NAME:{Phase3 RP Gen3 EQ enable} TYPE:{Combo}
+  # !BSF NAME:{Phase3 RP Gen4 EQ enable} TYPE:{Combo}
   # !BSF OPTION:{0:Disable, 1:Enable, 2:Auto}
-  # !BSF HELP:{Phase3 Gen3 EQ enable. Disabled(0x0)(Default): Disable phase 3, Enabled(0x1): Enable phase 3}
+  # !BSF HELP:{Phase3 Gen4 EQ enable. Disabled(0x0)(Default): Disable phase 3, Enabled(0x1): Enable phase 3}
   gPlatformFspPkgTokenSpaceGuid.PcieRpGen4EqPh3Bypass         | * | 0xC | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
   # !BSF NAME:{Phase3 RP Gen5 EQ enable} TYPE:{Combo}
@@ -1550,7 +1546,7 @@
   gPlatformFspPkgTokenSpaceGuid.PcieAutoPowerGating | * | 0x0C | {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01}
 
   # !BSF NAME:{PCIe RootPort PHY AutoPower Gating} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Describes the Auto Power Gating for per controller. 0: Disable; 1: Enable(Default).}
+  # !BSF HELP:{Describes the PHY Auto Power Gating for per controller. 0: Disable; 1: Enable(Default).}
   gPlatformFspPkgTokenSpaceGuid.PciePhyAutoPowerGating | * | 0x01 | 0x01
 
   # !BSF NAME:{FOMS Control Policy} TYPE:{Combo}
@@ -1558,9 +1554,9 @@
   # !BSF HELP:{Choose the Foms Control Policy, <b>Default = 0 </b>}
   gPlatformFspPkgTokenSpaceGuid.PcieFomsCp | * | 0x0C | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
-  # !BSF NAME:{FOMS Control Policy} TYPE:{Combo}
+  # !BSF NAME:{EqPhBypass Control Policy} TYPE:{Combo}
   # !BSF OPTION:{0: Auto, 1: Gen3 Foms, 2: Gen4 Foms, 3: Gen3 and Gen4 Foms}
-  # !BSF HELP:{Choose the Foms Control Policy, <b>Default = 0 </b>}
+  # !BSF HELP:{PCIe Equalization Phase Enable Control, <b>Disabled</b>       (0x0) : Disable Phase (Default), Enabled (0x1) : Enable Phase}
   gPlatformFspPkgTokenSpaceGuid.PcieEqPhBypass | * | 0x0C | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
   # !BSF NAME:{PCIE RP Ltr Max Snoop Latency} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)}
@@ -2080,7 +2076,7 @@
 
   # !BSF NAME:{THC Wake On Touch GPIO resource of Active Level} TYPE:{EditNum, HEX, (0,0xFFFF)}
   # !BSF HELP:{Definition of GPIO resource configuration of Active Level}
-  gPlatformFspPkgTokenSpaceGuid.ThcWotActiveLevel             | * | 0x02 | {0x0, 0x0}
+  gPlatformFspPkgTokenSpaceGuid.ThcWotActiveLevel             | * | 0x02 | {0x1, 0x1}
 
   # !BSF NAME:{THC Wake On Touch GPIO resource of pin configuration} TYPE:{EditNum, HEX, (0,0xFFFF)}
   # !BSF HELP:{Definition of GPIO resource configuration of pin configuration}
@@ -2153,28 +2149,28 @@
   # !BSF HELP:{Set TSN MAC Address Low.}
   gPlatformFspPkgTokenSpaceGuid.PchTsn1MacAddressLow        | * | 0x04 | 0x00000000
 
-  # !BSF NAME:{PCH TSN MAC Address High Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Set TSN MAC Address High.}
+  # !BSF NAME:{PCH TSN2 MAC Address High Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Set TSN2 MAC Address High.}
   gPlatformFspPkgTokenSpaceGuid.PchTsn2MacAddressHigh       | * | 0x04 | 0x00000000
 
-  # !BSF NAME:{PCH TSN MAC Address Low Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Set TSN MAC Address Low.}
+  # !BSF NAME:{PCH TSN2 MAC Address Low Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Set TSN2 MAC Address Low.}
   gPlatformFspPkgTokenSpaceGuid.PchTsn2MacAddressLow        | * | 0x04 | 0x00000000
 
-  # !BSF NAME:{PCH TSN MAC Address High Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Set TSN MAC Address High.}
+  # !BSF NAME:{PCH TSN3 MAC Address High Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Set TSN3 MAC Address High.}
   gPlatformFspPkgTokenSpaceGuid.PchTsn3MacAddressHigh       | * | 0x04 | 0x00000000
 
-  # !BSF NAME:{PCH TSN MAC Address Low Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Set TSN MAC Address Low.}
+  # !BSF NAME:{PCH TSN3 MAC Address Low Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Set TSN3 MAC Address Low.}
   gPlatformFspPkgTokenSpaceGuid.PchTsn3MacAddressLow        | * | 0x04 | 0x00000000
 
-  # !BSF NAME:{PCH TSN MAC Address High Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Set TSN MAC Address High.}
+  # !BSF NAME:{PCH TSN4 MAC Address High Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Set TSN4 MAC Address High.}
   gPlatformFspPkgTokenSpaceGuid.PchTsn4MacAddressHigh       | * | 0x04 | 0x00000000
 
-  # !BSF NAME:{PCH TSN MAC Address Low Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Set TSN MAC Address Low.}
+  # !BSF NAME:{PCH TSN MAC4 Address Low Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Set TSN MAC4 Address Low.}
   gPlatformFspPkgTokenSpaceGuid.PchTsn4MacAddressLow        | * | 0x04 | 0x00000000
 
   ## TSN_CONFIG End

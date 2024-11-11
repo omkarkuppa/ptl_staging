@@ -167,8 +167,8 @@ PrintMemoryMap (
   DEBUG ((DEBUG_INFO, "| TraceHub MTB BAR                       |  | 0x%x                    |  | 0x%x                      |\n", PCH_TRACE_HUB_MTB_BASE_ADDRESS, (PCH_TRACE_HUB_MTB_BASE_ADDRESS + (PCH_TRACE_HUB_MTB_MMIO_SIZE - 1))));
   DEBUG ((DEBUG_INFO, "| eSPI2 SEGMR BAR                        |  | 0x%x                    |  | 0x%x                      |\n", PCH_ESPI_SEGMR_BASE_ADDRESS, (PCH_ESPI_SEGMR_BASE_ADDRESS + (PCH_ESPI_SEGMR_MMIO_SIZE - 1))));
   DEBUG ((DEBUG_INFO, "| eSPI LGMR BAR                          |  | 0x%x                    |  | 0x%x                      |\n", PCH_ESPI_LGMR_BASE_ADDRESS, (PCH_ESPI_LGMR_BASE_ADDRESS + (PCH_ESPI_LGMR_MMIO_SIZE - 1))));
-  DEBUG ((DEBUG_INFO, "| SerialIoUartDebugMmioBase              |  | 0x%x                    |  |                                 |\n", FixedPcdGet64 (PcdSerialIoUartDebugMmioBase)));
-  DEBUG ((DEBUG_INFO, "| SerialIo2ndUartMmioBase                |  | 0x%x                    |  |                                 |\n", FixedPcdGet64 (PcdSerialIo2ndUartMmioBase)));
+  DEBUG ((DEBUG_INFO, "| LpssUartDebugMmioBase                  |  | 0x%x                    |  |                                 |\n", FixedPcdGet64 (PcdLpssUartDebugMmioBase)));
+  DEBUG ((DEBUG_INFO, "| LpssUart2ndMmioBase                    |  | 0x%x                    |  |                                 |\n", FixedPcdGet64 (PcdLpssUart2ndMmioBase)));
   DEBUG ((DEBUG_INFO, "| SerialIo BAR in ACPI mode              |  | 0x%x                    |  | 0x%x                      |\n", PCH_SERIAL_IO_BASE_ADDRESS, (PCH_SERIAL_IO_BASE_ADDRESS + (PCH_SERIAL_IO_MMIO_SIZE - 1))));
   DEBUG ((DEBUG_INFO, "| SPI BAR0                               |  | 0x%x                    |  | 0x%x                      |\n", PCH_SPI_BASE_ADDRESS, (PCH_SPI_BASE_ADDRESS + (PCH_SPI_MMIO_SIZE - 1))));
   DEBUG ((DEBUG_INFO, "| PWRM BAR                               |  | 0x%x                    |  | 0x%x                      |\n", PCH_PWRM_BASE_ADDRESS, (PCH_PWRM_BASE_ADDRESS + (PCH_PWRM_MMIO_SIZE - 1))));

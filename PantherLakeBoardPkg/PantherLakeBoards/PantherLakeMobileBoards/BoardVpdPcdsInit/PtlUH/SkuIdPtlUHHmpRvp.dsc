@@ -362,6 +362,9 @@
   gBoardModuleTokenSpaceGuid.VpdPcdSkuType|*|0x2
   gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining|*|0x0
 
+  # PTL CNVi: WiFi (sku 0)
+  gBoardModuleTokenSpaceGuid.VpdPcdCnvDeviceId|*|0xE340
+
   # PCIE CLOCK USAGE for PTL P
   gBoardModuleTokenSpaceGuid.VpdPcdPPcieClkUsageMap|*|{CODE(
   {{
@@ -383,7 +386,6 @@
     // TCSS
     {GPIOV2_PTL_PCD_XXGPP_A_12,{GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateLow,  GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //TCP0_AUX_BIAS_P
     {GPIOV2_PTL_PCD_XXGPP_A_17,{GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateHigh, GpioV2IntDis, GpioV2ResetDefault, GpioV2TermDefault}},  //TCP0_AUX_BIAS_N
-    {GPIOV2_PTL_PCD_XXGPP_D_20,{GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateLow,  GpioV2IntDis, GpioV2ResetHost,    GpioV2TermDefault}},  //TCP_RETIMER_FORCE_PWR
 
     //EC
     {GPIOV2_PTL_PCD_XXGPP_E_7, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirInInv,  GpioV2StateDefault,GpioV2IntLevel|GpioV2IntSci, GpioV2ResetHost,    GpioV2TermDefault,  GpioV2Unlock, GpioV2Lock  }},  //EC_SMI_N

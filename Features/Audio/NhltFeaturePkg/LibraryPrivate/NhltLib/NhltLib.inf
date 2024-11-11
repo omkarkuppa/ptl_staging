@@ -29,12 +29,12 @@ MODULE_TYPE = BASE
 LIBRARY_CLASS = NhltLib
 
 [LibraryClasses]
-BaseLib
-DebugLib
+  BaseLib
+  DebugLib
 
 [Packages]
-MdePkg/MdePkg.dec
-NhltFeaturePkg/NhltFeaturePkg.dec
+  MdePkg/MdePkg.dec
+  NhltFeaturePkg/NhltFeaturePkg.dec
 
 [Sources]
-NhltLib.c
+  NhltLib.c

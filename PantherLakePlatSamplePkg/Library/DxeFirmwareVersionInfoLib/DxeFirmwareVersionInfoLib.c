@@ -148,6 +148,7 @@ ReadUsbCPdVersion (VOID)
   for (Index = 0; Index < PdNumber; Index++) {
     SetMem (DataBuffer, 8, 0);
     Status = GetPDFwVersion (Index, DataBuffer);
+    DEBUG ((DEBUG_INFO, "Get PD%d FW version with status:%r\n", Index, Status));
     if (Status == EFI_SUCCESS) {
       TempPdVersion = LShiftU64 (DataBuffer[7], 56) + LShiftU64 (DataBuffer[6], 48) \
                     + LShiftU64 (DataBuffer[5], 40) + LShiftU64 (DataBuffer[4], 32) \

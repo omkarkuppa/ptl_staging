@@ -353,6 +353,7 @@ typedef enum {
 #define MAX_BITS                  (8)       ///< BITS per byte.
 #define MAX_BITS_WITH_DBI         (MAX_BITS + 1) ///< 8 DQ bits plus 1 DBI bit
 #define DBI_BIT                   (8)       ///< DBI bit number
+#define DQS_INDEX                 (9)       ///< DQS Index
 #define MAX_BITS_MASK             ((1 << MAX_BITS) - 1)  ///< Mask for MAX_BITS
 #define CHAR_BITS                 (8)       ///< Number of bits in a char.
 #define MAX_DQ_IN_LP_CHANNEL      (MAX_BITS * MAX_BYTE_IN_LP_CHANNEL)  ///< Max number of DQ bits in LPDDR Channel
@@ -474,6 +475,9 @@ typedef enum {
 #define MRC_DEBUG_PARAM_OFFSET_0_CMOS_ADDR   (0xE3)
 #define MRC_DEBUG_PARAM_OFFSET_1_CMOS_ADDR   (0xE4)
 #define MRC_DEBUG_PARAM_OFFSET_2_CMOS_ADDR   (0xE5)
+#define MRC_FORCECKDBYPASS_CMOS_ADDR         (0xE6) ///< CMOS CONFIG0 hooks miscellaneous bits as follows:
+///< [Bit0] = ForceCkdBypass: Force CKD in bypass mode <b>0 = Disabled</b>, 1 = Enabled
+///< [Bit7:1] Reserved for future use
 #define MAX_OFFSETS_TO_CHANGE_VIA_CMOS (3)
 #define MAX_PARAM_TO_CHANGE_VIA_CMOS   (7)
 //In case increasing number of possible offset to control with single burn:
@@ -489,10 +493,6 @@ typedef enum {
 #define SPDLP_MANUF_END        328         ///< The ending point for the SPD manufacturing data.
 #define SPDLP_JEDEC_SPEC_MANUF_START   512 ///< The starting point for the SPD manufacturing data.
 #define SPDLP_JEDEC_SPEC_MANUF_END     520 ///< The ending point for the SPD manufacturing data.
-
-#define SSKPD_PCU_SKPD_MRC_RUNNING              0x2ULL // BIT1
-#define SSKPD_PCU_SKPD_MEM_BASICMEMORYTEST_FAIL 0x4ULL // BIT2
-#define SSKPD_PCU_SKPD_DRAM_NO_EDVFSC_SUPPORT   0x8ULL // BIT3
 
 #define MRC_DDR5_ECC_CPGC_COUNTER_INDEX 8
 #define MRC_DDR5_ECC_BYTE 4       /// Indicates the Byte index of the DDR5 ECC Byte
@@ -551,6 +551,7 @@ typedef enum {
   OemEarlyCommandTraining,  ///<  before Early Command training
   OemMapDqDqsSwizzle,       ///<  before Map Dq Dqs Swizzle training
   OemSenseAmpTraining,      ///<  before Sense Amp Training
+  OemWckClkPreDriverDcc,    ///<  before Duty Cycle Correction for Wck/Clk Pre-Driver
   OemWckPadDccCal,          ///<  before Wck Pad Dcc Calibration
   OemReadMprTraining,       ///<  before Read MPR Training
   OemReceiveEnable,         ///<  before Read Leveling
@@ -665,6 +666,8 @@ typedef enum {
   OemIsDramSupportsDvfsc,   ///< Check if DRAM supports E-DVFSC before finishing SAGV0 training flow
   OemEmphasisTraining,      ///< before Pre-Emphasis LP5 Training
   OemMrcHVMFinalize,        ///< before HVM Finalization
+  OemDqLoopbackTest,        ///< before Dq Loopback test
+  OemDqsPadDcc,             ///< before DQS PAD DCC Optimization
   ///
   ///*********************************************************************************
   ///
@@ -1634,6 +1637,38 @@ typedef struct {
 } MrcRefPiControl;
 
 typedef struct {
+  UINT32  RefPiCtrl0Data[10];   ///< [MRC_DATA_DT_NUM]
+  UINT32  RefPiCtrl1Data[10];   ///< [MRC_DATA_DT_NUM]
+  UINT32  RefPiCtrl0Ccc[4];     ///< [MRC_CCC_SHARED_DT_NUM]
+  UINT32  RefPiCtrl1Ccc[4];     ///< [MRC_CCC_SHARED_DT_NUM]
+} MrcRefPiCal;
+
+typedef union {
+  MrcRefPiControl RefPiControl;
+  MrcRefPiCal     RefPiCalData;
+} MRC_REF_PI_FREQ_SWITCH_DATA;
+
+typedef struct {
+  UINT32  DllControl0Data[10][2]; ///< [MRC_DATA_DT_NUM][MRC_DATA_CH_NUM]
+  UINT32  DllControl1DataSh[10];  ///< [MRC_DATA_DT_NUM]
+  UINT32  QclkPhclockRepeater0;
+  UINT32  PhClockRepeater0DataSh;
+  UINT32  PhClockRepeater0CccSh;
+} MrcBwSel;
+
+typedef struct {
+  UINT8 DataVccClkWpLvrVrefSel[8];        ///< [MRC_DATA_MOBILE_NUM]
+  UINT8 DataVccClkWpLvrRxdllb1vrefsel[8]; ///< [MRC_DATA_MOBILE_NUM]
+  UINT8 DataVccClkWpLvrRxdllb0vrefsel[8]; ///< [MRC_DATA_MOBILE_NUM]
+  UINT8 DataVccIogWpLvrVrefSel[8];        ///< [MRC_DATA_MOBILE_NUM]
+  UINT8 CccVccClkWpLvrVrefSel[4];         ///< [MRC_CCC_SBMEM_NUM]
+  UINT8 CccVccIogWpLvrVrefSel[4];         ///< [MRC_CCC_SBMEM_NUM]
+  UINT8 CompVccIogWpLvrVrefSel;
+  UINT8 WorkPointDISTGLVRVrefSel;
+  UINT8 CompVccIog40WpLvrVrefSel;
+} MrcLvrSaveRestore;
+
+typedef struct {
   UINT8     SpdValid[sizeof (MrcSpd) / (CHAR_BITS * sizeof (UINT8))]; ///< Each valid bit maps to SPD byte.
   UINT8     MrcSpdString[3]; ///< The SPD data start marker. This must be located at the start of the SPD data structure. It includes this string plus the following flag.
   union {
@@ -1758,7 +1793,6 @@ typedef struct {
 /// The following are channel level definitions. All DIMMs on a memory channel are set to these values.
 typedef struct {
   MrcChannelSts     Status;                                                       ///< Indicates whether this channel should be used.
-  MrcTiming         Timing[MAX_PROFILE];                                          ///< The channel timing values.
   MrcTimeBase       TimeBase[MAX_DIMMS_IN_CHANNEL][MAX_PROFILE];                  ///< Medium and fine timebases for each DIMM in the channel and each memory profile.
   UINT32            Capacity;                                                     ///< Amount of memory in this channel, in MBytes.
   UINT32            DimmCount;                                                    ///< Number of valid DIMMs that exist in the channel.
@@ -1829,7 +1863,6 @@ typedef struct {
   UINT8           ValidSubChBitMask;                                              ///< Bit map of the populated sub channels per channel.
   UINT16          ValidByteMask;                                                  ///< Bit map of the populated bytes per channel.
   UINT8           DqsMapCpu2Dram[MAX_DIMMS_IN_CHANNEL][MAX_BYTE_IN_DDR5_CHANNEL]; ///< Mapping from CPU DQS pins to SDRAM DQS pins. LP5 use DIMM0 index only; DDR5 uses both DIMMs
-  MrcTiming       Timing[MAX_PROFILE];                                            ///< The channel timing values.
   MrcDimmOut      Dimm[MAX_DIMMS_IN_CHANNEL];                                     ///< Save the DIMM output characteristics.
   MrcDimmSpdSave  DimmSpdSave[MAX_DIMMS_IN_CHANNEL];                              ///< Save SPD information needed for SMBIOS structure creation.
 } MrcChannelSave;
@@ -1868,8 +1901,9 @@ typedef struct {
 } MrcSaGvOutput;
 
 typedef struct {
-  MrcRefPiControl RefPiControlHighFreq[MAX_SAGV_POINTS];
-  MrcRefPiControl RefPiControlLowFreq[MAX_SAGV_POINTS];     ///< Per sagv point Refpi values for low frequency
+  MRC_REF_PI_FREQ_SWITCH_DATA RefPiCalHighFreq[MAX_SAGV_POINTS];    ///< Per sagv point Refpi cal training results for high frequency
+  MRC_REF_PI_FREQ_SWITCH_DATA RefPiCalLowFreq[MAX_SAGV_POINTS];     ///< Per sagv point Refpi cal training results for low frequency
+  MrcLvrSaveRestore LvrSaveRestore[MAX_SAGV_POINTS];        ///< Per sagv point Lvr Autotrim saved values
   UINT32          PmaMcTechEnable;                          ///< The enabled memory technologies and their max frequency
   UINT32          PmaMcCap;                                 ///< The memory controller's capabilities.UINT32
   UINT32          MeStolenSize;                             ///< The manageability engine memory size, in Mbyte units.
@@ -1902,7 +1936,6 @@ typedef struct {
   McRegOffsets      OffsetKnobs;                              ///< Options for MC Register Offset settings
   BOOLEAN           DynamicMemoryBoostTrainingFailed;         ///< TRUE if Dynamic Memory Boost failed to train
   BOOLEAN           IsLP5Camm2;                                ///< TRUE if current memory is JEDEC spec LP5 CAMM
-  UINT8             UsedForArrayAlign[3];                     ///< Ensure that the variables contained in InternalOnly are also aligned, otherwise an error may occur on external build
   UINT32            SaMemCfgCrcNoOffsetKnobs;                 ///< The CRC32 of the SA memory configuration without OffsetKnobs.
   UINT8             ValidRankMask;                 ///< Rank bit map.  Includes both channels across memory controllers.
   UINT8             ValidChBitMask;                ///< Channel bit map of the populated channels
@@ -1917,7 +1950,7 @@ typedef struct {
   BOOLEAN           MrXPdaDfeTap3Enabled;          ///< Defines if MRs of DFE TAP3 is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap4Enabled;          ///< Defines if MRs of DFE TAP4 is required as PDA for this channel.
   BOOLEAN           IsDdr5Hynix;                   ///< TRUE if any DDR5 Hynix DIMM is detected otherwise FALSE
-  UINT8             ReservedBytesAlign2[1];        ///< Align to 4 bytes for MrcSavedata
+  BOOLEAN           IsDrfmSupported;              ///< TRUE if DRAM supports DRFM
   /// Cmd and Ctl Pi Code for Low frequency. This is required to track for LP5 Frequency switching.
   UINT32            LowFCtlPiCode[MAX_SAGV_POINTS][MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL]; ///< Cmd and Ctl Pi Code for Low frequency. It will be used for Jedec Reset for Lp5
   UINT32            LowFCmdPiCode[MAX_SAGV_POINTS][MAX_CONTROLLER][MAX_CHANNEL]; ///< Cmd and Ctl Pi Code for Low frequency. It will be used for Jedec Reset for Lp5
@@ -1943,10 +1976,14 @@ typedef struct {
   UINT32          SaGvRegSave[MAX_SAGV_POINTS][MRC_REGISTER_COUNT_SAGV]; ///< The MC registers for each SA GV point.
   MrcContSave     Controller[MAX_CONTROLLER];               ///< The following are controller level definitions.
   MrcSaGvOutput   SaGvOutputs;                    ///< Per-SaGv Point output data
+  MrcTiming       Timing[MAX_PROFILE];            ///< The Memory Timing Values
   UINT16          VCO[NUM_LCPLL][MAX_SAGV_POINTS];          ///< Tracks which VCO frequencies have been allocated in each LCPLL
   INT8            LCPLLWPSel[NUM_LCPLL][MAX_SAGV_POINTS];   ///< Tracks which workpoints have been allocated in each LCPLL
-  UINT8           WP2LCPLL;                                 ///< Tracks which LCPLL (0/1) has been selected for the current workpoint
+  UINT8           WP2LCPLL[MAX_SAGV_POINTS];                ///< Tracks which LCPLL (0/1) has been selected for the current workpoint
   INT8            LCPLLWPSelLowFreq;                        ///< It will be used for LP5 low frequency initialization during JEDEC Reset
+  MrcBwSel        BwSelCalHighFreq[MAX_SAGV_POINTS];        ///< Per sagv point BwSel cal training results for high frequency
+  MrcBwSel        BwSelCalLowFreq[MAX_SAGV_POINTS];         ///< Per sagv point BwSel cal training results for low frequency
+  BOOLEAN         BwSelLowSaved[MAX_SAGV_POINTS];           ///< TRUE if Low Frequency BwSel cal training results have been calculated
 } MrcSaveData;
 
 // MrcOutputs needs to be DWORD aligned
@@ -1968,6 +2005,7 @@ typedef struct {
   MrcVddSelect        VddqVoltage[MAX_PROFILE];    ///< The voltage (VDDQ) setting for all DIMMs in the system, per profile.
   MrcVddSelect        VppVoltage[MAX_PROFILE];     ///< The voltage (VPP) setting for all DIMMs in the system, per profile.
   MrcFrequency        MemFrequency[MAX_PROFILE];   ///< Every Profile's Frequency
+  MrcTiming           Timing[MAX_PROFILE];         ///< The memory timing values.
   UINT32              VccddqVoltage;               ///< DDR transmitter FIVR voltage rail per technology and per datarate. @todo : Does it need
   UINT32              VccIogVoltage;               ///< Data Tx PreDriver, Data receive, and analog FIVR voltage rail
   UINT32              VccClkVoltage;               ///< IO Clock and clock distrubition FIVR voltage rail
@@ -2013,9 +2051,9 @@ typedef struct {
   UINT16              PostCodeStart;               ///< Green Start POST code for the interpreter
   UINT16              PostCodeStop;                ///< Green Stop  POST code for the interpreter
   UINT16              RcompTarget[MAX_RCOMP_TARGETS]; ///< RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
-  UINT8               ReservedBytesAlign[3];       ///< Reserved Bytes for 32-Bits aligned.
   MrcClockRatio       Ratio;                       ///< Request for this memory controller to use this clock ratio.
   MrcDimmStatus       FailingChannelBitMask;       ///< BitMask to detect failing Channels and disable them
+                                                   ///< -------------- Items below should be single-byte only --------------
   BOOLEAN             IsCaOdtStrapRead;            ///< Set to TRUE once CA ODT Strap has been read for DDR5
   BOOLEAN             BitByteSwizzleFound;         ///< Indicates if the Bit/Byte level swizzling from CPU to DRAM have been identified.
   BOOLEAN             GearMode;                    ///< Current memory frequency gear: 0=Gear2, 1=Gear4
@@ -2079,6 +2117,7 @@ typedef struct {
   BOOLEAN             IsPhyDqDeswizzleNeeded;      ///< Used to deswizzle DataTrainFeedback value, whenever DTF used in Per-Lane mode
   BOOLEAN             IsLP5Camm2;                  ///< Detects if the current JEDEC 1.0 Spec LP5 module uses the CAMM form factor
   BOOLEAN             IsIbeccInitRangesRequired;   ///< Flag to indicate that the IBECC Init Ranges FSM must be run
+  BOOLEAN             IsVocSearch;                 ///< TRUE if currently running VOC part of SOT
   UINT8               FinalIbeccOperationMode;     ///< Output to BIOS on the state of IBECC
   UINT8               tMAC;                        ///< Maximum Activate Count for pTRR.
   UINT8               MaxChannels;                 ///< Maximum number of channels supported by the controller.  Varies per technology.
@@ -2109,11 +2148,17 @@ typedef struct {
   UINT8               CmosConfig1;                 ///< Data of MRC_DEBUG_CONFIG1_CMOS_ADDR
   UINT8               CmosConfig2;                 ///< Data of MRC_DEBUG_CONFIG2_CMOS_ADDR
   UINT8               BankIncOrder[MAX_MPTU];      ///< Used to program BankIncOrder in Ddr5 for each Dunit
+  UINT8               CaDeselectStress;
+  UINT8               ReservedBytesAlign[1];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   MrcIpTestEnv        IpModel;
   MrcDdrType          DdrType;                     ///< Current memory type: DDR5, LPDDR5
   MrcSaGvPoint        SaGvFirst;                   ///< First SaGv Point to be trained
   MrcSaGvPoint        SaGvLast;                    ///< Last SaGv Point to be trained
   MrcSaGvPoint        SaGvPoint;                   ///< SA GV point - Low, Med or High
+  UINT8               BibOnRmt;                    ///< TRUE if  Bib is enabled for RMT
+  UINT8               BibEnable;
+  UINT8               BibIdle;
+  UINT8               BibIdleType;
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;

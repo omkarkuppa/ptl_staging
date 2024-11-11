@@ -89,6 +89,7 @@
 
 #define INC_OFFSET_CALC_MC_CH(MC0, MC1, MC, CH1, CH) (((((MC1) - (MC0)) * (MC)) + (((CH1) - (MC0)) * (CH))))
 #define INC_OFFSET_CALC_CH(CH0, CH1, CH) (((((CH1) - (CH0)) * (CH))))
+#define INC_OFFSET_CALC_INDEX(INDEX0, INDEX1, INDEX) INC_OFFSET_CALC_CH(INDEX0, INDEX1, INDEX)
 
 #define IS_MC_SUB_CH(IsLpddr, Channel) ((IsLpddr) && ((Channel) % 2))
 #define LP_IP_CH(IsLpddr, Channel) ((IsLpddr) ? (Channel) / 2 : (Channel))
@@ -464,7 +465,8 @@ typedef enum {
 
 typedef enum {
   WriteOdt,
-  ReadOdt
+  ReadOdt,
+  MaxOdtParamType
 } OdtParamType;
 
 #define RXF_SELECT_RC_100  (6)
@@ -638,6 +640,7 @@ typedef struct {
 
 typedef enum {
   ChScope,
+  ChRankScope,
   ByteScope,
   BitScope,
   BitScopeDqs
@@ -678,14 +681,18 @@ typedef enum {
 typedef struct {
   INT64 BiasPMCtrl;
   INT64 DefDrvEnLow;
-  INT64 ForceRxOn;
+  INT64 ForceRxOnAmpOrDqs;
+  INT64 ForceRxOnDqsMux;
+  INT64 ForceRxOnDq;
   INT64 InternalClocksOn;
   INT64 EnPhaseGating;
 } DDR5_CA_TRAIN_IO_INIT_SAVE;
 
 typedef struct {
   INT64 ForceOdtOn;
-  INT64 ForceRxOn;
+  INT64 ForceRxOnAmpOrDqs;
+  INT64 ForceRxOnDqsMux;
+  INT64 ForceRxOnDq;
   INT64 EnPhaseGating;
 } LPDDR5_CA_TRAIN_IO_SAVE;
 
@@ -693,6 +700,19 @@ typedef union {
   LPDDR5_CA_TRAIN_IO_SAVE Lpddr5IoSave;
   DDR5_CA_TRAIN_IO_INIT_SAVE Ddr5IoSave;
 } CA_PARITY_IO_SAVE;
+
+typedef enum {
+  LoopBackRdTDqsP,
+  LoopBackRdTDqsN,
+  LoopBackWriteTiming,
+  LoopBackReadVoltage,
+  LoopBackTasksMax
+} LoopBackTasks;
+
+typedef struct {
+  UINT64  Signature;
+  UINT16  LoopbackResult[LoopBackTasksMax][MAX_CONTROLLER][MAX_CHANNEL][MAX_BYTE_IN_LP_CHANNEL][MAX_BITS];
+} LOOPBACK_RESULT;
 
 ///
 /// External Global constants
@@ -906,6 +926,24 @@ BOOLEAN
 MrcGetHwControllerExists (
   IN MrcParameters *const MrcData,
   IN const UINT32         Controller
+  );
+
+/**
+  Returns whether Channel HW exists even though it may not be populated.
+
+  @param[in] MrcData    - Pointer to MRC global data.
+  @param[in] Controller - Controller to test.
+  @param[in] Channel    - Channel to test.
+
+  @retval BOOLEAN - TRUE if exists, FALSE otherwise.
+**/
+extern
+MRC_IRAM0_FUNCTION
+BOOLEAN
+MrcGetHwChannelExists (
+  IN MrcParameters *const MrcData,
+  IN const UINT32         Controller,
+  IN const UINT32         Channel
   );
 
 /**
@@ -4002,6 +4040,25 @@ MrcGetDdr5ClkIndex (
   );
 
 /**
+  Returns whether PHY Clock associated with given Controller,
+  Channel, Rank is enabled or not.
+
+  @param[in] MrcData    - Pointer to MRC global data.
+  @param[in] Controller - Controller to test.
+  @param[in] Channel    - Channel to test.
+  @param[in] Rank       - Rank to test.
+
+  @retval BOOLEAN - TRUE if enabled, FALSE otherwise.
+**/
+BOOLEAN
+MrcPhyClockExists (
+  IN MrcParameters *const MrcData,
+  IN UINT32         const Controller,
+  IN UINT32         const Channel,
+  IN UINT32         const Rank
+  );
+
+/**
   This function returns the tADCmin/max based on frequency.
 
   @param[in]  Frequency  - The memory frequency.
@@ -4162,6 +4219,42 @@ INT8
 MrcFindMaxVal (
   IN INT8  Array[],
   IN UINT8 ArraySize
+  );
+
+/**
+  This procedure is meant to handle RcvEn centering, places strobe in the middle of the data eye,
+  using a very robust, linear search algorithm.
+
+  @param[in,out] MrcData        - Include all MRC global data.
+  @param[in]     StepSize       - Step size
+  @param[in]     LoopCount      - loop count
+  @param[in]     MsgPrintMask   - Serial debug output message enable.
+  @param[in]     EarlyCentering - Execute as early centering routine
+
+  @retval        MrcStatus -  If succeeded, return mrcSuccess
+**/
+MrcStatus
+RcvEnCentering1D (
+  IN OUT MrcParameters* const MrcData,
+  IN     const UINT8          StepSize,
+  IN     const UINT8          LoopCount,
+  IN     UINT8                MsgPrintMask,
+  IN     BOOLEAN              EarlyCentering,
+  IN     UINT8                RankBitMask
+  );
+
+/**
+  Report DQ loopback margin results into a DRAM0 array
+
+  @param[in]  MrcData      - Include all MRC global data
+  @param[in]  Task         - Loopback task to report
+  @param[in]  PerBitResult - Per-bit margin results to report
+**/
+VOID
+GetLoopbackTestMarginsResults (
+  IN MrcParameters *const MrcData,
+  IN LoopBackTasks        Task,
+  IN SweepResultsBit      *PerBitResult
   );
 
 #endif //_MrcCommon_h_

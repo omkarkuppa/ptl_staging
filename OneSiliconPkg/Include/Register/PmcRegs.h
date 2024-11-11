@@ -187,6 +187,8 @@
 #define R_ACPI_IO_GPE0_STS_31_0                         0x60                            ///< General Purpose Event 0 Status [31:0]
 #define R_ACPI_IO_GPE0_STS_127_96                       0x6C                            ///< General Purpose Event 0 Status [127:96]
 #define S_ACPI_IO_GPE0_STS_127_96                       4
+#define B_ACPI_IO_GPE0_STS_127_96_PCIEDTR_SCI_STS       BIT25                           ///< PCIe Dynamic Temperature Range SCI Status
+#define N_ACPI_IO_GPE0_STS_127_96_PCIEDTR_SCI_STS       25
 #define B_ACPI_IO_GPE0_STS_127_96_WADT_STS              BIT18                           ///< Wake Alarm Device Timer Status
 #define B_ACPI_IO_GPE0_STS_127_96_USB_CON_DSX_STS       BIT17                           ///< USB Connection in/after DeepSx Status
 #define B_ACPI_IO_GPE0_STS_127_96_LANWAKE_STS           BIT16                           ///< GPIO[27] Status
@@ -207,6 +209,8 @@
 
 #define R_ACPI_IO_GPE0_EN_127_96                      0x7C                              ///< General Purpose Event 0 Enable [127:96]
 #define S_ACPI_IO_GPE0_EN_127_96                      4
+#define B_ACPI_IO_GPE0_EN_127_96_PCIEDTR_SCI_EN       BIT25                             ///< PCIe Dynamic Temperature Range SCI Enable
+#define N_ACPI_IO_GPE0_EN_127_96_PCIEDTR_SCI_EN       25
 #define B_ACPI_IO_GPE0_EN_127_96_TC_HOT_PLUG_EN       BIT23                             ///< TCSS Hot Plug Enable
 #define B_ACPI_IO_GPE0_EN_127_96_TC_PCI_EXP_EN        BIT22                             ///< TC PCI Express Enable
 #define B_ACPI_IO_GPE0_EN_127_96_TCSS_SX_WAKE_EN      BIT19                             ///< TCSS SX Wake Enable
@@ -577,12 +581,26 @@
 #define N_PMC_PWRM_GPIO_CFG_GPE0_DW0                        0
 
 #define R_PMC_PWRM_GBLRST_CAUSE0                            0x1924                      ///< Global Reset Causes 0
+#define B_PMC_PWRM_GBLRST_CAUSE0_PWR_BTN_RESET              BIT1                        ///< Global Cause0 power button reset
+#define B_PMC_PWRM_GBLRST_CAUSE0_FW_SOURCE                  BIT3                        ///< Global Cause0 system firmware reset source bit
+#define B_PMC_PWRM_GBLRST_CAUSE0_UNEXPECTED_RESET           BIT30                       ///< Global Cause0 unexpected reset
+#define B_PMC_PWRM_GBLRST_CAUSE0_THERMAL_RESET              (BIT27 | BIT26 | BIT25 | BIT5 | BIT3) ///< Gbl Cause0 thermal reset reason bits
+#define B_PMC_PWRM_GBLRST_CAUSE0_TIMEOUT_RESET              (BIT20 | BIT19 | BIT16 | BIT9 | BIT8) ///< Gbl Cause0 timeout reset reason bits
+#define B_PMC_PWRM_GBLRST_CAUSE0_FAULT_RESET                (BIT31 | BIT24 | BIT23 | BIT22 | BIT21 | BIT17 | BIT15 | BIT14 | BIT13 | BIT12 | BIT11 | BIT7 | BIT4 | BIT2 | BIT0) ///< Gbl Cause0 fault reset reason bits
+#define B_PMC_PWRM_GBLRST_CAUSE0_HW_SOURCE                  (BIT31 | BIT24 | BIT23 | BIT22 | BIT21 | BIT17 | BIT15 | BIT14 | BIT12 | BIT11 | BIT2 | BIT0) ///< Gbl Cause0 hardware reset source bits
 
 #define R_PMC_PWRM_GBLRST_CAUSE1                            0X1928                      ///< Global Reset Causes 1
+#define R_PMC_PWRM_GBLRST_CAUSE1_FAULT_RESET                (BIT7 | BIT6 | BIT5 | BIT4 | BIT3 | BIT2 | BIT1 | BIT0)   ///< Global Reset Causes 1 fault reset reason bits
+#define B_PMC_PWRM_GBLRST_CAUSE1_THERMAL_RESET              (BIT12 | BIT11 | BIT10 | BIT9 | BIT8) ///< Gbl Cause1 thermal reset reason bits
 
 #define R_PMC_PWRM_HPR_CAUSE0                               0x192C                      ///< Host Partition Reset Causes
 #define B_PMC_PWRM_HPR_CAUSE0_GBL_TO_HOST                   BIT15                       ///< Global Reset Converted to Host Reset
 #define B_PMC_PWRM_HPR_CAUSE0_AWR                           BIT0                        ///< Asynchronous Warm Reset Status
+#define B_PMC_PWRM_HPR_CAUSE0_SYSRST_ES                     BIT2                        ///< HPR Cause0 warm/cold reset bit
+#define B_PMC_PWRM_HPR_CAUSE0_CF9CR                         0x6                         ///< HPR Cause0 cold reset from CF9h
+#define B_PMC_PWRM_HPR_CAUSE0_CF9WR                         0xE                         ///< HPR Cause0 warm reset from CF9h
+#define B_PMC_PWRM_HPR_CAUSE0_COLD_RESET                    (BIT17 | BIT13 | BIT9)      ///< HPR Cause0 cold reset reason bits
+#define B_PMC_PWRM_HPR_CAUSE0_WARM_RESET                    (BIT16 | BIT12 | BIT8 | BIT3) ///< HPR Cause0 warm reset reason bits
 
 #define R_PMC_PWRM_RTC_SCRATCH_GCR_0                        0x1950                      ///< RTC Well Scratchpad Reg 0
 #define B_PMC_PWRM_RTC_SCRATCH_GCR_0_DISABLE_UFS            BIT0                        ///< Set by BIOS to indicate disabling UFS
@@ -716,6 +734,26 @@
 #define V_PMC_PWRM_IPC_CMD_CMD_ID_WRITE_PMIC3_I2C             0x07                      ///< SubCommand to read PMIC I2C
 
 #define V_PMC_PWRM_IPC_CMD_CMD_ID_WRITE_LOCK_ENABLE_PMIC_I2C  0xF                       ///< SubCommand to PMC write lock enable
+
+#define R_PMC_PWRM_TSDTR_THRESH                               0x1514                    ///< Thermal Sensor Dynamic Temperature Range PCIe Threshold
+#define B_PMC_PWRM_TSDTR_THRESH_DTRHIVAL                      0x1FF                     ///< DTR High Value
+#define N_PMC_PWRM_TSDTR_THRESH_DTRHIVAL                      0
+#define B_PMC_PWRM_TSDTR_THRESH_DTRLOVAL                      0x1FF0000                 ///< DTR Low Value
+#define N_PMC_PWRM_TSDTR_THRESH_DTRLOVAL                      16
+
+#define R_ACPI_IO_SMI_EN_1                                    0x38                      ///< SMI Control and Enable 1
+#define B_ACPI_IO_SMI_EN_1_PCIEDTR_SMI_EN                     BIT2                      ///< PCIe Dynamic Temperature Range SMI Enable
+#define N_ACPI_IO_SMI_EN_1_PCIEDTR_SMI_EN                     2
+
+#define R_ACPI_IO_SMI_STS_1                                   0x3C                      ///< SMI Status Register 1
+#define B_ACPI_IO_SMI_STS_1_PCIEDTR_SMI_STS                   BIT2                      ///< PCIe Dynamic Temperature Range SMI Status
+#define N_ACPI_IO_SMI_STS_1_PCIEDTR_SMI_STS                   2
+
+#define R_PMC_PWRM_MIN_TEMP                                   0x1500                    ///< Min Temperature
+#define B_PMC_PWRM_MIN_TEMP_MIN_TEMP                          0x1FF                     ///< Minimum Temperature
+#define N_PMC_PWRM_MIN_TEMP_MIN_TEMP                          0
+#define B_PMC_PWRM_MIN_TEMP_MIN_SRC                           ( BIT19 | BIT18 | BIT17 | BIT16 ) ///< DTS Minimum Source
+#define N_PMC_PWRM_MIN_TEMP_MIN_SRC                           16
 
 //
 // GPE interrupts definitons

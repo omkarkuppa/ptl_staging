@@ -123,21 +123,21 @@ UpdatePeiCpuPolicyDebug (
   UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.RaceToHalt,                  CpuPowerMgmtTestConfig->RaceToHalt,                  CpuSetup.RaceToHalt);
   UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateLimit,              CpuPowerMgmtTestConfig->PkgCStateLimit,              CpuSetup.PkgCStateLimit);
 
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.C1e, CpuPowerMgmtTestConfig->C1e, CpuSetup.EnableC1e);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.C1e, CpuPowerMgmtTestConfig->C1e, CpuSetup.EnableC1e);
 
-    //
-    // Core C-State AutoDemotion/UnDemotion
-    //
-    C1AutoDemotion = CpuSetup.CStateAutoDemotion;
-    C1UnDemotion   = CpuSetup.CStateUnDemotion;
+  //
+  // Core C-State AutoDemotion/UnDemotion
+  //
+  C1AutoDemotion = CpuSetup.CStateAutoDemotion;
+  C1UnDemotion   = CpuSetup.CStateUnDemotion;
 
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.C1StateUnDemotion, CpuPowerMgmtTestConfig->C1UnDemotion, C1UnDemotion);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.C1StateAutoDemotion, CpuPowerMgmtTestConfig->C1AutoDemotion, C1AutoDemotion);
-    //
-    // Pkg C-state Demotion/Un Demotion
-    //
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateDemotion, CpuPowerMgmtTestConfig->PkgCStateDemotion, CpuSetup.PkgCStateDemotion);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateUnDemotion, CpuPowerMgmtTestConfig->PkgCStateUnDemotion, CpuSetup.PkgCStateUnDemotion);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.C1StateUnDemotion, CpuPowerMgmtTestConfig->C1UnDemotion, C1UnDemotion);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.C1StateAutoDemotion, CpuPowerMgmtTestConfig->C1AutoDemotion, C1AutoDemotion);
+  //
+  // Pkg C-state Demotion/Un Demotion
+  //
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateDemotion, CpuPowerMgmtTestConfig->PkgCStateDemotion, CpuSetup.PkgCStateDemotion);
+  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateUnDemotion, CpuPowerMgmtTestConfig->PkgCStateUnDemotion, CpuSetup.PkgCStateUnDemotion);
 
   return EFI_SUCCESS;
 }

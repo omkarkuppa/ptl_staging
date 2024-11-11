@@ -253,8 +253,6 @@ MrcSaveSagvOutputs (
   const MrcInput    *Inputs;
   MrcOutput     *Outputs;
   MrcSaGvOutput *SaGvOutputs;
-  UINT32        FirstController;
-  UINT32        FirstChannel;
   INT64         MaxMemoryBandwidth;
   const MRC_FUNCTION      *MrcCall;
 
@@ -263,8 +261,6 @@ MrcSaveSagvOutputs (
   SaGvOutputs = &MrcData->Save.Data.SaGvOutputs;
 
   MrcCall = Inputs->Call.Func;
-  FirstController = (UINT8) Outputs->FirstPopController;
-  FirstChannel    = (UINT8) Outputs->Controller[FirstController].FirstPopCh;
 
   SaGvOutputs->SaGvTiming[Outputs->SaGvPoint].DataRate = Outputs->Frequency;
 
@@ -274,7 +270,7 @@ MrcSaveSagvOutputs (
   // Assume that all channels use the same timings
   MrcCall->MrcCopyMem (
     (UINT8 *) &SaGvOutputs->SaGvTiming[Outputs->SaGvPoint].JedecTiming,
-    (UINT8 *) &Outputs->Controller[FirstController].Channel[FirstChannel].Timing[Inputs->ExtInputs.Ptr->MemoryProfile],
+    (UINT8 *) &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile],
     sizeof (MrcTiming)
     );
 

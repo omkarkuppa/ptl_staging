@@ -29,6 +29,8 @@
 #include "MrcDdrIoUtils.h"
 #include "MrcPmaApiCrossProj.h"
 #include "MrcDdrIoApi.h"
+#include "MrcPowerMetering.h"
+
 
 
 /**
@@ -56,7 +58,10 @@ MrcWorkPointLock (
   MrcSaGvPoint      SaGvPoint;
   INT64             GetSetEn;
   INT64             GetSetDis;
-
+  MrcProfile        Profile;
+  MrcInput          *Inputs;
+  Inputs     = &MrcData->Inputs;
+  Profile    = Inputs->ExtInputs.Ptr->MemoryProfile;
   Outputs    = &MrcData->Outputs;
   Debug      = &Outputs->Debug;
   SaGvPoint  = Outputs->SaGvPoint;
@@ -71,8 +76,23 @@ MrcWorkPointLock (
     MrcPmCfgCrAccess (MrcData, TRUE, TRUE);
   }
 
+  // Make sure tCL-tCWL <= 4
+  // This is needed to support ODT properly for 2DPC case
+  if ((Outputs->Timing[Profile].tCL - Outputs->Timing[Profile].tCWL) > 4) {
+    Outputs->Timing[Profile].tCWL = Outputs->Timing[Profile].tCL - 4;
+    MRC_DEBUG_MSG (
+      Debug,
+      MSG_LEVEL_NOTE,
+      "(tCL-tCWL) > 4, tCWL has been updated to %u\n",
+      Outputs->Timing[Profile].tCWL
+    );
+  }
+
   SetVccLvr (MrcData);
   SetTlineTermination (MrcData);
+
+  // For the configuration of Power Meter Registers, it needs to be placed in front of write to MEMSS_PMA_CR_BIOS_REQ
+  MrcPowerMeteringConfig (MrcData);
 
   // PLL Offset Calibration before waking up the PHY with a PM0 message
   // CompQClkOCal{1:0}.OffsetCal{WP} should start at the reset default of 0

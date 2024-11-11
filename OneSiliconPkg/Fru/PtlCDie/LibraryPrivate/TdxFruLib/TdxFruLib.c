@@ -61,23 +61,19 @@ CalculateSeamrrSize (
     }
   }
 
-  ActTableSize = (ControllerCount * LShiftU64 (MemoryMap->TouudBase, CONVERT_MB_TO_B))/SIZE_32KB;
+  ActTableSize = (ControllerCount * CONVERT_MB_TO_B (MemoryMap->TouudBase))/SIZE_32KB;
   ActrrSize    = GetPowerOfTwo64 (((ActTableSize * 8) + 6) / 7);
 
-  DEBUG ((DEBUG_ERROR, "[TDX] Actrr Size = %d MB \n", ActrrSize));
+  DEBUG ((DEBUG_ERROR, "[TDX] Actrr Size = %d MB \n", CONVERT_B_TO_MB (ActrrSize)));
 
-  if (ActrrSize <= SIZE_8MB) {
-    SeamrrSize = SIZE_32MB;
-  } else if(ActrrSize == SIZE_16MB) {
-    SeamrrSize = SIZE_64MB;
-  } else if (ActrrSize == SIZE_32MB) {
-    SeamrrSize = SIZE_128MB;
-  } else if(ActrrSize == SIZE_64MB) {
-    SeamrrSize = SIZE_256MB;
+  if (ActrrSize <= SIZE_16MB) {
+      SeamrrSize = CONVERT_B_TO_MB(SIZE_32MB);
+      DEBUG ((DEBUG_ERROR, "[TDX] Seamrr Size = %d MB\n", SeamrrSize));
+  } else {
+    DEBUG ((DEBUG_ERROR, "[TDX] ERROR: Invalid Actrr Size = %d MB \n", CONVERT_B_TO_MB (ActrrSize)));
+    DEBUG ((DEBUG_ERROR, "[TDX] Seamrr Size = %d\n", SeamrrSize));
+    return SeamrrSize;
   }
-
-  SeamrrSize = (UINT32) RShiftU64(SeamrrSize, CONVERT_MB_TO_B);
-  DEBUG ((DEBUG_ERROR, "[TDX] Seamrr Size = %d MB \n", SeamrrSize));
 
   DEBUG ((DEBUG_INFO, "%a END\n", __FUNCTION__));
   return SeamrrSize;

@@ -127,6 +127,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.AtomRatioLimitRatio[6]|0x0                 
 gStructPcdTokenSpaceGuid.PcdCpuSetup.AtomRatioLimitRatio[7]|0x0                                    # E-core Turbo Ratio Limit Ratio7
 gStructPcdTokenSpaceGuid.PcdCpuSetup.AvxDisable|0x0                                                # AVX
 gStructPcdTokenSpaceGuid.PcdCpuSetup.BistOnReset|0x0                                               # BIST
+gStructPcdTokenSpaceGuid.PcdCpuSetup.ReduceXecores|0x1                                              # Reduce XeCores
 gStructPcdTokenSpaceGuid.PcdCpuSetup.BootFrequency|0x2                                             # Boot performance mode
 gStructPcdTokenSpaceGuid.PcdCpuSetup.BootMaxFrequency|0x1                                          # Boot Max Frequency
   gStructPcdTokenSpaceGuid.PcdCpuSetup.CStateAutoDemotion|0x0                                        # C-State Auto Demotion
@@ -277,22 +278,22 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceEnable|0x0                   
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceMemSize|0xff                                    # Processor trace memory allocation
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceOutputScheme|0x0                                # Processor Trace OutPut Scheme
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ProcessorTraceTimingPacket|0x0                                # Processor Trace Timing Packet
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[0]|0x0                                           # PS1 Current Threshold
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[1]|0x0                                           # PS1 Current Threshold
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[2]|0x0                                           # PS1 Current Threshold
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[3]|0x0                                           # PS1 Current Threshold
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[0]|0x0                                           # PS2 Current Threshold
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[1]|0x0                                           # PS2 Current Threshold
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[2]|0x0                                           # PS2 Current Threshold
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[3]|0x0                                           # PS2 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[0]|0x50                                          # PS1 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[1]|0x50                                          # PS1 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[2]|0x50                                          # PS1 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps1Threshold[3]|0x50                                          # PS1 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[0]|0x14                                          # PS2 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[1]|0x14                                          # PS2 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[2]|0x14                                          # PS2 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps2Threshold[3]|0x14                                          # PS2 Current Threshold
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Enable[0]|0x1                                              # PS3 Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Enable[1]|0x1                                              # PS3 Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Enable[2]|0x1                                              # PS3 Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Enable[3]|0x1                                              # PS3 Enable
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[0]|0x0                                           # PS3 Current Threshold
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[1]|0x0                                           # PS3 Current Threshold
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[2]|0x0                                           # PS3 Current Threshold
-  gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[3]|0x0                                           # PS3 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[0]|0x04                                          # PS3 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[1]|0x04                                          # PS3 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[2]|0x04                                          # PS3 Current Threshold
+gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps3Threshold[3]|0x04                                          # PS3 Current Threshold
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps4Enable[0]|0x1                                              # PS4 Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps4Enable[1]|0x1                                              # PS4 Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.Ps4Enable[2]|0x1                                              # PS4 Enable
@@ -3525,8 +3526,8 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.ERDMPRTC2D|0x1                              
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDMPRT|0x0                                                     #           BIT3 - Read MPR Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RCVET|0x1                                                      #           BIT4 - Receive Enable Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.JWRL|0x1                                                       #           BIT5 - Jedec Write Leveling
-gStructPcdTokenSpaceGuid.PcdSaSetup.EWRTC2D|0x0                                                    #           BIT6 - Early Write Time Centering 2D
-gStructPcdTokenSpaceGuid.PcdSaSetup.ERDTC2D|0x0                                                    #           BIT7 - Early Read Time Centering 2D
+gStructPcdTokenSpaceGuid.PcdSaSetup.EWRTC2D|0x1                                                    #           BIT6 - Early Write Time Centering 2D
+gStructPcdTokenSpaceGuid.PcdSaSetup.ERDTC2D|0x1                                                    #           BIT7 - Early Read Time Centering 2D
 gStructPcdTokenSpaceGuid.PcdSaSetup.UNMATCHEDWRTC1D|0x1                                            #           BIT8 - Unmatched Write Timing Centering 1D
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTC1D|0x1                                                     #           BIT9 - Write Timing Centering 1D
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRVC1D|0x1                                                     #           BIT10 - Write Voltage Centering 1D
@@ -3537,11 +3538,11 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RDTC2D|0x0                                  
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRVC2D|0x0                                                     #           BIT15 - Write Voltage Centering 2D
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDVC2D|0x0                                                     #           BIT16 - Read Voltage Centering 2D
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRDSEQT|0x0                                                    #           BIT17 - Write Drive Strength/Equalization 2D*
-gStructPcdTokenSpaceGuid.PcdSaSetup.DQSRF|0x0                                                      #           BIT18 - DQS Rise/Fall
+gStructPcdTokenSpaceGuid.PcdSaSetup.DQSRF|0x1                                                      #           BIT18 - DQS Rise/Fall
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDDQSODTT|0x0                                                  #           BIT19 - Read DQS ODT Training
-gStructPcdTokenSpaceGuid.PcdSaSetup.RDEQT|0x0                                                      #           BIT20 - Read Equalization Training*
+gStructPcdTokenSpaceGuid.PcdSaSetup.RDEQT|0x1                                                      #           BIT20 - Read Equalization Training*
 gStructPcdTokenSpaceGuid.PcdSaSetup.DUNITC|0x1                                                     #           BIT21 - Dunit Configuration
-gStructPcdTokenSpaceGuid.PcdSaSetup.CMDVC|0x0                                                      #           BIT22 - Command Voltage Centering
+gStructPcdTokenSpaceGuid.PcdSaSetup.CMDVC|0x1                                                      #           BIT22 - Command Voltage Centering
 gStructPcdTokenSpaceGuid.PcdSaSetup.LCT|0x0                                                        #           BIT23 - Late Command Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RTL|0x0                                                        #           BIT24 - Round Trip Latency
 gStructPcdTokenSpaceGuid.PcdSaSetup.TAT|0x1                                                        #           BIT25 - Turn Around Timing Training
@@ -3553,7 +3554,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RMC|0x0                                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.PRETRAIN|0x1                                                   #           BIT31 - PreTraining
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPICODELUT|0x0                                               # Offset 56 BIT0 - DCC PI Code LUT Calibration
-gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMODTT|0x0                                                   #           BIT1 - Dimm ODT Training*
+gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMODTT|0x1                                                   #           BIT1 - Dimm ODT Training*
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMRONT|0x0                                                   #           BIT2 - DIMM RON Training*
 gStructPcdTokenSpaceGuid.PcdSaSetup.TXTCO|0x0                                                      #           BIT3 - TxDqTCO Comp Training*
 gStructPcdTokenSpaceGuid.PcdSaSetup.CLKTCO|0x0                                                     #           BIT4 - ClkTCO Comp Training*
@@ -3569,15 +3570,15 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.VDDQT|0x0                                   
 gStructPcdTokenSpaceGuid.PcdSaSetup.RMTBIT|0x0                                                     #           BIT14 - Rank Margin Tool Per Bit
 gStructPcdTokenSpaceGuid.PcdSaSetup.DQDQSSWZ|0x1                                                   #           BIT15 - Map Dq Dqs Swizzle
 gStructPcdTokenSpaceGuid.PcdSaSetup.REFPI|0x1                                                      #           BIT16 - Ref PI Calibration
-gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5READDCA|0x0                                              #           BIT17 - DRAM DCC for LP5 READ DCA
+gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5READDCA|0x1                                              #           BIT17 - DRAM DCC for LP5 READ DCA
 gStructPcdTokenSpaceGuid.PcdSaSetup.VCCCLKFF|0x0                                                   #           BIT18 - VccCLK FF Offset Correction
 gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCDQS|0x0                                                 #           BIT19 - Functional Duty Cycle Correction for DDR5 DQS
 gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCCLK|0x0                                                 #           BIT20 - Functional Duty Cycle Correction for DDR5 CLK
 gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCWCK|0x0                                                 #           BIT21 - Functional Duty Cycle Correction for LP5 WCK
 gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCDQ|0x0                                                  #           BIT22 - Functional Duty Cycle Correction for Data DQ
-gStructPcdTokenSpaceGuid.PcdSaSetup.DATAPILIN|0x0                                                  #           BIT23 - Data PI Linearity Calibration
+gStructPcdTokenSpaceGuid.PcdSaSetup.DATAPILIN|0x1                                                  #           BIT23 - Data PI Linearity Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DDR5XTALK|0x0                                                  #           BIT24 - Ddr5 Rx Cross-Talk Cancellation
-gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5WCKDCA|0x0                                               #           BIT25 - DRAM DCC for LP5 WCK DCA
+gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5WCKDCA|0x1                                               #           BIT25 - DRAM DCC for LP5 WCK DCA
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXUNMATCHEDCAL|0x1                                             #           BIT26 - Unmatched Rx Calibaration
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTDIMMDFE|0x0                                                 #           BIT27 - DIMM DFE Training
 
@@ -3591,12 +3592,12 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.OPTIMIZECOMP|0x0                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTRETRAIN|0x0                                                 #           BIT8 - Write Dq/Dqs Retraining
 gStructPcdTokenSpaceGuid.PcdSaSetup.DDRPRECOMP|0x0                                                 #           BIT9 - Ddr Comp Calibration Pre Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.TLINECLKCAL|0x1                                                #           BIT13 - Tline Clk Calibration
-gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPISERIALCAL|0x0                                             #           BIT14 - DCC PI Serializer Calibration
+gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPISERIALCAL|0x1                                             #           BIT14 - DCC PI Serializer Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.PHASECLKCAL|0x0                                                #           BIT15 - DCC Phase Clk Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.WCKPADDCCCAL|0x1                                               #           BIT16 - Wck Pad DCC Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDCTLET|0x0                                                    #           BIT17 - Read CTLE Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDDQODTT|0x0                                                   #           BIT18 - Read DQ ODT Training
-gStructPcdTokenSpaceGuid.PcdSaSetup.EMPHASIS|0x0                                                   #           BIT19 - Pre-Emphasis LP5 Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.EMPHASIS|0x1                                                   #           BIT19 - Pre-Emphasis LP5 Training
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcTimeMeasure|0x0                                             # Offset 64 Bit 0 - Time Measure
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcFastBoot|0x1                                                #           Bit 1 - Fast Boot
@@ -3789,6 +3790,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.PprForceRepair|0x0                          
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashInterleaveBit|0x3                                     # Offset 320 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashMask|0x838                                            # Offset 321 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
+gStructPcdTokenSpaceGuid.PcdSaSetup.ForceCkdBypass|0x0                                             # Offset 323 Force CKD in Bypass Mode if CKD DIMM is detected: 0 = Single PLL mode (Default), 1 = Bypass mode.
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.MimicWcDisaplayInIpq|0x0                                       # Offset 340 Bit 3-6    Mimic WC display pattern in IPQ
 gStructPcdTokenSpaceGuid.PcdSaSetup.FakeSagv|0                                                     #            Bit 7      Fake SAGV

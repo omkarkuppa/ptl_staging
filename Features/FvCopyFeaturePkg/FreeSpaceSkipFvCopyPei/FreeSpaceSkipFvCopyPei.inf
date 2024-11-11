@@ -1,0 +1,61 @@
+## @file
+#  Free Space Skip Firmware Volume Copy Library
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+##
+
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FreeSpaceSkipFvCopyPei
+  FILE_GUID                      = 2896DAE0-778A-4231-86DF-1F54F752DB7B
+  VERSION_STRING                 = 1.0
+  MODULE_TYPE                    = PEIM
+  ENTRY_POINT                    = FreeSpaceSkipEntryPoint
+
+
+[Sources]
+  FreeSpaceSkipFvCopyPei.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  PerformanceLib
+  PcdLib
+  PeiServicesLib
+  PeiServicesTablePointerLib
+  PeimEntryPoint
+
+[FixedPcd]
+  gSiPkgTokenSpaceGuid.PcdSpiDmaEnable            ## CONSUMES
+
+[Ppis]
+  gEdkiiPeiFirmwareVolumeShadowPpiGuid            ## CONSUMES
+  gSpiDmaReadPpiGuid                              ## CONSUMES
+
+[Guids]
+  gEfiFirmwareFileSystem2Guid
+  gEfiFirmwareFileSystem3Guid                     ## CONSUMES
+
+[Depex]
+  gEfiPeiMemoryDiscoveredPpiGuid

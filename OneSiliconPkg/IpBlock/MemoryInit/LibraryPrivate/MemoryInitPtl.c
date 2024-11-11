@@ -42,6 +42,7 @@
 #include "MrcDdr5.h"
 #include "MrcDdr5Settings.h"
 #include "CMrcStatsTracker.h"
+#include <ConfigBlock/SiPreMemConfig.h>
 #include <Library/PeiHostBridgeIpStatusLib.h>
 #include <Library/MemoryInstallLib.h>
 #include <Library/DomainIGpuInit.h>
@@ -68,6 +69,8 @@
 #include <IndustryStandard/SmBios.h>
 #include <Library/PeiHostBridgeInitLib.h>
 #include <Library/PeiTelemetryInitLib.h>
+#include <Library/TxtLib.h>
+#include <Register/Cpuid.h>
 
 //
 // Driver Dependent PPI Prototypes
@@ -755,6 +758,11 @@ PeimMemoryInit (
   MrcStatus = mrcSuccess;
 
   //
+  // Unlock memory if it is necessary.
+  //
+  UnlockMemory (MrcData);
+
+  //
   // Get MRC BootMode
   //
   MrcBootMode = (SysBootMode == BOOT_ON_S3_RESUME) ? bmS3 : MrcGetBootMode (MrcData);
@@ -1148,6 +1156,15 @@ DEBUG_CODE_END();
         }
         break;
 
+      case mrcDramNotSupportEdvfsc:
+        // Clear MrcSave and MrcOutputs as we are going to restart the MRC core with ExtInputs->DvfscEnabled = 0
+        ZeroMem (&MrcData->Save, sizeof (MrcSave));
+        ZeroMem (&MrcData->Outputs, sizeof (MrcOutput));
+        MRC_DEBUG_MSG_OPEN (MrcData, Inputs->SerialDebugLevel, Inputs->DebugStream);
+        ExtInputs->DvfscEnabled = FALSE;
+        DEBUG ((DEBUG_ERROR, "Re-run MRC with E-DVFSC disabled\n"));
+        break;
+
       case mrcResetFullTrain:
         // Margin Check failed, reset and do full training
         REPORT_STATUS_CODE (EFI_ERROR_CODE, EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_CORRECTABLE);
@@ -1211,7 +1228,7 @@ DEBUG_CODE_END();
         ASSERT_EFI_ERROR (EFI_DEVICE_ERROR);
         return EFI_DEVICE_ERROR;
     }
-  } while (MrcStatus == mrcColdBootRequired);
+  } while ((MrcStatus == mrcColdBootRequired) || (MrcStatus == mrcDramNotSupportEdvfsc));
 
   // Set the MSR bit VIRTUAL_MSR_CR_POWER_CTL.SAPM_iMC_C2_POLICY(bit2) to 0.
   MsrPowerCtl.Uint64 = MrcCall->MrcReadMsr64 (MSR_POWER_CTL);
@@ -1463,6 +1480,8 @@ InstallEfiMemory (
   UINT64                                Tom;
   PEI_DDR_MAIN_MEMORY_MAP_RANGE         MainMemoryMap[MAX_RANGES];
   UINT8                                 MainMemoryIndex;
+  SI_PREMEM_CONFIG                      *SiPreMemConfig;
+  UINT64                                StaticContentSize;
 
   TseDataHob = NULL;
   MemorySubSystemConfig = NULL;
@@ -1490,6 +1509,7 @@ InstallEfiMemory (
   InstalledPeiMemoryLength = 0;
   ResourceAttributeTested = 0;
   ResourceAttribute = 0;
+  StaticContentSize = 0;
 
   FspReportedHobMemoryLength = 0;
   //
@@ -1504,6 +1524,16 @@ InstallEfiMemory (
              NULL,
              (VOID **) &SiPreMemPolicyPpi
              );
+
+  SiPreMemConfig = NULL;
+  if (SiPreMemPolicyPpi != NULL) {
+    Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
+    if (Status != EFI_SUCCESS) {
+      DEBUG ((DEBUG_ERROR, "Unable to Get gSiPreMemConfigGuid block\n"));
+      ASSERT_EFI_ERROR (Status);
+    }
+  }
+
   MemConfigNoCrc = NULL;
   if (SiPreMemPolicyPpi != NULL) {
     Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
@@ -1873,6 +1903,39 @@ InstallEfiMemory (
     Touud -= TopUseableMemAddr;
 
     DEBUG((DEBUG_INFO, "[TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+
+    //
+    // Memory Allocation @4GB
+    //
+    if(SiPreMemConfig != NULL) {
+      if (SiPreMemConfig->StaticContentSizeAt4Gb != 0) {
+        StaticContentSize = MultU64x32(SiPreMemConfig->StaticContentSizeAt4Gb, SIZE_1MB);
+        DEBUG ((DEBUG_INFO, "StaticContent Base = 0x%lx Size = 0x%lx\n", TopUseableMemAddr, StaticContentSize));
+        ResourceType      = EFI_RESOURCE_MEMORY_RESERVED;
+        ResourceAttribute = EFI_RESOURCE_ATTRIBUTE_PRESENT |
+                          EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+                          ResourceAttributeTested |
+                          EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
+                          EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
+                          EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
+                          EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE;
+        BuildResourceDescriptorHob (
+          ResourceType,                           // MemoryType,
+          ResourceAttribute,                      // MemoryAttribute
+          TopUseableMemAddr,                      // MemoryBegin
+          StaticContentSize                       // MemoryLength
+        );
+        BuildMemoryAllocationHob (
+          TopUseableMemAddr,
+          StaticContentSize,
+          EfiReservedMemoryType
+          );
+        TopUseableMemAddr += StaticContentSize;
+        Touud -= StaticContentSize;
+      }
+    }
+    DEBUG((DEBUG_INFO, "[Post Static Memory Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+
 
     //
     // Memory Allocation for Prmrr
@@ -2444,6 +2507,120 @@ MrcUpdateBdatHobIds (
 }
 
 /**
+  Determines whether or not the platform has executed a TXT launch by
+  examining the TPM Establishment bit.
+  @param[in] VOID
+  @retval TRUE        - If the TPM establishment bit is asserted.
+  @retval FALSE       - If the TPM establishment bit is unasserted.
+**/
+BOOLEAN
+IsEstablishmentBitAsserted (
+  VOID
+  )
+{
+  UINT8             Access;
+  UINT16            TimeOutCount;
+
+  //
+  // Set TPM.ACCESS polling timeout about 750ms.
+  //
+  TimeOutCount = TPM_TIME_OUT;
+  do {
+    //
+    // Read TPM status register
+    //
+    Access = MmioRead8 (TPM_STATUS_REG_ADDRESS);
+
+    //
+    // if TPM.Access == 0xFF, TPM is not present.
+    //
+    if (Access == 0xFF) {
+      return FALSE;
+    }
+    //
+    // Check tpmRegValidSts bit before checking establishment bit.
+    //
+    if ((Access & 0x80) == 0x80) {
+      //
+      // tpmRegValidSts set, we can check establishment bit now.
+      //
+      break;
+    } else {
+      //
+      // Delay 1ms
+      //
+      MicroSecondDelay (1000);
+    }
+
+    TimeOutCount--;
+  } while (TimeOutCount != 0);
+
+  //
+  // ValidSts is not set.
+  //
+  if ((Access & 0x80) != 0x80) {
+    return FALSE;
+  }
+  //
+  // The bit we're interested in uses negative logic:
+  // If bit 0 == 1 then return False,
+  // Else return True.
+  //
+  return (BOOLEAN) ((Access & 0x1) ? FALSE : TRUE);
+}
+
+/**
+  Unlock memory when security is set and TxT is not enabled.
+  @param[in] MrcData     - Mrc global data.
+**/
+void
+UnlockMemory (
+  IN CONST MrcParameters    *CONST  MrcData
+  )
+{
+  CPUID_VERSION_INFO_ECX  CpuidVersionInfoEcx;
+  UINT32                  Data32;
+  const MrcInput          *Inputs;
+  MRC_FUNCTION            *MrcCall;
+  MSR_LTCTRLSTS_REGISTER  MsrLtctrlsts;
+
+  Inputs = &MrcData->Inputs;
+  MrcCall = Inputs->Call.Func;
+
+  Data32 = 0;
+
+  AsmCpuid (
+      CPUID_VERSION_INFO,
+      NULL,
+      NULL,
+      &CpuidVersionInfoEcx.Uint32,
+      NULL
+      );
+  if ((CpuidVersionInfoEcx.Uint32 & BIT6)) {
+    DEBUG ((DEBUG_INFO, "Processor supports TXT\n"));
+
+    Data32 = CheckSmxCapabilities();
+
+    if (Data32 & BIT0) {
+      DEBUG ((DEBUG_INFO, "Platform / PCH supports TXT\n"));
+      MsrLtctrlsts.Uint64 = MrcCall->MrcReadMsr64 (MSR_LTCTRLSTS);
+      if (MsrLtctrlsts.Bits.Memlockcpu == 0 && MsrLtctrlsts.Bits.Memlockdev == 0) {
+        return;
+      }
+
+      if (!(IsEstablishmentBitAsserted ())) {
+        DEBUG ((DEBUG_INFO, "Unlock memory\n"));
+        MrcCall->MrcWriteMsr64 (MSR_LT_UNLOCK_MEMORY, 0);
+      }
+    } else {
+      DEBUG ((DEBUG_INFO, "Platform / PCH does not support TxT\n"));
+    }
+  } else {
+    DEBUG ((DEBUG_INFO, "Processor does not support TxT\n"));
+  }
+}
+
+/**
   Determine the current valid state of PmaCce.
 
   @param[in] CpuMemoryInitConfig   - The Cpu Memory Init config.
@@ -2765,7 +2942,7 @@ MrcSetupMrcData (
   DEBUG ((DEBUG_INFO, "ExtInputs: 0x%lx, RcompTarget: 0x%lx\n", (UINTN)ExtInputs, (UINTN)ExtInputs->RcompTarget));
   ASSERT ((OFFSET_OF(MRC_EXT_INPUTS_TYPE, RcompTarget) % sizeof(UINT16)) == 0);
   DEBUG ((DEBUG_INFO, "Outputs:   0x%lx, RcompTarget: 0x%lx\n", (UINTN)&MrcData->Outputs, (UINTN)MrcData->Outputs.RcompTarget));
-  ASSERT ((OFFSET_OF(MrcOutput, RcompTarget) % sizeof(UINT16)) == 0);  
+  ASSERT ((OFFSET_OF(MrcOutput, RcompTarget) % sizeof(UINT16)) == 0);
 
   Inputs->MaxVrefSamplesOvrd  = 0;
 
@@ -2890,7 +3067,7 @@ DEBUG_CODE_END();
   Inputs->Lp58BankMode = 0; // Lp5 8-Bank Mode
   Inputs->EnableOdtMatrix = TRUE;
   Inputs->IsCaDeselectStress    = FALSE;
-  Inputs->IsIOTestAddressRandom = FALSE;
+  Inputs->IsIOTestAddressRandom = FALSE; // Enabled on the fly inside RMT; do not enable here
   Inputs->RxDqVrefPerBit = TRUE; // Enable the RX DQ VREF PER BIT.
   Inputs->IsKeepUcssPostMrc = 0;
 
@@ -3130,6 +3307,8 @@ DEBUG_CODE_END();
       ExtInputs->TrainingEnables3.EMPHASIS       = 0;
       ExtInputs->TrainingEnables3.DIMMRXOFFSET   = 0;
       ExtInputs->TrainingEnables3.VIEWPINCAL     = 0;
+      ExtInputs->TrainingEnables3.WCKCLKPREDCC   = 0;
+      ExtInputs->TrainingEnables3.DQSPADDCC      = 0;
     }
   }
 
@@ -3425,8 +3604,9 @@ BuildMemoryInfoDataHob (
       ChannelInfo->Status           = ChannelSave->Status;
       ChannelInfo->ChannelId        = Channel;
       ChannelInfo->DimmCount        = (UINT8) ChannelSave->DimmCount;
+
       for (Profile = STD_PROFILE; Profile < MAX_PROFILE_NUM; Profile++) {
-        MrcCall->MrcCopyMem ((UINT8 *) &ChannelInfo->Timing[Profile], (UINT8 *) &ChannelSave->Timing[Profile], sizeof (MrcTiming));
+        MrcCall->MrcCopyMem ((UINT8 *) &ChannelInfo->Timing[Profile], (UINT8 *) &Outputs->Timing[Profile], sizeof (MrcTiming));
       }
       IsChannelPopulated = FALSE;
       for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
@@ -3626,9 +3806,9 @@ SetLastIbeccOpMode (
   )
 {
   M_PCU_CR_SSKPD_PCU_STRUCT SskpdData64 = {0};
-  UINTN                     MchBar;
+  UINT64                    MchBar;
 
-  MchBar = (UINT32) GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBaseLow);
+  MchBar = GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBaseLow);
 
   SskpdData64.Data = MmioRead64 (MchBar + SSKPD_PCU_REG);
   DEBUG ((DEBUG_INFO, "%a SSKPD_PCU R = 0x%llx\n", __FUNCTION__, SskpdData64.Data));

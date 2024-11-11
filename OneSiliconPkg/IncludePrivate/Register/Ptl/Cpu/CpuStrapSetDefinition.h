@@ -33,11 +33,13 @@ typedef struct {
   UINT32 Bist                       :  1; ///< [5]    Built In Self Test (BIST) initiation.
   UINT32 FlexRatio                  :  6; ///< [11:6] Flex Ratio.
   UINT32 FastWakeup                 :  1; ///< [12]   Processor boot ratio; When set allows the processor to power up in maximum non-turbo ratio from the following boot.
-  UINT32 Reserved2                  :  3; ///< [15:13]Reserved
+  UINT32 Reserved2                  :  1; ///< [13]Reserved
+  UINT32 ReduceXecores              :  1; ///< [14] ReduceXecores
+  UINT32 Reserved3                  :  1; ///< [15]Reserved
   UINT32 EnDebugDisable             :  1; ///< [16]   Encrypted debug disable.
   UINT32 NumberOfLpAtomCores        :  6; ///< [22:17]Number of enabled off ring (in NOC cluster) Atom cores.
   UINT32 NumberOfNonLpAtomCores     :  5; ///< [27:23]Number of enabled on ring (in CCF cluster) Atom cores.
-  UINT32 Reserved3                  :  2; ///< [29:28]Reserved.
+  UINT32 Reserved4                  :  2; ///< [29:28]Reserved.
   UINT32 KvmrCaptureDis             :  1; ///< [30]   Disable CSME VDM messages by OEM.
   UINT32 KvmrSpriteDis              :  1; ///< [31]   Disable CSME VDM messages by OEM.
 } CPU_STRAP_SET;

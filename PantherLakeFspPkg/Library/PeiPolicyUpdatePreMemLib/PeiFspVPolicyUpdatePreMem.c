@@ -58,4 +58,3 @@ FspUpdatePeiFspVPolicyPreMem (
 
   return EFI_SUCCESS;
 }
-

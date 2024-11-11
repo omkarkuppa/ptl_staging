@@ -475,8 +475,7 @@
   UCMS, 8,  // Offset(2357),  Option to select UCSI Version
   UCG1, 32, // Offset(2358),  Gpio for UCMC Port 1 Interrupt
   UCG2, 32, // Offset(2362),  Gpio for UCMC Port 2 Interrupt
-  RPSG, 32, // Offset(2366),  Gpio for Retimer Power state
-  // Offset(2370) : Offset(2376), Reserved bytes
+  // Offset(2366) : Offset(2376), Reserved bytes
   Offset(2377),
   UDGF, 8,  // Offset(2377),  Upstream Facing port or Downstream Facing port Global Flag from LPC EC
   UDUP, 8,  // Offset(2378),  Upstream Facing port or Downstream Facing port number from LPC EC

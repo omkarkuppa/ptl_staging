@@ -122,6 +122,10 @@ const SaveDataControl SaveDataMcPerSaGv64PerMc[] = {
   {0xd960, 0xd960}, // MC0_SC_QOS2
 };
 
+const SaveDataControl SaveDataVccClkPerSaGv32PerMc[] = {
+  {0x4798, 0x4798}, // DDRVCCCLK_SBMEM0_CR_SPARE
+};
+
 const SaveDataControl SaveDataMcPerSaGv64PerCh[] = {
   {0xe000, 0xe000}, // MC0_CH0_CR_TC_PRE
   {0xe050, 0xe050}, // MC0_CH0_CR_TC_PWRDN
@@ -198,21 +202,11 @@ const SaveDataControl SaveDataDdrioPerSaGv32[] = {
   {0x3f00, 0x3f10}, // DDRMISCS_CR_DDRPHY_DFI_LPCTRL0, DDRMISCS_CR_DDRPHY_DFI_LPCTRL1, DDRMISCS_CR_DDRPHY_DFI_LPCTRL2, DDRSCRAM_CR_VISA2VIEW,
                     // MCMISCS_CR_SPARE
   {0x3fa4, 0x3fa8}, // DDRSCRAM_CR_CS_GEARDOWN, DDRSCRAM_CR_TLCLKGATING
-  {0x4160, 0x4160}, // DDRDATA_SBMEM0_CR_SPARE
-  {0x41e0, 0x41e0}, // DDRDATA_SBMEM1_CR_SPARE
-  {0x4260, 0x4260}, // DDRDATA_SBMEM2_CR_SPARE
-  {0x42e0, 0x42e0}, // DDRDATA_SBMEM3_CR_SPARE
-  {0x4360, 0x4360}, // DDRDATA_SBMEM4_CR_SPARE
-  {0x43e0, 0x43e0}, // DDRDATA_SBMEM5_CR_SPARE
-  {0x4460, 0x4460}, // DDRDATA_SBMEM6_CR_SPARE
-  {0x44e0, 0x44e0}, // DDRDATA_SBMEM7_CR_SPARE
-  {0x45dc, 0x45dc}, // DDRCCC_SBMEM0_CR_SPARE
-  {0x465c, 0x465c}, // DDRCCC_SBMEM1_CR_SPARE
-  {0x46dc, 0x46dc}, // DDRCCC_SBMEM2_CR_SPARE
-  {0x475c, 0x475c}, // DDRCCC_SBMEM3_CR_SPARE
-  {0x4798, 0x4798}, // DDRVCCCLK_SBMEM0_CR_SPARE
-  {0x4818, 0x4818}, // DDRVCCCLK_SBMEM1_CR_SPARE
   {0x49a0, 0x49a0}, // DDRPHY_DDRCOMP_SBMEM_CR_SPARE
+};
+
+const SaveDataControl SaveDataDdrioPerSaGv32PerDataSbmem[] = { // DDRDATA_SBMEM needs to be separate group due to unique register offsets spacing 
+  {0x4160, 0x4160}, // DDRDATA_SBMEM0_CR_SPARE
 };
 
 const SaveDataControl SaveDataDdrioPerSaGv32PerPG[] = { // Covers partitions PG[0...9] and PGTERM[0...1]
@@ -251,6 +245,7 @@ const SaveDataControl SaveDataDdrioPerSaGv32PerCCCShared[] = {
                     // DDRCCC_SHARED0_CR_DDRCRVCCDLLCOMPCCCOFFSET, DDRCCC_SHARED0_CR_DDR_PMBONUS0
   {0x3268, 0x3270}, // DDRCCC_SHARED0_CR_DDRCRDLLCBTUNEOVRD, DDRCCC_SHARED0_CR_PHCLOCKREPEATER2, DDRCCC_SHARED0_CR_PHCLOCKREPEATER3
   {0x327c, 0x327c}, // DDRCCC_SHARED0_CR_DLLTIMERCONTROL
+  {0x45dc, 0x45dc}, // DDRCCC_SBMEM0_CR_SPARE
 };
 
 
@@ -299,6 +294,7 @@ const SaveDataLoopControl SaveDataLoop[] = {
   {NULL,                                0,                                                            PtGenFsm,     StCommon, R32Bit, STR ("GenericMrsFsm Control")},
   {NULL,                                0,                                                            PtGenFsm,     StSaGv,   R32Bit, STR ("GenericMrsFsm Storage/Timing")},
   {SaveDataMcPerSaGv32PerMc,            SAVE_DATA_CONTROL_SIZE (SaveDataMcPerSaGv32PerMc),            PtMc,         StSaGv,   R32Bit, STR (SaveDataMcPerSaGv32PerMc)},
+  {SaveDataVccClkPerSaGv32PerMc,        SAVE_DATA_CONTROL_SIZE (SaveDataVccClkPerSaGv32PerMc),        PtVccClk,     StSaGv,   R32Bit, STR (SaveDataVccClkPerSaGv32PerMc)},
   {SaveDataMcPerSaGv32PerCh,            SAVE_DATA_CONTROL_SIZE (SaveDataMcPerSaGv32PerCh),            PtCh,         StSaGv,   R32Bit, STR (SaveDataMcPerSaGv32PerCh)},
   {SaveDataMcPerSaGv64PerMc,            SAVE_DATA_CONTROL_SIZE (SaveDataMcPerSaGv64PerMc),            PtMc,         StSaGv,   R64Bit, STR (SaveDataMcPerSaGv64PerMc)},
   {SaveDataMcPerSaGv64PerCh,            SAVE_DATA_CONTROL_SIZE (SaveDataMcPerSaGv64PerCh),            PtCh,         StSaGv,   R64Bit, STR (SaveDataMcPerSaGv64PerCh)},
@@ -308,6 +304,7 @@ const SaveDataLoopControl SaveDataLoop[] = {
   {SaveDataDdrioPerSaGv32PerCCC,        SAVE_DATA_CONTROL_SIZE (SaveDataDdrioPerSaGv32PerCCC),        PtCCC,        StSaGv,   R32Bit, STR (SaveDataDdrioPerSaGv32PerCCC)},
   {SaveDataDdrioPerSaGv32PerCCCShared,  SAVE_DATA_CONTROL_SIZE (SaveDataDdrioPerSaGv32PerCCCShared),  PtCCCShared,  StSaGv,   R32Bit, STR (SaveDataDdrioPerSaGv32PerCCCShared)},
   {SaveDataDdrioPerSaGv32PerDataShared, SAVE_DATA_CONTROL_SIZE (SaveDataDdrioPerSaGv32PerDataShared), PtDATAShared, StSaGv,   R32Bit, STR (SaveDataDdrioPerSaGv32PerDataShared)},
+  {SaveDataDdrioPerSaGv32PerDataSbmem,  SAVE_DATA_CONTROL_SIZE (SaveDataDdrioPerSaGv32PerDataSbmem),  PtDATASbmem,  StSaGv,   R32Bit, STR (SaveDataDdrioPerSaGv32PerDataSbmem)},
   {SaveDataDdrioPerSaGv32PerPG,         SAVE_DATA_CONTROL_SIZE (SaveDataDdrioPerSaGv32PerPG),         PtPG,         StSaGv,   R32Bit, STR (SaveDataDdrioPerSaGv32PerPG)},
   {SaveDataDdrioCommon32PerByte,        SAVE_DATA_CONTROL_SIZE (SaveDataDdrioCommon32PerByte),        PtByte,       StCommon, R32Bit, STR (SaveDataDdrioCommon32PerByte)},
   {SaveDataDdrioCommon32,               SAVE_DATA_CONTROL_SIZE (SaveDataDdrioCommon32),               PtNone,       StCommon, R32Bit, STR (SaveDataDdrioCommon32)},
@@ -591,6 +588,7 @@ SaveRestoreExecution (
   UINT8         Index;
   UINT8         Controller;
   UINT8         Channel;
+  UINT8         PartIdx;
   UINT8         Byte;
   BOOLEAN       Is32Bit;
   MrcStatus     Status;
@@ -628,6 +626,8 @@ SaveRestoreExecution (
         || LoopControl->PScope == PtCCC
         || LoopControl->PScope == PtCCCShared
         || LoopControl->PScope == PtDATAShared
+        || LoopControl->PScope == PtDATASbmem
+        || LoopControl->PScope == PtVccClk
         || LoopControl->PScope == PtPG) {
         continue;
       }
@@ -683,6 +683,9 @@ SaveRestoreExecution (
       case PtByte:
         for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
           for (Channel = 0; Channel < MrcData->Outputs.MaxChannels; Channel++) {
+            if (!MrcGetHwChannelExists (MrcData, Controller, Channel)) {
+                continue;
+            }
             for (Byte = 0; Byte < MrcData->Outputs.SdramCount; Byte++) {
               MRC_DEBUG_MSG (Debug, DebugLevel, "\nMC%u C%u B%u:", Controller, Channel, Byte);
               RegOffset = MrcGetDataOffset (MrcData, DATA0CH0_CR_DDRCRWRRETRAINSWIZZLECONTROL_REG, Controller, Channel, Byte) - DATA0CH0_CR_DDRCRWRRETRAINSWIZZLECONTROL_REG;
@@ -694,38 +697,74 @@ SaveRestoreExecution (
         break;
 
       case PtCCC:
-        for (Channel = 0; Channel < MRC_CCC_NUM; Channel++) {
-          MRC_DEBUG_MSG (Debug, DebugLevel, "\nCCC%u", Channel);
-          RegOffset = INC_OFFSET_CALC_CH (CH0CCC_CR_DDRCRCLKCOMP_REG, CH1CCC_CR_DDRCRCLKCOMP_REG, Channel);
+        for (PartIdx = 0; PartIdx < MRC_CCC_NUM; PartIdx++) {
+          if (!(MrcGetHwPartitionExists (MrcData, PartitionCcc, PartIdx, MRC_IGNORE_ARG))) {
+            continue;
+          }
+          MRC_DEBUG_MSG (Debug, DebugLevel, "\nCCC%u", PartIdx);
+          RegOffset = INC_OFFSET_CALC_INDEX (CH0CCC_CR_DDRCRCLKCOMP_REG, CH1CCC_CR_DDRCRCLKCOMP_REG, PartIdx);
           LocalRegLoopCnt += SaveRestoreRegisters (MrcData, LoopControl->SaveDataControlData, LoopControl->DataSize, RegOffset, &McRegister, SaveType, Is32Bit, SkipPrint);
-        } // for Channel
+        } // for PartIdx
         TotalRegCnt += LocalRegLoopCnt;
         break;
 
       case PtCCCShared:
-        for (Channel = 0; Channel < MRC_CCC_SHARED_NUM; Channel++) {
-          MRC_DEBUG_MSG (Debug, DebugLevel, "\nCCCShared%u", Channel);
-          RegOffset = INC_OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRVCCCLKCOMPDATACCC_REG, DDRCCC_SHARED1_CR_DDRCRVCCCLKCOMPDATACCC_REG, Channel);
+        for (PartIdx = 0; PartIdx < MRC_CCC_SHARED_NUM; PartIdx++) {
+          if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, PartIdx, MRC_IGNORE_ARG))) {
+            continue;
+          }
+          MRC_DEBUG_MSG (Debug, DebugLevel, "\nCCCShared%u", PartIdx);
+          RegOffset = INC_OFFSET_CALC_INDEX (DDRCCC_SHARED0_CR_DDRCRVCCCLKCOMPDATACCC_REG, DDRCCC_SHARED1_CR_DDRCRVCCCLKCOMPDATACCC_REG, PartIdx);
           LocalRegLoopCnt += SaveRestoreRegisters (MrcData, LoopControl->SaveDataControlData, LoopControl->DataSize, RegOffset, &McRegister, SaveType, Is32Bit, SkipPrint);
-        } // for Channel
+        } // for PartIdx
         TotalRegCnt += LocalRegLoopCnt;
         break;
 
       case PtDATAShared:
-        for (Channel = 0; Channel < MRC_DATA_SHARED_NUM; Channel++) {
-          MRC_DEBUG_MSG (Debug, DebugLevel, "\nDATAShared%u", Channel);
-          RegOffset = INC_OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRDLLCONTROL1_REG, DDRDATA_SHARED1_CR_DDRCRDLLCONTROL1_REG, Channel);
+        for (PartIdx = 0; PartIdx < MRC_DATA_SHARED_NUM; PartIdx++) {
+          if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, PartIdx, MRC_IGNORE_ARG))) {
+            continue;
+          }
+          MRC_DEBUG_MSG (Debug, DebugLevel, "\nDATAShared%u", PartIdx);
+          RegOffset = INC_OFFSET_CALC_INDEX (DDRDATA_SHARED0_CR_DDRCRDLLCONTROL1_REG, DDRDATA_SHARED1_CR_DDRCRDLLCONTROL1_REG, PartIdx);
           LocalRegLoopCnt += SaveRestoreRegisters (MrcData, LoopControl->SaveDataControlData, LoopControl->DataSize, RegOffset, &McRegister, SaveType, Is32Bit, SkipPrint);
-        } // for Channel
+        } // for PartIdx
+        TotalRegCnt += LocalRegLoopCnt;
+        break;
+
+      case PtDATASbmem:
+        for (PartIdx = 0; PartIdx < MRC_DATA_SHARED_NUM; PartIdx++) {
+          if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, PartIdx, MRC_IGNORE_ARG))) {
+            continue;
+          }
+          MRC_DEBUG_MSG (Debug, DebugLevel, "\nDATASbmem%u", PartIdx);
+          RegOffset = INC_OFFSET_CALC_INDEX (DDRDATA_SBMEM0_CR_SPARE_REG, DDRDATA_SBMEM1_CR_SPARE_REG, PartIdx);
+          LocalRegLoopCnt += SaveRestoreRegisters (MrcData, LoopControl->SaveDataControlData, LoopControl->DataSize, RegOffset, &McRegister, SaveType, Is32Bit, SkipPrint);
+        } // for PartIdx
+        TotalRegCnt += LocalRegLoopCnt;
+        break;
+
+      case PtVccClk:
+        for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+          if (!MrcGetHwControllerExists (MrcData, Controller)) {
+            continue;
+          }
+          MRC_DEBUG_MSG (Debug, DebugLevel, "\nVccClk%u:", Controller);
+          RegOffset = INC_OFFSET_CALC_CH (DDRVCCCLK_SBMEM0_CR_SPARE_REG, DDRVCCCLK_SBMEM1_CR_SPARE_REG, Controller);
+          LocalRegLoopCnt += SaveRestoreRegisters (MrcData, LoopControl->SaveDataControlData, LoopControl->DataSize, RegOffset, &McRegister, SaveType, Is32Bit, SkipPrint);
+        } // for Controller
         TotalRegCnt += LocalRegLoopCnt;
         break;
 
       case PtPG:
-        for (Channel = 0; Channel < MRC_PG_NUM; Channel++) {
-          MRC_DEBUG_MSG (Debug, DebugLevel, "\nPG%u", Channel);
-          RegOffset = INC_OFFSET_CALC_CH (DDRPGTERMCR0_CR_LVRVOLTAGESENSOR_REG, DDRPGCR0_CR_LVRVOLTAGESENSOR_REG, Channel);
+        for (PartIdx = 0; PartIdx < MRC_PG_NUM; PartIdx++) {
+          if (!(MrcGetHwPartitionExists (MrcData, PartitionPg, PartIdx, MRC_IGNORE_ARG))) {
+            continue;
+          }
+          MRC_DEBUG_MSG (Debug, DebugLevel, "\nPG%u", PartIdx);
+          RegOffset = INC_OFFSET_CALC_INDEX (DDRPGTERMCR0_CR_LVRVOLTAGESENSOR_REG, DDRPGCR0_CR_LVRVOLTAGESENSOR_REG, PartIdx);
           LocalRegLoopCnt += SaveRestoreRegisters (MrcData, LoopControl->SaveDataControlData, LoopControl->DataSize, RegOffset, &McRegister, SaveType, Is32Bit, SkipPrint);
-        } // for Channel
+        } // for PartIdx
         TotalRegCnt += LocalRegLoopCnt;
         break;
 
@@ -797,6 +836,13 @@ MrcSaveMCValues (
 
   SaveData->Ratio = Outputs->Ratio;
 
+  if (Outputs->SaGvPoint == MrcSaGvPoint0 || Outputs->FreqMax >= SaveData->Frequency[Outputs->SaGvPoint - 1]) {
+    // Save Timing only when current frequency is higher than previous Sagv points.
+    for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
+      MrcCall->MrcCopyMem ((UINT8 *) &SaveData->Timing[Profile], (UINT8 *) &Outputs->Timing[Profile], sizeof (MrcTiming));
+    }
+  }
+
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     ControllerIn                  = &Inputs->Controller[Controller];
     ControllerOut                 = &Outputs->Controller[Controller];
@@ -815,12 +861,7 @@ MrcSaveMCValues (
       ChannelSave->ValidSubChBitMask= ChannelOut->ValidSubChBitMask;
       ChannelSave->ValidByteMask    = ChannelOut->ValidByteMask;
       ChannelSave->Status           = ChannelOut->Status;
-      if (Outputs->SaGvPoint == MrcSaGvPoint0 || Outputs->FreqMax >= SaveData->Frequency[Outputs->SaGvPoint - 1]) {
-        // Save Timing only when current frequency is higher than previous Sagv points.
-        for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
-          MrcCall->MrcCopyMem ((UINT8 *) &ChannelSave->Timing[Profile], (UINT8 *) &ChannelOut->Timing[Profile], sizeof (MrcTiming));
-        }
-      }
+
       SaveData->IsMr10PdaEnabled |= (ChannelOut->IsMr10PdaEnabled);
       SaveData->IsMr11PdaEnabled |= (ChannelOut->IsMr11PdaEnabled);
       SaveData->IsMr48PdaEnabled |= (ChannelOut->IsMr48PdaEnabled);
@@ -999,6 +1040,10 @@ MrcRestoreNonTrainingValues (
   MrcCall     = Inputs->Call.Func;
   SaGvPoint   = Outputs->SaGvPoint;
 
+  for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
+    MrcCall->MrcCopyMem ((UINT8 *) &Outputs->Timing[Profile], (UINT8 *) &SaveData->Timing[Profile], sizeof (MrcTiming));
+  }
+
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     ControllerIn                = &Inputs->Controller[Controller];
     ControllerSave              = &SaveData->Controller[Controller];
@@ -1016,9 +1061,7 @@ MrcRestoreNonTrainingValues (
       ChannelOut->Status            = ChannelSave->Status;
       ChannelOut->ValidSubChBitMask = ChannelSave->ValidSubChBitMask;
       ChannelOut->ValidByteMask     = ChannelSave->ValidByteMask;
-      for (Profile = STD_PROFILE; Profile < MAX_PROFILE; Profile++) {
-        MrcCall->MrcCopyMem ((UINT8 *) &ChannelOut->Timing[Profile], (UINT8 *) &ChannelSave->Timing[Profile], sizeof (MrcTiming));
-      }
+
       if (Inputs->EnablePda) {
         ChannelOut->Mr3PdaEnabled    = TRUE;
         ChannelOut->Mr7PdaEnabled    = TRUE;

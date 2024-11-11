@@ -171,7 +171,11 @@ UpdateHdAudioDxePolicy (
   }
 
   for (Index = 0; Index < HDAUDIO_FEATURES; Index++) {
-    HdAudioDxeConfig->DspFeatureMask |= (UINT32)(PchSetup->PchHdAudioFeature[Index] ? (1 << Index) : 0);
+    if (PchSetup->PchHdAudioFeature[Index]) {
+      HdAudioDxeConfig->DspFeatureMask |= (1 << Index);
+    } else {
+      HdAudioDxeConfig->DspFeatureMask &= ~(1 << Index);
+    }
   }
 
   // if BT is not present or disabled, disable DSP BT related features

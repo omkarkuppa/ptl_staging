@@ -2137,7 +2137,7 @@ TseDxeEntryPoint (
   //
   if (IsAesXts256Supported () == TRUE) {
     DEBUG ((DEBUG_INFO, "CryptoCap[%d]: 0x%x\n", CapIdx, mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx]));
-    mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx].Algorithm = gEfiBlockIoCryptoAlgoAesXtsGuid;
+    mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx].Algorithm = gTseBlockIoCryptoAlgoAesXtsGuid;
     mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx].KeySize = TSE_ALG_KEY_SIZE_AES_XTS_256;
     mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx].CryptoBlockSizeBitMask = TSE_LBA_512B_SUPPORT | TSE_LBA_4KB_SUPPORT;
     CapIdx++;

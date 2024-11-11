@@ -50,6 +50,7 @@
   TseInfoLib
   TmeInfoLib
   DgrInfoLib
+  TdxInfoLib
 
 [Packages]
   MdePkg/MdePkg.dec

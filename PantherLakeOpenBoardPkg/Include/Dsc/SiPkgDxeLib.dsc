@@ -54,3 +54,27 @@ SiConfigBlockLib|$(PLATFORM_SI_PACKAGE)/Library/BaseSiConfigBlockLib/BaseSiConfi
 # Pch
 #
  SmmPchPrivateLib|$(PLATFORM_SI_PACKAGE)/Pch/LibraryPrivate/SmmPchPrivateLib/SmmPchPrivateLib.inf
+ DxePchPolicyLib|$(PLATFORM_SI_PACKAGE)/Pch/Library/DxePchPolicyLib/DxePchPolicyLib.inf
+ DxeGpioPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Gpio/LibraryPrivate/DxeGpioPolicyLib/DxeGpioPolicyLib.inf
+ DxeHdaPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Hda/LibraryPrivate/DxeHdaPolicyLib/DxeHdaPolicyLib.inf
+ DxePchPcieRpPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/PcieRp/LibraryPrivate/DxePchPcieRpPolicyLib/DxePchPcieRpPolicyLib.inf
+
+#
+# ME
+#
+ MeLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Me/Library/DxeMeLib/DxeMeLib.inf
+
+#
+# SystemAgent
+#
+ DxeIGpuPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/DomainIGpu/Library/DxeIGpuPolicyLib/DxeIGpuPolicyLib.inf
+
+#
+# Graphics
+#
+ DxeGraphicsPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/DomainIGpu/LibraryPrivate/IGpuDxePolicyLib/IGpuDxePolicyLib.inf
+
+#
+# RAT Libs
+#
+ RegisterAddressTranslationLib|$(PLATFORM_SI_PACKAGE)/Library/RegisterAddressTranslationLibNull/RegisterAddressTranslationLibNull.inf

@@ -195,7 +195,7 @@ WdtClearAllowKnownReset (
   @retval TRUE                    if WDT was requested
   @retval FALSE                   if WDT was not requested
 **/
-UINT8
+BOOLEAN
 EFIAPI
 IsWdtRequired (
   VOID
@@ -225,7 +225,7 @@ IsWdtRequired (
   @retval TRUE                    if WDT is enabled
   @retval FALSE                   if WDT is disabled
 **/
-UINT8
+BOOLEAN
 EFIAPI
 IsWdtEnabled (
   VOID
@@ -255,7 +255,7 @@ IsWdtEnabled (
   @retval TRUE                    if WDT is locked
   @retval FALSE                   if WDT is unlocked
 **/
-UINT8
+BOOLEAN
 EFIAPI
 IsWdtLocked (
   VOID

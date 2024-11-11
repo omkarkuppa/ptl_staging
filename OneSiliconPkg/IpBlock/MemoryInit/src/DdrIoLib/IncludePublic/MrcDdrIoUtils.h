@@ -31,6 +31,8 @@ extern const INT8 DdrioChDeltaCccIL[MAX_SYS_CHANNEL];
 /// Defines
 #define FREQ_TO_TCK_PS   (2000000)
 
+#define VCCCLK_NOMINAL 725
+
 /// Structure to store Min/Max Rx Path Values Across Ranks
 typedef struct {
   UINT32 MaxRxDqsN[MAX_CONTROLLER][MAX_CHANNEL];
@@ -66,6 +68,20 @@ typedef struct {
   INT64 DqsDelay;
   INT64 DqsDuration;
 } SaOdtTiming;
+
+/**
+  Find initial Cben and BwSel values based on the current Frequency and CCC Half Frequency mode
+
+  @param[in]  MrcData   - Pointer to global MRC data.
+  @param[out] BwSel - The BW code based on gear and frequency
+  @param[out] Cben  - The CB code based on gear and frequency
+*/
+VOID
+MrcBwSelCbenFreqSet (
+  IN  MrcParameters *const MrcData,
+  OUT UINT32               *BwSel,
+  OUT UINT32               *Cben
+  );
 
 /**
   This function calculates Guardband for drift in Rd DQS timing over time
@@ -649,4 +665,28 @@ MrcConfigureDqPins (
   BOOLEAN                       IsEnabled
  );
 
+/**
+  As part of the frequency switching flow, this function generates all the frequency dependent values
+  (PI/DCA BW Values, CBMix, CBMux, NBias) for the new frequency.
+
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+MrcGenerateFreqDependentValues (
+ IN MrcParameters *const MrcData
+ );
+
+/**
+  This function runs View Pin Calibration
+
+  @param[in, out] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - mrcSuccess if successful or an error status.s
+**/
+MrcStatus
+MrcViewPinCal (
+  IN OUT MrcParameters* const MrcData
+  );
+  
 #endif // _MrcDdrIoUtils_h_
+

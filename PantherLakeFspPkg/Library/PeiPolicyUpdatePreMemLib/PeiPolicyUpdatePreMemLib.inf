@@ -61,11 +61,16 @@
   gSiPkgTokenSpaceGuid.PcdHgEnable                       ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTdxEnable                      ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdIpuEnable                      ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTdxActmMac0                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTdxActmMac1                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTdxActmMac2                    ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdTdxActmMac3                    ## CONSUMES
 
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdOverclockEnable                ## CONSUMES
 
 [Guids]
+  gTdxActmMacNvVarGuid
   gSiPreMemConfigGuid              ## CONSUMES
   gTraceHubPreMemConfigGuid        ## CONSUMES
   gSmbusPreMemConfigGuid           ## CONSUMES
@@ -92,4 +97,5 @@
   gVtdConfigGuid
   gCpuPowerDeliveryConfigGuid      ## CONSUMES
   gMemorySubSystemConfigGuid
-  gCnviPreMemConfigGuid                         ## CONSUMES
+  gCnviPreMemConfigGuid            ## CONSUMES
+  gFspVPreMemConfigGuid            ## CONSUMES

@@ -29,6 +29,7 @@
 #include <Protocol/SerialIo.h>
 #include <Ppi/SiPolicy.h>
 #include <Register/LpssUartRegs.h>
+#include <Library/LpssUartLib.h>
 #include <LpssSpiHandle.h>
 #include <LpssUartConfig.h>
 #include <LpssUartPriv.h>
@@ -143,11 +144,102 @@ typedef union {
   UINT32 Data;
 } LPSS_UART_CLOCK;
 
+STATIC EFI_EVENT      mLpssUartLibExitBootServicesEvent;
+STATIC BOOLEAN        mLpssUartLibAtRuntime = FALSE;
+
+/**
+  Set mLpssUartLibAtRuntime flag as TRUE after ExitBootServices.
+
+  @param[in]  Event   The Event that is being processed.
+  @param[in]  Context The Event Context.
+
+**/
+STATIC
+VOID
+EFIAPI
+LpssUartLibExitBootServicesEvent (
+  IN EFI_EVENT        Event,
+  IN VOID             *Context
+  )
+{
+  mLpssUartLibAtRuntime = TRUE;
+}
+
+/**
+  The constructor function registers a callback for the ExitBootServices event.
+
+  @param[in]  ImageHandle   The firmware allocated handle for the EFI image.
+  @param[in]  SystemTable   A pointer to the EFI System Table.
+
+  @retval EFI_SUCCESS   The operation completed successfully.
+  @retval other         Either the serial port failed to initialize or the
+                        ExitBootServices event callback registration failed.
+**/
+EFI_STATUS
+EFIAPI
+DxeRuntimeLpssUartLibConstructor (
+  IN EFI_HANDLE        ImageHandle,
+  IN EFI_SYSTEM_TABLE  *SystemTable
+  )
+{
+  return SystemTable->BootServices->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                                      TPL_NOTIFY, LpssUartLibExitBootServicesEvent, NULL,
+                                      &mLpssUartLibExitBootServicesEvent);
+}
+
+/**
+  If a runtime driver exits with an error, it must call this routine
+  to free the allocated resource before the exiting.
+
+  @param[in]  ImageHandle   The firmware allocated handle for the EFI image.
+  @param[in]  SystemTable   A pointer to the EFI System Table.
+
+  @retval     EFI_SUCCESS       The Runtime Driver Lib shutdown successfully.
+  @retval     EFI_UNSUPPORTED   Runtime Driver lib was not initialized.
+**/
+EFI_STATUS
+EFIAPI
+DxeRuntimeLpssUartLibDestructor  (
+  IN EFI_HANDLE        ImageHandle,
+  IN EFI_SYSTEM_TABLE  *SystemTable
+  )
+{
+  return SystemTable->BootServices->CloseEvent (mLpssUartLibExitBootServicesEvent);
+}
+
+/**
+  Polls a serial device to see if there is any data waiting or pending for read.
+  If there is data pending, then TRUE is returned.
+  If there is no data, then FALSE is returned.
+
+  @param[in]  MmioBaseAddress     MMIO Base address
+
+  @retval TRUE             Data is waiting to read from the serial device.
+  @retval FALSE            There is no data waiting to read from the serial device.
+**/
+BOOLEAN
+EFIAPI
+LpssUartPolling (
+  IN UINTN            MmioBaseAddress
+  )
+{
+  LPSS_UART_LSR        Lsr;
+
+  if (mLpssUartLibAtRuntime) {
+    return FALSE;
+  }
+
+  //
+  // Read the serial port status
+  //
+  Lsr.Data = LpssUartReadRegister (MmioBaseAddress, R_LPSS_UART_MEM_LSR);
+  return (BOOLEAN) Lsr.Fields.DR;
+}
+
 /**
   Register access helper. Depending on SerialIO UART mode,
   its registers are aligned to 1 or 4 bytes and have 8 or 32bit size
 
-  @param[in]  AccessMode          Selects between 8bit access to 1-byte aligned registers or 32bit access to 4-byte algined
   @param[in]  MmioBaseAddress     MMIO Base address
   @param[in]  Offset              Register offset in 8bit mode
   @param[in]  Data                Data to be written
@@ -160,6 +252,10 @@ LpssUartWriteRegister (
   )
 {
   UART_ACCESS_MODE    AccessMode;
+
+  if (mLpssUartLibAtRuntime) {
+    return;
+  }
 
   if (MmioRead32 (MmioBaseAddress + R_LPSS_UART_MEM_CTR) == UART_COMPONENT_IDENTIFICATION_CODE) {
     AccessMode = AccessMode32bit;
@@ -192,8 +288,8 @@ LpssUartReadRegister (
 {
   UART_ACCESS_MODE    AccessMode;
 
-  if (mSerialIoUartLibAtRuntime) {
-    return 0;
+  if (mLpssUartLibAtRuntime) {
+    return;
   }
 
   if (MmioRead32 (MmioBaseAddress + R_LPSS_UART_MEM_CTR) == UART_COMPONENT_IDENTIFICATION_CODE) {
@@ -243,6 +339,10 @@ LpssUartGetAutoFlow (
 {
   LPSS_UART_MCR       Mcr;
 
+  if (mLpssUartLibAtRuntime) {
+    return FALSE;
+  }
+
   Mcr.Data = LpssUartReadRegister (MmioBaseAddress, R_LPSS_UART_MEM_MCR);
   return (BOOLEAN) Mcr.Fields.AFCE;
 }
@@ -262,6 +362,10 @@ LpssUartSetStopBits (
   )
 {
   LPSS_UART_LCR             Lcr;
+
+  if (mLpssUartLibAtRuntime) {
+    return;
+  }
 
   if (StopBits > TwoStopBits) {
     return;
@@ -298,6 +402,10 @@ LpssUartGetStopBits (
 {
   LPSS_UART_LCR       Lcr;
 
+  if (mLpssUartLibAtRuntime) {
+    return OneStopBit;
+  }
+
   Lcr.Data = LpssUartReadRegister (MmioBaseAddress, R_LPSS_UART_MEM_LCR);
 
   if (Lcr.Fields.STOP == 1) {
@@ -323,6 +431,10 @@ LpssUartSetDataBits (
   )
 {
   LPSS_UART_LCR     Lcr;
+
+  if (mLpssUartLibAtRuntime) {
+    return;
+  }
 
   if (DataBits == 0) {
     DataBits = PcdGet8 (PcdUartDefaultDataBits);
@@ -352,6 +464,10 @@ LpssUartGetDataBits (
 {
   LPSS_UART_LCR  Lcr;
 
+  if (mLpssUartLibAtRuntime) {
+    return 0;
+  }
+
   Lcr.Data = LpssUartReadRegister (MmioBaseAddress, R_LPSS_UART_MEM_LCR);
 
   return (Lcr.Fields.DLS + (UINT8) 5);
@@ -370,6 +486,10 @@ LpssUartSetParity (
   )
 {
   LPSS_UART_LCR       Lcr;
+
+  if (mLpssUartLibAtRuntime) {
+    return;
+  }
 
   if (Parity == DefaultParity) {
     Parity = (EFI_PARITY_TYPE) PcdGet8 (PcdUartDefaultParity);
@@ -413,6 +533,10 @@ LpssUartGetParity (
 {
   LPSS_UART_LCR  Lcr;
 
+  if (mLpssUartLibAtRuntime) {
+    return NoParity;
+  }
+
   Lcr.Data = LpssUartReadRegister (MmioBaseAddress, R_LPSS_UART_MEM_LCR);
 
   if ((Lcr.Fields.PEN == 1) && (Lcr.Fields.EPS == 1)) {
@@ -441,6 +565,10 @@ LpssUartSetBaudRate (
   UINT64                ComputedDivisor;
   UINT32                ClockRate;
   UINT16                ClockOffset;
+
+  if (mLpssUartLibAtRuntime) {
+    return 0;
+  }
 
   if (MmioRead32 (MmioBaseAddress + R_LPSS_UART_MEM_CTR) == UART_COMPONENT_IDENTIFICATION_CODE) {
     AccessMode = AccessMode32bit;
@@ -570,6 +698,10 @@ LpssUartGetBaudRate (
   ClockRate   = 1843200;
   ClockOffset = R_LPSS_UART_MEM_CLOCKS;
 
+  if (mLpssUartLibAtRuntime) {
+    return 0;
+  }
+
   if (MmioRead32 (MmioBaseAddress + R_LPSS_UART_MEM_CTR) == UART_COMPONENT_IDENTIFICATION_CODE) {
     AccessMode = AccessMode32bit;
   } else {
@@ -624,6 +756,10 @@ LpssUartFifoEnable (
 {
   LPSS_UART_FCR     Fcr;
 
+  if (mLpssUartLibAtRuntime) {
+    return;
+  }
+
   Fcr.Data = LpssUartReadRegister (MmioBaseAddress, R_LPSS_UART_MEM_FCR);
   Fcr.Fields.FIFOE = 1;
   LpssUartWriteRegister (MmioBaseAddress, R_LPSS_UART_MEM_FCR, Fcr.Data);
@@ -655,7 +791,7 @@ LpssUartSetAttributes (
   IN BOOLEAN                AutoFlow
   )
 {
-  if (mSerialIoUartLibAtRuntime) {
+  if (mLpssUartLibAtRuntime) {
     return;
   }
   LpssUartFifoEnable  (MmioBaseAddress);
@@ -703,6 +839,10 @@ LpssUartTransmit (
   IN UINT8             Data
   )
 {
+  if (mLpssUartLibAtRuntime) {
+    return FALSE;
+  }
+
   if (LpssUartIsTxFifoNotFull (MmioBaseAddress)) {
     LpssUartWriteRegister (MmioBaseAddress, R_LPSS_UART_MEM_THR, Data);
     return TRUE;
@@ -734,7 +874,7 @@ LpssUartWrite (
   UINT32            Index;
   UINTN             Timeout;
 
-  if (mSerialIoUartLibAtRuntime) {
+  if (mLpssUartLibAtRuntime) {
     return 0;
   }
 
@@ -747,7 +887,7 @@ LpssUartWrite (
   //
   // If Timeout is equal to 0, then timeout is disabled
   //
-  Timeout = PcdGet32 (PcdSerialIoUartTimeOut);
+  Timeout = PcdGet32 (PcdLpssUartTimeOut);
   if (Timeout == 0) {
     UseTimeout = FALSE;
   }
@@ -767,7 +907,7 @@ LpssUartWrite (
           // Disable AutoFlow Control if data did not come out of the FIFO in given time
           //
           LpssUartSetAutoFlow (MmioBaseAddress, FALSE);
-          Timeout = PcdGet32 (PcdSerialIoUartTimeOut);
+          Timeout = PcdGet32 (PcdLpssUartTimeOut);
         }
         MicroSecondDelay (LPSS_UART_TIMEOUT_DELAY_INTERVAL);
         Timeout -= LPSS_UART_TIMEOUT_DELAY_INTERVAL;
@@ -804,7 +944,7 @@ LpssUartRead (
   LPSS_UART_LSR        Lsr;
   UINT8                Byte;
 
-  if (mSerialIoUartLibAtRuntime) {
+  if (mLpssUartLibAtRuntime) {
     return 0;
   }
 

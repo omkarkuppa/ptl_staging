@@ -140,9 +140,10 @@ UpdateVariables (
                   OldData
                   );
 
-  if (Status == EFI_NOT_FOUND) {
+  if ((Status == EFI_NOT_FOUND) || (VarSize != CnvVarSize)) {
     Status     = EFI_SUCCESS;
     NeedUpdate = TRUE;
+    VarSize    = CnvVarSize;
   }
 
   //

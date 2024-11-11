@@ -483,7 +483,8 @@
       {FALSE, 0,                0,         0, 0, 0,         0,       0, 0                        }
     }
   })}
-
+  # The delay is reuqired to ensure the delta time between dTBT CIO Power Enable and PERST is greater than 10ms during power on according to PCIe SPEC.
+  gBoardModuleTokenSpaceGuid.VpdPcdMiniDeltaTimeFromEarlyPrememToPrememGpio|*|10000 # 10ms
   gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable|*|TRUE
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCUcmMode|*|0x1 # 0: Unsupported, 1: UCSI, 2: UCMCx
   gBoardModuleTokenSpaceGuid.VpdPcdHdaI2sCodecIrqGpio|*|{CODE(
@@ -509,6 +510,7 @@
     0xFFFFFFFF                   // terminator
   })}
   gBoardModuleTokenSpaceGuid.VpdPcdBoardRtd3TableSignature|*|{'P', 't', 'l', '_', 'R', 'v', 'p', '2'}
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardSsdRtd3TableSignature|*|{'P', 't', 'l', '_', 'R', 'v', 'p', '2'}
   gBoardModuleTokenSpaceGuid.VpdPcdBatterySupport|*|($(BOARD_REAL_BATTERY_SUPPORTED)|$(BOARD_VIRTUAL_BATTERY_SUPPORTED))
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamSensor|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdZPoddConfig|*|0
@@ -544,6 +546,9 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdSkuType|*|0x2
   gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining|*|0x0
+
+  # PTL CNVi: WiFi (sku 2)
+  gBoardModuleTokenSpaceGuid.VpdPcdCnvDeviceId|*|0xE342
 
   # PTL-UH RVP1 power meter table
   gBoardModuleTokenSpaceGuid.VpdPcdPowerMeter|*|{CODE(
@@ -647,8 +652,6 @@
   //
     {GPIOV2_PTL_PCD_XXGPP_C_18,  {GpioV2PadModeGpio,   GpioV2HostOwnAcpi,  GpioV2DirOut,    GpioV2StateLow,    GpioV2IntDis,                GpioV2ResetHost,      GpioV2TermDefault}},  // SOC_DP_MUX_RT_CTRL
     {GPIOV2_PTL_PCD_XXGPP_C_19,  {GpioV2PadModeGpio,   GpioV2HostOwnAcpi,  GpioV2DirInInv,  GpioV2StateDefault,GpioV2IntLevel|GpioV2IntSci, GpioV2ResetHostDeep,  GpioV2TermDefault,  GpioV2Unlock,  GpioV2Lock}},  // BR_SOC_PCIE_WAKE_N
-    {GPIOV2_PTL_PCD_XXGPP_C_20,  {GpioV2PadModeGpio,   GpioV2HostOwnAcpi,  GpioV2DirOut,    GpioV2StateHigh,   GpioV2IntDis,                GpioV2ResetHost,      GpioV2TermDefault}},  // DTBT_BR_RESET_N
-    {GPIOV2_PTL_PCD_XXGPP_C_21,  {GpioV2PadModeGpio,   GpioV2HostOwnAcpi,  GpioV2DirOut,    GpioV2StateHigh,   GpioV2IntDis,                GpioV2ResetHost,      GpioV2TermDefault}},  // BR_RTD3_PWR_EN
     {GPIOV2_PTL_PCD_XXGPP_C_22,  {GpioV2PadModeGpio,   GpioV2HostOwnAcpi,  GpioV2DirOut,    GpioV2StateHigh,   GpioV2IntDis,                GpioV2ResetHost,      GpioV2TermDefault}},  // DP_MUX_RT_PD_N
     {GPIOV2_PTL_PCD_XXGPP_C_23,  {GpioV2PadModeGpio,   GpioV2HostOwnAcpi,  GpioV2DirOut,    GpioV2StateHigh,   GpioV2IntDis,                GpioV2ResetHost,      GpioV2TermDefault}},  // SOC_DP_RT_V0P9_PWR_EN
     {GPIOV2_PTL_PCD_XXGPP_E_8,   {GpioV2PadModeGpio,   GpioV2HostOwnAcpi,  GpioV2DirOut,    GpioV2StateLow,    GpioV2IntDis,                GpioV2ResetHost,      GpioV2TermDefault}},  // EDP_MUX_GPU_SEL
@@ -671,12 +674,7 @@
   //
   // TCSS
   //
-    {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateHigh,   GpioV2IntDis,  GpioV2ResetHost,      GpioV2TermDefault}}, // TCP_RT_S0IX_ENTRY_EXIT_N
-
-  //
-  // Type-C , TBT Re-Timers
-  //
-    {GPIOV2_PTL_PCD_XXGPP_B_21, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateLow,    GpioV2IntDis,  GpioV2ResetHostDeep,  GpioV2TermDefault}},  // TCP_RETIMER_FORCE_PWR
+    {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetResume,  GpioV2TermNone}}, // GPP_V17_TCP_RT_S0IX_ENTRY_EXIT_N
 
   //
   // Lid Switch Wake Gpio
@@ -709,10 +707,6 @@
 
     {0x0}
   })}
-
-  gBoardModuleTokenSpaceGuid.VpdPcdRetimerPowerStateGpio|*|{CODE(
-    { GPIOV2_PTL_PCD_XXGPP_V_17 } // TCP_RT_S0IX_ENTRY_EXIT_N
-  )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData| * |{CODE(
     {0x0}
@@ -754,14 +748,19 @@
   }})}
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableEarlyPreMem|*|{CODE({
+    //
+    // TCSS dTBT (Barlow Ridge)
+    //
+    {GPIOV2_PTL_PCD_XXGPP_C_21, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,  GpioV2ResetHost,      GpioV2TermDefault}},  // BR_RTD3_PWR_EN
     {0x0}  // terminator
   })}
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTablePreMem|*|{CODE({
     //
-    // TCSS
+    // TCSS dTBT (Barlow Ridge)
     //
-    {GPIOV2_PTL_PCD_XXGPP_D_1,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,  GpioV2StateHigh,   GpioV2IntDis,  GpioV2ResetHostDeep,  GpioV2TermDefault}}, // MOD_TCSS_TYP_A_VBUS_EN_EDP_BKLT_EN
+    {GPIOV2_PTL_PCD_XXGPP_C_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,  GpioV2ResetHost,      GpioV2TermDefault}},  // DTBT_BR_RESET_N
+    {GPIOV2_PTL_PCD_XXGPP_D_1,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,  GpioV2ResetHostDeep,  GpioV2TermDefault}},  // MOD_TCSS_TYP_A_VBUS_EN_EDP_BKLT_EN
     {0x0}  // terminator
   })}
 
@@ -800,6 +799,10 @@
   gStructPcdTokenSpaceGuid.PcdSetup.DTbtController[0]|0x1                                            # DTBT Controller 0
   gStructPcdTokenSpaceGuid.PcdSetup.DTbthostRouterPortNumber[0]|0x2                                  # TBT Host Router
   gStructPcdTokenSpaceGuid.PcdSetup.DTbtRtd3|0x1                                                     # DTBT RTD3 Enable
+  gStructPcdTokenSpaceGuid.PcdSetup.DTbtRtd3ClkReq|0x1                                               # DTBT RTD3 CLKREQ Enable
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PcieRootPortPTM[4]|0x0                                        # PTM
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PcieRootPortAspm[4]|0x2                                       # ASPM
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PcieRootPortSpeed[4]|0x4                                      # PCIe Speed
 
 #####################################################################
 #  PTL UH CAMM dTbT T3 - RVP2 BOM

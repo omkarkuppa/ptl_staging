@@ -1299,16 +1299,14 @@ PsrDriverCallback (
           mUsbDeviceCount++;
           PsrLink = GetNextNode (&mExportInfoLinkHead->Link, PsrLink);
         }
-
-        HiiUpdateForm (
-          HiiHandle,
-          &mPsrFormSetGuid,
-          FORM_ID_PSR_RECORD_EXPORT,
-          StartOpCodeHandle,
-          EndOpCodeHandle
-          );
       }
-
+      HiiUpdateForm (
+        HiiHandle,
+        &mPsrFormSetGuid,
+        FORM_ID_PSR_RECORD_EXPORT,
+        StartOpCodeHandle,
+        EndOpCodeHandle
+        );
     }
     HiiFreeOpCodeHandle (StartOpCodeHandle);
     HiiFreeOpCodeHandle (EndOpCodeHandle);

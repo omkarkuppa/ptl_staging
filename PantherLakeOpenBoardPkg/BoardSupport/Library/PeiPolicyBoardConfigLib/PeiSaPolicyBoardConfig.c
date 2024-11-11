@@ -207,7 +207,7 @@ UpdatePeiSaPolicyBoardConfig (
   IGPU_PEI_CONFIG     *IGpuConfig;
 
   Status           = EFI_SUCCESS;
-  IGpuConfig         = NULL;
+  IGpuConfig       = NULL;
 
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gGraphicsPeiConfigGuid, (VOID *) &IGpuConfig);
   ASSERT_EFI_ERROR (Status);
