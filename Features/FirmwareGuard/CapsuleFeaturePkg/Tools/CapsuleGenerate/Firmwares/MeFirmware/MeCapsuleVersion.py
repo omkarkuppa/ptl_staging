@@ -32,7 +32,7 @@ from CapsuleCommon import *
 
 from CapsuleGenerate.Model.CapsuleVersion import *
 
-ME_VERSION_REGEX: str = '^(\d){1,3}[.](\d){1,3}[.](\d){1,3}[.](\d){1,4}$'
+ME_VERSION_REGEX: str = r'^(\d){1,3}[.](\d){1,3}[.](\d){1,3}[.](\d){1,4}$'
 
 class MeCapsuleVersion (CapsuleVersion):
     def __init__ (

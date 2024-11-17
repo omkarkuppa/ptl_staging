@@ -22,6 +22,6 @@
 
 #include "MockPciSegmentLib.h"
 
-MOCK_INTERFACE_DEFINITION(MockPciSegmentLib);
+MOCK_INTERFACE_DEFINITION (MockPciSegmentLib);
 
-MOCK_FUNCTION_DEFINITION(MockPciSegmentLib, PciSegmentRead8, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPciSegmentLib, PciSegmentRead8, 1, EFIAPI);

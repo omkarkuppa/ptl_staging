@@ -33,6 +33,7 @@ __description__ = "Script to modify the BPM manifest parameter file.\n"
 IBB_SET_TYPE_STR = "IbbSetType"
 COLD_BOOT_TYPE   = "0:ColdBoot"
 S3_RESUME_TYPE   = "1:S3Resume"
+FV_NAME_STR = "FvFspS"
 
 IBB_FLAG_STR = "IbbFlags"
 IBB_FLAGS_BOOT_COMPONENT_BIT = 0xA
@@ -79,6 +80,27 @@ def GenerateIntervalTuple (InputList, MaxLen, StartPos=0):
         if Idx < (len (KeyPointList) - 1):
             Result.append ((KeyPointList[Idx], KeyPointList[Idx+1]))
     return Result
+
+def SkipFspsVerificationByObb (FileBuffer):
+    """ Remove FspS FV information to skip verification by OBB.
+        FspS will be verified as FSP sigining flow.
+
+    Args:
+        FileBuffer  [FileBuffer]: To do file operation.
+
+    Returns:
+        None
+
+    Raises:
+        None.
+    """
+    #
+    # Find the "FvFspS" string.
+    #
+    FvInfoLocList = File.FindKeywordInLine (FV_NAME_STR)
+    for i in FvInfoLocList:
+        OriString = File.GetLineData (i)
+        File.Replace (i, OriString, '')
 
 def ToggleIbbFlag (FileBuffer, BitPosition, Supported, BootType):
     """ To toggle the IBB flag bit position in ColdBoot or S3Resume section.
@@ -181,6 +203,8 @@ if __name__ == "__main__":
     Args          = GetArgs ()
     File          = FileBuffer (Args.File)
     BootComponent = Args.BootComponent
+
+    SkipFspsVerificationByObb (File)
 
     if BootComponent is not None:
         ToggleIbbFlag (File, IBB_FLAGS_BOOT_COMPONENT_BIT, BootComponent, COLD_BOOT_TYPE)

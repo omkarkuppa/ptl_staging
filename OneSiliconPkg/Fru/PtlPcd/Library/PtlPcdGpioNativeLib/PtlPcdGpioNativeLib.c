@@ -900,7 +900,7 @@ PtlPcdGpioEnableCpuC10GatePin (
 //
 // VRALERTB pin
 //
-GLOBAL_REMOVE_IF_UNREFERENCED GPIOV2_PAD_NATIVE_FUNCTION mPtlPcdVrAlertbPin = {GPIOV2_PTL_PCD_XXGPP_E_21, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame};
+GLOBAL_REMOVE_IF_UNREFERENCED GPIOV2_PAD_NATIVE_FUNCTION mPtlPcdVrAlertbPin = {GPIOV2_PTL_PCD_XXGPP_E_2, GpioV2PadModeNative2, GpioV2IosStateMasked, GpioV2IosTermSame};
 
 /**
   This function sets VRALERTB pin into native mode

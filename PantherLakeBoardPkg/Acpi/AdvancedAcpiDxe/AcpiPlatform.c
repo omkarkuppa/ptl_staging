@@ -3158,6 +3158,8 @@ InstallAcpiPlatform (
   }
 
   VarDataSize = sizeof (CNV_VFR_CONFIG_SETUP);
+  ZeroMem (&CnvSetup, VarDataSize);
+#if FixedPcdGetBool (PcdCnvFeatureEnable) == 1
   Status = gRT->GetVariable (
                   L"CnvSetup",
                   &gCnvFeatureSetupGuid,
@@ -3169,6 +3171,7 @@ InstallAcpiPlatform (
     ASSERT_EFI_ERROR (Status);
     return Status;
   }
+#endif
 
   VarDataSize = sizeof (VTIO_SETUP_DATA_STRUCT);
   Status = gRT->GetVariable (

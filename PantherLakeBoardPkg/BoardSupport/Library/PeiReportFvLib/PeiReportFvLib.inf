@@ -106,8 +106,8 @@
   gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize                 ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesBase    ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize    ## CONSUMES
-  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadBase   ## CONSUMES
-  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadSize   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadBase         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize         ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase        ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize        ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable                  ## CONSUMES

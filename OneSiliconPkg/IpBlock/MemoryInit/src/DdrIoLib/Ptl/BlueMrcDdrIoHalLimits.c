@@ -137,13 +137,13 @@ MrcGetDdrIoGroupLimits (
       break;
 
     case DqsTxEq:
-      Min = DATA0CH0_CR_TXCONTROL0RANK0_dqstxequalization_MIN;
-      Max = DATA0CH0_CR_TXCONTROL0RANK0_dqstxequalization_MAX;
+      Min = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqstx_eqdlycomp_MIN;
+      Max = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqstx_eqdlycomp_MAX;
       break;
 
     case DqTxEq:
-      Min = DATA0CH0_CR_TXCONTROL0RANK0_DqTxEqualization_MIN;
-      Max = DATA0CH0_CR_TXCONTROL0RANK0_DqTxEqualization_MAX;
+      Min = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqtx_eqdelaycomp_MIN;
+      Max = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqtx_eqdelaycomp_MAX;
       break;
 
     case DefDrvEnLow:

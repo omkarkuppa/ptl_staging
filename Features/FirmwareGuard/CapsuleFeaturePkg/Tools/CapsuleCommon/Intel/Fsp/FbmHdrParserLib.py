@@ -1,5 +1,5 @@
 ## @file
-#  Parse the FSP boot manifest (FPM) header information from binary file.
+#  Parse the FSP boot manifest (FBM) header information from binary file.
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -27,19 +27,19 @@ from CapsuleCommon.Wrapper.StructWrapperLib import *
 
 from CapsuleCommon.Intel.Fsp.FbmHdrLib import *
 
-class FspVersion (object):
+class FbmVersion (object):
     def __init__ (
         self,
         MajorVer: int,
         MinorVer: int,
         ) -> None:
-        """ Class to represent the FSP version.
+        """ Class to represent the FBM version.
 
         Args:
             MajorVer (int):
-                Major version of the FSP firmware.
+                Major version of the FBM.
             MinorVer (int):
-                Minor version of the FSP firmware.
+                Minor version of the FBM.
 
         Raises:
             None.
@@ -85,7 +85,7 @@ class FspVersion (object):
 
     @property
     def Major (self) -> int:
-        """ Return the major version of the FSP firmware. (1 byte)
+        """ Return the major version of the FBM. (1 byte)
 
         Args:
             None.
@@ -95,13 +95,13 @@ class FspVersion (object):
 
         Returns:
             int:
-                Major version of the FSP firmware.
+                Major version of the FBM.
         """
         return self.__MajorVer
 
     @property
     def Minor (self) -> int:
-        """ Return the minor version of the FSP firmware. (1 byte)
+        """ Return the minor version of the FBM. (1 byte)
 
         Args:
             None.
@@ -111,7 +111,7 @@ class FspVersion (object):
 
         Returns:
             int:
-                Minor version of the FSP firmware.
+                Minor version of the FBM.
         """
         return self.__MinorVer
 
@@ -135,11 +135,11 @@ class FbmHdrParser (object):
         self.__Buffer    : ByteBuffer = Buffer
         self.__ImageInfo : dict       = self.__GetImageInfo ()
         self.__FbmHdr    : FbmHdr     = FbmHdr (**self.__ImageInfo)
-        self.__FspVersion: FspVersion = self.__GetFspVersion ()
+        self.__FbmVersion: FbmVersion = self.__GetFbmVersion ()
 
     @property
-    def FspVersion (self) -> FspVersion:
-        """ Return FSP version information within this buffer.
+    def FbmVersion (self) -> FbmVersion:
+        """ Return FBM version information within this buffer.
 
         Args:
             None.
@@ -148,11 +148,11 @@ class FbmHdrParser (object):
             None.
 
         Returns:
-            FspVersion:
-                The FSP version information of this buffer.
-                (Should be FspVersion object)
+            FbmVersion:
+                The FBM version information of this buffer.
+                (Should be FbmVersion object)
         """
-        return self.__FspVersion
+        return self.__FbmVersion
 
     def __GetImageInfo (self) -> dict:
         """ Get the FBM header information.
@@ -182,27 +182,27 @@ class FbmHdrParser (object):
 
         return FbmInfo.Data
 
-    def __GetFspVersion (self) -> FspVersion:
-        """ Return the FSP version information.
+    def __GetFbmVersion (self) -> FbmVersion:
+        """ Return the FBM version information.
 
         Args:
             None.
 
         Raises:
             ValueError:
-                Unsupported version of FSP information table.
+                Unsupported version of FBM.
 
         Returns:
-            FspVersion:
-                The FSP version information of this buffer.
-                (Should be FspVersion object)
+            FbmVersion:
+                The FBM version information of this buffer.
+                (Should be FbmVersion object)
         """
         VerString: str        = None
-        FspVer   : FspVersion = None
+        FbmVer   : FbmVersion = None
 
         VerString = self.__FbmHdr.FspVersion
-        FspVer    = FspVersion (
+        FbmVer    = FbmVersion (
                         MajorVer  = HexToDec (VerString[2:4]),
                         MinorVer  = HexToDec (VerString[0:2]),
                         )
-        return FspVer
+        return FbmVer

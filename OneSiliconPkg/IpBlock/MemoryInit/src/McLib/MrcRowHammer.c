@@ -38,7 +38,7 @@
 #include "MrcDdr5.h"
 #include "MrcLpddr5.h"
 #include "MrcSpdProcessingDefs.h"  // for SdramCapacityTable[]
-#include "MrcPmaApiCrossProj.h"
+#include "MrcPmaApi.h"
 
 /**
  * This functions maps MrcRhDrfmBrcType to MrcTrrControlBrcType.

@@ -31,6 +31,8 @@
 #define ELAN8E18_PANEL                8
 #define SERIAL_IO_TPL_CUSTOM_DEVICE   7 // Custom TouchPanel device
 
+External (TPLM)
+
 //------------------------
 // Touch Panels on I2C for common use
 // Note: instead of adding more touch panels, parametrize this one with appropriate _HID value and GPIO numbers
@@ -51,6 +53,7 @@
       If (LEqual (DeRefOf(Index(TPTD,1)),0)) {
         SHPO (DeRefOf(Index(TPDI,1)),1) // configure gpio pad in gpio driver mode
       }
+      SGRA (DeRefOf(Index(TPDI,0)), TPLM) // set/reset GPIRoutIOxAPIC TPLM=1 means APIC enable
       If (LEqual (DeRefOf(Index(TPTD,0)), ATMEL3432_PANEL)) {
         Store ("ATML3432",_HID)
         Store (0,HID2)

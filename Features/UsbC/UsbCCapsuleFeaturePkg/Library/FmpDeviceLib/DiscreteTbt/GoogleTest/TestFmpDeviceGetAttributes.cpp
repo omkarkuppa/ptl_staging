@@ -1,5 +1,5 @@
 /** @file
-  Google Test for the implementation of FmpDeviceLib instance to support 
+  Google Test for the implementation of FmpDeviceLib instance to support
   Discrete Thunderbolt Firmware update
 
   @copyright
@@ -20,58 +20,58 @@
 @par Specification Reference:
 
 **/
+#include <GTestFmpDeviceLibDiscreteTbt.h>
+#include <GoogleTest/Library/MockBasePcdLib.h>
 
 /**
 Google test for FmpDeviceGetAttributes function.
 **/
-class FmpDeviceGetAttributesTest : public CommonMock {
+class FmpDeviceGetAttributesTest : public Test {
   protected:
-  EFI_STATUS     Status;
-  UINT64        *Supported;
-  UINT64        *Setting;
+    EFI_STATUS     Status;
+    UINT64         *Supported;
+    UINT64         *Setting;
+    MockBasePcdLib BasePcdLibMock;
 
   void SetUp() override {
-    Supported = (UINT64*) AllocatePool(1);
-    Setting = (UINT64*) AllocatePool(1);
-    ASSERT_NE(Supported, nullptr);
-    ASSERT_NE(Setting, nullptr);
+    Supported = (UINT64 *) AllocatePool (1);
+    Setting   = (UINT64 *) AllocatePool (1);
+    ASSERT_NE (Supported, nullptr);
+    ASSERT_NE (Setting, nullptr);
   }
 };
 
-TEST_F (FmpDeviceGetAttributesTest, VarError_1) {
-
+TEST_F (FmpDeviceGetAttributesTest, Var_1_Error) {
   //
   // Case 1 - Supported is NULL
   // Expected Result - Status will return EFI_INVALID_PARAMETER
   //
   cout << "[---------- Case 1 ----------]"<< endl;
   Status = FmpDeviceGetAttributes (NULL, Setting);
-  EXPECT_EQ(Status, EFI_INVALID_PARAMETER);
-
+  EXPECT_EQ (Status, EFI_INVALID_PARAMETER);
 }
 
-TEST_F (FmpDeviceGetAttributesTest, VarError_2) {
-
+TEST_F (FmpDeviceGetAttributesTest, Var_2_Error) {
   //
   // Case 2 - Setting is NULL
   // Expected Result - Status will return EFI_INVALID_PARAMETER
   //
   cout << "[---------- Case 2 ----------]"<< endl;
   Status = FmpDeviceGetAttributes (Supported, NULL);
-  EXPECT_EQ(Status, EFI_INVALID_PARAMETER);
-
+  EXPECT_EQ (Status, EFI_INVALID_PARAMETER);
 }
 
-TEST_F (FmpDeviceGetAttributesTest, VarSuccess) {
-
+TEST_F (FmpDeviceGetAttributesTest, Var_3_Success) {
   //
   // Case 3 - Success Case
+  // Mock - BasePcdLibMock
   // Expected Result - Status will return EFI_SUCCESS
   //
   cout << "[---------- Case 3 ----------]"<< endl;
+  EXPECT_CALL (BasePcdLibMock, LibPcdGetEx8 (_, _));
+
   Status = FmpDeviceGetAttributes (Supported, Setting);
-  EXPECT_EQ(Status, EFI_SUCCESS);
+  EXPECT_EQ (Status, EFI_SUCCESS);
 
   cout << "FmpDeviceGetAttributes Done." << endl;
-
 }

@@ -691,12 +691,24 @@
   {
   // Connectable, Visibility, ConnectorType, UsbOcPinType, UsbOcPin, Usb2Controller, Usb2PortNum, Usb3Controller, Usb3PortNum
     {0x0}  // terminator
+
+  })}
+  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbConnector| * |{CODE(
+  {
+  // Connectable, Visibility, ConnectorType, UsbOcPinType, UsbOcPin, Usb2Controller, Usb2PortNum, Usb3Controller, Usb3PortNum
+    {0x0}  // terminator
   })}
 
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCConnector| * |{CODE(
   {
     {0x0}  // terminator
   })}
+
+  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbCConnector| * |{CODE(
+  {
+    {0x0}  // terminator
+  })}
+
   # CascadedRetimerFlashIndex, FirstUsbCConnectorIndex, SecondUsbCConnectorIndex
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCRetimerFlash| * |{CODE(
   {

@@ -31,6 +31,8 @@
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlHLp5Gcs1.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlHLp5Gcs2.dsc
 !include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5MemSktmRvp.dsc
+!include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5Adk1.dsc
+!include $(BOARD_PTLUH_BOARDS)/BoardVpdPcdsInit/PtlUH/SkuIdPtlUHLp5Adk2.dsc
 
 [Packages]
   PantherLakeBoardPkg/BoardPkg.dec
@@ -45,6 +47,7 @@
   gI2cFeaturePkgTokenSpaceGuid.VpdPcdPssI2cDeviceAddress|*|0x0
   gI2cFeaturePkgTokenSpaceGuid.VpdPcdPssI2cBusNumber|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdSpdAddressOverride|*|FALSE
+  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig|*|FALSE  
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(
    { 0x0 }
   )}
@@ -294,7 +297,6 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdSkuType|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining|*|0x0
-  gBoardModuleTokenSpaceGuid.VpdPcdCnvDeviceId|*|0x0
 
   # MRC BoardStackUp
   gBoardModuleTokenSpaceGuid.VpdPcdMrcBoardStackUp|*|0x0

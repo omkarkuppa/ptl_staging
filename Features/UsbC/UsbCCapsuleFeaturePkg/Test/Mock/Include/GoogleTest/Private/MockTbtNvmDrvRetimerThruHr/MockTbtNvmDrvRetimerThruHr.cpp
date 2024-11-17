@@ -22,20 +22,22 @@
 
 #include "MockTbtNvmDrvRetimerThruHr.h"
 
-MOCK_INTERFACE_DEFINITION(MockTbtNvmDrvRetimerThruHr);
+UINT16 TBT_USB4_PORT_CAPABILITY_OFFSET;
 
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvRetimerThruHr, WriteIecs,                  4, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvRetimerThruHr, ReadIecs,                   4, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvRetimerThruHr, TbtNvmDrvRetimerThruHrCtor, 6, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvRetimerThruHr, Dtor,                       1, EFIAPI);
+MOCK_INTERFACE_DEFINITION (MockTbtNvmDrvRetimerThruHr);
 
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvRetimerThruHr, MockThruHr_WriteIecs, 4, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvRetimerThruHr, MockThruHr_ReadIecs, 4, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvRetimerThruHr, MockThruHr_Destroy, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvRetimerThruHr, MockThruHr_InitHW, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvRetimerThruHr, MockThruHr_TerminateHW, 1, EFIAPI);
 
-static TBT_RETIMER    LocalCommunicationPtr = {
-  NULL,                                // VOID
-  WriteIecs,                           // WRITE_IECS_REG
-  ReadIecs,                            // READ_IECS_REG
-  Dtor,                                // DESTROY
-  NULL,                                // INDICATE_STATE
+TBT_RETIMER  LocalCommunicationPtr = {
+  NULL,                                  // VOID
+  (WRITE_IECS_REG) MockThruHr_WriteIecs, // WRITE_IECS_REG
+  (READ_IECS_REG) MockThruHr_ReadIecs,   // READ_IECS_REG
+  (DESTROY) MockThruHr_Destroy,          // DESTROY
+  NULL,                                  // INDICATE_STATE
+  (INIT_HW) MockThruHr_InitHW,           // INIT_HW
+  (TERMINATE_HW) MockThruHr_TerminateHW, // TERMINATE_HW
 };
-
-TBT_RETIMER* gDevComRetimerMock = &LocalCommunicationPtr;

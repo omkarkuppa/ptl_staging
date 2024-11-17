@@ -847,19 +847,19 @@
       oneof varid = SA_SETUP.DramRfmMode,
         prompt    = STRING_TOKEN(STR_DRAM_RFM_PROMPT),
         help      = STRING_TOKEN(STR_DRAM_RFM_HELP),
-        option text = STRING_TOKEN (STR_ENABLE_RFM),          value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLE_RFM),          value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         option text = STRING_TOKEN (STR_ENABLE_ARFM_LEVELA),  value = 1, flags = RESET_REQUIRED;
         option text = STRING_TOKEN (STR_ENABLE_ARFM_LEVELB),  value = 2, flags = RESET_REQUIRED;
         option text = STRING_TOKEN (STR_ENABLE_ARFM_LEVELC),  value = 3, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN (STR_DISABLE_DRAM_RFM),    value = 4, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_DISABLE_DRAM_RFM),    value = 4, flags = RESET_REQUIRED;
       endoneof;
 
       oneof varid = SA_SETUP.TargetedRowRefreshMode,
         prompt    = STRING_TOKEN(STR_TRR_PROMPT),
         help      = STRING_TOKEN(STR_TRR_HELP),
         option text = STRING_TOKEN (STR_ENABLE_DRFM_STRING),  value = 0, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN (STR_ENABLE_PTRR_STRING),  value = 1, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN (STR_DISABLE_TRR),         value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLE_PTRR_STRING),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_DISABLE_TRR),         value = 2, flags = RESET_REQUIRED;
       endoneof;
 
       suppressif NOT ideqval SA_SETUP.TargetedRowRefreshMode == 0;
@@ -1809,8 +1809,8 @@
     oneof varid   = SA_SETUP.ForceCkdBypass,
       prompt      = STRING_TOKEN (STR_FORCE_CKD_BYPASS_PROMPT),
       help        = STRING_TOKEN (STR_FORCE_CKD_BYPASS_HELP),
-      option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-      option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
     endoneof;
 
     oneof varid   = SA_SETUP.VoltageReadout,
@@ -1887,8 +1887,8 @@
     oneof varid   = SA_SETUP.EnPeriodicComp,
       prompt      = STRING_TOKEN (STR_ENPERIODICCOMP_PROMPT),
       help        = STRING_TOKEN (STR_ENPERIODICCOMP_PROMPT),
-      option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-      option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
     endoneof;
 
     endform;
@@ -3845,8 +3845,8 @@ endform;
       oneof varid   = SA_SETUP.WRDSEQT,
         prompt      = STRING_TOKEN(STR_WRDSEQT_TRNG_NAME),
         help        = STRING_TOKEN(STR_WRDSEQT_TRNG_HELP),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.DQSRF,
@@ -3866,8 +3866,8 @@ endform;
       oneof varid   = SA_SETUP.RDDQODTT,
         prompt      = STRING_TOKEN(STR_RDDQODTT_TRNG_NAME),
         help        = STRING_TOKEN(STR_RDDQODTT_TRNG_HELP),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.RDEQT,
@@ -3980,8 +3980,8 @@ endform;
       oneof varid   = SA_SETUP.TXTCO,
         prompt      = STRING_TOKEN(STR_TXTCO_NAME),
         help        = STRING_TOKEN(STR_TXTCO_NAME),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.CLKTCO,
@@ -4197,8 +4197,8 @@ endform;
       oneof varid   = SA_SETUP.WRTRETRAIN,
         prompt      = STRING_TOKEN(STR_WRTRETRAIN_NAME),
         help        = STRING_TOKEN(STR_WRTRETRAIN_NAME),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.DDRPRECOMP,
@@ -4211,8 +4211,8 @@ endform;
       oneof varid   = SA_SETUP.DDR5ODTTIMING,
         prompt      = STRING_TOKEN(STR_DDR5ODTTIMING_NAME),
         help        = STRING_TOKEN(STR_DDR5ODTTIMING_NAME),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.DBI,
@@ -4412,7 +4412,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 132, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tRRDG,
@@ -4422,7 +4422,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 132, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tRRDR,
@@ -4432,7 +4432,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 136, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tRRDD,
@@ -4442,7 +4442,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 136, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tWRSG,
@@ -4452,7 +4452,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 132, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tWRDG,
@@ -4462,7 +4462,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 132, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tWRDR,
@@ -4472,7 +4472,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 136, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tWRDD,
@@ -4482,7 +4482,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 136, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tWWSG,
@@ -4492,7 +4492,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 132, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tWWDG,
@@ -4502,7 +4502,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 132, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tWWDR,
@@ -4512,7 +4512,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 136, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tWWDD,
@@ -4522,7 +4522,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 136, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tRWSG,
@@ -4532,7 +4532,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 132, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tRWDG,
@@ -4542,7 +4542,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 132, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tRWDR,
@@ -4552,7 +4552,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 136, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
       numeric varid = SA_SETUP.tRWDD,
@@ -4562,7 +4562,7 @@ endform;
         minimum     = 0,
         maximum     = 0xFF,
         step        = 1,
-        default     = 136, //0 is no override
+        default     = 0, //0 is no override
       endnumeric;
 
     endform;
@@ -4697,6 +4697,7 @@ endform;
           help        = STRING_TOKEN(STR_LCH_TESTDEVICE),
           option text = STRING_TOKEN(STR_LCH_TESTDEVICE_DISABLED),  value = 0, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_LCH_TESTDEVICE_GPIO),      value = 1, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_LCH_TESTDEVICE_I2C),       value = 2, flags = RESET_REQUIRED;
         endoneof;
       endif;
 

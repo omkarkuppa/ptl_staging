@@ -343,9 +343,14 @@ class FlashConfigIniGenerator (object):
         for Region in UpdateOrder:
             IsFound, Value = SearchKeyInDict (self.__FlashMap, Region)
             if not IsFound:
-                raise ValueError (
-                        f'FlashMap is not defined region [{Region}] offset.'
-                        )
+                DEBUG (DEBUG_TRACE, f'[{Region}] - is not defined, no need this region.')
+                continue
+
+            if (isinstance (self.__FlashMap[Value], str)) and \
+               (CheckStringMatch (self.__FlashMap[Value], NOT_APPLICABLE)):
+                DEBUG (DEBUG_TRACE, f'[{Region}] - is not assigned, no need this region.')
+                continue
+
             BaseAddress = ToInt (self.__FlashMap[Value][FM_OFFSET_KEY])
 
             if Region not in self.__ImageInfoDict:

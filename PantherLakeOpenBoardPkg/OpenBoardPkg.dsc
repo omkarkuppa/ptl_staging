@@ -203,6 +203,7 @@
   SiliconPolicyUpdateLib|$(PLATFORM_BOARD_PACKAGE)/Policy/Library/DxeSiliconPolicyUpdateLib/DxeSiliconPolicyUpdateLib.inf
   BoardBdsHookLib|BoardModulePkg/Library/BoardBdsHookLib/BoardBdsHookLib.inf
   BoardBootManagerLib|BoardModulePkg/Library/BoardBootManagerLib/BoardBootManagerLib.inf
+  PciIoLib|$(PLATFORM_SI_PACKAGE)/LibraryPrivate/PciIoLib/DxePciIoLib.inf
 
   #
   # Silicon Init Package

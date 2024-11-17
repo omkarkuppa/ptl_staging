@@ -1,5 +1,5 @@
 /** @file
-  Google Test for the implementation of  FmpDeviceLib instance to support 
+  Google Test for the implementation of FmpDeviceLib instance to support
   Thunderbolt Retimer Firmware update
 
   @copyright
@@ -20,25 +20,24 @@
 @par Specification Reference:
 
 **/
+#include <GTestFmpDeviceLibUsbCRetimer.h>
 
 /**
 Google test for FmpDeviceGetHardwareInstance function.
 **/
-class FmpDeviceGetHardwareInstanceTest : public CommonMock {
+class FmpDeviceGetHardwareInstanceTest : public Test {
   protected:
-  EFI_STATUS     Status;
+    EFI_STATUS Status;
 };
 
-TEST_F (FmpDeviceGetHardwareInstanceTest, VarUnSupported) {
-
+TEST_F (FmpDeviceGetHardwareInstanceTest, Var_1_UnSupported) {
   //
   // Case 1 - General Case
   // Expected Result - Status will return EFI_UNSUPPORTED
   //
   cout << "[---------- Case 1 ----------]"<< endl;
   Status = FmpDeviceGetHardwareInstance (NULL);
-  EXPECT_EQ(Status, EFI_UNSUPPORTED);
+  EXPECT_EQ (Status, EFI_UNSUPPORTED);
 
   cout << "FmpDeviceGetHardwareInstance Done." << endl;
-
 }

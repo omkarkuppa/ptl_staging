@@ -18,8 +18,8 @@
 
 @par Specification Reference:
 **/
-#ifndef _MrcMcSiSpecific_h_
-#define _MrcMcSiSpecific_h_
+#ifndef _MrcMc_h_
+#define _MrcMc_h_
 
 #include "MrcMcApi.h"
 
@@ -46,4 +46,4 @@ MrcFullRankBlockOptimization (
   IN UINT8                Channel
   );
 
-#endif //_MrcMcSiSpecific_h_
+#endif //_MrcMc_h_

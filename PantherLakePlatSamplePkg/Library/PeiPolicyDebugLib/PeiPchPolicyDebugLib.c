@@ -69,7 +69,7 @@ UpdateUsbDebugPolicy (
   }
 #endif
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciOcLock, UsbConfig->XhciOcLock, PchSetup->PchXhciOcLock);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciOcLock, UsbConfig->XhciOcLock, PchSetup->PchXhciOcLock);
 }
 
 /**
@@ -103,9 +103,9 @@ UpdatePmDebugPolicy (
   }
 #endif
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmDisableEnergyReport,     PmConfig->DisableEnergyReport, (PchSetup->PchEnergyReport == 1)? 0 : 1);
-  UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.PchPmErDebugMode,              PmConfig->PmErDebugMode, PchSetup->PchPmErDebugMode);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcLpmS0ixSubStateEnableMask, PmConfig->LpmS0ixSubStateEnable.Val,  ((PchSetup->PmcLpmS0i2p0En << 0) |
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchPmDisableEnergyReport,     PmConfig->DisableEnergyReport, (PchSetup->PchEnergyReport == 1)? 0 : 1);
+  UPDATE_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.PchPmErDebugMode,              PmConfig->PmErDebugMode, PchSetup->PchPmErDebugMode);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PmcLpmS0ixSubStateEnableMask, PmConfig->LpmS0ixSubStateEnable.Val,  ((PchSetup->PmcLpmS0i2p0En << 0) |
                                                                                                                              (PchSetup->PmcLpmS0i2p1En << 1) |
                                                                                                                              (PchSetup->PmcLpmS0i2p2En << 2) |
                                                                                                                              (PchSetup->PmcLpmS0i3p0En << 3) |
@@ -145,7 +145,7 @@ UpdateP2sbDebugPolicy (
   }
 #endif
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSbAccessUnlock, P2sbConfig->SbAccessUnlock, PchSetup->PchSidebandLock ? 0 : 1);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSbAccessUnlock, P2sbConfig->SbAccessUnlock, PchSetup->PchSidebandLock ? 0 : 1);
 }
 
 /**

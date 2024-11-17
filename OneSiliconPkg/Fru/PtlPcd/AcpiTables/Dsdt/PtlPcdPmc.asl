@@ -46,7 +46,7 @@ Scope (\) {
       S101, 32,   // Tier 1 - GPE0_STS bits 32_63  // 0x64
       S102, 32,   // Tier 1 - GPE0_STS bits 64_95  // 0x68
     Offset (R_ACPI_IO_GPE0_STS_127_96),     // 0x6C, General Purpose Event 0 Status [127:96]
-          ,  19,
+          , 19,
     Offset (R_ACPI_IO_GPE0_EN_127_96),      // 0x7C, General Purpose Event 0 Enable [127:96]
           ,  18,
       WAEN,  1,       // WADT EN

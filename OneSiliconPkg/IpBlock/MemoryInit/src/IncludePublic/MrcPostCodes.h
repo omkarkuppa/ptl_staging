@@ -89,14 +89,13 @@
 #define MRC_READ_VREF_2D                (0xDD3C)
 #define MRC_RXDQS_DCC                   (0xDD3D)
 #define MRC_LATE_COMMAND                (0xDD3E)
-//Place Holder
 #define MRC_VCC_CLK_RX_FF_CAL           (0xDD3F)
 #define MRC_TURN_AROUND                 (0xDD40)
 #define MRC_CMP_OPT                     (0xDD41)
 #define MRC_SAVE_MC_VALUES              (0xDD42)
 #define MRC_RESTORE_TRAINING            (0xDD43)
 #define MRC_RMT_TOOL                    (0xDD44)
-//#define MRC_                            (0xDD45)
+#define MRC_DDRIO_INIT_FAST             (0xDD45)
 #define MRC_DIMM_RON                    (0xDD46)
 #define MRC_DCC_PHASE_CLK_CAL           (0xDD47)
 #define MRC_MR_FILL                     (0xDD48)
@@ -177,4 +176,7 @@
 #define MRC_HVM_FINALIZE                (0xDD84)
 #define MRC_DQ_LOOPBACK_TEST            (0xDD85)
 #define MRC_DQS_PAD_DCC                 (0xDD86)
+#define MRC_EARLY_DDRIO_FINALIZE        (0xDD87)
+#define MRC_LATE_DDRIO_FINALIZE         (0xDD88)
+#define MRC_QCLK_PH_ALIGN_CAL           (0xDD89)
 #endif

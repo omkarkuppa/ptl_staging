@@ -970,6 +970,9 @@ MrcGetMcConfigGroupLimits (
     case GsmMccDdr5CkdEnable:
     case GsmMccDisLpddr5RdwrInterleaving:
     case GsmMccEccCorrectionDisable:
+    case GsmMccMcCbRowPressDisAutoPre:
+    case GsmMccPageOpenPolicyMaxCount:
+    case GsmMccPageOpenPolicyEn:
       Min = 0;
       Max = 1;
       break;

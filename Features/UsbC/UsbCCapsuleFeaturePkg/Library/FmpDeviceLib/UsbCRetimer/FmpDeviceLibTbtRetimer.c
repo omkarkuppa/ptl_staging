@@ -622,8 +622,8 @@ FmpDeviceCheckImageWithStatus (
   @retval EFI_INVALID_PARAMETER   The Image was NULL.
   @retval EFI_UNSUPPORTED         The operation is not supported.
 **/
-STATIC
 EFI_STATUS
+EFIAPI
 ConstructRetimerInstances (
   IN  CONST VOID                      *Image,
   IN  UINTN                           ImageSize,

@@ -1735,6 +1735,7 @@
 #string STR_LCH_TESTDEVICE_HELP                 #language en-US "CVS Test Device support"
 #string STR_LCH_TESTDEVICE_DISABLED             #language en-US "Disabled"
 #string STR_LCH_TESTDEVICE_GPIO                 #language en-US "GPIO"
+#string STR_LCH_TESTDEVICE_I2C                  #language en-US "I2C"
 
 #string STR_MIPICAM_LINK0                       #language en-US "Camera1"
 #string STR_MIPICAM_LINK1                       #language en-US "Camera2"

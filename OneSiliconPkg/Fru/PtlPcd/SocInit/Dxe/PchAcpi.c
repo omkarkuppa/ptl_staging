@@ -152,6 +152,7 @@ UpdateThcAcpiData (
   EFI_STATUS                Status;
   VOID                      *HobPtr;
   THC_CONFIG_HOB            *ThcConfigHob;
+  UINT8                     MultiSpiMode;
 
 
   HobPtr = GetFirstGuidHob (&gPchThcConfigHobGuid);
@@ -193,6 +194,13 @@ UpdateThcAcpiData (
     mPchNvsAreaProtocol.Area->ThcHidSpiReadOpcode[Index]               = ThcConfigHob->ThcPort[Index].HidOverSpi.ReadOpcode;
     mPchNvsAreaProtocol.Area->ThcHidSpiWriteOpcode[Index]              = ThcConfigHob->ThcPort[Index].HidOverSpi.WriteOpcode;
     mPchNvsAreaProtocol.Area->ThcHidSpiConnectionSpeed[Index]          = ThcConfigHob->ThcPort[Index].HidOverSpi.Frequency;
+    // Extract MultiSpiMode by masking and shifting the Flags field
+    MultiSpiMode                                                       = (ThcConfigHob->ThcPort[Index].HidOverSpi.Flags & (BIT14|BIT15)) >> 14;
+    // Check if MultiSpiMode is 0b01 - Dual SPI Mode or 0b10 - Quad SPI Mode
+    if(MultiSpiMode == 1 || MultiSpiMode == 2) {
+      // Set the MULTI_SPI_MODE_ENABLE bit in the Flags field
+      ThcConfigHob->ThcPort[Index].HidOverSpi.Flags |= BIT13;
+    }
     mPchNvsAreaProtocol.Area->ThcHidSpiFlags[Index]                    = ThcConfigHob->ThcPort[Index].HidOverSpi.Flags;
     mPchNvsAreaProtocol.Area->ThcHidSpiLimitPacketSize[Index]          = ThcConfigHob->ThcPort[Index].HidOverSpi.LimitPacketSize;
 
@@ -748,6 +756,7 @@ PchUpdateNvsArea (
   //
   mPchNvsAreaProtocol.Area->CpuSku = GetCpuSku ();
   mPchNvsAreaProtocol.Area->PsOnEnable            = (UINT8)mPchPmcConfigHob->PsOnEnable;
+  mPchNvsAreaProtocol.Area->DtrSciEnable             = 0;
 
   for (Index = 0; Index < GetPchMaxPciePortNum (); Index++) {
     mPchNvsAreaProtocol.Area->LtrEnable[Index]  = (UINT8)RootPort[Index].PcieRpCommonConfig.LtrEnable;

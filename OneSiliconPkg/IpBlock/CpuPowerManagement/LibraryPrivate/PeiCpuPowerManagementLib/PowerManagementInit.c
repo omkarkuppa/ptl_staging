@@ -374,9 +374,7 @@ SetPpmFlags (
   /// Monitor/MWAIT parameters function describes the numbers supported.
   ///
   States = MonitorMwaitEdx.Bits.C1States;
-  if (States >= ENHANCED_CSTATE_SUPPORTED) {
-    PpmFlags |= (PPM_C1 | PPM_C1E);
-  } else if (States == CSTATE_SUPPORTED) {
+  if (States == CSTATE_SUPPORTED) {
     PpmFlags |= PPM_C1;
   }
 
@@ -531,7 +529,7 @@ SetUserConfigurationPpmFlags (
   //
   // In advance to clear following PPM flags which are related with policies that user can enabled/disabled.
   //
-  UserPpmFlag = (UINT32) ~(PPM_EIST | PPM_C1 | PPM_C1E | PPM_TM | PPM_TURBO | PPM_TSTATES |
+  UserPpmFlag = (UINT32) ~(PPM_EIST | PPM_C1 | PPM_TM | PPM_TURBO | PPM_TSTATES |
                            PPM_TSTATE_FINE_GRAINED | PPM_EEPST | PPM_TIMED_MWAIT | PPM_HWP | PPM_OC_UNLOCKED);
   ///
   /// Configure flag based on user selections
@@ -541,10 +539,6 @@ SetUserConfigurationPpmFlags (
   }
   if (gCpuPowerMgmtTestConfig->Cx) {
     UserPpmFlag |= PPM_C1;
-    if (gCpuPowerMgmtTestConfig->C1e) {
-      UserPpmFlag |= PPM_C1E;
-    }
-
   } else {
     UserPpmFlag &= ~( PPM_C6 | C6_LONG_LATENCY_ENABLE |
                      PPM_C7S | PPM_C7 | C7_LONG_LATENCY_ENABLE | C7s_LONG_LATENCY_ENABLE | PPM_CD |

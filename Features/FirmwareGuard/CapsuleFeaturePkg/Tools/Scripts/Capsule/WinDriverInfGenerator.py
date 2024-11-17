@@ -535,7 +535,7 @@ class _Firmware (object):
         Payload             = _UpdatePayload ()
         Payload.Section     = ROLLBACK_REG_TAG
         Payload.MappingData = [
-            [f'HKLM,SYSTEM\CurrentControlSet\Control\FirmwareResources\{{{self.__Guid}}},Policy,%REG_DWORD%,1', ''],
+            [f'HKLM,SYSTEM\\CurrentControlSet\\Control\\FirmwareResources\\{{{self.__Guid}}},Policy,%REG_DWORD%,1', ''],
             ]
         if self.__IsRollBack:
             PayloadList.append (Payload)
@@ -750,7 +750,7 @@ class _WindowsDriverInf (INICfgFile):
         super ().Save (FilePath, FileMode)
 
 class WindowsDriverInfGenerator (object):
-    DOT_VER_STR_REGEX_STR: str  = '^(\d){1,5}[.](\d){1,5}[.](\d){1,5}[.](\d){1,5}$'
+    DOT_VER_STR_REGEX_STR: str  = r'^(\d){1,5}[.](\d){1,5}[.](\d){1,5}[.](\d){1,5}$'
     SUPPORTED_ARCH_LIST  : list = ['amd64', 'arm', 'ARM64']
 
     def __init__ (

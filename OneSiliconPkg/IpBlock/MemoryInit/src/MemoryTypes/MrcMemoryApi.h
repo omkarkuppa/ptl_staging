@@ -114,6 +114,7 @@ typedef enum {
   MrDramCmdWsFs,  // LPDDR5 Only
   MrDramCmdWsOff, // LPDDR5 Only
   MrDramCmdCs2nSyncNop, // DDR5 Only
+  MrDramCmdSre,   // LPDDR5 Only
   MrDramCmdMax
 } MrDramCmdType;
 
@@ -138,18 +139,6 @@ typedef enum {
 MrcJedecBrcType
 ConvertDrfmBrcToTMrcJedecBrcType (
   MrcRhDrfmBrcType BrcVal
-  );
-
-/**
-  This function returns the timing value for Read Preamble.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @retval UINT8 - 0 for unsupported technologies, otherwise the delay in tCK
-**/
-UINT8
-MrcGetTrpre (
-  IN MrcParameters *const MrcData
   );
 
 /**

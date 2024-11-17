@@ -56,6 +56,14 @@ DefinitionBlock (
   External (\_SB.PC00.TRP1.HPEV, MethodObj)
   External (\_SB.PC00.TRP2.HPEV, MethodObj)
   External (\_SB.PC00.TRP3.HPEV, MethodObj)
+  External (\_SB.PC00.TRP0.LTRC, MethodObj)
+  External (\_SB.PC00.TRP1.LTRC, MethodObj)
+  External (\_SB.PC00.TRP2.LTRC, MethodObj)
+  External (\_SB.PC00.TRP3.LTRC, MethodObj)
+  External (\_SB.PC00.TRP0.CRPM, MethodObj)
+  External (\_SB.PC00.TRP1.CRPM, MethodObj)
+  External (\_SB.PC00.TRP2.CRPM, MethodObj)
+  External (\_SB.PC00.TRP3.CRPM, MethodObj)
   External (\_SB.PC00.RP01, DeviceObj)
   External (\_SB.PC00.RP02, DeviceObj)
   External (\_SB.PC00.RP03, DeviceObj)
@@ -150,6 +158,34 @@ DefinitionBlock (
     }
 
     //
+    // TPR3 - Is any TCSS PCIe RP in D3?
+    //
+    Method (TPR3) {
+      Store (0, Local0)
+      Store (\_SB.PC00.TRP0.CRPM (), Local1)
+      If (LNotEqual (Local1, 0xFF)) {
+        Or (Local0, Local1, Local0)
+      }
+      Store (\_SB.PC00.TRP1.CRPM (), Local1)
+      If (LNotEqual (Local1, 0xFF)) {
+        Or (Local0, Local1, Local0)
+      }
+      Store (\_SB.PC00.TRP2.CRPM (), Local1)
+      If (LNotEqual (Local1, 0xFF)) {
+        Or (Local0, Local1, Local0)
+      }
+      Store (\_SB.PC00.TRP3.CRPM (), Local1)
+      If (LNotEqual (Local1, 0xFF)) {
+        Or (Local0, Local1, Local0)
+      }
+      If (LEqual (Local0, 0)) {
+        Return (0)
+      } Else {
+        Return (1)
+      }
+    }
+
+    //
     // SL77 - TCSS Hot Plug Event
     //
     Method (SL77) {
@@ -159,20 +195,32 @@ DefinitionBlock (
       //"..If software issues an FLR while there are outstanding Requests,
       //and then re-enables the Function for operation without waiting for potential stale Completions, any stale
       //Completions that arrive afterwards may cause data corruption..."
-      //Wait 100ms
-      Sleep (100)
-
       If (CondRefOf (\_SB.PC00.TXHC)) {
         //
         // The iTBT PCIe Hot-Plug event
         //
-        \_SB.PC00.TRP0.HPEV ()
-        \_SB.PC00.TRP1.HPEV ()
-        \_SB.PC00.TRP2.HPEV ()
-        \_SB.PC00.TRP3.HPEV ()
+        // Check power state of all iTBT RP
+        // Determine all iTBT RP power state are in D0 state
+        // If all are in D0 state, skip waiting 100 ms to prevent redundant delay
+        If (LEqual (TPR3 (), 1)) {
+          ADBG ("D3 100ms delay as one of iTBT RP is in D3 state")
+          Sleep (100)
+          \_SB.PC00.TRP0.HPEV ()
+          \_SB.PC00.TRP1.HPEV ()
+          \_SB.PC00.TRP2.HPEV ()
+          \_SB.PC00.TRP3.HPEV ()
+        }
+
+        //
+        // WA for Hot-Plug event
+        // Toggle LTREN if device is disconnected from RP
+        //
+        \_SB.PC00.TRP0.LTRC ()
+        \_SB.PC00.TRP1.LTRC ()
+        \_SB.PC00.TRP2.LTRC ()
+        \_SB.PC00.TRP3.LTRC ()
       }
     }
-
 
     //
     // SL6F - handle events from PCIE when RTD3 is supported
@@ -184,24 +232,6 @@ DefinitionBlock (
       If (LEqual (PGRT,1)) {} // if PCIE RTD3 enabled
     }
 
-    //
-    // SLA8 - TCSS PCIE0 Hot Plug Event, GPE1
-    // TC_PCIE0_HOT_PLUG
-    //
-    Method (SLA8) {
-      //PCI Express Base Specification Revision 5.0 Version 1.0
-      //6.6.2 Function Level Reset (FLR)
-      //Avoiding Data Corruption From Stale Completions
-      //"..If software issues an FLR while there are outstanding Requests,
-      //and then re-enables the Function for operation without waiting for potential stale Completions, any stale
-      //Completions that arrive afterwards may cause data corruption..."
-      //Wait 100ms
-      Sleep (100)
-
-      If (CondRefOf (\_SB.PC00.TXHC)) {
-        \_SB.PC00.TRP0.HPEV ()
-      }
-    }
 
     //
     // SL8E - I3C GPE1 Event
@@ -237,6 +267,26 @@ DefinitionBlock (
     }
 
     //
+    // SLA8 - TCSS PCIE0 Hot Plug Event, GPE1
+    // TC_PCIE0_HOT_PLUG
+    //
+    Method (SLA8) {
+      //PCI Express Base Specification Revision 5.0 Version 1.0
+      //6.6.2 Function Level Reset (FLR)
+      //Avoiding Data Corruption From Stale Completions
+      //"..If software issues an FLR while there are outstanding Requests,
+      //and then re-enables the Function for operation without waiting for potential stale Completions, any stale
+      //Completions that arrive afterwards may cause data corruption..."
+      If (CondRefOf (\_SB.PC00.TXHC)) {
+        If (LEqual (TPR3 (), 1)) {
+          Sleep (100)
+          \_SB.PC00.TRP0.HPEV ()
+        }
+        \_SB.PC00.TRP0.LTRC ()
+      }
+    }
+
+    //
     // SLA9 - TCSS PCIE1 Hot Plug Event, GPE1
     // TC_PCIE1_HOT_PLUG
     //
@@ -247,11 +297,12 @@ DefinitionBlock (
       //"..If software issues an FLR while there are outstanding Requests,
       //and then re-enables the Function for operation without waiting for potential stale Completions, any stale
       //Completions that arrive afterwards may cause data corruption..."
-      //Wait 100ms
-      Sleep (100)
-
       If (CondRefOf (\_SB.PC00.TXHC)) {
-        \_SB.PC00.TRP1.HPEV ()
+        If (LEqual (TPR3 (), 1)) {
+          Sleep (100)
+          \_SB.PC00.TRP1.HPEV ()
+        }
+        \_SB.PC00.TRP1.LTRC ()
       }
     }
 
@@ -266,11 +317,12 @@ DefinitionBlock (
       //"..If software issues an FLR while there are outstanding Requests,
       //and then re-enables the Function for operation without waiting for potential stale Completions, any stale
       //Completions that arrive afterwards may cause data corruption..."
-      //Wait 100ms
-      Sleep (100)
-
       If (CondRefOf (\_SB.PC00.TXHC)) {
-        \_SB.PC00.TRP2.HPEV ()
+        If (LEqual (TPR3 (), 1)) {
+          Sleep (100)
+          \_SB.PC00.TRP2.HPEV ()
+        }
+        \_SB.PC00.TRP2.LTRC ()
       }
     }
 
@@ -285,11 +337,12 @@ DefinitionBlock (
       //"..If software issues an FLR while there are outstanding Requests,
       //and then re-enables the Function for operation without waiting for potential stale Completions, any stale
       //Completions that arrive afterwards may cause data corruption..."
-      //Wait 100ms
-      Sleep (100)
-
       If (CondRefOf (\_SB.PC00.TXHC)) {
-        \_SB.PC00.TRP3.HPEV ()
+        If (LEqual (TPR3 (), 1)) {
+          Sleep (100)
+          \_SB.PC00.TRP3.HPEV ()
+        }
+        \_SB.PC00.TRP3.LTRC ()
       }
     }
 

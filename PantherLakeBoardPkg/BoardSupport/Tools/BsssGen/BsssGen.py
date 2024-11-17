@@ -37,6 +37,7 @@ SEARCH_CHUNK_SIZE  = 4096
 BSIS_VERSION       = 0x20
 BSSS_VERSION       = 0x10
 BSIS_MAX_LENGTH    = 512
+TPM_BASE_ADDRESS   = 0xFED40000
 FSPT_UPD_SIGNATURE = "PTLUPD_T"
 BSIS_ID            = "__BSIS__"
 BSSS_ID            = "__BSPM__"
@@ -279,6 +280,7 @@ class BspConfigHead(Structure):
         print("FspmLoadingPolicy:", hex(self.FspmLoadingPolicy))
         print("FspmBaseAddress:", hex(self.FspmBaseAddress))
         print("BspSegmentCount:", self.BspSegmentCount)
+        print("TpmBaseAddress:", hex(self.TpmBaseAddress))
 
     #
     # Get FSP-T Upd by searching FspUpdSearchKeyword and revision in PreMemory FV of client FD
@@ -378,6 +380,7 @@ class BspConfig():
         self.IbbSegmentList = []
         self.fdDir = fdDir
 
+        self.BspConfigHead.TpmBaseAddress = TPM_BASE_ADDRESS
         self.BspConfigHead.FspmBaseAddress = ConvertTo4GSpaceAddr(flashMap.FvFspmOffset, flashMap.BiosFlashBaseAddr)
         self.BspConfigHead.FspmLoadingPolicy = int(fspmLP, 16)
         print("FspmLoadingPolicy", self.BspConfigHead.FspmLoadingPolicy)

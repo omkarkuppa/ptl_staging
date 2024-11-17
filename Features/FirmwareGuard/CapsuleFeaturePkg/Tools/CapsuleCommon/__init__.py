@@ -43,6 +43,7 @@ from CapsuleCommon.Wrapper import *
 #
 from CapsuleCommon.Edk2 import *
 from CapsuleCommon.Intel import *
+from CapsuleCommon.OpenSSL import *
 from CapsuleCommon.Windows import *
 
 

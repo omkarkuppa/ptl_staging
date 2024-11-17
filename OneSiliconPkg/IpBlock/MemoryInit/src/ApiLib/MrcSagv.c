@@ -26,7 +26,7 @@
 #include "MrcMemoryApi.h"
 #include "MrcSaveRestore.h"
 #include "MrcLpddr5.h"
-#include "MrcPmaApiCrossProj.h"
+#include "MrcPmaApi.h"
 #include "MrcDdr5.h"
 #include "MrcChipRouting.h"
 #include "MrcRowHammer.h"

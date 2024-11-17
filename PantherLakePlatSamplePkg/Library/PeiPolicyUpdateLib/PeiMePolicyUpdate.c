@@ -89,19 +89,19 @@ UpdatePeiMePolicy (
                        &MeSetup
                        );
   if (!EFI_ERROR (Status)) {
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EndOfPostMessage, MePeiConfig->EndOfPostMessage, MeSetup.EndOfPostMessage);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MeUnconfigOnRtcClear, MePeiConfig->MeUnconfigOnRtcClear, MeSetup.MeUnconfigOnRtcClear);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MctpBroadcastCycle, MePeiConfig->MctpBroadcastCycle, MeSetup.MctpBroadcastCycle);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CseDataResilience, MePeiConfig->CseDataResilience, MeSetup.CseDataResilience);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SseCommunication, MePeiConfig->SseCommunication, MeSetup.SseCommunication);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PseEomFlowEnable, MePeiConfig->PseEomFlowEnable, MeSetup.PseEomFlowEnable);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.DisableD0I3SettingForHeci, MePeiConfig->DisableD0I3SettingForHeci, MeSetup.DisableD0I3SettingForHeci);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.EndOfPostMessage, MePeiConfig->EndOfPostMessage, MeSetup.EndOfPostMessage);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.MeUnconfigOnRtcClear, MePeiConfig->MeUnconfigOnRtcClear, MeSetup.MeUnconfigOnRtcClear);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.MctpBroadcastCycle, MePeiConfig->MctpBroadcastCycle, MeSetup.MctpBroadcastCycle);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CseDataResilience, MePeiConfig->CseDataResilience, MeSetup.CseDataResilience);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SseCommunication, MePeiConfig->SseCommunication, MeSetup.SseCommunication);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PseEomFlowEnable, MePeiConfig->PseEomFlowEnable, MeSetup.PseEomFlowEnable);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.DisableD0I3SettingForHeci, MePeiConfig->DisableD0I3SettingForHeci, MeSetup.DisableD0I3SettingForHeci);
   }
   if (!PmcIsRtcBatteryGood ()) {
     //
     // For non coin battery design, this can be skipped.
     //
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MeUnconfigOnRtcClear, MePeiConfig->MeUnconfigOnRtcClear, 2);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.MeUnconfigOnRtcClear, MePeiConfig->MeUnconfigOnRtcClear, 2);
   }
 
   return Status;

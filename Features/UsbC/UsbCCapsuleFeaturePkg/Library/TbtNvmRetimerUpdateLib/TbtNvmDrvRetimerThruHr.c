@@ -370,7 +370,7 @@ InitHW (
   //
   Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProgressCodeProtocolGuid, NULL, (VOID**) &UsbCProgressCodeProtocol);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
+    DEBUG ((DEBUG_ERROR, "InitHW - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
     return Status;
   }
 
@@ -422,7 +422,7 @@ TerminateHW (
   //
   Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProgressCodeProtocolGuid, NULL, (VOID**) &UsbCProgressCodeProtocol);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
+    DEBUG ((DEBUG_ERROR, "TerminateHW - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
     return Status;
   }
 
@@ -432,7 +432,7 @@ TerminateHW (
   Status = SendLsupCmdDis (RetimerPtr);
   if (TBT_STATUS_ERR (Status)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_TBTCMD_SEND_USUP_CMD_FAIL, (UINT32) Status, 0);
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::Dtor Failed to send USUP to retimer.\n"));
+    DEBUG ((DEBUG_ERROR, "TerminateHW - Dtor Failed to send USUP to retimer.\n"));
     return Status;
   }
   return TBT_STATUS_SUCCESS;

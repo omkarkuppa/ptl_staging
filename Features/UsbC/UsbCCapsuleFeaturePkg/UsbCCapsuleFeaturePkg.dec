@@ -51,7 +51,7 @@
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable|FALSE|BOOLEAN|0xCC000001
 
 [PcdsDynamic]
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber|0x0|UINT8|0xCC000010
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdSupportBitmap|0x0|UINT8|0xCC000010
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber|0x0|UINT8|0xCC000011
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapabilityParsingTimeDelay|0x0|UINT32|0xCC000014
   # Time delay to make sure retimer is ready for communication after Drive to TBT mode.

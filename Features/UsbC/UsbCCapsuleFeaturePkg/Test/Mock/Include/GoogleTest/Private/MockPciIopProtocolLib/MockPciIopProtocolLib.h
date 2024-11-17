@@ -28,6 +28,8 @@
 extern "C" {
 #include <Uefi.h>
 #include <Protocol/PciIo.h>
+
+extern EFI_PCI_IO_PROTOCOL localPp;
 }
 
 struct MockPciIopProtocolLib {
@@ -41,7 +43,43 @@ struct MockPciIopProtocolLib {
      OUT UINTN              *BusNumber,
      OUT UINTN              *DeviceNumber,
      OUT UINTN              *FunctionNumber)
-     );
+    );
+  MOCK_FUNCTION_DECLARATION (
+    EFI_STATUS,
+    Config_Attributes,
+    (IN  EFI_PCI_IO_PROTOCOL                      *This,
+     IN  EFI_PCI_IO_PROTOCOL_ATTRIBUTE_OPERATION  Operation,
+     IN  UINT64                                   Attributes,
+     OUT UINT64                                   *Result)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    EFI_STATUS,
+    Config_Read,
+    (IN     EFI_PCI_IO_PROTOCOL        *This,
+     IN     EFI_PCI_IO_PROTOCOL_WIDTH  Width,
+     IN     UINT32                     Offset,
+     IN     UINTN                      Count,
+     IN OUT VOID                       *Buffer)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    EFI_STATUS,
+    Config_Write,
+    (IN     EFI_PCI_IO_PROTOCOL        *This,
+     IN     EFI_PCI_IO_PROTOCOL_WIDTH  Width,
+     IN     UINT32                     Offset,
+     IN     UINTN                      Count,
+     IN OUT VOID                       *Buffer)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    EFI_STATUS,
+    Mem_Read,
+    (IN     EFI_PCI_IO_PROTOCOL        *This,
+     IN     EFI_PCI_IO_PROTOCOL_WIDTH  Width,
+     IN     UINT8                      BarIndex,
+     IN     UINT64                     Offset,
+     IN     UINTN                      Count,
+     IN OUT VOID                       *Buffer)
+    );
 };
 
 #endif

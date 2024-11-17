@@ -172,6 +172,8 @@ TouchPanelGpioInit (
     case BoardIdPtlHLp5Gcs2:
     case BoardIdPtlUHLp5Aep:
     case BoardIdPtlUHLp5MemSktmRvp:
+    case BoardIdPtlUHLp5Adk1:
+    case BoardIdPtlUHLp5Adk2:
       //
       // Verify if THC0 or THC1 panels are enabled before changing GPIO configuration
       //
@@ -423,7 +425,7 @@ PtlBoardTbtInit (
   // PD/Retimer information
   //
   PcdSetBoolS (PcdUsbCEcSupportPdInfoPresent, PcdGetBool (VpdPcdUsbCEcSupportPdInfoPresent));
-  SetPcdPdNumber ();
+  SetPcdUsbCPdSupportBitmap ();
 
   PcdSetBoolS (PcdUsbCEcSupportRetimerInfoPresent, PcdGetBool (VpdPcdUsbCEcSupportRetimerInfoPresent));
   PcdSet8S (PcdUsbCCapsuleDebugLevel, mSetupData.UsbcCapsuleDebugLevel);

@@ -402,6 +402,7 @@ FspUpdateHdaPreMemPolicy (
   HdaPreMemConfig->LowFreqLinkClkSrc  = FspmUpd->FspmConfig.PchHdaTestLowFreqLinkClkSrc;
   HdaPreMemConfig->HdaDiscBtOffload.HdaDiscBtOffEnabled = FspmUpd->FspmConfig.PchHdaDiscBtOffEnabled;
   HdaPreMemConfig->HdaDiscBtOffload.HdaDiscBtOffSspLink = FspmUpd->FspmConfig.PchHdaDiscBtOffSspLink;
+  HdaPreMemConfig->SoundWireClockSelect = FspmUpd->FspmConfig.PchHdaSndwClockSourceSelect;
 }
 
 

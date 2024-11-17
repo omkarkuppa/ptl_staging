@@ -176,7 +176,7 @@ class Edk2FdGeneratorApi (object):
                 The exit code of EDK-II FV generator script.
                 (Detail exit code should be reference its own)
         """
-        CmdList      : List[str] = [
+        CmdList: List[str] = [
             f'{Edk2FdGeneratorApi.PY_BUILDER_SCRIPT_PATH}',
             '-t',  f'{EDKII_TOOL_PATH}',
             '-w',  f'{EDKII_WORKSPACE_PATH}',
@@ -189,7 +189,9 @@ class Edk2FdGeneratorApi (object):
         DEBUG (DEBUG_TRACE, f'FDF File Path: {self.__FdfFilePath}')
         DEBUG (DEBUG_TRACE, f'FV Name      : {self.__FvName}')
 
-        ExitCode, _, _ = ExecPythonCmd (CmdList)
+        ExitCode, _, _ = ExecPythonCmd (CmdList, IsException = False)
+        if (ExitCode != STATUS_SUCCESS):
+            raise ErrorException (f'Failed to build EDK-II FV.')
 
         return ExitCode
 

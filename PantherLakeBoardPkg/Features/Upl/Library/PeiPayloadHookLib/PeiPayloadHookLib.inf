@@ -310,7 +310,6 @@
   gBoardModuleTokenSpaceGuid.PcdM2Ssd2PowerEnableGpio
   gBoardModuleTokenSpaceGuid.PcdM2Ssd2PowerEnableGpioPolarity
   gBoardModuleTokenSpaceGuid.PcdPcieSlot2RootPort
-  gBoardModuleTokenSpaceGuid.VpdPcdCnvDeviceId
 
   gBoardModuleTokenSpaceGuid.VpdPcdTelemetry
   gBoardModuleTokenSpaceGuid.PcdPcieSlot3HoldRstGpioNo

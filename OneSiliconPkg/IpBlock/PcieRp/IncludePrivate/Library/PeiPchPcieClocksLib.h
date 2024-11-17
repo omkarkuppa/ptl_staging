@@ -81,6 +81,19 @@ EnableClkReq (
 
 
 /**
+  Programs PadRstCfg for Gpio CLK REQ not assigned pin for given PCIe port
+  Corresponding GPIO pad PadRstMode is configured into GpioV2ResetHost mode
+  @param[in]  ClockUsage      type and number of PCIe port
+  @retval     EFI_SUCCESS     PadRstMode was successfully enabled
+  @retval     EFI_UNSUPPORTED PadRstMode was not set to given Port
+**/
+EFI_STATUS
+ChangePadRstCfg (
+  PCH_PCIE_CLOCK_USAGE ClockUsage
+  );
+
+
+/**
   Disables one PCIe clock.
 
   @param[in] ClockUsage    type and number of PCIe port for which Clock should be disabled

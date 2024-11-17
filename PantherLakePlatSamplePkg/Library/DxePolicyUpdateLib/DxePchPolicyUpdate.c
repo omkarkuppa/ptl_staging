@@ -146,6 +146,8 @@ UpdateHdAudioDxePolicy (
   ASSERT_EFI_ERROR (Status);
 
   VarDataSize = sizeof (CNV_VFR_CONFIG_SETUP);
+  ZeroMem (&CnvSetup, VarDataSize);
+#if FixedPcdGetBool (PcdCnvFeatureEnable) == 1
   Status = gRT->GetVariable (
                   L"CnvSetup",
                   &gCnvFeatureSetupGuid,
@@ -156,7 +158,7 @@ UpdateHdAudioDxePolicy (
   if (EFI_ERROR (Status)) {
     return;
   }
-
+#endif
   for (Index = 0; Index < PCH_MAX_HDA_SNDW_LINK_NUM; Index++) {
     HdAudioDxeConfig->SndwConfig[Index].AutonomousClockStop            = PchSetup->PchHdaAutonomousClockStopSndw[Index];
     HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalSelect     = PchSetup->PchHdaDataOnActiveIntervalSelectSndw[Index];

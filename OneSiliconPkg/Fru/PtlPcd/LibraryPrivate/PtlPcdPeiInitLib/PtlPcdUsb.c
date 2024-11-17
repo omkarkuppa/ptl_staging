@@ -566,11 +566,10 @@ PtlPcdUsbHostControllerInit (
   };
 
   IP_USB3_FEATURE_LIST_ENTRY  FeatureList[] = {
-    { IpUsb3FeatIdHhhFlushFix,                 IpUsb3FeatValHhhFlushFixDis                },
-    { IpUsb3FeatIdB2bRetryFix,                 IpUsb3FeatValB2bRetryFixEn                 },
-    { IpUsb3FeatIdReadAfterWriteDelay,         IpUsb3FeatValReadAfterWriteDelayEn         },
-    { IpUsb3FeatIdHSAsyncActiveExposure,       IpUsb3FeatValHSAsyncActiveExposureEn       },
-    { IpUsb3FeatIdLtrNdeEnhancedSsIsochInEp,   IpUsb3FeatValLtrNdeEnhancedSsIsochInEpDis  },
+    { IpUsb3FeatIdHhhFlushFix,            IpUsb3FeatValHhhFlushFixDis          },
+    { IpUsb3FeatIdB2bRetryFix,            IpUsb3FeatValB2bRetryFixEn           },
+    { IpUsb3FeatIdReadAfterWriteDelay,    IpUsb3FeatValReadAfterWriteDelayEn   },
+    { IpUsb3FeatIdHSAsyncActiveExposure,  IpUsb3FeatValHSAsyncActiveExposureEn },
   };
 
   DEBUG ((DEBUG_VERBOSE, "%a entry\n", __FUNCTION__));

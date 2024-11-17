@@ -32,6 +32,7 @@ VENDOR_KEY             : str = 'Vendor'
 PLATFORM_GENERATION_KEY: str = 'PlatformGeneration'
 PLATFORM_FULLNAME_KEY  : str = 'PlatformFullName'
 PLATFORM_PREFIX_KEY    : str = 'PlatformPrefix'
+HASH_ALGORITHM_KEY     : str = 'HashAlgorithm'
 
 #
 # Keystores section
@@ -141,6 +142,7 @@ UCODE_COMPONENT_KEY       : str = 'Ucode'
 UCODE_VERSION_KEY         : str = 'UcodeVersion'
 UCODE_BGUP_KEY            : str = 'UcodeBgup'
 UCODE_XDR_KEY             : str = 'UcodeXdr'
+FOXVILLE_COMPONENT_KEY    : str = 'Foxville'
 
 #
 # Firmware Section

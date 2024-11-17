@@ -173,7 +173,6 @@ FspUpdatePeiCpuPolicy (
   CpuPowerMgmtTestConfig->EnableAllThermalFunctions     = FspsUpd->FspsConfig.EnableAllThermalFunctions;
   CpuPowerMgmtTestConfig->Cx                            = FspsUpd->FspsConfig.Cx;
   CpuPowerMgmtTestConfig->PmgCstCfgCtrlLock             = FspsUpd->FspsConfig.PmgCstCfgCtrlLock;
-  CpuPowerMgmtTestConfig->C1e                           = FspsUpd->FspsConfig.C1e;
   CpuPowerMgmtTestConfig->C1AutoDemotion                = FspsUpd->FspsConfig.C1StateAutoDemotion;
   CpuPowerMgmtTestConfig->C1UnDemotion                  = FspsUpd->FspsConfig.C1StateUnDemotion;
   CpuPowerMgmtTestConfig->PkgCStateDemotion             = FspsUpd->FspsConfig.PkgCStateDemotion;

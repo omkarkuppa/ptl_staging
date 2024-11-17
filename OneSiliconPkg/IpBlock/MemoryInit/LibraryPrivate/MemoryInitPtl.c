@@ -152,10 +152,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED const SPD_OFFSET_TABLE SpdLpddrTable[] = {
   { 230,             232,               (1 << SpdCold),},
   { 234,             235,               (1 << SpdCold),},
   { SPDLP_MANUF_START, SPDLP_MANUF_END, (1 << SpdCold) | (1 << SpdFast),},
-  { 336,             383,               (1 << SpdCold),},
-  { 510,             511,               (1 << SpdCold),},
+  { 329,             352,               (1 << SpdCold),},
   { SPDLP_JEDEC_SPEC_MANUF_START, SPDLP_JEDEC_SPEC_MANUF_END, (1 << SpdCold) | (1 << SpdFast),},
-  { 521,             639,               (1 << SpdCold),}
+  { 521,             554,               (1 << SpdCold),}
 };
 
 ///
@@ -3078,6 +3077,7 @@ DEBUG_CODE_END();
   Inputs->Lp5NZQCount = 0;
   Inputs->IsXtensaEccDisabled = TRUE;
   Inputs->SenseAtRxDll = TRUE;
+  Inputs->MinAllowedNModeOvrd = CA_2_NMODE;
 
   Inputs->MptuPropagationErrorFlow = FALSE;
 
@@ -3309,6 +3309,7 @@ DEBUG_CODE_END();
       ExtInputs->TrainingEnables3.VIEWPINCAL     = 0;
       ExtInputs->TrainingEnables3.WCKCLKPREDCC   = 0;
       ExtInputs->TrainingEnables3.DQSPADDCC      = 0;
+      ExtInputs->TrainingEnables3.QCLKPHALIGN    = 0;
     }
   }
 

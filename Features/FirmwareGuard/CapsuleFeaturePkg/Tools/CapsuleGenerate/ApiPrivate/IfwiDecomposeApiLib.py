@@ -172,7 +172,8 @@ class IfwiDecomposeApi (object):
         ExitCode     : int = int ()
 
         DEBUG (DEBUG_INFO, f'>> Start to decompose the IFWI via FIT tool.')
-        Cmd: List[str] = [
+
+        CmdList: List[str] = [
             f'{IfwiDecomposeApi.PY_DECOMPOSE_SCRIPT_PATH}',
             '-i', f'{self.__IfwiPath}',
             '-f', f'{self.__FitToolPath}',
@@ -190,7 +191,10 @@ class IfwiDecomposeApi (object):
             '-config', f'{self.__IfwiCfgFileName}'
             ]
 
-        ExitCode, _, _ = ExecPythonCmd (Cmd)
+        ExitCode, _, _ = ExecPythonCmd (CmdList, IsException = False)
+        if (ExitCode != STATUS_SUCCESS):
+            raise ErrorException (f'Failed to decompose the IFWI via FIT tool.')
+
         DEBUG (DEBUG_INFO, f'>> Finish to decompose the IFWI via FIT tool.')
 
         return ExitCode

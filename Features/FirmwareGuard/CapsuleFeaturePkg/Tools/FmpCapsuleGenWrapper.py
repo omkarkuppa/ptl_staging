@@ -26,7 +26,7 @@ from typing import Dict
 
 from CapsuleCommon import *
 
-TOOLKIT_PATH                : str = os.path.dirname (__file__)
+TOOLKIT_PATH                : str = os.path.dirname (os.path.abspath (__file__))
 PY_CAPSULE_COMMON_PKG_PATH  : str = JoinPath (TOOLKIT_PATH, 'CapsuleCommon')
 PY_CAPSULE_GENERATE_PKG_PATH: str = JoinPath (TOOLKIT_PATH, 'CapsuleGenerate')
 
@@ -223,7 +223,11 @@ class _CapsuleBuild (object):
             '--pre-check',
             ]
 
-        ExitCode, _, _ = ExecPythonCmd (CmdList, Env = self.__EnvConfig)
+        ExitCode, _, _ = ExecPythonCmd (
+                           CmdList,
+                           Env         = self.__EnvConfig,
+                           IsException = False,
+                           )
         if (ExitCode != STATUS_SUCCESS) :
             raise ErrorException (f'Failed on Capsule build PreCheck.')
 
@@ -249,7 +253,11 @@ class _CapsuleBuild (object):
             '--post-check',
             ]
 
-        ExitCode, _, _ = ExecPythonCmd (CmdList, Env = self.__EnvConfig)
+        ExitCode, _, _ = ExecPythonCmd (
+                           CmdList,
+                           Env         = self.__EnvConfig,
+                           IsException = False,
+                           )
         if (ExitCode != STATUS_SUCCESS) :
             raise ErrorException (f'Failed on Capsule build PostCheck.')
 
@@ -275,7 +283,11 @@ class _CapsuleBuild (object):
         CmdList.append (_CapsuleBuild.PY_SCRIPT_FMP_CAP_BUILD_PATH)
         CmdList.extend (self.__BuildCmdList)
 
-        ExitCode, _, _ = ExecPythonCmd (CmdList, Env = self.__EnvConfig)
+        ExitCode, _, _ = ExecPythonCmd (
+                           CmdList,
+                           Env         = self.__EnvConfig,
+                           IsException = False,
+                           )
         if (ExitCode != STATUS_SUCCESS) :
             raise ErrorException (f'Failed to build the capsule.')
 

@@ -1,5 +1,5 @@
 /** @file
-  Google Test for the implementation of  FmpDeviceLib instance to support 
+  Google Test for the implementation of FmpDeviceLib instance to support
   Thunderbolt Retimer Firmware update
 
   @copyright
@@ -20,45 +20,40 @@
 @par Specification Reference:
 
 **/
+#include <GTestFmpDeviceLibUsbCRetimer.h>
 
 /**
 Google test for FmpDeviceGetVersionString function.
 **/
-class FmpDeviceGetVersionStringTest : public CommonMock {
+class FmpDeviceGetVersionStringTest : public Test {
   protected:
-  EFI_STATUS     Status;
-  CHAR16  **VersionString;
+    EFI_STATUS Status;
+    CHAR16     **VersionString;
 
   void SetUp() override {
-    VersionString = (CHAR16**) AllocatePool(1);
-    ASSERT_NE(VersionString, nullptr);
+    VersionString = (CHAR16 **) AllocatePool (1);
+    ASSERT_NE (VersionString, nullptr);
   }
 };
 
-
-TEST_F (FmpDeviceGetVersionStringTest, VarError) {
-
+TEST_F (FmpDeviceGetVersionStringTest, Var_1_Error) {
   //
   // Case 1 - VersionString is NULL
   // Expected Result - Status will return EFI_INVALID_PARAMETER
   //
   cout << "[---------- Case 1 ----------]"<< endl;
   Status = FmpDeviceGetVersionString (NULL);
-  EXPECT_EQ(Status, EFI_INVALID_PARAMETER);
-
+  EXPECT_EQ (Status, EFI_INVALID_PARAMETER);
 }
 
-TEST_F(FmpDeviceGetVersionStringTest, VarUnSupported) {
-
-
+TEST_F (FmpDeviceGetVersionStringTest, Var_2_UnSupported) {
   //
   // Case 2 - General Case
   // Expected Result - Status will return EFI_UNSUPPORTED
   //
   cout << "[---------- Case 2 ----------]"<< endl;
   Status = FmpDeviceGetVersionString (VersionString);
-  EXPECT_EQ(Status, EFI_UNSUPPORTED);
+  EXPECT_EQ (Status, EFI_UNSUPPORTED);
 
   cout << "FmpDeviceGetVersionString Done." << endl;
-
 }

@@ -136,7 +136,7 @@ UpdateGraphics(
 #endif
 
   DEBUG((DEBUG_INFO, "\nUpdating SA Policy in Post Mem\n"));
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PeiGraphicsPeimInit, IGpuConfig->PeiDisplayConfig.PeiGraphicsPeimInit, 1);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PeiGraphicsPeimInit, IGpuConfig->PeiDisplayConfig.PeiGraphicsPeimInit, 1);
 
   Size = 0;
   Buffer = NULL;
@@ -168,8 +168,8 @@ UpdateGraphics(
         return Status;
     }
 
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.LogoPixelWidth, IGpuConfig->PeiDisplayConfig.LogoPixelWidth, (UINT32)Width);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.LogoPixelHeight, IGpuConfig->PeiDisplayConfig.LogoPixelHeight, (UINT32)Height);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.LogoPixelWidth, IGpuConfig->PeiDisplayConfig.LogoPixelWidth, (UINT32)Width);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.LogoPixelHeight, IGpuConfig->PeiDisplayConfig.LogoPixelHeight, (UINT32)Height);
 
     IGpuConfig->PeiDisplayConfig.BltBufferAddress = (VOID *) Blt;
 

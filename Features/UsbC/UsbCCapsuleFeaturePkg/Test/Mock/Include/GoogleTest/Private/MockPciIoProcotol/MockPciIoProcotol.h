@@ -25,9 +25,9 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Uefi.h>
-  #include <Library/UefiLib.h>
-  #include <Protocol/PciIo.h>
+#include <Uefi.h>
+#include <Library/UefiLib.h>
+#include <Protocol/PciIo.h>
 }
 
 struct MockPciIoProcotol {
@@ -42,7 +42,6 @@ struct MockPciIoProcotol {
      IN     UINTN                      Count,
      IN OUT VOID                       *Buffer)
     );
-
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     MockPciIoConfigWrite,
@@ -52,7 +51,6 @@ struct MockPciIoProcotol {
      IN     UINTN                      Count,
      IN OUT VOID                       *Buffer)
     );
-
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     MockPciIoGetLocation,
@@ -62,7 +60,6 @@ struct MockPciIoProcotol {
      OUT UINTN                *Device,
      OUT UINTN                *Function)
     );
-
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     MockPciIoAttributes,
@@ -71,7 +68,6 @@ struct MockPciIoProcotol {
      IN  UINT64                                   Attributes,
      OUT UINT64                                   *Result)
     );
-
 };
 
 #endif

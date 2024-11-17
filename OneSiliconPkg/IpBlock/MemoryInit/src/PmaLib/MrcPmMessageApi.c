@@ -21,7 +21,7 @@
 
 #include "CMrcApi.h"
 #include "MrcHalRegisterAccess.h"
-#include "MrcPmaApiCrossProj.h"
+#include "MrcPmaApi.h"
 #include "MrcHalApi.h"
 
 /**

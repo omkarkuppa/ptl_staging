@@ -1,5 +1,5 @@
 /** @file
-  FmpDeviceLib instance to support Foxville I225/I226 update
+  Library instance for FmpDeviceLib to support Foxville update in DXE.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -21,16 +21,86 @@
 
 **/
 
+#include <Uefi.h>
+#include <Protocol/PciEnumerationComplete.h>
 #include <Library/DebugLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/PcdLib.h>
 #include <LastAttemptStatus.h>
 #include <Library/FmpDeviceLib.h>
-#include <Library/FoxvilleDeviceLib.h>
+#include "FoxvilleDeviceLib.h"
+
+//
+// Module Variables.
+//
+GLOBAL_REMOVE_IF_UNREFERENCED STATIC EFI_EVENT  mFoxvilleOnPciEnumCompleteEvent = NULL;
+
+/**
+  Callback function for the gEfiPciEnumerationCompleteProtocolGuid protocol installed.
+
+  @param[in]  Event    Event whose notification function is being invoked.
+  @param[in]  Context  The pointer to the notification function's context,
+                       which is implementation-dependent.
+
+**/
+VOID
+EFIAPI
+FoxvillePciEnumCompleteCallback (
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
+  )
+{
+  EFI_STATUS                             Status;
+  FMP_DEVICE_LIB_REGISTER_FMP_INSTALLER  FmpInstaller;
+  VOID                                   *InstPtr;
+  EFI_HANDLE                             DeviceHandle;
+
+  Status       = EFI_SUCCESS;
+  FmpInstaller = (FMP_DEVICE_LIB_REGISTER_FMP_INSTALLER)Context;
+  InstPtr      = NULL;
+  DeviceHandle = NULL;
+
+  if (FmpInstaller == NULL) {
+    DEBUG ((DEBUG_ERROR, "Foxville FmpInstaller is invalid.\n"));
+    return;
+  }
+
+  //
+  // Ensure the PCI enumeration complete protocol is installed.
+  //
+  Status = gBS->LocateProtocol (
+                  &gEfiPciEnumerationCompleteProtocolGuid,
+                  NULL,
+                  (VOID **)&InstPtr
+                  );
+  if (EFI_ERROR (Status)) {
+    return;
+  }
+
+  //
+  // Retrieve the device handle for Foxville.
+  //
+  Status = FoxvilleDeviceInit (&DeviceHandle);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "Failed to detect Foxville device, Status = %r\n", Status));
+    return;
+  }
+
+  //
+  // Install the FMP protocol for correspond device handle.
+  //
+  Status = FmpInstaller (DeviceHandle);
+  DEBUG ((DEBUG_INFO, "Create Foxville FMP device: %r\n", Status));
+
+  gBS->CloseEvent (Event);
+
+  return;
+}
 
 /**
   Provide a function to install the Firmware Management Protocol instance onto a
@@ -57,14 +127,20 @@ RegisterFmpInstaller (
   IN FMP_DEVICE_LIB_REGISTER_FMP_INSTALLER  Function
   )
 {
-  EFI_STATUS Status;
+  VOID  *Registration;
 
-  Status = FoxvilleDeviceInit ();
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Failed to detect GbE device, Status=%r\n", Status));
-    return EFI_NOT_FOUND;
+  mFoxvilleOnPciEnumCompleteEvent = EfiCreateProtocolNotifyEvent (
+                                      &gEfiPciEnumerationCompleteProtocolGuid,
+                                      TPL_CALLBACK,
+                                      FoxvillePciEnumCompleteCallback,
+                                      (VOID *)Function,
+                                      &Registration
+                                      );
+  if (mFoxvilleOnPciEnumCompleteEvent == NULL) {
+    return EFI_ABORTED;
   }
-  return EFI_UNSUPPORTED;
+
+  return EFI_SUCCESS;
 }
 
 /**
@@ -95,7 +171,7 @@ RegisterFmpUninstaller (
   //
   // This is a system firmware update that does not use Driver Binding Protocol
   //
-  return EFI_UNSUPPORTED;
+  return EFI_SUCCESS;
 }
 
 /**
@@ -219,6 +295,7 @@ FmpDeviceGetAttributes (
   if (Supported == NULL || Setting == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
   *Supported = (IMAGE_ATTRIBUTE_IMAGE_UPDATABLE         |
                 IMAGE_ATTRIBUTE_RESET_REQUIRED          |
                 IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED |
@@ -226,15 +303,9 @@ FmpDeviceGetAttributes (
                 );
   *Setting   = (IMAGE_ATTRIBUTE_IMAGE_UPDATABLE         |
                 IMAGE_ATTRIBUTE_RESET_REQUIRED          |
-                IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED
+                IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED |
+                IMAGE_ATTRIBUTE_IN_USE
                 );
-
-  if (PcdGet8 (PcdSystemFirmwareFmpSupportedMode) != 0) {
-    //
-    // Expose ESRT entry if not in Monolithic mode.
-    //
-    *Setting = *Setting | IMAGE_ATTRIBUTE_IN_USE;
-  }
 
   return EFI_SUCCESS;
 }
@@ -672,7 +743,7 @@ FmpDeviceGetVersionString (
     return EFI_INVALID_PARAMETER;
   }
 
-  return EFI_UNSUPPORTED;
+  return GetVersionString (VersionString);
 }
 
 /**

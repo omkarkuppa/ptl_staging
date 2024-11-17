@@ -52,6 +52,7 @@ gSiPkgTokenSpaceGuid.PcdTopMemoryCacheSize
 gSiPkgTokenSpaceGuid.PcdCacheCheckEnable
 gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase
 gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize
+gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedBufferSize
 
 [Sources.IA32]
   Ia32/SecCpuLib.nasm

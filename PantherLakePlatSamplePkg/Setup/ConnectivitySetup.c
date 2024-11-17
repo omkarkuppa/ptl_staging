@@ -116,6 +116,7 @@ CnvFormPlatformCallback (
     }
     mCnvFormChanged = 0;
 
+#if FixedPcdGetBool (PcdCnvFeatureEnable) == 1
     Status = gRT->GetVariable (
                     L"CnvSetup",
                     &gCnvFeatureSetupGuid,
@@ -126,6 +127,7 @@ CnvFormPlatformCallback (
     if (EFI_ERROR (Status)) {
       return Status;
     }
+#endif
 
     Status = gRT->GetVariable (
                     L"PchSetup",
@@ -310,10 +312,15 @@ DspFeaturesCnvSetupCallback (
 
   // Pull the correct data depending on whether the changes in the CNV setup are saved or not
   if (mCnvFormChanged) {
+#if FixedPcdGetBool (PcdCnvFeatureEnable) == 1
     if (!HiiGetBrowserData (&gCnvFeatureSetupGuid, CNV_SETUP_VARIABLE_NAME, CnvSetupVarSize, (UINT8 *) &CnvSetupData)) {
       return EFI_NOT_FOUND;
     }
+#else
+    return EFI_NOT_FOUND;
+#endif
   } else {
+#if FixedPcdGetBool (PcdCnvFeatureEnable) == 1
     CnvSetupVarSize = sizeof (CNV_VFR_CONFIG_SETUP);
     Status = gRT->GetVariable (
                     L"CnvSetup",
@@ -325,6 +332,7 @@ DspFeaturesCnvSetupCallback (
     if (EFI_ERROR (Status)) {
       return Status;
     }
+#endif
   }
 
   if (!HiiGetBrowserData (&gPchSetupVariableGuid, L"PchSetup", PchVarSize, (UINT8 *) &PchSetup)) {

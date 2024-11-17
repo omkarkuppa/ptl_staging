@@ -349,9 +349,12 @@ UpdateLchSetupConfig (
     MipiSetupData.MipiCam_Link0_DriverData_FlashSupport = 2;
     CopyMem (MipiSetupData.MipiCam_Link0_ModuleName, L"KAFE799", sizeof (L"KAFE799"));
     MipiSetupData.MipiCam_Link0_DriverData_LinkUsed = 0;
-    MipiSetupData.MipiCam_Link0_DriverData_LaneUsed = 4;
     MipiSetupData.MipiCam_Link0_DriverData_EepromType = 0x14;
     MipiSetupData.MipiCam_Link0_DriverData_VcmType = 0x0;
+    MipiSetupData.MipiCam_Link0_I2cDevicesEnabled = 0x2;
+    MipiSetupData.MipiCam_Link0_I2cChannel = 0x1;
+    MipiSetupData.MipiCam_Link0_I2cAddress[1] = 0x50;
+    MipiSetupData.MipiCam_Link0_I2cDeviceType[1] = 0x2;
 
     Status = gRT->SetVariable (
                     MIPICAM_CONFIG_VARIABLE_NAME,

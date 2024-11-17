@@ -189,20 +189,19 @@ ProgramCacheAttributes (
   )
 {
   EFI_STATUS                  Status;
-  UINTN                       Index;
   UINT64                      LowMemoryLength;
   UINT64                      HighMemoryLength;
   UINT64                      TopHighMemory;
   UINT64                      MaxLowMemoryLength;
-  UINT32                      VariableMtrrCount;
-  UINT8                       MtrrReserved;
   MTRR_SETTINGS               MtrrSetting;
   EFI_PHYSICAL_ADDRESS        TsegBaseAddress;
   EFI_HOB_RESOURCE_DESCRIPTOR *Descriptor;
   VOID                        *SpiInfoHob;
   SPI_INFO_HOB                *SpiInfoHobData;
   BOOLEAN                     ExtendedBiosSupport = FALSE;
+  UINT64                      Base;
 
+  Base = SIZE_4GB;
   TsegBaseAddress = 0;
   Descriptor = NULL;
   DEBUG ((DEBUG_INFO, "Program Cache Attributes\n"));
@@ -384,19 +383,9 @@ ProgramCacheAttributes (
       PERF_INMODULE_END ("MtrrSetAttr4Gb");
       if (TopHighMemory > SIZE_4GB) {
         TopHighMemory = RShiftU64 (TopHighMemory, 1);
+        Base = Base + (TopHighMemory - Base);
       }
     } while ((EFI_SUCCESS != Status) && (TopHighMemory > SIZE_4GB));
-  }
-
-  //
-  // When key features needed we will free some MTRR for them later and sacrifice some of above 4GB coverage.
-  // In later phase boot loader code can re-configure MTRR to exclude flash region and get back above 4GB coverage.
-  //
-  VariableMtrrCount = GetVariableMtrrCount ();
-  MtrrReserved = CalculatingMtrrReservedNumber ();
-  for (Index = VariableMtrrCount - 1; MtrrReserved > 0; Index--, MtrrReserved--) {
-    MtrrSetting.Variables.Mtrr[Index].Base = 0;
-    MtrrSetting.Variables.Mtrr[Index].Mask = 0;
   }
 
   ///

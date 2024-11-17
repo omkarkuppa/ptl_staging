@@ -68,7 +68,6 @@
 [Pcd]
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber         ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable         ## CONSUMES
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber                   ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapabilityParsingTimeDelay ## COMSUMES
 
 [FixedPcd]

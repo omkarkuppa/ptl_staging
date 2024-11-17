@@ -70,7 +70,8 @@ struct _USBC_PROGRESS_CODE_PROTOCOL {
 
 ## Configuration
 
-PcdUsbCPdNumber - Platform should configure the number of PD based on its board. layout.
+PcdUsbCPdSupportBitmap - Setting PcdUsbCPdSupportBitmap from UsbC connector configuration table
+The lower 4 bits (BIT0 - BIT3) of PcdUsbCPdSupportBitmap represent whether TCP 0 through 3 can support PD.
 PcdUsbCRetimerFlashNumber - The number of retimer flash part from the configuration table
 PcdUsbCCapabilityParsingTimeDelay - Time delay to handle TBT controller responding after first read register attempt
 PcdTcssWaitRetimerDeviceReady - Time delay to make sure retimer is ready for communication after Drive to TBT mode.

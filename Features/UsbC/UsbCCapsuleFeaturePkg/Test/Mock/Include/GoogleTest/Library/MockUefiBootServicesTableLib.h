@@ -26,8 +26,8 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Uefi.h>
-  #include <Library/UefiBootServicesTableLib.h>
+#include <Uefi.h>
+#include <Library/UefiBootServicesTableLib.h>
 }
 
 struct MockUefiBootServicesTableLib {
@@ -39,8 +39,7 @@ struct MockUefiBootServicesTableLib {
     (IN  EFI_GUID  *Protocol,
      IN  VOID      *Registration  OPTIONAL,
      OUT VOID      **Interface)
-     );
-
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     gBS_LocateHandleBuffer,
@@ -49,28 +48,24 @@ struct MockUefiBootServicesTableLib {
      IN  VOID                    *SearchKey      OPTIONAL,
      OUT UINTN                   *NoHandles,
      OUT EFI_HANDLE              **Buffer)
-     );
-
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     gBS_DisconnectController,
     (IN EFI_HANDLE  ControllerHandle,
      IN EFI_HANDLE  DriverImageHandle  OPTIONAL,
      IN EFI_HANDLE  ChildHandle        OPTIONAL)
-     );
-
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     gBS_FreePool,
     (IN VOID *Buffer)
-     );
-
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     gBS_CoreStall,
     (IN UINTN  Microseconds)
-     );
-
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     gBS_ConnectController,
@@ -78,15 +73,14 @@ struct MockUefiBootServicesTableLib {
      IN  EFI_HANDLE                *DriverImageHandle    OPTIONAL,
      IN  EFI_DEVICE_PATH_PROTOCOL  *RemainingDevicePath  OPTIONAL,
      IN  BOOLEAN                   Recursive)
-     );
-
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     gBS_HandleProtocol,
     (IN  EFI_HANDLE  Handle,
      IN  EFI_GUID    *Protocol,
      OUT VOID        **Interface)
-     );
+    );
 };
 
 #endif

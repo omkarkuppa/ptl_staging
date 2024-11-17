@@ -30,7 +30,7 @@ ErrorCode=0
 function USAGE()
 {
   echo
-  echo  "$0 \[PantherLake\(Optional\)\] \[GCC \| CLANG\]\[-h \| -? \| -r \| -tr \| -d \| -clean\] \[-header\]"
+  echo  "$0 \[PantherLake\(Optional\)\| WildcatLake\(Optional\)\] \[GCC \| CLANG\] \[-h \| -? \| -r \| -tr \| -d \| -clean\] \[-header\]"
   echo
   return 1
 }
@@ -86,6 +86,9 @@ function Clean(){
   if [ -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioV2Pad.h ]; then
     rm -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioV2Pad.h
   fi
+  if [ -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/FspPerformance.h ]; then
+    rm -f $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/FspPerformance.h
+  fi
   WORKSPACE=
   EDK_TOOLS_PATH=
   echo "Build Clean from FspPkg End"
@@ -123,6 +126,8 @@ function PreBuild(){
   cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Include/GpioV2Pad.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/GpioV2Pad.h
 
   cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Include/MemInfoHob.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/MemInfoHob.h
+
+  cp $WORKSPACE_SILICON/$PLATFORM_SI_PACKAGE/Include/FspPerformance.h $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/Include/FspPerformance.h
 
   cp $WORKSPACE_SILICON/$FSP_PKG_NAME/FspPkgPcdShare.dsc $WORKSPACE_SILICON/$FSP_BIN_PKG_NAME/FspPkgPcdShare.dsc
 
@@ -501,15 +506,28 @@ echo "Current PACKAGES_PATH is : $PACKAGES_PATH"
 #
 if [ "$1" = "PantherLake" ]; then
   echo Default PantherLake build
+  export PTL_BUILD=TRUE
+  export PCH_TYPE=P
   shift
-fi
-
-if [ "$1" = "WildcatLake" ]; then
-  echo Default WildcatLake build
+elif [ "$1" = "WildcatLake" ]; then
+  echo WildcatLake build
+  export WCL_BUILD=TRUE
+  export PTL_BUILD=FALSE
+  export FspTargetOption=WildcatLake
+  export TARGET_PLATFORM_SHORT=WCL
+  export FSPM_COMPRESSED=FALSE
+  export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdWclSupport=TRUE"
+  export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdWclSupport=TRUE"
+  export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdEnableFspmCompression=FALSE"
+  export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize=0x0"
+  export PCH_TYPE=P
   #
   # Setting PcdFspImageIdString to $WCLFSP$ for WCL
   #
+  export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdFspImageIdString=0x245053464c435724"
   export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdFspImageIdString=0x245053464c435724"
+  FSP_PKG_NAME=PantherLakeFspPkg
+  shift
 fi
 
 if [ "$1" = "GCC" ]; then

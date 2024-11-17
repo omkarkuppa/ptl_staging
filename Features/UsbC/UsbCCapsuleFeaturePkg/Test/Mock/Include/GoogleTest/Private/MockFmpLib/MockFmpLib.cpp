@@ -1,5 +1,5 @@
 /** @file
-  Google Test mocks for PeiServicesLib
+  Google Test mocks for FmpLib
 
   @copyright
   INTEL CONFIDENTIAL
@@ -22,6 +22,6 @@
 
 #include "MockFmpLib.h"
 
-MOCK_INTERFACE_DEFINITION(MockFmpLib);
+MOCK_INTERFACE_DEFINITION (MockFmpLib);
 
-MOCK_FUNCTION_DEFINITION(MockFmpLib, Progress, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockFmpLib, Progress, 1, EFIAPI);

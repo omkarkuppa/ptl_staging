@@ -60,7 +60,7 @@
 #define N_SNDW_MEM_FIFOSTAT_FREE                       8
 #define R_SNDW_MEM_COMMAND                             0x4180
 
-#define SNDW_MAX_PERIPHERAL_NUMBER                     12
+#define SNDW_MAX_PERIPHERAL_NUMBER                     11
 
 enum SNDW_PERIPHERAL_STATUS {
   SndwPeripheralNotPresent   = 0,

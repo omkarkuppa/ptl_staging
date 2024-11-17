@@ -37,10 +37,19 @@
 
 [LibraryClasses]
   UefiRuntimeServicesTableLib|MdePkg/Test/Mock/Library/GoogleTest/MockUefiRuntimeServicesTableLib/MockUefiRuntimeServicesTableLib.inf
-  MockUefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
-  TbtNvmRetimerUpdateLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockTbtNvmRetimerUpdateLib/MockTbtNvmRetimerUpdateLib.inf
   TimerLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockTimerLib/MockTimerLib.inf
-  
+  UsbcCapsuleDebugLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUsbcCapsuleDebugLib/MockUsbcCapsuleDebugLib.inf
+  PcdLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePcdLib/MockBasePcdLib.inf
+  Usb4DebugLib|Usb4FeaturePkg/Library/Usb4Cm/Usb4DebugLib/Usb4DebugLib.inf
+  UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
+  DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
+  CmUtilsLib|Usb4FeaturePkg/LibraryPrivate/Usb4Cm/CmUtilsLib/CmUtilsLib.inf
+  IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
+  DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
+  PostCodeLib|MdePkg/Library/BasePostCodeLibPort80/BasePostCodeLibPort80.inf
+  RegisterFilterLib|MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNull.inf
+  HobLib|MdePkg/Library/PeiHobLib/PeiHobLib.inf
+
 [Components]
   #
   # Build UsbCCapsuleFeaturePkgHostTest HOST_APPLICATION Tests
@@ -48,82 +57,26 @@
 
   UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/DiscreteTbt/GoogleTest/GTestFmpDeviceLibDiscreteTbt.inf {
     <LibraryClasses>
+      # TbtNvmRetimerUpdateLib package
+      TbtNvmRetimerUpdateLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockTbtNvmRetimerUpdateLib/MockTbtNvmRetimerUpdateLib.inf
+      # Target file for Unit Test
       NULL|UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/DiscreteTbt/FmpDeviceLibDiscreteTbt.inf
+      # Mock Library
+      UefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
+      UsbcRetimerProtocol|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockUsbcRetimerProtocol/MockUsbcRetimerProtocol.inf
+      FirmwareManagementLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockFirmwareManagementLib/MockFirmwareManagementLib.inf
+      PciIopProtocolLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockPciIopProtocolLib/MockPciIopProtocolLib.inf
+      MockUsbCProgressCodeProtocolLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockUsbCProgressCodeProtocol/MockUsbCProgressCodeProtocol.inf
   }
   UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/UsbCRetimer/GoogleTest/GTestFmpDeviceLibUsbCRetimer.inf {
     <LibraryClasses>
+      # TbtNvmRetimerUpdateLib package
+      TbtNvmRetimerUpdateLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockTbtNvmRetimerUpdateLib/MockTbtNvmRetimerUpdateLib.inf
+      # Target file for Unit Test
       NULL|UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/UsbCRetimer/FmpDeviceLibTbtRetimer.inf
-  }
-
-  UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/GoogleTest/TbtNvmDrvHr/GTestTbtNvmDrvHr.inf {
-    <PcdsFixedAtBuild>
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2E
-    <LibraryClasses>
-      UefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
-      MockHobLib|MdePkg/Test/Mock/Library/GoogleTest/MockHobLib/MockHobLib.inf
-      PchPciBdfLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePchPciBdfLibNull/MockBasePchPciBdfLibNull.inf
-      PciSegmentLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciSegmentLibPciNull/MockPciSegmentLibNull.inf
-      PciLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciLibPciExpressNull/MockBasePciLibPciExpressNull.inf
-      # Target file for Unit Test
-      NULL|UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/TbtNvmRetimerUpdateLib.inf
-  }
-
-  UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/GoogleTest/TbtNvmDrvRetimerThruHr/GTestTbtNvmDrvRetimerThruHr.inf {
-    <PcdsFixedAtBuild>
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2E
-    <LibraryClasses>
-      UefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
-      PchPciBdfLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePchPciBdfLibNull/MockBasePchPciBdfLibNull.inf
-      PciSegmentLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciSegmentLibPciNull/MockPciSegmentLibNull.inf
-      PciLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciLibPciExpressNull/MockBasePciLibPciExpressNull.inf
-      # Target file for Unit Test
-      NULL|UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/TbtNvmRetimerUpdateLib.inf
-  }
-
-  UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/GoogleTest/TbtNvmDrvRetimerThruHrHelpers/GTestTbtNvmDrvRetimerThruHrHelpers.inf {
-    <LibraryClasses>
-      UefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
-      PchPciBdfLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePchPciBdfLibNull/MockBasePchPciBdfLibNull.inf
-      PciSegmentLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciSegmentLibPciNull/MockPciSegmentLibNull.inf
-      PciLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciLibPciExpressNull/MockBasePciLibPciExpressNull.inf
-      # Target file for Unit Test
-      NULL|UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/TbtNvmRetimerUpdateLib.inf
-  }
-
-  UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/GoogleTest/TbtNvmDrvYflRouter/GTestTbtNvmDrvYflRouter.inf {
-    <LibraryClasses>
       # Mock Library
       UefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
-      PchPciBdfLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePchPciBdfLibNull/MockBasePchPciBdfLibNull.inf
-      PciSegmentLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciSegmentLibPciNull/MockPciSegmentLibNull.inf
-      PciLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciLibPciExpressNull/MockBasePciLibPciExpressNull.inf
-      # Target file for Unit Test
-      NULL|UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/TbtNvmRetimerUpdateLib.inf
-  }
-
-  UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/GoogleTest/TbtNvmRetimerDrvHelpers/GTestTbtNvmRetimerDrvHelpers.inf {
-    <PcdsFixedAtBuild>
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2E
-    <LibraryClasses>
-      UefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
-      PchPciBdfLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePchPciBdfLibNull/MockBasePchPciBdfLibNull.inf
-      PciSegmentLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciSegmentLibPciNull/MockPciSegmentLibNull.inf
-      PciLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciLibPciExpressNull/MockBasePciLibPciExpressNull.inf
-      # Target file for Unit Test
-      NULL|UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/TbtNvmRetimerUpdateLib.inf
-  }
-
-  UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/GoogleTest/TbtRetimerNvmUpdateLib/GTestTbtRetimerNvmUpdateLib.inf {
-    <PcdsFixedAtBuild>
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2E
-    <LibraryClasses>
-      # Mock Library
-      UefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
-      PcdLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePcdLib/MockBasePcdLib.inf
-      UefiRuntimeServicesTableLib|MdePkg/Test/Mock/Library/GoogleTest/MockUefiRuntimeServicesTableLib/MockUefiRuntimeServicesTableLib.inf
-      PchPciBdfLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePchPciBdfLibNull/MockBasePchPciBdfLibNull.inf
-      PciSegmentLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciSegmentLibPciNull/MockPciSegmentLibNull.inf
-      PciLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockBasePciLibPciExpressNull/MockBasePciLibPciExpressNull.inf
-      # Target file for Unit Test
-      NULL|UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/TbtNvmRetimerUpdateLib.inf
+      UsbcRetimerProtocol|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockUsbcRetimerProtocol/MockUsbcRetimerProtocol.inf
+      FirmwareManagementLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockFirmwareManagementLib/MockFirmwareManagementLib.inf
+      MockUsbCProgressCodeProtocolLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockUsbCProgressCodeProtocol/MockUsbCProgressCodeProtocol.inf
   }

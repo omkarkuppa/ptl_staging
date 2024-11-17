@@ -48,6 +48,7 @@ extern   ASM_PFX(PcdGet32 (PcdTemporaryRamBase))
 extern   ASM_PFX(PcdGet32 (PcdTopMemoryCacheSize))
 extern   ASM_PFX(PcdGet32 (PcdSecondaryDataStackBase))
 extern   ASM_PFX(PcdGet32 (PcdSecondaryDataStackSize))
+extern   ASM_PFX(PcdGet32 (PcdFspReservedBufferSize))
 
 SECTION .text
 
@@ -954,6 +955,9 @@ DataStackTestPass:
   mov     rax, ASM_PFX(PcdGet32 (PcdTemporaryRamBase))
   mov     esp, [rax]
   LOAD_TEMPORARY_RAM_SIZE rax
+  mov     rbx, ASM_PFX(PcdGet32 (PcdFspReservedBufferSize))
+  mov     ebx, [rbx]
+  sub     eax, ebx
   add     esp, eax
   ;
   ; program resource decoding

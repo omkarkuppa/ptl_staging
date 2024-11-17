@@ -34,14 +34,18 @@ PLATFORM_FULL_NAME: str = 'PantherLake'
 PTL_MOBILE_PLAT_NAME_STR: str = 'PTLP'
 PTL_MOBILE_PREFIX_STR   : str = 'PTL_P'
 
+WCL_MOBILE_PLAT_NAME_STR: str = 'WCL'
+WCL_MOBILE_PREFIX_STR   : str = 'WCL'
+
 PLATFORM_PREFIX_MAPPING_TABLE: Dict [str, str] = {
     PTL_MOBILE_PLAT_NAME_STR: PTL_MOBILE_PREFIX_STR,
+    WCL_MOBILE_PLAT_NAME_STR: WCL_MOBILE_PREFIX_STR,
     }
 
 #
 # Definition for path. (Platform specific.)
 #
-PLAT_BOARD_PKG_PATH : str = os.path.dirname (__file__)
+PLAT_BOARD_PKG_PATH : str = os.path.dirname (os.path.abspath (__file__))
 WORKSPACE_INTEL_PATH: str = os.path.dirname (PLAT_BOARD_PKG_PATH)
 CAP_FEATURE_PKG     : str = \
     os.path.join (
@@ -119,7 +123,7 @@ class _PlatformHook (object):
             None.
         """
         #
-        # EnvConfig variable shall be read-only and use by deep copy.
+        # EnvConfig variable shall be read-only and use by deepcopy.
         #
         self.__EnvConfig: Dict[str, str] = os.environ.copy ()
 
@@ -183,7 +187,7 @@ class _PlatformHook (object):
             # Signing Keys
             #
             (
-                JoinPath (CAP_FEATURE_PKG, 'SigningKeys'),
+                JoinPath (CAP_FEATURE_PKG, 'SigningKeys', 'InternalOnly', 'Common'),
                 _PlatformHook.TOOLKIT_SIGNING_KEYS_PATH,
             ),
             (
@@ -579,7 +583,7 @@ def _BuildCapsuleEntry (
     CmdList.append (ScriptPath)
     CmdList.extend (InputCmdList)
 
-    ExitCode, _, _ = ExecPythonCmd (CmdList, Env = EnvCfg)
+    ExitCode, _, _ = ExecPythonCmd (CmdList, Env = EnvCfg, IsException = False)
 
     return ExitCode
 

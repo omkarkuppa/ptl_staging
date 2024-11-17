@@ -138,8 +138,9 @@ BuildPchInfoHob (
 
   LpssUartDbg2ControllerIndex = 0;
   for (Index = 0; Index < GetMaxUartInterfacesNum (); Index++) {
-    if ((LpssUartConfig->UartDeviceConfig[Index].Mode == LpssUartHidden) && (LpssUartConfig->UartDeviceConfig[Index].DBG2 == TRUE)) {
+    if ((LpssUartConfig->UartDeviceConfig[Index].Mode == LpssUartCom) && (LpssUartConfig->UartDeviceConfig[Index].DBG2 == TRUE)) {
       LpssUartDbg2ControllerIndex = Index + 1;
+      PchInfoHob->LpssDebugUartPg = LpssUartConfig->UartDeviceConfig[Index].DebugPowerGating != 0;
       break;
     }
   }
@@ -299,7 +300,7 @@ BuildPchConfigHobs (
     LpssSpiConfig->SpiDeviceConfig,
     sizeof (LpssSpiConfigHob->SpiDeviceConfig)
     );
-    
+
   // LPSS UART HOB
   LpssUartConfigHob = BuildGuidHob (&gPchLpssUartConfigHobGuid, sizeof (LPSS_UART_CONFIG_HOB));
   if (LpssUartConfigHob == NULL) {
@@ -325,7 +326,7 @@ BuildPchConfigHobs (
     I2cConfig->I2cDeviceConfig,
     sizeof (LpssI2cConfigHob->I2cDeviceConfig)
     );
-  
+
   // LPSS I3C HOB
   LpssI3cConfigHob = BuildGuidHob (&gPchLpssI3cConfigHobGuid, sizeof (LPSS_I3C_CONFIG_HOB));
   if (LpssI3cConfigHob == NULL) {
@@ -387,6 +388,7 @@ BuildPchConfigHobs (
   HdaConfigHob->AudioLinkSndw4        = HdAudioPreMemConfig->AudioLinkSndw[4].Enable;
   HdaConfigHob->AudioLinkSndwLanes2   = HdAudioPreMemConfig->SndwMultilane[0].Enable;
   HdaConfigHob->AudioLinkSndwLanes3   = HdAudioPreMemConfig->SndwMultilane[1].Enable;
+  HdaConfigHob->SoundWireClockSelect  = HdAudioPreMemConfig->SoundWireClockSelect;
   HdaConfigHob->CodecSxWakeCapability = HdAudioConfig->CodecSxWakeCapability;
   HdaConfigHob->Pme                   = HdAudioConfig->Pme;
 
@@ -407,6 +409,7 @@ BuildPchConfigHobs (
   }
   ZeroMem (PmcConfigHob, sizeof (PMC_CONFIG_HOB));
   PmcConfigHob->PsOnEnable            = PmConfig->PsOnEnable;
+  PmcConfigHob->EnableDtrSci          = 0;
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
   PmcConfigHob->EnableTimedGpio0      = PmConfig->EnableTimedGpio0;
   PmcConfigHob->EnableTimedGpio1      = PmConfig->EnableTimedGpio1;
@@ -460,7 +463,7 @@ BuildPchConfigHobs (
   GeneralConfigHob->Crid          = PchGeneralConfig->Crid;
   GeneralConfigHob->UaolEnable    = UsbConfig->UaolEnable;
   GeneralConfigHob->DisableResets = PchGeneralPreMemConfig->DisableResets;
-    
+
 }
 
 /**

@@ -176,6 +176,7 @@ UpdateHdaAcpiData (
   mPchNvsAreaProtocol.Area->SML4 = HdAudioConfigHob->AudioLinkSndw4 ? (BIT0 | BIT1 | BIT2) : 0;
 
   mPchNvsAreaProtocol.Area->SWMC = GetPchHdaMaxSndwLinkNum ();
+  mPchNvsAreaProtocol.Area->SWCS = (UINT8) HdAudioConfigHob->SoundWireClockSelect;
 
   mPchNvsAreaProtocol.Area->ACS0 = (UINT8)HdAudioDxeConfig->SndwConfig[0].AutonomousClockStop;
   mPchNvsAreaProtocol.Area->ACS1 = (UINT8)HdAudioDxeConfig->SndwConfig[1].AutonomousClockStop;

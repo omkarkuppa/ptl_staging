@@ -220,7 +220,7 @@ EarlyDevicesEntryPoint (
           SerialPortInfoHob->Header.Revision = UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO_REVISION;
           SerialPortInfoHob->Header.Length   = sizeof (UNIVERSAL_PAYLOAD_SERIAL_PORT_INFO);
           SerialPortInfoHob->RegisterBase    = FixedMmioBaseAddress;
-          SerialPortInfoHob->RegisterStride  = 1;
+          SerialPortInfoHob->RegisterStride  = 4;
           SerialPortInfoHob->BaudRate        = LpssUartDeviceConfig.Attributes.BaudRate;
           SerialPortInfoHob->UseMmio         = TRUE;
           DEBUG ((DEBUG_INFO, "SerialPortInfoHob->RegisterBase: %x\n", SerialPortInfoHob->RegisterBase));

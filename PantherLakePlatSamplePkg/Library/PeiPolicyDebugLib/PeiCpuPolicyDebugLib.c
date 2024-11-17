@@ -99,31 +99,29 @@ UpdatePeiCpuPolicyDebug (
                                );
   ASSERT_EFI_ERROR (Status);
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ProcessorTraceOutputScheme, CpuTestConfig->ProcessorTraceOutputScheme,           CpuSetup.ProcessorTraceOutputScheme);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ProcessorTraceEnable,       CpuTestConfig->ProcessorTraceEnable,                 CpuSetup.ProcessorTraceEnable);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ProcessorTraceMemSize,      CpuTestConfig->ProcessorTraceMemSize,                CpuSetup.ProcessorTraceMemSize);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ProcessorTraceBspOnly,      CpuTestConfig->ProcessorTraceBspOnly,                CpuSetup.ProcessorTraceBspOnly);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ProcessorTraceTimingPacket, CpuTestConfig->ProcessorTraceTimingPacket,           CpuSetup.ProcessorTraceTimingPacket);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MachineCheckEnable,         CpuTestConfig->MachineCheckEnable,                   CpuSetup.MachineCheck);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.MonitorMwaitEnable,         CpuTestConfig->MonitorMwaitEnable,                   CpuSetup.MonitorMwait);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ProcessorTraceOutputScheme, CpuTestConfig->ProcessorTraceOutputScheme,           CpuSetup.ProcessorTraceOutputScheme);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ProcessorTraceEnable,       CpuTestConfig->ProcessorTraceEnable,                 CpuSetup.ProcessorTraceEnable);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ProcessorTraceMemSize,      CpuTestConfig->ProcessorTraceMemSize,                CpuSetup.ProcessorTraceMemSize);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ProcessorTraceBspOnly,      CpuTestConfig->ProcessorTraceBspOnly,                CpuSetup.ProcessorTraceBspOnly);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ProcessorTraceTimingPacket, CpuTestConfig->ProcessorTraceTimingPacket,           CpuSetup.ProcessorTraceTimingPacket);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.MachineCheckEnable,         CpuTestConfig->MachineCheckEnable,                   CpuSetup.MachineCheck);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.MonitorMwaitEnable,         CpuTestConfig->MonitorMwaitEnable,                   CpuSetup.MonitorMwait);
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ThreeStrikeCounter,          CpuTestConfig->ThreeStrikeCounter,                   CpuSetup.ThreeStrikeCounter);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PpmIrmSetting,               CpuPowerMgmtTestConfig->PpmIrmSetting,               CpuSetup.InterruptRedirectMode);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.Cx,                          CpuPowerMgmtTestConfig->Cx,                          CpuSetup.EnableCx);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.Eist,                        CpuPowerMgmtTestConfig->Eist,                        CpuSetup.EnableGv);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnergyEfficientPState,       CpuPowerMgmtTestConfig->EnergyEfficientPState,       CpuSetup.EnergyEfficientPState);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CStatePreWake,               CpuPowerMgmtTestConfig->CStatePreWake,               CpuSetup.CStatePreWake);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.TimedMwait,                  CpuPowerMgmtTestConfig->TimedMwait,                  CpuSetup.TimedMwait);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PmgCstCfgCtrlLock,           CpuPowerMgmtTestConfig->PmgCstCfgCtrlLock,           CpuSetup.PmgCstCfgCtrlLock);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ForcePrDemotion,             CpuPowerMgmtTestConfig->ForcePrDemotion,             CpuSetup.ForcePrDemotion);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.VrAlertDemotion,             CpuPowerMgmtTestConfig->VrAlertDemotion,             CpuSetup.VrAlertDemotion);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableAllThermalFunctions,   CpuPowerMgmtTestConfig->EnableAllThermalFunctions,   CpuSetup.EnableAllThermalFunctions);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.TStates,                     CpuPowerMgmtTestConfig->TStates,                     CpuSetup.TStatesEnable);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EnergyEfficientTurbo,        CpuPowerMgmtTestConfig->EnergyEfficientTurbo,        CpuSetup.EnergyEfficientTurbo);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.RaceToHalt,                  CpuPowerMgmtTestConfig->RaceToHalt,                  CpuSetup.RaceToHalt);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateLimit,              CpuPowerMgmtTestConfig->PkgCStateLimit,              CpuSetup.PkgCStateLimit);
-
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.C1e, CpuPowerMgmtTestConfig->C1e, CpuSetup.EnableC1e);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ThreeStrikeCounter,          CpuTestConfig->ThreeStrikeCounter,                   CpuSetup.ThreeStrikeCounter);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PpmIrmSetting,               CpuPowerMgmtTestConfig->PpmIrmSetting,               CpuSetup.InterruptRedirectMode);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Cx,                          CpuPowerMgmtTestConfig->Cx,                          CpuSetup.EnableCx);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Eist,                        CpuPowerMgmtTestConfig->Eist,                        CpuSetup.EnableGv);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.EnergyEfficientPState,       CpuPowerMgmtTestConfig->EnergyEfficientPState,       CpuSetup.EnergyEfficientPState);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CStatePreWake,               CpuPowerMgmtTestConfig->CStatePreWake,               CpuSetup.CStatePreWake);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.TimedMwait,                  CpuPowerMgmtTestConfig->TimedMwait,                  CpuSetup.TimedMwait);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PmgCstCfgCtrlLock,           CpuPowerMgmtTestConfig->PmgCstCfgCtrlLock,           CpuSetup.PmgCstCfgCtrlLock);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ForcePrDemotion,             CpuPowerMgmtTestConfig->ForcePrDemotion,             CpuSetup.ForcePrDemotion);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VrAlertDemotion,             CpuPowerMgmtTestConfig->VrAlertDemotion,             CpuSetup.VrAlertDemotion);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.EnableAllThermalFunctions,   CpuPowerMgmtTestConfig->EnableAllThermalFunctions,   CpuSetup.EnableAllThermalFunctions);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.TStates,                     CpuPowerMgmtTestConfig->TStates,                     CpuSetup.TStatesEnable);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.EnergyEfficientTurbo,        CpuPowerMgmtTestConfig->EnergyEfficientTurbo,        CpuSetup.EnergyEfficientTurbo);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.RaceToHalt,                  CpuPowerMgmtTestConfig->RaceToHalt,                  CpuSetup.RaceToHalt);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateLimit,              CpuPowerMgmtTestConfig->PkgCStateLimit,              CpuSetup.PkgCStateLimit);
 
   //
   // Core C-State AutoDemotion/UnDemotion
@@ -131,13 +129,13 @@ UpdatePeiCpuPolicyDebug (
   C1AutoDemotion = CpuSetup.CStateAutoDemotion;
   C1UnDemotion   = CpuSetup.CStateUnDemotion;
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.C1StateUnDemotion, CpuPowerMgmtTestConfig->C1UnDemotion, C1UnDemotion);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.C1StateAutoDemotion, CpuPowerMgmtTestConfig->C1AutoDemotion, C1AutoDemotion);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.C1StateUnDemotion, CpuPowerMgmtTestConfig->C1UnDemotion, C1UnDemotion);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.C1StateAutoDemotion, CpuPowerMgmtTestConfig->C1AutoDemotion, C1AutoDemotion);
   //
   // Pkg C-state Demotion/Un Demotion
   //
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateDemotion, CpuPowerMgmtTestConfig->PkgCStateDemotion, CpuSetup.PkgCStateDemotion);
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateUnDemotion, CpuPowerMgmtTestConfig->PkgCStateUnDemotion, CpuSetup.PkgCStateUnDemotion);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateDemotion, CpuPowerMgmtTestConfig->PkgCStateDemotion, CpuSetup.PkgCStateDemotion);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PkgCStateUnDemotion, CpuPowerMgmtTestConfig->PkgCStateUnDemotion, CpuSetup.PkgCStateUnDemotion);
 
   return EFI_SUCCESS;
 }

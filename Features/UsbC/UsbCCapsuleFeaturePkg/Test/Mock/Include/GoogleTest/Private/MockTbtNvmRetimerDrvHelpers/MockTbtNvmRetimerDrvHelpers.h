@@ -26,9 +26,9 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Uefi.h>
-  #include <Library/UefiLib.h>
-  #include <Library/TbtNvmDrvUtils.h>
+#include <Uefi.h>
+#include <Library/UefiLib.h>
+#include <Library/TbtNvmDrvUtils.h>
 }
 
 struct MockTbtNvmRetimerDrvHelpers {
@@ -41,7 +41,6 @@ struct MockTbtNvmRetimerDrvHelpers {
      IN UINT32        Cmd,
      IN BOOLEAN       ResponseRequired)
     );
-
   MOCK_FUNCTION_DECLARATION (
     TBT_STATUS,
     TbtNvmDrvDeviceWrBlk,
@@ -49,20 +48,17 @@ struct MockTbtNvmRetimerDrvHelpers {
      UINT32            *Data,
      UINT8             Length)
     );
-
   MOCK_FUNCTION_DECLARATION (
     TBT_STATUS,
     TbtNvmDrvDeviceWrOffset,
     (IN VOID   *DevCom,
      IN UINT32 OffsetInDW)
     );
-
   MOCK_FUNCTION_DECLARATION (
     TBT_STATUS,
     TbtNvmDrvDeviceExecAuth,
     (IN VOID   *DevCom)
     );
-
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     TbtDrvReadNvmVersion,

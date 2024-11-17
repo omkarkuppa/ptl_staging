@@ -33,7 +33,6 @@
 #include <Defines/IgdDefines.h>
 #include <Library/FspCommonLib.h>
 #include <FspStatusCode.h>
-#include <Library/SiPolicyLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Ppi/PeiSiDefaultPolicy.h>
 #include <Ppi/MpServices2.h>
@@ -86,6 +85,15 @@
 #include <Register/CpuGenInfoRegs.h>
 #include <Library/CpuLib.h>
 #include <Pi/PiHob.h>
+#include <Library/HobLib.h>
+#include <TraceHubDataHob.h>
+#include <Library/DomainPcie.h>
+#include <IpCpcie.h>
+#include <IpPcieRegs.h>
+#include <IpWrapperCntxtInfoClient.h>
+#include <Library/Ptl/PtlPcdP2SbSocLib.h>
+
+extern EFI_GUID gIpPcieInstHobGuid;
 
 EFI_PEI_PPI_DESCRIPTOR mEndOfSiInit = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
@@ -231,6 +239,25 @@ SiInitOnEndOfPei (
   IGPU_PEI_PREMEM_CONFIG      *IGpuPreMemConfig;
   IGPU_PEI_CONFIG             *IGpuConfig;
   CPU_POWER_DELIVERY_CONFIG   *CpuPowerDeliveryConfig;
+  VMD_PEI_CONFIG              *VmdPeiConfig;
+#if FixedPcdGetBool(PcdVmdEnable) == 1
+  VOID                        *BaseAddressImr11;
+  UINT32                      CpuFamilyId;
+  EFI_RESOURCE_TYPE           ResourceType;
+  EFI_RESOURCE_ATTRIBUTE_TYPE ResourceAttribute;
+#endif
+  IP_PCIE_INST                *pInst;
+  EFI_HOB_GUID_TYPE           *GuidHob;
+  UINT8                       MaxLinkSpeed;
+  IP_WR_REG_INFO              *RegInfo;
+  UINT64                      RpBase;
+  LCAP_PCIE_CFG_STRUCT        Lcap;
+  PCIE_DEV_INFO               DevInfo;
+
+  VmdPeiConfig           = NULL;
+#if FixedPcdGetBool(PcdVmdEnable) == 1
+  BaseAddressImr11       = NULL;
+#endif
 
   //
   // Get Policy settings through the SiPolicy PPI
@@ -278,13 +305,12 @@ SiInitOnEndOfPei (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gCpuPowerDeliveryConfigGuid, (VOID *) &CpuPowerDeliveryConfig);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((DEBUG_INFO, "SiInitOnEndOfPei - Start\n"));
+#if (FixedPcdGetBool(PcdVmdEnable) == 1)
+  Status = GetConfigBlock ((VOID *) SiPolicy, &gVmdPeiConfigGuid, (VOID *) &VmdPeiConfig);
+  ASSERT_EFI_ERROR (Status);
+#endif
 
-  //
-  // Cross IP Policy override on end of PEI for specific feature enabling
-  // The silicon policy should be override before CPU PM Init and after TCSS Init
-  //
-  PeiSiPolicyOverrideOnEndOfPei (SiPolicy);
+  DEBUG ((DEBUG_INFO, "SiInitOnEndOfPei - Start\n"));
 
   //
   // Initializes PCH after End of Pei
@@ -299,6 +325,100 @@ SiInitOnEndOfPei (
 
   DEBUG ((DEBUG_INFO, "Set WAC and CP for IMRGLOBAL_BM\n"));
   SetImrGlobalSai ();
+
+  GuidHob = GetFirstGuidHob (&gIpPcieInstHobGuid);
+  while(GuidHob != NULL) {
+    pInst = (IP_PCIE_INST *) GET_GUID_HOB_DATA (GuidHob);
+
+    if (pInst == NULL) {
+      DEBUG ((DEBUG_WARN, "%a: Invalid pInst\n", __FUNCTION__));
+      ASSERT (FALSE);
+    }
+
+    //
+    // 6.15 step 2 if LCTL.CLS = Lowest (LCAP.MLS, EndPointMaxSpeed), the flow has completed
+    // 6.15 step 4 skip all subsequence steps if LCTS.TLS is Gen2
+    //
+    if (!pInst->PrivateConfig.RootPortDisable && pInst->PrivateConfig.LinkRetrainInProgress) {
+      RegInfo = (IP_WR_REG_INFO*) pInst->RegCntxt_Cfg_Pri;
+      RpBase  = PCI_SEGMENT_LIB_ADDRESS (RegInfo->RegType.Pci.Seg, RegInfo->RegType.Pci.Bus, RegInfo->RegType.Pci.Dev, RegInfo->RegType.Pci.Fun, 0);
+
+      Lcap.Data = PciSegmentRead32 (RpBase + LCAP_PCIE_CFG_REG);
+      PcieGetDeviceInfo (pInst, pInst->PrivateConfig.BusMin, &DevInfo);
+      MaxLinkSpeed = (UINT8)MIN (Lcap.Bits.mls, DevInfo.MaxLinkSpeed);
+
+      IpPcieRpSpeedChangeEnd (pInst, MaxLinkSpeed, PcieGetTimeoutValue ());
+    }
+    SipLockCapRegisters (pInst);
+    GuidHob = GetNextGuidHob (&gIpPcieInstHobGuid, GET_NEXT_HOB(GuidHob));
+  }
+
+  //
+  // Configure P2SB at the end of EndOfPei
+  // This must be done before POSTBOOT_SAI programming.
+  //
+  PtlPcdP2sbLock (SiPolicy);
+  if (!PtlPcdIsSecondP2SbHidden ()) {
+    PtlPcdSecondP2sbLock (SiPolicy);
+  }
+
+  ///
+  /// VMD Initializations if the VMD IP is Supported
+  ///
+  DEBUG ((DEBUG_INFO, "Initializing VMD\n"));
+  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_VMD_INIT); //PostCode (0xA33)
+  PERF_INMODULE_BEGIN ("VmdInit");
+  VmdInit(VmdPeiConfig);
+  PERF_INMODULE_END ("VmdInit");
+
+#if (FixedPcdGetBool(PcdVmdEnable) == 1)
+  if ((IsVmdEnabled() == TRUE) && (VmdPeiConfig->VmdEnable)) {
+    CpuFamilyId = GetCpuFamilyModel ();
+    if (((GetCpuSteppingId () == EnumPtlHA0) || (GetCpuSteppingId () == EnumPtlUA0)) && (CpuFamilyId == CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE)) {
+      //
+      // Allocating 1MB for IMR11
+      //
+      BaseAddressImr11 = AllocateAlignedPages ((EFI_SIZE_TO_PAGES (SIZE_1MB)), SIZE_1MB);
+      ASSERT (BaseAddressImr11 != NULL);
+      DEBUG ((DEBUG_INFO, "BaseAddressImr11 = %lx\n",BaseAddressImr11));
+
+      //
+      // Program IMR11 with same BaseAddress
+      //
+      Status = SetImr (IMR_1M_IMR11, (UINT64) BaseAddressImr11, (UINT64) SIZE_1MB);
+      if (Status != EFI_SUCCESS) {
+        DEBUG ((DEBUG_ERROR, "Fail to program IMR11\n"));
+      }
+
+      ResourceType = EFI_RESOURCE_MEMORY_RESERVED;
+
+      ResourceAttribute = \
+        EFI_RESOURCE_ATTRIBUTE_PRESENT |
+        EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+        EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE;
+
+      BuildResourceDescriptorHob (
+        ResourceType,                                // MemoryType,
+        ResourceAttribute,                           // MemoryAttribute
+        (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
+        SIZE_1MB                                     // MemoryLength
+        );
+
+      BuildMemoryAllocationHob (
+        (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
+        SIZE_1MB,                                    // MemoryLength
+        EfiReservedMemoryType
+        );
+
+    }
+  }
+#endif
+
+  //
+  // Configure root port function number mapping
+  // This has to be done before PCI enumeration and after RST/VMD remapping
+  //
+  PtlPcdPcieRpConfigureRpfnMapping (SiPolicy);
 
   if ((BootMode == BOOT_ON_FLASH_UPDATE) && (SiConfig->SkipBiosDoneWhenFwUpdate)) {
     DEBUG ((DEBUG_INFO, "Skip BIOS_DONE when updating flash.\n"));
@@ -500,9 +620,19 @@ TraceHubConfigPostMem (
   P2SB_CONTROLLER                    P2SbController;
   P2SB_SIDEBAND_REGISTER_ACCESS      TraceHubSbAccessMmio;
   UINT64                             TraceHubMemBase;
+  TRACEHUB_DATA_HOB                  *TraceHubDataHob;
 
   TraceHubMemBase = 0;
-  TraceHubSetMemoryUncache (&TraceHubMemBase);
+  TraceHubDataHob = NULL;
+
+  TraceHubDataHob = (TRACEHUB_DATA_HOB *) GetFirstGuidHob (&gTraceHubDataHobGuid);
+
+  if (TraceHubDataHob != NULL) {
+    DEBUG ((DEBUG_INFO, "TraceHub memory base = 0x%lx Size = 0x%lx\n", TraceHubDataHob->TraceHubMemBase, TraceHubDataHob->TraceHubMemSize));
+    if ((TraceHubDataHob->TraceHubMemBase > 0) && (TraceHubDataHob->TraceHubMemSize > 0)) {
+      TraceHubMemBase = TraceHubDataHob->TraceHubMemBase;
+    }
+  }
 
   TraceHubInitSocHandle (
     SiPreMemPolicyPpi,
@@ -548,13 +678,6 @@ SiInitPostMemOnPolicy (
   MEMORY_CONFIGURATION        *MemConfig;
   TELEMETRY_PEI_CONFIG        *TelemetryPeiConfig;
   NPU_PEI_CONFIG              *NpuPeiConfig;
-  VMD_PEI_CONFIG              *VmdPeiConfig;
-#if FixedPcdGetBool(PcdVmdEnable) == 1
-  VOID                        *BaseAddressImr11;
-  UINT32                      CpuFamilyId;
-  EFI_RESOURCE_TYPE           ResourceType;
-  EFI_RESOURCE_ATTRIBUTE_TYPE ResourceAttribute;
-#endif
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
   OVERCLOCKING_PREMEM_CONFIG  *OverClockingConfig;
 #endif
@@ -570,10 +693,6 @@ SiInitPostMemOnPolicy (
 
   SiPreMemPolicyPpi      = NULL;
   SiPolicy               = NULL;
-  VmdPeiConfig           = NULL;
-#if FixedPcdGetBool(PcdVmdEnable) == 1
-  BaseAddressImr11       = NULL;
-#endif
   HostBridgePeiConfig    = NULL;
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
   OverClockingConfig     = NULL;
@@ -634,11 +753,6 @@ SiInitPostMemOnPolicy (
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigGuid, (VOID *) &MemConfig);
   ASSERT_EFI_ERROR (Status);
-
-#if (FixedPcdGetBool(PcdVmdEnable) == 1)
-  Status = GetConfigBlock ((VOID *) SiPolicy, &gVmdPeiConfigGuid, (VOID *) &VmdPeiConfig);
-  ASSERT_EFI_ERROR (Status);
-#endif
 
   Status = GetConfigBlock ((VOID *) SiPolicy, &gTelemetryPeiConfigGuid, (VOID *) &TelemetryPeiConfig);
   ASSERT_EFI_ERROR (Status);
@@ -769,58 +883,6 @@ SiInitPostMemOnPolicy (
   ///
   UpdateHostBridgeHobPostMem (HostBridgePeiConfig);
 
-  ///
-  /// VMD Initializations if the VMD IP is supported. Disable it if the feature PCD is disabled.
-  ///
-  DEBUG ((DEBUG_INFO, "Initializing VMD\n"));
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_VMD_INIT); //PostCode (0xA33)
-  PERF_INMODULE_BEGIN ("VmdInit");
-  VmdInit(VmdPeiConfig);
-  PERF_INMODULE_END ("VmdInit");
-
-#if (FixedPcdGetBool(PcdVmdEnable) == 1)
-  if ((IsVmdEnabled() == TRUE) && (VmdPeiConfig->VmdEnable)) {
-    CpuFamilyId = GetCpuFamilyModel ();
-    if (((GetCpuSteppingId () == EnumPtlHA0) || (GetCpuSteppingId () == EnumPtlUA0)) && (CpuFamilyId == CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE)) {
-      //
-      // Allocating 1MB for IMR11
-      //
-      BaseAddressImr11 = AllocateAlignedPages ((EFI_SIZE_TO_PAGES (SIZE_1MB)), SIZE_1MB);
-      ASSERT (BaseAddressImr11 != NULL);
-      DEBUG ((DEBUG_INFO, "BaseAddressImr11 = %lx\n",BaseAddressImr11));
-
-      //
-      // Program IMR11 with same BaseAddress
-      //
-      Status = SetImr (IMR_1M_IMR11, (UINT64) BaseAddressImr11, (UINT64) SIZE_1MB);
-      if (Status != EFI_SUCCESS) {
-        DEBUG ((DEBUG_ERROR, "Fail to program IMR11\n"));
-      }
-
-      ResourceType = EFI_RESOURCE_MEMORY_RESERVED;
-
-      ResourceAttribute = \
-        EFI_RESOURCE_ATTRIBUTE_PRESENT |
-        EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-        EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE;
-
-      BuildResourceDescriptorHob (
-        ResourceType,                                // MemoryType,
-        ResourceAttribute,                           // MemoryAttribute
-        (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
-        SIZE_1MB                                     // MemoryLength
-        );
-
-      BuildMemoryAllocationHob (
-        (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
-        SIZE_1MB,                                    // MemoryLength
-        EfiReservedMemoryType
-        );
-
-    }
-  }
-#endif
-
   /// PAVP Initialization
   ///
   DEBUG ((DEBUG_INFO, "Initializing Pavp\n"));
@@ -929,12 +991,6 @@ SiInitPostMemOnPolicy (
   // Initialize TraceHub in PostMem
   //
   TraceHubConfigPostMem (SiPreMemPolicyPpi);
-
-  //
-  // Configure root port function number mapping
-  // This has to be done before PCI enumeration and after RST/VMD remapping
-  //
-  PtlPcdPcieRpConfigureRpfnMapping (SiPolicy);
 
   //
   // Install EndOfPei callback function.

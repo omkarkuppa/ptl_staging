@@ -524,6 +524,11 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccDisLpddr5RdwrInterleaving",
   "GsmMccEccCorrectionDisable",
   "GsmMccMcMntsSpareRw",
+  "GsmMccMcCbRowPressDisAutoPre",
+  "GsmMccPageOpenPolicyMaxCount",
+  "GsmMccPageOpenPolicyEn",
+  "GsmMccRd2rdEchoMask",
+  "GsmMccWr2wrEchoMask",
   "EndOfMccMarker",
   "GsmPmaEnableMc",
   "GsmPmaEnableIbecc",
@@ -974,7 +979,7 @@ MrcGetSet (
   MRC_RANGE         LaneRange;
 
   // Check that the Group is unsupported
-  if (MrcCheckGroupUnSupported (MrcData, Group)) {
+  if (MrcCheckGroupUnSupported (MrcData, Group, Strobe)) {
     return mrcSuccess;
   }
 
@@ -1502,7 +1507,7 @@ MrcCkdGetSet (
   MRC_RANGE         LaneRange;
 
   // Check that the Group is unsupported
-  if (MrcCheckGroupUnSupported (MrcData, Group)) {
+  if (MrcCheckGroupUnSupported (MrcData, Group, Strobe)) {
     return mrcSuccess;
   }
 
@@ -1651,13 +1656,15 @@ MrcCkdGetSet (
 
   @param[in]  MrcData - Global MRC Data.
   @param[in]  Group   - The group to be accessed.
+  @param[in]  Strobe  - The Strobe to be accessed.
 
   @retval True if unsupported, otherwise False
 **/
 BOOLEAN
 MrcCheckGroupUnSupported (
   IN  MrcParameters *const  MrcData,
-  IN  GSM_GT        const   Group
+  IN  GSM_GT        const   Group,
+  IN  UINT32        const   Strobe
   )
 {
   switch (Group) {
@@ -2053,6 +2060,9 @@ MrcCheckGroupSupported (
     case GsmMccDisLpddr5RdwrInterleaving:
     case GsmMccEccCorrectionDisable:
     case GsmMccMcMntsSpareRw:
+    case GsmMccMcCbRowPressDisAutoPre:
+    case GsmMccPageOpenPolicyMaxCount:
+    case GsmMccPageOpenPolicyEn:
     case GsmPmaEnableMc:
     case GsmPmaEnableIbecc:
     case GsmPmaEnableCce:

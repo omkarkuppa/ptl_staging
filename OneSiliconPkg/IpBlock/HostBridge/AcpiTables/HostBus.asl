@@ -29,7 +29,6 @@ External (M64B)
 External (M64L)
 External (M32B)
 External (M32L)
-External (ITSP)
 External (\VMDE, FieldUnitObj)
 ACPI_DEBUG_EXTERNAL_REFERENCE
 External (\ODBG, MethodObj) // OEM specific platform callback, implemented by OEM
@@ -668,13 +667,6 @@ Method (_OSC,4,Serialized)
     If (LNot (NEXP))
     {
       And (CTRL, 0xFFFFFFF8, CTRL)       // disable Native hot plug, PME
-    }
-
-    If (CondRefOf (ITSP)) {
-      If (ITSP) {
-        // \_OSC disallow only Advanced Error Reporting control
-        And (CTRL, 0xFFFFFFF7, CTRL)
-      }
     }
 
     If (Not (And (CDW1,1)))  // Query flag clear?

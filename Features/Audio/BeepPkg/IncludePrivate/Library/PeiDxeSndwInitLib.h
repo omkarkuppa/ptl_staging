@@ -31,7 +31,6 @@ typedef struct {
   LIST_ENTRY       ListEntry;
   SNDW_CODEC_INFO  CodecInfo;
   UINTN            SndwControllerMmioOffset;
-  UINT32           PeripheralIndex;
 } CODEC_LIST_ENTRY;
 
 #define CODEC_LIST_ENTRY_FROM_LIST_ENTRY(a) BASE_CR (a, CODEC_LIST_ENTRY, ListEntry)

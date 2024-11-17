@@ -270,7 +270,9 @@ class BgupGenerateApi (object):
             CmdList.append ('-d')
             CmdList.append (f'{self.__DataPath}')
 
-        ExitCode, _, _ = ExecPythonCmd (CmdList)
+        ExitCode, _, _ = ExecPythonCmd (CmdList, IsException = False)
+        if (ExitCode != STATUS_SUCCESS):
+            raise ErrorException (f'Failed to generate BGUP.')
 
         return ExitCode
 

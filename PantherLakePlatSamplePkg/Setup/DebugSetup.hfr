@@ -32,6 +32,15 @@ form formid = AUTO_ID(DEBUG_FORM_ID),
     option text = STRING_TOKEN(STR_DEBUG_PORT_SERIALIO_UART0), value = 1, flags = RESET_REQUIRED;
   endoneof;
 
+  suppressif ideqval SETUP_DATA.OsDebugPort == 0;
+    oneof varid  = PCH_SETUP.SerialIoDebugUartPowerGating,
+      prompt   = STRING_TOKEN(STR_PCH_DBG_UART_PG),
+      help     = STRING_TOKEN(STR_PCH_DBG_UART_PG_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+  endif; // supressif SETUP_DATA.OsDebugPort == 0
+
   oneof varid = SETUP_DATA.KernelDebugPatch,
     prompt    = STRING_TOKEN(STR_KERNEL_DEBUG_PATCH),
     help      = STRING_TOKEN(STR_KERNEL_DEBUG_PATCH_HELP),

@@ -122,37 +122,6 @@ ConvertDrfmBrcToTMrcJedecBrcType (
 }
 
 /**
-  This function returns the timing value for Read Preamble.
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @retval UINT8 - 0 for unsupported technologies, otherwise the delay in tCK.
-**/
-UINT8
-MrcGetTrpre (
-  IN MrcParameters *const MrcData
-  )
-{
-  UINT8 tRPRE;
-
-  switch (MrcData->Outputs.DdrType) {
-    case MRC_DDR_TYPE_LPDDR5:
-      tRPRE = 1;
-      break;
-
-    case MRC_DDR_TYPE_DDR5:
-      tRPRE = tRPRE_ALL_FREQ_DDR5_2tCK;
-      break;
-
-    default:
-      tRPRE = 0;
-      break;
-  }
-
-  return tRPRE;
-}
-
-/**
   This function returns the timing value for Write Preamble.
 
   @param[in]  MrcData - Pointer to MRC global data.
@@ -164,16 +133,24 @@ MrcGetTwpre (
   IN MrcParameters *const MrcData
   )
 {
-  UINT8 tWPRE;
+  MrcOutput *Outputs;
+  UINT8     tWPRE;
 
-  switch (MrcData->Outputs.DdrType) {
+  Outputs = &MrcData->Outputs;
+
+  switch (Outputs->DdrType) {
     case MRC_DDR_TYPE_DDR5:
-      if (MrcData->Outputs.Frequency <= f4800) {
-        tWPRE = tWPRE_ALL_FREQ_DDR5_2tCK;
-      } else if (MrcData->Outputs.Frequency <= f6400) {
-        tWPRE = tWPRE_ALL_FREQ_DDR5_3tCK;
+      if (MrcData->Inputs.ExtInputs.Ptr->DqLoopbackTest) {
+        // WRPRE should match RDPRE
+        tWPRE = Outputs->ReadPreamble;
       } else {
-        tWPRE = tWPRE_ALL_FREQ_DDR5_4tCK;
+        if (Outputs->Frequency <= f4800) {
+          tWPRE = tWPRE_ALL_FREQ_DDR5_2tCK;
+        } else if (Outputs->Frequency <= f6400) {
+          tWPRE = tWPRE_ALL_FREQ_DDR5_3tCK;
+        } else {
+          tWPRE = tWPRE_ALL_FREQ_DDR5_4tCK;
+        }
       }
       break;
 

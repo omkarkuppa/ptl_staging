@@ -71,6 +71,7 @@ typedef enum {
   BiosIbbR     = 0,
   BiosIbb,
   BiosObb,
+  BiosObb1,
   BiosMax
 } BIOS_UPDATE_PROGRESS;
 

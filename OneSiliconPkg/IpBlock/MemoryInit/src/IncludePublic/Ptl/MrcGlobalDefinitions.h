@@ -38,7 +38,7 @@
 #define DCC_INIT_FIRST               -16
 #define DCC_INIT_SECOND              15
 #define MRC_PRINT_BUF_CR_REG         DDRMCMISC_CR_DDRVDD2POWER_REG
-
+#define WR_TIMING_STEP_SIZE_CTE      16
 /// Define the CPU stepping number.
 typedef enum {
   ipStepA0 = 0,

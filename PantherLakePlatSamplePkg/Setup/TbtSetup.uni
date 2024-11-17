@@ -102,11 +102,11 @@
 #string STR_PCI_HOT_PLUG_NOTIFY_HELP                             #language en-US "When enabled, BIOS generates ACPI Notify"
 
 #string STR_PCI_DTBT_CONTROLLER0                                 #language en-US "DTBT Controller 0"
-#string STR_PCI_DTBT_CONTROLLER0_HELP                            #language en-US "AUTO - Default, Enable - RVP3 PCIe Root Port1, CNL RVP5 - PCIe Root Port5, CNL SDS - PCIe Root Port5"
+#string STR_PCI_DTBT_CONTROLLER0_HELP                            #language en-US "Enable or Disable dTBT controller 0"
 #string STR_PCI_DTBT_CONTROLLER1                                 #language en-US "DTBT Controller 1"
-#string STR_PCI_DTBT_CONTROLLER1_HELP                            #language en-US "None"
+#string STR_PCI_DTBT_CONTROLLER1_HELP                            #language en-US "Enable or Disable dTBT controller 1"
 #string STR_PCI_DTBT_CONTROLLER2                                 #language en-US "DTBT Controller 2"
-#string STR_PCI_DTBT_CONTROLLER1_HELP                            #language en-US "None"
+#string STR_PCI_DTBT_CONTROLLER2_HELP                            #language en-US "Enable or Disable dTBT controller 2"
 
 #string STR_PCI_DTBT_CONTROLLER_TYPE                             #language en-US "DTbt Root Port Type"
 #string STR_PCI_DTBT_CONTROLLER_TYPE_HELP                        #language en-US "Select the TBT Root Port Type. PCH or PEG"

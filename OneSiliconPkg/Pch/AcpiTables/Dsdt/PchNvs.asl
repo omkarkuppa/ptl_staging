@@ -505,4 +505,6 @@
   SML2, 8,  // Offset(1313),  HD-Audio SoundWire Link #3 Multilane lanes enabled
   SML3, 8,  // Offset(1314),  HD-Audio SoundWire Link #4 Multilane lanes enabled
   SML4, 8,  // Offset(1315),  HD-Audio SoundWire Link #5 Multilane lanes enabled
+  DTRE, 8,  // Offset(1316),  PMC DTR SCI enable
+  SWCS, 8,  // Offset(1317),  SoundWire Clock Source Select
   }

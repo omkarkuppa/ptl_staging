@@ -1,5 +1,5 @@
 /** @file
-  Google Test for the implementation of FmpDeviceLib instance to support 
+  Google Test for the implementation of FmpDeviceLib instance to support
   Discrete Thunderbolt Firmware update
 
   @copyright
@@ -20,25 +20,24 @@
 @par Specification Reference:
 
 **/
+#include <GTestFmpDeviceLibDiscreteTbt.h>
 
 /**
 Google test for FmpDeviceGetSize function.
 **/
-class FmpDeviceGetSizeTest : public CommonMock {
+class FmpDeviceGetSizeTest : public Test {
   protected:
-  EFI_STATUS     Status;
+    EFI_STATUS Status;
 };
 
-TEST_F (FmpDeviceGetSizeTest, VarUnSupported) {
-
+TEST_F (FmpDeviceGetSizeTest, Var_1_UnSupported) {
   //
   // Case 1 - General Case
   // Expected Result - Status will return EFI_UNSUPPORTED
   //
   cout << "[---------- Case 1 ----------]"<< endl;
   Status = FmpDeviceGetSize (NULL);
-  EXPECT_EQ(Status, EFI_UNSUPPORTED);
+  EXPECT_EQ (Status, EFI_UNSUPPORTED);
 
   cout << "FmpDeviceGetSize Done." << endl;
-
 }

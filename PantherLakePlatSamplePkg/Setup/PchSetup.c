@@ -419,8 +419,9 @@ PchSetupHdAudio (
   for (Index = 0; Index < GetPchHdaMaxSndwMultilaneNum (); Index++) {
     SetupVolatileData->AudioSndwMultilaneSupported[Index] = PchInfoHob->SndwMultilaneSupport[Index];
   }
-
   VarDataSize = sizeof (CNV_VFR_CONFIG_SETUP);
+  ZeroMem (&CnvSetup, VarDataSize);
+#if FixedPcdGetBool (PcdCnvFeatureEnable) == 1
   Status = gRT->GetVariable (
                   L"CnvSetup",
                   &gCnvFeatureSetupGuid,
@@ -431,6 +432,7 @@ PchSetupHdAudio (
   if (EFI_ERROR (Status)) {
     return FALSE;
   }
+#endif
 
   // if BT is not present or disabled, disable DSP BT related knobs
   if ((!CnviCrfModuleIsPresent () || CnvSetup.CnviMode == 0) && !PchSetup->HdaDiscBtOffEnabled) {

@@ -186,6 +186,7 @@ PchPrintPcieConfig (
   DEBUG ((DEBUG_INFO, " ComplianceTestMode= %x\n", PchPcieConfig->PcieCommonConfig.ComplianceTestMode));
   DEBUG ((DEBUG_INFO, " RpFunctionSwap= %x\n", PchPcieConfig->PcieCommonConfig.RpFunctionSwap));
   DEBUG ((DEBUG_INFO, " PhyAutoPowerGating= %x\n", PchPcieConfig->PcieCommonConfig.PhyAutoPowerGating));
+  DEBUG ((DEBUG_INFO, " EnableDtr= %x\n", PchPcieConfig->PcieCommonConfig.EnableDtr));
 
 }
 

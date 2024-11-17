@@ -22,18 +22,27 @@
 
 #include "MockTbtNvmDrvHr.h"
 
-MOCK_INTERFACE_DEFINITION(MockTbtNvmDrvHr);
+MOCK_INTERFACE_DEFINITION (MockTbtNvmDrvHr);
 
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvHr, TbtNvmDrvHrWriteCioReg,   6, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvHr, TbtNvmDrvHrReadCioDevReg, 5, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvHr, TbtNvmDrvHrCtor,          4, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvHr, TbtNvmDrvHrDtor,          1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvHr, TbtNvmDrvHr_WriteCioReg, 6, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvHr, TbtNvmDrvHr_ReadCioDevReg, 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvHr, TbtNvmDrvHr_Dtor, 1, EFIAPI);
 
-static TBT_HOST_ROUTER    LocalHrPtr = {
-  NULL,                                // TBT_HR_IMPL
-  TbtNvmDrvHrWriteCioReg,              // WRITE_CIO_DEV_REG
-  TbtNvmDrvHrReadCioDevReg,            // ReadCioDevReg
-  TbtNvmDrvHrDtor,                     // Dtor
+TBT_HOST_ROUTER  LocalHrPtr = {
+  NULL,
+  {
+    0,
+    0
+  },
+  0,
+  0,
+  {
+    0,
+    0,
+    0
+  },
+  NULL,                                         // TBT_HR_IMPL
+  (WRITE_CIO_DEV_REG) TbtNvmDrvHr_WriteCioReg,  // WRITE_CIO_DEV_REG
+  (READ_CIO_DEV_REG) TbtNvmDrvHr_ReadCioDevReg, // ReadCioDevReg
+  (TBT_HR_DTOR) TbtNvmDrvHr_Dtor,               // Dtor
 };
-
-TBT_HOST_ROUTER* gDevComHostMock = &LocalHrPtr;

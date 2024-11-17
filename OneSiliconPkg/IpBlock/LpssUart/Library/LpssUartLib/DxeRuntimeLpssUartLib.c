@@ -289,7 +289,7 @@ LpssUartReadRegister (
   UART_ACCESS_MODE    AccessMode;
 
   if (mLpssUartLibAtRuntime) {
-    return;
+    return 0;
   }
 
   if (MmioRead32 (MmioBaseAddress + R_LPSS_UART_MEM_CTR) == UART_COMPONENT_IDENTIFICATION_CODE) {
@@ -567,7 +567,7 @@ LpssUartSetBaudRate (
   UINT16                ClockOffset;
 
   if (mLpssUartLibAtRuntime) {
-    return 0;
+    return;
   }
 
   if (MmioRead32 (MmioBaseAddress + R_LPSS_UART_MEM_CTR) == UART_COMPONENT_IDENTIFICATION_CODE) {

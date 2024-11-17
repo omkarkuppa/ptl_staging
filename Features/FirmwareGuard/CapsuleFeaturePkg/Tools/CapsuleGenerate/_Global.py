@@ -33,7 +33,7 @@ from CapsuleGenerate._CapsuleConfigLib import *
 # Toolkit related path cannot decode from configuration file.
 # The path of this dependent on toolkit actually located on user-side.
 #
-PACKAGE_PATH       : str = os.path.dirname (__file__)
+PACKAGE_PATH       : str = os.path.dirname (os.path.abspath (__file__))
 WORKSPACE_PATH     : str = os.path.dirname (PACKAGE_PATH)
 TEMPORARY_DIR_PATH : str = JoinPath (WORKSPACE_PATH, TEMPORARY_DIR_NAME)
 OUTPUT_DIR_PATH    : str = JoinPath (WORKSPACE_PATH, OUTPUT_DIR_NAME)
@@ -66,6 +66,7 @@ PLATFORM_FULL_NAME      : str  = PLATFORM_COMMON_CFG[PLATFORM_FULLNAME_KEY]
 PLATFORM_FULL_NAME_UPPER: str  = PLATFORM_FULL_NAME.upper ()
 PLATFORM_PREFIX_NAME    : str  = PLATFORM_COMMON_CFG[PLATFORM_PREFIX_KEY]
 PLATFORM_GENERATION     : int  = int (PLATFORM_COMMON_CFG[PLATFORM_GENERATION_KEY])
+CAPSULE_HASH_ALGORITHM  : str  = PLATFORM_COMMON_CFG[HASH_ALGORITHM_KEY]
 VENDOR_NAME             : str  = PLATFORM_COMMON_CFG[VENDOR_KEY]
 
 ########################################################################

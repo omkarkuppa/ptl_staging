@@ -27,7 +27,8 @@
 typedef union {
   UINT8       Data[6];
   struct {
-    UINT8     Version;
+    UINT8     UniqueId           : 4;
+    UINT8     Version            : 4;
     UINT8     ManufacturerID[2];
     UINT8     PartId[2];
     UINT8     Class;
@@ -36,6 +37,7 @@ typedef union {
 
 typedef struct {
   UINT32         SndwLinkIndex;
+  UINT32         PeripheralIndex;
   SNDW_CODEC_ID  CodecId;
 } SNDW_CODEC_INFO;
 

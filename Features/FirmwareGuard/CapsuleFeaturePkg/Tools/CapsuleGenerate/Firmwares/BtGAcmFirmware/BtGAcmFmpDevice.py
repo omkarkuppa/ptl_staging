@@ -73,10 +73,13 @@ if (BUILD_OP_VER == BTG_ACM_BUILD_OP_VER_1):
     # Pre-defined value
     #
     BGSL_TEMPLATE_KEY  : str = 'BgslTemplateFile'
+    SLOT_SIZE_DATA_KEY : str = 'Slotsize'
     BTG_ACM_FDF_FV_NAME: str = 'CapsulePayloadBtGAcm'
 
     BTG_ACM_FLASH_MAP_DATA    : dict = \
         BTG_ACM_FIRMWARE_CONFIG[FLASH_MAP_OFFSET_SECTION]
+    BTG_ACM_SLOT_SIZE_DATA    : dict = \
+        BTG_ACM_FIRMWARE_CONFIG[SLOT_SIZE_DATA_KEY]
     BTG_ACM_BGSL_TEMPLATE_PATH: str  = \
         JoinPath (
           TEMPLATE_DIR_PATH,
@@ -133,15 +136,12 @@ if (BUILD_OP_VER == BTG_ACM_BUILD_OP_VER_1):
 
             self.__PreCheck ()
 
-            self.__Buffer   : ByteBuffer        = self.__GetImageBuffer ()
-            self.__HdrParser: BtGAcmFwHdrParser = BtGAcmFwHdrParser (self.__Buffer)
-            self.__VerInfo  : BtGAcmVersion     = self.__HdrParser.AcmVersion
-
             #
             # Get the BIOS image configuration.
             #
             self.__BiosBoarId  : str  = DEFAULT
             self.__BiosType    : str  = self.__GetBiosType ()
+            self.__SlotSize    : int  = self.__GetSlotSize ()
             self.__FlashMapInfo: dict = \
                 GetFlashMapInfo (
                   BTG_ACM_FLASH_MAP_DATA,
@@ -151,6 +151,13 @@ if (BUILD_OP_VER == BTG_ACM_BUILD_OP_VER_1):
                   )
             self.__BlockSize   : int  = \
                 GetSpiFlashBlockSize (BoardId = self.__BiosBoarId)
+
+            #
+            # Get the BtGACM image information.
+            #
+            self.__Buffer   : ByteBuffer        = self.__GetImageBuffer ()
+            self.__HdrParser: BtGAcmFwHdrParser = BtGAcmFwHdrParser (self.__Buffer)
+            self.__VerInfo  : BtGAcmVersion     = self.__HdrParser.AcmVersion
 
             #
             # Get the version information for BIOS.
@@ -240,9 +247,9 @@ if (BUILD_OP_VER == BTG_ACM_BUILD_OP_VER_1):
             """
             IsAssigned: bool = None
 
-            IsAssigned, _ = IsFlashMapRegionInfoAssigned (
-                              self.__FlashMapInfo,
-                              BTG_ACM_FV_KEY,
+            IsAssigned, _ = IsRegionInfoAssigned (
+                              DataDict = self.__FlashMapInfo,
+                              Region   = BTG_ACM_FV_KEY,
                               )
 
             if not IsAssigned:
@@ -250,37 +257,6 @@ if (BUILD_OP_VER == BTG_ACM_BUILD_OP_VER_1):
                   'BtGAcm capsule build is not supported on '
                   f'[{self.__BiosType}] - [{self.__BuildType}] BIOS.'
                   )
-
-        def __GetImageBuffer (self) -> ByteBuffer:
-            """ Read the firmware image from storage to buffer.
-
-            Args:
-                None.
-
-            Raises:
-                None.
-
-            Returns:
-                ByteBuffer:
-                    Firmware image buffer within the ByteBuffer wrapper.
-            """
-            SrcBuffer: Union[None, ByteBuffer] = None
-            Buffer   : Union[None, ByteBuffer] = None
-
-            DEBUG (
-              DEBUG_TRACE,
-              f'User assign the BtGAcm path: {self.__BtGAcmPath}'
-              )
-            SrcBuffer = ByteBuffer (self.__BtGAcmPath)
-            SrcBuffer.Padding (
-                        TargetSize = BTG_ACM_ALIGNMENT,
-                        Char       = b'\xFF',
-                        )
-            SrcBuffer.Save (BTG_ACM_IMG_FILE_PATH)
-
-            Buffer = ByteBuffer (BTG_ACM_IMG_FILE_PATH)
-
-            return Buffer
 
         def __GetBiosType (self) -> str:
             """ Identify the type for the target platform BIOS image.
@@ -300,6 +276,94 @@ if (BUILD_OP_VER == BTG_ACM_BUILD_OP_VER_1):
                 return BIOS_RESILIENCY_TYPE
             else:
                 return BIOS_NORMAL_TYPE
+
+        def __GetSlotSize (self) -> int:
+            """ Return the BtGACM slot size for specific platform.
+
+            Args:
+                None.
+
+            Raises:
+                ValueError:
+                    Unsupported board ID and DEFAULT is not found.
+
+            Returns:
+                int:
+                    BtGACM slot size for specific platform.
+            """
+            IsFound : bool = None
+            Key     : str  = None
+            SlotSize: int  = None
+
+            IsFound, Key = SearchKeyInDict (
+                             BTG_ACM_SLOT_SIZE_DATA,
+                             self.__BiosBoarId,
+                             )
+
+            if not IsFound:
+                #
+                # Not found set it as default.
+                #
+                DEBUG (
+                  DEBUG_WARN,
+                  f'Sku assigned [{Key}] is not found. '
+                  f'Try to find the [{DEFAULT}] key.'
+                  )
+                IsFound, Key = SearchKeyInDict (BTG_ACM_SLOT_SIZE_DATA, DEFAULT)
+
+            if not IsFound:
+                raise ValueError (f'Sku {DEFAULT} is not found.')
+
+            SlotSize = ToInt (BTG_ACM_SLOT_SIZE_DATA[Key])
+            DEBUG (
+              DEBUG_INFO,
+              f'Find the [{self.__BiosBoarId}] slot size - [{hex (SlotSize)}].'
+              )
+
+            return SlotSize
+
+        def __GetImageBuffer (self) -> ByteBuffer:
+            """ Read the firmware image from storage to buffer.
+
+            Args:
+                None.
+
+            Raises:
+                ValueError:
+                    Image size is larger than the slot size.
+
+            Returns:
+                ByteBuffer:
+                    Firmware image buffer within the ByteBuffer wrapper.
+            """
+            SrcBuffer: Union[None, ByteBuffer] = None
+            Buffer   : Union[None, ByteBuffer] = None
+
+            DEBUG (
+              DEBUG_TRACE,
+              f'User assign the BtGAcm path: {self.__BtGAcmPath}'
+              )
+            SrcBuffer = ByteBuffer (self.__BtGAcmPath)
+            SrcBuffer.Padding (
+                        TargetSize = self.__SlotSize,
+                        Char       = b'\xFF',
+                        )
+            SrcBuffer.Save (BTG_ACM_IMG_FILE_PATH)
+
+            Buffer = ByteBuffer (BTG_ACM_IMG_FILE_PATH)
+
+            if Buffer.Size > self.__SlotSize:
+                    raise ValueError (
+                            f'BtGACM size [{hex (Buffer.Size)}] is larger than '
+                            f'slot size [{hex (self.__SlotSize)}].'
+                            )
+
+            Buffer.Padding (
+                     TargetSize = self.__SlotSize,
+                     Char       = b'\xFF',
+                     )
+
+            return Buffer
 
         def __GetCapsulePayload (self) -> ByteBuffer:
             """ Generate the capsule payload.
@@ -348,7 +412,7 @@ if (BUILD_OP_VER == BTG_ACM_BUILD_OP_VER_1):
                 _BtGAcmSlotInfoGenerator (
                     FvOffset     = FvOffset,
                     FvSize       = FvSize,
-                    SlotSize     = BTG_ACM_ALIGNMENT,
+                    SlotSize     = self.__SlotSize,
                     BtGAcmImg    = self.__Buffer,
                     IsSingleSlot = self.__SingleSlotFlag,
                     )
@@ -387,7 +451,7 @@ if (BUILD_OP_VER == BTG_ACM_BUILD_OP_VER_1):
                              self.__BlockSize,
                              )
             FdfGenerator.AddRawFile (uuid.UUID (BTG_ACM_CFG_FILE_GUID),  BTG_ACM_CFG_FILE_NAME,  None)
-            FdfGenerator.AddRawFile (uuid.UUID (BTG_ACM_IMG_FILE_GUID),  BTG_ACM_IMG_FILE_NAME,  FFS_ALIGNMENT_256K)
+            FdfGenerator.AddRawFile (uuid.UUID (BTG_ACM_IMG_FILE_GUID),  BTG_ACM_IMG_FILE_NAME,  FFS_ALIGNMENT_4K)
             FdfGenerator.AddRawFile (uuid.UUID (BTG_ACM_BGUP_FILE_GUID), BTG_ACM_BGUP_FILE_NAME, None)
             FdfGenerator.Save (EDKII_FDF_FILE_PATH)
 

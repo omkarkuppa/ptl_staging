@@ -39,7 +39,8 @@ typedef struct {
   UINT32  AudioLinkSndwLanes2   :  2; ///< SoundWire#2 Multilane enablement: <b>0: Disable</b>; 1: 2-lanes; 2: 3-lanes; 3: 4-lanes
   UINT32  AudioLinkSndwLanes3   :  2; ///< SoundWire#3 Multilane enablement: <b>0: Disable</b>; 1: 2-lanes; 2: 3-lanes; 3: 4-lanes
   UINT32  Pme                   :  1; ///< Azalia wake-on-ring, <b>0: Disable</b>; 1: Enable
-  UINT32  RsvdBits0             : 19; ///< Reserved bits
+  UINT32  SoundWireClockSelect  :  1; ///< SoundWire clock source select: <b> 0: XTAL</b>; 1: Audio PLL.
+  UINT32  RsvdBits0             : 18; ///< Reserved bits
   UINT32  AudioXtal;                  ///< Detected XTAL
 } HDAUDIO_CONFIG_HOB;
 

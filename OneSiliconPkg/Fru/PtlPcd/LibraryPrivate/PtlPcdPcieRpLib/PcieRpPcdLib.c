@@ -373,6 +373,7 @@ PcieUpdateConfig (
   pInst->PcieRpCommonConfig.RpFunctionSwap      = PcieConfig->PcieCommonConfig.RpFunctionSwap;
   pInst->PcieRpCommonConfig.ComplianceTestMode  = PcieConfig->PcieCommonConfig.ComplianceTestMode;
   pInst->PcieRpCommonConfig.EnablePort8xhDecode = PcieConfig->PcieCommonConfig.EnablePort8xhDecode;
+  pInst->PcieRpCommonConfig.EnableDtr           = 0;
 }
 
 /**

@@ -120,12 +120,13 @@ PeiSndwBeepEntryPoint (
   CopyMem (SndwBeepContext->SndwCodecInfo.CodecId.Data, PcdGetPtr (PcdSndwBeepCodecId), sizeof (SNDW_CODEC_ID));
 
   DEBUG ((DEBUG_INFO, "Codec ID:\n"));
-  DEBUG ((DEBUG_INFO, "  Version           [0x50]: %02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.Version));
-  DEBUG ((DEBUG_INFO, "  ManufacturerID[0] [0x51]: %02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.ManufacturerID[0]));
-  DEBUG ((DEBUG_INFO, "  ManufacturerID[1] [0x52]: %02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.ManufacturerID[1]));
-  DEBUG ((DEBUG_INFO, "  PartId[0]         [0x53]: %02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.PartId[0]));
-  DEBUG ((DEBUG_INFO, "  PartId[1]         [0x54]: %02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.PartId[1]));
-  DEBUG ((DEBUG_INFO, "  Class             [0x55]: %02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.Class));
+  DEBUG ((DEBUG_INFO, "  UniqueId          [0x50]: 0x%02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.UniqueId));
+  DEBUG ((DEBUG_INFO, "  Version           [0x50]: 0x%02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.Version));
+  DEBUG ((DEBUG_INFO, "  ManufacturerID[0] [0x51]: 0x%02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.ManufacturerID[0]));
+  DEBUG ((DEBUG_INFO, "  ManufacturerID[1] [0x52]: 0x%02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.ManufacturerID[1]));
+  DEBUG ((DEBUG_INFO, "  PartId[0]         [0x53]: 0x%02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.PartId[0]));
+  DEBUG ((DEBUG_INFO, "  PartId[1]         [0x54]: 0x%02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.PartId[1]));
+  DEBUG ((DEBUG_INFO, "  Class             [0x55]: 0x%02x\n", SndwBeepContext->SndwCodecInfo.CodecId.Encoding.Class));
 
   SndwBeepContext->Signature           = SNDW_BEEP_SIGNATURE;
   SndwBeepContext->BeepApi.Enable      = PeiSndwEnable;

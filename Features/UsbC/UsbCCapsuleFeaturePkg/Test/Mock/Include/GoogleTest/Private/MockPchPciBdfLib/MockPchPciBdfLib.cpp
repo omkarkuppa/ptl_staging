@@ -22,6 +22,6 @@
 
 #include "MockPchPciBdfLib.h"
 
-MOCK_INTERFACE_DEFINITION(MockPchPciBdfLib);
+MOCK_INTERFACE_DEFINITION (MockPchPciBdfLib);
 
-MOCK_FUNCTION_DEFINITION(MockPchPciBdfLib, PchPcieRpPciCfgBase, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPchPciBdfLib, PchPcieRpPciCfgBase, 1, EFIAPI);

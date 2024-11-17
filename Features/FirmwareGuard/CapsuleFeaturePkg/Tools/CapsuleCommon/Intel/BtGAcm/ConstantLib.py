@@ -22,4 +22,4 @@
 
 from CapsuleCommon.Constant.AlignmentLib import *
 
-BTG_ACM_ALIGNMENT: int = ALIGNMENT_256K
+BTG_ACM_ALIGNMENT: int = ALIGNMENT_4K

@@ -65,5 +65,6 @@ class UserEnvironment (object):
         print (f'OS Name             : {self.__OSSystem} {self.__OSRelease}')
         print (f'OS Version          : {self.__OSVersion}')
         print (f'OS Platform         : {self.__OSPlatform}')
+        print (f'Python Path         : {sys.executable}')
         print (f'Python Version      : {self.__PythonVersion}')
         print (f'----------- Dump the user system environment End -----------')

@@ -26,7 +26,7 @@
 #include "MrcDdr5.h"
 #include "MrcLpddr5.h"
 #include "MrcChipApi.h"
-#include "MrcPmaApiCrossProj.h"
+#include "MrcPmaApi.h"
 #include "MrcSagv.h"
 #if defined(FULL_HEADLESS) && !defined(NEW_STUB)
 #include "StubMrcUcManagement.h" // for MrcStubWriteMrcData()
@@ -1054,10 +1054,11 @@ ValidSdramDeviceWidth (
         return FALSE;
     }
     DimmOut->ChannelsPerSdramPackage = ChPerSdramPkg;
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  Die per SDRAM Package: %u\n", DimmOut->DiePerSdramPackage);
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  %s: %u\n", ChPerSdramPkgStr, ChPerSdramPkg);
   }
-
+  if (IsLpddr) {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  Die per SDRAM Package: %u\n", DimmOut->DiePerSdramPackage);
+  }
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  SDRAM device width: %u\n", DimmOut->SdramWidth);
 
   return TRUE;
@@ -1619,6 +1620,10 @@ GetRankCount (
     RankCount = Spd->Ddr5.ModuleCommon.ModuleOrganization.Bits.RankCount;
   } else if (Outputs->IsLP5Camm2) {
     RankCount = Spd->JedecLpddr5.ModuleCommon.ModuleOrganization.Bits.NumOfPackageRanksperSubChannel;
+    // Some LPCAMM2 modules do not program byte 234, so use byte 12 instead
+    if (Spd->Lpddr.Base.ModuleOrganization.Bits.RankCount > RankCount) {
+      RankCount = Spd->Lpddr.Base.ModuleOrganization.Bits.RankCount;
+    }
   } else {
     RankCount = Spd->Lpddr.Base.ModuleOrganization.Bits.RankCount;
   }
@@ -2322,6 +2327,11 @@ GetChannelDimmtCK (
             DimmOut->Speed = ConvertClock2Freq (MrcData, DimmCalculated, NULL);
           }
 
+          if (Actual[Profile] == 0) {
+            MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid tCKMin value: %u\n", gErrString, Actual[Profile]);
+            return FALSE;
+          }
+
           MRC_DEBUG_MSG (
             Debug,
             MSG_LEVEL_NOTE,
@@ -2753,78 +2763,6 @@ GetDdr5tCWL (
 }
 
 /**
-  Calculate the tCWL value for LPDDR5.
-
-  JEDEC Spec x8/x16 WL values:
-    Lower Clk   Upper Clk      SetA   SetB
-    Freq Limit  Freq Limit     WL     WL
-    --------------------------------------
-    10            67           2      2
-    67            133          2      3
-    133           200          3      4
-    200           267          4      5
-    267           344          4      7
-    344           400          5      8
-    400           467          6      9
-    467           533          6      11
-    533           600          7      12
-    600           688          8      14
-    688           750          9      15
-    750           800          9      16
-
-  @param[in] tCK   - The memory DCLK in femtoseconds.
-  @param[in] WlSet - 0: Set A, 1: Set B
-
-@retval LpDDR5 tCWL Value
-**/
-UINT32
-GetLpddr5tCWL (
-  IN UINT32 tCKmin,
-  IN UINT8  WlSet
-  )
-{
-  UINT32 tCWL;
-  UINT32 tCKNorm;
-
-  tCKNorm = tCKmin / 4;
-  //
-  // Using WL Set B values from table 4.6.2 of LPDDR5 JEDEC Spec.
-  //
-  if (tCKNorm >= MRC_DDR_533_TCK_MIN) {
-    tCWL = 2;
-  } else if (tCKNorm >= MRC_DDR_1067_TCK_MIN) {
-    tCWL = 3;
-  } else if (tCKNorm >= MRC_DDR_1600_TCK_MIN) {
-    tCWL = 4;
-  } else if (tCKNorm >= MRC_DDR_2133_TCK_MIN) {
-    tCWL = 5;
-  } else if (tCKNorm >= MRC_DDR_2750_TCK_MIN) {
-    tCWL = 7;
-  } else if (tCKNorm >= MRC_DDR_3200_TCK_MIN) {
-    tCWL = 8;
-  } else if (tCKNorm >= MRC_DDR_3733_TCK_MIN) {
-    tCWL = 9;
-  } else if (tCKNorm >= MRC_DDR_4267_TCK_MIN) {
-    tCWL = 11;
-  } else if (tCKNorm >= MRC_DDR_4800_TCK_MIN) {
-    tCWL = 12;
-  } else if (tCKNorm >= MRC_DDR_5500_TCK_MIN) {
-    tCWL = 14;
-  } else if (tCKNorm >= MRC_DDR_6000_TCK_MIN) {
-    tCWL = 15;
-  } else if (tCKNorm >= MRC_DDR_6400_TCK_MIN) {
-    tCWL = 16;
-  } else if (tCKNorm >= MRC_DDR_7500_TCK_MIN) {
-    tCWL = 19;
-  } else if (tCKNorm >= MRC_DDR_8533_TCK_MIN) {
-    tCWL = 22;
-  } else {
-    tCWL = 24; // MRC_DDR_9600_TCK_MIN
-  }
-  return tCWL;
-}
-
-/**
   Calculate the minimum tCWL timing value for the given memory frequency.
     We calculate timings for all profiles so that this information can be passed out of MRC.
 
@@ -2907,6 +2845,15 @@ GetChannelDimmtCWL (
                 Calculated = GetLpddr5tCWL (tCKmin, 1); // We always use Set B (1)
               } else if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
                 Calculated = GetDdr5tCWL (tCL);
+              }
+              if (Inputs->ExtInputs.Ptr->DqLoopbackTest) {
+                if (DimmOut->DdrType == MRC_DDR_TYPE_LPDDR5) {
+                  // CWL = CL + 1, subtract 1 tCK due to the preamble
+                  Calculated = tCL;
+                } else {
+                  // CWL = CL + 4, using 2N mode
+                  Calculated = tCL + 4;
+                }
               }
               break;
           } //switch
@@ -6117,7 +6064,7 @@ GetChannelDimmNmode (
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  %s:\n  %s\n", NmodeString, HeaderString);
 
-  MinAllowedNMode = (Inputs->IsDdrIoDtHalo && (Outputs->GearMode == 0)) ? CA_1_NMODE : CA_2_NMODE;
+  MinAllowedNMode = ((Outputs->Frequency <= f4800) && (Outputs->GearMode == 0)) ? CA_1_NMODE : CA_2_NMODE;
   if (Inputs->MinAllowedNModeOvrd != 0) {
     // Only CA_1_NMODE and CA_2_NMODE are allowed.
     MinAllowedNMode = MIN(Inputs->MinAllowedNModeOvrd, CA_2_NMODE);
@@ -6170,7 +6117,7 @@ GetChannelDimmNmode (
               /*FALLTHROUGH*/
             case STD_PROFILE:
             default:
-            Calculated = CA_2_NMODE;
+            Calculated = MinAllowedNMode;
               break;
           } //switch
 
@@ -7143,8 +7090,6 @@ MrcSpdProcessingStatic (
   MrcSaveData                   *SaveData;
   UINT8                         FirstDimmRankInDimm = 0;
   UINT8                         CurDimmRankInDimm = 0;
-  UINT8                         FirstDimmSdramWidth = 0;
-  UINT8                         CurDimmSdramWidth = 0;
   BOOLEAN                       IsFirstDimm;
 
   Inputs   = &MrcData->Inputs;
@@ -7241,7 +7186,6 @@ MrcSpdProcessingStatic (
           if (Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Status == DIMM_PRESENT) {
             if (IsFirstDimm) {
               FirstDimmRankInDimm = DimmOut->RankInDimm;
-              FirstDimmSdramWidth = DimmOut->SdramWidth;
               IsFirstDimm = FALSE;
               if (Dimm == 1) {
                 if (FirstDimmRankInDimm == 1) {
@@ -7258,13 +7202,10 @@ MrcSpdProcessingStatic (
               }
             } else {
               CurDimmRankInDimm = DimmOut->RankInDimm;
-              CurDimmSdramWidth = DimmOut->SdramWidth;
-              if (FirstDimmSdramWidth == CurDimmSdramWidth) {
-                if ((FirstDimmRankInDimm == MAX_RANK_IN_DIMM) && (CurDimmRankInDimm == MAX_RANK_IN_DIMM)) {
-                  Outputs->Is2DPC2R2R = TRUE;
-                } else if ((FirstDimmRankInDimm == (MAX_RANK_IN_DIMM - 1)) && (CurDimmRankInDimm == (MAX_RANK_IN_DIMM - 1))) {
-                  Outputs->Is2DPC1R1R = TRUE;
-                }
+              if ((FirstDimmRankInDimm == MAX_RANK_IN_DIMM) && (CurDimmRankInDimm == MAX_RANK_IN_DIMM)) {
+                Outputs->Is2DPC2R2R = TRUE;
+              } else if ((FirstDimmRankInDimm == (MAX_RANK_IN_DIMM - 1)) && (CurDimmRankInDimm == (MAX_RANK_IN_DIMM - 1))) {
+                Outputs->Is2DPC1R1R = TRUE;
               }
             }
           }

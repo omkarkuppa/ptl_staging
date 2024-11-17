@@ -26,7 +26,37 @@
 #include <BspmDef.h>
 #include <FbmDef.h>
 
-#define  HASH_CTX_LEN_MAX    256
+#define MSR_BOOT_GUARD_SACM_INFO             0x0000013A
+#define B_BOOT_GUARD_SACM_INFO_TPM_SUCCESS   BIT3
+#define HASH_CTX_LEN_MAX                     256
+#define BOOT_GUARD_PROFILE_3                 3
+#define BOOT_GUARD_PROFILE_4                 4
+#define BOOT_GUARD_PROFILE_5                 5
+
+/**
+  Detect the boot guard profile.
+
+  @retval BootGuardProfile  Boot Guard Profile.
+
+**/
+UINT8
+DetectBootGuardProfile (
+  VOID
+  );
+
+/**
+  Check if FSP signing is supported.
+
+  @param[in]   Fbm    FSP Boot Manifest which keeps FSP-M digest and IBB information.
+
+  @retval TRUE   Signing is supported.
+  @retval FALSE  Signing is not supported.
+
+**/
+UINT8
+IsSigningSupported (
+  IN FSP_BOOT_MANIFEST_STRUCTURE  *Fbm
+  );
 
 /**
   Verify FSP Version information in BSSS(BSPM) and FBM.
@@ -68,7 +98,7 @@ VerifyFspVersion (
 **/
 EFI_STATUS
 EFIAPI
-VerifyFspm (
+VerifyAndExtendFspm (
   IN BSPM_ELEMENT                   *Bsss,
   IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
@@ -93,21 +123,21 @@ VerifyFspm (
 **/
 EFI_STATUS
 EFIAPI
-VerifyFsps (
+VerifyAndLogEventFsps (
   IN UINTN                          FspsImageBase,
   IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
   );
 
 /**
-  Verify BSP-PreMem with the information in BSSS(BSPM).
-  BSP-PreMem digest information is kept in BSSS(BSPM), only one TPM required algorithm (SHA256, SHA384,
+  Verify and extend BSP-PreMem with the information in BSPM.
+  BSP-PreMem digest information is kept in BSPM, only one TPM required algorithm (SHA256, SHA384,
   SHA512, SM3) is needed for size consideration.
 
-  BSP-PreMem region information is kept in BSSS(BSPM), only hashed IBB (indicate by flag) should be taken
+  BSP-PreMem region information is kept in BSPM, only hashed IBB (indicate by flag) should be taken
   into digest calculation.
 
-  @param[in]   Bsss      BSSS(BSPM) structure found in BPM.
+  @param[in]   Bspm      BSPM structure found in BPM.
   @param[in]   Buffer    Memory buffer for hash verification.
 
   @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
@@ -118,7 +148,7 @@ VerifyFsps (
 EFI_STATUS
 EFIAPI
 VerifyBsp (
-  IN BSPM_ELEMENT                   *Bsss,
+  IN BSPM_ELEMENT                   *Bspm,
   IN VOID                           *Buffer
   );
 

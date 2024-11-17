@@ -440,8 +440,6 @@
 #string STR_BOOT_MAX_FREQUENCY_HELP             #language en-US "Enable/Disable Boot Maximum Frequency in CPU strap."
 #string STR_CX_PROMPT                           #language en-US "C states"
 #string STR_CX_PROMPT_HELP                      #language en-US "Enable/Disable CPU Power Management. Allows CPU to go to C states when it's not 100% utilized."
-#string STR_CXE_PROMPT                          #language en-US "Enhanced C-states"
-#string STR_CXE_PROMPT_HELP                     #language en-US "Enable/Disable C1E. When enabled, CPU will switch to minimum speed when all cores enter C-State."
 //#string STR_RTCS4_WAKE_PROMPT                 #language en-US ""
 //#string STR_RTCS4_WAKE_HELP                   #language en-US "Enable/Disable"
 

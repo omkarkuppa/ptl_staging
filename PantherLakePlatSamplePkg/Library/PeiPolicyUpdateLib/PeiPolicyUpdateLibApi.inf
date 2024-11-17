@@ -131,6 +131,7 @@
   gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber                  ## CONSUMES
 
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvIntegratedSupport
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress     ## CONSUMES
@@ -333,7 +334,7 @@
   gPlatformModuleTokenSpaceGuid.PcdCnviBtInterfaceUpdate       ## PRODUCES
 
   # Payload Management
-  gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadSize         ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize         ## CONSUMES
 
   # MKTME
   gSiPkgTokenSpaceGuid.PcdMkTmeKeyIdBits                       ## CONSUMES
@@ -347,6 +348,7 @@
   gSiPkgTokenSpaceGuid.PcdTdxActmMac1                    ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTdxActmMac2                    ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTdxActmMac3                    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig     ## CONSUMES
 
 [Sources]
   PeiPchPolicyUpdatePreMem.c

@@ -25,6 +25,21 @@
 #include "MrcHalInternal.h"
 
 /**
+  Check if CR Cache is enabled or not in GetSet HAL
+
+  @retval TRUE  - CR cache is enabled
+  @retval FALSE - CR cache is disabled
+**/
+BOOLEAN
+MrcHalCrCacheEnabled (
+  VOID
+  )
+{
+  // CR Cache is enabled in Blue MRC
+  return TRUE;
+}
+
+/**
   Top level function used to interact with DDRIO parameters.
   This function ignores unused parameters in Core MRC to reduce code space.
     Socket Index, DIMM index, FreqIndex, and Level.
@@ -339,21 +354,48 @@ MrcGetSetPartitionBlockPiCodeLUT (
   IN OUT  INT64         *const  Value
   )
 {
-  return MrcGetSet (
-    MrcData,
-    MRC_IGNORE_ARG,
-    MRC_IGNORE_ARG,
-    MRC_IGNORE_ARG,
-    MRC_IGNORE_ARG,
-    FieldIndex,
-    PartitionBlock,
-    BlockIndex,
-    PhIndex,
-    DdrLevel,
-    Group,
-    Mode,
-    Value
-  );
+  UINT32 Index;
+  MrcStatus Status = mrcSuccess;
+  MRC_RANGE Range = MrcGetPartitionIndexRange (PartitionBlock, BlockIndex);
+  if (Range.Start != MRC_IGNORE_ARG_8) {
+    for (Index = Range.Start; Index < Range.End && Status == mrcSuccess; Index++) {
+      if (!MrcGetHwPartitionExists (MrcData, PartitionBlock, Index, MRC_IGNORE_ARG)) {
+        continue;
+      }
+      return MrcGetSet (
+        MrcData,
+        MRC_IGNORE_ARG,
+        MRC_IGNORE_ARG,
+        MRC_IGNORE_ARG,
+        MRC_IGNORE_ARG,
+        FieldIndex,     // Passed as Rank
+        PartitionBlock, // Passed as Strobe
+        Index,          // Passed as Lane
+        PhIndex,        // Passed as FreqIndex
+        DdrLevel,
+        Group,
+        Mode,
+        Value
+      );
+    }
+  } else {
+    return MrcGetSet (
+      MrcData,
+      MRC_IGNORE_ARG,
+      MRC_IGNORE_ARG,
+      MRC_IGNORE_ARG,
+      MRC_IGNORE_ARG,
+      FieldIndex,     // Passed as Rank
+      PartitionBlock, // Passed as Strobe
+      BlockIndex,     // Passed as Lane
+      PhIndex,        // Passed as FreqIndex
+      DdrLevel,
+      Group,
+      Mode,
+      Value
+    );
+  }
+  return Status;
 }
 
 /**
@@ -487,6 +529,77 @@ MrcGetSetPartitionBlockIndex (
       PartitionBlock,
       (PartitionBlock == PartitionPll) ? MRC_IGNORE_ARG : BlockIndex,
       MRC_IGNORE_ARG,
+      DdrLevel,
+      Group,
+      Mode,
+      Value
+    );
+  }
+  return Status;
+}
+
+/**
+  Top level function used to interact with SOC.
+  This function ignores unused parameters in Core MRC to reduce code space.
+  This function is used to access SAGV registers within partitions.
+
+  @param[in]      MrcData        - Pointer to global data structure.
+  @param[in]      PartitionBlock - Which Block set of DCC registers (PLL, PG, VCCCLK) to access (Passed on as Strobe)
+  @param[in]      BlockIndex     - Which Index of Block to access (Passed on as Lane parameter)
+  @param[in]      FreqIndex      - Index supporting multiple operating frequencies
+  @param[in]      Group          - DDRIO group to access.
+  @param[in]      Mode           - Bit-field flags controlling Get/Set.
+  @param[in,out]  Value          - Pointer to value for Get/Set to operate on. Can be offset or absolute value based on mode.
+
+  @return MrcStatus
+**/
+MrcStatus
+MrcGetSetPartitionBlockSagv (
+  IN      MrcParameters *const  MrcData,
+  IN      UINT32                PartitionBlock,
+  IN      UINT32                BlockIndex,
+  IN      UINT32        const   FreqIndex,
+  IN      GSM_GT        const   Group,
+  IN      UINT32                Mode,
+  IN OUT  INT64         *const  Value
+  )
+{
+  UINT32 PartIndex;
+  MrcStatus Status = mrcSuccess;
+  MRC_RANGE Range = MrcGetPartitionIndexRange (PartitionBlock, BlockIndex);
+  if (Range.Start != MRC_IGNORE_ARG_8) {
+    for (PartIndex = Range.Start; PartIndex < Range.End && Status == mrcSuccess; PartIndex++) {
+      if (!MrcGetHwPartitionExists (MrcData, PartitionBlock, PartIndex, MRC_IGNORE_ARG)) {
+        continue;
+      }
+
+      Status = MrcGetSet (
+        MrcData,
+        MRC_IGNORE_ARG,
+        MRC_IGNORE_ARG,
+        MRC_IGNORE_ARG,
+        MRC_IGNORE_ARG,
+        MRC_IGNORE_ARG,
+        PartitionBlock,  // Passed in as Strobe
+        PartIndex,       // Passed in as Lane
+        FreqIndex,
+        DdrLevel,
+        Group,
+        Mode,
+        Value
+      );
+    }
+  } else {
+    Status = MrcGetSet (
+      MrcData,
+      MRC_IGNORE_ARG,
+      MRC_IGNORE_ARG,
+      MRC_IGNORE_ARG,
+      MRC_IGNORE_ARG,
+      MRC_IGNORE_ARG,
+      PartitionBlock, // Passed in as Strobe
+      (PartitionBlock == PartitionPll) ? MRC_IGNORE_ARG : BlockIndex, // Passed in as Lane
+      FreqIndex,
       DdrLevel,
       Group,
       Mode,

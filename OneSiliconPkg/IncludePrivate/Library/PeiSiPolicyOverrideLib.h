@@ -45,26 +45,4 @@ PeiSiPolicyOverride (
   IN  SI_POLICY_PPI                    *SiPolicyPpi
   );
 
-/**
-  PCH Policy override in PostMem phase
-
-  @param[in] SiPreMemPolicyPpi         The PCH PreMem Policy PPI instance
-  @param[in] SiPolicyPpi               The PCH PostMem Policy PPI instance
-**/
-VOID
-PeiAttachedPchPolicyOverride (
-  IN  SI_PREMEM_POLICY_PPI             *SiPreMemPolicyPpi,
-  IN  SI_POLICY_PPI                    *SiPolicyPpi
-  );
-
-/**
-  Policy override on end of PEI phase
-
-  @param[in] SiPolicyPpi               The Silicon PostMem Policy PPI instance
-**/
-VOID
-PeiSiPolicyOverrideOnEndOfPei (
-  IN  SI_POLICY_PPI                    *SiPolicyPpi
-  );
-
 #endif

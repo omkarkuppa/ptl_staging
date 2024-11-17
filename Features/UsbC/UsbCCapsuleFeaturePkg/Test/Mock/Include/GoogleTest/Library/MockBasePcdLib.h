@@ -26,8 +26,8 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Base.h>
-  #include <Uefi/UefiBaseType.h>
+#include <Base.h>
+#include <Uefi/UefiBaseType.h>
 }
 
 struct MockBasePcdLib {
@@ -38,12 +38,22 @@ struct MockBasePcdLib {
     LibPcdGet8,
     (IN UINTN  TokenNumber)
     );
-
   MOCK_FUNCTION_DECLARATION (
     VOID *,
     LibPcdGetExPtr,
     (IN CONST GUID  *Guid,
      IN UINTN       TokenNumber)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    VOID *,
+    LibPcdGetEx8,
+    (IN CONST GUID  *Guid,
+     IN UINTN       TokenNumber)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    UINT8,
+    LibPcdGet32,
+    (IN UINTN  TokenNumber)
     );
 };
 

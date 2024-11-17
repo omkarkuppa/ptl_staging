@@ -58,14 +58,17 @@ If (LAnd( LAnd( LNotEqual (TPTY,0), LLess (TPTY,0xFF)), LEqual (TRT3,1))) {
           Method(_ON){
             ADBG("I2C3 Tpd PWR ON")
             // enable int line
-            \_SB.SGRA(TPDI, TPDP)
+            If (LEqual (TPDM,1)) {
+              \_SB.SGRA(TPDI, 1)
+            }
           }
 
           Method(_OFF){
             ADBG("I2C3 Tpd PWR OFF")
             // disable int line
-            Xor(TPDP, 1, Local0)
-            \_SB.SGRA(TPDI, Local0)
+            If (LEqual (TPDM,1)) {
+              \_SB.SGRA(TPDI, 0)
+            }
           }
         } // End PXTC
 

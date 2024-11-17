@@ -366,7 +366,7 @@
   gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable                    ## CONSUMES
   gEcFeaturePkgTokenSpaceGuid.PcdEcPeciMode                             ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTsnSupport                                    ## CONSUMES
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber                  ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdSupportBitmap           ## CONSUMES
 
   # SA USB Config
   gBoardModuleTokenSpaceGuid.PcdTcssPortCapMap                          ## CONSUMES
@@ -411,6 +411,8 @@
     # USB4
   gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable                           ## CONSUMES
   gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber            ## CONSUMES
+
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable                      ## CONSUMES
 
 [Depex]
   gMemInfoProtocolGuid                AND

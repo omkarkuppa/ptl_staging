@@ -622,6 +622,7 @@ FspUpdatePcieRpPolicy (
   PchPcieConfig->PcieCommonConfig.ComplianceTestMode            = FspsUpd->FspsConfig.PcieComplianceTestMode;
   PchPcieConfig->PcieCommonConfig.RpFunctionSwap                = FspsUpd->FspsConfig.PcieRpFunctionSwap;
   PchPcieConfig->PcieCommonConfig.PhyAutoPowerGating            = FspsUpd->FspsConfig.PciePhyAutoPowerGating;
+  PchPcieConfig->PcieCommonConfig.EnableDtr                     = 0;
 
 
   FiaConfig->FiaProgramming                                     = FspsUpd->FspsConfig.PcieFiaProgramming;
@@ -1293,6 +1294,7 @@ FspUpdatePmPolicy (
   PmConfig->MeWakeSts                     = FspsUpd->FspsConfig.PchPmMeWakeSts;
   PmConfig->WolOvrWkSts                   = FspsUpd->FspsConfig.PchPmWolOvrWkSts;
   PmConfig->EnableTcoTimer                = FspsUpd->FspsConfig.EnableTcoTimer;
+  PmConfig->DtrSci                        = 0;
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
   PmConfig->EnableTimedGpio0              = FspsUpd->FspsConfig.EnableTimedGpio0;
   PmConfig->EnableTimedGpio1              = FspsUpd->FspsConfig.EnableTimedGpio1;

@@ -76,6 +76,7 @@ typedef struct {
   UINT8    SanitizeOrder[SANITIZE_COUNT];
   UINT8    RpeOptionExposure;
   UINT8    RpeOptionGrayOut;
+  UINT8    CsmeUnconfigureExposure;
   UINT8    PlatformEraseSimulation;
 } PLATFORM_ERASE_VARIABLE;
 

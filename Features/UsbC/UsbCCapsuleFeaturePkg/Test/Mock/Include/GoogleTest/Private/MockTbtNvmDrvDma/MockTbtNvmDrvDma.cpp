@@ -22,20 +22,16 @@
 
 #include "MockTbtNvmDrvDma.h"
 
-MOCK_INTERFACE_DEFINITION(MockTbtNvmDrvDma);
+MOCK_INTERFACE_DEFINITION (MockTbtNvmDrvDma);
 
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvDma, TbtNvmDrvTxCfgPkt,      4, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvDma, TbtNvmDrvRxCfgPkt,      4, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvDma, TbtNvmDrvDmaWriteMmio,  3, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvDma, TbtNvmDrvDmaReadMmio,   2, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvDma, TbtNvmDrvDmaDebugPrint, 1, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvDma, TbtNvmDrvDmaDtor,       1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvDma, TbtNvmDrvTxCfgPkt, 4, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvDma, TbtNvmDrvRxCfgPkt, 4, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvDma, TbtNvmDrvDmaWriteMmio, 3, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvDma, TbtNvmDrvDmaReadMmio, 2, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvDma, TbtNvmDrvDmaDebugPrint, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvDma, TbtNvmDrvDmaDtor, 1, EFIAPI);
 
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvDma, TbtNvmDrvDmaCtor,       2, EFIAPI);
-
-//BOOLEAN                  *TBTControllerWasPowered;
-
-static TBT_DMA    LocalDmaPtr = {
+TBT_DMA LocalDmaPtr = {
   NULL,                                // TBT_DMA_IMPL
   TbtNvmDrvTxCfgPkt,                   // TX_CFG_PKT
   TbtNvmDrvRxCfgPkt,                   // RX_CFG_PKT
@@ -46,4 +42,4 @@ static TBT_DMA    LocalDmaPtr = {
   NULL,                                // *TBTControllerWasPowered
 };
 
-TBT_DMA* gDmaPtrMock = &LocalDmaPtr;
+TBT_DMA *gDmaPtrMock = &LocalDmaPtr;

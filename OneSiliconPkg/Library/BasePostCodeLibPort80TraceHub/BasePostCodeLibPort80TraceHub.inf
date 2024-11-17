@@ -44,6 +44,7 @@
   TraceHubDebugLib
   PostCodeToScratchPadLib
   SerialIoI2cLib
+  SmbusLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -52,6 +53,9 @@
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdPostCodePropertyMask
   gSiPkgTokenSpaceGuid.PcdI2cPostCode       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSmbusPostCode     ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSmbusPostCodeAddress   ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSmbusPostCodeCommand   ## CONSUMES
 
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdTraceHubCatalogEnable  ## CONSUMES

@@ -503,7 +503,6 @@ UpdatePDInformation (
   UINTN                 VarSize;
   UINT32                FwVersion;
   UINT32                SubFwVersion;
-  UINT8                 PdNumber;
   UINT8                 Index;
   EFI_STRING_ID         TokenToUpdate;
 
@@ -523,25 +522,24 @@ UpdatePDInformation (
     goto Exit;
   }
 
-  PdNumber = PcdGet8 (PcdUsbCPdNumber);
-  if (PdNumber > MAX_PD_NUMBER) {
-    DEBUG ((DEBUG_ERROR, "PcdUsbCPdNumber is invalid\n"));
-    goto Exit;
-  }
 
-  for (Index = 0; Index < PdNumber; Index++) {
+  for (Index = 0; Index < MAX_PD_NUMBER; Index++) {
     switch (Index) {
       case 0:
-        UsbCPdVersion = UsbCPdSetup.UsbCPd0Version;
-        TokenToUpdate = STRING_TOKEN (STR_PD0_VERSION_VALUE);
-        break;
-      case 1:
         UsbCPdVersion = UsbCPdSetup.UsbCPd1Version;
         TokenToUpdate = STRING_TOKEN (STR_PD1_VERSION_VALUE);
         break;
-      case 2:
+      case 1:
         UsbCPdVersion = UsbCPdSetup.UsbCPd2Version;
         TokenToUpdate = STRING_TOKEN (STR_PD2_VERSION_VALUE);
+        break;
+      case 2:
+        UsbCPdVersion = UsbCPdSetup.UsbCPd3Version;
+        TokenToUpdate = STRING_TOKEN (STR_PD3_VERSION_VALUE);
+        break;
+      case 3:
+        UsbCPdVersion = UsbCPdSetup.UsbCPd4Version;
+        TokenToUpdate = STRING_TOKEN (STR_PD4_VERSION_VALUE);
         break;
     }
     //
@@ -559,7 +557,7 @@ UpdatePDInformation (
         SubFwVersion
         );
     } else {
-      DEBUG ((DEBUG_INFO, "[USBC] PD%d Version is not found.\n", Index));
+      DEBUG ((DEBUG_INFO, "[USBC] PD%d Version is not found.\n", Index + 1));
     }
   }
 
@@ -617,6 +615,10 @@ UpdateRetimerInformation (
       case 2:
         InitStringRetimerValue = STR_RETIMER2_VERSION_VALUE;
         TempRetimerVersion     = UsbCRetimerSetup.UsbCRetimer2Version;
+        break;
+      case 3:
+        InitStringRetimerValue = STR_RETIMER3_VERSION_VALUE;
+        TempRetimerVersion     = UsbCRetimerSetup.UsbCRetimer3Version;
         break;
       default:
         DEBUG ((DEBUG_ERROR, "UsbCRetimerNumber is more than setting Index = %x.\n", Index));

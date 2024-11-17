@@ -296,6 +296,13 @@
   gBoardModuleTokenSpaceGuid.PcdSignedFspEnable                              ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMBase                           ## CONSUMES
 
+  gBoardModuleTokenSpaceGuid.PcdUsbConnectorTable                            ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdUsbCConnectorTable                           ## PRODUCES
+  gBoardModuleTokenSpaceGuid.VpdPcdUsbConnector                              ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdUsbCConnector                             ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbConnector                           ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbCConnector                          ## CONSUMES
+
 [Guids]
   gFspNonVolatileStorageHobGuid
   gSetupVariableGuid

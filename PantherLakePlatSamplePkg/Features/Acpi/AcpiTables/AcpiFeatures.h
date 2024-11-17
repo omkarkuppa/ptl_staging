@@ -57,9 +57,12 @@
 // ACPI DBG2 - Debug Device Name Space String
 //
 #define ACPI_DBG2_DEFAULT_NAME_SPACE            "."
-#define ACPI_DBG2_SERIALIO_UART0_NAME_SPACE     "\\_SB.UAH0"
-#define ACPI_DBG2_SERIALIO_UART1_NAME_SPACE     "\\_SB.UAH1"
-#define ACPI_DBG2_SERIALIO_UART2_NAME_SPACE     "\\_SB.UAH2"
+#define ACPI_DBG2_LPSS_UART0_NAME_SPACE         "\\_SB.UAH0"
+#define ACPI_DBG2_LPSS_UART1_NAME_SPACE         "\\_SB.UAH1"
+#define ACPI_DBG2_LPSS_UART2_NAME_SPACE         "\\_SB.UAH2"
+
+#define LPSS_UART_MEM_SIZE                             0x2000
+#define EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_INTEL_LPSS   0x0014
 
 //
 // Function definitions

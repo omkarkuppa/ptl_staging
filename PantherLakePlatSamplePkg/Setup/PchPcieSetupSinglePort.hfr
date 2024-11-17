@@ -150,6 +150,13 @@
         endoneof;
       endif;
 
+      oneof varid   = PCH_SETUP.PcieRootPortAER[PORT_INDEX],
+        prompt      = STRING_TOKEN(STR_PCIE_AER_PROMPT),
+        help        = STRING_TOKEN(STR_PCIE_AER_HELP),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      endoneof;
+
       oneof varid   = PCH_SETUP.PcieRootPortSpeed[PORT_INDEX],
         prompt   = STRING_TOKEN (CONCATENATE2(STR_PCIE_SPEED_PROMPT,PORT_INDEX)),
         help     = STRING_TOKEN (STR_PCIE_SPEED_HELP),

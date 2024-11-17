@@ -1,5 +1,5 @@
 /** @file
-  Google Test for the implementation of  FmpDeviceLib instance to support 
+  Google Test for the implementation of FmpDeviceLib instance to support
   Thunderbolt Retimer Firmware update
 
   @copyright
@@ -20,66 +20,62 @@
 @par Specification Reference:
 
 **/
+#include <GTestFmpDeviceLibUsbCRetimer.h>
+#include <GoogleTest/Library/MockUefiRuntimeServicesTableLib.h>
 
 /**
 Google test for FmpDeviceGetVersion function.
 **/
-class FmpDeviceGetVersionTest : public CommonMock {
+class FmpDeviceGetVersionTest : public Test {
   protected:
-  EFI_STATUS     Status;
-  UINT32         *Version1;
-  UINT32         *Version2;
+    EFI_STATUS                      Status;
+    UINT32                          *Version1;
+    UINT32                          *Version2;
+    MockUefiRuntimeServicesTableLib RtServicesMock;
 
   void SetUp() override {
     Version1 = NULL;
-    Version2 = (UINT32*) AllocatePool(1);
-    ASSERT_NE(Version2, nullptr);
+    Version2 = (UINT32 *) AllocatePool (1);
+    ASSERT_NE (Version2, nullptr);
   }
 };
 
-TEST_F (FmpDeviceGetVersionTest, VarError) {
-
+TEST_F (FmpDeviceGetVersionTest, Var_1_Error) {
   //
   // Case 1 - Version is NULL
   // Expected Result - Status will return EFI_INVALID_PARAMETER
   //
   cout << "[---------- Case 1 ----------]"<< endl;
   Status = FmpDeviceGetVersion (Version1);
-  EXPECT_EQ(Status, EFI_INVALID_PARAMETER);
-  
+  EXPECT_EQ (Status, EFI_INVALID_PARAMETER);
 }
 
-
-TEST_F(FmpDeviceGetVersionTest, VarUnSupported) {
-
+TEST_F (FmpDeviceGetVersionTest, Var_2_UnSupported) {
   //
   // Case 2 - gRT->GetVariable() fails
   // Mock -  RtServicesMock.
   // Expected Result - Status will return EFI_UNSUPPORTED
-  // 
+  //
   cout << "[---------- Case 2 ----------]"<< endl;
-  EXPECT_CALL(RtServicesMock, gRT_GetVariable)
-    .WillOnce(Return(EFI_UNSUPPORTED));
+  EXPECT_CALL (RtServicesMock, gRT_GetVariable)
+    .WillOnce (Return (EFI_UNSUPPORTED));
 
   Status = FmpDeviceGetVersion (Version2);
-  EXPECT_EQ(Status, EFI_UNSUPPORTED);
-
+  EXPECT_EQ (Status, EFI_UNSUPPORTED);
 }
 
-TEST_F(FmpDeviceGetVersionTest, VarSuccess) {
-
+TEST_F (FmpDeviceGetVersionTest, Var_3_Success) {
   //
   // Case 3 - Success Case
   // Mock -  RtServicesMock.
   // Expected Result - Status will return EFI_SUCCESS
   //
   cout << "[---------- Case 3 ----------]"<< endl;
-  EXPECT_CALL(RtServicesMock, gRT_GetVariable)
-    .WillOnce(Return(EFI_SUCCESS));
+  EXPECT_CALL (RtServicesMock, gRT_GetVariable)
+    .WillOnce (Return (EFI_SUCCESS));
 
   Status = FmpDeviceGetVersion (Version2);
-  EXPECT_EQ(Status, EFI_SUCCESS);
+  EXPECT_EQ (Status, EFI_SUCCESS);
 
   cout << "FmpDeviceGetVersion Done." << endl;
-
 }

@@ -160,12 +160,12 @@ UpdatePeiPciePolicyPreMem (
   ASSERT_EFI_ERROR (Status);
 
   if (Status == EFI_SUCCESS) {
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PlatformDebugOption, SiPreMemConfig->PlatformDebugOption, SiSetup.PlatformDebugOption );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PlatformDebugOption, SiPreMemConfig->PlatformDebugOption, SiSetup.PlatformDebugOption );
   }
   //
   // Policy to prevent MRC modify the boot mode while in flash update
   //
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SiSkipOverrideBootModeWhenFwUpdate, SiPreMemConfig->SkipOverrideBootModeWhenFwUpdate, (UINT8) FALSE);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SiSkipOverrideBootModeWhenFwUpdate, SiPreMemConfig->SkipOverrideBootModeWhenFwUpdate, (UINT8) FALSE);
 
   return EFI_SUCCESS;
 }
@@ -365,11 +365,11 @@ UpdateSsidPolicy (
   ASSERT (EntryCount < SI_MAX_DEVICE_COUNT);
 
   // WA: UPDATE_POLICY () func fails to update pointer , as SiSsidTablePtr is different type in configblock and UPD
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SiSkipSsidProgramming, SiConfig->SkipSsidProgramming, (UINT8) FALSE);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SiSkipSsidProgramming, SiConfig->SkipSsidProgramming, (UINT8) FALSE);
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   SiConfig->SsidTablePtr = (UINT32 *)mSsidTablePtr;
 #endif
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SiNumberOfSsidTableEntry, SiConfig->NumberOfSsidTableEntry, (UINT16) EntryCount);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SiNumberOfSsidTableEntry, SiConfig->NumberOfSsidTableEntry, (UINT16) EntryCount);
 
 }
 
@@ -422,11 +422,11 @@ UpdatePeiSiPolicy (
 #endif
 
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
-  UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SiSkipBiosDoneWhenFwUpdate, SiConfig->SkipBiosDoneWhenFwUpdate, (UINT8) TRUE);
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SiSkipBiosDoneWhenFwUpdate, SiConfig->SkipBiosDoneWhenFwUpdate, (UINT8) TRUE);
 #elif (FixedPcdGetBool (PcdTopSwapSmiSupport) == 0x0)
   if (IsBiosUpdateRequired ()) {
     DEBUG ((DEBUG_INFO, "Skip BiosDone MSR for BIOS Update Process\n"));
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SiSkipBiosDoneWhenFwUpdate, SiConfig->SkipBiosDoneWhenFwUpdate, (UINT8) TRUE);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SiSkipBiosDoneWhenFwUpdate, SiConfig->SkipBiosDoneWhenFwUpdate, (UINT8) TRUE);
   }
 #endif
 

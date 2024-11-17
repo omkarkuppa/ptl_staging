@@ -1516,9 +1516,11 @@ Combine10BitTag (
   )
 {
   TENBITTAG_CAPS Combined;
-
+  DEBUG ((DEBUG_INFO, "Combine10BitTag: A(PX10BTRS: %d PX10BTCS: %d)\n", TenBitTagA.Bits.RequesterSupported, TenBitTagA.Bits.CompleterSupported));
+  DEBUG ((DEBUG_INFO, "               : B(PX10BTRS: %d PX10BTCS: %d)\n", TenBitTagB.Bits.RequesterSupported, TenBitTagB.Bits.CompleterSupported));
   Combined.Bits.RequesterSupported   = TenBitTagA.Bits.CompleterSupported && TenBitTagB.Bits.RequesterSupported;
   Combined.Bits.CompleterSupported   = TenBitTagA.Bits.RequesterSupported && TenBitTagB.Bits.CompleterSupported;
+  DEBUG ((DEBUG_INFO, "               : C(PX10BTRS: %d PX10BTCS: %d)\n", Combined.Bits.RequesterSupported, Combined.Bits.CompleterSupported));
   return Combined;
 }
 
@@ -1546,7 +1548,6 @@ Get10BitTagCaps (
 
   Capabilities.Bits.RequesterSupported = !!(CapsRegister & B_PCIE_DCAP2_PX10BTRS);
   Capabilities.Bits.CompleterSupported = !!(CapsRegister & B_PCIE_DCAP2_PX10BTCS);
-  DEBUG ((DEBUG_INFO, "PX10BTRS: %d PX10BTCS: %d\n", Capabilities.Bits.RequesterSupported, Capabilities.Bits.CompleterSupported));
   return Capabilities;
 }
 
@@ -1661,7 +1662,7 @@ EnableMultiVc (
       DEBUG ((DEBUG_INFO, "LinkVcCount != 0 \n"));
       PciSegmentWrite8 (PcieBase + ExtVc.CapOffset + VcCtrlReg, TcVcMap->TcVcMap[VcIndex]);
     }
-    DEBUG ((DEBUG_INFO, "TcVc[%d] = %X\n", VcIndex, PciSegmentRead8 (PcieBase + VcCtrlReg)));
+    DEBUG ((DEBUG_INFO, "TcVc[%d] = %X\n", VcIndex, PciSegmentRead8 (PcieBase + ExtVc.CapOffset + VcCtrlReg)));
     if (VcIndex != 0) {
       PciSegmentAndThenOr32 (PcieBase + ExtVc.CapOffset + VcCtrlReg, (UINT32) ~(VC_ID), (VcIndex << 24) | VC_EN);
     }

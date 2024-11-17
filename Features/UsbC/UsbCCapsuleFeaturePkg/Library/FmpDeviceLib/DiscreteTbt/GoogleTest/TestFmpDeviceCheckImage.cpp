@@ -1,5 +1,5 @@
 /** @file
-  Google Test for the implementation of FmpDeviceLib instance to support 
+  Google Test for the implementation of FmpDeviceLib instance to support
   Discrete Thunderbolt Firmware update
 
   @copyright
@@ -20,17 +20,39 @@
 @par Specification Reference:
 
 **/
-
+#include <GTestFmpDeviceLibDiscreteTbt.h>
 /**
 Google test for FmpDeviceCheckImage function.
 **/
 
-class FmpDeviceCheckImageTest : public CommonMock {
+class FmpDeviceCheckImageTest : public Test {
   protected:
-  EFI_STATUS     Status;
-  VOID          *Image;
-  UINTN          ImageSize;
-  UINT32        *ImageUpdatable;
+    EFI_STATUS Status;
+    VOID       *Image;
+    UINTN      ImageSize;
+    UINT32     *ImageUpdatable;
+
+  typedef struct {
+    PAYLOAD_HEADER                     PayloadHeader;
+    DISCRETE_TBT_ITEM                  PayloadItem;
+  } DISCRETE_TBT_PAYLOAD_DATA;
+
+  DISCRETE_TBT_PAYLOAD_DATA MockDtbtImage = {
+    {
+      SIGNATURE_32 ('D', 'T', 'B', 'T'),      //  Signature    // DISCRETE_TBT_PAYLOAD_HEADER_SIGNATURE
+      0x20,                                   //  HeaderSize
+      1,                                      //  DiscreteTbtCount
+      0                                       //  Reserved
+    },                                        //  DISCRETE_TBT_PAYLOAD_HEADER
+    {
+      0x24,                                   //  ImageOffset
+      0x04,                                   //  ImageSize
+      0x02,                                   //  FirmwareType
+      0x00,                                   //  PcieRpType
+      0x19,                                   //  PcieRootPort
+      { 0, 0, 0, 0, 0 }                       //  Reserved[5]
+    }                                         //  DISCRETE_TBT_ITEM
+  };
 
   void SetUp() override {
     Image = (VOID *) &MockDtbtImage;
@@ -41,7 +63,7 @@ class FmpDeviceCheckImageTest : public CommonMock {
   }
 };
 
-TEST_F (FmpDeviceCheckImageTest, VarError_1) {
+TEST_F (FmpDeviceCheckImageTest, Var_1_Error) {
 
   //
   // Case 1 - ImageUpdatable is NULL
@@ -50,10 +72,9 @@ TEST_F (FmpDeviceCheckImageTest, VarError_1) {
   cout << "[---------- Case 1 ----------]"<< endl;
   Status = FmpDeviceCheckImage (Image, ImageSize, NULL);
   ASSERT_EQ (Status, EFI_INVALID_PARAMETER);
-
 }
 
-TEST_F (FmpDeviceCheckImageTest, VarError_2) {
+TEST_F (FmpDeviceCheckImageTest, Var_2_Error) {
 
   //
   // Case 2 - Image is NULL
@@ -62,10 +83,9 @@ TEST_F (FmpDeviceCheckImageTest, VarError_2) {
   cout << "[---------- Case 2 ----------]"<< endl;
   Status = FmpDeviceCheckImage (NULL, ImageSize, ImageUpdatable);
   ASSERT_EQ (Status, EFI_INVALID_PARAMETER);
-
 }
 
-TEST_F (FmpDeviceCheckImageTest, VarError_3) {
+TEST_F (FmpDeviceCheckImageTest, Var_3_Error) {
 
   //
   // Case 3 - Image size is too small
@@ -75,10 +95,9 @@ TEST_F (FmpDeviceCheckImageTest, VarError_3) {
   ImageSize = (sizeof (PAYLOAD_HEADER) - sizeof (UINT8));
   Status = FmpDeviceCheckImage (Image, ImageSize, ImageUpdatable);
   ASSERT_EQ (Status, EFI_INVALID_PARAMETER);
-
 }
 
-TEST_F (FmpDeviceCheckImageTest, VarError_4) {
+TEST_F (FmpDeviceCheckImageTest, Var_4_Error) {
 
   //
   // Case 4 - Image signature is DTBT
@@ -88,10 +107,9 @@ TEST_F (FmpDeviceCheckImageTest, VarError_4) {
   MockDtbtImage.PayloadHeader.Signature =  DISCRETE_TBT_PAYLOAD_HEADER_SIGNATURE;
   Status = FmpDeviceCheckImage (Image, ImageSize, ImageUpdatable);
   ASSERT_EQ (Status, EFI_INVALID_PARAMETER);
-
 }
 
-TEST_F (FmpDeviceCheckImageTest, VarError_5) {
+TEST_F (FmpDeviceCheckImageTest, Var_5_Error) {
 
   //
   // Case 5 - PayloadCount is 0
@@ -100,10 +118,9 @@ TEST_F (FmpDeviceCheckImageTest, VarError_5) {
   cout << "[---------- Case 5 ----------]"<< endl;
   Status = FmpDeviceCheckImage (Image, ImageSize, ImageUpdatable);
   ASSERT_EQ (Status, EFI_INVALID_PARAMETER);
-
 }
 
-TEST_F (FmpDeviceCheckImageTest, Var_UnSupported) {
+TEST_F (FmpDeviceCheckImageTest, Var_6_UnSupported) {
 
   //
   // Case 6 - PayloadCount is greater than 1
@@ -113,10 +130,9 @@ TEST_F (FmpDeviceCheckImageTest, Var_UnSupported) {
   MockDtbtImage.PayloadHeader.PayloadCount =  2;
   Status = FmpDeviceCheckImage (Image, ImageSize, ImageUpdatable);
   ASSERT_EQ (Status, EFI_UNSUPPORTED);
-
 }
 
-TEST_F (FmpDeviceCheckImageTest, VarError_6) {
+TEST_F (FmpDeviceCheckImageTest, Var_7_Error) {
 
   //
   // Case 7 - ImageSize less than sizeof PAYLOAD_HEADER add Retimer Item
@@ -125,13 +141,12 @@ TEST_F (FmpDeviceCheckImageTest, VarError_6) {
   cout << "[---------- Case 7 ----------]"<< endl;
   MockDtbtImage.PayloadHeader.PayloadCount =  1;
   ImageSize = ((sizeof (PAYLOAD_HEADER) + \
-               (MockDtbtImage.PayloadHeader.PayloadCount * sizeof (DISCRETE_TBT_ITEM))) - sizeof (UINT8));
+              (MockDtbtImage.PayloadHeader.PayloadCount * sizeof (DISCRETE_TBT_ITEM))) - sizeof (UINT8));
   Status = FmpDeviceCheckImage (Image, ImageSize, ImageUpdatable);
   ASSERT_EQ (Status, EFI_INVALID_PARAMETER);
-
 }
 
-TEST_F (FmpDeviceCheckImageTest, VarError_7) {
+TEST_F (FmpDeviceCheckImageTest, Var_8_Error) {
 
   //
   // Case 8 - ImageSize less than sizeof PAYLOAD_HEADER
@@ -141,10 +156,9 @@ TEST_F (FmpDeviceCheckImageTest, VarError_7) {
   MockDtbtImage.PayloadHeader.PayloadCount =  1;
   Status = FmpDeviceCheckImage (Image, ImageSize, ImageUpdatable);
   ASSERT_EQ (Status, EFI_INVALID_PARAMETER);
-
 }
 
-TEST_F (FmpDeviceCheckImageTest, VarSuccess) {
+TEST_F (FmpDeviceCheckImageTest, Var_9_Success) {
 
   //
   // Case 9 - Success Case
@@ -158,5 +172,4 @@ TEST_F (FmpDeviceCheckImageTest, VarSuccess) {
   ASSERT_EQ (EFI_SUCCESS, Status);
 
   cout << "FmpDeviceCheckImageWithStatus Done." << endl;
-
 }

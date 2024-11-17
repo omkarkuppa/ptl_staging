@@ -37,8 +37,6 @@
 #include <SndwAccess.h>
 
 #define SNDW_MAX_RETRY_NUMBER         10
-#define SNDW_MAX_PERIPHERAL_NUMBER    12
-#define SNDW_LINK_NUM                 4
 
 GLOBAL_REMOVE_IF_UNREFERENCED SNDW_COMMAND mMipiSndwReadPeripheralIdsCmds[] = {
   {
@@ -79,11 +77,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED SNDW_COMMAND mMipiSndwReadPeripheralIdsCmds[] = {
   }
 };
 
-GLOBAL_REMOVE_IF_UNREFERENCED SNDW_COMMAND MipiSndwPeripheralInitCmds = {
+GLOBAL_REMOVE_IF_UNREFERENCED SNDW_COMMAND mMipiSndwSetCodecAddressCmd = {
   .TxWrite = {
     .OpCode = SndwCmdWrite,
-    .RegAddr = 0x0049,
-    .RegData = 0x01,
+    .RegAddr = 0x0046,
   }
 };
 
@@ -329,8 +326,7 @@ ReadPeripheralId (
 
     Ack = TRUE;
 
-    SndwPrintRxMsg ((SNDW_COMMAND *) RxCommands);
-    for (Index = 0; Index < 6; Index++) {
+    for (Index = 0; Index < RxSize; Index++) {
       if (RxCommands[Index].Rx.Ack == 0) {
         Ack = FALSE;
         RetryNumber++;
@@ -339,9 +335,10 @@ ReadPeripheralId (
 
       SndwCodecId->Data[Index] = (UINT8) RxCommands[Index].Rx.Data;
     }
+
+    FreePool (RxCommands);
   } while (Ack == FALSE);
 
-  FreePool (RxCommands);
 
   return Status;
 }
@@ -464,14 +461,16 @@ PrintCodecInfo (
   IN SNDW_CODEC_INFO           *SndwCodecInfo
   )
 {
-  DEBUG ((DEBUG_INFO, "Link Number: %d\n", SndwCodecInfo->SndwLinkIndex));
+  DEBUG ((DEBUG_INFO, "Link Number:      %d\n", SndwCodecInfo->SndwLinkIndex));
+  DEBUG ((DEBUG_INFO, "Peripheral Index: %d\n", SndwCodecInfo->PeripheralIndex));
   DEBUG ((DEBUG_INFO, "Codec ID:\n"));
-  DEBUG ((DEBUG_INFO, "  Version           [0x50]: %02x\n", SndwCodecInfo->CodecId.Encoding.Version));
-  DEBUG ((DEBUG_INFO, "  ManufacturerID[0] [0x51]: %02x\n", SndwCodecInfo->CodecId.Encoding.ManufacturerID[0]));
-  DEBUG ((DEBUG_INFO, "  ManufacturerID[1] [0x52]: %02x\n", SndwCodecInfo->CodecId.Encoding.ManufacturerID[1]));
-  DEBUG ((DEBUG_INFO, "  PartId[0]         [0x53]: %02x\n", SndwCodecInfo->CodecId.Encoding.PartId[0]));
-  DEBUG ((DEBUG_INFO, "  PartId[1]         [0x54]: %02x\n", SndwCodecInfo->CodecId.Encoding.PartId[1]));
-  DEBUG ((DEBUG_INFO, "  Class             [0x55]: %02x\n", SndwCodecInfo->CodecId.Encoding.Class));
+  DEBUG ((DEBUG_INFO, "  UniqueId          [0x50]: 0x%02x\n", SndwCodecInfo->CodecId.Encoding.UniqueId));
+  DEBUG ((DEBUG_INFO, "  Version           [0x50]: 0x%02x\n", SndwCodecInfo->CodecId.Encoding.Version));
+  DEBUG ((DEBUG_INFO, "  ManufacturerID[0] [0x51]: 0x%02x\n", SndwCodecInfo->CodecId.Encoding.ManufacturerID[0]));
+  DEBUG ((DEBUG_INFO, "  ManufacturerID[1] [0x52]: 0x%02x\n", SndwCodecInfo->CodecId.Encoding.ManufacturerID[1]));
+  DEBUG ((DEBUG_INFO, "  PartId[0]         [0x53]: 0x%02x\n", SndwCodecInfo->CodecId.Encoding.PartId[0]));
+  DEBUG ((DEBUG_INFO, "  PartId[1]         [0x54]: 0x%02x\n", SndwCodecInfo->CodecId.Encoding.PartId[1]));
+  DEBUG ((DEBUG_INFO, "  Class             [0x55]: 0x%02x\n", SndwCodecInfo->CodecId.Encoding.Class));
 }
 
 /**
@@ -493,7 +492,9 @@ PrintAllCodecsInfo (
     DEBUG ((DEBUG_INFO, "------- SNDW CODEC -------\n"));
 
     DEBUG ((DEBUG_INFO, "SndwLinkIndex:        %d\n", NextCodecInfo->SndwLinkIndex));
+    DEBUG ((DEBUG_INFO, "Peripheral Index:     %d\n", NextCodecInfo->PeripheralIndex));
     DEBUG ((DEBUG_INFO, "Codec ID:\n"));
+    DEBUG ((DEBUG_INFO, "  UniqueId:           0x%02x\n", NextCodecInfo->CodecId.Encoding.UniqueId));
     DEBUG ((DEBUG_INFO, "  Version:            0x%02x\n", NextCodecInfo->CodecId.Encoding.Version));
     DEBUG ((DEBUG_INFO, "  ManufacturerID[0]:  0x%02x\n", NextCodecInfo->CodecId.Encoding.ManufacturerID[0]));
     DEBUG ((DEBUG_INFO, "  ManufacturerID[1]:  0x%02x\n", NextCodecInfo->CodecId.Encoding.ManufacturerID[1]));
@@ -750,49 +751,44 @@ EnumerateSndwCodecs (
     }
     DEBUG ((DEBUG_INFO, "Sndw#%d controller mmio address: 0x%X.\n", SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
 
-    ///
-    /// /// Codecs enumeration process, check peripherals status
-    ///
-    Status = SndwReadCodecsStatus (HdaBar + SndwControllerMmioOffset, &PeripheralsStatus);
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Sndw#%d controller did not detect any codecs on the peripherials.\n", SndwLinkIndex));
-      continue;
-    }
+    for (PeripheralIndex = 1; PeripheralIndex <= SNDW_MAX_PERIPHERAL_NUMBER; PeripheralIndex++) {
+      ///
+      /// Codecs enumeration process, check peripherals status
+      ///
+      Status = SndwReadCodecsStatus (HdaBar + SndwControllerMmioOffset, &PeripheralsStatus);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "Sndw#%d controller did not detect any codecs on the peripherials.\n", SndwLinkIndex));
+        continue;
+      }
 
-    DEBUG ((DEBUG_INFO, "Sndw#%d peripheral status: 0x%X.\n", SndwLinkIndex, PeripheralsStatus));
-
-    for (PeripheralIndex = 0; PeripheralIndex < SNDW_MAX_PERIPHERAL_NUMBER; PeripheralIndex++) {
-      if ((PeripheralsStatus & B_SNDW_MEM_PERIPHERALSTAT_STATUS (PeripheralIndex)) == SndwPeripheralAttachedOk) {
-        DEBUG ((DEBUG_INFO, "Peripheral#%d attached correctly.\n", PeripheralIndex));
-
-        ///
-        /// Waiting a few ms after sending init msg
-        ///
-        MicroSecondDelay (HDA_WAIT_PERIOD * 100);
+      if ((PeripheralsStatus & B_SNDW_MEM_PERIPHERALSTAT_STATUS (0)) == SndwPeripheralAttachedOk) {
+        DEBUG ((DEBUG_INFO, "Peripheral#%d attached correctly.\n", 0));
 
         ///
         /// Read if Codec is connected to PeripheralIndex
         ///
-        Status = ReadPeripheralId (HdaBar + SndwControllerMmioOffset, PeripheralIndex, &CodecId);
+        Status = ReadPeripheralId (HdaBar + SndwControllerMmioOffset, 0, &CodecId);
         if (EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_INFO, "Peripheral#%d on Sndw#%d not responding, skipping in the enumeration.\n", PeripheralIndex, SndwLinkIndex));
+          DEBUG ((DEBUG_INFO, "Peripheral#%d on Sndw#%d not responding, skipping in the enumeration.\n", 0, SndwLinkIndex));
           continue;
         }
 
         ///
-        /// Waiting a few ms after sending init msg
+        /// Waiting a few us after sending init msg
         ///
         MicroSecondDelay (HDA_WAIT_PERIOD * 100);
 
         ///
-        /// Send Init commands to codecs
+        /// Set Codec Address
         ///
-        MipiSndwPeripheralInitCmds.TxWrite.DeviceAddress = PeripheralIndex;
-        Status = SendwAck (HdaBar + SndwControllerMmioOffset, MipiSndwPeripheralInitCmds, &RxCommand);
-        if (EFI_ERROR (Status) || (RxCommand.Rx.Ack == 0)) {
-          DEBUG ((DEBUG_INFO, "Sndw%d controller - Peripheral number: %d initialization failed.\n", SndwLinkIndex, PeripheralIndex));
-          continue;
-        }
+        mMipiSndwSetCodecAddressCmd.TxWrite.DeviceAddress = 0;
+        mMipiSndwSetCodecAddressCmd.TxWrite.RegData       = PeripheralIndex;
+        SendwAck (HdaBar + SndwControllerMmioOffset, mMipiSndwSetCodecAddressCmd, &RxCommand);
+
+        ///
+        /// Waiting a few us after sending init msg
+        ///
+        MicroSecondDelay (HDA_WAIT_PERIOD * 100);
 
         CodecListEntry = AllocatePool (sizeof (CODEC_LIST_ENTRY));
 
@@ -801,12 +797,14 @@ EnumerateSndwCodecs (
         }
 
         CodecListEntry->CodecInfo.SndwLinkIndex   = SndwLinkIndex;
-        CodecListEntry->PeripheralIndex           = PeripheralIndex;
+        CodecListEntry->CodecInfo.PeripheralIndex = PeripheralIndex;
         CodecListEntry->SndwControllerMmioOffset  = SndwControllerMmioOffset;
 
         CopyMem (CodecListEntry->CodecInfo.CodecId.Data, CodecId.Data, sizeof (SNDW_CODEC_ID));
 
         PrintCodecInfo (&(CodecListEntry->CodecInfo));
+
+        DEBUG ((DEBUG_INFO, "Sndw#%d peripheral status: 0x%X.\n", SndwLinkIndex, PeripheralsStatus));
 
         if (CodecListHead == NULL) {
           SndwAccessContext->CodecListHead = CodecListEntry;
@@ -848,7 +846,6 @@ GetCodecAddressFromCodecInfo (
 
   DEBUG ((DEBUG_INFO, "%a () - Start.\n", __FUNCTION__));
 
-
   CurrentSndwListEntry = SndwAccessContext->CodecListHead;
   CurrentListEntry = &(CurrentSndwListEntry->ListEntry);
   ListEntryHead = CurrentListEntry;
@@ -858,7 +855,7 @@ GetCodecAddressFromCodecInfo (
 
     if (CompareMem (CurrentSndwListEntry->CodecInfo.CodecId.Data, SndwCodecInfo->CodecId.Data, sizeof (SNDW_CODEC_ID)) == 0) {
         SndwCodecInfo->SndwLinkIndex = CurrentSndwListEntry->CodecInfo.SndwLinkIndex;
-        *PeripheralIndex = CurrentSndwListEntry->PeripheralIndex;
+        *PeripheralIndex = CurrentSndwListEntry->CodecInfo.PeripheralIndex;
         *SndwControllerMmioOffset = CurrentSndwListEntry->SndwControllerMmioOffset;
         DEBUG ((DEBUG_INFO, "Codec Found: PeripheralIndex: 0x%x, SndwControllerMmioOffset: 0x%x\n", *PeripheralIndex, *SndwControllerMmioOffset));
         return EFI_SUCCESS;
@@ -921,7 +918,9 @@ SndwSend (
   }
 
   for (Index = 0; Index < TxSize; Index++) {
-    TxCommand[Index].TxWrite.DeviceAddress = PeripheralIndex;
+    if (TxCommand[Index].TxWrite.DeviceAddress != 0xF) {
+      TxCommand[Index].TxWrite.DeviceAddress = PeripheralIndex;
+    }
   }
   Send (HdaBar + SndwControllerMmioOffset, TxCommand, TxSize);
 
@@ -982,7 +981,13 @@ SndwSendWithAck (
   DEBUG ((DEBUG_INFO, "PeripheralIndex: %d\n", PeripheralIndex));
   DEBUG ((DEBUG_INFO, "Sndw%d: Controller mmio address: 0x%X.\n", SndwCodecInfo.SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
 
-  TxCommand.TxWrite.DeviceAddress = PeripheralIndex;
+  //
+  // In case of broadcast do not update DeviceAddress
+  //
+  if (TxCommand.TxWrite.DeviceAddress != 0xF) {
+    TxCommand.TxWrite.DeviceAddress = PeripheralIndex;
+  }
+
   SendwAck (HdaBar + SndwControllerMmioOffset, TxCommand, RxCommand);
 
   DisableHdaDspMmioAccess (SndwAccessContext->PciIo, IsTemporaryBar);
@@ -1192,7 +1197,8 @@ SndwGetFirstCodec (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    (*SndwCodecInfo)->SndwLinkIndex = CurrentCodecListEntry->CodecInfo.SndwLinkIndex;
+    (*SndwCodecInfo)->SndwLinkIndex   = CurrentCodecListEntry->CodecInfo.SndwLinkIndex;
+    (*SndwCodecInfo)->PeripheralIndex = CurrentCodecListEntry->CodecInfo.PeripheralIndex;
     CopyMem (&((*SndwCodecInfo)->CodecId.Data), &(CurrentCodecListEntry->CodecInfo.CodecId.Data), sizeof (SNDW_CODEC_ID));
   }
   else {
@@ -1254,7 +1260,8 @@ SndwGetNextCodec (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      (*NextSndwCodecInfo)->SndwLinkIndex = CurrentCodecListEntry->CodecInfo.SndwLinkIndex;
+      (*NextSndwCodecInfo)->SndwLinkIndex   = CurrentCodecListEntry->CodecInfo.SndwLinkIndex;
+      (*NextSndwCodecInfo)->PeripheralIndex = CurrentCodecListEntry->CodecInfo.PeripheralIndex;
       CopyMem (&((*NextSndwCodecInfo)->CodecId.Data), &(CurrentCodecListEntry->CodecInfo.CodecId.Data), sizeof (SNDW_CODEC_ID));
       break;
     }

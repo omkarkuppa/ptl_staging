@@ -31,6 +31,7 @@
 #include <Library/SerialIoAccessLib.h>
 #include <Library/SerialIoI2cLib.h>
 #include <Library/SerialIoPrivateLib.h>
+#include <Library/SmbusLib.h>
 
 /**
   Send 4 digit PostCode commands to Max6950 device
@@ -66,6 +67,36 @@ DisplayI2cPostCode (
               TRUE,
               TRUE
               );
+  return Status;
+}
+
+/**
+  Send 4 digit PostCode commands to Max6958 device
+  @param[in]  PostCodeValue - 4 digit PostCode value to be displayed
+**/
+EFI_STATUS
+EFIAPI
+DisplaySmbusPostCode (
+  IN UINT32 PostCodeValue
+  )
+{
+  UINT8           Index;
+  UINT8           WriBuf[4] = {0, 0, 0 ,0};
+  UINT8           Length = 4;
+  EFI_STATUS      Status;
+  UINTN           SmbusAddress;
+
+  SmbusAddress = SMBUS_LIB_ADDRESS (PcdGet8(PcdSmbusPostCodeAddress),
+                                    PcdGet8(PcdSmbusPostCodeCommand),
+                                    Length, FALSE);
+  Index = 3;
+  WriBuf[0] = (UINT8)(PostCodeValue >> (4 * Index-- )) & 0xF;
+  WriBuf[1] = (UINT8)(PostCodeValue >> (4 * Index--)) & 0xF;
+  WriBuf[2] = (UINT8)(PostCodeValue >> (4 * Index--)) & 0xF;
+  WriBuf[3] = (UINT8)(PostCodeValue >> (4 * Index )) & 0xF;
+
+  SmBusWriteBlock (SmbusAddress, WriBuf, &Status);
+
   return Status;
 }
 
@@ -171,6 +202,9 @@ PostCodeWithDescription (
   if (PcdGet8 (PcdI2cPostCode) == 0x1) {
     // Postcode display using I2C Interface
     DisplayI2cPostCode (Value);
+  } else if (PcdGet8 (PcdSmbusPostCode) == 0x1) {
+    // Postcode display using Smbus Interface
+    DisplaySmbusPostCode (Value);
   } else {
     // Postcode display using port 80
     IoWrite16 (0x80, (UINT16) Value);

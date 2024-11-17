@@ -21,4 +21,5 @@
 ##
 
 from EnvChecker.PythonCheck.Python3CheckerLib import *
+from EnvChecker.PythonCheck.PythonPathCheckerLib import *
 from EnvChecker.PythonCheck.PythonVerCheckerLib import *

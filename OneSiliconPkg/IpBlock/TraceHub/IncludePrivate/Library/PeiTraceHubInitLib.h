@@ -158,16 +158,6 @@ WriteTraceHubScrpd1 (
   );
 
 /**
-  Set TraceHub memory MTRR uncache
-
-  @param[in, out] TraceHubMemBase    Pointer TraceHub memory base
-**/
-VOID
-TraceHubSetMemoryUncache (
-  IN UINT64                          *TraceHubMemBase
-  );
-
-/**
   Reserve Trace Hub Memory
 
   @param[in] TopUseableMemAddr  Top usable memory address

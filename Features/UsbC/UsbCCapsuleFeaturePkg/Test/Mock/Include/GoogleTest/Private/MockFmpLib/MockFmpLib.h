@@ -26,8 +26,8 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Uefi.h>
-  #include <Library/UefiLib.h>
+#include <Uefi.h>
+#include <Library/UefiLib.h>
 }
 
 struct MockFmpLib {

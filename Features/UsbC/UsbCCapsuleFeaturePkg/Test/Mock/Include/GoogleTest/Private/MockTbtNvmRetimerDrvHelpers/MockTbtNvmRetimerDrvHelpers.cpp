@@ -22,10 +22,10 @@
 
 #include "MockTbtNvmRetimerDrvHelpers.h"
 
-MOCK_INTERFACE_DEFINITION(MockTbtNvmRetimerDrvHelpers);
+MOCK_INTERFACE_DEFINITION (MockTbtNvmRetimerDrvHelpers);
 
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerDrvHelpers, TbtNvmDrvSendCmd,        3, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerDrvHelpers, TbtNvmDrvDeviceWrBlk,    3, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerDrvHelpers, TbtNvmDrvDeviceWrOffset, 2, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerDrvHelpers, TbtNvmDrvDeviceExecAuth, 1, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerDrvHelpers, TbtDrvReadNvmVersion,    2, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerDrvHelpers, TbtNvmDrvSendCmd, 3, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerDrvHelpers, TbtNvmDrvDeviceWrBlk, 3, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerDrvHelpers, TbtNvmDrvDeviceWrOffset, 2, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerDrvHelpers, TbtNvmDrvDeviceExecAuth, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerDrvHelpers, TbtDrvReadNvmVersion, 2, EFIAPI);

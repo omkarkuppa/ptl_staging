@@ -70,7 +70,7 @@ UpdateSmbusDebugPreMemPolicy (
     return;
   }
 #endif
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SmbusSpdWriteDisable, SmbusPreMemConfig->SpdWriteDisable, PchSetup->SmbusSpdWriteDisable);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SmbusSpdWriteDisable, SmbusPreMemConfig->SpdWriteDisable, PchSetup->SmbusSpdWriteDisable);
 }
 
 /**

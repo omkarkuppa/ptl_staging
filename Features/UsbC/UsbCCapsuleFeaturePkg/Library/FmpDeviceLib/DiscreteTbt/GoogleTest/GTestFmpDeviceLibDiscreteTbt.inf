@@ -1,5 +1,5 @@
 ## @file
-#  Google Test for the implementation of FmpDeviceLib instance to support 
+#  Google Test for the implementation of FmpDeviceLib instance to support
 #  Discrete Thunderbolt Firmware update
 #
 #  @copyright
@@ -52,11 +52,12 @@
 
 [Packages]
   UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   FmpDevicePkg/FmpDevicePkg.dec
   OneSiliconPkg/SiPkg.dec
-  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
 
 [LibraryClasses]
   GoogleTestLib
@@ -64,12 +65,15 @@
   MemoryAllocationLib
   DebugLib
   UefiRuntimeServicesTableLib
-  MockUefiBootServicesTableLib
-  
+  UefiBootServicesTableLib
+  PcdLib
+  TbtNvmRetimerUpdateLib
+  FirmwareManagementLib
+  PciIopProtocolLib
+  UsbcCapsuleDebugLib
+  Usb4DebugLib
+  MockUsbCProgressCodeProtocolLib
+
 [Protocols]
   gEfiUsb2HcProtocolGuid
   gEfiPciIoProtocolGuid
-  
-[Pcd]
-
-[Guids]

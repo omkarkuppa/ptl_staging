@@ -70,6 +70,7 @@ HdaPreMemPrintConfig (
   DEBUG ((DEBUG_INFO, " SubSystemIds                                   = %x\n", HdaPreMemConfig->SubSystemIds));
   DEBUG ((DEBUG_INFO, " Power/Clock Gating                             = %x\n", HdaPreMemConfig->PowerClockGating));
   DEBUG ((DEBUG_INFO, " Low Frequency Clock                            = %x\n", HdaPreMemConfig->LowFreqLinkClkSrc));
+  DEBUG ((DEBUG_INFO, " SoundWire Clock Source Select                  = %x\n", HdaPreMemConfig->SoundWireClockSelect));
 }
 
 /**

@@ -31,6 +31,7 @@ Title = "Configuration file - TOML for Client CapsuleGenerate"
   PlatformGeneration = 999
   PlatformFullName   = 'Client'
   PlatformPrefix     = 'Client'
+  HashAlgorithm      = 'sha384'
 
 [Keystore]
   CapTrustPublicCert   = 'SigningKeys/TestRoot3K.pub.pem'
@@ -42,7 +43,7 @@ Title = "Configuration file - TOML for Client CapsuleGenerate"
 
 [Path]
   ToolDir          = 'Tools'
-  TemplateDir      = 'CapsuleGenerate/Template'
+  TemplateDir      = 'Template'
   EdkIIBaseToolDir = 'Tools/BaseTools'
   OpenSSLDir       = 'Tools/OpenSSL'
   EdssSignFileDir  = 'Tools/SignFile'
@@ -135,7 +136,8 @@ Title = "Configuration file - TOML for Client CapsuleGenerate"
   # gIntelMicrocodeVersionFfsFileGuid
   UcodeVersion  = { FileName = 'MicrocodeVersion.data',   FileGuid = 'E0562501-B41B-4566-AC0F-7EA8EE817F20' }
   UcodeBgup     = { FileName = 'UcodeBgup.bin',           FileGuid = ''                                     }
-  UcodeXdr      = { FileName = 'UcodeXdr.bin ',           FileGuid = ''                                     }
+  UcodeXdr      = { FileName = 'UcodeXdr.bin',            FileGuid = ''                                     }
+  Foxville      = { FileName = 'Foxville.bin',            FileGuid = ''                                     }
 
 #######################################################################################################################
 #                                            Firmware Configuration Section                                           #
@@ -215,6 +217,7 @@ Note:
   # e.g. { Offset = "0x00C80000", Size = "0x00040000" }
   #
   [Firmware.Bios.Offset.Default]
+    Obb1 = 'NA'
     Obb  = 'NA'
     Ibbr = 'NA'
     Ibb  = 'NA'
@@ -297,6 +300,7 @@ Note:
   #
   [Firmware.ExtendedBios.Offset.Default]
     Ext  = 'NA'
+    Obb1 = 'NA'
     Obb  = 'NA'
     Ibbr = 'NA'
     Ibb  = 'NA'
@@ -707,6 +711,11 @@ To build the BtGAcm Capsule File.
   [Firmware.Btgacm.Offset.Default]
     Fv = 'NA'
 
+  [Firmware.Btgacm.Slotsize]
+    # The default slot size value should be depended by platforms.
+    # (e.g. '0x40000')
+    Default = 'NA'
+
   [Firmware.Btgacm.Guid]
     Default = '4E88068B-41B2-4E05-893C-DB0B43F7D348'
 
@@ -821,7 +830,7 @@ To build the Ucode Capsule File.
     '''
     SubDescription = '''
 Note:
-  (1) Numbers of avaiable uCode depend on slot size and FV size.
+  (1) Numbers of available uCode depend on slot size and FV size.
     '''
 
   [Firmware.Ucode.Command.-sku]
@@ -893,3 +902,38 @@ Note:
 
   [Firmware.Ucode.Guid]
     Default = '69585D92-B50A-4AD7-B265-2EB1AE066574'
+
+#
+# Foxville Firmware sub-section
+#
+[[Firmware.Foxville]]
+  Version        = 1
+  IsEnabled      = false
+  BuildCmd       = 'foxvillecap'
+  CapFilePrefix  = 'FmpFoxville'
+  CapFilePostfix = ''
+
+  [Firmware.Foxville.Command]
+    Title          = 'Build Foxville capsule update file'
+    Description    = '''
+To build the Foxville Capsule File.
+  (1) Use -foxville to input the fresh Foxville device firmware.
+  (2) Use -foxvillelsv to assign the LSV. (Format X.YY)
+    '''
+    SubDescription = '''
+    '''
+
+  [Firmware.Foxville.Command.-foxville]
+    Compulsory  = false
+    Description = 'Path of Foxville image.'
+    Syntax      = 'PATH'
+    Default     = ''
+
+  [Firmware.Foxville.Command.-foxvillelsv]
+    Compulsory  = false
+    Description = 'Lowest supported version on Foxville firmware.'
+    Syntax      = 'DOT_FORMAT'
+    Default     = '0.0'
+
+  [Firmware.Foxville.Guid]
+    Default = '6E36078B-6B6F-42BC-981E-4C639AFA4D6D'

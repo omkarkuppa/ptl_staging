@@ -33,6 +33,7 @@
 #include <Library/SerialIoAccessLib.h>
 #include <Library/SerialIoI2cLib.h>
 #include <Library/SerialIoPrivateLib.h>
+#include <Library/SmbusLib.h>
 
 //
 // Define the maximum debug and assert message length that this library supports
@@ -73,6 +74,38 @@ DisplayI2cPostCode (
               TRUE,
               TRUE
               );
+  return Status;
+}
+
+/**
+  Send 4 digit PostCode commands to Max6958 device
+  @param[in]  PostCodeValue - 4 digit PostCode value to be displayed
+  @param[in]  Address       - Smbus slave address
+  @param[in]  Command       - Smbus command
+**/
+EFI_STATUS
+EFIAPI
+DisplaySmbusPostCode (
+  IN UINT32 PostCodeValue,
+  IN UINT8  Address,
+  IN UINT8  Command
+  )
+{
+  UINT8           Index;
+  UINT8           WriBuf[4] = {0, 0, 0 ,0};
+  UINT8           Length = 4;
+  EFI_STATUS      Status;
+  UINTN           SmbusAddress;
+
+  SmbusAddress = SMBUS_LIB_ADDRESS (Address, Command, Length, FALSE);
+  Index = 3;
+  WriBuf[0] = (UINT8)(PostCodeValue >> (4 * Index-- )) & 0xF;
+  WriBuf[1] = (UINT8)(PostCodeValue >> (4 * Index--)) & 0xF;
+  WriBuf[2] = (UINT8)(PostCodeValue >> (4 * Index--)) & 0xF;
+  WriBuf[3] = (UINT8)(PostCodeValue >> (4 * Index )) & 0xF;
+
+  SmBusWriteBlock (SmbusAddress, WriBuf, &Status);
+
   return Status;
 }
 
@@ -170,6 +203,7 @@ PostCodeWithDescription (
   UINT16                       PostCodeOutputPort;
   FSP_GLOBAL_DATA              *FspData;
   UINT8                        I2cPostCodeEnable;
+  UINT8                        SmbusPostCodeEnable;
 
   // Postcode display using port 80
   FspData = GetFspGlobalDataPointer ();
@@ -178,6 +212,9 @@ PostCodeWithDescription (
     if (PcdGet8 (PcdI2cPostCode) == 0x1) {
       // Postcode display using I2C Interface
       DisplayI2cPostCode (Value);
+    } else if (PcdGet8 (PcdSmbusPostCode) == 0x1) {
+      // Postcode display using Smbus Interface
+      DisplaySmbusPostCode (Value, PcdGet8(PcdSmbusPostCodeAddress), PcdGet8(PcdSmbusPostCodeCommand));
     } else {
       IoWrite16 (0x80, (UINT16) Value);
     }
@@ -185,11 +222,15 @@ PostCodeWithDescription (
     FspmUpd = FspData->MemoryInitUpdPtr;
     PostCodeOutputPort = FspmUpd->FspmConfig.PostCodeOutputPort;
     I2cPostCodeEnable = FspmUpd->FspmConfig.I2cPostCodeEnable;
+    SmbusPostCodeEnable = FspmUpd->FspmConfig.SmbusPostCodeEnable;
     Value &= 0xFFF;
     //Get the PostCode set using SetPhaseStatusCode
     Value |= GetPhaseStatusCode();
     if (I2cPostCodeEnable == 0x1) {
       DisplayI2cPostCode (Value);
+    } else if (SmbusPostCodeEnable == 0x1) {
+      // Postcode display using Smbus Interface
+      DisplaySmbusPostCode (Value, FspmUpd->FspmConfig.SmbusPostCodeAddress, FspmUpd->FspmConfig.SmbusPostCodeCommand);
     } else {
       IoWrite16 (PostCodeOutputPort, (UINT16) Value);
     }
@@ -200,6 +241,9 @@ PostCodeWithDescription (
     if (PcdGet8 (PcdI2cPostCode) == 0x1) {
       // Postcode display using I2C Interface
       DisplayI2cPostCode (Value);
+    } else if (PcdGet8 (PcdSmbusPostCode) == 0x1) {
+      // Postcode display using Smbus Interface
+      DisplaySmbusPostCode (Value, PcdGet8(PcdSmbusPostCodeAddress), PcdGet8(PcdSmbusPostCodeCommand));
     } else {
       IoWrite16 (0x80, (UINT16) Value);
     }

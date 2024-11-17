@@ -22,8 +22,8 @@
 
 #include "MockTbtNvmDrvUtils.h"
 
-MOCK_INTERFACE_DEFINITION(MockTbtNvmDrvUtils);
+MOCK_INTERFACE_DEFINITION (MockTbtNvmDrvUtils);
 
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvUtils, TbtNvmDrvAllocateMem, 1, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvUtils, TbtNvmDrvDeAllocateMem, 1, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvUtils, TbtNvmDrvSwapEndianess, 3, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvUtils, TbtNvmDrvAllocateMem, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvUtils, TbtNvmDrvDeAllocateMem, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvUtils, TbtNvmDrvSwapEndianess, 3, EFIAPI);

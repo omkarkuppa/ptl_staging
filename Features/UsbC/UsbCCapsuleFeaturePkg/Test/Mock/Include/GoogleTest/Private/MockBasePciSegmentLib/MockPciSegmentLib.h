@@ -26,8 +26,8 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Base.h>
-  #include <Uefi/UefiBaseType.h>
+#include <Base.h>
+#include <Uefi/UefiBaseType.h>
 }
 
 struct MockPciSegmentLib {

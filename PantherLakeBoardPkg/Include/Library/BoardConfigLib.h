@@ -217,13 +217,16 @@ SetUcsiRevisionPcd (
   );
 
 /**
-  Setting PcdUsbCPdNumber from UsbC connector configuration table
+  Setting PcdUsbCPdSupportBitmap from UsbC connector configuration table
+  The lower 4 bits (BIT0 - BIT3) of PcdUsbCPdSupportBitmap represent
+  whether TCP 0 through 3 can support PD.
 
 **/
 VOID
-SetPcdPdNumber (
+SetPcdUsbCPdSupportBitmap (
   VOID
   );
+
 
 /**
   Set TCSS Port Capability PCD

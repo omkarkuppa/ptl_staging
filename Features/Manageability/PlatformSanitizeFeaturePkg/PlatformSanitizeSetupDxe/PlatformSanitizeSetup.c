@@ -1106,6 +1106,7 @@ InitHiiConfigFromVariable (
   RPE_SETUP                      RpeSetup;
   UINTN                          RpeVariableSize;
   UINT32                         RpeVariableAttr;
+  ME_BIOS_PAYLOAD_HOB            *MbpHob = NULL;
 
   DEBUG ((DEBUG_INFO, "%a() - enter\n", __FUNCTION__));
 
@@ -1168,6 +1169,20 @@ InitHiiConfigFromVariable (
   if (AmtIsRemoteSessionEnabled () && (Variable->RpeOptionExposure == 1)) {
     Variable->RpeOptionGrayOut = 1;
     VariableUpdate = TRUE;
+  }
+
+  //
+  // Get Mbp Data HOB
+  //
+  MbpHob = GetFirstGuidHob(&gMeBiosPayloadHobGuid);
+  if (MbpHob != NULL) {
+    if ((MbpHob->MeBiosPayload.FwPlatType.RuleData.Fields.IntelMeFwImageType == IntelMeCorporateFw) && (Variable->CsmeUnconfigureExposure == 0)) {
+      Variable->CsmeUnconfigureExposure = 1;
+      VariableUpdate = TRUE;
+    } else if ((MbpHob->MeBiosPayload.FwPlatType.RuleData.Fields.IntelMeFwImageType != IntelMeCorporateFw) && (Variable->CsmeUnconfigureExposure == 1)) {
+      Variable->CsmeUnconfigureExposure = 0;
+      VariableUpdate = TRUE;
+    }
   }
 
   if (VariableUpdate) {

@@ -47,6 +47,7 @@
   PantherLakeFspPkg/PantherLakeFspPkg.dec
   OneSiliconPkg/SiPkg.dec
   UefiCpuPkg/UefiCpuPkg.dec
+  SecurityPkg/SecurityPkg.dec
 
 [LibraryClasses]
   BaseLib
@@ -60,6 +61,9 @@
   FspVerificationLib
   ExtractGuidedSectionLib
   LzmaArchDecompressLib
+  Tpm2DeviceLib
+  Tpm2CommandLib
+  FspMeasurementLib
 
   [Pcd]
   gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptBase          ## CONSUMES
@@ -70,3 +74,4 @@
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize              ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase               ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize               ## CONSUMES
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedBufferSize         ## CONSUMES

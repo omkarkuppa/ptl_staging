@@ -535,13 +535,15 @@ MrcCheckGroupSupported (
 
   @param[in]  MrcData - Global MRC Data.
   @param[in]  Group   - The group to be accessed.
+  @param[in]  Strobe  - The Strobe to be accessed.
 
   @retval mrcSuccess if supported, otherwise mrcWrongInputParameter
 **/
 BOOLEAN
 MrcCheckGroupUnSupported (
   IN  MrcParameters *const  MrcData,
-  IN  GSM_GT        const   Group
+  IN  GSM_GT        const   Group,
+  IN  UINT32        const   Strobe
   );
 
 /**
@@ -753,6 +755,17 @@ INT64
 MrcGetDividedValueTck (
   IN    MrcParameters *const  MrcData,
   IN    INT64                 Value
+  );
+
+/**
+  Check if CR Cache is enabled or not in GetSet HAL
+
+  @retval TRUE  - CR cache is enabled
+  @retval FALSE - CR cache is disabled
+**/
+BOOLEAN
+MrcHalCrCacheEnabled (
+  VOID
   );
 
 #pragma pack (pop)

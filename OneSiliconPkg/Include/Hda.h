@@ -90,4 +90,10 @@ typedef enum {
   HdaForceMicrophoneMute         = 3
 } HDAUDIO_MIC_PRIVACY_MODE;
 
+typedef enum {
+  HdaSndwClockSourceSelectXtal     = 0,
+  HdaSndwClockSourceSelectAudioPll = 1,
+  HdaSndwClockSourceSelectInvalid
+} HDAUDIO_SNDW_CLOCK_SRC_SELECT;
+
 #endif

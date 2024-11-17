@@ -34,6 +34,7 @@
   External (PS3H, MethodObj) // PCIe root port RTD3 _PS3 Hook Function.
   External (\_SB.ERPS, MethodObj)
   External (WAKG, IntObj)                   // WAKE GPIO PAD Number
+  External (MTDL, MethodObj) // Compare MIN_TEMP, DTRHIVAL and DTRLOVAL
 
   OperationRegion (PXCS,SystemMemory,\_SB.PC00.PC2M (_ADR (), PBNU),0x480)
   Field (PXCS,AnyAcc, NoLock, Preserve)
@@ -42,11 +43,14 @@
     VDID, 32,
     Offset (0x50),                     // LCTL - Link Control Register
     L0SE, 1,                           // 0, L0s Entry Enabled
-    , 3,
+    L01E, 1,                           // 1, L1 Entry Enabled
+    , 2,
     LDIS, 1,
-    , 3,
+    LRLK, 1,                           // Retrain Link
+    , 2,
     Offset (0x52),                     // LSTS - Link Status Register
-    , 13,
+    LCLS, 4,                           // CLS
+    , 9,
     LASX, 1,                           // 0, Link Active Status
     Offset (0x5A),                     // SLSTS[7:0] - Slot Status Register
     ABPX, 1,                           // 0, Attention Button Pressed
@@ -61,6 +65,8 @@
     Offset (0x68),
     , 10,
     LNRE, 1,                           // B_PCIE_DCTL2_LTREN   BIT10
+    Offset (0x70),
+    LTLS, 4,                           // TLS
     Offset (0xA4),                     // PMCSR
     D3HT, 2,                           // PowerState
     Offset (R_PCH_PCIE_CFG_MPC),       // 0xD8, MPC - Miscellaneous Port Configuration Register
@@ -69,7 +75,8 @@
     PMEX, 1,                           // 31,  Power Management SCI Enable
     Offset (R_PCH_PCIE_CFG_SPR),       // 0xE0, SPR - Scratch Pad Register
     SCB0, 1,                           // Scratchpad register SPR[0] (SCB)
-    , 6,
+    SCB2, 2,                           // Scratchpad register SPR[2:1] (SCB) - DTR State
+    , 4,
     NCB7, 1,                           // Non-Sticky Scratch Pad Bit (NSCB)[7]
     Offset (R_PCH_PCIE_CFG_RPPGEN),    // 0xE2, RPPGEN - Root Port Power Gating Enable
     , 2,
@@ -90,6 +97,12 @@
     PMSX, 1                            // 31,  Power Management SCI Status
   }
 
+  //Physical Layer 32.0 GT/s Status Register (G5STS) – Offset ae8
+  OperationRegion (DTR1,SystemMemory,(\_SB.PC00.PC2M (_ADR (), PBNU) + 0xae8),0x4)
+  Field (DTR1, AnyAcc, NoLock, Preserve)
+  {
+    E32C, 1                             // 0, Equalization 32.0 GT/s Complete (EQ32CMPLT)
+  }
   //
   // L23D method recovers link from L2 or L3 state. Used for RTD3 flows, right after endpoint is powered up and exits reset.
   // This flow is implemented in ASL because rootport registers used for L2/L3 entry/exit
@@ -457,4 +470,127 @@
     Return ()
   }
 #endif
+
+  //
+  // Handle DTR SCI
+  //
+  Method (DTRH, 0, Serialized) {
+
+    ADBG (Concatenate("DTRH: RP = 0x", ToHExString(SLOT)))
+
+    Store (0, Local0)
+
+    While (LLESS (Local0, 8)) {
+
+      If (LEqual (SCB2, 0)) { // Not need 
+        ADBG (Concatenate("DTRH: DTR Stat = 0x", ToHExString(SCB2)))
+        return ()
+      }
+
+      if (LEqual (SCB2, 1)) { // Not ready
+        ADBG (Concatenate("DTRH: DTR Stat = 0x", ToHExString(SCB2)))
+        return ()
+      }
+
+      If (LEqual (SCB2, 3)) { // Busy
+        ADBG (Concatenate("DTRH: DTR Stat = 0x", ToHExString(SCB2)))
+        Sleep (10)
+        Increment (Local0)
+        Continue
+      }
+
+      If (LEqual (LASX, 0)) { // Link Down/RTD3
+        ADBG (Concatenate("DTRH: Link active = 0x", ToHExString(LASX)))
+        Sleep (10)
+        Increment (Local0)
+        Continue
+      }
+    }
+
+    If (LGreater (Local0, 8)) {
+      ADBG ("DTRH: 80ms timeout")
+      return ()
+    }
+
+
+    // Upgrade or downgrade per temperature
+    If (CondRefOf(MTDL)) {
+      Name (DTLS, 0)
+      Name (FSTE, 0)
+      Name (DCNT, 0)
+
+      If (Lequal (MTDL(), 1)){ // MIN_TEMP > DTRHIVAL
+        Store(5, DTLS)
+        ADBG ("DTRH: Set TLS to gen5")
+        If (Lequal (E32C, 0)) {
+          ADBG ("DTRH: 1st Gen5 EQ")
+          Store (1, FSTE)
+        } Else {
+          ADBG ("DTRH: Complete Gen5 EQ before")
+          Store (0, FSTE)
+        }
+      }
+      ElseIf (Lequal (MTDL(), 2)){ // MIN_TEMP < DTRLOVAL
+        Store(4, DTLS)
+        ADBG ("DTRH: Set TLS to gen4")
+      }
+      Else {
+        Return()
+      }
+
+      If (Lequal(DTLS, LCLS)) {
+        ADBG ("DTRH: CLS already meet")
+        Return()
+      }
+
+      Store(3, SCB2) // Mark DTR stat busy
+
+      If (Lequal (FSTE, 1)) {
+        // Disable ASPM
+        Store(L0SE, Local0)
+        Store(L01E, Local1)
+        Store(0, L0SE) 
+        Store(0, L01E)
+      }
+
+      Store(DTLS, LTLS) //Programe TLS
+
+      Store(1, LRLK) // Programe RL 
+
+      If (Lequal (FSTE, 1)) {
+         While (LLESS (DCNT, 6)) {
+          If (Land((Lequal(E32C, 1)),(Lequal(DTLS, LCLS)))) {
+            Break
+          }
+          Sleep (10)
+          Increment (DCNT)
+        }
+      }
+      Else {
+        While (LLESS (DCNT, 5)) { // NOt expect timeout in this case
+          If (Lequal(DTLS, LCLS)) {
+            Break
+          }
+          Sleep (10)
+          Increment (DCNT)
+        }
+      }
+
+      If (LGreaterEqual (DCNT, 6)) {
+        Store(0, SCB2) // if Gen5 EQ timeout, not need DTR any more
+        Store(LCLS, LTLS) // Set back CLS to TLS
+      } 
+      Else {
+        Store(2, SCB2) // Set DTR stat to Ready
+      }
+
+      If (Lequal (FSTE, 1)) {
+        // Disable ASPM
+        Store(Local0, L0SE)
+        Store(Local1, L01E)
+      }
+    }
+
+    return ()
+  }
 

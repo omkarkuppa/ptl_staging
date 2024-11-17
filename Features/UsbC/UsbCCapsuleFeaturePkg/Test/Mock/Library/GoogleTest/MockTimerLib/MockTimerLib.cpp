@@ -22,6 +22,6 @@
 
 #include <GoogleTest/Library/MockTimerLib.h>
 
-MOCK_INTERFACE_DEFINITION(MockTimerLib);
+MOCK_INTERFACE_DEFINITION (MockTimerLib);
 
-MOCK_FUNCTION_DEFINITION(MockTimerLib, MicroSecondDelay, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTimerLib, MicroSecondDelay, 1, EFIAPI);

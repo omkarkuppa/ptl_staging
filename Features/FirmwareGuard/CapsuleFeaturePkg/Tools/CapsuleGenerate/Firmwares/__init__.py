@@ -31,3 +31,5 @@ from CapsuleGenerate.Firmwares.IfwiFirmware import *
 from CapsuleGenerate.Firmwares.BtGAcmFirmware import *
 from CapsuleGenerate.Firmwares.FspFirmware import *
 from CapsuleGenerate.Firmwares.UcodeFirmware import *
+
+from CapsuleGenerate.Firmwares.FoxvilleFirmware import *

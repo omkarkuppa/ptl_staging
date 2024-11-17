@@ -246,7 +246,8 @@ typedef struct {
   UINT8   SubChHashInterleaveBit;   ///< Offset 320 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)
   UINT16  SubChHashMask;            ///< Offset 321 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
   UINT8   ForceCkdBypass;           ///< Offset 323 Force CKD in Bypass Mode if CKD DIMM is detected: 0 = Single PLL mode (Default), 1 = Bypass mode.
-  UINT8   Reserved324[14];          ///< Offset 324 Reserved for future use
+  UINT8   RowPressEn;               ///< Offset 324 Enable/disable ROW PRESS feature
+  UINT8   Reserved325[13];           ///< Offset 325 Reserved for future use
 
   // Below policies are used by SV
   UINT32  DprLock                   : 2;   ///< Bit 0-1    Lock DPR register. <b>0: Platform POR </b>; 1: Enable; 2: Disable

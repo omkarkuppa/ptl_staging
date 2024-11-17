@@ -26,7 +26,7 @@ from CapsuleCommon.Wrapper.ByteBufferWrapperLib import *
 from CapsuleCommon.Wrapper.StructWrapperLib import *
 
 FBM_SIGNATURE       : str = '__FBMS__'
-FBM_STRUCT_VERSION_1: int = 0x1
+FBM_STRUCT_VERSION_1: int = 0x10
 
 #
 # Part of FBM header structure:
@@ -52,14 +52,14 @@ FBM_HDR_RESERVED2        : str = 'Reserved2'
 FBM_HDR_FLAGS            : str = 'Flags'
 
 FBM_HDR_FORMAT_DICT: Dict[str, Any] = {
-    FBM_HDR_STRUCTURE_ID     : {FILED_FORMAT: '8c', FIELD_SIZE: 8},
-    FBM_HDR_STRUCTURE_VERSION: {FILED_FORMAT: 'B' , FIELD_SIZE: 1},
-    FBM_HDR_RESERVED1        : {FILED_FORMAT: '3B', FIELD_SIZE: 3},
-    FBM_HDR_KEY_SIG_OFFSET   : {FILED_FORMAT: 'H',  FIELD_SIZE: 2},
-    FBM_HDR_FSP_VERSION      : {FILED_FORMAT: '2B', FIELD_SIZE: 2},
-    FBM_HDR_FSP_SVN          : {FILED_FORMAT: 'B' , FIELD_SIZE: 1},
-    FBM_HDR_RESERVED2        : {FILED_FORMAT: 'B' , FIELD_SIZE: 1},
-    FBM_HDR_FLAGS            : {FILED_FORMAT: '4B', FIELD_SIZE: 4}
+    FBM_HDR_STRUCTURE_ID     : { FIELD_FORMAT: '8c', FIELD_SIZE: 8 },
+    FBM_HDR_STRUCTURE_VERSION: { FIELD_FORMAT: 'B' , FIELD_SIZE: 1 },
+    FBM_HDR_RESERVED1        : { FIELD_FORMAT: '3B', FIELD_SIZE: 3 },
+    FBM_HDR_KEY_SIG_OFFSET   : { FIELD_FORMAT: 'H',  FIELD_SIZE: 2 },
+    FBM_HDR_FSP_VERSION      : { FIELD_FORMAT: '2B', FIELD_SIZE: 2 },
+    FBM_HDR_FSP_SVN          : { FIELD_FORMAT: 'B' , FIELD_SIZE: 1 },
+    FBM_HDR_RESERVED2        : { FIELD_FORMAT: 'B' , FIELD_SIZE: 1 },
+    FBM_HDR_FLAGS            : { FIELD_FORMAT: '4B', FIELD_SIZE: 4 }
     }
 
 FBM_HDR_STRUCT   : str = str ()

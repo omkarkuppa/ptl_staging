@@ -514,7 +514,6 @@ ModularUsbCIoPostMemCallback (
   UINT32                             CurrentTcssStrapConfig;
   UINTN                              VarSize;
   BOOLEAN                            IsFirstBoot;
-  BOOLEAN                            SetStrapOverrideIsNeeded;
   BOOLEAN                            VariableUpdateIsNeeded;
   VOID                               *Hob;
   UINT16                             DataSize;
@@ -526,7 +525,6 @@ ModularUsbCIoPostMemCallback (
   IsFirstBoot               = FALSE;
   CurrentTcssStrapConfigPtr = NULL;
   VariableUpdateIsNeeded    = FALSE;
-  SetStrapOverrideIsNeeded  = FALSE;
   CurrentTcssStrapConfig    = 0xFFFFFFFF;
   PlatformModularUsbCIoConfig = PcdGet64 (PcdPlatformModularUsbCIoConfig);
   CseModularUsbCIoConfig = ConvertModularUsbIoConfig ((EC_MODULAR_IO_CONFIG *) &PlatformModularUsbCIoConfig);
@@ -569,50 +567,48 @@ ModularUsbCIoPostMemCallback (
   //
   if (IsBootingFromG3 () == TRUE) {
     if (IsFirstBoot == TRUE) {
-      SetStrapOverrideIsNeeded = TRUE;
-      VariableUpdateIsNeeded   = TRUE;
+      VariableUpdateIsNeeded = TRUE;
     } else {
       if (CurrentTcssStrapConfigPtr != NULL) {
         if (*CurrentTcssStrapConfigPtr != CseModularUsbCIoConfig) {
-          SetStrapOverrideIsNeeded = TRUE;
-          VariableUpdateIsNeeded   = TRUE;
+          VariableUpdateIsNeeded = TRUE;
         }
       } else {
-        SetStrapOverrideIsNeeded = TRUE;
-        VariableUpdateIsNeeded   = TRUE;
+        VariableUpdateIsNeeded = TRUE;
       }
     }
 
-    if (SetStrapOverrideIsNeeded) {
-      StrapData.StrapGroupId = StrapGroupModularIoTypeCConfigStraps;
-      StrapData.OverrideData.ConfigData = CseModularUsbCIoConfig;
-      Status = PeiHeciSetStrapOverrideConfig (1, &StrapData, &Flags);
-      DEBUG ((DEBUG_INFO, "[TCSS] Modular USBC IO Strap Overrride Status: %r\n", Status));
+    StrapData.StrapGroupId = StrapGroupModularIoTypeCConfigStraps;
+    StrapData.OverrideData.ConfigData = CseModularUsbCIoConfig;
+    Status = PeiHeciSetStrapOverrideConfig (1, &StrapData, &Flags);
+    DEBUG ((DEBUG_INFO, "[TCSS] Modular USBC IO Strap Overrride Status: %r\n", Status));
 
+    if (!EFI_ERROR (Status)) {
+      if (Flags & MODULAR_IO_GLOBAL_RESET_MASK) {
+        DEBUG ((DEBUG_INFO, "Global reset is requested by CSE for Modular USBC IO. Reseting system ...\n"));
+        CopyMem (&ResetData.Guid, &gPchGlobalResetGuid, sizeof (EFI_GUID));
+        StrCpyS (ResetData.Description, PCH_RESET_DATA_STRING_MAX_LENGTH, PCH_PLATFORM_SPECIFIC_RESET_STRING);
+        (*GetPeiServicesTablePointer ())->ResetSystem2 (EfiResetPlatformSpecific, EFI_SUCCESS, sizeof (PCH_RESET_DATA), &ResetData);
+      }
+      if (VariableUpdateIsNeeded) {
+        CurrentTcssStrapConfig = CseModularUsbCIoConfig;
+      }
+    } else {
+      DEBUG ((DEBUG_ERROR, "[TCSS] Failed to set modular USBC IO Config in CSE - %r\n", Status));
+      Status = GetCurrentTcssStrapConfig (&CurrentTcssStrapConfig);
       if (!EFI_ERROR (Status)) {
-        if (Flags & MODULAR_IO_GLOBAL_RESET_MASK) {
-          DEBUG ((DEBUG_INFO, "Global reset is requested by CSE for Modular USBC IO. Reseting system ...\n"));
-          CopyMem (&ResetData.Guid, &gPchGlobalResetGuid, sizeof (EFI_GUID));
-          StrCpyS (ResetData.Description, PCH_RESET_DATA_STRING_MAX_LENGTH, PCH_PLATFORM_SPECIFIC_RESET_STRING);
-          (*GetPeiServicesTablePointer ())->ResetSystem2 (EfiResetPlatformSpecific, EFI_SUCCESS, sizeof (PCH_RESET_DATA), &ResetData);
-        }
-        if (VariableUpdateIsNeeded) {
-          CurrentTcssStrapConfig = CseModularUsbCIoConfig;
-        }
-      } else {
-        DEBUG ((DEBUG_ERROR, "[TCSS] Failed to set modular USBC IO Config in CSE - %r\n", Status));
+        VariableUpdateIsNeeded = TRUE;
+      }
+    }
+  } else {
+    CurrentTcssStrapConfig = CseModularUsbCIoConfig;
+    if (CurrentTcssStrapConfigPtr != NULL) {
+      if (*CurrentTcssStrapConfigPtr != CseModularUsbCIoConfig) {
         Status = GetCurrentTcssStrapConfig (&CurrentTcssStrapConfig);
         if (!EFI_ERROR (Status)) {
           VariableUpdateIsNeeded = TRUE;
         }
       }
-    }
-  } else {
-    if (CurrentTcssStrapConfigPtr != NULL) {
-      if (*CurrentTcssStrapConfigPtr != CseModularUsbCIoConfig) {
-        VariableUpdateIsNeeded = TRUE;
-      }
-      CurrentTcssStrapConfig = CseModularUsbCIoConfig;
     } else {
       Status = GetCurrentTcssStrapConfig (&CurrentTcssStrapConfig);
       if (!EFI_ERROR (Status)) {

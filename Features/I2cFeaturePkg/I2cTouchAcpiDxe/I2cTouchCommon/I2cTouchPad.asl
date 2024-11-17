@@ -32,6 +32,9 @@
 #define SMART_C_COVER                 9 // For smart C cover
 
 External(PPDI)
+External (TPDM)
+External (\_SB.GRXE, MethodObj)
+
 
 //------------------------
 // Touch Pads on I2C for common use
@@ -51,12 +54,11 @@ External(PPDI)
       If (LEqual (DeRefOf(Index(TPTD,5)), 0)) {
         SHPO (DeRefOf(Index(TPDI,0)), 1) // configure gpio pad in gpio driver mode
       }
+      SGRA (DeRefOf(Index(TPDI,0)), TPDM) // set/reset GPIRoutIOxAPIC TPDM=1 means APIC enable
       //
       //  IO APIC support
       //
       If (LEqual (DeRefOf(Index(TPTD,5)), 1)) {
-        Xor(PPDI, 1, Local0)
-        SGRA (DeRefOf(Index(TPDI,0)), Local0) // Enable GPIRoutIOxAPIC
         SGII (DeRefOf(Index(TPDI,0)), 0) // Disable RX inversion
         GRXE (DeRefOf(Index(TPDI,0)), 0) // Set interrupt delivery to level
       }

@@ -199,6 +199,10 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressBase|0x00000000|UINT32|0x20000049
   gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressSize|0x00000000|UINT32|0x2000004A
   gBoardModuleTokenSpaceGuid.PcdFlashFvTsnMacAddressOffset|0x00000000|UINT32|0x2000004B
+  gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadOffset|0x00000000|UINT32|0x2000004C
+  gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadBase|0x00000000|UINT32|0x2000004D
+  gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize|0x00000000|UINT32|0x2000004E
+
   gBoardModuleTokenSpaceGuid.PcdIntelRaidEnable     |FALSE|BOOLEAN|0xF000003A
   gBoardModuleTokenSpaceGuid.PcdSipkgBinaryEnable   |FALSE|BOOLEAN|0xF0000A50
 
@@ -270,6 +274,8 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   # The setting is byte map per TCSS port
   gBoardModuleTokenSpaceGuid.PcdTcssPortCapMap|0|UINT32|0x00100032
+  gBoardModuleTokenSpaceGuid.PcdUsbConnectorTable|0|UINT64|0x00100035
+  gBoardModuleTokenSpaceGuid.PcdUsbCConnectorTable|0|UINT64|0x00100036
 
   # LID SWITCH
   gBoardModuleTokenSpaceGuid.PcdLidSwitchWakeGpio|0|UINT32|0x0000040D
@@ -407,6 +413,9 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdPchSerialIoI2c5PadInternalTerm|0x1|UINT8|0x00000031
   gBoardModuleTokenSpaceGuid.PcdPchSerialIoI2c6PadInternalTerm|0x1|UINT8|0x00000032
   gBoardModuleTokenSpaceGuid.PcdPchSerialIoI2c7PadInternalTerm|0x1|UINT8|0x00000033
+
+  #Xep
+  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig   |FALSE|BOOLEAN|0x00001141
 
   # UCMC GPIO Table
   gBoardModuleTokenSpaceGuid.PcdBoardUcmcGpioTable|0|UINT32|0x00000111
@@ -1777,6 +1786,16 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
       PantherLakeBoardPkg/BoardPkg.dec
   }
 
+  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbConnector            |{0}|USB_CONNECTOR_BOARD_CONFIG[]|0x000012D0 {
+    <HeaderFiles>
+      Ucsi.h
+    <Packages>
+      MdePkg/MdePkg.dec
+      MdeModulePkg/MdeModulePkg.dec
+      UcsiFeaturePkg/UcsiFeaturePkg.dec
+      PantherLakeBoardPkg/BoardPkg.dec
+  }
+
   #
   # USBC Connector Board Config
   # typedef struct {
@@ -1868,6 +1887,16 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     PantherLakeBoardPkg/BoardPkg.dec
   }
 
+  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbCConnector           |{0}|USBC_CONNECTOR_BOARD_CONFIG[]|0x000012D1 {
+  <HeaderFiles>
+    Ucsi.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    MdeModulePkg/MdeModulePkg.dec
+    UcsiFeaturePkg/UcsiFeaturePkg.dec
+    PantherLakeBoardPkg/BoardPkg.dec
+  }
+
 #
 # USBC Retimer Flash Board Configuration Table
 # typedef struct {
@@ -1892,8 +1921,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   <HeaderFiles>
     PlatformBoardConfig.h
   }
-
-  gBoardModuleTokenSpaceGuid.VpdPcdCnvDeviceId|0x0|UINT16|0x000012CF
 
 #################################################################
 # VPD PCD's End #

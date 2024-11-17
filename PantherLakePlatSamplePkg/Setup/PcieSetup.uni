@@ -36,7 +36,7 @@
 //
 #string STR_PCIE_FORM                           #language en-US "PCIE Configuration"
 #string STR_PCIE_FORM_HELP                      #language en-US "PCIE Parameters"
-string STR_PCIE_IMR_CONFIG                      #language en-US "IMR Configuration"
+#string STR_PCIE_IMR_CONFIG                     #language en-US "IMR Configuration"
 
 #string STR_PCIE_IMR_PROMPT                     #language en-US  "PCIe IMR"
 #string STR_PCIE_IMR_HELP                       #language en-US  "Enable/Disable PCIe IMR"

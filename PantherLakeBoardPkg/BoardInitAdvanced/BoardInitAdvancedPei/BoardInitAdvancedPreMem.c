@@ -432,7 +432,6 @@ PlatformInitPreMem (
   UINT16                            ABase;
   SETUP_DATA                        SystemConfiguration;
   UINTN                             VariableSize;
-  UINT8                             FwConfig;
 
 #if FixedPcdGetBool(PcdTpmEnable) == 1
   UINT8                             TpmInterfaceId;
@@ -479,9 +478,7 @@ PlatformInitPreMem (
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Fail to get System Configuration and set the configuration to production mode!\n"));
-    FwConfig = 0;
   } else {
-    FwConfig = SystemConfiguration.FirmwareConfiguration;
   }
 
 #if FixedPcdGetBool(PcdDTbtEnable) == 1

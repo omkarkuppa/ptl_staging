@@ -257,6 +257,7 @@ GetDdrIoPllOffsets (
   @param[in]  MrcData      - Global MRC data structure.
   @param[in]  Group        - DDRIO group being accessed.
   @param[in]  Lane         - Lane index within the data group (0-based).
+  @param[in]  FreqIndex    - Workpoint Index.
   @param[out] VolatileMask - Mask indicating which bits are volatile in register
 
   @retval CR Offset.
@@ -266,6 +267,7 @@ GetDdrIoCompOffsets (
   IN  MrcParameters         *MrcData,
   IN  GSM_GT                Group,
   IN  UINT32                Lane,
+  IN  UINT32                FreqIndex,
   OUT UINT64_STRUCT *const  VolatileMask
   )
 {
@@ -308,12 +310,13 @@ GetDdrIoPgOffsets (
 }
 
 /**
-  Function used to get the CR Offset for registers listed under DATA_SHAREDx partitions.
+  Function used to get the CR Offset for registers listed under DATA_SHAREDx / DATA_SBMEMx partitions.
 
   @param[in]  MrcData      - Global MRC data structure.
   @param[in]  Group        - DDRIO group being accessed.
   @param[in]  Index        - # of field.
   @param[in]  Lane         - Uses the Lane parameter from GetSet to select which PI Mixer code to access.
+  @param[in]  FreqIndex    - Workpoint Index.
   @param[out] VolatileMask - Mask indicating which bits are volatile in register
 
   @retval CR Offset.
@@ -422,12 +425,17 @@ GetDdrIoDataWriteOffsets (
   switch (Group) {
     case TxDqsDelay:
     case TxDqDelay:
-    case DqsTxEq:
-    case DqTxEq:
       Offset = DATA0CH0_CR_TXCONTROL0RANK0_REG +
         ((DATA0CH1_CR_TXCONTROL0RANK0_REG - DATA0CH0_CR_TXCONTROL0RANK0_REG) * Channel) +
         ((DATA0CH0_CR_TXCONTROL0RANK1_REG - DATA0CH0_CR_TXCONTROL0RANK0_REG) * Rank) +
         ((DATA1CH0_CR_TXCONTROL0RANK0_REG - DATA0CH0_CR_TXCONTROL0RANK0_REG) * Strobe);
+      break;
+
+    case DqsTxEq:
+    case DqTxEq:
+      Offset = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_REG +
+        ((DATA0CH1_CR_DDRCRDATAOFFSETCOMP_REG - DATA0CH0_CR_DDRCRDATAOFFSETCOMP_REG) * Channel) +
+        ((DATA1CH0_CR_DDRCRDATAOFFSETCOMP_REG - DATA0CH0_CR_DDRCRDATAOFFSETCOMP_REG) * Strobe);
       break;
 
     case TxDqBitDelay:

@@ -85,6 +85,7 @@
   gSiPkgTokenSpaceGuid.PcdChannel1Dimm0SpdAddressTable
   gSiPkgTokenSpaceGuid.PcdChannel1Dimm1SpdAddressTable
   gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarFlags
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable
 
 [FixedPcd]
   gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable        ## CONSUMES

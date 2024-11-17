@@ -120,6 +120,11 @@ DebugPrint (
   if (StatusCodeFlags & STATUS_CODE_USE_ISA_SERIAL) {
     SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
   }
+
+  if (StatusCodeFlags & STATUS_CODE_USE_SERIALIO) {
+    SerialIoUartDebugWrite ((UINT8*)Buffer, AsciiStrLen (Buffer));
+  }
+
   if (StatusCodeFlags & STATUS_CODE_USE_TRACEHUB) {
     //
     // EDK ErrorLevel to TraceHub Severity Mapping
@@ -184,6 +189,10 @@ DebugAssert (
   //
   if (StatusCodeFlags & STATUS_CODE_USE_ISA_SERIAL) {
     SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
+  }
+
+  if (StatusCodeFlags & STATUS_CODE_USE_SERIALIO) {
+    SerialIoUartDebugWrite ((UINT8*)Buffer, AsciiStrLen(Buffer));
   }
 
   if (StatusCodeFlags & STATUS_CODE_USE_TRACEHUB) {

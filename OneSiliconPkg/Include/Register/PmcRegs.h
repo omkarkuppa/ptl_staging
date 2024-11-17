@@ -755,6 +755,15 @@
 #define B_PMC_PWRM_MIN_TEMP_MIN_SRC                           ( BIT19 | BIT18 | BIT17 | BIT16 ) ///< DTS Minimum Source
 #define N_PMC_PWRM_MIN_TEMP_MIN_SRC                           16
 
+#define R_PMC_PWRM_TSS0                                       0x00001560U      ///< Temperature Sensor Control and Status
+#define B_PMC_PWRM_TSS0_TSR                                   0x000001ffU      ///< TS Reading
+#define N_PMC_PWRM_TSS0_TSR                                   0
+#define B_PMC_PWRM_TSS0_TSRV                                  BIT9             ///< TS Reading Valid
+#define N_PMC_PWRM_TSS0_TSRV                                  9
+#define B_PMC_PWRM_TSS0_TSMASKEN                              BIT16            ///< TS MASK for MAXTEMP calculation
+#define N_PMC_PWRM_TSS0_TSMASKEN                              16
+#define B_PMC_PWRM_TSS0_TSS0LOCK                              BIT31            ///< Policy Lock-Down Bit
+#define N_PMC_PWRM_TSS0_TSS0LOCK                              31
 //
 // GPE interrupts definitons
 //

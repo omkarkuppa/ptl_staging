@@ -219,15 +219,17 @@ formset
         key          = KEY_LPE_RELOAD_BIOS,
       endcheckbox;
 
-      checkbox varid = LPE_SETUP.LpeCsmeUnconfigure,
-        prompt       = STRING_TOKEN (STR_LPE_UNCONFIGURE_CSME_PROMPT),
-        help         = STRING_TOKEN (STR_LPE_UNCONFIGURE_CSME_HELP),
-        flags        = 0 | RESET_REQUIRED,
-        key          = 0,
-        warningif prompt = STRING_TOKEN (STR_LPE_WARNING_UNCONFIGURE_CSME),
-        ideqval LPE_SETUP.LpeCsmeUnconfigure == 1
-        endif; //warningif
-      endcheckbox;
+      grayoutif ideqval PLATFORM_ERASE_VARIABLE.CsmeUnconfigureExposure == 0;
+        checkbox varid = LPE_SETUP.LpeCsmeUnconfigure,
+          prompt       = STRING_TOKEN (STR_LPE_UNCONFIGURE_CSME_PROMPT),
+          help         = STRING_TOKEN (STR_LPE_UNCONFIGURE_CSME_HELP),
+          flags        = 0 | RESET_REQUIRED,
+          key          = 0,
+          warningif prompt = STRING_TOKEN (STR_LPE_WARNING_UNCONFIGURE_CSME),
+          ideqval LPE_SETUP.LpeCsmeUnconfigure == 1
+          endif; //warningif
+        endcheckbox;
+      endif; // grayoutif ideqval PLATFORM_ERASE_VARIABLE.CsmeUnconfigureExposure == 0;
 
     endif;   // suppressif LPE_SETUP.LpeEnable == 0
   endform;   // End of LOCAL_PLATFORM_ERASE_FORM_ID

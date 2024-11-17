@@ -330,7 +330,53 @@ typedef enum {
 #define MRC_PRINT_DDR_IO_GROUP( MrcData, Socket, Controller, Channel, Rank, Strobe, Bit, FreqIndex, Group)
 #endif
 
+// MrcDdrioPiLinearity, PI DCC struct
+typedef struct {
+  UINT16 TxDq[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 TxDqs[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 TxDqOffset[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 Deltapicoder0[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 SkipCrWrite[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 SaveFullDcc[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 EnChop[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 Samples[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 LaneEn[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 RankMap[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 RankEn[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 MeasPoint[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 RefPi4X[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 RefPi4XOffset[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM];
+  UINT16 TxDqBit[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS];
+  INT64  TxDqDelaySave;
+  INT64  GetSetDccSamples;
+} MRC_DATA_PI_LIN_SAVE;
+
 /// Functions
+
+MrcStatus
+MrcPiLinearitySaveRestoreData(
+  IN      MrcParameters* const  MrcData,
+  IN OUT  MRC_DATA_PI_LIN_SAVE* SaveData,
+  IN      MrcSaveOrRestore      SaveOrRestore
+);
+
+VOID
+MrcPiLinearityTrainingInitData(
+  IN  MrcParameters* const MrcData,
+  IN  BOOLEAN              RunPiDCC
+);
+
+MrcStatus
+MrcPiDCCInitAndSaveData(
+  IN      MrcParameters* const  MrcData,
+  IN OUT  MRC_DATA_PI_LIN_SAVE* SaveData
+);
+
+MrcStatus
+MrcPiDCCRestoreSaveData(
+  IN      MrcParameters* const  MrcData,
+  IN OUT  MRC_DATA_PI_LIN_SAVE* SaveData
+);
 
 #ifdef MRC_DEBUG_PRINT
 /**
@@ -486,6 +532,30 @@ MrcRcvEnFinal (
 **/
 MrcStatus
 MrcDdrIoFinalize (
+  IN     MrcParameters *const MrcData
+  );
+
+/**
+  This function performs early DDRIO final configuration before Rank Margin Tool.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @retval MrcStatus - mrcSuccess
+**/
+MrcStatus
+MrcEarlyDdrIoFinalize (
+  IN     MrcParameters *const MrcData
+  );
+
+/**
+  This function performs late DDRIO final configuration after Rank Margin Tool.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @retval MrcStatus - mrcSuccess
+**/
+MrcStatus
+MrcLateDdrIoFinalize (
   IN     MrcParameters *const MrcData
   );
 
@@ -2548,6 +2618,7 @@ GetDdrIoPgOffsets (
   @param[in]  MrcData      - Global MRC data structure.
   @param[in]  Group        - DDRIO group being accessed.
   @param[in]  Lane         - Lane index within the data group (0-based).
+  @param[in]  FreqIndex    - Workpoint Index.
   @param[out] VolatileMask - Mask indicating which bits are volatile in register
 
   @retval CR Offset.
@@ -2557,16 +2628,18 @@ GetDdrIoCompOffsets (
   IN  MrcParameters         *MrcData,
   IN  GSM_GT                Group,
   IN  UINT32                Lane,
+  IN  UINT32                FreqIndex,
   OUT UINT64_STRUCT *const  VolatileMask
   );
 
 /**
-  Function used to get the CR Offset for registers listed under DATA_SHAREDx partitions.
+  Function used to get the CR Offset for registers listed under DATA_SHAREDx / DATA_SBMEMx partitions.
 
   @param[in]  MrcData      - Global MRC data structure.
   @param[in]  Group        - DDRIO group being accessed.
   @param[in]  Index        - # of field.
   @param[in]  Lane         - Uses the Lane parameter from GetSet to select which PI Mixer code to access.
+  @param[in]  FreqIndex    - Workpoint Index.
   @param[out] VolatileMask - Mask indicating which bits are volatile in register
 
   @returns the offset of the CR.
@@ -2904,6 +2977,18 @@ EnableSenseAmpOffsetVocSearch (
   );
 
 /**
+  This configures DDRIO registers required for DDRIO Init Complete on Green MRC Fast Boot.
+
+  @param[in, out] MrcData - MRC global data.
+
+  @retval MrcStatus - mrcSuccess if successful or an error status.
+**/
+MrcStatus
+MrcDdrIoFastEnable (
+  IN OUT MrcParameters *const MrcData
+  );
+
+/**
   This function programs or saves the DqsRFTrainingMode for sense amp training.
 
   @param[in]  MrcData     - Pointer to MRC global data.
@@ -2929,6 +3014,92 @@ MrcGetSetDqsRFTrainingModeInSenseAmp (
 VOID
 MrcDqLoopbackTestPhySetup (
   IN MrcParameters *const MrcData
+  );
+
+/**
+ Check if Dqs DCC Lane Results are required to be printed.
+
+  @param[in] MrcData - Pointer to MRC global data.
+
+  @retval TRUE if Dqs DCC Lane Results are required to be printed.
+**/
+BOOLEAN
+MrcCheckIfPrintDqsLaneResultsRequired (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  Program given GetSet Group
+
+  @param[in] MrcData        - Include all MRC global data.
+  @param[in] PartitionBlock - Which Block set of DCC registers (PLL, PG, VCCCLK) to access.
+  @param[in] BlockIndex     - Which Index of Block to access (Passed on as Lane parameter).
+  @param[in] Group          - DDRIO group to access.
+  @param[in] Mode           - Get Set Mode.
+  @param[in] GetSetVal      - The pointer to the value to be programmed.
+**/
+VOID
+MrcGetSetPartitionBlockWrapper (
+  IN MrcParameters* const MrcData,
+  IN UINT32               PartitionBlock,
+  IN UINT32               BlockIndex,
+  IN GSM_GT        const  Group,
+  IN UINT32               Mode,
+  IN INT64                *GetSetVal
+  );
+
+/**
+  Top level wrapper function used to interact with SOC. It's a wrapper of MrcGetSetChStrb.
+  This function ignores unused parameters in Core MRC to reduce code space.
+  This function is for those registers that are only per Strobe per Channel granularity.
+
+  @param[in]      MrcData     - Pointer to global data structure.
+  @param[in]      Controller  - Memory Controller Number within the processor (0-based).
+  @param[in]      Channel     - DDR Channel Number within the processor socket (0-based).
+  @param[in]      Strobe      - Dqs data group within the rank (0-based).
+  @param[in]      Group       - DDRIO group to access.
+  @param[in]      Mode        - Bit-field flags controlling Get/Set.
+  @param[in,out]  Value       - Pointer to value for Get/Set to operate on.  Can be offset or absolute value based on mode.
+
+  @retval MrcStatus
+**/
+VOID
+MrcGetSetChStrbWrapper (
+  IN      MrcParameters *const  MrcData,
+  IN      UINT32        const   Controller,
+  IN      UINT32        const   Channel,
+  IN      UINT32        const   Strobe,
+  IN      GSM_GT        const   Group,
+  IN      UINT32                Mode,
+  IN OUT  INT64         *const  Value
+  );
+
+/**
+   Top level wrapper function used to interact with SOC. It's a wrapper of MrcGetSetCcc.
+  This function ignores unused parameters in Core MRC to reduce code space.
+  This function is used to access indexed Command/Control/Clock groups.
+
+  @param[in]      MrcData     - Pointer to global data structure.
+  @param[in]      Controller  - Memory Controller Number within the processor (0-based).
+  @param[in]      Channel     - DDR Channel Number within the processor socket (0-based).
+  @param[in]      Rank        - Rank within the DDR Channel (0-based).
+  @param[in]      Index       - Group index to Get/Set.
+  @param[in]      Group       - DDRIO group to access.
+  @param[in]      Mode        - Bit-field flags controlling Get/Set.
+  @param[in,out]  Value       - Pointer to value for Get/Set to operate on.  Can be offset or absolute value based on mode.
+
+  @retval MrcStatus
+**/
+VOID
+MrcGetSetCccWrapper (
+  IN      MrcParameters *const  MrcData,
+  IN      UINT32        const   Controller,
+  IN      UINT32        const   Channel,
+  IN      UINT32        const   Rank,
+  IN      UINT32        const   Index,
+  IN      GSM_GT        const   Group,
+  IN      UINT32                Mode,
+  IN OUT  INT64         *const  Value
   );
 
 #endif //MRC_DDR_IO_API_H_

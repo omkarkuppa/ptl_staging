@@ -184,6 +184,16 @@ VOID
   );
 
 /**
+  Called by SIP library to change PadRstCfg for CLKREQ not assigned pin for root port.
+  @param[in] RpDev  Pointer to root port device.
+**/
+typedef
+VOID
+(*PCIE_SIP_CHANGE_PADRSTCFG) (
+  IN PCIE_ROOT_PORT_DEV  *RpDev
+  );
+
+/**
   Called by SIP library when initializing NCC root port.
 
   @param[in] RpDev  Pointer to root port device.
@@ -264,6 +274,7 @@ typedef struct {
   PCIE_SIP_ENABLE_PORT_80_DECODE        EnablePort80Decode;
   PCIE_SIP_IS_CLKREQ_PULLED_DOWN        IsClkReqPulledDown;
   PCIE_SIP_ENABLE_CLKREQ                EnableClkReq;
+  PCIE_SIP_CHANGE_PADRSTCFG             ChangePadRstCfg;
   PCIE_SIP_INIT_NCC_PORT                InitNccPort;
   PCIE_SIP_SWAP_FUNCTION_NUM            SwapFunctionNumber;
   PCIE_SIP_FORCE_ENABLE_PCI_CONFIG      ForceEnablePciConfig;

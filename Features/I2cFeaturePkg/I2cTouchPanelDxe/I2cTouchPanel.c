@@ -1005,6 +1005,12 @@ CheckDataAvailableCallback (
       TouchDev->State.CurrentZ    = Z;
       TouchDev->State.ActiveButtons = ActiveButtons ? 1 : 0;
       gBS->SignalEvent (TouchDev->AbsolutePointerProtocol.WaitForInput);
+    } else {
+      if (TouchDev->State.ActiveButtons != 0) {
+        TouchDev->State.ActiveButtons = 0;
+        TouchDev->NewStateAvailable   = TRUE;
+        gBS->SignalEvent (TouchDev->AbsolutePointerProtocol.WaitForInput);
+      }
     }
   }
 }

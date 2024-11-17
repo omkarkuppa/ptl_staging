@@ -142,7 +142,7 @@ MrcDdrIoInitRefPiFsmCtl (
   IN BOOLEAN              PrintTask
   );
 
-//To-Do: Add all function prototypes not elsewhere declared from MrcDdrIoConfig.c here
+//To-Do: Add all function prototypes not elsewhere declared from MrcDdrIoConfigNvl.c here
 
 /**
   This function kicks off RefPI FSM in all the DDRIO partitions.  Each partition on a line is run in parallel

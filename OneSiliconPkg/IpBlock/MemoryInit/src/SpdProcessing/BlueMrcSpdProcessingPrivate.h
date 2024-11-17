@@ -422,39 +422,6 @@ GetDdr5tCWL (
   IN const UINT32 tCL
   );
 
-
-/**
-  Calculate the tCWL value for LPDDR5.
-
-  JEDEC Spec x8/x16 WL values:
-    Lower Clk   Upper Clk      SetA   SetB
-    Freq Limit  Freq Limit     WL     WL
-    --------------------------------------
-    10            67           2      2
-    67            133          2      3
-    133           200          3      4
-    200           267          4      5
-    267           344          4      7
-    344           400          5      8
-    400           467          6      9
-    467           533          6      11
-    533           600          7      12
-    600           688          8      14
-    688           750          9      15
-    750           800          9      16
-
-  @param[in] tCK   - The memory DCLK in femtoseconds.
-  @param[in] WlSet - 0: Set A, 1: Set B
-
-@retval LpDDR5 tCWL Value
-**/
-UINT32
-GetLpddr5tCWL (
-  IN UINT32 tCKmin,
-  IN UINT8  WlSet
-  );
-
-
 /**
   Calculate the minimum tCWL timing value for the given memory frequency.
     We calculate timings for all profiles so that this information can be passed out of MRC.

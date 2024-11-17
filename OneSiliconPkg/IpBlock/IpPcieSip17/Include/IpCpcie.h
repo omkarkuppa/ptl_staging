@@ -339,18 +339,37 @@ IpPcieRpInit (
   );
 
 /**
-  Initiate Speed change
+  Initiate Speed Change
 
   @param[in] pInst               *pInst
-  @param[in] MaxLinkSpeed         Max Link Speed
+  @param[in] MaxLinkSpeed         Lowest of LCAP.MLS, EndPointMaxSpeed
 
   @retval  IpCsiStsSuccess        The function completes successfully
   @retval  IpCsiStsErrorNullPtr   pInst was NULL
 **/
 IP_CSI_STATUS
-IpPcieRpSpeedChange (
+IpPcieRpSpeedChangeStart (
   IP_PCIE_INST    *pInst,
   UINT8            MaxLinkSpeed
+  );
+
+
+/**
+  Checks for Link Active after initiating speed change in IpPcieRpSpeedChangeStart API.
+  if link is not retrained sucessfully, revert target link speed to current link speed.
+
+  @param[in] pInst               *pInst
+  @param[in] MaxLinkSpeed        Lowest of LCAP.MLS, EndPointMaxSpeed
+  @param[in] TimeoutValue        Timeout value to poll for link active after link retrain
+
+  @retval  IpCsiStsSuccess       The function completes successfully
+  @retval  IpCsiStsErrorNullPtr  pInst was NULL
+**/
+IP_CSI_STATUS
+IpPcieRpSpeedChangeEnd (
+  IP_PCIE_INST    *pInst,
+  UINT8            MaxLinkSpeed,
+  UINT32           TimeoutValue
   );
 
 /**
@@ -557,5 +576,60 @@ UINT16
 SipFindExtendedCapId (
   IP_PCIE_INST  *pInst,
   UINT16        CapId
+  );
+
+
+/**
+  Returns SPR.SCB[2:1]) DTR State
+
+  @param[in] pInst  the instance
+
+  @retval    0       IpPcieDtrNotNeed
+  @retval    1       IpPcieDtrNotReady
+  @retval    2       IpPcieDtrReady
+  @retval    3       IpPcieDtrBusy
+**/
+IP_PCIE_DTR_STAT
+IpPcieGetDtrStat (
+  IP_PCIE_INST  *pInst
+  );
+
+
+/**
+  Update SPR.SCB[2:1]) DTR State
+
+  @param[in] pInst  the instance
+  @param[in] Stat   State value
+
+  @retval  IpCsiStsSuccess    on success
+  @retval  !IpCsiStsSuccess   on failure
+**/
+IP_CSI_STATUS
+IpPcieSetDtrStat (
+  IP_PCIE_INST  *pInst,
+  IP_PCIE_DTR_STAT  Stat
+  );
+
+/**
+  DTR train from Gen4 to Gen5
+
+  @param[in] pInst               *pInst
+
+  @retval  IpCsiStsSuccess        The function completes successfully
+  @retval  IpCsiStsErrorNullPtr   pInst was NULL
+**/
+IP_CSI_STATUS
+IpPcieDtrGen4ToGen5 (
+  IP_PCIE_INST   *pInst
+  );
+
+/**
+  Perform write operation on RWO fileds to ensure locking of these registers
+
+  @param[in] pInst  *pInst
+**/
+VOID
+SipLockCapRegisters (
+  IP_PCIE_INST  *pInst
   );
 #endif

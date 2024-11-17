@@ -449,6 +449,13 @@ enum IP_PCIE_COMPLETION_TIMEOUT {
   IpPcieCompletionTO_Disabled  = 0x010
 };
 
+typedef enum IP_PCIE_DTR_STAT {
+  IpPcieDtrNotNeed    = 0x0,
+  IpPcieDtrNotReady   = 0x01,
+  IpPcieDtrReady      = 0x02,
+  IpPcieDtrBusy       = 0x03
+} IP_PCIE_DTR_STAT;
+
 //Note: This structure will be expanded to hold all common PCIe policies between SA and PCH RootPort
 typedef struct {
   UINT32  HotPlug                         :  1;   ///< Indicate whether the root port is hot plug available. <b>0: Disable</b>; 1: Enable.
@@ -594,7 +601,7 @@ typedef struct {
   UINT8  EnablePort8xhDecode;
   UINT8  TPowerOn;
   UINT8  EpErrorReporting;
-  UINT8  RsvdBytes3[1];
+  UINT8  EnableDtr;
   //                        ///< Reserved bytes
   UINT32  VisaClockGating;
   UINT32  AutoPowerGating;

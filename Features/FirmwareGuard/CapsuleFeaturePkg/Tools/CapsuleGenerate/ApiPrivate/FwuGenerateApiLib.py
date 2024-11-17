@@ -165,7 +165,7 @@ class FwuGenerateApi (object):
         TouchDir (WorkspacePath)
         TouchDir (ExportPath)
 
-        Cmd: List[str] = [
+        CmdList: List[str] = [
             f'{FwuGenerateApi.PY_FWU_BUILDER_SCRIPT_PATH}',
             '-i', f'{self.__IfwiPath}',
             '-f', f'{self.__FitToolPath}',
@@ -187,6 +187,8 @@ class FwuGenerateApi (object):
             f'{Platform}' if Platform else '',
             ]
 
-        ExitCode, _, _ = ExecPythonCmd (Cmd)
+        ExitCode, _, _ = ExecPythonCmd (CmdList, IsException = False)
+        if (ExitCode != STATUS_SUCCESS):
+            raise ErrorException ('Failed to generate FWUpdate image.')
 
         return ExitCode

@@ -155,7 +155,6 @@ typedef struct {
   UINT8 TXTAvailable;
   UINT8 CxAvailable;
   UINT8 C1Available;
-  UINT8 C1EAvailable;
   UINT8 C3Available;
   UINT8 C6Available;
   UINT8 C7Available;

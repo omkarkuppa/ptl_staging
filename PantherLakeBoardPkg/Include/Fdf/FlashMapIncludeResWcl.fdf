@@ -34,9 +34,10 @@ DEFINE ACM_ALIGNMENT_ON_FV_BASE                                     = 256K      
 #
 # NON FIT Payload
 # NON FIT Payload has a separete build process, and will be stitched into ClientBios.rom at PostBuild
+# The size should be fixed.
 #
-SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset      = 0x00000000  # Flash addr (0xFF000000)
-SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadSize        = 0x00060000
+SET gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadOffset            = 0x00000000  # Flash addr (0xFF000000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize              = 0x00060000
 
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageOffset             = 0x00060000  # Flash addr (0xFF060000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageSize               = 0x00060000  #
@@ -103,6 +104,7 @@ SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000A00
 #
 # FIT Payload Region - start
 # FIT Payload has a separete build process, and will be stitched into ClientBios.rom at PostBuild
+# The size should be fixed.
 #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset           = 0x00CA0000  # Flash addr (0xFFCA0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize             = 0X00040000  #
@@ -152,9 +154,10 @@ SET gBoardModuleTokenSpaceGuid.PcdFlashFvFspOSize                     = 0x000120
 #
 # NON FIT Payload
 # NON FIT Payload has a separete build process, and will be stitched into ClientBios.rom at PostBuild
+# The size should be fixed.
 #
-SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset      = 0x00000000  # Flash addr (0xFF000000)
-SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadSize        = 0x00060000
+SET gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadOffset            = 0x00000000  # Flash addr (0xFF000000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize              = 0x00060000
 
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageOffset             = 0x00060000  # Flash addr (0xFF060000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageSize               = 0x00060000  #
@@ -221,6 +224,7 @@ SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000A00
 #
 # FIT Payload Region - start
 # FIT Payload has a separete build process, and will be stitched into ClientBios.rom at PostBuild
+# The size should be fixed.
 #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset           = 0x00CA0000  # Flash addr (0xFFCA0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize             = 0X00080000  #

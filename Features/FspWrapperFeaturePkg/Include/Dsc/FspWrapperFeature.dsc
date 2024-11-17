@@ -43,7 +43,12 @@
 
 [LibraryClasses.IA32.SEC, LibraryClasses.IA32.PEIM, LibraryClasses.X64.SEC, LibraryClasses.X64.PEIM]
   FspWrapperPlatformLib|FspWrapperFeaturePkg/Library/PeiFspWrapperPlatformLib/PeiFspWrapperPlatformLib.inf
+!if gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1
+  # FSP Signing support is not enabled yet for API Mode
   PlatformFspsVerificationLib|FspWrapperFeaturePkg/Library/PlatformFspsVerificationLibNull/PlatformFspsVerificationLibNull.inf
+!else
+  PlatformFspsVerificationLib|FspWrapperFeaturePkg/Library/PeiPlatformFspVerificationLib/PeiPlatformFspsVerificationLib.inf
+!endif
 
 [LibraryClasses.IA32.PEIM, LibraryClasses.X64.PEIM]
   FspWrapperHobProcessLib|FspWrapperFeaturePkg/Library/PeiFspWrapperHobProcessLib/PeiFspWrapperHobProcessLib.inf
@@ -60,8 +65,8 @@
 [Components.$(FSP_ARCH)]
 !if gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1
   FspWrapperFeaturePkg/DebugEventHandler/DebugEventHandler.inf
-  FspWrapperFeaturePkg/FspWrapperExtractGuidedPeim/FspWrapperExtractGuidedPeim.inf
 !endif #PcdFspModeSelection
+  FspWrapperFeaturePkg/FspWrapperVerifyFsps/FspWrapperVerifyFsps.inf
   FspWrapperFeaturePkg/FspWrapperPeim/FspWrapperPeim.inf
 
 [Components.X64]

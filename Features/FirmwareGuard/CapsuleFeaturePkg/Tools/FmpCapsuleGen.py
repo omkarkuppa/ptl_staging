@@ -32,7 +32,7 @@ from CapsuleCommon import *
 #
 # Pre-defined environment variable
 #
-ENV_DEBUG_LEVEL    : str = 'DEBUG_LEVEL'
+ENV_DEBUG_LEVEL: str = 'DEBUG_LEVEL'
 
 #
 # Pre-config CapsuleCommon Package.
@@ -42,6 +42,7 @@ SetDebugLevel (os.environ[ENV_DEBUG_LEVEL])
 from CapsuleGenerate import *
 
 DEFAULT_KEY: str = 'DEFAULT'
+IGNORE_KEY : str = 'IGNORE'
 
 #
 # Pre-defined OpCode
@@ -68,6 +69,15 @@ gArgv        : ArgumentParser = ArgumentParser ()
 gPositionArgv: dict           = gArgv.PositionArgv
 gKeywordArgv : dict           = gArgv.KeywordArgv
 gFlagArgv    : dict           = gArgv.FlagArgv
+
+#
+# Requested global variable
+# Need to fill by caller self or call this script as main function.
+#
+COMMAND_DICT    : dict = dict ()
+MAPPING_DICT    : dict = dict ()
+BLD_CMD_FMP_DICT: dict = dict ()
+ARGS_HELPER_DICT: dict = dict ()
 
 def PrintHelper () -> bool:
     """ Print the correspond argument helper for build command.
@@ -130,6 +140,33 @@ def IsFwBuildRequired (DeviceName: str) -> bool:
 
     return IsRequired
 
+def IsFwBuildEnabled (DeviceName: str) -> bool:
+    """ Check if the firmware build is enabled.
+
+    Args:
+        DeviceName (str):
+            The FMP device instance name.
+            (Should be defined within the FmpInstance object itself)
+
+    Raises:
+        TypeError:
+            DeviceName is not str type.
+
+    Returns:
+        bool:
+            True  - Input firmware instance is enabled.
+            False - Input firmware instance is disabled.
+    """
+    if not isinstance (DeviceName, str):
+        raise TypeError ('Device name should be str type.')
+
+    BuildCmd: str = MAPPING_DICT[DeviceName]
+
+    if COMMAND_DICT[BuildCmd] is None:
+        return False
+
+    return True
+
 def IsIfwiDecomposeRequired () -> bool:
     """ Check if need to decompose the IFWI via FIT tool.
 
@@ -186,9 +223,10 @@ def IsFwuGenRequired () -> bool:
           f'Assigned the \"{POSITION_CMD_CSE_REGION}\".'
           'Build for CSME full region.'
           )
-    elif not (\
+    elif not ( \
         IsFwBuildRequired (ME_DEVICE_NAME) or \
-        IsFwBuildRequired (MONOLITHIC_DEVICE_NAME) \
+        IsFwBuildRequired (MONOLITHIC_DEVICE_NAME) or \
+        OPCODE_BUILD_ALL_CAP in gPositionArgv
         ):
         DEBUG (
           DEBUG_INFO,
@@ -199,6 +237,40 @@ def IsFwuGenRequired () -> bool:
         IsRequired = True
 
     return IsRequired
+
+def GetAllCapBuildFwList () -> list:
+    """ Return list of FMP device name for building "allcap" command.
+
+    Args:
+        None
+
+    Raises:
+        None.
+
+    Returns:
+        list:
+            List of FMP device name.
+    """
+    FwBuildList: List[str] = list ()
+    DeviceName : str       = None
+    DeviceInfo : dict      = None
+    IsEnabled  : bool      = None
+    IsIgnored  : bool      = None
+
+    for DeviceName, DeviceInfo in BLD_ALL_CAP_FMP_DEVICE_NAME_DICT.items ():
+        IsEnabled = IsFwBuildEnabled (DeviceName)
+        if not IsEnabled:
+            continue
+
+        IsIgnored = (DeviceInfo[KEY_IS_IMAGE_CHECK] is True) and \
+                    (DeviceInfo[KEY_IMAGE_PATH] is not None) and \
+                    (CheckStringMatch (DeviceInfo[KEY_IMAGE_PATH], IGNORE_KEY))
+        if IsIgnored:
+            continue
+
+        FwBuildList.append (DeviceName)
+
+    return FwBuildList
 
 def GetFwBuildList () -> list:
     """ Get the list of firmware FMP device name to be built.
@@ -227,7 +299,7 @@ def GetFwBuildList () -> list:
     # Standalone, Monolithic and All Capsule build check.
     #
     if OPCODE_BUILD_ALL_CAP in gPositionArgv:
-        FmpDeviceNameList += BLD_ALL_CAP_FMP_DEVICE_NAME_LIST
+        FmpDeviceNameList.extend (GetAllCapBuildFwList ())
 
     #
     # Specific firmware component build OP code check.
@@ -305,7 +377,7 @@ def StandaloneCapBuild (
 
     DEBUG (DEBUG_INFO, f'>> Start to build {FwName} standalone capsule.')
 
-    if COMMAND_DICT[BuildCmd] is None:
+    if not IsFwBuildEnabled (FwName):
         DEBUG (
           DEBUG_ERROR,
           f'{FwName} capsule build is not supported on {PlatformName}.'
@@ -364,7 +436,7 @@ def MonolithicCapBuild (
 
     DEBUG (DEBUG_INFO, f'>> Start to build {FwName} monolithic capsule.')
 
-    if COMMAND_DICT[BuildCmd] is None:
+    if not IsFwBuildEnabled (FwName):
         DEBUG (
           DEBUG_ERROR,
           f'{FwName} capsule build is not supported on {PlatformName}.'
@@ -449,18 +521,43 @@ FW_COMPONENT_DICT: dict = {
         BLD_OP_FLOW_KEY: StandaloneCapBuild,
         FW_FMP_OBJ_KEY : Ucode,
         },
+    #
+    # Device Firmware Capsule
+    #
+    FOXVILLE_DEVICE_NAME: {
+        BLD_OP_FLOW_KEY: StandaloneCapBuild,
+        FW_FMP_OBJ_KEY : Foxville,
+        },
     }
 
 #
 # Build command with 'allcap'.
 #
-BLD_ALL_CAP_FMP_DEVICE_NAME_LIST: list = [
-    BIOS_DEVICE_NAME,
-    EC_DEVICE_NAME,
-    ME_DEVICE_NAME,
-    ISH_PDT_DEVICE_NAME,
-    MONOLITHIC_DEVICE_NAME,
-    ]
+KEY_IS_IMAGE_CHECK: str = 'IsImagePathCheck'
+KEY_IMAGE_PATH    : str = 'ImagePath'
+
+BLD_ALL_CAP_FMP_DEVICE_NAME_DICT: dict = {
+    BIOS_DEVICE_NAME      : {
+        KEY_IS_IMAGE_CHECK: True,
+        KEY_IMAGE_PATH    : gKeywordArgv.get (KEYWORD_CMD_BIOS_IMG, None),
+        },
+    EC_DEVICE_NAME        : {
+        KEY_IS_IMAGE_CHECK: True,
+        KEY_IMAGE_PATH    : gKeywordArgv.get (KEYWORD_CMD_EC_IMG, None),
+        },
+    ME_DEVICE_NAME        : {
+        KEY_IS_IMAGE_CHECK: True,
+        KEY_IMAGE_PATH    : gKeywordArgv.get (KEYWORD_CMD_ME_IMG, None),
+        },
+    ISH_PDT_DEVICE_NAME   : {
+        KEY_IS_IMAGE_CHECK: True,
+        KEY_IMAGE_PATH    : gKeywordArgv.get (KEYWORD_CMD_ISH_PDT_IMG, None),
+        },
+    MONOLITHIC_DEVICE_NAME: {
+        KEY_IS_IMAGE_CHECK: False,
+        KEY_IMAGE_PATH    : None,
+        }
+    }
 
 ########################################################################
 #                       FmpCapsuleGen Main Script                      #

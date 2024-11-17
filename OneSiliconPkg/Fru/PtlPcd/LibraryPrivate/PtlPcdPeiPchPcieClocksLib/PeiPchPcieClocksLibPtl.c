@@ -38,6 +38,7 @@
 #include <Library/GpioHelpersLib.h>
 #include <Library/P2SbSocLib.h>
 #include <PcdSbPortIds.h>
+#include <Library/Ptl/PcdInfoLib/PtlPcdInfoLib.h>
 
 
 /**
@@ -211,10 +212,66 @@ EnableClkReq (
   if (Status == EFI_SUCCESS) {
     ClkReqPad = PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_PCIE_SRCCLKREQ (ClkReqNumber), GpioPinMuxValue);
     PadConfig.Direction   = GpioV2DirNone;
-    PadConfig.ResetConfig = GpioV2ResetHostDeep;
+    PadConfig.ResetConfig = GpioV2ResetHost;
     GpioServices->ConfigurePad (GpioServices, ClkReqPad, &PadConfig);
     DEBUG ((DEBUG_INFO, "Enabling CLKREQ%d ClkReqPad %0x\n", ClkReqNumber, ClkReqPad));
   }
+
+  return EFI_SUCCESS;
+}
+
+/**
+  Programs PadRstCfg for Gpio CLK REQ not assigned pin for given PCIe port
+  Corresponding GPIO pad PadRstMode is configured into GpioV2ResetHost mode
+  @param[in]  ClockUsage      type and number of PCIe port
+  @retval     EFI_SUCCESS     PadRstMode was successfully enabled
+  @retval     EFI_UNSUPPORTED PadRstMode was not set to given Port
+**/
+EFI_STATUS
+ChangePadRstCfg (
+  PCH_PCIE_CLOCK_USAGE ClockUsage
+  )
+{
+  EFI_STATUS      Status;
+  UINT32          ClkNumber;
+  UINT32          ClkReqNumber;
+  UINT32          GpioPinMuxValue;
+  GPIOV2_PAD      ClkReqPad;
+  GPIOV2_CONFIG   PadConfig;
+  GPIOV2_SERVICES *GpioServices;
+
+  if (GpioOverrideLevel1Enabled ()) {
+    return EFI_SUCCESS;
+  }
+
+  Status = GpioV2GetAccess (GPIO_HID_PTL_PCD_P, 0, &GpioServices);
+
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: [GPIOV2]: retrieving GpioServices(%a, %d) failed (Status: %d)\n", __FUNCTION__, GPIO_HID_PTL_PCD_P, 0, Status));
+    ASSERT (FALSE);
+    return EFI_NOT_FOUND;
+  }
+
+  ClkNumber = ClockUsageToClockNumber (GetClocksPolicy (), ClockUsage);
+  if (ClkNumber == PCH_PCIE_NO_SUCH_CLOCK) {
+    return EFI_UNSUPPORTED;
+  }
+  ClkReqNumber = ClockNumberToClkReqNumber (GetClocksPolicy (), ClkNumber);
+  if (ClkReqNumber == PCH_PCIE_NO_SUCH_CLOCK || ClkReqNumber >= GetPchMaxPcieClockReqNum ()) {
+    return EFI_UNSUPPORTED;
+  }
+  //
+  // Get Gpio Pin Mux Value
+  //
+  GpioPinMuxValue = ClockNumberToClkReqGpioPinMux (GetClocksPolicy (), ClkNumber);
+
+  ZeroMem (&PadConfig, sizeof (PadConfig));
+
+  ClkReqPad = PtlPcdGpioGetNativePadByFunctionAndPinMux (GpioServices, GPIOV2_SIGNAL_PCIE_SRCCLKREQ (ClkReqNumber), GpioPinMuxValue);
+  PadConfig.ResetConfig = GpioV2ResetHost;
+  GpioServices->ConfigurePad (GpioServices, ClkReqPad, &PadConfig);
+  DEBUG ((DEBUG_INFO, "Configure PadRstCfg on CLKREQ%d ClkReqPad %0x\n", ClkReqNumber, ClkReqPad));
 
   return EFI_SUCCESS;
 }

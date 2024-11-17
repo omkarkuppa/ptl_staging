@@ -33,9 +33,9 @@
 # module statements.
 #
 ################################################################################
-!if gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1
-  INF FspWrapperFeaturePkg/FspWrapperExtractGuidedPeim/FspWrapperExtractGuidedPeim.inf
-!endif #PcdFspModeSelection
+
+INF FspWrapperFeaturePkg/FspWrapperVerifyFsps/FspWrapperVerifyFsps.inf
+
 INF  FspWrapperFeaturePkg/FspWrapperPeim/FspWrapperPeim.inf
 !if gSiPkgTokenSpaceGuid.PcdFspVEnable == TRUE
   INF FspWrapperFeaturePkg/FspValidation/FspVPhatUpdate/FspVPhatUpdate.inf

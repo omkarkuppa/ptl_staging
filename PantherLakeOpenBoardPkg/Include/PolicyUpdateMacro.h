@@ -41,39 +41,39 @@
 #undef OR_POLICY
 #endif
 
-#define UPDATE_POLICY_V2(UpdField, ConfigField, Value)  UpdField = Value;
-#define COPY_POLICY_V2(UpdField, ConfigField, Value, Size)  CopyMem (UpdField, Value, Size);
-#define GET_POLICY_V2(UpdField, ConfigField, Value)  Value = UpdField;
-#define AND_POLICY_V2(UpdField, ConfigField, Value)  UpdField &= Value;
-#define OR_POLICY_V2(UpdField, ConfigField, Value)  UpdField |= Value;
+#define UPDATE_POLICY(UpdField, ConfigField, Value)  UpdField = Value;
+#define COPY_POLICY(UpdField, ConfigField, Value, Size)  CopyMem (UpdField, Value, Size);
+#define GET_POLICY(UpdField, ConfigField, Value)  Value = UpdField;
+#define AND_POLICY(UpdField, ConfigField, Value)  UpdField &= Value;
+#define OR_POLICY(UpdField, ConfigField, Value)  UpdField |= Value;
 //
 // Compare Policy Default and Setup Default when FirstBoot and RvpSupport
 //
 #if ((!defined(MDEPKG_NDEBUG)))
-#define POLICY_DEBUG_WARNING_V2(ConfigField, SetupField)  {\
+#define POLICY_DEBUG_WARNING(ConfigField, SetupField)  {\
   DEBUG ((DEBUG_INFO, ""#ConfigField"= 0x%x mismatch with "#SetupField"= 0x%x\n", ConfigField, SetupField));\
 }
 
-#define COMPARE_AND_UPDATE_POLICY_V2(UpdField, ConfigField, Value) {\
+#define COMPARE_AND_UPDATE_POLICY(UpdField, ConfigField, Value) {\
   if ((ConfigField != Value)) {\
-    POLICY_DEBUG_WARNING_V2(UpdField, Value);\
+    POLICY_DEBUG_WARNING(UpdField, Value);\
   }\
-  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+  UPDATE_POLICY(UpdField, ConfigField, Value);\
 }
 
-#define COMPARE_UPDATE_POLICY_ARRAY_V2(UpdField, ConfigField, Value, ArrayIndex) {\
+#define COMPARE_UPDATE_POLICY_ARRAY(UpdField, ConfigField, Value, ArrayIndex) {\
   if ((ConfigField != Value) ) {\
-    POLICY_DEBUG_WARNING_V2(UpdField, Value);\
+    POLICY_DEBUG_WARNING(UpdField, Value);\
     DEBUG ((DEBUG_INFO, "Index= 0x%x\n", ArrayIndex));\
   }\
-  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+  UPDATE_POLICY(UpdField, ConfigField, Value);\
 }
 #else
-#define COMPARE_AND_UPDATE_POLICY_V2(UpdField, ConfigField, Value) {\
-  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+#define COMPARE_AND_UPDATE_POLICY(UpdField, ConfigField, Value) {\
+  UPDATE_POLICY(UpdField, ConfigField, Value);\
 }
-#define COMPARE_UPDATE_POLICY_ARRAY_V2(UpdField, ConfigField, Value, ArrayIndex) {\
-  UPDATE_POLICY_V2(UpdField, ConfigField, Value);\
+#define COMPARE_UPDATE_POLICY_ARRAY(UpdField, ConfigField, Value, ArrayIndex) {\
+  UPDATE_POLICY(UpdField, ConfigField, Value);\
 }
 #endif
 

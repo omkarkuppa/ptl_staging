@@ -51,3 +51,8 @@
   BaseMemoryLib
   BaseCryptLib
   FspVerificationLib
+  FspMeasurementLib
+  IoLib
+
+[Pcd]
+  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase           ## CONSUMES

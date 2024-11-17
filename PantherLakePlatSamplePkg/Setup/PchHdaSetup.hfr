@@ -347,6 +347,19 @@
       option text = STRING_TOKEN(STR_PCH_HDA_IDISP_16T_MODE), value = 4, flags = RESET_REQUIRED;
     endoneof;
 
+    text
+       help   = STRING_TOKEN(STR_HDAUDIO_SNDW_ADV_CONFIGURATION_TITLE),
+       text   = STRING_TOKEN(STR_HDAUDIO_SNDW_ADV_CONFIGURATION_TITLE),
+       flags  = 0,
+       key    = 0;
+
+    oneof varid  = PCH_SETUP.PchHdaSndwClockSrcSelect,
+      prompt   = STRING_TOKEN(STR_HDAUDIO_SNDW_CLK_SRC_SELECT_PROMPT),
+      help     = STRING_TOKEN(STR_HDAUDIO_SNDW_CLK_SRC_SELECT_HELP),
+      option text = STRING_TOKEN(STR_HDAUDIO_SNDW_CLK_SRC_SELECT_XTAL), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_HDAUDIO_SNDW_CLK_SRC_SELECT_APLL), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+
     goto PCH_HDAUDIO_SNDW0_FORM_ID,
       prompt = STRING_TOKEN(STR_PCH_HDA_SNDW0_CONFIGURATION_PROMPT),
       help   = STRING_TOKEN(STR_PCH_HDA_SNDW_CONFIGURATION_HELP);
@@ -881,7 +894,7 @@
         help        = STRING_TOKEN(STR_HDAUDIO_MIC_PRIVACY_TIMEOUT_HELP),
         flags       = RESET_REQUIRED | DISPLAY_UINT_DEC,
         minimum     = 0,
-        maximum     = 0x7FF,
+        maximum     = 0x7CF,
         step        = 1,
         default     = 0x28,
       endnumeric;

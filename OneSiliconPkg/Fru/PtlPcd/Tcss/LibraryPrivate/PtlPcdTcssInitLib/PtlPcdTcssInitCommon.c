@@ -558,6 +558,8 @@ PcieRpInstOnCreate (
       RootPort->PcieRpConfig.NonSnoopLatencyOverrideValue      = PcieRpConfig->NonSnoopLatencyOverrideValue;
       RootPort->PcieRpConfig.ForceLtrOverride                  = PcieRpConfig->ForceLtrOverride;
       RootPort->PcieRpConfig.LtrConfigLock                     = PcieRpConfig->LtrConfigLock;
+      RootPort->PcieRpConfig.LtrMaxSnoopLatency                = PcieRpConfig->LtrMaxSnoopLatency;
+      RootPort->PcieRpConfig.LtrMaxNoSnoopLatency              = PcieRpConfig->LtrMaxNoSnoopLatency;
     }
   }
 }

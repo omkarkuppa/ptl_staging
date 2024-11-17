@@ -766,9 +766,10 @@
     prompt      = STRING_TOKEN(STR_MPDT_SUPPORT_PROMPT),
     help        = STRING_TOKEN(STR_MPDT_SUPPORT_HELP),
     option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | RESET_REQUIRED;
-    option text = STRING_TOKEN(STR_SENSOR_BOM1), value = 1, flags = RESET_REQUIRED;
-    option text = STRING_TOKEN(STR_SENSOR_BOM2), value = 2, flags = RESET_REQUIRED;
-    option text = STRING_TOKEN(STR_SENSOR_BOM1_WITH_COMPANION_CHIP), value = 3, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_BOM1_SENSOR), value = 1, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_BOM2_SENSOR), value = 2, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_CVS_AIC_ONLY), value = 3, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_BOM1_SENSOR_WITH_CVS_AIC), value = 4, flags = RESET_REQUIRED;
   endoneof;
 
    oneof varid    = SETUP_DATA.SkipObbHashVerification,
@@ -978,7 +979,7 @@
               minimum     = 0,
               maximum     = 15000,
               step        = 1,
-              default     = 5000,
+              default     = 500,
             endnumeric;
 
             oneof varid   = SETUP_DATA.DTbtRtd3ClkReq,
@@ -1153,25 +1154,15 @@
         prompt = STRING_TOKEN(STR_TBT_FORM),
         help   = STRING_TOKEN(STR_TBT_FORM_HELP);
 
-      //
-      // PD0
-      //
-      suppressif NOT ideqval SETUP_DATA.UsbCPdNumber > 0;
+      suppressif ideqval SETUP_DATA.UsbCPdSupportBitmap == 0;
         SEPARATOR
         SUBTITLE(STRING_TOKEN(STR_PD_INFORMATION))
-
-      text
-        help  = STRING_TOKEN(STR_PD0_VERSION_HELP),
-        text  = STRING_TOKEN(STR_PD0_VERSION_NAME),
-        text  = STRING_TOKEN(STR_PD0_VERSION_VALUE),
-        flags = 0,
-        key   = 0;
       endif;
 
       //
       // PD1
       //
-      suppressif NOT ideqval SETUP_DATA.UsbCPdNumber > 1;
+      suppressif (get(SETUP_DATA.UsbCPdSupportBitmap) & BIT0) == 0;
         text
           help  = STRING_TOKEN(STR_PD1_VERSION_HELP),
           text  = STRING_TOKEN(STR_PD1_VERSION_NAME),
@@ -1183,11 +1174,35 @@
       //
       // PD2
       //
-      suppressif NOT ideqval SETUP_DATA.UsbCPdNumber > 2;
+      suppressif (get(SETUP_DATA.UsbCPdSupportBitmap) & BIT1) == 0;
         text
           help  = STRING_TOKEN(STR_PD2_VERSION_HELP),
           text  = STRING_TOKEN(STR_PD2_VERSION_NAME),
           text  = STRING_TOKEN(STR_PD2_VERSION_VALUE),
+          flags = 0,
+          key   = 0;
+      endif;
+
+      //
+      // PD3
+      //
+      suppressif (get(SETUP_DATA.UsbCPdSupportBitmap) & BIT2) == 0;
+        text
+          help  = STRING_TOKEN(STR_PD3_VERSION_HELP),
+          text  = STRING_TOKEN(STR_PD3_VERSION_NAME),
+          text  = STRING_TOKEN(STR_PD3_VERSION_VALUE),
+          flags = 0,
+          key   = 0;
+      endif;
+
+      //
+      // PD4
+      //
+      suppressif (get(SETUP_DATA.UsbCPdSupportBitmap) & BIT3) == 0;
+        text
+          help  = STRING_TOKEN(STR_PD4_VERSION_HELP),
+          text  = STRING_TOKEN(STR_PD4_VERSION_NAME),
+          text  = STRING_TOKEN(STR_PD4_VERSION_VALUE),
           flags = 0,
           key   = 0;
       endif;
@@ -1220,6 +1235,15 @@
           help  = STRING_TOKEN(STR_RETIMER2_VERSION_HELP),
           text  = STRING_TOKEN(STR_RETIMER2_VERSION_NAME),
           text  = STRING_TOKEN(STR_RETIMER2_VERSION_VALUE),
+          flags = 0,
+          key   = 0;
+      endif;
+
+      suppressif NOT ideqval SETUP_DATA.UsbCRetimerNumber > 3;
+        text
+          help  = STRING_TOKEN(STR_RETIMER3_VERSION_HELP),
+          text  = STRING_TOKEN(STR_RETIMER3_VERSION_NAME),
+          text  = STRING_TOKEN(STR_RETIMER3_VERSION_VALUE),
           flags = 0,
           key   = 0;
       endif;

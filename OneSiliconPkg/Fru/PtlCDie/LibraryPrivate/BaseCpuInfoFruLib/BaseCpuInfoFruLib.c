@@ -112,7 +112,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED PPM_PLX_PROFILE mWclPlx[] = {
   // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow
   // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1
   {  1500,     0,     0,        0,        0,        0,        0,       28},  // ProfileWclU15W10
-  {  1500,  3500,  3500,     3500,     3500,     3500,     4400,       28}   // ProfileWclU15W20
+  {  1500,  3500,  3500,     3500,     3500,     4400,        0,       28}   // ProfileWclU15W20
 };
 //
 // Catch the mismatch of number of profile enum IDs and number of profiles.
@@ -638,17 +638,16 @@ GetCpuSkuIdentifier (
         ///
         /// WCL U
         ///
-        case WCL_SA_DEVICE_ID_1C_4LP:
-          if (PackageTdp == CPU_TDP_15_WATTS) {
-            DEBUG ((DEBUG_INFO, "CPU Identifier = WCL Pkg-U 1+0 15W\n"));
-            CpuIdentifier = EnumWclU15Watt10CpuId;
-          }
-          break;
-
         case WCL_SA_DEVICE_ID_2C_4LP:
           if (PackageTdp == CPU_TDP_15_WATTS) {
             DEBUG ((DEBUG_INFO, "CPU Identifier = WCL Pkg-U 2+0 15W\n"));
             CpuIdentifier = EnumWclU15Watt20CpuId;
+          }
+          break;
+        case WCL_SA_DEVICE_ID_1C_4LP:
+          if (PackageTdp == CPU_TDP_15_WATTS) {
+            DEBUG ((DEBUG_INFO, "CPU Identifier = WCL Pkg-U 1+0 15W\n"));
+            CpuIdentifier = EnumWclU15Watt10CpuId;
           }
           break;
         default:

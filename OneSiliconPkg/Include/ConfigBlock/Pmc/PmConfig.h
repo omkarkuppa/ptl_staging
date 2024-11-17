@@ -435,7 +435,8 @@ typedef struct {
     <b>0: Disable</b>, 1: Enable
   **/
   UINT8                   GlobalResetMasksOverride;
-  UINT8                   Rsvd1[3];             ///< Reserved bytes
+  UINT8                   DtrSci;
+  UINT8                   Rsvd1[2];             ///< Reserved bytes
   /*
     Mask for enabling Global Reset Trigger prevention
   */

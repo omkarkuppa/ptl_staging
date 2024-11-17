@@ -26,8 +26,8 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Uefi.h>
-  #include <Library/UefiLib.h>
+#include <Uefi.h>
+#include <Library/UefiLib.h>
 }
 
 struct MockTbtNvmDrvUtils {
@@ -38,13 +38,11 @@ struct MockTbtNvmDrvUtils {
     TbtNvmDrvAllocateMem,
     (IN UINTN  AllocationSize)
     );
-
   MOCK_FUNCTION_DECLARATION (
     VOID,
     TbtNvmDrvDeAllocateMem,
-    (IN VOID*  Mem)
+    (IN VOID *Mem)
     );
-
   MOCK_FUNCTION_DECLARATION (
     VOID,
     TbtNvmDrvSwapEndianess,

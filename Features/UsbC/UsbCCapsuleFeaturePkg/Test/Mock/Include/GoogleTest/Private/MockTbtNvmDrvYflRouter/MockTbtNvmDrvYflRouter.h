@@ -26,10 +26,10 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Uefi.h>
-  #include <Library/UefiLib.h>
-  #include <Protocol/PciIo.h>
-  #include <Library/TbtNvmDrvUtils.h>
+#include <Uefi.h>
+#include <Library/UefiLib.h>
+#include <Protocol/PciIo.h>
+#include <Library/TbtNvmDrvUtils.h>
 }
 
 struct MockTbtNvmDrvYflRouter {

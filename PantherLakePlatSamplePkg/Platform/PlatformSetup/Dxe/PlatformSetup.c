@@ -384,7 +384,6 @@ CpuSetupInitCallback (
   //
   SetupCpuFeatures.CxAvailable = 0;
   SetupCpuFeatures.C1Available = 0;
-  SetupCpuFeatures.C1EAvailable = 0;
   SetupCpuFeatures.C3Available = 0;
   SetupCpuFeatures.C6Available = 0;
   SetupCpuFeatures.C7Available = 0;
@@ -402,9 +401,6 @@ CpuSetupInitCallback (
     //}
     if (MonitorMwaitEdx.Bits.C1States) {
       SetupCpuFeatures.C1Available = 1;
-      if ((MonitorMwaitEdx.Bits.C1States) >= ENHANCED_CSTATE_SUPPORTED) {
-        SetupCpuFeatures.C1EAvailable = 1;
-      }
     }
     if (MonitorMwaitEdx.Bits.C2States) {
       SetupCpuFeatures.C3Available = 1;

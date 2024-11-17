@@ -127,4 +127,20 @@ MrcLpMode4Enable (
   IN OUT MrcParameters *const MrcData
   );
 
+/**
+  Configures DDR5 MC Echo Mask.
+  This function expects the caller to flush the register cache.
+
+  @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - Current Controller
+  @param[in] Channel    - Current Channel
+
+**/
+VOID
+MrcConfigureDdr5EchoMask (
+  IN MrcParameters *MrcData,
+  IN UINT32         Controller,
+  IN UINT32         Channel
+  );
+
 #endif // __MrcMcConfiguration_h__

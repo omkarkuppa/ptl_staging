@@ -1,5 +1,5 @@
 ## @file
-# FmpDeviceLib instance TO support Foxville I225/I226 update
+#  Library instance for FmpDeviceLib to support Foxville update in DXE.
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -15,27 +15,27 @@
 #  This software and the related documents are provided as is, with no
 #  express or implied warranties, other than those that are expressly stated
 #  in the License.
-
+#
 #  @par Specification Reference:
 #  Foxville Ethernet Controller External Architecture Specification, version 0.99
-###
+#
+##
 
 [Defines]
-  INF_VERSION                    = 0x0001001B
-  BASE_NAME                      = FmpDeviceLibFoxville
-  FILE_GUID                      = 30F75B56-0FF5-46D8-9FF2-0A81D50A5533
-  MODULE_TYPE                    = DXE_DRIVER
-  VERSION_STRING                 = 1.0
-  LIBRARY_CLASS                  = FmpDeviceLib|DXE_DRIVER
-
-#
-# The following information is for reference only and not required by the build tools.
-#
-#  VALID_ARCHITECTURES           = IA32 X64
-#
+  INF_VERSION    = 0x0001001B
+  BASE_NAME      = FmpDeviceLibFoxville
+  FILE_GUID      = 30F75B56-0FF5-46D8-9FF2-0A81D50A5533
+  MODULE_TYPE    = DXE_DRIVER
+  VERSION_STRING = 1.0
+  LIBRARY_CLASS  = FmpDeviceLib | DXE_DRIVER
 
 [Sources]
   FmpDeviceLibFoxville.c
+  FoxvilleDeviceLib.h
+  FoxvilleNvmMap.h
+  FoxvilleInitI225.c
+  I225.c
+  I225.h
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -49,14 +49,9 @@
   BaseMemoryLib
   UefiLib
   MemoryAllocationLib
+  PrintLib
   UefiBootServicesTableLib
-  FoxvilleDeviceLib
 
 [Protocols]
-  gEfiPciIoProtocolGuid                                                ## CONSUMES
-
-[Pcd]
-  gCapsuleFeaturePkgTokenSpaceGuid.PcdSystemFirmwareFmpSupportedMode   ## CONSUMES
-
-[Depex]
-  gEfiPciIoProtocolGuid
+  gEfiPciIoProtocolGuid                   ## CONSUMES
+  gEfiPciEnumerationCompleteProtocolGuid  ## CONSUMES

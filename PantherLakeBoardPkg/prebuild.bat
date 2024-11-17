@@ -121,9 +121,6 @@ if %WORKSPACE:~-1%==\ (
 
 @set SCRIPT_ERROR=0
 
-@if %IBBSIGN% EQU TRUE (
-  goto Toolchains
-)
 
 @if not exist %WORKSPACE_CONF% mkdir %WORKSPACE_CONF%
 
@@ -136,6 +133,24 @@ if %WORKSPACE:~-1%==\ (
     set SCRIPT_ERROR=1
     goto :EndPreBuild
   )
+)
+
+@echo Set basic environment.
+@echo.
+@echo Prebuild:  Run edksetup.bat batch file.
+@echo.
+
+echo %CD%
+cd %WORKSPACE_CORE%
+echo %CD%
+@call edksetup.bat Rebuild VS2019
+@if %ERRORLEVEL% NEQ 0 (
+  @echo !!! ERROR !!! Failed to run edksetup.bat Rebuild. !!!
+  set SCRIPT_ERROR=1
+  goto :EndPreBuild
+)
+@if %IBBSIGN% EQU TRUE (
+   goto Toolchains
 )
 
 @if %CATALOG_RELEASE% EQU TRUE (
@@ -188,20 +203,7 @@ if %WORKSPACE:~-1%==\ (
   goto :EndPreBuild
 )
 
-@echo Set basic environment.
-@echo.
-@echo Prebuild:  Run edksetup.bat batch file.
-@echo.
 
-echo %CD%
-cd %WORKSPACE_CORE%
-echo %CD%
-@call edksetup.bat Rebuild VS2019
-@if %ERRORLEVEL% NEQ 0 (
-  @echo !!! ERROR !!! Failed to run edksetup.bat Rebuild. !!!
-  set SCRIPT_ERROR=1
-  goto :EndPreBuild
-)
 
 @set TARGET_PLATFORM=PantherLake
 @set TARGET_PLATFORM_SHORT=PTL

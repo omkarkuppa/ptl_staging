@@ -507,7 +507,7 @@
   //
   // Touch pad
   //
-    {GPIOV2_PTL_PCD_XXGPP_F_18, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirInInv, GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic, GpioV2ResetHost,     GpioV2TermNone,     GpioV2Unlock,  GpioV2Lock}},  // GPP_F18_THC1_SPI2_INT_N
+    {GPIOV2_PTL_PCD_XXGPP_F_18, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirInInv, GpioV2StateDefault, GpioV2IntEdge, GpioV2ResetHost,     GpioV2TermNone,     GpioV2Unlock,  GpioV2Lock}},  // GPP_F18_THC1_SPI2_INT_N
 
   //
   // TCSS
@@ -766,9 +766,6 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cController|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cSlaveAddress|*|0x0
-  gPmaxFeaturePkgTokenSpaceGuid.VpdPcdPmaxDevices|*|{CODE(
-   { 0x0 }
-  )}
 
 [PcdsDynamicHii.common.SkuIdPtlHLp5Gcs2.STANDARD]
   gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[0]|0x2                                    # Connected device

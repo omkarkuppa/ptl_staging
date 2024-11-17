@@ -26,11 +26,14 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Uefi.h>
-  #include <Library/UefiLib.h>
-  #include <Protocol/TbtNvmDrvHrProtocol.h>
-  #include <Protocol/TbtNvmDrvDevice.h>
-  #include <TbtNvmRetimer.h>
+#include <Uefi.h>
+#include <Library/UefiLib.h>
+#include <Protocol/TbtNvmDrvHrProtocol.h>
+#include <Protocol/TbtNvmDrvDevice.h>
+#include <TbtNvmRetimer.h>
+#include <Library/TbtNvmDrvHr.h>
+
+extern TBT_HOST_ROUTER  LocalHrPtr;
 }
 
 struct MockTbtNvmDrvHr {
@@ -38,7 +41,7 @@ struct MockTbtNvmDrvHr {
 
   MOCK_FUNCTION_DECLARATION (
     TBT_STATUS,
-    TbtNvmDrvHrWriteCioReg,
+    TbtNvmDrvHr_WriteCioReg,
     (IN TBT_HOST_ROUTER *This,
      IN UINT8           ConfigurationSpace,
      IN UINT8           Adapter,
@@ -46,29 +49,18 @@ struct MockTbtNvmDrvHr {
      IN UINT8           Length,
      IN UINT32          *DataPtr)
     );
-
   MOCK_FUNCTION_DECLARATION (
     TBT_STATUS,
-    TbtNvmDrvHrReadCioDevReg,
+    TbtNvmDrvHr_ReadCioDevReg,
     (IN  TBT_HOST_ROUTER *This,
      IN  UINT8           ConfigurationSpace,
      IN  UINT8           Adapter,
      IN  UINT16          RegNum,
      OUT UINT32          *DataPtr)
     );
-
-  MOCK_FUNCTION_DECLARATION (
-    TBT_HOST_ROUTER *,
-    TbtNvmDrvHrCtor,
-    (IN UINT8           FirmwareType,
-     IN PCIE_RP_CONFIG  *PcieRpConfig,
-     IN PCIE_BDF        *TbtDmaPcieBdf,
-     IN FORCE_PWR_HR    ForcePwrFunc OPTIONAL)
-    );
-
   MOCK_FUNCTION_DECLARATION (
     VOID,
-    TbtNvmDrvHrDtor,
+    TbtNvmDrvHr_Dtor,
     (IN TBT_HOST_ROUTER *This)
     );
 };

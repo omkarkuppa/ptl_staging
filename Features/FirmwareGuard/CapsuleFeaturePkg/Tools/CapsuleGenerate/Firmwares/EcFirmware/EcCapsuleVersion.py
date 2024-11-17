@@ -43,8 +43,8 @@ from CapsuleCommon import *
 
 from CapsuleGenerate.Model.CapsuleVersion import *
 
-EC_VERSION_1_REGEX: str = '^(\d){1,3}[.](\d){1,3}$'
-EC_VERSION_2_REGEX: str = '^(\d){1,3}[.](\d){1,3}[.](\d){1,3}[.](\d){1,3}$'
+EC_VERSION_1_REGEX: str = r'^(\d){1,3}[.](\d){1,3}$'
+EC_VERSION_2_REGEX: str = r'^(\d){1,3}[.](\d){1,3}[.](\d){1,3}[.](\d){1,3}$'
 
 class EcCapsuleVersion (CapsuleVersion):
     def __init__ (

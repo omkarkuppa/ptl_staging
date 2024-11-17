@@ -26,7 +26,14 @@
 #include "MrcDdrIoDefines.h"
 
 extern const INT8 DdrioChDelta[MAX_SYS_CHANNEL];
+extern const INT8 DdrioTxFifoChOffset[MAX_SYS_CHANNEL];
+extern const INT8 DdrioRxFifoChOffset[MAX_SYS_CHANNEL];
 extern const INT8 DdrioChDeltaCccIL[MAX_SYS_CHANNEL];
+extern const UINT8 DDRCCC_ADJ_MAX_SREP_CNT_NIL[MAX_SYS_CHANNEL];
+extern const UINT8 DDRCCC_ADJ_MAX_SREP_CNT_IL[MAX_SYS_CHANNEL];
+extern const UINT8 DDRCCC_MIN_SREP_CNT[MAX_SYS_CHANNEL];
+extern const INT8  DDRCCC_tCL4RXDQFIFORDEN_CH_SREP_IL[MAX_SYS_CHANNEL];
+extern const INT8  DDRCCC_tCL4RXDQFIFORDEN_CH_SREP_NIL[MAX_SYS_CHANNEL];
 
 /// Defines
 #define FREQ_TO_TCK_PS   (2000000)
@@ -374,6 +381,22 @@ TxFifoLimitstCK (
 **/
 MrcStatus
 MrcSetLastCR (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  This function will set the DDRSCRAM_CR_DDRLASTCR_REG and poll for InitComplete bits to be high.
+
+  The periodic Write retraining Override (DDRSCRAM_CR_DDRMISCCONTROL0.WrRetrainOvrd) field is set
+  to 1 before the DDRLASTCR_REG bit is set and is restored after the InitComplete bit is polled high.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus  - mrcDeviceBusy if poll InitComplete hits timeout.
+                     - mrcSuccess otherwise.
+**/
+MrcStatus
+MrcSetLastCrWithWrRetrainOverride (
   IN MrcParameters *const MrcData
   );
 

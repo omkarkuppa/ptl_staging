@@ -183,11 +183,11 @@ MrcGetDdrIoHash (
       break;
 
     case DqsTxEq:
-      HashPtr->Data = DATA0CH0_CR_TXCONTROL0RANK0_dqstxequalization_HSH;
+      HashPtr->Data = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqstx_eqdlycomp_HSH;
       break;
 
     case DqTxEq:
-      HashPtr->Data = DATA0CH0_CR_TXCONTROL0RANK0_DqTxEqualization_HSH;
+      HashPtr->Data = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqtx_eqdelaycomp_HSH;
       break;
 
     case DefDrvEnLow:

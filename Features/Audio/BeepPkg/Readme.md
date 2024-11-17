@@ -87,7 +87,8 @@ Field Name    | Comments
 
 Register Address | Field Name     | Comments
 ---------------- | -------------- | --------
-```0x50```             | Version        | Indicates compliance with a specific SoundWire specification version.</br>b```0011``` => SoundWire v1.2</br>b```0010``` => SoundWire v1.1</br>b```0001``` => SoundWire v1.0
+```0x50``` - 0:3       | UniqueId       | 4-bit field for uniquifying multiple instances of identical parts. Method for generating the value is implementation-defined. Not supported in this version of the driver.
+```0x50``` - 4:7       | Version        | Indicates compliance with a specific SoundWire specification version.</br>b```0011``` => SoundWire v1.2</br>b```0010``` => SoundWire v1.1</br>b```0001``` => SoundWire v1.0
 ```0x51```, ```0x52```       | ManufacturerID | MIPI standard manufacturer code, see [http://mid.mipi.org](http://mid.mipi.org/).
 ```0x53```, ```0x54```       | PartID         | Fields implemented and defined by manufacturer.
 ```0x55```             | Class          | Field reserved for MIPI-defined class encoding.

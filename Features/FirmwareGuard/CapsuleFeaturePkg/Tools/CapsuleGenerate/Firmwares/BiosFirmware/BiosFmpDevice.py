@@ -44,6 +44,7 @@ BIOS_FIRMWARE_CONFIG  : dict = gFmpFirmwareInfo[BIOS_DEVICE_NAME]
 # List of all target BGUP flash region.
 #
 BGUP_REGION_ORDER: List[str] = [
+    BIOS_REGION_OBB1,
     BIOS_REGION_OBB,
     BIOS_REGION_IBBR,
     BIOS_REGION_IBB,
@@ -57,10 +58,12 @@ BIOS_UPDATE_FLASH_ORDER: dict = {
         BIOS_REGION_IBBR,
         BIOS_REGION_IBB,
         BIOS_REGION_OBB,
+        BIOS_REGION_OBB1,
         ],
     BIOS_RESILIENCY_TYPE: [
         BIOS_REGION_IBB,
         BIOS_REGION_OBB,
+        BIOS_REGION_OBB1,
         ],
     }
 

@@ -246,12 +246,13 @@ class ApiFmpCapBuild (object):
         CmdList: List[str] = [
             JoinPath (EDKII_TOOL_PATH, GetGenCapsuleToolPath ()),
             '--encode',
-            '--capflag',    'PersistAcrossReset',
-            '--capflag',    'InitiateReset',
-            '--guid',       f'{self.__FmpInfo[KEY_CAP_CAP_GUID]}',
-            '--fw-version', f'{FormatHex (self.__FmpInfo[KEY_CAP_VER])}',
-            '--lsv',        f'{FormatHex (self.__FmpInfo[KEY_CAP_LSV])}',
-            '-o',           f'{self.__CapFilePath}',
+            '--capflag',        'PersistAcrossReset',
+            '--capflag',        'InitiateReset',
+            '--hash-algorithm', f'{CAPSULE_HASH_ALGORITHM}',
+            '--guid',           f'{self.__FmpInfo[KEY_CAP_CAP_GUID]}',
+            '--fw-version',     f'{FormatHex (self.__FmpInfo[KEY_CAP_VER])}',
+            '--lsv',            f'{FormatHex (self.__FmpInfo[KEY_CAP_LSV])}',
+            '-o',               f'{self.__CapFilePath}',
             f'{CAP_PAYLOAD_FILE_PATH}',
             ]
         CmdList += SignCertObj.Command
@@ -345,7 +346,9 @@ class ApiFmpCapBuild (object):
             '-o',    f'{OutputPath}',
             ]
 
-        ExitCode, _, _ = ExecPythonCmd (CmdList)
+        ExitCode, _, _ = ExecPythonCmd (CmdList, IsException = False)
+        if (ExitCode != STATUS_SUCCESS):
+            raise ErrorException (f'Failed to generate Windows INF file.')
 
         return ExitCode
 
@@ -368,7 +371,9 @@ class ApiFmpCapBuild (object):
             '-i', f'{UpdatePkgPath}',
             ]
 
-        ExitCode, _, _ = ExecPythonCmd (CmdList)
+        ExitCode, _, _ = ExecPythonCmd (CmdList, IsException = False)
+        if (ExitCode != STATUS_SUCCESS):
+            raise ErrorException (f'Failed to generate Windows CAT file.')
 
         return ExitCode
 
@@ -404,7 +409,9 @@ class ApiFmpCapBuild (object):
             '-p', f'{WinDriverUpdatePkgPfxSignKeyPath}',
             ]
 
-        ExitCode, _, _ = ExecPythonCmd (CmdList)
+        ExitCode, _, _ = ExecPythonCmd (CmdList, IsException = False)
+        if (ExitCode != STATUS_SUCCESS):
+            raise ErrorException (f'Failed to sign Windows CAT file.')
 
         return ExitCode
 

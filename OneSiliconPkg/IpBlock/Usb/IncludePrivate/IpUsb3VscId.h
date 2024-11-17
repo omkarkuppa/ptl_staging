@@ -30,6 +30,7 @@ typedef enum {
   IpUsb3VscIdSocCreditExchangeTime, // SOC Credit Exchange Time
   IpUsb3VscIdUsb2RfPowerGating,     // USB2 RF Power Gating
   IpUsb3VscIdBackToBackWrSupport,   // xHCI USB2 Debug Mode Back to Back WR support
+  IpUsb3VscIdCameraFlicker,         // USB Camera Flicker
   IpUsb3VscIdLast
 } IP_USB3_VSC_ID;
 

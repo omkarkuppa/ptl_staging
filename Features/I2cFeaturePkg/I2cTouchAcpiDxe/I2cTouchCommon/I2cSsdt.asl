@@ -28,6 +28,8 @@ DefinitionBlock (
     )
 {
   External (\ADBG,MethodObj)
+  External (TPLM)
+  External (TPDM)
   Include("I2cDevices.asl")
   Include ("I2cRtd3Buffer.asl")
   Include ("I2cRtd3.asl")

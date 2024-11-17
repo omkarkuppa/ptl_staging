@@ -83,6 +83,8 @@
 #define B_XHCI_CFG_PCE_REG_D3_HOT_EN        BIT2
 #define R_XHCI_CFG_HSCFG2                   0xA4    ///< High Speed Configuration 2
 #define R_XHCI_CFG_SSCFG1                   0xA8    ///< Super Speed Configuration 1
+#define B_XHCI_CFG_SSCFG1_SSOAFM            BIT11
+#define B_XHCI_CFG_SSCFG1_SSIAFM            BIT10
 #define R_XHCI_CFG_HSCFG1                   0xAC    ///< High Speed Configuration 1
 #define B_XHCI_CFG_HSCFG1_HSAAPE            BIT9
 #define R_XHCI_CFG_XHCC3                    0xFC    ///< XHC System Bus Configuration 3
@@ -188,7 +190,7 @@
 #define B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS    BIT1
 #define B_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK              (BIT21 | BIT20 | BIT19 | BIT18 | BIT17 | BIT16)
 #define N_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK              16
-#define V_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK              5
+#define V_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK              1
 #define R_XHCI_MEM_HOST_CTRL_ENG_MISC_REG3      0x82FC
 #define R_XHCI_MEM_GRP0_SAI_WAC_POLICY_LO       0x8308    ///< Group0 SAI Write Access Control Policy Register Low
 #define R_XHCI_MEM_GRP0_SAI_RAC_POLICY_LO       0x8310    ///< Group0 SAI Read Access Control Policy Low
@@ -211,7 +213,9 @@
 #define R_XHCI_MEM_STRAP13_REG                  0x8830    ///< Miscellaneous Strap Register
 #define B_XHCI_MEM_STRAP13_REG_FORCE_P3         BIT2      ///< FORCE_P3
 #define R_XHCI_MEM_HOST_CTRL_SSP_LINK_PORT_REG1      0x8E5C    ///< Dublin HOST_CTRL_SSP_LINK_REG1
-#define R_XHCI_MEM_HOST_CTRL_SSP_LINK_REG2      0x8E68    ///< Dublin HOST_CTRL_SSP_LINK_REG2
+#define R_XHCI_MEM_HOST_CTRL_SSP_LINK_REG2                    0x8E68    ///< Dublin HOST_CTRL_SSP_LINK_REG2
+#define B_XHCI_MEM_HOST_CTRL_SSP_LINK_REG2_CFG_DIS_U2_SS      BIT12     ///< Override to disable U2 for all SS/SSP Ports.
+#define B_XHCI_MEM_HOST_CTRL_SSP_LINK_REG2_CFG_DIS_U1_SS      BIT13     ///< Override to disable U1 for all SS/SSP Ports.
 #define R_XHCI_MEM_HOST_CTRL_SSP_LFPS_REG4      0x8E7C    ///< Dublin LFPS Register 4
 #define B_XHCI_MEM_HOST_CTRL_SSP_LFPS_REG4_CFG_SCD_LFPS_TIMEOUT   (BIT23 | BIT22 | BIT21 | BIT20 | BIT19 | BIT18 | BIT17)
 #define N_XHCI_MEM_HOST_CTRL_SSP_LFPS_REG4_CFG_SCD_LFPS_TIMEOUT   17

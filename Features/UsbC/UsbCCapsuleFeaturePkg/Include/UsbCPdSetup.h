@@ -31,9 +31,10 @@
 #pragma pack(1)
 
 typedef struct {
-  UINT64  UsbCPd0Version;
   UINT64  UsbCPd1Version;
   UINT64  UsbCPd2Version;
+  UINT64  UsbCPd3Version;
+  UINT64  UsbCPd4Version;
 } USBC_PD_SETUP;
 
 #pragma pack()

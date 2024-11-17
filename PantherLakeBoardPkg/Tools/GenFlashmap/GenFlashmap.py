@@ -102,7 +102,7 @@ class Basemap ():
 
         # This list stores flashmap offset PCD names for NVS region and Payloads management region.
         self.nvs_offset_list = [
-        "gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset",
+        "gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadOffset",
         "gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareOffset",
         "gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingOffset",
         "gMinPlatformPkgTokenSpaceGuid.PcdFlashNvStorageVariableOffset",

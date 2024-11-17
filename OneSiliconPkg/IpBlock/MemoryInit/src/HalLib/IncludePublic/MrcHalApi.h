@@ -283,32 +283,6 @@ MrcGetSetPartitionBlockPiCodeLUT (
 /**
   Top level function used to interact with SOC.
   This function ignores unused parameters in Core MRC to reduce code space.
-  This function is used to access Block set of registers related to DCC, but intended to CCC partitions.
-
-  @param[in]      MrcData        - Pointer to global data structure.
-  @param[in]      BlockIndex     - Which Index of Block to access (Passed on as Lane parameter)
-  @param[in]      FieldIndex     - Which Field to access (Passed on as Rank parameter)
-  @param[in]      PhIndex        - Which Phase to access (Passed on as FreqIndex parameter)
-  @param[in]      Group          - DDRIO group to access.
-  @param[in]      Mode           - Bit-field flags controlling Get/Set.
-  @param[in,out]  Value          - Pointer to value for Get/Set to operate on.  Can be offset or absolute value based on mode.
-
-  @retval MrcStatus
-**/
-MrcStatus
-MrcGetSetCccPartitionBlockPiCodeLUT (
-  IN      MrcParameters *const  MrcData,
-  IN      UINT32                BlockIndex,
-  IN      UINT32                FieldIndex,
-  IN      UINT32                PhIndex,
-  IN      GSM_GT        const   Group,
-  IN      UINT32                Mode,
-  IN OUT  INT64         *const  Value
-  );
-
-/**
-  Top level function used to interact with SOC.
-  This function ignores unused parameters in Core MRC to reduce code space.
   This function is used to access Block set of registers related to DCC
 
   @param[in]      MrcData        - Pointer to global data structure.
@@ -351,6 +325,32 @@ MrcGetSetPartitionBlockIndex (
   IN      UINT32                PartitionBlock,
   IN      UINT32                BlockIndex,
   IN      UINT32        const   Index,
+  IN      GSM_GT        const   Group,
+  IN      UINT32                Mode,
+  IN OUT  INT64         *const  Value
+  );
+
+/**
+  Top level function used to interact with SOC.
+  This function ignores unused parameters in Core MRC to reduce code space.
+  This function is used to access SAGV registers within partitions.
+
+  @param[in]      MrcData        - Pointer to global data structure.
+  @param[in]      PartitionBlock - Which Block set of DCC registers (PLL, PG, VCCCLK) to access (Passed on as Strobe)
+  @param[in]      BlockIndex     - Which Index of Block to access (Passed on as Lane parameter)
+  @param[in]      FreqIndex      - Index supporting multiple operating frequencies
+  @param[in]      Group          - DDRIO group to access.
+  @param[in]      Mode           - Bit-field flags controlling Get/Set.
+  @param[in,out]  Value          - Pointer to value for Get/Set to operate on. Can be offset or absolute value based on mode.
+
+  @return MrcStatus
+**/
+MrcStatus
+MrcGetSetPartitionBlockSagv (
+  IN      MrcParameters *const  MrcData,
+  IN      UINT32                PartitionBlock,
+  IN      UINT32                BlockIndex,
+  IN      UINT32        const   FreqIndex,
   IN      GSM_GT        const   Group,
   IN      UINT32                Mode,
   IN OUT  INT64         *const  Value
@@ -620,6 +620,22 @@ MrcGetDunitSr0OffsetAndMask (
   IN      MrcParameters *const  MrcData,
   IN      UINT32        const   Mptu,
   OUT     UINT64_STRUCT *const  VolatileMask
+  );
+
+/**
+  Get the DUNIT0_CR_D_CR_REF REG offset
+
+  @param[in]      MrcData     - Pointer to global data structure.
+  @param[in]      Mptu        - Mptu number.
+  @param[out]     VolatileMask - Pointer to a volatile mask
+
+  @retval Offset
+**/
+UINT32
+MrcGetDunitRefOffset (
+  IN      MrcParameters *const  MrcData,
+  IN      UINT32        const   Mptu,
+  OUT     UINT64_STRUCT *const  VolatileMask OPTIONAL
   );
 
 #endif // _MrcHalApi_h_

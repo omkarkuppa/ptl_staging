@@ -26,12 +26,14 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Uefi.h>
-  #include <Library/UefiLib.h>
-  #include <Protocol/PciIo.h>
-  #include <Protocol/TbtNvmDrvDmaProtocol.h>
-  #include <Protocol/TbtNvmDrvCioProtocol.h>
-  #include <TbtNvmRetimer.h>
+#include <Uefi.h>
+#include <Library/UefiLib.h>
+#include <Protocol/PciIo.h>
+#include <Protocol/TbtNvmDrvDmaProtocol.h>
+#include <Protocol/TbtNvmDrvCioProtocol.h>
+#include <TbtNvmRetimer.h>
+
+extern TBT_DMA  LocalDmaPtr;
 }
 
 struct MockTbtNvmDrvDma {
@@ -45,7 +47,6 @@ struct MockTbtNvmDrvDma {
      IN UINT16     Length,
      IN UINT8      *Data)
     );
-
   MOCK_FUNCTION_DECLARATION (
     TBT_STATUS,
     TbtNvmDrvRxCfgPkt,
@@ -54,7 +55,6 @@ struct MockTbtNvmDrvDma {
      IN  UINT16       *Length,
      OUT UINT8        *Data)
     );
-
   MOCK_FUNCTION_DECLARATION (
     VOID,
     TbtNvmDrvDmaWriteMmio,
@@ -62,31 +62,21 @@ struct MockTbtNvmDrvDma {
      IN UINT32  RegOffset,
      IN UINT32  Data)
     );
-
   MOCK_FUNCTION_DECLARATION (
     UINT32,
     TbtNvmDrvDmaReadMmio,
     (IN TBT_DMA *This,
      IN UINT32  RegOffset)
     );
-
   MOCK_FUNCTION_DECLARATION (
     VOID,
     TbtNvmDrvDmaDebugPrint,
     (TBT_DMA *This)
     );
-
   MOCK_FUNCTION_DECLARATION (
     VOID,
     TbtNvmDrvDmaDtor,
     (TBT_DMA *This)
-    );
-
-  MOCK_FUNCTION_DECLARATION (
-    TBT_DMA*,
-    TbtNvmDrvDmaCtor,
-    (EFI_PCI_IO_PROTOCOL *PciIoProto,
-     BOOLEAN             *TBTControllerWasPowered)
     );
 };
 

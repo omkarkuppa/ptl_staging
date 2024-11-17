@@ -51,6 +51,7 @@ DefinitionBlock (
 
  External (\_SB.PC0X.IICB, MethodObj)
  External (\_SB.PC0X.VICC, MethodObj)
+ External (\_SB.PC0X.DSCR, MethodObj)
  External (\_SB.PC0X.VPN3, MethodObj)
  External (\_SB.PC0X.LNKC, MethodObj)
  External (\_SB.PC0X.LNKD, MethodObj)
@@ -484,8 +485,11 @@ Scope (\_SB) {
     Method (_DEP, 0, NotSerialized) {  // _DEP: Operation Region Dependencies
          Return (Package () {\_SB.PC0X})
     }
-    If (LNotEqual (C0GP,0)) {
+    If (LOr (LNotEqual (C0GP,0), LNotEqual (\_SB.PC0X.LNKC (_UID), 0))) {
       Method (_CRS, 0x0, NotSerialized) {
+        If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
+          Return (\_SB.PC0X.DSCR (_UID))
+        }
         If (LGreater (C0GP, 0)) {
           Store (PINR (C0P0, C0C0, C0G0), Local0)
         }
@@ -598,8 +602,12 @@ Scope (\_SB) {
     Method (_DEP, 0, NotSerialized) {  // _DEP: Operation Region Dependencies
       Return (Package () {\_SB.PC0X})
     }
-    If (LNotEqual(C1GP,0)) {
+
+    If (LOr (LNotEqual (C1GP,0), LNotEqual (\_SB.PC0X.LNKC (_UID), 0))) {
       Method (_CRS, 0x0, NotSerialized) {
+        If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
+          Return (\_SB.PC0X.DSCR (_UID))
+        }
         If (LGreater (C1GP, 0)) {
           Store (PINR (C1P0, C1C0, C1G0), Local0)
         }
@@ -711,8 +719,12 @@ Scope (\_SB) {
     Method (_DEP, 0, NotSerialized) {  // _DEP: Operation Region Dependencies
       Return (Package () {\_SB.PC0X})
     }
-    If (LNotEqual (C2GP,0)) {
+
+    If (LOr (LNotEqual (C2GP,0), LNotEqual (\_SB.PC0X.LNKC (_UID), 0))) {
       Method (_CRS, 0x0, NotSerialized) {
+        If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
+          Return (\_SB.PC0X.DSCR (_UID))
+        }
         If (LGreater (C2GP, 0)) {
           Store (PINR (C2P0, C2C0, C2G0), Local0)
         }
@@ -824,8 +836,12 @@ Scope (\_SB) {
     Method (_DEP, 0, NotSerialized) {  // _DEP: Operation Region Dependencies
       Return (Package () {\_SB.PC0X})
     }
-    If (LNotEqual (C3GP, 0)) {
+
+    If (LOr (LNotEqual (C3GP,0), LNotEqual (\_SB.PC0X.LNKC (_UID), 0))) {
       Method (_CRS, 0x0, NotSerialized) {
+        If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
+          Return (\_SB.PC0X.DSCR (_UID))
+        }
         If (LGreater (C3GP, 0)) {
           Store (PINR (C3P0, C3C0, C3G0), Local0)
         }
@@ -937,8 +953,12 @@ Scope (\_SB) {
     Method (_DEP, 0, NotSerialized) {  // _DEP: Operation Region Dependencies
       Return (Package () {\_SB.PC0X})
     }
-    If (LNotEqual (C4GP,0)) {
+
+    If (LOr (LNotEqual (C4GP,0), LNotEqual (\_SB.PC0X.LNKC (_UID), 0))) {
       Method (_CRS, 0x0, NotSerialized) {
+        If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
+          Return (\_SB.PC0X.DSCR (_UID))
+        }
         If (LGreater (C4GP, 0)) {
           Store (PINR (C4P0, C4C0, C4G0), Local0)
         }
@@ -1050,8 +1070,12 @@ Scope (\_SB) {
     Method (_DEP, 0, NotSerialized) {  // _DEP: Operation Region Dependencies
       Return (Package () {\_SB.PC0X})
     }
-    If (LNotEqual (C5GP,0)) {
+
+    If (LOr (LNotEqual (C5GP,0), LNotEqual (\_SB.PC0X.LNKC (_UID), 0))) {
       Method (_CRS, 0x0, NotSerialized) {
+        If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
+          Return (\_SB.PC0X.DSCR (_UID))
+        }
         If (LGreater (C5GP, 0)) {
           Store (PINR (C5P0, C5C0, C5G0), Local0)
         }
@@ -1861,7 +1885,7 @@ Scope (\_SB) {
 
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, L0A0), 0)) {
+      If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
         Return (\_SB.PC0X.VICC (_UID, L0A0))
       }
 
@@ -2229,7 +2253,7 @@ Scope (\_SB) {
 
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, L1A0), 0)) {
+      If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
         Return (\_SB.PC0X.VICC (_UID, L1A0))
       }
 
@@ -2597,7 +2621,7 @@ Scope (\_SB) {
 
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, L2A0), 0)) {
+      If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
         Return (\_SB.PC0X.VICC (_UID, L2A0))
       }
 
@@ -2964,7 +2988,7 @@ Scope (\_SB) {
 
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, L3A0), 0)) {
+      If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
         Return (\_SB.PC0X.VICC (_UID, L3A0))
       }
 
@@ -3330,7 +3354,7 @@ Scope (\_SB) {
 
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, L4A0), 0)) {
+      If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
         Return (\_SB.PC0X.VICC (_UID, L4A0))
       }
 
@@ -3696,7 +3720,7 @@ Scope (\_SB) {
 
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, L5A0), 0)) {
+      If (LNotEqual (\_SB.PC0X.LNKC (_UID), 0)) {
         Return (\_SB.PC0X.VICC (_UID, L5A0))
       }
 
@@ -4061,7 +4085,7 @@ Scope (\_SB) {
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
       // Create I2C Bus resource template using as parameters data provided in the BIOS setup
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, F0AB), 0)) {
+      If (LNotEqual (\_SB.PC0X.FLMC (_UID), 0)) {
         Store (\_SB.PC0X.VICC (_UID, F0AB), Local0)
       } Else {
         Store (\_SB.PC0X.IICB (F0AB, F0BS), Local0)
@@ -4185,7 +4209,7 @@ Scope (\_SB) {
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
       // Create I2C Bus resource template using as parameters data provided in the BIOS setup
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, F1AB), 0)) {
+      If (LNotEqual (\_SB.PC0X.FLMC (_UID), 0)) {
         Store (\_SB.PC0X.VICC (_UID, 4), Local0)
       } Else {
         Store (\_SB.PC0X.IICB (F1AB, F1BS), Local0)
@@ -4309,7 +4333,7 @@ Scope (\_SB) {
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
       // Create I2C Bus resource template using as parameters data provided in the BIOS setup
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, F2AB), 0)) {
+      If (LNotEqual (\_SB.PC0X.FLMC (_UID), 0)) {
         Store (\_SB.PC0X.VICC (_UID, F2AB), Local0)
       } Else {
         Store (\_SB.PC0X.IICB (F2AB, F2BS), Local0)
@@ -4433,7 +4457,7 @@ Scope (\_SB) {
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
       // Create I2C Bus resource template using as parameters data provided in the BIOS setup
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, F3AB), 0)) {
+      If (LNotEqual (\_SB.PC0X.FLMC (_UID), 0)) {
         Store (\_SB.PC0X.VICC (_UID, F3AB), Local0)
       } Else {
         Store (\_SB.PC0X.IICB (F3AB, F3BS), Local0)
@@ -4557,7 +4581,7 @@ Scope (\_SB) {
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
       // Create I2C Bus resource template using as parameters data provided in the BIOS setup
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, F4AB), 0)) {
+      If (LNotEqual (\_SB.PC0X.FLMC (_UID), 0)) {
         Store (\_SB.PC0X.VICC (_UID, F4AB), Local0)
       } Else {
         Store (\_SB.PC0X.IICB (F4AB, F4BS), Local0)
@@ -4681,7 +4705,7 @@ Scope (\_SB) {
     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
     {
       // Create I2C Bus resource template using as parameters data provided in the BIOS setup
-      If (LNotEqual (\_SB.PC0X.VICC (_UID, F5AB), 0)) {
+      If (LNotEqual (\_SB.PC0X.FLMC (_UID), 0)) {
         Store (\_SB.PC0X.VICC (_UID, F5AB), Local0)
       } Else {
         Store (\_SB.PC0X.IICB (F5AB, F5BS), Local0)

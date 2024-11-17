@@ -128,10 +128,10 @@ UpdatePeiAmtPolicy (
                                &MeSetup
                                );
   if (!EFI_ERROR (Status)) {
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.AmtEnabled,        AmtPeiConfig->AmtEnabled,        MeSetup.Amt              );
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogEnabled,   AmtPeiConfig->WatchDogEnabled,   MeSetup.WatchDogEnabled  );
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerBios, AmtPeiConfig->WatchDogTimerBios, MeSetup.WatchDogTimerBios);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerOs,   AmtPeiConfig->WatchDogTimerOs,   MeSetup.WatchDogTimerOs  );
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.AmtEnabled,        AmtPeiConfig->AmtEnabled,        MeSetup.Amt              );
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogEnabled,   AmtPeiConfig->WatchDogEnabled,   MeSetup.WatchDogEnabled  );
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerBios, AmtPeiConfig->WatchDogTimerBios, MeSetup.WatchDogTimerBios);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerOs,   AmtPeiConfig->WatchDogTimerOs,   MeSetup.WatchDogTimerOs  );
   }
   VariableSize  = sizeof (MEBX_DATA);
 
@@ -144,7 +144,7 @@ UpdatePeiAmtPolicy (
                                &MebxData
                                );
   if (!EFI_ERROR (Status)) {
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.AmtSolEnabled, AmtPeiConfig->AmtSolEnabled, MebxData.AmtSol);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.AmtSolEnabled, AmtPeiConfig->AmtSolEnabled, MebxData.AmtSol);
   } else {
     DEBUG ((DEBUG_WARN, "Failed to retrieve Variable:\"MebxData\", Status = %r\n", Status));
   }
@@ -156,10 +156,10 @@ UpdatePeiAmtPolicy (
     //
     // Disable below settings since they have dependency on AMT.
     //
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogEnabled, AmtPeiConfig->WatchDogEnabled,   0);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerBios, AmtPeiConfig->WatchDogTimerBios, 0);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerOs, AmtPeiConfig->WatchDogTimerOs,   0);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.AmtSolEnabled, AmtPeiConfig->AmtSolEnabled,     0);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogEnabled, AmtPeiConfig->WatchDogEnabled,   0);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerBios, AmtPeiConfig->WatchDogTimerBios, 0);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.WatchDogTimerOs, AmtPeiConfig->WatchDogTimerOs,   0);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.AmtSolEnabled, AmtPeiConfig->AmtSolEnabled,     0);
   }
 
   InstallAmtForcePushPetPolicy ();

@@ -31,6 +31,7 @@ typedef struct {
   UINT32 PsOnEnable             :  1; ///< Indicates if PS_ON support has been enabled, <b>0: Disable</b>; 1: Enable.
   UINT32 EnableTimedGpio0       :  1; ///< Enable Bit for Timed GPIO 0 <b>0 = disable</b>; 1 = enable
   UINT32 EnableTimedGpio1       :  1; ///< Enable Bit for Timed GPIO 1 <b>0 = disable</b>; 1 = enable
+  UINT32 EnableDtrSci           :  1; ///< Enable Bit for DTR SCI <b>0 = disable</b>; 1 = enable
   UINT32 RsvdBits1              : 29;
 } PMC_CONFIG_HOB;
 

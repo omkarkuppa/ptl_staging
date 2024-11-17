@@ -152,7 +152,8 @@ typedef struct {
   UINT32 QCLKDCC : 1;       ///< BIT22 - QCLK DCC calibration
   UINT32 WCKCLKPREDCC : 1;  ///< BIT23 - Wck / Clk Pre-Driver DCC
   UINT32 DQSPADDCC : 1;     ///< BIT24 - DQS DCC PAD Optimization
-  UINT32 ReservedBits : 7;  ///< BIT25-31 - Reserved
+  UINT32 QCLKPHALIGN : 1;   ///< BIT25 - MC QClk Ph QClk Align Calibration
+  UINT32 ReservedBits : 6;  ///< BIT26-31 - Reserved
 } TrainingStepsEn3;
 
 typedef struct {

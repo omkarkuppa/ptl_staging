@@ -104,10 +104,12 @@ SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvBase   = $(gSiPkgTokenSpac
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase    = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset)
 
 !if gCapsuleFeaturePkgTokenSpaceGuid.PcdCapsuleFeatureEnable == TRUE
-  SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbBase = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbOffset)
+  SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbBase  = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbOffset)
   SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbRBase = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashIbbROffset)
-  SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbBase = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset)
-  SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadBase = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset)
+  SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbBase  = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashObbOffset)
+  SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadBase   = $(gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress) + $(gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadOffset)
+  SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadOffset = $(gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadOffset)
+  SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashNonFitPayloadSize   = $(gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize)
 !if gPlatformModuleTokenSpaceGuid.PcdExtendedBiosRegionSupport == TRUE
   SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashExtendSize = $(gBoardModuleTokenSpaceGuid.PcdFlashExtendRegionSizeInUse)
   SET gCapsuleFeaturePkgTokenSpaceGuid.PcdFlashExtendOffset = $(gBoardModuleTokenSpaceGuid.PcdFlashExtendRegionOffset)
@@ -153,6 +155,11 @@ SET gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedPostMemoryBase = $(EXTENDED_REG
 FV = FvExtendedPostMemory
 
 !endif
+
+gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadOffset|gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize
+gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadBase|gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize
+# NotFitPayload
+FV = NonFitPayloads
 
 #
 # Firmware Volumes for 16MB Region at reset vector
@@ -262,7 +269,7 @@ FV = FvFwBinaries
 
 gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize
 gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeBase|gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeSize
-#Microcode
+# FitPayload (Microcode)
 FV = FvMicrocode
 
 #
@@ -326,15 +333,53 @@ FV = FvPreMemory
 
 !endif
 
+[FV.NonFitPayloads]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = F4E0C42C-78D2-42CD-B92A-0669FF8DE725
 #
-# For debug Resiliency BIOS, IBB only have one slot for uCode and don't support compatibility.
-# Use seperate FDF file to include only one uCode into BIOS.
+# Create an empty FV with FvNameGuid which will be patched with NonFitPayload FV in postbuild.
+# FvNameGuid must match to the one in NonFitPayloadsPkg.fdf
 #
-!if (gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable == FALSE) || ($(TARGET) == RELEASE)
-    !include $(PLATFORM_BIN_PACKAGE)/Include/Fdf/FvMicrocode.fdf
-!else
-    !include $(PLATFORM_BIN_PACKAGE)/Include/Fdf/FvMicrocodeDbgRes.fdf
-!endif
+
+[FV.FvMicrocode]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+FvNameGuid         = 62C98CCD-D8DD-4187-99AC-2B333C87B4CD
+#
+# Create an empty FV with FvNameGuid which will be patched with FitPayload FV in postbuild.
+# FvNameGuid must match to the one in FvMicrocode.fdf
+#
 
 !if gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == 0x1
 !include $(COMMON_BIN_PACKAGE)/Include/Fdf/FvTsnMacAddress.fdf
@@ -1271,12 +1316,12 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/Bdat/Dxe/BdatAccessHandler.inf
 $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Txt/Dxe/TxtDxe.inf
 !endif
 
-$(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/Dxe/SmbusDxe.inf
+$(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/SmbDriver/SmbusDxe.inf
 $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/Product/PantherLake/EarlyDevices/EarlyDxeDevices.inf
 $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/Pch/PchSmiDispatcher/Smm/PchSmiDispatcher.inf
 $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/Smm/PtlPcdPchInitSmm.inf
 
-$(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/Smm/SmbusSmm.inf
+$(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/SmbDriver/SmbusSmm.inf
 
 $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/Pch/SmmControl/RuntimeDxe/SmmControl.inf
 

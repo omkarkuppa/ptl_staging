@@ -1,5 +1,5 @@
 /** @file
-  Google Test for the implementation of FmpDeviceLib instance to support 
+  Google Test for the implementation of FmpDeviceLib instance to support
   Discrete Thunderbolt Firmware update
 
   @copyright
@@ -20,17 +20,17 @@
 @par Specification Reference:
 
 **/
+#include <GTestFmpDeviceLibDiscreteTbt.h>
 
 /**
 Google test for for RegisterFmpInstaller function.
 **/
-class RegisterFmpInstallerTest : public CommonMock {
+class RegisterFmpInstallerTest : public Test {
   protected:
-  EFI_STATUS     Status;
+    EFI_STATUS Status;
 };
 
-TEST_F (RegisterFmpInstallerTest, VarUnSupported) {
-
+TEST_F (RegisterFmpInstallerTest, Var_1_UnSupported) {
   //
   // Case 1 - General Case
   // Expected Result - Status will return EFI_UNSUPPORTED
@@ -41,5 +41,4 @@ TEST_F (RegisterFmpInstallerTest, VarUnSupported) {
   ASSERT_EQ (EFI_UNSUPPORTED, Status);
 
   cout << "RegisterFmpInstaller Done." << endl;
-
 }

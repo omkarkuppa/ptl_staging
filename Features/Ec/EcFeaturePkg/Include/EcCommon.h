@@ -38,18 +38,20 @@
 #define EC_SET_PD_MODE_WAIT_TIME_IN_FACTOR_OF_50_MS  10
 
 //
-// Currently EC is supporting 2 PD controller and following BIT MAP for each
+// Currently EC is supporting PD controller by TCP port and following BIT MAP for each
 // controller.
-//    BIT0 - 1 - PD0 I2C cmd successful ( 0 - fail )
-//    BIT1 - 1 - PD0 in FORCE TBT Mode (0 - not in force tbt mode)
-//    BIT2-BIT3 - Reserved
-//    BIT4 - 1 - PD1 I2C cmd successful(0 - fail)
-//    BIT5 - 1 - PD1 in FORCE TBT Mode (0 - not in force tbt mode)
-//    BIT6-BIT7 - Reserved
-// So currently EC is using 4 BIT for EACH Controller and 8 BIT in total.
+//    BIT0 - 1 - PD1 I2C cmd successful (0 - fail )
+//    BIT1 - 1 - PD1 in FORCE TBT Mode  (0 - not in force tbt mode)
+//    BIT2 - 1 - PD2 I2C cmd successful (0 - fail )
+//    BIT3 - 1 - PD2 in FORCE TBT Mode  (0 - not in force tbt mode)
+//    BIT4 - 1 - PD3 I2C cmd successful (0 - fail)
+//    BIT5 - 1 - PD3 in FORCE TBT Mode  (0 - not in force tbt mode)
+//    BIT6 - 1 - PD4 I2C cmd successful (0 - fail )
+//    BIT7 - 1 - PD4 in FORCE TBT Mode  (0 - not in force tbt mode)
+// So currently EC is using 2 BIT for EACH Controller and 8 BIT in total.
 //
 #define GET_PD_MODE_STATUS_BIT_WIDTH_TOTAL            8
-#define GET_PD_MODE_STATUS_BIT_WIDTH_PER_CONTROLLER   4
+#define GET_PD_MODE_STATUS_BIT_WIDTH_PER_CONTROLLER   2
 #define I2C_COMMAND_SUCCESSFUL                        BIT0  // PD I2C cmd successful  ( 0 - fail )
 #define RETIMER_FW_UPDATE_MODE                        BIT1  // FORCE TBT Mode (0 - not in force tbt mode)
 

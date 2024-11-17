@@ -49,6 +49,8 @@
   # SPD Address Override
   gBoardModuleTokenSpaceGuid.VpdPcdSpdAddressOverride|*|FALSE
 
+  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig|*|TRUE 
+
   # Usb2 Physical Tuning Table
   gBoardModuleTokenSpaceGuid.VpdPcdUsb2PhyTuningTable| * |{CODE(
   { 16,
@@ -327,7 +329,7 @@
   // Touch Panel 0, Same pins shared between THC and I2C based Panel,
     {GPIOV2_PTL_PCD_XXGPP_F_8,   {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHost,     GpioV2TermDefault}},  // GPP_F8_TCH_PANEL_PWR_EN
     {GPIOV2_PTL_PCD_XXGPP_E_16,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateDefault, GpioV2IntDis,                 GpioV2ResetDefault,  GpioV2TermDefault}},  // THC0_SPI1_RST_N
-    {GPIOV2_PTL_PCD_XXGPP_E_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic,  GpioV2ResetDefault,  GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // THC0_SPI1_INT_N
+    {GPIOV2_PTL_PCD_XXGPP_E_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge,  GpioV2ResetDefault,  GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // THC0_SPI1_INT_N
     { 0x0 }
   })}
 
@@ -594,7 +596,7 @@
   // Touch pad
   //
     {GPIOV2_PTL_PCD_XXGPP_F_11,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis, GpioV2ResetHostDeep,     GpioV2TermNone}},  // FRCPAD_PAD_STP_N
-    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // FRC_PAD_INT_N
+    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // FRC_PAD_INT_N
     {GPIOV2_PTL_PCD_XXGPP_F_22,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateDefault, GpioV2IntDis, GpioV2ResetDefault,     GpioV2TermNone}},  // GPP_F22_FRCPAD_DISABLE
 
   //
@@ -819,6 +821,3 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cController|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cSlaveAddress|*|0x0
-  gPmaxFeaturePkgTokenSpaceGuid.VpdPcdPmaxDevices|*|{CODE(
-   { 0x0 }
-  )}

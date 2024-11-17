@@ -54,3 +54,4 @@
   PeiPchPcieClocksLibPtl.c
 
 [Pcd]
+  gSiPkgTokenSpaceGuid.PcdWclSupport

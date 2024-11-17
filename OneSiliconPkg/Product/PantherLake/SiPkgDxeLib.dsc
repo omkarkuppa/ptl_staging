@@ -113,3 +113,9 @@
 !else
  RegisterAddressTranslationLib|$(PLATFORM_SI_PACKAGE)/Library/RegisterAddressTranslationLibNull/RegisterAddressTranslationLibNull.inf
 !endif
+
+[LibraryClasses.common.DXE_SMM_DRIVER]
+  SmbusLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/LibraryPrivate/SmmSmbusLib/SmmSmbusLib.inf
+
+[LibraryClasses.common.DXE_DRIVER]
+  SmbusLib|MdePkg/Library/DxeSmbusLib/DxeSmbusLib.inf

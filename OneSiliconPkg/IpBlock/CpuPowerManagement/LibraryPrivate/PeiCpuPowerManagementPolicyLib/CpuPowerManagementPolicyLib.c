@@ -166,7 +166,6 @@ CpuPowerMgmtTestConfigPrint (
   DEBUG ((DEBUG_INFO, " EnableAllThermalFunctions : 0x%x\n", CpuPowerMgmtTestConfig->EnableAllThermalFunctions));
   DEBUG ((DEBUG_INFO, " Cx : 0x%x\n", CpuPowerMgmtTestConfig->Cx));
   DEBUG ((DEBUG_INFO, " PmgCstCfgCtrlLock : 0x%x\n", CpuPowerMgmtTestConfig->PmgCstCfgCtrlLock));
-  DEBUG ((DEBUG_INFO, " C1e : 0x%x\n", CpuPowerMgmtTestConfig->C1e));
   DEBUG ((DEBUG_INFO, " C1Autodemotion : 0x%x\n", CpuPowerMgmtTestConfig->C1AutoDemotion));
   DEBUG ((DEBUG_INFO, " C1Undemotion : 0x%x\n", CpuPowerMgmtTestConfig->C1UnDemotion));
   DEBUG ((DEBUG_INFO, " PkgCState Demotion : 0x%x\n", CpuPowerMgmtTestConfig->PkgCStateDemotion));
@@ -404,7 +403,6 @@ LoadCpuPowerMgmtTestConfigDefault (
   CpuPowerMgmtTestConfig->EnableAllThermalFunctions     = TRUE;
   CpuPowerMgmtTestConfig->Cx                            = TRUE;
   CpuPowerMgmtTestConfig->PmgCstCfgCtrlLock             = TRUE;
-  CpuPowerMgmtTestConfig->C1e                           = TRUE;
   CpuPowerMgmtTestConfig->C1AutoDemotion                = TRUE;
   CpuPowerMgmtTestConfig->C1UnDemotion                  = TRUE;
   CpuPowerMgmtTestConfig->PkgCStateDemotion             = TRUE;

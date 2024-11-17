@@ -22,17 +22,17 @@
 
 #include <GoogleTest/Library/MockUefiBootServicesTableLib.h>
 
-MOCK_INTERFACE_DEFINITION(MockUefiBootServicesTableLib);
+MOCK_INTERFACE_DEFINITION (MockUefiBootServicesTableLib);
 
-MOCK_FUNCTION_DEFINITION(MockUefiBootServicesTableLib, gBS_FreePool,             1, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockUefiBootServicesTableLib, gBS_HandleProtocol,       3, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockUefiBootServicesTableLib, gBS_CoreStall,            1, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockUefiBootServicesTableLib, gBS_ConnectController,    4, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockUefiBootServicesTableLib, gBS_DisconnectController, 3, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockUefiBootServicesTableLib, gBS_LocateHandleBuffer,   5, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockUefiBootServicesTableLib, gBS_LocateProtocol,       3, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockUefiBootServicesTableLib, gBS_FreePool, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockUefiBootServicesTableLib, gBS_HandleProtocol, 3, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockUefiBootServicesTableLib, gBS_CoreStall, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockUefiBootServicesTableLib, gBS_ConnectController, 4, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockUefiBootServicesTableLib, gBS_DisconnectController, 3, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockUefiBootServicesTableLib, gBS_LocateHandleBuffer, 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockUefiBootServicesTableLib, gBS_LocateProtocol, 3, EFIAPI);
 
-static EFI_BOOT_SERVICES localBs = {
+EFI_BOOT_SERVICES localBs = {
   {
     (UINT64)NULL,                                                 // Signature
     0,                                                            // Revision
@@ -88,4 +88,7 @@ static EFI_BOOT_SERVICES localBs = {
 
 extern "C" {
   EFI_BOOT_SERVICES* gBS = &localBs;
+
+  EFI_HANDLE  gImageHandle;
+  EFI_SYSTEM_TABLE  *gST;
 }

@@ -33,7 +33,6 @@ SECTION .text
 
 extern   ASM_PFX(FspLoadComponents)
 extern   ASM_PFX(PcdGet32 (PcdFlashFvFsptBase))
-extern   ASM_PFX(ExtractFspm)
 
 
 struc FitTableEntry
@@ -389,18 +388,6 @@ TempRamInitDone:
   mov     rax, rsp
   and     rax, 0fh
   sub     rsp, rax
-
-  ;
-  ; Decompress FSPM region
-  ;
-  PUSHA_64
-  mov     ecx, esi                      ; Pass BSSS base address
-  sub     rsp, 20h
-  call    ASM_PFX(ExtractFspm)
-  test    rax, rax                      ; Check return status
-  jnz     FspApiFailed
-  add     rsp, 20h
-  POPA_64
 
   ; Load FSPM and BspPremem in FSP Signing flow
   PUSHA_64

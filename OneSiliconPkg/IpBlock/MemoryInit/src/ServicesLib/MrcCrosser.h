@@ -28,6 +28,164 @@
 #include "CMrcApi.h"
 #include "CMcAddress.h"
 #include "MrcCommon.h"
+#include "MrcHalRegisterAccess.h"
+
+#ifdef XTENSA
+#include <CGreenMrcCommonTypes.h>
+#else
+#include <CBlueMrcCommonTypes.h>
+#endif
+#include "CMrcInterfaceGlobalTypes.h"
+
+
+// Functional DCC defines
+#define FUNC_DCC_CLK_WCK_COMP_CYCLES  (3)
+#define FUNC_DCC_CLK_WCK_LARGE_CHANGE_CHECK  (FUNC_DCC_CLK_WCK_COMP_CYCLES - 1)
+#define FUNC_DCC_CLK_WCK_SWEEP_RANGE  (10)
+#define FUNC_DCC_DDR5_DQS_COMP_CYCLES  (4)
+#define FUNC_DCC_DDR5_DQS_LARGE_CHANGE_CHECK  (FUNC_DCC_DDR5_DQS_COMP_CYCLES - 2)
+#define FUNC_DCC_DDR5_DQS_SWEEP_RANGE  (15)
+
+// Max Bytes storage needed
+#define POWER_TRAINING_MAX_BYTES  (MAX_BYTE_IN_DDR5_CHANNEL * MAX_DDR5_CHANNEL)
+#define MAX_BITS_FOR_OFFSET_TRAINING     (MAX_BITS) ///< for SOT offset training done for 8 bits
+
+#define SOT_SELECT_RX                    (2)            ///  Amount of TrainingIdx cases for SenseAmpOffset, for the Rise and Fall
+#define RX_RISE                          (0)            ///< Training Case Idx for Rise
+#define RX_FALL                          (1)            ///< Training Case Idx for Fall
+
+// Re-centering loop count
+#define RE_CENTER_LOOP_COUNT (10)
+
+// Re-centering loop count
+#define CCC_RE_CENTER_LOOP_COUNT (10)
+
+/// Power optimization re-centering step size
+#define T_RECENTERING_STEP_SIZE (2)
+#define V_RECENTERING_STEP_SIZE (3)
+
+/// Power optimization final centering step size
+#define V_FINAL_STEP_SIZE (2)
+
+/// UPM/PWR increment value if margins are at or below the retrain limit.
+#define MRC_UPM_PWR_INC_VAL (80)
+
+/// Vref step size for the following: DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
+#define MRC_COMP_VREF_STEP_SIZE   (191)
+
+/// SenseAmplifier Wake-Up Time in pS
+#define MRC_SENSE_AMP_WAKEUP_TIME (2000)
+
+// Number of samples per lane for Sense Amp Offset Training
+#define MRC_SENSE_AMP_SAMPLES_CNT (7)
+
+/// SOT Spacing Macro
+///   GroupIdx | Spaces | Trained
+///   ---------|--------|-------------
+///      0     |   9    | 8 DQs, 1 DQS
+///      1     |   8    | 8 DQs
+#define MRC_SOT_BIT_SPACE(x) (((x) == 0) ? ("         ") : ("        "))
+
+/// We need to make one of the bits in the combined Scomp value the PC bit value. It can be any bit as long as we always use the same one everywhere, and don't overwrite any bits used to store the SComp values.
+/// The combined Scomp value is split back into individual PC and Scomp values before being written to registers using the get/set methods.
+#define SCOMP_PC_STORAGE_BIT_OFFSET (4)
+
+#define DQ_TCO_COMP_STEP  (6)
+#define CLK_TCO_CODE_STEP (5)
+#define WCK_TCO_CODE_STEP (5)
+#define VDDQ_STEP (10)
+#define WR_DS_STEP (2)
+#define WR_DS_STEP_COARSE (9)
+#define WR_TXEQ_STEP (3)
+#define CCC_DS_STEP (3)
+#define CCC_SCOMP_STEP (3)
+#define CCC_TXEQ_STEP (3)
+#define RXDQ_ODT_STEP (2)
+#define RXDQS_ODT_STEP (3)
+#define DFE_TAP_1_2_STEP_COARSE (5)
+#define DFE_TAP_3_4_STEP_COARSE (2)
+#define DFE_TAP_1_2_STEP (3)
+#define DFE_TAP_3_4_STEP (1)
+#define DRAM_DFE_STEP_FINE   (1)
+#define DRAM_DFE_STEP_MEDIUM (3)
+#define DRAM_DFE_STEP_COARSE (5)
+#define RXEQ_STEP (2)
+#define RX_XTALK_STEP (1)
+#define LP5_WCK_DCA_STEP (1)
+#define TXDQ_DCC_STEP (1)
+#define LP5_WCK_DCC_STEP (1)
+#define DDR5_DQS_DCC_STEP (1)
+#define DDR5_CLK_DCC_STEP (1)
+#define RX_DFE_NUM (16)
+
+// Slew rate constants
+#define SLEW_RATE_ENABLED (0)
+#define CYCLE_LOCK (1)
+
+// Number of read-write command margin failures.
+#define NUM_RW_CMD_MARGIN_FAILURES (3)
+
+// CCC margins are twice as large.
+#define MAX_CCC_POSSIBLE_TIME (MAX_POSSIBLE_TIME * 2)
+
+// 8 values can be set in each decap register
+#define MAX_DECAP_VALUES (8)
+
+// Max CCC TxEq limit
+#define CCC_TXEQ_MAX (DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_CaTxEq_MAX)
+
+// Min LPDDR/DDR CCC TxEq limits
+#define LP_CCC_TXEQ_LOW_LIMIT (8)
+#define DDR5_CCC_TXEQ_LOW_LIMIT (5)
+
+// Number to divide the CCC DS min comp code by when calculating min CCC TxEq limits
+#define CCC_TXEQ_COMP_DIVISOR (5)
+
+// The max number of comps/comp vrefs we ever optimize at once
+#define MAX_COMPS_OPTIMIZED (3)
+
+// The max number of comp offsets we ever optimize at once
+#define MAX_COMP_OFFSETS_OPTIMIZED (4)
+
+// The array index in which we store the name of the optimized comp vref during comp optimization
+#define OPTIMIZED_COMP_VREF_INDEX (0)
+
+// The max number of comps we ever check for saturation at once
+#define MAX_COMPS_CHECKED (3)
+
+// The number of comp codes we reserve to prevent saturation during training
+#define RESERVED_COMP_CODES (3)
+
+// Right now, we can only run 1D and 2D optimizations
+#define MAX_OPT_PARAM_LENGTH (2)
+
+// Scale for linear normalized power
+#define LINEAR_NORMALIZED_POWER_SCALE (1000)
+
+// Margins are multiplied by this when returned from the margining functions
+#define MARGIN_MULTIPLIER (10)
+
+// test loopcount used to calculate UPMs
+#define UPM_LOOPCOUNT (17)
+
+// test loopcount used to calculate UPMs in Early TCO training
+#define WEAK_LOOPCOUNT (8)
+
+// Extra Comps for DqTargetR[0:1]
+#define DQ_TARGET_R_INITIAL       (4)
+#define DQ_TARGET_R_SUBSEQUENT    (2)
+
+// Max buses checked (Rx/Tx/CCC)
+#define MAX_MARGIN_CHECK (3)
+
+// Number of ticks over which the margin rise/fall was seen
+#define STRESS_SLOPE_DENOMINATOR (8)
+
+// Speed delta over which 1 tick of eye width UPM rise/fall was seen, make this larger than reality to ensure top speed is always worst case.
+#define SPEED_SLOPE_DENOMINATOR (1330) // Power_Training - Calibrate this
+
+// Margin 2 ticks beyond the UPM limit in retraining
+#define MARGIN_LIMIT_GUARDBAND (2)
 
 /// Power optimization CCC loop count
 #define CCC_OPT_PARAM_LOOP_COUNT (10)
@@ -40,10 +198,6 @@
 
 // 2 places of decimal accuracy
 #define TWO_DECIMAL_PLACES   (100)
-
-// Max Bytes storage needed
-#define POWER_TRAINING_MAX_BYTES  (MAX_BYTE_IN_DDR5_CHANNEL * MAX_DDR5_CHANNEL)
-#define MAX_BITS_FOR_OFFSET_TRAINING     (MAX_BITS) ///< for SOT offset training done for 8 bits
 
 // Max Bits storage needed
 #define POWER_TRAINING_MAX_BITS  (POWER_TRAINING_MAX_BYTES * MAX_BITS)
@@ -90,6 +244,11 @@ typedef enum {
   TcoCompAlgoPerBit
 } TcoCompAlgoMode;
 
+typedef enum {
+  SotVrefSearchStage,
+  SotVocSearchStage
+} SenseAmpTrainingLsFeedbackStage; // LocalStub feedback stages
+
 #define MAX_OPT_POINTS        (64)
 #define MAX_OPT_POINTS_BIT    (16)
 #define MAX_GRID_DIM          (2)
@@ -121,11 +280,49 @@ typedef struct {
   INT16     Offset[MAX_CONTROLLER][POWER_TRAINING_MAX_BITS];
 } OptOffsetChByteBit;
 
+typedef struct {
+  INT64               OrigRxTap0;
+  INT64               OrigRxTap1;
+  INT64               OrigRxTap2;
+  INT64               OrigRxTap3;
+  INT64               RxDqVrefOrig;
+  INT64               DataOdtModeOrig;
+  INT64               DisableOdtStaticOrig;
+  INT64               DrvStatLegEnOrig;
+  INT64               RcompOdtDnOrig;
+  INT64               RcompOdtUpOrig;
+  INT64               RcompDrvDnOrig;
+  INT64               RcompDrvUpOrig;
+  INT64               InternalClockOnOrig;
+  INT64               DqsRFTrainingModeValue;
+  UINT32              VcmTargetRatio;
+  UINT32              VrefEdge[SOT_SELECT_RX][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS_FOR_OFFSET_TRAINING]; // serves as an output for the Vref search results. Used mainly for UTing
+  INT32               VocEdge[SOT_SELECT_RX][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS_FOR_OFFSET_TRAINING]; // serves as an output for the Voc search results
+} SenseAmpTrainingStateConfig;
+
 #pragma pack (pop)
 
 typedef struct {
   INT64  DqsOffsetNUI;
 } SenseAmpTrainingOverride;
+
+//***********************************************
+//************** New EV Training ****************
+//***********************************************
+
+#define LPF3          (3)
+#define LPF5          (5)
+#define TOTAL_CURVES  (6)
+#define TcoNum        (32)
+#define TX_EQ_NUM     (32)
+#define DFE_NUM_DDR5  (DDR5_DIMM_DFE_TAP1_RANGE + 11)
+#define DFE_NUM_LP5   (LPDDR5_DIMM_DFE_TAP_RANGE + 1)
+
+typedef struct {
+  UINT16  OptLastParams[2];
+  UINT16  Score;
+} TrainingData;
+
 
 /**
   This function implements Sense Amp Offset training.
@@ -293,6 +490,7 @@ DimmDFETraining (
   IN UINT8          Param,
   IN BOOLEAN        Optimize
   );
+
 /**
   This function wrap DimmODTCATraining routine.
 
@@ -353,6 +551,19 @@ MRC_IRAM1_FUNCTION
 extern
 MrcStatus
 MrcReadEqTraining (
+  IN MrcParameters *const MrcData
+  );
+
+/**
+  This function implements Read DQ ODT training.
+  Optimize Read ODT strength for performance & power
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus -  mrcSuccess.
+**/
+MrcStatus
+MrcReadODTTraining (
   IN MrcParameters *const MrcData
   );
 
@@ -1246,6 +1457,7 @@ MrcStatus
 WriteDsTraining(
   IN MrcParameters* const MrcData
 );
+
 /**
   This function implements Read Equalization training.
 
@@ -1377,7 +1589,8 @@ MrcTxDqTcoCompTrainingEarly (
 MrcStatus
 WriteEqTraining(
   IN MrcParameters* const MrcData
-);
+  );
+
 /**
   This function implements the  DimmODTTraining for LPDDR5.
 
@@ -1438,6 +1651,28 @@ Ddr5RttWr_RttNT_1dpc (
   );
 
 /**
+  This function approximates a non linear heaviside function using 5 linear (Y = Ax + B) curves.
+  UPM stands for Units Per Milion
+  The curves are defined by 3 parameters:
+    A    - The curve's slope
+    B    - Intercept with y axis.
+    XMax - The maximal x value to which curve parameters apply. i.e., for x < x1 a = a1, b = b1.
+  It should select a balanced wr/rd operating point with respect to UPM
+
+  @param[in]  MrcData          - MRC host structure
+  @param[in]  PostMargin       - Margin after training
+  @param[in]  GoodPwrLimitPost - UPM limits for margins
+
+  @retval  linear approximation function output
+**/
+UINT64
+UPMFilter(
+  IN MrcParameters* const MrcData,
+  IN UINT32               PostMargin,
+  IN UINT16               GoodPwrLimitPost
+  );
+
+/**
   This function provides Matrix Convolution calculation
   Get an Matrix, perform convolution using Convolution matrix and update result matrix
 
@@ -1448,8 +1683,6 @@ Ddr5RttWr_RttNT_1dpc (
   @param[in]  ColForSeek  - Number of columns that are actually used
   @param[in]  lpfarr      - Low Pass Filter array
   @param[in]  Size        - LPF array size
-
-  @retval None
 **/
 VOID
 MrcConvolution2D (
@@ -1462,4 +1695,188 @@ MrcConvolution2D (
   UINT8   Size
   );
 
+/**
+  This procedure is meant to handle basic per bit timing centering, places strobe in the middle of the data eye,
+  for both read and write DQ/DQS using a very robust, linear search algorithm.
+
+  @param[in,out] MrcData        - Include all MRC global data.
+  @param[in]     StepSize       - Step size
+  @param[in]     loopcount      - loop count
+  @param[in]     MsgPrint       - Show debug prints
+  @param[in]     EarlyCentering - Execute as early centering routine
+
+  @retval MrcStatus -  If succeeded, return mrcSuccess
+**/
+MrcStatus
+WriteTimingPerBit1DCentering(
+  IN OUT MrcParameters* const MrcData,
+  IN     const UINT8          StepSize,
+  IN     const UINT8          LoopCount,
+  IN     UINT8                MsgPrintMsk,
+  IN     BOOLEAN              EarlyCentering
+);
+
+/**
+  1) Store current MRC settings pre-test for later restoration.
+  2) Pad setup for SenseAmpOffset. Calculates Common Mode Percentages and configures comps.
+
+  @param[in,out] MrcData - Include all MRC global data.
+  @param[out] Config - Include MRC settings senseamp changes and Odt Mode.
+
+  @retval N/A
+**/
+VOID
+SenseAmpOffsetTrainingSetup(
+  IN OUT MrcParameters* const MrcData,
+  IN OUT SenseAmpTrainingStateConfig* Config
+);
+
+/**
+  Restore previous MRC settings to pre SenseAmpOffset Training
+  and clean up.
+
+  @param[in,out] MrcData - Include all MRC global data.
+  @param[in] Config - Include MRC settings senseamp changes and Odt Mode.
+
+  @retval N/A
+**/
+VOID
+SenseAmpOffsetTrainingTeardown(
+  IN OUT  MrcParameters* const MrcData,
+  IN     SenseAmpTrainingStateConfig* Config
+);
+
+/**
+  Search for the Vref voltage per lane where the 0 to 1 transition for both Rx
+  are equidistant from the center.
+
+  @param[in,out] MrcData - Include all MRC global data.
+  @param[in] Config - Include MRC settings senseamp changes and Odt Mode.
+
+  @retval mrcSuccess if successful calibration else mrcFail
+**/
+MrcStatus
+SenseAmpOffsetVrefSearch(
+  IN OUT MrcParameters* const MrcData,
+  IN     SenseAmpTrainingStateConfig* Config
+);
+
+/**
+  Search for the offset code per lane for the 0 to 1 transition for both Rx
+
+  @param[in,out] MrcData - Include all MRC global data.
+  @param[in] Config - Include MRC settings senseamp changes and Odt Mode.
+
+  @retval mrcSuccess if successful calibration else mrcFail
+**/
+MrcStatus
+SenseAmpOffsetVocSearch(
+  IN OUT MrcParameters* const MrcData,
+  IN     SenseAmpTrainingStateConfig* Config
+);
+
+/**
+  Set the RxVref code for all lanes for the given Controller/Channel/Byte.
+  If MultiCast is enabled, the RxVref code will be casted to all Controller/Channel/Byte.
+
+  @param[in,out] MrcData  - Include all MRC global data.
+  @param[in] Controller   - Controller to update
+  @param[in] Channel      - Channel to update
+  @param[in] Channel      - Byte to update
+  @param[in] LaneValue    - Array containing the Vref code for each lane
+  @param[in] MultiCast    - Bool flag to enable/disable multicasting
+
+
+  @retval N/A
+**/
+VOID
+SenseAmpOffsetSetRxVrefCodeAllLanes(
+  IN OUT MrcParameters* const MrcData,
+  IN     UINT8    Controller,
+  IN     UINT8    Channel,
+  IN     UINT8    Byte,
+  IN     UINT32   LaneValue[MAX_BITS_FOR_OFFSET_TRAINING],
+  IN     BOOLEAN  MultiCast
+);
+
+/**
+  Set the RxVoc (offset) codes for all lanes for the given Controller/Channel/Byte.
+  If MultiCast is enabled, the RxVoc code will be casted to all Controller/Channel/Byte.
+
+  @param[in,out] MrcData - Include all MRC global data.
+  @param[in] Controller   - Controller to update
+  @param[in] Channel      - Channel to update
+  @param[in] Channel      - Byte to update
+  @param[in] LaneValue    - 2D Array containing the Voc code for both Rx per lane
+  @param[in] MultiCast    - Bool flag to enable/disable multicasting
+
+  @retval N/A
+**/
+VOID
+SenseAmpOffsetSetRxVocCodeAllLanes(
+  IN OUT MrcParameters* const MrcData,
+  IN     UINT8    Controller,
+  IN     UINT8    Channel,
+  IN     UINT8    Rank,
+  IN     UINT8    Byte,
+  IN     INT32    LaneValues[MAX_BITS_FOR_OFFSET_TRAINING][SOT_SELECT_RX],
+  IN     BOOLEAN  MultiCast
+);
+
+/**
+  Set the RxVoc codes for a specific lane.
+  The offset code will be set for both receivers per lane.
+
+  @param[in,out] MrcData - Include all MRC global data.
+  @param[in] Controller   - Controller to update
+  @param[in] Channel      - Channel to update
+  @param[in] Channel      - Byte to update
+  @param[in] VocCodes     - Voc codes to set for the two Rx
+  @param[in] MultiCast    - Bool flag to enable/disable multicasting
+
+  @retval N/A
+**/
+VOID
+SenseAmpOffsetSetRxVocCodeLane(
+  IN OUT MrcParameters* const MrcData,
+  IN     UINT8    Controller,
+  IN     UINT8    Channel,
+  IN     UINT8    Rank,
+  IN     UINT8    Byte,
+  IN     UINT8    Bit,
+  IN     INT32    VocCodes[SOT_SELECT_RX],
+  IN     BOOLEAN  MultiCast
+);
+
+/**
+  Collect all samples from the DataTrainFeedback registers.
+
+  @param[in,out] MrcData    - Include all MRC global data.
+  @param[in,out] LaneResult - Pointer to the data structure that holds the DataTrainFeedback values for both Rx on a byte level
+
+  @retval N/A
+**/
+VOID
+SenseAmpOffsetGetRxOffsetResults(
+  IN OUT MrcParameters* const MrcData,
+  IN OUT UINT32   LaneResult[SOT_SELECT_RX][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM]
+);
+
+/**
+  Run comp if needed based on OptParam or if ForceComp is TRUE.
+
+  @param[in] MrcData   - MRC global data.
+  @param[in] OptParam  - Param type
+  @param[in] ForceComp - Force the comp to run regardless of the param type
+
+  @retval BOOLEAN - Whether a comp was performed or not
+**/
+BOOLEAN
+ForceSystemRComp(
+  IN MrcParameters* const MrcData,
+  IN UINT8                OptParam,
+  IN BOOLEAN              ForceComp
+);
+
 #endif // _MrcCrosser_h_
+

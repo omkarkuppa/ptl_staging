@@ -42,6 +42,8 @@
 #define ACE_HDA_SDI_2_IDISPLINK     2
 #define ACE_MAX_SDI_NUMBER          3
 #define ACE_MAX_SDI_MASK            ((1 << ACE_MAX_SDI_NUMBER) - 1)
+#define ACE_SNDW_ADD_CONTROLLER_OFFSET(ControllerIndex, RegisterOffset) \
+          ((ControllerIndex * 0x8000) + RegisterOffset)
 
 #define GET_PARAMETER_VERB_ID       0xF00
 #define GET_BCLK_FREQUENCY_VERB_ID  0xF37
@@ -93,12 +95,12 @@ AceConfigureMicPrivacy (
       MmioAndThenOr32 (
         HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP,
         (UINT32) (~B_ACE_MEM_DFMICPVCP_DDZWT),
-        (UINT32) ((HdaConfig->MicPrivacy.Timeout * 32) & B_ACE_MEM_DFMICPVCP_DDZWT) // timeout (ms) * RTC clock (32kHz)
+        (UINT32) (((HdaConfig->MicPrivacy.Timeout * 32768) / 1000) & B_ACE_MEM_DFMICPVCP_DDZWT) // timeout (ms) * RTC clock (32kHz)
         );
       DEBUG ((DEBUG_INFO, "Microphone privacy timeout value: %d.\n", MmioRead32 (HdaController->DspMmioAddress + R_ACE_MEM_DFMICPVCP) & B_ACE_MEM_DFMICPVCP_DDZWT));
     }
 
-    if ((HdaConfig->MicPrivacy.Deglitch == TRUE)) {
+    if (HdaConfig->MicPrivacy.Deglitch == TRUE) {
       //
       // De-glitcher enable for privacy signaling GPIO input running on resume clock domain.
       // Locked when DDZPL = 1.
@@ -1405,6 +1407,7 @@ AceConfigureController (
   EFI_STATUS              Status;
   UINT32                  Data32AndFncfg;
   UINT32                  Data32OrFncfg;
+  UINT32                  Index;
 
   Data32AndFncfg = (UINT32) ~0;
   Data32OrFncfg  = (UINT32) 0;
@@ -1605,6 +1608,20 @@ AceConfigureController (
   ///
   if (HdaPrivateConfig->MicPrivacySupported == TRUE) {
     AceConfigureMicPrivacy (HdaController, HdaConfig);
+  }
+
+  //
+  // Configure Audio PLL clock source for SoundWire
+  //
+  if (HdaPreMemConfig->SoundWireClockSelect == HdaSndwClockSourceSelectAudioPll) {
+    for (Index = 0; Index < HdaPrivateConfig->HdaMaxSndwLinkNum; Index++) {
+      if (HdaCallbacks->HdaIsAudioInterfaceSupported != NULL && HdaCallbacks->HdaIsAudioInterfaceSupported (HdaSndw, Index)) {
+        MmioOr32 (
+          HdaController->HdaMmioAddress + ACE_SNDW_ADD_CONTROLLER_OFFSET (Index, R_ACE_MEM_SNDW0LVSCTL),
+          (UINT32) (V_ACE_MEM_SNDWXLVSCTL_MLCS_APLL << N_ACE_MEM_SNDW0LVSCTL_MLCS)
+        );
+      }
+    }
   }
 
   DEBUG ((DEBUG_INFO, "%a () - End.\n", __FUNCTION__));

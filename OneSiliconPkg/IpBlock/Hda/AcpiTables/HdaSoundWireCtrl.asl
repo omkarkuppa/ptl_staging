@@ -19,6 +19,12 @@
 @par Specification Reference:
 **/
 
+// Values for Audio PLL 96MHz
+#define V_HDA_SNDW_IP_CLOCK_PLL_96MHZ                       96000000 // 96 MHz
+#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ           6000000, 12000000 // 6 MHz, 12 MHz
+#define V_HDA_SNDW_FRAME_ROW_SIZE_PLL_96MHZ                 125
+#define V_HDA_SNDW_FRAME_COL_SIZE_PLL_96MHZ                 2
+
 // Values for XTAL 24MHz
 #define V_HDA_SNDW_IP_CLOCK_XTAL24MHZ                       24000000 // 24 MHz
 #define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL24MHZ           6000000  // 6 MHz
@@ -61,6 +67,9 @@
 #define SDW_MIPI_DEFAULT_FRAME_COL_SIZE_INDEX               (SNW_INTEL_LAST_INDEX + 5)
 #define SDW_MIPI_DYNAMIC_FRAME_SHAPE_INDEX                  (SNW_INTEL_LAST_INDEX + 6)
 #define SDW_MIPI_CMD_ERROR_THRESHOLD_INDEX                  (SNW_INTEL_LAST_INDEX + 7)
+
+#define SDW_CLOCK_SOURCE_SELECT_XTAL                        0
+#define SDW_CLOCK_SOURCE_SELECT_APLL                        1
 
 #define SDW_LNK_DESC_DATA(LinkDesc) DeRefOf(Index(LinkDesc, 1))
 #define SDW_LNK_ENTRY(LinkDesc, EntryIndex) DeRefOf(Index(SDW_LNK_DESC_DATA(LinkDesc), EntryIndex))
@@ -118,38 +127,50 @@ Device (SNDW) {
   }
 
   //
-  // Update Link properties (Clock, Supported frequency, Frame) based on selected XTAL
+  // Update Link properties (Clock, Supported frequency, Frame) based on selected clock (XTAL, APLL)
   // Arg0 - Link instance (LNK[N])
-  // Arg1 - XTAL
-  //
-  Method (XCFG, 2,  NotSerialized) {
-    If (Arg1 == 24000000) {
-      ADBG ("XTAL 24MHz")
-      Store (V_HDA_SNDW_IP_CLOCK_XTAL24MHZ, Local0)
-      Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL24MHZ}, Local1)
-      Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL24MHZ, Local2)
-      Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL24MHZ, Local3)
-    }
-    ElseIf (Arg1 == 38400000) {
-      ADBG ("XTAL 38.4MHz")
-      Store (V_HDA_SNDW_IP_CLOCK_XTAL38P4MHZ, Local0)
-      Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ}, Local1)
-      Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ, Local2)
-      Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ, Local3)
-    }
-    ElseIf (Arg1 == 19200000) {
-      ADBG ("XTAL 19.2MHz")
-      Store (V_HDA_SNDW_IP_CLOCK_XTAL19P2MHZ, Local0)
-      Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL19P2MHZ}, Local1)
-      Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL19P2MHZ, Local2)
-      Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL19P2MHZ, Local3)
-    }
-    Else {
-      ADBG ("XTAL UNSUPPORTED")
-      Store (0x00, Local0)
-      Store (0x00, Local1)
-      Store (0x00, Local2)
-      Store (0x00, Local3)
+  // Arg1 - XTAL Clock Value
+  // Arg2 - SoundWire Clock Source Select
+  Method (XCFG, 3,  NotSerialized) {
+    Store (0x00, Local0)
+    Store (Package () {0x00}, Local1)
+    Store (0x00, Local2)
+    Store (0x00, Local3)
+
+    Switch (ToInteger (Arg2)) {
+      Case (SDW_CLOCK_SOURCE_SELECT_XTAL) {
+        If (Arg1 == 24000000) {
+          ADBG ("XTAL 24MHz")
+          Store (V_HDA_SNDW_IP_CLOCK_XTAL24MHZ, Local0)
+          Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL24MHZ}, Local1)
+          Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL24MHZ, Local2)
+          Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL24MHZ, Local3)
+        }
+        ElseIf (Arg1 == 38400000) {
+          ADBG ("XTAL 38.4MHz")
+          Store (V_HDA_SNDW_IP_CLOCK_XTAL38P4MHZ, Local0)
+          Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ}, Local1)
+          Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ, Local2)
+          Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ, Local3)
+        }
+        ElseIf (Arg1 == 19200000) {
+          ADBG ("XTAL 19.2MHz")
+          Store (V_HDA_SNDW_IP_CLOCK_XTAL19P2MHZ, Local0)
+          Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL19P2MHZ}, Local1)
+          Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL19P2MHZ, Local2)
+          Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL19P2MHZ, Local3)
+        }
+      }
+      Case (SDW_CLOCK_SOURCE_SELECT_APLL) {
+        ADBG ("APLL 96MHz")
+        Store (V_HDA_SNDW_IP_CLOCK_PLL_96MHZ, Local0)
+        Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ}, Local1)
+        Store (V_HDA_SNDW_FRAME_ROW_SIZE_PLL_96MHZ, Local2)
+        Store (V_HDA_SNDW_FRAME_COL_SIZE_PLL_96MHZ, Local3)
+      }
+      Default {
+        ADBG ("SOURCE CLOCK UNSUPPORTED")
+      }
     }
 
     // Update properties values: "intel-sdw-ip-clock", "mipi-sdw-clock-frequencies-supported",
@@ -232,13 +253,14 @@ Device (SNDW) {
     QCFG (LNK3, SWQ3, ACS3, SML3)
     QCFG (LNK4, SWQ4, ACS4, SML4)
 
-    // Update XTAL based properties
+    // Update SoundWire clock source based properties
     // XTAL - PCH NVS variable with XTAL frequency (0 - 24MHz; 1 - 38.4MHz)
-    XCFG (LNK0, XTAL)
-    XCFG (LNK1, XTAL)
-    XCFG (LNK2, XTAL)
-    XCFG (LNK3, XTAL)
-    XCFG (LNK4, XTAL)
+    // SWCS - PCH NVS variable with SoundWire Clock source value (0 - XTAL; 1 - Audio PLL)
+    XCFG (LNK0, XTAL, SWCS)
+    XCFG (LNK1, XTAL, SWCS)
+    XCFG (LNK2, XTAL, SWCS)
+    XCFG (LNK3, XTAL, SWCS)
+    XCFG (LNK4, XTAL, SWCS)
 
     // Update DOAIS and DODS based proparties
     // PCH NVS variables set in accordance with PchPolicy

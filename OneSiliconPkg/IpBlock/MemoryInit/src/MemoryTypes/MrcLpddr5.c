@@ -803,6 +803,7 @@ InitMrwLpddr5 (
   UINT16        DqVrefMv;
   UINT16        PdDrvStr;
   UINT16        SocOdt;
+  UINT16        tCWL;
   INT32         Offset;
   INT8          CaOdtEnc;
   INT8          CsOdtEnc;
@@ -818,6 +819,8 @@ InitMrwLpddr5 (
   UINT8         WrEnc;
   UINT8         DfeQu;
   UINT8         DfeQl;
+  UINT8         DcaValue;
+
   MRC_EXT_INPUTS_TYPE  *ExtInputs;
   TOdtValueLpddr LpddrOdtTableIndex;
   LPDDR5_MR10_tRPRE             RpreVal;
@@ -836,9 +839,11 @@ InitMrwLpddr5 (
   LPDDR5_MODE_REGISTER_19_TYPE  Mr19;
   LPDDR5_MODE_REGISTER_20_TYPE  Mr20;
   LPDDR5_MODE_REGISTER_24_TYPE  Mr24;
+  LPDDR5_MODE_REGISTER_30_TYPE  Mr30;
   LPDDR5_MODE_REGISTER_37_TYPE  Mr37;
   LPDDR5_MODE_REGISTER_40_TYPE  Mr40;
   LPDDR5_MODE_REGISTER_41_TYPE  Mr41;
+  LPDDR5_MODE_REGISTER_69_TYPE  Mr69;
 
   Inputs = &MrcData->Inputs;
   ExtInputs = Inputs->ExtInputs.Ptr;
@@ -850,17 +855,16 @@ InitMrwLpddr5 (
   CaDrvStrength = Outputs->RcompTarget[WrDSCmd];
   PdDrvStr = 40; // Ohms
   CsOdtEnc = 0;
-#ifdef HVM_MODE
-  Inputs->NonTargetOdtEn = 1;
-  CaOdtEnc = 0x3;
-  if ((2 & Outputs->ValidRankMask) == 0) {
-    NtOdtEnc = 4; // 1R: RZQ/4 = 60 Ohm
+  if (ExtInputs->DqLoopbackTest) {
+    // Inputs->NonTargetOdtEn = 1;
+    if ((2 & Outputs->ValidRankMask) == 0) {
+      NtOdtEnc = 4; // 1R: RZQ/4 = 60 Ohm
+    } else {
+      NtOdtEnc = 2; // 2R: RZQ/2 = 120 Ohm
+    }
   } else {
-    NtOdtEnc = 2; // 2R: RZQ/2 = 120 Ohm
+    NtOdtEnc = 0;
   }
-#else
-  NtOdtEnc = 0;
-#endif // HVM_MODE
 
   // Extract ODT table for first populated channel
   FirstMc = (MrcControllerExist (MrcData, cCONTROLLER0) ? cCONTROLLER0 : cCONTROLLER1);
@@ -953,6 +957,19 @@ InitMrwLpddr5 (
         Mr24.Bits.Dfeql = DfeQl;
         Mr24.Bits.Dfequ = DfeQu;
         MrPtr[mrIndexMR24] = Mr24.Data8;
+        
+        DcaValue = (Outputs->Frequency > f4800) ? 0xA : 0;
+        //MR30 - DCA WCK
+        Mr30.Data8 = 0;
+        Mr30.Bits.DcaUpperByte = DcaValue;
+        Mr30.Bits.DcaLowByte = DcaValue;
+        MrPtr[mrIndexMR30] = Mr30.Data8;
+
+        //MR69 - DCA READ
+        Mr69.Data8 = 0;
+        Mr69.Bits.ReadDcaUpperByte = DcaValue;
+        Mr69.Bits.ReadDcaLowByte = DcaValue;
+        MrPtr[mrIndexMR69] = Mr69.Data8;
 
         //MR17 -Rank 0 CK/CA/CS ODT = 0 (Enabled), x8 ODT Lower/Upper = (Enabled)
         Mr17.Data8 = 0;
@@ -1044,8 +1061,14 @@ InitMrwLpddr5 (
 
         //MR1 - Clock Mode = 0 (Differential)
         Mr1.Data8 = 0;
-        // Subtract 1 here to take into account tDQSS
-        if (EncodeWriteLatencyLpddr5 (MrcData, TimingPtr->tCWL, &WlEnc) != mrcSuccess) {
+        if (ExtInputs->DqLoopbackTest) {
+          // CWL in Timing profile was adjusted in SPD Processing for loopback mode
+          // Use the actual CWL for MR encoding only
+          tCWL = (UINT16) GetLpddr5tCWL (TimingPtr->tCK, 1); // We always use Set B (1)
+        } else {
+          tCWL = TimingPtr->tCWL;
+        }
+        if (EncodeWriteLatencyLpddr5 (MrcData, tCWL, &WlEnc) != mrcSuccess) {
           Status = mrcWrongInputParameter;
         }
         Mr1.Bits.WriteLatency = WlEnc;
@@ -2403,6 +2426,7 @@ MrcLpddr5SetMr69 (
 
   return Status;
 }
+
 /**
   Lpddr5 Set DimmParamValue is responsible for performing the concrete set DIMM parameter to value,
   using Lpddr specific MR set functions.
@@ -2899,7 +2923,7 @@ MrcGetBankBgOrg (
 
   if (Inputs->Lp58BankMode) {
     return MrcLp58Bank; //8-Bank Mode
-  } else if (Frequency > f3200) {
+  } else if ((Frequency > f3200) && !Inputs->ExtInputs.Ptr->DqLoopbackTest) {
     return MrcLp5BgMode; // BG Mode
   } else {
     return MrcLp516Bank; // 16-Bank Mode
@@ -3346,6 +3370,11 @@ MrcLpddr5GetDramCommandMap (
       *IsSingleCycleCmd = TRUE;
       break;
 
+    case MrDramCmdSre:
+      *DramCmdData = LP5_SRE_CMD_RISE_EDGE;
+      *IsSingleCycleCmd = TRUE;
+      break;
+
     case MrDramCmdNop:
       *DramCmdData = LP5_NOP_CMD_RISE_EDGE;
       break;
@@ -3678,4 +3707,76 @@ GetLpddrtCCDL (
   }
 
   return Result;
+}
+
+/**
+  Calculate the tCWL value for LPDDR5.
+
+  JEDEC Spec x8/x16 WL values:
+    Lower Clk   Upper Clk      SetA   SetB
+    Freq Limit  Freq Limit     WL     WL
+    --------------------------------------
+    10            67           2      2
+    67            133          2      3
+    133           200          3      4
+    200           267          4      5
+    267           344          4      7
+    344           400          5      8
+    400           467          6      9
+    467           533          6      11
+    533           600          7      12
+    600           688          8      14
+    688           750          9      15
+    750           800          9      16
+
+  @param[in] tCK   - The memory DCLK in femtoseconds.
+  @param[in] WlSet - 0: Set A, 1: Set B
+
+@retval LpDDR5 tCWL Value
+**/
+UINT32
+GetLpddr5tCWL (
+  IN UINT32 tCKmin,
+  IN UINT8  WlSet
+  )
+{
+  UINT32 tCWL;
+  UINT32 tCKNorm;
+
+  tCKNorm = tCKmin / 4;
+  //
+  // Using WL Set B values from table 4.6.2 of LPDDR5 JEDEC Spec.
+  //
+  if (tCKNorm >= MRC_DDR_533_TCK_MIN) {
+    tCWL = 2;
+  } else if (tCKNorm >= MRC_DDR_1067_TCK_MIN) {
+    tCWL = 3;
+  } else if (tCKNorm >= MRC_DDR_1600_TCK_MIN) {
+    tCWL = 4;
+  } else if (tCKNorm >= MRC_DDR_2133_TCK_MIN) {
+    tCWL = 5;
+  } else if (tCKNorm >= MRC_DDR_2750_TCK_MIN) {
+    tCWL = 7;
+  } else if (tCKNorm >= MRC_DDR_3200_TCK_MIN) {
+    tCWL = 8;
+  } else if (tCKNorm >= MRC_DDR_3733_TCK_MIN) {
+    tCWL = 9;
+  } else if (tCKNorm >= MRC_DDR_4267_TCK_MIN) {
+    tCWL = 11;
+  } else if (tCKNorm >= MRC_DDR_4800_TCK_MIN) {
+    tCWL = 12;
+  } else if (tCKNorm >= MRC_DDR_5500_TCK_MIN) {
+    tCWL = 14;
+  } else if (tCKNorm >= MRC_DDR_6000_TCK_MIN) {
+    tCWL = 15;
+  } else if (tCKNorm >= MRC_DDR_6400_TCK_MIN) {
+    tCWL = 16;
+  } else if (tCKNorm >= MRC_DDR_7500_TCK_MIN) {
+    tCWL = 19;
+  } else if (tCKNorm >= MRC_DDR_8533_TCK_MIN) {
+    tCWL = 22;
+  } else {
+    tCWL = 24; // MRC_DDR_9600_TCK_MIN
+  }
+  return tCWL;
 }

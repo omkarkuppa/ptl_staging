@@ -63,9 +63,9 @@ UpdatePeiCpuPolicyBoardConfigPreMem (
   //
   //  Cpu Config Lib policies
   //
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CpuRatio, CpuInitPreMemConfig->CpuRatio, PcdGet8 (PcdCpuRatio));
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosGuard, CpuSecurityPreMemConfig->BiosGuard, PcdGet8 (PcdBiosGuard));
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TsegSize, CpuInitPreMemConfig->TsegSize, PcdGet32 (PcdTsegSize));
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.CpuRatio, CpuInitPreMemConfig->CpuRatio, PcdGet8 (PcdCpuRatio));
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosGuard, CpuSecurityPreMemConfig->BiosGuard, PcdGet8 (PcdBiosGuard));
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TsegSize, CpuInitPreMemConfig->TsegSize, PcdGet32 (PcdTsegSize));
 
   return EFI_SUCCESS;
 }

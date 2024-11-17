@@ -130,7 +130,7 @@ MrcDdr5IssueMrCommand (
   MrPdaData[0] = MrPtr[MrIndex];
   NumDevices = 1;
 
-  IsPdaMr = MrcMrIsPda (MrcData, Controller, Channel, CurMrAddr);
+  IsPdaMr = MrcMrIsPda (MrcData, Controller, Channel, CurMrAddr, FALSE);
 
   if (IsPdaMr) {
     Status |= MrcDdr5GetPdaData (MrcData, Controller, Channel, Rank, CurMrAddr, MrPdaData);

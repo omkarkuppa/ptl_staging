@@ -97,11 +97,11 @@ UpdatePeiCpuPolicyBoardConfig (
       return EFI_NOT_FOUND;
     }
 
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EcProvisionEav, BiosGuardConfig->EcProvisionEav, (EFI_PHYSICAL_ADDRESS)(UINTN)EcProvisionEav);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.EcBiosGuardCmdLock, BiosGuardConfig->EcBiosGuardCmdLock, (EFI_PHYSICAL_ADDRESS)(UINTN)EcCmdLock);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.EcProvisionEav, BiosGuardConfig->EcProvisionEav, (EFI_PHYSICAL_ADDRESS)(UINTN)EcProvisionEav);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.EcBiosGuardCmdLock, BiosGuardConfig->EcBiosGuardCmdLock, (EFI_PHYSICAL_ADDRESS)(UINTN)EcCmdLock);
 
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.BiosGuardAttr, BiosGuardConfig->BiosGuardAttr, BiosGuardHobPtr->Bgpdt.BiosGuardAttr);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.BiosGuardModulePtr, BiosGuardConfig->BiosGuardModulePtr, BiosGuardHobPtr->BiosGuardModulePtr);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.BiosGuardAttr, BiosGuardConfig->BiosGuardAttr, BiosGuardHobPtr->Bgpdt.BiosGuardAttr);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.BiosGuardModulePtr, BiosGuardConfig->BiosGuardModulePtr, BiosGuardHobPtr->BiosGuardModulePtr);
 
     DataSize = Sha384GetContextSize ();
     Status   = PeiServicesAllocatePool (DataSize, &Sha384Context);
@@ -111,7 +111,7 @@ UpdatePeiCpuPolicyBoardConfig (
     Sha384Init   (Sha384Context);
     Sha384Update (Sha384Context, Data, DataSize);
     Sha384Final  (Sha384Context, HashValue);
-    COPY_POLICY_V2 (&((FSPS_UPD *) FspsUpd)->FspsConfig.BgpdtHash[0], &BiosGuardConfig->BgpdtHash[0], &HashValue[0], 48);
+    COPY_POLICY (&((FSPS_UPD *) FspsUpd)->FspsConfig.BgpdtHash[0], &BiosGuardConfig->BgpdtHash[0], &HashValue[0], 48);
   }
 
   return Status;

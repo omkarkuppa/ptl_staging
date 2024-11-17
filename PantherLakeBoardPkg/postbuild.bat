@@ -267,63 +267,93 @@ call %EDK_TOOLS_BINWRAPPERS%\FMMT -a ^
 @REM UPL Post Build Process End
 @REM
 
+@REM
+@REM Payload Management Post Build Process Begin
+@REM
 :PayloadBuild
+echo  Generate FIT/NON FIT Payloads
+@set PAYLOAD_BUILD_TOOL_PATH=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\PayloadManagement
 
-echo.
-echo  Call thess scripts to generate FIT/NON FIT Payloads
-echo.
+@REM Set generic arguments for NotFit/Fit Payload build
 @set PAYLOAD_BUILD_FLAGS=IntegrateBuild
-@if %RESILIENCY_BUILD% EQU TRUE (
-  @set PAYLOAD_BUILD_FLAGS=%PAYLOAD_BUILD_FLAGS% res
-)
 if "%TARGET%" == "RELEASE" (
-  call %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\PayloadManagement\NonFitPayloads\NonFitPayloadBuild.bat %PAYLOAD_BUILD_FLAGS% r
-) else (
-  call %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\PayloadManagement\NonFitPayloads\NonFitPayloadBuild.bat %PAYLOAD_BUILD_FLAGS%
+  @set PAYLOAD_BUILD_FLAGS=%PAYLOAD_BUILD_FLAGS% r
 )
+
+@REM
+@REM Build NonFitPayload
+@REM
+echo PAYLOAD_BUILD_FLAGS=%PAYLOAD_BUILD_FLAGS%
+call %PAYLOAD_BUILD_TOOL_PATH%\NonFitPayloads\NonFitPayloadBuild.bat %PAYLOAD_BUILD_FLAGS%
+
 @if %errorlevel% NEQ 0 (
    @echo ERROR: Failure in generating NonFitPayload
    @set SCRIPT_ERROR=1
    goto EndPostBuild
 )
-@REM  call %WORKSPACE_PLATFORM%\%PLATFORM_FULL_PACKAGE%\PayloadManagement\FitPayloads\FitPayloadBuild.bat %PAYLOAD_BUILD_FLAGS%
 
-@REM@if %errorlevel% NEQ 0 (
-@REM  @echo ERROR: Failure in generating FitPayload
-@REM  @set SCRIPT_ERROR=1
-@REM  goto EndPostBuild
-@REM)
-
-@REM
-@REM Stitch Payloads and ClientBios together
-@REM
-@set EXTBIOS_REGION_SIZE=
-@set EXTEND_PAYLOAD_REGION_SIZE=
-@set PAYLOADS_BUILD_DIR=Build\FitPayloadsPkg\%TARGET%_%TOOL_CHAIN_TAG%
-@set NONFIT_PAYLOAD_BUILD_DIR=Build\NonFitPayloadsPkg\%TARGET%_%TOOL_CHAIN_TAG%
-copy %BUILD_DIR%\FV\ClientBios.fd %BUILD_DIR%\FV\ClientBiosPrePayload.fd
-
-setlocal ENABLEDELAYEDEXPANSION
-@if %EXTENDEDREGION_BUILD% EQU FALSE (
-  @for /f "tokens=4" %%i in ('@findstr /c:"gMinPlatformPkgTokenSpaceGuid\.PcdFlashNvStorageOffset" %FLASHMAP_FDF%') do @set PAYLOAD_REGION_SIZE=%%i
-  call split -f %BUILD_DIR%\FV\ClientBios.fd -s !PAYLOAD_REGION_SIZE! -t %BUILD_DIR%\FV\ClientBios_ExcludePayload.fd -o %BUILD_DIR%\FV\Buffer.bin
-  copy /y /b %NONFIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd + %BUILD_DIR%\FV\ClientBios_ExcludePayload.fd %BUILD_DIR%\FV\ClientBios.fd
-  @del %BUILD_DIR%\FV\Buffer.bin
-) else (
-  @for /f "tokens=4" %%i in ('@findstr /c:"gBoardModuleTokenSpaceGuid\.PcdFlashAllExtendAreaSize" %FLASHMAP_FDF%') do @set EXTBIOS_REGION_SIZE=%%i
-  @for /f "tokens=4" %%i in ('@findstr /c:"gCapsuleFeaturePkgTokenSpaceGuid\.PcdFlashNonFitPayloadSize" %FLASHMAP_FDF%') do @set PAYLOAD_REGION_SIZE=%%i
-  call split -f %BUILD_DIR%\FV\ClientBios.fd -s !EXTBIOS_REGION_SIZE! -t %BUILD_DIR%\FV\ClientBios16M.fd -o %BUILD_DIR%\FV\ExtBiosRemaining.bin
-  call split -f %BUILD_DIR%\FV\ClientBios16M.fd -s !PAYLOAD_REGION_SIZE! -t %BUILD_DIR%\FV\ClientBios_ExcludePayload.fd -o %BUILD_DIR%\FV\Buffer.bin
-  copy /y /b %BUILD_DIR%\FV\ExtBiosRemaining.bin + %NONFIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd + %BUILD_DIR%\FV\ClientBios_ExcludePayload.fd %BUILD_DIR%\FV\ClientBios.fd
-  @del %BUILD_DIR%\FV\ExtBiosRemaining.bin
-  @del %BUILD_DIR%\FV\Buffer.bin
+@REM Add more arguments for FitPayload build
+@if %RESILIENCY_BUILD% EQU TRUE (
+  @set PAYLOAD_BUILD_FLAGS=%PAYLOAD_BUILD_FLAGS% res
 )
+@if %WCL_BUILD% EQU TRUE (
+  @set PAYLOAD_BUILD_FLAGS=%PAYLOAD_BUILD_FLAGS% wcl
+)
+
+@REM
+@REM Build FitPayload
+@REM
+echo PAYLOAD_BUILD_FLAGS=%PAYLOAD_BUILD_FLAGS%
+call %PAYLOAD_BUILD_TOOL_PATH%\FitPayloads\FitPayloadBuild.bat %PAYLOAD_BUILD_FLAGS%
+
 @if %errorlevel% NEQ 0 (
-  echo Error: Stitch Fit Payload into ClientBios failure
+   @echo ERROR: Failure in generating FitPayload
+   @set SCRIPT_ERROR=1
+   goto EndPostBuild
+)
+
+@REM
+@REM Patch Payloads to ClientBios
+@REM
+echo Patch Payloads to ClientBios
+
+@set NON_FIT_PAYLOAD_BUILD_DIR=%WORKSPACE%\Build\NonFitPayloadsPkg\%TARGET%_%TOOL_CHAIN_TAG%
+@set FIT_PAYLOAD_BUILD_DIR=%WORKSPACE%\Build\FitPayloadsPkg\%TARGET%_%TOOL_CHAIN_TAG%
+copy /y /b %BUILD_DIR%\FV\ClientBios.fd %BUILD_DIR%\FV\ClientBios_PayloadPre.fd
+
+@REM
+@REM Patch NotFitPayload
+@REM
+@call %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\PayloadManagement\ReplaceFvInImage.py ^
+  -I %BUILD_DIR%\FV\ClientBios.fd ^
+  -F %NON_FIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd ^
+  -O %BUILD_DIR%\FV\ClientBios_PayloadTemp.fd
+@if %errorlevel% NEQ 0 (
+  echo Error: Patch NonFitPayload failure
   @set SCRIPT_ERROR=1
   goto EndPostBuild
 )
 
+@REM
+@REM Patch FitPayload
+@REM
+@call %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\PayloadManagement\ReplaceFvInImage.py ^
+  -I %BUILD_DIR%\FV\ClientBios_PayloadTemp.fd ^
+  -F %FIT_PAYLOAD_BUILD_DIR%\FV\FITPAYLOADS.fd ^
+  -O %BUILD_DIR%\FV\ClientBios_PayloadPost.fd
+@if %errorlevel% NEQ 0 (
+  echo Error: Patch FitPayload failure
+  @set SCRIPT_ERROR=1
+  goto EndPostBuild
+)
+
+del %BUILD_DIR%\FV\ClientBios_PayloadTemp.fd
+copy /y /b %BUILD_DIR%\FV\ClientBios_PayloadPost.fd %BUILD_DIR%\FV\ClientBios.fd
+
+:EndPayloadBuild
+@REM
+@REM Payload Management Post Build Process End
+@REM
 
 @REM
 @REM XmlCli: Post Build Process Begin
@@ -532,7 +562,7 @@ call split -f %OBB_HASH_TMP_FOLDER%\NvsObb.bin -s !FLASH_OBB_OFFSET! -o %OBB_HAS
 @rem Calculate Obb/Non Fit Payload SHA384 digest and replace DummySha384Digest.bin with it.
 @rem
 call %OPENSSL_PATH%\openssl.exe dgst -binary -sha384 %OBB_HASH_TMP_FOLDER%\Obb.bin > %OBB_HASH_TMP_FOLDER%\ObbDigest.bin
-call %OPENSSL_PATH%\openssl.exe dgst -binary -sha384 %NONFIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd > %OBB_HASH_TMP_FOLDER%\NonFitPayloadDigest.bin
+call %OPENSSL_PATH%\openssl.exe dgst -binary -sha384 %NON_FIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd > %OBB_HASH_TMP_FOLDER%\NonFitPayloadDigest.bin
 @rem
 @rem Prepare ObbDigest.ffs
 @rem
@@ -629,7 +659,7 @@ if exist %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Features\MultiIbbConfig\T
   @rem
   @rem Generate NONFITPAYLOAD_to_SPI BGUP.
   @rem
-  call %BIOS_GUARD_UPDATE_PACKAGE_PATH%\BuildBGUP_SPI.bat -d %NONFIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd -p script_BuildBGUP_NonFitPayload.bgsl -v !BIOS_GUARD_SVN! -use_ftu false
+  call %BIOS_GUARD_UPDATE_PACKAGE_PATH%\BuildBGUP_SPI.bat -d %NON_FIT_PAYLOAD_BUILD_DIR%\FV\NONFITPAYLOADS.fd -p script_BuildBGUP_NonFitPayload.bgsl -v !BIOS_GUARD_SVN! -use_ftu false
   call %PYTHON_COMMAND% %BIOS_GUARD_UPDATE_PACKAGE_PATH%\BiosGuardCapsule.py -i update_package.BIOS_Guard -o capsule_update_package.BIOS_Guard
   copy /b capsule_update_package.BIOS_Guard + update_package_bgupc.biosguard %BGSL_TMP_FOLDER%\NonFitPayloadBgsl.bin
   @REM Delete BGUP related build files
@@ -799,7 +829,7 @@ setlocal ENABLEDELAYEDEXPANSION
     )
   )
   @if %FSPM_COMPRESSED% EQU TRUE (
-    @set /A FSPM_LOADING_POLICY= %FSPM_LOADING_POLICY% + 0x2
+    @set /A FSPM_LOADING_POLICY= !FSPM_LOADING_POLICY! + 0x2
   )
 
   @call %PYTHON_COMMAND% %WORKSPACE_COMMON%\%PLATFORM_BOARD_PACKAGE%\BoardSupport\Tools\BsssGen\BsssGen.py ^

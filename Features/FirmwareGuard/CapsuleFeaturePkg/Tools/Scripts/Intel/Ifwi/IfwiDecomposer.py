@@ -334,15 +334,15 @@ class IfwiDecomposer (object):
         """
         Result: bool = False
 
-        Cmd: List[str] = [
+        CmdList: List[str] = [
             f'{self.__IfwiConfigParserPath}',
             '-i',  f'{self.__IfwiConfigPath}',
             '-a',  f'{Attribute}',
             '-ev', f'{ExpectValue}',
             ]
-        Cmd = Cmd + ['-n'] + NodeList
+        CmdList = CmdList + ['-n'] + NodeList
 
-        ExitCode, _, _ = ExecPythonCmd (Cmd, IsException = False)
+        ExitCode, _, _ = ExecPythonCmd (CmdList, IsException = False)
 
         if ExitCode == EXIT_SUCCESS:
             Result = True

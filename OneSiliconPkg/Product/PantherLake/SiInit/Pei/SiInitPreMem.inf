@@ -83,6 +83,7 @@
   PeiOcInitLib
   CpuPmDataLib
   PerformanceLib
+  FspPerformanceLib
   HobLib
 
 [Guids]

@@ -165,6 +165,118 @@ def CentralStrWithFixedWidth (
 
     return f'{Prefix}{Left}{Middle}{Right}{Postfix}'
 
+class FileRangeInfo (object):
+    def __init__ (self) -> None:
+        """ Class to represent the range information.
+
+        Note:
+            Caller have responsibility to ensure the range value
+            is valid inside the file content.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            None.
+        """
+        self.__RangeList: List[Tuple[int, int]] = list ()
+
+    @property
+    def Data (self) -> List[Tuple[int, int]]:
+        """ Return the list of range information in tuple (0-based).
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            List[Tuple[int, int]]:
+                The 0-based list of range tuple.
+                Format should be [(Start, End), ...]
+        """
+        return self.__RangeList
+
+    @property
+    def Length (self) -> int:
+        """ Return the length of the range information.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            int:
+                The length of the range information.
+        """
+        return len (self.__RangeList)
+
+    def __IsValid (self, Value: int) -> bool:
+        """ Check the input value is valid.
+
+        Note:
+            This function would check below items.
+                (1) Is input value is int type.
+                (2) Is input value is positive value.
+
+        Args:
+            Value (int):
+                Input value to be trialed.
+
+        Raises:
+            None.
+
+        Returns:
+            bool:
+                False - Input value is invalid.
+                True  - Input value is valid.
+        """
+        if not isinstance (Value, int):
+            return False
+
+        if Value < 0:
+            return False
+
+        return True
+
+    def Add (self, Start: int, End: int) -> None:
+        """ Add the new range information.
+
+        Args:
+            Start (int):
+                The start value of the range.
+            End (int):
+                The end value of the range.
+
+        Raises:
+            ValueError:
+                (1) Start value is invalid.
+                (2) End value is invalid.
+
+        Returns:
+            None.
+        """
+        StartLoc: int = None
+        EndLoc  : int = None
+
+        if not self.__IsValid (Start):
+            raise ValueError (f'Start value is invalid.')
+        elif not self.__IsValid (End):
+            raise ValueError (f'End value is invalid.')
+
+        if Start < End:
+            StartLoc, EndLoc = Start, End
+        else:
+            StartLoc, EndLoc = End, Start
+
+        self.__RangeList.append (tuple ([StartLoc, EndLoc]))
+
 class File (object):
     def __init__ (
         self,
@@ -612,43 +724,41 @@ class File (object):
 
     def FindInRange (
         self,
-        Keyword       : Any,
-        RangeTupleList: List[Tuple[int, int]],
-        ) -> Tuple[List[Tuple[int, int]], List[int]]:
+        Keyword  : Any,
+        RangeInfo: FileRangeInfo,
+        ) -> Tuple[List[int], FileRangeInfo]:
         """ Find the specific keyword in the specific range list.
 
         Args:
             Keyword (Any):
                 The keyword to be search in line.
-            RangeTupleList (List[Tuple):
-                The 0-based range tuple list.
-                Format should be [(Start, End), ...]
+            RangeInfo (FileRangeInfo):
+                The 0-based range information.
+                (Shall be FileRangeInfo type.)
 
         Raises:
             None.
 
         Returns:
-            Tuple[List[Tuple[int, int]], List[int]]:
-                List[Tuple[int, int]]
-                    List of find the specific keyword in 0-based range.
-                    Format should be [(Start, End), ...]
-                List[int]
-                    List of find the specific keyword in 0-based
-                    position.
+            Tuple[List[int], FileRangeInfo]:
+                List[int]:
+                    List of find the specific keyword in offset.
+                FileRangeInfo:
+                    Range info of found specific keyword in range.
         """
-        SectionList : List[Tuple[int, int]] = list ()
-        PositionList: List[int]             = list ()
+        OffsetList      : List[int]     = list ()
+        SectionRangeInfo: FileRangeInfo = FileRangeInfo ()
 
-        for StartLoc, EndLoc in RangeTupleList:
+        for StartLoc, EndLoc in RangeInfo.Data:
             FindResult = self.Find (Keyword, StartLoc, EndLoc)
             if len (FindResult) == 0:
                 continue
-            else:
-                SectionList.append ((StartLoc, EndLoc))
-                for Loc in FindResult:
-                    PositionList.append (Loc)
 
-        return SectionList, PositionList
+            SectionRangeInfo.Add (StartLoc, EndLoc)
+            for Loc in FindResult:
+                OffsetList.append (Loc)
+
+        return OffsetList, SectionRangeInfo
 
     def Save (self, FilePath: Union[str, os.PathLike]) -> None:
         """ Save the text-based file from memory to storage.

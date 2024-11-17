@@ -82,6 +82,7 @@ typedef enum {
   mrMR45 = 45,
   mrMR46 = 46,
   mrMR48 = 48,
+  mrMR50 = 50,
   mrMR54 = 54,
   mrMR55 = 55,
   mrMR56 = 56,
@@ -229,6 +230,7 @@ typedef enum {
   mrIndexMR45,
   mrIndexMR46,
   mrIndexMR48,
+  mrIndexMR50,
   mrIndexMR54,
   mrIndexMR55,
   mrIndexMR56,
@@ -488,7 +490,7 @@ typedef enum {
 #define SPD5_MANUF_START       512         ///< The starting point for the SPD DRAM module manufacturing data.
 #define SPD5_MANUF_END         520         ///< The ending point for the SPD DRAM module manufacturing data.
 #define SPD5_DRAM_MFG_START    552         ///< The starting point for the SPD DRAM manufacturing data.
-#define SPD5_DRAM_MFG_END      553         ///< The ending point for the SPD DRAM manufacturing data.
+#define SPD5_DRAM_MFG_END      554         ///< The ending point for the SPD DRAM manufacturing data.
 #define SPDLP_MANUF_START      320         ///< The starting point for the SPD manufacturing data.
 #define SPDLP_MANUF_END        328         ///< The ending point for the SPD manufacturing data.
 #define SPDLP_JEDEC_SPEC_MANUF_START   512 ///< The starting point for the SPD manufacturing data.
@@ -619,6 +621,7 @@ typedef enum {
   OemSsaStopPoint,          ///< Call to SSA stop point.
   OemDunitConfig,           ///< before DUnit Init Sequence.
   OemDdrPhyInit,            ///< before Phy Init Sequence.
+  OemDdrPhyInitFast,        ///< before Phy Init Sequence for Green MRC Fast Boot.
   OemBwSelCal,              ///< before BwSel Calibration.
   OemViewPinCal,            ///< before View Pin Calibration
   OemWriteDqDqsReTraining,
@@ -646,6 +649,7 @@ typedef enum {
   OemDccPhaseClkCal,        ///< before DCC Phase CLK calibration
   OemDccPiCodeLut,          ///< before DCC PI Code LUT
   OemDataPiLinearity,       ///< before Data PI Linearity Calibration
+  OemQClkPhAlign,           ///< before Align MC QClk to Ph QClk calibration
   OemDccPiSerializerCal,    ///< before DCC PI Seriallizer Calibration
   OemVccLvrAutoTrim,        ///< before Vcc LVR Auto Trim
   OemDccTlineClkCal,        ///< before Tline CLK calibration
@@ -2086,7 +2090,6 @@ typedef struct {
   BOOLEAN             IsNtOdtEnabled;                 ///< TRUE if LP5 NT ODT is currently enabled
   BOOLEAN             IsCs2NEnabled;                  ///< If Current SAGV point is CS 2N Mode
   BOOLEAN             IsWckLevelingDone;              ///< TRUE if WCK2CK Leveling is done on LP5
-  BOOLEAN             IsIbeccInitFsm;                 ///< TRUE: IBECC Init FSM is enabled.
   BOOLEAN             IsDvfscEnabled;                 ///< TRUE if DVFSC is enabled for a given GV point, which is determined by Inputs.DvfscEnabled && Frequency <= f3200.
   BOOLEAN             IsLaneMode;                     ///< TRUE if in Lane Sensing Mode (Bit Mask), only set for training steps that will get feedback from DRAM on xxDQ pins
   BOOLEAN             IsDimm1Enabled;                 ///< TRUE if Dimm 1 (Rank[3:2]) is populated
@@ -2117,6 +2120,7 @@ typedef struct {
   BOOLEAN             IsPhyDqDeswizzleNeeded;      ///< Used to deswizzle DataTrainFeedback value, whenever DTF used in Per-Lane mode
   BOOLEAN             IsLP5Camm2;                  ///< Detects if the current JEDEC 1.0 Spec LP5 module uses the CAMM form factor
   BOOLEAN             IsIbeccInitRangesRequired;   ///< Flag to indicate that the IBECC Init Ranges FSM must be run
+  BOOLEAN             IsMptuFast;                  ///< Flag to indicate that the MPTU is required on the current fast boot
   BOOLEAN             IsVocSearch;                 ///< TRUE if currently running VOC part of SOT
   UINT8               FinalIbeccOperationMode;     ///< Output to BIOS on the state of IBECC
   UINT8               tMAC;                        ///< Maximum Activate Count for pTRR.
@@ -2149,7 +2153,8 @@ typedef struct {
   UINT8               CmosConfig2;                 ///< Data of MRC_DEBUG_CONFIG2_CMOS_ADDR
   UINT8               BankIncOrder[MAX_MPTU];      ///< Used to program BankIncOrder in Ddr5 for each Dunit
   UINT8               CaDeselectStress;
-  UINT8               ReservedBytesAlign[1];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  BOOLEAN             IsLoopbackSetupDone;
+//  UINT8               ReservedBytesAlign[4];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   MrcIpTestEnv        IpModel;
   MrcDdrType          DdrType;                     ///< Current memory type: DDR5, LPDDR5
   MrcSaGvPoint        SaGvFirst;                   ///< First SaGv Point to be trained
@@ -2326,7 +2331,8 @@ typedef struct {
   PLATFORM_DATA_PTR PlatformDataPtr; ///< Aligned pointer to optional platform-specific data.
   BOOLEAN LockUiDiv6Flow;     ///< LockUI Calibration flow uses Div6 mode
   UINT16  RloadTarget;        ///< Rload target value for Rload compensation
-  UINT8   ReservedForDwordAlignment[3];
+  BOOLEAN DiscardLvrAutoTrimResults; ///< Discard LVR Auto Trim Results and use PHY init values
+  UINT8   ReservedForDwordAlignment[2];
 } MrcInput;
 
 typedef struct {

@@ -29,6 +29,7 @@
 ::    build.exe to skip the generation of makefiles.
 :: 4) rom = Build Bios.rom only and building SPIs will be skipped.
 ::
+@setlocal EnableDelayedExpansion
 @set BLDTIMESTAMP=%time%
 
 @if not defined PYTHON_COMMAND (
@@ -242,10 +243,11 @@ call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOpt
     ) else (
       @set FBM_CONFIG_TXT=%WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmConfig_wcl.txt
     )
-
+    echo FBM_CONFIG_TXT=!FBM_CONFIG_TXT!
+    echo PTL_BUILD=%PTL_BUILD%
     @echo call FbmGen to generate FBM
     @call %PYTHON_COMMAND% %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmGen.py ^
-      -c %FBM_CONFIG_TXT% ^
+      -c !FBM_CONFIG_TXT! ^
       -o %WORKSPACE%\Build\%FSP_PKG_NAME%\%FSP_TARGET%_%TOOL_CHAIN_TAG%\FV ^
       -f %WORKSPACE_FSP_BIN%\PantherLakeFspBinPkg\Fsp.fd ^
       --ltsign-tool-path %WORKSPACE_BINARIES%\Tools\ltsign\ltsign.exe ^

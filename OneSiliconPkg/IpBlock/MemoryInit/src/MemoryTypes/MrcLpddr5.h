@@ -256,7 +256,7 @@
 #define TCCD_LP5_FREQ      (16)
 
 ///< MRR uses BL16 (half cacheline mode). Regular reads use BL32
-///< tCCD_L is = BL/4 = 16/4 = 4 -> HSD22016995464: Need to set tCCD_L to 2 to avoid bubbles in BG mode during Read MPR
+///< tCCD_L is = BL/4 = 16/4 = 4 -> Need to set tCCD_L to 2 to avoid bubbles in BG mode during Read MPR
 ///< tCCD_S is = BL/8 = 16/8 = 2 (Non-BG mode)
 ///< tCCD_S is = 2 (BG mode)
 #define TCCD_L_LP5_MRR    (2)
@@ -330,6 +330,7 @@
 /// DIMM DFE Tap defines
 ///
 #define LPDDR5_DIMM_DFE_TAP_RANGE  (7) ///< MR24
+
 ///
 /// LP5 Pre Emphasis define
 ///
@@ -345,6 +346,7 @@
 #define LP5_MRW_CMD_RISE_EDGE2   (0x08)  // L-L-L-H-L-L-L (0001000)
 #define LP5_MRR_CMD_RISE_EDGE    (0x18)  // L-L-H-H-L-L-L (0011000)
 #define LP5_MPC_CMD_RISE_EDGE    (0x30)  // L-H-H-L-L-L-L (0110000)
+#define LP5_SRE_CMD_RISE_EDGE    (0x68)  // H-H-L-H-L-L-L (1101000)
 #define LP5_PREA_CMD_RISE_EDGE   (0x78)  // H-H-H-H-L-L-L (1111000)
 #define LP5_PREA_CMD_FALL_EDGE   (0x40)  // H-L-L-L-L-L-L (1000000)
 #define LP5_WSFS_CMD_RISE_EDGE   (0x4c)  // H-L-L-H-H-L-L (1001100)
@@ -1115,6 +1117,17 @@ MrcIssueLp5FastSync (
   );
 
 /**
+  If WCK sync is required (WCK Always On mode and after WCK leveling):
+   - Issue CAS WS_OFF on all channels / ranks, followed by CAS WS_FS
+
+  @param[in] MrcData    - Pointer to MRC global data.
+**/
+VOID
+MrcLp5WckOffAndSync (
+  IN MrcParameters *const MrcData
+  );
+
+/**
   Return the RDQS Postamble Length encoding for MR10
 
   @return RDQS Postamble Length encoding for MR10
@@ -1170,7 +1183,7 @@ MrcLp5GetReadPreambleSetting (
   Update MR10 in the host struct as well
 
   @param[in]  MrcData -  Pointer to MRC global data.
-  
+
   @retval MrcStatus - mrcSuccess if successful, else an error status.
 **/
 MrcStatus
@@ -1352,4 +1365,36 @@ UINT32
 MrcGetDramWriteDrift (
   IN     MrcParameters *const MrcData
   );
+
+/**
+  Calculate the tCWL value for LPDDR5.
+
+  JEDEC Spec x8/x16 WL values:
+    Lower Clk   Upper Clk      SetA   SetB
+    Freq Limit  Freq Limit     WL     WL
+    --------------------------------------
+    10            67           2      2
+    67            133          2      3
+    133           200          3      4
+    200           267          4      5
+    267           344          4      7
+    344           400          5      8
+    400           467          6      9
+    467           533          6      11
+    533           600          7      12
+    600           688          8      14
+    688           750          9      15
+    750           800          9      16
+
+  @param[in] tCK   - The memory DCLK in femtoseconds.
+  @param[in] WlSet - 0: Set A, 1: Set B
+
+@retval LpDDR5 tCWL Value
+**/
+UINT32
+GetLpddr5tCWL (
+  IN UINT32 tCKmin,
+  IN UINT8  WlSet
+  );
+
 #endif // _MRC_LPDDR5_H_

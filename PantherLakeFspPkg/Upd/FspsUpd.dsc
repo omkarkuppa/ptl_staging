@@ -202,10 +202,6 @@
   # !BSF HELP:{Configure MSR to CFG Lock bit. 0: Disable; <b>1: Enable</b>.}
   gPlatformFspPkgTokenSpaceGuid.PmgCstCfgCtrlLock           | * | 0x01 | 0x01
 
-  # !BSF NAME:{Enable or Disable Enhanced C-states} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable/Disable C1E. When enabled, CPU will switch to minimum speed when all cores enter C-State. 0: Disable; <b>1: Enable</b>}
-  gPlatformFspPkgTokenSpaceGuid.C1e                         | * | 0x01 | 0x01
-
   # !BSF NAME:{Enable or Disable Package Cstate Demotion} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable or Disable Package C-State Demotion. 0: Disable; <b>1: Enable</b>}
   gPlatformFspPkgTokenSpaceGuid.PkgCStateDemotion           | * | 0x01 | 0x01
@@ -1612,6 +1608,7 @@
   # !BSF HELP:{The Index of PCIe Port that is selected for Port8xh Decode (1 Based).}
   gPlatformFspPkgTokenSpaceGuid.PchPciePort8xhDecodePortIndex  | * | 0x01 | 0x01
 
+
   # !BSF NAME:{PCIE RP LTR Override Spec Compliant} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFF)}
   # !BSF HELP:{Override LTR based on Ep capability.}
   gPlatformFspPkgTokenSpaceGuid.PcieRpLtrOverrideSpecCompliant      | * | 0x1C | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
@@ -1711,6 +1708,10 @@
   # !BSF NAME:{Serial IO UART DBG2 table} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFF)}
   # !BSF HELP:{Enable or disable Serial Io UART DBG2 table, default is Disable; <b>0: Disable;</b> 1: Enable.}
   gPlatformFspPkgTokenSpaceGuid.SerialIoUartDbg2            | * | 0x07 | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
+
+  # !BSF NAME:{Serial IO UART PG DBG2 table} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFF)}
+  # !BSF HELP:{Enable or disable Serial Io UART PG DBG2 table, default is Disable; <b>0: Disable;</b> 1: Enable.}
+  gPlatformFspPkgTokenSpaceGuid.SerialIoUartPgDbg2          | * | 0x07 | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
   # !BSF NAME:{I2Cn Device Mode} TYPE:{EditNum, HEX,  (0x00,0xFFFFFFFFFFFFFFFFFFFF)}
   # !BSF HELP:{Selects I2c operation mode. N represents controller index: I2c0, I2c1, ... Available modes: 0:SerialIoI2cDisabled, 1:SerialIoI2cPci, 2:SerialIoI2cHidden}

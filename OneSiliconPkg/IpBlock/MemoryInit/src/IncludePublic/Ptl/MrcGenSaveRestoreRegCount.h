@@ -35,7 +35,7 @@
 // MC SaGv 32 Bit Registers: 100
 // MC SaGv 64 Bit Registers: 40
 
-#define MRC_REGISTER_COUNT_COMMON  (3412 / sizeof (UINT32))
+#define MRC_REGISTER_COUNT_COMMON  (3416 / sizeof (UINT32))
 #define MRC_REGISTER_COUNT_SAGV    (8824 / sizeof (UINT32))
 
 #endif // MRC_GEN_SAVE_RESTORE_REG_COUNTS

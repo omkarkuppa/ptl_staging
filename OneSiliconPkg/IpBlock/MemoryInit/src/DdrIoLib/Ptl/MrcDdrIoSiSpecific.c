@@ -19,7 +19,7 @@
 
 #include "MrcCommon.h"
 #include "MrcBlueGreenCommunication.h"
-#include "MrcDdrIoSiSpecific.h"
+#include "MrcDdrIo.h"
 #include "MrcCrosser.h"
 
 /**

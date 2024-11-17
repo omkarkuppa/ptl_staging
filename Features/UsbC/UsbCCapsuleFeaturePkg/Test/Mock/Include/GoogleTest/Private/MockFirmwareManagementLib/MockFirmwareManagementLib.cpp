@@ -22,7 +22,8 @@
 
 #include "MockFirmwareManagementLib.h"
 
-MOCK_INTERFACE_DEFINITION(MockFirmwareManagementLib);
+MOCK_INTERFACE_DEFINITION (MockFirmwareManagementLib);
 
-MOCK_FUNCTION_DEFINITION(MockFirmwareManagementLib, Progress, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockFirmwareManagementLib, Progress, 1, EFIAPI);
 
+EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS LocalProgress = Progress;

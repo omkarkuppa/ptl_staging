@@ -26,7 +26,7 @@
 #include "MrcGeneral.h"
 #include "MrcLpddr5.h"
 #include "MrcDdrIoUtils.h"
-#include "MrcPmaApiCrossProj.h"
+#include "MrcPmaApi.h"
 #include "MrcHalRegisterAccess.h"
 
 ///

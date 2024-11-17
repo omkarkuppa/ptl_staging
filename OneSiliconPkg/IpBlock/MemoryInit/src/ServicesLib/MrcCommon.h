@@ -1600,6 +1600,8 @@ MrcBsort (
   @param[in] Controller        - Controller to work on.
   @param[in] Channel           - channel to work on.
   @param[in] MrAddress         - MR Address to check
+  @param[in] IsSagvConfig      - TRUE if Programming MRS FSM for SAGV Transistion.
+                                  If TRUE, Force DIMM DFE MRs to enable PDA
 
   @retval TRUE if the specific MR is PDA otherwise FALSE
 **/
@@ -1608,7 +1610,8 @@ MrcMrIsPda (
   IN    MrcParameters      *MrcData,
   IN    UINT32             Controller,
   IN    UINT32             Channel,
-  IN    MrcModeRegister    MrAddress
+  IN    MrcModeRegister    MrAddress,
+  IN    BOOLEAN            IsSagvConfig
   );
 
 /**

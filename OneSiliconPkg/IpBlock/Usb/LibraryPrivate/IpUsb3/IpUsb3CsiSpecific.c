@@ -267,17 +267,6 @@ IpUsb3GetControl (
       return IpUsb3FeatValDbcTraceInEpDis;
       break;
 
-    case IpUsb3FeatIdLtrNdeEnhancedSsIsochInEp:
-      Data = IP_WR_READ_32 (pInst->RegCntxtMem, R_XHCI_MEM_TRB_PRF_CTRL_REG4);
-      if (pCsiSts != NULL) {
-        *pCsiSts = IpCsiStsSuccess;
-      }
-      if ((Data & B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS) == B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS) {
-        return IpUsb3FeatValLtrNdeEnhancedSsIsochInEpEn;
-      } else {
-        return IpUsb3FeatValLtrNdeEnhancedSsIsochInEpDis;
-      }
-
     case IpUsb3FeatIdUnknown:
     default:
       PRINT_WARNING ("Invalid FeatureId provided to %s\n", __FUNCTION__);
@@ -474,20 +463,6 @@ IpUsb3SetControl (
       }
       break;
 
-    case IpUsb3FeatIdLtrNdeEnhancedSsIsochInEp:
-      if (FeatureVal == IpUsb3FeatValLtrNdeEnhancedSsIsochInEpEn) {
-        IP_WR_OR_32 (pInst->RegCntxtMem, R_XHCI_MEM_TRB_PRF_CTRL_REG4, B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS);
-      } else if (FeatureVal == IpUsb3FeatValLtrNdeEnhancedSsIsochInEpDis) {
-        IP_WR_AND_THEN_OR_32 (pInst->RegCntxtMem,
-                             R_XHCI_MEM_TRB_PRF_CTRL_REG4,
-                             ~(B_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK | B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS),
-                             (V_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK << N_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK));
-      } else {
-        PRINT_WARNING ("Invalid parameter provided to %s\n", __FUNCTION__);
-        return IpCsiStsErrorBadParam;
-      }
-      break;
-
     case IpUsb3FeatIdUnknown:
     default:
       PRINT_WARNING ("Invalid FeatureId provided to %s\n", __FUNCTION__);
@@ -551,6 +526,17 @@ IpUsb3IpInit (
 
   if (IpUsb3VersionSpecificConfigurationEnabled (pInst, IpUsb3VscIdUsb2RfPowerGating)) {
     IP_WR_AND_32 (pInst->RegCntxtMem, R_XHCI_MEM_PMCTRL2, ~(B_XHCI_MEM_PMCTRL2_PORT_RF_PG_USB2_DIS_DISC_EN));
+  }
+
+  if (IpUsb3VersionSpecificConfigurationEnabled (pInst, IpUsb3VscIdCameraFlicker)) {
+    IP_WR_AND_THEN_OR_32 (pInst->RegCntxtMem,
+                         R_XHCI_MEM_TRB_PRF_CTRL_REG4,
+                         ~(B_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK | B_XHCI_MEM_TRB_PRF_CTRL_REG4_LTRNDEISOINEN_ESS),
+                         (V_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK << N_XHCI_MEM_TRB_PRF_CTRL_REG4_TDWTMRK));
+
+    IP_WR_OR_32 (pInst->RegCntxtMem, R_XHCI_MEM_HOST_CTRL_SSP_LINK_REG2, (B_XHCI_MEM_HOST_CTRL_SSP_LINK_REG2_CFG_DIS_U2_SS | B_XHCI_MEM_HOST_CTRL_SSP_LINK_REG2_CFG_DIS_U1_SS));
+
+    IP_WR_AND_32 (pInst->RegCntxtPci, R_XHCI_CFG_SSCFG1, ~(B_XHCI_CFG_SSCFG1_SSOAFM | B_XHCI_CFG_SSCFG1_SSIAFM));
   }
 
   return IpCsiStsSuccess;
@@ -724,6 +710,10 @@ IpUsb3VersionSpecificConfigurationEnabled (
       break;
     case IpUsb3VscIdSocCreditExchangeTime:
       RetVal = (pInst->IpVersion <= IpUsb3IpVersion19p3);
+      break;
+
+    case IpUsb3VscIdCameraFlicker:
+      RetVal = (pInst->IpVersion == IpUsb3IpVersion19p3);
       break;
 
     case IpUsb3VscIdUnknown:

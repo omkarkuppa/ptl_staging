@@ -749,10 +749,10 @@ TbtNvmDrvHrCtor (
   }
 
   if (ForcePwrFunc != NULL) {
-    // Force power the ITBT
+    // Force power the iTBT
     TBTControllerWasPowered = FALSE;
 
-    DEBUG ((DEBUG_INFO, "TbtNvmDrvHrCtor: Force power the ITBT\n"));
+    DEBUG ((DEBUG_INFO, "TbtNvmDrvHrCtor: Force power the iTBT\n"));
     TbtStatus = ForcePwrFunc (HrImplPtr->pPciIoProto, TRUE, &TBTControllerWasPowered);
     if (TBT_STATUS_ERR (TbtStatus)) {
       DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: Could not perform device %x force pwr, Status = %d\n", PciId, Status));
@@ -786,7 +786,7 @@ TbtNvmDrvHrCtor (
   //
   if (FirmwareType == INTEGRATED_TBT_RETIMER) {
     //
-    // Check if ITBT exists
+    // Check if iTBT exists
     //
     ITbtInfoHob = NULL;
     ITbtInfoHob = GetFirstGuidHob (&gITbtInfoHobGuid);
@@ -798,9 +798,9 @@ TbtNvmDrvHrCtor (
     CmMode = (ITbtInfoHob->Usb4CmMode & USB4_CM_MODE_IN_PRE_BOOT);
   } else {
     //
-    // DTBT USB4 CM mode default only support FW CM.
+    // Get dTBT CM mode.
     //
-    CmMode = USB4_CM_MODE_FW_CM;
+    CmMode = (DTbtInfoHob->DTbtGenericConfig.Usb4CmMode & 0x07);
   }
 
   DEBUG ((DEBUG_INFO, "TbtNvmDrvHrCtor: CM Mode = %x\n", CmMode));

@@ -101,7 +101,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_RDTC2D                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_WRVC2D                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RDVC2D                 (0)
-#define MRC_EXT_INPUTS_INIT_VAL_WRDSEQT                (0)
+#define MRC_EXT_INPUTS_INIT_VAL_WRDSEQT                (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DQSRF                  (1)
 #define MRC_EXT_INPUTS_INIT_VAL_RDDQSODTT              (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RDEQT                  (1)
@@ -120,12 +120,12 @@
 #define MRC_EXT_INPUTS_INIT_VAL_DCCPICODELUT           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMODTT               (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMRONT               (0)
-#define MRC_EXT_INPUTS_INIT_VAL_TXTCO                  (0)
+#define MRC_EXT_INPUTS_INIT_VAL_TXTCO                  (1)
 #define MRC_EXT_INPUTS_INIT_VAL_CLKTCO                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_CMDSR                  (0)
 #define MRC_EXT_INPUTS_INIT_VAL_CMDDSEQ                (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMODTCA              (0)
-#define MRC_EXT_INPUTS_INIT_VAL_DDR5ODTTIMING          (1)
+#define MRC_EXT_INPUTS_INIT_VAL_DDR5ODTTIMING          (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DBI                    (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DLLDCC                 (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DLLBWSEL               (1)
@@ -155,7 +155,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_LVRAUTOTRIM            (0)
 #define MRC_EXT_INPUTS_INIT_VAL_PWRMETER               (0)
 #define MRC_EXT_INPUTS_INIT_VAL_OPTIMIZECOMP           (0)
-#define MRC_EXT_INPUTS_INIT_VAL_WRTRETRAIN             (0)
+#define MRC_EXT_INPUTS_INIT_VAL_WRTRETRAIN             (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DDRPRECOMP             (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RSVDBIT10              (0)
 #define MRC_EXT_INPUTS_INIT_VAL_JEDECRESET             (1)
@@ -165,13 +165,14 @@
 #define MRC_EXT_INPUTS_INIT_VAL_PHASECLKCAL            (0)
 #define MRC_EXT_INPUTS_INIT_VAL_WCKPADDCCCAL           (1)
 #define MRC_EXT_INPUTS_INIT_VAL_RDCTLET                (0)
-#define MRC_EXT_INPUTS_INIT_VAL_RDDQODTT               (0)
+#define MRC_EXT_INPUTS_INIT_VAL_RDDQODTT               (1)
 #define MRC_EXT_INPUTS_INIT_VAL_EMPHASIS               (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMRXOFFSET           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_VIEWPINCAL             (0)
 #define MRC_EXT_INPUTS_INIT_VAL_QCLKDCC                (0)
 #define MRC_EXT_INPUTS_INIT_VAL_WCKCLKPREDCC           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DQSPADDCC              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_QCLKPHALIGN            (0)
 #define MRC_EXT_INPUTS_INIT_VAL_ReservedBits           (0)
 
 #define MRC_EXT_INPUTS_INIT_VAL_MrcTimeMeasure         (0)
@@ -241,8 +242,8 @@
 #define MRC_EXT_INPUTS_INIT_VAL_Lfsr0Mask                       (OneIn2To11)
 #define MRC_EXT_INPUTS_INIT_VAL_Lfsr1Mask                       (OneIn2To11)
 #define MRC_EXT_INPUTS_INIT_VAL_RefreshWm                       (1)
-#define MRC_EXT_INPUTS_INIT_VAL_DramRfmMode                     (DramRfmDisabled)
-#define MRC_EXT_INPUTS_INIT_VAL_TargetedRowRefreshMode          (TrrDisabled)
+#define MRC_EXT_INPUTS_INIT_VAL_DramRfmMode                     (Rfm)
+#define MRC_EXT_INPUTS_INIT_VAL_TargetedRowRefreshMode          (Ptrr)
 #define MRC_EXT_INPUTS_INIT_VAL_DrfmBrc                         (DrfmBrc2)
 #define MRC_EXT_INPUTS_INIT_VAL_CmdMirror                       (0)
 
@@ -288,22 +289,22 @@
 #define MRC_EXT_INPUTS_INIT_VAL_CntrlrMask                      (0x0)
 #define MRC_EXT_INPUTS_INIT_VAL_ChMask                          (0x0)
 
-#define MRC_EXT_INPUTS_INIT_VAL_Trrsg                           (132)
-#define MRC_EXT_INPUTS_INIT_VAL_Trrdg                           (132)
-#define MRC_EXT_INPUTS_INIT_VAL_Trrdr                           (136)
-#define MRC_EXT_INPUTS_INIT_VAL_Trrdd                           (136)
-#define MRC_EXT_INPUTS_INIT_VAL_Twrsg                           (132)
-#define MRC_EXT_INPUTS_INIT_VAL_Twrdg                           (132)
-#define MRC_EXT_INPUTS_INIT_VAL_Twrdr                           (136)
-#define MRC_EXT_INPUTS_INIT_VAL_Twrdd                           (136)
-#define MRC_EXT_INPUTS_INIT_VAL_Twwsg                           (132)
-#define MRC_EXT_INPUTS_INIT_VAL_Twwdg                           (132)
-#define MRC_EXT_INPUTS_INIT_VAL_Twwdr                           (136)
-#define MRC_EXT_INPUTS_INIT_VAL_Twwdd                           (136)
-#define MRC_EXT_INPUTS_INIT_VAL_Trwsg                           (132)
-#define MRC_EXT_INPUTS_INIT_VAL_Trwdg                           (132)
-#define MRC_EXT_INPUTS_INIT_VAL_Trwdr                           (136)
-#define MRC_EXT_INPUTS_INIT_VAL_Trwdd                           (136)
+#define MRC_EXT_INPUTS_INIT_VAL_Trrsg                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Trrdg                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Trrdr                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Trrdd                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Twrsg                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Twrdg                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Twrdr                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Twrdd                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Twwsg                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Twwdg                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Twwdr                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Twwdd                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Trwsg                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Trwdg                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Trwdr                           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Trwdd                           (0)
 
 #define MRC_EXT_INPUTS_INIT_VAL_Interpreter                     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_IoOdtMode                       (MrcOdtModeDefault)
@@ -332,11 +333,12 @@
 #define MRC_EXT_INPUTS_INIT_VAL_BOARDTOPOLOGY                   (0)
 #define MRC_EXT_INPUTS_INIT_VAL_BRDRESERVED                     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_BRDRESERVED1                    (0)
-#define MRC_EXT_INPUTS_INIT_VAL_SubChHashMask                   (0x838)
-#define MRC_EXT_INPUTS_INIT_VAL_ForceCkdBypass                  (0)
 #define MRC_EXT_INPUTS_INIT_VAL_SubChHashInterleaveBit          (3)
+#define MRC_EXT_INPUTS_INIT_VAL_SubChHashMask                   (0x838)
+#define MRC_EXT_INPUTS_INIT_VAL_ForceCkdBypass                  (1)
+#define MRC_EXT_INPUTS_INIT_VAL_RowPressEn                      (0)
 
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved324                     {0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved325                     {0,0,0,0,0,0,0,0,0,0,0,0,0}
 
 // Below policies are used by SV
 #define MRC_EXT_INPUTS_INIT_VAL_DprLock                  (0)
@@ -366,11 +368,12 @@
 #define MRC_INT_INPUTS_INIT_VAL_IsPmaMemConfigDoneSkip                  (0)
 #define MRC_INT_INPUTS_INIT_VAL_PmaCceConfig                            (MrcCceDisable)
 #define MRC_INT_INPUTS_INIT_VAL_IsCs2NRequested                         (0)
-#define MRC_INT_INPUTS_INIT_VAL_MinAllowedNModeOvrd                     (0)
+#define MRC_INT_INPUTS_INIT_VAL_MinAllowedNModeOvrd                     (CA_2_NMODE)
 #define MRC_INT_INPUTS_INIT_VAL_SenseAtRxDll                            (1)
 #define MRC_INT_INPUTS_INIT_VAL_LockUiDiv6Flow                          (0)
 #define MRC_INT_INPUTS_INIT_VAL_MptuPropagationErrorFlow                (0)
 #define MRC_INT_INPUTS_INIT_VAL_RloadTarget                             (1000)
+#define MRC_INT_INPUTS_INIT_VAL_DiscardLvrAutoTrimResults               (0)
 #endif
 
 MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
@@ -525,7 +528,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
       MRC_EXT_INPUTS_INIT_VAL_QCLKDCC,           // BIT22
       MRC_EXT_INPUTS_INIT_VAL_WCKCLKPREDCC,      // BIT23
       MRC_EXT_INPUTS_INIT_VAL_DQSPADDCC,         // BIT24
-      MRC_EXT_INPUTS_INIT_VAL_ReservedBits,      // BIT25
+      MRC_EXT_INPUTS_INIT_VAL_QCLKPHALIGN,       // BIT25
+      MRC_EXT_INPUTS_INIT_VAL_ReservedBits,      // BIT26
     },
     MRC_EXT_INPUTS_INIT_VAL_MrcTimeMeasure,
     MRC_EXT_INPUTS_INIT_VAL_MrcFastBoot,
@@ -691,7 +695,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_SubChHashInterleaveBit,
     MRC_EXT_INPUTS_INIT_VAL_SubChHashMask,
     MRC_EXT_INPUTS_INIT_VAL_ForceCkdBypass,
-    MRC_EXT_INPUTS_INIT_VAL_Reserved324,
+    MRC_EXT_INPUTS_INIT_VAL_RowPressEn,
+    MRC_EXT_INPUTS_INIT_VAL_Reserved325,
 
     // Below policies are used by SV
     MRC_EXT_INPUTS_INIT_VAL_DprLock,
@@ -728,6 +733,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_INT_INPUTS_INIT_VAL_LockUiDiv6Flow,
     MRC_INT_INPUTS_INIT_VAL_MptuPropagationErrorFlow,
     MRC_INT_INPUTS_INIT_VAL_RloadTarget,
+    MRC_INT_INPUTS_INIT_VAL_DiscardLvrAutoTrimResults,
   },
 #endif
   MRC_INPUT_BINARY_BLOCK_END
@@ -763,22 +769,23 @@ MrcInternalInputsDefaultInit (
   OUT MrcInput *Inputs
   )
 {
-  Inputs->LpFreqSwitch  = MainInputs.InternalInputs.LpFreqSwitch;
-  Inputs->ErrorCountForFail        = MainInputs.InternalInputs.ErrorCountForFail;
-  Inputs->BER                      = MainInputs.InternalInputs.BER;
-  Inputs->TatDelta                 = MainInputs.InternalInputs.TatDelta;
-  Inputs->TxtClean                 = MainInputs.InternalInputs.TxtClean;
-  Inputs->EnablePda                = MainInputs.InternalInputs.EnablePda;
-  Inputs->Lp58BankMode             = MainInputs.InternalInputs.Lp58BankMode;
-  Inputs->ReadMprVA                = MainInputs.InternalInputs.ReadMprVA;
-  Inputs->IsPmaMemConfigDoneSkip   = MainInputs.InternalInputs.IsPmaMemConfigDoneSkip;
-  Inputs->PmaCceConfig             = MainInputs.InternalInputs.PmaCceConfig;
-  Inputs->IsCs2NRequested          = MainInputs.InternalInputs.IsCs2NRequested;
-  Inputs->MinAllowedNModeOvrd      = MainInputs.InternalInputs.MinAllowedNModeOvrd;
-  Inputs->SenseAtRxDll             = MainInputs.InternalInputs.SenseAtRxDll;
-  Inputs->LockUiDiv6Flow           = MainInputs.InternalInputs.LockUiDiv6Flow;
-  Inputs->MptuPropagationErrorFlow = MainInputs.InternalInputs.MptuPropagationErrorFlow;
-  Inputs->RloadTarget              = MainInputs.InternalInputs.RloadTarget;
+  Inputs->LpFreqSwitch              = MainInputs.InternalInputs.LpFreqSwitch;
+  Inputs->ErrorCountForFail         = MainInputs.InternalInputs.ErrorCountForFail;
+  Inputs->BER                       = MainInputs.InternalInputs.BER;
+  Inputs->TatDelta                  = MainInputs.InternalInputs.TatDelta;
+  Inputs->TxtClean                  = MainInputs.InternalInputs.TxtClean;
+  Inputs->EnablePda                 = MainInputs.InternalInputs.EnablePda;
+  Inputs->Lp58BankMode              = MainInputs.InternalInputs.Lp58BankMode;
+  Inputs->ReadMprVA                 = MainInputs.InternalInputs.ReadMprVA;
+  Inputs->IsPmaMemConfigDoneSkip    = MainInputs.InternalInputs.IsPmaMemConfigDoneSkip;
+  Inputs->PmaCceConfig              = MainInputs.InternalInputs.PmaCceConfig;
+  Inputs->IsCs2NRequested           = MainInputs.InternalInputs.IsCs2NRequested;
+  Inputs->MinAllowedNModeOvrd       = MainInputs.InternalInputs.MinAllowedNModeOvrd;
+  Inputs->SenseAtRxDll              = MainInputs.InternalInputs.SenseAtRxDll;
+  Inputs->LockUiDiv6Flow            = MainInputs.InternalInputs.LockUiDiv6Flow;
+  Inputs->MptuPropagationErrorFlow  = MainInputs.InternalInputs.MptuPropagationErrorFlow;
+  Inputs->RloadTarget               = MainInputs.InternalInputs.RloadTarget;
+  Inputs->DiscardLvrAutoTrimResults = MainInputs.InternalInputs.DiscardLvrAutoTrimResults;
 }
 
 /**

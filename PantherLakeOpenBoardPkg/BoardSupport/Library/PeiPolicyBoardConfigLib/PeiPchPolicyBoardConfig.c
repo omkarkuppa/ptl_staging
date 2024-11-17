@@ -48,7 +48,7 @@ UpdateUsb2OverCurrentPolicy (
   ASSERT (FspsUpd != NULL);
 #endif
   if (PortIndex < MAX_USB2_PORTS && ((Pin < USB_OC_MAX_PINS) || (Pin == USB_OC_SKIP))) {
-    UPDATE_POLICY_V2 (
+    UPDATE_POLICY (
       ((FSPS_UPD *)FspsUpd)->FspsConfig.Usb2OverCurrentPin[PortIndex],
       UsbConfig->PortUsb20[PortIndex].OverCurrentPin,
       Pin
@@ -82,7 +82,7 @@ UpdateUsb3OverCurrentPolicy (
   ASSERT (FspsUpd != NULL);
 #endif
   if (PortIndex < MAX_USB3_PORTS && ((Pin < USB_OC_MAX_PINS) || (Pin == USB_OC_SKIP))) {
-    UPDATE_POLICY_V2 (
+    UPDATE_POLICY (
       ((FSPS_UPD *)FspsUpd)->FspsConfig.Usb3OverCurrentPin[PortIndex],
       UsbConfig->PortUsb30[PortIndex].OverCurrentPin,
       Pin
@@ -133,12 +133,12 @@ UpdatePeiPchPolicyBoardConfig (
   // I2C
   //
   for (Index = 0; Index < 8; Index++) {
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI2cMode[Index], SerialIoConfig->I2cDeviceConfig[Index].Mode, 0);
-    UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cPadsTermination[Index], SerialIoConfig->I2cDeviceConfig[Index].PadTermination, 0);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.SerialIoI2cMode[Index], SerialIoConfig->I2cDeviceConfig[Index].Mode, 0);
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchSerialIoI2cPadsTermination[Index], SerialIoConfig->I2cDeviceConfig[Index].PadTermination, 0);
   }
 
-  UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[4], SerialIoConfig->I2cDeviceConfig[4].PinMux.Sda, GPIO_VER2_LP_MUXING_SERIALIO_I2C4_SDA_GPP_H8);
-  UPDATE_POLICY_V2 (((FSPS_UPD *)FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[4], SerialIoConfig->I2cDeviceConfig[4].PinMux.Scl, GPIO_VER2_LP_MUXING_SERIALIO_I2C4_SCL_GPP_H9);
+  UPDATE_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.PchSerialIoI2cSdaPinMux[4], SerialIoConfig->I2cDeviceConfig[4].PinMux.Sda, GPIO_VER2_LP_MUXING_SERIALIO_I2C4_SDA_GPP_H8);
+  UPDATE_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.PchSerialIoI2cSclPinMux[4], SerialIoConfig->I2cDeviceConfig[4].PinMux.Scl, GPIO_VER2_LP_MUXING_SERIALIO_I2C4_SCL_GPP_H9);
 
   return EFI_SUCCESS;
 }

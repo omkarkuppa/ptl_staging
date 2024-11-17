@@ -34,6 +34,7 @@ typedef struct {
   UINT32  UsbCRetimer0Version;
   UINT32  UsbCRetimer1Version;
   UINT32  UsbCRetimer2Version;
+  UINT32  UsbCRetimer3Version;
 } USBC_RETIMER_SETUP;
 
 #pragma pack()

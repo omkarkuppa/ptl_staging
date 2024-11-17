@@ -38,15 +38,15 @@ struct MockTbtNvmRetimerUpdateLib {
 
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
-    ReadRetimerNvmVersion, 
+    ReadRetimerNvmVersion,
     (IN   RETIMER_DEV_INSTANCE   RetimerDevice,
      OUT  UINT32                *Version)
-     );
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     DestroyRetimerDevInstance,
     (IN  RETIMER_DEV_INSTANCE  RetimerDevice)
-     );
+    );
   MOCK_FUNCTION_DECLARATION (
     VOID,
     UpdateRetimerNvmInformation,
@@ -55,17 +55,17 @@ struct MockTbtNvmRetimerUpdateLib {
      IN   UINT8                    PcieRootPort,
      IN   RETIMER_DEV_ADDRESS      *DevAddress,
      IN   UINT32                   RetimerVersion)
-     );
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     UpdateRetimerNvmFirmware,
     (IN  RETIMER_DEV_INSTANCE                              RetimerDevice,
      IN  UINT8                                             *RetimerImage,
      IN  UINTN                                             ImageSize,
-     IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS     Progress,          OPTIONAL
+     IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS     Progress, OPTIONAL
      IN  UINTN                                             StartPercentage,
      IN  UINTN                                             EndPercentage)
-     );
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     CreateRetimerDevInstance,
@@ -74,7 +74,7 @@ struct MockTbtNvmRetimerUpdateLib {
      IN   UINT8                    PcieRootPort,
      IN   RETIMER_DEV_ADDRESS      *DevAddress,
      OUT  RETIMER_DEV_INSTANCE     *RetimerDevice)
-     );
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     CreateTBTDevInstance,
@@ -82,22 +82,58 @@ struct MockTbtNvmRetimerUpdateLib {
      IN   UINT8                         PcieRpType,
      IN   UINT8                         PcieRootPort,
      OUT  DISCRETE_TBT_DEV_INSTANCE     *DiscreteTbtDevice)
-     );
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     UpdateDiscreteTbtNvmFirmware,
     (IN  DISCRETE_TBT_DEV_INSTANCE                         DiscreteTbtDevice,
      IN  UINT8                                             *DiscreteTbtImage,
      IN  UINTN                                             ImageSize,
-     IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS     Progress,          OPTIONAL
+     IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS     Progress, OPTIONAL
      IN  UINTN                                             StartPercentage,
      IN  UINTN                                             EndPercentage)
-     );
+    );
   MOCK_FUNCTION_DECLARATION (
     EFI_STATUS,
     DestroyTbtDevInstance,
     (IN  DISCRETE_TBT_DEV_INSTANCE    DiscreteTbtDevice)
-     );
+    );
+  MOCK_FUNCTION_DECLARATION (
+    EFI_STATUS,
+    CreateHrDevInstance,
+    (IN   RETIMER_DEV_INSTANCE       *RetimerDeviceInstances,
+     IN   UINT32                     *RetimerDeviceInstancesCount,
+     IN   HR_DEV_INSTANCE            *HrDeviceInstances,
+     OUT  UINT32                     *HrDeviceInstancesCount)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    EFI_STATUS,
+    TbtSendOfflineMode,
+    (IN   HR_DEV_INSTANCE   *HrDevice,
+     OUT  UINT32            Data)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    EFI_STATUS,
+    InitRetimerHW,
+    (IN  RETIMER_DEV_INSTANCE    RetimerDevice)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    EFI_STATUS,
+    TerminateRetimerHW,
+    (IN  RETIMER_DEV_INSTANCE    RetimerDevice)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    EFI_STATUS,
+    DriveToFwUpdateMode,
+    (IN  USBC_RETIMER_PROTOCOL  *This,
+     IN  EFI_GUID               RetimerGuid)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    EFI_STATUS,
+    RestoreToOriginalMode,
+    (IN USBC_RETIMER_PROTOCOL  *This,
+     IN EFI_GUID               RetimerGuid)
+    );
 };
 
 #endif

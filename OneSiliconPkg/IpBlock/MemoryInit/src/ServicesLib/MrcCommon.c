@@ -1493,8 +1493,13 @@ MrcMrAddrToIndex (
     case mrMR46:
       MrIndex = mrIndexMR46;
       break;
+
     case mrMR48:
       MrIndex = mrIndexMR48;
+      break;
+
+    case mrMR50:
+      MrIndex = mrIndexMR50;
       break;
 
     case mrMR57:
@@ -3444,6 +3449,8 @@ MrcSetFailingChannelBitMask (
   @param[in] Controller        - Controller to work on.
   @param[in] Channel           - channel to work on.
   @param[in] MrAddress         - MR Address to check
+  @param[in] IsSagvConfig      - TRUE if Programming MRS FSM for SAGV Transistion.
+                                  If TRUE, Force DIMM DFE MRs to enable PDA
 
   @retval TRUE if the specific MR is PDA otherwise FALSE
 **/
@@ -3452,7 +3459,8 @@ MrcMrIsPda (
   IN   MrcParameters* MrcData,
   IN   UINT32            Controller,
   IN   UINT32            Channel,
-  IN   MrcModeRegister   MrAddress
+  IN   MrcModeRegister   MrAddress,
+  IN   BOOLEAN           IsSagvConfig
   )
 {
   MrcOutput* Outputs;
@@ -3464,33 +3472,33 @@ MrcMrIsPda (
   IsDdr5 = Outputs->IsDdr5;
 
   // check if global PDA is enabled
-  if (!MrcData->Inputs.EnablePda) {
+  if (!MrcData->Inputs.EnablePda || !IsDdr5) {
     return FALSE;
   }
 
   switch (MrAddress) {
   case mrMR3:
-    if (IsDdr5 && ChannelOut->Mr3PdaEnabled) {
+    if (ChannelOut->Mr3PdaEnabled) {
       return TRUE;
     }
     break;
   case mrMR7:
-    if (IsDdr5 && ChannelOut->Mr7PdaEnabled) {
+    if (ChannelOut->Mr7PdaEnabled) {
       return TRUE;
     }
     break;
   case mrMR10:
-    if (IsDdr5 && ChannelOut->IsMr10PdaEnabled) {
+    if (ChannelOut->IsMr10PdaEnabled) {
       return TRUE;
     }
     break;
   case mrMR11:
-    if (IsDdr5 && ChannelOut->IsMr11PdaEnabled) {
+    if (ChannelOut->IsMr11PdaEnabled) {
       return TRUE;
     }
     break;
   case mrMR48:
-    if (IsDdr5 && ChannelOut->IsMr48PdaEnabled) {
+    if (ChannelOut->IsMr48PdaEnabled) {
       return TRUE;
     }
     break;
@@ -3510,7 +3518,8 @@ MrcMrIsPda (
   case mrMR233:
   case mrMR241:
   case mrMR249:
-    if (IsDdr5 && ChannelOut->MrXPdaDfeTap1Enabled) {
+    // Always enable PDA DFE Tap for SAGV FSM Config
+    if (IsSagvConfig || ChannelOut->MrXPdaDfeTap1Enabled) {
       return TRUE;
     }
     break;
@@ -3530,7 +3539,8 @@ MrcMrIsPda (
   case mrMR234:
   case mrMR242:
   case mrMR250:
-    if (IsDdr5 && ChannelOut->MrXPdaDfeTap2Enabled) {
+    // Always enable PDA DFE Tap for SAGV FSM Config
+    if (IsSagvConfig || ChannelOut->MrXPdaDfeTap2Enabled) {
       return TRUE;
     }
     break;
@@ -3550,7 +3560,8 @@ MrcMrIsPda (
   case mrMR235:
   case mrMR243:
   case mrMR251:
-    if (IsDdr5 && ChannelOut->MrXPdaDfeTap3Enabled) {
+    // Always enable PDA DFE Tap for SAGV FSM Config
+    if (IsSagvConfig || ChannelOut->MrXPdaDfeTap3Enabled) {
       return TRUE;
     }
     break;
@@ -3570,7 +3581,8 @@ MrcMrIsPda (
   case mrMR236:
   case mrMR244:
   case mrMR252:
-    if (IsDdr5 && ChannelOut->MrXPdaDfeTap4Enabled) {
+    // Always enable PDA DFE Tap for SAGV FSM Config
+    if (IsSagvConfig || ChannelOut->MrXPdaDfeTap4Enabled) {
       return TRUE;
     }
     break;

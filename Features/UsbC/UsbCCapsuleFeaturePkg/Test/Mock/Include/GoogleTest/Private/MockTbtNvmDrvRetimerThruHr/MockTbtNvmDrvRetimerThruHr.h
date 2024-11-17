@@ -26,12 +26,16 @@
 #include <Library/GoogleTestLib.h>
 #include <Library/FunctionMockLib.h>
 extern "C" {
-  #include <Uefi.h>
-  #include <Library/UefiLib.h>
-  #include <Protocol/TbtNvmDrvHrProtocol.h>
-  #include <Protocol/TbtNvmDrvDevice.h>
-  #include <TbtNvmRetimer.h>
+#include <Uefi.h>
+#include <Library/UefiLib.h>
+#include <Protocol/TbtNvmDrvHrProtocol.h>
+#include <Protocol/TbtNvmDrvDevice.h>
+#include <TbtNvmRetimer.h>
 
+#include <Library/TbtNvmDrvRetimerThruHr.h>
+
+extern TBT_RETIMER  LocalCommunicationPtr;
+extern UINT16       TBT_USB4_PORT_CAPABILITY_OFFSET;
 }
 
 struct MockTbtNvmDrvRetimerThruHr {
@@ -39,36 +43,33 @@ struct MockTbtNvmDrvRetimerThruHr {
 
   MOCK_FUNCTION_DECLARATION (
     TBT_STATUS,
-    WriteIecs,
+    MockThruHr_WriteIecs,
     (IN TBT_RETIMER      *This,
      IN UINT8            RegNum,
      IN UINT32           *DataPtr,
      IN UINT8            Length)
     );
-
   MOCK_FUNCTION_DECLARATION (
     TBT_STATUS,
-    ReadIecs,
+    MockThruHr_ReadIecs,
     (IN  TBT_RETIMER    *This,
      IN  UINT8          RegNum,   // TODO: RegNum type should be enum
      IN  UINT32         DataLength,
      OUT UINT32         *DataPtr)
     );
-
-  MOCK_FUNCTION_DECLARATION (
-    TBT_RETIMER *,
-    TbtNvmDrvRetimerThruHrCtor,
-    (IN UINT8          FirmwareType,
-     IN PCIE_BDF       *TbtDmaPcieBdf,
-     IN TBT_PORT       TbtPort,
-     IN UINT32         CascadedRetimerIndex,
-     IN PCIE_RP_CONFIG *PcieRpConfig,
-     IN FORCE_PWR_HR   ForcePwrFunc OPTIONAL)
-    );
-
   MOCK_FUNCTION_DECLARATION (
     VOID,
-    Dtor,
+    MockThruHr_Destroy,
+    (IN TBT_RETIMER *This)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    TBT_STATUS,
+    MockThruHr_InitHW,
+    (IN TBT_RETIMER *This)
+    );
+  MOCK_FUNCTION_DECLARATION (
+    TBT_STATUS,
+    MockThruHr_TerminateHW,
     (IN TBT_RETIMER *This)
     );
 };

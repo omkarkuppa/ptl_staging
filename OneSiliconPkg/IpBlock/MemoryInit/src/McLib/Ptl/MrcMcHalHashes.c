@@ -1209,6 +1209,18 @@ MrcGetMcConfigHash (
       HashPtr->Data = MC0_CH0_CR_MCMNTS_SPARE_Spare_RW_HSH;
       break;
 
+    case GsmMccMcCbRowPressDisAutoPre:
+      HashPtr->Data = MC0_CH0_CR_SCHED_THIRD_CBIT_row_press_dis_autopre_new_req_miss_HSH;
+      break;
+
+    case GsmMccPageOpenPolicyMaxCount:
+      HashPtr->Data = MC0_CH0_CR_PAGEOPEN_POLICY_LIMIT_MaxCount_HSH;
+      break;
+
+    case GsmMccPageOpenPolicyEn:
+      HashPtr->Data = MC0_CH0_CR_PAGEOPEN_POLICY_LIMIT_Enable_HSH;
+      break;
+
     default:
       IsDefined = FALSE;
       break;

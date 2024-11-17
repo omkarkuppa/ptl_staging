@@ -1,5 +1,5 @@
 /** @file
-  Google Test for the implementation of FmpDeviceLib instance to support 
+  Google Test for the implementation of FmpDeviceLib instance to support
   Discrete Thunderbolt Firmware update
 
   @copyright
@@ -20,21 +20,20 @@
 @par Specification Reference:
 
 **/
+#include <GTestFmpDeviceLibDiscreteTbt.h>
 
 /**
 Google test for FmpDeviceLock function.
 **/
-class FmpDeviceLockTest : public CommonMock {
+class FmpDeviceLockTest : public Test {
   protected:
-  EFI_STATUS     Status;
+    EFI_STATUS Status;
 };
 
-TEST_F (FmpDeviceLockTest, VarUnSupported) {
-  
+TEST_F (FmpDeviceLockTest, Var_1_UnSupported) {
   cout << "[---------- Case 1 ----------]"<< endl;
   Status = FmpDeviceLock ();
-  EXPECT_EQ(Status, EFI_UNSUPPORTED);
+  EXPECT_EQ (Status, EFI_UNSUPPORTED);
 
   cout << "FmpDeviceLock Done." << endl;
-
 }

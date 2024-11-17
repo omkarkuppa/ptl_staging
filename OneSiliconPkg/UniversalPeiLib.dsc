@@ -23,6 +23,7 @@
 #
 # Silicon Init Pei Library
 #
+  FspPerformanceLib|$(PLATFORM_SI_PACKAGE)/LibraryPrivate/FspPerformanceLib/FspPerformanceLib.inf
 
 #
 # Pch

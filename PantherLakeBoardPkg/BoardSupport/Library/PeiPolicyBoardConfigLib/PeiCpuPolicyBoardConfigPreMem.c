@@ -242,12 +242,12 @@ UpdatePeiCpuPolicyBoardConfigPreMem (
 
   Status = FindBiosAcmFromFit (&BiosAcmBase);
   if (!EFI_ERROR (Status)) {
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosAcmBase, TxtPreMemConfig->BiosAcmBase, (UINTN) BiosAcmBase);
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosSize, CpuSecurityPreMemConfig->BiosSize, (UINT16) RShiftU64 (FixedPcdGet32 (PcdBiosSize), 10));
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosAcmBase, TxtPreMemConfig->BiosAcmBase, (UINTN) BiosAcmBase);
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.BiosSize, CpuSecurityPreMemConfig->BiosSize, (UINT16) RShiftU64 (FixedPcdGet32 (PcdBiosSize), 10));
   }
   if ((Ecx.Bits.SMX == 1) && (TxtCapableChipset & BIT0)) {
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SinitMemorySize, TxtPreMemConfig->SinitMemorySize, TXT_SINIT_MEMORY_SIZE);
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TxtHeapMemorySize, TxtPreMemConfig->TxtHeapMemorySize, TXT_HEAP_MEMORY_SIZE);
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SinitMemorySize, TxtPreMemConfig->SinitMemorySize, TXT_SINIT_MEMORY_SIZE);
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TxtHeapMemorySize, TxtPreMemConfig->TxtHeapMemorySize, TXT_HEAP_MEMORY_SIZE);
   }
   return EFI_SUCCESS;
 }

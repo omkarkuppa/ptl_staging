@@ -251,6 +251,9 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   RngLib|MdePkg/Library/BaseRngLib/BaseRngLib.inf
   FspFbmSupportLib|$(FSP_PACKAGE)/Library/BaseFspFbmSupportLib/BaseFspFbmSupportLib.inf
   FspVerificationLib|$(FSP_PACKAGE)/Library/BaseFspVerificationLib/BaseFspVerificationLib.inf
+  FspMeasurementLib|$(FSP_PACKAGE)/Library/MeasurementLib/FspMeasurementLib.inf
+  Tpm2DeviceLib|$(FSP_PACKAGE)/Library/SecTpm2DeviceLibDTpm/Tpm2DeviceLibDTpmFsp.inf
+  Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
 
 #
 # UEFI & PI

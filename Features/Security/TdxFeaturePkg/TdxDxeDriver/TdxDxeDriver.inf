@@ -46,8 +46,6 @@
 
   OneSiliconPkg/SiPkg.dec
 
-  PantherLakeBoardPkg/BoardPkg.dec
-
 [Sources]
   TdxDxeDriver.c
 
@@ -56,6 +54,4 @@
   gTdxActmMacNvVarGuid                ## CONSUMES
 
 [Depex]
-  gEfiMpServiceProtocolGuid AND
-  gPlatformNvsAreaProtocolGuid AND
-  gCpuNvsAreaProtocolGuid
+  gEfiVariableArchProtocolGuid

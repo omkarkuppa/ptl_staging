@@ -22,13 +22,19 @@
 
 #include <GoogleTest/Library/MockTbtNvmRetimerUpdateLib.h>
 
-MOCK_INTERFACE_DEFINITION(MockTbtNvmRetimerUpdateLib);
+MOCK_INTERFACE_DEFINITION (MockTbtNvmRetimerUpdateLib);
 
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerUpdateLib, ReadRetimerNvmVersion, 2, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerUpdateLib, DestroyRetimerDevInstance, 1, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerUpdateLib, UpdateRetimerNvmInformation, 5, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerUpdateLib, UpdateRetimerNvmFirmware, 6, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerUpdateLib, CreateRetimerDevInstance, 5, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerUpdateLib, CreateTBTDevInstance, 4, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerUpdateLib, UpdateDiscreteTbtNvmFirmware, 6, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockTbtNvmRetimerUpdateLib, DestroyTbtDevInstance, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, ReadRetimerNvmVersion, 2, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, DestroyRetimerDevInstance, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, UpdateRetimerNvmInformation, 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, UpdateRetimerNvmFirmware, 6, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, CreateRetimerDevInstance, 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, CreateTBTDevInstance, 4, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, UpdateDiscreteTbtNvmFirmware, 6, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, DestroyTbtDevInstance, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, CreateHrDevInstance, 4, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, TbtSendOfflineMode, 2, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, InitRetimerHW, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, TerminateRetimerHW, 1, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, DriveToFwUpdateMode, 2, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmRetimerUpdateLib, RestoreToOriginalMode, 2, EFIAPI);

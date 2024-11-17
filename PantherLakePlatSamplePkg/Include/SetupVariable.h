@@ -511,7 +511,7 @@ typedef struct {
   UINT16  ReservePMemoryPerSlot;
   UINT8   ReserveIoPerSlot;
   UINT8   UsbCRetimerNumber;
-  UINT8   UsbCPdNumber;
+  UINT8   UsbCPdSupportBitmap;
 
   UINT8   IccLockRegisters;
   UINT8   IccProfile;
@@ -836,7 +836,6 @@ typedef struct {
 
   UINT8   BootFrequency;
   UINT8   EnableCx;
-  UINT8   EnableC1e;
   UINT8   TurboMode;
   UINT32  PowerLimit1;
   UINT8   LongDurationPwrLimitOverride;
@@ -2133,6 +2132,7 @@ typedef struct {
   UINT8   PchHdaMicPrivacyHwModeSoundWire4;
   UINT8   PchHdaMicPrivacyHwModeDmic;
   UINT32  PchHdaMicPrivacyTimeout;
+  UINT8   PchHdaSndwClockSrcSelect;
 
   //
   // Interrupt Configuration

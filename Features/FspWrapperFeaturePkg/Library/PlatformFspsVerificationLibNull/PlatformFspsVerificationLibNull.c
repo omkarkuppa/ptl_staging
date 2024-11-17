@@ -20,7 +20,7 @@
 @par Specification
 **/
 
-#include <Library/PlatformFspsVerificationLib.h>
+#include <Library/PeiPlatformFspsVerificationLib.h>
 
 /**
   Platform specific method to verify FSP-S, which should be executed after FSP-S is

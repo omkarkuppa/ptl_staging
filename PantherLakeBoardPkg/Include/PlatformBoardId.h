@@ -76,7 +76,6 @@ Defines Platform BoardIds
 //
 #define BoardIdReserved                   0x00
 
-
 // PantherLake Simics Board Id
 #define BoardIdPtlSimics                  0x31
 
@@ -97,9 +96,13 @@ Defines Platform BoardIds
 #define BoardIdPtlUHLp5Aep                 0x07
   #define BomIdPtlUHLp5Aep                 0x01
 #define BoardIdPtlUHLp5MemSktmRvp          0x05
-
 #define BoardIdPtlHLp5Gcs1                 0x11
 #define BoardIdPtlHLp5Gcs2                 0x12
+#define BoardIdPtlUHLp5Adk1                0x15
+#define BoardIdPtlUHLp5Adk2                0x16
+
+// WildcatLake N Board Id
+#define BoardIdWclNDdr5Rvp1                0x10
 
 #define BoardIdUnknown1                   0xffff
 
@@ -135,11 +138,16 @@ Defines Platform BoardIds
 #define SkuIdPtlUHDdr5Rvp4DpBom           0x01060004
 
 #define SkuIdPtlUHLp5MemSktmRvp           0x00000005
-
 #define SkuIdPtlHLp5Gcs1                  0x00000011
 #define SkuIdPtlHLp5Gcs2                  0x00000012
+#define SkuIdPtlUHLp5Adk1                 0x00000015
+#define SkuIdPtlUHLp5Adk2                 0x00000016
 
 #define SkuIdPtlUHLp5Aep                  0x00000007
 #define SkuIdPtlUHLp5AepBom               0x00010007
+
+// WildcatLake N Sku Id
+#define SkuIdWclNDdr5Rvp1                 0x08000010
+#define SkuIdWclNDdr5Rvp1HDMI             0x0A000010
 
 #endif // _PLATFORM_BOARD_ID_H_

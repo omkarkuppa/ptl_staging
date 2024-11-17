@@ -134,6 +134,7 @@
   gCapsuleFeaturePkgTokenSpaceGuid.PcdBiosResiliencyEnable          ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdVmdEnable                                 ## CONSUMES
   gCapsuleFeaturePkgTokenSpaceGuid.PcdNvmeRecoveryEnable            ## CONSUMES
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable                  ## CONSUMES
 
 [FixedPcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdSerialBaudRate                  ## CONSUMES

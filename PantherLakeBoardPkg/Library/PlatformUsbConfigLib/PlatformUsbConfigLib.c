@@ -33,7 +33,7 @@
   Build USB Connector HOB
 
   @retval EFI_SUCCESS                  USB Connector HOD is built successfully.
-  @retval EFI_NOT_FOUND                VpdPcdUsbConnector is not available.
+  @retval EFI_NOT_FOUND                PcdUsbConnectorTable is not available.
   @retval EFI_INVALID_PARAMETER        ConnectorCount is over the max supported number by platform.
 **/
 EFI_STATUS
@@ -48,10 +48,10 @@ BuildUsbConnectorHob (
   VOID                        *Hob;
 
   ConnectorCount = 0;
-  UsbConnectorBoardConfig = PcdGetPtr (VpdPcdUsbConnector);
+  UsbConnectorBoardConfig = (USB_CONNECTOR_BOARD_CONFIG *) PcdGet64 (PcdUsbConnectorTable);
 
   if (UsbConnectorBoardConfig == NULL) {
-    DEBUG((DEBUG_ERROR, "%a: VpdPcdUsbConnector is not available!!\n", __FUNCTION__));
+    DEBUG((DEBUG_ERROR, "%a: PcdUsbConnectorTable is not available!!\n", __FUNCTION__));
     return EFI_NOT_FOUND;
   }
 
@@ -66,7 +66,7 @@ BuildUsbConnectorHob (
 
   DEBUG((DEBUG_INFO, "Number of USB connectors: %d\n", ConnectorCount));
   UsbConnectorHobData.NumberOfUsbConnectors = ConnectorCount;
-  CopyMem (UsbConnectorHobData.UsbConnectorBoardConfig, PcdGetPtr (VpdPcdUsbConnector), sizeof (USB_CONNECTOR_BOARD_CONFIG) * ConnectorCount);
+  CopyMem (UsbConnectorHobData.UsbConnectorBoardConfig, (VOID *) PcdGet64 (PcdUsbConnectorTable), sizeof (USB_CONNECTOR_BOARD_CONFIG) * ConnectorCount);
 
   DEBUG((DEBUG_INFO, "%a: Creating HOB...\n", __FUNCTION__));
   Hob = BuildGuidDataHob (
@@ -105,7 +105,7 @@ GetUsbConnectorHobData (
   Build USBC Connector HOB
 
   @retval EFI_SUCCESS                  USBC Connector HOD is built successfully.
-  @retval EFI_NOT_FOUND                VpdPcdUsbCConnector is not available.
+  @retval EFI_NOT_FOUND                PcdUsbCConnectorTable is not available.
   @retval EFI_INVALID_PARAMETER        ConnectorCount is over the max supported number by platform.
 **/
 EFI_STATUS
@@ -121,7 +121,7 @@ BuildUsbCConnectorHob (
   VOID                        *Hob;
 
   ConnectorCount = 0;
-  UsbCConnectorBoardConfig = PcdGetPtr (VpdPcdUsbCConnector);
+  UsbCConnectorBoardConfig = (USBC_CONNECTOR_BOARD_CONFIG *) PcdGet64 (PcdUsbCConnectorTable);
   UsbConnectorHobDataPtr   = GetUsbConnectorHobData ();
 
   if (UsbConnectorHobDataPtr == NULL) {
@@ -130,7 +130,7 @@ BuildUsbCConnectorHob (
   }
 
   if (UsbCConnectorBoardConfig == NULL) {
-    DEBUG((DEBUG_ERROR, "%a: VpdPcdUsbCConnector is not available!!\n", __FUNCTION__));
+    DEBUG((DEBUG_ERROR, "%a: PcdUsbCConnectorTable is not available!!\n", __FUNCTION__));
     return EFI_NOT_FOUND;
   }
 
@@ -150,7 +150,7 @@ BuildUsbCConnectorHob (
 
   DEBUG((DEBUG_INFO, "Number of USBC connectors: %d\n", ConnectorCount));
   UsbCConnectorHobData.NumberOfUsbCConnectors = ConnectorCount;
-  CopyMem (UsbCConnectorHobData.UsbCConnectorBoardConfig, PcdGetPtr (VpdPcdUsbCConnector), sizeof (USBC_CONNECTOR_BOARD_CONFIG) * ConnectorCount);
+  CopyMem (UsbCConnectorHobData.UsbCConnectorBoardConfig, (VOID *) PcdGet64 (PcdUsbCConnectorTable), sizeof (USBC_CONNECTOR_BOARD_CONFIG) * ConnectorCount);
 
   DEBUG((DEBUG_INFO, "%a: Creating HOB...\n", __FUNCTION__));
   Hob = BuildGuidDataHob (

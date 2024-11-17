@@ -23,26 +23,591 @@
 import os
 import re
 import argparse
+from abc import ABCMeta, abstractmethod
 from typing import Union
 
 from CapsuleCommon import *
 
 MAJ_VER: int = 0
-MIN_VER: int = 1
+MIN_VER: int = 2
 
 __prog__       : str = os.path.basename (__file__)
 __version__    : str = f'{__prog__} Version {MAJ_VER}.{MIN_VER}'
 __copyright__  : str = 'Copyright (C) 2023 Intel Corporation.. All rights reserved.\n'
 __description__: str = 'Script to build the CSME FWUpdate image from IFWI.\n'
 
-MFIT_FWU_LAYOUT_NAME: str = 'Intel(R) {Platform} {Chipset} - FWUpdate'
-
 DEFAULT_IFWI_INFO_FILE_NAME: str = 'ImageInfo.txt'
 DEFAULT_FWU_FILENAME       : str = 'FWUpdate.bin'
 
 KEYWORD_IMAGE_LAYOUT: str = 'Image Layout'
-LAYOUT_REGEX        : str = \
-    r'^Intel\(R\) (([A-Za-z]+\s)+)[-] ([A-Za-z]+) [-] ([A-Za-z0-9]+)$'
+
+class _LayoutTypeDecoder (metaclass = ABCMeta):
+    def __init__ (self, LayoutName: str, Regex: str):
+        """ Class to decode the layout information.
+
+        Args:
+            LayoutName (str):
+                Layout name to be decoded.
+            Regex (str):
+                Regular expression for the layout name.
+
+        Raises:
+            None.
+
+        Returns
+            None.
+        """
+        self.__LayoutName: str = LayoutName
+        self.__Regex     : str = Regex
+
+    @property
+    def SearchGroup (self) -> Union[None, re.Match]:
+        """ Return the groups information based on REGEX.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, re.Match]:
+                Match groups based on REGEX.
+                If failed to decode, return as None.
+        """
+        SearchGroup: re.Match  = None
+
+        SearchGroup = re.search (
+                           self.__Regex,
+                           self.__LayoutName,
+                           re.I | re.DOTALL,
+                           )
+
+        return SearchGroup
+
+    @property
+    def Valid (self) -> bool:
+        """ Return the validity of the input layout name.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            bool:
+                False - Input layout name is not valid.
+                True  - Input layout name is valid.
+        """
+        if (self.SearchGroup is None):
+            return False
+
+        return True
+
+    @property
+    @abstractmethod
+    def Platform (self) -> Union[None, str]:
+        """ Return the content of the platform segment.
+
+        Required:
+            Yes.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Content of the platform segment.
+                If failed to decode, return as None.
+        """
+        return NotImplementedError
+
+    @Platform.setter
+    @abstractmethod
+    def Platform (self, Platform: str) -> None:
+        """ Set the content the platform segment.
+
+        Required:
+            Yes.
+
+        Args:
+            Platform (str):
+                Customized content of the platform segment to be set.
+
+        Raises:
+            None.
+
+        Returns:
+            None.
+        """
+        return NotImplementedError
+
+    @property
+    @abstractmethod
+    def Chipset (self) -> Union[None, str]:
+        """ Return the content of the chipset segment.
+
+        Required:
+            Yes.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Content of the chipset segment
+                If failed to decode, return as None.
+        """
+        return NotImplementedError
+
+    @property
+    @abstractmethod
+    def Sku (self) -> Union[None, str]:
+        """ Return the content of the SKU segment.
+
+        Required:
+            Yes.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Content of the SKU segment
+                If failed to decode, return as None.
+        """
+        return NotImplementedError
+
+    @property
+    @abstractmethod
+    def FwuLayoutName (self) -> Union[None, str]:
+        """ Return the layout name for the FWUpdate image.
+
+        Required:
+            Yes.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Layout name for the FWUpdate image.
+                If failed to decode, return as None.
+        """
+        return NotImplementedError
+
+class _LayoutType1 (_LayoutTypeDecoder):
+    IFWI_LAYOUT_NAME_REGEX: str = \
+        r'^Intel\(R\) (([A-Za-z]+\s)+)[-] ([A-Za-z]+) [-] ([A-Za-z0-9]+)$'
+    MFIT_FWU_LAYOUT_NAME  : str = \
+        'Intel(R) {Platform} {Chipset} - FWUpdate'
+
+    def __init__ (self, LayoutName: str) -> None:
+        """ Class to decode the layout with Type 1 format.
+
+        Notes:
+            This layout type supported below format.
+                (1) Intel(R) XLake S Chipset - Consumer - SPI
+                (2) Intel(R) XLake S and YLake S Chipsets - Corporate - SPI
+
+        Args:
+            LayoutName (str):
+                Layout name to be decoded.
+
+        Raises:
+            None.
+
+        Returns:
+            None.
+        """
+        super ().__init__ (LayoutName, _LayoutType1.IFWI_LAYOUT_NAME_REGEX)
+
+        self.__SearchGroup: re.Match = super ().SearchGroup
+
+        self.__Platform: Union[None, str] = None
+        self.__Chipset : Union[None, str] = None
+        self.__Sku     : Union[None, str] = None
+
+        self.__InitialVariable ()
+
+    @property
+    def Platform (self) -> Union[None, str]:
+        """ Return the content of the platform segment.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Content of the platform segment.
+                If failed to decode, return as None.
+        """
+        if not self.Valid:
+            return None
+
+        return self.__Platform
+
+    @Platform.setter
+    def Platform (self, Platform: str) -> None:
+        """ Set the content the platform segment.
+
+        Args:
+            Platform (str):
+                Customized content of the platform segment to be set.
+
+        Raises:
+            TypeError:
+                Platform is not str type.
+
+        Returns:
+            None.
+        """
+        if not isinstance (Platform, str):
+            raise TypeError (f'Platform shall be str type.')
+
+        if Platform:
+            DEBUG (DEBUG_INFO, f'Override the platform into {self.__Platform}')
+            self.__Platform = Platform
+
+    @property
+    def Chipset (self) -> Union[None, str]:
+        """ Return the content of the chipset segment.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Content of the chipset segment
+                If failed to decode, return as None.
+        """
+        if not self.Valid:
+            return None
+
+        return self.__Chipset
+
+    @property
+    def Sku (self) -> Union[None, str]:
+        """ Return the content of the SKU segment.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Content of the SKU segment
+                If failed to decode, return as None.
+        """
+        if not self.Valid:
+            return None
+
+        return self.__Sku
+
+    @property
+    def FwuLayoutName (self) -> Union[None, str]:
+        """ Return the layout name for the FWUpdate image.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Layout name for the FWUpdate image.
+                If failed to decode, return as None.
+        """
+        LayoutFormat: str = _LayoutType1.MFIT_FWU_LAYOUT_NAME
+
+        if (not self.Valid):
+            return None
+
+        return LayoutFormat.format (
+                              Platform = self.Platform,
+                              Chipset  = self.Chipset,
+                              )
+
+    def __Decode (self) ->Tuple[str, str, str]:
+        """ Decode the layout name with REGEX.
+
+        Notes:
+            (1) This layout type decode below groups
+                Group(1) => XLake S Chipset
+                Group(2) => Chipset
+                Group(3) => Consumer
+                Group(4) => SPI
+            (2) Need to trim the string.
+
+        Args:
+            None.
+
+        Raises:
+            ValueError:
+                Unexpected number of groups decoded.
+
+        Returns:
+            Tuple[str, str, str]:
+                str:
+                    Content of the platform segment.
+                str:
+                    Content of the chipset segment.
+                str:
+                    Content of the SKU segment.
+        """
+        PlatChip   : Union[None, str] = None
+        Platform   : Union[None, str] = None
+        Chipset    : Union[None, str] = None
+        Sku        : Union[None, str] = None
+
+        if len (self.__SearchGroup.groups ()) != 4:
+            raise ValueError (
+                    f'Search group number is not 4 - [{self.__SearchGroup.groups ()}]'
+                    )
+
+        PlatChip = str (self.__SearchGroup.group (1)).strip ()
+        Chipset  = str (self.__SearchGroup.group (2)).strip ()
+        Sku      = str (self.__SearchGroup.group (3)).strip ()
+
+        #
+        # Remove the Chipset/Chipsets string.
+        # Remove the chipset type string.
+        #
+        Platform = PlatChip.replace (Chipset, '').strip ()[:-1].strip ()
+        Chipset  = PlatChip.replace (Platform, '').strip ()
+
+        return Platform, Chipset, Sku
+
+    def __InitialVariable (self) -> None:
+        """ Initial the variables for this object.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            None.
+        """
+        if (not self.Valid):
+            return
+
+        self.__Platform, self.__Chipset, self.__Sku = self.__Decode ()
+
+class _LayoutType2 (_LayoutTypeDecoder):
+    IFWI_LAYOUT_NAME_REGEX: str = \
+        r'^(([A-Za-z]+\s)+)[-] ([A-Za-z]+) [-] ([A-Za-z0-9]+)$'
+    MFIT_FWU_LAYOUT_NAME  : str = \
+        '{Platform} {Chipset} - FWUpdate'
+
+    def __init__ (self, LayoutName: str) -> None:
+        """ Class to decode the layout with Type 2 format.
+
+        Notes:
+            This layout type supported below format.
+                (1) XLake S Chipset - Consumer - SPI
+                (2) XLake S and YLake S Chipsets - Corporate - SPI
+
+        Args:
+            LayoutName (str):
+                Layout name to be decoded.
+
+        Raises:
+            None.
+
+        Returns:
+            None.
+        """
+        super ().__init__ (LayoutName, _LayoutType2.IFWI_LAYOUT_NAME_REGEX)
+
+        self.__SearchGroup: re.Match = super ().SearchGroup
+
+        self.__Platform: Union[None, str] = None
+        self.__Chipset : Union[None, str] = None
+        self.__Sku     : Union[None, str] = None
+
+        self.__InitialVariable ()
+
+    @property
+    def Platform (self) -> Union[None, str]:
+        """ Return the content of the platform segment.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Content of the platform segment.
+                If failed to decode, return as None.
+        """
+        if not self.Valid:
+            return None
+
+        return self.__Platform
+
+    @Platform.setter
+    def Platform (self, Platform: str) -> None:
+        if Platform:
+            DEBUG (DEBUG_INFO, f'Override the platform into {self.__Platform}')
+            self.__Platform = Platform
+
+    @property
+    def Chipset (self) -> Union[None, str]:
+        """ Return the content of the chipset segment.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Content of the chipset segment
+                If failed to decode, return as None.
+        """
+        if not self.Valid:
+            return None
+
+        return self.__Chipset
+
+    @property
+    def Sku (self) -> Union[None, str]:
+        """ Return the content of the SKU segment.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Content of the SKU segment
+                If failed to decode, return as None.
+        """
+        if not self.Valid:
+            return None
+
+        return self.__Sku
+
+    @property
+    def FwuLayoutName (self) -> Union[None, str]:
+        """ Return the layout name for the FWUpdate image.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            Union[None, str]:
+                Layout name for the FWUpdate image.
+                If failed to decode, return as None.
+        """
+        LayoutFormat: str = _LayoutType2.MFIT_FWU_LAYOUT_NAME
+
+        if (not self.Valid):
+            return None
+
+        return LayoutFormat.format (
+                              Platform = self.Platform,
+                              Chipset  = self.Chipset,
+                              )
+
+    def __Decode (self) ->Tuple[str, str, str]:
+        """ Decode the layout name with REGEX.
+
+        Notes:
+            (1) This layout type decode below groups
+                Group(1) => XLake S Chipset
+                Group(2) => Chipset
+                Group(3) => Consumer
+                Group(4) => SPI
+            (2) Need to trim the string.
+
+        Args:
+            None.
+
+        Raises:
+            ValueError:
+                Unexpected number of groups decoded.
+
+        Returns:
+            Tuple[str, str, str]:
+                str:
+                    Content of the platform segment.
+                str:
+                    Content of the chipset segment.
+                str:
+                    Content of the SKU segment.
+        """
+        PlatChip   : Union[None, str] = None
+        Platform   : Union[None, str] = None
+        Chipset    : Union[None, str] = None
+        Sku        : Union[None, str] = None
+
+        if len (self.__SearchGroup.groups ()) != 4:
+            raise ValueError (
+                    f'Search group number is not 4 - [{self.__SearchGroup.groups ()}]'
+                    )
+
+        PlatChip = str (self.__SearchGroup.group (1)).strip ()
+        Chipset  = str (self.__SearchGroup.group (2)).strip ()
+        Sku      = str (self.__SearchGroup.group (3)).strip ()
+
+        #
+        # Remove the Chipset/Chipsets string.
+        # Remove the chipset type string.
+        #
+        Platform = PlatChip.replace (Chipset, '').strip ()[:-1].strip ()
+        Chipset  = PlatChip.replace (Platform, '').strip ()
+
+        return Platform, Chipset, Sku
+
+    def __InitialVariable (self) -> None:
+        """ Initial the variables for this object.
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            None.
+        """
+        if (not self.Valid):
+            return
+
+        self.__Platform, self.__Chipset, self.__Sku = self.__Decode ()
 
 class IfwiFWUpdateBuilder (object):
     def __init__ (
@@ -97,6 +662,7 @@ class IfwiFWUpdateBuilder (object):
         self.__Platform: str = Platform
 
         self.__PreCheck ()
+
         TouchDir (self.__DecomposePath)
         self.__ImageInfoPath: str = self.__GetIfwiInfo ()
 
@@ -165,7 +731,32 @@ class IfwiFWUpdateBuilder (object):
 
         return OutputPath
 
-    def __GetLayoutInfo (self) -> Tuple[str, str, str]:
+    def __GetLayoutType (self, LayoutName: str) -> _LayoutTypeDecoder:
+        """ Get the type of layout name.
+
+        Args:
+            LayoutName (str):
+                Layout name to be decoded.
+
+        Raises:
+            ErrorException:
+                Failed to decode the type of layout.
+
+        Returns:
+            _LayoutTypeDecoder:
+                Decoded layout information deliver by _LayoutTypeDecoder type.
+        """
+        LayoutType1: _LayoutType1 = _LayoutType1 (LayoutName = LayoutName)
+        LayoutType2: _LayoutType2 = _LayoutType2 (LayoutName = LayoutName)
+
+        if (LayoutType1.Valid):
+            return LayoutType1
+        elif (LayoutType2.Valid):
+            return LayoutType2
+        else:
+            raise ErrorException (f'Failed to decode the IFWI layout - {LayoutName}')
+
+    def __GetLayoutInfo (self) -> _LayoutTypeDecoder:
         """ Get the layout information from ImageInfo.
 
         Note:
@@ -180,14 +771,8 @@ class IfwiFWUpdateBuilder (object):
                 (2) Find more than one keyword in ImageInfo file.
 
         Returns:
-            Tuple[str, str, str]:
-                str:
-                    The platform name of the layout.
-                str:
-                    The chipset name of the layout.
-                str:
-                    The sku name of the layout.
-                    Should be Consumer or Corporate.
+            _LayoutTypeDecoder:
+                Decoded layout information deliver by _LayoutTypeDecoder type.
         """
         ImageInfoFile: File = File (
                                 FilePath    = self.__ImageInfoPath,
@@ -196,13 +781,9 @@ class IfwiFWUpdateBuilder (object):
 
         LayoutInfoLoc: List[int] = ImageInfoFile.Find (KEYWORD_IMAGE_LAYOUT)
 
-        LayoutInfo : List[str] = list ()
-        LayoutName : str       = str ()
-        SearchGroup: re.Match  = None
-        PlatChip   : str       = str ()
-        Platform   : str       = str ()
-        Chipset    : str       = str ()
-        Sku        : str       = str ()
+        LayoutInfo: List[str]          = list ()
+        LayoutName: str                = str ()
+        LayoutType: _LayoutTypeDecoder = None
 
         if len (LayoutInfoLoc) == 0:
             raise ValueError (
@@ -215,49 +796,14 @@ class IfwiFWUpdateBuilder (object):
         LayoutInfo = ImageInfoFile.GetLineData (LayoutInfoLoc[0]).split ()
         LayoutName = ' '.join (LayoutInfo[2:])
 
-        #
-        # Possible layout format:
-        #   (1) Intel(R) XLake S Chipset - Consumer - SPI
-        #   (2) Intel(R) XLake S and YLake S Chipsets - Corporate - SPI
-        #
-        #   Group(1) => XLake S Chipset
-        #   Group(2) => Chipset
-        #   Group(3) => Consumer
-        #   Group(4) => SPI
-        #
-        #   Note: Need to trim the string.
-        #
-        SearchGroup = re.search (LAYOUT_REGEX, LayoutName, re.I | re.DOTALL)
+        LayoutType = self.__GetLayoutType (LayoutName)
+        LayoutType.Platform = self.__Platform
 
-        if SearchGroup is None:
-            raise ValueError (
-                    f'Layout format is not supported! - [{LayoutName}]'
-                    )
-        elif len (SearchGroup.groups ()) != 4:
-            raise ValueError (
-                    f'Search group number is not 4 - [{SearchGroup.groups ()}]'
-                    )
+        DEBUG (DEBUG_TRACE, f'Layout Platform: {LayoutType.Platform}')
+        DEBUG (DEBUG_TRACE, f'Layout Chipset : {LayoutType.Chipset}')
+        DEBUG (DEBUG_TRACE, f'Layout Sku     : {LayoutType.Sku}')
 
-        PlatChip = str (SearchGroup.group (1)).strip ()
-        Chipset  = str (SearchGroup.group (2)).strip ()
-        Sku      = str (SearchGroup.group (3)).strip ()
-
-        #
-        # Remove the Chipset/Chipsets string.
-        # Remove the chipset type string.
-        #
-        Platform = PlatChip.replace (Chipset, '').strip ()[:-1].strip ()
-        Chipset  = PlatChip.replace (Platform, '').strip ()
-
-        if self.__Platform:
-            DEBUG (DEBUG_INFO, f'Override the platform into {self.__Platform}')
-            Platform = self.__Platform
-
-        DEBUG (DEBUG_TRACE, f'Layout Platform: {Platform}')
-        DEBUG (DEBUG_TRACE, f'Layout Chipset : {Chipset}')
-        DEBUG (DEBUG_TRACE, f'Layout Sku     : {Sku}')
-
-        return Platform, Chipset, Sku
+        return LayoutType
 
     def __SaveFwupdateFile (self, Output: Union[str, os.PathLike]) -> None:
         """ Save the FWUpdate image to specific path.
@@ -295,20 +841,15 @@ class IfwiFWUpdateBuilder (object):
         Returns:
             None.
         """
-        Platform      : str = str ()
-        Chipset       : str = str ()
-        Sku           : str = str ()
-        FWUpdateLayout: str = str ()
+        LayoutType    : _LayoutTypeDecoder = None
+        FWUpdateLayout: str                = str ()
 
-        Platform, Chipset, Sku = self.__GetLayoutInfo ()
+        LayoutType = self.__GetLayoutInfo ()
 
-        if (Sku == IFWI_CORPORATE) and (not self.__CSEImagePath):
+        if (LayoutType.Sku == IFWI_CORPORATE) and (not self.__CSEImagePath):
             ErrorException (f'Corporate IFWI require assign CSE image.')
 
-        FWUpdateLayout = MFIT_FWU_LAYOUT_NAME.format (
-                                                Platform = Platform,
-                                                Chipset  = Chipset,
-                                                )
+        FWUpdateLayout = LayoutType.FwuLayoutName
 
         Cmd: List[str] = [
             f'{self.__FitToolPath}',

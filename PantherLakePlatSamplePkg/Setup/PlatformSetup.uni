@@ -616,10 +616,6 @@
 // TCSS: PD Information
 //
 #string STR_PD_INFORMATION                               #language en-US "PD Information"
-#string STR_PD0_VERSION_HELP                             #language en-US "PD0 Version"
-#string STR_PD0_VERSION_NAME                             #language en-US "PD0 Version"
-#string STR_PD0_VERSION_VALUE                            #language en-US "N/A"
-
 #string STR_PD1_VERSION_HELP                             #language en-US "PD1 Version"
 #string STR_PD1_VERSION_NAME                             #language en-US "PD1 Version"
 #string STR_PD1_VERSION_VALUE                            #language en-US "N/A"
@@ -627,6 +623,14 @@
 #string STR_PD2_VERSION_HELP                             #language en-US "PD2 Version"
 #string STR_PD2_VERSION_NAME                             #language en-US "PD2 Version"
 #string STR_PD2_VERSION_VALUE                            #language en-US "N/A"
+
+#string STR_PD3_VERSION_HELP                             #language en-US "PD3 Version"
+#string STR_PD3_VERSION_NAME                             #language en-US "PD3 Version"
+#string STR_PD3_VERSION_VALUE                            #language en-US "N/A"
+
+#string STR_PD4_VERSION_HELP                             #language en-US "PD4 Version"
+#string STR_PD4_VERSION_NAME                             #language en-US "PD4 Version"
+#string STR_PD4_VERSION_VALUE                            #language en-US "N/A"
 
 //
 // TCSS: Retimer Information
@@ -643,6 +647,10 @@
 #string STR_RETIMER2_VERSION_HELP                        #language en-US "Retimer2 Version"
 #string STR_RETIMER2_VERSION_NAME                        #language en-US "Retimer2 Version"
 #string STR_RETIMER2_VERSION_VALUE                       #language en-US "N/A"
+
+#string STR_RETIMER3_VERSION_HELP                        #language en-US "Retimer3 Version"
+#string STR_RETIMER3_VERSION_NAME                        #language en-US "Retimer3 Version"
+#string STR_RETIMER3_VERSION_VALUE                       #language en-US "N/A"
 
 #string STR_GPE1_PROMPT                                  #language en-US "GPE1 support"
 #string STR_GPE1_HELP                                    #language en-US "Switch between GPE0 support only (disabled) and GPE0 + GPE1 support (enabled)"

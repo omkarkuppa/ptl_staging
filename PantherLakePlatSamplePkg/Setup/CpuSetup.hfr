@@ -784,28 +784,19 @@
         endoneof;
       endif;
 
-      suppressif ideqval SETUP_CPU_FEATURES.CxAvailable == 0 OR ideqval CPU_SETUP.EnableCx == 0 OR ideqval SETUP_CPU_FEATURES.C1EAvailable == 0;
-        oneof varid     = CPU_SETUP.EnableC1e,
-            prompt      = STRING_TOKEN (STR_CXE_PROMPT),
-            help        = STRING_TOKEN (STR_CXE_PROMPT_HELP),
-            option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
-            option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        endoneof;
-      endif;
-
       suppressif ideqval SETUP_CPU_FEATURES.CxAvailable == 0 OR ideqval CPU_SETUP.EnableCx == 0;
         oneof varid       = CPU_SETUP.CStateAutoDemotion,
               prompt      = STRING_TOKEN (STR_CST_AUTO_DEMOTION),
               help        = STRING_TOKEN (STR_CST_AUTO_DEMOTION_HELP),
-              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;// PTL PO temp WA TODO :: Revisit and move to POR
-              option text = STRING_TOKEN (STR_C1_AUTO_DEMOTION), value = 1, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_C1_AUTO_DEMOTION), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         endoneof;
 
         oneof varid       = CPU_SETUP.CStateUnDemotion,
               prompt      = STRING_TOKEN (STR_CST_UNDEMOTION),
               help        = STRING_TOKEN (STR_CST_UNDEMOTION_HELP),
-              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;// PTL PO temp WA TODO :: Revisit and move to POR
-              option text = STRING_TOKEN (STR_C1_AUTO_DEMOTION), value = 1, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+              option text = STRING_TOKEN (STR_C1_AUTO_DEMOTION), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         endoneof;
 
         oneof varid       = CPU_SETUP.PkgCStateDemotion,
@@ -850,8 +841,8 @@
       oneof varid   = CPU_SETUP.EnableThermalMonitor,
         prompt      = STRING_TOKEN (STR_THERMAL_MONITOR_PROMPT),
         help        = STRING_TOKEN (STR_THERMAL_MONITOR_PROMPT_HELP),
-        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;// PTL PO temp WA TODO :: Revisit and move to POR
-        option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_DISABLED),  value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       oneof varid = CPU_SETUP.InterruptRedirectMode,

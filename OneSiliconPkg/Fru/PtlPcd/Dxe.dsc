@@ -34,8 +34,8 @@
 !else
   $(PLATFORM_SI_PACKAGE)/IpBlock/Spi/RuntimeDxe/SpiRuntime.inf
 !endif
-  $(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/Smm/SmbusSmm.inf
-  $(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/Dxe/SmbusDxe.inf
+  $(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/SmbDriver/SmbusSmm.inf
+  $(PLATFORM_SI_PACKAGE)/IpBlock/Smbus/SmbDriver/SmbusDxe.inf
 
 #
 # ME

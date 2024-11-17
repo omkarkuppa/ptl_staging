@@ -104,11 +104,11 @@ UpdatePchGeneralPreMemPolicy (
     return;
   }
 #endif
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchPort80Route, PchGeneralPreMemConfig->Port80Route, PchSetup->IchPort80Route);
-  UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.GpioOverride, PchGeneralPreMemConfig->GpioOverride, 0);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IoeDebugEn, PchGeneralPreMemConfig->IoeDebugEn, PchSetup->IoeDebugEn);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PmodeClkEn, PchGeneralPreMemConfig->PmodeClkEn, PchSetup->PmodeClkEn);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PmcPrivacyConsent, PchGeneralPreMemConfig->PmcPrivacyConsent, PchSetup->PmcPrivacyConsent);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchPort80Route, PchGeneralPreMemConfig->Port80Route, PchSetup->IchPort80Route);
+  UPDATE_POLICY (((FSPM_UPD *)FspmUpd)->FspmConfig.GpioOverride, PchGeneralPreMemConfig->GpioOverride, 0);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IoeDebugEn, PchGeneralPreMemConfig->IoeDebugEn, PchSetup->IoeDebugEn);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PmodeClkEn, PchGeneralPreMemConfig->PmodeClkEn, PchSetup->PmodeClkEn);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PmcPrivacyConsent, PchGeneralPreMemConfig->PmcPrivacyConsent, PchSetup->PmcPrivacyConsent);
 
 }
 
@@ -143,10 +143,10 @@ UpdateDciPreMemPolicy (
   }
 #endif
 
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DciEn, DciPreMemConfig->DciEn, PchSetup->DciEn);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DciClkEnable, DciPreMemConfig->DciClkEnable, PchSetup->DciClkEnable);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DciDbcMode, DciPreMemConfig->DciDbcMode, PchSetup->DciDbcMode);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.KeepEarlyTrace, DciPreMemConfig->KeepEarlyTrace, PchSetup->KeepEarlyTrace);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DciEn, DciPreMemConfig->DciEn, PchSetup->DciEn);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DciClkEnable, DciPreMemConfig->DciClkEnable, PchSetup->DciClkEnable);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DciDbcMode, DciPreMemConfig->DciDbcMode, PchSetup->DciDbcMode);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.KeepEarlyTrace, DciPreMemConfig->KeepEarlyTrace, PchSetup->KeepEarlyTrace);
 }
 
 /**
@@ -187,7 +187,7 @@ UpdateTraceHubPreMemPolicy (
   TraceHubPreMemConfig->TraceHub[SocTraceHub].MemReg1Size = TRACEHUB_MEM_SIZE (PchSetup->SocTraceHubMemReg1Size);
 #endif
 
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SocTraceHubMode, TraceHubPreMemConfig->TraceHub[SocTraceHub].EnableMode, PchSetup->SocTraceHubMode);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SocTraceHubMode, TraceHubPreMemConfig->TraceHub[SocTraceHub].EnableMode, PchSetup->SocTraceHubMode);
 }
 
 /**
@@ -223,17 +223,17 @@ UpdateSmbusPreMemPolicy (
   }
 #endif
 
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SmbusEnable, SmbusPreMemConfig->Enable, TRUE);
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchSmbAlertEnable, SmbusPreMemConfig->SmbAlertEnable, PcdGetBool (PcdSmbusAlertEnable));
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SmbusEnable, SmbusPreMemConfig->Enable, TRUE);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchSmbAlertEnable, SmbusPreMemConfig->SmbAlertEnable, PcdGetBool (PcdSmbusAlertEnable));
 
   SmBusReservedTable = NULL;
   SmBusReservedNum   = 0;
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchSmbusIoBase, SmbusPreMemConfig->SmbusIoBase, PcdGet16 (PcdSmbusBaseAddress));
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchSmbusIoBase, SmbusPreMemConfig->SmbusIoBase, PcdGet16 (PcdSmbusBaseAddress));
   SmBusReservedTable = mSmbusSTPRsvdAddresses;
   SmBusReservedNum   = sizeof (mSmbusSTPRsvdAddresses);
 
   if (SmBusReservedTable != NULL) {
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchNumRsvdSmbusAddresses, SmbusPreMemConfig->NumRsvdSmbusAddresses, SmBusReservedNum);
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchNumRsvdSmbusAddresses, SmbusPreMemConfig->NumRsvdSmbusAddresses, SmBusReservedNum);
 #if FixedPcdGet8(PcdFspModeSelection) == 1
     ((FSPM_UPD *) FspmUpd)->FspmConfig.RsvdSmbusAddressTablePtr = (UINTN) SmBusReservedTable; //To fix Simics pause on API build
 #else
@@ -272,7 +272,7 @@ UpdateLpcPreMemPolicy (
     return;
   }
 #endif
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchLpcEnhancePort8xhDecoding, LpcPreMemConfig->EnhancePort8xhDecoding, PchSetup->EnhancePort8xhDecoding);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchLpcEnhancePort8xhDecoding, LpcPreMemConfig->EnhancePort8xhDecoding, PchSetup->EnhancePort8xhDecoding);
 }
 
 /**
@@ -307,7 +307,7 @@ UpdateWatchDogPreMemPolicy (
   }
 #endif
 
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.WdtDisableAndLock, WatchDogPreMemConfig->DisableAndLock, (UINTN)(!PchSetup->WdtEnable));
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.WdtDisableAndLock, WatchDogPreMemConfig->DisableAndLock, (UINTN)(!PchSetup->WdtEnable));
 }
 
 VOID
@@ -328,8 +328,8 @@ UpdatePcieClockInfo (
   DEBUG ((DEBUG_INFO, "UpdatePcieClockInfo ClkIndex %x ClkUsage %x, Supported %x\n", Index, Pcd64.PcieClock.ClockUsage, Pcd64.PcieClock.ClkReqSupported));
 
   if(Index < GetPchMaxPcieClockNum()) {
-    UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[Index], PcieRpPreMemConfig->PcieClock[Index].Usage, (UINT8)Pcd64.PcieClock.ClockUsage);
-    UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcClkReq[Index], PcieRpPreMemConfig->PcieClock[Index].ClkReq, Pcd64.PcieClock.ClkReqSupported ? (UINT8)Index : 0xFF);
+    UPDATE_POLICY (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[Index], PcieRpPreMemConfig->PcieClock[Index].Usage, (UINT8)Pcd64.PcieClock.ClockUsage);
+    UPDATE_POLICY (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcClkReq[Index], PcieRpPreMemConfig->PcieClock[Index].ClkReq, Pcd64.PcieClock.ClkReqSupported ? (UINT8)Index : 0xFF);
   }
 }
 /**
@@ -368,7 +368,7 @@ UpdatePcieRpPreMemPolicy (
   }
 #endif
 
-  GET_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PcieRpEnableMask,PcieRpPreMemConfig->RpEnabledMask, RpEnabledMask);
+  GET_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PcieRpEnableMask,PcieRpPreMemConfig->RpEnabledMask, RpEnabledMask);
 
   for (RpIndex = 0; RpIndex < GetPchMaxPciePortNum (); RpIndex ++) {
     if (PchSetup->PcieRootPortEn[RpIndex]) {
@@ -378,7 +378,7 @@ UpdatePcieRpPreMemPolicy (
     }
   }
   // RpEnabledMask value is related with Setup value, Need to check Policy Default
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PcieRpEnableMask, PcieRpPreMemConfig->RpEnabledMask, RpEnabledMask);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PcieRpEnableMask, PcieRpPreMemConfig->RpEnabledMask, RpEnabledMask);
 
   //
   // Retrieve Setup variable
@@ -407,11 +407,11 @@ UpdatePcieRpPreMemPolicy (
   //
   // External Graphics card scan option.
   //
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SkipExtGfxScan, PcieRpPreMemConfig->SkipExtGfxScan, SaSetup.SkipExtGfxScan);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SkipExtGfxScan, PcieRpPreMemConfig->SkipExtGfxScan, SaSetup.SkipExtGfxScan);
   //
   // SA:GfxRemovePostPOEnd
   //
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PcieResizableBarSupport, PcieRpPreMemConfig->PcieResizableBarSupport, PchSetup->PcieResizableBarSupport);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PcieResizableBarSupport, PcieRpPreMemConfig->PcieResizableBarSupport, PchSetup->PcieResizableBarSupport);
 
   UpdatePcieClockInfo (PcieRpPreMemConfig,  0, PcdGet64(PcdPcieClock0));
   UpdatePcieClockInfo (PcieRpPreMemConfig,  1, PcdGet64(PcdPcieClock1));
@@ -434,12 +434,12 @@ UpdatePcieRpPreMemPolicy (
 
   for (RpIndex = 0; RpIndex < GetPchMaxPcieClockNum(); RpIndex++) {
     if (PchSetup->PchPcieClkReqSupport[RpIndex] == 0xFF) {
-      UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcClkReq[RpIndex], PcieRpPreMemConfig->PcieClock[RpIndex].ClkReq, (UINT8)PCH_PCIE_NO_SUCH_CLOCK);
+      UPDATE_POLICY (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcClkReq[RpIndex], PcieRpPreMemConfig->PcieClock[RpIndex].ClkReq, (UINT8)PCH_PCIE_NO_SUCH_CLOCK);
     }
     if (PchSetup->PchPcieClockUsageOverride[RpIndex] == 1) {
-      UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[RpIndex], PcieRpPreMemConfig->PcieClock[RpIndex].Usage, PchClockUsageUnspecified);
+      UPDATE_POLICY (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[RpIndex], PcieRpPreMemConfig->PcieClock[RpIndex].Usage, PchClockUsageUnspecified);
     } else if (PchSetup->PchPcieClockUsageOverride[RpIndex] == 2) {
-      UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[RpIndex], PcieRpPreMemConfig->PcieClock[RpIndex].Usage, PchClockUsageNotUsed);
+      UPDATE_POLICY (((FSPM_UPD *)FspmUpd)->FspmConfig.PcieClkSrcUsage[RpIndex], PcieRpPreMemConfig->PcieClock[RpIndex].Usage, PchClockUsageNotUsed);
     }
   }
 
@@ -477,66 +477,72 @@ UpdateHdaPreMemPolicy (
 #endif
 
   for (Index = 0; Index < PCH_MAX_HDA_SDI; Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaSdiEnable[Index], HdaPreMemConfig->AudioLinkHda.SdiEnable[Index], PchSetup->PchHdAudioSdiLaneEnable[Index], Index);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaSdiEnable[Index], HdaPreMemConfig->AudioLinkHda.SdiEnable[Index], PchSetup->PchHdAudioSdiLaneEnable[Index], Index);
   }
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaEnable,               HdaPreMemConfig->Enable,               PchSetup->PchHdAudio                   );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaDspEnable,            HdaPreMemConfig->DspEnable,            PchSetup->PchHdAudioDsp                );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaIDispLinkFrequency,   HdaPreMemConfig->IDispLinkFrequency,   PchSetup->PchHdaIDisplayLinkFreq       );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaIDispLinkTmode,       HdaPreMemConfig->IDispLinkTmode,       PchSetup->PchHdaIDisplayLinkTmode      );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaIDispCodecDisconnect, HdaPreMemConfig->IDispCodecDisconnect, PchSetup->PchHdaIDisplayCodecDisconnect);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaDspUaaCompliance,     HdaPreMemConfig->DspUaaCompliance,     PchSetup->PchHdAudioDspUaaCompliance   );
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaEnable,               HdaPreMemConfig->Enable,               PchSetup->PchHdAudio                   );
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaDspEnable,            HdaPreMemConfig->DspEnable,            PchSetup->PchHdAudioDsp                );
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaIDispLinkFrequency,   HdaPreMemConfig->IDispLinkFrequency,   PchSetup->PchHdaIDisplayLinkFreq       );
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaIDispLinkTmode,       HdaPreMemConfig->IDispLinkTmode,       PchSetup->PchHdaIDisplayLinkTmode      );
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaIDispCodecDisconnect, HdaPreMemConfig->IDispCodecDisconnect, PchSetup->PchHdaIDisplayCodecDisconnect);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaDspUaaCompliance,     HdaPreMemConfig->DspUaaCompliance,     PchSetup->PchHdAudioDspUaaCompliance   );
 
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkHdaEnable,   HdaPreMemConfig->AudioLinkHda.Enable,  PchSetup->PchHdAudioHdaLinkEnable);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkHdaEnable,   HdaPreMemConfig->AudioLinkHda.Enable,  PchSetup->PchHdAudioHdaLinkEnable);
   for (Index = 0; Index < GetPchHdaMaxDmicLinkNum (); Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicEnable[Index],      HdaPreMemConfig->AudioLinkDmic[Index].Enable,          PchSetup->PchHdAudioDmicLinkEnable[Index],  Index);
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClockSelect[Index], HdaPreMemConfig->AudioLinkDmic[Index].DmicClockSelect, HdaDmicClockSelectClkA, Index);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicEnable[Index],      HdaPreMemConfig->AudioLinkDmic[Index].Enable,          PchSetup->PchHdAudioDmicLinkEnable[Index],  Index);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClockSelect[Index], HdaPreMemConfig->AudioLinkDmic[Index].DmicClockSelect, HdaDmicClockSelectClkA, Index);
   }
 
   for (Index = 0; Index < GetPchHdaMaxSndwMultilaneNum (); Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdAudioSndwMultilaneEnable[Index], HdaPreMemConfig->SndwMultilane[Index].Enable,        PchSetup->PchHdAudioSndwMultilaneEnable[Index], Index);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdAudioSndwMultilaneEnable[Index], HdaPreMemConfig->SndwMultilane[Index].Enable,        PchSetup->PchHdAudioSndwMultilaneEnable[Index], Index);
   }
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_S_4__DMIC_CLK_A_0);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_S_5__DMIC_DATA_0);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[1], HdaPreMemConfig->AudioLinkDmic[1].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_S_6__DMIC_CLK_A_1);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[1], HdaPreMemConfig->AudioLinkDmic[1].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_S_7__DMIC_DATA_1);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_S_4__DMIC_CLK_A_0);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_S_5__DMIC_DATA_0);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[1], HdaPreMemConfig->AudioLinkDmic[1].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_S_6__DMIC_CLK_A_1);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[1], HdaPreMemConfig->AudioLinkDmic[1].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_S_7__DMIC_DATA_1);
+
+  if(PcdGetBool (VpdPcdDmicReworkConfig)  == TRUE){
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicClkAPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.ClkA, GPIOV2_PTL_PCD_MUXING__XXGPP_D_16__DMIC_CLK_A_1);
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkDmicDataPinMux[0], HdaPreMemConfig->AudioLinkDmic[0].PinMux.Data, GPIOV2_PTL_PCD_MUXING__XXGPP_D_17__DMIC_DATA_1);
+  }
 
   for (Index = 0; Index < GetPchHdaMaxSndwMultilaneNum (); Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneClkPinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Clk,    0, Index);
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData0PinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Data0,  0, Index);
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData2PinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Data2,  0, Index);
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData3PinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Data3,  0, Index);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneClkPinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Clk,    0, Index);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData0PinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Data0,  0, Index);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData2PinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Data2,  0, Index);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData3PinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Data3,  0, Index);
   }
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData1PinMux[1], HdaPreMemConfig->SndwMultilane[0].PinMux.Data1, GPIOV2_PTL_PCD_MUXING__XXGPP_S_6__SNDW2_DATA1);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData1PinMux[1], HdaPreMemConfig->SndwMultilane[1].PinMux.Data1, 0);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdAudioSndwMultilaneSndwInterface[0], HdaPreMemConfig->SndwMultilane[0].SndwInterface, 2);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdAudioSndwMultilaneSndwInterface[1], HdaPreMemConfig->SndwMultilane[1].SndwInterface, 3);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSclkPinMux[0], HdaPreMemConfig->AudioLinkSsp[0].PinMux.Sclk, GPIOV2_PTL_PCD_MUXING__XXGPP_D_10__I2S0_SCLK);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSfmrPinMux[0], HdaPreMemConfig->AudioLinkSsp[0].PinMux.Sfmr, GPIOV2_PTL_PCD_MUXING__XXGPP_D_11__I2S0_SFRM);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspTxdPinMux[0], HdaPreMemConfig->AudioLinkSsp[0].PinMux.Txd,  GPIOV2_PTL_PCD_MUXING__XXGPP_D_12__I2S0_TXD);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspRxdPinMux[0], HdaPreMemConfig->AudioLinkSsp[0].PinMux.Rxd,  GPIOV2_PTL_PCD_MUXING__XXGPP_D_13__I2S0_RXD);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSclkPinMux[1], HdaPreMemConfig->AudioLinkSsp[1].PinMux.Sclk, GPIOV2_PTL_PCD_MUXING__XXGPP_S_2__I2S1_SCLK);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSfmrPinMux[1], HdaPreMemConfig->AudioLinkSsp[1].PinMux.Sfmr, GPIOV2_PTL_PCD_MUXING__XXGPP_S_3__I2S1_SFRM);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspTxdPinMux[1], HdaPreMemConfig->AudioLinkSsp[1].PinMux.Txd,  GPIOV2_PTL_PCD_MUXING__XXGPP_S_0__I2S1_TXD);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspRxdPinMux[1], HdaPreMemConfig->AudioLinkSsp[1].PinMux.Rxd,  GPIOV2_PTL_PCD_MUXING__XXGPP_S_1__I2S1_RXD);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSclkPinMux[2], HdaPreMemConfig->AudioLinkSsp[2].PinMux.Sclk, GPIOV2_PTL_PCD_MUXING__XXGPP_S_4__I2S2_SCLK);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSfmrPinMux[2], HdaPreMemConfig->AudioLinkSsp[2].PinMux.Sfmr, GPIOV2_PTL_PCD_MUXING__XXGPP_S_5__I2S2_SFRM);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspTxdPinMux[2], HdaPreMemConfig->AudioLinkSsp[2].PinMux.Txd,  GPIOV2_PTL_PCD_MUXING__XXGPP_S_6__I2S2_TXD);
-    COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspRxdPinMux[2], HdaPreMemConfig->AudioLinkSsp[2].PinMux.Rxd,  GPIOV2_PTL_PCD_MUXING__XXGPP_S_7__I2S2_RXD);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData1PinMux[1], HdaPreMemConfig->SndwMultilane[0].PinMux.Data1, GPIOV2_PTL_PCD_MUXING__XXGPP_S_6__SNDW2_DATA1);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData1PinMux[1], HdaPreMemConfig->SndwMultilane[1].PinMux.Data1, 0);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdAudioSndwMultilaneSndwInterface[0], HdaPreMemConfig->SndwMultilane[0].SndwInterface, 2);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdAudioSndwMultilaneSndwInterface[1], HdaPreMemConfig->SndwMultilane[1].SndwInterface, 3);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSclkPinMux[0], HdaPreMemConfig->AudioLinkSsp[0].PinMux.Sclk, GPIOV2_PTL_PCD_MUXING__XXGPP_D_10__I2S0_SCLK);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSfmrPinMux[0], HdaPreMemConfig->AudioLinkSsp[0].PinMux.Sfmr, GPIOV2_PTL_PCD_MUXING__XXGPP_D_11__I2S0_SFRM);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspTxdPinMux[0], HdaPreMemConfig->AudioLinkSsp[0].PinMux.Txd,  GPIOV2_PTL_PCD_MUXING__XXGPP_D_12__I2S0_TXD);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspRxdPinMux[0], HdaPreMemConfig->AudioLinkSsp[0].PinMux.Rxd,  GPIOV2_PTL_PCD_MUXING__XXGPP_D_13__I2S0_RXD);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSclkPinMux[1], HdaPreMemConfig->AudioLinkSsp[1].PinMux.Sclk, GPIOV2_PTL_PCD_MUXING__XXGPP_S_2__I2S1_SCLK);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSfmrPinMux[1], HdaPreMemConfig->AudioLinkSsp[1].PinMux.Sfmr, GPIOV2_PTL_PCD_MUXING__XXGPP_S_3__I2S1_SFRM);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspTxdPinMux[1], HdaPreMemConfig->AudioLinkSsp[1].PinMux.Txd,  GPIOV2_PTL_PCD_MUXING__XXGPP_S_0__I2S1_TXD);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspRxdPinMux[1], HdaPreMemConfig->AudioLinkSsp[1].PinMux.Rxd,  GPIOV2_PTL_PCD_MUXING__XXGPP_S_1__I2S1_RXD);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSclkPinMux[2], HdaPreMemConfig->AudioLinkSsp[2].PinMux.Sclk, GPIOV2_PTL_PCD_MUXING__XXGPP_S_4__I2S2_SCLK);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspSfmrPinMux[2], HdaPreMemConfig->AudioLinkSsp[2].PinMux.Sfmr, GPIOV2_PTL_PCD_MUXING__XXGPP_S_5__I2S2_SFRM);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspTxdPinMux[2], HdaPreMemConfig->AudioLinkSsp[2].PinMux.Txd,  GPIOV2_PTL_PCD_MUXING__XXGPP_S_6__I2S2_TXD);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspRxdPinMux[2], HdaPreMemConfig->AudioLinkSsp[2].PinMux.Rxd,  GPIOV2_PTL_PCD_MUXING__XXGPP_S_7__I2S2_RXD);
 
   for (Index = 0; Index < GetPchHdaMaxSspLinkNum (); Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspEnable[Index], HdaPreMemConfig->AudioLinkSsp[Index].Enable,  PchSetup->PchHdAudioSspLinkEnable[Index],  Index);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspEnable[Index], HdaPreMemConfig->AudioLinkSsp[Index].Enable,  PchSetup->PchHdAudioSspLinkEnable[Index],  Index);
   }
   //
   // This is to avoid SSP pins program when CNVi and Discrete BT Offload is enabled, since SSP pins need to be at HighZ when CRF is detected.
   //
   if (CnviCrfModuleIsPresent()) {
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspEnable[PchSetup->HdaDiscBtOffSspLink], HdaPreMemConfig->AudioLinkSsp[PchSetup->HdaDiscBtOffSspLink].Enable,  0);
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSspEnable[PchSetup->HdaDiscBtOffSspLink], HdaPreMemConfig->AudioLinkSsp[PchSetup->HdaDiscBtOffSspLink].Enable,  0);
   }
   for (Index = 0; Index < GetPchHdaMaxSndwLinkNum (); Index++) {
-    COMPARE_UPDATE_POLICY_ARRAY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSndwEnable[Index], HdaPreMemConfig->AudioLinkSndw[Index].Enable, PchSetup->PchHdAudioSndwLinkEnable[Index], Index);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkSndwEnable[Index], HdaPreMemConfig->AudioLinkSndw[Index].Enable, PchSetup->PchHdAudioSndwLinkEnable[Index], Index);
   }
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaDiscBtOffEnabled, HdaPreMemConfig->HdaDiscBtOffload.HdaDiscBtOffEnabled, PchSetup->HdaDiscBtOffEnabled);
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaDiscBtOffSspLink, HdaPreMemConfig->HdaDiscBtOffload.HdaDiscBtOffSspLink, PchSetup->HdaDiscBtOffSspLink);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaDiscBtOffEnabled, HdaPreMemConfig->HdaDiscBtOffload.HdaDiscBtOffEnabled, PchSetup->HdaDiscBtOffEnabled);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaDiscBtOffSspLink, HdaPreMemConfig->HdaDiscBtOffload.HdaDiscBtOffSspLink, PchSetup->HdaDiscBtOffSspLink);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaSndwClockSourceSelect, HdaPreMemConfig->SoundWireClockSelect, PchSetup->PchHdaSndwClockSrcSelect);
 
 }
 
@@ -569,7 +575,7 @@ UpdateIshPreMemPolicy (
     return;
   }
 #endif
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchIshEnable, IshPreMemConfig->Enable, PchSetup->PchIshEnable);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchIshEnable, IshPreMemConfig->Enable, PchSetup->PchIshEnable);
 }
 
 #if FixedPcdGetBool (PcdCnvIntegratedSupport) == 1
@@ -605,7 +611,7 @@ UpdateCnviPreMemPolicy (
   }
 #endif
 
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.CnviDdrRfim, CnviPreMemConfig->DdrRfim, SaSetup->CnviDdrRfim);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.CnviDdrRfim, CnviPreMemConfig->DdrRfim, SaSetup->CnviDdrRfim);
 }
 #endif
 
@@ -641,7 +647,7 @@ UpdateSpiPreMemPolicy (
   }
 #endif
 
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.PchSpiExtendedBiosDecodeRangeEnable, SpiPreMemConfig->ExtendedBiosDecodeRangeEnable, PchSetup->ExtendedBiosDecodeRangeEnable);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchSpiExtendedBiosDecodeRangeEnable, SpiPreMemConfig->ExtendedBiosDecodeRangeEnable, PchSetup->ExtendedBiosDecodeRangeEnable);
 }
 
 /**
@@ -665,7 +671,7 @@ UpdateSpiPreMemHob (
 
   if (SpiInfoHob != NULL) {
     SpiInfoHobData =  GET_GUID_HOB_DATA (SpiInfoHob);
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.ExtendedBiosDecodeRange, SpiInfoHobData->ExtendedBiosDecodeRangeEnable, FixedPcdGetBool(PcdExtendedBiosRegionSupport));
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ExtendedBiosDecodeRange, SpiInfoHobData->ExtendedBiosDecodeRangeEnable, FixedPcdGetBool(PcdExtendedBiosRegionSupport));
     DEBUG ((DEBUG_INFO, "ExtendedBiosDecodeRange = 0x%x\n", SpiInfoHobData->ExtendedBiosDecodeRangeEnable));
   } else {
     DEBUG ((DEBUG_INFO, "SPI Info Hob not found\n"));

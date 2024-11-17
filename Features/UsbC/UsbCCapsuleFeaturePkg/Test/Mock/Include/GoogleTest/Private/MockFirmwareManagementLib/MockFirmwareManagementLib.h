@@ -31,6 +31,8 @@
 extern "C" {
 #include <Uefi.h>
 #include <Protocol/FirmwareManagement.h>
+
+extern EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  LocalProgress;
 }
 
 struct MockFirmwareManagementLib {
@@ -40,7 +42,7 @@ struct MockFirmwareManagementLib {
     EFI_STATUS,
     Progress,
     (IN UINTN  Completion)
-     );
+    );
 };
 
-#endif /*MOCK_FIRMWARE_MANAGEMENT_H*/
+#endif

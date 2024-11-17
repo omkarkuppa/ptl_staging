@@ -321,7 +321,8 @@ typedef struct {
   ///
   UINT8  EnablePort8xhDecode;
   UINT8  PhyAutoPowerGating;
-  UINT8  RsvdBytes0[2];
+  UINT8  EnableDtr;
+  UINT8  RsvdBytes0[1];
 } PCIE_COMMON_CONFIG;
 
 

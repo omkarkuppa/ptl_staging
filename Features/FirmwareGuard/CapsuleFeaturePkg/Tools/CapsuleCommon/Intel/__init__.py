@@ -24,6 +24,7 @@ from CapsuleCommon.Intel.Bios import *
 from CapsuleCommon.Intel.BiosGuard import *
 from CapsuleCommon.Intel.BtGAcm import *
 from CapsuleCommon.Intel.Ec import *
+from CapsuleCommon.Intel.Foxville import *
 from CapsuleCommon.Intel.Fsp import *
 from CapsuleCommon.Intel.Ucode import *
 

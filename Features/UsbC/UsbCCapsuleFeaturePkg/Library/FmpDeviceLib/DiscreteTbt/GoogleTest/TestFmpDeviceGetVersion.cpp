@@ -1,5 +1,5 @@
 /** @file
-  Google Test for the implementation of FmpDeviceLib instance to support 
+  Google Test for the implementation of FmpDeviceLib instance to support
   Discrete Thunderbolt Firmware update
 
   @copyright
@@ -20,43 +20,40 @@
 @par Specification Reference:
 
 **/
+#include <GTestFmpDeviceLibDiscreteTbt.h>
 
 /**
 Google test for FmpDeviceGetVersion function.
 **/
-class FmpDeviceGetVersionTest : public CommonMock {
+class FmpDeviceGetVersionTest : public Test {
   protected:
-  EFI_STATUS     Status;
-  UINT32         *Version;
+    EFI_STATUS Status;
+    UINT32     *Version;
 
   void SetUp() override {
-    Version = (UINT32*) AllocatePool(1);
-    ASSERT_NE(Version, nullptr);
+    Version = (UINT32 *) AllocatePool (1);
+    ASSERT_NE (Version, nullptr);
   }
 };
 
-TEST_F (FmpDeviceGetVersionTest, VarError) {
-
+TEST_F (FmpDeviceGetVersionTest, Var_1_Error) {
   //
   // Case 1 - Version is NULL
   // Expected Result - Status will return EFI_INVALID_PARAMETER
   //
   cout << "[---------- Case 1 ----------]"<< endl;
   Status = FmpDeviceGetVersion (NULL);
-  EXPECT_EQ(Status, EFI_INVALID_PARAMETER);
-
+  EXPECT_EQ (Status, EFI_INVALID_PARAMETER);
 }
 
-TEST_F(FmpDeviceGetVersionTest, VarUnSupported) {
-
+TEST_F (FmpDeviceGetVersionTest, Var_2_UnSupported) {
   //
   // Case 2 - General Case
   // Expected Result - Status will return EFI_UNSUPPORTED
   //
   cout << "[---------- Case 2 ----------]"<< endl;
   Status = FmpDeviceGetVersion (Version);
-  EXPECT_EQ(Status, EFI_UNSUPPORTED);
+  EXPECT_EQ (Status, EFI_UNSUPPORTED);
 
   cout << "FmpDeviceGetVersion Done." << endl;
-
 }

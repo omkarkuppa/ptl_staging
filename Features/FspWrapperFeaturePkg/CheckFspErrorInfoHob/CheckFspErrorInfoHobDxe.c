@@ -41,7 +41,6 @@ FspDxeDumpErrorInfoHob (
   VOID
   )
 {
-  EFI_STATUS              Status;
   EFI_PEI_HOB_POINTERS    Hob;
 
   DEBUG ((DEBUG_ERROR, "Check FSP notifyPhase FSP_ERROR_INFO_HOB...\n"));
@@ -60,8 +59,7 @@ FspDxeDumpErrorInfoHob (
     //
     // Dump FSP error information HOB.
     //
-    Status = DumpFspErrorInfo ((VOID *) *mFspHobListPtr);
-    ASSERT_EFI_ERROR (Status);
+    DumpFspErrorInfo ((VOID *) *mFspHobListPtr);
   }
 }
 

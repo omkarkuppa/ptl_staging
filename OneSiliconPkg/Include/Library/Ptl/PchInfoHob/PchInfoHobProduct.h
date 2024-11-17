@@ -102,7 +102,8 @@ typedef struct {
   UINT32       HdaLinkSupport   :  1;
   UINT32       XhciSupport      :  1;
   UINT32       IshAvailable     :  1;
-  UINT32       Rsvdbits         :  7;
+  UINT32       LpssDebugUartPg  :  1;
+  UINT32       Rsvdbits         :  6;
   UINT8        DmicLinkSupport[PCH_MAX_HDA_DMIC_LINK_NUM];
   UINT8        SspLinkSupport[PCH_MAX_HDA_SSP_LINK_NUM];
   UINT8        SndwLinkSupport[PCH_MAX_HDA_SNDW_LINK_NUM];

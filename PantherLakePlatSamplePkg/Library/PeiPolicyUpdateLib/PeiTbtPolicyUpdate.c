@@ -208,10 +208,10 @@ UpdatePeiTbtPolicy (
     return Status;
   }
 
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.Usb4CmMode,                    PeiITbtConfig->ITbtGenericConfig.Usb4CmMode,                     Usb4CmMode                                        );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ITbtForcePowerOnTimeoutInMs,   PeiITbtConfig->ITbtGenericConfig.ITbtForcePowerOnTimeoutInMs,    SystemConfiguration.ITbtForcePowerOnTimeoutInMs   );
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ITbtConnectTopologyTimeoutInMs,PeiITbtConfig->ITbtGenericConfig.ITbtConnectTopologyTimeoutInMs, SystemConfiguration.ITbtConnectTopologyTimeoutInMs);
-  COMPARE_AND_UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.ITbtPcieTunnelingForUsb4,      PeiITbtConfig->ITbtGenericConfig.ITbtPcieTunnelingForUsb4,       SystemConfiguration.EnablePcieTunnelingOverUsb4   );
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Usb4CmMode,                    PeiITbtConfig->ITbtGenericConfig.Usb4CmMode,                     Usb4CmMode                                        );
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ITbtForcePowerOnTimeoutInMs,   PeiITbtConfig->ITbtGenericConfig.ITbtForcePowerOnTimeoutInMs,    SystemConfiguration.ITbtForcePowerOnTimeoutInMs   );
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ITbtConnectTopologyTimeoutInMs,PeiITbtConfig->ITbtGenericConfig.ITbtConnectTopologyTimeoutInMs, SystemConfiguration.ITbtConnectTopologyTimeoutInMs);
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.ITbtPcieTunnelingForUsb4,      PeiITbtConfig->ITbtGenericConfig.ITbtPcieTunnelingForUsb4,       SystemConfiguration.EnablePcieTunnelingOverUsb4   );
 #endif
 #if FixedPcdGetBool (PcdDTbtEnable) == 1
   //

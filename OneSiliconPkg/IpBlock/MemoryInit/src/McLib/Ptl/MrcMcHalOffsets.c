@@ -492,6 +492,13 @@ MrcGetMcConfigRegOffset (
       }
       break;
 
+    case GsmMccPageOpenPolicyMaxCount:
+    case GsmMccPageOpenPolicyEn:
+      if (Channel < MaxChannel) {
+        Offset = OFFSET_CALC_MC_CH(MC0_CH0_CR_PAGEOPEN_POLICY_LIMIT_REG, MC1_CH0_CR_PAGEOPEN_POLICY_LIMIT_REG, Controller, MC0_CH1_CR_PAGEOPEN_POLICY_LIMIT_REG, Channel);
+      }
+      break;
+
     case GsmMccLp5WckMode:
     case GsmMccLp5WckFastMode:
       if (Channel < MaxChannel) {
@@ -860,6 +867,7 @@ MrcGetMcConfigRegOffset (
     case GsmMccDisMntClkGate:
     case GsmMccDisWdbClkGate:
     case GsmMccDisableSplitAct:
+    case GsmMccMcCbRowPressDisAutoPre:
       if (Channel < MaxChannel) {
         Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SCHED_THIRD_CBIT_REG, MC1_CH0_CR_SCHED_THIRD_CBIT_REG, Controller, MC0_CH1_CR_SCHED_THIRD_CBIT_REG, Channel);
       }

@@ -22,40 +22,44 @@
 
 #include "MockPciIopProtocolLib.h"
 
-MOCK_INTERFACE_DEFINITION(MockPciIopProtocolLib);
+MOCK_INTERFACE_DEFINITION (MockPciIopProtocolLib);
 
-MOCK_FUNCTION_DEFINITION(MockPciIopProtocolLib, PciIopProtocol_GetLocation , 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPciIopProtocolLib, Config_Read, 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPciIopProtocolLib, Config_Write, 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPciIopProtocolLib, PciIopProtocol_GetLocation, 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPciIopProtocolLib, Config_Attributes, 4, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPciIopProtocolLib, Mem_Read, 6, EFIAPI);
 
-static EFI_PCI_IO_PROTOCOL localPp = {
-  NULL,                 //PollMem
-  NULL,                 //PollIo
+EFI_PCI_IO_PROTOCOL  localPp = {
+  NULL,                                                          // PollMem
+  NULL,                                                          // PollIo
   {
-    NULL,               //Mem(Read)
-    NULL                //Mem(Write)
+    (EFI_PCI_IO_PROTOCOL_IO_MEM) Mem_Read,                       // Mem(Read)
+    NULL                                                         // Mem(Write)
   },
   {
-    NULL,               //Io(Read)
-    NULL                //Io(Write)
+    NULL,                                                        // Io(Read)
+    NULL                                                         // Io(Write)
   },
   {
-    NULL,               //Pci(Read)
-    NULL                //Pci(Write)
+    (EFI_PCI_IO_PROTOCOL_CONFIG)  Config_Read,                   // Pci(Read)
+    (EFI_PCI_IO_PROTOCOL_CONFIG)  Config_Write                   // Pci(Write)
   },
-  NULL,                 //CopyMem
-  NULL,                 //Map
-  NULL,                 //Unmap
-  NULL,                 //AllocateBuffer
-  NULL,                 //FreeBuffer
-  NULL,                 //Flush
-  (EFI_PCI_IO_PROTOCOL_GET_LOCATION)PciIopProtocol_GetLocation,			//GetLocation
-  NULL,                 //Attributes
-  NULL,                 //GetBarAttributes
-  NULL,                 //SetBarAttributes
+  NULL,                                                          // CopyMem
+  NULL,                                                          // Map
+  NULL,                                                          // Unmap
+  NULL,                                                          // AllocateBuffer
+  NULL,                                                          // FreeBuffer
+  NULL,                                                          // Flush
+  (EFI_PCI_IO_PROTOCOL_GET_LOCATION) PciIopProtocol_GetLocation, // GetLocation
+  (EFI_PCI_IO_PROTOCOL_ATTRIBUTES) Config_Attributes,            // Attributes
+  NULL,                                                          // GetBarAttributes
+  NULL,                                                          // SetBarAttributes
 
   ///
   /// The size, in bytes, of the ROM image.
   ///
-  (UINT64)NULL,         //RomSize
+  (UINT64) NULL,                                                 // RomSize
 
   ///
   /// A pointer to the in memory copy of the ROM image. The PCI Bus Driver is responsible
@@ -65,12 +69,5 @@ static EFI_PCI_IO_PROTOCOL localPp = {
   /// The Attributes() function can be used to determine from which of these two sources
   /// the RomImage buffer was initialized.
   ///
- NULL                  //*RomImage
+  NULL                                                            // *RomImage
 };
-
-
-
-extern "C" {
-  EFI_PCI_IO_PROTOCOL* PciIopProtocol= &localPp;
-  
-}

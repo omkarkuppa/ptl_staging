@@ -2386,10 +2386,20 @@ SipInitRootPort (
       IpCompletionTimeoutRangeSupported(pInst, &Dcap2, &Dctl2);
     }
   }
+
+  if (pInst->PcieRpCommonConfig.EnableDtr) {
+    PRINT_LEVEL1 ("DTR: prepare to programe CTV = %d on Port %d\n", Dctl2.Bits.ctv, pInst->RpIndex);
+    if (Dctl2.Bits.ctv <= IpPcieCompletionTO_1_10ms)
+    {
+      //DTR not need since ctv < range B
+      PRINT_LEVEL1 ("DTR Not Need: Port %d CTRS < Range B\n", pInst->RpIndex);
+      IpPcieSetDtrStat(pInst, IpPcieDtrNotNeed);
+    }
+  }
+
   if (!CompletionTimeoutDefault) {
     IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, DCTL2_PCIE_CFG_REG, Dctl2.Data, IpWrRegFlagSize16Bits);
   }
-
 
   SipConfigureCoalescing (pInst);
 
@@ -2696,9 +2706,9 @@ SipInitRootPort (
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, BCTRL_PCIE_CFG_REG, Bctrl.Data, IpWrRegFlagSize16Bits);
 
   /// Program Strap And Fuse Configuration register 0x00FC
-  StrpFuseCfg.Data = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, STRPFUSECFG_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+  StrpFuseCfg.Data = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Sb, STRPFUSECFG_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
   StrpFuseCfg.Bits.pxip = pInst->PrivateConfig.InterruptPin;
-  IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, STRPFUSECFG_PCIE_CFG_REG, StrpFuseCfg.Data, IpWrRegFlagSize32Bits);
+  IpWrRegWrite (pInst->RegCntxt_Cfg_Sb, STRPFUSECFG_PCIE_CFG_REG, StrpFuseCfg.Data, IpWrRegFlagSize32Bits);
 
   if (pInst->PcieRpCommonConfig.LinkDownGpios) {
     /// Set Gpio Assertion on Link Down

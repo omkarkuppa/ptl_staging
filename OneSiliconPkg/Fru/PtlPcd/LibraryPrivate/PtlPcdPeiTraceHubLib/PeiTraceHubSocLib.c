@@ -423,36 +423,3 @@ WriteTraceHubScrpd1 (
 {
   return WriteMtbBar (R_TRACE_HUB_MEM_SCRPD1, Scrpd1);
 }
-
-/**
-  Set TraceHub memory MTRR uncache
-
-  @param[in, out] TraceHubMemBase    Pointer TraceHub memory base
-**/
-VOID
-TraceHubSetMemoryUncache (
-  IN OUT UINT64                *TraceHubMemBase
-  )
-{
-  EFI_STATUS                   Status;
-  TRACEHUB_DATA_HOB            *TraceHubDataHob;
-
-  Status = EFI_SUCCESS;
-  TraceHubDataHob = NULL;
-  TraceHubDataHob = (TRACEHUB_DATA_HOB *) GetFirstGuidHob (&gTraceHubDataHobGuid);
-  if (TraceHubDataHob != NULL) {
-    DEBUG ((DEBUG_INFO, "TraceHub memory base = 0x%lx Size = 0x%lx\n", TraceHubDataHob->TraceHubMemBase, TraceHubDataHob->TraceHubMemSize));
-    if ((TraceHubDataHob->TraceHubMemBase > 0) && (TraceHubDataHob->TraceHubMemSize > 0)) {
-      //
-      // Set TraceHub memory attribute to UC
-      //
-      Status = MtrrSetMemoryAttribute (TraceHubDataHob->TraceHubMemBase, TraceHubDataHob->TraceHubMemSize, CacheUncacheable);
-      *TraceHubMemBase = TraceHubDataHob->TraceHubMemBase;
-      if (EFI_ERROR (Status)) {
-        *TraceHubMemBase = 0;
-        DEBUG ((DEBUG_ERROR, "Set TraceHub memory MTRR attribute UC fail, Status = %r\n", Status));
-        DEBUG ((DEBUG_ERROR, "Reset TraceHub memory base = 0\n"));
-      }
-    }
-  }
-}

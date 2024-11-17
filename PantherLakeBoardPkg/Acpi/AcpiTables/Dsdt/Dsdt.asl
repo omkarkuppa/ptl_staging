@@ -30,7 +30,7 @@
 #define INT_ACTIVE_LOW  0
 #define INT_ACTIVE_HIGH 1
 
-#define LCH_INTERFACE_USB 0x01
+#define LCH_ENABLED       0x01
 #define LCH_LINK_NUMBER   0x00
 #define LCH_FLASH_NUMBER  0x00
 #define VGPIO_PIN3        0x03
@@ -320,65 +320,6 @@ DefinitionBlock (
       }
     }
 
-    Method (VPIN, 1, Serialized) { // Create VGPIO resource template buffer
-      // Arg0 - Gpio Number
-      If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS05.VGPO)) {
-        Name (GPOR, ResourceTemplate () {
-          GpioIo (Exclusive, PullDefault, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS05.VGPO",,,GPOD) { 0xFFFF }
-        })
-        CreateWordField (GPOR, GPOD._PIN, PINV)
-        Store(Arg0, PINV)
-        Return (GPOR)
-      }
-      Return (0)
-    }
-
-    //
-    // Create I2C Bus Resource descriptor for _CRS usage
-    // Arg0 - I2C bus address of the connection (Peripheral Address)
-    // Arg1 - I2C Device number
-    // Returns buffer with 'I2cSerialBusV2' resource descriptor
-    //
-    Method (VIIC, 2, Serialized) {
-      Switch (ToInteger (Arg1))
-      {
-        Case (Zero) // When virtual I2C device VIC0 is selected
-        {
-          If (CondRefOf (\_SB.PC00.XHCI.RHUB.VIC0)) {
-            Name (VI00, ResourceTemplate () {
-                I2cSerialBusV2 (0, ControllerInitiated, 400000,
-                    AddressingMode7Bit, "\\_SB.PC00.XHCI.RHUB.VIC0",
-                    0x00, ResourceConsumer, VII0,)
-            })
-
-            CreateWordField (VI00, VII0._ADR, DAR0)
-            Store (Arg0, DAR0)
-            Return (VI00)
-          }
-          Return (0)
-        }
-        Case (One) // When virtual I2C device VIC1 is selected
-        {
-          If (CondRefOf (\_SB.PC00.XHCI.RHUB.VIC1)) {
-            Name (VI11, ResourceTemplate () {
-                I2cSerialBusV2 (0, ControllerInitiated, 400000,
-                    AddressingMode7Bit, "\\_SB.PC00.XHCI.RHUB.VIC1",
-                    0x00, ResourceConsumer, VII1,)
-            })
-
-            CreateWordField (VI11, VII1._ADR, DAR1)
-            Store (Arg0, DAR1)
-            Return (VI11)
-          }
-          Return (0)
-        }
-        Default
-        {
-          Return (0)
-        }
-      }
-    }
-
     //
     // Create Interrupt Resource descriptor for _CRS usage
     // Arg0 - GPIO Pad used as Interrupt source
@@ -400,7 +341,7 @@ DefinitionBlock (
     }
 
     Method (LNKC, 1, Serialized) {
-      If (Land (LEqual (Arg0, LCH_LINK_NUMBER), LEqual (LCHS, LCH_INTERFACE_USB))) {
+      If (Land (LEqual (Arg0, LCH_LINK_NUMBER), LEqual (LCHS, LCH_ENABLED))) {
         Return (1)
       }
       Return (0)
@@ -411,20 +352,17 @@ DefinitionBlock (
     // Returns Package with Lch Dependencies for Link Device
     //
     Method (LNKD, 1, Serialized) {
-      If (Land (LEqual (Arg0, LCH_LINK_NUMBER), LEqual (LCHS, LCH_INTERFACE_USB))) {
-        If (CondRefOf (\_SB.PC00.CVSS)) {
-          ADBG ("CVS : Return dependency for Lch specific Camera")
-          Return (Package() {"\\_SB.PC00.CVSS"})
-        }
-        Return (0)
+      If (LAnd (CondRefOf (\_SB.PC00.CVSS), CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VIC1))) {
+        ADBG ("CVS : Return dependency for Lch specific Camera")
+        Return (Package() {"\\_SB.PC00.CVSS", "\\_SB.PC00.XHCI.RHUB.HS03.VIC1"})
       }
       Return (0)
     }
 
     Method (FLMC, 1, Serialized) {
-      If (Land (LEqual (Arg0, LCH_FLASH_NUMBER), LEqual (LCHS, LCH_INTERFACE_USB))) {
-       Return (1)
-      }
+      //If (Land (LEqual (Arg0, LCH_FLASH_NUMBER), LEqual (LCHS, LCH_ENABLED))) {
+      // Return (1)
+      //}
       Return (0)
     }
 
@@ -432,12 +370,9 @@ DefinitionBlock (
     // Returns Package with Lch Dependencies for Flash Device
     //
     Method (FLMD, 1, Serialized) {
-      If (Land (LEqual (Arg0, LCH_FLASH_NUMBER), LEqual (LCHS, LCH_INTERFACE_USB))) {
-        If (CondRefOf (\_SB.PC00.CVSS)) {
-          ADBG ("CVS : Return dependency for Lch specific Flash")
-          Return (Package() {"\\_SB.PC00.CVSS"})
-        }
-        Return (0)
+      If (LAnd (CondRefOf (\_SB.PC00.CVSS), CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VIC1))) {
+        ADBG ("CVS : Return dependency for Lch specific Flash")
+        Return (Package() {"\\_SB.PC00.CVSS", "\\_SB.PC00.XHCI.RHUB.HS03.VIC1"})
       }
       Return (0)
     }
@@ -459,9 +394,38 @@ DefinitionBlock (
     // Returns buffer with 'I2cSerialBusV2' resource descriptor
     //
     Method (VICC, 2, Serialized) {
-      //If (Land (LEqual (Arg0, LCH_LINK_NUMBER), LEqual (LCHS, LCH_INTERFACE_USB))) {
-      //  Return (VIIC (Arg1, 0)) // When virtual I2C device VIC0 is selected
-      //}
+      If (Land (LEqual (Arg0, LCH_LINK_NUMBER), LEqual (LCHS, LCH_ENABLED))) {
+        If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VIC1)) {
+          Name (VI11, ResourceTemplate ()
+          {
+              I2cSerialBusV2 (0x0000, ControllerInitiated, 0x400000,
+                  AddressingMode7Bit, "\\_SB.PC00.XHCI.RHUB.HS03.VIC1",
+                  0x00, ResourceConsumer, _Y1B, Exclusive,
+                  )
+          })
+          CreateWordField (VI11, _Y1B._ADR, DAR1)  // _ADR: Address
+          Store (Arg1, DAR1)
+          Return (VI11)
+        }
+        ADBG ("VIC1 not available")
+      }
+      Return (0)
+    }
+
+    Method (DSCR, 1, Serialized) {
+      If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VGPO)) {
+        Name (VDSC, ResourceTemplate () {
+          //
+          // Virtual GPIOs from RGB Camera
+          //
+          GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x01}
+          GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x02}
+          GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x03}
+          GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x04}
+        })
+        Return(VDSC)
+      }
+      ADBG ("VGPO not available")
       Return (0)
     }
 
@@ -470,8 +434,16 @@ DefinitionBlock (
     // Returns buffer with 'GpioIo' resource descriptor
     //
     Method (VPN3, 1, Serialized) {
-      If (Land (LEqual (Arg0, LCH_LINK_NUMBER), LEqual (LCHS, LCH_INTERFACE_USB))) {
-        Return (VPIN (VGPIO_PIN3))
+      If (Land (LEqual (Arg0, LCH_LINK_NUMBER), LEqual (LCHS, LCH_ENABLED))) {
+        If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VGPO)) {
+          Name (GPOR, ResourceTemplate () {
+            GpioIo (Exclusive, PullDefault, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,GPOD) { 0xFFFF }
+          })
+          CreateWordField (GPOR, GPOD._PIN, PINV)
+          Store(VGPIO_PIN3, PINV)
+          Return (GPOR)
+        }
+        ADBG ("VGPO not available")
       }
       Return (0)
     }

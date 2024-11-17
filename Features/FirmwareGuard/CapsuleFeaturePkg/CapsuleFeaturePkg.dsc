@@ -36,8 +36,8 @@
   #
   # Certificates used to authenticate capsule update image
   #
-  # Using Pkcs7 test keys from EDKII open source and 3K test keys from platform sample code. This cannot be used in product.
-  !include CapsuleFeaturePkg/SigningKeys/TestRoot_TestRoo3K.inc
+  # Using PKCS#7 3K test keys from platform sample code. This cannot be used in product.
+  !include CapsuleFeaturePkg/SigningKeys/TestRoot3K.inc
 [PcdsDynamicExDefault]
   gEfiMdeModulePkgTokenSpaceGuid.PcdRecoveryFileName|L"FVMAIN.FV"
 [LibraryClasses]
@@ -109,7 +109,6 @@
   PlatformEcResetLib|CapsuleFeaturePkg/Library/PlatformEcResetLibNull/PlatformEcResetLibNull.inf
   PlatformMeUpdateHookLib|CapsuleFeaturePkg/Library/PlatformMeUpdateHookLibNull/PlatformMeUpdateHookLibNull.inf
   PlatformDxeBootStateHookLib|CapsuleFeaturePkg/Library/PlatformDxeBootStateHookLibNull/PlatformDxeBootStateHookLibNull.inf
-  FoxvilleDeviceLib|CapsuleFeaturePkg/Library/FoxvilleDeviceLib/FoxvilleDeviceLibNull.inf
 
 [LibraryClasses.common.DXE_SMM_DRIVER]
   ReportStatusCodeLib|MdeModulePkg/Library/SmmReportStatusCodeLib/SmmReportStatusCodeLib.inf

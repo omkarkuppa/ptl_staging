@@ -86,7 +86,7 @@ C_STRUCT_BYTE_SIZE_DICT: MutableMapping[str, int] = {
     C_STRUCT_UINT64    : C_STRUCT_UINT64_BYTE,
     }
 
-FILED_FORMAT: str = 'Type'
+FIELD_FORMAT: str = 'Type'
 FIELD_SIZE  : str = 'Size'
 
 #
@@ -224,15 +224,15 @@ def GetStructFormatAndByteSize (
     for _, Value in FormatDataDict.items ():
         if not isinstance (Value, dict):
             raise TypeError (f'Make sure each is key-value dict type.')
-        elif FILED_FORMAT not in Value:
-            raise ValueError (f'{FILED_FORMAT} is necessary in struct info.')
+        elif FIELD_FORMAT not in Value:
+            raise ValueError (f'{FIELD_FORMAT} is necessary in struct info.')
         elif FIELD_SIZE not in Value:
             raise ValueError (f'{FIELD_SIZE} is necessary in struct info.')
 
-        FormatStr = Value[FILED_FORMAT]
+        FormatStr = Value[FIELD_FORMAT]
         ByteSize  = Value[FIELD_SIZE]
         if not isinstance (FormatStr, str):
-            raise TypeError (f'{FILED_FORMAT} should be str type.')
+            raise TypeError (f'{FIELD_FORMAT} should be str type.')
         elif not isinstance (ByteSize, int):
             raise TypeError (f'{FIELD_SIZE} should be int type.')
         elif not IsFormatStrValid (FormatStr):
@@ -419,7 +419,7 @@ class Struct (object):
         Value  : Union[None, bytes, str]                      = str ()
 
         for MemberName, MemberData in self.__FormatDict.items ():
-            MemberFormatStr: str = MemberData[FILED_FORMAT]
+            MemberFormatStr: str = MemberData[FIELD_FORMAT]
 
             if not IsFormatStrValid (MemberFormatStr):
                 raise ValueError (f'FormatStr [{MemberFormatStr}] not valid.')

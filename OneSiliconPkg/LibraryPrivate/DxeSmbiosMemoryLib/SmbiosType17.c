@@ -436,6 +436,10 @@ InstallSmbiosType17 (
               SmbiosTableType17Data.FormFactor = MemoryFormFactorRowOfChips;
               break;
 
+            case DDR_MTYPE_CAMM:
+              SmbiosTableType17Data.FormFactor = 0x11;
+              break;
+
             case DDR_MTYPE_UDIMM:
             case DDR_MTYPE_LR_DIMM:
             case DDR_MTYPE_CUDIMM:

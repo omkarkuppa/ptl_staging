@@ -782,8 +782,10 @@ NvmeControllerInit (
   //
   // Currently the driver only supports 4k page size.
   //
-  ASSERT ((Private->Cap.Mpsmin + 12) <= EFI_PAGE_SHIFT);
-
+  if ((Private->Cap.Mpsmin + 12) > EFI_PAGE_SHIFT) {
+    DEBUG ((DEBUG_INFO, "%a: Unsupported page size. Cap.Mpsmin = %u.\n", __FUNCTION__, Private->Cap.Mpsmin));
+    return EFI_UNSUPPORTED;
+  }
   Private->Cid[0]        = 0;
   Private->Cid[1]        = 0;
   Private->Cid[2]        = 0;

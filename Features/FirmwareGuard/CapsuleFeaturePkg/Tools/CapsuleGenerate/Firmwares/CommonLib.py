@@ -91,29 +91,29 @@ def IsFwImageIgnored (FilePath: str) -> bool:
 
     return IsIgnore
 
-def IsFlashMapRegionInfoAssigned (
-    FlashMap: dict,
+def IsRegionInfoAssigned (
+    DataDict: dict,
     Region  : str
     ) -> Tuple[bool, str]:
-    """ Check if specific region within flash map is assigned.
+    """ Check if specific region in input information data is assigned.
 
     Note:
-        (1) If value of this region is dict type, assume it is assigned.
-        (2) If value of this region is str type, check if assign with
+        (1) If value of this region is str type, check if assign with
             NOT_APPLICABLE.
+        (2) If value of this region is None assume it is not assigned.
+        (3) If value of this region is other types,
+            assume it is assigned.
 
     Args:
-        FlashMap (dict):
-            The flashmap data for the target platform configuration.
+        DataDict (dict):
+            The information data for the target platform configuration.
         Region (str):
             The name of the region.
 
     Raises:
         TypeError:
-            (1) FlashMap not dict type.
+            (1) DataDict not dict type.
             (2) Region not str type.
-            (3) Mapping information data within flash map should be dict
-                or str type.
         ValueError:
             Region str type only allow NOT_APPLICABLE.
 
@@ -129,32 +129,31 @@ def IsFlashMapRegionInfoAssigned (
     RegionName: str  = None
     RegionInfo: Any  = None
 
-    if not isinstance (FlashMap, dict):
-        raise TypeError ('FlashMap should be dict type.')
+    if not isinstance (DataDict, dict):
+        raise TypeError ('DataDict should be dict type.')
     elif not isinstance (Region, str):
         raise TypeError ('Region should be str type.')
 
-    IsFound, RegionName = SearchKeyInDict (FlashMap, Region)
+    IsFound, RegionName = SearchKeyInDict (DataDict, Region)
     if not IsFound:
         DEBUG (DEBUG_TRACE, f'Failed to find the [{RegionName}] region key.')
         return False, None
 
-    RegionInfo = FlashMap[RegionName]
-    if isinstance (RegionInfo, dict):
-        pass
+    RegionInfo = DataDict[RegionName]
+    if isinstance (RegionInfo, type (None)):
+        return False, RegionName
     elif isinstance (RegionInfo, str):
-        if CheckStringMatch (RegionInfo, NOT_APPLICABLE):
-            DEBUG (
-              DEBUG_TRACE,
-              f'Region [{RegionName}] present but set {NOT_APPLICABLE}.'
-              )
-            return False, RegionName
-        else:
+        if not CheckStringMatch (RegionInfo, NOT_APPLICABLE):
             raise ValueError (
                     f'Region info str type should be only {NOT_APPLICABLE}.'
                     )
-    else:
-        raise TypeError ('Region info should be dict or str type.')
+
+        DEBUG (
+          DEBUG_TRACE,
+          f'Region [{RegionName}] present but set {NOT_APPLICABLE}.'
+          )
+
+        return False, RegionName
 
     return True, RegionName
 
@@ -506,7 +505,10 @@ def GetFvRegionInfo (FlashMap: dict, Region: str) -> Tuple[str, int, int]:
     Offset    : int  = None
     Size      : int  = None
 
-    IsAssigned, RegionName = IsFlashMapRegionInfoAssigned (FlashMap, Region)
+    IsAssigned, RegionName = IsRegionInfoAssigned (
+                               DataDict = FlashMap,
+                               Region   = Region,
+                               )
 
     if not IsAssigned:
         raise ValueError (f'Failed to find the [{Region}] region key.')

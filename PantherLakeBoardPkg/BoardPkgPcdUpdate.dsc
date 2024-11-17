@@ -458,7 +458,7 @@
 
 !if $(TARGET) == DEBUG
   !if gSiPkgTokenSpaceGuid.PcdLpssUartEnable == TRUE
-    gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|TRUE
+    gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|FALSE
     gSiPkgTokenSpaceGuid.PcdLpssUartNumber|0
     gPlatformModuleTokenSpaceGuid.PcdStatusCodeUseSerialIoUart|TRUE
   !endif
@@ -590,6 +590,7 @@
 !if gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable == TRUE
 !if gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP == TRUE
   gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids|{GUID(gUndiDriverBinGuid), GUID(gWlanDriverBinGuid), GUID(gBluetoothHciImageGuid)}
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDeviceId|{UINT16(0xE340), UINT16(0xE341), UINT16(0xE342), UINT16(0xE343), UINT16(0xE440), UINT16(0xE441), UINT16(0xE442), UINT16(0xE443)}
 !endif
 !endif
 
@@ -603,6 +604,23 @@
   # Signature: gEfiVariableGuid
   gIntelSiliconPkgTokenSpaceGuid.PcdFlashVariableStoreType|0
 !endif
+  ## This PCD decides how FSP is measured
+  # 1) The BootGuard ACM may already measured the FSP component, such as FSPT/FSPM.
+  # We need a flag (PCD) to indicate if there is need to do such FSP measurement or NOT.
+  # 2) The FSP binary includes FSP code and FSP UPD region. The UPD region is considered
+  # as configuration block, and it may be updated by OEM by design.
+  # This flag (PCD) is to indicate if we need isolate the the UPD region from the FSP code region.
+  # BIT0: Need measure FSP.  (for FSP 1.x) - reserved in FSP2.
+  # BIT1: Need measure FSPT. (for FSP 2.x)
+  # BIT2: Need measure FSPM. (for FSP 2.x)
+  # BIT3: Need measure FSPS. (for FSP 2.x)
+  # BIT4~30: reserved.
+  # BIT31: Need isolate UPD region measurement.
+  #   0: measure FSP[T|M|S] as one binary in one record (PCR0).
+  #   1: measure FSP UPD region in one record (PCR1),
+  #      measure the FSP code without UPD in another record (PCR0).
+  #
+  gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig|0x8000000F  #Enable FSP measurement by platform
 
 
 # Update PcdsFeatureFlag acording to PcdsFixedAtBuild changes

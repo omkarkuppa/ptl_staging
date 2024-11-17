@@ -232,7 +232,7 @@ GetPdControllerMode (
   )
 {
   UINT8             DataSize;
-  UINT8             PdI2cCommand;
+  UINT8             PdI2cCommandSuccess;
   UINT8             PdRetimerFwMode;
   UINT8             TempBuffer[1];
   EFI_STATUS        Status;
@@ -256,8 +256,8 @@ GetPdControllerMode (
   Status = EFI_SUCCESS;
   MaxPdController = (UINT8)(GET_PD_MODE_STATUS_BIT_WIDTH_TOTAL / GET_PD_MODE_STATUS_BIT_WIDTH_PER_CONTROLLER);
 
-  // Initialize the parameter for Bit0 -> PdI2cCommand.
-  PdI2cCommand = 0;
+  // Initialize the parameter for Bit0 -> PdI2cCommandSuccess.
+  PdI2cCommandSuccess = 0;
   // Initialize the parameter for Bit1 -> PdRetimerFwMode.
   PdRetimerFwMode = 0;
 
@@ -266,7 +266,7 @@ GetPdControllerMode (
   // and will remain in that state unless if one PD reports in TBT mode.
   *PdControllerModeBuffer = RetimerFirmWareUpdateDisableMode;
 
-  DEBUG ((DEBUG_INFO, "\nGetPdControllerMode with TotalCountOfPdController =%x\n", TotalCountOfPdController));
+  DEBUG ((DEBUG_INFO, "\nGetPdControllerMode with TotalCountOfPdController =%d\n", TotalCountOfPdController));
 
   Status = EcInterface (EcId0, EC_C_GET_PD_FW_UPDATE_MODE, &DataSize, TempBuffer);
 
@@ -276,24 +276,24 @@ GetPdControllerMode (
     // Check the PD0/1 status after the EC send 1E command.
     for (Index = 0; ((Index < MaxPdController) && (Index < TotalCountOfPdController)); Index ++) {
 
-      // Get PdI2cCommand (Bit0) information.
-      PdI2cCommand = (UINT8)((TempBuffer[0] >> (Index * GET_PD_MODE_STATUS_BIT_WIDTH_PER_CONTROLLER)) & I2C_COMMAND_SUCCESSFUL);
+      // Get PdI2cCommandSuccess (Bit0) information.
+      PdI2cCommandSuccess = (UINT8)((TempBuffer[0] >> (Index * GET_PD_MODE_STATUS_BIT_WIDTH_PER_CONTROLLER)) & I2C_COMMAND_SUCCESSFUL);
       // Get PdRetimerFwMode (Bit1) information.
-      PdRetimerFwMode = (UINT8)((TempBuffer[0] >> (Index * GET_PD_MODE_STATUS_BIT_WIDTH_PER_CONTROLLER)) & RETIMER_FW_UPDATE_MODE);
+      PdRetimerFwMode     = (UINT8)((TempBuffer[0] >> (Index * GET_PD_MODE_STATUS_BIT_WIDTH_PER_CONTROLLER)) & RETIMER_FW_UPDATE_MODE);
 
-      DEBUG ((DEBUG_INFO, "GetPdMode - PD%x Bit0 = %x\n", Index, PdI2cCommand));
-      DEBUG ((DEBUG_INFO, "GetPdMode - PD%x Bit1 = %x\n", Index, PdRetimerFwMode));
+      DEBUG ((DEBUG_INFO, "GetPdMode - PD%d Bit0 = %d\n", Index + 1, PdI2cCommandSuccess));
+      DEBUG ((DEBUG_INFO, "GetPdMode - PD%d Bit1 = %d\n", Index + 1, PdRetimerFwMode));
 
       // Bit0 = 0 (PD I2C Command fail)
-      if (PdI2cCommand != 0) {
-        DEBUG ((DEBUG_INFO, "PD %x I2C command successful.\n", Index));
+      if (PdI2cCommandSuccess != 0) {
+        DEBUG ((DEBUG_INFO, "PD%d I2C command successful.\n", Index + 1));
       }
       // Bit1 = 0 (Not in force TBT mode)
       if (PdRetimerFwMode != 0) {
-        DEBUG ((DEBUG_INFO, "PD %x in Retimer FW update mode.\n", Index));
+        DEBUG ((DEBUG_INFO, "PD%d in Retimer FW update mode.\n", Index + 1));
       }
-      // Set PdControllerModeBuffer to RetimerFirmWareUpdateEnableMode if PdI2cCommand and PdRetimerFwMode not 0.
-      if ((PdI2cCommand != 0) && (PdRetimerFwMode != 0)) {
+      // Set PdControllerModeBuffer to RetimerFirmWareUpdateEnableMode if PdI2cCommandSuccess and PdRetimerFwMode not 0.
+      if ((PdI2cCommandSuccess != 0) && (PdRetimerFwMode != 0)) {
         *PdControllerModeBuffer = RetimerFirmWareUpdateEnableMode;
       }
     }

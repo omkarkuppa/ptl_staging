@@ -46,6 +46,7 @@ extern   ASM_PFX(SerialPortConfiguration)
 extern   ASM_PFX(PcdGet32 (PcdNemCodeCacheBase))
 extern   ASM_PFX(PcdGet32 (PcdTemporaryRamBase))
 extern   ASM_PFX(PcdGet32 (PcdTopMemoryCacheSize))
+extern   ASM_PFX(PcdGet32 (PcdFspReservedBufferSize))
 
 SECTION .text
 
@@ -877,6 +878,9 @@ DataStackTestPass:
   mov     eax, ASM_PFX(PcdGet32 (PcdTemporaryRamBase))
   mov     esp, [eax]
   LOAD_TEMPORARY_RAM_SIZE eax
+  mov     ebx, ASM_PFX(PcdGet32 (PcdFspReservedBufferSize))
+  mov     ebx, [ebx]
+  sub     eax, ebx
   add     esp, eax
   ;
   ; program resource decoding

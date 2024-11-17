@@ -232,7 +232,8 @@ typedef struct {
   UINT32  IDispLinkTmode        :  3;    ///< iDisp-Link T-Mode (PCH_HDAUDIO_IDISP_TMODE enum): 0: 2T, 1: 1T, 2: 4T, <b>3: 8T</b>, 4: 16T
   UINT32  IDispCodecDisconnect  :  1;    ///< iDisplay Audio Codec disconnection, <b>0: Not disconnected, enumerable</b>; 1: Disconnected SDI, not enumerable
   UINT32  PowerGatingSupported  :  1;    ///< Power Gating supported: <b>0: Not supported</b>, 1: Supported
-  UINT32  RsvdBits              : 20;    ///< Reserved bits 0
+  UINT32  SoundWireClockSelect  :  1;    ///< SoundWire clock source select: 0: XTAL, 1: Audio PLL
+  UINT32  RsvdBits              : 19;    ///< Reserved bits 0
 
   /**
     Audio Link Mode configuration bitmask.

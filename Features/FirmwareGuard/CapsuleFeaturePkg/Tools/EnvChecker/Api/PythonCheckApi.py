@@ -87,3 +87,35 @@ def CheckPythonVerEnvApi ():
     print ('============== End Check the Python Version ==============')
 
     return Result
+
+def CheckPythonPathEnvApi ():
+    """ API to check caller used path of Python program.
+
+    Args:
+        None.
+
+    Raises:
+        None.
+
+    Returns:
+        bool:
+            True  - Python program path is valid.
+            False - Python program path is not valid.
+    """
+    Result    = None
+    PyChecker = PythonPathChecker ()
+
+    print ('========== Start Check the Executed Python Path ==========')
+
+    print ('Python path: %s' % (PyChecker.Path))
+
+    if PyChecker.Check ():
+        Result = STATUS_SUCCESS
+        print ('Executed Python is in valid path.')
+    else:
+        Result = STATUS_ERROR
+        print ('Executed Python is not in invalid path.')
+
+    print ('=========== End Check the Executed Python Path ===========')
+
+    return Result

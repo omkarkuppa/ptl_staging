@@ -424,7 +424,7 @@ class _FspImgSplitter (object):
             self.__ImgInfo.update ({RegionInfo.Region: RegionInfo})
 
     def __SplitFsp (self) -> None:
-        """ Split FSP to FSP S \ T \ M \ O
+        """ Split FSP to FSP S / T / M / O
 
         Args:
             None.

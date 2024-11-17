@@ -24,6 +24,7 @@
 
 #include <P2SbController.h>
 #include <PcrDefine.h>
+#include <Library/SiPolicyLib.h>
 
 /**
   Get P2SB instance for SOC
@@ -66,6 +67,26 @@ PtlPcdGetFirstP2SbController (
 EFI_STATUS
 PtlPcdGetSecondP2SbController (
   IN OUT P2SB_CONTROLLER         *P2SbController
+  );
+
+/**
+  The function performs P2SB lock programming for SOC.
+
+  @param[in] SiPolicy         The SI Policy PPI instance
+**/
+VOID
+PtlPcdP2sbLock (
+  IN  SI_POLICY_PPI           *SiPolicy
+  );
+
+/**
+  The function performs P2SB lock programming for second P2SB instance.
+
+  @param[in] SiPolicy         The SI Policy PPI instance
+**/
+VOID
+PtlPcdSecondP2sbLock (
+  IN  SI_POLICY_PPI           *SiPolicy
   );
 
 /**

@@ -20,7 +20,7 @@
 **/
 #include "CnvCompatibilityDxe.h"
 
-STATIC CHAR16  *mFileName = L"FvAdvanced.Fv";
+STATIC CHAR16  *mFileName = L"FvCnvUnCompact.Fv";
 
 /**
   This function will unload existing CNV driver which was loaded from flash.
@@ -170,11 +170,14 @@ IsSupportedCnvPresent (
 {
   UINTN                SizeData;
   UINTN                Index;
+  UINTN                CnvDidIndex;
   EFI_HANDLE           *PciHandles;
   UINTN                PciHandlesSize;
   EFI_PCI_IO_PROTOCOL  *PciIo;
   PCI_TYPE00           PciConfig;
   EFI_STATUS           Status;
+  UINT16               *CnvDeviceId;
+  UINTN                Count;
 
   DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
   PciHandles     = NULL;
@@ -208,11 +211,15 @@ IsSupportedCnvPresent (
                             );
       if ((!EFI_ERROR (Status)) && (PciConfig.Hdr.VendorId == INTEL_VENDOR_ID)) {
         if (IS_CLASS2 (&PciConfig, PCI_CLASS_NETWORK, PCI_CLASS_NETWORK_OTHER)) {
-          if (PciConfig.Hdr.DeviceId == PcdGet16 (PcdCnvDeviceId)) {
-            PcdSet8S (PcdCnvPresent, 1);
-            break;
-          } else {
-            PcdSet8S (PcdCnvPresent, 2);  // looking for external HardDisk
+          CnvDeviceId  = PcdGetPtr (PcdCnvDeviceId);
+          Count = PcdGetSize (PcdCnvDeviceId)/sizeof (UINT16);
+          for (CnvDidIndex = 0; CnvDidIndex < Count; CnvDidIndex++, CnvDeviceId++) {
+            if (PciConfig.Hdr.DeviceId == *(CnvDeviceId)) {
+              PcdSet8S (PcdCnvPresent, 1);
+              break;
+            } else {
+              PcdSet8S (PcdCnvPresent, 2);  // looking for external HardDisk
+            }
           }
         }
       }

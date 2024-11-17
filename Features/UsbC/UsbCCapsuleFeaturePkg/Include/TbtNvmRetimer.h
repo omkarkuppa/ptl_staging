@@ -35,6 +35,9 @@
 #define OFFLINE_MODE_ENTRY         0
 #define OFFLINE_MODE_EXIT          1
 
+#define MAX_PD_NUMBER              4
+#define PD_SUPPORT                 1
+
 #pragma pack(1)
 typedef struct {
   UINT16  Bus;

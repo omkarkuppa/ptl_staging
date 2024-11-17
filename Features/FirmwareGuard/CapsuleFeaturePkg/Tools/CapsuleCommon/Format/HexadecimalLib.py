@@ -25,7 +25,7 @@ from typing import Pattern, Union
 
 from CapsuleCommon.Base.PaddingLib import *
 
-HEX_STRING_REGEX: str = '^(0x|0X)?[a-fA-F\d]+$'
+HEX_STRING_REGEX: str = r'^(0x|0X)?[a-fA-F\d]+$'
 
 def IsHexStr (String: str) -> Union[None, re.Match]:
     """ To trial the input value is hexadecimal format.

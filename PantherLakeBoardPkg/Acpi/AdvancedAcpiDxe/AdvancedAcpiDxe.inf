@@ -243,6 +243,7 @@
   gSiPkgTokenSpaceGuid.PcdEmbeddedEnable
   gSiPkgTokenSpaceGuid.PcdVmdEnable
   gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                     ## CONSUMES

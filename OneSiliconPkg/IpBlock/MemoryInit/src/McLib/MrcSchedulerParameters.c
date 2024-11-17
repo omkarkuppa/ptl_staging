@@ -166,6 +166,11 @@ MrcSchedulerParametersConfig (
   GetSetVal = MC0_CH0_CR_SCHED_CBIT_dis_2c_byp_DEF;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccDis2cByp, WriteToCache | PrintValue, &GetSetVal);
 
+  // only in LPDDR5 due HW bug found by design
+  if (ExtInputs->RowPressEn && IsLpddr) {
+    MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccMcCbRowPressDisAutoPre, WriteToCache | PrintValue, &GetSetEn);
+  }
+
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSchedDisClkGateLocal, WriteToCache | PrintValue, &GetSetDis);
   MrcFlushRegisterCachedData (MrcData);
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccDisStarvedPriorityOnNewReq, WriteToCache | PrintValue, &GetSetEn);
@@ -355,9 +360,16 @@ MrcSchedulerParametersConfig (
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSrxZqcal,  WriteToCache | PrintValue, &GetSetDis);
       }
 
+
     } // Channel
 
+
   } // Controller
+
+  GetSetVal = (IsLpddr) ? 0 : 1;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccPageOpenPolicyMaxCount, WriteCached, &GetSetVal);
+  GetSetVal = (ExtInputs->RowPressEn) ? 1 : 0;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccPageOpenPolicyEn, WriteCached, &GetSetVal);
 
   if ((MrcData->Inputs.IsCs2NRequested) && (Outputs->Frequency >= f7200) && (MrcGetNMode (MrcData) == CA_2_NMODE)) {
     // We expect to get out of green with CS Geardown enabled
@@ -384,6 +396,7 @@ MrcSchedulerParametersConfig (
     GetSetVal = (ExtInputs->Lp5SplitACTEnable == LP5_SPLIT_ACT_ENABLE) ? 0 : 1;
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccDisableSplitAct, WriteCached | PrintValue, &GetSetVal);
   }
+
 }
 
 /**

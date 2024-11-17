@@ -39,7 +39,6 @@
 //
 #define PPM_EIST                BIT0   ///< Enhanced Intel Speed Step Technology.
 #define PPM_C1                  BIT1   ///< C1 enabled, supported.
-#define PPM_C1E                 BIT2   ///< C1E enabled.
 #define PPM_C6                  BIT4   ///< C6 enabled, supported.
 #define PPM_C7                  BIT5   ///< C7 enabled, supported.
 #define PPM_C7S                 BIT6   ///< C7S enabled, supported

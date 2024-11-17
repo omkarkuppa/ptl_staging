@@ -545,6 +545,10 @@ MrcFlushRegisterCachedData (
   UINT64_STRUCT                Value64;
   RegCacheStatus               State;
 
+  if (!MrcHalCrCacheEnabled ()) {
+    return mrcSuccess;
+  }
+
   Outputs       = &MrcData->Outputs;
   RegisterCache = &Outputs->RegisterCache;
   for (Index = 0; Index < MAX_REGISTER_CACHE_ENTRIES; Index++) {

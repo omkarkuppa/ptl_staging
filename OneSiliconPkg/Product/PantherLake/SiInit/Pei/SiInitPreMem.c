@@ -71,6 +71,7 @@
 #include <FspGlobalData.h>
 #include <ConfigBlock/Ish/IshConfig.h>
 #include <Library/PchInitLib.h>
+#include <Library/FspPerformanceLib.h>
 
 /**
   PPV dummy reset handler.
@@ -880,6 +881,12 @@ SiInitPrePolicy (
 
   //MemoryInit Phase Postcode set
   SetPhaseStatusCode(FSP_STATUS_CODE_MEMORY_INIT);
+
+  //
+  // Create FSP Performance Hob
+  //
+  Status = CreateFspPerformanceHob();
+  ASSERT_EFI_ERROR (Status);
 
   Status = PtlPcdInstallDieInfo ();
   ASSERT_EFI_ERROR (Status);

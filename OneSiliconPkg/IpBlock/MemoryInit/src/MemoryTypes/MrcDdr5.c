@@ -730,7 +730,10 @@ Ddr5JedecInitVal (
   MrcOutput      *Outputs;
   MrcDebug       *Debug;
   MrcChannelOut  *ChannelOut;
+  MrcDimmOut     *DimmOut;
+  MrcRankOut     *RankOut;
   MrcTiming      *TimingPtr;
+  UINT8          Byte;
   UINT8          RetVal;
   UINT8          RlEnc;
   UINT8          WrEnc;
@@ -781,6 +784,8 @@ Ddr5JedecInitVal (
   Debug      = &Outputs->Debug;
   Profile    = Inputs->ExtInputs.Ptr->MemoryProfile;
   ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
+  DimmOut = &ChannelOut->Dimm[Rank / MAX_RANK_IN_DIMM];
+  RankOut = &DimmOut->Rank[Rank % MAX_RANK_IN_DIMM];
   TimingPtr  = &Outputs->Timing[Profile];
   RetVal     = 0;
   CccRttValue = 0;
@@ -994,6 +999,10 @@ Ddr5JedecInitVal (
       Mr129->Bits.DfeTap1Bias = ABS(DFETableIndex.Tap1); // Step size of 5mV
       Mr129->Bits.DfeTap1BiasSignBit = DFETableIndex.Tap1 < 0 ? 1 : 0; // Negative value
       Mr129->Bits.DfeTap1Enable = 1;
+      for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+        RankOut->Ddr5PdaMr129[Byte] = Mr129->Data8;
+        RankOut->Ddr5PdaMr193[Byte] = Mr129->Data8;
+      }
       break;
     case mrMR130:
     case mrMR138:
@@ -1014,6 +1023,10 @@ Ddr5JedecInitVal (
       Mr130->Bits.DfeTap2Bias = ABS(DFETableIndex.Tap2); // Step size of 5mV
       Mr130->Bits.DfeTap2BiasSignBit = DFETableIndex.Tap2 < 0 ? 1 : 0; // Negative value
       Mr130->Bits.DfeTap2Enable = 1;
+      for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+        RankOut->Ddr5PdaMr130[Byte] = Mr130->Data8;
+        RankOut->Ddr5PdaMr194[Byte] = Mr130->Data8;
+      }
       break;
     case mrMR131:
     case mrMR139:
@@ -1034,6 +1047,10 @@ Ddr5JedecInitVal (
       Mr131->Bits.DfeTap3Bias = ABS(DFETableIndex.Tap3); // Step size of 5mV
       Mr131->Bits.DfeTap3BiasSignBit = DFETableIndex.Tap3 < 0 ? 1 : 0;
       Mr131->Bits.DfeTap3Enable = 1;
+      for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+        RankOut->Ddr5PdaMr131[Byte] = Mr131->Data8;
+        RankOut->Ddr5PdaMr195[Byte] = Mr131->Data8;
+      }
       break;
 
     // DFE Tap 4
@@ -1056,6 +1073,10 @@ Ddr5JedecInitVal (
       Mr132->Bits.DfeTap4Bias = ABS(DFETableIndex.Tap4); // Step size of 5mV
       Mr132->Bits.DfeTap4BiasSignBit = DFETableIndex.Tap4 < 0 ? 1 : 0;
       Mr132->Bits.DfeTap4Enable = 1;
+      for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+        RankOut->Ddr5PdaMr132[Byte] = Mr132->Data8;
+        RankOut->Ddr5PdaMr196[Byte] = Mr132->Data8;
+      }
       break;
 
     case mpcMR32a0:
@@ -1843,7 +1864,7 @@ PerformGenericMrsFsmSequence (
               continue;
             }
             if (MrIndex <  MAX_MR_IN_DIMM) {
-              IsPdaMr = MrcMrIsPda (MrcData, Controller, Channel, CurMrAddr);
+              IsPdaMr = MrcMrIsPda (MrcData, Controller, Channel, CurMrAddr, SagvConfig);
               if (ConfigSeq == GenericFsmConfigNonPdaMrs) {
                 // In non-PDA section discard PDA MR's and also mpcSelectAllPDA
                 if (IsPdaMr || (CurMrAddr == mpcSelectAllPDA)) {
@@ -2704,7 +2725,7 @@ MrcDdr5SetDfePDA (
 
   ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
   DimmOut = &ChannelOut->Dimm[Rank / MAX_RANK_IN_DIMM];
-  RankOut = &DimmOut->Rank[Rank%2];
+  RankOut = &DimmOut->Rank[Rank % MAX_RANK_IN_DIMM];
 
   switch (OptParam) {
   case OptDdr5DimmDFETap1:

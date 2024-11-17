@@ -328,7 +328,7 @@
   // Touch Panel 0, Same pins shared between THC and I2C based Panel,
     {GPIOV2_PTL_PCD_XXGPP_F_8,   {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHost,   GpioV2TermDefault}},  // TCH_PNL1_PWR_EN
     {GPIOV2_PTL_PCD_XXGPP_E_16,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHost,   GpioV2TermDefault}},  // THC0_SPI1_RST_N_TCH_PNL1
-    {GPIOV2_PTL_PCD_XXGPP_E_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic,  GpioV2ResetDefault,   GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // THC0_SPI1_INT_N_TCH_PNL1
+    {GPIOV2_PTL_PCD_XXGPP_E_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge,  GpioV2ResetDefault,   GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // THC0_SPI1_INT_N_TCH_PNL1
     { 0x0 }
   })}
 
@@ -337,7 +337,7 @@
   // Touch Panel 1, Not used by default in RVP; Applicable as Rework;
     {GPIOV2_PTL_PCD_XXGPP_E_7,   {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis,                GpioV2ResetHost,     GpioV2TermDefault}},  // TCH_PNL2_PWR_EN
     {GPIOV2_PTL_PCD_XXGPP_F_16,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis,                GpioV2ResetHost,     GpioV2TermDefault}},  // THC1_SPI2_RST_N_TCH_PNL2
-    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // THC1_SPI2_INT_N_TCH_PNL2
+    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // THC1_SPI2_INT_N_TCH_PNL2
     { 0x0 }
   })}
 
@@ -451,6 +451,20 @@
     {UNCONNECTABLE, VISIBLE,    0x09,          VW_OC,        OC_PIN3,  PCH_USB2,       PORT4,       TCSS_USB3,      PORT4}, // TCP3, default is HDMI
     {CONNECTABLE,   VISIBLE,    0x00,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT5,       PCH_USB3,       PORT1}, // TAP1
     {CONNECTABLE,   VISIBLE,    0x00,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT6,       PCH_USB3,       PORT2}, // TAP2
+    {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT7,       0,              0    }, // FPS
+    {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT8,       0,              0    }, // M.2 WLAN
+    {0x0}  // terminator
+  })}
+
+  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbConnector| * |{CODE(
+  {
+  // Connectable,   Visibility, ConnectorType, UsbOcPinType, UsbOcPin, Usb2Controller, Usb2PortNum, Usb3Controller, Usb3PortNum
+    {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN0,  PCH_USB2,       PORT1,       TCSS_USB3,      PORT1}, // TCP0
+    {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN1,  PCH_USB2,       PORT2,       TCSS_USB3,      PORT2}, // TCP1
+    {UNCONNECTABLE, VISIBLE,    0x09,          VW_OC,        OC_PIN3,  PCH_USB2,       PORT4,       TCSS_USB3,      PORT4}, // TCP3, default is HDMI
+    {CONNECTABLE,   INVISIBLE,  0xFF,          0,            0,        PCH_USB2,       PORT3,       0,              0    }, // CRD
+    {CONNECTABLE,   VISIBLE,    0x00,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT5,       PCH_USB3,       PORT1}, // TAP1
+    {CONNECTABLE,   VISIBLE,    0x00,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT6,       PCH_USB3,       PORT2}, // TAP2
     {CONNECTABLE,   VISIBLE,    0x00,          0,            0,        PCH_USB2,       PORT7,       0,              0    }, // FPS
     {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT8,       0,              0    }, // M.2 WLAN
     {0x0}  // terminator
@@ -462,6 +476,15 @@
     {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT1,  0,        0}, // TCP0
     {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT2,  0,        0}, // TCP1
     {MODULAR_IO,         0,                     1,            1,             1,                  1,             1,             USBC_PD2, 0,         ITBT_DMA,          TBT_CONTROLLER2,  DMA_PORT1,  0,        0}, // TCP2
+    {MODULAR_IO,         0,                     0,            0,             0,                  0,             0,             USBC_PD3, 2,         ITBT_DMA,          TBT_CONTROLLER2,  DMA_PORT2,  0,        0}, // TCP3, default is HDMI
+    {0x0}  // terminator
+  })}
+
+  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbCConnector| * |{CODE(
+  {
+  // ModularIoSupported, EdpModularIoSupported, RetimerCount, PcieSupported, DpAltModeSupported, Usb4Supported, Tbt3Supported, PdNum,    AuxDpMode, TbtControllerType, TbtControllerNum, DmaPortNum, PcieType, PcieRootPortNum
+    {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT1,  0,        0}, // TCP0
+    {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT2,  0,        0}, // TCP1
     {MODULAR_IO,         0,                     0,            0,             0,                  0,             0,             USBC_PD3, 2,         ITBT_DMA,          TBT_CONTROLLER2,  DMA_PORT2,  0,        0}, // TCP3, default is HDMI
     {0x0}  // terminator
   })}
@@ -541,9 +564,6 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdSkuType|*|0x2
   gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining|*|0x0
-
-  # PTL CNVi: WiFi (sku 1)
-  gBoardModuleTokenSpaceGuid.VpdPcdCnvDeviceId|*|0xE341
 
   # PTL-UH RVP1 power meter table
   gBoardModuleTokenSpaceGuid.VpdPcdPowerMeter|*|{CODE(
@@ -677,18 +697,12 @@
   //
   // Touch pad
   //
-    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // TCH_PAD_INT_N
+    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // TCH_PAD_INT_N
 
   //
   // TCSS
   //
     {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetResume,  GpioV2TermNone}}, // GPP_V17_TCP_RT_S0IX_ENTRY_EXIT_N
-
-  //
-  // Lid Switch Wake Gpio
-  //
-    {GPIOV2_PTL_PCD_XXGPP_F_23, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirIn,  GpioV2StateDefault,  GpioV2IntDis, GpioV2ResetHostDeep,  GpioV2TermDefault}}, // SMC_LID
-
   //
   // Only for PNP
   //
@@ -867,6 +881,10 @@
   }})}
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableEarlyPreMem|*|{CODE({
+    //
+    // Lid Switch Wake Gpio
+    //
+    {GPIOV2_PTL_PCD_XXGPP_F_23, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirIn,  GpioV2StateDefault,  GpioV2IntDis, GpioV2ResetHostDeep,  GpioV2TermDefault}}, // SMC_LID
     {0x0}  // terminator
   })}
 
@@ -901,9 +919,6 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cController|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cSlaveAddress|*|0x0
-  gPmaxFeaturePkgTokenSpaceGuid.VpdPcdPmaxDevices|*|{CODE(
-   { 0x0 }
-  )}
 
 [PcdsDynamicHii.common.SkuIdPtlUHLp5Rvp1.STANDARD]
   gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[5]|0x1                                    # Connected device
@@ -922,7 +937,6 @@
 #       SKU ID: 0x00060001 (SkuIdPtlUHLp5Rvp1Bom)
 #####################################################################
 [PcdsDynamicExVpd.common.SkuIdPtlUHLp5Rvp1Bom]
-
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTable|*|{CODE(
   {
   //
@@ -993,17 +1007,12 @@
   //
   // Touch pad
   //
-    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // TCH_PAD_INT_N
+    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // TCH_PAD_INT_N
 
   //
   // TCSS
   //
     {GPIOV2_PTL_PCD_XXGPP_V_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetResume,  GpioV2TermNone}}, // GPP_V17_TCP_RT_S0IX_ENTRY_EXIT_N
-
-  //
-  // Lid Switch Wake Gpio
-  //
-    {GPIOV2_PTL_PCD_XXGPP_F_23, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirInInv,  GpioV2StateDefault,  GpioV2IntLevel|GpioV2IntSci, GpioV2ResetHostDeep,  GpioV2TermDefault}}, // SMC_LID
 
     {0x0}  // terminator
   })}
@@ -1028,3 +1037,127 @@
     0xFFFFFFFF                   // terminator
   })}
 
+
+#####################################################################
+#  PTL UH LP5x T3 MEMSD 32GB EPS
+#     Board ID: 0x01
+#     Bom ID: 0x03 (BomIdPtlUHLp5EpsRvp)
+#   Display ID: 0x00
+#       SKU ID: 0x00030001 (SkuIdPtlUHLp5MemSdEpsRvp1)
+#####################################################################
+[PcdsDynamicExVpd.common.SkuIdPtlUHLp5MemSdEpsRvp1]
+
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData|*|{CODE(
+  {
+    // LPDDR5x 315b 16Gb die, DDP 2Rx16 QDP, 8GB size per package
+    // Hynix H58G66BK7BX067
+    // 7500, ??-??-??-??
+    // 4 Banks, 4 bank groups, 16Gb SDRAM density
+    // 16 Row bits, 11 Column bits
+    // Non-Monolithic DRAM Device, 2 dies, 2 Channels per package
+     1,
+     {0x23,                                 ///< 0   384 SPD bytes used, 512 total
+      0x10,                                 ///< 1   SPD Revision 1.0
+      0x15,                                 ///< 2   DRAM Type: LPDDR5x SDRAM
+      0x0E,                                 ///< 3   Module Type: Not Hybrid (DRAM only) / Non-DIMM Solution (on-board DRAM)
+      0x16,                                 ///< 4   4 Bank Groups, 4 Banks, 16 Gb SDRAM density
+      0x22,                                 ///< 5   16 Rows, 11 Columns
+      0xB5,                                 ///< 6   Non-Monolithic DRAM Device, 2 die, 2 Channels per package, Signal Loading Matrix 1
+      0x08,                                 ///< 7   SDRAM Optional Features: tMAW = 8192 * tREFI, Unlimited MAC
+      0x00,                                 ///< 8   SDRAM Thermal / Refresh options: Reserved
+      0x40,                                 ///< 9   Other SDRAM Optional Features: Post package repair supported, one row per bank group, Soft PPR not supported
+      0x00,                                 ///< 10  Reserved
+      0x00,                                 ///< 11  Module Nominal Voltage: Reserved
+      0x0A,                                 ///< 12  Module Organization: 2 Rank, x16 Device Width per Channel
+      0x01,                                 ///< 13  Module Memory Bus width: 1 Channels, 16 bits channel width, no ECC
+      0x00,                                 ///< 14  Module Thermal Sensor: none
+      0x00,                                 ///< 15  Extended Module Type: Reserved
+      0x48,                                 ///< 16  Signal Loading: Data/Strobe/Mask: 2 loads, CAC: 2 loads, CS: 1 load
+      0x00,                                 ///< 17  MTB = 0.125ns, FTB = 1 ps
+      0x08,                                 ///< 18  tCKAVGmin = 0.937 ns (LPDDR5X-8533 4:1)
+      0xFF,                                 ///< 19  tCKAVGmax = 32.002 ns
+      0x92,                                 ///< 20  CAS Latencies supported (First Byte) : 14, 10, 6
+      0x55,                                 ///< 21  CAS Latencies supported (Second Byte): 28, 24, 20, 16
+      0x05,                                 ///< 22  CAS Latencies supported (Third Byte) : 36, 32
+      0x00,                                 ///< 23  CAS Latencies supported (Fourth Byte):
+      0xAA,                                 ///< 24  Minimum CAS Latency (tAAmin) = 21.25 ns
+      0x00,                                 ///< 25  Read and Write Latency Set options: Write Latency Set A and DBI-Read Disabled
+      0x90,                                 ///< 26  Minimum RAS-to-CAS delay (tRCDmin) = 18 ns
+      0xA8,                                 ///< 27  Row precharge time for all banks (tRPab) = 21 ns
+      0x90,                                 ///< 28  Minimum row precharge time (tRPpb) = 18 ns
+      0xC0,                                 ///< 29  tRFCab = 280 ns (16 Gb)
+      0x08,                                 ///< 30  tRFCab MSB
+      0x60,                                 ///< 31  tRFCpb = 140 ns (16 Gb)
+      0x04,                                 ///< 32  tRFCpb MSB
+      0, 0, 0, 0, 0, 0, 0,                  ///< 33 - 39
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 40 - 49
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 50 - 59
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 60 - 69
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 70 - 79
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 80 - 89
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 90 - 99
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 100 - 109
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 110 - 119
+      0x00,                                 ///< 120 FTB for Row precharge time per bank (tRPpb) = 18 ns
+      0x00,                                 ///< 121 FTB for Row precharge time for all banks (tRPab) = 21 ns
+      0x00,                                 ///< 122 FTB for Minimum RAS-to-CAS delay (tRCDmin) = 18 ns
+      0x00,                                 ///< 123 FTB for tAAmin = 21.25 ns
+      0x7F,                                 ///< 124 FTB for tCKAVGmax = 32.002 ns
+      0x43,                                 ///< 125 FTB for tCKAVGmin = -58ps
+      0x00,                                 ///< 126 CRC A
+      0x00,                                 ///< 127 CRC B
+      0, 0,                                 ///< 128 - 129
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 130 - 139
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 140 - 149
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 150 - 159
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 160 - 169
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 170 - 179
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 180 - 189
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 190 - 199
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 200 - 209
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 210 - 219
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 220 - 229
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 230 - 239
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 240 - 249
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 250 - 259
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 260 - 269
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 270 - 279
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 280 - 289
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 290 - 299
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 300 - 309
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 310 - 319
+      0x00,                                 ///< 320 Module Manufacturer ID Code, Least Significant Byte
+      0x00,                                 ///< 321 Module Manufacturer ID Code, Most Significant Byte
+      0x00,                                 ///< 322 Module Manufacturing Location
+      0x00,                                 ///< 323 Module Manufacturing Date Year
+      0x00,                                 ///< 324 Module Manufacturing Date Week
+      0x20,                                 ///< 325 Module ID: Module Serial Number
+      0x00,                                 ///< 326 Module Serial Number B
+      0x00,                                 ///< 327 Module Serial Number C
+      0x00,                                 ///< 328 Module Serial Number D
+      0x20, 0x20, 0x20, 0x20, 0x20,         ///< 329 - 333 Module Part Number: Unused bytes coded as ASCII Blanks (0x20)
+      0x20, 0x20, 0x20, 0x20, 0x20,         ///< 334 - 338 Module Part Number
+      0x20, 0x20, 0x20, 0x20, 0x20,         ///< 339 - 343 Module Part Number
+      0x20, 0x20, 0x20, 0x20, 0x20,         ///< 344 - 348 Module Part Number
+      0x00,                                 ///< 349 Module Revision Code
+      0x00,                                 ///< 350 DRAM Manufacturer ID Code, Least Significant Byte
+      0x00,                                 ///< 351 DRAM Manufacturer ID Code, Most Significant Byte
+      0x00,                                 ///< 352 DRAM Stepping
+      0, 0, 0, 0, 0, 0, 0,                  ///< 353 - 359
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 360 - 369
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 370 - 379
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 380 - 389
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 390 - 399
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 400 - 409
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 410 - 419
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 420 - 429
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 430 - 439
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 440 - 449
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 450 - 459
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 460 - 469
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 470 - 479
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 480 - 489
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 490 - 499
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,         ///< 500 - 509
+      0, 0                                  ///< 510 - 511
+  }})}

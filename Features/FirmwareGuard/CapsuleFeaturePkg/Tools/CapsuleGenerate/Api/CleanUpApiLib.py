@@ -81,7 +81,9 @@ def ApiCleanUpWorkspace () -> int:
         CmdList.append ('-e')
         CmdList.append (Extension)
 
-    ExitCode, _, _ = ExecPythonCmd (CmdList)
+    ExitCode, _, _ = ExecPythonCmd (CmdList, IsException = False)
+    if (ExitCode != STATUS_SUCCESS):
+        raise ErrorException (f'Failed to clean up workspace.')
 
     DEBUG (DEBUG_INFO, '>>> Clean up the workspace end.')
 

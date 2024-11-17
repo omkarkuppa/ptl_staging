@@ -122,16 +122,18 @@ class XdrGeneratorApi (object):
         """
         DEBUG (DEBUG_INFO, f'>> Start to generate the XDR format file.')
 
-        Cmd: List[str] = [
+        CmdList: List[str] = [
             f'{XdrGeneratorApi.PY_XDR_BUILDER_SCRIPT_PATH}',
             '-o', f'{self.__OutputPath}',
             ]
 
         for FilePath in self.__FilePathList:
-            Cmd.append ('-i')
-            Cmd.append (f'{FilePath}')
+            CmdList.append ('-i')
+            CmdList.append (f'{FilePath}')
 
-        ExitCode, _, _ = ExecPythonCmd (Cmd)
+        ExitCode, _, _ = ExecPythonCmd (CmdList, IsException = False)
+        if (ExitCode != STATUS_SUCCESS):
+            raise ErrorException (f'Failed to generate XDR format file.')
 
         DEBUG (DEBUG_INFO, f'>> Finish to generate the XDR format file.')
 

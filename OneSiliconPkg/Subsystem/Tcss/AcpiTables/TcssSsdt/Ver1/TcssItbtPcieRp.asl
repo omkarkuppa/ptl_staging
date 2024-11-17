@@ -329,7 +329,7 @@
         Store (1, LNRE)
         Sleep (1)
         Store (0, LNRE)
-        ADBG ("Toggle LNRE -")
+        ADBG ("Toggle LNRE")
       }
     }
 
@@ -388,10 +388,6 @@
   {
     ADBG (Concatenate ("TBT _PS0 Start RP ", ToHexString (TUID)))
     HPEV () // Check and handle Hot Plug SCI status
-    If (LEqual (HPEX, 1)) {
-      ADBG ("Disable Hot Plug SCI")
-      Store (0, HPEX) // Disable Hot Plug SCI
-    }
     HPME () // Check and handle PME SCI status
     If (LEqual (PMEX, 1)) {
       ADBG ("Disable PME SCI")
@@ -642,3 +638,35 @@
   Method (_PRT,0) {
     Return (AR01) // APIC mode
   } // end _PRT
+
+  //
+  // TBT-PCIe nullify LTR within Hot-Plug event
+  //
+  Method (LTRC, 0, Serialized) {
+    ADBG (Concatenate ("TCSS RP LTREN check TUID -", ToHexString (TUID)))
+    If (LNotEqual (VDID, 0xFFFFFFFF)) { // RP is enabled
+      ADBG (Concatenate ("Current DCTL2 LTREN -", ToHexString (LNRE)))
+      Store (1, HPSX)
+
+      //
+      // If no device is connected to iTBT RP, whatever in D3hot or D0, toggle LTREN.
+      //
+      If (LEqual (LASX, 0)) {
+        Store (1, LNRE)
+        Sleep (1)
+        Store (0, LNRE)
+        ADBG ("Toggle LNRE")
+      }
+    }
+  }
+
+  //
+  // Check RP power state within Hot-Plug event
+  //
+  Method (CRPM, 0, Serialized) {
+    If (LNotEqual (VDID, 0xFFFFFFFF)) { // RP is enabled
+      return (D3HT)
+    }
+
+    return (0xFF) // RP is disabled
+  }

@@ -264,9 +264,9 @@ INF MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.
 
 FILE RAW = BC09E184-0407-4334-8589-6E32813F435C {
 !if $(TARGET) == DEBUG
-    SECTION RAW = $(PLATFORM_SI_PACKAGE)/IpBlock/MemoryInit/src/GreenMrc.bin
+    SECTION RAW = PantherLakeBinPkg/MemoryInit/GreenMrc.bin
 !else
-    SECTION RAW = $(PLATFORM_SI_PACKAGE)/IpBlock/MemoryInit/src/ReleaseGreenMrc.bin
+    SECTION RAW = PantherLakeBinPkg/MemoryInit/ReleaseGreenMrc.bin
 !endif
 }
 

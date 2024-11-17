@@ -203,14 +203,6 @@ InstallDebugPortAcpiTable (
       Dbg2DeviceGasPtr[0].AccessSize        = EFI_ACPI_6_5_UNDEFINED;
       Dbg2DeviceGasPtr[0].Address           = PcdGet64 (PcdSerialRegisterBase);
       HasDebugPort                          = TRUE;
-
-      //
-      // Update Serial Io Power Gating support for Kernel Debug S0iX capability
-      //
-      if (SerialIoDebugUartPowerGating) {
-        Dbg2DeviceAdrSizePtr[0]           = SERIAL_IO_UART_MEM_SIZE;
-        Dbg2DeviceTablePtr[0].PortSubtype = EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_INTEL_LPSS;
-      }
       break;
     case 1:
     case 2:
@@ -230,6 +222,14 @@ InstallDebugPortAcpiTable (
       Dbg2DeviceGasPtr[0].AccessSize        = EFI_ACPI_6_5_UNDEFINED;
       Dbg2DeviceGasPtr[0].Address           = DebugPortTable->BaseAddress.Address;
       HasDebugPort                          = TRUE;
+
+      //
+      // Update Serial Io Power Gating support for Kernel Debug S0iX capability
+      //
+      if (SerialIoDebugUartPowerGating) {
+        Dbg2DeviceAdrSizePtr[0]           = SERIAL_IO_UART_MEM_SIZE;
+        Dbg2DeviceTablePtr[0].PortSubtype = EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_INTEL_LPSS;
+      }
       break;
     default:
       ASSERT (FALSE);

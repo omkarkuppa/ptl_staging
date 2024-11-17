@@ -73,7 +73,7 @@
 #string STR_LPE_VERIFICATION_HELP                          #language en-US  "Perform storage erase verification. As per NIST 800-88r1 suggestion and Timing concern, 10% of sampling data will be verified by collecting at different locations."
 
 #string STR_ENABLE_LOCAL_PLATFORM_ERASE_PROMPT             #language en-US  "Perform Platform Erase Operations"
-#string STR_ENABLE_LOCAL_PLATFORM_ERASE_HELP               #language en-US  "Enabling this Feature will trigger Platform Erase Operations on the Next Boot"
+#string STR_ENABLE_LOCAL_PLATFORM_ERASE_HELP               #language en-US  "Enabling this Feature will trigger Platform Erase Operations on the Next Boot.      Note: Unconfigure CSME option supported only on VPRO system. On Consumer, this can be done through PRTC reset."
 
 #string STR_LPE_ERASE_ALL_PROMPT                           #language en-US  "Erase All"
 #string STR_LPE_ERASE_ALL_PROMPT_HELP                      #language en-US  "Performs SSD Erase, TPM Clear, Reload BIOS golden config, Clear NVME and OEM Custom actions"

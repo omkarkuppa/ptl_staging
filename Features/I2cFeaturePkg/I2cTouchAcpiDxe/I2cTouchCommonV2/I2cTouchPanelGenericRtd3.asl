@@ -89,14 +89,17 @@ Alias(TPDL, TD_D)   // TD_D - Touch Device power on delay
       // update ONTM
       Store(Timer(), ONTM)
       // enable int line
-      \_SB.SGRA(TPIN, TPIP)
+      If (LEqual (TPLM,1)) {
+        \_SB.SGRA(TPIN, 1)
+      }
     }
 
     Method(_OFF){
       ADBG (Concatenate ("Touch PWR OFF I2C controller= ", ToHexString (TPCT)))
       // disable int line
-      Xor(TPIP, 1, Local0)
-      \_SB.SGRA(TPIN, Local0)
+      If (LEqual (TPLM,1)) {
+        \_SB.SGRA(TPIN, 0)
+      }
       // Assert GPIO RST
       Xor(TPRP, 1, Local0)
       \_SB.SGOV(TPPR, Local0)

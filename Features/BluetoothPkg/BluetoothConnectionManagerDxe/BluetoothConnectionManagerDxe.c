@@ -642,7 +642,6 @@ ScanCallback (
     RemoteDevAttr->AdvAddr.Type,
     RemoteDevAttr->LocalName
     ));
-  FreePool (RemoteDevAttr);
 
   return EFI_SUCCESS;
 }
@@ -1184,7 +1183,6 @@ GetDeviceAddress (
     );
 
   FreePool (Buffer);
-  FreePool (DevAddress);
 
   return EFI_SUCCESS;
 }
@@ -1237,7 +1235,6 @@ GetLocalName (
   *LocalName = UniDeviceName;
 
   FreePool (Buffer);
-  FreePool (UniDeviceName);
 
   return EFI_SUCCESS;
 }
@@ -1728,7 +1725,6 @@ UpdateDevicePage (
   HiiFreeOpCodeHandle (PairedEndOpCodeHandle);
   HiiFreeOpCodeHandle (AvailableStartOpCodeHandle);
   HiiFreeOpCodeHandle (AvailableEndOpCodeHandle);
-  FreePool (DeviceName);
 
   return EFI_SUCCESS;
 }
@@ -2367,7 +2363,6 @@ HandleNumericComparisonEvent (
       ((Key.UnicodeChar | UPPER_LOWER_CASE_OFFSET) != (RejectResponse | UPPER_LOWER_CASE_OFFSET))
     );
 
-  FreePool (StringBuffer1);
   FreePool (StringBuffer2);
   FreePool (StringBuffer3);
 
@@ -2488,8 +2483,6 @@ SmpCallback (
   }
 
   Passkey = 0; // Clear the stack entry
-  FreePool (StringBuffer);
-
   return Status;
 }
 
@@ -2801,6 +2794,7 @@ UpdateServiceInfoForRemoteDev (
     while ((AdInCompUuid16 != NULL) && ((AdInCompUuid16 + 4) <= (TempAdvertisementData + TempAdvertisementDataSize))) {
       UnicodeData = UuidToName (AdInCompUuid16);
       StringId = HiiSetString (mBtConfigDevice->HiiHandle, 0, UnicodeData, NULL);
+      FreePool(UnicodeData);
       HiiCreateTextOpCode (
         StartOpCodeHandle,
         StringId,
@@ -2822,6 +2816,7 @@ UpdateServiceInfoForRemoteDev (
     if ((AdInCompUuid16 != NULL) && ((AdInCompUuid16 + 4) <= (AdvertisementData + AdvertisementDataSize))) {
       UnicodeData = UuidToName (AdCompUuid16);
       StringId = HiiSetString (mBtConfigDevice->HiiHandle, 0, UnicodeData, NULL);
+      FreePool(UnicodeData);
       HiiCreateTextOpCode (
         StartOpCodeHandle,
         StringId,
@@ -2890,7 +2885,6 @@ UpdateRemoteDevPageInfo (
   if (StringId == 0) {
     return EFI_OUT_OF_RESOURCES;
   }
-  FreePool (UniValue);
 
   //
   // Update remote dev address.
@@ -2917,7 +2911,6 @@ UpdateRemoteDevPageInfo (
   if (StringId == 0) {
     return EFI_OUT_OF_RESOURCES;
   }
-  FreePool (UniValue);
 
   //
   // Update remote dev state info.
@@ -2950,6 +2943,7 @@ UpdateRemoteDevPageInfo (
       ASSERT (Buffer != NULL);
       DumpAdvertisementData (Buffer, (UINT32)BufferSize);
       UpdateServiceInfoForRemoteDev (Buffer, (UINT32)BufferSize);
+      FreePool (Buffer);
     } else {
       DEBUG ((EFI_D_INFO, "BtCfgDxe :: Get AdvertisementData from remote device failed!\n"));
     }
@@ -2960,7 +2954,6 @@ UpdateRemoteDevPageInfo (
     //
     Status = EFI_SUCCESS;
   }
-  FreePool (Buffer);
 
   return Status;
 }
@@ -3531,7 +3524,6 @@ InitializePairedDevice (
   UpdateDeviceStatus ();
 
   DumpRemoteDeviceList ();
-  FreePool (RemoteDevAttr);
 
   return EFI_SUCCESS;
 }
@@ -3712,7 +3704,6 @@ HiiConfigAccessCallback (
           if (StringId == 0) {
             Status = EFI_OUT_OF_RESOURCES;
           }
-          FreePool (UnicodeData);
         }
         break;
 
@@ -4240,7 +4231,6 @@ BluetoothConfigDriverBindingStart (
   DEBUG ((EFI_D_ERROR, "BluetoothConfigDriverBindingStart: Exit Success\n"));
 
   PERF_END (NULL, "Init", "Bluetooth", 0);
-  FreePool (BtConfigDevice);
   return EFI_SUCCESS;
 
 //

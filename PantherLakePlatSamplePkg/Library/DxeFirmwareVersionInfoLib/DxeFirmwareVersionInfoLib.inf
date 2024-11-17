@@ -76,7 +76,7 @@
   gBoardModuleTokenSpaceGuid.PcdEcPlatformMajorRevision                  ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdEcBuildRevision                          ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent               ## CONSUMES
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdNumber                   ## CONSUMES
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdSupportBitmap            ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportRetimerInfoPresent          ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber         ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable         ## CONSUMES
@@ -106,6 +106,7 @@
   gUsbCRetimerSetupGuid                         ## CONSUMES
   gUsbCPdSetupGuid                              ## CONSUMES
   gEfiEndOfDxeEventGroupGuid                    ## CONSUMES
+  gUsbCConnectorHobGuid                         ## CONSUMES
 
 [Depex]
   gEfiVariableArchProtocolGuid        AND

@@ -253,9 +253,9 @@ if (BUILD_OP_VER == UCODE_BUILD_OP_VER_1):
             """
             IsAssigned: bool = None
 
-            IsAssigned, _ = IsFlashMapRegionInfoAssigned (
-                              self.__FlashMapInfo,
-                              UCODE_FV_KEY,
+            IsAssigned, _ = IsRegionInfoAssigned (
+                              DataDict = self.__FlashMapInfo,
+                              Region   = UCODE_FV_KEY,
                               )
 
             if not IsAssigned:

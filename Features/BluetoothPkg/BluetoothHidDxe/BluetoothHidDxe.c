@@ -178,7 +178,7 @@ UpdateHogpHandles (
           HidReportInfo->ReportReferDescHandle = Attr.Header.AttributeHandle;
           InsertTailList (&BtHidDev->HidReportInfo, &HidReportInfo->Link);
         } else {
-          FreePool (HidReportInfo);
+          FreePool(HidReportInfo);
         }
       }
     } while(!EFI_ERROR(Status));
@@ -448,7 +448,6 @@ BluetoothHidDriverBindingStart (
   BtHidDev = AllocateZeroPool (sizeof (BT_HID_DEV));
   if (BtHidDev == NULL) {
     ASSERT (BtHidDev != NULL);
-    FreePool (DevicePath);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -561,7 +560,7 @@ BluetoothHidDriverBindingStop (
   BtHidDev = BT_HID_DEV_FROM_HID_PROTOCOL (Hid);
 
   HidStopNotification (Hid);
-  FreePool (BtHidDev->ReportMap);
+  FreePool(BtHidDev->ReportMap);
 
   Status = gBS->UninstallMultipleProtocolInterfaces (
                   BtHidDev->ControllerHandle,

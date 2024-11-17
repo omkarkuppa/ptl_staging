@@ -230,30 +230,12 @@ EnableCStates (
     ASSERT (FALSE);
   }
   ///
-  /// If C-states are disabled or not supported, Disable C1e and retrun
-  ///
-  if ((mPpmFlags & PPM_C_STATES) == 0) {
-    PowerCtl.Uint64 = AsmReadMsr64 (MSR_POWER_CTL);
-    PowerCtl.Bits.C1eEnable = 0;
-    AsmWriteMsr64 (MSR_POWER_CTL, PowerCtl.Uint64);
-    DEBUG ((DEBUG_INFO, "Setup C state disabled.Disable C1e. MSR(1FC) : 0x%08x\n", PowerCtl.Uint64));
-    return;
-  }
-  ///
   /// Configure supported enhanced C-states
   ///
   /// Read Power Ctl MSR
   ///
   PowerCtl.Uint64 = AsmReadMsr64 (MSR_POWER_CTL);
   DEBUG ((DEBUG_INFO, "MSR(1FC) before configuring C1E: 0x%08x\n", PowerCtl.Uint64));
-  ///
-  /// Enable supported states
-  ///
-  if (mPpmFlags & PPM_C1E) {
-    PowerCtl.Bits.C1eEnable = 1;
-  } else {
-    PowerCtl.Bits.C1eEnable = 0;
-  }
   ///
   /// Update Power Control MSR
   ///

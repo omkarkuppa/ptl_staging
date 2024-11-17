@@ -160,15 +160,6 @@ PtlPcdOnEndOfPei (
   PtlPcdAcePostMemInit (SiPreMemPolicy);
   PERF_INMODULE_END ("PcdAcePostMemInit");
 
-  //
-  // Configure P2SB at the end of EndOfPei
-  // This must be done before POSTBOOT_SAI programming.
-  //
-  PtlPcdP2sbLock (SiPolicy);
-  if (!PtlPcdIsSecondP2SbHidden ()) {
-    PtlPcdSecondP2sbLock (SiPolicy);
-  }
-
   PtlPcdBiosInterfaceLockDown (SiPolicy);
 
   //

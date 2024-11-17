@@ -139,7 +139,7 @@ BasicMemoryTest (
     Addr++;
   }
 
-  for (LoopCount = 0; LoopCount < 20; LoopCount++) {
+  for (LoopCount = 0; LoopCount < 2; LoopCount++) {
     Addr    = 0;
     Pattern = 0;
     while ((UINTN) Addr < BlockSize) {

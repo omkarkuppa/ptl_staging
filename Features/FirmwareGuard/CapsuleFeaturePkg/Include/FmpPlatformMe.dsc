@@ -47,6 +47,9 @@
       #
       # Certificates used to authenticate capsule update image
       #
+!if $(CSME_GENERATION) != 0
+      !include CapsuleFeaturePkg/SigningKeys/Production/Csme/Gen$(CSME_GENERATION).inc
+!endif
 
     <LibraryClasses>
       FmpDeviceLib|CapsuleFeaturePkg/Library/FmpDeviceLibMe/FmpDeviceLibMe.inf

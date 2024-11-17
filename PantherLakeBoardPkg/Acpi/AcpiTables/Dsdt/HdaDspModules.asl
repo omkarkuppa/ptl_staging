@@ -135,6 +135,8 @@ Scope (\_SB.PC00.HDAS)
     //  [BIT12] - Realtek Post-Process; [BIT13] - Realtek Smart Amp
     //  [BIT14] - PP Module Icepower IP MFX sub module; [BIT15] - PP Module Icepower IP EFX sub module
     //  [BIT16] - PP Module Voice Preprocessing; [BIT17] - PP Module Voice Preprocessing
+    //  [BIT27] - AEC for Cirrus
+    //  [BIT28] - Waves Full and Reduced for Cirrus
     //  [BIT31:29] - Custom 3rd party IP modules (GUIDs provided from BIOS Setup)
 
     //

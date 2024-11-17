@@ -61,6 +61,9 @@ from CapsuleGenerate.Firmwares.FspFirmware.FspFmpDevice \
 from CapsuleGenerate.Firmwares.UcodeFirmware.UcodeFmpDevice \
     import UCODE_DEVICE_NAME, Ucode
 
+from CapsuleGenerate.Firmwares.FoxvilleFirmware.FoxvilleFmpDevice \
+    import FOXVILLE_DEVICE_NAME, Foxville
+
 #
 # Expose variables / methods / objects.
 #
@@ -129,4 +132,9 @@ __all__: List[str] = [
     #
     'UCODE_DEVICE_NAME',
     'Ucode',
+    #
+    # Foxville device FW
+    #
+    'FOXVILLE_DEVICE_NAME',
+    'Foxville',
     ]

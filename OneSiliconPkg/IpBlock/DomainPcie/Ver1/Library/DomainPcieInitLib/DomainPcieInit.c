@@ -19,7 +19,6 @@
 @par Specification
 **/
 
-#include <IpCpcie.h>
 #include <IpPcieDefines.h>
 #include <Library/DomainPcie.h>
 #include <IpWrapperCntxtInfoClient.h>
@@ -57,12 +56,12 @@
 #include <IpPcieRegs.h>
 #include <Library/PcdInfoLib.h>
 #include <Library/PeiVtdInitFruLib.h>
+#include <Library/HobLib.h>
 
-typedef struct {
-  UINT16  Vid;
-  UINT16  Did;
-  UINT8   MaxLinkSpeed;
-} PCIE_DEV_INFO;
+#define TIMEOUT_100_MS  100000000  // 100 ms in Nanoseconds
+
+static UINT64   TimeStampAfterPcieLinkRetrainSet;
+extern EFI_GUID gIpPcieInstHobGuid;
 
 /**
   Fia Inst Init
@@ -558,16 +557,12 @@ PcieIsLaneReversalEnabled (
   IP_PCIE_INST  *pInst
   )
 {
-  UINT64                      RpBase;
-  IP_WR_REG_INFO              *RegInfo;
   STRPFUSECFG_PCIE_CFG_STRUCT Strpfusecfg;
 
-  RegInfo = (IP_WR_REG_INFO*)(UINTN) pInst->RegCntxt_Cfg_Pri;
-  RpBase  = PCI_SEGMENT_LIB_ADDRESS (RegInfo->RegType.Pci.Seg, RegInfo->RegType.Pci.Bus, RegInfo->RegType.Pci.Dev, RegInfo->RegType.Pci.Fun, 0);
   //
   // From SIP17, LR bit is moved from PCIEDBG to STRPFUSECFG
   //
-  Strpfusecfg.Data = PciSegmentRead32 (RpBase + STRPFUSECFG_PCIE_CFG_REG);
+  Strpfusecfg.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Sb, STRPFUSECFG_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
   return !!(Strpfusecfg.Bits.lr);
 }
 
@@ -662,21 +657,21 @@ PcieSipIsRpEnabledInController (
 
   @param[in] Index                Pcie RootPort Index
   @param[in] PcieType             PCIe Integration Type
+  @param[in] IP_PCIE_INST         *pInst
 
   @retval     Pointer to Ip Inst
 **/
 
 IP_PCIE_INST*
 DomainPcieInstSingleInit (
-  IN  UINT32  Index,
-  IN  BOOLEAN PcieType
+  IN  UINT32       Index,
+  IN  BOOLEAN      PcieType,
+  IN  IP_PCIE_INST *pInst
   )
 {
-  IP_PCIE_INST         *pInst;
   UINT32                DetectTimeoutUs;
   UINT32                DetectTimer;
   PCIE_DEV_INFO         DevInfo;
-  UINT8                 RpMaxLinkSpeed;
   UINT64                RpBase;
   IP_WR_REG_INFO       *RegInfo;
   LCAP_PCIE_CFG_STRUCT  LcapCfg;
@@ -690,8 +685,8 @@ DomainPcieInstSingleInit (
   TC_VC_MAP             TcVcMap;
   STATIC IP_PCIE_INST      *pInstController = NULL;
 
-  pInst = (IP_PCIE_INST*) AllocateZeroPool (sizeof (IP_PCIE_INST));
   if (pInst == NULL) {
+    DEBUG ((DEBUG_WARN, "%a: Invalid pInst\n", __FUNCTION__));
     ASSERT (FALSE);
     return NULL;
   }
@@ -803,6 +798,14 @@ DomainPcieInstSingleInit (
 
   IpPciePreLinkActiveProgramming (pInst);
 
+  //
+  //Init DTR status
+  //
+  if (pInst->PcieRpCommonConfig.EnableDtr){
+    PRINT_LEVEL1 ("DTR Ready: assume on Port %d\n", pInst->RpIndex);
+    IpPcieSetDtrStat(pInst, IpPcieDtrReady);
+  }
+
   pInst->PrivateConfig.ClkReqEnable = pInst->PrivateConfig.ClkReqAssigned;
   if (!pInst->PrivateConfig.RootPortDisable) {
     DetectTimer = 0;
@@ -831,6 +834,8 @@ DomainPcieInstSingleInit (
   ///
   if (pInst->PrivateConfig.ClkReqEnable) {
     EnableClkReq (PchClockUsagePchPcie0 + pInst->RpIndex);
+  } else {
+    ChangePadRstCfg (PchClockUsagePchPcie0 + pInst->RpIndex);
   }
 
   if (pInst->PrivateConfig.RootPortDisable) {
@@ -841,6 +846,12 @@ DomainPcieInstSingleInit (
       PtlPcdPsfDisablePcieRootPort (pInst->RpIndex);
     }
     DisableClock (PchClockUsagePchPcie0 + pInst->RpIndex);
+
+    //DTR not need since RP disabled
+    if (pInst->PcieRpCommonConfig.EnableDtr) {
+      PRINT_LEVEL1 ("DTR Not Need: Port %d disabled\n", pInst->RpIndex);
+      IpPcieSetDtrStat(pInst, IpPcieDtrNotNeed);
+    }
     return pInst;
   }
 
@@ -871,10 +882,10 @@ DomainPcieInstSingleInit (
     TcVcMap.TcVcMap[1] = 0xFE;
     PcieRpMultiVcConfiguration (pInst, &TcVcMap);
   }
-  LcapCfg.Data = PciSegmentRead32 (RpBase + LCAP_PCIE_CFG_REG);
-  RpMaxLinkSpeed = (UINT8)LcapCfg.Bits.mls;
 
-  IpPcieRpSpeedChange (pInst, MIN (RpMaxLinkSpeed, DevInfo.MaxLinkSpeed));
+  LcapCfg.Data = PciSegmentRead32 (RpBase + LCAP_PCIE_CFG_REG);
+  IpPcieRpSpeedChangeStart (pInst, MIN ((UINT8)LcapCfg.Bits.mls, DevInfo.MaxLinkSpeed));
+  TimeStampAfterPcieLinkRetrainSet = GetTimeInNanoSecond (GetPerformanceCounter ());
 
   return pInst;
 }
@@ -894,8 +905,12 @@ DomainPcieInit (
   IN BOOLEAN  PcieType
   )
 {
-  UINT32          Index;
-  IP_PCIE_INST    **pInstArray;
+  UINT32            Index;
+  IP_PCIE_INST      **pInstArray;
+  IP_PCIE_INST      *pInst;
+  EFI_HOB_GUID_TYPE *GuidHob;
+
+  Index = 0;
 
   DEBUG ((DEBUG_INFO, "DomainPcieInit start, MaxRootPortNum %d\n", MaxRootPortNum));
   //
@@ -910,11 +925,37 @@ DomainPcieInit (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  for (Index = 0; Index < MaxRootPortNum; Index++) {
-    pInstArray [Index] = DomainPcieInstSingleInit (Index, PcieType);
+  GuidHob = GetFirstGuidHob (&gIpPcieInstHobGuid);
+  while (GuidHob != NULL) {
+    pInst = (IP_PCIE_INST *) GET_GUID_HOB_DATA (GuidHob);
+
+    pInstArray [Index] = DomainPcieInstSingleInit (Index, PcieType, pInst);
+    Index++;
+    GuidHob = GetNextGuidHob (&gIpPcieInstHobGuid, GET_NEXT_HOB(GuidHob));
   }
 
   DEBUG ((DEBUG_INFO, "DomainPcieInit end\n"));
 
   return EFI_SUCCESS;
+}
+
+/**
+  Calculate the required timeout value after setting RL in SpeedChangeStart API.
+  Required Timeout value is difference between current CPU timestamp value and CPU timestamp when RL is set.
+
+  @retval  UINT32  Required Timeout value in milli seconds
+**/
+UINT32
+PcieGetTimeoutValue (
+ )
+{
+  UINT64  TimeElapsed;
+  UINT64  RequiredTimeout;
+
+  TimeElapsed  = GetTimeInNanoSecond (GetPerformanceCounter ()) - TimeStampAfterPcieLinkRetrainSet;
+  if (TimeElapsed < TIMEOUT_100_MS) {
+    RequiredTimeout = TIMEOUT_100_MS - TimeElapsed;
+    return ((UINT32)DivU64x32 (RequiredTimeout, 1000u));
+  }
+  return 0;
 }

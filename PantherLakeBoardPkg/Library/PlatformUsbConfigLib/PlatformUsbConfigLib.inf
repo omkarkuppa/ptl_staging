@@ -48,8 +48,8 @@
   UcsiFeaturePkg/UcsiFeaturePkg.dec
 
 [Pcd]
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbConnector
-  gBoardModuleTokenSpaceGuid.VpdPcdUsbCConnector
+  gBoardModuleTokenSpaceGuid.PcdUsbConnectorTable
+  gBoardModuleTokenSpaceGuid.PcdUsbCConnectorTable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCRetimerFlash
 
 [Guids]

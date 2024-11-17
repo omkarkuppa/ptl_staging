@@ -50,6 +50,7 @@ FW_ISH_PDT   : str = 'IshPdt'
 FW_BTGACM    : str = 'BtGAcm'
 FW_FSP       : str = 'Fsp'
 FW_UCODE     : str = 'Ucode'
+FW_FOXVILLE  : str = 'Foxville'
 
 INTEL_COPYRIGHT_STR: str = f'''\
 #  INTEL CONFIDENTIAL

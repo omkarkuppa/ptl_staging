@@ -86,5 +86,20 @@ EnableRefresh (
   IN UINT8                RankBitMask
   );
 
+/**
+  Checks the MRC inputs and current boot configuration to determine if
+  test engine based memory scrubbing is required.
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] MrcData - Enable the debug print.
+
+  @return TRUE if test engine based memory scrubbing is required, otherwise FALSE.
+**/
+BOOLEAN
+MrcIsTeMemoryScrubbingRequired (
+  IN     MrcParameters *const MrcData,
+  IN     BOOLEAN              IsDebugPrint
+  );
+
 #pragma pack (pop)
 #endif

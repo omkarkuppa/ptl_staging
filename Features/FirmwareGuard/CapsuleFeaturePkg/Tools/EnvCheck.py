@@ -33,6 +33,7 @@ __description__ = 'Script to check the environment.\n'
 ENV_PRE_CHECK_FUNC_LIST = [
     CheckPython3EnvApi,
     CheckPythonVerEnvApi,
+    CheckPythonPathEnvApi,
     CheckToolkitPathEnvApi,
     ]
 

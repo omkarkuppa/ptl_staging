@@ -311,7 +311,7 @@
   # !BSF NAME:{Vdd2Mv feature}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reduce BasicMemTest size. 0: Disabled (default), regular BasicMemTest. 1: Enabled, shorter BasicMemTest (faster boot)}
-  gPlatformFspPkgTokenSpaceGuid.EnPeriodicComp      | * | 0x04 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.EnPeriodicComp      | * | 0x04 | 0x01
 
   # !BSF NAME:{Vdd2Mv feature}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -763,7 +763,7 @@
   # !BSF NAME:{Write DQ/DQS Retraining}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable Write DQ/DQS Retraining}
-  gPlatformFspPkgTokenSpaceGuid.WRTRETRAIN               | * | 0x04 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.WRTRETRAIN               | * | 0x04 | 0x01
 
   # !BSF NAME:{Pre-Training Comp Calibration}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -788,7 +788,7 @@
   # !BSF NAME:{RDDQODTT}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/disable Read DQ ODT Training}
-  gPlatformFspPkgTokenSpaceGuid.RDDQODTT              | * | 0x04 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.RDDQODTT              | * | 0x04 | 0x01
 
   # !BSF NAME:{RDCTLET}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -853,7 +853,7 @@
   # !BSF NAME:{DDR5 ODT Timing Config}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable DDR5 ODT TIMING CONFIG}
-  gPlatformFspPkgTokenSpaceGuid.DDR5ODTTIMING               | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.DDR5ODTTIMING               | * | 0x01 | 0x00
 
   # !BSF NAME:{HobBufferSize} TYPE:{Combo}
   # !BSF OPTION:{0:Default, 1: 1 Byte, 2: 1 KB, 3: Max value}
@@ -933,7 +933,7 @@
   # !BSF NAME:{Write Drive Strength/Equalization 2D}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Write Drive Strength/Equalization 2D}
-  gPlatformFspPkgTokenSpaceGuid.WRDSEQT                  | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.WRDSEQT                  | * | 0x01 | 0x01
 
   # !BSF NAME:{Read Equalization Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -1118,7 +1118,7 @@
   # !BSF NAME:{TxDqTCO Comp Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable TxDqTCO Comp Training}
-  gPlatformFspPkgTokenSpaceGuid.TXTCO                   | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.TXTCO                   | * | 0x01 | 0x01
 
   # !BSF NAME:{ClkTCO Comp Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -1630,6 +1630,10 @@
   # !BSF NAME:{Audio Sub System IDs} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Set default Audio Sub System IDs. If its set to 0 then value from Strap is used.}
   gPlatformFspPkgTokenSpaceGuid.PchHdaSubSystemIds           | * | 0x4 | 0x0
+
+  # !BSF NAME:{SoundWire clock source select} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Select clock source for the SoundWire controllers. 0: XTAL, 1: Audio PLL.}
+  gPlatformFspPkgTokenSpaceGuid.PchHdaSndwClockSourceSelect  | * | 0x1 | 0x0
 
   ## HDAUDIO_PREMEM_CONFIG End
 
@@ -2787,7 +2791,7 @@
   # !BSF NAME:{Enable/Disable VR FastVmode. The VR will initiate reactive protection if Fast Vmode is enabled.}
   # !BSF TYPE:{Combo} OPTION:{0: Disable, 1: Enable}
   # !BSF HELP:{Enable/Disable VR FastVmode; <b>0: Disable</b>; 1: Enable.For all VR by domain}
-  gPlatformFspPkgTokenSpaceGuid.EnableFastVmode             | * | 0x6 | {0x0, 0x0, 0x0, 0x0, 0x0, 0x0}
+  gPlatformFspPkgTokenSpaceGuid.EnableFastVmode             | * | 0x6 | {0x1, 0x1, 0x1, 0x0, 0x0, 0x0}
 
   # !BSF NAME:{Vsys Full Scale}
   # !BSF TYPE:{EditNum, DEC, (0,255000)}
@@ -3414,7 +3418,7 @@
   # !BSF NAME:{Force CKD in Bypass Mode} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable Force CKD in Bypass Mode}
-  gPlatformFspPkgTokenSpaceGuid.ForceCkdBypass           | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.ForceCkdBypass           | * | 0x01 | 0x01
 
   # !BSF NAME:{Disable Zq}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -3454,6 +3458,20 @@
   # !BSF NAME:{DFI Control after cold boot} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Disable Switch DFI Control to MC after cold boot: 0(Default)=switch DFI to MC, 1=Keep with PHY/MPTU}
   gPlatformFspPkgTokenSpaceGuid.DisableSwitchDfiToMc      | * | 0x01 | 0x00
+
+  # !BSF NAME:{Enable/Disable SmbusPostcode} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Disable (Default): Postcode via Port80, Enable: Postcode via Smbus}
+  gPlatformFspPkgTokenSpaceGuid.SmbusPostCodeEnable       | * | 0x01 | 0x0
+
+  # !BSF NAME:{SmbusPostcode Address}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Slave address for Smbus postcode device}
+  gPlatformFspPkgTokenSpaceGuid.SmbusPostCodeAddress      | * | 0x01 | 0x38
+
+  # !BSF NAME:{SmbusPostcode Command}
+  # !BSF TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !BSF HELP:{Command value for Smbus postcode device}
+  gPlatformFspPkgTokenSpaceGuid.SmbusPostCodeCommand      | * | 0x01 | 0x20
 
   # !HDR EMBED:{FSP_M_CONFIG:FspmConfig:END}
   gPlatformFspPkgTokenSpaceGuid.ReservedFspmUpd             | * | 0x03 | {0x00}

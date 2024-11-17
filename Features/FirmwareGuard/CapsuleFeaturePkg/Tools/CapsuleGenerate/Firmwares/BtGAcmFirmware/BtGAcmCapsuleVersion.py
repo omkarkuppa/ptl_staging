@@ -32,7 +32,7 @@ from CapsuleCommon import *
 
 from CapsuleGenerate.Model.CapsuleVersion import *
 
-BTG_ACM_VERSION_REGEX: str = '^(\d){1,3}[.](\d){1,3}[.](\d){1,5}$'
+BTG_ACM_VERSION_REGEX: str = r'^(\d){1,3}[.](\d){1,3}[.](\d){1,5}$'
 
 class BtGAcmCapsuleVersion (CapsuleVersion):
     def __init__ (

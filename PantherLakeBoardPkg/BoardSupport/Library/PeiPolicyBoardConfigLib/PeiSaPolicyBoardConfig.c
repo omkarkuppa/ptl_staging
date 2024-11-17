@@ -50,11 +50,10 @@ UpdatePeiSaPolicyBoardConfig (
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                            *FspsUpd;
   VOID                            *FspmUpd;
-  
 #endif
-
   TCSS_PEI_CONFIG     *TcssConfig;
   TcssConfig          = NULL;
+
 #if FixedPcdGetBool(PcdTcssSupport) == 1
     TCSS_PEI_PREMEM_CONFIG             *TcssPeiPreMemConfig;
     TcssPeiPreMemConfig = NULL;
@@ -66,11 +65,11 @@ UpdatePeiSaPolicyBoardConfig (
   UINT8                              ConnectorIndex;
   USB_CONNECTOR_HOB_DATA             *UsbConnectorHobDataPtr;
 #endif
- 
+
   EFI_PEI_READ_ONLY_VARIABLE2_PPI    *VariableServices;
   UINTN                              VariableSize;
   SETUP_DATA                         SetupData;
-  
+
   DEBUG ((DEBUG_INFO, "Updating SA Policy by board config in Post-Mem\n"));
   Status = EFI_SUCCESS;
 
@@ -125,7 +124,7 @@ UpdatePeiSaPolicyBoardConfig (
       if (UsbConnectorBoardConfig != NULL) {
         // Initialize TCSS USB3 OC Config
         for (PortIndex = 0; PortIndex < MAX_USB3_PORTS; PortIndex++) {
-          UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.CpuUsb3OverCurrentPin[PortIndex], TcssConfig->UsbConfig.PortUsb30[PortIndex].OverCurrentPin, USB_OC_SKIP);
+          UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CpuUsb3OverCurrentPin[PortIndex], TcssConfig->UsbConfig.PortUsb30[PortIndex].OverCurrentPin, USB_OC_SKIP);
         }
 
         // Update TCSS USB3 USB OC Config
@@ -136,7 +135,7 @@ UpdatePeiSaPolicyBoardConfig (
               if (UsbConnectorBoardConfig->UsbOcPinType != 0) {
                 if (UsbConnectorBoardConfig->UsbOcPinType <= USB_OC_MAX_TYPE &&
                     UsbConnectorBoardConfig->UsbOcPin < USB_OC_MAX_PINS) {
-                  UPDATE_POLICY_V2 (
+                  UPDATE_POLICY (
                     ((FSPS_UPD *) FspsUpd)->FspsConfig.CpuUsb3OverCurrentPin[UsbConnectorBoardConfig->Usb3PortNum],
                     TcssConfig->UsbConfig.PortUsb30[UsbConnectorBoardConfig->Usb3PortNum].OverCurrentPin,
                     (UINT8) GET_USB3_OCM_REG (UsbConnectorBoardConfig->UsbOcPinType, UsbConnectorBoardConfig->UsbOcPin)
@@ -160,7 +159,7 @@ UpdatePeiSaPolicyBoardConfig (
     }
 
     for (PortIndex = 0; PortIndex < MAX_TCSS_USB3_PORTS; PortIndex++) {
-      UPDATE_POLICY_V2 (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb30Enable[PortIndex], TcssConfig->UsbConfig.PortUsb30[PortIndex].Enable, IS_TC_PORT_USB_SUPPORTED (TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[PortIndex]));
+      UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb30Enable[PortIndex], TcssConfig->UsbConfig.PortUsb30[PortIndex].Enable, IS_TC_PORT_USB_SUPPORTED (TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[PortIndex]));
     }
   }
 #endif  // PcdTcssSupport

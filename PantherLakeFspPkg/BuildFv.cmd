@@ -155,6 +155,7 @@ if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\FspProducerDataHeader.h 
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\Fsp*Upd.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\Fsp*Upd.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\HobUsageDataHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\HobUsageDataHob.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MemInfoHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\MemInfoHob.h
+if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\FspPerformance.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\FspPerformance.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosCacheInfoHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosCacheInfoHob.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosProcessorInfoHob.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\SmbiosProcessorInfoHob.h
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Config.h del %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\GpioV2Config.h
@@ -337,6 +338,10 @@ if "%ERRORLEVEL%"=="256" (
     if exist "%WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Pad.h" (
       copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Pad.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
       )
+    if exist %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\FspPerformance.h  attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\FspPerformance.h
+    if exist "%WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\FspPerformance.h" (
+      copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\FspPerformance.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
+      )
 )
 
 :PreBuildRet
@@ -485,6 +490,10 @@ if exist %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\GpioV2Pad.h (
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\FspPkgPcdShare.dsc attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\FspPkgPcdShare.dsc
 if exist %WORKSPACE_SILICON%\%FSP_PKG_NAME%\FspPkgPcdShare.dsc (
   copy /y %WORKSPACE_SILICON%\%FSP_PKG_NAME%\FspPkgPcdShare.dsc %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\
+  )
+if exist %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\FspPerformance.h  attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\FspPerformance.h
+if exist "%WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\FspPerformance.h" (
+  copy /y %WORKSPACE_SILICON%\%PLATFORM_SI_PACKAGE%\Include\FspPerformance.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\
   )
 
 echo off

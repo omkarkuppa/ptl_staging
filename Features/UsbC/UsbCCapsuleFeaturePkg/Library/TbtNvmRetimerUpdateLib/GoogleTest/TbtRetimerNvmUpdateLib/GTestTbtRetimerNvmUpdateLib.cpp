@@ -91,11 +91,11 @@ class CommonMock : public Test {
 
     MOCK_DISCRETE_TBT_PAYLOAD_DATA MockDtbtImage = {
       {
-        SIGNATURE_32 ('D', 'T', 'B', 'T'),      //  Signature    // DISCRETE_TBT_PAYLOAD_HEADER_SIGNATURE
+        SIGNATURE_32 ('D', 'T', 'B', 'T'),      //  Signature         // DISCRETE_TBT_PAYLOAD_HEADER_SIGNATURE
         0x20,                                   //  HeaderSize
         1,                                      //  DiscreteTbtCount
         0                                       //  Reserved
-      },                                        // DISCRETE_TBT_PAYLOAD_HEADER
+      },                                        //  DISCRETE_TBT_PAYLOAD_HEADER
       {
         0x20,                                   //  ImageOffset
         0x04,                                   //  ImageSize
@@ -103,34 +103,35 @@ class CommonMock : public Test {
         0x00,                                   //  PcieRpType
         0x19,                                   //  PcieRootPort
         { 0, 0, 0, 0, 0 }                       //  Reserved[5]
-      },                                        // DISCRETE_TBT_ITEM
-      0x00000000                                // ImageContent       // The value use to BufferPointer[0]
+      },                                        //  DISCRETE_TBT_ITEM
+      0x00000000                                //  ImageContent      // The value use to BufferPointer[0]
     };
 
     MOCK_RETIMER_PAYLOAD_DATA MockItbtRetimerImage = {
       {
-        SIGNATURE_32 ('R', 'T', 'M', 'R'),      //  Signature    // DISCRETE_TBT_PAYLOAD_HEADER_SIGNATURE
+        SIGNATURE_32 ('R', 'T', 'M', 'R'),      //  Signature         // RETIMER_PAYLOAD_HEADER_SIGNATURE
         0x30,                                   //  HeaderSize
         1,                                      //  RetimerCount
         0                                       //  Reserved
-      },                                        // RETIMER_PAYLOAD_HEADER
+      },                                        //  RETIMER_PAYLOAD_HEADER
       {
         {
-          0x00,                                 //   Bus
-          0x0D,                                 //   Device
-          0x03,                                 //   Function
-          0x00,                                 //   Port
-          0x01,                                 //   RetimerIndex
-          { 0, 0, 0, 0, 0, 0, 0, 0 }            //   Reserved[8]
+          0x00,                                 //  Bus
+          0x0D,                                 //  Device
+          0x03,                                 //  Function
+          0x00,                                 //  Port
+          0x01,                                 //  RetimerIndex
+          { 0, 0, 0, 0, 0, 0, 0, 0 }            //  Reserved[8]
         },                                      //  RetimerDevAddress // RETIMER_DEV_ADDRESS
+
         0x30,                                   //  ImageOffset
         0x04,                                   //  ImageSize
         0x00,                                   //  FirmwareType
         0xFF,                                   //  PcieRpType
         0xFF,                                   //  PcieRootPort
         { 0, 0, 0, 0, 0 }                       //  Reserved[5]
-      },                                        // RETIMER_ITEM
-      0x00000000                                // ImageContent       // The value use to BufferPointer[0]
+      },                                        //  RETIMER_ITEM
+      0x00000000                                //  ImageContent      // The value use to BufferPointer[0]
     };
 };
 

@@ -192,11 +192,12 @@
 #string STR_STANDARD_DEFAULT_PROMPT            #language en-US "Standard Default"
 
 // MPDT
-#string STR_MPDT_SUPPORT_PROMPT                #language en-US "MPDT Support"
-#string STR_MPDT_SUPPORT_HELP                  #language en-US "Enable(Sensor_BOM1,Sensor_BOM2 and Sensor_BOM1 with Companion Chip)/Disable MPDT Support in BIOS"
-#string STR_SENSOR_BOM1                        #language en-US "Sensor_BOM1"
-#string STR_SENSOR_BOM2                        #language en-US "Sensor_BOM2"
-#string STR_SENSOR_BOM1_WITH_COMPANION_CHIP    #language en-US "Sensor_BOM1 with Companion Chip"
+#string STR_MPDT_SUPPORT_PROMPT                #language en-US "Multi PDT Support"
+#string STR_MPDT_SUPPORT_HELP                  #language en-US "Enable Multi PDT Support
+#string STR_BOM1_SENSOR                        #language en-US "BOM1 Sensor"
+#string STR_BOM2_SENSOR                        #language en-US "BOM2 Sensor"
+#string STR_CVS_AIC_ONLY                       #language en-US "CVS AIC only"
+#string STR_BOM1_SENSOR_WITH_CVS_AIC           #language en-US "CVS AIC with BOM1 Sensor"
 
 // XmlCli Setup Option
 #string STR_XMLCLI_FORM                        #language en-US "XmlCli"

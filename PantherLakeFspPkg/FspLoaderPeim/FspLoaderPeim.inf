@@ -37,6 +37,9 @@
   PeiServicesLib
   FspFbmSupportLib
   FspVerificationLib
+  DebugLib
+  FspMeasurementLib
+  BaseMemoryLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -50,6 +53,14 @@
 
 [Ppis]
   gFspLoaderPpiGuid
+
+[Pcd]
+  gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamBase              ## CONSUMES
+  gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize              ## CONSUMES
+  gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedBufferSize         ## CONSUMES
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize          ## CONSUMES
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase               ## CONSUMES
 
 [Depex]
   TRUE

@@ -57,11 +57,11 @@ UpdatePeiCpuPolicyBoardConfig (
   // Directly assign the microcode flash location to FSPS UPD (API mode) or CpuInitConfig (Dispatch mode)
   // The microcode copy from flash to memory will be done just before microcode reload.
   //
-  UPDATE_POLICY_V2 (
+  UPDATE_POLICY (
     ((FSPS_UPD *)FspsUpd)->FspsConfig.MicrocodeRegionBase,CpuInitConfig->MicrocodePatchAddress,
     FixedPcdGet32 (PcdFlashFvMicrocodeBase) + FixedPcdGet32 (PcdMicrocodeOffsetInFv)
     );
-  UPDATE_POLICY_V2 (
+  UPDATE_POLICY (
     ((FSPS_UPD *)FspsUpd)->FspsConfig.MicrocodeRegionSize,CpuInitConfig->MicrocodePatchRegionSize,
     FixedPcdGet32 (PcdFlashFvMicrocodeSize) - FixedPcdGet32 (PcdMicrocodeOffsetInFv)
     );

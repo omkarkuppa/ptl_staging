@@ -29,6 +29,7 @@
 #include <Library/GpioV2WrapperLib.h>
 #include <Register/GpioV2PcdPins.h>
 #include <CnvVfrSetupMenuHii.h>
+#include <Library/BaseMemoryLib.h>
 
 static EFI_PEI_PPI_DESCRIPTOR  mFvCnvDispatchFlagPpi[] = {
   {
@@ -132,6 +133,8 @@ CnvInitPreMem (
   }
 
   VariableSize = sizeof (CNV_VFR_CONFIG_SETUP);
+  ZeroMem (&CnvSetup, VariableSize);
+#if FixedPcdGetBool (PcdCnvFeatureEnable) == 1
   Status = VariableServices->GetVariable (
                                VariableServices,
                                L"CnvSetup",
@@ -140,7 +143,7 @@ CnvInitPreMem (
                                &VariableSize,
                                &CnvSetup
                                );
-
+#endif
   //  install PPI descriptor for CNV, based on policy settings.
   if ((SystemConfiguration.EfiNetworkSupport != 0) ||
       (CnvSetup.PrebootBleEnable == 1)) {
@@ -149,7 +152,6 @@ CnvInitPreMem (
     #if FixedPcdGetBool (PcdCnvBinLoadFromESP) == 1
       PcdSetBoolS (PcdCnvDispatch, TRUE);
       PcdSetBoolS (PcdCnvUnloadRequirement, TRUE);
-      PcdSet16S   (PcdCnvDeviceId, PcdGet16 (VpdPcdCnvDeviceId));
     #endif
   }
 

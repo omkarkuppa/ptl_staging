@@ -121,22 +121,15 @@ enum {
   GOP_VER,
   ROYALPARK_VER,
   PLATFORM_VER,
-  USBC_PD0_VER,
   USBC_PD1_VER,
   USBC_PD2_VER,
+  USBC_PD3_VER,
+  USBC_PD4_VER,
   USBC_RETIMER0_VER,
   USBC_RETIMER1_VER,
   USBC_RETIMER2_VER,
+  USBC_RETIMER3_VER,
 } PLATFORM_FVI_INDEX;
-
-#define MAX_PD_NUMBER  3
-
-#define USBC_PD0_FVI_STRING             "USBC PD0 Version"
-#define USBC_PD0_DEFAULT_VERSION_STRING "FFFFFFFF.FFFFFFFF"
-#define USBC_PD0_VERSION \
-  { \
-    0xFF, 0xFF, 0xFF, 0xFFFF \
-  }
 
 #define USBC_PD1_FVI_STRING             "USBC PD1 Version"
 #define USBC_PD1_DEFAULT_VERSION_STRING "FFFFFFFF.FFFFFFFF"
@@ -148,6 +141,20 @@ enum {
 #define USBC_PD2_FVI_STRING             "USBC PD2 Version"
 #define USBC_PD2_DEFAULT_VERSION_STRING "FFFFFFFF.FFFFFFFF"
 #define USBC_PD2_VERSION \
+  { \
+    0xFF, 0xFF, 0xFF, 0xFFFF \
+  }
+
+#define USBC_PD3_FVI_STRING             "USBC PD3 Version"
+#define USBC_PD3_DEFAULT_VERSION_STRING "FFFFFFFF.FFFFFFFF"
+#define USBC_PD3_VERSION \
+  { \
+    0xFF, 0xFF, 0xFF, 0xFFFF \
+  }
+
+#define USBC_PD4_FVI_STRING             "USBC PD4 Version"
+#define USBC_PD4_DEFAULT_VERSION_STRING "FFFFFFFF.FFFFFFFF"
+#define USBC_PD4_VERSION \
   { \
     0xFF, 0xFF, 0xFF, 0xFFFF \
   }
@@ -166,6 +173,12 @@ enum {
 
 #define USBC_RETIMER2_FVI_STRING  "USBC Retimer2 Version"
 #define USBC_RETIMER2_VERSION \
+  { \
+    0xFF, 0xFF, 0xFF, 0xFFFF \
+  }
+
+#define USBC_RETIMER3_FVI_STRING  "USBC Retimer3 Version"
+#define USBC_RETIMER3_VERSION \
   { \
     0xFF, 0xFF, 0xFF, 0xFFFF \
   }

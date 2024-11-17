@@ -22,6 +22,6 @@
 
 #include "MockTbtNvmDrvYflRouter.h"
 
-MOCK_INTERFACE_DEFINITION(MockTbtNvmDrvYflRouter);
+MOCK_INTERFACE_DEFINITION (MockTbtNvmDrvYflRouter);
 
-MOCK_FUNCTION_DEFINITION(MockTbtNvmDrvYflRouter, TbtNvmDrvYflForcePwrFunc, 3, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockTbtNvmDrvYflRouter, TbtNvmDrvYflForcePwrFunc, 3, EFIAPI);

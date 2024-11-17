@@ -117,17 +117,22 @@ class Edk2BuildEnv (object):
         # Deep copy is needed.
         # To prevent any modification on current environment variable.
         #
-        EnvConfig: dict = dict (copy.deepcopy (os.environ))
-        EnvPath  : str  = os.environ['PATH']
+        EnvConfig : dict = dict (copy.deepcopy (os.environ))
+        EnvPath   : str  = EnvConfig.get ('PATH', '')
+        PythonPath: str  = EnvConfig.get ('PYTHONPATH', '')
 
-        EnvPath = (os.pathsep).join ([
-                                 self.__Edk2ToolsCmdPath,
-                                 self.__Edk2ToolsBinPath,
-                                 EnvPath,
-                                 ])
+        EnvPath    = (os.pathsep).join ([
+                                    self.__Edk2ToolsCmdPath,
+                                    self.__Edk2ToolsBinPath,
+                                    EnvPath,
+                                    ])
+        PythonPath = (os.pathsep).join ([
+                                    self.__Edk2PySrcPath,
+                                    PythonPath,
+                                    ])
 
         EnvConfig['WORKSPACE']       = self.__Workspace
-        EnvConfig['PYTHONPATH']      = self.__Edk2PySrcPath
+        EnvConfig['PYTHONPATH']      = PythonPath
         EnvConfig['PATH']            = EnvPath
         EnvConfig['PYTHON_COMMAND']  = self.__PyCmd
         EnvConfig['BASE_TOOLS_PATH'] = self.__Edk2ToolsPath

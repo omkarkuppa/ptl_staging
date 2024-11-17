@@ -26,7 +26,7 @@
 #include "MrcChipApi.h"
 #include "MrcChipRouting.h"
 #include "MrcUcManagement.h"
-#include "MrcPmaApiCrossProj.h"
+#include "MrcPmaApi.h"
 #include "MrcReset.h"
 #include "MrcTurnAround.h"
 #include "MrcWriteDqDqs.h"

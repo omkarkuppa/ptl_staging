@@ -139,8 +139,6 @@ CreateRetimerDevInstance (
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_INFO, "Thunderbolt Capsule Update for Retimer.\n"));
-
   //
   // Initialize device start
   //
@@ -256,8 +254,6 @@ CreateTBTDevInstance (
     ASSERT (DiscreteTbtDevice != NULL);
     return EFI_INVALID_PARAMETER;
   }
-
-  DEBUG ((DEBUG_INFO, "Discrete Thunderbolt Capsule Update.\n"));
 
   //
   // Initialize device start
@@ -466,6 +462,9 @@ UpdateRetimerNvmInformation (
         break;
       case 2:
         UsbCRetimerSetup.UsbCRetimer2Version = RetimerVersion;
+        break;
+      case 3:
+        UsbCRetimerSetup.UsbCRetimer3Version = RetimerVersion;
         break;
       default:
         DEBUG ((DEBUG_ERROR, "UsbCRetimerNumber is more than Index setting.\n"));
@@ -1012,7 +1011,6 @@ DriveToFwUpdateMode (
 {
   EFI_STATUS                        Status;
   USBC_RETIMER_PROTOCOL_CAPABILITY  RetimerProtocolCapability;
-  UINT8                             TotalCountOfPdController;
   UINT32                            VarAttributes;
   UINTN                             VarSize;
 
@@ -1021,13 +1019,6 @@ DriveToFwUpdateMode (
   DEBUG ((DEBUG_INFO, "\n%a Start\n", __FUNCTION__));
   DEBUG ((DEBUG_INFO, "  RetimerGuid = %g\n", RetimerGuid));
   CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_PD_DRIVE_START, 0, 0);
-
-  TotalCountOfPdController = PcdGet8 (PcdUsbCPdNumber);
-  DEBUG ((DEBUG_INFO, "Total count of PD Controller number = %d\n", TotalCountOfPdController));
-  if (TotalCountOfPdController == 0) {
-    DEBUG ((DEBUG_ERROR, "\n%a: Retimer Capsule Update is not supported as no PD Controller available. Returning with Status = %r\n", __FUNCTION__, Status));
-    return Status;
-  }
 
   //
   // Check if Valid Guid is passed or Not.
@@ -1058,7 +1049,7 @@ DriveToFwUpdateMode (
   //
   // Change the PD Controller Mode
   //
-  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateEnableMode, TotalCountOfPdController);
+  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateEnableMode, MAX_PD_NUMBER);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "\n%a : Failed to Enable Retimer FW Update Mode with Status = %r\n", __FUNCTION__, Status));
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_CHANGE_MODE_FAIL, (UINT32) Status, 0);
@@ -1094,7 +1085,6 @@ RestoreToOriginalMode (
 {
   EFI_STATUS                        Status;
   USBC_RETIMER_PROTOCOL_CAPABILITY  RetimerProtocolCapability;
-  UINT8                             TotalCountOfPdController;
   UINT32                            VarAttributes;
   UINTN                             VarSize;
 
@@ -1103,13 +1093,6 @@ RestoreToOriginalMode (
   DEBUG ((DEBUG_INFO, "\n%a Start\n", __FUNCTION__));
   DEBUG ((DEBUG_INFO, "  RetimerGuid = %g\n", RetimerGuid));
   CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_PD_RESTORE_START, 0, 0);
-
-  TotalCountOfPdController = PcdGet8 (PcdUsbCPdNumber);
-  DEBUG ((DEBUG_INFO, "Total count of PD Controller number = %d\n", TotalCountOfPdController));
-  if (TotalCountOfPdController == 0) {
-    DEBUG ((DEBUG_ERROR, "\n%a: Retimer Capsule Update is not supported as no PD Controller available. Returning with Status = %r\n", __FUNCTION__, Status));
-    return Status;
-  }
 
   //
   // Check if Valid Guid is passed or Not.
@@ -1140,7 +1123,7 @@ RestoreToOriginalMode (
   //
   // Change the PD Controller Mode
   //
-  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateDisableMode, TotalCountOfPdController);
+  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateDisableMode, MAX_PD_NUMBER);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "\n%a : Failed to Exit Retimer FW Update Mode For PD Controller with Status = %r\n", __FUNCTION__, Status));
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_CHANGE_MODE_FAIL, (UINT32) Status, 0);

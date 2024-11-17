@@ -1,5 +1,5 @@
 ## @file
-#  Google Test for the implementation of  FmpDeviceLib instance to support 
+#  Google Test for the implementation of FmpDeviceLib instance to support
 #  Thunderbolt Retimer Firmware update
 #
 #  @copyright
@@ -47,16 +47,18 @@
   TestFmpDeviceGetHardwareInstance.cpp
   TestFmpDeviceGetImage.cpp
   TestFmpDeviceCheckImage.cpp
+  TestConstructRetimerInstances.cpp
   TestFmpDeviceSetImage.cpp
   TestFmpDeviceLock.cpp
 
 [Packages]
   UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   FmpDevicePkg/FmpDevicePkg.dec
   OneSiliconPkg/SiPkg.dec
-  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
 
 [LibraryClasses]
   GoogleTestLib
@@ -64,14 +66,18 @@
   MemoryAllocationLib
   DebugLib
   UefiRuntimeServicesTableLib
-  MockUefiBootServicesTableLib
+  UefiBootServicesTableLib
+  UsbcCapsuleDebugLib
+  TbtNvmRetimerUpdateLib
+  UsbcRetimerProtocol
+  FirmwareManagementLib
+  Usb4DebugLib
+  MockUsbCProgressCodeProtocolLib
 
 [Protocols]
   gEfiUsb2HcProtocolGuid
   gEfiPciIoProtocolGuid
   gUsbCRetimerProtocolGuid
-
-[Pcd]
 
 [Guids]
   gAllTbtRetimerDeviceGuid

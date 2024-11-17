@@ -41,7 +41,7 @@
   ##
   ## CnvCompatibility Guids
   ##
-  gCnvCompatibilityGuid             = {0xB23E7388, 0x9953, 0x45C7, {0x92, 0x01, 0x04, 0x73, 0xDD, 0xE5, 0x48, 0x7A}}
+  gCnvCompatibilityGuid             = {0xB92CF322, 0x8AFA, 0x4AA4, {0xB9, 0x46, 0x00, 0x5D, 0xF1, 0xD6, 0x97, 0x79}}
   gCnvExternalGuid                  = {0x07BD652E, 0x9C84, 0x4F06, {0xAB, 0xBC, 0x47, 0xDD, 0xDB, 0x73, 0xF1, 0x8E}}
 
 [PcdsFixedAtBuild]
@@ -87,6 +87,7 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdDynamicSarSupport      |TRUE       |BOOLEAN|0x30000080
   gCnvFeaturePkgTokenSpaceGuid.PcdSkipVidDidCheck        |FALSE      |BOOLEAN|0x30000081
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP      |TRUE       |BOOLEAN|0x30003002
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDeviceId            |{0x0}      |VOID*  |0x3000007F
 
 [PcdsDynamic]
   gCnvFeaturePkgTokenSpaceGuid.PcdGlobalCnvDlvrRfim    |1          |UINT8  |0x30000079
@@ -95,7 +96,6 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvDispatch          |FALSE      |BOOLEAN|0x3000007C
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvUnloadRequirement |FALSE      |BOOLEAN|0x3000007E
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvGuidLockStatus    |1          |UINT8  |0x30000077
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDeviceId          |0x0        |UINT16 |0x3000007F
   gCnvFeaturePkgTokenSpaceGuid.PcdCnviPresence         |FALSE      |BOOLEAN|0x30000078
 
 [Protocols]

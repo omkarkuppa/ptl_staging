@@ -549,7 +549,7 @@ MrcJedecInitLpddr5 (
 #endif
     mrMR20, mrMR17, mrMR25, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15, mrMR18, 
     mrMR3,  mrMR1,  mrMR2,  mrMR19, mrMR21, mrMR28, mrMR30,  mrMR69, mrMR37, mrMR41, 
-    mrMR24, mrMR58, mrMR75
+    mrMR75, mrMR24, mrMR58
   };
 
   // Due to the 6400 boundary crossing rule in LP5 JEDEC spec, MRs cannot be updated from the current FSP.

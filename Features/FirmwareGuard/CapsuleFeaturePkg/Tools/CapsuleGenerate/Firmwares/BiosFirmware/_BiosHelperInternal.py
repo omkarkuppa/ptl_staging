@@ -36,6 +36,7 @@ from CapsuleGenerate.Firmwares.CommonLib import *
 #
 BIOS_REGION_LIST: List[str] = [
     BIOS_REGION_EXT,
+    BIOS_REGION_OBB1,
     BIOS_REGION_NVS,
     BIOS_REGION_OBB,
     BIOS_REGION_IBBR,
@@ -153,10 +154,19 @@ class _BiosImgSplitter (object):
         """
         RegionInfo: ImageRegion = None
         RegionName: str         = None
+        IsAssigned: bool        = None
         Offset    : int         = None
         Size      : int         = None
 
         for RegionName, _ in self.__FlashMapDict.items ():
+            IsAssigned, _ = IsRegionInfoAssigned (
+                              DataDict = self.__FlashMapDict,
+                              Region   = RegionName,
+                              )
+            if not IsAssigned:
+                DEBUG (DEBUG_TRACE, f'[{RegionName}] - is not assigned, no need this region.')
+                continue
+
             _, Offset, Size = GetFvRegionInfo (self.__FlashMapDict, RegionName)
             RegionInfo = self.__SplitRegion (RegionName, Offset, Size)
             self.__ImgInfo.update ({RegionInfo.Region: RegionInfo})
@@ -427,10 +437,19 @@ class _BiosBgupGenerator (object):
         """
         BiosBgupImg: bytearray = bytearray ()
         Offset     : int       = 0x0
+        IsAssigned : bool      = None
         IsFound    : bool      = None
         Value      : str       = None
 
         for RegionName in self.__BgupRegionOrder:
+            IsAssigned, _ = IsRegionInfoAssigned (
+                              DataDict = self.__BiosBgupInfo,
+                              Region   = RegionName,
+                              )
+            if not IsAssigned:
+                DEBUG (DEBUG_TRACE, f'[{RegionName}] - is not assigned, no need this region.')
+                continue
+
             IsFound, Value = SearchKeyInDict (self.__BiosBgupInfo, RegionName)
             if not IsFound:
                 raise ValueError (

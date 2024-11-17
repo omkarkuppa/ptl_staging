@@ -85,19 +85,19 @@ UpdatePeiMePolicyPreMem (
       Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMePeiPreMemConfigGuid, (VOID *) &MePeiPreMemConfig);
       ASSERT_EFI_ERROR (Status);
 #endif
-      COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.HeciTimeouts,  MePeiPreMemConfig->HeciTimeouts, MeSetup.HeciTimeouts);
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.HeciTimeouts,  MePeiPreMemConfig->HeciTimeouts, MeSetup.HeciTimeouts);
 
       //
       // Test policies
       //
-      COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DidInitStat, MePeiPreMemConfig->DidInitStat, MeSetup.DidInitStat);
-      COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableCpuReplacedPolling, MePeiPreMemConfig->DisableCpuReplacedPolling, MeSetup.DisableCpuReplacedPolling);
-      COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableMessageCheck, MePeiPreMemConfig->DisableMessageCheck, MeSetup.DisableMessageCheck);
-      COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.SkipMbpHob, MePeiPreMemConfig->SkipMbpHob, MeSetup.SkipMbpHob);
-      COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.HeciCommunication, MePeiPreMemConfig->HeciCommunication, MeSetup.HeciCommunication);
-      COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.HeciCommunication2, MePeiPreMemConfig->HeciCommunication2, MeSetup.HeciCommunication2);
-      COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.HeciCommunication3, MePeiPreMemConfig->HeciCommunication3, MeSetup.HeciCommunication3);
-      COMPARE_AND_UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.KtDeviceEnable, MePeiPreMemConfig->KtDeviceEnable, MeSetup.KtDeviceEnable);
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DidInitStat, MePeiPreMemConfig->DidInitStat, MeSetup.DidInitStat);
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableCpuReplacedPolling, MePeiPreMemConfig->DisableCpuReplacedPolling, MeSetup.DisableCpuReplacedPolling);
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableMessageCheck, MePeiPreMemConfig->DisableMessageCheck, MeSetup.DisableMessageCheck);
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SkipMbpHob, MePeiPreMemConfig->SkipMbpHob, MeSetup.SkipMbpHob);
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.HeciCommunication, MePeiPreMemConfig->HeciCommunication, MeSetup.HeciCommunication);
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.HeciCommunication2, MePeiPreMemConfig->HeciCommunication2, MeSetup.HeciCommunication2);
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.HeciCommunication3, MePeiPreMemConfig->HeciCommunication3, MeSetup.HeciCommunication3);
+      COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.KtDeviceEnable, MePeiPreMemConfig->KtDeviceEnable, MeSetup.KtDeviceEnable);
     }
   }
 

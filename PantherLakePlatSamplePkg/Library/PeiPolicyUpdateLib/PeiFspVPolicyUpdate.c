@@ -116,7 +116,7 @@ UpdatePeiFspVPolicy (
   }
 #endif
 
-  UPDATE_POLICY_V2 (FspVUpdateConfig->TestId, FspVUpdateConfig->TestId, FspVSetup.FspSVTestCaseId);
+  UPDATE_POLICY (FspVUpdateConfig->TestId, FspVUpdateConfig->TestId, FspVSetup.FspSVTestCaseId);
 
   return EFI_SUCCESS;
 }
@@ -192,7 +192,7 @@ UpdatePeiFspVPolicyPreMem (
   }
 #endif
 
-  UPDATE_POLICY_V2 (FspVUpdatePreMemConfig->TestId, FspVUpdatePreMemConfig->TestId, FspVSetup.FspMVTestCaseId);
+  UPDATE_POLICY (FspVUpdatePreMemConfig->TestId, FspVUpdatePreMemConfig->TestId, FspVSetup.FspMVTestCaseId);
 
   return EFI_SUCCESS;
 }

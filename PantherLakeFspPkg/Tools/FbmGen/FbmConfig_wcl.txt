@@ -29,4 +29,4 @@ ExcludeUpd:    True
 # FBM is signed with rsa-pss-sha256 algorithm for ACM verification.
 # Signing related parameters can refer to LT-CSS documents.
 #
-KeypairFilePath:    Intel\PantherLakeFspPkg\Tools\FbmGen\keypair.kp
+KeypairFilePath:    Intel\PantherLakeFspPkg\Tools\FbmGen\keypairInternalOnly.kp

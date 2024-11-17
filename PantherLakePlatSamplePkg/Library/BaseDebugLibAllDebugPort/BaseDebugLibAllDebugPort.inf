@@ -52,6 +52,7 @@
   DebugPrintErrorLevelLib
   TraceHubDebugLib
   Usb3DebugPortLib
+  SerialIoUartDebugHelperLib
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdDebugClearMemoryValue       ## SOMETIMES_CONSUMES

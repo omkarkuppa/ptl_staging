@@ -25,6 +25,8 @@
 #include <Library/FspFbmSupportLib.h>
 #include <Library/FspVerificationLib.h>
 #include <Library/BootGuardLib.h>
+#include <Library/FspMeasurementLib.h>
+#include <Library/BaseMemoryLib.h>
 
 FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
   FSP_VERIFY_API_WRAPPER_STRUCTURE_ID,
@@ -50,23 +52,29 @@ RebasePeiCoreFfs (
   );
 
 /**
-  Check if this is VerifiedBoot
-
-  @retval TRUE   This is VerifiedBoot
-  @retval FALSE  This is NOT VerifiedBoot
+  Rebase FSP-M image base address in FSP-M headr
 
 **/
-BOOLEAN
-IsVerifiedBoot (
+VOID
+RebaseFspmImageBase (
   VOID
-  )
-{
-  if ((AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO) & B_BOOT_GUARD_SACM_INFO_VERIFIED_BOOT) != 0) {
-    return TRUE;
-  } else {
-    return FALSE;
-  }
-}
+);
+
+/**
+  The Entry point of the FSP Wrapper Extract Guided Section
+
+  @param[in]  FspmBaseAddress   Base address of compressed FSP-M
+
+  @retval  RETURN_SUCCESS Decompression completed successfully
+  @retval  RETURN_INVALID_PARAMETER
+                          Not able to find FSPM FV.
+
+**/
+EFI_STATUS
+EFIAPI
+ExtractFspm (
+  IN UINT32                  FspmBaseAddress
+  );
 
 /**
   Get BSP Segment Base Address and Size infomation from BSPM_ELEMENT
@@ -145,25 +153,16 @@ LoadFspm (
     CpuDeadLoop ();
   }
 
-  if (IsVerifiedBoot () != FALSE) {
-    //
-    // In verified boot, we must verify FSP-M.
-    // Non FSP Signing flow should not come here!
-    //
-    if (Fbm == NULL) {
-      CpuDeadLoop ();
-    }
-
-    if (mFspVerifyApiWrapper.VerifyFspmApiWrapper == NULL) {
-      return EFI_DEVICE_ERROR;
-    }
-    DEBUG ((DEBUG_INFO, "FSP verifies FSPM region ...\n"));
-    Status = mFspVerifyApiWrapper.VerifyFspmApiWrapper (Bspm, Fbm, AvailableMemoryBuffer);
-    if (EFI_ERROR (Status)) {
-      CpuDeadLoop ();
-    }
+  if (mFspVerifyApiWrapper.VerifyFspmApiWrapper == NULL) {
+    return EFI_DEVICE_ERROR;
+  }
+  DEBUG ((DEBUG_INFO, "FSP verifies FSPM region ...\n"));
+  Status = mFspVerifyApiWrapper.VerifyFspmApiWrapper (Bspm, Fbm, AvailableMemoryBuffer);
+  if (EFI_ERROR (Status)) {
+    CpuDeadLoop ();
   }
 
+  RebaseFspmImageBase ();
   RebasePeiCoreFfs ((UINTN) Bspm->FspmBaseAddress);
 
   return EFI_SUCCESS;
@@ -224,10 +223,6 @@ LoadBspPreMem (
     if (Status == EFI_OUT_OF_RESOURCES) {
       CpuDeadLoop ();
     }
-  }
-
-  if (IsVerifiedBoot () == FALSE) {
-    return EFI_SUCCESS;
   }
 
   if (mFspVerifyApiWrapper.VerifyBspApiWrapper == NULL) {
@@ -326,27 +321,35 @@ FspLoadComponents (
   UINT32                         DataStackSize;
   FLASH_REGION_LIST              FlashRegionList;
   UINT8                          AvailableMemoryBuffer[HASH_CTX_LEN_MAX];
+  FSP_BUILD_MEASUREMENT_INFO     FspMeasurementInfo;
+  UINT32                         TpmActivePcrBanks;
 
   Bspm = LocateBspm ();
   if (Bspm == NULL) {
     return;
   }
 
-  if ((Bspm->FspmLoadingPolicy & BIT0) == SKIP_LOADING_FSPM && Bspm->BspSegmentCount == 0) {
+  if (Bspm->FspmLoadingPolicy & FSPM_COMPRESSED) {
+    ExtractFspm (Bspm->FspmBaseAddress);
+  }
+
+  Fbm = LocateFbm ();
+
+  //
+  // Check if signing is supported
+  //
+  if (!(IsSigningSupported (Fbm))) {
     return;
   }
 
-  //
-  // Get aligned data stack base and size
-  //
-  DataStackAlign ((UINT32) TopOfCar, &DataStackBase, &DataStackSize);
+  ZeroMem (&FspMeasurementInfo, sizeof (FSP_BUILD_MEASUREMENT_INFO));
+  InitializeTpmAndGetActivePcrs (FspMeasurementInfo, Bspm, &TpmActivePcrBanks);
 
   //
-  // Before loading FSP-M or BspPreMem to NEM, initialize the flash region list
+  // ACM will measure and extend FSP-O for measured boot (BTG 5)
+  // BIOS should do the same if it is verified boot
   //
-  InitializeFlashRegionList (&FlashRegionList);
-
-  Fbm = LocateFbm ();
+  Status = ExtendFspotRegion (FspMeasurementInfo, Fbm, TpmActivePcrBanks);
 
   if (TRUE) { // To-do : check if FSP-O/T is verified or not
     if (mFspVerifyApiWrapper.VerifyFspVersionApiWrapper == NULL) {
@@ -361,30 +364,35 @@ FspLoadComponents (
   }
 
   //
-  // Load FSP-M
+  // Get aligned data stack base and size
   //
-  if ((Bspm->FspmLoadingPolicy & BIT0) == LOADING_FSPM) {
-    //
-    // Todo: Get FbmValidationStatus from ACM published register
-    // if (FBM not valid) Fbm = NULL;
-    //
-    Status = LoadFspm (Bspm, Fbm, &FlashRegionList, DataStackBase, DataStackSize);
-    if (Status != EFI_SUCCESS) {
-      DEBUG ((DEBUG_ERROR, "Error: Fsp loads components failed, FSPM is not loaded! Status: %r!\n", Status));
-      return;
-    }
-  }
+  DataStackAlign ((UINT32) TopOfCar, &DataStackBase, &DataStackSize);
+
+  //
+  // Before loading FSP-M or BspPreMem to NEM, initialize the flash region list
+  //
+  InitializeFlashRegionList (&FlashRegionList);
 
   //
   // Load BspPreMem regions
   //
   if (Bspm->BspSegmentCount != 0) {
     Status = LoadBspPreMem (Bspm, &FlashRegionList, DataStackBase, DataStackSize);
-    if (Status != EFI_SUCCESS) {
-      DEBUG ((DEBUG_ERROR, "Error: Fsp loads components failed, BSP is not loaded! Status: %r\n", Status));
-      return;
+    if (Status == EFI_SUCCESS) {
+      ExtendBspRegion (FspMeasurementInfo, Bspm, TpmActivePcrBanks);
     }
   }
 
+  //
+  // Load FSP-M
+  //
+  if ((Bspm->FspmLoadingPolicy & BIT0) == LOADING_FSPM) {
+    Status = LoadFspm (Bspm, Fbm, &FlashRegionList, DataStackBase, DataStackSize);
+    if (Status == EFI_SUCCESS) {
+      ExtendFspmRegion (FspMeasurementInfo, Fbm, TpmActivePcrBanks);
+    }
+  }
+
+  FspBuildMeasurementInfo (FspMeasurementInfo);
   return;
 }

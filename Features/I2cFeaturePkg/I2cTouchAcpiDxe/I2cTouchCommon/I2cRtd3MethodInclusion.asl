@@ -100,7 +100,11 @@ Method (PON, 1, Serialized) /// _ON Method \n Turn on
   If (Arg0 == 0) {
     ADBG ("I2C Tpd PWR ON")
     // enable int line
-    \_SB.SGRA (DeRefOf (Index (PIRT,0)), DeRefOf (Index (PIRT,1)))
+    If (CondRefOf (TPDM)) {
+      If (LEqual (TPDM,1)) {
+        \_SB.SGRA (DeRefOf (Index (PIRT,0)), 1)
+      }
+    }
   }
   ElseIf (Arg0 == 1) {
     ADBG ("I2C Touch PWR ON")
@@ -112,7 +116,11 @@ Method (PON, 1, Serialized) /// _ON Method \n Turn on
       // update ONTM
       Store (Timer(), ONTM)
       // enable int line
-    \_SB.SGRA (DeRefOf (Index (TIRT,0)), DeRefOf (Index (TIRT,1)))
+      If (CondRefOf (TPLM)) {
+        If (LEqual (TPLM,1)) {
+          \_SB.SGRA (DeRefOf (Index (TIRT,0)), 1)
+        }
+      }
   }
 }
 
@@ -120,15 +128,21 @@ Method (POFF, 1, Serialized)  /// _OFF method \n Turn off
 {
   If (Arg0 == 0) {
     ADBG ("I2C Tpd PWR OFF")
-    // disable int li
-    Xor (DeRefOf (Index (PIRT,1)), 1, Local0)
-    \_SB.SGRA (DeRefOf (Index (PIRT,0)), Local0)
+    // disable int line
+    If (CondRefOf (TPDM)) {
+      If (LEqual (TPDM,1)) {
+        \_SB.SGRA (DeRefOf (Index (PIRT,0)), 0)
+      }
+    }
   }
   ElseIf (Arg0 == 1) {
     ADBG ("I2C Touch PWR OFF")
-      // disable int line
-    Xor (DeRefOf (Index (TIRT,1)), 1, Local0)
-    \_SB.SGRA (DeRefOf (Index (TIRT,0)), Local0)
+    // disable int line
+    If (CondRefOf (TPLM)) {
+      If (LEqual (TPLM,1)) {
+        \_SB.SGRA (DeRefOf (Index (TIRT,0)), 0)
+      }
+    }
     // Assert GPIO RST
     Xor (DeRefOf (Index (TRST,1)), 1, Local0)
     \_SB.SGOV (DeRefOf (Index (TRST,0)), Local0)

@@ -64,6 +64,7 @@
   gPsPlatformEraseVariableGuid                  ## CONSUMES
   gPsLpeSetupVariableGuid                       ## CONSUMES
   gPsRpeSetupVariableGuid                       ## CONSUMES
+  gMeBiosPayloadHobGuid                         ## CONSUMES
 
 [FixedPcd]
   gPsFeatureModuleTokenSpaceGuid.PcdPsSetupConfiguration                ## CONSUMES

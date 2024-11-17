@@ -49,13 +49,13 @@ UINT8  NO_OF_DEVICES_SEARCH_APP;
 
 #define SET_ATTRIBUTE_TYPE(_a, _t)  {(_a)->Header.Type.Length = UUID_16BIT_TYPE_LEN; (_a)->Header.Type.Data.Uuid16 = _t; }
 
-#define IS_ATTRIBUTE_PROPERTY_READ(x)               ((x & 0x02) >> 1)
-#define IS_ATTRIBUTE_PROPERTY_WRITE_NO_RESPONSE(x)  ((x & 0x04) >> 2)
-#define IS_ATTRIBUTE_PROPERTY_WRITE(x)              ((x & 0x08) >> 3)
-#define IS_ATTRIBUTE_PROPERTY_NOTIFY(x)             ((x & 0x10) >> 4)
-#define IS_ATTRIBUTE_PROPERTY_INDICATE(x)           ((x & 0x20) >> 5)
-#define IS_ATTRIBUTE_PROPERTY_AUTH_SIGNED_WRITE(x)  ((x & 0x40) >> 6)
-#define IS_ATTRIBUTE_EXTENDED_PROPERTY(x)           ((x & 0x80) >> 7)
+#define IS_ATTRIBUTE_PROPERTY_READ(x)			((x & 0x02) >> 1)
+#define IS_ATTRIBUTE_PROPERTY_WRITE_NO_RESPONSE(x)	((x & 0x04) >> 2)
+#define IS_ATTRIBUTE_PROPERTY_WRITE(x)			((x & 0x08) >> 3)
+#define IS_ATTRIBUTE_PROPERTY_NOTIFY(x)			((x & 0x10) >> 4)
+#define IS_ATTRIBUTE_PROPERTY_INDICATE(x)		((x & 0x20) >> 5)
+#define IS_ATTRIBUTE_PROPERTY_AUTH_SIGNED_WRITE(x)	((x & 0x40) >> 6)
+#define IS_ATTRIBUTE_EXTENDED_PROPERTY(x)		((x & 0x80) >> 7)
 
 #define ATTR_TYPE_CLIENT_CHARACTERISTIC_CONFIG_DESCRIPTOR_UUID  0x2902
 #define UEFI_APP_MAX_HID_INFO_LEN                               1000
@@ -65,25 +65,25 @@ UINT8  NO_OF_DEVICES_SEARCH_APP;
 
 char  *str_code[ATT_ERR_MAX] =
 {
-  "ATT_SUCCESS",
-  "ATT_ERR_INVALID_HANDLE",
-  "ATT_ERR_READ_NOT_PREMITTED",
-  "ATT_ERR_WRITE_NOT_PERMITTED",
-  "ATT_ERR_INVALID_PDU",
-  "ATT_ERR_INSUFF_AUTHENTICATION",
-  "ATT_ERR_REQ_NOT_SUPPORTED",
-  "ATT_ERR_INVALID_OFFSET",
-  "ATT_ERR_INSUFF_AUTHORIZATION",
-  "ATT_ERR_PREP_QUEUE_FULL",
-  "ATT_ERR_ATTRIB_NOT_FOUND",
-  "ATT_ERR_ATTRIB_NOT_LONG",
-  "ATT_ERR_INSUFF_ENCR_KEY_SIZE",
-  "ATT_ERR_INVALID_ATTRIB_VAL_LENGTH",
-  "ATT_ERR_UNLIKELY",
-  "ATT_ERR_INSUFF_ENCR",
-  "ATT_ERR_UNSUPPORTED_GRP_TYPE",
-  "ATT_ERR_INSUFF_RESOURCE",
-  "ATT_ERR_LOCAL_ERROR"
+		"ATT_SUCCESS",
+		"ATT_ERR_INVALID_HANDLE",
+		"ATT_ERR_READ_NOT_PREMITTED",
+		"ATT_ERR_WRITE_NOT_PERMITTED",
+		"ATT_ERR_INVALID_PDU",
+		"ATT_ERR_INSUFF_AUTHENTICATION",
+		"ATT_ERR_REQ_NOT_SUPPORTED",
+		"ATT_ERR_INVALID_OFFSET",
+		"ATT_ERR_INSUFF_AUTHORIZATION",
+		"ATT_ERR_PREP_QUEUE_FULL",
+		"ATT_ERR_ATTRIB_NOT_FOUND",
+		"ATT_ERR_ATTRIB_NOT_LONG",
+		"ATT_ERR_INSUFF_ENCR_KEY_SIZE",
+		"ATT_ERR_INVALID_ATTRIB_VAL_LENGTH",
+		"ATT_ERR_UNLIKELY",
+		"ATT_ERR_INSUFF_ENCR",
+		"ATT_ERR_UNSUPPORTED_GRP_TYPE",
+		"ATT_ERR_INSUFF_RESOURCE",
+		"ATT_ERR_LOCAL_ERROR"
 };
 
 typedef struct {
@@ -537,106 +537,91 @@ delete_hid_info (
 /**
  * Store HID information in persitent storage for given connection id
  */
-static void
-store_hid_info (
-  UINT8  conn_id
-  )
+static void store_hid_info(UINT8 conn_id)
 {
-  BLUETOOTH_LE_ADDRESS  remote_bd_addr;
-  UINTN                 data_size = 0;
-  UINT8                 *data, *p;
-  LIST_ENTRY            *Link;
-  uefi_app_hid_info_t   *hid_info;
-  BT_LE_DEV_INFO        *dev_info;
-  remote_device_t       *dev = &uefi_app_data.remote_device_list[conn_id];
-  CHAR16                hid_bd_addr_str[HID_BD_ADDR_STR_LEN];
-  EFI_STATUS            status;
+	BLUETOOTH_LE_ADDRESS remote_bd_addr;
+	UINTN data_size = 0;
+	UINT8 *data, *p;
+	LIST_ENTRY *Link;
+	uefi_app_hid_info_t *hid_info;
+	BT_LE_DEV_INFO *dev_info;
+	remote_device_t *dev = &uefi_app_data.remote_device_list[conn_id];
+	CHAR16 hid_bd_addr_str[HID_BD_ADDR_STR_LEN];
+	EFI_STATUS status;
 
-  logi ("");
-  BDADDR_ARR_TO_BDADDR_STRUCT (&remote_bd_addr, dev->bdaddr, dev->bdaddr_type);
+	logi("");
+	BDADDR_ARR_TO_BDADDR_STRUCT(&remote_bd_addr, dev->bdaddr, dev->bdaddr_type);
 
-  data = AllocateZeroPool (UEFI_APP_MAX_HID_INFO_LEN);
-  if (!data) {
-    loge ("AllocateZeroPool failed for %d bytes", UEFI_APP_MAX_HID_INFO_LEN);
-    return;
-  }
+	data = AllocateZeroPool(UEFI_APP_MAX_HID_INFO_LEN);
+	if (!data)
+	{
+		loge("AllocateZeroPool failed for %d bytes", UEFI_APP_MAX_HID_INFO_LEN);
+		return;
+	}
 
-  p = data;
+	p = data;
 
-  Link = GetFirstNode (&dev->hid_info);
-  while (!IsNull (&dev->hid_info, Link)) {
-    if ((data_size + sizeof (hid_info->handle) + sizeof (hid_info->type) + sizeof (hid_info->uuid)) > UEFI_APP_MAX_HID_INFO_LEN) {
-      break;
-    }
+	Link = GetFirstNode(&dev->hid_info);
+	while (!IsNull(&dev->hid_info, Link))
+	{
+		if ((data_size + sizeof(hid_info->handle) + sizeof(hid_info->type) + sizeof(hid_info->uuid)) > UEFI_APP_MAX_HID_INFO_LEN)
+			break;
+		hid_info = UEFI_APP_HID_INFO_FROM_LINK(Link);
+		UINT16_TO_STREAM(p, hid_info->handle);
+		UINT16_TO_STREAM(p, hid_info->type);
+		UINT16_TO_STREAM(p, hid_info->uuid);
+		data_size += (sizeof(hid_info->handle) + sizeof(hid_info->type) + sizeof(hid_info->uuid));
 
-    hid_info = UEFI_APP_HID_INFO_FROM_LINK (Link);
-    UINT16_TO_STREAM (p, hid_info->handle);
-    UINT16_TO_STREAM (p, hid_info->type);
-    UINT16_TO_STREAM (p, hid_info->uuid);
-    data_size += (sizeof (hid_info->handle) + sizeof (hid_info->type) + sizeof (hid_info->uuid));
+		if (hid_info->type == BluetoothGattTypePrimaryService)
+		{
+			/* For Primary Service store the end handle */
+			if ((data_size + sizeof(hid_info->extra_info.end_handle)) > UEFI_APP_MAX_HID_INFO_LEN)
+				break;
+			UINT16_TO_STREAM(p, hid_info->extra_info.end_handle);
+			data_size += sizeof(hid_info->extra_info.end_handle);
+		}
+		else if(hid_info->type == BluetoothGattTypeCharacteristic)
+		{
+			/* For Characteristic store the property */
+			if ((data_size + sizeof(hid_info->extra_info.property)) > UEFI_APP_MAX_HID_INFO_LEN)
+				break;
+			UINT8_TO_STREAM(p, hid_info->extra_info.property);
+			data_size += sizeof(hid_info->extra_info.property);
+		}
 
-    if (hid_info->type == BluetoothGattTypePrimaryService) {
-      /* For Primary Service store the end handle */
-      if ((data_size + sizeof (hid_info->extra_info.end_handle)) > UEFI_APP_MAX_HID_INFO_LEN) {
-        break;
-      }
+		/* Store data length */
+		if ((data_size + sizeof(UINT16)) > UEFI_APP_MAX_HID_INFO_LEN)
+			break;
+		UINT16_TO_STREAM(p, (UINT16)hid_info->data_len);
+		data_size += sizeof(UINT16);
 
-      UINT16_TO_STREAM (p, hid_info->extra_info.end_handle);
-      data_size += sizeof (hid_info->extra_info.end_handle);
-    } else if (hid_info->type == BluetoothGattTypeCharacteristic) {
-      /* For Characteristic store the property */
-      if ((data_size + sizeof (hid_info->extra_info.property)) > UEFI_APP_MAX_HID_INFO_LEN) {
-        break;
-      }
+		/* Store data if available */
+		if (hid_info->data_len && hid_info->data)
+		{
+			if ((data_size + hid_info->data_len) > UEFI_APP_MAX_HID_INFO_LEN)
+				break;
+			memcpy(p, hid_info->data, hid_info->data_len);
+			p += hid_info->data_len;
+			data_size += hid_info->data_len;
+		}
 
-      UINT8_TO_STREAM (p, hid_info->extra_info.property);
-      data_size += sizeof (hid_info->extra_info.property);
-    }
+		Link = GetNextNode(&dev->hid_info, Link);
+	}
 
-    /* Store data length */
-    if ((data_size + sizeof (UINT16)) > UEFI_APP_MAX_HID_INFO_LEN) {
-      break;
-    }
+	dev_info = BtLeFindDeviceInfo(uefi_app_data.BtHcDev, &remote_bd_addr);
+	if (!dev_info) return;
 
-    UINT16_TO_STREAM (p, (UINT16)hid_info->data_len);
-    data_size += sizeof (UINT16);
+	logd("Storing HID Information size: %d", data_size);
+	memset(hid_bd_addr_str, 0, sizeof(hid_bd_addr_str));
+	HID_BDADDR_TO_STRING(hid_bd_addr_str, dev_info->IDAddr.Address, dev_info->IDAddr.Type);
 
-    /* Store data if available */
-    if (hid_info->data_len && hid_info->data) {
-      if ((data_size + hid_info->data_len) > UEFI_APP_MAX_HID_INFO_LEN) {
-        break;
-      }
+	status = gRT->SetVariable(hid_bd_addr_str, &gEfiBluetoothLeConfigProtocolGuid,
+				EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+				data_size, data);
+	if (EFI_ERROR (status))
+		loge("Error while storing HID Information");
 
-      memcpy (p, hid_info->data, hid_info->data_len);
-      p         += hid_info->data_len;
-      data_size += hid_info->data_len;
-    }
-
-    Link = GetNextNode (&dev->hid_info, Link);
-  }
-
-  dev_info = BtLeFindDeviceInfo (uefi_app_data.BtHcDev, &remote_bd_addr);
-  if (!dev_info) {
-    FreePool (data);
-    return;
-  }
-
-  logd ("Storing HID Information size: %d", data_size);
-  memset (hid_bd_addr_str, 0, sizeof (hid_bd_addr_str));
-  HID_BDADDR_TO_STRING (hid_bd_addr_str, dev_info->IDAddr.Address, dev_info->IDAddr.Type);
-
-  status = gRT->SetVariable (
-                             hid_bd_addr_str,
-                             &gEfiBluetoothLeConfigProtocolGuid,
-                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-                             data_size,
-                             data
-                             );
-  if (EFI_ERROR (status)) {
-    loge ("Error while storing HID Information");
-  }
-
-  FreePool (data);
+	FreePool(data);
 }
 
 static EFI_STATUS
@@ -1138,198 +1123,185 @@ check_hid_support (
  * If HID information is available then map those information to Remote device
  * Attribute database
  */
-static BOOLEAN
-is_service_discovery_required (
-  UINT8  conn_id
-  )
+static BOOLEAN is_service_discovery_required(UINT8 conn_id)
 {
-  UINTN            data_size;
-  UINT8            *data, *p;
-  remote_device_t  *dev   = &uefi_app_data.remote_device_list[conn_id];
-  UINT16           handle = 0;
-  UINT16           type;
-  UINT16           uuid;
-  UINT16           index;
-  UINT16           value_len  = 0;
-  UINT8            property   = 0;
-  UINT16           end_handle = 0;
-  EFI_STATUS       status;
-  CHAR16           hid_bd_addr_str[HID_BD_ADDR_STR_LEN];
+	UINTN data_size;
+	UINT8 *data, *p;
+	remote_device_t *dev = &uefi_app_data.remote_device_list[conn_id];
+	UINT16 handle = 0;
+	UINT16 type;
+	UINT16 uuid;
+	UINT16 index;
+	UINT16 value_len = 0;
+	UINT8 property = 0;
+	UINT16 end_handle = 0;
+	EFI_STATUS status;
+	CHAR16 hid_bd_addr_str[HID_BD_ADDR_STR_LEN];
 
-  logi ("");
-  data      = NULL;
-  data_size = 0;
-  memset (hid_bd_addr_str, 0, sizeof (hid_bd_addr_str));
-  HID_BDADDR_TO_STRING (hid_bd_addr_str, dev->bdaddr, dev->bdaddr_type);
+	logi("");
+	data = NULL;
+	data_size = 0;
+	memset(hid_bd_addr_str, 0, sizeof(hid_bd_addr_str));
+	HID_BDADDR_TO_STRING(hid_bd_addr_str, dev->bdaddr, dev->bdaddr_type);
 
-  status = gRT->GetVariable (
-                             hid_bd_addr_str,
-                             &gEfiBluetoothLeConfigProtocolGuid,
-                             NULL,
-                             &data_size,
-                             NULL
-                             );
+	status = gRT->GetVariable(hid_bd_addr_str, &gEfiBluetoothLeConfigProtocolGuid,
+				NULL, &data_size, NULL);
 
-  if (data_size) {
-    data = AllocateZeroPool (data_size);
-    if (!data) {
-      loge ("AllocateZeroPool failed for %d bytes", data_size);
-      return TRUE;                   // Return TRUE to force service discovery
-    }
+	if (data_size)
+	{
+		data = AllocateZeroPool(data_size);
+		if (!data)
+		{
+			loge("AllocateZeroPool failed for %d bytes", data_size);
+			return TRUE; //Return TRUE to force service discovery
+		}
 
-    status = gRT->GetVariable (
-                               hid_bd_addr_str,
-                               &gEfiBluetoothLeConfigProtocolGuid,
-                               NULL,
-                               &data_size,
-                               data
-                               );
-    if (!EFI_ERROR (status)) {
-      p = data;
-      if (data_size >= sizeof (handle)) {
-        STREAM_TO_UINT16 (handle, p);
-        data_size -= sizeof (handle);
-      }
+		status = gRT->GetVariable(hid_bd_addr_str, &gEfiBluetoothLeConfigProtocolGuid,
+				NULL, &data_size, data);
+		if(!EFI_ERROR(status))
+		{
+			p = data;
+			if (data_size >= sizeof(handle))
+			{
+				STREAM_TO_UINT16(handle, p);
+				data_size -= sizeof(handle);
+			}
 
-      if (handle == 0) {
-        logd ("Peer device does not support HID");
-        FreePool (data);
-        return TRUE;
-      }
+			if (handle == 0)
+			{
+				logd("Peer device does not support HID");
+				FreePool(data);
+				return TRUE;
+			}
 
-      logd ("Peer HID info found in DB");
-      InitializeListHead (&uefi_app_data.remote_device_list[conn_id].hid_info);
+			logd("Peer HID info found in DB");
+			InitializeListHead (&uefi_app_data.remote_device_list[conn_id].hid_info);
 
-      /* Restore it to local Attribute database */
-      while ((handle != 0) && (data_size >= (sizeof (type) + sizeof (uuid)))) {
-        STREAM_TO_UINT16 (type, p);
-        STREAM_TO_UINT16 (uuid, p);
-        data_size -= (sizeof (type) + sizeof (uuid));
+			/* Restore it to local Attribute database */
+			while((handle != 0) && (data_size >= (sizeof(type) + sizeof(uuid))))
+			{
+				STREAM_TO_UINT16(type, p);
+				STREAM_TO_UINT16(uuid, p);
+				data_size -= (sizeof(type) + sizeof(uuid));
 
-        if (type == BluetoothGattTypePrimaryService) {
-          EFI_BLUETOOTH_GATT_PRIMARY_SERVICE_INFO  *attr;
+				if(type == BluetoothGattTypePrimaryService)
+				{
+					EFI_BLUETOOTH_GATT_PRIMARY_SERVICE_INFO *attr;
 
-          if (data_size < (sizeof (end_handle) + sizeof (value_len))) {
-            break;
-          }
+					if(data_size < (sizeof(end_handle) + sizeof(value_len)))
+						break;
 
-          attr = AllocateZeroPool (sizeof (EFI_BLUETOOTH_GATT_PRIMARY_SERVICE_INFO));
-          if (!attr) {
-            loge ("AllocateZeroPool failure returns NULL");
-            FreePool (data);
-            return FALSE;
-          }
+					attr = AllocateZeroPool(sizeof(EFI_BLUETOOTH_GATT_PRIMARY_SERVICE_INFO));
+					if (!attr)
+					{
+						loge("AllocateZeroPool failure returns NULL");
+						return FALSE;
+					}
+					SET_ATTRIBUTE_TYPE(attr, BluetoothGattTypePrimaryService);
+					attr->Header.AttributeHandle = handle;
+					STREAM_TO_UINT16(end_handle, p);
+					data_size -= sizeof(end_handle);
+					attr->EndGroupHandle = end_handle;
+					attr->ServiceUuid.Length = UUID_16BIT_TYPE_LEN;
+					attr->ServiceUuid.Data.Uuid16 = uuid;
+					index = dev->free_handle;
+					dev->BtLeSbDev->AttrDatabase[index] = &attr->Header;
+				}
+				else if(type == BluetoothGattTypeCharacteristic)
+				{
+					EFI_BLUETOOTH_GATT_CHARACTERISTIC_INFO *attr;
 
-          SET_ATTRIBUTE_TYPE (attr, BluetoothGattTypePrimaryService);
-          attr->Header.AttributeHandle = handle;
-          STREAM_TO_UINT16 (end_handle, p);
-          data_size                          -= sizeof (end_handle);
-          attr->EndGroupHandle                = end_handle;
-          attr->ServiceUuid.Length            = UUID_16BIT_TYPE_LEN;
-          attr->ServiceUuid.Data.Uuid16       = uuid;
-          index                               = dev->free_handle;
-          dev->BtLeSbDev->AttrDatabase[index] = &attr->Header;
-        } else if (type == BluetoothGattTypeCharacteristic) {
-          EFI_BLUETOOTH_GATT_CHARACTERISTIC_INFO  *attr;
+					if(data_size < (sizeof(property) + sizeof(value_len)))
+						break;
 
-          if (data_size < (sizeof (property) + sizeof (value_len))) {
-            break;
-          }
+					attr = AllocateZeroPool(sizeof(EFI_BLUETOOTH_GATT_CHARACTERISTIC_INFO));
+					if (!attr)
+					{
+						loge("AllocateZeroPool failed of size:%d bytes", sizeof(EFI_BLUETOOTH_GATT_CHARACTERISTIC_INFO));
+						return FALSE;
+					}
+					SET_ATTRIBUTE_TYPE(attr, BluetoothGattTypeCharacteristic);
+					attr->Header.AttributeHandle = handle - 1;
+					STREAM_TO_UINT8(property, p);
+					data_size -= sizeof(property);
+					attr->CharacteristicProperties = property;
+					attr->CharacteristicValueHandle = handle;
+					attr->CharacteristicUuid.Length = UUID_16BIT_TYPE_LEN;
+					attr->CharacteristicUuid.Data.Uuid16 = uuid;
+					index = att_db_get_idx_from_hdl(conn_id, handle - 1);
+					if (index < BT_LE_PER_DEV_ATTR)
+						dev->BtLeSbDev->AttrDatabase[index] = &attr->Header;
 
-          attr = AllocateZeroPool (sizeof (EFI_BLUETOOTH_GATT_CHARACTERISTIC_INFO));
-          if (!attr) {
-            loge ("AllocateZeroPool failed of size:%d bytes", sizeof (EFI_BLUETOOTH_GATT_CHARACTERISTIC_INFO));
-            FreePool (data);
-            return FALSE;
-          }
+					attr = AllocateZeroPool(sizeof(EFI_BLUETOOTH_GATT_CHARACTERISTIC_INFO));
+					if (!attr)
+					{
+						loge("AllocateZeroPool failed of size:%d bytes", sizeof(EFI_BLUETOOTH_GATT_CHARACTERISTIC_INFO));
+						return FALSE;
+					}
+					SET_ATTRIBUTE_TYPE(attr, uuid);
+					attr->Header.AttributeHandle = handle;
+					attr->CharacteristicProperties = property;
+					attr->CharacteristicValueHandle = handle;
+					attr->CharacteristicUuid.Length = UUID_16BIT_TYPE_LEN;
+					attr->CharacteristicUuid.Data.Uuid16 = uuid;
+					index = att_db_get_idx_from_hdl(conn_id, handle);
+					if (index < BT_LE_PER_DEV_ATTR)
+						dev->BtLeSbDev->AttrDatabase[index] = &attr->Header;
+				}
+				else if(type == BluetoothGattTypeCharacteristicExtendedProperties)
+				{
+					EFI_BLUETOOTH_GATT_CHARACTERISTIC_DESCRIPTOR_INFO *attr;
 
-          SET_ATTRIBUTE_TYPE (attr, BluetoothGattTypeCharacteristic);
-          attr->Header.AttributeHandle = handle - 1;
-          STREAM_TO_UINT8 (property, p);
-          data_size                           -= sizeof (property);
-          attr->CharacteristicProperties       = property;
-          attr->CharacteristicValueHandle      = handle;
-          attr->CharacteristicUuid.Length      = UUID_16BIT_TYPE_LEN;
-          attr->CharacteristicUuid.Data.Uuid16 = uuid;
-          index                                = att_db_get_idx_from_hdl (conn_id, handle - 1);
-          if (index < BT_LE_PER_DEV_ATTR) {
-            dev->BtLeSbDev->AttrDatabase[index] = &attr->Header;
-          }
+					attr = AllocateZeroPool(sizeof(EFI_BLUETOOTH_GATT_CHARACTERISTIC_DESCRIPTOR_INFO));
+					if (!attr)
+					{
+						loge("AllocateZeroPool failed of size:%d bytes", sizeof(EFI_BLUETOOTH_GATT_CHARACTERISTIC_DESCRIPTOR_INFO));
+						return FALSE;
+					}
+					SET_ATTRIBUTE_TYPE(attr, BluetoothGattTypeCharacteristicExtendedProperties);
+					attr->Header.AttributeHandle = handle;
+					attr->CharacteristicDescriptorUuid.Length = UUID_16BIT_TYPE_LEN;
+					attr->CharacteristicDescriptorUuid.Data.Uuid16 = uuid;
+					index = att_db_get_idx_from_hdl(conn_id, handle);
+					if (index < BT_LE_PER_DEV_ATTR)
+						dev->BtLeSbDev->AttrDatabase[index] = &attr->Header;
+				}
 
-          attr = AllocateZeroPool (sizeof (EFI_BLUETOOTH_GATT_CHARACTERISTIC_INFO));
-          if (!attr) {
-            loge ("AllocateZeroPool failed of size:%d bytes", sizeof (EFI_BLUETOOTH_GATT_CHARACTERISTIC_INFO));
-            FreePool (data);
-            return FALSE;
-          }
+				if(data_size >= sizeof(value_len))
+				{
+					STREAM_TO_UINT16(value_len, p);
+					data_size -= sizeof(value_len);
+				}
 
-          SET_ATTRIBUTE_TYPE (attr, uuid);
-          attr->Header.AttributeHandle         = handle;
-          attr->CharacteristicProperties       = property;
-          attr->CharacteristicValueHandle      = handle;
-          attr->CharacteristicUuid.Length      = UUID_16BIT_TYPE_LEN;
-          attr->CharacteristicUuid.Data.Uuid16 = uuid;
-          index                                = att_db_get_idx_from_hdl (conn_id, handle);
-          if (index < BT_LE_PER_DEV_ATTR) {
-            dev->BtLeSbDev->AttrDatabase[index] = &attr->Header;
-          }
-        } else if (type == BluetoothGattTypeCharacteristicExtendedProperties) {
-          EFI_BLUETOOTH_GATT_CHARACTERISTIC_DESCRIPTOR_INFO  *attr;
+				if (data_size < value_len)
+					break;
 
-          attr = AllocateZeroPool (sizeof (EFI_BLUETOOTH_GATT_CHARACTERISTIC_DESCRIPTOR_INFO));
-          if (!attr) {
-            loge ("AllocateZeroPool failed of size:%d bytes", sizeof (EFI_BLUETOOTH_GATT_CHARACTERISTIC_DESCRIPTOR_INFO));
-            FreePool (data);
-            return FALSE;
-          }
+				/* Store Hid Info in local list */
+				if (type == BluetoothGattTypePrimaryService)
+					store_hid_info_to_list(conn_id, handle, type, uuid, end_handle, p, (UINTN)value_len);
+				else
+					store_hid_info_to_list(conn_id, handle, type, uuid, property, p, (UINTN)value_len);
 
-          SET_ATTRIBUTE_TYPE (attr, BluetoothGattTypeCharacteristicExtendedProperties);
-          attr->Header.AttributeHandle                   = handle;
-          attr->CharacteristicDescriptorUuid.Length      = UUID_16BIT_TYPE_LEN;
-          attr->CharacteristicDescriptorUuid.Data.Uuid16 = uuid;
-          index                                          = att_db_get_idx_from_hdl (conn_id, handle);
-          if (index < BT_LE_PER_DEV_ATTR) {
-            dev->BtLeSbDev->AttrDatabase[index] = &attr->Header;
-          }
-        }
+				p += value_len;
+				data_size -= value_len;
 
-        if (data_size >= sizeof (value_len)) {
-          STREAM_TO_UINT16 (value_len, p);
-          data_size -= sizeof (value_len);
-        }
+				/* Break the loop if full data has been read */
+				if (data_size < sizeof(handle))
+					break;
 
-        if (data_size < value_len) {
-          break;
-        }
+				/* Get Next Handle */
+				STREAM_TO_UINT16(handle, p);
+				data_size -= sizeof(handle);
+			}
+		}
 
-        /* Store Hid Info in local list */
-        if (type == BluetoothGattTypePrimaryService) {
-          store_hid_info_to_list (conn_id, handle, type, uuid, end_handle, p, (UINTN)value_len);
-        } else {
-          store_hid_info_to_list (conn_id, handle, type, uuid, property, p, (UINTN)value_len);
-        }
+		FreePool(data);
+		return FALSE;
+	}
 
-        p         += value_len;
-        data_size -= value_len;
+	logd("Peer HID info not found in DB");
 
-        /* Break the loop if full data has been read */
-        if (data_size < sizeof (handle)) {
-          break;
-        }
-
-        /* Get Next Handle */
-        STREAM_TO_UINT16 (handle, p);
-        data_size -= sizeof (handle);
-      }
-    }
-
-    FreePool (data);
-    return FALSE;
-  }
-
-  logd ("Peer HID info not found in DB");
-
-  return TRUE;
+	return TRUE;
 }
 
 static void

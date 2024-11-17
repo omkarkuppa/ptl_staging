@@ -3219,6 +3219,8 @@ PlatformBootManagerBeforeConsole (
   // Unload BLE driver if it is disabled in setup
   //
   DataSize = sizeof (CNV_VFR_CONFIG_SETUP);
+  ZeroMem (&CnvSetup, DataSize);
+#if FixedPcdGetBool (PcdCnvFeatureEnable) == 1
   Status = gRT->GetVariable (
                   L"CnvSetup",
                   &gCnvFeatureSetupGuid,
@@ -3230,6 +3232,7 @@ PlatformBootManagerBeforeConsole (
     ASSERT_EFI_ERROR (Status);
     return;
   }
+#endif
   if (CnvSetup.PrebootBleEnable == 0) {
     UnloadDriver (&gBluetoothHciImageGuid, L"Intel BT Hci Driver");
   }

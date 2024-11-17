@@ -165,7 +165,7 @@ External (\_SB.PEPD.CUCO, MethodObj)
 //
 Method (PRCI, 0, Serialized)
 {
-  PEPV = 0x00
+  PEPV = 0x01
   If (CondRefOf (\_SB.PEPD.CUCO)) {
     PEPV = \_SB.PEPD.CUCO (PEPV)
   }

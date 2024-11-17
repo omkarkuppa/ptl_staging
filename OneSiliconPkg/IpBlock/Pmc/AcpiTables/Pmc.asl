@@ -170,6 +170,12 @@ Field (PWMR, DWordAcc, NoLock, Preserve) {
   Offset (R_PMC_PWRM_IPC_RBUF3), // IPC Read Buffer (IPC_RBUF3)
   IRB3, 32,         // [31:0] Read Buffer (RBUF)
 
+  offset (R_PMC_PWRM_MIN_TEMP), // Min Temperature
+  MTEM, 9,
+  Offset (R_PMC_PWRM_TSDTR_THRESH), //Thermal Sensor Dynamic Temperature Range PCIe Threshold
+  HIVA, 9,          // [8:0] DTR High Value (DTRHIVAL)
+      , 7,
+  LOVA, 9,          // [24:16] DTR Low Value (DTRLOVAL)
   Offset (R_PMC_PWRM_WADT_AC),
   //
   // AdvancedFeaturesBegin
@@ -282,4 +288,55 @@ Method (CFAE, 1, NotSerialized) {
     }
   }
   Return (Buffer () {0})
+}
+
+//
+// Compare input temperature 0 and temperature 1
+// return value
+// 1 - temperature 0 > temperature 1
+// 0 - temperature 0 <=  temperature 1
+//
+Method (TCMP, 2) {
+  And (Arg0, 0x100, Local0)
+  And (Arg1, 0x100, Local1)
+    // Arg0 is negative and Arg1 is negative
+  If (LAnd (Local0, Local1)) {
+    If (LGreater (Arg0, Arg1)) {
+      return (1)
+    }
+  }
+  // Arg0 is positive and Arg1 is positive
+  If (LAnd (LNot (Local0), LNot (Local1))) {
+    If (LGreater (Arg0, Arg1)) {
+      return (1)
+    }
+  }
+
+  // Arg0 is positive and Arg1 is negative
+  if (LAnd(Not (Local0), Local1)) {
+    return (1)
+  }
+  return (0)
+}
+
+//
+//Compare MIN_TEMP, DTRHIVAL and DTRLOVAL
+//return value
+//1 - MIN_TEMP > DTR HIVAL
+//2 - MIN_TEMP < DTR LOVAL
+//0-  others
+//
+Method (MTDL) 
+{
+  Local0 = TCMP (MTEM, HIVA)
+  If (LEqual (Local0, 1)) {
+    return (1)
+  }
+
+  Local0 = TCMP (MTEM, LOVA)
+  If (LEqual (Local0, 0)) {
+    return (2)
+  }
+
+  return (0)
 }

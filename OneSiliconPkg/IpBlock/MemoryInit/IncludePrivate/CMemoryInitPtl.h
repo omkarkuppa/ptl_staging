@@ -47,7 +47,7 @@ void
 UnlockMemory (
   IN CONST MrcParameters    *CONST  MrcData
   );
-  
+
 /**
   Determine whether a cold reset of the platform is required.
   Note that the memory configuration saved data must be valid.

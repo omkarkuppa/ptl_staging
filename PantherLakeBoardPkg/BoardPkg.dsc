@@ -183,8 +183,12 @@
   0x00000005|SkuIdPtlUHLp5MemSktmRvp
   0x00000011|SkuIdPtlHLp5Gcs1
   0x00000012|SkuIdPtlHLp5Gcs2
+  0x00000015|SkuIdPtlUHLp5Adk1
+  0x00000016|SkuIdPtlUHLp5Adk2
   0x00010007|SkuIdPtlUHLp5AepBom
   0x00000007|SkuIdPtlUHLp5Aep|SkuIdPtlUHLp5AepBom
+  0x08000010|SkuIdWclNDdr5Rvp1
+  0x0A000010|SkuIdWclNDdr5Rvp1HDMI|SkuIdWclNDdr5Rvp1
 
 # Keeping this section as an example to define SKUs that can inherit parent
 # properties and define a section by its own identifier as well.
@@ -269,12 +273,19 @@
   [Defines]
     DEFINE FMP_CLIENT_PLATFORM_NAME = PantherLake
 
+    #
+    # Set the CSME_GENERATION as 0 since not product yet.
+    # This would allow the CSME capsule which signed sample test key.
+    # (3K test keys from platform sample code.)
+    #
+    DEFINE CSME_GENERATION          = 0
+
   [PcdsFixedAtBuild]
     #
     # Certificates used to authenticate capsule update image
     #
-    # Using Pkcs7 test keys from EDKII open source and 3K test keys from platform sample code. This cannot be used in product.
-    !include CapsuleFeaturePkg/SigningKeys/TestRoot_TestRoo3K.inc
+    # Using PKCS#7 3K test keys from platform sample code. This cannot be used in product.
+    !include CapsuleFeaturePkg/SigningKeys/TestRoot3K.inc
 
   !include CapsuleFeaturePkg/Include/CapsuleFeature.dsc
 !endif
@@ -512,7 +523,6 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   PlatformEcResetLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformEcResetLib/PlatformEcResetLib.inf
   PlatformMeUpdateHookLib|CapsuleFeaturePkg/Library/PlatformMeUpdateHookLibNull/PlatformMeUpdateHookLibNull.inf
   PlatformDxeBootStateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformDxeBootStateHookLib/PlatformDxeBootStateHookLib.inf
-  FoxvilleDeviceLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/FoxvilleDeviceLibI225/FoxvilleDeviceLibI225.inf
   PayloadResiliencySupportLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PayloadResiliencySupportLib/PayloadResiliencySupportLib.inf
 !else
   PlatformWdtLib|CapsuleFeaturePkg/Library/PlatformWdtLibNull/PlatformWdtLibNull.inf
@@ -677,7 +687,6 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   SortLib|MdeModulePkg/Library/BaseSortLib/BaseSortLib.inf
 !endif
 
-  PlatformFspVerificationLib|PantherLakeBoardPkg/Features/FspWrapperFeaturePkg/PeiPlatformFspsVerificationLib/PeiPlatformFspsVerificationLib.inf
 
 [LibraryClasses.common.DXE_DRIVER, LibraryClasses.common.UEFI_DRIVER, LibraryClasses.common.UEFI_APPLICATION]
 !if gBoardModuleTokenSpaceGuid.PcdModularCryptoEnable == TRUE
@@ -878,6 +887,7 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   ProtectedVariableLib|ProtectedVariablePkg/Library/ProtectedVariableLib/SmmProtectedVariableLib.inf
   SortLib|MdeModulePkg/Library/BaseSortLib/BaseSortLib.inf
 !endif
+  PostCodeLib|$(PLATFORM_SI_PACKAGE)/Library/BasePostCodeLibPort80TraceHubSmm/BasePostCodeLibPort80TraceHubSmm.inf
 
 [LibraryClasses.X64.DXE_RUNTIME_DRIVER]
   ReportStatusCodeLib|MdeModulePkg/Library/RuntimeDxeReportStatusCodeLib/RuntimeDxeReportStatusCodeLib.inf
@@ -926,10 +936,7 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
 #
 !include $(PLATFORM_BOARD_PACKAGE)/Include/Dsc/CorePeiInclude.dsc
 
-$(SILICON_PRODUCT_PATH)/EarlyDevices/EarlyDevices.inf {
-  <PcdsFixedAtBuild>
-    gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|0
-}
+$(SILICON_PRODUCT_PATH)/EarlyDevices/EarlyDevices.inf
 $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpiInitPei.inf
 
 #
@@ -1213,8 +1220,6 @@ $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/Pei/PlatformStatusCodeHandle
       NULL|SecurityPkg/Library/HashInstanceLibSha512/HashInstanceLibSha512.inf
       NULL|SecurityPkg/Library/HashInstanceLibSm3/HashInstanceLibSm3.inf
 !endif
-    <PcdsFixedAtBuild>
-      gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig|0x0000000F  # Enable Fsp Measurement
     }
   IntelFsp2WrapperPkg/FspsWrapperPeim/FspsWrapperPeim.inf {
     <LibraryClasses>
@@ -1230,8 +1235,6 @@ $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/Pei/PlatformStatusCodeHandle
       NULL|SecurityPkg/Library/HashInstanceLibSha512/HashInstanceLibSha512.inf
       NULL|SecurityPkg/Library/HashInstanceLibSm3/HashInstanceLibSm3.inf
 !endif
-    <PcdsFixedAtBuild>
-      gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig|0x0000000F  # Enable Fsp Measurement
   }
 
 !if gNvmeFeaturePkgTokenSpaceGuid.PcdNvmeFeatureEnable == TRUE

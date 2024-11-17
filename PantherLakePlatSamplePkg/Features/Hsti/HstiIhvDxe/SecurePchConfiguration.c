@@ -90,14 +90,6 @@ UINT64  CodeReportedBitmap;
 
 #define R_PTL_PCD_P_PMC_PWRM_PMCR                             0x1DB0
 #define B_PTL_PCD_P_PMC_PWRM_PMCR_PGD_LOCK                    BIT0
-
-#define R_ACE_MEM2_MICPVCP                                    0x71A40
-#define B_ACE_MEM2_MICPVCP_DDZPL                              BIT19
-#define B_ACE_MEM2_MICPVCP_DDZE                               ( BIT17 | BIT16 )
-#define N_ACE_MEM2_MICPVCP_DDZE                               16
-
-
-
 //TODO: remove end
 
 
@@ -159,49 +151,6 @@ SecurePchAcsEchPortsConfiguration (
   return EFI_SUCCESS;
 }
 
-/**
-  Check Secure Audio Configuration
-  @param[in] Result - Secure Pch Configuration Tests Result
-  @retval TRUE   Error Detected.
-  @retval FALSE  Error Not Detected.
-**/
-EFI_STATUS
-SecurePchAudioConfiguration (
-  EFI_PCI_IO_PROTOCOL *PciIo,
-  PCI_TYPE00          *PciConfig
-  )
-{
-  EFI_STATUS                Status;
-  UINT32                    DfMicPvcs  = 0;
-
-  DEBUG ((DEBUG_INFO, "      Audio Mic Privacy Lock Test\n"));
-
-  Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, R_ACE_MEM2_MICPVCP, sizeof(DfMicPvcs), &DfMicPvcs);
-  if (EFI_ERROR(Status)) {
-    DEBUG ((DEBUG_INFO, "     Failed to read DfMICPVCS\n"));
-    return Status;
-  }
-
-  DEBUG ((DEBUG_INFO, "     DfMICPVCS Value = 0x%x\n", DfMicPvcs));
-  if ((DfMicPvcs & B_ACE_MEM2_MICPVCP_DDZE) != (0x2 << N_ACE_MEM2_MICPVCP_DDZE)) {
-    DEBUG ((DEBUG_INFO, "     privacy DMA data zeroing not equal to 2. Skipping test\n"));
-    return EFI_SUCCESS;
-  }
-
-  if ((DfMicPvcs & B_ACE_MEM2_MICPVCP_DDZPL) == 0) {
-    DEBUG ((DEBUG_INFO, "          Unexpected Status: Audio Mic Privacy Lock is not set = 0x%x\n", DfMicPvcs));
-
-    BuildAndAppendHstiUniqueStatusString (
-      HSTI_BYTE1_SECURE_PCH_CONFIGURATION_UNEXP_STATUS_CODE_F,
-      HSTI_BYTE1_SECURE_PCH_CONFIGURATION_UNEXP_STATUS_STRING_F,
-      &CodeReportedBitmap,
-      BIT15
-    );
-    return EFI_UNSUPPORTED;
-  }
-
-  return EFI_SUCCESS;
-}
 
 BOOLEAN
 SecurePchPmcPwrmTests (
@@ -571,17 +520,7 @@ CheckSecurePchConfiguration (
           Result = FALSE;
         }
       }
-
-      // PCH Audio Test
-      if (PciConfig.Hdr.VendorId == 0x8086 && IS_CLASS2 (&PciConfig, PCI_CLASS_MEDIA, PCI_CLASS_MEDIA_AUDIO) ) {
-        Status = SecurePchAudioConfiguration (PciIo,  &PciConfig);
-        if (EFI_ERROR (Status)) {
-          Result = FALSE;
-        }
-      }
     }
-
-
 
     Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiDevicePathProtocolGuid, (VOID*) &DevPath);
     if (EFI_ERROR (Status)) {
@@ -651,6 +590,7 @@ CheckSecurePchConfiguration (
                );
     CheckStatusForHstiLibSet (Status);
   }
+
   FreePool (HandleBuffer);
   return;
 }

@@ -49,6 +49,7 @@ typedef struct {
   BOOLEAN             LockUiDiv6Flow;
   BOOLEAN             MptuPropagationErrorFlow;
   UINT16              RloadTarget;
+  BOOLEAN             DiscardLvrAutoTrimResults;
 } MRC_INT_INPUTS_TYPE;
 #endif
 

@@ -143,7 +143,7 @@ UpdatePeiSaPolicyBoardConfigPreMem (
     for (ConnectorIndex = 0; ConnectorIndex < UsbCConnectorHobDataPtr->NumberOfUsbCConnectors; ConnectorIndex++, UsbConnectorBoardConfig++) {
       if (UsbConnectorBoardConfig->ConnectorConnectable == UNCONNECTABLE && UsbConnectorBoardConfig->Usb3Controller == TCSS_USB3) {
         if (UsbConnectorBoardConfig->Usb3PortNum < MAX_TCSS_USB3_PORTS) {
-          UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IomUsbCDpConfig[UsbConnectorBoardConfig->Usb3PortNum], TcssPeiPreMemConfig->IomConfig.IomUsbCDpConfig[UsbConnectorBoardConfig->Usb3PortNum], (UINT8) UsbCConnectorHobDataPtr->UsbCConnectorBoardConfig[ConnectorIndex].AuxDpMode);
+          UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IomUsbCDpConfig[UsbConnectorBoardConfig->Usb3PortNum], TcssPeiPreMemConfig->IomConfig.IomUsbCDpConfig[UsbConnectorBoardConfig->Usb3PortNum], (UINT8) UsbCConnectorHobDataPtr->UsbCConnectorBoardConfig[ConnectorIndex].AuxDpMode);
         }
       }
     }
@@ -168,16 +168,16 @@ UpdatePeiSaPolicyBoardConfigPreMem (
     //
     // The TypeC Port GPIO config setting reference on board design
     //
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IomTypeCPortPadCfg[(PortIndex * 3)], TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[PortIndex].ReceptacleSbu1BiasCtrl, IomAuxOriOverrideTablePtr[PortIndex].ReceptacleSbu1BiasCtrl);
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IomTypeCPortPadCfg[(PortIndex * 3) + 1], TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[PortIndex].ReceptacleSbu2BiasCtrl, IomAuxOriOverrideTablePtr[PortIndex].ReceptacleSbu2BiasCtrl);
-    UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.IomTypeCPortPadCfg[(PortIndex * 3) + 2], TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[PortIndex].AuxIsoCtrl, IomAuxOriOverrideTablePtr[PortIndex].AuxIsoCtrl);
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IomTypeCPortPadCfg[(PortIndex * 3)], TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[PortIndex].ReceptacleSbu1BiasCtrl, IomAuxOriOverrideTablePtr[PortIndex].ReceptacleSbu1BiasCtrl);
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IomTypeCPortPadCfg[(PortIndex * 3) + 1], TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[PortIndex].ReceptacleSbu2BiasCtrl, IomAuxOriOverrideTablePtr[PortIndex].ReceptacleSbu2BiasCtrl);
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IomTypeCPortPadCfg[(PortIndex * 3) + 2], TcssPeiPreMemConfig->IomConfig.IomAuxPortPad[PortIndex].AuxIsoCtrl, IomAuxOriOverrideTablePtr[PortIndex].AuxIsoCtrl);
     if ((IomAuxOriOverrideTablePtr[PortIndex].ReceptacleSbu1BiasCtrl != 0) && (IomAuxOriOverrideTablePtr[PortIndex].ReceptacleSbu2BiasCtrl != 0)) {
       TcssIomAuxOriEnableBitmap |= (BIT0 << (PortIndex * 2));
     }
   }
 
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TcssAuxOri, TcssPeiPreMemConfig->IomConfig.IomOverrides.AuxOri, TcssIomAuxOriEnableBitmap);
-  UPDATE_POLICY_V2 (((FSPM_UPD *) FspmUpd)->FspmConfig.TcssHslOri, TcssPeiPreMemConfig->IomConfig.IomOverrides.HslOri, 0);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TcssAuxOri, TcssPeiPreMemConfig->IomConfig.IomOverrides.AuxOri, TcssIomAuxOriEnableBitmap);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TcssHslOri, TcssPeiPreMemConfig->IomConfig.IomOverrides.HslOri, 0);
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   DEBUG ((DEBUG_INFO, "AuxOri is 0x%04X\n", ((FSPM_UPD *) FspmUpd)->FspmConfig.TcssAuxOri));
 #else

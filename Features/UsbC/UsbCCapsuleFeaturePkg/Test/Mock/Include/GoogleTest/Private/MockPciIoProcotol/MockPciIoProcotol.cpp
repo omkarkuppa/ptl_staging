@@ -21,17 +21,17 @@
 
 #include "MockPciIoProcotol.h"
 
-MOCK_INTERFACE_DEFINITION(MockPciIoProcotol);
+MOCK_INTERFACE_DEFINITION (MockPciIoProcotol);
 
-MOCK_FUNCTION_DEFINITION(MockPciIoProcotol, MockPciIoConfigRead,  5, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockPciIoProcotol, MockPciIoConfigWrite, 5, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockPciIoProcotol, MockPciIoGetLocation, 5, EFIAPI);
-MOCK_FUNCTION_DEFINITION(MockPciIoProcotol, MockPciIoAttributes,  4, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPciIoProcotol, MockPciIoConfigRead, 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPciIoProcotol, MockPciIoConfigWrite, 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPciIoProcotol, MockPciIoGetLocation, 5, EFIAPI);
+MOCK_FUNCTION_DEFINITION (MockPciIoProcotol, MockPciIoAttributes, 4, EFIAPI);
 
 //
 // Mock Pci Io Protocol Interface
 //
-static EFI_PCI_IO_PROTOCOL  LocalPciIoInterface = {
+EFI_PCI_IO_PROTOCOL LocalPciIoInterface = {
   NULL,                                 // PciIoPollMem
   NULL,                                 // PciIoPollIo
   {
@@ -60,4 +60,4 @@ static EFI_PCI_IO_PROTOCOL  LocalPciIoInterface = {
   NULL
 };
 
-EFI_PCI_IO_PROTOCOL*  gPciIoInterface = &LocalPciIoInterface;
+EFI_PCI_IO_PROTOCOL *gPciIoInterface = &LocalPciIoInterface;

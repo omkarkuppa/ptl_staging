@@ -84,7 +84,6 @@ typedef struct {
   UINT32 EnableAllThermalFunctions     : 1;        ///<              Enable or Disable Thermal Reporting through ACPI tables; 0: Disable; <b>1: Enable</b>.
   UINT32 Cx                            : 1;        ///<              Enable or Disable CPU power states (C-states). 0: Disable; <b>1: Enable</b>
   UINT32 PmgCstCfgCtrlLock             : 1;        ///<              If enabled, sets MSR 0xE2[15]; 0: Disable; <b>1: Enable</b>.
-  UINT32 C1e                           : 1;        ///<              Enable or Disable Enhanced C-states. 0: Disable; <b>1: Enable</b>
   UINT32 C1AutoDemotion                : 1;        ///<              Enable or Disable C6/C7 auto demotion to C1. 0: Disabled; <b>1: C1 Auto demotion</b>
   UINT32 C1UnDemotion                  : 1;        ///<              Enable or Disable C1UnDemotion. 0: Disabled; <b>1: C1 Auto undemotion</b>
   UINT32 PkgCStateDemotion             : 1;        ///<              Enable or Disable Package Cstate Demotion. Disable; <b>1: Enable</b> [WhiskeyLake] <b>Disable</b>; 1: Enable

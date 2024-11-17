@@ -45,6 +45,11 @@
   !ifndef FMP_CLIENT_PLATFORM_NAME
     DEFINE FMP_CLIENT_PLATFORM_NAME = Client
   !endif
+
+  !ifndef CSME_GENERATION
+    DEFINE CSME_GENERATION = 0
+  !endif
+
 [PcdsFixedAtBuild]
 
   gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressWatchdogTimeInSeconds|0

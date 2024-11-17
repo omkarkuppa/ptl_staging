@@ -37,6 +37,8 @@
 #string STR_DEBUG_PORT_SERIALIO_UART0                   #language en-US "SERIALIO UART0"
 #string STR_DEBUG_PORT_SERIALIO_UART1                   #language en-US "SERIALIO UART1"
 #string STR_DEBUG_PORT_SERIALIO_UART2                   #language en-US "SERIALIO UART2"
+#string STR_PCH_DBG_UART_PG                             #language en-US "LPSS Uart Debug Power Gating"
+#string STR_PCH_DBG_UART_PG_HELP                        #language en-US "For S0iX support with Kernel Debugger Enabled.\nBIOS needs to change DBG2 Port Sub Type as value of 0x14 (0x0014 Intel LPSS)\nNote: Requires OS support"
 #string STR_DEBUG_PORT_HELP                             #language en-US "Select Kernel Debug Port and report in ACPI DBG2 table"
 
 #string STR_KERNEL_DEBUG_PATCH                          #language en-US "Kernel Debug Patch"

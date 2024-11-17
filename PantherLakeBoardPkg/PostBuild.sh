@@ -138,45 +138,83 @@ fi
 # UPL Post Build Process End
 #
 
-#
-# Call this script to generate FIT Payload
-#
-export PAYLOAD_REGION_SIZE=$(grep "gMinPlatformPkgTokenSpaceGuid\.PcdFlashNvStorageOffset" $WORKSPACE/FlashMapInclude_Temp.fdf | awk '{print $4}' | sed 's/\r$//g')
-
-#if [ "$TARGET" = "RELEASE" ]; then
-#  . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/PayloadManagement/FitPayloads/FitPayloadBuild.sh IntegrateBuild r
-#else
-#    . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/PayloadManagement/FitPayloads/FitPayloadBuild.sh IntegrateBuild
-#fi
-#echo "Fit Payload build end..."
-#if [ $? -ne 0 ]; then
-#  echo "!!! ERROR: FitPayloadBuild execute failure !!!"
-#  exit 1
-#fi
 
 #
-# Call this script to generate Non-FIT Payload
+# Payload Management Post Build Process Begin
 #
+export PAYLOAD_BUILD_TOOL_PATH=$WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/PayloadManagement
+export PAYLOAD_BUILD_FLAGS=IntegrateBuild
+
+# Set generic arguments for NotFit/Fit Payload build
 if [ "$TARGET" = "RELEASE" ]; then
-  . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/PayloadManagement/NonFitPayloads/NonFitPayloadBuild.sh IntegrateBuild r
-else
-  . $WORKSPACE_PLATFORM/$PLATFORM_PACKAGE/PayloadManagement/NonFitPayloads/NonFitPayloadBuild.sh IntegrateBuild
+  export PAYLOAD_BUILD_FLAGS="$PAYLOAD_BUILD_FLAGS r"
 fi
+
+#
+# Generate Non-FIT Payload
+#
+. $PAYLOAD_BUILD_TOOL_PATH/NonFitPayloads/NonFitPayloadBuild.sh $PAYLOAD_BUILD_FLAGS
 echo "Non Fit Payload build end..."
 if [ $? -ne 0 ]; then
   echo "!!! ERROR: Non FitPayloadBuild execute failure !!!"
   exit 1
 fi
 
+# Add more arguments for FitPayload build
+if [ "$WCL_BUILD" = "TRUE" ]; then
+  export PAYLOAD_BUILD_FLAGS="$PAYLOAD_BUILD_FLAGS wcl"
+fi
+
 #
-# Stitching Payloads and ClientBios together
+# Generate FIT Payload
 #
-export PAYLOAD_TEMP_DIR=$WORKSPACE/$BUILD_DIR/FV/PayloadBuild
-export PAYLOADS_BUILD_DIR=$WORKSPACE/Build/FitPayloadsPkg/${TARGET}_${TOOL_CHAIN_TAG}
-export NON_FIT_PAYLOADS_BUILD_DIR=$WORKSPACE/Build/NonFitPayloadsPkg/${TARGET}_${TOOL_CHAIN_TAG}
-Split -f $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd -s $PAYLOAD_REGION_SIZE -t $PAYLOAD_TEMP_DIR/CLIENTBIOS_ExcludePayloads.bin -o $PAYLOAD_TEMP_DIR/Buffer.bin
-cat $NON_FIT_PAYLOADS_BUILD_DIR/FV/NONFITPAYLOADS.fd $PAYLOAD_TEMP_DIR/CLIENTBIOS_ExcludePayloads.bin > $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd
-rm -rf $PAYLOAD_TEMP_DIR
+. $PAYLOAD_BUILD_TOOL_PATH/FitPayloads/FitPayloadBuild.sh $PAYLOAD_BUILD_FLAGS
+echo "Fit Payload build end..."
+if [ $? -ne 0 ]; then
+  echo "!!! ERROR: FitPayloadBuild execute failure !!!"
+  exit 1
+fi
+
+#
+# Patch Payloads to ClientBios
+#
+echo "Patch Payloads to ClientBios"
+export NON_FIT_PAYLOAD_BUILD_DIR=$WORKSPACE/Build/NonFitPayloadsPkg/${TARGET}_${TOOL_CHAIN_TAG}
+export FIT_PAYLOAD_BUILD_DIR=$WORKSPACE/Build/FitPayloadsPkg/${TARGET}_${TOOL_CHAIN_TAG}
+cp -f $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_PAYLOADPRE.fd
+
+#
+# Patch NotFitPayload
+#
+$PYTHON_COMMAND $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/PayloadManagement/ReplaceFvInImage.py \
+  -I $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd \
+  -F $NON_FIT_PAYLOAD_BUILD_DIR/FV/NONFITPAYLOADS.fd \
+  -O $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_PAYLOADTEMP.fd
+if [ $? -ne 0 ]
+then
+  echo "Error: Patch NonFitPayload failure"
+  exit 1
+fi
+
+#
+# Patch FitPayload
+#
+$PYTHON_COMMAND $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/PayloadManagement/ReplaceFvInImage.py \
+  -I $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_PAYLOADTEMP.fd \
+  -F $FIT_PAYLOAD_BUILD_DIR/FV/FITPAYLOADS.fd \
+  -O $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_PAYLOADPOST.fd
+if [ $? -ne 0 ]
+then
+  echo "Error: Patch FitPayload failure"
+  exit 1
+fi
+
+rm $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_PAYLOADTEMP.fd
+cp -f $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS_PAYLOADPOST.fd $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd
+#
+# Payload Management Post Build Process End
+#
+
 
 # In FSP@Reset solution, FspO Fv will be located at 4G memory address.
 # FIT table should not be in FspO Fv and will be put at 4G - 0x5400.

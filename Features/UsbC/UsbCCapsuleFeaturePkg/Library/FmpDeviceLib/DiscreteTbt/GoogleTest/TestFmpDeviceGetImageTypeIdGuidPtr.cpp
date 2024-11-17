@@ -1,5 +1,5 @@
 /** @file
-  Google Test for the implementation of FmpDeviceLib instance to support 
+  Google Test for the implementation of FmpDeviceLib instance to support
   Discrete Thunderbolt Firmware update
 
   @copyright
@@ -20,25 +20,24 @@
 @par Specification Reference:
 
 **/
+#include <GTestFmpDeviceLibDiscreteTbt.h>
 
 /**
 Google test for FmpDeviceGetImageTypeIdGuidPtr function.
 **/
-class FmpDeviceGetImageTypeIdGuidPtrTest : public CommonMock {
+class FmpDeviceGetImageTypeIdGuidPtrTest : public Test {
   protected:
-  EFI_STATUS     Status;
+    EFI_STATUS Status;
 };
 
-TEST_F (FmpDeviceGetImageTypeIdGuidPtrTest, VarUnSupported) {
-
+TEST_F (FmpDeviceGetImageTypeIdGuidPtrTest, Var_1_UnSupported) {
   //
   // Case 1 - General Case
   // Expected Result - Status will return EFI_UNSUPPORTED
   //
   cout << "[---------- Case 1 ----------]"<< endl;
   Status = FmpDeviceGetImageTypeIdGuidPtr (NULL);
-  EXPECT_EQ(Status, EFI_UNSUPPORTED);
+  EXPECT_EQ (Status, EFI_UNSUPPORTED);
 
   cout << "FmpDeviceGetImageTypeIdGuidPtr Done." << endl;
-
 }

@@ -630,8 +630,6 @@ SetKeyboardLayoutEvent (
       HidNsKey = AllocateZeroPool (sizeof (HID_NS_KEY));
       if (HidNsKey == NULL) {
         ASSERT (HidNsKey != NULL);
-        ReleaseKeyboardLayoutResources (HidKbDev);
-        FreePool (KeyboardLayout);
         return;
       }
 
@@ -1838,7 +1836,7 @@ SetKeyLED (
     Data
     );
 
-  FreePool (Data);
+  FreePool(Data);
 
   return EFI_SUCCESS;
 }

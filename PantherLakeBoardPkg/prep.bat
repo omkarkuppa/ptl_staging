@@ -178,7 +178,9 @@ cd ..\..\
   set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
 --pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE ^
 --pcd gBoardModuleTokenSpaceGuid.PcdSignedFspEnable=TRUE ^
+--pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0 ^
 --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=0
+
 ) else if /i "embedded" == "%1" (
   set EMBEDDED_BUILD=TRUE
   set ROM_FILENAME_SPECIAL_BUILD_TYPE=_Embedded

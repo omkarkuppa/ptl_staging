@@ -500,6 +500,11 @@ typedef enum {
   GsmMccDisLpddr5RdwrInterleaving,
   GsmMccEccCorrectionDisable,
   GsmMccMcMntsSpareRw,
+  GsmMccMcCbRowPressDisAutoPre,
+  GsmMccPageOpenPolicyMaxCount,
+  GsmMccPageOpenPolicyEn,
+  GsmMccRd2rdEchoMask,
+  GsmMccWr2wrEchoMask,
   EndOfMccMarker,               ///< End of MC Configuration Group.
   GsmPmaEnableMc,
   GsmPmaEnableIbecc,

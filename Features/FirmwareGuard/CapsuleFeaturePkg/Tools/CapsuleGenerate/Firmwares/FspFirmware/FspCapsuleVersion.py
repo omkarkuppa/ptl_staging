@@ -35,12 +35,12 @@ from CapsuleCommon import *
 
 from CapsuleGenerate.Model.CapsuleVersion import *
 
-FSP_VERSION_REGEX: str = '^(\d){1,3}[.](\d){1,3}$'
+FSP_VERSION_REGEX: str = r'^(\d){1,3}[.](\d){1,3}$'
 
 class FspCapsuleVersion (CapsuleVersion):
     def __init__ (
         self,
-        VersionInfo: FspVersion = None,
+        VersionInfo: FbmVersion = None,
         DotVerStr  : str        = None
         ) -> None:
         """ Class to provide the capsule needed version information.
@@ -49,9 +49,9 @@ class FspCapsuleVersion (CapsuleVersion):
             Caller should be input Header or DotVerStr.
 
         Args:
-            VersionInfo (FspVersion, optional):
-                FSP version info object.
-                Should be FspVersion instance.
+            VersionInfo (FbmVersion, optional):
+                FBM version info object.
+                Should be FbmVersion instance.
                 Defaults to None.
             DotVerStr (str, optional):
                 Caller input the dot version format.
@@ -68,7 +68,7 @@ class FspCapsuleVersion (CapsuleVersion):
         #
         # User input information.
         #
-        self.__VersionInfo: FspVersion = VersionInfo
+        self.__VersionInfo: FbmVersion = VersionInfo
         self.__DotVerStr  : str        = DotVerStr
         self.__InputMode  : int        = self.__GetInputMode ()
 
@@ -103,7 +103,7 @@ class FspCapsuleVersion (CapsuleVersion):
 
         FwHeaderInputCondition: bool = \
             (self.__VersionInfo is not None) and \
-            (isinstance (self.__VersionInfo, FspVersion))
+            (isinstance (self.__VersionInfo, FbmVersion))
         DotVerInputCondition  : bool = \
             (self.__DotVerStr is not None) and \
             (isinstance (self.__DotVerStr, str))
@@ -111,7 +111,7 @@ class FspCapsuleVersion (CapsuleVersion):
         if FwHeaderInputCondition and DotVerInputCondition:
             DEBUG (
               DEBUG_WARN,
-              'FspVersion and dot version assigned in same time. ',
+              'FbmVersion and dot version assigned in same time. ',
               'Valid value would choose by the order.'
               )
 

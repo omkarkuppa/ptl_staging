@@ -34,11 +34,14 @@ GLOBAL_REMOVE_IF_UNREFERENCED PCH_SETUP                                 mPchSetu
 /**
   Install Debug Port ACPI Table
 
-  @param[in] OsDebugPort      Parameter to tell which debug port is used by the OS
+  @param[in] OsDebugPort                   Parameter to tell which debug port is used by the OS
+  @param[in] LpssUartDebugUartPowerGating  Parameter to tell to use PG for LPSS UART as subtype 0x14
 **/
+STATIC
 VOID
 InstallDebugPortAcpiTable (
-  IN  UINT8                                 OsDebugPort
+  IN  UINT8                                 OsDebugPort,
+  IN  BOOLEAN                               LpssUartDebugUartPowerGating
   )
 {
   BOOLEAN                                       HasDebugPort;
@@ -96,13 +99,13 @@ InstallDebugPortAcpiTable (
   //
   Dbg2DeviceNameSpaceStr = ACPI_DBG2_DEFAULT_NAME_SPACE;
   if (OsDebugPort == 1) {
-    Dbg2DeviceNameSpaceStr = ACPI_DBG2_SERIALIO_UART0_NAME_SPACE;
+    Dbg2DeviceNameSpaceStr = ACPI_DBG2_LPSS_UART0_NAME_SPACE;
   }
   if (OsDebugPort == 2) {
-    Dbg2DeviceNameSpaceStr = ACPI_DBG2_SERIALIO_UART1_NAME_SPACE;
+    Dbg2DeviceNameSpaceStr = ACPI_DBG2_LPSS_UART1_NAME_SPACE;
   }
   if (OsDebugPort == 3) {
-    Dbg2DeviceNameSpaceStr = ACPI_DBG2_SERIALIO_UART2_NAME_SPACE;
+    Dbg2DeviceNameSpaceStr = ACPI_DBG2_LPSS_UART2_NAME_SPACE;
   }
   Dbg2DeviceNameSpaceStrSize = (UINT16) AsciiStrSize(Dbg2DeviceNameSpaceStr);
 
@@ -185,9 +188,9 @@ InstallDebugPortAcpiTable (
   //
   // Check which port is used as Debug Port based on policy
   // case 0 : Legacy UART
-  // case 1 : Serial IO UART 0
-  // case 2 : Serial IO UART 1
-  // case 3 : Serial IO UART 2
+  // case 1 : LPSS UART 0
+  // case 2 : LPSS UART 1
+  // case 3 : LPSS UART 2
   //
   HasDebugPort      = FALSE;
   switch (OsDebugPort) {
@@ -226,6 +229,14 @@ InstallDebugPortAcpiTable (
       Dbg2DeviceGasPtr[0].AccessSize = EFI_ACPI_6_5_UNDEFINED;
       Dbg2DeviceGasPtr[0].Address = DebugPortTable->BaseAddress.Address;
       HasDebugPort = TRUE;
+
+      //
+      // Update LPSS Uart Power Gating support for Kernel Debug S0iX capability
+      //
+      if (LpssUartDebugUartPowerGating) {
+        Dbg2DeviceAdrSizePtr[0]           = LPSS_UART_MEM_SIZE;
+        Dbg2DeviceTablePtr[0].PortSubtype = EFI_ACPI_DBG2_PORT_SUBTYPE_SERIAL_INTEL_LPSS;
+      }
       break;
     default:
       ASSERT (FALSE);
@@ -785,9 +796,9 @@ InstallAcpiPlatformFeatures (
   ASSERT (HobPtr.Guid != NULL);
   PchInfoHob = (PCH_INFO_HOB *) GET_GUID_HOB_DATA (HobPtr.Guid);
   //
-  // If there is not SerialIo Uart setting to DBG2. EC Uart is used instead.
+  // If there is not LPSS Uart setting to DBG2. EC Uart is used instead.
   //
-  InstallDebugPortAcpiTable (PchInfoHob->OsDebugPort);
+  InstallDebugPortAcpiTable (PchInfoHob->OsDebugPort, PchInfoHob->LpssDebugUartPg != 0);
 
   //
   // Finished

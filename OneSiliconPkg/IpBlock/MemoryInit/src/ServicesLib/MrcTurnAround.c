@@ -275,13 +275,13 @@ GetLpddr5tWrRd (
   const MrcInput* Inputs;
   MrcOutput *Outputs;
   MrcTiming *Timing;
-  UINT32    Guardband;
-  UINT32    GB;
-  UINT32    ChFlightTime;
+  //UINT32    Guardband;
+  //UINT32    GB;
+  //UINT32    ChFlightTime;
   UINT32    nCK;
   INT32     TA1;
   INT32     PHClk;
-  INT32     tWck2Ck_Min;
+  //INT32     tWck2Ck_Min;
   UINT8     LeftShift;
   UINT8     tBLn_min;
   UINT8     tBLn_max;
@@ -290,19 +290,21 @@ GetLpddr5tWrRd (
   UINT32    tWTR_S;
   UINT32    tWTR_L;
   MRC_LP5_BANKORG Lp5BGOrg;
+   INT8     ODTLoff;
 
   Inputs  = &MrcData->Inputs;
   Outputs = &MrcData->Outputs;
   Timing  = &Outputs->Timing[Inputs->ExtInputs.Ptr->MemoryProfile];
   LeftShift  = 2;
-  Guardband  = 8;
+ // Guardband  = 8;
   PHClk = UDIVIDEROUND (FREQ_TO_TCK_PS, Outputs->Frequency);
-  GB = (Guardband * PHClk) / PI_PER_TCK;
-  tWck2Ck_Min = -PHClk / 2;
+  //GB = (Guardband * PHClk) / PI_PER_TCK;
+  //tWck2Ck_Min = -PHClk / 2;
   nCK = PHClk * 4;
   tBLn_min = Outputs->BurstLength + (Outputs->Frequency > f3200 ? 2 : 0);
   tBLn_max = Outputs->BurstLength + (Outputs->Frequency > f3200 ? 4 : 0);
   Lp5BGOrg = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
+  ODTLoff = MrcGetOdtlTiming (MrcData, Outputs->Frequency, LpWrOdt, LpOdtlOff);
 
   tCWL = Timing->tCWL;
   tCL = Timing->tCL;
@@ -314,25 +316,30 @@ GetLpddr5tWrRd (
   }
 
   //-----------------------------------
-  // Calculate tWRRD
+  // Calculate tWRRD - Currently using JEDEC Definition
   //-----------------------------------
   // DQ ODT Enabled case:
   // JEDEC Definition
   // tWRRD_dr = ODTLoff + RU(tODToff(max)/tCK) - RL
   // ODTLoff = tCWL + BL/n_min + RU(tWCK2DQI(max)/tCK)
   // tWRRD_dr = tCWL - RL + BL/n_min + RU(tWCK2DQI(max)/tCK) + RU(tODToff(max)/tCK)
-  //
+
+  TA1 = MRC_LP5_tODT_ON_OFF_MAX;
+  TA1 = DIVIDECEIL (TA1, nCK);
+  TA1 += tCWL - tCL +  ODTLoff; // ODTLOff includes BL/n_min
+
+
   // Design Definition
   // tWrRddr > (WL-RL) + 1 + (tODToff_max + ChFlightTime - tWCK2CK_Min - tWCKDQO_Min)/nCK
   // tWrRdsg = tCWL + tBln_max + tWTR_L - Spec Defined
   // tWrRddg = tCWL + tBln_min + tWTR_S - Spec Defined
-  ChFlightTime = 0;
-  TA1 = MRC_LP5_tODT_ON_OFF_MAX + ChFlightTime + GB + MRC_LP5_TCK2CK - tWck2Ck_Min - MRC_LP5_tWCKDQO_MIN;
-  TA1 = DIVIDECEIL (TA1, nCK);
-  TA1 += tCWL - tCL + 1 + tBLn_min;
-  if (TA1 < 0) {
-    TA1 = 0;
-  }
+  //ChFlightTime = 0;
+  //TA1 = MRC_LP5_tODT_ON_OFF_MAX + ChFlightTime + GB + MRC_LP5_TCK2CK - tWck2Ck_Min - MRC_LP5_tWCKDQO_MIN;
+  //TA1 = DIVIDECEIL (TA1, nCK);
+  //TA1 += tCWL - tCL + 1 + tBLn_min;
+  //if (TA1 < 0) {
+  //  TA1 = 0;
+  //}
   *tWrRddr = (TA1 << LeftShift);
   *tWrRddd =  *tWrRddr;
   *tWrRdsg = (tCWL + tBLn_max + tWTR_L) << LeftShift;

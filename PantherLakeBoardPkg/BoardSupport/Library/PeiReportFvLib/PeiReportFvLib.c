@@ -44,7 +44,7 @@
 #include <Library/ResiliencySupportLib.h>
 
 #ifndef MAX_NUMBER_OF_OBB_FIRMWARE_VOLUMES
-  #define MAX_NUMBER_OF_OBB_FIRMWARE_VOLUMES 7
+  #define MAX_NUMBER_OF_OBB_FIRMWARE_VOLUMES 8
 #endif
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mPpiListBeforePostMemFvReport = {
@@ -359,6 +359,15 @@ CreateStoredHashFvPpiInfo (
                                               HASHED_FV_FLAG_REPORT_FV_INFO_PPI |
                                               CapsuleRecoveryFlag;
   FvNumber++;
+  // NonFitPayloads
+  StoredHashFvPpi->FvInfo[FvNumber].Base    = FixedPcdGet32 (PcdFlashNonFitPayloadBase);
+  StoredHashFvPpi->FvInfo[FvNumber].Length  = FixedPcdGet32 (PcdFlashNonFitPayloadSize);
+  StoredHashFvPpi->FvInfo[FvNumber].Flag    = FvFlag |
+                                              HASHED_FV_FLAG_REPORT_FV_INFO_PPI |
+                                              HASHED_FV_FLAG_SKIP_BOOT_MODE(BOOT_ON_S3_RESUME) |
+                                              CapsuleRecoveryFlag;
+  FvNumber++;
+
   ASSERT (FvNumber <= MAX_NUMBER_OF_OBB_FIRMWARE_VOLUMES);
 
   StoredHashFvPpi->FvNumber = FvNumber;

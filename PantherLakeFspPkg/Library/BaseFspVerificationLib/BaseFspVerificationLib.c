@@ -27,6 +27,9 @@
 #include <Library/DebugLib.h>
 #include <Library/BaseCryptLib.h>
 #include <Library/FspVerificationLib.h>
+#include <Library/FspMeasurementLib.h>
+#include <Pi/PiFirmwareVolume.h>
+#include <Library/IoLib.h>
 
 BOOLEAN
 Sha384Verify (
@@ -34,8 +37,81 @@ Sha384Verify (
   IN SHA384_HASH_STRUCTURE    *Sha384DigestPtr,
   IN UINTN                    ImageBase,
   IN UINTN                    IbbSegmentCount,
-  IN REGION_SEGMENT              *IbbSegments
+  IN REGION_SEGMENT           *IbbSegments
   );
+
+/**
+  Detect the boot guard profile.
+
+  @retval BootGuardProfile  Boot Guard Profile.
+
+**/
+UINT8
+DetectBootGuardProfile (
+  VOID
+  )
+{
+  UINT8   BootGuardProfile = 0;
+  UINT64  MsrValue;
+  // Get FVME status from MSR 0x13A
+  // F = Force Anchor Boot
+  // V = Verified boot
+  // M = Measured boot
+  // E = Enforcement
+  // BTG Profile detection
+  // Profile  F  V  M  E
+  //    0     0  0  0  0
+  //    3     0  1  1  0
+  //    4     1  1  0  1
+  //    5     1  1  1  1
+  // F (BIT[4]), M (BIT[5]), V (BIT[6]) bits should be fine to detect boot guard profile.
+  //
+  MsrValue = AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO);
+  //
+  // Check condition from above table.
+  //
+  if (MsrValue & B_BOOT_GUARD_SACM_INFO_VERIFIED_BOOT) {
+    if (MsrValue & B_BOOT_GUARD_SACM_INFO_MEASURED_BOOT) {
+      if (MsrValue & B_BOOT_GUARD_SACM_INFO_FORCE_ANCHOR_BOOT) {
+        // Measured boot
+        BootGuardProfile = BOOT_GUARD_PROFILE_5;
+      } else {
+        BootGuardProfile = BOOT_GUARD_PROFILE_3;
+      }
+    } else {
+      if (MsrValue & B_BOOT_GUARD_SACM_INFO_FORCE_ANCHOR_BOOT) {
+        // Verified boot
+        BootGuardProfile = BOOT_GUARD_PROFILE_4;
+      }
+    }
+  }
+  return BootGuardProfile;
+}
+
+
+/**
+  Check if FSP signing is supported.
+
+  @param[in]   Fbm   FSP Boot Manifest which keeps FSP-M digest and IBB information.
+
+  @retval TRUE   Signing is supported.
+  @retval FALSE  Signing is not supported.
+
+**/
+UINT8
+IsSigningSupported (
+  IN FSP_BOOT_MANIFEST_STRUCTURE  *Fbm
+  )
+{
+  UINT64  AcmPolicyStatus;
+  AcmPolicyStatus = *(UINT64 *) (UINTN) (MMIO_ACM_POLICY_STATUS);
+
+  if ((DetectBootGuardProfile () >= BOOT_GUARD_PROFILE_4) && (Fbm != NULL) &&
+      (AcmPolicyStatus & B_FBM_VALID_STATUS)) {
+    return TRUE;
+  }
+  return FALSE;
+}
 
 /**
   Find FSP header pointer.
@@ -67,21 +143,16 @@ FspFindFspHeader (
   }
 
   CheckPointer = CheckPointer + sizeof (EFI_FFS_FILE_HEADER);
-
-  if (((EFI_RAW_SECTION *)CheckPointer)->Type != EFI_SECTION_RAW) {
-    return NULL;
-  }
-
   CheckPointer = CheckPointer + sizeof (EFI_RAW_SECTION);
 
   return (FSP_INFO_HEADER *)CheckPointer;
 }
 
 /**
-  Verify FSP Version information in BSSS(BSPM) and FBM.
+  Verify FSP Version information in BSPM and FBM.
   FSP Version digest information is kept in FBM, FSP will only verify the SHA384 digest.
 
-  @param[in]   Bsss      BSSS(BSPM) structure found in BPM.
+  @param[in]   Bspm      BSPM structure found in BPM.
   @param[in]   Fbm       FSP Boot Manifest which keeps FSP-M digest and IBB information.
   @param[in]   Buffer    Memory buffer for hash verification.
 
@@ -93,7 +164,7 @@ FspFindFspHeader (
 EFI_STATUS
 EFIAPI
 VerifyFspVersion (
-  IN BSPM_ELEMENT                   *Bsss,
+  IN BSPM_ELEMENT                   *Bspm,
   IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
   )
@@ -103,9 +174,10 @@ VerifyFspVersion (
   UINT8                   FspVersion [6];
   REGION_SEGMENT          Segment;
   FSP_INFO_HEADER         *FspInfoHeader;
+  UINTN                   FspmImageBase;
 
   DEBUG ((DEBUG_INFO, "FSP Version Verification ...\n"));
-  if (Bsss == NULL || Fbm == NULL || Buffer == NULL) {
+  if (Bspm == NULL || Fbm == NULL || Buffer == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -116,7 +188,13 @@ VerifyFspVersion (
     return EFI_INVALID_PARAMETER;
   }
   DEBUG ((DEBUG_INFO, "FSP Version Digest is Found!\n"));
-  FspInfoHeader = (FSP_INFO_HEADER *) FspFindFspHeader ((UINT32) Bsss->FspmBaseAddress);
+
+  if (Bspm->FspmLoadingPolicy & FSPM_COMPRESSED) {
+    FspmImageBase = (UINTN) PcdGet32 (PcdSecondaryDataStackBase) + SIZE_4KB;
+  } else {
+    FspmImageBase = (UINTN) Bspm->FspmBaseAddress;
+  }
+  FspInfoHeader = (FSP_INFO_HEADER *) FspFindFspHeader ((UINT32) FspmImageBase);
 
   FspVersion[0] = FspInfoHeader->ImageRevision & 0xff;
   FspVersion[1] = FspInfoHeader->ExtendedImageRevision & 0xff;
@@ -150,14 +228,15 @@ VerifyFspVersion (
   DEBUG ((DEBUG_INFO, "FSP Version Verification Fail!\n"));
   return EFI_ACCESS_DENIED;
 }
+
 /**
-  Verify FSP-M with the information in BSSS(BSPM) and FBM.
+  Verify FSP-M with the information in BSPM and FBM.
   FSP-M digest information is kept in FBM, FSP will only verify the SHA384 digest.
   FSP-M IBB region information is kept in FBM, only hashed IBB (indicate by flag) should be taken
   into digest calculation. FSP-M IBB region in FBM are relative offset since FSP-M might be relocated
-  in OEM bios integration. OEM should provide FSP-M image base information via BSSS(BSPM).
+  in OEM bios integration. OEM should provide FSP-M image base information via BSPM.
 
-  @param[in]   Bsss      BSSS(BSPM) structure found in BPM.
+  @param[in]   Bspm      BSPM structure found in BPM.
   @param[in]   Fbm       FSP Boot Manifest which keeps FSP-M digest and IBB information.
   @param[in]   Buffer    Memory buffer for hash verification.
 
@@ -168,8 +247,8 @@ VerifyFspVersion (
 **/
 EFI_STATUS
 EFIAPI
-VerifyFspm (
-  IN BSPM_ELEMENT                   *Bsss,
+VerifyAndExtendFspm (
+  IN BSPM_ELEMENT                   *Bspm,
   IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
   )
@@ -180,12 +259,16 @@ VerifyFspm (
   UINTN                   FspmImageBase;
 
   DEBUG ((DEBUG_INFO, "FSP-M Verification ...\n"));
-  if (Bsss == NULL || Fbm == NULL || Buffer == NULL) {
+  if (Bspm == NULL || Fbm == NULL || Buffer == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   HashCtx = (VOID *) Buffer;
-  FspmImageBase = (UINTN) Bsss->FspmBaseAddress;
+  if (Bspm->FspmLoadingPolicy & FSPM_COMPRESSED) {
+    FspmImageBase = (UINTN) PcdGet32 (PcdSecondaryDataStackBase) + SIZE_4KB;
+  } else {
+    FspmImageBase = (UINTN) Bspm->FspmBaseAddress;
+  }
 
   FspDigest  = COMPONENT_DIGEST0_PTR (Fbm);
   FspDigest += 1;    ///Skip Digest for FSP-O/T
@@ -197,18 +280,18 @@ VerifyFspm (
   FspRegion = FSP_REGION0_PTR (Fbm);
   FspRegion = (FSP_REGION_STRUCTURE *) ((UINT8 *) FspRegion + sizeof (FSP_REGION_STRUCTURE) +
                 FspRegion->SegmentCnt * sizeof (REGION_SEGMENT));
-  if (FspRegion->ComponentID != FSP_REGION_TYPE_FSPM) {
+
+  if ((FspRegion->ComponentID != FSP_REGION_TYPE_FSPM) ||
+       FspDigest->ComponentDigests.Sha384Digest.Size == 0) {
     return EFI_INVALID_PARAMETER;
   }
   DEBUG ((DEBUG_INFO, "FSP-M Region is Found!\n"));
 
-  if (FspDigest->ComponentDigests.Sha384Digest.Size != 0) {
-    if (Sha384Verify (HashCtx, &FspDigest->ComponentDigests.Sha384Digest,
-      FspmImageBase, FspRegion->SegmentCnt, IBB_SEGMENTS_PTR (FspRegion)) == TRUE)
-    {
-      DEBUG ((DEBUG_INFO, "FSP-M Verification Pass.\n"));
-      return EFI_SUCCESS;
-    }
+  if (Sha384Verify (HashCtx, &FspDigest->ComponentDigests.Sha384Digest,
+    FspmImageBase, FspRegion->SegmentCnt, IBB_SEGMENTS_PTR (FspRegion)) == TRUE)
+  {
+    DEBUG ((DEBUG_INFO, "FSP-M Verification Pass.\n"));
+    return EFI_SUCCESS;
   }
 
   DEBUG ((DEBUG_INFO, "FSP-M Verification Fail!\n"));
@@ -234,7 +317,7 @@ VerifyFspm (
 **/
 EFI_STATUS
 EFIAPI
-VerifyFsps (
+VerifyAndLogEventFsps (
   IN UINTN                          FspsImageBase,
   IN FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
   IN VOID                           *Buffer
@@ -242,6 +325,7 @@ VerifyFsps (
 {
   FSP_REGION_DIGEST       *FspDigest;
   FSP_REGION_STRUCTURE    *FspRegion;
+  UINT8                   Index;
   VOID                    *HashCtx;
 
   DEBUG ((DEBUG_INFO, "FSP-S Verification Start ...\n"));
@@ -252,41 +336,48 @@ VerifyFsps (
   HashCtx = (VOID *) Buffer;
 
   FspDigest  = COMPONENT_DIGEST0_PTR (Fbm);
-  FspDigest += 2;    ///Skip Digest for FSP-O/T and FSP-M
+  FspDigest += FSP_REGION_TYPE_FSPS;    ///Skip Digest for FSP-O/T and FSP-M
+
   if (FspDigest->ComponentID != FSP_REGION_TYPE_FSPS) {
     return EFI_INVALID_PARAMETER;
   }
   DEBUG ((DEBUG_INFO, "FSP-S Digest is Found!\n"));
 
   FspRegion  = FSP_REGION0_PTR (Fbm);
-  FspRegion += 2;
-  if (FspRegion->ComponentID != FSP_REGION_TYPE_FSPS) {
+
+  for (Index = 0; Index < FSP_REGION_TYPE_FSPS; Index++) {
+    //
+    // Skip FSP region for FSP-O/T and FSP-M
+    //
+    FspRegion = (FSP_REGION_STRUCTURE *) ((UINT8 *) FspRegion + sizeof (FSP_REGION_STRUCTURE) +
+                FspRegion->SegmentCnt * sizeof (REGION_SEGMENT));
+  }
+
+  if ((FspRegion->ComponentID != FSP_REGION_TYPE_FSPS) ||
+       FspDigest->ComponentDigests.Sha384Digest.Size == 0) {
     return EFI_INVALID_PARAMETER;
   }
   DEBUG ((DEBUG_INFO, "FSP-S Region is Found!\n"));
 
-  if (FspDigest->ComponentDigests.Sha384Digest.Size != 0) {
-    if (Sha384Verify (HashCtx, &FspDigest->ComponentDigests.Sha384Digest,
-      FspsImageBase, FspRegion->SegmentCnt, IBB_SEGMENTS_PTR (FspRegion)) == TRUE)
-    {
-      DEBUG ((DEBUG_INFO, "FSP-S Verification Pass!\n"));
-      return EFI_SUCCESS;
-    }
+  if (Sha384Verify (HashCtx, &FspDigest->ComponentDigests.Sha384Digest,
+    FspsImageBase, FspRegion->SegmentCnt, IBB_SEGMENTS_PTR (FspRegion)) == TRUE)
+  {
+    DEBUG ((DEBUG_INFO, "FSP-S Verification Pass!\n"));
+    return EFI_SUCCESS;
   }
-
   DEBUG ((DEBUG_INFO, "FSP-S Verification Fail!\n"));
   return EFI_ACCESS_DENIED;
 }
 
 /**
-  Verify BSP-PreMem with the information in BSSS(BSPM).
-  BSP-PreMem digest information is kept in BSSS(BSPM), only one TPM required algorithm (SHA256, SHA384,
+  Verify and extend BSP-PreMem with the information in BSPM.
+  BSP-PreMem digest information is kept in BSPM, only one TPM required algorithm (SHA256, SHA384,
   SHA512, SM3) is needed for size consideration.
 
-  BSP-PreMem region information is kept in BSSS(BSPM), only hashed IBB (indicate by flag) should be taken
+  BSP-PreMem region information is kept in BSPM, only hashed IBB (indicate by flag) should be taken
   into digest calculation.
 
-  @param[in]   Bsss      BSSS(BSPM) structure found in BPM.
+  @param[in]   Bspm      Bspm structure found in BPM.
   @param[in]   Buffer    Memory buffer for hash verification.
 
   @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
@@ -297,39 +388,39 @@ VerifyFsps (
 EFI_STATUS
 EFIAPI
 VerifyBsp (
-  IN BSPM_ELEMENT                   *Bsss,
+  IN BSPM_ELEMENT                   *Bspm,
   IN VOID                           *Buffer
   )
 {
   VOID                   *HashCtx;
   REGION_SEGMENT         *IbbSegmentPtr;
-  UINTN                  Index;
+  UINT32                 Index;
   SHAX_HASH_STRUCTURE    *DigestPtr;
   BOOLEAN                IsBspValid;
 
   DEBUG ((DEBUG_INFO, "BSP Verification Start ...\n"));
 
-  if (Bsss == NULL || Buffer == NULL) {
+  if (Bspm == NULL || Buffer == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   HashCtx = (VOID *) Buffer;
 
   DEBUG_CODE_BEGIN ();
-  IbbSegmentPtr = SEGMENT_ARRAY_PTR (Bsss);
-  for (Index = 0; Index < Bsss->BspSegmentCount; Index ++) {
+  IbbSegmentPtr = SEGMENT_ARRAY_PTR (Bspm);
+  for (Index = 0; Index < Bspm->BspSegmentCount; Index ++) {
     DEBUG ((DEBUG_INFO, "IbbBase - 0x%x    IbbSize - 0x%x    Flag - %d\n", IbbSegmentPtr->Base, IbbSegmentPtr->Size, IbbSegmentPtr->Flags));
     IbbSegmentPtr ++;
   }
   DEBUG_CODE_END ();
 
-  DigestPtr = (SHAX_HASH_STRUCTURE *) ((UINT8 *) Bsss + sizeof (BSPM_ELEMENT) + Bsss->BspSegmentCount * sizeof (REGION_SEGMENT));
+  DigestPtr = (SHAX_HASH_STRUCTURE *) ((UINT8 *) Bspm + sizeof (BSPM_ELEMENT) + Bspm->BspSegmentCount * sizeof (REGION_SEGMENT));
   DEBUG ((DEBUG_INFO, "BSP Digest is found: 0x%x!\n", (UINTN) (VOID *) DigestPtr));
 
   IsBspValid = FALSE;
-  IbbSegmentPtr = SEGMENT_ARRAY_PTR (Bsss);
+  IbbSegmentPtr = SEGMENT_ARRAY_PTR (Bspm);
   if (DigestPtr->HashAlg == TPM_ALG_SHA384) {
-    IsBspValid = Sha384Verify (HashCtx, (SHA384_HASH_STRUCTURE *) DigestPtr, 0, Bsss->BspSegmentCount, IbbSegmentPtr);
+    IsBspValid = Sha384Verify (HashCtx, (SHA384_HASH_STRUCTURE *) DigestPtr, 0, Bspm->BspSegmentCount, IbbSegmentPtr);
   } else {
     DEBUG ((DEBUG_INFO, "The first digest must be Sha384 format!\n"));
   }

@@ -189,4 +189,8 @@
 #define B_ACE_MEM_DFMICPVCP_DDZLS                       ( BIT27 | BIT26 | BIT25 | BIT24 | BIT23 | BIT22 | BIT21 | BIT20 )
 #define N_ACE_MEM_DFMICPVCP_DDZLS                       20
 
+#define V_ACE_MEM_SNDWXLVSCTL_MLCS_APLL                 0x1
+#define R_ACE_MEM_SNDW0LVSCTL                           0x00036004
+#define N_ACE_MEM_SNDW0LVSCTL_MLCS                      27
+
 #endif

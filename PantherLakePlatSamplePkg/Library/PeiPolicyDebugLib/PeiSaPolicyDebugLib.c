@@ -95,7 +95,7 @@ UpdatePeiSaPolicyDebugPreMem (
     //
     // Initialize the Graphics configuration
     //
-    UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PanelPowerEnable, IGpuPreMemConfig->PanelPowerEnable, SaSetup.PanelPowerEnable);
+    UPDATE_POLICY (((FSPM_UPD *)FspmUpd)->FspmConfig.PanelPowerEnable, IGpuPreMemConfig->PanelPowerEnable, SaSetup.PanelPowerEnable);
     //
     // Disable PanelPowerEnable if there is eDP present on DDI-A & B.
     //
@@ -104,7 +104,7 @@ UpdatePeiSaPolicyDebugPreMem (
 #else
     if ((IGpuPreMemConfig->DdiConfiguration.DdiPortAConfig != DdiPortEdp) && (IGpuPreMemConfig->DdiConfiguration.DdiPortBConfig != DdiPortEdp)) {
 #endif
-      UPDATE_POLICY_V2 (((FSPM_UPD *)FspmUpd)->FspmConfig.PanelPowerEnable, IGpuPreMemConfig->PanelPowerEnable, 0x0);
+      UPDATE_POLICY (((FSPM_UPD *)FspmUpd)->FspmConfig.PanelPowerEnable, IGpuPreMemConfig->PanelPowerEnable, 0x0);
     }
   }
 

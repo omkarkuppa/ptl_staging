@@ -131,7 +131,7 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
 
             self.__FbmBuffer   : ByteBuffer   = self.__GetFbmImageBuffer ()
             self.__HdrParser   : FbmHdrParser = FbmHdrParser (self.__FbmBuffer)
-            self.__VerInfo     : FspVersion   = self.__HdrParser.FspVersion
+            self.__VerInfo     : FbmVersion   = self.__HdrParser.FbmVersion
 
             #
             # Get the BIOS image configuration.

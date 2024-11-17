@@ -36,7 +36,7 @@ const TOdtValueLpddr Lpddr5OdtTableType3[MAX_DIMMS_IN_CHANNEL][MAX_ODT_VALUE] = 
 
 const TOdtValueLpddr Lpddr5OdtTableType4[MAX_DIMMS_IN_CHANNEL][MAX_ODT_VALUE] = {
 /// 1DPC 1R,                    1DPC 2R
-  {{48, 60, 80, 0, 80, 0, 0},  {40, 48, 120, 240, 80, 120, 0}},
+  {{48, 60, 80, 0, 80, 0, 0},  {60, 48, 60, 120, 80, 120, 0}},
 };
 
 /**
@@ -108,10 +108,10 @@ MrcLp5GetDFE (
 
   // DFE setting range is from -0.052V to -0.01V in step size of 7mV. Tap=1: -0.052V, Tap=7: -0.01V
   if (Dfeql != NULL) {
-    *Dfeql = (IsTypicalBoard || Inputs->Lpddr5Camm) ? 5 : 6;
+    *Dfeql = (IsTypicalBoard || Inputs->Lpddr5Camm) ? 1 : 6;
   }
   if (Dfequ != NULL) {
-    *Dfequ = (IsTypicalBoard || Inputs->Lpddr5Camm) ? 5 : 6;
+    *Dfequ = (IsTypicalBoard || Inputs->Lpddr5Camm) ? 1 : 6;
   }
 
 

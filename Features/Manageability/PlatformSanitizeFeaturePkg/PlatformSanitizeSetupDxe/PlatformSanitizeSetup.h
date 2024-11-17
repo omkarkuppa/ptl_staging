@@ -43,6 +43,9 @@
 #include <Library/PsCsmeAccessRpeLib.h>
 #include "SetupForm.h"
 #include <Library/DxeAmtSupportLib.h>
+#include <Library/HobLib.h>
+#include <MeBiosPayloadHob.h>
+
 //
 // Private structure of driver
 //

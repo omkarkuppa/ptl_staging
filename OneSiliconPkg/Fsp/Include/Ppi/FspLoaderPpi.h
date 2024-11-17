@@ -35,22 +35,6 @@
 typedef struct _FSP_LOADER_PPI FSP_LOADER_PPI;
 
 /**
-  A service provided by FSP to verify FSP-M and published for BSP use in Dispatch mode.
-  In API mode, it's not supported.
-
-  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
-  @retval EFI_UNSUPPORTED         FBM is not found or valid.
-  @retval EFI_ACCESS_DENIED       Verification Fail.
-  @retval EFI_SUCCESS             Verification Pass.
-
-**/
-typedef
-EFI_STATUS
-(EFIAPI *FSP_VERIFY_FSPM) (
-  VOID
-  );
-
-/**
   A service provided by FSP to verify FSP-S and published for BSP use in Dispatch mode.
   In API mode, it's not supported.
 
@@ -68,7 +52,6 @@ EFI_STATUS
   );
 
 struct _FSP_LOADER_PPI {
-  FSP_VERIFY_FSPM                FspVerifyFspm;
   FSP_VERIFY_FSPS                FspVerifyFsps;
 };
 
