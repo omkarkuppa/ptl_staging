@@ -241,6 +241,7 @@
       PcdLib|MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
       SiliconPolicyInitLib|$(PLATFORM_PACKAGE)/PlatformInit/Library/SiliconPolicyInitLibNull/SiliconPolicyInitLibNull.inf
       SiliconPolicyUpdateLib|$(PLATFORM_PACKAGE)/PlatformInit/Library/SiliconPolicyUpdateLibNull/SiliconPolicyUpdateLibNull.inf
+      NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
   }
   UefiCpuPkg/ResetVector/Vtf0/Vtf0.inf {
     <BuildOptions>
@@ -297,13 +298,51 @@
       SiliconPolicyInitLib|$(PLATFORM_PACKAGE)/PlatformInit/Library/SiliconPolicyInitLibNull/SiliconPolicyInitLibNull.inf
       SiliconPolicyUpdateLib|$(PLATFORM_PACKAGE)/PlatformInit/Library/SiliconPolicyUpdateLibNull/SiliconPolicyUpdateLibNull.inf
 !endif
+!if gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable == TRUE
+      NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
+      NULL|SecurityPkg/Library/HashInstanceLibSha384/HashInstanceLibSha384.inf
+      NULL|SecurityPkg/Library/HashInstanceLibSha512/HashInstanceLibSha512.inf
+      NULL|SecurityPkg/Library/HashInstanceLibSm3/HashInstanceLibSm3.inf
+!endif
   }
 
   #
   # Security
   #
 !if gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable == TRUE
-  $(PLATFORM_PACKAGE)/Tcg/Tcg2PlatformPei/Tcg2PlatformPei.inf
+
+SecurityPkg/Tcg/PhysicalPresencePei/PhysicalPresencePei.inf
+
+SecurityPkg/Tcg/Tcg2Config/Tcg2ConfigPei.inf {
+  <LibraryClasses>
+    Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2DeviceLibDTpm.inf
+    Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
+    Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibRouter/Tpm2DeviceLibRouterPei.inf
+    NULL|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2InstanceLibDTpm.inf
+    NULL|SecurityPkg/Library/HashLibBaseCryptoRouter/HashLibBaseCryptoRouterPei.inf
+    NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
+    NULL|SecurityPkg/Library/HashInstanceLibSha384/HashInstanceLibSha384.inf
+    NULL|SecurityPkg/Library/HashInstanceLibSha512/HashInstanceLibSha512.inf
+    NULL|SecurityPkg/Library/HashInstanceLibSm3/HashInstanceLibSm3.inf
+}
+SecurityPkg/Tcg/Tcg2Pei/Tcg2Pei.inf {
+  <LibraryClasses>
+    Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
+    Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibRouter/Tpm2DeviceLibRouterPei.inf
+    NULL|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2InstanceLibDTpm.inf
+    NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
+    NULL|SecurityPkg/Library/HashInstanceLibSha384/HashInstanceLibSha384.inf
+    NULL|SecurityPkg/Library/HashInstanceLibSha512/HashInstanceLibSha512.inf
+    NULL|SecurityPkg/Library/HashInstanceLibSm3/HashInstanceLibSm3.inf
+}
+
+$(PLATFORM_PACKAGE)/Tcg/Tcg2PlatformPei/Tcg2PlatformPei.inf {
+  <LibraryClasses>
+    Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
+    Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibRouter/Tpm2DeviceLibRouterPei.inf
+    NULL|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2InstanceLibDTpm.inf
+    TpmPlatformHierarchyLib|SecurityPkg/Library/PeiDxeTpmPlatformHierarchyLib/PeiDxeTpmPlatformHierarchyLib.inf
+  }
 !endif
  MdeModulePkg/Universal/ResetSystemPei/ResetSystemPei.inf
 
@@ -390,7 +429,12 @@
   #
   $(PLATFORM_PACKAGE)/Hsti/HstiIbvPlatformDxe/HstiIbvPlatformDxe.inf
 !if gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable == TRUE
-  $(PLATFORM_PACKAGE)/Tcg/Tcg2PlatformDxe/Tcg2PlatformDxe.inf
+  $(PLATFORM_PACKAGE)/Tcg/Tcg2PlatformDxe/Tcg2PlatformDxe.inf {
+    <LibraryClasses>
+      Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
+      NULL|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2InstanceLibDTpm.inf
+      TpmPlatformHierarchyLib|SecurityPkg/Library/PeiDxeTpmPlatformHierarchyLib/PeiDxeTpmPlatformHierarchyLib.inf
+  }
 !endif
 
   #

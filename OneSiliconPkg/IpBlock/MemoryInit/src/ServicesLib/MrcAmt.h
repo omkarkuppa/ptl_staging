@@ -33,6 +33,8 @@
 // Hook for function to display row failure list
 #define AMT_PRINT_ROW_FAIL_LIST   0
 
+#define LOCAL_STUB_PPR_RESOURCE_ALWAYS_AVAILABLE  0
+
 // Advanced Mem Test types
 // Should agree with PPR test type bits defined in CMrcExtTypes.h
 typedef enum {
@@ -43,6 +45,15 @@ typedef enum {
   AdvMtYMarchShort,
   AdvMtYMarchLong
 } MRC_ADVANCED_MEM_TEST_TYPE;
+
+typedef union {
+  struct {
+    UINT8 AmtEnabled    : 1;
+    UINT8 PprEnabled    : 1;
+    UINT8 Reserved      : 6;
+  } Bits;
+  UINT8 Data;
+} AMT_PPR_ENABLE;
 
 // Mem test type selection and overrides
 // PprTestType setup option encoding -- Bit 0: WCMATS8 test, Bit 1: Data Retention test, Bit 2: X March test, Bit 3: X March G test, Bit 4: Y March Short test, Bit 5: Y March Long test
@@ -74,6 +85,7 @@ typedef struct {
   UINT32    cpgcErrBank;
   UINT32    cpgcErrRank;
   BOOLEAN   overflow;
+  UINT8     device;
 } CPGC_ERROR_STATUS_AMT;
 
 /**

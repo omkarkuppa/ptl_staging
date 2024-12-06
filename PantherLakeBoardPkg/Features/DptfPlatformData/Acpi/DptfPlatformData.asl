@@ -142,13 +142,26 @@ Scope(\_SB)
     //
     Method(GDDV, 0, Serialized, 0, PkgObj)
     {
-      Return(Package()
-      {
-        Buffer()
-        {
-          Include("BiosDataVault.asl") // empty data vault for documentation purposes
+      ADBG (Concatenate ("Platform Board ID: ", PLID))
+      // ADBG (Concatenate ("Platform Board Revesion: ", BREV))
+      Switch (ToInteger (PLID)) {
+        Case (Package () {BoardIdPtlHLp5Gcs1, BoardIdPtlHLp5Gcs2}) {
+          ADBG ("Use platform GCS data vault")
+          Return (Package () {
+            Buffer () {
+              Include ("BiosDataVaultGcs.asl") // GCS data vault
+            }
+          })
         }
-      })
+        Default {
+          ADBG ("Use Default data vault")
+          Return (Package () {
+            Buffer () {
+              Include ("BiosDataVault.asl") // empty data vault for documentation purposes
+            }
+          })
+        }
+      }
     }
 
     // FIDC (Fan ID Convert to Port Method)

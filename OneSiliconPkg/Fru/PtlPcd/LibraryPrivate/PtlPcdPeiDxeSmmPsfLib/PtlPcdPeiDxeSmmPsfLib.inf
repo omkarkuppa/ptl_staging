@@ -53,7 +53,8 @@ LIBRARY_CLASS                  = PsfSocLib
 
 [Sources]
   PsfSocLib.c
+  PtlPcdPPsfLib.c
+  PtlPcdHPsfLib.c
 
 [Guids]
 gPsfConfigGuid    ##CONSUMES
-

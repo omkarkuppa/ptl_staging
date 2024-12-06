@@ -142,7 +142,6 @@ PtlTcssInitPostMem (
     { IpUsb3TuningParamIdCp15Deemphasis,            0x00007944 },
     { IpUsb3TuningParamIdCp16Deemphasis,            0x00000C00 },
     { IpUsb3TuningParamIdLinkPollingMinTime,        0x2 },
-    { IpUsb3TuningParamIdGapTimeAfterLsTx,          0x16 },
     { IpUsb3TuningParamIdU2ExitLatency,             0x3E8 },
     { IpUsb3TuningParamIdHbufWaterMark,             0x2 },
   };

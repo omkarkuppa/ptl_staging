@@ -81,11 +81,10 @@
 
   #Tbt config
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdSupportBitmap         ## PRODUCES
 
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportRetimerInfoPresent
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable  ## CONSUMES
 
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable  ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleDebugLevel
 
   # TPM interrupt
@@ -141,7 +140,6 @@
   gBoardModuleTokenSpaceGuid.PcdWwanWakeGpio                             ## PRODUCES
   gBoardModuleTokenSpaceGuid.PcdWwanSourceClock                          ## PRODUCES
   gBoardModuleTokenSpaceGuid.PcdWwanRootPortNumber                       ## PRODUCES
-  gBoardModuleTokenSpaceGuid.VpdPcdwwanPowerEnableGpio                   ## PRODUCES
 
   # WWAN
   gBoardModuleTokenSpaceGuid.PcdWwanSourceClock
@@ -251,11 +249,11 @@
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamGpioEnable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdTcssWaitRetimerDeviceReady
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCRetimerFlash
   gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable
   gBoardModuleTokenSpaceGuid.VpdPcdBoardRtd3TableSignature
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardSsdRtd3TableSignature
   gBoardModuleTokenSpaceGuid.VpdPcdHdaI2sCodecI2cBusNumber
   gBoardModuleTokenSpaceGuid.VpdPcdBatterySupport
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamSensor

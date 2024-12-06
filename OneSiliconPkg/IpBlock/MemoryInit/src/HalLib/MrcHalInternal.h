@@ -36,6 +36,7 @@
 **/
 MRC_RANGE
 MrcGetPartitionIndexRange (
+  IN MrcParameters *const MrcData,
   IN const PARTITION_TYPE PartitionType,
   IN const UINT32         Index
   );
@@ -225,5 +226,6 @@ MrcHalGetBitFieldS64 (
   IN const UINT32  HashIn,
   IN const UINT64  RegisterValue
   );
+
 
 #endif // _MrcHalCore_h_

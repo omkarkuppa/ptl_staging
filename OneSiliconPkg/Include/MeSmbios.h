@@ -144,9 +144,9 @@ typedef struct {
   UINT32  Reserved3           : 1;    ///< [4]    Reserved, must be set to 0
   UINT32  VTxSupport          : 1;    ///< [5]    BIOS supports VT-x in BIOS setup screen (can be editable)
   UINT32  IsrdIssrCapability  : 1;    ///< [6]    BIOS supports ISRD & ISSR
-  UINT32  LiCapability        : 1;    ///< [7]    BIOS supports Ledger Island
+  UINT32  Reserved4           : 1;    ///< [7]    Reserved, must be set to 0
   UINT32  NvmeRecoveryEnabled : 1;    ///< [8]    BIOS supports NVMe_Based Resiliency
-  UINT32  Reserved4           : 23;   ///< [31:9] Reserved, must be set to 0
+  UINT32  Reserved5           : 23;   ///< [31:9] Reserved, must be set to 0
 } BIOS_CAP;
 
 ///

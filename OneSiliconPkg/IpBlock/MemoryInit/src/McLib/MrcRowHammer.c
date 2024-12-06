@@ -416,6 +416,10 @@ MrcConfigArfm (
       break;
   }
 
+  if (Status == mrcSuccess) {
+    MrcData->Save.Data.IsRowHammerConfigured[Controller][Channel][Dimm] = TRUE;
+  }
+
   return Status;
 }
 
@@ -542,6 +546,9 @@ MrcConfigDrfm (
     if (Status != mrcSuccess) {
       return Status;
     }
+
+    // MR75/MR59 (LP5/DDR5) is updated so we treat it as configured RowHammer
+    MrcData->Save.Data.IsRowHammerConfigured[Controller][Channel][Dimm] = TRUE;
 
     if ((1 << Dimm) & DrfmEnableBits) {
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DRFM enabled on MC%u C%u Dimm%u\n", Controller, Channel, Dimm);
@@ -722,7 +729,6 @@ MrcRhPrevention (
   UINT8                Channel;
   UINT8                IpChannel;
   UINT8                Dimm;
-  UINT8                DimmMax;
   BOOLEAN              IsLpddr;
   UINT8                PopulatedDimmMask;
   UINT8                DrfmDimmSupportedMap;
@@ -735,6 +741,7 @@ MrcRhPrevention (
   INT64                PanicWm;
   INT64                HpWm;
   MRC_RFM_SETUP_CONFIG RfmSetupConfig;
+  BOOLEAN              IsMcSubChannel;
 
   const MRC_EXT_INPUTS_TYPE *ExtInputs;
 
@@ -765,22 +772,18 @@ MrcRhPrevention (
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
-      if (!IS_MC_SUB_CH (IsLpddr, Channel)) {
+      if (!MrcChannelExist (MrcData, Controller, Channel)) {
+        continue;
+      }
+
+      IsMcSubChannel = IS_MC_SUB_CH (IsLpddr, Channel);
+      if (!IsMcSubChannel) {
         PopulatedDimmMask    = 0;
         DrfmDimmSupportedMap = 0;
         MrcRfmSetupConfigInit (&RfmSetupConfig);
       }
-      // Use DimmMax to deal with a special case of LPDDR.
-      // DIMM0 is subch0 and DIMM1 is subch1 in case of LPDDR.
-      // LPDDR board might just install memory device at
-      // subchannel 0, 2, 4, 6 and not install memory at 1,3,5,7.
-      if (MrcChannelExist (MrcData, Controller, Channel)) {
-        DimmMax = MAX_DIMMS_IN_CHANNEL;
-      } else {
-        DimmMax = 0;
-      }
 
-      for (Dimm = 0; Dimm < DimmMax; Dimm++) {
+      for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
         if (Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Status != DIMM_PRESENT) {
           continue;
         }
@@ -836,14 +839,13 @@ MrcRhPrevention (
 
         // Check if DRFM supported on each DIMM
         DrfmSupported = MrcIsDrfmSupported (MrcData, Controller, Channel, Dimm);
-        MrcData->Save.Data.IsDrfmSupported = DrfmSupported;
 
         if (DrfmSupported) {
           MrcSetDimmBit (MrcData, Channel, Dimm, &DrfmDimmSupportedMap);
         }
       } // for Dimm
 
-      if ((PopulatedDimmMask == 0) || (IsLpddr && ((Channel % 2) == 0))) {
+      if ((PopulatedDimmMask == 0) || IsMcSubChannel) {
         //  MC registers are per big ch0/1 only
         //  As for LPDDR, we need check sub channel both 0 and 1,
         //  or both 2 and 3, before going ahead to configure RHCTL or PTRR.
@@ -867,7 +869,6 @@ MrcRhPrevention (
           if (Status != mrcSuccess) {
             return Status;
           }
-
           DrfmConfigured = TRUE;
           MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DRFM Configured\n");
         }

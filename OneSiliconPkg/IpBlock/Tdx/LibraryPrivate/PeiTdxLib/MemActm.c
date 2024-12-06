@@ -52,6 +52,32 @@ PrintByteBuffer (
 }
 
 /**
+  Return highest bit position for given Bitmap
+
+  @param[in] Bitmap Bitmap from which bit count is calculated 
+
+  @retval    UINT8  Highest bit position
+**/
+UINT8
+GetHighestBitPosition (
+  IN UINTN Bitmap
+  )
+{
+  UINT8 HighestBitPos = 0;
+
+  if (Bitmap == 0) {
+    return HighestBitPos;
+  }
+
+  while (Bitmap != 0) {
+    Bitmap >>= 1;
+    HighestBitPos++;
+  }
+
+  return HighestBitPos - 1;
+}
+
+/**
 
   Gets DIMM information from registers and fills DIMM manifest for
   Alias Check Trusted Module (ACTM).
@@ -171,14 +197,18 @@ ActmPopulateDimmManifest (
           ActmDimmDescription[Index].Channel            = Channel;
           ActmDimmDescription[Index].Dimm               = Dimm;
           ActmDimmDescription[Index].Rank               = Rank;
-          ActmDimmDescription[Index].SubRankBits        = 0;                 // SubRankBits is Ignored
-          ActmDimmDescription[Index].BankGroupBits      = BANK_GROUP_BITS;   // 2
-          ActmDimmDescription[Index].BankAddressBits    = BANK_ADDRESS_BITS; // 2
-          ActmDimmDescription[Index].ColumnBits         = COLUMN_BITS;       // 10
-          ActmDimmDescription[Index].RowBits            = ROW_BITS;          // 16
+          ActmDimmDescription[Index].SubRankBits        = 0; // SubRankBits is Ignored
+          // MRC is using Number of BankGroups. MCHECK expects bits number
+          ActmDimmDescription[Index].BankGroupBits      = GetHighestBitPosition (DimmOut->BankGroups);
+          // MRC is using Number of Banks. MCHECK expects bits number
+          ActmDimmDescription[Index].BankAddressBits    = GetHighestBitPosition (DimmOut->Banks);
+          // MRC is using Column address size. MCHECK expects bits number
+          ActmDimmDescription[Index].ColumnBits         = GetHighestBitPosition (DimmOut->ColumnSize);
+          // MRC is using Row address size. MCHECK expects bits number
+          ActmDimmDescription[Index].RowBits            = GetHighestBitPosition (DimmOut->RowSize);
           ActmDimmDescription[Index].Asymmetric         = DimmOut->DeviceDensity == DIMM_DENSITY_24_GB ? TRUE : FALSE;  // 1 for 24Gb, 0 for rest
-          ActmDimmDescription[Index].ModeRegister58     = 0;                 // MR58 is Ignored
-          ActmDimmDescription[Index].ModeRegister59     = 0;                 // MR59 is Ignored
+          ActmDimmDescription[Index].ModeRegister58     = 0; // MR58 is Ignored
+          ActmDimmDescription[Index].ModeRegister59     = 0; // MR59 is Ignored
 
           DEBUG ((DEBUG_INFO, "MemoryController         : %d\n", ActmDimmDescription[Index].MemoryController));
           DEBUG ((DEBUG_INFO, "Channel                  : %d\n", ActmDimmDescription[Index].Channel));

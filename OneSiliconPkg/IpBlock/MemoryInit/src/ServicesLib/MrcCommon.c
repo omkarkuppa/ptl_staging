@@ -52,6 +52,12 @@ const char  CmdVDelayString[] = "CmdVoltage";
 const char  TxDqDelayString[] = "TxDqDelay";
 #endif
 
+typedef struct {
+  UINT8 PhyClkToCkdVal;
+  UINT8 CkdAddress;
+  UINT8 Instance;
+} PhyClkToCkdDimmGrp;
+
 const TCkdValue Ddr5CKDTable[MAX_DIMMS_IN_SYSTEM][MAX_CKD_PIN] = {
   {{Ict80Ohm, SlewRateFast, LightDrive}, {Ict80Ohm, SlewRateFast, LightDrive}, {Ict80Ohm, SlewRateFast, LightDrive}, {Ict80Ohm, SlewRateFast, LightDrive}},
   {{Ict80Ohm, SlewRateFast, LightDrive}, {Ict80Ohm, SlewRateFast, LightDrive}, {Ict80Ohm, SlewRateFast, LightDrive}, {Ict80Ohm, SlewRateFast, LightDrive}},
@@ -1510,6 +1516,10 @@ MrcMrAddrToIndex (
       MrIndex = mrIndexMR58;
       break;
 
+    case mrMR59:
+      MrIndex = mrIndexMR59;
+      break;
+
     case mrMR69:
       MrIndex = mrIndexMR69;
       break;
@@ -2957,8 +2967,10 @@ MrcPrintHeader (
   Obtain CKD Smbus Address through SPD Smbus Address.
 
   @param[in] MrcData - Pointer to MRC global data.
+
+  @retval mrcFail on failure, otherwise mrcSuccess.
 **/
-VOID
+MrcStatus
 MrcSetupCkdAddress (
   MrcParameters    *const MrcData
   )
@@ -2966,42 +2978,60 @@ MrcSetupCkdAddress (
   MrcInput           *Inputs;
   MrcOutput          *Outputs;
   MrcDimmIn          *DimmIn;
-  UINT8              Controller;
-  UINT8              Channel;
-  UINT8              Dimm;
-  UINT8              Rank;
-  UINT8              RankInChannel;
-  UINT8              MaxChannel;
-  UINT32             CkdDimm;
+  MrcDimmOut         *DimmOut;
+  UINT8              Index;
+  UINT32             McIndex;
+  UINT32             ChIndex;
+  UINT32             DimmIndex;
+  UINT8              CkdIndex;
+  UINT32             MaxDimm;
+
+  Index = 0;
 
   Inputs      = &MrcData->Inputs;
   Outputs     = &MrcData->Outputs;
-  MaxChannel  = Outputs->MaxChannels;
+  MaxDimm = Inputs->IsDdrIoDtHalo ? MAX_DIMMS_IN_CHANNEL : 1;
 
-  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    for (Channel = 0; Channel < MaxChannel; Channel++) {
-      for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
-        if (Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].Status != DIMM_PRESENT) {
+  // Assign CKD DIMM Index
+  for (McIndex = 0; McIndex < MAX_CONTROLLER; McIndex++) {
+    for (ChIndex = 0; ChIndex < MAX_DDR5_CHANNEL; ChIndex++) {
+      for (DimmIndex = 0; DimmIndex < MaxDimm; DimmIndex++) {
+        DimmIn = &Inputs->Controller[McIndex].Channel[ChIndex].Dimm[DimmIndex];
+        DimmOut = &Outputs->Controller[McIndex].Channel[ChIndex].Dimm[DimmIndex];
+        if (DimmOut->IsCkdSupport == FALSE) {
           continue;
         }
-        DimmIn = &Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm];
-        for (Rank = 0; Rank < MAX_RANK_IN_DIMM; Rank++) {
-          RankInChannel = (Dimm * MAX_RANK_IN_DIMM) + Rank;
-          MrcCalcCkdDimmPin (MrcData, Controller, Channel, RankInChannel, &CkdDimm, NULL);
-          if (DimmIn->CkdAddress == 0) {
-            if (CkdDimm < MAX_DIMMS_IN_SYSTEM) {
-              if (Outputs->CkdBuffer[CkdDimm].CkdAddress == 0) {
-                Outputs->CkdBuffer[CkdDimm].CkdAddress = (DimmIn->SpdAddress & 0x0F) | 0xB0;
-              }
-            }
-          } else {
-            Outputs->CkdBuffer[CkdDimm].CkdAddress = DimmIn->CkdAddress;
+        // For CUDIMM, CSODIMM: set CKD Address based on SPD Address if it's not assigned
+        if ((DimmIn->CkdAddress == 0) && (DimmIn->SpdAddress > 0)) {
+          DimmIn->CkdAddress = (DimmIn->SpdAddress & 0x0F) | 0xB0;
+        }
+        if (DimmIn->CkdAddress == 0) {
+          continue;
+        }
+        for (CkdIndex = 0; CkdIndex < Index; CkdIndex++) {
+          // CkdAddress already existed
+          if (DimmIn->CkdAddress == Outputs->CkdBuffer[CkdIndex].CkdAddress) {
+            DimmOut->CkdDimmIndex = CkdIndex;
+            break;
           }
+        }
+        // New CKD Address
+        if (CkdIndex == Index) {
+          if (CkdIndex >= MAX_DIMMS_IN_SYSTEM) {
+            MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "%s CKD Dimm Index exceeding max DIMM in system (4), please check the CKD Address\n", gErrString);
+            return mrcFail;
+          }
+          DimmOut->CkdDimmIndex = CkdIndex;
+          Outputs->CkdBuffer[CkdIndex].CkdAddress = DimmIn->CkdAddress;
+          Index++;
         }
       }
     }
   }
+
+  return mrcSuccess;
 }
+
 
 /**
   This function gets the current CKD Control Word value from the CkdBuffer.
@@ -3079,6 +3109,8 @@ MrcCkdBufferWrite (
       }
       if (((Mode & GSM_FORCE_WRITE) != 0) || ((Mode & GSM_CACHE_ONLY) == 0)) {
         MrcSmbusWrite (MrcData, CkdBuffer->CkdAddress | (Offset << 8), Value, &SmbusStatus);
+
+        MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "CkdAddress = 0x%x Offset = 0x%x, Data = 0x%x\n", CkdBuffer->CkdAddress, Offset, CkdBuffer->Data[Index].Data);
       }
     } else {
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Attempted to write to a Read-Only Register\n");
@@ -3115,6 +3147,8 @@ MrcFlushCkdBuffer (
         if (Offset != MRC_IGNORE_ARG_8) {
           MrcSmbusWrite (MrcData, CkdBuffer->CkdAddress | ((UINT32) Offset << 8), CkdBuffer->Data[Index].Data, &Status);
           CkdBuffer->Data[Index].IsDirty = FALSE;
+
+          MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "CkdAddress = 0x%x Offset = 0x%x, Data = 0x%x\n", CkdBuffer->CkdAddress, Offset, CkdBuffer->Data[Index].Data);
         }
       }
     }
@@ -3122,53 +3156,21 @@ MrcFlushCkdBuffer (
 }
 
 /**
-  Obtain CKD Pin number and CKD Dimm number based on MC/Channel/Rank
+  Obtain CKD Output Pin number and CKD Dimm number based on MC/Channel/Rank
 
-  @param[in] MrcData      - Pointer to global data.
   @param[in]  Controller  - Memory Controller Number.
   @param[in]  Channel     - Channel Number.
   @param[in]  Rank        - Rank Number.
   @param[out] CkdDimm     - CKD Dimm Number.
   @param[out] CkdPin      - CKD Pin Number.
 
-  Desktop:
-  Controller   Channel   Rank | CKD DIMM   CKD Pin
-      0      |    0    |  0   |     2    |    0
-      0      |    0    |  1   |     2    |    1
-      0      |    0    |  2   |     3    |    0
-      0      |    0    |  3   |     3    |    1
-  ___________|_________|______|__________|__________
-      0      |    1    |  0   |     0    |    0
-      0      |    1    |  1   |     0    |    1
-      0      |    1    |  2   |     1    |    0
-      0      |    1    |  3   |     1    |    1
-  ___________|_________|______|__________|__________
-      1      |    0    |  0   |     2    |    2
-      1      |    0    |  1   |     2    |    3
-      1      |    0    |  2   |     3    |    2
-      1      |    0    |  3   |     3    |    3
-  ___________|_________|______|__________|__________
-      1      |    1    |  0   |     0    |    2
-      1      |    1    |  1   |     0    |    3
-      1      |    1    |  2   |     1    |    2
-      1      |    1    |  3   |     1    |    3
-  ___________|_________|______|__________|__________
+  Pin:
+  0 - QCLK0_A
+  1 - QCLK1_A
+  2 - QCLK0_B
+  3 - QCLK1_B
 
-  Mobile:
-  Controller   Channel   Rank | CKD DIMM   CKD Pin
-      0      |    0    |  0   |     0    |    0
-      0      |    0    |  1   |     0    |    1
-  ___________|_________|______|__________|__________
-      0      |    1    |  0   |     0    |    2
-      0      |    1    |  1   |     0    |    3
-  ___________|_________|______|__________|__________
-      1      |    0    |  0   |     2    |    0
-      1      |    0    |  1   |     2    |    1
-  ___________|_________|______|__________|__________
-      1      |    1    |  0   |     2    |    2
-      1      |    1    |  1   |     2    |    3
-  ___________|_________|______|__________|__________
-**/
+  **/
 VOID
 MrcCalcCkdDimmPin (
   IN MrcParameters      *const MrcData,
@@ -3182,29 +3184,8 @@ MrcCalcCkdDimmPin (
   UINT32       Dimm;
   UINT32       Pin;
 
-  Dimm = 0;
-  Pin = 0;
-
-  if (MrcData->Inputs.IsDdrIoDtHalo) {
-    if (Controller == 1) {
-      Pin = MAX_RANK_IN_DIMM;
-    }
-    if (Channel == 0) {
-      Dimm = MAX_RANK_IN_DIMM;
-    }
-  } else {
-    if (Channel == 1) {
-      Pin = MAX_RANK_IN_DIMM;
-    }
-    if (Controller == 1) {
-      Dimm = MAX_RANK_IN_DIMM;
-    }
-  }
-  // CKD Pin
-  Pin += (Rank % MAX_RANK_IN_DIMM);
-  // CKD DIMM
-  Dimm += (Rank / MAX_RANK_IN_DIMM);
-
+  Dimm = MrcData->Outputs.Controller[Controller].Channel[Channel].Dimm[Rank/2].CkdDimmIndex;
+  Pin  = (MrcData->Inputs.Controller[Controller].Channel[Channel].Dimm[Rank/2].ChannelToCkdQckMapping * 2) + (Rank % 2);
 
   if (CkdDimm != NULL) {
     *CkdDimm = Dimm;
@@ -3215,11 +3196,88 @@ MrcCalcCkdDimmPin (
 }
 
 /**
+  Check CKD Clock:
+  - no more than two instances of the clock requested
+  - must be in the same CKD DIMM
+
+  @param[in] MrcData - Pointer to MRC global data.
+
+  @retval mrcFail on failure, otherwise mrcSuccess.
+**/
+MrcStatus
+MrcCkdCheckValidInstance (
+  IN MrcParameters* const MrcData
+  )
+{
+  const MRC_FUNCTION  *MrcCall;
+  MrcInput            *Inputs;
+  MrcOutput           *Outputs;
+  MrcDebug            *Debug;
+  MrcStatus           Status;
+  UINT32              Controller;
+  UINT32              Channel;
+  UINT32              Dimm;
+  UINT8               CurrPhyClkToCkdDimm;
+  UINT8               CurrCkdAddress;
+  UINT8               Loop;
+  UINT8               Index;
+  PhyClkToCkdDimmGrp  PhyClkToCkd[8];
+
+  Inputs       = &MrcData->Inputs;
+  MrcCall      = Inputs->Call.Func;
+  Outputs      = &MrcData->Outputs;
+  Debug        = &Outputs->Debug;
+  Status       = mrcSuccess;
+  Index        = 0;
+
+  MrcCall->MrcSetMem ((UINT8*)PhyClkToCkd, sizeof (PhyClkToCkd), 0);
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
+        if (Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].IsCkdSupport) {
+          CurrPhyClkToCkdDimm = Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].PhyClockToCkdDimm;
+          CurrCkdAddress = Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].CkdAddress;
+          for (Loop = 0; Loop < Index; Loop++) {
+            if (CurrPhyClkToCkdDimm == PhyClkToCkd[Loop].PhyClkToCkdVal) {
+              if (PhyClkToCkd[Loop].CkdAddress != CurrCkdAddress) {
+                MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s PhyClockToCkdDimm = %d clock selected is not in the same CKD DIMM, CkdAddress = 0x%x vs 0x%x\n",
+                  gErrString, PhyClkToCkd[Loop].PhyClkToCkdVal, CurrCkdAddress, PhyClkToCkd[Loop].CkdAddress);
+                Status = mrcFail;
+              }
+              PhyClkToCkd[Loop].Instance++;
+              break;
+            }
+          }
+          if (Loop == Index) {
+            PhyClkToCkd[Loop].PhyClkToCkdVal = CurrPhyClkToCkdDimm;
+            PhyClkToCkd[Loop].CkdAddress = CurrCkdAddress;
+            PhyClkToCkd[Loop].Instance++;
+            Index++;
+          }
+        }
+      }
+    }
+  }
+
+  // Return error if it's more than 2 instances.
+  for (Loop = 0; Loop < Index; Loop++) {
+    if (PhyClkToCkd[Loop].Instance > 2) {
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s PhyClockToCkdDimm = %d has %d instances. PhyClockToCkdDimm must be no more than two instances.\n",
+        gErrString, PhyClkToCkd[Loop].PhyClkToCkdVal, PhyClkToCkd[Loop].Instance);
+      Status = mrcFail;
+    }
+  }
+
+  return Status;
+}
+
+/**
   This Function configures DDR5 CKD Control Word Registers.
 
   @param[in]  MrcData   - Pointer to MRC global data.
 
-  @retval mrcSuccess
+  @retval mrcFail if MrcCkdCheckValidInstance is fail, otherwise mrcSuccess
 **/
 MrcStatus
 MrcDdr5CkdConfig (
@@ -3230,21 +3288,27 @@ MrcDdr5CkdConfig (
   MrcDebug            *Debug;
   UINT32              Controller;
   UINT32              Channel;
+  UINT32              Dimm;
   UINT32              Rank;
+  UINT32              RankIndex;
   UINT32              CkdDimm;
   UINT32              CkdPin;
-  UINT8               MaxRank;
   INT64               GetSetVal;
 
   Outputs      = &MrcData->Outputs;
   Debug        = &Outputs->Debug;
-  MaxRank      = MrcData->Inputs.IsDdrIoDtHalo ? MAX_RANK_IN_CHANNEL : MAX_RANK_IN_DIMM;
 
   MrcEnableDimmPmic (MrcData);
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Programming CKD Control Word.\n");
 
-  MrcSetupCkdAddress (MrcData);
+  if (MrcSetupCkdAddress (MrcData) != mrcSuccess) {
+    return mrcFail;
+  }
+
+  if (MrcCkdCheckValidInstance (MrcData) != mrcSuccess) {
+    return mrcFail;
+  }
 
   // Update CKD Buffer initial values for RW00
   for (CkdDimm = 0; CkdDimm < MAX_DIMMS_IN_SYSTEM; CkdDimm++) {
@@ -3256,34 +3320,45 @@ MrcDdr5CkdConfig (
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
-      for (Rank = 0; Rank < MaxRank; Rank++) {
-        MrcCalcCkdDimmPin (MrcData, Controller, Channel, Rank, &CkdDimm, &CkdPin);
-        if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
+      for (Dimm = 0; Dimm < MAX_DIMMS_IN_CHANNEL; Dimm++) {
+        if (Outputs->Controller[Controller].Channel[Channel].Dimm[Dimm].IsCkdSupport == FALSE) {
           continue;
-        } else {
-          // RW00
-          GetSetVal = 0;
-          MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckClkDisable, WriteToCache, &GetSetVal);
-          GetSetVal = SinglePllMode;
-          MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdPllMode, WriteToCache, &GetSetVal);
-          GetSetVal = Ddr5CKDTable[CkdDimm][0].DckOdt;
-          MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdIctInputClkTerm, WriteToCache, &GetSetVal);
-          // RW01
-          GetSetVal = 1;
-          MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckOutputDelayEnable, WriteToCache, &GetSetVal);
-          // RW02
-          GetSetVal = Ddr5CKDTable[CkdDimm][CkdPin].Ron;
-          MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckDrive, WriteToCache, &GetSetVal);
-          // RW03
-          // Per Channel, only need to program for even rank
-          if ((Rank % CKD_QCK_SHARE) == 0) {
-            GetSetVal = Ddr5CKDTable[CkdDimm][CkdPin].SlewRate;
-            MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckSlewRate, WriteToCache, &GetSetVal);
-          }
-          if (MrcData->Inputs.BootMode == bmFast) {
-            // RW04-07
-            GetSetVal = Outputs->CkdShift[Controller][Channel][Rank];
-            MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckOutputDelay, WriteCached, &GetSetVal);
+        }
+        for (RankIndex = 0; RankIndex < MAX_RANK_IN_DIMM; RankIndex++) {
+          Rank = Dimm * MAX_RANK_IN_DIMM + RankIndex;
+          MrcCalcCkdDimmPin (MrcData, Controller, Channel, Rank, &CkdDimm, &CkdPin);
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Mc%dCh%dR%d CkdDimm = %d, CkdPin = %d\n",
+            Controller, Channel, Rank, CkdDimm, CkdPin);
+          // Program only QCK Clock Disable if Rank is not enabled
+          if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
+            // RW00
+            GetSetVal = 1;
+            MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckClkDisable, WriteToCache, &GetSetVal);
+            continue;
+          } else {
+            GetSetVal = 0;
+            MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckClkDisable, WriteToCache, &GetSetVal);
+            GetSetVal = SinglePllMode;
+            MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdPllMode, WriteToCache, &GetSetVal);
+            GetSetVal = Ddr5CKDTable[CkdDimm][0].DckOdt;
+            MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdIctInputClkTerm, WriteToCache, &GetSetVal);
+            // RW01
+            GetSetVal = 1;
+            MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckOutputDelayEnable, WriteToCache, &GetSetVal);
+            // RW02
+            GetSetVal = Ddr5CKDTable[CkdDimm][CkdPin].Ron;
+            MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckDrive, WriteToCache, &GetSetVal);
+            // RW03
+            // Per Channel, only need to program for even rank
+            if ((Rank % CKD_QCK_SHARE) == 0) {
+              GetSetVal = Ddr5CKDTable[CkdDimm][CkdPin].SlewRate;
+              MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckSlewRate, WriteToCache, &GetSetVal);
+            }
+            if (MrcData->Inputs.BootMode == bmFast) {
+              // RW04-07
+              GetSetVal = Outputs->CkdShift[Controller][Channel][Rank];
+              MrcCkdGetSetCW (MrcData, Controller, Channel, Rank, GsmCkdQckOutputDelay, WriteCached, &GetSetVal);
+            }
           }
         }
       }
@@ -3295,7 +3370,7 @@ MrcDdr5CkdConfig (
 }
 
 /**
-  Obtain Physical MC/Channel/Rank based on based on MC/Channel/Rank
+  Obtain Physical MC/Channel/Rank based on based on PhyClockToCkdDimm
 
   @param[in]  MrcData     - Pointer to global data.
   @param[in]  Controller  - Memory Controller Number.
@@ -3307,16 +3382,12 @@ MrcDdr5CkdConfig (
 
   @retval IsCkdSupported
 
-           |   CKD (Mobile)  |      Non-CKD
-  MC CH R  | MC CH R  (CLK)  |  MC CH R  (CLK)
-  0  0  0  | 0  0  0 (0CLK0) |  0  0  0 (0CLK0)
-  0  0  1  | 0  0  0 (0CLK0) |  0  0  1 (0CLK1)
-  0  1  0  | 0  0  0 (0CLK0) |  0  1  0 (1CLK0)
-  0  1  1  | 0  0  0 (0CLK0) |  0  1  1 (1CLK1)
-  1  0  0  | 1  0  0 (2CLK0) |  1  0  0 (2CLK0)
-  1  0  1  | 1  0  0 (2CLK0) |  1  0  1 (2CLK1)
-  1  1  0  | 1  0  0 (2CLK0) |  1  1  0 (3CLK0)
-  1  1  1  | 1  0  0 (2CLK0) |  1  1  1 (3CLK1)
+  PhyClockToCkdDimm
+  Encoding: a - xCLKy where a is the array index, x is Phy channel, and y is Phy Rank.
+            0  - 0CLK0, 4  - 1CLK0, 8  - 2CLK0, 12 - 3CLK0
+            1  - 0CLK1, 5  - 1CLK1, 9  - 2CLK1, 13 - 3CLK1
+            2  - 0CLK2, 6  - 1CLK2, 10 - 2CLK2, 14 - 3CLK2
+            3  - 0CLK3, 7  - 1CLK3, 11 - 2CLK3, 15 - 3CLK3
 **/
 BOOLEAN
 MrcGetDdr5ClkIndex (
@@ -3329,22 +3400,26 @@ MrcGetDdr5ClkIndex (
   OUT    UINT32         *const PhyRank
   )
 {
-  UINT32 Dimm;
-  BOOLEAN IsCkdDimm;
+  MrcInput   *Inputs;
+  UINT32     Dimm;
+  UINT8      PhyClockToCkdDimm;
+  BOOLEAN    IsCkdDimm;
 
+  Inputs    = &MrcData->Inputs;
+  Dimm      = Rank / MAX_RANK_IN_DIMM;
   IsCkdDimm = FALSE;
-  Dimm = Rank / MAX_RANK_IN_DIMM;
+  *PhyController = MRC_UINT32_MAX;
+  *PhyChannel    = MRC_UINT32_MAX;
+  *PhyRank       = MRC_UINT32_MAX;
 
   if (MrcData->Outputs.Controller[Controller].Channel[Channel].Dimm[Dimm].IsCkdSupport) {
-    IsCkdDimm = TRUE;
-    if (Rank < MAX_RANK_IN_DIMM) {
-      *PhyController = Controller;
-      *PhyChannel = 0;
-      *PhyRank = 0;
-    } else {
-      *PhyController = MRC_UINT32_MAX;
-      *PhyChannel = MRC_UINT32_MAX;
-      *PhyRank = MRC_UINT32_MAX;
+     // Mobile only supports up to 2 ranks
+    if ((Inputs->IsDdrIoUlxUlt && (Rank < MAX_RANK_IN_DIMM)) || Inputs->IsDdrIoDtHalo) {
+      PhyClockToCkdDimm = Inputs->Controller[Controller].Channel[Channel].Dimm[Dimm].PhyClockToCkdDimm;
+      IsCkdDimm = TRUE;
+      *PhyController = PhyClockToCkdDimm / 8;
+      *PhyChannel = (PhyClockToCkdDimm / 4) % 2;
+      *PhyRank = PhyClockToCkdDimm % 4;
     }
   } else {
     *PhyController = Controller;
@@ -3355,44 +3430,6 @@ MrcGetDdr5ClkIndex (
   return IsCkdDimm;
 }
 
-/**
-  Returns whether PHY Clock associated with given Controller,
-  Channel, Rank is enabled or not.
-
-  @param[in] MrcData    - Pointer to MRC global data.
-  @param[in] Controller - Controller to test.
-  @param[in] Channel    - Channel to test.
-  @param[in] Rank       - Rank to test.
-
-  @retval BOOLEAN - TRUE if enabled, FALSE otherwise.
-**/
-BOOLEAN
-MrcPhyClockExists (
-  IN MrcParameters *const MrcData,
-  IN UINT32         const Controller,
-  IN UINT32         const Channel,
-  IN UINT32         const Rank
-  )
-{
-  MrcOutput *Outputs;
-  UINT32 PhyController;
-  UINT32 PhyChannel;
-  UINT32 PhyRank;
-
-  Outputs = &MrcData->Outputs;
-
-  if (MrcRankExist (MrcData, Controller, Channel, Rank)) {
-    if (Outputs->IsCkdSupported) {
-      // For CKD DIMM, one PHY CLK source can be used to strobe different channels / ranks.
-      MrcGetDdr5ClkIndex (MrcData, Controller, Channel, Rank, &PhyController, &PhyChannel, &PhyRank);
-      if ((Controller != PhyController) || (Channel != PhyChannel) || (Rank != PhyRank)) {
-        return FALSE;
-      }
-    }
-    return TRUE;
-  }
-  return FALSE;
-}
 
 /**
   This function sets the bit-mask FailingChannelBitMask based on inputs Controller, Channel and Dimm value
@@ -3646,4 +3683,47 @@ MrcFindMaxVal (
   }
 
   return MaxVal;
+}
+
+/**
+  Display MR value from the host struct
+
+  @param[in] MrcData       - Include all MRC global data.
+  @param[in] MrAddr         - MR Address.
+**/
+VOID
+DisplayMRContentFromHost (
+  IN MrcParameters *const MrcData,
+  IN MrcModeRegister      MrAddr
+  )
+{
+  MrcChannelOut   *ChannelOut;
+  MrcOutput       *Outputs;
+  UINT8           Controller;
+  UINT8           Channel;
+  UINT8           Rank;
+  UINT8           Data;
+  UINT8           MrIndex;
+
+  Outputs = &MrcData->Outputs;
+  MrIndex = MrcMrAddrToIndex (MrcData, &MrAddr);
+
+  if (MrIndex >= mrIndexMax) {
+    MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_ERROR, "\nMrPtr argument is out of bounds\n");
+    // Prevent accessing index out of bound later in function
+    return;
+  }
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+      ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
+      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+        if (MrcRankExist (MrcData, Controller, Channel, Rank) == 0) {
+          continue;
+        }
+        Data = ChannelOut->Dimm[dDIMM0].Rank[Rank % MAX_RANK_IN_DIMM].MR[MrIndex];
+        MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "MC%u.C%u.R%u MR%d: 0x%X\n", Controller, Channel, Rank, MrAddr, Data);
+      }
+    } // Channel
+  } // Controller
 }

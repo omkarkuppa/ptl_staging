@@ -65,11 +65,5 @@ NiftyRockSupportLevel (
     return NO_NR_PPAM_SUPPORT;
   }
 
-#if FixedPcdGetBool (PcdLedgerIslandEnable) == 1
-  if ((MsrBrandIdentityValue & LEDGER_ISLAND_BRAND_IDENTITY_BITS) == LEDGER_ISLAND_BRAND_IDENTITY_BITS) {
-    return NR_PPAM_11_SUPPORT_WITH_LEDGER_ISLAND;
-  }
-#endif
-
   return NR_PPAM_11_SUPPORT;
 }

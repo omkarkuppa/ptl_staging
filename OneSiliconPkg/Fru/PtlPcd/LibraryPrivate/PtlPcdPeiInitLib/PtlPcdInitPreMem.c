@@ -44,7 +44,7 @@
 #include <TcssPeiPreMemConfig.h>
 #include <Library/PcdInfoLib.h>
 #include <Library/PeiCpuInitFruLib.h>
-#include <Register/DiccRegs.h>
+#include <Register/DfxRegs.h>
 #include <Register/PchRegs.h>
 #include <Library/WdtCommonLib.h>
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdSpiSocLib.h>
@@ -604,12 +604,11 @@ PtlPcdInitPrePolicy (
   //
   // Perform PSF early initialization.
   //
-  PcieRpFuncNumTableSize = GetPchMaxPciePortNum ();
+  PcieRpFuncNumTableSize = PtlPcdPsfGetMaxPsfDecodedPciePortNum ();
   for (Index = 0; Index < PcieRpFuncNumTableSize; Index++) {
     PcieRpFuncNumTable[Index] = PchPcieRpFuncNumber (Index);
   }
   PtlPcdPsfEarlyInit (PcieRpFuncNumTable, PcieRpFuncNumTableSize);
-  PtlPcdPsfResetRootspaceConfig ();
 
   //
   // Before any interrupt is enabled, set host message enable.
@@ -677,6 +676,8 @@ DfdConfiguration (
   CPU_INIT_PREMEM_CONFIG        *CpuInitPreMemConfig;
   PCH_GENERAL_PREMEM_CONFIG     *PchGeneralPreMemConfig;
   P2SB_PORT_16_ID               P2SBPid;
+  P2SB_CONTROLLER               P2SbController;
+  P2SB_SIDEBAND_REGISTER_ACCESS DfxGpepPcrAccess;
 
   CpuInitPreMemConfig = NULL;
   PchGeneralPreMemConfig = NULL;
@@ -691,10 +692,18 @@ DfdConfiguration (
   //
   // Configure Pmode clock
   //
-  P2SBPid.Pid16bit = PTL_SID_F2_PID_ICC_B;
+  P2SBPid.Pid16bit = PTL_SID_F2_PID_DFX_GPEP;
+  Status = PtlPcdGetP2SbController (&P2SbController, P2SBPid);
+  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Fail to get P2SbController for DFX_GPEP."));
+    return;
+  }
+  BuildP2SbSidebandAccess (&P2SbController, P2SBPid.PortId.LocalPid, 0, P2SbPrivateConfig, P2SbMsgAccess, FALSE, &DfxGpepPcrAccess);
+  DfxGpepPcrAccess.Bar = 7;
   if ((BOOLEAN)(PchGeneralPreMemConfig->PmodeClkEn)) {
-    PchPcrAndThenOr32 (P2SBPid.PortId.LocalPid, R_DICC_PCR_UDR_CFG_0, (UINT32)~B_DICC_PCR_UDR_CFG_0_PMODE_DIS, 0);
+    DfxGpepPcrAccess.Access.AndThenOr32 (&DfxGpepPcrAccess.Access, R_DFX_GPEP_PCR_SURVIVABILITY_DFD_0, (UINT32)~B_DFX_GPEP_PCR_SURVIVABILITY_DFD_0_SD0OUT_1, 0);
   } else {
-    PchPcrAndThenOr32 (P2SBPid.PortId.LocalPid, R_DICC_PCR_UDR_CFG_0, ~0u, B_DICC_PCR_UDR_CFG_0_PMODE_DIS);
+    DfxGpepPcrAccess.Access.AndThenOr32 (&DfxGpepPcrAccess.Access, R_DFX_GPEP_PCR_SURVIVABILITY_DFD_0, ~0u, B_DFX_GPEP_PCR_SURVIVABILITY_DFD_0_SD0OUT_1);
   }
 }

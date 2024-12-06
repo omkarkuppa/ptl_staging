@@ -24,8 +24,6 @@
 
 #define PLATFORM_FIRMWARE_BLOB_DESC  "Fv(XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX)"
 #define MSR_ANC_BOOT_POLICY_0        (0x00000130)
-#define B_S3X_RESUME_TYPE            BIT5          // 0: Resuming or Starting from S5/S4
-                                                   // 1: Resuming from an S3-type state
 #define TPM_INIT_SUCCESS             0
 #define TPM_INIT_SKIPPED             1
 #define TPM_INIT_FAILED              2
@@ -37,6 +35,7 @@
 #define R_CPU_ACM_POLICY_STATUS                     0x378
 #define TXT_PUBLIC_BASE                             0xFED30000
 #define MMIO_ACM_POLICY_STATUS                      (TXT_PUBLIC_BASE + R_CPU_ACM_POLICY_STATUS)
+#define FSP_MEASUREMENT_INFO_DEFAULT                0XFFFFFFFF
 
 #pragma pack (1)
 
@@ -80,7 +79,7 @@ typedef struct {
   @retval FALSE  Boot mode is not S3.
 
 **/
-UINT8
+BOOLEAN
 IsS3Resume (
   VOID
   );
@@ -100,7 +99,7 @@ IsS3Resume (
 EFI_STATUS
 EFIAPI
 InitializeTpmAndGetActivePcrs (
-  OUT  FSP_BUILD_MEASUREMENT_INFO  FspMeasurementInfo,
+  OUT  FSP_BUILD_MEASUREMENT_INFO  *FspMeasurementInfo,
   IN   BSPM_ELEMENT                *Bspm,
   OUT  UINT32                      *TpmActivePcrBanks
   );
@@ -119,7 +118,7 @@ InitializeTpmAndGetActivePcrs (
 EFI_STATUS
 EFIAPI
 ExtendFspmRegion (
-  OUT  FSP_BUILD_MEASUREMENT_INFO   FspMeasurementInfo,
+  OUT  FSP_BUILD_MEASUREMENT_INFO   *FspMeasurementInfo,
   IN   FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
   IN   UINT32                       TpmActivePcrBanks
 );
@@ -138,7 +137,7 @@ ExtendFspmRegion (
 EFI_STATUS
 EFIAPI
 ExtendBspRegion (
-  OUT  FSP_BUILD_MEASUREMENT_INFO   FspMeasurementInfo,
+  OUT  FSP_BUILD_MEASUREMENT_INFO   *FspMeasurementInfo,
   IN   BSPM_ELEMENT                 *Bspm,
   IN   UINT32                       TpmActivePcrBanks
 );
@@ -157,7 +156,7 @@ ExtendBspRegion (
 EFI_STATUS
 EFIAPI
 ExtendFspotRegion (
-  OUT  FSP_BUILD_MEASUREMENT_INFO   FspMeasurementInfo,
+  OUT  FSP_BUILD_MEASUREMENT_INFO   *FspMeasurementInfo,
   IN   FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
   IN   UINT32                       TpmActivePcrBanks
   );
@@ -196,7 +195,7 @@ LogHashEvent (
 EFI_STATUS
 EFIAPI
 FspInitializeTpm (
-  OUT  FSP_BUILD_MEASUREMENT_INFO  FspMeasurementInfo
+  OUT  FSP_BUILD_MEASUREMENT_INFO  *FspMeasurementInfo
   );
 
 /**

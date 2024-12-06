@@ -33,7 +33,7 @@
 #include "MrcLpddr5Registers.h"
 #include "MrcRegisterCache.h"
 #include "MrcDdrIoVcc.h"
-#include "MrcDdrIoRcomp.h"
+#include "MrcDdrIoComp.h"
 #include "MrcDdrIoUtils.h"
 #include "MrcDdrCommon.h"
 #include "MrcSpdProcessingDefs.h" // for MRC_SPD_SDRAM_DENSITY_8Gb
@@ -906,8 +906,8 @@ McRegistersLock (
   const MrcInput                                 *Inputs;
   const MRC_FUNCTION                             *MrcCall;
   MrcDebug                                       *Debug;
-  UINT32                                         Offset;
-  UINT32                                         PciEBaseAddress;
+  UINT64                                         Offset;
+  UINT64                                         PciEBaseAddress;
   DPR_0_0_0_PCI_STRUCT                           Dpr;
 
   Debug   = &MrcData->Outputs.Debug;
@@ -1164,7 +1164,6 @@ MrcSetSafeModeOverrides (
     ExtInputs->TrainingEnables2.CMDDSEQ        = 0;
     ExtInputs->TrainingEnables2.DIMMODTCA      = 0;
     ExtInputs->TrainingEnables2.RDVREFDC       = 0;
-    ExtInputs->TrainingEnables2.VDDQT          = 0;
     ExtInputs->TrainingEnables2.DATAPILIN      = 0;
     ExtInputs->TrainingEnables2.DDR5XTALK      = 0;
     ExtInputs->TrainingEnables2.WRTDIMMDFE     = 0;
@@ -1739,7 +1738,7 @@ MrcPrintInputParameters (
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tBaseAddresses\n"
-    "\t\tPciE: %Xh\n"
+    "\t\tPciE: %llXh\n"
     "\t\tMchBar: %llXh\n"
     "\t\tSmbus: %Xh\n"
     "\tMeStolenSize: %Xh\n"
@@ -2062,9 +2061,11 @@ MrcPrintInputParameters (
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tForceCkdBypass: %Xh\n"
-    "\tIsDdrphyx64: %Xh\n",
+    "\tIsDdrphyx64: %Xh\n"
+    "\tSenseAtRxDll: %Xh\n",
     ExtInputs->ForceCkdBypass,
-    Inputs->IsDdrphyx64
+    Inputs->IsDdrphyx64,
+    Inputs->SenseAtRxDll
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n%s*****    MRC TRAINING STEPS     *****\n%s", PrintBorder, PrintBorder);
@@ -2085,7 +2086,7 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DCCPICODELUT: %u\nDIMMODTT: %u\nDIMMRONT: %u\nTXTCO: %u\n",          TrainingSteps2->DCCPICODELUT,   TrainingSteps2->DIMMODTT,     TrainingSteps2->DIMMRONT,       TrainingSteps2->TXTCO);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "CLKTCO: %u\nCMDSR: %u\nCMDDSEQ: %u\nDIMMODTCA: %u\n",                TrainingSteps2->CLKTCO,         TrainingSteps2->CMDSR,        TrainingSteps2->CMDDSEQ,        TrainingSteps2->DIMMODTCA);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DDR5ODTTIMING: %u\nDBI: %u\nDLLDCC: %u\nDLLBWSEL: %u\n",             TrainingSteps2->DDR5ODTTIMING,  TrainingSteps2->DBI,          TrainingSteps2->DLLDCC,         TrainingSteps2->DLLBWSEL);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RDVREFDC: %u\nVDDQT: %u\nRMTBIT: %u\nDQDQSSWZ: %u\n",                TrainingSteps2->RDVREFDC,       TrainingSteps2->VDDQT,        TrainingSteps2->RMTBIT,         TrainingSteps2->DQDQSSWZ);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RDVREFDC: %u\nRMTBIT: %u\nDQDQSSWZ: %u\n",                           TrainingSteps2->RDVREFDC,       TrainingSteps2->RMTBIT,       TrainingSteps2->DQDQSSWZ);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "REFPI: %u\nVCCCLKFF: %u\nFUNCDCCDQS: %u\n",                          TrainingSteps2->REFPI,          TrainingSteps2->VCCCLKFF,     TrainingSteps2->FUNCDCCDQS);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "FUNCDCCCLK: %u\nFUNCDCCWCK: %u\nFUNCDCCDQ: %u\nDATAPILIN: %u\n",     TrainingSteps2->FUNCDCCCLK,     TrainingSteps2->FUNCDCCWCK,   TrainingSteps2->FUNCDCCDQ,      TrainingSteps2->DATAPILIN);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DDR5XTALK: %u\nDCCLP5WCKDCA: %u\nRXUNMATCHEDCAL: %u\n",              TrainingSteps2->DDR5XTALK,      TrainingSteps2->DCCLP5WCKDCA, TrainingSteps2->RXUNMATCHEDCAL);

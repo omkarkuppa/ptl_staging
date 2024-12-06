@@ -211,6 +211,9 @@ FspUpdatePeiSaPolicyPreMem (
   CopyMem ((VOID *)(UINTN) MemConfigNoCrc->DqDqsMap->DqMapCpu2Dram[1][2][0], &FspmUpd->FspmConfig.DqMapCpu2DramMc1Ch2[0], MEM_CFG_NUM_BYTES_MAPPED * 8);
   CopyMem ((VOID *)(UINTN) MemConfigNoCrc->DqDqsMap->DqMapCpu2Dram[1][3][0], &FspmUpd->FspmConfig.DqMapCpu2DramMc1Ch3[0], MEM_CFG_NUM_BYTES_MAPPED * 8);
 
+  CopyMem ((VOID *) (UINTN) MemConfigNoCrc->ChannelToCkdQckMapping, &FspmUpd->FspmConfig.ChannelToCkdQckMapping, sizeof(MemConfigNoCrc->ChannelToCkdQckMapping));
+  CopyMem ((VOID *) (UINTN) MemConfigNoCrc->PhyClockToCkdDimm,      &FspmUpd->FspmConfig.PhyClockToCkdDimm,      sizeof(MemConfigNoCrc->PhyClockToCkdDimm));
+
   MemConfigNoCrc->RcompData->RcompResistor = FspmUpd->FspmConfig.RcompResistor;
 
   CopyMem ((VOID *) &(MemConfigNoCrc->RcompData->RcompTarget[0]), (VOID *) &FspmUpd->FspmConfig.RcompTarget[0], 10);
@@ -359,6 +362,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.Lp5SplitACTEnable = FspmUpd->FspmConfig.Lp5SplitACTEnable;
   MemConfig->ExternalInputs.SubChHashOverride = FspmUpd->FspmConfig.SubChHashOverride;
   MemConfig->ExternalInputs.RetrainToWorkingChannel = FspmUpd->FspmConfig.RetrainToWorkingChannel;
+  MemConfig->ExternalInputs.RowPressEn             = FspmUpd->FspmConfig.RowPressEn;
   //
   // SA:End
   //
@@ -480,7 +484,6 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables2.WRTDIMMDFE              = FspmUpd->FspmConfig.WRTDIMMDFE;
   MemConfig->ExternalInputs.TrainingEnables2.DDR5ODTTIMING           = FspmUpd->FspmConfig.DDR5ODTTIMING;
   MemConfig->ExternalInputs.TrainingEnables2.RDVREFDC                = FspmUpd->FspmConfig.RDVREFDC;
-  MemConfig->ExternalInputs.TrainingEnables2.VDDQT                   = FspmUpd->FspmConfig.VDDQT;
   MemConfig->ExternalInputs.TrainingEnables2.RMTBIT                  = FspmUpd->FspmConfig.RMTBIT;
   MemConfig->ExternalInputs.TrainingEnables2.REFPI                   = FspmUpd->FspmConfig.REFPI;
   MemConfig->ExternalInputs.TrainingEnables2.DATAPILIN               = FspmUpd->FspmConfig.DATAPILIN;
@@ -576,6 +579,10 @@ FspUpdatePeiSaPolicyPreMem (
     IGpuPreMemConfig->PanelPowerEnable = FspmUpd->FspmConfig.PanelPowerEnable;
     IGpuPreMemConfig->OemT12DelayOverride = FspmUpd->FspmConfig.OemT12DelayOverride;
     IGpuPreMemConfig->MemoryBandwidthCompression = FspmUpd->FspmConfig.MemoryBandwidthCompression;
+    IGpuPreMemConfig->VbtPtr = (VOID *) (UINTN) FspmUpd->FspmConfig.VbtPtr;
+    IGpuPreMemConfig->VgaInitControl = FspmUpd->FspmConfig.VgaInitControl;
+    IGpuPreMemConfig->VgaMessage = (VOID *) (UINTN) FspmUpd->FspmConfig.VgaMessage;
+
     //
     // Display DDI Initialization
     //

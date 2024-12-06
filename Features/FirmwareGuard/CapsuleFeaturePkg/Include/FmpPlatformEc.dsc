@@ -43,6 +43,11 @@
       #
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressColor|0x0000B700
 
+      #
+      # File GUID for the EC FMP device driver.
+      #
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageTypeIdGuid|{GUID(gFmpDeviceEcDefaultGuid)}
+
     <LibraryClasses>
       FmpDeviceLib|CapsuleFeaturePkg/Library/FmpDeviceLibEc/FmpDeviceLibEc.inf
   }

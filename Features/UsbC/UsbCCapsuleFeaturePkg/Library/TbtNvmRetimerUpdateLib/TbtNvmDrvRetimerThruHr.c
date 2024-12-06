@@ -355,7 +355,6 @@ StateFromDriver (
     TBT_STATUS_NON_RECOVERABLE_ERROR - need to terminate the execution
     TBT_STATUS_SUCCESS               - indicate operation success
 **/
-STATIC
 TBT_STATUS
 InitHW (
   IN TBT_RETIMER      *This
@@ -407,7 +406,6 @@ InitHW (
     TBT_STATUS_NON_RECOVERABLE_ERROR - need to terminate the execution
     TBT_STATUS_SUCCESS               - indicate operation success
 **/
-STATIC
 TBT_STATUS
 TerminateHW (
   IN TBT_RETIMER      *This

@@ -45,6 +45,11 @@
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressColor|0x007F007F
 
       #
+      # File GUID for the ME FMP device driver.
+      #
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageTypeIdGuid|{GUID(gFmpDeviceMeDefaultGuid)}
+
+      #
       # Certificates used to authenticate capsule update image
       #
 !if $(CSME_GENERATION) != 0

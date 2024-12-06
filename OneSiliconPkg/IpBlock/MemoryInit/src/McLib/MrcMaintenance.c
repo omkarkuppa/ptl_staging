@@ -28,6 +28,7 @@
 #include "MrcRefreshConfiguration.h"
 #include "MrcChipApi.h"
 #include "MrcMemoryApi.h"
+#include "MrcMcSiSpecific.h"
 
 
 /**
@@ -343,4 +344,6 @@ MrcMaintenanceConfig (
   MrcDisableDqsOscillatorMc (MrcData);
   // Configure probeless.
   MrcProbelessConfig (MrcData);
+
+  MrcMcRfFastSleepDisable (MrcData);
 }

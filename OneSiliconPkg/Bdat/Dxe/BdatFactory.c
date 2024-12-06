@@ -35,7 +35,7 @@
 #endif
 #define NCDECS_CR_SCRATCHPAD_NCU_2_REG (0x00005430)
 
-extern EFI_GUID gSchemaListGuid;
+extern EFI_GUID gMrcSchemaListHobGuid;
 
 ///
 /// Bdat Access Handler instance data structure
@@ -201,7 +201,7 @@ CreateBdatTable (
     ///
     /// Get the memory information HOB so we can locate the BDAT information.
     ///
-    BdatSchemaListHob = GetNextGuidHob (&gSchemaListGuid, HobList);
+    BdatSchemaListHob = GetNextGuidHob (&gMrcSchemaListHobGuid, HobList);
     if (BdatSchemaListHob == NULL) {
       DEBUG ((DEBUG_INFO, "No BDAT data exists, exiting without creating table\n"));
       Status = EFI_UNSUPPORTED;

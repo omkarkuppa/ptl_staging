@@ -34,6 +34,7 @@ typedef enum {
 #define MAX_MPTU                  (2)       ///< The maximum number of MPTU blocks in PHY
 #define MAX_CONTROLLER            (2)       ///< The maximum number of memory controllers per CPU socket.
 #define MAX_CHANNEL               (4)       ///< The maximum number of channels per memory controller.
+#define MAX_CHANNEL_DDR5          (2)       ///< The maximum number of channels per memory controller in DDR5
 #define MAX_IBECC_REGIONS         (8)       ///< Maximum number of protection regions handled by IBECC
 #define MAX_SAGV_POINTS           (MrcSaGvPointMax) ///< Defines the number of frequency points supported.
 #define MAX_RANK_IN_DIMM          (2)       ///< The maximum number of ranks per DIMM.
@@ -107,7 +108,7 @@ typedef struct {
   UINT32 DLLDCC:1;               ///< BIT10 - DLL DCC Calibration
   UINT32 DLLBWSEL:1;             ///< BIT11 - DLL BW Select Calibration
   UINT32 RDVREFDC:1;             ///< BIT12 - Read Vref Decap Training
-  UINT32 VDDQT:1;                ///< BIT13 - Vddq Training
+  UINT32 RsvdBit13:1;            ///< BIT13 - Reserved
   UINT32 RMTBIT:1;               ///< BIT14 - Rank Margin Tool Per Bit
   UINT32 DQDQSSWZ:1;             ///< BIT15 - Map Dq Dqs Swizzle
   UINT32 REFPI:1;                ///< BIT16 - RefPi Calibration
@@ -122,7 +123,8 @@ typedef struct {
   UINT32 DCCLP5WCKDCA:1;         ///< BIT25 - DRAM DCC for LP5 WCK DCA
   UINT32 RXUNMATCHEDCAL:1;       ///< BIT26 - Unmatched Rx Calibaration
   UINT32 WRTDIMMDFE:1;           ///< BIT27 - DIMM DFE Training
-  UINT32 ReservedBits:3;         ///< BIT28 - Reserved
+  UINT32 RMTLVR:1;               ///< BIT28 - LVR RMT
+  UINT32 ReservedBits:2;         ///< BIT28 - Reserved
   UINT32 SimicsReservedBit:1;    ///< BIT31 - Simics uses this bit for mrc_mem_flows
 } TrainingStepsEn2;
 

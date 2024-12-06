@@ -138,7 +138,7 @@ HidKbDriverBindingSupported (
 
 #ifdef UEFI_COMBO_DEVICE_SUPPORTED
   if (!(HidInfo.HidType & HidTypeKeyBoard)) {
-    DEBUG ((EFI_D_ERROR, "HidKbDriverBindingSupported: Not a KB\n"));
+    DEBUG ((EFI_D_INFO, "HidKbDriverBindingSupported: Not a KB\n"));
 #else
   if (HidInfo.HidType != HidTypeKeyBoard) {
 #endif
@@ -147,7 +147,7 @@ HidKbDriverBindingSupported (
 
   Status = EFI_SUCCESS;
 
-  DEBUG ((EFI_D_ERROR, "HidKbDriverBindingSupported: %r\n", Status));
+  DEBUG ((EFI_D_INFO, "HidKbDriverBindingSupported: %r\n", Status));
 
   return Status;
 }
@@ -188,7 +188,7 @@ HidKbDriverBindingStart (
 #endif
 
 
-  DEBUG ((EFI_D_ERROR, "HidKbDriverBindingStart: Enter\n"));
+  DEBUG ((EFI_D_INFO, "HidKbDriverBindingStart: Enter\n"));
 
   HidKbDev = NULL;
 #ifdef UEFI_COMBO_DEVICE_SUPPORTED
@@ -354,7 +354,7 @@ HidKbDriverBindingStart (
 
 //  gBS->RestoreTPL (OldTpl);
 
-  DEBUG ((EFI_D_ERROR, "HidKbDriverBindingStart: Exit\n"));
+  DEBUG ((EFI_D_INFO, "HidKbDriverBindingStart: Exit\n"));
 
   return EFI_SUCCESS;
 
@@ -392,7 +392,7 @@ ErrorExit:
 ErrorExit1:
 //  gBS->RestoreTPL (OldTpl);
 
-  DEBUG ((EFI_D_ERROR, "HidKbDriverBindingStart: Exit - %r\n", Status));
+  DEBUG ((EFI_D_INFO, "HidKbDriverBindingStart: Exit - %r\n", Status));
   return Status;
 }
 

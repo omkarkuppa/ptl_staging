@@ -30,12 +30,13 @@
   0x4eabcd09, 0x43d3, 0x4b4d, { 0xb7, 0x3d, 0x43, 0xc8, 0xd9, 0x89, 0x99, 0x5 } \
 }
 
-#define PEI_IGPU_PLATFORM_POLICY_REVISION         1
+#define PEI_IGPU_PLATFORM_POLICY_REVISION  1
 
 /**
 Pre-declaration of PEI IGPU platform policy PPI.
 **/
-typedef struct _PEI_IGPU_PLATFORM_POLICY_PPI PEI_IGPU_PLATFORM_POLICY_PPI;
+typedef struct _PEI_IGPU_PLATFORM_POLICY_PPI  PEI_IGPU_PLATFORM_POLICY_PPI;
+typedef struct _EFI_PREMEM_GRAPHICS_PPI       EFI_PREMEM_GRAPHICS_PPI;
 
 /**
   Enum defining the different lid status values
@@ -47,6 +48,15 @@ typedef enum {
 } LID_STATUS;
 
 /**
+ * Enum defining text alignment for VGA
+ */
+typedef enum {
+  VGA_TEXT_LEFT,
+  VGA_TEXT_CENTER,
+  VGA_TEXT_RIGHT,
+} VGA_TEXT_ALIGNMENT;
+
+/**
   This function gets the platform lid status for LFP displays.
 
   @param[out] CurrentLidStatus  Output variable to store the lid status.
@@ -56,7 +66,7 @@ typedef enum {
 **/
 typedef
 EFI_STATUS
-(EFIAPI *GET_PLATFORM_LID_STATUS) (
+(EFIAPI *GET_PLATFORM_LID_STATUS)(
   OUT LID_STATUS  *CurrentLidStatus
   );
 
@@ -71,7 +81,7 @@ EFI_STATUS
 **/
 typedef
 EFI_STATUS
-(EFIAPI *GET_VBT_DATA) (
+(EFIAPI *GET_VBT_DATA)(
   OUT EFI_PHYSICAL_ADDRESS *VbtAddress,
   OUT UINT32               *VbtSize
   );
@@ -80,11 +90,58 @@ EFI_STATUS
   This defines the PEI Graphics Platform Policy PPI structure.
 **/
 struct _PEI_IGPU_PLATFORM_POLICY_PPI {
-  UINT32                        Revision;               ///< Revision of current implementation.
-  GET_PLATFORM_LID_STATUS       GetPlatformLidStatus;   ///< Function Pointer for get platform lid status.
-  GET_VBT_DATA                  GetVbtData;             ///< Function pointer for get vbt data.
+  UINT32                     Revision;                  ///< Revision of current implementation.
+  GET_PLATFORM_LID_STATUS    GetPlatformLidStatus;      ///< Function Pointer for get platform lid status.
+  GET_VBT_DATA               GetVbtData;                ///< Function pointer for get vbt data.
 };
 
-extern EFI_GUID gPeiGraphicsPlatformPpiGuid;
+/**
+  The GraphicsPreMemPpiInit initializes the graphics subsystem in phases.
+  @param[in] GraphicsPolicyPtr    GraphicsPolicyPtr points to a configuration data
+                                  block of policy settings required by Graphics PEIM.
+  @retval EFI_SUCCESS             The invocation was successful.
+  @retval EFI_INVALID_PARAMETER   The phase parameter is not valid.
+  @retval EFI_NOT_ABORTED         The stages was not called in the proper order.
+  @retval EFI_NOT_FOUND           The PeiGraphicsPlatformPolicyPpi is not located.
+  @retval EFI_DEVICE_ERROR        The initialization failed due to device error.
+  @retval EFI_NOT_READY           The previous init stage is still in progress and not
+                                  ready for the current initialization phase yet. The
+                                  platform code should call this again sometime later.
+**/
+typedef
+EFI_STATUS
+(EFIAPI *PREMEM_PEI_GRAPHICS_INIT)(
+  IN VOID                            *GraphicsPolicyPtr
+  );
+
+typedef
+EFI_STATUS
+(EFIAPI *PREMEM_PEI_GRAPHICS_EXIT)(
+  VOID
+  );
+
+typedef
+VOID
+(EFIAPI *PREMEM_PEI_GRAPHICS_VGA_WRITE)(
+  IN VGA_TEXT_ALIGNMENT Alignment,
+  IN UINTN              Line,
+  IN CHAR8              *String
+  );
+
+typedef
+EFI_STATUS
+(EFIAPI *PREMEM_PEI_GRAPHICS_VGA_GRAPHICS_VIDEO_FILL)(
+  IN VOID *Blt
+  );
+
+struct _EFI_PREMEM_GRAPHICS_PPI {
+  PREMEM_PEI_GRAPHICS_INIT                     GraphicsPreMemPpiInit;
+  PREMEM_PEI_GRAPHICS_EXIT                     GraphicsPreMemPpiExit;
+  PREMEM_PEI_GRAPHICS_VGA_WRITE                GraphicsPreMemPpiVgaWrite;
+  PREMEM_PEI_GRAPHICS_VGA_GRAPHICS_VIDEO_FILL  VGAFillBuffer;
+};
+
+extern EFI_GUID  gPeiGraphicsPlatformPpiGuid;
+extern EFI_GUID  gIntelPeiPreMemGraphicsPpiGuid;
 
 #endif // _IGPU_PLATFORM_POLICY_PPI_H_

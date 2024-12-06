@@ -29,7 +29,9 @@ External (\_SB.PLDT.FIDC, MethodObj)
 External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CPDC, MethodObj)
 External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.UPCR, MethodObj)
 External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.UPPM, MethodObj)
-External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RBPS, MethodObj)
+External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.BHFI, MethodObj)
+External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.BNLV, MethodObj)
+External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.BMPC, MethodObj)
 External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPBS, MethodObj)
 External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RCTP, MethodObj)
 External (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RBPM, MethodObj)
@@ -122,7 +124,8 @@ Method (UPPM, 1, Serialized)
 Method (CMPP, 0, Serialized, 0, IntObj)
 {
   If (CondRefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC)) {
-    Return (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RBPS (), 2))
+
+    Return (\_SB.PARENT_OF_LPCB.LPCB.H_EC.BMPC ())
   } Else {
     Return (0xFFFFFFFF)
   }
@@ -141,7 +144,7 @@ Method (CMPP, 0, Serialized, 0, IntObj)
 Method (VBNL, 0, Serialized, 0, IntObj)
 {
   If (CondRefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC)) {
-    Return (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RBPS (), 1))
+    Return (\_SB.PARENT_OF_LPCB.LPCB.H_EC.BNLV ())
   } Else {
     Return (0xFFFFFFFF)
   }
@@ -160,7 +163,7 @@ Method (VBNL, 0, Serialized, 0, IntObj)
 Method (RBHF, 0, Serialized, 0, IntObj)
 {
   If (CondRefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC)) {
-    Return (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RBPS (), 0))
+    Return (\_SB.PARENT_OF_LPCB.LPCB.H_EC.BHFI ())
   } Else {
     Return (0xFFFFFFFF)
   }

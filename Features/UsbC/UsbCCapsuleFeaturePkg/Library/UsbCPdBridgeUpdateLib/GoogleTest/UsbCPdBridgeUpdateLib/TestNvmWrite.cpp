@@ -1,0 +1,113 @@
+/** @file
+  Google test for UsbCPdBridgeUpdateLib function.
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2024 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification
+**/
+
+#include <GTestUsbCPdBridgeUpdateLib.h>
+#include <GoogleTest/Private/MockPdBridgeProtocol/MockPdBridgeProtocol.h>
+/**
+Google test for UsbCPdBridgeUpdateLib function.
+**/
+
+class NvmWriteTest : public Test {
+  protected:
+    EFI_STATUS              Status;
+    USBC_PD_BRIDGE_PROTOCOL PdBridgeProtocol;
+    UINT8                   PdBridgeIndex;
+    UINT8                   *Buffer;
+    UINT8                   BufferSize;
+
+    MockPdBridgeProtocol PdBridgeProtocolMock;
+
+  void SetUp() override {
+    Buffer     = (UINT8 *) AllocateZeroPool (sizeof (Buffer));
+    BufferSize = 0;
+    std::memcpy (&PdBridgeProtocol, &localPDBG, sizeof (USBC_PD_BRIDGE_PROTOCOL));
+  }
+};
+
+//
+// Case 1 - Buffer == 0 , return error
+// Expected Result - Status will return EFI_INVALID_PARAMETER
+//
+TEST_F (NvmWriteTest, case_1) {
+  cout << "[---------- Case 1 ----------]"<< endl;
+  Status = NvmWrite (
+             &localPDBG,
+             PdBridgeIndex,
+             NULL,
+             BufferSize
+             );
+  EXPECT_EQ (Status, EFI_INVALID_PARAMETER);
+}
+
+//
+// Case 2 - BufferSize > 32 , return error
+// Expected Result - Status will return EFI_INVALID_PARAMETER
+//
+TEST_F (NvmWriteTest, case_2) {
+  cout << "[---------- Case 2 ----------]"<< endl;
+  Status = NvmWrite (
+             &localPDBG,
+             PdBridgeIndex,
+             Buffer,
+             35
+             );
+  EXPECT_EQ (Status, EFI_INVALID_PARAMETER);
+}
+
+//
+// Case 3 - PdBridgeProtocol_ExecuteVendorCmd return error
+// Mock - PdBridgeProtocolMock
+// Expected Result - Status will return EFI_INVALID_PARAMETER
+//
+TEST_F (NvmWriteTest, case_3) {
+  cout << "[---------- Case 3 ----------]"<< endl;
+  EXPECT_CALL (PdBridgeProtocolMock, PdBridgeProtocol_ExecuteVendorCmd)
+    .WillOnce (Return (EFI_INVALID_PARAMETER));
+
+  Status = NvmWrite (
+             &localPDBG,
+             PdBridgeIndex,
+             Buffer,
+             BufferSize
+             );
+  EXPECT_EQ (Status, EFI_INVALID_PARAMETER);
+}
+
+//
+// Case 4 - PdBridgeProtocol_ExecuteVendorCmd return correct
+// Mock - PdBridgeProtocolMock
+// Expected Result - Status will return EFI_SUCCESS
+//
+TEST_F (NvmWriteTest, case_4) {
+  cout << "[---------- Case 4 ----------]"<< endl;
+  EXPECT_CALL (PdBridgeProtocolMock, PdBridgeProtocol_ExecuteVendorCmd)
+    .WillOnce (Return (EFI_SUCCESS));
+
+  Status = NvmWrite (
+             &localPDBG,
+             PdBridgeIndex,
+             Buffer,
+             BufferSize
+             );
+  EXPECT_EQ (Status, EFI_SUCCESS);
+
+  cout << "NvmWrite Done." << endl;
+}

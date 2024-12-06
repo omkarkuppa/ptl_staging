@@ -27,6 +27,7 @@
 #include "MrcMemoryApi.h"
 #include "MrcHalApi.h"
 #include "MrcMcSiSpecific.h"
+#include "MrcChipRouting.h"
 
 // LP5 SplitACT enable BIOS knob defines input values as:
 // 0 = Auto, 1 = Disable, 2 = Enable
@@ -651,6 +652,10 @@ MrcMcOneDpcConfig (
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccBlockXarb, WriteToCache, &GetSetVal);
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccBlockCke,  WriteToCache, &GetSetVal);
   MrcFlushRegisterCachedData (MrcData);
+
+  if (Inputs->IsOneDpcSplitBgEnabled) {
+    MrcConfigOneDpcSplitBg(MrcData);
+  }
 }
 
 /**

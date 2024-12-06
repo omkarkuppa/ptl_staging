@@ -43,6 +43,11 @@
       #
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressColor|0x00FFFF00
 
+      #
+      # File GUID for the Monolithic FMP device driver.
+      #
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageTypeIdGuid|{GUID(gFmpDeviceMonolithicDefaultGuid)}
+
     <LibraryClasses>
       FmpDeviceLib|CapsuleFeaturePkg/Library/FmpDeviceLibMonolithic/FmpDeviceLibMonolithic.inf
   }

@@ -95,18 +95,6 @@ typedef enum {
   PageAccessRightIgnore,
 } PAGE_ACCESS_RIGHT;
 
-///
-/// PPAM Param Page Structure
-///
-typedef struct {
-  UINT32     Version;
-  UINT32     DataBuffVersion;
-  UINT32     BaseAddrBufferLower;
-  UINT32     BaseAddrBufferUpper;
-  UINT32     BufferEntrySize;
-  UINT32     TotalNumberEntry;
-} PPAM_PARAM_PAGE;
-
 extern IA32_DESCRIPTOR                     mSmmDgrSmiGdtr;
 
 VOID

@@ -26,16 +26,17 @@ Name(_DSD, Package()
 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
 	Package ()
 	{
-		Package (2) {"mipi-sdw-sw-interface-revision", 0x00020001}, // v2.1
-		Package (2) {"mipi-sdw-sdca-interface-revision", 0x0801}, // v0.8r01
-		//Package (2) {"mipi-sdca-function-topology-features", 0x0080000000000000}, // Security/Privacy(bit-55)
-		Package (2) {"mipi-sdca-function-topology-features", 0x0000000000000000}, // No option
-		//Package (2) {"mipi-sdca-control-list", Package() {0x4, 0x5, 0x6, 0x7, 0x8} }, // Function level controls
-		Package (2) {"mipi-sdca-control-list", 0x01F0}, // Function level controls
-		//Package (2) {"mipi-sdca-entity-id-list",Package() {0x13, 0x14, 0x12, 0x18, 0x11, 0x26, 0x15, 0x1C, 0x16, 0x1D, 0x1E, 0x20, 0x1F, 0x17, 0x6a, 0x6B, 0x1a, 0x19, 0x1b} }, // List of entities in this function (No Security/Privacy)
-		Package (2) {"mipi-sdca-entity-id-list",Package() {0x13, 0x14, 0x12, 0x18, 0x11, 0x26, 0x15, 0x1C, 0x16, 0x1D, 0x1E, 0x20, 0x1F, 0x6a, 0x6B, 0x1a, 0x19, 0x1b} }, // List of entities in this function (No Security/Privacy)
+		Package(2) {"mipi-sdw-sw-interface-revision", 0x00020001}, // v2.1
+		Package(2) {"mipi-sdw-sdca-interface-revision", 0x0801}, // v0.8r01
+		//Package(2) {"mipi-sdca-function-topology-features", 0x0080000000000000}, // Security/Privacy(bit-55)
+		Package(2) {"mipi-sdca-function-topology-features", 0x0000000000000000}, // No option
+		//Package(2) {"mipi-sdca-control-list", Package() {0x4, 0x5, 0x6, 0x7, 0x8} }, // Function level controls
+		Package(2) {"mipi-sdca-control-list",	0xF000000301F2 }, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11, 0x2C, 0x2D, 0x2E, 0x2F - Function level controls
+                //Package(2) {"mipi-sdca-control-list", 0x01F0}, // Function level controls
+		//Package(2) {"mipi-sdca-entity-id-list",Package() {0x13, 0x14, 0x12, 0x18, 0x11, 0x26, 0x15, 0x1C, 0x16, 0x1D, 0x1E, 0x20, 0x1F, 0x17, 0x6a, 0x6B, 0x1a, 0x19, 0x1b} }, // List of entities in this function (No Security/Privacy)
+		Package(2) {"mipi-sdca-entity-id-list",Package() {0x13, 0x14, 0x12, 0x18, 0x11, 0x26, 0x15, 0x1C, 0x16, 0x1D, 0x1E, 0x20, 0x1F, 0x6a, 0x6B, 0x1a, 0x19, 0x1b} }, // List of entities in this function (No Security/Privacy)
 		// Cluster Library
-		Package (2) {"mipi-sdca-cluster-id-list", Package() {0x11, 0x12, 0x21, 0x22, 0x31, 0x32, 0x41, 0x42} },
+		Package(2) {"mipi-sdca-cluster-id-list", Package() {0x11, 0x12, 0x21, 0x22, 0x31, 0x32, 0x41, 0x42} },
 	},
 
 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
@@ -46,36 +47,43 @@ Name(_DSD, Package()
 		Package(2) {"mipi-sdca-control-0x6-subproperties", "C006"},
 		Package(2) {"mipi-sdca-control-0x7-subproperties", "C007"},
 		Package(2) {"mipi-sdca-control-0x8-subproperties", "C008"},
-        Package(2) {"mipi-sdca-entity-id-0x13-subproperties", "E013"},
-        Package(2) {"mipi-sdca-entity-id-0x14-subproperties", "E014"},
-        Package(2) {"mipi-sdca-entity-id-0x12-subproperties", "E012"},
-        Package(2) {"mipi-sdca-entity-id-0x18-subproperties", "E018"},
-        Package(2) {"mipi-sdca-entity-id-0x11-subproperties", "E011"},
-        Package(2) {"mipi-sdca-entity-id-0x26-subproperties", "E026"},
-        Package(2) {"mipi-sdca-entity-id-0x15-subproperties", "E015"},
-        Package(2) {"mipi-sdca-entity-id-0x1C-subproperties", "E01C"},
-        //Package(2) {"mipi-sdca-entity-id-0x53-subproperties", "E053"},
-        Package(2) {"mipi-sdca-entity-id-0x16-subproperties", "E016"},
-        Package(2) {"mipi-sdca-entity-id-0x1D-subproperties", "E01D"},
-        Package(2) {"mipi-sdca-entity-id-0x1E-subproperties", "E01E"},
-        Package(2) {"mipi-sdca-entity-id-0x20-subproperties", "E020"},
-        Package(2) {"mipi-sdca-entity-id-0x1F-subproperties", "E01F"},
-        //Package(2) {"mipi-sdca-entity-id-0x17-subproperties", "E017"},
-        Package(2) {"mipi-sdca-entity-id-0x6a-subproperties", "E06a"},
+	        Package(2) {"mipi-sdca-control-0x1-subproperties", "C042"},
+		Package(2) {"mipi-sdca-control-0x10-subproperties", "C043"},//Function_Status, Class, RW1C
+		Package(2) {"mipi-sdca-control-0x11-subproperties", "C044"},//Function_Action, Class, RW1S
+		Package(2) {"mipi-sdca-control-0x2C-subproperties", "C02C"},//Device_Manufacturer_ID
+		Package(2) {"mipi-sdca-control-0x2D-subproperties", "C02D"},//Device_Part_ID
+		Package(2) {"mipi-sdca-control-0x2E-subproperties", "C02E"},//Device_Version
+                Package(2) {"mipi-sdca-control-0x2F-subproperties", "C02F"},//Device_SDCA_Version
+                Package(2) {"mipi-sdca-entity-id-0x13-subproperties", "E013"},
+                Package(2) {"mipi-sdca-entity-id-0x14-subproperties", "E014"},
+                Package(2) {"mipi-sdca-entity-id-0x12-subproperties", "E012"},
+                Package(2) {"mipi-sdca-entity-id-0x18-subproperties", "E018"},
+                Package(2) {"mipi-sdca-entity-id-0x11-subproperties", "E011"},
+                Package(2) {"mipi-sdca-entity-id-0x26-subproperties", "E026"},
+                Package(2) {"mipi-sdca-entity-id-0x15-subproperties", "E015"},
+                Package(2) {"mipi-sdca-entity-id-0x1C-subproperties", "E01C"},
+                //Package(2) {"mipi-sdca-entity-id-0x53-subproperties", "E053"},
+                Package(2) {"mipi-sdca-entity-id-0x16-subproperties", "E016"},
+                Package(2) {"mipi-sdca-entity-id-0x1D-subproperties", "E01D"},
+                Package(2) {"mipi-sdca-entity-id-0x1E-subproperties", "E01E"},
+                Package(2) {"mipi-sdca-entity-id-0x20-subproperties", "E020"},
+                Package(2) {"mipi-sdca-entity-id-0x1F-subproperties", "E01F"},
+                //Package(2) {"mipi-sdca-entity-id-0x17-subproperties", "E017"},
+                Package(2) {"mipi-sdca-entity-id-0x6a-subproperties", "E06a"},
 		Package(2) {"mipi-sdca-entity-id-0x6B-subproperties", "E06B"},
-        Package(2) {"mipi-sdca-entity-id-0x1a-subproperties", "E01a"},
-        Package(2) {"mipi-sdca-entity-id-0x19-subproperties", "E019"},
-        Package(2) {"mipi-sdca-entity-id-0x1b-subproperties", "E01b"},
-		Package (2) {"mipi-sdca-function-expansion-subproperties", "EXT0"},
+                Package(2) {"mipi-sdca-entity-id-0x1a-subproperties", "E01a"},
+                Package(2) {"mipi-sdca-entity-id-0x19-subproperties", "E019"},
+                Package(2) {"mipi-sdca-entity-id-0x1b-subproperties", "E01b"},
+		Package(2) {"mipi-sdca-function-expansion-subproperties", "EXT0"},
 		// Cluster ID subproperties
-		Package (2) {"mipi-sdca-cluster-id-0x11-subproperties", "CL11"},
-		Package (2) {"mipi-sdca-cluster-id-0x12-subproperties", "CL12"},
-		Package (2) {"mipi-sdca-cluster-id-0x21-subproperties", "CL21"},
-		Package (2) {"mipi-sdca-cluster-id-0x22-subproperties", "CL22"},
-		Package (2) {"mipi-sdca-cluster-id-0x31-subproperties", "CL31"},
-		Package (2) {"mipi-sdca-cluster-id-0x32-subproperties", "CL32"},
-		Package (2) {"mipi-sdca-cluster-id-0x41-subproperties", "CL41"},
-		Package (2) {"mipi-sdca-cluster-id-0x42-subproperties", "CL42"},
+		Package(2) {"mipi-sdca-cluster-id-0x11-subproperties", "CL11"},
+		Package(2) {"mipi-sdca-cluster-id-0x12-subproperties", "CL12"},
+		Package(2) {"mipi-sdca-cluster-id-0x21-subproperties", "CL21"},
+		Package(2) {"mipi-sdca-cluster-id-0x22-subproperties", "CL22"},
+		Package(2) {"mipi-sdca-cluster-id-0x31-subproperties", "CL31"},
+		Package(2) {"mipi-sdca-cluster-id-0x32-subproperties", "CL32"},
+		Package(2) {"mipi-sdca-cluster-id-0x41-subproperties", "CL41"},
+		Package(2) {"mipi-sdca-cluster-id-0x42-subproperties", "CL42"},
 	},
 
 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
@@ -113,9 +121,91 @@ Name(BUF0, Buffer()
 	0xB0, 0x20, 0x10, 0x06, 0x03, // 0x061020B0, 0x03
 	0xB0, 0x00, 0x10, 0x06, 0x04, // 0x061000B0, 0x04
 
-        0x00, 0x13, 0x98, 0x40, 0x01, // 0x40981300, 0x01
+  0x00, 0x13, 0x98, 0x40, 0x01, // 0x40981300, 0x01
 
 }) //End AF02.BUF0
+
+        Name(C042, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			//Commit_Group_Mask, Class, RW
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 0},
+		}
+	}) //End AF04.C042
+
+Name(C043, Package()
+{
+	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	Package()
+	{
+		//Function_Status, Class, RW1C
+		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+		Package(2) {"mipi-sdca-control-access-mode", 2},
+		Package(2) {"mipi-sdca-control-interrupt-position", 19}, //IntStat_SDCA_19
+	}
+}) //End AF04.C043
+
+Name(C044, Package()
+{
+	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	Package()
+	{
+		//Function_Action, Class, RW1S
+		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+		Package(2) {"mipi-sdca-control-access-mode", 4},
+	}
+}) //End AF04.C044
+
+Name(C02C, Package()
+{
+	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	Package()
+	{
+		//Device_Manufacturer_ID = 0x025d, Class, DC
+		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+		Package(2) {"mipi-sdca-control-access-mode", 5},
+		Package(2) {"mipi-sdca-control-dc-value", 0x025D},
+	}
+}) //End AF04.C02C
+
+Name(C02D, Package()
+{
+	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	Package()
+	{
+		//Device_Part_ID = 0x712, Class, DC
+		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+		Package(2) {"mipi-sdca-control-access-mode", 5},
+		Package(2) {"mipi-sdca-control-dc-value", 0x0712},
+	}
+}) //End AF04.C02D
+
+Name(C02E, Package()
+{
+	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	Package()
+	{
+		//Device_Version, Class, DC
+		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+		Package(2) {"mipi-sdca-control-access-mode", 5},
+		Package(2) {"mipi-sdca-control-dc-value", 0x1},
+	}
+}) //End AF04.C02E
+
+Name(C02F, Package()
+{
+	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+	Package()
+	{
+		//Device_SDCA_Version, Class, DC
+		Package(2) {"mipi-sdca-control-access-layer", 0x4},
+		Package(2) {"mipi-sdca-control-access-mode", 5},
+		Package(2) {"mipi-sdca-control-dc-value", 0x08},
+	}
+}) //End AF04.C02F
 
 Name(C004, Package()
 {
@@ -1000,7 +1090,7 @@ Name(C200, Package() {
 Name(USG2, Buffer()
 {
 	0x07, 0x00,  // Range type 0x0007 (Septuples)
-	0x02, 0x00,  // Count of ranges = 0x2
+	0x04, 0x00,  // Count of ranges = 0x4
 	0x01, 0x00, 0x00, 0x00, // Usage Number
 	0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1ae) Full band & Near Ultrasound
 	0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
@@ -1009,9 +1099,23 @@ Name(USG2, Buffer()
 	0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
 	0x00, 0x00, 0x00, 0x00, // Usage Tag
 	0x01, 0x00, 0x00, 0x00, // Usage Number
+	0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1ae) Full band & Near Ultrasound
+	0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
+	0x10, 0x00, 0x00, 0x00, // Sample Width, 16-bits (0x10)
+	0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+	0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+	0x00, 0x00, 0x00, 0x00, // Usage Tag
+	0x01, 0x00, 0x00, 0x00, // Usage Number
 	0xe0, 0x01, 0x00, 0x00, // Usage CBN, 480 (0x1e0) HiFi Full band & Ultrasound40
 	0x00, 0x77, 0x01, 0x00, // Sample Rate, 96000Hz (0x17700)
 	0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
+	0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+	0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+	0x00, 0x00, 0x00, 0x00, // Usage Tag
+	0x01, 0x00, 0x00, 0x00, // Usage Number
+	0xe0, 0x01, 0x00, 0x00, // Usage CBN, 480 (0x1e0) HiFi Full band & Ultrasound40
+	0x00, 0x77, 0x01, 0x00, // Sample Rate, 96000Hz (0x17700)
+	0x10, 0x00, 0x00, 0x00, // Sample Width, 16-bits (0x10)
 	0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
 	0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
 	0x00, 0x00, 0x00, 0x00, // Usage Tag

@@ -583,6 +583,8 @@ PtlNotifyEcToPdForPcieTunnel (
 
   return;
 }
+
+
 /**
   A hook for board-specific initialization prior to memory initialization.
 
@@ -635,7 +637,6 @@ PtlBoardInitBeforeMemoryInit (
 
   // Notify Ec To Pd firmware for enabling or disabling Pcie.
   PtlNotifyEcToPdForPcieTunnel ();
-
   ASSERT(Status == EFI_SUCCESS);
   return EFI_SUCCESS;
 }

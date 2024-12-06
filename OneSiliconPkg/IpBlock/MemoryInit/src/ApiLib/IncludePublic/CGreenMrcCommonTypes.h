@@ -177,8 +177,6 @@ typedef enum {
   SCompCodeCtl,                 ///< Slew Comp Code for Ctl
   SCompBypassCmd,               ///< Bypass CA Slew delay
   SCompBypassCtl,               ///< Bypass Ctl Slew delay
-  CaUsePi1forPi0,               ///< Lane0 disables the Lane0 PI and uses the Lane1 PI when both TxTypes are the CA
-  CsUsePi1forPi0,               ///< Lane0 disables the Lane0 PI and uses the Lane1 PI when both TxTypes are the CS
   WrDSCodeUpCmd,                ///< RcompUp Code for Write Drive Strength-Cmd
   WrDSCodeUpCtl,                ///< RcompUp Code for Write Drive Strength-Ctl
   WrDSCodeUpClk,                ///< RcompUp Code for Write Drive Strength-Clk
@@ -516,6 +514,36 @@ typedef enum {
   GsmCccLvrAutoTrimOffsetClk,
   GsmCompVccDdqTarget,
   GsmCompVccIoTarget,
+  GsmVccClkRxCtlB0FbDivider,
+  GsmVccClkRxCtlB0Target,
+  GsmVccClkRxCtlB0BiasAdj,
+  GsmVccClkRxCtlB0PMBiasAdj,
+  GsmVccClkRxCtlB1FbDivider,
+  GsmVccClkRxCtlB1Target,
+  GsmVccClkRxCtlB1BiasAdj,
+  GsmVccClkRxCtlB1PMBiasAdj,
+  GsmVccClkFFBiasFbDivider,
+  GsmVccClkFFBiasNbTarget,
+  GsmVccPllControlFbDivider,
+  GsmVccPllControlTarget,
+  GsmVccDistControlFbDivider,
+  GsmVccDistControlTarget,
+  GsmVccIogControlFbDivider,
+  GsmVccIogControlTarget,
+  GsmVccIogControlBiasAdj,
+  GsmVccIogControlPMBiasAdj,
+  GsmVccClkTxControlFbDivider,
+  GsmVccClkTxControlTarget,
+  GsmVccClkTxControlBiasAdj,
+  GsmVccClkTxControlPMBiasAdj,
+  GsmVccClkqControlFbDivider,
+  GsmVccClkqControlTarget,
+  GsmVccClkqControlBiasAdj,
+  GsmVccClkqControlPMBiasAdj,
+  GsmVccDdqControlFbDivider,
+  GsmVccDdqControlTarget,
+  GsmVccDdqControlBiasAdj,
+  GsmVccDdqControlPMBiasAdj,
   GsmCompLvrAutoTrimRunBusy,
   GsmCompLvrAutoTrimOffsetIOG,
   GsmCompLvrAutoTrimOffsetIOGGV,
@@ -923,7 +951,9 @@ typedef enum {
   GsmMtgDqMaskHi,
   GsmMtgEccMask,
   GsmMtgDqDcCtl,
+  GsmMtgDqDcCtlEcc,
   GsmMtgDqInversion,
+  GsmMtgDqInversionEcc,
   GsmMtgSerialCharEn,
   GsmMtgSerialPatternConf0,
   GsmMtgSerialPatternConf1,

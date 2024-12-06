@@ -113,6 +113,19 @@ typedef struct {
   UINT8   SpdAddressTable[16];
 } VPD_MRC_SPD_ADDRESS_TABLE;
 
+// SBC VPD helper structure that's used to updating Mrc Channel to CKD QCK Mapping
+typedef struct {
+  UINT8   Size;
+  UINT8   ChannelToCkdQckMapping[8];
+} VPD_MRC_CH_2_CKD_QCK;
+
+// SBC VPD helper structure that's used to updating Mrc DDRIO Clock to CKD DIMM
+typedef struct {
+  UINT8   Size;
+  UINT8   PhyClockToCkdDimm[8];
+} VPD_MRC_DDRIO_2_CKD_CLOCK;
+
+
 #define USB2_OC_MAX_PINS 16
 #define USB3_OC_MAX_PINS 10
 

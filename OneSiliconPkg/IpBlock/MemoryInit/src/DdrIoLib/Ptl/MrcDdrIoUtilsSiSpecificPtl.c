@@ -455,6 +455,34 @@ SetupMarginRdV (
   *Group = RxVrefOffset;
 }
 
+/*
+  Update the requested Param offset with the given Value,
+  using direct multicast CR access for speed.
+
+  @param[in]  MrcData - Global MRC data structure
+  @param[in]  Param   - Margin param
+  @param[in]  Value   - The value to program
+*/
+VOID
+MrcWriteDirectMulticast (
+  IN MrcParameters *const MrcData,
+  IN UINT8                Param,
+  IN INT32                Value
+  )
+{
+  DATA0CH0_CR_DDRCRADC_STRUCT DdrCrAdc;
+
+  switch (Param) {
+    case RdV:
+      DdrCrAdc.Data = DATA0CH0_CR_DDRCRADC_DEF;
+      DdrCrAdc.Bits.VrefOffset = Value;
+      MrcWriteCrMulticast (MrcData, DATA_CR_DDRCRADC_REG, DdrCrAdc.Data);
+      break;
+
+    default:
+      break;
+  }
+}
 
 /**
   This function sets TlineTermination
@@ -469,6 +497,128 @@ SetTlineTermination (
 {
 }
 
+/*
+  IsDataPopulated
+
+  @param[in]  MrcData       - Global MRC data structure.
+  @param[in]  PartInst       - Partition instance
+
+  Returns True if a data partition instance is populated, otherwise False
+*/
+BOOLEAN
+IsDataPopulated (
+  IN MrcParameters* const MrcData,
+  IN UINT8                PartInst
+  )
+{
+  return TRUE;
+}
+
+/*
+  IsCCCPopulated
+
+  @param[in]  MrcData       - Global MRC data structure.
+  @param[in]  Instance       - Partition instance
+
+  Returns True if a CCC partition instance is populated, otherwise False
+*/
+BOOLEAN
+IsCCCPopulated (
+  IN MrcParameters* const MrcData,
+  IN UINT8                Instance
+  )
+{
+  return TRUE;
+}
+
+/*
+  IsPartPopulated
+
+  @param[in]  MrcData       - Global MRC data structure.
+  @param[in]  PartName       - Data/CCC/Comp.
+  @param[in]  Instance       - Partition instance
+
+  Returns True if partName and partInst is populated
+*/
+BOOLEAN
+IsPartPopulated (
+  IN MrcParameters* const MrcData,
+  IN RAIL_PARTTION     PartName,
+  IN UINT8             Instance
+  )
+{
+  return TRUE;
+}
+
+/*
+  Calculates the encoded target voltage and divider ratio to program into the LVR Voltage Sensor
+  Returns both the Target and VinDivider voltages.
+
+  @param[in]   MrcData       - Global MRC data structure.
+  @param[in]   Rail          - Voltage Rail Type
+  @param[in]   Target        - Target Voltage
+  @param[out]  Vid           - Voltage
+  @param[out]  FbDivider     - Divider Ratio
+*/
+VOID
+CalcLvrTarget (
+  IN  MrcParameters *const MrcData,
+  IN  RAIL_TYPE            Rail,
+  IN  UINT32               Target,
+  OUT UINT32*              Vid, OPTIONAL
+  OUT UINT32*              FbDivider
+  )
+{
+}
+
+/*
+  Calculates the target voltage based on DataRate and Fuse Limits
+  Returns the target voltage in mV
+
+  @param[in]   MrcData       - Global MRC data structure.
+  @param[in]   Type          - Vccclk or VccIo
+
+  @retval TargetVoltage
+*/
+UINT32
+CalcVFCurve (
+  IN MrcParameters *const MrcData,
+  VF_CURVE_TYPE           Type
+  )
+{
+
+  return 0;
+}
+
+/*
+  Write LVR Target
+
+  @param[in]  MrcData       - Global MRC data structure.
+  @param[in]  Rail          - Voltage Rail Type
+
+  @retval mrcSuccess - Always returned as this step is non-blocking
+*/
+MrcStatus
+WriteLvrTarget (
+  IN MrcParameters* const MrcData,
+  IN RAIL_TYPE            Rail
+  )
+{
+
+  return mrcSuccess;
+}
+
+/*
+  Setup LVR Registers
+
+  @param[in]  MrcData       - Global MRC data structure.
+*/
+VOID
+WriteAllLvrTarget (
+  IN MrcParameters* const MrcData
+  )
+{
+}
 
 /**
   This function calculates the SA/ODT Delay and Duration

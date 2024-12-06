@@ -44,6 +44,7 @@ CpuPlatformLib
 
 [Guids]
 gPchInfoHobGuid
+gIGpuDataHobGuid
 
 [Pcd]
 gSiPkgTokenSpaceGuid.PcdSiIoApicBaseAddress

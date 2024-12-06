@@ -19,29 +19,32 @@
 @par Specification
 **/
 
-//**********************************************************
-// SendEnumCmd Unit Test                                   *
-//**********************************************************
-class SendEnumCmdTest : public CommonMock {
+#include <GTestTbtNvmDRThruHrHelpers.h>
+#include <GoogleTest/Library/MockUefiBootServicesTableLib.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
+
+// **********************************************************
+// SendEnumCmd Unit Test                                    *
+// **********************************************************
+class SendEnumCmdTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    RETIMER_THRU_HR       *RetimerPtr;
+    TBT_STATUS                   TbtStatus;
+    RETIMER_THRU_HR              *RetimerPtr;
+    UINT32                       ExpData1;
+    UINT32                       ExpData2;
+    TBT_HOST_ROUTER              *gDevComHostMock = &LocalHrPtr;
+    MockTbtNvmDrvHr              TbtNvmDrvHrMock;
+    MockUefiBootServicesTableLib UefiBootServicesTableLibMock;
 
-    UINT32                ExpData1;
-    UINT32                ExpData2;
+  void SetUp() override {
+    RetimerPtr          = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
+    RetimerPtr->TbtPort = FIRST_MASTER_LANE;
+    RetimerPtr->Hr      = gDevComHostMock;
+  }
 
-    void SetUp() override {
-      RetimerPtr          = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
-      RetimerPtr->TbtPort = FIRST_MASTER_LANE;
-      RetimerPtr->Hr      = gDevComHostMock;
-    }
-
-    void TearDown() override {
-      //
-      // Destroy Mock Service
-      //
-      FreePool (RetimerPtr);
-    }
+  void TearDown() override {
+    FreePool (RetimerPtr);
+  }
 };
 
 //
@@ -51,19 +54,25 @@ class SendEnumCmdTest : public CommonMock {
 TEST_F (SendEnumCmdTest, SendCommandToLocalLcError) {
   cout << "[---------- Case 1 ----------]"<< endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
-      TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_2,
+      _,
       1,
-      _))
-    .WillRepeatedly (Return(TBT_STATUS_NON_RECOVERABLE_ERROR)); 
+      _
+      )
+    )
+    .WillRepeatedly (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_CoreStall (
-      _))
+      _
+      )
+    )
     .WillRepeatedly (Return (EFI_SUCCESS));
 
   TbtStatus = SendEnumCmd (RetimerPtr);
@@ -80,60 +89,77 @@ TEST_F (SendEnumCmdTest, CorrectFlow) {
   //
   //  Mock call WriteCioReg for SendCommandToLocalLc
   //
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
-      TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_2,
+      _,
       1,
-      _))
-    .WillRepeatedly (Return(TBT_STATUS_SUCCESS)); 
+      _
+      )
+    )
+    .WillRepeatedly (Return (TBT_STATUS_SUCCESS));
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
-      TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_1,
+      _,
       1,
-      _))
-    .WillRepeatedly (Return(TBT_STATUS_SUCCESS)); 
+      _
+      )
+    )
+    .WillRepeatedly (Return (TBT_STATUS_SUCCESS));
   //
   //  Mock call ReadCioDevReg for WaitForMsgOutTxDone in SendCommandToLocalLc
   //
   ExpData1 = TBT_MSG_OUT_ATCT1_LT0;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpData1, sizeof(ExpData1)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData1, sizeof (ExpData1)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   ExpData2 = TBT_LC_CMD_SUCCESS;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
-      TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_2,
-      _))
+      _,
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpData2, sizeof(ExpData2)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData2, sizeof (ExpData2)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_CoreStall (
-      _))
+      _
+      )
+    )
     .WillRepeatedly (Return (EFI_SUCCESS));
 
   TbtStatus = SendEnumCmd (RetimerPtr);

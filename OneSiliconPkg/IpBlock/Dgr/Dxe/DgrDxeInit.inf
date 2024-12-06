@@ -38,12 +38,8 @@ ENTRY_POINT = DgrDxeInitEntryPoint
 UefiDriverEntryPoint
 BaseLib
 DebugLib
-BaseMemoryLib
-MemoryAllocationLib
-AslUpdateLib
 UefiBootServicesTableLib
 DgrInfoLib
-PcdLib
 
 [Packages]
 MdePkg/MdePkg.dec
@@ -54,17 +50,10 @@ UefiCpuPkg/UefiCpuPkg.dec
 DgrDxeInit.c
 
 [Protocols]
-gEfiAcpiTableProtocolGuid       ## CONSUMES
-gEfiFirmwareVolume2ProtocolGuid ## CONSUMES
-gDgrNvsAreaProtocolGuid         ## PRODUCES
 gEfiSmbiosProtocolGuid          ## CONSUMES
 
 [Guids]
-gDgrAcpiTableStorageGuid        ## CONSUMES
 gEfiEndOfDxeEventGroupGuid      ## CONSUMES
 
-[Pcd]
-gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable
-
 [Depex]
-gEfiAcpiTableProtocolGuid
+TRUE

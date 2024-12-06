@@ -40,7 +40,7 @@
   # Stage 5 - boot to OS with security boot enabled
   # Stage 6 - boot with advanced features enabled
   #
-  gMinPlatformPkgTokenSpaceGuid.PcdBootStage|4
+  gMinPlatformPkgTokenSpaceGuid.PcdBootStage|5
 
   #
   # 0: FSP Wrapper is running in Dispatch mode.
@@ -121,6 +121,7 @@
   gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable|FALSE
   gMinPlatformPkgTokenSpaceGuid.PcdUefiSecureBootEnable|FALSE
   gMinPlatformPkgTokenSpaceGuid.PcdSerialTerminalEnable|TRUE
+  gMinPlatformPkgTokenSpaceGuid.PcdStandaloneMmEnable|FALSE
 
 !if gMinPlatformPkgTokenSpaceGuid.PcdBootStage >= 1
   gMinPlatformPkgTokenSpaceGuid.PcdStopAfterDebugInit|TRUE
@@ -286,7 +287,7 @@ gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopVbtBinEnable|TRUE
   ######################################
   # Edk2 Configuration
   ######################################
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0307
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0308
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000046
 
 [PcdsDynamicDefault]
@@ -315,6 +316,15 @@ gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopVbtBinEnable|TRUE
 
   gUefiCpuPkgTokenSpaceGuid.PcdCpuMaxLogicalProcessorNumber|16
 
+!if gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable == TRUE
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpmInitializationPolicy|1
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpmInstanceGuid|{0x5a, 0xf2, 0x6b, 0x28, 0xc3, 0xc2, 0x8c, 0x40, 0xb3, 0xb4, 0x25, 0xe6, 0x75, 0x8b, 0x73, 0x17}
+
+  gEfiSecurityPkgTokenSpaceGuid.PcdTcg2HashAlgorithmBitmap|0xFFFFFFFF
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpm2HashMask|0x0000001F
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpm2SelfTestPolicy|0
+  gEfiSecurityPkgTokenSpaceGuid.PcdTpm2ScrtmPolicy|1
+!endif
 [PcdsDynamicHii.X64.DEFAULT]
   ######################################
   # Edk2 Configuration

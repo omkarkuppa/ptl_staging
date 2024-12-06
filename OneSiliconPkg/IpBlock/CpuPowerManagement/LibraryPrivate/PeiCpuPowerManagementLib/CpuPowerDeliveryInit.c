@@ -117,6 +117,7 @@ ConfigurePl4Boost (
     MailboxCommand.InterfaceData = 0;
     MailboxCommand.Fields.Command = MAILBOX_BIOS_CMD_PLATFORM_CONFIG;
     MailboxCommand.Fields.Param1 = MAILBOX_BIOS_SUBCMD_WRITE_PL4_BOOST_POWER;
+    MailboxData.Data32 = 0;
     MailboxData.Fields.Pl4Boost = CpuPowerDeliveryConfig->PowerLimit4Boost;
     Status = MailboxWrite (MailboxCommand.InterfaceData, MailboxData.Data32, &MailboxStatus);
     if (Status != EFI_SUCCESS || MailboxStatus != EFI_SUCCESS) {

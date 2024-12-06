@@ -47,6 +47,11 @@
       #
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressColor|0x00FFFFFF
 
+      #
+      # File GUID for the IFWI FMP device driver.
+      #
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageTypeIdGuid|{GUID(gFmpDeviceIfwiDefaultGuid)}
+
     <LibraryClasses>
       FmpDeviceLib|CapsuleFeaturePkg/Library/FmpDeviceLibIfwi/FmpDeviceLibIfwi.inf
     }

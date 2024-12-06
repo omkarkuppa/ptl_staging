@@ -236,7 +236,7 @@ PtlPcdPsfEnableTraceHubAcpiMemSpace (
   Hide TraceHub ACPI at PSF level
 **/
 VOID
-PtlPcdHideTraceHubAcpi (
+PtlPcdPsfHideTraceHubAcpi (
   VOID
   );
 
@@ -244,7 +244,7 @@ PtlPcdHideTraceHubAcpi (
   Disable TraceHub ACPI at PSF level
 **/
 VOID
-PtlPcdDisableTraceHubAcpi (
+PtlPcdPsfDisableTraceHubAcpi (
   VOID
   );
 
@@ -423,6 +423,14 @@ PtlPcdPsfDisableScsUfsBar1 (
   );
 
 /**
+  Return max number of PCIe controllers decoded by PSF
+**/
+UINT32
+PtlPcdPsfGetMaxPsfDecodedPciePortNum (
+  VOID
+  );
+
+/**
   Disable SSE at PSF level
 
   @param[in] SseNumber     SSE Number (1-3)
@@ -445,6 +453,19 @@ PtlPcdPsfPcieDestinationId (
   );
 
 /**
+  Check if PCIe Root Port is enabled at PSF level
+
+  @param[in] RpIndex      PCIe Root Port Index
+
+  @retval    TRUE         Root Port is enabled on PSF
+  @retval    FALSE        Root Port is disabled on PSF
+**/
+BOOLEAN
+PtlPcdPsfIsPcieRootPortEnabled (
+  IN  UINT32  RpIndex
+  );
+
+/**
   Enable PCIe Relaxed Ordering in PSF
 **/
 VOID
@@ -456,7 +477,7 @@ PtlPcdPsfEnablePcieRelaxedOrder (
   Configure MCTP
 **/
 VOID
-PtlPcdMctpConfigure (
+PtlPcdPsfMctpConfigure (
   VOID
   );
 
@@ -487,34 +508,30 @@ PtlPcdPsfProgramDWB (
   );
 
 /**
-  Program Grant Counts for PCIE controllers on PTL-PCD
+  Program Grant Counts for PCIE controllers on NVL-PCD-S
 
-  @param PcieCtrlConfigsArray        Array of PCIe controllers bifurcation config
-  @param PcieCtrlConfigsArraySize    Size of the array
+  @param[in] PcieCtrlBifurcationArray        Array of PCIe controllers bifurcation config
+  @param[in] PcieCtrlNumOfLanesArray         Array of lanes per PCIe controller
+  @param[in] PcieCtrlNumOfRootPortsArray     Array of root ports per PCIe controller
+  @param[in] ArraySize                       Number of PCIe contollers
+  @param[in] PcieRpEnableArray               Array of Root Port enable state
+  @param[in] PcieRpArraySize                 Number of Root Ports and size of PcieRpEnableArray
 **/
 VOID
-PtlPcdGrantCountProgramming (
-  PSF_PCIE_CTRL_CONFIG   *PcieCtrlConfigsArray,
-  UINT32                 PcieCtrlConfigsArraySize
-  );
-
-/**
-  Reset R_PCH_PSF_PCR_ROOTSPACE_CONFIG_RS0 and
-  R_PCH_PSF_PCR_ROOTSPACE_CONFIG_RS3 registers for all PSFs
-  to HW default.
-  These registers are resets to defaults only after global reset,
-  after any other reset type these needs to be reset by BIOS.
-**/
-VOID
-PtlPcdPsfResetRootspaceConfig (
-  VOID
+PtlPcdPsfGrantCountProgramming (
+  UINT8                  *PcieCtrlBifurcationArray,
+  UINT8                  *PcieCtrlNumOfLanesArray,
+  UINT8                  *PcieCtrlNumOfRootPortsArray,
+  UINT32                 ArraySize,
+  BOOLEAN                *PcieRpEnableArray,
+  UINT32                 PcieRpArraySize
   );
 
 /**
   Program P2SB as EOI target
 **/
 VOID
-PtlPcdEnableP2SbEoiTarget (
+PtlPcdPsfEnableP2SbEoiTarget (
   VOID
   );
 

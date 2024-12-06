@@ -139,6 +139,9 @@ ThermalConfiguration (
     MmioOr32 (ThermalHandle->PwrmBase + R_PMC_PWRM_THERMAL_TL, B_PMC_PWRM_THERMAL_TL_TLLOCK | B_PMC_PWRM_THERMAL_TL_TTEN);
   }
 
+  // Enable PMC Throttling.
+  MmioOr32 (ThermalHandle->PwrmBase + R_PMC_PWRM_THERMAL_TLEN, B_PMC_PWRM_THERMAL_TLEN_PMCTEN);
+
   ///
   /// Lock down Thermal Reporting to prevent outside agents from changing the values.
   ///

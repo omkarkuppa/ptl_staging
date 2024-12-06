@@ -225,21 +225,21 @@ IocSetPcieFunction (
 {
   MCHBAR_HOSTBRIDGE_CFG_STRUCT      MchBar;
   UINT32                            BdfAllocRegOffset;
-  BDF_ALLOC_B_8_8_IOC_MCHBAR_STRUCT   BdfAllocCfg;
+  BDF_ALLOC_B_8_IOC_MCHBAR_STRUCT   BdfAllocCfg;
 
   DEBUG ((DEBUG_INFO, "ProgramBdfAllocRegister Start!\n"));
       switch (RpIndex) {
         case 8:
-          BdfAllocRegOffset = BDF_ALLOC_B_8_8_IOC_MCHBAR_REG;
+          BdfAllocRegOffset = BDF_ALLOC_B_8_IOC_MCHBAR_REG;
           break;
         case 9:
-          BdfAllocRegOffset = BDF_ALLOC_B_9_9_IOC_MCHBAR_REG;
+          BdfAllocRegOffset = BDF_ALLOC_B_9_IOC_MCHBAR_REG;
           break;
         case 10:
-          BdfAllocRegOffset = BDF_ALLOC_B_12_12_IOC_MCHBAR_REG;
+          BdfAllocRegOffset = BDF_ALLOC_B_12_IOC_MCHBAR_REG;
           break;
         case 11:
-          BdfAllocRegOffset = BDF_ALLOC_B_16_16_IOC_MCHBAR_REG;
+          BdfAllocRegOffset = BDF_ALLOC_B_16_IOC_MCHBAR_REG;
           break;
         default:
           DEBUG ((DEBUG_ERROR, "Invalid RpIndex %d\n", RpIndex));
@@ -623,6 +623,43 @@ IocDisablePcieRootPort (
 }
 
 /**
+  Check if root port is enabled.
+
+  @param[in] RpIndex            Root Port Number
+**/
+BOOLEAN
+EFIAPI
+IocIsPcieRootPortEnabled (
+  IN UINT32   RpIndex
+  )
+{
+  MCHBAR_HOSTBRIDGE_CFG_STRUCT              MchBar;
+  IOC_PMC_DEVEN_B_IOC_MCHBAR_STRUCT         PmcDevenStruct;
+
+  MchBar.Data = GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase);
+    PmcDevenStruct.Data = MmioRead32 ((UINTN)(MchBar.Data + IOC_PMC_DEVEN_B_IOC_MCHBAR_REG));
+    DEBUG ((DEBUG_INFO, "DevEn = %x\n", PmcDevenStruct.Data));
+
+      switch (RpIndex) {
+        case 8:
+          return (BOOLEAN)PmcDevenStruct.Bits.spc_f0_en;
+          break;
+        case 9:
+          return (BOOLEAN)PmcDevenStruct.Bits.spc_f1_en;
+          break;
+        case 10:
+          return (BOOLEAN)PmcDevenStruct.Bits.spd_f0_en;
+          break;
+        case 11:
+          return (BOOLEAN)PmcDevenStruct.Bits.spe_f0_en;
+          break;
+        default:
+          ASSERT(FALSE);
+          return FALSE;
+      }
+}
+
+/**
   This function wtites TCSS DEVEN Register.
 
   @param[in]  TcssDevEn  - Maps to bits in TCSS_DEVEN_0_0_0_MCHBAR_IMPH
@@ -686,11 +723,11 @@ HostBridgeSetTcssPcieRpFuncMap (
 
   for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index++) {
     ///
-    /// BdfAllocRegOffset = BDF_ALLOC_C_0_0_IOC_MCHBAR_REG + (PMC_DEVEN_C[i] * 4)
+    /// BdfAllocRegOffset = BDF_ALLOC_C_0_IOC_MCHBAR_REG + (PMC_DEVEN_C[i] * 4)
     ///
     MmioAndThenOr32 (
-      MchBar + (BDF_ALLOC_C_0_0_IOC_MCHBAR_REG + (Index * 4)), 
-      ~((UINT32)0x7), 
+      MchBar + (BDF_ALLOC_C_0_IOC_MCHBAR_REG + (Index * 4)),
+      ~((UINT32)0x7),
       (PcieFuncMap >> (Index * 3)) & 0x7
     );
   }

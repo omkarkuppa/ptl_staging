@@ -1110,4 +1110,21 @@ GetDigestFromDigestList(
   OUT VOID              *Digest
   );
 
+  /**
+   This function will query the TPM to determine which hashing algorithms and
+   get the digests of all active and supported PCR banks of a specific PCR register.
+
+   @param[in]     PcrHandle     The index of the PCR register to be read.
+   @param[out]    HashList      List of digests from PCR register being read.
+
+   @retval EFI_SUCCESS           The Pcr was read successfully.
+   @retval EFI_DEVICE_ERROR      The command was unsuccessful.
+**/
+EFI_STATUS
+EFIAPI
+Tpm2PcrReadForActiveBank (
+  IN      TPMI_DH_PCR  PcrHandle,
+  OUT     TPML_DIGEST  *HashList
+  );
+
 #endif

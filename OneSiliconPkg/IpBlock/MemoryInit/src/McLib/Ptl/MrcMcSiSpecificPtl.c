@@ -80,3 +80,19 @@ MrcFullRankBlockOptimization (
     }
   }
 }
+
+/**
+  This function disables independent fast sleep option.
+
+  @param[in]  MrcData  - Pointer to MRC global data.
+**/
+VOID
+MrcMcRfFastSleepDisable (
+  IN  MrcParameters *const  MrcData
+  )
+{
+  INT64          GetSetEn;
+
+  GetSetEn = 1;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccMcMntsRfFastSleepDisable, WriteCached | PrintValue, &GetSetEn);
+}

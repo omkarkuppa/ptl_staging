@@ -39,6 +39,11 @@
       #
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressColor|0x000000FF
 
+      #
+      # File GUID for the Foxville FMP device driver.
+      #
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageTypeIdGuid|{GUID(gFmpDeviceFoxvilleDefaultGuid)}
+
     <LibraryClasses>
       #
       # Platform specific library that processes a capsule and updates the FW storage device

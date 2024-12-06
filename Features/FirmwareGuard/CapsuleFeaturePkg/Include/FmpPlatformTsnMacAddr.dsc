@@ -38,6 +38,11 @@
       #
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressColor|0x000000FF
 
+      #
+      # File GUID for the TSN MAC Address FMP device driver.
+      #
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageTypeIdGuid|{GUID(gFmpCapsuleTsnMacAddrFileGuid)}
+
     <LibraryClasses>
       #
       # Platform specific library that processes a capsule and updates the FW storage device

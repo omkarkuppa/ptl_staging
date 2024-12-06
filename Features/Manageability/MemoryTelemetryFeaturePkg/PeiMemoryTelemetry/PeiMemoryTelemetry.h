@@ -28,8 +28,16 @@
 ///
 /// MRC Memory Types API matching definitions
 ///
-#define NOREPAIR_PPR  0
-#define HARD_PPR      2
+#define NOREPAIR_PPR      0
+#define HARD_PPR          2
+#define PPR_TEST          6
+
+///
+/// Defined for variable settings
+#define DISABLED          0
+#define ENABLED           1
+#define AMT_ONLY_ENABLED  2
+#define AMT_PPR_ENABLED   3
 
 /**
   Entry point of the Memory Telemetry PEIM

@@ -1145,11 +1145,6 @@
   # !BSF HELP:{Enable/Disable Read Vref Decap Training*}
   gPlatformFspPkgTokenSpaceGuid.RDVREFDC                | * | 0x01 | 0x00
 
-  # !BSF NAME:{Vddq Training}
-  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable/Disable Vddq Training}
-  gPlatformFspPkgTokenSpaceGuid.VDDQT                   | * | 0x01 | 0x00
-
   # !BSF NAME:{Rank Margin Tool Per Bit}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable Rank Margin Tool Per Bit}
@@ -1180,6 +1175,12 @@
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Retrain On Working Channel feature}
   gPlatformFspPkgTokenSpaceGuid.RetrainToWorkingChannel   | * | 0x01 | 0x00
+
+  # !BSF PAGE:{MRC}
+  # !BSF NAME:{Row Press}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enables/Disable Row Press feature}
+  gPlatformFspPkgTokenSpaceGuid.RowPressEn            | * | 0x01 | 0x00
 
   # !BSF NAME:{DBI feature}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -1738,11 +1739,6 @@
   gPlatformFspPkgTokenSpaceGuid.WdtDisableAndLock           | * | 0x01 | 0x00
 
   ## PCH_WDT_PREMEM_CONFIG End
-
-  # !BSF NAME:{Intel Graphics VBT (Video BIOS Table) Size}
-  # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Size of Internal Graphics VBT Image}
-  gPlatformFspPkgTokenSpaceGuid.VbtSize                     | * | 0x04 | 0x00000000
 
   # !BSF NAME:{HECI Timeouts} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{0: Disable, 1: Enable (Default) timeout check for HECI}
@@ -3101,6 +3097,36 @@
   # !BSF HELP:{3(Default)=AUTO, 0=IGFX, 4=Hybrid Graphics}
   gPlatformFspPkgTokenSpaceGuid.PrimaryDisplay              | * | 0x01 | 0x0
 
+  # !BSF NAME:{Internal Graphics Data Stolen Memory GSM2} TYPE:{Combo}
+  # !BSF OPTION:{0:2GB, 1:4GB, 2:6GB, 3:8GB, 4:10GB, 5:12GB, 6:14GB, 7:16GB, 8:18GB, 9:20GB, 10:22GB, 11:24GB, 12:26GB, 13:28GB, 14:30GB, 15:32GB, 0xFF:No Allocation}
+  # !BSF HELP:{Size of memory preallocated for internal graphics GSM2.}
+  gPlatformFspPkgTokenSpaceGuid.IGpuGsm2Size                | * | 0x01 | 0xFF
+
+  # !BSF NAME:{Intel Graphics VBT (Video BIOS Table) Size}
+  # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Size of Internal Graphics VBT Image}
+  gPlatformFspPkgTokenSpaceGuid.VbtSize                     | * | 0x04 | 0x00000000
+
+  # !BSF NAME:{Graphics Configuration Ptr}
+  # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Points to VBT}
+  gPlatformFspPkgTokenSpaceGuid.VbtPtr                      | * | 0x08 | 0x00000000
+
+  # !BSF NAME:{SOL Training Message Pointer}
+  # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Points to SOL Message String}
+  gPlatformFspPkgTokenSpaceGuid.VgaMessage                  | * | 0x08 | 0x00000000
+
+  # !BSF NAME:{Platform LID Status for LFP Displays.} TYPE:{Combo}
+  # !BSF OPTION:{0: LidClosed, 1: LidOpen}
+  # !BSF HELP:{LFP Display Lid Status (LID_STATUS enum): 0 (Default): LidClosed, 1: LidOpen.}
+  gPlatformFspPkgTokenSpaceGuid.LidStatus                   | * | 0x01 | 0x0
+
+  # !BSF NAME:{Control SOL VGA Initialition sequence} TYPE:{Combo}
+  # !BSF OPTION:{0x0: NO SOL VGA Init, 0x1: SOL VGA Init}
+  # !BSF HELP:{Initialise SOL Init}
+  gPlatformFspPkgTokenSpaceGuid.VgaInitControl              | * | 0x01 | 0x1
+
   ## GRAPHICS_PEI_PREMEM_CONFIG End
 
   ## TCSS_PEI_PREMEM_CONFIG Start
@@ -3472,6 +3498,16 @@
   # !BSF TYPE:{EditNum, HEX, (0x00,0xFF)}
   # !BSF HELP:{Command value for Smbus postcode device}
   gPlatformFspPkgTokenSpaceGuid.SmbusPostCodeCommand      | * | 0x01 | 0x20
+
+  # !BSF NAME:{Channel to CKD QCK Mapping} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !HDR STRUCT:{UINT8}
+  # !BSF HELP:{Specify Channel to CKD QCK Mapping for CH0D0/CH0D1/CH1D0&CH1D1}
+  gPlatformFspPkgTokenSpaceGuid.ChannelToCkdQckMapping       | * | 0x8 | { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
+
+  # !BSF NAME:{DDRIO Clock to CKD DIMM} TYPE:{EditNum, HEX, (0x00,0xFF)}
+  # !HDR STRUCT:{UINT8}
+  # !BSF HELP:{Specify DDRIO Clock to CKD DIMM for CH0D0/CH0D1/CH1D0&CH1D1}
+  gPlatformFspPkgTokenSpaceGuid.PhyClockToCkdDimm            | * | 0x8 | { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
 
   # !HDR EMBED:{FSP_M_CONFIG:FspmConfig:END}
   gPlatformFspPkgTokenSpaceGuid.ReservedFspmUpd             | * | 0x03 | {0x00}

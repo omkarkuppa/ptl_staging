@@ -37,6 +37,7 @@
 [LibraryClasses]
   NhltLib|NhltFeaturePkg/LibraryPrivate/NhltLib/NhltLib.inf
   GetNhltConfigurationLib|NhltFeaturePkg/LibraryPrivate/GetNhltConfigurationVariableLib/GetNhltConfigurationVariableLib.inf
+  InstallBtConfigurationVariableLib|NhltFeaturePkg/LibraryPrivate/InstallBtConfigurationVariable/InstallBtConfigurationVariable.inf
 
 ################################################################################
 #

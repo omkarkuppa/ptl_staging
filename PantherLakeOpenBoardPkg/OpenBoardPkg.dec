@@ -204,6 +204,27 @@ Include
     PantherLakeOpenBoardPkg/OpenBoardPkg.dec
   }
 
+    # Mrc Channel to CKD QCK Mapping
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcChannelToCkdQckMapping|{0}|VPD_MRC_CH_2_CKD_QCK|0x000012E3 {
+  <HeaderFiles>
+    PlatformOpenBoardConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  }
+
+  # Mrc DDRIO Clock to CKD DIMM
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcPhyClockToCkdDimm|{0}|VPD_MRC_DDRIO_2_CKD_CLOCK|0x000012E4 {
+  <HeaderFiles>
+    PlatformOpenBoardConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  }
+
+
   #VPD PCD Ratio
   gBoardModuleTokenSpaceGuid.VpdPcdCpuRatio|0|UINT8|0x00001190
 

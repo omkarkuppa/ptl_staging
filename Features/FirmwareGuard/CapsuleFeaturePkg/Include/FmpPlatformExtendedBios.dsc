@@ -43,6 +43,11 @@
       #
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressColor|0x000000FF
 
+      #
+      # File GUID for the Extended BIOS FMP device driver.
+      #
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageTypeIdGuid|{GUID(gFmpDeviceExtendedBiosDefaultGuid)}
+
     <LibraryClasses>
       FmpDeviceLib|CapsuleFeaturePkg/Library/FmpDeviceLibExtendedBios/FmpDeviceLibExtendedBios.inf
   }

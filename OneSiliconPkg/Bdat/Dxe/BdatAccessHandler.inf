@@ -62,7 +62,7 @@ gEfiAcpiTableProtocolGuid ## CONSUMES
 
 [Guids]
 gEfiHobListGuid ## CONSUMES
-gSchemaListGuid
+gMrcSchemaListHobGuid
 
 [Pcd]
 gSiPkgTokenSpaceGuid.PcdBdatEnable  ##CONSUMES

@@ -82,6 +82,8 @@ const char  *gMarginTypesStr[] = {
   "RdTDbi",
   "WrTDbi",
   "RdVDbi",
+  "WrTBit",
+  "RdTBit",
   "MarginTypeMax"
 };
 

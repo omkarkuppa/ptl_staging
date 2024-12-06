@@ -269,8 +269,8 @@ UpdateUsbAcpiNvs (
   USB_CONNECTOR_HOB_DATA        *UsbConnectorHobDataPtr;
   USBC_CONNECTOR_HOB_DATA       *UsbCConnectorHobDataPtr;
   EFI_HOB_GUID_TYPE             *GuidHob;
-  UINT8                         UsbConnectorBoardConfigEntryCount;
-  UINT8                         UsbCConnectorBoardConfigEntryCount;
+  UINT8                         NumberOfUsbConnectors;
+  UINT8                         NumberOfUsbCConnectors;
 
   //
   // Get USB and USBC Connector Tables
@@ -294,24 +294,24 @@ UpdateUsbAcpiNvs (
   //
   // Update Connectable Type C ports map
   //
-  mUcsiNvsAreaProtocol->Area->TypeCPortsMap = UsbCConnectorHobDataPtr->ConnectableUsbCConnectorsMap;
-  DEBUG ((DEBUG_INFO, "TypeCPortsMap = 0x%04x\n", mUcsiNvsAreaProtocol->Area->TypeCPortsMap));
+  mUcsiNvsAreaProtocol->Area->TypeCConnectorsMap = UsbCConnectorHobDataPtr->ConnectableUsbCConnectorsMap;
+  DEBUG ((DEBUG_INFO, "TypeCConnectorsMap = 0x%04x\n", mUcsiNvsAreaProtocol->Area->TypeCConnectorsMap));
 
   //
   // Get Board Config Table Entry Count
   //
-  UsbConnectorBoardConfigEntryCount = UsbConnectorHobDataPtr->NumberOfUsbConnectors;
-  UsbCConnectorBoardConfigEntryCount = UsbCConnectorHobDataPtr->NumberOfConnectableUsbCConnectors;
+  NumberOfUsbConnectors = UsbConnectorHobDataPtr->NumberOfUsbConnectors;
+  NumberOfUsbCConnectors = UsbCConnectorHobDataPtr->NumberOfUsbCConnectors;
   //
   // Update GroupPosition, Visibility, Connectable, Type and Capability
   //
-  for(EntryNum = 0; EntryNum < UsbConnectorBoardConfigEntryCount; EntryNum ++){
+  for(EntryNum = 0; EntryNum < NumberOfUsbConnectors; EntryNum ++){
     if (UsbConnectorBoardConfig[EntryNum].ConnectorConnectable == CONNECTABLE) {
-      UpdateGroupPosition (&UsbConnectorBoardConfig[EntryNum], EntryNum, UsbCConnectorBoardConfigEntryCount);
-      UpdateVisibility (&UsbConnectorBoardConfig[EntryNum], EntryNum, UsbCConnectorBoardConfigEntryCount);
-      UpdateConnectable (&UsbConnectorBoardConfig[EntryNum], EntryNum, UsbCConnectorBoardConfigEntryCount);
-      UpdateType (&UsbConnectorBoardConfig[EntryNum], EntryNum, UsbCConnectorBoardConfigEntryCount);
-      if(EntryNum < UsbCConnectorBoardConfigEntryCount){
+      UpdateGroupPosition (&UsbConnectorBoardConfig[EntryNum], EntryNum, NumberOfUsbCConnectors);
+      UpdateVisibility (&UsbConnectorBoardConfig[EntryNum], EntryNum, NumberOfUsbCConnectors);
+      UpdateConnectable (&UsbConnectorBoardConfig[EntryNum], EntryNum, NumberOfUsbCConnectors);
+      UpdateType (&UsbConnectorBoardConfig[EntryNum], EntryNum, NumberOfUsbCConnectors);
+      if(EntryNum < NumberOfUsbCConnectors){
         UpdateCapability (&UsbConnectorBoardConfig[EntryNum], &UsbCConnectorBoardConfig[EntryNum], EntryNum);
       }
     }

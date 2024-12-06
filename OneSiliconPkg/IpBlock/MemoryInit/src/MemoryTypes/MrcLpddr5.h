@@ -1187,7 +1187,7 @@ MrcLp5GetReadPreambleSetting (
   @retval MrcStatus - mrcSuccess if successful, else an error status.
 **/
 MrcStatus
-SetLp5Mr10 (
+MrcSetLpddr5Mr10ReadPreamble (
   IN  MrcParameters *const MrcData
   );
 

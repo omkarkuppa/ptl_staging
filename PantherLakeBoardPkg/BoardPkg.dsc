@@ -164,14 +164,22 @@
   0x00050001|SkuIdPtlUHLp5MemSdChromeRvp1|SkuIdPtlUHLp5Rvp1
   0x00060001|SkuIdPtlUHLp5Rvp1Bom|SkuIdPtlUHLp5Rvp1
   0x00070001|SkuIdPtlUHLp5MemSdMeccRvp1|SkuIdPtlUHLp5Rvp1
-  0x00000002|SkuIdPtlUHCammdTbTRvp2
+  0x00000002|SkuIdPtlUHCammDTbTRvp2
   0x00010002|SkuIdPtlUHCammDTbTExtGfxRvp2|SkuIdPtlUHCammDTbTRvp2
   0x00060002|SkuIdPtlUHCammDTbTRvp2Bom|SkuIdPtlUHCammDTbTRvp2
+  0x00000102|SkuIdPtlUHCammDTbTRvp2Rev1|SkuIdPtlUHCammDTbTRvp2
+  0x00010102|SkuIdPtlUHCammDTbTExtGfxRvp2Rev1|SkuIdPtlUHCammDTbTExtGfxRvp2
+  0x00060102|SkuIdPtlUHCammDTbTRvp2BomRev1|SkuIdPtlUHCammDTbTRvp2Bom
   0x00000003|SkuIdPtlUHLp5Rvp3
   0x00010003|SkuIdPtlUHLp5MemSdRvp3|SkuIdPtlUHLp5Rvp3
   0x00020003|SkuIdPtlUHLp5MemSktPnpRvp3|SkuIdPtlUHLp5Rvp3
   0x00050003|SkuIdPtlUHLp5Rvp3PpvBom|SkuIdPtlUHLp5Rvp3
   0x00060003|SkuIdPtlUHLp5Rvp3Bom|SkuIdPtlUHLp5Rvp3
+  0x00000103|SkuIdPtlUHLp5Rvp3Rev1|SkuIdPtlUHLp5Rvp3
+  0x00010103|SkuIdPtlUHLp5MemSdRvp3Rev1|SkuIdPtlUHLp5MemSdRvp3
+  0x00020103|SkuIdPtlUHLp5MemSktPnpRvp3Rev1|SkuIdPtlUHLp5MemSktPnpRvp3
+  0x00050103|SkuIdPtlUHLp5Rvp3PpvBomRev1|SkuIdPtlUHLp5Rvp3PpvBom
+  0x00060103|SkuIdPtlUHLp5Rvp3BomRev1|SkuIdPtlUHLp5Rvp3Bom
   0x00000004|SkuIdPtlUHDdr5Rvp4
   0x00040004|SkuIdPtlUHDdr5Rvp4Chrome|SkuIdPtlUHDdr5Rvp4
   0x00050004|SkuIdPtlUHDdr5Rvp4PpvBom|SkuIdPtlUHDdr5Rvp4
@@ -187,6 +195,7 @@
   0x00000016|SkuIdPtlUHLp5Adk2
   0x00010007|SkuIdPtlUHLp5AepBom
   0x00000007|SkuIdPtlUHLp5Aep|SkuIdPtlUHLp5AepBom
+  0x00020007|SkuIdPtlUHLp5AepBom32Gb|SkuIdPtlUHLp5AepBom
   0x08000010|SkuIdWclNDdr5Rvp1
   0x0A000010|SkuIdWclNDdr5Rvp1HDMI|SkuIdWclNDdr5Rvp1
 
@@ -990,6 +999,7 @@ $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpi
       DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibAllDebugPort.inf
       TraceHubDebugSysTLib|MdeModulePkg/Library/TraceHubDebugSysTLib/BaseTraceHubDebugSysTLib.inf
 !endif
+      NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
   }
   UefiCpuPkg/ResetVector/Vtf0/Vtf0.inf {
     <BuildOptions>
@@ -1460,6 +1470,7 @@ $(PLATFORM_SI_PACKAGE)/Product/PantherLake/EarlyDevices/EarlyDxeDevices.inf
   BluetoothPkg/BluetoothHidDxe/BluetoothHidDxe.inf
   BluetoothPkg/HidKbDxe/HidKbDxe.inf
   BluetoothPkg/HidMouseDxe/HidMouseDxe.inf
+  BluetoothPkg/BleConPlatformDxe/BleConPlatformDxe.inf
 !endif # gPlatformModuleTokenSpaceGuid.PcdNetworkEnable
 
 !if gPlatformModuleTokenSpaceGuid.PcdCapsuleEnable == TRUE
@@ -1483,6 +1494,7 @@ $(PLATFORM_SI_PACKAGE)/Product/PantherLake/EarlyDevices/EarlyDxeDevices.inf
 
 !if gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable == TRUE
   $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCRetimerSupport/UsbCRetimerSupport.inf
+  $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCPdBridgeSupport/UsbCPdBridgeSupport.inf
 !endif
 
 #

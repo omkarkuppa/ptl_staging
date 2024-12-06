@@ -150,7 +150,7 @@ LoadPpamImage (
   UINTN          PpamImageSize;
   EFI_GUID       *PpamGuid;
 
-  if (NrPpamVersion >= NR_PPAM_11_SUPPORT) {
+  if (NrPpamVersion == NR_PPAM_11_SUPPORT) {
     DEBUG ((DEBUG_INFO, "Get GUID Pointer for PPAM 1.1\n"));
     PpamGuid = PcdGetPtr (PcdPpam11BinFile);
   } else {
@@ -193,7 +193,7 @@ LoadPpamImage (
 
   @retval EFI_SUCCESS           STM is loaded to MSEG
   @retval EFI_BUFFER_TOO_SMALL  MSEG is too small
-  @retval EFI_OUT_OF_RESOURCES  Can not allocate the memory 
+  @retval EFI_OUT_OF_RESOURCES  Can not allocate the memory
 **/
 EFI_STATUS
 LoadPpamManifest (
@@ -528,7 +528,7 @@ InstallPpamPlatformSmm (
 //
 // Restricting IO, MSR access is controlled on PPAM 11 supported SKUs
 //
-  if (NrPpamSupportLevel >= NR_PPAM_11_SUPPORT) {
+  if (NrPpamSupportLevel == NR_PPAM_11_SUPPORT) {
     Status = gSmst->SmmLocateProtocol (
                       &gSmmResourceConfigProtocolGuid,
                       NULL,

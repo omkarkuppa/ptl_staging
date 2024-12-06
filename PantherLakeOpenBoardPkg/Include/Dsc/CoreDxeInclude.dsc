@@ -89,9 +89,13 @@
   SecurityPkg/Tcg/MemoryOverwriteControl/TcgMor.inf
   SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf {
     <LibraryClasses>
+      Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
       Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibRouter/Tpm2DeviceLibRouterDxe.inf
       NULL|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2InstanceLibDTpm.inf
       NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
+      NULL|SecurityPkg/Library/HashInstanceLibSha384/HashInstanceLibSha384.inf
+      NULL|SecurityPkg/Library/HashInstanceLibSha512/HashInstanceLibSha512.inf
+      NULL|SecurityPkg/Library/HashInstanceLibSm3/HashInstanceLibSm3.inf
   }
   SecurityPkg/Tcg/Tcg2Smm/Tcg2Smm.inf
   SecurityPkg/Tcg/Tcg2Acpi/Tcg2Acpi.inf

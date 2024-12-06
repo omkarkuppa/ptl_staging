@@ -1076,12 +1076,10 @@ ResiliencyCallBackFunction (
     PopUpMsg (L"Resiliency rollback (TopSwap is enabled)", L"Restore Obb from ESP - Begin...", NULL);
     Status = ObbRestoreOrBackUp (TRUE);
     ASSERT_EFI_ERROR (Status);
-//  @Todo: Temporarily disabled due to other depedency.
-//         Need to revert when enabling NonFitPayload update/recovery
-//    if (IsPayloadBackupEnabled ()) {
-//      Status = NonFitPayloadRestoreOrBackUp (TRUE);
-//      ASSERT_EFI_ERROR (Status);
-//    }
+    if (IsPayloadBackupEnabled ()) {
+      Status = NonFitPayloadRestoreOrBackUp (TRUE);
+      ASSERT_EFI_ERROR (Status);
+    }
     PopUpMsg (L"Resiliency rollback (TopSwap is enabled)", L"Restore Obb from ESP - End", &Status);
 
 #if FixedPcdGetBool (PcdBiosExtenedRegionEnable) == 1

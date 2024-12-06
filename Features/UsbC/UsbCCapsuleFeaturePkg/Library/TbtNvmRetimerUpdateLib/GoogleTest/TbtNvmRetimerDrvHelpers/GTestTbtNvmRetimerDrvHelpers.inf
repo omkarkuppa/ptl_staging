@@ -47,19 +47,16 @@
 
 [Packages]
   UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   FmpDevicePkg/FmpDevicePkg.dec
-  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
 
 [LibraryClasses]
   GoogleTestLib
   BaseMemoryLib
   MemoryAllocationLib
   UefiBootServicesTableLib
-
-[Protocols]
-
-[Pcd]
-
-[Guids]
+  TbtNvmDrvRetimerThruHrLib
+  TbtNvmDrvHrLib
+  SubhookLib

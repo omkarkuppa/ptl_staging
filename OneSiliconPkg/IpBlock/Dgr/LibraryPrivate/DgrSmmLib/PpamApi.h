@@ -355,10 +355,6 @@ typedef struct {
 #define SMM_ENTRY_POINT_INFO_USER_MODE_SHADOW_EXCEPTION_STACK      0xA3
 #define SMM_ENTRY_POINT_INFO_USER_MODE_SHADOW_EXCEPTION_STACK_SIZE 0xA4
 
-#if FixedPcdGetBool (PcdLedgerIslandEnable) == 1
-#define SMM_ENTRY_POINT_INFO_PPAM_PARAM_PAGE                       0xD0
-#endif
-
 #define SMM_ENTRY_POINT_INFO_SPA_CTXT                              0xE0
 
 // Add SMM Entry Point Info if any before End

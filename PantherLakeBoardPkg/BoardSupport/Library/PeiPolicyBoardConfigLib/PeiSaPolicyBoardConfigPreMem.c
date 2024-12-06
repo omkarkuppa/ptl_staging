@@ -69,6 +69,7 @@ UpdatePeiSaPolicyBoardConfigPreMem (
   USBC_CONNECTOR_HOB_DATA            *UsbCConnectorHobDataPtr;
   USB_CONNECTOR_HOB_DATA             *UsbConnectorHobDataPtr;
   USB_CONNECTOR_BOARD_CONFIG         *UsbConnectorBoardConfig;
+  UINT8                              AuxDpMode;
   UINT8                              ConnectorIndex;
 #endif
 
@@ -141,9 +142,13 @@ UpdatePeiSaPolicyBoardConfigPreMem (
   if (UsbConnectorHobDataPtr != NULL && UsbCConnectorHobDataPtr != NULL) {
     UsbConnectorBoardConfig = UsbConnectorHobDataPtr->UsbConnectorBoardConfig;
     for (ConnectorIndex = 0; ConnectorIndex < UsbCConnectorHobDataPtr->NumberOfUsbCConnectors; ConnectorIndex++, UsbConnectorBoardConfig++) {
-      if (UsbConnectorBoardConfig->ConnectorConnectable == UNCONNECTABLE && UsbConnectorBoardConfig->Usb3Controller == TCSS_USB3) {
+      AuxDpMode = (UINT8) UsbCConnectorHobDataPtr->UsbCConnectorBoardConfig[ConnectorIndex].AuxDpMode;
+      if (UsbConnectorBoardConfig->ConnectorConnectable == UNCONNECTABLE &&
+          UsbConnectorBoardConfig->Usb3Controller == TCSS_USB3 &&
+          UsbConnectorBoardConfig->ConnectorType == 0xFF &&
+          AuxDpMode != 0) {
         if (UsbConnectorBoardConfig->Usb3PortNum < MAX_TCSS_USB3_PORTS) {
-          UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IomUsbCDpConfig[UsbConnectorBoardConfig->Usb3PortNum], TcssPeiPreMemConfig->IomConfig.IomUsbCDpConfig[UsbConnectorBoardConfig->Usb3PortNum], (UINT8) UsbCConnectorHobDataPtr->UsbCConnectorBoardConfig[ConnectorIndex].AuxDpMode);
+          UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.IomUsbCDpConfig[UsbConnectorBoardConfig->Usb3PortNum], TcssPeiPreMemConfig->IomConfig.IomUsbCDpConfig[UsbConnectorBoardConfig->Usb3PortNum], AuxDpMode);
         }
       }
     }

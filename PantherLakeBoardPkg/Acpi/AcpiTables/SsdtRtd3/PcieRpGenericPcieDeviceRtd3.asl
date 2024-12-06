@@ -393,6 +393,18 @@
   ADBG(Concatenate("Rtd3Pcie _OFF TOFF time : ", ToHexString(WOFF)))
   }
 
+  Method (PRST, 1, Serialized) {
+    ADBG_PRINT_PCIE_RP_INFO_AFTER ("PRST Entry For ")
+
+    If (LEqual (Arg0, 1)) {
+      // Assert Reset Pin after the delay passed from the bus driver
+      \PIN.ON (RSTG)
+    } Else {
+      // De-Assert Reset Pin
+      \PIN.OFF (RSTG)
+    }
+  }
+
   Method (_PR0) {
     Return (Package (){PXP})
   }

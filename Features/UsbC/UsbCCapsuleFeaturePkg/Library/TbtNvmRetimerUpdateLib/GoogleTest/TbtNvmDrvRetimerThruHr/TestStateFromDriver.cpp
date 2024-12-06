@@ -19,31 +19,55 @@
 @par Specification
 **/
 
-//**********************************************************
-// StateFromDriver Unit Test                               *
-//**********************************************************
-class StateFromDriverTest : public CommonMock {
+#include <GTestTbtNvmDrvRetimerThruHr.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
+
+struct MockSendEnumCmd {
+  MOCK_INTERFACE_DECLARATION (MockSendEnumCmd);
+  MOCK_FUNCTION_INTERNAL_DECLARATION (
+    TBT_STATUS,
+    SendEnumCmd,
+    (RETIMER_THRU_HR *RetimerPtr)
+    );
+};
+MOCK_INTERFACE_DEFINITION (MockSendEnumCmd);
+MOCK_FUNCTION_INTERNAL_DEFINITION (MockSendEnumCmd, SendEnumCmd, 1, EFIAPI);
+//
+// Test function define.
+//
+extern "C" {
+VOID
+StateFromDriver (
+  IN TBT_RETIMER   *This,
+  IN DRIVER_STATE  State
+  );
+}
+
+// **********************************************************
+// StateFromDriver Unit Test                                *
+// **********************************************************
+class StateFromDriverTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    RETIMER_THRU_HR       *RetimerPtr;
-    TBT_RETIMER           *DevComRetimer;
-    DRIVER_STATE          State;
+    TBT_STATUS      TbtStatus;
+    RETIMER_THRU_HR *RetimerPtr;
+    TBT_RETIMER     *DevComRetimer;
+    DRIVER_STATE    State;
+    TBT_HOST_ROUTER *gDevComHostMock = &LocalHrPtr;
+    MockTbtNvmDrvHr TbtNvmDrvHrMock;
+    MockSendEnumCmd SendEnumCmdMock;
 
-    void SetUp() override {
-      RetimerPtr               = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
-      RetimerPtr->Hr           = gDevComHostMock;                        // For call Mock WriteCioDevReg
-      DevComRetimer            = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
-      DevComRetimer->Impl      = RetimerPtr;                             // For RetimerPtr = (RETIMER_THRU_HR *)This->Impl
-      State                    = AFTER_AUTH;
-    }
+  void SetUp() override {
+    RetimerPtr          = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
+    RetimerPtr->Hr      = gDevComHostMock;
+    DevComRetimer       = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
+    DevComRetimer->Impl = RetimerPtr;
+    State               = AFTER_AUTH;
+  }
 
-    void TearDown() override {
-      //
-      // Destroy Mock Service
-      //
-      FreePool (RetimerPtr);
-      FreePool (DevComRetimer);
-    }
+  void TearDown() override {
+    FreePool (RetimerPtr);
+    FreePool (DevComRetimer);
+  }
 };
 
 //
@@ -52,12 +76,12 @@ class StateFromDriverTest : public CommonMock {
 TEST_F (StateFromDriverTest, CorrectFlow) {
   cout << "[---------- Case 1 ----------]"<< endl;
 
-  //
-  //  Mock call SendEnumCmd
-  //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrHelpersMock,
+  EXPECT_CALL (
+    SendEnumCmdMock,
     SendEnumCmd (
-      _))
+      _
+      )
+    )
     .WillOnce (Return (TBT_STATUS_SUCCESS));
 
   StateFromDriver (DevComRetimer, State);

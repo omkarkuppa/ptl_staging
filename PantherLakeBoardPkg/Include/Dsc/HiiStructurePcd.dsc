@@ -321,6 +321,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.RatioLimitRatio[4]|0x0                     
 gStructPcdTokenSpaceGuid.PcdCpuSetup.RatioLimitRatio[5]|0x0                                        # P-core Turbo Ratio Limit Ratio5 (TRLR)
 gStructPcdTokenSpaceGuid.PcdCpuSetup.RatioLimitRatio[6]|0x0                                        # P-core Turbo Ratio Limit Ratio6 (TRLR)
 gStructPcdTokenSpaceGuid.PcdCpuSetup.RatioLimitRatio[7]|0x0                                        # P-core Turbo Ratio Limit Ratio7 (TRLR)
+gStructPcdTokenSpaceGuid.PcdCpuSetup.DprSize|0x4                                                   # DPR Memory Size (MB) | DPR Size
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ResetAux|0x0                                                  # Reset AUX Content
 gStructPcdTokenSpaceGuid.PcdCpuSetup.SlowSlewRate[0]|0x0                                           # Slow Slew Rate for Core Domain
 gStructPcdTokenSpaceGuid.PcdCpuSetup.SlowSlewRate[1]|0x0                                           # Slow Slew Rate for GT Domain
@@ -1291,7 +1292,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.KeepEarlyTrace|0x0                         
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchAdditionalSerialIoDevices|0x0                              # Additional Serial IO devices
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchBiosLock|0x1                                               # BIOS Lock
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchCrid|0x0                                                   # Compatible Revision ID
-  gStructPcdTokenSpaceGuid.PcdPchSetup.PchEnergyReport|0x0                                           # PCH Energy Reporting
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchEnergyReport|0x1                                           # PCH Energy Reporting
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchEspiHostC10ReportEnable|0x0                                # HOST_C10 reporting to Target
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchEspiLgmrEnable|0x0                                         # LGMR
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchGpioIrqRoute|0xe                                           # GPIO IRQ Route
@@ -1359,21 +1360,21 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaAutonomousClockStopSndw[1]|0x0       
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaAutonomousClockStopSndw[2]|0x0                          # Autonomous Clock Stop
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaAutonomousClockStopSndw[3]|0x0                          # Autonomous Clock Stop
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaAutonomousClockStopSndw[4]|0x0                          # Autonomous Clock Stop
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackDelaySelectSndw[0]|0x0                     # Clock Loopback Delay Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackDelaySelectSndw[1]|0x0                     # Clock Loopback Delay Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackDelaySelectSndw[2]|0x0                     # Clock Loopback Delay Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackDelaySelectSndw[3]|0x0                     # Clock Loopback Delay Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackDelaySelectSndw[4]|0x0                     # Clock Loopback Delay Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackDelaySelectSndw[0]|0x2                     # Clock Loopback Delay Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackDelaySelectSndw[1]|0x2                     # Clock Loopback Delay Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackDelaySelectSndw[2]|0x2                     # Clock Loopback Delay Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackDelaySelectSndw[3]|0x2                     # Clock Loopback Delay Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackDelaySelectSndw[4]|0x2                     # Clock Loopback Delay Select
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackEnableSndw[0]|0x0                          # Source Clock Loopback Enable
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackEnableSndw[1]|0x0                          # Source Clock Loopback Enable
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackEnableSndw[2]|0x0                          # Source Clock Loopback Enable
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackEnableSndw[3]|0x0                          # Source Clock Loopback Enable
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackEnableSndw[4]|0x0                          # Source Clock Loopback Enable
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackSourceSndw[0]|0x0                          # Source Clock Loopback Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackSourceSndw[1]|0x0                          # Source Clock Loopback Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackSourceSndw[2]|0x0                          # Source Clock Loopback Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackSourceSndw[3]|0x0                          # Source Clock Loopback Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackSourceSndw[4]|0x0                          # Source Clock Loopback Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackSourceSndw[0]|0x1                          # Source Clock Loopback Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackSourceSndw[1]|0x1                          # Source Clock Loopback Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackSourceSndw[2]|0x1                          # Source Clock Loopback Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackSourceSndw[3]|0x1                          # Source Clock Loopback Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaClockLoopbackSourceSndw[4]|0x1                          # Source Clock Loopback Select
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnActiveIntervalExt2SelectSndw[0]|0x0               # Data On Active Interval Extension 2 Select
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnActiveIntervalExt2SelectSndw[1]|0x0               # Data On Active Interval Extension 2 Select
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnActiveIntervalExt2SelectSndw[2]|0x0               # Data On Active Interval Extension 2 Select
@@ -1389,21 +1390,21 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnActiveIntervalSelectSndw[1]|0x3
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnActiveIntervalSelectSndw[2]|0x3                   # Data On Active Interval Select
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnActiveIntervalSelectSndw[3]|0x3                   # Data On Active Interval Select
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnActiveIntervalSelectSndw[4]|0x3                   # Data On Active Interval Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExt2Sndw[0]|0x0                        # Data On Delay Select Extension
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExt2Sndw[1]|0x0                        # Data On Delay Select Extension
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExt2Sndw[2]|0x0                        # Data On Delay Select Extension
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExt2Sndw[3]|0x0                        # Data On Delay Select Extension
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExt2Sndw[4]|0x0                        # Data On Delay Select Extension
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExtSndw[0]|0x0                         # Data On Delay Extension Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExtSndw[1]|0x0                         # Data On Delay Extension Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExtSndw[2]|0x0                         # Data On Delay Extension Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExtSndw[3]|0x0                         # Data On Delay Extension Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExtSndw[4]|0x0                         # Data On Delay Extension Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectSndw[0]|0x1                            # Data On Delay Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectSndw[1]|0x1                            # Data On Delay Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectSndw[2]|0x1                            # Data On Delay Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectSndw[3]|0x1                            # Data On Delay Select
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectSndw[4]|0x1                            # Data On Delay Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExt2Sndw[0]|0x1                        # Data On Delay Select Extension
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExt2Sndw[1]|0x1                        # Data On Delay Select Extension
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExt2Sndw[2]|0x1                        # Data On Delay Select Extension
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExt2Sndw[3]|0x1                        # Data On Delay Select Extension
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExt2Sndw[4]|0x1                        # Data On Delay Select Extension
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExtSndw[0]|0x1                         # Data On Delay Extension Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExtSndw[1]|0x1                         # Data On Delay Extension Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExtSndw[2]|0x1                         # Data On Delay Extension Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExtSndw[3]|0x1                         # Data On Delay Extension Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectExtSndw[4]|0x1                         # Data On Delay Extension Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectSndw[0]|0x0                            # Data On Delay Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectSndw[1]|0x0                            # Data On Delay Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectSndw[2]|0x0                            # Data On Delay Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectSndw[3]|0x0                            # Data On Delay Select
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaDataOnDelaySelectSndw[4]|0x0                            # Data On Delay Select
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaHdAudioLinkFreq|0x2                                     # HD Audio Link Frequency
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaIDisplayCodecDisconnect|0x0                             # iDisplay Audio Disconnect
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdaIDisplayLinkFreq|0x4                                    # iDisplay Audio Link Frequency
@@ -3376,6 +3377,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.EnableRenderStandby|0x1                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnableVtd|0x1                                                  # VT-d
 gStructPcdTokenSpaceGuid.PcdSaSetup.GopConfigEnable|0x1                                            # GOP Config Driver Enable
 gStructPcdTokenSpaceGuid.PcdSaSetup.IgdDvmt50PreAlloc|0x2                                          # DVMT Pre-Allocated
+gStructPcdTokenSpaceGuid.PcdSaSetup.IGpuGsm2Size|0xFF                                              # DVMT Pre-Allocated
 gStructPcdTokenSpaceGuid.PcdSaSetup.InternalGraphics|0x2                                           # Internal Graphics
 gStructPcdTokenSpaceGuid.PcdSaSetup.LpddrMemWriteLatencySet|0x1                                    # Lpddr Mem WL Set
 gStructPcdTokenSpaceGuid.PcdSaSetup.MaxTolud|0x0                                                   # Max TOLUD
@@ -3434,6 +3436,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.SaPcieItbtSnoopLatencyOverrideValue[1]|0xc8 
 gStructPcdTokenSpaceGuid.PcdSaSetup.SaPcieItbtSnoopLatencyOverrideValue[2]|0xc8                    # Snoop Latency Value
 gStructPcdTokenSpaceGuid.PcdSaSetup.SaPcieItbtSnoopLatencyOverrideValue[3]|0xc8                    # Snoop Latency Value
 gStructPcdTokenSpaceGuid.PcdSaSetup.SkipExtGfxScan|0x0                                             # Skip Scanning of External Gfx Card
+gStructPcdTokenSpaceGuid.PcdSaSetup.SolFeatureEnabled|0x1                                          # Intel Graphics PreMem SOL
 gStructPcdTokenSpaceGuid.PcdSaSetup.StrongWkLeaker|0x7                                             # Strong Weak Leaker
 gStructPcdTokenSpaceGuid.PcdSaSetup.TcStateLimit|0xa                                               # Tc C-State Limit
 gStructPcdTokenSpaceGuid.PcdSaSetup.TcNotifyIgd|0x0                                                # Tc Notify iGFX
@@ -3578,7 +3581,6 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DBI|0x0                                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.DLLDCC|0x1                                                     #           BIT10 - DLL DCC Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DLLBWSEL|0x1                                                   #           BIT11 - DLL BW Select Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDVREFDC|0x0                                                   #           BIT12 - Read Vref Decap Training*
-gStructPcdTokenSpaceGuid.PcdSaSetup.VDDQT|0x0                                                      #           BIT13 - Vddq Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RMTBIT|0x0                                                     #           BIT14 - Rank Margin Tool Per Bit
 gStructPcdTokenSpaceGuid.PcdSaSetup.DQDQSSWZ|0x1                                                   #           BIT15 - Map Dq Dqs Swizzle
 gStructPcdTokenSpaceGuid.PcdSaSetup.REFPI|0x1                                                      #           BIT16 - Ref PI Calibration
@@ -3802,6 +3804,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.PprForceRepair|0x0                          
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashInterleaveBit|0x3                                     # Offset 320 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashMask|0x838                                            # Offset 321 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
 gStructPcdTokenSpaceGuid.PcdSaSetup.ForceCkdBypass|0x1                                             # Offset 323 Force CKD in Bypass Mode if CKD DIMM is detected: 0 = Single PLL mode (Default), 1 = Bypass mode.
+gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                                                 # Offset 324 Enable/disable ROW PRESS feature
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.MimicWcDisaplayInIpq|0x0                                       # Offset 340 Bit 3-6    Mimic WC display pattern in IPQ
 gStructPcdTokenSpaceGuid.PcdSaSetup.FakeSagv|0                                                     #            Bit 7      Fake SAGV
@@ -4199,7 +4202,7 @@ gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevFlags[2]|0x0                            
 gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevFlags[3]|0x0                                               # Flags
 gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevFlags[4]|0x0                                               # Flags
 gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevHeciEntry|0x0                                              # Expose HECI SDEV Entry
-gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevIspEntry|0x0                                               # Expose ISP SDEV Entry
+gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevIspEntry|0x1                                               # Expose ISP SDEV Entry
 gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevNumberOfSensors[1]|0x2                                     # Number of Sensor Entries
 gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevNumberOfSensors[2]|0x0                                     # Number of Sensor Entries
 gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevNumberOfSensors[3]|0x1                                     # Number of Sensor Entries
@@ -4249,7 +4252,7 @@ gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevXhciSubClass[0]|0x1                     
 gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevXhciSubClass[1]|0x1                                        # Subclass
 gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevXhciVendorId[0]|0x0                                        # VID
 gStructPcdTokenSpaceGuid.PcdVtioCfg.SdevXhciVendorId[1]|0x0                                        # VID
-gStructPcdTokenSpaceGuid.PcdVtioCfg.VtioSupport|0x0                                                # Enable VTIO Support
+gStructPcdTokenSpaceGuid.PcdVtioCfg.VtioSupport|0x1                                                # Enable VTIO Support
 !if gXmlCliFeaturePkgTokenSpaceGuid.PcdXmlCliFeatureEnable == TRUE
     !if gXmlCliFeaturePkgTokenSpaceGuid.PcdEnableXmlCliLite == 0x1
         gStructPcdTokenSpaceGuid.PcdXmlCli.EnableXmlCliLite|0x1                                        # XmlCli Lite

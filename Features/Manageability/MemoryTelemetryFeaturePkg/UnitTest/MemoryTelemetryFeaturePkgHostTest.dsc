@@ -38,6 +38,7 @@
 [LibraryClasses]
   UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
+  PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
   HobLib|MdeModulePkg/Library/BaseHobLibNull/BaseHobLibNull.inf

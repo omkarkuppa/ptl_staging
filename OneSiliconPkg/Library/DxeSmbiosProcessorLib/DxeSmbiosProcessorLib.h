@@ -51,8 +51,9 @@ typedef struct {
   CHAR8 *SerialNumber;
   CHAR8 *AssetTag;
   CHAR8 *PartNumber;
+  CHAR8 *SocketType;
 } SMBIOS_TYPE4_STRING_ARRAY;
-#define SMBIOS_TYPE4_NUMBER_OF_STRINGS  6
+#define SMBIOS_TYPE4_NUMBER_OF_STRINGS  7
 #pragma pack()
 
 #endif

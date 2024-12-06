@@ -18,34 +18,47 @@
 
 @par Specification
 **/
+#include <GTestTbtNvmDrvRetimerThruHr.h>
+#include <GoogleTest/Library/MockUefiBootServicesTableLib.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
+#include <GoogleTest/Library/MockBasePcdLib.h>
+//
+// Test function define.
+//
+extern "C" {
+TBT_STATUS
+CapabilityParsing (
+  IN TBT_RETIMER  *This
+  );
+}
 
-//**********************************************************
-// CapabilityParsing Unit Test                             *
-//**********************************************************
-class CapabilityParsingTest : public CommonMock {
+// **********************************************************
+// CapabilityParsing Unit Test                              *
+// **********************************************************
+class CapabilityParsingTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    RETIMER_THRU_HR       *RetimerPtr;
-    TBT_RETIMER           *DevComRetimer;
+    TBT_STATUS                   TbtStatus;
+    RETIMER_THRU_HR              *RetimerPtr;
+    TBT_RETIMER                  *DevComRetimer;
+    UINT32                       ExpData1;
+    UINT32                       ExpData2;
+    UINT32                       ExpData3;
+    TBT_HOST_ROUTER              *gDevComHostMock = &LocalHrPtr;
+    MockUefiBootServicesTableLib UefiBootServicesTableLibMock;
+    MockTbtNvmDrvHr              TbtNvmDrvHrMock;
+    MockBasePcdLib               BasePcdLibMock;
 
-    UINT32                ExpData1;
-    UINT32                ExpData2;
-    UINT32                ExpData3;
+  void SetUp() override {
+    RetimerPtr          = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
+    DevComRetimer       = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
+    RetimerPtr->Hr      = gDevComHostMock;
+    DevComRetimer->Impl = RetimerPtr;
+  }
 
-    void SetUp() override {
-      RetimerPtr               = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
-      RetimerPtr->Hr           = gDevComHostMock;                        // For call Mock WriteCioDevReg
-      DevComRetimer            = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
-      DevComRetimer->Impl      = RetimerPtr;                             // For RetimerPtr = (RETIMER_THRU_HR *)This->Impl
-    }
-
-    void TearDown() override {
-      //
-      // Destroy Mock Service
-      //
-      FreePool (RetimerPtr);
-      FreePool (DevComRetimer);
-    }
+  void TearDown() override {
+    FreePool (RetimerPtr);
+    FreePool (DevComRetimer);
+  }
 };
 
 //
@@ -67,33 +80,46 @@ TEST_F (CapabilityParsingTest, FirstTimeReadCioDevRegError) {
   cout << "[---------- Case 2 ----------]"<< endl;
 
   ExpData1 = 0x8086;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+
+  EXPECT_CALL (BasePcdLibMock, LibPcdGet32 (_));
+
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       DEVICE_CONFIG_SPACE,
       0,
       0,
-      _))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR))
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR))
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpData1, sizeof(ExpData1)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData1, sizeof (ExpData1)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_CoreStall (
-      _))
+      _
+      )
+    )
     .WillRepeatedly (Return (EFI_SUCCESS));
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       0x1,
-      _))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = CapabilityParsing (DevComRetimer);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -107,32 +133,43 @@ TEST_F (CapabilityParsingTest, USB4_PortCapabilityWasNotFound) {
   cout << "[---------- Case 3 ----------]"<< endl;
 
   ExpData1 = 0x8086;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+
+  EXPECT_CALL (BasePcdLibMock, LibPcdGet32 (_));
+
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       DEVICE_CONFIG_SPACE,
       0,
       0,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpData1, sizeof(ExpData1)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData1, sizeof (ExpData1)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   ExpData2 = 0x0;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       0x1,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpData2, sizeof(ExpData2)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData2, sizeof (ExpData2)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = CapabilityParsing (DevComRetimer);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -146,33 +183,44 @@ TEST_F (CapabilityParsingTest, SecondTimeReadCioDevRegError) {
   cout << "[---------- Case 4 ----------]"<< endl;
 
   ExpData1 = 0x8086;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+
+  EXPECT_CALL (BasePcdLibMock, LibPcdGet32 (_));
+
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       DEVICE_CONFIG_SPACE,
       0,
       0,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpData1, sizeof(ExpData1)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData1, sizeof (ExpData1)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   ExpData2 = 0x6;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpData2, sizeof(ExpData2)),
-        Return (TBT_STATUS_SUCCESS)
-    ))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));
+       DoAll (
+         SetArgBuffer<4>(&ExpData2, sizeof (ExpData2)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = CapabilityParsing (DevComRetimer);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -186,85 +234,51 @@ TEST_F (CapabilityParsingTest, CorrectFlow) {
   cout << "[---------- Case 5 ----------]"<< endl;
 
   ExpData1 = 0x8086;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+
+  EXPECT_CALL (BasePcdLibMock, LibPcdGet32 (_));
+
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       DEVICE_CONFIG_SPACE,
       0,
       0,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpData1, sizeof(ExpData1)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData1, sizeof (ExpData1)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   ExpData2 = 0x6;
   ExpData3 = 0x600;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpData2, sizeof(ExpData2)),
-        Return (TBT_STATUS_SUCCESS)
-    ))
+       DoAll (
+         SetArgBuffer<4>(&ExpData2, sizeof (ExpData2)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpData3, sizeof(ExpData3)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData3, sizeof (ExpData3)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = CapabilityParsing (DevComRetimer);
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);
 }
-/*
-//
-// Case 6 - Failed to parse capabilities
-// Expected Result - TbtStatus will return TBT_STATUS_NON_RECOVERABLE_ERROR
-//
-TEST_F (CapabilityParsingTest, FailedToParseCapabilities) {
-  cout << "[---------- Case 6 ----------]"<< endl;
-
-  ExpData1 = 0x8086;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
-      RetimerPtr->Hr,
-      DEVICE_CONFIG_SPACE,
-      0,
-      0,
-      _))
-    .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpData1, sizeof(ExpData1)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
-
-  ExpData2 = 0x6;
-  ExpData3 = 0x6;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
-      RetimerPtr->Hr,
-      ADAPTER_CONFIG_SPACE,
-      (UINT8) RetimerPtr->TbtPort,
-      _,
-      _))
-    .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpData2, sizeof(ExpData2)),
-        Return (TBT_STATUS_SUCCESS)
-    ))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpData3, sizeof(ExpData3)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
-
-  TbtStatus = CapabilityParsing (DevComRetimer);
-  EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
-}
-*/

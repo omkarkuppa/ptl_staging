@@ -130,7 +130,6 @@
 #define MRC_EXT_INPUTS_INIT_VAL_DLLDCC                 (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DLLBWSEL               (1)
 #define MRC_EXT_INPUTS_INIT_VAL_RDVREFDC               (0)
-#define MRC_EXT_INPUTS_INIT_VAL_VDDQT                  (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RMTBIT                 (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DQDQSSWZ               (1)
 #define MRC_EXT_INPUTS_INIT_VAL_REFPI                  (1)
@@ -374,6 +373,11 @@
 #define MRC_INT_INPUTS_INIT_VAL_MptuPropagationErrorFlow                (0)
 #define MRC_INT_INPUTS_INIT_VAL_RloadTarget                             (1000)
 #define MRC_INT_INPUTS_INIT_VAL_DiscardLvrAutoTrimResults               (0)
+#define MRC_INT_INPUTS_INIT_VAL_PhClkSkipPhCorrection                   (0)
+#ifdef HVM_MODE
+#define MRC_INT_INPUTS_INIT_VAL_PhClkCheckPhError                       (20)
+#define MRC_INT_INPUTS_INIT_VAL_PhClkCheckDcError                       (10)
+#endif // HVM_MODE
 #endif
 
 MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
@@ -483,7 +487,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
       MRC_EXT_INPUTS_INIT_VAL_DLLDCC,            // BIT10
       MRC_EXT_INPUTS_INIT_VAL_DLLBWSEL,          // BIT11
       MRC_EXT_INPUTS_INIT_VAL_RDVREFDC,          // BIT12
-      MRC_EXT_INPUTS_INIT_VAL_VDDQT,             // BIT13
+      MRC_EXT_INPUTS_INIT_VAL_ReservedBits,      // BIT13
       MRC_EXT_INPUTS_INIT_VAL_RMTBIT,            // BIT14
       MRC_EXT_INPUTS_INIT_VAL_DQDQSSWZ,          // BIT15
       MRC_EXT_INPUTS_INIT_VAL_REFPI,             // BIT16
@@ -734,6 +738,11 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_INT_INPUTS_INIT_VAL_MptuPropagationErrorFlow,
     MRC_INT_INPUTS_INIT_VAL_RloadTarget,
     MRC_INT_INPUTS_INIT_VAL_DiscardLvrAutoTrimResults,
+    MRC_INT_INPUTS_INIT_VAL_PhClkSkipPhCorrection,
+#ifdef HVM_MODE
+    MRC_INT_INPUTS_INIT_VAL_PhClkCheckPhError,
+    MRC_INT_INPUTS_INIT_VAL_PhClkCheckDcError,
+#endif // HVM_MODE
   },
 #endif
   MRC_INPUT_BINARY_BLOCK_END
@@ -786,6 +795,11 @@ MrcInternalInputsDefaultInit (
   Inputs->MptuPropagationErrorFlow  = MainInputs.InternalInputs.MptuPropagationErrorFlow;
   Inputs->RloadTarget               = MainInputs.InternalInputs.RloadTarget;
   Inputs->DiscardLvrAutoTrimResults = MainInputs.InternalInputs.DiscardLvrAutoTrimResults;
+  Inputs->PhClkSkipPhCorrection    = MainInputs.InternalInputs.PhClkSkipPhCorrection;
+#ifdef HVM_MODE
+  Inputs->PhClkCheckPhError        = MainInputs.InternalInputs.PhClkCheckPhError;
+  Inputs->PhClkCheckDcError        = MainInputs.InternalInputs.PhClkCheckDcError;
+#endif // HVM_MODE
 }
 
 /**

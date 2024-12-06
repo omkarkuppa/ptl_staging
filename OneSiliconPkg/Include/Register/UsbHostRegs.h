@@ -270,6 +270,8 @@
 // xHCI Private registers
 //
 #define R_XHCI_PCR_DAP_COMMON_CONTROL_REG         0x440   ///< DAP Common Control Register
+#define R_XHCI_PCR_DAP_PHY_CONTROL_REG_1          0x448   ///< DAP PHY Control Register 1
+#define B_XHCI_PCR_DAP_PHY_CONTROL_REG_1_EB_MODE_GEN2          BIT16   ///< Elastic Buffer Mode Gen2
 #define R_XHCI_PCR_DAP_USB2_PORT_CONTROL_0_REG_0  0x500   ///< DAP USB2 Port0 Control 0 Register
 #define B_XHCI_PCR_DAP_USB2_PORT_CONTROL_0_REG_0_CONNECTOR_EVENT                  (BIT7 | BIT6 | BIT5)   ///< Connector Event (CE) in DAP USB2 Port<N> Control 0 Register
 #define V_XHCI_PCR_DAP_USB2_PORT_CONTROL_0_REG_0_CONNECTOR_EVENT_HOST             0        ///< Host Operation State

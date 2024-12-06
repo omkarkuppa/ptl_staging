@@ -95,13 +95,17 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
       Package (2) {"acpi-vendor-id", 0x1},
       Package (2) {"acpi-vendor-config-type", "Streaming_MicrophoneArray"},
       Package (2) {"acpi-vendor-sdca-terminal-type", 0x0201},
+      Package (2) {"acpi-acd-sdca-terminal-type", 0x0201},
       Package (2) {"acpi-acd-connection-count", 1},
+      Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
+      Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
+      Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x6},
       Package (2) {"acpi-acd-connection-0-properties",
                         Buffer()
                         {
                            0x02,
-                           0x00, 0x00, 0x00, 0x00,
-                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x00, 0x00,
+                           0x00, 0x03, 0x00, 0x00,
+                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x06
                         }
                   },
@@ -178,13 +182,17 @@ Name(VN02, Package() {    // Passed in as an AcxObjectBag during circuit creatio
       Package (2) {"acpi-vendor-id", 0x1},
       Package (2) {"acpi-vendor-config-type", "Streaming_Headphones"},
       Package (2) {"acpi-vendor-sdca-terminal-type", 0x06C0},
+      Package (2) {"acpi-acd-sdca-terminal-type", 0x06C0},
       Package (2) {"acpi-acd-connection-count", 1},
+      Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
+      Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
+      Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x1},
       Package (2) {"acpi-acd-connection-0-properties",
                         Buffer()
                         {
                            0x01,
-                           0x00, 0x00, 0x00, 0x00,
-                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x00, 0x00,
+                           0x00, 0x03, 0x00, 0x00,
+                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x01
                         }
                   },
@@ -253,13 +261,17 @@ Name(VN03, Package() {    // Passed in as an AcxObjectBag during circuit creatio
       Package (2) {"acpi-vendor-id", 0x1},
       Package (2) {"acpi-vendor-config-type", "Streaming_LineOut"},
       Package (2) {"acpi-vendor-sdca-terminal-type", 0x0690},
+      Package (2) {"acpi-acd-sdca-terminal-type", 0x0690},
       Package (2) {"acpi-acd-connection-count", 1},
+      Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
+      Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
+      Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x1},
       Package (2) {"acpi-acd-connection-0-properties",
                         Buffer()
                         {
                            0x01,
-                           0x00, 0x00, 0x00, 0x00,
-                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x00, 0x00,
+                           0x00, 0x03, 0x00, 0x00,
+                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x01
                         }
                   },
@@ -328,13 +340,17 @@ Name(VN04, Package() {    // Passed in as an AcxObjectBag during circuit creatio
       Package (2) {"acpi-vendor-id", 0x1},
       Package (2) {"acpi-vendor-config-type", "Streaming_HeadsetOutput"},
       Package (2) {"acpi-vendor-sdca-terminal-type", 0x06D0},
+      Package (2) {"acpi-acd-sdca-terminal-type", 0x06D0},
       Package (2) {"acpi-acd-connection-count", 1},
+      Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
+      Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
+      Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x1},
       Package (2) {"acpi-acd-connection-0-properties",
                         Buffer()
                         {
                            0x01,
-                           0x00, 0x00, 0x00, 0x00,
-                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x00, 0x00,
+                           0x00, 0x03, 0x00, 0x00,
+                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x01
                         }
                   },
@@ -403,13 +419,17 @@ Name(VN05, Package() {    // Passed in as an AcxObjectBag during circuit creatio
       Package (2) {"acpi-vendor-id", 0x1},
       Package (2) {"acpi-vendor-config-type", "Streaming_Microphone"},
       Package (2) {"acpi-vendor-sdca-terminal-type", 0x06A0},
+      Package (2) {"acpi-acd-sdca-terminal-type", 0x06A0},
       Package (2) {"acpi-acd-connection-count", 1},
+      Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
+      Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
+      Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x2},
       Package (2) {"acpi-acd-connection-0-properties",
                         Buffer()
                         {
                            0x02,
-                           0x00, 0x00, 0x00, 0x00,
-                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x00, 0x00,
+                           0x00, 0x03, 0x00, 0x00,
+                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x02
                         }
                   },
@@ -478,13 +498,17 @@ Name(VN06, Package() {    // Passed in as an AcxObjectBag during circuit creatio
       Package (2) {"acpi-vendor-id", 0x1},
       Package (2) {"acpi-vendor-config-type", "Streaming_LineIn"},
       Package (2) {"acpi-vendor-sdca-terminal-type", 0x0680},
+      Package (2) {"acpi-acd-sdca-terminal-type", 0x0680},
       Package (2) {"acpi-acd-connection-count", 1},
+      Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
+      Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
+      Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x2},
       Package (2) {"acpi-acd-connection-0-properties",
                         Buffer()
                         {
                            0x02,
-                           0x00, 0x00, 0x00, 0x00,
-                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x00, 0x00,
+                           0x00, 0x03, 0x00, 0x00,
+                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x02
                         }
                   },
@@ -553,13 +577,17 @@ Name(VN07, Package() {    // Passed in as an AcxObjectBag during circuit creatio
       Package (2) {"acpi-vendor-id", 0x1},
       Package (2) {"acpi-vendor-config-type", "Streaming_HeadsetMic"},
       Package (2) {"acpi-vendor-sdca-terminal-type", 0x06D0},
+      Package (2) {"acpi-acd-sdca-terminal-type", 0x06D0},
       Package (2) {"acpi-acd-connection-count", 1},
+      Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
+      Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
+      Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x2},
       Package (2) {"acpi-acd-connection-0-properties",
                         Buffer()
                         {
                            0x02,
-                           0x00, 0x00, 0x00, 0x00,
-                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x00, 0x00,
+                           0x00, 0x03, 0x00, 0x00,
+                           0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x02
                         }
                   },
@@ -628,13 +656,22 @@ Name(VN08, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-id", 0x1},
        Package (2) {"acpi-vendor-config-type", "Streaming_Speaker"},
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x0380},
+       Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},
        Package (2) {"acpi-acd-connection-count", 1},
+       // Speaker Render stream (raw)
+       Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
+       Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
+       Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x3},
+       // Speaker Render stream (offload)
+       Package (2) {"acpi-vendor-connection-1-dsp-pin", 0x2},
+       Package (2) {"acpi-vendor-connection-1-stream-type", 0x0},
+       Package (2) {"acpi-vendor-connection-1-peripheral-dp-number", 0x3},
        Package (2) {"acpi-acd-connection-0-properties",
           Buffer()
           {
              0x01,
-             0x00, 0x00, 0x00, 0x00,
-             0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x00, 0x00,
+             0x00, 0x03, 0x00, 0x00,
+             0x01, 0x22, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
              0x03
           }
        },

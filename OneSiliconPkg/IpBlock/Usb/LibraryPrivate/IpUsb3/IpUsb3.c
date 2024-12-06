@@ -448,7 +448,7 @@ IpUsb3FabricConfiguration (
                       ~(B_XHCI_CFG_XHCC2_RDREQSZCTRL),
                       (MaxPayloadSize & B_XHCI_CFG_XHCC2_RDREQSZCTRL));
 
-  if (pInst->UsbAudioOffloadEnable) {
+  if ((pInst->Integration != IpUsb3IntegrationUsb4ss) && (pInst->UsbAudioOffloadEnable)) {
     IP_WR_AND_THEN_OR_32 (pInst->RegCntxtMem,
                         R_XHCI_MEM_ADO_CONFIG_REG1,
                         ~(B_XHCI_MEM_ADO_CONFIG_REG1_ADO_MAX_PYLD_SIZE),
@@ -500,10 +500,12 @@ IpUsb3SocConfiguration (
     return Status;
   }
 
-  Status = IpUsb3SetControl (pInst, 0, IpUsb3FeatIdAudioOffload, pInst->UsbAudioOffloadEnable);
-  if (Status != IpCsiStsSuccess) {
-    PRINT_ERROR ("Couldn't enable USB Audio Offload.\n");\
-    return Status;
+  if (pInst->Integration != IpUsb3IntegrationUsb4ss) {
+    Status = IpUsb3SetControl (pInst, 0, IpUsb3FeatIdAudioOffload, pInst->UsbAudioOffloadEnable);
+    if (Status != IpCsiStsSuccess) {
+      PRINT_ERROR ("Couldn't enable USB Audio Offload.\n");\
+      return Status;
+    }
   }
 
   IpUsb3LatencyTuning (pInst, pInst->LtrEnable, pInst->NdeSbEnable, pInst->HsiiEnable);

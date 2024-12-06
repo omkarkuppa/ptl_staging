@@ -148,6 +148,14 @@ typedef enum {
   RxCompDqsDelayP,
   RxCompDqsDelayN,
   RxCompDqsOffset,
+  CompRcompOdtUp,               ///< The resistive value of the pull-up block of on die termination
+  CompRcompOdtDn,               ///< The resistive value of the pull-dn block of on die termination
+  WrDSCodeUpCmd,                ///< RcompUp Code for Write Drive Strength-Cmd
+  WrDSCodeUpCtl,                ///< RcompUp Code for Write Drive Strength-Ctl
+  WrDSCodeUpClk,                ///< RcompUp Code for Write Drive Strength-Clk
+  WrDSCodeDnCmd,                ///< RcompDown Code for Write Drive Strength-Cmd
+  WrDSCodeDnCtl,                ///< RcompDown Code for Write Drive Strength-Ctl
+  WrDSCodeDnClk,                ///< RcompDown Code for Write Drive Strength-Clk
                                 ///< -----------------------------------------------------------------
   EndOfPhyMarker,               ///< Marker for end of phy groups.
                                 ///< -----------------------------------------------------------------
@@ -249,6 +257,44 @@ typedef enum {
   GsmIocITerdcdselovrval,
   GsmIocITerdcdselovren,
   GsmDccDllDcdTargetSel,
+  GsmVccIoVccF0,
+  GsmVccIoVccF1,
+  GsmVccIoVccF2,
+  GsmVccIoOCSlope,
+  GsmVccClkVccF0,
+  GsmVccClkVccF1,
+  GsmVccClkVccF2,
+  GsmVccClkOCSlope,
+  GsmVccClkRxCtlB0FbDivider,
+  GsmVccClkRxCtlB0Target,
+  GsmVccClkRxCtlB0BiasAdj,
+  GsmVccClkRxCtlB0PMBiasAdj,
+  GsmVccClkRxCtlB1FbDivider,
+  GsmVccClkRxCtlB1Target,
+  GsmVccClkRxCtlB1BiasAdj,
+  GsmVccClkRxCtlB1PMBiasAdj,
+  GsmVccClkFFBiasFbDivider,
+  GsmVccClkFFBiasNbTarget,
+  GsmVccPllControlFbDivider,
+  GsmVccPllControlTarget,
+  GsmVccDistControlFbDivider,
+  GsmVccDistControlTarget,
+  GsmVccIogControlFbDivider,
+  GsmVccIogControlTarget,
+  GsmVccIogControlBiasAdj,
+  GsmVccIogControlPMBiasAdj,
+  GsmVccClkTxControlFbDivider,
+  GsmVccClkTxControlTarget,
+  GsmVccClkTxControlBiasAdj,
+  GsmVccClkTxControlPMBiasAdj,
+  GsmVccClkqControlFbDivider,
+  GsmVccClkqControlTarget,
+  GsmVccClkqControlBiasAdj,
+  GsmVccClkqControlPMBiasAdj,
+  GsmVccDdqControlFbDivider,
+  GsmVccDdqControlTarget,
+  GsmVccDdqControlBiasAdj,
+  GsmVccDdqControlPMBiasAdj,
                                     ///< -----------------------------------------------------------------
   EndOfIocMarker,                   ///< End of IO Config Marker
                                     ///< -----------------------------------------------------------------
@@ -494,17 +540,22 @@ typedef enum {
   GsmMccEccGranularity,
   GsmMccAutoPrechargeEn,
   GsmMccEnCsGearDown,
+  GsmMccCfiE2eParityEnRdata,
+  GsmMccCfiE2eParityEnRdCmplHeader,
+  GsmMccCfiE2eParityEn,
   GsmScPbrEcsRefabEnable,
   GsmScPbrEcsRefabPeriod,
   GsmMccDdr5CkdEnable,
   GsmMccDisLpddr5RdwrInterleaving,
   GsmMccEccCorrectionDisable,
   GsmMccMcMntsSpareRw,
+  GsmMccMcMntsRfFastSleepDisable,
   GsmMccMcCbRowPressDisAutoPre,
   GsmMccPageOpenPolicyMaxCount,
   GsmMccPageOpenPolicyEn,
   GsmMccRd2rdEchoMask,
   GsmMccWr2wrEchoMask,
+  GsmMccDdr1rSplitBgOnSubch,
   EndOfMccMarker,               ///< End of MC Configuration Group.
   GsmPmaEnableMc,
   GsmPmaEnableIbecc,

@@ -38,6 +38,7 @@ LIBRARY_CLASS = GetNhltConfigurationLib
   DxeServicesTableLib
   MemoryAllocationLib
   BaseMemoryLib
+  InstallBtConfigurationVariableLib
 
 [Packages]
   MdePkg/MdePkg.dec

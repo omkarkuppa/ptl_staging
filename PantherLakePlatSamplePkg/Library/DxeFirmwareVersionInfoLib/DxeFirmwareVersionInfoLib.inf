@@ -76,11 +76,13 @@
   gBoardModuleTokenSpaceGuid.PcdEcPlatformMajorRevision                  ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdEcBuildRevision                          ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent               ## CONSUMES
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdSupportBitmap            ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportRetimerInfoPresent          ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber         ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable         ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdTcssWaitRetimerDeviceReady     ## CONSUMES
+
+[FixedPcd]
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber                ## CONSUMES
 
 [Sources]
   DxeFirmwareVersionInfoLib.c

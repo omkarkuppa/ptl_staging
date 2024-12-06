@@ -86,56 +86,56 @@
       endoneof;
 
       oneof varid   = PCH_SETUP.PcieRootPortURE[PORT_INDEX],
-        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_URE_PROMPT,PORT_INDEX)),
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_URE_PROMPT),
         help        = STRING_TOKEN(STR_PCH_PCIE_URE_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = PCH_SETUP.PcieRootPortFEE[PORT_INDEX],
-        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_FEE_PROMPT,PORT_INDEX)),
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_FEE_PROMPT),
         help        = STRING_TOKEN(STR_PCH_PCIE_FEE_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = PCH_SETUP.PcieRootPortNFE[PORT_INDEX],
-        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_NFE_PROMPT,PORT_INDEX)),
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_NFE_PROMPT),
         help        = STRING_TOKEN(STR_PCH_PCIE_NFE_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = PCH_SETUP.PcieRootPortCEE[PORT_INDEX],
-        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_CEE_PROMPT,PORT_INDEX)),
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_CEE_PROMPT),
         help        = STRING_TOKEN(STR_PCH_PCIE_CEE_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = PCH_SETUP.PcieRootPortSFE[PORT_INDEX],
-        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_SFE_PROMPT,PORT_INDEX)),
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_SFE_PROMPT),
         help        = STRING_TOKEN(STR_PCH_PCIE_SFE_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
       oneof varid   = PCH_SETUP.PcieRootPortSNE[PORT_INDEX],
-        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_SNE_PROMPT,PORT_INDEX)),
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_SNE_PROMPT),
         help        = STRING_TOKEN(STR_PCH_PCIE_SNE_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
       oneof varid   = PCH_SETUP.PcieRootPortSCE[PORT_INDEX],
-        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_SCE_PROMPT,PORT_INDEX)),
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_SCE_PROMPT),
         help        = STRING_TOKEN(STR_PCH_PCIE_SCE_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
       endoneof;
 
       oneof varid   = PCH_SETUP.PcieRootPortPMCE[PORT_INDEX],
-        prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_PMCE_PROMPT,PORT_INDEX)),
+        prompt      = STRING_TOKEN(STR_PCH_PCIE_PMCE_PROMPT),
         help        = STRING_TOKEN(STR_PCH_PCIE_PMCE_HELP),
         option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
         option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
@@ -143,7 +143,7 @@
 
       grayoutif ideqval PCH_SETUP.PcieRootPortSI[PORT_INDEX] == 0;
         oneof varid   = PCH_SETUP.PcieRootPortHPE[PORT_INDEX],
-          prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_HPE_PROMPT,PORT_INDEX)),
+          prompt      = STRING_TOKEN(STR_PCH_PCIE_HPE_PROMPT),
           help        = STRING_TOKEN(STR_PCH_PCIE_HPE_HELP),
           option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
           option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
@@ -235,7 +235,7 @@
 
       suppressif ideqval PCH_SETUP.PchPcieLtrEnable[PORT_INDEX] == 0;
         oneof varid   = PCH_SETUP.PchPcieSnoopLatencyOverrideMode[PORT_INDEX],
-          prompt      = STRING_TOKEN (CONCATENATE2(STR_PCH_PCIE_SL_OVRD_PROMPT,PORT_INDEX)),
+          prompt      = STRING_TOKEN (STR_PCH_PCIE_SL_OVRD_PROMPT),
           help        = STRING_TOKEN (STR_PCH_PCIE_SL_OVRD_HELP),
           option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MANUAL_STRING),   value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
@@ -243,7 +243,7 @@
 
         suppressif NOT ideqval PCH_SETUP.PchPcieSnoopLatencyOverrideMode[PORT_INDEX] == 1;
           numeric varid = PCH_SETUP.PchPcieSnoopLatencyOverrideValue[PORT_INDEX],
-            prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_SL_VAL_PROMPT,PORT_INDEX)),
+            prompt      = STRING_TOKEN(STR_PCH_PCIE_SL_VAL_PROMPT),
             help        = STRING_TOKEN(STR_PCH_PCIE_SL_VAL_HELP),
             flags       = RESET_REQUIRED,
             minimum     = 0,
@@ -253,7 +253,7 @@
           endnumeric;
 
           oneof varid   = PCH_SETUP.PchPcieSnoopLatencyOverrideMultiplier[PORT_INDEX],
-            prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_SL_SCALE_PROMPT,PORT_INDEX)),
+            prompt      = STRING_TOKEN(STR_PCH_PCIE_SL_SCALE_PROMPT),
             help        = STRING_TOKEN(STR_PCH_PCIE_SL_SCALE_HELP),
             option text = STRING_TOKEN(STR_LTR_SCALE_0), value = 0, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_LTR_SCALE_1), value = 1, flags = RESET_REQUIRED;
@@ -265,7 +265,7 @@
         endif;
 
         oneof varid   = PCH_SETUP.PchPcieNonSnoopLatencyOverrideMode[PORT_INDEX],
-          prompt      = STRING_TOKEN (CONCATENATE2(STR_PCH_PCIE_NSL_OVRD_PROMPT,PORT_INDEX)),
+          prompt      = STRING_TOKEN (STR_PCH_PCIE_NSL_OVRD_PROMPT),
           help        = STRING_TOKEN (STR_PCH_PCIE_NSL_OVRD_HELP),
           option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_MANUAL_STRING),   value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
@@ -273,7 +273,7 @@
 
         suppressif NOT ideqval PCH_SETUP.PchPcieNonSnoopLatencyOverrideMode[PORT_INDEX] == 1;
           numeric varid = PCH_SETUP.PchPcieNonSnoopLatencyOverrideValue[PORT_INDEX],
-            prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_NSL_VAL_PROMPT,PORT_INDEX)),
+            prompt      = STRING_TOKEN(STR_PCH_PCIE_NSL_VAL_PROMPT),
             help        = STRING_TOKEN(STR_PCH_PCIE_NSL_VAL_HELP),
             flags       = RESET_REQUIRED,
             minimum     = 0,
@@ -283,7 +283,7 @@
           endnumeric;
 
           oneof varid   = PCH_SETUP.PchPcieNonSnoopLatencyOverrideMultiplier[PORT_INDEX],
-            prompt      = STRING_TOKEN(CONCATENATE2(STR_PCH_PCIE_NSL_SCALE_PROMPT,PORT_INDEX)),
+            prompt      = STRING_TOKEN(STR_PCH_PCIE_NSL_SCALE_PROMPT),
             help        = STRING_TOKEN(STR_PCH_PCIE_NSL_SCALE_HELP),
             option text = STRING_TOKEN(STR_LTR_SCALE_0), value = 0, flags = RESET_REQUIRED;
             option text = STRING_TOKEN(STR_LTR_SCALE_1), value = 1, flags = RESET_REQUIRED;

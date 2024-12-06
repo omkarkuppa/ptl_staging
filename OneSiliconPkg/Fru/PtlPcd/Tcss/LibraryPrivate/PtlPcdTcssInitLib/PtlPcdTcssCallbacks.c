@@ -67,7 +67,7 @@ PtlTcPcieRpDownStreamConfig (
   PCIE_FEATURE_CONFIGURATION         FeatureConfiguration;
   IOC_PMC_DEVEN_C_IOC_MCHBAR_STRUCT  SaTcssDevenCfg;
   UINT32                             BdfAllocRegOffset;
-  BDF_ALLOC_C_0_0_IOC_MCHBAR_STRUCT  BdfAllocCfg;
+  BDF_ALLOC_C_0_IOC_MCHBAR_STRUCT  BdfAllocCfg;
 
   SaMchBar = (UINT32) GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBaseLow);
   SaTcssDevenCfg.Data = MmioRead32 (SaMchBar + IOC_PMC_DEVEN_C_IOC_MCHBAR_REG);
@@ -79,12 +79,12 @@ PtlTcPcieRpDownStreamConfig (
   TempRootPortBusNumMax = PcdGet8 (PcdSiliconInitTempPciBusMax);
 
   ///
-  /// BdfAllocRegOffset = BDF_ALLOC_C_0_0_IOC_MCHBAR_REG + (PMC_DEVEN_C[i] * 4),
+  /// BdfAllocRegOffset = BDF_ALLOC_C_0_IOC_MCHBAR_REG + (PMC_DEVEN_C[i] * 4),
   /// PMC_DEVEN_C[i] = Index
   ///
-  BdfAllocRegOffset = BDF_ALLOC_C_0_0_IOC_MCHBAR_REG + (Index * 4);
+  BdfAllocRegOffset = BDF_ALLOC_C_0_IOC_MCHBAR_REG + (Index * 4);
   BdfAllocCfg.Data = MmioRead32 (SaMchBar + BdfAllocRegOffset);
-  RootPortFn = (UINT8)(BdfAllocCfg.Bits.func << BDF_ALLOC_C_0_0_IOC_MCHBAR_FUNC_LSB);
+  RootPortFn = (UINT8)(BdfAllocCfg.Bits.func << BDF_ALLOC_C_0_IOC_MCHBAR_FUNC_LSB);
   DEBUG ((DEBUG_INFO, "[TCSS] %a RootPortFn[%d] = 0x%x\n", __FUNCTION__, Index, RootPortFn));
 
   RootportDownstreamConfiguration (

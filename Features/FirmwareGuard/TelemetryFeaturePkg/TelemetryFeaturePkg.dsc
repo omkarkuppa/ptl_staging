@@ -74,6 +74,7 @@
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
   RngLib|MdePkg/Library/BaseRngLib/BaseRngLib.inf
   PeimEntryPoint|MdePkg/Library/PeimEntryPoint/PeimEntryPoint.inf
+  PhatAcpiLib|MinPlatformPkg/Acpi/Library/PhatAcpiLib/DxePhatAcpiLib.inf
 
   #
   # Generic Modules

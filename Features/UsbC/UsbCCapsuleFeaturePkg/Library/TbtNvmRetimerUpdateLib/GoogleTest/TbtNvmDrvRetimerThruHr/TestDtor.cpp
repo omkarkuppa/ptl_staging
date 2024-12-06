@@ -18,22 +18,32 @@
 
 @par Specification
 **/
+#include <GTestTbtNvmDrvRetimerThruHr.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
 
-//**********************************************************
-// Dtor Unit Test                                          *
-//**********************************************************
-class DtorTest : public CommonMock {
+extern "C" {
+VOID
+Dtor (
+  IN TBT_RETIMER  *This
+  );
+}
+// **********************************************************
+// Dtor Unit Test                                           *
+// **********************************************************
+class DtorTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    RETIMER_THRU_HR       *RetimerPtr;
-    TBT_RETIMER           *DevComRetimer;
+    TBT_STATUS      TbtStatus;
+    RETIMER_THRU_HR *RetimerPtr;
+    TBT_RETIMER     *DevComRetimer;
+    TBT_HOST_ROUTER *gDevComHostMock = &LocalHrPtr;
+    MockTbtNvmDrvHr TbtNvmDrvHrMock;
 
-    void SetUp() override {
-      RetimerPtr               = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
-      RetimerPtr->Hr           = gDevComHostMock;                        // For call Mock WriteCioDevReg
-      DevComRetimer            = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
-      DevComRetimer->Impl      = RetimerPtr;                             // For RetimerPtr = (RETIMER_THRU_HR *)This->Impl
-    }
+  void SetUp() override {
+    RetimerPtr          = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
+    RetimerPtr->Hr      = gDevComHostMock;                                 // For call Mock WriteCioDevReg
+    DevComRetimer       = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
+    DevComRetimer->Impl = RetimerPtr;                                      // For RetimerPtr = (RETIMER_THRU_HR *)This->Impl
+  }
 };
 
 //
@@ -42,30 +52,10 @@ class DtorTest : public CommonMock {
 TEST_F (DtorTest, DestroyFailFlow) {
   cout << "[---------- Case 1 ----------]"<< endl;
 
-  //
-  //  Mock call SendLsupCmdDis
-  //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrHelpersMock,
-    SendLsupCmdDis (
-      _))
-    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
-  //
-  //  Mock call SendCommandToLocalLc
-  //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrHelpersMock,
-    SendCommandToLocalLc (
-      _,
-      ADAPTER_CONFIG_SPACE,
-      TBT_IECS_CMD_LSEN,
-      _))
-    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
-  //
-  // Mock call RetimerPtr->Hr->Dtor (RetimerPtr->Hr)
-  //
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrDtor (
-      gDevComHostMock
-      ));
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_Dtor (gDevComHostMock)
+    );
 
   Dtor (DevComRetimer);
 }

@@ -36,7 +36,7 @@
   Field(UPNV,AnyAcc,Lock,Preserve)
   {
   UBCB, 32, // Offset(0),     USB Type C Opregion base address
-  TCPM, 16, // Offset(4),     Connectable Type C ports map
+  TCCM, 16, // Offset(4),     Connectable Type C connectors map
   // UCSI/UCMX Driver Support. 0: Force Disable, 1: UCSI Driver support, 2: UCMX Driver support.
   TP1U, 8,  // Offset(6),     Type C Connector 1  UCSI/UCMX Driver Support Enable/ Force Disable.
   TP2U, 8,  // Offset(7),     Type C Connector 2  UCSI/UCMX Driver Support Enable/ Force Disable.

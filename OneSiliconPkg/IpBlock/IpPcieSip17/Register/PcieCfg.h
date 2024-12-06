@@ -27,8 +27,6 @@
 #ifndef _PCIE_CFG_h
 #define _PCIE_CFG_h
 
-
-
 // IP GUID: dc6bb884-1558-436c-aec8-a85483b06e19
 #define PCIE_CFG_ID 0xdc6bb8841558436c
 
@@ -42,10 +40,10 @@
 
 typedef union {
   struct {
-    UINT32 vid : 16;
-
-    UINT32 did : 16;
-
+    UINT32 vid : 16; /**< Vendor Identification */
+                            /* Bits[15:0], default=0x00008086*/
+    UINT32 did : 16; /**< Device Identification */
+                            /* Bits[31:16], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -68,18 +66,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 iose : 1;
-    UINT16 mse : 1;
-    UINT16 bme : 1;
-    UINT16 sce : 1;
-    UINT16 mwie : 1;
-    UINT16 vga_pse : 1;
-    UINT16 pere : 1;
-    UINT16 wcc : 1;
-    UINT16 see : 1;
-    UINT16 fbe : 1;
-    UINT16 id : 1;
-    UINT16 rsvd_m : 5;
+    UINT16 iose : 1; /**< I/O Space Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT16 mse : 1; /**< Memory Space Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT16 bme : 1; /**< Bus Master Enable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT16 sce : 1; /**< Special Cycle Enable */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT16 mwie : 1; /**< Memory Write and Invalidate Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 vga_pse : 1; /**< VGA Palette Snoop */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT16 pere : 1; /**< Parity Error Response Enable */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT16 wcc : 1; /**< Wait Cycle Control */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT16 see : 1; /**< SERR Enable */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT16 fbe : 1; /**< Fast Back to Back Enable */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT16 id : 1; /**< Interrupt Disable */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT16 rsvd_m : 5; /**< Reserved */
+                            /* Bits[15:11], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -114,7 +124,6 @@ typedef union {
 #define CMD_PCIE_CFG_RSVD_M_LSB 0x000b
 #define CMD_PCIE_CFG_RSVD_M_SIZE 0x0005
 
-
 /** RID_CC desc:
   */
 
@@ -122,10 +131,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rid : 8;
-    UINT32 pi : 8;
-    UINT32 scc : 8;
-    UINT32 bcc : 8;
+    UINT32 rid : 8; /**< Revision ID */
+                            /* Bits[7:0], default=0x000000F0*/
+    UINT32 pi : 8; /**< Programming Interface */
+                            /* Bits[15:8], default=0x00000000*/
+    UINT32 scc : 8; /**< Sub-Class Code */
+                            /* Bits[23:16], default=0x00000004*/
+    UINT32 bcc : 8; /**< Base Class Code */
+                            /* Bits[31:24], default=0x00000006*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -145,7 +158,6 @@ typedef union {
 #define RID_CC_PCIE_CFG_BCC_LSB 0x0018
 #define RID_CC_PCIE_CFG_BCC_SIZE 0x0008
 
-
 /** BAR0 desc:
   */
 
@@ -153,10 +165,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 msi : 1;
-    UINT32 mmt : 2;
-    UINT32 p : 1;
-    UINT32 lba : 28;
+    UINT32 msi : 1; /**< Memory Space Indicator */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 mmt : 2; /**< Memory Mapping Type */
+                            /* Bits[2:1], default=0x00000000*/
+    UINT32 p : 1; /**< Prefetchable Memory */
+                            /* Bits[3:3], default=0x00000001*/
+    UINT32 lba : 28; /**< Lower Base Address */
+                            /* Bits[31:4], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -176,7 +192,6 @@ typedef union {
 #define BAR0_PCIE_CFG_LBA_LSB 0x0004
 #define BAR0_PCIE_CFG_LBA_SIZE 0x001c
 
-
 /** BAR1 desc:
   */
 
@@ -184,7 +199,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 uba : 32;
+    UINT32 uba : 32; /**< Upper Base Address */
+                            /* Bits[31:0], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -198,7 +214,6 @@ typedef union {
 #define BAR1_PCIE_CFG_UBA_LSB 0x0000
 #define BAR1_PCIE_CFG_UBA_SIZE 0x0020
 
-
 /** BNUM_SLT desc:
   */
 
@@ -206,10 +221,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pbn : 8;
-    UINT32 scbn : 8;
-    UINT32 sbbn : 8;
-    UINT32 slt : 8;
+    UINT32 pbn : 8; /**< Primary Bus Number */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 scbn : 8; /**< Secondary Bus Number */
+                            /* Bits[15:8], default=0x00000000*/
+    UINT32 sbbn : 8; /**< Subordinate Bus Number */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 slt : 8; /**< Secondary Latency Timer */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -229,7 +248,6 @@ typedef union {
 #define BNUM_SLT_PCIE_CFG_SLT_LSB 0x0018
 #define BNUM_SLT_PCIE_CFG_SLT_SIZE 0x0008
 
-
 /** CAPP desc:
   */
 
@@ -237,7 +255,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 ptr : 8;
+    UINT8 ptr : 8; /**< Capabilities Pointer */
+                            /* Bits[7:0], default=0x00000040*/
   }     Bits;
   UINT8 Data;
 } CAPP_PCIE_CFG_STRUCT;
@@ -249,7 +268,6 @@ typedef union {
 #define CAPP_PCIE_CFG_PTR_LSB 0x0000
 #define CAPP_PCIE_CFG_PTR_SIZE 0x0008
 
-
 /** BCTRL desc:
   */
 
@@ -257,19 +275,32 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 pere : 1;
-    UINT16 se : 1;
-    UINT16 ie : 1;
-    UINT16 ve : 1;
-    UINT16 v16 : 1;
-    UINT16 mam : 1;
-    UINT16 sbr : 1;
-    UINT16 fbe : 1;
-    UINT16 pdt : 1;
-    UINT16 sdt : 1;
-    UINT16 dts : 1;
-    UINT16 dtse : 1;
-    UINT16 rsvd_m : 4;
+    UINT16 pere : 1; /**< Parity Error Response Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT16 se : 1; /**< SERR Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT16 ie : 1; /**< ISA Enable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT16 ve : 1; /**< VGA Enable */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT16 v16 : 1; /**< VGA 16-Bit Decode */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 mam : 1; /**< Master Abort Mode */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT16 sbr : 1; /**< Secondary Bus Reset */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT16 fbe : 1; /**< Fast Back to Back Enable */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT16 pdt : 1; /**< Primary Discard Timer */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT16 sdt : 1; /**< Secondary Discard Timer */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT16 dts : 1; /**< Discard Timer Status */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT16 dtse : 1; /**< Discard Timer SERR Enable */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT16 rsvd_m : 4; /**< Reserved */
+                            /* Bits[15:12], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -306,7 +337,6 @@ typedef union {
 #define BCTRL_PCIE_CFG_RSVD_M_LSB 0x000c
 #define BCTRL_PCIE_CFG_RSVD_M_SIZE 0x0004
 
-
 /** CLIST desc:
   */
 
@@ -314,8 +344,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 cid : 8;
-    UINT16 next : 8;
+    UINT16 cid : 8; /**< Capability ID */
+                            /* Bits[7:0], default=0x00000010*/
+    UINT16 next : 8; /**< Next Capability */
+                            /* Bits[15:8], default=0x00000080*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -330,7 +362,6 @@ typedef union {
 #define CLIST_PCIE_CFG_NEXT_LSB 0x0008
 #define CLIST_PCIE_CFG_NEXT_SIZE 0x0008
 
-
 /** XCAP desc:
   */
 
@@ -338,11 +369,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 cv : 4;
-    UINT16 dt : 4;
-    UINT16 si : 1;
-    UINT16 imn : 5;
-    UINT16 rsvd_m : 2;
+    UINT16 cv : 4; /**< Capability Version */
+                            /* Bits[3:0], default=0x00000002*/
+    UINT16 dt : 4; /**< Device / Port Type */
+                            /* Bits[7:4], default=0x00000004*/
+    UINT16 si : 1; /**< Slot Implemented */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT16 imn : 5; /**< Interrupt Message Number */
+                            /* Bits[13:9], default=0x00000000*/
+    UINT16 rsvd_m : 2; /**< Reserved */
+                            /* Bits[15:14], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -363,7 +399,6 @@ typedef union {
 #define XCAP_PCIE_CFG_RSVD_M_LSB 0x000e
 #define XCAP_PCIE_CFG_RSVD_M_SIZE 0x0002
 
-
 /** DCAP desc:
   */
 
@@ -371,20 +406,34 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 mps : 3;
-    UINT32 pfs : 2;
-    UINT32 etfs : 1;
-    UINT32 e0al : 3;
-    UINT32 e1al : 3;
-    UINT32 abp : 1;
-    UINT32 aip : 1;
-    UINT32 pip : 1;
-    UINT32 rber : 1;
-    UINT32 rsvd_0 : 2;
-    UINT32 cspv : 8;
-    UINT32 csps : 2;
-    UINT32 flrc : 1;
-    UINT32 rsvd_m : 3;
+    UINT32 mps : 3; /**< Max Payload Size Supported */
+                            /* Bits[2:0], default=0x00000001*/
+    UINT32 pfs : 2; /**< Phantom Functions Supported */
+                            /* Bits[4:3], default=0x00000000*/
+    UINT32 etfs : 1; /**< Extended Tag Field Supported */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 e0al : 3; /**< Endpoint L0s Acceptable Latency */
+                            /* Bits[8:6], default=0x00000000*/
+    UINT32 e1al : 3; /**< Endpoint L1 Acceptable Latency */
+                            /* Bits[11:9], default=0x00000000*/
+    UINT32 abp : 1; /**< Reserved. On previous version of the specification this was Attention Button Present */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 aip : 1; /**< Reserved. On previous version of the specification this was Attention Indicator Present */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 pip : 1; /**< Reserved. On previous version of the specification this was Power Indicator Present */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 rber : 1; /**< Role Based Error Reporting */
+                            /* Bits[15:15], default=0x00000001*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[17:16] */
+                            /* Bits[17:16], default=0*/
+    UINT32 cspv : 8; /**< Captured Slot Power Limit Value */
+                            /* Bits[25:18], default=0x00000000*/
+    UINT32 csps : 2; /**< Captured Slot Power Limit Scale */
+                            /* Bits[27:26], default=0x00000000*/
+    UINT32 flrc : 1; /**< Function Level Reset Capable */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 rsvd_m : 3; /**< Reserved */
+                            /* Bits[31:29], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -422,7 +471,6 @@ typedef union {
 #define DCAP_PCIE_CFG_RSVD_M_LSB 0x001d
 #define DCAP_PCIE_CFG_RSVD_M_SIZE 0x0003
 
-
 /** DCTL desc:
   */
 
@@ -430,18 +478,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 cee : 1;
-    UINT16 nfe : 1;
-    UINT16 fee : 1;
-    UINT16 ure : 1;
-    UINT16 ero : 1;
-    UINT16 mps : 3;
-    UINT16 etfe : 1;
-    UINT16 pfe : 1;
-    UINT16 apme : 1;
-    UINT16 ens : 1;
-    UINT16 mrrs : 3;
-    UINT16 rsvd_m : 1;
+    UINT16 cee : 1; /**< Correctable Error Reporting Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT16 nfe : 1; /**< Non-Fatal Error Reporting Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT16 fee : 1; /**< Fatal Error Reporting Enable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT16 ure : 1; /**< Unsupported Request Reporting Enable */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT16 ero : 1; /**< Enable Relaxed Ordering */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 mps : 3; /**< Max Payload Size */
+                            /* Bits[7:5], default=0x00000001*/
+    UINT16 etfe : 1; /**< Extended Tag Field Enable */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT16 pfe : 1; /**< Phantom Functions Enable */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT16 apme : 1; /**< Aux Power PM Enable */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT16 ens : 1; /**< Enable No Snoop */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT16 mrrs : 3; /**< Max Read Request Size */
+                            /* Bits[14:12], default=0x00000000*/
+    UINT16 rsvd_m : 1; /**< Reserved */
+                            /* Bits[15:15], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -476,7 +536,6 @@ typedef union {
 #define DCTL_PCIE_CFG_RSVD_M_LSB 0x000f
 #define DCTL_PCIE_CFG_RSVD_M_SIZE 0x0001
 
-
 /** LCAP desc:
   */
 
@@ -484,18 +543,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 mls : 4;
-    UINT32 mlw : 6;
-    UINT32 apms : 2;
-    UINT32 el0 : 3;
-    UINT32 el1 : 3;
-    UINT32 cpm : 1;
-    UINT32 sderc : 1;
-    UINT32 larc : 1;
-    UINT32 lbnc : 1;
-    UINT32 aspmoc : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 pn : 8;
+    UINT32 mls : 4; /**< Max Link Speed */
+                            /* Bits[3:0], default=0x00000000*/
+    UINT32 mlw : 6; /**< Maximum Link Width */
+                            /* Bits[9:4], default=0x00000001*/
+    UINT32 apms : 2; /**< Active State Link PM Support */
+                            /* Bits[11:10], default=0x00000003*/
+    UINT32 el0 : 3; /**< L0s Exit Latency */
+                            /* Bits[14:12], default=0x00000004*/
+    UINT32 el1 : 3; /**< L1 Exit Latency */
+                            /* Bits[17:15], default=0x00000002*/
+    UINT32 cpm : 1; /**< Clock Power Management */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 sderc : 1; /**< Surprise Down Error Reporting Capable */
+                            /* Bits[19:19], default=0x00000000*/
+    UINT32 larc : 1; /**< Link Active Reporting Capable */
+                            /* Bits[20:20], default=0x00000001*/
+    UINT32 lbnc : 1; /**< Link Bandwidth Notification Capability */
+                            /* Bits[21:21], default=0x00000001*/
+    UINT32 aspmoc : 1; /**< ASPM Optionality Compliance */
+                            /* Bits[22:22], default=0x00000001*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[23:23] */
+                            /* Bits[23:23], default=0*/
+    UINT32 pn : 8; /**< Port Number */
+                            /* Bits[31:24], default=0x00000001*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -529,7 +600,6 @@ typedef union {
 #define LCAP_PCIE_CFG_PN_LSB 0x0018
 #define LCAP_PCIE_CFG_PN_SIZE 0x0008
 
-
 /** LCTL desc:
   */
 
@@ -537,18 +607,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 aspm : 2;
-    UINT16 ptmpdaib : 1;
-    UINT16 rcbc : 1;
-    UINT16 ld : 1;
-    UINT16 rl : 1;
-    UINT16 ccc : 1;
-    UINT16 es : 1;
-    UINT16 ecpm : 1;
-    UINT16 hawd : 1;
-    UINT16 lbmie : 1;
-    UINT16 labie : 1;
-    UINT16 rsvd_m : 4;
+    UINT16 aspm : 2; /**< Active State Link PM Control */
+                            /* Bits[1:0], default=0x00000000*/
+    UINT16 ptmpdaib : 1; /**< PTM Propagation Delay Adaptation Interpretation B */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT16 rcbc : 1; /**< Read Completion Boundary Control */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT16 ld : 1; /**< Link Disable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 rl : 1; /**< Retrain Link */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT16 ccc : 1; /**< Common Clock Configuration */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT16 es : 1; /**< Extended Synch */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT16 ecpm : 1; /**< Enable Clock Power Management */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT16 hawd : 1; /**< Hardware Autonomous Width Disable */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT16 lbmie : 1; /**< Link Bandwidth Management Interrupt Enable */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT16 labie : 1; /**< Link Autonomous Bandwidth Interrupt Enable */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT16 rsvd_m : 4; /**< Reserved */
+                            /* Bits[15:12], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -583,7 +665,6 @@ typedef union {
 #define LCTL_PCIE_CFG_RSVD_M_LSB 0x000c
 #define LCTL_PCIE_CFG_RSVD_M_SIZE 0x0004
 
-
 /** LSTS desc:
   */
 
@@ -591,14 +672,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 cls : 4;
-    UINT16 nlw : 6;
-    UINT16 rsvd_0 : 1;
-    UINT16 lt : 1;
-    UINT16 scc : 1;
-    UINT16 la : 1;
-    UINT16 lbms : 1;
-    UINT16 labs : 1;
+    UINT16 cls : 4; /**< Current Link Speed */
+                            /* Bits[3:0], default=0x00000001*/
+    UINT16 nlw : 6; /**< Negotiated Link Width */
+                            /* Bits[9:4], default=0x00000001*/
+    UINT16 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[10:10] */
+                            /* Bits[10:10], default=0*/
+    UINT16 lt : 1; /**< Link Training */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT16 scc : 1; /**< Slot Clock Configuration */
+                            /* Bits[12:12], default=0x00000001*/
+    UINT16 la : 1; /**< Link Active */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT16 lbms : 1; /**< Link Bandwidth Management Status */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT16 labs : 1; /**< Link Autonomous Bandwidth Status */
+                            /* Bits[15:15], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -623,7 +712,6 @@ typedef union {
 #define LSTS_PCIE_CFG_LABS_LSB 0x000f
 #define LSTS_PCIE_CFG_LABS_SIZE 0x0001
 
-
 /** SLCAP desc:
   */
 
@@ -631,18 +719,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 abp : 1;
-    UINT32 pcp : 1;
-    UINT32 msp : 1;
-    UINT32 aip : 1;
-    UINT32 pip : 1;
-    UINT32 hps : 1;
-    UINT32 hpc : 1;
-    UINT32 slv : 8;
-    UINT32 sls : 2;
-    UINT32 emip : 1;
-    UINT32 nccs : 1;
-    UINT32 psn : 13;
+    UINT32 abp : 1; /**< Attention Button Present */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 pcp : 1; /**< Power Controller Present */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 msp : 1; /**< MRL Sensor Present */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 aip : 1; /**< Attention Indicator Present */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 pip : 1; /**< Power Indicator Present */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 hps : 1; /**< Hot Plug Surprise */
+                            /* Bits[5:5], default=0x00000001*/
+    UINT32 hpc : 1; /**< Hot Plug Capable */
+                            /* Bits[6:6], default=0x00000001*/
+    UINT32 slv : 8; /**< Slot Power Limit Value */
+                            /* Bits[14:7], default=0x00000000*/
+    UINT32 sls : 2; /**< Slot Power Limit Scale */
+                            /* Bits[16:15], default=0x00000000*/
+    UINT32 emip : 1; /**< Electromechanical Interlock Present */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 nccs : 1; /**< No Command Completed Support */
+                            /* Bits[18:18], default=0x00000001*/
+    UINT32 psn : 13; /**< Physical Slot Number */
+                            /* Bits[31:19], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -678,7 +778,6 @@ typedef union {
 #define SLCAP_PCIE_CFG_PSN_LSB 0x0013
 #define SLCAP_PCIE_CFG_PSN_SIZE 0x000d
 
-
 /** SLCTL desc:
   */
 
@@ -686,19 +785,32 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 abe : 1;
-    UINT16 pfe : 1;
-    UINT16 mse : 1;
-    UINT16 pde : 1;
-    UINT16 cce : 1;
-    UINT16 hpe : 1;
-    UINT16 aic : 2;
-    UINT16 pic : 2;
-    UINT16 pcc : 1;
-    UINT16 emic : 1;
-    UINT16 dllsce : 1;
-    UINT16 aspld : 1;
-    UINT16 rsvd_m : 2;
+    UINT16 abe : 1; /**< Attention Button Pressed Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT16 pfe : 1; /**< Power Fault Detected Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT16 mse : 1; /**< MRL Sensor Changed Enable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT16 pde : 1; /**< Presence Detect Changed Enable */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT16 cce : 1; /**< Command Completed Interrupt Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 hpe : 1; /**< Hot Plug Interrupt Enable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT16 aic : 2; /**< Attention Indicator Control */
+                            /* Bits[7:6], default=0x00000000*/
+    UINT16 pic : 2; /**< Power Indicator Control */
+                            /* Bits[9:8], default=0x00000000*/
+    UINT16 pcc : 1; /**< Power Controller Control */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT16 emic : 1; /**< Electromechanical Interlock Control */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT16 dllsce : 1; /**< Data Link Layer State Changed Enable */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT16 aspld : 1; /**< Auto Slot Power Limit Disable */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT16 rsvd_m : 2; /**< Reserved */
+                            /* Bits[15:14], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -735,7 +847,6 @@ typedef union {
 #define SLCTL_PCIE_CFG_RSVD_M_LSB 0x000e
 #define SLCTL_PCIE_CFG_RSVD_M_SIZE 0x0002
 
-
 /** SLSTS desc:
   */
 
@@ -743,16 +854,26 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 abp : 1;
-    UINT16 pfd : 1;
-    UINT16 msc : 1;
-    UINT16 pdc : 1;
-    UINT16 cc : 1;
-    UINT16 ms : 1;
-    UINT16 pds : 1;
-    UINT16 emis : 1;
-    UINT16 dllsc : 1;
-    UINT16 rsvd_m : 7;
+    UINT16 abp : 1; /**< Attention Button Pressed */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT16 pfd : 1; /**< Power Fault Detected */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT16 msc : 1; /**< MRL Sensor Changed */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT16 pdc : 1; /**< Presence Detect Changed */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT16 cc : 1; /**< Command Completed */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 ms : 1; /**< MRL Sensor State */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT16 pds : 1; /**< Presence Detect State */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT16 emis : 1; /**< Electromechanical Interlock Status */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT16 dllsc : 1; /**< Data Link Layer State Changed */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT16 rsvd_m : 7; /**< Reserved */
+                            /* Bits[15:9], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -783,7 +904,6 @@ typedef union {
 #define SLSTS_PCIE_CFG_RSVD_M_LSB 0x0009
 #define SLSTS_PCIE_CFG_RSVD_M_SIZE 0x0007
 
-
 /** RCTL desc:
   */
 
@@ -791,12 +911,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 sce : 1;
-    UINT16 sne : 1;
-    UINT16 sfe : 1;
-    UINT16 pie : 1;
-    UINT16 crssve : 1;
-    UINT16 rsvd_m : 11;
+    UINT16 sce : 1; /**< System Error on Correctable Error Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT16 sne : 1; /**< System Error on Non-Fatal Error Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT16 sfe : 1; /**< System Error on Fatal Error Enable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT16 pie : 1; /**< PME Interrupt Enable */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT16 crssve : 1; /**< CRS Software Visibility Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 rsvd_m : 11; /**< Reserved */
+                            /* Bits[15:5], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -819,7 +945,6 @@ typedef union {
 #define RCTL_PCIE_CFG_RSVD_M_LSB 0x0005
 #define RCTL_PCIE_CFG_RSVD_M_SIZE 0x000b
 
-
 /** DCAP2 desc:
   */
 
@@ -827,23 +952,40 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ctrs : 4;
-    UINT32 ctds : 1;
-    UINT32 afs : 1;
-    UINT32 ars : 1;
-    UINT32 ac32bs : 1;
-    UINT32 ac64bs : 1;
-    UINT32 ac128bs : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 ltrms : 1;
-    UINT32 rsvd_1 : 4;
-    UINT32 px10btcs : 1;
-    UINT32 px10btrs : 1;
-    UINT32 obffs : 2;
-    UINT32 effs : 1;
-    UINT32 eetlpps : 1;
-    UINT32 meetlpp : 2;
-    UINT32 rsvd_m : 8;
+    UINT32 ctrs : 4; /**< Completion Timeout Ranges Supported */
+                            /* Bits[3:0], default=0x00000007*/
+    UINT32 ctds : 1; /**< Completion Timeout Disable Supported */
+                            /* Bits[4:4], default=0x00000001*/
+    UINT32 afs : 1; /**< ARI Forwarding Supported */
+                            /* Bits[5:5], default=0x00000001*/
+    UINT32 ars : 1; /**< Atomic Routing Supported */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 ac32bs : 1; /**< AtomicOp Completer 32-bit Supported */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 ac64bs : 1; /**< AtomicOp Completer 64-bit Supported */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 ac128bs : 1; /**< CAS Completer 128-bit Supported */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[10:10] */
+                            /* Bits[10:10], default=0*/
+    UINT32 ltrms : 1; /**< LTR Mechanism Supported */
+                            /* Bits[11:11], default=0x00000001*/
+    UINT32 rsvd_1 : 4; /**< Undefined - auto filled rsvd_[15:12] */
+                            /* Bits[15:12], default=0*/
+    UINT32 px10btcs : 1; /**< 10-Bit Tag Completer Supported */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 px10btrs : 1; /**< 10-Bit Tag Requester Supported */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 obffs : 2; /**< Optimized Buffer Flush/Fill Supported */
+                            /* Bits[19:18], default=0x00000002*/
+    UINT32 effs : 1; /**< Extended Fmt Field Supported */
+                            /* Bits[20:20], default=0x00000001*/
+    UINT32 eetlpps : 1; /**< End-End TLP Prefix Supported */
+                            /* Bits[21:21], default=0x00000001*/
+    UINT32 meetlpp : 2; /**< Max End-End TLP Prefixes */
+                            /* Bits[23:22], default=0x00000002*/
+    UINT32 rsvd_m : 8; /**< Reserved */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -885,7 +1027,6 @@ typedef union {
 #define DCAP2_PCIE_CFG_RSVD_M_LSB 0x0018
 #define DCAP2_PCIE_CFG_RSVD_M_SIZE 0x0008
 
-
 /** DCTL2 desc:
   */
 
@@ -893,17 +1034,28 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 ctv : 4;
-    UINT16 ctd : 1;
-    UINT16 afe : 1;
-    UINT16 are : 1;
-    UINT16 aeb : 1;
-    UINT16 rsvd_0 : 2;
-    UINT16 ltren : 1;
-    UINT16 rsvd_1 : 1;
-    UINT16 px10btre : 1;
-    UINT16 obffen : 2;
-    UINT16 eetlppb : 1;
+    UINT16 ctv : 4; /**< Completion Timeout Value */
+                            /* Bits[3:0], default=0x00000000*/
+    UINT16 ctd : 1; /**< Completion Timeout Disable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 afe : 1; /**< ARI Forwarding Enable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT16 are : 1; /**< AtomicOp Requester Enable */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT16 aeb : 1; /**< AtomicOp Egress Blocking */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT16 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[09:08] */
+                            /* Bits[9:8], default=0*/
+    UINT16 ltren : 1; /**< LTR Mechanism Enable */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT16 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[11:11] */
+                            /* Bits[11:11], default=0*/
+    UINT16 px10btre : 1; /**< 10-Bit Tag Requester Enable */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT16 obffen : 2; /**< Optimized Buffer Flush/Fill Enable */
+                            /* Bits[14:13], default=0x00000000*/
+    UINT16 eetlppb : 1; /**< End-End TLP Prefix Blocking */
+                            /* Bits[15:15], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -932,7 +1084,6 @@ typedef union {
 #define DCTL2_PCIE_CFG_EETLPPB_LSB 0x000f
 #define DCTL2_PCIE_CFG_EETLPPB_SIZE 0x0001
 
-
 /** LCAP2 desc:
   */
 
@@ -940,14 +1091,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 1;
-    UINT32 slsv : 7;
-    UINT32 cs : 1;
-    UINT32 lsosgssv : 7;
-    UINT32 lsosrss : 7;
-    UINT32 rpds : 1;
-    UINT32 trpds : 1;
-    UINT32 rsvd_m : 7;
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[00:00] */
+                            /* Bits[0:0], default=0*/
+    UINT32 slsv : 7; /**< Supported Link Speeds Vector */
+                            /* Bits[7:1], default=0x00000007*/
+    UINT32 cs : 1; /**< Crosslink Supported */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 lsosgssv : 7; /**< Lower SKP OS Generation Supported Speeds Vector */
+                            /* Bits[15:9], default=0x00000000*/
+    UINT32 lsosrss : 7; /**< Lower SKP OS Reception Supported Speeds Vector */
+                            /* Bits[22:16], default=0x00000000*/
+    UINT32 rpds : 1; /**< Retimer Presence Detect Supported */
+                            /* Bits[23:23], default=0x00000001*/
+    UINT32 trpds : 1; /**< Two Retimers Presence Detect Supported */
+                            /* Bits[24:24], default=0x00000001*/
+    UINT32 rsvd_m : 7; /**< Reserved */
+                            /* Bits[31:25], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -973,7 +1132,6 @@ typedef union {
 #define LCAP2_PCIE_CFG_RSVD_M_LSB 0x0019
 #define LCAP2_PCIE_CFG_RSVD_M_SIZE 0x0007
 
-
 /** LCTL2 desc:
   */
 
@@ -981,14 +1139,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 tls : 4;
-    UINT16 ec : 1;
-    UINT16 hasd : 1;
-    UINT16 sd : 1;
-    UINT16 tm : 3;
-    UINT16 emc : 1;
-    UINT16 csos : 1;
-    UINT16 cd : 4;
+    UINT16 tls : 4; /**< Target Link Speed */
+                            /* Bits[3:0], default=0x00000001*/
+    UINT16 ec : 1; /**< Enter Compliance */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 hasd : 1; /**< Reserved. Hardware Autonomous Speed Disable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT16 sd : 1; /**< Selectable De-emphasis */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT16 tm : 3; /**< Transmit Margin */
+                            /* Bits[9:7], default=0x00000000*/
+    UINT16 emc : 1; /**< Enter Modified Compliance */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT16 csos : 1; /**< Compliance SOS */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT16 cd : 4; /**< Compliance Preset/De-emphasis */
+                            /* Bits[15:12], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -1015,7 +1181,6 @@ typedef union {
 #define LCTL2_PCIE_CFG_CD_LSB 0x000c
 #define LCTL2_PCIE_CFG_CD_SIZE 0x0004
 
-
 /** LSTS2 desc:
   */
 
@@ -1023,15 +1188,24 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 cdl : 1;
-    UINT16 eqc : 1;
-    UINT16 eqp1s : 1;
-    UINT16 eqp2s : 1;
-    UINT16 eqp3s : 1;
-    UINT16 ler : 1;
-    UINT16 rpd : 1;
-    UINT16 px2rpd : 1;
-    UINT16 rsvd_m : 8;
+    UINT16 cdl : 1; /**< Current De-emphasis Level */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT16 eqc : 1; /**< Equalization Complete */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT16 eqp1s : 1; /**< Equalization Phase 1 Successful */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT16 eqp2s : 1; /**< Equalization Phase 2 Successful */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT16 eqp3s : 1; /**< Equalization Phase 3 Successful */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 ler : 1; /**< Link Equalization Request */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT16 rpd : 1; /**< Retimer Presence Detected */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT16 px2rpd : 1; /**< Two Retimers Presence Detected */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT16 rsvd_m : 8; /**< Reserved */
+                            /* Bits[15:8], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -1060,7 +1234,6 @@ typedef union {
 #define LSTS2_PCIE_CFG_RSVD_M_LSB 0x0008
 #define LSTS2_PCIE_CFG_RSVD_M_SIZE 0x0008
 
-
 /** MID desc:
   */
 
@@ -1068,8 +1241,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 cid : 8;
-    UINT16 next : 8;
+    UINT16 cid : 8; /**< Capability ID */
+                            /* Bits[7:0], default=0x00000005*/
+    UINT16 next : 8; /**< Next Pointer */
+                            /* Bits[15:8], default=0x00000090*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -1084,7 +1259,6 @@ typedef union {
 #define MID_PCIE_CFG_NEXT_LSB 0x0008
 #define MID_PCIE_CFG_NEXT_SIZE 0x0008
 
-
 /** SVCAP desc:
   */
 
@@ -1092,8 +1266,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 cid : 8;
-    UINT16 next : 8;
+    UINT16 cid : 8; /**< Capability Identifier */
+                            /* Bits[7:0], default=0x0000000D*/
+    UINT16 next : 8; /**< Next Capability */
+                            /* Bits[15:8], default=0x000000A0*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -1108,7 +1284,6 @@ typedef union {
 #define SVCAP_PCIE_CFG_NEXT_LSB 0x0008
 #define SVCAP_PCIE_CFG_NEXT_SIZE 0x0008
 
-
 /** PMCS desc:
   */
 
@@ -1116,18 +1291,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ps : 2;
-    UINT32 rsvd_0 : 1;
-    UINT32 nsr : 1;
-    UINT32 rsvd_1 : 4;
-    UINT32 pmee : 1;
-    UINT32 dsel : 4;
-    UINT32 dsc : 2;
-    UINT32 pmes : 1;
-    UINT32 rsvd_2 : 6;
-    UINT32 b23s : 1;
-    UINT32 bpce : 1;
-    UINT32 dta : 8;
+    UINT32 ps : 2; /**< Power State */
+                            /* Bits[1:0], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[02:02] */
+                            /* Bits[2:2], default=0*/
+    UINT32 nsr : 1; /**< No Soft Reset */
+                            /* Bits[3:3], default=0x00000001*/
+    UINT32 rsvd_1 : 4; /**< Undefined - auto filled rsvd_[07:04] */
+                            /* Bits[7:4], default=0*/
+    UINT32 pmee : 1; /**< PME Enable */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 dsel : 4; /**< Data Select */
+                            /* Bits[12:9], default=0x00000000*/
+    UINT32 dsc : 2; /**< Data Scale */
+                            /* Bits[14:13], default=0x00000000*/
+    UINT32 pmes : 1; /**< PME Status */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 rsvd_2 : 6; /**< Undefined - auto filled rsvd_[21:16] */
+                            /* Bits[21:16], default=0*/
+    UINT32 b23s : 1; /**< B2/B3 Support */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 bpce : 1; /**< Bus Power / Clock Control Enable */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 dta : 8; /**< PME Data */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1165,28 +1352,50 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 uprs : 3;
-    UINT32 rsvd_0 : 1;
-    UINT32 unrs : 3;
-    UINT32 rsvd_1 : 1;
-    UINT32 mrpc : 1;
-    UINT32 mrnpc : 1;
-    UINT32 upsaap : 1;
-    UINT32 rbms : 1;
-    UINT32 unrd : 2;
-    UINT32 unpsaap : 1;
-    UINT32 dcgeisma : 1;
-    UINT32 npap : 1;
-    UINT32 npas : 6;
-    UINT32 unsd : 1;
-    UINT32 upsd : 1;
-    UINT32 upmwpd : 1;
-    UINT32 umrpd : 1;
-    UINT32 uarpd : 1;
-    UINT32 ufdm : 1;
-    UINT32 rsvd_2 : 1;
-    UINT32 iore : 1;
-    UINT32 cre : 1;
+    UINT32 uprs : 3; /**< Upstream Posted Request Size */
+                            /* Bits[2:0], default=0x00000001*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[03:03] */
+                            /* Bits[3:3], default=0*/
+    UINT32 unrs : 3; /**< Upstream Non-Posted Request Size */
+                            /* Bits[6:4], default=0x00000001*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[07:07] */
+                            /* Bits[7:7], default=0*/
+    UINT32 mrpc : 1; /**< Minimum Receive Posted Credits */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 mrnpc : 1; /**< Minimum Receive Non-Posted Credits */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 upsaap : 1; /**< Upstream Posted Split Address Align Policy */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 rbms : 1; /**< Retry Buffers Minimum Size */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 unrd : 2; /**< Upstream Non-Posted Request Delay */
+                            /* Bits[13:12], default=0x00000000*/
+    UINT32 unpsaap : 1; /**< Upstream Non Posted Split Address Align Policy */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 dcgeisma : 1; /**< Dynamic Clock Gating Enable on ISM Active */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 npap : 1; /**< Non-Posted Pre-Allocation Policy */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 npas : 6; /**< Non-Posted Pre-Allocation Size */
+                            /* Bits[22:17], default=0x00000000*/
+    UINT32 unsd : 1; /**< Upstream Non-Posted Split Disable */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 upsd : 1; /**< Upstream Posted Split Disable */
+                            /* Bits[24:24], default=0x00000001*/
+    UINT32 upmwpd : 1; /**< Upstream Posted Memory Write Peer Disable */
+                            /* Bits[25:25], default=0x00000001*/
+    UINT32 umrpd : 1; /**< Upstream Memory Read Peer Disable */
+                            /* Bits[26:26], default=0x00000001*/
+    UINT32 uarpd : 1; /**< Upstream Atomic Request Peer Disable */
+                            /* Bits[27:27], default=0x00000001*/
+    UINT32 ufdm : 1; /**< Upstream Fabric Decode Mode */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[29:29] */
+                            /* Bits[29:29], default=0*/
+    UINT32 iore : 1; /**< I/O Receive Enabled */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 cre : 1; /**< Config Receive Enabled */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1194,7 +1403,7 @@ typedef union {
 } CCFG_PCIE_CFG_STRUCT;
 
 #define CCFG_PCIE_CFG_WIDTH 32
-#define CCFG_PCIE_CFG_DEFAULT 0x0f000017U
+#define CCFG_PCIE_CFG_DEFAULT 0x0f000011U
 #define CCFG_PCIE_CFG_ENDPOINT PCIE_CFG
 
 #define CCFG_PCIE_CFG_UPRS_LSB 0x0000
@@ -1245,34 +1454,60 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 l1ctm : 1;
-    UINT32 eoifd : 1;
-    UINT32 aspmco : 2;
-    UINT32 aspmcoen : 1;
-    UINT32 ieime : 1;
-    UINT32 lstp : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 cam : 1;
-    UINT32 tlpf : 1;
-    UINT32 itcum : 1;
-    UINT32 ipf : 1;
-    UINT32 ptnfae : 1;
-    UINT32 orcr : 1;
-    UINT32 orce : 2;
-    UINT32 displlewl1se : 1;
-    UINT32 rxl0sebpro : 1;
-    UINT32 macphyimpghpu : 1;
-    UINT32 dnprl : 1;
-    UINT32 gen3pllc : 1;
-    UINT32 gen2pllc : 1;
-    UINT32 mipipllc : 1;
-    UINT32 rud : 1;
-    UINT32 pllwait : 3;
-    UINT32 rsvd_1 : 1;
-    UINT32 nvc0dnprl : 1;
-    UINT32 ebrwuodil0 : 1;
-    UINT32 l1ssese : 1;
-    UINT32 devinitupcfgplcy : 1;
+    UINT32 l1ctm : 1; /**< L1 Completion Timeout Mode */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 eoifd : 1; /**< EOI Forwarding Disable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 aspmco : 2; /**< ASPM Control Override */
+                            /* Bits[3:2], default=0x00000000*/
+    UINT32 aspmcoen : 1; /**< ASPM Control Override Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 ieime : 1; /**< Infer Electrical Idle Mechanism Enable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 lstp : 1; /**< Link Speed Training Policy */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[07:07] */
+                            /* Bits[7:7], default=0*/
+    UINT32 cam : 1; /**< Credit Allocated Update Mode */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 tlpf : 1; /**< Transaction Layer Packet Fast Transmit Mode */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 itcum : 1; /**< IOSF Transaction Credit Update Mode */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 ipf : 1; /**< IOSF Packet Fast Transmit Mode */
+                            /* Bits[11:11], default=0x00000001*/
+    UINT32 ptnfae : 1; /**< Poisoned TLP Non-Fatal Advisory Error Enable */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 orcr : 1; /**< Offset Re-Calibration Request */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 orce : 2; /**< Offset Re-Calibration Enable */
+                            /* Bits[15:14], default=0x00000000*/
+    UINT32 displlewl1se : 1; /**< Disable PLL Early Wake on L1 Substate Exit */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 rxl0sebpro : 1; /**< RxL0s Entry to Bypass Phy Receive Off */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 macphyimpghpu : 1; /**< MAC PHY to Ignore modPHY Power Request Handshake during Powering Up */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 dnprl : 1; /**< Downstream Non-Posted Request Limit */
+                            /* Bits[19:19], default=0x00000000*/
+    UINT32 gen3pllc : 1; /**< Reserved */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 gen2pllc : 1; /**< Reserved */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 mipipllc : 1; /**< Reserved */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 rud : 1; /**< Reserved */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 pllwait : 3; /**< PLL Wait */
+                            /* Bits[26:24], default=0x00000000*/
+    UINT32 rsvd_1 : 2; /**< Undefined - auto filled rsvd_[28:27] */
+                            /* Bits[28:27], default=0*/
+    UINT32 ebrwuodil0 : 1; /**< Elastic Buffer Reset When Underrun Or Overrun Detected In L0 */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 l1ssese : 1; /**< L1 Substate Exit SCI Enable */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 devinitupcfgplcy : 1; /**< Device Initiated Width Upconfiguration Policy */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1327,8 +1562,6 @@ typedef union {
 #define MPC2_PCIE_CFG_RUD_SIZE 0x0001
 #define MPC2_PCIE_CFG_PLLWAIT_LSB 0x0018
 #define MPC2_PCIE_CFG_PLLWAIT_SIZE 0x0003
-#define MPC2_PCIE_CFG_NVC0DNPRL_LSB 0x001c
-#define MPC2_PCIE_CFG_NVC0DNPRL_SIZE 0x0001
 #define MPC2_PCIE_CFG_EBRWUODIL0_LSB 0x001d
 #define MPC2_PCIE_CFG_EBRWUODIL0_SIZE 0x0001
 #define MPC2_PCIE_CFG_L1SSESE_LSB 0x001e
@@ -1345,26 +1578,46 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pmme : 1;
-    UINT32 hpme : 1;
-    UINT32 bt : 1;
-    UINT32 mctpse : 1;
-    UINT32 fcp : 3;
-    UINT32 pae : 1;
-    UINT32 at : 4;
-    UINT32 pciesd : 3;
-    UINT32 ccel : 3;
-    UINT32 ucel : 3;
-    UINT32 fcdl1e : 1;
-    UINT32 rsvd_0 : 2;
-    UINT32 bmerce : 1;
-    UINT32 irrce : 1;
-    UINT32 p8xde : 1;
-    UINT32 mmbnce : 1;
-    UINT32 ate : 1;
-    UINT32 lho : 1;
-    UINT32 hpce : 1;
-    UINT32 pmce : 1;
+    UINT32 pmme : 1; /**< Power Management SMI Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 hpme : 1; /**< Hot Plug SMI Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 bt : 1; /**< Bridge Type */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 mctpse : 1; /**< MCTP Support Enable */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 fcp : 3; /**< Flow Control Update Policy */
+                            /* Bits[6:4], default=0x00000000*/
+    UINT32 pae : 1; /**< Port I/OxApic Enable */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 at : 4; /**< Address Translater */
+                            /* Bits[11:8], default=0x00000000*/
+    UINT32 pciesd : 3; /**< PCIe Speed Disable */
+                            /* Bits[14:12], default=0x00000000*/
+    UINT32 ccel : 3; /**< Common Clock Exit Latency */
+                            /* Bits[17:15], default=0x00000002*/
+    UINT32 ucel : 3; /**< Unique Clock Exit Latency */
+                            /* Bits[20:18], default=0x00000004*/
+    UINT32 fcdl1e : 1; /**< Flow Control During L1 Entry */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[23:22] */
+                            /* Bits[23:22], default=0*/
+    UINT32 bmerce : 1; /**< BME Receive Check Enable */
+                            /* Bits[24:24], default=0x00000001*/
+    UINT32 irrce : 1; /**< Invalid Receive Range Check Enable */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 p8xde : 1; /**< Port8xh Decode Enable */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 mmbnce : 1; /**< MCTP Message Bus Number Check Enable */
+                            /* Bits[27:27], default=0x00000001*/
+    UINT32 ate : 1; /**< Address Translater Enable */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 lho : 1; /**< Link Hold Off */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 hpce : 1; /**< Hot Plug SCI Enable */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 pmce : 1; /**< Power Management SCI Enable */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1423,10 +1676,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 scb : 4;
-    UINT8 bdfcp : 1;
-    UINT8 dlrfad : 1;
-    UINT8 nscb : 2;
+    UINT8 scb : 4; /**< Sticky Chicken Bits */
+                            /* Bits[3:0], default=0x00000000*/
+    UINT8 bdfcp : 1; /**< Block DLLP Flag Clear Policy */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT8 dlrfad : 1; /**< Down-Configured Lanes RXStandby Force Assertion Disable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT8 nscb : 2; /**< Non-Sticky Chicken Bits */
+                            /* Bits[7:6], default=0x00000000*/
   }     Bits;
   UINT8 Data;
 } SPR_PCIE_CFG_STRUCT;
@@ -1453,14 +1710,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 rpdbcgen : 1;
-    UINT8 rpdlcgen : 1;
-    UINT8 srdbcgen : 1;
-    UINT8 rsvd_rw : 1;
-    UINT8 bbclkreqen : 1;
-    UINT8 lclkreqen : 1;
-    UINT8 ptocge : 1;
-    UINT8 rsvd_m : 1;
+    UINT8 rpdbcgen : 1; /**< Root Port Dynamic Backbone Clock Gate Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT8 rpdlcgen : 1; /**< Root Port Dynamic Link Clock Gate Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT8 srdbcgen : 1; /**< Shared Resource Dynamic Backbone Clock Gate Enable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT8 rsvd_rw : 1; /**< Reserved */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT8 bbclkreqen : 1; /**< Backbone CLKREQ Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT8 lclkreqen : 1; /**< Link CLKREQ Enable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT8 ptocge : 1; /**< Partition/Trunk Oscillator Clock Gate Enable */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT8 rsvd_m : 1; /**< Reserved */
+                            /* Bits[7:7], default=0x00000000*/
   }     Bits;
   UINT8 Data;
 } RPDCGEN_PCIE_CFG_STRUCT;
@@ -1495,14 +1760,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 mdlswpr : 1;
-    UINT8 mdlswpgea : 1;
-    UINT8 l23er : 1;
-    UINT8 l23r2dt : 1;
-    UINT8 seoscge : 1;
-    UINT8 mdlswpgexa : 1;
-    UINT8 rsvd_0 : 1;
-    UINT8 mcwpgs : 1;
+    UINT8 mdlswpr : 1; /**< mod-PHY Data Lane Suspend Well Power Request */
+                            /* Bits[0:0], default=0x00000001*/
+    UINT8 mdlswpgea : 1; /**< mod-PHY Data Lane Suspend Well Power Gate Entry Ack */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT8 l23er : 1; /**< L23_Rdy Entry Request */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT8 l23r2dt : 1; /**< L23_Rdy to Detect Transition */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT8 seoscge : 1; /**< Sideband Endpoint Oscillator/Side Clock Gating Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT8 mdlswpgexa : 1; /**< mod-PHY Data Lane Suspend Well Power Gating Exit Ack */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT8 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[06:06] */
+                            /* Bits[6:6], default=0*/
+    UINT8 mcwpgs : 1; /**< mod-PHY Core Well Power Gating Status */
+                            /* Bits[7:7], default=0x00000000*/
   }     Bits;
   UINT8 Data;
 } RPPGEN_PCIE_CFG_STRUCT;
@@ -1535,37 +1808,68 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rpdtsqpol : 1;
-    UINT32 rpl1sqpol : 1;
-    UINT32 rpsewl : 2;
-    UINT32 ltrr : 1;
-    UINT32 isct : 1;
-    UINT32 pcsceiost : 1;
-    UINT32 sctem : 1;
-    UINT32 rptfsmwi : 1;
-    UINT32 selaq : 1;
-    UINT32 hrbf : 1;
-    UINT32 atodedtt : 1;
-    UINT32 efsostoetr : 1;
-    UINT32 txswing : 1;
-    UINT32 ilsvrx : 1;
-    UINT32 dbupi : 1;
-    UINT32 dlp : 1;
-    UINT32 wpdmpgep : 1;
-    UINT32 g3snb : 1;
-    UINT32 lwued : 1;
-    UINT32 ltssmrtc : 1;
-    UINT32 bishb : 1;
-    UINT32 ishcf : 1;
-    UINT32 lifecf : 1;
-    UINT32 ecf128b130b : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 l1ssvnnre : 1;
-    UINT32 rsvd_1 : 1;
-    UINT32 darece : 1;
-    UINT32 rxeispl1s : 1;
-    UINT32 txcmdspl1s : 1;
-    UINT32 rsvd_m : 1;
+    UINT32 rpdtsqpol : 1; /**< Root Port Detect Squelch Polling */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rpl1sqpol : 1; /**< Root Port L1 Squelch Polling */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 rpsewl : 2; /**< Root Port Squelch Exit Wait Latency */
+                            /* Bits[3:2], default=0x00000001*/
+    UINT32 ltrr : 1; /**< LTR Received */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 isct : 1; /**< Invalid Speed Change Transition */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 pcsceiost : 1; /**< Pollling Compliance Speed Change EIOS Transmission */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 sctem : 1; /**< Synthesized Completion Termination Encoding Masking */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 rptfsmwi : 1; /**< Reset Progress Tracker FSM When Idle */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 selaq : 1; /**< Squelch Exit Lane Active Qualification */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 hrbf : 1; /**< Hot Removal Bug Fix */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 atodedtt : 1; /**< Assert TxElecIdle On Detect Entry Due To TimeOut */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 efsostoetr : 1; /**< Enable Forced SKP Ordered Set Transmission On Entry To Recovery */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 txswing : 1; /**< Analog PHY Transmitter Voltage Swing */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 ilsvrx : 1; /**< Invalid LTR Latency Scale Value Received */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 dbupi : 1; /**< De-skew Buffer Unload Pointer Increment */
+                            /* Bits[15:15], default=0x00000001*/
+    UINT32 dlp : 1; /**< Down-configured Lanes Policy */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 wpdmpgep : 1; /**< Wake PLL On Detect mod-PHY Power Gating Exit Policy */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 g3snb : 1; /**< GEN3 Support Noted Behavior */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 lwued : 1; /**< Link Width Upconfiguration Evaluation Delay */
+                            /* Bits[19:19], default=0x00000000*/
+    UINT32 ltssmrtc : 1; /**< LTSSM Received TSx Count */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 bishb : 1; /**< BlockAlign Invalid Sync Header Behavior */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 ishcf : 1; /**< Invalid Sync Header Check Filter */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 lifecf : 1; /**< Logical Idle Framing Error Check Filter */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 ecf128b130b : 1; /**< 128b/130b Error Check Filter */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[25:25] */
+                            /* Bits[25:25], default=0*/
+    UINT32 l1ssvnnre : 1; /**< L1 Substate VNN Removal Enable */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[27:27] */
+                            /* Bits[27:27], default=0*/
+    UINT32 darece : 1; /**< Delayed Ack for Recovery Entry */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 rxeispl1s : 1; /**< RxEiDetectDisable Suppression in L1.x States */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 txcmdspl1s : 1; /**< TxCommonModeDisable Suppression in L1.x States */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 rsvd_m : 1; /**< Reserved */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1644,16 +1948,28 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 vc0nsaov : 1;
-    UINT32 vc0nsao : 1;
-    UINT32 pcibem : 1;
-    UINT32 ecd : 1;
-    UINT32 rcrbnrce : 1;
-    UINT32 rsvd_0 : 8;
-    UINT32 com : 1;
-    UINT32 rsvd_1 : 2;
-    UINT32 ioapicrb : 8;
-    UINT32 ioapicrl : 8;
+    UINT32 vc0nsaov : 1; /**< VC0 No-Snoop Attribute Override Value */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 vc0nsao : 1; /**< VC0 No-Snoop Attribute Override */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 pcibem : 1; /**< PCI Bus Emulation Mode */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 ecd : 1; /**< Extended Config Disable */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 rcrbnrce : 1; /**< RCRB MMIO Range Claim Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 rsvd_0 : 8; /**< Undefined - auto filled rsvd_[12:05] */
+                            /* Bits[12:5], default=0*/
+    UINT32 com : 1; /**< Completion Ordering Mode */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 dct0c : 1; /**< Downstream Config Type 0 Conversion */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 dct1c : 1; /**< Downstream Config Type 1 Conversion */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 ioapicrb : 8; /**< IOxAPIC Range Base */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 ioapicrl : 8; /**< IOxAPIC Range Limit */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1676,6 +1992,10 @@ typedef union {
 #define DC_PCIE_CFG_RCRBNRCE_SIZE 0x0001
 #define DC_PCIE_CFG_COM_LSB 0x000d
 #define DC_PCIE_CFG_COM_SIZE 0x0001
+#define DC_PCIE_CFG_DCT0C_LSB 0x000e
+#define DC_PCIE_CFG_DCT0C_SIZE 0x0001
+#define DC_PCIE_CFG_DCT1C_LSB 0x000f
+#define DC_PCIE_CFG_DCT1C_SIZE 0x0001
 #define DC_PCIE_CFG_IOAPICRB_LSB 0x0010
 #define DC_PCIE_CFG_IOAPICRB_SIZE 0x0008
 #define DC_PCIE_CFG_IOAPICRL_LSB 0x0018
@@ -1690,18 +2010,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 urre : 1;
-    UINT32 urd : 1;
-    UINT32 rsvd_0 : 2;
-    UINT32 imrs : 3;
-    UINT32 rsvd_1 : 1;
-    UINT32 imps : 3;
-    UINT32 rsvd_2 : 1;
-    UINT32 pric : 3;
-    UINT32 rsvd_3 : 1;
-    UINT32 pppcibsn : 4;
-    UINT32 hbpcibsn : 4;
-    UINT32 rsvd_m : 8;
+    UINT32 urre : 1; /**< Unsupported Request Reporting Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 urd : 1; /**< Unsupported Request Detected */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[03:02] */
+                            /* Bits[3:2], default=0*/
+    UINT32 imrs : 3; /**< IOSF Max Read Request Size */
+                            /* Bits[6:4], default=0x00000007*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[07:07] */
+                            /* Bits[7:7], default=0*/
+    UINT32 imps : 3; /**< IOSF_Max_Payload_Size */
+                            /* Bits[10:8], default=0x00000001*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[11:11] */
+                            /* Bits[11:11], default=0*/
+    UINT32 pric : 3; /**< IOSF Primary ISM Idle Counter */
+                            /* Bits[14:12], default=0x00000000*/
+    UINT32 rsvd_3 : 1; /**< Undefined - auto filled rsvd_[15:15] */
+                            /* Bits[15:15], default=0*/
+    UINT32 pppcibsn : 4; /**< PCIe Port PCI Bus Segment Number */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 hbpcibsn : 4; /**< Host-Bridge PCI Bus Segment Number */
+                            /* Bits[23:20], default=0x00000000*/
+    UINT32 rsvd_m : 8; /**< Reserved */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1738,12 +2070,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 pxpg2plloffen : 1;
-    UINT8 pxpg3plloffen : 1;
-    UINT8 blkpllen : 1;
-    UINT8 rsvd_0 : 1;
-    UINT8 txcfgchgwait : 2;
-    UINT8 tdft : 2;
+    UINT8 pxpg2plloffen : 1; /**< PCI Express GEN2 PLL Off Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT8 pxpg3plloffen : 1; /**< PCI Express GEN3 PLL Off Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT8 blkpllen : 1; /**< Block PLL Request */
+                            /* Bits[2:2], default=0x00000001*/
+    UINT8 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[03:03] */
+                            /* Bits[3:3], default=0*/
+    UINT8 txcfgchgwait : 2; /**< Transmit Configuration Change Wait Time */
+                            /* Bits[5:4], default=0x00000003*/
+    UINT8 tdft : 2; /**< Transmit Datapath Flush Timer */
+                            /* Bits[7:6], default=0x00000003*/
   }     Bits;
   UINT8 Data;
 } PHYCTL2_PCIE_CFG_STRUCT;
@@ -1772,10 +2110,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 txhsdeempctl : 1;
-    UINT8 sqdirctrl : 1;
-    UINT8 sqdirovren : 1;
-    UINT8 rsvd_m : 5;
+    UINT8 txhsdeempctl : 1; /**< TX Half Swing Deemphasis Control */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT8 sqdirctrl : 1; /**< Squelch Direction */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT8 sqdirovren : 1; /**< Squelch Direction Override Enable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT8 rsvd_m : 5; /**< Reserved */
+                            /* Bits[7:3], default=0x00000000*/
   }     Bits;
   UINT8 Data;
 } PHYCTL3_PCIE_CFG_STRUCT;
@@ -1802,12 +2144,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 sbic : 2;
-    UINT8 siid : 2;
-    UINT8 isurd : 1;
-    UINT8 isfsided : 1;
-    UINT8 scptcge : 1;
-    UINT8 rsvd_m : 1;
+    UINT8 sbic : 2; /**< IOSF Sideband ISM Idle Counter */
+                            /* Bits[1:0], default=0x00000000*/
+    UINT8 siid : 2; /**< IOSF Sideband Interface Idle Counter */
+                            /* Bits[3:2], default=0x00000001*/
+    UINT8 isurd : 1; /**< IOSF Sideband Unsupported Request Detected */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT8 isfsided : 1; /**< IOSF Sideband Fuse/Strap/ID Distribution Error Detected */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT8 scptcge : 1; /**< Side Clock Partition/Trunk Clock Gating Enable */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT8 rsvd_m : 1; /**< Reserved */
+                            /* Bits[7:7], default=0x00000000*/
   }     Bits;
   UINT8 Data;
 } IOSFSBCS_PCIE_CFG_STRUCT;
@@ -1838,29 +2186,52 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 2;
-    UINT32 desktopmob : 1;
-    UINT32 cdcgdis : 1;
-    UINT32 ltcgdis : 1;
-    UINT32 ldcgdis : 1;
-    UINT32 aspmdis : 1;
-    UINT32 rsvd_rof : 1;
-    UINT32 pllshtdwndis : 1;
-    UINT32 mphyiopmdis : 1;
-    UINT32 nal : 2;
-    UINT32 nalpg : 1;
-    UINT32 lr : 1;
-    UINT32 rpc : 3;
-    UINT32 xoscf : 2;
-    UINT32 ftm : 2;
-    UINT32 rsvd_1 : 1;
-    UINT32 mphypgd : 1;
-    UINT32 rsvd_2 : 1;
-    UINT32 pxip : 4;
-    UINT32 drpc : 1;
-    UINT32 serm : 1;
-    UINT32 blkdqda_rstvalue : 1;
-    UINT32 blkpllen_rstvalue : 1;
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[01:00] */
+                            /* Bits[1:0], default=0*/
+    UINT32 desktopmob : 1; /**< Desktop or Mobile Fuse */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 cdcgdis : 1; /**< Core Dynamic Clock Gating Disable Fuse */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 ltcgdis : 1; /**< Link Trunk Clock Gating Disable Fuse */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 ldcgdis : 1; /**< Link Dynamic Clock Gating Disable Fuse */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 aspmdis : 1; /**< ASPM Disable Fuse */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 rsvd_rof : 1; /**< Reserved */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 pllshtdwndis : 1; /**< PLL Shut Down Disable Fuse */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 mphyiopmdis : 1; /**< mPHY I/O PM Disable Fuse */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 nal : 2; /**< Number of Active Lane */
+                            /* Bits[11:10], default=0x00000000*/
+    UINT32 nalpg : 1; /**< Number of Active Lane with Power Gating enable */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 lr : 1; /**< Lane Reversal */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 rpc : 3; /**< Root Port Configuration Strap */
+                            /* Bits[16:14], default=0x00000000*/
+    UINT32 xoscf : 2; /**< Crystal Oscillator Frequency */
+                            /* Bits[18:17], default=0x00000000*/
+    UINT32 ftm : 2; /**< Frequency Throttling Mode */
+                            /* Bits[20:19], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[21:21] */
+                            /* Bits[21:21], default=0*/
+    UINT32 mphypgd : 1; /**< mod-PHY Power Gating Disable Fuse */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[23:23] */
+                            /* Bits[23:23], default=0*/
+    UINT32 pxip : 4; /**< PCI Express Interrupt Pin */
+                            /* Bits[27:24], default=0x00000000*/
+    UINT32 drpc : 1; /**< Dynamic Root Port Configuration Supported */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 serm : 1; /**< Server Error Reporting Mode */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 blkdqda_rstvalue : 1; /**< BLKDQDA Register Default value */
+                            /* Bits[30:30], default=0x00000001*/
+    UINT32 blkpllen_rstvalue : 1; /**< BLKPLLEN Register Default value */
+                            /* Bits[31:31], default=0x00000001*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1913,7 +2284,6 @@ typedef union {
 #define STRPFUSECFG_PCIE_CFG_BLKPLLEN_RSTVALUE_SIZE 0x0001
 
 
-
 /** AECH desc:
   */
 
@@ -1921,9 +2291,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 cid : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 cid : 16; /**< Capability ID */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1941,7 +2314,6 @@ typedef union {
 #define AECH_PCIE_CFG_NCO_LSB 0x0014
 #define AECH_PCIE_CFG_NCO_SIZE 0x000c
 
-
 /** UEM desc:
   */
 
@@ -1949,27 +2321,48 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 te : 1;
-    UINT32 rsvd_0 : 3;
-    UINT32 dlpe : 1;
-    UINT32 sde : 1;
-    UINT32 rsvd_1 : 6;
-    UINT32 pt : 1;
-    UINT32 fcpe : 1;
-    UINT32 ct : 1;
-    UINT32 cm : 1;
-    UINT32 uc : 1;
-    UINT32 ro : 1;
-    UINT32 mt : 1;
-    UINT32 rsvd_2 : 1;
-    UINT32 ure : 1;
-    UINT32 avm : 1;
-    UINT32 uiem : 1;
-    UINT32 mcbtlpm : 1;
-    UINT32 aebm : 1;
-    UINT32 tlppbem : 1;
-    UINT32 ptlpebm : 1;
-    UINT32 rsvd_3 : 5;
+    UINT32 te : 1; /**< Training Error Mask */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 3; /**< Undefined - auto filled rsvd_[03:01] */
+                            /* Bits[3:1], default=0*/
+    UINT32 dlpe : 1; /**< Data Link Protocol Error Mask */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 sde : 1; /**< Surprise Down Error Mask */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 rsvd_1 : 6; /**< Undefined - auto filled rsvd_[11:06] */
+                            /* Bits[11:6], default=0*/
+    UINT32 pt : 1; /**< Poisoned TLP Mask */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 fcpe : 1; /**< Flow Control Protocol Error Mask */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 ct : 1; /**< Completion Timeout Mask */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 cm : 1; /**< Completer Abort Mask */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 uc : 1; /**< Unexpected Completion Mask */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 ro : 1; /**< Receiver Overflow Mask */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 mt : 1; /**< Malformed TLP Mask */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[19:19] */
+                            /* Bits[19:19], default=0*/
+    UINT32 ure : 1; /**< Unsupported Request Error Mask */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 avm : 1; /**< ACS Violation Mask */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 uiem : 1; /**< Uncorrectable Internal Error Mask */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 mcbtlpm : 1; /**< MC Blocked TLP Mask */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 aebm : 1; /**< AtomicOp Egress Blocked Mask */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 tlppbem : 1; /**< TLP Prefix Blocked Error Mask */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 ptlpebm : 1; /**< Poisoned TLP Egress Blocked Mask */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 rsvd_3 : 5; /**< Undefined - auto filled rsvd_[31:27] */
+                            /* Bits[31:27], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2015,6 +2408,33 @@ typedef union {
 #define UEM_PCIE_CFG_PTLPEBM_LSB 0x001a
 #define UEM_PCIE_CFG_PTLPEBM_SIZE 0x0001
 
+/** CEM_PCIE_CFG desc:
+  * Register default value:        0x0000E000
+  * Register full path in IP: PXPC/sippcie2x4_configreg_top_inst0/sippcie2x4_inst0_pcie_cfg_port_0_/sippcie2x4_cfg_pri_sippcie2x4_cfg_sb/CEM
+  * Security PolicyGroup: SIPPCIE2X4_IOSFPRI_PLY0_1
+  * This is the Correctable Error Mask registers. Refer description for each individual field below for more details of the register functionality.
+  */
+
+#define CEM_PCIE_CFG_REG                 (0x00000114U)
+
+typedef union {
+  struct {
+    UINT32 re : 1; /**< Receiver Error Mask */
+    UINT32 rsvd_0 : 5; /**< Undefined - auto filled rsvd_[05:01] */
+    UINT32 bt : 1; /**< Bad TLP Mask */
+    UINT32 bd : 1; /**< Bad DLLP Mask */
+    UINT32 rnr : 1; /**< Replay Number Rollover Mask */
+    UINT32 rsvd_1 : 3; /**< Undefined - auto filled rsvd_[11:09] */
+    UINT32 rtt : 1; /**< Replay Timer Timeout Mask */
+    UINT32 anfem : 1; /**< Advisory Non-Fatal Error Mask */
+    UINT32 ciem : 1; /**< Corrected Internal Error Mask */
+    UINT32 hlom : 1; /**< Header Log Overflow Mask */
+    UINT32 rsvd_m : 16; /**< Reserved */
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} CEM_PCIE_CFG_STRUCT;
 
 /** PTMECH desc:
   */
@@ -2023,9 +2443,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 cid : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 cid : 16; /**< Capability ID */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2043,7 +2466,6 @@ typedef union {
 #define PTMECH_PCIE_CFG_NCO_LSB 0x0014
 #define PTMECH_PCIE_CFG_NCO_SIZE 0x000c
 
-
 /** PTMCAPR desc:
   */
 
@@ -2051,14 +2473,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ptmreqc : 1;
-    UINT32 ptmrspc : 1;
-    UINT32 ptmrc : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 ptmpdac : 1;
-    UINT32 rsvd_1 : 3;
-    UINT32 lcg : 8;
-    UINT32 rsvd_m : 16;
+    UINT32 ptmreqc : 1; /**< PTM Requester Capable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 ptmrspc : 1; /**< PTM Responder Capable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 ptmrc : 1; /**< PTM Root Capable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[03:03] */
+                            /* Bits[3:3], default=0*/
+    UINT32 ptmpdac : 1; /**< PTM Propagation Delay Adaptation Capable */
+                            /* Bits[4:4], default=0x00000001*/
+    UINT32 rsvd_1 : 3; /**< Undefined - auto filled rsvd_[07:05] */
+                            /* Bits[7:5], default=0*/
+    UINT32 lcg : 8; /**< Local Clock Granularity */
+                            /* Bits[15:8], default=0x00000004*/
+    UINT32 rsvd_m : 16; /**< Reserved */
+                            /* Bits[31:16], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2082,7 +2512,6 @@ typedef union {
 #define PTMCAPR_PCIE_CFG_RSVD_M_LSB 0x0010
 #define PTMCAPR_PCIE_CFG_RSVD_M_SIZE 0x0010
 
-
 /** PTMCTLR desc:
   */
 
@@ -2090,11 +2519,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ptme : 1;
-    UINT32 rs : 1;
-    UINT32 rsvd_0 : 6;
-    UINT32 eg : 8;
-    UINT32 rsvd_m : 16;
+    UINT32 ptme : 1; /**< PTM Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rs : 1; /**< Root Select */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 rsvd_0 : 6; /**< Undefined - auto filled rsvd_[07:02] */
+                            /* Bits[7:2], default=0*/
+    UINT32 eg : 8; /**< Effective Granularity */
+                            /* Bits[15:8], default=0x00000000*/
+    UINT32 rsvd_m : 16; /**< Reserved */
+                            /* Bits[31:16], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2114,7 +2548,6 @@ typedef union {
 #define PTMCTLR_PCIE_CFG_RSVD_M_LSB 0x0010
 #define PTMCTLR_PCIE_CFG_RSVD_M_SIZE 0x0010
 
-
 /** L1SECH desc:
   */
 
@@ -2122,9 +2555,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pcieec : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 pcieec : 16; /**< PCI Express Extended Capability ID */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2142,7 +2578,6 @@ typedef union {
 #define L1SECH_PCIE_CFG_NCO_LSB 0x0014
 #define L1SECH_PCIE_CFG_NCO_SIZE 0x000c
 
-
 /** L1SCAP desc:
   */
 
@@ -2150,18 +2585,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ppl12s : 1;
-    UINT32 ppl11s : 1;
-    UINT32 al12s : 1;
-    UINT32 al11s : 1;
-    UINT32 l1pss : 1;
-    UINT32 l1sses : 1;
-    UINT32 rsvd_0 : 2;
-    UINT32 pcmrt : 8;
-    UINT32 ptpos : 2;
-    UINT32 rsvd_1 : 1;
-    UINT32 ptv : 5;
-    UINT32 rsvd_m : 8;
+    UINT32 ppl12s : 1; /**< PCI-PM L1.2 Supported */
+                            /* Bits[0:0], default=0x00000001*/
+    UINT32 ppl11s : 1; /**< PCI-PM L1.1 Supported */
+                            /* Bits[1:1], default=0x00000001*/
+    UINT32 al12s : 1; /**< ASPM L1.2 Supported */
+                            /* Bits[2:2], default=0x00000001*/
+    UINT32 al11s : 1; /**< ASPM L1.1 Supported */
+                            /* Bits[3:3], default=0x00000001*/
+    UINT32 l1pss : 1; /**< L1 PM Substates Supported */
+                            /* Bits[4:4], default=0x00000001*/
+    UINT32 l1sses : 1; /**< CLKREQ Acceleration Supported */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[07:06] */
+                            /* Bits[7:6], default=0*/
+    UINT32 pcmrt : 8; /**< Port Common Mode Restore Time */
+                            /* Bits[15:8], default=0x00000028*/
+    UINT32 ptpos : 2; /**< Port Tpower_on Scale */
+                            /* Bits[17:16], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[18:18] */
+                            /* Bits[18:18], default=0*/
+    UINT32 ptv : 5; /**< Port Tpower_on Value */
+                            /* Bits[23:19], default=0x00000005*/
+    UINT32 rsvd_m : 8; /**< Reserved */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2193,7 +2640,6 @@ typedef union {
 #define L1SCAP_PCIE_CFG_RSVD_M_LSB 0x0018
 #define L1SCAP_PCIE_CFG_RSVD_M_SIZE 0x0008
 
-
 /** L1SCTL1 desc:
   */
 
@@ -2201,17 +2647,28 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ppl12e : 1;
-    UINT32 ppl11e : 1;
-    UINT32 al12e : 1;
-    UINT32 al11e : 1;
-    UINT32 l1sseie : 1;
-    UINT32 l1ssec : 1;
-    UINT32 rsvd_0 : 2;
-    UINT32 cmrt : 8;
-    UINT32 l12ltrtlv : 10;
-    UINT32 rsvd_1 : 3;
-    UINT32 l12ltrtlsv : 3;
+    UINT32 ppl12e : 1; /**< PCI-PM L1.2 Enabled */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 ppl11e : 1; /**< PCI-PM L1.1 Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 al12e : 1; /**< ASPM L1.2 Enable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 al11e : 1; /**< ASPM L1.1 Enable */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 l1sseie : 1; /**< CLKREQ Acceleration Interrupt Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 l1ssec : 1; /**< L1 Substate Exit Control */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[07:06] */
+                            /* Bits[7:6], default=0*/
+    UINT32 cmrt : 8; /**< Common Mode Restore Time */
+                            /* Bits[15:8], default=0x00000000*/
+    UINT32 l12ltrtlv : 10; /**< L1.2 LTR Threshold Latency Value */
+                            /* Bits[25:16], default=0x00000000*/
+    UINT32 rsvd_1 : 3; /**< Undefined - auto filled rsvd_[28:26] */
+                            /* Bits[28:26], default=0*/
+    UINT32 l12ltrtlsv : 3; /**< L1.2 LTR Threshold Latency Scale Value */
+                            /* Bits[31:29], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2241,7 +2698,6 @@ typedef union {
 #define L1SCTL1_PCIE_CFG_L12LTRTLSV_LSB 0x001d
 #define L1SCTL1_PCIE_CFG_L12LTRTLSV_SIZE 0x0003
 
-
 /** L1SCTL2 desc:
   */
 
@@ -2249,10 +2705,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 tpos : 2;
-    UINT32 rsvd_0 : 1;
-    UINT32 powt : 5;
-    UINT32 rsvd_m : 24;
+    UINT32 tpos : 2; /**< Tpower_on Scale */
+                            /* Bits[1:0], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[02:02] */
+                            /* Bits[2:2], default=0*/
+    UINT32 powt : 5; /**< Power On Wait Time */
+                            /* Bits[7:3], default=0x00000005*/
+    UINT32 rsvd_m : 24; /**< Reserved */
+                            /* Bits[31:8], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2270,7 +2730,6 @@ typedef union {
 #define L1SCTL2_PCIE_CFG_RSVD_M_LSB 0x0008
 #define L1SCTL2_PCIE_CFG_RSVD_M_SIZE 0x0018
 
-
 /** ACSECH desc:
   */
 
@@ -2278,9 +2737,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 cid : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 cid : 16; /**< Capability ID */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2298,7 +2760,6 @@ typedef union {
 #define ACSECH_PCIE_CFG_NCO_LSB 0x0014
 #define ACSECH_PCIE_CFG_NCO_SIZE 0x000c
 
-
 /** ACSCAPR desc:
   */
 
@@ -2306,14 +2767,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 v : 1;
-    UINT16 b : 1;
-    UINT16 r : 1;
-    UINT16 c : 1;
-    UINT16 u : 1;
-    UINT16 e : 1;
-    UINT16 t : 1;
-    UINT16 rsvd_m : 9;
+    UINT16 v : 1; /**< ACS Source Validation */
+                            /* Bits[0:0], default=0x00000001*/
+    UINT16 b : 1; /**< ACS Translation Blocking */
+                            /* Bits[1:1], default=0x00000001*/
+    UINT16 r : 1; /**< ACS P2P Request Redirect */
+                            /* Bits[2:2], default=0x00000001*/
+    UINT16 c : 1; /**< ACS P2P Completion Redirect */
+                            /* Bits[3:3], default=0x00000001*/
+    UINT16 u : 1; /**< ACS Upstream Forwarding */
+                            /* Bits[4:4], default=0x00000001*/
+    UINT16 e : 1; /**< ACS P2P Egress Control */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT16 t : 1; /**< ACS Direct Translated P2P */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT16 rsvd_m : 9; /**< Reserved */
+                            /* Bits[15:7], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -2340,7 +2809,6 @@ typedef union {
 #define ACSCAPR_PCIE_CFG_RSVD_M_LSB 0x0007
 #define ACSCAPR_PCIE_CFG_RSVD_M_SIZE 0x0009
 
-
 /** VCCH desc:
   */
 
@@ -2348,9 +2816,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 cid : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 cid : 16; /**< PCI Express Extended Capability ID */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2369,7 +2840,6 @@ typedef union {
 #define VCCH_PCIE_CFG_NCO_SIZE 0x000c
 
 
-
 /** PVCCR1 desc:
   */
 
@@ -2377,13 +2847,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 evcc : 3;
-    UINT32 rsvd_0 : 1;
-    UINT32 lpevcc : 3;
-    UINT32 rsvd_1 : 1;
-    UINT32 rc : 2;
-    UINT32 fares : 2;
-    UINT32 rsvd_m : 20;
+    UINT32 evcc : 3; /**< Extended VC Count */
+                            /* Bits[2:0], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[03:03] */
+                            /* Bits[3:3], default=0*/
+    UINT32 lpevcc : 3; /**< Low Priority Extended VC Count */
+                            /* Bits[6:4], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[07:07] */
+                            /* Bits[7:7], default=0*/
+    UINT32 rc : 2; /**< Reference Clock */
+                            /* Bits[9:8], default=0x00000000*/
+    UINT32 fares : 2; /**< Function Arbitration Table Entry Size */
+                            /* Bits[11:10], default=0x00000000*/
+    UINT32 rsvd_m : 20; /**< Reserved */
+                            /* Bits[31:12], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2405,7 +2882,6 @@ typedef union {
 #define PVCCR1_PCIE_CFG_RSVD_M_LSB 0x000c
 #define PVCCR1_PCIE_CFG_RSVD_M_SIZE 0x0014
 
-
 /** V0VCRC desc:
   */
 
@@ -2413,11 +2889,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 fac : 8;
-    UINT32 rsvd_0 : 8;
-    UINT32 mts : 7;
-    UINT32 rsvd_1 : 1;
-    UINT32 fato : 8;
+    UINT32 fac : 8; /**< Function Arbitration Capability */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 rsvd_0 : 8; /**< Undefined - auto filled rsvd_[15:08] */
+                            /* Bits[15:8], default=0*/
+    UINT32 mts : 7; /**< Maximum Time Slots */
+                            /* Bits[22:16], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[23:23] */
+                            /* Bits[23:23], default=0*/
+    UINT32 fato : 8; /**< Function Arbitration Table Offset */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2435,7 +2916,6 @@ typedef union {
 #define V0VCRC_PCIE_CFG_FATO_LSB 0x0018
 #define V0VCRC_PCIE_CFG_FATO_SIZE 0x0008
 
-
 /** V0CTL desc:
   */
 
@@ -2443,16 +2923,26 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 tvmt0 : 1;
-    UINT32 tvm : 7;
-    UINT32 rsvd_0 : 2;
-    UINT32 etvm : 6;
-    UINT32 lfat : 1;
-    UINT32 fas : 3;
-    UINT32 rsvd_1 : 4;
-    UINT32 id : 3;
-    UINT32 rsvd_2 : 4;
-    UINT32 en : 1;
+    UINT32 tvmt0 : 1; /**< Transaction Class / Virtual Channel Map TC0 */
+                            /* Bits[0:0], default=0x00000001*/
+    UINT32 tvm : 7; /**< Transaction Class / Virtual Channel Map */
+                            /* Bits[7:1], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[09:08] */
+                            /* Bits[9:8], default=0*/
+    UINT32 etvm : 6; /**< Extended TC/VC Map */
+                            /* Bits[15:10], default=0x00000000*/
+    UINT32 lfat : 1; /**< Load Function Arbitration Table */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 fas : 3; /**< Function Arbitration Select */
+                            /* Bits[19:17], default=0x00000000*/
+    UINT32 rsvd_1 : 4; /**< Undefined - auto filled rsvd_[23:20] */
+                            /* Bits[23:20], default=0*/
+    UINT32 id : 3; /**< Virtual Channel Identifier */
+                            /* Bits[26:24], default=0x00000000*/
+    UINT32 rsvd_2 : 4; /**< Undefined - auto filled rsvd_[30:27] */
+                            /* Bits[30:27], default=0*/
+    UINT32 en : 1; /**< Virtual Channel Enable */
+                            /* Bits[31:31], default=0x00000001*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2478,7 +2968,6 @@ typedef union {
 #define V0CTL_PCIE_CFG_EN_LSB 0x001f
 #define V0CTL_PCIE_CFG_EN_SIZE 0x0001
 
-
 /** V1VCRC desc:
   */
 
@@ -2486,11 +2975,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 fac : 8;
-    UINT32 rsvd_0 : 8;
-    UINT32 mts : 7;
-    UINT32 rsvd_1 : 1;
-    UINT32 fato : 8;
+    UINT32 fac : 8; /**< Function Arbitration Capability */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 rsvd_0 : 8; /**< Undefined - auto filled rsvd_[15:08] */
+                            /* Bits[15:8], default=0*/
+    UINT32 mts : 7; /**< Maximum Time Slots */
+                            /* Bits[22:16], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[23:23] */
+                            /* Bits[23:23], default=0*/
+    UINT32 fato : 8; /**< Function Arbitration Table Offset */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2508,7 +3002,6 @@ typedef union {
 #define V1VCRC_PCIE_CFG_FATO_LSB 0x0018
 #define V1VCRC_PCIE_CFG_FATO_SIZE 0x0008
 
-
 /** V1CTL desc:
   */
 
@@ -2516,16 +3009,26 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 1;
-    UINT32 tvm : 7;
-    UINT32 rsvd_1 : 2;
-    UINT32 etvm : 6;
-    UINT32 lfat : 1;
-    UINT32 fas : 3;
-    UINT32 rsvd_2 : 4;
-    UINT32 id : 4;
-    UINT32 rsvd_3 : 3;
-    UINT32 en : 1;
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[00:00] */
+                            /* Bits[0:0], default=0*/
+    UINT32 tvm : 7; /**< Transaction Class / Virtual Channel Map */
+                            /* Bits[7:1], default=0x00000000*/
+    UINT32 rsvd_1 : 2; /**< Undefined - auto filled rsvd_[09:08] */
+                            /* Bits[9:8], default=0*/
+    UINT32 etvm : 6; /**< Extended TC/VC Map */
+                            /* Bits[15:10], default=0x00000000*/
+    UINT32 lfat : 1; /**< Load Function Arbitration Table */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 fas : 3; /**< Function Arbitration Select */
+                            /* Bits[19:17], default=0x00000000*/
+    UINT32 rsvd_2 : 4; /**< Undefined - auto filled rsvd_[23:20] */
+                            /* Bits[23:20], default=0*/
+    UINT32 id : 4; /**< Virtual Channel Identifier */
+                            /* Bits[27:24], default=0x00000000*/
+    UINT32 rsvd_3 : 3; /**< Undefined - auto filled rsvd_[30:28] */
+                            /* Bits[30:28], default=0*/
+    UINT32 en : 1; /**< Virtual Channel Enable */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2549,7 +3052,6 @@ typedef union {
 #define V1CTL_PCIE_CFG_EN_LSB 0x001f
 #define V1CTL_PCIE_CFG_EN_SIZE 0x0001
 
-
 /** PCIERTP1 desc:
   */
 
@@ -2557,8 +3059,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 g1x4 : 4;
-    UINT8 rsvd_0 : 4;
+    UINT8 g1x4 : 4; /**< Gen 1 x4 */
+                            /* Bits[3:0], default=0x00000006*/
+    UINT8 rsvd_0 : 4; /**< Undefined - auto filled rsvd_[07:04] */
+                            /* Bits[7:4], default=0*/
   }     Bits;
   UINT8 Data;
 } PCIERTP1_PCIE_CFG_STRUCT;
@@ -2579,11 +3083,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 g4ccnfts : 8;
-    UINT32 g4ucnfts : 8;
-    UINT32 rsvd_0 : 6;
-    UINT32 g4l0sic : 2;
-    UINT32 g4asl0spl : 8;
+    UINT32 g4ccnfts : 8; /**< Gen4 Common Clock N_FTS */
+                            /* Bits[7:0], default=0x0000001E*/
+    UINT32 g4ucnfts : 8; /**< Gen4 Unique Clock N_FTS */
+                            /* Bits[15:8], default=0x00000028*/
+    UINT32 rsvd_0 : 6; /**< Undefined - auto filled rsvd_[21:16] */
+                            /* Bits[21:16], default=0*/
+    UINT32 g4l0sic : 2; /**< Gen4 L0s Entry Idle Control */
+                            /* Bits[23:22], default=0x00000000*/
+    UINT32 g4asl0spl : 8; /**< Gen4Active State L0s Preparation Latency */
+                            /* Bits[31:24], default=0x0000000C*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2612,10 +3121,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 g1ccnfts : 8;
-    UINT32 g1ucnfts : 8;
-    UINT32 g2ccnfts : 8;
-    UINT32 g2ucnfts : 8;
+    UINT32 g1ccnfts : 8; /**< Gen 1 Common Clock N_FTS */
+                            /* Bits[7:0], default=0x00000013*/
+    UINT32 g1ucnfts : 8; /**< Gen1 Unique Clock N_FTS */
+                            /* Bits[15:8], default=0x0000002A*/
+    UINT32 g2ccnfts : 8; /**< Gen2 Common Clock N_FTS */
+                            /* Bits[23:16], default=0x00000026*/
+    UINT32 g2ucnfts : 8; /**< Gen2 Unique Clock N_FTS */
+                            /* Bits[31:24], default=0x00000054*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2644,14 +3157,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 g1l0sic : 2;
-    UINT32 g2l0sic : 2;
-    UINT32 txl0srxexit : 2;
-    UINT32 txl0srxentry : 1;
-    UINT32 anftsen : 1;
-    UINT32 anftso : 8;
-    UINT32 g1asl0spl : 8;
-    UINT32 g2asl0spl : 8;
+    UINT32 g1l0sic : 2; /**< Gen1 L0s Entry Idle Control */
+                            /* Bits[1:0], default=0x00000000*/
+    UINT32 g2l0sic : 2; /**< Gen2 L0s Entry Idle Control */
+                            /* Bits[3:2], default=0x00000000*/
+    UINT32 txl0srxexit : 2; /**< Tx L0s Rx Exit Control */
+                            /* Bits[5:4], default=0x00000000*/
+    UINT32 txl0srxentry : 1; /**< Tx L0s Rx Entry */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 anftsen : 1; /**< Adaptive N_FTS Enable */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 anftso : 8; /**< Adaptive N_FTS Offset */
+                            /* Bits[15:8], default=0x00000000*/
+    UINT32 g1asl0spl : 8; /**< Gen1 Active State L0s Preparation Latency */
+                            /* Bits[23:16], default=0x0000000C*/
+    UINT32 g2asl0spl : 8; /**< Gen2 Active State L0s Preparation Latency */
+                            /* Bits[31:24], default=0x0000000C*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2688,20 +3209,34 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 laangc : 3;
-    UINT32 lafgc : 3;
-    UINT32 latgc : 3;
-    UINT32 g12skposl : 11;
-    UINT32 pmet : 2;
-    UINT32 crsren : 1;
-    UINT32 rsvd_0 : 2;
-    UINT32 rpagc : 1;
-    UINT32 rsvd_1 : 1;
-    UINT32 rllg3r : 1;
-    UINT32 lsieid : 1;
-    UINT32 rrcp : 1;
-    UINT32 rsvd_2 : 1;
-    UINT32 g3l0sedp : 1;
+    UINT32 laangc : 3; /**< Link Arbiter Ack/Nak Grant count */
+                            /* Bits[2:0], default=0x00000003*/
+    UINT32 lafgc : 3; /**< Link Arbiter FCP Grant count */
+                            /* Bits[5:3], default=0x00000003*/
+    UINT32 latgc : 3; /**< Link Arbiter TLP Grant count */
+                            /* Bits[8:6], default=0x00000003*/
+    UINT32 g12skposl : 11; /**< GEN1/2 SKIP Ordered-Set Latency */
+                            /* Bits[19:9], default=0x000004B0*/
+    UINT32 pmet : 2; /**< PME Timeout */
+                            /* Bits[21:20], default=0x00000000*/
+    UINT32 crsren : 1; /**< Completion Retry Status Replay Enable */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[24:23] */
+                            /* Bits[24:23], default=0*/
+    UINT32 rpagc : 1; /**< Reset Prep ACK Generation Check */
+                            /* Bits[25:25], default=0x00000001*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[26:26] */
+                            /* Bits[26:26], default=0*/
+    UINT32 rllg3r : 1; /**< Reset Link Layer In GEN3 Recovery */
+                            /* Bits[27:27], default=0x00000000*/
+    UINT32 lsieid : 1; /**< Loopback Slave Infer Electrical Idle Disable */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 rrcp : 1; /**< RXL0s Receiver Control Policy */
+                            /* Bits[29:29], default=0x00000001*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[30:30] */
+                            /* Bits[30:30], default=0*/
+    UINT32 g3l0sedp : 1; /**< GEN3 L0s Exit Deskew Policy */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2744,26 +3279,46 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 sncd : 1;
-    UINT32 crcd : 1;
-    UINT32 scmbb : 1;
-    UINT32 dmil1edm : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 spce : 1;
-    UINT32 cmplrx : 1;
-    UINT32 sqol0 : 1;
-    UINT32 repid : 1;
-    UINT32 dsb : 1;
-    UINT32 irfelb : 1;
-    UINT32 nedlbe : 1;
-    UINT32 g3csos : 1;
-    UINT32 ldswqrp : 1;
-    UINT32 ctonfae : 1;
-    UINT32 reutflpbkme : 1;
-    UINT32 tals : 8;
-    UINT32 rsvd_1 : 4;
-    UINT32 reutlpbkme : 1;
-    UINT32 txnftsadd : 3;
+    UINT32 sncd : 1; /**< Sequence Number Checking Disable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 crcd : 1; /**< CRC Disable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 scmbb : 1; /**< Scrambler Bypass */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 dmil1edm : 1; /**< DMI L1 Entry Disable Mask */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[04:04] */
+                            /* Bits[4:4], default=0*/
+    UINT32 spce : 1; /**< Squelch Propagation Control Enable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 cmplrx : 1; /**< Compliance Receive */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 sqol0 : 1; /**< Squelch Off in L0 */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 repid : 1; /**< Receive Error Packet Invalidation Disable */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 dsb : 1; /**< De-skew Bypass */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 irfelb : 1; /**< Initiate Remote Far-end Loop Back */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 nedlbe : 1; /**< Near End Digital Loopback Mode Enable */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 g3csos : 1; /**< GEN3 Compliance SOS */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 ldswqrp : 1; /**< Link Down SWQ Reset Policy */
+                            /* Bits[13:13], default=0x00000001*/
+    UINT32 ctonfae : 1; /**< Completion Time-Out Non-Fatal Advisory Error Enable */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 reutflpbkme : 1; /**< REUT Forced Loopback Master Entry */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 tals : 8; /**< Training Abort LTSSM State */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 rsvd_1 : 4; /**< Undefined - auto filled rsvd_[27:24] */
+                            /* Bits[27:24], default=0*/
+    UINT32 reutlpbkme : 1; /**< REUT Loopback Master Entry */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 txnftsadd : 3; /**< Transmit nFTS Adder */
+                            /* Bits[31:29], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2820,13 +3375,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 nxttxseqnum : 12;
-    UINT32 rsvd_0 : 4;
-    UINT32 dllretry : 1;
-    UINT32 replaynum : 2;
-    UINT32 lnkstat : 4;
-    UINT32 rsvd_1 : 1;
-    UINT32 ltsmstate : 8;
+    UINT32 nxttxseqnum : 12; /**< Next Transmitted Sequence Number */
+                            /* Bits[11:0], default=0x00000000*/
+    UINT32 rsvd_0 : 4; /**< Undefined - auto filled rsvd_[15:12] */
+                            /* Bits[15:12], default=0*/
+    UINT32 dllretry : 1; /**< Data Link Layer Retry */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 replaynum : 2; /**< Replay Number */
+                            /* Bits[18:17], default=0x00000000*/
+    UINT32 lnkstat : 4; /**< Link Status */
+                            /* Bits[22:19], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[23:23] */
+                            /* Bits[23:23], default=0*/
+    UINT32 ltsmstate : 8; /**< LTSM State */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2857,25 +3419,44 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 g3skposl : 9;
-    UINT32 acknakgh : 1;
-    UINT32 lpadllpgd : 1;
-    UINT32 onpraspml1p : 1;
-    UINT32 obtmrtnal1r : 2;
-    UINT32 rsvd_0 : 2;
-    UINT32 clg3fe : 4;
-    UINT32 pdsp : 1;
-    UINT32 rtd3pdsp : 1;
-    UINT32 rrptlpc : 1;
-    UINT32 ssrrs : 1;
-    UINT32 ssrld : 1;
-    UINT32 blkdqdasd : 1;
-    UINT32 blkdqda : 1;
-    UINT32 blkpapc : 1;
-    UINT32 illrcld : 1;
-    UINT32 itlrcld : 1;
-    UINT32 dpchserm : 1;
-    UINT32 cssaif : 1;
+    UINT32 g3skposl : 9; /**< GEN3 SKIP Ordered-Set Latency */
+                            /* Bits[8:0], default=0x00000172*/
+    UINT32 acknakgh : 1; /**< ACK NAK Generation Handling */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 lpadllpgd : 1; /**< Low Priority ACK DLLP Grant Disable */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 onpraspml1p : 1; /**< Outstanding Non-Posted Request ASPM L1 Prevention */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 obtmrtnal1r : 2; /**< Outstanding Block L1 Timer To NAK ASPM L1 Request */
+                            /* Bits[13:12], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[15:14] */
+                            /* Bits[15:14], default=0*/
+    UINT32 clg3fe : 4; /**< Cause of Last GEN3 Framing Error */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 pdsp : 1; /**< Present Detect State Policy */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 rtd3pdsp : 1; /**< RTD3 Present Detect State Policy */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 rrptlpc : 1; /**< Reset Receive Path using TLP Count */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 ssrrs : 1; /**< Survivability Sync Reset in Recovery state */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 ssrld : 1; /**< Survivability Sync Reset during Link Down */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 blkdqdasd : 1; /**< Block Detect.Quiet -> Detect.Active Strap Default */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 blkdqda : 1; /**< Block Detect.Quiet -> Detect.Active */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 blkpapc : 1; /**< Block Polling.Active -> Polling.Configuration */
+                            /* Bits[27:27], default=0x00000000*/
+    UINT32 illrcld : 1; /**< Initialize Link Layer Receiver Control on Link Down */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 itlrcld : 1; /**< Initialize Transaction Layer Receiver Control on Link Down */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 dpchserm : 1; /**< DPC Handling during SERM */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 cssaif : 1; /**< Completion Status during SAI Failure */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2932,18 +3513,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 iosfmadp : 4;
-    UINT32 ptmrnopad : 2;
-    UINT32 ptmrpae : 1;
-    UINT32 tgtscf : 1;
-    UINT32 pgtscfe : 1;
-    UINT32 pgtscff : 3;
-    UINT32 gtfspc : 1;
-    UINT32 gtffc : 2;
-    UINT32 gtfrc : 3;
-    UINT32 pltlff : 3;
-    UINT32 ptmmmc : 2;
-    UINT32 rsvd_m : 9;
+    UINT32 iosfmadp : 4; /**< IOSF Max Allowed Delay programming */
+                            /* Bits[3:0], default=0x00000000*/
+    UINT32 ptmrnopad : 2; /**< PTM Request Number Of Periodic ACK DLLP */
+                            /* Bits[5:4], default=0x00000000*/
+    UINT32 ptmrpae : 1; /**< PTM Request Periodic ACK Enable */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 tgtscf : 1; /**< Trigger Global Time Stamp Counter Fetch */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 pgtscfe : 1; /**< Periodic Global Time Stamp Counter Fetch Enable */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 pgtscff : 3; /**< Periodic Global Time Stamp Counter Fetch Frequency */
+                            /* Bits[11:9], default=0x00000000*/
+    UINT32 gtfspc : 1; /**< Global Time Fetch Status Pending Completion */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 gtffc : 2; /**< Global Time Fetch Fail Counter */
+                            /* Bits[14:13], default=0x00000000*/
+    UINT32 gtfrc : 3; /**< Global Time Fetch Retry Counter */
+                            /* Bits[17:15], default=0x00000000*/
+    UINT32 pltlff : 3; /**< Periodic Local TSC Link Fetch Frequency */
+                            /* Bits[20:18], default=0x00000000*/
+    UINT32 ptmmmc : 2; /**< PTM Monitor Mux Control */
+                            /* Bits[22:21], default=0x00000000*/
+    UINT32 rsvd_m : 9; /**< Reserved */
+                            /* Bits[31:23], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2988,14 +3581,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ltrslovrv : 10;
-    UINT32 ltrslsovrv : 3;
-    UINT32 rsvd_0 : 2;
-    UINT32 ltrsrovr : 1;
-    UINT32 ltrnslovrv : 10;
-    UINT32 ltrnslsovrv : 3;
-    UINT32 rsvd_1 : 2;
-    UINT32 ltrnsrovr : 1;
+    UINT32 ltrslovrv : 10; /**< LTR Snoop Latency Override Value */
+                            /* Bits[9:0], default=0x00000000*/
+    UINT32 ltrslsovrv : 3; /**< LTR Snoop Latency Scale Override Value */
+                            /* Bits[12:10], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[14:13] */
+                            /* Bits[14:13], default=0*/
+    UINT32 ltrsrovr : 1; /**< LTR Snoop Requirement Bit Override */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 ltrnslovrv : 10; /**< LTR Non-Snoop Latency Override Value */
+                            /* Bits[25:16], default=0x00000000*/
+    UINT32 ltrnslsovrv : 3; /**< LTR Non-Snoop Latency Scale Override Value */
+                            /* Bits[28:26], default=0x00000000*/
+    UINT32 rsvd_1 : 2; /**< Undefined - auto filled rsvd_[30:29] */
+                            /* Bits[30:29], default=0*/
+    UINT32 ltrnsrovr : 1; /**< LTR Non-Snoop Requirement Bit Override */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3028,14 +3629,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 ltrsovren : 1;
-    UINT8 ltrnsovren : 1;
-    UINT8 rsvd_0 : 1;
-    UINT8 ltrovrplcy : 1;
-    UINT8 dvltrrpl1p0 : 1;
-    UINT8 dvltrrpl1p1 : 1;
-    UINT8 dvltrrpl1p2 : 1;
-    UINT8 rsvd_m : 1;
+    UINT8 ltrsovren : 1; /**< LTR Snoop Override Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT8 ltrnsovren : 1; /**< LTR Non-Snoop Override Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT8 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[02:02] */
+                            /* Bits[2:2], default=0*/
+    UINT8 ltrovrplcy : 1; /**< LTR Override Policy */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT8 dvltrrpl1p0 : 1; /**< Device LTR Requirement Policy For L1.0 & L1.Low */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT8 dvltrrpl1p1 : 1; /**< Device LTR Requirement Policy For L1.1 */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT8 dvltrrpl1p2 : 1; /**< Device LTR Requirement Policy For L1.2 */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT8 rsvd_m : 1; /**< Reserved */
+                            /* Bits[7:7], default=0x00000000*/
   }     Bits;
   UINT8 Data;
 } LTROVR2_PCIE_CFG_STRUCT;
@@ -3068,18 +3677,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 g12ctsdp : 1;
-    UINT32 g3ctsdp : 1;
-    UINT32 g4ctsdp : 1;
-    UINT32 ltssmpcoe : 1;
-    UINT32 ltssmpcod : 1;
-    UINT32 aartle : 1;
-    UINT32 rcvdpdsp : 1;
-    UINT32 aatrle : 1;
-    UINT32 arcfuncfl : 1;
-    UINT32 rsvd_0 : 18;
-    UINT32 sqdis : 1;
-    UINT32 rsvd_m : 4;
+    UINT32 g12ctsdp : 1; /**< GEN1/2 Consecutive Training Sequence Decode Policy */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 g3ctsdp : 1; /**< GEN3 Consecutive Training Sequence Decode Policy */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 g4ctsdp : 1; /**< GEN4 Consecutive Training Sequence Decode Policy */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 ltssmpcoe : 1; /**< LTSSM Port Config Override Enable */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 ltssmpcod : 1; /**< LTSSM Port Config Override Directions */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 aartle : 1; /**< AFE Analog RX to TX Loopback Enable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 rcvdpdsp : 1; /**< Receiver Detection in Powerdown State Policy */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 aatrle : 1; /**< AFE Analog X to RX Loopback Enable */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 arcfuncfl : 1; /**< Allow Rate Change for Unconfigured Lane */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 rsvd_0 : 18; /**< Undefined - auto filled rsvd_[26:09] */
+                            /* Bits[26:9], default=0*/
+    UINT32 sqdis : 1; /**< Squelch Disable */
+                            /* Bits[27:27], default=0x00000000*/
+    UINT32 rsvd_m : 4; /**< Reserved */
+                            /* Bits[31:28], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3122,21 +3743,36 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ltlppdis : 1;
-    UINT32 cpusel : 1;
-    UINT32 dmitxswing : 1;
-    UINT32 fdsv : 3;
-    UINT32 vtdte : 1;
-    UINT32 rsvd_0 : 7;
-    UINT32 ebm : 1;
-    UINT32 forcel : 3;
-    UINT32 fcsl : 2;
-    UINT32 pcieslf : 3;
-    UINT32 rsvd_1 : 1;
-    UINT32 pciesl : 3;
-    UINT32 rsvd_2 : 1;
-    UINT32 ebmg3 : 1;
-    UINT32 rsvd_m : 3;
+    UINT32 ltlppdis : 1; /**< Local TLP Prefix Disable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 cpusel : 1; /**< CPU Select */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 dmitxswing : 1; /**< DMI TX Swing */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 fdsv : 3; /**< DMI Force Detect Strap Value */
+                            /* Bits[5:3], default=0x00000000*/
+    UINT32 vtdte : 1; /**< VT-d Translation Enable */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 rsvd_0 : 7; /**< Undefined - auto filled rsvd_[13:07] */
+                            /* Bits[13:7], default=0*/
+    UINT32 ebm : 1; /**< Elastic Buffer Mode */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 forcel : 3; /**< Force Limit to x1,x2,x4,x8,x16 */
+                            /* Bits[17:15], default=0x00000000*/
+    UINT32 fcsl : 2; /**< Flow Control Scale Limit */
+                            /* Bits[19:18], default=0x00000003*/
+    UINT32 pcieslf : 3; /**< PCI Express Speed Limit */
+                            /* Bits[22:20], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[23:23] */
+                            /* Bits[23:23], default=0*/
+    UINT32 pciesl : 3; /**< PCI Express Speed Limit */
+                            /* Bits[26:24], default=0x00000000*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[27:27] */
+                            /* Bits[27:27], default=0*/
+    UINT32 ebmg3 : 1; /**< Elastic Buffer Mode Gen3 */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 rsvd_m : 3; /**< Reserved */
+                            /* Bits[31:29], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3181,17 +3817,28 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dtxlte : 1;
-    UINT32 drxlte : 1;
-    UINT32 ttg : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 tsl0m : 2;
-    UINT32 tsl1m : 2;
-    UINT32 tsl2m : 2;
-    UINT32 tsl3m : 2;
-    UINT32 rsvd_1 : 4;
-    UINT32 tt : 8;
-    UINT32 tp : 8;
+    UINT32 dtxlte : 1; /**< Dynamic TX Link Throttling Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 drxlte : 1; /**< Dynamic RX Link Throttling Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 ttg : 1; /**< Throttling Timer Granularity */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[03:03] */
+                            /* Bits[3:3], default=0*/
+    UINT32 tsl0m : 2; /**< Throttling Severity Level 0 Multiplier */
+                            /* Bits[5:4], default=0x00000003*/
+    UINT32 tsl1m : 2; /**< Throttling Severity Level 1 Multiplier */
+                            /* Bits[7:6], default=0x00000000*/
+    UINT32 tsl2m : 2; /**< Throttling Severity Level 2 Multiplier */
+                            /* Bits[9:8], default=0x00000001*/
+    UINT32 tsl3m : 2; /**< Throttling Severity Level 3 Multiplier */
+                            /* Bits[11:10], default=0x00000002*/
+    UINT32 rsvd_1 : 4; /**< Undefined - auto filled rsvd_[15:12] */
+                            /* Bits[15:12], default=0*/
+    UINT32 tt : 8; /**< Throttle Time */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 tp : 8; /**< Throttle Period */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3230,22 +3877,38 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 l1fsoe : 1;
-    UINT32 rsvd_0 : 2;
-    UINT32 l1snzcrewd : 1;
-    UINT32 l1ltrtlv : 10;
-    UINT32 l1ltrtlsv : 3;
-    UINT32 l1le : 1;
-    UINT32 poffwt : 2;
-    UINT32 ipacpe : 1;
-    UINT32 ipiep : 1;
-    UINT32 l1offmrt : 2;
-    UINT32 l1ormrt : 2;
-    UINT32 rsvd_1 : 2;
-    UINT32 l1ocrewd : 1;
-    UINT32 dlsuldlsd : 1;
-    UINT32 dlsulppge : 1;
-    UINT32 fdppge : 1;
+    UINT32 l1fsoe : 1; /**< L1 Full Squelch OFF Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[02:01] */
+                            /* Bits[2:1], default=0*/
+    UINT32 l1snzcrewd : 1; /**< L1.SNOOZ/L1.LOW Clock Request Early Wake Disable */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 l1ltrtlv : 10; /**< L1.LOW LTR Threshold Latency Value */
+                            /* Bits[13:4], default=0x00000014*/
+    UINT32 l1ltrtlsv : 3; /**< L1.LOW LTR Threshold Latency ScaleValue */
+                            /* Bits[16:14], default=0x00000002*/
+    UINT32 l1le : 1; /**< L1.LOW Enable */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 poffwt : 2; /**< Power Off Wait Time */
+                            /* Bits[19:18], default=0x00000003*/
+    UINT32 ipacpe : 1; /**< IP-Accessible Context Propagation Enable */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 ipiep : 1; /**< IP-Inaccessible Entry Policy */
+                            /* Bits[21:21], default=0x00000001*/
+    UINT32 l1offmrt : 2; /**< L1.OFF Minimum Residency Time */
+                            /* Bits[23:22], default=0x00000002*/
+    UINT32 l1ormrt : 2; /**< L1.OFF_RDY Minimum Residency Time */
+                            /* Bits[25:24], default=0x00000002*/
+    UINT32 rsvd_1 : 2; /**< Undefined - auto filled rsvd_[27:26] */
+                            /* Bits[27:26], default=0*/
+    UINT32 l1ocrewd : 1; /**< L1.OFF Clock Request Early Wake Disable */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 dlsuldlsd : 1; /**< Disabled, Detect, L23_Rdy State,Un-Configured Lane and Down-Configured Lane Squelch Disable */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 dlsulppge : 1; /**< Disabled, Detect and L23_Rdy State PHY Lane Power Gating Enable */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 fdppge : 1; /**< Function Disable PHY Power Gating Enable */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3294,25 +3957,44 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 sl1oee : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 l1otcmrp : 1;
-    UINT32 dspm : 1;
-    UINT32 l1scpge : 1;
-    UINT32 disscpge : 1;
-    UINT32 l23rdyscpge : 1;
-    UINT32 detscpge : 1;
-    UINT32 fdcpge : 1;
-    UINT32 l1sphydlpge : 1;
-    UINT32 rsvd_1 : 1;
-    UINT32 phyclpge : 1;
-    UINT32 cpgenh : 2;
-    UINT32 cpgexh : 2;
-    UINT32 mexl1pgltrtlv : 10;
-    UINT32 l1sppge : 1;
-    UINT32 cpmcsre : 1;
-    UINT32 pgcbbld : 1;
-    UINT32 mexl1pgltrtlsv : 3;
+    UINT32 sl1oee : 1; /**< Speculative L1.OFF Exit Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[01:01] */
+                            /* Bits[1:1], default=0*/
+    UINT32 l1otcmrp : 1; /**< L1.OFF TX Common Mode Re-Establishment Policy */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 dspm : 1; /**< Detect State P-State Mapping */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 l1scpge : 1; /**< L1 State Controller Power Gating Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 disscpge : 1; /**< Disabled State Controller Power Gating Enable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 l23rdyscpge : 1; /**< L23_Rdy State Controller Power Gating Enable */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 detscpge : 1; /**< Detect State Controller Power Gating Enable */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 fdcpge : 1; /**< Function Disable Controller Power Gating Enable */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 l1sphydlpge : 1; /**< Reserved */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[10:10] */
+                            /* Bits[10:10], default=0*/
+    UINT32 phyclpge : 1; /**< PHY Common Lane Power Gating Enable */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 cpgenh : 2; /**< Controller Power Gating Entry Hysteresis */
+                            /* Bits[13:12], default=0x00000001*/
+    UINT32 cpgexh : 2; /**< Controller Power Gating Exit Hysteresis */
+                            /* Bits[15:14], default=0x00000003*/
+    UINT32 mexl1pgltrtlv : 10; /**< Mobile Express L1 Power Gating LTR Threshold Latency Value */
+                            /* Bits[25:16], default=0x00000000*/
+    UINT32 l1sppge : 1; /**< Mobile Express L1 State PHY Power Gating Enable */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 cpmcsre : 1; /**< Chassis PMC Save and Restore Enable */
+                            /* Bits[27:27], default=0x00000000*/
+    UINT32 pgcbbld : 1; /**< PGCB Boundary Lock Disable */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 mexl1pgltrtlsv : 3; /**< Mobile Express L1 Power Gating LTR Threshold Latency Scale Value */
+                            /* Bits[31:29], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3367,12 +4049,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 pmcre : 1;
-    UINT8 rsvd_0 : 2;
-    UINT8 se : 1;
-    UINT8 rsvd_1 : 1;
-    UINT8 hae : 1;
-    UINT8 rsvd_m : 2;
+    UINT8 pmcre : 1; /**< PMC Request Enable */
+                            /* Bits[0:0], default=0x00000001*/
+    UINT8 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[02:01] */
+                            /* Bits[2:1], default=0*/
+    UINT8 se : 1; /**< Sleep Enable */
+                            /* Bits[3:3], default=0x00000001*/
+    UINT8 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[04:04] */
+                            /* Bits[4:4], default=0*/
+    UINT8 hae : 1; /**< Hardware Autonomous Enable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT8 rsvd_m : 2; /**< Reserved */
+                            /* Bits[7:6], default=0x00000000*/
   }     Bits;
   UINT8 Data;
 } PCE_PCIE_CFG_STRUCT;
@@ -3399,10 +4087,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pmreqcpgexh : 2;
-    UINT32 osccgh : 2;
-    UINT32 l1pgautopgen : 1;
-    UINT32 rsvd_rw : 27;
+    UINT32 pmreqcpgexh : 2; /**< PM Request Controller Power Gating Exit Hysteresis */
+                            /* Bits[1:0], default=0x00000003*/
+    UINT32 osccgh : 2; /**< Osc Clock Gate Hysterisis */
+                            /* Bits[3:2], default=0x00000002*/
+    UINT32 l1pgautopgen : 1; /**< L1.PG Auto Power Gate Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 rsvd_rw : 27; /**< Reserved */
+                            /* Bits[31:5], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3431,28 +4123,50 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rupp : 1;
-    UINT32 tupp : 1;
-    UINT32 mflntl : 1;
-    UINT32 leqp01tcsp : 1;
-    UINT32 meqsmmflntl : 1;
-    UINT32 hapccpie : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 eqts2irrc : 1;
-    UINT32 rwtneve : 4;
-    UINT32 haed : 1;
-    UINT32 hpcmqe : 1;
-    UINT32 lerscie : 1;
-    UINT32 rtpcoe : 1;
-    UINT32 rtlepceb : 1;
-    UINT32 lep3b : 1;
-    UINT32 lep23b : 1;
-    UINT32 leb : 1;
-    UINT32 reic : 1;
-    UINT32 lersmie : 1;
-    UINT32 qg : 1;
-    UINT32 reifece : 1;
-    UINT32 rec : 8;
+    UINT32 rupp : 1; /**< Receiver Use Preset Policy */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 tupp : 1; /**< Transmitter Use Preset Policy */
+                            /* Bits[1:1], default=0x00000001*/
+    UINT32 mflntl : 1; /**< Multi-Fragment Linear and Nine-Tile List Enable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 leqp01tcsp : 1; /**< Link EQ Phase 0 or 1 Transmit Coefficient Settling Policy */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 meqsmmflntl : 1; /**< Multi-EQ Search Mode, Multi fragment linear and nine tile list Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 hapccpie : 1; /**< Hardware Autonomous Preset/Coefficient Count Per-Iteration Extention */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[06:06] */
+                            /* Bits[6:6], default=0*/
+    UINT32 eqts2irrc : 1; /**< EQ TS2 in Recovery.ReceiverConfig Enable */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 rwtneve : 4; /**< Receiver Wait Time For New Equalization Value Evaluation */
+                            /* Bits[11:8], default=0x00000001*/
+    UINT32 haed : 1; /**< Hardware Autonomous Equalization Done */
+                            /* Bits[12:12], default=0x00000001*/
+    UINT32 hpcmqe : 1; /**< Hardware Preset to Coefficient Mapping Query Enable */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 lerscie : 1; /**< Link Equalization Request SCI Enable */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 rtpcoe : 1; /**< Remote Transmitter Preset Coefficient Override Enable */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 rtlepceb : 1; /**< Remote Transmit Link Equalization Preset/Coefficient Evaluation Bypass */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 lep3b : 1; /**< Link Equalization 3 Bypass */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 lep23b : 1; /**< Link Equalization Phase 2 and 3 Bypass */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 leb : 1; /**< Link Equalization Bypass */
+                            /* Bits[19:19], default=0x00000000*/
+    UINT32 reic : 1; /**< Reset EIEOS Interval Count */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 lersmie : 1; /**< Link Equalization Request SMI Enable */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 qg : 1; /**< Quiesce Guarantee */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 reifece : 1; /**< Recovery Entry and Idle Framing Error Count Enable */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 rec : 8; /**< Recovery Entry Count */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3515,13 +4229,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rtprecl0pl0 : 6;
-    UINT32 rtpostcl0pl1 : 6;
-    UINT32 rtprecl1pl2 : 6;
-    UINT32 rtpostcl1pl3 : 6;
-    UINT32 rtprecl2pl4 : 6;
-    UINT32 rsvd_0 : 1;
-    UINT32 pcm : 1;
+    UINT32 rtprecl0pl0 : 6; /**< Remote Transmitter Pre-Cursor Coefficient List 0/Preset List 0 */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 rtpostcl0pl1 : 6; /**< Remote Transmitter Post-Cursor Coefficient List 0/Preset List 1 */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 rtprecl1pl2 : 6; /**< Remote Transmitter Pre-Cursor Coefficient List 1/Preset List 2 */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 rtpostcl1pl3 : 6; /**< Remote Transmitter Post-Cursor Coefficient List 1/Preset List 3 */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 rtprecl2pl4 : 6; /**< Remote Transmitter Pre-Cursor Coefficient List 2/Preset List 4 */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[30:30] */
+                            /* Bits[30:30], default=0*/
+    UINT32 pcm : 1; /**< Preset/Coefficient Mode */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3554,12 +4275,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rtpostcl2pl5 : 6;
-    UINT32 rtprecl3pl6 : 6;
-    UINT32 rtpostcl3pl7 : 6;
-    UINT32 rtprecl4pl8 : 6;
-    UINT32 rtpostcl4pl9 : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 rtpostcl2pl5 : 6; /**< Remote Transmitter Post-Cursor Coefficient List 2/Preset List 5 */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 rtprecl3pl6 : 6; /**< Remote Transmitter Pre-Cursor Coefficient List 3/Preset List 6 */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 rtpostcl3pl7 : 6; /**< Remote Transmitter Post-Cursor Coefficient List 3/Preset List 7 */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 rtprecl4pl8 : 6; /**< Remote Transmitter Pre-Cursor Coefficient List 4/Preset List 8 */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 rtpostcl4pl9 : 6; /**< Remote Transmitter Post-Cursor Coefficient List 4/Preset List 9 */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3592,9 +4319,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 fomsv : 24;
-    UINT32 ln : 5;
-    UINT32 idx : 3;
+    UINT32 fomsv : 24; /**< Figure of Merit Scoreboard Value */
+                            /* Bits[23:0], default=0x00000000*/
+    UINT32 ln : 5; /**< Lane Number */
+                            /* Bits[28:24], default=0x00000000*/
+    UINT32 idx : 3; /**< Index */
+                            /* Bits[31:29], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3621,12 +4351,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 sfomfm : 8;
-    UINT32 dl : 8;
-    UINT32 sl : 3;
-    UINT32 macfomc : 1;
-    UINT32 fomem : 8;
-    UINT32 hapccpi : 4;
+    UINT32 sfomfm : 8; /**< Starting FOM For Margining */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 dl : 8; /**< Dwelling Latency */
+                            /* Bits[15:8], default=0x0000000E*/
+    UINT32 sl : 3; /**< Speeding Latency */
+                            /* Bits[18:16], default=0x00000000*/
+    UINT32 macfomc : 1; /**< MAC FOM Control */
+                            /* Bits[19:19], default=0x00000001*/
+    UINT32 fomem : 8; /**< FOM Error Mask */
+                            /* Bits[27:20], default=0x00000000*/
+    UINT32 hapccpi : 4; /**< Hardware Autonomous Preset/Coefficient Count Per-Iteration */
+                            /* Bits[31:28], default=0x0000000A*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3659,13 +4395,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 l0tpreco : 6;
-    UINT32 l0tpostco : 6;
-    UINT32 l1tpreco : 6;
-    UINT32 l1tpostco : 6;
-    UINT32 l0tcoe : 1;
-    UINT32 l1tcoe : 1;
-    UINT32 rsvd_m : 6;
+    UINT32 l0tpreco : 6; /**< Lane 0 Transmitter Pre-Cursor Coefficient Override */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 l0tpostco : 6; /**< Lane 0 Transmitter Post-Cursor Coefficient Override */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 l1tpreco : 6; /**< Lane 1 Transmitter Pre-Cursor Coefficient Override */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 l1tpostco : 6; /**< Lane 1 Transmitter Post-Cursor Coefficient Override */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 l0tcoe : 1; /**< Lane 0 Transmitter Coefficient Override Enable */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 l1tcoe : 1; /**< Lane 1 Transmitter Coefficient Override Enable */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 rsvd_m : 6; /**< Reserved */
+                            /* Bits[31:26], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3700,11 +4443,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 g3ccnfts : 8;
-    UINT32 g3ucnfts : 8;
-    UINT32 rsvd_0 : 6;
-    UINT32 g3l0sic : 2;
-    UINT32 g3asl0spl : 8;
+    UINT32 g3ccnfts : 8; /**< Gen3 Common Clock N_FTS */
+                            /* Bits[7:0], default=0x0000001E*/
+    UINT32 g3ucnfts : 8; /**< Gen3 Unique Clock N_FTS */
+                            /* Bits[15:8], default=0x00000028*/
+    UINT32 rsvd_0 : 6; /**< Undefined - auto filled rsvd_[21:16] */
+                            /* Bits[21:16], default=0*/
+    UINT32 g3l0sic : 2; /**< Gen3 L0s Entry Idle Control */
+                            /* Bits[23:22], default=0x00000000*/
+    UINT32 g3asl0spl : 8; /**< Gen3 Active State L0s Preparation Latency */
+                            /* Bits[31:24], default=0x0000000C*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3733,15 +4481,24 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rewmet : 8;
-    UINT32 rewmetm : 2;
-    UINT32 mpeme : 1;
-    UINT32 nteme : 1;
-    UINT32 hapcsb : 4;
-    UINT32 pcet : 4;
-    UINT32 ntss : 3;
-    UINT32 emd : 1;
-    UINT32 ntic : 8;
+    UINT32 rewmet : 8; /**< Receiver Eye Margin Error Threshold */
+                            /* Bits[7:0], default=0x00000001*/
+    UINT32 rewmetm : 2; /**< Receiver Eye Margin Error Threshold Multiplier */
+                            /* Bits[9:8], default=0x00000000*/
+    UINT32 mpeme : 1; /**< Mid-Point Equalization Mechanism Enable */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 nteme : 1; /**< Nine-Tiles Equalization Mechanism Enable */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 hapcsb : 4; /**< Hardware Autonomous Preset/Coefficient Search Bound */
+                            /* Bits[15:12], default=0x0000000A*/
+    UINT32 pcet : 4; /**< Preset/Coefficient Evaluation Timeout */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 ntss : 3; /**< Nine-Tiles Step Size */
+                            /* Bits[22:20], default=0x00000000*/
+    UINT32 emd : 1; /**< Equalization Margining Disable */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 ntic : 8; /**< Nine-Tiles Iteration Count */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3780,8 +4537,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 mss : 8;
-    UINT32 msst : 24;
+    UINT32 mss : 8; /**< Monitor Signal Select */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 msst : 24; /**< Monitor Signal State */
+                            /* Bits[31:8], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3806,9 +4565,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 mcs : 4;
-    UINT32 mss : 4;
-    UINT32 rsvd_m : 24;
+    UINT32 mcs : 4; /**< Monitor Category Select */
+                            /* Bits[3:0], default=0x00000000*/
+    UINT32 mss : 4; /**< Monitor Segment Select */
+                            /* Bits[7:4], default=0x00000000*/
+    UINT32 rsvd_m : 24; /**< Reserved */
+                            /* Bits[31:8], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3835,25 +4597,44 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 px16gmflntl : 1;
-    UINT32 px16gmeqsmmflntl : 1;
-    UINT32 px16ghapccpie : 1;
-    UINT32 px16ghapccpi : 4;
-    UINT32 px16geqts2irrc : 1;
-    UINT32 px16grwtneve : 4;
-    UINT32 px16ghaed : 1;
-    UINT32 rsvd_0 : 2;
-    UINT32 px16grtpcoe : 1;
-    UINT32 px16grtlepceb : 1;
-    UINT32 px16glep3b : 1;
-    UINT32 px16glep23b : 1;
-    UINT32 rsvd_1 : 1;
-    UINT32 px16greic : 1;
-    UINT32 fomscp : 3;
-    UINT32 px8gtswlpce : 3;
-    UINT32 px16gtswlpce : 3;
-    UINT32 seqwpeqt2p : 1;
-    UINT32 rsvd_m : 1;
+    UINT32 px16gmflntl : 1; /**< 16GT/s Multi-Fragment Linear and Nine-Tile List Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 px16gmeqsmmflntl : 1; /**< 16.0 GT/s Multi-EQ Search Mode, Multi fragment linear and nine tile list Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 px16ghapccpie : 1; /**< 16.0 GT/s Hardware Autonomous Preset/Coefficient Count Per-Iteration Extention */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 px16ghapccpi : 4; /**< 16GT/s Hardware Autonomous Preset/Coefficient Count Per-Iteration */
+                            /* Bits[6:3], default=0x0000000A*/
+    UINT32 px16geqts2irrc : 1; /**< 16GT/s EQ TS2 in Recovery.ReceiverConfig Enable */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 px16grwtneve : 4; /**< 16GT/s Receiver Wait Time For New Equalization Value Evaluation */
+                            /* Bits[11:8], default=0x00000001*/
+    UINT32 px16ghaed : 1; /**< 16GT/s Hardware Autonomous Equalization Done */
+                            /* Bits[12:12], default=0x00000001*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[14:13] */
+                            /* Bits[14:13], default=0*/
+    UINT32 px16grtpcoe : 1; /**< 16GT/s Remote Transmitter Preset Coefficient Override Enable */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 px16grtlepceb : 1; /**< 16GT/s Remote Transmit Link Equalization Preset/Coefficient Evaluation Bypass */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 px16glep3b : 1; /**< 16.0 GT/s Link Equalization 3 Bypass */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 px16glep23b : 1; /**< 16.0 GT/s Link Equalization Phase 2 and 3 Bypass */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[19:19] */
+                            /* Bits[19:19], default=0*/
+    UINT32 px16greic : 1; /**< 16.0GT/s Reset EIEOS Interval Count */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 fomscp : 3; /**< FOM Scoreboard Control Policy */
+                            /* Bits[23:21], default=0x00000000*/
+    UINT32 px8gtswlpce : 3; /**< 8.0GT/s Training Sequence Wait Latency For Presets / Coefficients Evaluation */
+                            /* Bits[26:24], default=0x00000000*/
+    UINT32 px16gtswlpce : 3; /**< 16.0GT/s Training Sequence Wait Latency For Presets / Coefficients Evaluation */
+                            /* Bits[29:27], default=0x00000000*/
+    UINT32 seqwpeqt2p : 1; /**< Start EQ With Presets and EqTS2 Policy */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 rsvd_m : 1; /**< Reserved */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3908,11 +4689,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 rsvd_0 : 6;
-    UINT16 pmetofd : 1;
-    UINT16 rsvd_1 : 7;
-    UINT16 ltlpped : 1;
-    UINT16 rsvd_2 : 1;
+    UINT16 rsvd_0 : 6; /**< Undefined - auto filled rsvd_[05:00] */
+                            /* Bits[5:0], default=0*/
+    UINT16 pmetofd : 1; /**< PMETO Timeout Fix Disable */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT16 rsvd_1 : 7; /**< Undefined - auto filled rsvd_[13:07] */
+                            /* Bits[13:7], default=0*/
+    UINT16 ltlpped : 1; /**< Local TLP Prefix Error Detected */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT16 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[15:15] */
+                            /* Bits[15:15], default=0*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -3936,13 +4722,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rtprecl0pl0 : 6;
-    UINT32 rtpostcl0pl1 : 6;
-    UINT32 rtprecl1pl2 : 6;
-    UINT32 rtpostcl1pl3 : 6;
-    UINT32 rtprecl2pl4 : 6;
-    UINT32 rsvd_0 : 1;
-    UINT32 pcm : 1;
+    UINT32 rtprecl0pl0 : 6; /**< Remote Transmitter Pre-Cursor Coefficient List 0/Preset List 0 */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 rtpostcl0pl1 : 6; /**< Remote Transmitter Post-Cursor Coefficient List 0/Preset List 1 */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 rtprecl1pl2 : 6; /**< Remote Transmitter Pre-Cursor Coefficient List 1/Preset List 2 */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 rtpostcl1pl3 : 6; /**< Remote Transmitter Post-Cursor Coefficient List 1/Preset List 3 */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 rtprecl2pl4 : 6; /**< Remote Transmitter Pre-Cursor Coefficient List 2/Preset List 4 */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[30:30] */
+                            /* Bits[30:30], default=0*/
+    UINT32 pcm : 1; /**< Preset/Coefficient Mode */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -3975,15 +4768,24 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rewmet : 8;
-    UINT32 rewmetm : 2;
-    UINT32 mpeme : 1;
-    UINT32 nteme : 1;
-    UINT32 hapcsb : 4;
-    UINT32 pcet : 4;
-    UINT32 ntss : 3;
-    UINT32 emd : 1;
-    UINT32 ntic : 8;
+    UINT32 rewmet : 8; /**< Receiver Eye Margin Error Threshold */
+                            /* Bits[7:0], default=0x00000001*/
+    UINT32 rewmetm : 2; /**< Receiver Eye Margin Error Threshold Multiplier */
+                            /* Bits[9:8], default=0x00000000*/
+    UINT32 mpeme : 1; /**< Mid-Point Equalization Mechanism Enable */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 nteme : 1; /**< Nine-Tiles Equalization Mechanism Enable */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 hapcsb : 4; /**< Hardware Autonomous Preset/Coefficient Search Bound */
+                            /* Bits[15:12], default=0x0000000A*/
+    UINT32 pcet : 4; /**< Preset/Coefficient Evaluation Timeout */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 ntss : 3; /**< Nine-Tiles Step Size */
+                            /* Bits[22:20], default=0x00000000*/
+    UINT32 emd : 1; /**< Equalization Margining Disable */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 ntic : 8; /**< Nine-Tiles Iteration Count */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4014,6 +4816,7 @@ typedef union {
 #define EQCFG5_PCIE_CFG_NTIC_SIZE 0x0008
 
 
+
 /** L0P0P1PCM desc:
   */
 
@@ -4021,12 +4824,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p0cc : 6;
-    UINT32 p0precc : 6;
-    UINT32 p0pstcc : 6;
-    UINT32 p1cc : 6;
-    UINT32 p1precc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p0cc : 6; /**< Preset 0 Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p0precc : 6; /**< Preset 0 Pre-Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p0pstcc : 6; /**< Preset 0 Post-Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p1cc : 6; /**< Preset 1 Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p1precc : 6; /**< Preset 1 Pre-Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4059,12 +4868,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p1pstcc : 6;
-    UINT32 p2cc : 6;
-    UINT32 p2precc : 6;
-    UINT32 p2pstcc : 6;
-    UINT32 p3cc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p1pstcc : 6; /**< Preset 1 Post-Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p2cc : 6; /**< Preset 2 Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p2precc : 6; /**< Preset 2 Pre-Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p2pstcc : 6; /**< Preset 2 Post-Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p3cc : 6; /**< Preset 3 Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4097,12 +4912,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p3precc : 6;
-    UINT32 p3pstcc : 6;
-    UINT32 p4cc : 6;
-    UINT32 p4precc : 6;
-    UINT32 p4pstcc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p3precc : 6; /**< Preset 3 Pre-Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p3pstcc : 6; /**< Preset 3 Post-Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p4cc : 6; /**< Preset 4 Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p4precc : 6; /**< Preset 4 Pre-Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p4pstcc : 6; /**< Preset 4 Post-Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4135,12 +4956,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p5cc : 6;
-    UINT32 p5precc : 6;
-    UINT32 p5pstcc : 6;
-    UINT32 p6cc : 6;
-    UINT32 p6precc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p5cc : 6; /**< Preset 5 Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p5precc : 6; /**< Preset 5 Pre-Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p5pstcc : 6; /**< Preset 5 Post-Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p6cc : 6; /**< Preset 6 Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p6precc : 6; /**< Preset 6 Pre-Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4173,12 +5000,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p6pstcc : 6;
-    UINT32 p7cc : 6;
-    UINT32 p7precc : 6;
-    UINT32 p7pstcc : 6;
-    UINT32 p8cc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p6pstcc : 6; /**< Preset 6 Post-Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p7cc : 6; /**< Preset 7 Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p7precc : 6; /**< Preset 7 Pre-Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p7pstcc : 6; /**< Preset 7 Post-Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p8cc : 6; /**< Preset 8 Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4211,12 +5044,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p8precc : 6;
-    UINT32 p8pstcc : 6;
-    UINT32 p9cc : 6;
-    UINT32 p9precc : 6;
-    UINT32 p9pstcc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p8precc : 6; /**< Preset 8 Pre-Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p8pstcc : 6; /**< Preset 8 Post-Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p9cc : 6; /**< Preset 9 Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p9precc : 6; /**< Preset 9 Pre-Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p9pstcc : 6; /**< Preset 9 Post-Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4249,10 +5088,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p10cc : 6;
-    UINT32 p10precc : 6;
-    UINT32 p10pstcc : 6;
-    UINT32 rsvd_m : 14;
+    UINT32 p10cc : 6; /**< Preset 10 Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p10precc : 6; /**< Preset 10 Pre-Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p10pstcc : 6; /**< Preset 10 Post-Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 rsvd_m : 14; /**< Reserved */
+                            /* Bits[31:18], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4281,14 +5124,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 lplfv : 6;
-    UINT32 rsvd_0 : 2;
-    UINT32 lpfsv : 6;
-    UINT32 rsvd_1 : 2;
-    UINT32 rplfv : 6;
-    UINT32 rsvd_2 : 2;
-    UINT32 rpfsv : 6;
-    UINT32 rsvd_3 : 2;
+    UINT32 lplfv : 6; /**< Local PHY Low Frequency Value */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[07:06] */
+                            /* Bits[7:6], default=0*/
+    UINT32 lpfsv : 6; /**< Local PHY Full Swing Value */
+                            /* Bits[13:8], default=0x00000000*/
+    UINT32 rsvd_1 : 2; /**< Undefined - auto filled rsvd_[15:14] */
+                            /* Bits[15:14], default=0*/
+    UINT32 rplfv : 6; /**< Remote PHY Low Frequency Value */
+                            /* Bits[21:16], default=0x00000000*/
+    UINT32 rsvd_2 : 2; /**< Undefined - auto filled rsvd_[23:22] */
+                            /* Bits[23:22], default=0*/
+    UINT32 rpfsv : 6; /**< Remote PHY Full Swing Value */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_3 : 2; /**< Undefined - auto filled rsvd_[31:30] */
+                            /* Bits[31:30], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4317,12 +5168,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p0cc : 6;
-    UINT32 p0precc : 6;
-    UINT32 p0pstcc : 6;
-    UINT32 p1cc : 6;
-    UINT32 p1precc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p0cc : 6; /**< Preset 0 Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p0precc : 6; /**< Preset 0 Pre-Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p0pstcc : 6; /**< Preset 0 Post-Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p1cc : 6; /**< Preset 1 Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p1precc : 6; /**< Preset 1 Pre-Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4355,12 +5212,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p1pstcc : 6;
-    UINT32 p2cc : 6;
-    UINT32 p2precc : 6;
-    UINT32 p2pstcc : 6;
-    UINT32 p3cc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p1pstcc : 6; /**< Preset 1 Post-Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p2cc : 6; /**< Preset 2 Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p2precc : 6; /**< Preset 2 Pre-Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p2pstcc : 6; /**< Preset 2 Post-Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p3cc : 6; /**< Preset 3 Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4393,12 +5256,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p3precc : 6;
-    UINT32 p3pstcc : 6;
-    UINT32 p4cc : 6;
-    UINT32 p4precc : 6;
-    UINT32 p4pstcc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p3precc : 6; /**< Preset 3 Pre-Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p3pstcc : 6; /**< Preset 3 Post-Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p4cc : 6; /**< Preset 4 Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p4precc : 6; /**< Preset 4 Pre-Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p4pstcc : 6; /**< Preset 4 Post-Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4431,12 +5300,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p5cc : 6;
-    UINT32 p5precc : 6;
-    UINT32 p5pstcc : 6;
-    UINT32 p6cc : 6;
-    UINT32 p6precc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p5cc : 6; /**< Preset 5 Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p5precc : 6; /**< Preset 5 Pre-Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p5pstcc : 6; /**< Preset 5 Post-Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p6cc : 6; /**< Preset 6 Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p6precc : 6; /**< Preset 6 Pre-Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4469,12 +5344,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p6pstcc : 6;
-    UINT32 p7cc : 6;
-    UINT32 p7precc : 6;
-    UINT32 p7pstcc : 6;
-    UINT32 p8cc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p6pstcc : 6; /**< Preset 6 Post-Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p7cc : 6; /**< Preset 7 Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p7precc : 6; /**< Preset 7 Pre-Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p7pstcc : 6; /**< Preset 7 Post-Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p8cc : 6; /**< Preset 8 Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4507,12 +5388,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p8precc : 6;
-    UINT32 p8pstcc : 6;
-    UINT32 p9cc : 6;
-    UINT32 p9precc : 6;
-    UINT32 p9pstcc : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 p8precc : 6; /**< Preset 8 Pre-Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p8pstcc : 6; /**< Preset 8 Post-Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p9cc : 6; /**< Preset 9 Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 p9precc : 6; /**< Preset 9 Pre-Cursor Coefficient */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 p9pstcc : 6; /**< Preset 9 Post-Cursor Coefficient */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4545,10 +5432,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 p10cc : 6;
-    UINT32 p10precc : 6;
-    UINT32 p10pstcc : 6;
-    UINT32 rsvd_m : 14;
+    UINT32 p10cc : 6; /**< Preset 10 Cursor Coefficient */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 p10precc : 6; /**< Preset 10 Pre-Cursor Coefficient */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 p10pstcc : 6; /**< Preset 10 Post-Cursor Coefficient */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 rsvd_m : 14; /**< Reserved */
+                            /* Bits[31:18], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4577,14 +5468,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 lplfv : 6;
-    UINT32 rsvd_0 : 2;
-    UINT32 lpfsv : 6;
-    UINT32 rsvd_1 : 2;
-    UINT32 rplfv : 6;
-    UINT32 rsvd_2 : 2;
-    UINT32 rpfsv : 6;
-    UINT32 rsvd_m : 2;
+    UINT32 lplfv : 6; /**< Local PHY Low Frequency Value */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[07:06] */
+                            /* Bits[7:6], default=0*/
+    UINT32 lpfsv : 6; /**< Local PHY Full Swing Value */
+                            /* Bits[13:8], default=0x00000000*/
+    UINT32 rsvd_1 : 2; /**< Undefined - auto filled rsvd_[15:14] */
+                            /* Bits[15:14], default=0*/
+    UINT32 rplfv : 6; /**< Remote PHY Low Frequency Value */
+                            /* Bits[21:16], default=0x00000000*/
+    UINT32 rsvd_2 : 2; /**< Undefined - auto filled rsvd_[23:22] */
+                            /* Bits[23:22], default=0*/
+    UINT32 rpfsv : 6; /**< Remote PHY Full Swing Value */
+                            /* Bits[29:24], default=0x00000000*/
+    UINT32 rsvd_m : 2; /**< Reserved */
+                            /* Bits[31:30], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4606,6 +5505,8 @@ typedef union {
 #define PX16GLFFS_PCIE_CFG_RSVD_M_LSB 0x001e
 #define PX16GLFFS_PCIE_CFG_RSVD_M_SIZE 0x0002
 
+
+
 /** COCTL desc:
   */
 
@@ -4613,17 +5514,28 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pwce : 1;
-    UINT32 ddce : 1;
-    UINT32 ct : 8;
-    UINT32 cte : 1;
-    UINT32 roaop : 1;
-    UINT32 magparcd : 1;
-    UINT32 pclm : 2;
-    UINT32 npclm : 2;
-    UINT32 ccsm : 1;
-    UINT32 chainbarbe : 1;
-    UINT32 rsvd_m : 13;
+    UINT32 pwce : 1; /**< Posted Write Chaining Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 ddce : 1; /**< Completion Chaining Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 ct : 8; /**< Chain Timer */
+                            /* Bits[9:2], default=0x00000000*/
+    UINT32 cte : 1; /**< Chain Timer Enable */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 roaop : 1; /**< Relaxed Order Attribute Override Policy */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 magparcd : 1; /**< Maximum Addressable GPA Range Check Disable */
+                            /* Bits[12:12], default=0x00000001*/
+    UINT32 pclm : 2; /**< Posted Chain Limit Mode */
+                            /* Bits[14:13], default=0x00000000*/
+    UINT32 npclm : 2; /**< Non-Posted Chain Limit Mode */
+                            /* Bits[16:15], default=0x00000000*/
+    UINT32 ccsm : 1; /**< Coalescing Chain select mode */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 chainbarbe : 1; /**< Chain Bit Arbitration Enable */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 rsvd_m : 13; /**< Reserved */
+                            /* Bits[31:19], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4666,28 +5578,50 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pl1mit : 3;
-    UINT32 rtd3perst : 1;
-    UINT32 rtd3pfetdis : 1;
-    UINT32 pmreqblkpgrspt : 3;
-    UINT32 lmeqce : 1;
-    UINT32 lmeqts1e : 1;
-    UINT32 rllg12r : 1;
-    UINT32 rrllcl : 1;
-    UINT32 stlprs : 1;
-    UINT32 g3stfer : 1;
-    UINT32 clkreqsm : 1;
-    UINT32 rxl0dc : 1;
-    UINT32 pmreqcwc : 3;
-    UINT32 eiosmaskrx : 1;
-    UINT32 eiosdisds : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 inrxl0ctrl : 1;
-    UINT32 ccbe : 1;
-    UINT32 f10btse : 1;
-    UINT32 i8gteqts2tpv : 1;
-    UINT32 cttvs : 1;
-    UINT32 rsvd_rw2 : 5;
+    UINT32 pl1mit : 3; /**< Prolong L1 Min Idle Timer */
+                            /* Bits[2:0], default=0x00000000*/
+    UINT32 rtd3perst : 1; /**< RTD3 PERST */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 rtd3pfetdis : 1; /**< RTD3 PFET Disable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 pmreqblkpgrspt : 3; /**< PM_REQ Block and Power Gate Response Time */
+                            /* Bits[7:5], default=0x00000000*/
+    UINT32 lmeqce : 1; /**< Loopback Master EQ Change Enable */
+                            /* Bits[8:8], default=0x00000001*/
+    UINT32 lmeqts1e : 1; /**< Loopback Master EQ TS1 Enable */
+                            /* Bits[9:9], default=0x00000001*/
+    UINT32 rllg12r : 1; /**< Reset Link Layer in Gen1, 2 Recovery */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 rrllcl : 1; /**< Reset Receiver Link Layer Common Logic */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 stlprs : 1; /**< Short TLP Reporting Status */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 g3stfer : 1; /**< Gen3 Short TLP Framing Error Reporting */
+                            /* Bits[13:13], default=0x00000001*/
+    UINT32 clkreqsm : 1; /**< ClkReq Serialization Mode */
+                            /* Bits[14:14], default=0x00000001*/
+    UINT32 rxl0dc : 1; /**< RxL0 De-Assertion Control */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 pmreqcwc : 3; /**< PM_REQ Clock Wake Control */
+                            /* Bits[18:16], default=0x00000000*/
+    UINT32 eiosmaskrx : 1; /**< EIOS Mask Receiver Datapath */
+                            /* Bits[19:19], default=0x00000000*/
+    UINT32 eiosdisds : 1; /**< EIOS Disable DeSkew */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[21:21] */
+                            /* Bits[21:21], default=0*/
+    UINT32 inrxl0ctrl : 1; /**< InRxL0 Control */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 ccbe : 1; /**< Completion Coalescing Break Event */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 f10btse : 1; /**< Fabric 10-bit Tag Support Enable */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 i8gteqts2tpv : 1; /**< Ignore 8GT_EQ_TS2 Transmitter Preset Values */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 cttvs : 1; /**< Completion Timer Timeout Value Select */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 rsvd_rw2 : 5; /**< Reserved */
+                            /* Bits[31:27], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4750,11 +5684,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 l1pgltren : 1;
-    UINT32 rsvd_0 : 15;
-    UINT32 l1pgltrtlv : 10;
-    UINT32 rsvd_1 : 3;
-    UINT32 l1pgltrtlsv : 3;
+    UINT32 l1pgltren : 1; /**< L1 Power Gating LTR Enable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 15; /**< Undefined - auto filled rsvd_[15:01] */
+                            /* Bits[15:1], default=0*/
+    UINT32 l1pgltrtlv : 10; /**< L1 Power Gating LTR Threshold Latency Value */
+                            /* Bits[25:16], default=0x00000000*/
+    UINT32 rsvd_1 : 3; /**< Undefined - auto filled rsvd_[28:26] */
+                            /* Bits[28:26], default=0*/
+    UINT32 l1pgltrtlsv : 3; /**< L1 Power Gating LTR Threshold Latency Scale Value */
+                            /* Bits[31:29], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4781,11 +5720,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 bepw : 4;
-    UINT32 repw : 4;
-    UINT32 eeh : 2;
-    UINT32 ready4pg : 1;
-    UINT32 rsvd_m : 21;
+    UINT32 bepw : 4; /**< Bank Enable Pulse Width */
+                            /* Bits[3:0], default=0x00000007*/
+    UINT32 repw : 4; /**< Restore Enable Pulse Width */
+                            /* Bits[7:4], default=0x00000001*/
+    UINT32 eeh : 2; /**< Entry and Exit Hysteresis */
+                            /* Bits[9:8], default=0x00000002*/
+    UINT32 ready4pg : 1; /**< Ready for Power Gating */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 rsvd_m : 21; /**< Reserved */
+                            /* Bits[31:11], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4816,9 +5760,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pmreqblkrspt : 3;
-    UINT32 pmreqblkrsptm : 2;
-    UINT32 rsvd_m : 27;
+    UINT32 pmreqblkrspt : 3; /**< PM_REQ Block Response Time */
+                            /* Bits[2:0], default=0x00000000*/
+    UINT32 pmreqblkrsptm : 2; /**< PM_REQ Block Response Time Multiplier */
+                            /* Bits[4:3], default=0x00000000*/
+    UINT32 rsvd_m : 27; /**< Reserved */
+                            /* Bits[31:5], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4845,13 +5792,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 l0tpreco : 6;
-    UINT32 l0tpostco : 6;
-    UINT32 l1tpreco : 6;
-    UINT32 l1tpostco : 6;
-    UINT32 l0tcoe : 1;
-    UINT32 l1tcoe : 1;
-    UINT32 rsvd_m : 6;
+    UINT32 l0tpreco : 6; /**< Lane 0 Transmitter Pre-Cursor Coefficient Override */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 l0tpostco : 6; /**< Lane 0 Transmitter Post-Cursor Coefficient Override */
+                            /* Bits[11:6], default=0x00000000*/
+    UINT32 l1tpreco : 6; /**< Lane 1 Transmitter Pre-Cursor Coefficient Override */
+                            /* Bits[17:12], default=0x00000000*/
+    UINT32 l1tpostco : 6; /**< Lane 1 Transmitter Post-Cursor Coefficient Override */
+                            /* Bits[23:18], default=0x00000000*/
+    UINT32 l0tcoe : 1; /**< Lane 0 Transmitter Coefficient Override Enable */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 l1tcoe : 1; /**< Lane 1 Transmitter Coefficient Override Enable */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 rsvd_m : 6; /**< Reserved */
+                            /* Bits[31:26], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4886,13 +5840,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 10;
-    UINT32 gpioald : 1;
-    UINT32 vgpioalde : 1;
-    UINT32 ldvwmidx : 8;
-    UINT32 ldvwmbitloc : 3;
-    UINT32 ldvwmdestid : 8;
-    UINT32 rsvd_m : 1;
+    UINT32 rsvd_0 : 10; /**< Undefined - auto filled rsvd_[09:00] */
+                            /* Bits[9:0], default=0*/
+    UINT32 gpioald : 1; /**< GPIO Assertion on Link Down */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 vgpioalde : 1; /**< Virtual GPIO Assertion on Link Down Enable */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 ldvwmidx : 8; /**< Link Down Virtual Wire Message Index */
+                            /* Bits[19:12], default=0x00000000*/
+    UINT32 ldvwmbitloc : 3; /**< Link Down Virtual Wire Message Bit Location */
+                            /* Bits[22:20], default=0x00000000*/
+    UINT32 ldvwmdestid : 8; /**< Link Down Virtual Wire Message Destination ID */
+                            /* Bits[30:23], default=0x00000000*/
+    UINT32 rsvd_m : 1; /**< Reserved */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4925,23 +5886,40 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 uphlrcfg : 1;
-    UINT32 blkrxdsa : 1;
-    UINT32 ltsmstateosc : 5;
-    UINT32 rsvd_0 : 3;
-    UINT32 adeskew_dis : 1;
-    UINT32 lnrstctl : 3;
-    UINT32 rsvd_1 : 5;
-    UINT32 pasv : 1;
-    UINT32 sasv : 1;
-    UINT32 cbgm : 1;
-    UINT32 cpgwakectrl : 2;
-    UINT32 rsvd_2 : 1;
-    UINT32 vspfscg : 1;
-    UINT32 vspfb : 1;
-    UINT32 rrxdme : 1;
-    UINT32 rrxc : 3;
-    UINT32 cpudmiudecmsic : 1;
+    UINT32 uphlrcfg : 1; /**< Upconfiguration Hold Link in Recovery.Cfg */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 blkrxdsa : 1; /**< Block RxData Stream Assertion in Recovery.Cfg/Idle */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 ltsmstateosc : 5; /**< LTSM State in Oscillator Clock Domain */
+                            /* Bits[6:2], default=0x00000000*/
+    UINT32 rsvd_0 : 3; /**< Undefined - auto filled rsvd_[09:07] */
+                            /* Bits[9:7], default=0*/
+    UINT32 adeskew_dis : 1; /**< Adapted Deskew Disable */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 lnrstctl : 3; /**< Lane Reset Control */
+                            /* Bits[13:11], default=0x00000000*/
+    UINT32 rsvd_1 : 5; /**< Undefined - auto filled rsvd_[18:14] */
+                            /* Bits[18:14], default=0*/
+    UINT32 pasv : 1; /**< Primary Access SAI Violation */
+                            /* Bits[19:19], default=0x00000000*/
+    UINT32 sasv : 1; /**< Sideband Access SAI Violation */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 cbgm : 1; /**< Chain Bit Generation Mode */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 cpgwakectrl : 2; /**< CPG Wake Control */
+                            /* Bits[23:22], default=0x00000000*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[24:24] */
+                            /* Bits[24:24], default=0*/
+    UINT32 vspfscg : 1; /**< VISA Signals PV Flop Static Clock Gating Enable. */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 vspfb : 1; /**< Visa Signals PV Flop Bypass */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 rrxdme : 1; /**< Redo Receiver Detection Mechanism Enable */
+                            /* Bits[27:27], default=0x00000000*/
+    UINT32 rrxc : 3; /**< Redo Receiver Detection Count */
+                            /* Bits[30:28], default=0x00000000*/
+    UINT32 cpudmiudecmsic : 1; /**< CPU DMI Upstream Decoder MSI Checking */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -4990,9 +5968,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 cid : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 cid : 16; /**< Capability ID */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5010,7 +5991,6 @@ typedef union {
 #define DPCECH_PCIE_CFG_NCO_LSB 0x0014
 #define DPCECH_PCIE_CFG_NCO_SIZE 0x000c
 
-
 /** DPCCAPR desc:
   */
 
@@ -5018,13 +5998,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 dpcimn : 5;
-    UINT16 rpefdpc : 1;
-    UINT16 ptlpebs : 1;
-    UINT16 dpcsts : 1;
-    UINT16 rppiols : 4;
-    UINT16 dlaecss : 1;
-    UINT16 rsvd_m : 3;
+    UINT16 dpcimn : 5; /**< DPC Interrupt Message Number */
+                            /* Bits[4:0], default=0x00000000*/
+    UINT16 rpefdpc : 1; /**< RP Extensions For DPC */
+                            /* Bits[5:5], default=0x00000001*/
+    UINT16 ptlpebs : 1; /**< Poisoned TLP Egress Blocking Supported */
+                            /* Bits[6:6], default=0x00000001*/
+    UINT16 dpcsts : 1; /**< DPC Software Triggering Supported */
+                            /* Bits[7:7], default=0x00000001*/
+    UINT16 rppiols : 4; /**< RP PIO Log Size */
+                            /* Bits[11:8], default=0x00000004*/
+    UINT16 dlaecss : 1; /**< DL_Active ERR_COR Signaling Supported */
+                            /* Bits[12:12], default=0x00000001*/
+    UINT16 rsvd_m : 3; /**< Reserved */
+                            /* Bits[15:13], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -5049,7 +6036,6 @@ typedef union {
 #define DPCCAPR_PCIE_CFG_RSVD_M_LSB 0x000d
 #define DPCCAPR_PCIE_CFG_RSVD_M_SIZE 0x0003
 
-
 /** SPEECH desc:
   */
 
@@ -5057,9 +6043,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pcieecid : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 pcieecid : 16; /**< PCI Express Extended Capability ID */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5077,7 +6066,6 @@ typedef union {
 #define SPEECH_PCIE_CFG_NCO_LSB 0x0014
 #define SPEECH_PCIE_CFG_NCO_SIZE 0x000c
 
-
 /** LCTL3 desc:
   */
 
@@ -5085,11 +6073,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pe : 1;
-    UINT32 lerie : 1;
-    UINT32 rsvd_0 : 7;
-    UINT32 elsosgv : 7;
-    UINT32 rsvd_m : 16;
+    UINT32 pe : 1; /**< Perform Equalization */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 lerie : 1; /**< Link Equalization Request Interrupt Enable */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 rsvd_0 : 7; /**< Undefined - auto filled rsvd_[08:02] */
+                            /* Bits[8:2], default=0*/
+    UINT32 elsosgv : 7; /**< Enable Lower SKP OS Generation Vector */
+                            /* Bits[15:9], default=0x00000000*/
+    UINT32 rsvd_m : 16; /**< Reserved */
+                            /* Bits[31:16], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5109,7 +6102,6 @@ typedef union {
 #define LCTL3_PCIE_CFG_RSVD_M_LSB 0x0010
 #define LCTL3_PCIE_CFG_RSVD_M_SIZE 0x0010
 
-
 /** L01EC desc:
   */
 
@@ -5117,18 +6109,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dpl0tp : 4;
-    UINT32 dpl0rph : 3;
-    UINT32 rsvd_0 : 1;
-    UINT32 upl0tp : 4;
-    UINT32 upl0rph : 3;
-    UINT32 rsvd_1 : 1;
-    UINT32 dpl1tp : 4;
-    UINT32 dpl1rph : 3;
-    UINT32 rsvd_2 : 1;
-    UINT32 upl1tp : 4;
-    UINT32 upl1rph : 3;
-    UINT32 rsvd_m : 1;
+    UINT32 dpl0tp : 4; /**< Downstream Port Lane 0 Transmitter Preset */
+                            /* Bits[3:0], default=0x0000000F*/
+    UINT32 dpl0rph : 3; /**< Downstream Port Lane 0 Receiver Preset Hint */
+                            /* Bits[6:4], default=0x00000007*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[07:07] */
+                            /* Bits[7:7], default=0*/
+    UINT32 upl0tp : 4; /**< Upstream Port Lane 0 Transmitter Preset */
+                            /* Bits[11:8], default=0x0000000F*/
+    UINT32 upl0rph : 3; /**< Upstream Port Lane 0 Receiver Preset Hint */
+                            /* Bits[14:12], default=0x00000007*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[15:15] */
+                            /* Bits[15:15], default=0*/
+    UINT32 dpl1tp : 4; /**< Downstream Port Lane 1 Transmitter Preset */
+                            /* Bits[19:16], default=0x0000000F*/
+    UINT32 dpl1rph : 3; /**< Downstream Port Lane 1 Receiver Preset Hint */
+                            /* Bits[22:20], default=0x00000007*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[23:23] */
+                            /* Bits[23:23], default=0*/
+    UINT32 upl1tp : 4; /**< Upstream Port Lane 1 Transmitter Preset */
+                            /* Bits[27:24], default=0x0000000F*/
+    UINT32 upl1rph : 3; /**< Upstream Port Lane 1 Receiver Preset Hint */
+                            /* Bits[30:28], default=0x00000007*/
+    UINT32 rsvd_m : 1; /**< Reserved */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5158,7 +6162,6 @@ typedef union {
 #define L01EC_PCIE_CFG_RSVD_M_LSB 0x001f
 #define L01EC_PCIE_CFG_RSVD_M_SIZE 0x0001
 
-
 /** DLFECH desc:
   */
 
@@ -5166,9 +6169,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pciecid : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 pciecid : 16; /**< PCI Express Extended Capability ID */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5186,7 +6192,6 @@ typedef union {
 #define DLFECH_PCIE_CFG_NCO_LSB 0x0014
 #define DLFECH_PCIE_CFG_NCO_SIZE 0x000c
 
-
 /** DLFCAP desc:
   */
 
@@ -5194,10 +6199,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 lsfcs : 1;
-    UINT32 lfs : 22;
-    UINT32 rsvd_0 : 8;
-    UINT32 dlfee : 1;
+    UINT32 lsfcs : 1; /**< Local Scaled Flow Control Supported */
+                            /* Bits[0:0], default=0x00000001*/
+    UINT32 lfs : 22; /**< Local Feature Supported */
+                            /* Bits[22:1], default=0x00000000*/
+    UINT32 rsvd_0 : 8; /**< Undefined - auto filled rsvd_[30:23] */
+                            /* Bits[30:23], default=0*/
+    UINT32 dlfee : 1; /**< Data Link Feature Exchange Enable */
+                            /* Bits[31:31], default=0x00000001*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5215,7 +6224,6 @@ typedef union {
 #define DLFCAP_PCIE_CFG_DLFEE_LSB 0x001f
 #define DLFCAP_PCIE_CFG_DLFEE_SIZE 0x0001
 
-
 /** PL16GECH desc:
   */
 
@@ -5223,9 +6231,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pciecid : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 pciecid : 16; /**< PCI Express Extended Capability ID */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5243,7 +6254,6 @@ typedef union {
 #define PL16GECH_PCIE_CFG_NCO_LSB 0x0014
 #define PL16GECH_PCIE_CFG_NCO_SIZE 0x000c
 
-
 /** PL16S desc:
   */
 
@@ -5251,12 +6261,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 eqg4 : 1;
-    UINT32 eqp1sg4 : 1;
-    UINT32 eqp2sg4 : 1;
-    UINT32 eqp3sg4 : 1;
-    UINT32 lerg4 : 1;
-    UINT32 rsvd_m : 27;
+    UINT32 eqg4 : 1; /**< Equalization 16.0 GT/s Complete */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 eqp1sg4 : 1; /**< Equalization 16.0 GT/s Phase 1 Successful */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 eqp2sg4 : 1; /**< Equalization 16.0 GT/s Phase 2 Successful */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 eqp3sg4 : 1; /**< Equalization 16.0 GT/s Phase 3 Successful */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 lerg4 : 1; /**< Link Equalization Request 16.0 GT/s */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 rsvd_m : 27; /**< Reserved */
+                            /* Bits[31:5], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5280,7 +6296,6 @@ typedef union {
 #define PL16S_PCIE_CFG_RSVD_M_LSB 0x0005
 #define PL16S_PCIE_CFG_RSVD_M_SIZE 0x001b
 
-
 /** PL16L01EC desc:
   */
 
@@ -5288,10 +6303,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 dp16l0tp : 4;
-    UINT16 up16l0tp : 4;
-    UINT16 dp16l1tp : 4;
-    UINT16 up16l1tp : 4;
+    UINT16 dp16l0tp : 4; /**< Downstream Port 16 GT/s Lane 0 Transmitter Preset */
+                            /* Bits[3:0], default=0x0000000F*/
+    UINT16 up16l0tp : 4; /**< Upstream Port 16 GT/s Port Lane 0 Transmitter Preset */
+                            /* Bits[7:4], default=0x0000000F*/
+    UINT16 dp16l1tp : 4; /**< Downstream Port 16 GT/s Lane 1 Transmitter Preset */
+                            /* Bits[11:8], default=0x0000000F*/
+    UINT16 up16l1tp : 4; /**< Upstream Port 16 GT/s Port Lane 1 Transmitter Preset */
+                            /* Bits[15:12], default=0x0000000F*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -5310,7 +6329,6 @@ typedef union {
 #define PL16L01EC_PCIE_CFG_UP16L1TP_LSB 0x000c
 #define PL16L01EC_PCIE_CFG_UP16L1TP_SIZE 0x0004
 
-
 /** G5ECH desc:
   */
 
@@ -5318,9 +6336,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ecid : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 ecid : 16; /**< PCI Express Extended Capability ID */
+                            /* Bits[15:0], default=0x0000002A*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000000*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5338,7 +6359,6 @@ typedef union {
 #define G5ECH_PCIE_CFG_NCO_LSB 0x0014
 #define G5ECH_PCIE_CFG_NCO_SIZE 0x000c
 
-
 /** G5CAP desc:
   */
 
@@ -5346,14 +6366,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 eqbypsup : 1;
-    UINT32 noeqsup : 1;
-    UINT32 rsvd_0 : 6;
-    UINT32 modtsusgmd0sup : 1;
-    UINT32 modtsusgmd1sup : 1;
-    UINT32 modtsusgmd2sup : 1;
-    UINT32 modtsusgmdrsvrvd : 5;
-    UINT32 rsvd_m : 16;
+    UINT32 eqbypsup : 1; /**< Equalization bypass to highest rate Supported */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 noeqsup : 1; /**< No Equalization Needed Supported\n */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 rsvd_0 : 6; /**< Undefined - auto filled rsvd_[07:02] */
+                            /* Bits[7:2], default=0*/
+    UINT32 modtsusgmd0sup : 1; /**< Modified TS Usage Mode 0 Supported - PCI Express */
+                            /* Bits[8:8], default=0x00000001*/
+    UINT32 modtsusgmd1sup : 1; /**< Modified TS Usage Mode 1 Supported - Training Set Message */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 modtsusgmd2sup : 1; /**< Modified TS Usage Mode 2 Supported - Alternate Protocol */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 modtsusgmdrsvrvd : 5; /**< Modified TS Reserved Usage Modes */
+                            /* Bits[15:11], default=0x00000000*/
+    UINT32 rsvd_m : 16; /**< Reserved */
+                            /* Bits[31:16], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5379,7 +6407,6 @@ typedef union {
 #define G5CAP_PCIE_CFG_RSVD_M_LSB 0x0010
 #define G5CAP_PCIE_CFG_RSVD_M_SIZE 0x0010
 
-
 /** G5CTL desc:
   */
 
@@ -5387,11 +6414,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 eqbypdis : 1;
-    UINT32 noeqdis : 1;
-    UINT32 rsvd_0 : 6;
-    UINT32 modtsusgsel : 3;
-    UINT32 rsvd_m : 21;
+    UINT32 eqbypdis : 1; /**< Equalization bypass to highest rate Disable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 noeqdis : 1; /**< No Equalization Needed Disable */
+                            /* Bits[1:1], default=0x00000001*/
+    UINT32 rsvd_0 : 6; /**< Undefined - auto filled rsvd_[07:02] */
+                            /* Bits[7:2], default=0*/
+    UINT32 modtsusgsel : 3; /**< Modified TS Usage Mode Selected */
+                            /* Bits[10:8], default=0x00000000*/
+    UINT32 rsvd_m : 21; /**< Reserved */
+                            /* Bits[31:11], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5411,7 +6443,6 @@ typedef union {
 #define G5CTL_PCIE_CFG_RSVD_M_LSB 0x000b
 #define G5CTL_PCIE_CFG_RSVD_M_SIZE 0x0015
 
-
 /** G5STS desc:
   */
 
@@ -5419,17 +6450,28 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 eq32cmplt : 1;
-    UINT32 eq32ph1succ : 1;
-    UINT32 eq32ph2succ : 1;
-    UINT32 eq32ph3succ : 1;
-    UINT32 lerg5 : 1;
-    UINT32 modtsrcvd : 1;
-    UINT32 rcvdelbctl : 2;
-    UINT32 txprecodeo : 1;
-    UINT32 txprecoder : 1;
-    UINT32 noeqr : 1;
-    UINT32 rsvd_m : 21;
+    UINT32 eq32cmplt : 1; /**< Equalization 32.0 GT/s Complete */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 eq32ph1succ : 1; /**< Equalization 32.0 GT/s Phase 1 Successful */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 eq32ph2succ : 1; /**< Equalization 32.0 GT/s Phase 2 Successful */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 eq32ph3succ : 1; /**< Equalization 32.0 GT/s Phase 3 Successfu */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 lerg5 : 1; /**< Link Equalization Request 32.0 GT/s */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 modtsrcvd : 1; /**< Modified TS Received */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 rcvdelbctl : 2; /**< Received Enhanced Link Behavior Control */
+                            /* Bits[7:6], default=0x00000000*/
+    UINT32 txprecodeo : 1; /**< Transmitter Precoding On */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 txprecoder : 1; /**< Transmitter Precode Request */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 noeqr : 1; /**< No Equalization Needed Received */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 rsvd_m : 21; /**< Reserved */
+                            /* Bits[31:11], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5463,7 +6505,6 @@ typedef union {
 #define G5STS_PCIE_CFG_RSVD_M_LSB 0x000b
 #define G5STS_PCIE_CFG_RSVD_M_SIZE 0x0015
 
-
 /** G5LANEEQCTL_0 desc:
   */
 
@@ -5471,14 +6512,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 l0dptp : 4;
-    UINT32 l0uptp : 4;
-    UINT32 l1dptp : 4;
-    UINT32 l1uptp : 4;
-    UINT32 l2dptp : 4;
-    UINT32 l2uptp : 4;
-    UINT32 l3dptp : 4;
-    UINT32 l3uptp : 4;
+    UINT32 l0dptp : 4; /**< Lane 0 Downstream Port 32.0 GT/s Transmitter Preset */
+                            /* Bits[3:0], default=0x0000000F*/
+    UINT32 l0uptp : 4; /**< Lane 0 Upstream Port 32.0 GT/s Transmitter Preset */
+                            /* Bits[7:4], default=0x0000000F*/
+    UINT32 l1dptp : 4; /**< Lane 1 Downstream Port 32.0 GT/s Transmitter Preset */
+                            /* Bits[11:8], default=0x0000000F*/
+    UINT32 l1uptp : 4; /**< Lane 1 Upstream Port 32.0 GT/s Transmitter Preset */
+                            /* Bits[15:12], default=0x0000000F*/
+    UINT32 l2dptp : 4; /**< Lane 2 Downstream Port 32.0 GT/s Transmitter Preset */
+                            /* Bits[19:16], default=0x0000000F*/
+    UINT32 l2uptp : 4; /**< Lane 2 Upstream Port 32.0 GT/s Transmitter Preset */
+                            /* Bits[23:20], default=0x0000000F*/
+    UINT32 l3dptp : 4; /**< Lane 3 Downstream Port 32.0 GT/s Transmitter Preset */
+                            /* Bits[27:24], default=0x0000000F*/
+    UINT32 l3uptp : 4; /**< Lane 3 Upstream Port 32.0 GT/s Transmitter Preset */
+                            /* Bits[31:28], default=0x0000000F*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5506,7 +6555,6 @@ typedef union {
 #define G5LANEEQCTL_0_PCIE_CFG_L3UPTP_LSB 0x001c
 #define G5LANEEQCTL_0_PCIE_CFG_L3UPTP_SIZE 0x0004
 
-
 /** ACGR3S2 desc:
   */
 
@@ -5514,26 +6562,46 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 lstptls : 4;
-    UINT32 drxtermdq : 1;
-    UINT32 srt : 1;
-    UINT32 g1ebm : 1;
-    UINT32 g2ebm : 1;
-    UINT32 g3ebm : 1;
-    UINT32 g4ebm : 1;
-    UINT32 clkreqmsgtxvlmdestid : 8;
-    UINT32 rxadtrecrxmrge : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 g5ebm : 1;
-    UINT32 g6ebm_rsvd : 1;
-    UINT32 rtd3wrphrp : 1;
-    UINT32 pg5tprcc : 1;
-    UINT32 cfgsllncp : 1;
-    UINT32 ltatgce : 1;
-    UINT32 rsvd_rw1 : 1;
-    UINT32 rsvd_1 : 1;
-    UINT32 rsvd_rw : 3;
-    UINT32 rsvd_m : 1;
+    UINT32 lstptls : 4; /**< LSTP Target Link Speed */
+                            /* Bits[3:0], default=0x00000004*/
+    UINT32 drxtermdq : 1; /**< Disabled RxTermination in Detect.Quiet */
+                            /* Bits[4:4], default=0x00000001*/
+    UINT32 srt : 1; /**< Simplified Replay Timer */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 g1ebm : 1; /**< Gen 1 Elastic Buffer Mode */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 g2ebm : 1; /**< Gen 2 Elastic Buffer Mode */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 g3ebm : 1; /**< Gen 3 Elastic Buffer Mode */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 g4ebm : 1; /**< Gen 4 Elastic Buffer Mode */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 clkreqmsgtxvlmdestid : 8; /**< CLKREQ Message Transmit VLM Destination ID */
+                            /* Bits[17:10], default=0x00000000*/
+    UINT32 rxadtrecrxmrge : 1; /**< Receiver Adaptation in Recovery during Receiver Margining Enable */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[19:19] */
+                            /* Bits[19:19], default=0*/
+    UINT32 g5ebm : 1; /**< Gen 5 Elastic Buffer Mode */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 g6ebm_rsvd : 1; /**< Reserved */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 rtd3wrphrp : 1; /**< RTD3 with Reset Prep Hot Reset Policy */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 pg5tprcc : 1; /**< PCIe Gen 5 Transmitter Precode Request Capability Control */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 cfgsllncp : 1; /**< Configuration Substates Link Lanes Number Capture Policy */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 ltatgce : 1; /**< Link Transmitter Arbiter TLP Grant Count Enable */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 rsvd_rw1 : 1; /**< Reserved */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[27:27] */
+                            /* Bits[27:27], default=0*/
+    UINT32 rsvd_rw : 3; /**< Reserved */
+                            /* Bits[30:28], default=0x00000000*/
+    UINT32 rsvd_m : 1; /**< Reserved - This flops being recycle to use for ECO fix for PTMPDAIB registers implementations. */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5590,14 +6658,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ltrslsubv : 10;
-    UINT32 ltrslssubv : 3;
-    UINT32 rsvd_rw1 : 2;
-    UINT32 ltrslsuben : 1;
-    UINT32 ltrnslsubv : 10;
-    UINT32 ltrnslssubv : 3;
-    UINT32 rsvd_rw2 : 2;
-    UINT32 ltrnslsuben : 1;
+    UINT32 ltrslsubv : 10; /**< LTR Snoop Latency Subtraction Value */
+                            /* Bits[9:0], default=0x00000000*/
+    UINT32 ltrslssubv : 3; /**< LTR Snoop Latency Scale Subtraction Value */
+                            /* Bits[12:10], default=0x00000000*/
+    UINT32 rsvd_rw1 : 2; /**< Reserved */
+                            /* Bits[14:13], default=0x00000000*/
+    UINT32 ltrslsuben : 1; /**< LTR Snoop Latency Subtraction Enable */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 ltrnslsubv : 10; /**< LTR Non-Snoop Latency Subtraction Value */
+                            /* Bits[25:16], default=0x00000000*/
+    UINT32 ltrnslssubv : 3; /**< LTR Non-Snoop Latency Scale Subtraction Value */
+                            /* Bits[28:26], default=0x00000000*/
+    UINT32 rsvd_rw2 : 2; /**< Reserved */
+                            /* Bits[30:29], default=0x00000000*/
+    UINT32 ltrnslsuben : 1; /**< LTR Non-Snoop Latency Subtraction Enable */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5634,14 +6710,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ltrslsubv : 10;
-    UINT32 ltrslssubv : 3;
-    UINT32 rsvd_rw1 : 2;
-    UINT32 ltrslsuben : 1;
-    UINT32 ltrnslsubv : 10;
-    UINT32 ltrnslssubv : 3;
-    UINT32 rsvd_rw2 : 2;
-    UINT32 ltrnslsuben : 1;
+    UINT32 ltrslsubv : 10; /**< LTR Snoop Latency Subtraction Value */
+                            /* Bits[9:0], default=0x00000000*/
+    UINT32 ltrslssubv : 3; /**< LTR Snoop Latency Scale Subtraction Value */
+                            /* Bits[12:10], default=0x00000000*/
+    UINT32 rsvd_rw1 : 2; /**< Reserved */
+                            /* Bits[14:13], default=0x00000000*/
+    UINT32 ltrslsuben : 1; /**< LTR Snoop Latency Subtraction Enable */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 ltrnslsubv : 10; /**< LTR Non-Snoop Latency Subtraction Value */
+                            /* Bits[25:16], default=0x00000000*/
+    UINT32 ltrnslssubv : 3; /**< LTR Non-Snoop Latency Scale Subtraction Value */
+                            /* Bits[28:26], default=0x00000000*/
+    UINT32 rsvd_rw2 : 2; /**< Reserved */
+                            /* Bits[30:29], default=0x00000000*/
+    UINT32 ltrnslsuben : 1; /**< LTR Non-Snoop Latency Subtraction Enable */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5678,14 +6762,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ltrslsubv : 10;
-    UINT32 ltrslssubv : 3;
-    UINT32 rsvd_rw1 : 2;
-    UINT32 ltrslsuben : 1;
-    UINT32 ltrnslsubv : 10;
-    UINT32 ltrnslssubv : 3;
-    UINT32 rsvd_rw2 : 2;
-    UINT32 ltrnslsuben : 1;
+    UINT32 ltrslsubv : 10; /**< LTR Snoop Latency Subtraction Value */
+                            /* Bits[9:0], default=0x00000000*/
+    UINT32 ltrslssubv : 3; /**< LTR Snoop Latency Scale Subtraction Value */
+                            /* Bits[12:10], default=0x00000000*/
+    UINT32 rsvd_rw1 : 2; /**< Reserved */
+                            /* Bits[14:13], default=0x00000000*/
+    UINT32 ltrslsuben : 1; /**< LTR Snoop Latency Subtraction Enable */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 ltrnslsubv : 10; /**< LTR Non-Snoop Latency Subtraction Value */
+                            /* Bits[25:16], default=0x00000000*/
+    UINT32 ltrnslssubv : 3; /**< LTR Non-Snoop Latency Scale Subtraction Value */
+                            /* Bits[28:26], default=0x00000000*/
+    UINT32 rsvd_rw2 : 2; /**< Reserved */
+                            /* Bits[30:29], default=0x00000000*/
+    UINT32 ltrnslsuben : 1; /**< LTR Non-Snoop Latency Subtraction Enable */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5722,14 +6814,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ltrslsubv : 10;
-    UINT32 ltrslssubv : 3;
-    UINT32 rsvd_rw1 : 2;
-    UINT32 ltrslsuben : 1;
-    UINT32 ltrnslsubv : 10;
-    UINT32 ltrnslssubv : 3;
-    UINT32 rsvd_rw2 : 2;
-    UINT32 ltrnslsuben : 1;
+    UINT32 ltrslsubv : 10; /**< LTR Snoop Latency Subtraction Value */
+                            /* Bits[9:0], default=0x00000000*/
+    UINT32 ltrslssubv : 3; /**< LTR Snoop Latency Scale Subtraction Value */
+                            /* Bits[12:10], default=0x00000000*/
+    UINT32 rsvd_rw1 : 2; /**< Reserved */
+                            /* Bits[14:13], default=0x00000000*/
+    UINT32 ltrslsuben : 1; /**< LTR Snoop Latency Subtraction Enable */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 ltrnslsubv : 10; /**< LTR Non-Snoop Latency Subtraction Value */
+                            /* Bits[25:16], default=0x00000000*/
+    UINT32 ltrnslssubv : 3; /**< LTR Non-Snoop Latency Scale Subtraction Value */
+                            /* Bits[28:26], default=0x00000000*/
+    UINT32 rsvd_rw2 : 2; /**< Reserved */
+                            /* Bits[30:29], default=0x00000000*/
+    UINT32 ltrnslsuben : 1; /**< LTR Non-Snoop Latency Subtraction Enable */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5758,7 +6858,6 @@ typedef union {
 #define LTRSUBL11NPG_PCIE_CFG_LTRNSLSUBEN_SIZE 0x0001
 
 
-
 /** VNNREMCTL desc:
   */
 
@@ -5766,15 +6865,24 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 lrslfvnnre : 2;
-    UINT32 isplfvnnre : 2;
-    UINT32 ldvnnre : 1;
-    UINT32 rtd3vnnre : 1;
-    UINT32 dnpvnnre : 1;
-    UINT32 hpvnnre : 1;
-    UINT32 fdvnnre : 1;
-    UINT32 rsvd : 22;
-    UINT32 remetmd : 1;
+    UINT32 lrslfvnnre : 2; /**< Link Reset Suppression Latency For VNN Removal Exit */
+                            /* Bits[1:0], default=0x00000001*/
+    UINT32 isplfvnnre : 2; /**< Internal States Propagation Latency For VNN Removal Exit */
+                            /* Bits[3:2], default=0x00000000*/
+    UINT32 ldvnnre : 1; /**< Link Disable VNN Removal Enable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 rtd3vnnre : 1; /**< RTD3 VNN Removal Enable */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 dnpvnnre : 1; /**< Detect Not PCIe VNN Removal Enable */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 hpvnnre : 1; /**< Hot Plug VNN Removal Enable */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 fdvnnre : 1; /**< Function Disable VNN Removal */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 rsvd : 22; /**< Reserved */
+                            /* Bits[30:9], default=0x00000000*/
+    UINT32 remetmd : 1; /**< Receiver Eye Margin Error Tracking Mechanism Disable */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5804,7 +6912,6 @@ typedef union {
 #define VNNREMCTL_PCIE_CFG_REMETMD_LSB 0x001f
 #define VNNREMCTL_PCIE_CFG_REMETMD_SIZE 0x0001
 
-
 /** AECR1G3 desc:
   */
 
@@ -5812,32 +6919,58 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dcdcctdt : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 crmtdde : 1;
-    UINT32 crmtddt : 2;
-    UINT32 lesrrp : 1;
-    UINT32 l1offrdyhewten : 1;
-    UINT32 l1offrdyhewt : 3;
-    UINT32 tpse : 1;
-    UINT32 haedg3s : 1;
-    UINT32 haedg4s : 1;
-    UINT32 acedskrmd : 1;
-    UINT32 dtcgcm : 1;
-    UINT32 rxadcem : 1;
-    UINT32 clearblkdllp : 1;
-    UINT32 rsvd_rw : 1;
-    UINT32 rsvd_1 : 1;
-    UINT32 vc1rxccqnm : 3;
-    UINT32 rsvd_2 : 1;
-    UINT32 fcptodis : 1;
-    UINT32 ilppstwfd : 1;
-    UINT32 tdtmtsfud : 1;
-    UINT32 enptmrc : 1;
-    UINT32 rsvd_rw3 : 2;
-    UINT32 ifc2cup : 1;
-    UINT32 ifc1cap : 1;
-    UINT32 reqtmbof : 1;
+    UINT32 dcdcctdt : 1; /**< Disable Config.Dskew to Config.Complete transition delay timer */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[01:01] */
+                            /* Bits[1:1], default=0*/
+    UINT32 crmtdde : 1; /**< Clock Request Message TX Demotion Delay Enable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 crmtddt : 2; /**< Clock Request Message TX Demotion Delay Timer */
+                            /* Bits[4:3], default=0x00000000*/
+    UINT32 lesrrp : 1; /**< Lane Error Status Register Reporting Policy */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 l1offrdyhewten : 1; /**< L1OFFRDY Host Exit Wait Time Enable */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 l1offrdyhewt : 3; /**< L1OFFRDY Host Exit Wait Time */
+                            /* Bits[9:7], default=0x00000000*/
+    UINT32 tpse : 1; /**< Transmitted Preset Sticky Enable */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 haedg3s : 1; /**< Hardware Autonomous Equalization Done for Gen3 with Success */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 haedg4s : 1; /**< Hardware Autonomous Equalization Done for Gen4 with Success */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 acedskrmd : 1; /**< Adaptive COM/EIEOS Deskew Reset Mechanism Disable */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 dtcgcm : 1; /**< Dynamic and Trunk Clock Gating Coupling Mode */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 rxadcem : 1; /**< RX Adaptation Control During EQ Margining Phase */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 clearblkdllp : 1; /**< Clear Block DLLP */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 rsvd_rw : 1; /**< Reserved */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[18:18] */
+                            /* Bits[18:18], default=0*/
+    UINT32 vc1rxccqnm : 3; /**< VC1 RX Completion Command Queue NAK Mechanisms */
+                            /* Bits[21:19], default=0x00000000*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[22:22] */
+                            /* Bits[22:22], default=0*/
+    UINT32 fcptodis : 1; /**< FCP Timeout Mechanism Disabled */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 ilppstwfd : 1; /**< Inactive Lane P2 Power State Transition Wait Fix Disable */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 tdtmtsfud : 1; /**< TX Deemphasis TX Margin Tx Swing Message Bus Force Update */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 enptmrc : 1; /**< Enable PTM Reset Count */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 rsvd_rw3 : 2; /**< Reserved. */
+                            /* Bits[28:27], default=0x00000000*/
+    UINT32 ifc2cup : 1; /**< INITFC2 CA Update Policy */
+                            /* Bits[29:29], default=0x00000001*/
+    UINT32 ifc1cap : 1; /**< INITFC1 Credit Advertise Policy */
+                            /* Bits[30:30], default=0x00000001*/
+    UINT32 reqtmbof : 1; /**< RxEqTrain Message Bus Offset Mapping */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5904,14 +7037,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_rw : 2;
-    UINT32 ptmrrptrsplbugfixdis : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 tqrofd : 1;
-    UINT32 rsvd_1 : 1;
-    UINT32 iosfmpagc : 2;
-    UINT32 rsvd_rw2 : 23;
-    UINT32 rsvd_2 : 1;
+    UINT32 rsvd_rw : 2; /**< Reserved */
+                            /* Bits[1:0], default=0x00000000*/
+    UINT32 ptmrrptrsplbugfixdis : 1; /**< PTM Response Retry Pointer Sample Bug Fix Disable */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[03:03] */
+                            /* Bits[3:3], default=0*/
+    UINT32 tqrofd : 1; /**< Transmit Queue Relax Ordering Fix Disable */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[05:05] */
+                            /* Bits[5:5], default=0*/
+    UINT32 iosfmpagc : 2; /**< IOSF Master Port Arbitration Grand Count */
+                            /* Bits[7:6], default=0x00000000*/
+    UINT32 rsvd_rw2 : 23; /**< Reserved */
+                            /* Bits[30:8], default=0x00000000*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[31:31] */
+                            /* Bits[31:31], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5942,14 +7083,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ipcl : 1;
-    UINT32 rsvd_0 : 7;
-    UINT32 ipvccapl : 1;
-    UINT32 rsvd_1 : 7;
-    UINT32 rsvd_rwo2 : 1;
-    UINT32 rsvd_2 : 7;
-    UINT32 rsvd_rwo3 : 1;
-    UINT32 rsvd_m : 7;
+    UINT32 ipcl : 1; /**< IP Capability Lock */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 7; /**< Undefined - auto filled rsvd_[07:01] */
+                            /* Bits[7:1], default=0*/
+    UINT32 ipvccapl : 1; /**< IP VC Capability Lock */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 rsvd_1 : 7; /**< Undefined - auto filled rsvd_[15:09] */
+                            /* Bits[15:9], default=0*/
+    UINT32 rsvd_rwo2 : 1; /**< Reserved */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 rsvd_2 : 7; /**< Undefined - auto filled rsvd_[23:17] */
+                            /* Bits[23:17], default=0*/
+    UINT32 rsvd_rwo3 : 1; /**< Reserved */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 rsvd_m : 7; /**< Reserved */
+                            /* Bits[31:25], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -5980,14 +7129,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 srl : 1;
-    UINT32 rsvd_0 : 7;
-    UINT32 serl : 1;
-    UINT32 rsvd_1 : 7;
-    UINT32 ltrcfglock : 1;
-    UINT32 rsvd_2 : 7;
-    UINT32 didovr_lock : 1;
-    UINT32 rsvd_m : 7;
+    UINT32 srl : 1; /**< Secured Register Lock */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 7; /**< Undefined - auto filled rsvd_[07:01] */
+                            /* Bits[7:1], default=0*/
+    UINT32 serl : 1; /**< Secure Equalization Register Lock */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 rsvd_1 : 7; /**< Undefined - auto filled rsvd_[15:09] */
+                            /* Bits[15:9], default=0*/
+    UINT32 ltrcfglock : 1; /**< LTR Configuration Lock */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 rsvd_2 : 7; /**< Undefined - auto filled rsvd_[23:17] */
+                            /* Bits[23:17], default=0*/
+    UINT32 didovr_lock : 1; /**< Device ID Override Lock */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 rsvd_m : 7; /**< Reserved */
+                            /* Bits[31:25], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -6018,21 +7175,36 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 miess : 1;
-    UINT32 miudvms : 1;
-    UINT32 milrts : 1;
-    UINT32 mvs : 1;
-    UINT32 mmnols : 5;
-    UINT32 msrm : 1;
-    UINT32 rsvd_0 : 1;
-    UINT32 vmslop : 2;
-    UINT32 tmslop : 2;
-    UINT32 recfnmrg : 1;
-    UINT32 bpecrrxmrgna : 1;
-    UINT32 wfecrfcelc : 1;
-    UINT32 rsvd : 2;
-    UINT32 msrts : 6;
-    UINT32 msrvs : 6;
+    UINT32 miess : 1; /**< Margin Independent Error Sampler Support */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 miudvms : 1; /**< Margin Independent Up Down Voltage Margin Support */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 milrts : 1; /**< Margin Independent Left Right Timing Support */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 mvs : 1; /**< Margin Voltage Support */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 mmnols : 5; /**< Margin Max Number Of Lanes Support */
+                            /* Bits[8:4], default=0x00000000*/
+    UINT32 msrm : 1; /**< Margin Sample Reporting Method */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[10:10] */
+                            /* Bits[10:10], default=0*/
+    UINT32 vmslop : 2; /**< Voltage Margin Steps Limit On PIPE */
+                            /* Bits[12:11], default=0x00000000*/
+    UINT32 tmslop : 2; /**< Time Margin Steps Limit On PIPE */
+                            /* Bits[14:13], default=0x00000000*/
+    UINT32 recfnmrg : 1; /**< Reset Error Count For New Margin */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 bpecrrxmrgna : 1; /**< Block Phy Error Count Reset when Rx Margin not active */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 wfecrfcelc : 1; /**< Wait For Error Count Reset for Clear Error Log Command */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 rsvd : 2; /**< RSVD */
+                            /* Bits[19:18], default=0x00000000*/
+    UINT32 msrts : 6; /**< Margin Sampling Rate Timing Support */
+                            /* Bits[25:20], default=0x00000000*/
+    UINT32 msrvs : 6; /**< Margin Sampling Rate Voltage Support */
+                            /* Bits[31:26], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -6081,11 +7253,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 mmvos : 6;
-    UINT32 mnovss : 7;
-    UINT32 mmtos : 6;
-    UINT32 mnotss : 6;
-    UINT32 rsvd_m : 7;
+    UINT32 mmvos : 6; /**< Margin Max Voltage Offset Support */
+                            /* Bits[5:0], default=0x00000000*/
+    UINT32 mnovss : 7; /**< Margin Number Of Voltage Steps Support */
+                            /* Bits[12:6], default=0x00000000*/
+    UINT32 mmtos : 6; /**< Margin Max Timing Offset Support */
+                            /* Bits[18:13], default=0x00000000*/
+    UINT32 mnotss : 6; /**< Margin Number Of Timing Steps Support */
+                            /* Bits[24:19], default=0x00000000*/
+    UINT32 rsvd_m : 7; /**< RSVD */
+                            /* Bits[31:25], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -6116,10 +7293,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 einjdis : 1;
-    UINT32 injrcverr : 1;
-    UINT32 injctoerr : 1;
-    UINT32 rsvd_m : 29;
+    UINT32 einjdis : 1; /**< Error Injection Disable */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 injrcverr : 1; /**< Inject Receiver Error */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 injctoerr : 1; /**< Inject Completion Timeout Error */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 rsvd_m : 29; /**< Reserved */
+                            /* Bits[31:3], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -6148,9 +7329,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pciecid : 16;
-    UINT32 cv : 4;
-    UINT32 nco : 12;
+    UINT32 pciecid : 16; /**< PCI Express Extended Capability ID */
+                            /* Bits[15:0], default=0x00000027*/
+    UINT32 cv : 4; /**< Capability Version */
+                            /* Bits[19:16], default=0x00000001*/
+    UINT32 nco : 12; /**< Next Capability Offset */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -6168,7 +7352,6 @@ typedef union {
 #define PL16MECH_PCIE_CFG_NCO_LSB 0x0014
 #define PL16MECH_PCIE_CFG_NCO_SIZE 0x000c
 
-
 /** PL16MPCPSB01 desc:
   */
 
@@ -6176,8 +7359,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 margindrisw : 1;
-    UINT16 rsvd_m : 15;
+    UINT16 margindrisw : 1; /**< Margining uses Driver Software */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT16 rsvd_m : 15; /**< Reserved */
+                            /* Bits[15:1], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -6191,7 +7376,6 @@ typedef union {
 #define PL16MPCPSB01_PCIE_CFG_MARGINDRISW_SIZE 0x0001
 #define PL16MPCPSB01_PCIE_CFG_RSVD_M_LSB 0x0001
 #define PL16MPCPSB01_PCIE_CFG_RSVD_M_SIZE 0x000f
-
 
 //************************************************ /RegisterStructs
 #endif      // _PCIE_CFG_h

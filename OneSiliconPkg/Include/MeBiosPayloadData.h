@@ -62,7 +62,7 @@ typedef union {
 //
 // Macro to build abstract MBP Item Id
 //
-#define MBP_ITEM_ID(ApplicationId, ItemId) ((ApplicationId << 4) | ItemId)
+#define MBP_ITEM_ID(ApplicationId, ItemId) ((ApplicationId << 8) | ItemId)
 
 #define MBP_ITEM_FW_VERSION_NAME             MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdFwVerName)
 #define MBP_ITEM_FW_CAPABILITIES             MBP_ITEM_ID(MbpAppIdKernel, MbpItemIdFwCapabilities)

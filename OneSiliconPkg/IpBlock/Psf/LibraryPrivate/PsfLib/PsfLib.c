@@ -31,50 +31,28 @@
 #define DEFAULT_PCIE_GRANT_COUNT          0xFF
 #define PSF_PCIE_CHANNELS_PER_CONTROLLER  4u
 
-/**
-  This function is the method for PSF_SEGMENT_TABLE structure
-  Function returns PSF_SEGMENT structure from PSF_SEGMENT_TABLE
-  for corresponding Psf Id
-
-  @param[in] PsfSegmentTable  PSF Segment Table
-  @param[in] PsfId            PSF ID
-**/
-STATIC
-PSF_SEGMENT*
-PsfGetSegment (
-  IN PSF_SEGMENT_TABLE  *PsfSegmentTable,
-  IN UINT32             PsfId
-  )
-{
-  UINT32  Index;
-
-  for (Index = 0; Index < PsfSegmentTable->Size; Index++) {
-    if (PsfSegmentTable->Data[Index].Id == PsfId) {
-      return &PsfSegmentTable->Data[Index];
-    }
-  }
-  return NULL;
-}
 
 /**
-  This function is the method for PSF_SEGMENT_TABLE structure
-  Function returns PSF_DEV object from PSF_SEGMENT_TABLE
+  This function is the method for PSF_DEV_TABLE structure
+  Function returns PSF_DEV object from PSF_DEV_TABLE
   for corresponding Psf Id
 
-  @param[in] PsfSegmentTable  PSF Segment Table
+  @param[in] PsfTable         PSF Devices Table
   @param[in] PsfId            PSF ID
 **/
 PSF_DEV*
 PsfGetDev (
-  IN PSF_SEGMENT_TABLE  *PsfSegmentTable,
+  IN PSF_DEV_TABLE      *PsfTable,
   IN UINT32             PsfId
   )
 {
   UINT32  Index;
 
-  for (Index = 0; Index < PsfSegmentTable->Size; Index++) {
-    if (PsfSegmentTable->Data[Index].Id == PsfId) {
-      return PsfSegmentTable->Data[Index].PsfDev;
+  if (PsfTable != NULL) {
+    for (Index = 0; Index < PsfTable->Size; Index++) {
+      if (PsfTable->Data[Index].Id == PsfId) {
+        return &PsfTable->Data[Index];
+      }
     }
   }
   return NULL;
@@ -84,20 +62,21 @@ PsfGetDev (
   Disable device at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 **/
 VOID
 PsfDisableDevice (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
     ~0u,
     B_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN_FUNDIS
     );
@@ -106,20 +85,22 @@ PsfDisableDevice (
 /**
   Disable bridge (e.g. PCIe Root Port) at PSF level
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 **/
+STATIC
 VOID
 PsfDisableBridge (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN,
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN,
     ~0u,
     B_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN_FUNDIS
     );
@@ -128,67 +109,23 @@ PsfDisableBridge (
 /**
   Enable Bridge (e.g. PCIe Root port) at PSF level
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 **/
 STATIC
 VOID
 PsfEnableBridge (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN,
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN,
     (UINT32)~B_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN_FUNDIS,
-    0
-    );
-}
-
-/**
-  Disable bridge (e.g. PCIe Root Port) at PSF level in RS3
-
-  @param[in] PsfPort  PSF PORT data structure
-**/
-VOID
-PsfRs3DisableBridge (
-  IN PSF_PORT  PsfPort
-  )
-{
-  if (PSF_IS_PORT_NULL (PsfPort)) {
-    return;
-  }
-
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
-    ~0u,
-    B_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN_FUNDIS
-    );
-}
-
-/**
-  Enable bridge (e.g. PCIe Root Port) at PSF level in RS3
-
-  @param[in] PsfPort  PSF PORT data structure
-**/
-STATIC
-VOID
-PsfRs3EnableBridge (
-  IN PSF_PORT  PsfPort
-  )
-{
-  if (PSF_IS_PORT_NULL (PsfPort)) {
-    return;
-  }
-
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
-    (UINT32)~B_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN_FUNDIS,
     0
     );
 }
@@ -196,42 +133,48 @@ PsfRs3EnableBridge (
 /**
   Check if bridge (e.g. PCIe Root Port) is enabled at PSF level
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 
   @retval TRUE        Bridge behind PSF Port is enabled
           FALSE       Bridge behind PSF Port is disabled
 **/
+STATIC
 BOOLEAN
 PsfIsBridgeEnabled (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return FALSE;
   }
 
-  return ((PsfPort.PsfDev->Access->Read32 (PsfPort.PsfDev->Access, PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN)
-           & B_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN_FUNDIS) == 0);
+  return (
+    (PsfPort->PsfDev->Access->Read32 (
+      PsfPort->PsfDev->Access,
+      PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN
+      ) & B_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN_FUNDIS) == 0);
 }
 
 /**
   Enable device at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 **/
 VOID
 PsfEnableDevice (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
     (UINT32) ~(B_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN_FUNDIS),
     0
     );
@@ -241,20 +184,21 @@ PsfEnableDevice (
   Hide PciCfgSpace of device at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 **/
 VOID
 PsfHideDevice (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_CFG_DIS,
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_CFG_DIS,
     ~0u,
     B_PSF_PCR_PSF_X_AGNT_T0_SHDW_CFG_DIS_CFGDIS
     );
@@ -264,20 +208,21 @@ PsfHideDevice (
   Unhide PciCfgSpace of device at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 **/
 VOID
 PsfUnhideDevice (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_CFG_DIS,
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_CFG_DIS,
     (UINT32) ~(B_PSF_PCR_PSF_X_AGNT_T0_SHDW_CFG_DIS_CFGDIS),
     0
     );
@@ -287,23 +232,29 @@ PsfUnhideDevice (
   Disable device BARs at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort     PSF PORT data structure
+  @param[in] PsfPort     Pointer to PSF PORT data structure
   @param[in] BarDisMask  BIT0-BAR0, BIT1-BAR1,...
                          Mask corresponds to 32bit wide BARs
 **/
 VOID
 PsfDisableDeviceBar (
-  IN PSF_PORT  PsfPort,
+  IN PSF_PORT  *PsfPort,
   IN UINT32    BarDisMask
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort) || !(BarDisMask < BIT6)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
+  if (!(BarDisMask < BIT6)) {
+    DEBUG ((DEBUG_WARN, "%a - BarDisMask exceeds allowed range, max: 0x%X, given: 0x%X, abort\n", __FUNCTION__, BIT6 - 1, BarDisMask));
+    return;
+  }
+
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
     ~0u,
     BarDisMask << N_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN_BARXDIS
     );
@@ -313,23 +264,29 @@ PsfDisableDeviceBar (
   Enable device BARs at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort     PSF PORT data structure
+  @param[in] PsfPort     Pointer to PSF PORT data structure
   @param[in] BarEnMask   BIT0-BAR0, BIT1-BAR1,...
                          Mask corresponds to 32bit wide BARs
 **/
 VOID
 PsfEnableDeviceBar (
-  IN PSF_PORT  PsfPort,
+  IN PSF_PORT  *PsfPort,
   IN UINT32    BarEnMask
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort) || !(BarEnMask < BIT6)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
+  if (!(BarEnMask < BIT6)) {
+    DEBUG ((DEBUG_WARN, "%a - BarEnMask exceeds allowed range, max: 0x%X, given: 0x%X, abort\n", __FUNCTION__, BIT6 - 1, BarEnMask));
+    return;
+  }
+
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
     (UINT32)~(BarEnMask << N_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN_BARXDIS),
     0
     );
@@ -339,20 +296,22 @@ PsfEnableDeviceBar (
   Disable device IOSpace at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort     PSF PORT data structure
+  @param[in] PsfPort     Pointer to PSF PORT data structure
 **/
+STATIC
 VOID
 PsfDisableDeviceIoSpace (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
     ~(UINT32)(B_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN_IOEN),
     0
     );
@@ -362,46 +321,24 @@ PsfDisableDeviceIoSpace (
   Enable device IOSpace at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort     PSF PORT data structure
+  @param[in] PsfPort     Pointer to PSF PORT data structure
 **/
 STATIC
 VOID
 PsfEnableDeviceIoSpace (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
     ~0u,
     B_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN_IOEN
-    );
-}
-
-/**
-  Disable device Memory Space at PSF level
-  Method not for bridges (e.g. PCIe Root Port)
-
-  @param[in] PsfPort     PSF PORT data structure
-**/
-VOID
-PsfDisableDeviceMemSpace (
-  IN PSF_PORT  PsfPort
-  )
-{
-  if (PSF_IS_PORT_NULL (PsfPort)) {
-    return;
-  }
-
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
-    ~(UINT32)(B_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN_MEMEN),
-    0
     );
 }
 
@@ -409,20 +346,21 @@ PsfDisableDeviceMemSpace (
   Enable device Memory Space at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort     PSF PORT data structure
+  @param[in] PsfPort     Pointer to PSF PORT data structure
 **/
 VOID
 PsfEnableDeviceMemSpace (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN,
     ~0u,
     B_PSF_PCR_PSF_X_AGNT_T0_SHDW_PCIEN_MEMEN
     );
@@ -432,24 +370,30 @@ PsfEnableDeviceMemSpace (
   Set device BARx address at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort     PSF PORT data structure
+  @param[in] PsfPort     Pointer to PSF PORT data structure
   @param[in] BarNum      BAR Number (0:BAR0, 1:BAR1, ...)
   @param[in] BarValue    32bit BAR value
 **/
 VOID
 PsfSetDeviceBarValue (
-  IN PSF_PORT  PsfPort,
+  IN PSF_PORT  *PsfPort,
   IN UINT8     BarNum,
   IN UINT32    BarValue
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort) || !(BarNum < 6)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_BAR0 + BarNum * 0x4,
+  if (!(BarNum < 6)) {
+    DEBUG ((DEBUG_WARN, "%a - wrong BarNum, max: %d, given: %d, abort\n", __FUNCTION__, 5, BarNum));
+    return;
+  }
+
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_BAR0 + BarNum * 0x4,
     0x0,
     BarValue
     );
@@ -457,25 +401,30 @@ PsfSetDeviceBarValue (
 
 /**
   Set Function number for PSF_PORT
-  Method works both in RS0 and RS3 for devices and bridges
+  Method works both for devices and bridges
 
-  @param[in] PsfPort        PSF PORT data structure
+  @param[in] PsfPort        Pointer to PSF PORT data structure
   @param[in] FunctionNumber Function Number
 **/
-STATIC
 VOID
 PsfSetFunctionNumber (
-  IN PSF_PORT  PsfPort,
+  IN PSF_PORT  *PsfPort,
   IN UINT32    FunctionNumber
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort) || FunctionNumber > 7) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase,
+  if (FunctionNumber > 7) {
+    DEBUG ((DEBUG_WARN, "%a - illegal FunctionNumber, max: %d, given: %d, abort\n", __FUNCTION__, 7, FunctionNumber));
+    return;
+  }
+
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase,
     (UINT32)~B_PCH_PSFX_PCR_TX_AGENT_FUNCTION_CONFIG_FUNCTION,
     FunctionNumber << N_PCH_PSFX_PCR_TX_AGENT_FUNCTION_CONFIG_FUNCTION
     );
@@ -484,16 +433,17 @@ PsfSetFunctionNumber (
 /**
   Set PMC ABASE value in PSF
 
-  @param[in] PsfPort     PSF PMC Port
+  @param[in] PsfPort     Pointer to PSF PMC Port
   @param[in] Address     Address for ACPI base address.
 **/
 VOID
 PsfSetPmcAbase (
-  IN  PSF_PORT     PsfPort,
+  IN  PSF_PORT     *PsfPort,
   IN  UINT16       Address
   )
 {
-  if (PSF_IS_PORT_NULL (PsfPort)) {
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
     return;
   }
   //
@@ -513,51 +463,43 @@ PsfSetPmcAbase (
 /**
   Get PMC PWRMBASE value from PSF
 
-  @param[in] PsfPort     PSF PMC Port
+  @param[in] PsfPort     Pointer to PSF PMC Port
 
   @retval Address     Address for PWRM base.
 **/
-UINTN
+UINT32
 PsfGetPmcPwrmBase (
-  IN  PSF_PORT     PsfPort
+  IN  PSF_PORT     *PsfPort
   )
 {
-  UINTN    Address;
-
-  if (PSF_IS_PORT_NULL (PsfPort)) {
-    return 0;
+  if ((PsfPort == NULL) || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, return 0x%X\n", __FUNCTION__, ~(UINT32)0));
+    return ~(UINT32)0;
   }
 
-  Address = PsfPort.PsfDev->Access->Read32 (
-              PsfPort.PsfDev->Access,
-              PsfPort.RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_BAR0
-              );
-
-  if (Address == 0xFFFFFFFF) {
-    DEBUG ((DEBUG_ERROR, "PsfGetPmcPwrmBase (): cannot read PMC PWRM BASE!\n"));
-    return 0;
-  }
-
-  return Address;
+  return PsfPort->PsfDev->Access->Read32 (
+           PsfPort->PsfDev->Access,
+           PsfPort->RegBase + R_PSF_PCR_PSF_X_AGNT_T0_SHDW_BAR0
+           );
 }
 
 /**
   Disable PCIe Root Port at PSF level
 
+  @param[in] PsfTable            PSF Dev Table
   @param[in] PciePortData        PCIe Root Port Data
-  @param[in] PsfTable            PSF Segments Table
 **/
 VOID
 PsfDisablePcieRootPort (
-  IN PSF_PCIE_PORT_DATA    *PciePortData,
-  IN PSF_SEGMENT_TABLE     *PsfTable
+  IN PSF_DEV_TABLE         *PsfTable,
+  IN PSF_PCIE_PORT_DATA    *PciePortData
   )
 {
   PSF_PORT SecondLevelPort;
   PSF_PORT RootPciePort;
-  PSF_PORT RootRs3Port;
 
   if (PciePortData == NULL || PsfTable == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
@@ -569,7 +511,7 @@ PsfDisablePcieRootPort (
     // In such 2-level configuration this is the one to which
     // PCIe Root Port is directly connected
     //
-    PsfDisableBridge (SecondLevelPort);
+    PsfDisableBridge (&SecondLevelPort);
   }
   //
   // Disable PCIe Root Ports at PSF root level
@@ -578,53 +520,39 @@ PsfDisablePcieRootPort (
   RootPciePort.RegBase = PciePortData->RootPciePort;
   RootPciePort.PsfDev = PsfGetDev (PsfTable, PciePortData->PsfNumber);
   if (!PSF_IS_PORT_NULL (RootPciePort)) {
-    PsfDisableBridge (RootPciePort);
-  }
-
-  //
-  // Some projects don't support access to root port in root space 3.
-  // In such event PSF_PORT is going to be NULL and we have to skip RS3 access disabling
-  //
-  RootRs3Port.RegBase = PciePortData->RootRs3Port;
-  RootRs3Port.PsfDev = PsfGetDev (PsfTable, PciePortData->PsfNumber);
-  if (!PSF_IS_PORT_NULL (RootRs3Port)) {
-    //
-    // Disable PCIe Root Ports at PSF root level
-    // for RS3
-    //
-    PsfRs3DisableBridge (RootRs3Port);
+    PsfDisableBridge (&RootPciePort);
   }
 }
 
 /**
   Enable PCIe Root Port at PSF level
 
+  @param[in] PsfTable            PSF Dev Table
   @param[in] PciePortData        PCIe Root Port Data
-  @param[in] PsfTable            PSF Segments Table
 **/
 VOID
 PsfEnablePcieRootPort (
-  IN PSF_PCIE_PORT_DATA    *PciePortData,
-  IN PSF_SEGMENT_TABLE     *PsfTable
+  IN PSF_DEV_TABLE         *PsfTable,
+  IN PSF_PCIE_PORT_DATA    *PciePortData
   )
 {
   PSF_PORT SecondLevelPort;
   PSF_PORT RootPciePort;
-  PSF_PORT RootRs3Port;
 
   if (PciePortData == NULL || PsfTable == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
   SecondLevelPort.RegBase = PciePortData->SecondLevelPort;
-  SecondLevelPort.PsfDev = PsfGetDev (PsfTable, PciePortData->SecondLevelPort);
+  SecondLevelPort.PsfDev = PsfGetDev (PsfTable, PciePortData->SecondLevelPsfNumber);
   if (!PSF_IS_PORT_NULL (SecondLevelPort)) {
     //
     // Enable PCIe Root Port also in second level PSF segment.
     // In such 2-level configuration this is the one to which
     // PCIe Root Port is directly connected
     //
-    PsfEnableBridge (SecondLevelPort);
+    PsfEnableBridge (&SecondLevelPort);
   }
   //
   // Disable PCIe Root Ports at PSF root level
@@ -633,425 +561,73 @@ PsfEnablePcieRootPort (
   RootPciePort.RegBase = PciePortData->RootPciePort;
   RootPciePort.PsfDev = PsfGetDev (PsfTable, PciePortData->PsfNumber);
   if (!PSF_IS_PORT_NULL (RootPciePort)) {
-    PsfEnableBridge (RootPciePort);
+    PsfEnableBridge (&RootPciePort);
+  }
+}
+
+/**
+  Check if PCIe Root Port is enabled at PSF level
+
+  @param[in] PsfTable            PSF Dev Table
+  @param[in] PciePortData        PCIe Root Port Data
+**/
+BOOLEAN
+PsfIsPcieRootPortEnabled (
+  IN PSF_DEV_TABLE         *PsfTable,
+  IN PSF_PCIE_PORT_DATA    *PciePortData
+  )
+{
+  PSF_PORT SecondLevelPort;
+  PSF_PORT RootPciePort;
+  BOOLEAN  Enabled = FALSE;
+
+  if (PciePortData == NULL || PsfTable == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
+    return FALSE;
+  }
+
+  RootPciePort.RegBase = PciePortData->RootPciePort;
+  RootPciePort.PsfDev = PsfGetDev (PsfTable, PciePortData->PsfNumber);
+  if (!PSF_IS_PORT_NULL (RootPciePort)) {
+    Enabled = PsfIsBridgeEnabled (&RootPciePort);
   }
 
   //
-  // Some projects don't support access to root port in root space 3.
-  // In such event PSF_PORT is going to be NULL and we have to skip RS3 access enabling
+  // If Root Port have second level port,
+  // Root Port should be also enabled/disabled on it.
+  // Root Port should be enabled on both ports or disabled on both ports.
   //
-  RootRs3Port.RegBase = PciePortData->RootRs3Port;
-  RootRs3Port.PsfDev = PsfGetDev (PsfTable, PciePortData->PsfNumber);
-  if (!PSF_IS_PORT_NULL (RootRs3Port)) {
-    //
-    // Disable PCIe Root Ports at PSF root level
-    // for RS3
-    //
-    PsfRs3EnableBridge (RootRs3Port);
-  }
-}
-
-/**
-  PSF PCIe channel grant counts
-
-  @param[in]  PsfPcieCtrlConfig        PCIe controller configuration
-  @param[out] ChannelGrant             4 item array with PCIe Channel Grant Count values
-**/
-STATIC
-VOID
-PsfPcieChannelGrantCounts (
-  IN  PSF_PCIE_CTRL_CONFIG  PsfPcieCtrlConfig,
-  OUT UINT32                *ChannelGrant
-  )
-{
-  switch (PsfPcieCtrlConfig) {
-    case PsfPcieCtrl4xn:
-      ChannelGrant[0] = 1;
-      ChannelGrant[1] = 1;
-      ChannelGrant[2] = 1;
-      ChannelGrant[3] = 1;
-      break;
-    case PsfPcieCtrl1x2n_2xn:
-      ChannelGrant[0] = 2;
-      ChannelGrant[1] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[2] = 1;
-      ChannelGrant[3] = 1;
-      break;
-    case PsfPcieCtrl2xn_1x2n:
-      ChannelGrant[0] = 1;
-      ChannelGrant[1] = 1;
-      ChannelGrant[2] = 2;
-      ChannelGrant[3] = DEFAULT_PCIE_GRANT_COUNT;
-      break;
-    case PsfPcieCtrl2x2n:
-      ChannelGrant[0] = 2;
-      ChannelGrant[1] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[2] = 2;
-      ChannelGrant[3] = DEFAULT_PCIE_GRANT_COUNT;
-      break;
-    case PsfPcieCtrl1x4n:
-      ChannelGrant[0] = 4;
-      ChannelGrant[1] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[2] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[3] = DEFAULT_PCIE_GRANT_COUNT;
-      break;
-    default:
-      ChannelGrant[0] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[1] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[2] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[3] = DEFAULT_PCIE_GRANT_COUNT;
-      break;
-  }
-}
-
-/**
-  Set Grant Count
-
-  @param[in]  PsfDev                   Psf Device
-  @param[in]  DevGntCnt0Base           Device Grant Count Base
-  @param[in]  TargetGntCntPg1Tgt0Base  Target Grant Count Base
-  @param[in]  DgcrNo                   Device Grant Count Number
-  @param[in]  PgTgtNo                  Target Grant Count Number
-  @param[in]  GrantCount               Grant Count
-**/
-STATIC
-VOID
-PsfSetGrantCount (
-  PSF_DEV      *PsfDev,
-  UINT16       DevGntCnt0Base,
-  UINT16       TargetGntCntPg1Tgt0Base,
-  UINT32       DgcrNo,
-  UINT32       PgTgtNo,
-  UINT32       GrantCount
-  )
-{
-  if (PsfDev == NULL) {
-    return;
-  }
-
-  PsfDev->Access->AndThenOr32 (
-    PsfDev->Access,
-    (UINT16) (DevGntCnt0Base + (DgcrNo * S_PSF_PCR_PSF_X_DEV_GNTCNT_RELOAD_DGCRN_GNTCNTRELOAD)),
-    (UINT32) ~B_PSF_PCR_PSF_X_DEV_GNTCNT_RELOAD_DGCRN_GNTCNTRELOAD,
-    GrantCount
-    );
-
-  PsfDev->Access->AndThenOr32 (
-    PsfDev->Access,
-    (UINT16) (TargetGntCntPg1Tgt0Base + (PgTgtNo * S_PSF_PCR_PSF_X_TARGET_GNTCNT_RELOAD_PGN_TGTM_GNTCNTRELOAD)),
-    (UINT32) ~B_PSF_PCR_PSF_X_TARGET_GNTCNT_RELOAD_PGN_TGTM_GNTCNTRELOAD,
-    GrantCount
-    );
-}
-
-/**
-  Program PSF grant counts for PCI express PSF ports
-
-  @param[in] GrantCountData           Grant Count Data
-  @param[in] ChannelGrant             Array of Grant Counts per channel on controller
-  @param[in] PsfDev                   PSF Device
-  @param[in] PsfPortTable             Array of PSF_PORTs for PCIE Controller
-
-  @retval GrantCount  GrantCount value that was programmed for given PSF Port (PsfPort)
-**/
-STATIC
-UINT32
-PsfSetPcieControllerGrantCount (
-  IN PSF_GRANT_COUNT_REG_DATA    *GrantCountData,
-  IN UINT32                      *ChannelGrant, // 4-elements array
-  IN PSF_DEV                     *PsfDev,
-  IN PSF_PORT                    *PsfPortTable // 4-elements array
-  )
-{
-  UINT32       Channel;
-  UINT32       TotalGrantCount;
-
-  if (GrantCountData == NULL ||
-      PsfDev == NULL ||
-      ChannelGrant == NULL ||
-      PsfPortTable == NULL) {
-    return 0;
-  }
-
-  TotalGrantCount = 0;
-
-  for (Channel = 0; Channel < GrantCountData->GrantCountNum->Channels && Channel < PSF_PCIE_CHANNELS_PER_CONTROLLER; Channel++) {
-    if (ChannelGrant[Channel] == DEFAULT_PCIE_GRANT_COUNT) {
-      //
-      // If HW default move to next channel
-      //
-      continue;
-    }
-
-    PsfSetGrantCount (
-      PsfDev,
-      GrantCountData->DevGntCnt0Base,
-      GrantCountData->TargetGntCntPg1Tgt0Base,
-      GrantCountData->GrantCountNum->Data[Channel].DgcrNo,
-      GrantCountData->GrantCountNum->Data[Channel].PgTgtNo,
-      ChannelGrant[Channel]
-      );
-
-    if (PsfIsBridgeEnabled (PsfPortTable[Channel])) {
-      TotalGrantCount += ChannelGrant[Channel];
+  SecondLevelPort.RegBase = PciePortData->SecondLevelPort;
+  SecondLevelPort.PsfDev = PsfGetDev (PsfTable, PciePortData->SecondLevelPsfNumber);
+  if (!PSF_IS_PORT_NULL (SecondLevelPort)) {
+    if (Enabled != PsfIsBridgeEnabled (&SecondLevelPort)) {
+      DEBUG ((DEBUG_ERROR, "%a - PCIe Root Port should have the same Enabled or Disabled status on both PSF levels!\n", __FUNCTION__));
+      ASSERT (FALSE);
     }
   }
-  return TotalGrantCount;
-}
-
-/**
-  Program PSF grant counts for PSF to PSF port
-
-  @param[in] GrantCountData        GrantCount Data
-  @param[in] GrantCount            GrantCount value that is to be programmed for given PSF Port\
-
-  @retval GrantCount  GrantCount value that was programmed for given PSF Port (PsfPort)
-**/
-STATIC
-UINT32
-PsfSetSegmentGrantCounts (
-  IN PSF_GRANT_COUNT_REG_DATA    *GrantCountRegData,
-  IN UINT32                      GrantCount,
-  IN PSF_DEV                     *PsfDev
-  )
-{
-  UINT32               GrantCountMax;
-
-  if (GrantCountRegData == NULL || PsfDev == NULL) {
-    return 0;
-  }
-  GrantCountMax = MIN (V_PCH_PSFX_PCR_DEV_GNTCNT_MAX, GrantCount);
-
-  PsfSetGrantCount (
-    PsfDev,
-    GrantCountRegData->DevGntCnt0Base,
-    GrantCountRegData->TargetGntCntPg1Tgt0Base,
-    GrantCountRegData->GrantCountNum->Data[0].DgcrNo,
-    GrantCountRegData->GrantCountNum->Data[0].PgTgtNo,
-    GrantCountMax
-    );
-
-  return GrantCountMax;
-}
-
-/**
-  Program PSF grant counts for PCI express tree in PSF topology. This tree consists of PSF ports
-  for PCIe controllers and PSF segments under which PCIe controllers reside indirectly
-  through other PSF segments.
-
-  @param[in] PsfPcieCtrlConfigTable   Table with PCIe controllers configuration
-  @param[in] NumberOfPcieControllers  Number of PCIe controllers. This is also the size of PsfPcieCtrlConfig table
-  @param[in] PsfTopology              PSF Topology for which grant counts are to be programmed
-  @param[in] PsfTable                 PSF Segments Table
-  @param[in] PcieRpPorts              Table of PSF_PORT for Pcie Root Ports
-
-  @retval GrantCount  GrantCount value that was programmed for given PSF Port (PsfPort)
-**/
-STATIC
-UINT32
-PsfTopologyConfigurePcieGrantCounts (
-  IN PSF_PCIE_CTRL_CONFIG       *PsfPcieCtrlConfigTable,
-  IN UINT32                     NumberOfPcieControllers,
-  IN CONST PSF_TOPOLOGY         *PsfTopology,
-  IN PSF_SEGMENT_TABLE          *PsfTable,
-  IN PSF_REG_BASE               *PcieRpPorts
-  )
-{
-  UINT32               GrantCount;
-  CONST PSF_TOPOLOGY   *ChildSegment;
-  UINT32               ChannelGrant[PSF_PCIE_CHANNELS_PER_CONTROLLER];
-  PSF_DEV              *PsfDev;
-  PSF_PORT             PsfPortsInPcieController[PSF_PCIE_CHANNELS_PER_CONTROLLER];
-  UINT32               Index;
-
-  if (PsfPcieCtrlConfigTable == NULL || PsfTopology == NULL || PsfTable == NULL) {
-    return 0;
-  }
-  GrantCount = 0;
-
-  if (PsfTopology->PortType == PsfPcieCtrlPort && PsfTopology->PortData.PcieCtrlIndex < NumberOfPcieControllers) {
-    PsfPcieChannelGrantCounts (PsfPcieCtrlConfigTable[PsfTopology->PortData.PcieCtrlIndex], &ChannelGrant[0]);
-
-    for (Index = 0; Index < PSF_PCIE_CHANNELS_PER_CONTROLLER; Index++) {
-      PsfPortsInPcieController[Index].RegBase = PcieRpPorts[PsfTopology->PortData.PcieCtrlIndex * PSF_PCIE_CHANNELS_PER_CONTROLLER + Index].RegBase;
-      PsfPortsInPcieController[Index].PsfDev = PsfGetDev (PsfTable, PcieRpPorts[PsfTopology->PortData.PcieCtrlIndex * PSF_PCIE_CHANNELS_PER_CONTROLLER + Index].PsfNumber);
-    }
-    PsfDev = PsfGetDev (PsfTable, PsfTopology->PsfPort.PsfId);
-    if (PsfDev == NULL) {
-      return 0;
-    }
-    GrantCount = PsfSetPcieControllerGrantCount (
-                   PsfTopology->GrantCountData,
-                   ChannelGrant,
-                   PsfDev,
-                   PsfPortsInPcieController
-                   );
-  } else if (PsfTopology->PortType == PsfToPsfPort) {
-
-    ChildSegment = PsfTopology->Child;
-
-    while (!PSF_IS_TOPO_PORT_NULL (ChildSegment->PsfPort)) {
-      GrantCount += PsfTopologyConfigurePcieGrantCounts (
-                      PsfPcieCtrlConfigTable,
-                      NumberOfPcieControllers,
-                      ChildSegment,
-                      PsfTable,
-                      PcieRpPorts
-                      );
-      ChildSegment++;
-    }
-
-    if (!PSF_IS_TOPO_PORT_NULL (PsfTopology->PsfPort) && GrantCount > 0) {
-      PsfDev = PsfGetDev (PsfTable, PsfTopology->PsfPort.PsfId);
-      if (PsfDev == NULL) {
-        return 0;
-      }
-      GrantCount = PsfSetSegmentGrantCounts (
-                     PsfTopology->GrantCountData,
-                     GrantCount,
-                     PsfDev
-                     );
-    }
-  }
-  return GrantCount;
-}
-
-/**
-  Program PSF grant counts for PCI express depending on controllers configuration
-
-  @param[in] PsfPcieCtrlConfigTable   Table with PCIe controllers configuration
-  @param[in] NumberOfPcieControllers  Number of PCIe controllers. This is also the size of PsfPcieCtrlConfig table
-  @param[in] PsfTopology              PSF Topology for which grant counts are to be programmed
-  @param[in] PsfTable                 PSF Segments Table
-  @param[in] PcieRpPorts              PSF Root Ports table
-**/
-VOID
-PsfConfigurePcieGrantCounts (
-  IN PSF_PCIE_CTRL_CONFIG       *PsfPcieCtrlConfigTable,
-  IN UINT32                     NumberOfPcieControllers,
-  IN CONST PSF_TOPOLOGY         *PsfTopology,
-  IN PSF_SEGMENT_TABLE          *PsfTable,
-  IN PSF_REG_BASE               *PcieRpPorts
-  )
-{
-  DEBUG ((DEBUG_INFO, "PsfConfigurePcieGrantCounts() Start\n"));
-  PsfTopologyConfigurePcieGrantCounts (
-    PsfPcieCtrlConfigTable,
-    NumberOfPcieControllers,
-    PsfTopology,
-    PsfTable,
-    PcieRpPorts
-    );
-  DEBUG ((DEBUG_INFO, "PsfConfigurePcieGrantCounts() End\n"));
-}
-
-/**
-  Reload default RP PSF function number.
-  The PSF register doesn't got reset after system reset, which will result in mismatch between
-  PSF register setting and PCIE PCR PCD register setting. Reset PSF register in early phase
-  to avoid cycle decoding confusing.
-
-  @param[in] PciePortDataTable   PCIE Root Port Data table
-  @param[in] PsfTable            Table of PSF Segments
-  @param[in] PcieRpFuncNumTable  PCIE RP Function number array
-  @param[in] PortNumber          Size of PcieRpFuncNumTable
-**/
-STATIC
-VOID
-PsfReloadDefaultPcieRpFunc (
-  IN  PSF_PCIE_PORT_DATA_TABLE  *PciePortDataTable,
-  IN  PSF_SEGMENT_TABLE         *PsfTable,
-  IN  UINT8                     *PcieRpFuncNumTable,
-  IN  UINT32                    PortNumber
-  )
-{
-  UINT32   PortIndex;
-  UINT32   RootPortFunction;
-  PSF_PORT PsfSecondLevelPort;
-  PSF_PORT PsfRootRs3Port;
-  PSF_PORT PsfRootRs3FunctionConfigPort;
-  PSF_PORT PsfRootFunctionConfigPort;
-  PSF_PORT PsfRpFunctionConfig2ndLevelPort;
-
-  if (PciePortDataTable == NULL || PsfTable == NULL || PcieRpFuncNumTable == NULL) {
-    return;
-  }
-
-  //
-  // Reload PSF function config registers to restore default function numbers for PCIe Root Ports
-  //
-  for (PortIndex = 0; (PortIndex < PciePortDataTable->Size) && (PortIndex < PortNumber); PortIndex++) {
-
-    RootPortFunction = PcieRpFuncNumTable[PortIndex];
-
-    PsfSecondLevelPort.RegBase = PciePortDataTable->Data[PortIndex].SecondLevelPort;
-    PsfSecondLevelPort.PsfDev = PsfGetDev (PsfTable, PciePortDataTable->Data[PortIndex].SecondLevelPsfNumber);
-
-    if (!PSF_IS_PORT_NULL (PsfSecondLevelPort)) {
-      //
-      // Configure PCIe Root Port also in second level PSF segment.
-      // In such 2-level configuration this is the one to which
-      // PCIe Root Port is directly connected
-      //
-      PsfRpFunctionConfig2ndLevelPort.RegBase = PciePortDataTable->Data[PortIndex].RootPortFunctionConfig2ndLvlPort;
-      PsfRpFunctionConfig2ndLevelPort.PsfDev = PsfGetDev (PsfTable, PciePortDataTable->Data[PortIndex].SecondLevelPsfNumber);
-      PsfSetFunctionNumber (
-        PsfRpFunctionConfig2ndLevelPort,
-        RootPortFunction
-        );
-    }
-
-    //
-    // Configure PSF (Root level) in RS0
-    //
-    PsfRootFunctionConfigPort.RegBase = PciePortDataTable->Data[PortIndex].RootFunctionConfigPort;
-    PsfRootFunctionConfigPort.PsfDev = PsfGetDev (PsfTable, PciePortDataTable->Data[PortIndex].PsfNumber);
-    PsfSetFunctionNumber (
-      PsfRootFunctionConfigPort,
-      RootPortFunction
-      );
-
-    //
-    // Some projects don't support access to root port in root space 3.
-    // In such event PSF_PORT is going to be NULL and we have to skip resetting
-    // RS3 root port function number to default value
-    //
-    PsfRootRs3Port.RegBase = PciePortDataTable->Data[PortIndex].RootRs3Port;
-    PsfRootRs3Port.PsfDev = PsfGetDev (PsfTable, PciePortDataTable->Data[PortIndex].PsfNumber);
-    if (!PSF_IS_PORT_NULL (PsfRootRs3Port)) {
-      //
-      // Configure PSF (Root level) in RS3
-      //
-      PsfRootRs3FunctionConfigPort.RegBase = PciePortDataTable->Data[PortIndex].RootRs3FunctionConfigPort;
-      PsfRootRs3FunctionConfigPort.PsfDev = PsfGetDev (PsfTable, PciePortDataTable->Data[PortIndex].PsfNumber);
-      PsfSetFunctionNumber (
-        PsfRootRs3FunctionConfigPort,
-        RootPortFunction
-        );
-    }
-  }
+  return Enabled;
 }
 
 /**
   Assign new function number for PCIe Port Number.
 
+  @param[in] PsfTable       Table of PSF Devices
   @param[in] PciePortData   PCIe Root Port Data
   @param[in] NewFunction    New Function number
-  @param[in] PsfTable       Table of PSF Segments
 **/
 VOID
 PsfSetPcieFunction (
+  IN PSF_DEV_TABLE         *PsfTable,
   IN PSF_PCIE_PORT_DATA    *PciePortData,
-  IN UINT32                NewFunction,
-  IN PSF_SEGMENT_TABLE     *PsfTable
+  IN UINT32                NewFunction
   )
 {
   PSF_PORT SecondLevelPort;
   PSF_PORT RootFunctionConfigPort;
-  PSF_PORT RootRs3FunctionConfigPort;
   PSF_PORT PsfRpFunctionConfig2ndLevelPort;
 
   if (PciePortData == NULL || PsfTable == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
@@ -1066,7 +642,7 @@ PsfSetPcieFunction (
     PsfRpFunctionConfig2ndLevelPort.RegBase = PciePortData->RootPortFunctionConfig2ndLvlPort;
     PsfRpFunctionConfig2ndLevelPort.PsfDev = PsfGetDev (PsfTable, PciePortData->SecondLevelPsfNumber);
     PsfSetFunctionNumber (
-      PsfRpFunctionConfig2ndLevelPort,
+      &PsfRpFunctionConfig2ndLevelPort,
       NewFunction
       );
   }
@@ -1077,41 +653,24 @@ PsfSetPcieFunction (
   RootFunctionConfigPort.RegBase = PciePortData->RootFunctionConfigPort;
   RootFunctionConfigPort.PsfDev = PsfGetDev (PsfTable, PciePortData->PsfNumber);
   PsfSetFunctionNumber (
-    RootFunctionConfigPort,
+    &RootFunctionConfigPort,
     NewFunction
     );
-
-  //
-  // Some projects don't support access to root port in root space 3.
-  // In such event PSF_PORT is going to be NULL and we have to skip setting
-  // new function number for RS3 root port
-  //
-  if (PciePortData->RootRs3Port != 0) {
-    //
-    // Configure PSF (Root level) in RS3
-    //
-    RootRs3FunctionConfigPort.RegBase = PciePortData->RootRs3FunctionConfigPort;
-    RootRs3FunctionConfigPort.PsfDev = PsfGetDev (PsfTable, PciePortData->PsfNumber);
-    PsfSetFunctionNumber (
-      RootRs3FunctionConfigPort,
-      NewFunction
-      );
-  }
 }
 
 /**
-  API for PSF_REG_DATA_TABLE
-  This function extracts single PSF_REG_DATA entity from PSF_REG_DATA_TABLE
+  API for PSF_MCAST_REG_DATA_TABLE
+  This function extracts single PSF_MCAST_REG_DATA entity from PSF_MCAST_REG_DATA_TABLE
   for corresponding PsfId. Function is useful both for EOI and MCTP Reg Data.
 
   @param[in] RegDataTable  Table with EOI or MCTP data for supported PSFs
   @param[in] PsfId         PSF ID of Reg Data we want to get from RegDataTable
 **/
 STATIC
-PSF_REG_DATA*
-PsfGetRegData (
-  IN PSF_REG_DATA_TABLE  *RegDataTable,
-  IN UINT32              PsfId
+PSF_MCAST_REG_DATA*
+PsfGetMcastRegData (
+  IN PSF_MCAST_REG_DATA_TABLE  *RegDataTable,
+  IN UINT32                    PsfId
 )
 {
   UINT32  Index;
@@ -1135,9 +694,9 @@ PsfGetRegData (
 STATIC
 VOID
 PsfAddEoiTarget (
-  PSF_DEV          *PsfDev,
-  PSF_PORT_DEST_ID TargetId,
-  PSF_REG_DATA     *EoiRegData
+  PSF_DEV              *PsfDev,
+  PSF_PORT_DEST_ID     TargetId,
+  PSF_MCAST_REG_DATA   *EoiRegData
   )
 {
   UINT8       NumOfEnabledTargets;
@@ -1145,6 +704,7 @@ PsfAddEoiTarget (
   UINT8       TargetIndex;
 
   if (EoiRegData == NULL || PsfDev == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
@@ -1167,19 +727,12 @@ PsfAddEoiTarget (
     if (Data32 == TargetId.RegVal) {
       return;
     }
-    //
-    // If target is from different PSF segment than currently being analyzed
-    // it is enough that its PsfID is matching
-    //
-    if ((Data32 & B_PSF_PCR_PSF_X_RC_OWNER_RSN_PSFID) >> N_PSF_PCR_PSF_X_RC_OWNER_RSN_PSFID == TargetId.Fields.PsfId) {
-      return;
-    }
   }
 
   //
   // Check if next one can be added
   //
-  if (NumOfEnabledTargets >= EoiRegData->MaxTargets) {
+  if (NumOfEnabledTargets >= (UINT8)EoiRegData->MaxTargets) {
     return;
   }
 
@@ -1205,38 +758,49 @@ PsfAddEoiTarget (
 /**
   Enable EOI Target
 
-  @param[in] TargetId            Target ID
-  @param[in] PsfSegmentTable     Table of PSF Segments
+  @param[in] PsfTable            Table of PSF Devices
   @param[in] PsfEoiRegDataTable  Table of EOI Registry Data
+  @param[in] TargetId            Target ID
 **/
 VOID
 PsfEnableEoiTarget (
-  IN PSF_PORT_DEST_ID     TargetId,
-  IN PSF_SEGMENT_TABLE    *PsfSegmentTable,
-  IN PSF_REG_DATA_TABLE   *EoiRegDataTable
+  IN PSF_DEV_TABLE              *PsfTable,
+  IN PSF_MCAST_REG_DATA_TABLE   *EoiRegDataTable,
+  IN PSF_PORT_DEST_ID           TargetId
   )
 {
-  PSF_REG_DATA  *EoiRegData;
-  PSF_SEGMENT   *RootPsfSegment;
-  PSF_SEGMENT   *PsfSegment;
+  PSF_MCAST_REG_DATA  *EoiRegData;
+  PSF_MCAST_REG_DATA  *ParentEoiRegData;
+  PSF_DEV             *ParentPsfDev;
+  PSF_DEV             *PsfDev;
+  PSF_PORT_DEST_ID    ChildPsfTargetId;
+
+  if (PsfTable == NULL || EoiRegDataTable == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
 
   //
-  // Enable EOI target in root PSF
+  // Enable EOI target in parent PSF
   //
-  RootPsfSegment = &PsfSegmentTable->Data[0];
-  EoiRegData = PsfGetRegData (EoiRegDataTable, RootPsfSegment->Id);
-  PsfAddEoiTarget (RootPsfSegment->PsfDev, TargetId, EoiRegData);
-
-  //
-  // Enable EOI target on other PSF segment if target
-  // is not located on root PSF
-  //
-  if (TargetId.Fields.PsfId != RootPsfSegment->Id) {
-    PsfSegment = PsfGetSegment (PsfSegmentTable, TargetId.Fields.PsfId);
-    EoiRegData = PsfGetRegData (EoiRegDataTable, TargetId.Fields.PsfId);
-    if (PsfSegment != NULL) {
-      PsfAddEoiTarget (PsfSegment->PsfDev, TargetId, EoiRegData);
+  EoiRegData = PsfGetMcastRegData (EoiRegDataTable, TargetId.Fields.PsfId);
+  if (EoiRegData->HasParent) {
+    ParentPsfDev = PsfGetDev (PsfTable, EoiRegData->ParentPsfId);
+    if (ParentPsfDev != NULL) {
+      ParentEoiRegData = PsfGetMcastRegData (EoiRegDataTable, EoiRegData->ParentPsfId);
+      ChildPsfTargetId.RegVal = 0;
+      ChildPsfTargetId.Fields.PsfId = TargetId.Fields.PsfId;
+      PsfAddEoiTarget (ParentPsfDev, ChildPsfTargetId, ParentEoiRegData);
     }
+  }
+
+  //
+  // Enable EOI target on direct PSF segment
+  //
+  PsfDev = PsfGetDev (PsfTable, TargetId.Fields.PsfId);
+  EoiRegData = PsfGetMcastRegData (EoiRegDataTable, TargetId.Fields.PsfId);
+  if (PsfDev != NULL) {
+    PsfAddEoiTarget (PsfDev, TargetId, EoiRegData);
   }
 }
 
@@ -1245,49 +809,42 @@ PsfEnableEoiTarget (
   Function is needed because MCAST_CONTROL_EOI and MCAST_TARGET_EOI registers do not
   get back to HW default in all types of resets
 
-  @param[in]  PsfSegmentTable     Table of PSF Segments
+  @param[in]  PsfTable            Table of PSF Devices
   @param[in]  PsfEoiRegDataTable  Table of EOI Registry Data
 **/
-STATIC
 VOID
 PsfResetEoiTargets (
-  IN  PSF_SEGMENT_TABLE  *PsfSegmentTable,
-  IN  PSF_REG_DATA_TABLE *PsfEoiRegDataTable
+  IN  PSF_DEV_TABLE            *PsfTable,
+  IN  PSF_MCAST_REG_DATA_TABLE *PsfEoiRegDataTable
   )
 {
-  UINT8           NumOfEnabledTargets;
-  UINT8           TargetIndex;
-  UINT32          Data32;
-  UINT32          PsfTableIndex;
-  PSF_DEV         *PsfDev;
-  PSF_REG_DATA    *EoiRegData;
+  UINT32              TargetIndex;
+  UINT32              PsfTableIndex;
+  PSF_DEV             *PsfDev;
+  PSF_MCAST_REG_DATA  *EoiRegData;
 
-  if (PsfSegmentTable == NULL || PsfEoiRegDataTable == NULL) {
+  if (PsfTable == NULL || PsfEoiRegDataTable == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  for (PsfTableIndex = 0; PsfTableIndex < PsfSegmentTable->Size; PsfTableIndex++) {
-    EoiRegData = PsfGetRegData (PsfEoiRegDataTable, PsfSegmentTable->Data[PsfTableIndex].Id);
+  for (PsfTableIndex = 0; PsfTableIndex < PsfTable->Size; PsfTableIndex++) {
+    EoiRegData = PsfGetMcastRegData (PsfEoiRegDataTable, PsfTable->Data[PsfTableIndex].Id);
     if (EoiRegData != NULL) {
       //
       // Get number of enabled agents from EOI control register on this PSF
       //
-      PsfDev = PsfSegmentTable->Data[PsfTableIndex].PsfDev;
-      Data32 = PsfDev->Access->Read32 (PsfDev->Access, EoiRegData->ControlBase);
-      NumOfEnabledTargets = (UINT8) (Data32 >> N_PSF_PCR_PSF_X_PSF_MC_CONTROL_MCAST0_RSN_EOI_NUMMC);
+      PsfDev = &PsfTable->Data[PsfTableIndex];
+      //
+      // Disable EOI targets
+      //
+      PsfDev->Access->Write32 (PsfDev->Access, EoiRegData->ControlBase, 0);
 
-      if (NumOfEnabledTargets > 0) {
+      for (TargetIndex = 0; TargetIndex < EoiRegData->MaxTargets; TargetIndex++) {
         //
-        // Disable EOI targets
+        // Clear EOI target configuration
         //
-        PsfDev->Access->Write32 (PsfDev->Access, EoiRegData->ControlBase, 0);
-
-        for (TargetIndex = 0; TargetIndex < NumOfEnabledTargets; TargetIndex++) {
-          //
-          // Clear EOI target configuration
-          //
-          PsfDev->Access->Write32 (PsfDev->Access, EoiRegData->TargetBase + TargetIndex * 4, 0);
-        }
+        PsfDev->Access->Write32 (PsfDev->Access, EoiRegData->TargetBase + TargetIndex * 4, 0);
       }
     }
   }
@@ -1300,39 +857,41 @@ PsfResetEoiTargets (
   Agent Destination Addresses are being programmed only when adequate
   PCIe root port controllers are function enabled.
 
-  Function sets CSME PMT as a message broadcaster and programs the targets
+  Function sets RcOwner as a message broadcaster and programs the targets
   of the message in registers only if adequate PCIe root port controllers
-  are function enabled. Conditionally, if the CPU PEG exist and is function
-  enabled, DMI is also a target.
+  are function enabled.
 
+  @param[in] PsfTable       Table od PSF devices
+  @param[in] MctpRegTable   Table of MCTP registers
   @param[in] TargetIdTable  Array of MCTP Target IDs
   @param[in] TargetNumber   TargetIdTable array size
-  @param[in] PsfTable       Table od PSF segments
-  @param[in] MctpRegTable   Table of MCTP registers
   @param[in] RcOwner        RC Owner value
 **/
 VOID
 PsfConfigureMctpCycle (
-  IN  PSF_PORT_DEST_ID   *TargetIdTable,
-  IN  UINT32             TargetNumber,
-  IN  PSF_SEGMENT_TABLE  *PsfTable,
-  IN  PSF_REG_DATA_TABLE *MctpRegTable,
-  IN  UINT32             RcOwner
+  IN  PSF_DEV_TABLE            *PsfTable,
+  IN  PSF_MCAST_REG_DATA_TABLE *MctpRegTable,
+  IN  PSF_PORT_DEST_ID         *TargetIdTable,
+  IN  UINT32                   TargetNumber,
+  IN  UINT32                   RcOwner
   )
 {
-  UINT32            PsfId;
-  PSF_PORT_DEST_ID  TargetId;
-  UINT32            Index;
-  PSF_SEGMENT       *PsfSegment;
-  PSF_SEGMENT       *ParentPsfSegment;
-  PSF_REG_DATA      *MctpReg;
-  PSF_REG_DATA      *ParentMctpReg;
+  UINT32              PsfId;
+  PSF_PORT_DEST_ID    TargetId;
+  UINT32              Index;
+  PSF_DEV             *PsfDev;
+  PSF_DEV             *ParentPsfDev;
+  PSF_MCAST_REG_DATA  *MctpReg;
+  PSF_MCAST_REG_DATA  *ParentMctpReg;
 
+  if (PsfTable == NULL || MctpRegTable == NULL || TargetIdTable == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
 
   for (Index = 0; Index < MctpRegTable->Size; Index++) {
     MctpRegTable->Data[Index].NumOfEnabledTargets = 0;
   }
-
 
   //
   // Configure each target under direct PSF
@@ -1342,17 +901,17 @@ PsfConfigureMctpCycle (
     TargetId = TargetIdTable[Index];
 
     PsfId = TargetId.Fields.PsfId;
-    MctpReg = PsfGetRegData (MctpRegTable, PsfId);
-    PsfSegment = PsfGetSegment (PsfTable, PsfId);
-    if (PsfSegment == NULL || MctpReg == NULL) {
+    MctpReg = PsfGetMcastRegData (MctpRegTable, PsfId);
+    PsfDev = PsfGetDev (PsfTable, PsfId);
+    if (PsfDev == NULL || MctpReg == NULL) {
       continue;
     }
     //
     // Add next target in PSF segment directly connected to this endpoint
     // Configure Multicast Destination ID register with target device on PSF.
     //
-    PsfSegment->PsfDev->Access->Write32 (
-      PsfSegment->PsfDev->Access,
+    PsfDev->Access->Write32 (
+      PsfDev->Access,
       MctpReg->TargetBase + MctpReg->NumOfEnabledTargets * 4,
       TargetId.RegVal
       );
@@ -1366,10 +925,10 @@ PsfConfigureMctpCycle (
   for (Index = 0; Index < MctpRegTable->Size; Index++) {
     MctpReg = &MctpRegTable->Data[Index];
     if ((MctpReg->NumOfEnabledTargets > 0) && MctpReg->HasParent) {
-      ParentPsfSegment = PsfGetSegment (PsfTable, MctpReg->ParentPsfId);
-      ParentMctpReg = PsfGetRegData (MctpRegTable, MctpReg->ParentPsfId);
-      ParentPsfSegment->PsfDev->Access->Write32 (
-        ParentPsfSegment->PsfDev->Access,
+      ParentPsfDev = PsfGetDev (PsfTable, MctpReg->ParentPsfId);
+      ParentMctpReg = PsfGetMcastRegData (MctpRegTable, MctpReg->ParentPsfId);
+      ParentPsfDev->Access->Write32 (
+        ParentPsfDev->Access,
         ParentMctpReg->TargetBase + ParentMctpReg->NumOfEnabledTargets * 4,
         B_PSF_PCR_PSF_X_RC_OWNER_RSN_PORTGROUPID | (MctpReg->PsfId << N_PSF_PCR_PSF_X_RC_OWNER_RSN_PSFID)
         );
@@ -1380,25 +939,25 @@ PsfConfigureMctpCycle (
 
   //
   // Configure MCTP Control with a number of targets on a given PSF segment
-  // and assign MCTP ownership to PMT
+  // and assign MCTP ownership to given RcOwner
   //
   for (Index = 0; Index < MctpRegTable->Size; Index++) {
     MctpReg = &MctpRegTable->Data[Index];
 
     if (MctpReg->NumOfEnabledTargets > 0) {
-      PsfSegment = PsfGetSegment (PsfTable, MctpReg->PsfId);
-      if (PsfSegment == NULL) {
+      PsfDev = PsfGetDev (PsfTable, MctpReg->PsfId);
+      if (PsfDev == NULL) {
         return;
       }
 
-      PsfSegment->PsfDev->Access->Write32 (
-        PsfSegment->PsfDev->Access,
+      PsfDev->Access->Write32 (
+        PsfDev->Access,
         MctpReg->ControlBase,
         (MctpReg->NumOfEnabledTargets << N_PSF_PCR_PSF_X_PSF_MC_CONTROL_MCAST0_RSN_EOI_NUMMC) | B_PSF_PCR_PSF_X_PSF_MC_CONTROL_MCAST0_RSN_EOI_MULTCEN
         );
 
-      PsfSegment->PsfDev->Access->Write32 (
-        PsfSegment->PsfDev->Access,
+      PsfDev->Access->Write32 (
+        PsfDev->Access,
         R_PSF_PCR_PSF_X_RC_OWNER_RS0,
         RcOwner
         );
@@ -1411,27 +970,32 @@ PsfConfigureMctpCycle (
   Function is needed because MCAST_CONTROL_MCTP and MCAST_TARGET_MCTP registers do not
   get back to HW default in all types of resets
 
-  @param[in] PsfTable        Table of PSF segments
+  @param[in] PsfTable        Table of PSF devices
   @param[in] MctpRegTable    MCTP Registers table
 **/
 VOID
 PsfResetMctpTargets (
-  IN  PSF_SEGMENT_TABLE   *PsfTable,
-  IN  PSF_REG_DATA_TABLE  *MctpRegTable
+  IN  PSF_DEV_TABLE             *PsfTable,
+  IN  PSF_MCAST_REG_DATA_TABLE  *MctpRegTable
   )
 {
-  UINT32          PsfTableIndex;
-  UINT32           TargetIndex;
-  PSF_DEV         *PsfDev;
-  PSF_REG_DATA    *MctpReg;
+  UINT32              PsfTableIndex;
+  UINT32              TargetIndex;
+  PSF_DEV             *PsfDev;
+  PSF_MCAST_REG_DATA  *MctpReg;
+
+  if (PsfTable == NULL || MctpRegTable == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
 
   for (PsfTableIndex = 0; PsfTableIndex < PsfTable->Size; PsfTableIndex++) {
-    MctpReg = PsfGetRegData (MctpRegTable, PsfTable->Data[PsfTableIndex].Id);
+    MctpReg = PsfGetMcastRegData (MctpRegTable, PsfTable->Data[PsfTableIndex].Id);
     if (MctpReg == NULL) {
       continue;
     }
     if (MctpReg->MaxTargets > 0) {
-      PsfDev = PsfTable->Data[PsfTableIndex].PsfDev;
+      PsfDev = &PsfTable->Data[PsfTableIndex];
 
       //
       // Clear MCTP targets
@@ -1454,94 +1018,115 @@ PsfResetMctpTargets (
 }
 
 /**
-  PSF early initialization.
+  Set Ingress/Egress Force Relaxed Ordering bit for PSF_REG_BASE array
 
-  @param[in] EarlyInitData       Early Init Data
-  @param[in] PsfTable            Table of Psf Segments
-  @param[in] PcieRpFuncNumTable  PCIE RP Function number array
-  @param[in] PortNumber          Size of PcieRpFuncNumTable
+  @param[in] PsfTable                   PSF Devices Table
+  @param[in] PsfPortConfigRegBases      Array of PSF_REG_BASE for PSF_PORT_CONFIG_PG<N>_PORT<M> registers
+  @param[in] PsfPortConfigRegBasesSize  Size of PsfPortConfigRegBases array
+  @param[in] BitMask                    BitMask for Ingress or Engress FRO bit
 **/
+STATIC
 VOID
-PsfEarlyInit (
-  IN  PSF_EARLY_INIT_DATA       *EarlyInitData,
-  IN  PSF_SEGMENT_TABLE         *PsfTable,
-  IN  UINT8                     *PcieRpFuncNumTable,
-  IN  UINT32                    PortNumber
-  )
-{
-  PsfReloadDefaultPcieRpFunc (EarlyInitData->PciePortDataTable, PsfTable, PcieRpFuncNumTable, PortNumber);
-  PsfResetEoiTargets (PsfTable, EarlyInitData->EoiRegDataTable);
-  if (EarlyInitData->MctpSupported) {
-    PsfResetMctpTargets (PsfTable, EarlyInitData->MctpRegDataTable);
-  }
-}
-
-/**
-  Enable PCIE Relaxed order for Port Relaxed Ordering Table
-
-  @param[in] PortRelaxedOrderingConfigTable        Port Relaxed Ordering Config Table
-  @param[in] TableSize                             Port Relaxed Ordering Config Table Size
-**/
-VOID
-PsfEnablePcieRelaxedOrderForTable (
-  PSF_PORT_RELAXED_ORDERING_CONFIG_REG    *PortRelaxedOrderingConfigTable,
-  UINT32                                  TableSize
+PsfSetFroBit (
+  PSF_DEV_TABLE  *PsfTable,
+  PSF_REG_BASE   *PsfPortConfigRegBases,
+  UINT32         PsfPortConfigRegBasesSize,
+  UINT32         BitMask
   )
 {
   UINT32   Index;
   PSF_DEV  *PsfDev;
 
-  if (PortRelaxedOrderingConfigTable == NULL) {
-    DEBUG ((DEBUG_INFO, "PortRelaxedOrderingConfigTable is NULL\n"));
+  if (PsfTable == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
     return;
   }
 
-  for (Index = 0; Index < TableSize; Index++) {
-    PsfDev = PortRelaxedOrderingConfigTable[Index].PsfDev;
+  for (Index = 0; Index < PsfPortConfigRegBasesSize; Index++) {
+    PsfDev = PsfGetDev (PsfTable, PsfPortConfigRegBases[Index].PsfNumber);
     PsfDev->Access->AndThenOr32 (
       PsfDev->Access,
-      PortRelaxedOrderingConfigTable[Index].RegisterAddress,
+      PsfPortConfigRegBases[Index].RegBase,
       (UINT32)~(B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO | B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_INGRESS_FRO),
-      PortRelaxedOrderingConfigTable[Index].Fro
+      BitMask
       );
   }
 }
 
 /**
-  This function enables PCIe Relaxed Order in PSF
+  Set Ingress Force Relaxed Ordering bit for PSF_REG_BASE array
 
-  @param[in] PsfRelaxedOrderRegs      struct containing tables of registers for programming of Relaxed Ordering
+  @param[in] PsfTable                  PSF Devices Table
+  @param[in] PsfPortConfigRegBases     Array of PSF_REG_BASE for PSF_PORT_CONFIG_PG<N>_PORT<M> registers
+  @param[in] PsfPortConfigRegBasesSize Size of PsfPortConfigRegBases array
 **/
 VOID
-PsfEnablePcieRelaxedOrder (
-  PSF_RELAXED_ORDER_REGS* PsfRelaxedOrderRegs
+PsfSetIngressFro (
+  PSF_DEV_TABLE  *PsfTable,
+  PSF_REG_BASE   *PsfPortConfigRegBases,
+  UINT32         PsfPortConfigRegBasesSize
   )
 {
-  //
-  // PCH BIOS Spec Section 8.2.9
-  //
-  if (PsfRelaxedOrderRegs == NULL) {
+  if (PsfTable == NULL || PsfPortConfigRegBases == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
     return;
   }
-  PsfEnablePcieRelaxedOrderForTable (PsfRelaxedOrderRegs->RegsTable, PsfRelaxedOrderRegs->RegsTableSize);
-  PsfEnablePcieRelaxedOrderForTable (PsfRelaxedOrderRegs->RegsPchTypeSpecific, PsfRelaxedOrderRegs->RegsPchTypeSpecificTableSize);
+
+  PsfSetFroBit (
+    PsfTable,
+    PsfPortConfigRegBases,
+    PsfPortConfigRegBasesSize,
+    B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_INGRESS_FRO
+    );
 }
 
 /**
-  This function configures parity error checking for all PSF segments.
+  Set Egress Force Relaxed Ordering bit for PSF_REG_BASE array
 
-  @param[in] PsfTable       Table of supported PSF segments
+  @param[in] PsfTable                  PSF Devices Table
+  @param[in] PsfPortConfigRegBases     Array of PSF_REG_BASE for PSF_PORT_CONFIG_PG<N>_PORT<M> registers
+  @param[in] PsfPortConfigRegBasesSize Size of PsfPortConfigRegBases array
+**/
+VOID
+PsfSetEgressFro (
+  PSF_DEV_TABLE  *PsfTable,
+  PSF_REG_BASE   *PsfPortConfigRegBases,
+  UINT32         PsfPortConfigRegBasesSize
+  )
+{
+  if (PsfTable == NULL || PsfPortConfigRegBases == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
+
+  PsfSetFroBit (
+    PsfTable,
+    PsfPortConfigRegBases,
+    PsfPortConfigRegBasesSize,
+    B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO
+    );
+}
+
+/**
+  This function configures parity error checking for all PSF devices.
+
+  @param[in] PsfTable       Table of supported PSF devices
 **/
 VOID
 PsfConfigureParityChecking (
-  IN PSF_SEGMENT_TABLE  *PsfTable
+  IN PSF_DEV_TABLE  *PsfTable
   )
 {
   UINT32 Index;
   PSF_DEV *PsfDev;
 
+  if (PsfTable == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - PsfTable argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
+
   for(Index = 0; Index < PsfTable->Size; Index++) {
-    PsfDev = PsfTable->Data[Index].PsfDev;
+    PsfDev = &PsfTable->Data[Index];
     PsfDev->Access->AndThenOr32 (
       PsfDev->Access,
       R_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG,
@@ -1552,66 +1137,30 @@ PsfConfigureParityChecking (
 }
 
 /**
-  For platforms that support multi-VC,
-  this function configures TC-based channel mapping.
-
-  @param[in] TcVcMappingArray      Array of 3-value structure objects,
-                                   contains PsfId, RegisterAddress to write
-                                   and desired Value to be written into the register.
-                                   Value represents TC-VC bitmask that encodes which
-                                   Source Channel (SC [BitNumber]) should be mapped to
-                                   which Traffic Class (TC [BitNumber])
-  @param[in] TcVcMappingArraySize  Size of the array
-  @param[in] PsfTable              Table of PSF Segments available on current platform
-**/
-VOID
-PsfConfigureTcVcMapping (
-  IN  PSF_TC_VC_MAPPING  TcVcMappingArray[],
-  IN  UINT32             TcVcMappingArraySize,
-  IN  PSF_SEGMENT_TABLE  *PsfTable
-  )
-{
-  UINT32   Index;
-  PSF_DEV  *PsfDev;
-
-  if (PsfTable == NULL) {
-    return;
-  }
-
-  for (Index = 0; Index < TcVcMappingArraySize; Index++) {
-    PsfDev = PsfGetDev (PsfTable, TcVcMappingArray[Index].PsfId);
-    if (PsfDev == NULL || PsfDev->Access == NULL) {
-      continue;
-    }
-
-    PsfDev->Access->Write32 (
-      PsfDev->Access,
-      TcVcMappingArray[Index].RegisterAddress,
-      TcVcMappingArray[Index].Value
-      );
-  }
-}
-
-/**
   Enable VTd for one PSF_REG_BASE array
 
+  @param[in]  PsfTable                        Pointer to PSF_DEV_TABLE
   @param[in]  RootspaceConfigsRegsArray       Rootspace config regs array
   @param[in]  RootspaceConfigsRegsArraySize   Rootspace config regs array size
-  @param[in]  PsfSegmentTable                 Pointer to PSF_SEGMENT_TABLE
 **/
 VOID
 PsfLibEnableVtd (
+  PSF_DEV_TABLE     *PsfTable,
   PSF_REG_BASE      *RootspaceConfigsRegsArray,
-  UINT32            RootspaceConfigsRegsArraySize,
-  PSF_SEGMENT_TABLE *PsfSegmentTable
+  UINT32            RootspaceConfigsRegsArraySize
   )
 {
   UINT32  Index;
   PSF_DEV *PsfDev;
 
+  if (PsfTable == NULL || RootspaceConfigsRegsArray == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
+
   for (Index = 0; Index < RootspaceConfigsRegsArraySize; Index++) {
     PsfDev = PsfGetDev (
-      PsfSegmentTable,
+      PsfTable,
       RootspaceConfigsRegsArray[Index].PsfNumber
       );
     PsfDev->Access->AndThenOr32 (
@@ -1626,23 +1175,28 @@ PsfLibEnableVtd (
 /**
   Disable PSF address-based peer-to-peer decoding for one PSF_PORT array
 
+  @param[in]  PsfTable                        Pointer to PSF_DEV_TABLE
   @param[in]  RootspaceConfigsRegsArray       Rootspace config regs array
   @param[in]  RootspaceConfigsRegsArraySize   Rootspace config regs array size
-  @param[in]  PsfSegmentTable                 Pointer to PSF_SEGMENT_TABLE
 **/
 VOID
 PsfDisableP2pDecoding (
+  PSF_DEV_TABLE     *PsfTable,
   PSF_REG_BASE      *RootspaceConfigsRegsArray,
-  UINT32            RootspaceConfigsRegsArraySize,
-  PSF_SEGMENT_TABLE *PsfSegmentTable
+  UINT32            RootspaceConfigsRegsArraySize
   )
 {
   UINT32 Index;
   PSF_DEV *PsfDev;
 
+  if (PsfTable == NULL || RootspaceConfigsRegsArray == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
+
   for (Index = 0; Index < RootspaceConfigsRegsArraySize; Index++) {
     PsfDev = PsfGetDev (
-      PsfSegmentTable,
+      PsfTable,
       RootspaceConfigsRegsArray[Index].PsfNumber
       );
     PsfDev->Access->AndThenOr32 (
@@ -1659,20 +1213,25 @@ PsfDisableP2pDecoding (
   R_PCH_PSF_PCR_ROOTSPACE_CONFIG_RS3 registers for all PSFs
   to HW default for one array
 
+  @param[in]  PsfTable                        Pointer to PSF_DEV_TABLE
   @param[in]  RootspaceConfigsRegsArray       Rootspace config regs array
   @param[in]  RootspaceConfigsRegsArraySize   Rootspace config regs array size
-  @param[in]  PsfSegmentTable                 Pointer to PSF_SEGMENT_TABLE
 **/
 VOID
 PsfResetRootspaceConfig (
+  PSF_DEV_TABLE     *PsfTable,
   PSF_REG_BASE      *RootspaceConfigsRegsArray,
-  UINT32            RootspaceConfigsRegsArraySize,
-  PSF_SEGMENT_TABLE *PsfSegmentTable
+  UINT32            RootspaceConfigsRegsArraySize
   )
 {
   UINT32  Index;
   UINT32  Data32;
   PSF_DEV *PsfDev;
+
+  if (PsfTable == NULL || RootspaceConfigsRegsArray == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
 
   Data32 = (UINT32)(
     (0 << N_PSF_PCR_PSF_X_ROOTSPACE_CONFIG_RSN_ENADDRP2P) |
@@ -1681,7 +1240,7 @@ PsfResetRootspaceConfig (
 
   for (Index = 0; Index < RootspaceConfigsRegsArraySize; Index++) {
     PsfDev = PsfGetDev (
-      PsfSegmentTable,
+      PsfTable,
       RootspaceConfigsRegsArray[Index].PsfNumber
       );
     PsfDev->Access->Write32 (
@@ -1695,7 +1254,7 @@ PsfResetRootspaceConfig (
 /**
   Program Deferred Write Buffer
 
-  @param[in] PsfPort             PSF_PORT of DWB register offset
+  @param[in] PsfPort             Pointer to PSF_PORT of DWB register offset
   @param[in] DwbFlushThreshold   DWB Flush Threshold value
   @param[in] NonxHCIEn           Non xHCI Enable
   @param[in] OBFFEn              OBFF Enable
@@ -1703,7 +1262,7 @@ PsfResetRootspaceConfig (
 **/
 VOID
 PsfProgramDWB (
-  IN  PSF_PORT    PsfPort,
+  IN  PSF_PORT    *PsfPort,
   IN  UINT32      DwbFlushThreshold,
   IN  UINT32      NonxHCIEn,
   IN  UINT32      OBFFEn,
@@ -1712,6 +1271,11 @@ PsfProgramDWB (
 {
   UINT32      Data32And;
   UINT32      Data32Or;
+
+  if (PsfPort == NULL || PSF_IS_PORT_NULL ((*PsfPort))) {
+    DEBUG ((DEBUG_WARN, "%a - PsfPort argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
 
   Data32And = (UINT32)~(
     B_PSF_X_DWB_CONFIG_PG0_PORT0_CHANNEL0_FLUSHTHRESHHOLD |
@@ -1726,10 +1290,92 @@ PsfProgramDWB (
     (DWBEn             << N_PSF_X_DWB_CONFIG_PG0_PORT0_CHANNEL0_DWBEN)
     );
 
-  PsfPort.PsfDev->Access->AndThenOr32 (
-    PsfPort.PsfDev->Access,
-    PsfPort.RegBase,
+  PsfPort->PsfDev->Access->AndThenOr32 (
+    PsfPort->PsfDev->Access,
+    PsfPort->RegBase,
     Data32And,
     Data32Or
     );
+}
+
+#define PSF_GRANT_COUNT_MAX_VALUE 63
+/**
+  Program Grant Count Registers
+
+  @param[in]  PsfTable               PSF_DEV_TABLE pointer
+  @param[in]  RegWithValueArray      Array of REG_WITH_VALUEs to program
+  @param[in]  RegWithValueArraySize  RegWithValueArray size
+*/
+VOID
+PsfProgramGrantCountRegisters (
+  IN PSF_DEV_TABLE  *PsfTable,
+  IN REG_WITH_VALUE **RegWithValueArray,
+  IN UINT32         RegWithValueArraySize
+  )
+{
+  UINT32  Index;
+  PSF_DEV *PsfDev;
+
+  if (PsfTable == NULL || RegWithValueArray == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
+
+  for (Index = 0; Index < RegWithValueArraySize; Index++) {
+    if (RegWithValueArray[Index]->Value != 0) {
+      PsfDev = PsfGetDev (PsfTable, RegWithValueArray[Index]->PsfRegBase.PsfNumber);
+      if (RegWithValueArray[Index]->Value >= PSF_GRANT_COUNT_MAX_VALUE) {
+        RegWithValueArray[Index]->Value = PSF_GRANT_COUNT_MAX_VALUE;
+      }
+      PsfDev->Access->Write32 (
+        PsfDev->Access,
+        RegWithValueArray[Index]->PsfRegBase.RegBase,
+        RegWithValueArray[Index]->Value
+      );
+    }
+  }
+}
+
+/**
+  Set Grant Count values for register corresponds with Root Port number.
+  Array index represents Root Port number (0 based).
+
+  @param[in, out]  GcRegsForRpArray    Array of Grant Count registers representation for every Root Port number (0 based)
+  @param[in]       GcValuesArray       Array of Grant Count values for every Root Port number (0 based)
+  @param[in]       ArraySize           Size of GcRegsForRpArray which is equal to size of GcValuesArray
+**/
+VOID
+PsfSetGrantCountForRegs (
+  IN OUT  GC_REGS_FOR_RP  *GcRegsForRpArray,
+  IN      UINT8           *GcValuesArray,
+  IN      UINT32          ArraySize
+  )
+{
+  UINT32 Index;
+
+  if (GcRegsForRpArray == NULL || GcValuesArray == NULL) {
+    DEBUG ((DEBUG_WARN, "%a - argument is NULL, abort\n", __FUNCTION__));
+    return;
+  }
+
+  for (Index = 0; Index < ArraySize; Index++) {
+    if (GcRegsForRpArray[Index].GcRegs1stLvl.DevGc != NULL) {
+      GcRegsForRpArray[Index].GcRegs1stLvl.DevGc->Value += GcValuesArray[Index];
+    }
+    if (GcRegsForRpArray[Index].GcRegs1stLvl.TgtGcUpstream != NULL) {
+      GcRegsForRpArray[Index].GcRegs1stLvl.TgtGcUpstream->Value += GcValuesArray[Index];
+    }
+    if (GcRegsForRpArray[Index].GcRegs1stLvl.TgtGcDownstream != NULL) {
+      GcRegsForRpArray[Index].GcRegs1stLvl.TgtGcDownstream->Value += GcValuesArray[Index];
+    }
+    if (GcRegsForRpArray[Index].GcRegs2ndLvl.DevGc != NULL) {
+      GcRegsForRpArray[Index].GcRegs2ndLvl.DevGc->Value += GcValuesArray[Index];
+    }
+    if (GcRegsForRpArray[Index].GcRegs2ndLvl.TgtGcUpstream != NULL) {
+      GcRegsForRpArray[Index].GcRegs2ndLvl.TgtGcUpstream->Value += GcValuesArray[Index];
+    }
+    if (GcRegsForRpArray[Index].GcRegs2ndLvl.TgtGcDownstream != NULL) {
+      GcRegsForRpArray[Index].GcRegs2ndLvl.TgtGcDownstream->Value += GcValuesArray[Index];
+    }
+  }
 }

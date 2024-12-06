@@ -36,7 +36,7 @@
 #pragma pack (push,1)
 typedef struct {
   UINT32   UcsiOpBaseAddr;                          ///< Offset 0       USB Type C Opregion base address
-  UINT16   TypeCPortsMap;                           ///< Offset 4       Connectable Type C ports map
+  UINT16   TypeCConnectorsMap;                      ///< Offset 4       Connectable Type C connectors map
   // UCSI/UCMX Driver Support. 0: Force Disable, 1: UCSI Driver support, 2: UCMX Driver support.
   UINT8    UsbCPort1UcxxSupport;                    ///< Offset 6       Type C Connector 1  UCSI/UCMX Driver Support Enable/ Force Disable.
   UINT8    UsbCPort2UcxxSupport;                    ///< Offset 7       Type C Connector 2  UCSI/UCMX Driver Support Enable/ Force Disable.

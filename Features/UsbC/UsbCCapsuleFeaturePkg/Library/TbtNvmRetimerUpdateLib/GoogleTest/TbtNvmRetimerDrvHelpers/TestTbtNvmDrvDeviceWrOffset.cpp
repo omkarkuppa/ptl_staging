@@ -18,25 +18,30 @@
 
 @par Specification
 **/
+#include <GTestTbtNvmRetimerDrvHelpers.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
+#include <GoogleTest/Private/MockTbtNvmDrvRetimerThruHr/MockTbtNvmDrvRetimerThruHr.h>
 
-//**********************************************************
-// TbtNvmDrvDeviceWrOffset Unit Test                          *
-//**********************************************************
-class TbtNvmDrvDeviceWrOffsetTest : public CommonMock {
+// **********************************************************
+// TbtNvmDrvDeviceWrOffset Unit Test                        *
+// **********************************************************
+class TbtNvmDrvDeviceWrOffsetTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    VOID                  *DevComRetimer;
-    VOID                  *DevComHost;
-    UINT32                OffsetInDW;
+    TBT_STATUS                 TbtStatus;
+    VOID                       *DevComRetimer;
+    VOID                       *DevComHost;
+    UINT32                     OffsetInDW;
+    UINT32                     ExpReadData;
+    TBT_RETIMER                *gDevComRetimerMock  = &LocalCommunicationPtr;
+    TBT_HOST_ROUTER            *gDevComHostMock = &LocalHrPtr;
+    MockTbtNvmDrvRetimerThruHr TbtNvmDrvRetimerThruHrMock;
+    MockTbtNvmDrvHr            TbtNvmDrvHrMock;
 
-    UINT32                ExpReadData;
-
-    void SetUp() override {
-      DevComRetimer = (VOID *) gDevComRetimerMock;
-      DevComHost    = (VOID *) gDevComHostMock;
-      OffsetInDW = 0;
-    }
-
+  void SetUp() override {
+    DevComRetimer = (VOID *) gDevComRetimerMock;
+    DevComHost    = (VOID *) gDevComHostMock;
+    OffsetInDW    = 0;
+  }
 };
 
 //
@@ -59,13 +64,16 @@ TEST_F (TbtNvmDrvDeviceWrOffsetTest, WriteIecsRegError) {
 
   gUpdateTargetType = TARGET_RETIMER;
 
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    WriteIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_WriteIecs (
       gDevComRetimerMock,
       IECS_METADATA_ADDR,
       _,
-      1))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));
+      1
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = TbtNvmDrvDeviceWrOffset (DevComRetimer, OffsetInDW);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -80,23 +88,29 @@ TEST_F (TbtNvmDrvDeviceWrOffsetTest, TARGET_RETIMER_TbtNvmDrvSendCmdError) {
 
   gUpdateTargetType = TARGET_RETIMER;
 
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    WriteIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_WriteIecs (
       gDevComRetimerMock,
       IECS_METADATA_ADDR,
       _,
-      1))
-    .WillOnce (Return(TBT_STATUS_SUCCESS));
+      1
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS));
   //
-  // Mock call WriteIecs for TbtNvmDrvSendCmd 
+  // Mock call WriteIecs for TbtNvmDrvSendCmd
   //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    WriteIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_WriteIecs (
       gDevComRetimerMock,
       IECS_CMD_ADDR,
       _,
-      1))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));
+      1
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = TbtNvmDrvDeviceWrOffset (DevComRetimer, OffsetInDW);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -111,39 +125,49 @@ TEST_F (TbtNvmDrvDeviceWrOffsetTest, TARGET_RETIMER_CorrectFlow) {
 
   gUpdateTargetType = TARGET_RETIMER;
 
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    WriteIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_WriteIecs (
       gDevComRetimerMock,
       IECS_METADATA_ADDR,
       _,
-      1))
-    .WillOnce (Return(TBT_STATUS_SUCCESS));
+      1
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS));
   //
-  // Mock call WriteIecs for TbtNvmDrvSendCmd 
+  // Mock call WriteIecs for TbtNvmDrvSendCmd
   //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    WriteIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_WriteIecs (
       gDevComRetimerMock,
       IECS_CMD_ADDR,
       _,
-      1))
-    .WillOnce (Return(TBT_STATUS_SUCCESS));
+      1
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS));
 
-  ExpReadData       = NVM_READ;
+  ExpReadData = NVM_READ;
   //
-  // Mock call ReadIecsReg for TbtNvmDrvWaitForCmdCpl 
+  // Mock call ReadIecsReg for TbtNvmDrvWaitForCmdCpl
   //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    ReadIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_ReadIecs (
       gDevComRetimerMock,
       IECS_CMD_ADDR,
       1,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<3>(&ExpReadData, sizeof(ExpReadData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&ExpReadData, sizeof (ExpReadData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = TbtNvmDrvDeviceWrOffset (DevComRetimer, OffsetInDW);
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);
@@ -158,15 +182,18 @@ TEST_F (TbtNvmDrvDeviceWrOffsetTest, TbtNvmDrvHrWriteCioRegError) {
 
   gUpdateTargetType = TARGET_TBT_HOST;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_METADATA_ADDR,
       1,
-      _))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = TbtNvmDrvDeviceWrOffset (DevComHost, OffsetInDW);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -181,28 +208,34 @@ TEST_F (TbtNvmDrvDeviceWrOffsetTest, TARGET_TBT_HOST_TbtNvmDrvSendCmdError) {
 
   gUpdateTargetType = TARGET_TBT_HOST;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_METADATA_ADDR,
       1,
-      _))
-    .WillOnce (Return(TBT_STATUS_SUCCESS));
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS));
 
   //
-  // Mock call TbtNvmDrvHrWriteCioReg for TbtNvmDrvSendCmd 
+  // Mock call TbtNvmDrvHrWriteCioReg for TbtNvmDrvSendCmd
   //
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_CMD_ADDR,
       1,
-      _))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = TbtNvmDrvDeviceWrOffset (DevComHost, OffsetInDW);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -217,45 +250,55 @@ TEST_F (TbtNvmDrvDeviceWrOffsetTest, TARGET_TBT_HOST_CorrectFlow) {
 
   gUpdateTargetType = TARGET_TBT_HOST;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_METADATA_ADDR,
       1,
-      _))
-    .WillOnce (Return(TBT_STATUS_SUCCESS));
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS));
 
   //
-  // Mock call TbtNvmDrvHrWriteCioReg for TbtNvmDrvSendCmd 
+  // Mock call TbtNvmDrvHrWriteCioReg for TbtNvmDrvSendCmd
   //
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_CMD_ADDR,
       1,
-      _))
-    .WillOnce (Return(TBT_STATUS_SUCCESS));
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS));
 
   //
-  // Mock call TbtNvmDrvHrReadCioDevReg for TbtNvmDrvWaitForCmdCpl 
+  // Mock call TbtNvmDrvHrReadCioDevReg for TbtNvmDrvWaitForCmdCpl
   //
-  ExpReadData       = OPCODE_NVM_SETOFFSET_CMD;
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  ExpReadData = OPCODE_NVM_SETOFFSET_CMD;
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_CMD_ADDR,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpReadData, sizeof(ExpReadData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpReadData, sizeof (ExpReadData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = TbtNvmDrvDeviceWrOffset (DevComHost, OffsetInDW);
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);

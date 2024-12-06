@@ -24,7 +24,7 @@
 
 #define MUTLICAST_NOT_SUPPORTED (0)
 
-static const UINT8 BlockPartitionMaxRange[MaxPartition] = {
+UINT8 BlockPartitionMaxRange[MaxPartition] = {
   [PartitionDataShared] = MRC_DATA_SHARED_NUM,
   [PartitionData]       = MRC_DATA_MOBILE_NUM * MRC_DATA_CH_NUM,
   [PartitionCcc]        = MRC_CCC_NUM,
@@ -36,6 +36,7 @@ static const UINT8 BlockPartitionMaxRange[MaxPartition] = {
   This function gets block partition index range for the specified partition type and index.
   If index is multicast then the range is for all instances of the partition.
 
+  @param[in] MrcData       - Include all MRC global data.
   @param[in] PartitionType - The partition type.
   @param[in] Index         - The partition index.
 
@@ -43,6 +44,7 @@ static const UINT8 BlockPartitionMaxRange[MaxPartition] = {
 **/
 MRC_RANGE
 MrcGetPartitionIndexRange (
+  IN MrcParameters *const MrcData,
   IN const PARTITION_TYPE PartitionType,
   IN const UINT32         Index
   )
@@ -50,8 +52,9 @@ MrcGetPartitionIndexRange (
   MRC_RANGE Range = {.Start = MRC_IGNORE_ARG_8, .End = MRC_IGNORE_ARG_8};
   BOOLEAN IsPartitionSupported = (BlockPartitionMaxRange[PartitionType] != MUTLICAST_NOT_SUPPORTED);
 
+  BlockPartitionMaxRange [PartitionDataShared] = (UINT8) GetPartitionMax (PartitionDataShared, MrcData->Inputs.IsDdrIoUlxUlt);
   if (IsPartitionSupported) {
-    if (BlockPartitionMaxRange[PartitionType] == Index) {
+    if (BlockPartitionMaxRange[PartitionType] <= Index) {
       // This is multicast
       Range.Start = 0;
       Range.End = BlockPartitionMaxRange[PartitionType];

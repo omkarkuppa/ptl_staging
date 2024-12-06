@@ -38,6 +38,8 @@ typedef struct {
   UINT32                      VbtSize;                                  ///< Intel Graphics VBT (Video BIOS Table) Size.
   UINT8                       LidStatus;                                ///< LFP Display Lid Status (LID_STATUS enum).
   UINT8                       Rsvd[3];                                  ///< Reserved for future use.
+  UINT64                      Gsm2BaseAddress;                          ///< Graphics stolen memory 2 base address
+  UINT64                      Gsm2Size;                                 ///< Graphics stolen memory 2 size
 } IGPU_DATA_HOB;
 #pragma pack (pop)
 #endif

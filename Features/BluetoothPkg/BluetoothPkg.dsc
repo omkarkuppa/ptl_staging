@@ -79,6 +79,7 @@
   BluetoothPkg/HidKbDxe/HidKbDxe.inf
   BluetoothPkg/HidMouseDxe/HidMouseDxe.inf
   BluetoothPkg/BluetoothConnectionManagerDxe/BluetoothConnectionManagerDxe.inf
+  BluetoothPkg/BleConPlatformDxe/BleConPlatformDxe.inf
 
 [BuildOptions]
   *_*_*_CC_FLAGS = -D DISABLE_NEW_DEPRECATED_INTERFACES

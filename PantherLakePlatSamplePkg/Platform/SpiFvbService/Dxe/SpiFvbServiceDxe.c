@@ -31,23 +31,6 @@
 
 EFI_EVENT  mSpiFvbServiceAddressChangeEvent = NULL;
 
-FV_INFO mPlatformFullBiosFvBaseAddress[] = {
-  {FixedPcdGet32(PcdFlashNvStorageVariableBase), FixedPcdGet32(PcdFlashNvStorageVariableSize)},
-  {FixedPcdGet32(PcdFlashFvMicrocodeBase), FixedPcdGet32(PcdFlashFvMicrocodeSize)},
-  {FixedPcdGet32(PcdFlashFvAdvancedBase), FixedPcdGet32(PcdFlashFvAdvancedSize)},
-  {FixedPcdGet32(PcdFlashFvSecurityBase), FixedPcdGet32(PcdFlashFvSecuritySize)},
-  {FixedPcdGet32(PcdFlashFvOsBootBase), FixedPcdGet32(PcdFlashFvOsBootSize)},
-  {FixedPcdGet32(PcdFlashFvUefiBootBase), FixedPcdGet32(PcdFlashFvUefiBootSize)},
-  {FixedPcdGet32(PcdFlashFvPostMemoryBase), FixedPcdGet32(PcdFlashFvPostMemorySize)},
-  {FixedPcdGet32(PcdFlashFvPreMemoryBase), FixedPcdGet32(PcdFlashFvPreMemorySize)}
-#if FixedPcdGetBool (PcdExtendedBiosRegionSupport) == 1
-  ,{FixedPcdGet32(PcdFlashFvExtendedPostMemoryBase), FixedPcdGet32(PcdFlashFvExtendedPostMemorySize)},
-  {FixedPcdGet32(PcdFlashFvExtendedAdvancedBase), FixedPcdGet32(PcdFlashFvExtendedAdvancedSize)}
-#endif
-};
-
-UINTN mPlatformFullBiosFvBaseAddressCount = ARRAY_SIZE (mPlatformFullBiosFvBaseAddress);
-
 FV_INFO mPlatformUpdateInProgressFvBaseAddress[] = {
   {FixedPcdGet32(PcdFlashNvStorageVariableBase), FixedPcdGet32(PcdFlashNvStorageVariableSize)}
 };
@@ -248,11 +231,6 @@ FvbInitialize (
     //
     PlatformFvInfo = mPlatformDefaultBaseAddress;
     PlatformFvInfoCount = mPlatformDefaultBaseAddressCount;
-  }
-
-  if ((GetBootModeHob() == BOOT_ON_FLASH_UPDATE) || (GetBootModeHob() == BOOT_IN_RECOVERY_MODE)) {
-    PlatformFvInfo        = mPlatformFullBiosFvBaseAddress;
-    PlatformFvInfoCount   = mPlatformFullBiosFvBaseAddressCount;
   }
 
   if ((GetBootModeHob() == BOOT_ON_FLASH_UPDATE) && (GetFirstGuidHob (&gSysFwUpdateProgressGuid) != NULL)) {

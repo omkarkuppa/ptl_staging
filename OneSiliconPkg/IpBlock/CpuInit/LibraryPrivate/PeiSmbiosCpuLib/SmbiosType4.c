@@ -31,6 +31,8 @@
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
 #include <Library/OcMailboxLib.h>
 #endif
+#include <IndustryStandard/SmBios.h>
+
 ///
 /// Processor Information (Type 4)
 ///
@@ -513,7 +515,7 @@ InitializeSmbiosProcessorInfoHob (
   //
   //  Programs Processor Upgrade for type 4 SMBIOS Processor Info HOB in Fru.
   //
-  SmbiosProcessorInfoData.ProcessorUpgrade = SmbiosProcessorInfoHobType4 ();
+  SmbiosProcessorInfoData.ProcessorUpgrade = ProcessorUpgradeInvalid;
 
   //
   // Get all CDIE IDs, and fill them them into the DieIds list

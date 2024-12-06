@@ -1,4 +1,4 @@
-/** @file
+/**@file
   Unit test case of the Memory Telemetry driver.
 
   @copyright
@@ -61,7 +61,7 @@ GenMemInfoHob (
 **/
 UNIT_TEST_STATUS
 EFIAPI
-VerifyUpdateMemoryTelemetryTable(
+VerifyUpdateMemoryTelemetryTable (
   IN UNIT_TEST_CONTEXT  Context
   );
 

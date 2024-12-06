@@ -23,9 +23,11 @@
 #include <Library/TimerLib.h>
 #include <Library/DebugLib.h>
 #include <Library/EcPrivateLib.h>
+#include <Library/PcdLib.h>
 #include <EcCommands.h>
 #include <EcCommon.h>
-
+#include <EcPdCommands.h>
+#include <EcPdRamOffset.h>
 
 /**
   USBC EC Timeout Retry Message. Used to send messages to EC with predefined
@@ -63,10 +65,11 @@ UsbcEcTimeoutRetryMessage (
     //
     // Send the command to EC
     //
-    Status = EcInterface (EcId0, Command, &DataSize, DataBuffer);
+    Status = EcInterface (EcId0Ch0, Command, &DataSize, DataBuffer);
     if (Status != EFI_SUCCESS) {
       return Status;
     }
+
     //
     // If USB connection status is successful (0x00) or failed (0x02) then return
     // If in progress (0x01) then retry after 10 ms
@@ -129,14 +132,13 @@ UsbcRetimerCompliancePDMessage (
 
   DataSize = sizeof (Data8);
   Data8[0] = *Data;
-  Status = EcInterface (EcId0, EC_C_USBC_RETIMER, &DataSize, Data8);
+  Status = EcInterface (EcId0Ch0, EC_C_USBC_RETIMER, &DataSize, Data8);
   if (!EFI_ERROR (Status)) {
     *Data = Data8[0];
   }
 
   return Status;
 }
-
 
 /**
   USBC Get USB Connection Status
@@ -199,11 +201,11 @@ SetPdControllerMode (
   Data8[0] = PdControllerMode;
 
   // Send EC Command to Set PD Controller Mode
-  Status = (EcInterface (EcId0, EC_C_SET_PD_FW_UPDATE_MODE, &DataSize, Data8));
+  Status = (EcInterface (EcId0Ch0, EC_C_SET_PD_FW_UPDATE_MODE, &DataSize, Data8));
 
   // Wait (EC_SET_PD_MODE_WAIT_TIME_IN_FACTOR_OF_50_MS * 50)ms time before exiting
   for (Count = 0; Count < EC_SET_PD_MODE_WAIT_TIME_IN_FACTOR_OF_50_MS; Count++) {
-    MicroSecondDelay( 50 * 1000); // 50ms Delay
+    MicroSecondDelay(50 * 1000); // 50ms Delay
   }
 
   DEBUG ((DEBUG_INFO, "\nSetPdControllerMode Returning Status =%r\n", Status));
@@ -268,7 +270,7 @@ GetPdControllerMode (
 
   DEBUG ((DEBUG_INFO, "\nGetPdControllerMode with TotalCountOfPdController =%d\n", TotalCountOfPdController));
 
-  Status = EcInterface (EcId0, EC_C_GET_PD_FW_UPDATE_MODE, &DataSize, TempBuffer);
+  Status = EcInterface (EcId0Ch0, EC_C_GET_PD_FW_UPDATE_MODE, &DataSize, TempBuffer);
 
   *EcPdTempBuffer = TempBuffer[0];
 
@@ -325,7 +327,7 @@ GetModularUsbCIoConfig (
   if (BufferSize < sizeof (UINT64)) {
     return EFI_BUFFER_TOO_SMALL;
   }
-  return EcInterface (EcId0, EC_C_MODULAR_IO_INFO_CMD, &BufferSize, (UINT8 *) DataBuffer);
+  return EcInterface (EcId0Ch0, EC_C_MODULAR_IO_INFO_CMD, &BufferSize, (UINT8 *) DataBuffer);
 }
 
 /**
@@ -353,8 +355,246 @@ UpdateUsbCHostFlagsToEc (
 
   DataSize = sizeof (Data8);
   Data8 = *UsbCHostFlags;
-  Status = EcInterface (EcId0, EC_C_USBC_HOST_FLAGS, &DataSize, &Data8);
+  Status = EcInterface (EcId0Ch0, EC_C_USBC_HOST_FLAGS, &DataSize, &Data8);
   DEBUG((DEBUG_INFO, "EC_C_USBC_HOST_FLAGS Command status %r \n ", Status));
 
   return EFI_SUCCESS;
+}
+
+/**
+  Execute the PD Vendor Command via EC private port
+
+  @param[in]  PdCntrlIndex       PD controller index (0-based).
+  @param[in]  VendorCmd          PD Vendor command data
+  @param[in]  Lock               Need to Lock the EC PD I2C target or not
+  @param[in]  InputData          A pointer to input data
+  @param[in]  InputDataSize      A pointer to input data size
+  @param[out] OutputData         A pointer to out data
+  @param[out] OutputDataSize     A pointer to out data size
+
+  @retval EFI_SUCCESS            Command success.
+  @retval EFI_TIMEOUT            EC is busy.
+  @retval EFI_ACCESS_DENIED      EC PD I2C target is lock.
+  @retval EFI_INVALID_PARAMETER  Parameter invalid.
+  @retval EFI_UNSUPPORTED        Unsupported EC channel or the command is not found in mEcCommand.
+  @retval EFI_BUFFER_TOO_SMALL   The DataBuffer is too small to Read/Write data with EC FW.
+
+**/
+EFI_STATUS
+EFIAPI
+EcPdExecuteVendorCommand (
+  IN  UINT8    PdCntrlIndex,
+  IN  UINT8    VendorCmd,
+  IN  BOOLEAN  Lock,
+  IN  UINT8    *InputData,
+  IN  UINT8    *InputDataSize,
+  OUT UINT8    *OutputData OPTIONAL,
+  OUT UINT8    *OutputDataSize OPTIONAL
+  )
+{
+  EFI_STATUS  Status;
+  UINT8       DataBuffer[2];
+  UINT8       Index;
+  UINT16      EcPdCmdMaxRetry;
+  UINT16      EcPdCmdWaitStallInUs;
+  UINT16      Time;
+
+  if (Lock) {
+    ///
+    /// Lock the Ec Pd communication if needed
+    ///
+    Status = LockEcPdI2cTarget (EC_PD_LOCK_I2C);
+    if (EFI_ERROR (Status)) {
+      goto ERROR_EXIT;
+    }
+  }
+
+  ///
+  /// Write the PD controller index
+  ///
+  DataBuffer[1] = PdCntrlIndex;
+  DataBuffer[0] = PD_CONTROLLER_INDEX;
+  Status        = WriteEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+  if (EFI_ERROR (Status)) {
+    goto ERROR_EXIT;
+  }
+
+  ///
+  /// Write the PD Vendor command data
+  ///
+  DataBuffer[1] = VendorCmd;
+  DataBuffer[0] = VENDOR_REGISTER_OR_COMMAND;
+  Status        = WriteEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+  if (EFI_ERROR (Status)) {
+    goto ERROR_EXIT;
+  }
+
+  ///
+  /// Write the data size
+  ///
+  DataBuffer[1] = *InputDataSize;
+  DataBuffer[0] = DATA_SIZE;
+  Status        = WriteEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+  if (EFI_ERROR (Status)) {
+    goto ERROR_EXIT;
+  }
+
+  ///
+  /// Write the data
+  ///
+  for (Index = 0; Index < *InputDataSize; Index++) {
+    DataBuffer[1] = InputData[Index];
+    DataBuffer[0] = DATA_00 + Index;
+    Status        = WriteEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+    if (EFI_ERROR (Status)) {
+      goto ERROR_EXIT;
+    }
+  }
+
+  ///
+  /// Write the EC PD command 0x0C to execute PD vendor command
+  ///
+  DataBuffer[1] = EC_PRIVATE_CMD_EXECUTE;
+  DataBuffer[0] = BIOS_EC_COMMAND;
+  Status        = WriteEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+  if (EFI_ERROR (Status)) {
+    goto ERROR_EXIT;
+  }
+
+  EcPdCmdMaxRetry      = PcdGet16 (PcdEcPdCmdMaxRetry);
+  EcPdCmdWaitStallInUs = PcdGet16 (PcdEcPdCmdWaitStallInUs);
+
+  for (Time = 0; Time < EcPdCmdMaxRetry; Time++) {
+    DataBuffer[0] = COMMAND_EXECUTION_STATUS;
+
+    Status = ReadEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+    if (EFI_ERROR (Status)) {
+      goto ERROR_EXIT;
+    }
+
+    if (DataBuffer[0] == EC_PRIVATE_CMD_STATUS_SUCCESS) {
+      break;
+    } else if (DataBuffer[0] == EC_PRIVATE_CMD_STATUS_IN_PROGRESS) {
+      MicroSecondDelay (EcPdCmdWaitStallInUs);
+    } else if ((DataBuffer[0] == EC_PRIVATE_CMD_STATUS_NO_ACK) || (DataBuffer[0] == EC_PRIVATE_CMD_STATUS_FAILED)) {
+      DEBUG ((DEBUG_ERROR, "Command execution failed, Status:%x \n", DataBuffer[0]));
+      Status = EFI_DEVICE_ERROR;
+      goto ERROR_EXIT;
+    }
+  }
+
+  if (DataBuffer[0] != EC_PRIVATE_CMD_STATUS_SUCCESS) {
+    DEBUG ((DEBUG_ERROR, "Command execution failed, Status:%x \n", DataBuffer[0]));
+    Status = EFI_TIMEOUT;
+    goto ERROR_EXIT;
+  }
+
+  if (OutputData != NULL) {
+    ///
+    /// Read the return data size
+    ///
+    DataBuffer[0] = DATA_SIZE;
+    Status        = ReadEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+    if (EFI_ERROR (Status)) {
+      goto ERROR_EXIT;
+    }
+
+    *OutputDataSize = DataBuffer[0];
+    DEBUG ((DEBUG_INFO, "DataSize %d \n", *OutputDataSize));
+
+    ///
+    /// Read the return data
+    ///
+    for (Index = 0; Index < *OutputDataSize; Index++) {
+      DataBuffer[0] = DATA_00 + Index;
+      Status        = ReadEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+      if (EFI_ERROR (Status)) {
+        goto ERROR_EXIT;
+      }
+
+      OutputData[Index] = DataBuffer[0];
+    }
+  }
+
+  return Status;
+
+ERROR_EXIT:
+  DEBUG ((DEBUG_ERROR, "%a: Read/Write EcRam fail, Status: %r\n", __FUNCTION__, Status));
+  if (Lock) {
+    LockEcPdI2cTarget (EC_PD_UNLOCK_I2C);
+  }
+
+  return Status;
+}
+
+/**
+  Lock or unlock the EC PD I2C target
+
+  @param[in] Lock                Lock(0x01) or unlock(0x00).
+
+  @retval EFI_SUCCESS            Command success.
+  @retval EFI_TIMEOUT            EC is busy.
+  @retval EFI_INVALID_PARAMETER  Parameter invalid.
+  @retval EFI_UNSUPPORTED        Unsupported EC channel or the command is not found in mEcCommand.
+  @retval EFI_BUFFER_TOO_SMALL   The DataBuffer is too small to Read/Write data with EC FW.
+
+**/
+EFI_STATUS
+EFIAPI
+LockEcPdI2cTarget (
+  IN UINT8  Lock
+  )
+{
+  EFI_STATUS  Status;
+  UINT8       LockStatus;
+  UINT8       DataBuffer[2];
+
+  ///
+  /// Check the lock status before lock the I2C communication
+  ///
+  Status = GetEcPdLockStatus (&LockStatus);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  if (LockStatus != Lock) {
+    DEBUG ((DEBUG_INFO, "%a: EC PD %s the I2C target\n", __FUNCTION__, Lock == EC_PD_LOCK_I2C ? L"Lock" : L"Unlock"));
+    DataBuffer[1] = Lock;
+    DataBuffer[0] = I2C_COMMUNICATION_LOCK;
+    Status        = WriteEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+  }
+
+  return Status;
+}
+
+/**
+  Check the EC PD lock status
+
+  @param[in, out] LockStatus     Lock status
+
+  @retval EFI_SUCCESS            Command success.
+  @retval EFI_TIMEOUT            EC is busy.
+  @retval EFI_INVALID_PARAMETER  Parameter invalid.
+  @retval EFI_UNSUPPORTED        Unsupported EC channel or the command is not found in mEcCommand.
+  @retval EFI_BUFFER_TOO_SMALL   The DataBuffer is too small to Read/Write data with EC FW.
+
+**/
+EFI_STATUS
+EFIAPI
+GetEcPdLockStatus (
+  IN OUT UINT8  *LockStatus
+  )
+{
+  EFI_STATUS  Status;
+  UINT8       DataBuffer[1];
+
+  DataBuffer[0] = I2C_COMMUNICATION_LOCK;
+  Status        = ReadEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+
+  if (!EFI_ERROR (Status)) {
+    *LockStatus = DataBuffer[0];
+    DEBUG ((DEBUG_INFO, "%a: EC PD lock status: 0x%2X\n", __FUNCTION__, *LockStatus));
+  }
+
+  return Status;
 }

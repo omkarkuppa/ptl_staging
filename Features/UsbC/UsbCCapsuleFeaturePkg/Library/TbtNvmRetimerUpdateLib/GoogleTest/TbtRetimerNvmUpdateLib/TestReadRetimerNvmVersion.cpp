@@ -19,28 +19,41 @@
 @par Specification
 **/
 
-//**********************************************************
-// ReadRetimerNvmVersion Unit Test                         *
-//**********************************************************
-class ReadRetimerNvmVersionTest : public CommonMock {
+#include <GTestTbtRetimerNvmUpdateLib.h>
+#include <Library/FunctionMockLib.h>
+struct MockTbtDrvReadNvmVersion {
+  MOCK_INTERFACE_DECLARATION (MockTbtDrvReadNvmVersion);
+  MOCK_FUNCTION_INTERNAL_DECLARATION (
+    EFI_STATUS,
+    TbtDrvReadNvmVersion,
+    (IN  VOID          *DevCom,
+     OUT UINT32        *Version)
+    );
+};
+
+MOCK_INTERFACE_DEFINITION (MockTbtDrvReadNvmVersion);
+MOCK_FUNCTION_INTERNAL_DEFINITION (MockTbtDrvReadNvmVersion, TbtDrvReadNvmVersion, 2, EFIAPI);
+
+// **********************************************************
+// ReadRetimerNvmVersion Unit Test                          *
+// **********************************************************
+class ReadRetimerNvmVersionTest : public Test {
   protected:
-    EFI_STATUS                     Status;
-    RETIMER_DEV_INSTANCE           RetimerDevice;
-    TBT_RETIMER                    *Device;
-    UINT32                         Version;
+    EFI_STATUS               Status;
+    RETIMER_DEV_INSTANCE     RetimerDevice;
+    TBT_RETIMER              *Device;
+    UINT32                   Version;
+    MockTbtDrvReadNvmVersion TbtDrvReadNvmVersionMock;
 
-    void SetUp() override {
-      Device        = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
-      RetimerDevice = (RETIMER_DEV_INSTANCE) Device;
-      Version       = 0x123456;
-    }
+  void SetUp() override {
+    Device        = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
+    RetimerDevice = (RETIMER_DEV_INSTANCE) Device;
+    Version       = 0x123456;
+  }
 
-    void TearDown() override {
-      //
-      // Destroy Mock Service
-      //
-      FreePool (Device);
-    }
+  void TearDown () override {
+    FreePool (Device);
+  }
 };
 
 //
@@ -50,9 +63,7 @@ class ReadRetimerNvmVersionTest : public CommonMock {
 TEST_F (ReadRetimerNvmVersionTest, AssertError) {
   cout << "[---------- Case 1 ----------]"<< endl;
 
-  Status = ReadRetimerNvmVersion (
-             RetimerDevice,
-             NULL);
+  Status = ReadRetimerNvmVersion (RetimerDevice, NULL);
   EXPECT_EQ (Status, EFI_INVALID_PARAMETER);
 }
 
@@ -63,15 +74,16 @@ TEST_F (ReadRetimerNvmVersionTest, AssertError) {
 TEST_F (ReadRetimerNvmVersionTest, TbtDrvReadNvmVersionError) {
   cout << "[---------- Case 2 ----------]"<< endl;
 
-  EXPECT_CALL (TbtNvmRetimerDrvHelpersMock,
+  EXPECT_CALL (
+    TbtDrvReadNvmVersionMock,
     TbtDrvReadNvmVersion (
       Device,
-      _))
-    .WillOnce (Return(EFI_DEVICE_ERROR));
+      _
+      )
+    )
+    .WillOnce (Return (EFI_DEVICE_ERROR));
 
-  Status = ReadRetimerNvmVersion (
-             RetimerDevice,
-             &Version);
+  Status = ReadRetimerNvmVersion (RetimerDevice, &Version);
   EXPECT_EQ (Status, EFI_DEVICE_ERROR);
 }
 
@@ -82,18 +94,20 @@ TEST_F (ReadRetimerNvmVersionTest, TbtDrvReadNvmVersionError) {
 TEST_F (ReadRetimerNvmVersionTest, CorrectFlow) {
   cout << "[---------- Case 3 ----------]"<< endl;
 
-  EXPECT_CALL (TbtNvmRetimerDrvHelpersMock,
+  EXPECT_CALL (
+    TbtDrvReadNvmVersionMock,
     TbtDrvReadNvmVersion (
       Device,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<1>(&Version, sizeof(Version)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<1>(&Version, sizeof (Version)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  Status = ReadRetimerNvmVersion (
-             RetimerDevice,
-             &Version);
+  Status = ReadRetimerNvmVersion (RetimerDevice, &Version);
   EXPECT_EQ (Status, EFI_SUCCESS);
 }

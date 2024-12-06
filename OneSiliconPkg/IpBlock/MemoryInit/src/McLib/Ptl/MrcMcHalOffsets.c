@@ -519,6 +519,7 @@ MrcGetMcConfigRegOffset (
       break;
 
     case GsmMccMcMntsSpareRw:
+    case GsmMccMcMntsRfFastSleepDisable:
       if (Channel < MaxChannel) {
         Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_MCMNTS_SPARE_REG, MC1_CH0_CR_MCMNTS_SPARE_REG, Controller, MC0_CH1_CR_MCMNTS_SPARE_REG, Channel);
       }
@@ -919,6 +920,12 @@ MrcGetMcConfigRegOffset (
         Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_AUTO_PRE_CONTROL_REG, MC1_CH0_CR_AUTO_PRE_CONTROL_REG, Controller, MC0_CH1_CR_AUTO_PRE_CONTROL_REG, Channel);
       }
       VolatileMask->Data = MC0_CH0_CR_AUTO_PRE_CONTROL_VOLATILE_BITFIELDS_MSK;
+      break;
+
+    case GsmMccCfiE2eParityEnRdata:
+    case GsmMccCfiE2eParityEnRdCmplHeader:
+    case GsmMccCfiE2eParityEn:
+      Offset = OFFSET_CALC_CH (MC0_PARITY_CONTROL_REG, MC1_PARITY_CONTROL_REG, Controller);
       break;
 
     case GsmScPbrEcsRefabEnable:

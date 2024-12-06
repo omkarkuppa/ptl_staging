@@ -212,4 +212,17 @@ MrcIsSaGvEnabled (
   IN  MrcParameters *const  MrcData
   );
 
+/**
+  Enable Refresh Interval Rate (RIR) feature per channel for DDR5.
+  All DIMMs in channel must support RIR to enable feature.
+
+  @param[in] MrcData - include all the MRC general data.
+
+  @returns nothing.
+**/
+VOID
+MrcRirInit (
+  IN MrcParameters *const  MrcData
+  );
+
 #endif // _MrcGeneral_h_

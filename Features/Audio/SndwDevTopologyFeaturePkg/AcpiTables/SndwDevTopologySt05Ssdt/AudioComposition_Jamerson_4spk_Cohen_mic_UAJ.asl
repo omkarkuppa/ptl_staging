@@ -19,31 +19,79 @@
 @par Specification Reference:
 **/
 
-#ifdef COHEN_ONLY
-# define SPEAKER_RENDER_DATA_PORT       5
-#else   // !COHEN_ONLY
-# define SPEAKER_RENDER_DATA_PORT       1
-
-# ifdef JAMERSON_4_UID
-   // Four SDCA Audio Functions
-#  define ACPI_ACD_COLLECTION_COUNT  4
+// This would be so much cleaner with a real preprocessor.
+#ifdef JAMERSON_4_UID
+   // Four or five SDCA Audio Functions
+# define _FOUR_JAMERSONS
+# define _THREE_JAMERSONS  // really means 'at least three Jamersons'
+# define _TWO_JAMERSONS    // really means 'at least two Jamersons'
+# define _NUM_JAMERSON_AMPS 4
+#else
+# ifdef JAMERSON_3_UID
+#  define _THREE_JAMERSONS
+#  define _TWO_JAMERSONS
+#  define _NUM_JAMERSON_AMPS 3
 # else
-#  ifdef JAMERSON_3_UID
-#   error "Only 3 AMPs are defined!!!"
+#  ifdef JAMERSON_2_UID
+#   define _TWO_JAMERSONS
+#   define _NUM_JAMERSON_AMPS 2
 #  else
-#   ifdef JAMERSON_2_UID
-     // Two SDCA Audio Functions
-#    define ACPI_ACD_COLLECTION_COUNT  2
+#   ifdef JAMERSON_1_UID
+#    error "Only 1 AMP is defined!!!"
 #   else
-#    ifdef JAMERSON_1_UID
-#     error "Only 1 AMP is defined!!!"
-#    else
+     // No JAMERSON_x_UIDs is fine as long as there's a Cohen AMP function
+#    ifndef COHEN_AMP
 #     error "AMPs are undefined!!!"
-#    endif
-#   endif
-#  endif
-# endif
-#endif  // COHEN_ONLY
+#    else
+#     define _NUM_JAMERSON_AMPS 0
+#     define _COHEN_AMP_ONLY
+#    endif  // COHEN_AMP
+#   endif  // JAMERSON_1_UID
+#  endif  // JAMERSON_2_UID
+# endif  // JAMERSON_3_UID
+#endif  // JAMERSON_4_UID
+
+#ifdef COHEN_AMP
+# define _NUM_COHEN_AMPS     1
+#else
+# define _NUM_COHEN_AMPS     0
+#endif
+
+
+//
+// Fall back acpi-acd-device-namestring
+//
+#ifndef JAMERSON_1_AMP_DEV_NAME
+# define JAMERSON_1_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD2.AF01"
+#endif
+
+#ifndef JAMERSON_2_AMP_DEV_NAME
+# define JAMERSON_2_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD3.AF01"
+#endif
+
+#ifndef JAMERSON_3_AMP_DEV_NAME
+# define JAMERSON_3_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD4.AF01"
+#endif
+
+#ifndef JAMERSON_4_AMP_DEV_NAME
+# define JAMERSON_4_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD5.AF01"
+#endif
+
+#ifndef COHEN_1_AMP_DEV_NAME
+# define COHEN_1_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF01"
+#endif
+
+#ifndef COHEN_1_MIC_DEV_NAME
+# define COHEN_1_MIC_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF02"
+#endif
+
+#ifndef COHEN_1_UAJ_DEV_NAME
+# define COHEN_1_UAJ_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF03"
+#endif
+
+#ifndef DSP_ACPI_ACD_DEVICE_NAMESTRING
+# define DSP_ACPI_ACD_DEVICE_NAMESTRING "\\_SB.PC00.HDAS"
+#endif
 
 
 Name(EP00, Package() {
@@ -71,18 +119,18 @@ Name(EC00, Package() {
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
     Package () {
        Package (2) {"acpi-acd-collection-0-properties", "CC00"},    // DSP Configuration
-#ifdef COHEN_ONLY
-       Package (2) {"acpi-acd-collection-1-properties", "CC01"},    // Stereo Speakers
+#ifdef _COHEN_AMP_ONLY
+       Package (2) {"acpi-acd-collection-1-properties", "CCCO"},    // Cohen Stereo Speakers
 #else
        Package (2) {"acpi-acd-collection-1-properties", "AG00"},    // Aggregated Speakers
-#endif
+#endif  // _COHEN_AMP_ONLY
     }
 }) //End EC00
 
 Name(CC00, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -108,29 +156,49 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 
 #ifdef _AMD
        Package (2) {"amd-sdw-default-stream-dp-number", 0x1},    // Raw Stream Data port number on SPK device
-
-#else   // !_AMD
+#else  // !_AMD
+# ifdef _NVIDIA
+        // NVidia_Arm specific information for Speaker
+# else  // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x0380},
        Package (2) {"acpi-vendor-amp-degraded-mode", 0},
        Package (2) {"acpi-acd-connection-count", 2},
 
        // Reference stream setup
        Package (2) {"acpi_vendor_smart_amp", INTEL_DSP_AEC_ENABLE}, // enable is 1; disable is 0
-       Package (2) {"acpi-vendor-aggregation-peripheral-count", INTEL_DSP_NUM_AMPS}, // no of amps
-       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-count", INTEL_DSP_NUM_AMPS},  // amps participating in aggregation of reference.
+       Package (2) {"acpi-vendor-aggregation-peripheral-count", (_NUM_JAMERSON_AMPS + _NUM_COHEN_AMPS)}, // no of amps
+       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-count", (_NUM_JAMERSON_AMPS + _NUM_COHEN_AMPS)},  // amps participating in aggregation of reference.
 
-       // Speaker Render stream (raw)
+       // Speaker Render stream (connection 0, raw; connection 1, offload):
+       // Logic for determining which dataport to use:
+       //    Cohen amp, no Jamersons                  Cohen speaker render DP
+       //    Cohen bridge, no extra Jamersons         Cohen speaker render DP
+       //    No Cohen amp, Jamersons only             Jamerson speaker render DP
+       //    Cohen amp (not bridge) + agg'd J'sons    Jamerson speaker render DP
+       //    Cohen bridge + agg'd J'sons              Jamerson speaker render DP
        Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x00},
        Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
-       Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", SPEAKER_RENDER_DATA_PORT},
-
-       // Speaker Render stream (offload)
        Package (2) {"acpi-vendor-connection-1-dsp-pin", 0x02},
        Package (2) {"acpi-vendor-connection-1-stream-type", 0x0},
-       Package (2) {"acpi-vendor-connection-1-peripheral-dp-number", SPEAKER_RENDER_DATA_PORT},
+#  ifdef COHEN_AMP
+#   ifndef COHEN_JAMERSON_AMP_AGGREGATION
+       // Cohen amp or bridge is present, but no aggregation
+       Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", COHEN_SPEAKER_RENDER_DATA_PORT},
+       Package (2) {"acpi-vendor-connection-1-peripheral-dp-number", COHEN_SPEAKER_RENDER_DATA_PORT},
+#   else
+       // Cohen amp or bridge is present with aggregation to additional J'sons
+       Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+       Package (2) {"acpi-vendor-connection-1-peripheral-dp-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+#   endif  // COHEN_JAMERSON_AMP_AGGREGATION
+#  else
+       // No Cohen amp, Jamersons only
+       Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+       Package (2) {"acpi-vendor-connection-1-peripheral-dp-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
+#  endif  // COHEN_AMP
 
        // Information on peripheral participating in feedback streams aggregation
-# ifdef JAMERSON_1_LID
+#  ifdef _TWO_JAMERSONS
+       // Jamerson #1
        // Old streaming driver
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-0-controller-id", JAMERSON_1_LID},
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-0-unique-id",     JAMERSON_1_UID},
@@ -143,10 +211,10 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-aggregation-peripheral-0-unique-id", JAMERSON_1_UID},
        Package (2) {"acpi-vendor-aggregation-peripheral-0-function-number", 1},
        Package (2) {"acpi-vendor-aggregation-peripheral-0-function-type", 1},
-       Package (2) {"acpi-vendor-aggregation-peripheral-0-dp-number", SPEAKER_RENDER_DATA_PORT},
+       Package (2) {"acpi-vendor-aggregation-peripheral-0-dp-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
        Package (2) {"acpi-vendor-aggregation-peripheral-0-aec-feedback-channel-mask",  JAMERSON_1_LR_CHANNEL_MASK},
-# endif
-# ifdef JAMERSON_2_LID
+
+       // Jamerson #2
        // Old streaming driver
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-1-controller-id", JAMERSON_2_LID},
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-1-unique-id",     JAMERSON_2_UID},
@@ -159,10 +227,11 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-aggregation-peripheral-1-unique-id", JAMERSON_2_UID},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-number", 1},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-type", 1},
-       Package (2) {"acpi-vendor-aggregation-peripheral-1-dp-number", SPEAKER_RENDER_DATA_PORT},
+       Package (2) {"acpi-vendor-aggregation-peripheral-1-dp-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-aec-feedback-channel-mask",  JAMERSON_2_LR_CHANNEL_MASK},
-# endif
-# ifdef JAMERSON_3_LID
+#  endif  // _TWO_JAMERSONS
+#  ifdef _THREE_JAMERSONS
+       // Jamerson #3
        // Old streaming driver
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-2-controller-id", JAMERSON_3_LID},
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-2-unique-id",     JAMERSON_3_UID},
@@ -175,10 +244,11 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-aggregation-peripheral-2-unique-id", JAMERSON_3_UID},
        Package (2) {"acpi-vendor-aggregation-peripheral-2-function-number", 1},
        Package (2) {"acpi-vendor-aggregation-peripheral-2-function-type", 1},
-       Package (2) {"acpi-vendor-aggregation-peripheral-2-dp-number", SPEAKER_RENDER_DATA_PORT},
+       Package (2) {"acpi-vendor-aggregation-peripheral-2-dp-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
        Package (2) {"acpi-vendor-aggregation-peripheral-2-aec-feedback-channel-mask",  JAMERSON_3_LR_CHANNEL_MASK},
-# endif
-# ifdef JAMERSON_4_LID
+#  endif  // _THREE_JAMERSONS
+#  ifdef _FOUR_JAMERSONS
+       // Jamerson #4
        // Old streaming driver
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-3-controller-id", JAMERSON_4_LID},
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-3-unique-id",     JAMERSON_4_UID},
@@ -191,31 +261,64 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-aggregation-peripheral-3-unique-id", JAMERSON_4_UID},
        Package (2) {"acpi-vendor-aggregation-peripheral-3-function-number", 1},
        Package (2) {"acpi-vendor-aggregation-peripheral-3-function-type", 1},
-       Package (2) {"acpi-vendor-aggregation-peripheral-3-dp-number", SPEAKER_RENDER_DATA_PORT},
+       Package (2) {"acpi-vendor-aggregation-peripheral-3-dp-number", JAMERSON_SPEAKER_RENDER_DATA_PORT},
        Package (2) {"acpi-vendor-aggregation-peripheral-3-aec-feedback-channel-mask",  JAMERSON_4_LR_CHANNEL_MASK},
-# endif
-# ifdef JAMERSON_5_LID
+#  endif  // _FOUR_JAMERSONS
+
+#  ifdef COHEN_JAMERSON_AMP_AGGREGATION
+       // Aggregated Cohen amp
+#   ifdef _FOUR_JAMERSONS
+       // Old streaming driver
+       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-4-controller-id", COHEN_1_LID},
+       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-4-unique-id",     COHEN_1_UID},
+       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-4-channel-mask",  0x1}, //!!! ATR: Figure out value for this
+       // New streaming driver
        Package (2) {"acpi-vendor-aggregation-peripheral-4-function-manufacturer-id", 0x1fa},
-       Package (2) {"acpi-vendor-aggregation-peripheral-4-function-id", 0x3556},
+       Package (2) {"acpi-vendor-aggregation-peripheral-4-function-id", 0x4243},
        Package (2) {"acpi-vendor-aggregation-peripheral-4-controller-id", 0},
-       Package (2) {"acpi-vendor-aggregation-peripheral-4-link-id", JAMERSON_5_LID},
-       Package (2) {"acpi-vendor-aggregation-peripheral-4-unique-id", JAMERSON_5_UID},
+       Package (2) {"acpi-vendor-aggregation-peripheral-4-link-id", COHEN_1_LID},
+       Package (2) {"acpi-vendor-aggregation-peripheral-4-unique-id", COHEN_1_UID},
        Package (2) {"acpi-vendor-aggregation-peripheral-4-function-number", 1},
        Package (2) {"acpi-vendor-aggregation-peripheral-4-function-type", 1},
-       Package (2) {"acpi-vendor-aggregation-peripheral-4-dp-number", SPEAKER_RENDER_DATA_PORT},
-       Package (2) {"acpi-vendor-aggregation-peripheral-4-aec-feedback-channel-mask",  JAMERSON_5_LR_CHANNEL_MASK}
-# endif
-# ifdef JAMERSON_6_LID
-       Package (2) {"acpi-vendor-aggregation-peripheral-5-function-manufacturer-id", 0x1fa},
-       Package (2) {"acpi-vendor-aggregation-peripheral-5-function-id", 0x3556},
-       Package (2) {"acpi-vendor-aggregation-peripheral-5-controller-id", 0},
-       Package (2) {"acpi-vendor-aggregation-peripheral-5-link-id", JAMERSON_6_LID},
-       Package (2) {"acpi-vendor-aggregation-peripheral-5-unique-id", JAMERSON_6_UID},
-       Package (2) {"acpi-vendor-aggregation-peripheral-5-function-number", 1},
-       Package (2) {"acpi-vendor-aggregation-peripheral-5-function-type", 1},
-       Package (2) {"acpi-vendor-aggregation-peripheral-5-dp-number", SPEAKER_RENDER_DATA_PORT},
-       Package (2) {"acpi-vendor-aggregation-peripheral-5-aec-feedback-channel-mask",  JAMERSON_6_LR_CHANNEL_MASK}
-# endif
+       Package (2) {"acpi-vendor-aggregation-peripheral-4-dp-number", COHEN_SPEAKER_RENDER_DATA_PORT},
+       Package (2) {"acpi-vendor-aggregation-peripheral-4-aec-feedback-channel-mask",  0x1} //!!! ATR: FIgure out value for this
+#   else
+#    ifdef _THREE_JAMERSONS
+       // Old streaming driver
+       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-3-controller-id", COHEN_1_LID},
+       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-3-unique-id",     COHEN_1_UID},
+       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-3-channel-mask",  0x1}, //!!! ATR: Figure out value for this
+       // New streaming driver
+       Package (2) {"acpi-vendor-aggregation-peripheral-3-function-manufacturer-id", 0x1fa},
+       Package (2) {"acpi-vendor-aggregation-peripheral-3-function-id", 0x4243},
+       Package (2) {"acpi-vendor-aggregation-peripheral-3-controller-id", 0},
+       Package (2) {"acpi-vendor-aggregation-peripheral-3-link-id", COHEN_1_LID},
+       Package (2) {"acpi-vendor-aggregation-peripheral-3-unique-id", COHEN_1_UID},
+       Package (2) {"acpi-vendor-aggregation-peripheral-3-function-number", 1},
+       Package (2) {"acpi-vendor-aggregation-peripheral-3-function-type", 1},
+       Package (2) {"acpi-vendor-aggregation-peripheral-3-dp-number", COHEN_SPEAKER_RENDER_DATA_PORT},
+       Package (2) {"acpi-vendor-aggregation-peripheral-3-aec-feedback-channel-mask",  0x1} //!!! ATR: FIgure out value for this
+#    else
+#     ifdef _TWO_JAMERSONS
+       // Old streaming driver
+       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-2-controller-id", COHEN_1_LID},
+       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-2-unique-id",     COHEN_1_UID},
+       Package (2) {"acpi-vendor-feedback-aggregation-peripheral-2-channel-mask",  0x1}, //!!! ATR: Figure out value for this
+       // New streaming driver
+       Package (2) {"acpi-vendor-aggregation-peripheral-2-function-manufacturer-id", 0x1fa},
+       Package (2) {"acpi-vendor-aggregation-peripheral-2-function-id", 0x4243},
+       Package (2) {"acpi-vendor-aggregation-peripheral-2-controller-id", 0},
+       Package (2) {"acpi-vendor-aggregation-peripheral-2-link-id", COHEN_1_LID},
+       Package (2) {"acpi-vendor-aggregation-peripheral-2-unique-id", COHEN_1_UID},
+       Package (2) {"acpi-vendor-aggregation-peripheral-2-function-number", 1},
+       Package (2) {"acpi-vendor-aggregation-peripheral-2-function-type", 1},
+       Package (2) {"acpi-vendor-aggregation-peripheral-2-dp-number", COHEN_SPEAKER_RENDER_DATA_PORT},
+       Package (2) {"acpi-vendor-aggregation-peripheral-2-aec-feedback-channel-mask",  0x1} //!!! ATR: FIgure out value for this
+#     endif  // _TWO_JAMERSONS
+#    endif  // _THREE_JAMERSONS
+#   endif  // _FOUR_JAMERSONS
+#  endif  // COHEN_JAMERSON_AMP_AGGREGATION
+# endif  // _NVIDIA
 #endif  // _AMD
     }
 })  //End VN00
@@ -237,16 +340,11 @@ Name(AC02, Package() {    // This package is shared by all Codec devices in this
     }
 }) //End AC02
 
-#ifdef COHEN_ONLY
-
-Name(CC01, Package() {
+// This is the Cohen-only ACD collection
+Name(CCCO, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-# ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD6.AF01"},
-# else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF01"},
-# endif
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xC},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -255,10 +353,9 @@ Name(CC01, Package() {
     Package () {
        Package (2) {"msft-acx-properties", "AC01"},    // Acx specific properties
     }
-}) //End CC01
+}) //End CCCO
 
-#else   // !COHEN_ONLY
-
+// This is the multiple Jamersons or Jamersons and Cohen aggregation ACD collection
 Name(AG00, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
@@ -266,27 +363,41 @@ Name(AG00, Package() {
        Package (2) {"acpi-acd-config-friendly-name", "Speaker_Aggregation"},
        Package (2) {"acpi-acd-collection-type", 0},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-collection-ordering", 1},    // Parallel Connection
-       Package (2) {"acpi-acd-collection-count", ACPI_ACD_COLLECTION_COUNT},    // N SDCA Audio Functions
+       Package (2) {"acpi-acd-collection-count", (_NUM_JAMERSON_AMPS + _NUM_COHEN_AMPS)},    // N SDCA Audio Functions
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
     Package () {
-       Package (2) {"acpi-acd-collection-0-properties", "CC01"},    // First SDCA AMP Function
-       Package (2) {"acpi-acd-collection-1-properties", "CC02"},    // Second SDCA AMP Function
-# if (ACPI_ACD_COLLECTION_COUNT >= 4)
-       Package (2) {"acpi-acd-collection-2-properties", "CC03"},    // Third SDCA AMP Function
-       Package (2) {"acpi-acd-collection-3-properties", "CC04"},    // Fourth SDCA AMP Function
-# endif
-    }
+#ifdef _FOUR_JAMERSONS
+       Package (2) {"acpi-acd-collection-0-properties", "CC01"},    // First Jamerson AMP Function
+       Package (2) {"acpi-acd-collection-1-properties", "CC02"},    // Second Jamerson AMP Function
+       Package (2) {"acpi-acd-collection-2-properties", "CC03"},    // Third Jamerson AMP Function
+       Package (2) {"acpi-acd-collection-3-properties", "CC04"},    // Fourth Jamerson AMP Function
+# ifdef COHEN_AMP
+       Package (2) {"acpi-acd-collection-4-properties", "CC05"},    // Cohen AMP Function
+# endif  // COHEN_AMP
+#else
+# ifdef _THREE_JAMERSONS
+       Package (2) {"acpi-acd-collection-0-properties", "CC01"},    // First Jamerson AMP Function
+       Package (2) {"acpi-acd-collection-1-properties", "CC02"},    // Second Jamerson AMP Function
+       Package (2) {"acpi-acd-collection-2-properties", "CC03"},    // Third Jamerson AMP Function
+#  ifdef COHEN_AMP
+       Package (2) {"acpi-acd-collection-3-properties", "CC05"},    // Cohen AMP Function
+#  endif  // COHEN_AMP
+# else  // Two Jamersons
+       Package (2) {"acpi-acd-collection-0-properties", "CC01"},    // First Jamerson AMP Function
+       Package (2) {"acpi-acd-collection-1-properties", "CC02"},    // Second Jamerson AMP Function
+#  ifdef COHEN_AMP
+       Package (2) {"acpi-acd-collection-2-properties", "CC05"},    // Cohen AMP Function
+#  endif  // COHEN_AMP
+# endif  // _THREE_JAMERSONS
+#endif  // _FOUR_JAMERSONS
+    },
 }) //End AG00
 
 Name(CC01, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-# ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD2.AF01"},
-# else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD2.AF01"},
-# endif
+       Package (2) {"acpi-acd-device-namestring", JAMERSON_1_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xE},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -300,11 +411,7 @@ Name(CC01, Package() {
 Name(CC02, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-# ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD3.AF01"},
-# else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD3.AF01"},
-# endif
+       Package (2) {"acpi-acd-device-namestring", JAMERSON_2_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xE},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -315,15 +422,10 @@ Name(CC02, Package() {
     }
 }) //End CC02
 
-# if (ACPI_ACD_COLLECTION_COUNT >= 4)
 Name(CC03, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-#  ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD4.AF01"},
-#  else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD4.AF01"},
-#  endif
+       Package (2) {"acpi-acd-device-namestring", JAMERSON_3_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xE},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -337,11 +439,7 @@ Name(CC03, Package() {
 Name(CC04, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-#  ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD5.AF01"},
-#  else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD5.AF01"},
-#  endif
+       Package (2) {"acpi-acd-device-namestring", JAMERSON_4_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xE},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -351,8 +449,22 @@ Name(CC04, Package() {
        Package (2) {"msft-acx-properties", "AC01"},    // Acx specific properties
     }
 }) //End CC04
-# endif // (ACPI_ACD_COLLECTION_COUNT >= 4)
-#endif  // COHEN_ONLY
+
+#ifdef COHEN_JAMERSON_AMP_AGGREGATION
+Name(CC05, Package() {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
+    Package () {
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_AMP_DEV_NAME},
+       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
+       Package (2) {"acpi-acd-sdca-terminal-id", 0xC},    // Entity id of the Analog terminal used for this endpoint
+       Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
+    },
+    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
+    Package () {
+       Package (2) {"msft-acx-properties", "AC01"},    // Acx specific properties
+    }
+}) //End CC05
+#endif
 
 Name(EP01, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
@@ -386,7 +498,7 @@ Name(EC10, Package() {
 Name(CC10, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -403,25 +515,24 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-config-type", "Streaming_MicrophoneArray"},
 #ifdef _AMD
        Package (2) {"amd-sdw-default-stream-dp-number", 0x1},    // Raw Stream Data port number on Mic device
-#else
+#else // !_AMD
+# ifdef _NVIDIA
+       // NVidia_Arm specific information for Microphone Array
+# else // !_NVIDIA
        Package (2) {"acpi-acd-connection-count", 1},
-
        // Microphone Array Capture stream (raw)
        Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x00},
        Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
        Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x01},
-#endif
+# endif // _NVIDIA
+#endif // _AMD
     }
 }) //End VN01
 
 Name(CC11, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-#ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD6.AF02"},
-#else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF02"},
-#endif
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_MIC_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        // Circuit composition driver looks for this entity ID to select the graph
        // This is used in conjuntion with namestring, to differentiate speaker vs other function. For render, work backwards.
@@ -468,7 +579,7 @@ Name(EC20, Package() {
 Name(CC20, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -481,16 +592,21 @@ Name(CC20, Package() {
 Name(VN02, Package() {    // Passed in as an AcxObjectBag during circuit creation. Contents of this package are proprietary.
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
+       Package (2) {"acpi-vendor-id", 0x1},
        Package (2) {"acpi-vendor-config-type", "Streaming_Headphones"},
 #ifdef _AMD
        Package (2) {"amd-sdw-default-stream-dp-number", 0x6},    // Raw Stream Data port number on SPK device
-#else
+# else // !_AMD
+# ifdef _NVIDIA
+       // NVidia_Arm specific information for Headphone
+# else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x06c0},
        Package (2) {"acpi-acd-connection-count", 1},
        Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x00},
        Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
        Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x6},
-#endif
+# endif // _NVIDIA
+#endif // _AMD
     }
 }) //End VN02
 
@@ -530,7 +646,7 @@ Name(EC30, Package() {
 Name(CC30, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -547,13 +663,17 @@ Name(VN03, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-config-type", "Streaming_LineOut"},
 #ifdef _AMD
        Package (2) {"amd-sdw-default-stream-dp-number", 0x6},    // Raw Stream Data port number on SPK device
-#else
+# else // !_AMD
+# ifdef _NVIDIA
+       // NVidia_Arm specific information for Line-Out
+# else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x0690},
        Package (2) {"acpi-acd-connection-count", 1},
        Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x00},
        Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
        Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x6 },
-#endif
+# endif // _NVIDIA
+#endif // _AMD
     }
 }) //End VN03
 
@@ -593,7 +713,7 @@ Name(EC40, Package() {
 Name(CC40, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -610,13 +730,17 @@ Name(VN04, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-config-type", "Streaming_HeadsetOutput"},
 #ifdef _AMD
        Package (2) {"amd-sdw-default-stream-dp-number", 0x6},    // Raw Stream Data port number on SPK device
-#else
+# else // !_AMD
+# ifdef _NVIDIA
+       // NVidia_Arm specific information for Headset
+# else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x06D0},
        Package (2) {"acpi-acd-connection-count", 1},
        Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x00},
        Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
        Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x6},
-#endif
+# endif // _NVIDIA
+#endif // _AMD
     }
 }) //End VN04
 
@@ -656,7 +780,7 @@ Name(EC50, Package() {
 Name(CC50, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -673,13 +797,17 @@ Name(VN05, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-config-type", "Streaming_Microphone"},
 #ifdef _AMD
        Package (2) {"amd-sdw-default-stream-dp-number", 0x2},    // Raw Stream Data port number on SPK device
-#else
+# else // !_AMD
+# ifdef _NVIDIA
+       // NVidia_Arm specific information for Microphone
+# else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x06a0},
        Package (2) {"acpi-acd-connection-count", 1},
        Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x00},
        Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
        Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x2},
-#endif
+# endif // _NVIDIA
+#endif // _AMD
     }
 }) //End VN05
 
@@ -719,7 +847,7 @@ Name(EC60, Package() {
 Name(CC60, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -736,13 +864,17 @@ Name(VN06, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-config-type", "Streaming_LineIn"},
 #ifdef _AMD
        Package (2) {"amd-sdw-default-stream-dp-number", 0x2},    // Raw Stream Data port number on SPK device
-#else
+# else // !_AMD
+# ifdef _NVIDIA
+       // NVidia_Arm specific information for Line-In
+# else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x0680},
        Package (2) {"acpi-acd-connection-count", 1},
        Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x00},
        Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
        Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x2},
-#endif
+# endif // _NVIDIA
+#endif // _AMD
     }
 }) //End VN06
 
@@ -782,7 +914,7 @@ Name(EC70, Package() {
 Name(CC70, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -799,12 +931,28 @@ Name(VN07, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-config-type", "Streaming_HeadsetMic"},
 #ifdef _AMD
        Package (2) {"amd-sdw-default-stream-dp-number", 0x2},    // Raw Stream Data port number on SPK device
-#else
+# else // !_AMD
+# ifdef _NVIDIA
+       // NVidia_Arm specific information for Headset Microphone
+# else // !_NVIDIA
        Package (2) {"acpi-vendor-sdca-terminal-type", 0x06d0},
        Package (2) {"acpi-acd-connection-count", 1},
        Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x00},
        Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
        Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x2},
-#endif
+# endif // _NVIDIA
+#endif // _AMD
     }
 }) //End VN07
+
+//
+// CC71 package moved to a separate file.
+//
+
+#undef _TWO_JAMERSONS
+#undef _THREE_JAMERSONS
+#undef _FOUR_JAMERSONS
+#undef _COHEN_AMP_ONLY
+
+#undef _NUM_JAMERSON_AMPS
+#undef _NUM_COHEN_AMPS

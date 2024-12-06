@@ -215,17 +215,6 @@ GetFruPowerLimits (
   );
 
 /**
-  Programs Processor Upgrade for type 4 SMBIOS Processor Info HOB.
-
-  @retval Returns Processor Upgrade value for type 4 SMBIOS Processor Info HOB.
-**/
-UINT8
-EFIAPI
-SmbiosProcessorInfoHobType4 (
-  VOID
-  );
-
-/**
   This function is used to Patch SmmSupovrStateLock.
 
   @retval This corresponds to bit 2 of MSR_SMM_SUPOVR_STATE_LOCK_REGISTER. When set, prevents WRMSR to IA32_SMM_MONITOR_CTL (aka MSEG) MSR.
@@ -318,4 +307,18 @@ CpuGetAndVerifyPrmrrSize (
   IN BOOLEAN  TdxEnable,
   IN UINT32   PrmrrSize
   );
+
+/**
+  Returns Socket Type String
+
+  @param[in]  CpuFamilyId
+
+  @retval     Character pointer of Socket Type String
+**/
+CHAR8*
+EFIAPI
+GetSocketTypeFru (
+  IN UINT32  CpuFamilyId
+  );
+
 #endif // _CPU_INFO_FRU_LIB_H_

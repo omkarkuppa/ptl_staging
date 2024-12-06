@@ -58,6 +58,7 @@
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamBase              ## CONSUMES
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize              ## CONSUMES
   gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedBufferSize         ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress                      ## CONSUMES
 
 [Guids]
   gTcgEvent2EntryHobGuid                                   ## PRODUCES

@@ -89,6 +89,7 @@ MrcWorkPointLock (
   }
 
   SetVccLvr (MrcData);
+  WriteAllLvrTarget (MrcData);
   SetTlineTermination (MrcData);
 
   // For the configuration of Power Meter Registers, it needs to be placed in front of write to MEMSS_PMA_CR_BIOS_REQ

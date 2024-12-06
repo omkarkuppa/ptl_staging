@@ -780,11 +780,12 @@ TxtDxeLibLaunchBiosAcm (
   /// Launch the BIOS ACM to run the requested function
   ///
   DEBUG ((DEBUG_INFO, "TXTDXE::Running of LaunchBiosAcm\n"));
-  OldTpl = gBS->RaiseTPL (TPL_HIGH_LEVEL);
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_ENTRY); //PostCode (0x9901)
+  OldTpl = gBS->RaiseTPL (TPL_HIGH_LEVEL);
   LaunchBiosAcm (AlignedAddr, AcmFunction);
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_EXIT); //PostCode (0x9902)
   gBS->RestoreTPL (OldTpl);
+  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_EXIT); //PostCode (0x9902)
+
 
   ///
   /// Restart APs that were enabled before this function was called

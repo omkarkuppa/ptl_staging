@@ -46,17 +46,12 @@ typedef struct {
   UINT8            DimmId;
   UINT32           DimmCapacity;            ///< DIMM size in MBytes.
   UINT16           MfgId;                   ///< Dram module manufacturer ID
-  UINT16           CkdMfgID;                ///< Clock Driver (CKD) Manufacturer ID
-  UINT8            CkdDeviceRev;            ///< Clock Driver (CKD) device revision
-  UINT16           DramMfgID;               ///< Manufacturer ID code for DRAM chip on the module
   UINT8            ModulePartNum[20];       ///< Module part number for DDR3 is 18 bytes however for DDR4 20 bytes as per JEDEC Spec, so reserving 20 bytes
   UINT8            RankInDimm;              ///< The number of ranks in this DIMM.
   UINT8            SpdDramDeviceType;       ///< Save SPD DramDeviceType information needed for SMBIOS structure creation.
   UINT8            SpdModuleType;           ///< Save SPD ModuleType information needed for SMBIOS structure creation.
   UINT8            SpdModuleMemoryBusWidth; ///< Save SPD ModuleMemoryBusWidth information needed for SMBIOS structure creation.
-  UINT8            SpdSave[MAX_SPD_SAVE];   ///< Save SPD Manufacturing information needed for SMBIOS structure creation.
   UINT16           Speed;                   ///< The maximum capable speed of the device, in MHz
-  UINT8            MdSocket;                ///< MdSocket: 0 = Memory Down, 1 = Socketed. Needed for SMBIOS structure creation.
   UINT8            Banks;                   ///< Number of banks the DIMM contains.
   UINT8            BankGroups;              ///< Number of bank groups the DIMM contains.
 } DIMM_INFO;
@@ -65,7 +60,6 @@ typedef struct {
   UINT8            Status;                  ///< Indicates whether this channel should be used.
   UINT8            ChannelId;
   UINT8            DimmCount;               ///< Number of valid DIMMs that exist in the channel.
-  MRC_CH_TIMING    Timing[MAX_PROFILE_NUM]; ///< The channel timing values.
   DIMM_INFO        DimmInfo[MAX_DIMM];      ///< Save the DIMM output characteristics.
 } CHANNEL_INFO;
 
@@ -103,74 +97,48 @@ typedef struct _PPR_RESULT_COLUMNS_HOB {
 
 /**
   Memory Info Data Hob
-  <b>Revision 1:</b>
-  - Initial version. (from MTL)
-  <b>Revision 2:</b>
+
+  Revision 1:
+  - Initial version.
+  Revision 2:
   - Added MopPackages, MopDensity, MopRanks, MopVendor fields
 **/
 typedef struct {
-  UINT8             Revision;
-  UINT16            DataWidth;              ///< Data width, in bits, of this memory device
   /** As defined in SMBIOS 3.0 spec
     Section 7.18.2 and Table 75
   **/
-  UINT8             MemoryType;             ///< DDR type: DDR3, DDR4, or LPDDR3
-  UINT16            MaximumMemoryClockSpeed;///< The maximum capable speed of the device, in megahertz (MHz)
-  UINT16            ConfiguredMemoryClockSpeed; ///< The configured clock speed to the memory device, in megahertz (MHz)
+  UINT8                   MemoryType;                 ///< DDR type: DDR3, DDR4, or LPDDR3
+  UINT16                  MaximumMemoryClockSpeed;    ///< The maximum capable speed of the device, in megahertz (MHz)
   /** As defined in SMBIOS 3.0 spec
     Section 7.17.3 and Table 72
   **/
-  UINT8             ErrorCorrectionType;
-
-  SiMrcVersion      Version;
-  BOOLEAN           EccSupport;
-  UINT8             MemoryProfile;
-  UINT32            TotalPhysicalMemorySize;
-  UINT32            DefaultXmptCK[MAX_XMP_PROFILE_NUM];///< Stores the tCK value read from SPD XMP profiles if they exist.
-  UINT8             XmpProfileEnable;                  ///< If XMP capable DIMMs are detected, this will indicate which XMP Profiles are common among all DIMMs.
-  UINT8             XmpConfigWarning;                  ///< If XMP capable DIMMs config support only 1DPC, but 2DPC is installed
-  BOOLEAN           DynamicMemoryBoostTrainingFailed;  ///< TRUE if Dynamic Memory Boost failed to train and was force disabled on the last full training boot. FALSE otherwise.
-  UINT16            Ratio;                             ///< DDR Frequency Ratio, used for programs that require ratios higher then 255
-  UINT8             RefClk;
-  UINT32            VddVoltage[MAX_PROFILE_NUM];
-  UINT32            VddqVoltage[MAX_PROFILE_NUM];
-  UINT32            VppVoltage[MAX_PROFILE_NUM];
-  UINT16            RcompTarget[MAX_PROFILE_NUM][MAX_RCOMP_TARGETS];
-  UINT16            DimmOdt[MAX_PROFILE_NUM][MAX_DIMM][MAX_ODT_ENTRIES];
-  INT8              DimmDFE[MAX_PROFILE_NUM][MAX_DDR5_CH][MAX_DIMM][MAX_COPY_DIMM_DFE_TAPS];
-  CONTROLLER_INFO   Controller[MAX_NODE];
-  UINT32            NumPopulatedChannels;              ///< Total number of memory channels populated
-  HOB_SAGV_INFO     SagvConfigInfo;                    ///< This data structure contains SAGV config values that are considered output by the MRC.
-  BOOLEAN           IsIbeccEnabled;
-  UINT16            TotalMemWidth;                     ///< Total Memory Width in bits from all populated channels
-  UINT8             MopPackages;                       ///< Mop DRAM package population
-  UINT8             MopDensity;                        ///< Mop DRAM die density
-  UINT8             MopRanks;                          ///< Mop Number of ranks
-  UINT8             MopVendor;                         ///< Mop DRAM vendor ID
-  UINT8             PprRanInLastBoot;                  ///< Whether PPR ran in the prior boot
-  UINT16            PprDetectedErrors;                 ///< PPR: Counts of detected bad rows
-  UINT16            PprRepairFails;                    ///< PPR: Counts of repair failure
-  UINT16            PprForceRepairStatus;              ///< PPR: Force Repair Status
-  UINT16            PprRepairsSuccessful;              ///< PPR: Counts of repair successes
-  PPR_RESULT_COLUMNS_HOB PprErrorInfo;                 ///< PPR: Error location
-  UINT8             PprAvailableResources[MAX_NODE][MAX_CH][MAX_RANK_IN_CHANNEL][MAX_SDRAM_IN_DIMM]; ///< PPR available resources per device
+  CONTROLLER_INFO         Controller[MAX_NODE];
+  HOB_SAGV_INFO           SagvConfigInfo;             ///< This data structure contains SAGV config values that are considered output by the MRC.
+  UINT8                   PprRanInLastBoot;           ///< Whether PPR ran in the prior boot
+  UINT16                  PprDetectedErrors;          ///< PPR: Counts of detected bad rows
+  UINT16                  PprRepairFails;             ///< PPR: Counts of repair failure
+  UINT16                  PprForceRepairStatus;       ///< PPR: Force Repair Status
+  UINT16                  PprRepairsSuccessful;       ///< PPR: Counts of repair successes
+  PPR_RESULT_COLUMNS_HOB  PprErrorInfo;               ///< PPR: Error location
+  UINT8                   PprAvailableResources[MAX_NODE][MAX_CH][MAX_RANK_IN_CHANNEL][MAX_SDRAM_IN_DIMM];
 } MEMORY_INFO_DATA_HOB;
 
 /**
   Memory Platform Data Hob
-  <b>Revision 1:</b>
+
+  Revision 1:
   - Initial version.
-  <b>Revision 2:</b>
+  Revision 2:
   - Added TsegBase, PrmrrSize, PrmrrBase, Gttbase, MmioSize, PciEBaseAddress fields
 **/
 typedef struct {
-  UINT8             Revision;
+  UINT8                 Revision;
 } MEMORY_PLATFORM_DATA;
 
 typedef struct {
-  EFI_HOB_GUID_TYPE    EfiHobGuidType;
-  MEMORY_PLATFORM_DATA Data;
-  UINT8                *Buffer;
+  EFI_HOB_GUID_TYPE     EfiHobGuidType;
+  MEMORY_PLATFORM_DATA  Data;
+  UINT8                 *Buffer;
 } MEMORY_PLATFORM_DATA_HOB;
 
 #pragma pack (pop)

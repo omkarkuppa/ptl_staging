@@ -43,6 +43,11 @@
       #
       gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressColor|0x000080FF
 
+      #
+      # File GUID for the BtG ACM FMP device driver.
+      #
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageTypeIdGuid|{GUID(gFmpDeviceBtGAcmDefaultGuid)}
+
     <LibraryClasses>
       FmpDeviceLib|CapsuleFeaturePkg/Library/FmpDeviceLibBtGAcm/FmpDeviceLibBtGAcm.inf
   }

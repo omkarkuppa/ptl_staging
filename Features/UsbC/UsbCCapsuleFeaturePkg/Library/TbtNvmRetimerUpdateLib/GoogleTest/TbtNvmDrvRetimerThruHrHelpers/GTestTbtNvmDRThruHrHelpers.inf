@@ -1,0 +1,64 @@
+## @file
+# Unit test suite for the TbtNvmDrvRetimerThruHrHelpers using Google Test
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2023 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification
+##
+
+[Defines]
+  INF_VERSION     = 0x00010005
+  BASE_NAME       = GoogleTestTbtNvmDrvRetimerThruHrHelpers
+  FILE_GUID       = 4EF1BED1-F801-4CDD-8808-E56F647C252E
+  MODULE_TYPE     = HOST_APPLICATION
+  VERSION_STRING  = 1.0
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  #
+  # Test Main
+  #
+  GTestTbtNvmDRThruHrHelpers.cpp
+  TestWaitForMsgOutTxDone.cpp
+  TestSendCommandToLocalLc.cpp
+  TestSendEnumCmd.cpp
+  TestSendLsupCmdDis.cpp
+  TestSendLsupCmdEn.cpp
+  TestSendOfflineMode.cpp
+
+[Packages]
+  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  FmpDevicePkg/FmpDevicePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+
+[LibraryClasses]
+  GoogleTestLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  Usb4DebugLib
+  SubhookLib
+  TbtNvmDrvHrLib
+  TbtNvmDrvRetimerThruHrLib

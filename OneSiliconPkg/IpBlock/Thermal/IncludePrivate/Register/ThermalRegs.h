@@ -67,18 +67,19 @@
 
 #define R_PMC_PWRM_THERMAL_TLEN                                      0x1528  ///< Throttle Levels Enable
 #define B_PMC_PWRM_THERMAL_TLEN_TLENLOCK                             BIT31   ///< TLENLOCK
+#define B_PMC_PWRM_THERMAL_TLEN_PMCTEN                               BIT14   ///< PMC Throttle Enable
 
 #define R_PMC_PWRM_THERMAL_PHLC                                      0x1540  ///< PCH Hot Level Control
 #define B_PMC_PWRM_THERMAL_PHLC_PHLCLOCK                             BIT31   ///< PHL Lock
 #define B_PMC_PWRM_THERMAL_PHLC_PHLE                                 BIT15   ///< PHL Enable
 
-#define R_PMC_PWRM_DTS_S0IX_CONFIG                                   0x1580      ///< DTS-SIP operation in S0ix
-#define B_PMC_PWRM_DTS_S0IX_CONFIG_DISABLE_DTS_IN_S0IX               BIT0        ///< DISABLE_DTS_IN_S0IX
-#define B_PMC_PWRM_DTS_S0IX_CONFIG_ENABLE_DTS_THRESHOLD_XING_CHECK   BIT1   ///< ENABLE DTS THRESHOLD XING CHECK
-#define B_PMC_PWRM_DTS_S0IX_CONFIG_S0IXLOCK                          BIT31       ///< Policy Lock-Down Bit
+#define R_PMC_PWRM_DTS_S0IX_CONFIG                                   0x1580  ///< DTS-SIP operation in S0ix
+#define B_PMC_PWRM_DTS_S0IX_CONFIG_DISABLE_DTS_IN_S0IX               BIT0    ///< DISABLE_DTS_IN_S0IX
+#define B_PMC_PWRM_DTS_S0IX_CONFIG_ENABLE_DTS_THRESHOLD_XING_CHECK   BIT1    ///< ENABLE DTS THRESHOLD XING CHECK
+#define B_PMC_PWRM_DTS_S0IX_CONFIG_S0IXLOCK                          BIT31   ///< Policy Lock-Down Bit
 
-#define R_PMC_PWRM_SOCIFTTC                                          0x15A8   ///< SoC Internal Fabric Thermal Throttling Configuration
-#define B_PMC_PWRM_SOCIFTTC_SOCIFTTML                                BIT1     ///< SoC Internal Fabric Thermal Throttling Mechanism Lock
+#define R_PMC_PWRM_SOCIFTTC                                          0x15A8  ///< SoC Internal Fabric Thermal Throttling Configuration
+#define B_PMC_PWRM_SOCIFTTC_SOCIFTTML                                BIT1    ///< SoC Internal Fabric Thermal Throttling Mechanism Lock
 
 #define R_PMC_PWRM_THERMAL_PM_DOWN_PPB_CFG                           0x18E4  ///< PM_DOWN PCH_POWER_BUDGET CONFIGURATION
 #define B_PMC_PWRM_THERMAL_PM_DOWN_PPB_CFG_PPB_CFG_LOCK              BIT0    ///< PCH Power Budget Configuration lock

@@ -1,4 +1,4 @@
-/** @file
+/**@file
   Unit test main of the Memory Telemetry driver.
 
   @copyright

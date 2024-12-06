@@ -104,7 +104,7 @@ Method (RMPT)
 **/
 Method (RSSV)
 {
-  Name (TSPK, Buffer (5) {})
+  Name (TSPK, Package (5) {0, 0, 0, 0, 0})
   Store (ECRD (RefOf (^TSR1)), Index (TSPK, 0))
   Store (ECRD (RefOf (^TSR2)), Index (TSPK, 1))
   Store (ECRD (RefOf (^TSR3)), Index (TSPK, 2))
@@ -349,24 +349,39 @@ Method (RPBS)
 }
 
 /**
-  RBPS        Get battery packages.
+  BHFI        Get Battery high frequency impedance
 
   @param      None.
-  @retval     Return battery packages:
-              Index0    - RBHF: Battery high frequency impedance
-              Index1    - VBNL: Battery No-Load Voltage
-              Index2    - CMPP: Battery Maximum peak current
+  @retval     Return Battery high frequency impedance.
 
 **/
-Method (RBPS)
+Method (BHFI)
 {
-  Name (BPPK, Package () {
-    0x80000000, 0x80000000, 0x80000000
-  })
-  Store (ECRD (RefOf (^RBHF)), Index (BPPK, 0))
-  Store (ECRD (RefOf (^VBNL)), Index (BPPK, 1))
-  Store (ECRD (RefOf (^CMPP)), Index (BPPK, 2))
-  Return (BPPK)
+  Return (ECRD (RefOf (^RBHF)))
+}
+
+/**
+  BNLV        Get Battery No-Load Voltage.
+
+  @param      None.
+  @retval     Return Battery No-Load Voltage.
+
+**/
+Method (BNLV)
+{
+  Return (ECRD (RefOf (^VBNL)))
+}
+
+/**
+  BMPC        Get Battery Maximum peak current.
+
+  @param      None.
+  @retval     Return Battery Maximum peak current.
+
+**/
+Method (BMPC)
+{
+  Return (ECRD (RefOf (^CMPP)))
 }
 
 /**

@@ -204,6 +204,7 @@
   gUndiDriverBinGuid                            ## CONSUMES
   gWlanDriverBinGuid                            ## CONSUMES
   gBluetoothHciImageGuid                        ## CONSUMES
+  gBluetoothPciHciImageGuid                     ## CONSUMES
   gOsProfileGuid                                ## PRODUCES
   gTcg2ConfigFormSetGuid                        ## PRODUCES
   gEfiSecureBootEnableDisableGuid               ## PRODUCES

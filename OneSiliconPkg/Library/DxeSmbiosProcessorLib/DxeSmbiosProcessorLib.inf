@@ -39,6 +39,7 @@
   BaseLib
   HobLib
   UefiLib
+  CpuPlatformLib
 
 [Packages]
   MdePkg/MdePkg.dec

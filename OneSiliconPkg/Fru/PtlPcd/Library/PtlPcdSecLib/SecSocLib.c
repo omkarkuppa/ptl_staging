@@ -185,6 +185,8 @@ LpssUartDebugConfiguration (
   if (AdditionalUartEnabled == 1) {
     SecLpssUartConfiguration (Lpss2ndUartNumber, &Uart2ndDeviceConfig);
   }
+
+
 }
 
 /**

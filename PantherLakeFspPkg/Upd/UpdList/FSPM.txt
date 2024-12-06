@@ -123,6 +123,7 @@ RingPllVoltageOffset
 OcSupport
 SmbusDynamicPowerGating
 PrimaryDisplay
+IGpuGsm2Size
 DisableMessageCheck
 SerialIoUartDebugRtsPinMux
 CpuCrashLogEnable
@@ -241,6 +242,7 @@ IbeccParity
 IbeccOperationMode
 ChHashOverride
 RetrainToWorkingChannel
+RowPressEn
 DisableMc0Ch0
 DisableMc0Ch1
 DisableMc0Ch2
@@ -288,7 +290,6 @@ CMDDSEQ
 DIMMODTCA
 DDR5ODTTIMING
 RDVREFDC
-VDDQT
 RMTBIT
 DQDQSSWZ
 REFPI
@@ -418,3 +419,4 @@ TccActivationOffset
 InternalGraphics
 SocTraceHubMode
 MemoryBandwidthCompression
+IccLimit

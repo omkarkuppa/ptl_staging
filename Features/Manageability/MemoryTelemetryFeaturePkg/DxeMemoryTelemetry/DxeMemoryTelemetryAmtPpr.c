@@ -21,7 +21,7 @@
 
 #include "DxeMemoryTelemetry.h"
 #include <MemoryConfig.h>
-#include <Guid/AmtPprEnableVariable.h>
+#include <AmtPprEnableVariable.h>
 #include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
@@ -31,16 +31,17 @@
   Function to create/clear the AmtPprEnable variable
 **/
 VOID
-MemoryTelemetryAmtPprMain (
+AmtPprVarHandler (
   VOID
   )
 {
-  UINT8       AmtPprVarData;
-  EFI_STATUS  Status;
+  AMT_PPR_ENABLE  AmtPprVarData;
+  EFI_STATUS      Status;
 
-  AmtPprVarData = 0;
-
-  // Create/Clear AMT PPR variable
+  ///
+  /// Create/Clear AMT PPR variable
+  ///
+  ZeroMem (&AmtPprVarData, sizeof (AmtPprVarData));
   Status = gRT->SetVariable (
                   AMT_PPR_ENABLE_VARIABLE_NAME,
                   &gAmtPprEnableVariableGuid,
@@ -48,9 +49,7 @@ MemoryTelemetryAmtPprMain (
                   sizeof (AmtPprVarData),
                   &AmtPprVarData
                   );
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to clear variable with status: %r\n", __FUNCTION__, Status));
-    return;
+  if (EFI_ERROR (Status)){
+    DEBUG ((DEBUG_INFO, "[%a] Error created and cleared variable status %r\n", __FUNCTION__, Status));
   }
-  DEBUG ((DEBUG_INFO, "AmtPprEnable variable created/cleared successfully\n"));
 }

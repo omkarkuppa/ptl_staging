@@ -46,4 +46,14 @@ MrcFullRankBlockOptimization (
   IN UINT8                Channel
   );
 
+/**
+  This function disables independent fast sleep option.
+
+  @param[in]  MrcData  - Pointer to MRC global data.
+**/
+VOID
+MrcMcRfFastSleepDisable (
+  IN  MrcParameters *const  MrcData
+  );
+
 #endif //_MrcMc_h_

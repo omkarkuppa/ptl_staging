@@ -30,7 +30,6 @@
 #define MRC_INTERPRETER                 (0xDD01)
 #define MRC_MC_DESWIZZLE_REG            (0xDD02)
 #define MRC_DCC_PI_SERIALIZER_CAL       (0xDD03)
-#define MRC_VDDQ                        (0xDD04)
 #define MRC_CMD_EQ                      (0xDD05)
 #define MRC_VCC_LVR_AUTO_TRIM           (0xDD06)
 #define MRC_CMD_SR                      (0xDD07)
@@ -179,4 +178,5 @@
 #define MRC_EARLY_DDRIO_FINALIZE        (0xDD87)
 #define MRC_LATE_DDRIO_FINALIZE         (0xDD88)
 #define MRC_QCLK_PH_ALIGN_CAL           (0xDD89)
+#define MRC_LVR_RMT                     (0xDD8A)
 #endif

@@ -28,9 +28,9 @@
 
 ## Purpose
 
-MemoryTelemetry PEIM supports reading the AmtPprEnabled variable in pre-mem and accordingly enable MRC PPR/AMT tests. This variable is then cleared in post-mem/DXE MemoryTelemetry.
+Memory Telemetry PEIM supports reading the AmtPprEnabled variable in pre-mem and accordingly enable MRC PPR/AMT tests. This variable is then cleared in post-mem/DXE Memory Telemetry.
 
-MemoryTelemetry driver Provides system memory information from MRC hob to PHAT ACPI table for OS analysis use.
+Memory Telemetry driver Provides system memory information from MRC hob to PHAT ACPI table for OS analysis use.
 
 Currently supported function in DXE:
 
@@ -40,15 +40,15 @@ Currently supported function in DXE:
 
 # High-Level Theory of Operation
 
-1. MemoryTelemetry PEIM reads the AMT PPR Enabled variable
+1. Memory Telemetry PEIM reads the AMT PPR Enabled variable
 2. Will then access and set the Memory Config table according to the variable enablement.
 3. Memory Telemetry Driver will request MEMORY_INFO_DATA_HOB from MRC
 4. The driver will then convert the data to ACPI format
 5. Then it will search XSDT for an existing PHAT ACPI Table
 6. If the table exists we will save the data locally, uninstall the found PHAT, append the
-   MemoryTelemetry ACPI data to the local PHAT, and install the new XSDT PHAT ACPI table
-7. If the table does not exist we will generate the full PHAT ACPI Table with MemoryTelemetry data and install
-8. MemoryTelemetry driver will then check for AMT PPR Enable variable
+   Memory Telemetry ACPI data to the local PHAT, and install the new XSDT PHAT ACPI table
+7. If the table does not exist we will generate the full PHAT ACPI Table with Memory Telemetry data and install
+8. Memory Telemetry driver will then check for AMT PPR Enable variable
    1. If variable does not exist, it will be created
    2. If it does exist the driver will clear the variable if found
 
@@ -64,13 +64,13 @@ Currently supported function in DXE:
 
 ## Data Flows
 
-MemoryTelemetry PEIM
+Memory Telemetry PEIM
 
 * Read AMT_PPR_ENABLE_VARIABLE_NAME
 * Get gMemoryConfigGuid
 * Set gMemoryConfigGuid PPR according to AMT PPR enable variable
 
-MemoryTelemetry Driver
+Memory Telemetry Driver
 
 * Get MEMORY_INFO_DATA_HOB
 * Convert MEMORY_INFO_DATA_HOB data to ACPI
@@ -92,7 +92,7 @@ MemoryTelemetry Driver
 
 ## Dependencies
 
-* Edk2Platforms/PhatAcpiLib - Handles all operations for installing MemoryTelemetry data to the ACPI PHAT
+* Edk2Platforms/PhatAcpiLib - Handles all operations for installing Memory Telemetry data to the ACPI PHAT
 
 ## Common Optimizations
 

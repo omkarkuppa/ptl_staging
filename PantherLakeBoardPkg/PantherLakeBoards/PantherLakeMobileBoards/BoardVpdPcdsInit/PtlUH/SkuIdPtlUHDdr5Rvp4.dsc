@@ -96,11 +96,9 @@
   # GPIO Table WwanOff
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableWwanOffEarlyPreMem| * |{CODE(
   {
-    { GPIOV2_PTL_PCD_XXGPP_H_16, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // WWAN_PWREN
     { GPIOV2_PTL_PCD_XXGPP_A_9,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // M.2_WWAN_FCP_OFF_N
     { GPIOV2_PTL_PCD_XXGPP_B_20, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // M.2_WWAN_RST_N
-    { GPIOV2_PTL_PCD_XXGPP_D_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // M.2_WWAN_PERST_GPIO_N
-    { GPIOV2_PTL_PCD_XXGPP_E_2,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirInInv,  GpioV2StateDefault,  GpioV2IntLevel|GpioV2IntSci, GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Unlock, GpioV2Lock   }},  // WWAN_WAKE_GPIO_N
+    { GPIOV2_PTL_PCD_XXGPP_D_3,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,                GpioV2ResetHostDeep,  GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }},  // M.2_WWAN_PERST_GPIO_N
     { 0x0 }
   })}
 
@@ -115,6 +113,7 @@
     { GPIOV2_PTL_PCD_XXGPP_A_10, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,    GpioV2IntDis,                GpioV2ResetResume,    GpioV2TermNone,  GpioV2Lock,   GpioV2Unlock }}, // M.2_WWAN_DISABLE_N
     { 0x0 }
   })}
+
 
   # MRC UserBd
   gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|*|0x05
@@ -275,11 +274,6 @@
    { GPIOV2_PTL_PCD_XXGPP_D_3 }
   )}
 
-  # When using SSD on M.2 WWAN connector use wwan_pwren pin instead of wwan FCP
-  gBoardModuleTokenSpaceGuid.VpdPcdwwanPowerEnableGpio|*|{CODE(
-   { GPIOV2_PTL_PCD_XXGPP_H_16 }
-  )}
-
   gBoardModuleTokenSpaceGuid.VpdPcdTouchpanel0IrqGpio|*|{CODE(
    { GPIOV2_PTL_PCD_XXGPP_E_18 } // THC0_SPI1_INT_N_TCH_PNL1
   )}
@@ -327,7 +321,7 @@
   // Touch Panel 0, Same pins shared between THC and I2C based Panel,
     {GPIOV2_PTL_PCD_XXGPP_F_8,   {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHost,   GpioV2TermDefault}},  // TCH_PNL1_PWR_EN
     {GPIOV2_PTL_PCD_XXGPP_E_16,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHost,   GpioV2TermDefault}},  // THC0_SPI1_RST_N_TCH_PNL1
-    {GPIOV2_PTL_PCD_XXGPP_E_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge,  GpioV2ResetDefault,   GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // THC0_SPI1_INT_N_TCH_PNL1
+    {GPIOV2_PTL_PCD_XXGPP_E_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic,  GpioV2ResetDefault,   GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // THC0_SPI1_INT_N_TCH_PNL1
     { 0x0 }
   })}
 
@@ -336,7 +330,7 @@
   // Touch Panel 1, Not used by default in RVP; Applicable as Rework;
     {GPIOV2_PTL_PCD_XXGPP_E_7,   {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis,                GpioV2ResetHost,     GpioV2TermDefault}},  // TCH_PNL2_PWR_EN
     {GPIOV2_PTL_PCD_XXGPP_F_16,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut,     GpioV2StateHigh,    GpioV2IntDis,                GpioV2ResetHost,     GpioV2TermDefault}},  // THC1_SPI2_RST_N_TCH_PNL2
-    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // THC1_SPI2_INT_N_TCH_PNL2
+    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // THC1_SPI2_INT_N_TCH_PNL2
     { 0x0 }
   })}
 
@@ -437,6 +431,9 @@
   # UsbC Retimer Capsule Debug Progress Code Print: FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|*|FALSE
 
+  # Control the EC debug Info Print level before executing any command for PD Bridge, default is DEBUG_VERBOSE
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel|*|0x00400000
+
   #
   # *** IMPORTANT ***
   #   All of the USBC connectors MUST be described at the beginning of the table.
@@ -528,7 +525,6 @@
   })}
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardRtd3TableSignature|*|{'P','t','l','R','v','p','3','4'}
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardSsdRtd3TableSignature|*|{'P', 't', 'l', 'S', 's', 'd', '3', '4'}
   gBoardModuleTokenSpaceGuid.VpdPcdBatterySupport|*|($(BOARD_REAL_BATTERY_SUPPORTED)|$(BOARD_VIRTUAL_BATTERY_SUPPORTED))
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamSensor|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdZPoddConfig|*|0
@@ -684,7 +680,7 @@
   //
   // Touch pad
   //
-    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault, GpioV2IntEdge, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // TCH_PAD_INT_N
+    {GPIOV2_PTL_PCD_XXGPP_F_18,  {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirInInv,   GpioV2StateDefault,  GpioV2IntEdge|GpioV2IntApic, GpioV2ResetHost,     GpioV2TermNone,  GpioV2Unlock,  GpioV2Lock}},  // TCH_PAD_INT_N
 
   //
   // TCSS
@@ -694,16 +690,7 @@
   //
   // Not Used pins set to High Impedance
   //
-    {GPIOV2_PTL_PCD_XXGPP_A_13, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_B_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_C_2,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_D_2,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_F_14, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_F_15, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_F_17, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_H_0,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-    {GPIOV2_PTL_PCD_XXGPP_V_7,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
-
     {0x0}  // terminator
   })}
 
@@ -731,6 +718,32 @@
     //
     {GPIOV2_PTL_PCD_XXGPP_F_23, {GpioV2PadModeGpio, GpioV2HostOwnAcpi,    GpioV2DirIn,  GpioV2StateDefault,  GpioV2IntDis, GpioV2ResetHostDeep,  GpioV2TermDefault}}, // SMC_LID
     { 0x0 }  // terminator
+  })}
+
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcChannelToCkdQckMapping| * |{CODE(
+  { 8,
+    { 0 ,   // Port 0 Controller 0 Channel 0 Dimm 0
+      0 ,   // Port 1 Controller 0 Channel 0 Dimm 1
+      1 ,   // Port 2 Controller 0 Channel 1 Dimm 0
+      0 ,   // Port 3 Controller 0 Channel 1 Dimm 1
+      0 ,   // Port 4 Controller 1 Channel 0 Dimm 0
+      0 ,   // Port 5 Controller 1 Channel 0 Dimm 1
+      1 ,   // Port 6 Controller 1 Channel 1 Dimm 0
+      0     // Port 7 Controller 1 Channel 1 Dimm 1
+    }
+  })}
+
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcPhyClockToCkdDimm| * |{CODE(
+  { 8,
+    { 0 ,   // Port 0 Controller 0 Channel 0 Dimm 0
+      0 ,   // Port 1 Controller 0 Channel 0 Dimm 1
+      0 ,   // Port 2 Controller 0 Channel 1 Dimm 0
+      0 ,   // Port 3 Controller 0 Channel 1 Dimm 1
+      8 ,   // Port 4 Controller 1 Channel 0 Dimm 0
+      0 ,   // Port 5 Controller 1 Channel 0 Dimm 1
+      8 ,   // Port 6 Controller 1 Channel 1 Dimm 0
+      0     // Port 7 Controller 1 Channel 1 Dimm 1
+    }
   })}
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTablePreMem|*|{CODE({
@@ -836,11 +849,6 @@
    { 0x0 }
   )}
   gBoardModuleTokenSpaceGuid.VpdPcdWwanPerstGpio|*|{CODE(
-   { 0x0 }
-  )}
-
-  # When using SSD on M.2 WWAN connector use wwan_pwren pin instead of wwan FCP
-  gBoardModuleTokenSpaceGuid.VpdPcdwwanPowerEnableGpio|*|{CODE(
    { 0x0 }
   )}
 

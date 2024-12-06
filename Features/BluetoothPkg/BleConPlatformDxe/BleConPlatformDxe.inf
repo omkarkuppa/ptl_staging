@@ -1,0 +1,68 @@
+## @file
+#  The INF file of Platform console driver manages console devices.
+#  Console Platfrom DXE Driver that specifies whether device can be used as console
+#  input/output device or error output device and update global variables accordingly
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#
+#@par Specification
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = BleConPlatformDxe
+  FILE_GUID                      = 35DD4183-270E-47AF-93ED-EB0F95DF7E41
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InitializeBleConPlatform
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 EBC
+#
+
+[Sources]
+  BleConPlatform.h
+  BleConPlatform.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  MemoryAllocationLib
+  DevicePathLib
+  UefiRuntimeServicesTableLib
+  UefiBootServicesTableLib
+  BaseMemoryLib
+  UefiLib
+  UefiDriverEntryPoint
+  DebugLib
+
+[Guids]
+  #
+  # This GUID is used to specify the device is the console input device.
+  # If the device is a console input device, this GUID as the protocol GUID will be installed
+  # onto this device handle.
+  #
+  gEfiConsoleInDeviceGuid                       ## SOMETIMES_PRODUCES ## UNDEFINED # protocol GUID installed on device handle
+
+[Protocols]
+  gEfiDevicePathProtocolGuid                    ## TO_START
+  gEfiSimpleTextInProtocolGuid                  ## TO_START
+  gEfiBluetoothHcProtocolGuid                   ## TO_START

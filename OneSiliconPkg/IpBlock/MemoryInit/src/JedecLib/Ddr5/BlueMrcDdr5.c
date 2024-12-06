@@ -552,10 +552,14 @@ MrcDdr5ConfigArfm (
   UINT32                        RankInDimm;
   UINT8                         MrrResult[MRC_MRR_ARRAY_SIZE];
   DDR5_MODE_REGISTER_59_TYPE    Ddr5MR59;
+  DDR5_MODE_REGISTER_59_TYPE    *Ddr5MR59Host;
+  MrcChannelOut                 *ChannelOut;
+  MrcOutput                     *Outputs;
 
   MrcDebug *Debug;
   Debug = (MrcDebug *) &MrcData->Outputs.Debug;
   MrcStatus Status = mrcSuccess;
+  Outputs = &MrcData->Outputs;
 
   for (RankInDimm = 0; RankInDimm < MAX_RANK_IN_DIMM; RankInDimm++) {
     Rank = Dimm * MAX_RANK_IN_DIMM + RankInDimm;
@@ -577,6 +581,10 @@ MrcDdr5ConfigArfm (
     if (Status != mrcSuccess) {
       return Status;
     }
+    // Update MR59 host struct
+    ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
+    Ddr5MR59Host = (DDR5_MODE_REGISTER_59_TYPE *) &ChannelOut->Dimm[Dimm].Rank[Rank].MR[mrIndexMR59];
+    Ddr5MR59Host->Data8 = Ddr5MR59.Data8;
 
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ARFM Level configured.\n");
   }
@@ -608,6 +616,8 @@ MrcDdr5ConfigDrfm (
   UINT32                        Rank;
   DDR5_MODE_REGISTER_59_TYPE    Ddr5MR59;
   UINT8                         MrrResult[MRC_MRR_ARRAY_SIZE];
+  DDR5_MODE_REGISTER_59_TYPE    *Ddr5MR59Host;
+  MrcChannelOut                 *ChannelOut;
 
   MrcInput *Inputs = &MrcData->Inputs;
   MrcOutput *Outputs = &MrcData->Outputs;
@@ -647,6 +657,11 @@ MrcDdr5ConfigDrfm (
     if (Status != mrcSuccess) {
       return Status;
     }
+
+    // Update MR59 host struct
+    ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
+    Ddr5MR59Host = (DDR5_MODE_REGISTER_59_TYPE *) &ChannelOut->Dimm[Dimm].Rank[Rank].MR[mrIndexMR59];
+    Ddr5MR59Host->Data8 = Ddr5MR59.Data8;
   }
 
   return mrcSuccess;
@@ -829,6 +844,7 @@ MrcFinalizeDdr5MrSeq (
     mrMR39,
     mrMR40,
     mrMR45,
+    mrMR59,
     // PDA MRs start from here
     mrMR129,
     mrMR130,

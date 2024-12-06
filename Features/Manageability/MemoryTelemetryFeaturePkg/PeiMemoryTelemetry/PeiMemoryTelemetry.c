@@ -20,15 +20,15 @@
 **/
 
 #include "PeiMemoryTelemetry.h"
-
+#include <AmtPprEnableVariable.h>
 #include <MemoryConfig.h>
 #include <Ppi/SiPolicy.h>
+#include <Ppi/ReadOnlyVariable2.h>
 #include <Library/PeiLib.h>
 #include <Library/DebugLib.h>
 #include <Library/ConfigBlockLib.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Guid/AmtPprEnableVariable.h>
 
 /**
   Reads the AmtPprEnable UEFI variable and returns the variable data.
@@ -40,26 +40,37 @@
 **/
 EFI_STATUS
 GetAmtPprEnableVar (
-  OUT AMT_PPR_ENABLE    *AmtPprVariableData
+  IN OUT AMT_PPR_ENABLE    *AmtPprVariableData
   )
 {
-  EFI_STATUS      Status;
-  UINTN           VariableSize;
+  EFI_STATUS                        Status;
+  UINTN                             VariableSize;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI   *VariableServices;
 
   VariableSize = sizeof (AMT_PPR_ENABLE);
-  Status = PeiGetVariable (
-             AMT_PPR_ENABLE_VARIABLE_NAME,
-             &gAmtPprEnableVariableGuid,
-             (VOID *) &AmtPprVariableData,
-             &VariableSize
+  Status = PeiServicesLocatePpi (
+             &gEfiPeiReadOnlyVariable2PpiGuid,
+             0,
+             NULL,
+             (VOID **) &VariableServices
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] AMT PPR variable not found.\n", __FUNCTION__));
-    return EFI_NOT_FOUND;
+    return Status;
   }
 
-  DEBUG ((DEBUG_ERROR, "[%a] AMT PPR variable found.\n", __FUNCTION__));
-  return EFI_SUCCESS;
+  Status  = VariableServices->GetVariable (
+                                VariableServices,
+                                AMT_PPR_ENABLE_VARIABLE_NAME,
+                                &gAmtPprEnableVariableGuid,
+                                NULL,
+                                &VariableSize,
+                                AmtPprVariableData
+                                );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[%a] Get variable failed with status: %r.\n", __FUNCTION__, Status));
+  }
+  DEBUG ((DEBUG_INFO, "[%a] AMT PPR variable, AMT bit: %x, PPR bit: %x\n", __FUNCTION__, AmtPprVariableData->Bits.AmtEnabled, AmtPprVariableData->Bits.PprEnabled));
+  return Status;
 }
 
 /**
@@ -83,28 +94,37 @@ UpdatePprMrcPolicy (
     return EFI_INVALID_PARAMETER;
   }
 
-  // Obtain policy settings.
+  ///
+  /// Obtain policy settings.
+  ///
   SiPreMemPolicyPpi = NULL;
   Status = PeiServicesLocatePpi (&gSiPreMemPolicyPpiGuid, 0, NULL, (VOID **) &SiPreMemPolicyPpi);
   if (EFI_ERROR (Status) || (SiPreMemPolicyPpi == NULL)) {
+    DEBUG ((DEBUG_INFO, "[%a] Failed to locate SiPreMemPolicyPpi with statue: %r\n", __FUNCTION__, Status));
     return Status;
   }
 
-  // Get the current MRC policy
+  ///
+  /// Get the current MRC policy
+  ///
   MemConfig = NULL;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigGuid, (VOID *) &MemConfig);
   if (EFI_ERROR (Status) || (MemConfig == NULL)) {
+    DEBUG ((DEBUG_INFO, "[%a] Failed to get MemoryConfigGuid with statue: %r\n", __FUNCTION__, Status));
     return Status;
   }
 
-  // Enable AMT if variable enabled
-  MemConfig->ExternalInputs.TrainingEnables3.PPR = AmtPprVariable->Bits.AmtEnabled;
-
-  // Update the PPR enabled and PPR Test policies
-  if (AmtPprVariable->Bits.AmtEnabled && AmtPprVariable->Bits.PprEnabled) {
-    MemConfig->ExternalInputs.PprRepairType = HARD_PPR;
-  } else {
-    MemConfig->ExternalInputs.PprRepairType = NOREPAIR_PPR;
+  ///
+  /// Update and enable AMT, PPR and PPR Test policies
+  ///
+  if (AmtPprVariable->Bits.AmtEnabled) {
+    MemConfig->ExternalInputs.PprTestType           = PPR_TEST;
+    MemConfig->ExternalInputs.TrainingEnables3.PPR  = ENABLED;
+    if (AmtPprVariable->Bits.PprEnabled) {
+      MemConfig->ExternalInputs.PprRepairType       = HARD_PPR;
+    } else {
+      MemConfig->ExternalInputs.PprRepairType       = NOREPAIR_PPR;
+    }
   }
   return EFI_SUCCESS;
 }
@@ -116,8 +136,8 @@ UpdatePprMrcPolicy (
   @param[in]  FileHandle        The file handle of the file, Not used.
   @param[in]  PeiServices       General purpose services available to every PEIM.
 
-  @retval     EFI_SUCCESS       PEI MEMORY TELEMETRY executed as expected
-  @retval     Others            PEI MEMORY TELEMETRY failed to get and set AmtPprEnable variable
+  @retval     EFI_SUCCESS       PEI Memory Telemetry executed as expected
+  @retval     Others            PEI Memory Telemetry failed to get and set AmtPprEnable variable
 **/
 EFI_STATUS
 EFIAPI
@@ -129,28 +149,31 @@ PeiMemoryTelemetryEntryPoint (
   EFI_STATUS          Status;
   AMT_PPR_ENABLE      *AmtPprVariable;
 
+  DEBUG ((DEBUG_INFO, "[%a] Entry\n", __FUNCTION__));
+
   AmtPprVariable = (AMT_PPR_ENABLE *) AllocateZeroPool (sizeof (AMT_PPR_ENABLE));
-  if (AmtPprVariable) {
+  if (AmtPprVariable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  // Read UEFI Variable AmtPprEnable. Avoid ASSERT/Hang if not exist
+  ///
+  /// Read UEFI Variable AmtPprEnable. Avoid ASSERT/Hang if not exist
+  ///
   Status = GetAmtPprEnableVar (AmtPprVariable);
-  if (EFI_ERROR(Status)) {
-    // wait for variable to be created in DXE phase for next boot
-    DEBUG((DEBUG_WARN, "[%a] exit with status %r", __FUNCTION__, Status));
+  if (EFI_ERROR (Status)) {
+    ///
+    /// wait for variable to be created in DXE phase for next boot
+    ///
+    goto Exit;
+  }
+
+  ///
+  /// Update MRC policy based on UEFI variable
+  ///
+  Status = UpdatePprMrcPolicy (AmtPprVariable);
+
+  Exit:
+    DEBUG ((DEBUG_INFO, "[%a] Exit with status %r\n", __FUNCTION__, Status));
     FreePool (AmtPprVariable);
     return Status;
-  }
-
-  // Update MRC policy based on UEFI variable
-  Status = UpdatePprMrcPolicy (AmtPprVariable);
-  if (EFI_ERROR (Status)) {
-    DEBUG((DEBUG_WARN, "[%a] failed to get and set MRC PPR policy with status %r", __FUNCTION__, Status));
-  }
-
-
-  DEBUG((DEBUG_INFO, "[%a] exit with status %r", __FUNCTION__, Status));
-  FreePool (AmtPprVariable);
-  return Status;
 }

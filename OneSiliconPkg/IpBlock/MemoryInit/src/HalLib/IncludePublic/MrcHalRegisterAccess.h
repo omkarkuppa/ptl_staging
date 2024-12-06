@@ -468,6 +468,23 @@ MrcSetWckDccCrossProj (
   );
 
 /**
+  This function returns the correct amount of lanes for partition passed in.
+
+  @param[in, out] MrcData   - Include all MRC global data.
+  @param[in]      Partition - Partition to find the max lanes for
+  @param[out]     LaneMax   - Will be given the correct max lane value based on partition.
+
+  @retval - mrcSuccess if correct partition passed in.
+  @retval - mrcWrongInputParameter if wrong partition passed in.
+**/
+MrcStatus
+MrcSetPartitionLaneMax (
+  IN OUT MrcParameters *const MrcData,
+  IN     PARTITION_TYPE       Partition,
+  OUT    UINT32               *LaneMax
+  );
+
+/**
   Check if the given GSM_GT group key is skipable for reasons of writing to
   channels 1/3.
 

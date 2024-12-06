@@ -276,14 +276,6 @@
     { 0x0 }
   )}
 
-  # When using SSD on M.2 WWAN connector use wwan_pwren pin instead of wwan FCP
-  gBoardModuleTokenSpaceGuid.VpdPcdwwanPowerEnableGpio|*|{CODE(
-    //
-    // WWAN does not support on ADK platform
-    //
-    { 0x0 }
-  )}
-
   gBoardModuleTokenSpaceGuid.VpdPcdTouchpanel0IrqGpio|*|{CODE(
     //
     // Touchpanel0 does not support on ADK platform
@@ -472,6 +464,9 @@
   # UsbC Retimer Capsule Debug Progress Code Print: FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|*|FALSE
 
+  # Control the EC debug Info Print level before executing any command for PD Bridge, default is DEBUG_VERBOSE
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel|*|0x00400000
+
   #
   # *** IMPORTANT ***
   #   All of the USBC connectors MUST be described at the beginning of the table.
@@ -482,7 +477,7 @@
   // Connectable,   Visibility, ConnectorType, UsbOcPinType, UsbOcPin, Usb2Controller, Usb2PortNum, Usb3Controller, Usb3PortNum
     {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN0,  PCH_USB2,       PORT1,       TCSS_USB3,      PORT1}, // TCP0
     {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN1,  PCH_USB2,       PORT2,       TCSS_USB3,      PORT2}, // TCP1
-    {CONNECTABLE,   INVISIBLE,  0x02,          0,            0,        PCH_USB2,       PORT3,       0,              0    }, // Camera Connector
+    {UNCONNECTABLE, INVISIBLE,  0,             0,            0,        PCH_USB2,       PORT3,       0,              0    }, // NA
     {CONNECTABLE,   VISIBLE,    0x00,          0,            0,        PCH_USB2,       PORT4,       0,              0    }, // Debug Connector
     {CONNECTABLE,   VISIBLE,    0x03,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT5,       PCH_USB3,       PORT1}, // TYPE A PORT1
     {CONNECTABLE,   VISIBLE,    0x03,          PHYSICAL_OC,  OC_PIN0,  PCH_USB2,       PORT6,       PCH_USB3,       PORT2}, // TYPE A PORT2
@@ -543,7 +538,6 @@
     0xFFFFFFFF                   // terminator
   })}
   gBoardModuleTokenSpaceGuid.VpdPcdBoardRtd3TableSignature|*|{'P', 't', 'l', 'U', 'H', 'A', 'd', 'k'}
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardSsdRtd3TableSignature|*|{'P', 't', 'l', 'U', 'H', 'S', 's', 'd'}
   gBoardModuleTokenSpaceGuid.VpdPcdBatterySupport|*|($(BOARD_NO_BATTERY_SUPPORT))
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamSensor|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdZPoddConfig|*|0

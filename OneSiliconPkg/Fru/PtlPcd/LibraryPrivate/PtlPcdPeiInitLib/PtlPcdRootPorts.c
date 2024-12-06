@@ -52,8 +52,6 @@
 
 #define BUS_NUMBER_FOR_IMR 0x00
 
-extern EFI_GUID gIpPcieInstHobGuid;
-
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_GUID  gPtlPcdRpListPpiGuid = {0x55F621C1, 0xAEFE, 0x4712, {0x97, 0x96, 0xE3, 0xDC, 0x4D, 0xE4, 0x17, 0xC9}};
 
 typedef struct {
@@ -1411,42 +1409,50 @@ PtlPcdPcieRpConfigureGrantCounts (
   IN PCIE_ROOT_PORT_LIST  *RpList
   )
 {
-   UINT32                      ControllerIndex;
-   PSF_PCIE_CTRL_CONFIG        PsfPcieCtrlBifurcationArray[PCH_MAX_PCIE_CONTROLLERS];
-   EFI_STATUS                  Status;
-   PCIE_ROOT_PORT_DEV          *ControllerDev;
-   PCIE_ROOT_PORT_DEV_PRIVATE  *ControllerDevPrivate;
+  UINT32                      ControllerIndex;
+  UINT32                      RpIndex;
+  UINT8                       PcieCtrlBifurcationArray[PCH_MAX_PCIE_CONTROLLERS];
+  EFI_STATUS                  Status;
+  PCIE_ROOT_PORT_DEV          *ControllerDev;
+  PCIE_ROOT_PORT_DEV          *RpDev;
+  UINT8                       PcieCtrlNumOfLanesArray[PCH_MAX_PCIE_CONTROLLERS];
+  UINT8                       PcieCtrlNumOfRootPorts[PCH_MAX_PCIE_CONTROLLERS];
+  BOOLEAN                     PcieRpEnable[PCH_MAX_PCIE_ROOT_PORTS];
+  PCIE_ROOT_PORT_DEV_PRIVATE  *RpDevPrivate;
+
+  DEBUG ((DEBUG_ERROR, "%a Start()\n", __FUNCTION__));
+
+  RpIndex = 0;
+  for (Status = RpList->ResetToFirst (RpList, &RpDev); Status == EFI_SUCCESS; Status = RpList->GetNextRootPort (RpList, &RpDev)) {
+    RpDevPrivate = (PCIE_ROOT_PORT_DEV_PRIVATE*)RpDev;
+    ASSERT (RpDevPrivate->RpIndex == RpIndex);
+    if (PtlPcdIsRpIocDecoded (RpIndex)) {
+      PcieRpEnable[RpIndex] = IocIsPcieRootPortEnabled (RpIndex);
+    } else {
+      PcieRpEnable[RpIndex] = PtlPcdPsfIsPcieRootPortEnabled (RpIndex);
+    }
+    RpIndex++;
+  }
 
   ControllerIndex = 0;
   for (Status = RpList->ResetToFirst (RpList, &ControllerDev); Status == EFI_SUCCESS; Status = RpList->GetNextController (RpList, &ControllerDev)) {
-    if (ControllerIndex >= ARRAY_SIZE (PsfPcieCtrlBifurcationArray)) {
+    if (ControllerIndex >= ARRAY_SIZE (PcieCtrlBifurcationArray)) {
       break;
     }
-    ControllerDevPrivate = (PCIE_ROOT_PORT_DEV_PRIVATE*) ControllerDev;
-    if (PtlPcdIsRpIocDecoded (ControllerDevPrivate->RpIndex)) {
-      continue;
-    }
-    switch (PcieSipGetControllerBifurcation (ControllerDev)) {
-      case V_PCH_PCIE_CFG_STRPFUSECFG_RPC_1_1_1_1:
-        PsfPcieCtrlBifurcationArray[ControllerIndex] = PsfPcieCtrl4xn;
-        break;
-      case V_PCH_PCIE_CFG_STRPFUSECFG_RPC_2_1_1:
-        PsfPcieCtrlBifurcationArray[ControllerIndex] = PsfPcieCtrl1x2n_2xn;
-        break;
-      case V_PCH_PCIE_CFG_STRPFUSECFG_RPC_2_2:
-        PsfPcieCtrlBifurcationArray[ControllerIndex] = PsfPcieCtrl2x2n;
-        break;
-      case V_PCH_PCIE_CFG_STRPFUSECFG_RPC_4:
-        PsfPcieCtrlBifurcationArray[ControllerIndex] = PsfPcieCtrl1x4n;
-        break;
-      default:
-        DEBUG ((DEBUG_ERROR, "Unsupported PCIe configuration\n"));
-        ASSERT (FALSE);
-    }
+    PcieCtrlNumOfLanesArray[ControllerIndex] = PtlPcdGetPcieControllerNumOfLanes (ControllerIndex);
+    PcieCtrlNumOfRootPorts[ControllerIndex] = PtlPcdGetPcieControllerNumOfRootPorts (ControllerIndex);
+    PcieCtrlBifurcationArray[ControllerIndex] = PcieSipGetControllerBifurcation (ControllerDev);
     ControllerIndex++;
   }
   if (ControllerIndex != 0) {
-    PtlPcdGrantCountProgramming (PsfPcieCtrlBifurcationArray, ControllerIndex - 1);
+    PtlPcdPsfGrantCountProgramming (
+      PcieCtrlBifurcationArray,
+      PcieCtrlNumOfLanesArray,
+      PcieCtrlNumOfRootPorts,
+      ControllerIndex,
+      PcieRpEnable,
+      RpIndex
+      );
   }
 }
 
@@ -1608,9 +1614,6 @@ PtlPcdPciePrePolicyInit (
   PCIE_ROOT_PORT_LIST_PRIVATE  *RpListPrivate;
   EFI_PEI_PPI_DESCRIPTOR       *PtlPcdRpListPpi;
   EFI_STATUS                   Status;
-  IP_PCIE_INST                 *pInst;
-  UINT8                        Index;
-  UINT8                        MaxRootPortNum;
 
   PtlPcdRpListPpi = (EFI_PEI_PPI_DESCRIPTOR *) AllocateZeroPool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
   RpListPrivate = (PCIE_ROOT_PORT_LIST_PRIVATE*) AllocateZeroPool (sizeof (PCIE_ROOT_PORT_LIST_PRIVATE));
@@ -1635,16 +1638,6 @@ PtlPcdPciePrePolicyInit (
   PtlPcdPcieInitRpList (RpListPrivate);
   PcieSipHideDisableRootPorts (&RpListPrivate->RpList);
   PcieSipEarlyDecodeEnable (&RpListPrivate->RpList);
-
-  MaxRootPortNum = GetMaxPciePortNum ();
-  for (Index = 0; Index < MaxRootPortNum; Index++) {
-    pInst = BuildGuidHob (&gIpPcieInstHobGuid, sizeof (IP_PCIE_INST));
-    if (pInst == NULL) {
-      DEBUG ((DEBUG_WARN, "Failed to build pInst Hob(%d)\n", Index));
-      ASSERT (FALSE);
-    }
-    ZeroMem (pInst, sizeof (IP_PCIE_INST));
-  }
 }
 
 /**

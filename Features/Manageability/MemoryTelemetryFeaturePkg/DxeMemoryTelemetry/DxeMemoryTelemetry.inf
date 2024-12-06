@@ -53,6 +53,7 @@
   PhatAcpiLib
   UefiBootManagerLib
   UefiDriverEntryPoint
+  UefiRuntimeServicesTableLib
 
 [Guids]
   gSiMemoryInfoDataGuid       ## CONSUMES

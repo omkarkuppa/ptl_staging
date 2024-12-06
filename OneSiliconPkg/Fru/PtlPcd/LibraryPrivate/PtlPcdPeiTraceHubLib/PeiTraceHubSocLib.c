@@ -100,7 +100,7 @@ SocTraceHubEnableFwBar (
   //
   // Hide TraceHub phantom Device
   //
-  PtlPcdHideTraceHubAcpi ();
+  PtlPcdPsfHideTraceHubAcpi ();
 }
 
 /**
@@ -150,7 +150,7 @@ SocTraceHubDisable (
   ///
   /// Disable trace hub phantom device via PSF
   ///
-  PtlPcdDisableTraceHubAcpi ();
+  PtlPcdPsfDisableTraceHubAcpi ();
   ///
   /// Disable trace hub via PSF
   ///

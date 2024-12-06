@@ -81,9 +81,12 @@ HdaDxeLoadConfigDefault (
   DEBUG ((DEBUG_INFO, "HdaDxeConfig->Header.GuidHob.Header.HobLength = 0x%x\n", HdAudioDxeConfig->Header.GuidHob.Header.HobLength));
 
   for (Index = 0; Index < PCH_MAX_HDA_SNDW_LINK_NUM; Index++) {
-    HdAudioDxeConfig->SndwConfig[Index].DataOnDelaySelect             = HdaSndwDataOnDelay4ClockPeriods;
-    HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalSelect    = HdaSndwDataOnActiveIntervalSelect6ClockPeriods;
-    HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalExtSelect = TRUE;
+    HdAudioDxeConfig->SndwConfig[Index].DataOnDelayExtSelect          = 0x1;
+    HdAudioDxeConfig->SndwConfig[Index].DataOnDelayExt2Select         = 0x1;
+    HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalSelect    = 0x3;
+    HdAudioDxeConfig->SndwConfig[Index].DataOnActiveIntervalExtSelect = 0x1;
+    HdAudioDxeConfig->SndwConfig[Index].ClockLoopbackSourceSndw       = 0x1;
+    HdAudioDxeConfig->SndwConfig[Index].ClockLoopbackDelaySelectSndw  = 0x2;
   }
 
   // WoV; BT Sideband; BT Intel HFP, A2DP, LE; ACX/SDCA and speaker aggregation

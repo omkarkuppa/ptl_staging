@@ -56,9 +56,9 @@ GetMemInfo (
 }
 
 /**
-  Prints the received Memory Telemetry data to serial debug log.
+  Prints the received memory telemetry data to serial debug log.
 
-  @param[in]  MemoryTelemetryDataTable    Memory Health Table stored from MRC
+  @param[in]  MemoryTelemetryDataTable    Memory Telemetry Table stored from MRC
 **/
 VOID
 PrintMemoryTelemetryTable (
@@ -69,63 +69,58 @@ PrintMemoryTelemetryTable (
   UINT8   Idxj;
   UINT8   Idxk;
 
-  DEBUG ((DEBUG_INFO, "|-------------------------------------------------------|\n"));
-  DEBUG ((DEBUG_INFO, "|---------- Memory Telemetry Data Table ----------|\n"));
-  DEBUG ((DEBUG_INFO, "|-------------------------------------------------------|\n"));
-  DEBUG ((DEBUG_INFO, "|  Memory Type                             0x%-10X |\n", MemoryTelemetryDataTable->MemoryType));
+  DEBUG ((DEBUG_INFO, "|------------- Memory Telemetry Data Table -------------|\n"));
+  DEBUG ((DEBUG_INFO, "| Memory Type    0x%X\n", MemoryTelemetryDataTable->MemoryType));
   for (Idxi = 0; Idxi < MAX_NODE; Idxi++) {
-    DEBUG ((DEBUG_INFO, "|  Node          %d                                      |\n", Idxi));
+    DEBUG ((DEBUG_INFO,     "|\tNode          %d\n", Idxi));
     for (Idxj = 0; Idxj < MAX_CH; Idxj++) {
-      DEBUG ((DEBUG_INFO, "|  |  Channel    %d                                      |\n", Idxj));
+      DEBUG ((DEBUG_INFO,   "|\tChannel       %d\n", Idxj));
       for (Idxk = 0; Idxk < MAX_DIMM; Idxk++) {
-        DEBUG ((DEBUG_INFO, "|  |  |  DIMM    %d                                      |\n", Idxk));
-        DEBUG ((DEBUG_INFO, "|  |  |  |  Manufacture ID                 0x%-10X |\n", MemoryTelemetryDataTable->MfgId[Idxi][Idxj][Idxk]));
-        DEBUG ((DEBUG_INFO, "|  |  |  |  Memory Speed                   0x%-10X |\n", MemoryTelemetryDataTable->Speed[Idxi][Idxj][Idxk]));
-        DEBUG ((DEBUG_INFO, "|  |  |  |  Rank In DIMM                   0x%-10X |\n", MemoryTelemetryDataTable->RankInDimm[Idxi][Idxj][Idxk]));
-        DEBUG ((DEBUG_INFO, "|  |  |  |  Bank In DIMM                   0x%-10X |\n", MemoryTelemetryDataTable->Banks[Idxi][Idxj][Idxk]));
-        DEBUG ((DEBUG_INFO, "|  |  |  |  Bank Groups In DIMM            0x%-10X |\n", MemoryTelemetryDataTable->BankGroups[Idxi][Idxj][Idxk]));
-        DEBUG ((DEBUG_INFO, "|  |  |  |  Form Factor                    0x%-10X |\n", MemoryTelemetryDataTable->FormFactor[Idxi][Idxj][Idxk]));
+        DEBUG ((DEBUG_INFO, "|\tDIMM          %d\n", Idxk));
+        DEBUG ((DEBUG_INFO, "|\t\tManufacture ID        0x%X\n", MemoryTelemetryDataTable->MfgId[Idxi][Idxj][Idxk]));
+        DEBUG ((DEBUG_INFO, "|\t\tMemory Speed          0x%X\n", MemoryTelemetryDataTable->Speed[Idxi][Idxj][Idxk]));
+        DEBUG ((DEBUG_INFO, "|\t\tRank In DIMM          0x%X\n", MemoryTelemetryDataTable->RankInDimm[Idxi][Idxj][Idxk]));
+        DEBUG ((DEBUG_INFO, "|\t\tBank In DIMM          0x%X\n", MemoryTelemetryDataTable->Banks[Idxi][Idxj][Idxk]));
+        DEBUG ((DEBUG_INFO, "|\t\tBank Groups In DIMM   0x%X\n", MemoryTelemetryDataTable->BankGroups[Idxi][Idxj][Idxk]));
+        DEBUG ((DEBUG_INFO, "|\t\tForm Factor           0x%X\n", MemoryTelemetryDataTable->FormFactor[Idxi][Idxj][Idxk]));
       }
-      DEBUG ((DEBUG_INFO, "|  |  |  DIMM Count                        0x%-10X |\n", MemoryTelemetryDataTable->DimmCount[Idxi][Idxj]));
-      DEBUG ((DEBUG_INFO, "|-------------------------------------------------------|\n"));
+      DEBUG ((DEBUG_INFO, "|\tDIMM Count              0x%X\n", MemoryTelemetryDataTable->DimmCount[Idxi][Idxj]));
     }
   }
   for (Idxi = 0; Idxi < HOB_MAX_SAGV_POINTS; Idxi++) {
-    DEBUG ((DEBUG_INFO, "|  Sa Gv Point - %d                                     |\n", Idxi+1));
-    DEBUG ((DEBUG_INFO, "|  Data Rate                               0x%-10X |\n", MemoryTelemetryDataTable->DataRate[Idxi]));
-    DEBUG ((DEBUG_INFO, "|  Bandwidth                               0x%-10X |\n", MemoryTelemetryDataTable->Bandwidth[Idxi]));
+    DEBUG ((DEBUG_INFO, "| Sa Gv Point        %d\n", Idxi));
+    DEBUG ((DEBUG_INFO, "|\tData Rate                   0x%X\n", MemoryTelemetryDataTable->DataRate[Idxi]));
+    DEBUG ((DEBUG_INFO, "|\tBandwidth                   0x%X\n", MemoryTelemetryDataTable->Bandwidth[Idxi]));
   }
-  DEBUG ((DEBUG_INFO, "|  SaGvPointMask                           0x%-10X |\n", MemoryTelemetryDataTable->SaGvPointMask));
-  DEBUG ((DEBUG_INFO, "|  Maximum Frequency                       0x%-10X |\n", MemoryTelemetryDataTable->MaxFrequency));
+  DEBUG ((DEBUG_INFO, "| SaGvPointMask                0x%X\n", MemoryTelemetryDataTable->SaGvPointMask));
+  DEBUG ((DEBUG_INFO, "| Maximum Frequency            0x%X\n", MemoryTelemetryDataTable->MaxFrequency));
   DEBUG ((DEBUG_INFO, "|-------------------------------------------------------|\n"));
-
-  // PPR
   DEBUG ((DEBUG_INFO, "|---------------------- AMT PPR  -----------------------|\n"));
-  DEBUG ((DEBUG_INFO, "|  PprAvailable                            0x%-10X |\n", MemoryTelemetryDataTable->PprAvailable));
-  DEBUG ((DEBUG_INFO, "|  AmtPprRanInLastBoot                     0x%-10X |\n", MemoryTelemetryDataTable->AmtPprRanInLastBoot));
-  if (MemoryTelemetryDataTable->AmtPprRanInLastBoot.AmtRanLastBoot == 0x1) {
-    if (MemoryTelemetryDataTable->AmtPprRanInLastBoot.PprRanLastBoot == 0x1) {
-      DEBUG ((DEBUG_INFO, "|  Number of Successful Repairs            0x%-10X |\n", MemoryTelemetryDataTable->TotalPprRowRepairsSuccessful));
-      DEBUG ((DEBUG_INFO, "|  Number of Uncorrectable Devices         0x%-10X |\n", MemoryTelemetryDataTable->TotalUncorrectableDevices));
+  DEBUG ((DEBUG_INFO, "| PprAvailable                            0x%X\n", MemoryTelemetryDataTable->PprAvailable));
+  DEBUG ((DEBUG_INFO, "| AmtPprRanInLastBoot                     0x%X\n", MemoryTelemetryDataTable->AmtPprRanInLastBoot));
+  if (MemoryTelemetryDataTable->AmtPprRanInLastBoot.AmtRanLastBoot) {
+    if (MemoryTelemetryDataTable->AmtPprRanInLastBoot.PprRanLastBoot) {
+      DEBUG ((DEBUG_INFO, "| Number of Successful Repairs        0x%X\n", MemoryTelemetryDataTable->TotalPprRowRepairsSuccessful));
+      DEBUG ((DEBUG_INFO, "| Number of Uncorrectable Devices     0x%X\n", MemoryTelemetryDataTable->TotalUncorrectableDevices));
     }
-    DEBUG ((DEBUG_INFO, "|  Number of Detected Errors               0x%-10X |\n", MemoryTelemetryDataTable->TotalRowFailuresDiscovered));
-    DEBUG ((DEBUG_INFO, "|  Error Repair Successful                 0x%-10X |\n", MemoryTelemetryDataTable->PprErrorInfo.PprRowRepairsSuccessful));
-    DEBUG ((DEBUG_INFO, "|  Error Controller                        0x%-10X |\n", MemoryTelemetryDataTable->PprErrorInfo.Controller));
-    DEBUG ((DEBUG_INFO, "|  Error Channel                           0x%-10X |\n", MemoryTelemetryDataTable->PprErrorInfo.Channel));
-    DEBUG ((DEBUG_INFO, "|  Error Rank                              0x%-10X |\n", MemoryTelemetryDataTable->PprErrorInfo.Rank));
-    DEBUG ((DEBUG_INFO, "|  Error Bank Group                        0x%-10X |\n", MemoryTelemetryDataTable->PprErrorInfo.BankGroup));
-    DEBUG ((DEBUG_INFO, "|  Error Bank                              0x%-10X |\n", MemoryTelemetryDataTable->PprErrorInfo.Bank));
-    DEBUG ((DEBUG_INFO, "|  Error Row                               0x%-10X |\n", MemoryTelemetryDataTable->PprErrorInfo.Row));
-    DEBUG ((DEBUG_INFO, "|  Error Device                            0x%-10X |\n", MemoryTelemetryDataTable->PprErrorInfo.Device));
+    DEBUG ((DEBUG_INFO, "| Number of Detected Errors           0x%X\n", MemoryTelemetryDataTable->TotalRowFailuresDiscovered));
+    DEBUG ((DEBUG_INFO, "| Error Repair Successful             0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.PprRowRepairsSuccessful));
+    DEBUG ((DEBUG_INFO, "| Error Controller                    0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Controller));
+    DEBUG ((DEBUG_INFO, "| Error Channel                       0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Channel));
+    DEBUG ((DEBUG_INFO, "| Error Rank                          0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Rank));
+    DEBUG ((DEBUG_INFO, "| Error Bank Group                    0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.BankGroup));
+    DEBUG ((DEBUG_INFO, "| Error Bank                          0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Bank));
+    DEBUG ((DEBUG_INFO, "| Error Row                           0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Row));
+    DEBUG ((DEBUG_INFO, "| Error Device                        0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Device));
     for (Idxi = 0; Idxi < MAX_NODE; Idxi++) {
-      DEBUG ((DEBUG_INFO, "|  Node          %d                                      |\n", Idxi));
+      DEBUG ((DEBUG_INFO, "| Node             %d\n", Idxi));
       for (Idxj = 0; Idxj < MAX_CH; Idxj++) {
-        DEBUG ((DEBUG_INFO, "|  |  Channel    %d                                      |\n", Idxj));
+        DEBUG ((DEBUG_INFO, "  |\tChannel     %d\n", Idxj));
         for (Idxk = 0; Idxk < MAX_RANK_IN_CHANNEL; Idxk++) {
-          DEBUG ((DEBUG_INFO, "|  |  |  Rank    %d                                      |\n", Idxk));
+          DEBUG ((DEBUG_INFO, "|\tRank        %d\n", Idxk));
           for (UINT8 Idxl = 0; Idxl < MAX_SDRAM_IN_DIMM; Idxl++) {
-            DEBUG ((DEBUG_INFO, "|  |  |  |  Device    %d                                    |\n", Idxl));
-            DEBUG ((DEBUG_INFO, "|  |  |  |  |  Available Resources         0x%-10X |\n", MemoryTelemetryDataTable->AvailableResources[Idxi][Idxj][Idxk][Idxl]));
+            DEBUG ((DEBUG_INFO, "|\t\tDevice                         %d\n", Idxl));
+            DEBUG ((DEBUG_INFO, "|\t\tAvailable Resources            0x%X\n", MemoryTelemetryDataTable->AvailableResources[Idxi][Idxj][Idxk][Idxl]));
           }
         }
       }
@@ -151,7 +146,9 @@ GetFormFactor (
 {
   switch (ModuleType & DDR_MTYPE_SPD_MASK) {
     case DDR_MTYPE_SODIMM:
+      ///
       /// Legacy non-JEDEC LPDDR3 SPD images use SODIMM module type which should be soldered down form factor.
+      ///
       return (DramDeviceType == DDR_DTYPE_LPDDR3) ? MemoryFormFactorRowOfChips : MemoryFormFactorSodimm;
       break;
     case DDR_MTYPE_RDIMM:
@@ -163,7 +160,6 @@ GetFormFactor (
     case DDR_MTYPE_MEM_DOWN:
       return (UINT8) MemoryFormFactorRowOfChips;
       break;
-
     case DDR_MTYPE_UDIMM:
     case DDR_MTYPE_LR_DIMM:
     case DDR_MTYPE_CUDIMM:
@@ -179,16 +175,16 @@ GetFormFactor (
   Format MRC Memory Info Data structure for ACPI publishing.
 
   @param[in]      MemInfoData       Memory info data hob structure pointer
-  @param[in, out] MemoryTelemetryDataTable      Configured data to Memory Telemetry table and PHAT append
+  @param[in, out] MemoryTelemetryDataTable      Configured data to MEMORY_TELEMETRY table and PHAT append
 
   @retval     EFI_SUCCESS           Data set successfully
-  @retval     EFI_OUT_OF_RESOURCES  Could not allocate memory for Memory Telemetry table
+  @retval     EFI_OUT_OF_RESOURCES  Could not allocate memory for MEMORY_TELEMETRY table
   @retval     Others                Failed to set data to new table
 **/
 EFI_STATUS
 UpdateMemInfoToMemoryTelemetryPhat (
-  IN      MEMORY_INFO_DATA_HOB          *MemInfoData,
-  IN OUT  MEMORY_TELEMETRY_DATA_TABLE   * MemoryTelemetryDataTable
+  IN      MEMORY_INFO_DATA_HOB         *MemInfoData,
+  IN OUT  MEMORY_TELEMETRY_DATA_TABLE  *MemoryTelemetryDataTable
   )
 {
   UINT8 Idxi;
@@ -211,7 +207,9 @@ UpdateMemInfoToMemoryTelemetryPhat (
         MemoryTelemetryDataTable->Banks[Idxi][Idxj][Idxk]       = MemInfoData->Controller[Idxi].ChannelInfo[Idxj].DimmInfo[Idxk].Banks;
         MemoryTelemetryDataTable->BankGroups[Idxi][Idxj][Idxk]  = MemInfoData->Controller[Idxi].ChannelInfo[Idxj].DimmInfo[Idxk].BankGroups;
 
-        // Set the encoding for memory form factor align with SMBIOS Type 17
+        ///
+        /// Set the encoding for memory form factor align with SMBIOS Type 17
+        ///
         DramDeviceType = MemInfoData->Controller[Idxi].ChannelInfo[Idxj].DimmInfo[Idxk].SpdDramDeviceType;
         ModuleType = MemInfoData->Controller[Idxi].ChannelInfo[Idxj].DimmInfo[Idxk].SpdModuleType;
         MemoryTelemetryDataTable->FormFactor[Idxi][Idxj][Idxk]  = GetFormFactor (ModuleType, DramDeviceType);
@@ -227,7 +225,9 @@ UpdateMemInfoToMemoryTelemetryPhat (
   MemoryTelemetryDataTable->SaGvPointMask     = MemInfoData->SagvConfigInfo.SaGvPointMask;
   MemoryTelemetryDataTable->MaxFrequency      = MemInfoData->MaximumMemoryClockSpeed;
 
-  // PPR
+  ///
+  /// PPR
+  ///
   MemoryTelemetryDataTable->PprAvailable                            = (UINT8) FixedPcdGetBool (PcdPprCapability);
   MemoryTelemetryDataTable->AmtPprRanInLastBoot.AmtRanLastBoot      = (MemInfoData->PprRanInLastBoot & BIT1) >> 1;
   MemoryTelemetryDataTable->AmtPprRanInLastBoot.PprRanLastBoot      = MemInfoData->PprRanInLastBoot & BIT0;
@@ -241,20 +241,22 @@ UpdateMemInfoToMemoryTelemetryPhat (
     CopyMem (&MemoryTelemetryDataTable->AvailableResources, &MemInfoData->PprAvailableResources, sizeof (MemoryTelemetryDataTable->AvailableResources));
   }
 
-  // Print the MemoryTelemetry data to serial debug log
+  ///
+  /// Print the Memory Telemetry data to serial debug log
+  ///
   PrintMemoryTelemetryTable (MemoryTelemetryDataTable);
 
   return EFI_SUCCESS;
 }
 
 /**
-  Configures the PHAT MemoryTelemetry ACPI table data for installation
+  Configures the PHAT MEMORY TELEMETRY ACPI table data for installation
 
-  @param[in]     MemoryTelemetryDataTable    Pointer to the MRC MemoryTelemetry data table
-  @param[in,out] PhatMemoryTelemetryTable    Pointer to configured PHAT with MemoryTelemetry data
+  @param[in]     MemoryTelemetryDataTable    Pointer to the MRC MEMORY TELEMETRY data table
+  @param[in,out] PhatMemoryTelemetryTable    Pointer to configured PHAT with MEMORY TELEMETRY data
 
-  @retval EFI_SUCCESS            Successfully configured MemoryTelemetry for PHAT
-  @retval EFI_INVALID_PARAMETER  Received invalid MemoryTelemetry or PHAT pointers
+  @retval EFI_SUCCESS            Successfully configured MEMORY TELEMETRY for PHAT
+  @retval EFI_INVALID_PARAMETER  Received invalid MEMORY TELEMETRY or PHAT pointers
 **/
 EFI_STATUS
 ConfigMemoryTelemetryPhatTable (
@@ -262,27 +264,28 @@ ConfigMemoryTelemetryPhatTable (
   IN OUT PHAT_MEMORY_TELEMETRY_RECORD_STRUCTURE   *PhatMemoryTelemetryTable
   )
 {
-  // Check for valid pointer input
   if ((MemoryTelemetryDataTable == NULL) || (PhatMemoryTelemetryTable == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  // Add MemoryTelemetry specific data
+  ///
+  /// Add Memory Telemetry specific data
+  ///
   PhatMemoryTelemetryTable->PlatformRecordType  = MEMORY_TELEMETRY_PHAT_RECORD_TYPE;
   PhatMemoryTelemetryTable->Revision            = MEMORY_TELEMETRY_PHAT_RECORD_VERSION;
-  CopyMem (&PhatMemoryTelemetryTable->MemoryTelemetryData, MemoryTelemetryDataTable, sizeof (MEMORY_TELEMETRY_DATA_TABLE));
+  CopyMem (&PhatMemoryTelemetryTable->MemTelemetryData, MemoryTelemetryDataTable, sizeof (MEMORY_TELEMETRY_DATA_TABLE));
   PhatMemoryTelemetryTable->RecordLength        = sizeof (PHAT_MEMORY_TELEMETRY_RECORD_STRUCTURE);
   return EFI_SUCCESS;
 }
 
 /**
-  Checks if PHAT is installed, if it is we will add MemoryTelemetry data and update PHAT. If PHAT is not found then
+  Checks if PHAT is installed, if it is we will add MEMORY TELEMETRY data and update PHAT. If PHAT is not found then
   add data to PHAt and install table to ACPI.
 
-  @param[in]  MemoryTelemetryDataTable       Memory Telemetry data table configured from MRC
+  @param[in]  MemoryTelemetryDataTable       Memory telemetry data table configured from MRC
 
-  @retval EFI_SUCCESS            Successfully posted MemoryTelemetry data to existing or new PHAT ACPI table
-  @retval other                  Failed to either install or update PHAT with MemoryTelemetry data
+  @retval EFI_SUCCESS            Successfully posted MEMORY TELEMETRY data to existing or new PHAT ACPI table
+  @retval other                  Failed to either install or update PHAT with MEMORY TELEMETRY data
 **/
 EFI_STATUS
 PublishMemoryTelemetryToPhat (
@@ -292,7 +295,6 @@ PublishMemoryTelemetryToPhat (
   EFI_STATUS                              Status;
   PHAT_MEMORY_TELEMETRY_RECORD_STRUCTURE  *MemoryTelemetryPhatTable;
 
-  // Check the input for validity
   if (MemoryTelemetryDataTable == NULL) {
     return EFI_INVALID_PARAMETER;
   }
@@ -302,13 +304,17 @@ PublishMemoryTelemetryToPhat (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  // Configure the MemoryTelemetry to ACPI data
+  ///
+  /// Configure the Memory Telemetry to ACPI data
+  ///
   Status = ConfigMemoryTelemetryPhatTable (MemoryTelemetryDataTable, MemoryTelemetryPhatTable);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  // Table exists, get current table
+  ///
+  /// Table exists, get current table
+  ///
   Status = InstallPhatTable (MemoryTelemetryPhatTable, MemoryTelemetryPhatTable->RecordLength);
 
   return Status;
@@ -339,30 +345,42 @@ DxeMemoryTelemetryEntryPoint (
   MemInfoData  = NULL;
   MemoryTelemetryDataTable = NULL;
 
-  // Manage AMT PPR variable, must execute even if MemoryTelemetry table cannot allocate
-  MemoryTelemetryAmtPprMain ();
+  DEBUG ((DEBUG_INFO, "[%a] Entering\n", __FUNCTION__));
 
-  // Allocate space for MemoryTelemetry table
+  ///
+  /// Manage AMT PPR variable, must execute even if memory telemetry table cannot allocate
+  ///
+  AmtPprVarHandler ();
+
+  ///
+  /// Allocate space for Memory Telemetry table
+  ///
   MemoryTelemetryDataTable = (MEMORY_TELEMETRY_DATA_TABLE *) AllocateZeroPool (sizeof (MEMORY_TELEMETRY_DATA_TABLE));
   if (MemoryTelemetryDataTable == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
   }
 
-  // Get MRC Data Hob
+  ///
+  /// Get MRC Data Hob
+  ///
   MemInfoData = GetMemInfo ();
   if (MemInfoData == NULL) {
     Status = EFI_ABORTED;
     goto Exit;
   }
 
-  // Set memory data to MemoryTelemetry PHAT format
+  ///
+  /// Set memory data to Memory Telemetry PHAT format
+  ///
   Status = UpdateMemInfoToMemoryTelemetryPhat (MemInfoData, MemoryTelemetryDataTable);
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
 
-  // Post Memory health information to PHAT ACPI table
+  ///
+  /// Post Memory telemetry information to PHAT ACPI table
+  ///
   Status = PublishMemoryTelemetryToPhat (MemoryTelemetryDataTable);
 
   Exit:

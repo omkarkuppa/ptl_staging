@@ -39,187 +39,11 @@
 #include <Register/PchRegs.h>
 #include <Library/SiConfigBlockLib.h>
 #include <Library/PcdInfoLib.h>
-#include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdPsfSocLib.h>
 #include <PsfConfig.h>
 #include <PcdSbPortIds.h>
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_CONTROLLER P2SbDev0 = {
-  PCI_SEGMENT_LIB_ADDRESS (
-           DEFAULT_PCI_SEGMENT_NUMBER_PCH,
-           DEFAULT_PCI_BUS_NUMBER_PCH,
-           PCI_DEVICE_NUMBER_PCH_P2SB,
-           PCI_FUNCTION_NUMBER_PCH_P2SB,
-           0
-           ),
-  PCH_PCR_BASE_ADDRESS,
-  TRUE
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_CONTROLLER P2SbDev1 = {
-  PCI_SEGMENT_LIB_ADDRESS (
-           DEFAULT_PCI_SEGMENT_NUMBER_PCH,
-           DEFAULT_PCI_BUS_NUMBER_PCH,
-           PCI_DEVICE_NUMBER_SECOND_P2SB,
-           PCI_FUNCTION_NUMBER_SECOND_P2SB,
-           0
-           ),
-  PCH_PCR_SECOND_BASE_ADDRESS,
-  TRUE
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_SIDEBAND_REGISTER_ACCESS Psf0Access = {
-  P2SB_REGISTER_ACCESS_INIT,
-  P2SbMmioAccess,
-  GET_P2SB_LOCAL_PID(PTL_SID_F3_PID_PSF0),
-  0,
-  0,
-  P2SbPrivateConfig,
-  FALSE,
-  &P2SbDev1
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_SIDEBAND_REGISTER_ACCESS Psf4Access = {
-  P2SB_REGISTER_ACCESS_INIT,
-  P2SbMmioAccess,
-  GET_P2SB_LOCAL_PID(PTL_SID_F2_PID_PSF4),
-  0,
-  0,
-  P2SbPrivateConfig,
-  FALSE,
-  &P2SbDev0
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_SIDEBAND_REGISTER_ACCESS Psf5Access = {
-  P2SB_REGISTER_ACCESS_INIT,
-  P2SbMmioAccess,
-  GET_P2SB_LOCAL_PID(PTL_H_SID_F2_PID_PSF5),
-  0,
-  0,
-  P2SbPrivateConfig,
-  FALSE,
-  &P2SbDev0
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_SIDEBAND_REGISTER_ACCESS Psf6Access = {
-  P2SB_REGISTER_ACCESS_INIT,
-  P2SbMmioAccess,
-  GET_P2SB_LOCAL_PID(PTL_SID_F2_PID_PSF6),
-  0,
-  0,
-  P2SbPrivateConfig,
-  FALSE,
-  &P2SbDev0
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_SIDEBAND_REGISTER_ACCESS Psf8Access = {
-  P2SB_REGISTER_ACCESS_INIT,
-  P2SbMmioAccess,
-  GET_P2SB_LOCAL_PID(PTL_SID_F2_PID_PSF8),
-  0,
-  0,
-  P2SbPrivateConfig,
-  FALSE,
-  &P2SbDev0
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_SIDEBAND_REGISTER_ACCESS Psf14Access = {
-  P2SB_REGISTER_ACCESS_INIT,
-  P2SbMmioAccess,
-  GET_P2SB_LOCAL_PID(PTL_SID_F2_PID_PSF14),
-  0,
-  0,
-  P2SbPrivateConfig,
-  FALSE,
-  &P2SbDev0
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_SIDEBAND_REGISTER_ACCESS Psf15Access = {
-  P2SB_REGISTER_ACCESS_INIT,
-  P2SbMmioAccess,
-  GET_P2SB_LOCAL_PID(PTL_SID_F2_PID_PSF15),
-  0,
-  0,
-  P2SbPrivateConfig,
-  FALSE,
-  &P2SbDev0
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_SIDEBAND_REGISTER_ACCESS Psf11Access = {
-  P2SB_REGISTER_ACCESS_INIT,
-  P2SbMmioAccess,
-  GET_P2SB_LOCAL_PID(PTL_SID_F3_PID_TC_PSFTOP),
-  0,
-  0,
-  P2SbPrivateConfig,
-  FALSE,
-  &P2SbDev1
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED P2SB_SIDEBAND_REGISTER_ACCESS Psf12Access = {
-  P2SB_REGISTER_ACCESS_INIT,
-  P2SbMmioAccess,
-  GET_P2SB_LOCAL_PID(PTL_SID_F3_PID_TC_PSF),
-  0,
-  0,
-  P2SbPrivateConfig,
-  FALSE,
-  &P2SbDev1
-  };
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_DEV  Psf0Dev = {
-  &Psf0Access.Access,
-  FALSE
-};
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_DEV  Psf4Dev = {
-  &Psf4Access.Access,
-  FALSE
-};
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_DEV  Psf5Dev = {
-  &Psf5Access.Access,
-  FALSE
-};
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_DEV  Psf6Dev = {
-  &Psf6Access.Access,
-  FALSE
-};
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_DEV  Psf8Dev = {
-  &Psf8Access.Access,
-  FALSE
-};
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_DEV  Psf14Dev = {
-  &Psf14Access.Access,
-  TRUE
-};
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_DEV  Psf15Dev = {
-  &Psf15Access.Access,
-  FALSE
-};
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_DEV  Psf11TcssDev = {
-  &Psf11Access.Access,
-  FALSE
-};
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_DEV  Psf12TcssDev = {
-  &Psf12Access.Access,
-  FALSE
-};
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_PORT mPchSerialIoI2cPsfPort[] =
-{
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D21_F0_OFFSET3 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D21_F1_OFFSET4 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D21_F2_OFFSET5 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D21_F3_OFFSET6 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D25_F0_OFFSET7 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D25_F1_OFFSET8 }
-};
+#include <Library/Ptl/PtlPcdP2SbSocLib.h>
+#include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdPPsfLib.h>
+#include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdHPsfLib.h>
 
 /**
   Disable LPSS I2C at PSF level
@@ -231,10 +55,11 @@ PtlPcdPsfDisableLpssI2c (
   IN UINT32  I2cNum
   )
 {
-  if (I2cNum >= ARRAY_SIZE (mPchSerialIoI2cPsfPort)) {
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableLpssI2c (I2cNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableLpssI2c (I2cNum);
   }
-  PsfDisableDevice (mPchSerialIoI2cPsfPort[I2cNum]);
 }
 
 /**
@@ -247,10 +72,11 @@ PtlPcdPsfHideLpssI2c (
   IN UINT32  I2cNum
   )
 {
-  if (I2cNum >= ARRAY_SIZE (mPchSerialIoI2cPsfPort)) {
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfHideLpssI2c (I2cNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfHideLpssI2c (I2cNum);
   }
-  PsfHideDevice (mPchSerialIoI2cPsfPort[I2cNum]);
 }
 
 /**
@@ -263,10 +89,11 @@ PtlPcdPsfUnhideLpssI2c (
   IN UINT32  I2cNum
   )
 {
-  if (I2cNum >= ARRAY_SIZE (mPchSerialIoI2cPsfPort)) {
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfUnhideLpssI2c (I2cNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfUnhideLpssI2c (I2cNum);
   }
-  PsfUnhideDevice (mPchSerialIoI2cPsfPort[I2cNum]);
 }
 
 /**
@@ -279,10 +106,11 @@ PtlPcdPsfDisableLpssI2cBar1 (
   IN UINT32  I2cNum
   )
 {
-  if (I2cNum >= ARRAY_SIZE (mPchSerialIoI2cPsfPort)) {
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableLpssI2cBar1 (I2cNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableLpssI2cBar1 (I2cNum);
   }
-  PsfDisableDeviceBar (mPchSerialIoI2cPsfPort[I2cNum], (BIT3 | BIT2));
 }
 
 /**
@@ -295,18 +123,11 @@ PtlPcdPsfDisableLpssI3c (
   IN UINT32  I3cNum
   )
 {
-  PSF_PORT I3cPsfPort;
-
-  if ((I3cNum > 2) || (I3cNum == 1)) {
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableLpssI3c (I3cNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableLpssI3c (I3cNum);
   }
-  I3cPsfPort.PsfDev = &Psf8Dev;
-  if (I3cNum == 0) {
-    I3cPsfPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D17_F0_OFFSET9;
-  } else if (I3cNum == 2) {
-    I3cPsfPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D17_F1_OFFSET10;
-  }
-  PsfDisableDevice (I3cPsfPort);
 }
 
 /**
@@ -319,18 +140,11 @@ PtlPcdPsfHideLpssI3c (
   IN UINT32  I3cNum
   )
 {
-  PSF_PORT I3cPsfPort;
-
-  if ((I3cNum > 2) || (I3cNum == 1)) {
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfHideLpssI3c (I3cNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfHideLpssI3c (I3cNum);
   }
-  I3cPsfPort.PsfDev = &Psf8Dev;
-  if (I3cNum == 0) {
-    I3cPsfPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D17_F0_OFFSET9;
-  } else if (I3cNum == 2) {
-    I3cPsfPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D17_F1_OFFSET10;
-  }
-  PsfHideDevice (I3cPsfPort);
 }
 
 /**
@@ -343,18 +157,11 @@ PtlPcdPsfUnhideLpssI3c (
   IN UINT32  I3cNum
   )
 {
-  PSF_PORT I3cPsfPort;
-
-  if ((I3cNum > 2) || (I3cNum == 1)) {
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfUnhideLpssI3c (I3cNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfUnhideLpssI3c (I3cNum);
   }
-  I3cPsfPort.PsfDev = &Psf8Dev;
-  if (I3cNum == 0) {
-    I3cPsfPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D17_F0_OFFSET9;
-  } else if (I3cNum == 2) {
-    I3cPsfPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D17_F1_OFFSET10;
-  }
-  PsfUnhideDevice (I3cPsfPort);
 }
 
 /**
@@ -367,26 +174,12 @@ PtlPcdPsfDisableLpssI3cBar1 (
   IN UINT32  I3cNum
   )
 {
-  PSF_PORT I3cPsfPort;
-
-  if ((I3cNum > 2) || (I3cNum == 1)) {
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableLpssI3cBar1 (I3cNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableLpssI3cBar1 (I3cNum);
   }
-  I3cPsfPort.PsfDev = &Psf8Dev;
-  if (I3cNum == 0) {
-    I3cPsfPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D17_F0_OFFSET9;
-  } else if (I3cNum == 2) {
-    I3cPsfPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D17_F1_OFFSET10;
-  }
-  PsfDisableDeviceBar (I3cPsfPort, (BIT3 | BIT2));
 }
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_PORT mPchSerialIoSpiPsfPort[] =
-{
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D30_F2_OFFSET11 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D30_F3_OFFSET12 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D18_F6_OFFSET13 }
-};
 
 /**
   Disable LPSS SPI at PSF level
@@ -398,12 +191,11 @@ PtlPcdPsfDisableLpssSpi (
   IN UINT32  SpiNum
   )
 {
-  if (SpiNum >= ARRAY_SIZE (mPchSerialIoSpiPsfPort)) {
-    DEBUG ((DEBUG_WARN, "%a - wrong SPI number, bust be lesser than %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPchSerialIoSpiPsfPort), SpiNum));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableLpssSpi (SpiNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableLpssSpi (SpiNum);
   }
-
-  PsfDisableDevice (mPchSerialIoSpiPsfPort[SpiNum]);
 }
 
 /**
@@ -416,10 +208,11 @@ PtlPcdPsfHideLpssSpi (
   IN UINT32  SpiNum
   )
 {
-  if (SpiNum >= ARRAY_SIZE (mPchSerialIoSpiPsfPort)) {
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfHideLpssSpi (SpiNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfHideLpssSpi (SpiNum);
   }
-  PsfHideDevice (mPchSerialIoSpiPsfPort[SpiNum]);
 }
 
 /**
@@ -432,12 +225,11 @@ PtlPcdPsfUnhideLpssSpi (
   IN UINT32  SpiNum
   )
 {
-  if (SpiNum >= ARRAY_SIZE (mPchSerialIoSpiPsfPort)) {
-    DEBUG ((DEBUG_WARN, "%a - wrong SPI number, bust be lesser than %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPchSerialIoSpiPsfPort), SpiNum));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfUnhideLpssSpi (SpiNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfUnhideLpssSpi (SpiNum);
   }
-
-  PsfUnhideDevice (mPchSerialIoSpiPsfPort[SpiNum]);
 }
 
 /**
@@ -450,20 +242,12 @@ PtlPcdPsfDisableLpssSpiBar1 (
   IN UINT32  SpiNum
   )
 {
-  if (SpiNum >= ARRAY_SIZE (mPchSerialIoSpiPsfPort)) {
-    DEBUG ((DEBUG_WARN, "%a - wrong SPI number, bust be lesser than %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPchSerialIoSpiPsfPort), SpiNum));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableLpssSpiBar1 (SpiNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableLpssSpiBar1 (SpiNum);
   }
-
-  PsfDisableDeviceBar (mPchSerialIoSpiPsfPort[SpiNum], BIT3 | BIT2);
 }
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_PORT mPchSerialIoUartPsfPort[] =
-{
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D30_F0_OFFSET14 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D30_F1_OFFSET15 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_LPSS_RS0_D25_F2_OFFSET16 }
-};
 
 /**
   Disable LPSS UART at PSF level
@@ -475,12 +259,11 @@ PtlPcdPsfDisableLpssUart (
   IN UINT32  UartNum
   )
 {
-  if (UartNum >= ARRAY_SIZE (mPchSerialIoUartPsfPort)) {
-    DEBUG ((DEBUG_WARN, "%a - wrong UART number, bust be lesser than %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPchSerialIoUartPsfPort), UartNum));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableLpssUart (UartNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableLpssUart (UartNum);
   }
-
-  PsfDisableDevice (mPchSerialIoUartPsfPort[UartNum]);
 }
 
 /**
@@ -493,12 +276,11 @@ PtlPcdPsfEnableLpssUart (
   IN UINT32  UartNum
   )
 {
-  if (UartNum >= ARRAY_SIZE (mPchSerialIoUartPsfPort)) {
-    DEBUG ((DEBUG_WARN, "%a - wrong UART number, bust be lesser than %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPchSerialIoUartPsfPort), UartNum));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnableLpssUart (UartNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnableLpssUart (UartNum);
   }
-
-  PsfEnableDevice (mPchSerialIoUartPsfPort[UartNum]);
 }
 
 /**
@@ -511,12 +293,11 @@ PtlPcdPsfUnhideLpssUart (
   IN UINT32  UartNum
   )
 {
-  if (UartNum >= ARRAY_SIZE (mPchSerialIoUartPsfPort)) {
-    DEBUG ((DEBUG_WARN, "%a - wrong UART number, bust be lesser than %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPchSerialIoUartPsfPort), UartNum));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfUnhideLpssUart (UartNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfUnhideLpssUart (UartNum);
   }
-
-  PsfUnhideDevice (mPchSerialIoUartPsfPort[UartNum]);
 }
 
 /**
@@ -529,12 +310,11 @@ PtlPcdPsfHideLpssUart (
   IN UINT32  UartNum
   )
 {
-  if (UartNum >= ARRAY_SIZE (mPchSerialIoUartPsfPort)) {
-    DEBUG ((DEBUG_WARN, "%a - wrong UART number, bust be lesser than %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPchSerialIoUartPsfPort), UartNum));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfHideLpssUart (UartNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfHideLpssUart (UartNum);
   }
-
-  PsfHideDevice (mPchSerialIoUartPsfPort[UartNum]);
 }
 
 /**
@@ -547,12 +327,11 @@ PtlPcdPsfDisableLpssUartBar1 (
   IN UINT32  UartNum
   )
 {
-  if (UartNum >= ARRAY_SIZE (mPchSerialIoUartPsfPort)) {
-    DEBUG ((DEBUG_WARN, "%a - wrong UART number, bust be lesser than %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPchSerialIoUartPsfPort), UartNum));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableLpssUartBar1 (UartNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableLpssUartBar1 (UartNum);
   }
-
-  PsfDisableDeviceBar (mPchSerialIoUartPsfPort[UartNum], BIT3 | BIT2);
 }
 
 /**
@@ -565,12 +344,11 @@ PtlPcdPsfEnableLpssUartBar1 (
   IN UINT32  UartNum
   )
 {
-  if (UartNum >= ARRAY_SIZE (mPchSerialIoUartPsfPort)) {
-    DEBUG ((DEBUG_WARN, "%a - wrong UART number, bust be lesser than %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPchSerialIoUartPsfPort), UartNum));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnableLpssUartBar1 (UartNum);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnableLpssUartBar1 (UartNum);
   }
-
-  PsfEnableDeviceBar (mPchSerialIoUartPsfPort[UartNum], BIT3 | BIT2);
 }
 
 /**
@@ -581,12 +359,11 @@ PtlPcdPsfDisableTraceHub (
   VOID
   )
 {
-  PSF_PORT TraceHubPort;
-
-  TraceHubPort.PsfDev = &Psf6Dev;
-  TraceHubPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_NPK_RS0_D31_F7_OFFSET5;
-
-  PsfDisableDevice (TraceHubPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableTraceHub ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableTraceHub ();
+  }
 }
 
 /**
@@ -601,12 +378,11 @@ PtlPcdPsfSetTraceHubAcpiBar (
   IN UINT32    BarValue
   )
 {
-  PSF_PORT TraceHubAcpiPort;
-
-  TraceHubAcpiPort.PsfDev = &Psf6Dev;
-  TraceHubAcpiPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_NPK_RS0_D17_F2_OFFSET4;
-
-  PsfSetDeviceBarValue (TraceHubAcpiPort, BarNum, BarValue);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfSetTraceHubAcpiBar (BarNum, BarValue);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfSetTraceHubAcpiBar (BarNum, BarValue);
+  }
 }
 
 /**
@@ -617,53 +393,42 @@ PtlPcdPsfEnableTraceHubAcpiMemSpace (
   VOID
   )
 {
-  PSF_PORT TraceHubAcpiPort;
-
-  TraceHubAcpiPort.PsfDev = &Psf6Dev;
-  TraceHubAcpiPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_NPK_RS0_D17_F2_OFFSET4;
-
-  PsfEnableDeviceMemSpace (TraceHubAcpiPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnableTraceHubAcpiMemSpace ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnableTraceHubAcpiMemSpace ();
+  }
 }
 
 /**
   Hide TraceHub ACPI at PSF level
 **/
 VOID
-PtlPcdHideTraceHubAcpi (
+PtlPcdPsfHideTraceHubAcpi (
   VOID
   )
 {
-  PSF_PORT TraceHubAcpiPort;
-
-  TraceHubAcpiPort.PsfDev = &Psf6Dev;
-  TraceHubAcpiPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_NPK_RS0_D17_F2_OFFSET4;
-
-  PsfHideDevice (TraceHubAcpiPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfHideTraceHubAcpi ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfHideTraceHubAcpi ();
+  }
 }
 
 /**
   Disable TraceHub ACPI at PSF level
 **/
 VOID
-PtlPcdDisableTraceHubAcpi (
+PtlPcdPsfDisableTraceHubAcpi (
   VOID
   )
 {
-  PSF_PORT TraceHubAcpiPort;
-
-  TraceHubAcpiPort.PsfDev = &Psf6Dev;
-  TraceHubAcpiPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_NPK_RS0_D17_F2_OFFSET4;
-
-  PsfDisableDevice (TraceHubAcpiPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableTraceHubAcpi ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableTraceHubAcpi ();
+  }
 }
-
-GLOBAL_REMOVE_IF_UNREFERENCED UINT16 mPchHeciPsfRegBase[] =
-{
-  R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_CSE_RS0_D22_F0_OFFSET9,
-  R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_CSE_RS0_D22_F1_OFFSET10,
-  R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_CSE_RS0_D22_F4_OFFSET11,
-  R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_CSE_RS0_D22_F5_OFFSET12
-};
 
 /**
   Enable HECI at PSF level
@@ -675,16 +440,11 @@ PtlPcdPsfEnableHeci (
   IN  UINT8     HeciNumber
   )
 {
-  PSF_PORT HeciPort;
-
-  if ((HeciNumber == 0) || (HeciNumber > 4)) {
-    DEBUG ((DEBUG_INFO, "%a - wrong HeciNumber: should be 1-4, is %d\n", __FUNCTION__, HeciNumber));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnableHeci (HeciNumber);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnableHeci (HeciNumber);
   }
-  HeciPort.PsfDev = &Psf6Dev;
-  HeciPort.RegBase = mPchHeciPsfRegBase[HeciNumber - 1];
-
-  PsfEnableDevice (HeciPort);
 }
 
 /**
@@ -697,17 +457,13 @@ PtlPcdPsfDisableHeci (
   IN  UINT8     HeciNumber
   )
 {
-  PSF_PORT HeciPort;
-
-  if ((HeciNumber == 0) || (HeciNumber > 4)) {
-    DEBUG ((DEBUG_INFO, "%a - wrong HeciNumber: should be 1-4, is %d\n", __FUNCTION__, HeciNumber));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableHeci (HeciNumber);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableHeci (HeciNumber);
   }
-  HeciPort.PsfDev = &Psf6Dev;
-  HeciPort.RegBase = mPchHeciPsfRegBase[HeciNumber - 1];
-
-  PsfDisableDevice (HeciPort);
 }
+
 
 /**
   Disable SSE at PSF level
@@ -719,23 +475,11 @@ PtlPcdPsfDisableSse (
   IN UINT8      SseNumber
   )
 {
-  PSF_PORT SsePort;
-  UINT16 mPchSseHeciPsfRegBase[] =
-  {
-    R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_ESE_RS0_D24_F0_OFFSET16,
-    R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_ESE_RS0_D24_F1_OFFSET17,
-    R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_ESE_RS0_D24_F2_OFFSET18
-  };
-
-  if ((SseNumber == 0) || (SseNumber > ARRAY_SIZE (mPchSseHeciPsfRegBase))) {
-    DEBUG ((DEBUG_INFO, "%a - wrong SseNumber: should be 1-%d, is %d\n", __FUNCTION__, ARRAY_SIZE (mPchSseHeciPsfRegBase), SseNumber));
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableSse (SseNumber);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableSse (SseNumber);
   }
-
-  SsePort.PsfDev = &Psf6Dev;
-  SsePort.RegBase = mPchSseHeciPsfRegBase[SseNumber - 1];
-
-  PsfDisableDevice (SsePort);
 }
 
 /**
@@ -746,12 +490,11 @@ PtlPcdPsfEnableSol (
   VOID
   )
 {
-  PSF_PORT SolPort;
-
-  SolPort.PsfDev = &Psf6Dev;
-  SolPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_PTIO_RS0_D22_F3_OFFSET27;
-
-  PsfEnableDevice (SolPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnableSol ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnableSol ();
+  }
 }
 
 /**
@@ -762,12 +505,11 @@ PtlPcdPsfDisableSol (
   VOID
   )
 {
-  PSF_PORT SolPort;
-
-  SolPort.PsfDev = &Psf6Dev;
-  SolPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_PTIO_RS0_D22_F3_OFFSET27;
-
-  PsfDisableDevice (SolPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableSol ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableSol ();
+  }
 }
 
 /**
@@ -778,11 +520,11 @@ PtlPcdPsfDisableIder (
   VOID
   )
 {
-  PSF_PORT PsfPort;
-
-  PsfPort.PsfDev = &Psf6Dev;
-  PsfPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_PTIO_RS0_D22_F2_OFFSET26;
-  PsfDisableDevice (PsfPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableIder ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableIder ();
+  }
 }
 
 /**
@@ -793,10 +535,11 @@ PtlPcdPsfDisableAce (
   VOID
   )
 {
-  PSF_PORT PsfPort;
-    PsfPort.PsfDev = &Psf6Dev;
-    PsfPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_ACE_RS0_D31_F3_OFFSET28;
-  PsfDisableDevice (PsfPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableAce ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableAce ();
+  }
 }
 
 /**
@@ -807,18 +550,12 @@ PtlPcdPsfDisableDspBar (
   VOID
   )
 {
-  PSF_PORT PsfPort;
-    PsfPort.PsfDev = &Psf6Dev;
-    PsfPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_ACE_RS0_D31_F3_OFFSET28;
-
-  PsfDisableDeviceBar (PsfPort, (BIT5 | BIT4));
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableDspBar ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableDspBar ();
+  }
 }
-
-GLOBAL_REMOVE_IF_UNREFERENCED UINT16 mPchThcPsfRegBase[] =
-{
-  R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_THC0_RS0_D16_F0_OFFSET29,
-  R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_THC1_RS0_D16_F1_OFFSET30
-};
 
 /**
   Disable THC device at PSF level
@@ -830,17 +567,11 @@ PtlPcdPsfDisableThc (
   IN  UINT32        ThcNumber
   )
 {
-  PSF_PORT ThcPort;
-
-  if (ThcNumber >= ARRAY_SIZE (mPchThcPsfRegBase)) {
-    DEBUG ((DEBUG_WARN, "Wrong THC number!\n"));
-    ASSERT (FALSE);
-    return;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableThc (ThcNumber);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableThc (ThcNumber);
   }
-
-  ThcPort.PsfDev = &Psf8Dev;
-  ThcPort.RegBase = mPchThcPsfRegBase[ThcNumber];
-  PsfDisableDevice (ThcPort);
 }
 
 /**
@@ -851,11 +582,11 @@ PtlPcdPsfDisableXdci (
   VOID
   )
 {
-  PSF_PORT PsfPort;
-
-  PsfPort.PsfDev = &Psf8Dev;
-  PsfPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_XDCI_RS0_D20_F1_OFFSET31;
-  PsfDisableDevice (PsfPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableXdci ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableXdci ();
+  }
 }
 
 /**
@@ -866,11 +597,11 @@ PtlPcdPsfDisableIsh (
   VOID
   )
 {
-  PSF_PORT IshPort;
-    IshPort.PsfDev = &Psf0Dev;
-    IshPort.RegBase = R_PTL_PCD_P_H_PSF_0_AGNT_T0_SHDW_BAR0_ISH_RS0_D18_F0_OFFSET2;
-
-  PsfDisableDevice (IshPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableIsh ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableIsh ();
+  }
 }
 
 /**
@@ -881,11 +612,11 @@ PtlPcdPsfDisableIshBar1 (
   VOID
   )
 {
-  PSF_PORT IshPort;
-    IshPort.PsfDev = &Psf0Dev;
-    IshPort.RegBase = R_PTL_PCD_P_H_PSF_0_AGNT_T0_SHDW_BAR0_ISH_RS0_D18_F0_OFFSET2;
-
-  PsfDisableDeviceBar (IshPort, (BIT3 | BIT2));
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableIshBar1 ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableIshBar1 ();
+  }
 }
 
 /**
@@ -896,11 +627,11 @@ PtlPcdPsfDisableGbe (
   VOID
   )
 {
-  PSF_PORT GbePort;
-    GbePort.PsfDev = &Psf6Dev;
-    GbePort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_GBE_RS0_D31_F6_OFFSET32;
-
-  PsfDisableDevice (GbePort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableGbe ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableGbe ();
+  }
 }
 
 /**
@@ -911,20 +642,12 @@ PtlPcdPsfDisableSmbus (
   VOID
   )
 {
-  PSF_PORT SmbusPort;
-
-  SmbusPort.PsfDev = &Psf8Dev;
-  SmbusPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_SMB_RS0_D31_F4_OFFSET24;
-
-  PsfDisableDevice (SmbusPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableSmbus ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableSmbus ();
+  }
 }
-
-UINT16 mPtlPcdPsfScsUfsRegs[] =
-{
-  R_PTL_PCD_P_PSF_0_AGNT_T0_SHDW_BAR0_UFS_RS0_D23_F0_OFFSET4
-};
-
-
 
 /**
   Disable SCS UFS at PSF level
@@ -936,15 +659,11 @@ PtlPcdPsfDisableScsUfs (
   IN UINT32  UfsNumber
   )
 {
-  PSF_PORT UfsPort;
-    if (UfsNumber >= ARRAY_SIZE (mPtlPcdPsfScsUfsRegs)) {
-      DEBUG ((DEBUG_WARN, "%a - wrong UfsNumber: max %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPtlPcdPsfScsUfsRegs) - 1, UfsNumber));
-      return;
-    }
-    UfsPort.PsfDev = &Psf0Dev;
-    UfsPort.RegBase = mPtlPcdPsfScsUfsRegs[UfsNumber];
-
-  PsfDisableDevice (UfsPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableScsUfs (UfsNumber);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableScsUfs (UfsNumber);
+  }
 }
 
 /**
@@ -957,175 +676,28 @@ PtlPcdPsfDisableScsUfsBar1 (
   IN UINT32  UfsNumber
   )
 {
-  PSF_PORT UfsPort;
-    if (UfsNumber >= ARRAY_SIZE (mPtlPcdPsfScsUfsRegs)) {
-      DEBUG ((DEBUG_WARN, "%a - wrong UfsNumber: max %d, given %d\n", __FUNCTION__, ARRAY_SIZE (mPtlPcdPsfScsUfsRegs) - 1, UfsNumber));
-      return;
-    }
-    UfsPort.PsfDev = &Psf0Dev;
-    UfsPort.RegBase = mPtlPcdPsfScsUfsRegs[UfsNumber];
-  PsfDisableDeviceBar (UfsPort, (BIT3 | BIT2));
-}
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_REG_BASE mPtlPcdPHPPsfPcieRegBase[] =
-{
-  { 6, R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F0_OFFSET64 },
-  { 6, R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F1_OFFSET65 },
-  { 6, R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F2_OFFSET66 },
-  { 6, R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F3_OFFSET67 },
-  { 4, R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F4_OFFSET64 },
-  { 4, R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F5_OFFSET65 },
-  { 4, R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F6_OFFSET66 },
-  { 4, R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F7_OFFSET67 }
-};
-
-
-PSF_PCIE_PORT_DATA_TABLE mPtlPchPHPsfPciePortData = PSF_PCIE_PORT_DATA_TABLE_INIT (
-//{ PsfNumber, SecondLevelPsfNumber, RootPciePort, RootRs3Port, SecondLevelPort, RootFunctionConfigPort, RootRs3FunctionConfigPort, RootPortFunctionConfig2ndLvlPort}
-  { 6, 0, R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F0_OFFSET64, 0, R_PTL_PCD_P_H_PSF_0_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F0_OFFSET68, R_PTL_PCD_P_H_PSF_6_T1_AGENT_FUNCTION_CONFIG_PXPA_RS0_D28_F0_OFFSET64, 0, R_PTL_PCD_P_H_PSF_0_T1_AGENT_FUNCTION_CONFIG_PXPA_RS0_D28_F0_OFFSET68 },
-  { 6, 0, R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F1_OFFSET65, 0, R_PTL_PCD_P_H_PSF_0_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F1_OFFSET69, R_PTL_PCD_P_H_PSF_6_T1_AGENT_FUNCTION_CONFIG_PXPA_RS0_D28_F1_OFFSET65, 0, R_PTL_PCD_P_H_PSF_0_T1_AGENT_FUNCTION_CONFIG_PXPA_RS0_D28_F1_OFFSET69 },
-  { 6, 0, R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F2_OFFSET66, 0, R_PTL_PCD_P_H_PSF_0_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F2_OFFSET70, R_PTL_PCD_P_H_PSF_6_T1_AGENT_FUNCTION_CONFIG_PXPA_RS0_D28_F2_OFFSET66, 0, R_PTL_PCD_P_H_PSF_0_T1_AGENT_FUNCTION_CONFIG_PXPA_RS0_D28_F2_OFFSET70 },
-  { 6, 0, R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F3_OFFSET67, 0, R_PTL_PCD_P_H_PSF_0_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F3_OFFSET71, R_PTL_PCD_P_H_PSF_6_T1_AGENT_FUNCTION_CONFIG_PXPA_RS0_D28_F3_OFFSET67, 0, R_PTL_PCD_P_H_PSF_0_T1_AGENT_FUNCTION_CONFIG_PXPA_RS0_D28_F3_OFFSET71 },
-  { 4, 0, R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F4_OFFSET64, 0, R_PTL_PCD_P_H_PSF_0_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F4_OFFSET64, R_PTL_PCD_P_H_PSF_4_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F4_OFFSET64, 0, R_PTL_PCD_P_H_PSF_0_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F4_OFFSET64 },
-  { 4, 0, R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F5_OFFSET65, 0, R_PTL_PCD_P_H_PSF_0_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F5_OFFSET65, R_PTL_PCD_P_H_PSF_4_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F5_OFFSET65, 0, R_PTL_PCD_P_H_PSF_0_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F5_OFFSET65 },
-  { 4, 0, R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F6_OFFSET66, 0, R_PTL_PCD_P_H_PSF_0_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F6_OFFSET66, R_PTL_PCD_P_H_PSF_4_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F6_OFFSET66, 0, R_PTL_PCD_P_H_PSF_0_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F6_OFFSET66 },
-  { 4, 0, R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F7_OFFSET67, 0, R_PTL_PCD_P_H_PSF_0_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F7_OFFSET67, R_PTL_PCD_P_H_PSF_4_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F7_OFFSET67, 0, R_PTL_PCD_P_H_PSF_0_T1_AGENT_FUNCTION_CONFIG_PXPB_RS0_D28_F7_OFFSET67 }
-);
-
-
-
-/**
-  Return second level PSF_PORT to which PCIE Root Port device is connected (directly)
-
-  @param[in]  RpIndex         PCIe Root Port Index (0 based)
-  @retval     PciePortData    PCIE PORT Data
-**/
-STATIC
-PSF_PCIE_PORT_DATA*
-PtlPcdPsfGetPciePortData (
-  IN UINT32  RpIndex
-  )
-{
-  if (RpIndex < mPtlPchPHPsfPciePortData.Size) {
-    return &mPtlPchPHPsfPciePortData.Data[RpIndex];
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableScsUfsBar1 (UfsNumber);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableScsUfsBar1 (UfsNumber);
   }
-  return NULL;
-}
-
-
-PSF_REG_DATA_TABLE mPtlPcdPHEoiRegData = PSF_REG_DATA_TABLE_INIT (
-  { 0, R_PTL_PCD_P_H_PSF_0_PSF_MC_AGENT_MCAST0_RS0_TGT0_EOI, R_PTL_PCD_P_H_PSF_0_PSF_MC_CONTROL_MCAST0_RS0_EOI, 4 },
-  { 4, R_PTL_PCD_P_H_PSF_4_PSF_MC_AGENT_MCAST0_RS0_TGT0_EOI, R_PTL_PCD_P_H_PSF_4_PSF_MC_CONTROL_MCAST0_RS0_EOI, 4 },
-  { 6, R_PTL_PCD_P_H_PSF_6_PSF_MC_AGENT_MCAST0_RS0_TGT0_EOI, R_PTL_PCD_P_H_PSF_6_PSF_MC_CONTROL_MCAST0_RS0_EOI, 9 },
-  { 8, R_PTL_PCD_P_H_PSF_8_PSF_MC_AGENT_MCAST0_RS0_TGT0_EOI, R_PTL_PCD_P_H_PSF_8_PSF_MC_CONTROL_MCAST0_RS0_EOI, 1 }
-);
-
-
-/**
-  Get EOI register data table for all PSFs
-
-  @return PsfEoiRegDataTable   Pointer to PSF_EOI_REG_DATA_TABLE
-**/
-STATIC
-PSF_REG_DATA_TABLE*
-PtlPcdPsfGetEoiRegDataTable (
-  VOID
-  )
-{
-    return &mPtlPcdPHEoiRegData;
-}
-
-PSF_REG_DATA_TABLE mPtlPcdPHMctpRegDataTable = PSF_REG_DATA_TABLE_INIT (
-  { 0, R_PTL_PCD_P_H_PSF_0_PSF_MC_AGENT_MCAST1_RS0_TGT0_MCTP1, R_PTL_PCD_P_H_PSF_0_PSF_MC_CONTROL_MCAST1_RS0_MCTP1, 4, 0, TRUE, 6 },
-  { 4, R_PTL_PCD_P_H_PSF_4_PSF_MC_AGENT_MCAST1_RS0_TGT0_MCTP1, R_PTL_PCD_P_H_PSF_4_PSF_MC_CONTROL_MCAST1_RS0_MCTP1, 4, 0, TRUE, 0 },
-  { 6, R_PTL_PCD_P_H_PSF_6_PSF_MC_AGENT_MCAST1_RS0_TGT0_MCTP1, R_PTL_PCD_P_H_PSF_6_PSF_MC_CONTROL_MCAST1_RS0_MCTP1, 9, 0, FALSE, 0 }
-);
-
-
-/**
-  Get MCTP register data table for all PSFs
-
-  @return PsfEoiRegDataTable   Pointer to PSF_EOI_REG_DATA_TABLE
-**/
-STATIC
-PSF_REG_DATA_TABLE*
-PtlPcdPsfGetMctpRegDataTable (
-  VOID
-  )
-{
-    return &mPtlPcdPHMctpRegDataTable;
 }
 
 /**
-  Fill MCTP Targets Table
-
-  @param[out] TargetIdTable    MCTP Targets table
-  @param[in]  MaxTableSize     TargetIdTable real size
-  @param[in]  PsfTable         PSF Segment Table
-  @param[in]  PcieRegBaseTable Pcie Reg Base Table
-
-  @retval Number of targets, resulting size of the table
+  Return max number of PCIe controllers decoded by PSF
 **/
-STATIC
 UINT32
-PtlPcdMctpTargetsTable (
-  OUT PSF_PORT_DEST_ID  *TargetIdTable,
-  IN  UINT32            MaxTableSize,
-  IN  PSF_SEGMENT_TABLE *PsfTable,
-  IN  PSF_REG_BASE      *PcieRegBaseTable
+PtlPcdPsfGetMaxPsfDecodedPciePortNum (
+  VOID
   )
 {
-  UINT32       TargetNum;
-  UINT32       RpIndex;
-  PSF_PORT     PciePsfPort;
-  UINT32       MaxPciePortNum;
-
-  if (PsfTable == NULL || PcieRegBaseTable == NULL) {
-    return 0;
+  if (PtlIsPcdP ()) {
+    return PtlPcdPPsfGetMaxPsfDecodedPciePortNum ();
+  } else if (PtlIsPcdH ()) {
+    return PtlPcdHPsfGetMaxPsfDecodedPciePortNum ();
   }
-
-  TargetNum = 0;
-  ZeroMem (TargetIdTable, sizeof(PSF_PORT_DEST_ID) * MaxTableSize);
-
-  if ((UINT32)(GetPchMaxPciePortNum ()) + 1 > MaxTableSize) {
-    DEBUG ((DEBUG_ERROR, "Cannot create PtlPcdMctpTargetsTable - table size is too small!\n"));
-    return 0;
-  }
-    MaxPciePortNum = ARRAY_SIZE (mPtlPcdPHPPsfPcieRegBase);
-
-  for (RpIndex = 0; RpIndex < MaxPciePortNum; RpIndex++) {
-    PciePsfPort.RegBase = PcieRegBaseTable[RpIndex].RegBase;
-    PciePsfPort.PsfDev = PsfGetDev (PsfTable, PcieRegBaseTable[RpIndex].PsfNumber);
-    if (PsfIsBridgeEnabled (PciePsfPort)) {
-      TargetIdTable[TargetNum] = PtlPcdPsfPcieDestinationId (RpIndex);
-      TargetNum++;
-    }
-  }
-  //
-  // Add IOC Destination Id
-  //
-  TargetIdTable[TargetNum] = (PSF_PORT_DEST_ID){ 0x0001 };
-  TargetNum++;
-
-  return TargetNum;
+  return 0;
 }
-
-GLOBAL_REMOVE_IF_UNREFERENCED PSF_PORT_DEST_ID mPtlPcdPRpDestId[] =
-{
-  {0x68000}, {0x68002}, {0x68004}, {0x68006}, // PXPA: PSF6, PortID = 0, PortGroupID = 1
-  {0x48100}, {0x48102}, {0x48104}, {0x48106}, // PXPB: PSF4, PortID = 1, PortGroupID = 1
-  {0x48000}, {0x48002}                        // PXPC: PSF4, PortID = 0, PortGroupID = 1
-};
-
-STATIC PSF_PORT_DEST_ID mPtlPcdHRpDestId[] =
-{
-  { 0x68000 },  { 0x68002 },  { 0x68004 },  { 0x68006 },  // PXPA: PSF6, PortGroupId = 1, PortId = 0
-  { 0x48100 },  { 0x48102 },  { 0x48104 },  { 0x48106 },  // PXPB: PSF4, PortGroupId = 1, PortId = 1
-  { 0x48000 },  { 0x48002 },                              // PXPC: PSF4, PortID = 0, PortGroupID = 1
-  { 0x58000 },                                            // PXPD: PSF5, PortGroupId = 1, PortId = 0
-  { 0x58100 }                                             // PXPD: PSF5, PortGroupId = 1, PortId = 0
-};
-
 
 /**
   PCIe PSF port destination ID (psf_id:port_group_id:port_id:channel_id)
@@ -1140,16 +712,32 @@ PtlPcdPsfPcieDestinationId (
   )
 {
   if (PtlIsPcdP ()) {
-    if (RpIndex < ARRAY_SIZE (mPtlPcdPRpDestId)) {
-      return mPtlPcdPRpDestId[RpIndex];
-    }
+    return PtlPcdPPsfPcieDestinationId (RpIndex);
   } else if (PtlIsPcdH ()) {
-    if (RpIndex < ARRAY_SIZE (mPtlPcdHRpDestId)) {
-      return mPtlPcdHRpDestId[RpIndex];
-    }
+    return PtlPcdHPsfPcieDestinationId (RpIndex);
   }
-  ASSERT (FALSE);
   return (PSF_PORT_DEST_ID){0};
+};
+
+/**
+  Check if PCIe Root Port is enabled at PSF level
+
+  @param[in] RpIndex      PCIe Root Port Index
+
+  @retval    TRUE         Root Port is enabled on PSF
+  @retval    FALSE        Root Port is disabled on PSF
+**/
+BOOLEAN
+PtlPcdPsfIsPcieRootPortEnabled (
+  IN  UINT32  RpIndex
+  )
+{
+  if (PtlIsPcdP ()) {
+    return PtlPcdPPsfIsPcieRootPortEnabled (RpIndex);
+  } else if (PtlIsPcdH ()) {
+    return PtlPcdHPsfIsPcieRootPortEnabled (RpIndex);
+  }
+  return FALSE;
 }
 
 /**
@@ -1160,11 +748,11 @@ PtlPcdPsfDisableCnvi (
   VOID
   )
 {
-  PSF_PORT CnviPort;
-  CnviPort.PsfDev = &Psf6Dev;
-    CnviPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_WIFI_RS0_D20_F3_OFFSET34;
-
-  PsfDisableDevice (CnviPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableCnvi ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableCnvi ();
+  }
 }
 
 /**
@@ -1175,11 +763,11 @@ PtlPcdPsfDisableCnviBt (
   VOID
   )
 {
-  PSF_PORT BtPort;
-  BtPort.PsfDev = &Psf6Dev;
-    BtPort.RegBase = R_PTL_PCD_P_H_PSF_6_AGNT_T0_SHDW_BAR0_BT_RS0_D20_F7_OFFSET30;
-
-  PsfDisableDevice (BtPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableCnviBt ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableCnviBt ();
+  }
 }
 
 /**
@@ -1192,12 +780,11 @@ PtlPcdPsfSetPmcAbase (
   IN  UINT16  Abase
   )
 {
-  PSF_PORT PmcPort;
-
-  PmcPort.PsfDev = &Psf8Dev;
-  PmcPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_PMC_RS0_D31_F2_OFFSET21;
-
-  PsfSetPmcAbase (PmcPort, Abase);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfSetPmcAbase (Abase);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfSetPmcAbase (Abase);
+  }
 }
 
 /**
@@ -1208,12 +795,11 @@ PtlPcdPsfHidePmc (
   VOID
   )
 {
-  PSF_PORT PmcPort;
-
-  PmcPort.PsfDev = &Psf8Dev;
-  PmcPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_PMC_RS0_D31_F2_OFFSET21;
-
-  PsfHideDevice (PmcPort);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfHidePmc ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfHidePmc ();
+  }
 }
 
 /**
@@ -1226,91 +812,13 @@ PtlPcdPsfGetPmcPwrmBar0 (
   VOID
   )
 {
-  PSF_PORT PmcPort;
-
-  PmcPort.PsfDev = &Psf8Dev;
-  PmcPort.RegBase = R_PTL_PCD_P_H_PSF_8_AGNT_T0_SHDW_BAR0_PMC_RS0_D31_F2_OFFSET21;
-
-  return PsfGetPmcPwrmBase (PmcPort);
-}
-
-PSF_SEGMENT_TABLE mPtlPcdPSegmentTable = PSF_SEGMENT_TABLE_INIT (
-  {  0, &Psf0Dev  },
-  {  4, &Psf4Dev  },
-  {  6, &Psf6Dev  },
-  {  8, &Psf8Dev  },
-  { 14, &Psf14Dev },
-  { 15, &Psf15Dev }
-);
-
-PSF_SEGMENT_TABLE mPtlPcdHSegmentTable = PSF_SEGMENT_TABLE_INIT (
-  {  0, &Psf0Dev  },
-  {  4, &Psf4Dev  },
-  {  5, &Psf5Dev  },
-  {  6, &Psf6Dev  },
-  {  8, &Psf8Dev  },
-  { 14, &Psf14Dev },
-  { 15, &Psf15Dev }
-);
-
-/**
-  Get table of supported PSF segments
-
-  @return  PsfSegmentTable   Table of supported PSF segments
-**/
-PSF_SEGMENT_TABLE*
-PtlPcdPsfGetSegmentTable (
-  VOID
-  )
-{
   if (PtlIsPcdP ()) {
-    return &mPtlPcdPSegmentTable;
+    return PtlPcdPPsfGetPmcPwrmBar0 ();
   } else if (PtlIsPcdH ()) {
-    return &mPtlPcdHSegmentTable;
+    return PtlPcdHPsfGetPmcPwrmBar0 ();
   }
-  return NULL;
+  return ~(UINT32)0;
 }
-
-PSF_PORT_RELAXED_ORDERING_CONFIG_REG  mPtlPcdPPsfPortRelaxedOrderingConfigRegs[] =
-{
-  { &Psf0Dev, R_PTL_PCD_P_H_PSF_0_PSF_PORT_CONFIG_PG1_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf0Dev, R_PTL_PCD_P_H_PSF_0_PSF_PORT_CONFIG_PG1_PORT1, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf0Dev, R_PTL_PCD_P_H_PSF_0_PSF_PORT_CONFIG_PG1_PORT2, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf0Dev, R_PTL_PCD_P_H_PSF_0_PSF_PORT_CONFIG_PG1_PORT3, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf0Dev, R_PTL_PCD_P_H_PSF_0_PSF_PORT_CONFIG_PG1_PORT4, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-
-  { &Psf4Dev, R_PTL_PCD_P_H_PSF_4_PSF_PORT_CONFIG_PG1_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf4Dev, R_PTL_PCD_P_H_PSF_4_PSF_PORT_CONFIG_PG1_PORT1, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf4Dev, R_PTL_PCD_P_H_PSF_4_PSF_PORT_CONFIG_PG1_PORT2, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_PSF_PORT_CONFIG_PG1_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_PSF_PORT_CONFIG_PG1_PORT1, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_PSF_PORT_CONFIG_PG1_PORT2, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_PSF_PORT_CONFIG_PG1_PORT3, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_PSF_PORT_CONFIG_PG1_PORT4, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_PSF_PORT_CONFIG_PG1_PORT5, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_PSF_PORT_CONFIG_PG1_PORT6, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_PSF_PORT_CONFIG_PG1_PORT7, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_PSF_PORT_CONFIG_PG1_PORT8, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_PSF_PORT_CONFIG_PG0_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_INGRESS_FRO },
-  { &Psf14Dev, R_PTL_PCD_P_H_PSF_14_PSF_PORT_CONFIG_PG0_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_INGRESS_FRO },
-  { &Psf15Dev, R_PTL_PCD_P_H_PSF_15_PSF_PORT_CONFIG_PG0_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_INGRESS_FRO },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_PSF_PORT_CONFIG_PG0_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_INGRESS_FRO },
-  { &Psf4Dev, R_PTL_PCD_P_H_PSF_4_PSF_PORT_CONFIG_PG0_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_INGRESS_FRO },
-  { &Psf0Dev, R_PTL_PCD_P_H_PSF_0_PSF_PORT_CONFIG_PG0_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_INGRESS_FRO }
-};
-
-
-PSF_PORT_RELAXED_ORDERING_CONFIG_REG  mPtlPcdHPsfPortRelaxedOrderingConfigRegs[] =
-{
-  { &Psf5Dev, R_PTL_PCD_H_PSF_5_PSF_PORT_CONFIG_PG1_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-  { &Psf5Dev, R_PTL_PCD_H_PSF_5_PSF_PORT_CONFIG_PG1_PORT1, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_EGRESS_FRO },
-
-  { &Psf5Dev, R_PTL_PCD_H_PSF_5_PSF_PORT_CONFIG_PG0_PORT0, B_PSF_PCR_PSF_X_PSF_PORT_CONFIG_PGN_PORTM_INGRESS_FRO }
-};
-
-PSF_RELAXED_ORDER_REGS mPsfPortRelaxedOrderingConfigRegsStruct;
 
 /**
   Enable PCIe Relaxed Ordering in PSF
@@ -1320,96 +828,28 @@ PtlPcdPsfEnablePcieRelaxedOrder (
   VOID
   )
 {
-    mPsfPortRelaxedOrderingConfigRegsStruct.RegsTable = mPtlPcdPPsfPortRelaxedOrderingConfigRegs;
-    mPsfPortRelaxedOrderingConfigRegsStruct.RegsTableSize = ARRAY_SIZE (mPtlPcdPPsfPortRelaxedOrderingConfigRegs);
-    if (PtlIsPcdH ()) {
-      mPsfPortRelaxedOrderingConfigRegsStruct.RegsPchTypeSpecific = mPtlPcdHPsfPortRelaxedOrderingConfigRegs;
-      mPsfPortRelaxedOrderingConfigRegsStruct.RegsPchTypeSpecificTableSize = ARRAY_SIZE (mPtlPcdHPsfPortRelaxedOrderingConfigRegs);
-    } else {
-      mPsfPortRelaxedOrderingConfigRegsStruct.RegsPchTypeSpecific = NULL;
-      mPsfPortRelaxedOrderingConfigRegsStruct.RegsPchTypeSpecificTableSize = 0;
-    }
-
-  PsfEnablePcieRelaxedOrder (&mPsfPortRelaxedOrderingConfigRegsStruct);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnablePcieRelaxedOrder ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnablePcieRelaxedOrder ();
+  }
 }
 
-/**
-  Return RC_OWNER value to program
-
-  @retval RC_OWNER
-**/
-STATIC
-UINT32
-PtlPcdPsfGetRcOwner (
-  )
-{
-  PSF_PORT_DEST_ID Pmt = {
-    .Fields = {
-      .ChannelId = 1,
-      .PortId = 2,
-      .PortGroupId = 0,
-      .PsfId = 15
-    }
-  };
-  return Pmt.RegVal;
-}
-
-//
-// This constant should be at least equal to GetPchMaxPciePortNum ()
-//
-#define PTL_PCD_MAX_MCTP_TARGET_TABLE_ENTRIES 12
 /**
   Configure MCTP
 **/
 VOID
-PtlPcdMctpConfigure (
+PtlPcdPsfMctpConfigure (
   VOID
   )
 {
-  PSF_PORT_DEST_ID    PcdMctpTargetIdTable[PTL_PCD_MAX_MCTP_TARGET_TABLE_ENTRIES];
-  UINT32              PcdMctpTargetIdTableSize;
-    PcdMctpTargetIdTableSize = PtlPcdMctpTargetsTable (
-                               PcdMctpTargetIdTable,
-                               PTL_PCD_MAX_MCTP_TARGET_TABLE_ENTRIES,
-                               PtlPcdPsfGetSegmentTable (),
-                               mPtlPcdPHPPsfPcieRegBase
-                               );
-  PsfConfigureMctpCycle (
-    PcdMctpTargetIdTable,
-    PcdMctpTargetIdTableSize,
-    PtlPcdPsfGetSegmentTable (),
-    PtlPcdPsfGetMctpRegDataTable (),
-    PtlPcdPsfGetRcOwner ()
-    );
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfMctpConfigure ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfMctpConfigure ();
+  }
 }
 
-PSF_PORT mPtlPcdPPsfRootspaceConfigs[] = {
-  { &Psf0Dev, R_PTL_PCD_P_H_PSF_0_ROOTSPACE_CONFIG_RS0 },
-  { &Psf0Dev, R_PTL_PCD_P_H_PSF_0_ROOTSPACE_CONFIG_RS3 },
-  { &Psf4Dev, R_PTL_PCD_P_H_PSF_4_ROOTSPACE_CONFIG_RS0 },
-  { &Psf4Dev, R_PTL_PCD_P_H_PSF_4_ROOTSPACE_CONFIG_RS3 },
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_ROOTSPACE_CONFIG_RS0 },
-  { &Psf6Dev, R_PTL_PCD_P_H_PSF_6_ROOTSPACE_CONFIG_RS3 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_ROOTSPACE_CONFIG_RS3 },
-  { &Psf8Dev, R_PTL_PCD_P_H_PSF_8_ROOTSPACE_CONFIG_RS0 },
-  { &Psf14Dev, R_PTL_PCD_P_H_PSF_14_ROOTSPACE_CONFIG_RS3 },
-  { &Psf14Dev, R_PTL_PCD_P_H_PSF_14_ROOTSPACE_CONFIG_RS0 },
-  { &Psf15Dev, R_PTL_PCD_P_H_PSF_15_ROOTSPACE_CONFIG_RS3 },
-  { &Psf15Dev, R_PTL_PCD_P_H_PSF_15_ROOTSPACE_CONFIG_RS0 }
-};
-
-PSF_PORT mPtlPcdHPsfRootspaceConfigs[] = {
-  { &Psf5Dev, R_PTL_PCD_H_PSF_5_ROOTSPACE_CONFIG_RS0 },
-  { &Psf5Dev, R_PTL_PCD_H_PSF_5_ROOTSPACE_CONFIG_RS3 }
-};
-
-
-PSF_PORT mPtlPcdTcssPsfRootspaceConfigs[] = {
-  { &Psf11TcssDev, R_PTL_PCD_P_H_TCSS_PSF_11_ROOTSPACE_CONFIG_RS0 },
-  { &Psf11TcssDev, R_PTL_PCD_P_H_TCSS_PSF_11_ROOTSPACE_CONFIG_RS3 },
-  { &Psf12TcssDev, R_PTL_PCD_P_H_TCSS_PSF_12_ROOTSPACE_CONFIG_RS0 },
-  { &Psf12TcssDev, R_PTL_PCD_P_H_TCSS_PSF_12_ROOTSPACE_CONFIG_RS3 }
-};
 /**
   Enable VTd support in PSF.
 **/
@@ -1418,33 +858,10 @@ PtlPcdPsfEnableVtd (
   VOID
   )
 {
-  UINT32 Index;
-
-  for (Index = 0; Index < ARRAY_SIZE (mPtlPcdPPsfRootspaceConfigs); Index++) {
-    mPtlPcdPPsfRootspaceConfigs[Index].PsfDev->Access->AndThenOr32 (
-      mPtlPcdPPsfRootspaceConfigs[Index].PsfDev->Access,
-      mPtlPcdPPsfRootspaceConfigs[Index].RegBase,
-      ~0u,
-      B_PSF_PCR_PSF_X_ROOTSPACE_CONFIG_RSN_VTDEN
-      );
-  }
-  if (PtlIsPcdH ()) {
-    for (Index = 0; Index < ARRAY_SIZE (mPtlPcdHPsfRootspaceConfigs); Index++) {
-      mPtlPcdHPsfRootspaceConfigs[Index].PsfDev->Access->AndThenOr32 (
-        mPtlPcdHPsfRootspaceConfigs[Index].PsfDev->Access,
-        mPtlPcdHPsfRootspaceConfigs[Index].RegBase,
-        ~0u,
-        B_PSF_PCR_PSF_X_ROOTSPACE_CONFIG_RSN_VTDEN
-        );
-    }
-  }
- for (Index = 0; Index < ARRAY_SIZE (mPtlPcdTcssPsfRootspaceConfigs); Index++) {
-    mPtlPcdTcssPsfRootspaceConfigs[Index].PsfDev->Access->AndThenOr32 (
-      mPtlPcdTcssPsfRootspaceConfigs[Index].PsfDev->Access,
-      mPtlPcdTcssPsfRootspaceConfigs[Index].RegBase,
-      ~0u,
-      B_PSF_PCR_PSF_X_ROOTSPACE_CONFIG_RSN_VTDEN
-      );
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnableVtd ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnableVtd ();
   }
 }
 
@@ -1456,72 +873,10 @@ PtlPcdPsfDisableP2pDecoding (
   VOID
   )
 {
-  UINT32 Index;
-
-  for (Index = 0; Index < ARRAY_SIZE (mPtlPcdPPsfRootspaceConfigs); Index++) {
-    mPtlPcdPPsfRootspaceConfigs[Index].PsfDev->Access->AndThenOr32 (
-      mPtlPcdPPsfRootspaceConfigs[Index].PsfDev->Access,
-      mPtlPcdPPsfRootspaceConfigs[Index].RegBase,
-      (UINT32)~B_PSF_PCR_PSF_X_ROOTSPACE_CONFIG_RSN_ENADDRP2P,
-      0
-      );
-  }
-  if (PtlIsPcdH ()) {
-    for (Index = 0; Index < ARRAY_SIZE (mPtlPcdHPsfRootspaceConfigs); Index++) {
-      mPtlPcdHPsfRootspaceConfigs[Index].PsfDev->Access->AndThenOr32 (
-        mPtlPcdHPsfRootspaceConfigs[Index].PsfDev->Access,
-        mPtlPcdHPsfRootspaceConfigs[Index].RegBase,
-        (UINT32)~B_PSF_PCR_PSF_X_ROOTSPACE_CONFIG_RSN_ENADDRP2P,
-        0
-        );
-    }
-  }
- for (Index = 0; Index < ARRAY_SIZE (mPtlPcdTcssPsfRootspaceConfigs); Index++) {
-    mPtlPcdTcssPsfRootspaceConfigs[Index].PsfDev->Access->AndThenOr32 (
-      mPtlPcdTcssPsfRootspaceConfigs[Index].PsfDev->Access,
-      mPtlPcdTcssPsfRootspaceConfigs[Index].RegBase,
-      (UINT32)~B_PSF_PCR_PSF_X_ROOTSPACE_CONFIG_RSN_ENADDRP2P,
-      0
-      );
-  }
-}
-
-/**
-  Reset R_PCH_PSF_PCR_ROOTSPACE_CONFIG_RS0 and
-  R_PCH_PSF_PCR_ROOTSPACE_CONFIG_RS3 registers for all PSFs
-  to HW default.
-  These registers are resets to defaults only after global reset,
-  after any other reset type these needs to be reset by BIOS.
-**/
-VOID
-PtlPcdPsfResetRootspaceConfig (
-  VOID
-  )
-{
-  UINT32 Index;
-
-  for (Index = 0; Index < ARRAY_SIZE (mPtlPcdPPsfRootspaceConfigs); Index++) {
-    mPtlPcdPPsfRootspaceConfigs[Index].PsfDev->Access->Write32 (
-      mPtlPcdPPsfRootspaceConfigs[Index].PsfDev->Access,
-      mPtlPcdPPsfRootspaceConfigs[Index].RegBase,
-      (UINT32)((0 << N_PTL_PCD_P_H_PSF_PCR_ROOTSPACE_CONFIG_RSX_ENADDRP2P) | (0 << N_PTL_PCD_P_H_PSF_PCR_ROOTSPACE_CONFIG_RSX_VTDEN))
-      );
-  }
-  if (PtlIsPcdH ()) {
-    for (Index = 0; Index < ARRAY_SIZE (mPtlPcdHPsfRootspaceConfigs); Index++) {
-      mPtlPcdHPsfRootspaceConfigs[Index].PsfDev->Access->Write32 (
-        mPtlPcdHPsfRootspaceConfigs[Index].PsfDev->Access,
-        mPtlPcdHPsfRootspaceConfigs[Index].RegBase,
-        (UINT32)((0 << N_PTL_PCD_P_H_PSF_PCR_ROOTSPACE_CONFIG_RSX_ENADDRP2P) | (0 << N_PTL_PCD_P_H_PSF_PCR_ROOTSPACE_CONFIG_RSX_VTDEN))
-        );
-    }
-  }
- for (Index = 0; Index < ARRAY_SIZE (mPtlPcdTcssPsfRootspaceConfigs); Index++) {
-    mPtlPcdTcssPsfRootspaceConfigs[Index].PsfDev->Access->Write32 (
-      mPtlPcdTcssPsfRootspaceConfigs[Index].PsfDev->Access,
-      mPtlPcdTcssPsfRootspaceConfigs[Index].RegBase,
-      (UINT32)((0 << N_PTL_PCD_P_H_PSF_PCR_ROOTSPACE_CONFIG_RSX_ENADDRP2P) | (0 << N_PTL_PCD_P_H_PSF_PCR_ROOTSPACE_CONFIG_RSX_VTDEN))
-      );
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableP2pDecoding ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableP2pDecoding ();
   }
 }
 
@@ -1535,409 +890,67 @@ PtlPcdPsfProgramDWB (
   IN SI_PREMEM_POLICY_PPI     *SiPreMemPolicyPpi
   )
 {
-  EFI_STATUS  Status;
-  PSF_CONFIG  *PsfConfig;
-  UINT32      DwbFlushThreshold;
-  UINT32      NonxHCIEn;
-  UINT32      OBFFEn;
-  UINT32      DWBEn;
-  UINT32      DwbConfigRegOffset;
-
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gPsfConfigGuid, (VOID *) &PsfConfig);
-  ASSERT_EFI_ERROR (Status);
-  DwbFlushThreshold = PsfConfig->DwbConfigDwbFlushThreshold;
-  NonxHCIEn = PsfConfig->DwbConfigNonxHCIEn;
-  OBFFEn = PsfConfig->DwbConfigOBFFEn;
-  DWBEn = PsfConfig->DwbConfigDWBEn;
-  DwbConfigRegOffset = R_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0;
-
-  Psf6Dev.Access->AndThenOr32 (
-    Psf6Dev.Access,
-    DwbConfigRegOffset,
-    (UINT32)~(B_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0_FLUSHTHRESHHOLD | B_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0_NONXHCIEN | B_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0_OBFFEN | B_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0_DWBEN),
-    ((DwbFlushThreshold << N_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0_FLUSHTHRESHHOLD) | (NonxHCIEn << N_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0_NONXHCIEN) | (OBFFEn << N_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0_OBFFEN) | (DWBEn << N_PTL_PCD_P_H_PSF_6_DWB_CONFIG_PG0_PORT0_CHANNEL0_DWBEN))
-    );
-}
-
-//
-// Grant count programming
-//
-#define GRANT_COUNT_REG_N_A       0xFFFF
-
-EFI_STATUS
-PtlPcdSetGrantCount (
-  REGISTER_ACCESS  *Access,
-  UINT32           DevGntCntUpstreamReg,
-  UINT32           TgtGntCntUpstreamReg,
-  UINT32           TgtGntCntDownstreamReg,
-  UINT32           GrantCount
-  )
-{
-  if (Access == NULL) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  if (DevGntCntUpstreamReg != GRANT_COUNT_REG_N_A) {
-    Access->Write32 (
-      Access,
-      DevGntCntUpstreamReg,
-      GrantCount
-    );
-  }
-
-  if (TgtGntCntUpstreamReg != GRANT_COUNT_REG_N_A) {
-    Access->Write32 (
-      Access,
-      TgtGntCntUpstreamReg,
-      GrantCount
-    );
-  }
-
-  if (TgtGntCntDownstreamReg != GRANT_COUNT_REG_N_A) {
-    Access->Write32 (
-      Access,
-      TgtGntCntDownstreamReg,
-      GrantCount
-    );
-  }
-
-  return EFI_SUCCESS;
-}
-
-#define DEFAULT_PCIE_GRANT_COUNT 0xFF
-#define PSF_PCIE_CONTROLLER_MAX_CHANNELS 4
-typedef struct {
-  UINT32 Channels; // number of channels, cannot be greater than PSF_PCIE_CONTROLLER_MAX_CHANNELS
-  UINT16 DevGntCntUpstreamReg[PSF_PCIE_CONTROLLER_MAX_CHANNELS];
-  UINT16 TgtGntCntUpstreamReg[PSF_PCIE_CONTROLLER_MAX_CHANNELS];
-  UINT16 TgtGntCntDownstreamReg[PSF_PCIE_CONTROLLER_MAX_CHANNELS];
-} PTL_PCD_GRANT_COUNT_REG_DATA;
-
-typedef struct _PTL_PCD_PSF_TOPOLOGY {
-  REGISTER_ACCESS               *Access;
-  UINT32                        PsfId;
-  PSF_TOPO_PORT_TYPE            PortType;
-  UINT32                        PcieCtrlIndex;
-  struct _PTL_PCD_PSF_TOPOLOGY  *Child;
-  PTL_PCD_GRANT_COUNT_REG_DATA  *GrantCountData;
-  UINT32                        PcieRegs[PSF_PCIE_CONTROLLER_MAX_CHANNELS];
-} PTL_PCD_PSF_TOPOLOGY;
-
-UINT32
-PtlPcdSetPcieControllerGrantCount (
-  REGISTER_ACCESS              *Access,
-  PTL_PCD_GRANT_COUNT_REG_DATA *GntCntData,
-  UINT32                       ChannelGrant[PSF_PCIE_CONTROLLER_MAX_CHANNELS],
-  BOOLEAN                      PsfPortEnabled[PSF_PCIE_CONTROLLER_MAX_CHANNELS]
-  )
-{
-  UINT32 Channel;
-  UINT32 ControllerGrantCount;
-
-  ControllerGrantCount = 0;
-
-  for (Channel = 0; Channel < GntCntData->Channels && Channel < PSF_PCIE_CONTROLLER_MAX_CHANNELS; Channel++) {
-    if ((ChannelGrant[Channel] == DEFAULT_PCIE_GRANT_COUNT) || !PsfPortEnabled[Channel]) {
-      //
-      // If HW default or Root Port is disabled move to next channel
-      continue;
-    }
-
-    PtlPcdSetGrantCount (Access, GntCntData->DevGntCntUpstreamReg[Channel], GntCntData->TgtGntCntUpstreamReg[Channel], GntCntData->TgtGntCntDownstreamReg[Channel], ChannelGrant[Channel]);
-    ControllerGrantCount += ChannelGrant[Channel];
-  }
-  return ControllerGrantCount;
-}
-
-UINT32
-PtlPcdSetSegmentGrantCount (
-  REGISTER_ACCESS              *Access,
-  PTL_PCD_GRANT_COUNT_REG_DATA *GntCntData,
-  UINT32                       GrantCount
-  )
-{
-  PtlPcdSetGrantCount (Access, GntCntData->DevGntCntUpstreamReg[0], GntCntData->TgtGntCntUpstreamReg[0], GntCntData->TgtGntCntDownstreamReg[0], GrantCount);
-
-  return GrantCount;
-}
-
-BOOLEAN
-PtlPcdPsfIsPcieEnabled (
-  REGISTER_ACCESS *Access,
-  UINT32          Register
-  )
-{
-  return ((Access->Read32 (Access, Register + R_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN)
-           & B_PSF_PCR_PSF_X_AGNT_T1_SHDW_PCIEN_FUNDIS) == 0);
-}
-
-VOID
-PtlPcdPsfPcieChannelGrantCounts (
-  IN  PSF_PCIE_CTRL_CONFIG  PsfPcieCtrlConfig,
-  OUT UINT32                *ChannelGrant
-  )
-{
-  switch (PsfPcieCtrlConfig) {
-    case PsfPcieCtrl4xn:
-      ChannelGrant[0] = 1;
-      ChannelGrant[1] = 1;
-      ChannelGrant[2] = 1;
-      ChannelGrant[3] = 1;
-      break;
-    case PsfPcieCtrl1x2n_2xn:
-      ChannelGrant[0] = 2;
-      ChannelGrant[1] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[2] = 1;
-      ChannelGrant[3] = 1;
-      break;
-    case PsfPcieCtrl2xn_1x2n:
-      ChannelGrant[0] = 1;
-      ChannelGrant[1] = 1;
-      ChannelGrant[2] = 2;
-      ChannelGrant[3] = DEFAULT_PCIE_GRANT_COUNT;
-      break;
-    case PsfPcieCtrl2x2n:
-      ChannelGrant[0] = 2;
-      ChannelGrant[1] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[2] = 2;
-      ChannelGrant[3] = DEFAULT_PCIE_GRANT_COUNT;
-      break;
-    case PsfPcieCtrl1x4n:
-      ChannelGrant[0] = 4;
-      ChannelGrant[1] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[2] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[3] = DEFAULT_PCIE_GRANT_COUNT;
-      break;
-    default:
-      ChannelGrant[0] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[1] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[2] = DEFAULT_PCIE_GRANT_COUNT;
-      ChannelGrant[3] = DEFAULT_PCIE_GRANT_COUNT;
-      break;
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfProgramDWB (SiPreMemPolicyPpi);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfProgramDWB (SiPreMemPolicyPpi);
   }
 }
-
-UINT32
-PtlPcdTopologyConfigurePcieGrantCounts (
-  PSF_PCIE_CTRL_CONFIG   *PcieCtrlConfigsArray,
-  UINT32                 PcieCtrlConfigsArraySize,
-  PTL_PCD_PSF_TOPOLOGY   *PsfSegment
-  )
-{
-  UINT32               GrantCount;
-  PTL_PCD_PSF_TOPOLOGY *ChildSegment;
-  UINT32               ChannelGrant[PSF_PCIE_CONTROLLER_MAX_CHANNELS];
-  BOOLEAN              PciePortEnabled[PSF_PCIE_CONTROLLER_MAX_CHANNELS];
-  UINT32               Index;
-
-  GrantCount = 0;
-
-  if (PsfSegment->PortType == PsfPcieCtrlPort && PsfSegment->PcieCtrlIndex < PcieCtrlConfigsArraySize) {
-    PtlPcdPsfPcieChannelGrantCounts (PcieCtrlConfigsArray[PsfSegment->PcieCtrlIndex], &ChannelGrant[0]);
-
-    for (Index = 0; Index < PSF_PCIE_CONTROLLER_MAX_CHANNELS; Index++) {
-      PciePortEnabled[Index] = PtlPcdPsfIsPcieEnabled (
-                                 PsfSegment->Access,
-                                 PsfSegment->PcieRegs[Index]
-                               );
-    }
-
-    GrantCount = PtlPcdSetPcieControllerGrantCount (
-                   PsfSegment->Access,
-                   PsfSegment->GrantCountData,
-                   ChannelGrant,
-                   PciePortEnabled
-                 );
-
-  } else if (PsfSegment->PortType == PsfToPsfPort) {
-    ChildSegment = PsfSegment->Child;
-
-    while (ChildSegment->PortType != PsfNullPort) {
-      GrantCount += PtlPcdTopologyConfigurePcieGrantCounts (
-                      PcieCtrlConfigsArray,
-                      PcieCtrlConfigsArraySize,
-                      ChildSegment
-                    );
-      ChildSegment++;
-    }
-
-    if (GrantCount > 0) {
-      GrantCount = PtlPcdSetSegmentGrantCount (
-                     PsfSegment->Access,
-                     PsfSegment->GrantCountData,
-                     GrantCount
-                     );
-    }
-  }
-  return GrantCount;
-}
-
-PTL_PCD_GRANT_COUNT_REG_DATA mPxpaGrantCountRegs = {
-  .Channels = 4,
-  .DevGntCntUpstreamReg = {
-    R_PTL_PCD_P_H_PSF_6_DEV_GNTCNT_RELOAD_DGCR20,
-    R_PTL_PCD_P_H_PSF_6_DEV_GNTCNT_RELOAD_DGCR18,
-    R_PTL_PCD_P_H_PSF_6_DEV_GNTCNT_RELOAD_DGCR16,
-    R_PTL_PCD_P_H_PSF_6_DEV_GNTCNT_RELOAD_DGCR14
-  },
-  .TgtGntCntUpstreamReg = {
-    GRANT_COUNT_REG_N_A,
-    GRANT_COUNT_REG_N_A,
-    GRANT_COUNT_REG_N_A,
-    GRANT_COUNT_REG_N_A
-  },
-  .TgtGntCntDownstreamReg = {
-    R_PTL_PCD_P_H_PSF_6_TARGET_GNTCNT_RELOAD_PG1_TGT0,
-    R_PTL_PCD_P_H_PSF_6_TARGET_GNTCNT_RELOAD_PG1_TGT2,
-    R_PTL_PCD_P_H_PSF_6_TARGET_GNTCNT_RELOAD_PG1_TGT4,
-    R_PTL_PCD_P_H_PSF_6_TARGET_GNTCNT_RELOAD_PG1_TGT6
-  }
-};
-
-
-
-PTL_PCD_GRANT_COUNT_REG_DATA mPxpbGrantCountRegs = {
-  .Channels = 4,
-  .DevGntCntUpstreamReg = {
-    R_PTL_PCD_P_H_PSF_4_DEV_GNTCNT_RELOAD_DGCR9,
-    R_PTL_PCD_P_H_PSF_4_DEV_GNTCNT_RELOAD_DGCR7,
-    R_PTL_PCD_P_H_PSF_4_DEV_GNTCNT_RELOAD_DGCR5,
-    R_PTL_PCD_P_H_PSF_4_DEV_GNTCNT_RELOAD_DGCR3
-  },
-  .TgtGntCntUpstreamReg = {
-    GRANT_COUNT_REG_N_A,
-    GRANT_COUNT_REG_N_A,
-    GRANT_COUNT_REG_N_A,
-    GRANT_COUNT_REG_N_A
-  },
-  .TgtGntCntDownstreamReg = {
-    R_PTL_PCD_P_H_PSF_4_TARGET_GNTCNT_RELOAD_PG1_TGT8,
-    R_PTL_PCD_P_H_PSF_4_TARGET_GNTCNT_RELOAD_PG1_TGT10,
-    R_PTL_PCD_P_H_PSF_4_TARGET_GNTCNT_RELOAD_PG1_TGT12,
-    R_PTL_PCD_P_H_PSF_4_TARGET_GNTCNT_RELOAD_PG1_TGT14
-  }
-};
-
-PTL_PCD_GRANT_COUNT_REG_DATA mPsf0ToPsf6GrantCountRegs = {
-  .Channels = 1,
-  .DevGntCntUpstreamReg = {
-    GRANT_COUNT_REG_N_A
-  },
-  .TgtGntCntUpstreamReg = {
-    R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG0_TGT1
-  },
-  .TgtGntCntDownstreamReg = {
-    R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG1_TGT22
-  }
-};
-
-PTL_PCD_GRANT_COUNT_REG_DATA mPsf0ToPsf4GrantCountRegs = {
-  .Channels = 1,
-  .DevGntCntUpstreamReg = {
-    GRANT_COUNT_REG_N_A
-  },
-  .TgtGntCntUpstreamReg = {
-    R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG0_TGT1
-  },
-  .TgtGntCntDownstreamReg = {
-    R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG1_TGT7
-  }
-};
-
-
-#define PTL_PCD_PSF_TOPOLOGY_END { NULL, 0, PsfNullPort, 0, NULL, NULL }
-
-PTL_PCD_PSF_TOPOLOGY PtllPcdPsf6[] = {
-  {
-    .Access = &Psf6Access.Access,
-    .PsfId = 6,
-    .PortType = PsfPcieCtrlPort,
-    .PcieCtrlIndex = 0,
-    .Child = NULL,
-    .GrantCountData = &mPxpaGrantCountRegs,
-    .PcieRegs = {
-      R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F0_OFFSET64,
-      R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F1_OFFSET65,
-      R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F2_OFFSET66,
-      R_PTL_PCD_P_H_PSF_6_AGNT_T1_SHDW_BAR0_PXPA_RS0_D28_F3_OFFSET67
-    }
-  },
-  PTL_PCD_PSF_TOPOLOGY_END
-};
-
-PTL_PCD_PSF_TOPOLOGY PtllPcdPsf4[] = {
-  {
-    .Access = &Psf4Access.Access,
-    .PsfId = 4,
-    .PortType = PsfPcieCtrlPort,
-    .PcieCtrlIndex = 1,
-    .Child = NULL,
-    .GrantCountData = &mPxpbGrantCountRegs,
-    .PcieRegs = {
-      R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F4_OFFSET64,
-      R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F5_OFFSET65,
-      R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F6_OFFSET66,
-      R_PTL_PCD_P_H_PSF_4_AGNT_T1_SHDW_BAR0_PXPB_RS0_D28_F7_OFFSET67
-    }
-  },
-  PTL_PCD_PSF_TOPOLOGY_END
-};
-
-
-PTL_PCD_PSF_TOPOLOGY PtlPcdPsf0[] = {
-  {
-    .Access = &Psf0Access.Access,
-    .PsfId = 0,
-    .PortType = PsfToPsfPort,
-    .PcieCtrlIndex = 0, // this value is ignored if PortType == PsfToPsfPort
-    .Child = PtllPcdPsf6,
-    .GrantCountData = &mPsf0ToPsf6GrantCountRegs
-  },
-  {
-    .Access = &Psf0Access.Access,
-    .PsfId = 0,
-    .PortType = PsfToPsfPort,
-    .PcieCtrlIndex = 0, // this value is ignored if PortType == PsfToPsfPort
-    .Child = PtllPcdPsf4,
-    .GrantCountData = &mPsf0ToPsf4GrantCountRegs
-  },
-  PTL_PCD_PSF_TOPOLOGY_END
-};
-
 
 /**
-  Program Grant Counts for PCIE controllers on PTL-PCD
+  Program Grant Counts for PCIE controllers
 
-  @param PcieCtrlConfigsArray        Array of PCIe controllers bifurcation config
-  @param PcieCtrlConfigsArraySize    Size of the array
+  @param[in] PcieCtrlBifurcationArray        Array of PCIe controllers bifurcation config
+  @param[in] PcieCtrlNumOfLanesArray         Array of lanes per PCIe controller
+  @param[in] PcieCtrlNumOfRootPortsArray     Array of root ports per PCIe controller
+  @param[in] ArraySize                       Number of PCIe contollers
+  @param[in] PcieRpEnableArray               Array of Root Port enable state
+  @param[in] PcieRpArraySize                 Number of Root Ports and size of PcieRpEnableArray
 **/
 VOID
-PtlPcdGrantCountProgramming (
-  PSF_PCIE_CTRL_CONFIG   *PcieCtrlConfigsArray,
-  UINT32                 PcieCtrlConfigsArraySize
+PtlPcdPsfGrantCountProgramming (
+  UINT8                  *PcieCtrlBifurcationArray,
+  UINT8                  *PcieCtrlNumOfLanesArray,
+  UINT8                  *PcieCtrlNumOfRootPortsArray,
+  UINT32                 ArraySize,
+  BOOLEAN                *PcieRpEnableArray,
+  UINT32                 PcieRpArraySize
   )
 {
-  PTL_PCD_PSF_TOPOLOGY *PsfTopology;
-    PsfTopology = PtlPcdPsf0;
-  PtlPcdTopologyConfigurePcieGrantCounts (PcieCtrlConfigsArray, PcieCtrlConfigsArraySize, PsfTopology);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfGrantCountProgramming (
+      PcieCtrlBifurcationArray,
+      PcieCtrlNumOfLanesArray,
+      PcieCtrlNumOfRootPortsArray,
+      ArraySize,
+      PcieRpEnableArray,
+      PcieRpArraySize
+      );
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfGrantCountProgramming (
+      PcieCtrlBifurcationArray,
+      PcieCtrlNumOfLanesArray,
+      PcieCtrlNumOfRootPortsArray,
+      ArraySize,
+      PcieRpEnableArray,
+      PcieRpArraySize
+      );
+  }
 }
+
 /**
   Program P2SB as EOI target
 **/
 VOID
-PtlPcdEnableP2SbEoiTarget (
+PtlPcdPsfEnableP2SbEoiTarget (
   VOID
   )
 {
-  PSF_PORT_DEST_ID P2sbTarget = {
-    .Fields = {
-      .ChannelId = 0,
-      .PortId = 11,
-      .PortGroupId = 1,
-      .PsfId = 8
-    }
-  };
-  PsfEnableEoiTarget (P2sbTarget, PtlPcdPsfGetSegmentTable (), PtlPcdPsfGetEoiRegDataTable ());
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnableP2SbEoiTarget ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnableP2SbEoiTarget ();
+  }
 }
 
 /**
@@ -1952,9 +965,11 @@ PtlPcdPsfSetPcieRpFunction (
   IN UINT32  NewFunction
   )
 {
-  PSF_PCIE_PORT_DATA *PortData;
-    PortData = PtlPcdPsfGetPciePortData (RpIndex);
-  PsfSetPcieFunction (PortData, NewFunction, PtlPcdPsfGetSegmentTable ());
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfSetPcieRpFunction (RpIndex, NewFunction);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfSetPcieRpFunction (RpIndex, NewFunction);
+  }
 }
 
 /**
@@ -1970,13 +985,11 @@ PtlPcdPsfEarlyInit (
   IN  UINT32                    PcieRpFuncNumArraySize
   )
 {
-  PSF_EARLY_INIT_DATA   EarlyInitData;
-    EarlyInitData.PciePortDataTable = &mPtlPchPHPsfPciePortData;
-    EarlyInitData.EoiRegDataTable = &mPtlPcdPHEoiRegData;
-    EarlyInitData.MctpRegDataTable = &mPtlPcdPHMctpRegDataTable;
-    EarlyInitData.MctpSupported = TRUE;
-
-  PsfEarlyInit (&EarlyInitData, PtlPcdPsfGetSegmentTable (), PcieRpFuncNumArray, PcieRpFuncNumArraySize);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEarlyInit (PcieRpFuncNumArray, PcieRpFuncNumArraySize);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEarlyInit (PcieRpFuncNumArray, PcieRpFuncNumArraySize);
+  }
 }
 
 /**
@@ -1989,9 +1002,11 @@ PtlPcdPsfDisablePcieRootPort (
   IN UINT32  RpIndex
   )
 {
-  PSF_PCIE_PORT_DATA *PortData;
-    PortData = PtlPcdPsfGetPciePortData (RpIndex);
-  PsfDisablePcieRootPort (PortData, PtlPcdPsfGetSegmentTable ());
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisablePcieRootPort (RpIndex);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisablePcieRootPort (RpIndex);
+  }
 }
 
 /**
@@ -2004,10 +1019,11 @@ PtlPcdPsfEnablePcieRootPort (
   IN UINT32  RpIndex
   )
 {
-  PSF_PCIE_PORT_DATA *PortData;
-    PortData = PtlPcdPsfGetPciePortData (RpIndex);
-  PsfEnablePcieRootPort (PortData, PtlPcdPsfGetSegmentTable ());
-
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnablePcieRootPort (RpIndex);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnablePcieRootPort (RpIndex);
+  }
 }
 
 /**
@@ -2019,25 +1035,10 @@ PtlPcdPsfEnableRpEoiTarget (
   UINT32  RpIndex
   )
 {
-  PsfEnableEoiTarget (PtlPcdPsfPcieDestinationId (RpIndex), PtlPcdPsfGetSegmentTable(), PtlPcdPsfGetEoiRegDataTable ());
-}
-
-STATIC
-VOID
-PtlPcdPsfProgramPsfGlobalConfig (
-  IN UINT32    AndData32,
-  IN UINT32    OrData32
-  )
-{
-  PSF_SEGMENT_TABLE *PsfTable;
-  UINT32            PsfTableIndex;
-  PSF_DEV           *PsfDev;
-
-  PsfTable = PtlPcdPsfGetSegmentTable ();
-
-  for (PsfTableIndex = 0; PsfTableIndex < PsfTable->Size; PsfTableIndex++) {
-    PsfDev = PsfTable->Data[PsfTableIndex].PsfDev;
-    PsfDev->Access->AndThenOr32 (PsfDev->Access, R_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG, AndData32, OrData32);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnableRpEoiTarget (RpIndex);
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnableRpEoiTarget (RpIndex);
   }
 }
 
@@ -2050,17 +1051,11 @@ PtlPcdPsfDisableClockGating (
   VOID
   )
 {
-  UINT32                         AndData32;
-  UINT32                         OrData32;
-
-  AndData32 = (UINT32)~(
-    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENPCG |
-    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENTCG  |
-    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENLCG
-    );
-
-  OrData32 = 0;
-  PtlPcdPsfProgramPsfGlobalConfig (AndData32, OrData32);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfDisableClockGating ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfDisableClockGating ();
+  }
 }
 
 /**
@@ -2072,17 +1067,11 @@ PtlPcdPsfEnableClockGating (
   VOID
   )
 {
-  UINT32                         AndData32;
-  UINT32                         OrData32;
-
-  AndData32 = (UINT32)~(0);
-
-  OrData32 = (UINT32)(
-    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENPCG |
-    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENTCG  |
-    B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENLCG
-    );
-  PtlPcdPsfProgramPsfGlobalConfig (AndData32, OrData32);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfEnableClockGating ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfEnableClockGating ();
+  }
 }
 
 /**
@@ -2094,22 +1083,9 @@ PtlPcdPsfConfigurePowerManagement (
   VOID
   )
 {
-  PSF_SEGMENT_TABLE *PsfTable;
-  UINT32            PsfTableIndex;
-  PSF_DEV           *PsfDev;
-  UINT32            DataAnd32;
-  UINT32            DataOr32;
-
-  DataAnd32 = ~0u;
-  DataOr32 = (B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENLCG | B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENPCG);
-
-  PsfTable = PtlPcdPsfGetSegmentTable ();
-  //
-  // There in an ordering requirement to program enTCG before enLCG.
-  //
-  for (PsfTableIndex = 0; PsfTableIndex < PsfTable->Size; PsfTableIndex++) {
-    PsfDev = PsfTable->Data[PsfTableIndex].PsfDev;
-    PsfDev->Access->AndThenOr32 (PsfDev->Access, R_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG, ~0u, B_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG_ENTCG);
-    PsfDev->Access->AndThenOr32 (PsfDev->Access, R_PSF_PCR_PSF_X_PSF_GLOBAL_CONFIG, DataAnd32, DataOr32);
+  if (PtlIsPcdP ()) {
+    PtlPcdPPsfConfigurePowerManagement ();
+  } else if (PtlIsPcdH ()) {
+    PtlPcdHPsfConfigurePowerManagement ();
   }
 }

@@ -34,12 +34,12 @@ Package()
 	Package(2) {"mipi-sdw-paging-supported", 1},                            // Boolean SCP_AddrPage1/2 are implemented
 	//Package(2) {"mipi-sdw-peripheral-channelprepare-timeout", 50},          // Integer
 	//Package(2) {"mipi-sdw-port15-read-behavior", 0},                        // Boolean
-	Package(2) {"mipi-sdw-sdca-interface-revision", 0x0901},                // Integer: SDCA 0.9r01
+	Package(2) {"mipi-sdw-sdca-interface-revision", MIPI_SDW_SDCA_INTERFACE_REVISION_VAL},  // Integer: SDCA 1.0
 	Package(2) {"mipi-sdw-sdca-interrupt-register-list", 0xf},              // Bitmap
 	Package(2) {"mipi-sdw-simplified-clockstopprepare-sm-supported", 0},    // Boolean
 	Package(2) {"mipi-sdw-sink-port-list", 0x6},                            // Bitmap: IT 21 = DP 1 & IT 26 = DP 2
 	Package(2) {"mipi-sdw-source-port-list", 0x18},                         // Bitmap: OT 25 = DP 4 & OT 24 = DP 3
-	Package(2) {"mipi-sdw-sw-interface-revision", 0x00020000},              // Integer: v2.0
+	Package(2) {"mipi-sdw-sw-interface-revision", 0x00020001},              // Revision 2.1
 	Package(2) {"mipi-sdw-test-mode-supported", 0},                         // Boolean
 	Package(2) {"mipi-sdw-wake-up-unavailable", 0},                         // Boolean
 },

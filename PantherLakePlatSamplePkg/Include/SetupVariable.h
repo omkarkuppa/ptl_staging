@@ -511,7 +511,6 @@ typedef struct {
   UINT16  ReservePMemoryPerSlot;
   UINT8   ReserveIoPerSlot;
   UINT8   UsbCRetimerNumber;
-  UINT8   UsbCPdSupportBitmap;
 
   UINT8   IccLockRegisters;
   UINT8   IccProfile;
@@ -1464,6 +1463,7 @@ typedef struct {
   UINT8   Ddr5AutoPrechargeEnable;
   UINT8   Lp5SplitACTEnable;
   UINT8   RetrainToWorkingChannel;
+  UINT8   RowPressEn;
   UINT8   SubChHashOverride;
   UINT8   DisableMc0Ch0;
   UINT8   DisableMc0Ch1;
@@ -1524,7 +1524,6 @@ typedef struct {
   UINT8   DLLDCC;
   UINT8   DLLBWSEL;
   UINT8   RDVREFDC;
-  UINT8   VDDQT;
   UINT8   RMTBIT;
   UINT8   DQDQSSWZ;
   UINT8   REFPI;
@@ -1720,6 +1719,8 @@ typedef struct {
   UINT8   SpineGatePerLpmode;
   UINT8   PhclkGatePerLpmode;
   UINT8   DisableSwitchDfiToMc;
+  UINT8   IGpuGsm2Size;
+  UINT8   SolFeatureEnabled;
 } SA_SETUP;
 
 /**

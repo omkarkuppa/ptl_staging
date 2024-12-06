@@ -300,6 +300,17 @@ IocDisablePcieRootPort (
   );
 
 /**
+  Check if root port is enabled.
+
+  @param[in] RpIndex            Root Port Number
+**/
+BOOLEAN
+EFIAPI
+IocIsPcieRootPortEnabled (
+  IN UINT32   RpIndex
+  );
+
+/**
   This function wtites TCSS DEVEN Register.
 
   @param[in]  TcssDevEn  - Maps to bits in TCSS_DEVEN_0_0_0_MCHBAR_IMPH

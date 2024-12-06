@@ -388,7 +388,6 @@ MrcSaGvFinal (
   MrcOutput *Outputs;
   INT64     GetSetVal;
   BOOLEAN   IsOptimizeTxp = FALSE;
-  BOOLEAN   IsRirEnabled = FALSE;
 
   Status  = mrcSuccess;
   Outputs = &MrcData->Outputs;
@@ -417,15 +416,8 @@ MrcSaGvFinal (
     GetSetVal = MrcGetTxp (Outputs->DdrType, Outputs->MemoryClock) * WCK_TO_CK_RATIO;
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctXP, WriteCached, &GetSetVal);
   }
-  // Update DDR5 MR4[OP3] Refresh Interval Rate Indicator if supported by DRAM
-  if (Outputs->IsDdr5) {
-    Status = MrcTurnOnRirIfSupported (MrcData, &IsRirEnabled);
-    if (Status != mrcSuccess) {
-      return Status;
-    }
-    GetSetVal = IsRirEnabled;
-    MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMcDdr5Rir, WriteCached, &GetSetVal);
-  }
+
+  MrcRirInit (MrcData);
 
   Status |= MrcFinalizeMrSeq (MrcData, MRC_PRINTS_ON);
 
@@ -448,4 +440,57 @@ MrcSaGvFinal (
   MrcSaveSagvOutputs (MrcData);
 
   return Status;
+}
+
+/**
+  Enable Refresh Interval Rate (RIR) feature per channel for DDR5.
+  All DIMMs in channel must support RIR to enable feature, if so
+  MR4[OP3] is programmed.
+
+  @param[in] MrcData - include all the MRC general data.
+
+  @returns nothing.
+**/
+VOID
+MrcRirInit (
+  IN MrcParameters *const  MrcData
+  )
+{
+  MrcStatus Status;
+  MrcDebug  *Debug;
+  UINT8 Controller;
+  UINT8 Channel;
+  INT64 GetSetVal;
+  BOOLEAN IsRirSupported = FALSE;
+
+  Debug = &MrcData->Outputs.Debug;
+
+  // RIR is supported by DDR5 only
+  if (MrcData->Outputs.IsLpddr5) {
+    return;
+  }
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+      if (!(MrcChannelExist (MrcData, Controller, Channel))) {
+        continue;
+      }
+
+      Status = MrcGetDdr5RirSupport (MrcData, Controller, Channel, &IsRirSupported);
+      if (Status != mrcSuccess) {
+        MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "MC%d CH%d: Failed to detect if RIR is supported.\n", Controller, Channel);
+        continue; // Skip this channel
+      }
+
+      if (IsRirSupported) {
+        Status = MrcSetDdr5Rir (MrcData, Controller, Channel);
+        if (Status != mrcSuccess) {
+          MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "MC%d CH%d: Failed to enable RIR.\n", Controller, Channel);
+          continue; // Don't continue if there is a failure in enabling RIR
+        }
+
+        GetSetVal = IsRirSupported;
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMcDdr5Rir, WriteCached, &GetSetVal);
+      }
+    }
+  }
 }

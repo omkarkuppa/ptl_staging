@@ -60,4 +60,4 @@
   gSiPreMemPolicyPpiGuid      ## CONSUMES
 
 [Depex]
-  TRUE
+  gSiPreMemPolicyPpiGuid

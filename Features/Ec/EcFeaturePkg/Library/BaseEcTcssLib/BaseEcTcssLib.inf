@@ -38,6 +38,7 @@
   TimerLib
   EcLib
   EcPrivateLib
+  PcdLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -45,3 +46,7 @@
 
 [Sources]
   BaseEcTcssLib.c
+
+[Pcd]
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPdCmdMaxRetry        ## CONSUMES
+  gEcFeaturePkgTokenSpaceGuid.PcdEcPdCmdWaitStallInUs   ## CONSUMES

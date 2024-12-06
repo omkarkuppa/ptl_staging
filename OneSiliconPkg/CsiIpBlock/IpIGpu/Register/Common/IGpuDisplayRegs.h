@@ -44,9 +44,12 @@
 
 typedef union {
   struct {
-    UINT32 rm_timeout_value : 16;
-    UINT32 rsvd_0 : 15;
-    UINT32 rm_timeout : 1;
+    UINT32 rm_timeout_value : 16; /**< RM TIMEOUT VALUE */
+                            /* Bits[15:0], default=0x000005DC*/
+    UINT32 rsvd_0 : 15; /**< Undefined - auto filled rsvd_[30:16] */
+                            /* Bits[30:16], default=0*/
+    UINT32 rm_timeout : 1; /**< RM TIMEOUT */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -73,38 +76,70 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pavp_check_for_vrh_dis : 1;
-    UINT32 dbuf_wipe_dis : 1;
-    UINT32 override_crc_restriction : 1;
-    UINT32 vga_io_through_mmio_disable : 1;
-    UINT32 disable_display_page_tables : 1;
-    UINT32 ignore_pm_fill_abort : 1;
-    UINT32 hp_and_lp_idle_mem_status_disable : 1;
-    UINT32 enable_pavp_valid_readback : 1;
-    UINT32 spare_8 : 1;
-    UINT32 spare_9 : 1;
-    UINT32 spare_10 : 1;
-    UINT32 spare_11 : 1;
-    UINT32 spare_12 : 1;
-    UINT32 spare_13 : 1;
-    UINT32 spare_14 : 1;
-    UINT32 spare_15 : 1;
-    UINT32 spare_16 : 1;
-    UINT32 spare_17 : 1;
-    UINT32 spare_18 : 1;
-    UINT32 spare_19 : 1;
-    UINT32 spare_20 : 1;
-    UINT32 spare_21 : 1;
-    UINT32 spare_22 : 1;
-    UINT32 spare_23 : 1;
-    UINT32 spare_24 : 1;
-    UINT32 spare_25 : 1;
-    UINT32 spare_26 : 1;
-    UINT32 spare_27 : 1;
-    UINT32 spare_28 : 1;
-    UINT32 spare_29 : 1;
-    UINT32 spare_30 : 1;
-    UINT32 spare_31 : 1;
+    UINT32 pavp_check_for_vrh_dis : 1; /**< PAVP CHECK FOR VRH DIS */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 dbuf_wipe_dis : 1; /**< DBUF WIPE DIS */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 override_crc_restriction : 1; /**< OVERRIDE CRC RESTRICTION */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 vga_io_through_mmio_disable : 1; /**< VGA IO THROUGH MMIO DISABLE */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 disable_display_page_tables : 1; /**< DISABLE DISPLAY PAGE TABLES */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 ignore_pm_fill_abort : 1; /**< IGNORE PM FILL ABORT */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 hp_and_lp_idle_mem_status_disable : 1; /**< HP AND LP IDLE MEM STATUS DISABLE */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 enable_pavp_valid_readback : 1; /**< ENABLE PAVP VALID READBACK */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 spare_8 : 1; /**< SPARE 8 */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 spare_9 : 1; /**< SPARE 9 */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 spare_10 : 1; /**< SPARE 10 */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 spare_11 : 1; /**< SPARE 11 */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 spare_12 : 1; /**< SPARE 12 */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 spare_13 : 1; /**< SPARE 13 */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 spare_14 : 1; /**< SPARE 14 */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 spare_15 : 1; /**< SPARE 15 */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 spare_16 : 1; /**< SPARE 16 */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 spare_17 : 1; /**< SPARE 17 */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 spare_18 : 1; /**< SPARE 18 */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 spare_19 : 1; /**< SPARE 19 */
+                            /* Bits[19:19], default=0x00000000*/
+    UINT32 spare_20 : 1; /**< SPARE 20 */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 spare_21 : 1; /**< SPARE 21 */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 spare_22 : 1; /**< SPARE 22 */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 spare_23 : 1; /**< SPARE 23 */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 spare_24 : 1; /**< SPARE 24 */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 spare_25 : 1; /**< SPARE 25 */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 spare_26 : 1; /**< SPARE 26 */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 spare_27 : 1; /**< SPARE 27 */
+                            /* Bits[27:27], default=0x00000000*/
+    UINT32 spare_28 : 1; /**< SPARE 28 */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 spare_29 : 1; /**< SPARE 29 */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 spare_30 : 1; /**< SPARE 30 */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 spare_31 : 1; /**< SPARE 31 */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -191,12 +226,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 writeback_counter_threshold : 10;
-    UINT32 rsvd_0 : 18;
-    UINT32 missing_write_completions : 1;
-    UINT32 excess_write_completions : 1;
-    UINT32 dpce_writeback_completion_disable : 1;
-    UINT32 clear_writeback_counter : 1;
+    UINT32 writeback_counter_threshold : 10; /**< WRITEBACK COUNTER THRESHOLD */
+                            /* Bits[9:0], default=0x00000080*/
+    UINT32 rsvd_0 : 18; /**< Undefined - auto filled rsvd_[27:10] */
+                            /* Bits[27:10], default=0*/
+    UINT32 missing_write_completions : 1; /**< MISSING WRITE COMPLETIONS */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 excess_write_completions : 1; /**< EXCESS WRITE COMPLETIONS */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 dpce_writeback_completion_disable : 1; /**< DPCE WRITEBACK COMPLETION DISABLE */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 clear_writeback_counter : 1; /**< CLEAR WRITEBACK COUNTER */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -229,10 +270,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 powerup_pfet_delay : 10;
-    UINT32 forceon_pfet_delay : 10;
-    UINT32 ebb_pfet_delay : 10;
-    UINT32 rsvd_0 : 2;
+    UINT32 powerup_pfet_delay : 10; /**< POWERUP PFET DELAY */
+                            /* Bits[9:0], default=0x0000015E*/
+    UINT32 forceon_pfet_delay : 10; /**< FORCEON PFET DELAY */
+                            /* Bits[19:10], default=0x0000015E*/
+    UINT32 ebb_pfet_delay : 10; /**< EBB PFET DELAY */
+                            /* Bits[29:20], default=0x0000015E*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[31:30] */
+                            /* Bits[31:30], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -261,10 +306,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 powerup_pfet_delay : 10;
-    UINT32 forceon_pfet_delay : 10;
-    UINT32 ebb_pfet_delay : 10;
-    UINT32 rsvd_0 : 2;
+    UINT32 powerup_pfet_delay : 10; /**< POWERUP PFET DELAY */
+                            /* Bits[9:0], default=0x00000019*/
+    UINT32 forceon_pfet_delay : 10; /**< FORCEON PFET DELAY */
+                            /* Bits[19:10], default=0x00000019*/
+    UINT32 ebb_pfet_delay : 10; /**< EBB PFET DELAY */
+                            /* Bits[29:20], default=0x00000019*/
+    UINT32 rsvd_0 : 2; /**< Undefined - auto filled rsvd_[31:30] */
+                            /* Bits[31:30], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -293,10 +342,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pm_fill_timeout : 12;
-    UINT32 sagv_req_timeout_value : 12;
-    UINT32 hp_and_lp_idle_stable_count : 5;
-    UINT32 rsvd_0 : 3;
+    UINT32 pm_fill_timeout : 12; /**< PM FILL TIMEOUT */
+                            /* Bits[11:0], default=0x000001F4*/
+    UINT32 sagv_req_timeout_value : 12; /**< SAGV REQ TIMEOUT VALUE */
+                            /* Bits[23:12], default=0x000001F4*/
+    UINT32 hp_and_lp_idle_stable_count : 5; /**< HP AND LP IDLE STABLE COUNT */
+                            /* Bits[28:24], default=0x00000008*/
+    UINT32 rsvd_0 : 3; /**< Undefined - auto filled rsvd_[31:29] */
+                            /* Bits[31:29], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -316,6 +369,7 @@ typedef union {
 
 #endif      // SV_HOOKS
 
+
 /** MEM_SS_INFO_GLOBAL desc:
   */
 
@@ -323,10 +377,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ddr_type : 4;
-    UINT32 number_of_populated_channels : 4;
-    UINT32 number_of_enabled_qgv_points : 4;
-    UINT32 spare : 20;
+    UINT32 ddr_type : 4; /**< DDR TYPE */
+                            /* Bits[3:0], default=0x00000000*/
+    UINT32 number_of_populated_channels : 4; /**< NUMBER OF POPULATED CHANNELS */
+                            /* Bits[7:4], default=0x00000000*/
+    UINT32 number_of_enabled_qgv_points : 4; /**< NUMBER OF ENABLED QGV POINTS */
+                            /* Bits[11:8], default=0x00000000*/
+    UINT32 spare : 20; /**< SPARE */
+                            /* Bits[31:12], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -353,9 +411,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dclk_in_multiples_of_16_6666_mhz : 16;
-    UINT32 trp_in_dclks : 8;
-    UINT32 trcd_in_dclks : 8;
+    UINT32 dclk_in_multiples_of_16_6666_mhz : 16; /**< DCLK IN MULTIPLES OF 16 6666 MHZ */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 trp_in_dclks : 8; /**< TRP IN DCLKS */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 trcd_in_dclks : 8; /**< TRCD IN DCLKS */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -380,9 +441,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 trdpre_in_dclks : 8;
-    UINT32 tras_in_dclks : 9;
-    UINT32 rsvd_0 : 15;
+    UINT32 trdpre_in_dclks : 8; /**< TRDPRE IN DCLKS */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 tras_in_dclks : 9; /**< TRAS IN DCLKS */
+                            /* Bits[16:8], default=0x00000000*/
+    UINT32 rsvd_0 : 15; /**< Undefined - auto filled rsvd_[31:17] */
+                            /* Bits[31:17], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -405,9 +469,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dclk_in_multiples_of_16_6666_mhz : 16;
-    UINT32 trp_in_dclks : 8;
-    UINT32 trcd_in_dclks : 8;
+    UINT32 dclk_in_multiples_of_16_6666_mhz : 16; /**< DCLK IN MULTIPLES OF 16 6666 MHZ */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 trp_in_dclks : 8; /**< TRP IN DCLKS */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 trcd_in_dclks : 8; /**< TRCD IN DCLKS */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -432,9 +499,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 trdpre_in_dclks : 8;
-    UINT32 tras_in_dclks : 9;
-    UINT32 rsvd_0 : 15;
+    UINT32 trdpre_in_dclks : 8; /**< TRDPRE IN DCLKS */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 tras_in_dclks : 9; /**< TRAS IN DCLKS */
+                            /* Bits[16:8], default=0x00000000*/
+    UINT32 rsvd_0 : 15; /**< Undefined - auto filled rsvd_[31:17] */
+                            /* Bits[31:17], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -457,9 +527,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dclk_in_multiples_of_16_6666_mhz : 16;
-    UINT32 trp_in_dclks : 8;
-    UINT32 trcd_in_dclks : 8;
+    UINT32 dclk_in_multiples_of_16_6666_mhz : 16; /**< DCLK IN MULTIPLES OF 16 6666 MHZ */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 trp_in_dclks : 8; /**< TRP IN DCLKS */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 trcd_in_dclks : 8; /**< TRCD IN DCLKS */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -485,9 +558,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 trdpre_in_dclks : 8;
-    UINT32 tras_in_dclks : 9;
-    UINT32 rsvd_0 : 15;
+    UINT32 trdpre_in_dclks : 8; /**< TRDPRE IN DCLKS */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 tras_in_dclks : 9; /**< TRAS IN DCLKS */
+                            /* Bits[16:8], default=0x00000000*/
+    UINT32 rsvd_0 : 15; /**< Undefined - auto filled rsvd_[31:17] */
+                            /* Bits[31:17], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -510,9 +586,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dclk_in_multiples_of_16_6666_mhz : 16;
-    UINT32 trp_in_dclks : 8;
-    UINT32 trcd_in_dclks : 8;
+    UINT32 dclk_in_multiples_of_16_6666_mhz : 16; /**< DCLK IN MULTIPLES OF 16 6666 MHZ */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 trp_in_dclks : 8; /**< TRP IN DCLKS */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 trcd_in_dclks : 8; /**< TRCD IN DCLKS */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -537,9 +616,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 trdpre_in_dclks : 8;
-    UINT32 tras_in_dclks : 9;
-    UINT32 rsvd_0 : 15;
+    UINT32 trdpre_in_dclks : 8; /**< TRDPRE IN DCLKS */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 tras_in_dclks : 9; /**< TRAS IN DCLKS */
+                            /* Bits[16:8], default=0x00000000*/
+    UINT32 rsvd_0 : 15; /**< Undefined - auto filled rsvd_[31:17] */
+                            /* Bits[31:17], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -565,9 +647,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dclk_in_multiples_of_16_6666_mhz : 16;
-    UINT32 trp_in_dclks : 8;
-    UINT32 trcd_in_dclks : 8;
+    UINT32 dclk_in_multiples_of_16_6666_mhz : 16; /**< DCLK IN MULTIPLES OF 16 6666 MHZ */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 trp_in_dclks : 8; /**< TRP IN DCLKS */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 trcd_in_dclks : 8; /**< TRCD IN DCLKS */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -596,9 +681,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 trdpre_in_dclks : 8;
-    UINT32 tras_in_dclks : 9;
-    UINT32 rsvd_0 : 15;
+    UINT32 trdpre_in_dclks : 8; /**< TRDPRE IN DCLKS */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 tras_in_dclks : 9; /**< TRAS IN DCLKS */
+                            /* Bits[16:8], default=0x00000000*/
+    UINT32 rsvd_0 : 15; /**< Undefined - auto filled rsvd_[31:17] */
+                            /* Bits[31:17], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -625,9 +713,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dclk_in_multiples_of_16_6666_mhz : 16;
-    UINT32 trp_in_dclks : 8;
-    UINT32 trcd_in_dclks : 8;
+    UINT32 dclk_in_multiples_of_16_6666_mhz : 16; /**< DCLK IN MULTIPLES OF 16 6666 MHZ */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 trp_in_dclks : 8; /**< TRP IN DCLKS */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 trcd_in_dclks : 8; /**< TRCD IN DCLKS */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -656,9 +747,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 trdpre_in_dclks : 8;
-    UINT32 tras_in_dclks : 9;
-    UINT32 rsvd_0 : 15;
+    UINT32 trdpre_in_dclks : 8; /**< TRDPRE IN DCLKS */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 tras_in_dclks : 9; /**< TRAS IN DCLKS */
+                            /* Bits[16:8], default=0x00000000*/
+    UINT32 rsvd_0 : 15; /**< Undefined - auto filled rsvd_[31:17] */
+                            /* Bits[31:17], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -685,9 +779,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dclk_in_multiples_of_16_6666_mhz : 16;
-    UINT32 trp_in_dclks : 8;
-    UINT32 trcd_in_dclks : 8;
+    UINT32 dclk_in_multiples_of_16_6666_mhz : 16; /**< DCLK IN MULTIPLES OF 16 6666 MHZ */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 trp_in_dclks : 8; /**< TRP IN DCLKS */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 trcd_in_dclks : 8; /**< TRCD IN DCLKS */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -716,9 +813,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 trdpre_in_dclks : 8;
-    UINT32 tras_in_dclks : 9;
-    UINT32 rsvd_0 : 15;
+    UINT32 trdpre_in_dclks : 8; /**< TRDPRE IN DCLKS */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 tras_in_dclks : 9; /**< TRAS IN DCLKS */
+                            /* Bits[16:8], default=0x00000000*/
+    UINT32 rsvd_0 : 15; /**< Undefined - auto filled rsvd_[31:17] */
+                            /* Bits[31:17], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -745,9 +845,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dclk_in_multiples_of_16_6666_mhz : 16;
-    UINT32 trp_in_dclks : 8;
-    UINT32 trcd_in_dclks : 8;
+    UINT32 dclk_in_multiples_of_16_6666_mhz : 16; /**< DCLK IN MULTIPLES OF 16 6666 MHZ */
+                            /* Bits[15:0], default=0x00000000*/
+    UINT32 trp_in_dclks : 8; /**< TRP IN DCLKS */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 trcd_in_dclks : 8; /**< TRCD IN DCLKS */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -776,9 +879,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 trdpre_in_dclks : 8;
-    UINT32 tras_in_dclks : 9;
-    UINT32 rsvd_0 : 15;
+    UINT32 trdpre_in_dclks : 8; /**< TRDPRE IN DCLKS */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 tras_in_dclks : 9; /**< TRAS IN DCLKS */
+                            /* Bits[16:8], default=0x00000000*/
+    UINT32 rsvd_0 : 15; /**< Undefined - auto filled rsvd_[31:17] */
+                            /* Bits[31:17], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -805,10 +911,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 latency_level_0 : 13;
-    UINT32 rsvd_0 : 3;
-    UINT32 latency_level_1 : 13;
-    UINT32 rsvd_1 : 3;
+    UINT32 latency_level_0 : 13; /**< LATENCY LEVEL 0 */
+                            /* Bits[12:0], default=0x00000000*/
+    UINT32 rsvd_0 : 3; /**< Undefined - auto filled rsvd_[15:13] */
+                            /* Bits[15:13], default=0*/
+    UINT32 latency_level_1 : 13; /**< LATENCY LEVEL 1 */
+                            /* Bits[28:16], default=0x00000000*/
+    UINT32 rsvd_1 : 3; /**< Undefined - auto filled rsvd_[31:29] */
+                            /* Bits[31:29], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -835,10 +945,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 latency_level_2 : 13;
-    UINT32 rsvd_0 : 3;
-    UINT32 latency_level_3 : 13;
-    UINT32 rsvd_1 : 3;
+    UINT32 latency_level_2 : 13; /**< LATENCY LEVEL 2 */
+                            /* Bits[12:0], default=0x00000000*/
+    UINT32 rsvd_0 : 3; /**< Undefined - auto filled rsvd_[15:13] */
+                            /* Bits[15:13], default=0*/
+    UINT32 latency_level_3 : 13; /**< LATENCY LEVEL 3 */
+                            /* Bits[28:16], default=0x00000000*/
+    UINT32 rsvd_1 : 3; /**< Undefined - auto filled rsvd_[31:29] */
+                            /* Bits[31:29], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -865,10 +979,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 latency_level_4 : 13;
-    UINT32 rsvd_0 : 3;
-    UINT32 latency_level_5 : 13;
-    UINT32 rsvd_1 : 3;
+    UINT32 latency_level_4 : 13; /**< LATENCY LEVEL 4 */
+                            /* Bits[12:0], default=0x00000000*/
+    UINT32 rsvd_0 : 3; /**< Undefined - auto filled rsvd_[15:13] */
+                            /* Bits[15:13], default=0*/
+    UINT32 latency_level_5 : 13; /**< LATENCY LEVEL 5 */
+                            /* Bits[28:16], default=0x00000000*/
+    UINT32 rsvd_1 : 3; /**< Undefined - auto filled rsvd_[31:29] */
+                            /* Bits[31:29], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -895,8 +1013,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 latency_level_qclk_sagv : 13;
-    UINT32 rsvd_0 : 19;
+    UINT32 latency_level_qclk_sagv : 13; /**< LATENCY LEVEL QCLK SAGV */
+                            /* Bits[12:0], default=0x00000000*/
+    UINT32 rsvd_0 : 19; /**< Undefined - auto filled rsvd_[31:13] */
+                            /* Bits[31:13], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -921,9 +1041,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pwr_good_cntr_pg1 : 10;
-    UINT32 pwr_good_cntr : 10;
-    UINT32 rsvd_0 : 12;
+    UINT32 pwr_good_cntr_pg1 : 10; /**< PWR GOOD CNTR PG1 */
+                            /* Bits[9:0], default=0x00000019*/
+    UINT32 pwr_good_cntr : 10; /**< PWR GOOD CNTR */
+                            /* Bits[19:10], default=0x0000015E*/
+    UINT32 rsvd_0 : 12; /**< Undefined - auto filled rsvd_[31:20] */
+                            /* Bits[31:20], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -950,9 +1073,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ds_delay_pgpipe : 4;
-    UINT32 ds_delay_pg0 : 4;
-    UINT32 rsvd_0 : 24;
+    UINT32 ds_delay_pgpipe : 4; /**< DS DELAY PGPIPE */
+                            /* Bits[3:0], default=0x00000001*/
+    UINT32 ds_delay_pg0 : 4; /**< DS DELAY PG0 */
+                            /* Bits[7:4], default=0x00000001*/
+    UINT32 rsvd_0 : 24; /**< Undefined - auto filled rsvd_[31:08] */
+                            /* Bits[31:8], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -979,14 +1105,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 17;
-    UINT32 override_to_crystal : 1;
-    UINT32 override_to_slow_clock : 1;
-    UINT32 rsvd_1 : 3;
-    UINT32 cd2x_divider_select : 2;
-    UINT32 rsvd_2 : 1;
-    UINT32 mdclk_source_select : 1;
-    UINT32 rsvd_3 : 6;
+    UINT32 rsvd_0 : 17; /**< Undefined - auto filled rsvd_[16:00] */
+                            /* Bits[16:0], default=0*/
+    UINT32 override_to_crystal : 1; /**< OVERRIDE TO CRYSTAL */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 override_to_slow_clock : 1; /**< OVERRIDE TO SLOW CLOCK */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 rsvd_1 : 3; /**< Undefined - auto filled rsvd_[21:19] */
+                            /* Bits[21:19], default=0*/
+    UINT32 cd2x_divider_select : 2; /**< CD2X DIVIDER SELECT */
+                            /* Bits[23:22], default=0x00000000*/
+    UINT32 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[24:24] */
+                            /* Bits[24:24], default=0*/
+    UINT32 mdclk_source_select : 1; /**< MDCLK SOURCE SELECT */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 rsvd_3 : 6; /**< Undefined - auto filled rsvd_[31:26] */
+                            /* Bits[31:26], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1015,12 +1149,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 4;
-    UINT32 rst_pch_handshake_en : 1;
-    UINT32 rsvd_1 : 1;
-    UINT32 rst_pica_handshake_en : 1;
-    UINT32 disable_reset_wake_lock : 1;
-    UINT32 rsvd_2 : 24;
+    UINT32 rsvd_0 : 4; /**< Undefined - auto filled rsvd_[03:00] */
+                            /* Bits[3:0], default=0*/
+    UINT32 rst_pch_handshake_en : 1; /**< RST PCH HANDSHAKE EN */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[05:05] */
+                            /* Bits[5:5], default=0*/
+    UINT32 rst_pica_handshake_en : 1; /**< RST PICA HANDSHAKE EN */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 disable_reset_wake_lock : 1; /**< DISABLE RESET WAKE LOCK */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 rsvd_2 : 24; /**< Undefined - auto filled rsvd_[31:08] */
+                            /* Bits[31:8], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1047,8 +1187,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 31;
-    UINT32 enable : 1;
+    UINT32 rsvd_0 : 31; /**< Undefined - auto filled rsvd_[30:00] */
+                            /* Bits[30:0], default=0*/
+    UINT32 enable : 1; /**< ENABLE */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1073,7 +1215,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 id : 32;
+    UINT32 id : 32; /**< ID */
+                            /* Bits[31:0], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1098,14 +1241,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 3;
-    UINT32 _48mhz_bclk : 1;
-    UINT32 _96mhz_bclk : 1;
-    UINT32 rsvd_1 : 6;
-    UINT32 detect_frame_sync_early : 2;
-    UINT32 bypass_flop : 1;
-    UINT32 tmode : 2;
-    UINT32 rsvd_2 : 16;
+    UINT32 rsvd_0 : 3; /**< Undefined - auto filled rsvd_[02:00] */
+                            /* Bits[2:0], default=0*/
+    UINT32 _48mhz_bclk : 1; /**< 48MHZ BCLK */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 _96mhz_bclk : 1; /**< 96MHZ BCLK */
+                            /* Bits[4:4], default=0x00000001*/
+    UINT32 rsvd_1 : 6; /**< Undefined - auto filled rsvd_[10:05] */
+                            /* Bits[10:5], default=0*/
+    UINT32 detect_frame_sync_early : 2; /**< DETECT FRAME SYNC EARLY */
+                            /* Bits[12:11], default=0x00000000*/
+    UINT32 bypass_flop : 1; /**< BYPASS FLOP */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 tmode : 2; /**< TMODE */
+                            /* Bits[15:14], default=0x00000002*/
+    UINT32 rsvd_2 : 16; /**< Undefined - auto filled rsvd_[31:16] */
+                            /* Bits[31:16], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1138,8 +1289,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 error_control : 1;
-    UINT32 rsvd_0 : 31;
+    UINT32 error_control : 1; /**< ERROR CONTROL */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 31; /**< Undefined - auto filled rsvd_[31:01] */
+                            /* Bits[31:1], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1164,11 +1317,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 error_status : 1;
-    UINT32 rsvd_0 : 7;
-    UINT32 dedicated_path_error_status0 : 1;
-    UINT32 dedicated_path_error_status1 : 1;
-    UINT32 rsvd_1 : 22;
+    UINT32 error_status : 1; /**< ERROR STATUS */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 7; /**< Undefined - auto filled rsvd_[07:01] */
+                            /* Bits[7:1], default=0*/
+    UINT32 dedicated_path_error_status0 : 1; /**< DEDICATED PATH ERROR STATUS0 */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 dedicated_path_error_status1 : 1; /**< DEDICATED PATH ERROR STATUS1 */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 rsvd_1 : 22; /**< Undefined - auto filled rsvd_[31:10] */
+                            /* Bits[31:10], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1197,24 +1355,42 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 defusa_iosf_parity_cntrl_lock : 1;
-    UINT32 rsvd_0 : 3;
-    UINT32 psf_0_data_parity_error_inj : 2;
-    UINT32 psf_0_cmd_parity_err_inj : 1;
-    UINT32 rsvd_1 : 1;
-    UINT32 psf_0_data_parity_chk_en : 1;
-    UINT32 psf_0_cmd_parity_chk_en : 1;
-    UINT32 rsvd_2 : 2;
-    UINT32 psf_0_data_parity_gen_dis : 1;
-    UINT32 psf_0_cmd_parity_gen_dis : 1;
-    UINT32 rsvd_3 : 8;
-    UINT32 psf0_dip_cmd_parity_err_inj : 1;
-    UINT32 psf1_dip_cmd_parity_err_inj : 1;
-    UINT32 psf_dip_data_parity_chk_en : 1;
-    UINT32 psf_dip_cmd_parity_chk_en : 1;
-    UINT32 rsvd_4 : 3;
-    UINT32 psf_dip_cmd_parity_gen_dis : 1;
-    UINT32 rsvd_5 : 2;
+    UINT32 defusa_iosf_parity_cntrl_lock : 1; /**< DEFUSA IOSF PARITY CNTRL LOCK */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 3; /**< Undefined - auto filled rsvd_[03:01] */
+                            /* Bits[3:1], default=0*/
+    UINT32 psf_0_data_parity_error_inj : 2; /**< PSF 0 DATA PARITY ERROR INJ */
+                            /* Bits[5:4], default=0x00000000*/
+    UINT32 psf_0_cmd_parity_err_inj : 1; /**< PSF 0 CMD PARITY ERR INJ */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[07:07] */
+                            /* Bits[7:7], default=0*/
+    UINT32 psf_0_data_parity_chk_en : 1; /**< PSF 0 DATA PARITY CHK EN */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 psf_0_cmd_parity_chk_en : 1; /**< PSF 0 CMD PARITY CHK EN */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 rsvd_2 : 2; /**< Undefined - auto filled rsvd_[11:10] */
+                            /* Bits[11:10], default=0*/
+    UINT32 psf_0_data_parity_gen_dis : 1; /**< PSF 0 DATA PARITY GEN DIS */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 psf_0_cmd_parity_gen_dis : 1; /**< PSF 0 CMD PARITY GEN DIS */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 rsvd_3 : 8; /**< Undefined - auto filled rsvd_[21:14] */
+                            /* Bits[21:14], default=0*/
+    UINT32 psf0_dip_cmd_parity_err_inj : 1; /**< PSF0 DIP CMD PARITY ERR INJ */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 psf1_dip_cmd_parity_err_inj : 1; /**< PSF1 DIP CMD PARITY ERR INJ */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 psf_dip_data_parity_chk_en : 1; /**< PSF DIP DATA PARITY CHK EN */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 psf_dip_cmd_parity_chk_en : 1; /**< PSF DIP CMD PARITY CHK EN */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 rsvd_4 : 3; /**< Undefined - auto filled rsvd_[28:26] */
+                            /* Bits[28:26], default=0*/
+    UINT32 psf_dip_cmd_parity_gen_dis : 1; /**< PSF DIP CMD PARITY GEN DIS */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 rsvd_5 : 2; /**< Undefined - auto filled rsvd_[31:30] */
+                            /* Bits[31:30], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1261,10 +1437,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 abox0_credits : 7;
-    UINT32 spare_1 : 1;
-    UINT32 abox1_credits : 7;
-    UINT32 spare_0 : 17;
+    UINT32 abox0_credits : 7; /**< ABOX0 CREDITS */
+                            /* Bits[6:0], default=0x00000000*/
+    UINT32 spare_1 : 1; /**< SPARE 1 */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 abox1_credits : 7; /**< ABOX1 CREDITS */
+                            /* Bits[14:8], default=0x00000000*/
+    UINT32 spare_0 : 17; /**< SPARE 0 */
+                            /* Bits[31:15], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1295,8 +1475,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 memory_controller_credits : 8;
-    UINT32 rsvd_0 : 24;
+    UINT32 memory_controller_credits : 8; /**< MEMORY CONTROLLER CREDITS */
+                            /* Bits[7:0], default=0x00000010*/
+    UINT32 rsvd_0 : 24; /**< Undefined - auto filled rsvd_[31:08] */
+                            /* Bits[31:8], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1321,9 +1503,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 23;
-    UINT32 fuse_error_code : 8;
-    UINT32 fuse_error_valid : 1;
+    UINT32 rsvd_0 : 23; /**< Undefined - auto filled rsvd_[22:00] */
+                            /* Bits[22:0], default=0*/
+    UINT32 fuse_error_code : 8; /**< FUSE ERROR CODE */
+                            /* Bits[30:23], default=0x00000000*/
+    UINT32 fuse_error_valid : 1; /**< FUSE ERROR VALID */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1350,12 +1535,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 display_fusa_enable : 1;
-    UINT32 iosf_parity_disable : 1;
-    UINT32 dni_parity_disable : 1;
-    UINT32 ecc_error_injection_enable : 1;
-    UINT32 dg_spare_fuse : 4;
-    UINT32 rsvd_0 : 24;
+    UINT32 display_fusa_enable : 1; /**< DISPLAY FUSA ENABLE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 iosf_parity_disable : 1; /**< IOSF PARITY DISABLE */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 dni_parity_disable : 1; /**< DNI PARITY DISABLE */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 ecc_error_injection_enable : 1; /**< ECC ERROR INJECTION ENABLE */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 dg_spare_fuse : 4; /**< DG SPARE FUSE */
+                            /* Bits[7:4], default=0x00000000*/
+    UINT32 rsvd_0 : 24; /**< Undefined - auto filled rsvd_[31:08] */
+                            /* Bits[31:8], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1388,34 +1579,62 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 lp_nonsnoop : 1;
-    UINT32 vtd_fault_fix_disable : 1;
-    UINT32 spare2 : 1;
-    UINT32 sai_check_disable_on_flr_ack : 1;
-    UINT32 disable_wait_for_ats_invalidation_done_from_dsb : 1;
-    UINT32 disable_dsb_invalidation : 1;
-    UINT32 ccs_hashing_performance_update_disable : 1;
-    UINT32 fusa_and_interrupt_memup_override : 1;
-    UINT32 hdcp_iaptk_flow_delay : 5;
-    UINT32 hdcp_iaptk_flow_delay_dis : 1;
-    UINT32 dgs_wake_dc5_check_en : 1;
-    UINT32 pm_sai_check_disable : 1;
-    UINT32 kvmr_ravdm_enable : 1;
-    UINT32 iaptk_disable : 1;
-    UINT32 spare18 : 1;
-    UINT32 spare19 : 1;
-    UINT32 spare20 : 1;
-    UINT32 spare21 : 1;
-    UINT32 spare22 : 1;
-    UINT32 spare23 : 1;
-    UINT32 spare24 : 1;
-    UINT32 spare25 : 1;
-    UINT32 spare26 : 1;
-    UINT32 spare27 : 1;
-    UINT32 spare28 : 1;
-    UINT32 spare29 : 1;
-    UINT32 spare30 : 1;
-    UINT32 spare31 : 1;
+    UINT32 lp_nonsnoop : 1; /**< LP NONSNOOP */
+                            /* Bits[0:0], default=0x00000001*/
+    UINT32 vtd_fault_fix_disable : 1; /**< VTD FAULT FIX DISABLE */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 spare2 : 1; /**< SPARE2 */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 sai_check_disable_on_flr_ack : 1; /**< SAI CHECK DISABLE ON FLR ACK */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 disable_wait_for_ats_invalidation_done_from_dsb : 1; /**< DISABLE WAIT FOR ATS INVALIDATION DONE FROM DSB */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 disable_dsb_invalidation : 1; /**< DISABLE DSB INVALIDATION */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 ccs_hashing_performance_update_disable : 1; /**< CCS HASHING PERFORMANCE UPDATE DISABLE */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 fusa_and_interrupt_memup_override : 1; /**< FUSA AND INTERRUPT MEMUP OVERRIDE */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 hdcp_iaptk_flow_delay : 5; /**< HDCP IAPTK FLOW DELAY */
+                            /* Bits[12:8], default=0x00000008*/
+    UINT32 hdcp_iaptk_flow_delay_dis : 1; /**< HDCP IAPTK FLOW DELAY DIS */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 dgs_wake_dc5_check_en : 1; /**< DGS WAKE DC5 CHECK EN */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 pm_sai_check_disable : 1; /**< PM SAI CHECK DISABLE */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 kvmr_ravdm_enable : 1; /**< KVMR RAVDM ENABLE */
+                            /* Bits[16:16], default=0x00000001*/
+    UINT32 iaptk_disable : 1; /**< IAPTK DISABLE */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 spare18 : 1; /**< SPARE18 */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 spare19 : 1; /**< SPARE19 */
+                            /* Bits[19:19], default=0x00000000*/
+    UINT32 spare20 : 1; /**< SPARE20 */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 spare21 : 1; /**< SPARE21 */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 spare22 : 1; /**< SPARE22 */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 spare23 : 1; /**< SPARE23 */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 spare24 : 1; /**< SPARE24 */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 spare25 : 1; /**< SPARE25 */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 spare26 : 1; /**< SPARE26 */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 spare27 : 1; /**< SPARE27 */
+                            /* Bits[27:27], default=0x00000000*/
+    UINT32 spare28 : 1; /**< SPARE28 */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 spare29 : 1; /**< SPARE29 */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 spare30 : 1; /**< SPARE30 */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 spare31 : 1; /**< SPARE31 */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1494,11 +1713,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 aboxportmapdis : 1;
-    UINT32 ipcovrddis : 1;
-    UINT32 spare2 : 1;
-    UINT32 spare3 : 1;
-    UINT32 spare : 28;
+    UINT32 aboxportmapdis : 1; /**< ABOXPORTMAPDIS */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 ipcovrddis : 1; /**< IPCOVRDDIS */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 spare2 : 1; /**< SPARE2 */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 spare3 : 1; /**< SPARE3 */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 spare : 28; /**< SPARE */
+                            /* Bits[31:4], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1531,10 +1755,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 16;
-    UINT32 spare1 : 3;
-    UINT32 spare2 : 5;
-    UINT32 spare3 : 8;
+    UINT32 rsvd_0 : 16; /**< Undefined - auto filled rsvd_[15:00] */
+                            /* Bits[15:0], default=0*/
+    UINT32 spare1 : 3; /**< SPARE1 */
+                            /* Bits[18:16], default=0x00000000*/
+    UINT32 spare2 : 5; /**< SPARE2 */
+                            /* Bits[23:19], default=0x00000000*/
+    UINT32 spare3 : 8; /**< SPARE3 */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1563,12 +1791,18 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dgp_upstream_abort : 1;
-    UINT32 dgdp_upstream_abort0 : 1;
-    UINT32 dgdp_upstream_abort1 : 1;
-    UINT32 spare1 : 5;
-    UINT32 flr_state : 4;
-    UINT32 spare : 20;
+    UINT32 dgp_upstream_abort : 1; /**< DGP UPSTREAM ABORT */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 dgdp_upstream_abort0 : 1; /**< DGDP UPSTREAM ABORT0 */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 dgdp_upstream_abort1 : 1; /**< DGDP UPSTREAM ABORT1 */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 spare1 : 5; /**< SPARE1 */
+                            /* Bits[7:3], default=0x00000000*/
+    UINT32 flr_state : 4; /**< FLR STATE */
+                            /* Bits[11:8], default=0x00000000*/
+    UINT32 spare : 20; /**< SPARE */
+                            /* Bits[31:12], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1603,7 +1837,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 spare : 32;
+    UINT32 spare : 32; /**< SPARE */
+                            /* Bits[31:0], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1628,14 +1863,22 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 fclk_idle_timer : 4;
-    UINT32 fdpclk_idle_timer : 4;
-    UINT32 dgc_dis : 1;
-    UINT32 dgp_dis : 1;
-    UINT32 dgr_dis : 1;
-    UINT32 dgs_dis : 1;
-    UINT32 dgdp_dis : 1;
-    UINT32 rsvd_0 : 19;
+    UINT32 fclk_idle_timer : 4; /**< FCLK IDLE TIMER */
+                            /* Bits[3:0], default=0x00000000*/
+    UINT32 fdpclk_idle_timer : 4; /**< FDPCLK IDLE TIMER */
+                            /* Bits[7:4], default=0x00000000*/
+    UINT32 dgc_dis : 1; /**< DGC DIS */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 dgp_dis : 1; /**< DGP DIS */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 dgr_dis : 1; /**< DGR DIS */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 dgs_dis : 1; /**< DGS DIS */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 dgdp_dis : 1; /**< DGDP DIS */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 rsvd_0 : 19; /**< Undefined - auto filled rsvd_[31:13] */
+                            /* Bits[31:13], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1672,11 +1915,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 clkreq_ovrd : 1;
-    UINT32 mem_up_ovrd : 1;
-    UINT32 spare1 : 14;
-    UINT32 clkreq_hyst_cntr : 8;
-    UINT32 spare2 : 8;
+    UINT32 clkreq_ovrd : 1; /**< CLKREQ OVRD */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 mem_up_ovrd : 1; /**< MEM UP OVRD */
+                            /* Bits[1:1], default=0x00000001*/
+    UINT32 spare1 : 14; /**< SPARE1 */
+                            /* Bits[15:2], default=0x00000000*/
+    UINT32 clkreq_hyst_cntr : 8; /**< CLKREQ HYST CNTR */
+                            /* Bits[23:16], default=0x00000004*/
+    UINT32 spare2 : 8; /**< SPARE2 */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1708,11 +1956,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 funnum : 3;
-    UINT32 devnum : 5;
-    UINT32 busnum : 8;
-    UINT32 barnum : 3;
-    UINT32 rsvd_0 : 13;
+    UINT32 funnum : 3; /**< FUNNUM */
+                            /* Bits[2:0], default=0x00000000*/
+    UINT32 devnum : 5; /**< DEVNUM */
+                            /* Bits[7:3], default=0x00000016*/
+    UINT32 busnum : 8; /**< BUSNUM */
+                            /* Bits[15:8], default=0x00000000*/
+    UINT32 barnum : 3; /**< BARNUM */
+                            /* Bits[18:16], default=0x00000007*/
+    UINT32 rsvd_0 : 13; /**< Undefined - auto filled rsvd_[31:19] */
+                            /* Bits[31:19], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1740,10 +1993,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 16;
-    UINT32 function : 3;
-    UINT32 device : 5;
-    UINT32 bus : 8;
+    UINT32 rsvd_0 : 16; /**< Undefined - auto filled rsvd_[15:00] */
+                            /* Bits[15:0], default=0*/
+    UINT32 function : 3; /**< FUNCTION */
+                            /* Bits[18:16], default=0x00000000*/
+    UINT32 device : 5; /**< DEVICE */
+                            /* Bits[23:19], default=0x00000002*/
+    UINT32 bus : 8; /**< BUS */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1771,10 +2028,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pch_reset_done : 1;
-    UINT32 rsvd_0 : 7;
-    UINT32 pica_reset_done : 1;
-    UINT32 rsvd_1 : 23;
+    UINT32 pch_reset_done : 1; /**< PCH RESET DONE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 7; /**< Undefined - auto filled rsvd_[07:01] */
+                            /* Bits[7:1], default=0*/
+    UINT32 pica_reset_done : 1; /**< PICA RESET DONE */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 rsvd_1 : 23; /**< Undefined - auto filled rsvd_[31:09] */
+                            /* Bits[31:9], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1802,6 +2063,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 cp_debiosearly_lsb : 32;
+                            /* Bits[31:0], default=0x01100218*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1827,6 +2089,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 cp_debiosearly_msb : 32;
+                            /* Bits[31:0], default=0x00000400*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1852,6 +2115,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 rac_debiosearly_lsb : 32;
+                            /* Bits[31:0], default=0xFFFFFFFF*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1877,6 +2141,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 rac_debiosearly_msb : 32;
+                            /* Bits[31:0], default=0xFFFFFFFF*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1902,6 +2167,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 wac_debiosearly_lsb : 32;
+                            /* Bits[31:0], default=0x0110021A*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1927,6 +2193,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 wac_debiosearly_msb : 32;
+                            /* Bits[31:0], default=0x00000400*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1952,6 +2219,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 cp_debios_lsb : 32;
+                            /* Bits[31:0], default=0x01100208*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -1977,6 +2245,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 cp_debios_msb : 32;
+                            /* Bits[31:0], default=0x00000400*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2002,6 +2271,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 rac_debios_lsb : 32;
+                            /* Bits[31:0], default=0xFFFFFFFF*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2027,6 +2297,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 rac_debios_msb : 32;
+                            /* Bits[31:0], default=0xFFFFFFFF*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2052,6 +2323,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 wac_debios_lsb : 32;
+                            /* Bits[31:0], default=0x0110021A*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2077,6 +2349,7 @@ typedef union {
 typedef union {
   struct {
     UINT32 wac_debios_msb : 32;
+                            /* Bits[31:0], default=0x00000400*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2100,11 +2373,16 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 spare : 1;
-    UINT32 rsvd_0 : 5;
-    UINT32 ggms : 2;
-    UINT32 gms : 8;
-    UINT32 rsvd_1 : 16;
+    UINT32 spare : 1; /**< SPARE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 5; /**< Undefined - auto filled rsvd_[05:01] */
+                            /* Bits[5:1], default=0*/
+    UINT32 ggms : 2; /**< GGMS */
+                            /* Bits[7:6], default=0x00000003*/
+    UINT32 gms : 8; /**< GMS */
+                            /* Bits[15:8], default=0x00000005*/
+    UINT32 rsvd_1 : 16; /**< Undefined - auto filled rsvd_[31:16] */
+                            /* Bits[31:16], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2131,9 +2409,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 spare : 1;
-    UINT32 rsvd_0 : 19;
-    UINT32 bdsm : 12;
+    UINT32 spare : 1; /**< SPARE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 19; /**< Undefined - auto filled rsvd_[19:01] */
+                            /* Bits[19:1], default=0*/
+    UINT32 bdsm : 12; /**< BDSM */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2159,7 +2440,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 bdsm : 32;
+    UINT32 bdsm : 32; /**< BDSM */
+                            /* Bits[31:0], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2183,9 +2465,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 spare : 1;
-    UINT32 rsvd_0 : 19;
-    UINT32 bgsm_lsb : 12;
+    UINT32 spare : 1; /**< SPARE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 19; /**< Undefined - auto filled rsvd_[19:01] */
+                            /* Bits[19:1], default=0*/
+    UINT32 bgsm_lsb : 12; /**< BGSM LSB */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2211,7 +2496,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 bgsm_msb : 32;
+    UINT32 bgsm_msb : 32; /**< BGSM MSB */
+                            /* Bits[31:0], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2234,15 +2520,24 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pcm_enable : 1;
-    UINT32 pavp_enable : 1;
-    UINT32 lock : 1;
-    UINT32 heavy_mode_select : 1;
-    UINT32 override_terminate_attack : 1;
-    UINT32 reservd : 1;
-    UINT32 asmf_method_enable : 1;
-    UINT32 rsvd_0 : 13;
-    UINT32 wopcmbase : 12;
+    UINT32 pcm_enable : 1; /**< PCM ENABLE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 pavp_enable : 1; /**< PAVP ENABLE */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 lock : 1; /**< LOCK */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 heavy_mode_select : 1; /**< HEAVY MODE SELECT */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 override_terminate_attack : 1; /**< OVERRIDE TERMINATE ATTACK */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 reservd : 1; /**< RESERVD */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 asmf_method_enable : 1; /**< ASMF METHOD ENABLE */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 rsvd_0 : 13; /**< Undefined - auto filled rsvd_[19:07] */
+                            /* Bits[19:7], default=0*/
+    UINT32 wopcmbase : 12; /**< WOPCMBASE */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2279,7 +2574,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 wopcmbase : 32;
+    UINT32 wopcmbase : 32; /**< WOPCMBASE */
+                            /* Bits[31:0], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2304,8 +2600,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 24;
-    UINT32 dism_base_lsb : 8;
+    UINT32 rsvd_0 : 24; /**< Undefined - auto filled rsvd_[23:00] */
+                            /* Bits[23:0], default=0*/
+    UINT32 dism_base_lsb : 8; /**< DISM BASE LSB */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2330,7 +2628,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dism_base_msb : 32;
+    UINT32 dism_base_msb : 32; /**< DISM BASE MSB */
+                            /* Bits[31:0], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2355,8 +2654,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 24;
-    UINT32 dism_limit_lsb : 8;
+    UINT32 rsvd_0 : 24; /**< Undefined - auto filled rsvd_[23:00] */
+                            /* Bits[23:0], default=0*/
+    UINT32 dism_limit_lsb : 8; /**< DISM LIMIT LSB */
+                            /* Bits[31:24], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2381,7 +2682,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dism_limit_msb : 32;
+    UINT32 dism_limit_msb : 32; /**< DISM LIMIT MSB */
+                            /* Bits[31:0], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2406,8 +2708,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 lmtt_directory_pointer : 31;
-    UINT32 rsvd_0 : 1;
+    UINT32 lmtt_directory_pointer : 31; /**< LMTT DIRECTORY POINTER */
+                            /* Bits[30:0], default=0x00000000*/
+    UINT32 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[31:31] */
+                            /* Bits[31:31], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2430,9 +2734,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ccs_enable : 1;
-    UINT32 rsvd_0 : 5;
-    UINT32 flat_ccs_base_low : 26;
+    UINT32 ccs_enable : 1; /**< CCS ENABLE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 5; /**< Undefined - auto filled rsvd_[05:01] */
+                            /* Bits[5:1], default=0*/
+    UINT32 flat_ccs_base_low : 26; /**< FLAT CCS BASE LOW */
+                            /* Bits[31:6], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2455,10 +2762,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 flat_ccs_base_high : 10;
-    UINT32 rsvd_0 : 4;
-    UINT32 flat_ccs_size : 14;
-    UINT32 rsvd_1 : 4;
+    UINT32 flat_ccs_base_high : 10; /**< FLAT CCS BASE HIGH */
+                            /* Bits[9:0], default=0x00000000*/
+    UINT32 rsvd_0 : 4; /**< Undefined - auto filled rsvd_[13:10] */
+                            /* Bits[13:10], default=0*/
+    UINT32 flat_ccs_size : 14; /**< FLAT CCS SIZE */
+                            /* Bits[27:14], default=0x00000000*/
+    UINT32 rsvd_1 : 4; /**< Undefined - auto filled rsvd_[31:28] */
+                            /* Bits[31:28], default=0*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -2478,3 +2789,4 @@ typedef union {
 
 
 #endif      // _DISP_h
+

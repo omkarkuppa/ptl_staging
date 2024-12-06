@@ -3235,6 +3235,7 @@ PlatformBootManagerBeforeConsole (
 #endif
   if (CnvSetup.PrebootBleEnable == 0) {
     UnloadDriver (&gBluetoothHciImageGuid, L"Intel BT Hci Driver");
+    UnloadDriver (&gBluetoothPciHciImageGuid, L"Intel Pci Bt HciDxe");
   }
 
   //

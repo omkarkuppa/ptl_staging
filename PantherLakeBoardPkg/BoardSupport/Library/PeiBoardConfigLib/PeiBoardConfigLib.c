@@ -225,7 +225,7 @@ ParseBoardInfo (
     PcdSetBoolS (PcdSpdPresent, FALSE);
   }
 
-  PcdSet16S (PcdDisplayId, (UINT16)((BoardInfoStructure->RvpFields.DdiAConfig) | (BoardInfoStructure->RvpFields.DdiBConfig << BIT0)));
+  PcdSet16S (PcdDisplayId, (UINT16)((BoardInfoStructure->RvpFields.DdiAConfig) | (BoardInfoStructure->RvpFields.DdiBConfig << BIT1)));
 
   return EFI_SUCCESS;
 }
@@ -796,9 +796,12 @@ SetTcssPortCapPcd (
   UINTN                            DataSize;
   EFI_STATUS                       Status;
   UINT8                            PortNum;
+  BOOLEAN                          IsUsbConnectorConnectableMapChanged;
 
   TcssPortCapMap = 0;
   TcssPortCap = (UINT8 *) &TcssPortCapMap;
+  IsUsbConnectorConnectableMapChanged = FALSE;
+
   UsbConnectorHobDataPtr  = GetUsbConnectorHobData ();
   UsbCConnectorHobDataPtr = GetUsbCConnectorHobData ();
   if (UsbConnectorHobDataPtr == NULL || UsbCConnectorHobDataPtr == NULL) {
@@ -867,11 +870,22 @@ SetTcssPortCapPcd (
               break;
           }
         }
+        if (SaSetup.TcssPortConf[PortNum] == UsbCDisable) {
+          UsbConnectorBoardConfig[ConnectorIndex].ConnectorConnectable = UNCONNECTABLE;
+          IsUsbConnectorConnectableMapChanged = TRUE;
+        }
       } else {
         TcssPortCap[PortNum] = UsbCDisable;
       }
     }
   }
+
+  if (IsUsbConnectorConnectableMapChanged) {
+    // Update the number of connectable USBC connectors and map
+    Status = UpdateNumOfConnectableUsbCConnectorsAndMap ();
+    ASSERT_EFI_ERROR (Status);
+  }
+
   DEBUG ((DEBUG_INFO, "TcssPortCapMap = 0x%08x\n", TcssPortCapMap));
   PcdSet32S (PcdTcssPortCapMap, TcssPortCapMap);
 }
@@ -1113,46 +1127,6 @@ SetUcsiRevisionPcd (
   PcdSet16S (PcdUcsiRevision, Version);
 
   DEBUG ((DEBUG_INFO, "UpdateUCSIVersionPcd - End\n"));
-}
-
-/**
-  Setting PcdUsbCPdSupportBitmap from UsbC connector configuration table
-  The lower 4 bits (BIT0 - BIT3) of PcdUsbCPdSupportBitmap represent
-  whether TCP 0 through 3 can support PD.
-
-**/
-VOID
-SetPcdUsbCPdSupportBitmap (
-  VOID
-  )
-{
-  UINT8                           ConnectorIndex;
-  UINT8                           PdSupportBitmap;
-  USB_CONNECTOR_HOB_DATA          *UsbConnectorHobDataPtr;
-  USB_CONNECTOR_BOARD_CONFIG      *UsbConnectorBoardConfig;
-  USBC_CONNECTOR_HOB_DATA         *UsbCConnectorHobDataPtr;
-  USBC_CONNECTOR_BOARD_CONFIG     *UsbCConnectorBoardConfig;
-  PdSupportBitmap = 0;
-
-  UsbConnectorHobDataPtr  = GetUsbConnectorHobData ();
-  UsbCConnectorHobDataPtr = GetUsbCConnectorHobData ();
-
-  if (UsbConnectorHobDataPtr != NULL || UsbCConnectorHobDataPtr != NULL) {
-    UsbConnectorBoardConfig  = UsbConnectorHobDataPtr->UsbConnectorBoardConfig;
-    UsbCConnectorBoardConfig = UsbCConnectorHobDataPtr->UsbCConnectorBoardConfig;
-    if (UsbConnectorBoardConfig != NULL && UsbCConnectorBoardConfig != NULL) {
-      for (ConnectorIndex = 0; ConnectorIndex < UsbCConnectorHobDataPtr->NumberOfUsbCConnectors; ConnectorIndex++, UsbCConnectorBoardConfig++) {
-        if (UsbConnectorBoardConfig[ConnectorIndex].Usb3Controller == TCSS_USB3 &&
-            UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum < MAX_TCSS_USB3_PORTS &&
-            UsbCConnectorBoardConfig->PdNum != 0) {
-          PdSupportBitmap |= (PD_SUPPORT << UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum);
-        }
-      }
-    }
-  }
-
-  DEBUG ((DEBUG_INFO, "PdSupportBitmap: 0x%x\n", PdSupportBitmap));
-  PcdSet8S (PcdUsbCPdSupportBitmap, PdSupportBitmap);
 }
 
 VOID

@@ -18,6 +18,7 @@
 
 @par Specification Reference:
 **/
+
 #ifndef __DOMAIN_IGPU_INIT_H__
 #define __DOMAIN_IGPU_INIT_H__
 
@@ -27,6 +28,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <IGpuConfig.h>
 #include <Library/IoLib.h>
+#include <Ppi/SiPolicy.h>
 
 //
 // The Enum should be aligned with IP_IGPU_XE_VERSION
@@ -46,7 +48,7 @@ typedef enum {
 **/
 EFI_STATUS
 IGpuPreMemInit (
-  IN  IGPU_XE_VERSION     IGpuXeVersion
+  IN  IGPU_XE_VERSION  IGpuXeVersion
   );
 
 /**
@@ -81,9 +83,9 @@ CreateIGpuDataHob (
 **/
 VOID
 IGpuInit (
-  IN  IGPU_PEI_PREMEM_CONFIG       *IGpuPreMemConfig,
-  IN  DISPLAY_DEVICE               *PrimaryDisplay,
-  IN  OUT UINT32                   *IGpuMmioLength
+  IN  IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig,
+  IN  DISPLAY_DEVICE          *PrimaryDisplay,
+  IN  OUT UINT32              *IGpuMmioLength
   );
 
 /**
@@ -115,8 +117,8 @@ IGpuEndOfPeiCallback (
 **/
 EFI_STATUS
 IGpuPmInit (
-  IN  IGPU_PEI_PREMEM_CONFIG      *IGpuPreMemConfig,
-  IN  IGPU_PEI_CONFIG             *IGpuConfig
+  IN  IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig,
+  IN  IGPU_PEI_CONFIG         *IGpuConfig
   );
 
 /**
@@ -126,7 +128,7 @@ IGpuPmInit (
 **/
 VOID
 IGpuDisplayInitPreMem (
-  IN  IGPU_PEI_PREMEM_CONFIG      *IGpuPreMemConfig
+  IN  IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig
   );
 
 /**
@@ -140,11 +142,13 @@ IGpuDisplayInitPostMem (
 /**
   This function is to set IGPU Memory map (RC6 base, Doorbell base, Dfdbase etc).
 
+  @param[in] SiPreMemPolicyPpi  Pointer to pre-mem SI policy.
+
   @retval     EFI_STATUS
 **/
 EFI_STATUS
 IGpuSetMemMap (
-  VOID
+  IN SI_PREMEM_POLICY_PPI  *SiPreMemPolicyPpi
   );
 
 /**
@@ -157,8 +161,8 @@ IGpuSetMemMap (
 **/
 EFI_STATUS
 IGpuPeiDisplayInit (
-  IN   IGPU_PEI_PREMEM_CONFIG      *IGpuPreMemConfig,
-  IN   IGPU_PEI_CONFIG             *IGpuConfig
+  IN   IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig,
+  IN   IGPU_PEI_CONFIG         *IGpuConfig
   );
 
 /**
@@ -171,8 +175,8 @@ IGpuPeiDisplayInit (
 **/
 EFI_STATUS
 IGpuPavpInit (
-  IN       IGPU_PEI_CONFIG                 *IGpuConfig,
-  IN       IGPU_PEI_PREMEM_CONFIG          *IGpuPreMemConfig
+  IN       IGPU_PEI_CONFIG         *IGpuConfig,
+  IN       IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig
   );
 
 /**
@@ -205,8 +209,26 @@ InformIGpuDisableStatus (
 VOID
 EFIAPI
 IGpuMemoryAllocation (
-  IN OUT EFI_PHYSICAL_ADDRESS         *TopUseableMemAddr,
-  IN OUT UINT64                       *Touud,
-  IN EFI_RESOURCE_ATTRIBUTE_TYPE      ResourceAttributeTested
+  IN OUT EFI_PHYSICAL_ADDRESS     *TopUseableMemAddr,
+  IN OUT UINT64                   *Touud,
+  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
   );
+
+/**
+Reserve IGPU Stolen Memory.
+
+@param[in] SiPreMemPolicyPpi        - Pointer to SiPreMemPolicyPpi
+@param[in] TopUseableMemAddr        - Moving address pointer
+@param[in] Touud                    - Size leftover pointer
+@param[in] ResourceAttributeTested  - Resource attribute flag
+**/
+VOID
+EFIAPI
+IGpuGsm2Allocation (
+  IN SI_PREMEM_POLICY_PPI         *SiPreMemPolicyPpi,
+  IN OUT EFI_PHYSICAL_ADDRESS     *TopUseableMemAddr,
+  IN OUT UINT64                   *Touud,
+  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
+  );
+
 #endif // __DOMAIN_IGPU_INIT_H__

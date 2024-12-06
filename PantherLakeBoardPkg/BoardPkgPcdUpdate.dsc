@@ -170,6 +170,7 @@
   !endif
 
     gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable|TRUE
+    gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber|0x4
 
   !if gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable == TRUE
     gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber|0x1
@@ -255,7 +256,6 @@
   gSiPkgTokenSpaceGuid.PcdNpuEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdDtprEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdPpamEnable|TRUE
-  gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdStatusCodeUseTraceHub|TRUE
 
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable|TRUE
@@ -380,7 +380,7 @@
 # DMAR ACPI feature settings
 #
 !if gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarFeatureEnable == TRUE
-  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRmrrSupport|FALSE
+  gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRmrrSupport|TRUE
   gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSatcSupport|TRUE
   gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarSidpSupport|TRUE
   gDmarAcpiFeaturePkgTokenSpaceGuid.PcdDmarRhsaSupport|FALSE
@@ -458,7 +458,7 @@
 
 !if $(TARGET) == DEBUG
   !if gSiPkgTokenSpaceGuid.PcdLpssUartEnable == TRUE
-    gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|FALSE
+    gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|TRUE
     gSiPkgTokenSpaceGuid.PcdLpssUartNumber|0
     gPlatformModuleTokenSpaceGuid.PcdStatusCodeUseSerialIoUart|TRUE
   !endif
@@ -501,7 +501,6 @@
   gUefiCpuPkgTokenSpaceGuid.PcdCpuMsegSize|0x11A000
 !else
   gSiPkgTokenSpaceGuid.PcdSpaEnable|FALSE
-  gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable|FALSE
 !endif
 
 !if gSiPkgTokenSpaceGuid.PcdSmbiosEnable == TRUE
@@ -567,6 +566,8 @@
 
   gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopVbtBinEnable|TRUE
 
+  gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear|2024
+
   gIntelFsp2PkgTokenSpaceGuid.PcdGlobalDataPointerAddress|0xFED00148
   gIntelFsp2WrapperTokenSpaceGuid.PcdPeiMinMemSize|0x4800000
 
@@ -621,6 +622,8 @@
   #      measure the FSP code without UPD in another record (PCR0).
   #
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig|0x8000000F  #Enable FSP measurement by platform
+
+  gUefiCpuPkgTokenSpaceGuid.PcdMaxMappingAddressBeforeTempRamExit|0x100000000
 
 
 # Update PcdsFeatureFlag acording to PcdsFixedAtBuild changes

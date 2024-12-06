@@ -1305,7 +1305,6 @@
 #string STR_CMDSR_NAME                          #language en-US "CMD CTL CLK Slew Rate"
 #string STR_DIMMODTCA_NAME                      #language en-US "DIMM CA ODT Training"
 #string STR_RDVREFDC_NAME                       #language en-US "Read Vref Decap Training*"
-#string STR_VDDQT_NAME                          #language en-US "Vddq Training"
 #string STR_DCCPICODELUT_NAME                   #language en-US "DCC PI Code LUT Calibration"
 #string STR_REFPI_NAME                          #language en-US "Ref PI Calibration"
 #string STR_PHASECLKCAL_NAME                    #language en-US "DCC Phase Clk Calibration"
@@ -1510,6 +1509,9 @@
 #string STR_RETRAIN_TO_WORKING_CHANNEL_PROMPT   #language en-US "RetrainToWorkingChannel"
 #string STR_RETRAIN_TO_WORKING_CHANNEL_HELP     #language en-US "Retrain To Working Channel"
 
+#string STR_ROW_PRESS_PROMPT                    #language en-US "RowPressEn"
+#string STR_ROW_PRESS_HELP                      #language en-US "Enable/Disable Row Press feature"
+
 //
 // DVMT5.0 Graphics Memory
 //
@@ -1537,6 +1539,29 @@
 #string STR_DVMT50_PRE_ALLOC_60M                #language en-US "60M"
 
 #string STR_DVMT50_PRE_ALLOC_HELP               #language en-US "Select DVMT 5.0 Pre-Allocated (Fixed) Graphics Memory size used by the Internal Graphics Device."
+
+//
+// GSM2
+//
+#string STR_GSM2_TITLE                         #language en-US "IGPU Gsm2"
+#string STR_GSM2_HELP                          #language en-US "Graphics Stolen Memory 2"
+#string STR_GSM2_SIZE_0GB                      #language en-US "0GB"
+#string STR_GSM2_SIZE_2GB                      #language en-US "2GB"
+#string STR_GSM2_SIZE_4GB                      #language en-US "4GB"
+#string STR_GSM2_SIZE_6GB                      #language en-US "6GB"
+#string STR_GSM2_SIZE_8GB                      #language en-US "8GB"
+#string STR_GSM2_SIZE_10GB                     #language en-US "10GB"
+#string STR_GSM2_SIZE_12GB                     #language en-US "12GB"
+#string STR_GSM2_SIZE_14GB                     #language en-US "14GB"
+#string STR_GSM2_SIZE_16GB                     #language en-US "16GB"
+#string STR_GSM2_SIZE_18GB                     #language en-US "18GB"
+#string STR_GSM2_SIZE_20GB                     #language en-US "20GB"
+#string STR_GSM2_SIZE_22GB                     #language en-US "22GB"
+#string STR_GSM2_SIZE_24GB                     #language en-US "24GB"
+#string STR_GSM2_SIZE_26GB                     #language en-US "26GB"
+#string STR_GSM2_SIZE_28GB                     #language en-US "28GB"
+#string STR_GSM2_SIZE_30GB                     #language en-US "30GB"
+#string STR_GSM2_SIZE_32GB                     #language en-US "32GB"
 
 //
 //IGPU - Sub-Menu
@@ -1677,6 +1702,9 @@
 
 #string STR_PEI_DISPLAY                         #language en-US "Intel Graphics Pei Display Peim"
 #string STR_PEI_DISPLAY_HELP                    #language en-US "Enable/Disable Pei (Early) Display"
+
+#string STR_PEI_SOL_DISPLAY                     #language en-US "Intel Graphics PreMem SOL"
+#string STR_PEI_SOL_DISPLAY_HELP                #language en-US "Enable/Disable PreMem SOL Message"
 
 #string STR_CONFIGURE_GT                        #language en-US "Configure GT for use"
 #string STR_CONFIGURE_GT_HELP                   #language en-US "Enable/Disable GT configuration in BIOS"

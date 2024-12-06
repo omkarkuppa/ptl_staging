@@ -597,4 +597,15 @@ EFIAPI
 CpuGetCoreType (
   VOID
   );
+
+/**
+  Returns Socket Type String
+
+  @retval      Character pointer of Socket Type String
+**/
+CHAR8*
+EFIAPI
+GetSocketTypeString (
+  VOID
+  );
 #endif

@@ -52,10 +52,10 @@
 #define DDR_DTYPE_JEDEC_LPDDR3  0x0F  ///< LPDDR3 memory type, JEDEC SPD Specification
 
 /**
-  Function to create/clear the AmtPprEnable variable
+  Handles AMT PPR variable access and clearing/creating of variable for subsequent use
 **/
 VOID
-MemoryTelemetryAmtPprMain (
+AmtPprVarHandler (
   VOID
   );
 

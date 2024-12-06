@@ -19,41 +19,10 @@
 @par Specification
 **/
 
-#include <Library/GoogleTestLib.h>
+#include <GTestTbtNvmDrvYflRouter.h>
+using namespace std;
 using namespace testing;
 
-#include <iostream>
-using namespace std;
-
-extern "C" {
-  #include <Base.h>
-  #include <Uefi/UefiBaseType.h>
-  #include <Library/MemoryAllocationLib.h>
-  #include <Library/BaseMemoryLib.h>
-//
-// Test fucntion header file.
-//
-  #include <Library/TbtNvmDrvYflRouter.h>
-}
-
-//**********************************************************
-// GoogleTest mock                                         *
-//**********************************************************
-
-// Edk2 common mock
-#include <GoogleTest/Library/MockUefiBootServicesTableLib.h>
-// Private mock
-#include "GoogleTest/Private/MockPciIoProcotol/MockPciIoProcotol.cpp"
-
-class CommonMock : public Test {
-  protected:
-    MockPciIoProcotol              PciIoProcotolMock;
-    MockUefiBootServicesTableLib   UefiBootServicesTableLibMock;
-};
-
-//**********************************************************
-// GoogleTest framework                                    *
-//**********************************************************
 int main (int argc, char **argv) {
   testing::InitGoogleTest (&argc, argv);
   return RUN_ALL_TESTS ();

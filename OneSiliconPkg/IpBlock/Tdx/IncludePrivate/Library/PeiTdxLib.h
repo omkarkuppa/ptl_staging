@@ -30,10 +30,6 @@
 #define MAXIMUM_NUMBER_OF_RANKS         ( MAX_CONTROLLER * MAX_DDR5_CHANNEL * MAX_DIMMS_IN_CHANNEL * MAX_RANK_IN_DIMM )
 #define SIZE_OF_MANIFEST_MAC            ( 32 ) // 32 bytes
 #define MAXIMUM_SIZE_OF_MANIFEST        ( sizeof(DIMM_DESCRIPTION) * MAXIMUM_NUMBER_OF_RANKS + SIZE_OF_MANIFEST_MAC )
-#define BANK_GROUP_BITS                 2
-#define BANK_ADDRESS_BITS               2
-#define COLUMN_BITS                     10
-#define ROW_BITS                        16
 #define DIMM_DENSITY_24_GB              24
 
 //

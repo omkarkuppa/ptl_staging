@@ -49,6 +49,14 @@
 #include <Register/HostBridgeRegs.h>
 #include <Library/PeiImrInitLib.h>
 #include <Library/MeInitLib.h>
+#include <Library/IGpuPeiPolicyLib.h>
+#include <Ppi/IGpuPlatformPolicyPpi.h>
+
+EFI_PHYSICAL_ADDRESS
+NaturalAlignment (
+  IN  EFI_PHYSICAL_ADDRESS  MemBaseAddr,
+  IN  UINT64                MemSize
+  );
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mIGpuEndOfPeiNotifyList[] = {
   {
@@ -308,11 +316,11 @@ IGpuPreMemInit (
   ZeroMem (IGpuInst, sizeof (IP_IGPU_INST));
 
   Status = PeiServicesLocatePpi (
-             &gSiPreMemPolicyPpiGuid,
-             0,
-             NULL,
-             (VOID **)&SiPreMemPolicyPpi
-             );
+                                 &gSiPreMemPolicyPpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **)&SiPreMemPolicyPpi
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   IGpuPreMemConfig = NULL;
@@ -391,19 +399,19 @@ IGpuPostMemInit (
   }
 
   Status = PeiServicesLocatePpi (
-             &gSiPreMemPolicyPpiGuid,
-             0,
-             NULL,
-             (VOID **)&SiPreMemPolicyPpi
-             );
+                                 &gSiPreMemPolicyPpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **)&SiPreMemPolicyPpi
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   Status = PeiServicesLocatePpi (
-             &gSiPolicyPpiGuid,
-             0,
-             NULL,
-             (VOID **)&SiPolicy
-             );
+                                 &gSiPolicyPpiGuid,
+                                 0,
+                                 NULL,
+                                 (VOID **)&SiPolicy
+                                 );
   ASSERT_EFI_ERROR (Status);
 
   Status = GetConfigBlock ((VOID *)SiPreMemPolicyPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *)&IGpuPreMemConfig);
@@ -478,10 +486,10 @@ CreateIGpuDataHob (
   /// Create HOB for Graphics Data
   ///
   Status = PeiServicesCreateHob (
-             EFI_HOB_TYPE_GUID_EXTENSION,
-             sizeof (IGPU_DATA_HOB),
-             (VOID **)&IGpuDataHob
-             );
+                                 EFI_HOB_TYPE_GUID_EXTENSION,
+                                 sizeof (IGPU_DATA_HOB),
+                                 (VOID **)&IGpuDataHob
+                                 );
   ASSERT_EFI_ERROR (Status);
   if (IGpuDataHob == NULL) {
     DEBUG ((DEBUG_ERROR, "IGPU Data Hob not Created\n"));
@@ -501,7 +509,6 @@ CreateIGpuDataHob (
   DEBUG ((DEBUG_INFO, "IGpuDataHobSize - HobHeader: %X\n", sizeof (IGPU_DATA_HOB) - sizeof (EFI_HOB_GUID_TYPE)));
   DEBUG ((DEBUG_INFO, "IGpuDataHobSize: %X\n", sizeof (IGPU_DATA_HOB)));
   DEBUG ((DEBUG_INFO, "PrimaryDisplayDetection: 0x%x\n", IGpuDataHob->PrimaryDisplayDetection));
-
 
   DEBUG ((DEBUG_INFO, "IGPU HOBs installed\n"));
 
@@ -713,11 +720,11 @@ IGpuEndOfPeiCallback (
   DEBUG ((DEBUG_INFO, "GtApertureAdr = %lx GtApertureSize = %lx \n", IGpuInst->IGpuPreMemConfig.LMemBar, GtApertureSize));
   DEBUG ((DEBUG_INFO, "Restore Framebuffer memory to Original at EndofPei.\n"));
   Status = MtrrSetMemoryAttributeInMtrrSettings (
-             NULL,
-             IGpuInst->IGpuPreMemConfig.LMemBar,
-             GtApertureSize,
-             CacheUncacheable
-             );
+                                                 NULL,
+                                                 IGpuInst->IGpuPreMemConfig.LMemBar,
+                                                 GtApertureSize,
+                                                 CacheUncacheable
+                                                 );
 
   return EFI_SUCCESS;
 }
@@ -827,14 +834,22 @@ IGpuPmInit (
 **/
 EFI_STATUS
 IGpuSetMemMap (
-  VOID
+  IN SI_PREMEM_POLICY_PPI  *SiPreMemPolicyPpi
   )
 {
-  EFI_STATUS         Status;
-  IP_IGPU_INST       *IGpuInst;
-  EFI_HOB_GUID_TYPE  *GuidHob;
-  ME_HANDLE          *MeHandle;
-  PCI_SBDF           HeciSbdf;
+  EFI_STATUS               Status;
+  IP_IGPU_INST             *IGpuInst;
+  EFI_HOB_GUID_TYPE        *GuidHob;
+  ME_HANDLE                *MeHandle;
+  PCI_SBDF                 HeciSbdf;
+  EFI_PREMEM_GRAPHICS_PPI  *GraphicsPreMemPpi;
+  IGPU_PEI_PREMEM_CONFIG   *IGpuPreMemConfig;
+  UINT64                   StartTime;
+
+  IGpuPreMemConfig  = NULL;
+  GraphicsPreMemPpi = NULL;
+
+  DEBUG ((DEBUG_INFO, "%a Entry\n", __FUNCTION__));
 
   GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
   if (GuidHob != NULL) {
@@ -846,6 +861,12 @@ IGpuSetMemMap (
 
   if (IpIGpuIsInstValid (IGpuInst) == FALSE) {
     ASSERT (FALSE);
+  }
+
+  Status = GetConfigBlock ((VOID *)SiPreMemPolicyPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *)&IGpuPreMemConfig);
+  if (Status != EFI_SUCCESS) {
+    DEBUG ((DEBUG_ERROR, "Unable to Get gGraphicsPeiPreMemConfigGuid block\n"));
+    ASSERT_EFI_ERROR (Status);
   }
 
   if (IGpuInst->XeVersion <= IpIGpuXe3) {
@@ -872,6 +893,49 @@ IGpuSetMemMap (
   IGpuInst->IGpuPrivateConfig.GgcBase  = (UINT16)GetHostBridgeRegisterData (HostBridgeGgcCfgReg, HostBridgeGgcFullData);
 
   IpIGpuSetMemMap (IGpuInst);
+
+  //
+  // Clear VGA Display
+  //
+  if (IpIGpuSupported (IGpuInst) == TRUE) {
+    if (IGpuPreMemConfig != NULL) {
+      if (IGpuPreMemConfig->VgaInitControl == TRUE) {
+        Status = PeiServicesLocatePpi (&gIntelPeiPreMemGraphicsPpiGuid, 0, NULL, (VOID **)&GraphicsPreMemPpi);
+        if (EFI_ERROR (Status)) {
+          DEBUG ((DEBUG_ERROR, "Unable to locate the GraphicsPreMemPpi\n"));
+          return Status;
+        }
+
+        if (GraphicsPreMemPpi != NULL) {
+          //
+          // Log the uGOP Exit Timings
+          //
+          StartTime = GetFspCurrentTime ();
+
+          //
+          // Exit VGA
+          //
+          Status = GraphicsPreMemPpi->GraphicsPreMemPpiExit ();
+          if (EFI_ERROR (Status)) {
+            DEBUG ((DEBUG_INFO, "GraphicsPreMemPpiExit Failed"));
+            return Status;
+          }
+
+          //
+          // Log uGOP Exit timing in FSP
+          //
+          LogFspPerformanceData (FspuGopExitPerf, StartTime);
+
+          //
+          // disable IO Bar on 0:2:0
+          //
+          IpIGpuDisableIoCmdReg (IGpuInst);
+        }
+      }
+    }
+  }
+
+  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
 
   return EFI_SUCCESS;
 }
@@ -951,17 +1015,17 @@ IGpuMemoryAllocation (
                         EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE;
 
     BuildResourceDescriptorHob (
-      ResourceType,                           // MemoryType,
-      ResourceAttribute,                      // MemoryAttribute
-      FlatCcsBaseAddr,                        // MemoryBegin
-      FlatCcsSizeInBytes                      // MemoryLength
-      );
+                                ResourceType,      // MemoryType,
+                                ResourceAttribute, // MemoryAttribute
+                                FlatCcsBaseAddr,   // MemoryBegin
+                                FlatCcsSizeInBytes // MemoryLength
+                                );
 
     BuildMemoryAllocationHob (
-      FlatCcsBaseAddr,
-      FlatCcsSizeInBytes,
-      EfiReservedMemoryType
-      );
+                              FlatCcsBaseAddr,
+                              FlatCcsSizeInBytes,
+                              EfiReservedMemoryType
+                              );
     //
     // Program Flat CCS IMR.
     //
@@ -972,5 +1036,124 @@ IGpuMemoryAllocation (
 
     *TopUseableMemAddr = FlatCcsBaseAddr + FlatCcsSizeInBytes;
     *Touud            -= FlatCcsSizeInBytes;
+  }
+}
+
+/**
+  Reserve IGPU Stolen Memory.
+
+  @param[in] SiPreMemPolicyPpi        - Pointer to SiPreMemPolicyPpi
+  @param[in] TopUseableMemAddr        - Moving address pointer
+  @param[in] Touud                    - Size leftover pointer
+  @param[in] ResourceAttributeTested  - Resource attribute flag
+**/
+VOID
+EFIAPI
+IGpuGsm2Allocation (
+  IN SI_PREMEM_POLICY_PPI         *SiPreMemPolicyPpi,
+  IN OUT EFI_PHYSICAL_ADDRESS     *TopUseableMemAddr,
+  IN OUT UINT64                   *Touud,
+  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
+  )
+{
+  IGPU_PEI_PREMEM_CONFIG       *IGpuPreMemConfig;
+  UINT64                       GfxGsm2BaseAddress;
+  UINT64                       GfxGsm2TempBaseAddress;
+  UINT64                       GfxGsm2Size;
+  UINT64                       TempSize;
+  IP_IGPU_INST                 *IGpuInst;
+  IGPU_DATA_HOB                *IGpuDataHob;
+  EFI_STATUS                   Status;
+  EFI_RESOURCE_TYPE            ResourceType;
+  EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttribute;
+  EFI_HOB_GUID_TYPE            *GuidHob;
+
+  IGpuPreMemConfig       = NULL;
+  GuidHob                = NULL;
+  IGpuDataHob            = NULL;
+  GfxGsm2BaseAddress     = 0;
+  GfxGsm2TempBaseAddress = 0;
+  GfxGsm2Size            = 0;
+  TempSize               = 0;
+
+  if (IGpuIsSupported () == FALSE) {
+    DEBUG ((DEBUG_INFO, "Returning from %a since IGD is not present\n", __FUNCTION__));
+    return;
+  }
+
+  Status = GetConfigBlock ((VOID *)SiPreMemPolicyPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *)&IGpuPreMemConfig);
+  if (Status != EFI_SUCCESS) {
+    DEBUG ((DEBUG_ERROR, "Unable to Get gGraphicsPeiPreMemConfigGuid block\n"));
+    ASSERT_EFI_ERROR (Status);
+  }
+
+  GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
+  if (GuidHob != NULL) {
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
+  } else {
+    ASSERT (FALSE);
+    return;
+  }
+
+  if ((IGpuPreMemConfig != NULL) && (IGpuPreMemConfig->IGpuGsm2Size <= 15)) {
+    GfxGsm2TempBaseAddress = *TopUseableMemAddr;
+    GfxGsm2BaseAddress     = NaturalAlignment (GfxGsm2TempBaseAddress, SIZE_32MB);
+    if (IGpuPreMemConfig->IGpuGsm2Size == 0) {
+      GfxGsm2Size = SIZE_2GB;
+    } else {
+      TempSize    = MultU64x64 (IGpuPreMemConfig->IGpuGsm2Size, 2);
+      GfxGsm2Size = MultU64x64 (TempSize, SIZE_1GB) + SIZE_2GB;
+    }
+
+    //
+    // Check if the GSM2 Size is available or not
+    //
+    if (*Touud > GfxGsm2Size) {
+      ResourceType      = EFI_RESOURCE_MEMORY_RESERVED;
+      ResourceAttribute = EFI_RESOURCE_ATTRIBUTE_PRESENT |
+                          EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+                          ResourceAttributeTested |
+                          EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
+                          EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
+                          EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
+                          EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE;
+      if (GfxGsm2TempBaseAddress != GfxGsm2BaseAddress) {
+        BuildResourceDescriptorHob (
+                                    ResourceType,                                 // MemoryType,
+                                    ResourceAttribute,                            // MemoryAttribute
+                                    GfxGsm2TempBaseAddress,                       // MemoryBegin
+                                    (GfxGsm2BaseAddress - GfxGsm2TempBaseAddress) // MemoryLength
+                                    );
+        BuildMemoryAllocationHob (
+                                  GfxGsm2TempBaseAddress,
+                                  (GfxGsm2BaseAddress - GfxGsm2TempBaseAddress),
+                                  EfiReservedMemoryType
+                                  );
+      }
+
+      BuildResourceDescriptorHob (
+                                  ResourceType,       // MemoryType,
+                                  ResourceAttribute,  // MemoryAttribute
+                                  GfxGsm2BaseAddress, // MemoryBegin
+                                  GfxGsm2Size         // MemoryLength
+                                  );
+      BuildMemoryAllocationHob (
+                                GfxGsm2BaseAddress,
+                                GfxGsm2Size,
+                                EfiReservedMemoryType
+                                );
+      IpIGpuGsm2Allocation (IGpuInst, GfxGsm2BaseAddress, IGpuPreMemConfig->IGpuGsm2Size);
+      *TopUseableMemAddr = GfxGsm2BaseAddress + GfxGsm2Size;
+      *Touud            -= (GfxGsm2Size + (GfxGsm2BaseAddress - GfxGsm2TempBaseAddress));
+
+      IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+      if (IGpuDataHob != NULL) {
+        IGpuDataHob->Gsm2BaseAddress = GfxGsm2BaseAddress;
+        IGpuDataHob->Gsm2Size        = GfxGsm2Size;
+        DEBUG ((DEBUG_INFO, "Gsm2BaseAddress = 0x%lx Size = 0x%lx\n", IGpuDataHob->Gsm2BaseAddress, IGpuDataHob->Gsm2Size));
+      }
+    } else {
+      IpIGpuGsm2Allocation (IGpuInst, 0x0, 0x0);
+    }
   }
 }

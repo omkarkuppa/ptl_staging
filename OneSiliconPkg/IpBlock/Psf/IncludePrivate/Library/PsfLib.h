@@ -25,37 +25,26 @@
 #include <RegisterAccess.h>
 
 typedef struct {
+  UINT32           Id;
   REGISTER_ACCESS  *Access;
-  BOOLEAN          CsmeSegment;
 } PSF_DEV;
 
 typedef struct {
-  UINT32       Id;
-  PSF_DEV      *PsfDev;
-} PSF_SEGMENT;
-
-typedef struct {
   UINT32       Size;
-  PSF_SEGMENT  Data[];
-} PSF_SEGMENT_TABLE;
-
-#define PSF_SEGMENT_TABLE_INIT(...) \
-{ \
-  (sizeof((PSF_SEGMENT[]){__VA_ARGS__})/sizeof(PSF_SEGMENT)), \
-  { __VA_ARGS__ } \
-}
+  PSF_DEV      *Data;
+} PSF_DEV_TABLE;
 
 /**
-  This function is the method for PSF_SEGMENT_TABLE structure
-  Function returns PSF_DEV object from PSF_SEGMENT_TABLE
+  This function is the method for PSF_DEV_TABLE structure
+  Function returns PSF_DEV object from PSF_DEV_TABLE
   for corresponding Psf Id
 
-  @param[in] PsfSegmentTable  PSF Segment Table
+  @param[in] PsfTable         PSF Devices Table
   @param[in] PsfId            PSF ID
 **/
 PSF_DEV*
 PsfGetDev (
-  IN PSF_SEGMENT_TABLE  *PsfSegmentTable,
+  IN PSF_DEV_TABLE      *PsfTable,
   IN UINT32             PsfId
   );
 
@@ -70,18 +59,12 @@ typedef struct {
   UINT8   NumOfEnabledTargets;
   BOOLEAN HasParent;
   UINT32  ParentPsfId;
-} PSF_REG_DATA;
+} PSF_MCAST_REG_DATA;
 
 typedef struct {
-  UINT32            Size;
-  PSF_REG_DATA      Data[];
-} PSF_REG_DATA_TABLE;
-
-#define PSF_REG_DATA_TABLE_INIT(...) \
-{ \
-  (sizeof((PSF_REG_DATA[]){__VA_ARGS__})/sizeof(PSF_REG_DATA)), \
-  { __VA_ARGS__ } \
-}
+  UINT32              Size;
+  PSF_MCAST_REG_DATA  *Data;
+} PSF_MCAST_REG_DATA_TABLE;
 
 #define PSF_PORT_NULL ((PSF_PORT){NULL,0})
 #define PSF_IS_PORT_NULL(PsfPort) ((PsfPort.PsfDev == NULL) || (PsfPort.RegBase == 0))
@@ -104,92 +87,83 @@ typedef struct {
   UINT32    PsfNumber;
   UINT32    SecondLevelPsfNumber;
   UINT16    RootPciePort;
-  UINT16    RootRs3Port;
   UINT16    SecondLevelPort;
   UINT16    RootFunctionConfigPort;
-  UINT16    RootRs3FunctionConfigPort;
   UINT16    RootPortFunctionConfig2ndLvlPort;
 } PSF_PCIE_PORT_DATA;
 
 typedef struct {
   UINT32              Size;
-  PSF_PCIE_PORT_DATA  Data[];
+  PSF_PCIE_PORT_DATA  *Data;
 } PSF_PCIE_PORT_DATA_TABLE;
-
-#define PSF_PCIE_PORT_DATA_TABLE_INIT(...) \
-{ \
-  (sizeof((PSF_PCIE_PORT_DATA[]){__VA_ARGS__})/sizeof(PSF_PCIE_PORT_DATA)), \
-  { __VA_ARGS__ } \
-}
 
 /**
   Disable device at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 **/
 VOID
 PsfDisableDevice (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   );
 
 /**
-  Check if bridge (e.g. PCIe Root Port) is enabled at PSF level
+  Check if PCIe Root Port is enabled at PSF level
 
-  @param[in] PsfPort  PSF PORT data structure
-
-  @retval TRUE        Bridge behind PSF Port is enabled
-          FALSE       Bridge behind PSF Port is disabled
+  @param[in] PsfTable            PSF Dev Table
+  @param[in] PciePortData        PCIe Root Port Data
 **/
 BOOLEAN
-PsfIsBridgeEnabled (
-  IN PSF_PORT  PsfPort
+PsfIsPcieRootPortEnabled (
+  IN PSF_DEV_TABLE         *PsfTable,
+  IN PSF_PCIE_PORT_DATA    *PciePortData
   );
 
 /**
   Enable device at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 **/
 VOID
 PsfEnableDevice (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   );
 
 /**
   Hide PciCfgSpace of device at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 **/
 VOID
 PsfHideDevice (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   );
 
 /**
   Unhide PciCfgSpace of device at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort  PSF PORT data structure
+  @param[in] PsfPort  Pointer to PSF PORT data structure
 **/
 VOID
 PsfUnhideDevice (
-  IN PSF_PORT  PsfPort
+  IN PSF_PORT  *PsfPort
   );
 
 /**
   Disable device BARs at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort     PSF PORT data structure
+  @param[in] PsfPort     Pointer to PSF PORT data structure
   @param[in] BarDisMask  BIT0-BAR0, BIT1-BAR1,...
                          Mask corresponds to 32bit wide BARs
 **/
 VOID
 PsfDisableDeviceBar (
-  IN PSF_PORT  PsfPort,
+  IN PSF_PORT  *PsfPort,
   IN UINT32    BarDisMask
   );
 
@@ -197,180 +171,62 @@ PsfDisableDeviceBar (
   Enable device BARs at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort     PSF PORT data structure
+  @param[in] PsfPort     Pointer to PSF PORT data structure
   @param[in] BarEnMask   BIT0-BAR0, BIT1-BAR1,...
                          Mask corresponds to 32bit wide BARs
 **/
 VOID
 PsfEnableDeviceBar (
-  IN PSF_PORT  PsfPort,
+  IN PSF_PORT  *PsfPort,
   IN UINT32    BarEnMask
   );
 
 /**
   Set PMC ABASE value in PSF
 
-  @param[in] PsfPort     PSF PMC Port
+  @param[in] PsfPort     Pointer to PSF PMC Port
   @param[in] Address     Address for ACPI base address.
 **/
 VOID
 PsfSetPmcAbase (
-  IN  PSF_PORT     PsfPort,
+  IN  PSF_PORT     *PsfPort,
   IN  UINT16       Address
   );
 
 /**
   Get PMC PWRMBASE value from PSF
 
-  @param[in] PsfPort     PSF PMC Port
+  @param[in] PsfPort     Pointer to PSF PMC Port
 
   @retval Address     Address for PWRM base.
 **/
-UINTN
+UINT32
 PsfGetPmcPwrmBase (
-  IN  PSF_PORT     PsfPort
+  IN  PSF_PORT     *PsfPort
   );
 
 /**
   Disable PCIe Root Port at PSF level
 
+  @param[in] PsfTable            PSF Dev Table
   @param[in] PciePortData        PCIe Root Port Data
-  @param[in] PsfTable            PSF Segments Table
 **/
 VOID
 PsfDisablePcieRootPort (
-  IN PSF_PCIE_PORT_DATA    *PciePortData,
-  IN PSF_SEGMENT_TABLE     *PsfTable
-  );
-
-/**
-  Disable bridge (e.g. PCIe Root Port) at PSF level
-
-  @param[in] PsfPort  PSF PORT data structure
-**/
-VOID
-PsfDisableBridge (
-  IN PSF_PORT  PsfPort
-  );
-
-/**
-  Disable bridge (e.g. PCIe Root Port) at PSF level in RS3
-
-  @param[in] PsfPort  PSF PORT data structure
-**/
-VOID
-PsfRs3DisableBridge (
-  IN PSF_PORT  PsfPort
+  IN PSF_DEV_TABLE         *PsfTable,
+  IN PSF_PCIE_PORT_DATA    *PciePortData
   );
 
 /**
   Enable PCIe Root Port at PSF level
 
+  @param[in] PsfTable            PSF Dev Table
   @param[in] PciePortData        PCIe Root Port Data
-  @param[in] PsfTable            PSF Segments Table
 **/
 VOID
 PsfEnablePcieRootPort (
-  IN PSF_PCIE_PORT_DATA    *PciePortData,
-  IN PSF_SEGMENT_TABLE     *PsfTable
-  );
-
-typedef struct {
-  UINT32  DgcrNo;
-  UINT32  PgTgtNo;
-} PSF_GNTCNT_NUM;
-
-typedef struct {
-  UINT32         Channels;
-  PSF_GNTCNT_NUM Data[];
-} PSF_GRANT_COUNT_NUMBER;
-
-#define PSF_GRANT_COUNT_NUMBER_INIT(...) \
-{ \
-  (sizeof((PSF_GNTCNT_NUM[]){__VA_ARGS__})/sizeof(PSF_GNTCNT_NUM)), \
-  { __VA_ARGS__ } \
-}
-//
-// Structure for storing information on location in PSF topology
-// Every PSF node is identified by PsfID and PsfPortId
-//
-typedef struct {
-  UINT8         PsfId;
-  UINT8         PortId;
-} PSF_TOPO_PORT;
-
-#define PSF_TOPO_PORT_NULL ((PSF_TOPO_PORT){0, 0})
-#define PSF_IS_TOPO_PORT_NULL(PsfTopoPort) (((PsfTopoPort).PsfId == 0) && ((PsfTopoPort).PortId == 0))
-
-typedef struct {
-  UINT16                  DevGntCnt0Base;
-  UINT16                  TargetGntCntPg1Tgt0Base;
-  PSF_GRANT_COUNT_NUMBER  *GrantCountNum;
-} PSF_GRANT_COUNT_REG_DATA;
-
-/**
-  Specifies the root port configuration of the
-  PCIe controller. The number on the left of x
-  signifies the number of root ports in the controller
-  while value on the right is link width. N stands for
-  the number of PCIe lanes per root port instance.
-**/
-typedef enum {
-  PsfPcieCtrl4xn,
-  PsfPcieCtrl1x2n_2xn,
-  PsfPcieCtrl2xn_1x2n,
-  PsfPcieCtrl2x2n,
-  PsfPcieCtrl1x4n,
-  PsfPcieCtrl1x16n = 7,
-  PsfPcieCtrlUndefined
-} PSF_PCIE_CTRL_CONFIG;
-
-//
-// This is optional field containing PSF port specific data
-//
-typedef union {
-  UINT32  PcieCtrlIndex;
-} PSF_TOPO_PORT_DATA;
-
-//
-// Type of enpoint connected to PSF port.
-// PsfNullPort is used for ports which do not exist
-//
-typedef enum {
-  PsfNullPort,
-  PsfToPsfPort,
-  PsfPcieCtrlPort
-} PSF_TOPO_PORT_TYPE;
-
-//
-// Structure representing PSF port in PSF topology
-// If port is of PsfToPsfPort type Child will point to the first
-// port of sub PSF segment.
-//
-typedef struct PSF_TOPOLOGY {
-  PSF_TOPO_PORT              PsfPort;
-  PSF_TOPO_PORT_TYPE         PortType;
-  CONST struct PSF_TOPOLOGY  *Child;
-  PSF_GRANT_COUNT_REG_DATA   *GrantCountData;
-  PSF_TOPO_PORT_DATA         PortData;
-} PSF_TOPOLOGY;
-
-/**
-  Program PSF grant counts for PCI express depending on controllers configuration
-
-  @param[in] PsfPcieCtrlConfigTable   Table with PCIe controllers configuration
-  @param[in] NumberOfPcieControllers  Number of PCIe controllers. This is also the size of PsfPcieCtrlConfig table
-  @param[in] PsfTopology              PSF Topology for which grant counts are to be programmed
-  @param[in] PsfTable                 PSF Segments Table
-  @param[in] PcieRpPorts              PSF Root Ports table
-**/
-VOID
-PsfConfigurePcieGrantCounts (
-  IN PSF_PCIE_CTRL_CONFIG       *PsfPcieCtrlConfigTable,
-  IN UINT32                     NumberOfPcieControllers,
-  IN CONST PSF_TOPOLOGY         *PsfTopology,
-  IN PSF_SEGMENT_TABLE          *PsfTable,
-  IN PSF_REG_BASE               *PcieRpPorts
+  IN PSF_DEV_TABLE         *PsfTable,
+  IN PSF_PCIE_PORT_DATA    *PciePortData
   );
 
 //
@@ -391,87 +247,84 @@ typedef union {
 /**
   Enable EOI Target
 
-  @param[in] TargetId            Target ID
-  @param[in] PsfSegmentTable     Table of PSF Segments
+  @param[in] PsfTable            Table of PSF Devices
   @param[in] PsfEoiRegDataTable  Table of EOI Registry Data
+  @param[in] TargetId            Target ID
 **/
 VOID
 PsfEnableEoiTarget (
-  IN PSF_PORT_DEST_ID     TargetId,
-  IN PSF_SEGMENT_TABLE    *PsfSegmentTable,
-  IN PSF_REG_DATA_TABLE   *PsfEoiRegDataTable
-  );
-
-typedef struct {
-  PSF_PCIE_PORT_DATA_TABLE  *PciePortDataTable;
-  PSF_REG_DATA_TABLE        *EoiRegDataTable;
-  PSF_REG_DATA_TABLE        *MctpRegDataTable;
-  BOOLEAN                   MctpSupported;
-} PSF_EARLY_INIT_DATA;
-
-/**
-  PSF early initialization.
-
-  @param[in] EarlyInitData       Early Init Data
-  @param[in] PsfTable            Table of Psf Segments
-  @param[in] PcieRpFuncNumTable  PCIE RP Function number array
-  @param[in] PortNumber          Size of PcieRpFuncNumTable
-**/
-VOID
-PsfEarlyInit (
-  IN  PSF_EARLY_INIT_DATA       *EarlyInitData,
-  IN  PSF_SEGMENT_TABLE         *PsfTable,
-  IN  UINT8                     *PcieRpFuncNumTable,
-  IN  UINT32                    PortNumber
+  IN PSF_DEV_TABLE              *PsfTable,
+  IN PSF_MCAST_REG_DATA_TABLE   *EoiRegDataTable,
+  IN PSF_PORT_DEST_ID           TargetId
   );
 
 /**
   Assign new function number for PCIe Port Number.
 
+  @param[in] PsfTable       Table of PSF Devices
   @param[in] PciePortData   PCIe Root Port Data
   @param[in] NewFunction    New Function number
-  @param[in] PsfTable       Table of PSF Segments
 **/
 VOID
 PsfSetPcieFunction (
+  IN PSF_DEV_TABLE         *PsfTable,
   IN PSF_PCIE_PORT_DATA    *PciePortData,
-  IN UINT32                NewFunction,
-  IN PSF_SEGMENT_TABLE     *PsfTable
-  );
-
-typedef struct {
-  PSF_DEV      *PsfDev;
-  UINT32       RegisterAddress;
-  UINT8        Fro;
-} PSF_PORT_RELAXED_ORDERING_CONFIG_REG;
-
-typedef struct {
-  UINT32                                RegsTableSize;
-  UINT32                                RegsPchTypeSpecificTableSize;
-  PSF_PORT_RELAXED_ORDERING_CONFIG_REG* RegsTable;
-  PSF_PORT_RELAXED_ORDERING_CONFIG_REG* RegsPchTypeSpecific;
-} PSF_RELAXED_ORDER_REGS;
-
-/**
-  This function enables PCIe Relaxed Order in PSF
-
-  @param[in] PsfRelaxedOrderRegs      struct containing tables of registers for programming of Relaxed Ordering
-**/
-VOID
-PsfEnablePcieRelaxedOrder (
-  PSF_RELAXED_ORDER_REGS* PsfRelaxedOrderRegs
+  IN UINT32                NewFunction
   );
 
 /**
-  Enable PCIE Relaxed order for Port Relaxed Ordering Table
+  Set Function number for PSF_PORT
+  Method works both for devices and bridges
 
-  @param[in] PortRelaxedOrderingConfigTable        Port Relaxed Ordering Config Table
-  @param[in] TableSize                             Port Relaxed Ordering Config Table Size
+  @param[in] PsfPort        Pointer to PSF PORT data structure
+  @param[in] FunctionNumber Function Number
 **/
 VOID
-PsfEnablePcieRelaxedOrderForTable (
-  PSF_PORT_RELAXED_ORDERING_CONFIG_REG    *PortRelaxedOrderingConfigTable,
-  UINT32                                  TableSize
+PsfSetFunctionNumber (
+  IN PSF_PORT  *PsfPort,
+  IN UINT32    FunctionNumber
+  );
+
+/**
+  Set Ingress Force Relaxed Ordering bit for PSF_REG_BASE array
+
+  @param[in] PsfTable                  PSF Devices Table
+  @param[in] PsfPortConfigRegBases     Array of PSF_REG_BASE for PSF_PORT_CONFIG_PG<N>_PORT<M> registers
+  @param[in] PsfPortConfigRegBasesSize Size of PsfPortConfigRegBases array
+**/
+VOID
+PsfSetIngressFro (
+  PSF_DEV_TABLE  *PsfTable,
+  PSF_REG_BASE   *PsfPortConfigRegBases,
+  UINT32         PsfPortConfigRegBasesSize
+  );
+
+/**
+  Set Egress Force Relaxed Ordering bit for PSF_REG_BASE array
+
+  @param[in] PsfTable                  PSF Devices Table
+  @param[in] PsfPortConfigRegBases     Array of PSF_REG_BASE for PSF_PORT_CONFIG_PG<N>_PORT<M> registers
+  @param[in] PsfPortConfigRegBasesSize Size of PsfPortConfigRegBases array
+**/
+VOID
+PsfSetEgressFro (
+  PSF_DEV_TABLE  *PsfTable,
+  PSF_REG_BASE   *PsfPortConfigRegBases,
+  UINT32         PsfPortConfigRegBasesSize
+  );
+
+/**
+  This function disables all EOI targets and restores back HW default configuration.
+  Function is needed because MCAST_CONTROL_EOI and MCAST_TARGET_EOI registers do not
+  get back to HW default in all types of resets
+
+  @param[in]  PsfTable            Table of PSF Devices
+  @param[in]  PsfEoiRegDataTable  Table of EOI Registry Data
+**/
+VOID
+PsfResetEoiTargets (
+  IN  PSF_DEV_TABLE            *PsfTable,
+  IN  PSF_MCAST_REG_DATA_TABLE *PsfEoiRegDataTable
   );
 
 /**
@@ -481,47 +334,46 @@ PsfEnablePcieRelaxedOrderForTable (
   Agent Destination Addresses are being programmed only when adequate
   PCIe root port controllers are function enabled.
 
-  Function sets CSME PMT as a message broadcaster and programs the targets
+  Function sets RcOwner as a message broadcaster and programs the targets
   of the message in registers only if adequate PCIe root port controllers
-  are function enabled. Conditionally, if the CPU PEG exist and is function
-  enabled, DMI is also a target.
+  are function enabled.
 
+  @param[in] PsfTable       Table od PSF devices
+  @param[in] MctpRegTable   Table of MCTP registers
   @param[in] TargetIdTable  Array of MCTP Target IDs
   @param[in] TargetNumber   TargetIdTable array size
-  @param[in] PsfTable       Table od PSF segments
-  @param[in] MctpRegTable   Table of MCTP registers
   @param[in] RcOwner        RC Owner value
 **/
 VOID
 PsfConfigureMctpCycle (
-  IN  PSF_PORT_DEST_ID   *TargetIdTable,
-  IN  UINT32             TargetNumber,
-  IN  PSF_SEGMENT_TABLE  *PsfTable,
-  IN  PSF_REG_DATA_TABLE *MctpRegTable,
-  IN  UINT32             RcOwner
+  IN  PSF_DEV_TABLE            *PsfTable,
+  IN  PSF_MCAST_REG_DATA_TABLE *MctpRegTable,
+  IN  PSF_PORT_DEST_ID         *TargetIdTable,
+  IN  UINT32                   TargetNumber,
+  IN  UINT32                   RcOwner
   );
 
 /**
-  This function configures parity error checking for all PSF segments.
+  This function configures parity error checking for all PSF devices.
 
-  @param[in] PsfTable       Table of supported PSF segments
+  @param[in] PsfTable       Table of supported PSF devices
 **/
 VOID
 PsfConfigureParityChecking (
-  IN PSF_SEGMENT_TABLE  *PsfTable
+  IN PSF_DEV_TABLE  *PsfTable
   );
 
 /**
   Set device BARx address at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort     PSF PORT data structure
+  @param[in] PsfPort     Pointer to PSF PORT data structure
   @param[in] BarNum      BAR Number (0:BAR0, 1:BAR1, ...)
   @param[in] BarValue    32bit BAR value
 **/
 VOID
 PsfSetDeviceBarValue (
-  IN PSF_PORT  PsfPort,
+  IN PSF_PORT  *PsfPort,
   IN UINT8     BarNum,
   IN UINT32    BarValue
   );
@@ -530,65 +382,39 @@ PsfSetDeviceBarValue (
   Enable device Memory Space at PSF level
   Method not for bridges (e.g. PCIe Root Port)
 
-  @param[in] PsfPort     PSF PORT data structure
+  @param[in] PsfPort     Pointer to PSF PORT data structure
 **/
 VOID
 PsfEnableDeviceMemSpace (
-  IN PSF_PORT  PsfPort
-  );
-
-typedef struct {
-  UINT32  PsfId;
-  UINT16  RegisterAddress;
-  UINT32  Value;
-} PSF_TC_VC_MAPPING;
-
-/**
-  For platforms that support multi-VC,
-  this function configures TC-based channel mapping.
-
-  @param[in] TcVcMappingArray      Array of 3-value structure objects,
-                                   contains PsfId, RegisterAddress to write
-                                   and desired Value to be written into the register.
-                                   Value represents TC-VC bitmask that encodes which
-                                   Source Channel (SC [BitNumber]) should be mapped to
-                                   which Traffic Class (TC [BitNumber])
-  @param[in] TcVcMappingArraySize  Size of the array
-  @param[in] PsfTable              Table of PSF Segments available on current platform
-**/
-VOID
-PsfConfigureTcVcMapping (
-  IN  PSF_TC_VC_MAPPING  TcVcMappingArray[],
-  IN  UINT32             TcVcMappingArraySize,
-  IN  PSF_SEGMENT_TABLE  *PsfTable
+  IN PSF_PORT  *PsfPort
   );
 
 /**
   Enable VTd for one PSF_REG_BASE array
 
+  @param[in]  PsfTable                        Pointer to PSF_DEV_TABLE
   @param[in]  RootspaceConfigsRegsArray       Rootspace config regs array
   @param[in]  RootspaceConfigsRegsArraySize   Rootspace config regs array size
-  @param[in]  PsfSegmentTable                 Pointer to PSF_SEGMENT_TABLE
 **/
 VOID
 PsfLibEnableVtd (
+  PSF_DEV_TABLE     *PsfTable,
   PSF_REG_BASE      *RootspaceConfigsRegsArray,
-  UINT32            RootspaceConfigsRegsArraySize,
-  PSF_SEGMENT_TABLE *PsfSegmentTable
+  UINT32            RootspaceConfigsRegsArraySize
   );
 
 /**
   Disable PSF address-based peer-to-peer decoding for one PSF_PORT array
 
+  @param[in]  PsfTable                        Pointer to PSF_DEV_TABLE
   @param[in]  RootspaceConfigsRegsArray       Rootspace config regs array
   @param[in]  RootspaceConfigsRegsArraySize   Rootspace config regs array size
-  @param[in]  PsfSegmentTable                 Pointer to PSF_SEGMENT_TABLE
 **/
 VOID
 PsfDisableP2pDecoding (
+  PSF_DEV_TABLE     *PsfTable,
   PSF_REG_BASE      *RootspaceConfigsRegsArray,
-  UINT32            RootspaceConfigsRegsArraySize,
-  PSF_SEGMENT_TABLE *PsfSegmentTable
+  UINT32            RootspaceConfigsRegsArraySize
   );
 
 /**
@@ -598,19 +424,19 @@ PsfDisableP2pDecoding (
 
   @param[in]  RootspaceConfigsRegsArray       Rootspace config regs array
   @param[in]  RootspaceConfigsRegsArraySize   Rootspace config regs array size
-  @param[in]  PsfSegmentTable                 Pointer to PSF_SEGMENT_TABLE
+  @param[in]  PsfTable                        Pointer to PSF_DEV_TABLE
 **/
 VOID
 PsfResetRootspaceConfig (
+  PSF_DEV_TABLE     *PsfTable,
   PSF_REG_BASE      *RootspaceConfigsRegsArray,
-  UINT32            RootspaceConfigsRegsArraySize,
-  PSF_SEGMENT_TABLE *PsfSegmentTable
+  UINT32            RootspaceConfigsRegsArraySize
   );
 
 /**
   Program Deferred Write Buffer
 
-  @param[in] PsfPort             PSF_PORT of DWB register offset
+  @param[in] PsfPort             Pointer to PSF_PORT of DWB register offset
   @param[in] DwbFlushThreshold   DWB Flush Threshold value
   @param[in] NonxHCIEn           Non xHCI Enable
   @param[in] OBFFEn              OBFF Enable
@@ -618,7 +444,7 @@ PsfResetRootspaceConfig (
 **/
 VOID
 PsfProgramDWB (
-  IN  PSF_PORT    PsfPort,
+  IN  PSF_PORT    *PsfPort,
   IN  UINT32      DwbFlushThreshold,
   IN  UINT32      NonxHCIEn,
   IN  UINT32      OBFFEn,
@@ -630,13 +456,82 @@ PsfProgramDWB (
   Function is needed because MCAST_CONTROL_MCTP and MCAST_TARGET_MCTP registers do not
   get back to HW default in all types of resets
 
-  @param[in] PsfTable        Table of PSF segments
+  @param[in] PsfTable        Table of PSF devices
   @param[in] MctpRegTable    MCTP Registers table
 **/
 VOID
 PsfResetMctpTargets (
-  IN  PSF_SEGMENT_TABLE   *PsfTable,
-  IN  PSF_REG_DATA_TABLE  *MctpRegTable
+  IN  PSF_DEV_TABLE             *PsfTable,
+  IN  PSF_MCAST_REG_DATA_TABLE  *MctpRegTable
   );
 
+/**
+  Specifies the root port configuration of the
+  PCIe controller. The number on the left of x
+  signifies the number of root ports in the controller
+  while value on the right is link width. N stands for
+  the number of PCIe lanes per root port instance.
+**/
+typedef enum {
+  PsfPcieCtrl4xn,
+  PsfPcieCtrl1x2n_2xn,
+  PsfPcieCtrl2xn_1x2n,
+  PsfPcieCtrl2x2n,
+  PsfPcieCtrl1x4n,
+  PsfPcieCtrl1x16n = 7,
+  PsfPcieCtrlUndefined
+} PSF_PCIE_CTRL_CONFIG;
+
+typedef struct {
+  PSF_REG_BASE  PsfRegBase;
+  UINT32        Value;
+} REG_WITH_VALUE;
+
+typedef struct {
+  REG_WITH_VALUE *DevGc;
+  REG_WITH_VALUE *TgtGcUpstream;
+  REG_WITH_VALUE *TgtGcDownstream;
+} GC_REG;
+
+typedef struct {
+  GC_REG GcRegs1stLvl;
+  GC_REG GcRegs2ndLvl;
+} GC_REGS_FOR_RP;
+
+/**
+  Program Grant Count Registers
+
+  @param[in]  PsfTable               PSF_DEV_TABLE pointer
+  @param[in]  RegWithValueArray      Array of REG_WITH_VALUEs to program
+  @param[in]  RegWithValueArraySize  RegWithValueArray size
+*/
+VOID
+PsfProgramGrantCountRegisters (
+  IN PSF_DEV_TABLE  *PsfTable,
+  IN REG_WITH_VALUE **RegWithValueArray,
+  IN UINT32         RegWithValueArraySize
+  );
+
+/**
+  Set Grant Count values for register corresponds with Root Port number.
+  Array index represents Root Port number (0 based).
+
+  @param[in, out]  GcRegsForRpArray    Array of Grant Count registers representation for every Root Port number (0 based)
+  @param[in]       GcValuesArray       Array of Grant Count values for every Root Port number (0 based)
+  @param[in]       ArraySize           Size of GcRegsForRpArray which is equal to size of GcValuesArray
+**/
+VOID
+PsfSetGrantCountForRegs (
+  IN OUT  GC_REGS_FOR_RP  *GcRegsForRpArray,
+  IN      UINT8           *GcValuesArray,
+  IN      UINT32          ArraySize
+  );
+
+#define PSF_PCIE_CONTROLLER_MAX_CHANNELS 4
+typedef struct {
+  UINT8    Bifurcation;
+  UINT32   RpCount;
+  UINT32   LaneNum;
+  UINT8    GcArray[PSF_PCIE_CONTROLLER_MAX_CHANNELS];
+} BIFURCATION_TO_GRANT_COUNT;
 #endif

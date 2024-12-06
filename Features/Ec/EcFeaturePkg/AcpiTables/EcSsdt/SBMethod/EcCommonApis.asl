@@ -312,22 +312,39 @@ Method (RPBS)
 }
 
 /**
-  RBPS        Get battery packages.
+  BHFI        Get Battery high frequency impedance
+
   @param      None.
-  @retval     Return battery packages:
-              Index0    - RBHF: Battery high frequency impedance
-              Index1    - VBNL: Battery No-Load Voltage
-              Index2    - CMPP: Battery Maximum peak current
+  @retval     Return Battery high frequency impedance.
+
 **/
-Method (RBPS)
+Method (BHFI)
 {
-  Name (BPPK, Package () {
-    0x80000000, 0x80000000, 0x80000000
-  })
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RBHF)), Index (BPPK, 0))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.VBNL)), Index (BPPK, 1))
-  Store (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CMPP)), Index (BPPK, 2))
-  Return (BPPK)
+  Return (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RBHF)))
+}
+
+/**
+  BNLV        Get Battery No-Load Voltage.
+
+  @param      None.
+  @retval     Return Battery No-Load Voltage.
+
+**/
+Method (BNLV)
+{
+  Return (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.VBNL)))
+}
+
+/**
+  BMPC        Get Battery Maximum peak current.
+
+  @param      None.
+  @retval     Return Battery Maximum peak current.
+
+**/
+Method (BMPC)
+{
+  Return (\_SB.PARENT_OF_LPCB.LPCB.H_EC.ECRD (RefOf (\_SB.PARENT_OF_LPCB.LPCB.H_EC.CMPP)))
 }
 
 /**

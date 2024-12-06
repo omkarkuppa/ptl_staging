@@ -19,18 +19,19 @@
 @par Specification Reference:
 **/
 
-Scope (\_SB)
+// abb 5.9.22 - Added MS Audio compositor driver to _SB Scope
+Scope (_SB)
 {
     Device (AUDC) // MS Audio compositor driver
     {
         Name (_HID, "ACPI0018") // INF in MS audio compositor driver looks for this HWID (UEFI-defined for audio comp.)
         // #include is used so that the preprocessor is run on the contents of the file.
-        Include ("AudioComposition_Jamerson_4spk_Cohen_mic_UAJ_all_endpoints.asl")
-        Include ("AudioComposition_Jamerson_6spk_Cohen_mic_UAJ.asl")
+        #include <AudioComposition_Jamerson_4spk_Cohen_mic_UAJ_all_endpoints.asl>
+        #include <AudioComposition_Jamerson_6spk_Cohen_mic_UAJ.asl>
     }
 }
 
-Scope (\_SB.PC00.HDAS.IDA.SNDW)
+Scope (_SB.PC00.HDAS.IDA.SNDW)
 {
 #ifdef JAMERSON_1_LID
     // Jamerson 1 (UID_0, SNDW_0)
@@ -40,7 +41,7 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
 
         Name (_DSD, Package()   // _DSD: Device-Specific Data
         {
-            Include ("CS35L56_DSD.asl")  // For additional _DSD entries, common to all Jamersons
+            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamersons
 
 # ifdef JAMERSON_GPIO
             ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
@@ -50,19 +51,19 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
                 {
                     "spk-id-gpios", Package()
                     {
-                        ^SWD2, 0, 0, 0,
+                        AF01, 0, 0, 0,
                     },
                 },
             },
 # endif
         }) // End _DSD
-        Include ("CS35L56_PDP.asl")
+        #include <CS35L56_PDP.asl>
 
         Device(AF01)
         {
             Name(_ADR, 0x1)
             #define CHANNEL_LEFT
-            Include ("SdcaSmartAmp_CJAM3556_RefStream_common.asl")
+            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
             #undef CHANNEL_LEFT
 # ifdef JAMERSON_GPIO
             // Assign SPKR_ID GPIO for Jamerson
@@ -88,7 +89,7 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
 
         Name (_DSD, Package()   // _DSD: Device-Specific Data
         {
-            Include ("CS35L56_DSD.asl")  // For additional _DSD entries, common to all Jamersons
+            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamersons
 
 # ifdef JAMERSON_GPIO
             ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
@@ -98,19 +99,19 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
                 {
                     "spk-id-gpios", Package()
                     {
-                        ^SWD3, 0, 0, 0,
+                        AF01, 0, 0, 0,
                     },
                 },
             },
 # endif
         }) // End _DSD
-        Include ("CS35L56_PDP.asl")
+        #include <CS35L56_PDP.asl>
 
         Device(AF01)
         {
             Name(_ADR, 0x1)
             #define CHANNEL_LEFT
-            Include ("SdcaSmartAmp_CJAM3556_RefStream_common.asl")
+            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
             #undef CHANNEL_LEFT
 # ifdef JAMERSON_GPIO
             // Assign SPKR_ID GPIO for Jamerson
@@ -136,7 +137,7 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
 
         Name (_DSD, Package()   // _DSD: Device-Specific Data
         {
-            Include ("CS35L56_DSD.asl")  // For additional _DSD entries, common to all Jamersons
+            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamersons
 
 # ifdef JAMERSON_GPIO
             ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
@@ -146,19 +147,19 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
                 {
                     "spk-id-gpios", Package()
                     {
-                        ^SWD4, 0, 0, 0,
+                        AF01, 0, 0, 0,
                     },
                 },
             },
 # endif
         }) // End _DSD
-        Include ("CS35L56_PDP.asl")
+        #include <CS35L56_PDP.asl>
 
         Device(AF01)
         {
             Name(_ADR, 0x1)
             #define CHANNEL_RIGHT
-            Include ("SdcaSmartAmp_CJAM3556_RefStream_common.asl")
+            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
             #undef CHANNEL_RIGHT
 # ifdef JAMERSON_GPIO
             // Assign SPKR_ID GPIO for Jamerson
@@ -184,7 +185,7 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
 
         Name (_DSD, Package()   // _DSD: Device-Specific Data
         {
-            Include ("CS35L56_DSD.asl")  // For additional _DSD entries, common to all Jamersons
+            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamersons
 
 # ifdef JAMERSON_GPIO
             ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
@@ -194,19 +195,19 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
                 {
                     "spk-id-gpios", Package()
                     {
-                        ^SWD5, 0, 0, 0,
+                        AF01, 0, 0, 0,
                     },
                 },
             },
 # endif
         }) // End _DSD
-        Include ("CS35L56_PDP.asl")
+        #include <CS35L56_PDP.asl>
 
         Device(AF01)
         {
             Name(_ADR, 0x1)
             #define CHANNEL_RIGHT
-            Include ("SdcaSmartAmp_CJAM3556_RefStream_common.asl")
+            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
             #undef CHANNEL_RIGHT
 # ifdef JAMERSON_GPIO
             // Assign SPKR_ID GPIO for Jamerson
@@ -233,7 +234,7 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
 
         Name (_DSD, Package()   // _DSD: Device-Specific Data
         {
-            Include ("CS35L56_DSD.asl")  // For additional _DSD entries, common to all Jamersons
+            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamersons
 
 # ifdef JAMERSON_GPIO
             ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
@@ -243,19 +244,19 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
                 {
                     "spk-id-gpios", Package()
                     {
-                        ^SWD7, 0, 0, 0,
+                        AF01, 0, 0, 0,
                     },
                 },
             },
 # endif
         }) // End _DSD
-        Include ("CS35L56_PDP.asl")
+        #include <CS35L56_PDP.asl>
 
         Device(AF01)
         {
             Name(_ADR, 0x1)
             #define CHANNEL_LEFT
-            Include ("SdcaSmartAmp_CJAM3556_RefStream_common.asl")
+            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
             #undef CHANNEL_LEFT
 # ifdef JAMERSON_GPIO
             // Assign SPKR_ID GPIO for Jamerson
@@ -281,7 +282,7 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
 
         Name (_DSD, Package()   // _DSD: Device-Specific Data
         {
-            Include ("CS35L56_DSD.asl")  // For additional _DSD entries, common to all Jamersons
+            #include <CS35L56_DSD.asl>  // For additional _DSD entries, common to all Jamersons
 
 # ifdef JAMERSON_GPIO
             ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"), /* Device Properties for _DSD */
@@ -291,19 +292,19 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
                 {
                     "spk-id-gpios", Package()
                     {
-                        ^SWD8, 0, 0, 0,
+                        AF01, 0, 0, 0,
                     },
                 },
             },
 # endif
         }) // End _DSD
-        Include ("CS35L56_PDP.asl")
+        #include <CS35L56_PDP.asl>
 
         Device(AF01)
         {
             Name(_ADR, 0x1)
             #define CHANNEL_RIGHT
-            Include ("SdcaSmartAmp_CJAM3556_RefStream_common.asl")
+            #include <SdcaSmartAmp_CJAM3556_RefStream_common.asl>
             #undef CHANNEL_RIGHT
 # ifdef JAMERSON_GPIO
             // Assign SPKR_ID GPIO for Jamerson
@@ -327,15 +328,15 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
     {
         Name (_ADR, ((0x000<<52)|( COHEN_1_LID << 48 )|(3<<44)|( COHEN_1_UID << 40 )|0x01FA424301) )  // _ADR: Address
 
-        Include ("CS42L43_DSD.asl")
+        #include <CS42L43_DSD.asl>
 
-#ifdef COHEN_ONLY
+#ifdef COHEN_AMP
         Device (AF01)
         {
             Name (_ADR, 0x1) // SDCA Function Number = 0x1
             #define CHANNEL_LEFT
             #define CHANNEL_RIGHT
-            Include ("Cohen_Amp.asl")
+            #include <Cohen_Amp.asl>
             #undef CHANNEL_LEFT
             #undef CHANNEL_RIGHT
         }
@@ -343,20 +344,20 @@ Scope (\_SB.PC00.HDAS.IDA.SNDW)
         Device (AF02)
         {
             Name (_ADR, 0x2) // SDCA Function Number = 0x2
-            Include ("Cohen_SimpleMic.asl")
+            #include <Cohen_SimpleMic.asl>
         }
 
         Device (AF03)
         {
             Name (_ADR, 0x3) // SDCA Hierarchical Function Number = 0x3
-            Include ("Cohen_UAJ.asl")
-            Include ("Cohen_UAJ_capture_enable.asl")
+            #include <Cohen_UAJ.asl>
+            #include <Cohen_UAJ_capture_enable.asl>
         }
 
         Device (AF04)
         {
             Name (_ADR, 0x4) // SDCA Hierarchical Function Number = 0x4
-            Include ("CS_HID_headset_buttons.asl")
+            #include <CS_HID_headset_buttons.asl>
         }
     }
 #endif

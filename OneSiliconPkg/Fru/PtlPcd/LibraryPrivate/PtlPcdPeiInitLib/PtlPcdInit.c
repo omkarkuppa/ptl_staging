@@ -188,7 +188,7 @@ PtlPcdInit (
   // P2SB needs to be set as EOI Target because interrupt controller (ITSS)
   // is a sideband device located behind P2SB
   //
-  PtlPcdEnableP2SbEoiTarget ();
+  PtlPcdPsfEnableP2SbEoiTarget ();
   //
   // Configure IOAPIC and interrupts
   //

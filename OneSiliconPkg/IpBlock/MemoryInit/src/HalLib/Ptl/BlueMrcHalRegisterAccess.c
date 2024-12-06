@@ -172,6 +172,14 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "RxCompDqsDelayP",
   "RxCompDqsDelayN",
   "RxCompDqsOffset",
+  "CompRcompOdtUp",
+  "CompRcompOdtDn",
+  "WrDSCodeUpCmd",
+  "WrDSCodeUpCtl",
+  "WrDSCodeUpClk",
+  "WrDSCodeDnCmd",
+  "WrDSCodeDnCtl",
+  "WrDSCodeDnClk",
                                 ///< -----------------------------------------------------------------
   "EndOfPhyMarker",             ///< Marker for end of phy groups.
                                 ///< -----------------------------------------------------------------
@@ -273,6 +281,44 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmIocITerdcdselovrval",
   "GsmIocITerdcdselovren",
   "GsmDccDllDcdTargetSel",
+  "GsmVccIoVccF0",
+  "GsmVccIoVccF1",
+  "GsmVccIoVccF2",
+  "GsmVccIoOCSlope",
+  "GsmVccClkVccF0",
+  "GsmVccClkVccF1",
+  "GsmVccClkVccF2",
+  "GsmVccClkOCSlope",
+  "GsmVccClkRxCtlB0FbDivider",
+  "GsmVccClkRxCtlB0Target",
+  "GsmVccClkRxCtlB0BiasAdj",
+  "GsmVccClkRxCtlB0PMBiasAdj",
+  "GsmVccClkRxCtlB1FbDivider",
+  "GsmVccClkRxCtlB1Target",
+  "GsmVccClkRxCtlB1BiasAdj",
+  "GsmVccClkRxCtlB1PMBiasAdj",
+  "GsmVccClkFFBiasFbDivider",
+  "GsmVccClkFFBiasNbTarget",
+  "GsmVccPllControlFbDivider",
+  "GsmVccPllControlTarget",
+  "GsmVccDistControlFbDivider",
+  "GsmVccDistControlTarget",
+  "GsmVccIogControlFbDivider",
+  "GsmVccIogControlTarget",
+  "GsmVccIogControlBiasAdj",
+  "GsmVccIogControlPMBiasAdj",
+  "GsmVccClkTxControlFbDivider",
+  "GsmVccClkTxControlTarget",
+  "GsmVccClkTxControlBiasAdj",
+  "GsmVccClkTxControlPMBiasAdj",
+  "GsmVccClkqControlFbDivider",
+  "GsmVccClkqControlTarget",
+  "GsmVccClkqControlBiasAdj",
+  "GsmVccClkqControlPMBiasAdj",
+  "GsmVccDdqControlFbDivider",
+  "GsmVccDdqControlTarget",
+  "GsmVccDdqControlBiasAdj",
+  "GsmVccDdqControlPMBiasAdj",
                                     ///< -----------------------------------------------------------------
   "EndOfIocMarker",                 ///< End of IO Config Marker
                                     ///< -----------------------------------------------------------------
@@ -518,17 +564,22 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccEccGranularity",
   "GsmMccAutoPrechargeEn",
   "GsmMccEnCsGearDown",
+  "GsmMccCfiE2eParityEnRdata",
+  "GsmMccCfiE2eParityEnRdCmplHeader",
+  "GsmMccCfiE2eParityEn",
   "GsmScPbrEcsRefabEnable",
   "GsmScPbrEcsRefabPeriod",
   "GsmMccDdr5CkdEnable",
   "GsmMccDisLpddr5RdwrInterleaving",
   "GsmMccEccCorrectionDisable",
   "GsmMccMcMntsSpareRw",
+  "GsmMccMcMntsRfFastSleepDisable",
   "GsmMccMcCbRowPressDisAutoPre",
   "GsmMccPageOpenPolicyMaxCount",
   "GsmMccPageOpenPolicyEn",
   "GsmMccRd2rdEchoMask",
   "GsmMccWr2wrEchoMask",
+  "GsmMccDdr1rSplitBgOnSubch",
   "EndOfMccMarker",
   "GsmPmaEnableMc",
   "GsmPmaEnableIbecc",
@@ -1669,6 +1720,37 @@ MrcCheckGroupUnSupported (
 {
   switch (Group) {
       case GsmMccNoGear4ParamDivide:
+      case GsmVccClkRxCtlB0FbDivider:
+      case GsmVccClkRxCtlB0Target:
+      case GsmVccClkRxCtlB0BiasAdj:
+      case GsmVccClkRxCtlB0PMBiasAdj:
+      case GsmVccClkRxCtlB1FbDivider:
+      case GsmVccClkRxCtlB1Target:
+      case GsmVccClkRxCtlB1BiasAdj:
+      case GsmVccClkRxCtlB1PMBiasAdj:
+      case GsmVccClkFFBiasFbDivider:
+      case GsmVccClkFFBiasNbTarget:
+      case GsmVccPllControlFbDivider:
+      case GsmVccPllControlTarget:
+      case GsmVccDistControlFbDivider:
+      case GsmVccDistControlTarget:
+      case GsmVccIogControlFbDivider:
+      case GsmVccIogControlTarget:
+      case GsmVccIogControlBiasAdj:
+      case GsmVccIogControlPMBiasAdj:
+      case GsmVccClkTxControlFbDivider:
+      case GsmVccClkTxControlTarget:
+      case GsmVccClkTxControlBiasAdj:
+      case GsmVccClkTxControlPMBiasAdj:
+      case GsmVccClkqControlFbDivider:
+      case GsmVccClkqControlTarget:
+      case GsmVccClkqControlBiasAdj:
+      case GsmVccClkqControlPMBiasAdj:
+      case GsmVccDdqControlFbDivider:
+      case GsmVccDdqControlTarget:
+      case GsmVccDdqControlBiasAdj:
+      case GsmVccDdqControlPMBiasAdj:
+      case GsmMccDdr1rSplitBgOnSubch:
         return TRUE;
 
       default:
@@ -2060,6 +2142,7 @@ MrcCheckGroupSupported (
     case GsmMccDisLpddr5RdwrInterleaving:
     case GsmMccEccCorrectionDisable:
     case GsmMccMcMntsSpareRw:
+    case GsmMccMcMntsRfFastSleepDisable:
     case GsmMccMcCbRowPressDisAutoPre:
     case GsmMccPageOpenPolicyMaxCount:
     case GsmMccPageOpenPolicyEn:
@@ -2120,6 +2203,9 @@ MrcCheckGroupSupported (
     case GsmIocCsGearDownEnable:
     case GsmIocCsGearDownForce:
     case GsmIocCsGearDownSrDramTrack:
+    case GsmMccCfiE2eParityEnRdata:
+    case GsmMccCfiE2eParityEnRdCmplHeader:
+    case GsmMccCfiE2eParityEn:
       break;
 
 

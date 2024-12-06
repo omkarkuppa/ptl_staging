@@ -18,92 +18,10 @@
 
 @par Specification
 **/
-
-#include <Library/GoogleTestLib.h>
+#include <GTestTbtNvmDrvHr.h>
+using namespace std;
 using namespace testing;
 
-#include <iostream>
-using namespace std;
-
-extern "C" {
-  #include <PiDxe.h>
-  #include <Base.h>
-  #include <Uefi/UefiBaseType.h>
-  #include <Library/MemoryAllocationLib.h>
-  #include <Library/BaseMemoryLib.h>
-  #include <IndustryStandard/Pci22.h>
-//
-// Test fucntion header file.
-//
-  #include <Protocol/PciIo.h>
-  #include <Protocol/TbtNvmDrvDmaProtocol.h>
-  #include <Protocol/TbtNvmDrvHrProtocol.h>
-  #include <Library/TbtNvmDrvHr.h>
-  #include <Library/TbtNvmDrvUtils.h>
-  #include <TbtNvmRetimer.h>
-  #include <ITbtInfoHob.h>
-//
-// Test function define.
-//
-TBT_STATUS
-TbtNvmDrvHrSendDrvReady (
-  TBT_DMA *DmaPtr
-  );
-
-TBT_STATUS
-TbtNvmDrvHrWriteCioReg (
-  IN TBT_HOST_ROUTER *This,
-  IN UINT8           ConfigurationSpace,
-  IN UINT8           Adapter,
-  IN UINT16          RegNum,
-  IN UINT8           Length,
-  IN UINT32          *DataPtr
-  );
-
-TBT_STATUS
-TbtNvmDrvHrReadCioDevReg (
-  IN  TBT_HOST_ROUTER *This,
-  IN  UINT8           ConfigurationSpace,
-  IN  UINT8           Adapter,
-  IN  UINT16          RegNum,
-  OUT UINT32          *DataPtr
-  );
-
-VOID
-TbtNvmDrvHrDtor (
-  TBT_HOST_ROUTER *This
-  );
-}
-
-//**********************************************************
-// GoogleTest mock                                         *
-//**********************************************************
-
-// Edk2 common mock
-#include <GoogleTest/Library/MockUefiBootServicesTableLib.h>
-#include <GoogleTest/Library/MockHobLib.h>
-
-// Private mock
-#include "GoogleTest/Private/MockTbtNvmDrvDma/MockTbtNvmDrvDma.cpp"
-#include "GoogleTest/Private/MockTbtNvmDrvYflRouter/MockTbtNvmDrvYflRouter.cpp"
-#include "GoogleTest/Private/MockPchPciBdfLib/MockPchPciBdfLib.cpp"
-#include "GoogleTest/Private/MockBasePciSegmentLib/MockPciSegmentLib.cpp"
-#include "GoogleTest/Private/MockPciIoProcotol/MockPciIoProcotol.cpp"
-
-class CommonMock : public Test {
-  protected:
-    MockUefiBootServicesTableLib        UefiBootServicesTableLibMock;
-    MockHobLib                          HobLibMock;
-    MockTbtNvmDrvDma                    TbtNvmDrvDmaMock;
-    MockTbtNvmDrvYflRouter              TbtNvmDrvYflRouterMock;
-    MockPchPciBdfLib                    PchPciBdfLibMock;
-    MockPciSegmentLib                   PciSegmentLibMock;
-    MockPciIoProcotol                   PciIoProcotolMock;
-};
-
-//**********************************************************
-// GoogleTest framework                                    *
-//**********************************************************
 int main (int argc, char **argv) {
   testing::InitGoogleTest (&argc, argv);
   return RUN_ALL_TESTS ();

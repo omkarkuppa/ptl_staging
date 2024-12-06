@@ -86,4 +86,10 @@ DisableCacheAsRam (
               AsmReadMsr64 (MSR_IA32_MC0_STATUS + Index * 4)));
   }
   McaBankStatusClear ();
+
+  //
+  // Enable MTRRs for better performance
+  //
+  MsrMtrrDefault.Bits.En = 1;
+  AsmWriteMsr64 (MSR_MTRRDEFAULT, MsrMtrrDefault.Uint64);
 }

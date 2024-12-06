@@ -897,6 +897,7 @@ MrcGetMcConfigGroupLimits (
       Max = MC0_CH0_CR_MCMNTS_SPARE_Spare_RW_MAX;
       break;
 
+    case GsmMccMcMntsRfFastSleepDisable:
     case GsmScPbrEcsRefabEnable:
     case GsmMccEnSrxWrRetraining:
     case GsmMccEnWrRetraining:
@@ -973,6 +974,9 @@ MrcGetMcConfigGroupLimits (
     case GsmMccMcCbRowPressDisAutoPre:
     case GsmMccPageOpenPolicyMaxCount:
     case GsmMccPageOpenPolicyEn:
+    case GsmMccCfiE2eParityEnRdata:
+    case GsmMccCfiE2eParityEnRdCmplHeader:
+    case GsmMccCfiE2eParityEn:
       Min = 0;
       Max = 1;
       break;

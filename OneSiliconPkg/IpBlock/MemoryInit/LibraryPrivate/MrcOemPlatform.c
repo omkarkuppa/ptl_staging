@@ -872,7 +872,7 @@ ReturnFromSmc (
 **/
 VOID
 SaDramReset (
-  IN UINT32 PciEBaseAddress,
+  IN UINT64 PciEBaseAddress,
   IN UINT32 ResetValue
   )
 {

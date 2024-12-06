@@ -18,35 +18,47 @@
 
 @par Specification
 **/
+#include <GTestTbtNvmDrvHr.h>
+#include <GoogleTest/Private/MockTbtNvmDrvDma/MockTbtNvmDrvDma.h>
 
-//**********************************************************
-// TbtNvmDrvHrWriteCioReg Unit Test                        *
-//**********************************************************
-class TbtNvmDrvHrReadCioDevRegTest : public CommonMock {
+extern "C" {
+TBT_STATUS
+TbtNvmDrvHrReadCioDevReg (
+  IN  TBT_HOST_ROUTER  *This,
+  IN  UINT8            ConfigurationSpace,
+  IN  UINT8            Adapter,
+  IN  UINT16           RegNum,
+  OUT UINT32           *DataPtr
+  );
+}
+// **********************************************************
+// TbtNvmDrvHrWriteCioReg Unit Test                         *
+// **********************************************************
+class TbtNvmDrvHrReadCioDevRegTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    TBT_HOST_ROUTER       *HrPtr;
-    TBT_HR_IMPL           *HrImplPtr;
-    UINT8                 ConfigurationSpace;
-    UINT8                 Adapter;
-    UINT16                RegNum;
-    UINT32                Data;
+    TBT_STATUS       TbtStatus;
+    TBT_HOST_ROUTER  *HrPtr;
+    TBT_HR_IMPL      *HrImplPtr;
+    UINT8            ConfigurationSpace;
+    UINT8            Adapter;
+    UINT16           RegNum;
+    UINT32           Data;
+    MockTbtNvmDrvDma TbtNvmDrvDmaMock;
+    TBT_DMA          *gDmaPtrMock = &LocalDmaPtr;
 
-    void SetUp() override {
-      HrPtr              = (TBT_HOST_ROUTER *) AllocateZeroPool (sizeof (TBT_HOST_ROUTER));
-      HrImplPtr          = (TBT_HR_IMPL *) AllocateZeroPool (sizeof (TBT_HR_IMPL));
-      ConfigurationSpace = ADAPTER_CONFIG_SPACE;
-      Adapter            = 1;
-      RegNum             = 0x8;
-      HrImplPtr->pDma    = gDmaPtrMock;
-      HrPtr->Impl        = HrImplPtr;
-    }
-    void TearDown() override {
-      //
-      // Destroy Mock Service
-      //
-      FreePool (HrPtr);
-    }
+  void SetUp() override {
+    HrPtr              = (TBT_HOST_ROUTER *) AllocateZeroPool (sizeof (TBT_HOST_ROUTER));
+    HrImplPtr          = (TBT_HR_IMPL *) AllocateZeroPool (sizeof (TBT_HR_IMPL));
+    ConfigurationSpace = ADAPTER_CONFIG_SPACE;
+    Adapter            = 1;
+    RegNum             = 0x8;
+    HrImplPtr->pDma    = gDmaPtrMock;
+    HrPtr->Impl        = HrImplPtr;
+  }
+
+  void TearDown() override {
+    FreePool (HrPtr);
+  }
 };
 
 //
@@ -61,7 +73,8 @@ TEST_F (TbtNvmDrvHrReadCioDevRegTest, HrPtrIsNullError) {
                 ConfigurationSpace,
                 Adapter,
                 RegNum,
-                &Data);
+                &Data
+                );
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
 }
 
@@ -72,31 +85,31 @@ TEST_F (TbtNvmDrvHrReadCioDevRegTest, HrPtrIsNullError) {
 TEST_F (TbtNvmDrvHrReadCioDevRegTest, TxCfgPktError) {
   cout << "[---------- Case 2 ----------]"<< endl;
 
-  //
-  //  Mock call TbtNvmDrvTxCfgPkt
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvTxCfgPkt (
       gDmaPtrMock,
       PDF_READ_CONFIGURATION_REGISTERS,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
-  //
-  //  Mock call TbtNvmDrvDmaDtor
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvDmaDebugPrint (
       gDmaPtrMock
-    ));
+      )
+    );
 
   TbtStatus = TbtNvmDrvHrReadCioDevReg (
                 HrPtr,
                 ConfigurationSpace,
                 Adapter,
                 RegNum,
-                &Data);
+                &Data
+                );
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
 }
 
@@ -107,42 +120,42 @@ TEST_F (TbtNvmDrvHrReadCioDevRegTest, TxCfgPktError) {
 TEST_F (TbtNvmDrvHrReadCioDevRegTest, RxCfgPktError) {
   cout << "[---------- Case 3 ----------]"<< endl;
 
-  //
-  //  Mock call TbtNvmDrvTxCfgPkt
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvTxCfgPkt (
       gDmaPtrMock,
       PDF_READ_CONFIGURATION_REGISTERS,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (Return (TBT_STATUS_SUCCESS));
 
-  //
-  //  Mock call TbtNvmDrvRxCfgPkt
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvRxCfgPkt (
       gDmaPtrMock,
       PDF_READ_CONFIGURATION_REGISTERS,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
-  //
-  //  Mock call TbtNvmDrvDmaDtor
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvDmaDebugPrint (
       gDmaPtrMock
-    ));
+      )
+    );
 
   TbtStatus = TbtNvmDrvHrReadCioDevReg (
                 HrPtr,
                 ConfigurationSpace,
                 Adapter,
                 RegNum,
-                &Data);
+                &Data
+                );
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
 }
 
@@ -153,26 +166,26 @@ TEST_F (TbtNvmDrvHrReadCioDevRegTest, RxCfgPktError) {
 TEST_F (TbtNvmDrvHrReadCioDevRegTest, CorrectFlow) {
   cout << "[---------- Case 4 ----------]"<< endl;
 
-  //
-  //  Mock call TbtNvmDrvTxCfgPkt
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvTxCfgPkt (
       gDmaPtrMock,
       PDF_READ_CONFIGURATION_REGISTERS,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (Return (TBT_STATUS_SUCCESS));
 
-  //
-  //  Mock call TbtNvmDrvRxCfgPkt
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvRxCfgPkt (
       gDmaPtrMock,
       PDF_READ_CONFIGURATION_REGISTERS,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (Return (TBT_STATUS_SUCCESS));
 
   TbtStatus = TbtNvmDrvHrReadCioDevReg (
@@ -180,6 +193,7 @@ TEST_F (TbtNvmDrvHrReadCioDevRegTest, CorrectFlow) {
                 ConfigurationSpace,
                 Adapter,
                 RegNum,
-                &Data);
+                &Data
+                );
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);
 }

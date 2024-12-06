@@ -1214,6 +1214,121 @@ GetPprResourceAvailable (
 }
 
 /**
+  Get status for all PPR resources and store number of resources available
+  per Controller/Channel/Rank/Dimm into Outputs->PprAvailableResources.
+
+  @param[in] MrcData        - Global MRC data structure
+**/
+VOID
+GetAllPprResources (
+  MrcParameters   *const    MrcData
+  )
+{
+  MrcOutput           *Outputs;
+  MrcDebug            *Debug;
+  UINT8               Controller;
+  UINT8               Ch;
+  UINT8               Rank;
+  UINT8               Dram;
+  UINT8               BytesPerDram;
+  MrcDimmOut          *DimmOut;
+  UINT8               MaxChDdr;
+  MrcChannelOut       *ChannelOut;
+  UINT8               DeviceCount;
+  UINT8               BankGroup;
+  UINT32              MRNumber;
+  UINT8               MrrResult[MRC_MRR_ARRAY_SIZE];
+  UINT8               PprResource;
+  UINT8               Ddr5BgIdx;
+  UINT8               Lp5BankIdx;
+
+
+  Outputs     = &MrcData->Outputs;
+  Debug       = &Outputs->Debug;
+  MaxChDdr    = Outputs->MaxChannels;
+  DeviceCount = Outputs->SdramCount;
+
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Ch = 0; Ch < MaxChDdr; Ch++) {
+      ChannelOut = &Outputs->Controller[Controller].Channel[Ch];
+      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+        if (!MrcRankExist (MrcData, Controller, Ch, Rank)) {
+          continue;
+        }
+
+        DimmOut = &ChannelOut->Dimm[RANK_TO_DIMM_NUMBER(Rank)];
+
+        if (DimmOut->SdramWidth == 8) { // x8
+          BytesPerDram = 1;
+        } else { // x16
+          BytesPerDram = 2;
+        }
+
+        switch (Outputs->DdrType) {
+          case MRC_DDR_TYPE_DDR5:
+            // Minimize the number of MRRs by reading the MrrResult for every device before moving to the next MR number
+            for (BankGroup = 0; BankGroup < DimmOut->BankGroups; BankGroup += 2) {
+              switch (BankGroup) {
+                case 0x0:
+                case 0x1:
+                  MRNumber = mrMR54;
+                  break;
+                case 0x2:
+                case 0x3:
+                  MRNumber = mrMR55;
+                  break;
+                case 0x4:
+                case 0x5:
+                  MRNumber = mrMR56;
+                  break;
+                case 0x6:
+                case 0x7:
+                  MRNumber = mrMR57;
+                  break;
+                default:
+                  MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Warning: BankGroup %d is outside of range 0-7\n", BankGroup);
+                  continue;
+              }
+              MrcIssueMrr (MrcData, Controller, Ch, Rank, MRNumber, MrrResult); // Check the correct MR for PPR Resources, based on BA/BG
+
+              for (Dram = 0; Dram < DeviceCount; Dram += BytesPerDram) {
+                Outputs->PprAvailableResources[Controller][Ch][Rank][Dram] = 0;
+                PprResource = MrrResult[Dram];
+                for (Ddr5BgIdx = 0; Ddr5BgIdx < 2; Ddr5BgIdx++) {
+                  // Ddr5BgIdx 0 => Even BG - take the logical AND of bytes 0-3
+                  // Ddr5BgIdx 1 => Odd BG - take the logical AND of bytes 4-7
+                  if (((PprResource >> (4 * Ddr5BgIdx)) & 0xF) == 0xF) {
+                    Outputs->PprAvailableResources[Controller][Ch][Rank][Dram]++;
+                  }
+                }
+              } // for Dram
+            }
+            break;
+          case MRC_DDR_TYPE_LPDDR5:
+            MrcIssueMrr (MrcData, Controller, Ch, Rank, mrMR29, MrrResult);
+            for (Dram = 0; Dram < DeviceCount; Dram += BytesPerDram) {
+              Outputs->PprAvailableResources[Controller][Ch][Rank][Dram] = 0;
+              PprResource = MrrResult[Dram];
+              for (Lp5BankIdx = 0; Lp5BankIdx < 8; Lp5BankIdx++) {
+                if (PprResource & (1 << Lp5BankIdx)) {
+                  Outputs->PprAvailableResources[Controller][Ch][Rank][Dram]++;
+                }
+              }
+              // Available resources for LP5 are the number of banks with PPR resource available
+              Outputs->PprAvailableResources[Controller][Ch][Rank][Dram] *= 2;
+            }
+            break;
+          default:
+            break;
+        }
+      } // for Rank
+    } // for Ch
+  } // for Controller
+}
+
+
+/**
   Returns the number of low order bank group and bank address bits that are not included in the BG interleave
 
   @param[in] MrcData                - Pointer to MrcData
@@ -1379,7 +1494,7 @@ IsPprRepairRequired (
               } else { // x16
                 BytesPerDram = 2;
               }
-              for (Dram = 0; Dram < MSVx4 / BytesPerDram; Dram++) {
+              for (Dram = 0; Dram < MSVx4; Dram += BytesPerDram) {
                 if (GetPprResourceAvailable (MrcData, Controller, Ch, Rank, Dram, BankInterleaveIndex, Bank)) {
                   return 1;
                 } // GetPprResourceAvailable
@@ -1637,6 +1752,7 @@ DispositionFailRangesWithPprFlow (
       } // Bank pair
       MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "DispositionFailRangesWithPprFlow: Rank%d Mc%d Ch%d:\n  Number of rows with errors = %d\n  Number of repairs issued = %d\n  Number of repairs successful = %d\n",
         Rank, Controller, Channel, NumRowsError, NumRepairsIssued, NumRepairsSuccessful);
+      Outputs->PprNumSuccessfulRepairs += (UINT16) NumRepairsSuccessful;
     } // Ch
   } // Controller
 
@@ -2017,7 +2133,7 @@ MemTestMATSN (
 #endif
         PprDispositionFailRange(MrcData, BankMapping, &RepairDone);
       } else {
-        Outputs->PprDetectedErrors = PPR_MAX_DETECTED_ERRORS; // Too many errors
+        Outputs->PprNumDetectedErrors = PPR_MAX_DETECTED_ERRORS; // Too many errors
         MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_ERROR, "MemTestMATS8: Test #%d Failed!\n\n", Test);
         break;
       }
@@ -2140,7 +2256,7 @@ MemTestDataRetention (
         // Disposition any failures
         PprDispositionFailRange(MrcData, BankMapping, &RepairDone);
       } else {
-        Outputs->PprDetectedErrors = PPR_MAX_DETECTED_ERRORS; // Too many errors
+        Outputs->PprNumDetectedErrors = PPR_MAX_DETECTED_ERRORS; // Too many errors
         MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_ERROR, "MemTestDataRetention: Test #%d Failed!\n\n", Test);
         break;
       }
@@ -2277,7 +2393,7 @@ MemTestMarch (
         // Disposition any failures
         PprDispositionFailRange(MrcData, BankMapping, &RepairDone);
       } else {
-        Outputs->PprDetectedErrors = PPR_MAX_DETECTED_ERRORS; // Too many errors
+        Outputs->PprNumDetectedErrors = PPR_MAX_DETECTED_ERRORS; // Too many errors
         MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_ERROR, "%s: Test Failed!\n\n", TestName);
         break;
       }
@@ -2372,7 +2488,7 @@ MrcPostPackageRepairEnable (
 
   Outputs->PprRunningState = PPR_IS_RUNNING;
 
-  Outputs->PprDetectedErrors = 0;
+  Outputs->PprNumDetectedErrors = 0;
   Outputs->PprRepairFails = 0;
   Outputs->PprForceRepairStatus = mrcSuccess;
 
@@ -2456,8 +2572,6 @@ MrcPostPackageRepairEnable (
         case PPR_MEMTEST_YMARCHLONG_BIT:
           Status |= MemTestMarch(MrcData, BankMapping, &TotalTestTime, (MRC_ADVANCED_MEM_TEST_TYPE) Test);
           break;
-        default:
-          break;
       }
     }
     if (Status != mrcSuccess) {
@@ -2528,6 +2642,10 @@ Done:
   GetSetVal = 0;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);
   MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmDisAllCplInterleave, WriteCached, &GetSetVal);
+
+  // Get status of PPR resources for MHI report
+  GetAllPprResources (MrcData);
+
 
   Outputs->PprRunningState = PPR_IS_DONE;
 

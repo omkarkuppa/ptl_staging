@@ -576,6 +576,9 @@ READ_LOCK_STATUS   = TRUE
 FvNameGuid         = 9B7FA59D-71C6-4A36-906E-9725EA6ADD5B
 
 !include $(PLATFORM_PACKAGE)/Include/Fdf/CoreSecurityPreMemoryInclude.fdf
+!if gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable == TRUE
+  INF SecurityPkg/Tcg/PhysicalPresencePei/PhysicalPresencePei.inf
+!endif
 
 [FV.FvSecurityPostMemory]
 BlockSize          = $(FLASH_BLOCK_SIZE)

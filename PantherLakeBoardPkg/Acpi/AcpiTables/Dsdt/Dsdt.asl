@@ -196,6 +196,46 @@ DefinitionBlock (
       }
     })
 
+    Method (A3UP, 0, Serialized) {
+      Store (PUPP, Local0)
+      Store (0, Index (Local0, 0)) // Set UPC package default to invalid
+      If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
+        If (LOr (LEqual (SXP1, 3), LEqual (SXP2, 3))) { // This entry will expose only when Root Port Number is 3
+          Store (1, Index (Local0, 0)) // Set UPC package to valid
+        }
+      }
+      Return (Local0)
+    }
+    Method (A3PL, 0, serialized) {
+      Store (PPLP, Local0)
+      Store (0, Index (Local0, 0)) // Set PLD package default to invalid
+      If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
+        If (LOr (LEqual (SXP1, 3), LEqual (SXP2, 3))) { // This entry will expose only when Root Port Number is 3
+          Store (1, Index (Local0, 0)) // Set PLD package to valid
+        }
+      }
+      Return (Local0)
+    }
+    Method (A4UP, 0, Serialized) {
+      Store (PUPP, Local0)
+      Store (0, Index (Local0, 0)) // Set UPC package default to invalid
+      If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
+        If (LOr (LEqual (SXP1, 4), LEqual (SXP2, 4))) { // This entry will expose only when Root Port Number is 4
+          Store (1, Index (Local0, 0)) // Set UPC package to valid
+        }
+      }
+      Return (Local0)
+    }
+    Method (A4PL, 0, serialized) {
+      Store (PPLP, Local0)
+      Store (0, Index (Local0, 0)) // Set PLD package default to invalid
+      If (LAnd (CondRefOf (VTCM), LEqual (VTCM, 1))) { // This entry will expose only when Expose "XHCI SDEV Entry" is enabled
+        If (LOr (LEqual (SXP1, 4), LEqual (SXP2, 4))) { // This entry will expose only when Root Port Number is 4
+          Store (1, Index (Local0, 0)) // Set PLD package to valid
+        }
+      }
+      Return (Local0)
+    }
     Method (A5UP, 0, Serialized) {
       Store (PUPP, Local0)
       Store (0, Index (Local0, 0)) // Set UPC package default to invalid

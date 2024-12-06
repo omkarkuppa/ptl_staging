@@ -367,50 +367,6 @@ MrcCalcIoChNotPopMask (
 }
 
 /**
-  Display MR value from the host struct
-
-  @param[in] MrcData       - Include all MRC global data.
-  @param[in] MrAddr         - MR Address.
-**/
-VOID
-DisplayMRContentFromHost (
-  IN MrcParameters *const MrcData,
-  IN MrcModeRegister      MrAddr
-  )
-{
-  MrcChannelOut   *ChannelOut;
-  MrcOutput       *Outputs;
-  UINT8  Controller;
-  UINT8  Channel;
-  UINT8  Rank;
-  UINT8  Data;
-  UINT8  MrIndex;
-  Outputs = &MrcData->Outputs;
-
-  MrIndex = MrcMrAddrToIndex (MrcData, &MrAddr);
-
-  if (MrIndex >= mrIndexMax) {
-    MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_ERROR, "\nMrPtr argument is out of bounds\n");
-    // Prevent accessing index out of bound later in function
-    return;
-  }
-
-  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-      ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
-      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
-        if (MrcRankExist (MrcData, Controller, Channel, Rank) == 0) {
-          continue;
-        }
-        Data = ChannelOut->Dimm[dDIMM0].Rank[Rank % MAX_RANK_IN_DIMM].MR[MrIndex];
-        MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "MC%u.C%u.R%u MR%d: 0x%X\n", Controller, Channel, Rank, MrAddr, Data);
-      }
-    } // Channel
-  } // Controller
-}
-
-
-/**
   This function Sets InitComplete Override before sending PM message and Restores InitComplete Override after PM message is sent.
 
   @param[in] MrcData              - All the MRC global data.

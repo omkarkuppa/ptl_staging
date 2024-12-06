@@ -71,6 +71,7 @@
   # Build scripts override the value of this PCD, update value in scripts for the change to take effect.
   gMinPlatformPkgTokenSpaceGuid.PcdUefiSecureBootEnable|FALSE
   gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable|FALSE
+  gMinPlatformPkgTokenSpaceGuid.PcdStandaloneMmEnable|FALSE
 
   gBoardModuleTokenSpaceGuid.PcdSecurityEnable|FALSE
   gBoardModuleTokenSpaceGuid.PcdAdvancedFeatureEnable|FALSE
@@ -166,7 +167,6 @@
   gSiPkgTokenSpaceGuid.PcdLpssUartDebugEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdPpamEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdSpaEnable|FALSE
-  gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdSpecialPoolEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdPsmiEnable|FALSE
   gSiPkgTokenSpaceGuid.PcdVmdEnable|FALSE
@@ -447,6 +447,7 @@
   gUsb4FeaturePkgTokenSpaceGuid.PcdPchDTbtRpSupport|0x00000000
 
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable|FALSE
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber|0x04
 
   gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperFeatureSupport|TRUE
   gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp|FALSE
@@ -547,7 +548,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLangCodes|"en-US"
 
 [PcdsPatchableInModule]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0307
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0308
 
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000046
 

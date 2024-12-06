@@ -812,6 +812,8 @@ InitializeHwpMiscFeatures (
   MAILBOX_DATA_AUTONOMOUS_PARAMS MailBoxData;
   PCODE_MAILBOX_INTERFACE        MailboxCommand;
 
+  MailBoxData.Data32 = 0;
+
   if (gCpuPowerMgmtBasicConfig->Hwp == 1) {
 
     ///

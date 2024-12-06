@@ -155,6 +155,24 @@ UpdatePeiSaPolicyBoardConfigPreMem (
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Lp5CccConfig, MemConfig->ExternalInputs.Lp5CccConfig,    PcdGet8 (VpdPcdMrcLp5CccConfig)); // BitMask where bits [3:0] are controller 0 Channel [3:0] and [7:4] are Controller 1 Channel [3:0].  0 selects Ascending mapping and 1 selects Descending mapping.
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.CmdMirror, MemConfig->ExternalInputs.CmdMirror,          PcdGet8 (VpdPcdMrcCmdMirror)); // BitMask where bits [3:0] are controller 0 Channel [3:0] and [7:4] are Controller 1 Channel [3:0].  0 = No Command Mirror and 1 = Command Mirror.
 
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChannelToCkdQckMapping[0], MemConfigNoCrc->ChannelToCkdQckMapping[0], ((VPD_MRC_CH_2_CKD_QCK *) PcdGetPtr (VpdPcdMrcChannelToCkdQckMapping))->ChannelToCkdQckMapping[0]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChannelToCkdQckMapping[1], MemConfigNoCrc->ChannelToCkdQckMapping[1], ((VPD_MRC_CH_2_CKD_QCK *) PcdGetPtr (VpdPcdMrcChannelToCkdQckMapping))->ChannelToCkdQckMapping[1]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChannelToCkdQckMapping[2], MemConfigNoCrc->ChannelToCkdQckMapping[2], ((VPD_MRC_CH_2_CKD_QCK *) PcdGetPtr (VpdPcdMrcChannelToCkdQckMapping))->ChannelToCkdQckMapping[2]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChannelToCkdQckMapping[3], MemConfigNoCrc->ChannelToCkdQckMapping[3], ((VPD_MRC_CH_2_CKD_QCK *) PcdGetPtr (VpdPcdMrcChannelToCkdQckMapping))->ChannelToCkdQckMapping[3]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChannelToCkdQckMapping[4], MemConfigNoCrc->ChannelToCkdQckMapping[4], ((VPD_MRC_CH_2_CKD_QCK *) PcdGetPtr (VpdPcdMrcChannelToCkdQckMapping))->ChannelToCkdQckMapping[4]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChannelToCkdQckMapping[5], MemConfigNoCrc->ChannelToCkdQckMapping[5], ((VPD_MRC_CH_2_CKD_QCK *) PcdGetPtr (VpdPcdMrcChannelToCkdQckMapping))->ChannelToCkdQckMapping[5]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChannelToCkdQckMapping[6], MemConfigNoCrc->ChannelToCkdQckMapping[6], ((VPD_MRC_CH_2_CKD_QCK *) PcdGetPtr (VpdPcdMrcChannelToCkdQckMapping))->ChannelToCkdQckMapping[6]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChannelToCkdQckMapping[7], MemConfigNoCrc->ChannelToCkdQckMapping[7], ((VPD_MRC_CH_2_CKD_QCK *) PcdGetPtr (VpdPcdMrcChannelToCkdQckMapping))->ChannelToCkdQckMapping[7]);
+
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PhyClockToCkdDimm[0], MemConfigNoCrc->PhyClockToCkdDimm[0], ((VPD_MRC_DDRIO_2_CKD_CLOCK *) PcdGetPtr (VpdPcdMrcPhyClockToCkdDimm))->PhyClockToCkdDimm[0]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PhyClockToCkdDimm[1], MemConfigNoCrc->PhyClockToCkdDimm[1], ((VPD_MRC_DDRIO_2_CKD_CLOCK *) PcdGetPtr (VpdPcdMrcPhyClockToCkdDimm))->PhyClockToCkdDimm[1]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PhyClockToCkdDimm[2], MemConfigNoCrc->PhyClockToCkdDimm[2], ((VPD_MRC_DDRIO_2_CKD_CLOCK *) PcdGetPtr (VpdPcdMrcPhyClockToCkdDimm))->PhyClockToCkdDimm[2]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PhyClockToCkdDimm[3], MemConfigNoCrc->PhyClockToCkdDimm[3], ((VPD_MRC_DDRIO_2_CKD_CLOCK *) PcdGetPtr (VpdPcdMrcPhyClockToCkdDimm))->PhyClockToCkdDimm[3]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PhyClockToCkdDimm[4], MemConfigNoCrc->PhyClockToCkdDimm[4], ((VPD_MRC_DDRIO_2_CKD_CLOCK *) PcdGetPtr (VpdPcdMrcPhyClockToCkdDimm))->PhyClockToCkdDimm[4]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PhyClockToCkdDimm[5], MemConfigNoCrc->PhyClockToCkdDimm[5], ((VPD_MRC_DDRIO_2_CKD_CLOCK *) PcdGetPtr (VpdPcdMrcPhyClockToCkdDimm))->PhyClockToCkdDimm[5]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PhyClockToCkdDimm[6], MemConfigNoCrc->PhyClockToCkdDimm[6], ((VPD_MRC_DDRIO_2_CKD_CLOCK *) PcdGetPtr (VpdPcdMrcPhyClockToCkdDimm))->PhyClockToCkdDimm[6]);
+  UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PhyClockToCkdDimm[7], MemConfigNoCrc->PhyClockToCkdDimm[7], ((VPD_MRC_DDRIO_2_CKD_CLOCK *) PcdGetPtr (VpdPcdMrcPhyClockToCkdDimm))->PhyClockToCkdDimm[7]);
+
   ///
   /// Initialize the VTD Configuration
   ///

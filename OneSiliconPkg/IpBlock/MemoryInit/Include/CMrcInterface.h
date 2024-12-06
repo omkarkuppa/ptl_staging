@@ -567,7 +567,6 @@ typedef enum {
   OemEarlyReadDqDqs2D,      ///<  before Early Read Timing Centering 2D
   OemEarlyReadMprDqDqs2D,   ///<  before Early MPR Read Timing Centering 2D
   OemReadDqDqs,             ///<  before Read Timing Centering
-  OemVddqTraining,          ///<  before Vddq Training
   OemDimmRonTraining,       ///<  before DIMM Ron Training
   OemDimmODTTraining,       ///<  before DIMM ODT Training
   OemDimmNTODTTraining,     ///<  before DIMM NT ODT Training
@@ -626,6 +625,7 @@ typedef enum {
   OemViewPinCal,            ///< before View Pin Calibration
   OemWriteDqDqsReTraining,
   OemRmtPerBit,             ///< before Rank Margin Tool Per Bit training
+  OemRmtLvr,                ///< before Lvr Rmt
   OemDllDccCal,             ///< before Initializing DLL Duty Cycle Correction
   OemDccRiseFall,           ///< before Duty Cycle Correction for Rise/Fall Alignment
   OemVccClkRxFfCal,         ///< before VccClkRx FeedForward Leg Calibration
@@ -705,8 +705,8 @@ typedef UINT32       (EFIAPI *MRC_IO_READ_32)              (UINT32 IoAddress);
 typedef void         (EFIAPI *MRC_IO_WRITE_8)              (UINT32 IoAddress, UINT8 Value);
 typedef void         (EFIAPI *MRC_IO_WRITE_16)             (UINT32 IoAddress, UINT16 Value);
 typedef void         (EFIAPI *MRC_IO_WRITE_32)             (UINT32 IoAddress, UINT32 Value);
-typedef UINT8        (EFIAPI *MRC_MMIO_READ_8)             (UINT32 Address);
-typedef UINT16       (EFIAPI *MRC_MMIO_READ_16)            (UINT32 Address);
+typedef UINT8        (EFIAPI *MRC_MMIO_READ_8)             (UINT64 Address);
+typedef UINT16       (EFIAPI *MRC_MMIO_READ_16)            (UINT64 Address);
 typedef UINT32       (EFIAPI *MRC_MMIO_READ_32)            (UINT64 Address);
 typedef UINT64       (EFIAPI *MRC_MMIO_READ_64)            (UINT64 Address);
 typedef UINT8        (EFIAPI *MRC_MMIO_WRITE_8)            (UINT64 Address, UINT8 Value);
@@ -745,7 +745,7 @@ typedef UINT8        (EFIAPI *MRC_GET_RTC_CMOS)            (UINT8 Location);
 typedef UINT64       (EFIAPI *MRC_MSR_READ_64)             (UINT32 Location);
 typedef UINT64       (EFIAPI *MRC_MSR_WRITE_64)            (UINT32 Location, UINT64 Data);
 typedef void         (EFIAPI *MRC_RETURN_FROM_SMC)         (void *GlobalData, UINT32 MrcStatus);
-typedef void         (EFIAPI *MRC_DRAM_RESET)              (UINT32 PciEBaseAddress, UINT32 ResetValue);
+typedef void         (EFIAPI *MRC_DRAM_RESET)              (UINT64 PciEBaseAddress, UINT32 ResetValue);
 typedef void         (EFIAPI *MRC_DELAY_NS)                (void *MrcData, UINT32 DelayNs);
 typedef RETURN_STATUS(EFIAPI *MRC_SET_LOCK_PRMRR)          (UINT64 PrmrrBase, UINT32 PrmrrSize);
 
@@ -817,6 +817,7 @@ typedef struct {
   UINT8     BankGroupAttempts[MAX_BANK_GROUP_CNT];
   BOOLEAN   Overflow;
   UINT8     DeviceTemp; // Device temperature after fail detected
+  UINT8     Device;
 } ROW_FAIL_RANGE;
 
 // PPR test Type bits. Keep synced with defines in LunarLakePlatSamplePkg\Library\PeiPolicyUpdateLib\PeiSaPolicyUpdatePreMem.c
@@ -1791,6 +1792,7 @@ typedef struct {
   MrcFrequency   Speed;                   ///< Max DIMM speed in the current profile - needed  for SMBIOS
   MrcRankOut     Rank[MAX_RANK_IN_DIMM];  ///< The following are rank level definitions.
   BOOLEAN        IsCkdSupport;            ///< TRUE if CKD is installed on this DIMM.
+  UINT8          CkdDimmIndex;            ///< Indicates the index of Physical DIMM (Max up to 4 for 2DPC), this is used when programming CKD Control Word
 } MrcDimmOut;
 
 /// This data structure contains all the "global data" values that are considered output by the MRC.
@@ -1954,7 +1956,8 @@ typedef struct {
   BOOLEAN           MrXPdaDfeTap3Enabled;          ///< Defines if MRs of DFE TAP3 is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap4Enabled;          ///< Defines if MRs of DFE TAP4 is required as PDA for this channel.
   BOOLEAN           IsDdr5Hynix;                   ///< TRUE if any DDR5 Hynix DIMM is detected otherwise FALSE
-  BOOLEAN           IsDrfmSupported;              ///< TRUE if DRAM supports DRFM
+  BOOLEAN           IsOneDpcSplitBgEnabled;        ///< If One DPC 1R split bg is enabled.
+  BOOLEAN           IsRowHammerConfigured[MAX_CONTROLLER][MAX_CHANNEL][MAX_DIMMS_IN_CHANNEL]; ///< TRUE if ARFM or DRFM is configured for a DIMM
   /// Cmd and Ctl Pi Code for Low frequency. This is required to track for LP5 Frequency switching.
   UINT32            LowFCtlPiCode[MAX_SAGV_POINTS][MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL]; ///< Cmd and Ctl Pi Code for Low frequency. It will be used for Jedec Reset for Lp5
   UINT32            LowFCmdPiCode[MAX_SAGV_POINTS][MAX_CONTROLLER][MAX_CHANNEL]; ///< Cmd and Ctl Pi Code for Low frequency. It will be used for Jedec Reset for Lp5
@@ -2037,6 +2040,7 @@ typedef struct {
   INT8                ClkWckDccCode[MAX_CONTROLLER][MAX_CHANNEL][MAX_BYTE_IN_LP_CHANNEL][MAX_RANK_IN_CHANNEL]; // CLK uses Byte 0 only, WCK is per byte
   UINT8               CkdShift[MAX_CONTROLLER][MAX_DDR5_CHANNEL][MAX_RANK_IN_CHANNEL]; ///< CKD QCK Output Delay obtained from Early Command Training
   MRC_CKD_BUFFER      CkdBuffer[MAX_DIMMS_IN_SYSTEM];
+  UINT8               PprAvailableResources[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL][MAX_SDRAM_IN_DIMM]; ///< PPR available resources per device
 #if MRC_ENABLE_STATS
   MrcStatsTracker     StatsTracker;                ///< Used to record the data for the stats and telemetry framework
 #endif // MRC_ENABLE_STATS && MRC_DEBUG_PRINT
@@ -2047,13 +2051,14 @@ typedef struct {
   UINT16              Wckps;                       ///< Write clock period in pS
   UINT16              UIps;                        ///< Data Unit Interval period in pS (half of external bus clock)
   UINT16              NumCL;                       ///< Global Variables storing the current number of Cachelines
-  UINT16              PprDetectedErrors;           ///< PPR Detect how many times of bad rows or devices
+  UINT16              PprNumDetectedErrors;        ///< PPR Detect how many times of bad rows or devices
   UINT16              PprRepairFails;              ///< PPR repair fails
   UINT16              PprForceRepairStatus;        ///< PPR Force Repair Status
   UINT16              EWRTC2DSmallWidth;           ///< Record the small width of EarlyWrite Timing 2D training
   UINT16              MaxRdDataValid;              ///< Used to track the maximum RdDataValid delay across all Frequency Points, (Sub)Channels, and Ranks.
   UINT16              PostCodeStart;               ///< Green Start POST code for the interpreter
   UINT16              PostCodeStop;                ///< Green Stop  POST code for the interpreter
+  UINT16              PprNumSuccessfulRepairs;     ///< PPR number of successful repairs
   UINT16              RcompTarget[MAX_RCOMP_TARGETS]; ///< RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
   MrcClockRatio       Ratio;                       ///< Request for this memory controller to use this clock ratio.
   MrcDimmStatus       FailingChannelBitMask;       ///< BitMask to detect failing Channels and disable them
@@ -2122,6 +2127,7 @@ typedef struct {
   BOOLEAN             IsIbeccInitRangesRequired;   ///< Flag to indicate that the IBECC Init Ranges FSM must be run
   BOOLEAN             IsMptuFast;                  ///< Flag to indicate that the MPTU is required on the current fast boot
   BOOLEAN             IsVocSearch;                 ///< TRUE if currently running VOC part of SOT
+  BOOLEAN             IsAny2Ranks;                 ///< TRUE if any DIMM has 2 Ranks populated
   UINT8               FinalIbeccOperationMode;     ///< Output to BIOS on the state of IBECC
   UINT8               tMAC;                        ///< Maximum Activate Count for pTRR.
   UINT8               MaxChannels;                 ///< Maximum number of channels supported by the controller.  Varies per technology.
@@ -2154,7 +2160,7 @@ typedef struct {
   UINT8               BankIncOrder[MAX_MPTU];      ///< Used to program BankIncOrder in Ddr5 for each Dunit
   UINT8               CaDeselectStress;
   BOOLEAN             IsLoopbackSetupDone;
-//  UINT8               ReservedBytesAlign[4];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  UINT8               ReservedBytesAlign[1];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   MrcIpTestEnv        IpModel;
   MrcDdrType          DdrType;                     ///< Current memory type: DDR5, LPDDR5
   MrcSaGvPoint        SaGvFirst;                   ///< First SaGv Point to be trained
@@ -2180,6 +2186,8 @@ typedef struct {
   MrcTiming   Timing;     ///< The DIMMs requested timing overrides.
   UINT8       SpdAddress; ///< The SMBus address for the DIMM's SPD data.
   UINT8       CkdAddress; ///< The SMBus address for the DIMM's CKD data.
+  UINT8       ChannelToCkdQckMapping;
+  UINT8       PhyClockToCkdDimm;
 } MrcDimmIn;
 
 /// This data structure contains all the "global data" values that are considered input by the MRC.
@@ -2223,7 +2231,7 @@ typedef struct {
   MrcIteration    Iteration;                   ///< Number of iterations thru the MRC core call table.
   MRC_BOOT_MODE   BootMode;                    ///< The requested memory controller boot mode.
   UINT32          SaMemCfgCrc;                 ///< Save current MEMORY_CONFIGURATION crc before MemConfig is overwritten. Used for ColdBootRequired checking
-  UINT32          PciEBaseAddress;             ///< define the PciE base address.
+  UINT64          PciEBaseAddress;             ///< define the PciE base address.
   UINT64          MchBarBaseAddress;           ///< define the MCH bar base address.
   UINT32          SmbusBaseAddress;            ///< This field defines the smbus base address.
   UINT32          MeStolenSize;                ///< Define the size that the ME need in MB.
@@ -2247,7 +2255,8 @@ typedef struct {
   BOOLEAN           MptuPropagationErrorFlow;           ///< Boolean variable to enable or disable special flow around CHAN_EN field switching to avoid X propagation in simulation
   BOOLEAN           Mars;                               ///< Controls MARS feature
   UINT32            CleanMemory:1;                  ///< TRUE to request a memory clean
-  UINT32            RsvdBits1:31;
+  UINT32            BypassMemScrub:1;               ///< TRUE to skip memory scrub. Any memory scrub request (ECC, TxtClean, CleanMemory) will be ignored.
+  UINT32            RsvdBits1:30;
   UINT32            ErrorCountForFail;              ///< Error count for last-pass margin failure
   UINT8             BER;                            ///< Use BER margining in MRC
   BOOLEAN           IsDdrphyx64;                    ///< Identifies that the current CPU SKU is x64 (PHY)
@@ -2332,7 +2341,14 @@ typedef struct {
   BOOLEAN LockUiDiv6Flow;     ///< LockUI Calibration flow uses Div6 mode
   UINT16  RloadTarget;        ///< Rload target value for Rload compensation
   BOOLEAN DiscardLvrAutoTrimResults; ///< Discard LVR Auto Trim Results and use PHY init values
-  UINT8   ReservedForDwordAlignment[2];
+  BOOLEAN PhClkSkipPhCorrection; ///< Skip PhClk correction in PhClk calibration
+#ifdef HVM_MODE
+  UINT8   PhClkCheckPhError;     ///< Defines min to max tolerance for phase spacing check, specified max - min of all 8 phases in 1/512 * phclk increments
+  UINT8   PhClkCheckDcError;     ///< Defines duty cycle tolerance in 1/512 * phclk increments
+  UINT8   ReservedBytesAlign[2]; ///< Reserved Bytes to ensure HVM block size is a multiple of DWORDs
+#endif // HVM_MODE
+  BOOLEAN IsOneDpcSplitBgEnabled; ///< TRUE: 1Rank Split Bg On SubChannel Enabled.
+  UINT8  ReservedBytesAlign2[4]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

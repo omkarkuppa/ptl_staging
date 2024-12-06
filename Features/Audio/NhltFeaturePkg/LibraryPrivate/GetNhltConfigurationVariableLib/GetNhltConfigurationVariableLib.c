@@ -30,6 +30,7 @@
 #include <Library/DxeServicesLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/InstallBtConfigurationVariable.h>
 #include <NhltConfiguration.h>
 #include <NhltEndpointsConfigurationVariable.h>
 #include <Nhlt.h>
@@ -73,6 +74,7 @@ GetNhltConfiguration (
   EFI_STATUS                                   Status;
 
   ZeroMem (NhltConfiguration, sizeof (NHLT_CONFIGURATION));
+  ZeroMem (&NhltConfigurationVariable, sizeof (NhltConfigurationVariable));
 
 #if FixedPcdGetBool (NhltConfigurationByPcdEnabled)
   NhltEndpointTableLoadPcdConfiguration (&NhltConfigurationVariable);
@@ -174,14 +176,26 @@ GetNhltConfiguration (
       break;
   }
 
-  NhltConfigurationVariable.Revision = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_REVISION;
-  Status = gRT->SetVariable (
-                  NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_NAME,
-                  &gNhltEndpointsTableConfigurationVariableGuid,
-                  NhltConfigurationVariableAttr,
-                  VariableSize,
-                  &NhltConfigurationVariable
-                  );
+  if (NhltConfigurationVariable.Revision != NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_REVISION) {
+    NhltConfigurationVariable.Revision = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_REVISION;
+    Status = gRT->SetVariable (
+                    NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_NAME,
+                    &gNhltEndpointsTableConfigurationVariableGuid,
+                    NhltConfigurationVariableAttr,
+                    VariableSize,
+                    &NhltConfigurationVariable
+                    );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a (): Cannot update NHLT UEFI variable. Status = 0x%r.\n", __FUNCTION__, Status));
+      return Status;
+    }
+  }
+
+  Status = InstallNhltBtVariable (NhltConfigurationVariable.NhltBluetoothEnabled);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
 
   return EFI_SUCCESS;
 }

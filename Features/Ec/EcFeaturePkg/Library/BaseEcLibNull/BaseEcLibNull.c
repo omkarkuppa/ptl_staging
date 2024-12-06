@@ -25,6 +25,7 @@
 /**
   Send command to EC.
 
+  @param[in]  EcId                  Embedded Controller identification.
   @param[in]  Command               Command byte to send
 
   @retval     EFI_SUCCESS           Command success
@@ -34,6 +35,7 @@
 EFI_STATUS
 EFIAPI
 SendEcCommand (
+  IN UINT8          EcId,
   IN UINT8          Command
   )
 {
@@ -44,6 +46,7 @@ SendEcCommand (
 /**
   Receive data from EC.
 
+  @param[in]  EcId                    Embedded Controller identification.
   @param[out] Data                    Data byte received
 
   @retval     EFI_SUCCESS             Read success
@@ -53,8 +56,9 @@ SendEcCommand (
 EFI_STATUS
 EFIAPI
 ReceiveEcData (
+  IN  UINT8         EcId,
   OUT UINT8         *Data
- )
+  )
 {
     return EFI_SUCCESS;
 }
@@ -63,6 +67,7 @@ ReceiveEcData (
 /**
   Send data to EC.
 
+  @param[in]  EcId                  Embedded Controller identification.
   @param[in]  Data                  Data byte to send
 
   @retval     EFI_SUCCESS           Read success
@@ -71,6 +76,7 @@ ReceiveEcData (
 EFI_STATUS
 EFIAPI
 SendEcData (
+  IN UINT8          EcId,
   IN UINT8          Data
   )
 {

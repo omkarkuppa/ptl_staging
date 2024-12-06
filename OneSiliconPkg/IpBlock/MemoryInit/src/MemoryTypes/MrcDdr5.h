@@ -690,7 +690,7 @@ MrcSetDdr5Mr8ReadPreamble (
   @retval MrcStatus - mrcSuccess if successful, else an error status.
 **/
 MrcStatus
-MrcSetDdr5Mr40 (
+MrcSetDdr5Mr40EarlyDqs (
   IN  MrcParameters *const MrcData
   );
 
@@ -1320,17 +1320,38 @@ StartDramDqsToggleModeDdr5 (
 #endif // MRC_DDR_5_H_
 
 /**
-  Check if refresh interval rate is implemented if so then enable it.
+  Check if RIR is supported for a specific channel, this feature is supported
+  if all populated ranks within a channel support it.
 
-  @param[in]  MrcData        - The global host structure
-  @param[out] IsRirSupported - True if DDR5 RIR is supported (MR4 OP[3] = 1)
+  @param[in]  MrcData         - The global host structure
+  @param[in]  Controller      - Zero based controller number
+  @param[in]  Channel         - Zero based channel number
+  @param[out] pIsRirSupported - True if DDR5 RIR is supported (MR4 OP[3] = 1)
 
   @return MrcStatus.
 **/
 MrcStatus
-MrcTurnOnRirIfSupported (
+MrcGetDdr5RirSupport (
   IN  MrcParameters* const MrcData,
-  OUT BOOLEAN              *IsRirSupported
+  IN  UINT32               Controller,
+  IN  UINT32               Channel,
+  OUT BOOLEAN              *pIsRirSupported
+);
+
+/**
+  Enables RIR for a specific channel.
+
+  @param[in]  MrcData        - The global host structure
+  @param[in]  Controller     - Zero based controller number
+  @param[in]  Channel        - Zero based channel number
+
+  @return MrcStatus.
+**/
+MrcStatus
+MrcSetDdr5Rir (
+  IN  MrcParameters* const MrcData,
+  IN  UINT32               Controller,
+  IN  UINT32               Channel
 );
 
 /*

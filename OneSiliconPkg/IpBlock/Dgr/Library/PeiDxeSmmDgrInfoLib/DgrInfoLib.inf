@@ -36,7 +36,6 @@
   DebugLib
   IoLib
   CpuPlatformLib
-  PcdLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -45,6 +44,3 @@
 
 [Sources]
   DgrInfoLib.c
-
-[Pcd]
-  gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable

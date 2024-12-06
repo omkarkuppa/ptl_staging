@@ -19,50 +19,60 @@
 @par Specification
 **/
 
-//**********************************************************
-// TbtNvmDrvHrDtor Unit Test                               *
-//**********************************************************
-class TbtNvmDrvHrDtorTest : public CommonMock {
-  protected:
-    TBT_HOST_ROUTER       *HrPtr;
-    TBT_HR_IMPL           *HrImplPtr;
-    EFI_PCI_IO_PROTOCOL   *PciIoProto;
+#include <GTestTbtNvmDrvHr.h>
+#include <GoogleTest/Private/MockTbtNvmDrvDma/MockTbtNvmDrvDma.h>
 
-    void SetUp() override {
-      PciIoProto               = (EFI_PCI_IO_PROTOCOL *) AllocateZeroPool (sizeof (EFI_PCI_IO_PROTOCOL));
-      HrImplPtr                = (TBT_HR_IMPL *) AllocateZeroPool (sizeof (TBT_HR_IMPL));
-      HrImplPtr->pPciIoProto   = PciIoProto;
-      HrImplPtr->pDma          = gDmaPtrMock;
-      HrImplPtr->ForcePwrFunc  = TbtNvmDrvYflForcePwrFunc;
-      HrPtr                    = (TBT_HOST_ROUTER *) AllocateZeroPool (sizeof (TBT_HOST_ROUTER));
-      HrPtr->Impl              = HrImplPtr;
-    }
+extern "C" {
+VOID
+TbtNvmDrvHrDtor (
+  TBT_HOST_ROUTER  *This
+  );
+}
+// **********************************************************
+// TbtNvmDrvHrDtor Unit Test                                *
+// **********************************************************
+class TbtNvmDrvHrDtorTest : public Test {
+  protected:
+    TBT_HOST_ROUTER     *HrPtr;
+    TBT_HR_IMPL         *HrImplPtr;
+    EFI_PCI_IO_PROTOCOL *PciIoProto;
+    MockTbtNvmDrvDma    TbtNvmDrvDmaMock;
+    TBT_DMA             *gDmaPtrMock = &LocalDmaPtr;
+
+  void SetUp() override {
+    PciIoProto             = (EFI_PCI_IO_PROTOCOL *) AllocateZeroPool (sizeof (EFI_PCI_IO_PROTOCOL));
+    HrImplPtr              = (TBT_HR_IMPL *) AllocateZeroPool (sizeof (TBT_HR_IMPL));
+    HrImplPtr->pPciIoProto = PciIoProto;
+    HrImplPtr->pDma        = gDmaPtrMock;
+    HrPtr                  = (TBT_HOST_ROUTER *) AllocateZeroPool (sizeof (TBT_HOST_ROUTER));
+    HrPtr->Impl            = HrImplPtr;
+  }
 };
 
 //
-// Case 1 - Correct Flow
+// Case 1 - This->RefCount > 0 .
+// Mock - TbtNvmDrvDmaMock
 //
-TEST_F (TbtNvmDrvHrDtorTest, CorrectFlow) {
+TEST_F (TbtNvmDrvHrDtorTest, Case1) {
   cout << "[---------- Case 1 ----------]"<< endl;
 
-  //
-  //  Mock call TbtNvmDrvYflForcePwrFunc
-  //
-  EXPECT_CALL (TbtNvmDrvYflRouterMock,
-    TbtNvmDrvYflForcePwrFunc (
-      HrPtr->Impl->pPciIoProto,
-      FALSE,      
-      HrPtr->Impl->pDma->TBTControllerWasPowered
-    ))
-    .WillOnce (Return (TBT_STATUS_SUCCESS));
+  HrPtr->RefCount = 0x01;
 
-  //
-  //  Mock call TbtNvmDrvDmaDtor
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvDmaDtor (
       HrPtr->Impl->pDma
-    ));
+      )
+    );
+
+  TbtNvmDrvHrDtor (HrPtr);
+}
+
+//
+// Case 2 - This->RefCount = 0 , Return.
+//
+TEST_F (TbtNvmDrvHrDtorTest, Case2) {
+  cout << "[---------- Case 2 ----------]"<< endl;
 
   TbtNvmDrvHrDtor (HrPtr);
 }

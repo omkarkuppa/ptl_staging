@@ -1185,6 +1185,18 @@ MrcGetMcConfigHash (
       HashPtr->Data = MC0_CH0_CR_SC_GS_CFG_cs_geardown_enable_HSH;
       break;
 
+    case GsmMccCfiE2eParityEnRdata:
+      HashPtr->Data = MC0_PARITY_CONTROL_RDATA_PARITY_EN_HSH;
+      break;
+
+    case GsmMccCfiE2eParityEnRdCmplHeader:
+      HashPtr->Data = MC0_PARITY_CONTROL_RDCPL_HEADER_PARITY_EN_HSH;
+      break;
+
+    case GsmMccCfiE2eParityEn:
+      HashPtr->Data = MC0_PARITY_CONTROL_PARITY_EN_HSH;
+      break;
+
     case GsmScPbrEcsRefabEnable:
       HashPtr->Data = MC0_CH0_CR_SC_PBR_ECS_REFab_Enable_HSH;
       break;
@@ -1207,6 +1219,10 @@ MrcGetMcConfigHash (
 
     case GsmMccMcMntsSpareRw:
       HashPtr->Data = MC0_CH0_CR_MCMNTS_SPARE_Spare_RW_HSH;
+      break;
+
+    case GsmMccMcMntsRfFastSleepDisable:
+      HashPtr->Data = MC0_CH0_CR_MCMNTS_SPARE_rf_fast_sleep_disable_HSH;
       break;
 
     case GsmMccMcCbRowPressDisAutoPre:

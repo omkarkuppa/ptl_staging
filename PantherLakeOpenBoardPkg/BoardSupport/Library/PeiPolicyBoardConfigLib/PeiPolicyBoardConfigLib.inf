@@ -106,6 +106,8 @@
 
   # SPD Address Table
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcChannelToCkdQckMapping   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcPhyClockToCkdDimm        ## CONSUMES
 
   # PCIe Clock Info
   gBoardModuleTokenSpaceGuid.PcdPcieClock0                     ## CONSUMES

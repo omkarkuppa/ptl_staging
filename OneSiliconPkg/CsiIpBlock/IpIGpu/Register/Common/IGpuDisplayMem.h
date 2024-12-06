@@ -28,6 +28,10 @@
 #define _DISPLAY_MEM_h
 
 
+
+// IP GUID: b4af374f-4eec-4c75-a449-a2f0467773f5
+#define DISPLAY_MEM_ID 0xb4af374f4eec4c75
+
 //************************************************ RegisterStructs
 
 #ifdef SV_HOOKS
@@ -39,38 +43,70 @@
 
 typedef union {
   struct {
-    UINT32 spare_0 : 1;
-    UINT32 spare_1 : 1;
-    UINT32 spare_2 : 1;
-    UINT32 spare_3 : 1;
-    UINT32 spare_4 : 1;
-    UINT32 spare_5 : 1;
-    UINT32 spare_6 : 1;
-    UINT32 spare_7 : 1;
-    UINT32 spare_8 : 1;
-    UINT32 spare_9 : 1;
-    UINT32 spare_10 : 1;
-    UINT32 spare_11 : 1;
-    UINT32 spare_12 : 1;
-    UINT32 spare_13 : 1;
-    UINT32 spare_14 : 1;
-    UINT32 spare_15 : 1;
-    UINT32 spare_16 : 1;
-    UINT32 spare_17 : 1;
-    UINT32 spare_18 : 1;
-    UINT32 spare_19 : 1;
-    UINT32 spare_20 : 1;
-    UINT32 spare_21 : 1;
-    UINT32 spare_22 : 1;
-    UINT32 spare_23 : 1;
-    UINT32 spare_24 : 1;
-    UINT32 spare_25 : 1;
-    UINT32 spare_26 : 1;
-    UINT32 spare_27 : 1;
-    UINT32 spare_28 : 1;
-    UINT32 spare_29 : 1;
-    UINT32 spare_30 : 1;
-    UINT32 spare_31 : 1;
+    UINT32 spare_0 : 1; /**< SPARE 0 */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 spare_1 : 1; /**< SPARE 1 */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 spare_2 : 1; /**< SPARE 2 */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 spare_3 : 1; /**< SPARE 3 */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 spare_4 : 1; /**< SPARE 4 */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 spare_5 : 1; /**< SPARE 5 */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 spare_6 : 1; /**< SPARE 6 */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 spare_7 : 1; /**< SPARE 7 */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 spare_8 : 1; /**< SPARE 8 */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT32 spare_9 : 1; /**< SPARE 9 */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT32 spare_10 : 1; /**< SPARE 10 */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 spare_11 : 1; /**< SPARE 11 */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 spare_12 : 1; /**< SPARE 12 */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 spare_13 : 1; /**< SPARE 13 */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 spare_14 : 1; /**< SPARE 14 */
+                            /* Bits[14:14], default=0x00000000*/
+    UINT32 spare_15 : 1; /**< SPARE 15 */
+                            /* Bits[15:15], default=0x00000000*/
+    UINT32 spare_16 : 1; /**< SPARE 16 */
+                            /* Bits[16:16], default=0x00000000*/
+    UINT32 spare_17 : 1; /**< SPARE 17 */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 spare_18 : 1; /**< SPARE 18 */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 spare_19 : 1; /**< SPARE 19 */
+                            /* Bits[19:19], default=0x00000000*/
+    UINT32 spare_20 : 1; /**< SPARE 20 */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 spare_21 : 1; /**< SPARE 21 */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 spare_22 : 1; /**< SPARE 22 */
+                            /* Bits[22:22], default=0x00000000*/
+    UINT32 spare_23 : 1; /**< SPARE 23 */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 spare_24 : 1; /**< SPARE 24 */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 spare_25 : 1; /**< SPARE 25 */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 spare_26 : 1; /**< SPARE 26 */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 spare_27 : 1; /**< SPARE 27 */
+                            /* Bits[27:27], default=0x00000000*/
+    UINT32 spare_28 : 1; /**< SPARE 28 */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 spare_29 : 1; /**< SPARE 29 */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 spare_30 : 1; /**< SPARE 30 */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 spare_31 : 1; /**< SPARE 31 */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -157,7 +193,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 reset_prep_ack_timeout : 32;
+    UINT32 reset_prep_ack_timeout : 32; /**< RESET PREP ACK TIMEOUT */
+                            /* Bits[31:0], default=0x00AFC800*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -180,13 +217,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 power_state_target : 1;
-    UINT32 power_down_on_reset : 1;
-    UINT32 backlight_enable : 1;
-    UINT32 vdd_override : 1;
-    UINT32 power_cycle_delay : 5;
-    UINT32 rsvd_0 : 7;
-    UINT32 spare_31_16 : 16;
+    UINT32 power_state_target : 1; /**< POWER STATE TARGET */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 power_down_on_reset : 1; /**< POWER DOWN ON RESET */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 backlight_enable : 1; /**< BACKLIGHT ENABLE */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 vdd_override : 1; /**< VDD OVERRIDE */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 power_cycle_delay : 5; /**< POWER CYCLE DELAY */
+                            /* Bits[8:4], default=0x00000000*/
+    UINT32 rsvd_0 : 7; /**< Undefined - auto filled rsvd_[15:09] */
+                            /* Bits[15:9], default=0*/
+    UINT32 spare_31_16 : 16; /**< SPARE 31 16 */
+                            /* Bits[31:16], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -218,13 +262,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 power_state_target : 1;
-    UINT32 power_down_on_reset : 1;
-    UINT32 backlight_enable : 1;
-    UINT32 vdd_override : 1;
-    UINT32 power_cycle_delay : 5;
-    UINT32 rsvd_0 : 7;
-    UINT32 spare_31_16 : 16;
+    UINT32 power_state_target : 1; /**< POWER STATE TARGET */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 power_down_on_reset : 1; /**< POWER DOWN ON RESET */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 backlight_enable : 1; /**< BACKLIGHT ENABLE */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 vdd_override : 1; /**< VDD OVERRIDE */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 power_cycle_delay : 5; /**< POWER CYCLE DELAY */
+                            /* Bits[8:4], default=0x00000000*/
+    UINT32 rsvd_0 : 7; /**< Undefined - auto filled rsvd_[15:09] */
+                            /* Bits[15:9], default=0*/
+    UINT32 spare_31_16 : 16; /**< SPARE 31 16 */
+                            /* Bits[31:16], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];

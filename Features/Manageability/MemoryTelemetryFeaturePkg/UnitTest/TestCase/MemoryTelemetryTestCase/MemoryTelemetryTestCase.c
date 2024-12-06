@@ -1,4 +1,4 @@
-/** @file
+/**@file
   Unit test case of the Memory Telemetry driver.
 
   @copyright
@@ -47,6 +47,22 @@ EFI_STATUS
 UpdateMemInfoToMemoryTelemetryPhat (
   IN      MEMORY_INFO_DATA_HOB        *MemInfoData,
   IN OUT  MEMORY_TELEMETRY_DATA_TABLE *MemoryTelemetryDataTable
+  );
+
+/**
+  Encodes the MRC memory type and device type to the form factor.
+  Matching the SMBIOS type 17 form factor encoding style.
+
+  @param[out] ModuleType      Memory module type from MRC HOB
+  @param[out] DramDeviceType  DRAM device type from MRC HOB
+
+  @retval     Form Factor     Form factor value encoded
+**/
+extern
+UINT8
+GetFormFactor (
+  IN UINT8  ModuleType,
+  IN UINT8  DramDeviceType
   );
 
 /**
@@ -133,7 +149,7 @@ GenMemInfoHob (
     }
   }
   for (i = 0; i < HOB_MAX_SAGV_POINTS; i++) {
-    DEBUG ((DEBUG_INFO, "|  Sa Gv Point - %d                                |\n", i+1));
+    DEBUG ((DEBUG_INFO, "|  Sa Gv Point - %d                                 |\n", i+1));
     DEBUG ((DEBUG_INFO, "|  |  |  Data Rate                         0x%-10X |\n", MemInfoData->SagvConfigInfo.SaGvTiming[i].DataRate));
     DEBUG ((DEBUG_INFO, "|  |  |  Max Memory Bandwidth              0x%-10X |\n", MemInfoData->SagvConfigInfo.SaGvTiming[i].MaxMemoryBandwidth));
   }
@@ -183,7 +199,7 @@ GenMemInfoHob (
       for (k = 0; k < MAX_RANK_IN_CHANNEL; k++) {
         DEBUG ((DEBUG_INFO, "|  |  |  Rank    %d                                      |\n", k));
         for (l = 0; l < MAX_SDRAM_IN_DIMM; l++) {
-          DEBUG ((DEBUG_INFO, "|  |  |  |  Device    %d                                    |\n", l));
+          DEBUG ((DEBUG_INFO, "|  |  |  |  Device    %d                                 |\n", l));
           DEBUG ((DEBUG_INFO, "|  |  |  |  |  Available Resources         0x%-10X |\n", MemInfoData->PprAvailableResources[i][j][k][l]));
         }
       }
@@ -209,71 +225,49 @@ VerifyMemoryTelemetryTable (
   IN MEMORY_TELEMETRY_DATA_TABLE  *MemoryTelemetryDataTable
   )
 {
-  UINT8                   i, j, k, l;
+  UINT8 i, j, k, l;
+  UINT8 ControlFormFactor;
 
-  if (MemInfoData->MemoryType != MemoryTelemetryDataTable->MemoryType) {
-    DEBUG ((DEBUG_ERROR, "[FAIL] Failed to load matching data from MRC to MemoryTelemetry\n"));
-    return UNIT_TEST_ERROR_TEST_FAILED;
-  }
+  UT_ASSERT_EQUAL (MemInfoData->MemoryType, MemoryTelemetryDataTable->MemoryType);
+
   for (i = 0; i < MAX_NODE; i++) {
     for (j = 0; j < MAX_CH; j++) {
       for (k = 0; k < MAX_DIMM; k++) {
-        if ((MemoryTelemetryDataTable->MfgId[i][j][k]       != MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].MfgId) ||
-            (MemoryTelemetryDataTable->Speed[i][j][k]       != MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].Speed) ||
-            (MemoryTelemetryDataTable->RankInDimm[i][j][k]  != MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].RankInDimm) ||
-            (MemoryTelemetryDataTable->Banks[i][j][k]       != MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].Banks) ||
-            (MemoryTelemetryDataTable->BankGroups[i][j][k]  != MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].BankGroups) ||
-            (MemoryTelemetryDataTable->FormFactor[i][j][k]  != MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].SpdModuleType)) {
-          DEBUG ((DEBUG_ERROR, "[FAIL] Failed to load matching data from MRC to MemoryTelemetry\n"));
-          return UNIT_TEST_ERROR_TEST_FAILED;
-        }
+        UT_ASSERT_EQUAL (MemoryTelemetryDataTable->MfgId[i][j][k],      MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].MfgId);
+        UT_ASSERT_EQUAL (MemoryTelemetryDataTable->Speed[i][j][k],      MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].Speed);
+        UT_ASSERT_EQUAL (MemoryTelemetryDataTable->RankInDimm[i][j][k], MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].RankInDimm);
+        UT_ASSERT_EQUAL (MemoryTelemetryDataTable->Banks[i][j][k],      MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].Banks);
+        UT_ASSERT_EQUAL (MemoryTelemetryDataTable->BankGroups[i][j][k], MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].BankGroups);
+
+        // Get form factors for matching
+        ControlFormFactor  = GetFormFactor (MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].SpdModuleType, MemInfoData->Controller[i].ChannelInfo[j].DimmInfo[k].SpdDramDeviceType);
+        UT_ASSERT_EQUAL (MemoryTelemetryDataTable->FormFactor[i][j][k], ControlFormFactor);
       }
-      if (MemoryTelemetryDataTable->DimmCount[i][j] != MemInfoData->Controller[i].ChannelInfo[j].DimmCount) {
-        DEBUG ((DEBUG_ERROR, "[FAIL] Failed to load matching data from MRC to MemoryTelemetry\n"));
-        return UNIT_TEST_ERROR_TEST_FAILED;
-      }
+      UT_ASSERT_EQUAL (MemoryTelemetryDataTable->DimmCount[i][j],       MemInfoData->Controller[i].ChannelInfo[j].DimmCount);
     }
   }
 
   for (i = 0; i < HOB_MAX_SAGV_POINTS; i++) {
-    if ((MemoryTelemetryDataTable->DataRate[i]     != MemInfoData->SagvConfigInfo.SaGvTiming[i].DataRate) ||
-        (MemoryTelemetryDataTable->Bandwidth[i]     != MemInfoData->SagvConfigInfo.SaGvTiming[i].MaxMemoryBandwidth)) {
-      DEBUG ((DEBUG_ERROR, "[FAIL] Failed to load matching data from MRC to MemoryTelemetry\n"));
-      return UNIT_TEST_ERROR_TEST_FAILED;
-    }
+    UT_ASSERT_EQUAL (MemoryTelemetryDataTable->DataRate[i],  MemInfoData->SagvConfigInfo.SaGvTiming[i].DataRate);
+    UT_ASSERT_EQUAL (MemoryTelemetryDataTable->Bandwidth[i], MemInfoData->SagvConfigInfo.SaGvTiming[i].MaxMemoryBandwidth);
   }
 
-  if ((MemoryTelemetryDataTable->SaGvPointMask != MemInfoData->SagvConfigInfo.SaGvPointMask) ||
-      (MemoryTelemetryDataTable->MaxFrequency  != MemInfoData->MaximumMemoryClockSpeed)) {
-    DEBUG ((DEBUG_ERROR, "[FAIL] Failed to load matching data from MRC to MemoryTelemetry\n"));
-    return UNIT_TEST_ERROR_TEST_FAILED;
-  }
+  UT_ASSERT_EQUAL (MemoryTelemetryDataTable->SaGvPointMask, MemInfoData->SagvConfigInfo.SaGvPointMask);
+  UT_ASSERT_EQUAL (MemoryTelemetryDataTable->MaxFrequency,  MemInfoData->MaximumMemoryClockSpeed);
 
   // PPR value check
-  if ((MemoryTelemetryDataTable->AmtPprRanInLastBoot.AmtRanLastBoot     != ((MemInfoData->PprRanInLastBoot & BIT1) >> 1)) ||
-      (MemoryTelemetryDataTable->AmtPprRanInLastBoot.PprRanLastBoot     != (MemInfoData->PprRanInLastBoot & BIT0)) ||
-      (MemoryTelemetryDataTable->TotalRowFailuresDiscovered             != MemInfoData->PprDetectedErrors) ||
-      (MemoryTelemetryDataTable->TotalPprRowRepairsSuccessful           != MemInfoData->PprRepairsSuccessful) ||
-      (MemoryTelemetryDataTable->TotalUncorrectableDevices              != MemInfoData->PprRepairFails) ||
-      (MemoryTelemetryDataTable->PprErrorInfo.PprRowRepairsSuccessful   != MemInfoData->PprErrorInfo.PprRowRepairsSuccessful) ||
-      (MemoryTelemetryDataTable->PprErrorInfo.Controller                != MemInfoData->PprErrorInfo.Controller) ||
-      (MemoryTelemetryDataTable->PprErrorInfo.Channel                   != MemInfoData->PprErrorInfo.Channel) ||
-      (MemoryTelemetryDataTable->PprErrorInfo.Rank                      != MemInfoData->PprErrorInfo.Rank) ||
-      (MemoryTelemetryDataTable->PprErrorInfo.BankGroup                 != MemInfoData->PprErrorInfo.BankGroup) ||
-      (MemoryTelemetryDataTable->PprErrorInfo.Bank                      != MemInfoData->PprErrorInfo.Bank) ||
-      (MemoryTelemetryDataTable->PprErrorInfo.Row                       != MemInfoData->PprErrorInfo.Row) ||
-      (MemoryTelemetryDataTable->PprErrorInfo.Device                    != MemInfoData->PprErrorInfo.Device)) {
-    DEBUG ((DEBUG_ERROR, "[FAIL] Failed to get AMT PPR MRC data into MemoryTelemetry\n"));
-    return UNIT_TEST_ERROR_TEST_FAILED;
-  }
+  UT_ASSERT_EQUAL (MemoryTelemetryDataTable->AmtPprRanInLastBoot.AmtRanLastBoot, ((MemInfoData->PprRanInLastBoot & BIT1) >> 1));
+  UT_ASSERT_EQUAL (MemoryTelemetryDataTable->AmtPprRanInLastBoot.PprRanLastBoot, (MemInfoData->PprRanInLastBoot & BIT0));
+  UT_ASSERT_EQUAL (MemoryTelemetryDataTable->TotalRowFailuresDiscovered,          MemInfoData->PprDetectedErrors);
+  UT_ASSERT_EQUAL (MemoryTelemetryDataTable->TotalPprRowRepairsSuccessful,        MemInfoData->PprRepairsSuccessful);
+  UT_ASSERT_EQUAL (MemoryTelemetryDataTable->TotalUncorrectableDevices,           MemInfoData->PprRepairFails);
+  UT_ASSERT_MEM_EQUAL (&MemoryTelemetryDataTable->PprErrorInfo,                   &MemInfoData->PprErrorInfo, sizeof (PPR_RESULT_COLUMNS_HOB));
+
   for (i = 0; i < MAX_NODE; i++) {
     for (j = 0; j < MAX_CH; j++) {
       for (k = 0; k < MAX_RANK_IN_CHANNEL; k++) {
         for (l = 0; l < MAX_SDRAM_IN_DIMM; l++) {
-          if (MemoryTelemetryDataTable->AvailableResources[i][j][k][l] != MemInfoData->PprAvailableResources[i][j][k][l]) {
-            DEBUG ((DEBUG_ERROR, "[FAIL] Failed to get AMT PPR MRC data into MemoryTelemetry\n"));
-            return UNIT_TEST_ERROR_TEST_FAILED;
-          }
+          UT_ASSERT_EQUAL (MemoryTelemetryDataTable->AvailableResources[i][j][k][l], MemInfoData->PprAvailableResources[i][j][k][l])
         }
       }
     }
@@ -295,13 +289,11 @@ VerifyUpdateMemoryTelemetryTable (
   IN UNIT_TEST_CONTEXT  Context
   )
 {
-  EFI_STATUS                           Status;
-  UNIT_TEST_STATUS                     TestStatus;
-  MEMORY_INFO_DATA_HOB                 *MemInfoData;
-  MEMORY_TELEMETRY_DATA_TABLE          *MemoryTelemetryDataTable;
-  MEMORY_TELEMETRY_DATA_TABLE          *MemoryTelemetryDataTableTemp;
-
-  DEBUG ((DEBUG_INFO, "[UnitTestGetAndStoreMemData] Testing MemoryTelemetry get MRC data HOB and Store it in local table for later PHAT publishing...\n"));
+  EFI_STATUS                   Status;
+  UNIT_TEST_STATUS             TestStatus;
+  MEMORY_INFO_DATA_HOB         *MemInfoData;
+  MEMORY_TELEMETRY_DATA_TABLE  *MemoryTelemetryDataTable;
+  MEMORY_TELEMETRY_DATA_TABLE  *MemoryTelemetryDataTableTemp;
 
   MemInfoData       = NULL;
   MemoryTelemetryDataTable      = NULL;
@@ -350,6 +342,9 @@ VerifyUpdateMemoryTelemetryTable (
   // Free memory space
   if (MemInfoData != NULL) {
     FreePool (MemInfoData);
+  }
+  if (MemoryTelemetryDataTable != NULL) {
+    FreePool (MemoryTelemetryDataTable);
   }
 
   // Exit with no issues

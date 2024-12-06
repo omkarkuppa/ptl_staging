@@ -45,6 +45,7 @@
 
 STATIC CONST CHAR8 mCpuFamilyString[] = "PantherLake";
 STATIC CONST CHAR8 mCpuFamilyStringWcl[] = "WildcatLake";
+STATIC CHAR8 mPtlSocketTypeString[] = "BGA2540";
 typedef struct {
   UINT32  CPUID;
   CHAR8   String[16];
@@ -670,20 +671,6 @@ GetCpuSkuIdentifier (
 }
 
 /**
-  Programs Processor Upgrade for type 4 SMBIOS Processor Info HOB.
-
-  @retval Returns Processor Upgrade value for type 4 SMBIOS Processor Info HOB.
-**/
-UINT8
-EFIAPI
-SmbiosProcessorInfoHobType4 (
-  VOID
-  )
-{
-  return ProcessorUpgradeOther;
-}
-
-/**
   This function is used to Patch SmmSupovrStateLock.
 
   @retval This corresponds to bit 2 of MSR_SMM_SUPOVR_STATE_LOCK_REGISTER. When set, prevents WRMSR to IA32_SMM_MONITOR_CTL (aka MSEG) MSR.
@@ -997,5 +984,29 @@ CpuGetAndVerifyPrmrrSize (
   } else {
     DEBUG ((DEBUG_INFO, "PrmrrSize is invalid, disable PrmrrSize\n"));
     return 0;
+  }
+}
+
+/**
+  Returns Socket Type String
+
+  @param[in]   CpuFamilyId
+
+  @retval      Character pointer of Socket Type String
+**/
+CHAR8*
+EFIAPI
+GetSocketTypeFru (
+  IN UINT32 CpuFamilyId
+  )
+{
+  switch (CpuFamilyId) {
+    case CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE:
+      return mPtlSocketTypeString;
+    // Reserve for WCL
+    case CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE:
+      return NULL;
+    default:
+      return NULL;
   }
 }

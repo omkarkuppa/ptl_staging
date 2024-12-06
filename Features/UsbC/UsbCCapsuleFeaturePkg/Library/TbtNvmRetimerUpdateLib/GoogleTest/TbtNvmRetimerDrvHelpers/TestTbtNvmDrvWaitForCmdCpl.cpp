@@ -18,27 +18,40 @@
 
 @par Specification
 **/
+#include <GTestTbtNvmRetimerDrvHelpers.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
+#include <GoogleTest/Private/MockTbtNvmDrvRetimerThruHr/MockTbtNvmDrvRetimerThruHr.h>
 
-//**********************************************************
-// TbtNvmDrvWaitForCmdCpl Unit Test                        *
-//**********************************************************
-class TbtNvmDrvWaitForCmdCplTest : public CommonMock {
+extern "C" {
+TBT_STATUS
+TbtNvmDrvWaitForCmdCpl (
+  IN VOID    *DevCom,
+  IN UINT32  Cmd
+  );
+}
+
+// **********************************************************
+// TbtNvmDrvWaitForCmdCpl Unit Test                         *
+// **********************************************************
+class TbtNvmDrvWaitForCmdCplTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    VOID                  *DevComRetimer;
-    VOID                  *DevComHost;
-    UINT32                IECS_Cmd;
-    UINT32                CioDev_Cmd;
+    TBT_STATUS                 TbtStatus;
+    VOID                       *DevComRetimer;
+    VOID                       *DevComHost;
+    UINT32                     IECS_Cmd;
+    UINT32                     CioDev_Cmd;
+    UINT32                     ExpReadData;
+    TBT_RETIMER                *gDevComRetimerMock  = &LocalCommunicationPtr;
+    TBT_HOST_ROUTER            *gDevComHostMock = &LocalHrPtr;
+    MockTbtNvmDrvRetimerThruHr TbtNvmDrvRetimerThruHrMock;
+    MockTbtNvmDrvHr            TbtNvmDrvHrMock;
 
-    UINT32                ExpReadData;
-
-    void SetUp() override {
-      DevComRetimer = (VOID *) gDevComRetimerMock;
-      DevComHost    = (VOID *) gDevComHostMock;
-      IECS_Cmd      = TBT_IECS_CMD_USUP;
-      CioDev_Cmd    = OPCODE_NVM_AUTH_CMD;
-    }
-
+  void SetUp() override {
+    DevComRetimer = (VOID *) gDevComRetimerMock;
+    DevComHost    = (VOID *) gDevComHostMock;
+    IECS_Cmd      = TBT_IECS_CMD_USUP;
+    CioDev_Cmd    = OPCODE_NVM_AUTH_CMD;
+  }
 };
 
 //
@@ -61,14 +74,16 @@ TEST_F (TbtNvmDrvWaitForCmdCplTest, ReadIecsReg_IECS_CMD_ADDR_Error) {
 
   gUpdateTargetType = TARGET_RETIMER;
 
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    ReadIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_ReadIecs (
       gDevComRetimerMock,
       IECS_CMD_ADDR,
       1,
       _
-      ))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = TbtNvmDrvWaitForCmdCpl (DevComRetimer, IECS_Cmd);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -84,17 +99,21 @@ TEST_F (TbtNvmDrvWaitForCmdCplTest, IECS_CMD_IsTimeoutedError) {
   gUpdateTargetType = TARGET_RETIMER;
   ExpReadData       = TBT_IECS_CMD_USUP;
 
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    ReadIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_ReadIecs (
       gDevComRetimerMock,
       IECS_CMD_ADDR,
       1,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<3>(&ExpReadData, sizeof(ExpReadData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&ExpReadData, sizeof (ExpReadData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = TbtNvmDrvWaitForCmdCpl (DevComRetimer, IECS_Cmd);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -110,17 +129,21 @@ TEST_F (TbtNvmDrvWaitForCmdCplTest, CommandNotSupportedError) {
   gUpdateTargetType = TARGET_RETIMER;
   ExpReadData       = IECS_USB4_CMD_NOTSUPPORTED;
 
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    ReadIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_ReadIecs (
       gDevComRetimerMock,
       IECS_CMD_ADDR,
       1,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<3>(&ExpReadData, sizeof(ExpReadData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&ExpReadData, sizeof (ExpReadData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = TbtNvmDrvWaitForCmdCpl (DevComRetimer, IECS_Cmd);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -136,17 +159,21 @@ TEST_F (TbtNvmDrvWaitForCmdCplTest, USB4_CMD_ERR) {
   gUpdateTargetType = TARGET_RETIMER;
   ExpReadData       = IECS_USB4_CMD_ERR;
 
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    ReadIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_ReadIecs (
       gDevComRetimerMock,
       IECS_CMD_ADDR,
       1,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<3>(&ExpReadData, sizeof(ExpReadData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&ExpReadData, sizeof (ExpReadData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = TbtNvmDrvWaitForCmdCpl (DevComRetimer, IECS_Cmd);
   EXPECT_EQ (TbtStatus, TBT_STATUS_RETRY);
@@ -161,14 +188,17 @@ TEST_F (TbtNvmDrvWaitForCmdCplTest, ReadCioDevRegDEVICE_CONFIG_SPACE_Error) {
 
   gUpdateTargetType = TARGET_TBT_HOST;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_CMD_ADDR,
-      _))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = TbtNvmDrvWaitForCmdCpl (DevComHost, CioDev_Cmd);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -184,18 +214,22 @@ TEST_F (TbtNvmDrvWaitForCmdCplTest, ROUTER_CMD_Is_Timeouted) {
   gUpdateTargetType = TARGET_TBT_HOST;
   ExpReadData       = TBT_CMD_VALID;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_CMD_ADDR,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpReadData, sizeof(ExpReadData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpReadData, sizeof (ExpReadData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = TbtNvmDrvWaitForCmdCpl (DevComHost, CioDev_Cmd);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -211,18 +245,22 @@ TEST_F (TbtNvmDrvWaitForCmdCplTest, ROUTER_CMD_NotSupportedError) {
   gUpdateTargetType = TARGET_TBT_HOST;
   ExpReadData       = TBT_CMD_NOTSUPPORTED;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_CMD_ADDR,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpReadData, sizeof(ExpReadData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpReadData, sizeof (ExpReadData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = TbtNvmDrvWaitForCmdCpl (DevComHost, CioDev_Cmd);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -238,18 +276,22 @@ TEST_F (TbtNvmDrvWaitForCmdCplTest, ROUTER_CMD_RncounteredAnError) {
   gUpdateTargetType = TARGET_TBT_HOST;
   ExpReadData       = TBT_METADATA_VALID;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_CMD_ADDR,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpReadData, sizeof(ExpReadData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpReadData, sizeof (ExpReadData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = TbtNvmDrvWaitForCmdCpl (DevComHost, CioDev_Cmd);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -265,18 +307,22 @@ TEST_F (TbtNvmDrvWaitForCmdCplTest, CorrectFlow) {
   gUpdateTargetType = TARGET_TBT_HOST;
   ExpReadData       = OPCODE_NVM_AUTH_CMD;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       gDevComHostMock,
       DEVICE_CONFIG_SPACE,
       0,
       ROUTER_CMD_ADDR,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpReadData, sizeof(ExpReadData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpReadData, sizeof (ExpReadData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
   TbtStatus = TbtNvmDrvWaitForCmdCpl (DevComHost, CioDev_Cmd);
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);

@@ -102,10 +102,6 @@
   $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Smm/BiosGuardServices.inf
 !endif
 
-!if gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable == TRUE
-  $(PLATFORM_SI_PACKAGE)/IpBlock/Dgr/AcpiTables/DgrAcpiTables.inf
-!endif
-
 !if gSiPkgTokenSpaceGuid.PcdPpamEnable == TRUE
   $(PLATFORM_SI_PACKAGE)/IpBlock/Dgr/Dxe/DgrDxeInit.inf
 !endif

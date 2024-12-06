@@ -95,6 +95,7 @@ Defines Platform BoardIds
 #define BoardIdPtlUHCammDTbTRvp2           0x02
 #define BoardIdPtlUHLp5Aep                 0x07
   #define BomIdPtlUHLp5Aep                 0x01
+  #define BomIdPtlUHLp5Aep32Gb             0x02
 #define BoardIdPtlUHLp5MemSktmRvp          0x05
 #define BoardIdPtlHLp5Gcs1                 0x11
 #define BoardIdPtlHLp5Gcs2                 0x12
@@ -121,12 +122,20 @@ Defines Platform BoardIds
 #define SkuIdPtlUHCammDTbTRvp2            0x00000002
 #define SkuIdPtlUHCammDTbTExtGfxRvp2      0x00010002
 #define SkuIdPtlUHCammDTbTRvp2Bom         0x00060002
+#define SkuIdPtlUHCammDTbTRvp2Rev1        0x00000102
+#define SkuIdPtlUHCammDTbTExtGfxRvp2Rev1  0x00010102
+#define SkuIdPtlUHCammDTbTRvp2BomRev1     0x00060102
 
 #define SkuIdPtlUHLp5Rvp3                 0x00000003
 #define SkuIdPtlUHLp5MemSdRvp3            0x00010003
 #define SkuIdPtlUHLp5MemSktPnpRvp3        0x00020003
 #define SkuIdPtlUHLp5Rvp3PpvBom           0x00050003
 #define SkuIdPtlUHLp5Rvp3Bom              0x00060003
+#define SkuIdPtlUHLp5Rvp3Rev1             0x00000103
+#define SkuIdPtlUHLp5MemSdRvp3Rev1        0x00010103
+#define SkuIdPtlUHLp5MemSktPnpRvp3Rev1    0x00020103
+#define SkuIdPtlUHLp5Rvp3PpvBomRev1       0x00050103
+#define SkuIdPtlUHLp5Rvp3BomRev1          0x00060103
 
 #define SkuIdPtlUHDdr5Rvp4                0x00000004
 #define SkuIdPtlUHDdr5Rvp4Chrome          0x00040004
@@ -145,6 +154,7 @@ Defines Platform BoardIds
 
 #define SkuIdPtlUHLp5Aep                  0x00000007
 #define SkuIdPtlUHLp5AepBom               0x00010007
+#define SkuIdPtlUHLp5AepBom32Gb           0x00020007
 
 // WildcatLake N Sku Id
 #define SkuIdWclNDdr5Rvp1                 0x08000010

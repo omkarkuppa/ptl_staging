@@ -549,6 +549,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
       MmPciLib|$(SILICON_FSP_PATH)/Library/MmPciCf8Lib/MmPciCf8Lib.inf
       PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
       FspSecPlatformLib|$(PLATFORM_SI_PACKAGE)/Library/PlatformSecLib/FspTPlatformSecLib.inf
+      NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
     <PcdsFixedAtBuild>
       gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer|FALSE
   }
@@ -558,6 +559,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
       PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
       FspSecPlatformLib|$(PLATFORM_SI_PACKAGE)/Library/PlatformSecLib/FspMPlatformSecLib.inf
       NULL|$(PLATFORM_SI_PACKAGE)/Library/BasePlatformFspMultiPhaseLib/BasePlatformFspMultiPhaseLib.inf
+      NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
     <PcdsFixedAtBuild>
       gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer|FALSE
       gIntelFsp2PkgTokenSpaceGuid.PcdMultiPhaseNumberOfPhases|0
@@ -568,6 +570,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
       PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
       FspSecPlatformLib|$(PLATFORM_SI_PACKAGE)/Library/PlatformSecLib/FspSPlatformSecLib.inf
       NULL|$(PLATFORM_SI_PACKAGE)/Library/BasePlatformFspMultiPhaseLib/BasePlatformFspMultiPhaseLib.inf
+      NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
     <PcdsFixedAtBuild>
       gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer|FALSE
       gIntelFsp2PkgTokenSpaceGuid.PcdMultiPhaseNumberOfPhases|1
@@ -590,6 +593,8 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   # SEC Core
   #
   $(FSP_PACKAGE)/FspSecCore/FspSecCoreO.inf {
+    <LibraryClasses>
+      NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
     <PcdsFixedAtBuild>
       gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer|FALSE
   }
@@ -614,6 +619,13 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
       gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x02
 !else
       gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x27
+!endif
+!if (gPantherLakeFspPkgTokenSpaceGuid.PcdSignedFspBuild == TRUE)
+# todo : Review how GS flag impacting PeiMain execution in Post memory phase.
+!if $(TARGET) == DEBUG
+    <BuildOptions>
+      MSFT: DEBUG_*_*_CC_FLAGS = /GS- /volatileMetadata
+!endif
 !endif
   }
 

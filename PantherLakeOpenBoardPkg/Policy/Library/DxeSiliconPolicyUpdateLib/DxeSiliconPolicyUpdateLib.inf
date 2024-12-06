@@ -58,6 +58,7 @@
 [Protocols]
   gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
   gGopPolicyProtocolGuid                        ## PRODUCES
+  gPchNvsAreaProtocolGuid
 
 [Depex]
   gEfiVariableArchProtocolGuid

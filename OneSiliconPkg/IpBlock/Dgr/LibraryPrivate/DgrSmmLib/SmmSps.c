@@ -27,11 +27,6 @@
 #include <Library/VtdInfoLib.h>
 #include <IntelRcStatusCode.h>
 #include <Register/Intel/SmramSaveStateMap.h>
-#if FixedPcdGetBool (PcdLedgerIslandEnable) == 1
-#include <Protocol/SmmSwDispatch2.h>
-#include <Protocol/SmmBase2.h>
-#include <Protocol/DgrNvsArea.h>
-#endif
 
 /**
   Setup SMM Protected Mode context for processor.
@@ -101,13 +96,6 @@ UINTN                               gSmmDgrGdtBufferSize;
 UINTN                               gSmmDgrGdtTssTableSize;
 EFI_PHYSICAL_ADDRESS                gSmmDgrTxtDprMemoryBase = 0;
 UINT64                              gSmmDgrTxtDprMemorySize = 0;
-#if FixedPcdGetBool (PcdLedgerIslandEnable) == 1
-EFI_PHYSICAL_ADDRESS                gSmmPpamParamPage = 0;
-EFI_PHYSICAL_ADDRESS                gSmmLedgerIslandBuffer = 0;;
-EFI_PHYSICAL_ADDRESS                gLedgerIslandBuffer = 0;
-EFI_SMM_BASE2_PROTOCOL              *gSMM = NULL;
-EFI_SMM_SYSTEM_TABLE2               *mSmst = NULL;
-#endif
 
 //
 // Global copy of the PcdPteMemoryEncryptionAddressOrMask
@@ -349,103 +337,6 @@ InitGdtDgr (
   return;
 }
 
-#if FixedPcdGetBool (PcdLedgerIslandEnable) == 1
-/**
-  Software SMI callback for Ledger Island which is called from ACPI method.
-
-  @param[in]      DispatchHandle    The unique handle assigned to this handler by SmiHandlerRegister().
-  @param[in]      Context           Points to an optional handler context which was specified when the
-                                    handler was registered.
-  @param[in, out] CommBuffer        A pointer to a collection of data in memory that will
-                                    be conveyed from a non-SMM environment into an SMM environment.
-  @param[in, out] CommBufferSize    The size of the CommBuffer.
-
-  @retval EFI_SUCCESS               The interrupt was handled successfully.
-
-**/
-EFI_STATUS
-EFIAPI
-LedgerIslandSmmCallback (
-  IN EFI_HANDLE     DispatchHandle,
-  IN CONST VOID     *Context,
-  IN OUT VOID       *CommBuffer,
-  IN OUT UINTN      *CommBufferSize
-  )
-{
-  CopyMem ((VOID *)(UINTN)gLedgerIslandBuffer, (VOID *)(UINTN)gSmmLedgerIslandBuffer, PcdGet32 (PcdLedgerIslandBufferSize));
-  return EFI_SUCCESS;
-}
-
-/**
-  SMM Ledger Island callback function at gEfiSmmSwDispatch2ProtocolGuid.
-  Updates the DGR NVS Area with Ledger Island Data
-
-  @param[in] Protocol   Points to the protocol's unique identifier
-  @param[in] Interface  Points to the interface instance
-  @param[in] Handle     The handle on which the interface was installed
-
-  @retval EFI_SUCCESS   Notification handler runs successfully.
-  @return Others        Other error as indicated.
-**/
-EFI_STATUS
-EFIAPI
-SmmLedgerIslandNvsInit (
-  IN CONST EFI_GUID  *Protocol,
-  IN VOID            *Interface,
-  IN EFI_HANDLE      Handle
-  ) {
-  EFI_SMM_SW_DISPATCH2_PROTOCOL     *SwDispatch;
-  EFI_SMM_SW_REGISTER_CONTEXT       SwContext;
-  EFI_HANDLE                        SwHandle;
-  DGR_NVS_AREA_PROTOCOL             *DgrNvsAreaProtocol;
-  EFI_STATUS                        Status;
-
-  SwDispatch = NULL;
-
-  Status = gBS->LocateProtocol(&gEfiSmmBase2ProtocolGuid, NULL, (VOID **)&gSMM);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  Status = gSMM->GetSmstLocation (gSMM, &mSmst);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  Status = mSmst->SmmLocateProtocol (&gEfiSmmSwDispatch2ProtocolGuid, NULL, (VOID **) &SwDispatch);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  //
-  // If SwSmiInputValue is set to (UINTN) -1 then a unique value
-  // will be assigned and returned in the structure.
-  //
-  SwContext.SwSmiInputValue = (UINTN) -1;
-  Status = SwDispatch->Register (SwDispatch, LedgerIslandSmmCallback, &SwContext, &SwHandle);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  Status = gBS->LocateProtocol (&gDgrNvsAreaProtocolGuid, NULL, (VOID **) &DgrNvsAreaProtocol);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  DgrNvsAreaProtocol->Area->LedgerIslandMemAddress     = gLedgerIslandBuffer;
-  DEBUG ((DEBUG_INFO, "DgrNvsAreaProtocol LedgerIslandMemAddress = 0x%x\n", DgrNvsAreaProtocol->Area->LedgerIslandMemAddress));
-  DgrNvsAreaProtocol->Area->LedgerIslandSwSmi          = (UINT8) SwContext.SwSmiInputValue;
-  DEBUG ((DEBUG_INFO, "DgrNvsAreaProtocol LedgerIslandSwSmi = 0x%x\n", DgrNvsAreaProtocol->Area->LedgerIslandSwSmi));
-
-  return EFI_SUCCESS;
-}
-#endif
-
 /**
   Constructor for SPS
 **/
@@ -468,9 +359,6 @@ SpsConstructor (
   EFI_GUID                *SpsFileGuid;
 #if FixedPcdGetBool (PcdSpaEnable) == 1
   DXE_CPU_POLICY_PROTOCOL *CpuPolicyData;
-#endif
-#if FixedPcdGetBool (PcdLedgerIslandEnable) == 1
-  VOID                    *Registration;
 #endif
 
   DEBUG ((DEBUG_INFO, "***** SPS Constructor. Extracts binaries from FV and initializes them *****\n"));
@@ -525,7 +413,7 @@ SpsConstructor (
   mSmmDgrEntryPointHeader = (VOID *) (UINTN) SmmFeatureAllocateCodePagesDgr (EFI_SIZE_TO_PAGES(SmmEntryPointBufferSize));
   if (mSmmDgrEntryPointHeader == NULL) {
     ASSERT (mSmmDgrEntryPointHeader != NULL);
-    goto CleanUp2;
+    goto CleanUp;
   }
 
   CopyMem ((VOID *) (UINTN) mSmmDgrEntryPointHeader, SmmEntryPointBuffer, SmmEntryPointBufferSize);
@@ -557,13 +445,13 @@ SpsConstructor (
   if (EFI_ERROR (Status) || (gSpsBinSize == 0)) {
     DEBUG ((DEBUG_ERROR, "      Failed to get Binary image from FV\n"));
     ASSERT_EFI_ERROR (Status);
-    goto CleanUp2;
+    goto CleanUp;
   }
 
   gSpsBin = (VOID *) (UINTN) AllocatePages (EFI_SIZE_TO_PAGES (gSpsBinSize));
   if (gSpsBin == NULL) {
     ASSERT (gSpsBin != NULL);
-    goto CleanUp2;
+    goto CleanUp;
   }
   ZeroMem ((VOID *) (UINTN) gSpsBin, EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (gSpsBinSize)));
   CopyMem ((VOID *) (UINTN) gSpsBin, SpsBin, gSpsBinSize);
@@ -615,75 +503,14 @@ SpsConstructor (
     if (gSmmDgrSpaCtxt == NULL) {
       ASSERT_EFI_ERROR (FALSE);
       DEBUG ((DEBUG_ERROR, "Failed to allocate buffer for SPA context\n"));
-      goto CleanUp2;
+      goto CleanUp;
     }
   }
 #endif
 
-#if FixedPcdGetBool (PcdLedgerIslandEnable) == 1
-  if (gSmmDgrEnableState != NR_PPAM_11_SUPPORT_WITH_LEDGER_ISLAND) {
-    DEBUG ((DEBUG_INFO, "Ledger Island not supported.\n"));
-    return;
-  }
-
-  // Allocate 4K (1 page) for PPAM Param Page
-  gSmmPpamParamPage = (EFI_PHYSICAL_ADDRESS) (UINTN) SmmFeatureAllocateCodePagesDgr (1);
-  if (gSmmPpamParamPage == (EFI_PHYSICAL_ADDRESS) NULL) {
-    DEBUG ((DEBUG_ERROR, "Allocation of PPAM Param page failed.\n"));
-    ASSERT (FALSE);
-    return;
-  }
-
-  // Allocate Ledger Island SMM Buffer
-  gSmmLedgerIslandBuffer = (EFI_PHYSICAL_ADDRESS) (UINTN) SmmFeatureAllocateCodePagesDgr (EFI_SIZE_TO_PAGES (PcdGet32 (PcdLedgerIslandBufferSize)));
-  if (gSmmLedgerIslandBuffer == (EFI_PHYSICAL_ADDRESS) NULL) {
-    DEBUG ((DEBUG_ERROR, "Allocation of SMM buffer for Ledger Island failed.\n"));
-    ASSERT (FALSE);
-    goto CleanUp1;
-  }
-
-  // Update the PPAM Param Page entries
-  ((PPAM_PARAM_PAGE *)gSmmPpamParamPage)->Version             = 1;
-  ((PPAM_PARAM_PAGE *)gSmmPpamParamPage)->DataBuffVersion     = 1;
-  ((PPAM_PARAM_PAGE *)gSmmPpamParamPage)->BaseAddrBufferLower = (UINT32) (gSmmLedgerIslandBuffer & 0xFFFFFFFF);
-  ((PPAM_PARAM_PAGE *)gSmmPpamParamPage)->BaseAddrBufferUpper = (UINT32) RShiftU64 (gSmmLedgerIslandBuffer, 32);
-  ((PPAM_PARAM_PAGE *)gSmmPpamParamPage)->BufferEntrySize     = PcdGet32 (PcdLedgerIslandBufferSize);
-  ((PPAM_PARAM_PAGE *)gSmmPpamParamPage)->TotalNumberEntry    = 1;
-
-  // Allocate (non-SMM) Ledger Island Buffer
-  Status = gBS->AllocatePages (AllocateAnyPages, EfiReservedMemoryType, EFI_SIZE_TO_PAGES (PcdGet32 (PcdLedgerIslandBufferSize)), &gLedgerIslandBuffer);
-  if (EFI_ERROR (Status) || gLedgerIslandBuffer == (EFI_PHYSICAL_ADDRESS) NULL) {
-    DEBUG ((DEBUG_ERROR, "Allocation of buffer for Ledger Island failed.\n"));
-    ASSERT_EFI_ERROR (Status);
-    goto CleanUp1;
-  }
-
-  //
-  //
-  // Register SMM Event based on gEfiSmmSwDispatch2ProtocolGuid
-  //
-  Status = gSmst->SmmRegisterProtocolNotify (
-                    &gEfiSmmSwDispatch2ProtocolGuid,
-                    SmmLedgerIslandNvsInit,
-                    &Registration
-                    );
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
-    goto CleanUp1;
-  }
   return;
 
-CleanUp1: // Free Ledger Island resources due to error and exit the function. ISSR/ISRD is still expected to work.
-  if (gSmmPpamParamPage != (EFI_PHYSICAL_ADDRESS) NULL) {
-    Status = gSmst->SmmFreePages (gSmmPpamParamPage, 1);
-  }
-  if (gSmmLedgerIslandBuffer != (EFI_PHYSICAL_ADDRESS) NULL) {
-    Status = gSmst->SmmFreePages (gSmmLedgerIslandBuffer, EFI_SIZE_TO_PAGES (PcdGet32 (PcdLedgerIslandBufferSize)));
-  }
-#endif
-  return;
-
-CleanUp2:
+CleanUp:
   if (SmmEntryPointBuffer != NULL) {
     gBS->FreePool ((VOID *) ((UINTN) SmmEntryPointBuffer));
   }
@@ -901,12 +728,6 @@ SmmCpuFeaturesInstallSmiHandlerSps (
   PatchSmmEntryPoint (mSmmDgrEntryPointHeader, SMM_ENTRY_POINT_INFO_USER_MODE_XCR0, &Xcr0Data, sizeof(Xcr0Data));
   PatchSmmEntryPoint (mSmmDgrEntryPointHeader, SMM_ENTRY_POINT_INFO_USER_MODE_MSR_IA32_XSS, &XssData, sizeof(XssData));
   PatchSmmEntryPoint (mSmmDgrEntryPointHeader, SMM_ENTRY_POINT_SUPERVISOR_STATE_SAVE, &gSmmDgrSupervisorStateSave, sizeof (gSmmDgrSupervisorStateSave));
-
-#if FixedPcdGetBool (PcdLedgerIslandEnable) == 1
-  if (gSmmDgrEnableState == NR_PPAM_11_SUPPORT_WITH_LEDGER_ISLAND) {
-    PatchSmmEntryPoint (mSmmDgrEntryPointHeader, SMM_ENTRY_POINT_INFO_PPAM_PARAM_PAGE, &gSmmPpamParamPage, sizeof (gSmmPpamParamPage));
-  }
-#endif
 
 #if FixedPcdGetBool (PcdSpaEnable) == 1
   if (gSmmDgrSpaEnable) {
@@ -1466,40 +1287,6 @@ SetPageTableAccessRight (
              EFI_MEMORY_XP
              );
   ASSERT_EFI_ERROR (Status);
-
-#if FixedPcdGetBool (PcdLedgerIslandEnable) == 1
-  if (gSmmDgrEnableState == NR_PPAM_11_SUPPORT_WITH_LEDGER_ISLAND) {
-    //
-    // Set PPAM Param Page as Not Present
-    //
-    Status = gSmmDgrMemoryAttribute->SetMemoryAttributes (
-               gSmmDgrMemoryAttribute,
-               gSmmPpamParamPage,
-               EFI_PAGES_TO_SIZE (1),
-               EFI_MEMORY_RP
-               );
-    ASSERT_EFI_ERROR (Status);
-
-    //
-    // Set Ledger Island Buffers as Non-executable
-    //
-    Status = gSmmDgrMemoryAttribute->SetMemoryAttributes (
-               gSmmDgrMemoryAttribute,
-               gLedgerIslandBuffer,
-               PcdGet32 (PcdLedgerIslandBufferSize),
-               EFI_MEMORY_XP
-               );
-    ASSERT_EFI_ERROR (Status);
-  
-    Status = gSmmDgrMemoryAttribute->SetMemoryAttributes (
-               gSmmDgrMemoryAttribute,
-               gSmmLedgerIslandBuffer,
-               PcdGet32 (PcdLedgerIslandBufferSize),
-               EFI_MEMORY_XP
-               );
-    ASSERT_EFI_ERROR (Status);
-  }
-#endif
 
 //
 // Set Page tables with Ring0 (Supervisor) / Ring3 (User) Policies

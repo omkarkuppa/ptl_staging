@@ -112,6 +112,8 @@
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdData
   gBoardModuleTokenSpaceGuid.VpdPcdMrcDqsMapCpu2Dram
   gBoardModuleTokenSpaceGuid.VpdPcdMrcDqMapCpu2Dram
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcChannelToCkdQckMapping   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcPhyClockToCkdDimm        ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdDisplayId                      ## CONSUMES
 
   gBoardModuleTokenSpaceGuid.PcdCpuRatio
@@ -123,6 +125,7 @@
 
   gBoardModuleTokenSpaceGuid.PcdStackBase
   gBoardModuleTokenSpaceGuid.PcdStackSize
+
 
   #SA GPIO Config
   gBoardModuleTokenSpaceGuid.PcdRootPortIndex
@@ -278,7 +281,6 @@
   gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity          ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdWwanSourceClock                           ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdwwanPowerEnableGpio                       ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdWwanModemBaseBandResetGpio                ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdWwanRootPortNumber                        ## CONSUMES
 

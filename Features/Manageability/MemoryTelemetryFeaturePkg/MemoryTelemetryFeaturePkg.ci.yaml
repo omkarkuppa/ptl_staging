@@ -24,16 +24,22 @@
     "HostUnitTestDscCompleteCheck": {"skip": True},
     ## options defined ci/Plugin/HostUnitTestCompilerPlugin
     "HostUnitTestCompilerPlugin": {
-        "skip": True,     # ToDo: Skip unit test for MemoryTelemetryFeaturePkg temporary since there is OneSiliconPkg dependency.
+        "skip": True,
         "DscPath": "UnitTest/MemoryTelemetryFeaturePkgHostTest.dsc"
     },
     # Skip the following CI checks
     "LicenseCheck":      {"skip": True},
     "EccCheck":          {"skip": True},
-    "CompilerPlugin":    {"skip": True},
+    "CompilerPlugin":    {
+        "skip": True,
+        "DscPath": "MemoryTelemetryFeaturePkg.dsc"
+    },
     "CharEncodingCheck": {"skip": True},
     "DependencyCheck":   {"skip": True},
-    "DscCompleteCheck":  {"skip": True},
+    "DscCompleteCheck":  {
+        "skip": True,
+        "DscPath": "MemoryTelemetryFeaturePkg.dsc"
+    },
     "GuidCheck":         {"skip": True},
     "LibraryClassCheck": {"skip": True},
     "SpellCheck":        {"skip": True},

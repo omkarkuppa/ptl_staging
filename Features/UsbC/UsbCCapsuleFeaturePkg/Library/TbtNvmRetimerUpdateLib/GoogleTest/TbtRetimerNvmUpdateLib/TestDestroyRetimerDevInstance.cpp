@@ -19,13 +19,18 @@
 @par Specification
 **/
 
-//**********************************************************
-// DestroyRetimerDevInstance Unit Test                     *
-//**********************************************************
-class DestroyRetimerDevInstanceTest : public CommonMock {
+#include <GTestTbtRetimerNvmUpdateLib.h>
+#include <GoogleTest/Private/MockTbtNvmDrvRetimerThruHr/MockTbtNvmDrvRetimerThruHr.h>
+
+// **********************************************************
+// DestroyRetimerDevInstance Unit Test                      *
+// **********************************************************
+class DestroyRetimerDevInstanceTest : public Test {
   protected:
-    EFI_STATUS                     Status;
-    RETIMER_DEV_INSTANCE           RetimerDevice;
+    EFI_STATUS                 Status;
+    RETIMER_DEV_INSTANCE       RetimerDevice;
+    MockTbtNvmDrvRetimerThruHr TbtNvmDrvRetimerThruHrMock;
+    TBT_RETIMER                *gDevComRetimerMock = &LocalCommunicationPtr;
 };
 
 //
@@ -37,11 +42,13 @@ TEST_F (DestroyRetimerDevInstanceTest, CorrectFlow) {
 
   RetimerDevice = (RETIMER_DEV_INSTANCE) gDevComRetimerMock;
 
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    Dtor (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_Destroy (
       gDevComRetimerMock
-      ));
-  Status = DestroyRetimerDevInstance (
-             RetimerDevice);
+      )
+    );
+
+  Status = DestroyRetimerDevInstance (RetimerDevice);
   EXPECT_EQ (Status, EFI_SUCCESS);
 }

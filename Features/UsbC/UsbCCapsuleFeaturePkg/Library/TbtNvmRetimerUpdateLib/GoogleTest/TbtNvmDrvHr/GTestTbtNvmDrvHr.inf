@@ -37,31 +37,33 @@
   # Test Main
   #
   GTestTbtNvmDrvHr.cpp
-  TestTbtNvmDrvHrSendDrvReady.cpp
-  TestTbtNvmDrvHrWriteCioReg.cpp
-  TestTbtNvmDrvHrReadCioDevReg.cpp
-  TestTbtNvmDrvHrDtor.cpp
+  TestRemoveTbtHostRouterList.cpp
   TestTbtNvmDrvHrCtor.cpp
+  TestTbtNvmDrvHrDtor.cpp
+  TestTbtNvmDrvHrSendDrvReady.cpp
+  TestTbtNvmDrvHrReadCioDevReg.cpp
+  TestTbtNvmDrvHrWriteCioReg.cpp
 
 [Packages]
   UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   FmpDevicePkg/FmpDevicePkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
   OneSiliconPkg/SiPkg.dec
-  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
 
 [LibraryClasses]
+  TbtNvmDrvDmaLib
   GoogleTestLib
   BaseMemoryLib
   MemoryAllocationLib
   UefiBootServicesTableLib
   PchPciBdfLib
-  MockHobLib
-
-[Protocols]
-
-[Pcd]
+  PciSegmentLib
+  HobLib
+  PciIopProtocolLib
+  SubhookLib
 
 [Guids]
   gITbtInfoHobGuid                         ## CONSUMES

@@ -131,26 +131,6 @@ VerifiedComponentLogHashEvent (
     }
   }
 
-  if (FspMeasurementData->Bits.BspPreMemStatus == EFI_SUCCESS) {
-    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    BspRegionGetDigestList (Bspm, &TpmDigestValues, TpmActivePcrBanks);
-    IbbSegmentPtr = SEGMENT_ARRAY_PTR (Bspm);
-    for (Index = 0; Index < Bspm->BspSegmentCount; Index ++) {
-      if (IbbSegmentPtr[Index].Size != 0 && (IbbSegmentPtr[Index].Flags & BIT_HASHED_IBB) == 0) {
-        Status = LogHashEvent (&TpmDigestValues,
-                              IbbSegmentPtr->Base,
-                              IbbSegmentPtr->Size,
-                              TpmActivePcrBanks,
-                              "BSPM"
-                              );
-        if (Status == EFI_SUCCESS) {
-          DEBUG ((DEBUG_INFO, "Hash event log created successfully for BSP Pre-Mem\n"));
-        }
-      }
-      IbbSegmentPtr ++;
-    }
-  }
-
   if (FspMeasurementData->Bits.FspmStatus == EFI_SUCCESS) {
     if (Bspm->FspmLoadingPolicy & FSPM_COMPRESSED) {
       FspmImageBase = (UINTN) PcdGet32 (PcdSecondaryDataStackBase) + SIZE_4KB;
@@ -168,6 +148,26 @@ VerifiedComponentLogHashEvent (
                            );
     if (Status == EFI_SUCCESS) {
       DEBUG ((DEBUG_INFO, "Hash event log created successfully for FSP-M\n"));
+    }
+  }
+
+  if (FspMeasurementData->Bits.BspPreMemStatus == EFI_SUCCESS) {
+    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
+    BspRegionGetDigestList (Bspm, &TpmDigestValues, TpmActivePcrBanks);
+    IbbSegmentPtr = SEGMENT_ARRAY_PTR (Bspm);
+    for (Index = 0; Index < Bspm->BspSegmentCount; Index ++) {
+      if (IbbSegmentPtr[Index].Size != 0 && (IbbSegmentPtr[Index].Flags & BIT_HASHED_IBB) == 0) {
+        Status = LogHashEvent (&TpmDigestValues,
+                              IbbSegmentPtr->Base,
+                              IbbSegmentPtr->Size,
+                              TpmActivePcrBanks,
+                              "BSPM"
+                              );
+        if (Status == EFI_SUCCESS) {
+          DEBUG ((DEBUG_INFO, "Hash event log created successfully for BSP Pre-Mem\n"));
+        }
+      }
+      IbbSegmentPtr ++;
     }
   }
 
@@ -224,7 +224,10 @@ FspLoaderVerifyAndLogEventFsps (
     Status = FspExtendFsps (Fbm, TpmActivePcrBanks);
     if (Status != EFI_SUCCESS) {
       DEBUG ((DEBUG_INFO, "Failed to extend FSP-S region\n"));
-      return Status;
+      //
+      // Proceed with the boot even if measurement failed.
+      //
+      return EFI_SUCCESS;
     }
 
     ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));

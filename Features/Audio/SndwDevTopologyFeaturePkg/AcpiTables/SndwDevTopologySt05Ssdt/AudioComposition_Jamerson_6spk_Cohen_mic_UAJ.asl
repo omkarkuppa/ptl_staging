@@ -19,19 +19,72 @@
 @par Specification Reference:
 **/
 
+//
+// _DSD package moved to a separate file.
+//
+
 #ifdef COHEN_ONLY
 # define SPEAKER_RENDER_DATA_PORT       5
 #else   // !COHEN_ONLY
 # define SPEAKER_RENDER_DATA_PORT       1
-
-#define ACPI_ACD_COLLECTION_COUNT  6
-
-#ifdef INTEL_DSP_NUM_AMPS
-#undef INTEL_DSP_NUM_AMPS
-#define INTEL_DSP_NUM_AMPS 6
-#endif // INTEL_DSP_NUM_AMPS
+#ifdef JAMERSON_6_LID
+# define ACPI_ACD_COLLECTION_COUNT      6
+#else
+# ifdef JAMERSON_5_LID
+#  define ACPI_ACD_COLLECTION_COUNT     5
+# else
+#  ifdef JAMERSON_4_LID
+#   define ACPI_ACD_COLLECTION_COUNT    4
+#  else
+#   define ACPI_ACD_COLLECTION_COUNT    3
+#  endif // JAMERSON_4_LID
+# endif // JAMERSON_5_LID
+#endif // JAMERSON_6_LID
 #endif // COHEN_ONLY
 
+
+//
+// Fall back acpi-acd-device-namestring
+//
+#ifndef JAMERSON_1_AMP_DEV_NAME
+# define JAMERSON_1_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD2.AF01"
+#endif
+
+#ifndef JAMERSON_2_AMP_DEV_NAME
+# define JAMERSON_2_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD3.AF01"
+#endif
+
+#ifndef JAMERSON_3_AMP_DEV_NAME
+# define JAMERSON_3_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD4.AF01"
+#endif
+
+#ifndef JAMERSON_4_AMP_DEV_NAME
+# define JAMERSON_4_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD5.AF01"
+#endif
+
+#ifndef COHEN_1_AMP_DEV_NAME
+# define COHEN_1_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF01"
+#endif
+
+#ifndef COHEN_1_MIC_DEV_NAME
+# define COHEN_1_MIC_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF02"
+#endif
+
+#ifndef COHEN_1_UAJ_DEV_NAME
+# define COHEN_1_UAJ_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF03"
+#endif
+
+#ifndef JAMERSON_5_AMP_DEV_NAME
+# define JAMERSON_5_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD7.AF01"
+#endif
+
+#ifndef JAMERSON_6_AMP_DEV_NAME
+# define JAMERSON_6_AMP_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD8.AF01"
+#endif
+
+#ifndef DSP_ACPI_ACD_DEVICE_NAMESTRING
+# define DSP_ACPI_ACD_DEVICE_NAMESTRING "\\_SB.PC00.HDAS"
+#endif
 
 Name(EP00, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
@@ -69,7 +122,7 @@ Name(EC00, Package() {
 Name(CC00, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -239,11 +292,7 @@ Name(AC02, Package() {    // This package is shared by all Codec devices in this
 Name(CC01, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-# ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD6.AF01"},
-# else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF01"},
-# endif
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xC},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -270,20 +319,22 @@ Name(AG00, Package() {
        Package (2) {"acpi-acd-collection-0-properties", "CC01"},    // First SDCA AMP Function
        Package (2) {"acpi-acd-collection-1-properties", "CC02"},    // Second SDCA AMP Function
        Package (2) {"acpi-acd-collection-2-properties", "CC03"},    // Third SDCA AMP Function
+#if (ACPI_ACD_COLLECTION_COUNT > 3)
        Package (2) {"acpi-acd-collection-3-properties", "CC04"},    // Fourth SDCA AMP Function
+# if (ACPI_ACD_COLLECTION_COUNT > 4)
        Package (2) {"acpi-acd-collection-4-properties", "CC05"},    // Fifth SDCA AMP Function
+#  if (ACPI_ACD_COLLECTION_COUNT > 5)
        Package (2) {"acpi-acd-collection-5-properties", "CC06"},    // Sixth SDCA AMP Function
+#  endif // ACPI_ACD_COLLECTION_COUNT > 5
+# endif // ACPI_ACD_COLLECTION_COUNT > 4
+#endif // ACPI_ACD_COLLECTION_COUNT > 3
     }
 }) //End AG00
 
 Name(CC01, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-# ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD2.AF01"},
-# else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD2.AF01"},
-# endif
+       Package (2) {"acpi-acd-device-namestring", JAMERSON_1_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xE},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -297,11 +348,7 @@ Name(CC01, Package() {
 Name(CC02, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-# ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD3.AF01"},
-# else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD3.AF01"},
-# endif
+       Package (2) {"acpi-acd-device-namestring", JAMERSON_2_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xE},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -314,11 +361,7 @@ Name(CC02, Package() {
 Name(CC03, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-#  ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD4.AF01"},
-#  else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD4.AF01"},
-#  endif
+       Package (2) {"acpi-acd-device-namestring", JAMERSON_3_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xE},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -332,11 +375,7 @@ Name(CC03, Package() {
 Name(CC04, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-#  ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD5.AF01"},
-#  else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD5.AF01"},
-#  endif
+       Package (2) {"acpi-acd-device-namestring", JAMERSON_4_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xE},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -350,11 +389,7 @@ Name(CC04, Package() {
 Name(CC05, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-#  ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD7.AF01"},
-#  else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD7.AF01"},
-#  endif
+       Package (2) {"acpi-acd-device-namestring", JAMERSON_5_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xE},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -368,11 +403,7 @@ Name(CC05, Package() {
 Name(CC06, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-#  ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD8.AF01"},
-#  else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD8.AF01"},
-#  endif
+       Package (2) {"acpi-acd-device-namestring", JAMERSON_6_AMP_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xE},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -416,7 +447,7 @@ Name(EC10, Package() {
 Name(CC10, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -447,11 +478,7 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
 Name(CC11, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-#ifdef _AMD
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PCI0.GP17.ACP.SDWC.SWD6.AF02"},
-#else
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF02"},
-#endif
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_MIC_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        // Circuit composition driver looks for this entity ID to select the graph
        // This is used in conjuntion with namestring, to differentiate speaker vs other function. For render, work backwards.
@@ -498,7 +525,7 @@ Name(EC20, Package() {
 Name(CC20, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -560,7 +587,7 @@ Name(EC30, Package() {
 Name(CC30, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -623,7 +650,7 @@ Name(EC40, Package() {
 Name(CC40, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -686,7 +713,7 @@ Name(EC50, Package() {
 Name(CC50, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -749,7 +776,7 @@ Name(EC60, Package() {
 Name(CC60, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -812,7 +839,7 @@ Name(EC70, Package() {
 Name(CC70, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
+       Package (2) {"acpi-acd-device-namestring", DSP_ACPI_ACD_DEVICE_NAMESTRING},
        Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID

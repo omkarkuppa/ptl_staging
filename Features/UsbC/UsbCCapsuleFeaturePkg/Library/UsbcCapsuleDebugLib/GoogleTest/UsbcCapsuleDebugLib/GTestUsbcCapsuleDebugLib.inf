@@ -1,0 +1,61 @@
+## @file
+#   Google Test for the implementation of UsbcCapsuleDebugLib.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+###
+
+[Defines]
+  INF_VERSION     = 0x00010005
+  BASE_NAME       = GTestUsbcCapsuleDebugLib
+  FILE_GUID       = b9d93940-897d-484e-95d5-8a0f4cc10220
+  MODULE_TYPE     = HOST_APPLICATION
+  VERSION_STRING  = 1.0
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  GTestUsbcCapsuleDebugLib.cpp
+  TestUsbcCapsuleDebugLib.cpp
+
+[Packages]
+  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
+
+[LibraryClasses]
+  GoogleTestLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  DebugLib
+  UefiRuntimeServicesTableLib
+  UefiBootServicesTableLib
+  PcdLib
+  BaseLib
+  UefiLib
+  Usb4DebugLib
+  SubhookLib
+
+[Protocols]
+  gEfiUsbCCapsuleDebugProtocolGuid

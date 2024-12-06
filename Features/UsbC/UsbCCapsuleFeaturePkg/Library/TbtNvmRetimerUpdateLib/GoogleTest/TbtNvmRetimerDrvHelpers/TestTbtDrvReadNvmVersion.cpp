@@ -18,22 +18,24 @@
 
 @par Specification
 **/
-
-//**********************************************************
-// TbtDrvReadNvmVersion Unit Test                          *
-//**********************************************************
-class TbtDrvReadNvmVersionTest : public CommonMock {
+#include <GTestTbtNvmRetimerDrvHelpers.h>
+#include <GoogleTest/Private/MockTbtNvmDrvRetimerThruHr/MockTbtNvmDrvRetimerThruHr.h>
+// **********************************************************
+// TbtDrvReadNvmVersion Unit Test                           *
+// **********************************************************
+class TbtDrvReadNvmVersionTest : public Test {
   protected:
-    EFI_STATUS            Status;
-    VOID                  *DevComRetimer;
-    UINT32                Version;
-    UINT32                ExpReadData;
+    EFI_STATUS                 Status;
+    VOID                       *DevComRetimer;
+    UINT32                     Version;
+    UINT32                     ExpReadData;
+    TBT_RETIMER                *gDevComRetimerMock = &LocalCommunicationPtr;
+    MockTbtNvmDrvRetimerThruHr TbtNvmDrvRetimerThruHrMock;
 
-    void SetUp() override {
-      DevComRetimer = (VOID *) gDevComRetimerMock;
-      Version = 0x123456;
-    }
-
+  void SetUp() override {
+    DevComRetimer = (VOID *) gDevComRetimerMock;
+    Version       = 0x123456;
+  }
 };
 
 //
@@ -58,13 +60,16 @@ TEST_F (TbtDrvReadNvmVersionTest, WriteIecsRegError) {
   //
   // Mock call WriteIecs for TbtDrvReadDwFromNvm
   //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    WriteIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_WriteIecs (
       gDevComRetimerMock,
       IECS_METADATA_ADDR,
       _,
-      1))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));
+      1
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   Status = TbtDrvReadNvmVersion (DevComRetimer, &Version);
   EXPECT_EQ (Status, EFI_DEVICE_ERROR);
@@ -81,47 +86,59 @@ TEST_F (TbtDrvReadNvmVersionTest, CorrectFlow) {
   //
   // Mock call WriteIecs for TbtDrvReadDwFromNvm
   //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    WriteIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_WriteIecs (
       gDevComRetimerMock,
       IECS_METADATA_ADDR,
       _,
-      1))
-    .WillOnce (Return(TBT_STATUS_SUCCESS));
+      1
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS));
   //
-  // Mock call WriteIecsReg for TbtNvmDrvSendCmd 
+  // Mock call WriteIecsReg for TbtNvmDrvSendCmd
   //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    WriteIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_WriteIecs (
       gDevComRetimerMock,
       IECS_CMD_ADDR,
       _,
-      1))
-    .WillOnce (Return(TBT_STATUS_SUCCESS));
+      1
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS));
   //
   // Mock call ReadIecsReg for TbtNvmDrvWaitForCmdCpl in TbtNvmDrvSendCmd
   //
-  ExpReadData       = OPCODE_NVM_READ_CMD;
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    ReadIecs (
+  ExpReadData = OPCODE_NVM_READ_CMD;
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_ReadIecs (
       gDevComRetimerMock,
       IECS_CMD_ADDR,
       1,
       _
-      ))
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<3>(&ExpReadData, sizeof(ExpReadData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&ExpReadData, sizeof (ExpReadData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrMock,
-    ReadIecs (
+  EXPECT_CALL (
+    TbtNvmDrvRetimerThruHrMock,
+    MockThruHr_ReadIecs (
       gDevComRetimerMock,
       IECS_MSG_OUT_RDATA,
       _,
-      _))
-    .WillOnce (Return(TBT_STATUS_SUCCESS));
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS));
 
   Status = TbtDrvReadNvmVersion (DevComRetimer, &Version);
   EXPECT_EQ (Status, EFI_SUCCESS);

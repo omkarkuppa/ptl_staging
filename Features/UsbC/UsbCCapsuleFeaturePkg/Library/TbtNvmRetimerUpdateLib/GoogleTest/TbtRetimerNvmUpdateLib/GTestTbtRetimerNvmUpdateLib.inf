@@ -1,5 +1,5 @@
 ## @file
-# Unit test suite for the TbtRetimerNvmUpdateLib using Google Test
+# Unit test suite for the TbtRetimerNvmUpdate using Google Test
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -37,32 +37,44 @@
   # Test Main
   #
   GTestTbtRetimerNvmUpdateLib.cpp
+  TestCreateHrDevInstance.cpp
   TestCreateRetimerDevInstance.cpp
   TestCreateTBTDevInstance.cpp
   TestDestroyRetimerDevInstance.cpp
   TestDestroyTbtDevInstance.cpp
+  TestInitRetimerHW.cpp
   TestReadRetimerNvmVersion.cpp
-  TestUpdateRetimerNvmInformation.cpp
-  TestUpdateRetimerNvmFirmware.cpp
+  TestTbtSendOfflineMode.cpp
+  TestTerminateRetimerHW.cpp
   TestUpdateDiscreteTbtNvmFirmware.cpp
+  TestUpdateRetimerNvmFirmware.cpp
+  TestUpdateRetimerNvmInformation.cpp
+  TestTbtPdRetimerFwUpdateModeChange.cpp
+  TestDriveToFwUpdateMode.cpp
+  TestRestoreToOriginalMode.cpp
 
 [Packages]
-  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   FmpDevicePkg/FmpDevicePkg.dec
+  UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
   OneSiliconPkg/SiPkg.dec
-  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
 
 [LibraryClasses]
+  TbtNvmDrvRetimerThruHrLib
+  TbtNvmDrvHrLib
   GoogleTestLib
-  BaseMemoryLib
   MemoryAllocationLib
   UefiBootServicesTableLib
   PcdLib
   UefiRuntimeServicesTableLib
-
-[Protocols]
+  FirmwareManagementLib
+  SubhookLib
+  UsbcRetimerProtocol
+  Usb4DebugLib
+  MockBaseMemoryLib
 
 [Pcd]
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber    ## CONSUMES

@@ -26,8 +26,10 @@
   Convert AIP data block to PHAT ACPI style, and publish it onto
   an existing ACPI PHAT structure or initialize and install a new
   instance.
+
   @param[in]   InfoBlock          Point to AIP data block.
   @param[in]   InfoBlockSize      The size of AIP data.
+
   @retval EFI_SUCCESS             Success
   @retval EFI_OUT_OF_RESOURCES    Out of memory space.
   @retval EFI_INVALID_PARAMETER   Either InfoBlock is NULL,

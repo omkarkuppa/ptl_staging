@@ -36,7 +36,7 @@
 
 GLOBAL_REMOVE_IF_UNREFERENCED IGD_OPREGION_PROTOCOL  mIgdOpRegion;
 
-#define HEADER_OPREGION_VER  0x0300
+#define HEADER_OPREGION_VER 0x0302
 
 /**
   Update IgdOpRegion Nvs Base address
@@ -217,9 +217,9 @@ IGpuOpRegionInit (
     ExtendedVbtSize = ((VbtFileBuffer->HeaderVbtSize) & (UINT32) ~(0x1FF)) + 0x200;
   }
 
-  Status = (gBS->AllocatePool)(EfiACPIMemoryNVS, sizeof (IGD_OPREGION_STRUCTURE_VER_3_0) + ExtendedVbtSize, (VOID **)&mIgdOpRegion.OpRegion);
+  Status = (gBS->AllocatePool)(EfiACPIMemoryNVS, sizeof (IGD_OPREGION_STRUCTURE_VER_3_2) + ExtendedVbtSize, (VOID **)&mIgdOpRegion.OpRegion);
   ASSERT_EFI_ERROR (Status);
-  SetMem (mIgdOpRegion.OpRegion, sizeof (IGD_OPREGION_STRUCTURE_VER_3_0) + ExtendedVbtSize, 0);
+  SetMem (mIgdOpRegion.OpRegion, sizeof (IGD_OPREGION_STRUCTURE_VER_3_2) + ExtendedVbtSize, 0);
   ///
   /// Update IgdOpRegion Nvs Base address
   ///
@@ -264,8 +264,8 @@ IGpuOpRegionInit (
   ///
   /// Set Initial current Brightness
   ///
-  mIgdOpRegion.OpRegion->MBox2.BCL1 = BACKLIGHT_BRIGHTNESS;
-  mIgdOpRegion.OpRegion->MBox2.BCL2 = BACKLIGHT_BRIGHTNESS;
+  mIgdOpRegion.OpRegion->MBox2.BCL1.Bits.Brightness = BACKLIGHT_BRIGHTNESS;
+  mIgdOpRegion.OpRegion->MBox2.BCL2.Bits.Brightness = BACKLIGHT_BRIGHTNESS;
   mIgdOpRegion.OpRegion->MBox2.CBL1 = (INIT_BRIGHT_LEVEL | FIELD_VALID_BIT);
   mIgdOpRegion.OpRegion->MBox2.CBL2 = (INIT_BRIGHT_LEVEL | FIELD_VALID_BIT);
   ///
@@ -282,9 +282,9 @@ IGpuOpRegionInit (
       if (ExtendedVbtSize > 0) {
         // VBT > 6KB
         DEBUG ((DEBUG_INFO, "Extended VBT supported\n"));
-        mIgdOpRegion.OpRegion->MBox3.RVDA = sizeof (IGD_OPREGION_STRUCTURE_VER_3_0);                      // Relative offset at the end of Op-region.
+        mIgdOpRegion.OpRegion->MBox3.RVDA = sizeof (IGD_OPREGION_STRUCTURE_VER_3_2);                      // Relative offset at the end of Op-region.
         mIgdOpRegion.OpRegion->MBox3.RVDS = ((VbtFileBuffer->HeaderVbtSize) & (UINT32) ~(0x1FF)) + 0x200; // Aligned VBT Data Size to 512 bytes.
-        CopyMem ((CHAR8 *)(UINTN)(mIgdOpRegion.OpRegion) + sizeof (IGD_OPREGION_STRUCTURE_VER_3_0), VbtFileBuffer, mIgdOpRegion.OpRegion->MBox3.RVDS);
+        CopyMem ((CHAR8 *)(UINTN)(mIgdOpRegion.OpRegion) + sizeof (IGD_OPREGION_STRUCTURE_VER_3_2), VbtFileBuffer, mIgdOpRegion.OpRegion->MBox3.RVDS);
       } else {
         CopyMem (mIgdOpRegion.OpRegion->MBox4.RVBT, VbtFileBuffer, VbtFileBuffer->HeaderVbtSize);
       }

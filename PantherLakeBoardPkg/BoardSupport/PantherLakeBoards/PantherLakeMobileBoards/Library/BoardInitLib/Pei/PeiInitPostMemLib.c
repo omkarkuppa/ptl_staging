@@ -425,10 +425,10 @@ PtlBoardTbtInit (
   // PD/Retimer information
   //
   PcdSetBoolS (PcdUsbCEcSupportPdInfoPresent, PcdGetBool (VpdPcdUsbCEcSupportPdInfoPresent));
-  SetPcdUsbCPdSupportBitmap ();
 
   PcdSetBoolS (PcdUsbCEcSupportRetimerInfoPresent, PcdGetBool (VpdPcdUsbCEcSupportRetimerInfoPresent));
   PcdSet8S (PcdUsbCCapsuleDebugLevel, mSetupData.UsbcCapsuleDebugLevel);
+
   //
   // 2 seconds GOP HPD polling timer + 1 seconds to ensure all pending timer callbacks to be serviced.
   //
@@ -614,13 +614,7 @@ PtlBoardSpecificGpioInitPostMem (
   //
   // Update OEM table ID
   //
-  if ((mSetupData.WwanEnable == 0)) {
-    // When WWAN is disabled load ssd rtd3 file
-    PcdSet64S (PcdBoardRtd3TableSignature, PcdGet64 (VpdPcdBoardSsdRtd3TableSignature));
-  } else {
-    // When WWAN is enabled load Rvp rtd3 file
-    PcdSet64S (PcdBoardRtd3TableSignature, PcdGet64 (VpdPcdBoardRtd3TableSignature));
-  }
+  PcdSet64S (PcdBoardRtd3TableSignature, PcdGet64 (VpdPcdBoardRtd3TableSignature));
 
   //
   //Modify Preferred_PM_Profile field based on Board SKU's. Default is set to Mobile

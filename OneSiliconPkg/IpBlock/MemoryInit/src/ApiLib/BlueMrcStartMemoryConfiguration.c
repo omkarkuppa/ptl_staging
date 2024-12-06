@@ -73,6 +73,7 @@ MrcSaveStaticSpdData (
   StaticSpdData->OutMaxChannels         = Outputs->MaxChannels;
   StaticSpdData->OutMaxDimm             = Outputs->MaxDimm;
   StaticSpdData->OutMaxDqBits           = Outputs->MaxDqBits;
+  StaticSpdData->OutIsAny2Ranks         = Outputs->IsAny2Ranks;
   StaticSpdData->OutXmpProfileEnable    = Outputs->XmpProfileEnable;
   StaticSpdData->OutXmpConfigWarning    = Outputs->XmpConfigWarning;
   StaticSpdData->OutIsDimm1Enabled      = Outputs->IsDimm1Enabled;
@@ -174,6 +175,7 @@ MrcRestoreStaticSpdData (
   Outputs->MaxChannels         = StaticSpdData->OutMaxChannels;
   Outputs->MaxDimm             = StaticSpdData->OutMaxDimm;
   Outputs->MaxDqBits           = StaticSpdData->OutMaxDqBits;
+  Outputs->IsAny2Ranks         = StaticSpdData->OutIsAny2Ranks;
   Outputs->XmpProfileEnable    = StaticSpdData->OutXmpProfileEnable;
   Outputs->XmpConfigWarning    = StaticSpdData->OutXmpConfigWarning;
   Outputs->IsDimm1Enabled      = StaticSpdData->OutIsDimm1Enabled;

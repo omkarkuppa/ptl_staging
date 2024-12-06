@@ -35,6 +35,7 @@
 #include <Library/CpuPlatformLib.h>
 #include <IndustryStandard/Pci22.h>
 #include <Library/PchInfoHob.h>
+#include <IGpuDataHob.h>
 
 #define MAX_PHYSICAL_ADDRESS_SIZE_WITH_MKTME  46
 
@@ -569,7 +570,22 @@ GetNumberOfReservedMemoryRegions (
   OUT UINT32                 *NumberOfReservedMemoryRegions
   )
 {
-  return EFI_UNSUPPORTED;
+  IGPU_DATA_HOB                   *IGpuDataHob;
+
+  IGpuDataHob = NULL;
+  *NumberOfReservedMemoryRegions = 0;
+
+  IGpuDataHob = (IGPU_DATA_HOB *) GetFirstGuidHob (&gIGpuDataHobGuid);
+
+  if (IGpuDataHob != NULL) {
+    if ((IGpuDataHob->Gsm2BaseAddress > 0) && (IGpuDataHob->Gsm2Size > 0)) {
+        *NumberOfReservedMemoryRegions += 1;
+    }
+  }
+
+  DEBUG ((DEBUG_INFO, "NumberOfReservedMemoryRegions = %d\n", *NumberOfReservedMemoryRegions));
+
+  return EFI_SUCCESS;
 }
 
 /**
@@ -598,7 +614,90 @@ GetReservedMemoryRegionInfo (
   OUT UINT32                       *ListLength
   )
 {
-  return EFI_UNSUPPORTED;
+  DEVICE_INFO                     *LocalDeviceList;
+  DEVICE_INFO                     *ReturnDeviceList;
+  UINT32                          DeviceCount;
+  UINT32                          DeviceIndex;
+  UINT16                          VendorId;
+  UINT32                          NumberOfEnabledDevices;
+  VTD_TOPOLOGY_PROTOCOL_INTERNAL  *VtdTopologyProtocol;
+  IGPU_DATA_HOB                   *IGpuDataHob;
+
+  IGpuDataHob = NULL;
+
+  DEBUG ((DEBUG_INFO, "GetReservedMemoryRegionInfo Start\n"));
+
+  if ((This == NULL) || (ListLength == NULL)) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if (ReservedMemoryRegionId == GFX_VTD) {
+    IGpuDataHob = (IGPU_DATA_HOB *) GetFirstGuidHob (&gIGpuDataHobGuid);
+
+    VtdTopologyProtocol = (VTD_TOPOLOGY_PROTOCOL_INTERNAL *)This;
+
+    LocalDeviceList = VtdTopologyProtocol->Private.VtdEngine[GFX_VTD].DeviceList;
+    DeviceCount     = VtdTopologyProtocol->Private.VtdEngine[GFX_VTD].DeviceCount;
+    DEBUG ((DEBUG_INFO, "DeviceCount = %x\n", DeviceCount));
+
+    NumberOfEnabledDevices = 0;
+    ReturnDeviceList       = NULL;
+
+    if (LocalDeviceList != NULL) {
+      for (DeviceIndex = 0; DeviceIndex < DeviceCount; DeviceIndex++) {
+        if (LocalDeviceList[DeviceIndex].Type == PciEndpointDevice) {
+
+          VendorId = PciSegmentRead16 (
+                      PCI_SEGMENT_LIB_ADDRESS (
+                        0,
+                        LocalDeviceList[DeviceIndex].Bdf.Bus,
+                        LocalDeviceList[DeviceIndex].Bdf.Device,
+                        LocalDeviceList[DeviceIndex].Bdf.Function,
+                        PCI_VENDOR_ID_OFFSET
+                        )
+                      );
+
+          if (VendorId == 0xFFFF) {
+            continue;
+          }
+
+          if (ReturnDeviceList == NULL) {
+            ReturnDeviceList = AllocatePool (sizeof (DEVICE_INFO));
+          } else {
+            ReturnDeviceList = ReallocatePool (
+                                NumberOfEnabledDevices * sizeof (DEVICE_INFO),
+                                (NumberOfEnabledDevices + 1) * sizeof (DEVICE_INFO),
+                                ReturnDeviceList
+                                );
+          }
+
+          if (ReturnDeviceList == NULL) {
+            return EFI_OUT_OF_RESOURCES;
+          }
+
+          CopyMem (&ReturnDeviceList[NumberOfEnabledDevices], &LocalDeviceList[DeviceIndex], sizeof (DEVICE_INFO));
+          NumberOfEnabledDevices++;
+        }
+      }
+    }
+
+    *ListLength = NumberOfEnabledDevices;
+    if (DeviceList != NULL) {
+      *DeviceList = ReturnDeviceList;
+    }
+
+    if (IGpuDataHob != NULL) {
+      if ((IGpuDataHob->Gsm2BaseAddress > 0) && (IGpuDataHob->Gsm2Size > 0)) {
+        Info->BaseAddress  = IGpuDataHob->Gsm2BaseAddress;
+        Info->LimitAddress = (Info->BaseAddress) + IGpuDataHob->Gsm2Size - 1;
+        DEBUG ((DEBUG_INFO, "RMRR Base  address IGD GSM2 %016lX\n", Info->BaseAddress));
+        DEBUG ((DEBUG_INFO, "RMRR Limit address IGD GSM2 %016lX\n", Info->LimitAddress));
+      }
+    }
+    return EFI_SUCCESS;
+  } else {
+    return EFI_UNSUPPORTED;
+  }
 }
 
 /**

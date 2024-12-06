@@ -158,7 +158,7 @@ MrcCalcSagvTypeConfig (
     break;
 
   case MidBwSaGv:
-    Freq = f3200;
+    Freq = f4800;
     Gear = 4;
     break;
 
@@ -188,7 +188,7 @@ MrcCalcSagvTypeConfig (
 
   if (SaGvType == RfiHighBwSaGv || SaGvType == RfiLowLatencySaGv) {
     if (IsLpddr5) {
-      Freq = f4800;
+      Freq = f6400;
     } else if (IsDdr5) {
       Freq = f3200;
     } else {

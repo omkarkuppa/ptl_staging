@@ -30,6 +30,8 @@
 #include <Library/PrintLib.h>
 #include <Library/HobLib.h>
 #include <Library/FspVerificationLib.h>
+#include <Library/IoLib.h>
+#include <Register/PmcRegs.h>
 
 /**
   Check if the boot mode is S3.
@@ -38,13 +40,21 @@
   @retval FALSE  Boot mode is not S3.
 
 **/
-UINT8
+BOOLEAN
 IsS3Resume (
   VOID
   )
 {
-  //ToDO: Find logic to detect S3 resume
-  return FALSE;
+  UINT16  AcpiBase;
+  UINT16  PmconA;
+
+  AcpiBase = FixedPcdGet16 (PcdAcpiBaseAddress);
+  PmconA   = IoRead16 (AcpiBase + R_ACPI_IO_PM1_CNT);
+  if ((PmconA & B_ACPI_IO_PM1_CNT_SLP_TYP) == V_ACPI_IO_PM1_CNT_S3) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 /**
@@ -180,7 +190,7 @@ LogHashEvent (
 EFI_STATUS
 EFIAPI
 FspInitializeTpm (
-  OUT  FSP_BUILD_MEASUREMENT_INFO  FspMeasurementInfo
+  OUT  FSP_BUILD_MEASUREMENT_INFO  *FspMeasurementInfo
   )
 {
   EFI_STATUS    Status;
@@ -191,7 +201,7 @@ FspInitializeTpm (
     return EFI_DEVICE_ERROR;
   }
 
-  FspMeasurementInfo.Bits.TpmInitStatus = TPM_INIT_SKIPPED;
+  FspMeasurementInfo->Bits.TpmInitStatus = TPM_INIT_SKIPPED;
 
   if (!(AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO) & B_BOOT_GUARD_SACM_INFO_TPM_SUCCESS)) {
     if (IsS3Resume () == 1) {
@@ -202,9 +212,9 @@ FspInitializeTpm (
     } else {
       Status = Tpm2Startup (TPM_SU_CLEAR);
       if (Status == EFI_SUCCESS) {
-        FspMeasurementInfo.Bits.TpmInitStatus = TPM_INIT_SUCCESS;
+        FspMeasurementInfo->Bits.TpmInitStatus = TPM_INIT_SUCCESS;
       } else {
-        FspMeasurementInfo.Bits.TpmInitStatus = TPM_INIT_FAILED;
+        FspMeasurementInfo->Bits.TpmInitStatus = TPM_INIT_FAILED;
       }
     }
     DEBUG ((DEBUG_INFO, "Tpm2Startup: %r\n", Status));
@@ -236,7 +246,6 @@ FspGetSupportedPcrs (
   //
   Status = Tpm2GetCapabilitySupportedAndActivePcrs (&TpmHashAlgorithmBitmap, TpmActivePcrBanks);
   DEBUG ((DEBUG_INFO, "Tpm2GetCapabilitySupportedAndActivePcrs: %r  (TpmActivePcrBanks = %d)\n", Status, *TpmActivePcrBanks));
-  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
@@ -494,21 +503,21 @@ FspExtendFsps (
 EFI_STATUS
 EFIAPI
 ExtendFspotRegion (
-  OUT  FSP_BUILD_MEASUREMENT_INFO   FspMeasurementInfo,
+  OUT  FSP_BUILD_MEASUREMENT_INFO   *FspMeasurementInfo,
   IN   FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
   IN   UINT32                       TpmActivePcrBanks
   )
 {
   EFI_STATUS  Status = EFI_ACCESS_DENIED;
-  //if ((DetectBootGuardProfile () == BOOT_GUARD_PROFILE_4) && (IsS3Resume () == 0)) {
+  if (IsS3Resume () == 0) {
     Status = FspExtendFspot (Fbm, TpmActivePcrBanks);
     if (Status == EFI_SUCCESS) {
+      FspMeasurementInfo->Bits.IbbStatus = EFI_SUCCESS;
       DEBUG ((DEBUG_INFO, "FSP-OT extended to PCR Bank %d\n", TpmActivePcrBanks));
     } else {
-      FspMeasurementInfo.Bits.IbbStatus = 1;
       DEBUG ((DEBUG_INFO, "FSP-OT measurement fail\n"));
     }
-  //}
+  }
   return Status;
 }
 
@@ -526,7 +535,7 @@ ExtendFspotRegion (
 EFI_STATUS
 EFIAPI
 ExtendFspmRegion (
-  OUT  FSP_BUILD_MEASUREMENT_INFO   FspMeasurementInfo,
+  OUT  FSP_BUILD_MEASUREMENT_INFO   *FspMeasurementInfo,
   IN   FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
   IN   UINT32                       TpmActivePcrBanks
 )
@@ -535,9 +544,9 @@ ExtendFspmRegion (
   if (IsS3Resume () == 0) {
     Status = FspExtendFspm (Fbm, TpmActivePcrBanks);
     if (Status == EFI_SUCCESS) {
+      FspMeasurementInfo->Bits.FspmStatus = EFI_SUCCESS;
       DEBUG ((DEBUG_INFO, "FSP-M extended to PCR Bank %d\n", TpmActivePcrBanks));
     } else {
-      FspMeasurementInfo.Bits.FspmStatus = 1;
       DEBUG ((DEBUG_ERROR, "Failed to extend FSP-M! Status: %r\n", Status));
     }
   }
@@ -558,7 +567,7 @@ ExtendFspmRegion (
 EFI_STATUS
 EFIAPI
 ExtendBspRegion (
-  OUT  FSP_BUILD_MEASUREMENT_INFO   FspMeasurementInfo,
+  OUT  FSP_BUILD_MEASUREMENT_INFO   *FspMeasurementInfo,
   IN   BSPM_ELEMENT                 *Bspm,
   IN   UINT32                       TpmActivePcrBanks
 )
@@ -571,9 +580,9 @@ ExtendBspRegion (
     BspRegionGetDigestList (Bspm, &TpmDigestValues, TpmActivePcrBanks);
     Status = Tpm2PcrExtend (0, &TpmDigestValues);
     if (Status == EFI_SUCCESS) {
+      FspMeasurementInfo->Bits.BspPreMemStatus = EFI_SUCCESS;
       DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d BSP Pre-Mem digests have been extended!)\n", Status, TpmDigestValues.count));
     } else {
-      FspMeasurementInfo.Bits.BspPreMemStatus = 1;
       DEBUG ((DEBUG_ERROR, "Failed to extend BSP Pre-Mem! Status: %r\n", Status));
     }
   }
@@ -595,16 +604,31 @@ ExtendBspRegion (
 EFI_STATUS
 EFIAPI
 InitializeTpmAndGetActivePcrs (
-  OUT  FSP_BUILD_MEASUREMENT_INFO  FspMeasurementInfo,
+  OUT  FSP_BUILD_MEASUREMENT_INFO  *FspMeasurementInfo,
   IN   BSPM_ELEMENT                *Bspm,
   OUT  UINT32                      *TpmActivePcrBanks
   )
 {
-  EFI_STATUS  Status;
+  EFI_STATUS   Status;
+  TPML_DIGEST  EmptyHashList;
+  TPML_DIGEST  EarlyHashList;
 
   Status = FspInitializeTpm (FspMeasurementInfo);
 
-  if (FspMeasurementInfo.Bits.TpmInitStatus != TPM_INIT_FAILED) {
+  //
+  // Verify if FSP-OT and FSP version is already extended by ACM
+  //
+  Tpm2PcrReadForActiveBank (00, &EarlyHashList);
+  ZeroMem (&EmptyHashList, sizeof (TPML_DIGEST));
+  if (CompareMem (EmptyHashList.digests->buffer, EarlyHashList.digests->buffer, sizeof (EarlyHashList.digests->buffer)) != 0) {
+    //
+    // If PCR[0] digest list is not empty, this would mean that ACM has extended FSP-OT and FSP version into the PCR
+    //
+    DEBUG ((DEBUG_INFO, "FSP-OT and FSP version has already been measured by ACM\n"));
+    FspMeasurementInfo->Bits.IbbStatus = EFI_SUCCESS;
+  }
+
+  if (FspMeasurementInfo->Bits.TpmInitStatus != TPM_INIT_FAILED) {
     Status = FspGetSupportedPcrs (TpmActivePcrBanks);
   }
   return Status;
@@ -628,8 +652,6 @@ FspBuildMeasurementInfo (
   VOID  *FspMeasurementData;
   FspMeasurementData = (VOID *) (UINTN) (PcdGet32 (PcdTemporaryRamBase) + PcdGet32 (PcdTemporaryRamSize) - PcdGet32 (PcdFspReservedBufferSize));
 
-  ZeroMem (FspMeasurementData, sizeof (FSP_BUILD_MEASUREMENT_INFO));
   CopyMem (FspMeasurementData, &FspMeasurementInfo, sizeof (FSP_BUILD_MEASUREMENT_INFO));
-
   return EFI_SUCCESS;
 }

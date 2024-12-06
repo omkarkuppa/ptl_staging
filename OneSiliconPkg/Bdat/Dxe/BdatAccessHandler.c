@@ -20,7 +20,7 @@
 **/
 #include "BdatAccessHandler.h"
 
-STATIC EFI_ACPI_TABLE_PROTOCOL  *AcpiTable;
+static EFI_ACPI_TABLE_PROTOCOL  *AcpiTable;
 
 /**
   Entry point of the Bdat Access Handler.

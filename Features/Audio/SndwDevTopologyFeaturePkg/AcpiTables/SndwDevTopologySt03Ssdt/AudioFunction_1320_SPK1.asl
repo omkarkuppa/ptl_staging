@@ -33,7 +33,8 @@
 			Package(2) {"mipi-sdw-test-mode-supported", 1}, // Integer/Boolean
 			//Package(2) {"mipi-sdca-function-topology-features", 0x8000000000042D},	// Security/Privacy(55), Companion Data Output(10), Reference Stream(5), Sense Capture(3), Ultrasound Render(2), Secondary Transducer(0)
 			Package(2) {"mipi-sdca-function-topology-features", 0x002C},	// Reference Stream(5), Sense Capture(3), Ultrasound Render(2)
-			Package(2) {"mipi-sdca-control-list", 0x301F2}, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11 - Function level controls
+			//Package(2) {"mipi-sdca-control-list", 0x301F2}, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11 - Function level controls
+                        Package(2) {"mipi-sdca-control-list", 0xF000000301F2}, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11, 0x2C, 0x2D, 0x2E, 0x2F - Function level controls
 			// All entities
 				// Package(2) {"mipi-sdca-entity-id-list",
 				// 	Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24, 0x38, 0x66, 0x63, 0x62, 0x27, 0x17, 0x61, 0x60, 0x51} },
@@ -61,6 +62,10 @@
 			Package(2) {"mipi-sdca-control-0x8-subproperties", "C008"},
 			Package(2) {"mipi-sdca-control-0x10-subproperties", "C043"},
 			Package(2) {"mipi-sdca-control-0x11-subproperties", "C044"},
+			Package(2) {"mipi-sdca-control-0x2C-subproperties", "C02C"},
+			Package(2) {"mipi-sdca-control-0x2D-subproperties", "C02D"},
+			Package(2) {"mipi-sdca-control-0x2E-subproperties", "C02E"},
+			Package(2) {"mipi-sdca-control-0x2F-subproperties", "C02F"},
 			Package(2) {"mipi-sdca-entity-id-0x40-subproperties", "EN40"},
 			Package(2) {"mipi-sdca-entity-id-0x33-subproperties", "EN33"},
 			Package(2) {"mipi-sdca-entity-id-0x13-subproperties", "EN13"},
@@ -1074,6 +1079,53 @@
 		}
 	}) //End AF04.C044
 
+Name(C02C, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			//Device_Manufacturer_ID = 0x025d, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0x025D},
+		}
+	}) //End AF04.C02C
+
+	Name(C02D, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			//Device_Part_ID = 0x1320, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0x1320},
+		}
+	}) //End AF04.C02D
+
+	Name(C02E, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			//Device_Version, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0x1},
+		}
+	}) //End AF04.C02E
+
+	Name(C02F, Package()
+	{
+		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+		Package()
+		{
+			//Device_SDCA_Version, Class, DC
+			Package(2) {"mipi-sdca-control-access-layer", 0x4},
+			Package(2) {"mipi-sdca-control-access-mode", 5},
+			Package(2) {"mipi-sdca-control-dc-value", 0x08},
+		}
+	}) //End AF04.C02F
 	Name(EN40, Package()
 	{
 		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -1319,7 +1371,7 @@
 		ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
 		Package()
 		{
-			// Mixer, Class, DC, The Q7.8dB format used for MU Controls represents the gain range −128 dB to +127.996 dB
+			// Mixer, Class, DC, The Q7.8dB format used for MU Controls represents the gain range ??28 dB to +127.996 dB
 			Package(2) {"mipi-sdca-control-access-layer", 0x4},
 			Package(2) {"mipi-sdca-control-access-mode", 5},
 			Package(2) {"mipi-sdca-control-cn-0-dc-value", 0x0000},	// Input Pin 1, Ch 1 => Output Pin 1, Ch 1 => 0dB unmute

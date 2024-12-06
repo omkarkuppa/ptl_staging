@@ -86,7 +86,7 @@ PLATFORM_SIGNER_PRI_KEY_FILE_PATH: str = \
       )
 
 PLATFORM_CERT_SIGN: SignCert        = SignCert ()
-PLATFORM_CERT_SIGN.CertName         = 'Intel Platform 3K Test Certificate'
+PLATFORM_CERT_SIGN.CertName         = 'Intel Platform Sample Test Certificate'
 PLATFORM_CERT_SIGN.CertType         = SIGN_X509_CERT_FILE
 PLATFORM_CERT_SIGN.SignToolType     = SIGN_TOOL_OPENSSL
 PLATFORM_CERT_SIGN.SignToolPath     = OPENSSL_SIGN_TOOL_PATH

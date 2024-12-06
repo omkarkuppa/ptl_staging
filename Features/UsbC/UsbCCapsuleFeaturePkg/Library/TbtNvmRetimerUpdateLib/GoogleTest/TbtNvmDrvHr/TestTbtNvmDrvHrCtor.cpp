@@ -19,1519 +19,1296 @@
 @par Specification
 **/
 
-//**********************************************************
-// TbtNvmDrvHrCtor Unit Test                               *
-//**********************************************************
-class TbtNvmDrvHrCtorTest : public CommonMock {
-  protected:
-    TBT_HOST_ROUTER       *HrPtr;
-    UINT8                 FirmwareType;
-    PCIE_RP_CONFIG        *PcieRpConfig;
-    PCIE_BDF              *TbtDmaPcieBdf;
-    FORCE_PWR_HR          ForcePwrFunc;
+#include <GTestTbtNvmDrvHr.h>
+#include <GoogleTest/Library/MockUefiBootServicesTableLib.h>
+#include <GoogleTest/Library/MockHobLib.h>
+#include <GoogleTest/Private/MockTbtNvmDrvDma/MockTbtNvmDrvDma.h>
+#include <GoogleTest/Private/MockPciIopProtocolLib/MockPciIopProtocolLib.h>
 
-    EFI_HANDLE            ExpHandlesPtr;
-    EFI_HANDLE            ExpHandles[5] = {
-      0,0,0,0,0
-    };
-    UINTN                 ExpHandleCount;
-    UINT64                ExpPcieRpBaseAddr;
-    UINT8                 ExpSecondaryBus;
-    UINT8                 ExpSubordinateBus;
-    EFI_PCI_IO_PROTOCOL   *ExpPciIoProto;
-    PCI_ID                ExpPciId1;
-    PCI_ID                ExpPciId2;
-    UINT8                 ExpClassCode[3] = {
+struct MockTbtNvmDrvDmaCtor {
+  MOCK_INTERFACE_DECLARATION (MockTbtNvmDrvDmaCtor);
+  MOCK_FUNCTION_INTERNAL_DECLARATION (
+    TBT_DMA *,
+    TbtNvmDrvDmaCtor,
+    (EFI_PCI_IO_PROTOCOL *PciIoProto,
+     BOOLEAN             *TBTControllerWasPowered,
+     UINTN                FunctionNumber)
+    );
+};
+
+MOCK_INTERFACE_DEFINITION (MockTbtNvmDrvDmaCtor);
+MOCK_FUNCTION_INTERNAL_DEFINITION (MockTbtNvmDrvDmaCtor, TbtNvmDrvDmaCtor, 3, EFIAPI);
+
+// **********************************************************
+// TbtNvmDrvHrCtor Unit Test                                *
+// **********************************************************
+class TbtNvmDrvHrCtorTest : public Test {
+  protected:
+    EFI_STATUS             Status;
+    TBT_HOST_ROUTER        *HrPtr;
+    TBT_HR_IMPL            *HrImplPtr;
+    UINT8                  FirmwareType;
+    PCIE_RP_CONFIG         *PcieRpConfig;
+    PCIE_BDF               *TbtDmaPcieBdf;
+    DTBT_CONTROLLER_CONFIG *DTbtControllerConfig;
+    FORCE_PWR_HR           ForcePwrFunc;
+    UINT8                  PcieRootPort;
+    UINTN                  HandleCount;
+    EFI_HANDLE             Handles[5] = {0, 0, 0, 0, 0};
+
+    UINT8 ExpClassCode[3] = {
       PCI_IF_USB4,
       PCI_CLASS_SERIAL_USB,
       PCI_CLASS_SERIAL
     };
-    UINTN                 ExpSegmentNumber;
-    UINTN                 ExpBusNumber;
-    UINTN                 ExpMissMatchBusNumber;
-    UINTN                 ExpDeviceNumber;
-    UINTN                 ExpFunctionNumber;
-    UINTN                 ExpMissMatchFunctionNumber;
-    TBT_DMA               *ExpDmaPtr;
-    ITBT_INFO_HOB         *ExpITbtInfoHob;
-    BOOLEAN               *TBTControllerWasPowered;
 
-    void SetUp() override {
-      PcieRpConfig                = (PCIE_RP_CONFIG *) AllocateZeroPool (sizeof (PCIE_RP_CONFIG));
-      TbtDmaPcieBdf               = (PCIE_BDF *) AllocateZeroPool (sizeof (PCIE_BDF));
-      FirmwareType                = DISCRETE_TBT;             // Default value
-      PcieRpConfig->PcieRpType    = SUPPORT_PCH_TYPE;         // Default value
-      ForcePwrFunc                = TbtNvmDrvYflForcePwrFunc;
-      //
-      // Default value
-      //
-      ExpHandleCount              = 0x5;
-      ExpPcieRpBaseAddr           = 0x86000000;
-      ExpPciIoProto               = gPciIoInterface;
-      ExpPciId1.VendorId          = 0x8888;
-      ExpPciId2.VendorId          = USB_VENDOR_ID_1;
-      ExpSecondaryBus             = 0x0;
-      ExpSubordinateBus           = 0x6;
-      ExpSegmentNumber            = 0x0;
-      ExpBusNumber                = 0x1;
-      ExpMissMatchBusNumber       = 0x7;
-      ExpDeviceNumber             = 0xD;
-      ExpFunctionNumber           = 0x2;
-      ExpMissMatchFunctionNumber  = 0x0;
-      TbtDmaPcieBdf->Bus          = (UINT16) ExpBusNumber;
-      TbtDmaPcieBdf->Device       = (UINT16) ExpDeviceNumber;
-      TbtDmaPcieBdf->Function     = (UINT16) ExpFunctionNumber;
-      TBTControllerWasPowered     = (BOOLEAN *) AllocateZeroPool (sizeof (BOOLEAN));
-      gDmaPtrMock->TBTControllerWasPowered  = TBTControllerWasPowered;
-      ExpDmaPtr                   = gDmaPtrMock;
-      ExpITbtInfoHob              = (ITBT_INFO_HOB *) AllocateZeroPool (sizeof (ITBT_INFO_HOB));
-      ExpITbtInfoHob->Usb4CmMode  = 0;
-    }
-    void TearDown() override {
-      //
-      // Destroy Mock Service
-      //
-      FreePool (PcieRpConfig);
-      FreePool (TbtDmaPcieBdf);
-    }
+    DTBT_INFO_HOB                *DTbtInfoHob;
+    ITBT_INFO_HOB                *ITbtInfoHob;
+    BOOLEAN                      *TBTControllerWasPowered;
+    MockUefiBootServicesTableLib UefiBootServicesTableLibMock;
+    MockPciIopProtocolLib        PciIoProcotolMock;
+    MockHobLib                   HobLibMock;
+    MockTbtNvmDrvDma             TbtNvmDrvDmaMock;
+    MockTbtNvmDrvDmaCtor         TbtNvmDrvDmaCtorMock;
+    PCI_ID                       ExpPciId;
+    UINTN                        BusNumber;
+    UINTN                        DeviceNumber;
+    UINTN                        FunctionNumber;
+    UINTN                        SegmentNumber;
+    TBT_DMA                      *ExpDmaPtr;
+    EFI_PCI_IO_PROTOCOL          *PciIoProto = &localPp;
+    TBT_DMA                      *gDmaPtrMock = &LocalDmaPtr;
+
+  void SetUp() override {
+    PcieRpConfig                         = (PCIE_RP_CONFIG *) AllocateZeroPool (sizeof (PCIE_RP_CONFIG));
+    DTbtControllerConfig                 = (DTBT_CONTROLLER_CONFIG *) AllocateZeroPool (sizeof (DTBT_CONTROLLER_CONFIG));
+    DTbtInfoHob                          = (DTBT_INFO_HOB *) AllocateZeroPool (sizeof (DTBT_INFO_HOB));
+    TbtDmaPcieBdf                        = (PCIE_BDF *) AllocateZeroPool (sizeof (PCIE_BDF));
+    TBTControllerWasPowered              = (BOOLEAN *) AllocateZeroPool (sizeof (BOOLEAN));
+    HrImplPtr                            = (TBT_HR_IMPL *) AllocateZeroPool (sizeof (TBT_HR_IMPL));
+    TbtDmaPcieBdf->Bus                   = (UINT16) BusNumber;
+    TbtDmaPcieBdf->Device                = (UINT16) DeviceNumber;
+    TbtDmaPcieBdf->Function              = (UINT16) FunctionNumber;
+    ExpDmaPtr                            = gDmaPtrMock;
+    gDmaPtrMock->TBTControllerWasPowered = TBTControllerWasPowered;
+    HrImplPtr->pPciIoProto               = PciIoProto;
+    HrImplPtr->ForcePwrFunc              = ForcePwrFunc;
+    ExpPciId.VendorId                    = USB_VENDOR_ID_1;
+    HandleCount                          = 0x1;
+    PcieRpConfig->PcieRpType             = 0x02;
+    BusNumber                            = 0x1;
+    DeviceNumber                         = 0xD;
+    FunctionNumber                       = 0x2;
+    TbtDmaPcieBdf->Bus                   = 0x1;
+    TbtDmaPcieBdf->Device                = 0xD;
+    TbtDmaPcieBdf->Function              = 0x2;
+  }
 };
 
 //
-// Case 1 - Mock call LocateHandleBuffer return error
+// Case 1 - gBS->LocateHandleBuffer return error
+// Mock - UefiBootServicesTableLibMock
 // Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, LocateHandleBufferError) {
+TEST_F (TbtNvmDrvHrCtorTest, Case1) {
   cout << "[---------- Case 1 ----------]"<< endl;
-  //
-  //  Mock call gBS->LocateHandleBuffer
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (Return (EFI_INVALID_PARAMETER));
 
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
+  HrPtr = TbtNvmDrvHrCtor (FirmwareType, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
   EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 2 - When PcieRpConfig->PcieRpType = PCIE_RP_TYPE_MAX_VALUE
-//          That would failed at unsupported type.
+// Case 2 - When PcieRpConfig->PcieRpType = 0x06(other) , goto free_hr_impl .
+// Mock - UefiBootServicesTableLibMock / HobLibMock
 // Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, FailedAtUnsupportedPcieRpType) {
+TEST_F (TbtNvmDrvHrCtorTest, Case2) {
   cout << "[---------- Case 2 ----------]"<< endl;
 
-  PcieRpConfig->PcieRpType = PCIE_RP_TYPE_MAX_VALUE;
+  PcieRpConfig->PcieRpType = 0x06;
   //
   //  Mock call gBS->LocateHandleBuffer
   //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
+      _
+      )
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
+  //
+  //  Mock call GetFirstGuidHob
+  //
+  EXPECT_CALL (
+    HobLibMock,
+    GetFirstGuidHob (
+      BufferEq (&gDTbtInfoHobGuid, sizeof (EFI_GUID))
+      )
+    )
+    .WillOnce (Return (DTbtInfoHob));
+
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
+
+  HrPtr = TbtNvmDrvHrCtor (0x01, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
   EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 3 - When FirmwareType = DISCRETE_TBT, PcieRpConfig->PcieRpType = SUPPORT_PCH_TYPE
-//          BusNumber > SubordinateBus, that would executed PCI device is not found with root port.
+// Case 3 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , gBS->HandleProtocol return error.
+// Mock - UefiBootServicesTableLibMock / HobLibMock
 // Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, DISCRETE_TBT_PCI_DeviceIsNotFound) {
+TEST_F (TbtNvmDrvHrCtorTest, Case3) {
   cout << "[---------- Case 3 ----------]"<< endl;
 
+  PcieRpConfig->PcieRpType = 0x02;
   //
   //  Mock call gBS->LocateHandleBuffer
   //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<3>(&ExpHandleCount, sizeof(ExpHandleCount)),
-        SetArgPointee<4>(ExpHandles),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
   //
-  //  Mock call PchPcieRpPciCfgBase
+  //  Mock call GetFirstGuidHob
   //
-  EXPECT_CALL (PchPciBdfLibMock,
-    PchPcieRpPciCfgBase (
-      _))
-    .WillOnce (Return (ExpPcieRpBaseAddr));
+  EXPECT_CALL (
+    HobLibMock,
+    GetFirstGuidHob (
+      BufferEq (&gDTbtInfoHobGuid, sizeof (EFI_GUID))
+      )
+    )
+    .WillOnce (Return (DTbtInfoHob));
 
-  //
-  //  Mock call PciSegmentRead8
-  //
-  EXPECT_CALL (PciSegmentLibMock,
-    PciSegmentRead8 (
-      _))
-    .WillOnce (Return (ExpSecondaryBus))
-    .WillOnce (Return (ExpSubordinateBus));
-  //
-  //  Mock call gBS->HandleProtocol
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_HandleProtocol (
       _,
       _,
-      _))
-    .WillOnce (Return (EFI_LOAD_ERROR))                            // First time return error
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgPointee<2>(ExpPciIoProto),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint32),
-      0,
-      _,
-      _))
-    .WillOnce (Return (EFI_LOAD_ERROR))                           // First time return error
-    .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId1, sizeof(ExpPciId1)),
-        Return (EFI_SUCCESS)
-    ))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId2, sizeof(ExpPciId2)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_LOAD_ERROR)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint8),
-      PCI_CLASSCODE_OFFSET,
-      _,
-      _))
-    .WillOnce (Return (EFI_LOAD_ERROR))                           // First time return error
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpClassCode, sizeof(ExpClassCode)),
-        Return (EFI_SUCCESS)
-    ));
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->GetLocation
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoGetLocation (
-      ExpPciIoProto,
-      _,
-      _,
-      _,
-      _))
-    .WillOnce (Return (EFI_NOT_FOUND))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<1>(&ExpSegmentNumber, sizeof(ExpSegmentNumber)),
-        SetArgBuffer<2>(&ExpMissMatchBusNumber, sizeof(ExpMissMatchBusNumber)),
-        SetArgBuffer<3>(&ExpDeviceNumber, sizeof(ExpDeviceNumber)),
-        SetArgBuffer<4>(&ExpFunctionNumber, sizeof(ExpFunctionNumber)),
-        Return (EFI_SUCCESS)
-    ));
-
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
+  HrPtr = TbtNvmDrvHrCtor (0x01, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
   EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 4 - When FirmwareType = INTEGRATED_TBT_RETIMER, PcieRpConfig->PcieRpType = SUPPORT_PCH_TYPE
-//          BusNumber > SubordinateBus, that would executed PCI device with bdf is not found.
+// Case 4 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , HrImplPtr->pPciIoProto->Pci.Read return error.
+// Mock - UefiBootServicesTableLibMock / HobLibMock / PciIoProcotolMock
 // Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, INTEGRATED_TBT_RETIMER_PCI_DeviceIsNotFound) {
+TEST_F (TbtNvmDrvHrCtorTest, Case4) {
   cout << "[---------- Case 4 ----------]"<< endl;
-  FirmwareType = INTEGRATED_TBT_RETIMER;
+
+  PcieRpConfig->PcieRpType = 0x02;
   //
   //  Mock call gBS->LocateHandleBuffer
   //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<3>(&ExpHandleCount, sizeof(ExpHandleCount)),
-        SetArgPointee<4>(ExpHandles),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call gBS->HandleProtocol
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_HandleProtocol (
       _,
       _,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgPointee<2>(ExpPciIoProto),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint32),
-      0,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId2, sizeof(ExpPciId2)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint8),
-      PCI_CLASSCODE_OFFSET,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpClassCode, sizeof(ExpClassCode)),
-        Return (EFI_SUCCESS)
-    ));
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillRepeatedly (Return (EFI_LOAD_ERROR));
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->GetLocation
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoGetLocation (
-      ExpPciIoProto,
-      _,
-      _,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<1>(&ExpSegmentNumber, sizeof(ExpSegmentNumber)),
-        SetArgBuffer<2>(&ExpMissMatchBusNumber, sizeof(ExpMissMatchBusNumber)),
-        SetArgBuffer<3>(&ExpDeviceNumber, sizeof(ExpDeviceNumber)),
-        SetArgBuffer<4>(&ExpFunctionNumber, sizeof(ExpFunctionNumber)),
-        Return (EFI_SUCCESS)
-    ));
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
 
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
+  HrPtr = TbtNvmDrvHrCtor (0x0, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
   EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 5 - When FirmwareType = INTEGRATED_TBT_RETIMER, PcieRpConfig->PcieRpType = SUPPORT_PCH_TYPE
-//          That would attributes get is failed.
+// Case 5 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , PciId.VendorId != USB_VENDOR_ID_1 return error.
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock
 // Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, AttributesGetIsFailed) {
+TEST_F (TbtNvmDrvHrCtorTest, Case5) {
   cout << "[---------- Case 5 ----------]"<< endl;
-  FirmwareType = INTEGRATED_TBT_RETIMER;
-  //
-  //  Mock call gBS->LocateHandleBuffer
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+
+  PcieRpConfig->PcieRpType = 0x02;
+
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<3>(&ExpHandleCount, sizeof(ExpHandleCount)),
-        SetArgPointee<4>(ExpHandles),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call gBS->HandleProtocol
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_HandleProtocol (
       _,
       _,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgPointee<2>(ExpPciIoProto),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint32),
-      0,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId2, sizeof(ExpPciId2)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint8),
-      PCI_CLASSCODE_OFFSET,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpClassCode, sizeof(ExpClassCode)),
-        Return (EFI_SUCCESS)
-    ));
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillRepeatedly (Return (EFI_SUCCESS));
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->GetLocation
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoGetLocation (
-      ExpPciIoProto,
-      _,
-      _,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<1>(&ExpSegmentNumber, sizeof(ExpSegmentNumber)),
-        SetArgBuffer<2>(&ExpBusNumber, sizeof(ExpBusNumber)),
-        SetArgBuffer<3>(&ExpDeviceNumber, sizeof(ExpDeviceNumber)),
-        SetArgBuffer<4>(&ExpFunctionNumber, sizeof(ExpFunctionNumber)),
-        Return (EFI_SUCCESS)
-    ));
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationSupported,
-      0,
-      _))
-    .WillOnce (Return (EFI_UNSUPPORTED));
-
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
+  HrPtr = TbtNvmDrvHrCtor (0x0, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
   EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 6 - When FirmwareType = INTEGRATED_TBT_RETIMER, PcieRpConfig->PcieRpType = SUPPORT_PCH_TYPE
-//          That would attributes set is failed.
+// Case 6 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , HrImplPtr->pPciIoProto->Pci.Read return error.
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock
 // Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, AttributesSetIsFailed) {
+TEST_F (TbtNvmDrvHrCtorTest, Case6) {
   cout << "[---------- Case 6 ----------]"<< endl;
-  FirmwareType = INTEGRATED_TBT_RETIMER;
-  //
-  //  Mock call gBS->LocateHandleBuffer
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+
+  PcieRpConfig->PcieRpType = 0x02;
+
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<3>(&ExpHandleCount, sizeof(ExpHandleCount)),
-        SetArgPointee<4>(ExpHandles),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call gBS->HandleProtocol
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_HandleProtocol (
       _,
       _,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgPointee<2>(ExpPciIoProto),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint32),
-      0,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId2, sizeof(ExpPciId2)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint8),
-      PCI_CLASSCODE_OFFSET,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpClassCode, sizeof(ExpClassCode)),
-        Return (EFI_SUCCESS)
-    ));
-
-  //
-  //  Mock call HrImplPtr->pPciIoProto->GetLocation
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoGetLocation (
-      ExpPciIoProto,
-      _,
-      _,
-      _,
-      _))
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<1>(&ExpSegmentNumber, sizeof(ExpSegmentNumber)),
-        SetArgBuffer<2>(&ExpBusNumber, sizeof(ExpBusNumber)),
-        SetArgBuffer<3>(&ExpDeviceNumber, sizeof(ExpDeviceNumber)),
-        SetArgBuffer<4>(&ExpFunctionNumber, sizeof(ExpFunctionNumber)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       )                        // First time return error
+    .WillOnce (Return (EFI_LOAD_ERROR));
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Get the PCI Command options that are supported by this controller.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationSupported,
-      0,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Set the PCI Command options to enable device memory mapped IO,
-  //  port IO, and bus mastering.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationEnable,
-      _,
-      _))
-    .WillOnce (Return (EFI_UNSUPPORTED));
-
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
+  HrPtr = TbtNvmDrvHrCtor (0x0, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
   EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 7 - When FirmwareType = INTEGRATED_TBT_RETIMER, PcieRpConfig->PcieRpType = SUPPORT_PCH_TYPE
-//          Could not perform device into force pwr
+// Case 7 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , ProgInterface != PCI_IF_USB4 ,Status return error.
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock
 // Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, CouldNotPerformDeviceIntoForcePwr) {
+TEST_F (TbtNvmDrvHrCtorTest, Case7) {
   cout << "[---------- Case 7 ----------]"<< endl;
-  FirmwareType = INTEGRATED_TBT_RETIMER;
+
+  PcieRpConfig->PcieRpType = 0x02;
   //
   //  Mock call gBS->LocateHandleBuffer
   //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<3>(&ExpHandleCount, sizeof(ExpHandleCount)),
-        SetArgPointee<4>(ExpHandles),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call gBS->HandleProtocol
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_HandleProtocol (
       _,
       _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgPointee<2>(ExpPciIoProto),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint32),
-      0,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId2, sizeof(ExpPciId2)),
-        Return (EFI_SUCCESS)
-    ));
-
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint8),
-      PCI_CLASSCODE_OFFSET,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpClassCode, sizeof(ExpClassCode)),
-        Return (EFI_SUCCESS)
-    ));
-
-  //
-  //  Mock call HrImplPtr->pPciIoProto->GetLocation
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoGetLocation (
-      ExpPciIoProto,
-      _,
-      _,
-      _,
-      _))
-    .WillOnce (
-      DoAll (
-        SetArgBuffer<1>(&ExpSegmentNumber, sizeof(ExpSegmentNumber)),
-        SetArgBuffer<2>(&ExpBusNumber, sizeof(ExpBusNumber)),
-        SetArgBuffer<3>(&ExpDeviceNumber, sizeof(ExpDeviceNumber)),
-        SetArgBuffer<4>(&ExpFunctionNumber, sizeof(ExpFunctionNumber)),
-        Return (EFI_SUCCESS)
-    ));
-
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Get the PCI Command options that are supported by this controller.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationSupported,
-      0,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
-
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Set the PCI Command options to enable device memory mapped IO,
-  //  port IO, and bus mastering.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationEnable,
-      _,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
-  //
-  //  Mock call ForcePwrFunc
-  //
-  EXPECT_CALL (TbtNvmDrvYflRouterMock,
-    TbtNvmDrvYflForcePwrFunc (
-      ExpPciIoProto,
-      TRUE,      
       _
-    ))
-    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
+      )
+    )
+    .WillRepeatedly (
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillRepeatedly (
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
+
+  HrPtr = TbtNvmDrvHrCtor (0x0, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
   EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 8 - When FirmwareType = INTEGRATED_TBT_RETIMER, PcieRpConfig->PcieRpType = SUPPORT_PCH_TYPE
-//          Could not initialize DMA for device
+// Case 8 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , ProgInterface == PCI_IF_USB4 ,
+//          HrImplPtr->pPciIoProto->GetLocation return error.
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock
 // Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, CouldNotInitializeDMA_ForDevice) {
+TEST_F (TbtNvmDrvHrCtorTest, Case8) {
   cout << "[---------- Case 8 ----------]"<< endl;
-  FirmwareType = INTEGRATED_TBT_RETIMER;
-  //
-  //  Mock call gBS->LocateHandleBuffer
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+
+  PcieRpConfig->PcieRpType = 0x02;
+
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<3>(&ExpHandleCount, sizeof(ExpHandleCount)),
-        SetArgPointee<4>(ExpHandles),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call gBS->HandleProtocol
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_HandleProtocol (
       _,
       _,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgPointee<2>(ExpPciIoProto),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint32),
-      0,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId2, sizeof(ExpPciId2)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint8),
-      PCI_CLASSCODE_OFFSET,
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpClassCode, sizeof (ExpClassCode)),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    PciIopProtocol_GetLocation
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<1>(&SegmentNumber, sizeof (SegmentNumber)),
+         SetArgBuffer<2>(&BusNumber, sizeof (BusNumber)),
+         SetArgBuffer<3>(&DeviceNumber, sizeof (DeviceNumber)),
+         SetArgBuffer<4>(&FunctionNumber, sizeof (FunctionNumber)),
+         Return (EFI_LOAD_ERROR)
+         )
+       );
+
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
+
+  HrPtr = TbtNvmDrvHrCtor (0x0, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
+  EXPECT_EQ (HrPtr, NULL);
+}
+
+//
+// Case 9 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , BusNumber != TbtDmaPcieBdf->Bus ,
+//          HrImplPtr->pPciIoProto->GetLocation return error.
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock
+// Expected Result - TbtNvmDrvHrCtor will return NULL
+//
+TEST_F (TbtNvmDrvHrCtorTest, Case9) {
+  cout << "[---------- Case 9 ----------]"<< endl;
+
+  PcieRpConfig->PcieRpType = 0x02;
+  BusNumber                = 0x2;
+
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
+    gBS_LocateHandleBuffer (
+      ByProtocol,
       _,
-      _))
+      NULL,
+      _,
+      _
+      )
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
+    gBS_HandleProtocol (
+      _,
+      _,
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpClassCode, sizeof(ExpClassCode)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       )                        // First time return error
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpClassCode, sizeof (ExpClassCode)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
   //
   //  Mock call HrImplPtr->pPciIoProto->GetLocation
   //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoGetLocation (
-      ExpPciIoProto,
-      _,
-      _,
-      _,
-      _))
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    PciIopProtocol_GetLocation
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<1>(&ExpSegmentNumber, sizeof(ExpSegmentNumber)),
-        SetArgBuffer<2>(&ExpBusNumber, sizeof(ExpBusNumber)),
-        SetArgBuffer<3>(&ExpDeviceNumber, sizeof(ExpDeviceNumber)),
-        SetArgBuffer<4>(&ExpFunctionNumber, sizeof(ExpFunctionNumber)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<1>(&SegmentNumber, sizeof (SegmentNumber)),
+         SetArgBuffer<2>(&BusNumber, sizeof (BusNumber)),
+         SetArgBuffer<3>(&DeviceNumber, sizeof (DeviceNumber)),
+         SetArgBuffer<4>(&FunctionNumber, sizeof (FunctionNumber)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Get the PCI Command options that are supported by this controller.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationSupported,
-      0,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
 
+  HrPtr = TbtNvmDrvHrCtor (0x0, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
+  EXPECT_EQ (HrPtr, NULL);
+}
+
+//
+// Case 10 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , HrImplPtr->pPciIoProto->Attributes return error.
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock
+// Expected Result - TbtNvmDrvHrCtor will return NULL
+//
+TEST_F (TbtNvmDrvHrCtorTest, Case10) {
+  cout << "[---------- Case 10 ----------]"<< endl;
+
+  PcieRpConfig->PcieRpType = 0x02;
   //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Set the PCI Command options to enable device memory mapped IO,
-  //  port IO, and bus mastering.
+  //  Mock call gBS->LocateHandleBuffer
   //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationEnable,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
+    gBS_LocateHandleBuffer (
+      ByProtocol,
       _,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
-  //
-  //  Mock call ForcePwrFunc
-  //
-  EXPECT_CALL (TbtNvmDrvYflRouterMock,
-    TbtNvmDrvYflForcePwrFunc (
-      ExpPciIoProto,
-      TRUE,      
+      NULL,
+      _,
       _
-    ))
-    .WillOnce (Return (TBT_STATUS_SUCCESS));
+      )
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
+    gBS_HandleProtocol (
+      _,
+      _,
+      _
+      )
+    )
+    .WillRepeatedly (
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpClassCode, sizeof (ExpClassCode)),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    PciIopProtocol_GetLocation
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<1>(&SegmentNumber, sizeof (SegmentNumber)),
+         SetArgBuffer<2>(&BusNumber, sizeof (BusNumber)),
+         SetArgBuffer<3>(&DeviceNumber, sizeof (DeviceNumber)),
+         SetArgBuffer<4>(&FunctionNumber, sizeof (FunctionNumber)),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Attributes
+    )
+    .WillRepeatedly (Return (EFI_LOAD_ERROR));
+
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
+
+  HrPtr = TbtNvmDrvHrCtor (0x0, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
+  EXPECT_EQ (HrPtr, NULL);
+}
+
+//
+// Case 11 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , Second HrImplPtr->pPciIoProto->Attributes return error.
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock
+// Expected Result - TbtNvmDrvHrCtor will return NULL
+//
+TEST_F (TbtNvmDrvHrCtorTest, Case11) {
+  cout << "[---------- Case 11 ----------]"<< endl;
+
+  PcieRpConfig->PcieRpType = 0x02;
   //
-  //  Mock call TbtNvmDrvTxCfgPkt
+  //  Mock call gBS->LocateHandleBuffer
   //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
-    TbtNvmDrvDmaCtor (
-      ExpPciIoProto,
-      _))
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
+    gBS_LocateHandleBuffer (
+      ByProtocol,
+      _,
+      NULL,
+      _,
+      _
+      )
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
+    gBS_HandleProtocol (
+      _,
+      _,
+      _
+      )
+    )
+    .WillRepeatedly (
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       )                        // First time return error
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpClassCode, sizeof (ExpClassCode)),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    PciIopProtocol_GetLocation
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<1>(&SegmentNumber, sizeof (SegmentNumber)),
+         SetArgBuffer<2>(&BusNumber, sizeof (BusNumber)),
+         SetArgBuffer<3>(&DeviceNumber, sizeof (DeviceNumber)),
+         SetArgBuffer<4>(&FunctionNumber, sizeof (FunctionNumber)),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Attributes
+    )
+    .WillOnce (Return (EFI_SUCCESS))
+    .WillOnce (Return (EFI_LOAD_ERROR));
+
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
+
+  HrPtr = TbtNvmDrvHrCtor (0x0, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
+  EXPECT_EQ (HrPtr, NULL);
+}
+
+//
+// Case 12 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , !HrImplPtr->pDma, goto free_hr_impl .
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock / TbtNvmDrvDmaMock
+// Expected Result - TbtNvmDrvHrCtor will return NULL
+//
+TEST_F (TbtNvmDrvHrCtorTest, Case12) {
+  cout << "[---------- Case 12 ----------]"<< endl;
+
+  PcieRpConfig->PcieRpType = 0x02;
+  //
+  //  Mock call gBS->LocateHandleBuffer
+  //
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
+    gBS_LocateHandleBuffer (
+      ByProtocol,
+      _,
+      NULL,
+      _,
+      _
+      )
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
+    gBS_HandleProtocol (
+      _,
+      _,
+      _
+      )
+    )
+    .WillRepeatedly (
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpClassCode, sizeof (ExpClassCode)),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    PciIopProtocol_GetLocation
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<1>(&SegmentNumber, sizeof (SegmentNumber)),
+         SetArgBuffer<2>(&BusNumber, sizeof (BusNumber)),
+         SetArgBuffer<3>(&DeviceNumber, sizeof (DeviceNumber)),
+         SetArgBuffer<4>(&FunctionNumber, sizeof (FunctionNumber)),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Attributes
+    )
+    .WillRepeatedly (Return (EFI_SUCCESS));
+
+  EXPECT_CALL (
+    TbtNvmDrvDmaCtorMock,
+    TbtNvmDrvDmaCtor
+    )
     .WillOnce (Return (NULL));
 
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
+
+  HrPtr = TbtNvmDrvHrCtor (0x0, PcieRpConfig, TbtDmaPcieBdf, NULL);
   EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 9 - When FirmwareType = INTEGRATED_TBT_RETIMER, PcieRpConfig->PcieRpType = SUPPORT_PCH_TYPE
-//          Mock call GetFirstGuidHob return Error
+// Case 13 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , !HrImplPtr->pDma, goto free_dma .
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock / HobLibMock
 // Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, GetFirstGuidHobError) {
-  cout << "[---------- Case 9 ----------]"<< endl;
-  FirmwareType = INTEGRATED_TBT_RETIMER;
+TEST_F (TbtNvmDrvHrCtorTest, Case13) {
+  cout << "[---------- Case 13 ----------]"<< endl;
+
+  PcieRpConfig->PcieRpType = 0x02;
   //
   //  Mock call gBS->LocateHandleBuffer
   //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<3>(&ExpHandleCount, sizeof(ExpHandleCount)),
-        SetArgPointee<4>(ExpHandles),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call gBS->HandleProtocol
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_HandleProtocol (
       _,
       _,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgPointee<2>(ExpPciIoProto),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint32),
-      0,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId2, sizeof(ExpPciId2)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint8),
-      PCI_CLASSCODE_OFFSET,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpClassCode, sizeof(ExpClassCode)),
-        Return (EFI_SUCCESS)
-    ));
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       )                        // First time return error
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpClassCode, sizeof (ExpClassCode)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
   //
   //  Mock call HrImplPtr->pPciIoProto->GetLocation
   //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoGetLocation (
-      ExpPciIoProto,
-      _,
-      _,
-      _,
-      _))
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    PciIopProtocol_GetLocation
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<1>(&ExpSegmentNumber, sizeof(ExpSegmentNumber)),
-        SetArgBuffer<2>(&ExpBusNumber, sizeof(ExpBusNumber)),
-        SetArgBuffer<3>(&ExpDeviceNumber, sizeof(ExpDeviceNumber)),
-        SetArgBuffer<4>(&ExpFunctionNumber, sizeof(ExpFunctionNumber)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<1>(&SegmentNumber, sizeof (SegmentNumber)),
+         SetArgBuffer<2>(&BusNumber, sizeof (BusNumber)),
+         SetArgBuffer<3>(&DeviceNumber, sizeof (DeviceNumber)),
+         SetArgBuffer<4>(&FunctionNumber, sizeof (FunctionNumber)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Get the PCI Command options that are supported by this controller.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationSupported,
-      0,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Attributes
+    )
+    .WillRepeatedly (Return (EFI_SUCCESS));
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Set the PCI Command options to enable device memory mapped IO,
-  //  port IO, and bus mastering.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationEnable,
-      _,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
-  //
-  //  Mock call ForcePwrFunc
-  //
-  EXPECT_CALL (TbtNvmDrvYflRouterMock,
-    TbtNvmDrvYflForcePwrFunc (
-      ExpPciIoProto,
-      TRUE,      
-      _
-    ))
-    .WillOnce (Return (TBT_STATUS_SUCCESS));
-
-  //
-  //  Mock call TbtNvmDrvDmaCtor
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
-    TbtNvmDrvDmaCtor (
-      ExpPciIoProto,
-      _))
+  EXPECT_CALL (
+    TbtNvmDrvDmaCtorMock,
+    TbtNvmDrvDmaCtor
+    )
     .WillOnce (Return (ExpDmaPtr));
 
-  //
-  //  Mock call GetFirstGuidHob
-  //
-  EXPECT_CALL (HobLibMock,
+  EXPECT_CALL (
+    HobLibMock,
     GetFirstGuidHob (
-      BufferEq(&gITbtInfoHobGuid, sizeof(EFI_GUID))
-    ))
-    .WillOnce(Return(NULL));
+      BufferEq (&gITbtInfoHobGuid, sizeof (EFI_GUID))
+      )
+    )
+    .WillOnce (Return (NULL));
 
-  //
-  //  Mock call HrImplPtr->pDma->Dtor
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvDmaDtor (
       ExpDmaPtr
-    ));
+      )
+    );
 
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
+
+  HrPtr = TbtNvmDrvHrCtor (0x0, PcieRpConfig, TbtDmaPcieBdf, NULL);
   EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 10 - When FirmwareType = INTEGRATED_TBT_RETIMER, PcieRpConfig->PcieRpType = SUPPORT_PCH_TYPE
-//           Mock call TbtNvmDrvHrSendDrvReady return Error
+// Case 14 - When PcieRpConfig->PcieRpType = 0x02(PCIE_RP_TYPE_PCH) , IsDeviceAvailable = FALSE , Status return EFI_NOT_FOUND.
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock / HobLibMock
 // Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, TbtNvmDrvHrSendDrvReadyError) {
-  cout << "[---------- Case 10 ----------]"<< endl;
-  FirmwareType = INTEGRATED_TBT_RETIMER;
+TEST_F (TbtNvmDrvHrCtorTest, 14) {
+  cout << "[---------- Case 14 ----------]"<< endl;
+
+  PcieRpConfig->PcieRpType = 0x02;
   //
   //  Mock call gBS->LocateHandleBuffer
   //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<3>(&ExpHandleCount, sizeof(ExpHandleCount)),
-        SetArgPointee<4>(ExpHandles),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call gBS->HandleProtocol
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    HobLibMock,
+    GetFirstGuidHob (
+      BufferEq (&gDTbtInfoHobGuid, sizeof (EFI_GUID))
+      )
+    )
+    .WillOnce (Return (DTbtInfoHob));
+
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_HandleProtocol (
       _,
       _,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgPointee<2>(ExpPciIoProto),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint32),
-      0,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId2, sizeof(ExpPciId2)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint8),
-      PCI_CLASSCODE_OFFSET,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpClassCode, sizeof(ExpClassCode)),
-        Return (EFI_SUCCESS)
-    ));
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       )                        // First time return error
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpClassCode, sizeof (ExpClassCode)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
   //
   //  Mock call HrImplPtr->pPciIoProto->GetLocation
   //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoGetLocation (
-      ExpPciIoProto,
-      _,
-      _,
-      _,
-      _))
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    PciIopProtocol_GetLocation
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<1>(&ExpSegmentNumber, sizeof(ExpSegmentNumber)),
-        SetArgBuffer<2>(&ExpBusNumber, sizeof(ExpBusNumber)),
-        SetArgBuffer<3>(&ExpDeviceNumber, sizeof(ExpDeviceNumber)),
-        SetArgBuffer<4>(&ExpFunctionNumber, sizeof(ExpFunctionNumber)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<1>(&SegmentNumber, sizeof (SegmentNumber)),
+         SetArgBuffer<2>(&BusNumber, sizeof (BusNumber)),
+         SetArgBuffer<3>(&DeviceNumber, sizeof (DeviceNumber)),
+         SetArgBuffer<4>(&FunctionNumber, sizeof (FunctionNumber)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Get the PCI Command options that are supported by this controller.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationSupported,
-      0,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Attributes
+    )
+    .WillRepeatedly (Return (EFI_LOAD_ERROR));
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Set the PCI Command options to enable device memory mapped IO,
-  //  port IO, and bus mastering.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationEnable,
-      _,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
-  //
-  //  Mock call ForcePwrFunc
-  //
-  EXPECT_CALL (TbtNvmDrvYflRouterMock,
-    TbtNvmDrvYflForcePwrFunc (
-      ExpPciIoProto,
-      TRUE,      
-      _
-    ))
-    .WillOnce (Return (TBT_STATUS_SUCCESS));
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
 
-  //
-  //  Mock call TbtNvmDrvDmaCtor
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
-    TbtNvmDrvDmaCtor (
-      ExpPciIoProto,
-      _))
-    .WillOnce (Return (ExpDmaPtr));
-
-  //
-  //  Mock call GetFirstGuidHob
-  //
-  EXPECT_CALL (HobLibMock,
-    GetFirstGuidHob (
-      BufferEq(&gITbtInfoHobGuid, sizeof(EFI_GUID))
-    ))
-    .WillOnce(Return(ExpITbtInfoHob));
-
-  //
-  //  Mock call TbtNvmDrvTxCfgPkt in TbtNvmDrvHrSendDrvReady
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
-    TbtNvmDrvTxCfgPkt (
-      ExpDmaPtr,
-      _,
-      _,
-      _))
-    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
-
-  //
-  //  Mock call HrImplPtr->pDma->DbgPrint (HrImplPtr->pDma);
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
-    TbtNvmDrvDmaDebugPrint (
-      gDmaPtrMock
-    ));
-
-  //
-  //  Mock call HrImplPtr->pDma->Dtor
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
-    TbtNvmDrvDmaDtor (
-      ExpDmaPtr
-    ));
-
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
+  HrPtr = TbtNvmDrvHrCtor (0x01, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
   EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 11 - When FirmwareType = INTEGRATED_TBT_RETIMER, PcieRpConfig->PcieRpType = SUPPORT_PCH_TYPE
-//           Usb4CmMode  = USB4_CM_MODE_SW_CM, Correct Flow 1
-// Expected Result - TbtNvmDrvHrCtor will not return NULL
+// Case 15 - When PcieRpConfig->PcieRpType = 0x4(PCIE_RP_TYPE_CPU) ,
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock / HobLibMock / TbtNvmDrvDmaMock
+// Expected Result - TbtNvmDrvHrCtor will return NULL
 //
-TEST_F (TbtNvmDrvHrCtorTest, CorrectFlow1) {
-  FirmwareType = INTEGRATED_TBT_RETIMER;
-  ExpITbtInfoHob->Usb4CmMode  = USB4_CM_MODE_SW_CM;
-  cout << "[---------- Case 11 ----------]"<< endl;
+TEST_F (TbtNvmDrvHrCtorTest, 15) {
+  cout << "[---------- Case 15 ----------]"<< endl;
+
+  PcieRpConfig->PcieRpType = 0x04;
   //
   //  Mock call gBS->LocateHandleBuffer
   //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<3>(&ExpHandleCount, sizeof(ExpHandleCount)),
-        SetArgPointee<4>(ExpHandles),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call gBS->HandleProtocol
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    HobLibMock,
+    GetFirstGuidHob (
+      BufferEq (&gDTbtInfoHobGuid, sizeof (EFI_GUID))
+      )
+    )
+    .WillOnce (Return (DTbtInfoHob));
+
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_HandleProtocol (
       _,
       _,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgPointee<2>(ExpPciIoProto),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint32),
-      0,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId2, sizeof(ExpPciId2)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint8),
-      PCI_CLASSCODE_OFFSET,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpClassCode, sizeof(ExpClassCode)),
-        Return (EFI_SUCCESS)
-    ));
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       )                        // First time return error
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpClassCode, sizeof (ExpClassCode)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
   //
   //  Mock call HrImplPtr->pPciIoProto->GetLocation
   //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoGetLocation (
-      ExpPciIoProto,
-      _,
-      _,
-      _,
-      _))
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    PciIopProtocol_GetLocation
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<1>(&ExpSegmentNumber, sizeof(ExpSegmentNumber)),
-        SetArgBuffer<2>(&ExpBusNumber, sizeof(ExpBusNumber)),
-        SetArgBuffer<3>(&ExpDeviceNumber, sizeof(ExpDeviceNumber)),
-        SetArgBuffer<4>(&ExpFunctionNumber, sizeof(ExpFunctionNumber)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<1>(&SegmentNumber, sizeof (SegmentNumber)),
+         SetArgBuffer<2>(&BusNumber, sizeof (BusNumber)),
+         SetArgBuffer<3>(&DeviceNumber, sizeof (DeviceNumber)),
+         SetArgBuffer<4>(&FunctionNumber, sizeof (FunctionNumber)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Get the PCI Command options that are supported by this controller.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationSupported,
-      0,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Attributes
+    )
+    .WillRepeatedly (Return (EFI_LOAD_ERROR));
 
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Set the PCI Command options to enable device memory mapped IO,
-  //  port IO, and bus mastering.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationEnable,
-      _,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
-  //
-  //  Mock call ForcePwrFunc
-  //
-  EXPECT_CALL (TbtNvmDrvYflRouterMock,
-    TbtNvmDrvYflForcePwrFunc (
-      ExpPciIoProto,
-      TRUE,      
-      _
-    ))
-    .WillOnce (Return (TBT_STATUS_SUCCESS));
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
 
-  //
-  //  Mock call TbtNvmDrvDmaCtor
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
-    TbtNvmDrvDmaCtor (
-      ExpPciIoProto,
-      _))
-    .WillOnce (Return (ExpDmaPtr));
-
-  //
-  //  Mock call GetFirstGuidHob
-  //
-  EXPECT_CALL (HobLibMock,
-    GetFirstGuidHob (
-      BufferEq(&gITbtInfoHobGuid, sizeof(EFI_GUID))
-    ))
-    .WillOnce(Return(ExpITbtInfoHob));
-
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
-  EXPECT_NE (HrPtr, NULL);
+  HrPtr = TbtNvmDrvHrCtor (0x01, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
+  EXPECT_EQ (HrPtr, NULL);
 }
 
 //
-// Case 12 - When FirmwareType = DISCRETE_TBT, PcieRpConfig->PcieRpType = SUPPORT_PCH_TYPE
-//           Correct Flow 2
-// Expected Result - TbtNvmDrvHrCtor will not return NULL
+// Case 16 - When PcieRpConfig->PcieRpType != 0x02(PCIE_RP_TYPE_PCH) != 0x04(PCIE_RP_TYPE_CPU)
+// Mock - UefiBootServicesTableLibMock / PciIoProcotolMock / TbtNvmDrvDmaCtorMock
+// Expected Result - TbtNvmDrvHrCtor will return HrPtr
 //
-TEST_F (TbtNvmDrvHrCtorTest, CorrectFlow2) {
-  cout << "[---------- Case 12 ----------]"<< endl;
+TEST_F (TbtNvmDrvHrCtorTest, Case16) {
+  cout << "[---------- Case 16 ----------]"<< endl;
+
+  PcieRpConfig->PcieRpType = 0x03;
   //
   //  Mock call gBS->LocateHandleBuffer
   //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_LocateHandleBuffer (
       ByProtocol,
       _,
       NULL,
       _,
-      _))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<3>(&ExpHandleCount, sizeof(ExpHandleCount)),
-        SetArgPointee<4>(ExpHandles),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call PchPcieRpPciCfgBase
-  //
-  EXPECT_CALL (PchPciBdfLibMock,
-    PchPcieRpPciCfgBase (
-      _))
-    .WillOnce (Return (ExpPcieRpBaseAddr));
+       DoAll (
+         SetArgBuffer<3>(&HandleCount, sizeof (HandleCount)),
+         SetArgPointee<4>(Handles),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call PciSegmentRead8
-  //
-  EXPECT_CALL (PciSegmentLibMock,
-    PciSegmentRead8 (
-      _))
-    .WillOnce (Return (ExpSecondaryBus))
-    .WillOnce (Return (ExpSubordinateBus));
-  //
-  //  Mock call gBS->HandleProtocol
-  //
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_HandleProtocol (
       _,
       _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgPointee<2>(ExpPciIoProto),
-        Return (EFI_SUCCESS)
-    ));
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint32),
-      0,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpPciId2, sizeof(ExpPciId2)),
-        Return (EFI_SUCCESS)
-    ));
-
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Pci.Read
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      ExpPciIoProto,
-      Eq(EfiPciIoWidthUint8),
-      PCI_CLASSCODE_OFFSET,
-      _,
-      _))
-    .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpClassCode, sizeof(ExpClassCode)),
-        Return (EFI_SUCCESS)
-    ));
-
-  //
-  //  Mock call HrImplPtr->pPciIoProto->GetLocation
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoGetLocation (
-      ExpPciIoProto,
-      _,
-      _,
-      _,
-      _))
-    .WillOnce (
-      DoAll (
-        SetArgBuffer<1>(&ExpSegmentNumber, sizeof(ExpSegmentNumber)),
-        SetArgBuffer<2>(&ExpBusNumber, sizeof(ExpBusNumber)),
-        SetArgBuffer<3>(&ExpDeviceNumber, sizeof(ExpDeviceNumber)),
-        SetArgBuffer<4>(&ExpFunctionNumber, sizeof(ExpFunctionNumber)),
-        Return (EFI_SUCCESS)
-    ));
-
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Get the PCI Command options that are supported by this controller.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationSupported,
-      0,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
-
-  //
-  //  Mock call HrImplPtr->pPciIoProto->Attributes
-  //  For Set the PCI Command options to enable device memory mapped IO,
-  //  port IO, and bus mastering.
-  //
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoAttributes (
-      ExpPciIoProto,
-      EfiPciIoAttributeOperationEnable,
-      _,
-      _))
-    .WillOnce (Return (EFI_SUCCESS));
-  //
-  //  Mock call ForcePwrFunc
-  //
-  EXPECT_CALL (TbtNvmDrvYflRouterMock,
-    TbtNvmDrvYflForcePwrFunc (
-      ExpPciIoProto,
-      TRUE,      
       _
-    ))
-    .WillOnce (Return (TBT_STATUS_SUCCESS));
+      )
+    )
+    .WillRepeatedly (
+       DoAll (
+         SetArgPointee<2>(PciIoProto),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  //
-  //  Mock call TbtNvmDrvDmaCtor
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
-    TbtNvmDrvDmaCtor (
-      ExpPciIoProto,
-      _))
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpPciId, sizeof (ExpPciId)),
+         Return (EFI_SUCCESS)
+         )
+       )                        // First time return error
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<4>(&ExpClassCode, sizeof (ExpClassCode)),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    PciIopProtocol_GetLocation
+    )
+    .WillOnce (
+       DoAll (
+         SetArgBuffer<1>(&SegmentNumber, sizeof (SegmentNumber)),
+         SetArgBuffer<2>(&BusNumber, sizeof (BusNumber)),
+         SetArgBuffer<3>(&DeviceNumber, sizeof (DeviceNumber)),
+         SetArgBuffer<4>(&FunctionNumber, sizeof (FunctionNumber)),
+         Return (EFI_SUCCESS)
+         )
+       );
+
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Attributes
+    )
+    .WillRepeatedly (Return (EFI_SUCCESS));
+
+  EXPECT_CALL (
+    TbtNvmDrvDmaCtorMock,
+    TbtNvmDrvDmaCtor
+    )
     .WillOnce (Return (ExpDmaPtr));
 
-  //
-  //  Mock call TbtNvmDrvTxCfgPkt in TbtNvmDrvHrSendDrvReady
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
-    TbtNvmDrvTxCfgPkt (
-      ExpDmaPtr,
-      _,
-      _,
-      _))
-    .WillOnce (Return (TBT_STATUS_SUCCESS));
+  EXPECT_CALL (UefiBootServicesTableLibMock, gBS_FreePool);
 
-  //
-  //  Mock call TbtNvmDrvRxCfgPkt in TbtNvmDrvHrSendDrvReady
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
-    TbtNvmDrvRxCfgPkt (
-      ExpDmaPtr,
-      _,
-      _,
-      _))
-    .WillOnce (Return (TBT_STATUS_SUCCESS));
-
-  HrPtr = TbtNvmDrvHrCtor (
-                FirmwareType,
-                PcieRpConfig,
-                TbtDmaPcieBdf,
-                ForcePwrFunc);
-  EXPECT_NE (HrPtr, NULL);
+  HrPtr = TbtNvmDrvHrCtor (0x3, PcieRpConfig, TbtDmaPcieBdf, NULL);
 }

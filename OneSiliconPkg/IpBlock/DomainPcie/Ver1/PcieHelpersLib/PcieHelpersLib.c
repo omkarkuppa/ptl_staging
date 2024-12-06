@@ -1805,7 +1805,7 @@ PcieRpDownstreamConfiguration (
 
   DevType = GetDeviceType (RpSbdf);
   if (HasChildBus (RpSbdf, &ChildSbdf)) {
-    if (FindNextPcieChild (DevType, &ChildSbdf)) {
+    while (FindNextPcieChild (DevType, &ChildSbdf)) {
       Mps = MIN (Mps, RecursiveMpsCheck (ChildSbdf));
       RecursiveMpsConfiguration (ChildSbdf, Mps);
     }
@@ -1818,7 +1818,7 @@ PcieRpDownstreamConfiguration (
   if(pInst->PcieRpCommonConfig.EpErrorReporting){
     DevType = GetDeviceType (RpSbdf);
     if (HasChildBus (RpSbdf, &ChildSbdf)) {
-      if (FindNextPcieChild (DevType, &ChildSbdf)) {
+      while (FindNextPcieChild (DevType, &ChildSbdf)) {
         RecursiveSetEpErrorFlags(ChildSbdf);
       }
     }

@@ -106,3 +106,14 @@ MrcStaticPma1 (
 
   MrcStaticPma1PlatformSpecific (MrcData);
 }
+
+/**
+  Configure 1DPC 1R split Bg feature.
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+MrcConfigOneDpcSplitBg (
+  IN OUT MrcParameters *const MrcData
+  )
+{
+}

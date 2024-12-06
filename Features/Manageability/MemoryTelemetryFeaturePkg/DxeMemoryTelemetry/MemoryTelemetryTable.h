@@ -28,9 +28,10 @@
 
 #include <Ptl/MrcGlobalDefinitions.h>
 
-//
-// Memory Telemetry Data Table
-//
+#pragma pack (1)
+///
+/// Memory Telemetry Data Table
+///
 typedef struct {
   UINT8     MemoryType;                               ///<  Memory Type Memory Type of the module (E.g DDR4, DDR5)
   UINT16    MfgId[MAX_NODE][MAX_CH][MAX_DIMM];        ///<  Manufacturer ID Part number of the memory module
@@ -46,9 +47,9 @@ typedef struct {
   UINT16    MaxFrequency;                             ///<  Maximum operating frequency of IMC
   UINT8     PprAvailable;                             ///<  PPR enabled from variable
   struct {
-    UINT8 Reserved          : 6;
     UINT8 AmtRanLastBoot    : 1;
     UINT8 PprRanLastBoot    : 1;
+    UINT8 Reserved          : 6;
   } AmtPprRanInLastBoot;                              ///<  Whether AMT and PPR ran in the prior boot [Bit 0: PPR, Bit 1: AMT]
   UINT16    TotalRowFailuresDiscovered;               ///<  PPR: Counts of detected bad rows
   UINT16    TotalPprRowRepairsSuccessful;             ///<  PPR: Counts of repair successes
@@ -57,19 +58,20 @@ typedef struct {
   UINT8     AvailableResources[MAX_NODE][MAX_CH][MAX_RANK_IN_CHANNEL][MAX_SDRAM_IN_DIMM]; ///< PPR available resources per device
 } MEMORY_TELEMETRY_DATA_TABLE;
 
-//
-// ACPI structure for Memory Health Table addition to PHAT
-//
+///
+/// ACPI structure for Memory Telemetry Table addition to PHAT
+///
 typedef struct {
   UINT16                        PlatformRecordType;
   UINT16                        RecordLength;
   UINT8                         Revision;
-  MEMORY_TELEMETRY_DATA_TABLE   MemoryTelemetryData;
+  MEMORY_TELEMETRY_DATA_TABLE   MemTelemetryData;
 } PHAT_MEMORY_TELEMETRY_RECORD_STRUCTURE;
+#pragma pack()
 
-//
-// This value depicts the format and contents of the MEMORY_TELEMETRY record
-//
+///
+/// This value depicts the format and contents of the MEMORY_TELEMETRY record
+///
 #define MEMORY_TELEMETRY_PHAT_RECORD_TYPE      0x2000
 #define MEMORY_TELEMETRY_PHAT_RECORD_VERSION   1
 

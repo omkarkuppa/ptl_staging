@@ -34,16 +34,18 @@
 #define VERSION_IPFWINTFEXT_IGPU_MAJOR  (0x00)
 #define VERSION_IPFWINTFEXT_IGPU_MINOR  (0x0011)
 
-#define VERSION_IPFWINTFEXT_IGPU  ((VERSION_IPFWINTFEXT_IGPU_MAJOR<<16) | (VERSION_IPFWINTFEXT_IGPU_MINOR<<0)) // FORMAT: 0x00MMmmmm
-#define VERSION_IPFWINTF_IGPU     ((VERSION_IPFWINTFEXT_IGPU_GEN<<24) | (VERSION_IPFWINTFEXT_IGPU & 0x00FFFFFF))   // FORMAT: 0xGGMMmmmm
+#define VERSION_IPFWINTFEXT_IGPU  ((VERSION_IPFWINTFEXT_IGPU_MAJOR<<16) | (VERSION_IPFWINTFEXT_IGPU_MINOR<<0))   // FORMAT: 0x00MMmmmm
+#define VERSION_IPFWINTF_IGPU     ((VERSION_IPFWINTFEXT_IGPU_GEN<<24) | (VERSION_IPFWINTFEXT_IGPU & 0x00FFFFFF)) // FORMAT: 0xGGMMmmmm
 
-#define IP_IGPU_SIGNATURE        0X5F555047495F5049 // SIGNATURE_64 ('I','P','_','I','G','P','U','_')
+#define IP_IGPU_SIGNATURE  0X5F555047495F5049       // SIGNATURE_64 ('I','P','_','I','G','P','U','_')
 
-#define FORCE_ENABLE        1
+#ifndef FORCE_ENABLE
+#define FORCE_ENABLE  1
+#endif
 
 typedef struct {
-  UINT32  Offset;
-  UINT32  Value;
+  UINT32    Offset;
+  UINT32    Value;
 } BOOT_SCRIPT_REGISTER_IGPU_SETTING;
 
 typedef enum {
@@ -56,53 +58,53 @@ typedef enum {
 
 typedef struct _IP_IGPU_INST IP_IGPU_INST;
 struct _IP_IGPU_INST {
-  IP_CSI_INST_PREFIX          Prefix;
+  IP_CSI_INST_PREFIX           Prefix;
 
   // IP Wrapper Register Contexts
-  IP_WR_REG_CNTXT             PcieCfgAccess;   // IGpu Configspace primary access
-  IP_WR_REG_CNTXT             MmioAccess;      // IGpu Register access
+  IP_WR_REG_CNTXT              PcieCfgAccess;  // IGpu Configspace primary access
+  IP_WR_REG_CNTXT              MmioAccess;     // IGpu Register access
 
   // IP Wrapper Error Contexts
-  IP_WR_ERROR_CNTXT           ErrorCntxt;
-  IP_WR_ERROR_CNTXT           ErrorCntxtWarning;
-  IP_WR_ERROR_CNTXT           ErrorAssert;
+  IP_WR_ERROR_CNTXT            ErrorCntxt;
+  IP_WR_ERROR_CNTXT            ErrorCntxtWarning;
+  IP_WR_ERROR_CNTXT            ErrorAssert;
 
   // IP Wrapper Print Contexts
-  IP_WR_PRINT_CNTXT           PrintError;
-  IP_WR_PRINT_CNTXT           PrintWarning;
-  IP_WR_PRINT_CNTXT           PrintLevel1;
+  IP_WR_PRINT_CNTXT            PrintError;
+  IP_WR_PRINT_CNTXT            PrintWarning;
+  IP_WR_PRINT_CNTXT            PrintLevel1;
 
   // IP Wrapper Version Specific Contexts
-  IP_WR_VSC_CNTXT             IpWrVscCntxt;
+  IP_WR_VSC_CNTXT              IpWrVscCntxt;
 
   // IP Wrapper Timing Contexts
-  IP_WR_TIME_CNTXT            TimeCntxt;
+  IP_WR_TIME_CNTXT             TimeCntxt;
 
   //
   // Signature to validate the pInst
   // it should be always 0X5F555047495F5049
   //
-  UINT64                      Signature;
+  UINT64                       Signature;
   //
   // IGPU Product Xe Version
   //
-  IP_IGPU_XE_VERSION          XeVersion;
+  IP_IGPU_XE_VERSION           XeVersion;
 
   //
   // These members describe the configuration for the Pre Mememory Phase
   // This can be used in PostMem as well.
   //
-  IP_IGPU_PEI_PREMEM_CONFIG   IGpuPreMemConfig;
+  IP_IGPU_PEI_PREMEM_CONFIG    IGpuPreMemConfig;
 
   //
   // These members describe the configuration for the Post Mememory Phase
   //
-  IP_IGPU_PEI_CONFIG          IGpuConfig;
+  IP_IGPU_PEI_CONFIG           IGpuConfig;
 
   //
   // These Members used to store the data during the initialization of IGPU
   //
-  IGPU_PRIVATE_CONFIG         IGpuPrivateConfig;
+  IGPU_PRIVATE_CONFIG          IGpuPrivateConfig;
 };
 
 typedef enum {
@@ -113,7 +115,7 @@ typedef enum {
 typedef enum {
   IpIGpuFeatValDis = 0,
 
-  //<=== NOTE: add new emums to end for backwards compatability
+  // <=== NOTE: add new emums to end for backwards compatability
 } IP_IGPU_FEAT_VAL;
 
 typedef enum {
@@ -235,7 +237,7 @@ IpIGpuIpInit (
 **/
 UINT32
 IpIGpuGetVersion (
-  IP_IGPU_INST  *pInst,
+  IP_IGPU_INST   *pInst,
   IP_CSI_VER_ID  VerId
   );
 
@@ -358,7 +360,7 @@ IpIGpuSupported (
 **/
 UINT64
 IpIGpuGetGttMmAdr (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   );
 
 /**
@@ -384,6 +386,28 @@ IpIGpuProgramGttMmAdr (
 **/
 IP_CSI_STATUS
 IpIGpuEnableCmdReg (
+  IP_IGPU_INST  *pInst
+  );
+
+/**
+  This function will enable IO Bar on 0:2:0
+
+  @param[in] pInst   - A pointer to the IP instance to be used.
+  @retval None
+**/
+VOID
+IpIGpuEnableIoCmdReg (
+  IP_IGPU_INST  *pInst
+  );
+
+/**
+  This function will disable IO Bar on 0:2:0
+
+  @param[in] pInst   - A pointer to the IP instance to be used.
+  @retval None
+**/
+VOID
+IpIGpuDisableIoCmdReg (
   IP_IGPU_INST  *pInst
   );
 
@@ -454,7 +478,7 @@ IpIGpuGetRevisionId (
 **/
 UINT64
 IpIGpuGetLMemBar (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   );
 
 /**
@@ -544,8 +568,8 @@ IpIGpuCheckAndForceVddOn (
 **/
 IP_CSI_STATUS
 IpIGpuSetMemMap (
-  IP_IGPU_INST                *pInst
-);
+  IP_IGPU_INST  *pInst
+  );
 
 /**
    Initialize GT of SystemAgent
@@ -557,7 +581,7 @@ IpIGpuSetMemMap (
 **/
 IP_CSI_STATUS
 IpIGpuGtInit (
-  IP_IGPU_INST         *pInst
+  IP_IGPU_INST  *pInst
   );
 
 /**
@@ -569,7 +593,7 @@ IpIGpuGtInit (
 **/
 IP_CSI_STATUS
 IpIGpuPavpInit (
-  IP_IGPU_INST              *pInst
+  IP_IGPU_INST  *pInst
   );
 
 /**
@@ -667,7 +691,7 @@ IpIGpuClearCmdReg (
 **/
 BOOLEAN
 IpIGpuIsL3BankLocked (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   );
 
 /**
@@ -676,9 +700,9 @@ IpIGpuIsL3BankLocked (
 
   @retval         Status of L3BANK MEDIA lock bit
 **/
-  BOOLEAN
+BOOLEAN
 IpIGpuIsL3BankMediaLocked (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   );
 
 /**
@@ -691,7 +715,7 @@ IpIGpuIsL3BankMediaLocked (
 **/
 IP_CSI_STATUS
 IpIGpuForceWakeupGt (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   );
 
 /**
@@ -704,7 +728,7 @@ IpIGpuForceWakeupGt (
 **/
 IP_CSI_STATUS
 IpIGpuIdleGt (
-   IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   );
 
 /**
@@ -717,7 +741,7 @@ IpIGpuIdleGt (
 **/
 IP_CSI_STATUS
 IpIGpuForceWakeupMedia (
-  IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   );
 
 /**
@@ -730,7 +754,7 @@ IpIGpuForceWakeupMedia (
 **/
 IP_CSI_STATUS
 IpIGpuIdleMedia (
-   IP_IGPU_INST     *pInst
+  IP_IGPU_INST  *pInst
   );
 
 /**
@@ -745,17 +769,31 @@ IpIGpuIdleMedia (
 VOID
 IpIGpuPrintRegData (
   IP_IGPU_INST  *pInst,
-  CHAR8*        String,
+  CHAR8         *String,
   UINT32        Register,
   UINT64        Value,
   UINT64        Data
+  );
+
+/**
+  Allocate GSM2 Base Address and Size
+
+  @param[in]  pInst  A pointer to the IP instance to be used.
+  @param[in]  UINT64 Base Address
+  @param[in]  UINT64 Size
+**/
+VOID
+IpIGpuGsm2Allocation (
+  IP_IGPU_INST  *pInst,
+  UINT64        Gsm2BaseAddress,
+  UINT8         Gsm2Size
   );
 
 //
 // PRINT_* Macros
 //
 // Easy PRINT_*() Macros
-#if defined(IP_IGPU_PRINT_ALL) || defined(IP_IGPU_PRINT_ERROR)
+#if defined (IP_IGPU_PRINT_ALL) || defined (IP_IGPU_PRINT_ERROR)
 #define PRINT_ERROR(...)                        \
   do {                                          \
     IpWrPrint (pInst->PrintError, __VA_ARGS__); \
@@ -777,7 +815,7 @@ IpIGpuPrintRegData (
   } while (0)
 #endif
 
-#if defined(IP_IGPU_PRINT_ALL) || defined(IP_IGPU_PRINT_WARNING)
+#if defined (IP_IGPU_PRINT_ALL) || defined (IP_IGPU_PRINT_WARNING)
 #define PRINT_WARNING(...)                             \
   do {                                                 \
     IpWrPrint (pInst->PrintWarning, __VA_ARGS__);      \
@@ -790,12 +828,12 @@ IpIGpuPrintRegData (
   } while (0)
 #endif
 
-#if defined(IP_IGPU_PRINT_ALL) || defined(IP_IGPU_PRINT_LEVEL1)
-#define PRINT_LEVEL1(...) IpWrPrint (pInst->PrintLevel1, __VA_ARGS__)
+#if defined (IP_IGPU_PRINT_ALL) || defined (IP_IGPU_PRINT_LEVEL1)
+#define PRINT_LEVEL1(...)  IpWrPrint (pInst->PrintLevel1, __VA_ARGS__)
 #else
 #define PRINT_LEVEL1(...) \
   do {                    \
   } while (0)
 #endif
 
-#endif  // __IP_IGPU_H__
+#endif // __IP_IGPU_H__

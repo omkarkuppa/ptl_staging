@@ -37,28 +37,29 @@
   # Test Main
   #
   GTestTbtNvmDrvRetimerThruHr.cpp
-  TestWriteIecs.cpp
-  TestReadIecs.cpp
   TestCapabilityParsing.cpp
-  TestStateFromDriver.cpp
   TestDtor.cpp
+  TestInitHW.cpp
+  TestReadIecs.cpp
+  TestStateFromDriver.cpp
   TestTbtNvmDrvRetimerThruHrCtor.cpp
-
+  TestTerminateHW.cpp
+  TestWriteIecs.cpp
 [Packages]
   UnitTestFrameworkPkg/UnitTestFrameworkPkg.dec
+  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   FmpDevicePkg/FmpDevicePkg.dec
-  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
+  Usb4FeaturePkg/Usb4FeaturePkg.dec
 
 [LibraryClasses]
+  TbtNvmDrvHrLib
   GoogleTestLib
   BaseMemoryLib
   MemoryAllocationLib
   UefiBootServicesTableLib
-
-[Protocols]
-
-[Pcd]
-
-[Guids]
+  Usb4DebugLib
+  MockUsbCProgressCodeProtocolLib
+  SubhookLib
+  UsbcCapsuleDebugLib

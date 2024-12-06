@@ -81,6 +81,7 @@ const MrcModeRegister JedecInitSequenceMultiCycle[] = {
   mrMR39,
   mrMR40,
   mrMR45,
+  mrMR59,
   // PDA MR's start here
   // IMPORTANT note: the order of the MR's here should be opposite to their training order in MRC call table
   // For example, MR3 is trained as PDA before MR10.
@@ -1339,6 +1340,7 @@ MrcDdr5GetGmfAttributes (
     case mrMR34:
     case mrMR35:
     case mrMR36:
+    case mrMR59:
     case mrMR129:
     case mrMR130:
     case mrMR131:
@@ -1822,11 +1824,11 @@ PerformGenericMrsFsmSequence (
     mrEndOfSequence
   };
 
-  Inputs  = &MrcData->Inputs;
-  Outputs = &MrcData->Outputs;
-  Debug   = &Outputs->Debug;
-  MrcCall = Inputs->Call.Func;
-  Delay   = 0;
+  Inputs     = &MrcData->Inputs;
+  Outputs    = &MrcData->Outputs;
+  Debug      = &Outputs->Debug;
+  MrcCall    = Inputs->Call.Func;
+  Delay      = 0;
   DebugLevel = ((SagvConfig) ? MSG_LEVEL_ERROR : MSG_LEVEL_NONE);
 
   // Clear out our array
@@ -1855,14 +1857,22 @@ PerformGenericMrsFsmSequence (
         for (ConfigSeq = GenericFsmConfigNonPdaMrs; ConfigSeq <= GenericFsmConfigPdaMrs; ConfigSeq++) {
           for (Index = 0; Sequence[Index] != mrEndOfSequence; Index++) {
             CurMrAddr = Sequence[Index];
+
             MrIndex = MrcMrAddrToIndex (MrcData, &CurMrAddr);
             Isx8DramWidth = (ChannelOut->Dimm[Dimm].SdramWidth == 8) && !Isx16DramWidthSameChannel;
+
             if (Isx8DramWidth && ((CurMrAddr >= mrMR193) && (CurMrAddr <= mrMR252))) {
               continue;
             }
             if ((!Inputs->ExtInputs.Ptr->IsDdr5MR7WicaSupported) && (CurMrAddr == mrMR7)) {
               continue;
             }
+
+            // Skip MR59 only if RowHammer is not configured
+            if ((CurMrAddr == mrMR59) && (!MrcData->Save.Data.IsRowHammerConfigured[Controller][Channel][Dimm])) {
+              continue;
+            }
+
             if (MrIndex <  MAX_MR_IN_DIMM) {
               IsPdaMr = MrcMrIsPda (MrcData, Controller, Channel, CurMrAddr, SagvConfig);
               if (ConfigSeq == GenericFsmConfigNonPdaMrs) {
@@ -2536,7 +2546,7 @@ MrcDdr5SetMr39 (
   @retval MrcStatus - mrcSuccess if successful, else an error status.
 **/
 MrcStatus
-MrcSetDdr5Mr40 (
+MrcSetDdr5Mr40EarlyDqs (
   IN  MrcParameters *const MrcData
   )
 {
@@ -4689,12 +4699,15 @@ IsDdr5DFESupported (
 {
   MrcOutput     *Outputs;
   MrcChannelOut *ChannelOut;
+  MrcDimmOut    *DimmOut;
   UINT32 Controller;
   UINT32 Channel;
   UINT32 Rank;
   UINT32 Device;
-  UINT32 DdrRank;
-  UINT8 MrrResult[MRC_MRR_ARRAY_SIZE];
+  UINT32 DeviceMax;
+  UINT32 Dimm;
+  UINT32 Index;
+  UINT8  MrrResult[MRC_MRR_ARRAY_SIZE];
   BOOLEAN IsDFESupported;
   BOOLEAN IsDFETap1Supported;
   BOOLEAN IsDFETap2Supported;
@@ -4717,11 +4730,20 @@ IsDdr5DFESupported (
          continue;
         }
         ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
-        DdrRank = Rank / MAX_RANK_IN_DIMM;
-        Mr111 = (DDR5_MODE_REGISTER_111_TYPE *)&ChannelOut->Dimm[DdrRank].Rank[(Rank % MAX_RANK_IN_DIMM)].MR[mrIndexMR111];
+        Dimm = RANK_TO_DIMM_NUMBER (Rank);
+        DimmOut = &ChannelOut->Dimm[Dimm];
+        // Channel Width (ddr5 = 32 Bytes) / SdramWidth (x8 or x16)
+        DeviceMax = DimmOut->PrimaryBusWidth / DimmOut->SdramWidth;
+        Mr111 = (DDR5_MODE_REGISTER_111_TYPE *)&ChannelOut->Dimm[Dimm].Rank[(Rank % MAX_RANK_IN_DIMM)].MR[mrIndexMR111];
         MrcIssueMrr (MrcData, Controller, Channel, Rank, mrMR111, MrrResult);
-        for (Device = 0; Device < Outputs->SdramCount; Device++) {
-          Mr111->Data8 = MrrResult[Device];
+        for (Device = 0; Device < DeviceMax; Device++) {
+          if (DimmOut->SdramWidth == 16) {
+            Index = Device * 2;
+          } else {
+            Index = Device;
+          }
+          Mr111->Data8 = MrrResult[Index];
+          // MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "MC%u C%u R%u Dev%u MR111: 0x%02X Index: %u\n", Controller, Channel, Rank, Device, Mr111->Data8, Index);
           IsDFETap1Supported &= (Mr111->Bits.GlobalDfeTap1Enable == 0) ? TRUE : FALSE;
           IsDFETap2Supported &= (Mr111->Bits.GlobalDfeTap2Enable == 0) ? TRUE : FALSE;
           IsDFETap3Supported &= (Mr111->Bits.GlobalDfeTap3Enable == 0) ? TRUE : FALSE;
@@ -5013,72 +5035,104 @@ MrcGetTpdaDelay (
 }
 
 /**
-  Enabling RIR feature in DDR5 DRAM devices. It is controlled by MR4 OP[3] field
-  which is Status Read/Host Write field, the MR field is read to check if the feature
-  is implemented, if so it is enabled by writing 1 to the MR.
+  Check if RIR is supported for a specific channel, this feature is supported
+  if all populated ranks within a channel support it.
 
-  @param[in]  MrcData        - The global host structure
-  @param[out] IsRirSupported - True if DDR5 RIR is supported (MR4 OP[3] = 1)
+  @param[in]  MrcData       - The global host structure
+  @param[in]  Controller    - Zero based controller number
+  @param[in]  Channel       - Zero based channel number
+  @param[out] pIsRirSupported - True if DDR5 RIR is supported (MR4 OP[3] = 1)
 
   @return MrcStatus.
 **/
 MrcStatus
-MrcTurnOnRirIfSupported (
+MrcGetDdr5RirSupport (
   IN  MrcParameters* const MrcData,
-  OUT BOOLEAN              *IsRirSupported
+  IN  UINT32               Controller,
+  IN  UINT32               Channel,
+  OUT BOOLEAN              *pIsRirSupported
 )
 {
-  MrcOutput *Outputs = &MrcData->Outputs;
+  DDR5_MODE_REGISTER_4_TYPE Ddr5Mr4;
+  UINT8 MrrResult[MRC_MRR_ARRAY_SIZE];
+  UINT32 Rank;
   MrcStatus Status = mrcSuccess;
 
-  UINT32 Controller;
-  UINT32 Channel;
-  MrcChannelOut *ChannelOut;
-  UINT32 Rank;
+  *pIsRirSupported = TRUE;
 
-  UINT8 MrrResult[MRC_MRR_ARRAY_SIZE];
-  MrcModeRegister MrAddr = mrMR4;
-  MrcModeRegisterIndex MrIndex;
-  DDR5_MODE_REGISTER_4_TYPE Ddr5Mr4;
-  DDR5_MODE_REGISTER_4_TYPE *Ddr5Mr4Host;
-  UINT8 FirstController;
-  UINT8 FirstChannel;
-
-  *IsRirSupported = FALSE;
-
-  FirstController   = Outputs->FirstPopController;
-  FirstChannel      = Outputs->Controller[FirstController].FirstPopCh;
-
-  MrIndex = MrcMrAddrToIndex(MrcData, &MrAddr);
-  Status = MrcIssueMrr (MrcData, FirstController, FirstChannel, 0, MrAddr, MrrResult);
-  if (Status != mrcSuccess) {
-    return Status;
-  }
-
-  Ddr5Mr4.Data8 = MrrResult[0];
-  *IsRirSupported = Ddr5Mr4.Bits.RefreshIntervalRateIndicator;
-
-  if (*IsRirSupported) {
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
-        if (!(MrcChannelExist (MrcData, Controller, Channel))) {
-          continue;
-        }
-        for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
-          if (!(MrcRankExist (MrcData, Controller, Channel, Rank))) {
-            continue;
-          }
-          ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
-          Ddr5Mr4Host = (DDR5_MODE_REGISTER_4_TYPE *) &ChannelOut->Dimm[RANK_TO_DIMM_NUMBER (Rank)].Rank[Rank % MAX_RANK_IN_DIMM].MR[MrIndex];
-          Ddr5Mr4Host->Bits.RefreshIntervalRateIndicator = *IsRirSupported;
-          MrcIssueMrw (MrcData, Controller, Channel, Rank, MrAddr, Ddr5Mr4Host->Data8, MRC_PRINTS_OFF);
-        }
-      }
+  // Check if RIR is supported for all ranks within channel
+  for (Rank = 0;  Rank < MAX_RANK_IN_CHANNEL && *pIsRirSupported; Rank++) {
+    if (!(MrcRankExist (MrcData, Controller, Channel, Rank))) {
+      continue;
     }
+
+    Status = MrcIssueMrr (MrcData, Controller, Channel, Rank, mrMR4, MrrResult);
+    if (Status != mrcSuccess) {
+      return Status;
+    }
+
+    Ddr5Mr4.Data8 = MrrResult[0];
+    *pIsRirSupported &= Ddr5Mr4.Bits.RefreshIntervalRateIndicator;
   }
 
   return Status;
 }
+
+/**
+  Enable RIR for a specific channel.
+
+  @param[in]  MrcData        - The global host structure
+  @param[in]  Controller     - Zero based controller number
+  @param[in]  Channel        - Zero based channel number
+
+  @return MrcStatus.
+**/
+MrcStatus
+MrcSetDdr5Rir (
+  IN  MrcParameters* const MrcData,
+  IN  UINT32               Controller,
+  IN  UINT32               Channel
+)
+{
+  MrcOutput *Outputs;
+  UINT8 MrrResult[MRC_MRR_ARRAY_SIZE];
+  MrcModeRegister MrAddr = mrMR4;
+  MrcModeRegisterIndex MrIndex;
+  MrcChannelOut *ChannelOut;
+  DDR5_MODE_REGISTER_4_TYPE *Ddr5Mr4Host;
+  DDR5_MODE_REGISTER_4_TYPE Ddr5Mr4;
+  UINT8 Rank;
+  MrcStatus Status = mrcSuccess;
+
+  Outputs = &MrcData->Outputs;
+  MrIndex = MrcMrAddrToIndex(MrcData, &MrAddr);
+
+  for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+    if (!(MrcRankExist (MrcData, Controller, Channel, Rank))) {
+      continue;
+    }
+
+    Status = MrcIssueMrr (MrcData, Controller, Channel, Rank, MrAddr, MrrResult);
+    if (Status != mrcSuccess) {
+      return Status;
+    }
+    Ddr5Mr4.Data8 = MrrResult[0];
+
+    Ddr5Mr4.Bits.RefreshIntervalRateIndicator = 1;
+    Status = MrcIssueMrw (MrcData, Controller, Channel, Rank, MrAddr, Ddr5Mr4.Data8, MRC_PRINTS_ON);
+    if (Status != mrcSuccess) {
+      return Status;
+    }
+
+    // Update host structure
+    ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
+    Ddr5Mr4Host = (DDR5_MODE_REGISTER_4_TYPE *) &ChannelOut->Dimm[RANK_TO_DIMM_NUMBER (Rank)].Rank[Rank % MAX_RANK_IN_DIMM].MR[MrIndex];
+    Ddr5Mr4Host->Data8 = Ddr5Mr4.Data8;
+  }
+
+  return Status;
+}
+
 
 /*
   Program Ppr Guard key for s/h/mPpr or MBIST

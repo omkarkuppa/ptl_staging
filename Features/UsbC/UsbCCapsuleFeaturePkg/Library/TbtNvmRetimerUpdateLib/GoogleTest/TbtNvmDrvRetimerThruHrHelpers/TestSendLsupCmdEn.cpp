@@ -18,29 +18,46 @@
 
 @par Specification
 **/
+#include <GTestTbtNvmDRThruHrHelpers.h>
+#include <GoogleTest/Library/MockUefiBootServicesTableLib.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
+#include <GoogleTest/Private/MockTbtNvmDrvRetimerThruHr/MockTbtNvmDrvRetimerThruHr.h>
 
-//**********************************************************
-// SendLsupCmdEn Unit Test                                   *
-//**********************************************************
-class SendLsupCmdEnTest : public CommonMock {
+struct MockTbtNvmDrvSendCmd {
+  MOCK_INTERFACE_DECLARATION (MockTbtNvmDrvSendCmd);
+  MOCK_FUNCTION_INTERNAL_DECLARATION (
+    TBT_STATUS,
+    TbtNvmDrvSendCmd,
+    (IN VOID          *DevCom,
+     IN UINT32        Cmd,
+     IN BOOLEAN       ResponseRequired)
+    );
+};
+
+// **********************************************************
+// SendLsupCmdEn Unit Test                                  *
+// **********************************************************
+class SendLsupCmdEnTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    RETIMER_THRU_HR       *RetimerPtr;
+    TBT_STATUS                   TbtStatus;
+    RETIMER_THRU_HR              *RetimerPtr;
+    TBT_RETIMER                  *gDevComRetimerMock = &LocalCommunicationPtr;
+    TBT_HOST_ROUTER              *gDevComHostMock = &LocalHrPtr;
+    MockTbtNvmDrvHr              TbtNvmDrvHrMock;
+    MockTbtNvmDrvSendCmd         TbtNvmDrvSendCmdMock;
+    MockUefiBootServicesTableLib UefiBootServicesTableLibMock;
 
-    void SetUp() override {
-      RetimerPtr                       = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
-      RetimerPtr->TbtPort              = FIRST_MASTER_LANE;
-      RetimerPtr->Comm                 = gDevComRetimerMock;
-      RetimerPtr->Hr                   = gDevComHostMock;
-      RetimerPtr->CascadedRetimerIndex = 1;
-    }
+  void SetUp() override {
+    RetimerPtr                       = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
+    RetimerPtr->TbtPort              = FIRST_MASTER_LANE;
+    RetimerPtr->Comm                 = gDevComRetimerMock;
+    RetimerPtr->Hr                   = gDevComHostMock;
+    RetimerPtr->CascadedRetimerIndex = 1;
+  }
 
-    void TearDown() override {
-      //
-      // Destroy Mock Service
-      //
-      FreePool (RetimerPtr);
-    }
+  void TearDown () override {
+    FreePool (RetimerPtr);
+  }
 };
 
 //
@@ -48,18 +65,24 @@ class SendLsupCmdEnTest : public CommonMock {
 // Expected Result - TbtStatus will return TBT_STATUS_NON_RECOVERABLE_ERROR
 //
 TEST_F (SendLsupCmdEnTest, TbtNvmDrvSendCmdError) {
-  cout << "[---------- Case 1 ----------]"<< endl;
+  cout << "[---------- Case 1 ----------]" << endl;
 
-  EXPECT_CALL (TbtNvmRetimerDrvHelpersMock,
+  EXPECT_CALL (
+    TbtNvmDrvSendCmdMock,
     TbtNvmDrvSendCmd (
       (VOID *) RetimerPtr->Comm,
       TBT_IECS_CMD_LSUP,
-      TRUE))
-    .WillRepeatedly (Return(TBT_STATUS_NON_RECOVERABLE_ERROR)); 
+      TRUE
+      )
+    )
+    .WillRepeatedly (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_CoreStall (
-      _))
+      _
+      )
+    )
     .WillRepeatedly (Return (EFI_SUCCESS));
 
   TbtStatus = SendLsupCmdEn (RetimerPtr);
@@ -71,16 +94,18 @@ TEST_F (SendLsupCmdEnTest, TbtNvmDrvSendCmdError) {
 // Expected Result - TbtStatus will return TBT_STATUS_SUCCESS
 //
 TEST_F (SendLsupCmdEnTest, CorrectFlow) {
-  cout << "[---------- Case 2 ----------]"<< endl;
+  cout << "[---------- Case 2 ----------]" << endl;
 
-  EXPECT_CALL (TbtNvmRetimerDrvHelpersMock,
+  EXPECT_CALL (
+    TbtNvmDrvSendCmdMock,
     TbtNvmDrvSendCmd (
       (VOID *) RetimerPtr->Comm,
       TBT_IECS_CMD_LSUP,
-      TRUE))
-    .WillRepeatedly (Return(TBT_STATUS_SUCCESS)); 
+      TRUE
+      )
+    )
+    .WillRepeatedly (Return (TBT_STATUS_SUCCESS));
 
   TbtStatus = SendLsupCmdEn (RetimerPtr);
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);
 }
-

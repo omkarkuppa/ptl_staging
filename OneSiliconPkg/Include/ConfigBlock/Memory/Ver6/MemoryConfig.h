@@ -44,6 +44,7 @@
 #define MEM_CFG_NUM_BYTES_MAPPED         2
 #define MEM_CFG_MAX_SPD_SIZE             1024
 #define MEM_CFG_MAX_SOCKETS              (MEM_CFG_MAX_CONTROLLERS * MEM_CFG_MAX_CHANNELS * MEM_CFG_MAX_DIMMS)
+#define MEM_CFG_MAX_DDR5_SOCKETS         (MEM_CFG_MAX_CONTROLLERS * 2 * MEM_CFG_MAX_DIMMS)
 #define MEM_CFG_MAX_ROWS                 (MEM_CFG_MAX_RANKS_PER_DIMM * MEM_CFG_MAX_SOCKETS)
 #ifndef MEM_MAX_SAGV_POINTS
 #define MEM_MAX_SAGV_POINTS              MAX_SAGV_POINTS
@@ -185,7 +186,55 @@ typedef struct {
   UINT8   TsegMemoryTestStatus;              ///< Offset 87 Tseg Memory Test Status
   UINT8   MrcPprStatus;                      ///< Offset 88 Mrc Ppr Status
   UINT8   RetryCount;                        ///< Offset 89 TSEG RetryCount
-  UINT8   Rsvd[2];                           ///< Offset 90 Reserved for future use.
+  /**
+  ///< Offset 90 CKD QCK to Controller/Channel/DIMM Mapping.
+  This mapping is aligned with SA_MISC_PEI_PREMEM_CONFIG.CkdAddressTable[16], but skipping LPDDR instances.
+  Encoding:
+    0 - QCK[0:1]_A
+    1 - QCK[0:1]_B
+    Keep as 0 for unused since we won't be using the instance if it's non-CKD/unpopulated, so the encoding doesn't matter.
+  Array Index Mapping
+    0 - Controller 0 Channel 0 Dimm 0
+    1 - Controller 0 Channel 0 Dimm 1
+    2 - Controller 0 Channel 1 Dimm 0
+    3 - Controller 0 Channel 1 Dimm 1
+    4 - Controller 1 Channel 0 Dimm 0
+    5 - Controller 1 Channel 0 Dimm 1
+    6 - Controller 1 Channel 1 Dimm 0
+    7 - Controller 1 Channel 1 Dimm 1
+  **/
+  UINT8 ChannelToCkdQckMapping[MEM_CFG_MAX_DDR5_SOCKETS];
+  /**
+  ///< Offset 98 DDRIO to CKD Clock.
+  This mapping is aligned with SA_MISC_PEI_PREMEM_CONFIG.CkdAddressTable[16], but skipping LPDDR instances.
+  This is a 0-based index which identifies the Phy Clock this Controller/Channel/DIMM is using.
+  For Channels mapping to the same CKD DIMM, the encoding will be the same.
+  The following requirements exist for selecting a CKD Clock:
+    1. There must be two instances of the clock requested and no more.
+         A CKD DIMM must service two channels
+    2. The clock selected must be in the channel that is servicing the CKD DIMM
+    3. This policy must have two Channels of the same DIMM mapping to the same Phy Clock.
+    4. In the case of CKD and Non-CKD mixed 2DPC systems:
+       a. If the CKD DIMM is DIMM 0, user must map Rank 0 or 1 from either Channel attached to the DIMM. If the CKD DIMM is DIMM 1, user must map Rank 2 or 3 from either Channel attached to the CKD DIMM.
+       b. If the Non-CKD DIMM is in DIMM 0, Rank 0 must be routed to the DIMM Rank 0 and Rank 1 must be routed to the DIMM Rank 1.  If the Non-CKD DIMM is in DIMM 1, Rank 2 must be routed to DIMM Rank 2, and Rank 3 must be routed to DIMM Rank 3.  All ranks must be from the Channel the Non-CKD DIMM is attached.
+  Encoding: a - xCLKy where a is the array index, x is Phy channel, and y is Phy Rank.
+    0  - 0CLK0, 4  - 1CLK0, 8  - 2CLK0, 12 - 3CLK0
+    1  - 0CLK1, 5  - 1CLK1, 9  - 2CLK1, 13 - 3CLK1
+    2  - 0CLK2, 6  - 1CLK2, 10 - 2CLK2, 14 - 3CLK2
+    3  - 0CLK3, 7  - 1CLK3, 11 - 2CLK3, 15 - 3CLK3
+    Keep as 0 for unused since we won't be using the instance if it's non-CKD/unpopulated, so the encoding doesn't matter.
+  Array Index Mapping:
+    0 - Controller 0 Channel 0 Dimm 0
+    1 - Controller 0 Channel 0 Dimm 1
+    2 - Controller 0 Channel 1 Dimm 0
+    3 - Controller 0 Channel 1 Dimm 1
+    4 - Controller 1 Channel 0 Dimm 0
+    5 - Controller 1 Channel 0 Dimm 1
+    6 - Controller 1 Channel 1 Dimm 0
+    7 - Controller 1 Channel 1 Dimm 1
+  **/
+  UINT8 PhyClockToCkdDimm[MEM_CFG_MAX_DDR5_SOCKETS];
+  UINT8   Rsvd[2];                           ///< Offset 106 Reserved for future use.
 } MEMORY_CONFIG_NO_CRC;
 #pragma pack(pop)
 

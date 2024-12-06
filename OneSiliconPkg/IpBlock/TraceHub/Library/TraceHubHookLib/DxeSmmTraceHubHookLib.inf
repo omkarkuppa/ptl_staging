@@ -44,3 +44,5 @@ DxeSmmTraceHubHookLib.c
 
 [Guids]
 gTraceHubDataHobGuid
+
+[Pcd]

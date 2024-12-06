@@ -18,37 +18,63 @@
 
 @par Specification
 **/
+#include <GTestTbtNvmDrvRetimerThruHr.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
 
-//**********************************************************
-// WriteIecs Unit Test                                     *
-//**********************************************************
-class WriteIecsTest : public CommonMock {
+//
+// Test function define.
+//
+extern "C"
+{
+TBT_STATUS
+WriteIecs (
+  IN TBT_RETIMER  *This,
+  IN UINT8        RegNum,
+  IN UINT32       *DataPtr,
+  IN UINT8        Length
+  );
+}
+
+struct MockWaitForMsgOutTxDone {
+  MOCK_INTERFACE_DECLARATION (MockWaitForMsgOutTxDone);
+  MOCK_FUNCTION_INTERNAL_DECLARATION (
+    TBT_STATUS,
+    WaitForMsgOutTxDone,
+    (IN RETIMER_THRU_HR     *RetimerPtr,
+     IN UINT16              MsgOutCmdOffset,
+     IN UINT8               DbgData)
+    );
+};
+
+// **********************************************************
+// WriteIecs Unit Test                                      *
+// **********************************************************
+class WriteIecsTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    RETIMER_THRU_HR       *RetimerPtr;
-    TBT_RETIMER           *DevComRetimer;
-    UINT8                 RegNum;
-    UINT32                CmdData;
-    UINT8                 Length;
+    TBT_STATUS              TbtStatus;
+    RETIMER_THRU_HR         *RetimerPtr;
+    TBT_RETIMER             *DevComRetimer;
+    UINT8                   RegNum;
+    UINT32                  CmdData;
+    UINT8                   Length;
+    TBT_HOST_ROUTER         *gDevComHostMock = &LocalHrPtr;
+    MockTbtNvmDrvHr         TbtNvmDrvHrMock;
+    MockWaitForMsgOutTxDone WaitForMsgOutTxDoneMock;
 
-    void SetUp() override {
-      RetimerPtr               = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
-      RetimerPtr->Hr           = gDevComHostMock;                        // For call Mock WriteCioDevReg
-      DevComRetimer            = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
-      DevComRetimer->Impl      = RetimerPtr;                             // For RetimerPtr = (RETIMER_THRU_HR *)This->Impl
+  void SetUp() override {
+    RetimerPtr          = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
+    RetimerPtr->Hr      = gDevComHostMock; // For call Mock WriteCioDevReg
+    DevComRetimer       = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
+    DevComRetimer->Impl = RetimerPtr;      // For RetimerPtr = (RETIMER_THRU_HR *)This->Impl
+    RegNum              = IECS_CMD_ADDR;
+    CmdData             = IECS_BLKW_CMD;
+    Length              = 1;
+  }
 
-      RegNum                   = IECS_CMD_ADDR;
-      CmdData                  = IECS_BLKW_CMD;
-      Length                   = 1;
-    }
-
-    void TearDown() override {
-      //
-      // Destroy Mock Service
-      //
-      FreePool (RetimerPtr);
-      FreePool (DevComRetimer);
-    }
+  void TearDown () override {
+    FreePool (RetimerPtr);
+    FreePool (DevComRetimer);
+  }
 };
 
 //
@@ -56,7 +82,7 @@ class WriteIecsTest : public CommonMock {
 // Expected Result - TbtStatus will return TBT_STATUS_INVALID_PARAM
 //
 TEST_F (WriteIecsTest, AssertError) {
-  cout << "[---------- Case 1 ----------]"<< endl;
+  cout << "[---------- Case 1 ----------]" << endl;
 
   TbtStatus = WriteIecs (NULL, RegNum, &CmdData, Length);
   EXPECT_EQ (TbtStatus, TBT_STATUS_INVALID_PARAM);
@@ -67,17 +93,20 @@ TEST_F (WriteIecsTest, AssertError) {
 // Expected Result - TbtStatus will return TBT_STATUS_NON_RECOVERABLE_ERROR
 //
 TEST_F (WriteIecsTest, FirstTimeWriteCioDevRegError) {
-  cout << "[---------- Case 2 ----------]"<< endl;
+  cout << "[---------- Case 2 ----------]" << endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
       Length,
-      _))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));   // For PORT_CS_2 first time call WriteCioReg return error
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR)); // For PORT_CS_2 first time call WriteCioReg return error
 
   TbtStatus = WriteIecs (DevComRetimer, RegNum, &CmdData, Length);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -88,18 +117,21 @@ TEST_F (WriteIecsTest, FirstTimeWriteCioDevRegError) {
 // Expected Result - TbtStatus will return TBT_STATUS_NON_RECOVERABLE_ERROR
 //
 TEST_F (WriteIecsTest, SecondTimeWriteCioDevRegError) {
-  cout << "[---------- Case 3 ----------]"<< endl;
+  cout << "[---------- Case 3 ----------]" << endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
       Length,
-      _))
-    .WillOnce (Return(TBT_STATUS_SUCCESS))                   // For PORT_CS_2 first time call WriteCioReg return TBT_STATUS_SUCCESS
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));    // For PORT_CS_1 second time call WriteCioReg return error
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS))                // For PORT_CS_2 first time call WriteCioReg return TBT_STATUS_SUCCESS
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR)); // For PORT_CS_1 second time call WriteCioReg return error
 
   TbtStatus = WriteIecs (DevComRetimer, RegNum, &CmdData, Length);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -110,27 +142,30 @@ TEST_F (WriteIecsTest, SecondTimeWriteCioDevRegError) {
 // Expected Result - TbtStatus will return TBT_STATUS_NON_RECOVERABLE_ERROR
 //
 TEST_F (WriteIecsTest, WaitForMsgOutTxDone_NON_RECOVERABLE_ERROR) {
-  cout << "[---------- Case 4 ----------]"<< endl;
+  cout << "[---------- Case 4 ----------]" << endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
       Length,
-      _))
-    .WillOnce (Return(TBT_STATUS_SUCCESS))                   // For PORT_CS_2 first time call WriteCioReg return TBT_STATUS_SUCCESS
-    .WillOnce (Return(TBT_STATUS_SUCCESS));                  // For PORT_CS_1 second time call WriteCioReg return TBT_STATUS_SUCCESS
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS))  // For PORT_CS_2 first time call WriteCioReg return TBT_STATUS_SUCCESS
+    .WillOnce (Return (TBT_STATUS_SUCCESS)); // For PORT_CS_1 second time call WriteCioReg return TBT_STATUS_SUCCESS
 
-  //
-  //  Mock call WaitForMsgOutTxDone
-  //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrHelpersMock,
+  EXPECT_CALL (
+    WaitForMsgOutTxDoneMock,
     WaitForMsgOutTxDone (
       RetimerPtr,
       _,
-      0))
+      0
+      )
+    )
     .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = WriteIecs (DevComRetimer, RegNum, &CmdData, Length);
@@ -142,27 +177,30 @@ TEST_F (WriteIecsTest, WaitForMsgOutTxDone_NON_RECOVERABLE_ERROR) {
 // Expected Result - TbtStatus will return TBT_STATUS_RETRY
 //
 TEST_F (WriteIecsTest, WaitForMsgOutTxDoneRETRY) {
-  cout << "[---------- Case 5 ----------]"<< endl;
+  cout << "[---------- Case 5 ----------]" << endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
       Length,
-      _))
-    .WillOnce (Return(TBT_STATUS_SUCCESS))                   // For PORT_CS_2 first time call WriteCioReg return TBT_STATUS_SUCCESS
-    .WillRepeatedly (Return(TBT_STATUS_SUCCESS));            // For PORT_CS_1 second time call WriteCioReg return TBT_STATUS_SUCCESS
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS))        // For PORT_CS_2 first time call WriteCioReg return TBT_STATUS_SUCCESS
+    .WillRepeatedly (Return (TBT_STATUS_SUCCESS)); // For PORT_CS_1 second time call WriteCioReg return TBT_STATUS_SUCCESS
 
-  //
-  //  Mock call WaitForMsgOutTxDone
-  //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrHelpersMock,
+  EXPECT_CALL (
+    WaitForMsgOutTxDoneMock,
     WaitForMsgOutTxDone (
       RetimerPtr,
       _,
-      0))
+      0
+      )
+    )
     .WillRepeatedly (Return (TBT_STATUS_RETRY));
 
   TbtStatus = WriteIecs (DevComRetimer, RegNum, &CmdData, Length);
@@ -174,27 +212,33 @@ TEST_F (WriteIecsTest, WaitForMsgOutTxDoneRETRY) {
 // Expected Result - TbtStatus will return TBT_STATUS_SUCCESS
 //
 TEST_F (WriteIecsTest, CorrectFlow) {
-  cout << "[---------- Case 6 ----------]"<< endl;
+  cout << "[---------- Case 6 ----------]" << endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
       Length,
-      _))
-    .WillOnce (Return(TBT_STATUS_SUCCESS))                        // For PORT_CS_2 first time call WriteCioReg return TBT_STATUS_SUCCESS
-    .WillRepeatedly (Return(TBT_STATUS_SUCCESS));                 // For PORT_CS_1 second time call WriteCioReg return TBT_STATUS_SUCCESS
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS))
+    .WillRepeatedly (Return (TBT_STATUS_SUCCESS));
 
   //
   //  Mock call WaitForMsgOutTxDone
   //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrHelpersMock,
+  EXPECT_CALL (
+    WaitForMsgOutTxDoneMock,
     WaitForMsgOutTxDone (
       RetimerPtr,
       _,
-      0))
+      0
+      )
+    )
     .WillOnce (Return (TBT_STATUS_SUCCESS));
 
   TbtStatus = WriteIecs (DevComRetimer, RegNum, &CmdData, Length);

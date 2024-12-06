@@ -1641,6 +1641,9 @@ GetRankCount (
     DimmOut->RankInDimm = 0;
     return FALSE;
   }
+  if (DimmOut->RankInDimm > 1) {
+    MrcData->Outputs.IsAny2Ranks = TRUE;
+  }
 
   return TRUE;
 }

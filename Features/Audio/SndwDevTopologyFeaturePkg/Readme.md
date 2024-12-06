@@ -43,7 +43,7 @@ Currently supported devices and endpoints topology:
 1. [1] - Configuration 10EC3056 ALC711-VD1, ALC714-VC1, 2x ALC316
 1. [2] - ALC712-VB, ALC1320, 5-Star Configuration
 1. [3] - ALC713-VB, 2xALC1320, 4-Star(3) Configuration
-1. [4] - ALC722-CG, 4-Star(1) Configuration
+1. [4] - ALC722-CG, 4-Star(2) Configuration
 1. [5] - Cirrus 6-speaker configuration
 
 </br>

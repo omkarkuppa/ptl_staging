@@ -222,13 +222,12 @@ src/DdrIoLib/IncludePublic/MrcDdrIoUtils.h
 src/DdrIoLib/IncludePublic/MrcDdrIoRefPi.h
 src/DdrIoLib/MrcDdrIoUtilsPrivate.h
 src/DdrIoLib/Ptl/MrcDdrIoVccPtl.c
-src/DdrIoLib/Ptl/MrcDdrIoRcomp.c
+src/DdrIoLib/Ptl/MrcDdrIoComp.c
 src/DdrIoLib/IncludePublic/MrcDdrIoVcc.h
 src/DdrIoLib/MrcDdrIoVcc.c
-src/DdrIoLib/IncludePublic/MrcDdrIoRcomp.h
+src/DdrIoLib/IncludePublic/MrcDdrIoComp.h
 src/DdrIoLib/Ptl/BlueMrcDdrIoHalHashes.c
 src/DdrIoLib/Ptl/BlueMrcDdrIoHalLimits.c
-src/DdrIoLib/MrcDdrIoHalStrings.c
 src/DdrIoLib/MrcDdrIoHalOffsets.c
 src/DdrIoLib/Ptl/BlueMrcDdrIoHalOffsets.c
 src/DdrIoLib/Ptl/MrcDdrIoSiSpecific.c

@@ -236,6 +236,18 @@ GetPprResourceAvailable (
   UINT8                     BankAddress
   );
 
+
+/**
+  Get status for all PPR resources and store number of resources available
+  per Controller/Channel/Rank/Dimm into Outputs->PprAvailableResources.
+
+  @param[in] MrcData        - Global MRC data structure
+**/
+VOID
+GetAllPprResources (
+  MrcParameters   *const    MrcData
+  );
+
 /**
   Returns the number of low order bank group and bank address bits that are not included in the BG interleave
 

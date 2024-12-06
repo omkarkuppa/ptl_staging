@@ -674,6 +674,11 @@ INF $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPc
   INF $(PLATFORM_BOARD_PACKAGE)/BoardInitAdvanced/BoardInitAdvancedPei/BoardInitAdvancedPreMem.inf
 !endif
 
+FILE FREEFORM = PCD(gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid) {
+  SECTION RAW = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/Vbt.bin
+  SECTION UI  = "IntelGopPreMemVbt"
+}
+
 !if gCapsuleFeaturePkgTokenSpaceGuid.PcdCapsuleFeatureEnable == TRUE
   !include CapsuleFeaturePkg/Include/PreMemory.fdf
 !endif
@@ -1909,10 +1914,6 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Smm/BiosGuardServi
   INF  $(PLATFORM_SI_PACKAGE)/IpBlock/Dgr/Dxe/DgrDxeInit.inf
 !endif
 
-!if gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable == TRUE
-  INF RuleOverride = ACPITABLE $(PLATFORM_SI_PACKAGE)/IpBlock/Dgr/AcpiTables/DgrAcpiTables.inf
-!endif
-
 !if gCapsuleFeaturePkgTokenSpaceGuid.PcdCapsuleFeatureEnable == TRUE
   INF MdeModulePkg/Universal/EsrtFmpDxe/EsrtFmpDxe.inf
   INF FmpDevicePkg/CapsuleUpdatePolicyDxe/CapsuleUpdatePolicyDxe.inf
@@ -1928,6 +1929,7 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Smm/BiosGuardServi
 
 !if gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable == TRUE
   INF  $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCRetimerSupport/UsbCRetimerSupport.inf
+  INF  $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCPdBridgeSupport/UsbCPdBridgeSupport.inf
   !include UsbCCapsuleFeaturePkg/Include/PostMemory.fdf
 !endif
 
@@ -2088,6 +2090,7 @@ INF BluetoothPkg/BluetoothBusDxe/BluetoothBusDxe.inf
 INF BluetoothPkg/BluetoothHidDxe/BluetoothHidDxe.inf
 INF BluetoothPkg/HidKbDxe/HidKbDxe.inf
 INF BluetoothPkg/HidMouseDxe/HidMouseDxe.inf
+INF BluetoothPkg/BleConPlatformDxe/BleConPlatformDxe.inf
 !include $(PLATFORM_BIN_PACKAGE)/Include/Fdf/FvBlueToothDxeUnCompact.fdf
 
 

@@ -122,6 +122,15 @@ extern const char *GlobalCompOffsetStr[];
 
 #define RXTX_CONTROLS_SREP_CNT_0   7
 
+#define MAX_LVR_VCM      520 // Max allowed input common mode in mV for LVR analog feedback loop
+#define MIN_LVR_VCM      320 // Min allowed input common mode in mV for LVR analog feedback loop
+
+//Maps datashared partition to the 2 channels in that partition
+static const INT8 Data2ChLp5[MRC_DATA_DT_NUM][2] = { {0,1}, {0,1}, {2,3}, {2,3}, {4,5}, {4,5}, {6,7}, {6,7}, {-1,-1}, {-1,-1} };
+static const INT8 Data2ChDdr5NIL[MRC_DATA_DT_NUM][2] = { {0,0}, {0,0}, {1,1}, {1,1}, {2,2}, {2,2}, {3,3}, {3,3}, {-1,-1}, {-1,-1} };
+static const INT8 Data2ChDdr5ILEcc[MRC_DATA_DT_NUM][2] = { {0,1}, {0,1}, {0,1}, {0,1}, {2,3}, {2,3}, {2,3}, {2,3}, {0, 1}, {2, 3} };
+static const INT8 Data2ChDdr5IL[MRC_DATA_DT_NUM][2] = { {0,1}, {0,1}, {0,1}, {0,1}, {2,3}, {2,3}, {2,3}, {2,3}, {-1,-1}, {-1,-1} };
+
 //DCC DLL Constants
 #define DCC_DLL_CODE_1        (8)
 #define DCC_DLL_CODE_2        (7)
@@ -143,6 +152,54 @@ typedef enum {
   PhDrvG,
   PiCcc
 } FFCODE_LEGS_TYPE;
+
+typedef enum {
+  VccIo,
+  VccClk
+} VF_CURVE_TYPE;
+
+typedef enum {
+  VCCCLKRX0,
+  VCCCLKRX1,
+  VCCCLKTX,
+  NBIASFF,
+  VCCIOG,
+  VCCPLL,
+  VCCDIST,
+  VCCCLKQ,
+  VCCMEMG,
+  VCCDD2G,
+  VCCDDQG,
+  MaxRail
+} RAIL_TYPE;
+
+typedef enum {
+  DataRailPartion,
+  CccRailPartion,
+  CompRailPartion,
+  MaxRailPartion
+} RAIL_PARTTION;
+
+
+#define PART_RAIL_DATA_MSK  (MRC_BIT0 << DataRailPartion) // data bit0
+#define PART_RAIL_CCC_MSK   (MRC_BIT0 << CccRailPartion)  // ccc bit1
+#define PART_RAIL_COMP_MSK  (MRC_BIT0 << CompRailPartion) // comp bit2
+
+static const UINT8 RailPartsMask[MaxRail] = {
+  PART_RAIL_DATA_MSK,                                          // VCCCLKRX0
+  PART_RAIL_DATA_MSK,                                          // VCCCLKRX1
+  PART_RAIL_DATA_MSK | PART_RAIL_CCC_MSK,                      // VCCCLKTX
+  PART_RAIL_DATA_MSK,                                          // NBIASFF
+  PART_RAIL_DATA_MSK | PART_RAIL_CCC_MSK | PART_RAIL_COMP_MSK, // VCCIOG
+                                           PART_RAIL_COMP_MSK, // VCCPLL
+                                           PART_RAIL_COMP_MSK, // VCCDIST
+                                           PART_RAIL_COMP_MSK, // VCCCLKQ
+  PART_RAIL_DATA_MSK | PART_RAIL_CCC_MSK | PART_RAIL_COMP_MSK, // VCCMEMG
+                       PART_RAIL_CCC_MSK | PART_RAIL_COMP_MSK, // VCCDD2G
+                                           PART_RAIL_COMP_MSK  // VCCDDQG
+};
+
+static const UINT8 PartInstanceNum[MaxRailPartion] = { MRC_DATA_DT_NUM , MRC_CCC_SHARED_NUM , MRC_COMP_NUM };
 
 typedef struct {
   INT64 RxPiPwrDnDis;
@@ -265,10 +322,6 @@ typedef enum {
   DCC_VCDL
 } DCC_COMPONENT;
 
-#define MRC_DACCODE_HI        (1200) // 1024 * 0.5; 10-bit DAC on VccClkMv, default to 0.5*VccClk
-#define MRC_DACCODE_TARG      (0x2CC) // 10-bit DAC on VccClkMv, default to 0.35*VccClk
-#define MRC_DACCODE_LOW       (410) // 10-bit DAC on VccClkMv, default 0.20*vccclk need high enough voltage to account for temp drift, can be very low (0.05) if temp==hot
-
 #define BW_SEL_ENABLE         (TRUE)
 #define BW_SEL_DISABLE        (FALSE)
 #define MRC_NO_VALID_BWSEL    (0xFF)
@@ -324,10 +377,10 @@ typedef enum {
 #define CCC_FFPH_DRV_G    (2)
 
 #ifdef MRC_DEBUG_PRINT
-#define MRC_PRINT_DDR_IO_GROUP(MrcData, Socket, Controller, Channel, Rank, Strobe, Bit, FreqIndex, Group)\
-  MrcPrintDdrIoGroup (MrcData, Socket, Controller, Channel, Rank, Strobe, Bit, FreqIndex, Group )
+#define MRC_PRINT_DDR_IO_GROUP_RCV_EN(MrcData, Socket, Controller, Channel, Rank, Strobe, Bit, FreqIndex, Group)\
+  MrcPrintDdrIoGroupRcvEn (MrcData, Socket, Controller, Channel, Rank, Strobe, Bit, FreqIndex, Group )
 #else
-#define MRC_PRINT_DDR_IO_GROUP( MrcData, Socket, Controller, Channel, Rank, Strobe, Bit, FreqIndex, Group)
+#define MRC_PRINT_DDR_IO_GROUP_RCV_EN( MrcData, Socket, Controller, Channel, Rank, Strobe, Bit, FreqIndex, Group)
 #endif
 
 // MrcDdrioPiLinearity, PI DCC struct
@@ -380,7 +433,7 @@ MrcPiDCCRestoreSaveData(
 
 #ifdef MRC_DEBUG_PRINT
 /**
-  This function outputs the specified group values to the debug print device.
+  This function outputs the GSM group values for RcvEn to the debug print device.
 
   @param[in] MrcData   - Pointer to global data.
   @param[in] Group     - DDRIO group to access.
@@ -396,7 +449,7 @@ MrcPiDCCRestoreSaveData(
 **/
 extern
 MrcStatus
-MrcPrintDdrIoGroup (
+MrcPrintDdrIoGroupRcvEn (
   IN MrcParameters *const  MrcData,
   IN UINT32  const Socket,
   IN UINT32  const Controller,
@@ -408,6 +461,64 @@ MrcPrintDdrIoGroup (
   IN GSM_GT  const Group
   );
 #endif
+
+/*
+  Setup LVR Registers
+
+  @param[in]  MrcData       - Global MRC data structure.
+*/
+VOID
+WriteAllLvrTarget (
+  IN MrcParameters* const MrcData
+  );
+
+/*
+  Write LVR Target
+
+  @param[in]  MrcData       - Global MRC data structure.
+  @param[in]  Rail          - Voltage Rail Type
+
+  @retval mrcSuccess - Always returned as this step is non-blocking
+*/
+MrcStatus
+WriteLvrTarget (
+  IN MrcParameters* const MrcData,
+  IN RAIL_TYPE            Rail
+  );
+
+/*
+  Calculates the target voltage based on DataRate and Fuse Limits
+  Returns the target voltage in mV
+
+  @param[in]   MrcData       - Global MRC data structure.
+  @param[in]   Type          - Vccclk or VccIo
+
+  @retval TargetVoltage
+*/
+UINT32
+CalcVFCurve (
+  IN MrcParameters *const MrcData,
+  VF_CURVE_TYPE           Type
+  );
+
+/*
+  Calculates the encoded target voltage and divider ratio to program into the LVR Voltage Sensor
+  Returns both the Target and VinDivider voltages.
+
+  @param[in]   MrcData       - Global MRC data structure.
+  @param[in]   Rail          - Voltage Rail Type
+  @param[in]   Target        - Target Voltage
+  @param[out]  Vid           - Voltage
+  @param[out]  FbDivider     - Divider Ratio
+*/
+VOID
+CalcLvrTarget (
+  IN  MrcParameters *const MrcData,
+  IN  RAIL_TYPE            Rail,
+  IN  UINT32               Target,
+  OUT UINT32*              Vid, OPTIONAL
+  OUT UINT32*              FbDivider
+  );
 
 /**
   This function performs Bw DLL Calibration
@@ -493,18 +604,6 @@ MrcDecodeRxVref (
 MrcStatus
 MrcDdrIoInit (
   IN OUT MrcParameters *const MrcData
-  );
-
-/**
-  This function calculates FeedForward Current Sensor Weight
-
-  @param[in]  MrcData - Pointer to MRC global data.
-
-  @returns MrcStatus value reflecting any errors
-**/
-MrcStatus
-MrcFFCurrentSensorWeightCalc (
-  IN     MrcParameters *const MrcData
   );
 
 /**
@@ -650,6 +749,18 @@ MrcVccCLKRxFFCalibration (
   );
 
 /**
+  Run Lvr RMT
+
+  @param[in, out] MrcData - Include all MRC global data.
+
+  @retval mrcSuccess if success otherwise a failure code
+**/
+MrcStatus
+MrcRunLvrRmt (
+  IN OUT MrcParameters *const MrcData
+  );
+
+/**
   RxDQS DCC calibration
 
   @param[in, out] MrcData - Include all MRC global data.
@@ -660,23 +771,6 @@ MrcVccCLKRxFFCalibration (
 MrcStatus
 MrcRxDqsDcc (
   IN OUT MrcParameters *const MrcData
-  );
-
-/**
-  This function returns the correct amount of lanes for partition passed in.
-
-  @param[in, out] MrcData   - Include all MRC global data.
-  @param[in]      Partition - Partition to find the max lanes for
-  @param[out]     LaneMax   - Will be given the correct max lane value based on partition.
-
-  @retval - mrcSuccess if correct partition passed in.
-  @retval - mrcWrongInputParameter if wrong partition passed in.
-**/
-MrcStatus
-MrcSetPartitionLaneMax (
-  IN OUT MrcParameters *const MrcData,
-  IN     PARTITION_TYPE       Partition,
-  OUT    UINT32               *LaneMax
   );
 
 /**
@@ -983,16 +1077,6 @@ MrcWeaklockEnDis (
   );
 
 /**
-  This function prints DdrIo COMP registers related to VccDdq.
-
-  @param[in] MrcData - All the MRC global data.
-**/
-VOID
-PrintDdrIoCompVddq(
-  IN MrcParameters* const MrcData
-);
-
-/**
   This function will assign the DFI control to MPTU or MC according to input parameter.
 
   @param[in] MrcData    - Include all MRC global data.
@@ -1199,20 +1283,6 @@ MrcWckClkPreDriverDcc (
 MrcStatus
 MrcWckPadDcc (
   IN MrcParameters *const MrcData
-  );
-
-/**
-  This function runs Comp Update and then a Full Comp cycle.
-
-  @param[in] MrcData  - Pointer to global MRC data.
-  @param[in] CompType - Enum of Comp being forced
-
-  @returns the status returned from calling ForceRcomp.
-**/
-MrcStatus
-MrcDccForceComp (
-  IN MrcParameters *const  MrcData,
-  IN COMP_CYCLE_TYPE       CompType
   );
 
 /**
@@ -2187,7 +2257,7 @@ MrcGetDdrIoCfgGroupLimits (
   @param[in,out] MrcData   - Include all MRC global data.
 **/
 VOID
-UpdateSampOdtTiming (
+MrcUpdateSampOdtTiming (
   IN OUT MrcParameters *const MrcData
   );
 
@@ -2235,6 +2305,21 @@ SetupMarginRdV (
   IN           INT64           *GetSetVal,
   IN OUT       BOOLEAN         *UpdateGrp,
   IN OUT       GSM_GT          *Group
+  );
+
+/*
+  Update the requested Param offset with the given Value,
+  using direct multicast CR access for speed.
+
+  @param[in]  MrcData - Global MRC data structure
+  @param[in]  Param   - Margin param
+  @param[in]  Value   - The value to program
+*/
+VOID
+MrcWriteDirectMulticast (
+  IN MrcParameters *const MrcData,
+  IN UINT8                Param,
+  IN INT32                Value
   );
 
 /**
@@ -2906,25 +2991,6 @@ MrcRloadCompensation (
   IN MrcParameters* const MrcData
   );
 
-
-/**
-  This function returns the RankMask to be used for this particular OptParam.
-  @param[in]  MrcData      - Pointer to MRC global data.
-  @param[in]  OptParam     - OptParam being tested.
-  @param[in]  Controller   - Controller to review.
-  @param[in]  Channel      - Channel to review.
-  @param[in, out] RankMask - RankMask for use for this OptParam specific to this Controller/Channel.
-**/
-VOID
-MrcRankMaskDqTargetR (
-  IN     MrcParameters *const MrcData,
-  IN     TOptParamOffset  OptParam,
-  IN     UINT32  Controller,
-  IN     UINT32  Channel,
-  IN OUT UINT8   *RankMask
-  );
-
-
 /**
   This function sums up the differences between Duty Cycle Accumulator Results
   and then calculates Step Size for both PLL Partition and PLL Partition Phase.
@@ -3100,6 +3166,41 @@ MrcGetSetCccWrapper (
   IN      GSM_GT        const   Group,
   IN      UINT32                Mode,
   IN OUT  INT64         *const  Value
+  );
+
+/**
+  This function takes the offset to determine if a rank is populated.
+
+  @param[in, out] MrcData - Include all MRC global data.
+  @param[in]      Offset  - Offset to be checked.
+
+  @retval TRUE if rank is populated on associated offset
+          FALSE if rank is not populated on associated offset
+
+**/
+BOOLEAN
+MrcClockEnable (
+  IN OUT MrcParameters *const MrcData,
+  IN     UINT32  Offset
+  );
+
+/**
+  Returns whether PHY Clock associated with given Controller,
+  Channel, Rank is enabled or not.
+
+  @param[in] MrcData    - Pointer to MRC global data.
+  @param[in] Controller - Controller to test.
+  @param[in] Channel    - Channel to test.
+  @param[in] Rank       - Rank to test.
+
+  @retval BOOLEAN - TRUE if enabled, FALSE otherwise.
+**/
+BOOLEAN
+MrcPhyClockExists (
+  IN MrcParameters *const MrcData,
+  IN UINT32         const Controller,
+  IN UINT32         const Channel,
+  IN UINT32         const Rank
   );
 
 #endif //MRC_DDR_IO_API_H_

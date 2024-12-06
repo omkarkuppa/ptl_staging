@@ -27,32 +27,77 @@
 #include <Library/PmcLib.h>
 #include <Library/HobLib.h>
 #include <Library/DebugLib.h>
+#include <Library/PhatAcpiLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+
+/**
+  Checks if PHAT is installed, if it is add data and update PHAT.
+  If PHAT is not found then add data to PHAt and install table
+  to ACPI.
+
+  @param[in]  DataTable     Reset Reason data table configured
+  @param[in]  OpStatus      Status to publish tables AmHealthy
+
+  @retval EFI_SUCCESS       Successfully posted data to existing or new PHAT ACPI table
+  @retval other             Failed to publish data
+**/
+EFI_STATUS
+PublishResetReasonPhat (
+  IN EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE *DataTable,
+  IN OUT EFI_STATUS  OpStatus
+  )
+{
+  EFI_STATUS                          Status;
+  PHAT_RESET_REASON_RECORD_STRUCTURE  *ResetReasonPhatTable;
+
+  if (DataTable == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  ResetReasonPhatTable = (PHAT_RESET_REASON_RECORD_STRUCTURE  *) AllocateZeroPool (sizeof (PHAT_RESET_REASON_RECORD_STRUCTURE));
+  if (ResetReasonPhatTable == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  ///
+  /// Configure the Reset Reason Data to ACPI data
+  ///
+  ResetReasonPhatTable->PlatformRecordType        = RESET_REASON_PHAT_RECORD_TYPE;
+  ResetReasonPhatTable->Revision                  = EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_REVISION;
+  ResetReasonPhatTable->DeviceSignature           = (GUID) EFI_ACPI_6_5_PHAT_RESET_REASON_HEADER_GUID;
+  CopyMem (&ResetReasonPhatTable->Data, &DataTable, sizeof (EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE));
+  ResetReasonPhatTable->RecordLength              = sizeof (PHAT_RESET_REASON_RECORD_STRUCTURE);
+
+  ///
+  /// Table exists, get current table
+  ///
+  Status = InstallPhatTable (ResetReasonPhatTable, ResetReasonPhatTable->RecordLength);
+
+  return Status;
+}
 
 /**
   Checks if reset was from cold boot
 
   @param[in]      GenPmConA   PMC CON A register
-  @param[in,out]  Reason      Reset reason structure pointer
-  @param[in,out]  Source      Reset source structure pointer
+  @param[in,out]  Reason      Reset reason structure
+  @param[in,out]  Source      Reset source structure
 
   @retval TRUE            Cold boot bit set
   @retval FALSE           Cold boot bit not set
 **/
 BOOLEAN
 IsColdBoot (
-  IN      UINT32        GenPmConA,
-  IN OUT  RESET_REASON  *Reason,
-  IN OUT  RESET_SOURCE  *Source
+  IN      UINT32    GenPmConA,
+  IN OUT  UINT8     Reason,
+  IN OUT  UINT8     Source
   )
 {
-  if (Reason == NULL || Source == NULL) {
-    return FALSE;
-  }
   if ((GenPmConA & B_ACPI_IO_PM1_STS_WAK) == B_ACPI_IO_PM1_STS_WAK) {
-    Reason->Bits.ColdBoot = 0x1;
-    Source->Bits.Unknown  = 0x1;
+    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_COLD_BOOT;
+    Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
     return TRUE;
   }
   return FALSE;
@@ -62,94 +107,98 @@ IsColdBoot (
   Checks if reset was from cold reset
 
   @param[in]      HprCause0   PMC HPR Cause 0 Register
-  @param[in,out]  Reason      Reset reason structure pointer
-  @param[in,out]  Source      Reset source structure pointer
+  @param[in,out]  Reason      Reset reason structure
+  @param[in,out]  Source      Reset source structure
 
   @retval TRUE            Cold reset bit set
   @retval FALSE           Cold reset bit not set
 **/
 BOOLEAN
 IsColdReset (
-  IN      UINT32        HprCause0,
-  IN OUT  RESET_REASON  *Reason,
-  IN OUT  RESET_SOURCE  *Source
+  IN      UINT32    HprCause0,
+  IN OUT  UINT8     Reason,
+  IN OUT  UINT8     Source
 )
 {
   UINT32    ResetReg;
+  BOOLEAN   TypeFound;
 
-  if (Reason == NULL || Source == NULL) {
-    return FALSE;
-  }
+  TypeFound = FALSE;
 
   if (HprCause0 & B_PMC_PWRM_HPR_CAUSE0_COLD_RESET) {
-    return TRUE;
+    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_COLD_RESET;
+    Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
+    TypeFound = TRUE;
   }
 
   if (HprCause0 & B_PMC_PWRM_HPR_CAUSE0_SYSRST_ES) {
     ResetReg = IoRead8 ((UINTN) R_PCH_IO_RST_CNT);
     if (ResetReg == B_PMC_PWRM_HPR_CAUSE0_CF9CR) {
-      return TRUE;
+      Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_COLD_RESET;
+      Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
+      TypeFound = TRUE;
     }
   }
-  return FALSE;
+  return TypeFound;
 }
 
 /**
   Checks if reset was from warm reset
 
   @param[in]      HprCause0   PMC HPR Cause 0 Register
-  @param[in,out]  Reason      Reset reason structure pointer
-  @param[in,out]  Source      Reset source structure pointer
+  @param[in,out]  Reason      Reset reason structure
+  @param[in,out]  Source      Reset source structure
 
   @retval TRUE            Warm reset bit set
   @retval FALSE           Warm reset bit not set
 **/
 BOOLEAN
 IsWarmReset (
-  IN      UINT32        HprCause0,
-  IN OUT  RESET_REASON  *Reason,
-  IN OUT  RESET_SOURCE  *Source
+  IN      UINT32    HprCause0,
+  IN OUT  UINT8     Reason,
+  IN OUT  UINT8     Source
   )
 {
-  UINT32  ResetReg;
+  UINT32    ResetReg;
+  BOOLEAN   TypeFound;
 
-  if (Reason == NULL || Source == NULL) {
-    return FALSE;
-  }
+  TypeFound = FALSE;
 
   if (HprCause0 & B_PMC_PWRM_HPR_CAUSE0_SYSRST_ES) {
     ResetReg = IoRead8 ((UINTN) R_PCH_IO_RST_CNT);
     if (ResetReg == B_PMC_PWRM_HPR_CAUSE0_CF9WR) {
-      return TRUE;
+      Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_WARM_RESET;
+      Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
+      TypeFound = TRUE;
     }
   }
 
   if (HprCause0 & B_PMC_PWRM_HPR_CAUSE0_WARM_RESET) {
-    return TRUE;
+    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_WARM_RESET;
+    Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
+    TypeFound = TRUE;
   }
-  return FALSE;
+  return TypeFound;
 }
 
 /**
   Checks if reset was from system update
 
-  @param[in,out] Reason   Reset reason structure pointer
-  @param[in,out] Source   Reset source structure pointer
+  @param[in,out] Reason   Reset reason structure
+  @param[in,out] Source   Reset source structure
 
   @retval TRUE            Boot flash update found
   @retval FALSE           Not a boot flash update
 **/
 BOOLEAN
 IsUpdate (
-  IN OUT  RESET_REASON  *Reason,
-  IN OUT  RESET_SOURCE  *Source
+  IN OUT  UINT8   Reason,
+  IN OUT  UINT8   Source
   )
 {
-  if (Reason == NULL || Source == NULL) {
-    return FALSE;
-  }
-
   if (GetBootModeHob () == BOOT_ON_FLASH_UPDATE) {
+    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_UPDATE;
+    Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_SOFTWARE;
     return TRUE;
   }
   return FALSE;
@@ -160,33 +209,29 @@ IsUpdate (
 
   @param[in]      GblCause0   PMC GBL reset cause 0 Register
   @param[in]      GblCause1   PMC GBL reset cause 1 Register
-  @param[in,out]  Reason      Reset reason structure pointer
-  @param[in,out]  Source      Reset source structure pointer
+  @param[in,out]  Reason      Reset reason structure
+  @param[in,out]  Source      Reset source structure
 
   @retval TRUE      Fault reset bit set
   @retval FALSE     Fault reset bit not set
 **/
 BOOLEAN
 IsFaultReset (
-  IN      UINT32        GblCause0,
-  IN      UINT32        GblCause1,
-  IN OUT  RESET_REASON  *Reason,
-  IN OUT  RESET_SOURCE  *Source
+  IN      UINT32    GblCause0,
+  IN      UINT32    GblCause1,
+  IN OUT  UINT8     Reason,
+  IN OUT  UINT8     Source
   )
 {
-  if (Reason == NULL || Source == NULL) {
-    return FALSE;
-  }
-
   if ((GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_FAULT_RESET) ||
       (GblCause1 & R_PMC_PWRM_GBLRST_CAUSE1_FAULT_RESET)) {
-    Reason->Bits.Fault      = 0x1;
+    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_FAULT;
     if (GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_HW_SOURCE) {
-      Source->Bits.Hardware = 0x1;
+      Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_HARDWARE;
     } else if (GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_FW_SOURCE) {
-      Source->Bits.Firmware = 0x1;
+      Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_FIRMWARE;
     } else {
-      Source->Bits.Unknown  = 0x1;
+      Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
     }
     return TRUE;
   }
@@ -197,26 +242,22 @@ IsFaultReset (
   Checks if reset was unexpected
 
   @param[in]      GblCause0   PMC GBL reset cause 0 Register
-  @param[in,out]  Reason      Reset reason structure pointer
-  @param[in,out]  Source      Reset source structure pointer
+  @param[in,out]  Reason      Reset reason structure
+  @param[in,out]  Source      Reset source structure
 
   @retval TRUE      unexpected reset bit set
   @retval FALSE     unexpected reset bit not set
 **/
 BOOLEAN
 IsUnexpectedReset (
-  IN      UINT32        GblCause0,
-  IN OUT  RESET_REASON  *Reason,
-  IN OUT  RESET_SOURCE  *Source
+  IN      UINT32      GblCause0,
+  IN OUT  UINT8       Reason,
+  IN OUT  UINT8       Source
   )
 {
-  if (Reason == NULL || Source == NULL) {
-    return FALSE;
-  }
-
   if (GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_UNEXPECTED_RESET) {
-    Reason->Bits.UnexpectedReset = 0x1;
-    Source->Bits.Unknown         = 0x1;
+    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_UNEXPECTED_RESET;
+    Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
     return TRUE;
   }
   return FALSE;
@@ -226,24 +267,22 @@ IsUnexpectedReset (
   Checks if reset was from timeout
 
   @param[in]      GblCause0   PMC GBL reset cause 0 Register
-  @param[in,out]  Reason      Reset reason structure pointer
-  @param[in,out]  Source      Reset source structure pointer
+  @param[in,out]  Reason      Reset reason structure
+  @param[in,out]  Source      Reset source structure
 
   @retval TRUE      Timeout reset bit set
   @retval FALSE     Timeout reset bit not set
 **/
 BOOLEAN
 IsTimeoutReset (
-  IN UINT32             GblCause0,
-  IN OUT  RESET_REASON  *Reason,
-  IN OUT  RESET_SOURCE  *Source
+  IN      UINT32    GblCause0,
+  IN OUT  UINT8     Reason,
+  IN OUT  UINT8     Source
   )
 {
-  if (Reason == NULL || Source == NULL) {
-    return FALSE;
-  }
-
   if (GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_TIMEOUT_RESET) {
+    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_TIMEOUT;
+    Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
     return TRUE;
   }
   return FALSE;
@@ -254,28 +293,24 @@ IsTimeoutReset (
 
   @param[in]      GblCause0   PMC GBL reset cause 0 Register
   @param[in]      GblCause1   PMC GBL reset cause 0 Register
-  @param[in,out]  Reason      Reset reason structure pointer
-  @param[in,out]  Source      Reset source structure pointer
+  @param[in,out]  Reason      Reset reason structure
+  @param[in,out]  Source      Reset source structure
 
   @retval TRUE      Thermal reset bit set
   @retval FALSE     Thermal reset bit not set
 **/
 BOOLEAN
 IsThermalReset (
-  IN      UINT32        GblCause0,
-  IN      UINT32        GblCause1,
-  IN OUT  RESET_REASON  *Reason,
-  IN OUT  RESET_SOURCE  *Source
+  IN      UINT32      GblCause0,
+  IN      UINT32      GblCause1,
+  IN OUT  UINT8       Reason,
+  IN OUT  UINT8       Source
   )
 {
-  if (Reason == NULL || Source == NULL) {
-    return FALSE;
-  }
-
   if ((GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_THERMAL_RESET) ||
       (GblCause1 & B_PMC_PWRM_GBLRST_CAUSE1_THERMAL_RESET)) {
-    Reason->Bits.Thermal  = 0x1;
-    Source->Bits.Hardware = 0x1;
+    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_THERMAL;
+    Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_HARDWARE;
     return TRUE;
   }
   return FALSE;
@@ -285,26 +320,22 @@ IsThermalReset (
   Checks if reset was from Power Loss occurrence
 
   @param[in]      GenPmConA   PMC CON A register
-  @param[in,out]  Reason      Reset reason structure pointer
-  @param[in,out]  Source      Reset source structure pointer
+  @param[in,out]  Reason      Reset reason structure
+  @param[in,out]  Source      Reset source structure
 
   @retval TRUE      Power loss reset bit set
   @retval FALSE     Power loss reset bit not set
 **/
 BOOLEAN
 IsPowerLossReset (
-  IN      UINT32        GenPmConA,
-  IN OUT  RESET_REASON  *Reason,
-  IN OUT  RESET_SOURCE  *Source
+  IN      UINT32      GenPmConA,
+  IN OUT  UINT8       Reason,
+  IN OUT  UINT8       Source
   )
 {
-  if (Reason == NULL || Source == NULL) {
-    return FALSE;
-  }
-
   if (GenPmConA & B_PMC_PWRM_GEN_PMCON_A_PF) {
-    Reason->Bits.PowerLoss = 0x1;
-    Source->Bits.Hardware  = 0x1;
+    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_POWER_LOSS;
+    Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_HARDWARE;
     return TRUE;
   }
   return FALSE;
@@ -314,26 +345,22 @@ IsPowerLossReset (
   Checks if reset was from power button press
 
   @param[in]      GblCause0   PMC GBL reset cause 0 Register
-  @param[in,out]  Reason      Reset reason structure pointer
-  @param[in,out]  Source      Reset source structure pointer
+  @param[in,out]  Reason      Reset reason structure
+  @param[in,out]  Source      Reset source structure
 
   @retval TRUE      Power button reset bit set
   @retval FALSE     Power button reset bit not set
 **/
 BOOLEAN
 IsPowerButtonReset (
-  IN      UINT32        GblCause0,
-  IN OUT  RESET_REASON  *Reason,
-  IN OUT  RESET_SOURCE  *Source
+  IN      UINT32      GblCause0,
+  IN OUT  UINT8       Reason,
+  IN OUT  UINT8       Source
   )
 {
-  if (Reason == NULL || Source == NULL) {
-    return FALSE;
-  }
-
   if (GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_PWR_BTN_RESET) {
-    Reason->Bits.PowerButton = 0x1;
-    Source->Bits.Unknown     = 0x1;
+    Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_POWER_BUTTON;
+    Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
     return EFI_SUCCESS;
   }
   return FALSE;
@@ -350,9 +377,10 @@ IsPowerButtonReset (
 **/
 EFI_STATUS
 GetSourceAndReason (
-  IN OUT RESET_REASON_HEALTH_STRUCTURE  *ResetHealthTable
+  IN OUT EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE  *ResetHealthTable
   )
 {
+  EFI_STATUS      Status;
   UINT32          GenPmConA;
   UINT32          HprCause0;
   UINT32          GblCause0;
@@ -362,89 +390,93 @@ GetSourceAndReason (
     return EFI_INVALID_PARAMETER;
   }
 
-  // Get the PMC reset registers
+  Status = EFI_NOT_FOUND;
+
+  ///
+  /// Get the PMC reset registers
+  ///
   GenPmConA = 0;
   HprCause0 = 0;
   GblCause0 = 0;
   GblCause1 = 0;
   GetPmcResetRegisters (GenPmConA, HprCause0, GblCause0, GblCause1);
 
-  //
-  // Check for Cold Boot
-  //
-  if (IsColdBoot (GenPmConA, &ResetHealthTable->ResetReason, &ResetHealthTable->ResetSource)) {
+  ///
+  /// Check for Cold Boot
+  ///
+  if (IsColdBoot (GenPmConA, ResetHealthTable->Reason, ResetHealthTable->Source)) {
     return EFI_SUCCESS;
   }
 
-  //
-  // Cold Reset Check
-  //
-  if (IsColdReset (HprCause0, &ResetHealthTable->ResetReason, &ResetHealthTable->ResetSource)) {
+  ///
+  /// Cold Reset Check
+  ///
+  if (IsColdReset (HprCause0, ResetHealthTable->Reason, ResetHealthTable->Source)) {
     return EFI_SUCCESS;
   }
 
-  //
-  // Check for Warm Reset
-  //
-  if (IsWarmReset (HprCause0, &ResetHealthTable->ResetReason, &ResetHealthTable->ResetSource)) {
+  ///
+  /// Check for Warm Reset
+  ///
+  if (IsWarmReset (HprCause0, ResetHealthTable->Reason, ResetHealthTable->Source)) {
     return EFI_SUCCESS;
   }
 
-  //
-  // Check if Update was the reason
-  //
-  if (IsUpdate(&ResetHealthTable->ResetReason, &ResetHealthTable->ResetSource)) {
+  ///
+  /// Check if Update was the reason
+  ///
+  if (IsUpdate(ResetHealthTable->Reason, ResetHealthTable->Source)) {
     return EFI_SUCCESS;
   }
 
-  //
-  // Check for Unexpected Reset Reason
-  //
-  if (IsUnexpectedReset (GblCause0, &ResetHealthTable->ResetReason, &ResetHealthTable->ResetSource)) {
+  ///
+  /// Check for Unexpected Reset Reason
+  ///
+  if (IsUnexpectedReset (GblCause0, ResetHealthTable->Reason, ResetHealthTable->Source)) {
     return EFI_SUCCESS;
   }
 
-  //
-  // Check for Fault Reset Reason
-  //
-  if (IsFaultReset (GblCause0, GblCause1, &ResetHealthTable->ResetReason, &ResetHealthTable->ResetSource)) {
+  ///
+  /// Check for Fault Reset Reason
+  ///
+  if (IsFaultReset (GblCause0, GblCause1, ResetHealthTable->Reason, ResetHealthTable->Source)) {
     return EFI_SUCCESS;
   }
 
-  //
-  // Check for Timeout Reset Reason
-  //
-  if (IsTimeoutReset (GblCause0, &ResetHealthTable->ResetReason, &ResetHealthTable->ResetSource)) {
+  ///
+  /// Check for Timeout Reset Reason
+  ///
+  if (IsTimeoutReset (GblCause0, ResetHealthTable->Reason, ResetHealthTable->Source)) {
     return EFI_SUCCESS;
   }
 
-  //
-  // Check for Thermal Reset Reason
-  //
-  if (IsThermalReset (GblCause0, GblCause1, &ResetHealthTable->ResetReason, &ResetHealthTable->ResetSource)) {
+  ///
+  /// Check for Thermal Reset Reason
+  ///
+  if (IsThermalReset (GblCause0, GblCause1, ResetHealthTable->Reason, ResetHealthTable->Source)) {
     return EFI_SUCCESS;
   }
 
-  //
-  // Power Loss Reset Reason
-  //
-  if (IsPowerLossReset (GenPmConA, &ResetHealthTable->ResetReason, &ResetHealthTable->ResetSource)) {
+  ///
+  /// Power Loss Reset Reason
+  ///
+  if (IsPowerLossReset (GenPmConA, ResetHealthTable->Reason, ResetHealthTable->Source)) {
     return EFI_SUCCESS;
   }
 
-  //
-  // Power Button Pressed Reset Reason
-  //
-  if (IsPowerButtonReset (GblCause0, &ResetHealthTable->ResetReason, &ResetHealthTable->ResetSource)) {
+  ///
+  /// Power Button Pressed Reset Reason
+  ///
+  if (IsPowerButtonReset (GblCause0, ResetHealthTable->Reason, ResetHealthTable->Source)) {
     return EFI_SUCCESS;
   }
 
-  //
-  // If no reset reason found, marking as unknown
-  //
-  ResetHealthTable->ResetReason.Bits.Unknown = 0x1;
-  ResetHealthTable->ResetSource.Bits.Unknown = 0x1;
-  return EFI_NOT_FOUND;
+  ///
+  /// If no reset reason found, marking as unknown
+  ///
+  ResetHealthTable->Reason = EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_UNKNOWN;
+  ResetHealthTable->Source = EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
+  return Status;
 }
 
 /**
@@ -455,52 +487,42 @@ GetSourceAndReason (
 **/
 EFI_STATUS
 EFIAPI
-ResetReasonCallback (
+ResetReasonMain (
   VOID
   )
 {
   EFI_STATUS                      Status;
-  RESET_REASON_HEALTH_STRUCTURE   *ResetReasonHealthTable;
+  EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE   *ResetReasonHealthTable;
 
-  // Initiate reset reason table
-  ResetReasonHealthTable = (RESET_REASON_HEALTH_STRUCTURE *) AllocateZeroPool (sizeof (RESET_REASON_HEALTH_STRUCTURE));
+  ///
+  /// Initiate reset reason table
+  ///
+  ResetReasonHealthTable = (EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE *) AllocateZeroPool (sizeof (EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE));
   if (ResetReasonHealthTable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  // Get and set reset reason and source
+  ///
+  /// Get and set reset reason and source
+  ///
   Status = GetSourceAndReason (ResetReasonHealthTable);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "[%a] Get reset reason and source exit with status: %r", __FUNCTION__, Status));
+    DEBUG ((DEBUG_WARN, "[%a] Get reset reason and source exit with status: %r\n", __FUNCTION__, Status));
     if (Status != EFI_NOT_FOUND) {
-      // Reason may not be found but will still publish the data as unknown
+      /// Reason may not be found but will still publish the data as unknown
       FreePool (ResetReasonHealthTable);
     }
   }
 
-  return Status;
-}
-
-/**
-  Callback handler for Telemetry Reset Reason
-
-  @param[in] Event                  A pointer to the Event that triggered the callback
-  @param[in] Context                A pointer to private data registered with the callback function
-**/
-VOID
-EFIAPI
-ResetReasonCallbackHandler(
-  IN EFI_EVENT  Event,
-  IN VOID       *Context
-  )
-{
-  EFI_STATUS  Status;
-
-  Status = ResetReasonCallback ();
+  ///
+  /// Publish table to PHAT
+  ///
+  Status = PublishResetReasonPhat (ResetReasonHealthTable, Status);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "[%a] Failed to get reset reason or source with status: %r", __FUNCTION__, Status));
+    DEBUG ((DEBUG_WARN, "[%a] Publish reset reason PHAT exit with status: %r\n", __FUNCTION__, Status));    FreePool (ResetReasonHealthTable);
   }
-  gBS->CloseEvent (Event);
+
+  return Status;
 }
 
 /**
@@ -520,20 +542,10 @@ ResetReasonEntryPoint (
   )
 {
   EFI_STATUS      Status;
-  EFI_EVENT       ReadyToBootEvent;
 
-  Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  ResetReasonCallbackHandler,
-                  NULL,
-                  &gEfiEventReadyToBootGuid,
-                  &ReadyToBootEvent
-                  );
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "[%a] Failed to load vendor data with status %r", __FUNCTION__, Status));
-    return Status;
-  }
+  DEBUG ((DEBUG_WARN, "[%a] Entry\n", __FUNCTION__));
 
-  return EFI_SUCCESS;
+  Status = ResetReasonMain ();
+  DEBUG ((DEBUG_WARN, "[%a] Exit with status %r\n", __FUNCTION__, Status));
+  return Status;
 }

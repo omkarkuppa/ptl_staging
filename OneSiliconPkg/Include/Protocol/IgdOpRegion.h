@@ -23,7 +23,7 @@
 #ifndef _IGD_OPREGION_PROTOCOL_H_
 #define _IGD_OPREGION_PROTOCOL_H_
 
-#include <IndustryStandard/IgdOpRegion30.h>
+#include <IndustryStandard/IgdOpRegion32.h>
 
 extern EFI_GUID gIgdOpRegionProtocolGuid;
 
@@ -31,7 +31,7 @@ extern EFI_GUID gIgdOpRegionProtocolGuid;
 /// IGD OpRegion Protocol
 ///
 typedef struct {
-  IGD_OPREGION_STRUCTURE_VER_3_0  *OpRegion; ///< IGD Operation Region Structure
+  IGD_OPREGION_STRUCTURE_VER_3_2  *OpRegion; ///< IGD Operation Region Structure
 } IGD_OPREGION_PROTOCOL;
 
 #endif

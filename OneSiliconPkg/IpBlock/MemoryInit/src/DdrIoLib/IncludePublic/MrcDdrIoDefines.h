@@ -112,6 +112,7 @@ This file contains Memory Controller specific defines.
 #define PADV_CALC(VREF, RAIL) (((RAIL) * (2 * (VREF) + 1)) / MRC_COMP_VREF_CALCULATION_VALUE)
 
 #define BG_REF_MV                          (800) ///< Banded Gap Reference Voltage
+#define VCC_LOW_POWER                      (400) ///< Low Reference Voltage
 
 #define MAX_PHASE (8)
 

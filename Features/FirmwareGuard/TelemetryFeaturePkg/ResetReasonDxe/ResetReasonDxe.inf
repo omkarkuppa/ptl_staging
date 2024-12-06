@@ -41,6 +41,7 @@
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  MinPlatformPkg/MinPlatformPkg.dec
   TelemetryFeaturePkg/TelemetryFeaturePkg.dec
   OneSiliconPkg/SiPkg.dec
 
@@ -49,12 +50,12 @@
   HobLib
   PmcLib
   DebugLib
+  PhatAcpiLib
   UefiDriverEntryPoint
   MemoryAllocationLib
   UefiBootServicesTableLib
 
 [Guids]
-  gEfiEventReadyToBootGuid              ## CONSUMES
   gResetReasonDeviceSignatureGuid       ## PRODUCES
 
 [Depex]

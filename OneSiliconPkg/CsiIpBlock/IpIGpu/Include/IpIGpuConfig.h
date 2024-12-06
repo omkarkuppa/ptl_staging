@@ -196,7 +196,7 @@ typedef struct {
   UINT16                 DeltaT12PowerCycleDelay;    /// 34 Power Cycle Delay required for eDP as per VESA standard.0 - 0 ms, <b>0xFFFF - Auto calculate to max 500 ms<\b>
   UINT64                 GttMmAdr;                   /// Temp Address of Graphics GTTMMADR: Default is <b>0xAF000000
   UINT64                 LMemBar;                    /// Temp Address of Graphics LMEMBAR: Default is <b>0xB0000000
-  IGPU_DDI_CONFIGURATION DdiConfiguration;         /// DDI configuration, need to match with VBT settings.
+  IGPU_DDI_CONFIGURATION DdiConfiguration;           /// DDI configuration, need to match with VBT settings.
   UINT8                  OemT12DelayOverride;        /// Oem T12 Delay Override <b> Disable<\b>,Enable-Enable T12 Time.
   UINT8                  TestRsvd0[7];               /// Reserved for 8 bytes alignment
 } IP_IGPU_PEI_PREMEM_CONFIG;

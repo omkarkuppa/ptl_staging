@@ -448,7 +448,7 @@ DgrSmmLibConstructor (
   gSmmDgrEnableState = NO_NR_PPAM_SUPPORT;
   if (CpuPolicyData->DgrEnable) {
       gSmmDgrEnableState = NiftyRockSupportLevel ();
-    if (gSmmDgrEnableState >= NR_PPAM_11_SUPPORT) {
+    if (gSmmDgrEnableState == NR_PPAM_11_SUPPORT) {
       mSmmDgrEnable = TRUE;
 #if FixedPcdGetBool (PcdSpsStateSaveEnable) == 1
       mSmmDgrStateSaveEnable = TRUE;

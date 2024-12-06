@@ -307,7 +307,6 @@
 /** IMR0CP_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x40021210210
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_role/IMRCP_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.IMR0CP_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_role.IMRxCP_0_0_0_MCHBAR_IMPH[0]
   * Security PolicyGroup: IMR_0_PG
   * IMR0CP_0_0_0_MCHBAR_IMPH: This register controls the access policy to the Read Access Policy BIMR0RAC, Write Access Policy BIMR0WAC
   */
@@ -345,7 +344,6 @@ typedef union {
 /** IMR0RAC_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x40021210000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_role/IMRRAC_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.IMR0RAC_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_role.IMRxRAC_0_0_0_MCHBAR_IMPH[0]
   * Security PolicyGroup: IMR_0_PG
   * IMR0RAC_0_0_0_MCHBAR_IMPH: This register, along with IMR0BASE, IMR0MASK and IMR0WAC, defines an isolated region of memory that can be masked to prohibit certain agents from accessing memory. It is programmed with an SAI Policy that indicates which agents in the system are allowed to perform read operations to IMR0. The requesting agents 6bit encoded SAI value is used as an index into this registers bits to determine read access
   */
@@ -383,7 +381,6 @@ typedef union {
 /** IMR0WAC_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x40021210000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_role/IMRWAC_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.IMR0WAC_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_role.IMRxWAC_0_0_0_MCHBAR_IMPH[0]
   * Security PolicyGroup: IMR_0_PG
   * IMR0WAC_0_0_0_MCHBAR_IMPH: This register, along with IMR0BASE, IMR0MASK and IMR0RAC, defines an isolated region of memory that can be masked to prohibit certain agents from accessing memory. It is programmed with an SAI Policy that indicates which agents in the system are allowed to perform write operations to IMR0. The requesting agents 6bit encoded SAI value is used as an index into this registers bits to determine write access
   */
@@ -2683,7 +2680,6 @@ typedef union {
 /** IMR0BASE_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000010
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_func/IMRBASE_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.IMR0BASE_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_func.IMRxBASE_0_0_0_MCHBAR_IMPH[0]
   * Security PolicyGroup: IMRGLOBAL_BM
   * Specifies the start address of IMRn region. IMR region size must be a strict power of two, at least 1KB, and naturally aligned to the size. These bits are compared with the result of the IMRn_MASK[63:6] applied the incoming address, to determine if an access falls within the IMRn defined region.
   */
@@ -2827,7 +2823,6 @@ typedef union {
 /** IMR0MASK_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_func/IMRMASK_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.IMR0MASK_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_func.IMRxMASK_0_0_0_MCHBAR_IMPH[0]
   * Security PolicyGroup: IMRGLOBAL_BM
   * This register, along with IMRnBASE, IMRnRAC, and IMRnWAC, defines an isolated region of memory that can be masked to prohibit certain system agents from accessing memory. When an agent sends a request to the uncore, whether snooped or not, an IMR may optionally prevent that transaction from changing the state of memory or from getting correct data in response to the operation
   */
@@ -9532,7 +9527,6 @@ typedef union {
 /** IMR1M0CP_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x40021210210
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr1m_role/IMR1MCP_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.IMR1M0CP_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr1m_role.IMR1MxCP_0_0_0_MCHBAR_IMPH[0]
   * Security PolicyGroup: IMR1M_0_PG
   * IMR0CP_0_0_0_MCHBAR_IMPH: This register controls the access policy to the Read Access Policy BIMR0RAC, Write Access Policy BIMR0WAC
   */
@@ -9570,7 +9564,6 @@ typedef union {
 /** IMR1M0RAC_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x40001000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr1m_role/IMR1MRAC_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.IMR1M0RAC_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr1m_role.IMR1MxRAC_0_0_0_MCHBAR_IMPH[0]
   * Security PolicyGroup: IMR1M_0_PG
   * IMR0RAC_0_0_0_MCHBAR_IMPH: This register, along with IMR0BASE, IMR0MASK and IMR0WAC, defines an isolated region of memory that can be masked to prohibit certain agents from accessing memory. It is programmed with an SAI Policy that indicates which agents in the system are allowed to perform read operations to IMR0. The requesting agents 6bit encoded SAI value is used as an index into this registers bits to determine read access
   */
@@ -9608,7 +9601,6 @@ typedef union {
 /** IMR1M0WAC_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x40001000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr1m_role/IMR1MWAC_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.IMR1M0WAC_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr1m_role.IMR1MxWAC_0_0_0_MCHBAR_IMPH[0]
   * Security PolicyGroup: IMR1M_0_PG
   * IMR0WAC_0_0_0_MCHBAR_IMPH: This register, along with IMR0BASE, IMR0MASK and IMR0RAC, defines an isolated region of memory that can be masked to prohibit certain agents from accessing memory. It is programmed with an SAI Policy that indicates which agents in the system are allowed to perform write operations to IMR0. The requesting agents 6bit encoded SAI value is used as an index into this registers bits to determine write access
   */
@@ -10777,7 +10769,6 @@ typedef union {
 /** IMR1M0BASE_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000010
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr1m_func/IMR1MBASE_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.IMR1M0BASE_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr1m_func.IMR1MxBASE_0_0_0_MCHBAR_IMPH[0]
   * Security PolicyGroup: IMRGLOBAL_OS
   * Specifies the start address of IMRn region. IMR1M region address and size must be with 1MB resolution. These bits are compared with the result of the IMR1Mn_LIMIT[63:20] applied the incoming address, to determine if an access falls within the IMR1Mn defined region.
   */
@@ -10921,7 +10912,6 @@ typedef union {
 /** IMR1M0LIMIT_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr1m_func/IMR1MLimit_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.IMR1M0Limit_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr1m_func.IMR1MxLimit_0_0_0_MCHBAR_IMPH[0]
   * Security PolicyGroup: IMRGLOBAL_OS
   * This register, along with IMRn1MMASK, IMRn1MRAC, and IMRn1MWAC defines an isolated region of memory that can be masked to prohibit certain system agents from accessing memory. When an agent sends a request to the uncore, whether snooped or not, an IMR may optionally prevent that transaction from changing the state of memory or from getting correct data in response to the operation
   */
@@ -14337,7 +14327,6 @@ typedef union {
 /** SAF_ADDR_BASE_MEM_EXCLUDE_RANGE_H_IOC_MCHBAR desc:
   * Register default value:        0x00000010
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_exclude_range/saf_addr_base_mem_exclude_range_H
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.saf_addr_base_mem_exclude_range_H, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_exclude_range.saf_addr_base_mem_exclude_range_H
   * Security PolicyGroup: IMRGLOBAL_BM
   * Specifies the start address of IMRn region. IMR1M region address and size must be with 1MB resolution. These bits are compared with the result of the IMR1Mn_LIMIT[63:20] applied the incoming address, to determine if an access falls within the IMR1Mn defined region.
   */
@@ -14479,7 +14468,6 @@ typedef union {
 /** SAF_ADDR_LIMIT_MEM_EXCLUDE_RANGE_H_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_exclude_range/saf_addr_limit_mem_exclude_range_H
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.saf_addr_limit_mem_exclude_range_H, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_exclude_range.saf_addr_limit_mem_exclude_range_H
   * Security PolicyGroup: IMRGLOBAL_BM
   * This register, along with IMRn1MMASK, IMRn1MRAC, and IMRn1MWAC defines an isolated region of memory that can be masked to prohibit certain system agents from accessing memory. When an agent sends a request to the uncore, whether snooped or not, an IMR may optionally prevent that transaction from changing the state of memory or from getting correct data in response to the operation
   */
@@ -14604,7 +14592,6 @@ typedef union {
 /** SAF_ADDR_BASE_MEM_EXCLUDE_RANGE_L_IOC_MCHBAR desc:
   * Register default value:        0x00000010
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_exclude_range/saf_addr_base_mem_exclude_range_L
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.saf_addr_base_mem_exclude_range_L, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_exclude_range.saf_addr_base_mem_exclude_range_L
   * Security PolicyGroup: IMRGLOBAL_BM
   * Specifies the start address of IMRn region. IMR1M region address and size must be with 1MB resolution. These bits are compared with the result of the IMR1Mn_LIMIT[63:20] applied the incoming address, to determine if an access falls within the IMR1Mn defined region.
   */
@@ -14746,7 +14733,6 @@ typedef union {
 /** SAF_ADDR_LIMIT_MEM_EXCLUDE_RANGE_L_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_exclude_range/saf_addr_limit_mem_exclude_range_L
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.saf_addr_limit_mem_exclude_range_L, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_exclude_range.saf_addr_limit_mem_exclude_range_L
   * Security PolicyGroup: IMRGLOBAL_BM
   * This register, along with IMRn1MMASK, IMRn1MRAC, and IMRn1MWAC defines an isolated region of memory that can be masked to prohibit certain system agents from accessing memory. When an agent sends a request to the uncore, whether snooped or not, an IMR may optionally prevent that transaction from changing the state of memory or from getting correct data in response to the operation
   */
@@ -14871,7 +14857,6 @@ typedef union {
 /** SAF_ADDR_BASE_MEM_VGA_EXCLUDE_RANGE_IOC_MCHBAR desc:
   * Register default value:        0x00000010
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_exclude_range/saf_addr_base_mem_vga_exclude_range
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.saf_addr_base_mem_vga_exclude_range, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_exclude_range.saf_addr_base_mem_vga_exclude_range
   * Security PolicyGroup: IMRGLOBAL_BM
   * Specifies the start address of IMRn region. IMR region size must be a strict power of two, at least 1KB, and naturally aligned to the size. These bits are compared with the result of the IMRn_MASK[63:6] applied the incoming address, to determine if an access falls within the IMRn defined region.
   */
@@ -15013,7 +14998,6 @@ typedef union {
 /** SAF_ADDR_MASK_MEM_VGA_EXCLUDE_RANGE_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/imr_exclude_range/saf_addr_mask_mem_vga_exclude_range
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.saf_addr_mask_mem_vga_exclude_range, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.imr_exclude_range.saf_addr_mask_mem_vga_exclude_range
   * Security PolicyGroup: IMRGLOBAL_BM
   * This register, along with IMRnBASE, IMRnRAC, and IMRnWAC, defines an isolated region of memory that can be masked to prohibit certain system agents from accessing memory. When an agent sends a request to the uncore, whether snooped or not, an IMR may optionally prevent that transaction from changing the state of memory or from getting correct data in response to the operation
   */
@@ -15138,7 +15122,6 @@ typedef union {
 /** SAF_IMRGLOBAL_CP_IOC_MCHBAR desc:
   * Register default value:        0x40021210218
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/global_bm_registers/saf_imrglobal_cp
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.saf_imrglobal_cp, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.global_bm_registers.saf_imrglobal_cp
   * Security PolicyGroup: IMRGLOBAL_BM
   * IMR0CP_0_0_0_MCHBAR_IMPH: This register controls the access policy to the Read Access Policy BIMR0RAC, Write Access Policy BIMR0WAC
   */
@@ -15174,7 +15157,6 @@ typedef union {
 /** SAF_IMRGLOBAL_WAC_IOC_MCHBAR desc:
   * Register default value:        0x4000121061A
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/global_bm_registers/saf_imrglobal_wac
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.saf_imrglobal_wac, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.global_bm_registers.saf_imrglobal_wac
   * Security PolicyGroup: IMRGLOBAL_BM
   * IMR0WAC_0_0_0_MCHBAR_IMPH: This register, along with IMR0BASE, IMR0MASK and IMR0RAC, defines an isolated region of memory that can be masked to prohibit certain agents from accessing memory. It is programmed with an SAI Policy that indicates which agents in the system are allowed to perform write operations to IMR0. The requesting agents 6bit encoded SAI value is used as an index into this registers bits to determine write access
   */
@@ -15210,7 +15192,6 @@ typedef union {
 /** SAF_IMRGLOBAL_OS_CP_IOC_MCHBAR desc:
   * Register default value:        0x40021210218
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/global_bm_registers/saf_imrglobal_os_cp
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.saf_imrglobal_os_cp, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.global_bm_registers.saf_imrglobal_os_cp
   * Security PolicyGroup: IMRGLOBAL_OS
   * IMR0CP_0_0_0_MCHBAR_IMPH: This register controls the access policy to the Read Access Policy BIMR0RAC, Write Access Policy BIMR0WAC
   */
@@ -15246,7 +15227,6 @@ typedef union {
 /** SAF_IMRGLOBAL_OS_WAC_IOC_MCHBAR desc:
   * Register default value:        0x4000121061F
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOC_IMR_REGS/global_bm_registers/saf_imrglobal_os_wac
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.saf_imrglobal_os_wac, OSX=SAF_SOUTH.saf_south.ioc.IOC_IMR_REGS.global_bm_registers.saf_imrglobal_os_wac
   * Security PolicyGroup: IMRGLOBAL_OS
   * IMR0WAC_0_0_0_MCHBAR_IMPH: This register, along with IMR0BASE, IMR0MASK and IMR0RAC, defines an isolated region of memory that can be masked to prohibit certain agents from accessing memory. It is programmed with an SAI Policy that indicates which agents in the system are allowed to perform write operations to IMR0. The requesting agents 6bit encoded SAI value is used as an index into this registers bits to determine write access
   */
@@ -15283,7 +15263,6 @@ typedef union {
 /** CRDTCTL_PMIN_A_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000210
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_PMIN_A_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_PMIN_A_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_PMIN_A_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set minimum IO Tracker posted credits for each VC. Each fields value indicates the number of IOTrk entries reserved for that VCs sole use. BIOS Note: BIOS must not program the total value of all credits in this register, the CrdtCtl1 register, and the IOTRK_SHRD field of the CrdtCtl4/12 register to exceed the total number of IOTrk entries.
   */
@@ -15391,7 +15370,6 @@ typedef union {
 /** CRDTCTL_PMIN_B_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x0000324A
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_PMIN_B_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_PMIN_B_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_PMIN_B_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set minimum IO Tracker posted credits for each VC. Each fields value indicates the number of IOTrk entries reserved for that VCs sole use. BIOS Note: BIOS must not program the total value of all credits in this register, the CrdtCtl1 register, and the IOTRK_SHRD field of the CrdtCtl4/12 register to exceed the total number of IOTrk entries.
   */
@@ -15477,7 +15455,6 @@ typedef union {
 /** CRDTCTL_NPMIN_A_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000210
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_NPMIN_A_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_NPMIN_A_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_NPMIN_A_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set minimum IO Tracker non-posted credits for each VC. Each fields value indicates the number of IOTrk entries reserved for that VCs sole use. BIOS Note: BIOS must not program the total value of all credits in this register, the CrdtCtl1 register, and the IOTRK_SHRD field of the CrdtCtl4/12 register to exceed the total number of IOTrk entries.
   */
@@ -15585,7 +15562,6 @@ typedef union {
 /** CRDTCTL_NPMIN_B_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x0000324A
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_NPMIN_B_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_NPMIN_B_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_NPMIN_B_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set minimum IO Tracker non-posted credits for each VC. Each fields value indicates the number of IOTrk entries reserved for that VCs sole use. BIOS Note: BIOS must not program the total value of all credits in this register, the CrdtCtl1 register, and the IOTRK_SHRD field of the CrdtCtl4/12 register to exceed the total number of IOTrk entries.
   */
@@ -15671,7 +15647,6 @@ typedef union {
 /** CRDTCTL_PINIT_A_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000208
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_PINIT_A_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_PINIT_A_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_PINIT_A_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set initial IO Tracker posted credits for each VC. Each fields value indicates the number of IOTrk entries reserved for that VCs sole use. BIOS Note: BIOS must not program the total value of all credits in this register, the CrdtCtl1 register, and the IOTRK_SHRD field of the CrdtCtl4/12 register to exceed the total number of IOTrk entries.
   */
@@ -15779,7 +15754,6 @@ typedef union {
 /** CRDTCTL_PINIT_B_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00001249
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_PINIT_B_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_PINIT_B_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_PINIT_B_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set initial IO Tracker posted credits for each VC. Each fields value indicates the number of IOTrk entries reserved for that VCs sole use. BIOS Note: BIOS must not program the total value of all credits in this register, the CrdtCtl1 register, and the IOTRK_SHRD field of the CrdtCtl4/12 register to exceed the total number of IOTrk entries.
   */
@@ -15865,7 +15839,6 @@ typedef union {
 /** CRDTCTL_NPINIT_A_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000208
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_NPINIT_A_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_NPINIT_A_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_NPINIT_A_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set initial IO Tracker non-posted credits for each VC. Each fields value indicates the number of IOTrk entries reserved for that VCs sole use. BIOS Note: BIOS must not program the total value of all credits in this register, the CrdtCtl1 register, and the IOTRK_SHRD field of the CrdtCtl4/12 register to exceed the total number of IOTrk entries.
   */
@@ -15984,7 +15957,6 @@ typedef union {
 /** CRDTCTL_NPINIT_B_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00001249
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_NPINIT_B_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_NPINIT_B_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_NPINIT_B_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set initial IO Tracker non-posted credits for each VC. Each fields value indicates the number of IOTrk entries reserved for that VCs sole use. BIOS Note: BIOS must not program the total value of all credits in this register, the CrdtCtl1 register, and the IOTRK_SHRD field of the CrdtCtl4/12 register to exceed the total number of IOTrk entries.
   */
@@ -16070,7 +16042,6 @@ typedef union {
 /** CRDTCTL_PMAX_A_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00020200
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_PMAX_A_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_PMAX_A_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_PMAX_A_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set maximum IO Tracker posted credits for each VCs. Each fields value indicates the maximum number of IOTrk entries that may be used by that VCs posted requests.
   */
@@ -16167,7 +16138,6 @@ typedef union {
 /** CRDTCTL_PMAX_B_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x63C24A20
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_PMAX_B_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_PMAX_B_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_PMAX_B_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set maximum IO Tracker posted credits for each VCs. Each fields value indicates the maximum number of IOTrk entries that may be used by that VCs posted requests.
   */
@@ -16258,7 +16228,6 @@ typedef union {
 /** CRDTCTL_NPMAX_A_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00008180
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_NPMAX_A_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_NPMAX_A_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_NPMAX_A_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set maximum IO Tracker non-posted credits for each VCs. Each fields value indicates the maximum number of IOTrk entries that may be used by that VCs non-posted requests.
   */
@@ -16355,7 +16324,6 @@ typedef union {
 /** CRDTCTL_NPMAX_B_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x5B4241E0
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_NPMAX_B_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_NPMAX_B_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_NPMAX_B_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set maximum IO Tracker non-posted credits for each VCs. Each fields value indicates the maximum number of IOTrk entries that may be used by that VCs non-posted requests
   */
@@ -16446,7 +16414,6 @@ typedef union {
 /** CRDTCTL_RRMIN_A_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000208
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_RRMIN_A_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_RRMIN_A_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_RRMIN_A_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set minimum Read Return Tracker credits for each VC. Each fields value indicates the number of RRTrk entries reserved for that VCs sole use. BIOS Note: BIOS must not program the total value of all credits in this register and the RRTRK_SHRD field of the CrdtCtl3 register to exceed 64. Also, for each VC, the value in this register should be greater than or this register should be greater than or equal to the minimum IOTrk credits allocated to that NP VC in CrdtCtl1, to avoid shared credit distribution at initialization time
   */
@@ -16554,7 +16521,6 @@ typedef union {
 /** CRDTCTL_RRMIN_B_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00001249
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_RRMIN_B_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_RRMIN_B_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_RRMIN_B_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set minimum Read Return Tracker credits for each VC. Each fields value indicates the number of RRTrk entries reserved for that VCs sole use. BIOS Note: BIOS must not program the total value of all credits in this register and the RRTRK_SHRD field of the CrdtCtl3 register to exceed 64. Also, for each VC, the value in this register should be greater than or this register should be greater than or equal to the minimum IOTrk credits allocated to that NP VC in CrdtCtl1, to avoid shared credit distribution at initialization time
   */
@@ -16640,7 +16606,6 @@ typedef union {
 /** CRDTCTL_RRMAX_A_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x0A00AA00
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_RRMAX_A_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_RRMAX_A_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_RRMAX_A_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set maximum Read Return Tracker credits for each VC. Each fields value indicates the maximum number of RRTrk entries that may be used by that VCs requests.
   */
@@ -16709,7 +16674,6 @@ typedef union {
 /** CRDTCTL_RRMAX_B_IMPH_IOC_MCHBAR desc:
   * Register default value:        0xB864AA00
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_RRMAX_B_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_RRMAX_B_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_RRMAX_B_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set maximum Read Return Tracker credits for each VC. Each fields value indicates the maximum number of RRTrk entries that may be used by that VCs requests.
   */
@@ -16778,7 +16742,6 @@ typedef union {
 /** CRDTCTL_SHRD_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x0000B8AA
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_SHRD_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_SHRD_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_SHRD_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register contains shared credits for each tracker.
   */
@@ -16831,7 +16794,6 @@ typedef union {
 /** CRDTCTL_NPDATA_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00002492
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_NPDATA_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_NPDATA_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_NPDATA_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set the IOP upstream non-posted data credits for each VC.
   */
@@ -16917,7 +16879,6 @@ typedef union {
 /** IOTRK_CRDT_RTRN_IPC_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x1241691841921888
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/IOTRK_CRDT_RTRN_IPC_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.IOTRK_CRDT_RTRN_IPC_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.IOTRK_CRDT_RTRN_IPC_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register contains the threshold values to be used for override the state of IPC VC1 demotion in IOTRK_CRDT_RTRN arbitration module.
   */
@@ -17137,7 +17098,6 @@ typedef union {
 /** CRDTCTRLLCK_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000100
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTRLLCK_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTRLLCK_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTRLLCK_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to lock all IOSF credit control related registers in IOP. Assertion of the LOCK bit prevents any CRDTCTL register from being updated.
   */
@@ -17268,7 +17228,6 @@ typedef union {
 /** CRDTCTL_RRMAX_C_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00AAAA00
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_CREDIT/IOP_CREDIT_0_0_0_MCHBAR/CRDTCTL_RRMAX_C_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_CREDIT.CRDTCTL_RRMAX_C_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_CREDIT_493_135.IOP_CREDIT_0_0_0_MCHBAR_53_9.CRDTCTL_RRMAX_C_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to set maximum Read Return Tracker credits for each VC. Each fields value indicates the maximum number of RRTrk entries that may be used by that VCs requests.
   */
@@ -17337,7 +17296,6 @@ typedef union {
 /** XTM_DEF_VTD1_ARB_IPC_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000023
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR1_PRI/XTM_DEF_VTD1_ARB_IPC_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.XTM_DEF_VTD1_ARB_IPC_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR1_PRI_56_65.XTM_DEF_VTD1_ARB_IPC_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register contains vtd arbiter parking control
   */
@@ -17409,7 +17367,6 @@ typedef union {
 /** VLWCTL_IOC_MCHBAR desc:
   * Register default value:        0x00000001
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR1_PRI/VLWCTL_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.VLWCTL_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR1_PRI_56_65.VLWCTL_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Control and status information associated with VLWs.
   */
@@ -17463,7 +17420,6 @@ typedef union {
 /** HCTL0_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x001F0008
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR1_PRI/HCTL0_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.HCTL0_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR1_PRI_56_65.HCTL0_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * The Host Control Registers include miscellaneous functionality used to enable/disable features in the system agent
   */
@@ -17692,7 +17648,6 @@ typedef union {
 /** TSE_BDF_EN_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR1_PRI/TSE_BDF_EN
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.TSE_BDF_EN, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR1_PRI_56_65.TSE_BDF_EN
   * Security PolicyGroup: IOP_OS_W_PG
   * The PMC/Punit pull the fuse (TSE_EN) and copy it to IOC. IOC should steer the NVMe traffic to IOCCE only when TSE_EN = 0.
   */
@@ -17821,7 +17776,6 @@ typedef union {
 /** TSE_BDF_CMP0_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR1_PRI/TSE_BDF_CMP0
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.TSE_BDF_CMP0, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR1_PRI_56_65.TSE_BDF_CMP0
   * Security PolicyGroup: IOP_OS_W_PG
   * IOC support upto 8 NMVe devices (BDF) for TSE traffic.
   */
@@ -17879,7 +17833,6 @@ typedef union {
 /** TSE_BDF_CMP1_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR1_PRI/TSE_BDF_CMP1
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.TSE_BDF_CMP1, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR1_PRI_56_65.TSE_BDF_CMP1
   * Security PolicyGroup: IOP_OS_W_PG
   * IOC support upto 8 NMVe devices (BDF) for TSE traffic.
   */
@@ -17937,7 +17890,6 @@ typedef union {
 /** PRIMDN_MASK1_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR2_PRI/PRIMDN_MASK1_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PRIMDN_MASK1_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR2_PRI_56_66.PRIMDN_MASK1_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_OS_W_PG
   * This register is used to mask bits used in comparison 1 of downstream commands. Only register bits          with a value of 1 enable the corresponding compare register bit to be matched with the downstream          command.
   */
@@ -18055,7 +18007,6 @@ typedef union {
 /** XTM_UPSTREAM_ARB_IPC_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x1241696841422484
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR2_PRI/XTM_UPSTREAM_ARB_IPC_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.XTM_UPSTREAM_ARB_IPC_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR2_PRI_56_66.XTM_UPSTREAM_ARB_IPC_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register contains the threshold values to be used for override the state of IPC VC1 demotion in XTM_UPSTREAM_ARB arbitration module.
   */
@@ -18275,7 +18226,6 @@ typedef union {
 /** XTM_DOWNSTREAM_ARB_IPC_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x1241691841921888
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR2_PRI/XTM_DOWNSTREAM_ARB_IPC_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.XTM_DOWNSTREAM_ARB_IPC_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR2_PRI_56_66.XTM_DOWNSTREAM_ARB_IPC_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register contains the threshold values to be used for override the state of IPC VC1 demotion in XTM_DOWNSTREAM_ARB arbitration module.
   */
@@ -18495,7 +18445,6 @@ typedef union {
 /** CRDTLCK_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR2_PRI/CRDTLCK_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.CRDTLCK_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR2_PRI_56_66.CRDTLCK_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register is used to lock all IOSF credit-related registers in iMPH. Assertion of the LOCK bit          prevents any CRDTCTL register from being updated.
   */
@@ -18537,7 +18486,6 @@ typedef union {
 /** VCLIM0_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00044400
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR3_PRI/VCLIM0_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.VCLIM0_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR3_PRI_56_67.VCLIM0_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register contains the limit value indicating the maximum number of requests which may be granted         by an arbiter back-to-back. These limit values are used by the upstream, downstream, and snoop arbiters. Note         that when a limit field is changed, the new value does not take effect in a given arbiter park counter until         that counter reaches zero and reloads, when it will obtain the updated value.
   */
@@ -18620,7 +18568,6 @@ typedef union {
 /** VC1_PARK_SIZE_IPC_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x19321932
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR3_PRI/VC1_PARK_SIZE_IPC_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.VC1_PARK_SIZE_IPC_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR3_PRI_56_67.VC1_PARK_SIZE_IPC_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register contains the park size for weighted round robin between VC1 DE and IPU
   */
@@ -18741,7 +18688,6 @@ typedef union {
 /** FRC_SNP_OVRD_IOC_MCHBAR desc:
   * Register default value:        0x000400BE
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR3_PRI/FRC_SNP_OVRD
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.FRC_SNP_OVRD, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR3_PRI_56_67.FRC_SNP_OVRD
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register enables overriding the No Snoop indication on a per VC basis. FRC_SNP_OVRD should not be used when WRC_VC_ENABLE is set.  Wrongly setting it might cause stale data to be fetched from mem in certain scenarios. https://hsdes.intel.com/appstore/article/#/2205479557
   */
@@ -18930,7 +18876,6 @@ typedef union {
 /** FRC_SNP_VAL_IOC_MCHBAR desc:
   * Register default value:        0x000400BE
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR3_PRI/FRC_SNP_VAL
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.FRC_SNP_VAL, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR3_PRI_56_67.FRC_SNP_VAL
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register enables overriding the No Snoop indication on a per VC basis. FRC_SNP_OVRD should not be used when WRC_VC_ENABLE is set.  Wrongly setting it might cause stale data to be fetched from mem in certain scenarios. https://hsdes.intel.com/appstore/article/#/2205479557
   */
@@ -19119,7 +19064,6 @@ typedef union {
 /** MCARBLCK_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR3_PRI/MCARBLCK_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.MCARBLCK_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR3_PRI_56_67.MCARBLCK_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19157,7 +19101,6 @@ typedef union {
 /** PCIEPAR1E_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/PCIEPAR1E_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PCIEPAR1E_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.PCIEPAR1E_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19228,7 +19171,6 @@ typedef union {
 /** PCIEPAR2E_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/PCIEPAR2E_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PCIEPAR2E_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.PCIEPAR2E_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19299,7 +19241,6 @@ typedef union {
 /** PCIEPAR3E_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/PCIEPAR3E_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PCIEPAR3E_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.PCIEPAR3E_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19370,7 +19311,6 @@ typedef union {
 /** PCIEPAR4E_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/PCIEPAR4E_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PCIEPAR4E_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.PCIEPAR4E_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19441,7 +19381,6 @@ typedef union {
 /** PCIEPAR1DID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/PCIEPAR1DID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PCIEPAR1DID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.PCIEPAR1DID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19480,7 +19419,6 @@ typedef union {
 /** PCIEPAR2DID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/PCIEPAR2DID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PCIEPAR2DID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.PCIEPAR2DID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19519,7 +19457,6 @@ typedef union {
 /** PCIEPAR3DID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/PCIEPAR3DID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PCIEPAR3DID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.PCIEPAR3DID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19558,7 +19495,6 @@ typedef union {
 /** PCIEPAR4DID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/PCIEPAR4DID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PCIEPAR4DID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.PCIEPAR4DID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19597,7 +19533,6 @@ typedef union {
 /** P2SBIOR_IOC_MCHBAR desc:
   * Register default value:        0x00FC0000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/P2SBIOR_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.P2SBIOR_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.P2SBIOR_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19679,7 +19614,6 @@ typedef union {
 /** TTTBARB_IOC_MCHBAR desc:
   * Register default value:        0x00000004
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/TTTBARB_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.TTTBARB_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.TTTBARB_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19754,7 +19688,6 @@ typedef union {
 /** TTTBARBH_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/TTTBARBH_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.TTTBARBH_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.TTTBARBH_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19788,7 +19721,6 @@ typedef union {
 /** LPCLGIR1_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/LPCLGIR1_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.LPCLGIR1_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.LPCLGIR1_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19867,7 +19799,6 @@ typedef union {
 /** LPCLGIR2_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/LPCLGIR2_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.LPCLGIR2_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.LPCLGIR2_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -19946,7 +19877,6 @@ typedef union {
 /** LPCLGIR3_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/LPCLGIR3_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.LPCLGIR3_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.LPCLGIR3_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -20025,7 +19955,6 @@ typedef union {
 /** LPCLGIR4_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/LPCLGIR4_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.LPCLGIR4_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.LPCLGIR4_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -20104,7 +20033,6 @@ typedef union {
 /** LPCGMR_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/LPCGMR_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.LPCGMR_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.LPCGMR_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -20155,7 +20083,6 @@ typedef union {
 /** LPCBDE_IOC_MCHBAR desc:
   * Register default value:        0x0000FFCF
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/LPCBDE_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.LPCBDE_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.LPCBDE_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -20347,7 +20274,6 @@ typedef union {
 /** UCPR_IOC_MCHBAR desc:
   * Register default value:        0x00000001
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/UCPR_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.UCPR_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.UCPR_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -20403,7 +20329,6 @@ typedef union {
 /** GCS_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GCS_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GCS_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GCS_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -20506,7 +20431,6 @@ typedef union {
 /** IOT1_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/IOT1_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOT1_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.IOT1_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_OS_W_PG
   */
 
@@ -20640,7 +20564,6 @@ typedef union {
 /** IOT2_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/IOT2_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOT2_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.IOT2_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_OS_W_PG
   */
 
@@ -20774,7 +20697,6 @@ typedef union {
 /** IOT3_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/IOT3_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOT3_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.IOT3_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_OS_W_PG
   */
 
@@ -20908,7 +20830,6 @@ typedef union {
 /** IOT4_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/IOT4_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOT4_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.IOT4_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_OS_W_PG
   */
 
@@ -21042,7 +20963,6 @@ typedef union {
 /** LPCIOD_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/LPCIOD_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.LPCIOD_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.LPCIOD_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21141,7 +21061,6 @@ typedef union {
 /** LPCIOE_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/LPCIOE_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.LPCIOE_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.LPCIOE_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21239,7 +21158,6 @@ typedef union {
 /** TCOBASE_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/TCOBASE_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.TCOBASE_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.TCOBASE_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21301,7 +21219,6 @@ typedef union {
 /** GPMR1_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPMR1_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPMR1_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPMR1_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21346,7 +21263,6 @@ typedef union {
 /** GPMR1DID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPMR1DID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPMR1DID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPMR1DID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21396,7 +21312,6 @@ typedef union {
 /** GPMR2_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPMR2_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPMR2_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPMR2_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21441,7 +21356,6 @@ typedef union {
 /** GPMR2DID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPMR2DID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPMR2DID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPMR2DID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21491,7 +21405,6 @@ typedef union {
 /** GPMR3_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPMR3_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPMR3_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPMR3_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21536,7 +21449,6 @@ typedef union {
 /** GPMR3DID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPMR3DID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPMR3DID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPMR3DID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21586,7 +21498,6 @@ typedef union {
 /** GPIOR1_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPIOR1_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPIOR1_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPIOR1_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21665,7 +21576,6 @@ typedef union {
 /** GPIOR1DID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPIOR1DID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPIOR1DID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPIOR1DID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21699,7 +21609,6 @@ typedef union {
 /** GPIOR2_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPIOR2_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPIOR2_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPIOR2_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21778,7 +21687,6 @@ typedef union {
 /** GPIOR2DID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPIOR2DID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPIOR2DID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPIOR2DID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21812,7 +21720,6 @@ typedef union {
 /** GPIOR3_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPIOR3_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPIOR3_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPIOR3_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21891,7 +21798,6 @@ typedef union {
 /** GPIOR3DID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/GPIOR3DID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.GPIOR3DID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.GPIOR3DID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21926,7 +21832,6 @@ typedef union {
 /** PMBASEA_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/PMBASEA_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PMBASEA_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.PMBASEA_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -21974,7 +21879,6 @@ typedef union {
 /** PMBASEC_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/PMBASEC_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.PMBASEC_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.PMBASEC_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -22027,7 +21931,6 @@ typedef union {
 /** ACPIBA_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/ACPIBA_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.ACPIBA_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.ACPIBA_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -22109,7 +22012,6 @@ typedef union {
 /** ACPIBDID_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/ACPIBDID_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.ACPIBDID_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.ACPIBDID_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -22147,7 +22049,6 @@ typedef union {
 /** SEGIR_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/SEGIR_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.SEGIR_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.SEGIR_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -22227,7 +22128,6 @@ typedef union {
 /** SEGMR_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/SEGMR_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.SEGMR_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.SEGMR_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -22279,7 +22179,6 @@ typedef union {
 /** CABBR_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/CABBR_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.CABBR_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.CABBR_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -22320,7 +22219,6 @@ typedef union {
 /** E3GIR_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/E3GIR_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.E3GIR_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.E3GIR_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -22399,7 +22297,6 @@ typedef union {
 /** E3GMR_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/E3GMR_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.E3GMR_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.E3GMR_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -22450,7 +22347,6 @@ typedef union {
 /** E4GIR_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/E4GIR_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.E4GIR_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.E4GIR_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -22529,7 +22425,6 @@ typedef union {
 /** E4GMR_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_0_0_0_MCHBAR4_PRI/E4GMR_0_0_0_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.E4GMR_0_0_0_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_0_0_0_MCHBAR4_PRI_56_68.E4GMR_0_0_0_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   */
 
@@ -22581,7 +22476,6 @@ typedef union {
 /** FUSA_PARITY_EN_OVRD_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_FUSA_0_0_0_MCHBAR/FUSA_PARITY_EN_OVRD_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.FUSA_PARITY_EN_OVRD_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_FUSA_0_0_0_MCHBAR_56_80.FUSA_PARITY_EN_OVRD_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register allows BIOS to override the fuse settings on a per parity check point bases.
   */
@@ -22633,7 +22527,6 @@ typedef union {
 /** FUSA_SRC_ERR_MASK_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_FUSA_0_0_0_MCHBAR/FUSA_SRC_ERR_MASK_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.FUSA_SRC_ERR_MASK_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_FUSA_0_0_0_MCHBAR_56_80.FUSA_SRC_ERR_MASK_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Each Bit corresponds to 1 IP error source. If this a bit is set, errors from the corresponding IP should be logged in the SRC_ERROR_STS register but not logged in the IOMCA.
   */
@@ -22904,7 +22797,6 @@ typedef union {
 /** FUSA_SRC_ERR_STS_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_FUSA_0_0_0_MCHBAR/FUSA_SRC_ERR_STS_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.FUSA_SRC_ERR_STS_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_FUSA_0_0_0_MCHBAR_56_80.FUSA_SRC_ERR_STS_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Each Bit corresponds to 1 parity check site. This bit vector is asserted one if a corresponding parity check point detects a parity error. Write '1' to clear. Used for FUSA STL and post sil debug to know where the parity check was caught. FUSA STL will use this for check the checker flows by injecting parity errors and checking to see that each site caught an error.
   */
@@ -23175,7 +23067,6 @@ typedef union {
 /** FUSA_PARITY_ERR_LOG_IMPH_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOP_FUSA_0_0_0_MCHBAR/FUSA_PARITY_ERR_LOG_0_0_0_MCHBAR_IMPH
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.FUSA_PARITY_ERR_LOG_0_0_0_MCHBAR_IMPH, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOP_FUSA_0_0_0_MCHBAR_56_80.FUSA_PARITY_ERR_LOG_0_0_0_MCHBAR_IMPH
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This is a new register
   */
@@ -23222,15 +23113,14 @@ typedef union {
 #endif      // SV_HOOKS
 
 
-/** BDF_ALLOC_A_10_10_IOC_MCHBAR desc:
+/** BDF_ALLOC_A_10_IOC_MCHBAR desc:
   * Register default value:        0x000000A0
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_A_MCHBAR_10_10
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_A_MCHBAR_10, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_A_MCHBAR[10]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_A_MCHBAR_10
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_A_10_10_IOC_MCHBAR_REG (0x00007228U)
+#define BDF_ALLOC_A_10_IOC_MCHBAR_REG    (0x00007228U)
 
 typedef union {
   struct {
@@ -23265,27 +23155,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_A_10_10_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_A_10_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_A_10_10_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_A_10_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_A_10_10_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_A_10_10_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_A_10_10_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_A_10_10_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_A_10_10_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_A_10_10_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_A_10_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_A_10_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_A_10_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_A_10_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_A_10_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_A_10_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_A_13_13_IOC_MCHBAR desc:
+/** BDF_ALLOC_A_13_IOC_MCHBAR desc:
   * Register default value:        0x00000000
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_A_MCHBAR_13_13
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_A_MCHBAR_13, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_A_MCHBAR[13]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_A_MCHBAR_13
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_A_13_13_IOC_MCHBAR_REG (0x00007234U)
+#define BDF_ALLOC_A_13_IOC_MCHBAR_REG    (0x00007234U)
 
 typedef union {
   struct {
@@ -23320,27 +23209,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_A_13_13_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_A_13_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_A_13_13_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_A_13_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_A_13_13_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_A_13_13_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_A_13_13_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_A_13_13_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_A_13_13_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_A_13_13_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_A_13_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_A_13_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_A_13_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_A_13_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_A_13_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_A_13_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_A_14_14_IOC_MCHBAR desc:
+/** BDF_ALLOC_A_14_IOC_MCHBAR desc:
   * Register default value:        0x00000000
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_A_MCHBAR_14_14
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_A_MCHBAR_14, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_A_MCHBAR[14]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_A_MCHBAR_14
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_A_14_14_IOC_MCHBAR_REG (0x00007238U)
+#define BDF_ALLOC_A_14_IOC_MCHBAR_REG    (0x00007238U)
 
 typedef union {
   struct {
@@ -23375,27 +23263,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_A_14_14_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_A_14_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_A_14_14_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_A_14_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_A_14_14_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_A_14_14_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_A_14_14_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_A_14_14_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_A_14_14_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_A_14_14_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_A_14_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_A_14_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_A_14_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_A_14_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_A_14_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_A_14_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_B_8_8_IOC_MCHBAR desc:
+/** BDF_ALLOC_B_8_IOC_MCHBAR desc:
   * Register default value:        0x00000030
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_8_8
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_B_MCHBAR_8, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_B_MCHBAR[8]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_8
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_B_8_8_IOC_MCHBAR_REG   (0x000072a0U)
+#define BDF_ALLOC_B_8_IOC_MCHBAR_REG     (0x000072a0U)
 
 typedef union {
   struct {
@@ -23430,27 +23317,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_B_8_8_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_B_8_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_B_8_8_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_B_8_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_B_8_8_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_B_8_8_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_B_8_8_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_B_8_8_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_B_8_8_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_B_8_8_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_B_8_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_B_8_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_B_8_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_B_8_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_B_8_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_B_8_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_B_9_9_IOC_MCHBAR desc:
+/** BDF_ALLOC_B_9_IOC_MCHBAR desc:
   * Register default value:        0x00000031
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_9_9
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_B_MCHBAR_9, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_B_MCHBAR[9]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_9
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_B_9_9_IOC_MCHBAR_REG   (0x000072a4U)
+#define BDF_ALLOC_B_9_IOC_MCHBAR_REG     (0x000072a4U)
 
 typedef union {
   struct {
@@ -23485,27 +23371,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_B_9_9_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_B_9_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_B_9_9_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_B_9_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_B_9_9_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_B_9_9_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_B_9_9_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_B_9_9_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_B_9_9_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_B_9_9_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_B_9_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_B_9_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_B_9_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_B_9_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_B_9_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_B_9_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_B_12_12_IOC_MCHBAR desc:
+/** BDF_ALLOC_B_12_IOC_MCHBAR desc:
   * Register default value:        0x00000032
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_12_12
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_B_MCHBAR_12, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_B_MCHBAR[12]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_12
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_B_12_12_IOC_MCHBAR_REG (0x000072b0U)
+#define BDF_ALLOC_B_12_IOC_MCHBAR_REG    (0x000072b0U)
 
 typedef union {
   struct {
@@ -23540,27 +23425,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_B_12_12_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_B_12_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_B_12_12_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_B_12_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_B_12_12_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_B_12_12_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_B_12_12_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_B_12_12_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_B_12_12_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_B_12_12_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_B_12_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_B_12_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_B_12_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_B_12_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_B_12_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_B_12_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_B_16_16_IOC_MCHBAR desc:
+/** BDF_ALLOC_B_16_IOC_MCHBAR desc:
   * Register default value:        0x00000033
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_16_16
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_B_MCHBAR_16, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_B_MCHBAR[16]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_16
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_B_16_16_IOC_MCHBAR_REG (0x000072c0U)
+#define BDF_ALLOC_B_16_IOC_MCHBAR_REG    (0x000072c0U)
 
 typedef union {
   struct {
@@ -23595,27 +23479,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_B_16_16_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_B_16_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_B_16_16_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_B_16_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_B_16_16_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_B_16_16_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_B_16_16_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_B_16_16_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_B_16_16_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_B_16_16_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_B_16_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_B_16_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_B_16_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_B_16_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_B_16_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_B_16_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_B_28_28_IOC_MCHBAR desc:
+/** BDF_ALLOC_B_28_IOC_MCHBAR desc:
   * Register default value:        0x00000000
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_28_28
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_B_MCHBAR_28, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_B_MCHBAR[28]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_28
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_B_28_28_IOC_MCHBAR_REG (0x000072f0U)
+#define BDF_ALLOC_B_28_IOC_MCHBAR_REG    (0x000072f0U)
 
 typedef union {
   struct {
@@ -23650,27 +23533,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_B_28_28_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_B_28_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_B_28_28_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_B_28_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_B_28_28_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_B_28_28_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_B_28_28_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_B_28_28_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_B_28_28_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_B_28_28_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_B_28_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_B_28_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_B_28_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_B_28_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_B_28_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_B_28_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_B_29_29_IOC_MCHBAR desc:
+/** BDF_ALLOC_B_29_IOC_MCHBAR desc:
   * Register default value:        0x00000000
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_29_29
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_B_MCHBAR_29, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_B_MCHBAR[29]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_B_MCHBAR_29
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_B_29_29_IOC_MCHBAR_REG (0x000072f4U)
+#define BDF_ALLOC_B_29_IOC_MCHBAR_REG    (0x000072f4U)
 
 typedef union {
   struct {
@@ -23705,27 +23587,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_B_29_29_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_B_29_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_B_29_29_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_B_29_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_B_29_29_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_B_29_29_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_B_29_29_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_B_29_29_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_B_29_29_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_B_29_29_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_B_29_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_B_29_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_B_29_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_B_29_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_B_29_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_B_29_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_C_0_0_IOC_MCHBAR desc:
+/** BDF_ALLOC_C_0_IOC_MCHBAR desc:
   * Register default value:        0x00000038
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_0_0
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_C_MCHBAR_0, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_C_MCHBAR[0]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_0
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_C_0_0_IOC_MCHBAR_REG   (0x00007300U)
+#define BDF_ALLOC_C_0_IOC_MCHBAR_REG     (0x00007300U)
 
 typedef union {
   struct {
@@ -23760,27 +23641,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_C_0_0_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_C_0_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_C_0_0_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_C_0_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_C_0_0_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_C_0_0_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_C_0_0_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_C_0_0_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_C_0_0_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_C_0_0_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_C_0_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_C_0_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_C_0_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_C_0_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_C_0_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_C_0_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_C_1_1_IOC_MCHBAR desc:
+/** BDF_ALLOC_C_1_IOC_MCHBAR desc:
   * Register default value:        0x00000039
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_1_1
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_C_MCHBAR_1, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_C_MCHBAR[1]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_1
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_C_1_1_IOC_MCHBAR_REG   (0x00007304U)
+#define BDF_ALLOC_C_1_IOC_MCHBAR_REG     (0x00007304U)
 
 typedef union {
   struct {
@@ -23815,27 +23695,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_C_1_1_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_C_1_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_C_1_1_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_C_1_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_C_1_1_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_C_1_1_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_C_1_1_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_C_1_1_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_C_1_1_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_C_1_1_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_C_1_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_C_1_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_C_1_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_C_1_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_C_1_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_C_1_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_C_2_2_IOC_MCHBAR desc:
+/** BDF_ALLOC_C_2_IOC_MCHBAR desc:
   * Register default value:        0x0000003A
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_2_2
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_C_MCHBAR_2, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_C_MCHBAR[2]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_2
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_C_2_2_IOC_MCHBAR_REG   (0x00007308U)
+#define BDF_ALLOC_C_2_IOC_MCHBAR_REG     (0x00007308U)
 
 typedef union {
   struct {
@@ -23870,27 +23749,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_C_2_2_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_C_2_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_C_2_2_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_C_2_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_C_2_2_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_C_2_2_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_C_2_2_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_C_2_2_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_C_2_2_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_C_2_2_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_C_2_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_C_2_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_C_2_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_C_2_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_C_2_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_C_2_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_C_3_3_IOC_MCHBAR desc:
+/** BDF_ALLOC_C_3_IOC_MCHBAR desc:
   * Register default value:        0x0000003B
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_3_3
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_C_MCHBAR_3, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_C_MCHBAR[3]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_3
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_C_3_3_IOC_MCHBAR_REG   (0x0000730cU)
+#define BDF_ALLOC_C_3_IOC_MCHBAR_REG     (0x0000730cU)
 
 typedef union {
   struct {
@@ -23925,27 +23803,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_C_3_3_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_C_3_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_C_3_3_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_C_3_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_C_3_3_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_C_3_3_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_C_3_3_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_C_3_3_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_C_3_3_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_C_3_3_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_C_3_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_C_3_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_C_3_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_C_3_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_C_3_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_C_3_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_C_8_8_IOC_MCHBAR desc:
+/** BDF_ALLOC_C_8_IOC_MCHBAR desc:
   * Register default value:        0x00000068
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_8_8
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_C_MCHBAR_8, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_C_MCHBAR[8]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_8
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_C_8_8_IOC_MCHBAR_REG   (0x00007320U)
+#define BDF_ALLOC_C_8_IOC_MCHBAR_REG     (0x00007320U)
 
 typedef union {
   struct {
@@ -23980,27 +23857,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_C_8_8_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_C_8_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_C_8_8_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_C_8_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_C_8_8_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_C_8_8_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_C_8_8_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_C_8_8_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_C_8_8_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_C_8_8_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_C_8_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_C_8_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_C_8_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_C_8_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_C_8_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_C_8_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_C_9_9_IOC_MCHBAR desc:
+/** BDF_ALLOC_C_9_IOC_MCHBAR desc:
   * Register default value:        0x00000069
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_9_9
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_C_MCHBAR_9, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_C_MCHBAR[9]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_9
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_C_9_9_IOC_MCHBAR_REG   (0x00007324U)
+#define BDF_ALLOC_C_9_IOC_MCHBAR_REG     (0x00007324U)
 
 typedef union {
   struct {
@@ -24035,27 +23911,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_C_9_9_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_C_9_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_C_9_9_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_C_9_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_C_9_9_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_C_9_9_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_C_9_9_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_C_9_9_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_C_9_9_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_C_9_9_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_C_9_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_C_9_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_C_9_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_C_9_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_C_9_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_C_9_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_C_10_10_IOC_MCHBAR desc:
+/** BDF_ALLOC_C_10_IOC_MCHBAR desc:
   * Register default value:        0x0000006A
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_10_10
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_C_MCHBAR_10, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_C_MCHBAR[10]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_10
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_C_10_10_IOC_MCHBAR_REG (0x00007328U)
+#define BDF_ALLOC_C_10_IOC_MCHBAR_REG    (0x00007328U)
 
 typedef union {
   struct {
@@ -24090,27 +23965,26 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_C_10_10_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_C_10_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_C_10_10_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_C_10_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_C_10_10_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_C_10_10_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_C_10_10_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_C_10_10_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_C_10_10_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_C_10_10_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_C_10_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_C_10_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_C_10_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_C_10_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_C_10_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_C_10_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
-/** BDF_ALLOC_C_11_11_IOC_MCHBAR desc:
+/** BDF_ALLOC_C_11_IOC_MCHBAR desc:
   * Register default value:        0x0000006B
-  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_11_11
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.BDF_ALLOC_C_MCHBAR_11, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.BDF_ALLOC_C_MCHBAR[11]
+  * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/BDF_ALLOC_C_MCHBAR_11
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Indicate BDF of device. This register is tied to the relevant CAPID and DEVEN of the device its represents
   */
 
-#define BDF_ALLOC_C_11_11_IOC_MCHBAR_REG (0x0000732cU)
+#define BDF_ALLOC_C_11_IOC_MCHBAR_REG    (0x0000732cU)
 
 typedef union {
   struct {
@@ -24145,22 +24019,21 @@ typedef union {
   UINT32 Data;
   UINT16 Data16[2];
   UINT8  Data8[4];
-} BDF_ALLOC_C_11_11_IOC_MCHBAR_STRUCT;
+} BDF_ALLOC_C_11_IOC_MCHBAR_STRUCT;
 
-#define BDF_ALLOC_C_11_11_IOC_MCHBAR_WIDTH 32
+#define BDF_ALLOC_C_11_IOC_MCHBAR_WIDTH 32
 
-#define BDF_ALLOC_C_11_11_IOC_MCHBAR_FUNC_LSB 0x0000
-#define BDF_ALLOC_C_11_11_IOC_MCHBAR_FUNC_SIZE 0x0003
-#define BDF_ALLOC_C_11_11_IOC_MCHBAR_DEVICE_LSB 0x0003
-#define BDF_ALLOC_C_11_11_IOC_MCHBAR_DEVICE_SIZE 0x0005
-#define BDF_ALLOC_C_11_11_IOC_MCHBAR_BUS_LSB 0x0008
-#define BDF_ALLOC_C_11_11_IOC_MCHBAR_BUS_SIZE 0x0008
+#define BDF_ALLOC_C_11_IOC_MCHBAR_FUNC_LSB 0x0000
+#define BDF_ALLOC_C_11_IOC_MCHBAR_FUNC_SIZE 0x0003
+#define BDF_ALLOC_C_11_IOC_MCHBAR_DEVICE_LSB 0x0003
+#define BDF_ALLOC_C_11_IOC_MCHBAR_DEVICE_SIZE 0x0005
+#define BDF_ALLOC_C_11_IOC_MCHBAR_BUS_LSB 0x0008
+#define BDF_ALLOC_C_11_IOC_MCHBAR_BUS_SIZE 0x0008
 
 
 /** IOC_PMC_DEVEN_A_IOC_MCHBAR desc:
   * Register default value:        0x00000400
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/IOC_PMC_DEVEN_A_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_DEVEN_A_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.IOC_PMC_DEVEN_A_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Allows for enabling/disabling of type0 devices and functions that are within the CPU package
   */
@@ -24478,7 +24351,6 @@ typedef union {
 /** IOC_PMC_DEVEN_B_IOC_MCHBAR desc:
   * Register default value:        0x00011300
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/IOC_PMC_DEVEN_B_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_DEVEN_B_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.IOC_PMC_DEVEN_B_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Allows for enabling/disabling of RP
   */
@@ -24884,7 +24756,6 @@ typedef union {
 /** IOC_PMC_DEVEN_C_IOC_MCHBAR desc:
   * Register default value:        0x00000F0F
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/IOC_PMC_DEVEN_C_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_DEVEN_C_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.IOC_PMC_DEVEN_C_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * Allows for enabling/disabling of typeC devices and functions that are within the CPU package
   */
@@ -25220,7 +25091,6 @@ typedef union {
 /** LAC_PCI_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/LAC_PCI_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.LAC_PCI_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.LAC_PCI_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register controls steering of MDA cycles and a fixed DRAM hole from 15-16MB. There can only be at most one MDA device in the system.
   */
@@ -26714,7 +26584,6 @@ typedef union {
 /** LAC_TCSS_PCI_IOC_MCHBAR desc:
   * Register default value:        0x00000000
   * Register full path in IP: SAF_SOUTH/saf_south/ioc/IOP_REGISTERS_BANK/IOC_PMC_CAPID_DEVEN_MCHBAR/LAC_TCSS_PCI_MCHBAR
-  * Std path: VER=1, UVM=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.LAC_TCSS_PCI_MCHBAR, OSX=SAF_SOUTH.saf_south.ioc.IOP_REGISTERS_BANK.IOC_PMC_CAPID_DEVEN_MCHBAR_56_82.LAC_TCSS_PCI_MCHBAR
   * Security PolicyGroup: IOP_LT_SA_W_PG
   * This register controls steering of MDA cycles and a fixed DRAM hole from 15-16MB. There can only be at most one MDA device in the system.
   */

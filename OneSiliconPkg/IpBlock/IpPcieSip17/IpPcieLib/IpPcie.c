@@ -743,7 +743,7 @@ SipIsPhyLanePgEnabled (
 
   @param[in] pInst  *pInst
 **/
-VOID
+void
 SipL1ssProprietaryConfiguration (
   IP_PCIE_INST      *pInst
   )
@@ -762,12 +762,12 @@ SipL1ssProprietaryConfiguration (
 /**
   Perform write operation on RWO fileds to ensure locking of these registers
 
-  @param[in] pInst  *pInst
+  @param[in] pInst               *pInst
 **/
-VOID
-SipLockCapRegisters (
-  IP_PCIE_INST  *pInst
-  )
+void
+SipLockCapRegisters(
+  IP_PCIE_INST    *pInst
+)
 {
   UINT32  Data32;
   UINT16  Data16;
@@ -790,8 +790,6 @@ SipLockCapRegisters (
     { IMRLE_PCIE_PRVT_REG, IMRLE_PCIE_PRVT_WIDTH }, { SRL_PCIE_PRVT_REG, SRL_PCIE_PRVT_WIDTH }, 
     { DRPC_PCIE_PRVT_REG, DRPC_PCIE_PRVT_WIDTH }
   };
-
-  PRINT_LEVEL1 ("%s(%d)\n", __FUNCTION__, pInst->RpIndex);
 
   RwoFieldSize = sizeof (RwoCfgRegisters) / sizeof (struct RegOffSetSzInfo);
   for (RwoFieldIndex = 0; RwoFieldIndex < RwoFieldSize; ++RwoFieldIndex) {
@@ -823,28 +821,42 @@ SipLockCapRegisters (
 }
 
 /**
-  Initiate Speed Change
+  Initiate Speed change
 
   @param[in] pInst               *pInst
-  @param[in] MaxLinkSpeed         Lowest of LCAP.MLS, EndPointMaxSpeed
+  @param[in] MaxLinkSpeed         Max Link Speed
 
   @retval  IpCsiStsSuccess        The function completes successfully
   @retval  IpCsiStsErrorNullPtr   pInst was NULL
 **/
 IP_CSI_STATUS
-IpPcieRpSpeedChangeStart (
-  IP_PCIE_INST  *pInst,
-  UINT8         MaxLinkSpeed
+IpPcieRpSpeedChange (
+  IP_PCIE_INST    *pInst,
+  UINT8            MaxLinkSpeed
   )
 {
-  MPC2_PCIE_CFG_STRUCT    Mpc2;
-  ACGR3S2_PCIE_CFG_STRUCT Acgr3s2;
-  LCTL_PCIE_CFG_STRUCT    Lctl;
-  LCTL2_PCIE_CFG_STRUCT   Lctl2;
-  LCTL3_PCIE_CFG_STRUCT   Lctl3;
-  LSTS_PCIE_CFG_STRUCT    Lsts;
-  UINT16                  FomsCpValue;
-  EQCFG4_PCIE_CFG_STRUCT  EqCfg4;
+  UINT32                            TimeoutCount;
+  UINT32                            NumOfRootPortsToTrain;
+  MPC2_PCIE_CFG_STRUCT              Mpc2;
+  ACGR3S2_PCIE_CFG_STRUCT           Acgr3s2;
+  LCTL_PCIE_CFG_STRUCT              Lctl;
+  LCTL2_PCIE_CFG_STRUCT             Lctl2;
+  LCTL3_PCIE_CFG_STRUCT             Lctl3;
+  LSTS_PCIE_CFG_STRUCT              Lsts;
+  LSTS2_PCIE_CFG_STRUCT             Lsts2;
+  PCIESTS1_PCIE_CFG_STRUCT          Pciests1;
+  PX32EQCFG1_PCIE_MEM_RCRB_STRUCT   Px32EqCfg1;
+  UINT32                            LtssmState;
+  UINT16                            FomsCpValue;
+  PL16S_PCIE_CFG_STRUCT             Pl16s;
+  G5STS_PCIE_CFG_STRUCT             G5sts;
+  EQCFG1_PCIE_CFG_STRUCT            EqCfg1;
+  EQCFG4_PCIE_CFG_STRUCT            EqCfg4;
+  UINT8                             EqReAttemptCount;
+  UINT16                            Tls;
+  UINT16                            Cls;
+
+  LtssmState = 0x33; //  LTSSMSTATE L0
 
   if (pInst == NULL) {
     PRINT_ERROR_NO_CNTXT ("ERROR: %s: Invalid pInst\n", __FUNCTION__);
@@ -856,9 +868,8 @@ IpPcieRpSpeedChangeStart (
     return IpCsiStsErrorBadParam;
   }
 
-  PRINT_LEVEL1 ("%s(%d)\nMaxLinkSpeed = %d\n", __FUNCTION__, pInst->RpIndex, MaxLinkSpeed);
-
-  pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
+  PRINT_LEVEL1 ("%s Start (%d) \n", __FUNCTION__, pInst->RpIndex);
+  PRINT_LEVEL1 ("MaxLinkSpeed = %d \n", MaxLinkSpeed);
 
   if (pInst->PcieRpCommonConfig.EnableDtr) {
     if (IpPcieGetDtrStat(pInst) == IpPcieDtrReady) {
@@ -890,6 +901,8 @@ IpPcieRpSpeedChangeStart (
   /// PCH BIOS Spec Section 8.14 Additional PCI Express* Programming Steps
   /// NOTE: Detection of Non-Complaint PCI Express Devices
   ///
+  NumOfRootPortsToTrain = 0;
+
   if ((UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PCI_VENDOR_ID_OFFSET, IpWrRegFlagSize16Bits) == 0xFFFF) {
     PRINT_LEVEL1 ("Device unknown at RootPort %d\n", pInst->RpIndex);
     if (pInst->PcieRpCommonConfig.EnableDtr) {
@@ -902,14 +915,15 @@ IpPcieRpSpeedChangeStart (
   PRINT_LEVEL1 ("Device present at RootPort %d\n", pInst->RpIndex);
   //Section 6.15 C Step 2
   Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-  if (Lsts.Bits.cls == MaxLinkSpeed) {
-    PRINT_LEVEL1 ("IpPcieRpSpeedChangeEnd for Rootport %d (CLS = Gen%d)\n", pInst->RpIndex, Lsts.Bits.cls);
+  Cls = Lsts.Bits.cls;
+  if(Cls == MaxLinkSpeed){
+    PRINT_LEVEL1 ("CLS = MLS\n");
     return IpCsiStsSuccess;
   }
 
   if (MaxLinkSpeed > 1) {
-    PRINT_LEVEL1 ("Program TLS to Gen%d\n", MaxLinkSpeed);
     // Program Link Control 2 register 0x0070
+    PRINT_LEVEL1 ("Program TLS to %d\n", MaxLinkSpeed);
     Lctl2.Data     = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
     Lctl2.Bits.tls = MaxLinkSpeed;
     IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, Lctl2.Data, IpWrRegFlagSize16Bits);
@@ -917,10 +931,10 @@ IpPcieRpSpeedChangeStart (
     // Section 6.15 c step 4
     Lctl2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
     if (Lctl2.Bits.tls == IpPcieGen2) {
+      PRINT_LEVEL1 ("TLS is Gen2 so perform RL\n");
       Lctl.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
       Lctl.Bits.rl = 1;
       IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, Lctl.Data, IpWrRegFlagSize16Bits);
-      PRINT_LEVEL1 ("IpPcieRpSpeedChangeEnd for Rootport %d (TLS = Gen2)\n", pInst->RpIndex);
       return IpCsiStsSuccess;
     }
 
@@ -942,6 +956,7 @@ IpPcieRpSpeedChangeStart (
       IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, Lctl.Data, IpWrRegFlagSize16Bits);
 
       pInst->PrivateConfig.LinkRetrainInProgress = TRUE;
+      NumOfRootPortsToTrain++;
     }
   }
 
@@ -977,195 +992,164 @@ IpPcieRpSpeedChangeStart (
   }
   PRINT_LEVEL1 ("FomsCpValue : %x\n", FomsCpValue);
   /// Program Equalization Configuration 4 register 0x048C
-  EqCfg4.Data        = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG4_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+  EqCfg4.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG4_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+  PRINT_LEVEL1 ( "FomsCp : %x\n", EqCfg4.Bits.fomscp);
   EqCfg4.Bits.fomscp = FomsCpValue;
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, EQCFG4_PCIE_CFG_REG, EqCfg4.Data, IpWrRegFlagSize32Bits);
   EqCfg4.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG4_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-  PRINT_LEVEL1 ( "FomsCp : %x\n", EqCfg4.Bits.fomscp);
-
-  return IpCsiStsSuccess;
-}
-
-
-/**
-  Checks for Link Active after initiating speed change in IpPcieRpSpeedChangeStart API.
-  if link is not retrained sucessfully, revert target link speed to current link speed.
-
-  @param[in] pInst               *pInst
-  @param[in] MaxLinkSpeed        Lowest of LCAP.MLS, EndPointMaxSpeed
-  @param[in] TimeoutValue        Timeout value to poll for link active after link retrain
-
-  @retval  IpCsiStsSuccess       The function completes successfully
-  @retval  IpCsiStsErrorNullPtr  pInst was NULL
-**/
-IP_CSI_STATUS
-IpPcieRpSpeedChangeEnd (
-  IP_PCIE_INST    *pInst,
-  UINT8            MaxLinkSpeed,
-  UINT32           TimeoutValue
-  )
-{
-  UINT32                           TimeoutCount;
-  ID_PCIE_CFG_STRUCT               Id;
-  LCTL_PCIE_CFG_STRUCT             Lctl;
-  LCTL2_PCIE_CFG_STRUCT            Lctl2;
-  LSTS_PCIE_CFG_STRUCT             Lsts;
-  LSTS2_PCIE_CFG_STRUCT            Lsts2;
-  PCIESTS1_PCIE_CFG_STRUCT         Pciests1;
-  PX32EQCFG1_PCIE_MEM_RCRB_STRUCT  Px32EqCfg1;
-  UINT32                           LtssmState;
-  PL16S_PCIE_CFG_STRUCT            Pl16s;
-  G5STS_PCIE_CFG_STRUCT            G5sts;
-  EQCFG1_PCIE_CFG_STRUCT           EqCfg1;
-  EQCFG4_PCIE_CFG_STRUCT           EqCfg4;
-  UINT8                            EqReAttemptCount;
-  UINT16                           Cls;
-
-  LtssmState = 0x33; //  LTSSMSTATE L0
-
-  if (pInst == NULL) {
-    PRINT_ERROR_NO_CNTXT ("ERROR: %s: Invalid pInst\n", __FUNCTION__);
-    return IpCsiStsErrorNullPtr;
-  }
-
-  if (MaxLinkSpeed > IpPcieGen5) {
-    PRINT_ERROR_NO_CNTXT ("ERROR: %s: Invalid MaxLinkSpeed\n", __FUNCTION__);
-    return IpCsiStsErrorBadParam;
-  }
-
-  PRINT_LEVEL1 ("%s(%d)\nMaxLinkSpeed = %d\n", __FUNCTION__, pInst->RpIndex, MaxLinkSpeed);
-
-  if (IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PCI_VENDOR_ID_OFFSET, IpWrRegFlagSize16Bits) == 0xFFFF) {
-    PRINT_ERROR ("ERROR: Invalid PCIe Port\n");
-    return IpCsiStsSuccess;
-  }
 
   //
-  // Check for link active on retrained link
+  // 150 ms timeout while checking for link active on retrained link
   //
-  for (TimeoutCount = 0; pInst->PrivateConfig.LinkRetrainInProgress && (TimeoutCount <= TimeoutValue); TimeoutCount++) {
+  for (TimeoutCount = 0; ((NumOfRootPortsToTrain != 0) && (TimeoutCount < LINK_TIMEOUT)); TimeoutCount++) {
     //
     // Delay 100 us
     //
     IpWrDelayUs (pInst->TimeCntxt, 100);
-
-    Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-    Pciests1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PCIESTS1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-    if ((Lsts.Bits.la) && (Lsts.Bits.cls == MaxLinkSpeed) && (Pciests1.Bits.ltsmstate == LtssmState)) {
-      switch (MaxLinkSpeed) {
-        case IpPcieGen3:
-          Lsts2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-          EqCfg1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-          if(Lsts2.Bits.eqp3s && EqCfg1.Bits.haed) {
-            pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
-            PRINT_LEVEL1 ("Rootport %d At Gen3\n", pInst->RpIndex);
-          }
-          break;
-        case IpPcieGen4:
-          Pl16s.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PL16S_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-          EqCfg4.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG4_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-          if(Pl16s.Bits.eqp3sg4 && EqCfg4.Bits.px16ghaed){
-            pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
-            PRINT_LEVEL1 ("Rootport %d At Gen4\n", pInst->RpIndex);
-          }
-          break;
-        case IpPcieGen5:
-          G5sts.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, G5STS_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-          Px32EqCfg1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Mem_Rcrb, PX32EQCFG1_PCIE_MEM_RCRB_REG, IpWrRegFlagSize32Bits);
-          if(G5sts.Bits.eq32ph3succ && Px32EqCfg1.Bits.px32ghaed){
-            pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
-            PRINT_LEVEL1 ("Rootport %d At Gen5\n", pInst->RpIndex);
-          }
-          break;
-        default:
-          break;
+    //
+    // Check for remaining root port which was link retrained
+    //
+    if (pInst->PrivateConfig.LinkRetrainInProgress) {
+      Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+      Cls = Lsts.Bits.cls;
+      //
+      // Program Link Status register 0x0052
+      // If the link is active, clear the bitmap
+      //
+      Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+      Pciests1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PCIESTS1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+      if ((Lsts.Bits.la) &&
+      (Cls == MaxLinkSpeed) &&
+      (Pciests1.Bits.ltsmstate == LtssmState)) {
+        switch(MaxLinkSpeed) {
+          case IpPcieGen3:
+            Lsts2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+            EqCfg1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+            if(Lsts2.Bits.eqp3s && EqCfg1.Bits.haed) {
+              pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
+              NumOfRootPortsToTrain--;
+              PRINT_LEVEL1 ("Rootport %d At Gen3\n", pInst->RpIndex);
+            }
+            break;
+          case IpPcieGen4:
+            Pl16s.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PL16S_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+            EqCfg4.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG4_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+            if(Pl16s.Bits.eqp3sg4 && EqCfg4.Bits.px16ghaed){
+              pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
+              NumOfRootPortsToTrain--;
+              PRINT_LEVEL1 ("Rootport %d At Gen4\n", pInst->RpIndex);
+            }
+            break;
+          case IpPcieGen5:
+            G5sts.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, G5STS_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+            Px32EqCfg1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Mem_Rcrb, PX32EQCFG1_PCIE_MEM_RCRB_REG, IpWrRegFlagSize32Bits);
+            if(G5sts.Bits.eq32ph3succ && Px32EqCfg1.Bits.px32ghaed){
+              pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
+              NumOfRootPortsToTrain--;
+              PRINT_LEVEL1 ("Rootport %d At Gen5\n", pInst->RpIndex);
+            }
+            break;
+          default:
+            break;
+        }
       }
     }
   }
 
-  Lsts.Data  = (UINT16)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-  Id.Data    = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, ID_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-  Lctl2.Data = (UINT16)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-  PRINT_LEVEL1 ("After 1st attempt CLS = %d MaxLinkSpeed = %d TLS = %d DID = 0x%x\n", Lsts.Bits.cls, MaxLinkSpeed, Lctl2.Bits.tls, Id.Bits.did);
-
-  if (pInst->PrivateConfig.LinkRetrainInProgress) {
-    //
-    // Re-attempt 'EqReAttemptCount' times
-    // to train ports not trained to Gen speed requested
-    // Section 6.15 c step 5 re-attempt part.
-    //
+  //
+  // Re-attempt 'EqReAttemptCount' times
+  // to train ports not trained to Gen speed requested
+  // Section 6.15 c step 5 re-attempt part.
+  //
+  if(NumOfRootPortsToTrain != 0){
+    PRINT_LEVEL1 ("Reattempt NumOfRootPortsToTrain %d\n", NumOfRootPortsToTrain);
     for (EqReAttemptCount = 2; EqReAttemptCount > 0; EqReAttemptCount--) {
-      Lctl2.Data = (UINT16)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-      Lsts.Data  = (UINT16)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-      PRINT_LEVEL1 ("ReAttempting EQ at - EqReAttemptCount %d TargetLinkSpeed %d CurrentLinkSpeed %d\n", EqReAttemptCount, Lctl2.Bits.tls, Lsts.Bits.cls);
+      Lctl2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+      Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+      Tls = Lctl2.Bits.tls;
+      Cls = Lsts.Bits.cls;
+      PRINT_LEVEL1 ("ReAttempting EQ at - EqReAttemptCount %d TargetLinkSpeed %d CurrentLinkSpeed %d\n", EqReAttemptCount, Tls, Cls);
 
-      if ((Lsts.Bits.cls != MaxLinkSpeed) && (Lsts.Bits.cls >= IpPcieGen3)) {
-        PRINT_LEVEL1 ("ReAttempt at more than Gen3\n");
-        //
-        // Set TLS to CLS + 1
-        //
-        Lctl2.Bits.tls = Lsts.Bits.cls + 1;
-        IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, Lctl2.Data, IpWrRegFlagSize16Bits);
-        //
-        // Retrain link
-        //
-        Lctl.Data    = (UINT16)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-        Lctl.Bits.rl = 1;
-        IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, Lctl.Data, IpWrRegFlagSize16Bits);
-        pInst->PrivateConfig.LinkRetrainInProgress = TRUE;
+      if(Tls < MaxLinkSpeed){
+        if((EqReAttemptCount) && (Cls != Tls) && (Cls >= IpPcieGen3)){
+          PRINT_LEVEL1 ("ReAttempt at more than Gen3\n");
+          //
+          // Set TLS to CLS + 1
+          //
+          Lctl2.Bits.tls = Cls + 1;
+          IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, Lctl2.Data, IpWrRegFlagSize16Bits);
+          //
+          // Retrain link
+          //
+          Lctl.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+          Lctl.Bits.rl = 1;
+          IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, Lctl.Data, IpWrRegFlagSize16Bits);
+          NumOfRootPortsToTrain++;
+        }
       }
 
       //
       // 150 ms timeout while checking for link active on retrained link
       //
-      for (TimeoutCount = 0; pInst->PrivateConfig.LinkRetrainInProgress && (TimeoutCount < LINK_TIMEOUT); TimeoutCount++) {
+      for (TimeoutCount = 0; ((NumOfRootPortsToTrain != 0) && (TimeoutCount < LINK_TIMEOUT)); TimeoutCount++) {
         //
         // Delay 100 us
         //
         IpWrDelayUs (pInst->TimeCntxt, 100);
         //
-        // Check for link active on retrained link
+        // Check for remaining root port which was link retrained
         //
-        Lctl2.Data    = (UINT16)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-        Lsts.Data     = (UINT16)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-        Pciests1.Data = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PCIESTS1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-        if ((Lsts.Bits.la) && (Lsts.Bits.cls == MaxLinkSpeed) && (Pciests1.Bits.ltsmstate == LtssmState)) {
-          switch (Lctl2.Bits.tls) {
-            case IpPcieGen3:
-              Lsts2.Data  = (UINT16)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-              EqCfg1.Data = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-              if (Lsts2.Bits.eqp3s && EqCfg1.Bits.haed) {
-                pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
-                PRINT_LEVEL1 ("Rootport %d At Gen3\n", pInst->RpIndex);
-              }
-              break;
-            case IpPcieGen4:
-              Pl16s.Data  = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PL16S_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-              EqCfg4.Data = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG4_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-              if (Pl16s.Bits.eqp3sg4 && EqCfg4.Bits.px16ghaed) {
-                pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
-                PRINT_LEVEL1 ("Rootport %d At Gen4\n", pInst->RpIndex);
-              }
-              break;
-            case IpPcieGen5:
-              G5sts.Data      = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, G5STS_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-              Px32EqCfg1.Data = (UINT32)IpWrRegRead (pInst->RegCntxt_Mem_Rcrb, PX32EQCFG1_PCIE_MEM_RCRB_REG, IpWrRegFlagSize32Bits);
-              if (G5sts.Bits.eq32ph3succ && Px32EqCfg1.Bits.px32ghaed) {
-                pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
-                PRINT_LEVEL1 ("Rootport %d At Gen5\n", pInst->RpIndex);
-              }
-              break;
-            default:
-              break;
+        if (pInst->PrivateConfig.LinkRetrainInProgress) {
 
+          Lctl2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+          Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+          Tls = Lctl2.Bits.tls;
+          Cls = Lsts.Bits.cls;
+
+          //
+          // Program Link Status register 0x0052
+          // If the link is active, clear the bitmap
+          //
+          Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+          Pciests1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PCIESTS1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+          if ((Lsts.Bits.la) &&
+          (Cls == MaxLinkSpeed) &&
+          (Pciests1.Bits.ltsmstate == LtssmState)) {
+            switch(Tls) {
+              case IpPcieGen3:
+                Lsts2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
+                EqCfg1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+                if(Lsts2.Bits.eqp3s && EqCfg1.Bits.haed) {
+                  pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
+                  NumOfRootPortsToTrain--;
+                  PRINT_LEVEL1 ("Rootport %d At Gen3\n", pInst->RpIndex);
+                }
+                break;
+              case IpPcieGen4:
+                Pl16s.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PL16S_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+                EqCfg4.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, EQCFG4_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+                if(Pl16s.Bits.eqp3sg4 && EqCfg4.Bits.px16ghaed){
+                  pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
+                  NumOfRootPortsToTrain--;
+                  PRINT_LEVEL1 ("Rootport %d At Gen4\n", pInst->RpIndex);
+                }
+                break;
+              case IpPcieGen5:
+                G5sts.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, G5STS_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
+                Px32EqCfg1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Mem_Rcrb, PX32EQCFG1_PCIE_MEM_RCRB_REG, IpWrRegFlagSize32Bits);
+                if(G5sts.Bits.eq32ph3succ && Px32EqCfg1.Bits.px32ghaed){
+                  pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
+                  NumOfRootPortsToTrain--;
+                  PRINT_LEVEL1 ("Rootport %d At Gen5\n", pInst->RpIndex);
+                }
+                break;
+              default:
+                break;
+            }
           }
         }
       }
     }
-    Lsts.Data  = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-    Id.Data    = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, ID_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-    Lctl2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-    PRINT_LEVEL1 ("After reattempt CLS = %d MaxLinkSpeed = %d TLS = %d DID = 0x%x\n", Lsts.Bits.cls, MaxLinkSpeed, Lctl2.Bits.tls, Id.Bits.did);
   }
 
   //
@@ -1173,21 +1157,8 @@ IpPcieRpSpeedChangeEnd (
   // or CLS still doesn't match MLS, revert back to CLS
   // Section 6.15 c step 6
   //
-  if (pInst->PrivateConfig.LinkRetrainInProgress) {
-    //
-    // Set TLS to CLS
-    //
-    Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-    PRINT_LEVEL1 ("[Rootport %d]Device not trained - reverting to CLS at %d\n", pInst->RpIndex, Lsts.Bits.cls);
-    Lctl2.Data    = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-    Lctl2.Bits.tls = Lsts.Bits.cls;
-    IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, Lctl2.Data, IpWrRegFlagSize16Bits);
-    //
-    // Retrain link
-    //
-    Lctl.Data   = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-    Lctl.Bits.rl = 1;
-    IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, Lctl.Data, IpWrRegFlagSize16Bits);
+  if (NumOfRootPortsToTrain != 0) {
+    PRINT_LEVEL1 ("Still not trained\n");
 
     if (pInst->PcieRpCommonConfig.EnableDtr) {
       //
@@ -1219,13 +1190,13 @@ IpPcieRpSpeedChangeEnd (
     // Wait for retrain completion or timeout in 22.5ms. Do not expect failure as
     // port was detected and trained at CLS earlier
     //
-    for (TimeoutCount = 0; (TimeoutCount < 150); TimeoutCount++) {
+    for (TimeoutCount = 0; ((NumOfRootPortsToTrain != 0) && (TimeoutCount < 150)); TimeoutCount++) {
       //
       // Delay 150 us
       //
       IpWrDelayUs (pInst->TimeCntxt, 150);
       //
-      // Check for link active on retrained link
+      // Check for remaining root port which was link retrained
       //
       if (pInst->PrivateConfig.LinkRetrainInProgress) {
         PRINT_LEVEL1 ("Still not trained in the loop - retrain in progress\n");
@@ -1234,11 +1205,14 @@ IpPcieRpSpeedChangeEnd (
         //
         Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
         PRINT_LEVEL1 ("LA status at: %d\n", Lsts.Bits.la);
+        Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
         PRINT_LEVEL1 ("CLS status at: %d\n", Lsts.Bits.cls);
         Pciests1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Sb, PCIESTS1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
         PRINT_LEVEL1 ("LTSSM status at: %d\n", Pciests1.Bits.ltsmstate);
-        if ((Lsts.Bits.la != 0) && (Lsts.Bits.cls == MaxLinkSpeed) && (Pciests1.Bits.ltsmstate == LtssmState)) {
-          pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
+        if((Lsts.Bits.la != 0) &&
+           (Lsts.Bits.cls == (UINT16)MaxLinkSpeed) &&
+           (Pciests1.Bits.ltsmstate == LtssmState)) {
+            pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
         }
       }
     }
@@ -1257,11 +1231,8 @@ IpPcieRpSpeedChangeEnd (
   }
 
   SipResetErrorCounts (pInst);
-
-  Lsts.Data  = (UINT16)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-  Id.Data    = (UINT32)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, ID_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-  Lctl2.Data = (UINT16)IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-  PRINT_LEVEL1 ("At end of speed change CLS = %d MaxLinkSpeed = %d TLS = %d DID = 0x%x\n", Lsts.Bits.cls, MaxLinkSpeed, Lctl2.Bits.tls, Id.Bits.did);
+  SipLockCapRegisters (pInst);
+  PRINT_LEVEL1 ("%s End \n", __FUNCTION__);
 
   return IpCsiStsSuccess;
 }

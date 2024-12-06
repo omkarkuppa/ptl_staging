@@ -28,6 +28,9 @@
 #define GCD_WOPCM_SIZE_2_MB       2
 #define WOPCM_TOTAL_SIZE_4_MB     4
 #define WOPCM_TOTAL_SIZE_8_MB     8
+#ifndef BASE_32MB
+#define BASE_32MB  0x02000000
+#endif
 
 //
 // GMD ID
@@ -238,5 +241,21 @@ typedef enum {
   MemoryTypeLpddr5                   = 0x23,
   MemoryTypeHBM3                     = 0x24
 } MEMORY_DEVICE_TYPE;
+
+#define B2D_SCRATCH0_REG         0x102000
+
+typedef union {
+  struct {
+    UINT32 rsvd_0          : 16;
+                            /* Bits[15:0] */
+    UINT32 Gsm2Size        : 4;
+                            /* Bits[19:16] */
+    UINT32 Gsm2BaseAddress : 12;
+                            /* Bits[31:20] */
+  } Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} B2D_SCRATCH0_STRUCT;
 
 #endif // _IP_IGPU_DEFINES_H_

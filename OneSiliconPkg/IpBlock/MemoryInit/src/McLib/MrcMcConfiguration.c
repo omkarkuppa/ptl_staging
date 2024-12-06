@@ -122,6 +122,9 @@ MrcMcFinalize (
   // Configure LPModes
   MrcLpMode4Enable (MrcData);
 
+  // Enable parity generation and disable parity checking by default
+  MrcEnableMcParityGen (MrcData);
+
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     if (!(MrcControllerExist (MrcData, Controller))) {
       continue;

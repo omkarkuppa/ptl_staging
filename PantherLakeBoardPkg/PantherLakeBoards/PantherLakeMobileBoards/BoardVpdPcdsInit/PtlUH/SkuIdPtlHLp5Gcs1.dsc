@@ -325,6 +325,9 @@
   # UsbC Retimer Capsule Debug Progress Code Print: FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|*|FALSE
 
+  # Control the EC debug Info Print level before executing any command for PD Bridge, default is DEBUG_VERBOSE
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel|*|0x00400000
+
   # USB Connector Board Config : {ConnectorConnectable, ConnectorVisibility, ConnectorType, UsbOcPinType, UsbOcPin, Usb2Controller, Usb2PortNum, Usb3Controller, Usb3PortNum}
   gBoardModuleTokenSpaceGuid.VpdPcdUsbConnector| * |{CODE(
   {
@@ -385,7 +388,6 @@
     0xFFFFFFFF                   // terminator
   })}
   gBoardModuleTokenSpaceGuid.VpdPcdBoardRtd3TableSignature|*|{'P', 't', 'l', '_', 'H', 'G', 'c', 's'}
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardSsdRtd3TableSignature|*|{'P', 't', 'l', '_', 'H', 'S', 's', 'd'}
   gBoardModuleTokenSpaceGuid.VpdPcdBatterySupport|*|($(BOARD_REAL_BATTERY_SUPPORTED)|$(BOARD_VIRTUAL_BATTERY_SUPPORTED))
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamSensor|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdZPoddConfig|*|0
@@ -768,6 +770,14 @@
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cSlaveAddress|*|0x0
 
 [PcdsDynamicHii.common.SkuIdPtlHLp5Gcs1.STANDARD]
+  #
+  # DDT Fan
+  #
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen2Participant|0x1                                   # Sensor Device 2
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen3Participant|0x1                                   # Sensor Device 3
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen4Participant|0x1                                   # Sensor Device 4
+  gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen5Participant|0x1                                   # Sensor Device 5
+
   gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[0]|0x2                                    # Connected device
   gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[3]|0x1                                    # Connected device
   gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[4]|0x2                                    # Connected device

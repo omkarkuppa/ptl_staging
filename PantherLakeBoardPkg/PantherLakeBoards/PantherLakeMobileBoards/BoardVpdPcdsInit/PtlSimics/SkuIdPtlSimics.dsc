@@ -316,6 +316,9 @@
   # UsbC Retimer Capsule Debug Progress Code Print: FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|*|FALSE
 
+  # Control the EC debug Info Print level before executing any command for PD Bridge, default is DEBUG_VERBOSE
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel|*|0x00400000
+
   #
   # *** IMPORTANT ***
   #   All of the USBC connectors MUST be described at the beginning of the table.
@@ -415,7 +418,6 @@
   })}
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardRtd3TableSignature|*|{'P', 't', 'l', 'U', 'H', 'R', 'v', 'p'}
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardSsdRtd3TableSignature|*|{'P', 't', 'l', 'U', 'H', 'S', 's', 'd'}
   gBoardModuleTokenSpaceGuid.VpdPcdBatterySupport|*|($(BOARD_REAL_BATTERY_SUPPORTED)|$(BOARD_VIRTUAL_BATTERY_SUPPORTED))
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamSensor|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdZPoddConfig|*|0

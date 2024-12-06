@@ -69,6 +69,7 @@
 
 [LibraryClasses]
   HobLib
+  PcdLib
   BaseLib
   UefiLib
   DebugLib
@@ -79,5 +80,9 @@
   BaseMemoryLib
   MemoryAllocationLib
 
+[Pcd]
+  gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdPprCapability  ## PRODUCES
+
 [Guids]
+  gSiMemoryInfoDataGuid       ## CONSUMES
   gAmtPprEnableVariableGuid   ## PRODUCES

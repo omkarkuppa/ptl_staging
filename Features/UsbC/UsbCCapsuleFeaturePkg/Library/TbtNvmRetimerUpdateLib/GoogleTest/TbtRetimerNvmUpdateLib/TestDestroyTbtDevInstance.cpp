@@ -19,13 +19,18 @@
 @par Specification
 **/
 
-//**********************************************************
-// DestroyTbtDevInstance Unit Test                         *
-//**********************************************************
-class DestroyTbtDevInstanceTest : public CommonMock {
+#include <GTestTbtRetimerNvmUpdateLib.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
+
+// **********************************************************
+// DestroyTbtDevInstance Unit Test                          *
+// **********************************************************
+class DestroyTbtDevInstanceTest : public Test {
   protected:
-    EFI_STATUS                     Status;
-    DISCRETE_TBT_DEV_INSTANCE      DiscreteTbtDevice;
+    EFI_STATUS                Status;
+    DISCRETE_TBT_DEV_INSTANCE DiscreteTbtDevice;
+    TBT_HOST_ROUTER           *gDevComHostMock = &LocalHrPtr;
+    MockTbtNvmDrvHr           TbtNvmDrvHrMock;
 };
 
 //
@@ -37,11 +42,13 @@ TEST_F (DestroyTbtDevInstanceTest, CorrectFlow) {
 
   DiscreteTbtDevice = (DISCRETE_TBT_DEV_INSTANCE) gDevComHostMock;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrDtor (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_Dtor (
       gDevComHostMock
-      ));
-  Status = DestroyTbtDevInstance (
-             DiscreteTbtDevice);
+      )
+    );
+
+  Status = DestroyTbtDevInstance (DiscreteTbtDevice);
   EXPECT_EQ (Status, EFI_SUCCESS);
 }

@@ -93,6 +93,30 @@ PtlPcdGetRpSbiPid (
   );
 
 /**
+  Return number of Root Ports for given PCIe Controller number
+
+  @param[in] ControllerIndex     PCIe controller index
+
+  @retval NumOfRp    Number of Root Ports for PCIe Controller
+**/
+UINT8
+PtlPcdGetPcieControllerNumOfRootPorts (
+  IN UINT32  ControllerIndex
+  );
+
+/**
+  Return number of lanes for given PCIe Controller number
+
+  @param[in] ControllerIndex     PCIe controller index
+
+  @retval NumOfLanes    Number of lanes for PCIe Controller
+**/
+UINT8
+PtlPcdGetPcieControllerNumOfLanes (
+  IN UINT32  ControllerIndex
+  );
+
+/**
   Checks if root port is decoded by IOC.
 
   @param[in] RpIndex  Root port index.

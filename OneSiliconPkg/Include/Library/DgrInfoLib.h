@@ -28,20 +28,16 @@
 #include <Register/GenerationMsr.h>
 #include <Register/Cpuid.h>
 #include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
 
 #define NO_NR_PPAM_SUPPORT                    0
 #define NR_PPAM_11_SUPPORT                    11
-#define NR_PPAM_11_SUPPORT_WITH_LEDGER_ISLAND 12
 #define NR_BRAND_IDENTITY_BITS                (BIT0 | BIT1 | BIT2)
-#define LEDGER_ISLAND_BRAND_IDENTITY_BITS     BIT4
 
 /**
   Returns PPAM version details to support Nifty Rock feature based on SKU.
 
   @retval 0    Nifty Rock feature is not supported, No need to load PPAM.
   @retval 11   Nifty Rock feature is supported with PPAM Version 1.1.
-  @retval 12   Nifty Rock feature is supported with PPAM Version 1.1 with Ledger Island PTL-Comment:RestrictedContent
 **/
 UINT8
 EFIAPI

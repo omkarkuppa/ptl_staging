@@ -330,7 +330,6 @@ STATIC UINT32 TbtHostRoutersCount = 0;
   @param[in]  ForcePwrFunc      Force power function, will be performed on a found TBT device.
                                 If NULL -> no Force Powered.
 **/
-STATIC
 TBT_HOST_ROUTER*
 GetTbtHostRouterList (
   IN UINT8            FirmwareType,
@@ -386,7 +385,6 @@ GetTbtHostRouterList (
   @param[in]  ForcePwrFunc      Force power function, will be performed on a found TBT device.
                                 If NULL -> no Force Powered.
 **/
-STATIC
 VOID
 AddTbtHostRouterList (
   IN TBT_HOST_ROUTER  *TbtHostRouter,
@@ -433,7 +431,6 @@ AddTbtHostRouterList (
   Remove the information list which in the TbtHostRouters.
   @param[in]  TbtHostRouter      Pointer to the TBT_HOST_ROUTER structure on which the method is invoked.
 **/
-STATIC
 VOID
 RemoveTbtHostRouterList (
   IN TBT_HOST_ROUTER  *TbtHostRouter

@@ -326,7 +326,8 @@ typedef struct {
 
   param = {0:RcvEn, 1:RdT, 2:WrT, 3: WrDqsT, 4:RdV, 5:WrV, 6:WrLevel,
            7:RdVBit, 8:RdVBit1, 9:RcvEnaX, 10:WrTUnMatched, 11:CmdT, 12:CmdV,
-           13:RdTN, 14:RdTP, 15:RdTDbi, 16:WrTDbi, 17:RdVDbi}
+           13:CtlV, 14:RdTN, 15:RdTP, 16:CmdTBit, 17:RdTDbi, 18:WrTDbi,
+           19:RdVDbi, 20:WrTBit, 21:RdTBit}
 **/
 typedef enum {
   RcvEna = 0,
@@ -349,6 +350,8 @@ typedef enum {
   RdTDbi,
   WrTDbi,
   RdVDbi,
+  WrTBit,
+  RdTBit,
   MarginTypeMax
 } MrcMarginTypes;
 
@@ -706,12 +709,14 @@ typedef enum {
   LoopBackRdTDqsN,
   LoopBackWriteTiming,
   LoopBackReadVoltage,
+  LoopBackTxDqs,
+  LoopBackRcvEn,
   LoopBackTasksMax
 } LoopBackTasks;
 
 typedef struct {
   UINT64  Signature;
-  UINT16  LoopbackResult[LoopBackTasksMax][MAX_CONTROLLER][MAX_CHANNEL][MAX_BYTE_IN_LP_CHANNEL][MAX_BITS];
+  UINT16  LoopbackResult[LoopBackTasksMax][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS];
 } LOOPBACK_RESULT;
 
 ///
@@ -3962,6 +3967,18 @@ MrcDdr5CkdConfig (
   );
 
 /**
+  Obtain CKD Smbus Address through SPD Smbus Address.
+
+  @param[in] MrcData - Pointer to MRC global data.
+
+  @retval mrcFail on failure, otherwise mrcSuccess.
+**/
+MrcStatus
+MrcSetupCkdAddress (
+  MrcParameters    *const MrcData
+  );
+
+/**
   This function gets the current CKD Control Word value from the CkdBuffer.
 
   @param[in] MrcData    - Pointer to global data.
@@ -3999,7 +4016,7 @@ MrcCkdBufferWrite (
   );
 
 /**
-  Obtain CKD Pin number and CKD Dimm number based on MC/Channel/Rank
+  Obtain CKD Output Pin number and CKD Dimm number based on MC/Channel/Rank
 
   @param[in]  MrcData     - Pointer to global data.
   @param[in]  Controller  - Memory Controller Number.
@@ -4019,7 +4036,19 @@ MrcCalcCkdDimmPin (
   );
 
 /**
-  Obtain Physical MC/Channel/Rank based on based on MC/Channel/Rank
+  Check CKD Clock:
+  - no more than two instances of the clock requested
+  - must be in the same CKD DIMM
+  @param[in] MrcData - Pointer to MRC global data.
+  @retval mrcFail on failure, otherwise mrcSuccess.
+**/
+MrcStatus
+MrcCkdCheckValidInstance (
+  IN MrcParameters* const MrcData
+  );
+
+/**
+  Obtain Physical MC/Channel/Rank based on based on PhyClockToCkdDimm
 
   @param[in]  MrcData     - Pointer to global data.
   @param[in]  Controller  - Memory Controller Number.
@@ -4040,25 +4069,6 @@ MrcGetDdr5ClkIndex (
   OUT    UINT32         *const PhyController,
   OUT    UINT32         *const PhyChannel,
   OUT    UINT32         *const PhyRank
-  );
-
-/**
-  Returns whether PHY Clock associated with given Controller,
-  Channel, Rank is enabled or not.
-
-  @param[in] MrcData    - Pointer to MRC global data.
-  @param[in] Controller - Controller to test.
-  @param[in] Channel    - Channel to test.
-  @param[in] Rank       - Rank to test.
-
-  @retval BOOLEAN - TRUE if enabled, FALSE otherwise.
-**/
-BOOLEAN
-MrcPhyClockExists (
-  IN MrcParameters *const MrcData,
-  IN UINT32         const Controller,
-  IN UINT32         const Channel,
-  IN UINT32         const Rank
   );
 
 /**
@@ -4258,6 +4268,19 @@ GetLoopbackTestMarginsResults (
   IN MrcParameters *const MrcData,
   IN LoopBackTasks        Task,
   IN SweepResultsBit      *PerBitResult
+  );
+
+/**
+  Display MR value from the host struct
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] MrAddr  - MR Address.
+**/
+extern
+VOID
+DisplayMRContentFromHost (
+  IN MrcParameters *const MrcData,
+  IN MrcModeRegister      MrAddr
   );
 
 #endif //_MrcCommon_h_

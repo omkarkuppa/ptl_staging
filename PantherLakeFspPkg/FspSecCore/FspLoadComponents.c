@@ -320,7 +320,6 @@ FspLoadComponents (
   UINT32                         DataStackBase;
   UINT32                         DataStackSize;
   FLASH_REGION_LIST              FlashRegionList;
-  UINT8                          AvailableMemoryBuffer[HASH_CTX_LEN_MAX];
   FSP_BUILD_MEASUREMENT_INFO     FspMeasurementInfo;
   UINT32                         TpmActivePcrBanks;
 
@@ -342,25 +341,14 @@ FspLoadComponents (
     return;
   }
 
-  ZeroMem (&FspMeasurementInfo, sizeof (FSP_BUILD_MEASUREMENT_INFO));
-  InitializeTpmAndGetActivePcrs (FspMeasurementInfo, Bspm, &TpmActivePcrBanks);
+  FspMeasurementInfo.Data = FSP_MEASUREMENT_INFO_DEFAULT;
+  InitializeTpmAndGetActivePcrs (&FspMeasurementInfo, Bspm, &TpmActivePcrBanks);
 
-  //
-  // ACM will measure and extend FSP-O for measured boot (BTG 5)
-  // BIOS should do the same if it is verified boot
-  //
-  Status = ExtendFspotRegion (FspMeasurementInfo, Fbm, TpmActivePcrBanks);
-
-  if (TRUE) { // To-do : check if FSP-O/T is verified or not
-    if (mFspVerifyApiWrapper.VerifyFspVersionApiWrapper == NULL) {
-      DEBUG ((DEBUG_INFO, "VerifyFspVersionApiWrapper is NULL ...\n"));
-      return;
-    }
-    DEBUG ((DEBUG_INFO, "FSP verifies FSP Version ...\n"));
-    Status = mFspVerifyApiWrapper.VerifyFspVersionApiWrapper (Bspm, Fbm, AvailableMemoryBuffer);
-    if (EFI_ERROR (Status)) {
-      CpuDeadLoop ();
-    }
+  if (FspMeasurementInfo.Bits.IbbStatus != EFI_SUCCESS) {
+    //
+    // Measure FSP-OT for BTG4 when it was not measured by ACM
+    //
+    ExtendFspotRegion (&FspMeasurementInfo, Fbm, TpmActivePcrBanks);
   }
 
   //
@@ -374,22 +362,22 @@ FspLoadComponents (
   InitializeFlashRegionList (&FlashRegionList);
 
   //
-  // Load BspPreMem regions
-  //
-  if (Bspm->BspSegmentCount != 0) {
-    Status = LoadBspPreMem (Bspm, &FlashRegionList, DataStackBase, DataStackSize);
-    if (Status == EFI_SUCCESS) {
-      ExtendBspRegion (FspMeasurementInfo, Bspm, TpmActivePcrBanks);
-    }
-  }
-
-  //
   // Load FSP-M
   //
   if ((Bspm->FspmLoadingPolicy & BIT0) == LOADING_FSPM) {
     Status = LoadFspm (Bspm, Fbm, &FlashRegionList, DataStackBase, DataStackSize);
     if (Status == EFI_SUCCESS) {
-      ExtendFspmRegion (FspMeasurementInfo, Fbm, TpmActivePcrBanks);
+      ExtendFspmRegion (&FspMeasurementInfo, Fbm, TpmActivePcrBanks);
+    }
+  }
+
+  //
+  // Load BspPreMem regions
+  //
+  if (Bspm->BspSegmentCount != 0) {
+    Status = LoadBspPreMem (Bspm, &FlashRegionList, DataStackBase, DataStackSize);
+    if (Status == EFI_SUCCESS) {
+      ExtendBspRegion (&FspMeasurementInfo, Bspm, TpmActivePcrBanks);
     }
   }
 

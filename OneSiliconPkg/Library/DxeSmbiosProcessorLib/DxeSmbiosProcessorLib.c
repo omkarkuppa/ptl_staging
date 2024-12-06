@@ -31,6 +31,7 @@
 #include <SmbiosCacheInfoHob.h>
 #include <SmbiosProcessorInfoHob.h>
 #include <DxeSmbiosProcessorLib.h>
+#include <Library/CpuPlatformLib.h>
 
 #define MAX_PROCESSOR_SOCKET_SUPPORTED 8
 
@@ -70,6 +71,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED SMBIOS_TABLE_TYPE4 SmbiosTableType4Data = {
   TO_BE_FILLED,             ///< CoreCount2
   TO_BE_FILLED,             ///< EnabledCoreCount2
   TO_BE_FILLED,             ///< ThreadCount2
+  TO_BE_FILLED,             ///< ThreadEnabled;
+  TO_BE_FILLED,             ///< SocketType;
 };
 
 GLOBAL_REMOVE_IF_UNREFERENCED SMBIOS_TYPE4_STRING_ARRAY SmbiosTableType4Strings = {
@@ -79,6 +82,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED SMBIOS_TYPE4_STRING_ARRAY SmbiosTableType4Strings 
   TO_BE_FILLED_STRING,      ///< SerialNumber
   TO_BE_FILLED_STRING,      ///< AssetTag
   TO_BE_FILLED_STRING,      ///< PartNumber
+  TO_BE_FILLED_STRING,      ///< SocketType
 };
 
 /**
@@ -419,6 +423,9 @@ InstallSmbiosProcessorInfo (
       SmbiosTableType4Data.CoreCount2 = ProcessorInfo->CoreCount;
       SmbiosTableType4Data.EnabledCoreCount2 = ProcessorInfo->EnabledCoreCount;
       SmbiosTableType4Data.ThreadCount2 = ProcessorInfo->ThreadCount;
+      SmbiosTableType4Data.ThreadEnabled = GetEnabledThreadCount();
+      SmbiosTableType4Strings.SocketType = (CHAR8 *) GetSocketTypeString ();
+      SmbiosTableType4Data.SocketType = AssignStringNumber (SmbiosTableType4Strings.SocketType, &StringNumber);
 
       Status = AddSmbiosTableEntry (
                  (EFI_SMBIOS_TABLE_HEADER *) &SmbiosTableType4Data,

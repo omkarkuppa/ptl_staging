@@ -19,6 +19,13 @@
 @par Specification Reference:
 **/
 
+//
+// Fall back acpi-acd-device-namestring
+//
+#ifndef COHEN_1_UAJ2_DEV_NAME
+# define COHEN_1_UAJ2_DEV_NAME "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF3B"
+#endif
+
 Name(_DSD, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
@@ -36,7 +43,7 @@ Name(_DSD, Package() {
 Name(CC21, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF3B"},
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_UAJ2_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0x13},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x06c0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -51,7 +58,7 @@ Name(CC21, Package() {
 Name(CC31, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF3B"},
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_UAJ2_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0x15},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0690},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -66,7 +73,7 @@ Name(CC31, Package() {
 Name(CC41, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF3B"},
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_UAJ2_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0x17},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x06d0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -81,7 +88,7 @@ Name(CC41, Package() {
 Name(CC51, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF3B"},
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_UAJ2_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0x7},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x06a0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -96,7 +103,7 @@ Name(CC51, Package() {
 Name(CC61, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF3B"},
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_UAJ2_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0x9},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0680},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -111,7 +118,7 @@ Name(CC61, Package() {
 Name(CC71, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWD6.AF3B"},
+       Package (2) {"acpi-acd-device-namestring", COHEN_1_UAJ2_DEV_NAME},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0xB},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x06d0},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function

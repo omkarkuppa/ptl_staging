@@ -132,22 +132,14 @@ MrcOverrideTerDcd (
   BOOLEAN   IsEnable
   )
 {
-  INT64 OvrVal;
-  INT64 OvrEn;
   INT64 TargetSel;
 
   if (IsEnable) {
-    OvrVal    = 3;
-    OvrEn     = 1;
     TargetSel = 1;
   } else {
-    OvrVal    = 0;
-    OvrEn     = 0;
     TargetSel = 0;
   }
 
-  MrcGetSetChStrb (MrcData, Controller, Channel, Byte, GsmIocITerdcdselovrval, WriteCached, &OvrVal);
-  MrcGetSetChStrb (MrcData, Controller, Channel, Byte, GsmIocITerdcdselovren,  WriteCached, &OvrEn);
   MrcGetSetChStrb (MrcData, Controller, Channel, Byte, GsmDccDllDcdTargetSel,  WriteCached, &TargetSel);
 }
 

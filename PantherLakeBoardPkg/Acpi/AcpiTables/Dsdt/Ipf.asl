@@ -20,7 +20,6 @@
 **/
 
 #define IETM_PARTICIPANT_HID           "INTC10D4"
-#define LEDGER_ISLAND_PARTICIPANT_HID  "INTC10D5"
 
 
 Scope (\_SB) {
@@ -37,14 +36,6 @@ Scope (\_SB) {
       } Else {
         Return (0x00)
       }
-    }
-
-    //
-    // LHID (Ledger Island HID)
-    //
-    // This method returns the HID value of the Ledger Island GPD1 device
-    Method (LHID) {
-      Return (LEDGER_ISLAND_PARTICIPANT_HID)
     }
   }
 }

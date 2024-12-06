@@ -18,33 +18,36 @@
 
 @par Specification
 **/
+#include <GTestTbtNvmDRThruHrHelpers.h>
+#include <GoogleTest/Library/MockUefiBootServicesTableLib.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
 
 //**********************************************************
 // WaitForMsgOutTxDone Unit Test                           *
 //**********************************************************
-class WaitForMsgOutTxDoneTest : public CommonMock {
+class WaitForMsgOutTxDoneTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    RETIMER_THRU_HR       *RetimerPtr;
-    UINT16                MsgOutCmdOffset;
-    UINT8                 DbgData;
+    TBT_STATUS                   TbtStatus;
+    RETIMER_THRU_HR              *RetimerPtr;
+    UINT16                       MsgOutCmdOffset;
+    UINT8                        DbgData;
+    UINT32                       ExpData;
+    TBT_HOST_ROUTER              *gDevComHostMock = &LocalHrPtr;
+    MockTbtNvmDrvHr              TbtNvmDrvHrMock;
+    MockUefiBootServicesTableLib UefiBootServicesTableLibMock;
 
-    UINT32                ExpData;
+  void SetUp() override {
+    RetimerPtr = (RETIMER_THRU_HR *)AllocateZeroPool(sizeof(RETIMER_THRU_HR));
+    RetimerPtr->TbtPort = FIRST_MASTER_LANE;
+    RetimerPtr->Hr = gDevComHostMock;
+    MsgOutCmdOffset = 0;
+    DbgData = 0;
+  }
 
-    void SetUp() override {
-      RetimerPtr          = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
-      RetimerPtr->TbtPort = FIRST_MASTER_LANE;
-      RetimerPtr->Hr      = gDevComHostMock;
-      MsgOutCmdOffset     = 0;
-      DbgData             = 0;
-    }
-
-    void TearDown() override {
-      //
-      // Destroy Mock Service
-      //
-      FreePool (RetimerPtr);
-    }
+  void TearDown() override
+  {
+    FreePool(RetimerPtr);
+  }
 };
 
 //
@@ -52,16 +55,19 @@ class WaitForMsgOutTxDoneTest : public CommonMock {
 // Expected Result - TbtStatus will return TBT_STATUS_NON_RECOVERABLE_ERROR
 //
 TEST_F (WaitForMsgOutTxDoneTest, ReadCioDevRegError) {
-  cout << "[---------- Case 1 ----------]"<< endl;
+  cout << "[---------- Case 1 ----------]" << endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       MsgOutCmdOffset,
-      _))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = WaitForMsgOutTxDone (RetimerPtr, MsgOutCmdOffset, DbgData);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -72,26 +78,33 @@ TEST_F (WaitForMsgOutTxDoneTest, ReadCioDevRegError) {
 // Expected Result - TbtStatus will return TBT_STATUS_NON_RECOVERABLE_ERROR
 //
 TEST_F (WaitForMsgOutTxDoneTest, LocalLC_SeemsToBeStuck) {
-  cout << "[---------- Case 2 ----------]"<< endl;
+  cout << "[---------- Case 2 ----------]" << endl;
 
   ExpData = TBT_MSG_OUT_CMD_VALID;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       MsgOutCmdOffset,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpData, sizeof(ExpData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData, sizeof (ExpData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_CoreStall (
-      _))
+      _
+      )
+    )
     .WillRepeatedly (Return (EFI_SUCCESS));
 
   TbtStatus = WaitForMsgOutTxDone (RetimerPtr, MsgOutCmdOffset, DbgData);
@@ -103,26 +116,33 @@ TEST_F (WaitForMsgOutTxDoneTest, LocalLC_SeemsToBeStuck) {
 // Expected Result - TbtStatus will return TBT_STATUS_RETRY
 //
 TEST_F (WaitForMsgOutTxDoneTest, IECS_TransactionWasTimeouted) {
-  cout << "[---------- Case 3 ----------]"<< endl;
+  cout << "[---------- Case 3 ----------]" << endl;
 
   ExpData = TBT_MSG_OUT_TIMEOUT;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       MsgOutCmdOffset,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpData, sizeof(ExpData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData, sizeof (ExpData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_CoreStall (
-      _))
+      _
+      )
+    )
     .WillRepeatedly (Return (EFI_SUCCESS));
 
   TbtStatus = WaitForMsgOutTxDone (RetimerPtr, MsgOutCmdOffset, DbgData);
@@ -134,26 +154,33 @@ TEST_F (WaitForMsgOutTxDoneTest, IECS_TransactionWasTimeouted) {
 // Expected Result - TbtStatus will return TBT_STATUS_NON_RECOVERABLE_ERROR
 //
 TEST_F (WaitForMsgOutTxDoneTest, IECS_TransactionWasInvalid) {
-  cout << "[---------- Case 4 ----------]"<< endl;
+  cout << "[---------- Case 4 ----------]" << endl;
 
   ExpData = TBT_MSG_OUT_INVALID;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       MsgOutCmdOffset,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpData, sizeof(ExpData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData, sizeof (ExpData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_CoreStall (
-      _))
+      _
+      )
+    )
     .WillRepeatedly (Return (EFI_SUCCESS));
 
   TbtStatus = WaitForMsgOutTxDone (RetimerPtr, MsgOutCmdOffset, DbgData);
@@ -165,26 +192,33 @@ TEST_F (WaitForMsgOutTxDoneTest, IECS_TransactionWasInvalid) {
 // Expected Result - TbtStatus will return TBT_STATUS_SUCCESS
 //
 TEST_F (WaitForMsgOutTxDoneTest, CorrectFlow) {
-  cout << "[---------- Case 5 ----------]"<< endl;
+  cout << "[---------- Case 5 ----------]" << endl;
 
   ExpData = TBT_MSG_OUT_ATCT1_LT0;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       MsgOutCmdOffset,
-      _))
+      _
+      )
+    )
     .WillRepeatedly (
-      DoAll (
-        SetArgBuffer<4>(&ExpData, sizeof(ExpData)),
-        Return (TBT_STATUS_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&ExpData, sizeof (ExpData)),
+         Return (TBT_STATUS_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_CoreStall (
-      _))
+      _
+      )
+    )
     .WillRepeatedly (Return (EFI_SUCCESS));
 
   TbtStatus = WaitForMsgOutTxDone (RetimerPtr, MsgOutCmdOffset, DbgData);

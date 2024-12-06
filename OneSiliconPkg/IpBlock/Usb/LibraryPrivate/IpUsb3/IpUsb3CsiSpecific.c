@@ -539,6 +539,10 @@ IpUsb3IpInit (
     IP_WR_AND_32 (pInst->RegCntxtPci, R_XHCI_CFG_SSCFG1, ~(B_XHCI_CFG_SSCFG1_SSOAFM | B_XHCI_CFG_SSCFG1_SSIAFM));
   }
 
+  if (IpUsb3VersionSpecificConfigurationEnabled (pInst, IpUsb3VscIdC20PhyElasticBuffer)) {
+    IP_WR_AND_32 (pInst->RegCntxtSbMmio, R_XHCI_PCR_DAP_PHY_CONTROL_REG_1, ~(B_XHCI_PCR_DAP_PHY_CONTROL_REG_1_EB_MODE_GEN2));
+  }
+
   return IpCsiStsSuccess;
 }
 
@@ -709,11 +713,15 @@ IpUsb3VersionSpecificConfigurationEnabled (
       RetVal = (pInst->IpVersion < IpUsb3IpVersion19p2);
       break;
     case IpUsb3VscIdSocCreditExchangeTime:
-      RetVal = (pInst->IpVersion <= IpUsb3IpVersion19p3);
+      RetVal = (pInst->IpVersion <= IpUsb3IpVersion19p3) && (pInst->Integration != IpUsb3IntegrationUsb4ss);
       break;
 
     case IpUsb3VscIdCameraFlicker:
-      RetVal = (pInst->IpVersion == IpUsb3IpVersion19p3);
+      RetVal = (pInst->IpVersion == IpUsb3IpVersion19p3) && (pInst->Integration != IpUsb3IntegrationUsb4ss);
+      break;
+
+    case IpUsb3VscIdC20PhyElasticBuffer:
+      RetVal = (pInst->IpVersion == IpUsb3IpVersion19p3) && (pInst->Integration == IpUsb3IntegrationUsb4ss);
       break;
 
     case IpUsb3VscIdUnknown:

@@ -140,6 +140,7 @@ SetVrCommon (
   /// -Adding half of divisor to dividend to account for rounding errors in fixed point arithmetic.
   ///
   if (CpuPowerMgmtVrConfig->PsysOffset != 0 || CpuPowerMgmtVrConfig->PsysSlope != 0 ) {
+    PmonMailboxData.Data32 = 0;
     PmonMailboxData.Fields.PmonOffset = ToSignedFixedPoint16 (CpuPowerMgmtVrConfig->PsysOffset, 1000, 7, 8, NULL);
     PmonMailboxData.Fields.PmonSlopeCorrection = ToUnsignedFixedPoint16 (CpuPowerMgmtVrConfig->PsysSlope, 100, 1, 15, NULL);
     MailboxCommand.InterfaceData = 0;
@@ -391,7 +392,7 @@ SetVrOverrideValues (
     TempDcLoadline = MultU64x64 (DcLoadline[VrIndex], LShiftU64 (1, 20));
     TempDcLoadline = DivU64x32 (TempDcLoadline + 50000, 100000);
 
-
+    AcDcLoadlineMailboxData.Data32 = 0;
     AcDcLoadlineMailboxData.Fields.AcLoadLine = (UINT16) TempAcLoadline;
     AcDcLoadlineMailboxData.Fields.DcLoadLine = (UINT16) TempDcLoadline;
     MailboxCommand.InterfaceData = 0;
@@ -489,6 +490,7 @@ SetVrOverrideValues (
     }
     DEBUG ((DEBUG_INFO, "(MAILBOX) ConvertedTimeWindow        = %xh \n", ConvertedTimeWindow));
     if (TdcCurrentLimit[VrIndex] != 0) {
+      VrTdcMailboxData.Data32 = 0;
       VrTdcMailboxData.Fields.CurrentLimit = TdcCurrentLimit[VrIndex];
       VrTdcMailboxData.Fields.TdcEnable = CpuPowerMgmtVrConfig->TdcEnable[VrIndex];
       VrTdcMailboxData.Fields.TimeWindow = ConvertedTimeWindow;
@@ -575,6 +577,7 @@ SetVrNonOverrideValues (
   /// -Adding half of divisor to dividend to account for rounding errors in fixed point arithmetic.
   ///
   if (CpuPowerMgmtVrConfig->ImonOffset[VrIndex] != 0 || CpuPowerMgmtVrConfig->ImonSlope[VrIndex] != 0) {
+    ImonMailboxData.Data32 = 0;
     ImonMailboxData.Fields.ImonOffset = ToSignedFixedPoint16 (CpuPowerMgmtVrConfig->ImonOffset[VrIndex], 1000, 7, 8, NULL);
     ImonMailboxData.Fields.ImonSlope = ToUnsignedFixedPoint16 (CpuPowerMgmtVrConfig->ImonSlope[VrIndex], 100, 1, 15, NULL);
     MailboxCommand.InterfaceData = 0;

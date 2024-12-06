@@ -150,6 +150,7 @@
   gPlatformModuleTokenSpaceGuid.PcdVmdCfgBarBase     ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdVmdMemBar1Base    ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdVmdMemBar2Base    ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid ## CONSUMES
 
   gPlatformModuleTokenSpaceGuid.PcdApicLocalAddress    ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdNvmeHcPeiMmioBase   ## CONSUMES
@@ -199,6 +200,8 @@
   # SPD Address Table
   gBoardModuleTokenSpaceGuid.PcdSpdPresent                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdAddressTable          ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcChannelToCkdQckMapping   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcPhyClockToCkdDimm        ## CONSUMES
 
   # PCIE RTD3 GPIO
   gBoardModuleTokenSpaceGuid.PcdRootPortIndex                  ## CONSUMES

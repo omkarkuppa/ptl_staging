@@ -45,11 +45,11 @@ PtlPcdSseInit (
   if (MePeiConfig->SseCommunication == FORCE_ENABLE) {
     return;
   } else if (MePeiConfig->SseCommunication == FORCE_DISABLE) {
-    PtlPcdPsfDisableSse (1);
+    PtlPcdPsfDisableSse (0);
   }
 
+  PtlPcdPsfDisableSse (1);
   PtlPcdPsfDisableSse (2);
-  PtlPcdPsfDisableSse (3);
 
   DEBUG ((DEBUG_INFO, "%a() exit\n", __FUNCTION__));
 }

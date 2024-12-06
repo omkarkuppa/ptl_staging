@@ -359,8 +359,8 @@ ConfigPowerFloorMgmt (
   MAILBOX_DATA_POWER_FLOOR_CONFIG  MailboxData;
   BOOLEAN                          SettingsChanged;
 
-  SettingsChanged     = FALSE;
-
+  SettingsChanged  = FALSE;
+  MailboxData.Data = 0;
 
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gCpuPowerMgmtBasicConfigGuid, (VOID *) &CpuPowerMgmtBasicConfig);
   ASSERT_EFI_ERROR (Status);

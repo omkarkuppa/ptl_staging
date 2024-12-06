@@ -90,8 +90,6 @@
   ImrInitLib
   VmdInfoLib
   CpuLib
-  DomainPcieInitLib
-  P2SbSocLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -99,7 +97,6 @@
   OneSiliconPkg/SiPkg.dec
   IntelFsp2Pkg/IntelFsp2Pkg.dec
   UefiCpuPkg/UefiCpuPkg.dec
-  CsiApiPkg/CsiApiPkg.dec
 
 [Sources]
   SiInit.c
@@ -142,7 +139,6 @@
   gSiPolicyHobGuid            ## CONSUMES
   gSiPreMemPolicyHobGuid      ## CONSUMES
   gTraceHubDataHobGuid        ## CONSUMES
-  gIpPcieInstHobGuid          ## CONSUMES
 
   ##
   ## Performance GUIDs

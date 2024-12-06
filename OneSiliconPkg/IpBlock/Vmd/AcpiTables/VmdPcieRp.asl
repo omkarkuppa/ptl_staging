@@ -203,3 +203,21 @@ Method (RLA, 0, Serialized) {
     Increment (Local0)
   }
 }
+
+Method (VRST, 0, Serialized) {
+  ADBG ("_RST VMD RP")
+
+  // 1. Trigger L2/L3 ready entry flow in root port
+  RL23()
+  Sleep (100)
+
+  // 2. Assert RST pin to the remapped PCIe slot
+  \_SB.PC00.VMD0.VDRA (RSPT, RSPI, 1)
+  Sleep (100)
+
+  // 3. De-assert RESET GPIO.
+  \_SB.PC00.VMD0.VDRA (RSPT, RSPI, 0)
+  // 4. Transition into Link Active
+  RLA ()
+  Sleep (100)
+}

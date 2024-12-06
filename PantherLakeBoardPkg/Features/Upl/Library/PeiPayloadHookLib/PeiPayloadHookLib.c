@@ -480,6 +480,7 @@ CreateTraceHubHob (
   TRACEHUB_DEBUG_INFO_HOB  *ThDebugInfo;
   UINTN                    MmioAddr;
   EFI_STATUS               Status;
+  UINT8                    ScratchPad2RegValue;
 
   MmioAddr     = 0;
   ThDebugInfo  = NULL;
@@ -494,10 +495,12 @@ CreateTraceHubHob (
     return Status;
   }
 
+  TraceHubScratchPad2RegValue (&ScratchPad2RegValue);
+
   ZeroMem (ThDebugInfo, sizeof (TRACEHUB_DEBUG_INFO_HOB));
   ThDebugInfo->Revision   = TRACEHUB_DEBUG_INFO_HOB_REVISION;
-  ThDebugInfo->Flag       = 0x1;
-  ThDebugInfo->DebugLevel = 0x3;
+  ThDebugInfo->Flag       = ScratchPad2RegValue & BIT0; // B_TRACE_HUB_MEM_SCRPD2_BIOS_TRACE_EN  BIT0
+  ThDebugInfo->DebugLevel = ScratchPad2RegValue >> 1;   // N_TRACE_HUB_MEM_SCRPD2_TRACE_VERBO    1
   TraceHubMmioTraceAddress (FixedPcdGet32(PcdTraceHubDebugLibMaster), FixedPcdGet32(PcdTraceHubDebugLibChannel), &MmioAddr);
   ThDebugInfo->TraceHubMmioAddress = (UINT64)MmioAddr;
 

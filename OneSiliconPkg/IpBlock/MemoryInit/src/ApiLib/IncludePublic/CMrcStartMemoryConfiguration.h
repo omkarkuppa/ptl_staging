@@ -126,6 +126,7 @@ typedef struct {
   UINT8          DimmOutXmpSupport[MAX_CONTROLLER][MAX_CHANNEL][MAX_DIMMS_IN_CHANNEL];
   UINT32         ChannelOutDimmCount[MAX_CONTROLLER][MAX_CHANNEL];
   BOOLEAN        OutLpX;
+  BOOLEAN        OutIsAny2Ranks;
   BOOLEAN        DimmOutCkdSupport[MAX_CONTROLLER][MAX_CHANNEL][MAX_DIMMS_IN_CHANNEL];
   UINT8          DimmOutDeviceDensity[MAX_CONTROLLER][MAX_CHANNEL][MAX_DIMMS_IN_CHANNEL];
 } STATIC_SPD_DATA;

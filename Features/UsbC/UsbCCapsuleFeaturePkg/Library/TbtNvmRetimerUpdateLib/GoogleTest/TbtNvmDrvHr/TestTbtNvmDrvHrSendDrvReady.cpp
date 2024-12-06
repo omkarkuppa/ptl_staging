@@ -18,18 +18,28 @@
 
 @par Specification
 **/
+#include <GTestTbtNvmDrvHr.h>
+#include <GoogleTest/Private/MockTbtNvmDrvDma/MockTbtNvmDrvDma.h>
 
-//**********************************************************
-// TbtNvmDrvHrSendDrvReady Unit Test                       *
-//**********************************************************
-class TbtNvmDrvHrSendDrvReadyTest : public CommonMock {
+extern "C" {
+TBT_STATUS
+TbtNvmDrvHrSendDrvReady (
+  TBT_DMA  *DmaPtr
+  );
+}
+// **********************************************************
+// TbtNvmDrvHrSendDrvReady Unit Test                        *
+// **********************************************************
+class TbtNvmDrvHrSendDrvReadyTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    TBT_DMA               *DmaPtr;
+    TBT_STATUS       TbtStatus;
+    TBT_DMA          *DmaPtr;
+    MockTbtNvmDrvDma TbtNvmDrvDmaMock;
+    TBT_DMA          *gDmaPtrMock = &LocalDmaPtr;
 
-    void SetUp() override {
-      DmaPtr                     = gDmaPtrMock;
-    }
+  void SetUp() override {
+    DmaPtr = gDmaPtrMock;
+  }
 };
 
 //
@@ -50,15 +60,15 @@ TEST_F (TbtNvmDrvHrSendDrvReadyTest, DmaPtrIsNullError) {
 TEST_F (TbtNvmDrvHrSendDrvReadyTest, TxCfgPktError) {
   cout << "[---------- Case 2 ----------]"<< endl;
 
-  //
-  //  Mock call TbtNvmDrvTxCfgPkt
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvTxCfgPkt (
       DmaPtr,
       PDF_SW_TO_FW_COMMAND,
-      sizeof(DRV_RDY_CMD),
-      _))
+      sizeof (DRV_RDY_CMD),
+      _
+      )
+    )
     .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = TbtNvmDrvHrSendDrvReady (DmaPtr);
@@ -72,26 +82,26 @@ TEST_F (TbtNvmDrvHrSendDrvReadyTest, TxCfgPktError) {
 TEST_F (TbtNvmDrvHrSendDrvReadyTest, RxCfgPktError) {
   cout << "[---------- Case 3 ----------]"<< endl;
 
-  //
-  //  Mock call TbtNvmDrvTxCfgPkt
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvTxCfgPkt (
       DmaPtr,
       PDF_SW_TO_FW_COMMAND,
-      sizeof(DRV_RDY_CMD),
-      _))
+      sizeof (DRV_RDY_CMD),
+      _
+      )
+    )
     .WillOnce (Return (TBT_STATUS_SUCCESS));
 
-  //
-  //  Mock call TbtNvmDrvRxCfgPkt
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvRxCfgPkt (
       DmaPtr,
       PDF_FW_TO_SW_RESPONSE,
       NULL,
-      NULL))
+      NULL
+      )
+    )
     .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = TbtNvmDrvHrSendDrvReady (DmaPtr);
@@ -105,26 +115,26 @@ TEST_F (TbtNvmDrvHrSendDrvReadyTest, RxCfgPktError) {
 TEST_F (TbtNvmDrvHrSendDrvReadyTest, CorrectFlow) {
   cout << "[---------- Case 4 ----------]"<< endl;
 
-  //
-  //  Mock call TbtNvmDrvTxCfgPkt
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvTxCfgPkt (
       DmaPtr,
       PDF_SW_TO_FW_COMMAND,
-      sizeof(DRV_RDY_CMD),
-      _))
+      sizeof (DRV_RDY_CMD),
+      _
+      )
+    )
     .WillOnce (Return (TBT_STATUS_SUCCESS));
 
-  //
-  //  Mock call TbtNvmDrvRxCfgPkt
-  //
-  EXPECT_CALL (TbtNvmDrvDmaMock,
+  EXPECT_CALL (
+    TbtNvmDrvDmaMock,
     TbtNvmDrvRxCfgPkt (
       DmaPtr,
       PDF_FW_TO_SW_RESPONSE,
       NULL,
-      NULL))
+      NULL
+      )
+    )
     .WillOnce (Return (TBT_STATUS_SUCCESS));
 
   TbtStatus = TbtNvmDrvHrSendDrvReady (DmaPtr);

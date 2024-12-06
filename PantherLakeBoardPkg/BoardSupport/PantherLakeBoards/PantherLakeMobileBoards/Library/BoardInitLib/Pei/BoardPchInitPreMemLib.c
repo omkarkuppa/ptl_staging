@@ -220,15 +220,9 @@ PtlGpioTablePreMemInit (
   PcdSetBoolS (PcdWwanBbrstGpioPolarity, PcdGetBool (VpdPcdWwanBbrstGpioPolarity));
   PcdSet8S (PcdWwanSourceClock, PcdGet8 (VpdPcdWwanSourceClock));
   PcdSet8S (PcdWwanRootPortNumber, PcdGet8 (VpdPcdWwanRootPortNumber));
-  if ((Setup.WwanEnable == 0)) {
-    // When WWAN is disabled in setup use WWAN PWREN enable pin
-    GpioVpd = PcdGetPtr (VpdPcdwwanPowerEnableGpio);
-    PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
-  } else {
-    // When WWAN is enabled in setup power enable pin use WWAN FCP pin
-    GpioVpd = PcdGetPtr (VpdPcdWwanFullCardPowerOffGpio);
-    PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
-  }
+  // When WWAN is enabled in setup power enable pin use WWAN FCP pin
+  GpioVpd = PcdGetPtr (VpdPcdWwanFullCardPowerOffGpio);
+  PcdSet32S (PcdWwanFullCardPowerOffGpio, GpioVpd->GpioPad);
 
   GpioVpd = PcdGetPtr (VpdPcdWwanModemBaseBandResetGpio);
   PcdSet32S(PcdWwanModemBaseBandResetGpio, GpioVpd->GpioPad); // WWAN/Modem Base Band Reset pin

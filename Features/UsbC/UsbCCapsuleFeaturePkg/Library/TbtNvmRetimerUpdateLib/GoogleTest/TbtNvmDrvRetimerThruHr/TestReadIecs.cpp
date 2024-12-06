@@ -18,37 +18,65 @@
 
 @par Specification
 **/
+#include <GTestTbtNvmDrvRetimerThruHr.h>
+#include <GoogleTest/Private/MockTbtNvmDrvHr/MockTbtNvmDrvHr.h>
 
-//**********************************************************
-// ReadIecs Unit Test                                      *
-//**********************************************************
-class ReadIecsTest : public CommonMock {
+//
+// Test function define.
+//
+extern "C" {
+TBT_STATUS
+ReadIecs (
+  IN  TBT_RETIMER  *This,
+  IN  UINT8        RegNum,
+  IN  UINT32       DataLength,
+  OUT UINT32       *DataPtr
+  );
+}
+
+struct MockWaitForMsgOutTxDone {
+  MOCK_INTERFACE_DECLARATION (MockWaitForMsgOutTxDone);
+  MOCK_FUNCTION_INTERNAL_DECLARATION (
+    TBT_STATUS,
+    WaitForMsgOutTxDone,
+    (IN RETIMER_THRU_HR     *RetimerPtr,
+     IN UINT16              MsgOutCmdOffset,
+     IN UINT8               DbgData)
+    );
+};
+
+MOCK_INTERFACE_DEFINITION (MockWaitForMsgOutTxDone);
+MOCK_FUNCTION_INTERNAL_DEFINITION (MockWaitForMsgOutTxDone, WaitForMsgOutTxDone, 3, EFIAPI);
+
+// **********************************************************
+// ReadIecs Unit Test                                       *
+// **********************************************************
+class ReadIecsTest : public Test {
   protected:
-    TBT_STATUS            TbtStatus;
-    RETIMER_THRU_HR       *RetimerPtr;
-    TBT_RETIMER           *DevComRetimer;
-    UINT8                 RegNum;
-    UINT32                CmdData;
-    UINT8                 Length;
+    TBT_STATUS              TbtStatus;
+    RETIMER_THRU_HR         *RetimerPtr;
+    TBT_RETIMER             *DevComRetimer;
+    UINT8                   RegNum;
+    UINT32                  CmdData;
+    UINT8                   Length;
+    TBT_HOST_ROUTER         *gDevComHostMock = &LocalHrPtr;
+    MockWaitForMsgOutTxDone WaitForMsgOutTxDoneMock;
+    MockTbtNvmDrvHr         TbtNvmDrvHrMock;
 
-    void SetUp() override {
-      RetimerPtr               = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
-      RetimerPtr->Hr           = gDevComHostMock;                        // For call Mock WriteCioDevReg
-      DevComRetimer            = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
-      DevComRetimer->Impl      = RetimerPtr;                             // For RetimerPtr = (RETIMER_THRU_HR *)This->Impl
+  void SetUp() override {
+    RetimerPtr          = (RETIMER_THRU_HR *) AllocateZeroPool (sizeof (RETIMER_THRU_HR));
+    RetimerPtr->Hr      = gDevComHostMock;
+    DevComRetimer       = (TBT_RETIMER *) AllocateZeroPool (sizeof (TBT_RETIMER));
+    DevComRetimer->Impl = RetimerPtr;
+    RegNum              = IECS_CMD_ADDR;
+    CmdData             = IECS_BLKW_CMD;
+    Length              = 1;
+  }
 
-      RegNum                   = IECS_CMD_ADDR;
-      CmdData                  = IECS_BLKW_CMD;
-      Length                   = 1;
-    }
-
-    void TearDown() override {
-      //
-      // Destroy Mock Service
-      //
-      FreePool (RetimerPtr);
-      FreePool (DevComRetimer);
-    }
+  void TearDown() override {
+    FreePool (RetimerPtr);
+    FreePool (DevComRetimer);
+  }
 };
 
 //
@@ -69,15 +97,18 @@ TEST_F (ReadIecsTest, AssertError) {
 TEST_F (ReadIecsTest, WriteCioDevRegError) {
   cout << "[---------- Case 2 ----------]"<< endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
       Length,
-      _))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));   // For PORT_CS_1 call WriteCioReg return error
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = ReadIecs (DevComRetimer, RegNum, Length, &CmdData);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -90,23 +121,29 @@ TEST_F (ReadIecsTest, WriteCioDevRegError) {
 TEST_F (ReadIecsTest, WaitForMsgOutTxDone_NON_RECOVERABLE_ERROR) {
   cout << "[---------- Case 3 ----------]"<< endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
       Length,
-      _))
-    .WillRepeatedly (Return(TBT_STATUS_SUCCESS));           // For PORT_CS_1 call WriteCioReg return TBT_STATUS_SUCCESS
+      _
+      )
+    )
+    .WillRepeatedly (Return (TBT_STATUS_SUCCESS));
   //
   //  Mock call WaitForMsgOutTxDone
   //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrHelpersMock,
+  EXPECT_CALL (
+    WaitForMsgOutTxDoneMock,
     WaitForMsgOutTxDone (
       RetimerPtr,
       _,
-      1))
+      1
+      )
+    )
     .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = ReadIecs (DevComRetimer, RegNum, Length, &CmdData);
@@ -120,24 +157,27 @@ TEST_F (ReadIecsTest, WaitForMsgOutTxDone_NON_RECOVERABLE_ERROR) {
 TEST_F (ReadIecsTest, WaitForMsgOutTxDoneRETRY) {
   cout << "[---------- Case 4 ----------]"<< endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
       Length,
-      _))
-    .WillRepeatedly (Return(TBT_STATUS_SUCCESS));           // For PORT_CS_1 call WriteCioReg return TBT_STATUS_SUCCESS
+      _
+      )
+    )
+    .WillRepeatedly (Return (TBT_STATUS_SUCCESS));
 
-  //
-  //  Mock call WaitForMsgOutTxDone
-  //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrHelpersMock,
+  EXPECT_CALL (
+    WaitForMsgOutTxDoneMock,
     WaitForMsgOutTxDone (
       RetimerPtr,
       _,
-      1))
+      1
+      )
+    )
     .WillRepeatedly (Return (TBT_STATUS_RETRY));
 
   TbtStatus = ReadIecs (DevComRetimer, RegNum, Length, &CmdData);
@@ -151,36 +191,40 @@ TEST_F (ReadIecsTest, WaitForMsgOutTxDoneRETRY) {
 TEST_F (ReadIecsTest, ReadCioDevRegError) {
   cout << "[---------- Case 5 ----------]"<< endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
       Length,
-      _))
-    .WillRepeatedly (Return(TBT_STATUS_SUCCESS));           // For PORT_CS_1 call WriteCioReg return TBT_STATUS_SUCCESS
-  //
-  //  Mock call WaitForMsgOutTxDone
-  //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrHelpersMock,
+      _
+      )
+    )
+    .WillRepeatedly (Return (TBT_STATUS_SUCCESS));
+
+  EXPECT_CALL (
+    WaitForMsgOutTxDoneMock,
     WaitForMsgOutTxDone (
       RetimerPtr,
       _,
-      1))
+      1
+      )
+    )
     .WillRepeatedly (Return (TBT_STATUS_SUCCESS));
 
-  //
-  //  Mock call ReadCioDevReg
-  //
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
-      _))
-    .WillOnce (Return(TBT_STATUS_NON_RECOVERABLE_ERROR));       // Call ReadCioDevReg return error
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_NON_RECOVERABLE_ERROR));
 
   TbtStatus = ReadIecs (DevComRetimer, RegNum, Length, &CmdData);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
@@ -193,35 +237,40 @@ TEST_F (ReadIecsTest, ReadCioDevRegError) {
 TEST_F (ReadIecsTest, CorrectFlow) {
   cout << "[---------- Case 6 ----------]"<< endl;
 
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrWriteCioReg (
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_WriteCioReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
       Length,
-      _))
-    .WillRepeatedly (Return(TBT_STATUS_SUCCESS));           // For PORT_CS_1 call WriteCioReg return TBT_STATUS_SUCCESS
-  //
-  //  Mock call WaitForMsgOutTxDone
-  //
-  EXPECT_CALL (TbtNvmDrvRetimerThruHrHelpersMock,
+      _
+      )
+    )
+    .WillRepeatedly (Return (TBT_STATUS_SUCCESS));
+
+  EXPECT_CALL (
+    WaitForMsgOutTxDoneMock,
     WaitForMsgOutTxDone (
       RetimerPtr,
       _,
-      1))
+      1
+      )
+    )
     .WillRepeatedly (Return (TBT_STATUS_SUCCESS));
-  //
-  //  Mock call ReadCioDevReg
-  //
-  EXPECT_CALL (TbtNvmDrvHrMock,
-    TbtNvmDrvHrReadCioDevReg (
+
+  EXPECT_CALL (
+    TbtNvmDrvHrMock,
+    TbtNvmDrvHr_ReadCioDevReg (
       RetimerPtr->Hr,
       ADAPTER_CONFIG_SPACE,
       (UINT8) RetimerPtr->TbtPort,
       _,
-      _))
-    .WillOnce (Return(TBT_STATUS_SUCCESS));             // Correct Flow
+      _
+      )
+    )
+    .WillOnce (Return (TBT_STATUS_SUCCESS));
 
   TbtStatus = ReadIecs (DevComRetimer, RegNum, Length, &CmdData);
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);

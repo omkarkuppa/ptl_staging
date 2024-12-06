@@ -41,7 +41,8 @@
 
 typedef union {
   struct {
-    UINT16 vid : 16;
+    UINT16 vid : 16; /**< VENDOR IDENTIFICATION NUMBER */
+                            /* Bits[15:0], default=0x00008086*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -62,9 +63,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 did_sku : 7;
-    UINT16 did_msb : 9;
-
+    UINT16 did : 16; /**< DEVICE IDENTIFICATION NUMBER */
+                            /* Bits[15:0], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -74,10 +74,9 @@ typedef union {
 #define DID2_IGPU_DEFAULT 0x0000U
 #define DID2_IGPU_ENDPOINT IGPU
 
-#define DID2_IGPU_DID_SKU_LSB 0x0000
-#define DID2_IGPU_DID_SKU_SIZE 0x0007
-#define DID2_IGPU_DID_MSB_LSB 0x0007
-#define DID2_IGPU_DID_MSB_SIZE 0x0009
+#define DID2_IGPU_DID_LSB 0x0000
+#define DID2_IGPU_DID_SIZE 0x0010
+
 
 /** PCICMD_0_2_0_PCI desc:
   */
@@ -86,18 +85,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 ioae : 1;
-    UINT16 mae : 1;
-    UINT16 bme : 1;
-    UINT16 sce : 1;
-    UINT16 mwie : 1;
-    UINT16 vps : 1;
-    UINT16 per : 1;
-    UINT16 wcc : 1;
-    UINT16 sen : 1;
-    UINT16 fb2b : 1;
-    UINT16 intdis : 1;
-    UINT16 reserved_0 : 5;
+    UINT16 ioae : 1; /**< I/O ACCESS ENABLE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT16 mae : 1; /**< MEMORY ACCESS ENABLE */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT16 bme : 1; /**< BUS MASTER ENABLE */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT16 sce : 1; /**< SPECIAL CYCLE ENABLE */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT16 mwie : 1; /**< MEMORY WRITE AND INVALIDATE ENABLE */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT16 vps : 1; /**< VIDEO PALETTE SNOOPING */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT16 per : 1; /**< PARITY ERROR ENABLE */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT16 wcc : 1; /**< WAIT CYCLE CONTROL */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT16 sen : 1; /**< SERR ENABLE */
+                            /* Bits[8:8], default=0x00000000*/
+    UINT16 fb2b : 1; /**< FAST BACK-TO-BACK */
+                            /* Bits[9:9], default=0x00000000*/
+    UINT16 intdis : 1; /**< INTERRUPT DISABLE */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT16 reserved_0 : 5; /**< RESERVED */
+                            /* Bits[15:11], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -140,10 +151,14 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rid : 8;
-    UINT32 pi : 8;
-    UINT32 subcc : 8;
-    UINT32 bcc : 8;
+    UINT32 rid : 8; /**< REVISION IDENTIFICATION NUMBER */
+                            /* Bits[7:0], default=0x00000000*/
+    UINT32 pi : 8; /**< PROGRAMMING INTERFACE */
+                            /* Bits[15:8], default=0x00000000*/
+    UINT32 subcc : 8; /**< SUB-CLASS CODE */
+                            /* Bits[23:16], default=0x00000000*/
+    UINT32 bcc : 8; /**< BASE CLASS CODE */
+                            /* Bits[31:24], default=0x00000003*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -171,13 +186,20 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 mios : 1;
-    UINT32 memtyp : 2;
-    UINT32 prefmem : 1;
-    UINT32 adm : 20;
-    UINT32 mbat_0 : 1;
-    UINT32 mbat_1 : 1;
-    UINT32 mba_0 : 6;
+    UINT32 mios : 1; /**< MEMORY/IO SPACE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 memtyp : 2; /**< MEMORY TYPE */
+                            /* Bits[2:1], default=0x00000002*/
+    UINT32 prefmem : 1; /**< PREFETCHABLE_MEMORY */
+                            /* Bits[3:3], default=0x00000001*/
+    UINT32 adm : 20; /**< ADDRESS MASK */
+                            /* Bits[23:4], default=0x00000000*/
+    UINT32 mbat_0 : 1; /**< MEMORY BASE ADDRESS TILE 0 */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 mbat_1 : 1; /**< MEMORY BASE ADDRESS TILE 1 */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 mba_0 : 6; /**< MEMORY BASE ADDRESS0 */
+                            /* Bits[31:26], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -211,15 +233,24 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 mios : 1;
-    UINT32 memtyp : 2;
-    UINT32 prefmem : 1;
-    UINT32 adm : 23;
-    UINT32 admsk256 : 1;
-    UINT32 admsk512 : 1;
-    UINT32 admsk1gb : 1;
-    UINT32 admsk2gb : 1;
-    UINT32 admsk4gb : 1;
+    UINT32 mios : 1; /**< MEMORY/IO SPACE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 memtyp : 2; /**< MEMORY TYPE */
+                            /* Bits[2:1], default=0x00000002*/
+    UINT32 prefmem : 1; /**< PREFETCHABLE MEMORY */
+                            /* Bits[3:3], default=0x00000001*/
+    UINT32 adm : 23; /**< ADDRESS MASK */
+                            /* Bits[26:4], default=0x00000000*/
+    UINT32 admsk256 : 1; /**< 256 MB ADDRESS MASK */
+                            /* Bits[27:27], default=0x00000000*/
+    UINT32 admsk512 : 1; /**< 512MB ADDRESS MASK */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 admsk1gb : 1; /**< 1 GB ADDRESS MASK */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 admsk2gb : 1; /**< 2 GB ADDRESS MASK */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 admsk4gb : 1; /**< 4 GB ADDRESS MASK */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -257,7 +288,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 subvid : 16;
+    UINT16 subvid : 16; /**< SUBSYSTEM VENDOR ID */
+                            /* Bits[15:0], default=0x00008086*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -278,7 +310,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT16 subid : 16;
+    UINT16 subid : 16; /**< SUBSYSTEM  ID */
+                            /* Bits[15:0], default=0x00000000*/
   }     Bits;
   UINT16 Data;
   UINT8  Data8[2];
@@ -292,8 +325,6 @@ typedef union {
 #define SID2_IGPU_SUBID_SIZE 0x0010
 
 
-
-
 /** PAVPC0_0_2_0_PCI desc:
   */
 
@@ -301,18 +332,30 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 pcme : 1;
-    UINT32 pavpe : 1;
-    UINT32 lock : 1;
-    UINT32 spare_3 : 1;
-    UINT32 ovtattack : 1;
-    UINT32 vdboxresetcountercheckindisable : 1;
-    UINT32 kcr_reset_fix : 1;
-    UINT32 wopcmsize : 3;
-    UINT32 reserved_1 : 1;
-    UINT32 sam_wopcmsize : 3;
-    UINT32 reserved_0 : 6;
-    UINT32 wopcmbase_lsb : 12;
+    UINT32 pcme : 1; /**< PCM ENABLE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 pavpe : 1; /**< PAVP ENABLE */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 lock : 1; /**< LOCK */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 spare_3 : 1; /**< SPARE_3 */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 ovtattack : 1; /**< OVERRIDE TERMINATE ATTACK */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 vdboxresetcountercheckindisable : 1; /**< VDBOX RESET COUNTER CHECKIN DISABLE */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 kcr_reset_fix : 1; /**< KCR RESET FIX */
+                            /* Bits[6:6], default=0x00000001*/
+    UINT32 wopcmsize : 3; /**< WOPCM SIZE */
+                            /* Bits[9:7], default=0x00000003*/
+    UINT32 reserved_1 : 1; /**< RESERVED */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 sam_wopcmsize : 3; /**< SA MEDIA WOPCM SIZE */
+                            /* Bits[13:11], default=0x00000004*/
+    UINT32 reserved_0 : 6; /**< RESERVED */
+                            /* Bits[19:14], default=0x00000000*/
+    UINT32 wopcmbase_lsb : 12; /**< WOPCM BASE LSB */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -356,7 +399,8 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 dss : 32;
+    UINT32 dss : 32; /**< DEVICE SWITCHING STORAGE */
+                            /* Bits[31:0], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -372,35 +416,58 @@ typedef union {
 
 
 /** GU_CNTL_PROTECTED desc:
-    */
+  */
 
 #define GU_CNTL_PROTECTED_IGPU_REG       (0x0010100cU)
 
 typedef union {
   struct {
-    UINT32 lp_nonsnoop : 1;
-    UINT32 vtdfaultfix_dis : 1;
-    UINT32 blkiosfsb_on_pmblk : 1;
-    UINT32 spare3 : 1;
-    UINT32 widi_chk_dis : 1;
-    UINT32 bar0_pref : 1;
-    UINT32 spare_bit_6 : 1;
-    UINT32 spareb : 1;
-    UINT32 gtpresent : 1;
-    UINT32 depresent : 1;
-    UINT32 impresent : 1;
-    UINT32 soc_viral_mask : 1;
-    UINT32 soc_gate_viral_usp : 1;
-    UINT32 erase_ord_en : 1;
-    UINT32 spare1614 : 3;
-    UINT32 stolen_mem_wipe_dis : 1;
-    UINT32 pmrsp_auto_debug_enable : 1;
-    UINT32 pmrsp_auto : 1;
-    UINT32 disable_sbgp_block : 1;
-    UINT32 disable_cdie_block : 1;
-    UINT32 sparea : 8;
-    UINT32 driverint_pcicmdmask_dis : 1;
-    UINT32 driverint_dis : 1;
+    UINT32 lp_nonsnoop : 1; /**< LP NON-SNOOP */
+                            /* Bits[0:0], default=0x00000001*/
+    UINT32 vtdfaultfix_dis : 1; /**< VTD FAULT FIX DISABLE */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 blkiosfsb_on_pmblk : 1; /**< BLOCK IOSF SB ON PM BLOCK */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 spare3 : 1; /**< SPARE3 */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 widi_chk_dis : 1; /**< WIDI_CHK_DIS */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 bar0_pref : 1; /**< BAR0_PREF */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 spare_bit_6 : 1; /**< SPARE6 */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT32 spareb : 1; /**< SPAREB */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT32 gtpresent : 1; /**< GTPRESENT */
+                            /* Bits[8:8], default=0x00000001*/
+    UINT32 depresent : 1; /**< DEPRESENT */
+                            /* Bits[9:9], default=0x00000001*/
+    UINT32 impresent : 1; /**< IMPRESENT */
+                            /* Bits[10:10], default=0x00000001*/
+    UINT32 soc_viral_mask : 1; /**< SOC VIRAL WIRE MASK */
+                            /* Bits[11:11], default=0x00000000*/
+    UINT32 soc_gate_viral_usp : 1; /**< SOC GATE VIRAL TO USP */
+                            /* Bits[12:12], default=0x00000000*/
+    UINT32 erase_ord_en : 1; /**< SPI ERASE ORDERING ENABLE */
+                            /* Bits[13:13], default=0x00000000*/
+    UINT32 spare1614 : 3; /**< SPARE1614 */
+                            /* Bits[16:14], default=0x00000000*/
+    UINT32 stolen_mem_wipe_dis : 1; /**< STOLEN MEMORY WIPE */
+                            /* Bits[17:17], default=0x00000000*/
+    UINT32 pmrsp_auto_debug_enable : 1; /**< PMRSP AUTO DEBUG ENABLE */
+                            /* Bits[18:18], default=0x00000000*/
+    UINT32 pmrsp_auto : 1; /**< PMRSP AUTO DEBUG MODE */
+                            /* Bits[19:19], default=0x00000000*/
+    UINT32 disable_sbgp_block : 1; /**< DISABLE SBGP BLOCK */
+                            /* Bits[20:20], default=0x00000000*/
+    UINT32 disable_cdie_block : 1; /**< DISABLE CDIE BLOCK */
+                            /* Bits[21:21], default=0x00000000*/
+    UINT32 sparea : 8; /**< SPARE29 */
+                            /* Bits[29:22], default=0x00000000*/
+    UINT32 driverint_pcicmdmask_dis : 1; /**< DRIVERINT_PCICMDMASK_DIS */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 driverint_dis : 1; /**< DRIVERINT_DIS */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -460,17 +527,22 @@ typedef union {
 
 
 /** CSMEBDF desc:
-    */
+  */
 
 #define CSMEBDF_IGPU_REG                 (0x00101070U)
 
 typedef union {
   struct {
-    UINT32 funnum : 3;
-    UINT32 devnum : 5;
-    UINT32 busnum : 8;
-    UINT32 barnum : 3;
-    UINT32 reserved_0 : 13;
+    UINT32 funnum : 3; /**< FUNNUM */
+                            /* Bits[2:0], default=0x00000000*/
+    UINT32 devnum : 5; /**< DEVNUM */
+                            /* Bits[7:3], default=0x00000016*/
+    UINT32 busnum : 8; /**< BUSNUM */
+                            /* Bits[15:8], default=0x00000000*/
+    UINT32 barnum : 3; /**< BARNUM */
+                            /* Bits[18:16], default=0x00000007*/
+    UINT32 reserved_0 : 13; /**< RESERVED */
+                            /* Bits[31:19], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -494,19 +566,26 @@ typedef union {
 
 
 /** GGC desc:
-    */
+  */
 
 #define GGC_IGPU_REG                     (0x00108040U)
 
 typedef union {
   struct {
-    UINT32 spare : 1;
-    UINT32 ivd : 1;
-    UINT32 vamen : 1;
-    UINT32 reserved_1 : 3;
-    UINT32 ggms : 2;
-    UINT32 gms : 8;
-    UINT32 reserved_0 : 16;
+    UINT32 spare : 1; /**< SPARE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 ivd : 1; /**< IVD */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 vamen : 1; /**< VAMEN */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 reserved_1 : 3; /**< RESERVED */
+                            /* Bits[5:3], default=0x00000000*/
+    UINT32 ggms : 2; /**< GGMS */
+                            /* Bits[7:6], default=0x00000003*/
+    UINT32 gms : 8; /**< GMS */
+                            /* Bits[15:8], default=0x00000002*/
+    UINT32 reserved_0 : 16; /**< RESERVED */
+                            /* Bits[31:16], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -534,15 +613,18 @@ typedef union {
 
 
 /** DSMBASE0 desc:
-    */
+  */
 
 #define DSMBASE0_IGPU_REG                (0x001080c0U)
 
 typedef union {
   struct {
-    UINT32 spare : 1;
-    UINT32 reserved_0 : 19;
-    UINT32 bdsm_0 : 12;
+    UINT32 spare : 1; /**< SPARE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 reserved_0 : 19; /**< RESERVED */
+                            /* Bits[19:1], default=0x00000000*/
+    UINT32 bdsm_0 : 12; /**< BDSM */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -568,9 +650,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 spare : 1;
-    UINT32 reserved_0 : 19;
-    UINT32 bgsm_lsb : 12;
+    UINT32 spare : 1; /**< SPARE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 reserved_0 : 19; /**< RESERVED */
+                            /* Bits[19:1], default=0x00000000*/
+    UINT32 bgsm_lsb : 12; /**< BGSM_LSB */
+                            /* Bits[31:20], default=0x00000001*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -590,24 +675,36 @@ typedef union {
 
 
 /** PAVPC0_REG desc:
-    */
+  */
 
 #define PAVPC0_REG_IGPU_REG              (0x001082c0U)
 
 typedef union {
   struct {
-    UINT32 pcme : 1;
-    UINT32 pavpe : 1;
-    UINT32 lock : 1;
-    UINT32 spare_3 : 1;
-    UINT32 ovtattack : 1;
-    UINT32 vdboxresetcountercheckindisable : 1;
-    UINT32 kcr_reset_fix : 1;
-    UINT32 wopcm_size : 3;
-    UINT32 reserved_1 : 1;
-    UINT32 sa_media_wopcm_size : 3;
-    UINT32 reserved_0 : 6;
-    UINT32 wopcmbase_0 : 12;
+    UINT32 pcme : 1; /**< PCM ENABLE */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 pavpe : 1; /**< PAVP ENABLE */
+                            /* Bits[1:1], default=0x00000000*/
+    UINT32 lock : 1; /**< LOCK */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT32 spare_3 : 1; /**< SPARE_3 */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT32 ovtattack : 1; /**< OVERRIDE TERMINATE ATTACK */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT32 vdboxresetcountercheckindisable : 1; /**< VDBOX RESET COUNTER CHECKIN DISABLE */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT32 kcr_reset_fix : 1; /**< KCR RESET FIX */
+                            /* Bits[6:6], default=0x00000001*/
+    UINT32 wopcm_size : 3; /**< WOPCM SIZE */
+                            /* Bits[9:7], default=0x00000003*/
+    UINT32 reserved_1 : 1; /**< RESERVED */
+                            /* Bits[10:10], default=0x00000000*/
+    UINT32 sa_media_wopcm_size : 3; /**< SA MEDIA WOPCM SIZE */
+                            /* Bits[13:11], default=0x00000004*/
+    UINT32 reserved_0 : 6; /**< RESERVED */
+                            /* Bits[19:14], default=0x00000000*/
+    UINT32 wopcmbase_0 : 12; /**< WOPCMBASE */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];

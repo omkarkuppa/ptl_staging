@@ -158,28 +158,12 @@ MrcOverrideTerDcd (
   );
 
 /**
-  This function takes the offset to determine if a rank is populated.
-
-  @param[in, out] MrcData - Include all MRC global data.
-  @param[in]      Offset  - Offset to be checked.
-
-  @retval TRUE if rank is populated on associated offset
-          FALSE if rank is not populated on associated offset
-
-**/
-BOOLEAN
-MrcClockEnable (
-  IN OUT MrcParameters *const MrcData,
-  IN     UINT32  Offset
-  );
-
-/**
   This function finds all the CKD ranks that are associated to the index 0 of Controller/Channel/Rank arrays
-  @param[in, out] MrcData    - Include all MRC global data.
-  @param[in, out] Controller - Stores the CKD ranks' Controller that are associated with index 0
-  @param[in, out] Channel    - Stores the CKD ranks' Channel that are associated with index 0
-  @param[in, out] Rank       - Stores the CKD ranks' Rank that are associated with index 0
-  @param[out]     Loop       - Number of ranks that has the same CKD main clock
+  @param[in, out] MrcData        - Include all MRC global data.
+  @param[in, out] Controller     - Stores the CKD ranks' Controller that are associated with index 0
+  @param[in, out] Channel        - Stores the CKD ranks' Channel that are associated with index 0
+  @param[in, out] Rank           - Stores the CKD ranks' Rank that are associated with index 0
+  @param[out]     CkdSharedClks  - Number of ranks that has the same CKD main clock
   
 **/
 VOID
@@ -188,6 +172,6 @@ MrcGetCkdRanks (
   IN OUT UINT32 Controller[MAX_CKD_PIN],
   IN OUT UINT32 Channel[MAX_CKD_PIN],
   IN OUT UINT32 Rank[MAX_CKD_PIN],
-  OUT UINT32 *Loop 
+  OUT UINT32 *CkdSharedClks
   );
 #endif // MRC_DDRIO_H_

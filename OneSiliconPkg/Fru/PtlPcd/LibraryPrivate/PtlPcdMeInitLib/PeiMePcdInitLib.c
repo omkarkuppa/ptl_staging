@@ -63,11 +63,11 @@ PtlPcdSetCsmeHeciDeviceState (
     case HECI2:
     case HECI3:
       if (DeviceFuncCtrl == Enabled) {
-        PtlPcdPsfEnableHeci ((UINT8) HECI_DEVICE_TO_NUMBER (WhichDevice));
+        PtlPcdPsfEnableHeci ((UINT8) HECI_DEVICE_TO_INDEX (WhichDevice));
         ClearD0I3Bit (WhichDevice);
       } else {
         SetD0I3Bit (WhichDevice);
-        PtlPcdPsfDisableHeci ((UINT8) HECI_DEVICE_TO_NUMBER (WhichDevice));
+        PtlPcdPsfDisableHeci ((UINT8) HECI_DEVICE_TO_INDEX (WhichDevice));
       }
       break;
     case HECI4:
@@ -77,7 +77,7 @@ PtlPcdSetCsmeHeciDeviceState (
         return;
       } else {
         SetD0I3Bit (HECI4);
-        PtlPcdPsfDisableHeci ((UINT8) HECI_DEVICE_TO_NUMBER (HECI4));
+        PtlPcdPsfDisableHeci ((UINT8) HECI_DEVICE_TO_INDEX (HECI4));
       }
       break;
     case IDER:

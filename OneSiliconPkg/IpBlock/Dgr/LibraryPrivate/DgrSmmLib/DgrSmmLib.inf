@@ -83,7 +83,6 @@
   gEfiSpaLogOutputProtocolGuid             ## CONSUMES
   gEfiLoadedImageProtocolGuid              ## CONSUMES
   gEfiSmmSwDispatch2ProtocolGuid           ## CONSUMES
-  gDgrNvsAreaProtocolGuid                  ## CONSUMES
   gEfiSmmBase2ProtocolGuid                 ## CONSUMES
 
 
@@ -114,8 +113,6 @@
   gUefiCpuPkgTokenSpaceGuid.PcdCpuSmmStackSize                     ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSpsStateSaveEnable                       ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSpaEnable                                ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdLedgerIslandEnable                       ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdLedgerIslandBufferSize                   ## CONSUMES
 
 [Pcd.X64]
   gUefiCpuPkgTokenSpaceGuid.PcdCpuSmmRestrictedMemoryAccess        ## CONSUMES

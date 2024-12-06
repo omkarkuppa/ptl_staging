@@ -33,7 +33,8 @@
 // Max String size = PEI_PERFORMANCE_STRING_SIZE
 //
 FSP_PERF_DATA  FspPerfData[FspMaxPerf] = {
-  { FspuGopPerf, "uGOP" },
+  { FspuGopPerf,     "uGOPInit" },
+  { FspuGopExitPerf, "uGOPExit" },
 };
 
 /**

@@ -118,6 +118,12 @@
 #define DDR5_CLK_DCC_STEP (1)
 #define RX_DFE_NUM (16)
 
+#define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY (22) // More than this, and the XTensa will run out of memory during a per-bit sweep if the array is per-rank
+#define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_CHANNEL_ARRAY (MAX_RANK_IN_CHANNEL * MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY) // More than this, and the XTensa will run out of memory during a per-bit sweep
+#define MAX_SI_TRAINING_SWEEP_RANGE_BYTE_PER_RANK_ARRAY (MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY * MAX_BITS) // More than this, and the XTensa will run out of memory during a per-byte sweep if the array is per-rank
+#define MAX_SI_TRAINING_SWEEP_RANGE_BYTE_PER_CHANNEL_ARRAY (MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_CHANNEL_ARRAY * MAX_BITS) // More than this, and the XTensa will run out of memory during a per-byte sweep
+#define MAX_PRINT_MARGIN_PARAMS (4) // Max prams SI training print function can handle
+
 // Slew rate constants
 #define SLEW_RATE_ENABLED (0)
 #define CYCLE_LOCK (1)
@@ -241,8 +247,15 @@ typedef enum {
   TcoCompAlgoEarlyPerByte,
   TcoCompAlgoEarlyPerBit,
   TcoCompAlgoPerByte,
-  TcoCompAlgoPerBit
-} TcoCompAlgoMode;
+  TcoCompAlgoPerBit,
+  PerChannelPerByte,
+  PerChannelPerBit,
+  PerChannel,
+  PerRankPerByte,
+  PerRankPerBit,
+  PerRank,
+  PerSystem
+} AlgoMode;
 
 typedef enum {
   SotVrefSearchStage,
@@ -923,7 +936,7 @@ UpdateCompGlobalOffset (
 **/
 extern
 void
-UpdateSampOdtTiming(
+MrcUpdateSampOdtTiming(
   IN OUT MrcParameters *const MrcData
   );
 
@@ -1316,18 +1329,6 @@ MrcWckTcoCompTraining (
   );
 
 /**
-  This function is used to train Vddq.
-
-  @param[in] MrcData - Pointer to global MRC data.
-
-  @retval mrcSuccess - if it succeed return mrcSuccess
-**/
-MrcStatus
-MrcVddqTraining (
-  IN MrcParameters *const MrcData
-  );
-
-/**
   This function is used to train CMD/CTL Drive Strength and Equalization 2D.
 
   @param[in] MrcData - Pointer to global MRC data.
@@ -1565,7 +1566,7 @@ MrcTxDqTcoCompTraining (
 MrcStatus
 MrcTxDqTcoCompTrainingAlgo (
   IN MrcParameters* const MrcData,
-  TcoCompAlgoMode         AlgoMode
+  AlgoMode                AlgoMode
   );
 
 /**

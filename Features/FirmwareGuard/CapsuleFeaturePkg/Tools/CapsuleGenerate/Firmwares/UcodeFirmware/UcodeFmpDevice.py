@@ -626,7 +626,7 @@ if (BUILD_OP_VER == UCODE_BUILD_OP_VER_1):
                     SignCert:
                         The sign certificate object to sign the capsule.
             """
-            return FMP_SUCCESS, EDKII_CERT_SIGN
+            return FMP_SUCCESS, PLATFORM_CERT_SIGN
 
         def GetDeviceName (self) -> Tuple[int, str]:
             """ Return the FMP firmware device name.

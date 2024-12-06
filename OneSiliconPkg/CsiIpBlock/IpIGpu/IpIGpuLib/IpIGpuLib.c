@@ -955,7 +955,7 @@ IpIGpuSetMemMap (
   }
 
   if (IpIGpuSupported (pInst) == FALSE) {
-    PRINT_LEVEL1 ("Returning from %s since IGD is not present\n", __FUNCTION__);
+    PRINT_LEVEL1 ("Returning from %s since IGPU is not present\n", __FUNCTION__);
     return IpCsiStsSuccess;
   }
 
@@ -1198,7 +1198,7 @@ IpIGpuPrintConfigSpace (
   UINT8  j;
 
   if (IpIGpuSupported (pInst) == FALSE) {
-    PRINT_LEVEL1 ("Returning from %s since IGD is not present\n", __FUNCTION__);
+    PRINT_LEVEL1 ("Returning from %s since IGPU is not present\n", __FUNCTION__);
     return;
   }
 
@@ -1267,4 +1267,86 @@ IpIGpuPrintRegData (
   } else {
     PRINT_LEVEL1 ("IGPU Offset = 0x%x Value = 0x%016lX Data = 0x%016lX\n", Register, Value, Data);
   }
+}
+
+/**
+Allocate GSM2 Base Address and Size
+
+@param[in]  pInst  A pointer to the IP instance to be used.
+@param[in]  UINT64 Base Address
+@param[in]  UINT64 Size
+**/
+VOID
+IpIGpuGsm2Allocation (
+  IP_IGPU_INST  *pInst,
+  UINT64        Gsm2BaseAddress,
+  UINT8         Gsm2Size
+  )
+{
+  B2D_SCRATCH0_STRUCT  Gsm2Struct;
+
+  if (IpIGpuIsInstValid (pInst) == FALSE) {
+    PRINT_WARNING ("Invalid parameters for %s\n", __FUNCTION__);
+    return;
+  }
+
+  Gsm2Struct.Data = 0;
+
+  if (IpIGpuSupported (pInst) == FALSE) {
+    PRINT_LEVEL1 ("Returning from %s since IGPU is not present\n", __FUNCTION__);
+    return;
+  }
+
+  if (Gsm2BaseAddress != 0) {
+    Gsm2Struct.Bits.Gsm2BaseAddress = (UINT32)IpWrDivU64x32 (Gsm2BaseAddress, BASE_32MB);
+  }
+
+  Gsm2Struct.Bits.Gsm2Size = Gsm2Size;
+  PRINT_LEVEL1 ("GSM2 Data = 0x%lx\n", Gsm2Struct.Data);
+
+  IpWrRegWrite (pInst->MmioAccess, B2D_SCRATCH0_REG, Gsm2Struct.Data, IpWrRegFlagSize32Bits);
+}
+
+/**
+  This function will enable IO Bar on 0:2:0
+
+  @param[in] pInst   - A pointer to the IP instance to be used.
+  @retval None
+**/
+VOID
+IpIGpuEnableIoCmdReg (
+  IP_IGPU_INST  *pInst
+  )
+{
+  PCICMD_IGPU_STRUCT  PciCmd;
+
+  if (IpIGpuIsInstValid (pInst) == FALSE) {
+    return;
+  }
+
+  PciCmd.Data      = (UINT16)IpWrRegRead (pInst->PcieCfgAccess, PCICMD_IGPU_REG, IpWrRegFlagSize16Bits);
+  PciCmd.Bits.ioae = TRUE;
+  IpWrRegWrite (pInst->PcieCfgAccess, PCICMD_IGPU_REG, PciCmd.Data, IpWrRegFlagSize16Bits);
+}
+
+/**
+  This function will disable IO Bar on 0:2:0
+
+  @param[in] pInst   - A pointer to the IP instance to be used.
+  @retval None
+**/
+VOID
+IpIGpuDisableIoCmdReg (
+  IP_IGPU_INST  *pInst
+  )
+{
+  PCICMD_IGPU_STRUCT  PciCmd;
+
+  if (IpIGpuIsInstValid (pInst) == FALSE) {
+    return;
+  }
+
+  PciCmd.Data      = (UINT16)IpWrRegRead (pInst->PcieCfgAccess, PCICMD_IGPU_REG, IpWrRegFlagSize16Bits);
+  PciCmd.Bits.ioae = FALSE;
+  IpWrRegWrite (pInst->PcieCfgAccess, PCICMD_IGPU_REG, PciCmd.Data, IpWrRegFlagSize16Bits);
 }

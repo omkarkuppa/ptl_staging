@@ -122,7 +122,7 @@ IpIGpuMediaInit (
   IsFlatCcsCompressionEnable = FALSE;
 
   if (IpIGpuSupported (pInst) == FALSE) {
-    PRINT_LEVEL1 ("Returning from %s since IGD is not present\n", __FUNCTION__);
+    PRINT_LEVEL1 ("Returning from %s since IGPU is not present\n", __FUNCTION__);
     return IpCsiStsSuccess;
   }
 

@@ -23,64 +23,23 @@
 #define _RESET_REASON_H_
 
 #include <PiDxe.h>
-
-#define RESET_REASON_OFFSET   0x0074
-#define RESET_REASON_REVISION 1
+#include <IndustryStandard/Acpi65.h>
 
 ///
-/// This field indicates the source of the reset.
-/// Only one bit should be set, or left zero if unknown.
+/// Definitions for PHAT and Reset Reason table
 ///
-typedef union {
-  struct{
-    UINT8 Unknown     : 1;  ///< Unknown reset source
-    UINT8 Hardware    : 1;  ///< Hardware initiated reset
-    UINT8 Firmware    : 1;  ///< Firmware initiated reset
-    UINT8 Hypervisor  : 1;  ///< Hypervisor initiated reset
-    UINT8 OS          : 1;  ///< Operation System initiated reset
-    UINT8 Reserved    : 3;  ///< Reserved
-  } Bits;
-} RESET_SOURCE;
+#define RESET_REASON_PHAT_RECORD_TYPE   0x1
 
 ///
-/// Reset reason table definition
-///
-typedef union {
-  struct {
-    UINT8   Unknown           : 1;  ///< [0]    An unknown reset reason
-    UINT8   ColdBoot          : 1;  ///< [1]    The System booted or resumed from G3, S4 or S5
-    UINT8   ColdReset         : 1;  ///< [2]    The system was successfully rebooted and performed a full cold reset.
-    UINT8   WarmReset         : 1;  ///< [3]    The system performed a user or software initiated reset
-    UINT8   Update            : 1;  ///< [4]    A system or software update was applied that required a reset.
-    UINT32  Reserved          : 26; ///< [5:31] Reserved
-    UINT8   UnexpectedReset   : 1;  ///< [32]   Any undisclosed reasons that triggered a reset
-    UINT8   Fault             : 1;  ///< [33]   All errors that can cause a warm reset, cold reset, or global reset but not due to a WDT timeout.
-    UINT8   Timeout           : 1;  ///< [34]   All timeout reasons
-    UINT8   Thermal           : 1;  ///< [35]   All thermal global reset causes
-    UINT8   PowerLoss         : 1;  ///< [36]   System unexpected power loss: PWR_FLR bits
-    UINT8   PowerButton       : 1;  ///< [37]   Power button override global reset cause
-  } Bits;
-} RESET_REASON;
-
-///
-/// Vendor Data Entry
+/// ACPI structure for Memory Telemetry Table addition to PHAT
 ///
 typedef struct {
-  UINTN   VendorId;   ///< A vender defined UUID that describes this entry type
-  UINT8   Length;     ///< Length of the vendor data entry
-  UINTN   Data;       ///< Vendor specific data
-} VENDOR_DATA;
-
-///
-/// Reset Reason Health Record Structure
-///
-typedef struct {
-  RESET_SOURCE        ResetSource;
-  RESET_SOURCE        SupportedSources;
-  RESET_REASON        ResetReason;
-  UINT16              VendorCount;
-  UINTN               VendorSpecificResetReason;
-} RESET_REASON_HEALTH_STRUCTURE;
+  UINT16                        PlatformRecordType;
+  UINT16                        RecordLength;
+  GUID                          DeviceSignature;
+  UINT8                         Revision;
+  EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE  Data;
+} PHAT_RESET_REASON_RECORD_STRUCTURE;
 
 /**
   Entry point to telemetry platform reset reason PHAT.

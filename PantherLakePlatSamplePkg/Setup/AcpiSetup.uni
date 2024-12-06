@@ -71,7 +71,7 @@
 #string STR_S3_VIDEO_REPOST_HELP                #language en-US "On enabling, Video Option ROM will be dispatched during S3 resume."
 
 #string STR_ACPI_PCIE_NATIVE_PROMPT             #language en-US "Native PCIE Enable"
-#string STR_ACPI_PCIE_NATIVE_HELP               #language en-US "Bit - PCIe Native * control\n 0 - ~ Hot Plug\n 1 - SHPC Native Hot Plug control\n 2 - ~ Power Management Events\n 3 - PCIe Advanced Error Reporting control\n 4 - PCIe Capability Structure control\n 5 - Latency Tolerance Reporting control"
+#string STR_ACPI_PCIE_NATIVE_HELP               #language en-US "When Enabled, Enables below OSPM capabilities\nBit - PCIe Native * control\n0 - ~ Hot Plug\n1 - SHPC Native Hot Plug control\n2 - ~ Power Management Events"
 
 #string STR_NATIVE_ASPM_PROMPT                  #language en-US "Native ASPM"
 #string STR_NATIVE_ASPM_HELP                    #language en-US "Enabled - OS Controlled ASPM, Disabled - BIOS Controlled ASPM"

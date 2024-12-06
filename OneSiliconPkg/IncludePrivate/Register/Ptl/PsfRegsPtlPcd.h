@@ -148,11 +148,6 @@
 #define R_PTL_PCD_H_PSF_5_ROOTSPACE_CONFIG_RS0 0x00004018U      ///< Offset 4018h: Rootspace Configuration Register
 #define R_PTL_PCD_H_PSF_5_ROOTSPACE_CONFIG_RS3 0x00004024U      ///< Offset 4024h: Rootspace Configuration Register
 
-#define R_PTL_PCD_P_H_TCSS_PSF_11_ROOTSPACE_CONFIG_RS0 0x00004010U      ///< Offset 4010h: Rootspace Configuration Register
-#define R_PTL_PCD_P_H_TCSS_PSF_11_ROOTSPACE_CONFIG_RS3 0x00004014U      ///< Offset 4014h: Rootspace Configuration Register
-#define R_PTL_PCD_P_H_TCSS_PSF_12_ROOTSPACE_CONFIG_RS0 0x00004010U      ///< Offset 4010h: Rootspace Configuration Register
-#define R_PTL_PCD_P_H_TCSS_PSF_12_ROOTSPACE_CONFIG_RS3 0x00004014U      ///< Offset 4014h: Rootspace Configuration Register
-
 #define R_PTL_PCD_P_H_PSF_6_BUS_SHADOW_RS3    0x0000000cU      ///< Offset 000Ch: Bus Number Shadow Register
 
 // PCIe Root Ports registers:
@@ -219,6 +214,23 @@
 #define R_PTL_PCD_P_H_PSF_4_TARGET_GNTCNT_RELOAD_PG1_TGT0 0x000043c4U      ///< Offset 43C4h: Grant Count Reload Register
 #define R_PTL_PCD_P_H_PSF_6_TARGET_GNTCNT_RELOAD_PG1_TGT0 0x00004b30U      ///< Offset 4B30h: Grant Count Reload Register
 
+#define R_PTL_PCD_P_H_PSF_4_TARGET_GNTCNT_RELOAD_PG0_TGT1                               0x43B8     // Offset 43B8h: Grant Count Reload Register
+#define R_PTL_PCD_P_H_PSF_4_TARGET_GNTCNT_RELOAD_PG0_TGT2                               0x43BC     // Offset 43BCh: Grant Count Reload Register
+#define R_PTL_PCD_P_H_PSF_4_TARGET_GNTCNT_RELOAD_PG1_TGT2                               0x43CC     // Offset 43CCh: Grant Count Reload Register
+#define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG0_TGT2                               0x455C     // Offset 455Ch: Grant Count Reload Register
+#define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG1_TGT8                               0x4584     // Offset 4584h: Grant Count Reload Register
+#define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG0_TGT3                               0x4560     // Offset 4560h: Grant Count Reload Register
+#define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG1_TGT9                               0x4588     // Offset 4588h: Grant Count Reload Register
+
+#define R_PTL_PCD_H_PSF_5_TARGET_GNTCNT_RELOAD_PG0_TGT0                               0x4110     // Offset 4110h: Grant Count Reload Register
+#define R_PTL_PCD_H_PSF_5_TARGET_GNTCNT_RELOAD_PG1_TGT0                               0x411C     // Offset 411Ch: Grant Count Reload Register
+#define R_PTL_PCD_H_PSF_5_TARGET_GNTCNT_RELOAD_PG0_TGT1                               0x4114     // Offset 4114h: Grant Count Reload Register
+#define R_PTL_PCD_H_PSF_5_TARGET_GNTCNT_RELOAD_PG1_TGT3                               0x4124     // Offset 4124h: Grant Count Reload Register
+
+#define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG0_TGT4                               0x4564     // Offset 4564h: Grant Count Reload Register
+#define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG1_TGT0                               0x4574     // Offset 4574h: Grant Count Reload Register
+#define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG0_TGT5                               0x4568     // Offset 4568h: Grant Count Reload Register
+#define R_PTL_PCD_P_H_PSF_0_TARGET_GNTCNT_RELOAD_PG1_TGT1                               0x4578     // Offset 4578h: Grant Count Reload Register
 // Relaxed ordering registers:
 #define R_PTL_PCD_P_H_PSF_0_PSF_PORT_CONFIG_PG1_PORT0 0x0000402cU      ///< Offset 402Ch: PSF Port Configuration Register
 #define R_PTL_PCD_P_H_PSF_0_PSF_PORT_CONFIG_PG1_PORT1 0x00004030U      ///< Offset 4030h: PSF Port Configuration Register

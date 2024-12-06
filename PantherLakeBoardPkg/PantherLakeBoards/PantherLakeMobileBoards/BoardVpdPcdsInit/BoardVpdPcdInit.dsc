@@ -47,7 +47,7 @@
   gI2cFeaturePkgTokenSpaceGuid.VpdPcdPssI2cDeviceAddress|*|0x0
   gI2cFeaturePkgTokenSpaceGuid.VpdPcdPssI2cBusNumber|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdSpdAddressOverride|*|FALSE
-  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig|*|FALSE  
+  gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdPwmBlinkEnable|*|{CODE(
    { 0x0 }
   )}
@@ -92,6 +92,7 @@
     { 0x0 }
   })}
 
+
   gBoardModuleTokenSpaceGuid.VpdPcdSaMiscUserBd|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdSaDdrFreqLimit|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdMrcSpdDataSize|*|0x0
@@ -125,6 +126,18 @@
   {  5,
      { 0x0, 0x0, 0x0, 0x0, 0x0}
   })}
+
+  !if gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection == 1
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcChannelToCkdQckMapping| * |{CODE(
+  { 8,
+     { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
+  })}
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcPhyClockToCkdDimm| * |{CODE(
+  { 8,
+     { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
+  })}
+  !endif
+
   gBoardModuleTokenSpaceGuid.VpdPcdMrcDqPinsInterleavedControl|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdMrcDqPinsInterleaved|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdMrcLp5CccConfig|*|0x0
@@ -234,6 +247,9 @@
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|*|FALSE
 
+  # Control the EC debug Info Print level before executing any command for PD Bridge, default is DEBUG_VERBOSE
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel|*|0x00400000
+
   gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCUcmMode|*|0x0 # 0: Unsupported, 1: UCSI, 2: UCMCx
   gBoardModuleTokenSpaceGuid.VpdPcdHdaI2sCodecIrqGpio|*|{CODE(
@@ -261,7 +277,6 @@
     0xFFFFFFFF               // terminator
   })}
   gBoardModuleTokenSpaceGuid.VpdPcdBoardRtd3TableSignature|*|{0x00}
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardSsdRtd3TableSignature|*|{0x00}
   gBoardModuleTokenSpaceGuid.VpdPcdBatterySupport|*|0x00
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamSensor|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdZPoddConfig|*|0x0

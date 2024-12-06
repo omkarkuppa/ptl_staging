@@ -47,8 +47,9 @@
 #include <Library/MemoryInstallLib.h>
 #include <Library/DomainIGpuInit.h>
 #include <Library/PeiTraceHubInitLib.h>
-#include "MrcDdrIoRcomp.h"
+#include "MrcDdrIoComp.h"
 #include "CPlatformData.h"  // for PLATFORM_DATA and BDAT definitionss
+#include "MrcAmt.h" // For AMT_PPR_ENABLE
 
 //
 // Definition in EDK Foundation, used in this driver
@@ -182,6 +183,8 @@ CONST EFI_PEI_PPI_DESCRIPTOR gMrcColdBootRequiredPpi = {
 
 GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 MrcDataStringConst[] = "MRCD";
 GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 MrcSpdStringConst[]  = "SPD ";
+GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 Ch2CkdQckString[]    = "Channel To CKD QCK";
+GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 PhyClk2CkdString[]   = "DDRIO To CKD Clock";
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mTsegMemoryTestInitPpi = {
     (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
@@ -210,6 +213,7 @@ InstallMrcCallback (
   VOID
   )
 {
+#ifndef NO_MRC // Exists strictly to build MRC-excluded BIOS for size check
   EFI_STATUS                    Status;
   MRC_INSTANCE                  *MrcInstance;
   SI_PREMEM_POLICY_PPI          *SiPreMemPolicyPpi;
@@ -251,6 +255,9 @@ InstallMrcCallback (
   Status = PeiServicesNotifyPpi (&MrcInstance->NotifyDescriptor);
   ASSERT_EFI_ERROR (Status);
   return Status;
+#else // NO_MRC
+  return EFI_SUCCESS;
+#endif // NO_MRC
 }
 
 /**
@@ -686,7 +693,7 @@ PeimMemoryInit (
 
   Inputs->SaMemCfgCrcForSave = MrcCalculateCrc32((UINT8 *)MemConfig, sizeof (MEMORY_CONFIGURATION));
 
-  Inputs->PciEBaseAddress   = (UINT32) PcdGet64 (PcdSiPciExpressBaseAddress);
+  Inputs->PciEBaseAddress   = PcdGet64 (PcdSiPciExpressBaseAddress);
 
   MrcSetupOem (MrcData, MemConfig);
 
@@ -1983,6 +1990,12 @@ InstallEfiMemory (
     //
     PeiPsmiMemoryAllocation(&TopUseableMemAddr, &Touud, ResourceAttributeTested);
     DEBUG((DEBUG_INFO, "[Post Psmi Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+
+    //
+    // GSM2 allocation
+    //
+    IGpuGsm2Allocation(SiPreMemPolicyPpi, &TopUseableMemAddr, &Touud, ResourceAttributeTested);
+    DEBUG((DEBUG_INFO, "[Post GSM2 Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
     //
     // This is above PSMI memory space, give it to EFI.
     //
@@ -2722,13 +2735,15 @@ ColdBootRequired (
         SaveData->SaMemCfgCrc,
         MrcData->Inputs.SaMemCfgCrc
         ));
+      RetVal = TRUE;
 
-      if (Inputs->SaMemCfgCrc != Inputs->SaMemCfgCrcForSave) {
-        RetVal = TRUE;
-      }
+      // TODO: PPR input policy should move to MEMORY_CONFIG_NO_CRC, and then SaMemCfgCrcForSave should be cleaned up
+      // if (Inputs->SaMemCfgCrc != Inputs->SaMemCfgCrcForSave) {
+      //   RetVal = TRUE;
+      // }
 
       // Check if McRegisterOffset is the only input parameter change if McRegisterOffset training function is enabled.
-      //
+      // TODO: move MCREGOFFSET to MEMORY_CONFIG_NO_CRC and clean up this code
       if (MemConfig->ExternalInputs.MCREGOFFSET) {
         TempOffsets = MemConfig->ExternalInputs.OffsetKnobs;
         MemConfig->ExternalInputs.OffsetKnobs = SaveData->OffsetKnobs;
@@ -2742,8 +2757,7 @@ ColdBootRequired (
           DEBUG_INFO,
           "Only McOffsetKnob inputs changed...ignoring SA input parameter CRC (i.e. try not to retrain).\n"
           ));
-        } else {
-          RetVal = TRUE;
+          RetVal = FALSE;
         }
       }
     } // CRC mismatch
@@ -2907,6 +2921,7 @@ MrcSetupMrcData (
   UINT8                               DimmNum;
   BOOLEAN                             IsSpdMatched;
   UINT8                               Index;
+  UINT8                               CkdIndex;
   BOOLEAN                             Ddr5DoubleSize1Dpc;
   BOOLEAN                             Ddr5DoubleSize2Dpc;
   BOOLEAN                             Lpddr5CammPresent;
@@ -3083,6 +3098,8 @@ DEBUG_CODE_END();
 
   Inputs->RloadTarget = 1000;
 
+  Inputs->IsOneDpcSplitBgEnabled = FALSE;
+
   ExtInputs->MemoryProfile = STD_PROFILE;
 
   SpdCount = 0;
@@ -3203,6 +3220,12 @@ DEBUG_CODE_END();
             }
           }
         }
+        if (DimmIn->Spd.Data.Ddr5.Base.DramDeviceType.Bits.Type == MRC_SPD_DDR5_SDRAM_TYPE_NUMBER && (Channel < MAX_DDR5_CHANNEL)) {
+          CkdIndex = (Controller * MAX_DDR5_CHANNEL * MAX_DIMMS_IN_CHANNEL) + (Channel * MAX_DIMMS_IN_CHANNEL) + Dimm;
+          DimmIn->ChannelToCkdQckMapping = MemConfigNoCrc->ChannelToCkdQckMapping[CkdIndex];
+          DimmIn->PhyClockToCkdDimm      = MemConfigNoCrc->PhyClockToCkdDimm[CkdIndex];
+          DEBUG ((DEBUG_INFO, "MC%dCH%dD%d:\n\t%a = %d\n\t%a = %d\n", Controller, Channel, Dimm, Ch2CkdQckString, DimmIn->ChannelToCkdQckMapping, PhyClk2CkdString, DimmIn->PhyClockToCkdDimm));
+        }
       } // for Dimm
     } // for Channel
   } // for Controller
@@ -3280,7 +3303,6 @@ DEBUG_CODE_END();
       ExtInputs->TrainingEnables2.CMDDSEQ        = 0;
       ExtInputs->TrainingEnables2.DIMMODTCA      = 0;
       ExtInputs->TrainingEnables2.RDVREFDC       = 0;
-      ExtInputs->TrainingEnables2.VDDQT          = 0;
       ExtInputs->TrainingEnables2.DATAPILIN      = 0;
       ExtInputs->TrainingEnables2.DDR5XTALK      = 0;
       ExtInputs->TrainingEnables2.WRTDIMMDFE     = 0;
@@ -3505,6 +3527,11 @@ BuildMemoryInfoDataHob (
   TOdtValueCccDdr5     *CccOdtTableIndex;
   MrcStatus            Status;
   const UINT16         *RcompTarget;
+  UINT8                BankGroup;
+  ROW_FAIL_RANGE       *FailRangePtr;
+  UINT8                Rank;
+  BOOLEAN              PprDoneFillingErrorInfo;
+  AMT_PPR_ENABLE       AmtPprRanInLastBoot;
 
   SaveData = &MrcData->Save.Data;
   Outputs  = &MrcData->Outputs;
@@ -3582,9 +3609,55 @@ BuildMemoryInfoDataHob (
   MemoryInfo->IsIbeccEnabled = (BOOLEAN) ExtInputs->Ibecc;
   DEBUG((DEBUG_INFO, "MemoryInfo->IsIbeccEnabled = %d \n", MemoryInfo->IsIbeccEnabled));
 
-  MemoryInfo->PprDetectedErrors       = Outputs->PprDetectedErrors;
+  AmtPprRanInLastBoot.Data = 0;
+  if ((Outputs->PprRunningState == PPR_IS_DONE) && (ExtInputs->PprTestType != 0)) {
+    AmtPprRanInLastBoot.Bits.AmtEnabled = 1;
+    if (ExtInputs->PprRepairType != 0) {
+      AmtPprRanInLastBoot.Bits.PprEnabled = 1;
+    }
+  }
+  MemoryInfo->PprRanInLastBoot = AmtPprRanInLastBoot.Data;
+
+  MemoryInfo->PprDetectedErrors       = Outputs->PprNumDetectedErrors;
   MemoryInfo->PprRepairFails          = Outputs->PprRepairFails;
   MemoryInfo->PprForceRepairStatus    = Outputs->PprForceRepairStatus;
+  MemoryInfo->PprRepairsSuccessful    = Outputs->PprNumSuccessfulRepairs;
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
+      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+        for (Dimm = 0; Dimm < MAX_SDRAM_IN_DIMM; Dimm++) {
+          MemoryInfo->PprAvailableResources[Controller][Channel][Rank][Dimm] = Outputs->PprAvailableResources[Controller][Channel][Rank][Dimm];
+        }
+      }
+    }
+  }
+  if (Outputs->PprNumDetectedErrors > 0) {
+    PprDoneFillingErrorInfo = FALSE;
+    for (Controller = 0; Controller < MAX_CONTROLLER && !PprDoneFillingErrorInfo; Controller++) {
+      for (Channel = 0; Channel < MAX_CHANNEL && !PprDoneFillingErrorInfo; Channel++) {
+        FailRangePtr = &Outputs->FailRange[Controller][Channel][0];
+        if ((Outputs->FailMax[Controller][Channel] > 0) && FailRangePtr->Addr.Bits.Valid) {
+          // Determine BankGroup
+          for (BankGroup = 0; BankGroup < MAX_BANK_GROUP_CNT && !PprDoneFillingErrorInfo; BankGroup++) {
+            if (!(FailRangePtr->BankGroupMask & (1 << BankGroup))) {
+              continue;
+            }
+            MemoryInfo->PprErrorInfo.PprRowRepairsSuccessful = (FailRangePtr->BankGroupRepairedMask & (1 << BankGroup)) != 0;
+            MemoryInfo->PprErrorInfo.Controller = Controller;
+            MemoryInfo->PprErrorInfo.Channel = Channel;
+            MemoryInfo->PprErrorInfo.Rank = (UINT8) FailRangePtr->Addr.Bits.Rank;
+            MemoryInfo->PprErrorInfo.BankGroup = BankGroup;
+            MemoryInfo->PprErrorInfo.Bank = (UINT8) FailRangePtr->Addr.Bits.BankPair;
+            MemoryInfo->PprErrorInfo.Row = FailRangePtr->Addr.Bits.Row;
+            MemoryInfo->PprErrorInfo.Device = FailRangePtr->Device;
+
+            // Stop after filling info for one row
+            PprDoneFillingErrorInfo = TRUE;
+          }
+        }
+      } // Channel
+    } // Controller
+  }
 
   PartNumberOffset = sizeof (SPD_MANUFACTURER_ID_CODE) + sizeof (SPD_MANUFACTURING_LOCATION) + sizeof (SPD_MANUFACTURING_DATE) + sizeof (SPD_MANUFACTURER_SERIAL_NUMBER);
 
@@ -3754,7 +3827,7 @@ BuildMemoryPlatformDataHob (
   MemoryPlatformData->Data.PrmrrBase       = MemoryMapData->PrmrrBase;
   MemoryPlatformData->Data.GttBase         = MemoryMapData->GttBase;
   MemoryPlatformData->Data.MmioSize        = Inputs->MmioSize;
-  MemoryPlatformData->Data.PciEBaseAddress = Inputs->PciEBaseAddress;
+  MemoryPlatformData->Data.PciEBaseAddress = (UINT32) Inputs->PciEBaseAddress;
   MemoryPlatformData->Data.MrcBasicMemoryTestPass = Outputs->MrcBasicMemoryTestPass;
 }
 

@@ -498,6 +498,39 @@ Cpgc20ReadRasterRepoStatus (
 }
 
 /**
+  This function returns the device that failed in the last memory test based on DQ lane errors.
+
+  @param[in]  MrcData     - Pointer to MRC global data.
+  @param[in]  Controller  - Desired Memory Controller.
+  @param[in]  Channel     - Desired Channel.
+
+  @retval The device that failed.
+**/
+UINT8
+AmtGetFailingDevice (
+  IN  MrcParameters   *const  MrcData,
+  IN  UINT32                  Controller,
+  IN  UINT32                  Channel
+)
+{
+  MrcOutput     *Outputs;
+  UINT8         Byte;
+  UINT8         BitGroupErr[MRC_MRR_ARRAY_SIZE];  // Variable size needs to support ECC
+
+  Outputs    = &MrcData->Outputs;
+
+  Cpgc20GetBitGroupErrStatus (MrcData, Controller, Channel, BitGroupErr);
+
+  for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+    if (BitGroupErr[Byte] != 0) {
+      return Byte;
+    }
+  }
+
+  return 0xFF;
+}
+
+/**
   This function configures the CPGC Data Control register.
 
   @param[in]  MrcData                   - Pointer to MRC global data.
@@ -1286,8 +1319,8 @@ AmtUpdateRowFailures (
   ErrorStatusLo = CpgcErrorStatus.cpgcErrDat0S;
   ErrorStatusEcc = (Outputs->EccSupport) ? (CpgcErrorStatus.cpgcErrEccS & MRC_UINT8_MAX) : 0;
 
-  Outputs->PprDetectedErrors++;
-  Outputs->PprDetectedErrors = MIN(PPR_MAX_DETECTED_ERRORS, Outputs->PprDetectedErrors);
+  Outputs->PprNumDetectedErrors++;
+  Outputs->PprNumDetectedErrors = MIN(PPR_MAX_DETECTED_ERRORS, Outputs->PprNumDetectedErrors);
 
   if (ErrorStatusLo | ErrorStatusEcc) {
     // Create new fail address
@@ -1299,6 +1332,7 @@ AmtUpdateRowFailures (
 
     NewFail.BankGroupMask = (1 << (ErrBank >> BaseBits));
     NewFail.DeviceTemp = DeviceTemp[Controller][Channel];
+    NewFail.Device = CpgcErrorStatus.device;
 
     if (AmtUpdateRowFailList (MrcData, Controller, Channel, NewFail) != mrcSuccess) {
       Status = mrcFail;
@@ -2478,6 +2512,7 @@ AmtCheckTestResults (
             AmtCreateDqFailure (MrcData, DqMask);
             CpgcErrorStatus.cpgcErrDat0S = DqMask[0];
             CpgcErrorStatus.cpgcErrEccS = DqMask[1];
+            CpgcErrorStatus.device = AmtGetFailingDevice (MrcData, Controller, Channel);
             if (Outputs->IsLpddr) {
               // LP5 BG and 16 bank mode both use 16 bank programming
               Bank = Bank >> 1; // Bank number increases every 2 entries in Raster Repo Mode 3 16-bank mode; shift right to divide bank by 2

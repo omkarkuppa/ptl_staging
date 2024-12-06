@@ -327,19 +327,6 @@ MrcGetRxDqFifoDelay(
 );
 
 /**
-  Display MR value from the host struct
-
-  @param[in] MrcData - Include all MRC global data.
-  @param[in] MrAddr  - MR Address.
-**/
-extern
-VOID
-DisplayMRContentFromHost (
-  IN MrcParameters *const MrcData,
-  IN MrcModeRegister      MrAddr
-  );
-
-/**
   This function Sets InitComplete Override before sending PM message and Restores InitComplete Override after PM message is sent.
 
   @param[in] MrcData              - All the MRC global data.
@@ -710,6 +697,22 @@ MrcStatus
 MrcViewPinCal (
   IN OUT MrcParameters* const MrcData
   );
-  
+
+/**
+  Find mapping of Alert0, Alert1 pins to Memory Controllers. They depend on Board Memory Population/Mapping
+
+  @param[in]  MrcData       - Pointer to MRC global data.
+  @param[out] Alert0toMcMap - Pointer to the mapping of Alert0 pin to MCs (0x0-disabled; 0x1-MC0; 0x2-MC1; 0x3-MC0,MC1).
+  @param[out] Alert1toMcMap - Pointer to the mapping of Alert1 pin to MCs (0x0-disabled; 0x1-MC0; 0x2-MC1; 0x3-MC0,MC1).
+
+  @retval N/A.
+**/
+VOID
+MrcGetAlertToMcMap (
+  IN OUT MrcParameters *const MrcData,
+  OUT    UINT8         *Alert0toMcMap,
+  OUT    UINT8         *Alert1toMcMap
+  );
+
 #endif // _MrcDdrIoUtils_h_
 

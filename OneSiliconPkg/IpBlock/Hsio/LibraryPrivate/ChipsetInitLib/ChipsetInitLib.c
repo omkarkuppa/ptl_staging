@@ -77,13 +77,17 @@ PrintOemTableVersionInfo (
 {
   DEBUG_CODE_BEGIN ();
 
+#if !defined (MDEPKG_NDEBUG) || (FixedPcdGetBool (PcdSiCatalogDebugEnable) == 1)
   DEBUG ((DEBUG_INFO, "CSME OEM %a Version Information:\n", OEM_TABLE_NAME[OemTableType]));
+#endif
   DEBUG ((DEBUG_INFO, "Major  = 0x%x\n", CsmeOemTableVerInfo->Major));
   DEBUG ((DEBUG_INFO, "Minor  = 0x%x\n", CsmeOemTableVerInfo->Minor));
   DEBUG ((DEBUG_INFO, "HotFix = 0x%x\n", CsmeOemTableVerInfo->Hotfix));
   DEBUG ((DEBUG_INFO, "Build  = 0x%x\n", CsmeOemTableVerInfo->Build));
 
+#if !defined (MDEPKG_NDEBUG) || (FixedPcdGetBool (PcdSiCatalogDebugEnable) == 1)
   DEBUG ((DEBUG_INFO, "BIOS OEM %a Version Information:\n", OEM_TABLE_NAME[OemTableType]));
+#endif
   DEBUG ((DEBUG_INFO, "Major  = 0x%x\n", BiosOemTableVerInfo->Major));
   DEBUG ((DEBUG_INFO, "Minor  = 0x%x\n", BiosOemTableVerInfo->Minor));
   DEBUG ((DEBUG_INFO, "HotFix = 0x%x\n", BiosOemTableVerInfo->Hotfix));
@@ -170,14 +174,20 @@ IsOemTableSyncRequired (
   OEM_TABLE_VER_INFO  *BiosOemTableVerInfo;
 
   if (!IsOemTableVersionPresentInMbp (OemTableType, &CsmeOemTableVerInfo)) {
-    DEBUG ((DEBUG_INFO, "No %a binary present in CSME\n", OEM_TABLE_NAME[OemTableType]));
+    #if !defined (MDEPKG_NDEBUG) || (FixedPcdGetBool (PcdSiCatalogDebugEnable) == 1)
+      DEBUG ((DEBUG_INFO, "No %a binary present in CSME\n", OEM_TABLE_NAME[OemTableType]));
+    #endif
     return FALSE;
   }
 
   if ((OemTablePointer == 0) || (OemTableSize == 0)) {
+  #if !defined (MDEPKG_NDEBUG) || (FixedPcdGetBool (PcdSiCatalogDebugEnable) == 1)
     DEBUG ((DEBUG_INFO, "No OEM %a binary present in BIOS or binary size is 0\n", OEM_TABLE_NAME[OemTableType]));
+  #endif
   } else if (OemTableSize > OEM_TABLE_MAX_SIZE[OemTableType]) {
+#if !defined (MDEPKG_NDEBUG) || (FixedPcdGetBool (PcdSiCatalogDebugEnable) == 1)
     DEBUG ((DEBUG_ERROR, "OEM %a binary length exceeds maximum size!\n", OEM_TABLE_NAME[OemTableType]));
+#endif
   } else {
     BiosOemTableVerInfo = (OEM_TABLE_VER_INFO *) ((UINT8 *) OemTablePointer + HSIO_OEM_TABLE_VERSION_OFFSET);
 
@@ -257,7 +267,9 @@ PerformOemTableSync (
   }
 
   if (IsOemTableSyncRequired (HsioConfig, OemTablePointer, OemTableSize, OemTableType)) {
+#if !defined (MDEPKG_NDEBUG) || (FixedPcdGetBool (PcdSiCatalogDebugEnable) == 1)
     DEBUG ((DEBUG_INFO, "BIOS <-> CSME OEM %a table sync required\n", OEM_TABLE_NAME[OemTableType]));
+#endif
 
     ///
     /// Allocate memory for maximum OEM table size
@@ -296,12 +308,16 @@ PerformOemTableSync (
         break;
     }
 
+#if !defined (MDEPKG_NDEBUG) || (FixedPcdGetBool (PcdSiCatalogDebugEnable) == 1)
     DEBUG ((DEBUG_INFO, "OEM %a sync done - schedule global reset\n", OEM_TABLE_NAME[OemTableType]));
+#endif
     CopyMem (&ResetData.Guid, &gPchGlobalResetGuid, sizeof (EFI_GUID));
     StrCpyS (ResetData.Description, PCH_RESET_DATA_STRING_MAX_LENGTH, PCH_PLATFORM_SPECIFIC_RESET_STRING);
     SiScheduleResetSetType (EfiResetPlatformSpecific, &ResetData);
   } else {
+#if !defined (MDEPKG_NDEBUG) || (FixedPcdGetBool (PcdSiCatalogDebugEnable) == 1)
     DEBUG ((DEBUG_INFO, "BIOS <-> CSME OEM %a table sync not required\n", OEM_TABLE_NAME[OemTableType]));
+#endif
   }
 
   DEBUG ((DEBUG_INFO, "%a() - End\n", __FUNCTION__));

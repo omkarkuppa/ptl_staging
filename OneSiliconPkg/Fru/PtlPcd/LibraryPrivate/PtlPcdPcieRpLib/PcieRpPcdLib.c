@@ -46,21 +46,22 @@ typedef struct {
   P2SB_PORT_16_ID  Pid;
   UINTN            RpNumBase;
   UINT8            NumOfRp;
+  UINT8            NumOfLanes;
   BOOLEAN          IocDecoded;
 } PTL_SOC_PCIE_CONTROLLER_INFO;
 
 GLOBAL_REMOVE_IF_UNREFERENCED PTL_SOC_PCIE_CONTROLLER_INFO  mPtlPcdPPcieControllerInfo[] = {
-  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_1, .Pid.Pid16bit = PTL_SID_F2_PID_PXPA,  0, 4, FALSE },
-  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_5, .Pid.Pid16bit = PTL_SID_F2_PID_PXPB,  4, 4, FALSE },
-  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_9, .Pid.Pid16bit = PTL_P_H_SID_F2_PID_PXPC,  8, 2, TRUE  }
+  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_1, .Pid.Pid16bit = PTL_SID_F2_PID_PXPA,  0, 4, 4, FALSE },
+  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_5, .Pid.Pid16bit = PTL_SID_F2_PID_PXPB,  4, 4, 4, FALSE },
+  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_9, .Pid.Pid16bit = PTL_P_H_SID_F2_PID_PXPC,  8, 2, 4, TRUE }
 };
 
 GLOBAL_REMOVE_IF_UNREFERENCED PTL_SOC_PCIE_CONTROLLER_INFO  mPtlPcdHPcieControllerInfo[] = {
-  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_1, .Pid.Pid16bit = PTL_SID_F2_PID_PXPA,  0,  4,  FALSE },
-  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_5, .Pid.Pid16bit = PTL_SID_F2_PID_PXPB,  4,  4,  FALSE },
-  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_9, .Pid.Pid16bit = PTL_P_H_SID_F2_PID_PXPC,  8,  2,  TRUE  },
-  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_11, .Pid.Pid16bit = PTL_H_SID_F2_PID_PXPD,  10, 1,  TRUE  },
-  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_12, .Pid.Pid16bit = PTL_H_SID_F2_PID_PXPE,  11, 1,  TRUE  }
+  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_1, .Pid.Pid16bit = PTL_SID_F2_PID_PXPA, 0, 4, 4, FALSE },
+  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_5, .Pid.Pid16bit = PTL_SID_F2_PID_PXPB, 4, 4, 4, FALSE },
+  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_9, .Pid.Pid16bit = PTL_P_H_SID_F2_PID_PXPC, 8, 2, 4, TRUE },
+  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_11, .Pid.Pid16bit = PTL_H_SID_F2_PID_PXPD, 10, 1, 8, TRUE },
+  { PCI_DEVICE_NUMBER_PCH_PCIE_ROOT_PORT_12, .Pid.Pid16bit = PTL_H_SID_F2_PID_PXPE, 11, 1, 4, TRUE }
 };
 
 
@@ -240,6 +241,54 @@ PtlPcdGetPcieControllerSbiPid (
   } else {
     if (ControllerIndex < ARRAY_SIZE (mPtlPcdHPcieControllerInfo)) {
       return mPtlPcdHPcieControllerInfo[ControllerIndex].Pid.PortId.LocalPid;
+    }
+  }
+  return 0xFF;
+}
+
+/**
+  Return number of Root Ports for given PCIe Controller number
+
+  @param[in] ControllerIndex     PCIe controller index
+
+  @retval NumOfRp    Number of Root Ports for PCIe Controller
+**/
+UINT8
+PtlPcdGetPcieControllerNumOfRootPorts (
+  IN UINT32  ControllerIndex
+  )
+{
+  if (PtlIsPcdP ()) {
+    if (ControllerIndex < ARRAY_SIZE (mPtlPcdPPcieControllerInfo)) {
+      return mPtlPcdPPcieControllerInfo[ControllerIndex].NumOfRp;
+    }
+  } else {
+    if (ControllerIndex < ARRAY_SIZE (mPtlPcdHPcieControllerInfo)) {
+      return mPtlPcdHPcieControllerInfo[ControllerIndex].NumOfRp;
+    }
+  }
+  return 0xFF;
+}
+
+/**
+  Return number of lanes for given PCIe Controller number
+
+  @param[in] ControllerIndex     PCIe controller index
+
+  @retval NumOfLanes    Number of lanes for PCIe Controller
+**/
+UINT8
+PtlPcdGetPcieControllerNumOfLanes (
+  IN UINT32  ControllerIndex
+  )
+{
+  if (PtlIsPcdP ()) {
+    if (ControllerIndex < ARRAY_SIZE (mPtlPcdPPcieControllerInfo)) {
+      return mPtlPcdPPcieControllerInfo[ControllerIndex].NumOfLanes;
+    }
+  } else {
+    if (ControllerIndex < ARRAY_SIZE (mPtlPcdHPcieControllerInfo)) {
+      return mPtlPcdHPcieControllerInfo[ControllerIndex].NumOfLanes;
     }
   }
   return 0xFF;

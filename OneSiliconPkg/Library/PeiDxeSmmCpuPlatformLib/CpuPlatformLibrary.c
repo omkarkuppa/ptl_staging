@@ -175,6 +175,7 @@ IsDlvrPhaseSscSupported (
   MailboxCommand.InterfaceData = 0;
   MailboxCommand.Fields.Command = MAILBOX_PCODE_CMD_DLVR_SOC;
   MailboxCommand.Fields.Param1 = MAILBOX_PCODE_DLVR_PHASE_SSC_GET_SUBCOMMAND;
+  MailboxData.Data32 = 0;
   Status = MailboxRead (MailboxCommand.InterfaceData, &MailboxData.Data32 , &MailboxStatus);
   if (Status != EFI_SUCCESS || MailboxStatus != EFI_SUCCESS) {
     DEBUG ((DEBUG_ERROR, "Mailbox read command failed unexpectedly, DLVR Phase SSC is not supported. MailboxStatus = %x , Mailbox command return status %r\n", MailboxStatus, Status));
@@ -1415,4 +1416,21 @@ CpuGetCoreType (
   GetCoreType (&CoreType);
 
   return CoreType;
+}
+
+/**
+  Returns Socket Type String
+
+  @retval      Character pointer of Socket Type String
+**/
+CHAR8*
+EFIAPI
+GetSocketTypeString (
+  VOID
+  )
+{
+  UINT32 CpuFamilyId;
+
+  CpuFamilyId = GetCpuFamilyModel ();
+  return GetSocketTypeFru (CpuFamilyId);
 }

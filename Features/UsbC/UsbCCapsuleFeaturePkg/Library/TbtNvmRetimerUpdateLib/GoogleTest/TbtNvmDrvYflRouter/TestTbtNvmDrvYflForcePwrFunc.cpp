@@ -19,22 +19,28 @@
 @par Specification
 **/
 
-//**********************************************************
-// TbtNvmDrvYflForcePwrFunc Unit Test                      *
-//**********************************************************
-class TbtNvmDrvYflForcePwrFuncTest : public CommonMock {
-  protected:
-    TBT_STATUS            TbtStatus;
-    BOOLEAN               Enable;
-    BOOLEAN               TBTControllerWasPowered;
-    EFI_PCI_IO_PROTOCOL   *PciIoProto;
-    UINT32                RegValue;
-    UINT32                RegValue2;
-    UINT32                RegValue3;
+#include <GTestTbtNvmDrvYflRouter.h>
+#include <GoogleTest/Library/MockUefiBootServicesTableLib.h>
+#include <GoogleTest/Private/MockPciIopProtocolLib/MockPciIopProtocolLib.h>
 
-    void SetUp() override {
-      PciIoProto = gPciIoInterface;
-    }
+// **********************************************************
+// TbtNvmDrvYflForcePwrFunc Unit Test                       *
+// **********************************************************
+class TbtNvmDrvYflForcePwrFuncTest : public Test {
+  protected:
+    TBT_STATUS                   TbtStatus;
+    BOOLEAN                      Enable;
+    BOOLEAN                      TBTControllerWasPowered;
+    EFI_PCI_IO_PROTOCOL          PciIopProtocol;
+    UINT32                       RegValue;
+    UINT32                       RegValue2;
+    UINT32                       RegValue3;
+    MockPciIopProtocolLib        PciIoProcotolMock;
+    MockUefiBootServicesTableLib UefiBootServicesTableLibMock;
+
+  void SetUp() override {
+    std::memcpy (&PciIopProtocol, &localPp, sizeof (EFI_PCI_IO_PROTOCOL));
+  }
 };
 
 //
@@ -55,7 +61,7 @@ TEST_F (TbtNvmDrvYflForcePwrFuncTest, PciIoProtoIsNullError) {
 TEST_F (TbtNvmDrvYflForcePwrFuncTest, TBTControllerWasPoweredIsNullError) {
   cout << "[---------- Case 2 ----------]"<< endl;
   Enable    = TRUE;
-  TbtStatus = TbtNvmDrvYflForcePwrFunc (PciIoProto, Enable, NULL);
+  TbtStatus = TbtNvmDrvYflForcePwrFunc (&localPp, Enable, NULL);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
 }
 
@@ -65,24 +71,26 @@ TEST_F (TbtNvmDrvYflForcePwrFuncTest, TBTControllerWasPoweredIsNullError) {
 //
 TEST_F (TbtNvmDrvYflForcePwrFuncTest, TBTControllerWasPoweredInTrueSuccess) {
   cout << "[---------- Case 3 ----------]"<< endl;
-  Enable                   = TRUE;
-  TBTControllerWasPowered  = TRUE;
-  TbtStatus = TbtNvmDrvYflForcePwrFunc (PciIoProto, Enable, &TBTControllerWasPowered);
+  Enable                  = TRUE;
+  TBTControllerWasPowered = TRUE;
+  TbtStatus               = TbtNvmDrvYflForcePwrFunc (&localPp, Enable, &TBTControllerWasPowered);
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);
 }
 
 //
-// Case 4 - Couldn't read from PCIe register. 
+// Case 4 - Couldn't read from PCIe register.
 // Expected Result - TbtStatus will return TBT_STATUS_NON_RECOVERABLE_ERROR
 //
 TEST_F (TbtNvmDrvYflForcePwrFuncTest, PciReadRegError) {
   cout << "[---------- Case 4 ----------]"<< endl;
-  Enable                   = TRUE;
-  TBTControllerWasPowered  = FALSE;
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead )
-    .WillOnce (Return(EFI_LOAD_ERROR));
-  TbtStatus = TbtNvmDrvYflForcePwrFunc (PciIoProto, Enable, &TBTControllerWasPowered);
+  Enable                  = TRUE;
+  TBTControllerWasPowered = FALSE;
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read
+    )
+    .WillOnce (Return (EFI_LOAD_ERROR));
+  TbtStatus = TbtNvmDrvYflForcePwrFunc (&localPp, Enable, &TBTControllerWasPowered);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
 }
 
@@ -93,86 +101,103 @@ TEST_F (TbtNvmDrvYflForcePwrFuncTest, PciReadRegError) {
 //
 TEST_F (TbtNvmDrvYflForcePwrFuncTest, FORCE_PWR_REG_BIT_MaskSuccess) {
   cout << "[---------- Case 5 ----------]"<< endl;
-  Enable                   = TRUE;
-  TBTControllerWasPowered  = FALSE;
-  RegValue = 0x02;
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      PciIoProto,
-      Eq(EfiPciIoWidthUint32),
+  Enable                  = TRUE;
+  TBTControllerWasPowered = FALSE;
+  RegValue                = 0x02;
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read (
+      &localPp,
+      Eq (EfiPciIoWidthUint32),
       FORCE_PWR_REG_OFFSET,
       1,
-      _ ))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&RegValue, sizeof(RegValue)),
-        Return (EFI_SUCCESS)
-    ));
-  TbtStatus = TbtNvmDrvYflForcePwrFunc (PciIoProto, Enable, &TBTControllerWasPowered);
+       DoAll (
+         SetArgBuffer<4>(&RegValue, sizeof (RegValue)),
+         Return (EFI_SUCCESS)
+         )
+       );
+  TbtStatus = TbtNvmDrvYflForcePwrFunc (&localPp, Enable, &TBTControllerWasPowered);
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);
   EXPECT_EQ (TBTControllerWasPowered, TRUE);
 }
 
 //
-// Case 6 - Couldn't write to PCIe register for enabled force power. 
+// Case 6 - Couldn't write to PCIe register for enabled force power.
 // Expected Result - TbtStatus will return TBT_STATUS_NON_RECOVERABLE_ERROR
 //
 TEST_F (TbtNvmDrvYflForcePwrFuncTest, PciWriteRegError) {
   cout << "[---------- Case 6 ----------]"<< endl;
-  Enable                   = TRUE;
-  TBTControllerWasPowered  = FALSE;
-  RegValue = 0x00;
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      PciIoProto,
-      Eq(EfiPciIoWidthUint32),
+  Enable                  = TRUE;
+  TBTControllerWasPowered = FALSE;
+  RegValue                = 0x00;
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read (
+      &localPp,
+      Eq (EfiPciIoWidthUint32),
       FORCE_PWR_REG_OFFSET,
       1,
-      _ ))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&RegValue, sizeof(RegValue)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&RegValue, sizeof (RegValue)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigWrite )
-    .WillOnce (Return(EFI_UNSUPPORTED));
-  TbtStatus = TbtNvmDrvYflForcePwrFunc (PciIoProto, Enable, &TBTControllerWasPowered);
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Write
+    )
+    .WillOnce (Return (EFI_UNSUPPORTED));
+  TbtStatus = TbtNvmDrvYflForcePwrFunc (&localPp, Enable, &TBTControllerWasPowered);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
 }
 
 //
-// Case 7 - In case the operation is disable, no need to verify FW is ready. 
+// Case 7 - In case the operation is disable, no need to verify FW is ready.
 // Expected Result - TbtStatus will return TBT_STATUS_SUCCESS
 //
 TEST_F (TbtNvmDrvYflForcePwrFuncTest, TBTControllerWasPoweredDisabledSuccess) {
   cout << "[---------- Case 7 ----------]"<< endl;
-  Enable                   = FALSE;
-  TBTControllerWasPowered  = FALSE;
-  RegValue = 0x00;
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      PciIoProto,
-      Eq(EfiPciIoWidthUint32),
+  Enable                  = FALSE;
+  TBTControllerWasPowered = FALSE;
+  RegValue                = 0x00;
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read (
+      &localPp,
+      Eq (EfiPciIoWidthUint32),
       FORCE_PWR_REG_OFFSET,
       1,
-      _ ))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&RegValue, sizeof(RegValue)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&RegValue, sizeof (RegValue)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigWrite (
-      PciIoProto,
-      Eq(EfiPciIoWidthUint32),
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Write (
+      &localPp,
+      Eq (EfiPciIoWidthUint32),
       FORCE_PWR_REG_OFFSET,
       1,
-      _ ))
+      _
+      )
+    )
     .WillOnce (Return (EFI_SUCCESS));
-  TbtStatus = TbtNvmDrvYflForcePwrFunc (PciIoProto, Enable, &TBTControllerWasPowered);
+  TbtStatus = TbtNvmDrvYflForcePwrFunc (&localPp, Enable, &TBTControllerWasPowered);
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);
 }
 
@@ -182,59 +207,75 @@ TEST_F (TbtNvmDrvYflForcePwrFuncTest, TBTControllerWasPoweredDisabledSuccess) {
 //
 TEST_F (TbtNvmDrvYflForcePwrFuncTest, FW_Of_TBT_Controller_is_ready) {
   cout << "[---------- Case 8 ----------]"<< endl;
-  Enable                   = TRUE;
-  TBTControllerWasPowered  = FALSE;
+  Enable                  = TRUE;
+  TBTControllerWasPowered = FALSE;
 
   RegValue = 0x00;
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      PciIoProto,
-      Eq(EfiPciIoWidthUint32),
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read (
+      &localPp,
+      Eq (EfiPciIoWidthUint32),
       FORCE_PWR_REG_OFFSET,
       1,
-      _ ))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&RegValue, sizeof(RegValue)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&RegValue, sizeof (RegValue)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigWrite (
-      PciIoProto,
-      Eq(EfiPciIoWidthUint32),
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Write (
+      &localPp,
+      Eq (EfiPciIoWidthUint32),
       FORCE_PWR_REG_OFFSET,
       1,
-      _ ))
+      _
+      )
+    )
     .WillOnce (Return (EFI_SUCCESS));
 
   RegValue2 = 0x0;
   RegValue3 = 0x80000000;
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      PciIoProto,
-      Eq(EfiPciIoWidthUint32),
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read (
+      &localPp,
+      Eq (EfiPciIoWidthUint32),
       FW_READY_REG_OFFSET,
       1,
-      _ ))
-    .Times(3)
-    .WillOnce (Return(EFI_LOAD_ERROR))
+      _
+      )
+    )
+    .Times (3)
+    .WillOnce (Return (EFI_LOAD_ERROR))
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&RegValue2, sizeof(RegValue2)),
-        Return (EFI_SUCCESS)))
+       DoAll (
+         SetArgBuffer<4>(&RegValue2, sizeof (RegValue2)),
+         Return (EFI_SUCCESS)
+         )
+       )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&RegValue3, sizeof(RegValue3)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&RegValue3, sizeof (RegValue3)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (UefiBootServicesTableLibMock,
+  EXPECT_CALL (
+    UefiBootServicesTableLibMock,
     gBS_CoreStall (
-      _))
+      _
+      )
+    )
     .WillOnce (Return (EFI_SUCCESS));
 
-  TbtStatus = TbtNvmDrvYflForcePwrFunc (PciIoProto, Enable, &TBTControllerWasPowered);
+  TbtStatus = TbtNvmDrvYflForcePwrFunc (&localPp, Enable, &TBTControllerWasPowered);
   EXPECT_EQ (TbtStatus, TBT_STATUS_SUCCESS);
 }
 
@@ -244,41 +285,51 @@ TEST_F (TbtNvmDrvYflForcePwrFuncTest, FW_Of_TBT_Controller_is_ready) {
 //
 TEST_F (TbtNvmDrvYflForcePwrFuncTest, Waiting_too_much_on_power_on) {
   cout << "[---------- Case 9 ----------]"<< endl;
-  Enable                   = TRUE;
-  TBTControllerWasPowered  = FALSE;
+  Enable                  = TRUE;
+  TBTControllerWasPowered = FALSE;
 
   RegValue = 0x00;
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      PciIoProto,
-      Eq(EfiPciIoWidthUint32),
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read (
+      &localPp,
+      Eq (EfiPciIoWidthUint32),
       FORCE_PWR_REG_OFFSET,
       1,
-      _ ))
+      _
+      )
+    )
     .WillOnce (
-      DoAll (
-        SetArgBuffer<4>(&RegValue, sizeof(RegValue)),
-        Return (EFI_SUCCESS)
-    ));
+       DoAll (
+         SetArgBuffer<4>(&RegValue, sizeof (RegValue)),
+         Return (EFI_SUCCESS)
+         )
+       );
 
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigWrite (
-      PciIoProto,
-      Eq(EfiPciIoWidthUint32),
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Write (
+      &localPp,
+      Eq (EfiPciIoWidthUint32),
       FORCE_PWR_REG_OFFSET,
       1,
-      _ ))
+      _
+      )
+    )
     .WillOnce (Return (EFI_SUCCESS));
 
-  EXPECT_CALL (PciIoProcotolMock,
-    MockPciIoConfigRead (
-      PciIoProto,
-      Eq(EfiPciIoWidthUint32),
+  EXPECT_CALL (
+    PciIoProcotolMock,
+    Config_Read (
+      &localPp,
+      Eq (EfiPciIoWidthUint32),
       FW_READY_REG_OFFSET,
       1,
-      _ ))
-    .WillRepeatedly (Return(EFI_LOAD_ERROR));
+      _
+      )
+    )
+    .WillRepeatedly (Return (EFI_LOAD_ERROR));
 
-  TbtStatus = TbtNvmDrvYflForcePwrFunc (PciIoProto, Enable, &TBTControllerWasPowered);
+  TbtStatus = TbtNvmDrvYflForcePwrFunc (&localPp, Enable, &TBTControllerWasPowered);
   EXPECT_EQ (TbtStatus, TBT_STATUS_NON_RECOVERABLE_ERROR);
 }

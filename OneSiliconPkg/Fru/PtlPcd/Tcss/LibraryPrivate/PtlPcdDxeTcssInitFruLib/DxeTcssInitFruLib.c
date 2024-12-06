@@ -60,7 +60,7 @@ TcssIbtPcieConfigPciEnumComplete (
   LTR_LIMIT                          PolicyLtr;
   IOC_PMC_DEVEN_C_IOC_MCHBAR_STRUCT  TcssDevenCfg;
   UINTN                              BdfAllocRegOffset;
-  BDF_ALLOC_C_0_0_IOC_MCHBAR_STRUCT  BdfAllocCfg;
+  BDF_ALLOC_C_0_IOC_MCHBAR_STRUCT  BdfAllocCfg;
 
   ///
   /// Update TCSS Device Enable status to TCSS HOB
@@ -79,12 +79,12 @@ TcssIbtPcieConfigPciEnumComplete (
   for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index++) {
     if ((TcssDevenCfg.Data >> Index) & BIT0) {
       ///
-      /// BdfAllocRegOffset = BDF_ALLOC_C_0_0_IOC_MCHBAR_REG + (PMC_DEVEN_C[i] * 4),
+      /// BdfAllocRegOffset = BDF_ALLOC_C_0_IOC_MCHBAR_REG + (PMC_DEVEN_C[i] * 4),
       /// PMC_DEVEN_C[i] = Index
       ///
-      BdfAllocRegOffset = BDF_ALLOC_C_0_0_IOC_MCHBAR_REG + (Index * 4);
+      BdfAllocRegOffset = BDF_ALLOC_C_0_IOC_MCHBAR_REG + (Index * 4);
       BdfAllocCfg.Data =  MmioRead32 (MchBar + BdfAllocRegOffset);
-      RootPortFn = (UINT8)(BdfAllocCfg.Bits.func << BDF_ALLOC_C_0_0_IOC_MCHBAR_FUNC_LSB);
+      RootPortFn = (UINT8)(BdfAllocCfg.Bits.func << BDF_ALLOC_C_0_IOC_MCHBAR_FUNC_LSB);
 
       DEBUG((DEBUG_INFO, "TcssRootportDownstreamPmConfiguration %x\n", RootPortFn));
 

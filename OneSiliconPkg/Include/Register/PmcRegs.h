@@ -424,7 +424,6 @@
 #define B_PMC_PWRM_ETR3_CF9GR                               BIT20                       ///< CF9h Global Reset
 #define B_PMC_PWRM_ETR3_CWORWRE                             BIT18                       ///< CF9h Without Resume Well Reset Enable
 #define B_PMC_PWRM_ETR3_ER_DEBUG_EN                         BIT1                        ///< Energy Reporting Debug Enable
-#define B_PMC_PWRM_PMC_THROT_1_VRALERT_EN                   BIT0                        ///< VRAlert# Enable
 
 #define R_PMC_PWRM_SSML                                     0x104C           ///< SET STRAP MSG LOCK
 #define B_PMC_PWRM_SSML_SSL                                 BIT0             ///< Set_Strap Lock

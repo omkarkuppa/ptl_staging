@@ -356,7 +356,7 @@ MrcGetSetPartitionBlockPiCodeLUT (
 {
   UINT32 Index;
   MrcStatus Status = mrcSuccess;
-  MRC_RANGE Range = MrcGetPartitionIndexRange (PartitionBlock, BlockIndex);
+  MRC_RANGE Range = MrcGetPartitionIndexRange (MrcData, PartitionBlock, BlockIndex);
   if (Range.Start != MRC_IGNORE_ARG_8) {
     for (Index = Range.Start; Index < Range.End && Status == mrcSuccess; Index++) {
       if (!MrcGetHwPartitionExists (MrcData, PartitionBlock, Index, MRC_IGNORE_ARG)) {
@@ -424,7 +424,7 @@ MrcGetSetPartitionBlock (
 {
   UINT32 Index;
   MrcStatus Status = mrcSuccess;
-  MRC_RANGE Range = MrcGetPartitionIndexRange (PartitionBlock, BlockIndex);
+  MRC_RANGE Range = MrcGetPartitionIndexRange (MrcData, PartitionBlock, BlockIndex);
   if (Range.Start != MRC_IGNORE_ARG_8) {
     for (Index = Range.Start; Index < Range.End && Status == mrcSuccess; Index++) {
       if (!MrcGetHwPartitionExists (MrcData, PartitionBlock, Index, MRC_IGNORE_ARG)) {
@@ -495,7 +495,7 @@ MrcGetSetPartitionBlockIndex (
 {
   UINT32 PartIndex;
   MrcStatus Status = mrcSuccess;
-  MRC_RANGE Range = MrcGetPartitionIndexRange (PartitionBlock, BlockIndex);
+  MRC_RANGE Range = MrcGetPartitionIndexRange (MrcData, PartitionBlock, BlockIndex);
   if (Range.Start != MRC_IGNORE_ARG_8) {
     for (PartIndex = Range.Start; PartIndex < Range.End && Status == mrcSuccess; PartIndex++) {
       if (!MrcGetHwPartitionExists (MrcData, PartitionBlock, PartIndex, MRC_IGNORE_ARG)) {
@@ -566,7 +566,7 @@ MrcGetSetPartitionBlockSagv (
 {
   UINT32 PartIndex;
   MrcStatus Status = mrcSuccess;
-  MRC_RANGE Range = MrcGetPartitionIndexRange (PartitionBlock, BlockIndex);
+  MRC_RANGE Range = MrcGetPartitionIndexRange (MrcData, PartitionBlock, BlockIndex);
   if (Range.Start != MRC_IGNORE_ARG_8) {
     for (PartIndex = Range.Start; PartIndex < Range.End && Status == mrcSuccess; PartIndex++) {
       if (!MrcGetHwPartitionExists (MrcData, PartitionBlock, PartIndex, MRC_IGNORE_ARG)) {

@@ -51,32 +51,58 @@
 
 typedef union {
   struct {
-    UINT64 nd : 3;
-    UINT64 afl : 1;
-	  UINT64 rwbf : 1;
-    UINT64 plmr : 1;
-    UINT64 phmr : 1;
-    UINT64 cm : 1;
-	  UINT64 sagaw : 5;
-    UINT64 rsvd_0 : 3;
-    UINT64 mgaw : 6;
-    UINT64 zlr : 1; 
-    UINT64 rsvd_1 : 1;
-    UINT64 fro : 10;
-    UINT64 sllps : 4;
-    UINT64 rsvd_2 : 1;
-    UINT64 psi : 1;
-    UINT64 nfr : 8;
-    UINT64 mamv : 6;
-    UINT64 dwd : 1;
-    UINT64 drd : 1;
-    UINT64 fl1gp : 1;
-    UINT64 rsvd_3 : 2;
-    UINT64 pi : 1;
-    UINT64 fl5lp : 1;
-    UINT64 ecmds : 1;
-    UINT64 esirtps : 1;
-    UINT64 esrtps : 1;
+    UINT64 nd : 3; /**< Number of Domains Supported */
+                            /* Bits[2:0], default=0x00000002*/
+    UINT64 afl : 1; /**< Advanced Fault Logging */
+                            /* Bits[3:3], default=0x00000000*/
+    UINT64 rwbf : 1; /**< Required Write-Buffer Flushing */
+                            /* Bits[4:4], default=0x00000000*/
+    UINT64 plmr : 1; /**< Protected Low-Memory Region */
+                            /* Bits[5:5], default=0x00000000*/
+    UINT64 phmr : 1; /**< Protected High-Memory Region */
+                            /* Bits[6:6], default=0x00000000*/
+    UINT64 cm : 1; /**< Caching Mode */
+                            /* Bits[7:7], default=0x00000000*/
+    UINT64 sagaw : 5; /**< Supported Adjusted Guest Address Widths */
+                            /* Bits[12:8], default=0x00000004*/
+    UINT64 rsvd_0 : 3; /**< Undefined - auto filled rsvd_[15:13] */
+                            /* Bits[15:13], default=None*/
+    UINT64 mgaw : 6; /**< Maximum Guest Address Width */
+                            /* Bits[21:16], default=0x00000029*/
+    UINT64 zlr : 1; /**< Zero Length Read */
+                            /* Bits[22:22], default=0x00000001*/
+    UINT64 rsvd_1 : 1; /**< Undefined - auto filled rsvd_[23:23] */
+                            /* Bits[23:23], default=None*/
+    UINT64 fro : 10; /**< Fault-Recording Register Offset */
+                            /* Bits[33:24], default=0x000000EE*/
+    UINT64 sllps : 4; /**< Second Level Large Page Support */
+                            /* Bits[37:34], default=0x00000003*/
+    UINT64 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[38:38] */
+                            /* Bits[38:38], default=None*/
+    UINT64 psi : 1; /**< Page Selective Invalidation */
+                            /* Bits[39:39], default=0x00000001*/
+    UINT64 nfr : 8; /**< Number of Fault-Recording Registers */
+                            /* Bits[47:40], default=0x00000000*/
+    UINT64 mamv : 6; /**< Maximum Address Mask Value */
+                            /* Bits[53:48], default=0x0000001E*/
+    UINT64 dwd : 1; /**< Write Draining */
+                            /* Bits[54:54], default=0x00000001*/
+    UINT64 drd : 1; /**< Read Draining */
+                            /* Bits[55:55], default=0x00000001*/
+    UINT64 fl1gp : 1; /**< First Level 1-GByte Page Support */
+                            /* Bits[56:56], default=0x00000001*/
+    UINT64 rsvd_3 : 2; /**< Undefined - auto filled rsvd_[58:57] */
+                            /* Bits[58:57], default=None*/
+    UINT64 pi : 1; /**< Posted Interrupt Support */
+                            /* Bits[59:59], default=0x00000001*/
+    UINT64 fl5lp : 1; /**< First Level 5-level Paging */
+                            /* Bits[60:60], default=0x00000000*/
+    UINT64 ecmds : 1; /**< Enhanced Command Support */
+                            /* Bits[61:61], default=0x00000001*/
+    UINT64 esirtps : 1; /**< Enhanced Set Interrupt Root Table Pointer Support */
+                            /* Bits[62:62], default=0x00000001*/
+    UINT64 esrtps : 1; /**< Enhanced Set Root Table Pointer Support */
+                            /* Bits[63:63], default=0x00000001*/
   }     Bits;
   UINT64 Data;
   UINT32 Data32[2];
@@ -139,71 +165,128 @@ typedef union {
 
 typedef union {
   struct {
-    UINT64 c : 1;
-    UINT64 qi : 1;
-    UINT64 dt : 1;
-    UINT64 ir : 1;
-    UINT64 eim : 1;
-    UINT64 rsvd_0 : 1;
-    UINT64 pt : 1;
-    UINT64 sc : 1;
-    UINT64 iro : 10;
-    UINT64 rsvd_1 : 2;
-    UINT64 mhmv : 4;
-    UINT64 rsvd_2 : 1;
-    UINT64 mts : 1;
-    UINT64 nest : 1;
-    UINT64 rsvd_3 : 2;
-    UINT64 prs : 1;
-    UINT64 ers : 1;
-    UINT64 srs : 1;
-    UINT64 rsvd_4 : 1;
-    UINT64 nwfs : 1;
-    UINT64 eafs : 1;
-    UINT64 pss : 5;
-    UINT64 pasid : 1;
-    UINT64 dit : 1;
-    UINT64 pds : 1;
-    UINT64 smts : 1;
-    UINT64 vcs : 1;
-    UINT64 slads : 1;
-    UINT64 slts : 1;
-    UINT64 flts : 1;
-    UINT64 smpwcs : 1;
-	  UINT64 rps : 1;
+    UINT64 c : 1; /**< Page-Walk Coherency */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT64 qi : 1; /**< Queued Invalidation Support */
+                            /* Bits[1:1], default=0x00000001*/
+    UINT64 dt : 1; /**< Device-TLB Support */
+                            /* Bits[2:2], default=0x00000000*/
+    UINT64 ir : 1; /**< Interrupt Remapping Suport */
+                            /* Bits[3:3], default=0x00000001*/
+    UINT64 eim : 1; /**< Extended Interrupt Mode */
+                            /* Bits[4:4], default=0x00000001*/
+    UINT64 rsvd_0 : 1; /**< Undefined - auto filled rsvd_[05:05] */
+                            /* Bits[5:5], default=None*/
+    UINT64 pt : 1; /**< Pass Through */
+                            /* Bits[6:6], default=0x00000001*/
+    UINT64 sc : 1; /**< Snoop Control */
+                            /* Bits[7:7], default=0x00000001*/
+    UINT64 iro : 10; /**< IOTLB Register Offset */
+                            /* Bits[17:8], default=0x000000EF*/
+    UINT64 rsvd_1 : 2; /**< Undefined - auto filled rsvd_[19:18] */
+                            /* Bits[19:18], default=None*/
+    UINT64 mhmv : 4; /**< Maximum Handle Mask Value */
+                            /* Bits[23:20], default=0x0000000F*/
+    UINT64 rsvd_2 : 1; /**< Undefined - auto filled rsvd_[24:24] */
+                            /* Bits[24:24], default=None*/
+    UINT64 mts : 1; /**< Memory Type Support */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT64 nest : 1; /**< Nested Translation Support */
+                            /* Bits[26:26], default=0x00000001*/
+    UINT64 rsvd_3 : 2; /**< Undefined - auto filled rsvd_[28:27] */
+                            /* Bits[28:27], default=None*/
+    UINT64 prs : 1; /**< Page Request Support */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT64 ers : 1; /**< Execute Request Support */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT64 srs : 1; /**< Supervisor Request Support */
+                            /* Bits[31:31], default=0x00000001*/
+    UINT64 rsvd_4 : 1; /**< Undefined - auto filled rsvd_[32:32] */
+                            /* Bits[32:32], default=None*/
+    UINT64 nwfs : 1; /**< No Write Flag Support */
+                            /* Bits[33:33], default=0x00000000*/
+    UINT64 eafs : 1; /**< Extended Accessed Flag Support */
+                            /* Bits[34:34], default=0x00000000*/
+    UINT64 pss : 5; /**< PASID Size Supported */
+                            /* Bits[39:35], default=0x00000013*/
+    UINT64 pasid : 1; /**< Process Address Space ID Support */
+                            /* Bits[40:40], default=0x00000000*/
+    UINT64 dit : 1; /**< Device-TLB Invalidation Throttle */
+                            /* Bits[41:41], default=0x00000000*/
+    UINT64 pds : 1; /**< Page Request Draining Support */
+                            /* Bits[42:42], default=0x00000000*/
+    UINT64 smts : 1; /**< Scalable Mode Translation Support */
+                            /* Bits[43:43], default=0x00000001*/
+    UINT64 vcs : 1; /**< Virtual Command Support */
+                            /* Bits[44:44], default=0x00000000*/
+    UINT64 slads : 1; /**< Second-Level Accessed/Dirty Support */
+                            /* Bits[45:45], default=0x00000000*/
+    UINT64 slts : 1; /**< Second-Level Translation Support */
+                            /* Bits[46:46], default=0x00000001*/
+    UINT64 flts : 1; /**< First-Level Translation Support */
+                            /* Bits[47:47], default=0x00000001*/
+    UINT64 smpwcs : 1; /**< Scalable Mode Page-walk Coherency */
+                            /* Bits[48:48], default=0x00000000*/
+    UINT64 rps : 1; /**< RID_PASID Support */
+                            /* Bits[49:49], default=0x00000001*/
 #ifdef SV_HOOKS
-    UINT64 tdxio : 1;
+    UINT64 tdxio : 1; /**< TDX_IO Support */
+                            /* Bits[50:50], default=0x00000000*/
 
 #else
     UINT64 rsvd_5 : 1;
+
+                            /* Bits[50:50], Access Type=RO, default=None*/
+
+                            /* Reserved */
 #endif      // SV_HOOKS
 
-    UINT64 pms : 1;
-    UINT64 adms : 1;
-    UINT64 rprivs : 1;
-    UINT64 rsvd_6 : 1;
+    UINT64 pms : 1; /**< Performance Monitoring Support */
+                            /* Bits[51:51], default=0x00000001*/
+    UINT64 adms : 1; /**< Abort DMA Mode Support */
+                            /* Bits[52:52], default=0x00000001*/
+    UINT64 rprivs : 1; /**< RID-PRIV Supported */
+                            /* Bits[53:53], default=0x00000001*/
+    UINT64 rsvd_6 : 1; /**< Undefined - auto filled rsvd_[54:54] */
+                            /* Bits[54:54], default=None*/
 #ifdef SV_HOOKS
-    UINT64 hpts : 1;
+    UINT64 hpts : 1; /**< HPT Support */
+                            /* Bits[55:55], default=0x00000000*/
 
 #else
     UINT64 rsvd_7 : 1;
+
+                            /* Bits[55:55], Access Type=RO, default=None*/
+
+                            /* Reserved */
 #endif      // SV_HOOKS
 
 #ifdef SV_HOOKS
-    UINT64 ptrs : 1;
+    UINT64 ptrs : 1; /**< PASID in Translated Requests Support */
+                            /* Bits[56:56], default=0x00000000*/
 
 #else
     UINT64 rsvd_8 : 1;
+
+                            /* Bits[56:56], Access Type=RO, default=None*/
+
+                            /* Reserved */
 #endif      // SV_HOOKS
 
 #ifdef SV_HOOKS
-    UINT64 pbds : 1;
+    UINT64 pbds : 1; /**< Page Specific DMA Support */
+                            /* Bits[57:57], default=0x00000000*/
 
 #else
     UINT64 rsvd_9 : 1;
+
+                            /* Bits[57:57], Access Type=RO, default=None*/
+
+                            /* Reserved */
 #endif      // SV_HOOKS
 
-    UINT64 rsvd_10 : 6;
+    UINT64 rsvd_10 : 6; /**< Undefined - auto filled rsvd_[63:58] */
+                            /* Bits[63:58], default=None*/
   }     Bits;
   UINT64 Data;
   UINT32 Data32[2];
@@ -298,16 +381,26 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 23;
-    UINT32 cfis : 1;
-    UINT32 irtps : 1;
-    UINT32 ires : 1;
-    UINT32 qies : 1;
-    UINT32 wbfs : 1;
-    UINT32 afls : 1;
-    UINT32 fls : 1;
-    UINT32 rtps : 1;
-    UINT32 tes : 1;
+    UINT32 rsvd_0 : 23; /**< Undefined - auto filled rsvd_[22:00] */
+                            /* Bits[22:0], default=None*/
+    UINT32 cfis : 1; /**< Compatibility Format Interrupt Status */
+                            /* Bits[23:23], default=0x00000000*/
+    UINT32 irtps : 1; /**< Interrupt Remapping Pointer Status */
+                            /* Bits[24:24], default=0x00000000*/
+    UINT32 ires : 1; /**< Interrupt Remapping Enable Status */
+                            /* Bits[25:25], default=0x00000000*/
+    UINT32 qies : 1; /**< Queued Invalidation Enable Status */
+                            /* Bits[26:26], default=0x00000000*/
+    UINT32 wbfs : 1; /**< Write Buffer Flush Status */
+                            /* Bits[27:27], default=0x00000000*/
+    UINT32 afls : 1; /**< Adavanced Fault Logging Status */
+                            /* Bits[28:28], default=0x00000000*/
+    UINT32 fls : 1; /**< Fault Log Status */
+                            /* Bits[29:29], default=0x00000000*/
+    UINT32 rtps : 1; /**< Root Table Pointer Status */
+                            /* Bits[30:30], default=0x00000000*/
+    UINT32 tes : 1; /**< Translation Enable Status */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -343,9 +436,12 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 prs : 1;
-    UINT32 rsvd_0 : 30;
-    UINT32 epm : 1;
+    UINT32 prs : 1; /**< Protected Region Status */
+                            /* Bits[0:0], default=0x00000000*/
+    UINT32 rsvd_0 : 30; /**< Undefined - auto filled rsvd_[30:01] */
+                            /* Bits[30:1], default=None*/
+    UINT32 epm : 1; /**< Enable Protected Memory */
+                            /* Bits[31:31], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -367,8 +463,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 20;
-    UINT32 plmb : 12;
+    UINT32 rsvd_0 : 20; /**< Undefined - auto filled rsvd_[19:00] */
+                            /* Bits[19:0], default=None*/
+    UINT32 plmb : 12; /**< Protected Low-Memory Base */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -388,8 +486,10 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 rsvd_0 : 20;
-    UINT32 plml : 12;
+    UINT32 rsvd_0 : 20; /**< Undefined - auto filled rsvd_[19:00] */
+                            /* Bits[19:0], default=None*/
+    UINT32 plml : 12; /**< Protected Low-Memory Limit */
+                            /* Bits[31:20], default=0x00000000*/
   }     Bits;
   UINT32 Data;
   UINT16 Data16[2];
@@ -402,9 +502,6 @@ typedef union {
 #define PLMLIMIT_VTD_IOMMU_PLML_SIZE 0x000c
 
 //************************************************ /RegisterStructs
-
-
-
 
 #endif      // _VTD_IOMMU_h
 

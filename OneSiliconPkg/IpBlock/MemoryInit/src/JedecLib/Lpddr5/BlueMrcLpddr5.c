@@ -482,7 +482,7 @@ MrcLpddr5ConfigDrfm (
 
     // This routine is called on even Channels only
     // Send MR75 on the corresponding odd channels and update host structure for them
-    if (MrcChannelExist (MrcData, Controller, Channel + 1)) { 
+    if (MrcChannelExist (MrcData, Controller, Channel + 1)) {
       Status = MrcIssueMrw (MrcData, Controller, Channel + 1, Rank, mrMR75, Lpddr5MR75.Data8, TRUE);
       if (Status != mrcSuccess) {
         return Status;
@@ -526,7 +526,6 @@ MrcJedecInitLpddr5 (
   MrcChannelOut           *ChannelOut;
   MrcOutput               *Outputs;
   MrcDebug                *Debug;
-  MrcSaveData             *SaveData;
   MrcModeRegister         CurMrAddr;
   UINT32                  Channel;
   UINT32                  Controller;
@@ -541,14 +540,15 @@ MrcJedecInitLpddr5 (
   GmfLpddr5DelayType      CurDelayType;
   MRC_GEN_MRS_FSM_MR_TYPE *GenMrsFsmMr;
   MRC_GEN_MRS_FSM_MR_TYPE MrData[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL][MAX_MR_GEN_FSM];
+  BOOLEAN                 IsRowHammerEnabled;
 
   static const UINT8  MrAddress[] = {
     mrMR16,
 #ifndef HVM_MODE
     mrMR13,
 #endif
-    mrMR20, mrMR17, mrMR25, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15, mrMR18, 
-    mrMR3,  mrMR1,  mrMR2,  mrMR19, mrMR21, mrMR28, mrMR30,  mrMR69, mrMR37, mrMR41, 
+    mrMR20, mrMR17, mrMR25, mrMR10, mrMR11, mrMR12, mrMR12b, mrMR14, mrMR15, mrMR18,
+    mrMR3,  mrMR1,  mrMR2,  mrMR19, mrMR21, mrMR28, mrMR30,  mrMR69, mrMR37, mrMR41,
     mrMR75, mrMR24, mrMR58
   };
 
@@ -567,7 +567,6 @@ MrcJedecInitLpddr5 (
   Outputs  = &MrcData->Outputs;
   Debug    = &Outputs->Debug;
   Inputs   = &MrcData->Inputs;
-  SaveData = &MrcData->Save.Data;
   MrcCall  = Inputs->Call.Func;
   Status   = mrcSuccess;
 
@@ -594,7 +593,9 @@ MrcJedecInitLpddr5 (
           for (Index = 0, OutIdx = 0; Index < ARRAY_COUNT (MrAddress); Index++) {
             CurMrAddr = MrAddress[Index];
 
-            if ((CurMrAddr == mrMR75) && (!SaveData->IsDrfmSupported)) {  // Do not program MR75 if DRFM is not supported
+            // Do not program MR75 if DRFM is not supported
+            IsRowHammerEnabled = MrcData->Save.Data.IsRowHammerConfigured[Controller][Channel][dDIMM0];
+            if ((CurMrAddr == mrMR75) && (!IsRowHammerEnabled)) {
               continue;
             }
 

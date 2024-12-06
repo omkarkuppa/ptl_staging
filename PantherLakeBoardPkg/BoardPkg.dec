@@ -235,6 +235,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   # Memory Diagnostic Test Enable
   gBoardModuleTokenSpaceGuid.PcdMemoryDiagnosticTestEnable|FALSE|BOOLEAN|0xE0000001
+  gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid|{ 0xae, 0x6d, 0xb2, 0xff, 0xd7, 0x5a, 0x4e, 0x6f, 0xbd, 0x77, 0x06, 0x9d, 0x7d, 0xc4, 0x74, 0xcc }|VOID*|0x30000001
 
 [PcdsDynamic, PcdsDynamicEx]
   # PCH Misc Configuration
@@ -1052,12 +1053,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     GpioV2Config.h
     PlatformBoardConfig.h
   }
-  gBoardModuleTokenSpaceGuid.VpdPcdwwanPowerEnableGpio          |{0}|VPD_GPIO_PAD|0x0000112E {
-  <HeaderFiles>
-    Register/GpioV2PcdPins.h
-    GpioV2Config.h
-    PlatformBoardConfig.h
-  }
 
   gBoardModuleTokenSpaceGuid.VpdPcdWwanFullCardPowerOffGpioPolarity   |FALSE|BOOLEAN|0x00001185
   gBoardModuleTokenSpaceGuid.VpdPcdWwanBbrstGpioPolarity              |FALSE|BOOLEAN|0x00001186
@@ -1460,6 +1455,10 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   # UsbC Retimer Capsule Debug PostCode Print: FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|0|BOOLEAN|0x00001264
 
+  # Control the EC debug Info Print level before executing any command for PD Bridge, default is DEBUG_VERBOSE
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel|0x00400000|UINT32|0x00001268
+
+
   # PMC PD Enable
   gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable                    |FALSE|BOOLEAN|0x00001265
 
@@ -1514,9 +1513,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   # Rtd3 Table Signature
   gBoardModuleTokenSpaceGuid.VpdPcdBoardRtd3TableSignature            |0x0|UINT64|0x00001274
-
-  # Rtd3 Table Signature
-  gBoardModuleTokenSpaceGuid.VpdPcdBoardSsdRtd3TableSignature            |0x0|UINT64|0x00001300
 
   # Battery support Real and Virtual Battery
   # BOARD_REAL_BATTERY_SUPPORTED    : 1
@@ -1920,6 +1916,18 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCRetimerFlash           |{0}|USBC_RETIMER_FLASH_BOARD_CONFIG[]|0x000012CD {
   <HeaderFiles>
     PlatformBoardConfig.h
+  }
+
+# Mrc Channel to CKD QCK Mapping
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcChannelToCkdQckMapping|{0}|VPD_MRC_CH_2_CKD_QCK|0x000012E3 {
+    <HeaderFiles>
+      PlatformBoardConfig.h
+  }
+
+  # Mrc DDRIO Clock to CKD DIMM
+  gBoardModuleTokenSpaceGuid.VpdPcdMrcPhyClockToCkdDimm|{0}|VPD_MRC_DDRIO_2_CKD_CLOCK|0x000012E4 {
+    <HeaderFiles>
+      PlatformBoardConfig.h
   }
 
 #################################################################

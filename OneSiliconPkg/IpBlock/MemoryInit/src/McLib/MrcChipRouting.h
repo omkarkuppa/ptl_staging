@@ -42,4 +42,13 @@ MrcWorkPointLock (
   IN OUT MrcParameters *const MrcData
   );
 
+/**
+  Configure 1DPC 1R split Bg feature.
+
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+MrcConfigOneDpcSplitBg (
+  IN OUT MrcParameters *const MrcData
+  );
 #endif // _MrcChipRouting_h_
