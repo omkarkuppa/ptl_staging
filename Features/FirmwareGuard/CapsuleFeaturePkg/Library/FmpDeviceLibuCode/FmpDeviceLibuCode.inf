@@ -65,7 +65,6 @@
   TopSwapSupportLib
   ResiliencySupportLib
   PlatformBiosUpdateHookLib
-  PayloadResiliencySupportLib
 
 [Pcd]
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset              ## CONSUMES

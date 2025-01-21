@@ -40,7 +40,6 @@
 #include <Library/PlatformBootStateHookLib.h>
 #include <Library/VariablePolicyHelperLib.h>
 #include <Library/HashSupportLib.h>
-#include <Library/PayloadResiliencySupportLib.h>
 
 #include <Guid/SystemResourceTable.h>
 #include <Guid/CapsuleReport.h>
@@ -1076,10 +1075,9 @@ ResiliencyCallBackFunction (
     PopUpMsg (L"Resiliency rollback (TopSwap is enabled)", L"Restore Obb from ESP - Begin...", NULL);
     Status = ObbRestoreOrBackUp (TRUE);
     ASSERT_EFI_ERROR (Status);
-    if (IsPayloadBackupEnabled ()) {
-      Status = NonFitPayloadRestoreOrBackUp (TRUE);
-      ASSERT_EFI_ERROR (Status);
-    }
+
+    Status = NonFitPayloadRestoreOrBackUp (TRUE);
+    ASSERT_EFI_ERROR (Status);
     PopUpMsg (L"Resiliency rollback (TopSwap is enabled)", L"Restore Obb from ESP - End", &Status);
 
 #if FixedPcdGetBool (PcdBiosExtenedRegionEnable) == 1
@@ -1136,10 +1134,10 @@ ResiliencyCallBackFunction (
     PopUpMsg (L"Resiliency backup", L"Backup Obb to Esp - Begin...", NULL);
     Status = ObbRestoreOrBackUp (FALSE);
     ASSERT_EFI_ERROR (Status);
-    if (IsPayloadBackupEnabled ()) {
-      Status = NonFitPayloadRestoreOrBackUp (FALSE);
-      ASSERT_EFI_ERROR (Status);
-    }
+
+    Status = NonFitPayloadRestoreOrBackUp (FALSE);
+    ASSERT_EFI_ERROR (Status);
+
     PopUpMsg (L"Resiliency backup", L"Backup Obb to Esp - End", &Status);
 
 #if FixedPcdGetBool (PcdBiosExtenedRegionEnable) == 1

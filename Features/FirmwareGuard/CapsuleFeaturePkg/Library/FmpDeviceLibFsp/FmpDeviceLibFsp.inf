@@ -56,7 +56,6 @@
   ResiliencySupportLib
   ConfigProfileAccessLib
   CapsuleUpdateResetLib
-  PayloadResiliencySupportLib
 
 [Guids]
   gCapsuleFspImageFileGuid   ## CONSUMES
