@@ -188,7 +188,7 @@ CnvFormPlatformCallback (
       } else { //I2S (legacy) interface is used
         // Audio DSP NHLT Endpoints Configuration - Bluetooth
         if (NhltConfiguration.NhltBluetoothEnabled == BT_DISABLED) {
-          NhltConfiguration.NhltBluetoothEnabled = BT_DRIVES_I2S_CLOCK; // BT drives I2S in HFP
+          NhltConfiguration.NhltBluetoothEnabled = DSP_DRIVES_I2S_CLOCK;
           NhltNeedUpdate = TRUE;
         }
         // BT Offload through SoundWire
@@ -369,7 +369,7 @@ DspFeaturesCnvSetupCallback (
       } else { //I2S (legacy) interface is used
         // Audio DSP NHLT Endpoints Configuration - Bluetooth
         if (NhltConfiguration.NhltBluetoothEnabled == BT_DISABLED) {
-          NhltConfiguration.NhltBluetoothEnabled = BT_DRIVES_I2S_CLOCK;
+          NhltConfiguration.NhltBluetoothEnabled = DSP_DRIVES_I2S_CLOCK;
         }
       }
   } else {

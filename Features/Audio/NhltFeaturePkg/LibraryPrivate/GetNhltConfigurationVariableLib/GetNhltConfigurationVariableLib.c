@@ -76,7 +76,7 @@ GetNhltConfiguration (
   ZeroMem (NhltConfiguration, sizeof (NHLT_CONFIGURATION));
   ZeroMem (&NhltConfigurationVariable, sizeof (NhltConfigurationVariable));
 
-#if FixedPcdGetBool (NhltConfigurationByPcdEnabled)
+#if FixedPcdGetBool (NhltConfigurationByPcdEnabled) == 1
   NhltEndpointTableLoadPcdConfiguration (&NhltConfigurationVariable);
   DEBUG ((DEBUG_ERROR, "%a (): Nhlt Endpoint Table configured based on the PCDs.\n", __FUNCTION__));
 #else
@@ -176,6 +176,7 @@ GetNhltConfiguration (
       break;
   }
 
+#if FixedPcdGetBool (NhltConfigurationByPcdEnabled) == 0
   if (NhltConfigurationVariable.Revision != NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_REVISION) {
     NhltConfigurationVariable.Revision = NHLT_ENDPOINTS_TABLE_CONFIGURATION_VARIABLE_REVISION;
     Status = gRT->SetVariable (
@@ -190,6 +191,7 @@ GetNhltConfiguration (
       return Status;
     }
   }
+#endif
 
   Status = InstallNhltBtVariable (NhltConfigurationVariable.NhltBluetoothEnabled);
   if (EFI_ERROR (Status)) {
