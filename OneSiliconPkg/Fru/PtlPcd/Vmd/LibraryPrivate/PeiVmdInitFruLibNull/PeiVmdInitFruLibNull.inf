@@ -1,9 +1,9 @@
 ## @file
-# Library description file for  PEI Phase SA VMDInit Lib
+# Null Library description file for  PEI Phase SA VMDInit Lib
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2021 Intel Corporation.
+#  Copyright (C) 2024 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -23,23 +23,12 @@
 [Defines]
 INF_VERSION = 0x00010017
 BASE_NAME = PeiVmdInitFruLib
-FILE_GUID = B9522872-F1C5-407E-A344-7BC5E1D7AA6B
+FILE_GUID = B9542972-FFC5-409E-A364-7FC5E1D7FA6B
 VERSION_STRING = 1.0
 MODULE_TYPE = PEIM
 LIBRARY_CLASS = PeiVmdInitFruLib
 
 [LibraryClasses]
-BaseMemoryLib
-BaseLib
-IoLib
-DebugLib
-PciSegmentLib
-MmPciLib
-VmdInfoLib
-PeiVmdInitLib
-MeInfoLib
-ImrInitLib
-CpuLib
 
 [Packages]
 MdePkg/MdePkg.dec
@@ -48,11 +37,10 @@ IntelSiliconPkg/IntelSiliconPkg.dec
 OneSiliconPkg/SiPkg.dec
 
 [Sources]
-PeiVmdInitFruLib.c
+PeiVmdInitFruLibNull.c
 
 [FixedPcd]
 
 [Ppis]
 
 [Guids]
-gVmdInfoHobGuid

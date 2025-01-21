@@ -50,6 +50,7 @@
 #include "MrcDdrIoComp.h"
 #include "CPlatformData.h"  // for PLATFORM_DATA and BDAT definitionss
 #include "MrcAmt.h" // For AMT_PPR_ENABLE
+#include <Library/PeiVmdInitFruLib.h>
 
 //
 // Definition in EDK Foundation, used in this driver
@@ -1942,6 +1943,8 @@ InstallEfiMemory (
     }
     DEBUG((DEBUG_INFO, "[Post Static Memory Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
+    VmdMemoryAllocation(&TopUseableMemAddr, &Touud, ResourceAttributeTested);
+    DEBUG((DEBUG_INFO, "[Post Vmd Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // Memory Allocation for Prmrr
@@ -1996,6 +1999,7 @@ InstallEfiMemory (
     //
     IGpuGsm2Allocation(SiPreMemPolicyPpi, &TopUseableMemAddr, &Touud, ResourceAttributeTested);
     DEBUG((DEBUG_INFO, "[Post GSM2 Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+
     //
     // This is above PSMI memory space, give it to EFI.
     //

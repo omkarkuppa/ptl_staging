@@ -91,6 +91,7 @@ PeiTraceHubInitLib
 PeiTelemetryInitLib
 PeiMemorySubSystemFruLib
 CapsulePpiProcessLib
+PeiVmdInitFruLib
 
 [Packages]
 MdePkg/MdePkg.dec

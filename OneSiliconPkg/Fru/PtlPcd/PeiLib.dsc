@@ -169,4 +169,5 @@
 !else
  PeiVmdInitLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Vmd/LibraryPrivate/PeiVmdInitLibNull/PeiVmdInitLibNull.inf
  PeiVmdPolicyLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Vmd/LibraryPrivate/PeiVmdPolicyLibNull/PeiVmdPolicyLibNull.inf
+ PeiVmdInitFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/Vmd/LibraryPrivate/PeiVmdInitFruLibNull/PeiVmdInitFruLibNull.inf
 !endif

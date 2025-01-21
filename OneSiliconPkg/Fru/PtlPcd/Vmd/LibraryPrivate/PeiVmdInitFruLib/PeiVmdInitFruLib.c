@@ -35,6 +35,9 @@
 #include <Library/VmdInfoLib.h>
 #include <Register/VmdRegs.h>
 #include <Library/PeiVmdInitFruLib.h>
+#include <Library/PeiImrInitLib.h>
+#include <Register/CpuGenInfoRegs.h>
+#include <Library/CpuLib.h>
 
 #define VMD_DEVICE_ID        (0xB06F)
 
@@ -312,4 +315,100 @@ VmdInitFruApi (
   }
 
   return;
+}
+
+/**
+  Reserve VMD Stolen Memory.
+
+  @param[in] TopUseableMemAddr          - Moving address pointer
+  @param[in] Touud                      - Size leftover pointer
+  @param[in] ResourceAttributeTested    - Resource attribute flag
+**/
+
+VOID
+EFIAPI
+VmdMemoryAllocation (
+  IN OUT EFI_PHYSICAL_ADDRESS     *TopUseableMemAddr,
+  IN OUT UINT64                   *Touud,
+  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
+  )
+{
+  EFI_STATUS                   Status;
+  EFI_RESOURCE_TYPE            ResourceType;
+  EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttribute;
+  UINT64                       BaseAddressImr11;
+  UINT32                       Imr11SizeInBytes;
+  UINT32                       Imr11SizeInMb;
+  UINT32                       CpuFamilyId;
+
+  if ((IsVmdEnabled() == TRUE)) {
+    CpuFamilyId = GetCpuFamilyModel ();
+    if (((GetCpuSteppingId () == EnumPtlHA0) || (GetCpuSteppingId () == EnumPtlUA0)) && (CpuFamilyId == CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE)) {
+
+      BaseAddressImr11 = *TopUseableMemAddr;
+      //
+      // Check if CCS Base is 1M aligned or not. If not, it should be MB aligned due to IMR requirement.
+      //
+      if ((BaseAddressImr11 & (SIZE_1MB - 1)) != 0x0) {
+        BaseAddressImr11 = (BaseAddressImr11 & ((UINT64) ~(SIZE_1MB - 1))) + SIZE_1MB;
+      }
+
+      Imr11SizeInMb    = (UINT32) SIZE_1MB;
+      Imr11SizeInBytes = Imr11SizeInMb << 20;
+      DEBUG ((DEBUG_INFO, "VmdMemoryAllocation memory base = 0x%016lX Size = 0x%x\n", BaseAddressImr11, Imr11SizeInBytes));
+
+
+        ResourceType      = EFI_RESOURCE_MEMORY_RESERVED;
+        ResourceAttribute = EFI_RESOURCE_ATTRIBUTE_PRESENT |
+                            EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+                            EFI_RESOURCE_ATTRIBUTE_TESTED |
+                            EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE;
+
+      BuildResourceDescriptorHob (
+        ResourceType,                                // MemoryType,
+        ResourceAttribute,                           // MemoryAttribute
+        (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
+        SIZE_1MB                                     // MemoryLength
+        );
+
+      BuildMemoryAllocationHob (
+        (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
+        SIZE_1MB,                                    // MemoryLength
+        EfiReservedMemoryType
+        );
+      //
+      // Program IMR11.
+      //
+      Status = SetImr (IMR_1M_IMR11, (UINT64) BaseAddressImr11, (UINT64) SIZE_1MB);
+      if (Status != EFI_SUCCESS) {
+        DEBUG ((DEBUG_ERROR, "Fail to program IMR11\n"));
+      }
+
+      *TopUseableMemAddr = BaseAddressImr11 + Imr11SizeInBytes;
+      *Touud            -= Imr11SizeInBytes;
+    }
+  }
+}
+
+/**
+  Check if Vmd Memory reservation is required.
+
+  @retval TRUE    If Memory reservation is required..
+  @retval FALSE   If Memory reservation is not required..
+**/
+
+BOOLEAN
+IsVmdMemoryAllocationRequired (
+VOID
+  )
+{
+  UINT32                      CpuFamilyId;
+
+  if ((IsVmdEnabled() == TRUE)) {
+    CpuFamilyId = GetCpuFamilyModel ();
+    if (((GetCpuSteppingId () == EnumPtlHA0) || (GetCpuSteppingId () == EnumPtlUA0)) && (CpuFamilyId == CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE)) {
+      return TRUE;
+    }
+  }
+  return FALSE;
 }
