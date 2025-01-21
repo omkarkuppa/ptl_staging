@@ -1809,8 +1809,8 @@
     oneof varid   = SA_SETUP.ForceCkdBypass,
       prompt      = STRING_TOKEN (STR_FORCE_CKD_BYPASS_PROMPT),
       help        = STRING_TOKEN (STR_FORCE_CKD_BYPASS_HELP),
-      option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-      option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN (STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
     endoneof;
 
     oneof varid   = SA_SETUP.VoltageReadout,
@@ -4173,8 +4173,8 @@ endform;
       oneof varid   = SA_SETUP.WRTDIMMDFE,
         prompt      = STRING_TOKEN(STR_WRTDIMMDFE_NAME),
         help        = STRING_TOKEN(STR_WRTDIMMDFE_NAME),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.RXDQSDCC,

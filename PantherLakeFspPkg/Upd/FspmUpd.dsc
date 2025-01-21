@@ -852,7 +852,7 @@
   # !BSF NAME:{DIMM DFE Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable DIMM DFE Training}
-  gPlatformFspPkgTokenSpaceGuid.WRTDIMMDFE                  | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.WRTDIMMDFE                  | * | 0x01 | 0x01
 
   # !BSF NAME:{DDR5 ODT Timing Config}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -3532,7 +3532,8 @@
   # !BSF NAME:{Force CKD in Bypass Mode} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable Force CKD in Bypass Mode}
-  gPlatformFspPkgTokenSpaceGuid.ForceCkdBypass           | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.ForceCkdBypass           | * | 0x01 | 0x00
+
   # Added reserved space   UnusedUpdSpace41[3]
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd41                 | * | 0x3 | {0x00}
 
