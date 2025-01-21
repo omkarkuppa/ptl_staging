@@ -1,0 +1,63 @@
+## @file
+#  Configuration file for X.509 certificate chain.
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2024 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+#  @par Specification
+#
+##
+
+[RootCA]
+  Extensions             = 'v3_ca'
+  KeyName                = 'TestRoot3K'
+  KeyLength              = '3072'
+  HashAlgorithm          = 'sha384'
+  Validity               = '18250'
+  Passphrase             = 'pass:TestRoot3K'
+  CountryName            = 'US'
+  StateOrProvinceName    = 'CA'
+  LocalName              = 'SC'
+  Organization           = 'Intel'
+  OrganizationalUnitName = 'Client'
+  CommonName             = 'Client Platform Sample TestRoot 3K'
+
+[IntermediateCA]
+  Extensions             = 'v3_intermediate_ca'
+  KeyName                = 'TestSub3K'
+  KeyLength              = '3072'
+  HashAlgorithm          = 'sha384'
+  Validity               = '18250'
+  Passphrase             = 'pass:TestSub3K'
+  CountryName            = 'US'
+  StateOrProvinceName    = 'CA'
+  LocalName              = 'SC'
+  Organization           = 'Intel'
+  OrganizationalUnitName = 'Client'
+  CommonName             = 'Client Platform Sample TestSub 3K'
+
+[UserCert]
+  Extensions             = 'usr_cert'
+  KeyName                = 'TestCert3K'
+  KeyLength              = '3072'
+  HashAlgorithm          = 'sha384'
+  Validity               = '18250'
+  Passphrase             = 'pass:TestCert3K'
+  CountryName            = 'US'
+  StateOrProvinceName    = 'CA'
+  LocalName              = 'SC'
+  Organization           = 'Intel'
+  OrganizationalUnitName = 'Client'
+  CommonName             = 'Client Platform Sample TestCert 3K'
