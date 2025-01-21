@@ -23,3 +23,5 @@
 from CapsuleCommon.Intel.Fsp.ConstantLib import *
 from CapsuleCommon.Intel.Fsp.FbmHdrParserLib import *
 from CapsuleCommon.Intel.Fsp.FbmHdrLib import *
+from CapsuleCommon.Intel.Fsp.FspFwHdrParserLib import *
+from CapsuleCommon.Intel.Fsp.FspFwHdrLib import *

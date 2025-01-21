@@ -17,14 +17,27 @@
 #  in the License.
 #
 #  @par Specification
+#    - Intel Firmware Support Package EAS, Version 2.4 (Errata A)
 #
 ##
 
+MAX_FSP_COMPONENT_NUMBER: int = 5
+
 #
-# Layout of FSP Firmware Image
+# Layout of FSP firmware image.
 #
-FSP_S: str = 'FspS'
-FSP_M: str = 'FspM'
 FSP_T: str = 'FspT'
+FSP_M: str = 'FspM'
+FSP_S: str = 'FspS'
+FSP_I: str = 'FspI'
 FSP_O: str = 'FspO'
 FBM  : str = 'FBM'
+
+#
+# Component ID.
+#
+FSP_T_COMPONENT_ID: int = 0b0001
+FSP_M_COMPONENT_ID: int = 0b0010
+FSP_S_COMPONENT_ID: int = 0b0011
+FSP_I_COMPONENT_ID: int = 0b0100
+FSP_O_COMPONENT_ID: int = 0b1000

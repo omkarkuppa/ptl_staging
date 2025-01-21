@@ -4,11 +4,11 @@
 #  [Rule]
 #  FSP Version
 #  ---------------------
-#  For the FSP version (MM.mm) is 2.52 (DEC)
-#  MM - Major , mm - Minor.
+#  For the FSP version (MM.mm.RRRR.BBBB) is 02.11.0024.4721 (HEX)
+#  MM - Major, mm - Minor, RRRR - Revision, BBBB - Build
 #
-#  Version Conversion   : 2052 (DEC) -> 804 (HEX)
-#  Dot Version Represent: 0.0.2.052 (DEC) -> 0.0.2.34 (HEX)
+#  Version Conversion   : 00244721 (HEX) -> 2377505 (DEC) [RRRRBBBB]
+#  Dot Version Represent: 02.11.0024.4721 (HEX) -> 02.17.36.18209 (DEC)
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -35,13 +35,13 @@ from CapsuleCommon import *
 
 from CapsuleGenerate.Model.CapsuleVersion import *
 
-FSP_VERSION_REGEX: str = r'^(\d){1,3}[.](\d){1,3}$'
+FSP_VERSION_REGEX: str = r'^([A-Fa-f0-9]){1,2}[.]([A-Fa-f0-9]){1,2}[.]([A-Fa-f0-9]){1,4}[.]([A-Fa-f0-9]){1,4}$'
 
 class FspCapsuleVersion (CapsuleVersion):
     def __init__ (
         self,
-        VersionInfo: FbmVersion = None,
-        DotVerStr  : str        = None
+        VersionInfo: FspFwVersion = None,
+        DotVerStr  : str          = None,
         ) -> None:
         """ Class to provide the capsule needed version information.
 
@@ -49,13 +49,13 @@ class FspCapsuleVersion (CapsuleVersion):
             Caller should be input Header or DotVerStr.
 
         Args:
-            VersionInfo (FbmVersion, optional):
-                FBM version info object.
-                Should be FbmVersion instance.
+            VersionInfo (FspFwVersion, optional):
+                FSP version info object.
+                Should be FspFwVersion instance.
                 Defaults to None.
             DotVerStr (str, optional):
                 Caller input the dot version format.
-                (Like XXX.XXX)
+                (Like MM.mm.RRRR.BBBB)
                 (Different header version have different format)
                 Defaults to None.
 
@@ -68,15 +68,17 @@ class FspCapsuleVersion (CapsuleVersion):
         #
         # User input information.
         #
-        self.__VersionInfo: FbmVersion = VersionInfo
-        self.__DotVerStr  : str        = DotVerStr
-        self.__InputMode  : int        = self.__GetInputMode ()
+        self.__VersionInfo: FspFwVersion = VersionInfo
+        self.__DotVerStr  : str          = DotVerStr
+        self.__InputMode  : int          = self.__GetInputMode ()
 
         #
-        # FSP valid version information. (DEC value)
+        # FSP version information.
         #
-        self.__MajorVer: int = int ()
-        self.__MinorVer: int = int ()
+        self.__MajorVer: int = None
+        self.__MinorVer: int = None
+        self.__RevVer  : int = None
+        self.__BuildVer: int = None
 
         self.__PreCheck ()
 
@@ -93,7 +95,7 @@ class FspCapsuleVersion (CapsuleVersion):
         Raises:
             ErrorException:
                 The input method is not valid.
-                (FW_HEADER_INPUT_TYPE or DOT_VERSION_DEC_INPUT_TYPE)
+                (FW_HEADER_INPUT_TYPE or DOT_VERSION_HEX_INPUT_TYPE)
 
         Returns:
             int:
@@ -103,7 +105,7 @@ class FspCapsuleVersion (CapsuleVersion):
 
         FwHeaderInputCondition: bool = \
             (self.__VersionInfo is not None) and \
-            (isinstance (self.__VersionInfo, FbmVersion))
+            (isinstance (self.__VersionInfo, FspFwVersion))
         DotVerInputCondition  : bool = \
             (self.__DotVerStr is not None) and \
             (isinstance (self.__DotVerStr, str))
@@ -111,7 +113,7 @@ class FspCapsuleVersion (CapsuleVersion):
         if FwHeaderInputCondition and DotVerInputCondition:
             DEBUG (
               DEBUG_WARN,
-              'FbmVersion and dot version assigned in same time. ',
+              'FspFwVersion and dot version assigned in same time. ',
               'Valid value would choose by the order.'
               )
 
@@ -119,7 +121,7 @@ class FspCapsuleVersion (CapsuleVersion):
             DEBUG (DEBUG_TRACE, "Input the version information via Header.")
             InputMode = FW_HEADER_INPUT_TYPE
         elif DotVerInputCondition:
-            InputMode = DOT_VERSION_DEC_INPUT_TYPE
+            InputMode = DOT_VERSION_HEX_INPUT_TYPE
         else:
             ErrorException (f'Need input valid FSP FW version information.')
 
@@ -127,9 +129,6 @@ class FspCapsuleVersion (CapsuleVersion):
 
     def __InitFspVerInfo (self) -> None:
         """ Initial the FSP version for this object.
-
-        Note:
-            Platform ID and Build version is not reference.
 
         Args:
             None.
@@ -141,19 +140,31 @@ class FspCapsuleVersion (CapsuleVersion):
         Returns:
             None.
         """
-        Regex: Pattern = re.compile (FSP_VERSION_REGEX)
+        Regex      : Pattern = re.compile (FSP_VERSION_REGEX)
+        MajorVerStr: str     = None
+        MinorVerStr: str     = None
+        RevVerStr  : str     = None
+        BuildVerStr: str     = None
 
         if self.__InputMode == FW_HEADER_INPUT_TYPE:
-            self.__MajorVer = self.__VersionInfo.Major
-            self.__MinorVer = self.__VersionInfo.Minor
-        elif self.__InputMode == DOT_VERSION_DEC_INPUT_TYPE:
+            MajorVerStr = self.__VersionInfo.Major
+            MinorVerStr = self.__VersionInfo.Minor
+            RevVerStr   = self.__VersionInfo.Revision
+            BuildVerStr = self.__VersionInfo.Build
+        elif self.__InputMode == DOT_VERSION_HEX_INPUT_TYPE:
             if not (Regex.match (self.__DotVerStr)):
                 ErrorException (
                   f'Invalid FSP version [{self.__DotVerStr}]. '
-                  'The format should be XXX.XXX'
+                  'The format should be MM.mm.RRRR.BBBB'
                   )
 
-            self.__MajorVer, self.__MinorVer = self.__DotVerStr.split ('.')
+            MajorVerStr, MinorVerStr, RevVerStr, BuildVerStr \
+                = self.__DotVerStr.split ('.')
+
+        self.__MajorVer = HexToDec (MajorVerStr)
+        self.__MinorVer = HexToDec (MinorVerStr)
+        self.__RevVer   = HexToDec (RevVerStr)
+        self.__BuildVer = HexToDec (BuildVerStr)
 
     def __PreCheck (self) -> None:
         """ Check the input argument is valid.
@@ -165,6 +176,8 @@ class FspCapsuleVersion (CapsuleVersion):
             ValueError:
                 (1) FSP major version is not UINT8.
                 (2) FSP minor version is not UINT8.
+                (3) FSP revision version is not UINT16.
+                (4) FSP build version is not UINT16.
 
         Returns:
             None.
@@ -179,6 +192,10 @@ class FspCapsuleVersion (CapsuleVersion):
             raise ValueError (f'Major version [{self.__MajorVer}] not UINT8.')
         elif not IsUint8 (self.__MinorVer):
             raise ValueError (f'Minor version [{self.__MinorVer}] not UINT8.')
+        elif not IsUint16 (self.__RevVer):
+            raise ValueError (f'Revision version [{self.__RevVer}] not UINT16.')
+        elif not IsUint16 (self.__BuildVer):
+            raise ValueError (f'Minor version [{self.__BuildVer}] not UINT16.')
         else:
             DEBUG (DEBUG_TRACE, 'FSP version check passed.')
 
@@ -195,15 +212,7 @@ class FspCapsuleVersion (CapsuleVersion):
             str:
                 String to represent the DEC version.
         """
-        MajorVer  : str = str ()
-        MinorVer  : str = str ()
-        FullDecStr: str = str ()
-
-        MajorVer   = str (self.__MajorVer)
-        MinorVer   = ZeroPadding (str (self.__MinorVer), 3)
-        FullDecStr = ''.join ([MajorVer, MinorVer])
-
-        return FullDecStr
+        return str (HexToDec (self.GetHexVersion ()))
 
     def GetHexVersion (self) -> str:
         """ Return the firmware version format in HEX style. (32-bit)
@@ -220,7 +229,10 @@ class FspCapsuleVersion (CapsuleVersion):
         """
         FullHexStr: str = str ()
 
-        FullHexStr = DecToHex (ToInt (self.GetDecVersion ()))
+        FullHexStr = ''.join ([
+                          DecToHex (self.__RevVer),
+                          ZeroPadding (String = DecToHex (self.__BuildVer), Size = 4),
+                          ])
 
         return FullHexStr
 
@@ -238,12 +250,21 @@ class FspCapsuleVersion (CapsuleVersion):
                 String to represent the DEC dot format version.
         """
         DecDotVerStr: str = str ()
+        MajorStr    : str = None
+        MinorStr    : str = None
+        RevStr      : str = None
+        BuildStr    : str = None
+
+        MajorStr = ZeroPadding (String = str (self.__MajorVer), Size = 2)
+        MinorStr = ZeroPadding (String = str (self.__MinorVer), Size = 2)
+        RevStr   = ZeroPadding (String = str (self.__RevVer),   Size = 4)
+        BuildStr = ZeroPadding (String = str (self.__BuildVer), Size = 4)
 
         DecDotVerStr = '.'.join ([
-                                '0',
-                                '0',
-                                str (self.__MajorVer),
-                                ZeroPadding (str (self.__MinorVer), 3),
+                                MajorStr,
+                                MinorStr,
+                                RevStr,
+                                BuildStr,
                                 ])
 
         return DecDotVerStr
@@ -262,12 +283,21 @@ class FspCapsuleVersion (CapsuleVersion):
                 String to represent the HEX dot format version.
         """
         HexDotVerStr: str = str ()
+        MajorStr    : str = None
+        MinorStr    : str = None
+        RevStr      : str = None
+        BuildStr    : str = None
+
+        MajorStr = ZeroPadding (String = DecToHex (self.__MajorVer), Size = 2)
+        MinorStr = ZeroPadding (String = DecToHex (self.__MinorVer), Size = 2)
+        RevStr   = ZeroPadding (String = DecToHex (self.__RevVer),   Size = 4)
+        BuildStr = ZeroPadding (String = DecToHex (self.__BuildVer), Size = 4)
 
         HexDotVerStr = '.'.join ([
-                                '0',
-                                '0',
-                                DecToHex (self.__MajorVer),
-                                ZeroPadding (DecToHex (self.__MinorVer), 2),
+                                MajorStr,
+                                MinorStr,
+                                RevStr,
+                                BuildStr,
                                 ])
 
         return HexDotVerStr
