@@ -1088,7 +1088,7 @@ typedef struct {
   UINT8   TseEnable;
   UINT8   CompareCtdpRatio;
   UINT8   CompareCtdpRatio2;
-  UINT8   Reserved[2];
+  UINT8   Reserved[14];
   //
   // Select Core(s) and RING DLVR Mode
   //
