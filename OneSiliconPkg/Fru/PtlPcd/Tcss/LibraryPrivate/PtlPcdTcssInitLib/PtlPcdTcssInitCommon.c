@@ -569,7 +569,7 @@ PcieRpInstOnCreate (
   Note:
   Caller is responsible for the memory allocation
  **/
-UINT32
+EFI_STATUS
 PtlTcssInstInit (
   TCSS_INST               *TcssInst,
   TCSS_CALLBACKS          *TcssCallbacks,
@@ -597,15 +597,14 @@ PtlTcssInstInit (
   HOST_BRIDGE_PREMEM_CONFIG   *HostBridgePreMemConfig
   )
 {
-  UINT32            Status;
+  EFI_STATUS        Status;
+  IP_CSI_STATUS     IpCsiStatus;
   UINT32            Index;
   IP_PCIE_ROOT_PORT *RootPort;
   IP_PCIE_ROOT_PORT **RpPtr;
   IP_WR_REG_INFO    *RegInfo;
   IP_USB4_DMA       *DmaDev;
   IP_USB4_DMA       **DmaPtr;
-
-  Status = EFI_SUCCESS;
 
   //
   // Clear all structures
@@ -717,9 +716,13 @@ PtlTcssInstInit (
   //
   // Private TCSS Instance Init (initializes private data in the instance structure)
   //
-  Status = TcssInstInit (TcssInst);
-  if (EFI_ERROR (Status)) {
-    DEBUG((DEBUG_ERROR, "ERROR: TCSS Pre Memory initialization fail!\n"));
+  IpCsiStatus = TcssInstInit (TcssInst);
+
+  if (IpCsiStatus != 0) {
+    Status = EFI_DEVICE_ERROR;
+    DEBUG((DEBUG_ERROR, "ERROR: TCSS Pre Memory initialization failed! IpCsiStatus 0x%x\n", IpCsiStatus));
+  } else {
+    Status = EFI_SUCCESS;
   }
 
   return Status;

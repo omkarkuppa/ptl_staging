@@ -70,7 +70,7 @@ typedef enum {
   Note:
   Caller is responsible for the memory allocation
  **/
-UINT32
+EFI_STATUS
 PtlTcssInstInit (
   TCSS_INST               *TcssInst,
   TCSS_CALLBACKS          *TcssCallbacks,
