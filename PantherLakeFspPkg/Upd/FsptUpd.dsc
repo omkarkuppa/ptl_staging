@@ -284,6 +284,8 @@
   # !BSF NAME:{Serial Io SPI Device Number} TYPE:{EditNum, HEX, (0x0,0xFF)}
   # !BSF HELP:{Select which Serial Io SPI controller is initalized in early stage.}
   gPlatformFspPkgTokenSpaceGuid.PcdSerialIoSpiNumber                | * | 0x01 | 0x0
+  # Added reserved space  UnusedUpdSpace0[3]
+  gPlatformFspPkgTokenSpaceGuid.FsptUpdRsvd0                        | * | 0x3 | {0x00}
 
   # !BSF NAME:{Serial Io SPI Device MMIO Base} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
   # !BSF HELP:{Assigns MMIO for Serial Io SPI controller usage in early stage.}
@@ -333,7 +335,9 @@
   gPlatformFspPkgTokenSpaceGuid.EnableSecondaryDataCache       | * | 0x01 | 0x0
 
   # !HDR EMBED:{FSP_T_CONFIG:FsptConfig:END}
-  gPlatformFspPkgTokenSpaceGuid.ReservedFsptUpd1                        | * | 0x6 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.ReservedFsptUpd1                | * | 0x09 | {0x00}
+  # Added reserved space  UnusedUpdSpace2[6]
+  gPlatformFspPkgTokenSpaceGuid.FsptUpdRsvd2                    | * | 0x6 | {0x00}
 
   # Note please keep "UpdTerminator" at the end of each UPD region.
   # The tool will use this field to determine the actual end of the UPD data
