@@ -651,6 +651,29 @@ WrRetrainControlStatusOffset (
 }
 
 /**
+  This function returns the offset to access specific Channel/Strobe of RdRetrainControlStatus.
+
+  @param[in]  Channel - 0-based index of Channel to access.
+  @param[in]  Strobe  - 0-based index of Strobe to access.
+
+  @returns the offset of the CR
+**/
+UINT32
+RdRetrainControlStatusOffset (
+  IN  UINT32  const   Channel,
+  IN  UINT32  const   Strobe
+  )
+{
+  UINT32 Offset;
+
+  Offset = DATA0CH0_CR_DDRCRRDRETRAINCONTROLSTATUS_REG;
+  Offset += (DATA0CH1_CR_DDRCRRDRETRAINCONTROLSTATUS_REG - DATA0CH0_CR_DDRCRRDRETRAINCONTROLSTATUS_REG) * Channel +
+         (DATA1CH0_CR_DDRCRRDRETRAINCONTROLSTATUS_REG - DATA0CH0_CR_DDRCRRDRETRAINCONTROLSTATUS_REG) * Strobe;
+
+  return Offset;
+}
+
+/**
   This function returns the offset to access specific Index and SaGv Point for DDRCRVCCDDQCONTROL_Target
 
   @param[in]  Index - DDRDATA DDRCRVCCDDQCONTROL SBMEM Index

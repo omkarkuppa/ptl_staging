@@ -49,6 +49,9 @@ extern const char *GlobalCompOffsetStr[];
 #define DCC_DQS_MASK           (MRC_BIT1)
 #define DCC_CLK_MASK           (MRC_BIT2)
 #define DCC_WCK_MASK           (MRC_BIT3)
+#define DCC_DATASH_MASK        (MRC_BIT4)
+#define DCC_CCCSH_MASK         (MRC_BIT5)
+#define DCC_COMP_MASK          (MRC_BIT6)
 #define DCC_CLK                     (0)
 #define DCC_WCK                     (1)
 #define DCC_RISE_FALL_WCK_BL        (0)
@@ -63,7 +66,7 @@ extern const char *GlobalCompOffsetStr[];
 #define REFCLK_DCC_MAX_CORRECTION_LOOPS    (10)
 #define REFCLK_DCC_DELTA_LIMIT             (4)
 #define REFCLK_TLINE_DCC_REGION_NUM        (2)
-#define REFCLK_TLINE_DCC_STEP_SIZE_FORMULA (32 * 15 * 12)
+
 // The offset between each CCC channel instance is constant across all CCC Registers.
 #define CCC_CH_OFFSET (CH1CCC_CR_DDRCRCACOMP_REG - CH0CCC_CR_DDRCRCACOMP_REG)       // 0x100
 
@@ -955,20 +958,6 @@ DdrIoSetVddqImpactedCrs (
   );
 
 /**
-  This function programs the sequency for Changing VccDDQ
-
-  @param[in] MrcData          - All the MRC global data.
-  @param[in] Print            - Whether to print debug
-  @param[in] VccddqVoltageMv  - Voltage in mV
-**/
-MrcStatus
-MrcSwitchVddq (
-  IN MrcParameters *const MrcData,
-  IN BOOLEAN  Print,
-  IN UINT32   VccddqVoltageMv
-  );
-
-/**
   This function calculates the Up/Dn values for the Param (RdOdt/WrDS/WrDSCmd/WrDSCtl/WrDSClk).
 
   @param[in]   MrcData - All the MRC global data.
@@ -1853,6 +1842,20 @@ RetrainRankOffset(
 **/
 UINT32
 WrRetrainControlStatusOffset (
+  IN  UINT32  const   Channel,
+  IN  UINT32  const   Strobe
+);
+
+/**
+  This function returns the offset to access specific Channel/Strobe of RdRetrainControlStatus.
+
+  @param[in]  Channel - 0-based index of Channel to access.
+  @param[in]  Strobe  - 0-based index of Strobe to access.
+
+  @returns the offset of the CR
+**/
+UINT32
+RdRetrainControlStatusOffset (
   IN  UINT32  const   Channel,
   IN  UINT32  const   Strobe
 );

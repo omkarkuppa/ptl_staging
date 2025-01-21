@@ -124,7 +124,7 @@ typedef struct {
   UINT32  OpportunisticRead:1;                ///<            Bit 28 - Option to Enable Opportunistic Read in Write Major Mode.
   UINT32  Disable2CycleBypass:1;              ///<            Bit 29 - Option to disable 2 cycle bypass
   UINT32  OCSafeMode:1;                       ///<            Bit 30 - OverClocking Safe Mode
-  UINT32  Rsvd63B31:1;                        ///<            Bit 31:- Rsvd
+  UINT32  HsleFlag:1;                         ///<            Bit 31 - Option to Enable HSLE: <b>0=Disable</b>, 1=Enable
   UINT16  SrefCfgIdleTmr;         ///< Offset 68 Self Refresh idle timer: <b>512=Minimal</b>, 65535=Maximum
   UINT16  ChHashMask;             ///< Offset 70 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
   UINT16  DdrFreqLimit;           ///< Offset 72 Memory Frequency limit: <b>0 = Auto</b>, or memory speed value in MT/s: 1067, 1333, 1600 etc. See the possible values in CMrcInterface.h
@@ -272,7 +272,8 @@ typedef struct {
                                            ///<            PhclkGatePerLpmode[4]  PhClkGating control at lpmode4
   UINT32  DisableSwitchDfiToMc      : 1;   ///< Bit 24     keep the control of the DFI with the PHY/MPTU or switching it to MC (after cold boot) : <b>1=Enable, 0=Disable(Default)
   UINT32  DqLoopbackTest            : 1;   ///< Bit 25     Control Dq Loopback test: 0: Disable, 1: Enable
-  UINT32  SvReservedBits            : 6;   ///< Bit 26-31  Reserved
+  UINT32  DunitTatOptimization      : 1;   ///< Bit 26     Optimize Dunit TAT Timings
+  UINT32  SvReservedBits            : 5;   ///< Bit 27-31  Reserved
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

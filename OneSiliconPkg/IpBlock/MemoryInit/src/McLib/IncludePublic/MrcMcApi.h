@@ -67,6 +67,15 @@ typedef struct {
   INT32 MainGlbDrvGateDis;
 } MRC_DDR5_CS_GEARDOWN_SAVE;
 
+typedef struct {
+  INT64 Subch0RankCnt[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64 Subch1RankCnt[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64 Subch0SdramWidth[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64 Subch1SdramWidth[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64 Subch0Density[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64 Subch1Density[MAX_CONTROLLER][MAX_CHANNEL];
+} MRC_MC_AD_SAVE;
+
 typedef enum {
   MrhCasWck2CkSyncOff,
   MrhCasWckFastSync,
@@ -76,27 +85,6 @@ typedef enum {
 /// MC Safe Modes
 #define MC_SAFE_RESERVED                    (MRC_BIT0)
 #define MC_SAFE_OPP_SR                      (MRC_BIT1)
-
-/// Structure to store turnaround timings
-typedef struct {
-  UINT32 tRdRdsg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdRddg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrWrsg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrWrdg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdWrsg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdWrdg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrRdsg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrRddg[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdRddr[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdRddd[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrWrdr[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrWrdd[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdWrdr[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tRdWrdd[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrRddr[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT32 tWrRddd[MAX_CONTROLLER][MAX_CHANNEL];
-} McTurnAroundTimings;
-
 
 ///
 /// Functions
@@ -870,6 +858,22 @@ MrcStatus
 SetTurnAroundTiming (
   IN MrcParameters *const MrcData,
   IN BOOLEAN              IsMcInit
+  );
+
+/**
+  This function saves / restores MC Address Decoder values.
+
+  @param[in]      MrcData       - Include all MRC global data.
+  @param[in]      SaveOrRestore - Selects between saving the values or restoring the values.
+  @param[in, out] SavedValues   - Stores saved values.
+
+  @retval Nothing.
+**/
+VOID
+MrcMcAddressDecoderValuesSaveRestore (
+  IN     MrcParameters *const MrcData,
+  IN     MrcSaveOrRestore     SaveOrRestore,
+  IN OUT MRC_MC_AD_SAVE       *SavedValues
   );
 
 #endif // MRC_MC_API_H_

@@ -2691,12 +2691,11 @@
   #define DATA0CH0_CR_DDRCRDATACONTROL5_ODTSingleSegEn_DEF             (0x00000000)
   #define DATA0CH0_CR_DDRCRDATACONTROL5_ODTSingleSegEn_HSH             (0x01200104)
 
-  // Manual edit - 2's complement field
   #define DATA0CH0_CR_DDRCRDATACONTROL5_DqsOdtCompOffset_OFF           (17)
   #define DATA0CH0_CR_DDRCRDATACONTROL5_DqsOdtCompOffset_WID           ( 5)
   #define DATA0CH0_CR_DDRCRDATACONTROL5_DqsOdtCompOffset_MSK           (0x003E0000)
   #define DATA0CH0_CR_DDRCRDATACONTROL5_DqsOdtCompOffset_MIN           (-16)
-  #define DATA0CH0_CR_DDRCRDATACONTROL5_DqsOdtCompOffset_MAX           (15) // 0x0000001F
+  #define DATA0CH0_CR_DDRCRDATACONTROL5_DqsOdtCompOffset_MAX           (15) // 0x0000000F
   #define DATA0CH0_CR_DDRCRDATACONTROL5_DqsOdtCompOffset_DEF           (0x00000000)
   #define DATA0CH0_CR_DDRCRDATACONTROL5_DqsOdtCompOffset_HSH           (0x85220104)
 

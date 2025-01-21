@@ -73,7 +73,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_VoltageReadout          (0)
 #define MRC_EXT_INPUTS_INIT_VAL_CccHalfFrequency        (0)
 #define MRC_EXT_INPUTS_INIT_VAL_Ddr5AutoPrechargeEnable (0)
-#define MRC_EXT_INPUTS_INIT_VAL_Lp5SplitACTEnable       (1)
+#define MRC_EXT_INPUTS_INIT_VAL_Lp5SplitACTEnable       (2)
 #define MRC_EXT_INPUTS_INIT_VAL_RetrainToWorkingChannel (0)
 #define MRC_EXT_INPUTS_INIT_VAL_SubChHashOverride       (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DisableChannel          {{0,0,0,0}, {0,0,0,0}}
@@ -137,7 +137,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_VCCCLKFF               (0)
 #define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCDQS             (0)
 #define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCCLK             (0)
-#define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCWCK             (0)
+#define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCWCK             (1)
 #define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCDQ              (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DATAPILIN              (1)
 #define MRC_EXT_INPUTS_INIT_VAL_DDR5XTALK              (0)
@@ -172,6 +172,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_WCKCLKPREDCC           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DQSPADDCC              (0)
 #define MRC_EXT_INPUTS_INIT_VAL_QCLKPHALIGN            (0)
+#define MRC_EXT_INPUTS_INIT_VAL_RXDQSVOCC              (0)
 #define MRC_EXT_INPUTS_INIT_VAL_ReservedBits           (0)
 
 #define MRC_EXT_INPUTS_INIT_VAL_MrcTimeMeasure         (0)
@@ -205,7 +206,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_OpportunisticRead      (1)
 #define MRC_EXT_INPUTS_INIT_VAL_Disable2CycleBypass    (0)
 #define MRC_EXT_INPUTS_INIT_VAL_OCSafeMode             (1)
-#define MRC_EXT_INPUTS_INIT_VAL_Rsvd63B31              (0)
+#define MRC_EXT_INPUTS_INIT_VAL_HsleFlag               (0)
 
 #define MRC_EXT_INPUTS_INIT_VAL_SrefCfgIdleTmr         (0x200)
 #define MRC_EXT_INPUTS_INIT_VAL_ChHashMask             (0x830)
@@ -353,13 +354,13 @@
 #define MRC_EXT_INPUTS_INIT_VAL_PhclkGatePerLpmode       (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DisableSwitchDfiToMc     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DqLoopbackTest           (0)
+#define MRC_EXT_INPUTS_INIT_VAL_DunitTatOptimization     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_SvReservedBits           (0)
 
 #ifdef MRC_MINIBIOS_BUILD
 #define MRC_INT_INPUTS_INIT_VAL_LpFreqSwitch                            (0)
 #define MRC_INT_INPUTS_INIT_VAL_ErrorCountForFail                       (MRC_BER_ERROR_COUNTER_FOR_FAILURE)
 #define MRC_INT_INPUTS_INIT_VAL_BER                                     (1)
-#define MRC_INT_INPUTS_INIT_VAL_TatDelta                                (0)
 #define MRC_INT_INPUTS_INIT_VAL_TxtClean                                (0)
 #define MRC_INT_INPUTS_INIT_VAL_EnablePda                               (1)
 #define MRC_INT_INPUTS_INIT_VAL_Lp58BankMode                            (0)
@@ -533,7 +534,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
       MRC_EXT_INPUTS_INIT_VAL_WCKCLKPREDCC,      // BIT23
       MRC_EXT_INPUTS_INIT_VAL_DQSPADDCC,         // BIT24
       MRC_EXT_INPUTS_INIT_VAL_QCLKPHALIGN,       // BIT25
-      MRC_EXT_INPUTS_INIT_VAL_ReservedBits,      // BIT26
+      MRC_EXT_INPUTS_INIT_VAL_RXDQSVOCC,         // BIT26
+      MRC_EXT_INPUTS_INIT_VAL_ReservedBits,      // BIT27
     },
     MRC_EXT_INPUTS_INIT_VAL_MrcTimeMeasure,
     MRC_EXT_INPUTS_INIT_VAL_MrcFastBoot,
@@ -566,7 +568,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_OpportunisticRead,
     MRC_EXT_INPUTS_INIT_VAL_Disable2CycleBypass,
     MRC_EXT_INPUTS_INIT_VAL_OCSafeMode,
-    MRC_EXT_INPUTS_INIT_VAL_Rsvd63B31,
+    MRC_EXT_INPUTS_INIT_VAL_HsleFlag,
 
     MRC_EXT_INPUTS_INIT_VAL_SrefCfgIdleTmr,
     MRC_EXT_INPUTS_INIT_VAL_ChHashMask,
@@ -716,6 +718,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_PhclkGatePerLpmode,
     MRC_EXT_INPUTS_INIT_VAL_DisableSwitchDfiToMc,
     MRC_EXT_INPUTS_INIT_VAL_DqLoopbackTest,
+    MRC_EXT_INPUTS_INIT_VAL_DunitTatOptimization,
     MRC_EXT_INPUTS_INIT_VAL_SvReservedBits,
   },
 #ifdef MRC_MINIBIOS_BUILD
@@ -724,7 +727,6 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_INT_INPUTS_INIT_VAL_LpFreqSwitch,
     MRC_INT_INPUTS_INIT_VAL_ErrorCountForFail,
     MRC_INT_INPUTS_INIT_VAL_BER,
-    MRC_INT_INPUTS_INIT_VAL_TatDelta,
     MRC_INT_INPUTS_INIT_VAL_TxtClean,
     MRC_INT_INPUTS_INIT_VAL_EnablePda,
     MRC_INT_INPUTS_INIT_VAL_Lp58BankMode,
@@ -778,10 +780,10 @@ MrcInternalInputsDefaultInit (
   OUT MrcInput *Inputs
   )
 {
+
   Inputs->LpFreqSwitch              = MainInputs.InternalInputs.LpFreqSwitch;
   Inputs->ErrorCountForFail         = MainInputs.InternalInputs.ErrorCountForFail;
   Inputs->BER                       = MainInputs.InternalInputs.BER;
-  Inputs->TatDelta                  = MainInputs.InternalInputs.TatDelta;
   Inputs->TxtClean                  = MainInputs.InternalInputs.TxtClean;
   Inputs->EnablePda                 = MainInputs.InternalInputs.EnablePda;
   Inputs->Lp58BankMode              = MainInputs.InternalInputs.Lp58BankMode;

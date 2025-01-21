@@ -364,7 +364,7 @@ MrcMcCapability (
     }
   }
 
-  ExtInputs->Ibecc = (ExtInputs->Ibecc == TRUE) && (PmaMcCap.Bits.IBECCDIS == 0);
+  Inputs->IsIbeccEnabled = (Inputs->IsIbeccEnabled == TRUE) && (PmaMcCap.Bits.IBECCDIS == 0);
 
   // Print Dq / Dqs Swizzle Tables
   PrintDqDqsTable (MrcData);

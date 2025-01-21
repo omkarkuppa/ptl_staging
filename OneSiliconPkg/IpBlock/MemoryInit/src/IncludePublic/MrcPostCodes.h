@@ -179,4 +179,7 @@
 #define MRC_LATE_DDRIO_FINALIZE         (0xDD88)
 #define MRC_QCLK_PH_ALIGN_CAL           (0xDD89)
 #define MRC_LVR_RMT                     (0xDD8A)
+#define MRC_EARLY_RXDQS_VOC             (0xDD8B)
+#define MRC_RXDQS_VOC                   (0xDD8C)
+#define MRC_DUNIT_TAT_OPTIMIZATION      (0xDD8D)
 #endif

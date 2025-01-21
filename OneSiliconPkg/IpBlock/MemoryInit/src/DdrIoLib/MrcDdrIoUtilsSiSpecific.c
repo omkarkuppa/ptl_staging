@@ -274,7 +274,7 @@ MrcSetLastCR (
   do {
     PhyPmStatus0.Data = MrcReadCR (MrcData, DDRPHY_MISC_SAUG_CR_PHYPMSTATUS0_REG);
     IsInitComplete = (PhyPmStatus0.Bits.InitComplete == DDRPHY_MISC_SAUG_CR_PHYPMSTATUS0_InitComplete_MAX);
-    if (Inputs->ExtInputs.Ptr->SimicsFlag != 0) {
+    if (Inputs->ExtInputs.Ptr->SimicsFlag != 0 && Inputs->ExtInputs.Ptr->HsleFlag == 0) {
       IsInitComplete = 1;
     }
     // Error out if exceeds timeout
@@ -941,7 +941,13 @@ MrcGetPartition2ChMask (
       } else {
         Partition2Ch = 0x3 << (PgPartitionToLogicalCntrl[PartInstance] * Outputs->MaxChannels);
       }
-    break;
+      break;
+
+    case PartitionPll:
+    case PartitionComp:
+      // These are always present
+      Partition2Ch = Outputs->ValidChBitMask;
+      break;
 
     default:
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Unexpected partition type: %d\n", PartType);

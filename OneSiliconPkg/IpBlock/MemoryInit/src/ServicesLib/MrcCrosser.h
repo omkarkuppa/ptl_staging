@@ -244,10 +244,8 @@ typedef enum {
 } CompGlobalOffsetParam;
 
 typedef enum {
-  TcoCompAlgoEarlyPerByte,
-  TcoCompAlgoEarlyPerBit,
-  TcoCompAlgoPerByte,
-  TcoCompAlgoPerBit,
+  EarlyPerByte,
+  EarlyPerBit,
   PerChannelPerByte,
   PerChannelPerBit,
   PerChannel,
@@ -1422,6 +1420,18 @@ MrcDccLpddr5Wck (
 MrcStatus
 MrcDccLp5WckDca (
   IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  Functional WCK DCC training
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - if it succeeds return mrcSuccess
+**/
+MrcStatus
+MrcWckDccCodeTraining (
+  IN MrcParameters *const MrcData
   );
 
 /**

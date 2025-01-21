@@ -31,6 +31,7 @@
 #include "MrcReset.h"
 #include "MrcCommon.h"
 #include "MrcDdrIoApi.h"
+#include "MrcMcApi.h"
 
 /**
   This function calculates the tRdRd (sg,dg,dr,dd) for LPDDR5 based on Jedec specifications
@@ -361,7 +362,7 @@ GetLpddr5tWrRd (
 VOID
 GetDdr5tRdRd (
   IN MrcParameters *const  MrcData,
-  IN  UINT32               DeltaRcvEnPiCode,
+  IN   UINT32              DeltaRcvEnPiCode,
   OUT  UINT32              *tRdRdsg,
   OUT  UINT32              *tRdRddg,
   OUT  UINT32              *tRdRddr,
@@ -427,8 +428,8 @@ GetDdr5tRdRd (
 VOID
 GetDdr5tWrWr (
   IN MrcParameters *const  MrcData,
-  IN  UINT32               MaxOdtWrOff,
-  IN  UINT32               MinOdtWrOn,
+  IN   INT32               MaxOdtWrOff,
+  IN   INT32               MinOdtWrOn,
   OUT  UINT32              *tWrWrsg,
   OUT  UINT32              *tWrWrdg,
   OUT  UINT32              *tWrWrdr,
@@ -481,8 +482,8 @@ VOID
 GetDdr5tRdWr (
   IN MrcParameters *const  MrcData,
   IN  UINT32               DeltaTxDqsPiCode,
-  IN  UINT32               MaxOdtRdOff,
-  IN  UINT32               MinOdtWrOn,
+  IN  INT32                MaxOdtRdOff,
+  IN  INT32                MinOdtWrOn,
   IN  BOOLEAN              NTODTRd,
   OUT  UINT32              *tRdWrsg,
   OUT  UINT32              *tRdWrdg,
@@ -561,8 +562,8 @@ VOID
 GetDdr5tWrRd (
   IN MrcParameters *const  MrcData,
   IN  UINT32               DeltaTxDqsPiCode,
-  IN  UINT32               MinOdtRdOn,
-  IN  UINT32               MaxOdtWrOff,
+  IN  INT8                 MinOdtRdOn,
+  IN  INT8                 MaxOdtWrOff,
   IN  BOOLEAN              NTODTRd,
   OUT  UINT32              *tWrRdsg,
   OUT  UINT32              *tWrRddg,
@@ -700,8 +701,7 @@ GetPhyWr2WrTA (
   // Wr2Wr Rank to Rank
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     for (Channel = 0; Channel < MaxChannel; Channel++) {
-      if ((!MrcChannelExist (MrcData, Controller, Channel)) || IS_MC_SUB_CH (Outputs->IsLpddr, Channel)) {
-        // For LPDDR5, only program register on even channels.
+      if (!MrcChannelExist (MrcData, Controller, Channel)) {
         continue;
       }
       MinPiCode = MIN (MinPiCode, ((TxPathResults->MinTxDq[Controller][Channel] + TxPathResults->MinTxDqBit[Controller][Channel])));
@@ -780,8 +780,7 @@ GetPhyRd2RdTA (
   // Rd2Rd Rank to Rank
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     for (Channel = 0; Channel < MaxChannel; Channel++) {
-      if ((!MrcChannelExist (MrcData, Controller, Channel)) || IS_MC_SUB_CH (Outputs->IsLpddr, Channel)) {
-        // For LPDDR5, only program register on even channels.
+      if (!MrcChannelExist (MrcData, Controller, Channel)) {
         continue;
       }
       DeltaPiCode = RxPathResults->DeltaPiCode[Controller][Channel];
@@ -802,3 +801,230 @@ GetPhyRd2RdTA (
     }
   }
 }
+
+/**
+  This function gets the Pre Training Turnaround Values
+
+  @param[in]  MrcData - Include all MRC global data.
+  @param[out] TAT     - return struct which holds TAT values
+
+  @retval None
+**/
+VOID
+GetDramTatPreTraining (
+  IN  MrcParameters *const   MrcData,
+  OUT TurnAroundTimings      *TAT
+  )
+{
+  MrcOutput *Outputs;
+  UINT8     FirstController;
+  UINT8     FirstChannel;
+  BOOLEAN   NTODTWr;
+  BOOLEAN   NTODTRd;
+
+  Outputs = &MrcData->Outputs;
+  FirstController = Outputs->FirstPopController;
+  FirstChannel    = Outputs->Controller[FirstController].FirstPopCh;
+
+  if (Outputs->IsDdr5) {
+    IsNtOdtSupported (MrcData, FirstController, FirstChannel, &NTODTWr, &NTODTRd);
+    GetDdr5tRdRd (MrcData, DEFAULT_DELTA_RCVEN_PICODE, &TAT->tRdRdsg, &TAT->tRdRddg, &TAT->tRdRddr, &TAT->tRdRddd);
+    GetDdr5tWrWr (MrcData, MRC_DDR5_WORST_CASE_ODT_WR_OFF_OFFSET, MRC_DDR5_WORST_CASE_ODT_WR_ON_OFFSET, &TAT->tWrWrsg, &TAT->tWrWrdg, &TAT->tWrWrdr, &TAT->tWrWrdd);
+    GetDdr5tRdWr (MrcData, DEFAULT_DELTA_TXDQS_PICODE, MRC_DDR5_WORST_CASE_ODT_RD_OFF_OFFSET, MRC_DDR5_WORST_CASE_ODT_WR_ON_OFFSET, NTODTRd, &TAT->tRdWrsg, &TAT->tRdWrdg, &TAT->tRdWrdr, &TAT->tRdWrdd);
+    GetDdr5tWrRd (MrcData, DEFAULT_DELTA_TXDQS_PICODE, MRC_DDR5_WORST_CASE_ODT_RD_ON_OFFSET, MRC_DDR5_WORST_CASE_ODT_WR_OFF_OFFSET, NTODTRd, &TAT->tWrRdsg, &TAT->tWrRddg, &TAT->tWrRddr, &TAT->tWrRddd);
+  } else {
+    GetLpddr5tRdRd (MrcData, (UINT32) DEFAULT_DELTA_RCVEN_PICODE, &TAT->tRdRdsg, &TAT->tRdRddg, &TAT->tRdRddr, &TAT->tRdRddd);
+    GetLpddr5tWrWr (MrcData, &TAT->tWrWrsg, &TAT->tWrWrdg, &TAT->tWrWrdr, &TAT->tWrWrdd);
+    GetLpddr5tRdWr (MrcData, &TAT->tRdWrsg, &TAT->tRdWrdg, &TAT->tRdWrdr, &TAT->tRdWrdd);
+    GetLpddr5tWrRd (MrcData, &TAT->tWrRdsg, &TAT->tWrRddg, &TAT->tWrRddr, &TAT->tWrRddd);
+  }
+}
+
+/**
+  This function gets the Post Training Turnaround Values
+
+  @param[in]  MrcData       - Include all MRC global data.
+  @param[in]  RxPathResults - Struct contianing Min/Max Data for Rx Data Path
+  @param[in]  TxPathResults - Struct contianing Min/Max Data for Tx Data Path
+  @param[in]  Controller    - Current Controller
+  @param[in]  Channel       - Current Channel
+  @param[out] TAT           - return struct which holds TAT values
+
+  @retval None
+**/
+VOID
+GetDramTatPostTraining (
+  IN  MrcParameters *const MrcData,
+  IN  RxPathMinMax         *RxPathResults,
+  IN  TxPathMinMax         *TxPathResults,
+  IN  UINT32               Controller,
+  IN  UINT32               Channel,
+  OUT TurnAroundTimings    *TAT
+  )
+{
+  MrcOutput      *Outputs;
+  UINT32 DeltaRcvEnPiCode;
+  UINT32 DeltaTxDqsPiCode;
+  UINT32 Rank;
+  UINT32 Byte;
+  UINT32 WLTxDqs;
+  UINT32 MaxWL;
+  UINT32 MinWL;
+  INT64  TxDqs;
+  INT8   MinOdtWrOn;
+  INT8   MinOdtRdOn;
+  INT8   MaxOdtWrOff;
+  INT8   MaxOdtRdOff;
+  INT8   OdtWrOn;
+  INT8   OdtWrOff;
+  INT8   OdtRdOn;
+  INT8   OdtRdOff;
+  BOOLEAN NTODTWr;
+  BOOLEAN NTODTRd;
+
+  Outputs      = &MrcData->Outputs;
+
+  // DeltaPiCode = Delta of RcvEn
+  DeltaRcvEnPiCode = (UINT32) (RxPathResults->MaxRcvEnPi[Controller][Channel] - RxPathResults->MinRcvEnPi[Controller][Channel]);
+  if (Outputs->IsDdr5) {
+    IsNtOdtSupported (MrcData, Controller, Channel, &NTODTWr, &NTODTRd);
+    // Set Inital values, then search for worst case ODT offsets among ranks
+    MinOdtWrOn  = 0xF;
+    MinOdtRdOn  = 0xF;
+    MaxOdtWrOff = -0xF;
+    MaxOdtRdOff = -0xF;
+
+
+    // Find Worst case ODT offsets among Ranks
+    for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+      if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
+        continue;
+      }
+      GetDdr5OdtOffsets (MrcData, Controller, Channel, Rank, NTODTWr, FALSE, &OdtWrOn, &OdtWrOff, &OdtRdOn, &OdtRdOff);
+      MinOdtWrOn = MIN (OdtWrOn, MinOdtWrOn);
+      MinOdtRdOn = MIN (OdtRdOn, MinOdtRdOn);
+      MaxOdtWrOff = MAX (OdtWrOff, MaxOdtWrOff);
+      MaxOdtRdOff = MAX (OdtRdOff, MaxOdtRdOff);
+    }
+    WLTxDqs = 0;
+    for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+      MaxWL = 0;
+      MinWL = MRC_UINT32_MAX;
+      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+        if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
+          continue;
+        }
+        MrcGetSetStrobe (MrcData, Controller, Channel, Rank, Byte, TxDqsDelay, ReadCached, &TxDqs);
+        MaxWL = MAX ((UINT32) TxDqs, MaxWL);
+        MinWL = MIN ((UINT32) TxDqs, MinWL);
+      }
+      // CK2CK = Delta of Write Leveling TxDqs
+      WLTxDqs = MAX (WLTxDqs, MaxWL - MinWL);
+    }
+    DeltaTxDqsPiCode = WLTxDqs;
+
+    GetDdr5tRdRd (MrcData, DeltaRcvEnPiCode, &TAT->tRdRdsg, &TAT->tRdRddg, &TAT->tRdRddr, &TAT->tRdRddd);
+    GetDdr5tWrWr (MrcData, MaxOdtWrOff, MinOdtWrOn, &TAT->tWrWrsg, &TAT->tWrWrdg, &TAT->tWrWrdr, &TAT->tWrWrdd);
+    GetDdr5tRdWr (MrcData, DeltaTxDqsPiCode, MaxOdtRdOff, MinOdtWrOn, NTODTRd, &TAT->tRdWrsg, &TAT->tRdWrdg, &TAT->tRdWrdr, &TAT->tRdWrdd);
+    GetDdr5tWrRd (MrcData, DeltaTxDqsPiCode, MinOdtRdOn, MaxOdtWrOff, NTODTRd, &TAT->tWrRdsg, &TAT->tWrRddg, &TAT->tWrRddr, &TAT->tWrRddd);
+  } else {
+    GetLpddr5tRdRd (MrcData, DeltaRcvEnPiCode, &TAT->tRdRdsg, &TAT->tRdRddg, &TAT->tRdRddr, &TAT->tRdRddd);
+    GetLpddr5tWrWr (MrcData, &TAT->tWrWrsg, &TAT->tWrWrdg, &TAT->tWrWrdr, &TAT->tWrWrdd);
+    GetLpddr5tRdWr (MrcData, &TAT->tRdWrsg, &TAT->tRdWrdg, &TAT->tRdWrdr, &TAT->tRdWrdd);
+    GetLpddr5tWrRd (MrcData, &TAT->tWrRdsg, &TAT->tWrRddg, &TAT->tWrRddr, &TAT->tWrRddd);
+  }
+}
+
+/**
+  This function gets and sets the Pre Training Turnaround Values
+
+  @param[in]  MrcData - Include all MRC global data.
+
+  @retval None
+**/
+VOID
+MrcTurnAroundTimingsPreTraining (
+  IN  MrcParameters *const MrcData
+  )
+{
+  const MrcInput  *Inputs;
+  const MRC_FUNCTION *MrcCall;
+  TurnAroundTimings  TAT;
+
+  Inputs    = &MrcData->Inputs;
+  MrcCall   = Inputs->Call.Func;
+
+  MrcCall->MrcSetMem ((UINT8 *) &TAT, sizeof (TAT), 0);
+  GetDramTatPreTraining (MrcData, &TAT);
+  SetDramTatTimings (MrcData, &TAT, MAX_CONTROLLER, MAX_CHANNEL, TRUE);
+}
+
+/**
+  This function implements Turn Around Timing Optimization.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - If it succeeds return mrcSuccess.
+**/
+MrcStatus
+MrcTurnAroundTimingOptimization (
+  IN  MrcParameters *const   MrcData
+  )
+{
+  MrcOutput *Outputs;
+  const MrcInput  *Inputs;
+  const MRC_FUNCTION *MrcCall;
+  MrcDebug *Debug;
+  TurnAroundTimings  TAT;
+  TxPathMinMax TxPathResults;
+  RxPathMinMax RxPathResults;
+  UINT32 PHYRd2Rd_PI[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 PHYWr2Wr_PI[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 Controller;
+  UINT32 Channel;
+
+  Inputs    = &MrcData->Inputs;
+  Outputs = &MrcData->Outputs;
+  MrcCall   = Inputs->Call.Func;
+  Debug     = &Outputs->Debug;
+  MrcCall->MrcSetMem ((UINT8 *) &TxPathResults, sizeof (TxPathResults), 0);
+  MrcCall->MrcSetMem ((UINT8 *) &RxPathResults, sizeof (RxPathResults), 0);
+  MrcCall->MrcSetMem ((UINT8 *) &TAT, sizeof (TAT), 0);
+
+  // Find Max/Min Values for Rx/Tx Path parameters
+  GetTxPathMinMax (MrcData, &TxPathResults);
+  GetRxPathMinMax (MrcData, &RxPathResults);
+
+  // Calculate TAT values constrained by PHY and training values
+  GetPhyRd2RdTA (MrcData, &RxPathResults, PHYRd2Rd_PI);
+  GetPhyWr2WrTA (MrcData, &TxPathResults, PHYWr2Wr_PI);
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      if (!MrcChannelExist (MrcData, Controller, Channel)) {
+        continue;
+      }
+      GetDramTatPostTraining (MrcData, &RxPathResults, &TxPathResults, Controller, Channel, &TAT);
+
+      MRC_DEBUG_MSG (
+        Debug,
+        MSG_LEVEL_NOTE,
+        "Mc%d.Ch%d: PhyRdRd:%d tRdRd:%d, PhyWrWr:%d tWrWr:%d \n",
+        Controller,
+        Channel,
+        PHYRd2Rd_PI[Controller][Channel],
+        TAT.tRdRddr,
+        PHYWr2Wr_PI[Controller][Channel],
+        TAT.tWrWrdr
+      );
+      TAT.tRdRddr = MAX (PHYRd2Rd_PI[Controller][Channel], TAT.tRdRddr);
+      TAT.tRdRddd = TAT.tRdRddr;
+      TAT.tWrWrdr = MAX (PHYWr2Wr_PI[Controller][Channel], TAT.tWrWrdr);
+      TAT.tWrWrdd= TAT.tWrWrdr;
+
+      SetDramTatTimings (MrcData, &TAT, Controller, Channel, FALSE);
+    }
+  }
+  return mrcSuccess;
+}
+

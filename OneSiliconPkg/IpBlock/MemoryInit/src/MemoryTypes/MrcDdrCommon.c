@@ -616,14 +616,29 @@ McFrequencySet (
   Outputs->Ratio -= GearMode ? (Outputs->Ratio % 4) : (Outputs->Ratio % 2);
 
   if (Outputs->InWorkPointLock) {
-    //Send PM0 to Lock PLL
-    Status = MrcSendPmMessage (MrcData, PM_MESSAGE_0, PM_MSG_MC);
+    if (Inputs->IsDdrIoTc && !ExtInputs->SimicsFlag) {
+      if (Inputs->DdrIoIpVersion.Bits.Derivative == 1) { // MC_IP model
+        Status = MrcSendPmMessage (MrcData, PM_MESSAGE_0, PM_MSG_MC);
+      } else {
+        if ((Outputs->SaGvPoint == MrcSaGvPoint0) || !MrcIsSaGvEnabled (MrcData)) {
+          // Test Chip uses PMmessage register to send PM0 for SAGV0 or when SAGV is disabled
+          Status = MrcSendPmMessage (MrcData, PM_MESSAGE_0, PM_MSG_PHY);
+        } else {
+          // Test Chip uses PMmessage register to send PM8->PM6->PM0 sequence for SAGV1/2/3
+          Status = MrcSendPmMessage (MrcData, PM_MESSAGE_8, PM_MSG_PHY);
+          Status |= MrcSendPmMessage (MrcData, PM_MESSAGE_6, PM_MSG_PHY);
+          Status |= MrcSendPmMessage (MrcData, PM_MESSAGE_0, PM_MSG_PHY);
+        }
+      }
+    } else {
+      Status = MrcSendPmMessage (MrcData, PM_MESSAGE_0, PM_MSG_MC);
+    }
   } else {
     //Send PM13
     Status = MrcSendPmMessage (MrcData, PM_MESSAGE_13, PM_MSG_PHY);
   }
 
-  if ((ExtInputs->SimicsFlag == 1) || Outputs->InWorkPointLock)  {
+  if ((ExtInputs->SimicsFlag == 1) || (Outputs->InWorkPointLock && !Inputs->IsDdrIoTc))  {
     Outputs->Frequency = MrcGetCurrentMemoryFrequency (MrcData, &MemoryClock, &Ratio);
   } else {
     Outputs->Frequency = MrcGetPhyCurrentMemoryFrequency (MrcData, &MemoryClock, &Ratio);

@@ -700,10 +700,10 @@
   # !BSF HELP:{Auto Precharge Enable for DDR5: <b>O=Auto</b>, 1=Disable, 2=Enable}
   gPlatformFspPkgTokenSpaceGuid.Ddr5AutoPrechargeEnable               | * | 0x01 | 0x00
 
-  # !BSF NAME:{ Lp5 SplitACT Enable}
-  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{SplitACT enable for LP5: <b>0=Auto</b>, 1=Disable, 2=Enable}
-  gPlatformFspPkgTokenSpaceGuid.Lp5SplitACTEnable               | * | 0x01 | 0x00
+  # !BSF NAME:{Lp5 SplitACT Enable}
+  # !BSF TYPE:{Combo} OPTION:{0:Auto, 1:Disable, 2:Enable}
+  # !BSF HELP:{SplitACT enable for LP5}
+  gPlatformFspPkgTokenSpaceGuid.Lp5SplitACTEnable           | * | 0x01 | 0x02
 
   # !BSF NAME:{CCC Half Frequency}
   # !BSF TYPE:{Combo} OPTION:{0: Auto, 1: Disable, 2: GroupGv0, 3: GroupGv1, 4: GroupGv2, 5: GroupGv3}
