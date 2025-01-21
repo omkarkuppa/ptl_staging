@@ -1345,6 +1345,7 @@
 #string STR_MARGIN_LIMIT_CHECK_L2_THSD_HELP     #language en-US "L2 check threshold is scale of L1 check. Ex. 200 is 2 x L1 Check"
 
 #string STR_EMPHASIS_TRNG_NAME                  #language en-US "Pre EMPHASIS Training"
+#string STR_RXDQSVOCC_TRNG_NAME                 #language en-US "RX DQS VOC Centring Training"
 
 #string STR_MCREGOFFSET_NAME                    #language en-US "MC Register Offset"
 #string STR_MCREGOFFSET_HELP                    #language en-US "Apply user offsets to select MC registers"

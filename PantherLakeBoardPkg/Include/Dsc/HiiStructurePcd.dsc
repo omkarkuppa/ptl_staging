@@ -3612,6 +3612,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.WCKPADDCCCAL|0x1                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDCTLET|0x0                                                    #           BIT17 - Read CTLE Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDDQODTT|0x1                                                   #           BIT18 - Read DQ ODT Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.EMPHASIS|0x1                                                   #           BIT19 - Pre-Emphasis LP5 Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSVOCC|0x0                                                  #           BIT26 - RxDqsVocCentering1D Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcTimeMeasure|0x0                                             # Offset 64 Bit 0 - Time Measure
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcFastBoot|0x1                                                #           Bit 1 - Fast Boot
 gStructPcdTokenSpaceGuid.PcdSaSetup.RankInterleave|0x1                                             #           Bit 3 - RI Support
