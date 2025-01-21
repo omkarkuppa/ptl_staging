@@ -190,7 +190,7 @@ MrcCalcSagvTypeConfig (
     if (IsLpddr5) {
       Freq = f6400;
     } else if (IsDdr5) {
-      Freq = f3200;
+      Freq = f4800;
     } else {
       // Recalculate Freq - 1 bin
       Freq = Freq - 1;

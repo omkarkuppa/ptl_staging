@@ -856,11 +856,13 @@ InitMrwLpddr5 (
   PdDrvStr = 40; // Ohms
   CsOdtEnc = 0;
   if (ExtInputs->DqLoopbackTest) {
-    // Inputs->NonTargetOdtEn = 1;
+#ifndef HVM_FLAG
+    Inputs->NonTargetOdtEn = 1;
+#endif
     if ((2 & Outputs->ValidRankMask) == 0) {
-      NtOdtEnc = 4; // 1R: RZQ/4 = 60 Ohm
+      NtOdtEnc = 6; // 1R: RZQ/6 = 40 Ohm
     } else {
-      NtOdtEnc = 2; // 2R: RZQ/2 = 120 Ohm
+      NtOdtEnc = 3; // 2R: RZQ/3 = 80 Ohm
     }
   } else {
     NtOdtEnc = 0;
@@ -3354,6 +3356,7 @@ MrcLpddr5GetDramCommandMap (
   IN OUT BOOLEAN            *IsSingleCycleCmd
   )
 {
+  LpDdr5ActStruct           LpDdr5ActCommand;
   // LPDDR5 cmd map:
   // DATA[6:0]   = CA[6:0], Cmd1 Rise edge
   // DATA[13:7]  = CA[6:0], Cmd1 Fall edge
@@ -3381,6 +3384,7 @@ MrcLpddr5GetDramCommandMap (
 
     case MrDramCmdPrea:
       *DramCmdData = (LP5_PREA_CMD_FALL_EDGE << 7) | LP5_PREA_CMD_RISE_EDGE;
+      *IsSingleCycleCmd = TRUE;
       break;
 
     case MrDramCmdWsFs:
@@ -3397,6 +3401,18 @@ MrcLpddr5GetDramCommandMap (
       if (!IsMultiCast) {
         break;
       }
+
+    case MrDramCmdAct:
+      LpDdr5ActCommand.Data32 = Data;
+      *DramCmdData =
+        (LpDdr5ActCommand.Bits.RowBits0_6 << 21) |
+        (LpDdr5ActCommand.Bits.RowBits7_10 << 17) |
+        (LP5_ACT2_CMD_RISE_EDGE << 14) |
+        (LpDdr5ActCommand.Bits.RowBits11_13) << 11 |
+        (Address << 7) |
+        (LpDdr5ActCommand.Bits.RowBits14_17 << 3) |
+        LP5_ACT1_CMD_RISE_EDGE;
+      break;
 
     default:
       MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "Invalid MR Command !\n");

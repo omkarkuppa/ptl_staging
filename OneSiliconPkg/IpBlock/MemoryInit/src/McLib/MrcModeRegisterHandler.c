@@ -194,7 +194,7 @@ MrcRunMrh (
   MrcStatus Status;
 
   MrcStatsStartTimer (MrcData, Timer);
-  Status = WrappedMrcRunMrh (MrcData, Controller, Channel, Rank, Address, Data, MrhCmd, SpidWrCmdOverride, DebugPrint);
+  Status = WrappedMrcRunMrh (MrcData, Controller, Channel, Rank, Address, Data, MrhCmd, SpidWrCmdOverride, NULL, DebugPrint);
   MrcStatsEndTimer (MrcData, Timer);
 
   return Status;
@@ -211,9 +211,10 @@ MrcRunMrh (
   @param[in] Channel           - The channel to work on
   @param[in] Rank              - The rank to work on
   @param[in] Address           - MRW address
-  @param[in] MrhCmd            - MRH command to execute
   @param[in] Data              - MRW Data
+  @param[in] MrhCmd            - MRH command to execute
   @param[in] SpidWrCmdOverride - Force WrCmd on SPID_cmd_type
+  @param[in] MrhGenericCommand - Optinal Generic MRH Command to execute. If NULL, the MrhCmd will be used.
   @param[in] DebugPrint        - When TRUE, will print debugging information
 
   @retval mrcSuccess              - MRW was sent successfully
@@ -231,6 +232,7 @@ WrappedMrcRunMrh (
   IN  UINT32                Data,
   IN  UINT8                 MrhCmd,
   IN  BOOLEAN               SpidWrCmdOverride,
+  IN  VOID                  *MrhGenericCommand, OPTIONAL
   IN  BOOLEAN               DebugPrint
   )
 {
@@ -240,6 +242,7 @@ WrappedMrcRunMrh (
   MrcInput            *Inputs;
   INT64               GetSetVal;
   UINT32              OffsetMrCommand;
+  UINT32              OffsetGenMrh;
   UINT32              IpChannel;
   UINT32              GetSetIpCh;
   UINT32              ControllerLoop;
@@ -329,6 +332,14 @@ WrappedMrcRunMrh (
       if (Busy) {
         MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Timed out waiting for previous MRH command to finish!\n");
         return mrcDeviceBusy;
+      }
+
+      if (MrhGenericCommand != NULL) {
+        // Caller must configure MrhGenericCommand input with command and Generic_MRH_override = 1
+        OffsetGenMrh = MC0_CH0_CR_MRH_GENERIC_COMMAND_REG +
+                ((MC1_CH0_CR_MRH_GENERIC_COMMAND_REG - MC0_CH0_CR_MRH_GENERIC_COMMAND_REG) * ControllerLoop) +
+                ((MC0_CH1_CR_MRH_GENERIC_COMMAND_REG - MC0_CH0_CR_MRH_GENERIC_COMMAND_REG) * IpChannel);
+        MrcWriteCR (MrcData, OffsetGenMrh, ((MC0_CH0_CR_MRH_GENERIC_COMMAND_STRUCT *) MrhGenericCommand)->Data);
       }
 
       //
@@ -481,6 +492,15 @@ WrappedMrcRunMrh (
         // Wait 64 DCLKs after Busy is low, before sending another MRH command
         MrcWait (MrcData, (Outputs->Dclkps * 64 * MRC_TIMER_1NS) / 1000);
       }
+
+      // Cleanup Generic MRH Command config
+      if (MrhGenericCommand != NULL) {
+        OffsetGenMrh = MC0_CH0_CR_MRH_GENERIC_COMMAND_REG +
+                ((MC1_CH0_CR_MRH_GENERIC_COMMAND_REG - MC0_CH0_CR_MRH_GENERIC_COMMAND_REG) * ControllerLoop) +
+                ((MC0_CH1_CR_MRH_GENERIC_COMMAND_REG - MC0_CH0_CR_MRH_GENERIC_COMMAND_REG) * IpChannel);
+        ((MC0_CH0_CR_MRH_GENERIC_COMMAND_STRUCT *) MrhGenericCommand)->Bits.Generic_MRH_override = 0;
+        MrcWriteCR (MrcData, OffsetGenMrh, ((MC0_CH0_CR_MRH_GENERIC_COMMAND_STRUCT *) MrhGenericCommand)->Data);
+      }
     } // ChannelLoop
   } // ControllerLoop
 
@@ -511,27 +531,19 @@ MrcRunGenericMrh (
   IN BOOLEAN                     TwoCycleCommand
   )
 {
+  const MRC_STATISTIC Timer = MRC_MRH_TIME;
   MrcStatus   Status;
-  UINT32      IpChannel;
-  UINT32      Offset;
   MC0_CH0_CR_MRH_GENERIC_COMMAND_STRUCT MrhGenericCommand;
-
-  IpChannel = LP_IP_CH (MrcData->Outputs.IsLpddr, Channel);
 
   MrhGenericCommand.Data = 0;
   MrhGenericCommand.Bits.ca_bus = Ca_Bus.Data;      // ca_bus: Precharge banks
   MrhGenericCommand.Bits.two_cyc_command = TwoCycleCommand ? 0x1 : 0x0; // two_cyc_command
   MrhGenericCommand.Bits.Generic_MRH_override = 1;  // Generic_MRH_override: True
 
-  Offset = MC0_CH0_CR_MRH_GENERIC_COMMAND_REG +
-          ((MC1_CH0_CR_MRH_GENERIC_COMMAND_REG - MC0_CH0_CR_MRH_GENERIC_COMMAND_REG) * Controller) +
-          ((MC0_CH1_CR_MRH_GENERIC_COMMAND_REG - MC0_CH0_CR_MRH_GENERIC_COMMAND_REG) * IpChannel);
-  MrcWriteCR (MrcData, Offset, MrhGenericCommand.Data);
+  MrcStatsStartTimer (MrcData, Timer);
+  Status = WrappedMrcRunMrh (MrcData, Controller, Channel, Rank, 0, 0, MRC_MRH_CMD_MPC, SpidWrCmdOverride, &MrhGenericCommand, FALSE);
+  MrcStatsEndTimer (MrcData, Timer);
 
-  Status = MrcRunMrh (MrcData, Controller, Channel, Rank, 0, 0, MRC_MRH_CMD_MPC, SpidWrCmdOverride, FALSE);
-
-  MrhGenericCommand.Bits.Generic_MRH_override = 0;  // Generic_MRH_override: False
-  MrcWriteCR (MrcData, Offset, MrhGenericCommand.Data);
   return Status;
 }
 
@@ -936,7 +948,7 @@ MrcIssueCas (
   IN UINT32               Controller,
   IN UINT32               Channel,
   IN UINT32               Rank,
-  IN UINT8                OpcodeEnum,
+  IN MrhCasOpcode         OpcodeEnum,
   IN BOOLEAN              DebugPrint
 )
 {
@@ -1133,3 +1145,235 @@ MrcIssueZQ (
   return Status;
 }
 
+/**
+  Issue PREA command.
+
+  @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - the controller to work on
+  @param[in] Channel    - The channel to work on
+  @param[in] Rank       - The rank to work on
+
+  @retval mrcSuccess    - PREA was sent successfully
+  @retval mrcFail       - PREA was not sent successfully
+**/
+MrcStatus
+MrcIssuePreaCmd (
+  IN MrcParameters* const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank
+  )
+{
+  MRC_GEN_MRH_COMMAND MrhCommand;
+  BOOLEAN TwoCycleCommand;
+
+  if (MrcData->Outputs.IsLpddr) {
+    MrhCommand.Lpddr5.CA_0 = LP5_PREA_CMD_RISE_EDGE; // Precharge All command
+    MrhCommand.Lpddr5.CA_1 = LP5_PREA_CMD_FALL_EDGE;
+    MrhCommand.Lpddr5.CA_2 = 0;
+    MrhCommand.Lpddr5.CA_3 = 0;
+    TwoCycleCommand = TRUE;
+  } else {
+    MrhCommand.Data = 0;
+    MrhCommand.Ddr5.CA_0 = DDR5_PREA_CMD; // Precharge All command
+    MrhCommand.Ddr5.CA_1 = 0x0;
+    TwoCycleCommand = FALSE;
+  }
+
+  return MrcRunGenericMrh (MrcData, Controller, Channel, Rank, MrhCommand, FALSE, TwoCycleCommand); // Issue PREA using MRH command
+}
+
+/**
+  Issue ACT command.
+
+  @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - the controller to work on
+  @param[in] Channel    - The channel to work on
+  @param[in] Rank       - The rank to work on
+  @param[in] Address    - BankGroup and Bank addresses
+  @param[in] Row       - Failing Row
+
+  @retval mrcSuccess    - ACT was sent successfully
+  @retval mrcFail       - ACT was not sent successfully
+**/
+MrcStatus
+MrcIssueActCmd (
+  IN MrcParameters* const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank,
+  IN UINT32               BankGroup,
+  IN UINT32               BankAddress,
+  IN UINT32               Row
+  )
+{
+  MrcOutput           *Outputs;
+  MRC_GEN_MRH_COMMAND MrhCommand;
+  Ddr5ActStruct       Ddr5ActCommand;
+  LpDdr5ActStruct     LpDdr5ActCommand;
+  MRC_LP5_BANKORG     BankMode;
+  BOOLEAN             TwoCycleCommand;
+
+  Outputs = &MrcData->Outputs;
+
+  if (MrcData->Outputs.IsLpddr) {
+    LpDdr5ActCommand.Data32 = Row;
+    MrhCommand.Lpddr5.CA_0 = (LpDdr5ActCommand.Bits.RowBits14_17 << 3) | LP5_ACT1_CMD_RISE_EDGE; // ACT command 1
+
+    BankMode = MrcGetBankBgOrg (MrcData, Outputs->Frequency);
+    switch (BankMode) {
+      case MrcLp58Bank:
+      case MrcLp516Bank:
+        MrhCommand.Lpddr5.CA_1 = BankAddress | (LpDdr5ActCommand.Bits.RowBits11_13 << 4);
+        break;
+      case MrcLp5BgMode:
+        MrhCommand.Lpddr5.CA_1 = BankAddress | (BankGroup << 2) | (LpDdr5ActCommand.Bits.RowBits11_13 << 4);
+        break;
+    }
+    MrhCommand.Lpddr5.CA_2 = (LpDdr5ActCommand.Bits.RowBits7_10 << 3) | LP5_ACT2_CMD_RISE_EDGE;  // ACT command 2
+    MrhCommand.Lpddr5.CA_3 = LpDdr5ActCommand.Bits.RowBits0_6;
+    TwoCycleCommand = FALSE;
+  } else {
+    Ddr5ActCommand.Data32 = Row;
+    MrhCommand.Ddr5.CA_0 = (Ddr5ActCommand.Bits.RowBits0_3 << 2) | (BankAddress << 6) | (BankGroup << 8);
+    MrhCommand.Ddr5.CA_1 = Ddr5ActCommand.Bits.RowBits4_16;
+    TwoCycleCommand = TRUE; // Issue 2N ACT using MRH command
+  }
+
+  return MrcRunGenericMrh (MrcData, Controller, Channel, Rank, MrhCommand, FALSE, TwoCycleCommand);
+}
+
+/**
+  Issue Precharge Per-Bank command.
+
+  @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - the controller to work on
+  @param[in] Channel    - The channel to work on
+  @param[in] Rank       - The rank to work on
+  @param[in] BankGroup   - Bank group
+  @param[in] BankAddress - Bank address
+
+  @retval mrcSuccess    - Precharge PB was sent successfully
+  @retval mrcFail       - Precharge PB was not sent successfully
+**/
+MrcStatus
+MrcIssuePrepbCmd (
+  IN MrcParameters* const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank,
+  IN UINT32               BankGroup,
+  IN UINT32               BankAddress
+  )
+{
+  MRC_GEN_MRH_COMMAND           MrhCommand;
+
+  MrhCommand.Ddr5.CA_0 = DDR5_PREPB_CMD;
+  MrhCommand.Ddr5.CA_0 |= (BankGroup & 0x7) << 8;
+  MrhCommand.Ddr5.CA_0 |= (BankAddress & 0x3) << 6;
+  MrhCommand.Ddr5.CA_1 = 0x0;
+
+  return MrcRunGenericMrh (MrcData, Controller, Channel, Rank, MrhCommand, FALSE, FALSE); // Precharge PB
+}
+
+/**
+  Issue WRA command.
+
+  @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - the controller to work on
+  @param[in] Channel    - The channel to work on
+  @param[in] Rank       - The rank to work on
+  @param[in] BankGroup   - BankGroup
+  @param[in] BankAddress - Bank addresses
+  @param[in] Row         - Failing Row
+  @param[in] ByteMask    - A mask of DQ bits, where bits set to 1 will be configured to drive low, all others will drive high.
+
+  @retval mrcSuccess    - WRA was sent successfully
+  @retval mrcFail       - WRA was not sent successfully
+**/
+MrcStatus
+MrcIssueWraCmd (
+  IN MrcParameters* const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank,
+  IN UINT32               BankGroup,
+  IN UINT32               BankAddress,
+  IN UINT32               Row,
+  IN UINT32               ByteMask
+  )
+{
+  MrcStatus  Status;
+  MrcOutput  *Outputs;
+  MrcInput   *Inputs;
+  MrcTiming  *Timing;
+  UINT32     tMpcNck;
+  UINT32     tMpcNckFs;
+  UINT32     tMpcNs;
+  UINT32     WraDelayNs;
+  INT64  GetSetVal;
+  INT64  GetSetEn;
+  INT64  GetSetDis;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
+  UINT32 Byte;
+  MRC_GEN_MRH_COMMAND MrhCommand;
+
+  Outputs     = &MrcData->Outputs;
+  Inputs      = &MrcData->Inputs;
+  ExtInputs   = Inputs->ExtInputs.Ptr;
+  Timing      = &Outputs->Timing[ExtInputs->MemoryProfile];
+  GetSetEn  = 1;
+  GetSetDis = 0;
+
+  tMpcNck     = MrcGetTmod (MrcData, Timing->tCK);
+  tMpcNckFs   = tMpcNck * Outputs->MemoryClock;
+  tMpcNs      = DIVIDECEIL (tMpcNckFs, FEMTOSECONDS_PER_NANOSECOND);
+
+  // Jedec defined delay from WRA commmand until the next valid command
+  WraDelayNs = Timing->tCWL + 8 + Timing->tWR + Timing->tRCDtRP + 1;  // in nCK
+  WraDelayNs = WraDelayNs * Outputs->MemoryClock; // in femtoseconds
+  WraDelayNs = DIVIDECEIL (WraDelayNs, FEMTOSECONDS_PER_NANOSECOND); // in nanoseconds
+
+  // Issue ACT to Failing Row
+  Status = MrcIssueActCmd (MrcData, Controller, Channel, Rank, BankGroup, BankAddress, Row);
+
+  if (Status != mrcSuccess) {
+    return Status;
+  }
+  MrcWait (MrcData, tMpcNs);
+
+  // Initalize all DQ pins
+  GetSetVal = 0xFF;
+  MrcGetSetChStrb (MrcData, Controller, Channel, MAX_SDRAM_IN_DIMM, GsmIocDqOverrideData, WriteCached, &GetSetVal);
+
+  // Zero out the DQ pins that are part of the ByteMask
+  for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
+    if (((1 << Byte) & ByteMask) == 0) {
+      continue;
+    }
+    GetSetVal = 0;
+    MrcGetSetChStrb (MrcData, Controller, Channel, Byte, GsmIocDqOverrideData, WriteToCache, &GetSetVal);
+  }
+  // Enable the override on all DQ pins
+  GetSetVal = 0xFF;
+  MrcGetSetChStrb (MrcData, Controller, Channel, MAX_SDRAM_IN_DIMM, GsmIocDqOverrideEn, WriteToCache, &GetSetVal);
+  MrcFlushRegisterCachedData (MrcData); // Override DQ to LOW
+
+  MrhCommand.Data = 0;
+  MrhCommand.Ddr5.CA_0 = DDR5_WRA_CMD | ((BankGroup & 0x7) << 8) | ((BankAddress & 0x3) << 6); // WRA
+  MrhCommand.Ddr5.CA_1 = 0x800; // Not Partial
+
+  // Enable multicyccmd
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMultiCycCmd, WriteNoCache, &GetSetEn);
+  // WRA, this should send WRCMD indication, for DQS
+  MrcRunGenericMrh (MrcData, Controller, Channel, Rank, MrhCommand, TRUE, TRUE);
+  MrcWait (MrcData, WraDelayNs);
+  // Disable multicyccmd
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccMultiCycCmd, WriteNoCache, &GetSetDis);
+
+  GetSetVal = 0x0;
+  MrcGetSetChStrb (MrcData, Controller, Channel, MAX_SDRAM_IN_DIMM, GsmIocDqOverrideEn, WriteToCache, &GetSetVal);
+  MrcFlushRegisterCachedData (MrcData);
+
+  return mrcSuccess;
+}

@@ -22,10 +22,18 @@
 #ifndef _MrcPpr_h_
 #define _MrcPpr_h_
 
-#include "MrcCpgcApi.h"
-#include "MrcAmt.h"
+#include "CMrcTypes.h"
+#include "CMrcInterface.h"
+#include "MrcCommon.h"
+#include "MrcAmtPprInterface.h"
 
 #define PPR_MAX_DETECTED_ERRORS       (0xF000)
+
+typedef struct {
+  INT64 SaveVal0;
+  INT64 SaveVal1;
+  INT64 SaveVal2;
+} PPR_MC_SETUP_SAVE;
 
 /**
   Enter Post Package Repair (PPR) to attempt to repair detected failed row.
@@ -390,6 +398,90 @@ MemTestMmrw (
 MrcStatus
 MrcPostPackageRepairEnable (
   IN MrcParameters *const MrcData
+  );
+
+/**
+  Set up the controller for Post-Package Repair (PPR).
+
+  @param[in]  MrcData    - Include all MRC global data.
+  @param[in]  Controller - the controller to work on
+  @param[in]  Channel    - The channel to work on
+  @param[out] SaveData   - A data buffer to save the current state of the controller.
+
+  @retval None
+**/
+void
+MrcDdr5PprControllerSetup (
+  IN MrcParameters *const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN PPR_MC_SETUP_SAVE    *SaveData
+  );
+
+
+/**
+  Cleanup the MC configuration after Post-Package Repair (PPR).
+
+  @param[in]  MrcData    - Include all MRC global data.
+  @param[in]  Controller - the controller to work on
+  @param[in]  Channel    - The channel to work on
+  @param[out] SaveData   - A data buffer to save the controller state prior to PPR.
+
+  @retval None
+**/
+void
+MrcDdr5PprControllerTeardown (
+  IN MrcParameters *const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN PPR_MC_SETUP_SAVE    *SaveData
+  );
+
+/**
+  Set up the controller for Post-Package Repair (PPR).
+
+  @param[in]  MrcData    - Include all MRC global data.
+  @param[in]  Controller - the controller to work on
+  @param[in]  Channel    - The channel to work on
+  @param[out] SaveData   - A data buffer to save the current state of the controller.
+
+  @retval None
+**/
+void
+MrcLpddr5PprControllerSetup (
+  IN MrcParameters *const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN PPR_MC_SETUP_SAVE    *SaveData
+  );
+
+/**
+  Cleanup the MC configuration after Post-Package Repair (PPR).
+
+  @param[in]  MrcData    - Include all MRC global data.
+  @param[in]  Controller - the controller to work on
+  @param[in]  Channel    - The channel to work on
+  @param[out] SaveData   - A data buffer to save the controller state prior to PPR.
+
+  @retval None
+**/
+void
+MrcLpddr5PprControllerTeardown (
+  IN MrcParameters *const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN PPR_MC_SETUP_SAVE    *SaveData
+  );
+
+/**
+  This is a test function for direct testing of the Post Package Repair sequence.
+  @param[in] MrcData     - Pointer to global MRC data.
+
+  @return MrcStatus - mrcSuccess if no errors, otherwise return error status.
+**/
+MrcStatus
+MrcPostPackageRepairTest (
+  IN  MrcParameters *const MrcData
   );
 
 #endif // _MrcPpr_h_

@@ -3291,98 +3291,15 @@ DEBUG_CODE_END();
 
     // If Simics reserved bit is set, then use mrc_mem_flow overrides
     if ((Memflows1.Data & MRC_BIT63) != 0) {
-      MrcCall->MrcCopyMem ((UINT8 *)&ExtInputs->TrainingEnables, (UINT8 *) &Memflows1.Bits.Low, sizeof(TrainingStepsEn));
+      MrcCall->MrcCopyMem ((UINT8 *)&ExtInputs->TrainingEnables,  (UINT8 *) &Memflows1.Bits.Low,  sizeof(TrainingStepsEn));
       MrcCall->MrcCopyMem ((UINT8 *)&ExtInputs->TrainingEnables2, (UINT8 *) &Memflows1.Bits.High, sizeof(TrainingStepsEn2));
-      MrcCall->MrcCopyMem ((UINT8 *)&ExtInputs->TrainingEnables3, (UINT8 *) &Memflows2.Bits.Low, sizeof(TrainingStepsEn3));
+      MrcCall->MrcCopyMem ((UINT8 *)&ExtInputs->TrainingEnables3, (UINT8 *) &Memflows2.Bits.Low,  sizeof(TrainingStepsEn3));
     } else {
       // Else, use Bios Knob setting
       // Disable trainings not supported in simics currently
-
-      ExtInputs->TrainingEnables.ECT             = 0;
-      ExtInputs->TrainingEnables.SOT             = 0;
-      ExtInputs->TrainingEnables.RDMPRT          = 0;
-      ExtInputs->TrainingEnables.RCVET           = 0;
-      ExtInputs->TrainingEnables.JWRL            = 0;
-      ExtInputs->TrainingEnables.EWRTC2D         = 0;
-      ExtInputs->TrainingEnables.ERDTC2D         = 0;
-      ExtInputs->TrainingEnables.UNMATCHEDWRTC1D = 0;
-      ExtInputs->TrainingEnables.WRTC1D          = 0;
-      ExtInputs->TrainingEnables.WRVC1D          = 0;
-      ExtInputs->TrainingEnables.RDTC1D          = 0;
-      ExtInputs->TrainingEnables.RDVC1D          = 0;
-      ExtInputs->TrainingEnables.WRTC2D          = 0;
-      ExtInputs->TrainingEnables.RDTC2D          = 0;
-      ExtInputs->TrainingEnables.WRVC2D          = 0;
-      ExtInputs->TrainingEnables.RDVC2D          = 0;
-      ExtInputs->TrainingEnables.TAT             = 0;
-      ExtInputs->TrainingEnables.CMDVC           = 0;
-      ExtInputs->TrainingEnables.LCT             = 0;
-      ExtInputs->TrainingEnables.RMT             = 0;
-      ExtInputs->TrainingEnables.WRDSEQT         = 0;
-      ExtInputs->TrainingEnables.RDDQSODTT       = 0;
-      ExtInputs->TrainingEnables3.RDDQODTT       = 0;
-      ExtInputs->TrainingEnables.RDEQT           = 0;
-      ExtInputs->TrainingEnables3.RDCTLET        = 0;
-      ExtInputs->TrainingEnables.ALIASCHK        = 0;
-      ExtInputs->TrainingEnables.RMC             = 0;
-      ExtInputs->TrainingEnables.RTL             = 0;
-      ExtInputs->TrainingEnables.ERDMPRTC2D      = 0;
-      ExtInputs->TrainingEnables.WRDSEQT         = 0;
-      ExtInputs->TrainingEnables.DQSRF           = 0;
-      ExtInputs->TrainingEnables.DUNITC          = 0;
-      ExtInputs->TrainingEnables.RMTEVENODD      = 0;
-      ExtInputs->TrainingEnables.RCVENC1D        = 0;
-      ExtInputs->TrainingEnables.PRETRAIN        = 0;
-
-      ExtInputs->TrainingEnables2.DQDQSSWZ       = 0;
-      ExtInputs->TrainingEnables2.REFPI          = 0;
-      ExtInputs->TrainingEnables2.RXUNMATCHEDCAL = 0;
-      ExtInputs->TrainingEnables2.DDR5ODTTIMING  = 0;
-      ExtInputs->TrainingEnables2.DBI            = 0;
-      ExtInputs->TrainingEnables2.RMTBIT         = 0;
-      ExtInputs->TrainingEnables2.DCCPICODELUT   = 0;
-      ExtInputs->TrainingEnables2.FUNCDCCDQS     = 0; //If DCC is disabled, this needs to be disabled as well
-      ExtInputs->TrainingEnables2.FUNCDCCCLK     = 0; //If DCC is disabled, this needs to be disabled as well
-      ExtInputs->TrainingEnables2.FUNCDCCWCK     = 0; //If DCC is disabled, this needs to be disabled as well
-      ExtInputs->TrainingEnables2.FUNCDCCDQ      = 0;
-      ExtInputs->TrainingEnables2.DIMMODTT       = 0;
-      ExtInputs->TrainingEnables2.DIMMRONT       = 0;
-      ExtInputs->TrainingEnables2.TXTCO          = 0;
-      ExtInputs->TrainingEnables2.CLKTCO         = 0;
-      ExtInputs->TrainingEnables2.CMDSR          = 0;
-      ExtInputs->TrainingEnables2.CMDDSEQ        = 0;
-      ExtInputs->TrainingEnables2.DIMMODTCA      = 0;
-      ExtInputs->TrainingEnables2.RDVREFDC       = 0;
-      ExtInputs->TrainingEnables2.DATAPILIN      = 0;
-      ExtInputs->TrainingEnables2.DDR5XTALK      = 0;
-      ExtInputs->TrainingEnables2.WRTDIMMDFE     = 0;
-      ExtInputs->TrainingEnables2.DCCLP5WCKDCA   = 0;
-      ExtInputs->TrainingEnables2.VCCCLKFF       = 0;
-      ExtInputs->TrainingEnables2.DLLDCC         = 0;
-      ExtInputs->TrainingEnables2.DLLBWSEL       = 0;
-      ExtInputs->TrainingEnables2.DCCLP5READDCA  = 0;
-
-      ExtInputs->TrainingEnables3.LVRAUTOTRIM    = 0;
-      ExtInputs->TrainingEnables3.TLINECLKCAL    = 0;
-      ExtInputs->TrainingEnables3.QCLKDCC        = 0;
-      ExtInputs->TrainingEnables3.DDRPRECOMP     = 0;
-      ExtInputs->TrainingEnables3.WRTRETRAIN     = 0;
-      ExtInputs->TrainingEnables3.OPTIMIZECOMP   = 0;
-      ExtInputs->TrainingEnables3.PWRMETER       = 0;
-      ExtInputs->TrainingEnables3.PPR            = 0;
-      ExtInputs->TrainingEnables3.RXDQSDCC       = 0;
-      ExtInputs->TrainingEnables3.DIMMNTODT      = 0;
-      ExtInputs->TrainingEnables3.RXVREFPERBIT   = 0;
-      ExtInputs->TrainingEnables3.DCCPISERIALCAL = 0;
-      ExtInputs->TrainingEnables3.PHASECLKCAL    = 0;
-      ExtInputs->TrainingEnables3.WCKPADDCCCAL   = 0;
-      ExtInputs->TrainingEnables3.EMPHASIS       = 0;
-      ExtInputs->TrainingEnables3.DIMMRXOFFSET   = 0;
-      ExtInputs->TrainingEnables3.VIEWPINCAL     = 0;
-      ExtInputs->TrainingEnables3.WCKCLKPREDCC   = 0;
-      ExtInputs->TrainingEnables3.DQSPADDCC      = 0;
-      ExtInputs->TrainingEnables3.QCLKPHALIGN    = 0;
-      ExtInputs->TrainingEnables3.RXDQSVOCC      = 0;
+      MrcCall->MrcSetMem ((UINT8 *) &ExtInputs->TrainingEnables,  sizeof (TrainingStepsEn),  0);
+      MrcCall->MrcSetMem ((UINT8 *) &ExtInputs->TrainingEnables2, sizeof (TrainingStepsEn2), 0);
+      MrcCall->MrcSetMem ((UINT8 *) &ExtInputs->TrainingEnables3, sizeof (TrainingStepsEn3), 0);
     }
   }
 

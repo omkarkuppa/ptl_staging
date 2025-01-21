@@ -111,6 +111,9 @@ typedef enum {
   MrDramCmdMrr,
   MrDramCmdNop,
   MrDramCmdPrea,
+  MrDramCmdPrepb,
+  MrDramCmdWra,
+  MrDramCmdAct,
   MrDramCmdWsFs,  // LPDDR5 Only
   MrDramCmdWsOff, // LPDDR5 Only
   MrDramCmdCs2nSyncNop, // DDR5 Only

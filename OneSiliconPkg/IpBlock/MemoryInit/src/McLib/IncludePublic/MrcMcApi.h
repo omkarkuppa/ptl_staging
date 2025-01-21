@@ -328,7 +328,7 @@ MrcIssueCas (
   IN UINT32               Controller,
   IN UINT32               Channel,
   IN UINT32               Rank,
-  IN UINT8                OpcodeEnum,
+  IN MrhCasOpcode         OpcodeEnum,
   IN BOOLEAN              DebugPrint
 );
 
@@ -821,16 +821,96 @@ MrcSetBusCmdType (
   );
 
 /**
-  Issue PREA command using MPTU, on all populated ranks / channels
+  Issue PREA command.
 
   @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - the controller to work on
+  @param[in] Channel    - The channel to work on
+  @param[in] Rank       - The rank to work on
 
-  @retval mrcSuccess    - if command was sent successfully
-  @retval mrcFail       - if command was not sent successfully
+  @retval mrcSuccess    - PREA was sent successfully
+  @retval mrcFail       - PREA was not sent successfully
 **/
 MrcStatus
-MrcIssuePrechargeAll (
-  IN MrcParameters* const MrcData
+MrcIssuePreaCmd (
+  IN MrcParameters* const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank
+  );
+
+/**
+  Issue ACT command.
+
+  @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - the controller to work on
+  @param[in] Channel    - The channel to work on
+  @param[in] Rank       - The rank to work on
+  @param[in] Address    - BankGroup and Bank addresses
+  @param[in] Row       - Failing Row
+
+  @retval mrcSuccess    - ACT was sent successfully
+  @retval mrcFail       - ACT was not sent successfully
+**/
+MrcStatus
+MrcIssueActCmd (
+  IN MrcParameters* const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank,
+  IN UINT32               BankGroup,
+  IN UINT32               BankAddress,
+  IN UINT32               Row
+  );
+
+/**
+  Issue Precharge Per-Bank command.
+
+  @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - the controller to work on
+  @param[in] Channel    - The channel to work on
+  @param[in] Rank       - The rank to work on
+  @param[in] BankGroup   - Bank group
+  @param[in] BankAddress - Bank address
+
+  @retval mrcSuccess    - Precharge PB was sent successfully
+  @retval mrcFail       - Precharge PB was not sent successfully
+**/
+MrcStatus
+MrcIssuePrepbCmd (
+  IN MrcParameters* const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank,
+  IN UINT32               BankGroup,
+  IN UINT32               BankAddress
+  );
+
+/**
+  Issue WRA command.
+
+  @param[in] MrcData    - Include all MRC global data.
+  @param[in] Controller - the controller to work on
+  @param[in] Channel    - The channel to work on
+  @param[in] Rank       - The rank to work on
+  @param[in] BankGroup   - BankGroup
+  @param[in] BankAddress - Bank addresses
+  @param[in] Row         - Failing Row
+  @param[in] ByteMask    - A mask of DQ bits, where bits set to 1 will be configured to drive low, all others will drive high.
+
+  @retval mrcSuccess    - WRA was sent successfully
+  @retval mrcFail       - WRA was not sent successfully
+**/
+MrcStatus
+MrcIssueWraCmd (
+  IN MrcParameters* const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank,
+  IN UINT32               BankGroup,
+  IN UINT32               BankAddress,
+  IN UINT32               Row,
+  IN UINT32               ByteMask
   );
 
 /**
