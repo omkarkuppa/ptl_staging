@@ -1489,6 +1489,9 @@ InstallEfiMemory (
   UINT8                                 MainMemoryIndex;
   SI_PREMEM_CONFIG                      *SiPreMemConfig;
   UINT64                                StaticContentSize;
+  UINT64                                NocImrExclusionLimit;
+  UINT64                                NocImrExclusionSize;
+  UINT64                                NocImrExclusionDelta;
 
   TseDataHob = NULL;
   MemorySubSystemConfig = NULL;
@@ -1908,6 +1911,7 @@ InstallEfiMemory (
   if (Touud > MEM_EQU_4GB) {
     TopUseableMemAddr = MEM_EQU_4GB;
     Touud -= TopUseableMemAddr;
+    NocImrExclusionLimit = MEM_EQU_4GB;
 
     DEBUG((DEBUG_INFO, "[TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
@@ -1943,9 +1947,6 @@ InstallEfiMemory (
     }
     DEBUG((DEBUG_INFO, "[Post Static Memory Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
-    VmdMemoryAllocation(&TopUseableMemAddr, &Touud, ResourceAttributeTested);
-    DEBUG((DEBUG_INFO, "[Post Vmd Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
-
     //
     // Memory Allocation for Prmrr
     //
@@ -1957,6 +1958,9 @@ InstallEfiMemory (
     //
     PeiTraceHubMemoryAllocation(&TopUseableMemAddr, &Touud);
     DEBUG((DEBUG_INFO, "[Post Trace Hub Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+
+    VmdMemoryAllocation(&TopUseableMemAddr, &Touud, ResourceAttributeTested);
+    DEBUG((DEBUG_INFO, "[Post Vmd Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // Memory Allocation for Telemetry
@@ -1982,6 +1986,47 @@ InstallEfiMemory (
       MemoryMapData->SeamrrBase = SeamRrBaseAddress;
       DEBUG((DEBUG_INFO, "[Post Tdx Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
     }
+
+    NocImrExclusionLimit = TopUseableMemAddr;
+
+    if (NocImrExclusionLimit != MEM_EQU_4GB) {
+      NocImrExclusionSize = NocImrExclusionLimit - BASE_4GB;
+      if (NocImrExclusionSize > GetPowerOfTwo64 (NocImrExclusionSize)) {
+        NocImrExclusionSize = 2 * GetPowerOfTwo64 (NocImrExclusionSize);
+      }
+
+      NocImrExclusionDelta = NocImrExclusionSize - (NocImrExclusionLimit - BASE_4GB);
+      DEBUG ((DEBUG_INFO, "NocImrExclusionLimit = 0x%llX NocImrExclusionDelta = 0x%llX NocImrExclusionSize = 0x%llX\n", NocImrExclusionLimit, NocImrExclusionDelta, NocImrExclusionSize));
+
+      if (NocImrExclusionDelta != 0) {
+        ResourceType      = EFI_RESOURCE_MEMORY_RESERVED;
+        ResourceAttribute = EFI_RESOURCE_ATTRIBUTE_PRESENT |
+                            EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+                            ResourceAttributeTested |
+                            EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
+                            EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
+                            EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
+                            EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE;
+
+        BuildResourceDescriptorHob (
+                                    ResourceType,         // MemoryType,
+                                    ResourceAttribute,    // MemoryAttribute
+                                    NocImrExclusionLimit, // MemoryBegin
+                                    NocImrExclusionDelta  // MemoryLength
+                                    );
+
+        BuildMemoryAllocationHob (
+                                  NocImrExclusionLimit,
+                                  NocImrExclusionDelta,
+                                  EfiReservedMemoryType
+                                  );
+
+        TopUseableMemAddr += NocImrExclusionDelta;
+        Touud             -= NocImrExclusionDelta;
+        DEBUG ((DEBUG_INFO, "After Aligning the BASE 2 IMR TopUseableMemAddr = 0x%016lX Touud=0x%llX\n", TopUseableMemAddr, Touud));
+      }
+    }
+
     //
     // Memory Allocation for FlatCcs
     //

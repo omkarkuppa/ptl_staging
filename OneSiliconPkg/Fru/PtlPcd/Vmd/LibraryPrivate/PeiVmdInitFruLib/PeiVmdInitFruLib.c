@@ -338,7 +338,6 @@ VmdMemoryAllocation (
   EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttribute;
   UINT64                       BaseAddressImr11;
   UINT32                       Imr11SizeInBytes;
-  UINT32                       Imr11SizeInMb;
   UINT32                       CpuFamilyId;
 
   if ((IsVmdEnabled() == TRUE)) {
@@ -353,27 +352,25 @@ VmdMemoryAllocation (
         BaseAddressImr11 = (BaseAddressImr11 & ((UINT64) ~(SIZE_1MB - 1))) + SIZE_1MB;
       }
 
-      Imr11SizeInMb    = (UINT32) SIZE_1MB;
-      Imr11SizeInBytes = Imr11SizeInMb << 20;
+      Imr11SizeInBytes = SIZE_1MB;
       DEBUG ((DEBUG_INFO, "VmdMemoryAllocation memory base = 0x%016lX Size = 0x%x\n", BaseAddressImr11, Imr11SizeInBytes));
 
-
-        ResourceType      = EFI_RESOURCE_MEMORY_RESERVED;
-        ResourceAttribute = EFI_RESOURCE_ATTRIBUTE_PRESENT |
-                            EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-                            EFI_RESOURCE_ATTRIBUTE_TESTED |
-                            EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE;
+      ResourceType      = EFI_RESOURCE_MEMORY_RESERVED;
+      ResourceAttribute = EFI_RESOURCE_ATTRIBUTE_PRESENT |
+                          EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+                          ResourceAttributeTested |
+                          EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE;
 
       BuildResourceDescriptorHob (
         ResourceType,                                // MemoryType,
         ResourceAttribute,                           // MemoryAttribute
         (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
-        SIZE_1MB                                     // MemoryLength
+        Imr11SizeInBytes                             // MemoryLength
         );
 
       BuildMemoryAllocationHob (
         (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
-        SIZE_1MB,                                    // MemoryLength
+        Imr11SizeInBytes,                            // MemoryLength
         EfiReservedMemoryType
         );
       //
