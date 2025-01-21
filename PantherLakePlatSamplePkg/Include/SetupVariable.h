@@ -1544,10 +1544,8 @@ typedef struct {
   UINT8   RXVREFPERBIT;
   UINT8   PPR;
   UINT8   LVRAUTOTRIM;
-  UINT8   PWRMETER;
   UINT8   OPTIMIZECOMP;
   UINT8   WRTRETRAIN;
-  UINT8   DDRPRECOMP;
   UINT8   TLINECLKCAL;
   UINT8   DCCPISERIALCAL;
   UINT8   PHASECLKCAL;
@@ -1722,6 +1720,7 @@ typedef struct {
   UINT8   DisableSwitchDfiToMc;
   UINT8   IGpuGsm2Size;
   UINT8   SolFeatureEnabled;
+  UINT8   Rsvd[64];
 } SA_SETUP;
 
 /**

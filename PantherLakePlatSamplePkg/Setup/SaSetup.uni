@@ -1331,10 +1331,8 @@
 #string STR_ENPERIODICCOMP_PROMPT               #language en-US "Enable/Disable Periodic Compensation"
 #string STR_LVRAUTOTRIM_NAME                    #language en-US "LVR Auto Trim"
 #string STR_TLINECLKCAL_NAME                    #language en-US "Tline Clk Calibration"
-#string STR_PWRMETER_NAME                       #language en-US "Power Saving Meter"
 #string STR_OPTIMIZECOMP_NAME                   #language en-US "Comp Optimization"
 #string STR_WRTRETRAIN_NAME                     #language en-US "Write Dq/Dqs Retraining"
-#string STR_DDRPRECOMP_NAME                     #language en-US "Ddr Comp Calibration Pre Training"
 
 #string STR_MARGIN_LIMIT_CHECK_NAME             #language en-US "Margin Check Limit"
 #string STR_MARGIN_LIMIT_CHECK_HELP             #language en-US "Checks Margin to Limit to see if next boot memory needs to be retrain"

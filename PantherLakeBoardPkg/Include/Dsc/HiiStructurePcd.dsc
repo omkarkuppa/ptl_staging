@@ -3601,10 +3601,8 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMNTODT|0x0                               
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXVREFPERBIT|0x0                                               #           BIT3 - RxVref Per-Bit Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.PPR|0x0                                                        #           BIT4 - Post Package Repair
 gStructPcdTokenSpaceGuid.PcdSaSetup.LVRAUTOTRIM|0x0                                                #           BIT5 - LVR Auto Trim
-gStructPcdTokenSpaceGuid.PcdSaSetup.PWRMETER|0x0                                                   #           BIT6 - Power Saving Meter
 gStructPcdTokenSpaceGuid.PcdSaSetup.OPTIMIZECOMP|0x0                                               #           BIT7 - Comp optimization
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTRETRAIN|0x1                                                 #           BIT8 - Write Dq/Dqs Retraining
-gStructPcdTokenSpaceGuid.PcdSaSetup.DDRPRECOMP|0x0                                                 #           BIT9 - Ddr Comp Calibration Pre Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.TLINECLKCAL|0x1                                                #           BIT13 - Tline Clk Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPISERIALCAL|0x1                                             #           BIT14 - DCC PI Serializer Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.PHASECLKCAL|0x0                                                #           BIT15 - DCC Phase Clk Calibration
