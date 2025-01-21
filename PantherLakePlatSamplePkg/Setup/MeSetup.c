@@ -605,8 +605,11 @@ MeRouteConfig (
       RequestString = HiiConstructRequestString (RequestString, OFFSET_OF (ME_STORAGE_EXPOSURE, MeState), sizeof (MeStorageExposure.MeState));
       if (RequestString != NULL) {
         MeStorageExposure.MeState = 0;
-        HiiSetBrowserData (&gMeSetupVariableGuid, L"MeStorageExposure", sizeof (ME_STORAGE_EXPOSURE), (UINT8 *)&MeStorageExposure, RequestString);
+        Status = HiiSetBrowserData (&gMeSetupVariableGuid, L"MeStorageExposure", sizeof (ME_STORAGE_EXPOSURE), (UINT8 *)&MeStorageExposure, RequestString);
         FreePool (RequestString);
+        if (EFI_ERROR (Status)) {
+          return;
+        }
       }
     }
 

@@ -80,14 +80,6 @@ UpdatePeiPchPolicyBoardConfigPreMem (
   UpdatePcieClockInfo (PcieRpPreMemConfig, 7, PcdGet64  (PcdPcieClock7));
   UpdatePcieClockInfo (PcieRpPreMemConfig, 8, PcdGet64  (PcdPcieClock8));
   UpdatePcieClockInfo (PcieRpPreMemConfig, 9, PcdGet64  (PcdPcieClock9));
-  UpdatePcieClockInfo (PcieRpPreMemConfig, 10, PcdGet64 (PcdPcieClock10));
-  UpdatePcieClockInfo (PcieRpPreMemConfig, 11, PcdGet64 (PcdPcieClock11));
-  UpdatePcieClockInfo (PcieRpPreMemConfig, 12, PcdGet64 (PcdPcieClock12));
-  UpdatePcieClockInfo (PcieRpPreMemConfig, 13, PcdGet64 (PcdPcieClock13));
-  UpdatePcieClockInfo (PcieRpPreMemConfig, 14, PcdGet64 (PcdPcieClock14));
-  UpdatePcieClockInfo (PcieRpPreMemConfig, 15, PcdGet64 (PcdPcieClock15));
-  UpdatePcieClockInfo (PcieRpPreMemConfig, 16, PcdGet64 (PcdPcieClock16));
-  UpdatePcieClockInfo (PcieRpPreMemConfig, 17, PcdGet64 (PcdPcieClock17));
 
   return Status;
 }
