@@ -56,3 +56,4 @@ PeiVmdInitFruLib.c
 
 [Guids]
 gVmdInfoHobGuid
+gHostBridgeDataHobGuid
