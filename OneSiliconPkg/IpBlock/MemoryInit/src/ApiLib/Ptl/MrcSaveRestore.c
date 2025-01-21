@@ -205,7 +205,7 @@ const SaveDataControl SaveDataDdrioPerSaGv32[] = {
   {0x49a0, 0x49a0}, // DDRPHY_DDRCOMP_SBMEM_CR_SPARE
 };
 
-const SaveDataControl SaveDataDdrioPerSaGv32PerDataSbmem[] = { // DDRDATA_SBMEM needs to be separate group due to unique register offsets spacing 
+const SaveDataControl SaveDataDdrioPerSaGv32PerDataSbmem[] = { // DDRDATA_SBMEM needs to be separate group due to unique register offsets spacing
   {0x4160, 0x4160}, // DDRDATA_SBMEM0_CR_SPARE
 };
 
@@ -1324,9 +1324,9 @@ MrcRestoreTrainingValues (
   InitializeRegisterCache (MrcData);
 
   // Perform DLL reset, followed by an IoReset
-  ToggleDllReset (MrcData, 1);
+  MrcToggleDllReset (MrcData, 1);
   MrcWait (MrcData, MRC_TIMER_1NS * 100);
-  ToggleDllReset (MrcData, 0);
+  MrcToggleDllReset (MrcData, 0);
   MrcWait (MrcData, MRC_TIMER_1US);
   IoReset (MrcData);
 

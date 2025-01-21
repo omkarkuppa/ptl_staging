@@ -829,6 +829,7 @@ typedef struct {
 #define PPR_MEMTEST_XMARCHG_BIT               (3)
 #define PPR_MEMTEST_YMARCHSHORT_BIT           (4)
 #define PPR_MEMTEST_YMARCHLONG_BIT            (5)
+#define PPR_MEMTEST_MMRW_BIT                  (6)
 
 // PPR Running State
 typedef enum {

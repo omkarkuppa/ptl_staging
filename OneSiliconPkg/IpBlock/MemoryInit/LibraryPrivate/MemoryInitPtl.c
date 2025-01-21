@@ -130,10 +130,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED static const SPD_OFFSET_TABLE SpdDdr5Table[] = {
   { 126,             127,           (1 << bmCold),},
   { 192,             213,           (1 << bmCold),},
   { 230,             235,           (1 << bmCold),},
-  { 240,             243,           (1 << bmCold),},
+  { 240,             243,           (1 << bmCold) | (1 << bmFast),},
   { SPD5_MANUF_START, SPD5_MANUF_END, (1 << bmCold) | (1 << bmFast),},
   { 521,             550,           (1 << bmCold),},
-  { SPD5_DRAM_MFG_START, SPD5_DRAM_MFG_END, (1 << bmCold),},
+  { SPD5_DRAM_MFG_START, SPD5_DRAM_MFG_END, (1 << bmCold) | (1 << bmFast),},
   // XMP 3.0 spec
   // Below XMP Global Section
   { 640,             703,             (1 << bmCold),},
@@ -154,7 +154,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED const SPD_OFFSET_TABLE SpdLpddrTable[] = {
   { 230,             232,               (1 << SpdCold),},
   { 234,             235,               (1 << SpdCold),},
   { SPDLP_MANUF_START, SPDLP_MANUF_END, (1 << SpdCold) | (1 << SpdFast),},
-  { 329,             352,               (1 << SpdCold),},
+  { 329,             352,               (1 << SpdCold) | (1 << SpdFast),},
   { SPDLP_JEDEC_SPEC_MANUF_START, SPDLP_JEDEC_SPEC_MANUF_END, (1 << SpdCold) | (1 << SpdFast),},
   { 521,             554,               (1 << SpdCold),}
 };

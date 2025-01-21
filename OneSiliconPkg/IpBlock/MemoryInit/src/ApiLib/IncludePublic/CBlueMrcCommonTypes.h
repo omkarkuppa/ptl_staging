@@ -141,6 +141,8 @@ typedef enum {
   CmdTxEq,                      ///< CA Equalization codes: {4} Controls ConstantZ (1) vs. NonConstantZ (0), {3:0}={0: 0 Static Legs / 12 Eq Legs, ... 12: 12 Static Legs / 0 Eq Legs, 13-15: rsvd}
   CtlTxEq,                      ///< CTL Equalization codes: {4} Controls ConstantZ (1) vs. NonConstantZ (0), {3:0}={0: 0 Static Legs / 12 Eq Legs, ... 12: 12 Static Legs / 0 Eq Legs, 13-15: rsvd}
   GsmIntCkOn,                   ///< Force PI enables in CCC
+  GsmIocDllWeakLock,
+  GsmIocTxDllWeakLock,
   RxVrefVddqDecap,              ///< Control Rx Vref coupling to Vddq.  0: No cap to Vddq  1-7 is cap control with 12.5% step size. Remaining cap will be to VSS
   RxVocFall,
   WrRetrainDeltaPiCode,

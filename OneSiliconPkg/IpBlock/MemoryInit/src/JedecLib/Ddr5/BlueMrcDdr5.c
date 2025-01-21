@@ -192,47 +192,6 @@ MrcJedecInitDdr5 (
 }
 
 /**
-  Override CS to the input CsOverrideVal value.
-
-  @param[in] MrcData       - Pointer to MRC global data.
-  @param[in] CsOverrideVal - Value to override CS to. Any non-zero value sets CS high.
-  @param[in] CsOverrideEn  - Input specifying whether to enable or disable CS Override.
-**/
-void
-OverrideCs (
-  IN MrcParameters *const MrcData,
-  IN UINT8                CsOverrideVal,
-  IN BOOLEAN              CsOverrideEn
-  )
-{
-  MrcOutput     *Outputs;
-  INT64         ValidRankBitMask;
-  INT64         OverrideValRankBitMask;
-  INT64         OverrideEnRankBitMask;
-  INT32         Channel;
-  UINT32        Controller;
-
-  Outputs = &MrcData->Outputs;
-
-  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    for (Channel = 0; Channel < MAX_CHANNEL; Channel++) {
-      if (MrcChannelExist (MrcData, Controller, Channel)) {
-        ValidRankBitMask = Outputs->Controller[Controller].Channel[Channel].ValidRankBitMask;
-        OverrideValRankBitMask = (CsOverrideVal == 0) ? 0 : ValidRankBitMask;
-        OverrideEnRankBitMask = (CsOverrideEn == FALSE) ? 0 : ValidRankBitMask;
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccCsOverrideVal0, WriteToCache, &OverrideValRankBitMask);
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccCsOverride0, WriteToCache, &OverrideEnRankBitMask);
-        if (Outputs->IsDdr5 && Outputs->GearMode) {
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccCsOverrideVal1, WriteToCache, &OverrideValRankBitMask);
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccCsOverride1, WriteToCache, &OverrideEnRankBitMask);
-        }
-      }
-    } // Channel
-  } // Controller
-  MrcFlushRegisterCachedData (MrcData);
-}
-
-/**
   Helper function to check whether a DIMM supports a given ARFM level
   via reading a corresponding SPD byte.
 

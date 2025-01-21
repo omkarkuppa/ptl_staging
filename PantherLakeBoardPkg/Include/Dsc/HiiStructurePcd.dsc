@@ -3609,7 +3609,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.TLINECLKCAL|0x1                             
 gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPISERIALCAL|0x1                                             #           BIT14 - DCC PI Serializer Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.PHASECLKCAL|0x0                                                #           BIT15 - DCC Phase Clk Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.WCKPADDCCCAL|0x1                                               #           BIT16 - Wck Pad DCC Calibration
-gStructPcdTokenSpaceGuid.PcdSaSetup.RDCTLET|0x0                                                    #           BIT17 - Read CTLE Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.RDCTLET|0x1                                                    #           BIT17 - Read CTLE Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDDQODTT|0x1                                                   #           BIT18 - Read DQ ODT Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.EMPHASIS|0x1                                                   #           BIT19 - Pre-Emphasis LP5 Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSVOCC|0x0                                                  #           BIT26 - RxDqsVocCentering1D Training
