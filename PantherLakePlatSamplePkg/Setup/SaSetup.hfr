@@ -4663,7 +4663,7 @@ endform;
         minimum = 512,
         maximum = 65535,
         step    = 1,
-        default = 512,
+        default = 1600,
       endnumeric;
 
       oneof varid   = SA_SETUP.ThrtCkeMinDefeat,

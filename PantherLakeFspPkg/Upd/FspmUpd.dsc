@@ -3347,7 +3347,7 @@
   # !BSF NAME:{SelfRefresh IdleTimer}
   # !BSF TYPE:{EditNum, HEX, (0x100,0xFFFF)}
   # !BSF HELP:{SelfRefresh IdleTimer, Default is 256}
-  gPlatformFspPkgTokenSpaceGuid.SrefCfgIdleTmr          | * | 0x02 | 0x200
+  gPlatformFspPkgTokenSpaceGuid.SrefCfgIdleTmr          | * | 0x02 | 0x640
 
   # !BSF NAME:{MC Register Offset}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
