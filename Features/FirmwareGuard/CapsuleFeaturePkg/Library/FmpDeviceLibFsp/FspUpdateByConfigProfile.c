@@ -43,20 +43,7 @@
 #include <IndustryStandard/FirmwareInterfaceTable.h>
 
 #include <Protocol/FirmwareManagement.h>
-
-#define FIT_TYPE_0D_FSP_BOOT_MANIFEST  0x0D
-#define FBM_SIGNATURE "__FBMS__"
-
-typedef struct __FBM_HEADER__ {
-  CHAR8   StructureId[8];
-  UINT8   StructVersion;
-  UINT8   Reserved1[3];
-  UINT16  KeySignatureOffset;
-  UINT16  FspVersion;
-  UINT8   FspSvn;
-  UINT8   Reserved2;
-  UINT32  Flags;
-} FBM_HEADER;
+#include "FspBootManifest.h"
 
 /**
   Parse FIT and get FBM base address.
@@ -75,8 +62,8 @@ GetFbmBase (
   UINT32                         Index;
   UINTN                          FbmBaseAddress;
 
-  FitPointer     = *(UINT64 *) (UINTN) (FIT_POINTER_ADDRESS);
-  FitEntry       = (FIRMWARE_INTERFACE_TABLE_ENTRY *) (UINTN) FitPointer;
+  FitPointer     = *(UINT64 *)(UINTN)FIT_POINTER_ADDRESS;
+  FitEntry       = (FIRMWARE_INTERFACE_TABLE_ENTRY *)(UINTN)FitPointer;
   EntryNum       = (((UINT32)FitEntry[0].Size[2] << 16) |
                    ((UINT32)FitEntry[0].Size[1] << 8) |
                    (UINT32)FitEntry[0].Size[0]) & 0xFFFFFF;
@@ -84,7 +71,7 @@ GetFbmBase (
 
   for (Index = 0; Index < EntryNum; Index++) {
     if (FitEntry[Index].Type == FIT_TYPE_0D_FSP_BOOT_MANIFEST) {
-      FbmBaseAddress = (UINTN)(FitEntry[Index].Address & 0xFFFF0000);
+      FbmBaseAddress = (UINTN)(FitEntry[Index].Address & MAX_UINT32);
       DEBUG ((DEBUG_INFO, "FBM BaseAddress 0x%x\n", FbmBaseAddress));
       break;
     }
@@ -107,16 +94,17 @@ IsBiosSupportFspSigned (
 {
   FBM_HEADER *FbmHeader;
 
-  FbmHeader = (FBM_HEADER *)GetFbmBase ();
+  FbmHeader = (FBM_HEADER *)(GetFbmBase ());
 
   if (FbmHeader == NULL) {
     return FALSE;
   }
 
-  if (AsciiStrCmp (FbmHeader->StructureId, FBM_SIGNATURE) == 0) {
-    return TRUE;
+  if (*(UINT64 *)(FbmHeader->StructureId) != FBM_STRUCTURE_ID) {
+    return FALSE;
   }
-  return FALSE;
+
+  return TRUE;
 }
 
 /**
