@@ -528,6 +528,7 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
 !if gCapsuleFeaturePkgTokenSpaceGuid.PcdCapsuleFeatureEnable == TRUE
   PlatformBiosUpdateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformBiosUpdateHookLib/PlatformBiosUpdateHookLib.inf
   PlatformEcUpdateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformEcUpdateHookLib/PlatformEcUpdateHookLib.inf
+  PlatformFspUpdateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformFspUpdateHookLib/PlatformFspUpdateHookLib.inf
   PlatformWdtLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformWdtLib/PlatformWdtLib.inf
   PlatformEcResetLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformEcResetLib/PlatformEcResetLib.inf
   PlatformMeUpdateHookLib|CapsuleFeaturePkg/Library/PlatformMeUpdateHookLibNull/PlatformMeUpdateHookLibNull.inf

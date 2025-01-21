@@ -52,6 +52,7 @@
   UefiRuntimeServicesTableLib
   PcdLib
   PlatformFlashAccessLib
+  PlatformFspUpdateHookLib
   SeamlessRecoverySupportLib
   ResiliencySupportLib
   ConfigProfileAccessLib

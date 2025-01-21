@@ -33,6 +33,7 @@
 #include <Library/SeamlessRecoverySupportLib.h>
 #include <Library/ResiliencySupportLib.h>
 #include <Library/CapsuleUpdateResetLib.h>
+#include <Library/PlatformFspUpdateHookLib.h>
 
 /**
   Check if current BIOS supports Fsp signed by checking FBM header.
@@ -380,7 +381,7 @@ FmpDeviceGetVersionString (
   OUT CHAR16  **VersionString
   )
 {
-  return EFI_UNSUPPORTED;
+  return PlatformFmpGetFspVersionString (VersionString);
 }
 
 /**
@@ -415,7 +416,7 @@ FmpDeviceGetVersion (
   OUT UINT32  *Version
   )
 {
-  return EFI_UNSUPPORTED;
+  return PlatformFmpGetFspVersion (Version);
 }
 
 /**
@@ -799,6 +800,8 @@ FmpDeviceSetImageWithStatus (
     ASSERT (PreviousProgress.Component == UpdatingFsp);
   }
 
+  PlatformFmpFspUpdatePreHook ();
+
   DEBUG ((DEBUG_INFO, "UpdateFsp - Start\n"));
   SetUpdateProgress (UpdatingFsp, 0);
   Status = PerformFspUpdateByConfigData (
@@ -815,6 +818,7 @@ FmpDeviceSetImageWithStatus (
     DEBUG ((DEBUG_INFO, "[%a]: Fsp Update Fail!\n", __FUNCTION__));
   }
 
+  PlatformFmpFspUpdatePostHook (Status);
   ClearUpdateProgress ();
   DeleteBackupFiles ();
 
