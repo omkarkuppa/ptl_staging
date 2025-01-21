@@ -1869,7 +1869,6 @@ InstallEfiMemory (
 
     ResourceAttribute = \
       EFI_RESOURCE_ATTRIBUTE_PRESENT |
-      ResourceAttributeTested |
       EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
       EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE;
 
