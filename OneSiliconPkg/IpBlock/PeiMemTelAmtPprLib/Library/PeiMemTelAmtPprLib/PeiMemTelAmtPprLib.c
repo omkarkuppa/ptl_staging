@@ -1,5 +1,5 @@
 /** @file
-  Pei Memory Telemetry Feature Implementation.
+  Pei Memory Telemetry Amt Ppr Library Implementation.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -19,12 +19,11 @@
 @par Specification Reference:
 **/
 
-#include "PeiMemoryTelemetry.h"
+#include <Library/PeiMemTelAmtPprLib.h>
 #include <AmtPprEnableVariable.h>
 #include <MemoryConfig.h>
 #include <Ppi/SiPolicy.h>
 #include <Ppi/ReadOnlyVariable2.h>
-#include <Library/PeiLib.h>
 #include <Library/DebugLib.h>
 #include <Library/ConfigBlockLib.h>
 #include <Library/PeiServicesLib.h>
@@ -61,7 +60,7 @@ GetAmtPprEnableVar (
   Status  = VariableServices->GetVariable (
                                 VariableServices,
                                 AMT_PPR_ENABLE_VARIABLE_NAME,
-                                &gAmtPprEnableVariableGuid,
+                                &gMemTelAmtPprVariableGuid,
                                 NULL,
                                 &VariableSize,
                                 AmtPprVariableData
@@ -133,17 +132,12 @@ UpdatePprMrcPolicy (
   Entry point of the Memory Telemetry PEIM
   Checks the AMT PPR enable variable status, will update memory config accordingly.
 
-  @param[in]  FileHandle        The file handle of the file, Not used.
-  @param[in]  PeiServices       General purpose services available to every PEIM.
-
   @retval     EFI_SUCCESS       PEI Memory Telemetry executed as expected
   @retval     Others            PEI Memory Telemetry failed to get and set AmtPprEnable variable
 **/
-EFI_STATUS
-EFIAPI
-PeiMemoryTelemetryEntryPoint (
-  IN  EFI_PEI_FILE_HANDLE     FileHandle,
-  IN CONST EFI_PEI_SERVICES   **PeiServices
+VOID
+MemTelemetryAmtPprVarUpdate (
+  VOID
   )
 {
   EFI_STATUS          Status;
@@ -153,7 +147,7 @@ PeiMemoryTelemetryEntryPoint (
 
   AmtPprVariable = (AMT_PPR_ENABLE *) AllocateZeroPool (sizeof (AMT_PPR_ENABLE));
   if (AmtPprVariable == NULL) {
-    return EFI_OUT_OF_RESOURCES;
+    return;
   }
 
   ///
@@ -175,5 +169,4 @@ PeiMemoryTelemetryEntryPoint (
   Exit:
     DEBUG ((DEBUG_INFO, "[%a] Exit with status %r\n", __FUNCTION__, Status));
     FreePool (AmtPprVariable);
-    return Status;
 }

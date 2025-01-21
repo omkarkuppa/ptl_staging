@@ -30,20 +30,9 @@
 
 [Guids]
   gMemoryTelemetryFeaturePkgTokenSpaceGuid = { 0x35358306, 0xE4CC, 0x40D1, {0x9F, 0xB0, 0xD4, 0xF0, 0xAF, 0x95, 0x2F, 0x97 }}
-  gAmtPprEnableVariableGuid = { 0x34F64334, 0xF458, 0x4C2A, {0xB1, 0x9C, 0x71, 0xB6, 0x90, 0x31, 0xEE, 0x01 }}
 
 [PcdsFixedAtBuild]
   gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled|TRUE|BOOLEAN|0xF00000A8
   ## PCD for AMT PPR discoverability.
   #  OEM to enable this PCD when AMT PPR feature is available on the platform.
   gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdPprCapability|TRUE|BOOLEAN|0xF00000B2
-
-[PcdsFixedAtBuild,PcdsPatchableInModule,PcdsDynamic,PcdsDynamicEx]
-  gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdAmtPprEnable|{0}|AMT_PPR_ENABLE|0XFCD00027{
-  <HeaderFiles>
-    Guid/AmtPprEnableVariableGuid.h
-  <Packages>
-    MdePkg/MdePkg.dec
-    MdeModulePkg/MdeModulePkg.dec
-    MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
-  }

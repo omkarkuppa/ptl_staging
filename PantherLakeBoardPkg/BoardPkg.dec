@@ -2347,3 +2347,11 @@ gStructPcdTokenSpaceGuid.PcdFspVSetup|{0}|FSPV_SETUP|0XFCD00025{
  <Packages>
   PantherLakePlatSamplePkg/PlatformPkg.dec
 }
+gStructPcdTokenSpaceGuid.PcdAmtPprEnable|{0}|AMT_PPR_ENABLE|0XFCD00027{
+ <HeaderFiles>
+  Include/AmtPprEnableVariableGuid.h
+ <Packages>
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
+}

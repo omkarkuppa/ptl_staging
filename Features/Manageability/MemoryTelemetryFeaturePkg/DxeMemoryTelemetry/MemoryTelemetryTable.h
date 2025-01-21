@@ -47,8 +47,8 @@ typedef struct {
   UINT16    MaxFrequency;                             ///<  Maximum operating frequency of IMC
   UINT8     PprAvailable;                             ///<  PPR enabled from variable
   struct {
-    UINT8 AmtRanLastBoot    : 1;
     UINT8 PprRanLastBoot    : 1;
+    UINT8 AmtRanLastBoot    : 1;
     UINT8 Reserved          : 6;
   } AmtPprRanInLastBoot;                              ///<  Whether AMT and PPR ran in the prior boot [Bit 0: PPR, Bit 1: AMT]
   UINT16    TotalRowFailuresDiscovered;               ///<  PPR: Counts of detected bad rows
