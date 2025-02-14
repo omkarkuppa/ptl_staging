@@ -944,6 +944,7 @@ MrcGetMcConfigGroupLimits (
     case GsmMccDisGlbDrvClkGate:
     case GsmMccDisIosfSbClkGate:
     case GsmMccCmdBgfAlwaysOn:
+    case GsmMccCkDisTristate:
     case GsmMccAllowOppRefBelowWrtThreshold:
     case GsmMccDisCkett:
     case GsmMccAPD:

@@ -215,6 +215,9 @@ typedef struct {
   INT64 DccClkGateDisable;
   INT64 DqsIdleModeDrvEn;
   INT64 ForceOdtOn;
+  INT64 DqOdtParkMode;
+  INT64 ForceRxOnDqsMux;
+  INT64 ForceRxOnDq;
 } MRC_RX_DQS_DCC_SAVE;
 
 typedef enum {
@@ -892,23 +895,6 @@ MrcStatus
 MrcDccLut (
   IN OUT MrcParameters *const MrcData,
   OUT BOOLEAN *UnexpectedResultOut  OPTIONAL
-  );
-
-/**
-  This function calculates the LVR DAC Encode from input voltage
-
-  @param[in]  - Target voltage value (0: view0, 1: view1)
-  @param[in]  - Bandgap reference
-  @param[in]  - OCDivider reference
-  @param[in]  - Multiplier to handle voltage passed-in scaling
-  @returns Returns LVR DAC Encode
-**/
-UINT32
-MrcDACEncode (
-  IN UINT32        Vref,
-  IN UINT32        BGRef,
-  IN BOOLEAN       OCDivider,
-  IN UINT32        Multiplier
   );
 
 /**
@@ -3204,5 +3190,16 @@ MrcPhyClockExists (
   IN UINT32         const Channel,
   IN UINT32         const Rank
   );
+
+/**
+  Configuring the bit channel_not_populated.
+
+  @param[in] MrcData - Pointer to MRC global data
+  @return VOID
+**/
+VOID
+MrcSetChannelNotPopulated (
+  MrcParameters * MrcData
+);
 
 #endif //MRC_DDR_IO_API_H_

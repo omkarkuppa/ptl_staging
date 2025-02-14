@@ -677,6 +677,7 @@ MrcGetMcConfigRegOffset (
       break;
 
     case GsmMccCmdBgfAlwaysOn:
+    case GsmMccCkDisTristate:
     case GsmMccDisStarvedPriorityOnNewReq:
     case GsmMccDisAsyncOdt:
       if (Channel < MaxChannel) {

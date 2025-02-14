@@ -633,6 +633,7 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccPtrSepOspid",
   "GsmMccPtrSepIspid",
   "GsmMccCmdBgfAlwaysOn",
+  "GsmMccCkDisTristate",
   "GsmMccPageIdleTimerDisable",
   "GsmMccDisSchedsClkGate",
   "GsmMccDisMntClkGate",
@@ -2104,6 +2105,7 @@ MrcCheckGroupSupported (
     case GsmMccPtrSepOspid:
     case GsmMccPtrSepIspid:
     case GsmMccCmdBgfAlwaysOn:
+    case GsmMccCkDisTristate:
     case GsmMccAllowOppRefBelowWrtThreshold:
     case GsmMccWrtThreshold:
     case GsmMccPdwnIdleCounterSubch0:

@@ -276,6 +276,8 @@ MrcEccClean (
     } // for Rank
   } // for TxtClean
 
+  MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcRestoreEnum, &MadSavedValues);
+
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     if (MrcControllerExist (MrcData, Controller)) {
       for (Channel = 0; Channel < MaxChannels; Channel++) {
@@ -311,7 +313,6 @@ MrcEccClean (
     }
   }
   MrcFlushRegisterCachedData (MrcData);
-  MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcRestoreEnum, &MadSavedValues);
 
   // Check the scrubbing result
   if (McChError != 0) {

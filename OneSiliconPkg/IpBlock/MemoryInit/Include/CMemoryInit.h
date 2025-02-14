@@ -32,7 +32,7 @@
 #include <DprInfoHob.h>
 #include "CpuRegs.h"
 
-#include <IncludePrivate/CMemoryInitPtl.h>
+#include <CMemoryInitPtl.h>
 
 
 ///

@@ -87,7 +87,7 @@ MrcWorkPointLock (
       Outputs->Timing[Profile].tCWL
     );
   }
-
+  MrcSetChannelNotPopulated (MrcData);
   SetVccLvr (MrcData);
   WriteAllLvrTarget (MrcData);
   SetTlineTermination (MrcData);

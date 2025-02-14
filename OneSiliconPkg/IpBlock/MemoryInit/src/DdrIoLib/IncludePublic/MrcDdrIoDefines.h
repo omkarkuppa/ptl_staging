@@ -106,9 +106,6 @@ This file contains Memory Controller specific defines.
 #define MRC_COMP_VREF_CALCULATION_VALUE   (386)
 #define MRC_COMP_VREF_STEP_SIZE   (191)
 
-/// RCOMP Vref calculation value for the following: DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
-#define MRC_RCOMP_VREF_CALCULATION_VALUE  (193)
-
 /// Solving for PadV in formula: XYZ = Rnd(((PadV/VrefRail)*386-1) /2 ) without Rounding
 #define PADV_CALC(VREF, RAIL) (((RAIL) * (2 * (VREF) + 1)) / MRC_COMP_VREF_CALCULATION_VALUE)
 

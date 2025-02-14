@@ -66,7 +66,8 @@ SetTcRfpRftpReg (
   IsLpddr5  = Outputs->IsLpddr5;
   IsDdr5    = Outputs->IsDdr5;
 
-  tRefi = (TimingOut->tREFI);
+  tRefi = TimingOut->tREFI;
+  MrcUpdateTRefi (MrcData, &tRefi);
   if (IsLpddr5) {
     tRefi *= 4;
   }

@@ -198,6 +198,10 @@ typedef enum {
 #ifndef ARRAY_COUNT2D
 #define ARRAY_COUNT2D(a) (sizeof (a) / sizeof (a[0][0]))
 #endif
+// Number of elements in a 3D array
+#ifndef ARRAY_COUNT3D
+#define ARRAY_COUNT3D(a) (sizeof (a) / sizeof (a[0][0][0]))
+#endif
 // Macros to define all [Controller/Channel/SubChannel/Rank] bits in the mask
 #ifndef ALL_CONTROLLER_MASK
 #define ALL_CONTROLLER_MASK ((1 << MAX_CONTROLLER) - 1)

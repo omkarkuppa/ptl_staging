@@ -36,6 +36,7 @@ MrcJedecResetLpddr (
   IN  MrcParameters* const  MrcData
   )
 {
+  MrcOutput     *Outputs;
   MrcStatus     Status;
   UINT32        tInit1;
   UINT32        tInit3;
@@ -43,9 +44,16 @@ MrcJedecResetLpddr (
   INT64         GetSetEn;
   INT64         GetSetDis;
 
+  INT64         DisCkTristateSave;
+  UINT32        Controller;
+  UINT32        Channel;
+
+  Outputs = &MrcData->Outputs;
   Status = mrcSuccess;
   GetSetEn = 1;
   GetSetDis = 0;
+  Controller = Outputs->FirstPopController;
+  Channel = Outputs->Controller[Controller].FirstPopCh;
   tInit1 = MRC_LP_tINIT1_US * MRC_TIMER_1US;
   tInit3 = MRC_LP_tINIT3_US * MRC_TIMER_1US;
   tInit5 = MRC_LP_tINIT5_US * MRC_TIMER_1US;
@@ -62,7 +70,11 @@ MrcJedecResetLpddr (
   // De-Assert DRAM RESET# signal.
   MrcGetSetNoScope (MrcData, GsmDdrReset, WriteCached, &GetSetDis);
 
-  // Wait tINIT3 (2ms) - covers Min CS low after RESET# high and tINIT4 (5tCK) - Min Stable CLK before CS high
+  // Save ck_tristate setting
+  MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccCkDisTristate, ReadCached, &DisCkTristateSave);
+  // Disable ck_tristate
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkDisTristate, WriteCached, &GetSetEn);
+  // Wait tINIT3 (2ms) - covers Min CKE low after RESET# high and tINIT4 (5tCK) is covered for the Min Stable CLK before CKE high
   MrcWait (MrcData, tInit3);
 
   // Set the valid CKE's
@@ -70,6 +82,9 @@ MrcJedecResetLpddr (
 
   // Wait tINIT5: Min idle time before first MR[R,W] command.
   MrcWait (MrcData, tInit5);
+
+  // Restore ck_tristate setting
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkDisTristate, WriteCached, &DisCkTristateSave);
 
   return Status;
 }

@@ -611,6 +611,7 @@ typedef enum {
   GsmMccPtrSepOspid,
   GsmMccPtrSepIspid,
   GsmMccCmdBgfAlwaysOn,
+  GsmMccCkDisTristate,
   GsmMccPageIdleTimerDisable,
   GsmMccDisSchedsClkGate,
   GsmMccDisMntClkGate,

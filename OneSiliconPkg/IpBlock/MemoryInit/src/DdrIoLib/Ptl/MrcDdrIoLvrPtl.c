@@ -126,6 +126,43 @@ MrcVoltageSensorTargetSetup (
 }
 
 /**
+  This function calculates the VddqControl Target value based on VccddqVoltage in Outputs structure
+  @param[in] MrcData - All the MRC global data.
+  @param[in] VccddqVoltageMv  - Voltage in mV
+  @retval calculated value for Target field for VddqControl registers
+**/
+UINT32
+GetVddqControlTarget (
+  IN MrcParameters *const MrcData,
+  IN UINT32   VccddqVoltageMv
+ )
+{
+  MrcOutput         *Outputs;
+  UINT32            VccDdq;
+  UINT32            VccClk;
+  UINT32            VccIog;
+  UINT32            TempVar1;
+  UINT32            TempVar2;
+  UINT32            Data;
+
+  Outputs = &MrcData->Outputs;
+  VccDdq  = VccddqVoltageMv;
+  VccClk  = Outputs->VccClkVoltage;
+  VccIog  = Outputs->VccIogVoltage;
+
+  TempVar1 = MAX (VccClk, VccIog);
+  TempVar2 = MAX (TempVar1, VccDdq);
+  Data = (TempVar2 > 925) ? 1 : 0;
+  // Min(383, Rnd( VccDdq/(BGRef/386*IF(OCDivider,1.5,1)) -1) )
+  TempVar1 = (Data ? 1500 : 1000) * BG_REF_MV;
+  TempVar2 = THOUSAND_MULTIPLIER * VccDdq * MRC_COMP_VREF_CALCULATION_VALUE;
+  Data = UDIVIDEROUND (TempVar2, TempVar1) - 1;
+  Data = MIN (MAX_VCCDDQCONTROL_TARGET, Data);
+
+  return Data;
+}
+
+/**
   This function Reset all LVR Voltage Sensor Counters
 
   @param[in]  MrcData - Pointer to global MRC data.
@@ -611,6 +648,31 @@ MrcCurrentSensorCounter (
 }
 
 /**
+  This function calculates the LVR DAC Encode from input voltage
+
+  @param[in]  - Target voltage value
+  @param[in]  - Bandgap reference
+  @param[in]  - OCDivider reference
+  @param[in]  - Multiplier to handle voltage passed-in scaling
+  @retval Returns LVR DAC Encode
+**/
+UINT32
+MrcDACEncode (
+  IN UINT32        Vref,
+  IN UINT32        BGRef,
+  IN BOOLEAN       OCDivider,
+  IN UINT32        Multiplier
+  )
+{
+  UINT32    TempVar;
+
+  TempVar = MAX (UDIVIDEROUND (Vref * 386, (BGRef * (OCDivider ? (UINT32) (15 * (Multiplier/10)) : Multiplier)) / Multiplier) - Multiplier, 0);
+  TempVar = MIN (UDIVIDEROUND (TempVar, Multiplier), 383);
+
+  return TempVar;
+}
+
+/**
   This function calculates the VTarget for all 3 target (VccIOG, VccDDQ and VccCLK)
   it supports default voltage tolerance only
 
@@ -673,31 +735,6 @@ GetVTarget (
   }
 
   return VTarget;
-}
-
-/**
-  This function calculates the LVR DAC Encode from input voltage
-
-  @param[in]  - Target voltage value
-  @param[in]  - Bandgap reference
-  @param[in]  - OCDivider reference
-  @param[in]  - Multiplier to handle voltage passed-in scaling
-  @retval Returns LVR DAC Encode
-**/
-UINT32
-MrcDACEncode (
-  IN UINT32        Vref,
-  IN UINT32        BGRef,
-  IN BOOLEAN       OCDivider,
-  IN UINT32        Multiplier
-  )
-{
-  UINT32    TempVar;
-
-  TempVar = MAX (UDIVIDEROUND (Vref * 386, (BGRef * (OCDivider ? (UINT32) (15 * (Multiplier/10)) : Multiplier)) / Multiplier) - Multiplier, 0);
-  TempVar = MIN (UDIVIDEROUND (TempVar, Multiplier), 383);
-
-  return TempVar;
 }
 
 /**
@@ -1135,4 +1172,17 @@ SetVccClk (
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "VccClk(mV) = %d\n", VccClk);
   Outputs->VccClkVoltage = VccClk;
+}
+
+/**
+  This function sets TlineTermination
+
+  @param[in, out] MrcData - All the MRC global data.
+
+**/
+VOID
+SetTlineTermination (
+  IN MrcParameters *const MrcData
+ )
+{
 }

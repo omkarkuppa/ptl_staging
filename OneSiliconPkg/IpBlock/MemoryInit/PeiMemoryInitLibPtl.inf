@@ -228,7 +228,6 @@ src/DdrIoLib/MrcDdrIoUtilsPrivate.h
 src/DdrIoLib/Ptl/MrcDdrIoLvrPtl.c
 src/DdrIoLib/Ptl/MrcDdrIoComp.c
 src/DdrIoLib/IncludePublic/MrcDdrIoLvr.h
-src/DdrIoLib/MrcDdrIoLvr.c
 src/DdrIoLib/IncludePublic/MrcDdrIoComp.h
 src/DdrIoLib/Ptl/MrcDdrIoDllPtl.c
 src/DdrIoLib/MrcDdrIoDll.c

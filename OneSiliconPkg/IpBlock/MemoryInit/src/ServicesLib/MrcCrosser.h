@@ -304,6 +304,7 @@ typedef struct {
   INT64               RcompDrvUpOrig;
   INT64               InternalClockOnOrig;
   INT64               DqsRFTrainingModeValue;
+  INT64               ForcePctleOn;
   UINT32              VcmTargetRatio;
   UINT32              VrefEdge[SOT_SELECT_RX][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS_FOR_OFFSET_TRAINING]; // serves as an output for the Vref search results. Used mainly for UTing
   INT32               VocEdge[SOT_SELECT_RX][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS_FOR_OFFSET_TRAINING]; // serves as an output for the Voc search results

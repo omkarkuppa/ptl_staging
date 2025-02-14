@@ -81,24 +81,6 @@ Cpgc20ConfigPgRotation (
   IN  UINT16                RotateRate
   );
 
-
-
-/**
-  This function sets up the CPGC data pattern configuration per Outputs->McChBitMask.
-
-  @param[in]  MrcData     - Pointer to global MRC data.
-  @param[in]  PatCtlPtr   - Structure that stores start, Stop, IncRate and Dqpat for pattern.
-  @param[in]  Index       - Which USQ to program pattern to
-
-  @retval - MrcStatus: mrcSuccess if McChBitMask are non-zero, mrcFail if McChBitMask = 0.
-**/
-MrcStatus
-Cpgc20DPatUsqCfg (
-  IN  MrcParameters *const   MrcData,
-  IN  MRC_PATTERN_CTL *const PatCtlPtr,
-  IN  UINT8                  Index
-  );
-
 /**
   This function sets up the CPGC LFSR configuration per Outputs->McChBitMask.
 
@@ -113,20 +95,6 @@ Cpgc20LfsrCfg (
   IN  UINT8                  LaneRotate
   );
 
-
-/**
-  This function program the CPGC PGs Mux Seeds by setting up the CPGC LFSR configuration per Outputs->McChBitMask.
-
-  @param[in]  MrcData     - Pointer to global MRC data.
-  @param[in]  Seeds        - Seed to program
-
-  @retval - MrcStatus: mrcSuccess if McChBitMask are non-zero, mrcFail if McChBitMask = 0.
-**/
-MrcStatus
-Cpgc20LfsrSeed (
-  IN  MrcParameters *const   MrcData,
-  IN  const UINT32  *const   Seeds
-  );
 
 /**
   This function sets the Pattern Generators' Invert/DC configuration (per Outputs->McChBitMask).

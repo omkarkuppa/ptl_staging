@@ -19,8 +19,8 @@
 @par Specification Reference:
 **/
 
-#ifndef _MrcDdrIoLvr_h_
-#define _MrcDdrIoLvr_h_
+#ifndef MrcDdrIoLvr_h
+#define MrcDdrIoLvr_h
 
 #include "CMrcInterface.h"  // for MrcParameters
 
@@ -103,4 +103,4 @@ GetVddqControlTarget (
   IN UINT32   VccddqVoltageMv
  );
 
-#endif // _MrcDdrIoLvr_h_
+#endif // MrcDdrIoLvr_h

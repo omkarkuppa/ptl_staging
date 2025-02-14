@@ -109,3 +109,18 @@ MrcEnableMcParityGen (
   )
 {
 }
+
+/**
+  Update tREFI to 97% of nominal value.
+
+  @param[in]      MrcData - Include all MRC global data.
+  @param[in, out] tRefi   - tRefi value to update
+**/
+VOID
+MrcUpdateTRefi (
+  IN     MrcParameters *MrcData,
+  IN OUT UINT32        *tRefi
+  )
+{
+  *tRefi = UDIVIDEROUND (*tRefi * 97, 100);
+}

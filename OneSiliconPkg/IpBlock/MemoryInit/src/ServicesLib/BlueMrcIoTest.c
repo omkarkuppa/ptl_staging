@@ -30,14 +30,6 @@
 #include "MrcMcApi.h"
 #include "MrcPostCodes.h"
 
-/// Galois MPR Bit Mask for LFSR Assignment: 0 - LFSR0, 1 - LFSR1
-/// Vicim bit is associated with LFSR0
-/// Aggressor bit is associated with LFSR1
-UINT8 GaloisMprBitMask[8] = {0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF, 0x7F};
-
-/// Galois Starting Seeds
-static const UINT32 DataGaloisSeeds[MRC_NUM_MUX_SEEDS] = {0x5A, 0x3C, 0xF0};
-
 /**
   This routine programs the EXT_BUF for Victim-aggressor traffic on DQ lanes using a VA pattern
   This routine performs the following steps:
@@ -97,8 +89,6 @@ SetupIOTest (
   IN UINT16                       SubSeqWait
   )
 {
-  static const UINT32 DataLfsrSeeds[MRC_NUM_MUX_SEEDS]  = {0xA10CA1, 0xEF0D08, 0xAD0A1E};
-  static const UINT32 DataStaticSeeds[MRC_NUM_MUX_SEEDS] = {0xAAAAAAAA, 0xCCCCCCCC, 0xF0F0F0F0};
   MrcInput          *Inputs;
   MrcOutput         *Outputs;
   UINT32            ChunkMask;
@@ -106,11 +96,8 @@ SetupIOTest (
   UINT8             Controller;
   UINT8             Channel;
   UINT8             IpChannel;
-  UINT8             Index;
-  UINT8             LaneRotateRate;
   UINT8             OldRankCount;
   UINT32            BlockRepeats;
-  UINT32            *LfsrSeed;
   BOOLEAN           IsDdr5;
   BOOLEAN           IsPatSrcAllZeroes;
   BOOLEAN           IsDqPatternRequired;
@@ -139,7 +126,7 @@ SetupIOTest (
 
   BlockRepeats = MrcCalculateLoopCount (NumCL, LcExp);
 
-  TestDataEngineSetLoopCount (MrcData, McChBitMask,BlockRepeats);
+  TestDataEngineSetLoopCount (MrcData, McChBitMask, BlockRepeats);
   //Set Number of CL transactions per algorithm instruction within 1 BlockRepeat
   Cpgc20BaseRepeats (MrcData, McChBitMask, MAX (NumCL, 1), 1); //@TODO supposed to be part of SetSequence
 
@@ -152,31 +139,12 @@ SetupIOTest (
   if (!IsPatSrcAllZeroes) {
     // Setup the Pattern Generator for the test.
     //   StaticPattern: The caller programs the pattern
-    //   GaloisMprVa: RunIOTest programs the pattern
-    IsDqPatternRequired = (PatCtlPtr->DQPat != StaticPattern && PatCtlPtr->DQPat != GaloisMprVa);
+    IsDqPatternRequired = (PatCtlPtr->DQPat != StaticPattern);
     if (IsDqPatternRequired) {
       MrcProgramVAPattern (MrcData, McChBitMask, BASIC_VA_VICTIM_16, BASIC_VA_AGGRESSOR_16);
     }
 
-    // Write the LFSR seeds
-    if (PatCtlPtr->DQPat == StaticPattern) {
-      LfsrSeed = (UINT32*) DataStaticSeeds;
-      LaneRotateRate = 0;
-    } else if (PatCtlPtr->DQPat == GaloisMprVa) {
-      LfsrSeed = (UINT32*) DataGaloisSeeds;
-      LaneRotateRate = 0;
-    } else {
-      LfsrSeed = (UINT32*) DataLfsrSeeds;
-      LaneRotateRate = 2;
-    }
-    Cpgc20LfsrSeed (MrcData, (const UINT32*) LfsrSeed);
-
-    // Setup CPGC in terms of LFSR selects, LFSR seeds, LMN constants and overall control
-    for (Index = 0; Index < MRC_NUM_MUX_SEEDS; Index++) {
-      Cpgc20DPatUsqCfg (MrcData, PatCtlPtr, Index);
-    }
-    //@todo should LSFR Poly match previous code or documentation?
-    Cpgc20LfsrCfg (MrcData, LaneRotateRate);
+    Cpgc20LfsrCfg (MrcData, 0);
 
     // Program Write Data Buffer Related Entries.
     // Assumes the PG has already been selected above for Data PG's.
@@ -189,7 +157,7 @@ SetupIOTest (
   Cpgc20SetPgInvDcCfg (MrcData, IsPatSrcAllZeroes ? Cpgc20DcMode : Cpgc20InvertMode, 0, FALSE, 0, BASIC_STATIC_PATTERN);
 
   //Setup test command sequence
-  Cpgc20SetCommandSequence(MrcData, CmdPat, FALSE, SubSeqWait);
+  Cpgc20SetCommandSequence (MrcData, CmdPat, FALSE, SubSeqWait);
 
   //###########################################################
   // Program Cpgc Address
@@ -376,13 +344,10 @@ RunIOTest (
   )
 {
   const MrcInput      *Inputs;
-  const MrcChannelIn  *ChannelIn;
-  MrcChannelOut       *ChannelOut;
   const MRC_FUNCTION  *MrcCall;
   MrcDebug            *Debug;
   MrcOutput           *Outputs;
   MrcStatus           Status;
-  MrcDimmOut          *DimmOut;
   INT64               GetSetVal;
   UINT32              Controller;
   UINT32              Channel;
@@ -395,21 +360,12 @@ RunIOTest (
   UINT8               TurnAroundOffset;
   UINT8               MaxChannel;
   BOOLEAN             IsLpddr;
-  UINT32              vmask;
-  UINT32              amask;
-  UINT8               Rank;
-  UINT8               RankMask;  // RankBitMask for both channels
-  UINT8               NumDevices;
-  UINT8               DimmIdx;
-  UINT8               Device;
-  UINT8               Byte;
 
   Inputs        = &MrcData->Inputs;
   MrcCall       = Inputs->Call.Func;
   Outputs       = &MrcData->Outputs;
   IsLpddr       = Outputs->IsLpddr;
   MaxChannel    = Outputs->MaxChannels;
-  RankMask      = Outputs->ValidRankMask;
   Debug         = &Outputs->Debug;
   MrcCall->MrcSetMem ((UINT8 *) tRDRD_dr_Min, sizeof (tRDRD_dr_Min), 0);
   MrcCall->MrcSetMem ((UINT8 *) tRDRD_sg_Min, sizeof (tRDRD_sg_Min), 0);
@@ -418,9 +374,7 @@ RunIOTest (
   NumTests               = 1;
   Status                 = mrcSuccess;
 
-  if ((DQPat == GaloisMprVa) && Inputs->ReadMprVA) {
-    NumTests = 8;
-  } else if (DQPat == RdRdTA) {
+  if (DQPat == RdRdTA) {
     NumTests = 2;
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       for (Channel = 0; Channel < MaxChannel; Channel++) {
@@ -458,71 +412,13 @@ RunIOTest (
     }
   }
 
-  // Intial values for VA masks
-  if (!Inputs->ReadMprVA) {
-    vmask = BASIC_NON_MPR_VA_VICTIM_16;
-    amask = BASIC_NON_MPR_VA_AGGRESSOR_16;
-  } else {
-    vmask = BASIC_VA_VICTIM_16;
-    amask = BASIC_VA_AGGRESSOR_16;
-  }
-
   for (TestIdx = 0; TestIdx < NumTests; TestIdx++) {
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       for (Channel = 0; Channel < MaxChannel; Channel++) {
-        ChannelIn = &Inputs->Controller[Controller].Channel[Channel];
-        ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
         CurMcChBitMask = (1 << ((Controller * MaxChannel) + Channel));
         if (!(CurMcChBitMask & McChBitMask) ||
           (IS_MC_SUB_CH (IsLpddr, Channel) && ((DQPat == RdRdTA) || (DQPat == RdRdTA_All)))) {
           continue;
-        }
-
-        if (DQPat == GaloisMprVa) {
-          for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
-            if (!((MRC_BIT0 << Rank) & RankMask)) {
-              continue; // Skip if both channels empty
-            }
-            if (!MrcRankExist (MrcData, Controller, Channel, Rank)) {
-              continue;
-            }
-            DimmIdx = RANK_TO_DIMM_NUMBER (Rank);
-            DimmOut = &ChannelOut->Dimm[DimmIdx];
-            // Channel Width (ddr5 = 32 Bytes) / SdramWidth (x8 or x16)
-            NumDevices = DimmOut->PrimaryBusWidth / DimmOut->SdramWidth;
-            if (DimmOut->EccSupport) {
-              NumDevices += 1;
-            }
-            //Reprogram DRAM
-            MrcIssueMrw (MrcData, Controller, Channel, Rank, mrMR26, DataGaloisSeeds[0], TRUE); // LFSR0 Seed
-            MrcIssueMrw (MrcData, Controller, Channel, Rank, mrMR27, DataGaloisSeeds[1], TRUE); // LFSR1 Seed
-            if (Inputs->ReadMprVA) {
-              // Set up Victim/Aggressor for each device
-              for (Device = 0; Device < NumDevices; Device++) {
-                MrcPdaSelect (MrcData, Controller, Channel, Rank, Device, MRC_PRINTS_OFF);
-                if (DimmOut->SdramWidth == 8) {
-                  MrcIssueMrw (MrcData, Controller, Channel, Rank, mrMR30, GaloisMprBitMask[ChannelIn->DqMapCpu2Dram[Rank][Device][TestIdx] % 8], FALSE); // LFSR Assignment(0-LFSR0, 1-LFSR1)
-                } else { // x16 case
-                  // Program MR30 for both bytes in Device
-                  for (Byte = 0; Byte < Outputs->SdramCount; Byte++) {
-                    if (!MrcByteExist (MrcData, Controller, Channel, Byte)) {
-                      continue;
-                    }
-                    // Account for both the lower and upper byte in the same device
-                    if ((((Device * 2) + 1) == ChannelIn->DqsMapCpu2Dram[DimmIdx][Byte]) ||
-                      ((Device * 2) == ChannelIn->DqsMapCpu2Dram[DimmIdx][Byte])) {
-                      MrcIssueMrw (MrcData, Controller, Channel, Rank, mrMR30, GaloisMprBitMask[ChannelIn->DqMapCpu2Dram[Rank][Byte][TestIdx] % 8], FALSE); // LFSR Assignment(0-LFSR0, 1-LFSR1)
-                      break;
-                    }
-                  }
-                }
-              }
-              // Send PDA command of Index 15 to resume normal rank operation mode for MR/CAVREF/MPC
-              MrcPdaSelect (MrcData, Controller, Channel, Rank, 15, MRC_PRINTS_OFF);
-            } else {
-              MrcIssueMrw (MrcData, Controller, Channel, Rank, mrMR30, 0xFF, TRUE); // LFSR Assignnent (0-LFSR0, 1-LFSR1)
-            } // ReadMprVA
-          }
         }
 
         if (DQPat == RdRdTA) {
@@ -544,12 +440,6 @@ RunIOTest (
         }
       } // for Channel
     }  // for Controller
-
-    if (DQPat == GaloisMprVa) {
-      //Reprogram CPGC - Reset starting Seed
-      Cpgc20LfsrSeed (MrcData, DataGaloisSeeds);
-      MrcProgramVAPattern (MrcData, McChBitMask, vmask, amask);
-    }
 
     //###########################################################
     // Start Test and Poll on completion
@@ -575,12 +465,6 @@ RunIOTest (
     Status = TestDataEngineTestDone (MrcData, McChBitMask);
     if (Status != mrcSuccess) {
       MRC_DEBUG_ASSERT(FALSE, Debug, "RunIO test exceeds timeout value\n");
-    }
-
-    if ((DQPat == GaloisMprVa) && (Inputs->ReadMprVA)) {
-      // Change the VA variables for next test iteration
-      vmask = vmask << 1;
-      amask = ~vmask;
     }
 
     // For x64 Channels, we can break out as soon as either SubChannel has an error for the channels populated.

@@ -39,6 +39,8 @@
 #define DCC_INIT_SECOND              15
 #define MRC_PRINT_BUF_CR_REG         DDRMCMISC_CR_DDRVDD2POWER_REG
 #define WR_TIMING_STEP_SIZE_CTE      16
+/// RCOMP Vref calculation value for the following: DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
+#define MRC_RCOMP_VREF_CALCULATION_VALUE  (193)
 /// Define the CPU stepping number.
 typedef enum {
   ipStepA0 = 0,

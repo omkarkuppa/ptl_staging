@@ -484,19 +484,6 @@ MrcWriteDirectMulticast (
   }
 }
 
-/**
-  This function sets TlineTermination
-
-  @param[in, out] MrcData - All the MRC global data.
-
-**/
-VOID
-SetTlineTermination (
-  IN MrcParameters *const MrcData
- )
-{
-}
-
 /*
   IsDataPopulated
 
@@ -796,33 +783,6 @@ MrcCalcRatio33 (
   QClkRatio33     /= (IsGear4 ? 4 : 2);
 
   return QClkRatio33;
-}
-
-/**
-  This function does the ADC global override
-
-  @param[in] MrcData - Include all MRC global data.
-
-  @retval NA.
-**/
-VOID
-MrcAdcGlobalOverride (
-  IN MrcParameters *const MrcData
-  )
-{
-  DDRPHY_DDRCOMP_CR_CBB_BONUS_STRUCT  CbbBonus;
-  DDRPHY_DDRCOMP_CR_VISA2VIEW_STRUCT  Visa2View;
-  // *** Global Overrides for Viewpins *** //
-  CbbBonus.Data = MrcReadCR (MrcData, DDRPHY_DDRCOMP_CR_CBB_BONUS_REG);
-  CbbBonus.Bits.rcompcbb_i_bonus = 1;
-  MrcWriteCR (MrcData, DDRPHY_DDRCOMP_CR_CBB_BONUS_REG, CbbBonus.Data);
-
-  Visa2View.Data = MrcReadCR (MrcData, DDRPHY_DDRCOMP_CR_VISA2VIEW_REG);
-  Visa2View.Bits.i_anaviewoutench0 = 1;
-  Visa2View.Bits.i_anaviewoutench1 = 0;
-  Visa2View.Bits.i_localforcedacen = 0;
-  Visa2View.Bits.i_localforcedaccode = 0;
-  MrcWriteCR (MrcData, DDRPHY_DDRCOMP_CR_VISA2VIEW_REG, Visa2View.Data);
 }
 
 /**
@@ -1778,4 +1738,17 @@ MrcBwSelCbenFreqSet (
       *Cben = 3;
     }
   }
+}
+
+/**
+  Configuring the bit channel_not_populated.
+
+  @param[in] MrcData - Pointer to MRC global data
+  @return VOID
+**/
+VOID
+MrcSetChannelNotPopulated (
+  MrcParameters * MrcData
+)
+{
 }

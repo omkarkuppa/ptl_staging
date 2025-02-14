@@ -405,6 +405,7 @@ typedef enum {
   GsmIocInternalClocksOn,           ///< Force on all the PI enables
   GsmIocInternalTxClocksOn,         ///< Enable Internal Tx Clocks
   GsmIocInternalRxClocksOn,         ///< Enable Internal Rx Clocks
+  GsmIocForcePctleOn,               ///< Enable ForcePctleOn
   GsmIocDataRunRefPiFsm,            ///< Start the RefPi FSM in DATA
   GsmIocCccRunRefPiFsm,             ///< Start the RefPi FSM in CCC
   GsmIocDqsMaskPulseCnt,            ///< Controls the number of masked DQS pulses sent by the DDR IO during CMD VREF update in LP4 CBT

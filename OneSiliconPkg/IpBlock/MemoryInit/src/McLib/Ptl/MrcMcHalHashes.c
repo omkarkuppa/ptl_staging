@@ -710,6 +710,10 @@ MrcGetMcConfigHash (
     HashPtr->Data = MC0_CH0_CR_SCHED_SECOND_CBIT_cmd_bgf_always_on_HSH;
     break;
 
+  case GsmMccCkDisTristate:
+    HashPtr->Data = MC0_CH0_CR_SCHED_SECOND_CBIT_dis_ck_tristate_HSH;
+    break;
+
   case GsmMccDisStarvedPriorityOnNewReq:
     HashPtr->Data = MC0_CH0_CR_SCHED_SECOND_CBIT_disable_starved_prio_on_new_req_HSH;
     break;
