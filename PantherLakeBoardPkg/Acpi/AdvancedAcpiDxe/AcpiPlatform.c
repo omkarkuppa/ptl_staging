@@ -3050,11 +3050,14 @@ InstallAcpiPlatform (
   EFI_STATUS                    SetupStatus;
   UINTN                         VariableSize;
   UINT32                        SetupAttr;
+  UINT16                        BoardId;
 
   Handle                     = NULL;
   Usb4PlatformInfo           = NULL;
   mUcsiNvsAreaProtocol       = NULL;
   mUsbPortMapNvsAreaProtocol = NULL;
+
+  BoardId = PcdGet16 (PcdBoardId);
 
   EfiNamedEventListen (
     &gUcsiNvsAreaProtocolGuid,
@@ -3246,6 +3249,25 @@ InstallAcpiPlatform (
                                                               | (mSystemConfiguration.Rtd3I2CTouchPanel << 4); // Applicable for SKL SDS RTD3 SIP only
   mPlatformNvsAreaProtocol.Area->StorageRtd3Support           = mSystemConfiguration.StorageRtd3Support;
   mPlatformNvsAreaProtocol.Area->StorageDynamicLinkManagement = mSystemConfiguration.StorageDynamicLinkManagement;
+
+  switch (BoardId) {
+    case BoardIdPtlUHLp5Rvp1:
+    case BoardIdPtlUHLp5Rvp3:
+    case BoardIdPtlUHDdr5Rvp4:
+      mPlatformNvsAreaProtocol.Area->M2Ssd1Gen4_5Dlrm              = mSystemConfiguration.StorageDynamicLinkManagement;
+      mPlatformNvsAreaProtocol.Area->M2Ssd2Gen4_5Dlrm              = mSystemConfiguration.StorageDynamicLinkManagement;
+      break;
+    case BoardIdPtlUHCammDTbTRvp2:
+      mPlatformNvsAreaProtocol.Area->M2Ssd1Gen4_5Dlrm              = 0;
+      mPlatformNvsAreaProtocol.Area->M2Ssd2Gen4_5Dlrm              = mSystemConfiguration.StorageDynamicLinkManagement;
+      break;
+    default:
+      mPlatformNvsAreaProtocol.Area->M2Ssd1Gen4_5Dlrm              = 0;
+      mPlatformNvsAreaProtocol.Area->M2Ssd2Gen4_5Dlrm              = 0;
+      break;
+  }
+  DEBUG ((DEBUG_INFO, "M2Ssd1Gen4_5Dlrm %x\n", mPlatformNvsAreaProtocol.Area->M2Ssd1Gen4_5Dlrm));
+  DEBUG ((DEBUG_INFO, "M2Ssd2Gen4_5Dlrm %x\n", mPlatformNvsAreaProtocol.Area->M2Ssd1Gen4_5Dlrm));
   //
   // Enable PowerState
   //

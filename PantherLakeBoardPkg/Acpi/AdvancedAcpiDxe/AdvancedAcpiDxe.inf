@@ -125,6 +125,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId
   gEcFeaturePkgTokenSpaceGuid.PcdBatterySupport                     ## CONSUMES
   gUcsiFeaturePkgTokenSpaceGuid.PcdUcmSelection                     ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardId                             ## CONSUMES
 
   # DXE PCD
   gMinPlatformPkgTokenSpaceGuid.PcdFadtPreferredPmProfile                   ## CONSUMES

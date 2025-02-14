@@ -691,6 +691,8 @@ typedef struct {
   UINT32   IpfEnable;                               ///< Offset 2847    Ipf Enable
   UINT8    SubBusBoundary;                          ///< Offset 2851    PCI BUS resource occupied boundary
   UINT8    StorageDynamicLinkManagement;            ///< Offset 2852    Storage Dynamic Link (PCIe) Rate management (DLRM) Support
+  UINT8    M2Ssd1Gen4_5Dlrm;                        ///< Offset 2853    Pcie slot 1 M.2 SSD Gen4_5 DLRM support
+  UINT8    M2Ssd2Gen4_5Dlrm;                        ///< Offset 2854    Pcie slot 2 M.2 SSD Gen4_5 DLRM support
 } PLATFORM_NVS_AREA;
 
 #pragma pack(pop)

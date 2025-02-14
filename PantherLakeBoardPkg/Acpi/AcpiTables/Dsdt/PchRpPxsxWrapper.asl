@@ -41,17 +41,15 @@ Scope (\_SB.PC00.RP01.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+  Method (_DSM, 4, Serialized)
   {
-    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
-    {
-      // Compare passed in UUID to supported UUID.
-
+    // Compare passed in UUID to supported UUID.
+    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT))) {
       Include ("WwanDsm.asl")
-      // If the code falls through to this point, just return a buffer of 0.
-      Return (Buffer () {0x00})
-    }  // End _DSM Method
-  }
+    }
+    // If the code falls through to this point, just return a buffer of 0.
+    Return (Buffer () {0x00})
+  }  // End _DSM Method
 }
 
 Scope (\_SB.PC00.RP02.PXSX)
@@ -75,16 +73,16 @@ Scope (\_SB.PC00.RP02.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+  Method (_DSM, 4, Serialized)
   {
-    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
+    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
     {
       // Compare passed in UUID to supported UUID.
       Include ("WwanDsm.asl")
-      // If the code falls through to this point, just return a buffer of 0.
-      Return (Buffer () {0x00})
-    }  // End _DSM Method
-  }
+    }
+    // If the code falls through to this point, just return a buffer of 0.
+    Return (Buffer () {0x00})
+  }  // End _DSM Method
 }
 
 Scope (\_SB.PC00.RP03.PXSX)
@@ -108,16 +106,16 @@ Scope (\_SB.PC00.RP03.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+
+  Method (_DSM, 4, Serialized)
   {
-    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
-    {
-      // Compare passed in UUID to supported UUID.
+    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+    {      // Compare passed in UUID to supported UUID.
       Include ("WwanDsm.asl")
-      // If the code falls through to this point, just return a buffer of 0.
-      Return (Buffer () {0x00})
-    }  // End _DSM Method
-  }
+    }
+    // If the code falls through to this point, just return a buffer of 0.
+    Return (Buffer () {0x00})
+  }  // End _DSM Method
 }
 
 Scope (\_SB.PC00.RP04.PXSX)
@@ -141,16 +139,15 @@ Scope (\_SB.PC00.RP04.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+  Method (_DSM, 4, Serialized)
   {
-    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
-    {
-      // Compare passed in UUID to supported UUID.
+    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+    {      // Compare passed in UUID to supported UUID.
       Include ("WwanDsm.asl")
-      // If the code falls through to this point, just return a buffer of 0.
-      Return (Buffer () {0x00})
-    }  // End _DSM Method
-  }
+    }
+    // If the code falls through to this point, just return a buffer of 0.
+    Return (Buffer () {0x00})
+  }  // End _DSM Method
 }
 
 Scope (\_SB.PC00.RP05.PXSX)
@@ -174,24 +171,22 @@ Scope (\_SB.PC00.RP05.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  If (LOr (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)), LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0)))))
+  Method (_DSM, 4, Serialized)
   {
-    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
-    {
-      //
-      // DLRM support
-      //
+    //
+    // DLRM support
+    //
+    If (LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0)))) {
       If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4")))
       {
         If (LEqual (1, ToInteger (Arg1)))        // Revision 1.
         {
-
           Switch (ToInteger (Arg2))            // Switch to Function Index.
           {
             //
             // Function 0, Query of supported functions.
             //
-          Case (0)
+            Case (0)
             {
               Return (Buffer () {0x03})
             }
@@ -202,14 +197,12 @@ Scope (\_SB.PC00.RP05.PXSX)
             Case (1)
             {
               // Only return support if platform enabled DLRM via setup.
-              If (PNVM ()) {
-                If (LNotEqual (\DLRM, 0)) {
-                  ADBG ("Enable DLRM for Storage")
-                  Return (1)
-                } Else {
-                  ADBG ("Disable DLRM for Storage")
-                  Return (0)
-                }
+              If (LAnd (PNVM (), LAnd (LNotEqual (\DLRM, 0), LEqual (S1G4, 1)))) {
+                ADBG ("Enable DLRM for Storage")
+                Return (1)
+              } Else {
+                ADBG ("Disable DLRM for Storage")
+                Return (0)
               }
             }
           }
@@ -217,13 +210,14 @@ Scope (\_SB.PC00.RP05.PXSX)
           ADBG ("DLRM Revision 0: No function supported")
         }
       }
+    }
 
+    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT))) {
       // Compare passed in UUID to supported UUID.
       Include ("WwanDsm.asl")
-
-      Return (Buffer () {0x00})
-    }  // End _DSM Method
-  }
+    }
+    Return (Buffer () {0x00})
+  }  // End _DSM Method
 }
 
 Scope (\_SB.PC00.RP06.PXSX)
@@ -247,16 +241,15 @@ Scope (\_SB.PC00.RP06.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+  Method (_DSM, 4, Serialized)
   {
-    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
-    {
-      // Compare passed in UUID to supported UUID.
+    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+    {      // Compare passed in UUID to supported UUID.
       Include ("WwanDsm.asl")
-      // If the code falls through to this point, just return a buffer of 0.
-      Return (Buffer () {0x00})
-    }  // End _DSM Method
-  }
+    }
+    // If the code falls through to this point, just return a buffer of 0.
+    Return (Buffer () {0x00})
+  }  // End _DSM Method
 }
 
 Scope (\_SB.PC00.RP09.PXSX)
@@ -280,24 +273,23 @@ Scope (\_SB.PC00.RP09.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  If (LOr (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)), LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0)))))
+  //
+  Method (_DSM, 4, Serialized)
   {
-    Method (_DSM, 4, Serialized, 0, UnknownObj, {BuffObj, IntObj, IntObj, PkgObj})
-    {
-      //
-      // DLRM support
-      //
+    //
+    // DLRM support
+    //
+    If (LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0)))) {
       If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4")))
       {
         If (LEqual (1, ToInteger (Arg1)))        // Revision 1.
         {
-
           Switch (ToInteger (Arg2))            // Switch to Function Index.
           {
             //
             // Function 0, Query of supported functions.
             //
-          Case (0)
+            Case (0)
             {
               Return (Buffer () {0x03})
             }
@@ -308,14 +300,12 @@ Scope (\_SB.PC00.RP09.PXSX)
             Case (1)
             {
               // Only return support if platform enabled DLRM via setup.
-              If (PNVM ()) {
-                If (LNotEqual (\DLRM, 0)) {
-                  ADBG ("Enable DLRM for Storage")
-                  Return (1)
-                } Else {
-                  ADBG ("Disable DLRM for Storage")
-                  Return (0)
-                }
+              If (LAnd (PNVM (), LAnd (LNotEqual (\DLRM, 0), LEqual (S2G4, 1)))) {
+                ADBG ("Enable DLRM for Storage")
+                Return (1)
+              } Else {
+                ADBG ("Disable DLRM for Storage")
+                Return (0)
               }
             }
           }
@@ -323,12 +313,13 @@ Scope (\_SB.PC00.RP09.PXSX)
           ADBG ("DLRM Revision 0: No function supported")
         }
       }
+    }
 
+    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT))) {
       // Compare passed in UUID to supported UUID.
       Include ("WwanDsm.asl")
-
-      Return (Buffer () {0x00})
-    }  // End _DSM Method
-  }
+    }
+    Return (Buffer () {0x00})
+  }  // End _DSM Method
 }
 

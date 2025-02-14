@@ -709,4 +709,6 @@
   IPFE, 32, // Offset(2847),  Ipf Enable
   MSUB, 8,  // Offset(2851),  PCI BUS resource occupied boundary
   DLRM, 8,  // Offset(2852),  Storage Dynamic Link (PCIe) Rate management (DLRM) Support
+  S1G4, 8,  // Offset(2853),  Pcie slot 1 M.2 SSD Gen4_5 DLRM support
+  S2G4, 8,  // Offset(2854),  Pcie slot 2 M.2 SSD Gen4_5 DLRM support
   }
