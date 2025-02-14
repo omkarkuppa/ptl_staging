@@ -488,7 +488,7 @@ CpuSetupInitCallback (
   ///
   /// Set TME supported
   ///
-  SetupCpuFeatures.TmeSupported = (UINT8) IsTmeSupported ();
+  SetupCpuFeatures.TmeSupported = (UINT8) IsMkTmeSupported ();
 
   ///
   /// Set TME Bypass Supported
