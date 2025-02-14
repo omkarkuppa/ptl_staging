@@ -74,7 +74,6 @@
         default     = 0,
       endnumeric;
 
-
        oneof varid   = CPU_SETUP.TccOffsetLock,
            prompt      = STRING_TOKEN(STR_TCC_OFFSET_LOCK_ENABLE_PROMPT),
            help        = STRING_TOKEN(STR_TCC_OFFSET_LOCK_ENABLE_HELP),
@@ -1057,9 +1056,8 @@
       oneof varid  = SETUP_DATA.TcssUcmDevice,
         prompt   = STRING_TOKEN(STR_UCM_SELECTION),
         help     = STRING_TOKEN(STR_UCM_SELECTION_HELP),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_UCSI_1_2), value = 1, flags = RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_UCSI_2_X), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = UCXX_DISABLE, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_AUTO),     value = UCM_UCSI_AUTO, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       suppressif (ideqval SETUP_DATA.AuxOriOverrideSupport == 0);
@@ -1201,6 +1199,7 @@
         flags = 0,
         key   = 0;
 #endif
+
       suppressif NOT ideqval SETUP_DATA.UsbCRetimerNumber > 0;
         SEPARATOR
         SUBTITLE(STRING_TOKEN(STR_RETIMER_INFORMATION))

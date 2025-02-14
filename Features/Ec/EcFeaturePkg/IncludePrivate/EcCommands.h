@@ -241,7 +241,7 @@
                                                           // 4 bytes: PD info data
 #define EC_C_PD_VERSION_INFO_CMD_4BYTE            0xDF
 #define EC_C_UCSI_CMD_HNDLR                       0xE0    // UCSI command interrupt
-#define EC_C_UCSI_READ_VERSION                    0xE1    // USCI spec version
+#define EC_C_UCSI_READ_VERSION                    0xE1    // UCSI spec version
                                                           // Receive:
                                                           // 2 bytes: UCSI revision
 #define EC_C_USBC_HOST_FLAGS                      0xE2    // Passing USBC host flags to EC.

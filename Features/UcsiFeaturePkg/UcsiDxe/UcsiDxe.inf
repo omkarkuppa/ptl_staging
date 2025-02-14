@@ -61,7 +61,7 @@
   gUcsiFeaturePkgTokenSpaceGuid.PcdUsbCUcmMode                       ## CONSUMES
 
   # UCxx Driver Type and Support for Port
-  gUcsiFeaturePkgTokenSpaceGuid.PcdUcxxDriverType                    ## CONSUMES
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUcmSelection                      ## CONSUMES
   gUcsiFeaturePkgTokenSpaceGuid.PcdPortUcxxDriverSupport             ## CONSUMES
   gUcsiFeaturePkgTokenSpaceGuid.PcdUcsiRevision                      ## CONSUMES
 

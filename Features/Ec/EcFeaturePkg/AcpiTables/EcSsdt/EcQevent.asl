@@ -406,7 +406,7 @@ Method (UCEV, 0, Serialized)    // Any event on USBTypeC.
   Store ( MI0E, \_SB.UBTC.MI0E )
   Store ( MI0F, \_SB.UBTC.MI0F )
   If (CondRefOf (UCMS)) {
-    If (LEqual (UCMS, 2)) {
+    If (LGreaterEqual (UCMS, 2)) {
       Store ( MI10, \_SB.UBTC.MI10 )
       Store ( MI11, \_SB.UBTC.MI11 )
       Store ( MI12, \_SB.UBTC.MI12 )

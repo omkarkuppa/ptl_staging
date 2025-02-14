@@ -197,16 +197,6 @@ SetRetimerCfgTablePcd (
   IN USBC_RETIMER_FLASH_BOARD_CONFIG   *RetimerFlashConfig
   );
 
-
-/**
-  Setting UcsiRevision To Ec
-
-**/
-VOID
-SetUcsiRevisionToEc (
-  VOID
-  );
-
 /**
   Setting PcdUcsiRevision
 

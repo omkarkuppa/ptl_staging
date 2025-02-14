@@ -571,9 +571,10 @@
 #string STR_PLATFORM_TCSS_FORM_HELP                    #language en-US "Configure TCSS Platform Setting"
 #string STR_PLATFORM_TCSS_FORM_TITLE                   #language en-US "TCSS Platform Setting"
 #string STR_UCM_SELECTION                              #language en-US "USBC connector manager selection"
-#string STR_UCM_SELECTION_HELP                         #language en-US "Select UCSI version in ACPI support based on configuration"
+#string STR_UCM_SELECTION_HELP                         #language en-US "Select UCSI version in ACPI support based on configuration.\nAUTO: Platform POR"
 #string STR_UCSI_1_2                                   #language en-US "Enable UCSI 1.2"
-#string STR_UCSI_2_X                                   #language en-US "Enable UCSI 2.x"
+#string STR_UCSI_2_0                                   #language en-US "Enable UCSI 2.0"
+#string STR_UCSI_2_1                                   #language en-US "Enable UCSI 2.1"
 
 #string STR_AUX_ORI_OVERRIDE                           #language en-US "Aux Ori Override"
 #string STR_AUX_ORI_OVERRIDE_HELP                      #language en-US "Aux Ori Override"

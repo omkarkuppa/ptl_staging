@@ -30,9 +30,14 @@
 #define TCSS_FORCE_DISABLE                      0x02
 
 #define UCXX_DISABLE                            0x00
-#define UCSI_ENABLE                             0x01
-#define UCSI2x_ENABLE                           0x02
-#define UCMX_ENABLE                             0x03
+#define UCM_UCSI_1_2                            0x01
+#define UCM_UCSI_2_0                            0x02
+#define UCM_UCSI_2_1                            0x03
+#define UCM_UCSI_AUTO                           0xFF
+
+#define UCSI_VER_1_2                            0x0102
+#define UCSI_VER_2_0                            0x0200
+#define UCSI_VER_2_1                            0x0210
 
 #pragma pack (1)
 //

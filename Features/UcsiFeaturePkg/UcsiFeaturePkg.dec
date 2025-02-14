@@ -42,7 +42,7 @@
 
 [PcdsDynamic]
   gUcsiFeaturePkgTokenSpaceGuid.PcdUsbCUcmMode           |0|UINT8|0x20000010
-  gUcsiFeaturePkgTokenSpaceGuid.PcdUcxxDriverType        |0|UINT8|0x20000011
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUcmSelection          |0|UINT8|0x20000011
   gUcsiFeaturePkgTokenSpaceGuid.PcdPortUcxxDriverSupport |{0}|UINT8[]|0x20000012
 
   gUcsiFeaturePkgTokenSpaceGuid.PcdUcsiRevision          |0xFFFF|UINT16|0x20000013

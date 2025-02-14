@@ -4144,7 +4144,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.SysFwUpdateLoadDefault|0x0                    
 gStructPcdTokenSpaceGuid.PcdSetup.SysFwUpdateSkipPowerCheck|0x0                                    # Skip Power Check
 gStructPcdTokenSpaceGuid.PcdSetup.SystemTimeAndAlarmSource|0x0                                     # System Time and Alarm Source
 gStructPcdTokenSpaceGuid.PcdSetup.DisableTbtPcieTreeBme|0x1                                        # Disable TBT PCIE Tree BME
-gStructPcdTokenSpaceGuid.PcdSetup.TcssUcmDevice|0x2                                                # USBC connector manager selection
+gStructPcdTokenSpaceGuid.PcdSetup.TcssUcmDevice|0xFF                                               # USBC connector manager selection
 gStructPcdTokenSpaceGuid.PcdSetup.TerminalOverDebug|0x1                                            # Virtual UART - Terminal Over Debug
 gStructPcdTokenSpaceGuid.PcdSetup.TypecRetimerPD0|0x1                                              # Type C Port 0
 gStructPcdTokenSpaceGuid.PcdSetup.TypecRetimerPD1|0x1                                              # Type C Port 1

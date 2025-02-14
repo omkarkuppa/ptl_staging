@@ -26,7 +26,7 @@
 * **SMM Required?** No
 
 ## Purpose
-To provide SSDT with ACPI Table to support universal USCI 1.2 & 2.0 declaration for supporting integrated TCSS and dTBT in AFP.
+To provide SSDT with ACPI Table to support universal UCSI 1.2 & 2.0 declaration for supporting integrated TCSS and dTBT in AFP.
 
 # High-Level Theory of Operation
 This package Implements Ucsi Dxe driver and publish Ucsi Acpi table.

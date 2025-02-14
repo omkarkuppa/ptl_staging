@@ -441,8 +441,6 @@ PtlBoardTbtInit (
   SetRetimerCfgTablePcd (RetimerFlashConfig);
 
   UpdateUcxxDriverTypePcd();
-  SetUcsiRevisionToEc();
-  SetUcsiRevisionPcd ();
 }
 
 /**

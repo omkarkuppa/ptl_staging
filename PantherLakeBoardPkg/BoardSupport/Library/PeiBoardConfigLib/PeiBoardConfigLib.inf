@@ -125,7 +125,7 @@
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable
 
   # UCxx Driver Type and Support for Port
-  gUcsiFeaturePkgTokenSpaceGuid.PcdUcxxDriverType         ## PRODUCES
+  gUcsiFeaturePkgTokenSpaceGuid.PcdUcmSelection           ## PRODUCES  ## CONSUMES
   gUcsiFeaturePkgTokenSpaceGuid.PcdPortUcxxDriverSupport  ## PRODUCES
 
   gUcsiFeaturePkgTokenSpaceGuid.PcdUcsiRevision           ## PRODUCES

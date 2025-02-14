@@ -56,6 +56,7 @@ DefinitionBlock (
   Include ("UcsiNvs.asl")
 
   ADBG (Concatenate ("TCCM:", ToHexString (TCCM)))
+  ADBG (Concatenate ("UCMS:", ToHexString (UCMS)))
   External (P8XH, MethodObj)
   External (\_SB.PC00.XHCI.RHUB, DeviceObj)
   External (\_SB.PC00.XHCI.RHUB.TPLD, MethodObj)
@@ -77,14 +78,14 @@ DefinitionBlock (
       // Arg0 : Data Structure Type 1: MGO Data Structure, 0: MGI Data Structure
       //
       Method (MGBS, 1, Serialized) {
-        If (LEqual (UCMS, 0x2)) {
+        If (LGreaterEqual (UCMS, UCM_UCSI_2_0)) {
           //
           // UCSI 2.0 MGI and MGO Data Structure size is 0 - 0xFF (0x100)
           //
           Store (0x100, Local0)
         } else {
           //
-          // USCI 1.0 MGI Data Structure size is 0 - 0x13 (0x14)
+          // UCSI 1.0 MGI Data Structure size is 0 - 0x13 (0x14)
           // MGO Data Structure size is 0 - 0xF (0x10)
           //
           If (LEqual (Arg0, 1)) {
@@ -220,7 +221,7 @@ DefinitionBlock (
       {
         If (LAnd (LEqual (USTC, 1), LNotEqual (TCCM, 0))) // Check if USB Type C is supported
         {
-          If (LOr (LEqual (UCMS, 1), LEqual (UCMS, 2)))   // Check if UCSI is supported
+          If (LNotEqual (UCMS, UCXX_DISABLE))   // Check if UCSI is supported
           {
             Return (0x000F)
           }
@@ -231,10 +232,9 @@ DefinitionBlock (
       //
       // Expose connector based on Total supported Connectors
       //
-
       // If UCxx Driver Support not force Disable
-      If (LAnd (LNotEqual (And (TCCM, 0x0001), 0), LAnd (LOr (LEqual (TP1U, UCSI_ENABLE), LEqual (TP1U, UCSI2x_ENABLE)), LAnd(LGreaterEqual (CRT1, 8),LLessEqual(CRT1,10))))) {
-        ADBG ("CR01")
+      If (LAnd (LNotEqual (And (TCCM, 0x0001), 0), LAnd (LNotEqual (TP1U, 0), LAnd (LGreaterEqual (CRT1, 8), LLessEqual (CRT1, 10))))) {
+        ADBG ("[UCSI] CR01")
         Device (CR01) { // USB Type C Connector#1
           Name (_ADR, 0x0)
           Method (_PLD, 0, Serialized) {
@@ -246,8 +246,8 @@ DefinitionBlock (
         }
       }
       // If UCxx Driver Support not force Disable
-      If (LAnd (LNotEqual (And (TCCM, 0x0002), 0), LAnd (LOr (LEqual (TP2U, UCSI_ENABLE), LEqual (TP2U, UCSI2x_ENABLE)), LAnd(LGreaterEqual (CRT2, 8),LLessEqual(CRT2,10))))) {
-        ADBG ("CR02")
+      If (LAnd (LNotEqual (And (TCCM, 0x0002), 0), LAnd (LNotEqual (TP2U, 0), LAnd (LGreaterEqual (CRT2, 8), LLessEqual (CRT2, 10))))) {
+        ADBG ("[UCSI] CR02")
         Device (CR02) { // USB Type C Connector#2
           Name (_ADR, 0x1)
           Method (_PLD, 0, Serialized) {
@@ -259,8 +259,8 @@ DefinitionBlock (
         }
       }
       // If UCxx Driver Support not force Disable
-      If (LAnd (LNotEqual (And (TCCM, 0x0004), 0), LAnd (LOr (LEqual (TP3U, UCSI_ENABLE), LEqual (TP3U, UCSI2x_ENABLE)), LAnd(LGreaterEqual (CRT3, 8),LLessEqual(CRT3,10))))) {
-        ADBG ("CR03")
+      If (LAnd (LNotEqual (And (TCCM, 0x0004), 0), LAnd (LNotEqual (TP3U, 0), LAnd (LGreaterEqual (CRT3, 8), LLessEqual (CRT3, 10))))) {
+        ADBG ("[UCSI] CR03")
         Device (CR03) { // USB Type C Connector#3
           Name (_ADR, 0x2)
           Method (_PLD, 0, Serialized) {
@@ -272,8 +272,8 @@ DefinitionBlock (
         }
       }
       // If UCxx Driver Support not force Disable
-      If (LAnd (LNotEqual (And (TCCM, 0x0008), 0), LAnd (LOr (LEqual (TP4U, UCSI_ENABLE), LEqual (TP4U, UCSI2x_ENABLE)), LAnd(LGreaterEqual (CRT4, 8),LLessEqual(CRT4,10))))) {
-        ADBG ("CR04")
+      If (LAnd (LNotEqual (And (TCCM, 0x0008), 0), LAnd (LNotEqual (TP4U, 0), LAnd (LGreaterEqual (CRT4, 8), LLessEqual (CRT4, 10))))) {
+        ADBG ("[UCSI] CR04")
         Device (CR04) { // USB Type C Connector#4
           Name (_ADR, 0x3)
           Method (_PLD, 0, Serialized) {
@@ -285,8 +285,8 @@ DefinitionBlock (
         }
       }
       // If UCxx Driver Support not force Disable
-      If (LAnd (LNotEqual (And (TCCM, 0x0010), 0), LAnd (LOr (LEqual (TP5U, UCSI_ENABLE), LEqual (TP5U, UCSI2x_ENABLE)), LAnd(LGreaterEqual (CRT5, 8),LLessEqual(CRT5,10))))) {
-        ADBG ("CR05")
+      If (LAnd (LNotEqual (And (TCCM, 0x0010), 0), LAnd (LNotEqual (TP5U, 0), LAnd (LGreaterEqual (CRT5, 8), LLessEqual (CRT5, 10))))) {
+        ADBG ("[UCSI] CR05")
         Device (CR05) { // USB Type C Connector#5
           Name (_ADR, 0x4)
           Method (_PLD, 0, Serialized) {
@@ -298,8 +298,8 @@ DefinitionBlock (
         }
       }
       // If UCxx Driver Support not force Disable
-      If (LAnd (LNotEqual (And (TCCM, 0x0020), 0), LAnd (LOr (LEqual (TP6U, UCSI_ENABLE), LEqual (TP6U, UCSI2x_ENABLE)), LAnd(LGreaterEqual (CRT6, 8),LLessEqual(CRT6,10))))) {
-        ADBG ("CR06")
+      If (LAnd (LNotEqual (And (TCCM, 0x0020), 0), LAnd (LNotEqual (TP6U, 0), LAnd (LGreaterEqual (CRT6, 8), LLessEqual (CRT6, 10))))) {
+        ADBG ("[UCSI] CR06")
         Device (CR06) { // USB Type C Connector#6
           Name (_ADR, 0x5)
           Method (_PLD, 0, Serialized) {
@@ -311,9 +311,9 @@ DefinitionBlock (
         }
       }
       // If UCxx Driver Support not force Disable
-      If (LAnd (LNotEqual (And (TCCM, 0x0040), 0), LAnd (LOr (LEqual (TP7U, UCSI_ENABLE), LEqual (TP7U, UCSI2x_ENABLE)), LAnd(LGreaterEqual (CRT7, 8),LLessEqual(CRT7,10))))) {
-        ADBG ("CR07")
+      If (LAnd (LNotEqual (And (TCCM, 0x0040), 0), LAnd (LNotEqual (TP7U, 0), LAnd (LGreaterEqual (CRT7, 8), LLessEqual (CRT7, 10))))) {
         Device (CR07) { // USB Type C Connector#7
+          ADBG ("[UCSI] CR07")
           Name (_ADR, 0x6)
           Method (_PLD, 0, Serialized) {
             Return (\_SB.TPLD (CRV7, CRP7))
@@ -324,8 +324,8 @@ DefinitionBlock (
         }
       }
       // If UCxx Driver Support not force Disable
-      If (LAnd (LNotEqual (And (TCCM, 0x0080), 0), LAnd (LOr (LEqual (TP8U, UCSI_ENABLE), LEqual (TP8U, UCSI2x_ENABLE)), LAnd(LGreaterEqual (CRT8, 8),LLessEqual(CRT8,10))))) {
-        ADBG ("CR08")
+      If (LAnd (LNotEqual (And (TCCM, 0x0080), 0), LAnd (LNotEqual (TP8U, 0), LAnd (LGreaterEqual (CRT8, 8), LLessEqual (CRT8, 10))))) {
+        ADBG ("[UCSI] CR08")
         Device (CR08) { // USB Type C Connector#8
           Name (_ADR, 0x7)
           Method (_PLD, 0, Serialized) {
@@ -337,8 +337,8 @@ DefinitionBlock (
         }
       }
       // If UCxx Driver Support not force Disable
-      If (LAnd (LNotEqual (And (TCCM, 0x0100), 0), LAnd (LOr (LEqual (TP9U, UCSI_ENABLE), LEqual (TP9U, UCSI2x_ENABLE)), LAnd(LGreaterEqual (CRT9, 8),LLessEqual(CRT9,10))))) {
-        ADBG ("CR09")
+      If (LAnd (LNotEqual (And (TCCM, 0x0100), 0), LAnd (LNotEqual (TP9U, 0), LAnd (LGreaterEqual (CRT9, 8), LLessEqual (CRT9, 10))))) {
+        ADBG ("[UCSI] CR09")
         Device (CR09) { // USB Type C Connector#9
           Name (_ADR, 0x8)
           Method (_PLD, 0, Serialized) {
@@ -350,8 +350,8 @@ DefinitionBlock (
         }
       }
       // If UCxx Driver Support not force Disable
-      If (LAnd (LNotEqual (And (TCCM, 0x0200), 0), LAnd (LOr (LEqual (TPAU, UCSI_ENABLE), LEqual (TPAU, UCSI2x_ENABLE)), LAnd(LGreaterEqual (CRTA, 8),LLessEqual(CRTA,10))))) {
-        ADBG ("CR0A")
+      If (LAnd (LNotEqual (And (TCCM, 0x0200), 0), LAnd (LNotEqual (TPAU, 0), LAnd (LGreaterEqual (CRTA, 8), LLessEqual (CRTA, 10))))) {
+        ADBG ("[UCSI] CR0A")
         Device (CR0A) { // USB Type C Connector#10
           Name (_ADR, 0x9)
           Method (_PLD, 0, Serialized) {
@@ -426,7 +426,7 @@ DefinitionBlock (
               Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 13)), MI0D )
               Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 14)), MI0E )
               Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 15)), MI0F )
-              If (LEqual (UCMS, 1)) {
+              If (LEqual (UCMS, UCM_UCSI_1_2)) {
                 // UCSI 1.2
                 Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 16)), CCI0 )
                 Store ( DeRefOf (Index (\_SB.PARENT_OF_LPCB.LPCB.H_EC.RPOI(), 17)), CCI1 )
@@ -458,8 +458,8 @@ DefinitionBlock (
 
             Case (5) //Expose platform UCSI capability
             {
-              If (LEqual (UCMS, 0x2)) {
-                Return (Buffer () {1}) // 1:  PpmReportedUcsiVersion 2.1
+              If (LGreaterEqual (UCMS, UCM_UCSI_2_0)) {
+                Return (Buffer () {1}) // 1:  PpmReportedUcsiVersion 2.x
               } Else {
                 Return (Buffer () {0}) // 0:  PpmReportedUcsiVersion 1.2
               }

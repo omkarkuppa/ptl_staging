@@ -725,7 +725,7 @@ typedef struct {
   UINT8   SkipObbHashVerification;
 
   //
-  // TCSS Port Disable UCSI/UCMX Driver Support. 0: Platform POR (For EclessPd it is UCMX, For For EcPd it is USCI), 2: Force Disable the Driver support.
+  // TCSS Port Disable UCSI/UCMX Driver Support. 0: Platform POR (For EclessPd it is UCMX, For For EcPd it is UCSI), 2: Force Disable the Driver support.
   //
   UINT8   TestDisableTcssPortUcxxSupport[10]; // MAX 10 Type-C Port. Reserve Extra also.
 

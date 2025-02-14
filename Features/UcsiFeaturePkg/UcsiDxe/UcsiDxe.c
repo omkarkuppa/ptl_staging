@@ -298,7 +298,7 @@ UcsiEntryPoint (
 {
   EFI_STATUS                    Status;
   UCSI_OPM_BUF                  *OpmBuffer;
-  UINT8                         TcssUcxxDriverType;
+  UINT8                         UcmSelection;
   UINT8                         *TcssPortUcxxDriverSupport;
   EFI_HANDLE                    Handle;
 
@@ -317,7 +317,7 @@ UcsiEntryPoint (
     return EFI_UNSUPPORTED;
   }
 
-  TcssUcxxDriverType        = PcdGet8 (PcdUcxxDriverType);
+  UcmSelection              = PcdGet8 (PcdUcmSelection);
   TcssPortUcxxDriverSupport = PcdGetPtr (PcdPortUcxxDriverSupport);
 
   //
@@ -349,7 +349,7 @@ UcsiEntryPoint (
   //
   //  Get version when UCSI Device is enable
   //
-  if (TcssUcxxDriverType == UCSI_ENABLE || TcssUcxxDriverType == UCSI2x_ENABLE){
+  if (UcmSelection != UCXX_DISABLE){
     OpmBuffer->Version = (UINT16) PcdGet16 (PcdUcsiRevision);
   }
 
@@ -371,34 +371,34 @@ UcsiEntryPoint (
 
   // Port 1  mapping and properties
   mUcsiNvsAreaProtocol.Area->UsbCPort1UcxxSupport = (TcssPortUcxxDriverSupport[0] == TCSS_FORCE_DISABLE) ?\
-                                              0 : TcssUcxxDriverType;
+                                                    0 : UcmSelection;
   // Port 2  mapping and properties
   mUcsiNvsAreaProtocol.Area->UsbCPort2UcxxSupport = (TcssPortUcxxDriverSupport[1] == TCSS_FORCE_DISABLE) ?\
-                                              0 : TcssUcxxDriverType;
+                                                    0 : UcmSelection;
   // Port 3  mapping and properties
   mUcsiNvsAreaProtocol.Area->UsbCPort3UcxxSupport = (TcssPortUcxxDriverSupport[2] == TCSS_FORCE_DISABLE) ?\
-                                              0 : TcssUcxxDriverType;
+                                                    0 : UcmSelection;
   // Port 4  mapping and properties
   mUcsiNvsAreaProtocol.Area->UsbCPort4UcxxSupport = (TcssPortUcxxDriverSupport[3] == TCSS_FORCE_DISABLE) ?\
-                                              0 : TcssUcxxDriverType;
+                                                    0 : UcmSelection;
   // Port 5  mapping and properties
   mUcsiNvsAreaProtocol.Area->UsbCPort5UcxxSupport = (TcssPortUcxxDriverSupport[4] == TCSS_FORCE_DISABLE) ?\
-                                              0 : TcssUcxxDriverType;
+                                                    0 : UcmSelection;
   // Port 6  mapping and properties
   mUcsiNvsAreaProtocol.Area->UsbCPort6UcxxSupport = (TcssPortUcxxDriverSupport[5] == TCSS_FORCE_DISABLE) ?\
-                                              0 : TcssUcxxDriverType;
+                                                    0 : UcmSelection;
   // Port 7  mapping and properties
   mUcsiNvsAreaProtocol.Area->UsbCPort7UcxxSupport = (TcssPortUcxxDriverSupport[6] == TCSS_FORCE_DISABLE) ?\
-                                              0 : TcssUcxxDriverType;
+                                                    0 : UcmSelection;
   // Port 8  mapping and properties
   mUcsiNvsAreaProtocol.Area->UsbCPort8UcxxSupport = (TcssPortUcxxDriverSupport[7] == TCSS_FORCE_DISABLE) ?\
-                                              0 : TcssUcxxDriverType;
+                                                    0 : UcmSelection;
   // Port 9  mapping and properties
   mUcsiNvsAreaProtocol.Area->UsbCPort9UcxxSupport = (TcssPortUcxxDriverSupport[8] == TCSS_FORCE_DISABLE) ?\
-                                              0 : TcssUcxxDriverType;
+                                                    0 : UcmSelection;
   // Port 10  mapping and properties
   mUcsiNvsAreaProtocol.Area->UsbCPortAUcxxSupport = (TcssPortUcxxDriverSupport[9] == TCSS_FORCE_DISABLE) ?\
-                                              0 : TcssUcxxDriverType;
+                                                    0 : UcmSelection;
 
   return Status;
 }

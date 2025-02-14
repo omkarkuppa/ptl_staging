@@ -935,7 +935,8 @@ UpdateUcxxDriverTypePcd (
                                  &Setup
                                  );
     if (!EFI_ERROR (Status)) {
-      PcdSet8S (PcdUcxxDriverType, Setup.TcssUcmDevice);
+      PcdSet8S (PcdUcmSelection, Setup.TcssUcmDevice);
+      SetUcsiRevisionPcd ();
       if (BootMode != BOOT_ON_S3_RESUME) {
         UsbCHostFlags = (Setup.TcssUcmDevice > 0) ? HOST_USBC_UCSI_STATUS : 0;
         UpdateUsbCHostFlagsToEc (&UsbCHostFlags);
@@ -1062,51 +1063,31 @@ SetRetimerCfgTablePcd (
   DEBUG ((DEBUG_INFO, "SetRetimerCfgTablePCD() End\n"));
 }
 
-#define UCSI_VER_1_2          0x12
-#define UCSI_VER_2_x          0x20
-
 /**
-  Setting UcsiRevision
+  Setting PcdUcmSelection
+
+  @param[in]  UcsiVersion   UCSI Version
 
 **/
 VOID
-SetUcsiRevisionToEc (
-  VOID
+UpdatePcdUcmSelection (
+  IN  UINT16  UcsiVersion
   )
 {
-  EFI_BOOT_MODE                   BootMode;
-  EFI_STATUS                      Status;
-  UINT8                           TcssUcxxDriverType;
-
-  DEBUG ((DEBUG_INFO, "%a - Start\n", __func__));
-
-  Status = PeiServicesGetBootMode (&BootMode);
-
-  TcssUcxxDriverType = PcdGet8 (PcdUcxxDriverType);
-  //
-  // Send UCSI version to EC
-  //
-  if ((BootMode != BOOT_ON_S4_RESUME) &&
-      (BootMode != BOOT_ON_S5_RESUME)) {
-    if (TcssUcxxDriverType == 1) {
-      DEBUG ((DEBUG_INFO, "Send UCSI Version to EC: 0x%X\n", UCSI_VER_1_2));
-      Status = EcSetUcsiVer (UCSI_VER_1_2);
-    } else if (TcssUcxxDriverType == 2) {
-      DEBUG ((DEBUG_INFO, "Send UCSI Version to EC: 0x%X\n", UCSI_VER_2_x));
-      Status = EcSetUcsiVer (UCSI_VER_2_x);
-    } else {
-      DEBUG ((DEBUG_INFO, "Default UCSI Version to EC: 0x%X\n", 0x0));
-      Status = EcSetUcsiVer (UCSI_VER_2_x);
-    }
-
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "UCSI version is sent to EC successfully.\n"));
-    } else {
-      DEBUG ((DEBUG_ERROR, "UCSI version is not sent to EC successfully.\n"));
-    }
+  switch (UcsiVersion) {
+    case UCSI_VER_1_2:
+      PcdSet8S (PcdUcmSelection, UCM_UCSI_1_2);
+      break;
+    case UCSI_VER_2_0:
+      PcdSet8S (PcdUcmSelection, UCM_UCSI_2_0);
+      break;
+    case UCSI_VER_2_1:
+      PcdSet8S (PcdUcmSelection, UCM_UCSI_2_1);
+      break;
+    default:
+      PcdSet8S (PcdUcmSelection, UCXX_DISABLE);
+      break;
   }
-
-  DEBUG ((DEBUG_INFO, "%a - End\n", __func__));
 }
 
 /**
@@ -1118,15 +1099,23 @@ SetUcsiRevisionPcd (
   VOID
   )
 {
-  UINT16                Version;
+  UINT16  Version;
 
-  DEBUG ((DEBUG_INFO, "UpdateUCSIVersionPcd - Start\n"));
+  DEBUG ((DEBUG_INFO, "SetUcsiRevisionPcd - Start\n"));
 
-  Version = GetUcsiRev ();
+  switch (PcdGet8 (PcdUcmSelection)) {
+    case UCM_UCSI_AUTO:
+      Version = GetUcsiRev ();
+      UpdatePcdUcmSelection (Version);
+      break;
+    default:
+      Version = 0;
+      break;
+  }
 
   PcdSet16S (PcdUcsiRevision, Version);
 
-  DEBUG ((DEBUG_INFO, "UpdateUCSIVersionPcd - End\n"));
+  DEBUG ((DEBUG_INFO, "SetUcsiRevisionPcd - End\n"));
 }
 
 VOID

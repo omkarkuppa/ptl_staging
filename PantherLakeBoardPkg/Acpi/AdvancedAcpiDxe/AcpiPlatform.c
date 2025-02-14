@@ -320,7 +320,7 @@ UpdateUsbAcpiNvs (
 }
 
 /**
-  Get USCI NVS Protocol and Update ACPI NVS
+  Get UCSI NVS Protocol and Update ACPI NVS
 
   @param[in] Event    The Event this notify function registered to.
   @param[in] Context  Pointer to the context data registered to the Event.
@@ -3459,14 +3459,13 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->GPTD           = mPchSetup.PchGpioTestDevices;
   mPlatformNvsAreaProtocol.Area->SPTD           = mPchSetup.PchAdditionalSerialIoDevices;
 
-
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
   mPlatformNvsAreaProtocol.Area->TsnPcsEnabled  = mPchSetup.TsnPcsEnabled;
 #else
   mPlatformNvsAreaProtocol.Area->TsnPcsEnabled  = 0;
 #endif
 
-  mPlatformNvsAreaProtocol.Area->UCMS           = mSystemConfiguration.TcssUcmDevice;
+  mPlatformNvsAreaProtocol.Area->UCMS           = PcdGet8 (PcdUcmSelection);
 
   //
   // Serial IO timing parameters

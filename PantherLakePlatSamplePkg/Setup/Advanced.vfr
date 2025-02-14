@@ -50,6 +50,7 @@ typedef struct {
 #include <CnvSetupId.h>
 #include <CnvVfrSetupMenuHii.h>
 #include <CrashLogVariable.h>
+#include <Ucsi.h>
 
 formset guid = ADVANCED_FORM_SET_GUID,
   title      = STRING_TOKEN(STR_ADVANCED),
