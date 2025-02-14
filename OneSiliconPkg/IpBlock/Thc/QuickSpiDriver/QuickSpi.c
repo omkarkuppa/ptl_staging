@@ -636,9 +636,16 @@ QuickSpiDriverBindingStart (
   //
   // HID
   //
-  QuickSpiDev->ThcProtocol.HidGetFeature         = HidGetFeature;
-  QuickSpiDev->ThcProtocol.HidSetFeature         = HidSetFeature;
-  QuickSpiDev->ThcProtocol.HidEnableAfterReset   = HidEnableAfterReset;
+  QuickSpiDev->ThcProtocol.HidGetFeature          = HidGetFeature;
+  QuickSpiDev->ThcProtocol.HidSetFeature          = HidSetFeature;
+  QuickSpiDev->ThcProtocol.HidEnableAfterReset    = HidEnableAfterReset;
+  QuickSpiDev->ThcProtocol.HidGetInputReport      = HidGetInputReport;
+  QuickSpiDev->ThcProtocol.HidSetOutputReport     = HidSetOutputReport;
+  QuickSpiDev->ThcProtocol.HidGetDeviceDescriptor = HidGetDeviceDescriptor;
+  QuickSpiDev->ThcProtocol.HidPerformReset        = HidPerformReset;
+  QuickSpiDev->ThcProtocol.HidSetPowerState       = HidSetPowerState;
+  QuickSpiDev->ThcProtocol.HidGetReportDescriptor = HidGetReportDescriptor;
+  
   QuickSpiDev->HidDataAvailable          = FALSE;
   QuickSpiDev->HidActive                 = FALSE;
   QuickSpiDev->HidBuffer                 = NULL;

@@ -28,8 +28,8 @@
   Performs SetFeature function as described in Human Interface Device specification.
 
   @param[in]  This       Pointer to instance of protocol.
-  @param[in]  Length     Size of buffer.
-  @param[in]  Buffer     On input, contains ReportId in 1st byte. On output, filled with Feature data from external device.
+  @param[in]  Length     Size of the buffer.
+  @param[in]  Buffer      On input, contains data to be sent to host.
   @param[in]  Timeout    0 - No timeout, do not wait for response
                          1 or higher - will wait for that amount of time and copy response results to the same buffer.
 
@@ -43,7 +43,7 @@
 **/
 EFI_STATUS
 EFIAPI
-HidSetFeature (
+QuickI2cHidSetFeature (
   IN THC_PROTOCOL   *This,
   IN UINT32         Length,
   IN OUT UINT8      *Buffer,
@@ -54,7 +54,7 @@ HidSetFeature (
   Performs GetFeature function as described in Human Interface Device specification.
 
   @param[in]  This       Pointer to instance of protocol.
-  @param[in]  Length     Size of buffer.
+  @param[in]  Length     Size of the buffer.
   @param[in]  Buffer     On input, contains ReportId in 1st byte. On output, filled with Feature data from external device.
   @param[in]  Timeout    0 - No timeout, do not wait for response
                          1 or higher - will wait for that amount of time and copy response results to the same buffer.
@@ -69,11 +69,157 @@ HidSetFeature (
 **/
 EFI_STATUS
 EFIAPI
-HidGetFeature (
-  IN THC_PROTOCOL  *This,
-  IN UINT32        Length,
-  IN OUT UINT8     *Buffer,
-  IN UINTN         Timeout
+QuickI2cHidGetFeature (
+  IN THC_PROTOCOL   *This,
+  IN UINT32         Length,
+  IN OUT UINT8      *Buffer,
+  IN UINTN          Timeout
+  );
+
+/**
+  Performs SetPowerState function as described in Human Interface Device specification.
+  @param[in]  This       Pointer to instance of protocol.
+  @param[in]  Length     Size of the buffer.
+  @param[out] Buffer     On input, contains data to be sent to host.
+  @param[in]  PowerState Power State.
+  @retval EFI_NOT_READY         THC is not ready
+  @retval EFI_ALREADY_STARTED   HID transaction is still active
+  @retval EFI_NOT_AVAILABLE_YET THC read transaction is ongoing
+  @retval EFI_TIMEOUT           a) Response did not come in time OR
+                                b) DMA transaction did not finish in time
+  @retval EFI_BUFFER_TOO_SMALL  THC DMA buffer is unable to fit that much data
+  @retval EFI_SUCCESS           Set feature completed
+**/
+EFI_STATUS
+EFIAPI
+QuickI2cHidSetPowerState (
+  IN THC_PROTOCOL   *This,
+  IN UINT32         Length,
+  IN OUT UINT8      *Buffer,
+  IN UINT8          PowerState
+  );
+
+/**
+  Performs perform reset function as described in Human Interface Device specification.
+  @param[in]  This       Pointer to instance of protocol.
+  @param[in]  Length     Size of the buffer.
+  @param[out] Buffer     On input, contains data to be sent to host.
+  @param[in]  Timeout    0 - No timeout, do not wait for response
+                         1 or higher - will wait for that amount of time and copy response results to the same buffer.
+  @retval EFI_NOT_READY         THC is not ready
+  @retval EFI_ALREADY_STARTED   HID transaction is still active
+  @retval EFI_NOT_AVAILABLE_YET THC read transaction is ongoing
+  @retval EFI_TIMEOUT           a) Response did not come in time OR
+                                b) DMA transaction did not finish in time
+  @retval EFI_BUFFER_TOO_SMALL  THC DMA buffer is unable to fit that much data
+  @retval EFI_SUCCESS           Set feature completed
+**/
+EFI_STATUS
+EFIAPI
+QuickI2cHidPerformReset (
+  IN THC_PROTOCOL   *This,
+  IN UINT32         Length,
+  IN OUT UINT8      *Buffer,
+  IN UINTN          Timeout
+  );
+
+/**
+  Performs Get input report function as described in Human Interface Device specification.
+  @param[in]  This       Pointer to instance of protocol.
+  @param[in]  Length     Size of the buffer.
+  @param[in]  Buffer     On input, contains ReportId in 1st byte. On output, filled with Feature data from external device.
+                         The caller is responsible for freeing the buffer that is allocated by callee for HidPacket.ReportBuffer.
+  @param[in]  Timeout    0 - No timeout, do not wait for response
+                         1 or higher - will wait for that amount of time and copy response results to the same buffer.
+  @retval EFI_NOT_READY         THC is not ready
+  @retval EFI_ALREADY_STARTED   HID transaction is still active
+  @retval EFI_NOT_AVAILABLE_YET THC read transaction is ongoing
+  @retval EFI_TIMEOUT           a) Response did not come in time OR
+                                b) DMA transaction did not finish in time
+  @retval EFI_BUFFER_TOO_SMALL  THC DMA buffer is unable to fit that much data
+  @retval EFI_SUCCESS           Set feature completed
+**/
+EFI_STATUS
+EFIAPI
+QuickI2cHidGetInputReport (
+  IN THC_PROTOCOL   *This,
+  IN UINT32         Length,
+  IN OUT UINT8      *Buffer,
+  IN UINTN          Timeout
+  );
+
+/**
+  Performs SetOutput report function as described in Human Interface Device specification.
+  @param[in]  This       Pointer to instance of protocol.
+  @param[in]  Length     Size of the buffer.
+  @param[out] Buffer     On input, contains data to be sent to host.
+  @param[in]  Timeout    0 - No timeout, do not wait for response
+                         1 or higher - will wait for that amount of time and copy response results to the same buffer.
+  @retval EFI_NOT_READY         THC is not ready
+  @retval EFI_ALREADY_STARTED   HID transaction is still active
+  @retval EFI_NOT_AVAILABLE_YET THC read transaction is ongoing
+  @retval EFI_TIMEOUT           a) Response did not come in time OR
+                                b) DMA transaction did not finish in time
+  @retval EFI_BUFFER_TOO_SMALL  THC DMA buffer is unable to fit that much data
+  @retval EFI_SUCCESS           Set feature completed
+**/
+EFI_STATUS
+EFIAPI
+QuickI2cHidSetOutputReport (
+  IN THC_PROTOCOL   *This,
+  IN UINT32         Length,
+  IN OUT UINT8      *Buffer,
+  IN UINTN          Timeout
+  );
+
+/**
+  Provide device descriptor to caller.
+  @param[in]  This       Pointer to instance of protocol.
+  @param[in]  Length     Size of the buffer.
+  @param[out] Buffer     On output, filled with descriptor data for external device.
+                         The caller is responsible for freeing the buffer that is allocated by callee for HidPacket.ReportBuffer.
+  @param[in]  Timeout    0 - No timeout, do not wait for response
+                         1 or higher - will wait for that amount of time and copy response results to the same buffer.
+  @retval EFI_NOT_READY         THC is not ready
+  @retval EFI_ALREADY_STARTED   HID transaction is still active
+  @retval EFI_NOT_AVAILABLE_YET THC read transaction is ongoing
+  @retval EFI_TIMEOUT           a) Response did not come in time OR
+                                b) DMA transaction did not finish in time
+  @retval EFI_BUFFER_TOO_SMALL  THC DMA buffer is unable to fit that much data
+  @retval EFI_SUCCESS           Set feature completed
+**/
+EFI_STATUS
+EFIAPI
+QuickI2cHidGetDeviceDescriptor (
+  IN THC_PROTOCOL   *This,
+  IN UINT32         Length,
+  IN OUT UINT8      *Buffer,
+  IN UINTN          Timeout
+  );
+
+/**
+  Provides Input HID report to caller.
+  @param[in]  This       Pointer to instance of protocol.
+  @param[in]  Length     Size of the buffer.
+  @param[out] Buffer     On output, filled with descriptor data for external device.
+                         The caller is responsible for freeing the buffer that is allocated by callee for HidPacket.ReportBuffer.
+  @param[in]  Timeout    0 - No timeout, do not wait for response
+                         1 or higher - will wait for that amount of time and copy response results to the same buffer.
+  @retval EFI_NOT_READY         THC is not ready
+  @retval EFI_ALREADY_STARTED   HID transaction is still active
+  @retval EFI_NOT_AVAILABLE_YET THC read transaction is ongoing
+  @retval EFI_TIMEOUT           a) Response did not come in time OR
+                                b) DMA transaction did not finish in time
+  @retval EFI_BUFFER_TOO_SMALL  THC DMA buffer is unable to fit that much data
+  @retval EFI_SUCCESS           Set feature completed
+**/
+EFI_STATUS
+EFIAPI
+QuickI2cGetHidReportDescriptor (
+  IN THC_PROTOCOL   *This,
+  IN UINT32         Length,
+  IN OUT UINT8      *Buffer,
+  IN UINTN          Timeout
   );
 
 /**
@@ -89,7 +235,7 @@ HidGetFeature (
 **/
 EFI_STATUS
 EFIAPI
-HidEnableAfterReset (
+QuickI2cHidEnableAfterReset (
   IN THC_PROTOCOL  *This
   );
 

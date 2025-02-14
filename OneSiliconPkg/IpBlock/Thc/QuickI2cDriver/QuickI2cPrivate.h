@@ -169,6 +169,10 @@ extern EFI_GUID                     gEdkiiTouchPanelGuid;
 #define QUICK_I2C_DEFAULT_RESET_RESPONSE_LENGTH  2
 
 #define THC_M_PRT_INT_EN_DEFAULT                 0x095e2604
+#define QUICKI2C_TOUCH_ENABLE_COMMAND_LENGTH     3
+#define QUICKI2C_TOUCH_ENABLE_COMMAND_BYTE1      0xE
+#define QUICKI2C_TOUCH_ENABLE_COMMAND_BYTE2      0x2
+#define QUICKI2C_TOUCH_ENABLE_COMMAND_BYTE3      0x0
 
 //
 // Quick I2C HID
@@ -312,6 +316,11 @@ typedef union
   UINT32 Data32;
 } RESET_RESPONSE_DATA;
 
+typedef struct {
+  UINT8*  ReportBuffer;
+  UINT32  ReportBufferLen;
+  UINT8   ReportId;
+} HID_PACKET;
 
 typedef union {
   struct {
@@ -371,10 +380,9 @@ typedef union {
 
 typedef union {
   struct {
-    UINT32 ReportType    : 8;  // See QUICK_I2C_OUTPUT_REPORT_TYPE for OUTPUT_REPORT_TYPE
-    UINT32 ContentLength : 16; // Size of content field (n bytes) + 3 (for size of content length and content id fields)
-    UINT32 Reserved      : 8;
+    UINT16 ContentLength; // Size of content field (n bytes) + 3 (for size of content length and content id fields)
     UINT16 CommandRegister;    // 0x00 - descriptors, Report ID - Set/Feature feature or Input/Output Reports. Command opcode - for commands
+    UINT16 Reserved;
   } Fields;
   UINT32 Data32;
   UINT16 Data16;
@@ -1253,6 +1261,8 @@ typedef struct {
   HID_GET_REPORT_FORMAT          ReportPacket;
   BOOLEAN                        SwDmaActive;
   BOOLEAN                        InitProcessDoneEnableInterrupt;
+  UINT32                         HidInputReportSize;
+  UINT8                          *HidInputReportBuffer;
 } QUICK_I2C_DEV;
 
 #endif

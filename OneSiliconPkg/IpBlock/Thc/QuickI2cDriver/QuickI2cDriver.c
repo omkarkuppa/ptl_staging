@@ -783,7 +783,7 @@ QuickI2cLibGetOutOfReset (
     return Status;
   }
 
-  Status = QuickI2cSendResetRequest (QuickI2cDev);
+  Status = QuickI2cSendResetRequest (QuickI2cDev, WaitForResetTimeout);
   if (EFI_ERROR (Status)) {
     THC_LOCAL_DEBUG (L"QuickI2cSendResetRequest returned Status- %r\n", Status)
     DEBUG ((DEBUG_WARN, "QuickI2cSendResetRequest: ERROR Status %r\n", Status));
@@ -1246,6 +1246,7 @@ QuickI2cDmaReadSingleReport (
   //
   if (MessageLength == QUICK_I2C_DEFAULT_RESET_RESPONSE_LENGTH) {
     THC_LOCAL_DEBUG (L"QuickI2cDmaReadSingleReport QuickI2cInputReportResetResponse received\n")
+
     DataAddress = LShiftU64 (PrdTable->Entries[EntryOffset].DestinationAddress, ADDRESS_SHIFT);
     CopyMem ((UINT8*) ReadDataBuff, (UINT8*) DataAddress, MessageLength);
 
@@ -1461,14 +1462,14 @@ QuickI2cSwDmaReadSingleReport (
     DataAddress = LShiftU64 (PrdTable->Entries[EntryOffset].DestinationAddress, ADDRESS_SHIFT);
 
     CopyMem ((UINT8*) ReadDataBuff, (UINT8*) DataAddress, sizeof (QUICK_I2C_INPUT_REPORT_BODY_HEADER));
+    // update the MessageLength with the actual content length
+    MessageLength = ReadDataBuff->Header.Fields.ContentLength;
 
     THC_LOCAL_DEBUG (L"SwDma response MessageLength <%d> Bytes, ContentLength <%d>\n", MessageLength, ReadDataBuff->Header.Fields.ContentLength)
     //ShowBuffer ((UINT8*)(DataAddress), (UINT32) MessageLength); // Uncomment when THC_LOCAL_DEBUG is enabled
 
     if ((QuickI2cDev->HidActive == TRUE) && (QuickI2cDev->HidBuffer != NULL)) {
-      THC_LOCAL_DEBUG (L"QuickI2cSwDmaReadSingleReport: SwDma response of <%d> Bytes\n", ReadDataBuff->Header.Fields.ContentLength)
-      CopyMem ((UINT8*) QuickI2cDev->HidBuffer, (UINT8*) DataAddress, ReadDataBuff->Header.Fields.ContentLength);
-      QuickI2cDev->HidBuffer += MessageLength;
+      CopyMem ((UINT8*) QuickI2cDev->HidBuffer, (UINT8*) DataAddress, MessageLength);
       QuickI2cDev->SwDmaMessageLength = MessageLength;
       QuickI2cDev->HidDataAvailable = TRUE;
     }
@@ -2126,9 +2127,12 @@ QuickI2cReadHidDescriptor (
 
   THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor Start()\n")
 
-  QuickI2cDev->HidDataAvailable = FALSE;
-  QuickI2cDev->HidActive        = TRUE;
-  Buffer = QuickI2cDev->HidBuffer;
+  QuickI2cDev->HidDataAvailable     = FALSE;
+  QuickI2cDev->HidActive            = TRUE;
+  Buffer                            = QuickI2cDev->HidBuffer;
+  QuickI2cDev->HidInputReportBuffer = NULL;
+  QuickI2cDev->HidInputReportSize   = 0;
+  QuickI2cDev->SwDmaMessageLength   = 0;
 
   ZeroMem (QuickI2cDev->HidBuffer, THC_MAX_HID_BUFFER_SIZE);
 
@@ -2143,8 +2147,8 @@ QuickI2cReadHidDescriptor (
   THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor QuickI2cSwDma: %r\n", Status)
   if (EFI_ERROR (Status)) {
     QuickI2cDev->SwDmaActive = FALSE;
-    THC_LOCAL_DEBUG(L"QuickI2cReadHidDescriptor: QuickI2c SwDma End\n")
-    return Status;
+    THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor QuickI2cSwDma: %r\n", Status) 
+    goto End;
   }
 
   Timeout = HidResponseTimeout;
@@ -2167,39 +2171,33 @@ QuickI2cReadHidDescriptor (
     if (Timeout == 0) {
       THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor Response Timeout\n")
       DEBUG ((DEBUG_ERROR, "QuickI2cReadHidDescriptor Response Timeout\n"));
-      //
-      // Even for error case need to clear out everything
-      //
-      QuickI2cCompleteSwdma (QuickI2cDev);
-
-      // Just to make sure interrupt is disabled since its init flow
-      THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor: QuickI2cDisableInterrupt\n")
-      QuickI2cDisableInterrupt (QuickI2cDev->PciBar0);
-      QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);
-      QuickI2cDev->SwDmaActive = FALSE;
-      THC_LOCAL_DEBUG(L"QuickI2cReadHidDescriptor: QuickI2c SwDma End\n")
-      return EFI_TIMEOUT;
+      
+      Status = EFI_TIMEOUT;
+      goto End;
     }
   }
-
-  QuickI2cDev->HidDataAvailable = FALSE;
-  QuickI2cDev->HidActive        = FALSE;
 
   //
   // Restore initial pointer
   //
   QuickI2cDev->HidBuffer = Buffer;
 
+  // Calculate Recieved data length and store HID report data
   //
-  // Calculate Recieved data length
-  //
-  HidMessageLength = QuickI2cDev->SwDmaMessageLength;
-
-  //
-  // Parse HID data
-  //
-  HidParseDescriptor (QuickI2cDev, QuickI2cDev->HidBuffer, HidMessageLength);
-
+  if (QuickI2cDev->SwDmaMessageLength > 0) {
+    HidMessageLength = QuickI2cDev->SwDmaMessageLength;
+    QuickI2cDev->HidInputReportBuffer = AllocateZeroPool (HidMessageLength);
+    if (QuickI2cDev->HidInputReportBuffer != NULL) {
+      CopyMem (QuickI2cDev->HidInputReportBuffer, QuickI2cDev->HidBuffer, HidMessageLength);
+      QuickI2cDev->HidInputReportSize = HidMessageLength;
+    }
+    //
+    // Parse HID data
+    //
+    HidParseDescriptor (QuickI2cDev, QuickI2cDev->HidBuffer, HidMessageLength);
+  }
+  Status = EFI_SUCCESS;
+  End:
   //
   // Complete the process
   //
@@ -2207,14 +2205,16 @@ QuickI2cReadHidDescriptor (
 
   // Just to make sure interrupt is disabled since its init flow, complete the flow
   QuickI2cDisableInterrupt (QuickI2cDev->PciBar0);
-  QuickI2cDev->SwDmaMessageLength = 0;
 
   // Reset PRD table settings
   //
   QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);
   QuickI2cDev->SwDmaActive = FALSE;
+  QuickI2cDev->SwDmaActive      = FALSE;
+  QuickI2cDev->HidDataAvailable = FALSE;
+  QuickI2cDev->HidActive        = FALSE;
   THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor SwDmaActive %r End\n", Status)
-  return EFI_SUCCESS;
+  return Status;
 }
 
 /**
@@ -2231,15 +2231,8 @@ QuickI2cTouchEnable (
   IN  QUICK_I2C_DEV   *QuickI2cDev
   )
 {
-  EFI_STATUS                      Status;
-  UINT8                           Content[3] = {0xE, 0x2, 0x0};
-  UINT8                           *WriteBuffer;
-  UINT16                          LenghtField;
-  UINT8                           TotalLength;
-  QUICK_I2C_COMMAND_REQUEST       QuickI2cCommandRequest;
-  QUICK_I2C_OUTPUT_REPORT_HEADER  OutputReportHeader;
-
-  THC_LOCAL_DEBUG (L"QuickI2cTouchEnable\n")
+  EFI_STATUS          Status;
+  HID_PACKET          HidPacket;
 
   if ((QuickI2cDev->HidSolutionFlag == ElanHidProtocol) || (QuickI2cDev->InputReportTable.TouchPad)) {
     THC_LOCAL_DEBUG (L"QuickI2cTouchEnable: Skipping it !!\n")
@@ -2247,228 +2240,30 @@ QuickI2cTouchEnable (
     return EFI_SUCCESS;
   }
 
-  SetMem (&QuickI2cCommandRequest, sizeof (QUICK_I2C_COMMAND_REQUEST), 0);
-  SetMem (&OutputReportHeader,sizeof (QUICK_I2C_OUTPUT_REPORT_HEADER), 0);
-
-  QuickI2cDev->HidActive        = TRUE;
-  TotalLength                   = 0;
-  QuickI2cDev->HidBuffer        = AllocateAlignedPages (EFI_SIZE_TO_PAGES (THC_MAX_HID_BUFFER_SIZE), sizeof (UINT8));
-  if (QuickI2cDev->HidBuffer == NULL) {
+  ZeroMem (&HidPacket, sizeof(HID_PACKET));
+  HidPacket.ReportBufferLen = QUICKI2C_TOUCH_ENABLE_COMMAND_LENGTH;
+  HidPacket.ReportBuffer = AllocateZeroPool (HidPacket.ReportBufferLen);
+  if (HidPacket.ReportBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+  HidPacket.ReportBuffer[0] = QUICKI2C_TOUCH_ENABLE_COMMAND_BYTE1;
+  HidPacket.ReportBuffer[1] = QUICKI2C_TOUCH_ENABLE_COMMAND_BYTE2;
+  HidPacket.ReportBuffer[2] = QUICKI2C_TOUCH_ENABLE_COMMAND_BYTE3;
 
-  OutputReportHeader.Fields.ReportType    = QuickI2cOutputReportSetFeature;
+  Status = QuickI2cSetFeature (QuickI2cDev, &HidPacket, QuickI2cReportTypeFeature, CycleTimeout);
 
-  // First add the command register LSB + MSB to the TXDMA buffer
-  if (QuickI2cDev->DeviceDescriptor.wCommandRegister) {
-    OutputReportHeader.Fields.CommandRegister = QuickI2cDev->DeviceDescriptor.wCommandRegister;
-  }
-
- // For optional third byte, add the data register LSB + MSB to the TXDMA buffer
-  OutputReportHeader.Fields.ContentLength = sizeof (QUICK_I2C_COMMAND_REQUEST) +
-                                            sizeof (QuickI2cDev->DeviceDescriptor.wDataRegister) +
-                                            sizeof (LenghtField) +
-                                            sizeof (Content);
-
-  WriteBuffer = AllocateZeroPool (OutputReportHeader.Fields.ContentLength);
-  if (WriteBuffer == NULL) {
-    FreeAlignedPages (QuickI2cDev->HidBuffer, EFI_SIZE_TO_PAGES (THC_MAX_HID_BUFFER_SIZE));
-    return EFI_OUT_OF_RESOURCES;
-  }
-
-  //
-  // Send command request
-  //
-  QuickI2cCommandRequest.Fields.High.Opcode     = (UINT8) QuickI2cSubIpOpcodeSet;
-  QuickI2cCommandRequest.Fields.High.Reserved   = 0b0000;
-  QuickI2cCommandRequest.Fields.Low.ReportID    = QUICK_I2C_TOUCH_ENABLE_REQUEST_REPORT_ID;
-  QuickI2cCommandRequest.Fields.Low.ReportType  = (UINT8) QuickI2cReportTypeFeature;
-  QuickI2cCommandRequest.Fields.Low.Reserved    = 0b00;
-
-  CopyMem (WriteBuffer, (VOID*)&(QuickI2cCommandRequest), sizeof (QUICK_I2C_COMMAND_REQUEST));
-  TotalLength += sizeof (QUICK_I2C_COMMAND_REQUEST);
-
-  //
-  // Add the data register LSB + MSB to the TXDMA buffer if there is a data to send
-  //
-  if (QuickI2cDev->DeviceDescriptor.wDataRegister) {
-      CopyMem (WriteBuffer + TotalLength, (VOID*)&(QuickI2cDev->DeviceDescriptor.wDataRegister), sizeof (QuickI2cDev->DeviceDescriptor.wDataRegister));
-      TotalLength += sizeof (QuickI2cDev->DeviceDescriptor.wDataRegister);
-  }
-
-  //
-  // Copy Length of data field and Content itself to TxDma write buffer
-  //
-  LenghtField = sizeof (UINT16) + sizeof (Content);
-  CopyMem (WriteBuffer + TotalLength, (VOID*)&LenghtField, sizeof (UINT16));
-  TotalLength += sizeof (UINT16);
-  CopyMem (WriteBuffer + TotalLength, (VOID*)&Content, sizeof (Content));
-
-  // No response is needed for QuickI2cOutputReportSetFeature, WriteDmaPollComplete is enough
-  Status = QuickI2cDmaWriteTx (QuickI2cDev, OutputReportHeader, WriteBuffer);
-  THC_LOCAL_DEBUG (L"QuickI2cTouchEnable QuickI2cDmaWriteTx: %r\n", Status)
-  if (EFI_ERROR (Status)) {
-    FreeAlignedPages (QuickI2cDev->HidBuffer, EFI_SIZE_TO_PAGES (THC_MAX_HID_BUFFER_SIZE));
-    DEBUG ((DEBUG_INFO, "QuickI2cTouchEnable QuickI2cDmaWriteTx: %r, might be expected\n", Status));
-  }
-  FreePool (WriteBuffer);
-  return EFI_SUCCESS;
-}
-
-/**
-  Send Power on request to SubIP
-
-  @param[in]  MmioBase         QuickI2c MMIO BAR0
-  @param[in]  PowerState       PowerState
-
-  @retval EFI_SUCCESS          No Cycles running
-  @retval EFI_TIMEOUT          Timeout
-**/
-EFI_STATUS
-QuickI2cSendSetPowerRequest (
-  IN QUICK_I2C_DEV    *QuickI2cDev,
-  IN UINT8            PowerState
-  )
-{
-  EFI_STATUS                      Status;
-  QUICK_I2C_SET_POWER_REQUEST     QuickI2cSetPowerReq;
-  QUICK_I2C_OUTPUT_REPORT_HEADER  OutputReportHeader;
-
-  THC_LOCAL_DEBUG (L"QuickI2cSendSetPowerRequest Entry() \n");
-
-  SetMem (&QuickI2cSetPowerReq, sizeof(QUICK_I2C_SET_POWER_REQUEST), 0);
-  SetMem (&OutputReportHeader,sizeof(QUICK_I2C_OUTPUT_REPORT_HEADER), 0);
-
-  //
-  // As per QuickI2c Spec only ContentLength and Command Register will be passed to THC HW PRD
-  //
-  OutputReportHeader.Fields.ReportType    = QuickI2cOutputReportCommandContent;
-  OutputReportHeader.Fields.ContentLength = sizeof (QUICK_I2C_SET_POWER_REQUEST);
-
-  //
-  // First add the command register LSB + MSB to the TXDMA buffer
-  //
-  if (QuickI2cDev->DeviceDescriptor.wCommandRegister) {
-    OutputReportHeader.Fields.CommandRegister = QuickI2cDev->DeviceDescriptor.wCommandRegister;
-  }
-
-  //
-  // First add the command register LSB+MSB to the TXDMA buffer
-  //
-  QuickI2cSetPowerReq.Fields.High.Opcode    = (UINT8) QuickI2cSubIpOpcodeSetPower;
-  QuickI2cSetPowerReq.Fields.High.Reserved  = 0b0000;
-  QuickI2cSetPowerReq.Fields.Low.PowerState = (UINT8) PowerState;
-  QuickI2cSetPowerReq.Fields.Low.Reserved   = 0b000000;
-
-  //
-  // For Power On request thier is no response expected
-  //
-  Status = QuickI2cDmaWriteTx (QuickI2cDev, OutputReportHeader, (UINT8 *) &QuickI2cSetPowerReq);
-  if (EFI_ERROR (Status)) {
-    THC_LOCAL_DEBUG (L"QuickI2cSendSetPowerRequest: QuickI2cDmaWriteTx Error Status %r\n", Status)
-    return Status;
-  }
-
-  return EFI_SUCCESS;
-}
-
-/**
-  Send Reset request to SubIP
-
-  @param[in]  MmioBase         QuickI2c MMIO BAR0
-
-  @retval EFI_SUCCESS          No Cycles running
-  @retval EFI_TIMEOUT          Timeout
-**/
-EFI_STATUS
-QuickI2cSendResetRequest (
-  IN QUICK_I2C_DEV      *QuickI2cDev
-  )
-{
-  EFI_STATUS                      Status;
-  UINT32                          Timeout;
-  QUICK_I2C_COMMAND_REQUEST       QuickI2cCommandRequest;
-  QUICK_I2C_OUTPUT_REPORT_HEADER  OutputReportHeader;
-  THC_M_PRT_INT_STATUS            ThcIntStatus;
-  RESET_RESPONSE_DATA             ResetResponseData;
-
-  THC_LOCAL_DEBUG (L"QuickI2cSendResetRequest Entry() \n");
-
-  SetMem (&QuickI2cCommandRequest, sizeof (QUICK_I2C_COMMAND_REQUEST), 0);
-  SetMem (&OutputReportHeader, sizeof (QUICK_I2C_OUTPUT_REPORT_HEADER), 0);
-  SetMem (&ResetResponseData, sizeof (RESET_RESPONSE_DATA), 0);
-
-  OutputReportHeader.Fields.ReportType    = QuickI2cOutputReportCommandContent;
-  OutputReportHeader.Fields.ContentLength = sizeof (QUICK_I2C_COMMAND_REQUEST);
-  //
-  // First add the command register LSB + MSB to the TXDMA buffer
-  //
-  if (QuickI2cDev->DeviceDescriptor.wCommandRegister) {
-    OutputReportHeader.Fields.CommandRegister = QuickI2cDev->DeviceDescriptor.wCommandRegister;
-  }
-
-  //
-  // Send Reset Request
-  //
-  QuickI2cCommandRequest.Fields.High.Opcode     = (UINT8) QuickI2cSubIpOpcodeReset;
-  QuickI2cCommandRequest.Fields.High.Reserved   = 0b0000;
-  QuickI2cCommandRequest.Fields.Low.ReportID    = QUICK_I2C_RESET_REQUEST_REPORT_ID;
-  QuickI2cCommandRequest.Fields.Low.ReportType  = (UINT8) QuickI2cReportTypeReset;
-  QuickI2cCommandRequest.Fields.Low.Reserved    = 0b00;
-
-  Timeout = WaitForResetTimeout;
-
-   // Set other registers to clear INT status
-  ThcIntStatus.Data32 = MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS);
-  ThcIntStatus.Fields.DevRawIntSts = 1;
-  MmioWrite32 ((UINTN)(QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS), ThcIntStatus.Data32);
-  THC_LOCAL_DEBUG (L"Instance %d:, Before sending reset request DEV_RAW_INT_STS = 0x%X\n", QuickI2cDev->InstanceId, MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS))
-  Status = QuickI2cDmaWriteTx (QuickI2cDev, OutputReportHeader, (UINT8 *) &QuickI2cCommandRequest);
   THC_LOCAL_DEBUG (L"QuickI2cSendResetRequest: QuickI2cDmaWriteTx Status %r\n", Status)
   if (EFI_ERROR (Status)) {
-    return Status;
+    THC_LOCAL_DEBUG (L"QuickI2cTouchEnable: QuickI2cSetFeature returned Status- %r\n", Status)
+    DEBUG ((DEBUG_ERROR, "QuickI2cTouchEnable: SetFeature failed, Status %r\n", Status));
+    // continue with the flow
   }
 
-  //
-  // Wait for Response
-  //
-  if (Timeout > 0) {
-    THC_LOCAL_DEBUG (L"QuickI2cSendResetRequest Waiting for Response DEV_RAW_INT_STS = 0x%X \n", MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS))
-    DEBUG ((DEBUG_INFO, "QuickI2cSendResetRequest Waiting for Response DEV_RAW_INT_STS = 0x%X\n", MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS)));
-    do {
-      ThcIntStatus.Data32 = MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS);
-      if (ThcIntStatus.Fields.DevRawIntSts) {
-        Status = QuickI2cLibPerformPioRead (
-                  QuickI2cDev->PciBar0,
-                  QuickI2cDev->DeviceDescriptor.wInputRegister,
-                  sizeof (RESET_RESPONSE_DATA),
-                  &ResetResponseData.Data32
-                );
-        if (!EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_INFO, "QuickI2cLibPerformPioRead: Complete, Status %r\n", Status));
-          //
-          // Clear int status bit
-          //
-          ThcIntStatus.Data32 = MmioRead32 (QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS);
-          ThcIntStatus.Fields.DevRawIntSts = 1;
-          MmioWrite32 ((UINTN)(QuickI2cDev->PciBar0 + R_THC_MEM_PRT_INT_STATUS), ThcIntStatus.Data32);
-          Status = EFI_SUCCESS;
-          break;
-        }
-      }
-      MicroSecondDelay (1000);
-      Timeout--;
-    } while (Timeout > 0);
-
-    if (Timeout == 0) {
-      // Output reponse is optional
-      THC_LOCAL_DEBUG (L"QuickI2cSendResetRequest Response Timeout might be expected\n")
-      DEBUG ((DEBUG_WARN, "QuickI2cSendResetRequest Response Timeout might be expected\n"));
-    }
+  if (HidPacket.ReportBuffer != NULL) {
+  FreePool (HidPacket.ReportBuffer);
+  DEBUG ((DEBUG_INFO, "QuickI2cTouchEnable Status %r End\n", Status));
   }
-
-
-  return EFI_SUCCESS;
+  return Status;
 }
 
 /**
@@ -2483,105 +2278,33 @@ QuickI2cSendResetRequest (
 **/
 EFI_STATUS
 QuickI2cGetFeatureViaSwDma (
-  IN  QUICK_I2C_DEV              *QuickI2cDev
+  IN  QUICK_I2C_DEV         *QuickI2cDev
   )
 {
-  EFI_STATUS          Status;
-  UINT32              Timeout;
-  UINT32              RxDlenEn;
-  UINT32              Wbc;
-  UINT32              WriteDataHeader;
-  UINT32              Data;
-  UINT8               rId = 0;
-  QUICK_I2C_COMMAND_REQUEST Quick2cGetFeatureRequest;
+  EFI_STATUS                Status;
+  HID_PACKET                HidPacket;
 
   THC_LOCAL_DEBUG (L"QuickI2cGetFeatureViaSwDma Start()\n")
 
   if (QuickI2cDev->ReportPacket.FeatureReportAvailable == FALSE) {
-    DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma: FeatureReportAvailable = %d not available \n", QuickI2cDev->ReportPacket.FeatureReportAvailable));
-    THC_LOCAL_DEBUG(L"QuickI2cGetFeatureViaSwDma: FeatureReportAvailable = %d not available \n", QuickI2cDev->ReportPacket.FeatureReportAvailable)
+    DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma: FeatureReportAvailable not available \n"));
+    THC_LOCAL_DEBUG(L"QuickI2cGetFeatureViaSwDma: FeatureReportAvailable not available \n")
     return EFI_SUCCESS;
   }
   DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma: For ReportId = 0x%x\n", QuickI2cDev->ReportPacket.ReportId));
 
-  QuickI2cDev->HidDataAvailable = FALSE;
-  QuickI2cDev->HidActive        = TRUE;
-  ZeroMem (QuickI2cDev->HidBuffer, THC_MAX_HID_BUFFER_SIZE);
-  ZeroMem (&Quick2cGetFeatureRequest, sizeof (QUICK_I2C_COMMAND_REQUEST));
+  ZeroMem ((void*)&HidPacket, sizeof(HID_PACKET));
+  HidPacket.ReportId = (UINT8) QuickI2cDev->ReportPacket.ReportId;
 
-  //
-  // Send Reset Request
-  //
-  Quick2cGetFeatureRequest.Fields.High.Opcode     = QuickI2cSubIpOpcodeGet;
-  Quick2cGetFeatureRequest.Fields.High.Reserved   = 0b0000;
-  Quick2cGetFeatureRequest.Fields.Low.ReportType  = QuickI2cReportTypeFeature;
-  Quick2cGetFeatureRequest.Fields.Low.Reserved    = 0b00;
-
-  // need to check reportID value to determine if the third optional byte is needed and also determine the write-byte-size
-  if (QuickI2cDev->ReportPacket.ReportId < QUICKI_I2C_THC_SWDMA_WRITE_BYTE_SIZE_LIMIT) {
-    Quick2cGetFeatureRequest.Fields.Low.ReportID  = (UINT8)QuickI2cDev->ReportPacket.ReportId;
-    RxDlenEn = QUICK_I2C_THC_SWDMA_I2C_RX_DLEN_EN_1;
-    Wbc = sizeof (QuickI2cDev->DeviceDescriptor.wCommandRegister) + sizeof (Quick2cGetFeatureRequest) + sizeof (QuickI2cDev->DeviceDescriptor.wDataRegister);
-    WriteDataHeader = QuickI2cDev->DeviceDescriptor.wCommandRegister | (Quick2cGetFeatureRequest.Data << 16);
-    Data = QuickI2cDev->DeviceDescriptor.wDataRegister;
-  } else {
-    Quick2cGetFeatureRequest.Fields.Low.ReportID = 0b1111;
-    rId = (UINT8)QuickI2cDev->ReportPacket.ReportId;
-    RxDlenEn = QUICK_I2C_THC_SWDMA_I2C_RX_DLEN_EN_1;
-    Wbc = sizeof (QuickI2cDev->DeviceDescriptor.wCommandRegister) + sizeof (Quick2cGetFeatureRequest) + sizeof (rId) + sizeof (QuickI2cDev->DeviceDescriptor.wDataRegister);
-    WriteDataHeader = QuickI2cDev->DeviceDescriptor.wCommandRegister | (Quick2cGetFeatureRequest.Data << 16);
-    Data = (QuickI2cDev->DeviceDescriptor.wDataRegister << 8) | rId;
-  }
-
-  THC_LOCAL_DEBUG(L"QuickI2cGetFeatureViaSwDma: RxDlenEn = %d, Wbc = %d, WriteDataHeader= 0x%x, Data= 0x%x\n", RxDlenEn, Wbc, WriteDataHeader, Data)
-  THC_LOCAL_DEBUG(L"QuickI2cGetFeatureViaSwDma: QuickI2c SwDma Active !\n")
-  QuickI2cDev->SwDmaActive = TRUE;
-  Status = QuickI2cSwDma (QuickI2cDev, &Data, RxDlenEn, Wbc, WriteDataHeader);
+  Status = QuickI2cGetFeature (QuickI2cDev, &HidPacket, QuickI2cReportTypeFeature, HidResponseTimeout);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cGetFeatureViaSwDma QuickI2cSwDma return Status: %r\n", Status));
-    // return status is optional
+    THC_LOCAL_DEBUG (L"QuickI2cGetFeatureViaSwDma: QuickI2cGetFeature Status %r\n", Status)
+    // continue
   }
 
-  Timeout = HidResponseTimeout;
-
-  //
-  // Wait for Response
-  //
-  if (Timeout > 0) {
-    DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma Waiting for Response \n"));
-    do {
-      if (QuickI2cDev->HidDataAvailable == TRUE && QuickI2cDev->ReadDone == TRUE) {
-        THC_LOCAL_DEBUG (L"QuickI2cGetFeatureViaSwDma Response received\n")
-        DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma Response received\n"));
-        Status = EFI_SUCCESS;
-        break;
-      }
-      MicroSecondDelay (1000);
-      Timeout--;
-    } while (Timeout > 0);
-
-    if (Timeout == 0) {
-      THC_LOCAL_DEBUG (L"QuickI2cGetFeatureViaSwDma Response Timeout might be optional\n")
-      DEBUG ((DEBUG_ERROR, "QuickI2cGetFeatureViaSwDma Response Timeout might be optional\n"));
-      // return status is optional
-    }
+  if (HidPacket.ReportBuffer != NULL) {
+    FreePool(HidPacket.ReportBuffer);
   }
-
-  QuickI2cDev->HidDataAvailable = FALSE;
-  QuickI2cDev->HidActive        = FALSE;
-
-  //
-  // complete the process
-  //
-  QuickI2cCompleteSwdma (QuickI2cDev);
-  QuickI2cDev->SwDmaMessageLength = 0;
-
-  // Just to make sure interrupt is disabled since its init flow
-  THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor: QuickI2cDisableInterrupt\n")
-  QuickI2cDisableInterrupt (QuickI2cDev->PciBar0);
-
-  QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);
-  QuickI2cDev->SwDmaActive = FALSE;
-  DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma SwDmaActive End\n"));
-  return EFI_SUCCESS;
+  DEBUG ((DEBUG_INFO, "QuickI2cGetFeatureViaSwDma Status %r End\n", Status));
+  return Status;
 }

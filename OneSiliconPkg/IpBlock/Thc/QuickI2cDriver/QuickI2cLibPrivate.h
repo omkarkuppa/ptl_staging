@@ -590,31 +590,3 @@ QuickI2cSwDmaProgramReadLen(
   IN  UINT32 Wbc,
   IN  UINT32 wReportDescLength
   );
-
-/**
-  Send Power request to SubIP
-
-  @param[in]  MmioBase         QuickI2c MMIO BAR0
-  @param[in]  PowerState       PowerState
-
-  @retval EFI_SUCCESS          No Cycles running
-  @retval EFI_TIMEOUT          Timeout
-**/
-EFI_STATUS
-QuickI2cSendSetPowerRequest(
-  IN  QUICK_I2C_DEV    *QuickI2cDev,
-  IN  UINT8            PowerState
-  );
-
-  /**
-  Send Reset request to SubIP
-
-  @param[in]  MmioBase         QuickI2c MMIO BAR0
-
-  @retval EFI_SUCCESS          No Cycles running
-  @retval EFI_TIMEOUT          Timeout
-**/
-EFI_STATUS
-QuickI2cSendResetRequest(
-  IN QUICK_I2C_DEV      *QuickI2cDev
-  );

@@ -41,6 +41,8 @@
   QuickI2cHid.c
   QuickI2c.c
   QuickI2cComponentName.c
+  QuickI2cThcProtocolImpl.c
+  QuickI2cThcProtocolHandler.c
 
 [LibraryClasses]
   BaseLib

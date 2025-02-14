@@ -488,6 +488,70 @@ QuickI2cGetFeatureViaSwDma (
   IN  QUICK_I2C_DEV              *QuickI2cDev
   );
 
+  /**
+  THC Hid Set Feature
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @param[in]  HidPacket        THC HID packet
+  @param[in]  ReportType       Report Type
+  @param[in]  Timeout          Timeout
+  @retval EFI_SUCCESS          Enabling completed
+  @retval EFI_NO_RESPONSE      Device did not respond to request for report descriptro
+  @retval EFI_TIMEOUT          Timeout while waiting for response from the device
+  @retval EFI_OUT_OF_RESOURCES Unable to allocate buffer for QuickI2c HID support
+**/
+EFI_STATUS
+QuickI2cSetFeature (
+  IN  QUICK_I2C_DEV              *QuickI2cDev,
+  IN  HID_PACKET                 *HidPacket,
+  IN  UINT8                      ReportType,
+  IN  UINTN                      Timeout
+  );
+
+/**
+  THC Hid Get Feature
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @param[in]  HidPacket        THC HID packet
+  @param[in]  ReportType       Report Type
+  @param[in]  Timeout          Timeout
+  @retval EFI_SUCCESS          Enabling completed
+  @retval EFI_NO_RESPONSE      Device did not respond to request for report descriptro
+  @retval EFI_TIMEOUT          Timeout while waiting for response from the device
+  @retval EFI_OUT_OF_RESOURCES Unable to allocate buffer for QuickI2c HID support
+**/
+EFI_STATUS
+QuickI2cGetFeature (
+  IN     QUICK_I2C_DEV              *QuickI2cDev,
+  IN OUT HID_PACKET                  *HidPacket,
+  IN     UINT8                       ReportType,
+  IN     UINTN                       Timeout
+  );
+
+/**
+  Send Power on request to SubIP
+  @param[in]  QuickI2cDev      QuickI2c Dev
+  @param[in]  PowerState       PowerState
+  @retval EFI_SUCCESS          No Cycles running
+  @retval EFI_TIMEOUT          Timeout
+**/
+EFI_STATUS
+QuickI2cSendSetPowerRequest (
+  IN QUICK_I2C_DEV    *QuickI2cDev,
+  IN UINT8            PowerState
+  );
+
+/**
+  Send Reset request to SubIP
+  @param[in]  QuickI2cDev      QuickI2c Dev
+  @param[in]  Timeout          Timeout
+  @retval EFI_SUCCESS          No Cycles running
+  @retval EFI_TIMEOUT          Timeout
+**/
+EFI_STATUS
+QuickI2cSendResetRequest (
+  IN QUICK_I2C_DEV      *QuickI2cDev,
+  IN UINTN              Timeout
+  );
+
 /**
   Reads data from each Read Sw DMA PRD Table Entry if write pointer is equal to read pointer
 
@@ -497,4 +561,15 @@ QuickI2cGetFeatureViaSwDma (
 VOID
 QuickI2cReadSwRxDma (
   IN QUICK_I2C_DEV          *QuickI2cDev
+  );
+
+/**
+  For serial debugger used, it will show the buffer message line by line to serial console.
+  @param[in] Message   The address point of buffer message
+  @param[in] Length    Message length
+**/
+VOID
+ShowBuffer (
+  IN  UINT8            *Message,
+  IN  UINT32           Length
   );

@@ -625,9 +625,15 @@ QuickI2cDriverBindingStart (
   //
   // HID
   //
-  QuickI2cDev->ThcProtocol.HidGetFeature          = HidGetFeature;
-  QuickI2cDev->ThcProtocol.HidSetFeature          = HidSetFeature;
-  QuickI2cDev->ThcProtocol.HidEnableAfterReset    = HidEnableAfterReset;
+  QuickI2cDev->ThcProtocol.HidGetFeature          = QuickI2cHidGetFeature;
+  QuickI2cDev->ThcProtocol.HidSetFeature          = QuickI2cHidSetFeature;
+  QuickI2cDev->ThcProtocol.HidGetInputReport      = QuickI2cHidGetInputReport;
+  QuickI2cDev->ThcProtocol.HidSetOutputReport     = QuickI2cHidSetOutputReport;
+  QuickI2cDev->ThcProtocol.HidGetDeviceDescriptor = QuickI2cHidGetDeviceDescriptor;
+  QuickI2cDev->ThcProtocol.HidPerformReset        = QuickI2cHidPerformReset;
+  QuickI2cDev->ThcProtocol.HidSetPowerState       = QuickI2cHidSetPowerState;
+  QuickI2cDev->ThcProtocol.HidEnableAfterReset    = QuickI2cHidEnableAfterReset;
+  QuickI2cDev->ThcProtocol.HidGetReportDescriptor = QuickI2cGetHidReportDescriptor;
   QuickI2cDev->HidDataAvailable                   = FALSE;
   QuickI2cDev->HidActive                          = FALSE;
   QuickI2cDev->HidBuffer                          = NULL;
