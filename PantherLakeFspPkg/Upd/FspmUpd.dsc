@@ -814,6 +814,11 @@
   # !BSF HELP:{Enable/Disable Pre EMPHASIS Training}
   gPlatformFspPkgTokenSpaceGuid.EMPHASIS                    | * | 0x01 | 0x01
 
+  # !BSF NAME:{RX DQS VOC Centring Training}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable RX DQS VOC Centring Training}
+  gPlatformFspPkgTokenSpaceGuid.RXDQSVOCC              | * | 0x01 | 0x00
+
   # !BSF NAME:{NMode}
   # !BSF TYPE:{EditNum, HEX, (0x00,0x02)}
   # !BSF HELP:{System command rate, range 0-2, 0 means auto, 1 = 1N, 2 = 2N}

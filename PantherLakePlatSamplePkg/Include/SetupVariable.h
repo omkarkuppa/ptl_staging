@@ -1553,6 +1553,7 @@ typedef struct {
   UINT8   RDCTLET;
   UINT8   RDDQODTT;
   UINT8   EMPHASIS;
+  UINT8   RXDQSVOCC;
 
   UINT8   MrcTimeMeasure;
   UINT8   MrcFastBoot;

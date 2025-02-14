@@ -313,6 +313,7 @@ DDRPRECOMP
 RDCTLET
 RDDQODTT
 EMPHASIS
+RXDQSVOCC
 MrcTimeMeasure
 MrcFastBoot
 RankInterleave
