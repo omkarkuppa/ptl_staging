@@ -901,7 +901,7 @@ GetEnabledCDieIds (
   UINTN                      NumberOfProcessors;
   EFI_PROCESSOR_INFORMATION  *ProcessorInfo;
   UINT8                      FusedCDieIds[MAX_CDIE];
-  UINT8                      TempEnalbedCDieIds[MAX_CDIE];
+  UINT8                      TempEnableddCDieIds[MAX_CDIE];
   UINTN                      NumberOfFusedCDie;
   UINTN                      Index1;
   UINTN                      Index2;
@@ -928,7 +928,7 @@ GetEnabledCDieIds (
   for (Index1 = 0; Index1 < NumberOfFusedCDie; Index1++) {
     for (Index2 = 0; Index2 < NumberOfProcessors; Index2++) {
       if (FusedCDieIds[Index1] == ProcessorInfo[Index2].ExtendedInformation.Location2.Die) {
-        TempEnalbedCDieIds[EnabledCDieIndex] = FusedCDieIds[Index1];
+        TempEnableddCDieIds[EnabledCDieIndex] = FusedCDieIds[Index1];
         EnabledCDieIndex++;
         break;
       }
@@ -949,7 +949,7 @@ GetEnabledCDieIds (
     return EFI_INVALID_PARAMETER;
   }
 
-  CopyMem (CDieIds, TempEnalbedCDieIds, sizeof(UINT8) * EnabledCDieIndex);
+  CopyMem (CDieIds, TempEnableddCDieIds, sizeof(UINT8) * EnabledCDieIndex);
 
   FreePages(ProcessorInfo, EFI_SIZE_TO_PAGES(sizeof(EFI_PROCESSOR_INFORMATION) * NumberOfProcessors));
   return EFI_SUCCESS;

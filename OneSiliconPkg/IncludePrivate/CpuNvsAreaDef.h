@@ -317,7 +317,7 @@ typedef struct {
   UINT8    MaxP1Ratio;                              ///< Offset 326     Indicate the max P1 ratio of all cores
   UINT16   BusFrequency;                            ///< Offset 327     Bus frequency
   UINT8    EnableRp;                                ///< Offset 329     Enable/Disable Resource Priority Feature
-  UINT8    ThETAIbattEnable;                        ///< Offset 330     Enalbe/Disable ThETA Ibatt Feature
+  UINT8    ThETAIbattEnable;                        ///< Offset 330     Enable/Disable ThETA Ibatt Feature
   UINT8    IsysLimitL1Enable;                       ///< Offset 331     Enable/Disable Isys Limit L1 Feature
   UINT8    IsysLimitL2Enable;                       ///< Offset 332     Enable/Disable Isys Limit L2 Feature
 } CPU_NVS_AREA;

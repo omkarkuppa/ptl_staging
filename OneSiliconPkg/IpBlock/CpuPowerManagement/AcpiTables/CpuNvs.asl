@@ -322,7 +322,7 @@
   MXP1, 8,  // Offset(326),   Indicate the max P1 ratio of all cores
   BSFQ, 16, // Offset(327),   Bus frequency
   RPEF, 8,  // Offset(329),   Enable/Disable Resource Priority Feature
-  ISEN, 8,  // Offset(330),   Enalbe/Disable ThETA Ibatt Feature
+  ISEN, 8,  // Offset(330),   Enable/Disable ThETA Ibatt Feature
   LL1E, 8,  // Offset(331),   Enable/Disable Isys Limit L1 Feature
   LL2E, 8,  // Offset(332),   Enable/Disable Isys Limit L2 Feature
   }
