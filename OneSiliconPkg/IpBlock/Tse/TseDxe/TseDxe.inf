@@ -40,6 +40,7 @@
   PciLib
   PciSegmentLib
   MemoryAllocationLib
+  PeiHostBridgeIpStatusLib
   TseInfoLib
 
 [Packages]

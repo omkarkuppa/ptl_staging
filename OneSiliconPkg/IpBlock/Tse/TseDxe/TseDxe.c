@@ -33,7 +33,6 @@
 #include <Library/IoLib.h>
 #include <Library/PciLib.h>
 #include <Library/PciSegmentLib.h>
-#include <Library/HostBridgeInfoLib.h>
 #include <Library/PeiHostBridgeIpStatusLib.h>
 #include <Library/TseDataHob.h>
 #include <Library/TseInfoLib.h>
