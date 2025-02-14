@@ -814,7 +814,7 @@ CreatePolicyDataMeasurementEvent (
         CopyMem (
         AcmPolicyDataPtr,
         CurrPos,
-        BpmSigSize);
+        FbmSigSize);
       }
 
     } else {
