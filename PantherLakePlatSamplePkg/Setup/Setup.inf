@@ -196,6 +196,7 @@
   AmtPetInitFeaturePkg/AmtPetInitFeaturePkg.dec
   MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
   VtioFeaturePkg/VtioFeaturePkg.dec
+  XmlCliFeaturePkg/XmlCliFeaturePkg.dec
 
 [LibraryClasses]
   UefiDriverEntryPoint
@@ -389,6 +390,9 @@
   # ME Config
   #
   gAmtPetInitFeaturePkgTokenSpaceGuid.PcdAmtPetInitFeatureEnable        ## CONSUMES
+
+[FeaturePcd]
+  gXmlCliFeaturePkgTokenSpaceGuid.PcdXmlCliFeatureEnable
 
 [FixedPcd]
   gBoardModuleTokenSpaceGuid.PcdUplEnable                               ## CONSUMES
