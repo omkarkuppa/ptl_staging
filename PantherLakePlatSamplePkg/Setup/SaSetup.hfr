@@ -3678,13 +3678,6 @@ endform;
         option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
       endoneof;
 
-      oneof   varid   = SA_SETUP.SolFeatureEnabled,
-        prompt  = STRING_TOKEN(STR_PEI_SOL_DISPLAY),
-        help    = STRING_TOKEN(STR_PEI_SOL_DISPLAY_HELP),
-        option text = STRING_TOKEN (STR_ENABLED_STRING), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN (STR_DISABLED_STRING), value = 0, flags = RESET_REQUIRED;
-      endoneof;
-
       suppressif ideqval SETUP_VOLATILE_DATA.PlatformFlavor == FlavorUpServer;
         oneof varid  = SA_SETUP.PanelPowerEnable,
           prompt   = STRING_TOKEN (STR_PANEL_POWER),

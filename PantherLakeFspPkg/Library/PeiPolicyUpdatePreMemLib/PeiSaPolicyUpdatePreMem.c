@@ -576,10 +576,6 @@ FspUpdatePeiSaPolicyPreMem (
     IGpuPreMemConfig->PanelPowerEnable = FspmUpd->FspmConfig.PanelPowerEnable;
     IGpuPreMemConfig->OemT12DelayOverride = FspmUpd->FspmConfig.OemT12DelayOverride;
     IGpuPreMemConfig->MemoryBandwidthCompression = FspmUpd->FspmConfig.MemoryBandwidthCompression;
-    IGpuPreMemConfig->VbtPtr = (VOID *) (UINTN) FspmUpd->FspmConfig.VbtPtr;
-    IGpuPreMemConfig->VgaInitControl = FspmUpd->FspmConfig.VgaInitControl;
-    IGpuPreMemConfig->VgaMessage = (VOID *) (UINTN) FspmUpd->FspmConfig.VgaMessage;
-
     //
     // Display DDI Initialization
     //

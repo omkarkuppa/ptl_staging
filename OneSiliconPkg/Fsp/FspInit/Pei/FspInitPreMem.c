@@ -40,7 +40,6 @@
 #include <Library/CpuPlatformLib.h>
 #include <Library/PlatformFspMultiPhaseLib.h>
 #include <Library/PcdLib.h>
-#include <Ppi/IGpuPlatformPolicyPpi.h>
 
 extern EFI_GUID gFspSiliconFvGuid;
 extern EFI_GUID gFspPerformanceDataGuid;
@@ -88,63 +87,6 @@ FspResetSystem (
     FspApiReturnStatusReset (FSP_STATUS_RESET_REQUIRED_WARM);
   return EFI_SUCCESS;
 }
-
-EFI_STATUS
-EFIAPI
-GetVbtData (
-  OUT EFI_PHYSICAL_ADDRESS *VbtAddress,
-  OUT UINT32               *VbtSize
-  )
-{
-  FSPM_UPD                *FspmUpdDataPtr;
-
-  FspmUpdDataPtr = (FSPM_UPD *) GetFspMemoryInitUpdDataPointer ();
-
-  if (FspmUpdDataPtr == NULL) {
-    DEBUG ((DEBUG_ERROR, "FSPM UPD not found\n"));
-    return EFI_NOT_FOUND;
-  }
-
-  *VbtAddress = FspmUpdDataPtr->FspmConfig.VbtPtr;
-  *VbtSize    = FspmUpdDataPtr->FspmConfig.VbtSize;
-  DEBUG ((DEBUG_INFO, "VbtAddress is 0x%x\n", *VbtAddress));
-  DEBUG ((DEBUG_INFO, "Vbt Size is 0x%x\n", *VbtSize));
-
-  return EFI_SUCCESS;
-}
-
-EFI_STATUS
-EFIAPI
-GetPeiPlatformLidStatus (
-  OUT LID_STATUS  *CurrentLidStatus
-  )
-{
-  FSPM_UPD                *FspmUpdDataPtr;
-
-  FspmUpdDataPtr = (FSPM_UPD *) GetFspMemoryInitUpdDataPointer ();
-
-  if (FspmUpdDataPtr == NULL) {
-    DEBUG ((DEBUG_ERROR, "FSPM UPD not found\n"));
-    return EFI_NOT_FOUND;
-  }
-
-  *CurrentLidStatus = FspmUpdDataPtr->FspmConfig.LidStatus;
-  DEBUG ((DEBUG_INFO, "LidStatus 0x%x\n", FspmUpdDataPtr->FspmConfig.LidStatus));
-
-  return EFI_SUCCESS;
-}
-
-PEI_IGPU_PLATFORM_POLICY_PPI mPeiGraphicsPreMemPlatform = {
-  PEI_IGPU_PLATFORM_POLICY_REVISION,
-  GetPeiPlatformLidStatus,
-  GetVbtData
-};
-
-EFI_PEI_PPI_DESCRIPTOR  mPeiGfxPreMemPpiDescriptor = {
-  (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
-  &gPeiGraphicsPlatformPreMemPpiGuid,
-  &mPeiGraphicsPreMemPlatform
-};
 
 
 /**
@@ -706,12 +648,6 @@ FspInitPreMemEntryPoint (
     // Install FSP-M Arch Config PPI
     //
     Status = PeiServicesInstallPpi (FspmArchConfigPpiDesc);
-    ASSERT_EFI_ERROR (Status);
-
-    //
-    // For FSP API mode, Install PEI_GRAPHICS_PLATFORM_POLICY_PPI.
-    //
-    Status = PeiServicesInstallPpi (&mPeiGfxPreMemPpiDescriptor);
     ASSERT_EFI_ERROR (Status);
 
     //

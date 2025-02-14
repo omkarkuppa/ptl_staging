@@ -42,14 +42,6 @@ SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x000F7000      #
 SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0005E000      #
 SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x00012000      #
 #=============================================================================#
-!if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
-#=============================================================================#
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x00009000      #
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x000FB000      #
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0005C000      #
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x00011000      #
-#=============================================================================#
-!endif
 !if gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable == TRUE
 #=============================================================================#
 DEFINE FLASH_SIZE       = 0x00128000     # The flash size in bytes of the FSP #
@@ -289,14 +281,6 @@ INF $(SILICON_FSP_PATH)/FspInit/Pei/FspVInit/FspMVInit.inf
 INF $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPcdPpiInitPei.inf
 
 !include $(PLATFORM_SI_PACKAGE)/IpBlock/Me/Heci/HeciDriverPei.fdf
-
-!if gSiPkgTokenSpaceGuid.PcdPeiDisplayEnable == TRUE
-FILE PEIM = 4baed146-b579-4959-8150-f93f1c7a0b68 {
-  SECTION Align = Auto PE32 = PantherLakeBinPkg/Binaries/Gop/PreMem/IntelGraphicsPreMemPeim.efi
-  SECTION PEI_DEPEX_EXP = {gPcdPpiGuid}
-  SECTION UI = "IntelGraphicsPreMemPeim"
-}
-!endif  #PcdPeiDisplayEnable
 
 #
 # SiInit will produce a PPI for installing default policy PPI, so it has to be

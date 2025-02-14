@@ -351,7 +351,7 @@ PeiMemoryMapInit (
   //
   // This function is to set IGPU Memory map.
   //
-  MemorySubSystemCallback.SetIGpuMemMap (SiPreMemPolicyPpi);
+  MemorySubSystemCallback.SetIGpuMemMap ();
 
   //
   // Program IMR and IMR_1M

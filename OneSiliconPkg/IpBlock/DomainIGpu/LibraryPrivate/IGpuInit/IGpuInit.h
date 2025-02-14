@@ -27,7 +27,6 @@
 #include <Library/HobLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <IGpuConfig.h>
-#include <Library/FspPerformanceLib.h>
 
 /**
   Initialize GT of IGPU.

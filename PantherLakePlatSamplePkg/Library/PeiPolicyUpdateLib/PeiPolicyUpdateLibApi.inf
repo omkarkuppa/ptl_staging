@@ -150,7 +150,6 @@
   gPlatformModuleTokenSpaceGuid.PcdVmdCfgBarBase     ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdVmdMemBar1Base    ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdVmdMemBar2Base    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid ## CONSUMES
 
   gPlatformModuleTokenSpaceGuid.PcdApicLocalAddress    ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdNvmeHcPeiMmioBase   ## CONSUMES

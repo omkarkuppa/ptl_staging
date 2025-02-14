@@ -1701,9 +1701,6 @@
 #string STR_PEI_DISPLAY                         #language en-US "Intel Graphics Pei Display Peim"
 #string STR_PEI_DISPLAY_HELP                    #language en-US "Enable/Disable Pei (Early) Display"
 
-#string STR_PEI_SOL_DISPLAY                     #language en-US "Intel Graphics PreMem SOL"
-#string STR_PEI_SOL_DISPLAY_HELP                #language en-US "Enable/Disable PreMem SOL Message"
-
 #string STR_CONFIGURE_GT                        #language en-US "Configure GT for use"
 #string STR_CONFIGURE_GT_HELP                   #language en-US "Enable/Disable GT configuration in BIOS"
 

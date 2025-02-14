@@ -1729,6 +1729,11 @@
 
   ## PCH_WDT_PREMEM_CONFIG End
 
+  # !BSF NAME:{Intel Graphics VBT (Video BIOS Table) Size}
+  # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
+  # !BSF HELP:{Size of Internal Graphics VBT Image}
+  gPlatformFspPkgTokenSpaceGuid.VbtSize                     | * | 0x04 | 0x00000000
+
   # !BSF NAME:{HECI Timeouts} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{0: Disable, 1: Enable (Default) timeout check for HECI}
   gPlatformFspPkgTokenSpaceGuid.HeciTimeouts                | * | 0x01 | 0x01
@@ -3090,31 +3095,6 @@
   # !BSF OPTION:{0:2GB, 1:4GB, 2:6GB, 3:8GB, 4:10GB, 5:12GB, 6:14GB, 7:16GB, 8:18GB, 9:20GB, 10:22GB, 11:24GB, 12:26GB, 13:28GB, 14:30GB, 15:32GB, 0xFF:No Allocation}
   # !BSF HELP:{Size of memory preallocated for internal graphics GSM2.}
   gPlatformFspPkgTokenSpaceGuid.IGpuGsm2Size                | * | 0x01 | 0xFF
-
-  # !BSF NAME:{Intel Graphics VBT (Video BIOS Table) Size}
-  # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Size of Internal Graphics VBT Image}
-  gPlatformFspPkgTokenSpaceGuid.VbtSize                     | * | 0x04 | 0x00000000
-
-  # !BSF NAME:{Graphics Configuration Ptr}
-  # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Points to VBT}
-  gPlatformFspPkgTokenSpaceGuid.VbtPtr                      | * | 0x08 | 0x00000000
-
-  # !BSF NAME:{SOL Training Message Pointer}
-  # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Points to SOL Message String}
-  gPlatformFspPkgTokenSpaceGuid.VgaMessage                  | * | 0x08 | 0x00000000
-
-  # !BSF NAME:{Platform LID Status for LFP Displays.} TYPE:{Combo}
-  # !BSF OPTION:{0: LidClosed, 1: LidOpen}
-  # !BSF HELP:{LFP Display Lid Status (LID_STATUS enum): 0 (Default): LidClosed, 1: LidOpen.}
-  gPlatformFspPkgTokenSpaceGuid.LidStatus                   | * | 0x01 | 0x0
-
-  # !BSF NAME:{Control SOL VGA Initialition sequence} TYPE:{Combo}
-  # !BSF OPTION:{0x0: NO SOL VGA Init, 0x1: SOL VGA Init}
-  # !BSF HELP:{Initialise SOL Init}
-  gPlatformFspPkgTokenSpaceGuid.VgaInitControl              | * | 0x01 | 0x1
 
   ## GRAPHICS_PEI_PREMEM_CONFIG End
 

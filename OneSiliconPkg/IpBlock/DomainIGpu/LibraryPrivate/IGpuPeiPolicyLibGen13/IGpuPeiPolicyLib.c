@@ -32,10 +32,10 @@
 **/
 VOID
 IGpuLoadPeiPreMemDefault (
-  IN VOID  *ConfigBlockPointer
+  IN VOID    *ConfigBlockPointer
   )
 {
-  IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig;
+  IGPU_PEI_PREMEM_CONFIG                         *IGpuPreMemConfig;
 
   IGpuPreMemConfig = ConfigBlockPointer;
   DEBUG ((DEBUG_INFO, "IGpuPreMemConfig->Header.GuidHob.Name = %g\n", &IGpuPreMemConfig->Header.GuidHob.Name));
@@ -44,12 +44,12 @@ IGpuLoadPeiPreMemDefault (
   ///
   /// Initialize IGPU Pre-Mem policies
   ///
-  IGpuPreMemConfig->LMemBar                    = 0xB0000000;
-  IGpuPreMemConfig->GttMmAdr                   = 0xAF000000;
-  IGpuPreMemConfig->IgdDvmt50PreAlloc          = 2;
-  IGpuPreMemConfig->InternalGraphics           = 2;
-  IGpuPreMemConfig->PanelPowerEnable           = 1;
-  IGpuPreMemConfig->IGpuGsm2Size               = 0xFF; // 0xFF no allocation
+  IGpuPreMemConfig->LMemBar             = 0xB0000000;
+  IGpuPreMemConfig->GttMmAdr            = 0xAF000000;
+  IGpuPreMemConfig->IgdDvmt50PreAlloc   = 2;
+  IGpuPreMemConfig->InternalGraphics    = 2;
+  IGpuPreMemConfig->PanelPowerEnable    = 1;
+  IGpuPreMemConfig->IGpuGsm2Size        = 0xFF; // 0xFF no allocation
   IGpuPreMemConfig->MemoryBandwidthCompression = 1;
 
   //
@@ -57,20 +57,20 @@ IGpuLoadPeiPreMemDefault (
   //
   IGpuPreMemConfig->DdiConfiguration.DdiPortAConfig = DdiPortEdp;
   IGpuPreMemConfig->DdiConfiguration.DdiPortBConfig = DdiPortDisabled;
-  IGpuPreMemConfig->DdiConfiguration.DdiPortAHpd    = DdiHpdDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPortBHpd    = DdiHpdEnable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPortCHpd    = DdiHpdDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPort1Hpd    = DdiHpdDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPort2Hpd    = DdiHpdDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPort3Hpd    = DdiHpdDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPort4Hpd    = DdiHpdDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPortADdc    = DdiDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPortBDdc    = DdiDdcEnable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPortCDdc    = DdiDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPort1Ddc    = DdiDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPort2Ddc    = DdiDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPort3Ddc    = DdiDisable;
-  IGpuPreMemConfig->DdiConfiguration.DdiPort4Ddc    = DdiDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPortAHpd = DdiHpdDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPortBHpd = DdiHpdEnable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPortCHpd = DdiHpdDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPort1Hpd = DdiHpdDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPort2Hpd = DdiHpdDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPort3Hpd = DdiHpdDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPort4Hpd = DdiHpdDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPortADdc = DdiDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPortBDdc = DdiDdcEnable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPortCDdc = DdiDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPort1Ddc = DdiDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPort2Ddc = DdiDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPort3Ddc = DdiDisable;
+  IGpuPreMemConfig->DdiConfiguration.DdiPort4Ddc = DdiDisable;
 }
 
 /**
@@ -80,10 +80,10 @@ IGpuLoadPeiPreMemDefault (
 **/
 VOID
 IGpuLoadPeiDefault (
-  IN VOID  *ConfigBlockPointer
+  IN VOID    *ConfigBlockPointer
   )
 {
-  IGPU_PEI_CONFIG  *IGpuConfig;
+  IGPU_PEI_CONFIG     *IGpuConfig;
 
   IGpuConfig = ConfigBlockPointer;
   DEBUG ((DEBUG_INFO, "IGpuConfig Name = %g\n", &IGpuConfig->Header.GuidHob.Name));
@@ -92,12 +92,12 @@ IGpuLoadPeiDefault (
   //
   // Initialize the Graphics configuration
   //
-  IGpuConfig->RenderStandby                        = 1;
-  IGpuConfig->PavpEnable                           = 1;
-  IGpuConfig->PeiGtConfig.ConfigureGT              = 1;
-  IGpuConfig->PeiMediaConfig.ConfigureMedia        = 1;
+  IGpuConfig->RenderStandby       = 1;
+  IGpuConfig->PavpEnable          = 1;
+  IGpuConfig->PeiGtConfig.ConfigureGT         = 1;
+  IGpuConfig->PeiMediaConfig.ConfigureMedia      = 1;
   IGpuConfig->PeiDisplayConfig.BltBufferAddress    = NULL;
-  IGpuConfig->MediaStandby                         = 1;
+  IGpuConfig->MediaStandby  = 1;
   IGpuConfig->PeiDisplayConfig.PeiGraphicsPeimInit = 1;
 }
 
@@ -148,11 +148,10 @@ IGpuGetConfigBlockTotalSizePreMem  (
 EFI_STATUS
 EFIAPI
 IGpuAddConfigBlocksPreMem  (
-  IN VOID  *ConfigBlockTableAddress
+  IN VOID           *ConfigBlockTableAddress
   )
 {
   EFI_STATUS  Status;
-
   Status = AddComponentConfigBlocks (ConfigBlockTableAddress, &mGraphicsIpBlocksPreMem, 1);
   return Status;
 }
@@ -168,14 +167,14 @@ IGpuAddConfigBlocksPreMem  (
 EFI_STATUS
 EFIAPI
 IGpuAddConfigBlocks (
-  IN VOID  *ConfigBlockTableAddress
+  IN VOID           *ConfigBlockTableAddress
   )
 {
   EFI_STATUS  Status;
-
   Status = AddComponentConfigBlocks (ConfigBlockTableAddress, &mGraphicsIpBlocks, 1);
   return Status;
 }
+
 
 /**
   This function prints the PEI phase Graphics PreMem policy.
@@ -185,17 +184,17 @@ IGpuAddConfigBlocks (
 VOID
 EFIAPI
 IGpuPrintPolicyPpiPreMem (
-  IN  SI_PREMEM_POLICY_PPI  *SiPolicyPreMemPpi
+  IN  SI_PREMEM_POLICY_PPI *SiPolicyPreMemPpi
   )
 {
   DEBUG_CODE_BEGIN ();
-  EFI_STATUS              Status;
-  IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig;
+  EFI_STATUS                            Status;
+  IGPU_PEI_PREMEM_CONFIG                *IGpuPreMemConfig;
 
   //
   // Get requisite IP Config Blocks which needs to be used here
   //
-  Status = GetConfigBlock ((VOID *)SiPolicyPreMemPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *)&IGpuPreMemConfig);
+  Status = GetConfigBlock ((VOID *)SiPolicyPreMemPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((DEBUG_INFO, "IGPU_PEI_PREMEM_CONFIG Print START\n"));
@@ -226,9 +225,6 @@ IGpuPrintPolicyPpiPreMem (
   DEBUG ((DEBUG_INFO, " DeltaT12PowerCycleDelay : 0x%x\n", IGpuPreMemConfig->DeltaT12PowerCycleDelay));
   DEBUG ((DEBUG_INFO, " MemoryBandwidthCompression : 0x%x\n", IGpuPreMemConfig->MemoryBandwidthCompression));
   DEBUG ((DEBUG_INFO, " OemT12DelayOverride : 0x%x\n", IGpuPreMemConfig->OemT12DelayOverride));
-  DEBUG ((DEBUG_INFO, " VgaInitControl : 0x%x\n", IGpuPreMemConfig->VgaInitControl));
-  DEBUG ((DEBUG_INFO, " GraphicsConfigPtr : 0x%x\n", IGpuPreMemConfig->VbtPtr));
-  DEBUG ((DEBUG_INFO, " VgaMessage : 0x%x\n", IGpuPreMemConfig->VgaMessage));
   DEBUG ((DEBUG_INFO, "IGPU_PEI_PREMEM_CONFIG Print END\n"));
   DEBUG_CODE_END ();
   return;
@@ -242,17 +238,17 @@ IGpuPrintPolicyPpiPreMem (
 VOID
 EFIAPI
 IGpuPrintPolicyPpi (
-  IN  SI_POLICY_PPI  *SiPolicyPpi
+  IN  SI_POLICY_PPI     *SiPolicyPpi
   )
 {
   DEBUG_CODE_BEGIN ();
-  EFI_STATUS       Status;
-  IGPU_PEI_CONFIG  *IGpuConfig;
+  EFI_STATUS        Status;
+  IGPU_PEI_CONFIG   *IGpuConfig;
 
   //
   // Get requisite IP Config Blocks which needs to be used here
   //
-  Status = GetConfigBlock ((VOID *)SiPolicyPpi, &gGraphicsPeiConfigGuid, (VOID *)&IGpuConfig);
+  Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gGraphicsPeiConfigGuid, (VOID *) &IGpuConfig);
   ASSERT_EFI_ERROR (Status);
 
   DEBUG ((DEBUG_INFO, "IGPU_PEI_CONFIG Print START\n"));
