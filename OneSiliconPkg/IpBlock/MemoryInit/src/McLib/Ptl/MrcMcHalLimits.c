@@ -449,11 +449,6 @@ MrcGetMcTimingGroupLimits (
       Max = MC0_CH0_CR_TC_RETRAINING_OSCL_WR_OSCL_RUNTIME_MAX;
       break;
 
-    case GsmMctRdOsclRuntime:
-      Min = MC0_CH0_CR_TC_RETRAINING_OSCL_RD_OSCL_RUNTIME_MIN;
-      Max = MC0_CH0_CR_TC_RETRAINING_OSCL_RD_OSCL_RUNTIME_MAX;
-      break;
-
     case GsmMcttMRR:
       Min = MC0_CH0_CR_TC_MR_tMRR_MIN;
       Max = MC0_CH0_CR_TC_MR_tMRR_MAX;
@@ -692,7 +687,6 @@ MrcGetMcConfigGroupLimits (
       break;
 
     case GsmMccMinRefRate:
-    case GsmMccMaxRefRate:
       Min = MC0_CH0_CR_PM_CONFIG_THERM_STATUS_MIN_REF_RATE_MIN;
       Max = MC0_CH0_CR_PM_CONFIG_THERM_STATUS_MIN_REF_RATE_MAX;
       break;
@@ -798,12 +792,6 @@ MrcGetMcConfigGroupLimits (
       Max = MC0_CH0_CR_SC_ODT_MATRIX_Read_Rank_0_MAX;
       break;
 
-    case GsmMccPtrSepOspid:
-    case GsmMccPtrSepIspid:
-      Min = MC0_CH0_CR_MC2PHY_BGF_CTRL_PtrSep_ospid_MIN;
-      Max = MC0_CH0_CR_MC2PHY_BGF_CTRL_PtrSep_ospid_MAX;
-      break;
-
     case GsmMccWrtThreshold:
       Min = MC0_CH0_CR_PM_PDWN_CONFIG_write_threshold_MIN;
       Max = MC0_CH0_CR_PM_PDWN_CONFIG_write_threshold_MAX;
@@ -852,11 +840,6 @@ MrcGetMcConfigGroupLimits (
     case GsmMccVc1IsocLatencyGuardTimerx8:
       Min = MC0_CH0_CR_SC_PR_CNT_CONFIG_VC1_latency_guard_timer_x8_MIN;
       Max = MC0_CH0_CR_SC_PR_CNT_CONFIG_VC1_latency_guard_timer_x8_MAX;
-      break;
-
-    case GsmMccLpMode4En:
-      Min = MC0_PM_OPP_SR_POLICY_0_LPMode4_EN_MIN;
-      Max = MC0_PM_OPP_SR_POLICY_0_LPMode4_EN_MAX;
       break;
 
     case GsmMccCmiSourceId0:
@@ -918,12 +901,9 @@ MrcGetMcConfigGroupLimits (
     case GsmMccGearMode:
     case GsmMccMultiCycCmd:
     case GsmMccCpgcInOrder:
-    case GsmMccIgnoreCke:
-    case GsmMccMaskCs:
     case GsmMccBlockXarb:
     case GsmMccBlockCke:
     case GsmMccEnableOdtMatrix:
-    case GsmMccCmdTriStateDisTrain:
     case GsmMccCmdTriStateDis:
     case GsmMccEnhancedInterleave:
     case GsmMccEnableRefresh:
@@ -939,11 +919,7 @@ MrcGetMcConfigGroupLimits (
     case GsmMccRrdValidSign:
     case GsmMccLpddrCurrentFsp:
     case GsmMccLpddrCurrentFspTrk:
-    case GsmMccMainDisClkGate:
-    case GsmMccMainDisRegClkGate:
-    case GsmMccDisGlbDrvClkGate:
     case GsmMccDisIosfSbClkGate:
-    case GsmMccCmdBgfAlwaysOn:
     case GsmMccCkDisTristate:
     case GsmMccAllowOppRefBelowWrtThreshold:
     case GsmMccDisCkett:
@@ -959,9 +935,6 @@ MrcGetMcConfigGroupLimits (
     case GsmMccSchedDisClkGateLocal:
     case GsmMccDisAsyncOdt:
     case GsmMccDisStarvedPriorityOnNewReq:
-    case GsmMccDisWdbClkGate:
-    case GsmMccDisMntClkGate:
-    case GsmMccDisSchedsClkGate:
     case GsmMccDisableSplitAct:
     case GsmMccHashEnabled:
     case GsmMccEcDis:

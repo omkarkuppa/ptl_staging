@@ -147,7 +147,6 @@ MrcGetMcTimingRegOffset (
 
     case GsmMcttOSCO:
     case GsmMctWrOsclRuntime:
-    case GsmMctRdOsclRuntime:
       if (Channel < MaxChannel) {
         Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_TC_RETRAINING_OSCL_REG, MC1_CH0_CR_TC_RETRAINING_OSCL_REG, Controller, MC0_CH1_CR_TC_RETRAINING_OSCL_REG, Channel);
       }
@@ -459,8 +458,6 @@ MrcGetMcConfigRegOffset (
   IpChannel = LP_IP_CH (IsLpddr, Channel);
 
   switch (Group) {
-    case GsmMccMaskCs:
-    case GsmMccIgnoreCke:
     case GsmMccBlockXarb:
     case GsmMccBlockCke:
       if (Channel < MaxChannel) {
@@ -676,7 +673,6 @@ MrcGetMcConfigRegOffset (
       Offset = OFFSET_CALC_CH (MC0_MAD_CHANNEL_HASH_REG, MC1_MAD_CHANNEL_HASH_REG, Controller);
       break;
 
-    case GsmMccCmdBgfAlwaysOn:
     case GsmMccCkDisTristate:
     case GsmMccDisStarvedPriorityOnNewReq:
     case GsmMccDisAsyncOdt:
@@ -722,7 +718,6 @@ MrcGetMcConfigRegOffset (
       break;
 
     case GsmMccMinRefRate:
-    case GsmMccMaxRefRate:
     case GsmMccMR4Period:
       if (Channel < MaxChannel) {
         Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_PM_CONFIG_THERM_STATUS_REG, MC1_CH0_CR_PM_CONFIG_THERM_STATUS_REG, Controller, MC0_CH1_CR_PM_CONFIG_THERM_STATUS_REG, Channel);
@@ -803,20 +798,9 @@ MrcGetMcConfigRegOffset (
       }
       break;
 
-    case GsmMccMainDisClkGate:
-    case GsmMccMainDisRegClkGate:
-    case GsmMccDisGlbDrvClkGate:
     case GsmMccDisIosfSbClkGate:
       Offset = OFFSET_CALC_CH (MC0_MCDECS_CBIT_REG, MC1_MCDECS_CBIT_REG, Controller);
       VolatileMask->Data = MC0_MCDECS_CBIT_VOLATILE_BITFIELDS_MSK;
-      break;
-
-    case GsmMccPtrSepOspid:
-    case GsmMccPtrSepIspid:
-      if (Channel < MaxChannel) {
-        Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_MC2PHY_BGF_CTRL_REG, MC1_CH0_CR_MC2PHY_BGF_CTRL_REG, Controller, MC0_CH1_CR_MC2PHY_BGF_CTRL_REG, Channel);
-      }
-      VolatileMask->Data = MC0_CH0_CR_MC2PHY_BGF_CTRL_VOLATILE_BITFIELDS_MSK;
       break;
 
     case GsmMccAllowOppRefBelowWrtThreshold:
@@ -865,9 +849,6 @@ MrcGetMcConfigRegOffset (
       }
       break;
 
-    case GsmMccDisSchedsClkGate:
-    case GsmMccDisMntClkGate:
-    case GsmMccDisWdbClkGate:
     case GsmMccDisableSplitAct:
     case GsmMccMcCbRowPressDisAutoPre:
       if (Channel < MaxChannel) {
@@ -892,10 +873,6 @@ MrcGetMcConfigRegOffset (
         Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SPID_LOW_POWER_CTL_REG, MC1_CH0_CR_SPID_LOW_POWER_CTL_REG, Controller, MC0_CH1_CR_SPID_LOW_POWER_CTL_REG, Channel);
       }
       VolatileMask->Data = MC0_CH0_CR_SPID_LOW_POWER_CTL_VOLATILE_BITFIELDS_MSK;
-      break;
-
-    case GsmMccLpMode4En:
-      Offset = OFFSET_CALC_CH (MC0_PM_OPP_SR_POLICY_0_REG, MC1_PM_OPP_SR_POLICY_0_REG, Controller);
       break;
 
     case GsmMccCmiSourceId0:

@@ -274,3 +274,38 @@ SenseAmpOffsetSetVocAverage (
   MrcGetSetBit (MrcData, Controller, Channel, Rank, Byte, Bit, RxVocFall, WriteToCache, &VocAverage);
   // CR Cache will be flushed by caller
 }
+
+/**
+  This function enables or disables the rxdqs delay comp.
+
+  @param[in, out] MrcData          - Include all MRC global data.
+  @param[in]      RxDqsDelayCompEn - Enable or disable rxdqs delay comp.
+
+**/
+VOID
+RxDqsDelayCompEnable (
+  IN MrcParameters* const MrcData,
+  IN BOOLEAN              RxDqsDelayCompEn
+  )
+{
+  UINT32    Offset;
+  UINT8     Part;
+
+  DDRDATA_SHARED0_CR_DDRCRCOMPDQSDELAYCONTROL_STRUCT CompDqsDelayControl;
+
+  for (Part = 0; Part < MRC_DATA_SHARED_NUM; Part++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Part, MRC_IGNORE_ARG))) {
+      continue;
+    }
+    Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRCOMPDQSDELAYCONTROL_REG, DDRDATA_SHARED1_CR_DDRCRCOMPDQSDELAYCONTROL_REG, Part);
+    CompDqsDelayControl.Data = MrcReadCR (MrcData, Offset);
+    if (RxDqsDelayCompEn) {
+      CompDqsDelayControl.Bits.Override = 0;
+    } else {
+      CompDqsDelayControl.Bits.Override = 1;
+    }
+    MrcWriteCR (MrcData, Offset, CompDqsDelayControl.Data);
+  }
+
+  return;
+}

@@ -56,90 +56,32 @@ static MrcGetSetControl MrcGetSetLoopControl[] = {
 ///
 const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "RecEnDelay",
-  "RxDqsDelay",
-  "RxDqDelay",
   "RxDqsPDelay",
   "RxDqsNDelay",
   "RxVref",
-  "RxVrefDQS",
   "RxDqVref",
-  "RxDbiVref",
   "RxDqVrefByte",
-  "RxDqVrefBit",
-  "RxEq",
-  "RxDqBitDelay",
   "RxVocRise",
-  "RxVocRiseDbi",
-  "RxOdt",
-  "RxOdtUp",
-  "RxOdtDn",
-  "DramDrvStr",
   "McOdtDelay",
   "McOdtDuration",
   "SenseAmpDelay",
   "SenseAmpDuration",
   "RoundTripDelay",
   "RxDqsBitDelay",
-  "RxDbiDelay",
-  "RxDqDqsDelay",
-  "WrLvlDelay",
   "TxDqsDelay",
   "TxDqDelay",
-  "CtlDrvVrefUp",
-  "CtlDrvVrefDn",
-  "TxVref",
   "TxDqBitDelay",
-  "TxDbiDelay",
-  "TxRon",
   "TxRonUp",
   "TxRonDn",
-  "TxImode",
-  "WrOdt",
-  "NomOdt",
-  "ParkOdt",
-  "TxDqTco",
-  "TxXtalk",
-  "RxCtleR",
-  "RxCtleC",
-  "RxCtleEn",
-  "RxDqsPBitDelay",
-  "RxDqsNBitDelay",
-  "CmdAll",
-  "CmdGrp0",
-  "CmdGrp1",
-  "CmdGrp2",
-  "CtlAll",
-  "CtlGrp0",
-  "CtlGrp1",
-  "CtlGrp2",
-  "CtlGrp3",
-  "CtlGrp4",
-  "CtlGrp5",
-  "CmdCtlAll",
-  "CkAll",
-  "AlertVref",
-  "CmdRon",
   "CmdGrpPi",
   "CtlGrpPi",
-  "ClkGrpPi",
-  "TxCycleDelay",
-  "EridDelay",
-  "EridVref",
-  "ErrorVref",
-  "ReqVref",
   "RecEnOffset",
   "RxDqsOffset",
   "RxVrefOffset",
   "TxDqsOffset",
   "TxDqOffset",
   "RxDqsBitOffset",
-  "DqsTxEq",
-  "DqTxEq",
   "WckGrpPi",
-  "DqsOdtDelay",
-  "DqsOdtDuration",
-  "RxBiasCtl",
-  "RxDqsAmpOffset",
   "TxRankMuxDelay",
   "TxRankMuxDelayDq",
   "TxRankMuxDelayDqs",
@@ -152,22 +94,11 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "RxR2RRxPi",
   "RxR2RRcvEn",
   "RxRankMuxDelay",
-  "RxIoTclDelay",
-  "RoundTripIoComp",
-  "RxFifoRdEnFlybyDelay",
-  "RxFifoRdEnTclDelay",
   "TxDqFifoWrEnTcwlDelay",
   "TxDqFifoRdEnTcwlDelay",
-  "TxDqsTcoPFallNRise",
-  "TxDqsTcoPRiseNFall",
-  "TxDqsTcoCode",
   "DefDrvEnLow",
-  "CmdTxEq",
-  "CtlTxEq",
-  "GsmIntCkOn",
   "GsmIocDllWeakLock",
   "GsmIocTxDllWeakLock",
-  "RxVrefVddqDecap",
   "RxVocFall",
   "WrRetrainDeltaPiCode",
   "RdRetrainDeltaPiCode",
@@ -187,29 +118,18 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
                                 ///< -----------------------------------------------------------------
   "GsmIocIoReset",
   "GsmIocDccClkGateDisable",
-  "GsmIocNoDqInterleave",
-  "GsmIocScramDdr5Mode",
-  "GsmIocScramGearMode",
   "GsmTrainWCkEn",
   "GsmTrainWCkPulse",
   "GsmTrainWCkBL",
-  "GsmtWckHalfRate",
   "GsmTrainWCkMask",
   "GsmWCkDiffLowInIdle",
-  "GsmIocCccPiEn",
-  "GsmIocCccPiEnOverride",
-  "GsmIocDisClkGate",
   "GsmIocDisDataIdlClkGate",
   "GsmIocScramLp5Mode",
-  "GsmIocLp5Wck2CkRatio",
   "GsmIocChNotPop",
   "GsmIocDfiCmdDecoderEn",
   "GsmIocDisIosfSbClkGate",
-  "GsmIocEccEn",
-  "GsmIocWrite0En",
   "GsmIocScramEn",
   "GsmIocWrRetrainOvrd",
-  "GsmIocRdRetrainOvrd",
   "GsmIocDdr52NMode",
   "GsmDdrReset",
   "GsmIocDdr5CkdMode",
@@ -228,11 +148,9 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmIocDqsOvrdToggle",
   "GsmIocRankOverrideEn",
   "GsmIocRankOverrideVal",
-  "GsmIocDataDisableTxDqs",
   "GsmIocDataDqsOdtParkMode",
   "GsmIocDataInvertNibble",
   "GsmIocEnableLpMode4",
-  "GsmIocLpCtrlEn",
   "GsmIocWrEnViewDrv",
   "GsmDataDccRankEn",
   "GsmDataDccLaneEn",
@@ -242,7 +160,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmCompVccDdqTarget",
   "GsmInitCompleteOvrd",
   "GsmInitCompleteOvrdVal",
-  "GsmIocVccClkFFCRWait",
   "GsmPChannelEn",
   "GsmSkipRestoreCR",
   "GsmSkipRetentionCR",
@@ -488,7 +405,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMcttOSCO",
   "GsmMcttPREMRR",
   "GsmMctWrOsclRuntime",
-  "GsmMctRdOsclRuntime",
   "GsmMcttMRR",
   "GsmMcttCSLCK",
   "GsmMcttWckStop",
@@ -508,7 +424,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccDramType",
   "GsmMccCmdStretch",
   "GsmMccAddrMirror",
-  "GsmMccCmdTriStateDisTrain",
   "GsmMccCmdTriStateDis",
   "GsmMccFreqPoint",
   "GsmMccEnableOdtMatrix",
@@ -542,8 +457,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccForceSreWithFreqChange",
   "GsmMccEnableDclk",
   "GsmMccPureSrx",
-  "GsmMccIgnoreCke",
-  "GsmMccMaskCs",
   "GsmMccCpgcInOrder",
   "GsmMccBlockXarb",
   "GsmMccBlockCke",
@@ -565,7 +478,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccCsOverride1",
   "GsmMccCsOverrideVal1",
   "GsmMccMinRefRate",
-  "GsmMccMaxRefRate",
   "GsmMccMR4Period",
   "GsmMccLpddrCurrentFsp",
   "GsmMccLpddrCurrentFspTrk",
@@ -626,17 +538,9 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccSchedDisClkGateLocal",
   "GsmMccDisAsyncOdt",
   "GsmMccDisStarvedPriorityOnNewReq",
-  "GsmMccMainDisClkGate",
-  "GsmMccMainDisRegClkGate",
-  "GsmMccDisGlbDrvClkGate",
   "GsmMccDisIosfSbClkGate",
-  "GsmMccPtrSepOspid",
-  "GsmMccPtrSepIspid",
-  "GsmMccCmdBgfAlwaysOn",
   "GsmMccCkDisTristate",
   "GsmMccPageIdleTimerDisable",
-  "GsmMccDisSchedsClkGate",
-  "GsmMccDisMntClkGate",
   "GsmMccDisableSplitAct",
   "GsmMccAllowOppRefBelowWrtThreshold",
   "GsmMccWrtThreshold",
@@ -647,8 +551,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccTTIdleCounter",
   "GsmMccAPD",
   "GsmMccPPD",
-  "GsmMccDisWdbClkGate",
-  "GsmMccLpMode4En",
   "GsmMccCmiSourceId0",
   "GsmMccCmiSourceId1",
   "GsmMccCmiSourceId2",
@@ -705,10 +607,6 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmCkdQckDrive",
   "GsmCkdQckSlewRate",
   "GsmCkdQckOutputDelay",
-  "GsmCkdErrorParityCheck",
-  "GsmCkdErrorPacketCheck",
-  "GsmCkdClearParityErrSts",
-  "GsmCkdClearPacketErrSts",
   "EndOfCkdMarker",
   "GsmComplexRcvEn",
   "GsmComplexRxBias",
@@ -1390,11 +1288,6 @@ MrcGetSetParamMaxAdjust (
       *LaneMax   = GetPartitionMax (Index, UlxUlt);
       break;
 
-//Register allows but usage isnt targeting these higher bits currently
-    case GsmIocCccPiEn:
-      *LaneMax = MAX_CCC_LANE;
-      break;
-
     default:
       //Everything else is considered as part of Data set
       *LaneMax = MAX_BITS;
@@ -1880,18 +1773,12 @@ MrcCheckGroupSupported (
     case RxVref:
     case RxDqVref:
     case RxVocRise:
-    case RxVocRiseDbi:
     case RxDqsBitDelay:
     case RxDqsBitOffset:
     case RxRankMuxDelay:
     case TxDqsDelay:
     case TxDqDelay:
-    case DqsTxEq:
-    case DqTxEq:
     case DefDrvEnLow:
-    case CmdTxEq:
-    case CtlTxEq:
-    case RxVrefVddqDecap:
     case TxRankMuxDelay:
     case TxR2RDqsEq:
     case TxR2RDqEq:
@@ -1902,7 +1789,6 @@ MrcCheckGroupSupported (
     case RxR2RRxPi:
     case RxR2RRcvEn:
     case TxDqBitDelay:
-    case TxDqsTcoCode:
     case RecEnOffset:
     case RxDqsOffset:
     case RxVrefOffset:
@@ -1914,43 +1800,24 @@ MrcCheckGroupSupported (
     case RxCompDqsDelayN:
     case RxCompDqsOffset:
     case RoundTripDelay:
-    case RxIoTclDelay:
-    case RxFifoRdEnFlybyDelay:
-    case RxFifoRdEnTclDelay:
     case TxDqFifoWrEnTcwlDelay:
     case TxDqFifoRdEnTcwlDelay:
     case SenseAmpDelay:
     case SenseAmpDuration:
     case McOdtDelay:
     case McOdtDuration:
-    case DqsOdtDelay:
-    case DqsOdtDuration:
-    case RxDqsAmpOffset:
     case CmdGrpPi:
     case CtlGrpPi:
-    case ClkGrpPi:
     case WckGrpPi:
     case TxRonUp:
     case TxRonDn:
-    case TxDqTco:
-    case TxDqsTcoPFallNRise:
-    case TxDqsTcoPRiseNFall:
-    case GsmIocCccPiEn:
-    case GsmIocCccPiEnOverride:
-    case RxEq:
-    case RxCtleR:
-    case RxCtleC:
-    case RxCtleEn:
-    case RxBiasCtl:
     case GsmIocEnableLpMode4:
-    case GsmIocLpCtrlEn:
     case GsmIocDqsMaskPulseCnt:
     case GsmIocDqsPulseCnt:
     case GsmIocDqOverrideData:
     case GsmIocDqOverrideEn:
     case GsmIocRankOverrideEn:
     case GsmIocRankOverrideVal:
-    case GsmIocDataDisableTxDqs:
     case GsmIocDisableTxDqs:
     case GsmIocForceRxAmpOn:
     case GsmIocForceOdtOn:
@@ -1959,11 +1826,7 @@ MrcCheckGroupSupported (
     case GsmIocDataDqsOdtParkMode:
     case GsmIocIoReset:
     case GsmIocDccClkGateDisable:
-    case GsmIocNoDqInterleave:
-    case GsmIocScramDdr5Mode:
-    case GsmIocScramGearMode:
     case GsmIocScramLp5Mode:
-    case GsmIocLp5Wck2CkRatio:
     case GsmIocChNotPop:
     case GsmIocDfiCmdDecoderEn:
     case GsmIocDisIosfSbClkGate:
@@ -1979,7 +1842,6 @@ MrcCheckGroupSupported (
     case GsmCompCtrlPeriodicComp:
     case GsmTrainWCkPulse:
     case GsmTrainWCkBL:
-    case GsmtWckHalfRate:
     case GsmTrainWCkMask:
     case GsmWCkDiffLowInIdle:
     case GsmCompCtrlDVFSComp:
@@ -1998,7 +1860,6 @@ MrcCheckGroupSupported (
     case GsmCompVccDdqTarget:
     case GsmInitCompleteOvrd:
     case GsmInitCompleteOvrdVal:
-    case GsmIocVccClkFFCRWait:
     case GsmPChannelEn:
     case GsmSkipRestoreCR:
     case GsmSkipRetentionCR:
@@ -2087,24 +1948,15 @@ MrcCheckGroupSupported (
     case GsmMccForceSreWithFreqChange:
     case GsmMccEnableDclk:
     case GsmMccPureSrx:
-    case GsmMccIgnoreCke:
-    case GsmMccMaskCs:
     case GsmMccCpgcInOrder:
     case GsmMccBlockXarb:
     case GsmMccDramType:
     case GsmMccCmdStretch:
     case GsmMccAddrMirror:
-    case GsmMccCmdTriStateDisTrain:
     case GsmMccCmdTriStateDis:
     case GsmMccFreqPoint: // This aliases with ddr_probless_low_frequency.
     case GsmMccEnableOdtMatrix:
-    case GsmMccMainDisClkGate:
-    case GsmMccMainDisRegClkGate:
-    case GsmMccDisGlbDrvClkGate:
     case GsmMccDisIosfSbClkGate:
-    case GsmMccPtrSepOspid:
-    case GsmMccPtrSepIspid:
-    case GsmMccCmdBgfAlwaysOn:
     case GsmMccCkDisTristate:
     case GsmMccAllowOppRefBelowWrtThreshold:
     case GsmMccWrtThreshold:
@@ -2135,7 +1987,6 @@ MrcCheckGroupSupported (
     case GsmMcttOSCO:
     case GsmMcttPREMRR:
     case GsmMctWrOsclRuntime:
-    case GsmMctRdOsclRuntime:
     case GsmMcttMRR:
     case GsmMcttCSLCK:
     case GsmMcttWckStop:
@@ -2154,7 +2005,6 @@ MrcCheckGroupSupported (
     case GsmMccCkeOverride:
     case GsmMccCkeOn:
     case GsmMccMinRefRate:
-    case GsmMccMaxRefRate:
     case GsmMccMR4Period:
     case GsmMccLpddrCurrentFsp:
     case GsmMccLpddrCurrentFspTrk:
@@ -2216,11 +2066,7 @@ MrcCheckGroupSupported (
     case GsmMccDisAsyncOdt:
     case GsmMccDisStarvedPriorityOnNewReq:
     case GsmMccAPD:
-    case GsmMccDisWdbClkGate:
-    case GsmMccDisMntClkGate:
-    case GsmMccDisSchedsClkGate:
     case GsmMccDisableSplitAct:
-    case GsmMccLpMode4En:
     case GsmMccCmiSourceId0:
     case GsmMccCmiSourceId1:
     case GsmMccCmiSourceId2:
@@ -2266,7 +2112,6 @@ MrcCheckGroupSupported (
     case GsmPmaBiosMailboxReserved:
     case GsmMccWCKDiffLowInIdle:
     case GsmMctREFSbRd:
-    case GsmIocEccEn:
     case GsmDdrReset:
     case GsmMccCsOverride0:
     case GsmMccCsOverrideVal0:
@@ -2275,10 +2120,8 @@ MrcCheckGroupSupported (
     case GsmMccBlockCke:
     case GsmMctSR:
     case GsmMctXSRDs:
-    case GsmIocWrite0En:
     case GsmIocScramEn:
     case GsmIocWrRetrainOvrd:
-    case GsmIocRdRetrainOvrd:
     case GsmIocDdr52NMode:
     case GsmIocCs2NReset:
     case GsmMccRefreshRankMask:
@@ -2294,10 +2137,6 @@ MrcCheckGroupSupported (
     case GsmCkdQckDrive:
     case GsmCkdQckSlewRate:
     case GsmCkdQckOutputDelay:
-    case GsmCkdErrorParityCheck:
-    case GsmCkdErrorPacketCheck:
-    case GsmCkdClearParityErrSts:
-    case GsmCkdClearPacketErrSts:
     case GsmIocCsGearDownEnable:
     case GsmIocCsGearDownForce:
     case GsmIocCsGearDownSrDramTrack:
@@ -2355,7 +2194,6 @@ MrcCheckComplexOrSideEffect (
       case RecEnOffset:
       case TxDqsDelay:
       case TxDqDelay:
-      case ClkGrpPi:
       case TxDqsOffset:
       case TxDqOffset:
         RetVal = TRUE;
@@ -2427,15 +2265,9 @@ MrcGetSetUpdatePhyChannels (
   MaxChannel = Outputs->MaxChannels;
 
   switch (Group) {
-    // MCMISCS_READCFGCHx_REG
-    case RxIoTclDelay:
-    case RxFifoRdEnTclDelay:
       // MCMISCS_WRITECFGCHx_REG
     case TxDqFifoWrEnTcwlDelay:
     case TxDqFifoRdEnTcwlDelay:
-      // MCMISCS_READCFGCHxy_REG
-      // MCMISCS_RXDQFIFORDENCHxy_REG
-    case RxFifoRdEnFlybyDelay:
       switch (Outputs->DdrType) {
         case MRC_DDR_TYPE_DDR5:
           for (SideEffectLoop = 0; SideEffectLoop < sizeof(Ddr5SideEffect); SideEffectLoop++) {
@@ -2664,8 +2496,7 @@ IsClkGrp (
 {
   BOOLEAN IsInputClkGrp;
 
-  if ((Group == ClkGrpPi) ||
-      (Group == GsmClkDccRankEn)) {
+  if ((Group == GsmClkDccRankEn)) {
     IsInputClkGrp = TRUE;
   } else {
     IsInputClkGrp = FALSE;
@@ -2692,8 +2523,7 @@ IsPerBitGrp (
       (Group == RxDqsBitDelay) ||
       (Group == RxDqsBitOffset) ||
       (Group == RxDqVref) ||
-      (Group == RxVocRise) ||
-      (Group == TxDqTco)) {
+      (Group == RxVocRise)) {
     IsInputPerBit = TRUE;
   } else {
     IsInputPerBit = FALSE;
@@ -2749,18 +2579,10 @@ MrcTranslateSystemToIp (
   TransLane       = *Lane;
 
   switch (Group) {
-    // MCMISCS_READCFGCHx_REG
-    case RxIoTclDelay:
-    case RxFifoRdEnTclDelay:
     // MCMISCS_WRITECFGCHx_REG
     case TxDqFifoWrEnTcwlDelay:
     case TxDqFifoRdEnTcwlDelay:
-    // MCMISCS_READCFGCHxy_REG
-    // MCMISCS_RXDQFIFORDENCHxy_REG
-    case RxFifoRdEnFlybyDelay:
     // CCC_CR_xxx_REG
-    case GsmIocCccPiEn:
-    case GsmIocCccPiEnOverride:
       TransController = MRC_IGNORE_ARG;
       TransChannel = (*Controller * MAX_CHANNEL);
       TransChannel += (*Channel * (MAX_CHANNEL / Outputs->MaxChannels));
@@ -2768,8 +2590,6 @@ MrcTranslateSystemToIp (
 
     // CCCSHARED
     case DefDrvEnLow:
-    case CmdTxEq:
-    case CtlTxEq:
       TransController = MRC_IGNORE_ARG;
       TransChannel = (*Controller * MAX_CHANNEL_SHARE_REGS);
       TransChannel += (*Channel * MAX_CHANNEL_SHARE_REGS / Outputs->MaxChannels);
@@ -2778,7 +2598,6 @@ MrcTranslateSystemToIp (
     // CCC_CR_DCCFSMCONTROL
     case GsmClkDccRankEn:
     // CCC_CR_DDRCRCCCPIxxx_REG
-    case ClkGrpPi:
     case CmdGrpPi:
       TransController = MRC_IGNORE_ARG;
       TransChannel = (*Controller * MAX_CHANNEL);
@@ -2829,15 +2648,11 @@ MrcTranslateSystemToIp (
     case GsmIocDataDqsOdtParkMode:
     case GsmIocRankOverrideEn:
     case GsmIocRankOverrideVal:
-    case GsmIocDataDisableTxDqs:
     case GsmIocDisableTxDqs:
     case RxDqsBitDelay:
     case RxDqsBitOffset:
     case TxDqBitDelay:
-    case TxDqsTcoCode:
     case RxVocRise:
-    case RxVocRiseDbi:
-    case RxDqsAmpOffset:
     case RxVref:
     case RxDqVref:
     case RecEnDelay:
@@ -2847,8 +2662,6 @@ MrcTranslateSystemToIp (
     case SenseAmpDuration:
     case McOdtDelay:
     case McOdtDuration:
-    case DqsOdtDelay:
-    case DqsOdtDuration:
     case RxRankMuxDelay:
     case TxRankMuxDelay:
     case TxR2RDqsEq:
@@ -2859,8 +2672,6 @@ MrcTranslateSystemToIp (
     case RxR2RDqOff:
     case RxR2RRxPi:
     case RxR2RRcvEn:
-    case DqsTxEq:
-    case DqTxEq:
     case TxDqsDelay:
     case TxDqDelay:
     case RecEnOffset:
@@ -2873,15 +2684,6 @@ MrcTranslateSystemToIp (
     case RxCompDqsDelayP:
     case RxCompDqsDelayN:
     case RxCompDqsOffset:
-    case TxDqTco:
-    case TxDqsTcoPFallNRise:
-    case TxDqsTcoPRiseNFall:
-    case RxEq:
-    case RxCtleR:
-    case RxCtleC:
-    case RxCtleEn:
-    case RxVrefVddqDecap:
-    case RxBiasCtl:
     case GsmDataDccRankEn:
     case GsmIocRetrainSwizzleCtlRetrainEn:
     case GsmIocRetrainSwizzleCtlSerialMrr:
@@ -2975,10 +2777,6 @@ MrcTranslateSystemToIp (
 
     case GsmCkdPllMode:
     case GsmCkdIctInputClkTerm:
-    case GsmCkdErrorParityCheck:
-    case GsmCkdErrorPacketCheck:
-    case GsmCkdClearParityErrSts:
-    case GsmCkdClearPacketErrSts:
       // Belongs to CKD group, only do translation for DIMM#
       TransController = MRC_IGNORE_ARG;
       TransChannel = MRC_IGNORE_ARG;
@@ -3058,10 +2856,6 @@ MrcGetCkdGroupLimits (
   switch (Group) {
     case GsmCkdQckClkDisable:
     case GsmCkdQckOutputDelayEnable:
-    case GsmCkdClearParityErrSts:
-    case GsmCkdClearPacketErrSts:
-    case GsmCkdErrorParityCheck:
-    case GsmCkdErrorPacketCheck:
       Min = 0;
       Max = 1;
       break;
@@ -3342,22 +3136,6 @@ MrcGetCkdHash (
 
     case GsmCkdQckOutputDelay:
       HashPtr->Data = CKD_QCK0_OUTPUT_DELAY_RANGE_QckOutputDelay_HSH;
-      break;
-
-    case GsmCkdErrorParityCheck:
-      HashPtr->Data = CKD_I2C_I3C_ERROR_STATUS_ErrorParityChk_HSH;
-      break;
-
-    case GsmCkdErrorPacketCheck:
-      HashPtr->Data = CKD_I2C_I3C_ERROR_STATUS_ErrorPacketErrChk_HSH;
-      break;
-
-    case GsmCkdClearParityErrSts:
-      HashPtr->Data = CKD_I2C_I3C_CLEAR_ERROR_STATUS_ClearParityErrStatus_HSH;
-      break;
-
-    case GsmCkdClearPacketErrSts:
-      HashPtr->Data = CKD_I2C_I3C_CLEAR_ERROR_STATUS_ClearPacketErrStatus_HSH;
       break;
 
     default:

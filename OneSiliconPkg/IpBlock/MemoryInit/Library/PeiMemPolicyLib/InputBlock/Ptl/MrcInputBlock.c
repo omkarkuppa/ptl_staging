@@ -152,7 +152,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_SimicsReservedBit      (0)  // BIT31
 
 // TrainingEnables3
-#define MRC_EXT_INPUTS_INIT_VAL_RXDQSDCC               (0)  // BIT0
+#define MRC_EXT_INPUTS_INIT_VAL_RXDQSDCC               (1)  // BIT0
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMNTODT              (0)  // BIT1
 #define MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit2          (0)  // BIT2
 #define MRC_EXT_INPUTS_INIT_VAL_RXVREFPERBIT           (0)  // BIT3
@@ -260,7 +260,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_SafeModeOverride                (0xFF)
 #define MRC_EXT_INPUTS_INIT_VAL_DdrSafeMode                     (MRC_BIT2) // DDR_SAFE_DCC
 
-#define MRC_EXT_INPUTS_INIT_VAL_McSafeMode                      (0)
+#define MRC_EXT_INPUTS_INIT_VAL_McSafeMode                      (0x02)
 #define MRC_EXT_INPUTS_INIT_VAL_LpMode                          (MRC_LPMODE_ALL)
 #define MRC_EXT_INPUTS_INIT_VAL_LpMode4                         (MrcLpMode4_Enable)
 #define MRC_EXT_INPUTS_INIT_VAL_PprTestType                     (0x6)

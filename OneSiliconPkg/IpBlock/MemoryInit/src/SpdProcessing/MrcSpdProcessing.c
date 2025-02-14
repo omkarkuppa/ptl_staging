@@ -5155,7 +5155,11 @@ GetChannelDimmtRTP (
                 if (DimmOut->DdrType == MRC_DDR_TYPE_DDR5) {
                   Calculated = GetDdr5tRTP (tCKmin);
                 } else {
-                  Calculated = DIVIDECEIL ((7500000 - (tCKmin / 100)), tCKmin); // 7.5ns
+                  if (Outputs->IsDvfscEnabled) {
+                    Calculated = DIVIDECEIL ((8500000 - (tCKmin / 100)), tCKmin); // 8.5ns
+                  } else {
+                    Calculated = DIVIDECEIL ((7500000 - (tCKmin / 100)), tCKmin); // 7.5ns
+                  }
                   if (DimmOut->DdrType == MRC_DDR_TYPE_LPDDR5) {
                     if (Calculated > 2) {
                       Calculated -= 2;

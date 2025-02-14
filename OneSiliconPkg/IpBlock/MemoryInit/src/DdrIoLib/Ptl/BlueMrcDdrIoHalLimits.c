@@ -86,29 +86,8 @@ MrcGetDdrIoGroupLimits (
       break;
 
     case RxVocRise:
-    case RxVocRiseDbi:
       Min = DATA0CH0_CR_DDRDATADQRANK0LANE0_RxDQVrefOffsetR_MIN;
       Max = DATA0CH0_CR_DDRDATADQRANK0LANE0_RxDQVrefOffsetR_MAX;
-      break;
-
-    case RxEq:
-      Min = DATA0CH0_CR_DDRCRRXCTLE_CtleEq_MIN;
-      Max = DATA0CH0_CR_DDRCRRXCTLE_CtleEq_MAX;
-      break;
-
-    case RxCtleR:
-      Min = DATA0CH0_CR_DDRCRRXCTLE_CtleRes_MIN;
-      Max = DATA0CH0_CR_DDRCRRXCTLE_CtleRes_MAX;
-      break;
-
-    case RxCtleC:
-      Min = DATA0CH0_CR_DDRCRRXCTLE_CtleCap_MIN;
-      Max = DATA0CH0_CR_DDRCRRXCTLE_CtleCap_MAX;
-      break;
-
-    case RxCtleEn:
-      Min = DATA0CH0_CR_DDRCRRXCTLE_CtleEn_MIN;
-      Max = DATA0CH0_CR_DDRCRRXCTLE_CtleEn_MAX;
       break;
 
     case RxDqsBitDelay:
@@ -136,44 +115,9 @@ MrcGetDdrIoGroupLimits (
       Max = DATA0CH0_CR_TXCONTROL0RANK0_TxDqDelay_MAX;
       break;
 
-    case DqsTxEq:
-      Min = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqstx_eqdlycomp_MIN;
-      Max = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqstx_eqdlycomp_MAX;
-      break;
-
-    case DqTxEq:
-      Min = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqtx_eqdelaycomp_MIN;
-      Max = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqtx_eqdelaycomp_MAX;
-      break;
-
     case DefDrvEnLow:
       Min = DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_DefDrvEnLow_MIN;
       Max = DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_DefDrvEnLow_MAX;
-      break;
-
-    case CmdTxEq:
-      Min = DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_CaTxEq_MIN;
-      Max = DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_CaTxEq_MAX;
-      break;
-
-    case CtlTxEq:
-      Min = DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_CtlTxEq_MIN;
-      Max = DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_CtlTxEq_MAX;
-      break;
-
-    case RxVrefVddqDecap:
-      Min = DATA0CH0_CR_DDRCRDATACONTROL2_RxVrefVddqProgMFC_MIN;
-      Max = DATA0CH0_CR_DDRCRDATACONTROL2_RxVrefVddqProgMFC_MAX;
-      break;
-
-    case RxBiasCtl:
-      Min = DATA0CH0_CR_DDRCRDATACONTROL5_BiasIrefAdj_MIN;
-      Max = DATA0CH0_CR_DDRCRDATACONTROL5_BiasIrefAdj_MAX;
-      break;
-
-    case GsmIocLpCtrlEn:
-      Min = DDRMISCS_CR_DDRPHY_DFI_LPCTRL0_lp_ctrl_en_MIN;
-      Max = DDRMISCS_CR_DDRPHY_DFI_LPCTRL0_lp_ctrl_en_MAX;
       break;
 
     case TxRankMuxDelay:
@@ -224,11 +168,6 @@ MrcGetDdrIoGroupLimits (
     case TxDqBitDelay:
       Min = DATA0CH0_CR_DDRDATADQRANK0LANE0_TxDQPerBitDeskew_MIN;
       Max = DATA0CH0_CR_DDRDATADQRANK0LANE0_TxDQPerBitDeskew_MAX;
-      break;
-
-    case TxDqsTcoCode:
-      Min = DATA0CH0_CR_DDRDATADQSRANK0_DqsTcoCode_MIN;
-      Max = DATA0CH0_CR_DDRDATADQSRANK0_DqsTcoCode_MAX;
       break;
 
     case RecEnOffset:
@@ -290,21 +229,6 @@ MrcGetDdrIoGroupLimits (
       Max = MC0_CH0_CR_SC_ROUNDTRIP_LATENCY_Rank_0_latency_MAX;
       break;
 
-    case RxIoTclDelay:
-      Min = MCMISCS_READCFGCH0_tCL4RcvEn_MIN;
-      Max = MCMISCS_READCFGCH0_tCL4RcvEn_MAX;
-      break;
-
-    case RxFifoRdEnFlybyDelay:
-      Min = MCMISCS_RXDQFIFORDENCH01_RxDqFifoRdEnRank0ChADel_MIN;
-      Max = MCMISCS_RXDQFIFORDENCH01_RxDqFifoRdEnRank0ChADel_MAX;
-      break;
-
-    case RxFifoRdEnTclDelay:
-      Min = MCMISCS_READCFGCH0_tCL4RxDqFifoRdEn_MIN;
-      Max = MCMISCS_READCFGCH0_tCL4RxDqFifoRdEn_MAX;
-      break;
-
     case TxDqFifoWrEnTcwlDelay:
       Min = MCMISCS_WRITECFGCH0_tcwl4txdqfifowren_MIN;
       Max = MCMISCS_WRITECFGCH0_tcwl4txdqfifowren_MAX;
@@ -335,29 +259,9 @@ MrcGetDdrIoGroupLimits (
       Max = DATA0CH0_CR_DDRCRDATACONTROL1_DqOdtDuration_MAX;
       break;
 
-    case DqsOdtDelay:
-      Min = DATA0CH0_CR_DDRCRDATACONTROL1_DqsOdtDelay_MIN;
-      Max = DATA0CH0_CR_DDRCRDATACONTROL1_DqsOdtDelay_MAX;
-      break;
-
-    case DqsOdtDuration:
-      Min = DATA0CH0_CR_DDRCRDATACONTROL1_DqsOdtDuration_MIN;
-      Max = DATA0CH0_CR_DDRCRDATACONTROL1_DqsOdtDuration_MAX;
-      break;
-
-    case RxDqsAmpOffset:
-      Min = DATA0CH0_CR_DDRDATADQSRANK0_RxDQSVrefOffset_MIN;
-      Max = DATA0CH0_CR_DDRDATADQSRANK0_RxDQSVrefOffset_MAX;
-      break;
-
     case CmdGrpPi:
       Min = CH0CCC_CR_DDRCRCCCPICODES_CAPICode_MIN;
       Max = CH0CCC_CR_DDRCRCCCPICODES_CAPICode_MAX;
-      break;
-
-    case ClkGrpPi:
-      Min = CH0CCC_CR_DDRCRCCCPICODES_CLKPICode_MIN;
-      Max = CH0CCC_CR_DDRCRCCCPICODES_CLKPICode_MAX;
       break;
 
     case CtlGrpPi:
@@ -378,16 +282,6 @@ MrcGetDdrIoGroupLimits (
     case TxRonDn:
       Min = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_RcompDrvDown_MIN;
       Max = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_RcompDrvDown_MAX;
-      break;
-
-    case TxDqTco:
-      Min = DATA0CH0_CR_DDRCRDATATCOCONTROL0_DqTcoCompBit0_MIN;
-      Max = DATA0CH0_CR_DDRCRDATATCOCONTROL0_DqTcoCompBit0_MAX;
-      break;
-
-    case TxDqsTcoPFallNRise:
-      Min = DATA0CH0_CR_DDRDATADQSRANK0_DqsPfNrTcoDelay_MIN;
-      Max = DATA0CH0_CR_DDRDATADQSRANK0_DqsPfNrTcoDelay_MAX;
       break;
 
     default:
@@ -459,11 +353,6 @@ MrcGetDdrIoCfgGroupLimits (
       Max = MCMISCS_DDRWCKCONTROL_TrainWCkMask_MAX;
       break;
 
-    case GsmtWckHalfRate:
-      Min = MCMISCS_DDRWCKCONTROL_tWckHalfRate_MIN;
-      Max = MCMISCS_DDRWCKCONTROL_tWckHalfRate_MAX;
-      break;
-
     case GsmIocChNotPop:
       Min = DDRSCRAM_CR_DDRMISCCONTROL0_Channel_Not_Populated_MIN;
       Max = DDRSCRAM_CR_DDRMISCCONTROL0_Channel_Not_Populated_MAX;
@@ -499,7 +388,7 @@ MrcGetDdrIoCfgGroupLimits (
       Max = DATA0CH0_CR_DDRCRDATACONTROL0_EnDqsOdtParkMode_MAX;
       break;
 
-     case GsmIocDataInvertNibble:
+    case GsmIocDataInvertNibble:
       Min = DATA0CH0_CR_DDRCRDATACONTROL5_DataInvertNibble_MIN;
       Max = DATA0CH0_CR_DDRCRDATACONTROL5_DataInvertNibble_MAX;
       break;
@@ -599,7 +488,6 @@ MrcGetDdrIoCfgGroupLimits (
     case GsmIocCsGearDownForce:
     case GsmIocCsGearDownSrDramTrack:
     case GsmIocDfiCmdDecoderEn:
-    case GsmIocVccClkFFCRWait:
     case GsmSaxgEnable:
     case GsmSaxgReady:
     case GsmSaxgPwrGood:
@@ -607,29 +495,18 @@ MrcGetDdrIoCfgGroupLimits (
     case GsmSkipRestoreCR:
     case GsmSkipRetentionCR:
     case GsmMiscPmMessageRunBusy:
-    case GsmIocCccPiEn:
     case GsmWorkPointGear4:
     case GsmIocDisableTxDqs:
-    case GsmIocDataDisableTxDqs:
-    case GsmIocCccPiEnOverride:
     case GsmIocIoReset:
     case GsmIocDccClkGateDisable:
     case GsmIocScramLp5Mode:
-    case GsmIocLp5Wck2CkRatio:
-    case GsmIocScramDdr5Mode:
-    case GsmIocScramGearMode:
     case GsmIocDisDataIdlClkGate:
-    case GsmIocDisClkGate:
     case GsmIocDisIosfSbClkGate:
-    case GsmIocEccEn:
-    case GsmIocWrite0En:
     case GsmIocScramEn:
     case GsmIocWrRetrainOvrd:
-    case GsmIocRdRetrainOvrd:
     case GsmIocDdr52NMode:
     case GsmIocCs2NReset:
     case GsmDdrReset:
-    case GsmIocNoDqInterleave:
     case GsmIocForceOdtOn:
     case GsmIocTxPiPwrDnDis:
     case GsmIocInternalClocksOn:

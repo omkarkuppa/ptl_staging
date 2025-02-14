@@ -1248,9 +1248,9 @@ MrcGetLpddr5Trrfpb (
   );
 
 /**
-  Check if LPDDR5x is supported - Read MR8 register - bits[1:0] = 0x01 means LPDDR5x is supported
+  Check if LPDDR5x is supported via MR8.
   Then check if E-DVFSC mode is supported - Read MR41 - bits[2:1]
-  MR41 - bits[2:1] (Valid just in case MR8, bit0=1 - LPDDR5x):
+  MR41 - bits[2:1] (Valid only in case MR8 reports LP5x):
     00 - Only DVFSC mode supported
     01 - Only E-DVFSC (Enhanced DVFSC) supported
     10 - DVFSC and E-DVFSC modes supported

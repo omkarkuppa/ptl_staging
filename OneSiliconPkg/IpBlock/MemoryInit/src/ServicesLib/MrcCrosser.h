@@ -253,6 +253,36 @@ typedef enum {
   PerSystem
 } AlgoMode;
 
+#ifdef MRC_DEBUG_PRINT
+typedef struct {
+  CHAR8           *SweepParamHeader2D;
+  UINT8           SweepParamHeader2DLength;
+  INT16           CurrentVal2D;
+} PrintSiAlgoData2D;
+
+typedef struct {
+  AlgoMode        PrintMode;
+  UINT8           Rank;
+  CHAR8           *SweepParamHeader;
+  UINT8           SweepParamHeaderLength;
+  MrcMarginTypes  MarginParams[MAX_PRINT_MARGIN_PARAMS];
+  UINT8           NumMarginParams;
+  INT16           StopSweepValue;
+  INT16           StartSweepValue;
+  INT16           SweepStep;
+} PrintSiAlgoData;
+
+typedef struct {
+  BOOLEAN Print;
+  BOOLEAN PrintChannels[MAX_CHANNEL];
+} PrintMC;
+
+typedef struct {
+  BOOLEAN Print;
+  PrintMC PrintController[MAX_CONTROLLER];
+} Print;
+#endif
+
 typedef enum {
   SotVrefSearchStage,
   SotVocSearchStage
@@ -305,6 +335,8 @@ typedef struct {
   INT64               InternalClockOnOrig;
   INT64               DqsRFTrainingModeValue;
   INT64               ForcePctleOn;
+  INT64               InputClkSelect;
+  INT64               EnPhaseGating;
   UINT32              VcmTargetRatio;
   UINT32              VrefEdge[SOT_SELECT_RX][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS_FOR_OFFSET_TRAINING]; // serves as an output for the Vref search results. Used mainly for UTing
   INT32               VocEdge[SOT_SELECT_RX][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS_FOR_OFFSET_TRAINING]; // serves as an output for the Voc search results
@@ -333,6 +365,46 @@ typedef struct {
   UINT16  Score;
 } TrainingData;
 
+#ifdef MRC_DEBUG_PRINT
+/**
+  Generic function for Printing SI Training Results.
+  Assumes TotalScore/BestVal arrays are of the form [MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS][Specific max range constant].
+  @param[in]     MrcData                     - Include all MRC global data.
+  @param[in]     ArrayMode                   - PerChannelPerByte, PerChannelPerBit, PerChannel, PerRankPerByte, PerRankPerBit, PerRank, PerSystem.
+  @param[in]     PrintData                   - Data to print with.
+                  PrintMode                  - PerChannelPerByte, PerChannelPerBit, PerChannel, PerRankPerByte, PerRankPerBit, PerRank, PerSystem.
+                  Rank                       - Rank to be printed.
+                  SweepParamHeader           - Header for the sweep param.
+                  SweepParamHeaderLength     - Length of the sweep param header.
+                  MarginParams               - Params margined.
+                  NumMarginParams            - Number of params margined.
+                  StopSweepValue             - Sweep param value stop point.
+                  StartSweepValue            - Sweep param value start point.
+                  SweepStep                  - Sweep param step.
+  @param[in]     TotalScorePerRankPerBit     - Total score array, per rank per bit.
+  @param[in]     TotalScorePerChannelPerBit  - Total score array, per bit.
+  @param[in]     TotalScorePerRankPerByte    - Total score array, per rank per byte.
+  @param[in]     TotalScorePerChannelPerByte - Total score array, per byte.
+  @param[in]     BestVal                     - Best value array.
+  @param[in]     PrintData2D                 - Additional data for 2D prints.
+                  SweepParamHeader2D         - Header for the 2D sweep param.
+                  SweepParamHeader2DLength   - Length of the 2D sweep param header.
+                  CurrentVal2D;              - 2D Sweep param current value.
+  @retval MrcStatus - If succeeded, return mrcSuccess.
+**/
+BOOLEAN
+PrintSiTrainingResults (
+  IN MrcParameters*  const MrcData,
+  IN AlgoMode              ArrayMode,
+  IN PrintSiAlgoData const PrintData,
+  IN TrainingData    const TotalScorePerRankPerBit[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS][MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY], OPTIONAL
+  IN TrainingData    const TotalScorePerChannelPerBit[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS][MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_CHANNEL_ARRAY], OPTIONAL
+  IN TrainingData    const TotalScorePerRankPerByte[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_SI_TRAINING_SWEEP_RANGE_BYTE_PER_RANK_ARRAY], OPTIONAL
+  IN TrainingData    const TotalScorePerChannelPerByte[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_SI_TRAINING_SWEEP_RANGE_BYTE_PER_CHANNEL_ARRAY], OPTIONAL
+  IN INT16           const BestVal[MAX_CONTROLLER][MAX_CHANNEL_DDR5 * MAX_BYTE_IN_DDR5_CHANNEL][MAX_BITS],
+  IN const PrintSiAlgoData2D* const PrintData2D OPTIONAL
+  );
+#endif
 
 /**
   This function implements Sense Amp Offset training.

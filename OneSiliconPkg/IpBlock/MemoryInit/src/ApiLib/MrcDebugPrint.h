@@ -579,6 +579,7 @@ MrcGets (
   @param[in] Marker     - Variable argument marker.
   @param[in] BufferSize - Size of the buffer, in bytes.
   @param[in] Buffer     - The buffer.
+  @param[out] IsPrintCountValid - The number of characters added to the buffer is valid flag
 
   @retval Number of characters printed.
 **/
@@ -589,7 +590,8 @@ MrcStringFormatter (
   IN const char *const      Format,
   IN MrcVaList              Marker,
   IN UINTN                  BufferSize,
-  IN OUT UINT8              *Buffer
+  IN OUT UINT8              *Buffer,
+     OUT BOOLEAN            *IsPrintCountValid
   );
 
 /*++

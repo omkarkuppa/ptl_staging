@@ -133,16 +133,6 @@ MrcGetCkdRegOffset (
       Offset = OFFSET_CALC_CH (CKD_QCK0_OUTPUT_DELAY_RANGE_REG, CKD_QCK1_OUTPUT_DELAY_RANGE_REG, CkdPin);
       break;
 
-    case GsmCkdErrorParityCheck:
-    case GsmCkdErrorPacketCheck:
-      Offset = CKD_I2C_I3C_ERROR_STATUS_REG;
-      break;
-
-    case GsmCkdClearParityErrSts:
-    case GsmCkdClearPacketErrSts:
-      Offset = CKD_I2C_I3C_CLEAR_ERROR_STATUS_REG;
-      break;
-
     default:
       Offset = MRC_UINT32_MAX;
       break;

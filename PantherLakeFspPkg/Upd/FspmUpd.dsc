@@ -1282,8 +1282,8 @@
 
   # !BSF NAME:{Mc Safe Mode Support}
   # !BSF TYPE:{EditNum, HEX, (0x00,0xFFFF)}
-  # !BSF HELP:{McSafeMode[0]: Clk Gate / BGF, McSafeMode[1]: CKE Pdwn, McSafeMode[2]: Tristate, McSafeMode[3]: PHY Power States / Clock Spine, McSafeMode[4]: Same Rank TA, McSafeMode[5]: Different Rank TA, McSafeMode[6]: MR4_Period / ZQCAL_Period McSafeMode[7]: LP5 Wck Mode, SafeMode[8]: Self Refresh, McSafeMode[9]: WR/RD Retraining, McSafeMode[10]: Power Saving}
-  gPlatformFspPkgTokenSpaceGuid.McSafeMode                  | * | 0x01 | 0x00
+  # !BSF HELP:{McSafeMode[0]: Reserved, McSafeMode[1]: OppSR}
+  gPlatformFspPkgTokenSpaceGuid.McSafeMode                  | * | 0x01 | 0x02
 
   # !BSF NAME:{Ask MRC to clear memory content}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}

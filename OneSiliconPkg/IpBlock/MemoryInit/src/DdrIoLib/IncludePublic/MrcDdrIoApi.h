@@ -884,20 +884,6 @@ MrcDccReadWckStatusLargeChange (
   );
 
 /**
-  This function sets up LUT for DCC
-
-  @param[in, out] MrcData - Include all MRC global data.
-  @param[out] UnexpectedResultOut - Optional return.
-
-  @retval mrcSuccess
-**/
-MrcStatus
-MrcDccLut (
-  IN OUT MrcParameters *const MrcData,
-  OUT BOOLEAN *UnexpectedResultOut  OPTIONAL
-  );
-
-/**
   This function calculates the VTarget
 
   @param[in, out] MrcData - All the MRC global data.
@@ -2621,21 +2607,6 @@ VOID
 MrcRxUnmatchedUpdate(
     IN OUT MrcParameters* const MrcData
 );
-
-/**
-  This function enables/disables Data Phase Detection for the DDRIO.
-
-  @param[in]  MrcData   - Pointer to MRC global data.
-  @param[in]  Rank      - Rank to be enabled in RankValue and RankOvrd.
-  @param[in]  IsEnabled - Whether to enable or disable Phase Detection
-**/
-VOID
-MrcRiseFallDataPhaseDetection (
-  IN  MrcParameters *const MrcData,
-  IN  UINT8          const Rank,
-  IN  BOOLEAN        const IsEnabled
-  );
-
 
 /**
   This function calculates DCC Samples based on RankMap

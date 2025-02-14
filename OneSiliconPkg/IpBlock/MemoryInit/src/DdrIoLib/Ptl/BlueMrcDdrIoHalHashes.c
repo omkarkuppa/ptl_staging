@@ -77,10 +77,6 @@ MrcGetDdrIoHash (
   static const UINT32 WrReTrainDeltaHsh[MAX_RANK_IN_CHANNEL] = {
     DATA0CH0_CR_DDRCRWRRETRAINDELTARANK_DeltaPiCodeR0_HSH, DATA0CH0_CR_DDRCRWRRETRAINDELTARANK_DeltaPiCodeR1_HSH,
   };
-  static const UINT32 RxFifoRdyDelay[2][MAX_RANK_IN_CHANNEL] = {
-    {MCMISCS_RXDQFIFORDENCH01_RxDqFifoRdEnRank0ChADel_HSH, MCMISCS_RXDQFIFORDENCH01_RxDqFifoRdEnRank1ChADel_HSH}, // Channel 0
-    {MCMISCS_RXDQFIFORDENCH01_RxDqFifoRdEnRank0ChBDel_HSH, MCMISCS_RXDQFIFORDENCH01_RxDqFifoRdEnRank1ChBDel_HSH}, // Channel 1
-  };
 
 #if (defined (MRC_HAL_DEBUG) && (MRC_HAL_DEBUG == SUPPORT))
   Debug     = &MrcData->Outputs.Debug;
@@ -142,24 +138,7 @@ MrcGetDdrIoHash (
       break;
 
     case RxVocRise:
-    case RxVocRiseDbi:
       HashPtr->Data = DATA0CH0_CR_DDRDATADQRANK0LANE0_RxDQVrefOffsetR_HSH;
-      break;
-
-    case RxEq:
-      HashPtr->Data = DATA0CH0_CR_DDRCRRXCTLE_CtleEq_HSH;
-      break;
-
-    case RxCtleR:
-      HashPtr->Data = DATA0CH0_CR_DDRCRRXCTLE_CtleRes_HSH;
-      break;
-
-    case RxCtleC:
-      HashPtr->Data = DATA0CH0_CR_DDRCRRXCTLE_CtleCap_HSH;
-      break;
-
-    case RxCtleEn:
-      HashPtr->Data = DATA0CH0_CR_DDRCRRXCTLE_CtleEn_HSH;
       break;
 
     case RxRankMuxDelay:
@@ -182,32 +161,8 @@ MrcGetDdrIoHash (
       HashPtr->Data = DATA0CH0_CR_TXCONTROL0RANK0_TxDqDelay_HSH;
       break;
 
-    case DqsTxEq:
-      HashPtr->Data = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqstx_eqdlycomp_HSH;
-      break;
-
-    case DqTxEq:
-      HashPtr->Data = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_dqtx_eqdelaycomp_HSH;
-      break;
-
     case DefDrvEnLow:
       HashPtr->Data = DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_DefDrvEnLow_HSH;
-      break;
-
-    case CmdTxEq:
-      HashPtr->Data = DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_CaTxEq_HSH;
-      break;
-
-    case CtlTxEq:
-      HashPtr->Data = DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_CtlTxEq_HSH;
-      break;
-
-    case RxVrefVddqDecap:
-      HashPtr->Data = DATA0CH0_CR_DDRCRDATACONTROL2_RxVrefVddqProgMFC_HSH;
-      break;
-
-    case RxBiasCtl:
-      HashPtr->Data = DATA0CH0_CR_DDRCRDATACONTROL5_BiasIrefAdj_HSH;
       break;
 
     case TxRankMuxDelay:
@@ -248,10 +203,6 @@ MrcGetDdrIoHash (
 
     case TxDqBitDelay:
       HashPtr->Data = DATA0CH0_CR_DDRDATADQRANK0LANE0_TxDQPerBitDeskew_HSH;
-      break;
-
-    case TxDqsTcoCode:
-      HashPtr->Data = DATA0CH0_CR_DDRDATADQSRANK0_DqsTcoCode_HSH;
       break;
 
     case RecEnOffset:
@@ -308,22 +259,6 @@ MrcGetDdrIoHash (
       }
       break;
 
-    case RxIoTclDelay:
-      HashPtr->Data = MCMISCS_READCFGCH0_tCL4RcvEn_HSH;
-      break;
-
-    case RxFifoRdEnFlybyDelay:
-      if ((Rank >= MAX_RANK_IN_CHANNEL) || (ChMod2 > (sizeof (RxFifoRdyDelay) / sizeof (RxFifoRdyDelay[0])))) {
-        Status = mrcWrongInputParameter;
-      } else {
-        HashPtr->Data = RxFifoRdyDelay[ChMod2][Rank];
-      }
-      break;
-
-    case RxFifoRdEnTclDelay:
-      HashPtr->Data = MCMISCS_READCFGCH0_tCL4RxDqFifoRdEn_HSH;
-      break;
-
     case TxDqFifoWrEnTcwlDelay:
       HashPtr->Data = MCMISCS_WRITECFGCH0_tcwl4txdqfifowren_HSH;
       break;
@@ -348,24 +283,8 @@ MrcGetDdrIoHash (
       HashPtr->Data = DATA0CH0_CR_DDRCRDATACONTROL1_DqOdtDuration_HSH;
       break;
 
-    case DqsOdtDelay:
-      HashPtr->Data = DATA0CH0_CR_DDRCRDATACONTROL1_DqsOdtDelay_HSH;
-      break;
-
-    case DqsOdtDuration:
-      HashPtr->Data = DATA0CH0_CR_DDRCRDATACONTROL1_DqsOdtDuration_HSH;
-      break;
-
-    case RxDqsAmpOffset:
-      HashPtr->Data = DATA0CH0_CR_DDRDATADQSRANK0_RxDQSVrefOffset_HSH;
-      break;
-
     case CmdGrpPi:
       HashPtr->Data = CH0CCC_CR_DDRCRCCCPICODES_CAPICode_HSH;
-      break;
-
-    case ClkGrpPi:
-      HashPtr->Data = CH0CCC_CR_DDRCRCCCPICODES_CLKPICode_HSH;
       break;
 
     case CtlGrpPi:
@@ -387,57 +306,6 @@ MrcGetDdrIoHash (
     case TxRonDn:
       HashPtr->Data = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_RcompDrvDown_HSH;
       break;
-
-    case TxDqTco:
-      switch (Lane) {
-      default:
-        Status = mrcWrongInputParameter;
-        /*FALLTHROUGH*/
-      case 0:
-        HashPtr->Data = DATA0CH0_CR_DDRCRDATATCOCONTROL0_DqTcoCompBit0_HSH;
-        break;
-
-      case 1:
-        HashPtr->Data = DATA0CH0_CR_DDRCRDATATCOCONTROL0_DqTcoCompBit1_HSH;
-        break;
-
-      case 2:
-        HashPtr->Data = DATA0CH0_CR_DDRCRDATATCOCONTROL0_DqTcoCompBit2_HSH;
-        break;
-
-      case 3:
-        HashPtr->Data = DATA0CH0_CR_DDRCRDATATCOCONTROL0_DqTcoCompBit3_HSH;
-        break;
-
-      case 4:
-        HashPtr->Data = DATA0CH0_CR_DDRCRDATATCOCONTROL0_DqTcoCompBit4_HSH;
-        break;
-
-      case 5:
-        HashPtr->Data = DATA0CH0_CR_DDRCRDATATCOCONTROL1_DqTcoCompBit5_HSH;
-        break;
-
-      case 6:
-        HashPtr->Data = DATA0CH0_CR_DDRCRDATATCOCONTROL1_DqTcoCompBit6_HSH;
-        break;
-
-      case 7:
-        HashPtr->Data = DATA0CH0_CR_DDRCRDATATCOCONTROL1_DqTcoCompBit7_HSH;
-        break;
-      }
-      break;
-
-    case TxDqsTcoPFallNRise:
-      HashPtr->Data = DATA0CH0_CR_DDRDATADQSRANK0_DqsPfNrTcoDelay_HSH;
-      break;
-
-    case TxDqsTcoPRiseNFall:
-      HashPtr->Data = DATA0CH0_CR_DDRDATADQSRANK0_DqsPrNfTcoDelay_HSH;
-      break;
-
-    // These are unused.  Need to finish HAL if these fields are accessed.
-    case TxRon:
-    case CmdRon:
 
     default:
       Status = mrcWrongInputParameter;
@@ -509,32 +377,12 @@ MrcGetDdrIoCfgHash (
   CrOffset  = MRC_UINT32_MAX;
 
   switch (Group) {
-    case GsmIocNoDqInterleave:
-      HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_DdrNoChInterleave_HSH;
-      break;
-
-    case GsmIocScramDdr5Mode:
-      HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_DDR5Mode_HSH;
-      break;
-
-    case GsmIocScramGearMode:
-      HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_GearMode_HSH;
-      break;
-
-    case GsmIocDisClkGate:
-      HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_ClkGateDisable_HSH;
-      break;
-
     case GsmIocDisDataIdlClkGate:
       HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_DataClkGateDisAtIdle_HSH;
       break;
 
     case GsmIocScramLp5Mode:
       HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_Lp5Mode_HSH;
-      break;
-
-    case GsmIocLp5Wck2CkRatio:
-      HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_lp5wck2ckratio_HSH;
       break;
 
     case GsmIocChNotPop:
@@ -549,24 +397,12 @@ MrcGetDdrIoCfgHash (
       HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_dis_iosf_sb_clk_gate_HSH;
       break;
 
-    case GsmIocEccEn:
-      HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_ECCPresent_HSH;
-      break;
-
-    case GsmIocWrite0En:
-      HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_Write0En_HSH;
-      break;
-
     case GsmIocScramEn:
       HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_ScramEn_HSH;
       break;
 
     case GsmIocWrRetrainOvrd:
       HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_WrRetrainOvrd_HSH;
-      break;
-
-    case GsmIocRdRetrainOvrd:
-      HashPtr->Data = DDRSCRAM_CR_DDRMISCCONTROL0_RdRetrainOvrd_HSH;
       break;
 
     case GsmIocDdr52NMode:
@@ -579,14 +415,6 @@ MrcGetDdrIoCfgHash (
 
     case GsmDdrReset:
       HashPtr->Data = DDRPHY_DDRCOMP_CR_DDRCRCOMPCTL4_DramReset_HSH;
-      break;
-
-    case GsmIocCccPiEn:
-      HashPtr->Data = DDRDATA_SHARED0_CR_DDRCRCCCCH0LANE0_PiEn_HSH;
-      break;
-
-    case GsmIocCccPiEnOverride:
-      HashPtr->Data = CH0CCC_CR_DDRCRCCCPICODES_PiEnOvrd_HSH;
       break;
 
     case GsmIocDqsMaskPulseCnt:
@@ -611,10 +439,6 @@ MrcGetDdrIoCfgHash (
 
     case GsmIocRankOverrideVal:
       HashPtr->Data = DATA0CH0_CR_DATATRAINFEEDBACK_RankValue_HSH;
-      break;
-
-    case GsmIocDataDisableTxDqs:
-      HashPtr->Data = DATA0CH0_CR_DDRCRDATACONTROL1_DisableTxDqs_HSH;
       break;
 
     case GsmDataDccRankEn:
@@ -689,10 +513,6 @@ MrcGetDdrIoCfgHash (
 
     case GsmInitCompleteOvrdVal:
       HashPtr->Data = DDRPHY_MISC_SAUG_CR_PHYPMOVRD_InitCompleteOvrdVal_HSH;
-      break;
-
-    case GsmIocVccClkFFCRWait:
-      HashPtr->Data = DDRPHY_MISC_SAUG_CR_PHYPMOVRD_VccClkFFCRWait_HSH;
       break;
 
     case GsmSaxgEnable:
@@ -851,10 +671,6 @@ MrcGetDdrIoCfgHash (
       HashPtr->Data = MCMISCS_DDRWCKCONTROL_TrainWCkBL_HSH;
       break;
 
-    case GsmtWckHalfRate:
-      HashPtr->Data = MCMISCS_DDRWCKCONTROL_tWckHalfRate_HSH;
-      break;
-
     case GsmTrainWCkMask:
       HashPtr->Data = MCMISCS_DDRWCKCONTROL_TrainWCkMask_HSH;
       break;
@@ -877,10 +693,6 @@ MrcGetDdrIoCfgHash (
 
     case GsmIocEnableLpMode4:
       HashPtr->Data = DDRPHY_MISC_SAUG_CR_LPMODE4_CTRL0_enable_lpmode4_HSH;
-      break;
-
-    case GsmIocLpCtrlEn:
-      HashPtr->Data = DDRMISCS_CR_DDRPHY_DFI_LPCTRL0_lp_ctrl_en_HSH;
       break;
 
     case GsmMiscPmMessage:

@@ -221,6 +221,14 @@ typedef enum {
 } LPDDR5_CBT_MODE_PHASE;
 
 /**
+  LPDDR5x MR8 Type OP[1:0]
+**/
+typedef enum {
+  Lp5Mr8TypeLp5x8533 = 1,
+  Lp5Mr8TypeLp5x9600 = 2
+} LPDDR5_MR8_TYPE;
+
+/**
   LPDDR5 MR10 RDQS Postamble Length
 **/
 typedef enum {

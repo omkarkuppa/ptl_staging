@@ -407,7 +407,7 @@ MrcGetCkdHash (
 
 /**
   Update MRC Host Data Structure when GSM_UPDATE_HOST is set
-  Currently only used for RxDqBitDelay and TxDqBitDelay
+  Currently only used for RxDqsBitDelay and TxDqBitDelay
 
   @param[in]      MrcData     - Pointer to global data structure.
   @param[in]      Controller  - Memory Controller Number within the processor (0-based).

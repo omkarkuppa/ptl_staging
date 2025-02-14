@@ -72,6 +72,7 @@ BOOLEAN decoder_so( // inputs
                    UINT32 mad_sub_channel_hash,
                    UINT32 mad_dram_hash_0,
                    UINT32 mad_dram_hash_1,
+                   UINT64 address,
                    // outputs
                    UINT32* ch,
                    UINT32* sub_ch,
@@ -197,7 +198,7 @@ EFIAPI MrcMemoryAddressDecode (
   UINT32 row;
   UINT32 column;
 
-  UINT64 temp;
+  UINT64 temp_address;
 
   BOOLEAN Status;
 
@@ -215,7 +216,7 @@ EFIAPI MrcMemoryAddressDecode (
                tolud,
                memory_slice_hash,
                MemoryAddress,
-               &temp,
+               &temp_address,
                &mc);
 
   MrcGetConfigRegisters(
@@ -238,6 +239,7 @@ EFIAPI MrcMemoryAddressDecode (
                    mad_sub_channel_hash,
                    mad_dram_hash_0,
                    mad_dram_hash_1,
+                   temp_address,
                    // outputs
                    &ch,
                    &sub_ch,

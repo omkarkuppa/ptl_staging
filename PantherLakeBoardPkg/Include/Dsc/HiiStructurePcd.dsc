@@ -3705,7 +3705,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.TargetedRowRefreshMode|0x1                  
 gStructPcdTokenSpaceGuid.PcdSaSetup.DrfmBrc|0x2                                                    # Offset 157 Row Hammer: Directed Refresh Management Blast Radius Configuration
 gStructPcdTokenSpaceGuid.PcdSaSetup.SafeModeOverride|0xFF                                          # Offset 159 MRC Safe Mode Override
 gStructPcdTokenSpaceGuid.PcdSaSetup.DdrSafeMode|0x4                                                # Offset 160 DDR PHY Safe Mode Support
-gStructPcdTokenSpaceGuid.PcdSaSetup.McSafeMode|0x0                                                 # Offset 164 MC Safe Mode Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.McSafeMode|0x02                                                # Offset 164 MC Safe Mode Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode|0x7                                                     # Offset 165 LpMode bit mask
 gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode4|0x1                                                    # Offset 166 LpMode4
 

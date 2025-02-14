@@ -408,7 +408,7 @@
           minimum = 0,
           maximum = 0xFF,
           step    = 1,
-          default = 0,
+          default = 0x02,
         endnumeric;
       endif;
 

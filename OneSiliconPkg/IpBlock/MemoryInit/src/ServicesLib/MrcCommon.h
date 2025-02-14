@@ -1104,20 +1104,21 @@ MrcGetErrCounterStatus (
   OUT UINT64          *const    Status
 );
 
-
 /**
-  This function returns a consolidated channel error status
+  This function gathers the Regular (Non - CA Parity) status for the channels in the McChBitMask, and returns
+  an error status in the McCh bitmask format, where 1 is a pass and 0 is a fail.
 
   @param[in]      MrcData       - Pointer to MRC global data.
   @param[in]      McChBitMask   - Valid Channel bit mask
 
-  @retval AllChError   - returns value of error status ORed between all channels
+  @return UINT8 - Bitmask of failing channels.
 **/
 UINT8
 MrcGetAllChannelsErrorStatus (
   IN  MrcParameters *const  MrcData,
   IN  UINT8                 McChBitMask
   );
+
 /**
   This function completes setting up the Generic MRS FSM configuration to enable SAGV during normal operation.
 

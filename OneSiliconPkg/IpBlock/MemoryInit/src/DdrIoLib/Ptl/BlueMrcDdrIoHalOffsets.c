@@ -132,7 +132,6 @@ GetDdrIoDataReadOffsets (
   Offset  = MRC_UINT32_MAX;
 
   switch (Group) {
-    case RxBiasCtl:
     case RxVref:
       Offset = DataControl5Offset (Channel, Strobe);
       break;
@@ -145,12 +144,6 @@ GetDdrIoDataReadOffsets (
                  ((DATA1CH0_CR_DDRCRDATAVREFPERBIT012_REG - DATA0CH0_CR_DDRCRDATAVREFPERBIT012_REG) * Strobe));
       break;
 
-    case RxDbiVref:
-      Offset = DATA0CH0_CR_DDRCRDATAVREFPERBIT67DBI_REG +
-             ((DATA0CH1_CR_DDRCRDATAVREFPERBIT67DBI_REG - DATA0CH0_CR_DDRCRDATAVREFPERBIT67DBI_REG) * Channel) +
-             ((DATA1CH0_CR_DDRCRDATAVREFPERBIT67DBI_REG - DATA0CH0_CR_DDRCRDATAVREFPERBIT67DBI_REG) * Strobe);
-      break;
-
     case RecEnDelay:
     case RxDqsPDelay:
     case RxDqsNDelay:
@@ -160,24 +153,10 @@ GetDdrIoDataReadOffsets (
         ((DATA1CH0_CR_RXCONTROL0RANK0_REG - DATA0CH0_CR_RXCONTROL0RANK0_REG) * Strobe);
       break;
 
-    case RxEq:
-    case RxCtleR:
-    case RxCtleC:
-    case RxCtleEn:
-      Offset = DATA0CH0_CR_DDRCRRXCTLE_REG +
-        ((DATA0CH1_CR_DDRCRRXCTLE_REG - DATA0CH0_CR_DDRCRRXCTLE_REG) * Channel) +
-        ((DATA1CH0_CR_DDRCRRXCTLE_REG - DATA0CH0_CR_DDRCRRXCTLE_REG) * Strobe);
-      break;
-
     case RxDqsBitDelay:
     case RxDqsBitOffset:
     case RxVocRise:
       Offset = DataDqRankXLaneYOffset (Channel, Rank, Strobe, Bit, VolatileMask);
-      break;
-
-    case RxVocRiseDbi:
-    case RxDbiDelay:
-      Offset = DataDqRankXLaneYOffset (Channel, Rank, Strobe, DBI_BIT, VolatileMask);
       break;
 
     case RoundTripDelay:
@@ -185,31 +164,11 @@ GetDdrIoDataReadOffsets (
       Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SC_ROUNDTRIP_LATENCY_REG, MC1_CH0_CR_SC_ROUNDTRIP_LATENCY_REG, Controller, MC0_CH1_CR_SC_ROUNDTRIP_LATENCY_REG, IpChannel);
       break;
 
-    case RxFifoRdEnFlybyDelay:
-      Offset  = MCMISCS_RXDQFIFORDENCH01_REG;
-      Offset += (MCMISCS_RXDQFIFORDENCH23_REG - MCMISCS_RXDQFIFORDENCH01_REG) * (Channel / 2);
-      break;
-
-    case RxIoTclDelay:
-    case RxFifoRdEnTclDelay:
-      Offset  = MCMISCS_READCFGCH0_REG;
-      Offset += (MCMISCS_READCFGCH1_REG - MCMISCS_READCFGCH0_REG) * Channel;
-      break;
-
     case SenseAmpDelay:
     case SenseAmpDuration:
     case McOdtDelay:
     case McOdtDuration:
-    case DqsOdtDelay:
-    case DqsOdtDuration:
       Offset = DataControl1Offset (Channel, Strobe);
-      break;
-
-    case RxVrefVddqDecap:
-      Offset = DataControl2Offset (Channel, Strobe);
-      break;
-    case RxDqsAmpOffset:
-      Offset = DataDqsOffset (Channel, Rank, Strobe, VolatileMask);
       break;
 
     default:
@@ -431,19 +390,8 @@ GetDdrIoDataWriteOffsets (
         ((DATA1CH0_CR_TXCONTROL0RANK0_REG - DATA0CH0_CR_TXCONTROL0RANK0_REG) * Strobe);
       break;
 
-    case DqsTxEq:
-    case DqTxEq:
-      Offset = DATA0CH0_CR_DDRCRDATAOFFSETCOMP_REG +
-        ((DATA0CH1_CR_DDRCRDATAOFFSETCOMP_REG - DATA0CH0_CR_DDRCRDATAOFFSETCOMP_REG) * Channel) +
-        ((DATA1CH0_CR_DDRCRDATAOFFSETCOMP_REG - DATA0CH0_CR_DDRCRDATAOFFSETCOMP_REG) * Strobe);
-      break;
-
     case TxDqBitDelay:
       Offset = DataDqRankXLaneYOffset (Channel, Rank, Strobe, Bit, VolatileMask);
-      break;
-
-    case TxDbiDelay:
-      Offset = DataDqRankXLaneYOffset (Channel, Rank, Strobe, DBI_BIT, VolatileMask);
       break;
 
     case TxDqFifoWrEnTcwlDelay:
@@ -455,16 +403,6 @@ GetDdrIoDataWriteOffsets (
     case TxRonDn:
       Offset = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_REG;
       VolatileMask->Data = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_VOLATILE_BITFIELDS_MSK;
-      break;
-
-    case TxDqTco:
-      Offset = GetDdrIoDataTcoControl (Channel, Strobe, Bit);
-      break;
-
-    case TxDqsTcoPFallNRise:
-    case TxDqsTcoPRiseNFall:
-    case TxDqsTcoCode:
-      Offset = DataDqsOffset (Channel, Rank, Strobe, VolatileMask);
       break;
 
     default:
@@ -565,21 +503,13 @@ MrcGetDdrIoConfigOffsets (
   IsDdr5      = MrcData->Outputs.IsDdr5;
 
   switch (Group) {
-    case GsmIocNoDqInterleave:
-    case GsmIocScramDdr5Mode:
-    case GsmIocScramGearMode:
-    case GsmIocDisClkGate:
     case GsmIocDisDataIdlClkGate:
     case GsmIocScramLp5Mode:
     case GsmIocChNotPop:
     case GsmIocDfiCmdDecoderEn:
     case GsmIocDisIosfSbClkGate:
-    case GsmIocLp5Wck2CkRatio:
-    case GsmIocEccEn:
-    case GsmIocWrite0En:
     case GsmIocScramEn:
     case GsmIocWrRetrainOvrd:
-    case GsmIocRdRetrainOvrd:
     case GsmIocDdr52NMode:
       Offset = DDRSCRAM_CR_DDRMISCCONTROL0_REG;
       break;
@@ -590,15 +520,6 @@ MrcGetDdrIoConfigOffsets (
     case GsmIocCsGearDownSrDramTrack:
       Offset = DDRSCRAM_CR_CS_GEARDOWN_REG;
       VolatileMask->Data = DDRSCRAM_CR_CS_GEARDOWN_VOLATILE_BITFIELDS_MSK;
-      break;
-
-    case GsmIocCccPiEnOverride:
-      Offset = OFFSET_CALC_CH (CH0CCC_CR_DDRCRCCCPICODES_REG, CH1CCC_CR_DDRCRCCCPICODES_REG, Channel);
-      VolatileMask->Data = CH0CCC_CR_DDRCRCCCPICODES_VOLATILE_BITFIELDS_MSK;
-      break;
-
-    case GsmIocCccPiEn:
-      Offset = GetDdrIoCccLaneOffsets (Channel, Lane, VolatileMask);
       break;
 
     case GsmIocIoReset:
@@ -626,7 +547,6 @@ MrcGetDdrIoConfigOffsets (
     case GsmIocDataDqsOdtParkMode:
       Offset = DataControl0Offset (Channel, Strobe, VolatileMask);
       break;
-    case GsmIocDataDisableTxDqs:
 
     case GsmIocDisableTxDqs:
       Offset = DataControl1Offset (Channel, Strobe);
@@ -645,10 +565,6 @@ MrcGetDdrIoConfigOffsets (
 
     case GsmIocEnableLpMode4:
       Offset = DDRPHY_MISC_SAUG_CR_LPMODE4_CTRL0_REG;
-      break;
-
-    case GsmIocLpCtrlEn:
-      Offset = DDRMISCS_CR_DDRPHY_DFI_LPCTRL0_REG;
       break;
 
     case GsmDdrReset:
@@ -685,7 +601,6 @@ MrcGetDdrIoConfigOffsets (
 
     case GsmInitCompleteOvrd:
     case GsmInitCompleteOvrdVal:
-    case GsmIocVccClkFFCRWait:
       Offset = DDRPHY_MISC_SAUG_CR_PHYPMOVRD_REG;
       break;
 
@@ -727,7 +642,6 @@ MrcGetDdrIoConfigOffsets (
 
     case GsmTrainWCkPulse:
     case GsmTrainWCkBL:
-    case GsmtWckHalfRate:
     case GsmTrainWCkMask:
     case GsmWCkDiffLowInIdle:
       Offset = MCMISCS_DDRWCKCONTROL_REG;
@@ -786,30 +700,15 @@ GetDdrIoCommandOffsets (
   switch (Group) {
     case CmdGrpPi:
     case CtlGrpPi:
-    case ClkGrpPi:
       Offset = OFFSET_CALC_CH (CH0CCC_CR_DDRCRCCCPICODES_REG, CH1CCC_CR_DDRCRCCCPICODES_REG, Channel);
       VolatileMask->Data = CH0CCC_CR_DDRCRCCCPICODES_VOLATILE_BITFIELDS_MSK;
       break;
 
     case DefDrvEnLow:
-    case CmdTxEq:
-    case CtlTxEq:
-    case GsmIntCkOn:
       Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_REG, DDRCCC_SHARED1_CR_DDRCRCCCPINCONTROLS_REG, Channel);
       VolatileMask->Data = DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_VOLATILE_BITFIELDS_MSK;
       break;
 
-    case CtlGrp0:
-    case CtlGrp1:
-    case CtlGrp2:
-    case CtlGrp3:
-    case CtlGrp4:
-    case CmdGrp0:
-    case CmdGrp1:
-    case CmdGrp2:
-    case CkAll:
-    case CmdAll:
-    case CtlAll:
     default:
       break;
     }
@@ -853,51 +752,29 @@ MrcGetDdrIoRegOffset (
   Offset    = MRC_UINT32_MAX;
 
   switch (Group) {
-    case RxVrefVddqDecap:
     case RecEnDelay:
     case RxDqsPDelay:
     case RxDqsNDelay:
     case RxVref:
     case RxDqVref:
-    case RxEq:
-    case RxCtleR:
-    case RxCtleC:
-    case RxCtleEn:
     case RxDqsBitDelay:
     case RxDqsBitOffset:
     case RoundTripDelay:
-    case RxIoTclDelay:
-    case RxFifoRdEnFlybyDelay:
-    case RxFifoRdEnTclDelay:
     case SenseAmpDelay:
     case SenseAmpDuration:
     case McOdtDelay:
     case McOdtDuration:
-    case DqsOdtDelay:
-    case DqsOdtDuration:
-    case RxBiasCtl:
-    case RxDqsAmpOffset:
     case RxVocRise:
-    case RxVocRiseDbi:
-    case RxDbiDelay:
-    case RxDbiVref:
       Offset = GetDdrIoDataReadOffsets (MrcData, Group, Controller, Channel, Rank, Strobe, Lane, VolatileMask);
       break;
 
-    case TxDqTco:
-    case TxDqsTcoPFallNRise:
-    case TxDqsTcoPRiseNFall:
     case TxRonUp:
     case TxRonDn:
     case TxDqsDelay:
     case TxDqDelay:
-    case DqsTxEq:
-    case DqTxEq:
     case TxDqBitDelay:
-    case TxDqsTcoCode:
     case TxDqFifoWrEnTcwlDelay:
     case TxDqFifoRdEnTcwlDelay:
-    case TxDbiDelay:
       Offset = GetDdrIoDataWriteOffsets (Group, Channel, Rank, Strobe, Lane, VolatileMask);
       break;
 
@@ -951,11 +828,7 @@ MrcGetDdrIoRegOffset (
 
     case CtlGrpPi:
     case CmdGrpPi:
-    case ClkGrpPi:
     case DefDrvEnLow:
-    case CmdTxEq:
-    case CtlTxEq:
-    case GsmIntCkOn:
       Offset = GetDdrIoCommandOffsets (Group, Channel, FreqIndex, FALSE, VolatileMask);
       break;
 

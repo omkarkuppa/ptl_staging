@@ -793,7 +793,7 @@ ShowLpddrInfo (
           for (Device = 0; Device < DeviceMax; Device++) {
             Mr8.Data8 = MrrResult[Device];
             MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\tDevice[%u]= 0x%02X - LP5%c %s %uGb\n", Device, MrrResult[Device],
-              (Mr8.Bits.Type == 1) ? 'X' : ' ',
+              ((Mr8.Bits.Type == Lp5Mr8TypeLp5x8533) || (Mr8.Bits.Type == Lp5Mr8TypeLp5x9600)) ? 'X' : ' ',
               (Mr8.Bits.IoWidth == 1) ? "x8" : "x16",
               (Mr8.Bits.Density < ARRAY_COUNT (DensityMap)) ? DensityMap[Mr8.Bits.Density] : 0
               );

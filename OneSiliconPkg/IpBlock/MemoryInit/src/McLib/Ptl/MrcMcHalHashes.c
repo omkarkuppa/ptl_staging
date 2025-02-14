@@ -358,10 +358,6 @@ MrcGetMcTimingHash (
       HashPtr->Data = MC0_CH0_CR_TC_RETRAINING_OSCL_WR_OSCL_RUNTIME_HSH;
       break;
 
-    case GsmMctRdOsclRuntime:
-      HashPtr->Data = MC0_CH0_CR_TC_RETRAINING_OSCL_RD_OSCL_RUNTIME_HSH;
-      break;
-
     case GsmMcttMRR:
       HashPtr->Data = MC0_CH0_CR_TC_MR_tMRR_HSH;
       break;
@@ -546,10 +542,6 @@ MrcGetMcConfigHash (
     HashPtr->Data = MC0_CH0_CR_SC_GS_CFG_address_mirror_HSH;
     break;
 
-  case GsmMccCmdTriStateDisTrain:
-    HashPtr->Data = MC0_CH0_CR_SC_GS_CFG_TRAINING_disable_tristate_HSH;
-    break;
-
   case GsmMccCmdTriStateDis:
     HashPtr->Data = MC0_CH0_CR_SC_GS_CFG_UARCH_disable_tristate_HSH;
     break;
@@ -666,14 +658,6 @@ MrcGetMcConfigHash (
     HashPtr->Data = MC0_CH0_CR_PM_SREF_CONTROL_force_sre_with_freq_change_HSH;
     break;
 
-  case GsmMccIgnoreCke:
-    HashPtr->Data = MC0_CH0_CR_SC_GS_CFG_TRAINING_ignore_cke_HSH;
-    break;
-
-  case GsmMccMaskCs:
-    HashPtr->Data = MC0_CH0_CR_SC_GS_CFG_TRAINING_mask_cs_HSH;
-    break;
-
   case GsmMccCpgcInOrder:
     HashPtr->Data = MC0_CH0_CR_SC_GS_CFG_cpgc_in_order_HSH;
     break;
@@ -704,10 +688,6 @@ MrcGetMcConfigHash (
 
   case GsmMccLsbMaskBit:
     HashPtr->Data = MC0_MAD_CHANNEL_HASH_HASH_LSB_MASK_BIT_HSH;
-    break;
-
-  case GsmMccCmdBgfAlwaysOn:
-    HashPtr->Data = MC0_CH0_CR_SCHED_SECOND_CBIT_cmd_bgf_always_on_HSH;
     break;
 
   case GsmMccCkDisTristate:
@@ -752,10 +732,6 @@ MrcGetMcConfigHash (
 
   case GsmMccMinRefRate:
     HashPtr->Data = MC0_CH0_CR_PM_CONFIG_THERM_STATUS_MIN_REF_RATE_HSH;
-    break;
-
-  case GsmMccMaxRefRate:
-    HashPtr->Data = MC0_CH0_CR_PM_CONFIG_THERM_STATUS_MAX_REF_RATE_HSH;
     break;
 
   case GsmMccMR4Period:
@@ -988,24 +964,8 @@ MrcGetMcConfigHash (
     HashPtr->Data = MC0_CH0_CR_SCHED_SECOND_CBIT_dis_async_odt_HSH;
     break;
 
-  case GsmMccDisSchedsClkGate:
-    HashPtr->Data = MC0_CH0_CR_SCHED_THIRD_CBIT_dis_scheds_clk_gate_HSH;
-    break;
-
-  case GsmMccDisWdbClkGate:
-    HashPtr->Data = MC0_CH0_CR_SCHED_THIRD_CBIT_dis_wdb_clk_gate_HSH;
-    break;
-
-  case GsmMccDisMntClkGate:
-    HashPtr->Data = MC0_CH0_CR_SCHED_THIRD_CBIT_dis_mnt_clk_gate_HSH;
-    break;
-
   case GsmMccDisableSplitAct:
     HashPtr->Data = MC0_CH0_CR_SCHED_THIRD_CBIT_disable_split_act_HSH;
-    break;
-
-  case GsmMccLpMode4En:
-    HashPtr->Data = MC0_PM_OPP_SR_POLICY_0_LPMode4_EN_HSH;
     break;
 
   case GsmMccCmiSourceId0:
@@ -1105,28 +1065,8 @@ MrcGetMcConfigHash (
       HashPtr->Data = MC0_CH0_CR_REUT_CH_MISC_REFRESH_CTRL_Refresh_Rank_Mask_HSH;
       break;
 
-    case GsmMccMainDisClkGate:
-      HashPtr->Data = MC0_MCDECS_CBIT_dis_clk_gate_HSH;
-      break;
-
-    case GsmMccMainDisRegClkGate:
-      HashPtr->Data = MC0_MCDECS_CBIT_dis_reg_clk_gate_HSH;
-      break;
-
-    case GsmMccDisGlbDrvClkGate:
-      HashPtr->Data = MC0_MCDECS_CBIT_dis_glbdrv_clk_gate_HSH;
-      break;
-
     case GsmMccDisIosfSbClkGate:
       HashPtr->Data = MC0_MCDECS_CBIT_dis_iosf_sb_clk_gate_HSH;
-      break;
-
-    case GsmMccPtrSepOspid:
-      HashPtr->Data = MC0_CH0_CR_MC2PHY_BGF_CTRL_PtrSep_ospid_HSH;
-      break;
-
-    case GsmMccPtrSepIspid:
-      HashPtr->Data = MC0_CH0_CR_MC2PHY_BGF_CTRL_PtrSep_ispid_HSH;
       break;
 
     case GsmMccAllowOppRefBelowWrtThreshold:

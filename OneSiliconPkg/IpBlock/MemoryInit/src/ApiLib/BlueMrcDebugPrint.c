@@ -386,6 +386,7 @@ MrcPrintfVaList (
   const MRC_FUNCTION *MrcCall;
   UINT32             CharCount;
   UINT8              Buffer[MAX_STRING_LENGTH];
+  BOOLEAN            IsPrintCountValid;
 
   Inputs    = (const MrcInput *) &((MrcParameters *)(Debug->MrcData.Ptr))->Inputs;
   MrcCall   = Inputs->Call.Func;
@@ -405,7 +406,7 @@ MrcPrintfVaList (
   }
 
   // Format the string to be printed
-  CharCount = MrcStringFormatter (MrcCall, Format, Marker, sizeof (Buffer), Buffer);
+  CharCount = MrcStringFormatter (MrcCall, Format, Marker, sizeof (Buffer), Buffer, &IsPrintCountValid);
 
   // Print the string
   if (Debug->Stream.DataN > 0) {
@@ -415,6 +416,8 @@ MrcPrintfVaList (
     MrcCall->MrcPrintString (Buffer);
 #endif
   }
+
+  MRC_DEBUG_ASSERT (IsPrintCountValid, Debug, "MrcPrintf has overflowed print buffer\n");
 
   return CharCount;
 }
@@ -445,12 +448,13 @@ MrcSPrintf (
   const MrcInput      *Inputs;
   const MRC_FUNCTION  *MrcCall;
   MrcVaList           Marker;
+  BOOLEAN             IsPrintCountValid;
 
   MRC_VA_START (Marker, Format);
   Inputs  = &MrcData->Inputs;
   MrcCall = Inputs->Call.Func;
 
-  return MrcStringFormatter (MrcCall, Format, Marker, Size, (UINT8 *) String);
+  return MrcStringFormatter (MrcCall, Format, Marker, Size, (UINT8 *) String, &IsPrintCountValid);
 #else
   return 0;
 #endif // MRC_DEBUG_PRINT
