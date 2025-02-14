@@ -1030,10 +1030,8 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RXVREFPERBIT,  MemConfig->ExternalInputs.TrainingEnables3.RXVREFPERBIT,   SaSetup.RXVREFPERBIT   );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PPR,  MemConfig->ExternalInputs.TrainingEnables3.PPR,            SaSetup.PPR            );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.LVRAUTOTRIM,  MemConfig->ExternalInputs.TrainingEnables3.LVRAUTOTRIM,    SaSetup.LVRAUTOTRIM    );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PWRMETER,  MemConfig->ExternalInputs.TrainingEnables3.PWRMETER,       SaSetup.PWRMETER       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.OPTIMIZECOMP,  MemConfig->ExternalInputs.TrainingEnables3.OPTIMIZECOMP,   SaSetup.OPTIMIZECOMP   );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.WRTRETRAIN,  MemConfig->ExternalInputs.TrainingEnables3.WRTRETRAIN,     SaSetup.WRTRETRAIN     );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DDRPRECOMP,  MemConfig->ExternalInputs.TrainingEnables3.DDRPRECOMP,     SaSetup.DDRPRECOMP     );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TLINECLKCAL,  MemConfig->ExternalInputs.TrainingEnables3.TLINECLKCAL,    SaSetup.TLINECLKCAL    );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DCCPISERIALCAL,  MemConfig->ExternalInputs.TrainingEnables3.DCCPISERIALCAL, SaSetup.DCCPISERIALCAL );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PHASECLKCAL,  MemConfig->ExternalInputs.TrainingEnables3.PHASECLKCAL,    SaSetup.PHASECLKCAL    );

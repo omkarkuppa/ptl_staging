@@ -414,7 +414,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables3.RXDQSDCC               = FspmUpd->FspmConfig.RXDQSDCC;
   MemConfig->ExternalInputs.TrainingEnables3.DIMMNTODT              = FspmUpd->FspmConfig.DIMMNTODT;
   MemConfig->ExternalInputs.SubChHashInterleaveBit                  = FspmUpd->FspmConfig.SubChHashInterleaveBit;
-  MemConfig->ExternalInputs.DFETap1StepSize                         = (UINT8)FspmUpd->FspmConfig.DFETap1StepSize;
+  MemConfig->ExternalInputs.DFETap1StepSize                         = FspmUpd->FspmConfig.DFETap1StepSize;
   MemConfig->ExternalInputs.RealtimeMemoryFrequency                 = FspmUpd->FspmConfig.RealtimeMemoryFrequency;
   MemConfig->ExternalInputs.CmdRanksTerminated                      = FspmUpd->FspmConfig.CmdRanksTerminated;
   MemConfig->ExternalInputs.CmdMirror                               = FspmUpd->FspmConfig.CmdMirror;
@@ -422,12 +422,9 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables3.RXVREFPERBIT           = FspmUpd->FspmConfig.RXVREFPERBIT;
   MemConfig->ExternalInputs.TrainingEnables3.PPR                    = FspmUpd->FspmConfig.PPR;
   MemConfig->ExternalInputs.TrainingEnables3.LVRAUTOTRIM            = FspmUpd->FspmConfig.LVRAUTOTRIM;
-  MemConfig->ExternalInputs.TrainingEnables3.PWRMETER               = FspmUpd->FspmConfig.PWRMETER;
   MemConfig->ExternalInputs.TrainingEnables3.OPTIMIZECOMP           = FspmUpd->FspmConfig.OPTIMIZECOMP;
   MemConfig->ExternalInputs.TrainingEnables3.WRTRETRAIN             = FspmUpd->FspmConfig.WRTRETRAIN;
-  MemConfig->ExternalInputs.TrainingEnables3.DDRPRECOMP             = FspmUpd->FspmConfig.DDRPRECOMP;
   MemConfig->ExternalInputs.TrainingEnables3.TLINECLKCAL            = FspmUpd->FspmConfig.TLINECLKCAL;
-
   MemConfig->ExternalInputs.TrainingEnables.RCVET                   = FspmUpd->FspmConfig.RCVET;
   MemConfig->ExternalInputs.TrainingEnables.JWRL                    = FspmUpd->FspmConfig.JWRL;
   MemConfig->ExternalInputs.TrainingEnables.EWRTC2D                 = FspmUpd->FspmConfig.EWRTC2D;
@@ -435,9 +432,9 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables.WRTC1D                  = FspmUpd->FspmConfig.WRTC1D;
   MemConfig->ExternalInputs.TrainingEnables.WRVC1D                  = FspmUpd->FspmConfig.WRVC1D;
   MemConfig->ExternalInputs.TrainingEnables.RDTC1D                  = FspmUpd->FspmConfig.RDTC1D;
-  MemConfig->ExternalInputs.TrainingEnables2.DIMMODTT                = FspmUpd->FspmConfig.DIMMODTT;
+  MemConfig->ExternalInputs.TrainingEnables2.DIMMODTT               = FspmUpd->FspmConfig.DIMMODTT;
   MemConfig->ExternalInputs.TrainingEnables2.FUNCDCCCLK             = FspmUpd->FspmConfig.FUNCDCCCLK;
-  MemConfig->ExternalInputs.TrainingEnables2.DIMMRONT                = FspmUpd->FspmConfig.DIMMRONT;
+  MemConfig->ExternalInputs.TrainingEnables2.DIMMRONT               = FspmUpd->FspmConfig.DIMMRONT;
   MemConfig->ExternalInputs.TrainingEnables.RDEQT                   = FspmUpd->FspmConfig.RDEQT;
   MemConfig->ExternalInputs.TrainingEnables.WRTC2D                  = FspmUpd->FspmConfig.WRTC2D;
   MemConfig->ExternalInputs.TrainingEnables.UNMATCHEDWRTC1D         = FspmUpd->FspmConfig.UNMATCHEDWRTC1D;
@@ -459,7 +456,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables.RMC                     = FspmUpd->FspmConfig.RMC;
   MemConfig->ExternalInputs.TrainingEnables.PRETRAIN                = FspmUpd->FspmConfig.PRETRAIN;
   MemConfig->ExternalInputs.EccSupport              = FspmUpd->FspmConfig.EccSupport;
-  MemConfig->ExternalInputs.RemapEnable              = FspmUpd->FspmConfig.RemapEnable;
+  MemConfig->ExternalInputs.RemapEnable             = FspmUpd->FspmConfig.RemapEnable;
   MemConfig->ExternalInputs.MrcFastBoot             = FspmUpd->FspmConfig.MrcFastBoot;
   MemConfig->ExternalInputs.RankInterleave          = FspmUpd->FspmConfig.RankInterleave;
   MemConfig->ExternalInputs.EnhancedInterleave      = FspmUpd->FspmConfig.EnhancedInterleave;
@@ -475,7 +472,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.ChHashMask              = FspmUpd->FspmConfig.ChHashMask;
   MemConfig->ExternalInputs.ExtendedBankHashing     = FspmUpd->FspmConfig.ExtendedBankHashing;
   MemConfig->ExternalInputs.TrainingEnables2.DCCPICODELUT            = FspmUpd->FspmConfig.DCCPICODELUT;
-  MemConfig->ExternalInputs.TrainingEnables.RDVC1D                  = FspmUpd->FspmConfig.RDVC1D;
+  MemConfig->ExternalInputs.TrainingEnables.RDVC1D                   = FspmUpd->FspmConfig.RDVC1D;
   MemConfig->ExternalInputs.TrainingEnables2.TXTCO                   = FspmUpd->FspmConfig.TXTCO;
   MemConfig->ExternalInputs.TrainingEnables2.CLKTCO                  = FspmUpd->FspmConfig.CLKTCO;
   MemConfig->ExternalInputs.TrainingEnables2.CMDSR                   = FspmUpd->FspmConfig.CMDSR;
