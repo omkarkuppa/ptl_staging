@@ -30,7 +30,9 @@
   }
 
 #define LABEL_START           0x1000
+#ifndef LABEL_END
 #define LABEL_END             0x1001
+#endif
 
 #define STORAGE_ERASE_VARSTORE_ID                 0x0101
 // ID's for various forms that will be used by HII

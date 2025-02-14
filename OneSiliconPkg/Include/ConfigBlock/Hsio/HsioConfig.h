@@ -32,13 +32,16 @@ extern EFI_GUID gHsioConfigGuid;
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER   Header;   ///< Config Block Header
+  UINT8     RsvdBytes35[4];       ///< Reserved
   VOID      *ChipsetInitBinPtr;   ///< Policy used to point to the Base (+ OEM) ChipsetInit binary used to sync between BIOS and CSME
   UINT32    ChipsetInitBinLen;    ///< Policy used to indicate the size of the Base (+ OEM) ChipsetInit binary used to sync between BIOS and CSME
+  UINT8     RsvdBytes38[4];       ///< Reserved
   VOID      *NphyBinPtr;          ///< Policy used to point to the OEM Nphy binary used to sync between BIOS and CSME
   UINT32    NphyBinLen;           ///< Policy used to indicate the size of the OEM Nphy binary used to sync between BIOS and CSME
+  UINT8     RsvdBytes41[4];       ///< Reserved
   VOID      *SynpsPhyBinPtr;      ///< Policy used to point to the OEM Synophsys Phy binary used to sync between BIOS and CSME
   UINT32    SynpsPhyBinLen;       ///< Policy used to indicate the size of the OEM Synophsys Phy binary used to sync between BIOS and CSME
-  UINT8     RsvdBytes41[4];       ///< Reserved
+  UINT8     RsvdBytes44[4];       ///< Reserved
 } HSIO_CONFIG;
 
 #pragma pack (pop)
