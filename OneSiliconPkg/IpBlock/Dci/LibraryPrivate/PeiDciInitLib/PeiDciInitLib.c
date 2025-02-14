@@ -203,7 +203,8 @@ DciConfiguration (
   EctrlNew = DciPcrAccess->Read32 (DciPcrAccess, R_DCI_PCR_ECTRL);
   DEBUG ((DEBUG_INFO, "ECTRL Old = 0x%08x\nECTRL New = 0x%08x\n", EctrlOrg, EctrlNew));
 
-  if ((EctrlNew & R_DCI_PCR_ECTRL) == 0) {
+  // If all debug disabled then BIOS sets ECKPWRCTL bit 18 to 0.
+  if ((EctrlNew & B_DCI_PCR_ECTRL_DBGENABLE) == 0) {
     DciPcrAccess->And32 (DciPcrAccess, R_DCI_PCR_ECKPWRCTL, (UINT32)~B_DCI_PCR_ECKPWRCTL_RO_FAST_CLKGATE_DIS);
   }
 
