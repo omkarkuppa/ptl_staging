@@ -381,8 +381,7 @@ MrcChannelDisable (
 /**
   ECC byte only has 4 bits DQ
   This function check if the bit is:
-      - upper nibble (bit 7:4) for MC0
-      - lower nibble (bit 3:0) for MC1
+      - lower nibble (bit 3:0) for MC0, MC1
   @param[in]      Controller  - Current MC
   @param[in]      Byte        - Current Byte
   @param[in]      Bit         - Current Bit
@@ -401,13 +400,8 @@ MrcBitExist (
     if (Bit >= MAX_BITS) { //DQS bit
       ValidBit = TRUE;
     } else {
-      if (Controller == CONTROLLER_0) {
-        // MC0 uses upper nibble
-        ValidBit = (Bit >= MRC_DDR5_ECC_MAX_BITS) ? TRUE : FALSE;
-      } else { // MC1
-        // MC1 uses lower nibble
-        ValidBit = (Bit < MRC_DDR5_ECC_MAX_BITS) ? TRUE : FALSE;
-      }
+      // MC0 MC1 uses lower nibble
+      ValidBit = (Bit < MRC_DDR5_ECC_MAX_BITS) ? TRUE : FALSE;
     }
   }
 
@@ -456,7 +450,7 @@ MrcGetBitMask (
 
 /**
   This function return if bit is Start Bit within the byte
-  return TRUE if is bit 4 for MC0 ECC byte, otherwise return TRUE if is bit 0
+  return TRUE if is bit 0 for MC0, MC1
   @param[in]  Controller - Controller to get StartBit
   @param[in]  Byte       - Byte to get StartBit
   @param[in]  Bit        - Bit to check with StartBit
@@ -471,16 +465,12 @@ MrcIsStartBit (
   UINT32 StartBit;
 
   StartBit = 0;
-  if ((Byte == 4) && (Controller == CONTROLLER_0)) {
-    StartBit = 4;
-  }
-
   return (Bit == StartBit);
 }
 
 /**
   This function return the ECC DataTrainFeedback Mask based on MC
-  ECC byte uses upper nibble for MC0, lower nibble for MC1
+  ECC byte uses lower nibble for MC0, MC1
   @param[in]  Controller - Controller to get FeedbackMask
 **/
 UINT32
@@ -488,11 +478,7 @@ MrcEccFeedbackMask (
   UINT32 Controller
   )
 {
-  if (Controller == CONTROLLER_0) {
-    return FEEDBACKMASK_ECC_UPPER;
-  } else { // MC1
-    return FEEDBACKMASK_ECC;
-  }
+  return FEEDBACKMASK_ECC;
 }
 
 /**

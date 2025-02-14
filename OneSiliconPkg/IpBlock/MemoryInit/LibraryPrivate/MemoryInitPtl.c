@@ -214,7 +214,8 @@ InstallMrcCallback (
   VOID
   )
 {
-#ifndef NO_MRC // Exists strictly to build MRC-excluded BIOS for size check
+// Exists strictly to build MRC-excluded BIOS for size check
+#ifndef NO_MRC
   EFI_STATUS                    Status;
   MRC_INSTANCE                  *MrcInstance;
   SI_PREMEM_POLICY_PPI          *SiPreMemPolicyPpi;
@@ -3336,6 +3337,7 @@ DEBUG_CODE_END();
       ExtInputs->TrainingEnables3.WCKCLKPREDCC   = 0;
       ExtInputs->TrainingEnables3.DQSPADDCC      = 0;
       ExtInputs->TrainingEnables3.QCLKPHALIGN    = 0;
+      ExtInputs->TrainingEnables3.RXDQSVOCC      = 0;
     }
   }
 
@@ -3610,7 +3612,7 @@ BuildMemoryInfoDataHob (
   MemoryInfo->DynamicMemoryBoostTrainingFailed = SaveData->DynamicMemoryBoostTrainingFailed;
   MemoryInfo->Ratio = SaveData->Ratio;
   MemoryInfo->NumPopulatedChannels = Outputs->NumPopChannel;
-  MemoryInfo->IsIbeccEnabled = (BOOLEAN) ExtInputs->Ibecc;
+  MemoryInfo->IsIbeccEnabled = Inputs->IsIbeccEnabled;
   DEBUG((DEBUG_INFO, "MemoryInfo->IsIbeccEnabled = %d \n", MemoryInfo->IsIbeccEnabled));
 
   AmtPprRanInLastBoot.Data = 0;

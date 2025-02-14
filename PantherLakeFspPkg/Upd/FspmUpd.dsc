@@ -690,7 +690,7 @@
   # !BSF NAME:{Lp5 SplitACT Enable}
   # !BSF TYPE:{Combo} OPTION:{0:Auto, 1:Disable, 2:Enable}
   # !BSF HELP:{SplitACT enable for LP5}
-  gPlatformFspPkgTokenSpaceGuid.Lp5SplitACTEnable           | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.Lp5SplitACTEnable           | * | 0x01 | 0x02
 
   # !BSF NAME:{CCC Half Frequency}
   # !BSF TYPE:{Combo} OPTION:{0: Auto, 1: Disable, 2: GroupGv0, 3: GroupGv1, 4: GroupGv2, 5: GroupGv3}

@@ -96,3 +96,27 @@ MrcMcRfFastSleepDisable (
   GetSetEn = 1;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccMcMntsRfFastSleepDisable, WriteCached | PrintValue, &GetSetEn);
 }
+
+/**
+  This function modifies MC Address Decoder values.
+
+  @param[in]  MrcData  - Pointer to MRC global data.
+**/
+VOID
+MrcModifyMcAddressDecoderValues (
+  IN  MrcParameters *const  MrcData
+  )
+{
+  INT64 GetSetVal;
+
+  // Set MAD to 2Rx8, Density = 0xF (max value)
+  GetSetVal = 1;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch0RankCnt,    WriteCached, &GetSetVal);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch1RankCnt,    WriteCached, &GetSetVal);
+  GetSetVal = 1;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch0SdramWidth, WriteCached, &GetSetVal);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch1SdramWidth, WriteCached, &GetSetVal);
+  GetSetVal = 0xF;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch0Density,    WriteCached, &GetSetVal);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch1Density,    WriteCached, &GetSetVal);
+}

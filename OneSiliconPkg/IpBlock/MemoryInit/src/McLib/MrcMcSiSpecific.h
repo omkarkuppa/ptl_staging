@@ -56,4 +56,14 @@ MrcMcRfFastSleepDisable (
   IN  MrcParameters *const  MrcData
   );
 
+/**
+  This function modifies MC Address Decoder values.
+
+  @param[in]  MrcData  - Pointer to MRC global data.
+**/
+VOID
+MrcModifyMcAddressDecoderValues (
+  IN  MrcParameters *const  MrcData
+  );
+
 #endif //_MrcMc_h_

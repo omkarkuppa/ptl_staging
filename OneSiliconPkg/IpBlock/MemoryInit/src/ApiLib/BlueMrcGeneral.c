@@ -32,7 +32,7 @@
 #include "MrcChipApi.h"
 #include "MrcLpddr5Registers.h"
 #include "MrcRegisterCache.h"
-#include "MrcDdrIoVcc.h"
+#include "MrcDdrIoLvr.h"
 #include "MrcDdrIoComp.h"
 #include "MrcDdrIoUtils.h"
 #include "MrcDdrCommon.h"
@@ -676,6 +676,8 @@ MrcIbecc (
   INT64                                         GetSetEnable;
   IbeccOpMode                                   IbeccOperationMode;
   MC0_IBECC_CONTROL_STRUCT                      IbeccControl;
+  MC0_IBECC_PARITY_CONTROL_STRUCT               IbeccParityControl;
+  MC0_PARITY_CONTROL_STRUCT                     ParityControl;
   MC0_IBECC_MEMORY_INIT_CONTROL_STRUCT          IbeccMemInit;
   MC0_IBECC_ACTIVATE_STRUCT                     IbeccActivate;
   MC0_IBECC_ADDR_HASH_STRUCT                    IbeccAddrHash;
@@ -694,7 +696,7 @@ MrcIbecc (
   IbeccOperationMode = (ExtInputs->Ibecc && !Inputs->IsIbeccEnabled) ? IbeccNonProtect : ExtInputs->IbeccOperationMode;
   Outputs->FinalIbeccOperationMode = IbeccOperationMode;
 
-  if (ExtInputs->Ibecc && MrcIsIbeccSymmetric (MrcData)) {
+  if (Inputs->IsIbeccEnabled == TRUE && MrcIsIbeccSymmetric (MrcData)) {
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       if (MrcControllerExist (MrcData, Controller)) {
         ControllerCount++;
@@ -719,6 +721,19 @@ MrcIbecc (
 
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       if (MrcControllerExist (MrcData, Controller)) {
+
+        if (ExtInputs->IbeccParity) {
+          Offset = OFFSET_CALC_CH (MC0_PARITY_CONTROL_REG, MC1_PARITY_CONTROL_REG, Controller);
+          ParityControl.Data = MrcReadCR (MrcData, Offset);
+          ParityControl.Bits.PARITY_EN = 1;
+          MrcWriteCR (MrcData, Offset, ParityControl.Data);
+
+          Offset = OFFSET_CALC_CH (MC0_IBECC_PARITY_CONTROL_REG, MC1_IBECC_PARITY_CONTROL_REG, Controller);
+          IbeccParityControl.Data = MrcReadCR (MrcData, Offset);
+          IbeccParityControl.Bits.PARITY_CHK_EN = 1;
+          MrcWriteCR (MrcData, Offset, IbeccParityControl.Data);
+        }
+
         Offset = OFFSET_CALC_CH (MC0_IBECC_CONTROL_REG, MC1_IBECC_CONTROL_REG, Controller);
         IbeccControl.Data = MrcReadCR (MrcData, Offset);
         IbeccControl.Bits.RSB_ENABLE = 1;
@@ -1202,14 +1217,15 @@ MrcSetSafeModeOverrides (
     ExtInputs->TrainingEnables3.WCKCLKPREDCC   = 0;
     ExtInputs->TrainingEnables3.DQSPADDCC      = 0;
     ExtInputs->TrainingEnables3.QCLKPHALIGN    = 0;
-    ExtInputs->MarginLimitCheck = 0;
+    ExtInputs->TrainingEnables3.RXDQSVOCC      = 0;
+    ExtInputs->MarginLimitCheck                = 0;
   }
 
   if ((ExtInputs->SafeModeOverride & MRC_SAFE_OVERRIDE_SAGV) == 0) {
     MrcSagvOverride (MrcData);
   }
 
-  if (ExtInputs->SimicsFlag) {
+  if (ExtInputs->SimicsFlag || ExtInputs->HsleFlag) {
     // Skip training / calibration steps which are not supported in Simics
     MrcCall->MrcSetMem ((UINT8 *) &ExtInputs->TrainingEnables,  sizeof (TrainingStepsEn),  0);
     MrcCall->MrcSetMem ((UINT8 *) &ExtInputs->TrainingEnables2, sizeof (TrainingStepsEn2), 0);
@@ -1688,12 +1704,14 @@ MrcPrintInputParameters (
     "\tLoopCount: %u\n"
     "\tPprTestType: %u\n"
     "\tDqLoopbackTest: %u\n"
-    "\tEnPeriodicComp: %u\n",
+    "\tEnPeriodicComp: %u\n"
+    "\tDunitTatOptimization: %u\n",
     Inputs->NumCL,
     Inputs->LoopCount,
     ExtInputs->PprTestType,
     ExtInputs->DqLoopbackTest,
-    ExtInputs->EnPeriodicComp
+    ExtInputs->EnPeriodicComp,
+    ExtInputs->DunitTatOptimization
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\tDisableChannel:\n");
@@ -1727,14 +1745,16 @@ MrcPrintInputParameters (
     "\tDdrIoIpStepping: %Xh\n"
     "\tBootMode: %Xh\n"
     "\tTxtClean: %Xh\n"
-    "\tSimicsFlag: %Xh\n",
+    "\tSimicsFlag: %Xh\n"
+    "\tHsleFlag: %Xh\n",
     Inputs->DdrIoIpVersion.Bits.Version,
     Inputs->DdrIoIpVersion.Bits.Derivative,
     Inputs->DdrIoIpVersion.Bits.Segment,
     Inputs->DdrIoIpVersion.Bits.Stepping,
     Inputs->BootMode,
     Inputs->TxtClean,
-    ExtInputs->SimicsFlag
+    ExtInputs->SimicsFlag,
+    ExtInputs->HsleFlag
     );
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tBaseAddresses\n"
@@ -1848,8 +1868,8 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tEccSupport: %Xh\n"
     "\tCleanMemory: %u\n"
-    "\tIbecc: %Xh\n"
-    "\tIsIbeccEnabled: %d\n"
+    "\tExtInputs Ibecc: %Xh\n"
+    "\tInputs IsIbeccEnabled: %d\n"
     "\tIbeccOperationMode: 0x%X\n"
     "\tIbeccParity: 0x%X\n",
     ExtInputs->EccSupport,
@@ -2092,10 +2112,10 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DDR5XTALK: %u\nDCCLP5WCKDCA: %u\nRXUNMATCHEDCAL: %u\n",              TrainingSteps2->DDR5XTALK,      TrainingSteps2->DCCLP5WCKDCA, TrainingSteps2->RXUNMATCHEDCAL);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WRTDIMMDFE: %u\nDCCLP5READDCA: %u\n",                                TrainingSteps2->WRTDIMMDFE,     TrainingSteps2->DCCLP5WCKDCA);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s3:\n", "TrainingEnables");
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RXDQSDCC: %u\nDIMMNTODT: %u\nRXVREFPERBIT: %u\n",                            TrainingSteps3->RXDQSDCC,       TrainingSteps3->DIMMNTODT,    TrainingSteps3->RXVREFPERBIT);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR: %u\nLVRAUTOTRIM: %u\nPWRMETER: %u\nOPTIMIZECOMP: %u\n",                 TrainingSteps3->PPR,            TrainingSteps3->LVRAUTOTRIM,  TrainingSteps3->PWRMETER,       TrainingSteps3->OPTIMIZECOMP);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WRTRETRAIN: %u\nDDRPRECOMP: %u\nJEDECRESET: %u\nDQSPADDCC: %u\n",            TrainingSteps3->WRTRETRAIN,     TrainingSteps3->DDRPRECOMP,   TrainingSteps3->JEDECRESET,     TrainingSteps3->DQSPADDCC);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ROUNDTRIPMATCH: %u\nTLINECLKCAL: %u\nDCCPISERIALCAL: %u\nPHASECLKCAL: %u\nQCLKDCC: %u\n", TrainingSteps3->ROUNDTRIPMATCH, TrainingSteps3->TLINECLKCAL,  TrainingSteps3->DCCPISERIALCAL, TrainingSteps3->PHASECLKCAL, TrainingSteps3->QCLKDCC);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RXDQSDCC: %u\nDIMMNTODT: %u\nRXVREFPERBIT: %u\n",                                         TrainingSteps3->RXDQSDCC,       TrainingSteps3->DIMMNTODT,   TrainingSteps3->RXVREFPERBIT);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR: %u\nLVRAUTOTRIM: %u\nPWRMETER: %u\nOPTIMIZECOMP: %u\n",                              TrainingSteps3->PPR,            TrainingSteps3->LVRAUTOTRIM, TrainingSteps3->PWRMETER,       TrainingSteps3->OPTIMIZECOMP);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WRTRETRAIN: %u\nDDRPRECOMP: %u\nJEDECRESET: %u\nDQSPADDCC: %u\n RXDQSVOCC: %u\n",         TrainingSteps3->WRTRETRAIN,     TrainingSteps3->DDRPRECOMP,  TrainingSteps3->JEDECRESET,     TrainingSteps3->DQSPADDCC,   TrainingSteps3->RXDQSVOCC);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ROUNDTRIPMATCH: %u\nTLINECLKCAL: %u\nDCCPISERIALCAL: %u\nPHASECLKCAL: %u\nQCLKDCC: %u\n", TrainingSteps3->ROUNDTRIPMATCH, TrainingSteps3->TLINECLKCAL, TrainingSteps3->DCCPISERIALCAL, TrainingSteps3->PHASECLKCAL, TrainingSteps3->QCLKDCC);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WCKPADDCCCAL: %u\nEMPHASIS: %u\nDIMMRXOFFSET: %u\nVIEWPINCAL: %u\nWCKCLKPREDCC: %u\nQCLKPHALIGN: %u\n",    TrainingSteps3->WCKPADDCCCAL,   TrainingSteps3->EMPHASIS,     TrainingSteps3->DIMMRXOFFSET,   TrainingSteps3->VIEWPINCAL,  TrainingSteps3->WCKCLKPREDCC, TrainingSteps3->QCLKPHALIGN);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MCREGOFFSET: %u\n", ExtInputs->MCREGOFFSET);
 

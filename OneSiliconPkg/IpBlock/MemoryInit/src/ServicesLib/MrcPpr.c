@@ -32,6 +32,7 @@
 #include "MrcLpddr5.h"
 #include "MrcReset.h"
 #include "MrcGeneral.h"
+#include "MrcMcSiSpecific.h"
 
 UINT64 AmtCacheLine1[8] = {
   0x5555555555555555, 0x5555555555555555,
@@ -2450,6 +2451,7 @@ MrcPostPackageRepairEnable (
   UINT8               FirstChannel;
   MrcChannelOut       *ChannelOut;
   UINT8               Rank;
+  MRC_MC_AD_SAVE      MadSavedValues;
 
   Status          = mrcSuccess;
   Outputs         = &MrcData->Outputs;
@@ -2481,6 +2483,8 @@ MrcPostPackageRepairEnable (
   }
 
   MrcModifyRdRdTimings (MrcData, TRUE);
+
+  MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcSaveEnum, &MadSavedValues);
 
   GetSetVal = 1;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);
@@ -2529,6 +2533,8 @@ MrcPostPackageRepairEnable (
 
   MrcGetSetMc (MrcData, Outputs->FirstPopController, GsmMccOppSrefEnable, ReadNoCache, &EnableSrSave);  // Save state of Self Refresh
   MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmMccOppSrefEnable, WriteNoCache, &GetSetDis); // Disable Self Refresh
+
+  MrcModifyMcAddressDecoderValues (MrcData);
 
   MrcCall->MrcSetMemDword (SavedCpgc20Credits, ARRAY_COUNT (SavedCpgc20Credits), RDCPL_CREDITS_SCRUB);
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
@@ -2638,6 +2644,8 @@ Done:
   }
 
   MrcModifyRdRdTimings (MrcData, FALSE);
+
+  MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcRestoreEnum, &MadSavedValues);
 
   GetSetVal = 0;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);

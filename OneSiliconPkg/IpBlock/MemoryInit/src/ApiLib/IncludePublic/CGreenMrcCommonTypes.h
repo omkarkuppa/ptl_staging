@@ -125,6 +125,7 @@ typedef enum {
   TxRankMuxDelay,               ///< Tx rank mux delay for DQ/DQS to account for the I/O setting latching time vs. the drive enable
   TxRankMuxDelayDq,             ///< Tx rank mux delay for DQ to account for the I/O setting latching time vs. the drive enable
   TxRankMuxDelayDqs,            ///< Tx rank mux delay for DQS to account for the I/O setting latching time vs. the drive enable
+  DisRankSwitchClkGating,
   TxR2RDqEq,                    ///< Offset added to TxRankMuxDelay for DqEqCode
   TxR2RDqsEq,                   ///< Offset added to TxRankMuxDelay for (Dqs{PrNf,PfNr}TcoDelay, DqsEqCode)
   TxR2RDqPi,                    ///< Offset added to TxRankMuxDelay for TxDqPiCode
@@ -601,11 +602,6 @@ typedef enum {
   GsmVccClkVccF1,
   GsmVccClkVccF2,
   GsmVccClkOCSlope,
-  GsmPChannelEn,
-  GsmSkipRestoreCR,
-  GsmSkipRetentionCR,
-  GsmSaxgEnable,
-  GsmSaxgPwrGood,
   GsmPostCode,
   GsmDdrPerfMonCountEn,
   GsmVccSagPrampiCtl,
@@ -631,6 +627,9 @@ typedef enum {
   GsmIocDllReady,
   GsmSaveFullDcc,
   GsmDccSamples,
+  GsmDccLargeChange,
+  GsmDccLargeChangeEnable,
+  GsmDccLargeChangeReset,
   GsmDccTxDllCode,
   GsmDccVcdlCode,
   GsmDccVcdlCodeEn,
@@ -690,6 +689,8 @@ typedef enum {
   GsmIocRetrainCtlInitTrain,
   GsmIocRetrainCtlDuration,
   GsmIocRetrainCtlResetStatus,
+  GsmIocRdRetrainCtlInitTrain,
+  GsmIocRdRetrainCtlResetStatus,
   GsmIocAuxClkOffAuxClk,
   GsmIocAuxClkOffQClkPhClk,
   GsmIocQClkCalOff,
@@ -789,6 +790,12 @@ typedef enum {
   GsmIocMiscEnWrCRC,
   GsmIocMiscTxBurstLen,
   GsmIocMiscRxBurstLen,
+  GsmIocDataDisableWriteBackCriClkGating,
+  GsmIocCompDisableWriteBackCriClkGating,
+  GsmIocScramDisableWriteBackCriClkGating,
+  GsmIocCccDisableWriteBackCriClkGating,
+  GsmIocDataShrDisableWriteBackCriClkGating,
+  GsmIocCccShrDisableWriteBackCriClkGating,
                                     ///< -----------------------------------------------------------------
   EndOfIocMarker,                   ///< End of IO Config Marker
                                     ///< -----------------------------------------------------------------

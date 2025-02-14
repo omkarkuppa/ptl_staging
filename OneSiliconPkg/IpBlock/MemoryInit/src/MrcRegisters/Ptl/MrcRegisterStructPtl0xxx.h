@@ -614,7 +614,7 @@ typedef union {
     UINT32 RXVcmResSel                             :  2;  // Bits 13:12
     UINT32 RXDqsTailCtl                            :  2;  // Bits 15:14
     UINT32 ODTSingleSegEn                          :  1;  // Bits 16:16
-    INT32 DqsOdtCompOffset                         :  5;  // Bits 21:17 // Manual edit - 2's complement field
+    INT32 DqsOdtCompOffset                         :  5;  // Bits 21:17
     UINT32 VrefPwrMuxSelVdd2                       :  1;  // Bits 22:22
     UINT32 RxVref                                  :  9;  // Bits 31:23
   } Bits;

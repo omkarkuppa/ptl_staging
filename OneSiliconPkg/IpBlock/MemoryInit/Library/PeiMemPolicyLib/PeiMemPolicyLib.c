@@ -117,6 +117,7 @@ LoadMemConfigDefault (
   // SAGV: 0 = Disabled, 1 = Enabled
   // SAGV WP Mask: 0x3 = Points0_1, 0x7 = Points0_1_2, 0xF = AllPoints0_1_2_3 (Only valid when SAGV is Enabled, otherwise ignored)
   if (IsSimicsEnvironment () || IsHfpgaEnvironment ()) {
+    MemConfig->ExternalInputs.HsleFlag           = 0;
     MemConfig->ExternalInputs.SimicsFlag         = 1;
     SimRecognitionReg = PciSegmentRead32 (PCI_SEGMENT_LIB_ADDRESS (SA_SEG_NUM, SA_MC_BUS, SA_MC_DEV, SA_MC_FUN, R_SA_MC_SIM_RECOGNITION_OFFSET));
     if ((SimRecognitionReg & BIT16) != 0) {
@@ -124,6 +125,7 @@ LoadMemConfigDefault (
     }
   } else {
     MemConfig->ExternalInputs.SimicsFlag         = 0;
+    MemConfig->ExternalInputs.HsleFlag           = 0;
   }
 
   // Below default values are different from MiniBios.

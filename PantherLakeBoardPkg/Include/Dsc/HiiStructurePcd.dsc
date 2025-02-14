@@ -3519,7 +3519,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DvfscEnabled|0x0                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.VoltageReadout|0x0                                             #           Bit 24 - Display VCCClk and PBias voltage readings across partitions
 gStructPcdTokenSpaceGuid.PcdSaSetup.CccHalfFrequency|0x0                                           #           Bit 25 - CCC Half Frequency
 gStructPcdTokenSpaceGuid.PcdSaSetup.Ddr5AutoPrechargeEnable|0x0                                    #           Bit 26:27 - DDR5 Auto Precharge Enable
-gStructPcdTokenSpaceGuid.PcdSaSetup.Lp5SplitACTEnable|0x1                                          #           Bit 28:29 - LP5 SplitACT Enable
+gStructPcdTokenSpaceGuid.PcdSaSetup.Lp5SplitACTEnable|0x2                                          #           Bit 28:29 - LP5 SplitACT Enable
 gStructPcdTokenSpaceGuid.PcdSaSetup.RetrainToWorkingChannel|0x00                                   #           Bit 30 - Disable Failing Channel during Cold Boot and Retrain To Working Channel
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashOverride|0x00                                         #           Bit 31 - Select if SubChannel Hash setting values will be taken from input parameters or automatically taken from POR values depending on DRAM type detected.
 gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc0Ch0|0x0                                              # Offset 34 Controller 0, Channel 0 Control

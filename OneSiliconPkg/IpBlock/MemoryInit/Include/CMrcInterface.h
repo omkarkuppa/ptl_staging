@@ -672,6 +672,8 @@ typedef enum {
   OemMrcHVMFinalize,        ///< before HVM Finalization
   OemDqLoopbackTest,        ///< before Dq Loopback test
   OemDqsPadDcc,             ///< before DQS PAD DCC Optimization
+  OemRxDqsVoc,              ///< before RxDqs VOC Centering
+  OemDunitTatOptimization,  ///< before Dunit TAT optimization
   ///
   ///*********************************************************************************
   ///
@@ -1955,7 +1957,7 @@ typedef struct {
   BOOLEAN           MrXPdaDfeTap2Enabled;          ///< Defines if MRs of DFE TAP2 is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap3Enabled;          ///< Defines if MRs of DFE TAP3 is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap4Enabled;          ///< Defines if MRs of DFE TAP4 is required as PDA for this channel.
-  BOOLEAN           IsDdr5Hynix;                   ///< TRUE if any DDR5 Hynix DIMM is detected otherwise FALSE
+  BOOLEAN           IsDdr5Hynix[MAX_CONTROLLER][MAX_DDR5_CHANNEL][MAX_DIMMS_IN_CHANNEL];       ///< If a DDR5 Hynix DIMM is detected set it to TRUE per MC/Ch/DIMM being populated otherwise FALSE
   BOOLEAN           IsOneDpcSplitBgEnabled;        ///< If One DPC 1R split bg is enabled.
   BOOLEAN           IsRowHammerConfigured[MAX_CONTROLLER][MAX_CHANNEL][MAX_DIMMS_IN_CHANNEL]; ///< TRUE if ARFM or DRFM is configured for a DIMM
   /// Cmd and Ctl Pi Code for Low frequency. This is required to track for LP5 Frequency switching.
@@ -1976,6 +1978,7 @@ typedef struct {
   UINT8             Ibecc;
   UINT8             TmeEnable;
   UINT8             PmaCceConfig;
+  UINT8             ReservedBytesAlign[1];        ///< Align to 4 bytes for MrcSavedata
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back
   //
@@ -2273,7 +2276,7 @@ typedef struct {
   BOOLEAN           IsDdrIoTc;                      ///< Identified that the current CPU is a test chip (PHY)
   BOOLEAN           NonTargetOdtEn;                 ///< Enables Non-Target ODT for LPDDR5
   BOOLEAN           TxtClean;                       ///< TRUE if we require to perform TxtClean when Trusted eXecution Technology flow enabled.
-  UINT8             TatDelta;                       ///< Used to increase Turnaround values in Safe mode
+  UINT8             Reserved2;                      ///< Reserved to ensure config block size is a multiple of DWORDs
   BOOLEAN           Mbist;                          ///< TRUE if we require to perform Memory BIST
   BOOLEAN           EnablePda;                      ///< TRUE MRs will be configured per PDA.
   BOOLEAN           Lp58BankMode;                   ///< TRUE if running Lp5 8-Bank Mode

@@ -38,6 +38,26 @@
 /// Guardband any flight time between 2 ranks
 #define MRC_LP5_TCK2CK (50)
 
+/// Structure to store turnaround timings
+typedef struct {
+  UINT32 tRdRdsg;
+  UINT32 tRdRddg;
+  UINT32 tWrWrsg;
+  UINT32 tWrWrdg;
+  UINT32 tRdWrsg;
+  UINT32 tRdWrdg;
+  UINT32 tWrRdsg;
+  UINT32 tWrRddg;
+  UINT32 tRdRddr;
+  UINT32 tRdRddd;
+  UINT32 tWrWrdr;
+  UINT32 tWrWrdd;
+  UINT32 tRdWrdr;
+  UINT32 tRdWrdd;
+  UINT32 tWrRddr;
+  UINT32 tWrRddd;
+} TurnAroundTimings;
+
 /**
   This function calculates the tRdRd (sg,dg,dr,dd) for LPDDR5 based on Jedec specifications
 
@@ -146,8 +166,8 @@ GetDdr5tRdRd (
 VOID
 GetDdr5tWrWr (
   IN MrcParameters *const  MrcData,
-  IN  UINT32               MaxOdtWrOff,
-  IN  UINT32               MinOdtWrOn,
+  IN  INT32                MaxOdtWrOff,
+  IN  INT32                MinOdtWrOn,
   OUT  UINT32              *tWrWrsg,
   OUT  UINT32              *tWrWrdg,
   OUT  UINT32              *tWrWrdr,
@@ -171,8 +191,8 @@ VOID
 GetDdr5tRdWr (
   IN MrcParameters *const  MrcData,
   IN  UINT32               DeltaTxDqsPiCode,
-  IN  UINT32               MaxOdtRdOff,
-  IN  UINT32               MinOdtWrOn,
+  IN  INT32                MaxOdtRdOff,
+  IN  INT32                MinOdtWrOn,
   IN  BOOLEAN              NTODTRd,
   OUT  UINT32              *tRdWrsg,
   OUT  UINT32              *tRdWrdg,
@@ -197,8 +217,8 @@ VOID
 GetDdr5tWrRd (
   IN MrcParameters *const  MrcData,
   IN  UINT32               DeltaTxDqsPiCode,
-  IN  UINT32               MinOdtRdOn,
-  IN  UINT32               MaxOdtWrOff,
+  IN  INT8                 MinOdtRdOn,
+  IN  INT8                 MaxOdtWrOff,
   IN  BOOLEAN              NTODTRd,
   OUT  UINT32              *tWrRdsg,
   OUT  UINT32              *tWrRddg,
@@ -233,6 +253,74 @@ GetPhyWr2WrTA (
   IN  MrcParameters *const MrcData,
   IN  TxPathMinMax  *const TxPathResults,
   OUT UINT32               PHYWr2Wr_PI[MAX_CONTROLLER][MAX_CHANNEL]
+  );
+
+/**
+  This function gets the Pre Training Turnaround Values
+
+  @param[in]  MrcData - Include all MRC global data.
+  @param[out] TAT     - return struct which holds TAT values
+
+  @retval None
+**/
+VOID
+GetDramTatPreTraining (
+  IN  MrcParameters *const   MrcData,
+  OUT TurnAroundTimings      *TAT
+  );
+
+/**
+  This function gets the Post Training Turnaround Values
+
+  @param[in]  MrcData       - Include all MRC global data.
+  @param[in]  RxPathResults - Struct contianing Min/Max Data for Rx Data Path
+  @param[in]  TxPathResults - Struct contianing Min/Max Data for Tx Data Path
+  @param[in]  Controller    - Current Controller
+  @param[in]  Channel       - Current Channel
+  @param[out] TAT           - return struct which holds TAT values
+
+  @retval None
+**/
+VOID
+GetDramTatPostTraining (
+  IN  MrcParameters *const   MrcData,
+  IN  RxPathMinMax  * RxPathResults,
+  IN  TxPathMinMax  * TxPathResults,
+  IN  UINT32               Controller,
+  IN  UINT32               Channel,
+  OUT TurnAroundTimings    *TAT
+  );
+
+/**
+  This function gets and sets the Pre Training Turnaround Values
+
+  @param[in]  MrcData - Include all MRC global data.
+
+  @retval None
+**/
+VOID
+MrcTurnAroundTimingsPreTraining (
+  IN  MrcParameters *const MrcData
+  );
+
+/**
+  This function sets the Turnaround Timings based on the incoming Input Struct (TAT)
+
+  @param[in]      MrcData       - Include all MRC global data.
+  @param[in]      TAT           - Struct to hold TAT values
+  @param[in]      Controller    - Controller to setup
+  @param[in]      Channel       - Channel to setup
+  @param[in]      IsPreTraining - BOOLEAN to indicate if TAT values should be programmed for Pre Trianing or Post Trianing TAT Optimization
+
+  @retval None
+**/
+VOID
+SetDramTatTimings (
+  IN MrcParameters* const  MrcData,
+  IN TurnAroundTimings     *TAT,
+  IN  UINT32               Controller,
+  IN  UINT32               Channel,
+  IN  BOOLEAN              IsPreTraining
   );
 
 #endif // _MrcTurnAround_h_

@@ -437,7 +437,7 @@ MrcTimingConfiguration (
     }
   }
   // Setup turnaround timings
-  SetTurnAroundTiming (MrcData, TRUE);
+  MrcTurnAroundTimingsPreTraining (MrcData);
 
   // Check RawCard Types and adjust Read ODT if needed
   //RdOdtStretch (MrcData);
