@@ -63,6 +63,7 @@
 #define TXT_CRASHCODE_REG_OFF     0x30   ///< Offset of TXT crash code register (CRASH)
 #define TXT_SPAD_REG_OFF          0xA0   ///< Offset of TXT SPAD register (SPAD)
 #define B_BPT_TXT_PASSED          BIT30  /// <1 = TXT check passed into SACM; 0 = TXT check failed into SACM
+#define B_TXT_SPAD_ALIAS_CHECK    BIT22  /// <1 = Alias check reqested; 0 = Alias check not requested
 
 #define TXT_SINIT_BASE_REG_OFF    0x270  ///< Offset of SINIT base address register (SINIT_MEMORY_BASE)
 #define TXT_SINIT_SIZE_REG_OFF    0x278  ///< Offset of SINIT size register (SINIT_MEMORY_SIZE)
