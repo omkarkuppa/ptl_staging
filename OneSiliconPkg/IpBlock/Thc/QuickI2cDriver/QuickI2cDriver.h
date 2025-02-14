@@ -91,14 +91,37 @@ QuickI2cSetGlobalInterruptState (
   );
 
 /**
+  Perform disable interrupt and Internal state clear
+  @param[in]  MmioBase    QuickI2c MMIO BAR0
+
+  @retval EFI_SUCCESS     QuickI2c initialized successfully
+  @retval other           Error during initialization
+**/
+EFI_STATUS
+QuickI2cDisIntAndInternalStateClr (
+  IN UINT64       MmioBase
+  );
+
+/**
+  Configure/Clear internal IP state
+  @param[in]  MmioBase        QuickI2c MMIO BAR0
+  
+  @retval  Status
+**/
+EFI_STATUS
+QuickI2cInternalStateClear (
+  IN UINT64 MmioBase
+  );
+
+/**
   Perfomrs Interrupt disable
-  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @param[in]  MmioBase    QuickI2c MMIO BAR0
   @retval EFI_SUCCESS     QuickI2c initialized successfully
   @retval other           Error during initialization
 **/
 EFI_STATUS
 QuickI2cDisableInterrupt (
-  IN QUICK_I2C_DEV      *QuickI2cDev
+  IN UINT64       MmioBase
   );
 
 /**

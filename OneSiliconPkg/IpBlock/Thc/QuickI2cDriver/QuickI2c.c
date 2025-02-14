@@ -660,7 +660,7 @@ QuickI2cDriverBindingStart (
     return Status;
   }
 
-  Status = QuickI2cDisableInterrupt (QuickI2cDev);
+  Status = QuickI2cDisableInterrupt (QuickI2cDev->PciBar0);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "ERROR - QuickI2c failed to disable interrupts Status: %r\n", Status));
     FreePool (QuickI2cDev);

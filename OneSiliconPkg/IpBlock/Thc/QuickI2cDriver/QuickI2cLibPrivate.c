@@ -964,13 +964,136 @@ QuickI2cSwDmaConfigure (
 }
 
 /**
+  Configure/Clear internal IP state
+  @param[in]    *QuickI2cDev    QuickI2cDev struct pointer
+  @retval  Status
+**/
+EFI_STATUS
+QuickI2cInternalStateClear (
+  IN UINT64 MmioBase
+  )
+{
+  THC_M_PRT_INT_STATUS            ThcIntStatus;
+  THC_M_PRT_SW_SEQ_STS            SwSeqSts;
+  THC_M_PRT_READ_DMA_CNTRL_2      ReadDmaCntrl2;
+  THC_M_PRT_READ_DMA_INT_STS_2    ReadDmaIntSts2;
+  THC_M_PRT_WRITE_DMA_CNTRL       WriteDmaCntrl;
+  THC_M_PRT_ERR_CAUSE             ThcMPrtErrCause;
+  THC_M_PRT_READ_DMA_INT_STS_1    ThcMPrtReadDmaIntSts1;
+  THC_M_PRT_READ_DMA_CNTRL_1      ThcMPrtReadDmaCntrl1;
+  THC_M_PRT_WRITE_INT_STS         ThcMPrtWriteIntSts;
+  THC_M_PRT_DEVINT_CNT            ThcMPrtDevintCnt;
+  THC_M_PRT_DB_CNT_1              ThcMPrtDbCnt1;
+  THC_M_PRT_FRAME_DROP_CNT_1      ThcMPrtFrameDropCnt1;
+  THC_M_PRT_FRAME_DROP_CNT_2      ThcMPrtFrameDropCnt2;
+  THC_M_PRT_FRM_CNT_1             ThcMPrtFrmCnt1;
+  THC_M_PRT_FRM_CNT_2             ThcMPrtFrmCnt2;
+  THC_M_PRT_RXDMA_PKT_CNT_1       ThcMPrtRxdmaPktCnt1;
+  THC_M_PRT_RXDMA_PKT_CNT_2       ThcMPrtRxdmaPktCnt2;
+  THC_M_PRT_SWINT_CNT_1           ThcMPrtSwintCnt1;
+  THC_M_PRT_SWINT_CNT_2           ThcMPrtSwintCnt2;
+  THC_M_PRT_TX_FRM_CNT            ThcMPrtTxFrmCnt;
+  THC_M_PRT_TXDMA_PKT_CNT         ThcMPrtTxdmaPktCnt;
+  THC_M_PRT_UFRM_CNT_1            ThcMPrtUfrmCnt1;
+  THC_M_PRT_UFRM_CNT_2            ThcMPrtUfrmCnt2;
+  THC_M_PRT_PRD_EMPTY_CNT_1       ThcMPrtPrdEmptyCnt1;
+  THC_M_PRT_PRD_EMPTY_CNT_2       ThcMPrtPrdEmptyCnt2;
+
+  ThcMPrtErrCause.Fields.BufOvrrunErr = 1; // 0x1028
+  ThcMPrtErrCause.Fields.InvldDevEntry = 1;
+  ThcMPrtErrCause.Fields.FrameBabbleErr = 1;
+  ThcMPrtErrCause.Fields.PrdEntryErr = 1;
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_ERR_CAUSE, ThcMPrtErrCause.Data32);
+
+  ReadDmaIntSts2.Fields.StallSts = 1; //0x1210
+  ReadDmaIntSts2.Fields.EofIntSts = 1;
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_READ_DMA_INT_STS_2, ReadDmaIntSts2.Data32);
+
+  ThcMPrtReadDmaIntSts1.Fields.StallSts = 1; // 0x1110h
+  ThcMPrtReadDmaIntSts1.Fields.EofIntSts = 1;
+  ThcMPrtReadDmaIntSts1.Fields.NondmaIntSts = 1;
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_READ_DMA_INT_STS_1, ThcMPrtReadDmaIntSts1.Data32);
+
+  ThcIntStatus.Fields.TxnErrIntSts = 1; // 1024h
+  ThcIntStatus.Fields.FatalErrIntSts = 1;
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_INT_STATUS, ThcIntStatus.Data32);
+
+  SwSeqSts.Fields.ThcSsErr = 1; //0x1044
+  SwSeqSts.Fields.TssDone = 1;
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_SW_SEQ_STS, SwSeqSts.Data32);
+
+  ThcMPrtReadDmaCntrl1.Fields.IeEof = 0; // 0x110C
+  ThcMPrtReadDmaCntrl1.Fields.Tpcpr = 1; 
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_READ_DMA_CNTRL_1, ThcMPrtReadDmaCntrl1.Data32);
+  ReadDmaCntrl2.Fields.IeEof = 0; // 0x120C
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_READ_DMA_CNTRL_2, ReadDmaCntrl2.Data);
+
+  WriteDmaCntrl.Fields.QuickI2cWrDmaIeDmaCpl = 0; //0x1098
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_WRITE_DMA_CNTRL, WriteDmaCntrl.Data);
+
+  ThcMPrtWriteIntSts.Fields.ThcWrdmaErrorSts = 1; // 0x109C
+  ThcMPrtWriteIntSts.Fields.ThcWrdmaIocSts = 1;
+  ThcMPrtWriteIntSts.Fields.ThcWrdmaCmplStatus = 1;
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_WRITE_INT_STS, ThcMPrtWriteIntSts.Data32);
+
+  ThcMPrtDbCnt1.Fields.ThcMPrtDbCntRst = 1; //0x11A0
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_DB_CNT_1, ThcMPrtDbCnt1.Data32);
+
+  ThcMPrtDevintCnt.Fields.ThcMPrtDevintCntRst = 1; // 0x10E8
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_DEVINT_CNT, ThcMPrtDevintCnt.Data32);
+
+  ThcMPrtFrameDropCnt1.Fields.Rfdc = 1; // 0x11B4
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_FRAME_DROP_CNT_1, ThcMPrtFrameDropCnt1.Data32);
+
+  ThcMPrtFrameDropCnt2.Fields.Rfdc = 1; // 0x12B4
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_FRAME_DROP_CNT_2, ThcMPrtFrameDropCnt2.Data32);
+
+  ThcMPrtFrmCnt1.Fields.ThcMPrtFrmCntRst = 1; // 0x11A4
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_FRM_CNT_1, ThcMPrtFrmCnt1.Data32);
+
+  ThcMPrtFrmCnt2.Fields.ThcMPrtFrmCntRst = 1; // 0x12A4
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_FRM_CNT_2, ThcMPrtFrmCnt2.Data32);
+
+  ThcMPrtRxdmaPktCnt1.Fields.ThcMPrtRxdmaPktCntRst = 1; // 0x11AC
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_RXDMA_PKT_CNT_1, ThcMPrtRxdmaPktCnt1.Data32);
+
+  ThcMPrtRxdmaPktCnt2.Fields.ThcMPrtRxdmaPktCntRst = 1; // 0x12AC
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_RXDMA_PKT_CNT_2, ThcMPrtRxdmaPktCnt2.Data32);
+
+  ThcMPrtSwintCnt1.Fields.ThcMPrtSwintCntRst = 1; // 0x11B0
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_SWINT_CNT_1, ThcMPrtSwintCnt1.Data32);
+
+  ThcMPrtSwintCnt2.Fields.ThcMPrtSwintCntRst = 1; // 0x12B0
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_SWINT_CNT_2, ThcMPrtSwintCnt2.Data32);
+
+  ThcMPrtTxFrmCnt.Fields.ThcMPrtTxFrmCntRst = 1; // 0x10E0
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_TX_FRM_CNT, ThcMPrtTxFrmCnt.Data32);
+
+  ThcMPrtTxdmaPktCnt.Fields.ThcMPrtTxdmaPktCntRst = 1; // 0x10E4
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_TXDMA_PKT_CNT, ThcMPrtTxdmaPktCnt.Data32);
+
+  ThcMPrtUfrmCnt1.Fields.ThcMPrtUfrmCntRst = 1; // 0x11A8
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_UFRM_CNT_1, ThcMPrtUfrmCnt1.Data32);
+
+  ThcMPrtUfrmCnt2.Fields.ThcMPrtUfrmCntRst = 1; // 0x12A8
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_UFRM_CNT_2, ThcMPrtUfrmCnt2.Data32);
+
+  ThcMPrtPrdEmptyCnt1.Fields.Rptec = 1; // 0x12F0
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_PRD_EMPTY_CNT_1, ThcMPrtPrdEmptyCnt1.Data32);
+
+  ThcMPrtPrdEmptyCnt2.Fields.Rptec = 1; // 0x12F4
+  MmioWrite32 (MmioBase + R_THC_MEM_PRT_PRD_EMPTY_CNT_2, ThcMPrtPrdEmptyCnt2.Data32);
+  return EFI_SUCCESS;
+}
+
+/**
   Program Sub IP register to default settings
 
   @param[in]  MmioBase              QuickI2c MMIO BAR0
 
 **/
 VOID
-QuickI2cLiProgramSubIpRegisterToDefault (
+QuickI2cLibProgramSubIpRegisterToDefault (
   IN UINT64  MmioBase
   )
 {
@@ -1066,7 +1189,7 @@ QuickI2cLiProgramSubIpRegisterToDefault (
 
 **/
 VOID
-QuickI2cSubIpCleanUp (
+QuickI2cSubIpResetConfiguredSettings (
   IN UINT64  MmioBase
   )
 {
@@ -1088,233 +1211,237 @@ QuickI2cSubIpCleanUp (
   THC_I2C_IC_DMA_TDLR     IcDmaTdlr;
   THC_I2C_IC_DMA_RDLR     IcDmaRdlr;
 
-  THC_LOCAL_DEBUG (L"QuickI2cSubIpCleanUp: Start ()\n")
+  THC_LOCAL_DEBUG (L"QuickI2cSubIpResetConfiguredSettings: Start ()\n")
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_ENABLE, &IcEnable.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_ENABLE error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_ENABLE error, Status %r\n", Status));
     return;
   }
   IcEnable.Fields.Enable = 0;
   IcEnable.Fields.SdaStuckRecoveryEnable = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_ENABLE, IcEnable.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_ENABLE error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_ENABLE error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_CON, &IcCon.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_CON error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_CON error, Status %r\n", Status));
     return;
   }
   IcCon.Data32 = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_CON, IcCon.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_CON error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_CON error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_TAR, &IcTar.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_TAR error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_TAR error, Status %r\n", Status));
     return;
   }
   IcTar.Fields.IcTar = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_TAR, IcTar.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_TAR error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_TAR error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_SS_SCL_HCNT, &IcSsSclHcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SS_SCL_HCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_SS_SCL_HCNT error, Status %r\n", Status));
     return;
   }
   IcSsSclHcnt.Fields.IcSsSclHcnt = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_SS_SCL_HCNT, IcSsSclHcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SS_SCL_HCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_SS_SCL_HCNT error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_SS_SCL_LCNT, &IcSsSclLcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SS_SCL_LCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_SS_SCL_LCNT error, Status %r\n", Status));
     return;
   }
   IcSsSclLcnt.Fields.IcSsSclLcnt = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_SS_SCL_LCNT, IcSsSclLcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SS_SCL_LCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_SS_SCL_LCNT error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_SDA_HOLD, &IcSdaHold.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
     return;
   }
   IcSdaHold.Fields.IcSdaTxHold = 0;
   IcSdaHold.Fields.IcSdaRxHold = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_SDA_HOLD, IcSdaHold.Data32);
     if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_FS_SCL_HCNT, &IcFsSclHcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_FS_SCL_HCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_FS_SCL_HCNT error, Status %r\n", Status));
     return;
   }
   IcFsSclHcnt.Fields.IcFsSclHcnt = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_FS_SCL_HCNT, IcFsSclHcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_FS_SCL_HCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_FS_SCL_HCNT error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_FS_SCL_LCNT, &IcFsSclLcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_FS_SCL_LCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_FS_SCL_LCNT error, Status %r\n", Status));
     return;
   }
   IcFsSclLcnt.Fields.IcFsSclLcnt = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_FS_SCL_LCNT, IcFsSclLcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_FS_SCL_LCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_FS_SCL_LCNT error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_SDA_HOLD, &IcSdaHold.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
     return;
   }
   IcSdaHold.Fields.IcSdaTxHold = 0;
   IcSdaHold.Fields.IcSdaRxHold = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_SDA_HOLD, IcSdaHold.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_HS_SCL_HCNT, &IcHsSclHcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_HS_SCL_HCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_HS_SCL_HCNT error, Status %r\n", Status));
     return;
   }
   IcHsSclHcnt.Fields.IcHsSclHcnt = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_HS_SCL_HCNT, IcHsSclHcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_HS_SCL_HCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_HS_SCL_HCNT error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_HS_SCL_LCNT, &IcHsSclLcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_HS_SCL_LCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_HS_SCL_LCNT error, Status %r\n", Status));
     return;
   }
   IcHsSclLcnt.Fields.IcHsSclLcnt  = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_HS_SCL_LCNT, IcHsSclLcnt.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_HS_SCL_LCNT error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_HS_SCL_LCNT error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_SDA_HOLD, &IcSdaHold.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
     return;
   }
   IcSdaHold.Fields.IcSdaTxHold = 0;
   IcSdaHold.Fields.IcSdaRxHold = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_SDA_HOLD, IcSdaHold.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_SDA_HOLD error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_INTR_MASK, &IcIntrMask.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_INTR_MASK error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_INTR_MASK error, Status %r\n", Status));
     return;
   }
   IcIntrMask.Data32 = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_INTR_MASK, IcIntrMask.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_INTR_MASK error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_INTR_MASK error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_RX_TL, &IcRxTl.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_RX_TL error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_RX_TL error, Status %r\n", Status));
     return;
   }
   IcRxTl.Fields.RxTl = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_RX_TL, IcRxTl.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_RX_TL error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_RX_TL error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_TX_TL, &IcTxTl.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_TX_TL error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_TX_TL error, Status %r\n", Status));
     return;
   }
   IcTxTl.Fields.TxTl = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_TX_TL, IcTxTl.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_TX_TL error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_TX_TL error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_DMA_CR, &IcDmaCr.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_DMA_CR error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_DMA_CR error, Status %r\n", Status));
     return;
   }
   IcDmaCr.Data32 = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_DMA_CR, IcDmaCr.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_DMA_CR error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_DMA_CR error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_DMA_TDLR, &IcDmaTdlr.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_DMA_TDLR error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_DMA_TDLR error, Status %r\n", Status));
     return;
   }
   IcDmaTdlr.Fields.Dmatdl = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_DMA_TDLR, IcDmaTdlr.Data32);
       if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_DMA_TDLR error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_DMA_TDLR error, Status %r\n", Status));
     return;
   }
 
   Status = QuickI2cLibReadSubIpRegister (MmioBase, THC_I2C_REG_IC_DMA_RDLR, &IcDmaRdlr.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_DMA_RDLR error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_DMA_RDLR error, Status %r\n", Status));
     return;
   }
   IcDmaRdlr.Fields.Dmadrl = 0;
   Status = QuickI2cLibWriteSubIpRegister (MmioBase, THC_I2C_REG_IC_DMA_RDLR, IcDmaRdlr.Data32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "QuickI2cInitialize QuickI2cLibWriteSubIpRegister THC_I2C_REG_IC_DMA_RDLR error, Status %r\n", Status));
+    DEBUG ((DEBUG_ERROR, "QuickI2cSubIpResetConfiguredSettings THC_I2C_REG_IC_DMA_RDLR error, Status %r\n", Status));
     return;
   }
 
-  THC_LOCAL_DEBUG (L"QuickI2cSubIpCleanUp: End()\n")
+  THC_LOCAL_DEBUG (L"QuickI2cSubIpResetConfiguredSettings: End()\n")
 }
 
 /**
   Prepares Touch Panel and THC for OS hand off
+  a.	Wait till all PIOs are finished
+  b.	Quiesce THC interrupt and wait THC_DEVINT_QUIESCE_HW_STS bit to be 1
+  c.	Do THC internal state clear up
+  d.	Disable THC DMAs
 
   @param[in]  MmioBase           QuickI2c MMIO BAR0
 
@@ -1324,38 +1451,16 @@ QuickI2cLibCleanUp (
   IN UINT64       MmioBase
   )
 {
-  EFI_STATUS      Status;
-
   THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp ()\n")
-
-  QuickI2cSetGlobalInterruptState (MmioBase, FALSE);
-
-  THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp Disable interrupt \n")
-  if (QuickI2cLibIsQuiesceDisabled (MmioBase)) {
-    THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp QuiesceDisabled \n")
-    Status = QuickI2cLibStartQuiesce (MmioBase, StartQuiesceTimeout);
-    THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp QuickI2cLibStartQuiesce Status: %r\n", Status)
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_WARN, "QuickI2cLibCleanUp QuickI2cLibStartQuiesce error, Status %r\n", Status));
-      return;
-    }
-  }
-  //
-  // Clear out QuickI2c SubIP programmed register values
-  //
-  QuickI2cSubIpCleanUp (MmioBase);
-
+  
+  QuickI2cDisIntAndInternalStateClr (MmioBase);
+  QuickI2cResetDmaSettings (MmioBase);
+  QuickI2cResetSwdmaSettings (MmioBase);
+  QuickI2cSubIpResetConfiguredSettings (MmioBase);
   QuickI2cLibSetReadRx2WritePointer (MmioBase, 0);
-
-  Status = QuickI2cLibSetPrdTablesAddress (MmioBase, 0, 0, 0);
-  if (EFI_ERROR (Status)) {
-    THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp: QuickI2cLibSetPrdTablesAddress error, Status %r\n", Status)
-    // continue
-  }
-
+  QuickI2cLibSetPrdTablesAddress (MmioBase, 0, 0, 0);
   QuickI2cLibSetLengthInPrd (MmioBase, 1, 1, 1, 1, 1);
-
-  QuickI2cLiProgramSubIpRegisterToDefault (MmioBase);
+  QuickI2cLibProgramSubIpRegisterToDefault (MmioBase);
 }
 
 /**

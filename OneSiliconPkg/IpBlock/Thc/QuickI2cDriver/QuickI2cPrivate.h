@@ -547,6 +547,201 @@ typedef union {
 } THC_M_PRT_READ_DMA_CNTRL_2;
 
 typedef union {
+	struct {
+		UINT32 Rsvd0            : 9; // RO Reserved
+		UINT32 InvldDevEntry    : 1; // RW/1C/V THC Transaction Error Cause - Invalid Device Register Setting
+		UINT32 FrameBabbleErr   : 1; // RW/1C/V THC Transaction Error Cause - Frame Babble
+		UINT32 Rsvd1            : 1; // RO Reserved
+		UINT32 BufOvrrunErr     : 1; // RW/1C/V THC Transaction Error Cause - THC Buffer Overrun
+		UINT32 PrdEntryErr      : 1; // RW/1C/V THC Transaction Error Cause - Invalid PRD Entry
+		UINT32 Rsvd2            : 2; // RO Reserved
+		UINT32 FatalErrCause    : 8; // RO/V THC Fatal Error Cause
+		UINT32 Rsvd3            : 8; // RO Reserved
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_ERR_CAUSE;
+
+
+typedef union {
+	struct {
+		UINT32 DmacplSts     : 1; // RW/1C/V DMA Complete for the 1st RXDMA
+		UINT32 ErrorSts      : 1; // RW/1C/V Error status for the 1st RXDMA
+		UINT32 IocSts        : 1; // RW/1C/V Interrupt Status of PRD completion with IOC =1 for the 1st RXDMA
+		UINT32 StallSts      : 1; // RW/1C/V Interrupt Status of PRD table stalls for the 1st RXDMA
+		UINT32 NondmaIntSts  : 1; // RW/1C/V Interrupt Status of non DMA device interrupt
+		UINT32 EofIntSts     : 1; // RW/1C/V Interrupt Status of EOF Interrupt for the 1st RXDMA
+		UINT32 Rsvd0         : 2; // RO Reserved
+		UINT32 Active        : 1; // RO/V Active status for the 1st RXDMA
+		UINT32 Rsvd1         : 23;// RO Reserved
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_READ_DMA_INT_STS_1;
+
+typedef union {
+	struct {
+		UINT32 Start           : 1; // RW/V Start for the 1st RXDMA
+		UINT32 Ie              : 1; // RW Interrupt Enable
+		UINT32 IeIoc           : 1; // RW Interrupt Enable on Completion for the 1st RXDMA
+		UINT32 IeStall         : 1; // RW Interrupt Enable on Stall for the 1st RXDMA
+		UINT32 IeNddi          : 1; // RW Interrupt Enable on Non DMA Device Interrupt
+		UINT32 IeEof           : 1; // RW Interrupt Enable at EOF for the 1st RXDMA
+		UINT32 ThcStallReadEn1 : 1; // RW TIC DATA Read Enable during Stall for 1st RXDMA
+		UINT32 IeDmacpl        : 1; // RW Interrupt Enable on DMA Completion for the 1st RXDMA
+		UINT32 Tpcrp           : 8; // RO/V THC PRD CB Read Pointer for the 1st RXDMA
+		UINT32 Tpcwp           : 8; // RW/V THC PRD CB Write Pointer for the 1st RXDMA
+		UINT32 Rsvd0           : 4; // RO Reserved
+		UINT32 IntSwDmaEn      : 1; // RW/L Interrupt SW Enable on DMA Device Interrupt for the 1st RXDMA
+		UINT32 Soo             : 1; // RW Stop on Overflow for the 1st RXDMA
+		UINT32 Uhs             : 1; // RO Update HwStatus for the 1st RXDMA
+		UINT32 Tpcpr           : 1; // RW/1S/V THC PRD CB Pointer Reset for the 1st RXDMA
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_READ_DMA_CNTRL_1;
+
+typedef union {
+	struct {
+		UINT32 ThcWrdmaCmplStatus : 1; // RW/1C/V Write DMA Completion Status  bit
+		UINT32 ThcWrdmaErrorSts   : 1; // RW/1C/V Write DMA Error Status
+		UINT32 ThcWrdmaIocSts     : 1; // RW/1C/V Interrupt Status for IOC for Write DMA
+		UINT32 ThcWrdmaActive     : 1; // RO/V Active status for Write DMA
+		UINT32 Rsvd0              : 28;// RO Reserved
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_WRITE_INT_STS;
+
+typedef union {
+	struct {
+		UINT32 ThcMPrtDbCnt     : 31; // RO/V Touch Host Controller Doorbell Counter for the 1st RXDMA
+		UINT32 ThcMPrtDbCntRst  : 1; // RW/1S/V Touch Host Controller Doorbell Counter Reset for the 1st RXDMA
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_DB_CNT_1;
+
+typedef union {
+	struct {
+		UINT32 Nofd : 31; // RO/V Number of Frames Dropped for the 1st RXDMA
+		UINT32 Rfdc : 1; // RW/1S/V Reset Frame Dropped Counter for the 1st RXDMA
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_FRAME_DROP_CNT_1;
+typedef union {
+	struct {
+		UINT32 Nofd : 31; // RO/V Number of Frames Dropped for the 2nd RXDMA
+		UINT32 Rfdc : 1;  // RW/1S/V Reset Frame Dropped Counter for the 2nd RXDMA
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_FRAME_DROP_CNT_2;
+
+typedef union
+{
+	struct {
+		UINT32 ThcMPrtFrmCnt     : 31; // RO/V Touch Frame Counter
+		UINT32 ThcMPrtFrmCntRst  : 1;  // RW/1S/V Touch Frame Counter Reset
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_FRM_CNT_1;
+
+typedef union {
+	struct {
+		UINT32 ThcMPrtFrmCnt     : 31; // RO/V Touch Frame Counter
+		UINT32 ThcMPrtFrmCntRst  : 1;  // RW/1S/V Touch Frame Counter Reset
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_FRM_CNT_2;
+
+typedef union {
+	struct {
+		UINT32 ThcMPrtDevintCnt     : 31; // RO/V Touch Device Interrupt Counter
+		UINT32 ThcMPrtDevintCntRst  : 1;  // RW/1S/V Touch Device Interrupt Counter Reset
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_DEVINT_CNT;
+
+
+typedef union{
+	struct {
+		UINT32 ThcMPrtRxdmaPktCnt     : 31; // RO/V Touch RX DMA Packet Counter for the 1st RXDMA
+		UINT32 ThcMPrtRxdmaPktCntRst  : 1;  // RW/1S/V Touch RX DMA Packet Counter Reset for the 1st RXDMA
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_RXDMA_PKT_CNT_1;
+
+
+typedef union{
+	struct {
+		UINT32 ThcMPrtRxdmaPktCnt     : 31; // RO/V Touch RX DMA Packet Counter
+		UINT32 ThcMPrtRxdmaPktCntRst  : 1;  // RW/1S/V Touch RX DMA Packet Counter Reset
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_RXDMA_PKT_CNT_2;
+
+typedef union {
+	struct {
+		UINT32 ThcMPrtSwintCnt    : 31; // RO/V Touch Host Controller Interrupt Counter for the 1st RXDMA
+		UINT32 ThcMPrtSwintCntRst : 1;  // RW/1S/V Touch Host Controller Software Interrupt Counter Reset for the 1st RXDMA
+  } Fields;
+	UINT32 Data32;
+} THC_M_PRT_SWINT_CNT_1;
+
+
+typedef union {
+	struct {
+		UINT32 ThcMPrtSwintCnt     : 31; // RO/V Touch Host Controller Interrupt Counter
+		UINT32 ThcMPrtSwintCntRst  : 1;  // RW/1S/V Touch Host Controller Software Interrupt Counter Reset
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_SWINT_CNT_2;
+
+typedef union {
+	struct {
+		UINT32 ThcMPrtTxFrmCnt    : 31; // RO/V Touch TX Frame Counter
+		UINT32 ThcMPrtTxFrmCntRst : 1;  // RW/1S/V Touch TX Frame Counter Reset
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_TX_FRM_CNT;
+
+typedef union {
+	struct {
+		UINT32 ThcMPrtTxdmaPktCnt    : 31; // RO/V Touch TX DMA Packet Counter
+		UINT32 ThcMPrtTxdmaPktCntRst : 1;  // RW/1S/V Touch TX DMA Packet Counter Reset
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_TXDMA_PKT_CNT;
+
+typedef union {
+	struct {
+		UINT32 ThcMPrtUfrmCnt    : 31; // RO/V Touch Microframe Counter for the 1st RXDMA
+		UINT32 ThcMPrtUfrmCntRst : 1;  // RW/1S/V Touch Microframe Counter Reset for the 1st RXDMA
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_UFRM_CNT_1;
+
+
+typedef union {
+	struct {
+		UINT32 ThcMPrtUfrmCnt    : 31; // RO/V Touch Microframe Counter for the 2nd DMA engine
+		UINT32 ThcMPrtUfrmCntRst : 1;  // RW/1S/V Touch Microframe Counter Reset for the 2nd DMA engine
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_UFRM_CNT_2;
+
+typedef union {
+	struct {
+		UINT32 Nopte : 31; // Number of PRD Table Empty Events for the 1st RXDMA
+		UINT32 Rptec : 1;  // Reset PRD Table Empty Counter for the 1st RXDMA
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_PRD_EMPTY_CNT_1;
+
+typedef union {
+	struct {
+		UINT32 Nopte : 31; // Number of PRD Table Empty Events for the 2nd RXDMA
+		UINT32 Rptec : 1;  // Reset PRD Table Empty Counter for the 2nd RXDMA
+	} Fields;
+	UINT32 Data32;
+} THC_M_PRT_PRD_EMPTY_CNT_2;
+
+typedef union {
    struct {
     UINT32 DmaCplSts             : 1; // RW/1C/V This bit is set upon successful completion of the DMA operation.
                                       // If the IE bit is also 1, then an interrupt is generated. SW clears the bit by writing 1 to the bit.

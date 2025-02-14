@@ -128,23 +128,40 @@
 #define R_THC_MEM_PRT_WR_BULK_ADDR                        0x10B4         ///< THC device address for the bulk write - Output Report Header Address
 #define R_THC_MEM_PRT_DEV_INT_CAUSE_ADDR                  0x10B8         ///< THC Device Interrupt Cause Register Address - Input Report Header Address
 #define R_THC_MEM_PRT_DEV_INT_CAUSE_REG_VAL               0x10BC         ///< THC Device Interrupt Cause Register Value - Input Report Header Value
+#define R_THC_MEM_PRT_DEVINT_CNT                          0x10E8         ///< Touch Device Interrupt Counter
+#define R_THC_MEM_PRT_TX_FRM_CNT                          0x10E0         ///< Touch TX Frame Counter
+#define R_THC_MEM_PRT_TXDMA_PKT_CNT                       0x10E4         ///< Touch TX DMA Packet Counter
 #define R_THC_MEM_PRT_DEVINT_CFG_1                        0x10EC         ///< Touch Device Interrupt Cause register Format Configuration Register 1
 #define R_THC_MEM_PRT_DEVINT_CFG_2                        0x10F0         ///< Touch Device Interrupt Cause register Format Configuration Register 2
+#define R_THC_MEM_PRT_READ_DMA_CNTRL_1                    0x110C         ///< THC Read DMA Control for the 1st RXDMA
 #define R_THC_MEM_PRT_READ_DMA_INT_STS_1                  0x1110         ///< THC Read Interrupt Status for the 1st RXDMA
 #define R_THC_MEM_PRT_TSEQ_CNTRL_1                        0x1128         ///< Touch Sequencer Control for the 1st DMA
 #define R_THC_MEM_PRT_RD_BULK_ADDR_1                      0x1170         ///< THC Device Address for the bulk/touch data read for the 1st RXDMA
+#define R_THC_MEM_PRT_DB_CNT_1                            0x11A0         ///< Touch Host Controller Doorbell Counter for the 1st RXDMA
+#define R_THC_MEM_PRT_FRM_CNT_1                           0x11A4         ///< THC Frame Count from the 1st Stream RXDMA on this port
+#define R_THC_MEM_PRT_UFRM_CNT_1                          0x11A8         ///< Touch Microframe Counter for the 1st RXDMA
+#define R_THC_MEM_PRT_RXDMA_PKT_CNT_1                     0x11AC         ///< Touch RX DMA Packet Counter for the 1st RXDMA
+#define R_THC_MEM_PRT_SWINT_CNT_1                         0x11B0         ///< THC Software Interrupt Count from the 1st Stream RXDMA on this port
+#define R_THC_MEM_PRT_FRAME_DROP_CNT_1                    0x11B4         ///< Touch Sequencer Frame Drop Counter for the 1st RXDMA
 #define R_THC_MEM_PRT_RPRD_BA_LOW_2                       0x1200         ///< THC Read PRD Base Address Low for the 2nd RXDMA
 #define R_THC_MEM_PRT_RPRD_BA_HI_2                        0x1204         ///< THC Read PRD Base Address High for the 2nd RXDMA
 #define R_THC_MEM_PRT_RPRD_CNTRL_2                        0x1208         ///< THC Read PRD Control for the 2nd RXDMA
 #define R_THC_MEM_PRT_READ_DMA_INT_STS_2                  0x1210         // < THC Read Interrupt Status for the 2nd RXDMA
 #define R_THC_MEM_PRT_READ_DMA_CNTRL_2                    0x120C         ///< THC Read DMA Control for the 2nd RXDMA
 #define R_THC_MEM_PRT_RD_BULK_ADDR_2                      0x1270         ///< THC Device Address for the bulk/touch data read for the 2nd RXDMA
+#define R_THC_MEM_PRT_FRM_CNT_2                           0x12A4         ///< Touch Frame Counter for the 2nd DMA engine
+#define R_THC_MEM_PRT_UFRM_CNT_2                          0x12A8         ///< Touch Microframe Counter for the 2nd DMA engine
+#define R_THC_MEM_PRT_RXDMA_PKT_CNT_2                     0x12AC         ///< Touch RX DMA Packet Counter for the 2nd DMA engine
+#define R_THC_MEM_PRT_SWINT_CNT_2                         0x12B0         ///< Touch Host Controller Doorbell Counter for the 2nd DMA engine
+#define R_THC_MEM_PRT_FRAME_DROP_CNT_2                    0x12B4         ///< Touch Sequencer Frame Drop Counter for the 2nd RXDMA
 #define R_THC_MEM_PRT_RPRD_BA_LOW_SW                      0x12C0         ///< THC Read PRD Base Address Low for the SW RXDMA
-#define R_THC_MEM_PRT_RPRD_BA_HI_SW                       0x12C4        /// < THC Read PRD Base Address High for the SW RXDMA
+#define R_THC_MEM_PRT_RPRD_BA_HI_SW                       0x12C4         /// < THC Read PRD Base Address High for the SW RXDMA
 #define R_THC_MEM_PRT_RPRD_CNTRL_SW                       0x12C8         ///< THC Read PRD Control for the SW RXDMA
 #define R_THC_MEM_PRT_READ_DMA_CNTRL_SW                   0x12CC         ///< THC Read DMA Control for the SW RXDMA
 #define R_THC_MEM_PRT_READ_DMA_INT_STS_SW                 0x12D0         ///< THC Read Interrupt Status for the SW RXDMA
 #define R_THC_MEM_PRT_SW_DMA_PRD_TABLE_LEN                0x12E4         ///< SW DMA PRD Table Length
+#define R_THC_MEM_PRT_PRD_EMPTY_CNT_1                     0x12F0         ///< Touch Sequencer PRD Table Empty Counter when dvice asserts interrupt for the 1st RXDMA. One register per RXDMA enginer.
+#define R_THC_MEM_PRT_PRD_EMPTY_CNT_2                     0x12F4         ///< Touch Sequencer PRD Table Empty Counter when dvice asserts interrupt for the 2nd RXDMA. One register per RXDMA enginer.
 #define R_THC_MEM_PRT_SW_SEQ_I2C_WR_CNTRL                 0x1304         ///< THC Register for SW I2C write sequecing control
 
 //
