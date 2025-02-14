@@ -566,7 +566,7 @@ IpTcPciePowerManagementInit (
   /// LTR Mechanism Supported (LTRMS) 0x64  11 1
   ///
   Data32And = ~ (UINT32) (B_TC_PCIE_RP_CFG_DCAP2_OBFFS | B_TC_PCIE_RP_CFG_DCAP2_LTRMS);
-  Data32Or  = B_TC_PCIE_RP_CFG_DCAP2_PX10BTCS;
+  Data32Or  = 0;
   if (PcieRootPortPolicy->LtrEnable) {
     Data32Or |= B_TC_PCIE_RP_CFG_DCAP2_LTRMS;
   }
