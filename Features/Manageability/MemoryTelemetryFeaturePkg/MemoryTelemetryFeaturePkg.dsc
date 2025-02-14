@@ -46,7 +46,4 @@
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   UefiBootServicesTableLib|MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
 
-[PcdsDynamicHii.common.DEFAULT.STANDARD]
-  gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdAmtPprEnable|L"AmtPprEnable"|gAmtPprEnableVariableGuid|0x00||NV, BS, RT
-
 !include MemoryTelemetryFeaturePkg/Include/MemoryTelemetryFeaturePkg.dsc

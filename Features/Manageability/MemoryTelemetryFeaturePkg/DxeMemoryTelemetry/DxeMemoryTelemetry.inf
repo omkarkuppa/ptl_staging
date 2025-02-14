@@ -57,7 +57,7 @@
 
 [Guids]
   gSiMemoryInfoDataGuid       ## CONSUMES
-  gAmtPprEnableVariableGuid   ## PRODUCES
+  gMemTelAmtPprVariableGuid   ## PRODUCES
 
 [Pcd]
   gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdPprCapability  ## PRODUCES

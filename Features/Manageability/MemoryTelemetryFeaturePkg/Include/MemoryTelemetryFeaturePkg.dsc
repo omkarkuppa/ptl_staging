@@ -22,11 +22,6 @@
 [Packages]
   MemoryTelemetryFeaturePkg/MemoryTelemetryFeaturePkg.dec
 
-[Components.$(FSP_ARCH)]
-!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
-  MemoryTelemetryFeaturePkg/PeiMemoryTelemetry/PeiMemoryTelemetry.inf
-!endif
-
 [Components.X64]
 !if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
   MemoryTelemetryFeaturePkg/DxeMemoryTelemetry/DxeMemoryTelemetry.inf

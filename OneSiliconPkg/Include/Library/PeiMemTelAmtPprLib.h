@@ -1,5 +1,5 @@
 /** @file
-  Pei Memory Telemetry Functional Definitions
+  Pei Memory Telemetry Amt Ppr Library Definitions
 
   @copyright
   INTEL CONFIDENTIAL
@@ -23,7 +23,6 @@
 #define _PEI_MEMORY_TELEMETRY_H_
 
 #include <PiPei.h>
-#include <Uefi.h>
 
 ///
 /// MRC Memory Types API matching definitions
@@ -43,16 +42,11 @@
   Entry point of the Memory Telemetry PEIM
   Checks the AMT PPR enable variable status, will update memory config accordingly.
 
-  @param[in]  FileHandle        The file handle of the file, Not used.
-  @param[in]  PeiServices       General purpose services available to every PEIM.
-
   @retval     EFI_SUCCESS       PEI Memory Telemetry executed as expected
   @retval     Others            PEI Memory Telemetry failed to get and set AmtPprEnable variable
 **/
-EFI_STATUS
-EFIAPI
-PeiMemoryTelemetryEntryPoint (
-  IN  EFI_PEI_FILE_HANDLE      FileHandle,
-  IN CONST EFI_PEI_SERVICES  **PeiServices
+VOID
+MemTelemetryAmtPprVarUpdate (
+  VOID
   );
 #endif // _PEI_MEMORY_TELEMETRY_H_

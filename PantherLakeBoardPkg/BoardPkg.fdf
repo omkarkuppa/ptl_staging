@@ -723,13 +723,6 @@ FILE FV_IMAGE = 9B9C7C89-5FC4-4C29-9942-E33DCFE2058F  {
 }
 !endif
 
-#
-# Memory Telemetry Pre-Mem Feature
-#
-!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
-  !include MemoryTelemetryFeaturePkg/Include/PreMemory.fdf
-!endif # PcdMemoryTelemetryEnabled
-
 [FV.FvPostMemoryUncompact]
 BlockSize          = $(FLASH_BLOCK_SIZE)
 FvAlignment        = 16
