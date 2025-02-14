@@ -491,7 +491,7 @@
     {GPIOV2_PTL_PCD_XXGPP_C_8,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateLow,     GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // IR_PWRDN
     {GPIOV2_PTL_PCD_XXGPP_E_1,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateHigh,    GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // IR_RST_N
     {GPIOV2_PTL_PCD_XXGPP_F_19, {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateLow,     GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // IR_PLED_EN
-    {GPIOV2_PTL_PCD_XXGPP_H_1,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirOut,   GpioV2StateLow,     GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // IR_LED_CTRL
+    {GPIOV2_PTL_PCD_XXGPP_H_1,  {GpioV2PadModeGpio, GpioV2HostOwnAcpi, GpioV2DirNone,  GpioV2StateLow,     GpioV2IntDis,      GpioV2ResetHost,      GpioV2TermDefault}},  // IR_LED_CTRL
 
   //
   // Camera Conn 2
@@ -769,7 +769,28 @@
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cController|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cSlaveAddress|*|0x0
 
-[PcdsDynamicHii.common.SkuIdPtlHLp5Gcs2.STANDARD]
+[PcdsDynamicHii.common.SkuIdPtlHLp5Gcs1.STANDARD]
+  #
+  # Power Meter
+  #
+  gStructPcdTokenSpaceGuid.PcdSetup.PowermeterDeviceEnable|0x1                                       # Enable PowerMeter, Enabled
+  gStructPcdTokenSpaceGuid.PcdSetup.TelemetryDeviceEnable|0x0                                        # Enable Telemetry
+  
+  #
+  # Touch pad
+  #
+  gStructPcdTokenSpaceGuid.PcdPchSetup.PchSerialIoI2c[5]|0x0                                         # I2C5 Controller, Disabled
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcAssignment[0]|0x1                                          # THC Port Configuration, THC0
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcAssignment[1]|0x2                                          # THC Port Configuration, THC1
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[1]|0x2                                                # THC Mode, HID over I2C
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cDeviceAddress[1]|0x2C                                # HIDI2C Device address, 0x2C
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cConnectionSpeed[1]|0x186A0                           # Requested Connection Speed, 0x186A0
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cAddressingMode[1]|0x0                                # Addressing Mode, 0
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cDeviceDescriptorAddress[1]|0x20                      # Device Descriptor address, 0x20
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cStandardModeSerialClockLineHighPeriod[1]|0x267       # SM SCL HIGH Period, 0x267
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cStandardModeSerialClockLineLowPeriod[1]|0x271        # SM SCL LOW Period, 0x271
+  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcWakeOnTouch[1]|0x1                                         # Wake On Touch, Enabled
+
   #
   # DDT Fan
   #
@@ -778,14 +799,6 @@
   gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen4Participant|0x1                                   # Sensor Device 4
   gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen5Participant|0x1                                   # Sensor Device 5
 
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[0]|0x2                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[3]|0x1                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[4]|0x2                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[5]|0x3                                    # Connected device
-  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cTouchPadType|0x7                                           # THAT Touch Pad
-  gStructPcdTokenSpaceGuid.PcdSetup.TelemetryDeviceEnable|0x1                                        # Enable Telemetry
-  gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshI2cEnable[1]|0x0                                        # I2C1
-  gStructPcdTokenSpaceGuid.PcdPchSetup.PchIshSpiEnable[0]|0x1                                        # SPI_0
   #
   # HD Audio
   #
@@ -801,6 +814,9 @@
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[11]|0x1            # ACX/SDCA speaker aggregation = Enabled
   gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0x6     # SoundWire codecs topology = Configuration GCS/ADK ALC712-VB, ALC1320
 
+  #
+  # Camera
+  #
 !if gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable == TRUE
   #
   # Control Logic 1
