@@ -84,7 +84,7 @@ export EXT_BUILD_FLAGS=$VAR_BUILD_FLAGS
 export BUILD_OPTION_PCD="--pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE"
 export FSP_BUILD_OPTION_PCD
 
-export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPcAtChipsetPkgTokenSpaceGuid.PcdRtcDefaultYear=$(date +'%Y')"
+export BUILD_OPTION_PCD="$BUILD_OPTION_PCD --pcd gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear=$(date +'%Y')"
 
 function PrintUsage {
   echo "Client BIOS build script"

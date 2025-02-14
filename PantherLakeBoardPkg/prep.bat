@@ -117,8 +117,9 @@ cd ..\..\
 @set SYMBOL_PREFIX=
 @set BUILD_OPTION_PCD=--pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE
 
-@ for /f "tokens=2 delims==" %%G in ('wmic os get localdatetime /value') do set datetime=%%G
-@set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% --pcd gPcAtChipsetPkgTokenSpaceGuid.PcdRtcDefaultYear=%datetime:~0,4%
+@set BUILD_DATE=
+@ for /f "tokens=2 delims==" %%G in ('wmic os get localdatetime /value') do set BUILD_DATE=%%G
+@set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% --pcd gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear=%BUILD_DATE:~0,4%
 
 :CmdLineParse
 
