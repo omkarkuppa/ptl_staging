@@ -167,12 +167,16 @@ ReadUsbCPdVersion(
       case 1:
         UsbCPdSetup.UsbCPd2Version = TempPdVersion;
         break;
+#if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 2
       case 2:
         UsbCPdSetup.UsbCPd3Version = TempPdVersion;
         break;
+#endif
+#if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 3
       case 3:
         UsbCPdSetup.UsbCPd4Version = TempPdVersion;
         break;
+#endif
     }
   }
 
@@ -222,8 +226,12 @@ UpdateUsbCPdVersion (
   UINT8          Index;
   CHAR8          Pd1VersionString[18];
   CHAR8          Pd2VersionString[18];
+#if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 2
   CHAR8          Pd3VersionString[18];
+#endif
+#if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 3
   CHAR8          Pd4VersionString[18];
+#endif
 
   DEBUG ((DEBUG_INFO, "UpdateUsbCPdVersion - Start\n"));
 
@@ -261,6 +269,7 @@ UpdateUsbCPdVersion (
           CopyMem (mPlatformFviStrings[USBC_PD2_VER].VersionString, Pd2VersionString, sizeof (Pd2VersionString));
         }
         break;
+#if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 2
       case 2:
         UsbCPdVersion = UsbCPdSetup.UsbCPd3Version;
         if (UsbCPdVersion != 0) {
@@ -270,6 +279,8 @@ UpdateUsbCPdVersion (
           CopyMem (mPlatformFviStrings[USBC_PD3_VER].VersionString, Pd3VersionString, sizeof (Pd3VersionString));
         }
         break;
+#endif
+#if FixedPcdGet8 (PcdMaxUsbCPdNumber) > 3
       case 3:
         UsbCPdVersion = UsbCPdSetup.UsbCPd4Version;
         if (UsbCPdVersion != 0) {
@@ -278,6 +289,7 @@ UpdateUsbCPdVersion (
           AsciiSPrint (Pd4VersionString, sizeof (Pd4VersionString), "%08x.%08x", FwVersion, SubFwVersion);
           CopyMem (mPlatformFviStrings[USBC_PD4_VER].VersionString, Pd4VersionString, sizeof (Pd4VersionString));
         }
+#endif
         break;
     }
   }
