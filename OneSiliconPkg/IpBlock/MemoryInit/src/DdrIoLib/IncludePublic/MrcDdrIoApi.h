@@ -1309,7 +1309,7 @@ MrcPhyProgramDeswizzleRegisters (
   @param[in] Value   - DLL Reset value
 **/
 VOID
-ToggleDllReset (
+MrcToggleDllReset (
   IN MrcParameters * const MrcData,
   IN UINT32                Value
   );

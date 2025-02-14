@@ -819,7 +819,7 @@
   # !BSF NAME:{RDCTLET}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/disable Read CTLE Training}
-  gPlatformFspPkgTokenSpaceGuid.RDCTLET                     | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.RDCTLET                     | * | 0x01 | 0x01
 
   # !BSF NAME:{RxVref Pre EMPHASIS Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}

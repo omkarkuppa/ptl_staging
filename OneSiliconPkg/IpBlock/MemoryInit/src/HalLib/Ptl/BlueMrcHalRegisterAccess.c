@@ -165,6 +165,8 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "CmdTxEq",
   "CtlTxEq",
   "GsmIntCkOn",
+  "GsmIocDllWeakLock",
+  "GsmIocTxDllWeakLock",
   "RxVrefVddqDecap",
   "RxVocFall",
   "WrRetrainDeltaPiCode",
@@ -2502,11 +2504,16 @@ MrcGetSetSideEffect (
   UINT32    LocalModeRead;
   UINT32    SearchVal;
   UINT32    SearchVal2;
+  UINT32    DriftPI;
   BOOLEAN   Gear4;
   BOOLEAN   IsLpddr5;
 
   Gear4  = MrcData->Outputs.GearMode ? 1 : 0;
   IsLpddr5 = MrcData->Outputs.IsLpddr5;
+
+  // Maximum drift due to periodic retraining, assume 70ps for both LP5 and DDR5
+  // Convert to PI ticks
+  DriftPI = UDIVIDEROUND (70 * 64, MrcData->Outputs.UIps);
 
   // Read from cache or register based on the write Mode to the group
   LocalModeRead = GSM_READ_ONLY;
@@ -2525,6 +2532,7 @@ MrcGetSetSideEffect (
   }
   if ((Group == RecEnDelay) || (Group == RecEnOffset) || (Group == TxDqsDelay) || (Group == TxDqsOffset) || (Group == TxDqDelay) || (Group == TxDqOffset)) {
     // Find the smallest RecEnDelay/TxDqsDelay/TxDqDelay in the Byte/Channel and update the new [Rx,Tx]RankMuxDelay
+    // Calibration steps may update pi codes regardless of population, do not update [Rx, Tx]RankMuxDelay if channel is not enabled
     if ((Group == RecEnDelay) || (Group == RecEnOffset)) {
       WriteGroup = RxRankMuxDelay;
       OffsetGroup = RecEnOffset;
@@ -2538,40 +2546,50 @@ MrcGetSetSideEffect (
           SearchVal = MIN (SearchVal, (UINT32) GetSetVal);
         }
       }
-      // Rounded down to QCLK
-      SearchVal = SearchVal >> (7 + Gear4);
-      GetSetVal = SearchVal;
-      MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, WriteGroup, LocalModeWrite, &GetSetVal);
+      if (SearchVal != MRC_UINT32_MAX) {
+        // Rounded down to QCLK
+        SearchVal = SearchVal >> (7 + Gear4);
+        GetSetVal = SearchVal;
+        MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, WriteGroup, LocalModeWrite, &GetSetVal);
+      }
 
     } else { // TxDqDelay, TxDqOffset, TxDqsDelay, TxDqsOffset
       // Avoid overwrite R2RDelay after Rank to Rank Training Done
       if (!MrcData->Outputs.IsR2RDone) {
         SearchVal = MRC_UINT32_MAX;
-        SearchVal2 = MRC_UINT32_MAX;
+        SearchVal2 = IsLpddr5 ? 0 : MRC_UINT32_MAX;   // Do not look at TxDqs in LP5
         for (LocalRank = 0; LocalRank < MAX_RANK_IN_CHANNEL; LocalRank++) {
           if (MrcRankExist (MrcData, Controller, Channel, LocalRank)) {
             MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, LocalRank, Strobe, Bit, FreqIndex, Level, TxDqOffset, LocalModeRead, &GetSetValOffset);
             MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, LocalRank, Strobe, Bit, FreqIndex, Level, TxDqDelay, LocalModeRead, &GetSetVal);
-            MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, LocalRank, Strobe, Bit, FreqIndex, Level, TxDqsOffset, LocalModeRead, &GetSetValOffset2);
-            MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, LocalRank, Strobe, Bit, FreqIndex, Level, TxDqsDelay, LocalModeRead, &GetSetVal2);
             GetSetVal = GetSetVal + GetSetValOffset;
             SearchVal = MIN (SearchVal, (UINT32) GetSetVal); // TxDq
-            GetSetVal2 = GetSetVal2 + GetSetValOffset2;
-            SearchVal2 = MIN (SearchVal2, (UINT32) GetSetVal2); // TxDqs
+            if (!IsLpddr5) {
+              MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, LocalRank, Strobe, Bit, FreqIndex, Level, TxDqsOffset, LocalModeRead, &GetSetValOffset2);
+              MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, LocalRank, Strobe, Bit, FreqIndex, Level, TxDqsDelay, LocalModeRead, &GetSetVal2);
+              GetSetVal2 = GetSetVal2 + GetSetValOffset2;
+              SearchVal2 = MIN (SearchVal2, (UINT32) GetSetVal2); // TxDqs
+            }
           }
         }
-        // Rounded down to QCLK
-        SearchVal = SearchVal >> (7 + Gear4); // Min TxDq
-        SearchVal2 = SearchVal2 >> (7 + Gear4); // Min TxDqs
-        GetSetVal = IsLpddr5 ? SearchVal : MIN (SearchVal, SearchVal2); // RankMux Delay is the min of the TxDQ/DQS across ranks, rounded down to QClk (DQS is not used in LP5)
-        MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxRankMuxDelay, LocalModeWrite, &GetSetVal);
-        GetSetVal2 = SearchVal - GetSetVal; // DQS is earlier, DQ is updated with the difference
-        MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqPi, LocalModeWrite, &GetSetVal2);
-        MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqEq, LocalModeWrite, &GetSetVal2);
-        if (!IsLpddr5) {
-          GetSetVal2 = SearchVal2 - GetSetVal; // DQ is earlier, DQS is updated with the difference
-          MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqsPi, LocalModeWrite, &GetSetVal2);
-          MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqsEq, LocalModeWrite, &GetSetVal2);
+        if (!(SearchVal == MRC_UINT32_MAX || SearchVal2 == MRC_UINT32_MAX)) {
+          // Account for periodic TxDqDqs Retraining which may reduce Tx DQ PI
+          if (SearchVal > DriftPI) {
+            SearchVal -= DriftPI;
+          }
+          // Rounded down to QCLK
+          SearchVal = SearchVal >> (7 + Gear4); // Min TxDq
+          SearchVal2 = SearchVal2 >> (7 + Gear4); // Min TxDqs
+          GetSetVal = IsLpddr5 ? SearchVal : MIN (SearchVal, SearchVal2); // RankMux Delay is the min of the TxDQ/DQS across ranks, rounded down to QClk (DQS is not used in LP5)
+          MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxRankMuxDelay, LocalModeWrite, &GetSetVal);
+          if (!IsLpddr5) {
+            GetSetVal2 = SearchVal - GetSetVal; // DQS is earlier, DQ is updated with the difference
+            MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqPi, LocalModeWrite, &GetSetVal2);
+            MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqEq, LocalModeWrite, &GetSetVal2);
+            GetSetVal2 = SearchVal2 - GetSetVal; // DQ is earlier, DQS is updated with the difference
+            MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqsPi, LocalModeWrite, &GetSetVal2);
+            MrcGetSet (MrcData, Socket, Controller, Channel, Dimm, 0, Strobe, Bit, FreqIndex, Level, TxR2RDqsEq, LocalModeWrite, &GetSetVal2);
+          }
         }
       }
     }

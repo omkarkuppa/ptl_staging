@@ -175,6 +175,7 @@ src/ServicesLib/MrcPpr.h
 src/JedecLib/Ddr5/BlueMrcDdr5.c
 src/JedecLib/Ddr5/Ptl/BlueMrcDdr5Ptl.c
 src/JedecLib/Lpddr5/BlueMrcLpddr5.c
+src/JedecLib/Lpddr5/Ptl/BlueMrcLpddr5Ptl.c
 src/ServicesLib/MrcAmt.c
 src/JedecLib/IncludePublic/BlueMrcJedecApi.h
 src/JedecLib/BlueMrcMemoryApi.c
@@ -227,6 +228,8 @@ src/DdrIoLib/Ptl/MrcDdrIoComp.c
 src/DdrIoLib/IncludePublic/MrcDdrIoLvr.h
 src/DdrIoLib/MrcDdrIoLvr.c
 src/DdrIoLib/IncludePublic/MrcDdrIoComp.h
+src/DdrIoLib/Ptl/MrcDdrIoDllPtl.c
+src/DdrIoLib/MrcDdrIoDll.c
 src/DdrIoLib/Ptl/BlueMrcDdrIoHalHashes.c
 src/DdrIoLib/Ptl/BlueMrcDdrIoHalLimits.c
 src/DdrIoLib/MrcDdrIoHalOffsets.c

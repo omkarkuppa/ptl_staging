@@ -1088,10 +1088,14 @@ SetVccIo (
   Outputs = &MrcData->Outputs;
   Debug   = &Outputs->Debug;
 
-  if (Outputs->Frequency <= f8533) {
-    Outputs->VccIogVoltage = 750;
+  if (Outputs->IsDdr5) {
+    Outputs->VccIogVoltage = 800;
   } else {
-    Outputs->VccIogVoltage = 850;
+    if (Outputs->Frequency <= f8533) {
+      Outputs->VccIogVoltage = 750;
+    } else {
+      Outputs->VccIogVoltage = 850;
+    }
   }
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "VccIo(mV) = %u\n", Outputs->VccIogVoltage);
