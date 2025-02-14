@@ -755,17 +755,6 @@ CodeRegionMtrrdone:
   ;
 BootGuardNemSetup:
   ;
-  ; During page enabling CR0.CD might be set. This ensures cache is enabled.
-  ;
-  ; Enable the logical processor's (BSP) cache: execute INVD and set
-  ; CR0.CD = 0, CR0.NW = 0.
-  ;
-  mov     rax, cr0
-  and     rax, ~(CR0_CACHE_DISABLE + CR0_NO_WRITE)
-  invd
-  mov     cr0, rax
-
-  ;
   ; Finished with cache configuration
   ;
 

@@ -365,6 +365,9 @@ CreateAcmDataHob (
       ACMBenchmarkBuffer = Buffer + 28; // This reaches the Count and Data sections of the stucture once the UUID is found to match (Type + Size + UUID + ModuleID)
       ACMBenchmarkFound = TRUE;
       ACMBenchmarkBufferStruct = (STARTUP_ACM_BENCHMARK*) ACMBenchmarkBuffer;
+
+      // Benchmarking data is last in CNB
+      break;
     }
     Buffer += StructureSize;
     Count+= StructureSize;
