@@ -339,37 +339,18 @@ IpPcieRpInit (
   );
 
 /**
-  Initiate Speed Change
+  Initiate Speed change
 
   @param[in] pInst               *pInst
-  @param[in] MaxLinkSpeed         Lowest of LCAP.MLS, EndPointMaxSpeed
+  @param[in] MaxLinkSpeed         Max Link Speed
 
   @retval  IpCsiStsSuccess        The function completes successfully
   @retval  IpCsiStsErrorNullPtr   pInst was NULL
 **/
 IP_CSI_STATUS
-IpPcieRpSpeedChangeStart (
+IpPcieRpSpeedChange (
   IP_PCIE_INST    *pInst,
   UINT8            MaxLinkSpeed
-  );
-
-
-/**
-  Checks for Link Active after initiating speed change in IpPcieRpSpeedChangeStart API.
-  if link is not retrained sucessfully, revert target link speed to current link speed.
-
-  @param[in] pInst               *pInst
-  @param[in] MaxLinkSpeed        Lowest of LCAP.MLS, EndPointMaxSpeed
-  @param[in] TimeoutValue        Timeout value to poll for link active after link retrain
-
-  @retval  IpCsiStsSuccess       The function completes successfully
-  @retval  IpCsiStsErrorNullPtr  pInst was NULL
-**/
-IP_CSI_STATUS
-IpPcieRpSpeedChangeEnd (
-  IP_PCIE_INST    *pInst,
-  UINT8            MaxLinkSpeed,
-  UINT32           TimeoutValue
   );
 
 /**
@@ -621,15 +602,5 @@ IpPcieSetDtrStat (
 IP_CSI_STATUS
 IpPcieDtrGen4ToGen5 (
   IP_PCIE_INST   *pInst
-  );
-
-/**
-  Perform write operation on RWO fileds to ensure locking of these registers
-
-  @param[in] pInst  *pInst
-**/
-VOID
-SipLockCapRegisters (
-  IP_PCIE_INST  *pInst
   );
 #endif

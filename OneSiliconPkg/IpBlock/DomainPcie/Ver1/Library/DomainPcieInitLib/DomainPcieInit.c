@@ -19,6 +19,7 @@
 @par Specification
 **/
 
+#include <IpCpcie.h>
 #include <IpPcieDefines.h>
 #include <Library/DomainPcie.h>
 #include <IpWrapperCntxtInfoClient.h>
@@ -56,12 +57,12 @@
 #include <IpPcieRegs.h>
 #include <Library/PcdInfoLib.h>
 #include <Library/PeiVtdInitFruLib.h>
-#include <Library/HobLib.h>
 
-#define TIMEOUT_100_MS  100000000  // 100 ms in Nanoseconds
-
-static UINT64   TimeStampAfterPcieLinkRetrainSet;
-extern EFI_GUID gIpPcieInstHobGuid;
+typedef struct {
+  UINT16  Vid;
+  UINT16  Did;
+  UINT8   MaxLinkSpeed;
+} PCIE_DEV_INFO;
 
 /**
   Fia Inst Init
@@ -657,21 +658,21 @@ PcieSipIsRpEnabledInController (
 
   @param[in] Index                Pcie RootPort Index
   @param[in] PcieType             PCIe Integration Type
-  @param[in] IP_PCIE_INST         *pInst
 
   @retval     Pointer to Ip Inst
 **/
 
 IP_PCIE_INST*
 DomainPcieInstSingleInit (
-  IN  UINT32       Index,
-  IN  BOOLEAN      PcieType,
-  IN  IP_PCIE_INST *pInst
+  IN  UINT32  Index,
+  IN  BOOLEAN PcieType
   )
 {
+  IP_PCIE_INST         *pInst;
   UINT32                DetectTimeoutUs;
   UINT32                DetectTimer;
   PCIE_DEV_INFO         DevInfo;
+  UINT8                 RpMaxLinkSpeed;
   UINT64                RpBase;
   IP_WR_REG_INFO       *RegInfo;
   LCAP_PCIE_CFG_STRUCT  LcapCfg;
@@ -685,8 +686,8 @@ DomainPcieInstSingleInit (
   TC_VC_MAP             TcVcMap;
   STATIC IP_PCIE_INST      *pInstController = NULL;
 
+  pInst = (IP_PCIE_INST*) AllocateZeroPool (sizeof (IP_PCIE_INST));
   if (pInst == NULL) {
-    DEBUG ((DEBUG_WARN, "%a: Invalid pInst\n", __FUNCTION__));
     ASSERT (FALSE);
     return NULL;
   }
@@ -882,10 +883,10 @@ DomainPcieInstSingleInit (
     TcVcMap.TcVcMap[1] = 0xFE;
     PcieRpMultiVcConfiguration (pInst, &TcVcMap);
   }
-
   LcapCfg.Data = PciSegmentRead32 (RpBase + LCAP_PCIE_CFG_REG);
-  IpPcieRpSpeedChangeStart (pInst, MIN ((UINT8)LcapCfg.Bits.mls, DevInfo.MaxLinkSpeed));
-  TimeStampAfterPcieLinkRetrainSet = GetTimeInNanoSecond (GetPerformanceCounter ());
+  RpMaxLinkSpeed = (UINT8)LcapCfg.Bits.mls;
+
+  IpPcieRpSpeedChange (pInst, MIN (RpMaxLinkSpeed, DevInfo.MaxLinkSpeed));
 
   return pInst;
 }
@@ -905,12 +906,8 @@ DomainPcieInit (
   IN BOOLEAN  PcieType
   )
 {
-  UINT32            Index;
-  IP_PCIE_INST      **pInstArray;
-  IP_PCIE_INST      *pInst;
-  EFI_HOB_GUID_TYPE *GuidHob;
-
-  Index = 0;
+  UINT32          Index;
+  IP_PCIE_INST    **pInstArray;
 
   DEBUG ((DEBUG_INFO, "DomainPcieInit start, MaxRootPortNum %d\n", MaxRootPortNum));
   //
@@ -925,37 +922,11 @@ DomainPcieInit (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  GuidHob = GetFirstGuidHob (&gIpPcieInstHobGuid);
-  while (GuidHob != NULL) {
-    pInst = (IP_PCIE_INST *) GET_GUID_HOB_DATA (GuidHob);
-
-    pInstArray [Index] = DomainPcieInstSingleInit (Index, PcieType, pInst);
-    Index++;
-    GuidHob = GetNextGuidHob (&gIpPcieInstHobGuid, GET_NEXT_HOB(GuidHob));
+  for (Index = 0; Index < MaxRootPortNum; Index++) {
+    pInstArray [Index] = DomainPcieInstSingleInit (Index, PcieType);
   }
 
   DEBUG ((DEBUG_INFO, "DomainPcieInit end\n"));
 
   return EFI_SUCCESS;
-}
-
-/**
-  Calculate the required timeout value after setting RL in SpeedChangeStart API.
-  Required Timeout value is difference between current CPU timestamp value and CPU timestamp when RL is set.
-
-  @retval  UINT32  Required Timeout value in milli seconds
-**/
-UINT32
-PcieGetTimeoutValue (
- )
-{
-  UINT64  TimeElapsed;
-  UINT64  RequiredTimeout;
-
-  TimeElapsed  = GetTimeInNanoSecond (GetPerformanceCounter ()) - TimeStampAfterPcieLinkRetrainSet;
-  if (TimeElapsed < TIMEOUT_100_MS) {
-    RequiredTimeout = TIMEOUT_100_MS - TimeElapsed;
-    return ((UINT32)DivU64x32 (RequiredTimeout, 1000u));
-  }
-  return 0;
 }

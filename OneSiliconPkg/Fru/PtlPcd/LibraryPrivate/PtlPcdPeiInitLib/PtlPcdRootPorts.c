@@ -52,8 +52,6 @@
 
 #define BUS_NUMBER_FOR_IMR 0x00
 
-extern EFI_GUID gIpPcieInstHobGuid;
-
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_GUID  gPtlPcdRpListPpiGuid = {0x55F621C1, 0xAEFE, 0x4712, {0x97, 0x96, 0xE3, 0xDC, 0x4D, 0xE4, 0x17, 0xC9}};
 
 typedef struct {
@@ -1616,9 +1614,6 @@ PtlPcdPciePrePolicyInit (
   PCIE_ROOT_PORT_LIST_PRIVATE  *RpListPrivate;
   EFI_PEI_PPI_DESCRIPTOR       *PtlPcdRpListPpi;
   EFI_STATUS                   Status;
-  IP_PCIE_INST                 *pInst;
-  UINT8                        Index;
-  UINT8                        MaxRootPortNum;
 
   PtlPcdRpListPpi = (EFI_PEI_PPI_DESCRIPTOR *) AllocateZeroPool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
   RpListPrivate = (PCIE_ROOT_PORT_LIST_PRIVATE*) AllocateZeroPool (sizeof (PCIE_ROOT_PORT_LIST_PRIVATE));
@@ -1643,16 +1638,6 @@ PtlPcdPciePrePolicyInit (
   PtlPcdPcieInitRpList (RpListPrivate);
   PcieSipHideDisableRootPorts (&RpListPrivate->RpList);
   PcieSipEarlyDecodeEnable (&RpListPrivate->RpList);
-
-  MaxRootPortNum = GetMaxPciePortNum ();
-  for (Index = 0; Index < MaxRootPortNum; Index++) {
-    pInst = BuildGuidHob (&gIpPcieInstHobGuid, sizeof (IP_PCIE_INST));
-    if (pInst == NULL) {
-      DEBUG ((DEBUG_WARN, "Failed to build pInst Hob(%d)\n", Index));
-      ASSERT (FALSE);
-    }
-    ZeroMem (pInst, sizeof (IP_PCIE_INST));
-  }
 }
 
 /**
