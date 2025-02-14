@@ -1826,8 +1826,8 @@ PtlPcdPPsfGetScsUfsPort (
     { 0, R_PTL_PCD_P_PSF_0_AGNT_T0_SHDW_BAR0_UFS_RS0_D23_F0_OFFSET4 }
   };
 
-  if (ScsUfsNumber >= ARRAY_SIZE (mFclPcdScsUfsPsfRegBase)) {
-    DEBUG ((DEBUG_ERROR, "Wrong I2C index, max: %d, given: %d\n", ARRAY_SIZE (mFclPcdScsUfsPsfRegBase) - 1, ScsUfsNumber));
+  if (ScsUfsNumber >= ARRAY_SIZE (mPtlPcdPScsUfsPsfRegBase)) {
+    DEBUG ((DEBUG_ERROR, "Wrong I2C index, max: %d, given: %d\n", ARRAY_SIZE (mPtlPcdPScsUfsPsfRegBase) - 1, ScsUfsNumber));
     return;
   }
 
