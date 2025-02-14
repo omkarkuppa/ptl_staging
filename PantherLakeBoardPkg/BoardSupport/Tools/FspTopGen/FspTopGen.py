@@ -201,7 +201,7 @@ def main():
         with open(FspO_path, "rb") as F:
             ReadData = F.read()
             FileWrite.write(ReadData)
-    
+
     FreeSpaceSize = os.path.getsize(FspTopAt4G_path) - os.path.getsize(FspT_path) - os.path.getsize(FspO_path)
     if FreeSpaceSize < FBM_OFFSET_TO_FSPT:
         print("Error! There is not enough free space (at least 8KB)")
@@ -211,12 +211,7 @@ def main():
         #
         # If FSP_SIGNED is True, Patch FBM to FSP Top binary.
         #
-        fbmFilePath = os.path.join(os.getenv('WORKSPACE_ROOT'),
-                                   'Build',
-                                   os.getenv('FSP_PKG_NAME'),
-                                   os.getenv('FSP_TARGET') + '_' + os.getenv('TOOL_CHAIN_TAG'),
-                                   'FV',
-                                   'Fbm.bin')
+        fbmFilePath = os.path.join(FspBinDir, "PantherLakeFspBinPkg", "Fbm.bin")
         with open(fbmFilePath, "rb") as FileRead:
             FbmBin = FileRead.read()
 

@@ -237,26 +237,6 @@ call %WORKSPACE_COMMON%\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake %FspTargetOpt
       @echo !!! ERROR:Patch FSP-O failed!!!
       set SCRIPT_ERROR=1
     )
-
-    if %PTL_BUILD% EQU TRUE (
-      @set FBM_CONFIG_TXT=%WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmConfig.txt
-    ) else (
-      @set FBM_CONFIG_TXT=%WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmConfig_wcl.txt
-    )
-    echo FBM_CONFIG_TXT=!FBM_CONFIG_TXT!
-    echo PTL_BUILD=%PTL_BUILD%
-    @echo call FbmGen to generate FBM
-    @call %PYTHON_COMMAND% %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FbmGen\FbmGen.py ^
-      -c !FBM_CONFIG_TXT! ^
-      -o %WORKSPACE%\Build\%FSP_PKG_NAME%\%FSP_TARGET%_%TOOL_CHAIN_TAG%\FV ^
-      -f %WORKSPACE_FSP_BIN%\PantherLakeFspBinPkg\Fsp.fd ^
-      --ltsign-tool-path %WORKSPACE_BINARIES%\Tools\ltsign\ltsign.exe ^
-      --openssl-tool-path %WORKSPACE_BINARIES%\Tools\OpenSSL\openssl.exe
-
-    @if %errorlevel% NEQ 0 (
-      @echo !!! ERROR:Generate FBM failed!!!
-      set SCRIPT_ERROR=1
-    )
   )
   @echo FSP build has succeeded
   @echo FSP build has succeeded >> %WORKSPACE%\Build.log 2>&1
