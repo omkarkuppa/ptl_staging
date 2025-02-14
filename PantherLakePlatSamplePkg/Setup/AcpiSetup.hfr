@@ -339,8 +339,8 @@ form formid = AUTO_ID(PEP_FORM_ID),
       prompt      = STRING_TOKEN(STR_PEP_PCIE_LAN),
       help        = STRING_TOKEN(STR_PEP_PCIE_LAN_HELP),
       option text = STRING_TOKEN(STR_PEP_PCIE_NO_CONSTRAINT), value = 0, flags = RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_PEP_PCIE_D0F1),  value = 1, flags = RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_PEP_PCIE_D3),   value = 3, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PEP_PCIE_D0F1),  value = 1, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PEP_PCIE_D3),   value = 3, flags = RESET_REQUIRED;
     endoneof;
 
     oneof varid   = SETUP_DATA.PepPcieWlan,

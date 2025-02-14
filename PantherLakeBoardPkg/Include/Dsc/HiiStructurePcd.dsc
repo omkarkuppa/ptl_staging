@@ -4094,7 +4094,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.PepI2c5|0x1                                   
 gStructPcdTokenSpaceGuid.PcdSetup.PepIpu|0x1                                                       # PEP IPU
 gStructPcdTokenSpaceGuid.PcdSetup.PepIsh|0x1                                                       # PEP ISH
 gStructPcdTokenSpaceGuid.PcdSetup.PepPcieGfx|0x3                                                   # PEP PCIe GFX
-gStructPcdTokenSpaceGuid.PcdSetup.PepPcieLan|0x3                                                   # PEP PCIe LAN
+gStructPcdTokenSpaceGuid.PcdSetup.PepPcieLan|0x1                                                   # PEP PCIe LAN
 gStructPcdTokenSpaceGuid.PcdSetup.PepPcieOther|0x0                                                 # PEP PCIe Other
 gStructPcdTokenSpaceGuid.PcdSetup.PepPcieStorage|0x1                                               # PEP PCIe Storage
 gStructPcdTokenSpaceGuid.PcdSetup.PepPcieWlan|0x1                                                  # PEP PCIe WLAN
