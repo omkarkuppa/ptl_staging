@@ -56,7 +56,6 @@
   UefiBootServicesTableLib
 
 [Guids]
-  gEfiEventReadyToBootGuid              ## CONSUMES
   gResetReasonDeviceSignatureGuid       ## PRODUCES
 
 [Depex]

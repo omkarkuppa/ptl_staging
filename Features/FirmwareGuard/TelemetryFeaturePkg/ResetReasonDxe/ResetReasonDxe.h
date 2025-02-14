@@ -23,12 +23,23 @@
 #define _RESET_REASON_H_
 
 #include <PiDxe.h>
+#include <IndustryStandard/Acpi65.h>
 
 ///
 /// Definitions for PHAT and Reset Reason table
 ///
 #define RESET_REASON_PHAT_RECORD_TYPE   0x1
-#define RESET_REASON_OFFSET             0x0074
+
+///
+/// ACPI structure for Memory Telemetry Table addition to PHAT
+///
+typedef struct {
+  UINT16                        PlatformRecordType;
+  UINT16                        RecordLength;
+  GUID                          DeviceSignature;
+  UINT8                         Revision;
+  EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE  Data;
+} PHAT_RESET_REASON_RECORD_STRUCTURE;
 
 /**
   Entry point to telemetry platform reset reason PHAT.
