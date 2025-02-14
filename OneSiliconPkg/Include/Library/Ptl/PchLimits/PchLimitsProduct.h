@@ -35,7 +35,7 @@
 //
 // PCIe limits
 //
-#define MAX_PCIE_ROOT_PORTS                 29
+#define MAX_PCIE_ROOT_PORTS                 20
 
 #define PCH_MAX_PCIE_ROOT_PORTS             12
 #define PCH_MAX_PCIE_CONTROLLERS            5
@@ -43,7 +43,7 @@
 //
 // PCIe clocks limits
 //
-#define PCH_MAX_PCIE_CLOCKS                 16
+#define PCH_MAX_PCIE_CLOCKS                 10
 
 //
 // DMI lanes

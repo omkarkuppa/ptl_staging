@@ -83,6 +83,7 @@ typedef struct {
   UINT8            CsMode;                                        ///< <b>0 = HW Control</b> 1 = SW Control. Sets Chip Select Control mode Hardware or Software.
   UINT8            CsState;                                       ///< <b>0 = CS is set to low</b> 1 = CS is set to high
   LPSS_SPI_PIN_MUX PinMux;                                        ///< SPI Pinmux configuration
+  UINT32           RsvdByte;
 } LPSS_SPI_DEVICE_CONFIG;
 
 /**

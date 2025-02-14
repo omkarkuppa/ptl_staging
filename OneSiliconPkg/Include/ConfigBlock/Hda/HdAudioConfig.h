@@ -317,6 +317,7 @@ typedef struct {
    *  Discrete BT HCI Audio Offload Support
    **/
   HDAUDIO_DISC_BT_OFFLOAD HdaDiscBtOffload;
+  UINT32                  RsvdBits1:32;
 } HDAUDIO_DXE_CONFIG;
 
 #pragma pack (pop)

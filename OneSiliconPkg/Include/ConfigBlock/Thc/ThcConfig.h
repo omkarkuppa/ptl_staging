@@ -165,6 +165,7 @@ typedef struct {
   THC_HID_OVER_I2C      HidOverI2c;                     ///< Hid Over I2c mode settings
   UINT32                Clock;                          ///< For available options see THC_PORT_CLOCK
   THC_PORT_SUBSYTEM_ID  ThcSubSystemId;              ///< Customized Subsystem ID
+  UINT32                Reserved;
 } THC_PORT;
 
 /**
