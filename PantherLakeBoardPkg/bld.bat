@@ -395,6 +395,7 @@ set UPL_SETTINGS= ^
   -p gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport=TRUE ^
   -p gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset=TRUE ^
   -p gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosEntryPointProvideMethod=0x01 ^
+  -p gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear=2024 ^
   -p gEfiMdeModulePkgTokenSpaceGuid.PcdDxeNxMemoryProtectionPolicy=%PCD_DXE_NX_MEMORY_PROTECTION_POLICY%
 
 echo %UPL_SETTINGS%
