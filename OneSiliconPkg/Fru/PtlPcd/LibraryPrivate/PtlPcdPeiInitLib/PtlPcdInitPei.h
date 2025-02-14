@@ -221,8 +221,11 @@ PtlPcdGbeInit (
   Initialize the TSN devices
 
   @param[in] SiPolicy   The Silicon Policy PPI instance
+
+  @retval EFI_SUCCESS    Completed successfully
+  @retval Status         Completed with error
 **/
-VOID
+EFI_STATUS
 PtlPcdTsnInit (
   IN  SI_POLICY_PPI  *SiPolicy
   );

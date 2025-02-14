@@ -611,7 +611,7 @@ FspUpdatePcieRpPolicy (
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.AutoPowerGating          = FspsUpd->FspsConfig.PcieAutoPowerGating[Index];
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.VisaClockGating          = FspsUpd->FspsConfig.PcieVisaClockGating[Index];
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieFomsCp               = FspsUpd->FspsConfig.PcieFomsCp[Index];
-	PchPcieConfig->RootPort[Index].PcieRpCommonConfig.EqPhBypass               = FspsUpd->FspsConfig.PcieEqPhBypass[Index];
+    PchPcieConfig->RootPort[Index].PcieRpCommonConfig.EqPhBypass               = FspsUpd->FspsConfig.PcieEqPhBypass[Index];
   }
 
   //

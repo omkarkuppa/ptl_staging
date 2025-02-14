@@ -20,18 +20,19 @@
 **/
 
 #include <Library/DebugLib.h>
-#include <Ppi/SiPolicy.h>
+#include <SiPolicyStruct.h>
+#include <Register/PchRegs.h>
 #include <Library/PchPciBdfLib.h>
 #include <PcdSbPortIds.h>
-#include <Register/PchRegs.h>
 #include <Library/P2SbSocLib.h>
-#include <Library/PeiItssLib.h>
 #include <Library/P2SbSidebandAccessLib.h>
 #include <Library/PeiTsnInitLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/PcdInfoLib.h>
 #include <Library/PcdGpioNativeLib.h>
 #include <Register/GpioAcpiDefines.h>
+#include <Library/ConfigBlockLib.h>
+#include <Library/PcdLib.h>
 
 /**
   Load default zero and NULL values for the TSN handle.
@@ -40,7 +41,6 @@
   @param[in out]  TsnController  Pointer to TSN controller structure
   @param[in out]  TsnPrivate     Pointer to TSN private configuration structure
 **/
-STATIC
 VOID
 TsnHandleLoadDefaults (
   IN OUT  TSN_HANDLE          *TsnHandle,
@@ -70,15 +70,13 @@ TsnHandleLoadDefaults (
   @param[in out]  TsnHandle        Pointer to the TSN handle structure
 
   @retval EFI_SUCCESS           - Completed successfully
-          EFI_OUT_OF_RESOURCES  - Not enough resources to allocate P2SbCtrl for the context.
           EFI_INVALID_PARAMETER - P2SB_CONTROLLER or TSN_CONTROLLER is NULL or TsnIndex is incorrect
 **/
-STATIC
 EFI_STATUS
 TsnRegisterAccessInit (
   IN      UINT8                           TsnIndex,
-  IN      P2SB_CONTROLLER                 *P2SbController,
-  IN      P2SB_SIDEBAND_REGISTER_ACCESS   *P2SbAccess,
+  IN OUT  P2SB_CONTROLLER                 *P2SbController,
+  IN OUT  P2SB_SIDEBAND_REGISTER_ACCESS   *P2SbAccess,
   IN OUT  TSN_HANDLE                      *TsnHandle
   )
 {
@@ -86,6 +84,10 @@ TsnRegisterAccessInit (
 
   if (P2SbController == NULL) {
     DEBUG ((DEBUG_ERROR, "%a: P2SbController is NULL\n", __FUNCTION__));
+    return EFI_INVALID_PARAMETER;
+  }
+  if (P2SbAccess == NULL) {
+    DEBUG ((DEBUG_ERROR, "%a: P2SbAccess is NULL\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
   }
   if (TsnHandle == NULL) {
@@ -141,13 +143,16 @@ TsnRegisterAccessInit (
   Enable the TSN GPIOs.
 
   @param[in]  TsnIndex   Index of the TSN controller
+
+  @retval EFI_SUCCESS    Completed successfully
+  @retval Status         Completed with error
 **/
-STATIC
-VOID
+EFI_STATUS
 TsnEnableGpio (
   IN  UINT8   TsnIndex
   )
 {
+  return EFI_SUCCESS;
 }
 
 /**
@@ -155,8 +160,10 @@ TsnEnableGpio (
 
   @param[in]      TsnIndex    Index of the TSN controller
   @param[in out]  TsnHandle   Pointer to the TSN handle structure
+
+  @retval EFI_SUCCESS           - Completed successfully
 **/
-VOID
+EFI_STATUS
 TsnGetMacAddress (
   IN      UINT8        TsnIndex,
   IN OUT  TSN_HANDLE   *TsnHandle
@@ -167,14 +174,18 @@ TsnGetMacAddress (
           "TSN[%d] Dev: 0x%x, Fun: 0x%x, MAC high: 0x%x, MAC low: 0x%x\n",
           TsnIndex, TsnDevNumber (TsnIndex), TsnFuncNumber (TsnIndex), TsnHandle->PrivateConfig->Port->MacAddr[1], TsnHandle->PrivateConfig->Port->MacAddr[0]
           ));
+  return EFI_SUCCESS;
 }
 
 /**
   Initialize the TSN devices.
 
   @param[in] SiPolicy   The Silicon Policy PPI instance
+
+  @retval EFI_SUCCESS    Completed successfully
+  @retval Status         Completed with error
 **/
-VOID
+EFI_STATUS
 PtlPcdTsnInit (
   IN  SI_POLICY_PPI   *SiPolicy
   )
@@ -194,7 +205,7 @@ PtlPcdTsnInit (
 
   if (SiPolicy == NULL) {
     DEBUG ((DEBUG_ERROR, "%a: SiPolicy is NULL\n", __FUNCTION__));
-    return;
+    return EFI_INVALID_PARAMETER;
   }
 
   // Initialize handler with default zero values and NULL configuration pointer
@@ -204,13 +215,13 @@ PtlPcdTsnInit (
   Status = PtlPcdGetFirstP2SbController (&P2SbCtrl);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Failed to get P2SB controller (Status: %d)\n", __FUNCTION__, Status));
-    return;
+    return Status;
   }
 
   Status = GetConfigBlock ((VOID *) SiPolicy, &gTsnConfigGuid, (VOID *) &TsnConfig);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Failed to get TSN configuration (Status: %d)\n", __FUNCTION__, Status));
-    return;
+    return Status;
   }
   TsnHandle.Config = TsnConfig;
 
@@ -224,7 +235,7 @@ PtlPcdTsnInit (
 
   if (!IsTsnEnabled) {
     DEBUG ((DEBUG_INFO, "%a: TSN ports are disabled\n", __FUNCTION__));
-    return;
+    return EFI_SUCCESS;
   }
 
   // Initialize each TSN controller
@@ -248,4 +259,6 @@ PtlPcdTsnInit (
   }
 
   DEBUG ((DEBUG_VERBOSE, "%a end\n", __FUNCTION__));
+
+  return EFI_SUCCESS;
 }
