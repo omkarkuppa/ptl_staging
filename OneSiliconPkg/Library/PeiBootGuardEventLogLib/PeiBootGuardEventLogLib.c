@@ -656,6 +656,15 @@ CreatePolicyDataMeasurementEvent (
   UINT8                            *AcmPolicyDataPtr;
   STATIC CONST UINT16              PolicyDataMeasurementEventDataString[] = L"BIOS Measured Boot Guard Policy\0";
 
+  //
+  // No measurements done for profile 0 in FSP signed case,
+  // and FACB used to check we're not profile 4/5
+  //
+  if ((Fbm != NULL) &&
+      ((AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO) & B_BOOT_GUARD_SACM_INFO_FORCE_ANCHOR_BOOT) == 0)) {
+    return EFI_SUCCESS;
+  }
+
   DEBUG ((DEBUG_INFO, "%a() entry...\n", __FUNCTION__));
 
   ASSERT (Km != NULL);
@@ -900,6 +909,15 @@ CreateIbbMeasurementEvent (
   STATIC CONST CHAR16          IbbMeasurementEventDataString[] = L"Boot Guard Measured IBB\0";
   STATIC CONST CHAR16          Near4GRegionEventDataString[] = L"4G - 4K Region\0";
 
+  //
+  // No measurements done for profile 0 in FSP signed case,
+  // and FACB used to check we're not profile 4/5
+  //
+  if ((Fbm != NULL) &&
+      ((AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO) & B_BOOT_GUARD_SACM_INFO_FORCE_ANCHOR_BOOT) == 0)) {
+    return EFI_SUCCESS;
+  }
+
   CurrPcrBank = 0;
   CurrHashAlg =  0;
   ZeroMem (&DigestList, sizeof (TPML_DIGEST_VALUES));
@@ -1009,11 +1027,12 @@ CreateIbbMeasurementEvent (
       if (Status != EFI_SUCCESS) {
         return Status;
       }
-      //
-      // Skip further measurement as all IBB components have been measured by ACM and FSP.
-      //
-      ExcludeIbbFv ();
     }
+    //
+    // Skip further measurement as all IBB components have been measured by ACM and FSP.
+    //
+    ExcludeIbbFv ();
+
     NewEventHdr.EventSize = sizeof (Near4GRegionEventDataString);
     Status = LogAcmPcrExtendedEvent (&SortedDigestList, &NewEventHdr, (UINT8 *) Near4GRegionEventDataString);
     return Status;
@@ -1315,7 +1334,7 @@ CreateBootguardEventLogEntriesCallback (
   //   b'001--> BTG / b'010 (2) --> TXT / b'100 (4) --> PFR
   //
 
-  if (AcmPolicySts.Bits.SCrtmStatus == 0) {
+  if ((AcmPolicySts.Bits.SCrtmStatus == 0) && (Fbm == NULL)) {
     return EFI_SUCCESS;
   }
 
@@ -1404,16 +1423,18 @@ CreateBootguardEventLogEntriesCallback (
     return Status;
   }
 
-  if (Fbm == NULL) {
-    //
-    // For non-signed FSP, create event log ACM version
-    //
+  //
+  // Create event log for ACM version for signed and non-signed FSP
+  // when SCrtmStatus is non-zero
+  //
+  if (AcmPolicySts.Bits.SCrtmStatus != 0) {
     Status = CreateScrtmVersionEvent (TpmActivePcrBanks, AcmHdr);
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "CreateScrtmVersionEvent() error status: %r\n", Status));
       return Status;
     }
   }
+
   //
   // Disable BIOS TCG drivers measurement of CRTM
   // and log ACM's extention of the S-CRTM version

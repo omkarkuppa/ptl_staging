@@ -26,6 +26,7 @@
 #define B_BOOT_GUARD_SACM_INFO_NEM_ENABLED                            BIT0
 #define V_TPM_PRESENT_MASK                                            0x06
 #define B_BOOT_GUARD_SACM_INFO_TPM_SUCCESS                            BIT3
+#define B_BOOT_GUARD_SACM_INFO_FORCE_ANCHOR_BOOT                      BIT4
 #define B_BOOT_GUARD_SACM_INFO_MEASURED_BOOT                          BIT5
 #define B_BOOT_GUARD_SACM_INFO_VERIFIED_BOOT                          BIT6
 #define B_BOOT_GUARD_SACM_INFO_CAPABILITY                             BIT32

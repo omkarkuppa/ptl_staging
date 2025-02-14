@@ -523,7 +523,6 @@ ExtendFspVersion (
   if (IsS3Resume () == 0) {
     Status = FspExtendFspVersion (Fbm, TpmActivePcrBanks);
     if (Status == EFI_SUCCESS) {
-      FspMeasurementInfo->Bits.FspVersionStatus = EFI_SUCCESS;
       DEBUG ((DEBUG_INFO, "FSP version extended to PCR Bank\n",
               Status, TpmActivePcrBanks));
     } else {
@@ -563,6 +562,35 @@ ExtendFspotRegion (
     }
   }
   return Status;
+}
+
+/**
+  Save FSP-O/T event log data.
+
+  @param[in]  Fbm        Base address of Fbm
+
+**/
+VOID
+EFIAPI
+SaveFspotEventData (
+  IN   FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
+  IN   UINT32                       TpmActivePcrBanks
+  )
+{
+  TPML_DIGEST_VALUES             TpmDigestValues;
+  EFI_STATUS                     Status;
+
+  ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
+  FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPOT, TpmActivePcrBanks);
+  Status = SaveHashEvent (&TpmDigestValues,
+                         TpmActivePcrBanks,
+                         (UINT8 *) "FSPOT",
+                         sizeof ("FSPOT"),
+                         EV_POST_CODE
+                         );
+  if (Status == EFI_SUCCESS) {
+    DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-OT\n"));
+  }
 }
 
 /**
@@ -666,10 +694,15 @@ InitializeTpmAndGetActivePcrs (
   ZeroMem (&EmptyHashList, sizeof (TPML_DIGEST));
   if (CompareMem (EmptyHashList.digests->buffer, EarlyHashList.digests->buffer, sizeof (EarlyHashList.digests->buffer)) != 0) {
     //
-    // If PCR[0] digest list is not empty, this would mean that ACM has extended FSP-OT and FSP version into the PCR
+    // If PCR[0] digest list is not empty, this would mean that ACM has extended FSP-OT and ACM version
+    // into the PCR. FSP version should not be extended as ACM is SCRTM.
     //
-    DEBUG ((DEBUG_INFO, "FSP-OT and FSP version has already been measured by ACM\n"));
+    DEBUG ((DEBUG_INFO, "FSP-OT and ACM version has already been measured by ACM\n"));
     FspMeasurementInfo->Bits.IbbStatus = EFI_SUCCESS;
+  } else {
+    //
+    // FSP is SCRTM and FSP version should be extended.
+    //
     FspMeasurementInfo->Bits.FspVersionStatus = EFI_SUCCESS;
   }
 
@@ -700,6 +733,7 @@ VerifiedComponentSaveHashEvent (
   BSPM_ELEMENT                   *Bspm;
   UINT32                         TpmActivePcrBanks;
   TPML_DIGEST_VALUES             TpmDigestValues;
+  UINT64                         AcmPolicyStatus;
 
   if (IsS3Resume () == 1) {
     //
@@ -709,10 +743,23 @@ VerifiedComponentSaveHashEvent (
   }
 
   Fbm = LocateFbm ();
+
   //
   // Check if signing is supported
   //
   if (!(IsSigningSupported (Fbm))) {
+    AcmPolicyStatus = MmioRead64 (MMIO_ACM_POLICY_STATUS);
+    //
+    // ACM measures FSP-OT for BTG0 with TXT enabled. Save event log for this case.
+    //
+    if ((Fbm != NULL) && (DetectBootGuardProfile () == 0) && (AcmPolicyStatus & B_SCRTM_STATUS)) {
+      Status = Tpm2RequestUseTpm ();
+      Status = FspGetSupportedPcrs (&TpmActivePcrBanks);
+      if (EFI_ERROR (Status)) {
+        return EFI_DEVICE_ERROR;
+      }
+      SaveFspotEventData (Fbm, TpmActivePcrBanks);
+    }
     return EFI_UNSUPPORTED;
   }
 
@@ -740,22 +787,12 @@ VerifiedComponentSaveHashEvent (
                            EV_S_CRTM_VERSION
                            );
     if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FBM\n"));
+      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP Version\n"));
     }
   }
 
   if (FspMeasurementData->Bits.IbbStatus == EFI_SUCCESS) {
-    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPOT, TpmActivePcrBanks);
-    Status = SaveHashEvent (&TpmDigestValues,
-                           TpmActivePcrBanks,
-                           (UINT8 *) "FSPOT",
-                           sizeof ("FSPOT"),
-                           EV_POST_CODE
-                           );
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-OT\n"));
-    }
+    SaveFspotEventData (Fbm, TpmActivePcrBanks);
   }
 
   if (FspMeasurementData->Bits.FspmStatus == EFI_SUCCESS) {

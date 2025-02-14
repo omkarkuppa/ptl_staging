@@ -45,7 +45,6 @@
 [Packages]
   MdePkg/MdePkg.dec
   FspWrapperFeaturePkg/FspWrapperFeaturePkg.dec
-  PantherLakeFspBinPkg/PantherLakeFspBinPkg.dec
   OneSiliconPkg/SiPkg.dec
 
 [LibraryClasses]

@@ -32,6 +32,7 @@
 #define B_BOOT_GUARD_SACM_INFO_MEASURED_BOOT        BIT5
 #define B_BOOT_GUARD_SACM_INFO_VERIFIED_BOOT        BIT6
 #define B_FBM_VALID_STATUS                          BIT27
+#define B_SCRTM_STATUS                              BIT32|BIT33|BIT34
 #define R_CPU_ACM_POLICY_STATUS                     0x378
 #define TXT_PUBLIC_BASE                             0xFED30000
 #define MMIO_ACM_POLICY_STATUS                      (TXT_PUBLIC_BASE + R_CPU_ACM_POLICY_STATUS)

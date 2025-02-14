@@ -306,7 +306,8 @@ FspLoadComponents (
   FspMeasurementInfo.Data = FSP_MEASUREMENT_INFO_DEFAULT;
   InitializeTpmAndGetActivePcrs (&FspMeasurementInfo, Bspm, &TpmActivePcrBanks);
 
-  if (FspMeasurementInfo.Bits.IbbStatus != EFI_SUCCESS) {
+  if ((FspMeasurementInfo.Bits.IbbStatus != EFI_SUCCESS) &&
+      (FspMeasurementInfo.Bits.FspVersionStatus == EFI_SUCCESS)) {
     //
     // Measure FSP version and FSP-OT for BTG4 when it was not measured by ACM
     //
