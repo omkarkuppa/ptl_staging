@@ -31,6 +31,7 @@
 [Defines]
   DEFINE FMP_CLIENT_PLATFORM_TBT_RETIMER          = 2FE2CBFC-B9AA-4A93-AB5B-40173B581C42
   DEFINE FMP_CLIENT_PLATFORM_DISCRETE_TBT         = 86A885EE-D71E-2ED6-0FC1-9D6CCC9677EB
+  DEFINE FMP_CLIENT_PLATFORM_PD_BRIDGE            = 11984C7E-1207-4DE0-92C5-29661F9A6557
 
 ################################################################################
 #
@@ -40,6 +41,7 @@
 [LibraryClasses.common.DXE_DRIVER,LibraryClasses.common.UEFI_APPLICATION]
 
   TbtNvmRetimerUpdateLib|UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/TbtNvmRetimerUpdateLib.inf
+  UsbCPdBridgeUpdateLib|UsbCCapsuleFeaturePkg/Library/UsbCPdBridgeUpdateLib/UsbCPdBridgeUpdateLib.inf
   UsbcCapsuleDebugLib|UsbCCapsuleFeaturePkg/Library/UsbcCapsuleDebugLib/UsbcCapsuleDebugLib.inf
 
 ################################################################################
@@ -123,6 +125,27 @@
 
     <LibraryClasses>
       FmpDeviceLib|UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/DiscreteTbt/FmpDeviceLibDiscreteTbt.inf
+  }
+
+#
+# UsbCPdBridge FMP
+#
+    FmpDevicePkg/FmpDxe/FmpDxe.inf {
+    <Defines>
+      FILE_GUID = $(FMP_CLIENT_PLATFORM_PD_BRIDGE)
+
+    <PcdsFixedAtBuild>
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageIdName|L"UsbC PD Bridge Device"
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceBuildTimeLowestSupportedVersion|0x00000000
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressWatchdogTimeInSeconds|0
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceProgressColor|0x00FF8000
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageTypeIdGuid|{GUID("11984C7E-1207-4DE0-92C5-29661F9A6557")}
+
+      # Using Pkcs7 test keys from EDKII open source. This cannot be used in product.
+      !include BaseTools/Source/Python/Pkcs7Sign/TestRoot.cer.gFmpDevicePkgTokenSpaceGuid.PcdFmpDevicePkcs7CertBufferXdr.inc
+
+    <LibraryClasses>
+      FmpDeviceLib|UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/PdBridge/FmpDeviceLibPdBridge.inf
   }
 
 #

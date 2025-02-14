@@ -1,9 +1,9 @@
 # @file
-#  Generate Discrete Thunderbolt firmware payload header.
+#  Generate PD Bridge firmware payload header.
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2023 Intel Corporation.
+#  Copyright (C) 2024 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -30,31 +30,41 @@ else:
 
 #
 #
-# Data structures used in dTBT image payload
+# Data structures used in PD Bridge image payload
 #
-# #define DISCRETE_TBT_PAYLOAD_HEADER_SIGNATURE SIGNATURE_32 ('D', 'T', 'B', 'T')
+# #define PD_BRIDGE_PAYLOAD_HEADER_SIGNATURE SIGNATURE_32 ('P', 'D', 'B', 'G')
 
 # #pragma pack(1)
 # typedef struct {
 #   UINT32  Signature;
 #   UINT32  HeaderSize;
-#   UINT32  DiscreteTbtCount;
+#   UINT32  PayloadCount;
 #   UINT32  Reserved;
 #   ///
 #   /// Variable length array of dimension [EmbeddedDriverCount + PayloadItemCount]
 #   /// containing offsets of each of the drivers and payload items contained within the capsule
 #   ///
-#   // DISCRETE_TBT_ITEM DiscreteTbtItem[];
-# } DISCRETE_TBT_PAYLOAD_HEADER;
+#   /// PAYLOAD_ITEM PayloadItem[];
+# } PAYLOAD_HEADER;
 #
+# typedef union {
+#   struct {
+#     UINT8  PdCntrlIndex;
+#     UINT8  ShareFlashMode;  // 0: Disable, 1:Enabled
+#     UINT8  Reserved[14];
+#   } PdBridge;  // FirmwareType 3: PdBridge
+
+#   UINT8 Data8[16];
+
+# } FIRMWARE_PRIVATE_DATA;
+
 # typedef struct {
-#   UINT32                   ImageOffset;
-#   UINT32                   ImageSize;
-#   UINT8                    FirmwareType;      // 2:Discrete TBT, Others: Reserved
-#   UINT8                    PcieRpType;        // 2:PCH 4:CPU
-#   UINT8                    PcieRootPort;
-#   UINT8                    Reserve[5];
-# } DISCRETE_TBT_ITEM;
+#   FIRMWARE_PRIVATE_DATA  PrivateData;
+#   UINT32                 ImageOffset;
+#   UINT32                 ImageSize;
+#   UINT8                  FirmwareType;   // 3: PD Bridge
+#   UINT8                  Reserve[3];
+# } PAYLOAD_ITEM;
 #
 # #pragma pack()
 #
@@ -62,11 +72,11 @@ else:
 def _SIGNATURE_32 (A, B, C, D):
     return struct.unpack ('=I',bytearray (A + B + C + D, 'ascii'))[0]
 
-HeaderSignature = _SIGNATURE_32 ('D', 'T', 'B', 'T')
+HeaderSignature = _SIGNATURE_32 ('P', 'D', 'B', 'G')
 HeaderStruct    = '<IIII'
-ItemStruct      = '<IIBBB5s'
+ItemStruct      = '<BB14sIIB3s'
 
-def gen_discrete_tbt_header_from_ini (inifile):
+def gen_pd_bridge_header_from_ini (inifile):
 
   IniDir = os.path.dirname(inifile)
   if sys.version_info.major == 2:
@@ -84,36 +94,36 @@ def gen_discrete_tbt_header_from_ini (inifile):
   HeaderSize = struct.calcsize (HeaderStruct) + (UpdateNum * struct.calcsize (ItemStruct))
   ImageOffset = HeaderSize
   ItemHeaderBuffer = b''
-  DiscreteTbtFwBuffer = b''
+  PdBridgeFwBuffer = b''
 
   for Section in config.sections():
-    FwType     = config.getint(Section, 'FirmwareType')
-    PcieRpType = config.getint(Section, 'PcieRpType')
-    PcieRpNum  = config.getint(Section, 'PcieRpNumber')
-    File       = config.get(Section, 'FileName')
+    FwType          = config.getint(Section, 'FirmwareType')
+    PdCntrlIndex    = config.getint(Section, 'PdCntrlIndex')
+    ShareFlashMode  = config.getint(Section, 'ShareFlashMode')
+    File            = config.get(Section, 'FileName')
 
-    DiscreteTbtFwFile = os.path.join(IniDir,File)
+    PdBridgeFwFile = os.path.join(IniDir,File)
     try:
-      fin = open(DiscreteTbtFwFile, "rb")
-      ImageSize = os.path.getsize(DiscreteTbtFwFile)
+      fin = open(PdBridgeFwFile, "rb")
+      ImageSize = os.path.getsize(PdBridgeFwFile)
       # Read file to buffer
-      DiscreteTbtFw = fin.read()
+      PdBridgeFw = fin.read()
       fin.close()
 
     except:
-      print ("Failed to open %s" % DiscreteTbtFwFile)
+      print ("Failed to open %s" % PdBridgeFwFile)
       sys.exit (1)
 
-    DiscreteTbtItemHeader = struct.pack (ItemStruct, ImageOffset, ImageSize, FwType, PcieRpType, PcieRpNum, B'')
+    PdBridgeItemHeader = struct.pack (ItemStruct, PdCntrlIndex, ShareFlashMode, B'', ImageOffset, ImageSize, FwType, B'')
     ImageOffset = ImageOffset + ImageSize
-    ItemHeaderBuffer = ItemHeaderBuffer + DiscreteTbtItemHeader
-    DiscreteTbtFwBuffer = DiscreteTbtFwBuffer + DiscreteTbtFw
+    ItemHeaderBuffer = ItemHeaderBuffer + PdBridgeItemHeader
+    PdBridgeFwBuffer = PdBridgeFwBuffer + PdBridgeFw
 
-  DiscreteTbtPayloadHeader = struct.pack (HeaderStruct, HeaderSignature, HeaderSize, UpdateNum, 0)
-  Result = DiscreteTbtPayloadHeader + ItemHeaderBuffer + DiscreteTbtFwBuffer
+  PdBridgePayloadHeader = struct.pack (HeaderStruct, HeaderSignature, HeaderSize, UpdateNum, 0)
+  Result = PdBridgePayloadHeader + ItemHeaderBuffer + PdBridgeFwBuffer
 
   # Write output
-  fout = open(os.path.join(IniDir,"DTbtPayload.bin"), "wb")
+  fout = open(os.path.join(IniDir,"PdBridgePayload.bin"), "wb")
   fout.write(Result)
   fout.close()
 
@@ -128,7 +138,7 @@ def main():
     print ("incorrent number of arguments")
     return 1
 
-  ret = gen_discrete_tbt_header_from_ini(sys.argv[1])
+  ret = gen_pd_bridge_header_from_ini(sys.argv[1])
 
   if ret != 0:
     return 1

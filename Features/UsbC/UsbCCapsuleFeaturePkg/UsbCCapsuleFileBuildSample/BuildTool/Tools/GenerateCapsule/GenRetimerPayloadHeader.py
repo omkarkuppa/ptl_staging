@@ -51,8 +51,8 @@ else:
 #   RETIMER_DEV_ADDRESS      RetimerDevAddress;
 #   UINT32                   ImageOffset;
 #   UINT32                   ImageSize;
-#   UINT8                    FirmwareType;      // 0:Integrated TBT retimer 1:Discrete TBT retimer 2:Discrete TBT (FMP Retimer un-support the value)
-#   UINT8                    PcieRpType;        // 0:PCH 1:CPU
+#   UINT8                    FirmwareType;      // 0:Integrated Tbt retimer, 1:Discrete TBT retimer, Others: Reserved
+#   UINT8                    PcieRpType;        // 2:PCH 4:CPU
 #   UINT8                    PcieRootPort;
 #   UINT8                    Reserve[5];
 # } RETIMER_ITEM;

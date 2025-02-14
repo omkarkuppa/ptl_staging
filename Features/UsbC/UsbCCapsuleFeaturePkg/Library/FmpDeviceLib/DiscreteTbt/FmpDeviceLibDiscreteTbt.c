@@ -784,7 +784,7 @@ FmpDeviceSetImageWithStatus (
   }
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_DTBT_CAPSULE_START);
   //
-  // Boundary check is supposed to be taken case by FmpDeviceCheckImage above already.
+  // Boundary check is supposed to be taken care by FmpDeviceCheckImage above already.
   //
   DiscreteTbtPayloadHeader = (PAYLOAD_HEADER *) Image;
   DiscreteTbtPayloadItem = (DISCRETE_TBT_ITEM *) (DiscreteTbtPayloadHeader + 1);

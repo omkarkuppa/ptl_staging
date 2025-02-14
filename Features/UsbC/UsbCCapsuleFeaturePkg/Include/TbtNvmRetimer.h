@@ -23,6 +23,8 @@
 #ifndef __TBT_RETIMER_NVM_H__
 #define __TBT_RETIMER_NVM_H__
 
+#include "UsbCPdBridgeRetimer.h"
+
 //
 // Data structures used in Retimer/Discrete TBT image payload
 //
@@ -60,18 +62,6 @@ typedef struct {
 } RETIMER_CONFIG_ARRAY;
 
 typedef struct {
-  UINT32  Signature;
-  UINT32  HeaderSize;
-  UINT32  PayloadCount;
-  UINT32  Reserved;
-  ///
-  /// Variable length array of dimension [EmbeddedDriverCount + PayloadItemCount]
-  /// containing offsets of each of the drivers and payload items contained within the capsule
-  ///
-  // PAYLOAD_HEADER PayloadItem[];
-} PAYLOAD_HEADER;
-
-typedef struct {
   RETIMER_DEV_ADDRESS      RetimerDevAddress;
   UINT32                   ImageOffset;
   UINT32                   ImageSize;
@@ -101,12 +91,5 @@ typedef struct {
   UINT8 PcieRpType;
   UINT8 PcieRootPort;
 } PCIE_RP_CONFIG;
-
-typedef enum {
-  INTEGRATED_TBT_RETIMER = 0x0,
-  DISCRETE_TBT_RETIMER = 0x1,
-  DISCRETE_TBT = 0x02,
-  FIRMWARE_TYPE_MAX_VALUE
-} FIRMWARE_TYPE;
 
 #endif  // __TBT_RETIMER_NVM_H__
