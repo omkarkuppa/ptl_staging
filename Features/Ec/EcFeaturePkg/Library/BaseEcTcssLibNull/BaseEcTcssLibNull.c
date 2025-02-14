@@ -202,8 +202,6 @@ NotifyEcToRestorePL4Value (
 }
 
 /**
-
-/**
   Execute the PD Vendor Command via EC private port
 
   @param[in]  PdCntrlIndex       PD controller index (0-based).
