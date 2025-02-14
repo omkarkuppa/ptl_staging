@@ -784,6 +784,11 @@ PsfEnableEoiTarget (
   // Enable EOI target in parent PSF
   //
   EoiRegData = PsfGetMcastRegData (EoiRegDataTable, TargetId.Fields.PsfId);
+  if (EoiRegData == NULL) {
+    // This PSF segment cannot have EOI targets
+    return;
+  }
+
   if (EoiRegData->HasParent) {
     ParentPsfDev = PsfGetDev (PsfTable, EoiRegData->ParentPsfId);
     if (ParentPsfDev != NULL) {
@@ -798,7 +803,6 @@ PsfEnableEoiTarget (
   // Enable EOI target on direct PSF segment
   //
   PsfDev = PsfGetDev (PsfTable, TargetId.Fields.PsfId);
-  EoiRegData = PsfGetMcastRegData (EoiRegDataTable, TargetId.Fields.PsfId);
   if (PsfDev != NULL) {
     PsfAddEoiTarget (PsfDev, TargetId, EoiRegData);
   }

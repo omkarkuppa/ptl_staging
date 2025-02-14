@@ -222,6 +222,11 @@ PtlPcdHPsfDisableLpssI2c (
   PSF_PORT I2cPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&I2cPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetLpssI2cPort (
     &RegisterAccess,
     &PsfDev,
@@ -247,6 +252,11 @@ PtlPcdHPsfHideLpssI2c (
   PSF_DEV PsfDev;
   PSF_PORT I2cPort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&I2cPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetLpssI2cPort (
     &RegisterAccess,
@@ -274,6 +284,11 @@ PtlPcdHPsfUnhideLpssI2c (
   PSF_PORT I2cPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&I2cPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetLpssI2cPort (
     &RegisterAccess,
     &PsfDev,
@@ -299,6 +314,11 @@ PtlPcdHPsfDisableLpssI2cBar1 (
   PSF_DEV PsfDev;
   PSF_PORT I2cPort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&I2cPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetLpssI2cPort (
     &RegisterAccess,
@@ -370,6 +390,11 @@ PtlPcdHPsfDisableLpssI3c (
   PSF_PORT I3cPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&I3cPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetLpssI3cPort (
     &RegisterAccess,
     &PsfDev,
@@ -394,6 +419,11 @@ PtlPcdHPsfHideLpssI3c (
   PSF_DEV PsfDev;
   PSF_PORT I3cPort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&I3cPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetLpssI3cPort (
     &RegisterAccess,
@@ -420,6 +450,11 @@ PtlPcdHPsfUnhideLpssI3c (
   PSF_PORT I3cPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&I3cPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetLpssI3cPort (
     &RegisterAccess,
     &PsfDev,
@@ -445,6 +480,11 @@ PtlPcdHPsfDisableLpssI3cBar1 (
   PSF_PORT I3cPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&I3cPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetLpssI3cPort (
     &RegisterAccess,
     &PsfDev,
@@ -453,7 +493,7 @@ PtlPcdHPsfDisableLpssI3cBar1 (
     &I3cPort
   );
 
-  PsfEnableDeviceBar (&I3cPort, BIT3 | BIT2);
+  PsfDisableDeviceBar (&I3cPort, BIT3 | BIT2);
 }
 
 /**
@@ -514,6 +554,11 @@ PtlPcdHPsfDisableLpssSpi (
   PSF_PORT SpiPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&SpiPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetLpssSpiPort (
     &RegisterAccess,
     &PsfDev,
@@ -539,6 +584,11 @@ PtlPcdHPsfHideLpssSpi (
   PSF_DEV PsfDev;
   PSF_PORT SpiPort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&SpiPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetLpssSpiPort (
     &RegisterAccess,
@@ -566,6 +616,11 @@ PtlPcdHPsfUnhideLpssSpi (
   PSF_PORT SpiPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&SpiPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetLpssSpiPort (
     &RegisterAccess,
     &PsfDev,
@@ -591,6 +646,11 @@ PtlPcdHPsfDisableLpssSpiBar1 (
   PSF_DEV PsfDev;
   PSF_PORT SpiPort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&SpiPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetLpssSpiPort (
     &RegisterAccess,
@@ -661,6 +721,11 @@ PtlPcdHPsfDisableLpssUart (
   PSF_PORT UartPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&UartPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetLpssUartPort (
     &RegisterAccess,
     &PsfDev,
@@ -686,6 +751,11 @@ PtlPcdHPsfEnableLpssUart (
   PSF_DEV PsfDev;
   PSF_PORT UartPort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&UartPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetLpssUartPort (
     &RegisterAccess,
@@ -713,6 +783,11 @@ PtlPcdHPsfUnhideLpssUart (
   PSF_PORT UartPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&UartPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetLpssUartPort (
     &RegisterAccess,
     &PsfDev,
@@ -738,6 +813,11 @@ PtlPcdHPsfHideLpssUart (
   PSF_DEV PsfDev;
   PSF_PORT UartPort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&UartPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetLpssUartPort (
     &RegisterAccess,
@@ -765,6 +845,11 @@ PtlPcdHPsfDisableLpssUartBar1 (
   PSF_PORT UartPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&UartPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetLpssUartPort (
     &RegisterAccess,
     &PsfDev,
@@ -790,6 +875,11 @@ PtlPcdHPsfEnableLpssUartBar1 (
   PSF_DEV PsfDev;
   PSF_PORT UartPort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&UartPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetLpssUartPort (
     &RegisterAccess,
@@ -1044,6 +1134,11 @@ PtlPcdHPsfEnableHeci (
   PSF_PORT HeciPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&HeciPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetHeciPort (
     &RegisterAccess,
     &PsfDev,
@@ -1069,6 +1164,11 @@ PtlPcdHPsfDisableHeci (
   PSF_DEV PsfDev;
   PSF_PORT HeciPort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&HeciPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetHeciPort (
     &RegisterAccess,
@@ -1139,6 +1239,11 @@ PtlPcdHPsfDisableSse (
   PSF_DEV PsfDev;
   PSF_PORT SsePort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&SsePort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetSsePort (
     &RegisterAccess,
@@ -1432,6 +1537,11 @@ PtlPcdHPsfDisableThc (
   PSF_PORT ThcPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&ThcPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetThcPort (
     &RegisterAccess,
     &PsfDev,
@@ -1719,6 +1829,11 @@ PtlPcdHPsfGetScsUfsPort (
     { 0, R_PTL_PCD_P_PSF_0_AGNT_T0_SHDW_BAR0_UFS_RS0_D23_F0_OFFSET4 }
   };
 
+  if (ScsUfsNumber >= ARRAY_SIZE (mFclPcdScsUfsPsfRegBase)) {
+    DEBUG ((DEBUG_ERROR, "Wrong I2C index, max: %d, given: %d\n", ARRAY_SIZE (mFclPcdScsUfsPsfRegBase) - 1, ScsUfsNumber));
+    return;
+  }
+
   BuildPsfP2SbAccess (
     mPtlPcdHScsUfsPsfRegBase[ScsUfsNumber].PsfNumber,
     P2SbController,
@@ -1747,6 +1862,11 @@ PtlPcdHPsfDisableScsUfs (
   PSF_PORT ScsUfsPort;
   P2SB_CONTROLLER P2SbController;
 
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&ScsUfsPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
+
   PtlPcdHPsfGetScsUfsPort (
     &RegisterAccess,
     &PsfDev,
@@ -1771,6 +1891,11 @@ PtlPcdHPsfDisableScsUfsBar1 (
   PSF_DEV PsfDev;
   PSF_PORT ScsUfsPort;
   P2SB_CONTROLLER P2SbController;
+
+  ZeroMem (&RegisterAccess, sizeof (P2SB_SIDEBAND_REGISTER_ACCESS));
+  ZeroMem (&PsfDev, sizeof (PSF_DEV));
+  ZeroMem (&ScsUfsPort, sizeof (PSF_PORT));
+  ZeroMem (&P2SbController, sizeof (P2SB_CONTROLLER));
 
   PtlPcdHPsfGetScsUfsPort (
     &RegisterAccess,
@@ -1967,6 +2092,11 @@ PtlPcdHPsfMctpTargetsTable (
   UINT32       TargetNum;
   UINT32       RpIndex;
   UINT32       MaxPsfDecodedPciePortCount;
+
+  if (TargetIdTable == NULL || MaxTableSize == 0) {
+    DEBUG ((DEBUG_ERROR, "%a - invalid parameter, return 0\n", __FUNCTION__));
+    return 0;
+  }
 
   TargetNum = 0;
   ZeroMem (TargetIdTable, sizeof(PSF_PORT_DEST_ID) * MaxTableSize);
@@ -2476,7 +2606,7 @@ PtlPcdHPsfProgramDWB (
   P2SB_CONTROLLER               P2SbController;
   PSF_REG_BASE                  PsfRegBase;
 
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gPsfConfigGuid, (VOID *) &PsfConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gPsfConfigGuid, (VOID **) &PsfConfig);
   ASSERT_EFI_ERROR (Status);
 
   PsfRegBase.PsfNumber = 6;
@@ -2980,6 +3110,10 @@ PtlPcdHPsfEnableRpEoiTarget (
   P2SB_CONTROLLER                P2SbController[PTL_PCD_H_NUM_ENTRIES_PSF_DEV_TABLE];
   PSF_DEV                        PsfDevArray[PTL_PCD_H_NUM_ENTRIES_PSF_DEV_TABLE];
   PSF_DEV_TABLE                  PsfTable;
+
+  if (RpIndex >= PTL_PCD_H_PSF_MAX_PSF_DECODED_PCIE_ROOT_PORTS) {
+    return;
+  }
 
   PtlPcdHPsfPreparePsfTable (
     PTL_PCD_H_NUM_ENTRIES_PSF_DEV_TABLE,
