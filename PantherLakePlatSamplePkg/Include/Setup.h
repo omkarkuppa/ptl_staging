@@ -84,7 +84,7 @@
 #define ADMIN_PW_CLEAR        0
 #define ADMIN_PW_SET          1
 
-
+#define SYSTEM_ACCESS_REVISION  1
 typedef struct _SYSTEM_ACCESS
 {
   //
@@ -96,6 +96,7 @@ typedef struct _SYSTEM_ACCESS
 //
 // Record the password status.
 //
+#define EFI_PASSWORD_STATUS_REVISION  1
 typedef struct {
   UINT8   AdminName;
   UINT8   UserName;
@@ -106,6 +107,7 @@ typedef struct {
 //
 // Config Data
 //
+#define DEBUG_CONFIG_DATA_REVISION  1
 typedef struct {
   UINT8 SerialDebugMrcLevel;
   UINT8 SerialDebug;

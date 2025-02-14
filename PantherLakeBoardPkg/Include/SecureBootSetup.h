@@ -2,7 +2,7 @@
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2023 Intel Corporation.
+  Copyright (C) 2024 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -15,16 +15,25 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification Reference:
+@par Specification
 **/
 
-#define FSPV_SETUP_NAME         L"FspVSetup"
+#ifndef _SECURE_BOOT_SETUP_H_
+#define _SECURE_BOOT_SETUP_H_
 
 #pragma pack(1)
-#define FSPV_SETUP_REVISION  1
-typedef struct {
-  UINT32   FspMVTestCaseId;
-  UINT32   FspSVTestCaseId;
-} FSPV_SETUP;
-#pragma pack()
 
+/**
+ Making any setup structure change after code frozen
+ will need to maintain backward compatibility, bump up
+ structure revision and update below history table\n
+  <b>Revision 1</b>:  - Initial version.
+**/
+#define SECURE_BOOT_VARIABLE_REVISION 1
+
+typedef struct {
+  UINT8   SecureBoot;
+} SECURE_BOOT_VARIABLE;
+
+#pragma pack()
+#endif

@@ -39,6 +39,7 @@
 //
 // CrashLog variable
 //
+#define CRASHLOG_VARIABLE_REVISION 1
 typedef struct {
   //
   //  Control the entire Crash Log collection flow
@@ -73,6 +74,7 @@ typedef struct {
 //
 // CrashLog control variable used to control show/hidden of option
 //
+#define CRASHLOG_CONTROL_VARIABLE_REVISION 1
 typedef struct {
   //
   //  Silicon Crash Log flow

@@ -23,7 +23,7 @@
 #define _NVME_SETUP_H_
 
 #pragma pack(1)
-
+#define NVME_SETUP_REVISION 1
 typedef struct {
   UINT8   PlnEnable;
   UINT8   NvmeRwRecoveryEnable;

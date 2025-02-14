@@ -47,6 +47,7 @@
  structure revision and update below history table\n
   <b>Revision 1</b>:  - Initial version.
 **/
+#define VTIO_SETUP_DATA_STRUCT_REVISION 1
 typedef struct {
   UINT8                               Revision;
   UINT8                               VtioSupport;

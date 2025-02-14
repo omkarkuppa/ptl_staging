@@ -25,10 +25,7 @@
 #include <PlatformBoardId.h>
 #include <PlatformBoardType.h>
 #include <Guid/GlobalVariable.h>
-
-typedef struct{
-  UINT8   SecureBoot;
-} SECURE_BOOT_VARIABLE;
+#include <SecureBootSetup.h>
 
 formset guid = BOOT_FORM_SET_GUID,
   title      = STRING_TOKEN(STR_BOOT),

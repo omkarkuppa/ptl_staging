@@ -42,9 +42,7 @@
 #include <AmtPetInitConfigVariable.h>
 #endif
 
-typedef struct {
-  UINT8 InstallExtOpRom;
-} PCI_BUS_SETUP;
+#include <PciBusSetup.h>
 #include <Library/PchInfoDefs.h>
 #include <NvmeSetup.h>
 #include <CnvSetupId.h>

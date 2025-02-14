@@ -190,6 +190,7 @@ typedef struct {
   UINT8 TdxSupported;
 } SETUP_CPU_FEATURES;
 
+#define OS_PROFILE_REVISION  1
 typedef struct {
   UINT8   OsProfile;
   UINT8   PrevOs;

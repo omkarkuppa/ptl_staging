@@ -1122,6 +1122,7 @@ typedef struct {
   UINT8   ReduceXecores;
 } CPU_SETUP;
 
+#define CPU_SETUP_VOLATILE_DATA_REVISION       1
 typedef struct {
   UINT16  CpuFamilyModel;
   UINT16  CpuExtendedFamilyModel;
@@ -1137,6 +1138,7 @@ typedef struct {
   UINT8  AtomVrLocked;
 } CPU_SETUP_VOLATILE_DATA;
 
+#define TBT_SETUP_VOLATILE_DATA_REVISION       1
 typedef struct {
   UINT8  DTbtContollersNumber;
   UINT8  BoardITbtPcieRootPortSupported[MAX_ITBT_PCIE_PORT];
@@ -2440,6 +2442,7 @@ typedef struct {
   UINT8   PcieImrRpSelection;
 } SI_SETUP;
 
+#define DEBUG_SETUP_VOLATILE_DATA_REVISION 1
 typedef struct {
   UINT8   StreamingTraceSink;
   UINT8   PchIsAttached;
