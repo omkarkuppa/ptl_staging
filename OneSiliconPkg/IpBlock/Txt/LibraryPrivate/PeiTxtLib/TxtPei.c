@@ -32,6 +32,7 @@
 #include <Library/MpInitLib.h>
 #include <Register/PchRegs.h>
 #include <Register/PmcRegs.h>
+#include <Library/SpiAccessLib.h>
 
 EFI_STATUS
 EFIAPI
@@ -204,7 +205,7 @@ Done:
   /// If S-ACM reports TXT failure , disable TXT
   ///
 
-  if (IsBptTxtPassed () == FALSE) {
+  if (IsBptTxtPassed () == FALSE || SpiIsFlashDescriptorOverrideEnabled ()) {
     DEBUG ((DEBUG_WARN, "TXTPEI::TXT failed reported by S-ACM\n"));
     TxtInfoHob->Data.TxtMode = 0;
   }
