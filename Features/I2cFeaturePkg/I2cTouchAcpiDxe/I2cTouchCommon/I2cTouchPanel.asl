@@ -32,6 +32,7 @@
 #define SERIAL_IO_TPL_CUSTOM_DEVICE   7 // Custom TouchPanel device
 
 External (TPLM)
+External (\_SB.GRXE, MethodObj)
 
 //------------------------
 // Touch Panels on I2C for common use
@@ -53,7 +54,11 @@ External (TPLM)
       If (LEqual (DeRefOf(Index(TPTD,1)),0)) {
         SHPO (DeRefOf(Index(TPDI,1)),1) // configure gpio pad in gpio driver mode
       }
-      SGRA (DeRefOf(Index(TPDI,0)), TPLM) // set/reset GPIRoutIOxAPIC TPLM=1 means APIC enable
+      GRXE (DeRefOf(Index(TPDI,1)),0) // Set interrupt delivery to level
+      If (LEqual (TPLM,1)) {
+        GRXE (DeRefOf(Index(TPDI,1)),1) // Set interrupt delivery to edge for APIC mode
+      }
+      SGRA (DeRefOf(Index(TPDI,1)), TPLM) // set/reset GPIRoutIOxAPIC TPLM=1 means APIC enable
       If (LEqual (DeRefOf(Index(TPTD,0)), ATMEL3432_PANEL)) {
         Store ("ATML3432",_HID)
         Store (0,HID2)
