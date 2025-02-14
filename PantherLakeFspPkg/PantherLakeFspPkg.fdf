@@ -44,10 +44,10 @@ SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x00012000      #
 #=============================================================================#
 !if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
 #=============================================================================#
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x00009000      #
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x000FB000      #
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0005C000      #
-SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x00011000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize     = 0x00007000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize     = 0x000FF000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspsSize     = 0x0005B000      #
+SET gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize     = 0x00010000      #
 #=============================================================================#
 !endif
 !if gSiPkgTokenSpaceGuid.PcdSocCoreBootEnable == TRUE
