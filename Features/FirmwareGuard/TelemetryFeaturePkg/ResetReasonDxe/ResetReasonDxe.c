@@ -133,7 +133,7 @@ IsColdReset (
 
   if (HprCause0 & B_PMC_PWRM_HPR_CAUSE0_SYSRST_ES) {
     ResetReg = IoRead8 ((UINTN) R_PCH_IO_RST_CNT);
-    if (ResetReg == B_PMC_PWRM_HPR_CAUSE0_CF9CR) {
+    if (ResetReg == V_PMC_PWRM_HPR_CAUSE0_CF9CR) {
       Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_COLD_RESET;
       Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
       TypeFound = TRUE;
@@ -166,7 +166,7 @@ IsWarmReset (
 
   if (HprCause0 & B_PMC_PWRM_HPR_CAUSE0_SYSRST_ES) {
     ResetReg = IoRead8 ((UINTN) R_PCH_IO_RST_CNT);
-    if (ResetReg == B_PMC_PWRM_HPR_CAUSE0_CF9WR) {
+    if (ResetReg == V_PMC_PWRM_HPR_CAUSE0_CF9WR) {
       Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_WARM_RESET;
       Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
       TypeFound = TRUE;
@@ -224,7 +224,7 @@ IsFaultReset (
   )
 {
   if ((GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_FAULT_RESET) ||
-      (GblCause1 & R_PMC_PWRM_GBLRST_CAUSE1_FAULT_RESET)) {
+      (GblCause1 & B_PMC_PWRM_GBLRST_CAUSE1_FAULT_RESET)) {
     Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_FAULT;
     if (GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_HW_SOURCE) {
       Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_HARDWARE;
@@ -358,7 +358,7 @@ IsPowerButtonReset (
   IN OUT  UINT8       Source
   )
 {
-  if (GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_PWR_BTN_RESET) {
+  if (GblCause0 & B_PMC_PWRM_GBLRST_CAUSE0_PBO) {
     Reason |= EFI_ACPI_6_5_PHAT_RESET_REASON_REASON_POWER_BUTTON;
     Source |= EFI_ACPI_6_5_PHAT_RESET_REASON_SOURCES_UNKNOWN;
     return EFI_SUCCESS;
