@@ -86,7 +86,7 @@ IsPlatformSanitizeRequested (
       CsmeUnConfigViaCdr = FALSE;
     }
   } else if (RpeTriggered && CsmeUnConfigViaCdr) {
-    // If both RPE & CSME Unconfig are set, it is Invalid Trigger.
+    // If both RPE & CSME Unconfig are set, it is invalid trigger.
     DEBUG ((DEBUG_INFO, "PS: Both RPE and CSME Unconfig Triggered at the same time.\n"));
     DEBUG ((DEBUG_INFO, "PS: No Sanitize takes place.\n"));
     PsPetAlert (PsProgressFailure, PsPetEraseGeneral, PsInvalidBootParameters);
@@ -97,7 +97,7 @@ IsPlatformSanitizeRequested (
     DEBUG ((DEBUG_INFO, "PS: Remote CSME Unconfiguration Triggered.\n"));
     mPsBootParameters->TriggerSource = BootConfigDataReset;
   } else if (IsPreviousBootSanitizeContinuation()) {
-      // Config Data Reset gets cleared on reset. Hence checking with Pending list.
+      // Config Data Reset gets cleared on reset. Hence checking with pending list.
       if (mPsBootParameters->PsPendingList & PS_CSME_UNCONFIGURE) {
         DEBUG((DEBUG_INFO, "PS: Remote CSME Unconfiguration Triggered.\n"));
         mPsBootParameters->TriggerSource = BootConfigDataReset;

@@ -78,6 +78,7 @@
 [Guids]
   gEfiEndOfDxeEventGroupGuid                    ## CONSUMES ## Event
   gPsPlatformEraseVariableGuid                  ## CONSUMES
+  gPsStorageEraseVariableGuid                   ## CONSUMES
 
 [Depex]
   TRUE

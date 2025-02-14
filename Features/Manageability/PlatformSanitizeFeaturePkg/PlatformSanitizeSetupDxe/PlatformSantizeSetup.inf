@@ -61,6 +61,7 @@
 [Guids]
   gEfiIfrFrontPageGuid                          ## CONSUMES
   gEfiIfrTianoGuid                              ## CONSUMES
+  gPsStorageEraseVariableGuid                   ## CONSUMES
   gPsPlatformEraseVariableGuid                  ## CONSUMES
   gPsLpeSetupVariableGuid                       ## CONSUMES
   gPsRpeSetupVariableGuid                       ## CONSUMES

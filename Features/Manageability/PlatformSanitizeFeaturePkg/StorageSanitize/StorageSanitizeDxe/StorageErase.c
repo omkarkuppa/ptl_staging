@@ -268,6 +268,106 @@ DriverStopDevice (
 }
 
 /**
+  Get Devices from STORAGE_ERASE_DEVICE_VARIABLE and build device list for erase.
+
+  @param[in] Variable           The pointer to the STORAGE_ERASE_DEVICE_VARIABLE which contain the device not selected to erase.
+  @param[in] DeviceList         The old device list.
+
+  @retval ERASE_DEVICE_LIST     Return the new device list or NULL.
+**/
+ERASE_DEVICE_LIST *
+BuildDeviceItemFromVariable (
+  IN STORAGE_ERASE_DEVICE_VARIABLE  *Variable,
+  IN ERASE_DEVICE_LIST              *DeviceList
+  )
+{
+  ERASE_DEVICE_LIST              *TempDeviceList;
+  ERASE_DEVICE_INFO              *DeviceInfo;
+  UINT32                         TotalSize;
+  UINT32                         DeviceSize;
+
+  if ((Variable == NULL) || (DeviceList == NULL)) {
+    return NULL;
+  }
+  TotalSize = DeviceList->TotalSize;
+  DeviceSize = (UINT32)(sizeof (ERASE_DEVICE_INFO));
+  TempDeviceList = AllocateZeroPool (TotalSize + DeviceSize);
+  if (TempDeviceList == NULL) {
+    return NULL;
+  }
+  CopyMem (TempDeviceList, DeviceList, TotalSize);
+  FreePool (DeviceList);
+  DeviceList = NULL;
+
+  DeviceInfo = (ERASE_DEVICE_INFO *)((UINTN)TempDeviceList + TotalSize);
+  DeviceInfo->NameSize = Variable->NameLength;
+  DeviceInfo->SnSize = Variable->SnLength;
+  StrCpyS (DeviceInfo->Name, MN_MAX_LEN, Variable->Name);
+  CopyMem (DeviceInfo->Sn, Variable->Sn, SN_MAX_LEN);
+  TempDeviceList->TotalSize = TotalSize + DeviceSize;
+  TempDeviceList->Selected = 0;
+  return TempDeviceList;
+}
+
+/**
+  Build the device list from variable for storage erase.
+
+  @retval ERASE_DEVICE_LIST     Return the device list or NULL.
+**/
+ERASE_DEVICE_LIST *
+EFIAPI
+BuildEraseDeviceList (
+  VOID
+  )
+{
+  STORAGE_ERASE_DEVICE_VARIABLE  *TempVariable;
+  STORAGE_ERASE_DEVICE_VARIABLE  *Variable;
+  UINTN                          VariableSize;
+  EFI_STATUS                     Status;
+  ERASE_DEVICE_LIST              *DeviceList;
+  ERASE_DEVICE_LIST              *TempDeviceList;
+
+  Variable = NULL;
+  VariableSize = 0;
+  DeviceList = NULL;
+  TempDeviceList = NULL;
+
+  Status = GetVariable2 (
+             DEVICE_VARIABLE_NAME,
+             &gPsStorageEraseVariableGuid,
+             (VOID **)&Variable,
+             &VariableSize
+             );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "PS: %a - Fail to get %S variable (%r)\n", __FUNCTION__, DEVICE_VARIABLE_NAME, Status));
+    return NULL;
+  }
+
+  if ((VariableSize >= sizeof (STORAGE_ERASE_DEVICE_VARIABLE)) && (Variable != NULL)) {
+    DeviceList = AllocateZeroPool (sizeof (ERASE_DEVICE_LIST));
+    if (DeviceList == NULL) {
+      FreePool (Variable);
+      return NULL;
+    }
+    DeviceList->TotalSize = sizeof (ERASE_DEVICE_LIST);
+    TempVariable = Variable;
+    while ((TempVariable != NULL) &&
+          (VariableSize >= sizeof (STORAGE_ERASE_DEVICE_VARIABLE))) {
+      TempDeviceList = BuildDeviceItemFromVariable (TempVariable, DeviceList);
+      if (TempDeviceList == NULL) {
+        break;
+      }
+      DeviceList = TempDeviceList;
+      VariableSize -= sizeof (STORAGE_ERASE_DEVICE_VARIABLE);
+      TempVariable ++;
+    }
+    FreePool (Variable);
+  }
+
+  return DeviceList;
+}
+
+/**
   Get password from device list.
 
   @param[in] DeviceInfo  Pointer the ERASE_DEVICE_INFO list.
@@ -348,60 +448,68 @@ GetDeviceInfoFromList (
 /**
   Update the selected status and password for platform erase device.
 
-  @param[in] DeviceList  the device list which is not selected.
+  @param[in] HostPassword  HostPassword to erase storage.
+
 **/
 VOID
 UpdateDeviceInfo (
-  IN  ERASE_DEVICE_LIST      *DeviceList
+  IN CHAR8  *HostPassword
   )
 {
+  ERASE_DEVICE_LIST      *DeviceList;
   LIST_ENTRY             *Node;
   PLATFORM_ERASE_DEVICE  *Dev;
   UINT32                 TotalSize;
   ERASE_DEVICE_INFO      *DeviceInfo;
   ERASE_DEVICE_INFO      *TempDevice;
-  CHAR8                  Password[PASSWORD_MAX_LENGTH + 1];
   UINT8                  Selected;
 
-  if (DeviceList == NULL) {
-    return;
-  }
+  DEBUG ((DEBUG_INFO, "PS: %a - enter\n", __FUNCTION__));
 
-  ZeroMem(Password, PASSWORD_MAX_LENGTH + 1);
-  TotalSize = DeviceList->TotalSize;
-  Selected = DeviceList->Selected;
-  if (TotalSize > 0) {
-    TotalSize -= sizeof (ERASE_DEVICE_LIST);
-    DeviceInfo = (ERASE_DEVICE_INFO *)((UINTN)DeviceList + sizeof (ERASE_DEVICE_LIST));
-  } else {
-    return;
-  }
-  //
-  // Get Password
-  //
-  GetPasswordFromDeviceList (DeviceInfo, TotalSize, Password);
-
-  //
-  // Update the selected status and password
-  //
-  for (Node = GetFirstNode (&mStorageEraseDriver.PlatformEraseDeviceList);
-    !IsNull (&mStorageEraseDriver.PlatformEraseDeviceList, Node);
-    Node = GetNextNode (&mStorageEraseDriver.PlatformEraseDeviceList, Node)) {
-    Dev = PLATFORM_ERASE_DEVICE_FROM_LINK (Node);
-    TempDevice = GetDeviceInfoFromList (Dev, DeviceInfo, TotalSize);
-    if (TempDevice == NULL) {
-      if (Selected) {
-        Dev->Selected = 0;
-      } else {
-        Dev->Selected = 1;
-        if ((AsciiStrLen (Password) != 0)) {
-          CopyMem (Dev->Password, Password, PASSWORD_MAX_LENGTH);
+  DeviceList = BuildEraseDeviceList (); // Build the device list from variable.
+  if (DeviceList != NULL) {
+    TotalSize = DeviceList->TotalSize;
+    Selected = DeviceList->Selected;
+    if (TotalSize > 0) {
+      TotalSize -= sizeof (ERASE_DEVICE_LIST);
+      DeviceInfo = (ERASE_DEVICE_INFO *)((UINTN)DeviceList + sizeof (ERASE_DEVICE_LIST));
+      //
+      // Update the selected status and password from variable.
+      //
+      for (Node = GetFirstNode (&mStorageEraseDriver.PlatformEraseDeviceList);
+        !IsNull (&mStorageEraseDriver.PlatformEraseDeviceList, Node);
+        Node = GetNextNode (&mStorageEraseDriver.PlatformEraseDeviceList, Node)) {
+        Dev = PLATFORM_ERASE_DEVICE_FROM_LINK (Node);
+        TempDevice = GetDeviceInfoFromList (Dev, DeviceInfo, TotalSize);
+        if (TempDevice == NULL) { // De-select device is not in the erase device list
+          if (Selected) {
+            Dev->Selected = 0;
+          } else {
+            Dev->Selected = 1;
+            if ((AsciiStrLen (HostPassword) != 0)) {
+              CopyMem (Dev->Password, HostPassword, PASSWORD_MAX_LENGTH);
+            }
+          }
+        } else {
+          Dev->Selected = Selected;
+          if (Selected && (AsciiStrLen (HostPassword) != 0)) {
+            CopyMem (Dev->Password, HostPassword, PASSWORD_MAX_LENGTH);
+          }
         }
       }
-    } else {
-      Dev->Selected = Selected;
-      if (Selected && (AsciiStrLen (TempDevice->Password) != 0)) {
-        CopyMem (Dev->Password, TempDevice->Password, PASSWORD_MAX_LENGTH);
+    }
+  }
+
+  //
+  // Update Host password for selected devices.
+  //
+  if ((HostPassword != NULL) && (AsciiStrLen (HostPassword) != 0)) {
+    for (Node = GetFirstNode (&mStorageEraseDriver.PlatformEraseDeviceList);
+      !IsNull (&mStorageEraseDriver.PlatformEraseDeviceList, Node);
+      Node = GetNextNode (&mStorageEraseDriver.PlatformEraseDeviceList, Node)) {
+      Dev = PLATFORM_ERASE_DEVICE_FROM_LINK (Node);
+      if (Dev->Selected) {
+        CopyMem (Dev->Password, HostPassword, PASSWORD_MAX_LENGTH);
       }
     }
   }
@@ -738,7 +846,7 @@ PerformStorageErase (
   BOOLEAN                PostponeErase;
   UINT64                 Time;
 
-  DEBUG ((DEBUG_INFO, "%a : enter\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PS: %a - enter\n", __FUNCTION__));
 
   PostponeErase = FALSE;
   Result = EFI_SUCCESS;
@@ -770,7 +878,7 @@ PerformStorageErase (
 
     Status = EFI_UNSUPPORTED;
     TmpDev->Erased = TRUE;
-    DEBUG ((DEBUG_INFO, "storage erase on %a -  start\n", TmpDev->EraseInfo.ModelName));
+    DEBUG ((DEBUG_INFO, "PS: storage erase on %a - start\n", TmpDev->EraseInfo.ModelName));
     //
     // show message on the screen
     //
@@ -810,7 +918,7 @@ PerformStorageErase (
     if (HasOutputConsole && TmpDev->Erased) {
       UpdateEraseMessage (TmpDev->EraseInfo.ModelName, TmpDev->DeviceType, ResultString (TmpDev->Result, PerformVerify));
     }
-    DEBUG ((DEBUG_INFO, "storage erase on %a -  end, Status(%r)\n", TmpDev->EraseInfo.ModelName, Status));
+    DEBUG ((DEBUG_INFO, "PS: storage erase on %a - end, Status(%r)\n", TmpDev->EraseInfo.ModelName, Status));
   }
 
   if (PostponeErase) {
@@ -890,8 +998,8 @@ StorageEraseOutputConsoleConnected (
 /**
   Function to start storage erase.
 
-  @param[in] Configuration     Configuration of erase operation
-  @param[in] DeviceList        The Device list which is not selected for Erasing
+  @param[in] Configuration     Configuration of erase operation.
+  @param[in] HostPassword      Host password for storage unlock.
   @param[in] CompleteFunction  Callback function when erase completed.
 
   @retval EFI_SUCCESS     Storage erase is successful.
@@ -901,7 +1009,7 @@ EFI_STATUS
 EFIAPI
 StorageEraseExec (
   IN  ERASE_CONFIGURATION    Configuration,
-  IN  ERASE_DEVICE_LIST      *DeviceList,
+  IN  CHAR8                  *HostPassword,
   IN  STORAGE_ERASE_COMPLETE CompleteFunction
   )
 {
@@ -934,7 +1042,7 @@ StorageEraseExec (
     InitSanitizeUi ();
   }
 
-  UpdateDeviceInfo (DeviceList);
+  UpdateDeviceInfo (HostPassword);
   UpdateSanitizeOrder ();
   Result = ResetSystemForStoragePowerCycle ();
   if (!EFI_ERROR (Result)) {

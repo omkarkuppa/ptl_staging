@@ -91,10 +91,8 @@ SanitizeStorageDevices (
 {
   EFI_STATUS                     Status;
   ERASE_CONFIGURATION            EraseConfiguration;
-  ERASE_DEVICE_LIST              *DeviceList;
 
   EraseConfiguration.Value = 0;
-  DeviceList = NULL;
 
   //
   // Start SSD Erase Operation
@@ -106,17 +104,12 @@ SanitizeStorageDevices (
   // In case of RPE, Get the password from Boot Parameters (Pop UP will be shown if password is empty)
   // In case of LPE, Storage erase driver will Pop-Up a message and get the password directly from User
   //
-  DeviceList = BuildEraseDeviceList (PsBootStorageParameters->PsStorageDevPassword);
   Status = PerformSsdErase (
              EraseConfiguration,
-             DeviceList,
+             PsBootStorageParameters->PsStorageDevPassword,
              PsStorageEraseComplete
              );
   DEBUG ((DEBUG_INFO, "SSD Erase Status = %r\n", Status));
-
-  if (DeviceList != NULL) {
-    FreePool (DeviceList);
-  }
 
   return EFI_SUCCESS;
 }

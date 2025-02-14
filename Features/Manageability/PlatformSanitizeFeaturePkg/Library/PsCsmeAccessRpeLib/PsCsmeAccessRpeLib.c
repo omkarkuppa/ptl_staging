@@ -181,7 +181,7 @@ PsIsRpeEnabledAndTriggeredByAmt (
   BOOLEAN                 IsAmtRpeTriggered;
   ME_BIOS_PAYLOAD_HOB     *MbpHob;
 
-  DEBUG ((DEBUG_INFO, "PS-%a = \n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PS: %a - enter\n", __FUNCTION__));
 
   MbpHob = GetFirstGuidHob (&gMeBiosPayloadHobGuid);
   if (MbpHob == NULL) {
@@ -194,7 +194,7 @@ PsIsRpeEnabledAndTriggeredByAmt (
 
   Status = PsGetRpeSetupData ();
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "Failed to get RPE setup Data\n"));
+    DEBUG ((DEBUG_INFO, "PS: Failed to get RPE setup Data\n"));
     return FALSE;
   }
 
@@ -230,7 +230,7 @@ PsIsRpeEnabledAndTriggeredByAmt (
     // RPE is disabled in BIOS Setup but still triggered remotely.
     // BIOS to Notify AMT with failure info via BIOSLastStatus & PET Alert
     //
-    DEBUG ((DEBUG_ERROR, "RPE: AMT initiated RPE, but feature is disabled from BIOS. Reporting failure to AMT\n"));
+    DEBUG ((DEBUG_ERROR, "PS: AMT initiated RPE, but feature is disabled from BIOS. Reporting failure to AMT\n"));
     Status = PsReportBiosStatus (AsfRbsGeneralFailure);
     //SendRpePetAlert (ASF_RPE_EVENT_DATA3_BOOT_PARAMETER_RECEIVE_FAILED, 0, ASF_RPE_EVENT_OFFSET_FAILURE);
   }
@@ -258,7 +258,7 @@ PsGetRpeAdditionalParameters (
   UINT32                             Index;
   UEFI_BOOT_OPTION_PARAMETER         *AmtUefiBootOption;
 
-  DEBUG ((DEBUG_INFO, "%a: Entry.\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PS: %a - Enter.\n", __FUNCTION__));
 
   AmtUefiBootOption = AllocateZeroPool (sizeof (UEFI_BOOT_OPTION_PARAMETER));
   if (AmtUefiBootOption == NULL) {
@@ -269,7 +269,7 @@ PsGetRpeAdditionalParameters (
   Status = AsfGetUefiBootParameters (AmtUefiBootOption);
   if (EFI_ERROR (Status)) {
     FreePool (AmtUefiBootOption);
-    DEBUG ((DEBUG_ERROR, "PS-RPE: Failed to get ASF UefiBootParameters.\n"));
+    DEBUG ((DEBUG_ERROR, "PS: Failed to get ASF UefiBootParameters.\n"));
     //SendRpePetAlert (ASF_RPE_EVENT_DATA3_BOOT_PARAMETER_RECEIVE_FAILED, 0, ASF_RPE_EVENT_OFFSET_FAILURE);
     return Status;
   }
@@ -281,7 +281,7 @@ PsGetRpeAdditionalParameters (
   RpeParamTlv = (RPE_PARAMETER_TLV *) AmtUefiBootOption->ParametersArray;
 
   for (Index = 0; Index < AmtUefiBootOption->NumberOfParams; Index++) {
-    DEBUG ((DEBUG_INFO, "PS: Index: %d, VendorId: %d, ParamTypeId: %d, length: %d\n",
+    DEBUG ((DEBUG_INFO, "PS: Index: %d, VendorId: %x, ParamTypeId: %d, length: %d\n",
       Index, RpeParamTlv->Header.ParamType.VendorId, RpeParamTlv->Header.ParamType.ParamTypeId, RpeParamTlv->Header.Length));
 
     if (RpeParamTlv->Header.ParamType.VendorId == V_PCH_INTEL_VENDOR_ID) {
@@ -341,7 +341,7 @@ PsGetRpeSanitizeParameter (
   UINT32                             Index;
   UEFI_BOOT_OPTION_PARAMETER         *AmtUefiBootOption;
 
-  DEBUG ((DEBUG_INFO, "%a: Entry.\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "PS: %a - Enter.\n", __FUNCTION__));
   if (PsBootParameters == NULL) {
     DEBUG ((DEBUG_ERROR, "PS: PsBootParameters - NULL\n"));
     return EFI_INVALID_PARAMETER;
@@ -374,7 +374,7 @@ PsGetRpeSanitizeParameter (
   RpeParamTlv = (RPE_PARAMETER_TLV *) AmtUefiBootOption->ParametersArray;
 
   for (Index = 0; Index < AmtUefiBootOption->NumberOfParams; Index++) {
-    DEBUG ((DEBUG_INFO, "PS: Index: %d, VendorId: %d, ParamTypeId: %d, length: %d\n",
+    DEBUG ((DEBUG_INFO, "PS: Index: %d, VendorId: %x, ParamTypeId: %d, length: %d\n",
       Index, RpeParamTlv->Header.ParamType.VendorId, RpeParamTlv->Header.ParamType.ParamTypeId, RpeParamTlv->Header.Length));
 
     if (RpeParamTlv->Header.ParamType.VendorId == V_PCH_INTEL_VENDOR_ID) {
@@ -388,7 +388,7 @@ PsGetRpeSanitizeParameter (
 
         case ParamTypeStoragePassword:
           if (RpeParamTlv->Header.Length <= STORAGE_DEV_PSW_MAX_LEN) {
-            CopyMem (&StorageDevPassword, &RpeParamTlv->Value, RpeParamTlv->Header.Length);
+            CopyMem (StorageDevPassword, &RpeParamTlv->Value, RpeParamTlv->Header.Length);
             //Note: Do not print password in the log
             DEBUG ((DEBUG_INFO, "PS: Storage Erase Password length = %d.\n", RpeParamTlv->Header.Length));
           } else {
@@ -404,7 +404,7 @@ PsGetRpeSanitizeParameter (
         PsOemHookTlvData->OemVid = RpeParamTlv->Header.ParamType.VendorId;
         PsOemHookTlvData->OemParameterTypeId = RpeParamTlv->Header.ParamType.ParamTypeId;
         PsOemHookTlvData->OemDataLength = RpeParamTlv->Header.Length;
-        CopyMem (&PsOemHookTlvData->OemData, &RpeParamTlv->Value, RpeParamTlv->Header.Length);
+        CopyMem (PsOemHookTlvData->OemData, &RpeParamTlv->Value, RpeParamTlv->Header.Length);
       }
     } else {
       DEBUG ((DEBUG_INFO, "PS: Invalid Vendor ID sent from Remote User Interface.\n"));

@@ -32,7 +32,7 @@ formset
   varstore HII_CONFIG,                        // This is the Data structure type
     varid = STORAGE_ERASE_VARSTORE_ID,
     name  = PlatformSanitizeHiiCfg,           // Define referenced name in vfr
-    guid  = PLATFORM_SANITIZE_FORMSET_GUID;   // GUID of this Buffer storage
+    guid  = STORAGE_ERASE_VARIABLE_GUID;      // GUID of this Buffer storage
 
   efivarstore PLATFORM_ERASE_VARIABLE,        // This is the Data structure type
     attribute = 0x3,

@@ -27,6 +27,9 @@
 //
 // Global ID for Platform Sanitize variables
 //
+#define STORAGE_ERASE_VARIABLE_GUID \
+  { 0x00a329fe, 0x40ae, 0x46ed, { 0xac, 0x57, 0xa6, 0xfb, 0x87, 0x58, 0x4f, 0x58 } }
+
 #define PLATFORM_ERASE_VARIABLE_GUID \
   { 0x858c26d3, 0x3ee9, 0x4643, { 0xa1, 0x2f, 0x5d, 0xa4, 0xcc, 0x5f, 0x89, 0x65 } }
 
@@ -116,6 +119,7 @@ typedef struct {
 #define RPE_SETUP_VARIABLE_NAME        L"RpeSetup"
 #define PS_NVM_VARIABLE_BOOT_PARAM     L"PsNvmBootParameters"
 
+extern EFI_GUID gPsStorageEraseVariableGuid;
 extern EFI_GUID gPsPlatformEraseVariableGuid;
 extern EFI_GUID gPsLpeSetupVariableGuid;
 extern EFI_GUID gPsRpeSetupVariableGuid;

@@ -95,8 +95,8 @@ VOID
 /**
   Function for storage erase.
 
-  @param[in] Configuration     Configuration of erase operation
-  @param[in] DeviceList        The Device list which is not selected for Erasing
+  @param[in] Configuration     Configuration of erase operation.
+  @param[in] HostPassword      Host password for storage unlock.
   @param[in] CompleteFunction  Callback function when erase completed.
 
   @retval EFI_SUCCESS     Storage erase is successful.
@@ -106,7 +106,7 @@ typedef
 EFI_STATUS
 (EFIAPI *STORAGE_ERASE) (
   IN  ERASE_CONFIGURATION    Configuration,
-  IN  ERASE_DEVICE_LIST      *DeviceList,
+  IN  CHAR8                  *HostPassword,
   IN  STORAGE_ERASE_COMPLETE CompleteFunction
   );
 

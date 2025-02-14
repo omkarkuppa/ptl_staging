@@ -39,156 +39,6 @@
 GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN mResetSystemHook;
 
 /**
-  Get Devices from STORAGE_ERASE_DEVICE_VARIABLE and build device list for erase.
-
-  @param[in] Variable           The pointer to the STORAGE_ERASE_DEVICE_VARIABLE which contain the device not selected to erase.
-  @param[in] DeviceList         The old device list.
-
-  @retval ERASE_DEVICE_LIST     Return the new device list or NULL.
-**/
-ERASE_DEVICE_LIST *
-BuildDeviceItemFromVariable (
-  IN STORAGE_ERASE_DEVICE_VARIABLE  *Variable,
-  IN ERASE_DEVICE_LIST              *DeviceList
-  )
-{
-  ERASE_DEVICE_LIST              *TempDeviceList;
-  ERASE_DEVICE_INFO              *DeviceInfo;
-  UINT32                         TotalSize;
-  UINT32                         DeviceSize;
-
-  if ((Variable == NULL) || (DeviceList == NULL)) {
-    return NULL;
-  }
-  TotalSize = DeviceList->TotalSize;
-  DeviceSize = (UINT32)(sizeof (ERASE_DEVICE_INFO));
-  TempDeviceList = AllocateZeroPool (TotalSize + DeviceSize);
-  if (TempDeviceList == NULL) {
-    return NULL;
-  }
-  CopyMem (TempDeviceList, DeviceList, TotalSize);
-  FreePool (DeviceList);
-  DeviceList = NULL;
-
-  DeviceInfo = (ERASE_DEVICE_INFO *)((UINTN)TempDeviceList + TotalSize);
-  DeviceInfo->NameSize = Variable->NameLength;
-  DeviceInfo->SnSize = Variable->SnLength;
-  StrCpyS (DeviceInfo->Name, MN_MAX_LEN, Variable->Name);
-  CopyMem (DeviceInfo->Sn, Variable->Sn, SN_MAX_LEN);
-  TempDeviceList->TotalSize = TotalSize + DeviceSize;
-  TempDeviceList->Selected = 0;
-  return TempDeviceList;
-}
-
-/**
-  Insert the password to the device list for erasing.
-
-  @param[in] DeviceList         The old device list.
-  @param[in] Password           The password should insert to the device list.
-
-  @retval ERASE_DEVICE_LIST     Return the new device list or NULL.
-**/
-ERASE_DEVICE_LIST *
-BuildDeviceItemWithPassword (
-  IN ERASE_DEVICE_LIST  *DeviceList,
-  IN CHAR8              *Password
-  )
-{
-  ERASE_DEVICE_LIST              *TempDeviceList;
-  ERASE_DEVICE_INFO              *DeviceInfo;
-  UINT32                         TotalSize;
-  UINT32                         DeviceSize;
-
-  if ((Password != NULL) && (AsciiStrLen (Password) != 0)) {
-    DEBUG ((DEBUG_INFO, "%a: Set Storage Erase password .\n", __FUNCTION__));
-    DeviceSize = (UINT32)(sizeof (ERASE_DEVICE_INFO));
-    if (DeviceList != NULL) {
-      TotalSize = DeviceList->TotalSize;
-    } else {
-      TotalSize = sizeof (ERASE_DEVICE_LIST);
-    }
-    TempDeviceList = AllocateZeroPool (TotalSize + DeviceSize);
-    if (TempDeviceList != NULL) {
-      if (DeviceList != NULL) {
-        CopyMem (TempDeviceList, DeviceList, TotalSize);
-        FreePool (DeviceList);
-        DeviceList = NULL;
-      }
-      DeviceInfo = (ERASE_DEVICE_INFO *)((UINTN)TempDeviceList + TotalSize);
-      CopyMem (DeviceInfo->Password, Password, PASSWORD_MAX_LENGTH);
-      TempDeviceList->TotalSize = TotalSize + DeviceSize;
-      TempDeviceList->Selected = 0;
-      return TempDeviceList;
-    }
-  }
-  return NULL;
-}
-
-/**
-  Build the device list from variable for storage erase.
-
-  @param[in] Password        The password should insert to the device list.
-
-  @retval ERASE_DEVICE_LIST     Return the device list or NULL.
-**/
-ERASE_DEVICE_LIST *
-EFIAPI
-BuildEraseDeviceList (
-  IN CHAR8   *Password
-  )
-{
-  STORAGE_ERASE_DEVICE_VARIABLE  *TempVariable;
-  STORAGE_ERASE_DEVICE_VARIABLE  *Variable;
-  UINTN                          VariableSize;
-  EFI_STATUS                     Status;
-  ERASE_DEVICE_LIST              *DeviceList;
-  ERASE_DEVICE_LIST              *TempDeviceList;
-
-  Variable = NULL;
-  VariableSize = 0;
-  DeviceList = NULL;
-  TempDeviceList = NULL;
-
-  Status = GetVariable2 (
-             DEVICE_VARIABLE_NAME,
-             &gPsPlatformEraseVariableGuid,
-             (VOID **)&Variable,
-             &VariableSize
-             );
-  if (EFI_ERROR (Status)) {
-    return NULL;
-  }
-
-  if ((VariableSize >= sizeof (STORAGE_ERASE_DEVICE_VARIABLE)) && (Variable != NULL)) {
-    DeviceList = AllocateZeroPool (sizeof (ERASE_DEVICE_LIST));
-    if (DeviceList == NULL) {
-      FreePool (Variable);
-      return NULL;
-    }
-    DeviceList->TotalSize = sizeof (ERASE_DEVICE_LIST);
-    TempVariable = Variable;
-    while ((TempVariable != NULL) &&
-          (VariableSize >= sizeof (STORAGE_ERASE_DEVICE_VARIABLE))) {
-      TempDeviceList = BuildDeviceItemFromVariable (TempVariable, DeviceList);
-      if (TempDeviceList == NULL) {
-        break;
-      }
-      DeviceList = TempDeviceList;
-      VariableSize -= sizeof (STORAGE_ERASE_DEVICE_VARIABLE);
-      TempVariable ++;
-    }
-    FreePool (Variable);
-  }
-  if ((Password != NULL) && AsciiStrLen (Password) != 0) {
-    TempDeviceList = BuildDeviceItemWithPassword (DeviceList, Password);
-    if (TempDeviceList != NULL) {
-      DeviceList = TempDeviceList;
-    }
-  }
-  return DeviceList;
-}
-
-/**
   Due to platform security concern, only trusted storages are connected.
   This function is to connect all storages so they can be found and erased.
 **/
@@ -337,20 +187,20 @@ PlatformEraseOnResetHook (
 /**
   Attempts to erase storage devices.
 
-  @param[in]   EraseConfiguration  Configuration for erase operation
-  @param[in]   DeviceList          The device list for erasing
+  @param[in]   EraseConfiguration  Configuration for erase operation.
+  @param[in]   HostPassword        Host password for storage unlock.
   @param[in]   CompleteFunction    Callback function when erase completed.
 
-  @retval      EFI_SUCCESS         Erase device succeed
-  @retval      EFI_UNSUPPORTED     The device is not supported
-  @retval      EFI_ACCESS_DENIED   User has entered wrong password too many times
+  @retval      EFI_SUCCESS         Erase device succeed.
+  @retval      EFI_UNSUPPORTED     The device is not supported.
+  @retval      EFI_ACCESS_DENIED   User has entered wrong password too many times.
   @retval      EFI_ABORTED         The device is supported, but the system
-                                   has failed to erase it
+                                   has failed to erase it.
 **/
 EFI_STATUS
 PerformSsdErase (
   IN ERASE_CONFIGURATION    EraseConfiguration,
-  IN ERASE_DEVICE_LIST      *DeviceList,
+  IN CHAR8                  *HostPassword,
   IN STORAGE_ERASE_COMPLETE CompleteFunction
   )
 {
@@ -405,7 +255,7 @@ PerformSsdErase (
   }
   Status = StorageEraseNotify->StorageErase (
                                  EraseConfiguration,
-                                 DeviceList,
+                                 HostPassword,
                                  (STORAGE_ERASE_COMPLETE) CompleteFunction
                                  );
 

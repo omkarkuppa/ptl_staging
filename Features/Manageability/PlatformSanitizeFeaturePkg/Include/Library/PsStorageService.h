@@ -24,36 +24,23 @@
 #include <Protocol/StorageSanitizeNotifyProtocol.h>
 
 /**
-  Build the device list from variable for storage erase.
-
-  @param[in] Password           The password should insert to the device list.
-
-  @retval ERASE_DEVICE_LIST     Return the device list or NULL.
-**/
-ERASE_DEVICE_LIST *
-EFIAPI
-BuildEraseDeviceList (
-  IN CHAR8   *Password
-  );
-
-/**
   Attempts to erase ATA and NVMe drives.
   This function should be called as a BDS Phase Event, once all the devices/protocols are available.
 
-  @param[in]   EraseConfiguration  Configuration for erase operation
-  @param[in]   DeviceList          The device list for erasing
+  @param[in]   EraseConfiguration  Configuration for erase operation.
+  @param[in]   HostPassword        Host password for storage unlock.
   @param[in]   CompleteFunction    Callback function when erase completed.
 
-  @retval      EFI_SUCCESS         Erase device succeed
-  @retval      EFI_UNSUPPORTED     The device is not supported
-  @retval      EFI_ACCESS_DENIED   User has entered wrong password too many times
+  @retval      EFI_SUCCESS         Erase device succeed.
+  @retval      EFI_UNSUPPORTED     The device is not supported.
+  @retval      EFI_ACCESS_DENIED   User has entered wrong password too many times.
   @retval      EFI_ABORTED         The device is supported, but the system
-                                   has failed to erase it
+                                   has failed to erase it.
 **/
 EFI_STATUS
 PerformSsdErase (
   IN ERASE_CONFIGURATION    EraseConfiguration,
-  IN ERASE_DEVICE_LIST      *DeviceList,
+  IN CHAR8                  *HostPassword,
   IN STORAGE_ERASE_COMPLETE CompleteFunction
   );
 

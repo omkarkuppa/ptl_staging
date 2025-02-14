@@ -97,7 +97,7 @@ IsDeviceSelected (
 
   Status = GetVariable2 (
              DEVICE_VARIABLE_NAME,
-             &gPsPlatformEraseVariableGuid,
+             &gPsStorageEraseVariableGuid,
              (VOID **)&Variable,
              &VariableSize
              );
@@ -356,7 +356,7 @@ SaveDeviceVariable (
 
   Status = gRT->SetVariable (
                   DEVICE_VARIABLE_NAME,
-                  (EFI_GUID *) &gPsPlatformEraseVariableGuid,
+                  (EFI_GUID *) &gPsStorageEraseVariableGuid,
                   EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
                   VariableSize,
                   Variable
@@ -929,7 +929,7 @@ RouteConfig (
   // Check routing data in <ConfigHdr>.
   // Note: there is no name for Name/Value storage, only GUID will be checked
   //
-  if (HiiIsConfigHdrMatch (Configuration, &mPlatformSanitizeFormsetGuid, HII_CFG_NAME)) {
+  if (HiiIsConfigHdrMatch (Configuration, &gPsStorageEraseVariableGuid, HII_CFG_NAME)) {
     //
     // Set variable
     //
@@ -999,9 +999,9 @@ ExtractConfig (
 
   ZeroMem (&Guid, sizeof (EFI_GUID));
   if ((Request != NULL)) {
-    if (HiiIsConfigHdrMatch (Request, &mPlatformSanitizeFormsetGuid, HII_CFG_NAME)) {
+    if (HiiIsConfigHdrMatch (Request, &gPsStorageEraseVariableGuid, HII_CFG_NAME)) {
       BufferSize = sizeof (HII_CONFIG);
-      CopyMem (&Guid, &mPlatformSanitizeFormsetGuid, sizeof (mPlatformSanitizeFormsetGuid));
+      CopyMem (&Guid, &gPsStorageEraseVariableGuid, sizeof (gPsStorageEraseVariableGuid));
       Length = StrSize (HII_CFG_NAME);
       Name = AllocatePool (Length);
       if (Name == NULL) {
@@ -1030,7 +1030,7 @@ ExtractConfig (
     // followed by "&OFFSET=0&WIDTH=WWWWWWWWWWWWWWWW" followed by a Null-terminator
     //
     BufferSize = sizeof (HII_CONFIG);
-    CopyMem (&Guid, &mPlatformSanitizeFormsetGuid, sizeof (mPlatformSanitizeFormsetGuid));
+    CopyMem (&Guid, &gPsStorageEraseVariableGuid, sizeof (gPsStorageEraseVariableGuid));
     Length = StrSize (HII_CFG_NAME);
     Name = AllocatePool (Length);
     if (Name == NULL) {
@@ -1052,7 +1052,7 @@ ExtractConfig (
     FreePool (ConfigRequestHdr);
   }
 
-  if (CompareGuid (&Guid, &mPlatformSanitizeFormsetGuid)) {
+  if (CompareGuid (&Guid, &gPsStorageEraseVariableGuid)) {
     Status = gHiiConfigRouting->BlockToConfig (
                                   gHiiConfigRouting,
                                   ConfigRequest,
