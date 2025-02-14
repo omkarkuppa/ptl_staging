@@ -971,6 +971,7 @@
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwMultilaneEnable[1]|0x1 # SNDW #3 Multilane = 2 data lanes
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[10]|0x1            # ACX/SDCA = Enabled
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[11]|0x1            # ACX/SDCA speaker aggregation = Enabled
+  gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0x6     # SoundWire codecs topology = Configuration GCS/ADK ALC712-VB, ALC1320
   #
   # THC unused
   #

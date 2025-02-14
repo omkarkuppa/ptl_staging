@@ -27,6 +27,7 @@ Feature package contains:
     * SndwDevTopologySt03Ssdt - SSDT contains DisCo for ALC713-VB, 2xALC1320, 4-Star(3) Configuration.
     * SndwDevTopologySt04Ssdt - SSDT contains DisCo for ALC722-CG, 4-Star(1) Configuration.
     * SndwDevTopologySt05Ssdt - SSDT contains DisCo for Cirrus 6-speaker configuration
+    * SndwDevTopologySt06Ssdt - SSDT contains DisCo for GCS/ADK ALC712-VB, ALC1320 Configuration.
 
 ## Modules
 * SndwInstallDevTopology.inf
@@ -45,6 +46,7 @@ Currently supported devices and endpoints topology:
 1. [3] - ALC713-VB, 2xALC1320, 4-Star(3) Configuration
 1. [4] - ALC722-CG, 4-Star(2) Configuration
 1. [5] - Cirrus 6-speaker configuration
+1. [6] - Configuration GCS/ADK ALC712-VB, ALC1320
 
 </br>
 
