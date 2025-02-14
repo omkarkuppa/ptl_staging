@@ -2408,6 +2408,34 @@ typedef union {
 #define UEM_PCIE_CFG_PTLPEBM_LSB 0x001a
 #define UEM_PCIE_CFG_PTLPEBM_SIZE 0x0001
 
+/** CEM_PCIE_CFG desc:
+  * Register default value:        0x0000E000
+  * Register full path in IP: PXPC/sippcie2x4_configreg_top_inst0/sippcie2x4_inst0_pcie_cfg_port_0_/sippcie2x4_cfg_pri_sippcie2x4_cfg_sb/CEM
+  * Security PolicyGroup: SIPPCIE2X4_IOSFPRI_PLY0_1
+  * This is the Correctable Error Mask registers. Refer description for each individual field below for more details of the register functionality.
+  */
+
+#define CEM_PCIE_CFG_REG                 (0x00000114U)
+
+typedef union {
+  struct {
+    UINT32 re : 1; /**< Receiver Error Mask */
+    UINT32 rsvd_0 : 5; /**< Undefined - auto filled rsvd_[05:01] */
+    UINT32 bt : 1; /**< Bad TLP Mask */
+    UINT32 bd : 1; /**< Bad DLLP Mask */
+    UINT32 rnr : 1; /**< Replay Number Rollover Mask */
+    UINT32 rsvd_1 : 3; /**< Undefined - auto filled rsvd_[11:09] */
+    UINT32 rtt : 1; /**< Replay Timer Timeout Mask */
+    UINT32 anfem : 1; /**< Advisory Non-Fatal Error Mask */
+    UINT32 ciem : 1; /**< Corrected Internal Error Mask */
+    UINT32 hlom : 1; /**< Header Log Overflow Mask */
+    UINT32 rsvd_m : 16; /**< Reserved */
+  }     Bits;
+  UINT32 Data;
+  UINT16 Data16[2];
+  UINT8  Data8[4];
+} CEM_PCIE_CFG_STRUCT;
+
 /** PTMECH desc:
   */
 
