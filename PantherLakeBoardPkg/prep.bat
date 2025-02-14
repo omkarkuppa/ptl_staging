@@ -153,9 +153,6 @@ cd ..\..\
 ) else if /i "non_upl" == "%1" (
   @set UNIVERSAL_PAYLOAD=FALSE
   set ROM_FILENAME_SPECIAL_BUILD_TYPE=_Non_UPL
-  set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
---pcd gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosEntryPointProvideMethod=0x02 ^
---pcd gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiExposedTableVersions=0x3C
 ) else if /i "fsp32" == "%1" (
   echo "fsp32"
   set FSP_ARCH=IA32

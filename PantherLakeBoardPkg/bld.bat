@@ -395,9 +395,7 @@ set UPL_SETTINGS= ^
   -p gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport=TRUE ^
   -p gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset=TRUE ^
   -p gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosEntryPointProvideMethod=0x01 ^
-  -p gEfiMdeModulePkgTokenSpaceGuid.PcdDxeNxMemoryProtectionPolicy=%PCD_DXE_NX_MEMORY_PROTECTION_POLICY% ^
-  -p gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosEntryPointProvideMethod=0x02 ^
-  -p gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiExposedTableVersions=0x3C
+  -p gEfiMdeModulePkgTokenSpaceGuid.PcdDxeNxMemoryProtectionPolicy=%PCD_DXE_NX_MEMORY_PROTECTION_POLICY%
 
 echo %UPL_SETTINGS%
 @if %SILENT_MODE% EQU TRUE (

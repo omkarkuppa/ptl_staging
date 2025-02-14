@@ -127,9 +127,7 @@ else
     -p gEfiMdeModulePkgTokenSpaceGuid.PcdBrowserFieldTextColor=0x01 \
     -p gUefiCpuPkgTokenSpaceGuid.PcdCpuApLoopMode=0x2 \
     -p gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport=TRUE \
-    -p gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset=TRUE \
-    -p gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosEntryPointProvideMethod=0x02 \
-    -p gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiExposedTableVersions=0x3C
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset=TRUE
     ret=$?
     if [ $ret -ne 0 ]; then
       BuildFail $ret

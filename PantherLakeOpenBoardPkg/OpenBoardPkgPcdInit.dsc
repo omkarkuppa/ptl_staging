@@ -103,8 +103,6 @@
 !endif
 
   gSiPkgTokenSpaceGuid.PcdSmbusBaseAddress|0x0000EFA0
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosEntryPointProvideMethod|0x02
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiExposedTableVersions|0x3C
 
 [PcdsFeatureFlag.common]
   ######################################
