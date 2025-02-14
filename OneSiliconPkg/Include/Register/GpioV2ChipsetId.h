@@ -32,6 +32,10 @@
 #define GPIOV2_PTL_SOC_S_CHIPSET_ID     GPIOV2_MTL_SOC_S_CHIPSET_ID
 #define GPIOV2_PTL_PCD_CHIPSET_ID     0xD
 //
+// WCL
+//
+#define GPIOV2_WCL_PCD_CHIPSET_ID     0x1
+//
 // IBL
 //
 #define GPIOV2_IBL_CHIPSET_ID           0xA
