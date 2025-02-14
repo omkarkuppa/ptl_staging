@@ -38,7 +38,11 @@
 #if FixedPcdGetBool (PcdMultiIbbFeatureEnable) == 1
   #define BASE_FV_SIZE 12
 #else
+#if FixedPcdGetBool (PcdSignedFspEnable) == 0
   #define BASE_FV_SIZE 10
+#else
+  #define BASE_FV_SIZE 9
+#endif
 #endif
 
 #if FixedPcdGetBool (PcdFspWrapperResetVectorInFsp) == 1
@@ -228,6 +232,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED BIOS_INFO  mBiosInfo = {
     },
 #endif
 
+#if FixedPcdGetBool (PcdSignedFspEnable) == 0
 #if FixedPcdGetBool (PcdFspWrapperResetVectorInFsp) == 1
     {
       FIT_TYPE_07_BIOS_STARTUP_MODULE,
@@ -244,6 +249,15 @@ GLOBAL_REMOVE_IF_UNREFERENCED BIOS_INFO  mBiosInfo = {
       FixedPcdGet32 (PcdFlashFvFspTSize),
       FixedPcdGet32 (PcdFlashFvFspTBase)
     },
+#else
+    {
+      FIT_TYPE_07_BIOS_STARTUP_MODULE,
+      0x00,    // IBB FV
+      0x0100,
+      SIZE_4KB,
+      SIZE_4GB - SIZE_4KB
+    },
+#endif
 #if FixedPcdGetBool (PcdSignedFspEnable) == 1
     {
       FIT_TYPE_07_BIOS_STARTUP_MODULE,
