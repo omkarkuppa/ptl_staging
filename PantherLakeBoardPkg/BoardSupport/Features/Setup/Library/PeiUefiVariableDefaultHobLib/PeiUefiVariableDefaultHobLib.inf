@@ -50,9 +50,6 @@
 [Sources]
   PeiUefiVariableDefaultHobLib.c
 
-[Ppis]
-  gEfiPeiMemoryDiscoveredPpiGuid                ## NOTIFY
-
 [Guids]
   gEfiVariableGuid                              ## SOMETIMES_PRODUCES ## HOB
   gEfiAuthenticatedVariableGuid                 ## SOMETIMES_CONSUMES ## HOB

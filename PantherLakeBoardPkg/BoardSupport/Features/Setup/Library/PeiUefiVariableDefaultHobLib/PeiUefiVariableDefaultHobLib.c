@@ -32,30 +32,6 @@
 #include <Ppi/ReadOnlyVariable2.h>
 
 /**
-  Convert Authenticated variable to normal variable data.
-
-  @param PeiServices       General purpose services available to every PEIM.
-  @param NotifyDescriptor  Notify that this module published.
-  @param Ppi               PPI that was installed.
-
-  @return EFI_SUCCESS      The function completed successfully.
-
-**/
-EFI_STATUS
-EFIAPI
-BuildDefaultDataHobForRecoveryVariable (
-  IN EFI_PEI_SERVICES           **PeiServices,
-  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
-  IN VOID                       *Ppi
-  );
-
-STATIC EFI_PEI_NOTIFY_DESCRIPTOR mMemoryNotifyList = {
-  (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
-  &gEfiPeiMemoryDiscoveredPpiGuid,
-  BuildDefaultDataHobForRecoveryVariable
-};
-
-/**
   Find variable from default variable HOB.
 
   @param[in]  VariableName      A Null-terminated string that is the name of the vendor's
@@ -256,108 +232,6 @@ SetVariableToHob (
 }
 
 /**
-  Convert Authenticated variable to normal variable data.
-
-  @param PeiServices       General purpose services available to every PEIM.
-  @param NotifyDescriptor  Notify that this module published.
-  @param Ppi               PPI that was installed.
-
-  @return EFI_SUCCESS      The function completed successfully.
-
-**/
-EFI_STATUS
-EFIAPI
-BuildDefaultDataHobForRecoveryVariable (
-  IN EFI_PEI_SERVICES           **PeiServices,
-  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
-  IN VOID                       *Ppi
-  )
-{
-  EFI_HOB_GUID_TYPE             *GuidHob;
-  VARIABLE_STORE_HEADER         *AuthVarStoreHeader;
-  VARIABLE_STORE_HEADER         *VarStoreHeader;
-  UINT32                        VarStoreSize;
-  AUTHENTICATED_VARIABLE_HEADER *AuthStartPtr;
-  AUTHENTICATED_VARIABLE_HEADER *AuthEndPtr;
-  AUTHENTICATED_VARIABLE_HEADER *AuthVariable;
-  VARIABLE_HEADER               *Variable;
-  UINT8                         *AuthVariablePtr;
-  UINT8                         *VariablePtr;
-
-  GuidHob = GetFirstGuidHob (&gEfiAuthenticatedVariableGuid);
-  AuthVarStoreHeader = (VARIABLE_STORE_HEADER *) GET_GUID_HOB_DATA (GuidHob);
-  //
-  // Go through AuthVarStore to calculate the required size for normal varstore.
-  //
-  VarStoreSize = sizeof (VARIABLE_STORE_HEADER);
-  AuthStartPtr = GetStartPointer (AuthVarStoreHeader);
-  AuthEndPtr   = GetEndPointer (AuthVarStoreHeader);
-  AuthVariable = AuthStartPtr;
-  while ((AuthVariable < AuthEndPtr) && IsValidVariableHeader (AuthVariable)) {
-    if (AuthVariable->State == VAR_ADDED) {
-      VarStoreSize = HEADER_ALIGN (VarStoreSize);
-      VarStoreSize += sizeof (VARIABLE_HEADER);
-      VarStoreSize += AuthVariable->NameSize + GET_PAD_SIZE (AuthVariable->NameSize);
-      VarStoreSize += AuthVariable->DataSize + GET_PAD_SIZE (AuthVariable->DataSize);
-    }
-    AuthVariable = GetNextVariablePtr (AuthVariable, TRUE);
-  }
-
-  //
-  // Create HOB data for normal variable storage.
-  // Allocate more data for header alignment.
-  //
-  VarStoreSize   = VarStoreSize + HEADER_ALIGNMENT - 1;
-  VarStoreHeader = (VARIABLE_STORE_HEADER *) BuildGuidHob (&gEfiVariableGuid, VarStoreSize);
-  ASSERT (VarStoreHeader != NULL);
-  if (VarStoreHeader == NULL) {
-    return EFI_OUT_OF_RESOURCES;
-  }
-  CopyGuid (&VarStoreHeader->Signature, &gEfiVariableGuid);
-  VarStoreHeader->Format = AuthVarStoreHeader->Format;
-  VarStoreHeader->State  = AuthVarStoreHeader->State;
-
-  //
-  // Copy variable data from AuthVarStore to NormalVarStore
-  //
-  AuthVariable = AuthStartPtr;
-  VariablePtr  = (UINT8 *) (VarStoreHeader + 1);
-  while ((AuthVariable < AuthEndPtr) && IsValidVariableHeader (AuthVariable)) {
-    if (AuthVariable->State == VAR_ADDED) {
-      Variable = (VARIABLE_HEADER *) HEADER_ALIGN ((UINTN) VariablePtr);
-      //
-      // Copy variable header
-      //
-      Variable->StartId    = AuthVariable->StartId;
-      Variable->State      = AuthVariable->State;
-      Variable->Reserved   = AuthVariable->Reserved;
-      Variable->Attributes = AuthVariable->Attributes;
-      Variable->NameSize   = AuthVariable->NameSize;
-      Variable->DataSize   = AuthVariable->DataSize;
-      CopyGuid (&Variable->VendorGuid, &AuthVariable->VendorGuid);
-      //
-      // Copy variable Name and Data
-      //
-      VariablePtr     = (UINT8 *) (Variable + 1);
-      AuthVariablePtr = (UINT8 *) (AuthVariable + 1);
-      CopyMem (VariablePtr, AuthVariablePtr, Variable->NameSize);
-      VariablePtr     = VariablePtr + Variable->NameSize + GET_PAD_SIZE (Variable->NameSize);
-      AuthVariablePtr = AuthVariablePtr + AuthVariable->NameSize + GET_PAD_SIZE (AuthVariable->NameSize);
-      CopyMem (VariablePtr, AuthVariablePtr, Variable->DataSize);
-      VariablePtr     = VariablePtr + Variable->DataSize + GET_PAD_SIZE (Variable->DataSize);
-    }
-    AuthVariable = GetNextVariablePtr (AuthVariable, TRUE);
-  }
-
-  //
-  // Update Variable Storage Size
-  //
-  VarStoreHeader->Size = (UINT32) ((UINTN) VariablePtr - (UINTN) VarStoreHeader);
-
-  return EFI_SUCCESS;
-}
-
-/**
   This function finds the matched default data and create GUID hob for it.
 
   @param[in] DefaultId         - Specifies the type of defaults to retrieve.
@@ -379,7 +253,6 @@ CreateDefaultVariableHob (
   UINT32                     FileSize;
   EFI_COMMON_SECTION_HEADER  *Section;
   UINT32                     SectionLength;
-  EFI_STATUS                 Status;
   BOOLEAN                    DefaultSettingIsFound;
   DEFAULT_DATA               *DefaultData;
   DEFAULT_INFO               *DefaultInfo;
@@ -389,7 +262,6 @@ CreateDefaultVariableHob (
   UINT8                      *VarPtr;
   UINT32                     VarDataOffset;
   UINT32                     VarHobDataOffset;
-  EFI_BOOT_MODE              BootMode;
   BOOLEAN                    IsFirstSection;
   DATA_DELTA                 *DataDelta;
   UINTN                      DataDeltaSize;
@@ -521,18 +393,6 @@ CreateDefaultVariableHob (
       ((EFI_HOB_GUID_TYPE *)((UINT8 *) VarStoreHeaderHob - sizeof (EFI_HOB_GUID_TYPE)))->Header.HobType = EFI_HOB_TYPE_UNUSED;
     }
     return EFI_NOT_FOUND;
-  }
-
-  //
-  // On recovery boot mode, emulation variable driver will be used.
-  // But, Emulation variable only knows normal variable data format.
-  // So, if the default variable data format is authenticated, it needs to be converted to normal data.
-  //
-  Status = (*PeiServices)->GetBootMode (PeiServices, &BootMode);
-  if (BootMode == BOOT_IN_RECOVERY_MODE &&
-      CompareGuid (&VarStoreHeader->Signature, &gEfiAuthenticatedVariableGuid)) {
-    Status = (**PeiServices).NotifyPpi (PeiServices, &mMemoryNotifyList);
-    ASSERT_EFI_ERROR (Status);
   }
 
   return EFI_SUCCESS;

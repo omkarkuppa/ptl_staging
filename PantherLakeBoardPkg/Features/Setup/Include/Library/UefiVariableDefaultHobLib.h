@@ -108,24 +108,6 @@ SetVariableToHob (
   );
 
 /**
-  Convert Authenticated variable to normal variable data.
-
-  @param PeiServices       General purpose services available to every PEIM.
-  @param NotifyDescriptor  Notify that this module published.
-  @param Ppi               PPI that was installed.
-
-  @return EFI_SUCCESS      The function completed successfully.
-
-**/
-EFI_STATUS
-EFIAPI
-BuildDefaultDataHobForRecoveryVariable (
-  IN EFI_PEI_SERVICES           **PeiServices,
-  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
-  IN VOID                       *Ppi
-  );
-
-/**
   This function finds the matched default data and create GUID hob for it.
 
   @param[in] DefaultId         - Specifies the type of defaults to retrieve.
