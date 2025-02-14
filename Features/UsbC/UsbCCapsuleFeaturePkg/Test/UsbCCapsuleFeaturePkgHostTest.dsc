@@ -49,6 +49,7 @@
   PostCodeLib|MdePkg/Library/BasePostCodeLibPort80/BasePostCodeLibPort80.inf
   RegisterFilterLib|MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNull.inf
   HobLib|MdePkg/Library/PeiHobLib/PeiHobLib.inf
+  PeiServicesLib|MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
 
 [Components]
   #
@@ -80,6 +81,21 @@
       UsbcRetimerProtocol|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockUsbcRetimerProtocol/MockUsbcRetimerProtocol.inf
       FirmwareManagementLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockFirmwareManagementLib/MockFirmwareManagementLib.inf
       MockUsbCProgressCodeProtocolLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockUsbCProgressCodeProtocol/MockUsbCProgressCodeProtocol.inf
+  }
+
+  UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/PdBridge/GoogleTest/GTestFmpDeviceLibPdBridge.inf {
+    <LibraryClasses>
+      # TbtNvmRetimerUpdateLib package
+      UsbCPdBridgeUpdateLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUsbCPdBridgeUpdateLib/MockUsbCPdBridgeUpdateLib.inf
+      # Mock Library
+      UefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
+      UsbcRetimerProtocol|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockUsbcRetimerProtocol/MockUsbcRetimerProtocol.inf
+      FirmwareManagementLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockFirmwareManagementLib/MockFirmwareManagementLib.inf
+      PciIopProtocolLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockPciIopProtocolLib/MockPciIopProtocolLib.inf
+      MockUsbCProgressCodeProtocolLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockUsbCProgressCodeProtocol/MockUsbCProgressCodeProtocol.inf
+      PdBridgeProtocol|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockPdBridgeProtocol/MockPdBridgeProtocol.inf
+      # Target file for Unit Test
+      NULL|UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/PdBridge/FmpDeviceLibPdBridge.inf
   }
 
   UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/GoogleTest/TbtNvmDrvHr/GTestTbtNvmDrvHr.inf {
@@ -178,10 +194,22 @@
       NULL|UsbCCapsuleFeaturePkg/Library/TbtNvmRetimerUpdateLib/TbtNvmRetimerUpdateLib.inf
   }
 
-    UsbCCapsuleFeaturePkg/Library/UsbcCapsuleDebugLib/GoogleTest/UsbcCapsuleDebugLib/GTestUsbcCapsuleDebugLib.inf {
+  UsbCCapsuleFeaturePkg/Library/UsbcCapsuleDebugLib/GoogleTest/UsbcCapsuleDebugLib/GTestUsbcCapsuleDebugLib.inf {
     <LibraryClasses>
       # Mock Library
       UefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
       # Target file for Unit Test
       NULL|UsbCCapsuleFeaturePkg/Library/UsbcCapsuleDebugLib/UsbcCapsuleDebugLib.inf
+  }
+
+  UsbCCapsuleFeaturePkg/Library/UsbCPdBridgeUpdateLib/GoogleTest/UsbCPdBridgeUpdateLib/GTestUsbCPdBridgeUpdateLib.inf {
+    <PcdsFixedAtBuild>
+      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x2E
+    <LibraryClasses>
+      # Mock Library
+      UefiBootServicesTableLib|UsbCCapsuleFeaturePkg/Test/Mock/Library/GoogleTest/MockUefiBootServicesTableLib/MockUefiBootServicesTableLib.inf
+      PdBridgeProtocol|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockPdBridgeProtocol/MockPdBridgeProtocol.inf
+      FirmwareManagementLib|UsbCCapsuleFeaturePkg/Test/Mock/Include/GoogleTest/Private/MockFirmwareManagementLib/MockFirmwareManagementLib.inf
+      # Target file for Unit Test
+      NULL|UsbCCapsuleFeaturePkg/Library/UsbCPdBridgeUpdateLib/UsbCPdBridgeUpdateLib.inf
   }
