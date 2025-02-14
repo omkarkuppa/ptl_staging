@@ -97,10 +97,10 @@ LoadPcieRpConfigDefault (
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.LtrEnable              = TRUE;
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieRpLtrConfig.SnoopLatencyOverrideMode          = 2;
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieRpLtrConfig.SnoopLatencyOverrideMultiplier    = 2;
-    PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieRpLtrConfig.SnoopLatencyOverrideValue         = 60;
+    PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieRpLtrConfig.SnoopLatencyOverrideValue         = 0x41;
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieRpLtrConfig.NonSnoopLatencyOverrideMode       = 2;
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieRpLtrConfig.NonSnoopLatencyOverrideMultiplier = 2;
-    PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieRpLtrConfig.NonSnoopLatencyOverrideValue      = 60;
+    PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieRpLtrConfig.NonSnoopLatencyOverrideValue      = 0x41;
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.PcieRpLtrConfig.LtrOverrideSpecCompliant          = 0;
 
     PchPcieConfig->RootPort[Index].PcieRpCommonConfig.AspmOptionalityCompliance                         = 0;

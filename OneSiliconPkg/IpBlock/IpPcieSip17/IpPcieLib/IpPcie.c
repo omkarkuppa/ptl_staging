@@ -234,10 +234,10 @@ PcieLoadDefaultConfig (
   pInst->PcieRpCommonConfig.PcieRpLtrConfig.LtrMaxNoSnoopLatency                         = 0x100F;
   pInst->PcieRpCommonConfig.PcieRpLtrConfig.SnoopLatencyOverrideMode                     = 2;
   pInst->PcieRpCommonConfig.PcieRpLtrConfig.SnoopLatencyOverrideMultiplier               = 2;
-  pInst->PcieRpCommonConfig.PcieRpLtrConfig.SnoopLatencyOverrideValue                    = 60;
+  pInst->PcieRpCommonConfig.PcieRpLtrConfig.SnoopLatencyOverrideValue                    = 0x41;
   pInst->PcieRpCommonConfig.PcieRpLtrConfig.NonSnoopLatencyOverrideMode                  = 2;
   pInst->PcieRpCommonConfig.PcieRpLtrConfig.NonSnoopLatencyOverrideMultiplier            = 2;
-  pInst->PcieRpCommonConfig.PcieRpLtrConfig.NonSnoopLatencyOverrideValue                 = 60;
+  pInst->PcieRpCommonConfig.PcieRpLtrConfig.NonSnoopLatencyOverrideValue                 = 0x41;
   pInst->PcieRpCommonConfig.PcieCfgDump                                                  = 0;
   pInst->PcieRpCommonConfig.EqPhBypass                                                   = 0;
 
