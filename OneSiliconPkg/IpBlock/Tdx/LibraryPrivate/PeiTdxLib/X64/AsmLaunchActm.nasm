@@ -24,67 +24,6 @@ bits 64
 
 %include "Common.inc"
 
-;extern ASM_PFX(AsmSideDebugDeadloop)
-
-;
-; MSRs
-;
-%define IA32_MISC_ENABLE     0x1A0
-%define IA32_EFER_MSR        0xC0000080
-;
-; MTRRs
-;
-%define IA32_MTRR_PHYSBASE0  0x200
-%define IA32_MTRR_PHYSMASK0  0x201
-%define IA32_MTRR_PHYSBASE1  0x202
-%define IA32_MTRR_PHYSMASK1  0x203
-%define IA32_MTRR_PHYSBASE2  0x204
-%define IA32_MTRR_PHYSMASK2  0x205
-%define IA32_MTRR_PHYSBASE3  0x206
-%define IA32_MTRR_PHYSMASK3  0x207
-%define IA32_MTRR_PHYSBASE4  0x208
-%define IA32_MTRR_PHYSMASK4  0x209
-%define IA32_MTRR_PHYSBASE5  0x20A
-%define IA32_MTRR_PHYSMASK5  0x20B
-%define IA32_MTRR_PHYSBASE6  0x20C
-%define IA32_MTRR_PHYSMASK6  0x20D
-%define IA32_MTRR_PHYSBASE7  0x20E
-%define IA32_MTRR_PHYSMASK7  0x20F
-%define IA32_MTRR_DEF_TYPE   0x2FF
-%define IA32_MTRR_CAP        0xFE
-;
-; Only low order bits are assumed
-;
-%define MTRR_MASK            0xFFFFF000
-%define MTRR_ENABLE          (1 << 11)
-%define MTRR_FIXED_ENABLE    (1 << 10)
-%define MTRR_VALID           (1 << 11)
-%define UC                   0x0
-%define WB                   0x6
-;
-; Control register bits
-;
-%define CR0_NE_MASK          (1 << 5)
-%define CR0_NW_MASK          (1 << 29)
-%define CR0_CD_MASK          (1 << 30)
-%define CR4_DE               (1 << 3)
-%define CR4_OSFXSR           (1 << 9)
-%define CR4_SMXE             (1 << 14)
-;;
-;; Machine check architecture MSR registers
-;;
-;%define MCG_CAP 0x179
-;%define MC0_STATUS 0x401
-;
-;%define ACM_SIZE_TO_CACHE    xmm0
-;%define ACM_BASE_TO_CACHE    xmm1
-;%define NEXT_MTRR_INDEX      xmm2
-;%define NEXT_MTRR_SIZE       xmm3
-%define MTRR_PHYS_MASK_HIGH  xmm4
-
-%define ACMOD_SIZE 24
-%define LONG_MODE_CODE_SEGMENT  0x10
-%define MOVQIN3                        movq mm3, rax
 ;-----------------------------------------------------------------------------
 ;  Macro:        PUSHA_64
 ;
@@ -172,11 +111,11 @@ ASM_PFX(AsmLaunchActm):
   ;-----------------------------------------
   ; Store ACTM base address in MMX
   ;-----------------------------------------
-  mov     rax, rcx 
+  mov     rax, rcx
   MOVQIN0            ; mm0 := ACTM base address
   xor     rax, rax
 
-  mov     rax, rdx      
+  mov     rax, rdx
   MOVQIN1            ; mm1 := ACTM size in bytes
   xor     rax, rax
 
@@ -390,8 +329,11 @@ AsmLaunchActmAfterRestoreCs:
   ;--------------------------------
   ; Store ActmStatus in mm0
   ;--------------------------------
-  mov rax, r9 ; rax := r9
-  MOVQIN0     ; mm0 := rax
+  mov   rcx, MSR_TEE_ERR_CODE
+  rdmsr                       ; Extended bits are 0 for eax, edx
+  shl   rdx, 32
+  or    rax, rdx              ; rax := edx:eax
+  MOVDIN0                     ; mm0 := rax
 
   ;-----------------------------------------
   ; Restore GP registers
