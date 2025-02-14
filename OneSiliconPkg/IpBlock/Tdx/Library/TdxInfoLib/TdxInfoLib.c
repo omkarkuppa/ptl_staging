@@ -57,7 +57,7 @@ IsTdxEnabled (
   TdxDataHobPtr = (TDX_DATA_HOB *) GetFirstGuidHob (&gTdxDataHobGuid);
 
   if (TdxDataHobPtr == NULL) {
-    DEBUG ((DEBUG_INFO, "TdxInfoLib: Cannot retrieve TDX Data HOB!\n"));
+    DEBUG ((DEBUG_ERROR, "TdxInfoLib: Error getting TDX Data HOB!\n"));
     return FALSE;
   }
 
@@ -95,7 +95,7 @@ GetSeamrrSize (
 
   TdxDataHobPtr = (TDX_DATA_HOB *) GetFirstGuidHob (&gTdxDataHobGuid);
   if (TdxDataHobPtr == NULL) {
-    DEBUG ((DEBUG_INFO, "TdxInfoLib: Cannot retrieve TDX Data HOB!\n"));
+    DEBUG ((DEBUG_ERROR, "TdxInfoLib: Error getting TDX Data HOB!\n"));
     Status = EFI_NOT_READY;
     return Status;
   }
