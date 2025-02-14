@@ -452,6 +452,14 @@ SetNocImrExclusion (
     SizeAbove4Gb += LShiftU64((UINT64)SeamrrSize, 20);
     SizeAbove4Gb = NaturalAlignment (SizeAbove4Gb, SIZE_32MB);
   }
+
+  //
+  // Align the Size to next power of 2
+  //
+  if (SizeAbove4Gb > GetPowerOfTwo64 (SizeAbove4Gb)) {
+    SizeAbove4Gb = 2 * GetPowerOfTwo64 (SizeAbove4Gb);
+  }
+
   LimitAbove4Gb = BaseAbove4Gb + SizeAbove4Gb;
 
   DEBUG ((DEBUG_INFO, "ImrBaseBelow4Gb  = 0x%lx\n", BaseBelow4Gb));
