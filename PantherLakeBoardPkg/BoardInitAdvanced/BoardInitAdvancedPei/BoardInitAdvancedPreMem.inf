@@ -98,6 +98,11 @@
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress            ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTcoBaseAddress                        ## CONSUMES
 
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEnableDiscreteAudioOffloadPreMem       ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEnableDiscreteAudioOffloadPreMemSize   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableDisableDiscreteAudioOffloadPreMem      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableDisableDiscreteAudioOffloadPreMemSize  ## CONSUMES
+
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdBootGuardEnable                       ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTxtEnable                             ## CONSUMES

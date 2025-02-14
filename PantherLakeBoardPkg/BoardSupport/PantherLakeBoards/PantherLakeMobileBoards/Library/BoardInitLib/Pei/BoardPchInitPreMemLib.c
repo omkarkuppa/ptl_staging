@@ -254,6 +254,25 @@ PtlGpioTablePreMemInit (
   PcdSet16S (PcdBoardGpioTableM80WwanOnEarlyPreMemSize, GpioCount);
 
   //
+  // GPIO Table Init, Update enable BT Audio offload PreMem GPIO table to PcdBoardGpioTableEnableDiscreteAudioOffloadPreMem
+  //
+  GpioTable = (GPIOV2_INIT_CONFIG*) NULL;
+  GpioTable = PcdGetPtr (VpdPcdBoardGpioTableEnableDiscreteAudioOffloadPreMem);
+  PcdSet64S (PcdBoardGpioTableEnableDiscreteAudioOffloadPreMem, (UINT64) GpioTable);
+  GpioCount = 0;
+  GetGpioTableSize (GpioTable, &GpioCount);
+  PcdSet16S (PcdBoardGpioTableEnableDiscreteAudioOffloadPreMemSize, GpioCount);
+  //
+  // GPIO Table Init, Update disable BT Audio offload PreMem GPIO table to PcdBoardGpioTableDisableDiscreteAudioOffloadPreMem
+  //
+  GpioTable = (GPIOV2_INIT_CONFIG*) NULL;
+  GpioTable = PcdGetPtr (VpdPcdBoardGpioTableDisableDiscreteAudioOffloadPreMem);
+  PcdSet64S (PcdBoardGpioTableDisableDiscreteAudioOffloadPreMem, (UINT64) GpioTable);
+  GpioCount = 0;
+  GetGpioTableSize (GpioTable, &GpioCount);
+  PcdSet16S (PcdBoardGpioTableDisableDiscreteAudioOffloadPreMemSize, GpioCount);
+
+  //
   // GPIO Table Init, Update PreMem and Early Premem GPIO table to PcdBoardGpioTablePreMem and PcdBoardGpioTableEarlyPreMem
   //
   GpioTable = (GPIOV2_INIT_CONFIG *)PcdGetPtr (VpdPcdBoardGpioTablePreMem);

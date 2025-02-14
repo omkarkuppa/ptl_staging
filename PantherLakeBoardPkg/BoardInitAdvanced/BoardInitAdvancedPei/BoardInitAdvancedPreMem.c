@@ -432,6 +432,7 @@ PlatformInitPreMem (
   UINT16                            ABase;
   SETUP_DATA                        SystemConfiguration;
   UINTN                             VariableSize;
+  PCH_SETUP                         PchSetup;
 
 #if FixedPcdGetBool(PcdTpmEnable) == 1
   UINT8                             TpmInterfaceId;
@@ -488,6 +489,49 @@ PlatformInitPreMem (
 #endif
 
   UsbcRetimerComplianceModeConfig ();
+
+  VariableSize = sizeof (PCH_SETUP);
+  Status = VariableServices->GetVariable (
+                               VariableServices,
+                               L"PchSetup",
+                               &gPchSetupVariableGuid,
+                               NULL,
+                               &VariableSize,
+                               &PchSetup
+                               );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Fail to get System Configuration and set the configuration to production mode!\n"));
+    if (PcdGet64 (PcdBoardGpioTableDisableDiscreteAudioOffloadPreMem) != 0 && PcdGet16 (PcdBoardGpioTableDisableDiscreteAudioOffloadPreMemSize) != 0) {
+      DEBUG ((DEBUG_INFO, "Audio Discrete Bt Offload Disable: Pre Mem GPIO Start\n"));
+      //
+      // BT_PCM GPP_S5 (I2S2_SFRM) GPP_S6 (I2S2_TXD) to be at High-Z
+      //
+      ConfigureGpio ((VOID*)(UINTN) PcdGet64 (PcdBoardGpioTableDisableDiscreteAudioOffloadPreMem), (UINTN) PcdGet16 (PcdBoardGpioTableDisableDiscreteAudioOffloadPreMemSize));
+      DEBUG ((DEBUG_INFO, "Audio Discrete Bt Offload Disable: Pre Mem GPIO End\n"));
+    }
+  } else {
+    DEBUG ((DEBUG_INFO, "Audio Discrete Bt Offload : 0x%X\n", PchSetup.HdaDiscBtOffEnabled));
+    if (PchSetup.HdaDiscBtOffEnabled) {
+      if (PcdGet64 (PcdBoardGpioTableEnableDiscreteAudioOffloadPreMem) != 0 && PcdGet16 (PcdBoardGpioTableEnableDiscreteAudioOffloadPreMemSize) != 0) {
+        DEBUG ((DEBUG_INFO, "Audio Discrete Bt Offload Enable: Pre Mem GPIO Start\n"));
+        //
+        // Enable on I2S port for Discrete
+        // CNVi GPP_F4 (CNV_RF_RESET) GPP_F5 (MODEM_CLKREQ) to be at High-Z
+        //
+        ConfigureGpio ((VOID *) (UINTN) PcdGet64 (PcdBoardGpioTableEnableDiscreteAudioOffloadPreMem), (UINTN) PcdGet16 (PcdBoardGpioTableEnableDiscreteAudioOffloadPreMemSize));
+        DEBUG ((DEBUG_INFO, "Audio Discrete Bt Offload Enable: Pre Mem GPIO End\n"));
+      }
+    } else {
+      if (PcdGet64 (PcdBoardGpioTableDisableDiscreteAudioOffloadPreMem) != 0 && PcdGet16 (PcdBoardGpioTableDisableDiscreteAudioOffloadPreMemSize) != 0) {
+        DEBUG ((DEBUG_INFO, "Audio Discrete Bt Offload Disable: Pre Mem GPIO Start\n"));
+        //
+        // BT_PCM GPP_S5 (I2S2_SFRM) GPP_S6 (I2S2_TXD) to be at High-Z
+        //
+        ConfigureGpio ((VOID *) (UINTN) PcdGet64 (PcdBoardGpioTableDisableDiscreteAudioOffloadPreMem), (UINTN) PcdGet16 (PcdBoardGpioTableDisableDiscreteAudioOffloadPreMemSize));
+        DEBUG ((DEBUG_INFO, "Audio Discrete Bt Offload Disable: Pre Mem GPIO End\n"));
+      }
+    }
+  }
 
 
   PcdSetBoolS (PcdGuidForward, SystemConfiguration.GuidForward);

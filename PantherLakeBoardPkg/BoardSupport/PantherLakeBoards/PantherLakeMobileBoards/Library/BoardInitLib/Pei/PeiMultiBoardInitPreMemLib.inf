@@ -235,6 +235,12 @@
   gBoardModuleTokenSpaceGuid.PcdWwanModemBaseBandResetGpio                  ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdWwanWakeGpio                                ## CONSUMES
 
+  # BT Audio Offload
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEnableDiscreteAudioOffloadPreMem       ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEnableDiscreteAudioOffloadPreMemSize   ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableDisableDiscreteAudioOffloadPreMem      ## PRODUCES
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableDisableDiscreteAudioOffloadPreMemSize  ## PRODUCES
+
   ##
   ## VPD Pcd's
   ##
@@ -283,6 +289,8 @@
   gBoardModuleTokenSpaceGuid.VpdPcdWwanSourceClock                           ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdWwanModemBaseBandResetGpio                ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdWwanRootPortNumber                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableEnableDiscreteAudioOffloadPreMem   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableDisableDiscreteAudioOffloadPreMem  ## CONSUMES
 
   gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable                   ## CONSUMES
 

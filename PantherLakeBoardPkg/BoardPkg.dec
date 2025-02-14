@@ -772,6 +772,12 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdEcFailSafeActionCpuTemp                 |0x00000055|UINT8|0x00000119
   gBoardModuleTokenSpaceGuid.PcdEcFailSafeActionFanPwm                  |0x00000041|UINT8|0x0000011A
 
+  # BT Audio Offload
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEnableDiscreteAudioOffloadPreMem|0|UINT64|0x0000011B
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEnableDiscreteAudioOffloadPreMemSize|0|UINT16|0x0000011C
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableDisableDiscreteAudioOffloadPreMem|0|UINT64|0x0000011D
+  gBoardModuleTokenSpaceGuid.PcdBoardGpioTableDisableDiscreteAudioOffloadPreMemSize|0|UINT16|0x0000011E
+
 #################################################################
 # VPD PCD's Start #
 #################################################################
@@ -1929,6 +1935,19 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
       PlatformBoardConfig.h
   }
 
+  # GPIO Table Discrete Bt Audio Offload Enabled
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableEnableDiscreteAudioOffloadPreMem|{0}|GPIOV2_INIT_CONFIG[]|0x50000033 {
+  <HeaderFiles>
+    Register/GpioV2PcdPins.h
+    GpioV2Config.h
+  }
+
+  # GPIO Table Discrete Bt Audio Offload Disabled
+  gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableDisableDiscreteAudioOffloadPreMem|{0}|GPIOV2_INIT_CONFIG[]|0x50000034 {
+  <HeaderFiles>
+    Register/GpioV2PcdPins.h
+    GpioV2Config.h
+  }
 #################################################################
 # VPD PCD's End #
 #################################################################
