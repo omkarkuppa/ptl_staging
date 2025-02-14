@@ -24,7 +24,7 @@ HostBridgeDataLib|$(PLATFORM_SI_PACKAGE)/IpBlock/HostBridge/Library/HostBridgeDa
 CpuPcieInfoFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/CpuPcieRp/Library/PtlPcdPeiDxeSmmCpuPcieInfoFruLibNull/PtlPcdPeiDxeSmmCpuPcieInfoFruLibNull.inf
 BaseTraceHubInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/TraceHub/Library/BaseTraceHubInfoLib/BaseTraceHubInfoLib.inf
 PsfLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Psf/LibraryPrivate/PsfLib/PeiDxeSmmPsfLib.inf
-PsfSocLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdPeiDxeSmmPsfLib/PtlPcdPeiDxeSmmPsfLib.inf
+	PsfSocLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdPeiDxeSmmPsfLib/PtlPcdPeiDxeSmmPsfLib.inf
 P2sbPrivateLib|$(PLATFORM_SI_PACKAGE)/IpBlock/P2sb/LibraryPrivate/P2sbPrivateLib/P2sbPrivateLib.inf
 P2SbSocLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/LibraryPrivate/PtlPcdP2SbLib/PtlPcdP2SbLib.inf
 PchPcrLib|$(PLATFORM_SI_PACKAGE)/IpBlock/P2sb/Library/PeiDxeSmmPchPcrLib/PeiDxeSmmPchPcrLib.inf
