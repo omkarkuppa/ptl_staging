@@ -996,10 +996,10 @@ FmpDeviceSetImageWithStatus (
         for (HandleIndex = 0; HandleIndex < DeviceHandleCount; HandleIndex++) {
           DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - DisconnectController gEfiUsb2HcProtocolGuid HandleIndex %x\n", HandleIndex));
           gBS->DisconnectController (
-                  (DeviceHandleBuffer)[HandleIndex],
-                  NULL,
-                  NULL
-                  );
+                 (DeviceHandleBuffer)[HandleIndex],
+                 NULL,
+                 NULL
+                 );
         }
       }
     }

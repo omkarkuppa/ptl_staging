@@ -642,7 +642,7 @@ ConstructRetimerInstances (
 
     if (EFI_ERROR (Status) || (RetimerDevice == NULL)) {
       DEBUG ((DEBUG_ERROR, "CreateRetimerDevInstance failed (%r) at instance index %d\n", Status, Index));
-      return Status;
+      continue;
     }
     RetimerDeviceInstances[*RetimerDeviceInstancesCount] = RetimerDevice;
     ++(*RetimerDeviceInstancesCount);
