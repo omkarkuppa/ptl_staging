@@ -183,6 +183,8 @@ CONST EFI_PEI_PPI_DESCRIPTOR gMrcColdBootRequiredPpi = {
 
 GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 MrcDataStringConst[] = "MRCD";
 GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 MrcSpdStringConst[]  = "SPD ";
+GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 Ch2CkdQckString[]    = "Channel To CKD QCK";
+GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 PhyClk2CkdString[]   = "DDRIO To CKD Clock";
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mTsegMemoryTestInitPpi = {
     (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
@@ -2919,6 +2921,7 @@ MrcSetupMrcData (
   UINT8                               DimmNum;
   BOOLEAN                             IsSpdMatched;
   UINT8                               Index;
+  UINT8                               CkdIndex;
   BOOLEAN                             Ddr5DoubleSize1Dpc;
   BOOLEAN                             Ddr5DoubleSize2Dpc;
   BOOLEAN                             Lpddr5CammPresent;
@@ -3216,6 +3219,12 @@ DEBUG_CODE_END();
                }
             }
           }
+        }
+        if (DimmIn->Spd.Data.Ddr5.Base.DramDeviceType.Bits.Type == MRC_SPD_DDR5_SDRAM_TYPE_NUMBER && (Channel < MAX_DDR5_CHANNEL)) {
+          CkdIndex = (Controller * MAX_DDR5_CHANNEL * MAX_DIMMS_IN_CHANNEL) + (Channel * MAX_DIMMS_IN_CHANNEL) + Dimm;
+          DimmIn->ChannelToCkdQckMapping = MemConfigNoCrc->ChannelToCkdQckMapping[CkdIndex];
+          DimmIn->PhyClockToCkdDimm      = MemConfigNoCrc->PhyClockToCkdDimm[CkdIndex];
+          DEBUG ((DEBUG_INFO, "MC%dCH%dD%d:\n\t%a = %d\n\t%a = %d\n", Controller, Channel, Dimm, Ch2CkdQckString, DimmIn->ChannelToCkdQckMapping, PhyClk2CkdString, DimmIn->PhyClockToCkdDimm));
         }
       } // for Dimm
     } // for Channel
