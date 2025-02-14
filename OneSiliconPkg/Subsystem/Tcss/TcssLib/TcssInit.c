@@ -475,7 +475,10 @@ SsTcssInitPostMemory (
 
     PERF_INMODULE_BEGIN ("PmcTcssBiosInitDone");
     if (pInst->Callbacks->PmcTcssBiosInitDone != NULL) {
-      PmcTcssInitStatus = (UINT32) pInst->Callbacks->PmcTcssBiosInitDone (pInst->Info->IOMReady, PmcReplay);
+      //
+      // BIOS interaction with IOM has completed, send init done IPC command.
+      //
+      PmcTcssInitStatus = (UINT32) pInst->Callbacks->PmcTcssBiosInitDone (IpCsiStsSuccess, PmcReplay);
       PRINT_INFO ("%a: [TCSS] PmcTcssInitStatus = %r\n", __FUNCTION__, PmcTcssInitStatus);
     }
     PERF_INMODULE_END ("PmcTcssBiosInitDone");

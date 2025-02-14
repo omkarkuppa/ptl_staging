@@ -59,7 +59,6 @@ PtlTcssCreateTbtHob (
   SI_POLICY_PPI         *SiPolicyPpi;
   PEI_ITBT_CONFIG       *PeiITbtConfig;
   ITBT_INFO_HOB         *ITbtInfoHob;
-  TCSS_DATA_HOB         *TcssHob;
   UINT8                 EnableDma;
   EFI_STATUS            Status;
   UINT32                Index;
@@ -107,22 +106,11 @@ PtlTcssCreateTbtHob (
       //
       ITbtInfoHob->EfiHobGuidType.Name = gITbtInfoHobGuid;
 
-      TcssHob = NULL;
-      ///
-      /// Locate HOB for TCSS Data
-      ///
-      TcssHob = (TCSS_DATA_HOB *) GetFirstGuidHob (&gTcssHobGuid);
-
       //
       // Update ITBT Policy
       //
       for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index++) {
-        if (TcssHob == NULL) {
-          ITbtInfoHob->ITbtRootPortConfig[Index].ITbtPcieRootPortEn = 0;
-          DEBUG ((DEBUG_INFO, "TcssHob not found\n"));
-        } else {
-          ITbtInfoHob->ITbtRootPortConfig[Index].ITbtPcieRootPortEn = TcssHob->TcssData.ItbtPcieRpEn[Index];
-        }
+        ITbtInfoHob->ITbtRootPortConfig[Index].ITbtPcieRootPortEn = (TcssInst->IomInst->IomConfig.DevEn.TcssDevEn >> Index) & 1;
       }
       ITbtInfoHob->ITbtForcePowerOnTimeoutInMs    = PeiITbtConfig->ITbtGenericConfig.ITbtForcePowerOnTimeoutInMs;
       ITbtInfoHob->ITbtConnectTopologyTimeoutInMs = PeiITbtConfig->ITbtGenericConfig.ITbtConnectTopologyTimeoutInMs;
@@ -238,11 +226,6 @@ PtlTcssInitEndOfPei (
   }
 
   //
-  // Create TBT HOB
-  //
-  PtlTcssCreateTbtHob (&TcssInst);
-
-  //
   // TCSS initialization procedure for End of PEI
   //
   CsiStatus = SsTcssInitEndOfPei (&TcssInst);
@@ -321,7 +304,7 @@ PtlTcssInitEndOfPei (
   }
 
   //
-  // the TcssSsidHob only use PEI phase, so claer value before entry DXE phase.
+  // The TcssSsidHob only use PEI phase, so claer value before entry DXE phase.
   //
   TcssSsidHob = NULL;
   TcssSsidHob = (TCSS_DATA_SSID_HOB *) GetFirstGuidHob (&gTcssSsidHobGuid);
@@ -329,6 +312,11 @@ PtlTcssInitEndOfPei (
     TcssSsidHob->TcssSsidTable = NULL;
     TcssSsidHob->NumberOfTcssSsidTable = 0;
   }
+
+  //
+  // Create TBT HOB
+  //
+  PtlTcssCreateTbtHob (&TcssInst);
 
   DEBUG ((DEBUG_INFO, "%a END\n",__FUNCTION__));
   return Status;
