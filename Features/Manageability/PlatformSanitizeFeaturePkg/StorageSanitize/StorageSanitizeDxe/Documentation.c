@@ -262,19 +262,16 @@ ActionToGetSanitizationReport  (
   )
 {
   EFI_INPUT_KEY             InputKey;
-  UINTN                     InputLength;
-  CHAR16                    Mask[1];
-  CHAR16                    Unicode[1];
+  CHAR16                    UserInput[2];
 
   *GetResponse = FALSE;
-  ZeroMem (Unicode, sizeof (Unicode));
-  ZeroMem (Mask, sizeof (Mask));
+  ZeroMem (UserInput, sizeof (UserInput));
   ClearPopupScreen();
   DEBUG ((DEBUG_INFO, "%a Enter\n", __FUNCTION__));
   DEBUG ((DEBUG_INFO, "Enter action pop up function\n"));
 
-  InputLength = 0;
-  Mask[InputLength] = L'_';
+  UserInput[0] = L'_';
+
   while (TRUE) {
     if (PopUpString2 == NULL) {
       CreatePopUp (
@@ -282,7 +279,7 @@ ActionToGetSanitizationReport  (
         &InputKey,
         PopUpString,
         L"---------------------",
-        Mask,
+        UserInput,
         NULL
       );
     } else {
@@ -293,7 +290,7 @@ ActionToGetSanitizationReport  (
           PopUpString,
           PopUpString2,
           L"---------------------",
-          Mask,
+          UserInput,
           NULL
         );
       } else {
@@ -304,7 +301,7 @@ ActionToGetSanitizationReport  (
           PopUpString2,
           PopUpString3,
           L"---------------------",
-          Mask,
+          UserInput,
           NULL
         );
       }
@@ -316,7 +313,7 @@ ActionToGetSanitizationReport  (
     if (InputKey.ScanCode == SCAN_NULL) {
       if (InputKey.UnicodeChar == CHAR_CARRIAGE_RETURN) {
         DEBUG ((DEBUG_INFO, "Enter is pressed\n"));
-        if (Unicode[0] == L'Y' || Unicode[0] == L'y') {
+        if (UserInput[0] == L'Y' || UserInput[0] == L'y') {
           *GetResponse = TRUE;
           DEBUG ((DEBUG_INFO, "Replied YES\n"));
         }
@@ -324,12 +321,6 @@ ActionToGetSanitizationReport  (
           *GetResponse = FALSE;
           DEBUG ((DEBUG_INFO, "Replied NO or others\n"));
         }
-
-        //
-        // Add the null terminator.
-        //
-        Unicode[InputLength] = 0;
-        Mask[InputLength] = 0;
         break;
       } else if ((InputKey.UnicodeChar == CHAR_NULL) ||
                  (InputKey.UnicodeChar == CHAR_TAB) ||
@@ -337,21 +328,20 @@ ActionToGetSanitizationReport  (
                 ) {
         continue;
       } else {
-        //
-        // delete last key entered
-        //
         if (InputKey.UnicodeChar == CHAR_BACKSPACE) {
-          Mask[InputLength] = L'_';
+          //
+          // delete last key entered
+          //
+          UserInput[0] = L'_';
         } else {
           //
           // update key entry
           //
-          Unicode[InputLength] = InputKey.UnicodeChar;
-          Mask[InputLength] = InputKey.UnicodeChar;
+          UserInput[0] = InputKey.UnicodeChar;
         }
       }
     }
-    DEBUG((DEBUG_INFO, "The response user input is '%s'\n", Unicode));
+    DEBUG((DEBUG_INFO, "The response user input is '%s'\n", UserInput));
   }
 }
 
