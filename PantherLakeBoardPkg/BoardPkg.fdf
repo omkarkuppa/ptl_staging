@@ -758,9 +758,9 @@ FvNameGuid         = 7C4DCFC6-AECA-4707-85B9-FD4B2EEA49E7
     FILE PEIM = 988845E7-62B2-4968-B530-4895CEB9CF1A {
       SECTION COMPRESS {
         !if $(TARGET) == DEBUG
-          SECTION Align = Auto PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfigDriverPeiDebug.efi
+          SECTION Align = Auto PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfig/GopConfigDriverPeiDebug.efi
         !else
-          SECTION Align = Auto PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfigDriverPei.efi
+          SECTION Align = Auto PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfig/GopConfigDriverPei.efi
         !endif
         SECTION PEI_DEPEX_EXP = {gEfiPeiStallPpiGuid}
         SECTION UI = "GopConfigDriverPei"
@@ -988,11 +988,11 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/Spi/RuntimeDxe/SpiRuntime.in
 !if gSiPkgTokenSpaceGuid.PcdIgdEnable == TRUE
     FILE DRIVER = 84bd674a-9ceb-4335-9015-26b7cf2f9365 {
       !if $(TARGET) == DEBUG
-        SECTION PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfigDriverDxeDebug.efi
+        SECTION PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfig/GopConfigDriverDxeDebug.efi
       !else
-        SECTION PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfigDriverDxe.efi
+        SECTION PE32 = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfig/GopConfigDriverDxe.efi
       !endif
-      SECTION DXE_DEPEX = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfigDriverDxe.depex
+      SECTION DXE_DEPEX = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/GopConfig/GopConfigDriverDxe.depex
       SECTION UI = "GopConfigDriverDxe"
     }
 !endif # gSiPkgTokenSpaceGuid.PcdIgdEnable
