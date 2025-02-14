@@ -329,12 +329,10 @@ SsTcssInitPostMemory (
   UINT8                         MaxUsb3;
   UINT8                         Index;
   DEV_INIT_DONE                 Done;
-  BOOLEAN                       IsOneSecDelayPerformed;
 
   TCSS_API_ENTRY ();
 
-  Done.Value  = 0;
-  IsOneSecDelayPerformed = FALSE;
+  Done.Value = 0;
 
   //
   //  IOM Post Memory initialization
@@ -500,10 +498,6 @@ SsTcssInitPostMemory (
       continue;
     }
     if (pInst->Callbacks->ConvertUsbCToUsbA != NULL) {
-      if (IsOneSecDelayPerformed == FALSE) {
-        IpWrDelayUs (0, 15000);
-        IsOneSecDelayPerformed = TRUE;
-      }
       pInst->Callbacks->ConvertUsbCToUsbA (
         Index + 1,
         pInst->Config->TcssConvUsbA[Index].Field.MappingPchXhciUsb2,
