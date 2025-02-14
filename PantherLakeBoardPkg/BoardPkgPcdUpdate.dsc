@@ -78,10 +78,6 @@
   gUsbPortMapPkgTokenSpaceGuid.PcdUsbPortMapEnable|TRUE
 !endif
 
-  # XmlCli: Update Pcd Value
-  gXmlCliFeaturePkgTokenSpaceGuid.PcdXmlCliFeatureEnable|TRUE
-  gXmlCliFeaturePkgTokenSpaceGuid.PcdStandaloneMmXmlCliEnable|FALSE
-
   # I2C
   gI2cFeaturePkgTokenSpaceGuid.PcdI2cFeatureEnable|TRUE
   gI2cFeaturePkgTokenSpaceGuid.PcdI2cPssEnable|TRUE
