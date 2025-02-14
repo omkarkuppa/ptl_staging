@@ -40,13 +40,11 @@
   DebugLib
   PcdLib
   UefiDriverEntryPoint
-  Usb4DebugLib
   UsbcCapsuleDebugLib
 
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  Usb4FeaturePkg/Usb4FeaturePkg.dec
   UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
 
 [Sources]

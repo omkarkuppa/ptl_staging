@@ -22,8 +22,7 @@
 #define _USBC_CAPSULE_DEBUG_LIB_H_
 
 #include <Uefi.h>
-#include <Usb4Debug/Usb4DebugProtocol.h>
-#include <Usb4Debug/Usb4LogEvents.h>
+#include <CapsuleDebugProtocol.h>
 
 /**
   Write Log data to the next available Log entry in Log buffer
@@ -37,14 +36,15 @@
   @retval EFI_SUCCESS           - Write Log data to Log buffer successfully
   @retval EFI_INVALID_PARAMETER - Invalid parameter
   @retval EFI_OUT_OF_RESOURCES  - Log buffer is full
+
 **/
 EFI_STATUS
 EFIAPI
 CapsuleLogWrite (
-  IN UINT8                      LogLevel,
-  IN UINT16                     EventCode,
-  IN UINT32                     EvtArg0,
-  IN UINT32                     EvtArg1
+  IN UINT8   LogLevel,
+  IN UINT32  EventCode,
+  IN UINT32  EvtArg0,
+  IN UINT32  EvtArg1
   );
 
 #endif

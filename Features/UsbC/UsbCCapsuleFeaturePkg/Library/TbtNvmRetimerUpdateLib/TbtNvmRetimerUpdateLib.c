@@ -63,16 +63,16 @@ CreateHrDevInstance (
   BOOLEAN          NeedUpdated;
 
   if (*RetimerDeviceInstancesCount == 0) {
-    DEBUG ((DEBUG_ERROR, "RetimerDeviceInstancesCount is zero.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_HR_DEV_COUNT_ZERO, 0, 0);
     return EFI_UNSUPPORTED;
   }
 
   if (*HrDeviceInstancesCount != 0) {
-    DEBUG ((DEBUG_ERROR, "HrDeviceInstances already exists.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_HR_DEV_ALREADY, 0, 0);
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_INFO, "%a - Start\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_HR_DEV_CREATE_START, 0, 0);
 
   for (RetimerIndex = 0; RetimerIndex < *RetimerDeviceInstancesCount; RetimerIndex++) {
     RetimerHr = (RETIMER_THRU_HR *) (((TBT_RETIMER *) RetimerDeviceInstances[RetimerIndex])->Impl);
@@ -145,12 +145,12 @@ CreateRetimerDevInstance (
   gUpdateTargetType = TARGET_RETIMER;
   TbtDmaPciLocation = TbtNvmDrvAllocateMem (sizeof (PCIE_BDF));
   if (TbtDmaPciLocation == NULL) {
-    DEBUG ((DEBUG_ERROR, "CreateRetimerDevInstance: Failed to allocate memory for PCIE_BDF\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_RT_BDF_ALLOCATE_MEM_FAIL, 0, 0);
     return EFI_OUT_OF_RESOURCES;
   }
   PcieRpConfig = TbtNvmDrvAllocateMem (sizeof (PCIE_RP_CONFIG));
   if (PcieRpConfig == NULL) {
-    DEBUG ((DEBUG_ERROR, "CreateRetimerDevInstance: Failed to allocate memory for PCIE_RP_CONFIG\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_RT_RP_ALLOCATE_MEM_FAIL, 0, 0);
     return EFI_OUT_OF_RESOURCES;
   }
   Device = NULL;
@@ -161,7 +161,7 @@ CreateRetimerDevInstance (
   } else if (DevAddress->Port == 1) {
     TBT_TARGET_PORT = PORT_B;
   } else {
-    DEBUG ((DEBUG_ERROR, "Error DevAddress->Port value.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_RT_DEV_ADDRESS_ERROR, 0, 0);
     return EFI_UNSUPPORTED;
   }
 
@@ -187,7 +187,7 @@ CreateRetimerDevInstance (
              );
 
   if (Device == NULL) {
-    DEBUG ((DEBUG_ERROR, "Failed to create a device context for the retimer.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_RT_DEV_CREATE_FAIL, 0, 0);
     Status = EFI_DEVICE_ERROR;
   }
 
@@ -262,7 +262,7 @@ CreateTBTDevInstance (
 
   PcieRpConfig = TbtNvmDrvAllocateMem (sizeof (PCIE_RP_CONFIG));
   if (PcieRpConfig == NULL) {
-    DEBUG ((DEBUG_ERROR, "CreateTBTDevInstance: Failed to allocate memory for PCIE_RP_CONFIG\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CREATE_TBT_ALLOCATE_MEM_FAIL, 0, 0);
     return EFI_OUT_OF_RESOURCES;
   }
   PcieRpConfig->PcieRpType   = PcieRpType;
@@ -272,7 +272,7 @@ CreateTBTDevInstance (
 
   TbtNvmDrvDeAllocateMem (PcieRpConfig);
   if (HrPtr == NULL) {
-    DEBUG ((DEBUG_ERROR, "CreateTBTDevInstance: Failed to create DMA\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CREATE_TBT_DMA_FAIL, 0, 0);
     return EFI_DEVICE_ERROR;
   }
 
@@ -373,7 +373,7 @@ ReadRetimerNvmVersion (
 
   Status = TbtDrvReadNvmVersion (Device, &RetimerVersion);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtDrvReadNvmVersion error %r.\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_READ_NVM_VERSION_ERROR, (UINT32) Status, 0);
     return EFI_DEVICE_ERROR;
   }
 
@@ -383,7 +383,8 @@ ReadRetimerNvmVersion (
   MinorVersion    = ((RetimerVersion >> 8)  & 0x3F);                    // The minor version of retimer NVM.
   OfficialNvm     = ((RetimerVersion >> 15) & 0x1);                     // The official NVM indication, should be set in official NVMs.
 
-  DEBUG ((DEBUG_INFO, "Current NVM version is rev%02x v%02x.%02x Official bit: %d\n", PlatformVersion, MajorVersion, MinorVersion, OfficialNvm));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_READ_NVM_VERSION_INFO, (UINT32) PlatformVersion, (UINT32) MajorVersion);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_READ_NVM_VERSION_INFO2, (UINT32) MinorVersion, (UINT32) OfficialNvm);
   RetimerVersion = ((PlatformVersion << 16) | (MajorVersion << 8) | MinorVersion);
 
   *Version = RetimerVersion;
@@ -432,7 +433,7 @@ UpdateRetimerNvmInformation (
                   &UsbCRetimerSetup
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to get setup variable\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_RT_GET_VARIABLE_FAIL, 0, 0);
     return;
   }
   IsRetimerConfigFound   = FALSE;
@@ -459,7 +460,7 @@ UpdateRetimerNvmInformation (
         continue;
       }
     } else {
-      DEBUG ((DEBUG_ERROR, "FirmwareType is not supported.\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_RT_FW_TYPE_UNSUPPORT, 0, 0);
       return;
     }
     //
@@ -483,16 +484,15 @@ UpdateRetimerNvmInformation (
         UsbCRetimerSetup.UsbCRetimer3Version = RetimerVersion;
         break;
       default:
-        DEBUG ((DEBUG_ERROR, "UsbCRetimerNumber is more than Index setting.\n"));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_RT_INVALID_RETIMER_INDEX , 0, 0);
         break;
     }
     IsRetimerConfigFound = TRUE;
-    DEBUG ((DEBUG_INFO, "RetimerConfigTable config %x is matched.\n", Index));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_RT_CONFIG_MATCH, (UINT32) Index, 0);
     break;
   }
   if (!IsRetimerConfigFound) {
-    DEBUG ((DEBUG_ERROR, \
-      "UpdateRetimerNvmInformation - Fail on RetimerPayloadConfig header in capsule file does not match the RetimerConfigTable.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_RT_CONFIG_NOT_MATCH, 0, 0);
     return;
   }
   if (IsUpdateVariableNeeded) {
@@ -504,7 +504,7 @@ UpdateRetimerNvmInformation (
                     &UsbCRetimerSetup
                     );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UpdateRetimerNvmInformation - Fail to set variable in UsbCRetimerSetup.\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_RT_SET_VARIABLE_FAIL, 0, 0);
     }
   }
 
@@ -542,15 +542,15 @@ InitRetimerHW (
 
   Device = (TBT_RETIMER *) RetimerDevice;
 
-  DEBUG ((DEBUG_INFO, "InitRetimerHW START\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_INIT_RT_HW_START, 0, 0);
   TbtStatus = Device->InitHW (Device);
 
   if (TBT_STATUS_ERR (TbtStatus)) {
     Status = EFI_DEVICE_ERROR;
-    DEBUG ((DEBUG_ERROR, "InitRetimerHW: Got an ERROR(%d)\n", TbtStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_INIT_RT_HW_GOT_ERROR, (UINT32) TbtStatus, 0);
   } else {
     Status = EFI_SUCCESS;
-    DEBUG ((DEBUG_INFO, "InitRetimerHW success\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_INIT_RT_HW_SUCCESS, 0, 0);
   }
 
   return Status;
@@ -583,15 +583,15 @@ TerminateRetimerHW (
 
   Device = (TBT_RETIMER *) RetimerDevice;
 
-  DEBUG ((DEBUG_INFO, "TerminateRetimerHW START\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TERMINATE_START, 0, 0);
   TbtStatus = Device->TerminateHW(Device);
 
   if (TBT_STATUS_ERR (TbtStatus)) {
     Status = EFI_DEVICE_ERROR;
-    DEBUG ((DEBUG_ERROR, "TerminateRetimerHW: Got an ERROR(%d)\n", TbtStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TERMINATE_GOT_ERROR, (UINT32) TbtStatus, 0);
   } else {
     Status = EFI_SUCCESS;
-    DEBUG ((DEBUG_INFO, "TerminateRetimerHW success\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TERMINATE_SUCCESS, 0, 0);
   }
 
   return Status;
@@ -654,20 +654,21 @@ UpdateRetimerNvmFirmware (
   ImageSize -= (BufferPointer[0] & TBT_NVM_VERSION_MASK);
   BufferPointer += ((BufferPointer[0] & TBT_NVM_VERSION_MASK) / 4); // Point to digital
 
-  DEBUG ((DEBUG_INFO, "UpdateRetimerNvmFirmware START (0x%06x bytes to write):\n", ImageSize));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_RT_FW_START, (UINT32) ImageSize, 0);
+
   ImageSize /= 4;
   for (RecoveryCount = 0; RecoveryCount < TBT_TOTAL_NUM_OF_RECOVERIES_DURING_IMAGE_WRITE; RecoveryCount++) {
     // Write BOPS once at the start
     TbtStatus = TbtNvmDrvDeviceWrOffset (Device, 0x0);
     if (TBT_STATUS_ERR (TbtStatus)) {
       if (TBT_STATUS_FATAL_ERR (TbtStatus)) {
-        DEBUG ((DEBUG_ERROR, "Got a FATAL error, exiting...\n"));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_FATAL_ERROR, 0, 0);
         Status = EFI_DEVICE_ERROR;
         goto finish_set_image;
       }
       continue;  // retry image write from the start
     }
-    DEBUG ((DEBUG_INFO, "The total data to write is 0x%6x\n", ImageSize));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_WRITE_DATA, (UINT32) ImageSize, 0);
 
     for (Offset = 0; Offset < ImageSize; Offset += TBT_NVM_MAX_DWS_TO_WRITE) {
       if ((Progress != NULL) & (DisplayLength > 0) && ((Offset & 0xFF) == 0)) {
@@ -677,21 +678,21 @@ UpdateRetimerNvmFirmware (
         Progress (StartPercentage + ((Offset * (DisplayLength)) / ImageSize));
       }
       if ((Offset % 3200) == 0) {
-        DEBUG ((DEBUG_INFO, "Written so far : 0x%05x bytes\n", Offset * 4));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_WRITE_SIZE, (UINT32) (Offset * 4), 0);
       }
       WriteLength = (ImageSize - Offset) >= TBT_NVM_MAX_DWS_TO_WRITE ? TBT_NVM_MAX_DWS_TO_WRITE :
         (UINT8)(ImageSize - Offset);
 
       if ((Offset % 64) == 0) {
-        DEBUG ((DEBUG_INFO, "Writing at Offset - 0x%x length of 0x%0x, first reg 0x%04x\n",
-          Offset, WriteLength, (BufferPointer + Offset) [0]));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_WRITE_INFO, Offset, 0);
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_WRITE_INFO2, WriteLength, (UINT32) ((BufferPointer + Offset) [ 0 ]));
       }
 
       TbtStatus = TbtNvmDrvDeviceWrBlk (Device, BufferPointer + Offset, WriteLength);
       if (TBT_STATUS_ERR (TbtStatus)) {
-        DEBUG ((DEBUG_ERROR, "Got an error at offset 0x%08x\n", Offset));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_ERROR_OFFSET, 0, 0);
         if (TBT_STATUS_FATAL_ERR (TbtStatus)) {
-          DEBUG ((DEBUG_ERROR, "Got a FATAL error, exiting...\n"));
+          CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_FATAL_ERROR, 0, 0);
           Status = EFI_DEVICE_ERROR;
           goto finish_set_image;
         }
@@ -701,15 +702,15 @@ UpdateRetimerNvmFirmware (
     }
 
     if (!TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_INFO, "Image write finished.\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_WRITE_FINISH, 0, 0);
       Status = EFI_SUCCESS;
       break;
     } else {
-      DEBUG ((DEBUG_ERROR, "Got an error while writing the image. As a recovery, starting again\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_WRITE_IM_ERROR, 0, 0);
     }
   }
   if (RecoveryCount >= TBT_TOTAL_NUM_OF_RECOVERIES_DURING_IMAGE_WRITE) {
-    DEBUG ((DEBUG_ERROR, "Image write wasn't successful due to a device error\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_DEV_ERROR, 0, 0);
     Status = EFI_DEVICE_ERROR;
     goto finish_set_image;
   }
@@ -720,7 +721,7 @@ UpdateRetimerNvmFirmware (
     goto finish_set_image;
   }
 
-  DEBUG ((DEBUG_INFO, "UpdateRetimerNvmFirmware: Retimer firmware update and authentication success\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_AUTH_SUCCESS, 0, 0);
 
   Status = EFI_SUCCESS;
 
@@ -790,20 +791,20 @@ UpdateDiscreteTbtNvmFirmware (
   ImageSize -= (BufferPointer[0] & TBT_NVM_VERSION_MASK);
   BufferPointer += ((BufferPointer[0] & TBT_NVM_VERSION_MASK) / 4); // Point to digital
 
-  DEBUG ((DEBUG_INFO, "UpdateDiscreteTbtNvmFirmware START (0x%06x bytes to write):\n", ImageSize));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_DTBT_START, (UINT32) ImageSize, 0);
   ImageSize /= 4;
   for (RecoveryCount = 0; RecoveryCount < TBT_TOTAL_NUM_OF_RECOVERIES_DURING_IMAGE_WRITE; RecoveryCount++) {
     // Write BOPS once at the start
     TbtStatus = TbtNvmDrvDeviceWrOffset (Device, 0x0);
     if (TBT_STATUS_ERR (TbtStatus)) {
       if (TBT_STATUS_FATAL_ERR (TbtStatus)) {
-        DEBUG ((DEBUG_ERROR, "Got a FATAL error, exiting...\n"));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_FATAL_ERROR, 0, 0);
         Status = EFI_DEVICE_ERROR;
         goto finish_set_image;
       }
       continue;  // retry image write from the start
     }
-    DEBUG ((DEBUG_INFO, "The total data to write is 0x%6x\n", ImageSize));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_WRITE_DATA, (UINT32) ImageSize, 0);
 
     for (Offset = 0; Offset < ImageSize; Offset += TBT_NVM_MAX_DWS_TO_WRITE) {
       if ((Progress != NULL) & (DisplayLength > 0) && ((Offset & 0xFF) == 0)) {
@@ -813,21 +814,21 @@ UpdateDiscreteTbtNvmFirmware (
         Progress (StartPercentage + ((Offset * (DisplayLength)) / ImageSize));
       }
       if ((Offset % 3200) == 0) {
-        DEBUG ((DEBUG_INFO, "Written so far : 0x%05x bytes\n", Offset * 4));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_WRITE_SIZE, (UINT32) (Offset * 4), 0);
       }
       WriteLength = (ImageSize - Offset) >= TBT_NVM_MAX_DWS_TO_WRITE ? TBT_NVM_MAX_DWS_TO_WRITE :
         (UINT8)(ImageSize - Offset);
 
       if ((Offset % 64) == 0) {
-        DEBUG ((DEBUG_INFO, "Writing at Offset - 0x%x length of 0x%0x, first reg 0x%04x\n",
-          Offset, WriteLength, (BufferPointer + Offset) [0]));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_WRITE_INFO, Offset, 0);
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_WRITE_INFO2, WriteLength, (UINT32) ((BufferPointer + Offset) [ 0 ]));
       }
 
       TbtStatus = TbtNvmDrvDeviceWrBlk (Device, BufferPointer + Offset, WriteLength);
       if (TBT_STATUS_ERR (TbtStatus)) {
-        DEBUG ((DEBUG_ERROR, "Got an error at offset 0x%08x\n", Offset));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_ERROR_OFFSET, Offset, 0);
         if (TBT_STATUS_FATAL_ERR (TbtStatus)) {
-          DEBUG ((DEBUG_ERROR, "Got a FATAL error, exiting...\n"));
+          CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_FATAL_ERROR, 0, 0);
           Status = EFI_DEVICE_ERROR;
           goto finish_set_image;
         }
@@ -837,16 +838,16 @@ UpdateDiscreteTbtNvmFirmware (
     }
 
     if (!TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_INFO, "Image write finished.\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_NVM_WRITE_FINISH, 0, 0);
       Status = EFI_SUCCESS;
       break;
     }
     else {
-      DEBUG ((DEBUG_ERROR, "Got an error while writing the image. As a recovery, starting again\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_WRITE_IM_ERROR, 0, 0);
     }
   }
   if (RecoveryCount >= TBT_TOTAL_NUM_OF_RECOVERIES_DURING_IMAGE_WRITE) {
-    DEBUG ((DEBUG_ERROR, "Image write wasn't successful due to a device error\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_DEV_ERROR, 0, 0);
     Status = EFI_DEVICE_ERROR;
     goto finish_set_image;
   }
@@ -857,8 +858,7 @@ UpdateDiscreteTbtNvmFirmware (
     goto finish_set_image;
   }
 
-  DEBUG ((DEBUG_INFO, "UpdateDiscreteTbtNvmFirmware: Discrete TBT NVM firmware update and authentication success\n"));
-
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_UPDATE_DTBT_FW_AUTH_SUCCESS, 0, 0);
   Status = EFI_SUCCESS;
 
 finish_set_image:
@@ -912,16 +912,16 @@ TbtPdRetimerFwUpdateModeChange (
   Status = This->GetPdControllerMode (&DeviceMode, &EcPdTempBuffer, PdNumber);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller GET MODE Not Responding. Returning with Status = %r\n", String, Status));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_SECOND_GET_MODE_FAIL, (UINT32) Status, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_PD_GET_MODE_FAIL, (UINT32) Status, 0);
     return Status;
   }
 
   if (PdControllerMode == RetimerFwUpdateEnableMode) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_FIRST_GET_MODE_EC_STATUS, (UINT32) EcPdTempBuffer, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_PD_DRIVE_FIRST_GET_MODE, (UINT32) EcPdTempBuffer, 0);
   }
 
   if (PdControllerMode == RetimerFwUpdateDisableMode) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_FIRST_GET_MODE_EC_STATUS, (UINT32) EcPdTempBuffer, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_PD_RESTORE_PD_FIRST_GET_MODE, (UINT32) EcPdTempBuffer, 0);
   }
 
   //
@@ -929,14 +929,12 @@ TbtPdRetimerFwUpdateModeChange (
   //
   if (DeviceMode == PdControllerMode) {
     if (PdControllerMode == RetimerFwUpdateEnableMode) {
-      DEBUG ((DEBUG_INFO, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller is already in FW Update Mode\n", String));
-      CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_ALREADY_IN_UPDATE_MODE, 0, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_PD_CONTROLLER_ALREADY, 0, 0);
       Status = EFI_ALREADY_STARTED;
     }
 
     if (PdControllerMode == RetimerFwUpdateDisableMode) {
-      DEBUG ((DEBUG_INFO, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller is already exited FW Update Mode.\n", String));
-      CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_ALREADY_IN_UPDATE_MODE, 0, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_PD_CONTROLLER_EXITED, 0, 0);
       Status = EFI_NOT_STARTED;
     }
 
@@ -949,7 +947,7 @@ TbtPdRetimerFwUpdateModeChange (
   Status = This->SetPdControllerMode (PdControllerMode);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller SET MODE Not Responding. Returning with Status = %r\n", String, Status));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_SET_MODE_FAIL, (UINT32) Status, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_PD_SET_MODE_FAIL, (UINT32) Status, 0);
     return Status;
   }
 
@@ -962,16 +960,16 @@ TbtPdRetimerFwUpdateModeChange (
   Status = This->GetPdControllerMode (&DeviceMode, &EcPdTempBuffer, PdNumber);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller GET MODE Not Responding. Returning with Status = %r\n", String, Status));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_SECOND_GET_MODE_FAIL, (UINT32) Status, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_PD_GET_MODE_FAIL, (UINT32) Status, 0);
     return Status;
   }
 
   if (PdControllerMode == RetimerFwUpdateEnableMode) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_SECOND_GET_MODE_EC_STATUS, (UINT32) EcPdTempBuffer, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_PD_DRIVE_SECOND_GET_MODE, (UINT32) EcPdTempBuffer, 0);
   }
 
   if (PdControllerMode == RetimerFwUpdateDisableMode) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_SECOND_GET_MODE_EC_STATUS, (UINT32) EcPdTempBuffer, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_PD_RESTORE_PD_SECOND_GET_MODE, (UINT32) EcPdTempBuffer, 0);
   }
 
   //
@@ -980,7 +978,7 @@ TbtPdRetimerFwUpdateModeChange (
   if (DeviceMode != PdControllerMode) {
     Status = EFI_TIMEOUT;
     DEBUG ((DEBUG_ERROR, "\nTbtPdRetimerFwUpdateMode.%S: PD Controller SET MODE is not Completed. Returning with Status = %r\n", String, Status));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_SET_MODE_NOT_COMPLETE, (UINT32) Status, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_PD_CONTROLLER_SET_MODE_INCOMPLETE, (UINT32) Status, 0);
     return Status;
   }
 
@@ -988,18 +986,16 @@ TbtPdRetimerFwUpdateModeChange (
     //
     // Now PD Controller Successfully Enter Into FW Update Mode.
     //
-    DEBUG ((DEBUG_INFO, "\nTbtPdRetimerFwUpdateMode.Drive: "));
-    DEBUG ((DEBUG_INFO, "PD Controller Enter Into FW Update Mode with Status = %r\n", Status));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_ENTER_FW_UPDATE_MODE, 0, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_PD_CONTROLLER_UPDATE_MODE_STATUS, 0, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_PD_CONTROLLER_UPDATE_MODE_ENTER, (UINT32) Status, 0);
   }
 
   if (PdControllerMode == RetimerFwUpdateDisableMode) {
     //
     // Now PD Controller Successfully EXIT From FW Update Mode.
     //
-    DEBUG ((DEBUG_INFO, "\nTbtPdRetimerFwUpdateMode.Restore: "));
-    DEBUG ((DEBUG_INFO, "PD Controller Exit from FW Update Mode with Status = %r\n", Status));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_ENTER_FW_UPDATE_MODE, 0, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_PD_RESTORE_CONTROLLER_MODE_STATUS, 0, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_PD_CONTROLLER_UPDATE_MODE_EXIT, (UINT32) Status, 0);
   }
 
   return EFI_SUCCESS;
@@ -1034,16 +1030,15 @@ DriveToFwUpdateMode (
 
   Status = EFI_SUCCESS;
 
-  DEBUG ((DEBUG_INFO, "\n%a Start\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DRIVE_START, 0, 0);
   DEBUG ((DEBUG_INFO, "  RetimerGuid = %g\n", RetimerGuid));
-  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_PD_DRIVE_START, 0, 0);
 
   //
   // Check if Valid Guid is passed or Not.
   //
   if (!CompareGuid (&RetimerGuid, &gAllTbtRetimerDeviceGuid)) {
     Status = EFI_INVALID_PARAMETER;
-    DEBUG ((DEBUG_ERROR, "\n%a : Invalid Retimer Guid Passed for UsbCRetimer. Returning with Status = %r\n", __FUNCTION__, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DRIVE_GUID_CHECK_FAILED, (UINT32) Status, 0);
     return Status;
   }
 
@@ -1060,7 +1055,7 @@ DriveToFwUpdateMode (
                    );
   if (!EFI_ERROR (Status)) {
     Status = EFI_UNSUPPORTED;
-    DEBUG ((DEBUG_ERROR, "\n%a: Usb Type-C Retimer is not supported. Returning with Status = %r\n", __FUNCTION__, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DRIVE_USBC_RT_UNSUPPORT, (UINT32) Status, 0);
     return Status;
   }
 
@@ -1069,13 +1064,11 @@ DriveToFwUpdateMode (
   //
   Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateEnableMode, FixedPcdGet8 (PcdMaxUsbCPdNumber));
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "\n%a : Failed to Enable Retimer FW Update Mode with Status = %r\n", __FUNCTION__, Status));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_CHANGE_MODE_FAIL, (UINT32) Status, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DRIVE_CHANGE_MODE_FAIL, (UINT32) Status, 0);
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "\n%a : End\n", __FUNCTION__));
-  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_PD_DRIVE_END, 0, 0);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DRIVE_END, 0, 0);
   return Status;
 }
 
@@ -1108,16 +1101,15 @@ RestoreToOriginalMode (
 
   Status = EFI_SUCCESS;
 
-  DEBUG ((DEBUG_INFO, "\n%a Start\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_RESTORE_START, 0, 0);
   DEBUG ((DEBUG_INFO, "  RetimerGuid = %g\n", RetimerGuid));
-  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_PD_RESTORE_START, 0, 0);
 
   //
   // Check if Valid Guid is passed or Not.
   //
   if (!CompareGuid (&RetimerGuid, &gAllTbtRetimerDeviceGuid)) {
     Status = EFI_INVALID_PARAMETER;
-    DEBUG ((DEBUG_ERROR, "\n%a : Invalid Retimer Guid Passed for UsbCRetimer. Returning with Status = %r\n", __FUNCTION__, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_RESTORE_GUID_CHECK_FAILED, (UINT32) Status, 0);
     return Status;
   }
 
@@ -1134,7 +1126,7 @@ RestoreToOriginalMode (
                    );
   if (!EFI_ERROR (Status)) {
     Status = EFI_UNSUPPORTED;
-    DEBUG ((DEBUG_ERROR, "\n%a: Usb Type-C Retimer is not supported. Returning with Status = %r\n", __FUNCTION__, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_RESTORE_USBC_RT_UNSUPPORT, (UINT32) Status, 0);
     return Status;
   }
 
@@ -1143,12 +1135,10 @@ RestoreToOriginalMode (
   //
   Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateDisableMode, FixedPcdGet8 (PcdMaxUsbCPdNumber));
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "\n%a : Failed to Exit Retimer FW Update Mode For PD Controller with Status = %r\n", __FUNCTION__, Status));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_CHANGE_MODE_FAIL, (UINT32) Status, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_RESTORE_CHANGE_MODE_FAIL, (UINT32) Status, 0);
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "\n%a : End\n", __FUNCTION__));
-  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_PD_RESTORE_END, 0, 0);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_RESTORE_END, 0, 0);
   return Status;
 }

@@ -21,6 +21,9 @@
 **/
 #include <Library/TbtNvmDrvYflRouter.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/UsbcCapsuleDebugLib.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
 
 /**
   TbtNvmDrvYflForcePwrFunc function to perform force power on YFL router
@@ -41,18 +44,18 @@ TbtNvmDrvYflForcePwrFunc (
 
   // Force power
   if (Enable) {
-    DEBUG ((DEBUG_INFO, "TbtNvmDrvYflForcePwrFunc: Performing force power on TBT Controller\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_YFL_FORCE_PWR_PERF, 0, 0);
   } else {
-    DEBUG ((DEBUG_INFO, "TbtNvmDrvYflForcePwrFunc: Disabling force power on TBT Controller\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_YFL_FORCE_PWR_DISABLE, 0, 0);
   }
 
   if (PciIoProto == NULL) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvYflForcePwrFunc: PciIoProto parameter is NULL\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_YFL_FORCE_PWR_PCI_IO_NULL, 0, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
   if (TBTControllerWasPowered == NULL) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvYflForcePwrFunc: TBTControllerWasPowered parameter is NULL\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_YFL_FORCE_PWR_PARAMETER_NULL, 0, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -63,7 +66,7 @@ TbtNvmDrvYflForcePwrFunc (
 
   Status = PciIoProto->Pci.Read (PciIoProto, EfiPciIoWidthUint32, FORCE_PWR_REG_OFFSET, 1, &Reg);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvYflForcePwrFunc: Couldn't read from PCIe register - 0x%x, Status - %r\n", FORCE_PWR_REG_OFFSET, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_YFL_FORCE_PWR_READ_PCIE_REG_ERROR, (UINT32) FORCE_PWR_REG_OFFSET, (UINT32) Status);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
   if (Enable) {
@@ -78,7 +81,7 @@ TbtNvmDrvYflForcePwrFunc (
   }
   Status = PciIoProto->Pci.Write (PciIoProto, EfiPciIoWidthUint32, FORCE_PWR_REG_OFFSET, 1, &Reg);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvYflForcePwrFunc: Couldn't write to PCIe register - 0x%x, Status - %r\n", FORCE_PWR_REG_OFFSET, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_YFL_FORCE_PWR_READ_PCIE_REG_ERROR, (UINT32) FORCE_PWR_REG_OFFSET, (UINT32) Status);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -95,14 +98,13 @@ TbtNvmDrvYflForcePwrFunc (
     }
     Reg = Reg & MASK (FW_READY_REG_BIT_INDEX, FW_READY_REG_BIT_INDEX);
     if (Reg != 0) {
-      DEBUG ((DEBUG_INFO, "FW of TBT controller is ready.\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_YFL_TBT_CONTROLLER_READY, 0, 0);
       *TBTControllerWasPowered = TRUE;
       return TBT_STATUS_SUCCESS;
     }
-    DEBUG ((DEBUG_WARN, "FW of TBT controller is not yet ready.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_WARN, EVT_CODE_YFL_TBT_CONTROLLER_NOT_READY, 0, 0);
     gBS->Stall (1000);   // Wait 1ms
   }
-  DEBUG ((DEBUG_ERROR, "TbtNvmDrvYflForcePwrFunc: Waiting too much on power on. Exiting...\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_YFL_FORCE_PWR_WAIT_ERROR, 0, 0);
   return TBT_STATUS_NON_RECOVERABLE_ERROR;
-
 }

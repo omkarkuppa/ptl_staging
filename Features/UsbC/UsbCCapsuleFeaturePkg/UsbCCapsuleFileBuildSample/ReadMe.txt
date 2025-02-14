@@ -15,6 +15,11 @@ There are several Capsule targets supported:
    Involved payloads: DTbtPayload.bin (DTbtPayload.bin is generated according to DTbtPayloadConfig.ini)
    To build Discrete Thunderbolt Capsule, DTbtPayloadConfig.ini must be a valid config file.
 
+3. Standalone PD Bridge Device Capsule - A Capsule to update PD Bridge device only.
+   ESRT entry GUID: 11984C7E-1207-4DE0-92C5-29661F9A6557
+   Involved payloads: PdBridgePayload.bin (PdBridge.bin is generated according to PdBridgePayloadConfig.ini)
+   To build Pd Bridge Capsule, PdBridgePayloadConfig.ini must be a valid config file.
+
 See [How to Use] below for further details.
 
 [Pre-Requisites]

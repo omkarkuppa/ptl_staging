@@ -1,5 +1,5 @@
 /** @file
-  Publish EFI_USB4_DEBUG_PROTOCOL.
+  Publish EFI_CAPSULE_DEBUG_PROTOCOL.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -24,16 +24,16 @@
 #include <Library/PcdLib.h>
 #include <Library/DebugLib.h>
 #include <Library/UsbcCapsuleDebugLib.h>
-#include <Library/Usb4DebugLib.h>
+#include <Library/CapsuleDebugLib.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleLogMappingTable.h>
 
-//
-// Pointer to Capsule Debug Protocol instance
-//
-EFI_USB4_DEBUG_PROTOCOL   *mRetimerCapsuleLog = NULL;
-extern const USB4_LOG_MAPPING_ENTRY  mUsbCCapsuleLogMappingTable [];
+///
+/// Pointer to Capsule Debug Protocol instance
+///
+EFI_CAPSULE_DEBUG_PROTOCOL   *mRetimerCapsuleLog = NULL;
+extern const CAPSULE_LOG_MAPPING_ENTRY  mUsbCCapsuleLogMappingTable [];
 extern UINT32 mUsbCCapsuleLogMappingEntries;
 
 /**
@@ -47,15 +47,15 @@ InstallCapsuleDebugProtocol (
 {
   EFI_STATUS   Status;
 
-  Status = InstallUsb4DebugProtocol (
-                  &gEfiUsbCCapsuleDebugProtocolGuid,
-                  PcdGet8 (PcdUsbCCapsuleDebugLevel),
-                  mUsbCCapsuleLogMappingTable,
-                  mUsbCCapsuleLogMappingEntries,
-                  &mRetimerCapsuleLog
-                  );
+  Status = InstallCapsuleDebugLibProtocol (
+             &gEfiUsbCCapsuleDebugProtocolGuid,
+             PcdGet8 (PcdUsbCCapsuleDebugLevel),
+             mUsbCCapsuleLogMappingTable,
+             mUsbCCapsuleLogMappingEntries,
+             &mRetimerCapsuleLog
+             );
   if (!EFI_ERROR (Status) && mRetimerCapsuleLog != NULL) {
-    if (mRetimerCapsuleLog->Usb4LogWrite != NULL) {
+    if (mRetimerCapsuleLog->LogWrite != NULL) {
       DEBUG ((DEBUG_INFO, "Install USBC Capsule Debug Protocol - Debug Level = %d\n", PcdGet8 (PcdUsbCCapsuleDebugLevel)));
     } else {
       DEBUG ((DEBUG_ERROR, "NULL Log Write function in USBC Capsule Debug Protocol\n"));

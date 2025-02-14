@@ -26,6 +26,9 @@
 #include <Library/BaseLib.h>
 #include <Library/Usb4PlatformHob.h>
 #include <Library/HobLib.h>
+#include <Library/UsbcCapsuleDebugLib.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 
 /**
   Get TX data buffer, which is pointed by the producer index.
@@ -51,11 +54,11 @@ TbtNvmDrvGetTxBuf (
   Prod = (ProdConsReg & REG_RING_PROD_MASK) >> REG_RING_PROD_SHIFT;
   Cons = (ProdConsReg & REG_RING_CONS_MASK) >> REG_RING_CONS_SHIFT;
   if (Prod >= FW_RING_NUM_TX_BUFS) {
-    DEBUG ((DEBUG_ERROR, "TbtDrvGetTxBuf: DMA is not functional, producer %u out of range\n", Prod));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_ERROR, Prod, 0);
     return NULL;
   }
   if (TBT_TX_RING_FULL (Prod, Cons, FW_RING_NUM_TX_BUFS)) {
-    DEBUG ((DEBUG_ERROR, "TbtDrvGetTxBuf: DMA is not functional, TX ring is full\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_TX_RING_FULL, 0, 0);
     return NULL;
   }
   *ProdPtr = (UINT16)Prod;
@@ -82,7 +85,8 @@ TbtNvmDrvInitiateTx (
   UINT32      NewAttributes;
 
   if (Producer < FW_RING_NUM_TX_BUFS) {
-    DEBUG ((DEBUG_VERBOSE, "TbtNvmDrvInitiateTx: Sending packet with pdf=0x%x, length=0x%x, prod=0x%x\n", Pdf, MsgLen, Producer));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_TX_PACKET_INFO, (UINT32) Pdf, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_TX_PACKET_INFO2, (UINT32) MsgLen, (UINT32) Producer);
     NewAttributes = MsgLen << DESC_ATTR_LEN_SHIFT;
     NewAttributes |= Pdf << DESC_ATTR_EOF_SHIFT;
     NewAttributes |= DESC_ATTR_REQ_STS;
@@ -90,7 +94,7 @@ TbtNvmDrvInitiateTx (
     ProdCons = ((Producer + 1) % FW_RING_NUM_TX_BUFS) << REG_RING_PROD_SHIFT;
     This->WriteMmio (This, REG_TX_RING_BASE + REG_RING_CONS_PROD_OFFSET, ProdCons);
   } else {
-    DEBUG ((DEBUG_ERROR, "The producer - consumer is bigger than ring size!\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_TX_FRAME_ERROR, 0, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -157,6 +161,11 @@ TbtNvmDrvWaitForRxResponse (
   volatile TBT_BUF_DESC  *RxDescPtr;
   UINT32                 Index;
   UINT32                 TotalRxPkts;
+  UINT32                 PtrAddr;
+  UINT32                 PhyHAddr;
+  UINT32                 PhyLAddr;
+  UINT32                 Cmd;
+  UINT32                 MsgLen;
 
   ProdConsReg = This->ReadMmio (This, REG_RX_RING_BASE + REG_RING_CONS_PROD_OFFSET);
   ConsIndex = (ProdConsReg & REG_RING_CONS_MASK) >> REG_RING_CONS_SHIFT;
@@ -165,32 +174,38 @@ TbtNvmDrvWaitForRxResponse (
   do {
     ConsIndex = (ConsIndex + 1) % FW_RING_NUM_RX_BUFS;  // Get consumer pointer from HW
     RxDescPtr = &(This->Impl->pSharedMem->rxBufDesc[ConsIndex]);
-    DEBUG ((DEBUG_VERBOSE, "Before: RxDescPtr - 0x%x, attributes - 0x%x, data addr - 0x%x\n", RxDescPtr, RxDescPtr->attributes, RxDescPtr->Phys));
+    PtrAddr =  (UINT32) (UINTN) RxDescPtr;
+    PhyHAddr = (UINT32) ((RxDescPtr->Phys) >> 32);
+    PhyLAddr = (UINT32) ((RxDescPtr->Phys) & 0xFFFFFFFF);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_RX_PTR_INFO, PtrAddr, RxDescPtr->attributes);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_RX_PTR_INFO2, PhyHAddr, PhyLAddr);
     for (Index = 0; ((RxDescPtr->attributes & DESC_ATTR_DESC_DONE) == 0) && (Index < TBT_TOTAL_ACCESSES_WHEN_WAIT_TO_RX); ++Index) {
       Status = gBS->Stall (TBT_TIME_BETWEEN_RX_RING_POLL_US);
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Stall had failed, Status %d\n", Status));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_RX_STALL_ERROR, (UINT32) Status, 0);
       }
     }
 
     if (Index >= TBT_TOTAL_ACCESSES_WHEN_WAIT_TO_RX) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvWaitForRxResponse: ERROR! Timeout waiting for any response packet from DMA\n"));
-      DEBUG ((DEBUG_ERROR, "Waited for %d us. Exiting...\n", TBT_TOTAL_TIME_TO_WAIT_FOR_RX_US));
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvWaitForRxResponse: The descriptor address - 0x%x, attributes - 0x%x\n", RxDescPtr, RxDescPtr->attributes));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_RX_WAIT_TIMEOUT, 0, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_RX_WAIT_TIMEOUT2, (UINT32) (TBT_TOTAL_TIME_TO_WAIT_FOR_RX_US), 0);
+      PtrAddr = (UINT32) (UINTN) RxDescPtr;
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_RX_DESCRIPT, PtrAddr, RxDescPtr->attributes);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
     ReceivedPdf = (UINT8)((RxDescPtr->attributes & DESC_ATTR_EOF_MASK) >> DESC_ATTR_EOF_SHIFT);
-    DEBUG ((
-      DEBUG_VERBOSE,
-      "DMA RX frame: pdf 0x%x cmd 0x%x msg_len 0x%x. Consumer index 0x%x\n",
-      ReceivedPdf,
-      *(((UINT32*)This->Impl->pSharedMem->rxBuf[ConsIndex] + 2)),
-      RxDescPtr->attributes & DESC_ATTR_LEN_MASK,
-      ConsIndex
-      ));
+    PtrAddr = (UINT32) (UINTN) ReceivedPdf;
+    Cmd = *(((UINT32*)This->Impl->pSharedMem->rxBuf[ConsIndex] + 2));
+    MsgLen = (UINT32)(RxDescPtr->attributes & DESC_ATTR_LEN_MASK);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_RX_FRAME_INFO, PtrAddr, Cmd);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_RX_FRAME_INFO2, MsgLen, ConsIndex);    
 
-    DEBUG ((DEBUG_VERBOSE, "After: RxDescPtr - 0x%x, attributes - 0x%x, data addr - 0x%x\n", RxDescPtr, RxDescPtr->attributes, RxDescPtr->Phys));
+    PtrAddr = (UINT32) (UINTN) RxDescPtr;
+    PhyHAddr = (UINT32) ((RxDescPtr->Phys) >> 32);
+    PhyLAddr = (UINT32) ((RxDescPtr->Phys) & 0xFFFFFFFF);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_RX_PTR_INFO_AFTER, PtrAddr, RxDescPtr->attributes);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_RX_PTR_INFO2, PhyHAddr, PhyLAddr);
 
     /* free the descriptors for more receive */
     if (ReceivedPdf != Pdf) {
@@ -200,7 +215,7 @@ TbtNvmDrvWaitForRxResponse (
   } while ((ReceivedPdf != Pdf) && (TotalRxPkts < MAX_PACKETS_TO_RX_WHILE_WAIT_FOR_RESP));
 
   if (TotalRxPkts >= MAX_PACKETS_TO_RX_WHILE_WAIT_FOR_RESP) {
-    DEBUG ((DEBUG_ERROR, "Timeout waiting for the response with given Pdf 0x%x. Exiting...\n", Pdf));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_RX_RESP_WAIT_TIMEOUT, (UINT32) Pdf, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
   *ConsPtr = ConsIndex;
@@ -270,8 +285,8 @@ TbtNvmDrvRxCfgPkt (
     return Status;
   }
   if (Length != NULL && Len != *Length) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRxCfgPkt: ERROR! The frame received has length other than expected\n"));
-    DEBUG ((DEBUG_ERROR, "                   Expected - 0x%x, Received - 0x%x\n", *Length, Len));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_RX_RECEIVED_ERROR, 0, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_RX_RECEIVED_EXP, (UINT32) *Length, (UINT32) Len);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
   if (Data != NULL) {
@@ -297,7 +312,7 @@ TbtNvmDrvDmaWriteMmio (
   IN UINT32  Data
   )
 {
-  DEBUG ((DEBUG_VERBOSE, "Write MMIO offset - 0x%x, wdata - 0x%x\n", RegOffset, Data));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_WRITE_MMIO, RegOffset, Data);
 
   This->Impl->PciIoProtoPtr->Mem.Write (
                                    This->Impl->PciIoProtoPtr,
@@ -334,7 +349,7 @@ TbtNvmDrvDmaReadMmio (
                                    &ReadVal
                                    );
 
-  DEBUG ((DEBUG_VERBOSE, "Read MMIO offset - 0x%x, rdata - 0x%x\n", RegOffset, ReadVal));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DMA_READ_MMIO, RegOffset, ReadVal);
   return ReadVal;
 }
 
@@ -345,26 +360,34 @@ TbtNvmDrvDmaDebugPrint (
 )
 {
   UINT32 Index;
+  UINT32 MmioAddr;
 
-  DEBUG ((DEBUG_INFO, "-------------------------------------------------------------------------\n"));
-  DEBUG ((DEBUG_INFO, "Printing the DMA internal state for debug:\n"));
-  DEBUG ((DEBUG_INFO, "ARC_DEBUG - 0x%x\n\n", TbtNvmDrvDmaReadMmio(This, TBT_ARC_DEBUG_REG_MMIO_OFFSET)));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_SYMBOL, 0, 0);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_STATE_PRINT, 0, 0);
+  MmioAddr = TbtNvmDrvDmaReadMmio(This, TBT_ARC_DEBUG_REG_MMIO_OFFSET);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_ARC_DEBUG, (UINT32) MmioAddr, 0);
+
   for (Index = 0; Index < 4; Index++) {
-    DEBUG ((DEBUG_INFO, "TX ring descriptor DW%d - 0x%x\n", Index, TbtNvmDrvDmaReadMmio(This, REG_TX_RING_BASE + Index*4)));
+    MmioAddr = TbtNvmDrvDmaReadMmio(This, REG_TX_RING_BASE + Index*4);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_TX_RING, Index, MmioAddr);
   }
-  DEBUG ((DEBUG_INFO, "\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_NEWLINE, 0, 0);
   for (Index = 0; Index < 5; Index++) {
-    DEBUG ((DEBUG_INFO, "TX ring table DW%d - 0x%x\n", Index, TbtNvmDrvDmaReadMmio(This, REG_TX_OPTIONS_BASE + Index*4)));
+    MmioAddr = TbtNvmDrvDmaReadMmio(This, REG_TX_OPTIONS_BASE + Index*4);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_TX_RING_TABLE, Index, MmioAddr);
   }
-  DEBUG ((DEBUG_INFO, "\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_NEWLINE, 0, 0);
   for (Index = 0; Index < 4; Index++) {
-    DEBUG ((DEBUG_INFO, "RX ring descriptor DW%d - 0x%x\n", Index, TbtNvmDrvDmaReadMmio(This, REG_RX_RING_BASE + Index*4)));
+    MmioAddr = TbtNvmDrvDmaReadMmio(This, REG_TX_OPTIONS_BASE + Index*4);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_RX_RING, Index, MmioAddr);
   }
-  DEBUG ((DEBUG_INFO, "\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_NEWLINE, 0, 0);
   for (Index = 0; Index < 5; Index++) {
-    DEBUG ((DEBUG_INFO, "RX ring table DW%d - 0x%x\n", Index, TbtNvmDrvDmaReadMmio(This, REG_RX_OPTIONS_BASE + Index*4)));
+    MmioAddr = TbtNvmDrvDmaReadMmio(This, REG_RX_OPTIONS_BASE + Index*4);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_RX_RING_TABLE, Index, MmioAddr);
   }
-  DEBUG ((DEBUG_INFO, "\n"));
+
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_NEWLINE, 0, 0);
 }
 
 /**
@@ -381,7 +404,7 @@ TbtNvmDrvDmaDtor(
 {
   UINT32 Data;
 
-  DEBUG ((DEBUG_INFO, "TbtNvmDrvDmaDtor is called.\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_DTOR, 0, 0);
 
   // Release RX ring
   Data = This->ReadMmio (This, REG_RX_OPTIONS_BASE);
@@ -431,7 +454,8 @@ TbtNvmDrvDmaCtor (
 
   DmaImplPtr = TbtNvmDrvAllocateMem (sizeof(TBT_DMA_IMPL));
   if (!DmaImplPtr) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvDmaCtor: AllocateRuntimeZeroPool failed, Status = %r\n", EFI_OUT_OF_RESOURCES));
+    Status = EFI_OUT_OF_RESOURCES;
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_CTOR_ALLOCATE_MEM_FAIL, (UINT32) Status, 0);
     return NULL;
   }
   DmaImplPtr->PciIoProtoPtr = PciIoProto;
@@ -445,7 +469,7 @@ TbtNvmDrvDmaCtor (
                                         0
                                         );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvDmaCtor: AllocateBuffer failed, Status = %r\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_CTOR_ALLOCATE_BUF_FAIL, (UINT32) Status, 0);
     goto free_dma_impl;
   }
   // Map the memory to the physical location
@@ -488,7 +512,7 @@ TbtNvmDrvDmaCtor (
         }
       }
     } else {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDmaCtor: Map failed, Status=%r\n", Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_CTOR_MAP_FAIL, (UINT32) Status, 0);
       goto free_shared_mem;
     }
   }
@@ -496,14 +520,15 @@ TbtNvmDrvDmaCtor (
   // Check the mapping is done fully
   if (NumBytes != sizeof (*DmaImplPtr->pSharedMem)) {
     Status = EFI_OUT_OF_RESOURCES;
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvDmaCtor: Map returned %u bytes, Status=%r\n", NumBytes, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_CTOR_MAP_RETURN, (UINT32) NumBytes, (UINT32) Status);
     goto unmap;
   }
 
   // Initialize the DMA public object
   DmaPtr = TbtNvmDrvAllocateMem (sizeof(TBT_DMA));
   if (!DmaPtr) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvDmaCtor: AllocateRuntimeZeroPool failed, Status=%r\n", EFI_OUT_OF_RESOURCES));
+    Status = EFI_OUT_OF_RESOURCES;
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_DMA_CTOR_INIT_MEM_FAIL, (UINT32) Status, 0);
     goto unmap;
   }
   DmaPtr->Impl                    = DmaImplPtr;

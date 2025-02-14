@@ -1,9 +1,9 @@
 /** @file
-  USBC Capsule Log Event and Log String Definitions
+  CAPSULE Log Event and Log String Definitions
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2023 Intel Corporation.
+  Copyright (C) 2024 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -19,13 +19,17 @@
 @par Specification Reference:
 **/
 
-#ifndef _USBC_CAPSULE_EVENTS_H_
-#define _USBC_CAPSULE_EVENTS_H_
+#ifndef _CAPSULE_LOG_MAPPING_ENTRY_H_
+#define _CAPSULE_LOG_MAPPING_ENTRY_H_
 
-#include <Uefi.h>
-#include "UsbCCapsuleLogEventsId.h"
-#include "FmpDeviceLibUsbCRetimerLog.h"
-#include "FmpDeviceLibDiscreteTbtLog.h"
-#include "TbtRetimerNvmUpdateLibLog.h"
+///
+/// Define the structure of string mapping
+///   EvtCode - (EvtId << 2) | (argument number:2 bits)
+///   LogStr  - return the corresponding message by EvtCode
+///
+typedef struct {
+  UINT32  EvtCode;
+  CHAR8*  LogStr;
+} CAPSULE_LOG_MAPPING_ENTRY;
 
 #endif

@@ -62,7 +62,6 @@
   PciLib
   PcdLib
   HobLib
-  Usb4DebugLib
   UsbcCapsuleDebugLib
 
 [Pcd]

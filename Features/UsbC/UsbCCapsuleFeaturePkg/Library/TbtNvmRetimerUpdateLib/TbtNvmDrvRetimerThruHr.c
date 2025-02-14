@@ -62,7 +62,7 @@ WriteIecs (
   UINT32            USB4CapRegWrite;
   UINTN             RetryCnt;
 
-  DEBUG ((DEBUG_ERROR, "WriteIecs Length 0x%x\n", Length));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_WRITE_IECS_LENGTH, (UINT32) Length, 0);
 
   if (Length > TBT_IECS_MAILBOX_LEGTH_IN_DW || Length == 0 || This == NULL) {
     ASSERT (Length <= TBT_IECS_MAILBOX_LEGTH_IN_DW && Length > 0);
@@ -70,7 +70,7 @@ WriteIecs (
     return TBT_STATUS_INVALID_PARAM;
   }
 
-  DEBUG ((DEBUG_VERBOSE, "RetimerThruHr::WriteIecs: IECS reg num - 0x%x, Length - 0x%x\n", RegNum, Length));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBTCMD_WRITE_IECS_REG_NUM_LENGTH, (UINT32) RegNum, (UINT32) Length);
 
   RetimerPtr = (RETIMER_THRU_HR *)This->Impl;
 
@@ -83,8 +83,7 @@ WriteIecs (
                                 DataPtr
                                 );
   if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::WriteIecs: ERROR when writing the data, TbtStatus - %d. \
-                          Exiting...\n", TbtStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WRITE_IECS_DATA_ERROR, (UINT32) TbtStatus, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -97,8 +96,7 @@ WriteIecs (
                     | ((Length << 2) << TBT_USB4_PORT_CAPABILITY_LENGTH_OFFSET)
                     | RegNum;
 
-    DEBUG ((DEBUG_INFO, "TbtNvmDrvRetimerThruHrWriteIecs: Writing USB 4.0 reg, USB4CapRegWrite = 0x%08x\n",
-                          USB4CapRegWrite));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_WRITE_IECS_USB4_REG, USB4CapRegWrite, 0);
     TbtStatus = RetimerPtr->Hr->WriteCioDevReg (
                                   RetimerPtr->Hr,
                                   ADAPTER_CONFIG_SPACE,
@@ -108,29 +106,28 @@ WriteIecs (
                                   &USB4CapRegWrite
                                   );
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::WriteIecs: ERROR when writing the data, TbtStatus - %d. \
-                            Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WRITE_IECS_DATA_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
     TbtStatus = WaitForMsgOutTxDone (RetimerPtr, TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_1, 0);
     if (TbtStatus == TBT_STATUS_NON_RECOVERABLE_ERROR || TbtStatus == TBT_STATUS_SUCCESS) {
-       if (TbtStatus == TBT_STATUS_NON_RECOVERABLE_ERROR)
-       DEBUG ((DEBUG_ERROR, "RetimerThruHr::WriteIecs WaitForMsgOutTxDone::failed: \
-                             RegNum=%x, Data[0]=%x, Length=%d, TbtStatus - %d. \
-                             Exiting...\n", RegNum, *DataPtr, Length, TbtStatus));
+      if (TbtStatus == TBT_STATUS_NON_RECOVERABLE_ERROR) {
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WRITE_IECS_FAIL, 0, 0);
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WRITE_IECS_REGNUM_DATA, (UINT32) RegNum, *DataPtr);
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WRITE_IECS_LENGTH_STATUS, (UINT32) Length, (UINT32) TbtStatus);
+      }
       return TbtStatus;
     } else if (TbtStatus == TBT_STATUS_RETRY) {
-        DEBUG ((DEBUG_ERROR, "RetimerThruHr::WriteIecs TBT_STATUS_RETRY WaitForMsgOutTxDone::failed: \
-                              RegNum=%x, Data[0]=%x, Length=%d, TbtStatus - %d. \
-                              Exiting...\n", RegNum, *DataPtr, Length, TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WRITE_IECS_RETRY_FAIL, 0, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WRITE_IECS_REGNUM_DATA, (UINT32) RegNum, *DataPtr);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WRITE_IECS_LENGTH_STATUS, (UINT32) Length, (UINT32) TbtStatus);
     }
-    DEBUG ((DEBUG_ERROR, "RetimerThruHr::WriteIecs: RetryCnt=%d, Off=%x, Cmd=%x\n",
-           RetryCnt, TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_1, RegNum));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WRITE_IECS_RETRY_REG, (UINT32) RetryCnt, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WRITE_IECS_OFFSET_CMD, (UINT32) (TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_1), (UINT32) RegNum);
   }
 
   return TbtStatus;
-
 }
 
 /**
@@ -171,8 +168,7 @@ ReadIecs (
     return TBT_STATUS_INVALID_PARAM;
   }
 
-  DEBUG ((DEBUG_VERBOSE, "RetimerThruHr::ReadIecs: IECS reg num - 0x%x\n", RegNum));
-
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBTCMD_READ_IECS_REG, (UINT32) RegNum, 0);
   RetimerPtr = (RETIMER_THRU_HR *)This->Impl;
 
   USB4CapRegWrite = 0;
@@ -192,9 +188,7 @@ ReadIecs (
                                   &USB4CapRegWrite
                                   );
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR,
-              "RetimerThruHr::ReadIecs: ERROR when reading from IECS rdata, TbtStatus - %d. Exiting...\n",
-              TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_READ_IECS_DATA_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
@@ -204,14 +198,12 @@ ReadIecs (
     } else if (TbtStatus == TBT_STATUS_SUCCESS) {
       break;
     }
-    DEBUG ((DEBUG_ERROR, "RetimerThruHr::ReadIecs: RetryCnt=%d, Off=%x, RegNum=%x\n",
-            RetryCnt, TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_1, RegNum));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_READ_IECS_RETRYCNT, (UINT32) RetryCnt, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_READ_IECS_OFFSET_REG, (UINT32) (TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_1), (UINT32) RegNum);
   }
 
   if (TbtStatus != TBT_STATUS_SUCCESS) {
-    DEBUG ((DEBUG_ERROR,
-            "RetimerThruHr::ReadIecs: Read IECS operation failed after several retries, TbtStatus - %d. Exiting...\n",
-            TbtStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_READ_IECS_OPERATION_FAIL, (UINT32) TbtStatus, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -223,9 +215,7 @@ ReadIecs (
                                 DataPtr
                                 );
   if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR,
-            "RetimerThruHr::ReadIecs: ERROR when reading from IECS rdata, TbtStatus - %d. Exiting...\n",
-            TbtStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_READ_IECS_DATA_ERROR, (UINT32) TbtStatus, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -254,10 +244,11 @@ CapabilityParsing (
   UINT8             NoOfAttempts;
   UINT32            TimeDelay;
 
-  DEBUG ((DEBUG_INFO, "RetimerThruHr::CapabilityParsing.\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_CAPABILITY_PARSING, 0, 0);
+
   if (This == NULL) {
     ASSERT (This != NULL);
-    DEBUG ((DEBUG_ERROR, "RetimerThruHr::CapabilityParsing, NULL device provided.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_CAPABILITY_PARSING_DEV_NULL, 0, 0);
     return TBT_STATUS_INVALID_PARAM;
   }
 
@@ -267,7 +258,7 @@ CapabilityParsing (
   //WA for handling TBT controller responding after first read register attempt
   while (NoOfAttempts--) {
     RetimerPtr->Hr->ReadCioDevReg (RetimerPtr->Hr, DEVICE_CONFIG_SPACE, 0, 0x0, &Data);
-    DEBUG ((DEBUG_INFO, "RetimerThruHr::CapabilityParsing: Data read 0x%08x.\n", Data));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_CAPABILITY_PARSING_READ_DATA, Data, 0);
       Data = Data & 0xFFFF;
       if ((Data == 0x8086) || (Data == 0x8087)) {
         break;
@@ -283,9 +274,7 @@ CapabilityParsing (
                                 &Data
                                 );
   if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR,
-            "RetimerThruHr::CapabilityParsing: ERROR when reading from Adapter config space, TbtStatus - %d. \
-             Exiting...\n", TbtStatus ));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_CAPABILITY_PARSING_READ_ERROR, (UINT32) TbtStatus, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -293,10 +282,10 @@ CapabilityParsing (
   CapabilityID = 0x0;
   while (1) {
     NextCapability = ((UINT8)Data) & MASK (7, 0);
-    DEBUG ((DEBUG_INFO, "RetimerThruHr::CapabilityParsing: Read NextCapability = %x\n", NextCapability));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_CAPABILITY_PARSING_READ_NEXT, (UINT32) NextCapability, 0);
 
     if (NextCapability == 0x0) {
-      DEBUG ((DEBUG_ERROR, "RetimerThruHr::CapabilityParsing: ERROR, USB4 Port Capability was not found.\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_CAPABILITY_USB4_FOUND_ERROR, 0, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
@@ -308,22 +297,20 @@ CapabilityParsing (
                                   &Data
                                   );
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR,
-            "RetimerThruHr::CapabilityParsing: ERROR when reading from Adapter config space, TbtStatus - %d. \
-             Exiting...\n", TbtStatus ));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_CAPABILITY_PARSING_READ_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
     CapabilityID = (UINT8)(Data >> 8);
-    DEBUG ((DEBUG_INFO, "RetimerThruHr::CapabilityParsing: Capability ID = 0x%x.\n", CapabilityID));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_CAPABILITY_ID, (UINT32) CapabilityID, 0);
 
     if (CapabilityID == 0x6) {
-      DEBUG ((DEBUG_INFO, "RetimerThruHr::CapabilityParsing: USB4 Port Capability found at offset 0x%x.\n", NextCapability ));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_CAPABILITY_USB4_OFFSET, (UINT32) NextCapability, 0);
       TBT_USB4_PORT_CAPABILITY_OFFSET = (UINT16)NextCapability;
       return TBT_STATUS_SUCCESS;
     }
   }
-  DEBUG ((DEBUG_ERROR, "RetimerThruHr::CapabilityParsing, failed to parse capabilities.\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_CAPABILITY_PARSING_FAIL, 0, 0);
   return TBT_STATUS_NON_RECOVERABLE_ERROR;
 }
 
@@ -376,21 +363,19 @@ InitHW (
   RetimerPtr = (RETIMER_THRU_HR *)This->Impl;
 
   // Enumerate retimer on a path to the target retimer
-  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_TBTCMD_SEND_ENUM_CMD, 0, 0);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBTCMD_SEND_ENUM_CMD, 0, 0);
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_ENUM_CMD);
   Status = SendEnumCmd (RetimerPtr);
   if (TBT_STATUS_ERR (Status)) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_TBTCMD_SEND_ENUM_CMD_FAIL, (UINT32) Status, 0);
-    DEBUG ((DEBUG_ERROR, "InitRetimerHW: The Retimer could not perform ENUM, Status %d\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_ENUM_CMD_FAIL, (UINT32) Status, 0);
     return Status;
   }
 
-  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_TBTCMD_SEND_LSUP_CMD, 0, 0);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBTCMD_SEND_LSUP_CMD, 0, 0);
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_LSUP_CMD);
   Status = SendLsupCmdEn (RetimerPtr);
   if (TBT_STATUS_ERR (Status)) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_TBTCMD_SEND_LSUP_CMD_FAIL, (UINT32) Status, 0);
-    DEBUG ((DEBUG_ERROR, "InitRetimerHW: The Retimer could not perform LSUP, Status %d\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_LSUP_CMD_FAIL, (UINT32) Status, 0);
     return Status;
   }
 
@@ -425,12 +410,11 @@ TerminateHW (
   }
 
   RetimerPtr = (RETIMER_THRU_HR *)This->Impl;
-  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_TBTCMD_SEND_USUP_CMD, 0, 0);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBTCMD_SEND_USUP_CMD, 0, 0);
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_USUP_CMD);
   Status = SendLsupCmdDis (RetimerPtr);
   if (TBT_STATUS_ERR (Status)) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_TBTCMD_SEND_USUP_CMD_FAIL, (UINT32) Status, 0);
-    DEBUG ((DEBUG_ERROR, "TerminateHW - Dtor Failed to send USUP to retimer.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_USUP_CMD_FAIL, 0, 0);
     return Status;
   }
   return TBT_STATUS_SUCCESS;
@@ -449,7 +433,7 @@ Dtor (
 {
   RETIMER_THRU_HR   *RetimerPtr;
 
-  DEBUG ((DEBUG_INFO, "TbtNvmDrvRetimerThruHr::Dtor was called.\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_DTOR_CALL, 0, 0);
 
   RetimerPtr = (RETIMER_THRU_HR *)This->Impl;
 
@@ -491,17 +475,17 @@ TbtNvmDrvRetimerThruHrCtor (
   // Create all the resources
   RetimerPtr = TbtNvmDrvAllocateMem (sizeof (RETIMER_THRU_HR));
   if (RetimerPtr == NULL) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHrCtor: Failed to allocate memory for RETIMER_THRU_HR\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_THRU_ALLOCATE_MEM_FAIL, 0, 0);
     return NULL;
   }
   CommunicationPtr = TbtNvmDrvAllocateMem (sizeof (TBT_RETIMER));
   if (CommunicationPtr == NULL) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHrCtor: Failed to allocate memory for DEVICE_COMMUNICATION_INTERFACE\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_DEV_ALLOCATE_MEM_FAIL, 0, 0);
     goto free_retimer;
   }
   HrPtr = TbtNvmDrvHrCtor (FirmwareType, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
   if (HrPtr == NULL) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHrCtor: Failed to create DMA\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_CREATE_DMA_FAIL, 0, 0);
     goto free_communication;
   }
 
@@ -526,8 +510,7 @@ TbtNvmDrvRetimerThruHrCtor (
 
   Status = CapabilityParsing (CommunicationPtr);
   if (TBT_STATUS_ERR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHrCtor: The retimer could not perform Capability Parsing, \
-                          Status %d. Exiting...\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_RT_CAPABILITY_PARSING_FAIL, (UINT32) Status, 0);
     goto free_hr;
   }
 

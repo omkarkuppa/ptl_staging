@@ -521,7 +521,7 @@ FmpDeviceCheckImageWithStatus (
   DiscreteTbtPayloadItem   = NULL;
 
   if (ImageUpdatable == NULL) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - ImageUpdatable Pointer Parameter is NULL.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_CHECKIMAGE_UPDATABLE_NULL, 0, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_IMAGE_TABLE_NOT_PROVIDED;
     return EFI_INVALID_PARAMETER;
   }
@@ -532,7 +532,7 @@ FmpDeviceCheckImageWithStatus (
   *ImageUpdatable = IMAGE_UPDATABLE_VALID;
 
   if (Image == NULL) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - Image Pointer Parameter is NULL.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_CHECKIMAGE_POINTER_NULL, 0, 0);
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_IMAGE_PARAMETER_IS_NULL;
     return EFI_INVALID_PARAMETER;
@@ -540,7 +540,7 @@ FmpDeviceCheckImageWithStatus (
 
   if ((ImageSize < sizeof (PAYLOAD_HEADER)) || \
       (*(UINT32 *)Image != DISCRETE_TBT_PAYLOAD_HEADER_SIGNATURE)) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - Discrete TBT payload signature is not detected.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_CHECKIMAGE_PAYLOAD_SIGNATURE_UNDETECTED, 0, 0);  
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_SIGNATURE_IS_NOT_DETECTED;
     return EFI_INVALID_PARAMETER;
@@ -549,21 +549,21 @@ FmpDeviceCheckImageWithStatus (
   DiscreteTbtPayloadHeader = (PAYLOAD_HEADER *) Image;
 
   if (DiscreteTbtPayloadHeader->PayloadCount == 0) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - DiscreteTbtCount in header is 0, nothing to update.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_CHECKIMAGE_PAYLOAD_HEADER_ZERO, 0, 0);
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_RETIMER_COUNT_HEADER_IS_ZERO;
     return EFI_INVALID_PARAMETER;
   }
 
   if (DiscreteTbtPayloadHeader->PayloadCount > 1) {
-    DEBUG ((DEBUG_ERROR, "Current BIOS only supports a single Discrete TBT update.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_CHECKIMAGE_PAYLOAD_COUNT_INVALID, 0, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_OVER_ONE_RETIMER_COUNT;
     return EFI_UNSUPPORTED;
   }
 
   if (ImageSize < (sizeof (PAYLOAD_HEADER) + \
       (DiscreteTbtPayloadHeader->PayloadCount * sizeof (DISCRETE_TBT_ITEM)))) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - DiscreteTbt payload size too small\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_CHECKIMAGE_PAYLOAD_SIZE_TOO_SMALL, 0, 0);
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_PAYLOAD_SIZE_TOO_SMALL;
     return EFI_INVALID_PARAMETER;
@@ -573,7 +573,7 @@ FmpDeviceCheckImageWithStatus (
 
   for (Index = 0; Index < DiscreteTbtPayloadHeader->PayloadCount; Index++, DiscreteTbtPayloadItem++) {
     if ((DiscreteTbtPayloadItem->ImageOffset + DiscreteTbtPayloadItem->ImageSize) > ImageSize) {
-      DEBUG ((DEBUG_ERROR, "CheckImage - DiscreteTbtCount payload is out of bounds\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_CHECKIMAGE_PAYLOAD_OUT_BOUNDS, 0, 0);
       *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS;
       return EFI_INVALID_PARAMETER;
@@ -749,7 +749,7 @@ FmpDeviceSetImageWithStatus (
   UINTN                               FunctionNumber;
   USBC_PROGRESS_CODE_PROTOCOL         *UsbCProgressCodeProtocol;
 
-  DEBUG ((DEBUG_INFO, "%a (Discrete TBT) - Start\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DTBT_FMP_UPDATE_START, 0, 0);
 
   if (Image == NULL) {
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_IMAGE_NOT_PROVIDED;
@@ -757,7 +757,7 @@ FmpDeviceSetImageWithStatus (
   }
 
   if (Progress == NULL) {
-    DEBUG ((DEBUG_ERROR, "UsbC dTBT Capsule - Invalid progress callback\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_FMP_UPDATE_PROGRESS_NULL, 0, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_PROGRESS_CALLBACK_ERROR;
     return EFI_INVALID_PARAMETER;
   }
@@ -767,11 +767,10 @@ FmpDeviceSetImageWithStatus (
   //
   Status = Progress (5);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbC dTBT Capsule - Progress Callback failed with Status %r.\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_FMP_UPDATE_PROGRESS_FAIL, (UINT32) Status, 0);
   }
 
-
-  DEBUG ((DEBUG_INFO, "UsbC dTBT Capsule - Update Start\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DTBT_FMP_UPDATE_DTBT_START, 0, 0);
 
   //
   // Locate UsbC Capsule Debug Progress Code Protocol
@@ -794,15 +793,14 @@ FmpDeviceSetImageWithStatus (
   //
   for (Index = 0; Index < DiscreteTbtPayloadHeader->PayloadCount; Index++, DiscreteTbtPayloadItem++) {
     if ((DiscreteTbtPayloadItem->ImageOffset + DiscreteTbtPayloadItem->ImageSize) > ImageSize) {
-      DEBUG ((DEBUG_ERROR, "UsbC dTBT Capsule - Payload is out of bounds\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_PAYLOAD_OUT_BOUNDS, 0, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS_2;
       return EFI_INVALID_PARAMETER;
     }
 
-    DEBUG ((DEBUG_INFO, "UsbC dTBT Capsule - Update DiscreteTbt (%d/%d).\n", Index + 1, DiscreteTbtPayloadHeader->PayloadCount));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_DTBT_CAPSULE_EVT_CODE_DTBT_UPDATE_START, (UINT32) Index, (UINT32) DiscreteTbtPayloadHeader->PayloadCount);
-    DEBUG ((DEBUG_INFO, "UsbC dTBT Capsule - ImageOffset=0x%x, size=0x%x\n", DiscreteTbtPayloadItem->ImageOffset, DiscreteTbtPayloadItem->ImageSize));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_DTBT_CAPSULE_EVT_CODE_DTBT_UPDATE_INFO, (UINT32) Index, (UINT32) DiscreteTbtPayloadHeader->PayloadCount);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DTBT_UPDATE, (UINT32) (Index + 1), DiscreteTbtPayloadHeader->PayloadCount);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DTBT_PAYLOAD_OFFSET_SIZE, DiscreteTbtPayloadItem->ImageOffset, DiscreteTbtPayloadItem->ImageSize);
+
     if (DiscreteTbtPayloadItem->FirmwareType == DISCRETE_TBT) {
       DeviceHandleBuffer = NULL;
       //
@@ -820,7 +818,7 @@ FmpDeviceSetImageWithStatus (
         gBS->FreePool (DeviceHandleBuffer);
         return Status;
       } else if (Status != EFI_NOT_FOUND) {
-        DEBUG ((DEBUG_INFO, "UsbC dTBT Capsule - DisconnectController gEfiUsb2HcProtocolGuid\n"));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DTBT_DISCONNECT_CONTROLLER, 0, 0);
         //
         // Disconnect the driver from all the devices in the handle database.
         // This for avoid Chip Hardware Reset wait until the Controller Not Ready (CNR) flag
@@ -854,15 +852,9 @@ FmpDeviceSetImageWithStatus (
           gBS->FreePool (DeviceHandleBuffer);
         }
       }
-      DEBUG ((
-        DEBUG_INFO,
-        "UsbC dTBT Capsule - Discrete TBT's Pcie root port type value %x, root port number %d\n",
-        DiscreteTbtPayloadItem->PcieRpType,
-        DiscreteTbtPayloadItem->PcieRootPort
-        ));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DTBT_PCIE_TYPE_RP, DiscreteTbtPayloadItem->PcieRpType, DiscreteTbtPayloadItem->PcieRootPort);
     } else {
-      DEBUG ((DEBUG_ERROR, "UsbC dTBT Capsule - Update failed on un-support FirmwareType value %d\n",
-        DiscreteTbtPayloadItem->FirmwareType));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_FIRMWARETYPE_ERROR, DiscreteTbtPayloadItem->FirmwareType, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_UNSUPPORT_FIRMWARE_TYPE;
       continue;
     }
@@ -871,7 +863,7 @@ FmpDeviceSetImageWithStatus (
     // Initialize Discrete TBT device
     //
     DiscreteTbtDevice = NULL;
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_DTBT_CAPSULE_EVT_CODE_CREATE_DTBT_DEV_INST, 0, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_DTBT_CREATE_DEV_INST, 0, 0);
     UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_DTBT_CAPSULE_CREATE_DEV_INST);
     Status = CreateTBTDevInstance (
                DiscreteTbtPayloadItem->FirmwareType,
@@ -879,13 +871,12 @@ FmpDeviceSetImageWithStatus (
                DiscreteTbtPayloadItem->PcieRootPort,
                &DiscreteTbtDevice);
     if (EFI_ERROR (Status) || (DiscreteTbtDevice == NULL)) {
-      DEBUG ((DEBUG_ERROR, "UsbC dTBT Capsule - Initialization failed (%r) at image index %d\n", Status, Index));
-      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_DTBT_CAPSULE_EVT_CODE_CREATE_DTBT_DEV_INST_FAIL_STATUS, (UINT32) Status, (UINT32) Index);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_INITIALIZE_FAIL, (UINT32) Status, (UINT32) Index);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_INITIALIZATION_FAILED;
       continue;
     }
 
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_DTBT_CAPSULE_EVT_CODE_UPDATE_DTBT_NVM_FW, 0, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_DTBT_UPDATE_NVM_FW, 0, 0);
     UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_DTBT_CAPSULE_UPDATE_NVM_FW);
     Status = UpdateDiscreteTbtNvmFirmware (
                DiscreteTbtDevice,
@@ -902,14 +893,13 @@ FmpDeviceSetImageWithStatus (
     DestroyTbtDevInstance (DiscreteTbtDevice);
 
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UsbC dTBT Capsule - Update failed (%r) at image index %d\n", Status, Index));
-      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_DTBT_CAPSULE_EVT_CODE_UPDATE_DTBT_NVM_FW_FAIL_STATUS, (UINT32) Status, (UINT32) Index);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_INSTANCE_UPDATE_FAIL, (UINT32) Status, (UINT32) Index);
     }
   }
 
   Progress (100);
 
-  DEBUG ((DEBUG_INFO, "%a (Discrete TBT) - End\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DTBT_FMP_UPDATE_END, 0, 0);
   if (EFI_ERROR (Status)) {
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_UPDATE_FAILED;
   }
@@ -937,6 +927,6 @@ FmpDeviceLock (
   VOID
   )
 {
-  DEBUG ((DEBUG_INFO, "FmpDeviceLib(Discrete TBT): FmpDeviceLock() for system FLASH\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_DTBT_FMP_DEVICE_LOCK, 0, 0);
   return EFI_UNSUPPORTED;
 }

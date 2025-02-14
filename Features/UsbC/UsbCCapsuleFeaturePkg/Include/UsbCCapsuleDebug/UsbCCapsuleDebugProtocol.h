@@ -22,7 +22,7 @@
 #ifndef _EFI_USBC_CAPSULE_DEBUG_PROTOCOL_H_
 #define _EFI_USBC_CAPSULE_DEBUG_PROTOCOL_H_
 
-#include <Usb4Debug/Usb4DebugProtocol.h>
+#include <CapsuleDebugProtocol.h>
 ///
 /// Global ID for the EFI_USBC_CAPSULE_DEBUG_PROTOCOL
 ///

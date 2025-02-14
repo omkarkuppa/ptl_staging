@@ -374,7 +374,7 @@ FmpDeviceGetVersion (
                   &UsbCRetimerSetup
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to get UsbCRetimer variable with return Status = (%r).\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_GETVERSION_FAIL_GET_SETUP_VARIABLE, (UINT32) Status, 0);
     return EFI_UNSUPPORTED;
   }
   *Version = UsbCRetimerSetup.UsbCRetimer0Version;
@@ -539,7 +539,7 @@ FmpDeviceCheckImageWithStatus (
   RetimerPayloadItem   = NULL;
 
   if (ImageUpdatable == NULL) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - ImageUpdatable Pointer Parameter is NULL.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CHECKIMAGE_UPDATABLE_NULL, 0, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_IMAGE_TABLE_NOT_PROVIDED;
     return EFI_INVALID_PARAMETER;
   }
@@ -550,7 +550,7 @@ FmpDeviceCheckImageWithStatus (
   *ImageUpdatable = IMAGE_UPDATABLE_VALID;
 
   if (Image == NULL) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - Image Pointer Parameter is NULL.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CHECKIMAGE_POINTER_NULL, 0, 0);
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_IMAGE_PARAMETER_IS_NULL;
     return EFI_INVALID_PARAMETER;
@@ -558,7 +558,7 @@ FmpDeviceCheckImageWithStatus (
 
   if ((ImageSize < sizeof (PAYLOAD_HEADER)) || \
       (*(UINT32 *)Image != RETIMER_PAYLOAD_HEADER_SIGNATURE)) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - Retimer payload signature is not detected.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CHECKIMAGE_PAYLOAD_SIGNATURE_NOT_DETECTED , 0, 0);
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_SIGNATURE_IS_NOT_DETECTED;
     return EFI_INVALID_PARAMETER;
@@ -567,7 +567,7 @@ FmpDeviceCheckImageWithStatus (
   RetimerPayloadHeader = (PAYLOAD_HEADER *) Image;
 
   if (RetimerPayloadHeader->PayloadCount == 0) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - RetimerCount in header is 0, nothing to update.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CHECKIMAGE_PAYLOAD_HEADER_ZERO , 0, 0);
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_RETIMER_COUNT_HEADER_IS_ZERO;
     return EFI_INVALID_PARAMETER;
@@ -575,7 +575,7 @@ FmpDeviceCheckImageWithStatus (
 
   if (ImageSize < (sizeof (PAYLOAD_HEADER) + \
       (RetimerPayloadHeader->PayloadCount * sizeof (RETIMER_ITEM)))) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - Retimer payload size too small\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CHECKIMAGE_PAYLOAD_SIZE_TOO_SMALL , 0, 0);
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_PAYLOAD_SIZE_TOO_SMALL;
     return EFI_INVALID_PARAMETER;
@@ -585,7 +585,7 @@ FmpDeviceCheckImageWithStatus (
 
   for (Index = 0; Index < RetimerPayloadHeader->PayloadCount; Index++, RetimerPayloadItem++) {
     if ((RetimerPayloadItem->ImageOffset + RetimerPayloadItem->ImageSize) > ImageSize) {
-      DEBUG ((DEBUG_ERROR, "CheckImage - Retimer payload is out of bounds\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CHECKIMAGE_PAYLOAD_OUT_BOUNDS , 0, 0);
       *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS;
       return EFI_INVALID_PARAMETER;
@@ -646,48 +646,35 @@ ConstructRetimerInstances (
   RetimerPayloadHeader = (PAYLOAD_HEADER *) Image;
   RetimerPayloadItem = (RETIMER_ITEM *) (RetimerPayloadHeader + 1);
 
-  DEBUG ((DEBUG_INFO, "Total of Retimer Payload = %d\n", RetimerPayloadHeader->PayloadCount));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_CONSTRUCT_INSTANCE_TOTAL_PAYLOAD, RetimerPayloadHeader->PayloadCount, 0);
 
   //
   // Start to Construct Retimer Instances
   //
   for (Index = 0; Index < RetimerPayloadHeader->PayloadCount; Index++, RetimerPayloadItem++) {
     if (*RetimerDeviceInstancesCount >= MAX_RETIMER_INSTANCES) {
-      DEBUG ((DEBUG_ERROR, "MAX_RETIMER_INSTANCES(%d) too small\n", MAX_RETIMER_INSTANCES));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CONSTRUCT_INSTANCE_MAX_INSTANCE_TOO_SMALL, (UINT32) MAX_RETIMER_INSTANCES, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_TOO_FEW_RETIMER_INSTANCES;
       Status = EFI_INVALID_PARAMETER;
       return Status;
     }
 
     if ((RetimerPayloadItem->ImageOffset + RetimerPayloadItem->ImageSize) > ImageSize) {
-      DEBUG ((DEBUG_ERROR, "Retimer payload is out of bounds\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CHECKIMAGE_PAYLOAD_OUT_BOUNDS , 0, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS_2;
       Status = EFI_INVALID_PARAMETER;
       return Status;
     }
 
     if (RetimerPayloadItem->FirmwareType == INTEGRATED_TBT_RETIMER) {
-      DEBUG ((
-        DEBUG_INFO,
-        "PayLoad - Integrated TBT retimer address B%d D%d F%d, Tbt Port %d, Retimer Index %d\n",
-        RetimerPayloadItem->RetimerDevAddress.Bus,
-        RetimerPayloadItem->RetimerDevAddress.Device,
-        RetimerPayloadItem->RetimerDevAddress.Function,
-        RetimerPayloadItem->RetimerDevAddress.Port,
-        RetimerPayloadItem->RetimerDevAddress.CascadedRetimerIndex
-        ));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_CONSTRUCT_INSTANCE_ADDRESS_BUS_DEVICE, (UINT32) RetimerPayloadItem->RetimerDevAddress.Bus, (UINT32) RetimerPayloadItem->RetimerDevAddress.Device);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_CONSTRUCT_INSTANCE_ADDRESS_FUNC, (UINT32) RetimerPayloadItem->RetimerDevAddress.Function, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_CONSTRUCT_INSTANCE_ADDRESS_PORT_INDEX, (UINT32) RetimerPayloadItem->RetimerDevAddress.Port, (UINT32) RetimerPayloadItem->RetimerDevAddress.CascadedRetimerIndex);
     } else if (RetimerPayloadItem->FirmwareType == DISCRETE_TBT_RETIMER) {
-      DEBUG ((
-        DEBUG_INFO,
-        "PayLoad - Discrete TBT retimer's Pcie root port type value %x, root port number %d, TBT Port %d, Retimer Index %d\n",
-        RetimerPayloadItem->PcieRpType,
-        RetimerPayloadItem->PcieRootPort,
-        RetimerPayloadItem->RetimerDevAddress.Port,
-        RetimerPayloadItem->RetimerDevAddress.CascadedRetimerIndex
-        ));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_CONSTRUCT_INSTANCE_PCIE_TYPE_RP, (UINT32) RetimerPayloadItem->PcieRpType, (UINT32) RetimerPayloadItem->PcieRootPort);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_CONSTRUCT_INSTANCE_ADDRESS_PORT_INDEX, (UINT32) RetimerPayloadItem->RetimerDevAddress.Port, (UINT32) RetimerPayloadItem->RetimerDevAddress.CascadedRetimerIndex);
     } else {
-      DEBUG ((DEBUG_ERROR, "PayLoad - Update failed on Un-Support FirmwareType value %d\n",
-        RetimerPayloadItem->FirmwareType));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CONSTRUCT_INSTANCE_FIRMWARETYPE_ERROR, (UINT32) RetimerPayloadItem->FirmwareType, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_UNSUPPORT_FIRMWARE_TYPE;
       continue;
     }
@@ -703,9 +690,9 @@ ConstructRetimerInstances (
                &RetimerPayloadItem->RetimerDevAddress,
                &RetimerDevice);
     if (EFI_ERROR (Status) || (RetimerDevice == NULL)) {
-      DEBUG ((DEBUG_ERROR, "CreateRetimerDevInstance failed (%r) at instance index %d\n", Status, Index));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CONSTRUCT_INSTANCE_CREATE_RETIMER_FAIL, (UINT32) Status, (UINT32) Index);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_INITIALIZATION_FAILED;
-      return Status;
+      continue;
     }
     //
     // Add to Retimer list
@@ -724,7 +711,7 @@ ConstructRetimerInstances (
              HrDeviceInstancesCount
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "CreateHrDevInstance failed (%r) at Host Router instance index %d\n", Status, Index));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CONSTRUCT_INSTANCE_CREATE_HR_FAIL, (UINT32) Status, (UINT32) Index);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_INITIALIZATION_FAILED;
     return Status;
   }
@@ -902,7 +889,7 @@ FmpDeviceSetImageWithStatus (
   USBC_PROGRESS_CODE_PROTOCOL         *UsbCProgressCodeProtocol;
   UINTN                               WaitForRetimerReadyToUpdate;
 
-  DEBUG ((DEBUG_INFO, "%a (UsbC Retimer) - Start\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_START, 0, 0);
 
   if (Image == NULL) {
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_IMAGE_NOT_PROVIDED;
@@ -910,7 +897,7 @@ FmpDeviceSetImageWithStatus (
   }
 
   if (Progress == NULL) {
-    DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Invalid progress callback\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_PROGRESS_NULL, 0, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_PROGRESS_CALLBACK_ERROR;
     return EFI_INVALID_PARAMETER;
   }
@@ -920,7 +907,7 @@ FmpDeviceSetImageWithStatus (
   //
   Status = Progress (5);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Progress Callback failed with Status %r.\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_PROGRESS_FAIL, (UINT32) Status, 0);
   }
 
   //
@@ -928,7 +915,7 @@ FmpDeviceSetImageWithStatus (
   //
   Status = gBS->LocateProtocol (&gUsbCRetimerProtocolGuid, NULL, (VOID**) &UsbCRetimerProtocol);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Failed to locate UsbCRetimerProtocol (%r).\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_LOCATE_USBCRETIMER_PROTOCOL_FAIL, (UINT32) Status, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_USBC_RETIMER_PROTOCOL_NOT_FOUND;
     return Status;
   }
@@ -938,7 +925,7 @@ FmpDeviceSetImageWithStatus (
   //
   Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProgressCodeProtocolGuid, NULL, (VOID**) &UsbCProgressCodeProtocol);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_LOCATE_USBCPROGRESS_PROTOCOL_FAIL, (UINT32) Status, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_USBC_PROGRESS_CODE_PROTOCOL_NOT_FOUND;
     return Status;
   }
@@ -958,7 +945,7 @@ FmpDeviceSetImageWithStatus (
              &HrDeviceInstancesCount
              );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Failed to ConstructRetimerInstances(%r). LastAttemptStatus(%d)\n", Status, *LastAttemptStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_CONSTRUCT_RETIMER_INSTANCE_FAILED, (UINT32) Status, (UINT32) *LastAttemptStatus);
     goto FreeInstances;
   }
 
@@ -986,7 +973,7 @@ FmpDeviceSetImageWithStatus (
         *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_USB2HC_PROTOCOL_NOT_FOUND;
         goto ConnectHc;
       }
-      DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - DisconnectController gEfiUsb2HcProtocolGuid\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_DISCONNECT_CONTROLLER_START, 0, 0);
       //
       // Disconnect the driver from all the devices in the handle database.
       // This for avoid Chip Hardware Reset wait until the Controller Not Ready (CNR) flag
@@ -994,7 +981,7 @@ FmpDeviceSetImageWithStatus (
       //
       if (DeviceHandleBuffer != NULL) {
         for (HandleIndex = 0; HandleIndex < DeviceHandleCount; HandleIndex++) {
-          DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - DisconnectController gEfiUsb2HcProtocolGuid HandleIndex %x\n", HandleIndex));
+          CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_DISCONNECT_CONTROLLER_HANDLEINDEX, (UINT32) HandleIndex, 0);
           gBS->DisconnectController (
                  (DeviceHandleBuffer)[HandleIndex],
                  NULL,
@@ -1012,13 +999,13 @@ FmpDeviceSetImageWithStatus (
   for (Index = 0; Index < HrDeviceInstancesCount; Index++) {
     Status = TbtSendOfflineMode (HrDeviceInstances[Index], OFFLINE_MODE_ENTRY);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - TbtSendOfflineMode failed (%r) on HR instance index %d\n", Status, Index));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_SEND_OFFLINEMODE_FAIL, (UINT32) Status, (UINT32) Index);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_SEND_OFFLINE_MODE_FAILED;
       goto OfflineModeExit;
     }
   }
 
-  DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - Drive all TBT ports to TBT mode...\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_DRIVE_TBTMODE_START, 0, 0);
 
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_PD_DRIVE);
   Status = DriveToFwUpdateMode (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
@@ -1026,7 +1013,7 @@ FmpDeviceSetImageWithStatus (
 
   if (EFI_ERROR (Status)) {
     if (Status != EFI_ALREADY_STARTED) {
-      DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Failed to drive ports to TBT mode (%r).\n", Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_DRIVE_TBTMODE_FAIL, (UINT32) Status, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_DRIVE_TBT_MODE_FAILED;
       goto RestorePdPowerMode;
     }
@@ -1034,7 +1021,7 @@ FmpDeviceSetImageWithStatus (
     //
     // Time delay for Retimer device ready.
     //
-    DEBUG ((DEBUG_INFO, "Time delay for Retimer device ready = %d(MicroSecond)\n", WaitForRetimerReadyToUpdate));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_WAIT_FOR_RETIMER_DEVICE, (UINT32) WaitForRetimerReadyToUpdate, 0);
     MicroSecondDelay (WaitForRetimerReadyToUpdate);
   }
 
@@ -1044,17 +1031,16 @@ FmpDeviceSetImageWithStatus (
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_RETIMER_FP_GPIO_ASSERT);
   if (UsbCRetimerProtocol->RetimerFP != NULL) {
     Status = UsbCRetimerProtocol->RetimerFP (RETIMER_FORCE_POWER_GPIO_HIGH);
-    DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - Assert Retimer ForcePower GPIO\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_ASSERT_RETIMER_FP_GPIO, 0, 0);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Failed to assert Retimer Force Power GPIO (%r).\n", Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_ID_FMP_UPDATE_ASSERT_RETIMER_FP_GPIO_FAILED, (UINT32) Status, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_ASSERT_RETIMER_FORCE_POWER_FAILED;
       goto DeAssertRetimerForcePowerGpio;
     }
   }
 
-  DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - Update TBT Retimer - Start\n"));
-
-  DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - Total of Retimer Payload = %d\n", RetimerPayloadHeader->PayloadCount));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_RETIMER_START, 0, 0);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_TOTAL_RETIMER_PAYLOAD, RetimerPayloadHeader->PayloadCount, 0);
 
   RetimerPayloadItem = (RETIMER_ITEM *) (RetimerPayloadHeader + 1);
   //
@@ -1062,19 +1048,18 @@ FmpDeviceSetImageWithStatus (
   //
   for (Index = 0; Index < RetimerPayloadHeader->PayloadCount && Index < RetimerDeviceInstancesCount; Index++, RetimerPayloadItem++) {
 
-    DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - Update Retimer Payload = %d\n", Index + 1));
-    CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_UPDATE_RETIMER_PAYLOAD, (UINT32) (Index + 1), 0);
-    DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - ImageOffset=0x%x, size=0x%x\n", RetimerPayloadItem->ImageOffset, RetimerPayloadItem->ImageSize));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_UPDATE_RETIMER_PAYLOAD, (UINT32) (Index + 1), 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_PAYLOAD_OFFSET_SIZE, RetimerPayloadItem->ImageOffset, RetimerPayloadItem->ImageSize);
     RetimerDevice = RetimerDeviceInstances[Index];
 
     Status = InitRetimerHW (RetimerDevice);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - InitRetimerHW Fail (%r)\n", Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_INIT_RETIMER_HW_FAIL, (UINT32) Status, 0);
       continue;
     }
 
     if ((RetimerPayloadItem->ImageOffset + RetimerPayloadItem->ImageSize) > ImageSize) {
-      DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Retimer payload is out of bounds\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_CHECKIMAGE_PAYLOAD_OUT_BOUNDS , 0, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS_2;
       Status = EFI_INVALID_PARAMETER;
       continue;
@@ -1092,7 +1077,8 @@ FmpDeviceSetImageWithStatus (
     if (!EFI_ERROR (Status)) {
       RetimerVersion = 0;
       Status = ReadRetimerNvmVersion (RetimerDevice, &RetimerVersion);
-      DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - Retimer version after the update is 0x%x (%r) at image index %d\n", RetimerVersion, Status, Index));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_NVM_VERSION, RetimerVersion, (UINT32) Status);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_NVM_VERSION1, (UINT32) Index, 0);
       if (!EFI_ERROR (Status)) {
         UpdateRetimerNvmInformation (
         RetimerPayloadItem->FirmwareType,
@@ -1108,7 +1094,7 @@ FmpDeviceSetImageWithStatus (
     //
     Status = TerminateRetimerHW (RetimerDeviceInstances[Index]);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - TerminateRetimerHW fail :%r\n", Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_TERMINATE_RETIMER_HW_FAIL, (UINT32) Status, 0);
     }
   }
 
@@ -1118,10 +1104,10 @@ DeAssertRetimerForcePowerGpio:
   //
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_RETIMER_FP_GPIO_DEASSERT);
   if (UsbCRetimerProtocol->RetimerFP != NULL) {
-    DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - De-assert Retimer ForcePower GPIO\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_DEASSERT_RETIMER_FP_GPIO, 0, 0);
     Status = UsbCRetimerProtocol->RetimerFP (RETIMER_FORCE_POWER_GPIO_LOW);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Failed to de-assert Retimer Force Power GPIO (%r).\n", Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_DEASSERT_RETIMER_FP_GPIO_FAILED, (UINT32) Status, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_DEASSERT_RETIMER_FORCE_POWER_FAILED;
     }
   }
@@ -1132,7 +1118,7 @@ RestorePdPowerMode:
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_RETIMER_CAPSULE_PD_RESTORE);
   RestoreStatus = RestoreToOriginalMode (UsbCRetimerProtocol, gAllTbtRetimerDeviceGuid);
   if (EFI_ERROR (RestoreStatus)) {
-    DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Restore to TBT ports to original mode (%r).\n", RestoreStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_RESTORE_TBTMODE_FAIL, (UINT32) RestoreStatus, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_RESTORE_ORIGINAL_MODE_FAILED;
   }
 
@@ -1144,14 +1130,14 @@ OfflineModeExit:
   for (Index = 0; Index < HrDeviceInstancesCount; Index++) {
     Status = TbtSendOfflineMode (HrDeviceInstances[Index], OFFLINE_MODE_EXIT);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - TbtSendOfflineMode failed (%r) on HR instance index %d\n", Status, Index));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_UPDATE_SEND_OFFLINEMODE_FAIL, (UINT32) Status, (UINT32) Index);
     }
   }
 
 ConnectHc:
 
   if (DeviceHandleBuffer != NULL) {
-    DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - ConnectController gEfiUsb2HcProtocolGuid\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_CONNECT_CONTROLLER_USB2HC, 0, 0);
     for (HandleIndex = 0; HandleIndex < DeviceHandleCount; HandleIndex++) {
       gBS->ConnectController (DeviceHandleBuffer[HandleIndex], NULL, NULL, TRUE);
     }
@@ -1164,13 +1150,13 @@ FreeInstances:
   // Free up resources
   //
   for (Index = 0; Index < RetimerDeviceInstancesCount; Index++) {
-    DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - DestroyRetimerDevInstance: Retimer Instance %x\n", Index));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_DESTORY_RETIMER_INSTANCE, (UINT32) Index, 0);
     DestroyRetimerDevInstance (RetimerDeviceInstances[Index]);
   }
 
   Progress (100);
 
-  DEBUG ((DEBUG_INFO, "%a (UsbC Retimer) - End\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_UPDATE_END, 0, 0);
   if (EFI_ERROR (Status)) {
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_UPDATE_FAILED;
   }
@@ -1198,6 +1184,6 @@ FmpDeviceLock (
   VOID
   )
 {
-  DEBUG ((DEBUG_INFO, "FmpDeviceLib(TBT Retimer): FmpDeviceLock() for system FLASH\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEVICE_LOCK, 0, 0);
   return EFI_UNSUPPORTED;
 }

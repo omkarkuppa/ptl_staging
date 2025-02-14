@@ -32,6 +32,9 @@
 #include <TbtNvmRetimer.h>
 #include <Library/TbtNvmDrvHr.h>
 #include <Library/Crc32c.h>
+#include <Library/UsbcCapsuleDebugLib.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 
 BOOLEAN   mTBTControllerWasPowered; // Check TBT controller power Status in CM mode
 
@@ -62,7 +65,7 @@ TbtNvmDrvHrSendDrvReady (
   Message.reqCode = SwapBytes32 (CC_DRV_READY);
   Status = CalCrc32c ((UINT8 *)&Message, OFFSET_OF (DRV_RDY_CMD, crc), &Crc32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrSendDrvReady: Failed to generate CRC from the data. Status - %d. Exiting...\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_GEN_CRC_FAIL, (UINT32) Status, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -70,17 +73,17 @@ TbtNvmDrvHrSendDrvReady (
   // Send the message
   TbtStatus = DmaPtr->TxCfgPkt (DmaPtr, PDF_SW_TO_FW_COMMAND, sizeof(Message), (UINT8 *)&Message);
   if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrSendDrvReady: The driver ready command failed. TbtStatus - %d. Exiting...\n", TbtStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_RDY_CMD_SEND_FAIL, (UINT32) TbtStatus, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
   // Make sure response is received
   TbtStatus = DmaPtr->RxCfgPkt (DmaPtr, PDF_FW_TO_SW_RESPONSE, NULL, NULL);
   if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrSendDrvReady: Didn't receive response for driver ready command. TbtStatus - %d. Exiting...\n", TbtStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_RDY_CMD_RECEIVE_FAIL, (UINT32) TbtStatus, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
-  DEBUG ((DEBUG_INFO, "TbtNvmDrvHrSendDrvReady: Sent successfully\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CMD_SUCCESS, 0, 0);
   return TBT_STATUS_SUCCESS;
 }
 
@@ -130,8 +133,10 @@ TbtNvmDrvHrWriteCioReg (
 
   DEBUG_CODE_BEGIN ();
 
-  DEBUG ((DEBUG_VERBOSE, "TbtNvmDrvHrWriteCioReg: ConfigurationSpace - %d, Adapter - %d, RegNum - 0x%x\n", ConfigurationSpace, Adapter, RegNum));
-  DEBUG ((DEBUG_VERBOSE, "TbtNvmDrvHrWriteCioReg: Length - 0x%x, Data - ", Length));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_WRITE_CIO_REG, (UINT32) ConfigurationSpace, 0);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_WRITE_CIO_CONFIG, (UINT32) Adapter, (UINT32) RegNum);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_WRITE_CIO_DATA, (UINT32) Length, *DataPtr);
+
   for (DataPtrIndex = 0; DataPtrIndex < Length; DataPtrIndex++) {
     DEBUG ((DEBUG_VERBOSE, "%x ", *(DataPtr + DataPtrIndex)));
   }
@@ -144,7 +149,7 @@ TbtNvmDrvHrWriteCioReg (
   if (mWriteDevReq == NULL) {  // If not allocated yet
     mWriteDevReq = TbtNvmDrvAllocateMem (sizeof(WRITE_CONFIGURATION_REGISTERS_REQUEST));
     if (mWriteDevReq == NULL) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrWriteCioReg: Couldn't allocate memory for write request struct. Exiting...\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_WRITE_ALLOCATE_MEM_ERROR, 0, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     // Initialize constant values for read request
@@ -163,14 +168,14 @@ TbtNvmDrvHrWriteCioReg (
   // Swap the data
   Len = OFFSET_OF (WRITE_CONFIGURATION_REGISTERS_REQUEST, WrData) + DataPtrIndex * 4; // Length in Byte without CRC
   if (Len > sizeof (WRITE_CONFIGURATION_REGISTERS_REQUEST)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrWriteCioReg: Avoid buffer overflow.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_AVOID_BUFFER, 0, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
   TbtNvmDrvSwapEndianess ((UINT32 *)mWriteDevReq, Len / 4, (UINT32 *)&mWriteReqSwapped);
   // Calculate CRC
   Status = CalCrc32c ((UINT8 *)&mWriteReqSwapped, Len, &Crc32);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR,"TbtNvmDrvHrWriteCioReg: Failed to generate CRC from the data. Status - %d. Exiting...\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_WRITE_CIO_GEN_CRC_FAIL, (UINT32) Status, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -183,7 +188,7 @@ TbtNvmDrvHrWriteCioReg (
                                   (UINT8 *)&mWriteReqSwapped
                                   );
   if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrWriteCioReg: Couldn't transmit DMA frame to write to reg - 0x%x, length - 0x%x. Exiting...\n", RegNum, Length));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_TRANSMIT_DMA_ERROR, (UINT32) RegNum, (UINT32) Length);
     goto error_while_writing;
   }
   ExpectedLength = (UINT16)sizeof(WRITE_CONFIGURATION_REGISTERS_RESPONSE);
@@ -195,7 +200,7 @@ TbtNvmDrvHrWriteCioReg (
                                   NULL                                              // No data in the response
                                   );
   if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrReadCioDevReg: TbtNvmDrvHrWriteCioReg: Couldn't receive response while writing to reg - 0x%x, length - 0x%x. Exiting...\n", RegNum, Length));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_RECEIVE_ERROR, (UINT32) RegNum, (UINT32) Length);
     goto error_while_writing;
   }
 
@@ -250,12 +255,13 @@ TbtNvmDrvHrReadCioDevReg (
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
-  DEBUG ((DEBUG_VERBOSE, "TbtNvmDrvHrReadCioDevReg: ConfigurationSpace - %d, Adapter - %d, RegNum - 0x%x\n", ConfigurationSpace, Adapter, RegNum));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_READ_CIO_CONFIG, (UINT32) ConfigurationSpace, 0);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_READ_CIO_CONFIG2, (UINT32) Adapter, (UINT32) RegNum);
 
   if (mReadDevReq == NULL) {  // If not allocated yet
     mReadDevReq = TbtNvmDrvAllocateMem (sizeof(READ_CONFIGURATION_REGISTERS_REQUEST));
     if (mReadDevReq == NULL) {
-      DEBUG ((DEBUG_ERROR, "Couldn't allocate memory for read request struct\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_READ_CIO_ALLOCATE_MEM_ERROR, 0, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     // Initialize constant values for read request
@@ -269,14 +275,14 @@ TbtNvmDrvHrReadCioDevReg (
   // Swap the data
   Len = (UINT32) ((UINTN) &(mReadReqSwapped.Crc) - (UINTN) &mReadReqSwapped);
   if (Len > sizeof(READ_CONFIGURATION_REGISTERS_REQUEST)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrWriteCioReg: Avoid buffer overflow.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_READ_AVOID_BUFFER, 0, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
   TbtNvmDrvSwapEndianess ((UINT32 *)mReadDevReq, Len / 4, (UINT32 *)&mReadReqSwapped);
   // Calculate CRC
   Status = CalCrc32c ((UINT8 *)&mReadReqSwapped, Len, &Crc32);
   if (TBT_STATUS_ERR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrWriteCioReg: Failed to generate CRC from the data. Status - %d. Exiting...\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_READ_CIO_GEN_CRC_FAIL, (UINT32) Status, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
   mReadReqSwapped.Crc = SwapBytes32 (Crc32);
@@ -288,7 +294,7 @@ TbtNvmDrvHrReadCioDevReg (
                                (UINT8 *)&mReadReqSwapped
                                );
   if (TBT_STATUS_ERR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrReadCioDevReg: Couldn't transmit DMA frame to read from reg - 0x%x. Exiting...\n", RegNum));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_READ_CIO_TRANSMIT_DMA_FAIL, (UINT32) RegNum, 0);
     goto error_while_reading;
   }
   ExpectedLength = (UINT16)OFFSET_OF (READ_CONFIGURATION_REGISTERS_RESPONSE, Crc) + 4;
@@ -300,7 +306,7 @@ TbtNvmDrvHrReadCioDevReg (
                                (UINT8 *)&mReadReqResponse
                                );
   if (TBT_STATUS_ERR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrReadCioDevReg: Couldn't receive response while reading from reg - 0x%x. Exiting...\n", RegNum));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_READ_CIO_RECEIVE_REG_FAIL, (UINT32) RegNum, 0);
     goto error_while_reading;
   }
 
@@ -308,7 +314,7 @@ TbtNvmDrvHrReadCioDevReg (
   ReadData = mReadReqResponse.ReadData;
   ReadData = SwapBytes32 (ReadData);
   *DataPtr = ReadData;
-  DEBUG ((DEBUG_VERBOSE, "Read data is - 0x%x\n", ReadData));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_READ_CIO_READ_DATA, ReadData, 0);
 
   return TBT_STATUS_SUCCESS;
 
@@ -340,6 +346,7 @@ GetTbtHostRouterList (
 {
   UINT32            Index;
   TBT_HOST_ROUTER*  TbtHostInfo;
+  UINT32            PtrAddr;
 
   for (Index = 0; Index < TbtHostRoutersCount; ++Index) {
     TbtHostInfo = TbtHostRouters[Index];
@@ -365,9 +372,14 @@ GetTbtHostRouterList (
         continue;
       }
 
-    DEBUG ((DEBUG_INFO, "GetTbtHostRouterList: FirmwareType=%d ForcePwrFunc=%p, B%d D%d F%d PcieRpType=%d PcieRootPort=%d ret=%p RefCount=%d\n",
-    FirmwareType, ForcePwrFunc, TbtHostInfo->TbtDmaPcieBdf.Bus, TbtHostInfo->TbtDmaPcieBdf.Device, TbtHostInfo->TbtDmaPcieBdf.Function,
-    TbtHostInfo->PcieRpConfig.PcieRpType, TbtHostInfo->PcieRpConfig.PcieRootPort, TbtHostInfo, TbtHostInfo->RefCount));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_GET_HOST_ROUTER_LIST, 0, 0);
+    PtrAddr = (UINT32) (UINTN) ForcePwrFunc;
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO, (UINT32) FirmwareType, PtrAddr);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO2, (UINT32) TbtHostInfo->TbtDmaPcieBdf.Bus, (UINT32) TbtHostInfo->TbtDmaPcieBdf.Device);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO3, (UINT32) TbtHostInfo->TbtDmaPcieBdf.Function, (UINT32) TbtHostInfo->PcieRpConfig.PcieRpType);
+    PtrAddr = (UINT32) (UINTN) TbtHostInfo;
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO4, (UINT32) TbtHostInfo->PcieRpConfig.PcieRootPort, PtrAddr);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO5, TbtHostInfo->RefCount, 0);
 
     TbtHostInfo->RefCount++;
     return TbtHostInfo;
@@ -394,8 +406,10 @@ AddTbtHostRouterList (
   IN FORCE_PWR_HR     ForcePwrFunc OPTIONAL
   )
 {
+  UINT32            PtrAddr;
+
   if (TbtHostRoutersCount >= MAX_HOST_ROUTERS) {
-    DEBUG ((DEBUG_ERROR, "AddTbtHostRouterList ERROR: increase MAX_HOST_ROUTERS\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_ADD_ROUTER_ERROR, 0, 0);
     return;
   }
   TbtHostRouters[TbtHostRoutersCount] = TbtHostRouter;
@@ -422,9 +436,14 @@ AddTbtHostRouterList (
   }
 
   TbtHostRouter->RefCount++;
-  DEBUG ((DEBUG_INFO, "AddTbtHostRouterList FirmwareType=%d ForcePwrFunc=%p, B%d D%d F%d PcieRpType=%d PcieRootPort=%d ret=%p RefCount=%d\n",
-  FirmwareType, ForcePwrFunc, TbtHostRouter->TbtDmaPcieBdf.Bus, TbtHostRouter->TbtDmaPcieBdf.Device, TbtHostRouter->TbtDmaPcieBdf.Function,
-  TbtHostRouter->PcieRpConfig.PcieRpType, TbtHostRouter->PcieRpConfig.PcieRootPort, TbtHostRouter, TbtHostRouter->RefCount));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_ADD_ROUTER_LIST, 0, 0);
+  PtrAddr = (UINT32) (UINTN) ForcePwrFunc;
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO, (UINT32) FirmwareType, PtrAddr);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO2, (UINT32) TbtHostRouter->TbtDmaPcieBdf.Bus, (UINT32) TbtHostRouter->TbtDmaPcieBdf.Device);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO3, (UINT32) TbtHostRouter->TbtDmaPcieBdf.Function, (UINT32) TbtHostRouter->PcieRpConfig.PcieRpType);
+  PtrAddr = (UINT32) (UINTN) TbtHostRouter;
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO4, (UINT32) TbtHostRouter->PcieRpConfig.PcieRootPort, PtrAddr);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO5, TbtHostRouter->RefCount, 0);
 }
 
 /**
@@ -438,6 +457,7 @@ RemoveTbtHostRouterList (
 {
   UINT32            Index;
   TBT_HOST_ROUTER*  TbtHostInfo;
+  UINT32            PtrAddr;
 
   if (TbtHostRouter == NULL) {
     return;
@@ -449,15 +469,19 @@ RemoveTbtHostRouterList (
       continue;
     }
 
-    DEBUG ((DEBUG_INFO, "RemoveTbtHostRouterList: FirmwareType=%d ForcePwrFunc=%p, B%d D%d F%d PcieRpType=%d PcieRootPort=%d ret=%p RefCount=%d\n",
-    TbtHostInfo->FirmwareType, TbtHostInfo->ForcePwrFunc, TbtHostInfo->TbtDmaPcieBdf.Bus, TbtHostInfo->TbtDmaPcieBdf.Device,
-    TbtHostInfo->TbtDmaPcieBdf.Function, TbtHostInfo->PcieRpConfig.PcieRpType, TbtHostInfo->PcieRpConfig.PcieRootPort,
-    TbtHostInfo, TbtHostInfo->RefCount));
-
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_REMOVE_ROUTER_LIST, 0, 0);
+    PtrAddr = (UINT32) (UINTN) TbtHostInfo->ForcePwrFunc;
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO, (UINT32) TbtHostInfo->FirmwareType, PtrAddr);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO2, (UINT32) TbtHostInfo->TbtDmaPcieBdf.Bus, (UINT32) TbtHostInfo->TbtDmaPcieBdf.Device);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO3, (UINT32) TbtHostInfo->TbtDmaPcieBdf.Function, (UINT32) TbtHostInfo->PcieRpConfig.PcieRpType);
+    PtrAddr = (UINT32) (UINTN) TbtHostInfo;
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO4, (UINT32) TbtHostInfo->PcieRpConfig.PcieRootPort, PtrAddr);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HOST_ROUTER_INFO5, TbtHostInfo->RefCount, 0);
     TbtHostRouters[Index] = NULL;
     return;
   }
-  DEBUG ((DEBUG_ERROR, "RemoveTbtHostRouterList ERROR: TbtHostRouter=%p\n", TbtHostRouter));
+  PtrAddr = (UINT32) (UINTN) TbtHostRouter;
+  CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_REMOVE_ROUTER_ERROR, PtrAddr, 0);
 }
 
 /**
@@ -471,7 +495,7 @@ TbtNvmDrvHrDtor (
   TBT_HOST_ROUTER *This
   )
 {
-  DEBUG ((DEBUG_VERBOSE, "TbtNvmDrvHrDtor is called RefCount=%d.\n", This->RefCount));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_TBT_DRV_DTOR, This->RefCount, 0);
   This->RefCount--;
   if (This->RefCount > 0) {
     return;
@@ -535,6 +559,12 @@ TbtNvmDrvHrCtor (
   BOOLEAN            IsDeviceAvailable;
   ITBT_INFO_HOB      *ITbtInfoHob;
   DTBT_INFO_HOB      *DTbtInfoHob;
+  UINT32             CombinedPciId;
+
+  PchRpNumber  = 0;
+  PchBusNumber = 0;
+  CpuRpNumber  = 0;
+  CpuBusNumber = 0;
 
   HrPtr = GetTbtHostRouterList (FirmwareType, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
   if (HrPtr != NULL) {
@@ -551,14 +581,14 @@ TbtNvmDrvHrCtor (
                   );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: LocateHandleBuffer of gEfiPciIoProtocolGuid failed, Status = %r\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_PROTOCOL_FAIL, (UINT32) Status, 0);
     return NULL;
   }
 
   HrImplPtr = TbtNvmDrvAllocateMem (sizeof(TBT_HR_IMPL));
   if (!HrImplPtr) {
     gBS->FreePool (Handles);
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: TbtNvmDrvAllocateMem failed, Status = %r\n", EFI_OUT_OF_RESOURCES));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_ALLOCATE_MEM_FAIL, (UINT32) Status, 0);
     return NULL;
   }
 
@@ -581,13 +611,15 @@ TbtNvmDrvHrCtor (
 
     switch (PcieRpConfig->PcieRpType) {
       case (PCIE_RP_TYPE_PCH):
-        DEBUG ((DEBUG_INFO, "TbtNvmDrvHrCtor: Type:PCH FirmwareType %x PchRpNumber %x PchBusNumber %x\n", FirmwareType, PchRpNumber, PchBusNumber));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_TYPE_PCH, (UINT32) FirmwareType, 0);
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_TYPE_PCH1, (UINT32) PchRpNumber, (UINT32) PchBusNumber);
         break;
       case (PCIE_RP_TYPE_CPU):
-        DEBUG ((DEBUG_INFO, "TbtNvmDrvHrCtor: Type:CPU FirmwareType %x CpuRpNumber %x CpuBusNumber %x\n", FirmwareType, CpuRpNumber, CpuBusNumber));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_TYPE_CPU, (UINT32) FirmwareType, 0);
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_TYPE_CPU1, (UINT32) CpuRpNumber, (UINT32) CpuBusNumber);        
         break;
       default:
-        DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: Failed at unsupported type value %x in PCIE_RP_TYPE.\n", PcieRpConfig->PcieRpType));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_INVALID_RP_TYPE, (UINT32) PcieRpConfig->PcieRpType, 0);
         goto free_hr_impl;
     }
   }
@@ -596,7 +628,7 @@ TbtNvmDrvHrCtor (
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gBS->HandleProtocol (Handles[Index], &gEfiPciIoProtocolGuid, (VOID**) &HrImplPtr->pPciIoProto);
     if (EFI_ERROR(Status)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: HandleProtocol of gEfiPciIoProtocolGuid failed, Status = %r\n", Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_HANDLE_PROTOCOL_FAIL, (UINT32) Status, 0);
       continue;
     }
     Status = HrImplPtr->pPciIoProto->Pci.Read (
@@ -606,8 +638,10 @@ TbtNvmDrvHrCtor (
                                            sizeof (PciId) / sizeof (UINT32),
                                            &PciId
                                            );
+    CombinedPciId = ((UINT32)PciId.VendorId << 16) | PciId.DeviceId;
+
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: Pci.Read failed, Status = %r\n", Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_PCI_READ_FAIL, (UINT32) Status, 0);
       continue;
     }
     if ( (PciId.VendorId != USB_VENDOR_ID_1)
@@ -625,18 +659,18 @@ TbtNvmDrvHrCtor (
                                            PciData.Hdr.ClassCode
                                            );
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: check for USB class failed, Status = %r\n", Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_CHECK_USB_FAIL, (UINT32) Status, 0);
       continue;
     }
 
     ProgInterface = PciData.Hdr.ClassCode[0];
     SubClassCode  = PciData.Hdr.ClassCode[1];
     BaseCode      = PciData.Hdr.ClassCode[2];
-    DEBUG ((DEBUG_INFO, "PCI Device, class code = (%0xh, %0xh, %0xh)\n", BaseCode, SubClassCode, ProgInterface));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_PCI_DEV_CLASS, (UINT32) BaseCode, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_PCI_DEV_CLASS2, (UINT32) SubClassCode, (UINT32) ProgInterface);
 
     if ((ProgInterface == PCI_IF_USB4) && (SubClassCode == PCI_CLASS_SERIAL_USB) && (BaseCode == PCI_CLASS_SERIAL)) {
-      DEBUG ((DEBUG_INFO, "TbtNvmDrvHrCtor: USB4 PCI device\n"));
-
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_USB4_PCI, 0, 0);
       Status = HrImplPtr->pPciIoProto->GetLocation (
                                          HrImplPtr->pPciIoProto,
                                          &SegmentNumber,
@@ -645,7 +679,7 @@ TbtNvmDrvHrCtor (
                                          &FunctionNumber
                                          );
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: GetLocation failed, Status = %r\n", Status));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_LOCATION_GET_FAIL, (UINT32) Status, 0);
         continue;
       }
       if (FirmwareType == INTEGRATED_TBT_RETIMER) {
@@ -675,25 +709,16 @@ TbtNvmDrvHrCtor (
         }
 
         if (!IsDeviceAvailable) {
-          DEBUG ((DEBUG_ERROR,"The TBT Controller %x: %04x:%02x:%02x.%02x is not the target.\n",
-            PciId,
-            SegmentNumber,
-            BusNumber,
-            DeviceNumber,
-            FunctionNumber
-            ));
+          CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_CONTROLLER, CombinedPciId, 0);
+          CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_PCI_INFO, (UINT32) SegmentNumber, (UINT32) BusNumber);
+          CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_PCI_INFO2, (UINT32) DeviceNumber, (UINT32) FunctionNumber);
           Status = EFI_NOT_FOUND;
           continue;
         }
       }
-
-      DEBUG ((DEBUG_INFO,"TbtNvmDrvHrCtor: Found Thunderbolt Controller %x: %04x:%02x:%02x.%02x\n",
-        PciId,
-        SegmentNumber,
-        BusNumber,
-        DeviceNumber,
-        FunctionNumber
-        ));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_CONTROLLER_FOUND, CombinedPciId, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_PCI_INFO, (UINT32) SegmentNumber, (UINT32) BusNumber);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_PCI_INFO3, (UINT32) DeviceNumber, (UINT32) FunctionNumber);
       Status = EFI_SUCCESS;
 
       break;
@@ -705,17 +730,10 @@ TbtNvmDrvHrCtor (
 
   if (EFI_ERROR (Status)) {
     if (FirmwareType == INTEGRATED_TBT_RETIMER) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: PCI device with bdf = 0x%x,0x%x,0x%x is not found!, Status = %r\n",
-        TbtDmaPcieBdf->Bus,
-        TbtDmaPcieBdf->Device,
-        TbtDmaPcieBdf->Function,
-        Status
-        ));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_NOT_FOUND_FOR_ITBT_RETIMER, (UINT32) TbtDmaPcieBdf->Bus, (UINT32) TbtDmaPcieBdf->Device);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_NOT_FOUND_FOR_ITBT_RETIMER2, (UINT32) TbtDmaPcieBdf->Function, (UINT32) Status);  
     } else {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: PCI device is not found with root port = %d!, Status = %r\n",
-        PcieRpConfig->PcieRootPort,
-        Status
-        ));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_NOT_FOUND_FOR_DTBT_RETIMER, (UINT32) (PcieRpConfig->PcieRootPort), (UINT32) Status);
     }
     goto free_hr_impl;
   }
@@ -728,7 +746,7 @@ TbtNvmDrvHrCtor (
                                      &Attributes
                                      );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: Attributes get is failed, Status = %r\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_ATTRIBUTES_GET_FAIL, (UINT32) Status, 0);
     goto free_hr_impl;
   }
 
@@ -741,7 +759,7 @@ TbtNvmDrvHrCtor (
                                      NULL
                                      );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: Attributes set failed, Status = %r\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_ATTRIBUTES_SET_FAIL, (UINT32) Status, 0);
     goto free_hr_impl;
   }
 
@@ -749,13 +767,13 @@ TbtNvmDrvHrCtor (
     // Force power the iTBT
     TBTControllerWasPowered = FALSE;
 
-    DEBUG ((DEBUG_INFO, "TbtNvmDrvHrCtor: Force power the iTBT\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_FORCE_PWR_ITBT, 0, 0);
     TbtStatus = ForcePwrFunc (HrImplPtr->pPciIoProto, TRUE, &TBTControllerWasPowered);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: Could not perform device %x force pwr, Status = %d\n", PciId, Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_PERFORM_PWR_ERROR, CombinedPciId, (UINT32) Status);
       goto free_hr_impl;
     }
-    DEBUG ((DEBUG_INFO, "TbtNvmDrvHrCtor: Force powered device %x\n", PciId));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_FORCE_PWR_DEV, CombinedPciId, 0);
   }
   HrImplPtr->ForcePwrFunc = ForcePwrFunc;
 
@@ -763,14 +781,14 @@ TbtNvmDrvHrCtor (
   // Initiate DMA and config it
   HrImplPtr->pDma = TbtNvmDrvDmaCtor (HrImplPtr->pPciIoProto, &mTBTControllerWasPowered, FunctionNumber);
   if (!HrImplPtr->pDma) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: Could not initialize DMA for device \n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_INIT_DMA_FAIL, 0, 0);
     goto free_hr_impl;
   }
 
   // Allocate the interface and assign it
   HrPtr = TbtNvmDrvAllocateMem (sizeof(TBT_HOST_ROUTER));
   if (!HrPtr) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: Could not allocate memory for TBT_HOST_ROUTER\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_HOST_ALLOCATE_MEM_FAIL, 0, 0);
     goto free_dma;
   }
   HrPtr->Impl = HrImplPtr;
@@ -788,7 +806,7 @@ TbtNvmDrvHrCtor (
     ITbtInfoHob = NULL;
     ITbtInfoHob = GetFirstGuidHob (&gITbtInfoHobGuid);
     if (ITbtInfoHob == NULL) {
-      DEBUG ((DEBUG_INFO, "No integrated USB4 host router found!\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_ITBT_INFO_HOB_NOT_FOUND, 0, 0);
       TbtNvmDrvDeAllocateMem (HrPtr);
       goto free_dma;
     }
@@ -800,7 +818,7 @@ TbtNvmDrvHrCtor (
     CmMode = (DTbtInfoHob->DTbtGenericConfig.Usb4CmMode & 0x07);
   }
 
-  DEBUG ((DEBUG_INFO, "TbtNvmDrvHrCtor: CM Mode = %x\n", CmMode));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CM_MODE, (UINT32) CmMode, 0);
 
   // Send driver ready (needed when FW CM mode is detected)
   if (CmMode == USB4_CM_MODE_FW_CM) {
@@ -808,7 +826,7 @@ TbtNvmDrvHrCtor (
     *HrImplPtr->pDma->TBTControllerWasPowered = mTBTControllerWasPowered;
     Status = TbtNvmDrvHrSendDrvReady (HrImplPtr->pDma);
     if (TBT_STATUS_ERR (Status)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvHrCtor: Failed to send driver ready, Status=%d\n", Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_SEND_DRIVER_RDY_FAIL, (UINT32) Status, 0);
       HrImplPtr->pDma->DbgPrint (HrImplPtr->pDma);
       TbtNvmDrvDeAllocateMem (HrPtr);
       goto free_dma;
@@ -820,7 +838,7 @@ TbtNvmDrvHrCtor (
 
   gBS->FreePool (Handles);
   AddTbtHostRouterList (HrPtr, FirmwareType, PcieRpConfig, TbtDmaPcieBdf, ForcePwrFunc);
-  DEBUG ((DEBUG_INFO, "TbtNvmDrvHrCtor: Completed\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_HR_CTOR_COMPLETE, 0, 0);
   return HrPtr;
 
 free_dma:

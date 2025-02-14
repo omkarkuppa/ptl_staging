@@ -66,34 +66,38 @@ WaitForMsgOutTxDone (
                                MsgOutCmdOffset,
                                &Data
                                );
-    DEBUG ((DEBUG_INFO, "TbtNvmDrvRetimerThruHr::WaitForMsgOutTxDone: Read data = 0x%x\n", Data));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_WAIT_CMD_READ_DATA, Data, 0);
+
     if (TBT_STATUS_ERR (TbtStatus)) {
-       DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::WaitForMsgOutTxDone: ERROR! Reading register MSG_OUT_CMD is failed. \
-                             TbtStatus is %d. d=%dExiting...\n", TbtStatus, DbgData));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WAIT_CMD_READ_REG_FAIL, (UINT32) TbtStatus, (UINT32) DbgData);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
-    DEBUG ((DEBUG_INFO, "TbtNvmDrvRetimerThruHr::WaitForMsgOutTxDone: IECS transaction read data=%x\n", Data));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_WAIT_CMD_READ_TRAN_DATA, Data, 0);
     gBS->Stall (TBT_WAIT_TIME_BEFORE_NEXT_MSG_OUT_ACCESS);
     AccessCnt++;
   } while ((Data & TBT_MSG_OUT_CMD_VALID) != 0 && AccessCnt < TBT_TOTAL_ACCESSES_WHILE_WAIT_FOR_MSG_OUT);
 
   if ((Data & TBT_MSG_OUT_CMD_VALID) != 0) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::WaitForMsgOutTxDone: ERROR! Local LC seems to be stuck. \
-                          d=%d, Data=%x, m=%x AccessCnt=%d Exiting...\n", DbgData, Data, MsgOutCmdOffset, AccessCnt));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WAIT_CMD_LC_STUCK_ERROR, 0, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WAIT_CMD_LC_DATA, (UINT32) DbgData, Data);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WAIT_CMD_LC_DATA2, (UINT32) MsgOutCmdOffset, AccessCnt);
+
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
   if ((Data & TBT_MSG_OUT_TIMEOUT) != 0) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::WaitForMsgOutTxDone: IECS transaction was timeouted \
-                          d=%d, Data=%x, m=%x AccessCnt=%d\n", DbgData, Data, MsgOutCmdOffset, AccessCnt));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WAIT_CMD_LC_TIMEOUT, 0, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WAIT_CMD_LC_DATA, (UINT32) DbgData, Data);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WAIT_CMD_LC_DATA2, (UINT32) MsgOutCmdOffset, AccessCnt);
   } else if ((Data & TBT_MSG_OUT_INVALID) != 0) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::WaitForMsgOutTxDone: IECS transaction was invalid \
-                          d=%d, Data=%x, m=%x AccessCnt=%d\n", DbgData, Data, MsgOutCmdOffset, AccessCnt));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WAIT_CMD_LC_INVALID, 0, 0);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WAIT_CMD_LC_DATA, (UINT32) DbgData, Data);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_WAIT_CMD_LC_DATA2, (UINT32) MsgOutCmdOffset, AccessCnt);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   } else {
     return TBT_STATUS_SUCCESS;
   }
 
-  DEBUG ((DEBUG_INFO, "TbtNvmDrvRetimerThruHr::WaitForMsgOutTxDone: TBT_STATUS_RETRY, d=%d\n", DbgData));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_WAIT_CMD_RETRY_STATUS, (UINT32) DbgData, 0);
   return TBT_STATUS_RETRY;
 }
 
@@ -141,13 +145,11 @@ SendCommandToLocalLc (
                                   DataPtr
                                   );
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                            ERROR when writing 0x%x data to local LC, TbtStatus - %d. \
-                            Exiting...\n", DataPtr, TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_WRITE_ERROR, *DataPtr, (UINT32) TbtStatus);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
-    DEBUG ((DEBUG_INFO, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: Write USB4 port cap = %x\n", USB4CapRegWrite));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_LOCAL_LC_WRITE_USB4_CAP, USB4CapRegWrite, 0);
     USB4CapRegWrite = ((UINT32)1 << TBT_USB4_PORT_CAPABILITY_PND_OFFSET)
                     | ((UINT32)1 << TBT_USB4_PORT_CAPABILITY_WnR_OFFSET)
                     | ((UINT32)0 << TBT_USB4_PORT_CAPABILITY_TARGET_OFFSET)
@@ -163,16 +165,12 @@ SendCommandToLocalLc (
                                   &USB4CapRegWrite
                                   );
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                           ERROR when writing 0x%x data to local LC, TbtStatus - %d. \
-                           Exiting...\n", DataPtr, TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_WRITE_ERROR, *DataPtr, (UINT32) TbtStatus);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     TbtStatus = WaitForMsgOutTxDone (RetimerPtr, TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_1, 2);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                            ERROR when writing 0x%x data to local LC, TbtStatus - %d. \
-                            Exiting...\n", DataPtr, TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_WRITE_ERROR, *DataPtr, (UINT32) TbtStatus);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
   }
@@ -186,9 +184,7 @@ SendCommandToLocalLc (
                                 &Cmd
                                 );
   if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                          ERROR when writing 0x%x cmd to local LC, TbtStatus - %d.\
-                          Exiting...\n", Cmd, TbtStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_WRITE_CMD_ERROR, Cmd, (UINT32) TbtStatus);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -206,17 +202,13 @@ SendCommandToLocalLc (
                                 &USB4CapRegWrite
                                 );
   if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                          ERROR when writing 0x%x cmd to local LC, TbtStatus - %d.\
-                          Exiting...\n", Cmd, TbtStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_WRITE_CMD_ERROR, Cmd, (UINT32) TbtStatus);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
   TbtStatus = WaitForMsgOutTxDone (RetimerPtr, TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_1, 2);
-  if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                          ERROR when writing 0x%x data to local LC, TbtStatus - %d. \
-                          Exiting...\n", DataPtr, TbtStatus  ));
+  if (TBT_STATUS_ERR (TbtStatus) && DataPtr != NULL) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_WRITE_ERROR, *DataPtr, (UINT32) TbtStatus);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
@@ -237,17 +229,13 @@ SendCommandToLocalLc (
                                   &USB4CapRegWrite
                                   );
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                            ERROR when writing 0x%x data to local LC, TbtStatus - %d. \
-                            Exiting...\n", DataPtr, TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_WRITE_ERROR, *DataPtr, (UINT32) TbtStatus);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
     TbtStatus = WaitForMsgOutTxDone (RetimerPtr, TBT_USB4_PORT_CAPABILITY_OFFSET + PORT_CS_1, 2);
-    if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                            ERROR when writing 0x%x data to local LC, TbtStatus - %d. \
-                            Exiting...\n", DataPtr, TbtStatus));
+    if (TBT_STATUS_ERR (TbtStatus) && DataPtr != NULL) {
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_WRITE_ERROR, *DataPtr, (UINT32) TbtStatus);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
@@ -259,24 +247,17 @@ SendCommandToLocalLc (
                                   &USB4CapRegRead
                                   );
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                            ERROR when waiting for command 0x%x to complete, \
-                            TbtStatus - %d. Exiting...\n", Cmd, TbtStatus));
-
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_WAIT_CMD_COMPLETE_ERROR, Cmd, (UINT32) TbtStatus);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     AccessCnt++;
   } while (USB4CapRegRead == Cmd && AccessCnt < TBT_TOTAL_ACCESSES_WHILE_WAIT_FOR_IECS);
 
   if (USB4CapRegRead == Cmd) {  // Timeouted
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                          Local LC Couldn't perform 0x%x command - timeouted. \
-                          Exiting...\n", Cmd));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_CMD_TIMEOUT, Cmd, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   } else if (USB4CapRegRead != TBT_LC_CMD_SUCCESS) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::SendCommandToLocalLc: \
-                          Local LC reported error while performing 0x%x command - got error: 0x%x. \
-                          Exiting...\n", Cmd, USB4CapRegRead));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_LOCAL_LC_REPORTED_ERROR, Cmd, USB4CapRegRead);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
   return TBT_STATUS_SUCCESS;
@@ -310,8 +291,7 @@ SendEnumCmd (
   TBT_STATUS Status;
   UINTN      Index;
 
-  DEBUG ((DEBUG_INFO, "\nTbtNvmDrvRetimerThruHr::Sending ENUM to adapter %s of the HR\n",
-    RetimerPtr->TbtPort == FIRST_MASTER_LANE ? "A" : "B"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_SEND_ENUM_THRU_CMD, (UINT32) (RetimerPtr->TbtPort == FIRST_MASTER_LANE ? 0xA : 0xB), 0);
 
   for (Index = 0; Index < TBT_TOTAL_ENUM_ACCESSES; Index++) {
     // Doing this 4 times because there is no indication whether the operation succeeded or not
@@ -319,11 +299,11 @@ SendEnumCmd (
     gBS->Stall (TBT_WAIT_TIME_BETWEEN_ENUM_ACCESSES);
   }
   if (TBT_STATUS_ERR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::Enum wasn't sent successfully, got error...\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_ENUM_THRU_CMD_FAIL, 0, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
-  DEBUG ((DEBUG_INFO, "TbtNvmDrvRetimerThruHr::Enum was sent successfully!\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_SEND_ENUM_THRU_CMD_SUCCESS, 0, 0);
 
   return TBT_STATUS_SUCCESS;
 }
@@ -344,17 +324,15 @@ SendLsupCmdDis (
 {
   TBT_STATUS Status;
 
-  DEBUG ((DEBUG_INFO, "\nTbtNvmDrvRetimerThruHr::Sending USUP to adapter %s of the HR, retimer index - %d.\
-    The required operation is disable\n",
-    RetimerPtr->TbtPort == FIRST_MASTER_LANE ? "A" : "B", (UINT32)RetimerPtr->CascadedRetimerIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_SEND_USUP_RETIMER_INDEX, (UINT32) (RetimerPtr->TbtPort == FIRST_MASTER_LANE ? 0xA : 0xB), RetimerPtr->CascadedRetimerIndex);
 
   Status = TbtNvmDrvSendCmd ((VOID *)RetimerPtr->Comm, TBT_IECS_CMD_USUP, FALSE);
   if (TBT_STATUS_ERR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::USUP send is failed!\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_USUP_FAIL, 0, 0);
     return TBT_STATUS_NON_RECOVERABLE_ERROR;
   }
 
-  DEBUG ((DEBUG_INFO, "TbtNvmDrvRetimerThruHr::USUP was sent successfully!\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_SEND_USUP_SUCCESS, 0, 0);
 
   return TBT_STATUS_SUCCESS;
 }
@@ -376,22 +354,20 @@ SendLsupCmdEn (
   TBT_STATUS Status;
   UINTN      Index;
 
-  DEBUG ((DEBUG_INFO, "\nTbtNvmDrvRetimerThruHr::Sending LSUP to adapter %s of the HR, retimer index - %d. \
-         The required operation is enable\n",
-    RetimerPtr->TbtPort == FIRST_MASTER_LANE ? "A" : "B", (UINT32)RetimerPtr->CascadedRetimerIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_SEND_LSUP_RETIMER_INDEX, (UINT32) (RetimerPtr->TbtPort == FIRST_MASTER_LANE ? 0xA : 0xB), RetimerPtr->CascadedRetimerIndex);
 
   for (Index = 0; Index < TBT_TOTAL_LSUP_ACCESSES; Index++) {
     // Doing this 3 times because there might be no indication
     // whether the operation succeeded or not on the first or second executions
     Status = TbtNvmDrvSendCmd ((VOID *)RetimerPtr->Comm, TBT_IECS_CMD_LSUP, TRUE);
     if (Status == TBT_STATUS_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "TbtNvmDrvRetimerThruHr::LSUP command send had succeeded.\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_SEND_LSUP_SUCCESS, 0, 0);
       goto Exit;
     }
     gBS->Stall (TBT_WAIT_TIME_BEFORE_NEXT_IECS_ACCESS);
   }
   if (TBT_STATUS_ERR (Status)) {
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHr::LSUP command send had failed\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_LSUP_FAIL, 0, 0);
     goto Exit;
   }
 
@@ -418,19 +394,13 @@ SendOfflineMode (
 {
   TBT_STATUS       Status;
 
-  DEBUG ((DEBUG_INFO, "\nTbtNvmDrvRetimerThruHr::Sending OfflineMode(%s) to adapter %s of the HR, retimer index - %d. \
-        The required operation is enable\n",
-  Data == OFFLINE_MODE_ENTRY ? L"0" : L"1",
-  HrDevice->TbtPort == FIRST_MASTER_LANE ? "A" : "B",
-  (UINT32)HrDevice->CascadedRetimerIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_SEND_LSEN_CMD, (UINT32) (Data == OFFLINE_MODE_ENTRY ? 0x0 : 0x1), (UINT32) (HrDevice->TbtPort == FIRST_MASTER_LANE ? 0xA : 0xB));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBTCMD_SEND_LSEN_CMD1, HrDevice->CascadedRetimerIndex, 0);
 
   // Send LS Enable/Disable, to prevent LC to bring up the link
-  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, USBC_RETIMER_CAPSULE_EVT_CODE_TBTCMD_SEND_LSEN_CMD, (UINT32) Data, 0);
   Status = SendCommandToLocalLc (HrDevice, ADAPTER_CONFIG_SPACE, TBT_IECS_CMD_LSEN, &Data);
   if (TBT_STATUS_ERR (Status)) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_TBTCMD_SEND_LSEN_CMD_FAIL, (UINT32) Data, (UINT32) Status);
-    DEBUG ((DEBUG_ERROR, "TbtNvmDrvRetimerThruHrCtor: The retimer could not perform LS %s, \
-                          Status %d. Exiting...\n", (Data == 1)? L"Enable" : L"Disable", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBTCMD_SEND_LSEN_CMD_FAIL, (UINT32) (Data == 1 ? 0x1 : 0x0), (UINT32) Status);
   }
   return Status;
 }

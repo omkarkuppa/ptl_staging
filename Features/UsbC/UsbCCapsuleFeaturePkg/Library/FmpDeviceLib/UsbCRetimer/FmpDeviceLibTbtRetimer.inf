@@ -41,7 +41,6 @@
   MdeModulePkg/MdeModulePkg.dec
   FmpDevicePkg/FmpDevicePkg.dec
   OneSiliconPkg/SiPkg.dec
-  Usb4FeaturePkg/Usb4FeaturePkg.dec
   UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
 
 [Pcd]
@@ -56,7 +55,6 @@
   UefiBootServicesTableLib
   TbtNvmRetimerUpdateLib
   TimerLib
-  Usb4DebugLib
   UsbcCapsuleDebugLib
 
 [Protocols]

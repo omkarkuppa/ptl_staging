@@ -34,6 +34,7 @@
 #include <Library/UsbCPdBridgeUpdateLib.h>
 #include <Guid/SystemResourceTable.h>
 #include <Protocol/UsbCPdBridgeProtocol.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 
 /**
   Used to pass the FMP install function to this lib.  This allows the library to
@@ -196,7 +197,7 @@ FmpDeviceGetAttributes (
                 IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED |
                 IMAGE_ATTRIBUTE_IN_USE
                 );
-  if (PcdGet8 (PcdUsbCCapsuleDebugLevel) == 0) {
+  if (PcdGet8 (PcdUsbCCapsuleDebugLevel) ==  USBC_CAPSULE_DBG_DISABLED) {
     *Setting = (IMAGE_ATTRIBUTE_IMAGE_UPDATABLE         |
                 IMAGE_ATTRIBUTE_RESET_REQUIRED          |
                 IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED |

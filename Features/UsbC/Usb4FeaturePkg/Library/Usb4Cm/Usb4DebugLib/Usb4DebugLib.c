@@ -44,7 +44,7 @@
 **/
 UINTN
 EFIAPI
-LogDataToStr (
+Usb4LogDataToStr (
   OUT      CHAR8     *LogStr,
   IN       UINT32    BufSize,
   IN CONST CHAR8     *Format,
@@ -286,17 +286,17 @@ Usb4LogParse (
   //
   switch (Argc) {
     case 0:
-      if (LogDataToStr (LogStr, StrBufSize, Mappings[EvtId].LogStr) == 0) {
+      if (Usb4LogDataToStr (LogStr, StrBufSize, Mappings[EvtId].LogStr) == 0) {
         Status = EFI_UNSUPPORTED;
       }
       break;
     case 1:
-      if (LogDataToStr (LogStr, StrBufSize, Mappings[EvtId].LogStr, LogData->EvtArg0) == 0) {
+      if (Usb4LogDataToStr (LogStr, StrBufSize, Mappings[EvtId].LogStr, LogData->EvtArg0) == 0) {
         Status = EFI_UNSUPPORTED;
       }
       break;
     case 2:
-      if (LogDataToStr (LogStr, StrBufSize, Mappings[EvtId].LogStr, LogData->EvtArg0, LogData->EvtArg1) == 0) {
+      if (Usb4LogDataToStr (LogStr, StrBufSize, Mappings[EvtId].LogStr, LogData->EvtArg0, LogData->EvtArg1) == 0) {
         Status = EFI_UNSUPPORTED;
       }
       break;

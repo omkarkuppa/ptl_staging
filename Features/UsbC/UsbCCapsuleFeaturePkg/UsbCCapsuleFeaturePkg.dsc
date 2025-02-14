@@ -35,3 +35,6 @@
 # This package always builds the feature.
 #
 !include Include/UsbCCapsuleFeature.dsc
+
+[Components.X64]
+  UsbCCapsuleFeaturePkg/Application/InternalOnly/UsbCCapsuleDiagnosticTool/UsbCCapsuleDiagnosticTool.inf

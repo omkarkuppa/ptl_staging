@@ -55,7 +55,6 @@
   UefiBootServicesTableLib
   TbtNvmRetimerUpdateLib
   TimerLib
-  Usb4DebugLib
   UsbcCapsuleDebugLib
 
 [Protocols]

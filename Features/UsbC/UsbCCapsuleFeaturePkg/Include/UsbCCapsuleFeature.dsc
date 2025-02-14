@@ -83,6 +83,7 @@
   #####################################
 
   UsbCCapsuleFeaturePkg/UsbCRetimerDxe/UsbCRetimerDxe.inf
+
 #
 # UsbCRetimer FMP
 #

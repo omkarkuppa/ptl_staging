@@ -31,17 +31,21 @@
   BaseLib
   UefiLib
   DebugLib
-  Usb4DebugLib
 
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   OneSiliconPkg/SiPkg.dec
-  Usb4FeaturePkg/Usb4FeaturePkg.dec
   UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
 
 [Sources]
   UsbcCapsuleDebugLib.c
+  CapsuleDebugLib.c
 
 [Protocols]
   gEfiUsbCCapsuleDebugProtocolGuid                     ## PRODUCES
+
+[Pcd]
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleDebugLevel
+  gSiPkgTokenSpaceGuid.PcdSerialDebugLevel
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask

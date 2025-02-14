@@ -28,6 +28,9 @@
 #include <Library/TbtNvmRetimerDrvHelpers.h>
 #include <Library/TbtNvmDrvHr.h>
 #include <Library/TbtNvmDrvRetimerThruHr.h>
+#include <Library/UsbcCapsuleDebugLib.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 
 extern UPDATE_TARGET_TYPE gUpdateTargetType;    // TARGET_TBT_HOST or TARGET_RETIMER
 
@@ -59,13 +62,13 @@ TbtNvmDrvWaitForCmdCpl (
     return TBT_STATUS_INVALID_PARAM;
   }
   AccessCount = 0;
-  DEBUG ((DEBUG_INFO, "TbtNvmDrvWaitForIecsCmdCpl: TbtNvmDrvWaitForCmdCpl() Called.\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_NVM_IECS_CALL, 0, 0);
 
   if (gUpdateTargetType == TARGET_RETIMER) {
     DevComRetimer = (TBT_RETIMER *)DevCom;
     // Wait for command to be completed
     do {
-      DEBUG ((DEBUG_INFO, "TbtNvmDrvWaitForIecsCmdCpl: Check reg for completion\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_NVM_IECS_CHECK_REG, 0, 0);
       // Bypass the completion check for IECS_USUP_CMD,
       // because the operation kills the SBTx from the retimer side,
       // so it is most likely that we will not get response for this command
@@ -75,22 +78,25 @@ TbtNvmDrvWaitForCmdCpl (
       }
       TbtStatus = DevComRetimer->ReadIecsReg (DevComRetimer, IECS_CMD_ADDR, 1, &ReadData);
       if (TBT_STATUS_ERR (TbtStatus)) {
-        DEBUG ((DEBUG_ERROR, "TbtNvmDrvWaitForIecsCmdCpl: Got an error while reading from IECS_CMD register, TbtStatus - %d, AccessCount = %d, Cmd = %x. Exiting...\n", TbtStatus, AccessCount, Cmd));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_IECS_READ_GOT_ERROR, (UINT32) TbtStatus, 0);
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_IECS_READ_GOT_ERROR1, AccessCount, Cmd);
         return TBT_STATUS_NON_RECOVERABLE_ERROR;
       }
       AccessCount++;
     } while ((ReadData == Cmd) && (AccessCount < TBT_TOTAL_OF_ACCESSES_TO_CMD_UNTIL_TIMEOUT));
 
     if (ReadData == Cmd) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvWaitForIecsCmdCpl: Remote IECS CMD is timeouted. AccessCount = %d, ReadData = %x Exiting...\n", AccessCount, ReadData));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_IECS_CMD_TIMEOUT, AccessCount, ReadData);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     if (ReadData == IECS_USB4_CMD_NOTSUPPORTED) {  // !CMD (command not supported)
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvWaitForIecsCmdCpl: Command not supported. AccessCount = %d, ReadData = %x, Cmd = %x\n", AccessCount, ReadData, Cmd));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_IECS_CMD_NOT_SUP, AccessCount, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_IECS_CMD_NOT_SUP1, ReadData, Cmd);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     if (ReadData == IECS_USB4_CMD_ERR) { // ERR
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvWaitForIecsCmdCpl: Got error from remote LC while performing command = %x, AccessCount = %d, ReadData = %x\n", Cmd, AccessCount, ReadData));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_IECS_CMD_GOT_ERR, Cmd, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_IECS_CMD_GOT_ERR1, AccessCount, ReadData);
       return TBT_STATUS_RETRY;
     }
   } else {
@@ -101,7 +107,8 @@ TbtNvmDrvWaitForCmdCpl (
       TbtStatus = DevComHost->ReadCioDevReg (DevComHost, DEVICE_CONFIG_SPACE, 0, ROUTER_CMD_ADDR, &ReadData);
 
       if (TBT_STATUS_ERR (TbtStatus)) {
-        DEBUG ((DEBUG_ERROR, "TbtNvmDrvWaitForCmdCpl: Got an error while reading from CMD register, TbtStatus - %d, AccessCount = %d, Cmd = %x. Exiting...\n", TbtStatus, AccessCount, Cmd));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_IECS_CMD_READ_GOT_ERR, (UINT32) TbtStatus, 0);
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_IECS_READ_GOT_ERROR1, AccessCount, Cmd);
         return TBT_STATUS_NON_RECOVERABLE_ERROR;
       }
 
@@ -109,17 +116,18 @@ TbtNvmDrvWaitForCmdCpl (
     } while ((ReadData & TBT_CMD_VALID) != 0 && AccessCount < TBT_TOTAL_OF_ACCESSES_TO_CMD_UNTIL_TIMEOUT );
 
     if ((ReadData & TBT_CMD_VALID) != 0) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvWaitForCmdCpl: CMD is timeouted. AccessCount = %d, ReadData = %x Exiting...\n", AccessCount, ReadData));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_TBT_CMD_TIMEOUT, AccessCount, ReadData);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
     if ((ReadData & TBT_CMD_NOTSUPPORTED) != 0) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvWaitForCmdCpl: CMD not supported. AccessCount = %d, ReadData = %x Exiting...\n", AccessCount, ReadData));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_TBT_CMD_NOT_SUP, AccessCount, ReadData);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
     if ((ReadData != Cmd) != 0) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvWaitForCmdCpl: CMD 0x%x encountered an error. AccessCount = %d, ReadData = %x Exiting...\n", Cmd, AccessCount, ReadData));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_TBT_CMD_DATA_ERR, Cmd, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_TBT_CMD_DATA_ERR1, AccessCount, ReadData);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
   }
@@ -150,7 +158,7 @@ TbtNvmDrvSendCmd (
   TBT_HOST_ROUTER  *DevComHost;
   UINT32           Opcode;
 
-  DEBUG ((DEBUG_VERBOSE, "Sending CMD 0x%x\n", Cmd));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_NVM_SEND_IECS_CMD, (UINT32) Cmd, 0);
   TbtStatus = TBT_STATUS_SUCCESS;
 
   if (DevCom == NULL || Cmd == 0) {
@@ -162,7 +170,7 @@ TbtNvmDrvSendCmd (
     // Write command
     TbtStatus = DevComRetimer->WriteIecsReg (DevComRetimer, IECS_CMD_ADDR, &Cmd, 1);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvSendCmd: Fail to write to IECS CMD reg, TbtStatus = %d.\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_WRITE_IECS_CMD_FAIL, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
   } else {
@@ -171,8 +179,8 @@ TbtNvmDrvSendCmd (
     TbtStatus = DevComHost->WriteCioDevReg (DevComHost, DEVICE_CONFIG_SPACE, 0, ROUTER_CMD_ADDR, 1, &Opcode);
 
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvSendCmd: Fail to write to  CMD reg, TbtStatus = %d.\n", TbtStatus));
-      DEBUG ((DEBUG_ERROR, "                  Command was 0x%x. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_WRITE_IECS_CMD_REG_FAIL, (UINT32) TbtStatus, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_WRITE_IECS_CMD, Cmd, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
   }
@@ -215,7 +223,7 @@ TbtNvmDrvDeviceWrBlk (
     return TBT_STATUS_INVALID_PARAM;
   }
 
-  DEBUG ((DEBUG_VERBOSE, "Writing block with length - 0x%x\n", Length));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_NVM_WRITE_BLK_LENGTH, (UINT32) Length, 0);
   TbtStatus = TBT_STATUS_SUCCESS;
 
   if (gUpdateTargetType == TARGET_RETIMER) {
@@ -223,14 +231,14 @@ TbtNvmDrvDeviceWrBlk (
     // Write data
     TbtStatus = DevComRetimer->WriteIecsReg (DevComRetimer, IECS_MSG_OUT_RDATA, Data, Length);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceWrBlk: ERROR! The data to REMOTE_WDATA register wasn't written. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_WRITE_BLK_WDATA_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
     // Send the command
     TbtStatus = TbtNvmDrvSendCmd (DevCom, IECS_BLKW_CMD, TRUE);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceWrBlk: ERROR! Sending IECS_BLKW_CMD command failed. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_SEND_BLK_CMD_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
   } else {
@@ -239,7 +247,7 @@ TbtNvmDrvDeviceWrBlk (
     TbtStatus = DevComHost->WriteCioDevReg (DevComHost, DEVICE_CONFIG_SPACE, 0, ROUTER_DATA_ADDR, Length, Data);
 
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceWrBlk: ERROR! The data to REMOTE_WDATA register wasn't written. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_WRITE_BLK_WDATA_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
@@ -247,10 +255,10 @@ TbtNvmDrvDeviceWrBlk (
     TbtStatus = TbtNvmDrvSendCmd (DevCom, OPCODE_NVM_WRITE_CMD, TRUE);
 
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceWrBlk: ERROR! Sending OPCODE_NVM_WRITE_CMD command failed. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_SEND_BLK_OP_CMD_ERROR, (UINT32) TbtStatus, 0);
     }
   }
-  DEBUG ((DEBUG_VERBOSE, "Finished writing block with length - 0x%x. TbtStatus - %d\n", Length, TbtStatus));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_NVM_WRITE_BLK_FINISH, (UINT32) Length, (UINT32) TbtStatus);
   return TbtStatus;
 }
 
@@ -280,7 +288,7 @@ TbtNvmDrvDeviceWrOffset (
     return TBT_STATUS_INVALID_PARAM;
   }
 
-  DEBUG ((DEBUG_VERBOSE, "Write device OffsetInDW - 0x%x\n", OffsetInDW));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_NVM_WRITE_OFFSET, OffsetInDW, 0);
 
   OffsetInB = OffsetInDW << 2;
 
@@ -289,13 +297,13 @@ TbtNvmDrvDeviceWrOffset (
     // Write data
     TbtStatus = DevComRetimer->WriteIecsReg (DevComRetimer, IECS_METADATA_ADDR, &OffsetInB, 1);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceWrOffset: ERROR! Writing data to IECS_METADATA_ADDR register failed. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_WRITE_DATA_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     // Send the command
     TbtStatus = TbtNvmDrvSendCmd (DevCom, IECS_BOPS_CMD, TRUE);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceWrOffset: ERROR! Sending command IECS_BOPS_CMD failed. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_SEND_CMD_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
   } else {
@@ -304,17 +312,17 @@ TbtNvmDrvDeviceWrOffset (
     TbtStatus = DevComHost->WriteCioDevReg (DevComHost, DEVICE_CONFIG_SPACE, 0, ROUTER_METADATA_ADDR, 1, &OffsetInB); //metadata
 
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceWrOffset: ERROR! The data to Metadata register wasn't written. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_WRITE_RG_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     // Send the command
     TbtStatus = TbtNvmDrvSendCmd (DevCom, OPCODE_NVM_SETOFFSET_CMD, TRUE);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceWrOffset: ERROR! The data to Metadata register wasn't written. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_WRITE_RG_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
   }
-  DEBUG ((DEBUG_VERBOSE, "Finished writing device OffsetInDW - 0x%x (%d)\n", OffsetInDW, TbtStatus));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_VERBOSE, EVT_CODE_NVM_WRITE_DV_FINISH, OffsetInDW, (UINT32) TbtStatus);
   return TbtStatus;
 }
 
@@ -343,7 +351,7 @@ TbtNvmDrvDeviceExecAuth (
   UINT32            Opcode;
   UINT32            Cmd;
 
-  DEBUG ((DEBUG_INFO, "Sending Auth command\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_SEND_AUTH_COMMAND, 0, 0);
   if (DevCom == NULL) {
     return TBT_STATUS_INVALID_PARAM;
   }
@@ -354,41 +362,34 @@ TbtNvmDrvDeviceExecAuth (
     WriteData = 0;
     TbtStatus = DevComRetimer->WriteIecsReg (DevComRetimer, IECS_METADATA_ADDR, &WriteData, 1); // Turn Auth on
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceExecAuth: Got an error while writing to IECS_DATA register, TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_IECS_DATA_GOT_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
     WriteData = IECS_AUTH_CMD;
     TbtStatus = DevComRetimer->WriteIecsReg (DevComRetimer, IECS_CMD_ADDR, &WriteData, 1); // Send Auth command
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceExecAuth: Got an error while writing to IECS_CMD register, TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_IECS_CMD_GOT_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
-    DEBUG ((DEBUG_INFO,
-            "Waiting %d seconds for authentication to complete...\n",
-            TBT_TIME_TO_WAIT_FOR_AUTH_US / 1000000));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_WAIT_AUTH_SECONDS, (UINT32) (TBT_TIME_TO_WAIT_FOR_AUTH_US / 1000000), 0);
     gBS->Stall (TBT_TIME_TO_WAIT_FOR_AUTH_US);
 
     // Enumerate retimers on a path to the target retimer
     TbtStatus = SendEnumCmd (RetimerPtr);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceExecAuth: The retimer could not enumerate, TbtStatus %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_RT_ENUMERATE_ERROR, (UINT32) TbtStatus, 0);        
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     TbtStatus = TbtNvmDrvWaitForCmdCpl (DevCom, IECS_AUTH_CMD);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR,
-              "TbtNvmDrvDeviceExecAuth: Authentication failed!!! TbtStatus from LC - %d. Exiting...\n",
-              TbtStatus));
-
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_AUTH_FAIL, (UINT32) TbtStatus, 0);   
       TbtStatus = DevComRetimer->ReadIecsReg (DevComRetimer, IECS_METADATA_ADDR, 1, &ReadData);
       if (TBT_STATUS_ERR (TbtStatus)) {
-        DEBUG ((DEBUG_ERROR,
-                "TbtNvmDrvDeviceExecAuth: Got an error while reading from IECS_DATA register, TbtStatus - %d. Exiting...\n",
-                TbtStatus));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_AUTH_IECS_DATA_GOT_ERROR, (UINT32) TbtStatus, 0);
         return TBT_STATUS_NON_RECOVERABLE_ERROR;
       }
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceExecAuth: Auth has failed with metadata = %x. Exiting...\n", ReadData));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_AUTH_METADATA_FAIL, ReadData, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
   } else {
@@ -401,20 +402,20 @@ TbtNvmDrvDeviceExecAuth (
     TbtStatus = DevComHost->WriteCioDevReg (DevComHost, DEVICE_CONFIG_SPACE, 0, ROUTER_METADATA_ADDR, 1, &WriteData); //turn auth on
 
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceExecAuth: ERROR! The data to Metadata register wasn't written. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_WRITE_META_REG_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     TbtStatus = DevComHost->WriteCioDevReg (DevComHost, DEVICE_CONFIG_SPACE, 0, ROUTER_CMD_ADDR, 1, &Opcode);
 
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtNvmDrvDeviceExecAuth: Fail to write to  CMD reg, TbtStatus = %d.\n", TbtStatus));
-      DEBUG ((DEBUG_ERROR, "                  Command was 0x%x. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_WRITE_CMD_REG_ERROR, (UINT32) TbtStatus, 0);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_WRITE_IECS_CMD, Cmd, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
-    DEBUG ((DEBUG_INFO, "Waiting %d seconds for authentication to complete...\n", TBT_TIME_TO_WAIT_FOR_AUTH_US / 1000000));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_AUTH_WAIT_SECONDS, (UINT32) (TBT_TIME_TO_WAIT_FOR_AUTH_US / 1000000), 0);
     gBS->Stall (TBT_TIME_TO_WAIT_FOR_AUTH_US);
   }
-  DEBUG ((DEBUG_INFO, "TbtNvmDrvDeviceExecAuth: Authentication success!\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_AUTH_SUCCESS, 0, 0);
   return TBT_STATUS_SUCCESS;
 }
 
@@ -447,26 +448,26 @@ TbtDrvReadDwFromNvm (
     return TBT_STATUS_INVALID_PARAM;
   }
 
-  DEBUG ((DEBUG_INFO, "Reading DW from NVM, offset 0x%x\n", Offset));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_NVM_READ_DW_OFFSET, Offset, 0);
   if (gUpdateTargetType == TARGET_RETIMER) {
     TBT_RETIMER *DevComRetimer = (TBT_RETIMER *)DevCom;
 
     // Write Offset to IECS_DATA register
     TbtStatus = DevComRetimer->WriteIecsReg (DevComRetimer, IECS_METADATA_ADDR, &Offset, 1);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtDrvReadDwFromNvm: ERROR! Writing data to IECS_METADATA_ADDR register failed. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_WRITE_IECS_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     // Send the command
     TbtStatus = TbtNvmDrvSendCmd (DevCom, IECS_AFRR_CMD, TRUE);
     if (TBT_STATUS_ERR (TbtStatus)) {
-     DEBUG ((DEBUG_ERROR, "TbtDrvReadDwFromNvm: ERROR! Sending command IECS_AFRR_CMD failed. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_IECS_CMD_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     // Read data from MSG_OUT
     TbtStatus = DevComRetimer->ReadIecsReg (DevComRetimer, IECS_MSG_OUT_RDATA, (DataLength<16?DataLength:16), RdData);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtDrvReadDwFromNvm: ERROR! Failed to read data from IECS_DATA register. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_IECS_READ_REG_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
@@ -476,7 +477,7 @@ TbtDrvReadDwFromNvm (
     // Write Offset to Metadata register
     TbtStatus = DevComHost->WriteCioDevReg (DevComHost, DEVICE_CONFIG_SPACE, 0, ROUTER_METADATA_ADDR, 1, &WriteData);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtDrvReadDwFromNvm: ERROR! The data to DATA register wasn't written. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_IECS_WRITE_REG_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
     // Send the command
@@ -484,19 +485,19 @@ TbtDrvReadDwFromNvm (
 
 
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtDrvReadDwFromNvm: ERROR! The command wasn't send. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_SEND_CMD_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
     // Read data from DATA register
     TbtStatus = DevComHost->ReadCioDevReg (DevComHost, DEVICE_CONFIG_SPACE, 0, ROUTER_DATA_ADDR, RdData);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      DEBUG ((DEBUG_ERROR, "TbtDrvReadDwFromNvm: ERROR! The read from RDATA has failed. TbtStatus - %d. Exiting...\n", TbtStatus));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_READ_DATA_ERROR, (UINT32) TbtStatus, 0);
       return TBT_STATUS_NON_RECOVERABLE_ERROR;
     }
 
   }
-  DEBUG ((DEBUG_INFO, "Finished reading DW from NVM offset - 0x%x\n", Offset));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_READ_DW_OFFSET, Offset, 0);
 
   return TBT_STATUS_SUCCESS;
 }
@@ -525,15 +526,15 @@ TbtDrvReadNvmVersion (
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_INFO, "Reading nvm version\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_NVM_READ_VERSION, 0, 0);
 
   TbtStatus = TbtDrvReadDwFromNvm (DevCom, TBT_NVM_VERSION_OFFSET_DW << 2, 1 /* in DWs */, Version);
   if (TBT_STATUS_ERR (TbtStatus)) {
-    DEBUG ((DEBUG_ERROR, "TbtDrvReadNvmVersion: ERROR! Couldn't read from NVM. TbtStatus %d\n", TbtStatus));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_NVM_READ_VERSION_FAIL, (UINT32) TbtStatus, 0);
     return EFI_DEVICE_ERROR;
   }
 
-  DEBUG ((DEBUG_INFO, "Finished reading NVM version - 0x%x\n", *Version));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_NVM_READ_VERSION_FINISH, *Version, 0);
 
   return EFI_SUCCESS;
 }
