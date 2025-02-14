@@ -1260,7 +1260,7 @@ gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicMono
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicStereoEnabled|0x0      # Dmic Stereo
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicStereoVpEnabled|0x0    # Dmic Stereo VP
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicQuadEnabled|0x1        # Dmic Quad
-gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltBluetoothEnabled|0x1       # Bt
+gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltBluetoothEnabled|0x2       # Bt
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltI2sAlc274Enabled|0x0       # I2s Alc274
 gStructPcdTokenSpaceGuid.PcdNvmeSetup.PlnEnable|0x2                                                # Power Loss Notification Feature
 gStructPcdTokenSpaceGuid.PcdPchSetup.AetTraceHubMode|0x0                                           # AET Trace Hub Destination
