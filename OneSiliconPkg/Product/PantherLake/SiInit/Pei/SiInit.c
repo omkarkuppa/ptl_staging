@@ -88,6 +88,8 @@
 #include <Pi/PiHob.h>
 #include <Library/HobLib.h>
 #include <TraceHubDataHob.h>
+#include <Library/PeiVmdInitFruLib.h>
+
 
 EFI_PEI_PPI_DESCRIPTOR mEndOfSiInit = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
