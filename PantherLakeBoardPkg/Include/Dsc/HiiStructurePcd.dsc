@@ -3603,7 +3603,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5WCKDCA|0x1                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXUNMATCHEDCAL|0x1                                             #           BIT26 - Unmatched Rx Calibaration
 gStructPcdTokenSpaceGuid.PcdSaSetup.WRTDIMMDFE|0x1                                                 #           BIT27 - DIMM DFE Training
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x0                                                   # Offset 56 BIT0 - RXDQS Duty Cycle Correction
+gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x1                                                   # Offset 56 BIT0 - RXDQS Duty Cycle Correction
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMNTODT|0x0                                                  #           BIT1 - DIMM Non-Target ODT training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXVREFPERBIT|0x0                                               #           BIT3 - RxVref Per-Bit Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.PPR|0x0                                                        #           BIT4 - Post Package Repair

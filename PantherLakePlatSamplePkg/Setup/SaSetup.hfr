@@ -591,6 +591,7 @@
           option text = STRING_TOKEN(STR_DDR3_FREQ_6400_STRING), value = 6400, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_7467_STRING), value = 7467, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_8533_STRING), value = 8533, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DDR3_FREQ_9600_STRING), value = 9600, flags = RESET_REQUIRED;
         endoneof;
       endif;
 
@@ -622,6 +623,7 @@
           option text = STRING_TOKEN(STR_DDR3_FREQ_6400_STRING), value = 6400, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_7467_STRING), value = 7467, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_8533_STRING), value = 8533, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DDR3_FREQ_9600_STRING), value = 9600, flags = RESET_REQUIRED;
         endoneof;
       endif;
 
@@ -4180,8 +4182,8 @@ endform;
       oneof varid   = SA_SETUP.RXDQSDCC,
         prompt      = STRING_TOKEN(STR_RXDQSDCC_NAME),
         help        = STRING_TOKEN(STR_RXDQSDCC_NAME),
-        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       endoneof;
 
       oneof varid   = SA_SETUP.DIMMNTODT,

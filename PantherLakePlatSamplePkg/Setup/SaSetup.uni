@@ -1698,6 +1698,7 @@
 #string STR_DDR3_FREQ_6400_STRING               #language en-US "6400"
 #string STR_DDR3_FREQ_7467_STRING               #language en-US "7467"
 #string STR_DDR3_FREQ_8533_STRING               #language en-US "8533"
+#string STR_DDR3_FREQ_9600_STRING               #language en-US "9600"
 
 #string STR_PEI_DISPLAY                         #language en-US "Intel Graphics Pei Display Peim"
 #string STR_PEI_DISPLAY_HELP                    #language en-US "Enable/Disable Pei (Early) Display"

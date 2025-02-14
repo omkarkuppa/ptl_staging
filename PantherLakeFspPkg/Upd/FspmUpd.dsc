@@ -622,7 +622,7 @@
   # !BSF NAME:{Rx DQS Duty Cycle Correction}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Rx DQS Duty Cycle Correction}
-  gPlatformFspPkgTokenSpaceGuid.RXDQSDCC                    | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.RXDQSDCC                    | * | 0x01 | 0x01
 
   # !BSF NAME:{Ch Hash Override}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
