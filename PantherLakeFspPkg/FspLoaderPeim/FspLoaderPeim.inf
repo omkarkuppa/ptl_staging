@@ -47,6 +47,7 @@
   IntelFsp2Pkg/IntelFsp2Pkg.dec
   OneSiliconPkg/SiPkg.dec
   PantherLakeFspPkg/PantherLakeFspPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
 
 [Sources]
   FspLoaderPeim.c

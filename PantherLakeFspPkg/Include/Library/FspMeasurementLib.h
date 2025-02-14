@@ -37,6 +37,8 @@
 #define MMIO_ACM_POLICY_STATUS                      (TXT_PUBLIC_BASE + R_CPU_ACM_POLICY_STATUS)
 #define FSP_MEASUREMENT_INFO_DEFAULT                0XFFFFFFFF
 
+#define  BIT_HASHED_IBB                             0x00000001    //0: Hashed IBB    1:Non-Hashed IBB
+
 #pragma pack (1)
 
 typedef union {
@@ -47,17 +49,18 @@ typedef union {
     // 2: FSP failed to initialize TPM.
     // 3: Reserved.
     //
-    UINTN   TpmInitStatus      :   2;  // Bits 1:0
-    UINTN   IbbStatus          :   1;  // Bit 2
-    UINTN   BspPreMemStatus    :   1;  // Bit 3
-    UINTN   FspmStatus         :   1;  // Bit 4
+    UINT32   TpmInitStatus      :   2;  // Bits 1:0
+    UINT32   FspVersionStatus   :   1;  // Bit 2; 0 - Success, 1 - Failure
+    UINT32   IbbStatus          :   1;  // Bit 3; 0 - Success, 1 - Failure
+    UINT32   BspPreMemStatus    :   1;  // Bit 4; 0 - Success, 1 - Failure
+    UINT32   FspmStatus         :   1;  // Bit 5; 0 - Success, 1 - Failure
     //
     // 0:   Initialization fail in S3 Resume when invoke TPM2_STARTUP with TPM_SU_STATE.
     // 1:   FSP SCRTM measurement fail.
     // Values 2 and 3 are reserved.
     //
-    UINTN   ErrorStatus        :   2;  // Bits 6:5
-    UINTN   Reserved           :   25; // Bits 31:7
+    UINT32   ErrorStatus        :   2;  // Bits 7:6
+    UINT32   Reserved           :   25; // Bits 31:8
 
   } Bits;
   UINT32 Data;
@@ -162,25 +165,45 @@ ExtendFspotRegion (
   );
 
 /**
-  Add a new entry to the Event Log.
+  Extend FSP version to active PCR.
 
-  @param[in]     TpmDigestValues     Contains digest list.
-  @param[in]     FirmwareBlobBase    Base address of this FirmwareBlob.
-  @param[in]     FirmwareBlobLength  Size in bytes of this FirmwareBlob.
-  @param[in]     TpmActivePcrBanks   Active PCR value
-  @param[in]     Description         Description for this FirmwareBlob.
+  @param[out]  FspMeasurementInfo  Structure that points to the data
+  @param[in]   Fbm                 Base address of Fbm
+  @param[in]   TpmActivePcrBanks   Active PCR value
+
+  @retval EFI_SUCCESS       Operation completed successfully.
+  @retval EFI_DEVICE_ERROR  Unexpected device behavior.
+
+**/
+EFI_STATUS
+EFIAPI
+ExtendFspVersion (
+  OUT  FSP_BUILD_MEASUREMENT_INFO   *FspMeasurementInfo,
+  IN   FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
+  IN   UINT32                       TpmActivePcrBanks
+  );
+
+/**
+  Create HOB to save the event log data. The HOBs will be consumed
+  by PeiBootGuardEventLogLib to create event logs.
+
+  @param[in]     TpmDigestValues        Contains digest list.
+  @param[in]     TpmActivePcrBanks      Active PCR value
+  @param[in]     NewEventData           Pointer to the new event data.
+  @param[in]     EventSize              Size of the new event data.
+  @param[in]     EventType              Type of the new event
 
   @retval EFI_SUCCESS           The new event log entry was added.
   @retval EFI_OUT_OF_RESOURCES  No enough memory to log the new event.
 **/
 EFI_STATUS
 EFIAPI
-LogHashEvent (
+SaveHashEvent (
   IN TPML_DIGEST_VALUES     *TpmDigestValues,
-  IN EFI_PHYSICAL_ADDRESS   FirmwareBlobBase,
-  IN UINT64                 FirmwareBlobLength,
   IN UINT32                 TpmActivePcrBanks,
-  IN CHAR8                  *Description OPTIONAL
+  IN UINT8                  *NewEventData,
+  IN UINT32                 EventSize,
+  IN UINT32                 EventType
   );
 
 /**
@@ -301,6 +324,19 @@ BspRegionGetDigestList (
   IN   BSPM_ELEMENT                   *Bspm,
   OUT  TPML_DIGEST_VALUES             *TpmDigestValues,
   IN   UINT32                         TpmActivePcrBanks
+  );
+
+/**
+  Create HOB to save the event log data. The HOBs will be consumed
+  by PeiBootGuardEventLogLib to create event logs. Event data will
+  be saved for FSP Version, FSP-O/T, FSP-M, BSP Pre-Mem and FSP-S.
+  FSP-S measurement will also be done.
+
+**/
+EFI_STATUS
+EFIAPI
+VerifiedComponentSaveHashEvent (
+  VOID
   );
 
 /**

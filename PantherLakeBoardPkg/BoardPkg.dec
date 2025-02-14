@@ -185,7 +185,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdAcpiDebugFeatureEnable     |FALSE|BOOLEAN|0xF0000045
   gBoardModuleTokenSpaceGuid.PcdModularCryptoEnable        |FALSE|BOOLEAN|0xF000001B
   gBoardModuleTokenSpaceGuid.PcdFspPeiGopDisable           |FALSE|BOOLEAN|0xF000001C
-  gBoardModuleTokenSpaceGuid.PcdBootGuardPerformanceEnable |FALSE|BOOLEAN|0xF000001D
   gBoardModuleTokenSpaceGuid.PcdSignedFspEnable            |FALSE|BOOLEAN|0xF000001E
 
   ##

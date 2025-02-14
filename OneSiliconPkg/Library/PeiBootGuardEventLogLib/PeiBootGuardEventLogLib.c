@@ -20,7 +20,6 @@
 **/
 
 #include <PiPei.h>
-#include <IndustryStandard/FirmwareInterfaceTable.h>
 #include <IndustryStandard/Tpm20.h>
 #include <IndustryStandard/UefiTcgPlatform.h>
 #include <IndustryStandard/FirmwareInterfaceTable.h>
@@ -53,6 +52,7 @@
 #include <Library/BootGuardLib.h>
 #include <Library/PeiBootGuardEventLogLib.h>
 #include <Library/BaseBpmAccessLib.h>
+#include <FbmDef.h>
 
 #if FixedPcdGetBool(PcdBootGuardPerformanceEnable) == 1
 #include <Library/PerformanceLib.h>
@@ -250,7 +250,7 @@ LogAcmPcrExtendedEvent (
           }
 
           CopyMem (HobData, NewEventHdr, sizeof (*NewEventHdr));
-          HobData = (VOID *) ((UINT8*)HobData + sizeof (*NewEventHdr));
+          HobData = (VOID *) ((UINT8 *)HobData + sizeof (*NewEventHdr));
           CopyMem (HobData, NewEventData, NewEventHdr->EventSize);
         }
         break;
@@ -448,7 +448,7 @@ HashDataForSelectedPcrs (
   if (((SelectedPcrs & EFI_TCG2_BOOT_HASH_ALG_SHA1) != 0) &&
       (DigestList->count < HASH_COUNT)) {
 #if FixedPcdGetBool(PcdDeprecatedCryptoRemove) == 0
-    CreateSha1Hash ((UINT8*)Data, Size, (UINT8 *)Sha1);
+    CreateSha1Hash ((UINT8 *)Data, Size, (UINT8 *)Sha1);
     DigestList->digests[DigestList->count].hashAlg = TPM_ALG_SHA1;
     CopyMem (DigestList->digests[DigestList->count].digest.sha1, Sha1, SHA1_DIGEST_SIZE);
     DigestList->count ++;
@@ -459,7 +459,7 @@ HashDataForSelectedPcrs (
 
   if (((SelectedPcrs & EFI_TCG2_BOOT_HASH_ALG_SHA256) != 0) &&
       (DigestList->count < HASH_COUNT)) {
-    CreateSha256Hash ((UINT8*)Data, Size, (UINT8 *)Sha256);
+    CreateSha256Hash ((UINT8 *)Data, Size, (UINT8 *)Sha256);
     DigestList->digests[DigestList->count].hashAlg = TPM_ALG_SHA256;
     CopyMem (DigestList->digests[DigestList->count].digest.sha256, Sha256, SHA256_DIGEST_SIZE);
     DigestList->count ++;
@@ -467,7 +467,7 @@ HashDataForSelectedPcrs (
 
   if (((SelectedPcrs & EFI_TCG2_BOOT_HASH_ALG_SHA384) != 0) &&
       (DigestList->count < HASH_COUNT)) {
-    CreateSha384Hash ((UINT8*)Data, Size, (UINT8 *)Sha384);
+    CreateSha384Hash ((UINT8 *)Data, Size, (UINT8 *)Sha384);
     DigestList->digests[DigestList->count].hashAlg = TPM_ALG_SHA384;
     CopyMem (DigestList->digests[DigestList->count].digest.sha384, Sha384, SHA384_DIGEST_SIZE);
     DigestList->count ++;
@@ -475,7 +475,7 @@ HashDataForSelectedPcrs (
 
   if (((SelectedPcrs & EFI_TCG2_BOOT_HASH_ALG_SHA512) != 0) &&
       (DigestList->count < HASH_COUNT)) {
-    CreateSha512Hash ((UINT8*)Data, Size, (UINT8 *)Sha512);
+    CreateSha512Hash ((UINT8 *)Data, Size, (UINT8 *)Sha512);
     DigestList->digests[DigestList->count].hashAlg = TPM_ALG_SHA512;
     CopyMem (DigestList->digests[DigestList->count].digest.sha512, Sha512, SHA512_DIGEST_SIZE);
     DigestList->count ++;
@@ -483,7 +483,7 @@ HashDataForSelectedPcrs (
 
   if (((SelectedPcrs & EFI_TCG2_BOOT_HASH_ALG_SM3_256) != 0) &&
       (DigestList->count < HASH_COUNT)) {
-    CreateSm3Hash ((UINT8*)Data, Size, (UINT8 *)Sm3);
+    CreateSm3Hash ((UINT8 *)Data, Size, (UINT8 *)Sm3);
     DigestList->digests[DigestList->count].hashAlg = TPM_ALG_SM3_256;
     CopyMem (DigestList->digests[DigestList->count].digest.sm3_256, Sm3, SM3_256_DIGEST_SIZE);
     DigestList->count ++;
@@ -626,6 +626,7 @@ SortDigestList (
    @param[in] AcmPolicyStatus ACM Policy status data
    @param[in] Km Pointer to the Key Manifest
    @param[in] Bpm Pointer to the Boot Policy Manifest
+   @param[in] Fbm Pointer to the FSP Boot Manifest
    @param[in] IbbHashPtr Pointer to the IBB hash list
 
    @retval     EFI_SUCCESS     The function completes successfully
@@ -634,10 +635,11 @@ SortDigestList (
 **/
 EFI_STATUS
 CreatePolicyDataMeasurementEvent (
-  IN UINT32  ActivePcrBanks,
-  IN UINT64  AcmPolicyStatus,
+  IN UINT32                           ActivePcrBanks,
+  IN UINT64                           AcmPolicyStatus,
   IN KEY_MANIFEST_STRUCTURE           *Km,
   IN BOOT_POLICY_MANIFEST_HEADER      *Bpm,
+  IN FSP_BOOT_MANIFEST_STRUCTURE      *Fbm,
   IN IBB_ELEMENT                      *BpmIbb
   )
 {
@@ -646,6 +648,7 @@ CreatePolicyDataMeasurementEvent (
   UINT8                            *CurrPos;
   UINT32                           BpmSigSize = 0;
   UINT32                           KmSigSize = 0;
+  UINT32                           FbmSigSize = 0;
   UINT16                           KeyModulusSize;
   UINT16                           KeyStructSize;
   UINT32                           AcmPolicyDataSize = 0;
@@ -671,7 +674,7 @@ CreatePolicyDataMeasurementEvent (
   }
 
   ZeroMem (&MaxAcmPolicyData, sizeof (MAX_ACM_POLICY_DATA));
-  AcmPolicyDataPtr = (UINT8*) &MaxAcmPolicyData;
+  AcmPolicyDataPtr = (UINT8 *) &MaxAcmPolicyData;
 
   ((ACM_POLICY_DATA *) AcmPolicyDataPtr)->AcmPolicyStatus = AcmPolicyStatus;
   DEBUG ((DEBUG_INFO, "AcmPolicySts  - 0x%04lx\n", ((ACM_POLICY_DATA *) AcmPolicyDataPtr)->AcmPolicyStatus));
@@ -689,20 +692,20 @@ CreatePolicyDataMeasurementEvent (
   AcmPolicyDataSize = sizeof (((ACM_POLICY_DATA *) AcmPolicyDataPtr)->AcmPolicyStatus);
   AcmPolicyDataPtr += AcmPolicyDataSize;
 
-  CurrPos = ((UINT8*) Km + Km->KeySignatureOffset);
-  DEBUG ((DEBUG_INFO, "KmSignature offset:0x%04x\n", Km->KeySignatureOffset));
+  CurrPos = ((UINT8 *) Km + Km->KeySignatureOffset);
+  DEBUG ((DEBUG_INFO, "KmSignature offset: 0x%04x\n", Km->KeySignatureOffset));
 
   if (((KEY_AND_SIGNATURE_STRUCT*) CurrPos)->KeyAlg == TPM_ALG_RSA) {
     // Advance the pointer to version (1 byte) and Key_alg (2 byte)
     CurrPos = (UINT8 *) (CurrPos + sizeof (UINT8) + sizeof (UINT16));
-    KeyModulusSize = (((KEY_STRUCT_HEADER *) (UINT8*) CurrPos)->KeySizeBits)/8; // Modulus size in bytes
+    KeyModulusSize = (((KEY_STRUCT_HEADER *) (UINT8 *) CurrPos)->KeySizeBits) / 8; // Modulus size in bytes
     KeyStructSize = sizeof (UINT8) + sizeof (UINT16) + sizeof (UINT32) + KeyModulusSize;
     CurrPos = CurrPos + KeyStructSize;
 
     // Here we have reached up to SigScheme
     if((*(UINT16*) CurrPos == TPM_ALG_RSASSA) || (*(UINT16*)CurrPos == TPM_ALG_RSAPSS)) {
       CurrPos += sizeof (UINT16);
-      KmSigSize = (((SIGNATURE_STRUCT_HEADER*)CurrPos)->SigSizeBits)/8;
+      KmSigSize = (((SIGNATURE_STRUCT_HEADER*)CurrPos)->SigSizeBits) / 8;
       CurrPos += sizeof (UINT8) + sizeof (UINT16) + sizeof (UINT16); // Sig version (1 byte) + sigsize (2 bytes) + hash_alg (2 bytes)
 
       // We have reached here to the signature data
@@ -734,21 +737,21 @@ CreatePolicyDataMeasurementEvent (
   AcmPolicyDataSize += KmSigSize;
   AcmPolicyDataPtr += KmSigSize;
 
-  CurrPos = ((UINT8*) Bpm + Bpm->KeySignatureOffset);
-  DEBUG ((DEBUG_INFO, "BpmSignature offset:0x%04x\n", Bpm->KeySignatureOffset));
+  CurrPos = ((UINT8 *) Bpm + Bpm->KeySignatureOffset);
+  DEBUG ((DEBUG_INFO, "BpmSignature offset: 0x%04x\n", Bpm->KeySignatureOffset));
 
   if (((KEY_AND_SIGNATURE_STRUCT*) CurrPos)->KeyAlg == TPM_ALG_RSA) {
 
     // advance the pointer to version (1 byte) and Key_alg (2 byte)
     CurrPos = (UINT8 *) (CurrPos + sizeof (UINT8) + sizeof (UINT16));
-    KeyModulusSize = (((KEY_STRUCT_HEADER *) (UINT8*) CurrPos)-> KeySizeBits)/8; //modulus size in bytes
+    KeyModulusSize = (((KEY_STRUCT_HEADER *) (UINT8 *) CurrPos)-> KeySizeBits) / 8; //modulus size in bytes
     KeyStructSize = sizeof (UINT8) + sizeof (UINT16) + sizeof (UINT32) + KeyModulusSize;
     CurrPos = CurrPos + KeyStructSize;
 
     // Here we have reached up to SigScheme
     if ((*(UINT16 *) CurrPos == TPM_ALG_RSASSA) || (*(UINT16 *) CurrPos == TPM_ALG_RSAPSS)) {
       CurrPos += sizeof (UINT16);
-      BpmSigSize = (((SIGNATURE_STRUCT_HEADER *) CurrPos)->SigSizeBits)/8;
+      BpmSigSize = (((SIGNATURE_STRUCT_HEADER *) CurrPos)->SigSizeBits) / 8;
       CurrPos += sizeof (UINT8) + sizeof (UINT16) + sizeof (UINT16) ; // Sig version (1 byte) + sigsize (2 bytes) + hash_alg (2 bytes)
 
       // We have reached here to the signature data
@@ -777,6 +780,50 @@ CreatePolicyDataMeasurementEvent (
   }
 
   AcmPolicyDataSize += BpmSigSize;
+  AcmPolicyDataPtr += BpmSigSize;
+
+  if (Fbm != NULL) {
+    CurrPos = ((UINT8 *) Fbm + Fbm->KeySignatureOffset);
+    DEBUG ((DEBUG_INFO, "FbmSignature offset: 0x%04x\n", Fbm->KeySignatureOffset));
+
+    if (((KEY_AND_SIGNATURE_STRUCT*) CurrPos)->KeyAlg == TPM_ALG_RSA) {
+
+      // advance the pointer to version (1 byte) and Key_alg (2 byte)
+      CurrPos = (UINT8 *) (CurrPos + sizeof (UINT8) + sizeof (UINT16));
+      KeyModulusSize = (((KEY_STRUCT_HEADER *) (UINT8 *) CurrPos)-> KeySizeBits) / 8; //modulus size in bytes
+      KeyStructSize = sizeof (UINT8) + sizeof (UINT16) + sizeof (UINT32) + KeyModulusSize;
+      CurrPos = CurrPos + KeyStructSize;
+
+      // Here we have reached up to SigScheme
+      if ((*(UINT16 *) CurrPos == TPM_ALG_RSASSA) || (*(UINT16 *) CurrPos == TPM_ALG_RSAPSS)) {
+        CurrPos += sizeof (UINT16);
+        FbmSigSize = (((SIGNATURE_STRUCT_HEADER *) CurrPos)->SigSizeBits) / 8;
+        CurrPos += sizeof (UINT8) + sizeof (UINT16) + sizeof (UINT16) ; // Sig version (1 byte) + sigsize (2 bytes) + hash_alg (2 bytes)
+
+        // We have reached here to the signature data
+        DEBUG ((DEBUG_INFO, "FbmSignatureSize: 0x%x\n", FbmSigSize));
+        DEBUG ((DEBUG_INFO, "FbmSignature:\n"));
+        InternalDumpHex (CurrPos, FbmSigSize);
+
+        if ((AcmPolicyDataSize + FbmSigSize) > sizeof (MAX_ACM_POLICY_DATA)) {
+          DEBUG ((DEBUG_ERROR, "Fbm signature measurement: Error! Buffer Too Small.\n"));
+          Status = EFI_BUFFER_TOO_SMALL;
+          ASSERT_EFI_ERROR (Status);
+          return Status;
+        }
+        CopyMem (
+        AcmPolicyDataPtr,
+        CurrPos,
+        BpmSigSize);
+      }
+
+    } else {
+      DEBUG ((DEBUG_ERROR, "Unsupported FBM KeyAlg\n"));
+      Status = EFI_UNSUPPORTED;
+      ASSERT_EFI_ERROR (Status);
+      return Status;
+    }
+  }
 
   //
   // Dump ACM Policy Data to be measured
@@ -805,6 +852,20 @@ CreatePolicyDataMeasurementEvent (
 }
 
 /**
+  If Boot Guard already measured IBB, we do not need let TPM measure it again.
+  So we let BiosInfo PEIM register the Measurement Exclude PPI
+  and TPM driver knows this Fv should be excluded.
+**/
+VOID
+ExcludeIbbFv (
+  VOID
+  )
+{
+  DEBUG ((DEBUG_INFO, "Excluding IBB FVs as Boot Guard did Measurement of PEI FV\n"));
+  PeiServicesInstallPpi (&mMeasurementExcludeFvPlatformPpiList);
+}
+
+/**
   Create IBB Measurement event log
 
   All digests must be retrieved from BPM and placed into TPML_DIGEST_VALUES using the ascending
@@ -821,6 +882,7 @@ EFI_STATUS
 CreateIbbMeasurementEvent (
   IN UINT32                       ActivePcrBanks,
   IN BOOT_POLICY_MANIFEST_HEADER  *Bpm,
+  IN FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
   IN HASH_LIST                    *IbbHashPtr
   )
 {
@@ -836,6 +898,7 @@ CreateIbbMeasurementEvent (
   TPML_DIGEST_VALUES           DigestList;
   TPML_DIGEST_VALUES           SortedDigestList;
   STATIC CONST CHAR16          IbbMeasurementEventDataString[] = L"Boot Guard Measured IBB\0";
+  STATIC CONST CHAR16          Near4GRegionEventDataString[] = L"4G - 4K Region\0";
 
   CurrPcrBank = 0;
   CurrHashAlg =  0;
@@ -936,8 +999,70 @@ CreateIbbMeasurementEvent (
   NewEventHdr.EventType = EV_POST_CODE;
   NewEventHdr.EventSize = sizeof (IbbMeasurementEventDataString);
 
+  if (Fbm != NULL) {
+    //
+    // For signed FSP boot, only 4G - 4K region digest is calculated and placed in BPM
+    // Measure 4G - 4K region for BTG4.
+    //
+    if (!IsMeasuredBoot ()) {
+      Status = Tpm2PcrExtend (0, &SortedDigestList);
+      if (Status != EFI_SUCCESS) {
+        return Status;
+      }
+      //
+      // Skip further measurement as all IBB components have been measured by ACM and FSP.
+      //
+      ExcludeIbbFv ();
+    }
+    NewEventHdr.EventSize = sizeof (Near4GRegionEventDataString);
+    Status = LogAcmPcrExtendedEvent (&SortedDigestList, &NewEventHdr, (UINT8 *) Near4GRegionEventDataString);
+    return Status;
+  }
+
   Status = LogAcmPcrExtendedEvent (&SortedDigestList, &NewEventHdr, (UINT8 *) IbbMeasurementEventDataString);
   return Status;
+}
+
+/**
+  Create IBB Measurement event log
+
+  Detect all instances of gTcgEventDataHobGuid HOB created by FSP to retrieve
+  event log data and cretae gTcgEvent2EntryHobGuid for event logging.
+
+  @retval     EFI_SUCCESS  The function completes successfully
+  @retval     EFI_INVALID_PARAMETER Input pointers are invalid
+**/
+EFI_STATUS
+CreateFspMeasuredIbbEvent (
+  )
+{
+  EFI_PEI_HOB_POINTERS  Hob;
+  EFI_STATUS            RetStatus;
+  VOID                  *HobData;
+  VOID                  *SavedHobData;
+  UINT32                HobDataLength;
+
+  RetStatus = EFI_SUCCESS;
+
+  Hob.Raw = GetFirstGuidHob (&gTcgEventDataHobGuid);
+  while (Hob.Raw != NULL) {
+    SavedHobData = GET_GUID_HOB_DATA (Hob);
+    HobDataLength = GET_HOB_LENGTH (Hob) - sizeof (EFI_HOB_GUID_TYPE);
+    HobData = BuildGuidHob (
+                    &gTcgEvent2EntryHobGuid,
+                    HobDataLength
+                    );
+
+    if (HobData == NULL) {
+      RetStatus = EFI_OUT_OF_RESOURCES;
+      break;
+    }
+    CopyMem (HobData, SavedHobData, HobDataLength);
+
+    Hob.Raw = GET_NEXT_HOB (Hob);
+    Hob.Raw = GetNextGuidHob (&gTcgEventDataHobGuid, Hob.Raw);
+  }
+  return RetStatus;
 }
 
 /**
@@ -1125,20 +1250,6 @@ CreateLocalityStartupEvent (
 }
 
 /**
-  If Boot Guard already measured IBB, we do not need let TPM measure it again.
-  So we let BiosInfo PEIM register the Measurement Exclude PPI
-  and TPM driver knows this Fv should be excluded.
-**/
-VOID
-ExcludeIbbFv (
-  VOID
-  )
-{
-  DEBUG ((DEBUG_INFO, "Excluding IBB FVs as Boot Guard did Measurement of PEI FV\n"));
-  PeiServicesInstallPpi (&mMeasurementExcludeFvPlatformPpiList);
-}
-
-/**
   This is the library's callback entry point that will handle the TCG event logging
   depending on the Boot Guard configuration.
 
@@ -1177,6 +1288,7 @@ CreateBootguardEventLogEntriesCallback (
   ACM_HEADER_4                 *AcmHdr     = NULL;
   KEY_MANIFEST_STRUCTURE       *Km         = NULL;
   BOOT_POLICY_MANIFEST_HEADER  *Bpm        = NULL;
+  FSP_BOOT_MANIFEST_STRUCTURE  *Fbm        = NULL;
   IBB_ELEMENT                  *BpmIbb     = NULL;
   HASH_LIST                    *IbbHashPtr = NULL;
 
@@ -1192,6 +1304,9 @@ CreateBootguardEventLogEntriesCallback (
   if (BootGuardInfo.ByPassTpmEventLog == TRUE) {
     return EFI_SUCCESS;
   }
+
+  // Fbm should not be NULL for FSP signed BIOS
+  Fbm = FindFbm ();
 
   AcmPolicySts.Data = MmioRead64 (MMIO_ACM_POLICY_STATUS);
 
@@ -1209,8 +1324,8 @@ CreateBootguardEventLogEntriesCallback (
   //
   TpmStartupLocality = LOCALITY_0_INDICATOR;
   //
-  // If BootGuard ACM is the S-CRTM,
-  // Create event logs from previous PCR extensions on behalf of ACM
+  // If BootGuard ACM/FSP is the S-CRTM,
+  // Create event logs from previous PCR extensions on behalf of ACM/FSP
   //
 
   //
@@ -1218,7 +1333,7 @@ CreateBootguardEventLogEntriesCallback (
   //   0x0 : Startup Locality = 3
   //   0x1 : Startup Locality = 0
   //
-  if (AcmPolicySts.Bits.TpmStartupLocality == 0) {
+  if ((AcmPolicySts.Bits.TpmStartupLocality == 0) && (Fbm == NULL)) {
     TpmStartupLocality = LOCALITY_3_INDICATOR;
   }
 
@@ -1289,10 +1404,15 @@ CreateBootguardEventLogEntriesCallback (
     return Status;
   }
 
-  Status = CreateScrtmVersionEvent (TpmActivePcrBanks, AcmHdr);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "CreateScrtmVersionEvent() error status: %r\n", Status));
-    return Status;
+  if (Fbm == NULL) {
+    //
+    // For non-signed FSP, create event log ACM version
+    //
+    Status = CreateScrtmVersionEvent (TpmActivePcrBanks, AcmHdr);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "CreateScrtmVersionEvent() error status: %r\n", Status));
+      return Status;
+    }
   }
   //
   // Disable BIOS TCG drivers measurement of CRTM
@@ -1301,13 +1421,27 @@ CreateBootguardEventLogEntriesCallback (
   PcdSet8S (PcdTpm2ScrtmPolicy, 0);
 
   //
-  // Log ACM's extention of the IBB
+  // Log ACM's extention of the IBB for non-signed FSP
+  // Measure and log 4G - 4K region for signed FSP
   //
-  Status = CreateIbbMeasurementEvent (TpmActivePcrBanks, Bpm, IbbHashPtr);
+  Status = CreateIbbMeasurementEvent (TpmActivePcrBanks, Bpm, Fbm, IbbHashPtr);
 
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "CreateIbbMeasurementEvent() error status: %r\n", Status));
     return Status;
+  }
+  if (Fbm != NULL) {
+    //
+    // Log FSP's extention of the IBB for signed FSP
+    // Log data was saved by FSP in below order:
+    // 1. FSP version, 2. FSP-O/T, 3. FSP-M, 4. BSP Pre-Mem, 5. FSP-S
+    //
+    Status = CreateFspMeasuredIbbEvent ();
+
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "CreateFspMeasuredIbbEvent() error status: %r\n", Status));
+      return Status;
+    }
   }
   //
   // If Boot Guard already measured IBB, we do not need let TPM measure it again.
@@ -1324,6 +1458,7 @@ CreateBootguardEventLogEntriesCallback (
              AcmPolicySts.Data,
              Km,
              Bpm,
+             Fbm,
              BpmIbb);
 
   if (EFI_ERROR (Status)) {

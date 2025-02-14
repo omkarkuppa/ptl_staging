@@ -228,7 +228,7 @@ set FSP_BUILD_OPTION_PCD=%FSP_BUILD_OPTION_PCD% ^
   set ROM_FILENAME_SPECIAL_BUILD_TYPE=_Performance
   set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
 --pcd gMinPlatformPkgTokenSpaceGuid.PcdPerformanceEnable=TRUE ^
---pcd gBoardModuleTokenSpaceGuid.PcdBootGuardPerformanceEnable=TRUE
+--pcd gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable=TRUE
   set FSP_BUILD_OPTION_PCD=%FSP_BUILD_OPTION_PCD% ^
 --pcd gPantherLakeFspPkgTokenSpaceGuid.PcdFspPerformanceEnable=TRUE
 ) else if /i "res" == "%1" (

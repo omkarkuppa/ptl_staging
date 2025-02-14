@@ -48,6 +48,7 @@
   OneSiliconPkg/SiPkg.dec
   UefiCpuPkg/UefiCpuPkg.dec
   SecurityPkg/SecurityPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
 
 [LibraryClasses]
   BaseLib

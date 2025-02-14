@@ -95,6 +95,20 @@ FindBpm (
 }
 
 /**
+  Find FBM address
+
+  @return FBM address
+
+**/
+VOID *
+FindFbm (
+  VOID
+  )
+{
+  return FindFitEntryData (FIT_TYPE_0D_FSP_BOOT_MANIFEST);
+}
+
+/**
   Find KM address
 
   @return KM address

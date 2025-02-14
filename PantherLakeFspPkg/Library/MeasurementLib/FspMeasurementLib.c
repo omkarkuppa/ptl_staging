@@ -109,13 +109,14 @@ TpmMeasurementGetFvName (
 }
 
 /**
-  Add a new entry to the Event Log.
+  Create HOB to save the event log data. The HOBs will be consumed
+  by PeiBootGuardEventLogLib to create event logs.
 
-  @param[in]     TpmDigestValues     Contains digest list.
-  @param[in]     FirmwareBlobBase    Base address of this FirmwareBlob.
-  @param[in]     FirmwareBlobLength  Size in bytes of this FirmwareBlob.
-  @param[in]     TpmActivePcrBanks   Active PCR value
-  @param[in]     Description         Description for this FirmwareBlob.
+  @param[in]     TpmDigestValues        Contains digest list.
+  @param[in]     TpmActivePcrBanks      Active PCR value
+  @param[in]     NewEventData           Pointer to the new event data.
+  @param[in]     EventSize              Size of the new event data.
+  @param[in]     EventType              Type of the new event
 
   @retval EFI_SUCCESS           The new event log entry was added.
   @retval EFI_NOT_FOUND         FV information was not found
@@ -123,58 +124,36 @@ TpmMeasurementGetFvName (
 **/
 EFI_STATUS
 EFIAPI
-LogHashEvent (
+SaveHashEvent (
   IN TPML_DIGEST_VALUES     *TpmDigestValues,
-  IN EFI_PHYSICAL_ADDRESS   FirmwareBlobBase,
-  IN UINT64                 FirmwareBlobLength,
   IN UINT32                 TpmActivePcrBanks,
-  IN CHAR8                  *Description OPTIONAL
+  IN UINT8                  *NewEventData,
+  IN UINT32                 EventSize,
+  IN UINT32                 EventType
   )
 {
   VOID                            *HobData;
   VOID                            *DigestBuffer;
   TCG_PCR_EVENT_HDR               *TcgEventHdr;
-  VOID                            *FvName;
-  VOID                            *EventLog;
-  UINT32                          EventSize;
-  PLATFORM_FIRMWARE_BLOB2_STRUCT  FvBlob2;
 
-  FvName = TpmMeasurementGetFvName (FirmwareBlobBase, FirmwareBlobLength);
-
-  if ((Description != NULL) || (FvName != NULL)) {
-    if (Description != NULL) {
-      AsciiSPrint ((CHAR8 *)FvBlob2.BlobDescription, sizeof (FvBlob2.BlobDescription), "%a", Description);
-    } else {
-      AsciiSPrint ((CHAR8 *)FvBlob2.BlobDescription, sizeof (FvBlob2.BlobDescription), "Fv(%g)", FvName);
-    }
-    FvBlob2.BlobDescriptionSize = sizeof (FvBlob2.BlobDescription);
-    FvBlob2.BlobBase            = FirmwareBlobBase;
-    FvBlob2.BlobLength          = FirmwareBlobLength;
-
-    EventLog  = &FvBlob2;
-    EventSize = sizeof (FvBlob2);
-  } else {
-    // FV information was not found
-    return EFI_NOT_FOUND;
-  }
   HobData = BuildGuidHob (
-              &gTcgEvent2EntryHobGuid,
+              &gTcgEventDataHobGuid,
               sizeof (TcgEventHdr->PCRIndex) + sizeof (TcgEventHdr->EventType)
-              + GetDigestListSize (TpmDigestValues) + sizeof (EventSize) + EventSize
+              + GetDigestListSize (TpmDigestValues) + sizeof (TcgEventHdr->EventSize) +
+              EventSize
               );
   if (HobData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
   TcgEventHdr = HobData;
   TcgEventHdr->PCRIndex = 0;
-  TcgEventHdr->EventType = EV_EFI_PLATFORM_FIRMWARE_BLOB;
+  TcgEventHdr->EventType = EventType;
   DigestBuffer            = (UINT8 *)&TcgEventHdr->Digest;
   DigestBuffer            = CopyDigestListToBuffer (DigestBuffer, TpmDigestValues, TpmActivePcrBanks);
 
   CopyMem (DigestBuffer, &EventSize, sizeof (EventSize));
   DigestBuffer = (UINT8 *)DigestBuffer + sizeof (EventSize);
-  CopyMem (DigestBuffer, EventLog, EventSize);
-
+  CopyMem (DigestBuffer, NewEventData, EventSize);
   return EFI_SUCCESS;
 }
 
@@ -273,7 +252,12 @@ FspRegionGetDigestList (
   FSP_REGION_DIGEST       *FspDigest;
 
   FspDigest  = COMPONENT_DIGEST0_PTR (Fbm);
-  if (FspComponentId == FSP_REGION_TYPE_FSPS) {
+  if (FspComponentId == FSP_REGION_TYPE_FSP_VERSION) {
+    FspDigest  = VERSION_DIGEST_PTR (Fbm);
+    if (FspDigest->ComponentID != FSP_REGION_TYPE_FSP_VERSION) {
+      return EFI_INVALID_PARAMETER;
+    }
+  } else if (FspComponentId == FSP_REGION_TYPE_FSPS) {
     FspDigest += FSP_REGION_TYPE_FSPS;
   } else if (FspComponentId == FSP_REGION_TYPE_FSPM) {
     FspDigest += FSP_REGION_TYPE_FSPM;
@@ -434,6 +418,33 @@ FspExtendFspot (
 }
 
 /**
+  Extend FSP version to active PCR.
+
+  @param[in]   Fbm                 Base address of Fbm
+  @param[in]   TpmActivePcrBanks   Active PCR value
+
+  @retval EFI_SUCCESS       Operation completed successfully.
+  @retval EFI_DEVICE_ERROR  Unexpected device behavior.
+
+**/
+EFI_STATUS
+EFIAPI
+FspExtendFspVersion (
+  IN  FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
+  IN  UINT32                         TpmActivePcrBanks
+  )
+{
+  TPML_DIGEST_VALUES  TpmDigestValues;
+  EFI_STATUS          Status;
+
+  ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
+  FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSP_VERSION, TpmActivePcrBanks);
+  Status = Tpm2PcrExtend (0, &TpmDigestValues);
+  DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP Version digests have been extended!)\n", Status, TpmDigestValues.count));
+  return Status;
+}
+
+/**
   Extend FSP-M digests to active PCR.
 
   @param[in]   Fbm                 Base address of Fbm
@@ -486,6 +497,39 @@ FspExtendFsps (
   Status = Tpm2PcrExtend (0, &TpmDigestValues);
   DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-S digests have been extended!)\n", Status, TpmDigestValues.count));
 
+  return Status;
+}
+
+/**
+  Extend FSP Version to active PCR.
+
+  @param[out]  FspMeasurementInfo  Structure that points to the data
+  @param[in]   Fbm                 Base address of Fbm
+  @param[in]   TpmActivePcrBanks   Active PCR value
+
+  @retval EFI_SUCCESS       Operation completed successfully.
+  @retval EFI_DEVICE_ERROR  Unexpected device behavior.
+
+**/
+EFI_STATUS
+EFIAPI
+ExtendFspVersion (
+  OUT  FSP_BUILD_MEASUREMENT_INFO   *FspMeasurementInfo,
+  IN   FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
+  IN   UINT32                       TpmActivePcrBanks
+  )
+{
+  EFI_STATUS  Status = EFI_ACCESS_DENIED;
+  if (IsS3Resume () == 0) {
+    Status = FspExtendFspVersion (Fbm, TpmActivePcrBanks);
+    if (Status == EFI_SUCCESS) {
+      FspMeasurementInfo->Bits.FspVersionStatus = EFI_SUCCESS;
+      DEBUG ((DEBUG_INFO, "FSP version extended to PCR Bank\n",
+              Status, TpmActivePcrBanks));
+    } else {
+      DEBUG ((DEBUG_INFO, "FSP version measurement fail\n"));
+    }
+  }
   return Status;
 }
 
@@ -626,11 +670,151 @@ InitializeTpmAndGetActivePcrs (
     //
     DEBUG ((DEBUG_INFO, "FSP-OT and FSP version has already been measured by ACM\n"));
     FspMeasurementInfo->Bits.IbbStatus = EFI_SUCCESS;
+    FspMeasurementInfo->Bits.FspVersionStatus = EFI_SUCCESS;
   }
 
   if (FspMeasurementInfo->Bits.TpmInitStatus != TPM_INIT_FAILED) {
     Status = FspGetSupportedPcrs (TpmActivePcrBanks);
   }
+  return Status;
+}
+
+/**
+  Create HOB to save the event log data. The HOBs will be consumed
+  by PeiBootGuardEventLogLib to create event logs. Event data will
+  be saved for FSP Version, FSP-O/T, FSP-M, BSP Pre-Mem and FSP-S.
+  FSP-S measurement will also be done.
+
+**/
+EFI_STATUS
+EFIAPI
+VerifiedComponentSaveHashEvent (
+  VOID
+  )
+{
+  UINT32                         Index;
+  REGION_SEGMENT                 *IbbSegmentPtr;
+  FSP_BUILD_MEASUREMENT_INFO     *FspMeasurementData;
+  EFI_STATUS                     Status;
+  FSP_BOOT_MANIFEST_STRUCTURE    *Fbm;
+  BSPM_ELEMENT                   *Bspm;
+  UINT32                         TpmActivePcrBanks;
+  TPML_DIGEST_VALUES             TpmDigestValues;
+
+  if (IsS3Resume () == 1) {
+    //
+    // Skip event log creation for S3 resume.
+    //
+    return EFI_UNSUPPORTED;
+  }
+
+  Fbm = LocateFbm ();
+  //
+  // Check if signing is supported
+  //
+  if (!(IsSigningSupported (Fbm))) {
+    return EFI_UNSUPPORTED;
+  }
+
+  Bspm = LocateBspm ();
+  if (Bspm == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  FspGetSupportedPcrs (&TpmActivePcrBanks);
+
+  FspMeasurementData = (FSP_BUILD_MEASUREMENT_INFO *) (UINTN) (PcdGet32 (PcdTemporaryRamBase) +
+                        PcdGet32 (PcdTemporaryRamSize) - PcdGet32 (PcdFspReservedBufferSize));
+
+  if (FspMeasurementData->Bits.TpmInitStatus == TPM_INIT_FAILED) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  if (FspMeasurementData->Bits.FspVersionStatus == EFI_SUCCESS) {
+    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
+    FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSP_VERSION, TpmActivePcrBanks);
+    Status = SaveHashEvent (&TpmDigestValues,
+                           TpmActivePcrBanks,
+                           (UINT8 *) "FSP Version",
+                           sizeof ("FSP Version"),
+                           EV_S_CRTM_VERSION
+                           );
+    if (Status == EFI_SUCCESS) {
+      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FBM\n"));
+    }
+  }
+
+  if (FspMeasurementData->Bits.IbbStatus == EFI_SUCCESS) {
+    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
+    FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPOT, TpmActivePcrBanks);
+    Status = SaveHashEvent (&TpmDigestValues,
+                           TpmActivePcrBanks,
+                           (UINT8 *) "FSPOT",
+                           sizeof ("FSPOT"),
+                           EV_POST_CODE
+                           );
+    if (Status == EFI_SUCCESS) {
+      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-OT\n"));
+    }
+  }
+
+  if (FspMeasurementData->Bits.FspmStatus == EFI_SUCCESS) {
+    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
+    FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPM, TpmActivePcrBanks);
+    Status = SaveHashEvent (&TpmDigestValues,
+                           TpmActivePcrBanks,
+                           (UINT8 *) "FSPM",
+                           sizeof ("FSPM"),
+                           EV_POST_CODE
+                           );
+    if (Status == EFI_SUCCESS) {
+      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-M\n"));
+    }
+  }
+
+  if (FspMeasurementData->Bits.BspPreMemStatus == EFI_SUCCESS) {
+    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
+    BspRegionGetDigestList (Bspm, &TpmDigestValues, TpmActivePcrBanks);
+    IbbSegmentPtr = SEGMENT_ARRAY_PTR (Bspm);
+    for (Index = 0; Index < Bspm->BspSegmentCount; Index ++) {
+      if (IbbSegmentPtr[Index].Size != 0 && (IbbSegmentPtr[Index].Flags & BIT_HASHED_IBB) == 0) {
+        Status = SaveHashEvent (&TpmDigestValues,
+                              TpmActivePcrBanks,
+                              (UINT8 *) "BSPM",
+                              sizeof ("BSPM"),
+                              EV_POST_CODE
+                              );
+        if (Status == EFI_SUCCESS) {
+          DEBUG ((DEBUG_INFO, "Hash event log saved successfully for BSP Pre-Mem\n"));
+        }
+      }
+      IbbSegmentPtr ++;
+    }
+  }
+
+  ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
+  FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPS, TpmActivePcrBanks);
+  //
+  // Measure and create event log for FSP-S.
+  // FSP-S verification will happen later. We have deadloops to halt the boot
+  // if verification fails.
+  //
+  Status = FspExtendFsps (Fbm, TpmActivePcrBanks);
+  if (Status == EFI_SUCCESS) {
+    DEBUG ((DEBUG_INFO, "FSP-S extended to PCR Bank %d\n", TpmActivePcrBanks));
+    Status = SaveHashEvent (&TpmDigestValues,
+                           TpmActivePcrBanks,
+                           (UINT8 *) "FSPS",
+                           sizeof ("FSPS"),
+                           EV_POST_CODE
+                           );
+    if (Status == EFI_SUCCESS) {
+      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-S\n"));
+    }
+  } else {
+    DEBUG ((DEBUG_ERROR, "Failed to extend FSP-S! Status: %r\n", Status));
+  }
+
   return Status;
 }
 

@@ -32,7 +32,7 @@
 #define FSP_REGION_TYPE_FSPOT       0
 #define FSP_REGION_TYPE_FSPM        1
 #define FSP_REGION_TYPE_FSPS        2
-#define FSP_REGION_TYPE_FSPVERSION        15
+#define FSP_REGION_TYPE_FSP_VERSION        15
 
 #define VERSION_DIGEST_PTR(Fbm)  \
   (FSP_REGION_DIGEST *)((UINT8 *)(Fbm) + sizeof (FSP_BOOT_MANIFEST_STRUCTURE) - \

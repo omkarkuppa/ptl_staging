@@ -31,8 +31,6 @@
 #include <Library/DebugLib.h>
 #include <Ppi/FspLoaderPpi.h>
 
-#define  BIT_HASHED_IBB           0x00000001    //0: Hashed IBB    1:Non-Hashed IBB
-
 //
 // FspLoaderPeim is designed to be the only one who should links Crypto services
 // in FSP-O, FspSecCoreO should reuse API pointers in mFspVerifyApiWrapper structure
@@ -46,133 +44,6 @@ FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
   VerifyBsp,
   VerifyFspVersion
 };
-
-/**
-  Create hash event log for FSP-O/T and BSP Pre-Mem
-
-  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
-  @retval EFI_NOT_FOUND           FV information was not found
-  @retval EFI_OUT_OF_RESOURCES    No enough memory to log the new event.
-  @retval EFI_SUCCESS             Verification Pass.
-
-**/
-EFI_STATUS
-EFIAPI
-VerifiedComponentLogHashEvent (
-  VOID
-  )
-{
-  UINT32                         Index;
-  REGION_SEGMENT                 *IbbSegmentPtr;
-  FSP_BUILD_MEASUREMENT_INFO     *FspMeasurementData;
-  FSP_REGION_DIGEST              *FspDigest;
-  EFI_STATUS                     Status;
-  UINT32                         FspoSize;
-  UINT32                         FsptSize;
-  UINT32                         TopIbbSize;
-  UINT32                         TopIbbBase;
-  UINTN                          FspmImageBase;
-  FSP_BOOT_MANIFEST_STRUCTURE    *Fbm;
-  BSPM_ELEMENT                   *Bspm;
-  UINT32                         TpmActivePcrBanks;
-  TPML_DIGEST_VALUES             TpmDigestValues;
-
-  if (IsS3Resume () == 1) {
-    //
-    // Skip event log creation for S3 resume.
-    //
-    return EFI_UNSUPPORTED;
-  }
-
-  Fbm = LocateFbm ();
-  //
-  // Check if signing is supported
-  //
-  if (!(IsSigningSupported (Fbm))) {
-    return EFI_UNSUPPORTED;
-  }
-
-  Bspm = LocateBspm ();
-  if (Bspm == NULL) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  FspGetSupportedPcrs (&TpmActivePcrBanks);
-
-  Status = EFI_SUCCESS;
-  FspMeasurementData = (FSP_BUILD_MEASUREMENT_INFO *) (UINTN) (PcdGet32 (PcdTemporaryRamBase) +
-                        PcdGet32 (PcdTemporaryRamSize) - PcdGet32 (PcdFspReservedBufferSize));
-
-  if (FspMeasurementData->Bits.TpmInitStatus == TPM_INIT_FAILED) {
-    return EFI_DEVICE_ERROR;
-  }
-
-  FspDigest  = COMPONENT_DIGEST0_PTR (Fbm);
-  if (FspDigest->ComponentID != FSP_REGION_TYPE_FSPOT) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  if (FspMeasurementData->Bits.IbbStatus == EFI_SUCCESS) {
-    FspoSize      = FixedPcdGet32 (PcdFlashFvFspoSize);
-    FsptSize      = FixedPcdGet32 (PcdFlashFvFsptSize);
-    TopIbbSize    = FspoSize + FsptSize;
-    TopIbbBase    = (UINT32) (BASE_4GB - TopIbbSize);
-
-    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPOT, TpmActivePcrBanks);
-    Status = LogHashEvent (&TpmDigestValues,
-                           TopIbbBase,
-                           TopIbbSize,
-                           TpmActivePcrBanks,
-                           "FSPOT"
-                           );
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Hash event log created successfully for FSP-OT\n"));
-    }
-  }
-
-  if (FspMeasurementData->Bits.FspmStatus == EFI_SUCCESS) {
-    if (Bspm->FspmLoadingPolicy & FSPM_COMPRESSED) {
-      FspmImageBase = (UINTN) PcdGet32 (PcdSecondaryDataStackBase) + SIZE_4KB;
-    } else {
-      FspmImageBase = (UINTN) Bspm->FspmBaseAddress;
-    }
-
-    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPM, TpmActivePcrBanks);
-    Status = LogHashEvent (&TpmDigestValues,
-                           FspmImageBase,
-                           ((EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)FspmImageBase)->FvLength,
-                           TpmActivePcrBanks,
-                           "FSPM"
-                           );
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Hash event log created successfully for FSP-M\n"));
-    }
-  }
-
-  if (FspMeasurementData->Bits.BspPreMemStatus == EFI_SUCCESS) {
-    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    BspRegionGetDigestList (Bspm, &TpmDigestValues, TpmActivePcrBanks);
-    IbbSegmentPtr = SEGMENT_ARRAY_PTR (Bspm);
-    for (Index = 0; Index < Bspm->BspSegmentCount; Index ++) {
-      if (IbbSegmentPtr[Index].Size != 0 && (IbbSegmentPtr[Index].Flags & BIT_HASHED_IBB) == 0) {
-        Status = LogHashEvent (&TpmDigestValues,
-                              IbbSegmentPtr->Base,
-                              IbbSegmentPtr->Size,
-                              TpmActivePcrBanks,
-                              "BSPM"
-                              );
-        if (Status == EFI_SUCCESS) {
-          DEBUG ((DEBUG_INFO, "Hash event log created successfully for BSP Pre-Mem\n"));
-        }
-      }
-      IbbSegmentPtr ++;
-    }
-  }
-
-  return Status;
-}
 
 /**
   A service provided by FSP to verify FSP-S and published for BSP use in Dispatch mode.
@@ -194,8 +65,6 @@ FspLoaderVerifyAndLogEventFsps (
   FSP_BOOT_MANIFEST_STRUCTURE    *Fbm;
   BSPM_ELEMENT                   *Bspm;
   EFI_STATUS                     Status;
-  UINT32                         TpmActivePcrBanks;
-  TPML_DIGEST_VALUES             TpmDigestValues;
   UINT8                          AvailableMemoryBuffer[HASH_CTX_LEN_MAX];
 
   Fbm  = LocateFbm ();
@@ -215,34 +84,6 @@ FspLoaderVerifyAndLogEventFsps (
   // Veify and create hash event log.
   //
   Status = mFspVerifyApiWrapper.VerifyFspsApiWrapper (FspsImageBase, Fbm, AvailableMemoryBuffer);
-
-  if ((Status == EFI_SUCCESS) && (IsS3Resume () == 0)) {
-    FspGetSupportedPcrs (&TpmActivePcrBanks);
-    //
-    // Extend the digest to PCR if not resume from S3.
-    //
-    Status = FspExtendFsps (Fbm, TpmActivePcrBanks);
-    if (Status != EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Failed to extend FSP-S region\n"));
-      //
-      // Proceed with the boot even if measurement failed.
-      //
-      return EFI_SUCCESS;
-    }
-
-    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPS, TpmActivePcrBanks);
-    Status = LogHashEvent (&TpmDigestValues,
-                           FspsImageBase,
-                           ((EFI_FIRMWARE_VOLUME_HEADER *)(UINTN)FspsImageBase)->FvLength,
-                           TpmActivePcrBanks,
-                           "FSPS"
-                           );
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Hash event log created successfully for FSP-S\n"));
-    }
-    return Status;
-  }
 
   return Status;
 }
@@ -280,7 +121,7 @@ FspLoaderPeimEntryPoint (
   // for FSP-OT, BSP Pre-Mem and FSP-M
   //
   PeiServicesInstallPpi (&mPeiFspLoaderPpiDesc);
-  VerifiedComponentLogHashEvent ();
+  VerifiedComponentSaveHashEvent ();
 
   return EFI_SUCCESS;
 }

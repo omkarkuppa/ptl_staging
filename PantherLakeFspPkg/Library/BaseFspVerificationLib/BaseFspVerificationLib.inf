@@ -44,6 +44,7 @@
   OneSiliconPkg/SiPkg.dec
   PantherLakeFspPkg/PantherLakeFspPkg.dec
   CryptoPkg/CryptoPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
 
 [LibraryClasses]
   BaseLib

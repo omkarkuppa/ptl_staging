@@ -22,57 +22,9 @@
 #ifndef __BPM_DEF_H__
 #define __BPM_DEF_H__
 
+#include <IndustryStandard/FirmwareInterfaceTable.h>
+
 #pragma pack (1)
-
-//
-// FIT Entry type definitions
-//
-#define FIT_TYPE_00_HEADER                  0x00
-#define FIT_TYPE_01_MICROCODE               0x01
-#define FIT_TYPE_02_STARTUP_ACM             0x02
-#define FIT_TYPE_07_BIOS_STARTUP_MODULE     0x07
-#define FIT_TYPE_08_TPM_POLICY              0x08
-#define FIT_TYPE_09_BIOS_POLICY             0x09
-#define FIT_TYPE_0A_TXT_POLICY              0x0A
-#define FIT_TYPE_0B_KEY_MANIFEST            0x0B
-#define FIT_TYPE_0C_BOOT_POLICY_MANIFEST    0x0C
-#define FIT_TYPE_0D_FSP_BOOT_MANIFEST       0x0D
-#define FIT_TYPE_10_CSE_SECURE_BOOT         0x10
-#define FIT_TYPE_2D_TXTSX_POLICY            0x2D
-#define FIT_TYPE_2F_JMP_DEBUG_POLICY        0x2F
-#define FIT_TYPE_7F_SKIP                    0x7F
-
-#define FIT_POINTER_ADDRESS                 0xFFFFFFC0 ///< Fixed address at 4G - 40h
-
-#define FIT_TYPE_00_SIGNATURE  SIGNATURE_64 ('_', 'F', 'I', 'T', '_', ' ', ' ', ' ')
-
-typedef struct {
-  /**
-    Address is the base address of the firmware component
-    must be aligned on 16 byte boundary
-  **/
-  UINT64              Address;
-  UINT8               Size[3];   ///< Size is the span of the component in multiple of 16 bytes
-  UINT8               Reserved;  ///< Reserved must be set to 0
-  /**
-    Component's version number in binary coded decimal (BCD) format.
-    For the FIT header entry, the value in this field will indicate the revision
-    number of the FIT data structure. The upper byte of the revision field
-    indicates the major revision and the lower byte indicates the minor revision.
-  **/
-  UINT16              Version;
-  UINT8               Type : 7;  ///< FIT types 0x00 to 0x7F
-  ///
-  /// Checksum Valid indicates whether component has valid checksum.
-  ///
-  UINT8               C_V : 1;
-  /**
-    Component's checksum. The modulo sum of all the bytes in the component and
-    the value in this field (Chksum) must add up to zero. This field is only
-    valid if the C_V flag is non-zero.
-  **/
-  UINT8               Chksum;
-} FIRMWARE_INTERFACE_TABLE_ENTRY;
 
 //
 // BPM Policy:
@@ -251,10 +203,10 @@ typedef struct {
 #define BP_KEY_TYPE_KEY_MANIFEST          1
 
 #define BOOT_POLICY_MANIFEST_HEADER_STRUCTURE_ID  (*(UINT64 *)"__ACBP__")
-#define BOOT_POLICY_MANIFEST_HEADER_VERSION_2_1          0x21
+#define BOOT_POLICY_MANIFEST_HEADER_VERSION_2_5          0x25
 typedef struct {
   UINT8              StructureId[8];
-  UINT8              StructVersion;        // 0x21
+  UINT8              StructVersion;        // 0x25
   UINT8              HdrStructVersion;     // 0x20
   UINT16             HdrSize;              // total number of bytes in Header (i.e., offset to first element)
   UINT16             KeySignatureOffset;   // Offset from start of Bpm to KeySignature field of Signature Element
@@ -289,7 +241,7 @@ typedef struct {
 #define BOOT_POLICY_MANIFEST_IBB_ELEMENT_STRUCTURE_ID  (*(UINT64 *)"__IBBS__")
 #define BOOT_POLICY_MANIFEST_IBB_ELEMENT_DIGEST_ID     (*(UINT64 *)"__DIGE__")
 
-#define BOOT_POLICY_MANIFEST_IBB_ELEMENT_VERSION_2_0       0x20
+#define BOOT_POLICY_MANIFEST_IBB_ELEMENT_VERSION_2_0       0x21
 #define IBB_FLAG_INITIAL_MEASURE_LOC3  0x2
 #define IBB_FLAG_AUTHORITY_MEASURE     0x4
 //
@@ -319,7 +271,7 @@ typedef struct {
 } IBB_ELEMENT;
 
 #define BOOT_POLICY_MANIFEST_TXT_ELEMENT_STRUCTURE_ID  (*(UINT64 *)"__TXTS__")
-#define BOOT_POLICY_MANIFEST_TXT_ELEMENT_VERSION_2_0       0x20
+#define BOOT_POLICY_MANIFEST_TXT_ELEMENT_VERSION_2_0       0x22
 typedef struct {
   UINT8               StructureId[8];
   UINT8               StructVersion;   // 0x20
@@ -341,16 +293,50 @@ typedef struct {
   REGION_SEGMENT*     TxtSegment;      // TxtSegment[SegmentCount]
 } TXT_ELEMENT;
 
-#define BOOT_POLICY_MANIFEST_PLATFORM_CONFIG_DATA_ELEMENT_STRUCTURE_ID  (*(UINT64 *)"__PCDS__")
-#define BOOT_POLICY_MANIFEST_PLATFORM_CONFIG_DATA_ELEMENT_VERSION_2_0       0x20
+
 typedef struct {
-  UINT8               StructureId[8];
-  UINT8               StructVersion;   // 0x20
-  UINT8               Reserved0;
-  UINT16              ElementSize;     // Total number of bytes in the element
-  UINT16              Reserved1;
+  UINT64               Usage;          // Bit mask of usages
+  SHAX_HASH_STRUCTURE  Digest;         // Standard BtG hash structure primitive
+} SHAX_KMHASH_STRUCT;
+
+typedef struct {
+  UINT8               SetNumber;
+  UINT8               Reserved[3];
+  UINT8               Data[48];
+} BIOS_SPECIFIC_SEGMENT_STRUCTURE;
+
+#define BOOT_POLICY_MANIFEST_BIOS_SPECIFIC_IBB_STRUCTURE_STRUCTURE_ID  (*(UINT64 *)"__BSIS__")
+#define BOOT_POLICY_MANIFEST_BIOS_SPECIFIC_IBB_STRUCTURE_VERSION_2_0       0x20
+typedef struct {
+  UINT8                             StructureId[8];
+  UINT8                             StructVersion;    // 0x10
+  UINT16                            SizeOfData;
+  UINT8                             Reserved0;
+  BIOS_SPECIFIC_SEGMENT_STRUCTURE*  Data;             // BSIS data. Could be an array of BSSS structures - BSSS []
+} BIOS_SPECIFIC_IBB_STRUCTURE;
+
+#define BPM_CNBS_ELEMENT_STRUCTURE_ID (*(UINT64 *)"__CNBS__")
+#define BPM_CNBS_ELEMENT_VERSION 0x10
+typedef struct {
+  UINT8               StructureID[8];
+  UINT8               StructVersion; // 0x10
   UINT16              SizeOfData;
-  UINT8*              Data;            //Data[SizeofData]  // Any data but starts from PDRS
+  UINT8               Reserved;
+  REGION_SEGMENT      BufferData;
+} CNBS_SEGMENT;
+
+#define BOOT_POLICY_MANIFEST_PLATFORM_CONFIG_DATA_ELEMENT_STRUCTURE_ID  (*(UINT64 *)"__PCDS__")
+#define BOOT_POLICY_MANIFEST_PLATFORM_CONFIG_DATA_ELEMENT_VERSION_3_0       0x30
+typedef struct {
+  UINT8                        StructureId[8];
+  UINT8                        StructVersion;   // 0x30
+  UINT8                        Reserved0;
+  UINT16                       ElementSize;     // Total number of bytes in the element
+  UINT16                       Reserved1;
+  UINT16                       SizeOfData;
+  UINT8                        PdrsData[20];    //Data[SizeofData]  // PDRS
+  CNBS_SEGMENT                 Cnbs;
+  BIOS_SPECIFIC_IBB_STRUCTURE* Data2;           //Data2[SizeOfData2]  // BSIS
 } PLATFORM_CONFIG_DATA_ELEMENT;
 
 #define BOOT_POLICY_MANIFEST_PLATFORM_MANUFACTURER_ELEMENT_STRUCTURE_ID  (*(UINT64 *)"__PMDA__")

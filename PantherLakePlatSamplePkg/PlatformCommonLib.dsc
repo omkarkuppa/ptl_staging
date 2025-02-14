@@ -29,7 +29,7 @@
   BeepLib|$(PLATFORM_FULL_PACKAGE)/Library/BeepLib/BeepLib.inf
   BootGuardRevocationLib|$(PLATFORM_FULL_PACKAGE)/Library/BootGuardRevocationLib/BootGuardRevocationLib.inf
   HidI2cPlatformSupportLib|$(PLATFORM_FULL_PACKAGE)/Library/DxeHidI2cPlatformSupportLib/DxeHidI2cPlatformSupportLib.inf
-  PeiBootGuardEventLogLib|$(PLATFORM_FULL_PACKAGE)/Library/PeiBootGuardEventLogLib/PeiBootGuardEventLogLib.inf
+  PeiBootGuardEventLogLib|$(PLATFORM_SI_PACKAGE)/Library/PeiBootGuardEventLogLib/PeiBootGuardEventLogLib.inf
   SerialIoUartDebugHelperLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseSerialIoUartDebugHelperLib/BaseSerialIoUartDebugHelperLib.inf
   SerialIoUartDebugHelperLibNull|$(PLATFORM_FULL_PACKAGE)/Library/BaseSerialIoUartDebugHelperLib/BaseSerialIoUartDebugHelperLibNull.inf
   SerialIoUartDebugPropertyLib|$(PLATFORM_FULL_PACKAGE)/Library/SerialIoUartDebugPropertyLib/BaseSerialIoUartDebugPropertyLib.inf

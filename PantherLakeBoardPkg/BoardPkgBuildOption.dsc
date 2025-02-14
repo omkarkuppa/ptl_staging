@@ -48,7 +48,7 @@
   DEFINE DEFAULT_BOOT_TIME_OUT_MACRO = -DDEFAULT_BOOT_TIME_OUT=5
 !endif
 
-!if gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove == TRUE
+!if gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove == TRUE
   *_*_*_CC_FLAGS = -D DISABLE_SHA1_DEPRECATED_INTERFACES
 !endif
 

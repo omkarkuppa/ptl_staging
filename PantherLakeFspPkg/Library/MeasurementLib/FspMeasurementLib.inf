@@ -41,6 +41,7 @@
   OneSiliconPkg/SiPkg.dec
   PantherLakeFspPkg/PantherLakeFspPkg.dec
   SecurityPkg/SecurityPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
 
 [LibraryClasses]
   BaseLib
@@ -59,6 +60,9 @@
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize              ## CONSUMES
   gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedBufferSize         ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress                      ## CONSUMES
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize          ## CONSUMES
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase               ## CONSUMES
 
 [Guids]
-  gTcgEvent2EntryHobGuid                                   ## PRODUCES
+  gTcgEventDataHobGuid                                         ## PRODUCES

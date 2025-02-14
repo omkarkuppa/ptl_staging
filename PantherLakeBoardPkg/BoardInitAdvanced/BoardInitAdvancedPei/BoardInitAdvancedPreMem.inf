@@ -79,7 +79,7 @@
   gPlatformModuleTokenSpaceGuid.PcdGuidForward
   gPlatformModuleTokenSpaceGuid.PcdShellEntryMapPrint           ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPlatformType
-  gBoardModuleTokenSpaceGuid.PcdBootGuardPerformanceEnable      ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable            ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdGpioLidStatus                ## CONSUMES
 
   #

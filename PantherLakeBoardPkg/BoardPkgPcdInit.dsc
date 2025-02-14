@@ -181,7 +181,7 @@
   gMipiCamFeaturePkgTokenSpaceGuid.PcdMipiCamFeatureEnable|TRUE
   gSiPkgTokenSpaceGuid.PcdLpcIoDecodeRange|0x0010
   gSiPkgTokenSpaceGuid.PcdLpcIoEnableDecoding|0x7C03
-  gBoardModuleTokenSpaceGuid.PcdBootGuardPerformanceEnable|FALSE
+  gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable|FALSE
 
   # Platform Sanitize
   gPsFeatureModuleTokenSpaceGuid.PcdPlatformSanitizeRpeSupport|TRUE
@@ -334,7 +334,7 @@
   # PlatformTemporaryMmioAssignmentEnd
   #
 
-  gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove|TRUE
+  gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove|TRUE
 
   #
   # UEFI Replay Protected Variable Feature Support

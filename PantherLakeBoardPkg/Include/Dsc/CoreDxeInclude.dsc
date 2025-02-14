@@ -241,7 +241,7 @@
       Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
       Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibRouter/Tpm2DeviceLibRouterDxe.inf
       NULL|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2InstanceLibDTpm.inf
-      !if gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
+      !if gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
         NULL|SecurityPkg/Library/HashInstanceLibSha1/HashInstanceLibSha1.inf
       !endif
       NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf

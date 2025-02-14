@@ -1496,7 +1496,7 @@ FvNameGuid         = 9B7FA59D-71C6-4A36-906E-9725EA6ADD5B
 !include $(PLATFORM_PACKAGE)/Include/Fdf/CoreSecurityPreMemoryInclude.fdf
 
 !if gPlatformModuleTokenSpaceGuid.PcdTpmEnable == TRUE
-  !if gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
+  !if gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
     INF  SecurityPkg/Tcg/TcgPei/TcgPei.inf
   !endif
 !endif

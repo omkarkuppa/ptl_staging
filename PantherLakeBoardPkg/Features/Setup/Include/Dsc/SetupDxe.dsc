@@ -25,7 +25,7 @@
   $(PLATFORM_FULL_PACKAGE)/Setup/Setup.inf {
     <LibraryClasses>
       BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
-!if gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
+!if gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
       NULL|SecurityPkg/Library/HashInstanceLibSha1/HashInstanceLibSha1.inf
 !endif
       NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf

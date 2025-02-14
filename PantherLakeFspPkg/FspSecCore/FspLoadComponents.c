@@ -346,8 +346,9 @@ FspLoadComponents (
 
   if (FspMeasurementInfo.Bits.IbbStatus != EFI_SUCCESS) {
     //
-    // Measure FSP-OT for BTG4 when it was not measured by ACM
+    // Measure FSP version and FSP-OT for BTG4 when it was not measured by ACM
     //
+    ExtendFspVersion (&FspMeasurementInfo, Fbm, TpmActivePcrBanks);
     ExtendFspotRegion (&FspMeasurementInfo, Fbm, TpmActivePcrBanks);
   }
 

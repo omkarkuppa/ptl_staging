@@ -44,7 +44,6 @@ LIBRARY_CLASS                  = NULL
   CryptoPkg/CryptoPkg.dec
   OneSiliconPkg/SiPkg.dec
   IntelSiliconPkg/IntelSiliconPkg.dec
-  PantherLakePlatSamplePkg/PlatformPkg.dec
 
 [LibraryClasses]
   BaseLib

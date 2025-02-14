@@ -46,11 +46,8 @@ CONSTRUCTOR                    = PeiBootGuardEventLogConstructor
   UefiCpuPkg/UefiCpuPkg.dec
   CryptoPkg/CryptoPkg.dec
   BoardModulePkg/BoardModulePkg.dec
-  MinPlatformPkg/MinPlatformPkg.dec
   OneSiliconPkg/SiPkg.dec
   IntelSiliconPkg/IntelSiliconPkg.dec
-  PantherLakePlatSamplePkg/PlatformPkg.dec
-  PantherLakeBoardPkg/BoardPkg.dec
 
 [LibraryClasses]
   HobLib
@@ -77,6 +74,7 @@ CONSTRUCTOR                    = PeiBootGuardEventLogConstructor
   gTcgEvent2EntryHobGuid
   gAcmDataHobGuid                                                     ## CONSUMES ## HOB
   gPerfAcmGuid
+  gTcgEventDataHobGuid                                                ## CONSUMES ## HOB
 
 [Ppis]
   gPeiFvMeasurementExcludedPlatformPpiGuid                            ## SOMETIMES PRODUCES
@@ -85,8 +83,8 @@ CONSTRUCTOR                    = PeiBootGuardEventLogConstructor
 [Pcd]
   gEfiSecurityPkgTokenSpaceGuid.PcdTpm2HashMask                       ## CONSUMES
   gEfiSecurityPkgTokenSpaceGuid.PcdTpm2ScrtmPolicy                    ## SOMETIMES_PRODUCES
-  gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove             ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdBootGuardPerformanceEnable            ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove                      ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable                  ## CONSUMES
 
 [Depex]
   gBiosInfoGuid

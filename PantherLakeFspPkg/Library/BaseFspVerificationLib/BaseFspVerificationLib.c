@@ -184,7 +184,7 @@ VerifyFspVersion (
   HashCtx = (VOID *) Buffer;
 
   FspDigest  = VERSION_DIGEST_PTR (Fbm);
-  if (FspDigest->ComponentID != FSP_REGION_TYPE_FSPVERSION) {
+  if (FspDigest->ComponentID != FSP_REGION_TYPE_FSP_VERSION) {
     return EFI_INVALID_PARAMETER;
   }
   DEBUG ((DEBUG_INFO, "FSP Version Digest is Found!\n"));

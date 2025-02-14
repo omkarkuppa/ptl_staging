@@ -398,7 +398,7 @@ DebugLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseDebugLibAllDebugPort/BaseDebugLibA
 
 [LibraryClasses.common]
   PlatformHookLib|$(PLATFORM_BOARD_PACKAGE)/Library/BasePlatformHookLib/BasePlatformHookLib.inf
-  BpmAccessLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseBpmAccessLib/BaseBpmAccessLib.inf
+  BpmAccessLib|$(PLATFORM_SI_PACKAGE)/Library/BaseBpmAccessLib/BaseBpmAccessLib.inf
   FitAccessLib|$(PLATFORM_FULL_PACKAGE)/Library/BaseFitAccessLib/BaseFitAccessLib.inf
   SiliconPolicyInitLib|$(PLATFORM_PACKAGE)/PlatformInit/Library/SiliconPolicyInitLibNull/SiliconPolicyInitLibNull.inf
   SiliconPolicyUpdateLib|$(PLATFORM_PACKAGE)/PlatformInit/Library/SiliconPolicyUpdateLibNull/SiliconPolicyUpdateLibNull.inf
@@ -1221,7 +1221,7 @@ $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/Pei/PlatformStatusCodeHandle
         NULL|$(PLATFORM_FSP_BIN_PACKAGE)/Library/FspPcdListLib/FspPcdListLibNull.inf
       !endif  # PcdFspModeSelection
 !if gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable == TRUE
-!if gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
+!if gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
       NULL|SecurityPkg/Library/HashInstanceLibSha1/HashInstanceLibSha1.inf
 !endif
       NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
@@ -1236,7 +1236,7 @@ $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/Pei/PlatformStatusCodeHandle
         SiliconPolicyInitLib|$(PLATFORM_SI_PACKAGE)/Library/PeiSiliconPolicyInitLibDependency/PeiPostMemSiliconPolicyInitLibDependency.inf
       !endif
 !if gMinPlatformPkgTokenSpaceGuid.PcdTpm2Enable == TRUE
-!if gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
+!if gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
       NULL|SecurityPkg/Library/HashInstanceLibSha1/HashInstanceLibSha1.inf
 !endif
       NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
@@ -1275,8 +1275,8 @@ $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/Pei/PlatformStatusCodeHandle
       Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibRouter/Tpm2DeviceLibRouterPei.inf
       NULL|$(PLATFORM_FULL_PACKAGE)/Library/PeiTxtPowerdownReqLib/PeiTxtPowerdownReqLib.inf
       NULL|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2InstanceLibDTpm.inf
-      NULL|$(PLATFORM_FULL_PACKAGE)/Library/PeiBootGuardEventLogLib/PeiBootGuardEventLogLib.inf
-!if gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
+      NULL|$(PLATFORM_SI_PACKAGE)/Library/PeiBootGuardEventLogLib/PeiBootGuardEventLogLib.inf
+!if gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
       NULL|SecurityPkg/Library/HashInstanceLibSha1/HashInstanceLibSha1.inf
 !endif
       NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
@@ -1289,7 +1289,7 @@ $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/Pei/PlatformStatusCodeHandle
       Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
       Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibRouter/Tpm2DeviceLibRouterPei.inf
       NULL|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2InstanceLibDTpm.inf
-!if gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
+!if gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
       NULL|SecurityPkg/Library/HashInstanceLibSha1/HashInstanceLibSha1.inf
 !endif
       NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
@@ -1312,7 +1312,7 @@ $(PLATFORM_FEATURES_PATH)/PlatformStatusCodeHandler/Pei/PlatformStatusCodeHandle
   }
 !endif
 
-!if gPlatformModuleTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
+!if gSiPkgTokenSpaceGuid.PcdDeprecatedCryptoRemove == FALSE
   SecurityPkg/Tcg/TcgPei/TcgPei.inf
 !endif
 !endif # gPlatformModuleTokenSpaceGuid.PcdTpmEnable
