@@ -22,6 +22,52 @@
 #include "QuickI2cPrivate.h"
 
 /**
+  If not-yet-consumed touch data is available, GetState() returns it and marks it unavailable
+  If such data is not available, error will be returned. User should wait until WaitForInput event gets signalled
+
+  @param[in]      This
+  @param[in/out]  State
+
+  @retval EFI_SUCCESS     Data consumed
+  @retval EFI_NOT_READY   Data not available
+**/
+EFI_STATUS
+EFIAPI
+SimplePtrGetState (
+    IN      EFI_SIMPLE_POINTER_PROTOCOL* This,
+    IN OUT  EFI_SIMPLE_POINTER_STATE*    State
+);
+
+/**
+  Reset touch panel
+  Function required by SimplePtr protocol.
+
+  @param[in]  This
+  @param[in]  ExtendedVerification
+
+  @retval EFI_UNSUPPORTED
+**/
+EFI_STATUS
+EFIAPI
+SimplePtrReset (
+    IN EFI_SIMPLE_POINTER_PROTOCOL* This,
+    IN BOOLEAN                       ExtendedVerification
+);
+
+/**
+  SimplePointer protocol's WaitForInput (called when a consumer of SimplePtr protocol waits for new data)
+
+  @param[in]  Event              Pointer to event that triggered this callback
+  @param[in]  Context            Device context
+**/
+VOID
+EFIAPI
+SimplePtrWaitForInput (
+    IN EFI_EVENT Event,
+    IN VOID*     Context
+);
+
+/**
   AbsPtr protocol's WaitForInput (called when a consumer of AbsPtr protocol waits for new data)
 
   @param[in]  Event              Pointer to event that triggered this callback

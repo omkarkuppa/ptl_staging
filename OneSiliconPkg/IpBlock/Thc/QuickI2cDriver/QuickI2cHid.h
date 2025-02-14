@@ -107,25 +107,29 @@ HidParseDescriptor (
   IN UINT32          DescriptorLength
   );
 
-/*
+/**
   This function uses dictionaries to parse incoming InputReport and convert it into X/Y coordinates plus Button info.
 
-  @param[in]  ReportTable             Report Table with all supported HID reports
-  @param[in]  InputStream             Pointer to the HID report
-  @param[in]  Output                  Result X/Y/B data
-  @param[in]  MinMax                  X/Y Min and Max data
-  @param[in]  HidSolutionFlag         Flag for HID protocol
+  @param[in]  ReportTable             Report Table with all supported HID reports.
+  @param[in]  InputStream             Pointer to the HID report.
+  @param[out] Output                  Result X/Y/B data.
+  @param[out] MouseTouchOutput        Result relative X/Y data.
+  @param[in]  MinMax                  X/Y Min and Max data.
+  @param[in]  HidSolutionFlag         Flag for HID protocol.
+  @param[in]  UsageDevice             Device Usage
 
-  @retval EFI_SUCCESS       Parsing completed
+  @retval EFI_SUCCESS       Parsing completed.
   @retval EFI_NOT_FOUND     Corresponding Report ID was not found in the Report Table.
-*/
+**/
 EFI_STATUS
 HidParseInput (
-  IN HID_INPUT_REPORT_TABLE ReportTable,
-  IN UINT8                  *InputStream,
-  IN HID_TOUCH_OUTPUT       *Output,
-  IN HID_XY_BOUNDARY        *MinMax,
-  IN UINT8                  HidSolutionFlag
+  IN HID_INPUT_REPORT_TABLE     ReportTable,
+  IN UINT8                      *InputStream,
+  IN OUT HID_TOUCH_OUTPUT       *Output,
+  IN OUT HID_REL_TOUCH_OUTPUT   *MouseTouchOutput,
+  IN HID_XY_BOUNDARY            *MinMax,
+  IN UINT8                      HidSolutionFlag,
+  IN OUT UINT8                  *UsageDevice
   );
 
 #endif // _THC_HID_H_

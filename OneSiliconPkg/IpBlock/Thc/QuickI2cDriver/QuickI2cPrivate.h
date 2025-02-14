@@ -45,6 +45,7 @@
 #include <Protocol/ComponentName2.h>
 #include <Protocol/ComponentName.h>
 #include <Protocol/PciIo.h>
+#include <Protocol/SimplePointer.h>
 //
 // Produced Protocols
 //
@@ -86,8 +87,9 @@ extern EFI_COMPONENT_NAME2_PROTOCOL gQuickI2cDriverComponentName2;
 extern EFI_GUID                     gEdkiiTouchPanelGuid;
 
 #define QUICK_I2C_SIGNATURE  0x51493243 //"QI2C" Touch Host Controller Quick I2C
-#define QUICK_I2C_CONTEXT_FROM_THC_PROTOCOL(a)      CR (a, QUICK_I2C_DEV, ThcProtocol, QUICK_I2C_SIGNATURE)
-#define QUICK_I2C_CONTEXT_FROM_ABSPTR_PROTOCOL(a)   CR (a, QUICK_I2C_DEV, AbsPtrProtocol, QUICK_I2C_SIGNATURE)
+#define QUICK_I2C_CONTEXT_FROM_THC_PROTOCOL(a)         CR (a, QUICK_I2C_DEV, ThcProtocol, QUICK_I2C_SIGNATURE)
+#define QUICK_I2C_CONTEXT_FROM_ABSPTR_PROTOCOL(a)      CR (a, QUICK_I2C_DEV, AbsPtrProtocol, QUICK_I2C_SIGNATURE)
+#define QUICK_I2C_CONTEXT_FROM_SIMPLEPTR_PROTOCOL(a)   CR (a, QUICK_I2C_DEV, SimplePtrProtocol, QUICK_I2C_SIGNATURE)
 
 #define PRD_MAX_ENTRIES            256
 #define PRD_READ_TABLES_SUPPORTED  16
@@ -178,6 +180,19 @@ typedef enum {
   WacomHidProtocol      = 1,
   ElanHidProtocol       = 2,
 } THC_HID_PROTOCOL;
+
+typedef enum {
+  None          = 0,
+  Relative      = 1,
+  Absolute      = 2,
+  BothRelAbs    = 3
+} THC_HID_REL_ABS_SUPPORT;
+
+typedef enum {
+  TouchPanelUsage     = 1,
+  TouchPadUsage       = 2,
+  MouseUsage          = 3,
+} THC_HID_DEVICE_USAGE;
 
 typedef enum {
   I2cSpeedStandard     = 1,
@@ -793,6 +808,13 @@ typedef enum {
     UINT8 HigherYByte; // Higher Byte value of Y Coordinate.
   } SINGLE_FINGER_REPORT;
 
+  typedef struct {
+    UINT8 ReportId;    // Always 0x40.
+    UINT8 TouchSts;    // Bit 0: 0 - No Touch, 1 - Touch. Bits 1-7 are ignored.
+    INT32 X;           // X Coordinate.
+    INT32 Y;           // Y Coordinate.
+  } MOUSE_SINGLE_FINGER_REPORT;
+
 
 typedef struct {
   UINT32 ID;
@@ -822,6 +844,7 @@ typedef struct {
 #define TOUCHPANEL     0x04
 #define TOUCHPPAD      0x05
 #define TIP_SWITCH     0x42
+#define TOUCH_VALID    0x47
 #define BUTTON         0x09
 #define X_AXIS         0x30
 #define Y_AXIS         0x31
@@ -837,6 +860,15 @@ typedef struct {
 #define LOGICAL        0x02
 #define END_COLLECTION 0x30
 
+// Define flags for HID input descriptor
+#define HID_FLAG_DATA               0x01
+#define HID_FLAG_VARIABLE           0x02
+#define HID_FLAG_RELATIVE           0x04
+#define HID_FLAG_WRAP               0x08
+#define HID_FLAG_LINEAR             0x10
+#define HID_FLAG_PREFERRED_STATE    0x20
+#define HID_FLAG_NO_NULL_POSITION   0x40
+
 typedef struct {
   UINT32 ID;
   UINT32 Value;
@@ -847,6 +879,12 @@ typedef struct {
   UINT32 X;
   UINT32 Y;
 } HID_TOUCH_OUTPUT;
+
+typedef struct {
+  UINT8 B;
+  INT32 X;
+  INT32 Y;
+} HID_REL_TOUCH_OUTPUT;
 
 typedef struct {
   UINTN MinX;
@@ -893,8 +931,10 @@ typedef struct {
   UINT32  BitStopB;   // bit positions are calculated in pure input data (after cutting Length and reportID)
   UINT32  BitStartX;
   UINT32  BitStopX;
+  UINT32  BitsInputX;
   UINT32  BitStartY;
   UINT32  BitStopY;
+  UINT32  BitsInputY;
   UINT32  BitsTotal;  // total number of bits with declared purpose
   BOOLEAN ValidCollection;
 } HID_INPUT_REPORT_COLLECTION;
@@ -914,6 +954,7 @@ typedef struct {
   UINT32  Quantity;   // number of different report formats
   UINT32  TouchPanel;
   UINT32  TouchPad;
+  UINT32  Mouse;
   HID_INPUT_REPORT_FORMAT   *Report; // pointer to array of dictionaries for report formats
 } HID_INPUT_REPORT_TABLE;
 
@@ -940,6 +981,16 @@ typedef struct {
   UINT8   FeatureReportAvailable;
   UINT32  ReportId;
 } HID_GET_REPORT_FORMAT;
+
+  typedef struct {
+    UINT8 Data : 1;
+    UINT8 Var : 1;
+    UINT8 Rel : 1;
+    UINT8 Wrap : 1;
+    UINT8 Linear : 1;
+    UINT8 PreferredState : 1;
+    UINT8 NullPosition : 1;
+  } UsageInput;
 
 typedef union {
     struct {
@@ -982,9 +1033,13 @@ typedef struct {
   THC_DMA                        SwDmaRead;
   THC_PROTOCOL                   ThcProtocol;
   EFI_ABSOLUTE_POINTER_PROTOCOL  AbsPtrProtocol;
+  EFI_SIMPLE_POINTER_PROTOCOL    SimplePtrProtocol;
   EFI_ABSOLUTE_POINTER_MODE      AbsPtrMode;
   EFI_ABSOLUTE_POINTER_STATE     AbsPtrTouchData;
+  EFI_SIMPLE_POINTER_MODE        SimplePointerMode;
+  EFI_SIMPLE_POINTER_STATE       SimplePointerData;
   BOOLEAN                        AbsPtrDataAvailable;
+  BOOLEAN                        SimplePtrDataAvailable;
   UINT8                          *HidBuffer;
   UINT32                         SwDmaMessageLength;
   BOOLEAN                        HidActive;
@@ -992,6 +1047,7 @@ typedef struct {
   EFI_EVENT                      PollingEvent;
   EFI_EVENT                      ExitEvent;
   SINGLE_FINGER_REPORT           Report;
+  MOUSE_SINGLE_FINGER_REPORT     MouseReport;
   BOOLEAN                        ReadDone;
   BOOLEAN                        Initialized;
   HID_INPUT_REPORT_TABLE         InputReportTable;

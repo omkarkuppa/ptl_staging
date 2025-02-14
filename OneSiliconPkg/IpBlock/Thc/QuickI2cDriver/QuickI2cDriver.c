@@ -552,7 +552,7 @@ QuickI2cInitialize (
   //
   // Step 14- Power up device through RST GPIO only for ResetPadTrigger LOW case
   //
-if (!Reset->ResetPadTrigger) {
+  if (!Reset->ResetPadTrigger) {
       //
       // Power up device through RST GPIO, if not already by default RST line should be high
       //
@@ -1190,15 +1190,20 @@ QuickI2cDmaReadSingleReport (
   UINT64                    MessageLength;
   UINT64                    DataAddress;
   UINT32                    EntryOffset;
+  UINT8                     UsageDevice;
   HID_TOUCH_OUTPUT          TouchOutput;
   HID_XY_BOUNDARY           XyBoundary;
   EFI_STATUS                Status;
+  HID_REL_TOUCH_OUTPUT      RelTouchOutput;
 
   MessageLength = 0;
   DataAddress   = 0;
   EntryOffset   = 0;
+  UsageDevice   = 0;
+  Status        = EFI_SUCCESS;
   EntryOffset   = (UINT32) (QuickI2cDma->DriverPrdTable[CurrentPrdTable].NumOfConfiguredEntries) * CurrentPrdTable;
   PrdTable      = (PRD_TABLE *) QuickI2cDma->CommonPrdBuffer;
+  ZeroMem (&RelTouchOutput, sizeof(HID_REL_TOUCH_OUTPUT));
 
   ReadDataBuff = AllocateZeroPool (sizeof (QUICK_I2C_READ_DATA_BUFF));
   if (ReadDataBuff == NULL) {
@@ -1212,7 +1217,6 @@ QuickI2cDmaReadSingleReport (
   //
   if (MessageLength == QUICK_I2C_DEFAULT_RESET_RESPONSE_LENGTH) {
     THC_LOCAL_DEBUG (L"QuickI2cDmaReadSingleReport QuickI2cInputReportResetResponse received\n")
-
     DataAddress = LShiftU64 (PrdTable->Entries[EntryOffset].DestinationAddress, ADDRESS_SHIFT);
     CopyMem ((UINT8*) ReadDataBuff, (UINT8*) DataAddress, MessageLength);
 
@@ -1240,36 +1244,96 @@ QuickI2cDmaReadSingleReport (
   //ShowBuffer ((UINT8*)(QuickI2cDev->HidBuffer), (UINT32) MessageLength); // Uncomment when THC_LOCAL_DEBUG is enabled
 
   if (QuickI2cDev->HidBuffer != NULL) {
-    // Initialize the TouchOutput X/Y values with previous pointer location.
+    // Initialize the Mouse relative output X/Y values with previous pointer location.
+    RelTouchOutput.B = 0;
+    RelTouchOutput.X = QuickI2cDev->MouseReport.X;
+    RelTouchOutput.Y = QuickI2cDev->MouseReport.Y;
+    // Initialize the Touchpad touch output X/Y values with previous pointer location.
     TouchOutput.B = 0;
     TouchOutput.X = (QuickI2cDev->Report.HigherXByte << 8) + (QuickI2cDev->Report.LowerXByte);
     TouchOutput.Y = (QuickI2cDev->Report.HigherYByte << 8) + (QuickI2cDev->Report.LowerYByte);
-    Status = HidParseInput (QuickI2cDev->InputReportTable, (UINT8*) QuickI2cDev->HidBuffer, &TouchOutput, &XyBoundary, QuickI2cDev->HidSolutionFlag);
+    Status = HidParseInput (QuickI2cDev->InputReportTable,
+                            (UINT8*) QuickI2cDev->HidBuffer,
+                            &TouchOutput,
+                            &RelTouchOutput,
+                            &XyBoundary,
+                            QuickI2cDev->HidSolutionFlag,
+                            &UsageDevice
+                          );
     if (Status == EFI_SUCCESS) {
-      QuickI2cDev->Report.HigherXByte = (UINT8) (((TouchOutput.X) & 0xFF00) >> 8);
-      QuickI2cDev->Report.LowerXByte  = (UINT8) (TouchOutput.X) & 0xFF;
-      QuickI2cDev->Report.HigherYByte = (UINT8) (((TouchOutput.Y) & 0xFF00) >> 8);
-      QuickI2cDev->Report.LowerYByte  = (UINT8) (TouchOutput.Y) & 0xFF;
-      QuickI2cDev->Report.TouchSts    = (UINT8) TouchOutput.B;
-      QuickI2cDev->AbsPtrProtocol.Mode->AbsoluteMaxX = XyBoundary.MaxX;
-      QuickI2cDev->AbsPtrProtocol.Mode->AbsoluteMinX = XyBoundary.MinX;
-      QuickI2cDev->AbsPtrProtocol.Mode->AbsoluteMaxY = XyBoundary.MaxY;
-      QuickI2cDev->AbsPtrProtocol.Mode->AbsoluteMinY = XyBoundary.MinY;
-      QuickI2cDev->AbsPtrDataAvailable = TRUE;
-      THC_LOCAL_DEBUG (L"Touch data: State | X:%d | Y:%d | ActiveButton: %d \n",
-                      (QuickI2cDev->Report.HigherXByte << 8) + QuickI2cDev->Report.LowerXByte,
-                      (QuickI2cDev->Report.HigherYByte << 8) + QuickI2cDev->Report.LowerYByte,
-                      QuickI2cDev->Report.TouchSts)
-      Status = gBS->SignalEvent (QuickI2cDev->AbsPtrProtocol.WaitForInput);
-      THC_LOCAL_DEBUG (L"WaitForInput SignalEvent Status - %r\n", Status)
+      // Update the report based on the input report table type (Mouse or TouchPanel)
+      if (QuickI2cDev->InputReportTable.Mouse == 1 && UsageDevice == Relative) {
+        UpdateMouseReport (QuickI2cDev, &RelTouchOutput, &XyBoundary);
+      } else {
+        UpdateTouchPanelReport (QuickI2cDev, &TouchOutput, &XyBoundary);
+      }
     }
   }
 
   FreePool (ReadDataBuff);
-
-  return EFI_SUCCESS;
+  return Status;
 }
 
+/**
+  Updates the mouse report data and signals the event.
+
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @param[in]  RelTouchOutput   Relative touch output data
+  @param[in]  XyBoundary       XY boundary data
+**/
+VOID
+UpdateMouseReport (
+  IN QUICK_I2C_DEV           *QuickI2cDev,
+  IN HID_REL_TOUCH_OUTPUT    *RelTouchOutput,
+  IN HID_XY_BOUNDARY         *XyBoundary
+  )
+{
+  QuickI2cDev->MouseReport.X                       = RelTouchOutput->X;
+  QuickI2cDev->MouseReport.Y                       = RelTouchOutput->Y;
+  QuickI2cDev->MouseReport.TouchSts                = RelTouchOutput->B;
+  QuickI2cDev->SimplePtrDataAvailable              = TRUE;
+
+  // Debug output for mouse data
+  THC_LOCAL_DEBUG(L"Mouse data: State | X:%d | Y:%d | ActiveButton: %d \n",
+    QuickI2cDev->MouseReport.X,
+    QuickI2cDev->MouseReport.Y,
+    QuickI2cDev->MouseReport.TouchSts);
+  gBS->SignalEvent(QuickI2cDev->SimplePtrProtocol.WaitForInput);
+}
+
+/**
+  Updates the touch panel report data and signals the event.
+
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @param[in]  TouchOutput      Touch output data
+  @param[in]  XyBoundary       XY boundary data
+**/
+VOID
+UpdateTouchPanelReport (
+  IN QUICK_I2C_DEV           *QuickI2cDev,
+  IN HID_TOUCH_OUTPUT        *TouchOutput,
+  IN HID_XY_BOUNDARY         *XyBoundary
+  )
+{
+  QuickI2cDev->Report.HigherXByte                = (UINT8)(((TouchOutput->X) & 0xFF00) >> 8);
+  QuickI2cDev->Report.LowerXByte                 = (UINT8)(TouchOutput->X) & 0xFF;
+  QuickI2cDev->Report.HigherYByte                = (UINT8)(((TouchOutput->Y) & 0xFF00) >> 8);
+  QuickI2cDev->Report.LowerYByte                 = (UINT8)(TouchOutput->Y) & 0xFF;
+  QuickI2cDev->Report.TouchSts                   = (UINT8)TouchOutput->B;
+  QuickI2cDev->AbsPtrProtocol.Mode->AbsoluteMaxX = XyBoundary->MaxX;
+  QuickI2cDev->AbsPtrProtocol.Mode->AbsoluteMinX = XyBoundary->MinX;
+  QuickI2cDev->AbsPtrProtocol.Mode->AbsoluteMaxY = XyBoundary->MaxY;
+  QuickI2cDev->AbsPtrProtocol.Mode->AbsoluteMinY = XyBoundary->MinY;
+  QuickI2cDev->AbsPtrDataAvailable               = TRUE;
+
+  // Debug output for touch panel data
+  THC_LOCAL_DEBUG(L"TouchPanel data: State | X:%d | Y:%d | ActiveButton: %d \n",
+    (QuickI2cDev->Report.HigherXByte << 8) + QuickI2cDev->Report.LowerXByte,
+    (QuickI2cDev->Report.HigherYByte << 8) + QuickI2cDev->Report.LowerYByte,
+    QuickI2cDev->Report.TouchSts);
+  gBS->SignalEvent(QuickI2cDev->AbsPtrProtocol.WaitForInput);
+
+}
 
 /**
   For SwDMA Reads first PRD Table Entry and checks if header data type

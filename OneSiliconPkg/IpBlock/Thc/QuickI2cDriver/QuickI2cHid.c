@@ -344,6 +344,11 @@ HidExportReport (
     ReportTable->TouchPad = 1;
   }
 
+  // Mouse case will be set only if supports Input descriptor as Rel otherwise it will be set as 0
+  if (Stack->UsageMouse) {
+    ReportTable->Mouse = 1;
+  }
+
   if ((Stack->UsageX != 0) && (Stack->UsageY != 0)) {
     ArrayOfReports = (HID_INPUT_REPORT_FORMAT*) AllocatePool (sizeof(HID_INPUT_REPORT_FORMAT) * (ReportTable->Quantity + 1));
     ASSERT (ArrayOfReports != NULL);
@@ -383,7 +388,6 @@ HidUpdateStack (
   IN OUT HID_GET_REPORT_FORMAT  *GetReportPacket
   )
 {
-  UINT32      OffsetB;
 
   switch (Token.ID) {
     case USE_PAGE:
@@ -403,6 +407,8 @@ HidUpdateStack (
       if (Stack->GlobalUsage == DIGITIZER && Token.Value == TOUCHPPAD) { Stack->UsageTouchPad = 1; Stack->TempReport.UsageTouchPad = 1;}
       if (Stack->GlobalUsage == DIGITIZER && Token.Value == MOUSE) { Stack->UsageMouse = 1; Stack->TempReport.UsageMouse = 1; }
       if (Stack->GlobalUsage == DIGITIZER && Token.Value == TIP_SWITCH) { Stack->UsageB = Stack->Usages;}
+      if (Stack->GlobalUsage == DIGITIZER && Token.Value == TOUCH_VALID) { Stack->UsageB = Stack->Usages;}
+      if (Stack->GlobalUsage == DESKTOP && Token.Value == MOUSE) { Stack->UsageMouse = 1; Stack->TempReport.UsageMouse = 1; }
       if (Stack->GlobalUsage == DESKTOP && Token.Value == X_AXIS) { Stack->UsageX = Stack->Usages; }
       if (Stack->GlobalUsage == DESKTOP && Token.Value == Y_AXIS) { Stack->UsageY = Stack->Usages; }
       if (Stack->GlobalUsage == CUSTOM_REPORT_ID && Token.Value == THQA_FEATURE_REPORT) {
@@ -442,10 +448,9 @@ HidUpdateStack (
 
       break;
     case INPUT:
-      if (Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStopB == 0 && Stack->UsageB != 0) {
-        OffsetB = Stack->UsageB - (Stack->Usages - Stack->ReportCount) - 1;
-        Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStartB = Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal + (Stack->ReportSize * OffsetB);
-        Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStopB = Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal + (Stack->ReportSize * (OffsetB + 1));
+      if (Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStopB == 0 && Stack->UsageB != 0 && Stack->Usages == Stack->UsageB) {
+        Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStartB = Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal;
+        Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStopB = Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal + (Stack->ReportSize * Stack->ReportCount);
         Stack->LogMax = 0;
         Stack->LogMin = 0;
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal += (Stack->ReportSize * Stack->ReportCount);
@@ -456,8 +461,7 @@ HidUpdateStack (
       if ((Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStopX == 0)
           && (Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStopY == 0)
           && (Stack->UsageX != 0)
-          && (Stack->UsageY != 0))
-      {
+          && (Stack->UsageY != 0)) {
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStartX = Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal;
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStopX = Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal + (Stack->ReportSize);
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].LogMaxX = Stack->LogMax;
@@ -468,6 +472,8 @@ HidUpdateStack (
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitStopY = Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal + (Stack->ReportSize);
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].LogMaxY = Stack->LogMax;
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].LogMinY = Stack->LogMin;
+        Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsInputX = Token.Value;
+        Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsInputY = Token.Value;
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal += Stack->ReportSize;
         break;
       }
@@ -480,6 +486,7 @@ HidUpdateStack (
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].LogMinX = Stack->LogMin;
         Stack->LogMax = 0;
         Stack->LogMin = 0;
+        Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsInputX = Token.Value;
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal += (Stack->ReportSize * Stack->ReportCount);
         break;
       }
@@ -491,6 +498,7 @@ HidUpdateStack (
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].LogMinY = Stack->LogMin;
         Stack->LogMax = 0;
         Stack->LogMin = 0;
+        Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsInputY = Token.Value;
         Stack->TempReport.Collection[Stack->TempReport.CollectionCount - 1].BitsTotal += (Stack->ReportSize * Stack->ReportCount);
         break;
       }
@@ -546,8 +554,10 @@ HidShowReportTable (
   UINT32 Collections;
 
   for (Index = 0; Index < ReportTable.Quantity; Index++) {
-    DEBUG ((DEBUG_INFO, "Report Id_%x \n", ReportTable.Report[Index].Id));
-    THC_LOCAL_DEBUG (L"Report Id_%x \n", ReportTable.Report[Index].Id)
+    DEBUG ((DEBUG_INFO, "Report Id_%x", ReportTable.Report[Index].Id));
+    THC_LOCAL_DEBUG (L"Report Id_%x", ReportTable.Report[Index].Id)
+    DEBUG ((DEBUG_INFO, " %d_TouchPanel_%d_Touchpad_%d_Mouse \n", ReportTable.Report[Index].UsageTouchPanel, ReportTable.Report[Index].UsageTouchPad, ReportTable.Report[Index].UsageMouse));
+    THC_LOCAL_DEBUG (L" %d_TouchPanel_%d_Touchpad_%d_Mouse \n", ReportTable.Report[Index].UsageTouchPanel, ReportTable.Report[Index].UsageTouchPad, ReportTable.Report[Index].UsageMouse)
     for (Collections = 0; Collections < ReportTable.Report[Index].CollectionCount; Collections++) {
       DEBUG ((DEBUG_INFO, " Collection Id_%x ", Collections));
       DEBUG ((DEBUG_INFO, "MaxX_%x ", ReportTable.Report[Index].Collection[Collections].LogMaxX));
@@ -556,7 +566,9 @@ HidShowReportTable (
       DEBUG ((DEBUG_INFO, "MinY_%x ", ReportTable.Report[Index].Collection[Collections].LogMinY));
       DEBUG ((DEBUG_INFO, "BitB_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartB, ReportTable.Report[Index].Collection[Collections].BitStopB));
       DEBUG ((DEBUG_INFO, "BitX_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartX, ReportTable.Report[Index].Collection[Collections].BitStopX));
+      DEBUG ((DEBUG_INFO, "Input_%d_Rel_%d ", ReportTable.Report[Index].Collection[Collections].BitsInputX, ReportTable.Report[Index].Collection[Collections].BitsInputX & HID_FLAG_RELATIVE));
       DEBUG ((DEBUG_INFO, "BitY_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartY, ReportTable.Report[Index].Collection[Collections].BitStopY));
+      DEBUG ((DEBUG_INFO, "Input_%d_Rel_%d ", ReportTable.Report[Index].Collection[Collections].BitsInputY, ReportTable.Report[Index].Collection[Collections].BitsInputY & HID_FLAG_RELATIVE));
       DEBUG ((DEBUG_INFO, "\n"));
       THC_LOCAL_DEBUG (L" Collection Id_%x ", Collections)
       THC_LOCAL_DEBUG (L"MaxX_%x ", ReportTable.Report[Index].Collection[Collections].LogMaxX)
@@ -565,7 +577,9 @@ HidShowReportTable (
       THC_LOCAL_DEBUG (L"MinY_%x ", ReportTable.Report[Index].Collection[Collections].LogMinY)
       THC_LOCAL_DEBUG (L"BitB_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartB, ReportTable.Report[Index].Collection[Collections].BitStopB)
       THC_LOCAL_DEBUG (L"BitX_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartX, ReportTable.Report[Index].Collection[Collections].BitStopX)
+      THC_LOCAL_DEBUG (L"Input_%d_Rel_%d ", ReportTable.Report[Index].Collection[Collections].BitsInputX, ReportTable.Report[Index].Collection[Collections].BitsInputX & HID_FLAG_RELATIVE)
       THC_LOCAL_DEBUG (L"BitY_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartY, ReportTable.Report[Index].Collection[Collections].BitStopY)
+      THC_LOCAL_DEBUG (L"Input_%d_Rel_%d ", ReportTable.Report[Index].Collection[Collections].BitsInputX, ReportTable.Report[Index].Collection[Collections].BitsInputX & HID_FLAG_RELATIVE)
       THC_LOCAL_DEBUG (L"\n")
     }
   }
@@ -604,9 +618,9 @@ HidParseDescriptor (
 
   while (DescriptorLength > 0) {
     Token = HidGetToken (&MovingPointer, &DescriptorLength);
-    HidUpdateStack (ParseStack, Token, &(QuickI2cDev->InputReportTable), &(QuickI2cDev->ReportPacket) );
+    HidUpdateStack (ParseStack, Token, &(QuickI2cDev->InputReportTable), &(QuickI2cDev->ReportPacket));
   }
-  HidExportReport (ParseStack, &(QuickI2cDev->InputReportTable) );
+  HidExportReport (ParseStack, &(QuickI2cDev->InputReportTable));
   HidShowReportTable (QuickI2cDev->InputReportTable);
   FreePool(ParseStack);
 }
@@ -637,35 +651,47 @@ ConvertOutputToInt (
 /*
   This function uses dictionaries to parse incoming InputReport and convert it into X/Y coordinates plus Button info.
 
-  @param[in]  ReportTable             Report Table with all supported HID reports
-  @param[in]  InputStream             Pointer to the HID report
-  @param[in]  Output                  Result X/Y/B data
-  @param[in]  MinMax                  X/Y Min and Max data
-  @param[in]  HidSolutionFlag         Flag for HID protocol
+  @param[in]  ReportTable             Report Table with all supported HID reports.
+  @param[in]  InputStream             Pointer to the HID report.
+  @param[out] Output                  Result X/Y/B data.
+  @param[out] MouseTouchOutput        Result relative X/Y data.
+  @param[in]  MinMax                  X/Y Min and Max data.
+  @param[in]  HidSolutionFlag         Flag for HID protocol.
+  @param[in]  UsageDevice             Device usage
 
-  @retval EFI_SUCCESS       Parsing completed
+  @retval EFI_SUCCESS       Parsing completed.
   @retval EFI_NOT_FOUND     Corresponding Report ID was not found in the Report Table.
 */
 EFI_STATUS
 HidParseInput (
-  IN HID_INPUT_REPORT_TABLE ReportTable,
-  IN UINT8                  *InputStream,
-  IN HID_TOUCH_OUTPUT       *Output,
-  IN HID_XY_BOUNDARY        *MinMax,
-  IN UINT8                  HidSolutionFlag
+  IN HID_INPUT_REPORT_TABLE     ReportTable,
+  IN UINT8                      *InputStream,
+  IN OUT HID_TOUCH_OUTPUT       *Output,
+  IN OUT HID_REL_TOUCH_OUTPUT   *MouseTouchOutput,
+  IN HID_XY_BOUNDARY            *MinMax,
+  IN UINT8                      HidSolutionFlag,
+  IN OUT UINT8                  *UsageDevice
   )
 {
-  UINT32           Index;
-  UINT32           BitIndex;
-  UINT8*           RawData;
-  UINT32           Collections;
-  UINT32           BitCountX;
-  UINT32           BitCountY;
-  UINT32           BitStopX;
-  UINT32           BitStopY;
-  HID_TOUCH_OUTPUT *LastOutput;
+  UINT32                Index;
+  UINT32                BitIndex;
+  UINT8*                RawData;
+  UINT32                Collections;
+  UINT32                BitCountX;
+  UINT32                BitCountY;
+  UINT32                BitStopX;
+  UINT32                BitStopY;
+  HID_TOUCH_OUTPUT      *LastOutput;
+  HID_REL_TOUCH_OUTPUT  *LastMouseOutput;
 
-  // For relative pointer report, we need to save the last (X,Y) position.
+  // For mouse relative pointer report, we need to save the last (X,Y) position.
+  LastMouseOutput = AllocateZeroPool (sizeof (HID_REL_TOUCH_OUTPUT));
+  if (LastMouseOutput == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+  CopyMem (LastMouseOutput, MouseTouchOutput, sizeof (HID_REL_TOUCH_OUTPUT));
+
+  // For touchpad relative pointer report, we need to save the last (X,Y) position.
   LastOutput = AllocateZeroPool (sizeof (HID_TOUCH_OUTPUT));
   if (LastOutput == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -748,17 +774,21 @@ HidParseInput (
           Output->B += HidAccessBit(RawData, BitIndex) << (BitIndex - ReportTable.Report[Index].Collection[Collections].BitStartB);
         }
 
-        if (ReportTable.Report[Index].UsageTouchPanel == 1) {
-          MinMax->MinX = ReportTable.Report[Index].Collection[Collections].LogMinX;
-          MinMax->MaxX = ReportTable.Report[Index].Collection[Collections].LogMaxX;
-          MinMax->MinY = ReportTable.Report[Index].Collection[Collections].LogMinY;
-          MinMax->MaxY = ReportTable.Report[Index].Collection[Collections].LogMaxY;
+        MinMax->MinX = ReportTable.Report[Index].Collection[Collections].LogMinX;
+        MinMax->MaxX = ReportTable.Report[Index].Collection[Collections].LogMaxX;
+        MinMax->MinY = ReportTable.Report[Index].Collection[Collections].LogMinY;
+        MinMax->MaxY = ReportTable.Report[Index].Collection[Collections].LogMaxY;
+
+        if (ReportTable.Report[Index].UsageMouse == 1 && ReportTable.Report[Index].Collection[Collections].BitsInputX & HID_FLAG_RELATIVE) {
+          *UsageDevice = Relative;
+        } else {
+          *UsageDevice = Absolute;
         }
 
         //
         // Touch Pad - converted data to absolute position
         //
-        if (ReportTable.Report[Index].UsageTouchPad == 1 || ReportTable.Report[Index].UsageMouse== 1) {
+        if (ReportTable.Report[Index].UsageTouchPad == 1 || (ReportTable.Report[Index].UsageMouse == 1 && (*UsageDevice == Absolute))) {
           // Logical Max and Min in descriptor are only provided for the relative values
           MinMax->MinX = 0;
           MinMax->MaxX = QUICK_I2C_RELATIVE_COORDINATES_MAX_X;
@@ -782,12 +812,24 @@ HidParseInput (
             );
         }
 
+        if (ReportTable.Report[Index].UsageMouse == 1 && (*UsageDevice == Relative)) {
+          MouseTouchOutput->B = (UINT8) Output->B;
+          //
+          // Calculate relative X position using CurrentX onscreen
+          //
+          MouseTouchOutput->X = (INT32)LastMouseOutput->X + ConvertOutputToInt (BitCountX, Output->X);
+
+          // Calculate relative Y position using CurrentY onscreen
+          MouseTouchOutput->Y = (INT32)LastMouseOutput->Y + ConvertOutputToInt (BitCountY, Output->Y);
+        }
       }
       FreePool (LastOutput);
+      FreePool (LastMouseOutput);
       return EFI_SUCCESS;
     }
   }
   FreePool (LastOutput);
+  FreePool (LastMouseOutput);
   return EFI_NOT_FOUND;
 }
 

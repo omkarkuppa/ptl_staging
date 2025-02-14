@@ -63,6 +63,7 @@
   gEfiAbsolutePointerProtocolGuid ## PRODUCES
   gThcProtocolGuid ## PRODUCES
   gThcResetProtocolGuid ## CONSUMES
+  gEfiSimplePointerProtocolGuid  ## CONSUMES
 
 [Guids]
   gEfiEventExitBootServicesGuid ## CONSUMES

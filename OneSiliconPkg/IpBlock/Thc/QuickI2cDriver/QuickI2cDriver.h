@@ -230,6 +230,34 @@ QuickI2cDmaReadSingleReport (
   );
 
 /**
+  Updates the touch panel report data and signals the event.
+
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @param[in]  TouchOutput      Touch output data
+  @param[in]  XyBoundary       XY boundary data
+**/
+VOID
+UpdateTouchPanelReport (
+  IN QUICK_I2C_DEV           *QuickI2cDev,
+  IN HID_TOUCH_OUTPUT        *TouchOutput,
+  IN HID_XY_BOUNDARY         *XyBoundary
+  );
+
+/**
+  Updates the mouse report data and signals the event.
+
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @param[in]  RelTouchOutput   Relative touch output data
+  @param[in]  XyBoundary       XY boundary data
+**/
+VOID
+UpdateMouseReport (
+  IN QUICK_I2C_DEV           *QuickI2cDev,
+  IN HID_REL_TOUCH_OUTPUT    *RelTouchOutput,
+  IN HID_XY_BOUNDARY         *XyBoundary
+  );
+
+/**
   Reads first PRD Table Entry and checks if header data type
   equals TouchReadDataTypeHidReport
   and Report Id is equal to SINGLE_FINGER_REPORT_ID.

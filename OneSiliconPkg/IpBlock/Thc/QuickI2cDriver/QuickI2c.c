@@ -633,6 +633,7 @@ QuickI2cDriverBindingStart (
   QuickI2cDev->HidBuffer                          = NULL;
 
   QuickI2cDev->AbsPtrDataAvailable                = FALSE;
+  QuickI2cDev->SimplePtrDataAvailable             = FALSE;
   QuickI2cDev->ReadDone                           = FALSE;
 
   QuickI2cDev->InputReportTable.Quantity          = 0;
