@@ -127,13 +127,15 @@ VOID
 /**
   This function is to set IGPU Memory map (RC6 base, Doorbell base, Dfdbase etc)
 
+  @param[in] SiPreMemPolicyPpi  Pointer to pre-mem SI policy.
+
   @retval EFI_SUCCESS             The function completed successfully
   @retval EFI_NOT_FOUND           SiPreMemPolicyPpi not found
 **/
 typedef
 EFI_STATUS
 (*MEMORY_SUB_SYSTEM_SET_IGPU_MEM_MAP) (
-  VOID
+  IN SI_PREMEM_POLICY_PPI  *SiPreMemPolicyPpi
   );
 
 /**

@@ -235,6 +235,7 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
 
   # Memory Diagnostic Test Enable
   gBoardModuleTokenSpaceGuid.PcdMemoryDiagnosticTestEnable|FALSE|BOOLEAN|0xE0000001
+  gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid|{ 0xae, 0x6d, 0xb2, 0xff, 0xd7, 0x5a, 0x4e, 0x6f, 0xbd, 0x77, 0x06, 0x9d, 0x7d, 0xc4, 0x74, 0xcc }|VOID*|0x30000001
 
 [PcdsDynamic, PcdsDynamicEx]
   # PCH Misc Configuration

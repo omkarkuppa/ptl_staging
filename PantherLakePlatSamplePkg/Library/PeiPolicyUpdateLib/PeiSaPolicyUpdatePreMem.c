@@ -52,9 +52,12 @@
 #include <BoardSaConfigPreMem.h>
 #include <IGpuConfig.h>
 #include <Library/PcdLib.h>
+#include <Library/EcMiscLib.h>
 #if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
 #endif
+#include <Library/PeiLib.h>
+
 #if FixedPcdGetBool (PcdTcssSupport) == 1
 #include <TcssPeiPreMemConfig.h>
 #endif
@@ -75,6 +78,13 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_MEMORY_TYPE_INFORMATION mDefaultMemoryTypeInfo
 };
 
 #define GET_COMPRESS_DATA_SIZE(x) (x[4]) + (x[5] << 8) + (x[6] << 16) + (x[7] << 24)
+
+//
+// if OEM wants to display multiple lines then we can use \n
+// Ex: "MEMORY TRAINING\nIN PROGRESS"
+//
+GLOBAL_REMOVE_IF_UNREFERENCED const CHAR8 VgaMessage[] = "MEMORY TRAINING IN PROGRESS";
+
 
 // PPR test Type bits. Keep synced with defines in MrcInterface.h
 #define PPR_MEMTEST_WCMATS8_BIT               (0)
@@ -204,7 +214,6 @@ UpdatePeiSaPolicyPreMem (
 #endif
   UINT16                                          AdjustedMmioSize;
   UINT8                                           SaDisplayConfigTable[16];
-  EFI_BOOT_MODE                                   SysBootMode;
   UINT32                                          ProcessorTraceTotalMemSize;
   MSR_CORE_THREAD_COUNT_REGISTER                  MsrCoreThreadCount;
   CPUID_STRUCTURED_EXTENDED_FEATURE_FLAGS_EBX     Ebx;
@@ -221,6 +230,7 @@ UpdatePeiSaPolicyPreMem (
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                                            *FspmUpd;
+  BOOLEAN                                         LidStatusOpen;
 #else
   IGPU_PEI_PREMEM_CONFIG                          *IGpuPreMemConfig;
   MEMORY_CONFIGURATION                            *MemConfig;
@@ -243,11 +253,18 @@ UpdatePeiSaPolicyPreMem (
 #endif
 #endif //FSpMode Check
 
-  DEBUG ((DEBUG_INFO, "Update PeiSaPolicyUpdate Pre-Mem Start\n"));
+  UINTN                                           Size;
+  VOID                                            *Buffer;
+  BOOLEAN                                         VgaInitControl;
+
+  DEBUG ((DEBUG_INFO, "Update %a Start\n", __FUNCTION__));
   ZeroMem ((VOID*) SaDisplayConfigTable, sizeof (SaDisplayConfigTable));
   WdtTimeout           = 0;
-  SysBootMode          = 0;
+  BootMode             = 0;
   PlatformMemorySize   = 0;
+  Buffer               = NULL;
+  VgaInitControl       = FALSE;
+
   MemConfigNoCrc       = NULL;
 
 #if FixedPcdGetBool (PcdTcssSupport) == 1
@@ -256,6 +273,12 @@ UpdatePeiSaPolicyPreMem (
 #endif
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   FspmArchConfigPpi    = NULL;
+  RcompData            = NULL;
+  IGpuPreMemConfig     = NULL;
+  MemConfig            = NULL;
+#if FixedPcdGetBool(PcdIpuEnable) == 1
+  IpuPreMemPolicy      = NULL;
+#endif
 #endif
 
   ProcessorTraceTotalMemSize = 0;
@@ -707,6 +730,39 @@ UpdatePeiSaPolicyPreMem (
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.GttMmAdr, IGpuPreMemConfig->GttMmAdr, PcdGet32 (PcdGttMmAddress));
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DeltaT12PowerCycleDelay, IGpuPreMemConfig->DeltaT12PowerCycleDelay, 0x0);
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.MemoryBandwidthCompression, IGpuPreMemConfig->MemoryBandwidthCompression, SaSetup.MemoryBandwidthCompression);
+
+    //
+    // Check if SOL is enabled from BIOS Setup Menu
+    //
+    if (SaSetup.SolFeatureEnabled == TRUE) {
+      if ((BootMode == BOOT_WITH_FULL_CONFIGURATION) || (BootMode == BOOT_WITH_DEFAULT_SETTINGS)) {
+        VgaInitControl = TRUE;
+      }
+    }
+
+    if (IsSimicsEnvironment ()) {
+      VgaInitControl = FALSE;
+    }
+
+    UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.VgaInitControl,  IGpuPreMemConfig->VgaInitControl,  VgaInitControl);
+
+    if (VgaInitControl == TRUE) {
+      PeiGetSectionFromAnyFv (PcdGetPtr (PcdIntelGraphicsPreMemVbtFileGuid), EFI_SECTION_RAW, 0, &Buffer, &Size);
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaMessage  = (UINT64) VgaMessage;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.VbtPtr = (UINT64) Buffer;
+      Status = CheckLidStatus (&LidStatusOpen);
+      if (Status == EFI_SUCCESS) {
+        ((FSPM_UPD *) FspmUpd)->FspmConfig.LidStatus = LidStatusOpen;
+        DEBUG ((DEBUG_INFO, "LidStatus = 0x%x\n", LidStatusOpen));
+      }
+#else
+      IGpuPreMemConfig->VgaMessage = (VOID *)VgaMessage;
+      IGpuPreMemConfig->VbtPtr = Buffer;
+      DEBUG ((DEBUG_INFO, "Vbt Pointer from PeiGetSectionFromAnyFv is 0x%x\n", IGpuPreMemConfig->VbtPtr));
+#endif
+    }
+
     //
     // Display DDI Initialization
     //
@@ -782,8 +838,7 @@ UpdatePeiSaPolicyPreMem (
         UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PreBootDmaMask, Vtd->PreBootDmaMask, 0);
       }
 
-      PeiServicesGetBootMode (&SysBootMode);
-      if (SysBootMode == BOOT_ON_S3_RESUME) {
+      if (BootMode == BOOT_ON_S3_RESUME) {
         UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DmaBufferSize, Vtd->DmaBufferSize, PcdGet32 (PcdVTdPeiDmaBufferSizeS3));
       } else {
         UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DmaBufferSize, Vtd->DmaBufferSize, PcdGet32 (PcdVTdPeiDmaBufferSize));

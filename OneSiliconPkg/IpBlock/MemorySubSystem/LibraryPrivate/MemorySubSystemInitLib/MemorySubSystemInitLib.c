@@ -163,7 +163,7 @@ InitializeSecurityPolicy (
 
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_ERROR, "[TDX] Error creating TDX HOB, Status = %r\n", Status));
-      return Status; 
+      return Status;
     }
   }
 
@@ -351,7 +351,7 @@ PeiMemoryMapInit (
   //
   // This function is to set IGPU Memory map.
   //
-  MemorySubSystemCallback.SetIGpuMemMap ();
+  MemorySubSystemCallback.SetIGpuMemMap (SiPreMemPolicyPpi);
 
   //
   // Program IMR and IMR_1M

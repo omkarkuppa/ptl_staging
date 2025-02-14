@@ -63,6 +63,9 @@
 #include <AcmDataHob.h>
 #include <Library/BaseBpmAccessLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <PlatformBoardConfig.h>
+#include <Ppi/IGpuPlatformPolicyPpi.h>
+#include <Library/PeiLib.h>
 
 ///
 /// Reset Generator I/O Port
@@ -88,6 +91,111 @@ EFIAPI
 PchReset (
   IN CONST EFI_PEI_SERVICES    **PeiServices
   );
+
+/**
+  Get VBT Data from FV
+
+  @param[out] VbtAddress
+  @param[out] VbtSize
+
+  @retval     EFI_SUCCESS
+  @retval     EFI_NOT_FOUND
+**/
+EFI_STATUS
+EFIAPI
+GetVbtData (
+  OUT EFI_PHYSICAL_ADDRESS *VbtAddress,
+  OUT UINT32               *VbtSize
+  )
+{
+  EFI_GUID                        FileGuid;
+  EFI_GUID                        BmpImageGuid;
+  UINTN                           Size;
+
+  Size   = 0;
+
+  DEBUG((DEBUG_INFO, "%a Entry\n", __FUNCTION__));
+
+  CopyMem (&BmpImageGuid, PcdGetPtr(PcdIntelGraphicsPreMemVbtFileGuid), sizeof(BmpImageGuid));
+
+  CopyMem(&FileGuid, &BmpImageGuid, sizeof(FileGuid));
+
+  PeiGetSectionFromAnyFv(&FileGuid, EFI_SECTION_RAW, 0, (VOID**)VbtAddress, &Size);
+
+  if (Size == 0) {
+    DEBUG((DEBUG_ERROR, "Could not locate VBT.\n"));
+  } else {
+    DEBUG ((DEBUG_INFO, "GetVbtData VbtAddress is 0x%x\n", *VbtAddress));
+    DEBUG ((DEBUG_INFO, "GetVbtData Size is 0x%x\n", Size));
+    *VbtSize = (UINT32) Size;
+  }
+  DEBUG((DEBUG_INFO, "%a exit\n", __FUNCTION__));
+
+  return EFI_SUCCESS;
+}
+
+/**
+  This function will return Lid Status in PEI phase.
+
+  @param[out] CurrentLidStatus
+
+  @retval     EFI_SUCCESS
+  @retval     EFI_UNSUPPORTED
+**/
+
+EFI_STATUS
+EFIAPI
+GetPeiPlatformLidStatus (
+  OUT LID_STATUS  *CurrentLidStatus
+  )
+{
+  EFI_STATUS              Status;
+  GPIOV2_PAD_STATE        GpioLidStatus;
+  VPD_GPIO_PAD            *GpioVpd;
+
+  GpioLidStatus = GpioV2StateHigh;
+  GpioVpd = NULL;
+
+  DEBUG ((DEBUG_INFO, "LidStatus Entry\n"));
+  //
+  // If the platform does not support a lid, the function must return EFI_UNSUPPORTED
+  //
+  if (PcdGet8 (PcdPlatformType) == TypeTrad && PcdGet8 (PcdPlatformFlavor) == FlavorDesktop) {
+    DEBUG ((DEBUG_INFO, "Returning Lid status as unsupported to GOP for DT/AIO board\n"));
+    return EFI_UNSUPPORTED;
+  } else {
+    GpioVpd = PcdGetPtr(VpdPcdGpioLidStatus);
+    if (GpioVpd->GpioPad != 0x0) {
+      Status = GpioV2GetRx (GpioVpd->GpioPad, &GpioLidStatus);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_INFO, "Invalid Lid GPIO: %x\n", GpioVpd->GpioPad));
+        return EFI_UNSUPPORTED;
+      }
+      if (GpioLidStatus == GpioV2StateHigh) {
+        *CurrentLidStatus = LidOpen;
+      } else {
+        *CurrentLidStatus = LidClosed;
+      }
+      DEBUG ((DEBUG_INFO, "LidStatus Exit\n"));
+      return EFI_SUCCESS;
+    }
+  }
+
+  DEBUG ((DEBUG_INFO, "LidStatus UnSupported\n"));
+  return EFI_UNSUPPORTED;
+}
+
+PEI_IGPU_PLATFORM_POLICY_PPI PeiGraphicsPreMemPlatform = {
+  PEI_IGPU_PLATFORM_POLICY_REVISION,
+  GetPeiPlatformLidStatus,
+  GetVbtData
+};
+
+EFI_PEI_PPI_DESCRIPTOR  mPeiGraphicsPreMemPlatformPpi = {
+  (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
+  &gPeiGraphicsPlatformPreMemPpiGuid,
+  &PeiGraphicsPreMemPlatform
+};
 
 static EFI_PEI_NOTIFY_DESCRIPTOR mPreMemNotifyList = {
   (EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
@@ -664,6 +772,12 @@ BoardInitAdvancedPreMemEntryPoint(
 #if FixedPcdGetBool (PcdOverclockEnable) == 1
   PlatformVoltageInit ();
 #endif
+
+  //
+  // Install mPeiGraphicsPreMemPlatformPpi
+  //
+  DEBUG ((DEBUG_INFO, "Install mPeiGraphicsPreMemPlatformPpi \n"));
+  Status = PeiServicesInstallPpi (&mPeiGraphicsPreMemPlatformPpi);
 
   ///
   /// Performing PlatformInitPreMem after PeiReadOnlyVariable2 PPI produced

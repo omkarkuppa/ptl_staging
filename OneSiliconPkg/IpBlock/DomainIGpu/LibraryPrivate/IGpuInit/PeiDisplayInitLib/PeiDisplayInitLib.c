@@ -237,10 +237,13 @@ IGpuDisplayInitPreMem (
   IN  IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig
   )
 {
-  IP_IGPU_INST       *IGpuInst;
-  EFI_STATUS         Status;
-  EFI_BOOT_MODE      BootMode;
-  EFI_HOB_GUID_TYPE  *GuidHob;
+  IP_IGPU_INST             *IGpuInst;
+  EFI_PREMEM_GRAPHICS_PPI  *GraphicsPreMemPpi;
+  EFI_STATUS               Status;
+  EFI_BOOT_MODE            BootMode;
+  EFI_HOB_GUID_TYPE        *GuidHob;
+  CHAR8                    *String;
+  UINT64                   StartTime;
 
   DEBUG ((DEBUG_INFO, "%a() Start\n", __FUNCTION__));
 
@@ -276,6 +279,43 @@ IGpuDisplayInitPreMem (
   /// Install gIGpuDisplayInitPreMemDonePpi for OEM use.
   ///
   PeiServicesInstallPpi (&gIGpuDisplayInitPreMemDonePpi);
+
+  //
+  // VGA Initialization
+  //
+  if (IpIGpuSupported (IGpuInst) == TRUE) {
+    if (IGpuPreMemConfig->VgaInitControl == TRUE) {
+      Status = PeiServicesLocatePpi (&gIntelPeiPreMemGraphicsPpiGuid, 0, NULL, (VOID **)&GraphicsPreMemPpi);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "Failed to locate Ppi %g\n", &gIntelPeiPreMemGraphicsPpiGuid));
+        return;
+      }
+
+      //
+      // Enable IO Bar on 0:2:0
+      //
+      IpIGpuEnableIoCmdReg (IGpuInst);
+
+      //
+      // Log the uGOP Timings
+      //
+      StartTime = GetFspCurrentTime ();
+
+      Status = GraphicsPreMemPpi->GraphicsPreMemPpiInit (IGpuPreMemConfig->VbtPtr);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "GraphicsPreMemPpiInit Failed\n"));
+        return;
+      }
+
+      String = IGpuPreMemConfig->VgaMessage;
+      GraphicsPreMemPpi->GraphicsPreMemPpiVgaWrite (VGA_TEXT_CENTER, 12, String);
+
+      //
+      // Log uGOP timing in FSP
+      //
+      LogFspPerformanceData (FspuGopPerf, StartTime);
+    }
+  }
 
   DEBUG ((DEBUG_INFO, "%a() End\n", __FUNCTION__));
 }
@@ -370,11 +410,11 @@ IGpuPeiNotifyCallback (
 
   DEBUG ((DEBUG_INFO, "Configure FrameBuffer Memory as Write Combine before PEIM GOP load.\n"));
   Status = MtrrSetMemoryAttributeInMtrrSettings (
-             NULL,
-             GtApertureAdr,
-             GtApertureSize,
-             CacheWriteCombining
-             );
+                                                 NULL,
+                                                 GtApertureAdr,
+                                                 GtApertureSize,
+                                                 CacheWriteCombining
+                                                 );
 
   DEBUG ((DEBUG_INFO, "IGpuCallPpiAndFillFrameBuffer\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_SA_CALLPPI_AND_FILLFRAMEBUFFER);  // PostCode (0xA05)
@@ -432,10 +472,10 @@ IGpuCallPpiAndFillFrameBuffer (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "GraphicsPpiInit failed. \n"));
     SendFspErrorInfo (
-      gSaFspErrorTypeCallerId,
-      gSaFspErrorTypePeiGopInit,
-      EfiStatusToUint32 (Status)
-      );
+                      gSaFspErrorTypeCallerId,
+                      gSaFspErrorTypePeiGopInit,
+                      EfiStatusToUint32 (Status)
+                      );
     return Status;
   }
 
@@ -458,10 +498,10 @@ IGpuCallPpiAndFillFrameBuffer (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "GraphicsPpiGetMode failed. \n"));
     SendFspErrorInfo (
-      gSaFspErrorTypeCallerId,
-      gSaFspErrorTypePeiGopGetMode,
-      EfiStatusToUint32 (Status)
-      );
+                      gSaFspErrorTypeCallerId,
+                      gSaFspErrorTypePeiGopGetMode,
+                      EfiStatusToUint32 (Status)
+                      );
     return Status;
   }
 
@@ -624,8 +664,8 @@ IGpuPeiDisplayInit (
   IN   IGPU_PEI_CONFIG         *IGpuConfig
   )
 {
-  EFI_STATUS             Status;
-  IGPU_DATA_HOB          *IGpuDataHob;
+  EFI_STATUS     Status;
+  IGPU_DATA_HOB  *IGpuDataHob;
 
   DEBUG ((DEBUG_INFO, "%a Begin\n", __FUNCTION__));
   IGpuDataHob = NULL;
@@ -633,7 +673,7 @@ IGpuPeiDisplayInit (
   //
   // Get the HOB for Gfx Data
   //
-  IGpuDataHob = (IGPU_DATA_HOB *) GetFirstGuidHob (&gIGpuDataHobGuid);
+  IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
   if (IGpuDataHob == NULL) {
     DEBUG ((DEBUG_ERROR, "IGpu Data Hob not found\n"));
     return EFI_NOT_FOUND;
@@ -667,7 +707,7 @@ IGpuPeiDisplayInit (
   ///
   /// Return if Primary Display is  not set IGfx and External Gfx not connected
   ///
-  if (IGpuPreMemConfig->PrimaryDisplay != DISPLAY_IGD && IGpuDataHob->PrimaryDisplayDetection == DISPLAY_PCI) {
+  if ((IGpuPreMemConfig->PrimaryDisplay != DISPLAY_IGD) && (IGpuDataHob->PrimaryDisplayDetection == DISPLAY_PCI)) {
     return EFI_SUCCESS;
   }
 
