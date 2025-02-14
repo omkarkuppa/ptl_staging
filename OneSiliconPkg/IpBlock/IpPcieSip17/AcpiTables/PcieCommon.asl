@@ -97,7 +97,7 @@
     PMSX, 1                            // 31,  Power Management SCI Status
   }
 
-  //Physical Layer 32.0 GT/s Status Register (G5STS) – Offset ae8
+  //Physical Layer 32.0 GT/s Status Register (G5STS) - Offset ae8
   OperationRegion (DTR1,SystemMemory,(\_SB.PC00.PC2M (_ADR (), PBNU) + 0xae8),0x4)
   Field (DTR1, AnyAcc, NoLock, Preserve)
   {
@@ -396,7 +396,7 @@
       Return (ADSD())
     }
 
-    If (CondRefOf (PINI)) {
+    If (CondRefOf (PINI) || CondRefof (PCPR)) {
       Return (
         Package () {
           ToUUID ("FDF06FAD-F744-4451-BB64-ECD792215B10"),
