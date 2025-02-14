@@ -47,3 +47,4 @@ OneSiliconPkg/SiPkg.dec
 [Sources]
 HybridGraphicsInfoFruLib.c
 
+[Pcd]

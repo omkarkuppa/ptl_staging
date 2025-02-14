@@ -50,6 +50,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT16 mPtlPcdHLpssI2cDevId[] = {
 };
 
 
+
 /**
   Gets I2C Device Id
 
