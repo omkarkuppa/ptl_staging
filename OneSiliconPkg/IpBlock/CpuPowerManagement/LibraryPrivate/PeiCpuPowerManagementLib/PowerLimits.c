@@ -1255,91 +1255,71 @@ ConfigureMsrPowerLimits (
 }
 
 /**
-  This function returns Package TDP in Milli Watts
-
-  @param[in] MsrTdp    - Package TDP from MSR
-
-  @retval PackageTdp   - Package TDP in Milli Watts
-**/
-STATIC
-UINT32
-GetTdpInMilliWatt (
-  IN UINT16 MsrTdp
-  )
-{
-  MSR_PACKAGE_POWER_SKU_UNIT_REGISTER   PackagePowerSkuUnitMsr;
-
-  PackagePowerSkuUnitMsr.Uint64 = AsmReadMsr64 (MSR_PACKAGE_POWER_SKU_UNIT);
-
-  return MsrTdp * 1000 / (1 << (UINT8) PackagePowerSkuUnitMsr.Bits.PwrUnit);
-}
-
-/**
   To prevent thermal issues, adjust Ctdp Level when user sets Power limit which is lower than Tdp of selected Ctdp level which can prevent potential thermal issue
 
   @param[in] ConfigTdpLevel               ConfigTdpLevel policy set by user
-  @param[in] CustomPowerLimit1InMilliWatt Power limit in Milli Watts set by user
+  @param[in] CustomPowerLimit1            Power limit set by user
 
   @retval AdjustedCtdpLevel               Adjusted Ctdp level
 **/
 UINT8
 AdjustConfigTdpLevel (
   IN UINT8  ConfigTdpLevel,
-  IN UINT16 CustomPowerLimit1InMilliWatt
+  IN UINT16 CustomPowerLimit1
   )
 {
   MSR_CONFIG_TDP_LEVEL1_REGISTER    ConfigTdpLevel1Msr;
   MSR_CONFIG_TDP_LEVEL2_REGISTER    ConfigTdpLevel2Msr;
   MSR_PACKAGE_POWER_SKU_REGISTER    PackagePowerMsr;
-  UINT32                            TdpInMilliWatt[TDP_MAX_LEVEL];
+  UINT16                            PkgTdp[TDP_MAX_LEVEL];
   UINT8                             Index;
-  UINT32                            TempTdpInMilliWatt;
+  UINT32                            TempTdp;
   UINT8                             AdjustedCtdpLevel;
 
-  ASSERT (CustomPowerLimit1InMilliWatt != 0);
+  ASSERT (CustomPowerLimit1 != 0);
   ASSERT (TDP_MAX_LEVEL == 3);
 
   ConfigTdpLevel1Msr.Uint64 = AsmReadMsr64 (MSR_CONFIG_TDP_LEVEL1);
   ConfigTdpLevel2Msr.Uint64 = AsmReadMsr64 (MSR_CONFIG_TDP_LEVEL2);
   PackagePowerMsr.Uint64    = AsmReadMsr64 (MSR_PACKAGE_POWER_SKU);
 
-  TdpInMilliWatt[CONFIG_TDP_NOMINAL] = GetTdpInMilliWatt ((UINT16) PackagePowerMsr.Bits.PkgTdp);
-  TdpInMilliWatt[CONFIG_TDP_LEVEL1]  = GetTdpInMilliWatt ((UINT16) ConfigTdpLevel1Msr.Bits.PkgTdp);
-  TdpInMilliWatt[CONFIG_TDP_LEVEL2]  = GetTdpInMilliWatt ((UINT16) ConfigTdpLevel2Msr.Bits.PkgTdp);
+  PkgTdp[CONFIG_TDP_NOMINAL] = (UINT16) PackagePowerMsr.Bits.PkgTdp;
+  PkgTdp[CONFIG_TDP_LEVEL1]  = (UINT16) ConfigTdpLevel1Msr.Bits.PkgTdp;
+  PkgTdp[CONFIG_TDP_LEVEL2]  = (UINT16) ConfigTdpLevel2Msr.Bits.PkgTdp;
   //
-  // If TdpInMilliWatt[Index] is 0 (corresponding Ctdp Level is not supported), set it to MAX_UINT32
+  // If PkgTdp[Index] is 0 (corresponding Ctdp Level is not supported), set it to MAX_UINT16
   //
   for (Index = 0; Index < TDP_MAX_LEVEL; Index++) {
-    if (TdpInMilliWatt[Index] == 0) {
-      TdpInMilliWatt[Index] = MAX_UINT32;
+    if (PkgTdp[Index] == 0) {
+      PkgTdp[Index] = MAX_UINT16;
     }
   }
 
   //
-  // If TdpInMilliWatt is lower than CustomPowerLimit1InMilliWatt, return ConfigTdpLevel
+  // If PkgTdp is lower than CustomPowerLimit1, return ConfigTdpLevel
   //
-  if (TdpInMilliWatt[ConfigTdpLevel] <= CustomPowerLimit1InMilliWatt) {
+  if (PkgTdp[ConfigTdpLevel] <= CustomPowerLimit1) {
     return ConfigTdpLevel;
   }
 
-  TempTdpInMilliWatt = 0;
+  TempTdp = 0;
   AdjustedCtdpLevel = ConfigTdpLevel;
   //
-  // Find temp Tdp which is lower than CustomPowerLimit1InMilliWatt and higher than Tdps of other Ctdp levels and then get adjusted Ctdp Level
+  // Find temp Tdp which is lower than CustomPowerLimit1 and higher than Tdps of other Ctdp levels and then get adjusted Ctdp Level
   //
   for (Index = 0; Index < TDP_MAX_LEVEL; Index++) {
-    if ((TdpInMilliWatt[Index] > TempTdpInMilliWatt) && (TdpInMilliWatt[Index] <= CustomPowerLimit1InMilliWatt)) {
-      TempTdpInMilliWatt = TdpInMilliWatt[Index];
+    if ((PkgTdp[Index] > TempTdp) && (PkgTdp[Index] <= CustomPowerLimit1)) {
+      TempTdp = PkgTdp[Index];
       AdjustedCtdpLevel = Index;
     }
   }
 
   //
-  // It's unexpected when CustomPowerLimit1InMilliWatt is lower than Tdp of all Ctdp Levels
+  // It's unexpected when CustomPowerLimit1 is lower than Tdp of all Ctdp Levels
   //
-  if (TempTdpInMilliWatt == 0) {
+  if (TempTdp == 0) {
     DEBUG ((DEBUG_ERROR, "ASSERT: Behavior is unexpected! CustomPowerLimit1 is lower than TDP of all Ctdp Levels\n"));
-    ASSERT(TempTdpInMilliWatt == 0);
+    ASSERT(TempTdp == 0);
   }
   return AdjustedCtdpLevel;
 }
@@ -1363,7 +1343,7 @@ ConfigureCtdpLevelAndTar (
   MSR_CONFIG_TDP_CONTROL_REGISTER     ConfigTdpControlMsr;
   MSR_TURBO_ACTIVATION_RATIO_REGISTER TurboActivationRatioMsr;
   UINT8                               CpuConfigTdpBootRatio;
-  UINT16                              CustomPowerLimit1InMilliWatt;
+  UINT16                              CustomPowerLimit1;
 
   ///
   /// Config TDP Boot settings
@@ -1376,15 +1356,15 @@ ConfigureCtdpLevelAndTar (
   ConfigTdpControlMsr.Uint64 = AsmReadMsr64 (MSR_CONFIG_TDP_CONTROL);
   if (ConfigTdpControlMsr.Bits.ConfigTdpLock == 0) {
     ConfigTdpControlMsr.Bits.TdpLevel = (UINT32) CpuConfigTdpBootLevel;
-    CustomPowerLimit1InMilliWatt = CpuPowerDeliveryConfig->CustomPowerLimit1;
+    CustomPowerLimit1 = (UINT16) (CpuPowerDeliveryConfig->CustomPowerLimit1 * GetPowerUnit () / DefaultPowerUnit);
     ///
     /// To prevent thermal issues, adjust Ctdp Level when Power limit set by user
     /// is lower than Tdp of selected Ctdp level
     ///
-    if (CustomPowerLimit1InMilliWatt != 0) {
+    if (CustomPowerLimit1 != 0) {
       ConfigTdpControlMsr.Bits.TdpLevel = AdjustConfigTdpLevel (
         CpuConfigTdpBootLevel,
-        CustomPowerLimit1InMilliWatt
+        CustomPowerLimit1
       );
     }
     ///
