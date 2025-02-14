@@ -143,6 +143,7 @@ typedef struct {
 /// <b>Revision 1</b>:  - Initial version.
 typedef struct {
   CONFIG_BLOCK_HEADER      Header;              ///< Offset 0-27 Config Block Header
+  UINT8                    RsvdBytes151[4];
   SPD_DATA_BUFFER          *SpdData;            ///< Offset 28  Memory SPD data, will be used by the MRC when SPD SmBus address is zero.
   MEMORY_DQDQS_MAPPING     *DqDqsMap;           ///< Offset 36  LPDDR DQ bit and DQS byte swizzling between CPU and DRAM.
   MEMORY_RCOMP             *RcompData;          ///< Offset 44  DDR RCOMP resistors and target values.
@@ -234,7 +235,7 @@ typedef struct {
     7 - Controller 1 Channel 1 Dimm 1
   **/
   UINT8 PhyClockToCkdDimm[MEM_CFG_MAX_DDR5_SOCKETS];
-  UINT8   Rsvd[2];                           ///< Offset 106 Reserved for future use.
+  UINT8 RsvdBytes243[2];
 } MEMORY_CONFIG_NO_CRC;
 #pragma pack(pop)
 

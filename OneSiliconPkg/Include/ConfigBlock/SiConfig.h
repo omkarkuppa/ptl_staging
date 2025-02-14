@@ -59,6 +59,7 @@ typedef struct {
     <b>0: use silicon default SSID 0x7270 </b>, Non-zero: use customized SSID.
   **/
   UINT16 CustomizedSsid;        ///< offset 34 - 35
+  UINT8  RsvdBytes62[4];        ///< Reserved
   /**
     SsidTablePtr contains the SVID_SID_INIT_ENTRY table.
     This is valid when SkipSsidProgramming is FALSE;
@@ -106,7 +107,7 @@ typedef struct {
     <b>0: FALSE</b>, 1: TRUE
   **/
   UINT8  SkipBiosDoneWhenFwUpdate;  ///< Offset 44
-  UINT8  RsvdBytes2[3];             ///< Offset 45 - 47
+  UINT8  RsvdBytes110[3];             ///< Offset 45 - 47
 } SI_CONFIG;
 
 #pragma pack (pop)

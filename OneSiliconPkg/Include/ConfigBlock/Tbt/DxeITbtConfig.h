@@ -51,8 +51,8 @@ typedef struct _DXE_ITBT_CONFIG {
   DXE_ITBT_GENERIC_CONFIG ITbtGenericConfig;                                            ///< ITbt Generic Information
   TBT_RESOURCE_CONFIG     ITbtResourceConfig[MAX_ITBT_PCIE_PORT];                       ///< iTbt Resource Configuration
   UINT8                   OsNativeResourceBalance;
+  UINT8                   RsvdBytes54[1];                                               ///< Reserved
   UINT16                  PcieRtd3LinkActiveTimeout;                                    ///< PCIE RTD3 exit polling Link Active timeout and delay in PS0 before return to OS, unit is ms <b>100</b>
-  UINT8                   Reserved[1];
 } DXE_ITBT_CONFIG;
 
 #pragma pack(pop)

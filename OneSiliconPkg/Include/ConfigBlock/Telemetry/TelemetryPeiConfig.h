@@ -50,8 +50,10 @@ typedef struct {
   CONFIG_BLOCK_HEADER        Header;              /// Config Block Header
   UINT32                     CpuCrashLogDevice;   /// Enable or Disable CrashLog/Telemetry Device  0- Disable, <b>1- Enable</b>
   UINT32                     StreamTracerSize;    /// StreamTracer size in KB, Range 64KB - 512MB
+  UINT8                      RsvdBytes53[4];      /// Reserved
   UINT64                     StreamTracerBase;    /// StreamTracer physical address
   UINT32                     StreamTracerMode;    /// 0 - Disable StreamTracer, 3 - Allow user to enter size, 8192 - Auto mode with size 8MB, 524288 - Advanced trace mode with size 512MB
+  UINT8                      RsvdBytes56[4];      /// Reserved
 } TELEMETRY_PEI_PREMEM_CONFIG;
 
 /**

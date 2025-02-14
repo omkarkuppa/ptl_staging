@@ -84,7 +84,7 @@ typedef struct {
   // The TmeExcludeBase field requires an 8-byte alignment
   // therefore reserve 4 bytes here.
   //
-  UINT8               Reserved2[3];
+  UINT8               RsvdBytes87[4];
   UINT64              TmeExcludeBase;               ///< TME exclude base
   UINT64              TmeExcludeSize;               ///< TME exclude size
 
@@ -92,6 +92,7 @@ typedef struct {
   UINT32             TdxActmModuleSize;
 
   UINT8              TdxSeamldrSvn;
+  UINT8              RsvdBytes95[3];
 } CPU_SECURITY_PREMEM_CONFIG;
 
 #pragma pack (pop)

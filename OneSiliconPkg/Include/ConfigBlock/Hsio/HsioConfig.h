@@ -38,6 +38,7 @@ typedef struct {
   UINT32    NphyBinLen;           ///< Policy used to indicate the size of the OEM Nphy binary used to sync between BIOS and CSME
   VOID      *SynpsPhyBinPtr;      ///< Policy used to point to the OEM Synophsys Phy binary used to sync between BIOS and CSME
   UINT32    SynpsPhyBinLen;       ///< Policy used to indicate the size of the OEM Synophsys Phy binary used to sync between BIOS and CSME
+  UINT8     RsvdBytes41[4];       ///< Reserved
 } HSIO_CONFIG;
 
 #pragma pack (pop)

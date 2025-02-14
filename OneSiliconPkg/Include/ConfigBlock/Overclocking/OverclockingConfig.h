@@ -112,6 +112,7 @@ typedef struct {
   1: Per-core Scope, setting the VF curve per-core.
   **/
   UINT8  CoreVfConfigScope;
+  UINT8  RsvdBytes115[1];
   /**
   Voltage Regulator Current Limit (Icc Max) for IA, GT and SA. This value represents the Maximum instantaneous current allowed at any given time.
   The value is represented in 1/4 A increments. A value of 400 = 100A. <b>0 (HW default)</b>. Range is 4-2047.
@@ -223,6 +224,7 @@ typedef struct {
   <b>100 </b>. Range 0-100.
   **/
   UINT8  EcoreTvbTempThreshold1;
+  UINT8  RsvdBytes227[2];
   /**
   Core disable mask is a bitwise indication of which core should be disabled, while ActiveCoreCount is to set the number of active cores.
   Each bit represents physical core id for both P-core and E-core
@@ -358,7 +360,6 @@ typedef struct {
   **/
   UINT8  PcorePowerDensityThrottle;
   UINT8  EcorePowerDensityThrottle;
-  UINT8  RsvdByte0[11];
 } OVERCLOCKING_PREMEM_CONFIG;
 
 #pragma pack (pop)

@@ -181,7 +181,7 @@ typedef struct {
     Each entry points to a verb table which contains HDAUDIO_VERB_TABLE structure and verb command blocks.
   **/
   UINT8   VerbTableEntryNum;
-  UINT8   Rsvd0[3];                         ///< Reserved bytes, align to multiple 4
+  UINT8   RsvdBytes184[7];                         ///< Reserved bytes, align to multiple 4
   /**
     Pointer to a verb table array.
     This pointer points to 32bits address, and is only eligible and consumed in post mem phase.
@@ -317,7 +317,6 @@ typedef struct {
    *  Discrete BT HCI Audio Offload Support
    **/
   HDAUDIO_DISC_BT_OFFLOAD HdaDiscBtOffload;
-  UINT32                  RsvdBits1:32;
 } HDAUDIO_DXE_CONFIG;
 
 #pragma pack (pop)

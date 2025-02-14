@@ -234,7 +234,7 @@ typedef struct {
   UINT8   Vc1Ctrl;
   UINT8   VcMCtrl;
   UINT8   MeUmaRootSpaceCheck;
-  UINT8   RsvdBytes0[3];                            ///< Reserved bytes
+  UINT8   RsvdBytes237[3];
 } PCH_PCIE_ROOT_PORT_CONFIG;
 
 /**
@@ -305,7 +305,7 @@ typedef struct {
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER      Header;                     ///< Config Block Header
-
+  UINT8                    RsvdBytes323[4];            ///< Reserved
   /**
     PCIe device override table
     The PCIe device table is being used to override PCIe device ASPM settings.

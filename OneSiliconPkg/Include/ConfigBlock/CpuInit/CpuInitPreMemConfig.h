@@ -159,6 +159,7 @@ typedef struct {
   **/
   UINT8 TmeBypassCapability;
 
+  UINT8 RsvdBytes162[3];
   /**
     Size of TSEG in bytes. (Must be power of 2)
     <b>0x400000</b>: 4MB for Release build
@@ -178,7 +179,7 @@ typedef struct {
       -    1: Enable
   **/
   UINT8 ReduceXecores;
-  UINT8 Rsvd2[1];
+  UINT8 RsvdBytes182[2];
 } CPU_INIT_PREMEM_CONFIG;
 
 #pragma pack (pop)

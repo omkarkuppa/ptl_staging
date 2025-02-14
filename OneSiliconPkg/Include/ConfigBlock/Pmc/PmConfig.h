@@ -356,7 +356,7 @@ typedef struct {
     0: Disable; <b>1: Enable</b>.
   **/
   UINT32                  PmcWdtTimerEn                :  1;
-  UINT32                  RsvdBits1                    :  8;
+  UINT32                  RsvdBits1                    :  9;
   /*
     Power button debounce configuration
     Debounce time can be specified in microseconds. Only certain values according

@@ -125,6 +125,7 @@ typedef struct {
   UINT8                PanelPowerEnable;           ///< Offset 32 :<b>(Test)</b> Control for enabling/disabling VDD force bit (Required only for early enabling of eDP panel): 0=FALSE, <b>1=TRUE</b>
   UINT8                MemoryBandwidthCompression; ///< Offset 33 This policy is used to enable/disable Memory Bandwidth Compression <b>0- Disable</b>, 1- Enable
   UINT16               DeltaT12PowerCycleDelay;    ///< Offset 34 Power Cycle Delay required for eDP as per VESA standard.0 - 0 ms, <b>0xFFFF - Auto calculate to max 500 ms<\b>
+  UINT8                RsvdBytes128[4];            ///< Reserved
   UINT64               GttMmAdr;                   ///< Offset 36 Temp Address of Graphics GTTMMADR: Default is <b>0xAF000000</b>
   UINT64               LMemBar;                    ///< Offset 44 Temp Address of Graphics LMEMBAR: Default is <b>0xB0000000</b>
   DDI_CONFIGURATION    DdiConfiguration;           ///< Offset 52 DDI configuration, need to match with VBT settings.
@@ -134,7 +135,6 @@ typedef struct {
   BOOLEAN              VgaInitControl;             ///< Offset 74 : 0 (No VGA Support), 1 = 1 (VGA Supported)
   VOID                 *VgaMessage;                ///< Pointer to Message which should be displayed
   VOID                 *VbtPtr;                    ///< Address of the Graphics Configuration Table
-  UINT32               Rsvd1[8];                   /// Reserved for 32 bytes alignment
 } IGPU_PEI_PREMEM_CONFIG;
 
 typedef struct {
@@ -154,7 +154,7 @@ typedef struct {
 typedef struct {
   UINT8    ConfigureMedia;           ///< Configure Media for use. TRUE/FALSE: 0=FALSE, <b>1=TRUE</b>
   UINT8    RC1pMediaFreqEnable;      ///< This policy is used to enable/disable Media RC1p Frequency. <b>0- Disable</b>, 1- Enable
-  UINT8    Rsvd[2];
+  UINT8    RsvdBytes157[6];
 } PEI_MEDIA_CONFIG;
 
 typedef struct {
@@ -173,13 +173,14 @@ typedef struct {
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER    Header;             ///< Offset 0-27 Config Block Header
+  UINT8                  RsvdBytes178[4];
   PEI_DISPLAY_CONFIG     PeiDisplayConfig;
   PEI_MEDIA_CONFIG       PeiMediaConfig;
   PEI_GT_CONFIG          PeiGtConfig;
   UINT8                  RenderStandby;      ///< Offset 28 :<b>(Test)</b> This field is used to enable or disable RC6 (Render Standby): 0=FALSE, <b>1=TRUE</b>
   UINT8                  PavpEnable;         ///< Offset 29 :IGD PAVP TRUE/FALSE: 0=FALSE, <b>1=TRUE</b>
   UINT8                  MediaStandby;       ///< Offset 30 :This field is used to enable or disable MC6 (Media Standby): 0=FALSE, <b>1=TRUE</b>
-  UINT8                  Rsvd;
+  UINT8                  RsvdBytes183[5];
 } IGPU_PEI_CONFIG;
 
 /**

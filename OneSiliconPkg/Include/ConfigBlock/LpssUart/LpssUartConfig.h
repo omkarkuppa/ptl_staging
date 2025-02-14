@@ -122,7 +122,7 @@ typedef struct {
   UINT8                     PowerGating; ///< <b> LpssUartPgAuto </b> Applies to Hidden/COM/SkipInit see LPSS_UART_PG
   UINT8                     DebugPowerGating; ///< <b> Applies to ACPI DBG2 specific case
   UINT8                     DmaEnable;   ///< <b> TRUE </b> Applies to LpssUartPci only. Informs OS driver to use DMA, if false it will run in PIO mode
-  UINT32                    RsvdByte;
+  UINT8                     RsvdByte125[3];
 } LPSS_UART_DEVICE_CONFIG;
 
 /**

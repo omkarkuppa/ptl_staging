@@ -125,11 +125,13 @@ typedef struct {
   @note The policy is recommended for validation purpose only.
   **/
   UINT8  TccActivationOffset;
+  UINT8  RsvdBytes128[1];
   UINT16 IsysCurrentLimitL1;                      ///< This field indicated the current limitiation of L1. Units of measurements are 1/8 A. <b>Default: 0x0</b>. Range 0-0x7FFF.
   UINT8  IsysCurrentLimitL1Enable;                ///< This bits enables disables ISYS_CURRENT_LIMIT_L1 algorithm.<b>Default: 0</b>.
   UINT8  IsysCurrentL1Tau;                        ///< Specifies the time window used to calculate average current for ISYS_L1. <b>Default: 0x0</b>. Range 0-255.
   UINT16 IsysCurrentLimitL2;                      ///< This field indicated the current limitiation of L2. Units of measurements are 1/8 A. <b>Default: 0x0</b>. Range 0-0x7FFF.
   UINT8  IsysCurrentLimitL2Enable;                ///< This bits enables disables ISYS_CURRENT_LIMIT_L2 algorithm.<b>Default: 0</b>.
+  UINT8  RsvdBytes134[1];
   UINT16 VsysMax;                                 ///< Specifies Vsys Max defined in 1/1000 increments.<b>Default: 0x0 </b>. Range 0-65535.
   /**
   ThETA is name given to this feature which stands for Thermally Equal Turbo-boost Algorithm. Ibatt is Ibatt battery current.
@@ -149,7 +151,7 @@ typedef struct {
   UINT8  SkinTempOverrideEnable[SKIN_TEMP_CONTROL_SENSOR];   ///< When set, Pcode will use TEMPERATURE_OVERRIDE values instead of reading from corresponding sensor.<b>0: Disable</b>; 1: Enable.
   UINT8  SkinMinPerformanceLevel[SKIN_TEMP_CONTROL_SENSOR];  ///< Minimum Performance level below which the STC limit will not throttle. 0 - all levels of throttling allowed incl. survivability actions. 256 - no throttling allowed.
   UINT8  SkinTempOverride[SKIN_TEMP_CONTROL_SENSOR];         ///< Allows SW to override the input temperature.Pcode will use this value instead of the sensor temperature.EC control is not impacted.Units: 0.5C.Values are 0 to 255 which represents 0C - 122.5C range.
-  UINT8  Rsvd[20];
+  UINT8  RsvdBytes154[6];
 } CPU_POWER_DELIVERY_CONFIG;
 
 #pragma pack (pop)

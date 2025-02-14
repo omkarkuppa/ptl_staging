@@ -35,7 +35,7 @@ typedef struct {
   UINT32  AcpiReservedMemorySize;            ///< Offset 28 The Size of a Reserved memory buffer allocated in previous boot for S3 resume used. Originally it is retrieved from AcpiVariableCompatibility variable.
   UINT64  AcpiReservedMemoryBase;            ///< Offset 32 The Base address of a Reserved memory buffer allocated in previous boot for S3 resume used. Originally it is retrieved from AcpiVariableCompatibility variable.
   UINT8   MemMapOverlapCheckSupport;         ///< Offset 40 MemoryOverlap check Enable/Disable
-  UINT8   Rsvd[3];                           ///< Reserved for future use
+  UINT8   RsvdBytes38[7];                    ///< Reserved for future use
 } MEMORY_SUB_SYSTEM_CONFIG;
 #pragma pack(pop)
 #endif // _MEMORY_SUB_SYSTEM_CONFIG_H

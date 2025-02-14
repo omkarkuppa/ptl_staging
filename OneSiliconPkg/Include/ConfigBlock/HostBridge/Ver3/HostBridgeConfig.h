@@ -48,6 +48,7 @@ extern EFI_GUID gHostBridgePeiConfigGuid;
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER  Header;               ///< Offset 0-27 Config Block Header
+  UINT8   RsvdBytes51[4];                    ///< Reserved
   UINT64  MchBar;                            ///< Offset 28 Address of System Agent MCHBAR: <b>0xFEDC0000</b>
   UINT64  RegBar;                            ///< Offset 36 Address of System Agent REGBAR: <b>0xF0000000</b>
   /**
@@ -69,10 +70,11 @@ typedef struct {
   UINT32  VmdCfgBarBar;                      ///< Offset 76 Address of System Agent VmdCfgBarBase:      <b>0xA0000000</b>
   UINT32  VmdMemBar2Bar;                     ///< Offset 80 Address of System Agent VmdMemBar2Base:     <b>0xA4000000</b>
   UINT32  VmdMemBar1Bar;                     ///< Offset 84 Address of System Agent VmdMemBar1Base:     <b>0xA2000000</b>
+  UINT8   RsvdBytes73[4];
   UINT64  SafBar;                            ///< Offset 88 Address of System Agent SafBar:             <b>0x4150000000</b>
   UINT8   EnableAbove4GBMmio;                ///< Offset 96 Enable/disable above 4GB MMIO resource support: 0=Disable, <b>1=Enable</b>
   UINT8   CridEnable;                        ///< Offset 97 For Platforms supporting Intel(R) SIPP, this policy is use control enable/disable Compatibility Revision ID (CRID) feature: <b>0=FALSE</b>, 1=TRUE
-  UINT8   Reserved[2];                       ///< Offset 98-97 Reserved to ensure config block size is a multiple of DWORDs
+  UINT8   RsvdBytes77[6];                       ///< Offset 98-97 Reserved to ensure config block size is a multiple of DWORDs
 } HOST_BRIDGE_PREMEM_CONFIG;
 
 

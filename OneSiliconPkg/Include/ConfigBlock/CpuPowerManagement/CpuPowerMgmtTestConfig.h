@@ -93,7 +93,7 @@ typedef struct {
   UINT32 RaceToHalt                    : 1;        ///<              Enable or Disable Race To Halt feature; 0: Disable; <b>1: Enable </b>. RTH will dynamically increase CPU frequency in order to enter pkg C-State faster to reduce overall power. (RTH is controlled through MSR 1FC bit 20)
   UINT32 ForcePrDemotion               : 1;        ///<              FORCEPR Demotion Algorithm configuration; 0: Disable; <b> 1: Hardware Default</b>
   UINT32 VrAlertDemotion               : 1;        ///<              VR Alert Demotion Algorithm configuration; 0: Disable; <b> 1: Enable</b>
-  UINT32 RsvdBits                      : 15;       ///<              Reserved for future use.
+  UINT32 RsvdBits                      : 16;       ///<              Reserved for future use.
   MAX_PKG_C_STATE   PkgCStateLimit;                ///< Offset 32    This field is used to set the Max Pkg Cstate. Default set to Auto which limits the Max Pkg Cstate to deep C-state.
   /**
   Offset 36  Interrupt Redirection Mode Select.

@@ -48,10 +48,10 @@ typedef struct {
   CONFIG_BLOCK_HEADER  Header;                          ///< Offset 0-27 Config Block Header
   UINT8                VmdEnable;                       ///< Offset 28 This field used to enable VMD controller <b>1=Enable(default)</b> 0=Disable
   UINT8                VmdGlobalMapping;                ///< Offset 29 This field used to enable Global Mapping 1=Enable <b>0=Disable(default)</b>
-  UINT8                Rsvd[2];                        ///< Offset 30-39 Reserved
+  UINT8                RsvdBytes51[2];                  ///< Offset 30-39 Reserved
   RP_BDF_DATA          VmdPortEnable[VMD_MAX_DEVICES];  ///< Offset 40 to 163 This field used to to store b/d/f for each root port along with enable Support  1=Enable <b>0=Disable (default)</b>
-  VOID                 *VmdVariablePtr;                 ///< This config block will be updated as per the EFI variable.
   UINT32               VmdCfgBarBase;                   ///< Temp Address VMD CFG BAR Default is <b>0xA0000000</b>
+  VOID                 *VmdVariablePtr;                 ///< This config block will be updated as per the EFI variable.
   UINT32               VmdMemBar1Base;                  ///< Temp Address VMD CFG BAR Default is <b>0xA2000000</b>
   UINT32               VmdMemBar2Base;                  ///< Temp Address VMD CFG BAR Default is <b>0xA4000000</b>
 } VMD_PEI_CONFIG;

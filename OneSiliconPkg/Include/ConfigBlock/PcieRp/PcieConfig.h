@@ -246,6 +246,7 @@ typedef struct {
   UINT8   EnableCpm;                              ///< Enables Clock Power Management; even if disabled, CLKREQ# signal can still be controlled by L1 PM substates mechanism
   UINT8   PcieSpeed;                              ///< Contains speed of PCIe bus (see: PCIE_SPEED)
   UINT8   HostL0sTxDis;                           ///< Disable rootport L0s Tx
+  UINT8   RsvdBytes260[1];                        ///< Reserved
 
     /**
     The number of milliseconds reference code will wait for link to exit Detect state for enabled ports
@@ -272,6 +273,7 @@ typedef struct {
   - Enabled               (0x1) : Enable Phase
   **/
   UINT8   EqPhBypass;
+  UINT8   RsvdBytes287[3];
   PCIE_LINK_EQ_PLATFORM_SETTINGS    PcieGen3LinkEqPlatformSettings;  ///< Global PCIe Gen3 link EQ settings that BIOS will use during PCIe link EQ for every port.
   PCIE_LINK_EQ_PLATFORM_SETTINGS    PcieGen4LinkEqPlatformSettings;  ///< Global PCIe Gen4 link EQ settings that BIOS will use during PCIe link EQ for every port.
   PCIE_LINK_EQ_PLATFORM_SETTINGS    PcieGen5LinkEqPlatformSettings;  ///< Global PCIe Gen5 link EQ settings that BIOS will use during PCIe link EQ for every port.
