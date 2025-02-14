@@ -36,7 +36,9 @@ gStructPcdTokenSpaceGuid.PcdCnvSetup|L"CnvSetup"|gCnvFeatureSetupGuid|0x00||NV, 
 gStructPcdTokenSpaceGuid.PcdComAttributes|L"ComAttributes"|gSetupVariableGuid|0x00||NV, BS, RT
 gStructPcdTokenSpaceGuid.PcdCpuSetup|L"CpuSetup"|gCpuSetupVariableGuid|0x00||NV, BS, RT
 gStructPcdTokenSpaceGuid.PcdCrashLogVariable|L"CrashLogVariable"|gCrashLogVariableGuid|0x00||NV, BS, RT
-gStructPcdTokenSpaceGuid.PcdDebugConfigData|L"DebugConfigData"|gDebugConfigVariableGuid|0x00||NV, BS, RT
+!if $(TARGET) == DEBUG
+  gStructPcdTokenSpaceGuid.PcdDebugConfigData|L"DebugConfigData"|gDebugConfigVariableGuid|0x00||NV, BS, RT
+!endif
 gStructPcdTokenSpaceGuid.PcdDptfConfig|L"DptfConfig"|gDptfConfigVariableGuid|0x00||NV, BS, RT
 gStructPcdTokenSpaceGuid.PcdLpeSetup|L"LpeSetup"|gPsLpeSetupVariableGuid|0x00||NV, BS
 gStructPcdTokenSpaceGuid.PcdRpeSetup|L"RpeSetup"|gPsRpeSetupVariableGuid|0x00||NV, BS
