@@ -3640,7 +3640,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.AsyncOdtDis|0x0                             
 gStructPcdTokenSpaceGuid.PcdSaSetup.OpportunisticRead|0x1                                          #           Bit 28 - Opportunistic Read
 gStructPcdTokenSpaceGuid.PcdSaSetup.Disable2CycleBypass|0x0                                        #           Bit 29 Cycle Bypass Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.OCSafeMode|0x1                                                 #           Bit 30 OverClocking Safe Mode
-gStructPcdTokenSpaceGuid.PcdSaSetup.SrefCfgIdleTmr|0x200                                           # Offset 68 SelfRefresh IdleTimer
+gStructPcdTokenSpaceGuid.PcdSaSetup.SrefCfgIdleTmr|0x640                                           # Offset 68 SelfRefresh IdleTimer
 gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashMask|0x830                                               # Offset 70 Ch Hash Mask
 gStructPcdTokenSpaceGuid.PcdSaSetup.DdrFreqLimit|0                                                 # Offset 72 Maximum Memory Frequency. 0 - Auto
 gStructPcdTokenSpaceGuid.PcdSaSetup.ThrtCkeMinTmr|0x0                                              # Offset 74 Throttler CKEMin Timer
