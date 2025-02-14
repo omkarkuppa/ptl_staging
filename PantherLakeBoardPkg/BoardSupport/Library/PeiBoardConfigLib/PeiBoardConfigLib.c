@@ -225,7 +225,7 @@ ParseBoardInfo (
     PcdSetBoolS (PcdSpdPresent, FALSE);
   }
 
-  PcdSet16S (PcdDisplayId, (UINT16)((BoardInfoStructure->RvpFields.DdiAConfig) | (BoardInfoStructure->RvpFields.DdiBConfig << BIT0)));
+  PcdSet16S (PcdDisplayId, (UINT16)((BoardInfoStructure->RvpFields.DdiAConfig) | (BoardInfoStructure->RvpFields.DdiBConfig << BIT1)));
 
   return EFI_SUCCESS;
 }

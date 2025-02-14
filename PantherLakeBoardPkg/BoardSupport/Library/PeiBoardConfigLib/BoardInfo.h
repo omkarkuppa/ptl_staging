@@ -28,9 +28,8 @@ typedef union {
     UINT16  BomId          :3;     // [8:6]     - BOM_IDx
     UINT16  FabId          :2;     // [10:9]    - REV_FAB_IDx
     UINT16  SpdPresent     :1;     // [11]      - SPD_PRSNT
-    UINT16  DdiAConfig     :1;     // [12]      - DDI_A_CONFIG 0: EDP, 1: MIPI
-    UINT16  DdiBConfig     :2;     // [14:13]   - DDI_B_CONFIG 2'b00: EDP, 2'b01: MIPI, 2'b10: DP, 2'b11: HDMI
-    UINT16  Reserved       :1;     // [15]      - RESERVED
+    UINT16  DdiAConfig     :2;     // [13:12]   - DDI_A_CONFIG  0x0:eDP, 0x1:DP/DP++, 0x2:HDMI, 0x3:No Display
+    UINT16  DdiBConfig     :2;     // [15:14]   - DDI_B_CONFIG  0x0:eDP, 0x1:DP/DP++, 0x2:HDMI, 0x3:No Display
   } RvpFields;
 } BOARD_ID_INFO;
 
