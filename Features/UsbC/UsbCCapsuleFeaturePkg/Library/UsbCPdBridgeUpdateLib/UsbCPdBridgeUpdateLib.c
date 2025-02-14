@@ -73,7 +73,7 @@ NvmRead (
   ReadCmdData.Reserved2 = 0;
   DataSize              = sizeof (ReadCmdData);
 
-  Status = This->ExecuteVendorCmd (PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_READ, FALSE, (UINT8 *) &ReadCmdData, (UINT8 *) &DataSize, (UINT8 *) OutputData, (UINT8 *) OutputDataSize);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_READ, FALSE, (UINT8 *) &ReadCmdData, (UINT8 *) &DataSize, (UINT8 *) OutputData, (UINT8 *) OutputDataSize);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_NVM_READ, Status));
     return Status;
@@ -114,7 +114,7 @@ NvmSetOffset (
   SetOffsetCmdData.Reserved2 = 0;
   DataSize                   = sizeof (SetOffsetCmdData);
 
-  Status = This->ExecuteVendorCmd (PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_SET_OFFSET, FALSE, (UINT8 *) &SetOffsetCmdData, (UINT8 *) &DataSize, NULL, NULL);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_SET_OFFSET, FALSE, (UINT8 *) &SetOffsetCmdData, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_NVM_SET_OFFSET, Status));
     return Status;
@@ -164,7 +164,7 @@ NvmWrite (
   CopyMem (WriteData, Buffer, BufferSize);
 
   DataSize = BufferSize;
-  Status   = This->ExecuteVendorCmd (PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_WRITE, FALSE, (UINT8 *) WriteData, (UINT8 *) &DataSize, NULL, NULL);
+  Status   = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_WRITE, FALSE, (UINT8 *) WriteData, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_NVM_WRITE, Status));
     return Status;
@@ -199,7 +199,7 @@ NvmAuthenticateWrite (
   Data     = 0;
   DataSize = sizeof (Data);
 
-  Status = This->ExecuteVendorCmd (PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE, Status));
     return Status;
@@ -237,7 +237,7 @@ NvmStallNvmAccess (
   Data     = 0;
   DataSize = sizeof (Data);
 
-  Status = This->ExecuteVendorCmd (PdBridgeIndex, VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS, Status));
     return Status;
@@ -275,7 +275,7 @@ NvmReset (
   Data     = 0;
   DataSize = sizeof (Data);
 
-  Status = This->ExecuteVendorCmd (PdBridgeIndex, VENDOR_SPECIFIC_CMD_RESET, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_RESET, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_RESET, Status));
     return Status;

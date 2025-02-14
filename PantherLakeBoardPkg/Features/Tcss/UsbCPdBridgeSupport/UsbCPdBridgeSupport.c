@@ -28,6 +28,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/EcLib.h>
 #include <Library/EcTcssLib.h>
 #include <Library/EcMiscLib.h>
@@ -39,6 +40,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED USBC_PD_BRIDGE_PROTOCOL  mUsbCPdBridgeProtocol;
 /**
   The function to get PD Bridge version via EC command
 
+  @param[in]  This             Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
   @param[in]  PdCntrlIndex     PD controller index (1-based).
   @param[in]  PdBridgeVersion  A Pointer to PD Bridge version
 
@@ -48,15 +50,22 @@ GLOBAL_REMOVE_IF_UNREFERENCED USBC_PD_BRIDGE_PROTOCOL  mUsbCPdBridgeProtocol;
 **/
 EFI_STATUS
 GetPdBridgeVersion (
-  IN  UINT8   PdCntrlIndex,
-  IN  UINT64  *PdBridgeVersion
+  IN USBC_PD_BRIDGE_PROTOCOL  *This,
+  IN UINT8                    PdCntrlIndex,
+  IN UINT64                   *PdBridgeVersion
   )
 {
-  EFI_STATUS     Status;
-  UINT8          DataBuffer[8];
-  USBC_PD_SETUP  UsbCPdSetup;
-  UINT32         VarAttributes;
-  UINTN          VarSize;
+  EFI_STATUS               Status;
+  USBC_PD_BRIDGE_INSTANCE  *Instance;
+  UINT8                    DataBuffer[8];
+  USBC_PD_SETUP            UsbCPdSetup;
+  UINT32                   VarAttributes;
+  UINTN                    VarSize;
+
+  Instance = USBC_PD_BRIDGE_FROM_THIS (This);
+  if (Instance->Signature != PD_BRIDGE_PAYLOAD_HEADER_SIGNATURE) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   if (PdBridgeVersion == NULL ) {
     DEBUG ((DEBUG_ERROR, "PdBridgeVersion is NULL\n"));
@@ -120,6 +129,7 @@ GetPdBridgeVersion (
 /**
   Send Command to EC to lock/unlock EC-PD regular communication
 
+  @param[in] This             Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
   @param[in] Lock             Lock(0x01) or unlock(0x00).
 
   @retval EFI_SUCCESS         Lock/Unlock EC-PD regular communication successfully
@@ -129,9 +139,17 @@ GetPdBridgeVersion (
 **/
 EFI_STATUS
 EcPdLockCommunication (
-  IN  UINT8  Lock
+  IN  USBC_PD_BRIDGE_PROTOCOL  *This,
+  IN  UINT8                    Lock
   )
 {
+  USBC_PD_BRIDGE_INSTANCE  *Instance;
+
+  Instance = USBC_PD_BRIDGE_FROM_THIS (This);
+  if (Instance->Signature != PD_BRIDGE_PAYLOAD_HEADER_SIGNATURE) {
+    return EFI_INVALID_PARAMETER;
+  }
+
   //
   // Control the Ec Debug Info Print Level to DEBUG_VERBOSE before executing any command for PD Bridge
   // And revert back to DEBUG_INFO after executing the command
@@ -139,10 +157,52 @@ EcPdLockCommunication (
   if (Lock == 1) {
     gEcDebugInfoPrintLevel = PcdGet32 (VpdPcdPdBridgeDebugInfoPrintLevel);
   } else {
-    gEcDebugInfoPrintLevel =  (UINT32) DEBUG_INFO;
+    gEcDebugInfoPrintLevel = (UINT32) DEBUG_INFO;
   }
 
   return LockEcPdI2cTarget (Lock);
+}
+
+/**
+ Execute the PD Vendor Command via EC private port
+
+ @param[in]  This               Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
+ @param[in]  PdCntrlIndex       PD controller index (0-based).
+ @param[in]  VendorCmd          PD Vendor command data
+ @param[in]  Lock               Need to Lock the EC PD I2C target or not
+ @param[in]  InputData          A pointer to input data
+ @param[in]  InputDataSize      A pointer to input data size
+ @param[out] OutputData         A pointer to out data
+ @param[out] OutputDataSize     A pointer to out data size
+
+ @retval EFI_SUCCESS            Command success.
+ @retval EFI_TIMEOUT            EC is busy.
+ @retval EFI_ACCESS_DENIED      EC PD I2C target is lock.
+ @retval EFI_INVALID_PARAMETER  Parameter invalid.
+ @retval EFI_UNSUPPORTED        Unsupported EC channel or the command is not found in mEcCommand.
+ @retval EFI_BUFFER_TOO_SMALL   The DataBuffer is too small to Read/Write data with EC FW.
+
+**/
+EFI_STATUS
+PdBridgeExecuteVendorCommand (
+  IN  USBC_PD_BRIDGE_PROTOCOL  *This,
+  IN  UINT8                    PdCntrlIndex,
+  IN  UINT8                    VendorCmd,
+  IN  BOOLEAN                  Lock,
+  IN  UINT8                    *InputData,
+  IN  UINT8                    *InputDataSize,
+  OUT UINT8                    *OutputData OPTIONAL,
+  OUT UINT8                    *OutputDataSize OPTIONAL
+  )
+{
+  USBC_PD_BRIDGE_INSTANCE  *Instance;
+
+  Instance = USBC_PD_BRIDGE_FROM_THIS (This);
+  if (Instance->Signature != PD_BRIDGE_PAYLOAD_HEADER_SIGNATURE) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  return EcPdExecuteVendorCommand (PdCntrlIndex, VendorCmd, Lock, InputData, InputDataSize, OutputData, OutputDataSize);
 }
 
 /**
@@ -164,22 +224,30 @@ UsbCPdBridgeSupportEntryPoint (
   IN  EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS  Status;
+  EFI_STATUS               Status;
+  USBC_PD_BRIDGE_INSTANCE  *Instance;
 
   DEBUG ((DEBUG_INFO, "%a: Start\n", __FUNCTION__));
 
-  mUsbCPdBridgeProtocol.Revision              = USBC_PD_BRIDGE_PROTOCOL_REVISION;
-  mUsbCPdBridgeProtocol.GetVersion            = GetPdBridgeVersion;
-  mUsbCPdBridgeProtocol.Lock                  = EcPdLockCommunication;
-  mUsbCPdBridgeProtocol.ExecuteVendorCmd      = EcPdExecuteVendorCommand;
+  Instance = AllocateZeroPool (sizeof (USBC_PD_BRIDGE_INSTANCE));
+  if (Instance == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  Instance->Signature                         = PD_BRIDGE_PAYLOAD_HEADER_SIGNATURE;
+  Instance->PdBridgeProtocol.Revision         = USBC_PD_BRIDGE_PROTOCOL_REVISION;
+  Instance->PdBridgeProtocol.GetVersion       = GetPdBridgeVersion;
+  Instance->PdBridgeProtocol.Lock             = EcPdLockCommunication;
+  Instance->PdBridgeProtocol.ExecuteVendorCmd = PdBridgeExecuteVendorCommand;
+
   ///
   /// Install PD Bridge Protocol
   ///
-  Status = gBS->InstallMultipleProtocolInterfaces (
+  Status = gBS->InstallProtocolInterface(
                   &ImageHandle,
                   &gUsbCPdBridgeProtocolGuid,
-                  &mUsbCPdBridgeProtocol,
-                  NULL
+                  EFI_NATIVE_INTERFACE,
+                  &Instance->PdBridgeProtocol
                   );
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {

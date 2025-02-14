@@ -765,7 +765,7 @@ FmpDeviceSetImageWithStatus (
   ///
   /// Send Lock command to EC to stop EC-PD regular communication.
   ///
-  Status = PdBridgeProtocol->Lock (LOCK_I2C);
+  Status = PdBridgeProtocol->Lock (PdBridgeProtocol, LOCK_I2C);
   if (EFI_ERROR (Status)) {
     goto UnLockEcPdCommunication;
   }
@@ -810,7 +810,7 @@ FmpDeviceSetImageWithStatus (
       ///
       /// The PdCntrlIndex for GetPDFwVersion is 1-based.
       ///
-      Status = PdBridgeProtocol->GetVersion (PdBridgePayloadItem->PrivateData.PdBridge.PdCntrlIndex + 1, &PdBridgeVersion);
+      Status = PdBridgeProtocol->GetVersion (PdBridgeProtocol, PdBridgePayloadItem->PrivateData.PdBridge.PdCntrlIndex + 1, &PdBridgeVersion);
       if (!EFI_ERROR (Status)) {
         FwVersion    = (UINT32) (PdBridgeVersion & 0xFFFFFFFF);
         SubFwVersion = (UINT32) ((PdBridgeVersion >> 32) & 0xFFFFFFFF);
@@ -829,7 +829,7 @@ UnLockEcPdCommunication:
   ///
   /// Send UnLock command to EC to restore EC-PD regular communication.
   ///
-  Status = PdBridgeProtocol->Lock (UNLOCK_I2C);
+  Status = PdBridgeProtocol->Lock (PdBridgeProtocol, UNLOCK_I2C);
 
 Exit:
   Progress (100);

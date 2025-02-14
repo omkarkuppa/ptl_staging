@@ -24,6 +24,7 @@
 
 #include <Uefi.h>
 #include <PiDxe.h>
+#include "UsbCPdBridgeRetimer.h"
 
 #define PD_BRIDGE_MAX_TO_WRITE        32
 #define PD_BRIDGE_NVM_VERSION_OFFSET  2
@@ -74,6 +75,7 @@ typedef struct _USBC_PD_BRIDGE_PROTOCOL USBC_PD_BRIDGE_PROTOCOL;
 /// Major changes will require publication of a new protocol
 ///
 #define USBC_PD_BRIDGE_PROTOCOL_REVISION  0x00010000  ///< Initial version
+#define USBC_PD_BRIDGE_FROM_THIS(This)  CR (This, USBC_PD_BRIDGE_INSTANCE, PdBridgeProtocol, PD_BRIDGE_PAYLOAD_HEADER_SIGNATURE)
 
 #define USBC_PD_BRIDGE_PROTOCOL_GUID \
 { \
@@ -85,6 +87,7 @@ extern EFI_GUID  gUsbCPdBridgeProtocolGuid;
 /**
   The function to get PD Bridge version via EC command
 
+  @param[in]  This             Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
   @param[in]  PdCntrlIndex     PD controller index (1-based).
   @param[in]  PdBridgeVersion  A Pointer to PD Bridge version
 
@@ -95,13 +98,15 @@ extern EFI_GUID  gUsbCPdBridgeProtocolGuid;
 typedef
 EFI_STATUS
 (*GET_PD_BRIDGE_VERSION) (
-  IN   UINT8   PdCntrlIndex,
-  IN   UINT64  *PdBridgeVersion
+  IN USBC_PD_BRIDGE_PROTOCOL  *This,
+  IN UINT8                    PdCntrlIndex,
+  IN UINT64                   *PdBridgeVersion
   );
 
 /**
   Send Command to EC to lock/unlock EC-PD regular communication
 
+  @param[in] This             Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
   @param[in] Lock             Lock(0x01) or unlock(0x00).
 
   @retval EFI_SUCCESS         Lock/Unlock EC-PD regular communication successfully
@@ -112,12 +117,14 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (*LOCK_COMMUNICATION) (
-  IN UINT8  Lock
+  IN  USBC_PD_BRIDGE_PROTOCOL  *This,
+  IN  UINT8                    Lock
   );
 
 /**
-  Execute the PD Vendor Command via 0x0C command with EC private port
+  Execute the PD Vendor Command via EC private port
 
+  @param[in]  This               Pointer to the USBC_PD_BRIDGE_PROTOCOL instance.
   @param[in]  PdCntrlIndex       PD controller index (0-based).
   @param[in]  VendorCmd          PD Vendor command data
   @param[in]  Lock               Need to Lock the EC PD I2C target or not
@@ -136,14 +143,15 @@ EFI_STATUS
 **/
 typedef
 EFI_STATUS
-(EFIAPI *EXECUTE_VENDOR_CMD) (
-  IN  UINT8    PdCntrlIndex,
-  IN  UINT8    VendorCmd,
-  IN  BOOLEAN  Lock,
-  IN  UINT8    *InputData,
-  IN  UINT8    *InputDataSize,
-  OUT UINT8    *OutputData OPTIONAL,
-  OUT UINT8    *OutputDataSize OPTIONAL
+(*EXECUTE_VENDOR_CMD) (
+  IN  USBC_PD_BRIDGE_PROTOCOL  *This,
+  IN  UINT8                    PdCntrlIndex,
+  IN  UINT8                    VendorCmd,
+  IN  BOOLEAN                  Lock,
+  IN  UINT8                    *InputData,
+  IN  UINT8                    *InputDataSize,
+  OUT UINT8                    *OutputData OPTIONAL,
+  OUT UINT8                    *OutputDataSize OPTIONAL
   );
 
 ///
@@ -153,7 +161,12 @@ struct _USBC_PD_BRIDGE_PROTOCOL {
   UINT64                 Revision;          ///< Revision for the protocol structure
   GET_PD_BRIDGE_VERSION  GetVersion;        ///< Get PD Bridge version
   LOCK_COMMUNICATION     Lock;              ///< Lock/Unlock EC-PD regular communication
-  EXECUTE_VENDOR_CMD     ExecuteVendorCmd;  ///< Execute the PD Vendor Command via 0x0C command with EC private port
+  EXECUTE_VENDOR_CMD     ExecuteVendorCmd;  ///< Execute the PD Vendor Command via EC private port
 };
+
+typedef struct {
+  UINTN                   Signature;
+  USBC_PD_BRIDGE_PROTOCOL PdBridgeProtocol;
+} USBC_PD_BRIDGE_INSTANCE;
 
 #endif
