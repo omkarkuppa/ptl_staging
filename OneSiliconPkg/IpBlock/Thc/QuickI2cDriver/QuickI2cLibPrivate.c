@@ -1328,6 +1328,18 @@ QuickI2cLibCleanUp (
 
   THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp ()\n")
 
+  QuickI2cSetGlobalInterruptState (MmioBase, FALSE);
+
+  THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp Disable interrupt \n")
+  if (QuickI2cLibIsQuiesceDisabled (MmioBase)) {
+    THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp QuiesceDisabled \n")
+    Status = QuickI2cLibStartQuiesce (MmioBase, StartQuiesceTimeout);
+    THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp QuickI2cLibStartQuiesce Status: %r\n", Status)
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_WARN, "QuickI2cLibCleanUp QuickI2cLibStartQuiesce error, Status %r\n", Status));
+      return;
+    }
+  }
   //
   // Clear out QuickI2c SubIP programmed register values
   //
@@ -1342,19 +1354,6 @@ QuickI2cLibCleanUp (
   }
 
   QuickI2cLibSetLengthInPrd (MmioBase, 1, 1, 1, 1, 1);
-  //
-  // Clear Global error and stall
-  //
-  THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp Disable interrupt \n")
-  if (QuickI2cLibIsQuiesceDisabled (MmioBase)) {
-    THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp QuiesceDisabled \n")
-    Status = QuickI2cLibStartQuiesce (MmioBase, StartQuiesceTimeout);
-    THC_LOCAL_DEBUG (L"QuickI2cLibCleanUp QuickI2cLibStartQuiesce Status: %r\n", Status)
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_WARN, "QuickI2cLibCleanUp QuickI2cLibStartQuiesce error, Status %r\n", Status));
-      return;
-    }
-  }
 
   QuickI2cLiProgramSubIpRegisterToDefault (MmioBase);
 }

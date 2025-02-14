@@ -648,6 +648,30 @@ QuickI2cReadDeviceDescriptor (
   return Status;
 }
 
+/**
+  THC Global Interrupt Enable or Disable API
+  @param[in]  MmioBase                  QuickI2c MMIO BAR0
+  @param[in]  GlobalInterruptState      Context of QuickI2c device
+
+**/
+VOID
+QuickI2cSetGlobalInterruptState (
+  IN UINT64             MmioBase,
+  IN BOOLEAN            GlobalInterruptState
+  )
+{
+  if (GlobalInterruptState) {
+      if (!(MmioRead32 (MmioBase + R_THC_MEM_PRT_INT_ENABLE) & BIT31)) {
+      MmioOr32 (MmioBase + R_THC_MEM_PRT_INT_ENABLE, BIT31);
+      THC_LOCAL_DEBUG (L"QuickI2cSetGlobalInterruptState R_THC_MEM_PRT_INT_ENABLE : 0x%x\n",MmioRead32 (MmioBase + R_THC_MEM_PRT_INT_ENABLE) )
+    }
+  } else {
+      if (MmioRead32 (MmioBase + R_THC_MEM_PRT_INT_ENABLE) & BIT31) {
+      MmioAnd32 (MmioBase + R_THC_MEM_PRT_INT_ENABLE, (UINT32) ~(BIT31));
+      THC_LOCAL_DEBUG (L"QuickI2cSetGlobalInterruptState R_THC_MEM_PRT_INT_ENABLE : 0x%x\n",MmioRead32 (MmioBase + R_THC_MEM_PRT_INT_ENABLE) )
+    }
+  }
+}
 
 /**
   Perform disable interrupt
@@ -661,6 +685,9 @@ QuickI2cDisableInterrupt (
   )
 {
   EFI_STATUS            Status;
+
+  QuickI2cSetGlobalInterruptState (QuickI2cDev->PciBar0, FALSE);
+
   //
   // Clear Global error and stall
   //
@@ -688,6 +715,8 @@ QuickI2cEnableInterrupt (
   )
 {
   EFI_STATUS            Status;
+
+  QuickI2cSetGlobalInterruptState (QuickI2cDev->PciBar0, TRUE);
 
   if (QuickI2cDev->InitProcessDoneEnableInterrupt) {
     if (QuickI2cLibIsQuiesceEnabled (QuickI2cDev->PciBar0)) {
@@ -2453,6 +2482,10 @@ QuickI2cGetFeatureViaSwDma (
   //
   QuickI2cCompleteSwdma (QuickI2cDev);
   QuickI2cDev->SwDmaMessageLength = 0;
+
+  // Just to make sure interrupt is disabled since its init flow
+  THC_LOCAL_DEBUG (L"QuickI2cReadHidDescriptor: QuickI2cDisableInterrupt\n")
+  QuickI2cDisableInterrupt (QuickI2cDev);
 
   QuickI2cDmaFillSinglePrdTable (&QuickI2cDev->SwDmaRead, 0);
   QuickI2cDev->SwDmaActive = FALSE;

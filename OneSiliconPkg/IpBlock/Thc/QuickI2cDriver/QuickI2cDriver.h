@@ -79,6 +79,18 @@ QuickI2cReadDeviceDescriptor (
   );
 
 /**
+  THC Global Interrupt Enable or Disable API
+  @param[in]  MmioBase                  QuickI2c MMIO BAR0
+  @param[in]  GlobalInterruptState      Context of QuickI2c device
+
+**/
+VOID
+QuickI2cSetGlobalInterruptState (
+  IN UINT64             MmioBase,
+  IN BOOLEAN            GlobalInterruptState
+  );
+
+/**
   Perfomrs Interrupt disable
   @param[in]  QuickI2cDev      Context of QuickI2c device
   @retval EFI_SUCCESS     QuickI2c initialized successfully
