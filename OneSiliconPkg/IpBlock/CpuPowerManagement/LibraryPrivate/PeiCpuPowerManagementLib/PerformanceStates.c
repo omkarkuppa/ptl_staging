@@ -794,6 +794,31 @@ InitializeHwp (
   return;
 }
 
+/**
+  Initializes Dynamic Efficiency Control feature.
+**/
+VOID
+InitDynamicEfficiencyControl (
+  VOID
+  )
+{
+  MSR_POWER_CTL_REGISTER  PowerCtl;
+
+  ///
+  /// Configure Dynamic Efficiency Control: POWER_CTL[27]
+  /// When set, allows SoC to control energy efficiency targets autonomously, regardless of EPP, EPB and other SW inputs.
+  ///
+  if (gCpuPowerMgmtBasicConfig->EnableDynamicEfficiencyControl) {
+    PowerCtl.Uint64 = AsmReadMsr64 (MSR_POWER_CTL);
+    ///
+    /// DisableOok actually represents DYNAMIC_EFFICIENCY_CONTROL_EN (POWER_CTL[27])
+    ///
+    PowerCtl.Bits.DisableOok = 1;
+    AsmWriteMsr64 (MSR_POWER_CTL, PowerCtl.Uint64);
+  }
+
+  return;
+}
 
 /**
   Initialize Per Core P State OS control mode.
@@ -857,6 +882,12 @@ InitializeHwpMiscFeatures (
       }
     }
   }
+
+  ///
+  /// Initializes Dynamic Efficiency Control feature.
+  ///
+  InitDynamicEfficiencyControl ();
+
   return;
 }
 

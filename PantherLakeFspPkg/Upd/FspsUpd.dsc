@@ -350,6 +350,10 @@
   # !BSF HELP:{Enable EPP grouping Autonomous will request the same values for all cores with same EPP. Disable EPP grouping autonomous will not necessarily request same values for all cores with same EPP. 0: Disable; <b>1: Enable</b>}
   gPlatformFspPkgTokenSpaceGuid.EnableHwpAutoEppGrouping | * | 0x01 | 0x01
 
+  # !BSF NAME:{Dynamic Efficiency Control} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable or Disable SoC to control energy efficiency targets autonomously, regardless of EPP, EPB and other SW inputs. 0: Disable; </b>1: Enable <b>}
+  gPlatformFspPkgTokenSpaceGuid.EnableDynamicEfficiencyControl | * | 0x01 | 0x01
+
   # !BSF NAME:{Misc Power Management MSR Lock} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable HWP Lock support in Misc Power Management MSR. 0: Disable, <b>1: Enable </b>}
   gPlatformFspPkgTokenSpaceGuid.HwpLock                    | * | 0x01 | 0x01

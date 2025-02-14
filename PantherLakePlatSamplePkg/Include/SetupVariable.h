@@ -832,6 +832,7 @@ typedef struct {
 
   UINT8   EnableHwpAutoPerCorePstate;
   UINT8   EnableHwpAutoEppGrouping;
+  UINT8   EnableDynamicEfficiencyControl;
 
   UINT8   BootFrequency;
   UINT8   EnableCx;

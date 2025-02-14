@@ -147,7 +147,13 @@ typedef struct {
   0: Disable; <b> 1: Enable;</b>
   **/
   UINT8  EnableFastMsrHwpReq            : 1;
-  UINT8  ReservedBits1                  : 5;      ///< Reserved for future use.
+  /**
+  Dynamic Efficiency Control.
+  Enable it can set Bit 27 of MSR 0x1FC to allow SoC to control energy efficiency targets autonomously, regardless of EPP, EPB and other SW inputs.
+  0: Disable; </b> 1: Enable;<b>
+  **/
+  UINT8  EnableDynamicEfficiencyControl : 1;
+  UINT8  ReservedBits1                  : 4;      ///< Reserved for future use.
   UINT8  MinRingRatioLimit;                       ///< Minimum Ring Ratio Limit. Range from 0 to Max Turbo Ratio. 0 = AUTO/HW Default
   UINT8  MaxRingRatioLimit;                       ///< Maximum Ring Ratio Limit. Range from 0 to Max Turbo Ratio. 0 = AUTO/HW Default
   /**

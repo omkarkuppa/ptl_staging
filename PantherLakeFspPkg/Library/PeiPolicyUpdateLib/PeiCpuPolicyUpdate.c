@@ -145,6 +145,7 @@ FspUpdatePeiCpuPolicy (
   CpuPowerMgmtBasicConfig->EnableRp                                          = FspsUpd->FspsConfig.EnableRp;
   CpuPowerMgmtBasicConfig->EnableHwpAutoPerCorePstate                        = FspsUpd->FspsConfig.EnableHwpAutoPerCorePstate;
   CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping                          = FspsUpd->FspsConfig.EnableHwpAutoEppGrouping;
+  CpuPowerMgmtBasicConfig->EnableDynamicEfficiencyControl                    = FspsUpd->FspsConfig.EnableDynamicEfficiencyControl;
   CpuPowerMgmtBasicConfig->MinRingRatioLimit                                 = FspsUpd->FspsConfig.MinRingRatioLimit;
   CpuPowerMgmtBasicConfig->MaxRingRatioLimit                                 = FspsUpd->FspsConfig.MaxRingRatioLimit;
   CpuPowerMgmtBasicConfig->HwpLock                                           = FspsUpd->FspsConfig.HwpLock;

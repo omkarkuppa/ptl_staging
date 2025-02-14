@@ -61,6 +61,7 @@ CpuPowerMgmtBasicConfigPrint (
   DEBUG ((DEBUG_INFO, " (Resource Priority Feature)EnableRp : 0x%X\n", CpuPowerMgmtBasicConfig->EnableRp));
   DEBUG ((DEBUG_INFO, " EnableHwpAutoPerCorePstate : 0x%x\n", CpuPowerMgmtBasicConfig->EnableHwpAutoPerCorePstate));
   DEBUG ((DEBUG_INFO, " EnableHwpAutoEppGrouping : 0x%x\n", CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping));
+  DEBUG ((DEBUG_INFO, " EnableDynamicEfficiencyControl : 0x%x\n", CpuPowerMgmtBasicConfig->EnableDynamicEfficiencyControl));
   DEBUG ((DEBUG_INFO, " MinRingRatioLimit : 0x%x\n", CpuPowerMgmtBasicConfig->MinRingRatioLimit));
   DEBUG ((DEBUG_INFO, " MaxRingRatioLimit : 0x%x\n", CpuPowerMgmtBasicConfig->MaxRingRatioLimit));
   DEBUG ((DEBUG_INFO, " PowerFloorManagement : 0x%x\n", CpuPowerMgmtBasicConfig->PowerFloorManagement));
@@ -297,22 +298,23 @@ LoadCpuPowerMgmtBasicConfigDefault (
   /********************************
     CPU Power Management Basic configuration
   ********************************/
-  CpuPowerMgmtBasicConfig->Hwp                          = TRUE;
-  CpuPowerMgmtBasicConfig->EnableRp                     = TRUE;
-  CpuPowerMgmtBasicConfig->HwpLock                      = TRUE;
-  CpuPowerMgmtBasicConfig->HwpInterruptControl          = TRUE;
-  CpuPowerMgmtBasicConfig->PowerFloorManagement         = TRUE;
-  CpuPowerMgmtBasicConfig->PowerFloorDisplayDisconnect  = TRUE;
-  CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade   = TRUE;
+  CpuPowerMgmtBasicConfig->Hwp                            = TRUE;
+  CpuPowerMgmtBasicConfig->EnableRp                       = TRUE;
+  CpuPowerMgmtBasicConfig->HwpLock                        = TRUE;
+  CpuPowerMgmtBasicConfig->HwpInterruptControl            = TRUE;
+  CpuPowerMgmtBasicConfig->PowerFloorManagement           = TRUE;
+  CpuPowerMgmtBasicConfig->PowerFloorDisplayDisconnect    = TRUE;
+  CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade     = TRUE;
 
   ///
   /// Hwp misc functions
   ///
-  CpuPowerMgmtBasicConfig->EnableHwpAutoPerCorePstate   = TRUE;
-  CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping     = FALSE;
+  CpuPowerMgmtBasicConfig->EnableHwpAutoPerCorePstate     = TRUE;
+  CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping       = FALSE;
+  CpuPowerMgmtBasicConfig->EnableDynamicEfficiencyControl = FALSE;
 
-  CpuPowerMgmtBasicConfig->TurboMode                    = TRUE;
-  CpuPowerMgmtBasicConfig->BootFrequency                = 2;  // Turbo Performance
+  CpuPowerMgmtBasicConfig->TurboMode                      = TRUE;
+  CpuPowerMgmtBasicConfig->BootFrequency                  = 2;  // Turbo Performance
 
   PeiCpuLoadPowerMgmtBasicConfigDefault (CpuPowerMgmtBasicConfig);
 }
