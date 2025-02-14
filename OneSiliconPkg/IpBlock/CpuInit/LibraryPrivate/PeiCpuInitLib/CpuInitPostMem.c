@@ -1179,12 +1179,24 @@ ReloadMicrocodePatch (
     DEBUG ((DEBUG_INFO, " MicrocodePatchHob->MicrocodePatchAddress = 0x%x\n", MicrocodePatchHob->MicrocodePatchAddress));
     DEBUG ((DEBUG_INFO, " MicrocodePatchHob->ProcessorSpecificPatchOffset[0] = 0x%x\n", MicrocodePatchHob->ProcessorSpecificPatchOffset[0]));
 
-    if (MicrocodePatchHob->ProcessorSpecificPatchOffset[0] != MAX_UINT64) {
+    //
+    // In the FSP(API)+SBL case, CpuMpPei PEIM is executed before SiInit PEIM because of the dependency, so the PcdCpuMicrocodePatchAddress
+    // has not been initialized when used in the CpuMpPei PEIM, the microcode patch will not be shadowed and EdkiiMicrocodePatchHob
+    // will be built with MicrocodePatchAddress = 0 and ProcessorSpecificPatchOffset[0] = MAX_UINT64 in this module.
+    // In that case, no available microcode patch shadowed info can be found in the HOB when ReloadMicrocodePatch function is executed,
+    // which will result in reloading microcode patch failed. This patch will use the microcode patch region address and size info in
+    // CpuInitConfig block if can't find the available info in the HOB.
+    //
+    if ((MicrocodePatchHob->MicrocodePatchAddress != 0) &&
+        (MicrocodePatchHob->MicrocodePatchRegionSize != 0) &&
+        (MicrocodePatchHob->ProcessorSpecificPatchOffset[0] != MAX_UINT64)) {
       LatestMicrocode = (CPU_MICROCODE_HEADER *) (UINTN) (MicrocodePatchHob->MicrocodePatchAddress + MicrocodePatchHob->ProcessorSpecificPatchOffset[0]);
     }
-  } else {
+  }
+
+  if (LatestMicrocode == NULL) {
     //
-    // Copy the microcode from flash to memory.
+    // Microcode patch info can't be found in the HOB, copy the microcode from flash to memory.
     //
     DEBUG ((DEBUG_INFO, " Microcode Region Address = %p, Size = %d\n", (UINTN) mCpuInitConfig->MicrocodePatchAddress, mCpuInitConfig->MicrocodePatchRegionSize));
     if ((mCpuInitConfig->MicrocodePatchRegionSize != 0) && (mCpuInitConfig->MicrocodePatchAddress != 0)) {
