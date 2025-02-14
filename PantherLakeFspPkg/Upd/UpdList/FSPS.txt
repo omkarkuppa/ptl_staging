@@ -359,3 +359,11 @@ IaxEnable
 ThcInterruptPinMuxing
 ThcMode
 ThcWakeOnTouch
+Usb4CmMode
+PchIshI3cEnable
+VmdPortDev
+PchPmWoWlanEnable
+VmdPortFunc
+D3HotEnable
+SerialIoI3cMode
+FspEventHandler
