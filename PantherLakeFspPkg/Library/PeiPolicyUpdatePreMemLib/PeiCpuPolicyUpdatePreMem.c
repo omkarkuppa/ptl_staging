@@ -47,14 +47,7 @@ FspUpdatePeiCpuPolicyPreMem (
   CPU_POWER_DELIVERY_CONFIG                    *CpuPowerDeliveryConfig;
   UINT8                                        Index;
   EFI_STATUS                                   Status;
-  UINT8                                        AllCoreCount;
-  UINT8                                        AllSmallCoreCount;
-  UINT8                                        AllLpAtomCores;
   UINT16                                       MaxNumVrs;
-
-  AllCoreCount         = 0;
-  AllSmallCoreCount    = 0;
-  AllLpAtomCores       = 0;
 
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gCpuInitPreMemConfigGuid, (VOID *) &CpuInitPreMemConfig);
   ASSERT_EFI_ERROR (Status);
@@ -68,24 +61,6 @@ FspUpdatePeiCpuPolicyPreMem (
   //  Update CpuConfigLibPreMem Config Block data
   //
   CpuInitPreMemConfig->BootMaxFrequency         = FspmUpd->FspmConfig.BootMaxFrequency;
-
-  //
-  // Converting 0xFF to the actual total supported core count.
-  //
-  if (FspmUpd->FspmConfig.ActiveCoreCount == 0xFF) {
-    FspmUpd->FspmConfig.ActiveCoreCount = AllCoreCount;
-  }
-  if (FspmUpd->FspmConfig.ActiveSmallCoreCount == 0xFF) {
-    FspmUpd->FspmConfig.ActiveSmallCoreCount = AllSmallCoreCount;
-  }
-  if (FspmUpd->FspmConfig.ActiveCoreCount == 0 && FspmUpd->FspmConfig.ActiveSmallCoreCount == 0) {
-    FspmUpd->FspmConfig.ActiveCoreCount = AllCoreCount;
-    FspmUpd->FspmConfig.ActiveSmallCoreCount = AllSmallCoreCount;
-  }
-
-  if (FspmUpd->FspmConfig.ActiveLpAtomCoreCount == 0xFF) {
-    FspmUpd->FspmConfig.ActiveLpAtomCoreCount = AllLpAtomCores;
-  }
 
   CpuInitPreMemConfig->ActiveCoreCount             = FspmUpd->FspmConfig.ActiveCoreCount;
   CpuInitPreMemConfig->ActiveSmallCoreCount        = FspmUpd->FspmConfig.ActiveSmallCoreCount;

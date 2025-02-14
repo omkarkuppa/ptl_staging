@@ -2333,17 +2333,17 @@
   # !BSF NAME:{Number of active big cores}
   # !BSF TYPE:{Combo} OPTION:{0:Disable all big cores, 1:1, 2:2, 3:3, 0xFF:Active all big cores}
   # !BSF HELP:{Number of P-cores to enable in each processor package. Note: Number of P-Cores and E-Cores are looked at together. When both are {0,0}, Pcode will enable all cores. Default 0xFF means to active all system supported big cores. <b>0xFF: Active all big cores</b>; 0: Disable all big cores; 1: 1; 2: 2; 3: 3;}
-  gPlatformFspPkgTokenSpaceGuid.ActiveCoreCount             | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.ActiveCoreCount             | * | 0x01 | 0xFF
 
   # !BSF NAME:{Number of active small cores}
   # !BSF TYPE:{Combo} OPTION:{0:Disable all small cores, 1:1, 2:2, 3:3, 0xFF:Active all small cores}
   # !BSF HELP:{Number of E-cores to enable in each processor package. Note: Number of P-Cores and E-Cores are looked at together. When both are {0,0}, Pcode will enable all cores. Default 0xFF means to active all system supported small cores. <b>0xFF: Active all small cores</b>; 0: Disable all small cores; 1: 1; 2: 2; 3: 3;}
-  gPlatformFspPkgTokenSpaceGuid.ActiveSmallCoreCount        | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.ActiveSmallCoreCount        | * | 0x01 | 0xFF
 
   # !BSF NAME:{Number of LP Atom cores}
   # !BSF TYPE:{Combo} OPTION:{0:Disable all LP Atom cores, 1:1, 2:2, 0xFF:Active all cores}
   # !BSF HELP:{Number of LP E-cores to enable in LP. 0: Disable all LP Atom cores; 1: 1; 2: 2; <b>0xFF: Active all LP Atom cores</b>}
-  gPlatformFspPkgTokenSpaceGuid.ActiveLpAtomCoreCount | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.ActiveLpAtomCoreCount | * | 0x01 | 0xFF
 
   # !BSF NAME:{DFD Enable} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable or Disable DFD. <b>0: Disable</b>, 1:Enable}
