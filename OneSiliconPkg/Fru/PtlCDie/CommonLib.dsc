@@ -29,13 +29,8 @@
   TseInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tse/Library/PeiDxeSmmTseInfoNullLib/PeiDxeSmmTseInfoNullLib.inf
 !endif # gSiPkgTokenSpaceGuid.PcdTseEnable == TRUE
 
-!if gSiPkgTokenSpaceGuid.PcdTdxEnable == TRUE
-  TdxInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tdx/Library/TdxInfoLib/TdxInfoLib.inf
-!else
-  TdxInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tdx/Library/TdxInfoLibNull/TdxInfoLibNull.inf
-!endif # gSiPkgTokenSpaceGuid.PcdTdxEnable == TRUE
-
   TmeInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tme/Library/TmeInfoLib.inf
+  TdxInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Tdx/Library/TdxInfoLib/TdxInfoLib.inf
   DgrInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Dgr/Library/PeiDxeSmmDgrInfoLib/DgrInfoLib.inf
   CceInfoLib|$(PLATFORM_SI_PACKAGE)/IpBlock/Cce/Library/CceInfoLib.inf
 
