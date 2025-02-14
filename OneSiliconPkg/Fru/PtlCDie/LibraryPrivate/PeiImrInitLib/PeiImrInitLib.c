@@ -36,22 +36,22 @@
 #include <Library/PeiCmiInitLib.h>
 #include <DprInfoHob.h>
 
-STATIC IMR_ENTRY mImrTable[IMR_MAX] = {
+STATIC IMR_ENTRY  mImrTable[IMR_MAX] = {
   //
   // IMR_ENTRY should be aligned and match with IMR_ID numbers
   // IMR ID (IMR_ID), RAC, WAC, BaseAddressRegOffset, CP Offset
   //
-  { IMR_NPK,          (B_NPK_SAI | B_RCIOMMU_BYPASS_SAI), (B_NPK_SAI | B_RCIOMMU_BYPASS_SAI), GET_NOC_EFFECTIVE_ADDRESS(IMR15BASE_IMPH_IOC_MCHBAR_REG),        GET_NOC_EFFECTIVE_ADDRESS(IMR15CP_IMPH_IOC_MCHBAR_REG)}, //NPK is IMR15 register
-  { IMR_PRMRR,        V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR17BASE_IMPH_IOC_MCHBAR_REG),        GET_NOC_EFFECTIVE_ADDRESS(IMR17CP_IMPH_IOC_MCHBAR_REG)}, //PRMRR is IMR17 register
-  { IMR_TSE,          V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR21BASE_IMPH_IOC_MCHBAR_REG),        KEEP_SI_DEFAULT_VALUE}, //TSE is IMR21 register
-  { IMR_STREAM_TRACER,V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR25BASE_IMPH_IOC_MCHBAR_REG),        GET_NOC_EFFECTIVE_ADDRESS(IMR25CP_IMPH_IOC_MCHBAR_REG)}, //STREAM_TRACER is IMR25 register
-  { IMR_SEAMRR,       V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR26BASE_IMPH_IOC_MCHBAR_REG),        KEEP_SI_DEFAULT_VALUE}, //SEAMRR is IMR26 register
-  { IMR_1M_GSM,       V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR1M2BASE_IMPH_IOC_MCHBAR_REG),       KEEP_SI_DEFAULT_VALUE}, //GSM is IMR1M2 register
-  { IMR_1M_DSM,       V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR1M3BASE_IMPH_IOC_MCHBAR_REG),       KEEP_SI_DEFAULT_VALUE}, //DSM is IMR1M3 register
-  { IMR_1M_CCS,       B_GT_SAI | B_DISPLAY_SAI,           B_GT_SAI | B_DISPLAY_SAI,           GET_NOC_EFFECTIVE_ADDRESS(IMR1M6BASE_IMPH_IOC_MCHBAR_REG),       KEEP_SI_DEFAULT_VALUE}, //CCS is IMR1M6 register
-  { IMR_1M_DPR,       V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR1M9BASE_IMPH_IOC_MCHBAR_REG),       INVALID_CP_OFFSET},     //DPR is IMR1M9 register
-  { IMR_1M_TSEG,      V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR1M10BASE_IMPH_IOC_MCHBAR_REG),      INVALID_CP_OFFSET},     //TSEG is IMR1M10 register
-  { IMR_1M_IMR11,     V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS(IMR1M11BASE_IMPH_IOC_MCHBAR_REG),      INVALID_CP_OFFSET}      //IMR1M11 register
+  { IMR_NPK,           (B_NPK_SAI | B_RCIOMMU_BYPASS_SAI), (B_NPK_SAI | B_RCIOMMU_BYPASS_SAI), GET_NOC_EFFECTIVE_ADDRESS (IMR15BASE_IMPH_IOC_MCHBAR_REG),   GET_NOC_EFFECTIVE_ADDRESS (IMR15CP_IMPH_IOC_MCHBAR_REG) }, // NPK is IMR15 register
+  { IMR_PRMRR,         V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS (IMR17BASE_IMPH_IOC_MCHBAR_REG),   GET_NOC_EFFECTIVE_ADDRESS (IMR17CP_IMPH_IOC_MCHBAR_REG) }, // PRMRR is IMR17 register
+  { IMR_TSE,           V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS (IMR21BASE_IMPH_IOC_MCHBAR_REG),   KEEP_SI_DEFAULT_VALUE                                   }, // TSE is IMR21 register
+  { IMR_STREAM_TRACER, V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS (IMR25BASE_IMPH_IOC_MCHBAR_REG),   GET_NOC_EFFECTIVE_ADDRESS (IMR25CP_IMPH_IOC_MCHBAR_REG) }, // STREAM_TRACER is IMR25 register
+  { IMR_SEAMRR,        V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS (IMR26BASE_IMPH_IOC_MCHBAR_REG),   KEEP_SI_DEFAULT_VALUE                                   }, // SEAMRR is IMR26 register
+  { IMR_1M_GSM,        V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS (IMR1M2BASE_IMPH_IOC_MCHBAR_REG),  KEEP_SI_DEFAULT_VALUE                                   }, // GSM is IMR1M2 register
+  { IMR_1M_DSM,        V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS (IMR1M3BASE_IMPH_IOC_MCHBAR_REG),  KEEP_SI_DEFAULT_VALUE                                   }, // DSM is IMR1M3 register
+  { IMR_1M_CCS,        B_GT_SAI | B_DISPLAY_SAI,           B_GT_SAI | B_DISPLAY_SAI,           GET_NOC_EFFECTIVE_ADDRESS (IMR1M6BASE_IMPH_IOC_MCHBAR_REG),  KEEP_SI_DEFAULT_VALUE                                   }, // CCS is IMR1M6 register
+  { IMR_1M_DPR,        V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS (IMR1M9BASE_IMPH_IOC_MCHBAR_REG),  INVALID_CP_OFFSET                                       }, // DPR is IMR1M9 register
+  { IMR_1M_TSEG,       V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS (IMR1M10BASE_IMPH_IOC_MCHBAR_REG), INVALID_CP_OFFSET                                       }, // TSEG is IMR1M10 register
+  { IMR_1M_IMR11,      V_SAI_NONE,                         V_SAI_NONE,                         GET_NOC_EFFECTIVE_ADDRESS (IMR1M11BASE_IMPH_IOC_MCHBAR_REG), INVALID_CP_OFFSET                                       } // IMR1M11 register
 };
 
 /**
@@ -63,11 +63,11 @@ STATIC IMR_ENTRY mImrTable[IMR_MAX] = {
 STATIC
 BOOLEAN
 IsPowerOfTwo (
-  IN  UINT64        Operand
-)
+  IN  UINT64  Operand
+  )
 {
   ASSERT (Operand != 0);
-  return (BOOLEAN) ((Operand & (Operand - 1)) == 0);
+  return (BOOLEAN)((Operand & (Operand - 1)) == 0);
 }
 
 /**
@@ -84,21 +84,20 @@ IsPowerOfTwo (
 EFI_STATUS
 EFIAPI
 SetImr (
-  IN   IMR_ID      ImrId,
-  IN   UINT64      Base,
-  IN   UINT64      Size
-)
+  IN   IMR_ID  ImrId,
+  IN   UINT64  Base,
+  IN   UINT64  Size
+  )
 {
-  UINT64             MchBar;
-  UINT64             MaskOrLimit;
-  UINT64             SizeAlignment;
-  BOOLEAN            IsFullImr;
-  UINT64             CpDefault;
+  UINT64                         MchBar;
+  UINT64                         MaskOrLimit;
+  UINT64                         SizeAlignment;
+  BOOLEAN                        IsFullImr;
+  UINT64                         CpDefault;
   IMRnBASE_0_0_0_MCHBAR_IMPH     ImrnBase;
   IMR1MnBASE_0_0_0_MCHBAR_IMPH   Imr1mBase;
   IMRnMASK_0_0_0_MCHBAR_IMPH     ImrnMask;
   IMR1MnLimit_0_0_0_MCHBAR_IMPH  Imr1mLimit;
-
 
   DEBUG ((DEBUG_INFO, "IMR Programming for %d\n", ImrId));
 
@@ -117,6 +116,7 @@ SetImr (
     DEBUG ((DEBUG_WARN, "IMR is not BIOS programmable hence exiting from SetImr\n"));
     return EFI_UNSUPPORTED;
   }
+
   //
   // Check if the IMR to be programmed is Full or Simplified.
   //
@@ -178,22 +178,28 @@ SetImr (
     //
     // Calculate and program Mask value for IMRn.
     //
-    MaskOrLimit = ~(Size - 1);
-    ImrnMask.Data = MmioRead64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_MASK_OFFSET);
-    ImrnMask.Bits.IMRn_MASK_RW = RShiftU64 (MaskOrLimit, N_IMR_BASE_LIMIT_ADDRESS_OFFSET);
-    MmioWrite64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_MASK_OFFSET, ImrnMask.Data);
+    ImrnMask.Data = MmioRead64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_MASK_OFFSET);
+    if (Size > 0) {
+      MaskOrLimit                = ~(Size - 1);
+      ImrnMask.Bits.IMRn_MASK_RW = RShiftU64 (MaskOrLimit, N_IMR_BASE_LIMIT_ADDRESS_OFFSET);
+    }
+
+    MmioWrite64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_MASK_OFFSET, ImrnMask.Data);
   } else if ((ImrId >= IMR_1M_GSM) && (ImrId < IMR_MAX)) {
     //
     // Calculate and program Limit value which ANDed with incoming address to determine
     // if result matches the IMR Base value and address falls within the IMR.
     //
-    MaskOrLimit = Base + Size;
-    Imr1mLimit.Data = MmioRead64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_MASK_OFFSET);
-    Imr1mLimit.Bits.IMR1Mn_Limit_RW = RShiftU64 (MaskOrLimit, N_IMR_1M_BASE_LIMIT_ADDRESS_OFFSET);
-    MmioWrite64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_MASK_OFFSET, Imr1mLimit.Data);
+    Imr1mLimit.Data = MmioRead64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_MASK_OFFSET);
+    if (Size > 0) {
+      MaskOrLimit                     = Base + Size;
+      Imr1mLimit.Bits.IMR1Mn_Limit_RW = RShiftU64 (MaskOrLimit, N_IMR_1M_BASE_LIMIT_ADDRESS_OFFSET);
+    }
+
+    MmioWrite64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_MASK_OFFSET, Imr1mLimit.Data);
   }
 
-  DEBUG ((DEBUG_INFO, "Mask/Limit programmed in IMR %d = %lx \n", ImrId, MmioRead64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_MASK_OFFSET)));
+  DEBUG ((DEBUG_INFO, "Mask/Limit programmed in IMR %d = %lx \n", ImrId, MmioRead64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_MASK_OFFSET)));
 
   //
   // Check if it is full IMR and if HOSTIA_BOOT_SAI is set, then program RAC/WAC/CP values.
@@ -203,11 +209,11 @@ SetImr (
     CpDefault = MmioRead64 ((UINTN)MchBar + mImrTable[ImrId].Cp);
     DEBUG ((DEBUG_INFO, "Default CP value for IMR %d = %lx \n", ImrId, CpDefault));
     if ((CpDefault & B_HOSTIA_BOOT_SAI) == B_HOSTIA_BOOT_SAI) {
-      MmioOr64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_RAC_OFFSET, (UINT64) mImrTable[ImrId].Rac);  // RAC
-      MmioOr64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_WAC_OFFSET, (UINT64) mImrTable[ImrId].Wac);  // WAC
+      MmioOr64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_RAC_OFFSET, (UINT64)mImrTable[ImrId].Rac);    // RAC
+      MmioOr64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_WAC_OFFSET, (UINT64)mImrTable[ImrId].Wac);    // WAC
 
-      DEBUG ((DEBUG_INFO, "RAC programmed in IMR %d = %lx \n", ImrId, MmioRead64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_RAC_OFFSET)));
-      DEBUG ((DEBUG_INFO, "WAC programmed in IMR %d = %lx \n", ImrId, MmioRead64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_WAC_OFFSET)));
+      DEBUG ((DEBUG_INFO, "RAC programmed in IMR %d = %lx \n", ImrId, MmioRead64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_RAC_OFFSET)));
+      DEBUG ((DEBUG_INFO, "WAC programmed in IMR %d = %lx \n", ImrId, MmioRead64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset + RELATIVE_WAC_OFFSET)));
     }
   }
 
@@ -218,21 +224,27 @@ SetImr (
     //
     // Enable Address Range and program IMRn Base address
     //
-    ImrnBase.Data = MmioRead64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset);
-    ImrnBase.Bits.Disable = 0x0;
-    ImrnBase.Bits.IMRn_BASE_RW = RShiftU64 (Base, N_IMR_BASE_LIMIT_ADDRESS_OFFSET);
-    MmioWrite64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset, ImrnBase.Data);
+    ImrnBase.Data = MmioRead64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset);
+    if (Size > 0) {
+      ImrnBase.Bits.Disable      = 0x0;
+      ImrnBase.Bits.IMRn_BASE_RW = RShiftU64 (Base, N_IMR_BASE_LIMIT_ADDRESS_OFFSET);
+    }
+
+    MmioWrite64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset, ImrnBase.Data);
   } else if ((ImrId >= IMR_1M_GSM) && (ImrId < IMR_MAX)) {
     //
     // Enable Address Range and program IMR1M Base address
     //
-    Imr1mBase.Data = MmioRead64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset);
-    Imr1mBase.Bits.Disable = 0x0;
-    Imr1mBase.Bits.IMR1Mn_BASE_RW = RShiftU64 (Base, N_IMR_1M_BASE_LIMIT_ADDRESS_OFFSET);
-    MmioWrite64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset, Imr1mBase.Data);
+    Imr1mBase.Data = MmioRead64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset);
+    if (Size > 0) {
+      Imr1mBase.Bits.Disable        = 0x0;
+      Imr1mBase.Bits.IMR1Mn_BASE_RW = RShiftU64 (Base, N_IMR_1M_BASE_LIMIT_ADDRESS_OFFSET);
+    }
+
+    MmioWrite64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset, Imr1mBase.Data);
   }
 
-  DEBUG ((DEBUG_INFO, "Base programmed in IMR %d = %lx \n", ImrId, MmioRead64 ((UINTN) MchBar + mImrTable[ImrId].BaseAddrRegOffset)));
+  DEBUG ((DEBUG_INFO, "Base programmed in IMR %d = %lx \n", ImrId, MmioRead64 ((UINTN)MchBar + mImrTable[ImrId].BaseAddrRegOffset)));
 
   return EFI_SUCCESS;
 }
@@ -244,14 +256,14 @@ SetImr (
 **/
 VOID
 ImrInit (
-  IN UINT32   TsegSize
-)
+  IN UINT32  TsegSize
+  )
 {
-  EFI_STATUS                   Status;
-  UINT8                        ImrIndex;
-  UINT64                       Base;
-  UINT64                       Size;
-  UINT8                        TotalDprSizeMB;
+  EFI_STATUS  Status;
+  UINT8       ImrIndex;
+  UINT64      Base;
+  UINT64      Size;
+  UINT8       TotalDprSizeMB;
 
   Base = 0;
   Size = 0;
@@ -261,30 +273,32 @@ ImrInit (
   for (ImrIndex = 0; ImrIndex < IMR_MAX; ++ImrIndex) {
     switch (mImrTable[ImrIndex].ImrId) {
       case IMR_1M_DPR:
-        Base = (UINT64) (GetHostBridgeRegisterData (HostBridgeTsegMb, HostBridgeTsegMbFullData) - ((UINT32) TotalDprSizeMB << 20));
-        Size = LShiftU64 ((UINT32) TotalDprSizeMB, 20);
+        Base = (UINT64)(GetHostBridgeRegisterData (HostBridgeTsegMb, HostBridgeTsegMbFullData) - ((UINT32)TotalDprSizeMB << 20));
+        Size = LShiftU64 ((UINT32)TotalDprSizeMB, 20);
         DEBUG ((DEBUG_INFO, "DprBase = %lx \n", Base));
         DEBUG ((DEBUG_INFO, "DprSize = %lx \n", Size));
         break;
       case IMR_1M_GSM:
-        if (FALSE != IGpuIsSupported()) {
+        if (FALSE != IGpuIsSupported ()) {
           Base = GetHostBridgeRegisterData (HostBridgeBgsm, HostBridgeBgsmFullData);
-          Size = (UINT64) IGpuGetGsmSizeInBytes ();
+          Size = (UINT64)IGpuGetGsmSizeInBytes ();
           DEBUG ((DEBUG_INFO, "GsmBase = %lx \n", Base));
           DEBUG ((DEBUG_INFO, "GsmSize = %lx \n", Size));
         } else {
           DEBUG ((DEBUG_INFO, "Skip ProgramGsmImr because IGPU is not supported.\n"));
         }
+
         break;
       case IMR_1M_DSM:
-        if (FALSE != IGpuIsSupported()) {
+        if (FALSE != IGpuIsSupported ()) {
           Base = GetHostBridgeRegisterData (HostBridgeBdsm, HostBridgeBdsmFullData);
-          Size = (UINT64) IGpuGetDsmSizeInBytes ();
+          Size = (UINT64)IGpuGetDsmSizeInBytes ();
           DEBUG ((DEBUG_INFO, "DsmBase = %lx \n", Base));
           DEBUG ((DEBUG_INFO, "DsmSize = %lx \n", Size));
         } else {
           DEBUG ((DEBUG_INFO, "Skip ProgramDsmImr because IGPU is not supported.\n"));
         }
+
         break;
       case IMR_1M_TSEG:
         Base = GetHostBridgeRegisterData (HostBridgeTsegMb, HostBridgeTsegMbFullData);
@@ -297,7 +311,8 @@ ImrInit (
         Size = 0x0;
         break;
     }
-    if (Base != 0 && Size != 0) {
+
+    if ((Base != 0) && (Size != 0)) {
       Status = SetImr (mImrTable[ImrIndex].ImrId, Base, Size);
       if (Status != EFI_SUCCESS) {
         DEBUG ((DEBUG_WARN, "Fail to program IMR\n"));
