@@ -3507,7 +3507,8 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.tFAW|0x0                                    
 gStructPcdTokenSpaceGuid.PcdSaSetup.tCWL|0x0                                                       # Offset 22 tCWL
 gStructPcdTokenSpaceGuid.PcdSaSetup.tREFI|0x0                                                      # Offset 24 tREFI
 gStructPcdTokenSpaceGuid.PcdSaSetup.MemoryVoltage|0x0                                              # Offset 28 Memory Voltage
-gStructPcdTokenSpaceGuid.PcdSaSetup.EccSupport|0x0                                                 # Offset 30 Bit 0 - ECC Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.Vdd2Mv|0x0                                                     # Offset 30 Vdd2Mv
+gStructPcdTokenSpaceGuid.PcdSaSetup.EccSupport|0x0                                                 # Offset 32 Bit 0 - ECC Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.RemapEnable|0x1                                                #           Bit 2 - Memory Remap
 gStructPcdTokenSpaceGuid.PcdSaSetup.ScramblerSupport|0x1                                           #           Bit 3 - Memory Scrambler
 gStructPcdTokenSpaceGuid.PcdSaSetup.ProbelessTrace|0x0                                             #           Bit 4 - Probeless Trace
@@ -3529,19 +3530,18 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.Ddr5AutoPrechargeEnable|0x0                 
 gStructPcdTokenSpaceGuid.PcdSaSetup.Lp5SplitACTEnable|0x2                                          #           Bit 28:29 - LP5 SplitACT Enable
 gStructPcdTokenSpaceGuid.PcdSaSetup.RetrainToWorkingChannel|0x00                                   #           Bit 30 - Disable Failing Channel during Cold Boot and Retrain To Working Channel
 gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashOverride|0x00                                         #           Bit 31 - Select if SubChannel Hash setting values will be taken from input parameters or automatically taken from POR values depending on DRAM type detected.
-gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc0Ch0|0x0                                              # Offset 34 Controller 0, Channel 0 Control
-gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc0Ch1|0x0                                              # Offset 35 Controller 0, Channel 1 Control
-gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc0Ch2|0x0                                              # Offset 36 Controller 0, Channel 2 Control
-gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc0Ch3|0x0                                              # Offset 37 Controller 0, Channel 3 Control
-gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc1Ch0|0x0                                              # Offset 38 Controller 1, Channel 0 Control
-gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc1Ch1|0x0                                              # Offset 49 Controller 1, Channel 1 Control
-gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc1Ch2|0x0                                              # Offset 40 Controller 1, Channel 2 Control
-gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc1Ch3|0x0                                              # Offset 41 Controller 1, Channel 3 Control
-gStructPcdTokenSpaceGuid.PcdSaSetup.DdrRatio|0x0                                                   # Offset 42 Memory Ratio
-gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashInterleaveBit|0x2                                        # Offset 44 Ch Hash Interleaved Bit
-gStructPcdTokenSpaceGuid.PcdSaSetup.Vdd2Mv|0x0                                                     # Offset 46 Vdd2Mv
+gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc0Ch0|0x0                                              # Offset 36 Controller 0, Channel 0 Control
+gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc0Ch1|0x0                                              # Offset 37 Controller 0, Channel 1 Control
+gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc0Ch2|0x0                                              # Offset 38 Controller 0, Channel 2 Control
+gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc0Ch3|0x0                                              # Offset 39 Controller 0, Channel 3 Control
+gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc1Ch0|0x0                                              # Offset 40 Controller 1, Channel 0 Control
+gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc1Ch1|0x0                                              # Offset 41 Controller 1, Channel 1 Control
+gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc1Ch2|0x0                                              # Offset 42 Controller 1, Channel 2 Control
+gStructPcdTokenSpaceGuid.PcdSaSetup.DisableMc1Ch3|0x0                                              # Offset 43 Controller 1, Channel 3 Control
+gStructPcdTokenSpaceGuid.PcdSaSetup.DdrRatio|0x0                                                   # Offset 44 Memory Ratio
+gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashInterleaveBit|0x2                                        # Offset 46 Ch Hash Interleaved Bit
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.ECT|0x1                                                        # Offset 52 BIT0 - Early Command Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.ECT|0x1                                                        # Offset 48 BIT0 - Early Command Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.SOT|0x0                                                        #           BIT1 - SenseAmp Offset Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.ERDMPRTC2D|0x1                                                 #           BIT2 - Early ReadMPR Timing Centering 2D
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDMPRT|0x0                                                     #           BIT3 - Read MPR Training
@@ -3574,7 +3574,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RCVENC1D|0x0                                
 gStructPcdTokenSpaceGuid.PcdSaSetup.RMC|0x0                                                        #           BIT30 - Retrain Margin Check
 gStructPcdTokenSpaceGuid.PcdSaSetup.PRETRAIN|0x1                                                   #           BIT31 - PreTraining
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPICODELUT|0x0                                               # Offset 56 BIT0 - DCC PI Code LUT Calibration
+gStructPcdTokenSpaceGuid.PcdSaSetup.DCCPICODELUT|0x0                                               # Offset 52 BIT0 - DCC PI Code LUT Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMODTT|0x1                                                   #           BIT1 - Dimm ODT Training*
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMRONT|0x0                                                   #           BIT2 - DIMM RON Training*
 gStructPcdTokenSpaceGuid.PcdSaSetup.TXTCO|0x1                                                      #           BIT3 - TxDqTCO Comp Training*
@@ -3600,9 +3600,9 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DATAPILIN|0x1                               
 gStructPcdTokenSpaceGuid.PcdSaSetup.DDR5XTALK|0x0                                                  #           BIT24 - Ddr5 Rx Cross-Talk Cancellation
 gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5WCKDCA|0x1                                               #           BIT25 - DRAM DCC for LP5 WCK DCA
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXUNMATCHEDCAL|0x1                                             #           BIT26 - Unmatched Rx Calibaration
-gStructPcdTokenSpaceGuid.PcdSaSetup.WRTDIMMDFE|0x0                                                 #           BIT27 - DIMM DFE Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.WRTDIMMDFE|0x1                                                 #           BIT27 - DIMM DFE Training
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x0                                                   # Offset 60 BIT0 - RXDQS Duty Cycle Correction
+gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x0                                                   # Offset 56 BIT0 - RXDQS Duty Cycle Correction
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMNTODT|0x0                                                  #           BIT1 - DIMM Non-Target ODT training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXVREFPERBIT|0x0                                               #           BIT3 - RxVref Per-Bit Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.PPR|0x0                                                        #           BIT4 - Post Package Repair
@@ -3617,7 +3617,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RDCTLET|0x1                                 
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDDQODTT|0x1                                                   #           BIT18 - Read DQ ODT Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.EMPHASIS|0x1                                                   #           BIT19 - Pre-Emphasis LP5 Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSVOCC|0x0                                                  #           BIT26 - RxDqsVocCentering1D Training
-gStructPcdTokenSpaceGuid.PcdSaSetup.MrcTimeMeasure|0x0                                             # Offset 64 Bit 0 - Time Measure
+gStructPcdTokenSpaceGuid.PcdSaSetup.MrcTimeMeasure|0x0                                             # Offset 60 Bit 0 - Time Measure
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcFastBoot|0x1                                                #           Bit 1 - Fast Boot
 gStructPcdTokenSpaceGuid.PcdSaSetup.RankInterleave|0x1                                             #           Bit 3 - RI Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnhancedInterleave|0x1                                         #           Bit 4 - Enh Interleave Support
@@ -3642,40 +3642,40 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.AsyncOdtDis|0x0                             
 gStructPcdTokenSpaceGuid.PcdSaSetup.OpportunisticRead|0x1                                          #           Bit 28 - Opportunistic Read
 gStructPcdTokenSpaceGuid.PcdSaSetup.Disable2CycleBypass|0x0                                        #           Bit 29 Cycle Bypass Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.OCSafeMode|0x1                                                 #           Bit 30 OverClocking Safe Mode
-gStructPcdTokenSpaceGuid.PcdSaSetup.SrefCfgIdleTmr|0x640                                           # Offset 68 SelfRefresh IdleTimer
-gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashMask|0x830                                               # Offset 70 Ch Hash Mask
-gStructPcdTokenSpaceGuid.PcdSaSetup.DdrFreqLimit|0                                                 # Offset 72 Maximum Memory Frequency. 0 - Auto
-gStructPcdTokenSpaceGuid.PcdSaSetup.ThrtCkeMinTmr|0x0                                              # Offset 74 Throttler CKEMin Timer
-gStructPcdTokenSpaceGuid.PcdSaSetup.ThrtCkeMinTmrLpddr|0x0                                         # Offset 75 For LPDDR Only: Throttler CKEMin Timer
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvWpMask|0xf                                                 # Offset 76 SA GV Mask
-gStructPcdTokenSpaceGuid.PcdSaSetup.NModeSupport|0x0                                               # Offset 77 NMode
-gStructPcdTokenSpaceGuid.PcdSaSetup.McRefreshRate|0x0                                              # Offset 78 MC Refresh Rate
-gStructPcdTokenSpaceGuid.PcdSaSetup.PowerDownMode|0xff                                             # Offset 79 Power Down Mode
-gStructPcdTokenSpaceGuid.PcdSaSetup.PwdwnIdleCounter|0x0                                           # Offset 80 Pwr Down Idle Timer
-gStructPcdTokenSpaceGuid.PcdSaSetup.RMTLoopCount|0x0                                               # Offset 88 Rank Margin Tool Loop Count
-gStructPcdTokenSpaceGuid.PcdSaSetup.GearRatio|0x0                                                  # Offset 90 Gear Selection for SAGV Disabled. 0 - Auto, 2-Gear 2, 4-Gear 4
-gStructPcdTokenSpaceGuid.PcdSaSetup.DdrOneDpc|0x3                                                  # Offset 91 DDR_1DPC
-gStructPcdTokenSpaceGuid.PcdSaSetup.VddqVoltageOverride|0x0                                        # Offset 92 Vddq Voltage Override
-gStructPcdTokenSpaceGuid.PcdSaSetup.VccIogVoltageOverride|0x0                                      # Offset 94 VccIog Voltage Override
-gStructPcdTokenSpaceGuid.PcdSaSetup.VccClkVoltageOverride|0x0                                      # Offset 96 VccClk Voltage Override
-gStructPcdTokenSpaceGuid.PcdSaSetup.LpddrRttWr|0x0                                                 # Offset 98 LPDDR ODT RttWr
-gStructPcdTokenSpaceGuid.PcdSaSetup.LpddrRttCa|0x0                                                 # Offset 99 LPDDR ODT RttCa
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[0]|0                                                  # Offset 100 First Point Frequency. 0 - Auto
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[1]|0                                                  # Offset 102 Second Point Frequency. 0 - Auto
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[2]|0                                                  # Offset 104 Third Point Frequency. 0 - Auto
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[3]|0                                                  # Offset 106 Fourth Point Frequency. 0 - Auto
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[0]|0x0                                                # Offset 108 First Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[1]|0x0                                                # Offset 109 Second Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[2]|0x0                                                # Offset 110 Third Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
-gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[3]|0x0                                                # Offset 111 Fourth Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[0]|0x0                              # Offset 112 IBECC Protect Region 0
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[1]|0x0                              # Offset 113 IBECC Protect Region 1
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[2]|0x0                              # Offset 114 IBECC Protect Region 2
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[3]|0x0                              # Offset 115 IBECC Protect Region 3
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[4]|0x0                              # Offset 116 IBECC Protect Region 4
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[5]|0x0                              # Offset 117 IBECC Protect Region 5
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[6]|0x0                              # Offset 118 IBECC Protect Region 6
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[7]|0x0                              # Offset 119 IBECC Protect Region 7
+gStructPcdTokenSpaceGuid.PcdSaSetup.SrefCfgIdleTmr|0x640                                           # Offset 64 SelfRefresh IdleTimer
+gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashMask|0x830                                               # Offset 66 Ch Hash Mask
+gStructPcdTokenSpaceGuid.PcdSaSetup.DdrFreqLimit|0                                                 # Offset 68 Maximum Memory Frequency. 0 - Auto
+gStructPcdTokenSpaceGuid.PcdSaSetup.ThrtCkeMinTmr|0x0                                              # Offset 70 Throttler CKEMin Timer
+gStructPcdTokenSpaceGuid.PcdSaSetup.ThrtCkeMinTmrLpddr|0x0                                         # Offset 71 For LPDDR Only: Throttler CKEMin Timer
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvWpMask|0xf                                                 # Offset 72 SA GV Mask
+gStructPcdTokenSpaceGuid.PcdSaSetup.NModeSupport|0x0                                               # Offset 73 NMode
+gStructPcdTokenSpaceGuid.PcdSaSetup.McRefreshRate|0x0                                              # Offset 74 MC Refresh Rate
+gStructPcdTokenSpaceGuid.PcdSaSetup.PowerDownMode|0xff                                             # Offset 75 Power Down Mode
+gStructPcdTokenSpaceGuid.PcdSaSetup.PwdwnIdleCounter|0x0                                           # Offset 76 Pwr Down Idle Timer
+gStructPcdTokenSpaceGuid.PcdSaSetup.RMTLoopCount|0x0                                               # Offset 84 Rank Margin Tool Loop Count
+gStructPcdTokenSpaceGuid.PcdSaSetup.GearRatio|0x0                                                  # Offset 86 Gear Selection for SAGV Disabled. 0 - Auto, 2-Gear 2, 4-Gear 4
+gStructPcdTokenSpaceGuid.PcdSaSetup.DdrOneDpc|0x3                                                  # Offset 87 DDR_1DPC
+gStructPcdTokenSpaceGuid.PcdSaSetup.VddqVoltageOverride|0x0                                        # Offset 88 Vddq Voltage Override
+gStructPcdTokenSpaceGuid.PcdSaSetup.VccIogVoltageOverride|0x0                                      # Offset 90 VccIog Voltage Override
+gStructPcdTokenSpaceGuid.PcdSaSetup.VccClkVoltageOverride|0x0                                      # Offset 92 VccClk Voltage Override
+gStructPcdTokenSpaceGuid.PcdSaSetup.LpddrRttWr|0x0                                                 # Offset 94 LPDDR ODT RttWr
+gStructPcdTokenSpaceGuid.PcdSaSetup.LpddrRttCa|0x0                                                 # Offset 95 LPDDR ODT RttCa
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[0]|0                                                  # Offset 96 First Point Frequency. 0 - Auto
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[1]|0                                                  # Offset 98 Second Point Frequency. 0 - Auto
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[2]|0                                                  # Offset 100 Third Point Frequency. 0 - Auto
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvFreq[3]|0                                                  # Offset 102 Fourth Point Frequency. 0 - Auto
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[0]|0x0                                                # Offset 104 First Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[1]|0x0                                                # Offset 105 Second Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[2]|0x0                                                # Offset 106 Third Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
+gStructPcdTokenSpaceGuid.PcdSaSetup.SaGvGear[3]|0x0                                                # Offset 107 Fourth Point Gear, Gear Selection for SAGV points. 0 - Auto, 2-Gear 2, 4-Gear 4
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[0]|0x0                              # Offset 108 IBECC Protect Region 0
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[1]|0x0                              # Offset 109 IBECC Protect Region 1
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[2]|0x0                              # Offset 110 IBECC Protect Region 2
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[3]|0x0                              # Offset 111 IBECC Protect Region 3
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[4]|0x0                              # Offset 112 IBECC Protect Region 4
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[5]|0x0                              # Offset 113 IBECC Protect Region 5
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[6]|0x0                              # Offset 114 IBECC Protect Region 6
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionEnable[7]|0x0                              # Offset 115 IBECC Protect Region 7
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionOverallBase[0]|0x0                         # Protected Region 0 Base (in size of 32MB)
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionOverallBase[1]|0x0                         # Protected Region 1 Base (in size of 32MB)
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionOverallBase[2]|0x0                         # Protected Region 2 Base (in size of 32MB)
@@ -3684,107 +3684,107 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionOverallBase[4]|0x0      
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionOverallBase[5]|0x0                         # Protected Region 5 Base (in size of 32MB)
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionOverallBase[6]|0x0                         # Protected Region 6 Base (in size of 32MB)
 gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionOverallBase[7]|0x0                         # Protected Region 7 Base (in size of 32MB)
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[0]|0x3fff                             # Offset 136 Protected Region 0 Size
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[1]|0x3fff                             # Offset 138 Protected Region 1 Size
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[2]|0x3fff                             # Offset 140 Protected Region 2 Size
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[3]|0x3fff                             # Offset 142 Protected Region 3 Size
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[4]|0x3fff                             # Offset 144 Protected Region 4 Size
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[5]|0x3fff                             # Offset 146 Protected Region 5 Size
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[6]|0x3fff                             # Offset 148 Protected Region 6 Size
-gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[7]|0x3fff                             # Offset 150 Protected Region 7 Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[0]|0x3fff                             # Offset 132 Protected Region 0 Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[1]|0x3fff                             # Offset 134 Protected Region 1 Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[2]|0x3fff                             # Offset 136 Protected Region 2 Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[3]|0x3fff                             # Offset 138 Protected Region 3 Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[4]|0x3fff                             # Offset 140 Protected Region 4 Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[5]|0x3fff                             # Offset 142 Protected Region 5 Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[6]|0x3fff                             # Offset 144 Protected Region 6 Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccProtectedRegionMask[7]|0x3fff                             # Offset 146 Protected Region 7 Size
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.WriteThreshold|0x0                                             # Offset 152 Write Threshold
-gStructPcdTokenSpaceGuid.PcdSaSetup.MarginLimitL2|0x64                                             # Offset 153 Margin limit check L2 threshold
-gStructPcdTokenSpaceGuid.PcdSaSetup.MarginLimitCheck|0x0                                           # Offset 155 Margin limit check enable
-gStructPcdTokenSpaceGuid.PcdSaSetup.Lfsr0Mask|0xb                                                  # Offset 156 RH LFSR0 Mask
-gStructPcdTokenSpaceGuid.PcdSaSetup.Lfsr1Mask|0xb                                                  # Offset 157 RH LFSR1 Mask
-gStructPcdTokenSpaceGuid.PcdSaSetup.RefreshWm|0x1                                                  # Offset 158 Refresh Watermarks
-gStructPcdTokenSpaceGuid.PcdSaSetup.DramRfmMode|0x0                                                # Offset 159 Row Hammer Mode: DRAM Refresh Management Mode
-gStructPcdTokenSpaceGuid.PcdSaSetup.TargetedRowRefreshMode|0x1                                     # Offset 160 Row Hammer Mode: Targeted Row Refresh Mode
-gStructPcdTokenSpaceGuid.PcdSaSetup.DrfmBrc|0x2                                                    # Offset 161 Row Hammer: Directed Refresh Management Blast Radius Configuration
-gStructPcdTokenSpaceGuid.PcdSaSetup.SafeModeOverride|0xFF                                          # Offset 163 MRC Safe Mode Override
-gStructPcdTokenSpaceGuid.PcdSaSetup.DdrSafeMode|0x4                                                # Offset 164 DDR PHY Safe Mode Support
-gStructPcdTokenSpaceGuid.PcdSaSetup.McSafeMode|0x0                                                 # Offset 168 MC Safe Mode Support
-gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode|0x7                                                     # Offset 171 LpMode bit mask
-gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode4|0x1                                                    # Offset 172 LpMode4
+gStructPcdTokenSpaceGuid.PcdSaSetup.MarginLimitL2|0x64                                             # Offset 148 Margin limit check L2 threshold
+gStructPcdTokenSpaceGuid.PcdSaSetup.WriteThreshold|0x0                                             # Offset 150 Write Threshold
+gStructPcdTokenSpaceGuid.PcdSaSetup.MarginLimitCheck|0x0                                           # Offset 151 Margin limit check enable
+gStructPcdTokenSpaceGuid.PcdSaSetup.Lfsr0Mask|0xb                                                  # Offset 152 RH LFSR0 Mask
+gStructPcdTokenSpaceGuid.PcdSaSetup.Lfsr1Mask|0xb                                                  # Offset 153 RH LFSR1 Mask
+gStructPcdTokenSpaceGuid.PcdSaSetup.RefreshWm|0x1                                                  # Offset 154 Refresh Watermarks
+gStructPcdTokenSpaceGuid.PcdSaSetup.DramRfmMode|0x0                                                # Offset 155 Row Hammer Mode: DRAM Refresh Management Mode
+gStructPcdTokenSpaceGuid.PcdSaSetup.TargetedRowRefreshMode|0x1                                     # Offset 156 Row Hammer Mode: Targeted Row Refresh Mode
+gStructPcdTokenSpaceGuid.PcdSaSetup.DrfmBrc|0x2                                                    # Offset 157 Row Hammer: Directed Refresh Management Blast Radius Configuration
+gStructPcdTokenSpaceGuid.PcdSaSetup.SafeModeOverride|0xFF                                          # Offset 159 MRC Safe Mode Override
+gStructPcdTokenSpaceGuid.PcdSaSetup.DdrSafeMode|0x4                                                # Offset 160 DDR PHY Safe Mode Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.McSafeMode|0x0                                                 # Offset 164 MC Safe Mode Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode|0x7                                                     # Offset 165 LpMode bit mask
+gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode4|0x1                                                    # Offset 166 LpMode4
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRFCpb|0x0                                                     # Offset 174 User defined Memory Timing tRFCpb value,  valid when SpdProfileSelected is CUSTOM_PROFILE
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRFC2|0x0                                                      # Offset 176 User defined Memory Timing tRFC2 value,  valid when SpdProfileSelected is CUSTOM_PROFILE
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRFC4|0x0                                                      # Offset 178 User defined Memory Timing tRFC4 value,  valid when SpdProfileSelected is CUSTOM_PROFILE
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRRD_L|0x0                                                     # Offset 180 User defined Memory Timing tRRD_L value,  valid when SpdProfileSelected is CUSTOM_PROFILE
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRRD_S|0x0                                                     # Offset 182 User defined Memory Timing tRRD_S value,  valid when SpdProfileSelected is CUSTOM_PROFILE
-gStructPcdTokenSpaceGuid.PcdSaSetup.tWTR_L|0x0                                                     # Offset 184 User defined Memory Timing tWTR_L value,  valid when SpdProfileSelected is CUSTOM_PROFILE
-gStructPcdTokenSpaceGuid.PcdSaSetup.tCCD_L|0x0                                                     # Offset 186 User defined Memory Timing tCCD_L value,  valid when SpdProfileSelected is CUSTOM_PROFILE
-gStructPcdTokenSpaceGuid.PcdSaSetup.tWTR_S|0x0                                                     # Offset 188 User defined Memory Timing tWTR_S value,  valid when SpdProfileSelected is CUSTOM_PROFILE
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRFCpb|0x0                                                     # Offset 168 User defined Memory Timing tRFCpb value,  valid when SpdProfileSelected is CUSTOM_PROFILE
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRFC2|0x0                                                      # Offset 170 User defined Memory Timing tRFC2 value,  valid when SpdProfileSelected is CUSTOM_PROFILE
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRFC4|0x0                                                      # Offset 172 User defined Memory Timing tRFC4 value,  valid when SpdProfileSelected is CUSTOM_PROFILE
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRRD_L|0x0                                                     # Offset 174 User defined Memory Timing tRRD_L value,  valid when SpdProfileSelected is CUSTOM_PROFILE
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRRD_S|0x0                                                     # Offset 176 User defined Memory Timing tRRD_S value,  valid when SpdProfileSelected is CUSTOM_PROFILE
+gStructPcdTokenSpaceGuid.PcdSaSetup.tWTR_L|0x0                                                     # Offset 178 User defined Memory Timing tWTR_L value,  valid when SpdProfileSelected is CUSTOM_PROFILE
+gStructPcdTokenSpaceGuid.PcdSaSetup.tCCD_L|0x0                                                     # Offset 180 User defined Memory Timing tCCD_L value,  valid when SpdProfileSelected is CUSTOM_PROFILE
+gStructPcdTokenSpaceGuid.PcdSaSetup.tWTR_S|0x0                                                     # Offset 182 User defined Memory Timing tWTR_S value,  valid when SpdProfileSelected is CUSTOM_PROFILE
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[0]|0x0                                                 # Offset 190 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[1]|0x0                                                 # Offset 192 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[2]|0x0                                                 # Offset 194 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[3]|0x0                                                 # Offset 196 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[4]|0x0                                                 # Offset 198 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[5]|0x0                                                 # Offset 200 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[6]|0x0                                                 # Offset 202 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[7]|0x0                                                 # Offset 204 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[8]|0x0                                                 # Offset 206 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[9]|0x0                                                 # Offset 208 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[10]|0x0                                                # Offset 210 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[11]|0x0                                                # Offset 212 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[12]|0x0                                                # Offset 214 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[13]|0x0                                                # Offset 216 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[14]|0x0                                                # Offset 218 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[15]|0x0                                                # Offset 220 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[16]|0x0                                                # Offset 222 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[17]|0x0                                                # Offset 224 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[18]|0x0                                                # Offset 226 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[19]|0x0                                                # Offset 228 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[20]|0x0                                                # Offset 230 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[21]|0x0                                                # Offset 232 Dimm Odt values
-gStructPcdTokenSpaceGuid.PcdSaSetup.DFETap1StepSize|0x0                                            # Offset 234 Dimm DFE Tap1 Step Size
-gStructPcdTokenSpaceGuid.PcdSaSetup.DFETap2StepSize|0x0                                            # Offset 235 Dimm DFE Tap1 Step Size
-gStructPcdTokenSpaceGuid.PcdSaSetup.CsVrefLow|0x45                                                 # Offset 236 DDR5 Cs Sweep Low Vref Value
-gStructPcdTokenSpaceGuid.PcdSaSetup.CsVrefHigh|0x1D                                                # Offset 237 DDR5 Cs Sweep High Vref Value
-gStructPcdTokenSpaceGuid.PcdSaSetup.CaVrefLow|0x45                                                 # Offset 238 DDR5 Ca Sweep Low Vref Value
-gStructPcdTokenSpaceGuid.PcdSaSetup.CaVrefHigh|0x1D                                                # Offset 239 DDR5 Ca Sweep High Vref Value
-gStructPcdTokenSpaceGuid.PcdSaSetup.EccCorrectionMode|0x0                                          # Offset 240 ECC correction option
-gStructPcdTokenSpaceGuid.PcdSaSetup.EccGranularity32BEn|0x0                                        # Offset 241 ECC Granularity
-gStructPcdTokenSpaceGuid.PcdSaSetup.LowerBasicMemTestSize|0x0                                      # Offset 242 Reduce BasicMemoryTest size
-gStructPcdTokenSpaceGuid.PcdSaSetup.MCREGOFFSET|0x0                                                # Offset 243 MC Register Offset
-gStructPcdTokenSpaceGuid.PcdSaSetup.PcuDdrVoltage|0xff                                             # Offset 244 PCU DDR Voltage
-gStructPcdTokenSpaceGuid.PcdSaSetup.CAVrefCtlOffset|0x0                                            # Offset 245 CA Vref Ctl Offset
-gStructPcdTokenSpaceGuid.PcdSaSetup.VrefCtlOffset|0x0                                              # Offset 246 DQ Vref Ctrl Offset
-gStructPcdTokenSpaceGuid.PcdSaSetup.ClkPiCodeOffset|0x0                                            # Offset 247 Clk PI Code Offset
-gStructPcdTokenSpaceGuid.PcdSaSetup.RcvEnOffset|0x0                                                # Offset 248 RcvEn Offset
-gStructPcdTokenSpaceGuid.PcdSaSetup.RxDqsOffset|0x0                                                # Offset 249 Rx Dqs Offset
-gStructPcdTokenSpaceGuid.PcdSaSetup.TxDqOffset|0x0                                                 # Offset 250 Tx Dq Offset
-gStructPcdTokenSpaceGuid.PcdSaSetup.TxDqsOffset|0x0                                                # Offset 251 Tx Dqs Offset
-gStructPcdTokenSpaceGuid.PcdSaSetup.VrefOffset|0x0                                                 # Offset 252 Vref Offset
-gStructPcdTokenSpaceGuid.PcdSaSetup.CntrlrMask|0x0                                                 # Offset 253 Controller Mask
-gStructPcdTokenSpaceGuid.PcdSaSetup.ChMask|0x0                                                     # Offset 254 Channel  Mask
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRRSG|0                                                        # Offset 255 tRRSG Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRRDG|0                                                        # Offset 256 tRRDG Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRRDR|0                                                        # Offset 257 tRRDR Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRRDD|0                                                        # Offset 258 tRRDD Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tWRSG|0                                                        # Offset 259 tWRSG Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tWRDG|0                                                        # Offset 260 tWRDG Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tWRDR|0                                                        # Offset 261 tWRDR Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tWRDD|0                                                        # Offset 262 tWRDD Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tWWSG|0                                                        # Offset 263 tWWSG Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tWWDG|0                                                        # Offset 264 tWWDG Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tWWDR|0                                                        # Offset 265 tWWDR Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tWWDD|0                                                        # Offset 266 tWWDD Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRWSG|0                                                        # Offset 267 tRWSG Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRWDG|0                                                        # Offset 268 tRWDG Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRWDR|0                                                        # Offset 269 tRWDR Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.tRWDD|0                                                        # Offset 270 tRWDD Delta
-gStructPcdTokenSpaceGuid.PcdSaSetup.Interpreter|0x0                                                # Offset 271 MRC Interpreter
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[0]|0x0                                                 # Offset 184 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[1]|0x0                                                 # Offset 186 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[2]|0x0                                                 # Offset 188 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[3]|0x0                                                 # Offset 190 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[4]|0x0                                                 # Offset 192 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[5]|0x0                                                 # Offset 194 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[6]|0x0                                                 # Offset 196 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[7]|0x0                                                 # Offset 198 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[8]|0x0                                                 # Offset 200 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[9]|0x0                                                 # Offset 202 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[10]|0x0                                                # Offset 204 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[11]|0x0                                                # Offset 206 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[12]|0x0                                                # Offset 208 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[13]|0x0                                                # Offset 210 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[14]|0x0                                                # Offset 212 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[15]|0x0                                                # Offset 214 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[16]|0x0                                                # Offset 216 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[17]|0x0                                                # Offset 218 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[18]|0x0                                                # Offset 220 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[19]|0x0                                                # Offset 222 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[20]|0x0                                                # Offset 224 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DimmOdt[21]|0x0                                                # Offset 226 Dimm Odt values
+gStructPcdTokenSpaceGuid.PcdSaSetup.DFETap1StepSize|0x0                                            # Offset 228 Dimm DFE Tap1 Step Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.DFETap2StepSize|0x0                                            # Offset 229 Dimm DFE Tap1 Step Size
+gStructPcdTokenSpaceGuid.PcdSaSetup.CsVrefLow|0x45                                                 # Offset 230 DDR5 Cs Sweep Low Vref Value
+gStructPcdTokenSpaceGuid.PcdSaSetup.CsVrefHigh|0x1D                                                # Offset 231 DDR5 Cs Sweep High Vref Value
+gStructPcdTokenSpaceGuid.PcdSaSetup.CaVrefLow|0x45                                                 # Offset 232 DDR5 Ca Sweep Low Vref Value
+gStructPcdTokenSpaceGuid.PcdSaSetup.CaVrefHigh|0x1D                                                # Offset 233 DDR5 Ca Sweep High Vref Value
+gStructPcdTokenSpaceGuid.PcdSaSetup.EccCorrectionMode|0x0                                          # Offset 234 ECC correction option
+gStructPcdTokenSpaceGuid.PcdSaSetup.EccGranularity32BEn|0x0                                        # Offset 235 ECC Granularity
+gStructPcdTokenSpaceGuid.PcdSaSetup.CAVrefCtlOffset|0x0                                            # Offset 236 CA Vref Ctl Offset
+gStructPcdTokenSpaceGuid.PcdSaSetup.VrefCtlOffset|0x0                                              # Offset 237 DQ Vref Ctrl Offset
+gStructPcdTokenSpaceGuid.PcdSaSetup.ClkPiCodeOffset|0x0                                            # Offset 238 Clk PI Code Offset
+gStructPcdTokenSpaceGuid.PcdSaSetup.RcvEnOffset|0x0                                                # Offset 239 RcvEn Offset
+gStructPcdTokenSpaceGuid.PcdSaSetup.RxDqsOffset|0x0                                                # Offset 240 Rx Dqs Offset
+gStructPcdTokenSpaceGuid.PcdSaSetup.TxDqOffset|0x0                                                 # Offset 241 Tx Dq Offset
+gStructPcdTokenSpaceGuid.PcdSaSetup.TxDqsOffset|0x0                                                # Offset 242 Tx Dqs Offset
+gStructPcdTokenSpaceGuid.PcdSaSetup.VrefOffset|0x0                                                 # Offset 243 Vref Offset
+gStructPcdTokenSpaceGuid.PcdSaSetup.CntrlrMask|0x0                                                 # Offset 244 Controller Mask
+gStructPcdTokenSpaceGuid.PcdSaSetup.ChMask|0x0                                                     # Offset 245 Channel  Mask
+gStructPcdTokenSpaceGuid.PcdSaSetup.LowerBasicMemTestSize|0x0                                      # Offset 248 Reduce BasicMemoryTest size
+gStructPcdTokenSpaceGuid.PcdSaSetup.MCREGOFFSET|0x0                                                # Offset 249 MC Register Offset
+gStructPcdTokenSpaceGuid.PcdSaSetup.PcuDdrVoltage|0xff                                             # Offset 250 PCU DDR Voltage
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRRSG|0                                                        # Offset 251 tRRSG Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRRDG|0                                                        # Offset 252 tRRDG Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRRDR|0                                                        # Offset 253 tRRDR Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRRDD|0                                                        # Offset 254 tRRDD Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tWRSG|0                                                        # Offset 255 tWRSG Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tWRDG|0                                                        # Offset 256 tWRDG Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tWRDR|0                                                        # Offset 257 tWRDR Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tWRDD|0                                                        # Offset 258 tWRDD Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tWWSG|0                                                        # Offset 259 tWWSG Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tWWDG|0                                                        # Offset 260 tWWDG Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tWWDR|0                                                        # Offset 261 tWWDR Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tWWDD|0                                                        # Offset 262 tWWDD Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRWSG|0                                                        # Offset 263 tRWSG Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRWDG|0                                                        # Offset 264 tRWDG Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRWDR|0                                                        # Offset 265 tRWDR Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.tRWDD|0                                                        # Offset 266 tRWDD Delta
+gStructPcdTokenSpaceGuid.PcdSaSetup.Interpreter|0x0                                                # Offset 267 MRC Interpreter
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.RcompResistor|0                                                # Offset 278 Reference RCOMP resistor on motherboard
-gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[0]|0                                               # Offset 280 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
-gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[1]|0                                               # Offset 282 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
-gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[2]|0                                               # Offset 284 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
-gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[3]|0                                               # Offset 286 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
-gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[4]|0                                               # Offset 288 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
-gStructPcdTokenSpaceGuid.PcdSaSetup.tCCD_L_WR|0x0                                                  # Offset 290 User defined Memory Timing tCCD_L_WR value, valid when SpdProfileSelected is CUSTOM_PROFILE
+gStructPcdTokenSpaceGuid.PcdSaSetup.RcompResistor|0                                                # Offset 274 Reference RCOMP resistor on motherboard
+gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[0]|0                                               # Offset 276 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
+gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[1]|0                                               # Offset 278 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
+gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[2]|0                                               # Offset 280 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
+gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[3]|0                                               # Offset 282 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
+gStructPcdTokenSpaceGuid.PcdSaSetup.RcompTarget[4]|0                                               # Offset 284 RCOMP target values for DqOdt, DqDrv, CmdDrv, CtlDrv, ClkDrv
+gStructPcdTokenSpaceGuid.PcdSaSetup.tCCD_L_WR|0x0                                                  # Offset 286 User defined Memory Timing tCCD_L_WR value, valid when SpdProfileSelected is CUSTOM_PROFILE
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunWCHMATS8|0x1                                             # Run WCHMATS8 in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunRetention|0x1                                            # Run Data Retention in Post Package Repair flow
@@ -3792,26 +3792,25 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunXMarch|0x0                            
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunXMarchG|0x1                                              # Run XMarchG in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunYMarchShort|0x0                                          # Run YMarchShort in Post Package Repair flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunYMarchLong|0x0                                           # Run YMarchLong in Post Package Repair flow
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairType|0x0                                              # Offset 292 PPR Repair Type: 0:Do not Repair (Default), 1:Soft Repair, 2:Hard Repair
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunOnce|0x1                                                 # Offset 293 When enabled, PPR will run only once and then is disabled at next training cycle
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunAtFastboot|0x0                                           # Offset 294 When enabled, PPR will run during fastboot
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprErrorInjection|0x0                                          # Offset 295 When enabled, PPR will inject bad rows during testing
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairPhysicalAddress|0x0                                   # Offset 296 PPR repair physical address
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairRow|0x0                                               # Offset 304 PPR repair row
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairController|0x0                                        # Offset 308 PPR repair controller
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairChannel|0x0                                           # Offset 309 PPR repair channel
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairDimm|0x0                                              # Offset 310 PPR repair Dimm
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairRank|0x0                                              # Offset 311 PPR repair rank
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairBankGroup|0x0                                         # Offset 312 PPR repair bank group
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairBank|0x0                                              # Offset 313 PPR repair bank
-gStructPcdTokenSpaceGuid.PcdSaSetup.PprForceRepair|0x0                                             # Offset 314 When enabled, PPR will issue force repair to the same row many times (90)
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairType|0x0                                              # Offset 288 PPR Repair Type: 0:Do not Repair (Default), 1:Soft Repair, 2:Hard Repair
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunOnce|0x1                                                 # Offset 289 When enabled, PPR will run only once and then is disabled at next training cycle
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRunAtFastboot|0x0                                           # Offset 290 When enabled, PPR will run during fastboot
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprErrorInjection|0x0                                          # Offset 291 When enabled, PPR will inject bad rows during testing
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairPhysicalAddress|0x0                                   # Offset 292 PPR repair physical address
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairRow|0x0                                               # Offset 300 PPR repair row
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairController|0x0                                        # Offset 304 PPR repair controller
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairChannel|0x0                                           # Offset 305 PPR repair channel
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairDimm|0x0                                              # Offset 306 PPR repair Dimm
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairRank|0x0                                              # Offset 307 PPR repair rank
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairBankGroup|0x0                                         # Offset 308 PPR repair bank group
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprRepairBank|0x0                                              # Offset 309 PPR repair bank
+gStructPcdTokenSpaceGuid.PcdSaSetup.PprForceRepair|0x0                                             # Offset 310 When enabled, PPR will issue force repair to the same row many times (90)
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashInterleaveBit|0x3                                     # Offset 320 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)
-gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashMask|0x838                                            # Offset 321 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
-gStructPcdTokenSpaceGuid.PcdSaSetup.ForceCkdBypass|0x1                                             # Offset 323 Force CKD in Bypass Mode if CKD DIMM is detected: 0 = Single PLL mode (Default), 1 = Bypass mode.
-gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                                                 # Offset 324 Enable/disable ROW PRESS feature
+gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashMask|0x838                                            # Offset 316 Channel Hash Mask: 0x0001=BIT6 set(Minimal), 0x3FFF=BIT[19:6] set(Maximum), <b>0x30CE= BIT[19:18, 13:12 ,9:7] set</b>
+gStructPcdTokenSpaceGuid.PcdSaSetup.SubChHashInterleaveBit|0x3                                     # Offset 318 SubCh Option to select interleave Address bit. Valid values are 0 - 3 for BITS 6 - 9 (Valid values for BDW are 0-7 for BITS 6 - 13)
+gStructPcdTokenSpaceGuid.PcdSaSetup.ForceCkdBypass|0x0                                             # Offset 319 Force CKD in Bypass Mode if CKD DIMM is detected: 0 = Single PLL mode (Default), 1 = Bypass mode.
 
-gStructPcdTokenSpaceGuid.PcdSaSetup.MimicWcDisaplayInIpq|0x0                                       # Offset 340 Bit 3-6    Mimic WC display pattern in IPQ
+gStructPcdTokenSpaceGuid.PcdSaSetup.MimicWcDisaplayInIpq|0x0                                       # Offset 320 Bit 3-6    Mimic WC display pattern in IPQ
 gStructPcdTokenSpaceGuid.PcdSaSetup.FakeSagv|0                                                     #            Bit 7      Fake SAGV
 gStructPcdTokenSpaceGuid.PcdSaSetup.DisableZq|0                                                    #            Bit 8      Disable Zq Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.ReplicateSagv|0                                                #            Bit 9      Replicate SAGV point0 for 4 points
@@ -3821,6 +3820,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.SpineAndPhclkGateControl|0x0                
 gStructPcdTokenSpaceGuid.PcdSaSetup.SpineGatePerLpmode|0x0                                         #            Bit 15-18  SPINE Gate Control Per Lpmode
 gStructPcdTokenSpaceGuid.PcdSaSetup.PhclkGatePerLpmode|0x0                                         #            Bit 19-23  PHCLK Gate Control Per Lpmode
 gStructPcdTokenSpaceGuid.PcdSaSetup.DisableSwitchDfiToMc|0x0                                       #            Bit 24     Disable Switch DFI to MC after cold boot
+gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                                                 # Offset 324 Enable/disable ROW PRESS feature
 
 ##############################
 # MRC - ExtInputs end

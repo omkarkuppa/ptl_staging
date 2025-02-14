@@ -1448,6 +1448,7 @@ typedef struct {
   UINT16  tCWL;
   UINT32  tREFI;
   UINT16  MemoryVoltage;
+  UINT16  Vdd2Mv;
   UINT8   EccSupport;
   UINT8   RemapEnable;
   UINT8   ScramblerSupport;
@@ -1469,7 +1470,6 @@ typedef struct {
   UINT8   Ddr5AutoPrechargeEnable;
   UINT8   Lp5SplitACTEnable;
   UINT8   RetrainToWorkingChannel;
-  UINT8   RowPressEn;
   UINT8   SubChHashOverride;
   UINT8   DisableMc0Ch0;
   UINT8   DisableMc0Ch1;
@@ -1611,8 +1611,8 @@ typedef struct {
   UINT16  IbeccProtectedRegionBase[IBECC_REGIONS_MAX];
   UINT16  IbeccProtectedRegionOverallBase[IBECC_REGIONS_MAX];
   UINT16  IbeccProtectedRegionMask[IBECC_REGIONS_MAX];
-  UINT8   WriteThreshold;
   UINT16  MarginLimitL2;
+  UINT8   WriteThreshold;
   UINT8   MarginLimitCheck;
   UINT8   Lfsr0Mask;
   UINT8   Lfsr1Mask;
@@ -1633,7 +1633,6 @@ typedef struct {
   UINT16  tWTR_L;
   UINT16  tCCD_L;
   UINT16  tWTR_S;
-  UINT16  Vdd2Mv;
   UINT16  DimmOdt[MRC_TOTAL_DIMMODT_ENTRIES];
   UINT8   DFETap1StepSize;
   UINT8   DFETap2StepSize;
@@ -1643,9 +1642,6 @@ typedef struct {
   UINT8   CaVrefHigh;
   UINT8   EccCorrectionMode;
   UINT8   EccGranularity32BEn;
-  UINT8   LowerBasicMemTestSize;
-  UINT8   MCREGOFFSET;
-  UINT8   PcuDdrVoltage;
   UINT8   CAVrefCtlOffset;
   UINT8   VrefCtlOffset;
   UINT8   ClkPiCodeOffset;
@@ -1656,6 +1652,9 @@ typedef struct {
   UINT8   VrefOffset;
   UINT8   CntrlrMask;
   UINT8   ChMask;
+  UINT8   LowerBasicMemTestSize;
+  UINT8   MCREGOFFSET;
+  UINT8   PcuDdrVoltage;
   //
   // TurnAround Timing
   //
@@ -1724,6 +1723,7 @@ typedef struct {
   UINT8   SpineGatePerLpmode;
   UINT8   PhclkGatePerLpmode;
   UINT8   DisableSwitchDfiToMc;
+  UINT8   RowPressEn;
   UINT8   IGpuGsm2Size;
   UINT8   SolFeatureEnabled;
   UINT8   Rsvd[64];
