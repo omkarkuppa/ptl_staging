@@ -412,7 +412,8 @@ UpdatePeiSaPolicyPreMem (
   //
   Status = PeiServicesInstallPpi (FspmArchConfigPpiDesc);
   ASSERT_EFI_ERROR (Status);
-
+#else
+  ((FSPM_UPD *) FspmUpd)->FspmArchUpd.NvsBufferPtr = (EFI_PHYSICAL_ADDRESS)(UINTN) MemorySavedData;
 #endif
 
   //
