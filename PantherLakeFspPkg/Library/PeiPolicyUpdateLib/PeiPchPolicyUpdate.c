@@ -363,7 +363,14 @@ FspUpdateIshPolicy (
     IshConfig->I2c[Index].PinConfig.Sda.PadTermination = FspsUpd->FspsConfig.IshI2cSdaPadTermination[Index];
     IshConfig->I2c[Index].PinConfig.Scl.PadTermination = FspsUpd->FspsConfig.IshI2cSclPadTermination[Index];
   }
+  for (Index = 0; Index < GetPchMaxIshI3cControllersNum (); Index++) {
+    IshConfig->I3c[Index].Enable               = FspsUpd->FspsConfig.PchIshI3cEnable[Index];
+    IshConfig->I3c[Index].PinConfig.Sda.PinMux = FspsUpd->FspsConfig.IshI3cSdaPinMuxing[Index];
+    IshConfig->I3c[Index].PinConfig.Scl.PinMux = FspsUpd->FspsConfig.IshI3cSclPinMuxing[Index];
 
+    IshConfig->I3c[Index].PinConfig.Sda.PadTermination = FspsUpd->FspsConfig.IshI3cSdaPadTermination[Index];
+    IshConfig->I3c[Index].PinConfig.Scl.PadTermination = FspsUpd->FspsConfig.IshI3cSclPadTermination[Index];
+  }
   for (Index = 0; Index < GetPchMaxIshGpNum (); Index++) {
     IshConfig->Gp[Index].Enable           = FspsUpd->FspsConfig.PchIshGpEnable[Index];
     IshConfig->Gp[Index].PinConfig.PinMux = FspsUpd->FspsConfig.IshGpGpioPinMuxing[Index];
