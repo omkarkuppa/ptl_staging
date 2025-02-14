@@ -105,6 +105,7 @@
   #
   PlatformBiosUpdateHookLib|CapsuleFeaturePkg/Library/PlatformBiosUpdateHookLibNull/PlatformBiosUpdateHookLibNull.inf
   PlatformEcUpdateHookLib|CapsuleFeaturePkg/Library/PlatformEcUpdateHookLibNull/PlatformEcUpdateHookLibNull.inf
+  PlatformFspUpdateHookLib|CapsuleFeaturePkg/Library/PlatformFspUpdateHookLibNull/PlatformFspUpdateHookLibNull.inf
   PlatformWdtLib|CapsuleFeaturePkg/Library/PlatformWdtLibNull/PlatformWdtLibNull.inf
   PlatformEcResetLib|CapsuleFeaturePkg/Library/PlatformEcResetLibNull/PlatformEcResetLibNull.inf
   PlatformMeUpdateHookLib|CapsuleFeaturePkg/Library/PlatformMeUpdateHookLibNull/PlatformMeUpdateHookLibNull.inf
