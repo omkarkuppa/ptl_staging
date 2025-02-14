@@ -194,7 +194,12 @@ VerifyFspVersion (
   } else {
     FspmImageBase = (UINTN) Bspm->FspmBaseAddress;
   }
+
   FspInfoHeader = (FSP_INFO_HEADER *) FspFindFspHeader ((UINT32) FspmImageBase);
+  if (FspInfoHeader == NULL) {
+    DEBUG ((DEBUG_INFO, "FspInfoHeader is NULL.\n"));
+    return EFI_INVALID_PARAMETER;
+  }
 
   FspVersion[0] = FspInfoHeader->ImageRevision & 0xff;
   FspVersion[1] = FspInfoHeader->ExtendedImageRevision & 0xff;
