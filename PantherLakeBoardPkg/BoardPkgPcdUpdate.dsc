@@ -620,6 +620,8 @@
   #
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig|0x8000000F  #Enable FSP measurement by platform
 
+  gUefiCpuPkgTokenSpaceGuid.PcdMaxMappingAddressBeforeTempRamExit|0x100000000
+
 
 # Update PcdsFeatureFlag acording to PcdsFixedAtBuild changes
 [PcdsFeatureFlag]
