@@ -69,11 +69,11 @@ SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvAdvancedSize              = 0x003500
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecurityOffset            = 0x00480000  # Flash addr (0xFF670000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvSecuritySize              = 0x000D0000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootOffset              = 0x00550000  # Flash addr (0xFF740000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootSize                = 0x00090000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootOffset            = 0x005E0000  # Flash addr (0xFF7D0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvOsBootSize                = 0x00080000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootOffset            = 0x005D0000  # Flash addr (0xFF7D0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvUefiBootSize              = 0x00090000  #
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvUplOffset                    = 0x00670000  # Flash addr (0xFF860000)
-SET gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize                      = 0x00190000  #
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvUplOffset                    = 0x00660000  # Flash addr (0xFF860000)
+SET gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize                      = 0x001A0000  #
 !endif
 #
 # OBB - End
