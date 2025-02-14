@@ -759,9 +759,9 @@ To build the FSP Capsule File.
 
   [Firmware.Fsp.Command.-fsplsv]
     Compulsory  = false
-    Description = 'Lowest supported version of FSP. (Should be MM.mm)'
-    Syntax      = 'DEC'
-    Default     = '0.0'
+    Description = 'Lowest supported version of FSP. (Should be MM.mm.RRRR.BBBB)'
+    Syntax      = 'DOT_FORMAT'
+    Default     = '0.0.0.0'
 
   [Firmware.Fsp.Command.-build]
     Compulsory  = true
