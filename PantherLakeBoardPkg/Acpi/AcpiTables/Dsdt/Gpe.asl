@@ -91,6 +91,11 @@ Scope (\_GPE)
   // GPE0
   //
   Method (_L76, 0, serialized) {
+    If (CondRefOf (GP1E)) {
+      If (LEqual (GP1E, 1)) {
+        Return ()
+      }
+    }
     ADBG ("L76 Event")
 
     SL76 ()
@@ -102,6 +107,11 @@ Scope (\_GPE)
   //
   Method (_L77)
   {
+    If (CondRefOf (GP1E)) {
+      If (LEqual (GP1E, 1)) {
+        Return ()
+      }
+    }
     ADBG ("L77 Event")
     Add (L01C,1,L01C)  // Increment L01 Entry Count.
 

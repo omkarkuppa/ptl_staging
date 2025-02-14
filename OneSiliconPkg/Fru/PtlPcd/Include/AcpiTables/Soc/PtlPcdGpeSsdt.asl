@@ -60,10 +60,10 @@ DefinitionBlock (
   External (\_SB.PC00.TRP1.LTRC, MethodObj)
   External (\_SB.PC00.TRP2.LTRC, MethodObj)
   External (\_SB.PC00.TRP3.LTRC, MethodObj)
-  External (\_SB.PC00.TRP0.CRPM, MethodObj)
-  External (\_SB.PC00.TRP1.CRPM, MethodObj)
-  External (\_SB.PC00.TRP2.CRPM, MethodObj)
-  External (\_SB.PC00.TRP3.CRPM, MethodObj)
+  External (\_SB.PC00.TRP0.PID3, MethodObj)
+  External (\_SB.PC00.TRP1.PID3, MethodObj)
+  External (\_SB.PC00.TRP2.PID3, MethodObj)
+  External (\_SB.PC00.TRP3.PID3, MethodObj)
   External (\_SB.PC00.RP01, DeviceObj)
   External (\_SB.PC00.RP02, DeviceObj)
   External (\_SB.PC00.RP03, DeviceObj)
@@ -102,6 +102,7 @@ DefinitionBlock (
   External (\_SB.PC00.I3C2.PSTE, FieldUnitObj)
   External (\_SB.PC00.I3C2.PMEN, FieldUnitObj)
   External (\_SB.PC00.I3C2.PSTS, FieldUnitObj)
+  External (\GP1E, IntObj)
 
   Scope (\_GPE) {
 
@@ -161,28 +162,27 @@ DefinitionBlock (
     // TPR3 - Is any TCSS PCIe RP in D3?
     //
     Method (TPR3) {
-      Store (0, Local0)
-      Store (\_SB.PC00.TRP0.CRPM (), Local1)
-      If (LNotEqual (Local1, 0xFF)) {
-        Or (Local0, Local1, Local0)
+      If (CondRefOf (\_SB.PC00.TRP0.PID3)) {
+        If (LEqual (\_SB.PC00.TRP0.PID3 (), 1)) {
+          Return (1)
+        }
       }
-      Store (\_SB.PC00.TRP1.CRPM (), Local1)
-      If (LNotEqual (Local1, 0xFF)) {
-        Or (Local0, Local1, Local0)
+      If (CondRefOf (\_SB.PC00.TRP1.PID3)) {
+        If (LEqual (\_SB.PC00.TRP1.PID3 (), 1)) {
+          Return (1)
+        }
       }
-      Store (\_SB.PC00.TRP2.CRPM (), Local1)
-      If (LNotEqual (Local1, 0xFF)) {
-        Or (Local0, Local1, Local0)
+      If (CondRefOf (\_SB.PC00.TRP2.PID3)) {
+        If (LEqual (\_SB.PC00.TRP2.PID3 (), 1)) {
+          Return (1)
+        }
       }
-      Store (\_SB.PC00.TRP3.CRPM (), Local1)
-      If (LNotEqual (Local1, 0xFF)) {
-        Or (Local0, Local1, Local0)
+      If (CondRefOf (\_SB.PC00.TRP3.PID3)) {
+        If (LEqual (\_SB.PC00.TRP3.PID3 (), 1)) {
+          Return (1)
+        }
       }
-      If (LEqual (Local0, 0)) {
-        Return (0)
-      } Else {
-        Return (1)
-      }
+      Return (0)
     }
 
     //
@@ -278,9 +278,12 @@ DefinitionBlock (
       //and then re-enables the Function for operation without waiting for potential stale Completions, any stale
       //Completions that arrive afterwards may cause data corruption..."
       If (CondRefOf (\_SB.PC00.TXHC)) {
-        If (LEqual (TPR3 (), 1)) {
-          Sleep (100)
-          \_SB.PC00.TRP0.HPEV ()
+        If (CondRefOf (\_SB.PC00.TRP0.PID3)) {
+          If (LEqual (\_SB.PC00.TRP0.PID3 (), 1)) {
+            ADBG ("D3 100ms delay as TRP0 is in D3 state")
+            Sleep (100)
+            \_SB.PC00.TRP0.HPEV ()
+          }
         }
         \_SB.PC00.TRP0.LTRC ()
       }
@@ -298,9 +301,12 @@ DefinitionBlock (
       //and then re-enables the Function for operation without waiting for potential stale Completions, any stale
       //Completions that arrive afterwards may cause data corruption..."
       If (CondRefOf (\_SB.PC00.TXHC)) {
-        If (LEqual (TPR3 (), 1)) {
-          Sleep (100)
-          \_SB.PC00.TRP1.HPEV ()
+        If (CondRefOf (\_SB.PC00.TRP1.PID3)) {
+          If (LEqual (\_SB.PC00.TRP1.PID3 (), 1)) {
+            ADBG ("D3 100ms delay as TRP1 is in D3 state")
+            Sleep (100)
+            \_SB.PC00.TRP1.HPEV ()
+          }
         }
         \_SB.PC00.TRP1.LTRC ()
       }
@@ -318,9 +324,12 @@ DefinitionBlock (
       //and then re-enables the Function for operation without waiting for potential stale Completions, any stale
       //Completions that arrive afterwards may cause data corruption..."
       If (CondRefOf (\_SB.PC00.TXHC)) {
-        If (LEqual (TPR3 (), 1)) {
-          Sleep (100)
-          \_SB.PC00.TRP2.HPEV ()
+        If (CondRefOf (\_SB.PC00.TRP2.PID3)) {
+          If (LEqual (\_SB.PC00.TRP2.PID3 (), 1)) {
+            ADBG ("D3 100ms delay as TRP2 is in D3 state")
+            Sleep (100)
+            \_SB.PC00.TRP2.HPEV ()
+          }
         }
         \_SB.PC00.TRP2.LTRC ()
       }
@@ -338,9 +347,12 @@ DefinitionBlock (
       //and then re-enables the Function for operation without waiting for potential stale Completions, any stale
       //Completions that arrive afterwards may cause data corruption..."
       If (CondRefOf (\_SB.PC00.TXHC)) {
-        If (LEqual (TPR3 (), 1)) {
-          Sleep (100)
-          \_SB.PC00.TRP3.HPEV ()
+        If (CondRefOf (\_SB.PC00.TRP3.PID3)) {
+          If (LEqual (\_SB.PC00.TRP3.PID3 (), 1)) {
+            ADBG ("D3 100ms delay as TRP3 is in D3 state")
+            Sleep (100)
+            \_SB.PC00.TRP3.HPEV ()
+          }
         }
         \_SB.PC00.TRP3.LTRC ()
       }

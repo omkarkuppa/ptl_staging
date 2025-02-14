@@ -660,12 +660,15 @@
   }
 
   //
-  // Check RP power state within Hot-Plug event
+  // Report RP power state for Hot-Plug event
+  // return 0 - RP isn't in D3 state, or RP isn't present.
+  // return 1 - RP is in D3 state.
   //
-  Method (CRPM, 0, Serialized) {
+  Method (PID3, 0, Serialized) {
     If (LNotEqual (VDID, 0xFFFFFFFF)) { // RP is enabled
-      return (D3HT)
+      If (LEqual (D3HT, 3)) {
+        return (1) // RP is in D3 state
+      }
     }
-
-    return (0xFF) // RP is disabled
+    return (0) // RP isn't present or isn't in D3 state
   }
