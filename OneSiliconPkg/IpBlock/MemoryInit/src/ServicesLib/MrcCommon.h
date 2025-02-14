@@ -702,6 +702,7 @@ typedef struct {
 typedef union {
   LPDDR5_CA_TRAIN_IO_SAVE Lpddr5IoSave;
   DDR5_CA_TRAIN_IO_INIT_SAVE Ddr5IoSave;
+  INT64 CsPulseCntSave;
 } CA_PARITY_IO_SAVE;
 
 typedef enum {

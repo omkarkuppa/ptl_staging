@@ -117,6 +117,7 @@
 #define DDR5_DQS_DCC_STEP (1)
 #define DDR5_CLK_DCC_STEP (1)
 #define RX_DFE_NUM (16)
+#define RX_DFE_BIT_NUM (8)
 
 #define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY (22) // More than this, and the XTensa will run out of memory during a per-bit sweep if the array is per-rank
 #define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_CHANNEL_ARRAY (MAX_RANK_IN_CHANNEL * MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY) // More than this, and the XTensa will run out of memory during a per-bit sweep
@@ -164,9 +165,6 @@
 
 // Right now, we can only run 1D and 2D optimizations
 #define MAX_OPT_PARAM_LENGTH (2)
-
-// Scale for linear normalized power
-#define LINEAR_NORMALIZED_POWER_SCALE (1000)
 
 // Margins are multiplied by this when returned from the margining functions
 #define MARGIN_MULTIPLIER (10)
@@ -1133,26 +1131,6 @@ MrcUpdateUpmPwrLimits (
   );
 
 /**
-  Calculate Power for the selected Opt param using linear approximation
-
-  @param[in] MrcData     - Include all MRC global data.
-  @param[in] Scale       - Multiplication factor for margins and power to preserve decimal accuracy (usually 10 to preserve 1 decimal place)
-  @param[in] Params      - Params that power should be estimated for
-  @param[in] ParamValues - Param values that power should be estimated for
-  @param[in] ParamsCount - Number of params that power should be estimated for
-
-  @retval mrcSuccess
-**/
-MrcStatus
-CalcSysPower(
-  IN MrcParameters   *MrcData,
-  IN UINT8           Scale,
-  IN const UINT8     Params[],
-  IN INT8            ParamValues[],
-  IN UINT8           ParamsCount
-  );
-
-/**
   Normalizes the Power values to the Margins passed in Points2Calc.
   Assumes that power numbers are represented as lowest number is the lowest power,
   and inverts the scale such that highest number is the lowest power.  This is done
@@ -1251,24 +1229,6 @@ OptimizeSCompOffset (
 extern
 MrcStatus
 MrcOptimizeComp (
-  IN MrcParameters *const MrcData
-  );
-
-/**
-  This function calculates the percent of power saving from the power optimization steps and
-  updates the proper registers in the PCU.  To get the correct base line for this calculation,
-  this routing needs to run first time early in the training in order to update the MrcStruct
-  with the base line.  After the power training steps, it will run again to get the actual
-  percent of power saving.
-
-  @param[in] MrcData - Include all MRC global data.
-
-  @retval MrcStatus - mrcSuccess
-
-**/
-extern
-MrcStatus
-MrcPowerSavingMeter (
   IN MrcParameters *const MrcData
   );
 
@@ -1470,10 +1430,25 @@ WriteDsTraining(
 );
 
 /**
+  This function trains a PHY DFE tap
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] Tap     - Tap number
+
+  @retval MrcStatus - if it succeeds return mrcSuccess
+**/
+MrcStatus
+TrainDfeTap (
+  IN MrcParameters *const MrcData,
+  IN GSM_GT         const Tap
+  );
+
+/**
   This function implements Read Equalization training.
 
   @param[in] MrcData - Include all MRC global data.
   @param[in] DfeTap  - DFE Tap : 0, 1, 2, 3
+  @param[in] Mode    - Byte or bit
 
   @retval MrcStatus - if it succeeds return mrcSuccess
 **/
@@ -1481,8 +1456,10 @@ MRC_IRAM1_FUNCTION
 MrcStatus
 MrcReadDfe (
   IN MrcParameters* const MrcData,
-  IN GSM_GT         const Tap
+  IN GSM_GT         const Tap,
+  IN AlgoMode       const Mode
   );
+
 /**
 This function is the Pre-Emphasis training routine for LP5x.
 

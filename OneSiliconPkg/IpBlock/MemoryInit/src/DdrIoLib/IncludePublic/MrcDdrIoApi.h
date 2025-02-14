@@ -2128,8 +2128,7 @@ MrcAdcCountToVoltage (
 /**
   This function configure some registers according to HVM requirements:
   1. clear DataValue(BSCAN override of data value for each ccc) in CCC_CR_DDRCRBSCANDATA_REG
-  2. configure cccbypdataen (CCC Bypass Data Enable for Individual buffers) according to ascend/descent channel
-  3. Enter into infinite loop in the end of the function.
+  2. Enter into infinite loop in the end of the function.
 
   @param[in]  MrcData - Pointer to MRC global data.
 

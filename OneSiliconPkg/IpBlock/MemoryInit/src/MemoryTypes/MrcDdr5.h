@@ -371,13 +371,16 @@ typedef union {
 } Ddr5ActStruct;
 
 
-// DDR5 DRAM_CMD_REG Masks
+// DDR5 DRAM_CMD_REG Masks          CA[4:0]
 #define DDR5_MRW_CMD     (0x5)   // L-L-H-L-H (00101)
 #define DDR5_MRR_CMD     (0x15)  // H-L-H-L-H (10101)
 #define DDR5_MPC_CMD     (0xF)   // L-H-H-H-H (01111)
+#define DDR5_WRA_CMD     (0xD)   // L-H-H-L-H (01101)
 #define DDR5_PREA_CMD    (0xB)   // L-H-L-H-H (01011)
+#define DDR5_PREPB_CMD   (0x1B)  // H-H-L-H-H (11011)
 #define DDR5_VREF_CMD    (0x3)   // L-L-L-H-H (00011)
 #define DDR5_NOP_CMD     (0x1F)  // H-H-H-H-H (11111)
+#define DDR5_ACT_CMD     (0x0)   //       L-L (   00)
 
 
 // tECSinit configuration from DDR Jedec spec
@@ -1426,4 +1429,16 @@ GetDdr5OdtOffsets (
   OUT INT8                 *Odt_Wr_Off,
   OUT INT8                 *Odt_Rd_On,
   OUT INT8                 *Odt_Rd_Off
+  );
+
+/**
+  This function calculates Write ODT Timing Guardband for Write Drift.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @retval UINT32 WrDrift
+**/
+UINT32
+MrcDdr5OdtGbWrDrift (
+  IN     MrcParameters *const MrcData
   );

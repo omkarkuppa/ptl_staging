@@ -153,6 +153,10 @@ typedef enum {
   RxTap1,                       ///< Tap 1 Coefficient Control (2s complement). Prior sample of 0 injects +RxEqRankXTapY*dV. dV=3.5% of VccIOG.
   RxTap2,                       ///< Tap 2 Coefficient control (2s complement). Prior sample of 0 injects +RxEqRankXTapY*dV. dV=3.5% of VccIOG.
   RxTap3,                       ///< Tap 3 Coefficient Control (2s complement). Prior sample of 0 injects +RxEqRankXTapY*dV. dV=3.5% of VccIOG.
+  RxTap0Bit,                    ///< rxeqrtap0offset: Per Lane Offset to Tap 0 DFE Coefficient control (2s complement).
+  RxTap1Bit,                    ///< rxeqrtap0offset: Per Lane Offset to Tap 1 DFE Coefficient control (2s complement).
+  RxTap2Bit,                    ///< rxeqrtap0offset: Per Lane Offset to Tap 2 DFE Coefficient control (2s complement).
+  RxTap3Bit,                    ///< rxeqrtap0offset: Per Lane Offset to Tap 3 DFE Coefficient control (2s complement).
   DqsOdtCompOffset,             ///< Offset for DQS OdtUp & OdtDn, decoupled from DQ ODT values for better power control in the system
   DqOdtCompOffset,              ///< 2s Complement offset added to both DQ OdtUp and OdtDn Value. Positive # increases termination and each step is ~5%
   RxXtalkDQ10,                  ///< Cross talk cancellation value to apply to DQ[1:0].
@@ -253,10 +257,6 @@ typedef enum {
   RdEarlyDqs,
   UseDefaultRdPtrCalc,
   RcompVrefVdd2,
-  Vdd2PowerReadpJ,
-  Vdd2PowerWritepJ,
-  Vdd2PowerIdlemW,
-  Vdd2PowerCkemW,
                                 ///< -----------------------------------------------------------------
   EndOfPhyMarker,               ///< Marker for end of phy groups.
                                 ///< -----------------------------------------------------------------
@@ -877,6 +877,7 @@ typedef enum {
   GsmMptuDynamicSrEn,
   GsmMptuStatusInSr,
   GsmMptuPhyInitComplete,
+  GsmMptuStatusWckOn,
   GsmMptuCsMode,
   GsmMptuCsVal,
   GsmMptuCsMask,
@@ -892,6 +893,7 @@ typedef enum {
   GsmMptutRPpb,
   GsmMptutRPab,
   GsmMptutRAS,
+  GsmMptuAutoPrechargeEn,
   GsmMptutRDPRE,
   GsmMptutWRPRE,
   GsmMptutRRDdg,

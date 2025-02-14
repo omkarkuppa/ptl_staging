@@ -578,7 +578,6 @@ typedef enum {
   OemReadEQTraining,        ///<  before Read Equalization Training.
   OemReadCTLETraining,      ///<  before Read CTLE Training.
   OemOptimizeComp,          ///<  before Comp Optimization Training.
-  OemPowerSavingMeter,      ///<  before PowerSavingMeter step.
   OemWriteDqDqs2D,          ///<  before Write Timing Centering 2D.
   OemReadDqDqs2D,           ///<  before Read Timing Centering 2D.
   OemCmdVoltCentering,      ///<  before Command Voltage Centering.
@@ -1515,12 +1514,6 @@ typedef UINT16 MrcClockRatio;  ///< This value times the REF_FREQ determines the
 
 /// This data structure contains all the "DDR power saving data" values that are considered output by the MRC.
 /// The following are memory controller level definitions. All channels on a controller are set to these values.
-typedef struct {
-  BOOLEAN    BaseFlag;      ///< Indicates if the base line of power was already calculated.
-  UINT8      Dummy8AlignmentBuffer[3];
-  UINT16     BaseSavingTotal; ///< Indicates the base line total power consumed by the ddr.
-  UINT16     MrcSavingTotal;  ///< Indicates the total power consumed by the ddr at the end of MRC.
-} MrcOdtPowerSaving;
 
 /// MRC version description.
 typedef struct {
@@ -2048,7 +2041,6 @@ typedef struct {
 #if MRC_ENABLE_STATS
   MrcStatsTracker     StatsTracker;                ///< Used to record the data for the stats and telemetry framework
 #endif // MRC_ENABLE_STATS && MRC_DEBUG_PRINT
-  MrcOdtPowerSaving   OdtPowerSavingData;          ///< ODT power savings data.
   UINT16              Qclkps;                      ///< QCLK period in pS, this is internal MC/DDRIO clock which is impacted by Gear
   UINT16              Dclkps;                      ///< DCLK period in pS, this is internal MC/DDRIO clock which is impacted by Gear
   UINT16              tCKps;                       ///< Memory clock period in pS (external bus clock)
@@ -2352,7 +2344,8 @@ typedef struct {
   UINT8   ReservedBytesAlign[2]; ///< Reserved Bytes to ensure HVM block size is a multiple of DWORDs
 #endif // HVM_MODE
   BOOLEAN IsOneDpcSplitBgEnabled; ///< TRUE: 1Rank Split Bg On SubChannel Enabled.
-  UINT8  ReservedBytesAlign2[4]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
+  UINT32  DebugValue;             ///< Used for general debug
+  UINT8   ReservedBytesAlign2[4]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

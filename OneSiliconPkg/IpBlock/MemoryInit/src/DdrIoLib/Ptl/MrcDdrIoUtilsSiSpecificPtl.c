@@ -1613,9 +1613,9 @@ MrcGetTxDqFifoDelay(
     *tCWL4TxDqFifoRdEn -= 7;
     *tCWL4TxDqFifoRdEn -= IsGear4 ? ((WrPreambleVar + 1) / 2) : WrPreambleVar;
     *tCWL4TxDqFifoRdEn += (Outputs->Frequency == f3200) ? (IsGear4 ? 1 : 0) : 0;
-    if (Inputs->ExtInputs.Ptr->DqLoopbackTest) {
-      *tCWL4TxDqFifoRdEn -= 1;
-    }
+  }
+  if (Inputs->ExtInputs.Ptr->DqLoopbackTest) {
+    *tCWL4TxDqFifoRdEn -= 1;
   }
   *tCWL4TxDqFifoWrEn += *tCWL4TxDqFifoWrEn % 2;
   *tCWL4TxDqFifoRdEn += Inputs->ExtInputs.Ptr->CccPinsInterleaved ? DdrioChDeltaCccIL[Index] : DdrioChDelta[Index];

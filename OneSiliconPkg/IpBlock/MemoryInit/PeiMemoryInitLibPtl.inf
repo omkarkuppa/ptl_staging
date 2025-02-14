@@ -167,6 +167,7 @@ src/HalLib/IncludePublic/MrcHalApi.h
 src/HalLib/Ptl/BlueMrcHalRegisterAccess.c
 src/HalLib/IncludePublic/MrcHalRegisterAccess.h
 src/ServicesLib/MrcAmt.h
+src/ServicesLib/MrcAmtPprInterface.h
 src/ApiLib/BlueMrcAgentCommunication.h
 src/ApiLib/BlueMrcPmic.h
 src/ServicesLib/MrcTurnAround.h
@@ -183,6 +184,7 @@ src/SpdProcessing/MrcSpdProcessing.c
 src/ServicesLib/BlueMrcAgentCommunication.c
 src/ServicesLib/BlueMrcSpecific.c
 src/ServicesLib/MrcTurnAround.c
+src/ServicesLib/BlueMrcPpr.c
 src/ServicesLib/MrcPpr.c
 src/ServicesLib/MrcPmic.c
 src/ServicesLib/BlueMrcReset.c

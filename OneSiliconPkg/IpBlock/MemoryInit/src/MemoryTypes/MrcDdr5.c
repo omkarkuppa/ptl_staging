@@ -4931,6 +4931,7 @@ MrcDdr5GetDramCommandMap (
   OUT UINT32                *DramCmdData
   )
 {
+  Ddr5ActStruct             Ddr5ActCommand;
   // DDDR5 cmd map:
   // DATA[13:0]   = CA[13:0] Rise Edge
   // DATA[25:14]  = CA[13:0] Fall Edge
@@ -4950,6 +4951,19 @@ MrcDdr5GetDramCommandMap (
 
     case MrDramCmdPrea:
       *DramCmdData = DDR5_PREA_CMD;
+      break;
+
+    case MrDramCmdPrepb:
+      *DramCmdData = (Address << 6) | DDR5_PREPB_CMD;
+      break;
+
+    case MrDramCmdWra:
+      *DramCmdData = 0x1 << 25 | (Address << 6) | DDR5_WRA_CMD;
+      break;
+
+    case MrDramCmdAct:
+      Ddr5ActCommand.Data32 = Data;
+      *DramCmdData = (Ddr5ActCommand.Bits.RowBits4_16 << 14) | (Ddr5ActCommand.Bits.RowBits0_3 << 2) | (Address << 6) | DDR5_ACT_CMD;
       break;
 
     case MrcDramVref:
@@ -5255,4 +5269,23 @@ GetDdr5OdtOffsets (
   if (Odt_Rd_Off != NULL) {
     *Odt_Rd_Off = DDR5_ODT_OFFSET_DECODER - OdtlOffRdNtOffset;
   }
+}
+
+/**
+  This function calculates Write ODT Timing Guardband for Write Drift.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @retval UINT32 WrDrift
+**/
+UINT32
+MrcDdr5OdtGbWrDrift (
+  IN     MrcParameters *const MrcData
+  )
+{
+  UINT32 WrDrift;
+  WrDrift = (16 * 128 * MrcData->Outputs.Vdd2Mv);
+  WrDrift += (20 * 20 * 128 * 40);
+  WrDrift = UDIVIDEROUND (WrDrift, 200000);
+  return WrDrift;
 }

@@ -147,7 +147,8 @@ MrcCalcScomp (
     return mrcFail;
   }
 
-  *CompCells = MIN ((DIVIDEROUND ((ScompLockCycles * QclkPs), (2 * SlopePs))) -1, 15);
+  *CompCells = UDIVIDEROUND ((ScompLockCycles * QclkPs), (2 * SlopePs)) - 1;
+  *CompCells = MIN (*CompCells, 15);
 
   return mrcSuccess;
 }
