@@ -4188,7 +4188,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.WwanTResTogDelayMs|0xa                        
 !if gSiPkgTokenSpaceGuid.PcdSiCatalogDebugEnable == TRUE
     gStructPcdTokenSpaceGuid.PcdSiSetup.PlatformDebugOption|0x2                                    # Platform Debug Option
 !else
-    gStructPcdTokenSpaceGuid.PcdSiSetup.PlatformDebugOption|0x4                                    # Platform Debug Option
+    gStructPcdTokenSpaceGuid.PcdSiSetup.PlatformDebugOption|0x0                                    # Platform Debug Option
 !endif
 gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0x0     # SoundWire codecs topology
 gStructPcdTokenSpaceGuid.PcdTCG2_CONFIGURATION.TpmDevice|0x1                                       # Attempt TPM Device
