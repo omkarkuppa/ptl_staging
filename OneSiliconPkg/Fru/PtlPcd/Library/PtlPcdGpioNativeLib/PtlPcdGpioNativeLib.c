@@ -648,20 +648,20 @@ PtlPcdGpioInitPads (
 GLOBAL_REMOVE_IF_UNREFERENCED GPIOV2_PAD_NATIVE_FUNCTION mPtlPcdTbtLsxInterfacePins[][2] =
 {
   {// DDI 1 TBT LSX
-    {GPIOV2_PTL_PCD_XXGPP_C_16, GpioV2PadModeNative1, GpioV2IosStateTxDisRxEn, GpioV2IosTermSame},// TBT_LSX0_A
-    {GPIOV2_PTL_PCD_XXGPP_C_17, GpioV2PadModeNative1, GpioV2IosStateTxDisRxEn, GpioV2IosTermSame} // TBT_LSX0_B
+    {GPIOV2_PTL_PCD_XXGPP_C_16, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame},// TBT_LSX0_A
+    {GPIOV2_PTL_PCD_XXGPP_C_17, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame} // TBT_LSX0_B
   },
   {// DDI 2 TBT LSX
-    {GPIOV2_PTL_PCD_XXGPP_C_18, GpioV2PadModeNative1, GpioV2IosStateTxDisRxEn, GpioV2IosTermSame},// TBT_LSX1_A
-    {GPIOV2_PTL_PCD_XXGPP_C_19, GpioV2PadModeNative1, GpioV2IosStateTxDisRxEn, GpioV2IosTermSame} // TBT_LSX1_B
+    {GPIOV2_PTL_PCD_XXGPP_C_18, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame},// TBT_LSX1_A
+    {GPIOV2_PTL_PCD_XXGPP_C_19, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame} // TBT_LSX1_B
   },
   {// DDI 3 TBT LSX
-    {GPIOV2_PTL_PCD_XXGPP_C_20, GpioV2PadModeNative1, GpioV2IosStateTxDisRxEn, GpioV2IosTermSame},// TBT_LSX2_A
-    {GPIOV2_PTL_PCD_XXGPP_C_21, GpioV2PadModeNative1, GpioV2IosStateTxDisRxEn, GpioV2IosTermSame} // TBT_LSX2_B
+    {GPIOV2_PTL_PCD_XXGPP_C_20, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame},// TBT_LSX2_A
+    {GPIOV2_PTL_PCD_XXGPP_C_21, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame} // TBT_LSX2_B
   },
   {// DDI 4 TBT LSX
-    {GPIOV2_PTL_PCD_XXGPP_C_22, GpioV2PadModeNative1, GpioV2IosStateTxDisRxEn, GpioV2IosTermSame},// TBT_LSX3_A
-    {GPIOV2_PTL_PCD_XXGPP_C_23, GpioV2PadModeNative1, GpioV2IosStateTxDisRxEn, GpioV2IosTermSame} // TBT_LSX3_B
+    {GPIOV2_PTL_PCD_XXGPP_C_22, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame},// TBT_LSX3_A
+    {GPIOV2_PTL_PCD_XXGPP_C_23, GpioV2PadModeNative1, GpioV2IosStateMasked, GpioV2IosTermSame} // TBT_LSX3_B
   }
 };
 
