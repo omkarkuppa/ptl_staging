@@ -697,14 +697,12 @@ MrcGetDdrIoCfgHash (
 
     case GsmSaxgEnable:
       HashPtr->Data = DDRPHY_MISC_SAUG_CR_PG_CTRL3_SAXG_Enable_HSH;
-      break;
-
-    case GsmSaxgReady:
-      HashPtr->Data = DDRPHY_MISC_SAUG_CR_PG_CTRL3_SAXG_Ready_HSH;
+      VolatileMask->Data = DDRPHY_MISC_SAUG_CR_PG_CTRL3_VOLATILE_BITFIELDS_MSK;
       break;
 
     case GsmSaxgPwrGood:
       HashPtr->Data = DDRPHY_MISC_SAUG_CR_PHYPMSTATUS1_SAXGPwrGood_HSH;
+      VolatileMask->Data = DDRPHY_MISC_SAUG_CR_PHYPMSTATUS1_VOLATILE_BITFIELDS_MSK;
       break;
 
     case GsmPChannelEn:

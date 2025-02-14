@@ -25,18 +25,21 @@ from typing import Any, Dict, List
 from CapsuleCommon.Wrapper.ByteBufferWrapperLib import *
 from CapsuleCommon.Wrapper.StructWrapperLib import *
 
-FBM_STRUCTURE_ID      : str = '__FBMS__'
-FBM_STRUCT_VERSION_1_0: int = 0x10
+FBM_SIGNATURE       : str = '__FBMS__'
+FBM_STRUCT_VERSION_1: int = 0x10
 
 #
 # Part of FBM header structure:
 #
 # typedef struct {
-#   CHAR8     StructureId[8];
-#   UINT8     StructVersion;
-#   UINT8     Reserved1[3];
-#   UINT16    KeySignatureOffset;
-#   UINT8     FspVersion[6];
+#   CHAR8   StructureId[8];
+#   UINT8   StructVersion;
+#   UINT8   Reserved1[3];
+#   UINT16  KeySignatureOffset;
+#   UINT16  FspVersion;
+#   UINT8   FspSvn;
+#   UINT8   Reserved2;
+#   UINT32  Flags;
 # } FBM_IMAGE_HEADER;
 #
 FBM_HDR_STRUCTURE_ID     : str = 'StructureId'
@@ -44,13 +47,19 @@ FBM_HDR_STRUCTURE_VERSION: str = 'StructVersion'
 FBM_HDR_RESERVED1        : str = 'Reserved1'
 FBM_HDR_KEY_SIG_OFFSET   : str = 'KeySignatureOffset'
 FBM_HDR_FSP_VERSION      : str = 'FspVersion'
+FBM_HDR_FSP_SVN          : str = 'FspSvn'
+FBM_HDR_RESERVED2        : str = 'Reserved2'
+FBM_HDR_FLAGS            : str = 'Flags'
 
 FBM_HDR_FORMAT_DICT: Dict[str, Any] = {
     FBM_HDR_STRUCTURE_ID     : { FIELD_FORMAT: '8c', FIELD_SIZE: 8 },
     FBM_HDR_STRUCTURE_VERSION: { FIELD_FORMAT: 'B' , FIELD_SIZE: 1 },
     FBM_HDR_RESERVED1        : { FIELD_FORMAT: '3B', FIELD_SIZE: 3 },
     FBM_HDR_KEY_SIG_OFFSET   : { FIELD_FORMAT: 'H',  FIELD_SIZE: 2 },
-    FBM_HDR_FSP_VERSION      : { FIELD_FORMAT: '6B', FIELD_SIZE: 6 },
+    FBM_HDR_FSP_VERSION      : { FIELD_FORMAT: '2B', FIELD_SIZE: 2 },
+    FBM_HDR_FSP_SVN          : { FIELD_FORMAT: 'B' , FIELD_SIZE: 1 },
+    FBM_HDR_RESERVED2        : { FIELD_FORMAT: 'B' , FIELD_SIZE: 1 },
+    FBM_HDR_FLAGS            : { FIELD_FORMAT: '4B', FIELD_SIZE: 4 }
     }
 
 FBM_HDR_STRUCT   : str = str ()
@@ -59,8 +68,8 @@ FBM_HDR_STRUCT, FBM_HDR_BYTE_SIZE = \
     GetStructFormatAndByteSize (FBM_HDR_FORMAT_DICT)
 
 class FbmHdr (object):
-    Signature: str = FBM_STRUCTURE_ID
-    StructVer: str = FBM_STRUCT_VERSION_1_0
+    Signature: str = FBM_SIGNATURE
+    StructVer: str = FBM_STRUCT_VERSION_1
     #
     # List of items need to check for input key within dict.
     #
@@ -70,6 +79,8 @@ class FbmHdr (object):
         FBM_HDR_RESERVED1,
         FBM_HDR_KEY_SIG_OFFSET,
         FBM_HDR_FSP_VERSION,
+        FBM_HDR_RESERVED2,
+        FBM_HDR_FLAGS
         ]
 
     def __init__ (self, **Kwargs) -> None:
@@ -94,6 +105,8 @@ class FbmHdr (object):
         self.__StructVersion: str = Kwargs[FBM_HDR_STRUCTURE_VERSION]
         self.__KeySigOffset : str = Kwargs[FBM_HDR_KEY_SIG_OFFSET]
         self.__FspVersion   : str = Kwargs[FBM_HDR_FSP_VERSION]
+        self.__FspSvn       : str = Kwargs[FBM_HDR_FSP_SVN]
+        self.__Flags        : str = Kwargs[FBM_HDR_FLAGS]
 
     @property
     def StructId (self) -> str:
@@ -107,7 +120,7 @@ class FbmHdr (object):
 
         Returns:
             str:
-                Structure ID of FBM.
+                The StructId of FBM.
         """
         return self.__StructId
 
@@ -123,7 +136,7 @@ class FbmHdr (object):
 
         Returns:
             str:
-                Structure version of FBM.
+                The StructVersion of FBM.
         """
         return self.__StructVersion
 
@@ -139,7 +152,7 @@ class FbmHdr (object):
 
         Returns:
             str:
-                Key signature offset of FBM.
+                The KeySigOffset of FBM.
         """
         return self.__KeySigOffset
 
@@ -158,6 +171,38 @@ class FbmHdr (object):
                 The version of FSP firmware.
         """
         return self.__FspVersion
+
+    @property
+    def FspSvn (self) -> str:
+        """ Get the SVN of FSP firmware. (1 byte)
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            str:
+                The SVN of FSP firmware.
+        """
+        return self.__FspSvn
+
+    @property
+    def Flags (self) -> str:
+        """ Get the flags of FBM. (4 bytes)
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            str:
+                The flags of FBM.
+        """
+        return self.__Flags
 
     def __PreCheck (self) -> None:
         """ Check the input argument is valid.

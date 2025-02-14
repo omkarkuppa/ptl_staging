@@ -696,7 +696,6 @@ MrcGetDdrIoConfigOffsets (
       break;
 
     case GsmSaxgEnable:
-    case GsmSaxgReady:
       Offset = DDRPHY_MISC_SAUG_CR_PG_CTRL3_REG;
       VolatileMask->Data = DDRPHY_MISC_SAUG_CR_PG_CTRL3_VOLATILE_BITFIELDS_MSK;
       break;

@@ -180,26 +180,6 @@ PtlPcdSecondP2SbInit (
   );
 
 /**
-  The function performs P2SB lock programming for SOC.
-
-  @param[in] SiPolicy         The SI Policy PPI instance
-**/
-VOID
-PtlPcdP2sbLock (
-  IN  SI_POLICY_PPI           *SiPolicy
-  );
-
-/**
-  The function performs P2SB lock programming for second P2SB instance.
-
-  @param[in] SiPolicy         The SI Policy PPI instance
-**/
-VOID
-PtlPcdSecondP2sbLock (
-  IN  SI_POLICY_PPI           *SiPolicy
-  );
-
-/**
   Early init P2SB configuration
 **/
 VOID

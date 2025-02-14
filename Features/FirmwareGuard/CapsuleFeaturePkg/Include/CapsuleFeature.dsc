@@ -63,6 +63,7 @@
   ResiliencySupportLib|CapsuleFeaturePkg/Library/PeiDxeSmmResiliencySupportLib/PeiDxeSmmResiliencySupportLib.inf
   HashSupportLib|CapsuleFeaturePkg/LibraryPrivate/PeiDxeSmmHashSupportLib/PeiDxeSmmHashSupportLib.inf
   FitHelperLib|CapsuleFeaturePkg/LibraryPrivate/PeiDxeSmmFitHelperLib/PeiDxeSmmFitHelperLib.inf
+  PayloadResiliencySupportLib|CapsuleFeaturePkg/Library/PayloadResiliencySupportLibNull/PayloadResiliencySupportLibNull.inf
 
 [LibraryClasses.common.PEIM]
   #  #######################################

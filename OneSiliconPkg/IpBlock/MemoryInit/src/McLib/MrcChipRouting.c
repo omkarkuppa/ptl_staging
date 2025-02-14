@@ -25,7 +25,7 @@
 #include "MrcSagv.h"
 #include "MrcChipApi.h"
 #include "CMrcStartMemoryConfiguration.h"
-#include "MrcDdrIoLvr.h"
+#include "MrcDdrIoVcc.h"
 #include "MrcDdrIoUtils.h"
 #include "MrcPmaApi.h"
 #include "MrcDdrIoApi.h"

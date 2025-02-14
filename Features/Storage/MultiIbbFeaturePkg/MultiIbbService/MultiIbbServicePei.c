@@ -222,7 +222,7 @@ FvIntegrityCheck(
 
   if (EFI_ERROR (Status) || (DigestFileBuffer == NULL)) {
     DEBUG ((DEBUG_ERROR, "Failed to located IBB digest file on ROM\n"));
-    return Status;
+    ASSERT_EFI_ERROR (Status);
   }
 
   ZeroMem (Sha384, SHA384_DIGEST_SIZE);

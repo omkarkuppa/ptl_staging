@@ -459,8 +459,7 @@ MrcConfigRfm (
   }
 
   if (RfmSetupConfig->RfmDimmRequiredMap) {
-    // Subtract 5 from the POR value
-    GetSetVal = (RfmSetupConfig->Raammt > 5) ? (RfmSetupConfig->Raammt - 5) : 0;
+    GetSetVal = RfmSetupConfig->Raammt;
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhHighWM, WriteToCache | PrintValue, &GetSetVal);
     GetSetVal = RfmSetupConfig->Raaimt;
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhLowWM, WriteToCache | PrintValue, &GetSetVal);

@@ -40,6 +40,7 @@
 #include <Library/PlatformBiosUpdateHookLib.h>
 #include <Library/PlatformEcUpdateHookLib.h>
 #include <Library/ResiliencySupportLib.h>
+#include <Library/PayloadResiliencySupportLib.h>
 
 //
 // Matching this update order to what implemented in FmpDeviceSetImage() below.
@@ -859,17 +860,17 @@ FmpDeviceSetImageWithStatus (
       DEBUG ((DEBUG_ERROR, "Fail to find new BIOS image\n"));
       ASSERT (FALSE);
     }
-
-    if (ExtractNonFitPayloadFromImage ((VOID *) Image, ImageSize, &NonFitPayloadImage, &NonFitPayloadImageSize)) {
-      SaveNonFitPayloadToStorage (
-        NonFitPayloadImage,
-        NonFitPayloadImageSize
-        );
-    } else {
-      DEBUG ((DEBUG_ERROR, "Fail to find new NonFitPayload image\n"));
-      ASSERT (FALSE);
+    if (IsPayloadBackupEnabled ()) {
+      if (ExtractNonFitPayloadFromImage ((VOID *) Image, ImageSize, &NonFitPayloadImage, &NonFitPayloadImageSize)) {
+        SaveNonFitPayloadToStorage (
+          NonFitPayloadImage,
+          NonFitPayloadImageSize
+          );
+      } else {
+        DEBUG ((DEBUG_ERROR, "Fail to find new NonFitPayload image\n"));
+        ASSERT (FALSE);
+      }
     }
-
     SaveCurrentCapsuleToStorage ((VOID *) Image, ImageSize);
   } else {
     ASSERT (PreviousProgress.Component < UpdatingTypeMax);

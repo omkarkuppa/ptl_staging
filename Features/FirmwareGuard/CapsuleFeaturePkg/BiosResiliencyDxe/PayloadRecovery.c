@@ -30,6 +30,7 @@
 #include <Library/ComponentUpdateLib.h>
 #include <Library/HashSupportLib.h>
 #include <Library/SeamlessRecoverySupportLib.h>
+#include <Library/PayloadResiliencySupportLib.h>
 #include <Guid/SysFwUpdateProgress.h>
 
 extern EFI_HANDLE                        mBackUpFileSystemHandle;

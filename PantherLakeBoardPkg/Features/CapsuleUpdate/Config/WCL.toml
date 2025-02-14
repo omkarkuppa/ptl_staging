@@ -139,32 +139,32 @@ Title = "Configuration file - TOML for WildcatLake Mobile Platform"
     IsEnabled = true
 
     [Firmware.Fsp.Offset.Normal.Debug.Default]
-      FspS  = { Offset = '0x00A10000', Size = '0x000A0000' }
-      FspM  = { Offset = '0x00AB0000', Size = '0x00190000' }
+      FspM  = { Offset = '0x00950000', Size = '0x00190000' }
+      FspS  = { Offset = '0x00BA0000', Size = '0x000A0000' }
       FspT  = { Offset = '0x00DD2000', Size = '0x00010000' }
       FspO  = { Offset = '0x00DE2000', Size = '0x0001D000' }
       FspRV = { Offset = '0x00DFFFF0', Size = '0x00000010' }
       FBM   = { Offset = '0x00DD0000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Normal.Release.Default]
-      FspS  = { Offset = '0x00BA0000', Size = '0x00060000' }
-      FspM  = { Offset = '0x00C00000', Size = '0x00100000' }
+      FspM  = { Offset = '0x00AA0000', Size = '0x00100000' }
+      FspS  = { Offset = '0x00C60000', Size = '0x00060000' }
       FspT  = { Offset = '0x00DE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00DEE000', Size = '0x00011000' }
       FspRV = { Offset = '0x00DFFFF0', Size = '0x00000010' }
       FBM   = { Offset = '0x00DE2000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Resiliency.Debug.Default]
-      FspS  = { Offset = '0x00D60000', Size = '0x00060000' }
-      FspM  = { Offset = '0x00DC0000', Size = '0x00100000' }
+      FspM  = { Offset = '0x00CA0000', Size = '0x000F0000' }
+      FspS  = { Offset = '0x00E30000', Size = '0x00060000' }
       FspT  = { Offset = '0x00FE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00FEE000', Size = '0x00011000' }
       FspRV = { Offset = '0x00FFFFF0', Size = '0x00000010' }
       FBM   = { Offset = '0x00FE2000', Size = '0x00001000' }
 
     [Firmware.Fsp.Offset.Resiliency.Release.Default]
-      FspS  = { Offset = '0x00DA0000', Size = '0x00060000' }
-      FspM  = { Offset = '0x00E00000', Size = '0x00100000' }
+      FspM  = { Offset = '0x00CA0000', Size = '0x000F0000' }
+      FspS  = { Offset = '0x00E20000', Size = '0x00060000' }
       FspT  = { Offset = '0x00FE4000', Size = '0x0000A000' }
       FspO  = { Offset = '0x00FEE000', Size = '0x00011000' }
       FspRV = { Offset = '0x00FFFFF0', Size = '0x00000010' }

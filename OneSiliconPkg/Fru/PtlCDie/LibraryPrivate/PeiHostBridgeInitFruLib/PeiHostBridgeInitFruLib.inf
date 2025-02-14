@@ -45,7 +45,6 @@ TdxInfoLib
 PeiTdxLib
 TdxFruLib
 PeiMemorySubSystemInfoLib
-PeiVmdInitFruLib
 
 [Packages]
 MdePkg/MdePkg.dec

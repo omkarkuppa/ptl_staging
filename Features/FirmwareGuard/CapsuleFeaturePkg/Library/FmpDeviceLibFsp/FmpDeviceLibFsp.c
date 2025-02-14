@@ -32,8 +32,8 @@
 #include <Library/PcdLib.h>
 #include <Library/SeamlessRecoverySupportLib.h>
 #include <Library/ResiliencySupportLib.h>
+#include <Library/PayloadResiliencySupportLib.h>
 #include <Library/CapsuleUpdateResetLib.h>
-#include <Library/PlatformFspUpdateHookLib.h>
 
 /**
   Check if current BIOS supports Fsp signed by checking FBM header.
@@ -381,7 +381,7 @@ FmpDeviceGetVersionString (
   OUT CHAR16  **VersionString
   )
 {
-  return PlatformFmpGetFspVersionString (VersionString);
+  return EFI_UNSUPPORTED;
 }
 
 /**
@@ -416,7 +416,7 @@ FmpDeviceGetVersion (
   OUT UINT32  *Version
   )
 {
-  return PlatformFmpGetFspVersion (Version);
+  return EFI_UNSUPPORTED;
 }
 
 /**
@@ -794,13 +794,13 @@ FmpDeviceSetImageWithStatus (
   //
   if (!IsPreviousUpdateUnfinished (&PreviousProgress)) {
     SaveObbToStorage (NULL, 0); // Backup current Obb in case it's not on ESP already.
-    SaveNonFitPayloadToStorage (NULL, 0); // Still backup current NonFitPayload in case it's not on ESP already.
+    if (IsPayloadBackupEnabled ()) {
+      SaveNonFitPayloadToStorage (NULL, 0); // Still backup current NonFitPayload in case it's not on ESP already.
+    }
     SaveCurrentCapsuleToStorage ((VOID *) Image, ImageSize);
   } else {
     ASSERT (PreviousProgress.Component == UpdatingFsp);
   }
-
-  PlatformFmpFspUpdatePreHook ();
 
   DEBUG ((DEBUG_INFO, "UpdateFsp - Start\n"));
   SetUpdateProgress (UpdatingFsp, 0);
@@ -818,7 +818,6 @@ FmpDeviceSetImageWithStatus (
     DEBUG ((DEBUG_INFO, "[%a]: Fsp Update Fail!\n", __FUNCTION__));
   }
 
-  PlatformFmpFspUpdatePostHook (Status);
   ClearUpdateProgress ();
   DeleteBackupFiles ();
 

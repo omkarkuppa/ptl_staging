@@ -217,6 +217,7 @@ gLpssUartConfigGuid             ## CONSUMES
 gCnviPreMemConfigGuid           ## CONSUMES
 gCnviConfigGuid                 ## CONSUMES
 gTsnConfigGuid                  ## CONSUMES
+gIpPcieInstHobGuid              ## PRODUCES
 
 [Pcd]
 gSiPkgTokenSpaceGuid.PcdAcpiBaseAddress            ## CONSUMES

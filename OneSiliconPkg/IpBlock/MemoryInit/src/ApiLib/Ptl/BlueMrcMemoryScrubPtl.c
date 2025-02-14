@@ -31,7 +31,6 @@
 #include "MrcDdr5.h"
 #include "MrcReset.h"
 #include "MrcMemoryScrub.h"
-#include "MrcMcSiSpecific.h"
 
 /**
   Zero out all of the memory.
@@ -64,6 +63,12 @@ MrcEccClean (
   INT64                 MccIdleEnable[MAX_CONTROLLER][MAX_CHANNEL];
   INT64                 RetrainPeriodSave[MAX_CONTROLLER][MAX_CHANNEL];
   INT64                 MR4PeriodSave[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64                 Subch0RankCnt[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64                 Subch1RankCnt[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64                 Subch0SdramWidth[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64                 Subch1SdramWidth[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64                 Subch0Density[MAX_CONTROLLER][MAX_CHANNEL];
+  INT64                 Subch1Density[MAX_CONTROLLER][MAX_CHANNEL];
   UINT32                Offset;
   UINT32                tRFC;
   UINT32                SdramCapacity;
@@ -82,7 +87,6 @@ MrcEccClean (
   UINT32                SavedCpgc20Credits[MAX_CONTROLLER];
   MRC_ADDRESS          CPGCAddressArray[MAX_CONTROLLER][MAX_CHANNEL];
   UINT32                Pattern[CPGC_20_NUM_DPAT_EXTBUF/ CPGC_20_64b_CHUNCKS_IN_32b_ENTRIES][CPGC_20_64b_CHUNCKS_IN_32b_ENTRIES];
-  MRC_MC_AD_SAVE        MadSavedValues;
   const MRC_FUNCTION    *MrcCall;
   const MRC_EXT_INPUTS_TYPE          *ExtInputs;
   MC0_CH0_CR_SC_PCIT_STRUCT          ScPcit;
@@ -107,8 +111,6 @@ MrcEccClean (
   }
 
   MrcModifyRdRdTimings (MrcData, TRUE);
-
-  MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcSaveEnum, &MadSavedValues);
 
   GetSetVal = 1;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);
@@ -165,6 +167,16 @@ MrcEccClean (
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccPowerDownEnable, WriteToCache, &GetSetDis);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSelfRefreshEnable, WriteToCache, &GetSetDis);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccIdleEnable, WriteToCache, &GetSetDis);
+
+        // Back up the MAD values
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0RankCnt,     ReadCached, &Subch0RankCnt[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1RankCnt,     ReadCached, &Subch1RankCnt[Controller][Channel]);
+
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0SdramWidth,  ReadCached, &Subch0SdramWidth[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1SdramWidth,  ReadCached, &Subch1SdramWidth[Controller][Channel]);
+
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0Density,     ReadCached, &Subch0Density[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1Density,     ReadCached, &Subch1Density[Controller][Channel]);
       }
       Status |= MrcCpgcModifyReadCredits (MrcData, Controller, TRUE, &SavedCpgc20Credits[Controller]);
 
@@ -179,7 +191,16 @@ MrcEccClean (
 
   MrcCkeOnProgramming (MrcData);
 
-  MrcModifyMcAddressDecoderValues (MrcData);
+  // Set MAD to 2Rx8, Density = 0xF (max value)
+  GetSetVal = 1;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch0RankCnt,     WriteCached, &GetSetVal);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch1RankCnt,     WriteCached, &GetSetVal);
+  GetSetVal = 1;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch0SdramWidth,  WriteCached, &GetSetVal);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch1SdramWidth,  WriteCached, &GetSetVal);
+  GetSetVal = 0xF;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch0Density,     WriteCached, &GetSetVal);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSubch1Density,     WriteCached, &GetSetVal);
 
   // Scrub per rank, on both channels in parallel
   for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
@@ -305,13 +326,22 @@ MrcEccClean (
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccPowerDownEnable, WriteToCache, &PowerDownEnableSave[Controller][Channel]);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSelfRefreshEnable, WriteToCache, &SelfRefreshEnableSave[Controller][Channel]);
         MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccIdleEnable, WriteToCache, &MccIdleEnable[Controller][Channel]);
+
+        // Restore the MAD values
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0RankCnt,     WriteToCache, &Subch0RankCnt[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1RankCnt,     WriteToCache, &Subch1RankCnt[Controller][Channel]);
+
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0SdramWidth,  WriteToCache, &Subch0SdramWidth[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1SdramWidth,  WriteToCache, &Subch1SdramWidth[Controller][Channel]);
+
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch0Density,     WriteToCache, &Subch0Density[Controller][Channel]);
+        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccSubch1Density,     WriteToCache, &Subch1Density[Controller][Channel]);
       }
       // Restore RD_CPL_CREDITS_INIT
       Status |= MrcCpgcModifyReadCredits (MrcData, Controller, FALSE, &SavedCpgc20Credits[Controller]);
     }
   }
   MrcFlushRegisterCachedData (MrcData);
-  MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcRestoreEnum, &MadSavedValues);
 
   // Check the scrubbing result
   if (McChError != 0) {

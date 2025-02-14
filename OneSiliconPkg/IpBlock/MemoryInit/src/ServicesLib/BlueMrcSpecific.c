@@ -939,7 +939,7 @@ MrcCalcCccPartition (
    PMA_MCMISCSSAUG_CR_PMMESSAGE.SkipRetentionCR = 1
   Set the following bit right after PLL is locked
    SAXG_Enable
-   and poll for SAXG_Ready (enable case) / SAXGPwrGood (disable case)
+   and poll for saxgpwrgood
 
   Set the above bits to the opposite values after sending PM14 for last SAGV point only (except PChannelEn and SkipRestoreCR).
   Also program mptu_rst, mptu_crirst, mptu_en and xt_fe_sram_pg_en to power gate MPTU and FE SRAM.
@@ -949,8 +949,8 @@ MrcCalcCccPartition (
   @param[in] IsPrePllLock - Defines which bits to enable based on when the function is called i.e. before or after PM0 message.
   @param[in] IsSet        - Decides whether we set or clear the bits accessed in this branch
 
-  @retval mrcSuccess    - SAXG_Ready was set successfully / SAXGPwrGood was cleared successfully
-  @retval mrcDeviceBusy - Timed out waiting for the SAXG_Ready / SAXGPwrGood
+  @retval mrcSuccess    - SaxgPwrGood was set successfully
+  @retval mrcDeviceBusy - Timed out waiting for the SaxgPwrGood
 **/
 MrcStatus
 MrcPmCfgCrAccess (
@@ -963,7 +963,6 @@ MrcPmCfgCrAccess (
   MrcInput          *Inputs;
   INT64             GetSetEn;
   INT64             GetSetDis;
-  INT64             SaxgReady;
   INT64             SaxgPwrGood;
   UINT64            Timeout;
   BOOLEAN           Busy;
@@ -979,17 +978,17 @@ MrcPmCfgCrAccess (
   // Set
   if (IsSet) {
     if (IsPrePllLock) {
-      MrcGetSetNoScope (MrcData, GsmPChannelEn,         WriteCached | PrintValue, &GetSetEn);
+      MrcGetSetNoScope (MrcData, GsmPChannelEn, WriteCached | PrintValue, &GetSetEn);
       MrcGetSetNoScope (MrcData, GsmSkipRestoreCR,      WriteCached | PrintValue, &GetSetEn);
       MrcGetSetNoScope (MrcData, GsmSkipRetentionCR,    WriteCached | PrintValue, &GetSetEn);
     } else {
       MrcGetSetNoScope (MrcData, GsmSaxgEnable, WriteCached | PrintValue, &GetSetEn);
       MrcWait (MrcData, 10);
-      // Poll to check if SAXG_Ready is asserted.
+      // Poll to check if SaxgPwrGood is asserted.
       do {
-        MrcGetSetNoScope (MrcData, GsmSaxgReady, ReadNoCache, &SaxgReady);
-        Busy = (SaxgReady == 0);
-        // Simics does not have this modelled yet so skip polling for Simics
+        MrcGetSetNoScope (MrcData, GsmSaxgPwrGood, ReadNoCache, &SaxgPwrGood);
+        Busy = (SaxgPwrGood == 0);
+        //Simics does not have this modelled yet so skip polling for Simics
         if (MrcData->Inputs.ExtInputs.Ptr->SimicsFlag == 1) {
           Busy = FALSE;
         }
@@ -1015,11 +1014,11 @@ MrcPmCfgCrAccess (
 
       MrcGetSetNoScope (MrcData, GsmSaxgEnable,         WriteCached | PrintValue, &GetSetDis);
       MrcWait (MrcData, 10);
-      // Poll to check if SAXGPwrGood is deasserted.
+      // Poll to check if SaxgPwrGood is deasserted.
       do {
         MrcGetSetNoScope (MrcData, GsmSaxgPwrGood, ReadNoCache, &SaxgPwrGood);
         Busy = (SaxgPwrGood == 1);
-        // Simics does not have this modelled yet so skip polling for Simics
+        //Simics does not have this modelled yet so skip polling for Simics
         if (MrcData->Inputs.ExtInputs.Ptr->SimicsFlag == 1) {
           Busy = FALSE;
         }
@@ -1030,7 +1029,7 @@ MrcPmCfgCrAccess (
     }
   }
   if (Busy) {
-    MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "%s %s on SAXG_%s!\n", gErrString, gTimeout, IsSet ? "Ready" : "PwrGood");
+    MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "%s Timeout on SaxgPwrGood!\n", gErrString);
   }
 
   return (Busy ? mrcDeviceBusy : mrcSuccess);

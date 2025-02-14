@@ -1,5 +1,5 @@
-/** @file
-  AMT PPR Enable variable definition
+/**  @file
+  PayloadResiliencySupportLib to support Payloads management resiliency feature
 
   @copyright
   INTEL CONFIDENTIAL
@@ -16,32 +16,25 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification Reference:
+  @par Specification Reference:
 **/
 
-///
-/// AMT PPR variable name
-///
-#define AMT_PPR_ENABLE_VARIABLE_NAME  L"AmtPprEnable"
+#include <Uefi.h>
+#include <Library/DebugLib.h>
+#include <Library/PayloadResiliencySupportLib.h>
 
 /**
-  AMT PPR ENABLE
-      Bits [7:2] Reserved
-      Bits [1]   AmtEnable
-      Bits [0]   PprEnable
-          0X - Disabled AMT, Disabled PPR
-          10 - Enabled AMT,  Disabled PPR
-          11 - Enabled AMT,  Enabled PPR
-**/
-typedef union {
-  struct {
-    UINT8 PprEnabled    : 1;
-    UINT8 AmtEnabled    : 1;
-    UINT8 Reserved      : 6;
-  } Bits;
-} AMT_PPR_ENABLE;
+  Check whether the Payloads management backup Feature is enabled.
 
-///
-/// Memory Telemetry variable revision
-///
-#define AMT_PPR_ENABLE_VARIABLE_REVISION   1
+  @return TRUE       The Payloads management backup Feature is enabled.
+  @return FALSE      The Payloads management backup Feature is not enabled.
+
+**/
+BOOLEAN
+EFIAPI
+IsPayloadBackupEnabled (
+ )
+{
+  DEBUG((DEBUG_INFO, "The Payloads management backup Feature is not enabled.\n"));
+  return FALSE;
+}

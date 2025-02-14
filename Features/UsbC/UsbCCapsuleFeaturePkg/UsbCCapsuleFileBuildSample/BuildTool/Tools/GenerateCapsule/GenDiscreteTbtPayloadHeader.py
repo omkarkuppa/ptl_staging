@@ -30,7 +30,7 @@ else:
 
 #
 #
-# Data structures used in dTBT image payload
+# Data structures used in Retimer image payload
 #
 # #define DISCRETE_TBT_PAYLOAD_HEADER_SIGNATURE SIGNATURE_32 ('D', 'T', 'B', 'T')
 
@@ -50,8 +50,8 @@ else:
 # typedef struct {
 #   UINT32                   ImageOffset;
 #   UINT32                   ImageSize;
-#   UINT8                    FirmwareType;      // 2:Discrete TBT, Others: Reserved
-#   UINT8                    PcieRpType;        // 2:PCH 4:CPU
+#   UINT8                    FirmwareType;      // 0:Integrated TBT retimer(Un-support) 1:Discrete TBT retimer(Un-support) 2:Discrete TBT
+#   UINT8                    PcieRpType;        // 0:PCH 1:CPU
 #   UINT8                    PcieRootPort;
 #   UINT8                    Reserve[5];
 # } DISCRETE_TBT_ITEM;

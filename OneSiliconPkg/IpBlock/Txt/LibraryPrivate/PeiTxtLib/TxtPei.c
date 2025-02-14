@@ -245,8 +245,7 @@ AliasCheck (
       if (IsTxtChipset ()) {
         if (IsTxtProcessor ()) {
           DEBUG ((DEBUG_INFO, "TXTPEI::TXT enabled platform\n"));
-          if (((MmioRead32 (TXT_PUBLIC_BASE + TXT_SPAD_REG_OFF) & B_TXT_SPAD_ALIAS_CHECK) == B_TXT_SPAD_ALIAS_CHECK)
-              || ((MmioRead32 (TXT_PUBLIC_BASE + TXT_CRASHCODE_REG_OFF) & 0xFE007FF0) == 0xC00040B0)
+          if (((MmioRead32 (TXT_PUBLIC_BASE + TXT_CRASHCODE_REG_OFF) & 0xFE007FF0) == 0xC00040B0)
               || (IsAcheckRequested (TxtInfoHob))
               ) {
             DEBUG ((DEBUG_INFO, "TXTPEI::DoAlias\n"));

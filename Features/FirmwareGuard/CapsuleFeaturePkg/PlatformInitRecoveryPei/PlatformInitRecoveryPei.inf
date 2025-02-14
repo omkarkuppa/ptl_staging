@@ -38,8 +38,6 @@
   TopSwapSupportLib
   PlatformWdtLib
   ResiliencySupportLib
-  PmcLib
-  IoLib
 
 [Packages]
   MdeModulePkg/MdeModulePkg.dec

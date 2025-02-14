@@ -578,6 +578,7 @@ typedef enum {
   OemReadEQTraining,        ///<  before Read Equalization Training.
   OemReadCTLETraining,      ///<  before Read CTLE Training.
   OemOptimizeComp,          ///<  before Comp Optimization Training.
+  OemPowerSavingMeter,      ///<  before PowerSavingMeter step.
   OemWriteDqDqs2D,          ///<  before Write Timing Centering 2D.
   OemReadDqDqs2D,           ///<  before Read Timing Centering 2D.
   OemCmdVoltCentering,      ///<  before Command Voltage Centering.
@@ -671,8 +672,6 @@ typedef enum {
   OemMrcHVMFinalize,        ///< before HVM Finalization
   OemDqLoopbackTest,        ///< before Dq Loopback test
   OemDqsPadDcc,             ///< before DQS PAD DCC Optimization
-  OemRxDqsVoc,              ///< before RxDqs VOC Centering
-  OemDunitTatOptimization,  ///< before Dunit TAT optimization
   ///
   ///*********************************************************************************
   ///
@@ -828,7 +827,6 @@ typedef struct {
 #define PPR_MEMTEST_XMARCHG_BIT               (3)
 #define PPR_MEMTEST_YMARCHSHORT_BIT           (4)
 #define PPR_MEMTEST_YMARCHLONG_BIT            (5)
-#define PPR_MEMTEST_MMRW_BIT                  (6)
 
 // PPR Running State
 typedef enum {
@@ -1514,6 +1512,12 @@ typedef UINT16 MrcClockRatio;  ///< This value times the REF_FREQ determines the
 
 /// This data structure contains all the "DDR power saving data" values that are considered output by the MRC.
 /// The following are memory controller level definitions. All channels on a controller are set to these values.
+typedef struct {
+  BOOLEAN    BaseFlag;      ///< Indicates if the base line of power was already calculated.
+  UINT8      Dummy8AlignmentBuffer[3];
+  UINT16     BaseSavingTotal; ///< Indicates the base line total power consumed by the ddr.
+  UINT16     MrcSavingTotal;  ///< Indicates the total power consumed by the ddr at the end of MRC.
+} MrcOdtPowerSaving;
 
 /// MRC version description.
 typedef struct {
@@ -1951,7 +1955,7 @@ typedef struct {
   BOOLEAN           MrXPdaDfeTap2Enabled;          ///< Defines if MRs of DFE TAP2 is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap3Enabled;          ///< Defines if MRs of DFE TAP3 is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap4Enabled;          ///< Defines if MRs of DFE TAP4 is required as PDA for this channel.
-  BOOLEAN           IsDdr5Hynix[MAX_CONTROLLER][MAX_DDR5_CHANNEL][MAX_DIMMS_IN_CHANNEL];       ///< If a DDR5 Hynix DIMM is detected set it to TRUE per MC/Ch/DIMM being populated otherwise FALSE
+  BOOLEAN           IsDdr5Hynix;                   ///< TRUE if any DDR5 Hynix DIMM is detected otherwise FALSE
   BOOLEAN           IsOneDpcSplitBgEnabled;        ///< If One DPC 1R split bg is enabled.
   BOOLEAN           IsRowHammerConfigured[MAX_CONTROLLER][MAX_CHANNEL][MAX_DIMMS_IN_CHANNEL]; ///< TRUE if ARFM or DRFM is configured for a DIMM
   /// Cmd and Ctl Pi Code for Low frequency. This is required to track for LP5 Frequency switching.
@@ -1972,7 +1976,6 @@ typedef struct {
   UINT8             Ibecc;
   UINT8             TmeEnable;
   UINT8             PmaCceConfig;
-  UINT8             ReservedBytesAlign[1];        ///< Align to 4 bytes for MrcSavedata
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back
   //
@@ -2041,6 +2044,7 @@ typedef struct {
 #if MRC_ENABLE_STATS
   MrcStatsTracker     StatsTracker;                ///< Used to record the data for the stats and telemetry framework
 #endif // MRC_ENABLE_STATS && MRC_DEBUG_PRINT
+  MrcOdtPowerSaving   OdtPowerSavingData;          ///< ODT power savings data.
   UINT16              Qclkps;                      ///< QCLK period in pS, this is internal MC/DDRIO clock which is impacted by Gear
   UINT16              Dclkps;                      ///< DCLK period in pS, this is internal MC/DDRIO clock which is impacted by Gear
   UINT16              tCKps;                       ///< Memory clock period in pS (external bus clock)
@@ -2269,7 +2273,7 @@ typedef struct {
   BOOLEAN           IsDdrIoTc;                      ///< Identified that the current CPU is a test chip (PHY)
   BOOLEAN           NonTargetOdtEn;                 ///< Enables Non-Target ODT for LPDDR5
   BOOLEAN           TxtClean;                       ///< TRUE if we require to perform TxtClean when Trusted eXecution Technology flow enabled.
-  UINT8             Reserved2;                      ///< Reserved to ensure config block size is a multiple of DWORDs
+  UINT8             TatDelta;                       ///< Used to increase Turnaround values in Safe mode
   BOOLEAN           Mbist;                          ///< TRUE if we require to perform Memory BIST
   BOOLEAN           EnablePda;                      ///< TRUE MRs will be configured per PDA.
   BOOLEAN           Lp58BankMode;                   ///< TRUE if running Lp5 8-Bank Mode
@@ -2344,8 +2348,7 @@ typedef struct {
   UINT8   ReservedBytesAlign[2]; ///< Reserved Bytes to ensure HVM block size is a multiple of DWORDs
 #endif // HVM_MODE
   BOOLEAN IsOneDpcSplitBgEnabled; ///< TRUE: 1Rank Split Bg On SubChannel Enabled.
-  UINT32  DebugValue;             ///< Used for general debug
-  UINT8   ReservedBytesAlign2[4]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
+  UINT8  ReservedBytesAlign2[4]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

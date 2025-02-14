@@ -641,7 +641,7 @@ ConstructRetimerInstances (
   RETIMER_DEV_INSTANCE                RetimerDevice;
 
   //
-  // Boundary check is supposed to be taken care by FmpDeviceCheckImage above already.
+  // Boundary check is supposed to be taken case by FmpDeviceCheckImage above already.
   //
   RetimerPayloadHeader = (PAYLOAD_HEADER *) Image;
   RetimerPayloadItem = (RETIMER_ITEM *) (RetimerPayloadHeader + 1);
@@ -963,7 +963,7 @@ FmpDeviceSetImageWithStatus (
   }
 
   //
-  // Boundary check is supposed to be taken care by FmpDeviceCheckImage above already.
+  // Boundary check is supposed to be taken case by FmpDeviceCheckImage above already.
   //
   DeviceHandleBuffer   = NULL;
   DeviceHandleCount    = 0;
@@ -996,10 +996,10 @@ FmpDeviceSetImageWithStatus (
         for (HandleIndex = 0; HandleIndex < DeviceHandleCount; HandleIndex++) {
           DEBUG ((DEBUG_INFO, "UsbC Retimer Capsule - DisconnectController gEfiUsb2HcProtocolGuid HandleIndex %x\n", HandleIndex));
           gBS->DisconnectController (
-                 (DeviceHandleBuffer)[HandleIndex],
-                 NULL,
-                 NULL
-                 );
+                  (DeviceHandleBuffer)[HandleIndex],
+                  NULL,
+                  NULL
+                  );
         }
       }
     }

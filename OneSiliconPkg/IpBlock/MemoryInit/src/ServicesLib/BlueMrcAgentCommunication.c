@@ -347,7 +347,7 @@ BlueMrcXtensaSoftReset (
     Busy = (BOOLEAN)Ctrl.Bits.xt_soft_reset; // Poll until bit is cleared
 
     // COMMENT THIS BLOCK FOR HSLE BUILD
-    if (MrcData->Inputs.ExtInputs.Ptr->SimicsFlag && MrcData->Inputs.ExtInputs.Ptr->HsleFlag == 0) {
+    if (MrcData->Inputs.ExtInputs.Ptr->SimicsFlag) {
       Ctrl.Bits.xt_soft_reset = 0; // Manually clear reset bit
       MrcWriteCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_XT_CTRL_REG, Ctrl.Data);
       Busy = FALSE;
@@ -443,7 +443,7 @@ BlueMrcClearXtensaSram (
   do {
     StopAddr.Data = MrcReadCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_DRCT_LOAD_STOP_ADDR_REG);
     Busy = (StopAddr.Bits.start_direct_load == 1) || (StopAddr.Bits.ne_start_direct_load == 1); // Poll until both are done
-    if (Inputs->ExtInputs.Ptr->SimicsFlag && Inputs->ExtInputs.Ptr->HsleFlag == 0) {
+    if (Inputs->ExtInputs.Ptr->SimicsFlag) {
       Busy = FALSE;
     }
   } while (Busy && (MrcCall->MrcGetCpuTime () < Timeout));
@@ -648,13 +648,13 @@ BlueMrcPrintGreenLog (
     LocalBuffer[LogSize] = 0;     // Add the NULL terminator
     NewLogSize = 0;
 
-    if (MrcData->Inputs.ExtInputs.Ptr->SimicsFlag && MrcData->Inputs.ExtInputs.Ptr->HsleFlag == 0) {
+    if (MrcData->Inputs.ExtInputs.Ptr->SimicsFlag) {
       // Simics needs a halt before Blue MRC writes to SRAM while Xtensa is running
       BlueMrcSetXtensaHardwareHaltState(MrcData, MRC_XTENSA_HW_HALT);
     }
     // This will allow Green MRC to send the next log portion
     BlueMrcWriteUcData (MrcData, &NewLogSize, gUcCommBufferAddress + MRC_BLUE_GREEN_COMM_LOG_SIZE_OFFSET, MRC_BLUE_GREEN_COMM_LOG_SIZE_SIZE);
-    if (MrcData->Inputs.ExtInputs.Ptr->SimicsFlag && MrcData->Inputs.ExtInputs.Ptr->HsleFlag == 0) {
+    if (MrcData->Inputs.ExtInputs.Ptr->SimicsFlag) {
       BlueMrcSetXtensaHardwareHaltState(MrcData, MRC_XTENSA_HW_UNHALT);
     }
   }

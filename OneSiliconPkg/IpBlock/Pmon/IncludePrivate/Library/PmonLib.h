@@ -42,7 +42,7 @@ extern EFI_GUID gPmonDataHobGuid;
 #define SAFBAR_MEMORY_ADDRESS(Segment,PortId,Offset) \
   ( ((Offset) & 0xFFF)                 | \
     (((PortId) & 0xFF) << 12)          | \
-    (((Segment) & 0x1F) << 20)           \
+    (((Segment) & 0xFF) << 20)           \
   )
 
 #pragma pack (push,1)

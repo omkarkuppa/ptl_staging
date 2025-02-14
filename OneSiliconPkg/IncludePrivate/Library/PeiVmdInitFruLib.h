@@ -47,31 +47,4 @@ VmdInitFruApi (
   IN OUT VMCONFIG_IOC_VMD_STRUCT *VmConfig
 );
 
-/**
-  Reserve VMD Stolen Memory.
-
-  @param[in] TopUseableMemAddr          - Moving address pointer
-  @param[in] Touud                      - Size leftover pointer
-  @param[in] ResourceAttributeTested    - Resource attribute flag
-**/
-
-VOID
-EFIAPI
-VmdMemoryAllocation (
-  IN OUT EFI_PHYSICAL_ADDRESS     *TopUseableMemAddr,
-  IN OUT UINT64                   *Touud,
-  IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
-  );
-
-/**
-  Check if Vmd Memory reservation is required.
-
-  @retval TRUE    If Memory reservation is required..
-  @retval FALSE   If Memory reservation is not required..
-**/
-BOOLEAN
-IsVmdMemoryAllocationRequired (
-VOID
-  );
-
 #endif /* _PEI_VMD_INIT_FRU_LIB_H_ */

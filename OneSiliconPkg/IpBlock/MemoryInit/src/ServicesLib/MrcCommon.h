@@ -702,7 +702,6 @@ typedef struct {
 typedef union {
   LPDDR5_CA_TRAIN_IO_SAVE Lpddr5IoSave;
   DDR5_CA_TRAIN_IO_INIT_SAVE Ddr5IoSave;
-  INT64 CsPulseCntSave;
 } CA_PARITY_IO_SAVE;
 
 typedef enum {
@@ -3456,7 +3455,7 @@ GetNtRankSelection (
    PMA_MCMISCSSAUG_CR_PMMESSAGE.SkipRetentionCR = 1
   Set the following bit right after PLL is locked
    SAXG_Enable
-   and poll for SAXG_Ready (enable case) / SAXGPwrGood (disable case)
+   and poll for saxgpwrgood
 
   Set the above bits to the opposite values after sending PM14 for last SAGV point only (except PChannelEn and SkipRestoreCR).
   If SAGV is disabled then the bits are set and cleared at their respective locations within the same run.
@@ -3465,8 +3464,8 @@ GetNtRankSelection (
   @param[in] IsPrePllLock - Defines which bits to enable based on when the function is called i.e. before or after PM0 message.
   @param[in] IsSet        - Decides whether we set or clear the bits accessed in this branch
 
-  @retval mrcSuccess    - SAXG_Ready was set successfully / SAXGPwrGood was cleared successfully
-  @retval mrcDeviceBusy - Timed out waiting for the SAXG_Ready / SAXGPwrGood
+  @retval mrcSuccess    - SaxgPwrGood was set successfully
+  @retval mrcDeviceBusy - Timed out waiting for the SaxgPwrGood
 **/
 MrcStatus
 MrcPmCfgCrAccess (
@@ -4089,7 +4088,8 @@ MrcGetDdr5Tadc (
 /**
   ECC byte only has 4 bits DQ
   This function check if the bit is:
-      - lower nibble (bit 3:0) for MC0, MC1
+      - upper nibble (bit 7:4) for MC0
+      - lower nibble (bit 3:0) for MC1
   @param[in]      Controller  - Current MC
   @param[in]      Byte        - Current Byte
   @param[in]      Bit         - Current Bit
@@ -4126,7 +4126,7 @@ MrcGetBitMask (
 
 /**
   This function return if bit is Start Bit within the byte
-  return TRUE if is bit 0 for MC0, MC1
+  return TRUE if is bit 4 for MC0 ECC byte, otherwise return TRUE if is bit 0
   @param[in]  Controller - Controller to get StartBit
   @param[in]  Byte       - Byte to get StartBit
   @param[in]  Bit        - Bit to check with StartBit
@@ -4140,7 +4140,7 @@ MrcIsStartBit (
 
 /**
   This function return the ECC DataTrainFeedback Mask based on MC
-  ECC byte uses lower nibble for MCO, MC1
+  ECC byte uses upper nibble for MC0, lower nibble for MC1
   @param[in]  Controller - Controller to get FeedbackMask
 **/
 UINT32
@@ -4248,7 +4248,7 @@ MrcFindMaxVal (
 **/
 MrcStatus
 RcvEnCentering1D (
-  IN OUT MrcParameters *const MrcData,
+  IN OUT MrcParameters* const MrcData,
   IN     const UINT8          StepSize,
   IN     const UINT8          LoopCount,
   IN     UINT8                MsgPrintMask,
@@ -4267,11 +4267,12 @@ VOID
 GetLoopbackTestMarginsResults (
   IN MrcParameters *const MrcData,
   IN LoopBackTasks        Task,
-  IN SweepResultsBit     *PerBitResult
+  IN SweepResultsBit      *PerBitResult
   );
 
 /**
   Display MR value from the host struct
+
   @param[in] MrcData - Include all MRC global data.
   @param[in] MrAddr  - MR Address.
 **/
@@ -4280,26 +4281,6 @@ VOID
 DisplayMRContentFromHost (
   IN MrcParameters *const MrcData,
   IN MrcModeRegister      MrAddr
-  );
-
-  /**
-  Early Centering for RxDqsVoc
-  @param[in,out] MrcData   - Include all MRC global data.
-  @retval        MrcStatus -  If succeeded, return mrcSuccess
-**/
-MrcStatus
-MrcEarlyRxDqsVocCentering1D (
-  IN OUT MrcParameters *const MrcData
-  );
-
-/**
-  Centering for RxDqsVoc
-  @param[in,out] MrcData   - Include all MRC global data.
-  @retval        MrcStatus -  If succeeded, return mrcSuccess
-**/
-MrcStatus
-MrcRxDqsVocCentering1D (
-  IN OUT MrcParameters *const MrcData
   );
 
 #endif //_MrcCommon_h_

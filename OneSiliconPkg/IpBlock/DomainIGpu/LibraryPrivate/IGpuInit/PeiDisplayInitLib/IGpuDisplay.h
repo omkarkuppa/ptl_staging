@@ -43,7 +43,6 @@
 #include <Library/PeiHostBridgeIpStatusLib.h>
 #include <GpioV2Functionalities.h>
 #include <GpioV2Signals.h>
-#include <Ppi/IGpuPlatformPolicyPpi.h>
 
 /**
   Configure Display GPIO's

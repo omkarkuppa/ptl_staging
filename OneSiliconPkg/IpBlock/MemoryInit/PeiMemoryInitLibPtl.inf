@@ -91,7 +91,6 @@ PeiTraceHubInitLib
 PeiTelemetryInitLib
 PeiMemorySubSystemFruLib
 CapsulePpiProcessLib
-PeiVmdInitFruLib
 
 [Packages]
 MdePkg/MdePkg.dec
@@ -167,7 +166,6 @@ src/HalLib/IncludePublic/MrcHalApi.h
 src/HalLib/Ptl/BlueMrcHalRegisterAccess.c
 src/HalLib/IncludePublic/MrcHalRegisterAccess.h
 src/ServicesLib/MrcAmt.h
-src/ServicesLib/MrcAmtPprInterface.h
 src/ApiLib/BlueMrcAgentCommunication.h
 src/ApiLib/BlueMrcPmic.h
 src/ServicesLib/MrcTurnAround.h
@@ -176,7 +174,6 @@ src/ServicesLib/MrcPpr.h
 src/JedecLib/Ddr5/BlueMrcDdr5.c
 src/JedecLib/Ddr5/Ptl/BlueMrcDdr5Ptl.c
 src/JedecLib/Lpddr5/BlueMrcLpddr5.c
-src/JedecLib/Lpddr5/Ptl/BlueMrcLpddr5Ptl.c
 src/ServicesLib/MrcAmt.c
 src/JedecLib/IncludePublic/BlueMrcJedecApi.h
 src/JedecLib/BlueMrcMemoryApi.c
@@ -184,7 +181,6 @@ src/SpdProcessing/MrcSpdProcessing.c
 src/ServicesLib/BlueMrcAgentCommunication.c
 src/ServicesLib/BlueMrcSpecific.c
 src/ServicesLib/MrcTurnAround.c
-src/ServicesLib/BlueMrcPpr.c
 src/ServicesLib/MrcPpr.c
 src/ServicesLib/MrcPmic.c
 src/ServicesLib/BlueMrcReset.c
@@ -225,13 +221,11 @@ src/DdrIoLib/Ptl/MrcDdrIoUtilsSiSpecificPtl.c
 src/DdrIoLib/IncludePublic/MrcDdrIoUtils.h
 src/DdrIoLib/IncludePublic/MrcDdrIoRefPi.h
 src/DdrIoLib/MrcDdrIoUtilsPrivate.h
-src/DdrIoLib/Ptl/MrcDdrIoLvrPtl.c
+src/DdrIoLib/Ptl/MrcDdrIoVccPtl.c
 src/DdrIoLib/Ptl/MrcDdrIoComp.c
-src/DdrIoLib/IncludePublic/MrcDdrIoLvr.h
-src/DdrIoLib/MrcDdrIoLvr.c
+src/DdrIoLib/IncludePublic/MrcDdrIoVcc.h
+src/DdrIoLib/MrcDdrIoVcc.c
 src/DdrIoLib/IncludePublic/MrcDdrIoComp.h
-src/DdrIoLib/Ptl/MrcDdrIoDllPtl.c
-src/DdrIoLib/MrcDdrIoDll.c
 src/DdrIoLib/Ptl/BlueMrcDdrIoHalHashes.c
 src/DdrIoLib/Ptl/BlueMrcDdrIoHalLimits.c
 src/DdrIoLib/MrcDdrIoHalOffsets.c

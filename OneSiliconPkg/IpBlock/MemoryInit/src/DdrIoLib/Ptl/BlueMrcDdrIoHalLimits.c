@@ -601,7 +601,6 @@ MrcGetDdrIoCfgGroupLimits (
     case GsmIocDfiCmdDecoderEn:
     case GsmIocVccClkFFCRWait:
     case GsmSaxgEnable:
-    case GsmSaxgReady:
     case GsmSaxgPwrGood:
     case GsmPChannelEn:
     case GsmSkipRestoreCR:

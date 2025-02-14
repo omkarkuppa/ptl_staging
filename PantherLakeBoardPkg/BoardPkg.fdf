@@ -674,11 +674,6 @@ INF $(PLATFORM_SI_PACKAGE)/Fru/PtlPcd/SocInit/GpioV2ServicesInit/Pei/GpioV2PtlPc
   INF $(PLATFORM_BOARD_PACKAGE)/BoardInitAdvanced/BoardInitAdvancedPei/BoardInitAdvancedPreMem.inf
 !endif
 
-FILE FREEFORM = PCD(gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid) {
-  SECTION RAW = $(PLATFORM_BIN_PACKAGE)/Binaries/Gop/Vbt.bin
-  SECTION UI  = "IntelGopPreMemVbt"
-}
-
 !if gCapsuleFeaturePkgTokenSpaceGuid.PcdCapsuleFeatureEnable == TRUE
   !include CapsuleFeaturePkg/Include/PreMemory.fdf
 !endif
@@ -722,6 +717,13 @@ FILE FV_IMAGE = 9B9C7C89-5FC4-4C29-9942-E33DCFE2058F  {
   SECTION FV_IMAGE = FvSecurityPreMemory
 }
 !endif
+
+#
+# Memory Telemetry Pre-Mem Feature
+#
+!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
+  !include MemoryTelemetryFeaturePkg/Include/PreMemory.fdf
+!endif # PcdMemoryTelemetryEnabled
 
 [FV.FvPostMemoryUncompact]
 BlockSize          = $(FLASH_BLOCK_SIZE)
@@ -1922,7 +1924,6 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Smm/BiosGuardServi
 
 !if gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable == TRUE
   INF  $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCRetimerSupport/UsbCRetimerSupport.inf
-  INF  $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCPdBridgeSupport/UsbCPdBridgeSupport.inf
   !include UsbCCapsuleFeaturePkg/Include/PostMemory.fdf
 !endif
 

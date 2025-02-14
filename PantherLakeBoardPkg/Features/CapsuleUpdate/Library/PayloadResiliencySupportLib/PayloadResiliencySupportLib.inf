@@ -1,5 +1,5 @@
 ## @file
-# FmpDeviceLib instance to support PD Bridge firmware update
+#  PayloadResiliencySupportLib to support Payloads management resiliency feature
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -17,15 +17,16 @@
 #  in the License.
 #
 # @par Specification Reference:
+#
 ###
 
 [Defines]
   INF_VERSION                    = 0x0001001B
-  BASE_NAME                      = FmpDeviceLibPdBridge
-  FILE_GUID                      = 11984C7E-1207-4DE0-92C5-29661F9A6557
-  MODULE_TYPE                    = DXE_DRIVER
+  BASE_NAME                      = PayloadResiliencySupportLib
+  FILE_GUID                      = 1A48A2E8-9F22-4E9E-BA70-002B84D6DEF7
+  MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
-  LIBRARY_CLASS                  = FmpDeviceLib|DXE_DRIVER
+  LIBRARY_CLASS                  = PayloadResiliencySupportLib
 
 #
 # The following information is for reference only and not required by the build tools.
@@ -34,27 +35,11 @@
 #
 
 [Sources]
-  FmpDeviceLibPdBridge.c
+  PayloadResiliencySupportLib.c
 
 [Packages]
   MdePkg/MdePkg.dec
-  MdeModulePkg/MdeModulePkg.dec
-  FmpDevicePkg/FmpDevicePkg.dec
-  UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
-
-[Pcd]
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleDebugLevel
+  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
 
 [LibraryClasses]
   DebugLib
-  BaseLib
-  BaseMemoryLib
-  MemoryAllocationLib
-  UefiBootServicesTableLib
-  UsbCPdBridgeUpdateLib
-
-[Guids]
-  gUsbCPdBridgeVersionGuid                ## CONSUMES
-
-[Protocols]
-  gUsbCPdBridgeProtocolGuid              ## CONSUMES

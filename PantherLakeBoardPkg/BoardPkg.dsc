@@ -528,14 +528,15 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
 !if gCapsuleFeaturePkgTokenSpaceGuid.PcdCapsuleFeatureEnable == TRUE
   PlatformBiosUpdateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformBiosUpdateHookLib/PlatformBiosUpdateHookLib.inf
   PlatformEcUpdateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformEcUpdateHookLib/PlatformEcUpdateHookLib.inf
-  PlatformFspUpdateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformFspUpdateHookLib/PlatformFspUpdateHookLib.inf
   PlatformWdtLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformWdtLib/PlatformWdtLib.inf
   PlatformEcResetLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformEcResetLib/PlatformEcResetLib.inf
   PlatformMeUpdateHookLib|CapsuleFeaturePkg/Library/PlatformMeUpdateHookLibNull/PlatformMeUpdateHookLibNull.inf
   PlatformDxeBootStateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformDxeBootStateHookLib/PlatformDxeBootStateHookLib.inf
+  PayloadResiliencySupportLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PayloadResiliencySupportLib/PayloadResiliencySupportLib.inf
 !else
   PlatformWdtLib|CapsuleFeaturePkg/Library/PlatformWdtLibNull/PlatformWdtLibNull.inf
   ResiliencySupportLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PeiDxeSmmResiliencySupportLibNull/PeiDxeSmmResiliencySupportLibNull.inf
+  PayloadResiliencySupportLib|CapsuleFeaturePkg/Library/PayloadResiliencySupportLibNull/PayloadResiliencySupportLibNull.inf
 !endif
   TcgStorageCoreLib|SecurityPkg/Library/TcgStorageCoreLib/TcgStorageCoreLib.inf
   TcgStorageOpalLib|SecurityPkg/Library/TcgStorageOpalLib/TcgStorageOpalLib.inf
@@ -1493,7 +1494,6 @@ $(PLATFORM_SI_PACKAGE)/Product/PantherLake/EarlyDevices/EarlyDxeDevices.inf
 
 !if gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable == TRUE
   $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCRetimerSupport/UsbCRetimerSupport.inf
-  $(PLATFORM_BOARD_PACKAGE)/Features/Tcss/UsbCPdBridgeSupport/UsbCPdBridgeSupport.inf
 !endif
 
 #

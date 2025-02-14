@@ -620,13 +620,6 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
 !else
       gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x27
 !endif
-!if (gPantherLakeFspPkgTokenSpaceGuid.PcdSignedFspBuild == TRUE)
-# todo : Review how GS flag impacting PeiMain execution in Post memory phase.
-!if $(TARGET) == DEBUG
-    <BuildOptions>
-      MSFT: DEBUG_*_*_CC_FLAGS = /GS- /volatileMetadata
-!endif
-!endif
   }
 
   #

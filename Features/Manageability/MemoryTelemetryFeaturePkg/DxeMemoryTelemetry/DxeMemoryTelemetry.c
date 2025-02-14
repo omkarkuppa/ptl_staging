@@ -92,30 +92,30 @@ PrintMemoryTelemetryTable (
     DEBUG ((DEBUG_INFO, "|\tData Rate                   0x%X\n", MemoryTelemetryDataTable->DataRate[Idxi]));
     DEBUG ((DEBUG_INFO, "|\tBandwidth                   0x%X\n", MemoryTelemetryDataTable->Bandwidth[Idxi]));
   }
-  DEBUG ((DEBUG_INFO, "| SaGvPointMask               0x%X\n", MemoryTelemetryDataTable->SaGvPointMask));
-  DEBUG ((DEBUG_INFO, "| Maximum Frequency           0x%X\n", MemoryTelemetryDataTable->MaxFrequency));
+  DEBUG ((DEBUG_INFO, "| SaGvPointMask                0x%X\n", MemoryTelemetryDataTable->SaGvPointMask));
+  DEBUG ((DEBUG_INFO, "| Maximum Frequency            0x%X\n", MemoryTelemetryDataTable->MaxFrequency));
   DEBUG ((DEBUG_INFO, "|-------------------------------------------------------|\n"));
   DEBUG ((DEBUG_INFO, "|---------------------- AMT PPR  -----------------------|\n"));
-  DEBUG ((DEBUG_INFO, "| PprAvailable                        0x%X\n", MemoryTelemetryDataTable->PprAvailable));
-  DEBUG ((DEBUG_INFO, "| AmtPprRanInLastBoot                 0x%X\n", MemoryTelemetryDataTable->AmtPprRanInLastBoot));
+  DEBUG ((DEBUG_INFO, "| PprAvailable                            0x%X\n", MemoryTelemetryDataTable->PprAvailable));
+  DEBUG ((DEBUG_INFO, "| AmtPprRanInLastBoot                     0x%X\n", MemoryTelemetryDataTable->AmtPprRanInLastBoot));
   if (MemoryTelemetryDataTable->AmtPprRanInLastBoot.AmtRanLastBoot) {
     if (MemoryTelemetryDataTable->AmtPprRanInLastBoot.PprRanLastBoot) {
-      DEBUG ((DEBUG_INFO, "| Number of Successful Repairs     0x%X\n", MemoryTelemetryDataTable->TotalPprRowRepairsSuccessful));
-      DEBUG ((DEBUG_INFO, "| Number of Uncorrectable Devices  0x%X\n", MemoryTelemetryDataTable->TotalUncorrectableDevices));
+      DEBUG ((DEBUG_INFO, "| Number of Successful Repairs        0x%X\n", MemoryTelemetryDataTable->TotalPprRowRepairsSuccessful));
+      DEBUG ((DEBUG_INFO, "| Number of Uncorrectable Devices     0x%X\n", MemoryTelemetryDataTable->TotalUncorrectableDevices));
     }
-    DEBUG ((DEBUG_INFO, "| Number of Detected Errors          0x%X\n", MemoryTelemetryDataTable->TotalRowFailuresDiscovered));
-    DEBUG ((DEBUG_INFO, "| Error Repair Successful            0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.PprRowRepairsSuccessful));
-    DEBUG ((DEBUG_INFO, "| Error Controller                   0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Controller));
-    DEBUG ((DEBUG_INFO, "| Error Channel                      0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Channel));
-    DEBUG ((DEBUG_INFO, "| Error Rank                         0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Rank));
-    DEBUG ((DEBUG_INFO, "| Error Bank Group                   0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.BankGroup));
-    DEBUG ((DEBUG_INFO, "| Error Bank                         0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Bank));
-    DEBUG ((DEBUG_INFO, "| Error Row                          0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Row));
-    DEBUG ((DEBUG_INFO, "| Error Device                       0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Device));
+    DEBUG ((DEBUG_INFO, "| Number of Detected Errors           0x%X\n", MemoryTelemetryDataTable->TotalRowFailuresDiscovered));
+    DEBUG ((DEBUG_INFO, "| Error Repair Successful             0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.PprRowRepairsSuccessful));
+    DEBUG ((DEBUG_INFO, "| Error Controller                    0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Controller));
+    DEBUG ((DEBUG_INFO, "| Error Channel                       0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Channel));
+    DEBUG ((DEBUG_INFO, "| Error Rank                          0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Rank));
+    DEBUG ((DEBUG_INFO, "| Error Bank Group                    0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.BankGroup));
+    DEBUG ((DEBUG_INFO, "| Error Bank                          0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Bank));
+    DEBUG ((DEBUG_INFO, "| Error Row                           0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Row));
+    DEBUG ((DEBUG_INFO, "| Error Device                        0x%X\n", MemoryTelemetryDataTable->PprErrorInfo.Device));
     for (Idxi = 0; Idxi < MAX_NODE; Idxi++) {
-      DEBUG ((DEBUG_INFO, "| Node        %d\n", Idxi));
+      DEBUG ((DEBUG_INFO, "| Node             %d\n", Idxi));
       for (Idxj = 0; Idxj < MAX_CH; Idxj++) {
-        DEBUG ((DEBUG_INFO, "|\tChannel     %d\n", Idxj));
+        DEBUG ((DEBUG_INFO, "  |\tChannel     %d\n", Idxj));
         for (Idxk = 0; Idxk < MAX_RANK_IN_CHANNEL; Idxk++) {
           DEBUG ((DEBUG_INFO, "|\tRank        %d\n", Idxk));
           for (UINT8 Idxl = 0; Idxl < MAX_SDRAM_IN_DIMM; Idxl++) {

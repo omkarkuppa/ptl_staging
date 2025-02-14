@@ -29,7 +29,6 @@ from CapsuleGenerate.Firmwares.ConstLib import *
 from CapsuleGenerate.Firmwares.CertSignLib import *
 from CapsuleGenerate.Firmwares.FlashRegionLib import *
 from CapsuleGenerate.Firmwares.FlashConfigLib import *
-from CapsuleGenerate.Firmwares.FlashMapLib import *
 
 def IsIfwiDecomposed (Params: Dict[str, Any]) -> bool:
     """ Check if IFWI is decomposed via FIT tool.

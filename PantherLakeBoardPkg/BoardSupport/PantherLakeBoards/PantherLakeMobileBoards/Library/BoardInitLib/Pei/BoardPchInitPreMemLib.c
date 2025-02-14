@@ -96,6 +96,12 @@ PtlRootPortClkInfoInit (
   PcdSet64S (PcdPcieClock7,  Clock[ 7].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over
   PcdSet64S (PcdPcieClock8,  Clock[ 8].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over
   PcdSet64S (PcdPcieClock9,  Clock[ 9].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over
+  PcdSet64S (PcdPcieClock10, Clock[10].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over
+  PcdSet64S (PcdPcieClock11, Clock[11].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over
+  PcdSet64S (PcdPcieClock12, Clock[12].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over
+  PcdSet64S (PcdPcieClock13, Clock[13].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over
+  PcdSet64S (PcdPcieClock14, Clock[14].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over
+  PcdSet64S (PcdPcieClock15, Clock[15].Blob); // @todo Those individual PCDs should probably be replaced with something like a VOID* that can be iterated over
   return EFI_SUCCESS;
 }
 

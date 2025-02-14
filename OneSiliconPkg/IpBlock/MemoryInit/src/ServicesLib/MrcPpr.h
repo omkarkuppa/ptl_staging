@@ -22,18 +22,10 @@
 #ifndef _MrcPpr_h_
 #define _MrcPpr_h_
 
-#include "CMrcTypes.h"
-#include "CMrcInterface.h"
-#include "MrcCommon.h"
-#include "MrcAmtPprInterface.h"
+#include "MrcCpgcApi.h"
+#include "MrcAmt.h"
 
 #define PPR_MAX_DETECTED_ERRORS       (0xF000)
-
-typedef struct {
-  INT64 SaveVal0;
-  INT64 SaveVal1;
-  INT64 SaveVal2;
-} PPR_MC_SETUP_SAVE;
 
 /**
   Enter Post Package Repair (PPR) to attempt to repair detected failed row.
@@ -68,9 +60,10 @@ Ddr5PostPackageRepair (
   @param[in] Controller  - Controller for detected fail row
   @param[in] Channel     - Channel for detected fail row
   @param[in] Rank        - Rank for detected fail row
-  @param[in] BankGroup   - BankGroup for detected fail row
   @param[in] BankAddress - BankAddress for detected fail row
+  @param[in] BankGroup   - BankGroup for detected fail row
   @param[in] Row         - Row for detected fail row
+  @param[in] BankMode    - Bank/Bank Group mode for dimm
 
   @retval MrcStatus
 **/
@@ -84,6 +77,114 @@ LpDdr5PostPackageRepair (
   IN UINT32               BankAddress,
   IN UINT32               Row
   );
+
+/**
+  Check row failure list and PPR resource list to determine if repairs are required
+
+  @param[in] MrcData              - Global MRC data structure
+  @param[in] BaseBits             - Number of bank bits in SW loop
+
+  @retval status - TRUE/FALSE
+**/
+BOOLEAN
+IsPprRepairRequired (
+  MrcParameters  *const   MrcData,
+  UINT8                   BaseBits
+  );
+
+/**
+  Checks row failure list for any failures, and checks whether PPR resource exists for any failures.
+  If PPR resources exist, runs disposition flow for each failure.
+
+  @param [in]     MrcData             - Pointer to global MRC data.
+  @param [in]     BankMapping         - Array containing L2P bank mapping data for all CPGC_SEQ_BANK_L2P_MAPPING registers.
+  @param [in,out] *RepairDone         - Flag to indicate the repair was done
+
+  @retval status - MRC_STATUS_SUCCESS/MRC_STATUS_FAILURE
+**/
+MrcStatus
+PprDispositionFailRange (
+  IN     MrcParameters *const    MrcData,
+  IN     MRC_BG_BANK_PAIR        BankMapping[MAX_CONTROLLER][MAX_CHANNEL][MAX_BANKS],
+  IN OUT UINT8                   *RepairDone
+  );
+
+/**
+  Executes PPR flow on correctable failures in the row failure list
+
+  @param [in]     MrcData             - Pointer to global MRC data.
+  @param [in]     McChBitMask         - Memory Controller Channel Bit mask to update
+  @param [in]     Rank                - Rank number
+  @param [in]     BaseBits            - Number of BaseBits per technology
+  @param [in]     BankMapping         - Array containing L2P bank mapping data for all CPGC_SEQ_BANK_L2P_MAPPING registers.
+  @param [in,out] *RepairDone         - Flag to indicate the repair was done
+
+  @retval status - MRC_STATUS_SUCCESS/MRC_STATUS_FAILURE
+
+**/
+MrcStatus
+DispositionFailRangesWithPprFlow (
+  IN     MrcParameters* const    MrcData,
+  IN     UINT32                  McChBitMask,
+  IN     UINT32                  Rank,
+  IN     UINT8                   BaseBits,
+  IN     MRC_BG_BANK_PAIR        BankMapping[MAX_CONTROLLER][MAX_CHANNEL][MAX_BANKS],
+  IN OUT UINT8*                  RepairDone
+);
+/**
+  Check to see if Retry is required after a PPR repair
+
+  @param[in]  MrcData     - Include all MRC global data.
+  @param[in]  RepairDone  - Indicator whether PPR repair was done
+  @param[in]  RetryCount  - Count of retry attempts
+
+  @retval TRUE if Retry is required; FALSE otherwise
+**/
+BOOLEAN
+IsAmtRetryRequiredAfterRepair (
+  IN MrcParameters *const MrcData,
+  IN UINT8                RepairDone,
+  IN UINT32               RetryCount
+  );
+
+/**
+  Inject error for given Rank/Controller/Channel
+
+  @param[in]  MrcData       - Pointer to global MRC data.
+  @param[in]  Rank          - Physical rank index inside the dimm
+  @param[in]  Controller    - 0-based index to controller
+  @param[in]  Channel       - 0-based index to channel
+  @param[in]  Bank          - bank address number
+  @param[in]  Row           - row address
+  @param[in]  TestSize      - number of rows to test
+  @param[in]  Pattern       - Array of 64-bit test pattern
+  @param[in]  PatternDepth  - Length of PatternQW in number of UIs
+  @param[in]  ErrInjMask16  - Bitmask of DQ lanes to inject error
+  @param[in]  Direction     - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DN
+  @param[in]  SeqDataInv[2] - Enables pattern inversion per subsequence
+  @param[in]  IsUseInvtPat  - Info to indicate whether or not patternQW is inverted by comparing original pattern
+  @param[in]  UiShl         - Enables pattern rotation between all UIs
+
+  @retval MrcStatus - mrcSuccess/mrcFail
+**/
+MrcStatus
+InjectMemtestError (
+  IN MrcParameters* const MrcData,
+  IN UINT32         Rank,
+  IN UINT32         Controller,
+  IN UINT32         Channel,
+  IN UINT32         Bank,
+  IN UINT32         Row,
+  IN UINT32         TestSize,
+  IN UINT64         Pattern[],
+  IN UINT8          PatternDepth,
+  IN UINT16         ErrInjMask16,
+  IN UINT8          Direction,
+  IN UINT8          SeqDataInv[2],
+  IN BOOLEAN        IsUseInvtPat,
+  IN UINT8          UiShl,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
+);
 
 /**
   This function enables and runs Post Package Repair on detected fail rows.
@@ -160,34 +261,6 @@ GetBaseBits (
   );
 
 /**
-  Cleans up registers and values set during PPR memory tests.
-
-  @param[in] MrcData            - Global MRC data structure
-  @param[in] PprAmtData         - PPR and AMT data structure
-  @param[in] McChBitMask        - Bit masks of MC/Channels to clean settings.
-**/
-VOID
-PprCleanup (
-  IN MrcParameters *const           MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN UINT8                          McChBitMask
-  );
-
-/**
-  Check row failure if repairs are required
-
-  @param[in] FailRangePtr         - Pointer to Row Fail
-  @param[in] BankGroup            - Bank group
-
-  @retval status - TRUE/FALSE
-**/
-BOOLEAN
-IsRowFailureRepairRequired (
-  ROW_FAIL_RANGE  *const FailRangePtr,
-  UINT8                  BankGroup
-  );
-
-/**
   Check row failure list and PPR resource list to determine if repairs are required
 
   @param[in] MrcData              - Global MRC data structure
@@ -201,41 +274,6 @@ IsPprRepairRequired (
   UINT8                   BaseBits
   );
 
-/**
-  Checks row failure list for any failures, and checks whether PPR resource exists for any failures.
-  If PPR resources exist, runs disposition flow for each failure.
-
-  @param [in]     MrcData             - Pointer to global MRC data.
-  @param [in]     PprAmtData          - PPR and AMT data structure
-  @param [in,out] *RepairDone         - Flag to indicate the repair was done
-
-  @retval status - MRC_STATUS_SUCCESS/MRC_STATUS_FAILURE
-**/
-MrcStatus
-PprDispositionFailRange (
-  IN     MrcParameters *const       MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN OUT UINT8                      *RepairDone
-  );
-
-/**
-  Executes PPR flow on correctable failures in the row failure list
-
-  @param [in]     MrcData             - Pointer to global MRC data.
-  @param [in]     PprAmtData          - PPR and AMT data structure
-  @param [in]     McChBitMask         - Memory Controller Channel Bit mask to update
-  @param [in,out] *RepairDone         - Flag to indicate the repair was done
-
-  @retval status - MRC_STATUS_SUCCESS/MRC_STATUS_FAILURE
-
-**/
-MrcStatus
-DispositionFailRangesWithPprFlow (
-  IN     MrcParameters      *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN     UINT32                     McChBitMask,
-  IN OUT UINT8                      *RepairDone
-);
 /**
   Check to see if Retry is required after a PPR repair
 
@@ -253,58 +291,43 @@ IsAmtRetryRequiredAfterRepair (
   );
 
 /**
-
-  Inject error for given Rank/Controller/Channel
-
-  @param[in]  MrcData       - Pointer to global MRC data.
-  @param[in]  PprAmtData    - PPR and AMT data structure
-  @param[in]  Controller    - 0-based index to controller
-  @param[in]  Channel       - 0-based index to channel
-  @param[in]  Bank          - bank address number
-  @param[in]  Row           - row address
-  @param[in]  TestSize      - number of rows to test
-  @param[in]  ErrInjMask16  - Bitmask of DQ lanes to inject error
-
-  @retval MrcStatus - mrcSuccess/mrcFail
-  **/
-MrcStatus
-InjectMemtestError (
-  IN MrcParameters *const           MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN UINT32                         Controller,
-  IN UINT32                         Channel,
-  IN UINT32                         Bank,
-  IN UINT32                         Row,
-  IN UINT32                         TestSize,
-  IN UINT16                         ErrInjMask16
-  );
-
-/**
   Wrapper function for the Advanced Memory test algorithm that tracks time and splits read/write patterns.
 
   @param[in] MrcData        - Global MRC data structure
-  @param[in] PprAmtData     - PPR and AMT data structure
   @param[in] CmdPat         - Type of sequence MT_CPGC_WRITE, MT_CPGC_READ, or MT_CPGC_READ_WRITE
+  @param[in] SeqDataInv     - Specifies whether data pattern should be inverted per subsequence
   @param[in] Pattern        - Array of 64-bit Data Pattern for the test
+  @param[in] PatternDepth   - Length of PatternQW in number of UIs
   @param[in] IsUseInvtPat   - Info to indicate whether or not patternQW is inverted by comparing original pattern
+  @param[in] UiShl          - Bit-shift value per UI
+  @param[in] NumCL          - Number of cachelines to use in WDB
   @param[in] Direction      - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DOWN
+  @param[in] Status         - mrcSuccess / mrcFail
+  @param[in] TotalTime      - Accumulated time over all AMT runs for the current data pattern
   @param[in] PatternNumber  - Which pattern in the MATS8 sequence is this test
+  @param[in] TestType       - Memory test type that is currently being run
 
   @retval None
 **/
 VOID
 MrcRunPprDetection (
-  IN MrcParameters *const           MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN UINT8                          CmdPat,
-  IN UINT64                         Pattern[],
-  IN BOOLEAN                        IsUseInvtPat,
-  IN UINT8                          Direction,
-  IN UINT8                          PatternNumber
+  IN MrcParameters*             const MrcData,
+  IN UINT8                      CmdPat,
+  IN UINT8                      SeqDataInv[2], // MT_MAX_SUBSEQ = 2
+  IN UINT64                     Pattern[],
+  IN UINT8                      PatternDepth,
+  IN BOOLEAN                    IsUseInvtPat,
+  IN UINT8                      UiShl, // Pattern Rotation per UI
+  IN UINT8                      NumCL,
+  IN UINT8                      Direction,
+  IN MrcStatus                  *Status,
+  IN UINT32                     *TotalTime,
+  IN UINT8                      PatternNumber,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
   );
 
 /**
-  Pause refreshes during Data Retention memory test
+  Pause condition for data retention Advanced Memory Test
 
   @param[in] MrcData - Global MRC data structure
 
@@ -319,72 +342,52 @@ AdvMemTestPauseDataRet (
   Runs Advanced Memory Tests based on the MATS + algorithm
 
   @param[in] MrcData        - Global MRC data structure
-  @param[in] PprAmtData     - PPR and AMT data structure
+  @param[in] BankMapping    - Array containing L2P bank mapping data for all CPGC_SEQ_BANK_L2P_MAPPING registers
   @param[in] InvertedPassEn - Whether to run MATS+ patterns 4-6, which are the same as patterns 1-3 but with inverted data
+  @param[in] TotalTestTime  - Accumulated time over all AMT runs
 
   @retval MrcStatus - mrcSuccess/mrcFail
 **/
 MrcStatus
 MemTestMATSN (
-  IN MrcParameters          *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  BOOLEAN                           InvertedPassEn
+  IN MrcParameters  *const MrcData,
+  MRC_BG_BANK_PAIR  BankMapping[MAX_CONTROLLER][MAX_CHANNEL][MAX_BANKS],
+  BOOLEAN           InvertedPassEn,
+  UINT32            *TotalTestTime
 );
 
 /**
   Runs Advanced Memory Test targeting Data retention between refresh
 
   @param[in] MrcData        - Global MRC data structure
-  @param[in] PprAmtData     - PPR and AMT data structure
+  @param[in] BankMapping    - Array containing L2P bank mapping data for all CPGC_SEQ_BANK_L2P_MAPPING registers
+  @param[in] TotalTestTime  - Accumulated time over all AMT runs
 
   @retval MrcStatus - mrcSuccess/mrcFail
 **/
 MrcStatus
 MemTestDataRetention (
-  IN MrcParameters          *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData
+  IN MrcParameters  *const MrcData,
+  MRC_BG_BANK_PAIR  BankMapping[MAX_CONTROLLER][MAX_CHANNEL][MAX_BANKS],
+  UINT32            *TotalTestTime
 );
 
 /**
-  Runs Advanced Memory Test march pattern
+  Runs Advanced Memory Test targeting Data retention between refresh
 
   @param[in] MrcData        - Global MRC data structure
-  @param[in] PprAmtData     - PPR and AMT data structure
+  @param[in] BankMapping    - Array containing L2P bank mapping data for all CPGC_SEQ_BANK_L2P_MAPPING registers
+  @param[in] TotalTestTime  - Accumulated time over all AMT runs
+  @param[in] TestType       - Memory test type that is currently being run
 
   @retval MrcStatus - mrcSuccess/mrcFail
 **/
 MrcStatus
 MemTestMarch (
-  IN MrcParameters          *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData
-  );
-
-/**
-  Runs Advanced Memory Test march pattern with different data pattern and test flow
-
-  @param[in] MrcData        - Global MRC data structure
-  @param[in] PprAmtData     - PPR and AMT data structure
-
-  @retval MrcStatus - mrcSuccess/mrcFail
-**/
-MrcStatus
-MemTestMarchAlt (
-  IN MrcParameters          *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData
-  );
-
-/**
-  Runs Advanced Memory Test write/read test using multiple types of alternating data patterns
-
-  @param[in] MrcData        - Global MRC data structure
-  @param[in] PprAmtData     - PPR and AMT data structure
-
-  @retval MrcStatus - mrcSuccess/mrcFail
-**/
-MrcStatus
-MemTestMmrw (
-  IN MrcParameters          *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData
+  IN MrcParameters              *const MrcData,
+  MRC_BG_BANK_PAIR              BankMapping[MAX_CONTROLLER][MAX_CHANNEL][MAX_BANKS],
+  UINT32                        *TotalTestTime,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
   );
 
 /**
@@ -398,90 +401,6 @@ MemTestMmrw (
 MrcStatus
 MrcPostPackageRepairEnable (
   IN MrcParameters *const MrcData
-  );
-
-/**
-  Set up the controller for Post-Package Repair (PPR).
-
-  @param[in]  MrcData    - Include all MRC global data.
-  @param[in]  Controller - the controller to work on
-  @param[in]  Channel    - The channel to work on
-  @param[out] SaveData   - A data buffer to save the current state of the controller.
-
-  @retval None
-**/
-void
-MrcDdr5PprControllerSetup (
-  IN MrcParameters *const MrcData,
-  IN UINT32               Controller,
-  IN UINT32               Channel,
-  IN PPR_MC_SETUP_SAVE    *SaveData
-  );
-
-
-/**
-  Cleanup the MC configuration after Post-Package Repair (PPR).
-
-  @param[in]  MrcData    - Include all MRC global data.
-  @param[in]  Controller - the controller to work on
-  @param[in]  Channel    - The channel to work on
-  @param[out] SaveData   - A data buffer to save the controller state prior to PPR.
-
-  @retval None
-**/
-void
-MrcDdr5PprControllerTeardown (
-  IN MrcParameters *const MrcData,
-  IN UINT32               Controller,
-  IN UINT32               Channel,
-  IN PPR_MC_SETUP_SAVE    *SaveData
-  );
-
-/**
-  Set up the controller for Post-Package Repair (PPR).
-
-  @param[in]  MrcData    - Include all MRC global data.
-  @param[in]  Controller - the controller to work on
-  @param[in]  Channel    - The channel to work on
-  @param[out] SaveData   - A data buffer to save the current state of the controller.
-
-  @retval None
-**/
-void
-MrcLpddr5PprControllerSetup (
-  IN MrcParameters *const MrcData,
-  IN UINT32               Controller,
-  IN UINT32               Channel,
-  IN PPR_MC_SETUP_SAVE    *SaveData
-  );
-
-/**
-  Cleanup the MC configuration after Post-Package Repair (PPR).
-
-  @param[in]  MrcData    - Include all MRC global data.
-  @param[in]  Controller - the controller to work on
-  @param[in]  Channel    - The channel to work on
-  @param[out] SaveData   - A data buffer to save the controller state prior to PPR.
-
-  @retval None
-**/
-void
-MrcLpddr5PprControllerTeardown (
-  IN MrcParameters *const MrcData,
-  IN UINT32               Controller,
-  IN UINT32               Channel,
-  IN PPR_MC_SETUP_SAVE    *SaveData
-  );
-
-/**
-  This is a test function for direct testing of the Post Package Repair sequence.
-  @param[in] MrcData     - Pointer to global MRC data.
-
-  @return MrcStatus - mrcSuccess if no errors, otherwise return error status.
-**/
-MrcStatus
-MrcPostPackageRepairTest (
-  IN  MrcParameters *const MrcData
   );
 
 #endif // _MrcPpr_h_

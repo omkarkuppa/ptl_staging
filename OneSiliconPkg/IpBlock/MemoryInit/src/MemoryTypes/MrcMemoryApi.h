@@ -111,9 +111,6 @@ typedef enum {
   MrDramCmdMrr,
   MrDramCmdNop,
   MrDramCmdPrea,
-  MrDramCmdPrepb,
-  MrDramCmdWra,
-  MrDramCmdAct,
   MrDramCmdWsFs,  // LPDDR5 Only
   MrDramCmdWsOff, // LPDDR5 Only
   MrDramCmdCs2nSyncNop, // DDR5 Only
@@ -954,18 +951,5 @@ IsNtOdtSupported (
   OUT BOOLEAN              *NTODTRd
   );
 
-/**
-  Override CS to the input CsOverrideVal value.
-
-  @param[in] MrcData       - Pointer to MRC global data.
-  @param[in] CsOverrideVal - Value to override CS to. Any non-zero value sets CS high.
-  @param[in] CsOverrideEn  - Input specifying whether to enable or disable CS Override.
-**/
-VOID
-OverrideCs (
-  IN MrcParameters *const MrcData,
-  IN UINT8                CsOverrideVal,
-  IN BOOLEAN              CsOverrideEn
-  );
 
 #endif // _MRC_MEMORY_API_H_

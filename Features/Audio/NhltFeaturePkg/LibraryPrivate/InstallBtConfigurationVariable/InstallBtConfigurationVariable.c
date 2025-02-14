@@ -45,7 +45,9 @@ InstallNhltBtVariable (
   UINT32                          NhltBtVarAttr;
   EFI_STATUS                      Status;
   UINTN                           VariableSize;
+  BOOLEAN                         VarNeedUpdate;
 
+  VarNeedUpdate = FALSE;
   VariableSize  = sizeof (NHLT_BT_CONFIGURATION_VARIABLE);
   ZeroMem (&NhltBtVarGlobal, sizeof (NhltBtVarGlobal));
 
@@ -59,9 +61,15 @@ InstallNhltBtVariable (
                 &VariableSize,
                 &NhltBtVarGlobal
                 );
-
-  if (Status == EFI_NOT_FOUND || (NhltBtVar.NhltBtActiveConfig != NhltBtVarGlobal.NhltBtActiveConfig)) {
+  if (Status == EFI_NOT_FOUND) {
     NhltBtVarAttr = EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
+    VarNeedUpdate = TRUE;
+  }
+  if (NhltBtVar.NhltBtActiveConfig != NhltBtVarGlobal.NhltBtActiveConfig) {
+    VarNeedUpdate = TRUE;
+  }
+
+  if (VarNeedUpdate) {
     Status = gRT->SetVariable (
                     NHLT_BT_CONFIGURATION_VARIABLE_NAME,
                     &gNhltBtConfigurationVariableGuid,

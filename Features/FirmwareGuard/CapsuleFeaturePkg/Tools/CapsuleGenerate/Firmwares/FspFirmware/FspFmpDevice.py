@@ -129,9 +129,9 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
 
             self.__CopyFspImage ()
 
-            self.__Buffer   : ByteBuffer     = self.__GetFspImageBuffer ()
-            self.__HdrParser: FspFwHdrParser = FspFwHdrParser (Buffer = self.__Buffer)
-            self.__BufferVer: FspFwVersion   = self.__HdrParser.Version
+            self.__FbmBuffer   : ByteBuffer   = self.__GetFbmImageBuffer ()
+            self.__HdrParser   : FbmHdrParser = FbmHdrParser (self.__FbmBuffer)
+            self.__VerInfo     : FbmVersion   = self.__HdrParser.FbmVersion
 
             #
             # Get the BIOS image configuration.
@@ -154,7 +154,7 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
             #
             self.__FspCapVer   : FspCapsuleVersion = \
                 FspCapsuleVersion (
-                    VersionInfo = self.__BufferVer,
+                    VersionInfo = self.__VerInfo,
                     )
 
             self.__FspCapLsv   : FspCapsuleVersion =\
@@ -250,8 +250,8 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
                 FBM_IMG_FILE_PATH
                 )
 
-        def __GetFspImageBuffer (self) -> ByteBuffer:
-            """ Read the FSP image from storage to buffer.
+        def __GetFbmImageBuffer (self) -> ByteBuffer:
+            """ Read the FBM image from storage to buffer.
 
             Args:
                 None.
@@ -261,11 +261,9 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
 
             Returns:
                 ByteBuffer:
-                    FSP image buffer within the ByteBuffer wrapper.
+                    FBM image buffer within the ByteBuffer wrapper.
             """
-            Buffer: Union[None, ByteBuffer] = None
-
-            Buffer = ByteBuffer (FSP_IMG_FILE_PATH)
+            Buffer: Union[None, ByteBuffer] = ByteBuffer (FBM_IMG_FILE_PATH)
 
             return Buffer
 
@@ -454,7 +452,7 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
                 CAP_FILE_PREFIX,
                 self.__BiosType,
                 self.__BuildType,
-                self.__FspCapVer.GetHexDotVersion (),
+                self.__FspCapVer.GetDecVersion (),
                 CAP_FILE_POSTFIX,
                 ]
 
@@ -624,7 +622,9 @@ if (BUILD_OP_VER == FSP_BUILD_OP_VER_1):
             if Status != FMP_SUCCESS:
                 ErrorException (f'Failed to get the vendor name.')
 
-            VerStr = self.__FspCapVer.GetHexDotVersion ()
+            Status, VerStr = self.GetCapsuleString ()
+            if Status != FMP_SUCCESS:
+                ErrorException (f'Failed to get the capsule string.')
 
             return FMP_SUCCESS, ' '.join ([
                                       Vendor,

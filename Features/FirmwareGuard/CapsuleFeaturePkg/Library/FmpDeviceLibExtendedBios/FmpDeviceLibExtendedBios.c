@@ -36,6 +36,7 @@
 #include <Library/CapsuleUpdateResetLib.h>
 #include <Library/PlatformBiosUpdateHookLib.h>
 #include <Library/ResiliencySupportLib.h>
+#include <Library/PayloadResiliencySupportLib.h>
 
 /**
   Provide a function to install the Firmware Management Protocol instance onto a
@@ -749,12 +750,14 @@ FmpDeviceSetImageWithStatus (
       ExtendedBiosObbImageSize = FixedPcdGet32 (PcdFlashObbSize);
       SaveObbToStorage ((VOID *) ExtendedBiosObbImage, ExtendedBiosObbImageSize);
 
-      NonFitPayloadImage     = ExtendedBiosImage
-                             + ExtendedBiosImageSize
-                             + FixedPcdGet32 (PcdFlashNonFitPayloadOffset)
-                             - FixedPcdGet32 (PcdFlashAllExtendedRegionSize);
-      NonFitPayloadImageSize = FixedPcdGet32 (PcdFlashNonFitPayloadSize);
-      SaveNonFitPayloadToStorage ((VOID *) NonFitPayloadImage, NonFitPayloadImageSize);
+      if (IsPayloadBackupEnabled ()) {
+        NonFitPayloadImage     = ExtendedBiosImage
+                               + ExtendedBiosImageSize
+                               + FixedPcdGet32 (PcdFlashNonFitPayloadOffset)
+                               - FixedPcdGet32 (PcdFlashAllExtendedRegionSize);
+        NonFitPayloadImageSize = FixedPcdGet32 (PcdFlashNonFitPayloadSize);
+        SaveNonFitPayloadToStorage ((VOID *) NonFitPayloadImage, NonFitPayloadImageSize);
+      }
     } else {
       DEBUG ((DEBUG_ERROR, "Fail to find new Extended BIOS image\n"));
       ASSERT (FALSE);

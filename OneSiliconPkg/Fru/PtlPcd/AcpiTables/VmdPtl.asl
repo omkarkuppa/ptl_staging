@@ -33,40 +33,28 @@
 //
 External (\_SB.ROOT_BRIDGE_COMMON.RP01.PON, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP01.POFF, MethodObj)
-External (\_SB.ROOT_BRIDGE_COMMON.RP01.PRST, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP02.PON, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP02.POFF, MethodObj)
-External (\_SB.ROOT_BRIDGE_COMMON.RP02.PRST, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP03.PON, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP03.POFF, MethodObj)
-External (\_SB.ROOT_BRIDGE_COMMON.RP03.PRST, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP04.PON, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP04.POFF, MethodObj)
-External (\_SB.ROOT_BRIDGE_COMMON.RP04.PRST, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP05.PON, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP05.POFF, MethodObj)
-External (\_SB.ROOT_BRIDGE_COMMON.RP05.PRST, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP06.PON, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP06.POFF, MethodObj)
-External (\_SB.ROOT_BRIDGE_COMMON.RP06.PRST, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP07.PON, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP07.POFF, MethodObj)
-External (\_SB.ROOT_BRIDGE_COMMON.RP07.PRST, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP08.PON, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP08.POFF, MethodObj)
-External (\_SB.ROOT_BRIDGE_COMMON.RP08.PRST, MethodObj)
 External (\_SB.ROOT_BRIDGE_COMMON.RP09.PON, MethodObj)      // P.E.G 0/6/0
 External (\_SB.ROOT_BRIDGE_COMMON.RP09.POFF, MethodObj)     // P.E.G 0/6/0
-External (\_SB.ROOT_BRIDGE_COMMON.RP09.PRST, MethodObj)     // P.E.G 0/6/0
 External (\_SB.ROOT_BRIDGE_COMMON.RP10.PON, MethodObj)      // P.E.G 0/6/1
 External (\_SB.ROOT_BRIDGE_COMMON.RP10.POFF, MethodObj)     // P.E.G 0/6/1
-External (\_SB.ROOT_BRIDGE_COMMON.RP10.PRST, MethodObj)     // P.E.G 0/6/1
 External (\_SB.ROOT_BRIDGE_COMMON.RP11.PON, MethodObj)      // P.E.G 0/6/2
 External (\_SB.ROOT_BRIDGE_COMMON.RP11.POFF, MethodObj)     // P.E.G 0/6/2
-External (\_SB.ROOT_BRIDGE_COMMON.RP11.PRST, MethodObj)     // P.E.G 0/6/2
-External (\_SB.ROOT_BRIDGE_COMMON.RP12.PON, MethodObj)      // P.E.G 0/6/3
-External (\_SB.ROOT_BRIDGE_COMMON.RP12.POFF, MethodObj)     // P.E.G 0/6/3
-External (\_SB.ROOT_BRIDGE_COMMON.RP12.PRST, MethodObj)     // P.E.G 0/6/3
+External (\_SB.ROOT_BRIDGE_COMMON.RP12.PON, MethodObj)      // P.E.G 0/1/0
+External (\_SB.ROOT_BRIDGE_COMMON.RP12.POFF, MethodObj)     // P.E.G 0/1/0
 External (\VDSD, IntObj) // VMD _DSD Method - 1: Expose 0: Hide
 External (\PBUS) // PCH ROOT PORT BUS Number
 
@@ -725,58 +713,5 @@ Scope (\_SB.PC00) {
       } // while
     }
 
-    // Device Reset to the remapped port PCIe slot
-    // Arg0  Storage remap port type
-    // Arg1  Index of the storage remap port
-    // Arg2  Indicates Reset Method : Assert - 0  ,  De-Assert - 1
-    //
-    Method (VDRA, 3, Serialized) {
-      Switch (ToInteger (Arg0)) {
-        Case (VMD_STORAGE_REMAP_PORT_PCIE_RP) {
-          Switch (ToInteger (Arg1)) {
-            // PCD PCIe
-            Case (0) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP01.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP01.PRST (Arg2)}
-            }
-            Case (1) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP02.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP02.PRST (Arg2)}
-            }
-            Case (2) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP03.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP03.PRST (Arg2)}
-            }
-            Case (3) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP04.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP04.PRST (Arg2)}
-            }
-            Case (4) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP05.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP05.PRST (Arg2)}
-            }
-            Case (5) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP06.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP06.PRST (Arg2)}
-            }
-            Case (6) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP07.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP07.PRST (Arg2)}
-            }
-            Case (7) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP08.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP08.PRST (Arg2)}
-            }
-
-            Case (24) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP09.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP09.PRST (Arg2)}
-            }
-            Case (25) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP10.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP10.PRST (Arg2)}
-            }
-            Case (26) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP11.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP11.PRST (Arg2)}
-            }
-            Case (27) {
-              If (CondRefOf (\_SB.ROOT_BRIDGE_COMMON.RP12.PRST)) {\_SB.ROOT_BRIDGE_COMMON.RP12.PRST (Arg2)}
-            }
-            Default {Return (0)}
-          }
-        }
-      }
-      Return (0)
-    }
   }
 }

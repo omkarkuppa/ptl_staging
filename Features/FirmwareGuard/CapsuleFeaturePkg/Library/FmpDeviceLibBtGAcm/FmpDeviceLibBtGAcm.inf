@@ -62,6 +62,7 @@
   CbntSvnCheckLib
   TopSwapSupportLib
   ResiliencySupportLib
+  PayloadResiliencySupportLib
 
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress  ## CONSUMES

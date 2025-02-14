@@ -24,32 +24,36 @@
 
 #include "MrcCpgcApi.h"
 #include "Cpgc20.h"
-#include "Cpgc20Patterns.h"
-#include "MrcAmtPprInterface.h"
+
+//
+// Hooks to test error handling functionality
+//
+#define POISON_ROW_FAIL_LIST                              0
 
 // Hook for function to display row failure list
 #define AMT_PRINT_ROW_FAIL_LIST   0
 
-#define AMT_USE_XMARCH_ALT 1
-#define AMT_USE_YMARCH_SHORT_ALT 1
+#define LOCAL_STUB_PPR_RESOURCE_ALWAYS_AVAILABLE  0
+
+// Advanced Mem Test types
+// Should agree with PPR test type bits defined in CMrcExtTypes.h
+typedef enum {
+  AdvMtWcMats8 = 0,         // Worst case MATS8 test; default test type
+  AdvMtDataRet,             // Data retention test
+  AdvMtXMarch,
+  AdvMtXMarchG,
+  AdvMtYMarchShort,
+  AdvMtYMarchLong
+} MRC_ADVANCED_MEM_TEST_TYPE;
 
 typedef union {
   struct {
-    UINT8 PprEnabled    : 1;
     UINT8 AmtEnabled    : 1;
+    UINT8 PprEnabled    : 1;
     UINT8 Reserved      : 6;
   } Bits;
   UINT8 Data;
 } AMT_PPR_ENABLE;
-
-// Definitions for MMRW test type
-#define NUM_AMT_MMRW_TESTS 3
-#define NUM_AMT_MMRW_PATTERNS_PER_TEST 4
-typedef enum {
-  AmtMmrwTestPattern1 = 0x778501,
-  AmtMmrwTestPattern2 = 0x778502,
-  AmtMmrwTestPattern3 = 0x778503
-} MRC_AMT_MMRW_TEST_PATTERN_TYPE;
 
 // Mem test type selection and overrides
 // PprTestType setup option encoding -- Bit 0: WCMATS8 test, Bit 1: Data Retention test, Bit 2: X March test, Bit 3: X March G test, Bit 4: Y March Short test, Bit 5: Y March Long test
@@ -140,24 +144,6 @@ MrcProgramMATSPattern (
   );
 
 /**
-  This function programs a specific pattern for the MMRW test into CPGC ExtBuf registers.
-
-  @param[in]  MrcData                 - Global MRC data structure
-  @param[in]  McChBitMask             - Memory Controller Channel Bit mask to read status for.
-  @param[in]  PatternQW               - Array of 64-bit Data Pattern to write
-  @param[in]  ErrInjMask16            - Bitmask of DQ lanes to inject error
-
-  @retval   mrcSuccess / mrcFail
-**/
-MrcStatus
-MrcProgramDSPattern (
-  IN  MrcParameters *const MrcData,
-  IN  UINT32               McChBitMask,
-  IN  UINT64               PatternQW[],
-  IN  UINT16               ErrInjMask16
-  );
-
-/**
   Cpgc command pattern setup up for memory test
 
   @param[in] MrcData        - Pointer to MRC global data.
@@ -190,6 +176,8 @@ MrcConfigurePprCmdPat (
   @param[in]  RasterRepoClear - If set, Raster Repo entries will be Reset (this bit auto-clears)
   @param[in]  RasterRepoMode  - Indicates the mode of operation for Raster Repo
   @param[in]  Mode3Max        - In Raster Repo Mode 3, sets maximum number of failing address before an additional failing address will set fail_excess for the respective Bank.
+
+  @retval nothing
 **/
 void
 Cpgc20RasterRepoConfig (
@@ -372,7 +360,7 @@ AmtGetRowFailListSize (
 );
 
 /**
-  Get the current index in the Row fail list for given controller/channel
+  Get the current index in the Row fail list for given channel
 
   @param[in] MrcData        - Global MRC data structure
   @param[in] Controller     - Controller number
@@ -406,7 +394,7 @@ AmtSetRowFailIndex (
 );
 
 /**
-  Set the number of entries in the Row fail list for given controller/channel
+  Set the number of entries in the Row fail list for given channel
 
   @param[in] MrcData        - Global MRC data structure
   @param[in] Controller     - Controller number
@@ -427,7 +415,6 @@ AmtSetRowFailListSize (
   Creates a full DQ failure per technology.
 
   @param[in] MrcData        - Global MRC data structure
-  @param[in,out] DqMask     - Bitmask of DQ errors
 
 **/
 VOID
@@ -469,75 +456,17 @@ MrcPrintDeviceTemperature (
   );
 
 /**
-  Compare most significant channel address bits excluding row bits
+Compare most significant channel address bits excluding row bits
 
-  @param CurAddr          - First address to compare
-  @param RowAddr          - Second address to compare
+@param CurAddr          - First address to compare
+@param RowAddr          - Second address to compare
 
-  @retval   TRUE for match, otherwise FALSE
+@retval   TRUE for match, otherwise FALSE
 **/
 BOOLEAN
 AmtCurrentAddrMatch (
   ROW_ADDR CurAddr,
   ROW_ADDR RowAddr
-  );
-
-/**
-  Display the row failure list
-
-  @param[in] MrcData            - Global MRC data structure
-  @param[in] Controller         - Controller number
-  @param[in] Channel            - Channel number
-
-  @retval   None
-**/
-#if AMT_PRINT_ROW_FAIL_LIST
-VOID
-AmtDisplayRowFailureList (
-  IN MrcParameters   *const   MrcData,
-  IN UINT8                    Controller,
-  IN UINT8                    Channel
-  );
-#endif
-
-/**
-  Shifts row fail list to right by number of entries starting at given index
-
-  @param[in] MrcData        - Global MRC data structure
-  @param[in] Controller     - Controller number to compare
-  @param[in] Channel        - Channel number to compare
-  @param[in] Index          - List index to begin the shift operation
-  @param[in] NumEntries     - Number of entries to shift
-
-  @retval status - mrcSuccess / mrcFail
-**/
-MrcStatus
-AmtShiftFailRangeListRight (
-  MrcParameters *const MrcData,
-  UINT8                Controller,
-  UINT8                Channel,
-  UINT32               Index,
-  UINT32               NumEntries
-  );
-
-/**
-  Shifts row fail list left by number of entries starting at given index
-
-  @param[in] MrcData        - Global MRC data structure
-  @param[in] Controller     - Controller number to compare
-  @param[in] Channel        - Channel number to compare
-  @param[in] Index          - List index to begin the shift operation
-  @param[in] NumEntries     - Number of entries to shift
-
-  @retval status - mrcSuccess / mrcFail
-**/
-MrcStatus
-AmtShiftFailRangeListLeft (
-  MrcParameters *const MrcData,
-  UINT8                Controller,
-  UINT8                Channel,
-  UINT32               Index,
-  UINT32               NumEntries
   );
 
 /**
@@ -559,27 +488,61 @@ AmtRemoveRowFailRange (
   );
 
 /**
-  Sets values for the fail range entry at the given index
+  Display the row failure list
 
-  @param[in] MrcData        - Global MRC data structure
-  @param[in] Controller     - Controller number
-  @param[in] Channel        - Channel number
-  @param[in] FailIndex      - index into the Row fail list
-  @param[in] NewFail        - FailRange for the new fail to add
-  @param[in] SetIndex       - Whether to update the MrcOutputs->FailIndex pointer to the newly created failure
-  @param[in,out] Status     - mrcSuccess / mrcFail
+  @param[in] MrcData            - Global MRC data structure
+  @param[in] Controller         - Controller number
+  @param[in] Channel            - Channel number
 
-  @retval Whether the operation was successful
+  @retval   None
 **/
-UINT8
-AmtInsertEntryIntoRowFailRange (
-  IN     MrcParameters* const MrcData,
-  IN     UINT8                Controller,
-  IN     UINT8                Channel,
-  IN     UINT32               FailIndex,
-  IN     ROW_FAIL_RANGE       *NewFail,
-  IN     BOOLEAN              SetIndex,
-  IN OUT MrcStatus            *Status
+#if AMT_PRINT_ROW_FAIL_LIST
+VOID
+AmtDisplayRowFailureList (
+  IN MrcParameters   *const   MrcData,
+  IN UINT8                    Controller,
+  IN UINT8                    Channel
+  );
+#endif
+
+/**
+Shifts row fail list to right by number of entries starting at given index
+
+@param Host               - Pointer to sysHost, the system Host (root) structure
+@param Socket             - Socket Id
+@param Ch                 - Channel number
+@param Index              - List index to begin the shift operation
+@param NumEntries         - Number of entries to shift
+
+@retval status - MRC_STATUS_SUCCESS / MRC_STATUS_FAILURE
+**/
+MrcStatus
+AmtShiftFailRangeListRight (
+  MrcParameters *const MrcData,
+  UINT8                Controller,
+  UINT8                Channel,
+  UINT32               Index,
+  UINT32               NumEntries
+  );
+
+/**
+  Shifts row fail list to left by number of entries starting at given index
+
+  @param Host               - Pointer to sysHost, the system Host (root) structure
+  @param Socket             - Socket Id
+  @param Ch                 - Channel number
+  @param Index              - List index to begin the shift operation
+  @param NumEntries         - Number of entries to shift
+
+  @retval status - mrcSuccess / mrcFail
+**/
+MrcStatus
+AmtShiftFailRangeListLeft (
+  MrcParameters *const MrcData,
+  UINT8                Controller,
+  UINT8                Channel,
+  UINT32               Index,
+  UINT32               NumEntries
   );
 
 /**
@@ -604,22 +567,26 @@ AmtUpdateRowFailList (
   Updates Row failure list with last failure, coalescing failure ranges where possible
 
   @param[in]  MrcData                 - Global MRC data structure
-  @param[in]  PprAmtData              - PPR and AMT data structure
   @param[in]  Controller              - Controller number of failure
   @param[in]  Channel                 - Channel number of failure
   @param[in]  CpgcErrorStatus         - the failure information
   @param[in]  DeviceTemp              - Dimm Temperature on initial failure
+  @param[in]  RowBits                 - Number of row bits supported by current logical rank
+  @param[in]  BaseBits                - Number of bank bits in SW loop
+  @param[in]  Direction               - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DN
 
   @retval status - mrcSuccess / mrcFail
 **/
 MrcStatus
 AmtUpdateRowFailures (
-  IN  MrcParameters *const          MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN  UINT8                         Controller,
-  IN  UINT8                         Channel,
-  IN  CPGC_ERROR_STATUS_AMT         CpgcErrorStatus,
-  IN  UINT8                         DeviceTemp[MAX_CONTROLLER][MAX_CHANNEL]
+  IN  MrcParameters *const    MrcData,
+  IN  UINT8                   Controller,
+  IN  UINT8                   Channel,
+  IN  CPGC_ERROR_STATUS_AMT   CpgcErrorStatus,
+  IN  UINT8                   DeviceTemp[MAX_CONTROLLER][MAX_CHANNEL],
+  IN  UINT8                   RowBits[MAX_CONTROLLER][MAX_CHANNEL],
+  IN  UINT32                  BaseBits,
+  IN  UINT8                   Direction
   );
 
 /**
@@ -627,35 +594,73 @@ AmtUpdateRowFailures (
   CPGC setup per rank for Advanced Memory test
 
   @param[in] MrcData                    - Global MRC data structure
-  @param[in] PprAmtData                 - PPR and AMT data structure
   @param[in] McChBitMask                - Memory Controller Channel Bit mask to read results for.
+  @param[in] Rank                       - Physical rank index inside the dimm
+  @param[in] ColAddressBits             - number of DRAM column address bits to test
+  @param[in] RowAddressBits             - number of DRAM row address bits to test
+  @param[in] BankAddressBits            - number of DRAM bank address bits to test
+  @param[in] Direction                  - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DN
+  @param[in] BaseBankBits               - Number of least significant bank bits used in SW loop
+  @param[in] RowAddr                    - Base row address to start testing
+  @param[in] RowSize                    - Number of rows to test
+  @param[in] UseSingleBank              - If true, tests a single bank instead of all banks
+  @param[in] CpgcBank                   - Base bank address number to test in CPGC format (no BG number)
+  @param[in] TestType                   - Memory test type that is currently being run
 
   @retval Bit mask of channels enabled if rank exists
 
 **/
 UINT8
 AdvancedMemTestRankSetupMATSRowRange (
-  IN OUT MrcParameters  *const      MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN UINT8                          McChBitMask
+  IN OUT MrcParameters  *const  MrcData,
+  IN UINT8                      McChBitMask,
+  IN UINT32                     Rank,
+  IN UINT8                      ColAddressBits[MAX_CONTROLLER][MAX_CHANNEL],
+  IN UINT8                      RowAddressBits[MAX_CONTROLLER][MAX_CHANNEL],
+  IN UINT8                      BankAddressBits[MAX_CONTROLLER][MAX_CHANNEL],
+  IN UINT8                      Direction,
+  IN UINT32                     BaseBankBits,
+  IN UINT32                     RowAddr[MAX_CONTROLLER][MAX_IP_CHANNEL],
+  IN UINT32                     RowSize[MAX_CONTROLLER][MAX_IP_CHANNEL],
+  IN BOOLEAN                    UseSingleBank,
+  IN UINT32                     CpgcBank,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
   );
 
 /**
   This function sets up a test for the given MC channel mask, with specified data pattern.
 
   @param[in,out] MrcData           - Pointer to MRC global data.
-  @param[in]     PprAmtData        - PPR and AMT data structure
   @param[in]     McChBitMask       - Memory Controller Channel Bit mask to test.
+  @param[in]     Rank              - Physical rank index inside the dimm
   @param[in]     LoopCount         - CPGC sequence loop count
+  @param[in]     CmdPat            - 0: PatWrRd, PatWr, PatRd
+  @param[in]     SeqDataInv[2]     - Enables pattern inversion per subsequence
+  @param[in]     Pattern           - Array of 64-bit wide data pattern to use per UI
+  @param[in]     PatternDepth      - Length of PatternQW in number of UIs
+  @param[in]     IsUseInvtPat      - Info to indicate whether or not Pattern is inverted by comparing original pattern
+  @param[in]     UiShl             - Bit-shift value per UI
+  @param[in]     NumCacheLines     - Number of cachelines to use in WDB
+  @param[in]     Direction         - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DN
+  @param[in]     TestType          - Memory test type that is currently being run
 
   @retval mrcSuccess
 **/
 MrcStatus
 SetupIOTestRetention (
-  IN OUT   MrcParameters *const     MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN       UINT8                    McChBitMask,
-  IN       UINT8                    LoopCount
+  IN OUT   MrcParameters *const MrcData,
+  IN       UINT8                McChBitMask,
+  IN       UINT8                Rank,
+  IN       UINT8                LoopCount,
+  IN       UINT8                CmdPat,
+  IN       BOOLEAN              SeqDataInv[2],
+  IN       UINT64               Pattern[],
+  IN       UINT8                PatternDepth,
+  IN       BOOLEAN              IsUseInvtPat,
+  IN       UINT8                UiShl,
+  IN       UINT8                NumCacheLines,
+  IN       UINT8                Direction,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
   );
 
 /**
@@ -721,77 +726,101 @@ SetupIOTestPPR (
   This implements the Advanced Memory test algorithm, to run over the specified Controller/Channels.
 
   @param[in] MrcData        - Global MRC data structure
-  @param[in] PprAmtData     - PPR and AMT data structure
-
-  @retval status - mrcSuccess / mrcFail
-**/
-VOID
-MrcAdvancedMemTest (
-  IN MrcParameters            *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA   *const  PprAmtData
-);
-
-/**
-  Checks the results of the preceding advanced memory test
-
-  @param[in]  MrcData                 - Global MRC data structure
-  @param[in]  PprAmtData              - PPR and AMT data structure
-  @param[in]  McChBitMask             - Memory Controller Channel Bit mask to check results for.
+  @param[in] CmdPat         - Type of sequence MT_CPGC_WRITE, MT_CPGC_READ, or MT_CPGC_READ_WRITE
+  @param[in] SeqDataInv     - Specifies whether data pattern should be inverted per subsequence
+  @param[in] Pattern        - Array of 64-bit Data Pattern for the test
+  @param[in] PatternDepth   - Length of PatternQW in number of UIs
+  @param[in] IsUseInvtPat   - Info to indicate whether or not patternQW is inverted by comparing original pattern
+  @param[in] UiShl          - Bit-shift value per UI
+  @param[in] NumCacheLines  - Number of cachelines to use in WDB
+  @param[in] Direction      - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DOWN
+  @param[in] TestType       - Memory test type that is currently being run
 
   @retval status - mrcSuccess / mrcFail
 **/
 MrcStatus
+MrcAdvancedMemTest (
+  IN MrcParameters*             const MrcData,
+  IN UINT8                      CmdPat,
+  IN UINT8                      SeqDataInv[2], // MT_MAX_SUBSEQ = 2
+  IN UINT64                     Pattern[],
+  IN UINT8                      PatternDepth,
+  IN BOOLEAN                    IsUseInvtPat,
+  IN UINT8                      UiShl,
+  IN UINT8                      NumCacheLines,
+  IN UINT8                      Direction,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
+);
+
+/**
+Checks the results of the preceding advanced memory test
+
+@param[in]  MrcData                 - Global MRC data structure
+@param[in]  McChBitMask             - Memory Controller Channel Bit mask to check results for.
+@param[in]  Rank                    - Rank to check results for
+@param[in]  RowBits                 - Number of row bits supported by current rank
+@param[in]  BaseBits                - Number of least significant bank bits used in SW loop
+@param[in]  Direction               - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DN
+@param[in]  AmtRetryDisabled        - Indicates when the AMT Retry flag is disabled
+@param[in]  FromRowTestPpr          - Whether this memtest is being called from function RowTestPpr; if true, executes only one memtest without retry logic
+
+@retval status - mrcSuccess / mrcFail
+**/
+MrcStatus
 AmtCheckTestResults (
-  IN  MrcParameters *const          MrcData,
-  IN  PPR_AMT_PARAMETER_DATA *const PprAmtData,
-  IN  UINT32                        McChBitMask
+  IN  MrcParameters *const  MrcData,
+  IN  UINT32                McChBitMask,
+  IN  UINT32                Rank,
+  IN  UINT8                 RowBits[MAX_CONTROLLER][MAX_CHANNEL],
+  IN  UINT32                BaseBits,
+  IN  UINT8                 Direction,
+  IN  BOOLEAN               FromRowTestPpr
   );
 
 /**
   Executes a step of Advanced Memory test on given row address and size, and logs results.
 
   @param[in] MrcData                - Global MRC data structure
-  @param[in] PprAmtData             - PPR and AMT data structure
   @param[in] McChBitMask            - Memory Controller Channel Bit mask to read results for.
+  @param[in] Rank                   - Physical rank index inside the dimm
+  @param[in] ColumnBits             - number of column bits per logical rank
+  @param[in] RowBits                - number of row bits per logical rank
+  @param[in] BankBits               - number of bank bits
+  @param[in] CmdPat                 - Type of sequence MT_CPGC_WRITE, MT_CPGC_READ, or MT_CPGC_READ_WRITE
+  @param[in] Direction              - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DOWN
+  @param[in] Bank                   - Current bank address
+  @param[in] BaseBits               - Number of least significant bank bits used in SW loop
   @param[in] BaseRow                - Row address to start test
   @param[in] RangeSize              - Row range size to test
+  @param[in] FromRowTestPpr         - Whether this memtest is being called from function RowTestPpr; if true, executes only one memtest without retry logic
+  @param[in] TestType               - Memory test type that is currently being run
 
   @retval status - mrcSuccess / mrcFail
 **/
 MrcStatus
 AmtExecuteRowRangeTest (
   MrcParameters   *const        MrcData,
-  IN PPR_AMT_PARAMETER_DATA     *const  PprAmtData,
   UINT8                         McChBitMask,
+  UINT32                        Rank,
+  UINT8                         ColumnBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL],
+  UINT8                         RowBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL],
+  UINT8                         BankBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL],
+  UINT8                         CmdPat,
+  UINT8                         Direction,
+  UINT32                        CpgcBank,
+  UINT32                        BaseBits,
   UINT32                        BaseRow[MAX_CONTROLLER][MAX_IP_CHANNEL],
-  UINT32                        RangeSize[MAX_CONTROLLER][MAX_IP_CHANNEL]
-  );
-
-/**
-  Run write/read test on a row.
-
-  @param[in] MrcData              - Global MRC data structure
-  @param[in] PprAmtData           - PPR and AMT data structure
-  @param[in] McChBitMask          - Memory Controller Channel Bit mask to read results for.
-  @param[in] Row                  - Row address to run test
-
-  @retval status - mrcSuccess if no row failures found, mrcFail if row failure found
-
-  **/
-MrcStatus
-RowTestPprWorker (
-  MrcParameters *const            MrcData,
-  PPR_AMT_PARAMETER_DATA  *const  PprAmtData,
-  UINT8                           McChBitMask,
-  UINT32                          Row
+  UINT32                        RangeSize[MAX_CONTROLLER][MAX_IP_CHANNEL],
+  BOOLEAN                       FromRowTestPpr,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
   );
 
 /**
   Executes a single-row write/read memory test with a simple data pattern.
 
   @param[in] MrcData              - Global MRC data structure
-  @param[in] PprAmtData           - PPR and AMT data structure
   @param[in] McChBitMask          - Memory Controller Channel Bit mask to read results for.
+  @param[in] Rank                 - Pointer to return bitmask of channels to test next time
   @param[in] Bank                 - Current bank address
   @param[in] Row                  - Row address to run test
 
@@ -799,27 +828,25 @@ RowTestPprWorker (
 **/
 MrcStatus
 RowTestPpr (
-  IN MrcParameters  *const          MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN UINT8                          McChBitMask,
-  IN UINT32                         CpgcBank,
-  IN UINT32                         Row
+  IN MrcParameters  *const  MrcData,
+  IN UINT8                  McChBitMask,
+  IN UINT32                 Rank,
+  IN UINT32                 CpgcBank,
+  IN UINT32                 Row
   );
 
 /**
   Manually add entries into the row failure list for debugging purposes
 
   @param[in] MrcData        - Global MRC data structure
-  @param[in] PprAmtData     - PPR and AMT data structure
 
   @retval none
 **/
 #if POISON_ROW_FAIL_LIST
 VOID
 AmtPoisonRowFailList (
-  IN MrcParameters          *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData
-);
+  MrcParameters *const    MrcData
+  );
 
 /**
 Loop through all controllers and channels to find and print the total row failures per controller, channel
@@ -866,6 +893,28 @@ AmtUpdateL2PBankMappingWithoutBG (
   IN  UINT32                Rank,
   IN  BOOLEAN               UseSingleBank,
   IN  UINT32                CpgcBank
+  );
+
+/**
+  Run write/read test on a row.
+
+  @param[in] MrcData              - Global MRC data structure
+  @param[in] McChBitMask          - Memory Controller Channel Bit mask to read results for.
+  @param[in] Rank                 - Pointer to return bitmask of channels to test next time
+  @param[in] Bank                 - Current bank address
+  @param[in] Row                  - Row address to run test
+
+  @retval status - mrcSuccess if no row failures found, mrcFail if row failure found
+
+**/
+MrcStatus
+RowTestPprWorker (
+  MrcParameters *const  MrcData,
+  UINT8                 McChBitMask,
+  UINT32                Rank,
+  UINT32                CpgcBank,
+  UINT32                Row,
+  UINT64                TestPattern
   );
 
 #endif // _MrcAmt_h_

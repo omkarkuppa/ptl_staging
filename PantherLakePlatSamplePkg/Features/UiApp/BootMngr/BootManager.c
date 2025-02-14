@@ -272,9 +272,9 @@ CallBootManager (
                                     NULL
                                     );
   if (gBootManagerPrivate.HiiHandle == NULL) {
-    DEBUG((DEBUG_ERROR, "ERROR: HiiHandle is NULL\n"));
-    ASSERT(gBootManagerPrivate.HiiHandle != NULL);
-    return;
+    Status = EFI_OUT_OF_RESOURCES;
+  } else {
+    Status = EFI_SUCCESS;
   }
 
 

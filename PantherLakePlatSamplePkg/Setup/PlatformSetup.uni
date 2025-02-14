@@ -165,7 +165,7 @@
 
 #string STR_PCIE_REV_HELP                             #language en-US "PCIe BIOS Writer Guide Version"
 #string STR_PCIE_REV_NAME                             #language en-US "PCIe BWG Version"
-#string STR_PCIE_REV_VALUE                            #language en-US "2.35"
+#string STR_PCIE_REV_VALUE                            #language en-US "2.31"
 
 #string STR_THERMAL_REPORTING_PROMPT                  #language en-US "Enable All Thermal Functions"
 #string STR_THERMAL_REPORTING_HELP                    #language en-US "Enable All Thermal Functions will enable 'Memory Thermal Management', 'Active Trip Points', and 'Critical Trip Points'. Set to disable for Manual Configuration"

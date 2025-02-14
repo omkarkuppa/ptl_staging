@@ -621,7 +621,7 @@
 #define CCCSHARED_CR_DDRCRTXDLLCONTROL1_REG                            (0x000095B8)
 //Duplicate of DDRDATA_SHARED0_CR_DDRCRDLLCONTROL1_REG
 
-#define CCCSHARED_CR_DDRCCCSHARED_CR_SPARE_REG                         (0x000095BC)
+#define CCCSHARED_CR_SPARE_REG                                         (0x000095BC)
 //Duplicate of DATA0CH0_CR_SPARE_REG
 
 #define CCCSHARED_CR_DDRCRTXDLLCONTROL2_REG                            (0x000095C0)

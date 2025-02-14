@@ -170,7 +170,6 @@
   !endif
 
     gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable|TRUE
-    gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber|0x4
 
   !if gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable == TRUE
     gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber|0x1
@@ -566,8 +565,6 @@
 
   gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopVbtBinEnable|TRUE
 
-  gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear|2025
-
   gIntelFsp2PkgTokenSpaceGuid.PcdGlobalDataPointerAddress|0xFED00148
   gIntelFsp2WrapperTokenSpaceGuid.PcdPeiMinMemSize|0x4800000
 
@@ -622,8 +619,6 @@
   #      measure the FSP code without UPD in another record (PCR0).
   #
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig|0x8000000F  #Enable FSP measurement by platform
-
-  gUefiCpuPkgTokenSpaceGuid.PcdMaxMappingAddressBeforeTempRamExit|0x100000000
 
 
 # Update PcdsFeatureFlag acording to PcdsFixedAtBuild changes

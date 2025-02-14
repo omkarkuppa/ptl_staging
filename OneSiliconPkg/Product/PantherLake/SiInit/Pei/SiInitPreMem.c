@@ -72,7 +72,6 @@
 #include <ConfigBlock/Ish/IshConfig.h>
 #include <Library/PchInitLib.h>
 #include <Library/FspPerformanceLib.h>
-#include <Library/PeiMemTelAmtPprLib.h>
 
 /**
   PPV dummy reset handler.
@@ -547,11 +546,6 @@ SiInitPreMemOnPolicy (
   // Lock pmc set strap.
   //
   PmcLockSetStrapMsgInterface ();
-
-  ///
-  /// AMT PPR Policy Pre-memory
-  ///
-  MemTelemetryAmtPprVarUpdate ();
 
   //
   // Initialize ME after Policy PPI produced

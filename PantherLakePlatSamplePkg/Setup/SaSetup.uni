@@ -1331,8 +1331,10 @@
 #string STR_ENPERIODICCOMP_PROMPT               #language en-US "Enable/Disable Periodic Compensation"
 #string STR_LVRAUTOTRIM_NAME                    #language en-US "LVR Auto Trim"
 #string STR_TLINECLKCAL_NAME                    #language en-US "Tline Clk Calibration"
+#string STR_PWRMETER_NAME                       #language en-US "Power Saving Meter"
 #string STR_OPTIMIZECOMP_NAME                   #language en-US "Comp Optimization"
 #string STR_WRTRETRAIN_NAME                     #language en-US "Write Dq/Dqs Retraining"
+#string STR_DDRPRECOMP_NAME                     #language en-US "Ddr Comp Calibration Pre Training"
 
 #string STR_MARGIN_LIMIT_CHECK_NAME             #language en-US "Margin Check Limit"
 #string STR_MARGIN_LIMIT_CHECK_HELP             #language en-US "Checks Margin to Limit to see if next boot memory needs to be retrain"
@@ -1343,7 +1345,6 @@
 #string STR_MARGIN_LIMIT_CHECK_L2_THSD_HELP     #language en-US "L2 check threshold is scale of L1 check. Ex. 200 is 2 x L1 Check"
 
 #string STR_EMPHASIS_TRNG_NAME                  #language en-US "Pre EMPHASIS Training"
-#string STR_RXDQSVOCC_TRNG_NAME                 #language en-US "RX DQS VOC Centring Training"
 
 #string STR_MCREGOFFSET_NAME                    #language en-US "MC Register Offset"
 #string STR_MCREGOFFSET_HELP                    #language en-US "Apply user offsets to select MC registers"
@@ -1701,9 +1702,6 @@
 
 #string STR_PEI_DISPLAY                         #language en-US "Intel Graphics Pei Display Peim"
 #string STR_PEI_DISPLAY_HELP                    #language en-US "Enable/Disable Pei (Early) Display"
-
-#string STR_PEI_SOL_DISPLAY                     #language en-US "Intel Graphics PreMem SOL"
-#string STR_PEI_SOL_DISPLAY_HELP                #language en-US "Enable/Disable PreMem SOL Message"
 
 #string STR_CONFIGURE_GT                        #language en-US "Configure GT for use"
 #string STR_CONFIGURE_GT_HELP                   #language en-US "Enable/Disable GT configuration in BIOS"

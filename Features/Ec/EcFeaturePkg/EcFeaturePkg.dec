@@ -62,8 +62,6 @@
   #
   gEcFeaturePkgTokenSpaceGuid.PcdEcFeatureVersion           |0x00000001|UINT32|0xF000004E
   gEcFeaturePkgTokenSpaceGuid.PcdEcZeroTimeout              |FALSE|BOOLEAN|0xF0000013
-  gEcFeaturePkgTokenSpaceGuid.PcdEcPdCmdMaxRetry            |0x14|UINT16|0x00101037    # 20times
-  gEcFeaturePkgTokenSpaceGuid.PcdEcPdCmdWaitStallInUs       |0x2710|UINT16|0x00101038  # 10ms
 
 [PcdsDynamic, PcdsDynamicEx]
   gEcFeaturePkgTokenSpaceGuid.PcdEcPeciMode|0x00|UINT8|0x00101035

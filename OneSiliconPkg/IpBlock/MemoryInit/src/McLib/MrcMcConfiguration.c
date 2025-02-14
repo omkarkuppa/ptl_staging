@@ -281,7 +281,7 @@ MrcPmaConfig (
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     if (MrcControllerExist (MrcData, Controller)) {
       MrcGetSetMc (MrcData, Controller, GsmPmaEnableMc, WriteToCache | PrintValue, &GetSetVal);
-      if (Inputs->IsIbeccEnabled == TRUE) {
+      if (Inputs->ExtInputs.Ptr->Ibecc == TRUE) {
         MrcGetSetMc (MrcData, Controller, GsmPmaEnableIbecc, WriteToCache | PrintValue, &GetSetVal);
       }
     }

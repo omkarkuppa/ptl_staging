@@ -380,9 +380,6 @@ MrcWrappedStartMemoryConfiguration (
   if (BootMode == bmCold || BootMode == bmFast) {
     // MrcGetSpdData is only called on Cold and Fast boot
     MrcGetSpdDdrTypeParams (MrcData);
-    if (BootMode == bmFast) {
-      Outputs->IsLP5Camm2 = MrcData->Save.Data.IsLP5Camm2;
-    }
   } else {
     // On S3 and Warm Boot, do an early restore of the DDR Type
     Outputs->DdrType = MrcData->Save.Data.DdrType;

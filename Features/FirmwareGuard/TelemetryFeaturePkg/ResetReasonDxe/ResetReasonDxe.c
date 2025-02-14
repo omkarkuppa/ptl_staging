@@ -28,7 +28,7 @@
 #include <Library/HobLib.h>
 #include <Library/DebugLib.h>
 #include <Library/PhatAcpiLib.h>
-#include <Library/BaseMemoryLib.h>
+#include <IndustryStandard/Acpi65.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
@@ -49,31 +49,38 @@ PublishResetReasonPhat (
   IN OUT EFI_STATUS  OpStatus
   )
 {
-  EFI_STATUS                          Status;
-  PHAT_RESET_REASON_RECORD_STRUCTURE  *ResetReasonPhatTable;
+  EFI_STATUS      Status;
+  EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_STRUCTURE  *FwPhatTable;
 
   if (DataTable == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
-  ResetReasonPhatTable = (PHAT_RESET_REASON_RECORD_STRUCTURE  *) AllocateZeroPool (sizeof (PHAT_RESET_REASON_RECORD_STRUCTURE));
-  if (ResetReasonPhatTable == NULL) {
+  FwPhatTable = AllocateZeroPool (sizeof (EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_STRUCTURE));
+  if (FwPhatTable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
   ///
   /// Configure the Reset Reason Data to ACPI data
   ///
-  ResetReasonPhatTable->PlatformRecordType        = RESET_REASON_PHAT_RECORD_TYPE;
-  ResetReasonPhatTable->Revision                  = EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_REVISION;
-  ResetReasonPhatTable->DeviceSignature           = (GUID) EFI_ACPI_6_5_PHAT_RESET_REASON_HEADER_GUID;
-  CopyMem (&ResetReasonPhatTable->Data, &DataTable, sizeof (EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE));
-  ResetReasonPhatTable->RecordLength              = sizeof (PHAT_RESET_REASON_RECORD_STRUCTURE);
+  FwPhatTable->PlatformRecordType        = RESET_REASON_PHAT_RECORD_TYPE;
+  FwPhatTable->Revision                  = EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_REVISION;
+  FwPhatTable->DeviceSignature           = (GUID) EFI_ACPI_6_5_PHAT_RESET_REASON_HEADER_GUID;
+  FwPhatTable->DeviceSpecificDataOffset  = RESET_REASON_OFFSET;
+  FwPhatTable->RecordLength              = sizeof (EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_STRUCTURE) + sizeof (EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE);
+  if (EFI_ERROR (OpStatus)) {
+    FwPhatTable->AmHealthy               = EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_ERRORS_FOUND;
+  } else if (OpStatus == EFI_SUCCESS) {
+    FwPhatTable->AmHealthy               = EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_NO_ERRORS_FOUND;
+  } else {
+    FwPhatTable->AmHealthy               = EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_UNKNOWN;
+  }
 
   ///
   /// Table exists, get current table
   ///
-  Status = InstallPhatTable (ResetReasonPhatTable, ResetReasonPhatTable->RecordLength);
+  Status = InstallPhatTable (FwPhatTable, FwPhatTable->RecordLength);
 
   return Status;
 }
@@ -487,7 +494,7 @@ GetSourceAndReason (
 **/
 EFI_STATUS
 EFIAPI
-ResetReasonMain (
+ResetReasonCallback (
   VOID
   )
 {
@@ -507,7 +514,7 @@ ResetReasonMain (
   ///
   Status = GetSourceAndReason (ResetReasonHealthTable);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "[%a] Get reset reason and source exit with status: %r\n", __FUNCTION__, Status));
+    DEBUG ((DEBUG_WARN, "[%a] Get reset reason and source exit with status: %r", __FUNCTION__, Status));
     if (Status != EFI_NOT_FOUND) {
       /// Reason may not be found but will still publish the data as unknown
       FreePool (ResetReasonHealthTable);
@@ -519,10 +526,32 @@ ResetReasonMain (
   ///
   Status = PublishResetReasonPhat (ResetReasonHealthTable, Status);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "[%a] Publish reset reason PHAT exit with status: %r\n", __FUNCTION__, Status));    FreePool (ResetReasonHealthTable);
+    DEBUG ((DEBUG_WARN, "[%a] Publish reset reason PHAT exit with status: %r", __FUNCTION__, Status));    FreePool (ResetReasonHealthTable);
   }
 
   return Status;
+}
+
+/**
+  Callback handler for Telemetry Reset Reason
+
+  @param[in] Event                  A pointer to the Event that triggered the callback
+  @param[in] Context                A pointer to private data registered with the callback function
+**/
+VOID
+EFIAPI
+ResetReasonCallbackHandler(
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
+  )
+{
+  EFI_STATUS  Status;
+
+  Status = ResetReasonCallback ();
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_WARN, "[%a] Failed to get reset reason or source with status: %r", __FUNCTION__, Status));
+  }
+  gBS->CloseEvent (Event);
 }
 
 /**
@@ -542,10 +571,20 @@ ResetReasonEntryPoint (
   )
 {
   EFI_STATUS      Status;
+  EFI_EVENT       ReadyToBootEvent;
 
-  DEBUG ((DEBUG_WARN, "[%a] Entry\n", __FUNCTION__));
+  Status = gBS->CreateEventEx (
+                  EVT_NOTIFY_SIGNAL,
+                  TPL_NOTIFY,
+                  ResetReasonCallbackHandler,
+                  NULL,
+                  &gEfiEventReadyToBootGuid,
+                  &ReadyToBootEvent
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_WARN, "[%a] Failed to register ready to boot event with status %r\n", __FUNCTION__, Status));
+    return Status;
+  }
 
-  Status = ResetReasonMain ();
-  DEBUG ((DEBUG_WARN, "[%a] Exit with status %r\n", __FUNCTION__, Status));
-  return Status;
+  return EFI_SUCCESS;
 }

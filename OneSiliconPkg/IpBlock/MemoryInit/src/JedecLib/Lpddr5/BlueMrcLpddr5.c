@@ -667,3 +667,53 @@ MrcJedecInitLpddr5 (
 
   return Status;
 }
+
+/**
+  This function performs the reset sequence required by JEDEC spec for LPDDR5.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+
+  @retval MrcStatus - mrcSuccess if successful, else an error status.
+**/
+MrcStatus
+MrcJedecResetLpddr (
+  IN  MrcParameters* const  MrcData
+  )
+{
+  MrcStatus     Status;
+  UINT32        tInit1;
+  UINT32        tInit3;
+  UINT32        tInit5;
+  INT64         GetSetEn;
+  INT64         GetSetDis;
+
+  Status = mrcSuccess;
+  GetSetEn = 1;
+  GetSetDis = 0;
+  tInit1 = MRC_LP_tINIT1_US * MRC_TIMER_1US;
+  tInit3 = MRC_LP_tINIT3_US * MRC_TIMER_1US;
+  tInit5 = MRC_LP_tINIT5_US * MRC_TIMER_1US;
+
+  // Keep CS Low when DRAM_RESET# is asserted
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCkeOn, WriteCached, &GetSetDis);
+
+  // Assert DRAM RESET# signal after Voltage Ramp (Step 2)
+  MrcGetSetNoScope (MrcData, GsmDdrReset, WriteCached, &GetSetEn);
+
+  // Ensure tINIT1 (200us) before de-asserting DRAM reset. This will cover tINIT2 (10ns) as well.
+  MrcWait (MrcData, tInit1);
+
+  // De-Assert DRAM RESET# signal.
+  MrcGetSetNoScope (MrcData, GsmDdrReset, WriteCached, &GetSetDis);
+
+  // Wait tINIT3 (2ms) - covers Min CS low after RESET# high and tINIT4 (5tCK) - Min Stable CLK before CS high
+  MrcWait (MrcData, tInit3);
+
+  // Set the valid CKE's
+  MrcCkeOnProgramming (MrcData);
+
+  // Wait tINIT5: Min idle time before first MR[R,W] command.
+  MrcWait (MrcData, tInit5);
+
+  return Status;
+}

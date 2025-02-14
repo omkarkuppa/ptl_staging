@@ -416,14 +416,13 @@ UpdateRetimerNvmInformation (
   USBC_RETIMER_SETUP      UsbCRetimerSetup;
   UINT32                  VarAttributes;
   UINTN                   VarSize;
-  BOOLEAN                 IsRetimerConfigFound;
-  BOOLEAN                 IsUpdateVariableNeeded;
+
+  DEBUG ((DEBUG_INFO, "UpdateRetimerNvmInformation - RetimerVersion is %x .\n", RetimerVersion));
 
   UsbCRetimerNumber = PcdGet8 (PcdUsbCRetimerFlashNumber);
   RetimerConfigTable = (RETIMER_CONFIG *) PcdGetPtr (PcdUsbCRetimerConfigTable);
 
   VarSize = sizeof (USBC_RETIMER_SETUP);
-  ZeroMem (&UsbCRetimerSetup, VarSize);
   Status = gRT->GetVariable (
                   USBC_RETIMER_NAME,
                   &gUsbCRetimerSetupGuid,
@@ -433,81 +432,64 @@ UpdateRetimerNvmInformation (
                   );
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to get setup variable\n"));
-    return;
   }
-  IsRetimerConfigFound   = FALSE;
-  IsUpdateVariableNeeded = FALSE;
   for (Index = 0; Index < UsbCRetimerNumber; Index++) {
     //
     // Find the matching retimer configuration in RetimerConfigTable.
     //
-    if (FirmwareType == INTEGRATED_TBT_RETIMER) {
-      if ((RetimerConfigTable[Index].FirmwareType != FirmwareType)
+    if ( (RetimerConfigTable[Index].FirmwareType != FirmwareType)
+      || (RetimerConfigTable[Index].PcieRpType != PcieRpType)
+      || (RetimerConfigTable[Index].PcieRootPort != PcieRootPort)
       || (RetimerConfigTable[Index].RetimerDevAddress.Bus != DevAddress->Bus)
       || (RetimerConfigTable[Index].RetimerDevAddress.Device != DevAddress->Device)
       || (RetimerConfigTable[Index].RetimerDevAddress.Function != DevAddress->Function)
       || (RetimerConfigTable[Index].RetimerDevAddress.Port != DevAddress->Port)
-      || (RetimerConfigTable[Index].RetimerDevAddress.CascadedRetimerIndex != DevAddress->CascadedRetimerIndex)) {
-        continue;
-      }
-    } else if (FirmwareType == DISCRETE_TBT_RETIMER) {
-      if ((RetimerConfigTable[Index].FirmwareType != FirmwareType)
-      || (RetimerConfigTable[Index].PcieRpType != PcieRpType)
-      || (RetimerConfigTable[Index].PcieRootPort != PcieRootPort)
-      || (RetimerConfigTable[Index].RetimerDevAddress.Port != DevAddress->Port)
-      || (RetimerConfigTable[Index].RetimerDevAddress.CascadedRetimerIndex != DevAddress->CascadedRetimerIndex)) {
-        continue;
-      }
-    } else {
-      DEBUG ((DEBUG_ERROR, "FirmwareType is not supported.\n"));
-      return;
+      || (RetimerConfigTable[Index].RetimerDevAddress.CascadedRetimerIndex  != DevAddress->CascadedRetimerIndex))
+    {
+      Status = EFI_NOT_FOUND;
+      DEBUG ((DEBUG_INFO, "RetimerConfigTable config %x does not match.\n", Index));
+      continue;
     }
     //
     // Update UsbC Retimer information
     //
     switch (Index) {
       case 0:
-        IsUpdateVariableNeeded = (UsbCRetimerSetup.UsbCRetimer0Version != RetimerVersion) ? TRUE : FALSE;
         UsbCRetimerSetup.UsbCRetimer0Version = RetimerVersion;
         break;
       case 1:
-        IsUpdateVariableNeeded = (UsbCRetimerSetup.UsbCRetimer1Version != RetimerVersion) ? TRUE : FALSE;
         UsbCRetimerSetup.UsbCRetimer1Version = RetimerVersion;
         break;
       case 2:
-        IsUpdateVariableNeeded = (UsbCRetimerSetup.UsbCRetimer2Version != RetimerVersion) ? TRUE : FALSE;
         UsbCRetimerSetup.UsbCRetimer2Version = RetimerVersion;
         break;
       case 3:
-        IsUpdateVariableNeeded = (UsbCRetimerSetup.UsbCRetimer3Version != RetimerVersion) ? TRUE : FALSE;
         UsbCRetimerSetup.UsbCRetimer3Version = RetimerVersion;
         break;
       default:
         DEBUG ((DEBUG_ERROR, "UsbCRetimerNumber is more than Index setting.\n"));
         break;
     }
-    IsRetimerConfigFound = TRUE;
+    Status = EFI_SUCCESS;
     DEBUG ((DEBUG_INFO, "RetimerConfigTable config %x is matched.\n", Index));
     break;
   }
-  if (!IsRetimerConfigFound) {
+  if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, \
       "UpdateRetimerNvmInformation - Fail on RetimerPayloadConfig header in capsule file does not match the RetimerConfigTable.\n"));
-    return;
   }
-  if (IsUpdateVariableNeeded) {
-    Status = gRT->SetVariable (
-                    USBC_RETIMER_NAME,
-                    &gUsbCRetimerSetupGuid,
-                    VarAttributes,
-                    sizeof (USBC_RETIMER_SETUP),
-                    &UsbCRetimerSetup
-                    );
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "UpdateRetimerNvmInformation - Fail to set variable in UsbCRetimerSetup.\n"));
-    }
+  Status = gRT->SetVariable (
+                  USBC_RETIMER_NAME,
+                  &gUsbCRetimerSetupGuid,
+                  VarAttributes,
+                  sizeof (USBC_RETIMER_SETUP),
+                  &UsbCRetimerSetup
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "UpdateRetimerNvmInformation - Fail to set variable in UsbCRetimerSetup.\n"));
+  } else {
+    DEBUG ((DEBUG_INFO, "UpdateRetimerNvmInformation - Success to set variable in UsbCRetimerSetup. \n"));
   }
-
   return;
 }
 
@@ -1067,7 +1049,7 @@ DriveToFwUpdateMode (
   //
   // Change the PD Controller Mode
   //
-  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateEnableMode, FixedPcdGet8 (PcdMaxUsbCPdNumber));
+  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateEnableMode, MAX_PD_NUMBER);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "\n%a : Failed to Enable Retimer FW Update Mode with Status = %r\n", __FUNCTION__, Status));
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_CHANGE_MODE_FAIL, (UINT32) Status, 0);
@@ -1141,7 +1123,7 @@ RestoreToOriginalMode (
   //
   // Change the PD Controller Mode
   //
-  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateDisableMode, FixedPcdGet8 (PcdMaxUsbCPdNumber));
+  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateDisableMode, MAX_PD_NUMBER);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "\n%a : Failed to Exit Retimer FW Update Mode For PD Controller with Status = %r\n", __FUNCTION__, Status));
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_CHANGE_MODE_FAIL, (UINT32) Status, 0);

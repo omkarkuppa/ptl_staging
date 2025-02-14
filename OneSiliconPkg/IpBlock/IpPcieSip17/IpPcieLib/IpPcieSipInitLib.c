@@ -663,7 +663,7 @@ SipInitCapabilityList (
   /// Program Capabilities List Pointer register 0x0034
   ///
   Capp.Data = (UINT8) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, CAPP_PCIE_CFG_REG, IpWrRegFlagSize8Bits);
-  PRINT_LEVEL1 ("Capability List Pointer = 0x%x\n", Capp.Data);
+  PRINT_LEVEL1 ("Capp.Data = 0x%x\n", Capp.Data);
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, CAPP_PCIE_CFG_REG, Capp.Data, IpWrRegFlagSize8Bits);
 
   /// Program Capabilities List register 0x0040
@@ -683,7 +683,6 @@ SipInitCapabilityList (
 
   ///
   /// II.Build PCI Extended Capability linked list
-  /// 0xADC - G5ECH   (CAPID:002Ah) Physical Layer 32.0 GT/s Margining Extended Capability Header
   /// 0xEDC - PL16MECH(CAPID:0027h) Physical Layer 16.0 GT/s Margining Extended Capability Header
   /// 0xA9C - PL16GECH(CAPID:0026h) Physical Layer 16.0 GT/s Extended Capability Header
   /// 0xA90 - DLFECH  (CAPID:0025h) Data Link Feature Extended Capability Header
@@ -712,10 +711,10 @@ SipInitCapabilityList (
     G5ech.Bits.cv   = 1;
     G5ech.Bits.ecid =  V_EX_G5ECH_CID;
     G5ech.Bits.nco  = NextCap;
-    PRINT_LEVEL1 ("Physical Layer 32.0 GT/s Extended Capability Header\n");
-    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %04x\n", NextCap, V_EX_G5ECH_CID);
     NextCap = (UINT16) G5ECH_PCIE_CFG_REG;
     IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, G5ECH_PCIE_CFG_REG, G5ech.Data, IpWrRegFlagSize32Bits);
+    PRINT_LEVEL1 ("Physical Layer 32.0 GT/s Extended Capability Header\n");
+    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %x\n", NextCap, V_EX_G5ECH_CID);
   }
 
   /// Program Link Capabilities register 0x004C
@@ -734,10 +733,10 @@ SipInitCapabilityList (
     Pl16Mech.Bits.cv      = 1;
     Pl16Mech.Bits.pciecid =  V_EX_PL16MECH_CID;
     Pl16Mech.Bits.nco     = NextCap;
-    PRINT_LEVEL1 ("Physical Layer 16.0 GT/s Margining Extended Capability Header\n");
-    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %04x\n", NextCap, V_EX_PL16MECH_CID);
     NextCap = (UINT16) PL16MECH_PCIE_CFG_REG;
     IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, PL16MECH_PCIE_CFG_REG, Pl16Mech.Data, IpWrRegFlagSize32Bits);
+    PRINT_LEVEL1 ("Physical Layer 16.0 GT/s Margining Extended Capability Header\n");
+    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %x\n", NextCap, V_EX_PL16MECH_CID);
 
     /*
     c. Program [0xA9C] Physical Layer 16.0 GT/s Extended Capability Header(PL16GECH)
@@ -750,10 +749,10 @@ SipInitCapabilityList (
     Pl16Gech.Bits.cv      = 1;
     Pl16Gech.Bits.pciecid = V_EX_PL16GECH_CID;
     Pl16Gech.Bits.nco     = NextCap;
-    PRINT_LEVEL1 ("Physical Layer 16.0 GT/s Extended Capability Header\n");
-    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %04x\n", NextCap, V_EX_PL16GECH_CID);
     NextCap = (UINT16) PL16GECH_PCIE_CFG_REG;
     IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, PL16GECH_PCIE_CFG_REG, Pl16Gech.Data, IpWrRegFlagSize32Bits);
+    PRINT_LEVEL1 ("Physical Layer 16.0 GT/s Extended Capability Header\n");
+    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %x\n", NextCap, V_EX_PL16GECH_CID);
   } else {
     Pl16Mech.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PL16MECH_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
     IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, PL16MECH_PCIE_CFG_REG, Pl16Mech.Data, IpWrRegFlagSize32Bits);
@@ -765,16 +764,16 @@ SipInitCapabilityList (
     1. Set Next Capability Offset, 0xA90[31:20] = NEXT_CAP
     2. Set Capability Version, 0xA90[19:16] = 1h
     3. Set Capability ID, 0xA90[15:0] = 0025h
-    4. NEXT_CAP = 0xA90
+    4.  NEXT_CAP = 0xA90
   */
   DlFech.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, DLFECH_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
   DlFech.Bits.cv      = 1;
   DlFech.Bits.pciecid = V_EX_DLFECH_CID;
   DlFech.Bits.nco     = NextCap;
-  PRINT_LEVEL1 ("Data Link Feature Extended Capability Header\n");
-  PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %04x\n", NextCap, V_EX_DLFECH_CID);
   NextCap = (UINT16) DLFECH_PCIE_CFG_REG;
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, DLFECH_PCIE_CFG_REG, DlFech.Data, IpWrRegFlagSize32Bits);
+  PRINT_LEVEL1 ("Data Link Feature Extended Capability Header\n\n");
+  PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %x\n", NextCap, V_EX_DLFECH_CID);
 
    /*
   e. If the RP is GEN3 capable (by fuse and BIOS policy), enable Secondary PCI Express Extended Capability [0XA30]
@@ -790,8 +789,8 @@ SipInitCapabilityList (
     Speech.Bits.cv       = 1;
     Speech.Bits.pcieecid = V_EX_SPE_CID;
     Speech.Bits.nco      = NextCap;
-    PRINT_LEVEL1 ("Secondary PCI Express Extended Capability Header\n");
-    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %04x\n", NextCap, V_EX_SPE_CID);
+    PRINT_LEVEL1 ("Secondary PCI Express Extended Capability\n");
+    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %x\n", NextCap, V_EX_SPE_CID);
     NextCap = (UINT16) SPEECH_PCIE_CFG_REG;
   } else {
     Speech.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, SPEECH_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
@@ -814,9 +813,8 @@ SipInitCapabilityList (
     Vcch.Bits.cid = V_EX_VCCH_CID;
     Vcch.Bits.nco = (UINT16) NextCap;
     PRINT_LEVEL1 ("Virtual Channel Extended Capability Header\n");
-    PRINT_LEVEL1 ( "NextCap = %x \t Capability ID = %04x\n", NextCap, V_EX_VCCH_CID);
+    PRINT_LEVEL1 ( "NextCap = %x \t Capability ID = %x\n", NextCap, V_EX_VCCH_CID);
     NextCap = (UINT16) VCCH_PCIE_CFG_REG;
-
     Pvccr1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PVCCR1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
     Pvccr1.Bits.evcc = pInst->PrivateConfig.NumOfVcs;
     IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, PVCCR1_PCIE_CFG_REG, Pvccr1.Data, IpWrRegFlagSize32Bits);
@@ -842,8 +840,8 @@ SipInitCapabilityList (
     PtmEch.Bits.cv  = 1;
     PtmEch.Bits.cid = V_EX_PTM_CID;
     PtmEch.Bits.nco = (UINT16) NextCap;
-    PRINT_LEVEL1 ("PTM Extended Capability Header\n");
-    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %04x\n", NextCap, V_EX_PTM_CID);
+    PRINT_LEVEL1 ("PTM\n");
+    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %x\n", NextCap, V_EX_PTM_CID);
     NextCap = PTMECH_PCIE_CFG_REG;
   } else {
     PtmEch.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PTMECH_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
@@ -875,8 +873,8 @@ SipInitCapabilityList (
     L1Sech.Bits.cv     = 0x2;
     L1Sech.Bits.pcieec = V_EX_L1S_CID;
     L1Sech.Bits.nco    = NextCap;
-    PRINT_LEVEL1 ("L1 Sub-States Extended Capability Header\n");
-    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %04x\n", NextCap, V_EX_L1S_CID);
+    PRINT_LEVEL1 ("L1SS\n");
+    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %x\n", NextCap, V_EX_L1S_CID);
     NextCap = (UINT16) L1SECH_PCIE_CFG_REG;
   } else {
     L1Sech.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, L1SECH_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
@@ -938,8 +936,8 @@ SipInitCapabilityList (
     AcsEch.Bits.cv  = 1;
     AcsEch.Bits.cid = V_EX_ACS_CID;
     AcsEch.Bits.nco = NextCap;
-    PRINT_LEVEL1 ("ACS Extended Capability Header\n");
-    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %04x\n", NextCap, V_EX_ACS_CID);
+    PRINT_LEVEL1 ("ACSECH\n");
+    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %x\n", NextCap, V_EX_ACS_CID);
     NextCap = (UINT16) ACSECH_PCIE_CFG_REG;
   }
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, ACSECH_PCIE_CFG_REG, AcsEch.Data, IpWrRegFlagSize32Bits);
@@ -963,8 +961,6 @@ SipInitCapabilityList (
   if (pInst->PcieRpCommonConfig.AdvancedErrorReporting) {
     Aech.Bits.cv  = 1;
     Aech.Bits.cid = V_EX_AEC_CID;
-    PRINT_LEVEL1 ("Advanced Error Reporting Header\n");
-    PRINT_LEVEL1 ("NextCap = %x \t Capability ID = %04x\n", NextCap, V_EX_AEC_CID);
   }
   Aech.Bits.nco = NextCap;
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, AECH_PCIE_CFG_REG, Aech.Data, IpWrRegFlagSize32Bits);
@@ -2003,7 +1999,6 @@ SipInitRootPort (
   GDR_PCIE_CFG_STRUCT                Gdr;
   IORCCP1_PCIE_MEM_RCRB_STRUCT       Iorccp1;
   IPSCE_PCIE_MEM_RCRB_STRUCT         IpsceCfg;
-  CEM_PCIE_CFG_STRUCT                Cem;
 
   PRINT_LEVEL1 ("%s Start (%d)\n", __FUNCTION__, pInst->RpIndex);
 
@@ -2671,11 +2666,6 @@ SipInitRootPort (
     Uem.Bits.ptlpebm = 0;
   }
   IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, UEM_PCIE_CFG_REG, Uem.Data, IpWrRegFlagSize32Bits);
-
-  Cem.Data      = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, CEM_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-  Cem.Bits.ciem = 0;
-  Cem.Bits.hlom = 0;
-  IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, CEM_PCIE_CFG_REG, Cem.Data, IpWrRegFlagSize32Bits);
 
   ///
   /// PCH BIOS Spec Section 8.10 PCI Bus Emulation & Port80 Decode Support

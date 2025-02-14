@@ -28,16 +28,16 @@
 #include "MrcLpddr5.h" // for MrcGetWckPreRdTotalLpddr5()
 #include "MrcDdrIoRefPi.h"
 
-UINT8 AuxClkRef100[] = { 33,  33,  27,  28,  27,  30,  33,  28,  33,  32,  33,  32,  32,  33,  36,  36, //  0 .. 15
-                         39,  33,  42,  39,  42,  44,  44,  42,  53,  44,  45,  42,  51,  48,  52,  40, // 16 .. 31
-                         54,  52,  52,  57,  54,  45,  56,  52,  57,  63,  64,  60,  66,  66,  68,  69, // 32 .. 47
-                         69,  66,  66,  68,  69,  69,  76,  63,  78,  78,  30,  75,  83,  76,  78,  78, // 48 .. 63
-                         78,  81,  87,  88,  90,  84,  84,  92,  87,  87,  88,  92,  88,  93,  92,  84, // 64 .. 79
-                         93,  92,  63,  99, 105, 100, 100, 102, 114, 104, 116,  78, 114, 120, 114, 108, // 80 .. 95
-                        116, 111, 111, 112, 126, 114, 128, 117, 126, 144, 144, 120, 135,  90, 120, 124, // 96 .. 111
-                        123, 141, 123, 126, 136, 129, 138, 129, 129, 132, 132, 135, 132, 136, 136, 138, // 112 .. 127
-                        136, 140, 138, 141, 141, 144, 141, 144, 144, 108, 100, 132, 135, 111, 111, 135, // 128 .. 143
-                        104, 114, 140, 138, 114, 140, 144, 117, 141, 120, 132, 120, 136, 123, 120, 123, // 144 .. 159
+UINT8 AuxClkRef100[] = { 33,  33,  27,  28,  27,  30,  33,  28,  33,  32,  33,  32,  32,  33,  36,  36,
+                         39,  33,  42,  39,  42,  44,  44,  42,  53,  44,  45,  42,  51,  48,  52,  40,
+                         54,  52,  52,  57,  54,  45,  56,  52,  57,  63,  64,  60,  66,  66,  68,  69,
+                         69,  66,  66,  68,  69,  69,  76,  63,  78,  78,  30,  75,  83,  76,  78,  78,
+                         78,  81,  87,  88,  90,  84,  84,  92,  87,  87,  88,  92,  88,  93,  92,  84,
+                         93,  92,  63,  99, 105, 100, 100, 102, 114, 104, 116,  78, 114, 120, 114, 108,
+                        116, 111, 111, 112, 126, 114, 128, 117, 126, 144, 144, 120, 135,  90, 120, 124,
+                        123, 141, 123, 126, 136, 129, 138, 129, 129, 132, 132, 135, 132, 136, 136, 138,
+                        136, 140, 138, 141, 141, 144, 141, 144, 144, 108, 100, 132, 135, 111, 111, 135,
+                        104, 114, 140, 138, 114, 140, 144, 117, 141, 120, 132, 120, 136, 123, 120, 123,
                         123, 124,  68, 126, 126, 128, 126, 129, 129};
 
 
@@ -823,6 +823,50 @@ MrcAdcGlobalOverride (
   Visa2View.Bits.i_localforcedacen = 0;
   Visa2View.Bits.i_localforcedaccode = 0;
   MrcWriteCR (MrcData, DDRPHY_DDRCOMP_CR_VISA2VIEW_REG, Visa2View.Data);
+}
+
+/**
+  This function toggles the DLL Reset.
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] Value   - DLL Reset value
+**/
+VOID
+ToggleDllReset (
+  IN MrcParameters * const MrcData,
+  IN UINT32                Value
+  )
+{
+  UINT32     Offset;
+  UINT32     Index;
+  DATASHARED_CR_DDRCRDLLCONTROL1_STRUCT       DllControl1;
+  DATASHARED_CR_DDRCRTXDLLCONTROL1_STRUCT     DataTxDllControl1;
+  CCCSHARED_CR_DDRCRTXDLLCONTROL1_STRUCT      CccTxDllControl1;
+
+  // Issue DLL Reset
+  for (Index = 0; Index < MRC_CCC_SHARED_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
+    Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRTXDLLCONTROL1_REG, DDRCCC_SHARED1_CR_DDRCRTXDLLCONTROL1_REG, Index);
+    CccTxDllControl1.Data = MrcReadCR (MrcData, Offset);
+    CccTxDllControl1.Bits.ForceDLLReset = Value;
+    MrcWriteCR (MrcData, Offset, CccTxDllControl1.Data);
+  }
+  for (Index = 0; Index < MRC_DATA_SHARED_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
+    Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRTXDLLCONTROL1_REG, DDRDATA_SHARED1_CR_DDRCRTXDLLCONTROL1_REG, Index);
+    DataTxDllControl1.Data = MrcReadCR (MrcData, Offset);
+    DataTxDllControl1.Bits.ForceDLLReset = Value;
+    MrcWriteCR (MrcData, Offset, DataTxDllControl1.Data);
+
+    Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRDLLCONTROL1_REG, DDRDATA_SHARED1_CR_DDRCRDLLCONTROL1_REG, Index);
+    DllControl1.Data = MrcReadCR (MrcData, Offset);
+    DllControl1.Bits.ForceDLLReset = Value;
+    MrcWriteCR (MrcData, Offset, DllControl1.Data);
+  }
 }
 
 /**
@@ -1613,9 +1657,9 @@ MrcGetTxDqFifoDelay(
     *tCWL4TxDqFifoRdEn -= 7;
     *tCWL4TxDqFifoRdEn -= IsGear4 ? ((WrPreambleVar + 1) / 2) : WrPreambleVar;
     *tCWL4TxDqFifoRdEn += (Outputs->Frequency == f3200) ? (IsGear4 ? 1 : 0) : 0;
-  }
-  if (Inputs->ExtInputs.Ptr->DqLoopbackTest) {
-    *tCWL4TxDqFifoRdEn -= 1;
+    if (Inputs->ExtInputs.Ptr->DqLoopbackTest) {
+      *tCWL4TxDqFifoRdEn -= 1;
+    }
   }
   *tCWL4TxDqFifoWrEn += *tCWL4TxDqFifoWrEn % 2;
   *tCWL4TxDqFifoRdEn += Inputs->ExtInputs.Ptr->CccPinsInterleaved ? DdrioChDeltaCccIL[Index] : DdrioChDelta[Index];

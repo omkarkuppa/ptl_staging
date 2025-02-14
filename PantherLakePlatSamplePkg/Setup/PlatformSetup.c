@@ -523,7 +523,7 @@ UpdatePDInformation (
   }
 
 
-  for (Index = 0; Index < FixedPcdGet8 (PcdMaxUsbCPdNumber); Index++) {
+  for (Index = 0; Index < MAX_PD_NUMBER; Index++) {
     switch (Index) {
       case 0:
         UsbCPdVersion = UsbCPdSetup.UsbCPd1Version;

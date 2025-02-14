@@ -85,4 +85,4 @@
 
 [Guids]
   gSiMemoryInfoDataGuid       ## CONSUMES
-  gMemTelAmtPprVariableGuid   ## PRODUCES
+  gAmtPprEnableVariableGuid   ## PRODUCES

@@ -108,7 +108,7 @@ typedef struct {
   UINT32 DLLDCC:1;               ///< BIT10 - DLL DCC Calibration
   UINT32 DLLBWSEL:1;             ///< BIT11 - DLL BW Select Calibration
   UINT32 RDVREFDC:1;             ///< BIT12 - Read Vref Decap Training
-  UINT32 Reserved2Bit13:1;       ///< BIT13 - Reserved
+  UINT32 RsvdBit13:1;            ///< BIT13 - Reserved
   UINT32 RMTBIT:1;               ///< BIT14 - Rank Margin Tool Per Bit
   UINT32 DQDQSSWZ:1;             ///< BIT15 - Map Dq Dqs Swizzle
   UINT32 REFPI:1;                ///< BIT16 - RefPi Calibration
@@ -124,44 +124,38 @@ typedef struct {
   UINT32 RXUNMATCHEDCAL:1;       ///< BIT26 - Unmatched Rx Calibaration
   UINT32 WRTDIMMDFE:1;           ///< BIT27 - DIMM DFE Training
   UINT32 RMTLVR:1;               ///< BIT28 - LVR RMT
-  UINT32 Reserved2Bit29:1;       ///< BIT29 - Reserved
-  UINT32 Reserved2Bit30:1;       ///< BIT30 - Reserved
+  UINT32 ReservedBits:2;         ///< BIT28 - Reserved
   UINT32 SimicsReservedBit:1;    ///< BIT31 - Simics uses this bit for mrc_mem_flows
 } TrainingStepsEn2;
 
 typedef struct {
-  UINT32 RXDQSDCC:1;          ///< BIT0 - RXDQS Duty Cycle Correction
-  UINT32 DIMMNTODT:1;         ///< BIT1 - DIMM Non-Target ODT training
-  UINT32 Reserved3Bit2:1;     ///< BIT2 - Reserved
-  UINT32 RXVREFPERBIT:1;      ///< BIT3 - RxVref Per-Bit Training
-  UINT32 PPR:1;               ///< BIT4 - Post Package Repair
-  UINT32 LVRAUTOTRIM:1;       ///< BIT5 - LVR Auto Trim
-  UINT32 Reserved3Bit6:1;     ///< BIT6 - Reserved
-  UINT32 OPTIMIZECOMP:1;      ///< BIT7 - Comp optimization
-  UINT32 WRTRETRAIN:1;        ///< BIT8 - Write Dq/Dqs Retraining
-  UINT32 Reserved3Bit9:1;     ///< BIT9 - Reserved
-  UINT32 Reserved3Bit10:1;    ///< BIT10 - Reserved
-  UINT32 JEDECRESET:1;        ///< BIT11 - Jedec Reset / Init (Don't expose to BIOS setup Menu)
-  UINT32 ROUNDTRIPMATCH:1;    ///< BIT12 - Roundtrip Match (Don't expose to BIOS setup Menu)
-  UINT32 TLINECLKCAL:1;       ///< BIT13 - Tline Clk Calibration
-  UINT32 DCCPISERIALCAL:1;    ///< BIT14 - DCC PI Serializer Calibration
-  UINT32 PHASECLKCAL:1;       ///< BIT15 - DCC Phase Clk Calibration
-  UINT32 WCKPADDCCCAL:1;      ///< BIT16 - Wck Pad Dcc Calibration
-  UINT32 RDCTLET : 1;         ///< BIT17 - Read CTLE Training
-  UINT32 RDDQODTT : 1;        ///< BIT18 - Read DQ ODT Training
-  UINT32 EMPHASIS : 1;        ///< BIT19 - Pre-Emphasis LP5 Training
-  UINT32 DIMMRXOFFSET : 1;    ///< BIT20 - DRAM Rx Offset Calibration Training
-  UINT32 VIEWPINCAL : 1;      ///< BIT21 - View Pin Calibration Training
-  UINT32 QCLKDCC : 1;         ///< BIT22 - QCLK DCC calibration
-  UINT32 WCKCLKPREDCC : 1;    ///< BIT23 - Wck / Clk Pre-Driver DCC
-  UINT32 DQSPADDCC : 1;       ///< BIT24 - DQS DCC PAD Optimization
-  UINT32 QCLKPHALIGN : 1;     ///< BIT25 - MC QClk Ph QClk Align Calibration
-  UINT32 RXDQSVOCC : 1;       ///< BIT26 - RxDqs VOC Centering Training
-  UINT32 Reserved3Bit27 : 1;  ///< BIT27 - Reserved
-  UINT32 Reserved3Bit28 : 1;  ///< BIT28 - Reserved
-  UINT32 Reserved3Bit29 : 1;  ///< BIT29 - Reserved
-  UINT32 Reserved3Bit30 : 1;  ///< BIT30 - Reserved
-  UINT32 Reserved3Bit31 : 1;  ///< BIT31 - Reserved
+  UINT32 RXDQSDCC:1;        ///< BIT0 - RXDQS Duty Cycle Correction
+  UINT32 DIMMNTODT:1;       ///< BIT1 - DIMM Non-Target ODT training
+  UINT32 ReservedBits2:1;   ///< BIT2 - Reserved
+  UINT32 RXVREFPERBIT:1;    ///< BIT3 - RxVref Per-Bit Training
+  UINT32 PPR:1;             ///< BIT4 - Post Package Repair
+  UINT32 LVRAUTOTRIM:1;     ///< BIT5 - LVR Auto Trim
+  UINT32 PWRMETER:1;        ///< BIT6 - Power Saving Meter
+  UINT32 OPTIMIZECOMP:1;    ///< BIT7 - Comp optimization
+  UINT32 WRTRETRAIN:1;      ///< BIT8 - Write Dq/Dqs Retraining
+  UINT32 DDRPRECOMP:1;      ///< BIT9 - Ddr Comp Calibration Pre Training
+  UINT32 RsvdBit10:1;       ///< BIT10 - Reserved for future use
+  UINT32 JEDECRESET:1;      ///< BIT11 - Jedec Reset / Init (Don't expose to BIOS setup Menu)
+  UINT32 ROUNDTRIPMATCH:1;  ///< BIT12 - Roundtrip Match (Don't expose to BIOS setup Menu)
+  UINT32 TLINECLKCAL:1;     ///< BIT13 - Tline Clk Calibration
+  UINT32 DCCPISERIALCAL:1;  ///< BIT14 - DCC PI Serializer Calibration
+  UINT32 PHASECLKCAL:1;     ///< BIT15 - DCC Phase Clk Calibration
+  UINT32 WCKPADDCCCAL:1;    ///< Bit16 - Wck Pad Dcc Calibration
+  UINT32 RDCTLET : 1;       ///< BIT17 - Read CTLE Training
+  UINT32 RDDQODTT : 1;      ///< BIT18 - Read DQ ODT Training
+  UINT32 EMPHASIS : 1;      ///< BIT19 - Pre-Emphasis LP5 Training
+  UINT32 DIMMRXOFFSET : 1;  ///< BIT20 - DRAM Rx Offset Calibration Training
+  UINT32 VIEWPINCAL : 1;    ///< BIT21 - View Pin Calibration Training
+  UINT32 QCLKDCC : 1;       ///< BIT22 - QCLK DCC calibration
+  UINT32 WCKCLKPREDCC : 1;  ///< BIT23 - Wck / Clk Pre-Driver DCC
+  UINT32 DQSPADDCC : 1;     ///< BIT24 - DQS DCC PAD Optimization
+  UINT32 QCLKPHALIGN : 1;   ///< BIT25 - MC QClk Ph QClk Align Calibration
+  UINT32 ReservedBits : 6;  ///< BIT26-31 - Reserved
 } TrainingStepsEn3;
 
 typedef struct {

@@ -43,14 +43,12 @@
   MeFruInitLib
   ImrInitLib
   PeiMemorySubSystemInfoLib
-  FspPerformanceLib
 
 [Packages]
   MdePkg/MdePkg.dec
   OneSiliconPkg/SiPkg.dec
   CsiApiPkg/CsiApiPkg.dec
   UefiCpuPkg/UefiCpuPkg.dec
-  MdeModulePkg/MdeModulePkg.dec
 
 [Sources]
   IGpuInit.c
@@ -73,7 +71,6 @@
   gEfiEndOfPeiSignalPpiGuid           ## CONSUMES
   gEfiPeiGraphicsPpiGuid              ## CONSUMES
   gPeiGraphicsFramebufferReadyPpiGuid ## PRODUCES
-  gIntelPeiPreMemGraphicsPpiGuid      ## CONSUMES
 
 [BuildOptions]
   *_*_*_CC_FLAGS = -I $(WORKSPACE)/OneSiliconPkg/CsiIpBlock/IpIGpu/Include

@@ -149,7 +149,7 @@ typedef struct {
   UINT8  SkinTempOverrideEnable[SKIN_TEMP_CONTROL_SENSOR];   ///< When set, Pcode will use TEMPERATURE_OVERRIDE values instead of reading from corresponding sensor.<b>0: Disable</b>; 1: Enable.
   UINT8  SkinMinPerformanceLevel[SKIN_TEMP_CONTROL_SENSOR];  ///< Minimum Performance level below which the STC limit will not throttle. 0 - all levels of throttling allowed incl. survivability actions. 256 - no throttling allowed.
   UINT8  SkinTempOverride[SKIN_TEMP_CONTROL_SENSOR];         ///< Allows SW to override the input temperature.Pcode will use this value instead of the sensor temperature.EC control is not impacted.Units: 0.5C.Values are 0 to 255 which represents 0C - 122.5C range.
-  UINT8  Rsvd[20];
+  UINT8  Rsvd[8];
 } CPU_POWER_DELIVERY_CONFIG;
 
 #pragma pack (pop)

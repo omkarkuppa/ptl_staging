@@ -123,6 +123,7 @@
   # PD and Retimer Info
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdSupportBitmap
 
   # UCxx Driver Type and Support for Port
   gUcsiFeaturePkgTokenSpaceGuid.PcdUcxxDriverType         ## PRODUCES

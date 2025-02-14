@@ -423,6 +423,14 @@ UpdatePcieRpPreMemPolicy (
   UpdatePcieClockInfo (PcieRpPreMemConfig,  7, PcdGet64(PcdPcieClock7));
   UpdatePcieClockInfo (PcieRpPreMemConfig,  8, PcdGet64(PcdPcieClock8));
   UpdatePcieClockInfo (PcieRpPreMemConfig,  9, PcdGet64(PcdPcieClock9));
+  UpdatePcieClockInfo (PcieRpPreMemConfig,  10, PcdGet64(PcdPcieClock10));
+  UpdatePcieClockInfo (PcieRpPreMemConfig,  11, PcdGet64(PcdPcieClock11));
+  UpdatePcieClockInfo (PcieRpPreMemConfig,  12, PcdGet64(PcdPcieClock12));
+  UpdatePcieClockInfo (PcieRpPreMemConfig,  13, PcdGet64(PcdPcieClock13));
+  UpdatePcieClockInfo (PcieRpPreMemConfig,  14, PcdGet64(PcdPcieClock14));
+  UpdatePcieClockInfo (PcieRpPreMemConfig,  15, PcdGet64(PcdPcieClock15));
+  UpdatePcieClockInfo (PcieRpPreMemConfig,  16, PcdGet64(PcdPcieClock16));
+  UpdatePcieClockInfo (PcieRpPreMemConfig,  17, PcdGet64(PcdPcieClock17));
 
   for (RpIndex = 0; RpIndex < GetPchMaxPcieClockNum(); RpIndex++) {
     if (PchSetup->PchPcieClkReqSupport[RpIndex] == 0xFF) {
@@ -503,7 +511,7 @@ UpdateHdaPreMemPolicy (
     COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData2PinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Data2,  0, Index);
     COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData3PinMux[Index], HdaPreMemConfig->SndwMultilane[Index].PinMux.Data3,  0, Index);
   }
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData1PinMux[0], HdaPreMemConfig->SndwMultilane[0].PinMux.Data1, GPIOV2_PTL_PCD_MUXING__XXGPP_S_6__SNDW2_DATA1);
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData1PinMux[1], HdaPreMemConfig->SndwMultilane[0].PinMux.Data1, GPIOV2_PTL_PCD_MUXING__XXGPP_S_6__SNDW2_DATA1);
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdaAudioLinkMultilaneData1PinMux[1], HdaPreMemConfig->SndwMultilane[1].PinMux.Data1, 0);
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdAudioSndwMultilaneSndwInterface[0], HdaPreMemConfig->SndwMultilane[0].SndwInterface, 2);
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PchHdAudioSndwMultilaneSndwInterface[1], HdaPreMemConfig->SndwMultilane[1].SndwInterface, 3);

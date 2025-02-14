@@ -58,6 +58,7 @@
   TopSwapSupportLib
   PlatformDxeBootStateHookLib
   HashSupportLib
+  PayloadResiliencySupportLib
 
 [Pcd]
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryBase           ## CONSUMES

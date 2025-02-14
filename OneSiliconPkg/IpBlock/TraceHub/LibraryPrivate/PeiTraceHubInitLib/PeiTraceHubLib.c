@@ -174,22 +174,6 @@ PeiTraceHubMemoryAllocation (
                         EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
                         EFI_RESOURCE_ATTRIBUTE_TESTED |
                         EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE;
-
-    if (*TopUseableMemAddr != TraceHubDataHob->TraceHubMemBase) {
-      BuildResourceDescriptorHob (
-          ResourceType,                                             // MemoryType,
-          ResourceAttribute,                                        // MemoryAttribute
-          *TopUseableMemAddr,                                       // MemoryBegin
-          (TraceHubDataHob->TraceHubMemBase - *TopUseableMemAddr)   // MemoryLength
-        );
-
-        BuildMemoryAllocationHob (
-          *TopUseableMemAddr,
-          (TraceHubDataHob->TraceHubMemBase - *TopUseableMemAddr),
-          EfiReservedMemoryType
-        );
-    }
-
     BuildResourceDescriptorWithOwnerHob (
       ResourceType,
       ResourceAttribute,

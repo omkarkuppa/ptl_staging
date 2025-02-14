@@ -50,7 +50,6 @@
 #include "MrcDdrIoComp.h"
 #include "CPlatformData.h"  // for PLATFORM_DATA and BDAT definitionss
 #include "MrcAmt.h" // For AMT_PPR_ENABLE
-#include <Library/PeiVmdInitFruLib.h>
 
 //
 // Definition in EDK Foundation, used in this driver
@@ -130,10 +129,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED static const SPD_OFFSET_TABLE SpdDdr5Table[] = {
   { 126,             127,           (1 << bmCold),},
   { 192,             213,           (1 << bmCold),},
   { 230,             235,           (1 << bmCold),},
-  { 240,             243,           (1 << bmCold) | (1 << bmFast),},
+  { 240,             243,           (1 << bmCold),},
   { SPD5_MANUF_START, SPD5_MANUF_END, (1 << bmCold) | (1 << bmFast),},
   { 521,             550,           (1 << bmCold),},
-  { SPD5_DRAM_MFG_START, SPD5_DRAM_MFG_END, (1 << bmCold) | (1 << bmFast),},
+  { SPD5_DRAM_MFG_START, SPD5_DRAM_MFG_END, (1 << bmCold),},
   // XMP 3.0 spec
   // Below XMP Global Section
   { 640,             703,             (1 << bmCold),},
@@ -154,7 +153,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED const SPD_OFFSET_TABLE SpdLpddrTable[] = {
   { 230,             232,               (1 << SpdCold),},
   { 234,             235,               (1 << SpdCold),},
   { SPDLP_MANUF_START, SPDLP_MANUF_END, (1 << SpdCold) | (1 << SpdFast),},
-  { 329,             352,               (1 << SpdCold) | (1 << SpdFast),},
+  { 329,             352,               (1 << SpdCold),},
   { SPDLP_JEDEC_SPEC_MANUF_START, SPDLP_JEDEC_SPEC_MANUF_END, (1 << SpdCold) | (1 << SpdFast),},
   { 521,             554,               (1 << SpdCold),}
 };
@@ -184,8 +183,6 @@ CONST EFI_PEI_PPI_DESCRIPTOR gMrcColdBootRequiredPpi = {
 
 GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 MrcDataStringConst[] = "MRCD";
 GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 MrcSpdStringConst[]  = "SPD ";
-GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 Ch2CkdQckString[]    = "Channel To CKD QCK";
-GLOBAL_REMOVE_IF_UNREFERENCED const UINT8 PhyClk2CkdString[]   = "DDRIO To CKD Clock";
 
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_PPI_DESCRIPTOR mTsegMemoryTestInitPpi = {
     (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
@@ -214,8 +211,7 @@ InstallMrcCallback (
   VOID
   )
 {
-// Exists strictly to build MRC-excluded BIOS for size check
-#ifndef NO_MRC
+#ifndef NO_MRC // Exists strictly to build MRC-excluded BIOS for size check
   EFI_STATUS                    Status;
   MRC_INSTANCE                  *MrcInstance;
   SI_PREMEM_POLICY_PPI          *SiPreMemPolicyPpi;
@@ -1490,9 +1486,6 @@ InstallEfiMemory (
   UINT8                                 MainMemoryIndex;
   SI_PREMEM_CONFIG                      *SiPreMemConfig;
   UINT64                                StaticContentSize;
-  UINT64                                NocImrExclusionLimit;
-  UINT64                                NocImrExclusionSize;
-  UINT64                                NocImrExclusionDelta;
 
   TseDataHob = NULL;
   MemorySubSystemConfig = NULL;
@@ -1912,7 +1905,6 @@ InstallEfiMemory (
   if (Touud > MEM_EQU_4GB) {
     TopUseableMemAddr = MEM_EQU_4GB;
     Touud -= TopUseableMemAddr;
-    NocImrExclusionLimit = MEM_EQU_4GB;
 
     DEBUG((DEBUG_INFO, "[TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
@@ -1948,6 +1940,7 @@ InstallEfiMemory (
     }
     DEBUG((DEBUG_INFO, "[Post Static Memory Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
+
     //
     // Memory Allocation for Prmrr
     //
@@ -1959,9 +1952,6 @@ InstallEfiMemory (
     //
     PeiTraceHubMemoryAllocation(&TopUseableMemAddr, &Touud);
     DEBUG((DEBUG_INFO, "[Post Trace Hub Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
-
-    VmdMemoryAllocation(&TopUseableMemAddr, &Touud, ResourceAttributeTested);
-    DEBUG((DEBUG_INFO, "[Post Vmd Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // Memory Allocation for Telemetry
@@ -1987,47 +1977,6 @@ InstallEfiMemory (
       MemoryMapData->SeamrrBase = SeamRrBaseAddress;
       DEBUG((DEBUG_INFO, "[Post Tdx Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
     }
-
-    NocImrExclusionLimit = TopUseableMemAddr;
-
-    if (NocImrExclusionLimit != MEM_EQU_4GB) {
-      NocImrExclusionSize = NocImrExclusionLimit - BASE_4GB;
-      if (NocImrExclusionSize > GetPowerOfTwo64 (NocImrExclusionSize)) {
-        NocImrExclusionSize = 2 * GetPowerOfTwo64 (NocImrExclusionSize);
-      }
-
-      NocImrExclusionDelta = NocImrExclusionSize - (NocImrExclusionLimit - BASE_4GB);
-      DEBUG ((DEBUG_INFO, "NocImrExclusionLimit = 0x%llX NocImrExclusionDelta = 0x%llX NocImrExclusionSize = 0x%llX\n", NocImrExclusionLimit, NocImrExclusionDelta, NocImrExclusionSize));
-
-      if (NocImrExclusionDelta != 0) {
-        ResourceType      = EFI_RESOURCE_MEMORY_RESERVED;
-        ResourceAttribute = EFI_RESOURCE_ATTRIBUTE_PRESENT |
-                            EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-                            ResourceAttributeTested |
-                            EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
-                            EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
-                            EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
-                            EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE;
-
-        BuildResourceDescriptorHob (
-                                    ResourceType,         // MemoryType,
-                                    ResourceAttribute,    // MemoryAttribute
-                                    NocImrExclusionLimit, // MemoryBegin
-                                    NocImrExclusionDelta  // MemoryLength
-                                    );
-
-        BuildMemoryAllocationHob (
-                                  NocImrExclusionLimit,
-                                  NocImrExclusionDelta,
-                                  EfiReservedMemoryType
-                                  );
-
-        TopUseableMemAddr += NocImrExclusionDelta;
-        Touud             -= NocImrExclusionDelta;
-        DEBUG ((DEBUG_INFO, "After Aligning the BASE 2 IMR TopUseableMemAddr = 0x%016lX Touud=0x%llX\n", TopUseableMemAddr, Touud));
-      }
-    }
-
     //
     // Memory Allocation for FlatCcs
     //
@@ -2045,7 +1994,6 @@ InstallEfiMemory (
     //
     IGpuGsm2Allocation(SiPreMemPolicyPpi, &TopUseableMemAddr, &Touud, ResourceAttributeTested);
     DEBUG((DEBUG_INFO, "[Post GSM2 Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
-
     //
     // This is above PSMI memory space, give it to EFI.
     //
@@ -2971,7 +2919,6 @@ MrcSetupMrcData (
   UINT8                               DimmNum;
   BOOLEAN                             IsSpdMatched;
   UINT8                               Index;
-  UINT8                               CkdIndex;
   BOOLEAN                             Ddr5DoubleSize1Dpc;
   BOOLEAN                             Ddr5DoubleSize2Dpc;
   BOOLEAN                             Lpddr5CammPresent;
@@ -3270,12 +3217,6 @@ DEBUG_CODE_END();
             }
           }
         }
-        if (DimmIn->Spd.Data.Ddr5.Base.DramDeviceType.Bits.Type == MRC_SPD_DDR5_SDRAM_TYPE_NUMBER && (Channel < MAX_DDR5_CHANNEL)) {
-          CkdIndex = (Controller * MAX_DDR5_CHANNEL * MAX_DIMMS_IN_CHANNEL) + (Channel * MAX_DIMMS_IN_CHANNEL) + Dimm;
-          DimmIn->ChannelToCkdQckMapping = MemConfigNoCrc->ChannelToCkdQckMapping[CkdIndex];
-          DimmIn->PhyClockToCkdDimm      = MemConfigNoCrc->PhyClockToCkdDimm[CkdIndex];
-          DEBUG ((DEBUG_INFO, "MC%dCH%dD%d:\n\t%a = %d\n\t%a = %d\n", Controller, Channel, Dimm, Ch2CkdQckString, DimmIn->ChannelToCkdQckMapping, PhyClk2CkdString, DimmIn->PhyClockToCkdDimm));
-        }
       } // for Dimm
     } // for Channel
   } // for Controller
@@ -3291,15 +3232,97 @@ DEBUG_CODE_END();
 
     // If Simics reserved bit is set, then use mrc_mem_flow overrides
     if ((Memflows1.Data & MRC_BIT63) != 0) {
-      MrcCall->MrcCopyMem ((UINT8 *)&ExtInputs->TrainingEnables,  (UINT8 *) &Memflows1.Bits.Low,  sizeof(TrainingStepsEn));
+      MrcCall->MrcCopyMem ((UINT8 *)&ExtInputs->TrainingEnables, (UINT8 *) &Memflows1.Bits.Low, sizeof(TrainingStepsEn));
       MrcCall->MrcCopyMem ((UINT8 *)&ExtInputs->TrainingEnables2, (UINT8 *) &Memflows1.Bits.High, sizeof(TrainingStepsEn2));
-      MrcCall->MrcCopyMem ((UINT8 *)&ExtInputs->TrainingEnables3, (UINT8 *) &Memflows2.Bits.Low,  sizeof(TrainingStepsEn3));
+      MrcCall->MrcCopyMem ((UINT8 *)&ExtInputs->TrainingEnables3, (UINT8 *) &Memflows2.Bits.Low, sizeof(TrainingStepsEn3));
     } else {
       // Else, use Bios Knob setting
       // Disable trainings not supported in simics currently
-      MrcCall->MrcSetMem ((UINT8 *) &ExtInputs->TrainingEnables,  sizeof (TrainingStepsEn),  0);
-      MrcCall->MrcSetMem ((UINT8 *) &ExtInputs->TrainingEnables2, sizeof (TrainingStepsEn2), 0);
-      MrcCall->MrcSetMem ((UINT8 *) &ExtInputs->TrainingEnables3, sizeof (TrainingStepsEn3), 0);
+
+      ExtInputs->TrainingEnables.ECT             = 0;
+      ExtInputs->TrainingEnables.SOT             = 0;
+      ExtInputs->TrainingEnables.RDMPRT          = 0;
+      ExtInputs->TrainingEnables.RCVET           = 0;
+      ExtInputs->TrainingEnables.JWRL            = 0;
+      ExtInputs->TrainingEnables.EWRTC2D         = 0;
+      ExtInputs->TrainingEnables.ERDTC2D         = 0;
+      ExtInputs->TrainingEnables.UNMATCHEDWRTC1D = 0;
+      ExtInputs->TrainingEnables.WRTC1D          = 0;
+      ExtInputs->TrainingEnables.WRVC1D          = 0;
+      ExtInputs->TrainingEnables.RDTC1D          = 0;
+      ExtInputs->TrainingEnables.RDVC1D          = 0;
+      ExtInputs->TrainingEnables.WRTC2D          = 0;
+      ExtInputs->TrainingEnables.RDTC2D          = 0;
+      ExtInputs->TrainingEnables.WRVC2D          = 0;
+      ExtInputs->TrainingEnables.RDVC2D          = 0;
+      ExtInputs->TrainingEnables.TAT             = 0;
+      ExtInputs->TrainingEnables.CMDVC           = 0;
+      ExtInputs->TrainingEnables.LCT             = 0;
+      ExtInputs->TrainingEnables.RMT             = 0;
+      ExtInputs->TrainingEnables.WRDSEQT         = 0;
+      ExtInputs->TrainingEnables.RDDQSODTT       = 0;
+      ExtInputs->TrainingEnables3.RDDQODTT       = 0;
+      ExtInputs->TrainingEnables.RDEQT           = 0;
+      ExtInputs->TrainingEnables3.RDCTLET        = 0;
+      ExtInputs->TrainingEnables.ALIASCHK        = 0;
+      ExtInputs->TrainingEnables.RMC             = 0;
+      ExtInputs->TrainingEnables.RTL             = 0;
+      ExtInputs->TrainingEnables.ERDMPRTC2D      = 0;
+      ExtInputs->TrainingEnables.WRDSEQT         = 0;
+      ExtInputs->TrainingEnables.DQSRF           = 0;
+      ExtInputs->TrainingEnables.DUNITC          = 0;
+      ExtInputs->TrainingEnables.RMTEVENODD      = 0;
+      ExtInputs->TrainingEnables.RCVENC1D        = 0;
+      ExtInputs->TrainingEnables.PRETRAIN        = 0;
+
+      ExtInputs->TrainingEnables2.DQDQSSWZ       = 0;
+      ExtInputs->TrainingEnables2.REFPI          = 0;
+      ExtInputs->TrainingEnables2.RXUNMATCHEDCAL = 0;
+      ExtInputs->TrainingEnables2.DDR5ODTTIMING  = 0;
+      ExtInputs->TrainingEnables2.DBI            = 0;
+      ExtInputs->TrainingEnables2.RMTBIT         = 0;
+      ExtInputs->TrainingEnables2.DCCPICODELUT   = 0;
+      ExtInputs->TrainingEnables2.FUNCDCCDQS     = 0; //If DCC is disabled, this needs to be disabled as well
+      ExtInputs->TrainingEnables2.FUNCDCCCLK     = 0; //If DCC is disabled, this needs to be disabled as well
+      ExtInputs->TrainingEnables2.FUNCDCCWCK     = 0; //If DCC is disabled, this needs to be disabled as well
+      ExtInputs->TrainingEnables2.FUNCDCCDQ      = 0;
+      ExtInputs->TrainingEnables2.DIMMODTT       = 0;
+      ExtInputs->TrainingEnables2.DIMMRONT       = 0;
+      ExtInputs->TrainingEnables2.TXTCO          = 0;
+      ExtInputs->TrainingEnables2.CLKTCO         = 0;
+      ExtInputs->TrainingEnables2.CMDSR          = 0;
+      ExtInputs->TrainingEnables2.CMDDSEQ        = 0;
+      ExtInputs->TrainingEnables2.DIMMODTCA      = 0;
+      ExtInputs->TrainingEnables2.RDVREFDC       = 0;
+      ExtInputs->TrainingEnables2.DATAPILIN      = 0;
+      ExtInputs->TrainingEnables2.DDR5XTALK      = 0;
+      ExtInputs->TrainingEnables2.WRTDIMMDFE     = 0;
+      ExtInputs->TrainingEnables2.DCCLP5WCKDCA   = 0;
+      ExtInputs->TrainingEnables2.VCCCLKFF       = 0;
+      ExtInputs->TrainingEnables2.DLLDCC         = 0;
+      ExtInputs->TrainingEnables2.DLLBWSEL       = 0;
+      ExtInputs->TrainingEnables2.DCCLP5READDCA  = 0;
+
+      ExtInputs->TrainingEnables3.LVRAUTOTRIM    = 0;
+      ExtInputs->TrainingEnables3.TLINECLKCAL    = 0;
+      ExtInputs->TrainingEnables3.QCLKDCC        = 0;
+      ExtInputs->TrainingEnables3.DDRPRECOMP     = 0;
+      ExtInputs->TrainingEnables3.WRTRETRAIN     = 0;
+      ExtInputs->TrainingEnables3.OPTIMIZECOMP   = 0;
+      ExtInputs->TrainingEnables3.PWRMETER       = 0;
+      ExtInputs->TrainingEnables3.PPR            = 0;
+      ExtInputs->TrainingEnables3.RXDQSDCC       = 0;
+      ExtInputs->TrainingEnables3.DIMMNTODT      = 0;
+      ExtInputs->TrainingEnables3.RXVREFPERBIT   = 0;
+      ExtInputs->TrainingEnables3.DCCPISERIALCAL = 0;
+      ExtInputs->TrainingEnables3.PHASECLKCAL    = 0;
+      ExtInputs->TrainingEnables3.WCKPADDCCCAL   = 0;
+      ExtInputs->TrainingEnables3.EMPHASIS       = 0;
+      ExtInputs->TrainingEnables3.DIMMRXOFFSET   = 0;
+      ExtInputs->TrainingEnables3.VIEWPINCAL     = 0;
+      ExtInputs->TrainingEnables3.WCKCLKPREDCC   = 0;
+      ExtInputs->TrainingEnables3.DQSPADDCC      = 0;
+      ExtInputs->TrainingEnables3.QCLKPHALIGN    = 0;
     }
   }
 
@@ -3574,7 +3597,7 @@ BuildMemoryInfoDataHob (
   MemoryInfo->DynamicMemoryBoostTrainingFailed = SaveData->DynamicMemoryBoostTrainingFailed;
   MemoryInfo->Ratio = SaveData->Ratio;
   MemoryInfo->NumPopulatedChannels = Outputs->NumPopChannel;
-  MemoryInfo->IsIbeccEnabled = Inputs->IsIbeccEnabled;
+  MemoryInfo->IsIbeccEnabled = (BOOLEAN) ExtInputs->Ibecc;
   DEBUG((DEBUG_INFO, "MemoryInfo->IsIbeccEnabled = %d \n", MemoryInfo->IsIbeccEnabled));
 
   AmtPprRanInLastBoot.Data = 0;

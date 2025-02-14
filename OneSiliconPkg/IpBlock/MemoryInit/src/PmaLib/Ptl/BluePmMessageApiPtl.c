@@ -227,7 +227,7 @@ MrcMcCapabilityPreSpd (
     if (Outputs->IsLpddr5) {
       Outputs->FreqMax = MIN (Outputs->FreqMax, f7467); // Default SAGV: 2400, 4800, 6400, 7467 (all G4)
     } else { // DDR5
-      Outputs->FreqMax = MIN (Outputs->FreqMax, f5600); // Default SAGV: 3200/G4, 4800/G4, 5600/G4, 3200/G2
+      Outputs->FreqMax = MIN (Outputs->FreqMax, f4800); // Default SAGV: 3200/G4, 3200/G4, 4800/G4, 3200/G2
     }
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Auto FreqMax resolved to: %u\n", Outputs->FreqMax);
   }

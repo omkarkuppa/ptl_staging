@@ -140,7 +140,7 @@ typedef struct {
   UINT8  VsysAssertionDeglitchExponent;
   UINT8  VsysDeassertionDeglitchMantissa;
   UINT8  VsysDeassertionDeglitchExponent;
-  UINT8  Rsvd2[14];
+  UINT8  Rsvd2[2];
   /**
     PCODE VR Mailbox: Voltage Regulator Fast Vmode ICC Limit.
     This value represents the current threshold where the VR would initiate reactive protection if Fast Vmode is enabled.

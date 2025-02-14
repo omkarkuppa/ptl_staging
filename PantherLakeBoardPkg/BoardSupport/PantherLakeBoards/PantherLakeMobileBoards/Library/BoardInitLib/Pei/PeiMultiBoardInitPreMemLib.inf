@@ -183,6 +183,14 @@
   gBoardModuleTokenSpaceGuid.PcdPcieClock7
   gBoardModuleTokenSpaceGuid.PcdPcieClock8
   gBoardModuleTokenSpaceGuid.PcdPcieClock9
+  gBoardModuleTokenSpaceGuid.PcdPcieClock10
+  gBoardModuleTokenSpaceGuid.PcdPcieClock11
+  gBoardModuleTokenSpaceGuid.PcdPcieClock12
+  gBoardModuleTokenSpaceGuid.PcdPcieClock13
+  gBoardModuleTokenSpaceGuid.PcdPcieClock14
+  gBoardModuleTokenSpaceGuid.PcdPcieClock15
+  gBoardModuleTokenSpaceGuid.PcdPcieClock16
+  gBoardModuleTokenSpaceGuid.PcdPcieClock17
 
   # USB 2.0 PHY Port parameters
   gBoardModuleTokenSpaceGuid.PcdUsb2PhyTuningTable

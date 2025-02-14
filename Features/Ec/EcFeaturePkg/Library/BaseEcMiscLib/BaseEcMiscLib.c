@@ -58,9 +58,9 @@ EnableEcAcpiMode (
   )
 {
   if (Enable == TRUE) {
-    return (EcInterface (EcId0Ch0, EC_C_ACPI_ENABLE, NULL, NULL));
+    return (EcInterface (EcId0, EC_C_ACPI_ENABLE, NULL, NULL));
   } else {
-    return (EcInterface (EcId0Ch0, EC_C_ACPI_DISABLE, NULL, NULL));
+    return (EcInterface (EcId0, EC_C_ACPI_DISABLE, NULL, NULL));
   }
 }
 
@@ -81,7 +81,7 @@ DisableEcSmiMode (
   VOID
   )
 {
-  return (EcInterface (EcId0Ch0, EC_C_SMI_DISABLE, NULL, NULL));
+  return (EcInterface (EcId0, EC_C_SMI_DISABLE, NULL, NULL));
 }
 
 /**
@@ -107,7 +107,7 @@ PowerStateIsAc (
   ///
   PortDataOut[0]  = 0;
   DataSize        = 1;
-  Status = EcInterface (EcId0Ch0, EC_C_SWITCH_STATUS, &DataSize, PortDataOut);
+  Status = EcInterface (EcId0, EC_C_SWITCH_STATUS, &DataSize, PortDataOut);
   ///
   /// At this point, we expect this to always succeed
   ///
@@ -155,7 +155,7 @@ GetVirtualDockStatus (
   // 1 - dock attached, 0 - dock unattached
   //
   DockValue[0] = DEVICE_STATE_02;
-  Status = ReadEcRam (EcId0Ch0, DockValue, sizeof (DockValue));
+  Status = ReadEcRam (DockValue, sizeof (DockValue));
 
   if (!EFI_ERROR (Status)) {
     *Data = DockValue[0] & 0x01;
@@ -179,14 +179,14 @@ ClearTenSecPwrButtonMode (
   UINT8             DataBuffer[2];
 
   DataBuffer[0] = ACPI_CONCEPT_FLAG;
-  Status = ReadEcRam (EcId0Ch0, DataBuffer, sizeof (DataBuffer));
+  Status = ReadEcRam (DataBuffer, sizeof (DataBuffer));
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR(Status)) {
     return;
   }
   DataBuffer[1] = DataBuffer[0] & ~(BIT1); // Clear 10sec Power button Override in EC
   DataBuffer[0] = ACPI_CONCEPT_FLAG;
-  Status = WriteEcRam (EcId0Ch0, DataBuffer, sizeof (DataBuffer));
+  Status = WriteEcRam (DataBuffer, sizeof (DataBuffer));
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR(Status)) {
     return;
@@ -221,11 +221,11 @@ GetBoardInfo (
   }
 
   //
-  // For 'EC_C_BOARD_INFO' command SizeOfSendData = 0, SizeOfReceiveData =2.
+  // For 'EC_C_BOARD_INFO' command NumberOfSendData = 0, NumberOfReceiveData =2.
   //
   DataSize = 2;
 
-  Status = EcInterface (EcId0Ch0, EC_C_BOARD_INFO, &DataSize, DataBuffer);
+  Status = EcInterface (EcId0, EC_C_BOARD_INFO, &DataSize, DataBuffer);
 
   if (!EFI_ERROR(Status)) {
     //
@@ -262,7 +262,7 @@ DetectEcSupport (
   UINT8             EcStatus;
 
   DataSize = 4;
-  Status = EcInterface (EcId0Ch0, EC_C_SMC_GET_MODE, &DataSize, DataBuffer);
+  Status = EcInterface (EcId0, EC_C_SMC_GET_MODE, &DataSize, DataBuffer);
 
   if (Status != EFI_SUCCESS) {
     return Status;
@@ -271,10 +271,10 @@ DetectEcSupport (
   //
   // Flush the EC output data buffer
   //
-  ReceiveEcStatus (EcId0Ch0, &EcStatus);
+  ReceiveEcStatus (&EcStatus);
   while (EcStatus & EC_S_OBF) {
     IoRead8 (EC_D_PORT);
-    ReceiveEcStatus (EcId0Ch0, &EcStatus);
+    ReceiveEcStatus (&EcStatus);
   }
 
   if (Status == EFI_SUCCESS) {
@@ -309,7 +309,7 @@ DetectEcRevision (
 
   DataSize = 4;
   ZeroMem (DataBuffer, DataSize);
-  Status = (EcInterface (EcId0Ch0, EC_C_EC_REVISION, &DataSize, DataBuffer));
+  Status = (EcInterface (EcId0, EC_C_EC_REVISION, &DataSize, DataBuffer));
 
   if (!EFI_ERROR (Status)) {
     return Status;
@@ -343,7 +343,7 @@ DisablePchDtsReading (
 
   DataSize = sizeof (Data8);
   Data8[0] = Disable;
-  return (EcInterface (EcId0Ch0, EC_C_DIS_PCH_DTS_READ, &DataSize, Data8));
+  return (EcInterface (EcId0, EC_C_DIS_PCH_DTS_READ, &DataSize, Data8));
 }
 
 /**
@@ -402,7 +402,7 @@ GetFanSpeed(
   //
   DataBuffer[1] = Pwmvalue;
   DataBuffer[0] = PWM_ENDING_VALUE;
-  Status = WriteEcRam (EcId0Ch0, DataBuffer, sizeof (DataBuffer));
+  Status = WriteEcRam (DataBuffer, sizeof (DataBuffer));
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
@@ -417,7 +417,7 @@ GetFanSpeed(
   // Read data from offset 0x74(Higher Byte) & 0x73(Lower Byte) for Fan Speed.
   //
   DataBuffer[0] = CPU_FAN_SPEED + 1;
-  Status = ReadEcRam (EcId0Ch0, DataBuffer, sizeof (DataBuffer));
+  Status = ReadEcRam (DataBuffer, sizeof (DataBuffer));
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
@@ -425,7 +425,7 @@ GetFanSpeed(
   *Speed = (UINT16) (DataBuffer[0] << 8);
 
   DataBuffer[0] = CPU_FAN_SPEED;
-  Status = ReadEcRam (EcId0Ch0, DataBuffer, sizeof (DataBuffer));
+  Status = ReadEcRam (DataBuffer, sizeof (DataBuffer));
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
@@ -473,7 +473,7 @@ DfctFastChargingMode (
     DataBuffer[0] = EC_D_NORMAL_CHARGING;
   }
 
-  return (EcInterface (EcId0Ch0, EC_C_SET_CHARGING_METHOD, &DataSize, DataBuffer));
+  return (EcInterface (EcId0, EC_C_SET_CHARGING_METHOD, &DataSize, DataBuffer));
 }
 
 /**
@@ -493,7 +493,7 @@ EcForceResetAfterAcRemoval (
   UINT8             DataBuffer[2];
 
   DataBuffer[0] = ACPI_CONCEPT_FLAG;
-  Status = ReadEcRam (EcId0Ch0, DataBuffer, sizeof (DataBuffer));
+  Status = ReadEcRam (DataBuffer, sizeof (DataBuffer));
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return;
@@ -514,7 +514,7 @@ EcForceResetAfterAcRemoval (
 
   DataBuffer[1] = DataBuffer[0];
   DataBuffer[0] = ACPI_CONCEPT_FLAG;
-  Status = WriteEcRam (EcId0Ch0, DataBuffer, sizeof (DataBuffer));
+  Status = WriteEcRam (DataBuffer, sizeof (DataBuffer));
   ASSERT_EFI_ERROR (Status);
   if (EFI_ERROR (Status)) {
     return;
@@ -552,7 +552,7 @@ SetFailSafeFanCtrl (
   DataBuffer[0] = CpuTemp;
   DataBuffer[1] = CpuFanSpeed;
 
-  Status = EcInterface (EcId0Ch0, EC_C_FAIL_SAFE_FAN_CTRL, &DataSize, DataBuffer);
+  Status = EcInterface (EcId0, EC_C_FAIL_SAFE_FAN_CTRL, &DataSize, DataBuffer);
 
   return Status;
 }
@@ -585,7 +585,7 @@ BiosEcWdtReadCommand (
   }
 
   DataSize = sizeof (Data8);
-  Status = (EcInterface (EcId0Ch0, EC_C_WDT_READ, &DataSize, Data8));
+  Status = (EcInterface (EcId0, EC_C_WDT_READ, &DataSize, Data8));
   if (!EFI_ERROR (Status)) {
     *Data = Data8[0];
   }
@@ -684,7 +684,7 @@ EcControlPln (
   }
 
   DataSize = 1;
-  EcInterface (EcId0Ch0, EC_C_PLN_ENABLE, &DataSize, Data8);
+  EcInterface (EcId0, EC_C_PLN_ENABLE, &DataSize, Data8);
 }
 
 /**
@@ -697,7 +697,7 @@ EcDisablePowerButton (
   VOID
   )
 {
-  EcInterface (EcId0Ch0, EC_C_DISABLE_POWER_BTN, NULL, NULL);
+  EcInterface (EcId0, EC_C_DISABLE_POWER_BTN, NULL, NULL);
 }
 
 /**
@@ -710,7 +710,7 @@ EcEnablePowerButton (
   VOID
   )
 {
-  EcInterface (EcId0Ch0, EC_C_ENABLE_POWER_BTN, NULL, NULL);
+  EcInterface (EcId0, EC_C_ENABLE_POWER_BTN, NULL, NULL);
 }
 
 /**
@@ -737,7 +737,7 @@ EcSetG3State (
 
   Data8[0] = StateAfterG3;
   DataSize = 1;
-  return EcInterface (EcId0Ch0, EC_C_SET_G3TOS5, &DataSize, Data8);
+  return EcInterface (EcId0, EC_C_SET_G3TOS5, &DataSize, Data8);
 }
 
 /**
@@ -756,7 +756,7 @@ GetUcsiRev  (
   UINT8             DataSize;
 
   DataSize = sizeof (DataBuffer);
-  EcInterface (EcId0Ch0, EC_C_UCSI_READ_VERSION, &DataSize, DataBuffer);
+  EcInterface (EcId0, EC_C_UCSI_READ_VERSION, &DataSize, DataBuffer);
 
   return ((DataBuffer[0] << 8) + DataBuffer[1]);
 }
@@ -788,13 +788,13 @@ EcSetUcsiVer (
 
   EcDataBuffer[0] = 0xF3;
   EcDataBuffer[1] = UcsiVer;
-  WriteEcRam (EcId0Ch0, EcDataBuffer, sizeof (EcDataBuffer));
+  WriteEcRam (EcDataBuffer, sizeof (EcDataBuffer));
 
   EcDataBuffer[0] = 0xF2;
   EcDataBuffer[1] = EC_USBC_MAILBOX_CMD_SET_UCSI_VER_WA;
-  WriteEcRam (EcId0Ch0, EcDataBuffer, sizeof (EcDataBuffer));
+  WriteEcRam (EcDataBuffer, sizeof (EcDataBuffer));
 
-  Status = SendEcCommand (EcId0Ch0, EC_SMCHOST_USBC_MISC_CMD_HANDLER);
+  Status = SendEcCommand (EC_SMCHOST_USBC_MISC_CMD_HANDLER);
 
   return Status;
 }
@@ -830,7 +830,7 @@ GetBoardButtonStatus (
   }
 
   DataSize = sizeof (Data8);
-  Status = EcInterface (EcId0Ch0, EC_C_SWITCH_STATUS, &DataSize, Data8);
+  Status = EcInterface (EcId0, EC_C_SWITCH_STATUS, &DataSize, Data8);
   if (!EFI_ERROR (Status)) {
     *ButtonStatus = Data8[0];
   }
@@ -860,7 +860,7 @@ LpcEcResetEcInNormalMode (
 
   Data8[0] = 0x5A;
   DataSize = 1;
-  return EcInterface (EcId0Ch0, EC_C_RESET_KSC, &DataSize, Data8);
+  return EcInterface (EcId0, EC_C_RESET_KSC, &DataSize, Data8);
 }
 
 /**
@@ -908,7 +908,7 @@ GetPDFwVersion (
   //
   DataSize = sizeof (DataBuffer);
   DataBuffer[0] = PDIndex;
-  Status = EcInterface (EcId0Ch0, EC_C_PD_VERSION_INFO_CMD, &DataSize, DataBuffer);
+  Status = EcInterface (EcId0, EC_C_PD_VERSION_INFO_CMD, &DataSize, DataBuffer);
   if (!EFI_ERROR (Status)) {
     for (Index = 0; Index < PD_INFORMATION_LEN; Index++) {
       Data[Index] = DataBuffer[Index];
@@ -967,7 +967,7 @@ EcAcPresent (
   // Read EC ACPI offset 0x03 [bit0] to determine if AC is present
   //
   ValTemp[0] = DEVICE_STATE;
-  Status = ReadEcRam (EcId0Ch0, ValTemp, sizeof (ValTemp));
+  Status = ReadEcRam (ValTemp, sizeof (ValTemp));
 
   if (!EFI_ERROR (Status) && ((ValTemp[0] & BIT0) == BIT0)) {
     DEBUG ((DEBUG_INFO, "PowerCheck: AC is plugged-in\n"));
@@ -1040,7 +1040,7 @@ GetBatInfo (
   }
 
   Data8[0] = BatStatus;
-  Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+  Status = ReadEcRam (Data8, sizeof (Data8));
   if (!EFI_ERROR (Status)) {
     BatStatus = Data8[0];
     DEBUG ((DEBUG_INFO, "Battery %d status is 0x%x\n", BatIndex, BatStatus));
@@ -1050,7 +1050,7 @@ GetBatInfo (
   if (*BatPresent) {
     if (BatRemainPercent != NULL) {
       Data8[0] = *BatRemainPercent;
-      Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+      Status = ReadEcRam (Data8, sizeof (Data8));
       if (!EFI_ERROR (Status)) {
         *BatRemainPercent = Data8[0];
         DEBUG ((DEBUG_INFO, "Battery %d remaining precent is 0x%x\n", BatIndex, BatRemainPercent));
@@ -1063,13 +1063,13 @@ GetBatInfo (
       // Get high 8 bit, then get low 8 bit
       //
       Data8[0] = BatRCCmd + 1;
-      Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+      Status = ReadEcRam (Data8, sizeof (Data8));
       if (!EFI_ERROR (Status)) {
         *BatRemainCapacity |= (UINT16)Data8[0];
         *BatRemainCapacity <<= 8;
       }
       Data8[0] = BatRCCmd;
-      Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+      Status = ReadEcRam (Data8, sizeof (Data8));
       if (!EFI_ERROR (Status)) {
         *BatRemainCapacity |= (UINT16)Data8[0];
       }
@@ -1081,13 +1081,13 @@ GetBatInfo (
       // Get high 8 bit, then get low 8 bit
       //
       Data8[0] = BatRVCmd + 1;
-      Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+      Status = ReadEcRam (Data8, sizeof (Data8));
       if (!EFI_ERROR (Status)) {
         *BatResolutionVoltage |= (UINT16)Data8[0];
         *BatResolutionVoltage <<= 8;
       }
       Data8[0] = BatRVCmd;
-      Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+      Status = ReadEcRam (Data8, sizeof (Data8));
       if (!EFI_ERROR (Status)) {
         *BatResolutionVoltage |= (UINT16)Data8[0];
       }
@@ -1124,7 +1124,7 @@ CheckLidStatus (
   }
 
   LidStatus[0] = DEVICE_STATE;
-  Status = ReadEcRam (EcId0Ch0, LidStatus, sizeof (LidStatus));
+  Status = ReadEcRam (LidStatus, sizeof (LidStatus));
 
   if (!EFI_ERROR (Status) && (LidStatus[0] & BIT6)) {
     *LidOpen = TRUE;
@@ -1163,13 +1163,13 @@ EcGetFanSpeed (
   *FanSpeed = 0;
 
   EcFanSpeed[0] = CPU_FAN_SPEED + 1;             // EC_REG_CPU_FAN_SPEED + 1;
-  Status = ReadEcRam (EcId0Ch0, EcFanSpeed, sizeof (EcFanSpeed));
+  Status = ReadEcRam (EcFanSpeed, sizeof (EcFanSpeed));
   if (!EFI_ERROR (Status)) {
     *FanSpeed |= (UINT16) EcFanSpeed[0];
     *FanSpeed <<= 8;
   }
   EcFanSpeed[0] = CPU_FAN_SPEED;                 // EC_REG_CPU_FAN_SPEED;
-  Status = ReadEcRam (EcId0Ch0, EcFanSpeed, sizeof (EcFanSpeed));
+  Status = ReadEcRam (EcFanSpeed, sizeof (EcFanSpeed));
   if (!EFI_ERROR (Status)) {
     *FanSpeed |= (UINT16) EcFanSpeed[0];
   }
@@ -1204,7 +1204,7 @@ GetPchDtsTemp (
   }
 
   Data8[0] = PCH_DIGITAL_THERMAL_SENSOR;
-  Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+  Status = ReadEcRam (Data8, sizeof (Data8));
   if (!EFI_ERROR (Status)) {
     *PchDtsTemp = Data8[0];
   }
@@ -1264,13 +1264,13 @@ GetSensorTemp (
   }
 
   Data8[0] = SensorOffsetL + 1;
-  Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+  Status = ReadEcRam (Data8, sizeof (Data8));
   if (!EFI_ERROR (Status)) {
     *SensorTemp |= (UINT16) Data8[0];
     *SensorTemp <<= 8;
   }
   Data8[0] = SensorOffsetL;
-  Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+  Status = ReadEcRam (Data8, sizeof (Data8));
   if (!EFI_ERROR (Status)) {
     *SensorTemp |= (UINT16) Data8[0];
   }
@@ -1306,7 +1306,7 @@ EcSetPeciMode (
   Data8[0] = Data;
 
   DEBUG ((DEBUG_INFO, "%a: sending EC command to switch PECI mode\n", __FUNCTION__ ));
-  return EcInterface (EcId0Ch0, EC_C_SET_PECI_MODE, &DataSize, Data8);
+  return EcInterface (EcId0, EC_C_SET_PECI_MODE, &DataSize, Data8);
 
 }
 
@@ -1333,7 +1333,7 @@ DetectDttParticipants (
   UINT8             DataSize;
 
   DataSize = 2;
-  return (EcInterface (EcId0Ch0, GET_HW_PERIPHERALS_STS, &DataSize, DataBuffer));
+  return (EcInterface (EcId0, GET_HW_PERIPHERALS_STS, &DataSize, DataBuffer));
 }
 
 /**
@@ -1357,9 +1357,9 @@ EnableEcSmiMode (
   )
 {
   if (Enable == TRUE) {
-    return (EcInterface (EcId0Ch0, EC_C_SMI_ENABLE, NULL, NULL));
+    return (EcInterface (EcId0, EC_C_SMI_ENABLE, NULL, NULL));
   } else {
-    return (EcInterface (EcId0Ch0, EC_C_SMI_DISABLE, NULL, NULL));
+    return (EcInterface (EcId0, EC_C_SMI_DISABLE, NULL, NULL));
   }
 }
 
@@ -1387,7 +1387,7 @@ SetEcCriticalShutdownTemperature (
 
   DataSize = sizeof (Data8);
   Data8[0] = Data;
-  return (EcInterface (EcId0Ch0, EC_C_SET_CRITICAL_TEMP, &DataSize, Data8));
+  return (EcInterface (EcId0, EC_C_SET_CRITICAL_TEMP, &DataSize, Data8));
 }
 
 /**
@@ -1430,7 +1430,7 @@ SetEcLowPowerMode (
 
   DataSize = sizeof (Data8);
   Data8[0] = EcPowerFeatures;
-  return (EcInterface (EcId0Ch0, EC_C_CS_LOW_POWER_ENABLE, &DataSize, Data8));
+  return (EcInterface (EcId0, EC_C_CS_LOW_POWER_ENABLE, &DataSize, Data8));
 }
 
 /**
@@ -1457,7 +1457,7 @@ EcUpdateCsLED (
   UINT8             DataBuffer[2];
 
   DataBuffer[0] = ACPI_CONCEPT_FLAG;
-  Status = ReadEcRam (EcId0Ch0, DataBuffer, sizeof (DataBuffer));
+  Status = ReadEcRam (DataBuffer, sizeof (DataBuffer));
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -1467,7 +1467,7 @@ EcUpdateCsLED (
     DataBuffer[1] = DataBuffer[0] & ~(BIT0);
   }
   DataBuffer[0] = ACPI_CONCEPT_FLAG;
-  Status = WriteEcRam (EcId0Ch0, DataBuffer, sizeof (DataBuffer));
+  Status = WriteEcRam (DataBuffer, sizeof (DataBuffer));
 
   return Status;
 }
@@ -1497,7 +1497,7 @@ EcUpdatePG3 (
   DataBuffer[0] = PG3Enable;
 
   DataSize = 1;
-  return (EcInterface (EcId0Ch0, EC_C_P_G3_SET_MODE, &DataSize, DataBuffer));
+  return (EcInterface (EcId0, EC_C_P_G3_SET_MODE, &DataSize, DataBuffer));
 }
 
 /**
@@ -1515,13 +1515,13 @@ NotifyEcToPdToUpdatePcieTunnel (
 
   EcDataBuffer[0] = USBC_MAILBOX_DATA;
   EcDataBuffer[1] = PcieTunneling;
-  WriteEcRam (EcId0Ch0, EcDataBuffer, sizeof (EcDataBuffer));
+  WriteEcRam (EcDataBuffer, sizeof (EcDataBuffer));
 
   EcDataBuffer[0] = USBC_MAILBOX_COMMAND;
   EcDataBuffer[1] = EC_USBC_MISC_PCIE_EN_DIS;
-  WriteEcRam (EcId0Ch0, EcDataBuffer, sizeof (EcDataBuffer));
+  WriteEcRam (EcDataBuffer, sizeof (EcDataBuffer));
 
-  SendEcCommand (EcId0Ch0, EC_C_USBC_SX_EXIT_WAIT);
+  SendEcCommand (EC_C_USBC_SX_EXIT_WAIT);
 
   return;
 }
@@ -1544,11 +1544,11 @@ CriticalTempShutdownHappened (
   UINT8             DataSize;
 
   //
-  // For 'EC_C_LAST_SHUTDOWN_STATUS' command SizeOfSendData = 0, SizeOfReceiveData =1.
+  // For 'EC_C_LAST_SHUTDOWN_STATUS' command NumberOfSendData = 0, NumberOfReceiveData =1.
   //
   PortDataOut[0]  = 0;
   DataSize        = 1;
-  Status = EcInterface (EcId0Ch0, EC_C_LAST_SHUTDOWN_STATUS, &DataSize, PortDataOut);
+  Status = EcInterface (EcId0, EC_C_LAST_SHUTDOWN_STATUS, &DataSize, PortDataOut);
 
   if (!EFI_ERROR (Status) && (PortDataOut[0] & BIT0)) {
     return TRUE;
@@ -1656,7 +1656,7 @@ EcDeepSxConfig (
   DataBuffer[0] = DeepSxData;
   DataSize = sizeof (DataBuffer);
 
-  return EcInterface (EcId0Ch0, EC_C_SET_DSW_MODE, &DataSize, DataBuffer);
+  return EcInterface (EcId0, EC_C_SET_DSW_MODE, &DataSize, DataBuffer);
 }
 
 /**
@@ -1691,7 +1691,7 @@ EcGetPowerSource(
   DataBuffer[0] = POWER_SOURCE_TYPE;
   DataSize = sizeof(DataBuffer);
 
-  Status = EcInterface (EcId0Ch0, EC_C_READ_MEM, &DataSize, DataBuffer);
+  Status = EcInterface(EcId0, EC_C_READ_MEM, &DataSize, DataBuffer);
 
   if(!EFI_ERROR(Status)) {
     *PowerSource = DataBuffer[0];
@@ -1738,7 +1738,7 @@ SetSkinThermalControlConfig (
   DataSize = sizeof (StcConfigData);
   CopyMem (DataBuffer, &StcConfigData, DataSize);
 
-  Status = EcInterface (EcId0Ch0, EC_C_STC_CONFIG, &DataSize, DataBuffer);
+  Status = EcInterface (EcId0, EC_C_STC_CONFIG, &DataSize, DataBuffer);
 
   return Status;
 }
@@ -1760,7 +1760,7 @@ NotifyEcTdpForChargingRate (
   DataBuffer[0] = CpuTdp;
   DataSize = sizeof (DataBuffer);
 
-  EcInterface (EcId0Ch0, EC_C_TDP_WATTS, &DataSize, DataBuffer);
+  EcInterface (EcId0, EC_C_TDP_WATTS, &DataSize, DataBuffer);
 
 }
 
@@ -1782,5 +1782,5 @@ NotifyEcToRestorePL4Value (
 {
   DEBUG ((DEBUG_INFO, "NotifyEcToRestorePL4Value Start\n"));
 
-  return (EcInterface (EcId0Ch0, EC_C_RESTORATION_PL4_VALUES, NULL, NULL));
+  return (EcInterface (EcId0, EC_C_RESTORATION_PL4_VALUES, NULL, NULL));
 }

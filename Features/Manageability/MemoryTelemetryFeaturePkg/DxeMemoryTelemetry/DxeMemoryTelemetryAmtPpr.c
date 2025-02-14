@@ -44,7 +44,7 @@ AmtPprVarHandler (
   ZeroMem (&AmtPprVarData, sizeof (AmtPprVarData));
   Status = gRT->SetVariable (
                   AMT_PPR_ENABLE_VARIABLE_NAME,
-                  &gMemTelAmtPprVariableGuid,
+                  &gAmtPprEnableVariableGuid,
                   EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                   sizeof (AmtPprVarData),
                   &AmtPprVarData

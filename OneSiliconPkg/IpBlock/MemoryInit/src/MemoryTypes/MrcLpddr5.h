@@ -352,8 +352,6 @@
 #define LP5_WSFS_CMD_RISE_EDGE   (0x4c)  // H-L-L-H-H-L-L (1001100)
 #define LP5_WS_OFF_CMD_RISE_EDGE (0x7c)  // H-H-H-H-H-L-L (1111100)
 #define LP5_NOP_CMD_RISE_EDGE    (0)     // L-L-L-L-L-L-L (0)
-#define LP5_ACT1_CMD_RISE_EDGE   (0x07)  //         H-H-H (    111)
-#define LP5_ACT2_CMD_RISE_EDGE   (0x03)  //         L-H-H (    011)
 
 typedef enum {
   MrcLp5BgMode,

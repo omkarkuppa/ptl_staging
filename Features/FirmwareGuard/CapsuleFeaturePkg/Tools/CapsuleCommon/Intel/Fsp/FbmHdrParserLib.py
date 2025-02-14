@@ -21,10 +21,99 @@
 ##
 
 from CapsuleCommon.Base.DebugLib import *
+from CapsuleCommon.Validate.IntegerLib import *
 from CapsuleCommon.Wrapper.ByteBufferWrapperLib import *
 from CapsuleCommon.Wrapper.StructWrapperLib import *
 
 from CapsuleCommon.Intel.Fsp.FbmHdrLib import *
+
+class FbmVersion (object):
+    def __init__ (
+        self,
+        MajorVer: int,
+        MinorVer: int,
+        ) -> None:
+        """ Class to represent the FBM version.
+
+        Args:
+            MajorVer (int):
+                Major version of the FBM.
+            MinorVer (int):
+                Minor version of the FBM.
+
+        Raises:
+            None.
+
+        Returns:
+            None.
+        """
+        self.__MajorVer: int = MajorVer
+        self.__MinorVer: int = MinorVer
+
+        self.__PreCheck ()
+
+    def __PreCheck (self) -> None:
+        """ Check the input argument is valid.
+
+        Args:
+            None.
+
+        Raises:
+            TypeError:
+                (1) Major version not int type.
+                (2) Minor version not int type.
+            ValueError:
+                (1) Major version not UINT8.
+                (2) Minor version not UINT8.
+
+        Returns:
+            None.
+        """
+        if not isinstance (self.__MajorVer, int):
+            raise TypeError ('Major version should be int type.')
+        elif not isinstance (self.__MinorVer, int):
+            raise TypeError ('Minor version should be int type.')
+
+        if not IsUint8 (self.__MajorVer):
+            raise ValueError (
+                    f'Major version should be UINT8. [{self.__MajorVer}]'
+                    )
+        elif not IsUint8 (self.__MinorVer):
+            raise ValueError (
+                    f'Minor version should be UINT8. [{self.__MinorVer}]'
+                    )
+
+    @property
+    def Major (self) -> int:
+        """ Return the major version of the FBM. (1 byte)
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            int:
+                Major version of the FBM.
+        """
+        return self.__MajorVer
+
+    @property
+    def Minor (self) -> int:
+        """ Return the minor version of the FBM. (1 byte)
+
+        Args:
+            None.
+
+        Raises:
+            None.
+
+        Returns:
+            int:
+                Minor version of the FBM.
+        """
+        return self.__MinorVer
 
 class FbmHdrParser (object):
     def __init__ (
@@ -43,13 +132,14 @@ class FbmHdrParser (object):
         Returns:
             None.
         """
-        self.__Buffer     : ByteBuffer = Buffer
-        self.__FbmBaseInfo: dict       = self.__GetFbmBaseInfo ()
-        self.__FbmHdr     : FbmHdr     = FbmHdr (**self.__FbmBaseInfo)
+        self.__Buffer    : ByteBuffer = Buffer
+        self.__ImageInfo : dict       = self.__GetImageInfo ()
+        self.__FbmHdr    : FbmHdr     = FbmHdr (**self.__ImageInfo)
+        self.__FbmVersion: FbmVersion = self.__GetFbmVersion ()
 
     @property
-    def Header (self) -> FbmHdr:
-        """ Return FBM header information within this buffer.
+    def FbmVersion (self) -> FbmVersion:
+        """ Return FBM version information within this buffer.
 
         Args:
             None.
@@ -58,25 +148,21 @@ class FbmHdrParser (object):
             None.
 
         Returns:
-            FbmHdr:
-                The FBM header information of this buffer.
-                (Should be FbmHdr object)
+            FbmVersion:
+                The FBM version information of this buffer.
+                (Should be FbmVersion object)
         """
-        return self.__FbmHdr
+        return self.__FbmVersion
 
-    def __GetFbmBaseInfo (self) -> dict:
-        """ Get the base FBM header information.
-
-        Note:
-            (1) FBM header is varies based on each size information.
-            (2) This function reported the fixed field in the beginning
-                of header.
+    def __GetImageInfo (self) -> dict:
+        """ Get the FBM header information.
 
         Args:
             None.
 
         Raises:
-            None.
+            ValueError:
+                Unsupported FBM header version.
 
         Returns:
             dict:
@@ -84,13 +170,39 @@ class FbmHdrParser (object):
         """
         BeginOffset : int       = 0
         EndOffset   : int       = FBM_HDR_BYTE_SIZE
+        FormatDict  : dict      = FBM_HDR_FORMAT_DICT
         FbmHdrBuffer: bytearray = self.__Buffer.Buffer[BeginOffset:EndOffset]
         FbmInfo     : Struct    = None
 
         FbmInfo = Struct (
-                    Buffer     = FbmHdrBuffer,
-                    FormatDict = FBM_HDR_FORMAT_DICT,
-                    ByteOrder  = BYTE_ORDER_LITTLE_ENDIAN,
-                    )
+                     Buffer     = FbmHdrBuffer,
+                     FormatDict = FormatDict,
+                     ByteOrder  = BYTE_ORDER_LITTLE_ENDIAN,
+                     )
 
         return FbmInfo.Data
+
+    def __GetFbmVersion (self) -> FbmVersion:
+        """ Return the FBM version information.
+
+        Args:
+            None.
+
+        Raises:
+            ValueError:
+                Unsupported version of FBM.
+
+        Returns:
+            FbmVersion:
+                The FBM version information of this buffer.
+                (Should be FbmVersion object)
+        """
+        VerString: str        = None
+        FbmVer   : FbmVersion = None
+
+        VerString = self.__FbmHdr.FspVersion
+        FbmVer    = FbmVersion (
+                        MajorVer  = HexToDec (VerString[2:4]),
+                        MinorVer  = HexToDec (VerString[0:2]),
+                        )
+        return FbmVer

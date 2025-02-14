@@ -37,7 +37,6 @@
   VmdInfoLib
   PeiVmdInitFruLib
   PeiHostBridgeIpStatusLib
-  ImrInitLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -52,4 +51,3 @@
 
 [Guids]
   gVmdInfoHobGuid
-  gHostBridgeDataHobGuid

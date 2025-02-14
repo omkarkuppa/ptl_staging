@@ -233,21 +233,20 @@
               }
             }
           }
-        }
-      }
-
-      Method (_UPC, 0) {
-        If (CondRefOf (\_SB.E1UP)) {
-          Return (\_SB.E1UP ())
-        } Else {
-          Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
-        }
-      }
-      Method (_PLD, 0) {
-        If (CondRefOf (\_SB.E1PL)) {
-          Return (\_SB.E1PL ())
-        } Else {
-          Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
+          Method (_UPC, 0) {
+            If (CondRefOf (\_SB.E1UP)) {
+              Return (\_SB.E1UP ())
+            } Else {
+              Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
+            }
+          }
+          Method (_PLD, 0) {
+            If (CondRefOf (\_SB.E1PL)) {
+              Return (\_SB.E1PL ())
+            } Else {
+              Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
+            }
+          }
         }
       }
 
@@ -297,21 +296,20 @@
               }
             }
           }
-        }
-      }
-
-      Method (_UPC, 0) {
-        If (CondRefOf (\_SB.E2UP)) {
-          Return (\_SB.E2UP ())
-        } Else {
-          Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
-        }
-      }
-      Method (_PLD, 0) {
-        If (CondRefOf (\_SB.E2PL)) {
-          Return (\_SB.E2PL ())
-        } Else {
-          Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
+          Method (_UPC, 0) {
+            If (CondRefOf (\_SB.E2UP)) {
+              Return (\_SB.E2UP ())
+            } Else {
+              Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
+            }
+          }
+          Method (_PLD, 0) {
+            If (CondRefOf (\_SB.E2PL)) {
+              Return (\_SB.E2PL ())
+            } Else {
+              Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
+            }
+          }
         }
       }
 
@@ -361,21 +359,20 @@
               }
             }
           }
-        }
-      }
-
-      Method (_UPC, 0) {
-        If (CondRefOf (\_SB.E3UP)) {
-          Return (\_SB.E3UP ())
-        } Else {
-          Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
-        }
-      }
-      Method (_PLD, 0) {
-        If (CondRefOf (\_SB.E3PL)) {
-          Return (\_SB.E3PL ())
-        } Else {
-          Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
+          Method (_UPC, 0) {
+            If (CondRefOf (\_SB.E3UP)) {
+              Return (\_SB.E3UP ())
+            } Else {
+              Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
+            }
+          }
+          Method (_PLD, 0) {
+            If (CondRefOf (\_SB.E3PL)) {
+              Return (\_SB.E3PL ())
+            } Else {
+              Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
+            }
+          }
         }
       }
 
@@ -425,21 +422,20 @@
               }
             }
           }
-        }
-      }
-
-      Method (_UPC, 0) {
-        If (CondRefOf (\_SB.E4UP)) {
-          Return (\_SB.E4UP ())
-        } Else {
-          Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
-        }
-      }
-      Method (_PLD, 0) {
-        If (CondRefOf (\_SB.E4PL)) {
-          Return (\_SB.E4PL ())
-        } Else {
-          Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
+          Method (_UPC, 0) {
+            If (CondRefOf (\_SB.E4UP)) {
+              Return (\_SB.E4UP ())
+            } Else {
+              Return (Package (4) {0x0, 0xFF, 0x0, 0x0})
+            }
+          }
+          Method (_PLD, 0) {
+            If (CondRefOf (\_SB.E4PL)) {
+              Return (\_SB.E4PL ())
+            } Else {
+              Return (Package (1) {Buffer (0x14) {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}})
+            }
+          }
         }
       }
 

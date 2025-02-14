@@ -36,6 +36,7 @@ typedef struct {
   BOOLEAN             LpFreqSwitch;
   UINT32              ErrorCountForFail;
   UINT8               BER;
+  UINT8               TatDelta;
   BOOLEAN             TxtClean;
   BOOLEAN             EnablePda;
   BOOLEAN             Lp58BankMode;

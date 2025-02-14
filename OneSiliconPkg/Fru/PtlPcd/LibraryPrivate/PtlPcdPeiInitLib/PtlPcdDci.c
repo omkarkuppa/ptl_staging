@@ -63,7 +63,7 @@ SocDciResetHandling (
   PCH_RESET_DATA                  ResetData;
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_PREMEM_RESET_DCI);
-  DEBUG ((DEBUG_INFO, "SocDciResetHandling - global reset due to user opt-in debug state change.\n"));
+  DEBUG ((DEBUG_INFO, "DciConfiguration - global reset due to user opt-in debug state change.\n"));
 
   // Defer global reset to schedule reset timing. For one to ensure global reset executed fully thru heci command, which is not available prior to MRC;
   // For another when debug is enabled which possibly brings about crc sync global reset later to apply chipset init table for debug, defer to that point

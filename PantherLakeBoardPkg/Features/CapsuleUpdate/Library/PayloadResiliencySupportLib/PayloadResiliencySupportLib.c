@@ -1,5 +1,5 @@
-/** @file
-  Definition of FSP Boot Manifest.
+/**  @file
+  PayloadResiliencySupportLib to support Payloads management resiliency feature
 
   @copyright
   INTEL CONFIDENTIAL
@@ -17,20 +17,24 @@
   in the License.
 
   @par Specification Reference:
-
 **/
 
-#ifndef __FSP_BOOT_MANIFEST__
-#define __FSP_BOOT_MANIFEST__
+#include <Uefi.h>
+#include <Library/DebugLib.h>
+#include <Library/PayloadResiliencySupportLib.h>
 
-#define FBM_STRUCTURE_ID  (*(UINT64 *)"__FBMS__")
+/**
+  Check whether the Payloads management backup Feature is enabled.
 
-typedef struct {
-  UINT8     StructureId[8];
-  UINT8     StructVersion;
-  UINT8     Reserved1[3];
-  UINT16    KeySignatureOffset;
-  UINT8     FspVersion[6];
-} FBM_HEADER;
+  @return TRUE       The Payloads management backup Feature is enabled.
+  @return FALSE      The Payloads management backup Feature is not enabled.
 
-#endif
+**/
+BOOLEAN
+EFIAPI
+IsPayloadBackupEnabled (
+ )
+{
+  DEBUG((DEBUG_INFO, "The Payloads management backup Feature is enabled.\n"));
+  return TRUE;
+}

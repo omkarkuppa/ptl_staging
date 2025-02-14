@@ -27,9 +27,6 @@
 #include <CnvSetupId.h>
 #include <Protocol/CnvFormPlatformProtocol.h>
 
-#define BT_DISABLED          0
-#define BT_DRIVES_I2S_CLOCK  1
-#define DSP_DRIVES_I2S_CLOCK 2
 UINT8 mCnvFormChanged = 0;
 
 /**
@@ -171,8 +168,8 @@ CnvFormPlatformCallback (
       // SoundWire interface enable
       if (CnvSetupData.CnviBtAudioOffloadInterface == 1) {
         // Audio DSP NHLT Endpoints Configuration - Bluetooth
-        if (NhltConfiguration.NhltBluetoothEnabled != BT_DISABLED) {
-          NhltConfiguration.NhltBluetoothEnabled = BT_DISABLED;
+        if (NhltConfiguration.NhltBluetoothEnabled != FALSE) {
+          NhltConfiguration.NhltBluetoothEnabled = FALSE;
           NhltNeedUpdate = TRUE;
         }
         // BT Offload through SoundWire
@@ -187,8 +184,8 @@ CnvFormPlatformCallback (
         }
       } else { //I2S (legacy) interface is used
         // Audio DSP NHLT Endpoints Configuration - Bluetooth
-        if (NhltConfiguration.NhltBluetoothEnabled == BT_DISABLED) {
-          NhltConfiguration.NhltBluetoothEnabled = DSP_DRIVES_I2S_CLOCK;
+        if (NhltConfiguration.NhltBluetoothEnabled == FALSE) {
+          NhltConfiguration.NhltBluetoothEnabled = 1; // BT drives I2S in HFP
           NhltNeedUpdate = TRUE;
         }
         // BT Offload through SoundWire
@@ -204,8 +201,8 @@ CnvFormPlatformCallback (
       }
     } else { //BT not present or enabled or BT offload disabled
       // Audio DSP NHLT Endpoints Configuration - Bluetooth
-      if (NhltConfiguration.NhltBluetoothEnabled != BT_DISABLED) {
-        NhltConfiguration.NhltBluetoothEnabled = BT_DISABLED;
+      if (NhltConfiguration.NhltBluetoothEnabled != FALSE) {
+        NhltConfiguration.NhltBluetoothEnabled = FALSE;
         NhltNeedUpdate = TRUE;
       }
       // BT Offload through SoundWire
@@ -365,16 +362,14 @@ DspFeaturesCnvSetupCallback (
       // SoundWire interface enable
       if (CnvSetupData.CnviBtAudioOffloadInterface == 1) {
         // Audio DSP NHLT Endpoints Configuration - Bluetooth
-        NhltConfiguration.NhltBluetoothEnabled = BT_DISABLED;
+        NhltConfiguration.NhltBluetoothEnabled = FALSE;
       } else { //I2S (legacy) interface is used
         // Audio DSP NHLT Endpoints Configuration - Bluetooth
-        if (NhltConfiguration.NhltBluetoothEnabled == BT_DISABLED) {
-          NhltConfiguration.NhltBluetoothEnabled = DSP_DRIVES_I2S_CLOCK;
-        }
+        NhltConfiguration.NhltBluetoothEnabled = TRUE;
       }
   } else {
     // Audio DSP NHLT Endpoints Configuration - Bluetooth
-    NhltConfiguration.NhltBluetoothEnabled = BT_DISABLED;
+    NhltConfiguration.NhltBluetoothEnabled = FALSE;
     // BT Sideband support
     PchSetup.PchHdAudioFeature[1] = FALSE;
     // BT Intel HFP SCO

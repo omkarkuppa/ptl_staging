@@ -38,8 +38,6 @@ MmPciLib
 VmdInfoLib
 PeiVmdInitLib
 MeInfoLib
-ImrInitLib
-CpuLib
 
 [Packages]
 MdePkg/MdePkg.dec
@@ -56,4 +54,3 @@ PeiVmdInitFruLib.c
 
 [Guids]
 gVmdInfoHobGuid
-gHostBridgeDataHobGuid

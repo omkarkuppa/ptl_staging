@@ -2670,15 +2670,6 @@ GetChannelDimmtAA (
 
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  Profile %u common set of supported CAS Latency values = %llXh\n", Profile, CommonCasMask[Profile]);
 
-    if (CommonCasMask[Profile] == 0 && (Outputs->DdrType == MRC_DDR_TYPE_DDR5)) {
-      if (Profile == ExtInputs->MemoryProfile) {
-        MRC_DEBUG_MSG(Debug, MSG_LEVEL_ERROR, "ERROR: Selected profile %u has an invalid CAS Latency mask\n", Profile);
-        return FALSE;
-      } else {
-        MRC_DEBUG_MSG(Debug, MSG_LEVEL_WARNING, "Warning: Profile %u has an invalid CAS Latency mask\n", Profile);
-      }
-    }
-
     if ((Profile >= XMP_PROFILE1) && (tCKmin == 0)) {
       continue;
     }
@@ -2687,11 +2678,6 @@ GetChannelDimmtAA (
     ConvertClock2Freq (MrcData, tCKmin, &tCKminIndex);
 
     do {
-      if (CommonCasMask[Profile] == 0 && (Outputs->DdrType == MRC_DDR_TYPE_DDR5)) {
-        // For any profile, CasMask of 0 is an invalid configuration since there is no valid CAS latency
-        Actual[Profile] = 0;
-        break;
-      }
       for (; !Found[Profile] && (Actual[Profile] <= tCLLimitMax); Actual[Profile]++) {
         if (CustomProfile) {
           Found[Profile] = TRUE;
@@ -2861,11 +2847,7 @@ GetChannelDimmtCWL (
               if (DimmOut->DdrType == MRC_DDR_TYPE_LPDDR5) {
                 Calculated = GetLpddr5tCWL (tCKmin, 1); // We always use Set B (1)
               } else if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
-                if (tCL == 0) {
-                  Calculated = 0;
-                } else {
-                  Calculated = GetDdr5tCWL (tCL);
-                }
+                Calculated = GetDdr5tCWL (tCL);
               }
               if (Inputs->ExtInputs.Ptr->DqLoopbackTest) {
                 if (DimmOut->DdrType == MRC_DDR_TYPE_LPDDR5) {
@@ -7047,9 +7029,6 @@ MrcGetSpdDdrTypeParams (
              Outputs->IsDdr5    = FALSE;
              Outputs->MaxDqBits = 16;
              MaxDimm = 1;
-             if (SpdIn->Ddr5.Base.ModuleType.Bits.ModuleType == CammMemoryPackage) {
-               Outputs->IsLP5Camm2 = TRUE;
-             }
              break;
 
            case MRC_SPD_DDR5_SDRAM_TYPE_NUMBER:
@@ -7093,7 +7072,6 @@ MrcSpdProcessingStatic (
   )
 {
   MrcDebug                      *Debug;
-  const MRC_FUNCTION            *MrcCall;
   const MrcInput                *Inputs;
   const MrcControllerIn         *ControllerIn;
   const MrcChannelIn            *ChannelIn;
@@ -7121,7 +7099,6 @@ MrcSpdProcessingStatic (
   Outputs  = &MrcData->Outputs;
   Debug    = &Outputs->Debug;
   SaveData = &MrcData->Save.Data;
-  MrcCall  = MrcData->Inputs.Call.Func;
 
   Status             = mrcDimmNotExist;
   MaxDimm            = Outputs->MaxDimm;
@@ -7250,8 +7227,6 @@ MrcSpdProcessingStatic (
     }
   }
 
-  MrcCall->MrcSetMem ((UINT8 *) SaveData->IsDdr5Hynix, sizeof (SaveData->IsDdr5Hynix), 0);
-
   if (Outputs->IsDdr5) {
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     ControllerOut = &Outputs->Controller[Controller];
@@ -7273,7 +7248,7 @@ MrcSpdProcessingStatic (
 
             if ((Ddr5ManufactureData->DramIdCode.Data == SKHYNIX_DRAM_ID) ||
                 (Ddr5ManufactureData->ModuleId.IdCode.Data == SKHYNIX_DRAM_ID)) {
-              SaveData->IsDdr5Hynix[Controller][Channel][Dimm] = TRUE;
+              SaveData->IsDdr5Hynix = TRUE;
             }
           }
         }

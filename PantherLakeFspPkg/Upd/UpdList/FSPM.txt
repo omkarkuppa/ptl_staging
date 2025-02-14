@@ -313,7 +313,6 @@ DDRPRECOMP
 RDCTLET
 RDDQODTT
 EMPHASIS
-RXDQSVOCC
 MrcTimeMeasure
 MrcFastBoot
 RankInterleave
@@ -420,4 +419,3 @@ TccActivationOffset
 InternalGraphics
 SocTraceHubMode
 MemoryBandwidthCompression
-IccLimit

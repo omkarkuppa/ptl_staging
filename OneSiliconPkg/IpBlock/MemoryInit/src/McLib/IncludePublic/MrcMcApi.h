@@ -67,15 +67,6 @@ typedef struct {
   INT32 MainGlbDrvGateDis;
 } MRC_DDR5_CS_GEARDOWN_SAVE;
 
-typedef struct {
-  INT64 Subch0RankCnt[MAX_CONTROLLER][MAX_CHANNEL];
-  INT64 Subch1RankCnt[MAX_CONTROLLER][MAX_CHANNEL];
-  INT64 Subch0SdramWidth[MAX_CONTROLLER][MAX_CHANNEL];
-  INT64 Subch1SdramWidth[MAX_CONTROLLER][MAX_CHANNEL];
-  INT64 Subch0Density[MAX_CONTROLLER][MAX_CHANNEL];
-  INT64 Subch1Density[MAX_CONTROLLER][MAX_CHANNEL];
-} MRC_MC_AD_SAVE;
-
 typedef enum {
   MrhCasWck2CkSyncOff,
   MrhCasWckFastSync,
@@ -85,6 +76,27 @@ typedef enum {
 /// MC Safe Modes
 #define MC_SAFE_RESERVED                    (MRC_BIT0)
 #define MC_SAFE_OPP_SR                      (MRC_BIT1)
+
+/// Structure to store turnaround timings
+typedef struct {
+  UINT32 tRdRdsg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdRddg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrWrsg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrWrdg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdWrsg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdWrdg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrRdsg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrRddg[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdRddr[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdRddd[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrWrdr[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrWrdd[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdWrdr[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tRdWrdd[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrRddr[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32 tWrRddd[MAX_CONTROLLER][MAX_CHANNEL];
+} McTurnAroundTimings;
+
 
 ///
 /// Functions
@@ -328,7 +340,7 @@ MrcIssueCas (
   IN UINT32               Controller,
   IN UINT32               Channel,
   IN UINT32               Rank,
-  IN MrhCasOpcode         OpcodeEnum,
+  IN UINT8                OpcodeEnum,
   IN BOOLEAN              DebugPrint
 );
 
@@ -821,96 +833,16 @@ MrcSetBusCmdType (
   );
 
 /**
-  Issue PREA command.
+  Issue PREA command using MPTU, on all populated ranks / channels
 
   @param[in] MrcData    - Include all MRC global data.
-  @param[in] Controller - the controller to work on
-  @param[in] Channel    - The channel to work on
-  @param[in] Rank       - The rank to work on
 
-  @retval mrcSuccess    - PREA was sent successfully
-  @retval mrcFail       - PREA was not sent successfully
+  @retval mrcSuccess    - if command was sent successfully
+  @retval mrcFail       - if command was not sent successfully
 **/
 MrcStatus
-MrcIssuePreaCmd (
-  IN MrcParameters* const MrcData,
-  IN UINT32               Controller,
-  IN UINT32               Channel,
-  IN UINT32               Rank
-  );
-
-/**
-  Issue ACT command.
-
-  @param[in] MrcData    - Include all MRC global data.
-  @param[in] Controller - the controller to work on
-  @param[in] Channel    - The channel to work on
-  @param[in] Rank       - The rank to work on
-  @param[in] Address    - BankGroup and Bank addresses
-  @param[in] Row       - Failing Row
-
-  @retval mrcSuccess    - ACT was sent successfully
-  @retval mrcFail       - ACT was not sent successfully
-**/
-MrcStatus
-MrcIssueActCmd (
-  IN MrcParameters* const MrcData,
-  IN UINT32               Controller,
-  IN UINT32               Channel,
-  IN UINT32               Rank,
-  IN UINT32               BankGroup,
-  IN UINT32               BankAddress,
-  IN UINT32               Row
-  );
-
-/**
-  Issue Precharge Per-Bank command.
-
-  @param[in] MrcData    - Include all MRC global data.
-  @param[in] Controller - the controller to work on
-  @param[in] Channel    - The channel to work on
-  @param[in] Rank       - The rank to work on
-  @param[in] BankGroup   - Bank group
-  @param[in] BankAddress - Bank address
-
-  @retval mrcSuccess    - Precharge PB was sent successfully
-  @retval mrcFail       - Precharge PB was not sent successfully
-**/
-MrcStatus
-MrcIssuePrepbCmd (
-  IN MrcParameters* const MrcData,
-  IN UINT32               Controller,
-  IN UINT32               Channel,
-  IN UINT32               Rank,
-  IN UINT32               BankGroup,
-  IN UINT32               BankAddress
-  );
-
-/**
-  Issue WRA command.
-
-  @param[in] MrcData    - Include all MRC global data.
-  @param[in] Controller - the controller to work on
-  @param[in] Channel    - The channel to work on
-  @param[in] Rank       - The rank to work on
-  @param[in] BankGroup   - BankGroup
-  @param[in] BankAddress - Bank addresses
-  @param[in] Row         - Failing Row
-  @param[in] ByteMask    - A mask of DQ bits, where bits set to 1 will be configured to drive low, all others will drive high.
-
-  @retval mrcSuccess    - WRA was sent successfully
-  @retval mrcFail       - WRA was not sent successfully
-**/
-MrcStatus
-MrcIssueWraCmd (
-  IN MrcParameters* const MrcData,
-  IN UINT32               Controller,
-  IN UINT32               Channel,
-  IN UINT32               Rank,
-  IN UINT32               BankGroup,
-  IN UINT32               BankAddress,
-  IN UINT32               Row,
-  IN UINT32               ByteMask
+MrcIssuePrechargeAll (
+  IN MrcParameters* const MrcData
   );
 
 /**
@@ -938,22 +870,6 @@ MrcStatus
 SetTurnAroundTiming (
   IN MrcParameters *const MrcData,
   IN BOOLEAN              IsMcInit
-  );
-
-/**
-  This function saves / restores MC Address Decoder values.
-
-  @param[in]      MrcData       - Include all MRC global data.
-  @param[in]      SaveOrRestore - Selects between saving the values or restoring the values.
-  @param[in, out] SavedValues   - Stores saved values.
-
-  @retval Nothing.
-**/
-VOID
-MrcMcAddressDecoderValuesSaveRestore (
-  IN     MrcParameters *const MrcData,
-  IN     MrcSaveOrRestore     SaveOrRestore,
-  IN OUT MRC_MC_AD_SAVE       *SavedValues
   );
 
 #endif // MRC_MC_API_H_

@@ -632,9 +632,11 @@ if exist %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Features\MultiIbbConfig\T
   @if not exist %BGSL_TMP_FOLDER% mkdir %BGSL_TMP_FOLDER%
   %PYTHON_COMMAND% %BIOS_GUARD_UPDATE_PACKAGE_PATH%\GenerateBGSL.py ^
     genbgsl ^
-    -t %PrepRELEASE% ^
-    -m %FLASHMAP_FDF% ^
-    -o %BIOS_GUARD_UPDATE_PACKAGE_PATH%
+    -es %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_OBBR_template.bgsl ^
+    -is %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_template_Pri_Sec_Sync.bgsl ^
+    -os %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_OBBR_template.bgsl ^
+    -ns %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_OBBR_template.bgsl ^
+    -t %PrepRELEASE% -m %FLASHMAP_FDF% -o %BIOS_GUARD_UPDATE_PACKAGE_PATH%
 
   @rem
   @rem Generate Ibb <-> IbbR sync up BGUP.
@@ -718,10 +720,13 @@ if %EXTENDEDREGION_BUILD% EQU TRUE (
 
   @REM Clean-Up the intermediate files
   if exist %BGSL_TMP_FOLDER% rmdir /q /s %BGSL_TMP_FOLDER%
+  del %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_ibbr.bgsl
   del %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_ibb_ibbr.bgsl
   del %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_obb.bgsl
-  del %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_NonFitPayload.bgsl
   del %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_extendedbios.bgsl
+  del %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_Ucode.bgsl
+  del %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_FIT_table_sync.bgsl
+  del %BIOS_GUARD_UPDATE_PACKAGE_PATH%\script_BuildBGUP_NonFitPayload.bgsl
 )
 @rem
 @rem ChasmFalls Rresiliency support end

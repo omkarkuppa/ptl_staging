@@ -25,12 +25,11 @@
       # ESRT and FMP GUID for system firmware capsule update
       #
       FILE_GUID = $(FMP_CLIENT_PLATFORM_SYSTEM_FSP)
-
     <PcdsFixedAtBuild>
       #
       # Unicode name string that is used to populate FMP Image Descriptor for this capsule update module
       #
-      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageIdName|L"$(FMP_CLIENT_PLATFORM_NAME) FSP System Firmware Device"
+      gFmpDevicePkgTokenSpaceGuid.PcdFmpDeviceImageIdName|L"$(FMP_CLIENT_PLATFORM_NAME) FSP"
 
       #
       # ESRT and FMP Lowest Support Version for this capsule update module

@@ -194,77 +194,6 @@ MrcProgramMATSPattern (
 }
 
 /**
-This function programs a specific pattern for the MMRW test into CPGC ExtBuf registers.
-
-@param[in]  MrcData                 - Global MRC data structure
-@param[in]  McChBitMask             - Memory Controller Channel Bit mask to read status for.
-@param[in]  PatternQW               - Array of 64-bit Data Pattern to write
-@param[in]  ErrInjMask16            - Bitmask of DQ lanes to inject error
-
-@retval   mrcSuccess / mrcFail
-**/
-MrcStatus
-MrcProgramDSPattern (
-  IN  MrcParameters *const MrcData,
-  IN  UINT32               McChBitMask,
-  IN  UINT64               PatternQW[],
-  IN  UINT16               ErrInjMask16
-)
-{
-  MRC_FUNCTION    *MrcCall;
-  UINT32          Index;
-  UINT32          CpgcExtBuf[CPGC_20_NUM_DPAT_EXTBUF];
-  UINT32          BasePattern[2];
-  UINT32          PatternUI;
-  UINT64_STRUCT   InputPattern;
-
-  MrcCall = MrcData->Inputs.Call.Func;
-  MrcCall->MrcSetMem ((UINT8 *) CpgcExtBuf, sizeof (CpgcExtBuf), 0);
-
-  switch (PatternQW[0])
-  {
-  case AmtMmrwTestPattern1:
-  case AmtMmrwTestPattern3:
-    BasePattern[0] = 0xffffffff;
-    BasePattern[1] = 0x00000000;
-    break;
-  case AmtMmrwTestPattern2:
-    BasePattern[0] = 0xf0f0f0f0;
-    BasePattern[1] = 0x0f0f0f0f;
-    break;
-  default:
-    InputPattern.Data = PatternQW[0];
-    BasePattern[0] = InputPattern.Data32.High;
-    break;
-  }
-  if (PatternQW[1] == 1) {
-    // Invert data pattern
-    BasePattern[0] = ~BasePattern[0];
-    BasePattern[1] = ~BasePattern[1];
-  }
-
-  for (Index = 0; Index < ARRAY_COUNT(CpgcExtBuf); Index++) {
-    // Select the current UI based on pattern type
-    switch (PatternQW[0]){
-      case AmtMmrwTestPattern1:
-        PatternUI = ((Index & 0x7) < 4) ? BasePattern[0] : BasePattern[1];
-        break;
-      case AmtMmrwTestPattern2:
-      case AmtMmrwTestPattern3:
-        PatternUI = BasePattern[Index % 2];
-        break;
-      default:
-        PatternUI = BasePattern[0];
-        break;
-    }
-    CpgcExtBuf[Index] = (PatternUI & ~ErrInjMask16) | (~PatternUI & ErrInjMask16);
-    MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "ExtBuf[%d]: 0x%08x\n", Index, CpgcExtBuf[Index]);
-  } // i loop
-  Cpgc20WriteMATSFixedPattern (MrcData, CpgcExtBuf);
-  return mrcSuccess;
-}
-
-/**
   Cpgc command pattern setup for memory test
 
   @param[in] MrcData        - Pointer to MRC global data.
@@ -895,6 +824,7 @@ AmtSetRowFailListSize (
   @param[in] MrcData        - Global MRC data structure
   @param[in,out] DqMask     - Bitmask of DQ errors
 
+
 **/
 VOID
 AmtCreateDqFailure (
@@ -1186,14 +1116,14 @@ AmtShiftFailRangeListLeft (
 } // AmtShiftFailRangeListLeft
 
 /**
-  Remove an entry from the Row Fail Range list
+Remove an entry from the Row Fail Range list
 
-  @param[in] MrcData        - Global MRC data structure
-  @param[in] Controller     - Controller number to update
-  @param[in] Channel        - Channel number to update
-  @param[in] FailIndex      - List index to be removed from the list
+@param[in] MrcData        - Global MRC data structure
+@param[in] Controller     - Controller number to update
+@param[in] Channel        - Channel number to update
+@param[in] FailIndex      - List index to be removed from the list
 
-  @retval status - mrcSuccess / mrcFail
+@retval status - mrcSuccess / mrcFail
 **/
 MrcStatus
 AmtRemoveRowFailRange (
@@ -1221,17 +1151,17 @@ AmtRemoveRowFailRange (
 } // AmtRemoveRowFailRange
 
 /**
-  Sets values for the fail range entry at the given index
+Sets values for the fail range entry at the given index
 
-  @param[in] MrcData        - Global MRC data structure
-  @param[in] Controller     - Controller number
-  @param[in] Channel        - Channel number
-  @param[in] FailIndex      - index into the Row fail list
-  @param[in] NewFail        - FailRange for the new fail to add
-  @param[in] SetIndex       - Whether to update the MrcOutputs->FailIndex pointer to the newly created failure
-  @param[in,out] Status     - mrcSuccess / mrcFail
+@param[in] MrcData        - Global MRC data structure
+@param[in] Controller     - Controller number
+@param[in] Channel        - Channel number
+@param[in] FailIndex      - index into the Row fail list
+@param[in] NewFail        - FailRange for the new fail to add
+@param[in] SetIndex       - Whether to update the MrcOutputs->FailIndex pointer to the newly created failure
+@param[in,out] Status     - mrcSuccess / mrcFail
 
-  @retval Whether the operation was successful
+@retval Whether the operation was successful
 **/
 UINT8
 AmtInsertEntryIntoRowFailRange (
@@ -1341,26 +1271,30 @@ AmtUpdateRowFailList (
   return Status;
 }  //AmtUpdateRowFailList
 
-/**
-  Updates Row failure list with last failure, coalescing failure ranges where possible
+   /**
+   Updates Row failure list with last failure, coalescing failure ranges where possible
 
-  @param[in]  MrcData                 - Global MRC data structure
-  @param[in]  PprAmtData              - PPR and AMT data structure
-  @param[in]  Controller              - Controller number of failure
-  @param[in]  Channel                 - Channel number of failure
-  @param[in]  CpgcErrorStatus         - the failure information
-  @param[in]  DeviceTemp              - Dimm Temperature on initial failure
+   @param[in]  MrcData                 - Global MRC data structure
+   @param[in]  Controller              - Controller number of failure
+   @param[in]  Channel                 - Channel number of failure
+   @param[in]  CpgcErrorStatus         - the failure information
+   @param[in]  DeviceTemp              - Dimm Temperature on initial failure
+   @param[in]  RowBits                 - Number of row bits supported by current logical rank
+   @param[in]  BaseBits                - Number of bank bits in SW loop
+   @param[in]  Direction               - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DN
 
-  @retval status - mrcSuccess / mrcFail
-**/
+   @retval status - mrcSuccess / mrcFail
+   **/
 MrcStatus
 AmtUpdateRowFailures (
-  IN  MrcParameters *const          MrcData,
-  IN  PPR_AMT_PARAMETER_DATA *const PprAmtData,
-  IN  UINT8                         Controller,
-  IN  UINT8                         Channel,
-  IN  CPGC_ERROR_STATUS_AMT         CpgcErrorStatus,
-  IN  UINT8                         DeviceTemp[MAX_CONTROLLER][MAX_CHANNEL]
+  IN  MrcParameters *const    MrcData,
+  IN  UINT8                   Controller,
+  IN  UINT8                   Channel,
+  IN  CPGC_ERROR_STATUS_AMT   CpgcErrorStatus,
+  IN  UINT8                   DeviceTemp[MAX_CONTROLLER][MAX_CHANNEL],
+  IN  UINT8                   RowBits[MAX_CONTROLLER][MAX_CHANNEL],
+  IN  UINT32                  BaseBits,
+  IN  UINT8                   Direction
 )
 {
   MRC_FUNCTION       *MrcCall;
@@ -1392,11 +1326,11 @@ AmtUpdateRowFailures (
     // Create new fail address
     ErrBank = CpgcErrorStatus.cpgcErrBank & MRC_UINT16_MAX;
     NewFail.Addr.Bits.Row = CpgcErrorStatus.cpgcErrRow;
-    NewFail.Addr.Bits.BankPair = ErrBank & ((1 << PprAmtData->BaseBits) - 1);
+    NewFail.Addr.Bits.BankPair = ErrBank & ((1 << BaseBits) - 1);
     NewFail.Addr.Bits.Rank = CpgcErrorStatus.cpgcErrRank;
     NewFail.Addr.Bits.Valid = 1;
 
-    NewFail.BankGroupMask = (1 << (ErrBank >> PprAmtData->BaseBits));
+    NewFail.BankGroupMask = (1 << (ErrBank >> BaseBits));
     NewFail.DeviceTemp = DeviceTemp[Controller][Channel];
     NewFail.Device = CpgcErrorStatus.device;
 
@@ -1414,16 +1348,14 @@ AmtUpdateRowFailures (
   Manually add entries into the row failure list for debugging purposes
 
   @param[in] MrcData        - Global MRC data structure
-  @param[in] PprAmtData     - PPR and AMT data structure
 
   @retval none
 **/
 #if POISON_ROW_FAIL_LIST
 VOID
 AmtPoisonRowFailList (
-  IN MrcParameters          *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData
-)
+  MrcParameters* const    MrcData
+  )
 {
   MRC_FUNCTION        *MrcCall;
   MrcOutput           *Outputs;
@@ -1435,13 +1367,6 @@ AmtPoisonRowFailList (
   UINT32              CurrRowFailMax;
   MrcCall = MrcData->Inputs.Call.Func;
   Outputs = &MrcData->Outputs;
-
-  // If row fail list has already been poisoned during this memory test, do not poison again
-  if (PprAmtData->HasRowFailListBeenPoisonedOnThisTest) {
-    return;
-  }
-
-  PprAmtData->HasRowFailListBeenPoisonedOnThisTest = TRUE;
 
   MrcCall->MrcSetMem ((UINT8 *) &FailEntry, sizeof (FailEntry), 0);
   //
@@ -1676,22 +1601,43 @@ AmtUpdateL2PBankMappingWithoutBG (
   CPGC setup per rank for Advanced Memory test
 
   @param[in] MrcData                    - Global MRC data structure
-  @param[in] PprAmtData                 - PPR and AMT data structure
   @param[in] McChBitMask                - Memory Controller Channel Bit mask to read results for.
+  @param[in] Rank                       - Physical rank index inside the dimm
+  @param[in] ColAddressBits             - number of DRAM column address bits to test
+  @param[in] RowAddressBits             - number of DRAM row address bits to test
+  @param[in] BankAddressBits            - number of DRAM bank address bits to test
+  @param[in] Direction                  - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DN
+  @param[in] BaseBankBits               - Number of least significant bank bits used in SW loop
+  @param[in] RowAddr                    - Base row address to start testing
+  @param[in] RowSize                    - Number of rows to test
+  @param[in] UseSingleBank              - If true, tests a single bank instead of all banks
+  @param[in] CpgcBank                   - Base bank address number to test in CPGC format (no BG number)
+  @param[in] TestType                   - Memory test type that is currently being run
 
   @retval Bit mask of channels enabled if rank exists
 
 **/
 UINT8
 AdvancedMemTestRankSetupMATSRowRange (
-  IN OUT MrcParameters  *const      MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN UINT8                          McChBitMask
+  IN OUT MrcParameters  *const  MrcData,
+  IN UINT8                      McChBitMask,
+  IN UINT32                     Rank,
+  IN UINT8                      ColAddressBits[MAX_CONTROLLER][MAX_CHANNEL],
+  IN UINT8                      RowAddressBits[MAX_CONTROLLER][MAX_CHANNEL],
+  IN UINT8                      BankAddressBits[MAX_CONTROLLER][MAX_CHANNEL],
+  IN UINT8                      Direction,
+  IN UINT32                     BaseBankBits,
+  IN UINT32                     RowAddr[MAX_CONTROLLER][MAX_IP_CHANNEL],
+  IN UINT32                     RowSize[MAX_CONTROLLER][MAX_IP_CHANNEL],
+  IN BOOLEAN                    UseSingleBank,
+  IN UINT32                     CpgcBank,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
   )
 {
   MRC_FUNCTION          *MrcCall;
   MrcOutput             *Outputs;
   UINT8                 CpgcColAddressBits;
+  UINT8                 CpgcBankAddressBits;
   UINT8                 CpgcTotalBanks;
   UINT32                RowStart;
   UINT8                 Controller;
@@ -1704,7 +1650,6 @@ AdvancedMemTestRankSetupMATSRowRange (
   UINT8                 DpatAltStop;
   BOOLEAN               IsMarchAlgorithm;
   UINT32                BaseRepeats;
-  BOOLEAN               IsMarchAlgoStartStopPerCh;
 
   MrcCall = MrcData->Inputs.Call.Func;
   Outputs = &MrcData->Outputs;
@@ -1712,7 +1657,7 @@ AdvancedMemTestRankSetupMATSRowRange (
 
   MrcCall->MrcSetMem ((UINT8 *) CPGCAddressArray, sizeof (CPGCAddressArray), 0);
 
-  switch (PprAmtData->TestType) {
+  switch (TestType) {
     case AdvMtXMarch:
     case AdvMtXMarchG:
     case AdvMtYMarchShort:
@@ -1728,19 +1673,10 @@ AdvancedMemTestRankSetupMATSRowRange (
     for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
       IpChannel = LP_IP_CH(Outputs->IsLpddr, Channel);
       if ((MC_CH_MASK_CHECK (McChBitMask, Controller, Channel, Outputs->MaxChannels) == 0) ||
-          (PprAmtData->TestRowSize[Controller][IpChannel] == 0)) {
+          (RowSize[Controller][IpChannel] == 0)) {
         continue;
       }
-      IsMarchAlgoStartStopPerCh = IsMarchAlgorithm;
-#if AMT_USE_XMARCH_ALT == 1
-      // Use the same DpatAltStart / Stop for all channels when the test is AdvMtXMarch and AMT_USE_XMARCH_ALT is enabled
-      IsMarchAlgoStartStopPerCh = IsMarchAlgoStartStopPerCh && (PprAmtData->TestType != AdvMtXMarch);
-#endif // AMT_USE_XMARCH_ALT
-#if AMT_USE_YMARCH_SHORT_ALT == 1
-      // Use the same DpatAltStart / Stop for all channels when the test is AdvMtYMarchShort and AMT_USE_YMARCH_SHORT_ALT is enabled
-      IsMarchAlgoStartStopPerCh = IsMarchAlgoStartStopPerCh && (PprAmtData->TestType != AdvMtYMarchShort);
-#endif // AMT_USE_YMARCH_SHORT_ALT
-      if (IsMarchAlgoStartStopPerCh) {
+      if (IsMarchAlgorithm) {
         switch (Channel) {
           case 0:
             DpatAltStart = 0;
@@ -1767,7 +1703,6 @@ AdvancedMemTestRankSetupMATSRowRange (
         DpatAltStop  = (DpatAltStop + Outputs->PprPatBufShift) & 0x1F;
       } else {
         // WCMATS8 and Data Retention
-        // XMarchAlt and YMarchShortAlt
         DpatAltStart = 0;
         DpatAltStop = 0x7;
       }
@@ -1775,8 +1710,8 @@ AdvancedMemTestRankSetupMATSRowRange (
 
       // Programs CPGC to run on the selected physical ranks
       // If FromRowTestPpr, test must run on only one rank
-      McChBitMaskEnabled |= SelectReutRanks (MrcData, Controller, Channel, 1 << PprAmtData->Rank, FALSE);
-      EnableRefresh (MrcData, Controller, Channel, 1 << PprAmtData->Rank); // Enable refresh on all Ranks
+      McChBitMaskEnabled |= SelectReutRanks (MrcData, Controller, Channel, 1 << Rank, FALSE);
+      EnableRefresh (MrcData, Controller, Channel, 1 << Rank); // Enable refresh on all Ranks
 
       // Global bind disabled for PPR
       Cpgc20SetGlobalBind (MrcData, Controller, IpChannel, FALSE);
@@ -1791,12 +1726,12 @@ AdvancedMemTestRankSetupMATSRowRange (
       LocalMcChBitMask = (UINT8) (MRC_BIT0 << ((Controller * Outputs->MaxChannels) + Channel));
       IpChannel = LP_IP_CH(Outputs->IsLpddr, Channel);
 
-      if (PprAmtData->Direction == MT_ADDR_DIR_UP) {
-        RowStart = PprAmtData->TestRowAddr[Controller][IpChannel];
+      if (Direction == MT_ADDR_DIR_UP) {
+        RowStart = RowAddr[Controller][IpChannel];
       } else {
         // RowAddr contains the ending row for downward direction
         // For display purposes, print the top row (starting row) instead, but still program RowAddr to CPGC
-        RowStart = PprAmtData->TestRowAddr[Controller][IpChannel] + PprAmtData->TestRowSize[Controller][IpChannel] - 1;
+        RowStart = RowAddr[Controller][IpChannel] + RowSize[Controller][IpChannel] - 1;
       }
 
       // Clear raster repo
@@ -1804,52 +1739,48 @@ AdvancedMemTestRankSetupMATSRowRange (
 
       // DDR5 Burst Length is 16
       if (Outputs->IsLpddr) {
-        CpgcColAddressBits = PprAmtData->ColumnBits[Controller][Channel] - (MrcLog2 (MrcData, 32) - 1); // LPDDR BL=32 The log function return +1 so we subtract 1
+        CpgcColAddressBits = ColAddressBits[Controller][Channel] - (MrcLog2 (MrcData, 32) - 1); // LPDDR BL=32 The log function return +1 so we subtract 1
       } else {
-        CpgcColAddressBits = PprAmtData->ColumnBits[Controller][Channel] - (MrcLog2 (MrcData, Outputs->BurstLength * 2) - 1); // The log function return +1 so we subtract 1
+        CpgcColAddressBits = ColAddressBits[Controller][Channel] - (MrcLog2 (MrcData, Outputs->BurstLength * 2) - 1); // The log function return +1 so we subtract 1
       }
 
-      if (PprAmtData->FromRowTestPpr) {
+      CpgcBankAddressBits = BankAddressBits[Controller][Channel];
+
+      if (UseSingleBank) {
         CpgcTotalBanks = 1;
       } else {
         // Banks + BG
-        CpgcTotalBanks = (UINT8) (1 << (PprAmtData->BankBits[Controller][Channel]));
+        CpgcTotalBanks = (UINT8) (1 << (CpgcBankAddressBits));
       }
 
-      if (PprAmtData->TestType == AdvMtYMarchShort || PprAmtData->TestType == AdvMtYMarchLong) {
-        CPGCAddressArray[Controller][Channel].AddrDirection = 3;
-      } else {
-        CPGCAddressArray[Controller][Channel].AddrDirection = FAST_Y;
-      }
-#if AMT_USE_YMARCH_SHORT_ALT == 1
-      if (PprAmtData->TestType == AdvMtYMarchShort) {
-        // Alternate YMarch on patterns 2 and 3 (Rd/inverted Wr) should use Fast X ordering
-        if (PprAmtData->PatternNumber == 2 || PprAmtData->PatternNumber == 3) {
+      if (IsMarchAlgorithm) {
+        if (TestType == AdvMtYMarchShort || TestType == AdvMtYMarchLong) {
           CPGCAddressArray[Controller][Channel].AddrDirection = 3;
         } else {
           CPGCAddressArray[Controller][Channel].AddrDirection = FAST_Y;
         }
+      } else {
+        CPGCAddressArray[Controller][Channel].AddrDirection = (Direction == MT_ADDR_DIR_UP) ? FAST_Y : INVERSE_FAST_Y;
       }
-#endif
       CPGCAddressArray[Controller][Channel].AddrIncOrder = BANK_2_ROW_COL_2_RANK;
       CPGCAddressArray[Controller][Channel].BankSize = CpgcTotalBanks;  // Value is decremented by 1, so Block_Size_Max_Bank=0 when executing a single bank test
       CPGCAddressArray[Controller][Channel].ColSizeBits = CpgcColAddressBits;
       CPGCAddressArray[Controller][Channel].ColStart = 0;
       CPGCAddressArray[Controller][Channel].LastValidAddr = 0;
-      CPGCAddressArray[Controller][Channel].RowSizeBits = (PprAmtData->FromRowTestPpr) ? 0 : PprAmtData->RowBits[Controller][Channel];
-      CPGCAddressArray[Controller][Channel].RowStart = PprAmtData->TestRowAddr[Controller][IpChannel];
+      CPGCAddressArray[Controller][Channel].RowSizeBits = (UseSingleBank) ? 0 : RowAddressBits[Controller][Channel];
+      CPGCAddressArray[Controller][Channel].RowStart = RowAddr[Controller][IpChannel];
 
       Cpgc20AddressSetup (MrcData, CPGCAddressArray, FALSE);
-      AmtSetBaseAddressControl (MrcData, PprAmtData->TestType);
-      if ((Outputs->IsLpddr && (MrcGetBankBgOrg(MrcData, Outputs->Frequency) != MrcLp5BgMode)) || PprAmtData->FromRowTestPpr) {
-        AmtUpdateL2PBankMappingWithoutBG (MrcData, PprAmtData->Rank, PprAmtData->FromRowTestPpr, PprAmtData->Bank);  // Use if LP5 16 bank mode or programming a single bank
+      AmtSetBaseAddressControl (MrcData, TestType);
+      if ((Outputs->IsLpddr && (MrcGetBankBgOrg(MrcData, Outputs->Frequency) != MrcLp5BgMode)) || UseSingleBank) {
+        AmtUpdateL2PBankMappingWithoutBG (MrcData, Rank, UseSingleBank, CpgcBank);  // Use if LP5 16 bank mode or programming a single bank
       } else {
-        MrcUpdateL2PAllsBanksMapping (MrcData, PprAmtData->Rank, LocalMcChBitMask);
+        MrcUpdateL2PAllsBanksMapping (MrcData, Rank, LocalMcChBitMask);
       }
 
       // Set base repeats according to bank groups, number of rows tested, and column bits.
-      BaseRepeats = CpgcTotalBanks * PprAmtData->TestRowSize[Controller][IpChannel] * (1 << (CpgcColAddressBits));
-      if (PprAmtData->TestType == AdvMtYMarchLong) {
+      BaseRepeats = CpgcTotalBanks * RowSize[Controller][IpChannel] * (1 << (CpgcColAddressBits));
+      if (TestType == AdvMtYMarchLong) {
         Cpgc20BaseRepeats (MrcData, LocalMcChBitMask, BaseRepeats >> 1, 1); // Num Ranks = 1
         MrcSetLoopcount (MrcData, LocalMcChBitMask, 1);
       } else {
@@ -1866,15 +1797,15 @@ AdvancedMemTestRankSetupMATSRowRange (
         Controller,
         Channel,
         RowStart,
-        PprAmtData->TestRowSize[Controller][IpChannel],
-        PprAmtData->Direction,
-        PprAmtData->ColumnBits[Controller][Channel],
-        PprAmtData->RowBits[Controller][Channel],
-        PprAmtData->BankBits[Controller][Channel]
+        RowSize[Controller][IpChannel],
+        Direction,
+        ColAddressBits[Controller][Channel],
+        RowAddressBits[Controller][Channel],
+        BankAddressBits[Controller][Channel]
       );
-      if (PprAmtData->FromRowTestPpr) {
+      if (UseSingleBank) {
         MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE,
-          "  Single Bank: %d\n", PprAmtData->Bank);
+          "  Single Bank: %d\n", CpgcBank);
       }
     } // for Channel
   } // for Controller
@@ -1889,18 +1820,36 @@ AdvancedMemTestRankSetupMATSRowRange (
   This function sets up a test for the given MC channel mask, with specified data pattern.
 
   @param[in,out] MrcData           - Pointer to MRC global data.
-  @param[in]     PprAmtData        - PPR and AMT data structure
   @param[in]     McChBitMask       - Memory Controller Channel Bit mask to test.
+  @param[in]     Rank              - Physical rank index inside the dimm
   @param[in]     LoopCount         - CPGC sequence loop count
+  @param[in]     CmdPat            - 0: PatWrRd, PatWr, PatRd
+  @param[in]     SeqDataInv[2]     - Enables pattern inversion per subsequence
+  @param[in]     Pattern           - Array of 64-bit wide data pattern to use per UI
+  @param[in]     PatternDepth      - Length of PatternQW in number of UIs
+  @param[in]     IsUseInvtPat      - Info to indicate whether or not Pattern is inverted by comparing original pattern
+  @param[in]     UiShl             - Bit-shift value per UI
+  @param[in]     NumCacheLines     - Number of cachelines to use in WDB
+  @param[in]     Direction         - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DN
+  @param[in]     TestType          - Memory test type that is currently being run
 
   @retval mrcSuccess
 **/
 MrcStatus
 SetupIOTestRetention (
-  IN OUT   MrcParameters *const     MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN       UINT8                    McChBitMask,
-  IN       UINT8                    LoopCount
+  IN OUT   MrcParameters *const MrcData,
+  IN       UINT8                McChBitMask,
+  IN       UINT8                Rank,
+  IN       UINT8                LoopCount,
+  IN       UINT8                CmdPat,
+  IN       BOOLEAN              SeqDataInv[2],
+  IN       UINT64               Pattern[],
+  IN       UINT8                PatternDepth,
+  IN       BOOLEAN              IsUseInvtPat,
+  IN       UINT8                UiShl,
+  IN       UINT8                NumCacheLines,
+  IN       UINT8                Direction,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
   )
 {
   MrcOutput       *Outputs;
@@ -1932,7 +1881,7 @@ SetupIOTestRetention (
 
   Outputs = &MrcData->Outputs;
 
-  switch (PprAmtData->TestType) {
+  switch (TestType) {
     case AdvMtXMarch:
     case AdvMtXMarchG:
     case AdvMtYMarchShort:
@@ -1945,31 +1894,27 @@ SetupIOTestRetention (
   }
 
   // Update the Bank/Row/Col sizes per current rank population
-  UpdateAddressForWholeRank (MrcData, CpgcAddressArr, BANK_2_ROW_COL_2_RANK, McChBitMask, PprAmtData->Rank);
+  UpdateAddressForWholeRank (MrcData, CpgcAddressArr, BANK_2_ROW_COL_2_RANK, McChBitMask, Rank);
 
-  Cpgc20UpdateBaseRepeatsForWholeRank (MrcData, PprAmtData->Rank, Outputs->McChBitMask, FALSE);
+  Cpgc20UpdateBaseRepeatsForWholeRank (MrcData, Rank, Outputs->McChBitMask, FALSE);
 
   SkipZqRestore = Outputs->SkipZq;
   Outputs->SkipZq = TRUE;
-  SetupIOTestAmt (MrcData, McChBitMask, PprAmtData->CmdPat, PprAmtData->NumCL, LoopCount, CpgcAddressArr, NSOE, &PatCtl, 0);
+  SetupIOTestAmt (MrcData, McChBitMask, CmdPat, NumCacheLines, LoopCount, CpgcAddressArr, NSOE, &PatCtl, 0);
   Outputs->SkipZq = SkipZqRestore;
 
   // Set subsequence read or write data based on requested CmdPat mode
   RwMode = CPGC_BASE_WRITE_SUBSEQ;
   UseSubSeq1 = CPGC_NO_SUBSEQ1;
-  if (PprAmtData->CmdPat == PatRdWr || PprAmtData->CmdPat == PatRd) {
+  if (CmdPat == PatRdWr || CmdPat == PatRd) {
     RwMode = CPGC_BASE_READ_SUBSEQ;
   }
-  if (PprAmtData->CmdPat == PatRdWr) {
+  if (CmdPat == PatRdWr) {
     UseSubSeq1 = CPGC_BASE_WRITE_SUBSEQ;
   }
 
   // Setup WDB
-  if (PprAmtData->TestType == AdvMtMmrw) {
-    MrcProgramDSPattern(MrcData, McChBitMask, PprAmtData->DataPattern, 0);
-  } else {
-    MrcProgramMATSPattern(MrcData, McChBitMask, PprAmtData->DataPattern, PprAmtData->DataPatternDepth, PprAmtData->UiShl, 0);
-  }
+  MrcProgramMATSPattern(MrcData, McChBitMask, Pattern, PatternDepth, UiShl, 0);
 
   //Cpgc20SetDpatBufCtl (MrcData, 1, 0, PatCtl.Start, PatCtl.Stop);
 
@@ -1979,7 +1924,7 @@ SetupIOTestRetention (
   Cpgc20ControlRegWrite (MrcData, McChBitMask, CpgcSeqCtl);
 
   if (IsMarchAlgorithm) {
-    switch (PprAmtData->TestType) {
+    switch (TestType) {
       case AdvMtXMarch:
       case AdvMtYMarchShort:
       case AdvMtYMarchLong:
@@ -2017,8 +1962,8 @@ SetupIOTestRetention (
 
     Cpgc20CmdInstructWrite (MrcData, &Cpgc2CmdInstruction[0], ARRAY_COUNT (Cpgc2CmdInstruction));
 
-    if (PprAmtData->CmdPat == PatWr) {
-      if (PprAmtData->IsUseInvtPat) {
+    if (CmdPat == PatWr) {
+      if (IsUseInvtPat) {
         // Inverted write pattern
         Cpgc2AlgoInstruction[0].Data = 0;
         Cpgc2AlgoInstruction[0].Bits.Command_Start_Pointer = 2;
@@ -2039,7 +1984,7 @@ SetupIOTestRetention (
     Cpgc20AlgoInstructWrite (MrcData, &Cpgc2AlgoInstruction[0], AlgoInstructControl, AlgoWaitEventControl, 0x1);
 
   } else {
-    MrcConfigurePprCmdPat (MrcData, RwMode, UseSubSeq1, PprAmtData->Direction, PprAmtData->SubSeqDataInv, PprAmtData->IsUseInvtPat);
+    MrcConfigurePprCmdPat (MrcData, RwMode, UseSubSeq1, Direction, SeqDataInv, IsUseInvtPat);
 
     // Adjust programming of CMD instructions to use alternate data source
     // Write CMD [0]
@@ -2087,24 +2032,24 @@ SetupIOTestRetention (
 }
 
 /**
-  Programs all the key registers to define a CPGC test as per input mask and Outputs->McChBitMask.
-  McChBitMask is initialized in MrcPretraining based on population, and used throughout internal CPGC structure.
-  Modify McChBitMask to specify which MC/CH to program
+Programs all the key registers to define a CPGC test as per input mask and Outputs->McChBitMask.
+McChBitMask is initialized in MrcPretraining based on population, and used throughout internal CPGC structure.
+Modify McChBitMask to specify which MC/CH to program
 
-  @param[in] MrcData       - Include all MRC global data.
-  @param[in] McChBitMask   - Memory Controller Channel Bit mask for which test should be setup for.
-  @param[in] CmdPat        - 0: PatWrRd (Standard Write/Read Loopback),
-                             1: PatWr (Write Only),
-                             2: PatRd (Read Only),
-                             3: PatRdWrTA (ReadWrite Turnarounds),
-                             4: PatWrRdTA (WriteRead Turnarounds)
-  @param[in] NumCL         - Number of Cache lines transactions per algorithm instruction within 1 BlockRepeat.
-                             Non-zero Inputs->NumCL will override this.
-  @param[in] LcExp         - Loop Count exponent. Non-zero Inputs->LoopCount will override this.
-  @param[in] AddressArray  - 2D Array of Structure that stores address related settings
-  @param[in] SOE           - [0: Never Stop, 1: Stop on Any Lane, 2: Stop on All Byte, 3: Stop on All Lane]
-  @param[in] PatCtlPtr     - Structure that stores start, Stop, IncRate and Dqpat for pattern.
-  @param[in] SubSeqWait    - # of Dclks to stall at the end of a sub-sequence
+@param[in] MrcData       - Include all MRC global data.
+@param[in] McChBitMask   - Memory Controller Channel Bit mask for which test should be setup for.
+@param[in] CmdPat        - [0: PatWrRd (Standard Write/Read Loopback),
+1: PatWr (Write Only),
+2: PatRd (Read Only),
+3: PatRdWrTA (ReadWrite Turnarounds),
+4: PatWrRdTA (WriteRead Turnarounds)
+@param[in] NumCL         - Number of Cache lines transactions per algorithm instruction within 1 BlockRepeat.
+Non-zero Inputs->NumCL will override this.
+@param[in] LcExp         - Loop Count exponent. Non-zero Inputs->LoopCount will override this.
+@param[in] AddressArray  - 2D Array of Structure that stores address related settings
+@param[in] SOE           - [0: Never Stop, 1: Stop on Any Lane, 2: Stop on All Byte, 3: Stop on All Lane]
+@param[in] PatCtlPtr     - Structure that stores start, Stop, IncRate and Dqpat for pattern.
+@param[in] SubSeqWait    - # of Dclks to stall at the end of a sub-sequence
 **/
 VOID
 SetupIOTestAmt (
@@ -2327,16 +2272,33 @@ SetupIOTestPPR (
   This implements the Advanced Memory test algorithm, to run over the specified Controller/Channels.
 
   @param[in] MrcData        - Global MRC data structure
-  @param[in] PprAmtData     - PPR and AMT data structure
+  @param[in] CmdPat         - Type of sequence MT_CPGC_WRITE, MT_CPGC_READ, or MT_CPGC_READ_WRITE
+  @param[in] SeqDataInv     - Specifies whether data pattern should be inverted per subsequence
+  @param[in] Pattern        - Array of 64-bit Data Pattern for the test
+  @param[in] PatternDepth   - Length of PatternQW in number of UIs
+  @param[in] IsUseInvtPat   - Info to indicate whether or not patternQW is inverted by comparing original pattern
+  @param[in] UiShl          - Bit-shift value per UI
+  @param[in] NumCacheLines  - Number of cachelines to use in WDB
+  @param[in] Direction      - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DOWN
+  @param[in] TestType       - Memory test type that is currently being run
 
   @retval status - mrcSuccess / mrcFail
 **/
-VOID
+MrcStatus
 MrcAdvancedMemTest (
-  IN MrcParameters            *const  MrcData,
-  IN PPR_AMT_PARAMETER_DATA   *const  PprAmtData
+  IN MrcParameters*             const MrcData,
+  IN UINT8                      CmdPat,
+  IN UINT8                      SeqDataInv[2], // MT_MAX_SUBSEQ = 2
+  IN UINT64                     Pattern[],
+  IN UINT8                      PatternDepth,
+  IN BOOLEAN                    IsUseInvtPat,
+  IN UINT8                      UiShl,
+  IN UINT8                      NumCacheLines,
+  IN UINT8                      Direction,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
 )
 {
+  MrcStatus         Status;
   MrcOutput         *Outputs;
   MRC_FUNCTION      *MrcCall;
   MrcDimmOut        *DimmOut;
@@ -2346,20 +2308,21 @@ MrcAdvancedMemTest (
   UINT8             Channel;
   UINT8             Controller;
   UINT8             IpChannel;
+  UINT8             ColumnBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL];
+  UINT8             RowBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL];
   BOOLEAN           Is24GbDDR5[MAX_CONTROLLER][MAX_CHANNEL];
+  UINT8             BankBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL];
   UINT8             RankMask;
+  UINT32            BaseBits;
   UINT32            MaxRow[MAX_CONTROLLER][MAX_IP_CHANNEL];
   UINT32            CurrentRow[MAX_CONTROLLER][MAX_IP_CHANNEL];
 
-  PprAmtData->TestStatus = mrcSuccess;
-  PprAmtData->FromRowTestPpr = FALSE;
-  PprAmtData->Bank = 0;
+  Status = mrcSuccess;
   Outputs = &MrcData->Outputs;
   MrcCall = MrcData->Inputs.Call.Func;
   GetSetDis = 0;
 
-  MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "MrcAdvancedMemTest: CmdPat=%d, IsUseInvtPat=%d, NumCacheLines=%d, Direction=%d\n",
-    PprAmtData->CmdPat, PprAmtData->IsUseInvtPat, PprAmtData->NumCL, PprAmtData->Direction);
+  MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "MrcAdvancedMemTest: CmdPat=%d, IsUseInvtPat=%d, NumCacheLines=%d, Direction=%d\n", CmdPat, IsUseInvtPat, NumCacheLines, Direction);
 
   MrcCall->MrcSetMem((UINT8 *)Is24GbDDR5, sizeof(Is24GbDDR5), 0);
 
@@ -2376,9 +2339,9 @@ MrcAdvancedMemTest (
         DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER (Rank)];
         // Initialize per-Rank Column Row and Bank sizes
         // The MrcLog2 function returns +1 so we subtract 1
-        PprAmtData->ColumnBits[Controller][Channel] = MrcLog2 (MrcData, DimmOut->ColumnSize) - 1;
-        PprAmtData->RowBits[Controller][Channel] = MrcLog2 (MrcData, DimmOut->RowSize) - 1;
-        PprAmtData->BankBits[Controller][Channel] = (MrcLog2 (MrcData, DimmOut->Banks) - 1) + (MrcLog2 (MrcData, DimmOut->BankGroups) - 1);
+        ColumnBits[Rank][Controller][Channel] = MrcLog2 (MrcData, DimmOut->ColumnSize) - 1;
+        RowBits[Rank][Controller][Channel] = MrcLog2 (MrcData, DimmOut->RowSize) - 1;
+        BankBits[Rank][Controller][Channel] = (MrcLog2 (MrcData, DimmOut->Banks) - 1) + (MrcLog2 (MrcData, DimmOut->BankGroups) - 1);
 
         if ((Outputs->IsDdr5) && (DimmOut->DensityIndex == MrcDensity24Gb)) {
           Is24GbDDR5[Controller][Channel] = TRUE;
@@ -2393,8 +2356,7 @@ MrcAdvancedMemTest (
       continue;
     }
 
-    PprAmtData->Rank = Rank;
-    SetupIOTestRetention (MrcData, PprAmtData, LocalMcChBitMask, 1); // LC = 1
+    SetupIOTestRetention (MrcData, LocalMcChBitMask, Rank, 1, CmdPat, SeqDataInv, Pattern, PatternDepth, IsUseInvtPat, UiShl, NumCacheLines, Direction, TestType); // LC = 1
 
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
@@ -2414,6 +2376,8 @@ MrcAdvancedMemTest (
       }
     }
 
+    BaseBits = GetBaseBits (MrcData);
+
     // Set initial settings for starting test location
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
@@ -2424,9 +2388,8 @@ MrcAdvancedMemTest (
         CurrentRow[Controller][IpChannel] = 0;
         // Get max row bits
         MaxRow[Controller][IpChannel] = 0;
-        // If controller/channel is not valid for this rank, leave MaxRow as 0
-        if (PprAmtData->RowBits[Controller][Channel]) {
-          MaxRow[Controller][IpChannel] = 1 << PprAmtData->RowBits[Controller][Channel];
+        if (RowBits[Rank][Controller][Channel]) {
+          MaxRow[Controller][IpChannel] = 1 << RowBits[Rank][Controller][Channel];
         }
         if (Is24GbDDR5[Controller][Channel]) {
           // Row bits R[16:15] of 11b is invalid
@@ -2437,36 +2400,45 @@ MrcAdvancedMemTest (
 
     // TestSize = MaxRow because starting row is 0
     // CpgcBank is a "don't care" value when FromRowTestPpr = FALSE
-    PprAmtData->TestStatus = AmtExecuteRowRangeTest (MrcData, PprAmtData, LocalMcChBitMask,
-      CurrentRow, MaxRow);
+    Status = AmtExecuteRowRangeTest (MrcData, LocalMcChBitMask, Rank, ColumnBits, RowBits, BankBits, CmdPat, Direction,
+      0, BaseBits, CurrentRow, MaxRow, FALSE, TestType);
 
     // Failure means that row fail range list is full, exit out of testing
-    if (PprAmtData->TestStatus == mrcFail) {
+    if (Status == mrcFail) {
       MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_ERROR, "AmtExecuteRowRangeTest returned failure - FailRange List Full!\n");
-      return;
+      return Status;
     }
 #if AMT_PRINT_ROW_FAIL_LIST
     AmtDisplayRowFailureList (MrcData, Controller, Channel);
 #endif
   } // rank
 
-  return;
+  return Status;
 }
 
 /**
-  Checks the results of the preceding advanced memory test
+Checks the results of the preceding advanced memory test
 
-  @param[in]  MrcData                 - Global MRC data structure
-  @param[in]  PprAmtData              - PPR and AMT data structure
-  @param[in]  McChBitMask             - Memory Controller Channel Bit mask to check results for.
+@param[in]  MrcData                 - Global MRC data structure
+@param[in]  McChBitMask             - Memory Controller Channel Bit mask to check results for.
+@param[in]  Rank                    - Rank to check results for
+@param[in]  RowBits                 - Number of row bits supported by current rank
+@param[in]  BaseBits                - Number of least significant bank bits used in SW loop
+@param[in]  Direction               - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DN
+@param[in]  AmtRetryDisabled        - Indicates when the AMT Retry flag is disabled
+@param[in]  FromRowTestPpr          - Whether this memtest is being called from function RowTestPpr; if true, executes only one memtest without retry logic
 
-  @retval status - mrcSuccess / mrcFail
+@retval status - mrcSuccess / mrcFail
 **/
 MrcStatus
 AmtCheckTestResults (
-  IN  MrcParameters *const          MrcData,
-  IN  PPR_AMT_PARAMETER_DATA *const PprAmtData,
-  IN  UINT32                        McChBitMask
+  IN  MrcParameters *const  MrcData,
+  IN  UINT32                McChBitMask,
+  IN  UINT32                Rank,
+  IN  UINT8                 RowBits[MAX_CONTROLLER][MAX_CHANNEL],
+  IN  UINT32                BaseBits,
+  IN  UINT8                 Direction,
+  IN  BOOLEAN               FromRowTestPpr
 )
 {
   MrcOutput               *Outputs;
@@ -2520,7 +2492,7 @@ AmtCheckTestResults (
       }
 
       // If any lane has errors, then read DIMM temperature
-      DeviceTemp[Controller][Channel] = MrcReadDeviceTemperature (MrcData, Controller, Channel, PprAmtData->Rank);
+      DeviceTemp[Controller][Channel] = MrcReadDeviceTemperature (MrcData, Controller, Channel, Rank);
       MrcPrintDeviceTemperature (MrcData, DeviceTemp[Controller][Channel]);
 
       MrcCall->MrcSetMem ((UINT8 *) RepoContent, sizeof (RepoContent), 0);
@@ -2535,7 +2507,7 @@ AmtCheckTestResults (
             UpperRowBits = (RepoContent[CPGC20_NUM_RASTER_REPO_CONTENT_REG].Data16[Bank >> 3] >> (2 * (Bank % 8))) & 0x3; // 2 Upper row bits are stored in ECC[0]
             Row = (UpperRowBits << 16) | (RepoContent[ContentIndex].Data16[DataIndex] & MRC_UINT16_MAX);
             CpgcErrorStatus.cpgcErrRow = Row;
-            CpgcErrorStatus.cpgcErrRank = PprAmtData->Rank;
+            CpgcErrorStatus.cpgcErrRank = Rank;
             CpgcErrorStatus.overflow = Overflow;
             AmtCreateDqFailure (MrcData, DqMask);
             CpgcErrorStatus.cpgcErrDat0S = DqMask[0];
@@ -2554,7 +2526,7 @@ AmtCheckTestResults (
               Channel,
               Row,
               Bank,
-              PprAmtData->Rank
+              Rank
             );
             MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "  %s Error on strobe: 0x%02x",
               DqText,
@@ -2565,8 +2537,8 @@ AmtCheckTestResults (
               MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "  Too many failures found on Bank 0x%02x, did not record excess\n", Bank);
             }
 #endif
-            if (!PprAmtData->FromRowTestPpr) {
-              Status = AmtUpdateRowFailures (MrcData, PprAmtData, Controller, Channel, CpgcErrorStatus, DeviceTemp);
+            if (!FromRowTestPpr) {
+              Status = AmtUpdateRowFailures (MrcData, Controller, Channel, CpgcErrorStatus, DeviceTemp, RowBits, BaseBits, Direction);
             } else {
               // Being here indicates that a failure was encountered, so return mrcFail to let RowTestPpr know there was a failure
               Status = mrcFail; // Single row test uses Status to determine whether test had bit errors
@@ -2587,20 +2559,38 @@ AmtCheckTestResults (
   Executes a step of Advanced Memory test on given row address and size, and logs results.
 
   @param[in] MrcData                - Global MRC data structure
-  @param[in] PprAmtData             - PPR and AMT data structure
   @param[in] McChBitMask            - Memory Controller Channel Bit mask to read results for.
+  @param[in] Rank                   - Physical rank index inside the dimm
+  @param[in] ColumnBits             - number of column bits per logical rank
+  @param[in] RowBits                - number of row bits per logical rank
+  @param[in] BankBits               - number of bank bits
+  @param[in] CmdPat                 - Type of sequence MT_CPGC_WRITE, MT_CPGC_READ, or MT_CPGC_READ_WRITE
+  @param[in] Direction              - Sequential address direction MT_ADDR_DIR_UP, MT_ADDR_DIR_DOWN
+  @param[in] Bank                   - Current bank address
+  @param[in] BaseBits               - Number of least significant bank bits used in SW loop
   @param[in] BaseRow                - Row address to start test
   @param[in] RangeSize              - Row range size to test
+  @param[in] FromRowTestPpr         - Whether this memtest is being called from function RowTestPpr; if true, executes only one memtest without retry logic
+  @param[in] TestType               - Memory test type that is currently being run
 
   @retval status - mrcSuccess / mrcFail
 **/
 MrcStatus
 AmtExecuteRowRangeTest (
   MrcParameters   *const        MrcData,
-  IN PPR_AMT_PARAMETER_DATA     *const  PprAmtData,
   UINT8                         McChBitMask,
+  UINT32                        Rank,
+  UINT8                         ColumnBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL],
+  UINT8                         RowBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL],
+  UINT8                         BankBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL],
+  UINT8                         CmdPat,
+  UINT8                         Direction,
+  UINT32                        CpgcBank,
+  UINT32                        BaseBits,
   UINT32                        BaseRow[MAX_CONTROLLER][MAX_IP_CHANNEL],
-  UINT32                        RangeSize[MAX_CONTROLLER][MAX_IP_CHANNEL]
+  UINT32                        RangeSize[MAX_CONTROLLER][MAX_IP_CHANNEL],
+  BOOLEAN                       FromRowTestPpr,
+  IN MRC_ADVANCED_MEM_TEST_TYPE TestType
   )
 {
   MrcOutput       *Outputs;
@@ -2612,6 +2602,9 @@ AmtExecuteRowRangeTest (
   UINT8           MaxChannels;
   UINT8           IpChannel;
   BOOLEAN         IsLpddr;
+  UINT32          TestRow[MAX_CONTROLLER][MAX_IP_CHANNEL];
+  UINT32          TestSize[MAX_CONTROLLER][MAX_IP_CHANNEL];
+  UINT8           TestRowBits[MAX_CONTROLLER][MAX_CHANNEL];
   UINT32          RemSize[MAX_CONTROLLER][MAX_IP_CHANNEL];
   INT8            i;
   UINT8           done;
@@ -2622,9 +2615,10 @@ AmtExecuteRowRangeTest (
   TempRankChEnMap = McChBitMask;
   IsLpddr = Outputs->IsLpddr;
   Status = mrcSuccess;
-  MrcCall->MrcSetMem ((UINT8 *)PprAmtData->TestRowSize, sizeof (PprAmtData->TestRowSize), 0);
-  MrcCall->MrcSetMem ((UINT8 *)PprAmtData->TestRowAddr, sizeof (PprAmtData->TestRowAddr), 0);
+  MrcCall->MrcSetMem ((UINT8 *)TestSize, sizeof (TestSize), 0);
+  MrcCall->MrcSetMem ((UINT8 *)TestRow,  sizeof (TestRow), 0);
   MrcCall->MrcSetMem ((UINT8 *)RemSize, sizeof (RemSize), 0);
+  MrcCall->MrcSetMem ((UINT8 *)TestRowBits, sizeof (TestRowBits), 0);
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     for (Channel = 0; Channel < MaxChannels; Channel++) {
@@ -2632,10 +2626,10 @@ AmtExecuteRowRangeTest (
         continue;
       }
       IpChannel = LP_IP_CH(IsLpddr, Channel);
-      if (PprAmtData->Direction == MT_ADDR_DIR_UP) {
-        PprAmtData->TestRowAddr[Controller][IpChannel] = BaseRow[Controller][IpChannel];
+      if (Direction == MT_ADDR_DIR_UP) {
+        TestRow[Controller][IpChannel] = BaseRow[Controller][IpChannel];
       } else {
-        PprAmtData->TestRowAddr[Controller][IpChannel] = BaseRow[Controller][IpChannel] + RangeSize[Controller][IpChannel];
+        TestRow[Controller][IpChannel] = BaseRow[Controller][IpChannel] + RangeSize[Controller][IpChannel];
       }
       RemSize[Controller][IpChannel] = RangeSize[Controller][IpChannel];
       if (RangeSize[Controller][IpChannel] == 0) {
@@ -2655,34 +2649,35 @@ AmtExecuteRowRangeTest (
           continue;
         }
         IpChannel = LP_IP_CH(IsLpddr, Channel);
-        PprAmtData->TestRowSize[Controller][IpChannel] = 0;
-        PprAmtData->RowBits[Controller][Channel] = 0;
+        TestSize[Controller][IpChannel] = 0;
+        TestRowBits[Controller][Channel] = 0;
         for (i = 31; i >= 0; i--) {
           if (RemSize[Controller][IpChannel] & (1 << i)) {
-            PprAmtData->TestRowSize[Controller][IpChannel] = (1 << i);
-            PprAmtData->RowBits[Controller][Channel] = (UINT8)i;
+            TestSize[Controller][IpChannel] = (1 << i);
+            TestRowBits[Controller][Channel] = (UINT8)i;
             break;
           }
         }
 
-        if (PprAmtData->TestRowSize[Controller][IpChannel] == 0) {
+        if (TestSize[Controller][IpChannel] == 0) {
           TempRankChEnMap &= ~(1 << ((Controller * MaxChannels) + Channel));  // Mask channel if nothing to test
         }
-        if (!IS_MC_SUB_CH(IsLpddr, Channel) && PprAmtData->Direction == MT_ADDR_DIR_DOWN) {
-          PprAmtData->TestRowAddr[Controller][IpChannel] -= PprAmtData->TestRowSize[Controller][IpChannel];
+        if (!IS_MC_SUB_CH(IsLpddr, Channel) && Direction == MT_ADDR_DIR_DOWN) {
+          TestRow[Controller][IpChannel] -= TestSize[Controller][IpChannel];
         }
       }
     }
 
-    MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_NOTE, "CmdPat = %d\n", PprAmtData->CmdPat);
-    TempRankChEnMap = AdvancedMemTestRankSetupMATSRowRange(MrcData, PprAmtData, TempRankChEnMap);
+    MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_NOTE, "CmdPat = %d\n", CmdPat);
+    TempRankChEnMap = AdvancedMemTestRankSetupMATSRowRange(MrcData, TempRankChEnMap, Rank, ColumnBits[Rank], TestRowBits, BankBits[Rank],
+      Direction, BaseBits, TestRow, TestSize, FromRowTestPpr, CpgcBank, TestType);
 
     RunIoTestNoRank(MrcData, (UINT8)TempRankChEnMap, StaticPattern, 1);
 
     // For READ test must check for failures
-    if (PprAmtData->CmdPat == PatRdWr || PprAmtData->CmdPat == PatRd) {
+    if (CmdPat == PatRdWr || CmdPat == PatRd) {
       // Advanced Memtest error handling path
-      Status = AmtCheckTestResults(MrcData, PprAmtData, TempRankChEnMap);
+      Status = AmtCheckTestResults(MrcData, TempRankChEnMap, Rank, TestRowBits, BaseBits, Direction, FromRowTestPpr);
     } // if READ
 
     done = 1;
@@ -2694,17 +2689,17 @@ AmtExecuteRowRangeTest (
         IpChannel = LP_IP_CH(IsLpddr, Channel);
         if (RemSize[Controller][IpChannel] > 0) {
           // Move to next 2^n range until done
-          if (PprAmtData->Direction == MT_ADDR_DIR_UP) {
-            PprAmtData->TestRowAddr[Controller][IpChannel] += PprAmtData->TestRowSize[Controller][IpChannel];
-            if (PprAmtData->TestRowAddr[Controller][IpChannel] < BaseRow[Controller][IpChannel] + RangeSize[Controller][IpChannel]) {
+          if (Direction == MT_ADDR_DIR_UP) {
+            TestRow[Controller][IpChannel] += TestSize[Controller][IpChannel];
+            if (TestRow[Controller][IpChannel] < BaseRow[Controller][IpChannel] + RangeSize[Controller][IpChannel]) {
               done = 0;
             }
           } else {
-            if (PprAmtData->TestRowAddr[Controller][IpChannel] > BaseRow[Controller][IpChannel]) {
+            if (TestRow[Controller][IpChannel] > BaseRow[Controller][IpChannel]) {
               done = 0;
             }
           }
-          RemSize[Controller][IpChannel] &= ~PprAmtData->TestRowSize[Controller][IpChannel];
+          RemSize[Controller][IpChannel] &= ~TestSize[Controller][IpChannel];
         }
       } // channel
     } // controller
@@ -2718,8 +2713,9 @@ AmtExecuteRowRangeTest (
   Run write/read test on a row.
 
   @param[in] MrcData              - Global MRC data structure
-  @param[in] PprAmtData           - PPR and AMT data structure
   @param[in] McChBitMask          - Memory Controller Channel Bit mask to read results for.
+  @param[in] Rank                 - Pointer to return bitmask of channels to test next time
+  @param[in] Bank                 - Current bank address
   @param[in] Row                  - Row address to run test
 
   @retval status - mrcSuccess if no row failures found, mrcFail if row failure found
@@ -2727,57 +2723,72 @@ AmtExecuteRowRangeTest (
 **/
 MrcStatus
 RowTestPprWorker (
-  MrcParameters *const            MrcData,
-  PPR_AMT_PARAMETER_DATA  *const  PprAmtData,
-  UINT8                           McChBitMask,
-  UINT32                          Row
+  MrcParameters *const  MrcData,
+  UINT8                 McChBitMask,
+  UINT32                Rank,
+  UINT32                CpgcBank,
+  UINT32                Row,
+  UINT64                TestPattern
   )
 {
-  MrcStatus                   Status;
-  MrcOutput                   *Outputs;
-  MrcDimmOut                  *DimmOut;
-  MRC_FUNCTION                *MrcCall;
-  UINT32                      Channel;
-  UINT32                      Controller;
-  UINT8                       IpChannel;
-  MRC_ADVANCED_MEM_TEST_TYPE  TestTypeSave;
-  UINT32                      BaseRow[MAX_CONTROLLER][MAX_IP_CHANNEL];
-  UINT32                      RangeSize[MAX_CONTROLLER][MAX_IP_CHANNEL];
+  MrcStatus         Status;
+  MrcOutput         *Outputs;
+  MrcDimmOut        *DimmOut;
+  MRC_FUNCTION      *MrcCall;
+  UINT8             PatternDepth;
+  UINT8             ColumnBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL];
+  UINT8             RowBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL];
+  UINT8             BankBits[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL];
+  UINT32            BaseBits;
+  UINT32            Channel;
+  UINT32            Controller;
+  UINT32            TestRow[MAX_CONTROLLER][MAX_IP_CHANNEL];
+  UINT32            TestSize[MAX_CONTROLLER][MAX_IP_CHANNEL];
+  UINT8             UiShl;
+  UINT8             SeqDataInv[2];
+  UINT8             Direction;
+  UINT8             IpChannel;
+
   Status = mrcSuccess;
   Outputs = &MrcData->Outputs;
   MrcCall = MrcData->Inputs.Call.Func;
-  TestTypeSave = PprAmtData->TestType;
-  PprAmtData->TestType = AdvMtWcMats8;
+  PatternDepth = 1;
+  UiShl = 1;
+  Direction = MT_ADDR_DIR_UP;
 
-  MrcCall->MrcSetMem((UINT8 *) BaseRow, sizeof (BaseRow), 0);
-  MrcCall->MrcSetMem((UINT8 *) RangeSize, sizeof (RangeSize), 0);
-  MrcCall->MrcSetMem((UINT8 *) PprAmtData->RowBits, sizeof (PprAmtData->RowBits), 0); // Only 1 row in test
-  MrcCall->MrcSetMem((UINT8 *) PprAmtData->BankBits, sizeof (PprAmtData->BankBits), 0); // Only 1 bank in test
+  MrcCall->MrcSetMem((UINT8 *) TestRow, sizeof (TestRow), 0);
+  MrcCall->MrcSetMem((UINT8 *) TestSize, sizeof (TestSize), 0);
+  MrcCall->MrcSetMem((UINT8 *) RowBits, sizeof (RowBits), 0); // Only 1 row in test
 
+  SeqDataInv[0] = 0;
+  SeqDataInv[1] = 1;
+
+  BaseBits = GetBaseBits (MrcData);
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
-      DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER(PprAmtData->Rank)];
+      DimmOut = &Outputs->Controller[Controller].Channel[Channel].Dimm[RANK_TO_DIMM_NUMBER(Rank)];
       IpChannel = (UINT8) LP_IP_CH (Outputs->IsLpddr, Channel);
       if (MC_CH_MASK_CHECK(McChBitMask, Controller, Channel, Outputs->MaxChannels) == 0) {
         continue;
       } else {
-        BaseRow[Controller][IpChannel] = Row;
-        RangeSize[Controller][IpChannel] = 1;
+        TestRow[Controller][IpChannel] = Row;
+        TestSize[Controller][IpChannel] = 1;
         // Initialize per-Rank Column Row and Bank sizes
         // The MrcLog2 function returns +1 so we subtract 1
-        PprAmtData->ColumnBits[Controller][Channel] = MrcLog2 (MrcData, DimmOut->ColumnSize) - 1;
+        ColumnBits[Rank][Controller][Channel] = MrcLog2 (MrcData, DimmOut->ColumnSize) - 1;
+        BankBits[Rank][Controller][Channel] = (MrcLog2(MrcData, DimmOut->Banks) - 1) + (MrcLog2(MrcData, DimmOut->BankGroups) - 1);
       }
     }
   }
-  PprAmtData->CmdPat = PatWr;
-  SetupIOTestRetention (MrcData, PprAmtData, McChBitMask, 1); // LC = 1
+  SetupIOTestRetention (MrcData, McChBitMask, (UINT8)Rank, 1, PatWr, SeqDataInv, &TestPattern, PatternDepth, FALSE, UiShl, 1, Direction, AdvMtWcMats8); // LC = 1
 
-  AmtExecuteRowRangeTest (MrcData, PprAmtData, McChBitMask, BaseRow, RangeSize);
+  MrcProgramMATSPattern (MrcData, McChBitMask, &TestPattern, PatternDepth, UiShl, 0x0);
 
-  PprAmtData->CmdPat = PatRd;
-  Status = AmtExecuteRowRangeTest (MrcData, PprAmtData, McChBitMask, BaseRow, RangeSize);
+  AmtExecuteRowRangeTest (MrcData, McChBitMask, Rank, ColumnBits, RowBits, BankBits, PatWr, Direction, CpgcBank, BaseBits,
+    TestRow, TestSize, TRUE, AdvMtWcMats8);
 
-  PprAmtData->TestType = TestTypeSave;
+  Status = AmtExecuteRowRangeTest (MrcData, McChBitMask, Rank, ColumnBits, RowBits, BankBits, PatRd, Direction, CpgcBank, BaseBits,
+    TestRow, TestSize, TRUE, AdvMtWcMats8);
 
   return Status;
 }
@@ -2786,8 +2797,8 @@ RowTestPprWorker (
   Executes a single-row write/read memory test with a simple data pattern.
 
   @param[in] MrcData              - Global MRC data structure
-  @param[in] PprAmtData           - PPR and AMT data structure
   @param[in] McChBitMask          - Memory Controller Channel Bit mask to read results for.
+  @param[in] Rank                 - Pointer to return bitmask of channels to test next time
   @param[in] Bank                 - Current bank address
   @param[in] Row                  - Row address to run test
 
@@ -2795,28 +2806,21 @@ RowTestPprWorker (
 **/
 MrcStatus
 RowTestPpr (
-  IN MrcParameters  *const          MrcData,
-  IN PPR_AMT_PARAMETER_DATA *const  PprAmtData,
-  IN UINT8                          McChBitMask,
-  IN UINT32                         CpgcBank,
-  IN UINT32                         Row
+  IN MrcParameters  *const  MrcData,
+  IN UINT8                  McChBitMask,
+  IN UINT32                 Rank,
+  IN UINT32                 CpgcBank,
+  IN UINT32                 Row
   )
 {
-  MrcOutput                   *Outputs;
-  MRC_EXT_INPUTS_TYPE         *ExtInputs;
-  MrcStatus                   Status;
+  MrcOutput                 *Outputs;
+  MRC_EXT_INPUTS_TYPE       *ExtInputs;
+  MrcStatus                 Status;
+  UINT64                    TestPattern;
 
   Outputs = &MrcData->Outputs;
   ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
   Status = mrcSuccess;
-  PprAmtData->FromRowTestPpr = TRUE;
-  PprAmtData->Bank = CpgcBank;
-  PprAmtData->DataPatternDepth = 1;
-  PprAmtData->UiShl = 1;
-  PprAmtData->Direction = MT_ADDR_DIR_UP;
-  PprAmtData->IsUseInvtPat = FALSE;
-  PprAmtData->SubSeqDataInv[0] = 0;
-  PprAmtData->SubSeqDataInv[1] = 1;
 
   if ((McChBitMask == 0) ||
       (Outputs->IsLpddr && (ExtInputs->PprRepairType == SOFT_PPR)) ||
@@ -2827,8 +2831,8 @@ RowTestPpr (
   MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_NOTE, "\nPPR Row Test------------------------ START\n");
 
   // Test pattern all 1s
-  PprAmtData->DataPattern[0] = 0xFFFFFFFFFFFFFFFF;
-  Status = RowTestPprWorker(MrcData, PprAmtData, McChBitMask, Row);
+  TestPattern = 0xFFFFFFFFFFFFFFFF;
+  Status = RowTestPprWorker(MrcData, McChBitMask, Rank, CpgcBank, Row, TestPattern);
   if (Status != mrcSuccess) {
     return Status;
   }
@@ -2836,8 +2840,8 @@ RowTestPpr (
   MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_NOTE, "\n");
 
   // Test pattern all 0s
-  PprAmtData->DataPattern[0] = 0x0000000000000000;
-  Status = RowTestPprWorker(MrcData, PprAmtData, McChBitMask, Row);
+  TestPattern = 0x0000000000000000;
+  Status = RowTestPprWorker(MrcData, McChBitMask, Rank, CpgcBank, Row, TestPattern);
 
   MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_NOTE, "PPR Row Test------------------------ END\n\n");
 

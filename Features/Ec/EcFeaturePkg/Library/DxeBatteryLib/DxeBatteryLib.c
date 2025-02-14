@@ -56,7 +56,7 @@ CheckBatPresent (
   BatStatus[0]   = BATTERY_1_STATUS;
   *IsRealBat     = FALSE;
 
-  Status = ReadEcRam (EcId0Ch0, BatStatus, sizeof (BatStatus));
+  Status = ReadEcRam (BatStatus, sizeof (BatStatus));
   if (EFI_ERROR (Status)) {
     if (Status == EFI_TIMEOUT) {
       Status = EFI_NOT_READY;
@@ -93,14 +93,14 @@ ReadEcBatData32 (
 
   Data8[0]  = EcOffset + 1;
 
-  Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+  Status = ReadEcRam (Data8, sizeof (Data8));
   *Data32 |= (UINT32)Data8[0];
   *Data32 <<= 8;
   if (EFI_ERROR (Status)) {
     return Status;
   }
   Data8[0]  = EcOffset;
-  Status = ReadEcRam (EcId0Ch0, Data8, sizeof (Data8));
+  Status = ReadEcRam (Data8, sizeof (Data8));
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -469,7 +469,7 @@ GetBatteryState (
     // Get Battery State
     //
     BatStatus[0] = BATTERY_1_STATUS;
-    Status = ReadEcRam (EcId0Ch0, BatStatus, sizeof (BatStatus));
+    Status = ReadEcRam (BatStatus, sizeof (BatStatus));
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -479,7 +479,7 @@ GetBatteryState (
     // Get power charging state from EC.
     //
     BatStatus[0] = DEVICE_STATE_02;
-    Status = ReadEcRam (EcId0Ch0, BatStatus, sizeof (BatStatus));
+    Status = ReadEcRam (BatStatus, sizeof (BatStatus));
     if (Status == EFI_TIMEOUT) {
       Status = EFI_NOT_READY;
       return Status;
@@ -538,7 +538,7 @@ GetBatteryPresentRate (
 
   if (IsRealBat) {
     BatStatus[0] = BATTERY_1_STATUS;
-    Status = ReadEcRam (EcId0Ch0, BatStatus, sizeof (BatStatus));
+    Status = ReadEcRam (BatStatus, sizeof (BatStatus));
     if (EFI_ERROR (Status)) {
       return Status;
     }

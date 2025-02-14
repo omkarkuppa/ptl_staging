@@ -74,7 +74,6 @@ This file contains Memory Controller specific defines.
 #define DDR_SAFE_PLL                 (MRC_BIT26)
 #define DDR_SAFE_MCQCLK              (MRC_BIT27)
 #define DDR_SAFE_ROUNDTRIP           (MRC_BIT28)
-#define DDR_SAFE_DCC_RANKS           (MRC_BIT29)
 
 /// Rank to Rank Mux
 #define MRC_PICODELUT_PARTITION (2) // DATASHARED, CCCSHARED

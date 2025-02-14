@@ -25,7 +25,7 @@
 PRIVATE_HEADER_DEFENDER(MrcModeRegisterHandlerPrivate)
 
 /**
-  This function executes the MRH (Mode Register Handler).
+  This function executes the MRH (Mode Register Handler)
 
   If the CADB mux is enabled, MRH is not executed.
 
@@ -37,7 +37,6 @@ PRIVATE_HEADER_DEFENDER(MrcModeRegisterHandlerPrivate)
   @param[in] Data              - MRW Data
   @param[in] MrhCmd            - MRH command to execute
   @param[in] SpidWrCmdOverride - Force WrCmd on SPID_cmd_type
-  @param[in] MrhGenericCommand - Optinal Generic MRH Command to execute. If NULL, the MrhCmd will be used.
   @param[in] DebugPrint        - When TRUE, will print debugging information
 
   @retval mrcSuccess              - MRW was sent successfully
@@ -55,7 +54,6 @@ WrappedMrcRunMrh (
   IN  UINT32                Data,
   IN  UINT8                 MrhCmd,
   IN  BOOLEAN               SpidWrCmdOverride,
-  IN  VOID                  *MrhGenericCommand, OPTIONAL
   IN  BOOLEAN               DebugPrint
   );
 

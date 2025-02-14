@@ -44,34 +44,13 @@ typedef enum {
 } EC_INTERFACE_TYPE;
 
 typedef enum {
-  ///
-  /// public EC port
-  ///
-  EcId0Ch0 = 0,
-  ///
-  /// private EC port for vendor specific register usage
-  ///
-  EcId0Ch1 = 1,
+  EcId0 = 0,
   EcIdMax
 } EC_ID;
-
-typedef struct {
-  UINT8   CommandNumber;
-  UINT8   SizeOfSendData;
-  UINT8   SizeOfReceiveData;
-  BOOLEAN CommandImplemented;
-} EC_COMMAND_TABLE;
-
-typedef struct {
-  EC_ID  EcId;
-  UINT16 CommandPort;
-  UINT16 DataPort;
-} EC_ID_IO_PORT_TABLE;
 
 /**
   Sends command to EC.
 
-  @param[in]        EcId                    Embedded Controller identification.
   @param[in]        Command                 Command byte to send
   @param[in]        Timeout                 Timeout in microseonds
 
@@ -82,7 +61,6 @@ typedef struct {
 EFI_STATUS
 EFIAPI
 SendEcCommandTimeout (
-  IN UINT8          EcId,
   IN UINT8          Command,
   IN UINT32         Timeout
   );
@@ -90,7 +68,6 @@ SendEcCommandTimeout (
 /**
   Receives status from EC.
 
-  @param[in]        EcId                    Embedded Controller identification.
   @param[out]       EcStatus                Status byte to receive
 
   @retval           EFI_SUCCESS             Command success.
@@ -100,14 +77,12 @@ SendEcCommandTimeout (
 EFI_STATUS
 EFIAPI
 ReceiveEcStatus (
-  IN  UINT8         EcId,
   OUT UINT8         *EcStatus
   );
 
 /**
   Receive data from EC.
 
-  @param[in]        EcId                    Embedded Controller identification.
   @param[out]       Data                    Data byte received
   @param[in]        Timeout                 Timeout in microseonds
 
@@ -119,7 +94,6 @@ ReceiveEcStatus (
 EFI_STATUS
 EFIAPI
 ReceiveEcDataTimeout (
-  IN  UINT8         EcId,
   OUT UINT8         *Data,
   IN  UINT32        Timeout
   );
@@ -127,7 +101,6 @@ ReceiveEcDataTimeout (
 /**
   Send data from EC.
 
-  @param[in]        EcId                    Embedded Controller identification.
   @param[out]       Data                    Data byte received
   @param[in]        Timeout                 Timeout in microseonds
 
@@ -138,7 +111,6 @@ ReceiveEcDataTimeout (
 EFI_STATUS
 EFIAPI
 SendEcDataTimeout (
-  IN  UINT8         EcId,
   OUT UINT8         Data,
   IN  UINT32        Timeout
   );
@@ -165,15 +137,15 @@ SendEcDataTimeout (
   @retval           EFI_SUCCESS             Command success.
   @retval           EFI_TIMEOUT             EC is busy.
   @retval           EFI_INVALID_PARAMETER   Parameter invalid.
-  @retval           EFI_UNSUPPORTED         Unsupported EC channel or the command is not found in mEcCommand.
+  @retval           EFI_UNSUPPORTED         EcId is not EcId0 or the command is not found in mEcCommand.
   @retval           EFI_BUFFER_TOO_SMALL    The DataBuffer is too small to Read/Write data with EC FW.
 
 **/
 EFI_STATUS
 EFIAPI
 EcInterface (
-  IN     EC_ID      EcId,
-  IN     UINT8      Command,
+  IN EC_ID          EcId,
+  IN UINT8          Command,
   IN OUT UINT8      *DataSize,
   IN OUT UINT8      *DataBuffer
   );
@@ -181,7 +153,6 @@ EcInterface (
 /**
   Read Data from EC Memory from location pointed by DataBuffer.
 
-  @param[in]        EcId                    Embedded Controller identification.
   @param[in, out]   DataBuffer              Buffer use to communicate with EC RAM
   @param[in]        DataSize                Buffer size of DataBuffer
 
@@ -196,7 +167,6 @@ EcInterface (
 EFI_STATUS
 EFIAPI
 ReadEcRam (
-  IN      UINT8       EcId,
   IN OUT  UINT8       *DataBuffer,
   IN      UINT8       DataSize
   );
@@ -204,7 +174,6 @@ ReadEcRam (
 /**
   Write Data to EC memory at location pointed by DataBuffer.
 
-  @param[in]        EcId                    Embedded Controller identification.
   @param[in, out]   DataBuffer              Buffer use to communicate with EC RAM
   @param[in]        DataSize                Buffer size of DataBuffer
 
@@ -219,7 +188,6 @@ ReadEcRam (
 EFI_STATUS
 EFIAPI
 WriteEcRam (
-  IN      UINT8       EcId,
   IN OUT  UINT8       *DataBuffer,
   IN      UINT8       DataSize
   );

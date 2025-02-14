@@ -1,5 +1,5 @@
 ## @file
-#  Null library to get FSP information or perform specific action on platform.
+#  PayloadResiliencySupportLib to support Payloads management resiliency feature
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -16,27 +16,30 @@
 #  express or implied warranties, other than those that are expressly stated
 #  in the License.
 #
-#  @par Specification Reference:
+# @par Specification Reference:
 #
-##
+###
 
 [Defines]
-  INF_VERSION    = 0x0001001B
-  BASE_NAME      = PlatformFspUpdateHookLibNull
-  FILE_GUID      = C8C62D75-2063-429F-A361-2CC8AEB720F8
-  MODULE_TYPE    = DXE_DRIVER
-  VERSION_STRING = 1.0
-  LIBRARY_CLASS  = PlatformFspUpdateHookLib | DXE_DRIVER
+  INF_VERSION                    = 0x0001001B
+  BASE_NAME                      = PayloadResiliencySupportLibNull
+  FILE_GUID                      = 3AF97035-B7F9-43EF-B54A-72E070EADD37
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = PayloadResiliencySupportLib
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
 
 [Sources]
-  PlatformFspUpdateHookLibNull.c
+  PayloadResiliencySupportLibNull.c
 
 [Packages]
   MdePkg/MdePkg.dec
-  MdeModulePkg/MdeModulePkg.dec
-  CapsuleFeaturePkg/CapsuleFeaturePkg.dec
 
 [LibraryClasses]
-
-[Depex]
-  TRUE
+  BaseLib
+  DebugLib

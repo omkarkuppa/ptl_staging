@@ -35,8 +35,6 @@
 #include <Base.h>
 #include <Uefi.h>
 
-extern UINT32 gEcDebugInfoPrintLevel;
-
 //
 // Function declarations
 //
@@ -52,7 +50,6 @@ extern UINT32 gEcDebugInfoPrintLevel;
 EFI_STATUS
 EFIAPI
 SendEcCommand (
-  IN UINT8          EcId,
   IN UINT8          Command
   );
 
@@ -67,7 +64,6 @@ SendEcCommand (
 EFI_STATUS
 EFIAPI
 SendEcData (
-  IN UINT8          EcId,
   IN UINT8          Data
   );
 
@@ -83,7 +79,6 @@ SendEcData (
 EFI_STATUS
 EFIAPI
 ReceiveEcData (
-  IN UINT8          EcId,
   OUT UINT8         *Data
   );
 

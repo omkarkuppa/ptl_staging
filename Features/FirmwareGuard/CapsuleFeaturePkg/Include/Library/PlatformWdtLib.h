@@ -44,7 +44,7 @@ DisarmPlatformWdt (
   @param[in] timeout value, 1 stands for 1 second, max is 255 seconds with input 0xFF
 
   @retval     EFI_SUCCESS       The operation succeed.
-  @retval     Other             The operation failed.
+  @retval     EFI_DEVICE_ERROR  The operation succeed.
 
 **/
 EFI_STATUS

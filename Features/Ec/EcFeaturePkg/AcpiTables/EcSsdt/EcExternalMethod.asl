@@ -104,7 +104,7 @@ Method (RMPT)
 **/
 Method (RSSV)
 {
-  Name (TSPK, Package (5) {0, 0, 0, 0, 0})
+  Name (TSPK, Buffer (5) {})
   Store (ECRD (RefOf (^TSR1)), Index (TSPK, 0))
   Store (ECRD (RefOf (^TSR2)), Index (TSPK, 1))
   Store (ECRD (RefOf (^TSR3)), Index (TSPK, 2))

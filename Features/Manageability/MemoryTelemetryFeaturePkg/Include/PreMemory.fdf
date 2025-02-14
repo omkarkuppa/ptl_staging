@@ -1,5 +1,5 @@
 ## @file
-# Null Library description file for  PEI Phase SA VMDInit Lib
+#  Memory Telemetry pre-mem feature module
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
@@ -16,31 +16,9 @@
 #  express or implied warranties, other than those that are expressly stated
 #  in the License.
 #
-#@par Specification
+# @par Specification
 ##
 
-
-[Defines]
-INF_VERSION = 0x00010017
-BASE_NAME = PeiVmdInitFruLib
-FILE_GUID = B9542972-FFC5-409E-A364-7FC5E1D7FA6B
-VERSION_STRING = 1.0
-MODULE_TYPE = PEIM
-LIBRARY_CLASS = PeiVmdInitFruLib
-
-[LibraryClasses]
-
-[Packages]
-MdePkg/MdePkg.dec
-UefiCpuPkg/UefiCpuPkg.dec
-IntelSiliconPkg/IntelSiliconPkg.dec
-OneSiliconPkg/SiPkg.dec
-
-[Sources]
-PeiVmdInitFruLibNull.c
-
-[FixedPcd]
-
-[Ppis]
-
-[Guids]
+!if gMemoryTelemetryFeaturePkgTokenSpaceGuid.PcdMemoryTelemetryEnabled == TRUE
+INF MemoryTelemetryFeaturePkg/PeiMemoryTelemetry/PeiMemoryTelemetry.inf
+!endif

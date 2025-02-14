@@ -72,7 +72,6 @@
 
 [FixedPcd]
   gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber             ## CONSUMES
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber                ## CONSUMES
 
 [Protocols]
   gEfiPciIoProtocolGuid                      ## CONSUMES
