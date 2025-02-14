@@ -88,8 +88,13 @@
 #include <Pi/PiHob.h>
 #include <Library/HobLib.h>
 #include <TraceHubDataHob.h>
+#include <Library/DomainPcie.h>
+#include <IpCpcie.h>
+#include <IpPcieRegs.h>
+#include <IpWrapperCntxtInfoClient.h>
 #include <Library/PeiVmdInitFruLib.h>
 
+extern EFI_GUID gIpPcieInstHobGuid;
 
 EFI_PEI_PPI_DESCRIPTOR mEndOfSiInit = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
@@ -567,7 +572,13 @@ SiInitPostMemOnPolicy (
   TCSS_PEI_CONFIG             *TcssPeiConfig;
   PEI_ITBT_CONFIG             *PeiITbtConfig;
   HOST_BRIDGE_PREMEM_CONFIG   *HostBridgePreMemConfig;
-
+  IP_PCIE_INST                *pInst;
+  EFI_HOB_GUID_TYPE           *GuidHob;
+  UINT8                       MaxLinkSpeed;
+  IP_WR_REG_INFO              *RegInfo;
+  UINT64                      RpBase;
+  LCAP_PCIE_CFG_STRUCT        Lcap;
+  PCIE_DEV_INFO               DevInfo;
 
   DEBUG ((DEBUG_INFO, "SiInit () - Start\n"));
 
@@ -768,6 +779,35 @@ SiInitPostMemOnPolicy (
   /// Update HostBridge Hob in PostMem
   ///
   UpdateHostBridgeHobPostMem (HostBridgePeiConfig);
+
+  GuidHob = GetFirstGuidHob (&gIpPcieInstHobGuid);
+  while(GuidHob != NULL) {
+    pInst = (IP_PCIE_INST *) GET_GUID_HOB_DATA (GuidHob);
+
+    if (pInst == NULL) {
+      DEBUG ((DEBUG_WARN, "%a: Invalid pInst\n", __FUNCTION__));
+      ASSERT (FALSE);
+    }
+
+    //
+    // 6.15 step 2 if LCTL.CLS = Lowest (LCAP.MLS, EndPointMaxSpeed), the flow has completed
+    // 6.15 step 4 skip all subsequence steps if LCTS.TLS is Gen2
+    //
+    if (!pInst->PrivateConfig.RootPortDisable && pInst->PrivateConfig.LinkRetrainInProgress) {
+      RegInfo = (IP_WR_REG_INFO*) pInst->RegCntxt_Cfg_Pri;
+      RpBase  = PCI_SEGMENT_LIB_ADDRESS (RegInfo->RegType.Pci.Seg, RegInfo->RegType.Pci.Bus, RegInfo->RegType.Pci.Dev, RegInfo->RegType.Pci.Fun, 0);
+
+      Lcap.Data = PciSegmentRead32 (RpBase + LCAP_PCIE_CFG_REG);
+      PcieGetDeviceInfo (pInst, pInst->PrivateConfig.BusMin, &DevInfo);
+      MaxLinkSpeed = (UINT8)MIN (Lcap.Bits.mls, DevInfo.MaxLinkSpeed);
+      if (pInst->PcieRpCommonConfig.EnableDtr) {
+        MaxLinkSpeed = PcieDtrSpeedDetermine (pInst, MaxLinkSpeed);
+      }
+      IpPcieRpSpeedChangeEnd (pInst, MaxLinkSpeed, PcieGetTimeoutValue ());
+    }
+    SipLockCapRegisters (pInst);
+    GuidHob = GetNextGuidHob (&gIpPcieInstHobGuid, GET_NEXT_HOB(GuidHob));
+  }
 
   ///
   /// VMD Initializations if the VMD IP is supported. Disable it if the feature PCD is disabled.

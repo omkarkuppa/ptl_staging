@@ -55,6 +55,7 @@
 
 [Guids]
   gPchPcieConfigGuid                                 ## CONSUMES
+  gIpPcieInstHobGuid                                 ## CONSUMES
 
 [Pcd]
   gSiPkgTokenSpaceGuid.PcdSiliconInitTempPciBusMin   ## CONSUMES

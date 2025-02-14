@@ -22,6 +22,14 @@
 #ifndef __DOMAIN_PCIE_H__
 #define __DOMAIN_PCIE_H__
 
+#include <IpCpcie.h>
+
+typedef struct {
+  UINT16  Vid;
+  UINT16  Did;
+  UINT8   MaxLinkSpeed;
+} PCIE_DEV_INFO;
+
 /**
   DomainInit for Initilizing IP Instances
 
@@ -58,4 +66,41 @@ SipHideDisableRootPorts (
   IN BOOLEAN  PcieType
   );
 
+/**
+  Get information about the endpoint
+
+  @param[in]  IP_PCIE_INST    *pInst
+  @param[in]  TempPciBus       Temporary bus number
+  @param[out] DeviceInfo       Device information structure
+
+  @raturn TRUE if device was found, FALSE otherwise
+**/
+BOOLEAN
+PcieGetDeviceInfo (
+  IP_PCIE_INST     *pInst,
+  UINT8             TempPciBus,
+  PCIE_DEV_INFO    *DeviceInfo
+  );
+
+/**
+  Calculate the required timeout value after setting RL in SpeedChangeStart API.
+  Required Timeout value is difference between current CPU timestamp value and CPU timestamp when RL is set.
+
+  @retval  UINT32  Required Timeout value in milli seconds
+**/
+UINT32
+PcieGetTimeoutValue (
+ );
+
+/**
+  Detect min temp and determine link speed when DTR is enabled
+
+  @param[in] pInst   Point of pInst
+  @param[in] UINT8   Speed per root port and end point capability
+  @retval UINT8  Speed per DTR
+**/
+UINT8 PcieDtrSpeedDetermine(
+  IN IP_PCIE_INST       *pInst,
+  IN UINT8              CapSpeed
+  );
 #endif
