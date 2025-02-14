@@ -40,6 +40,15 @@
 #include <Register/ArchitecturalMsr.h>
 #include <Library/SmmRelocationLib.h>
 
+UINTN           mTileSize;
+EFI_BOOT_MODE   mBootMode;
+///
+/// Used to patch the initial value of MSR_SMM_SUPOVR_STATE_LOCK(0x141) in SmiEntry.asm.
+/// Should ensure that Supovr State Lock not be enabled in S3 flow when first entering _SmiEntryPoint.
+///
+#define SMM_SUPOVR_STATE_LOCK_DATA_PATCH_SIG_STR  "L_D_P_S"
+#define SMM_SUPOVR_STATE_LOCK_DATA_OFFSET  2
+
 ///
 /// Encapsulate all information AP procedure needs into a structure.
 /// A pointer to the structure will be passed to AP procedure.
@@ -50,6 +59,71 @@ typedef struct {
   UINTN                             BspNumber;
 } SMM_BASE_SETTING_CONTEXT;
 
+
+/**
+  Finds a specific signature within a given SMI handler address range.
+
+  @param[in]  Base              Pointer to the base of the SMI handler address.
+  @param[in]  Size              Size of the memory range in bytes.
+  @param[in]  Signature         Pointer to the signature to find.
+  @param[in]  SignatureLength   Length of the signature in bytes.
+
+  @retval     Pointer to the start of the signature if found.
+  @retval     NULL if the signature is not found.
+**/
+UINT8 *
+FindSignature (
+  IN UINT8        *Base,
+  IN UINTN        Size,
+  IN CONST CHAR8  *Signature,
+  IN UINTN        SignatureLength
+  )
+{
+  UINTN  Index;
+
+  for (Index = 0; Index <= Size - SignatureLength; Index++) {
+    if (CompareMem (Base + Index, Signature, SignatureLength) == 0) {
+      return Base + Index;
+    }
+  }
+
+  return NULL;
+}
+
+/**
+  Updates the SMM Supervisor Override State Lock data.
+
+  This function searches for the SmmSupovrStateLock data signature within the given range specified by the Base & Size.
+  If the signature is found, it updates the data with a zero value.
+
+  @param[in] Base   Pointer to the SMI handler address.
+  @param[in] Size   Size of searching range starting from SMI handler.
+
+  @retval EFI_SUCCESS       The operation completed successfully.
+  @retval EFI_NOT_FOUND     The signature was not found in the memory range.
+**/
+EFI_STATUS
+ZeroSmmSupovrStateLockData (
+  IN UINT8  *Base,
+  IN UINTN  Size
+  )
+{
+  UINT8  *SignatureAddress;
+  UINT8  *TargetAddress;
+  UINTN  SignatureLength;
+
+  SignatureLength = AsciiStrLen (SMM_SUPOVR_STATE_LOCK_DATA_PATCH_SIG_STR);
+
+  SignatureAddress = FindSignature (Base, Size, SMM_SUPOVR_STATE_LOCK_DATA_PATCH_SIG_STR, SignatureLength);
+  if (SignatureAddress == NULL) {
+    return EFI_NOT_FOUND;
+  }
+
+  TargetAddress = SignatureAddress + SignatureLength + SMM_SUPOVR_STATE_LOCK_DATA_OFFSET;
+  *(UINT64 *)TargetAddress = 0;
+
+  return EFI_SUCCESS;
+}
 
 /**
   Program to the SMBASE Register for each thread.
@@ -77,6 +151,18 @@ ProgramSmmRelocationRegisters (
   }
 
   AsmWriteMsr64 (MSR_IA32_SMBASE, Context->SmBaseForAllCpu[CpuNumber]);
+
+  //
+  // Zero SmmSupovrStateLock Data for S3
+  //
+  if (mBootMode == BOOT_ON_S3_RESUME) {
+    Status = ZeroSmmSupovrStateLockData ((UINT8 *) Context->SmBaseForAllCpu[CpuNumber] + SMM_HANDLER_OFFSET, mTileSize);
+    if (EFI_ERROR (Status)) {
+      if (CpuNumber == Context->BspNumber) {
+        DEBUG ((DEBUG_ERROR, "S3: Failed to Zero SmmSupovrStateLock Data!\n"));
+      }
+    }
+  }
 
   if (CpuNumber == Context->BspNumber) {
     DEBUG ((DEBUG_INFO, "ProgramSmmRelocationRegisters: (BSP) Write SmBase to MSR sucessfully!\n"));
@@ -203,7 +289,6 @@ SmmRelocationInit (
   UINTN                             NumberOfProcessors;
   UINTN                             NumberOfEnabledProcessors;
   UINTN                             MaxNumberOfCpus;
-  UINTN                             TileSize;
   UINT64                            SmmRelocationSize;
   EFI_PHYSICAL_ADDRESS              SmmRelocationStart;
   UINTN                             Index;
@@ -261,8 +346,8 @@ SmmRelocationInit (
   // The total amount of memory required is the maximum number of CPUs that
   // platform supports times the tile size.
   //
-  TileSize          = SIZE_8KB;
-  SmmRelocationSize = EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (SIZE_32KB + TileSize * (MaxNumberOfCpus - 1)));
+  mTileSize         = SIZE_8KB;
+  SmmRelocationSize = EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (SIZE_32KB + mTileSize * (MaxNumberOfCpus - 1)));
 
   //
   // Split SmramReserve hob to reserve SmmRelocationSize for Smm relocated memory
@@ -317,7 +402,7 @@ SmmRelocationInit (
       //
       // Calculate the new SMBASE address
       //
-      SmmBaseHobData->SmBase[Index] = (UINTN)(SmmRelocationStart)+ (Index + CpuCount) * TileSize - SMM_HANDLER_OFFSET;
+      SmmBaseHobData->SmBase[Index] = (UINTN)(SmmRelocationStart)+ (Index + CpuCount) * mTileSize - SMM_HANDLER_OFFSET;
       DEBUG ((DEBUG_INFO, "SmmRelocationInit - SmmBaseHobData[%d]->SmBase[%03x]: %08x\n", HobCount, Index, SmmBaseHobData->SmBase[Index]));
 
       //
@@ -340,6 +425,7 @@ SmmRelocationInit (
   //
   // Program to the SMBASE Registers in parallel if Msr Based Smbase Relocation enabled.
   //
+  mBootMode = GetBootModeHob ();
   Status = MpServices2->StartupAllCPUs (
                           MpServices2,
                           (EFI_AP_PROCEDURE) ProgramSmmRelocationRegisters,

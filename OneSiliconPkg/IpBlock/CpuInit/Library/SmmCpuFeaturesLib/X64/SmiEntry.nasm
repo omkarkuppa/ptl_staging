@@ -65,6 +65,10 @@
 %define LONG_MODE_DS    0x20
 %define TSS_SEGMENT     0x40
 
+%macro SMM_SUPOVR_STATE_LOCK_DATA_PATCH_SIG 0
+DB 'L_D_P_S'
+%endmacro
+
 extern ASM_PFX(SmiRendezvous)
 
 extern ASM_PFX(SmmFeatureCpuSmmDebugEntry)
@@ -324,6 +328,10 @@ CetInterruptDone:
 
 CetDone:
 
+; Define the SMM_SUPOVR_STATE_LOCK_DATA_PATCH_SIG signature,
+; which is used to locate the SmmSupovrStateLock data for the data patching.
+    jmp     @SmmSupovrStateLock
+    SMM_SUPOVR_STATE_LOCK_DATA_PATCH_SIG
 @SmmSupovrStateLock:
     mov     rax, strict qword 0
 gSmmSupovrStateLockDataPatch:
