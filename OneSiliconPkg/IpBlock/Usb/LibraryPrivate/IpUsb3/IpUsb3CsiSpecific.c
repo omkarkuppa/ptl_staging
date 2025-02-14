@@ -713,11 +713,11 @@ IpUsb3VersionSpecificConfigurationEnabled (
       RetVal = (pInst->IpVersion < IpUsb3IpVersion19p2);
       break;
     case IpUsb3VscIdSocCreditExchangeTime:
-      RetVal = (pInst->IpVersion <= IpUsb3IpVersion19p3);
+      RetVal = (pInst->IpVersion <= IpUsb3IpVersion19p3) && (pInst->Integration != IpUsb3IntegrationUsb4ss);
       break;
 
     case IpUsb3VscIdCameraFlicker:
-      RetVal = (pInst->IpVersion == IpUsb3IpVersion19p3);
+      RetVal = (pInst->IpVersion == IpUsb3IpVersion19p3) && (pInst->Integration != IpUsb3IntegrationUsb4ss);
       break;
 
     case IpUsb3VscIdC20PhyElasticBuffer:
