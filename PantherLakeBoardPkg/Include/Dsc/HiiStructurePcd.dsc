@@ -321,6 +321,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.RatioLimitRatio[4]|0x0                     
 gStructPcdTokenSpaceGuid.PcdCpuSetup.RatioLimitRatio[5]|0x0                                        # P-core Turbo Ratio Limit Ratio5 (TRLR)
 gStructPcdTokenSpaceGuid.PcdCpuSetup.RatioLimitRatio[6]|0x0                                        # P-core Turbo Ratio Limit Ratio6 (TRLR)
 gStructPcdTokenSpaceGuid.PcdCpuSetup.RatioLimitRatio[7]|0x0                                        # P-core Turbo Ratio Limit Ratio7 (TRLR)
+gStructPcdTokenSpaceGuid.PcdCpuSetup.DprSize|0x4                                                   # DPR Memory Size (MB) | DPR Size
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ResetAux|0x0                                                  # Reset AUX Content
 gStructPcdTokenSpaceGuid.PcdCpuSetup.SlowSlewRate[0]|0x0                                           # Slow Slew Rate for Core Domain
 gStructPcdTokenSpaceGuid.PcdCpuSetup.SlowSlewRate[1]|0x0                                           # Slow Slew Rate for GT Domain
