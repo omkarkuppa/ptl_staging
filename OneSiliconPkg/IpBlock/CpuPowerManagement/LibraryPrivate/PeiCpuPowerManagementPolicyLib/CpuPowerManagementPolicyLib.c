@@ -310,7 +310,7 @@ LoadCpuPowerMgmtBasicConfigDefault (
   /// Hwp misc functions
   ///
   CpuPowerMgmtBasicConfig->EnableHwpAutoPerCorePstate     = TRUE;
-  CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping       = FALSE;
+  CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping       = TRUE;
   CpuPowerMgmtBasicConfig->EnableDynamicEfficiencyControl = FALSE;
 
   CpuPowerMgmtBasicConfig->TurboMode                      = TRUE;

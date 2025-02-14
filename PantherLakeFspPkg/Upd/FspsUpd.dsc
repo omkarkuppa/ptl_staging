@@ -332,7 +332,7 @@
 
   # !BSF NAME:{Resource Priority Feature} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable Resource Priority Feature. Enable/Disable; 0: Disable, <b>1: Enable </b>}
-  gPlatformFspPkgTokenSpaceGuid.EnableRp                    | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.EnableRp                    | * | 0x01 | 0x01
 
   # !BSF NAME:{Enable or Disable HWP} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable Intel(R) Speed Shift Technology support. Enabling will expose the CPPC v2 interface to allow for hardware controlled P-states. 0: Disable; <b>1: Enable;</b>}
