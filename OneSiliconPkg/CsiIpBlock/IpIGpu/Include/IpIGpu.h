@@ -390,6 +390,28 @@ IpIGpuEnableCmdReg (
   );
 
 /**
+  This function will enable IO Bar on 0:2:0
+
+  @param[in] pInst   - A pointer to the IP instance to be used.
+  @retval None
+**/
+VOID
+IpIGpuEnableIoCmdReg (
+  IP_IGPU_INST  *pInst
+  );
+
+/**
+  This function will disable IO Bar on 0:2:0
+
+  @param[in] pInst   - A pointer to the IP instance to be used.
+  @retval None
+**/
+VOID
+IpIGpuDisableIoCmdReg (
+  IP_IGPU_INST  *pInst
+  );
+
+/**
   This function will return the IGPU Vendor ID
 
   @param[in]  pInst       The instance

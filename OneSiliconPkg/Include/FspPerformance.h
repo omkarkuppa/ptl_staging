@@ -28,12 +28,14 @@
 //
 // Performance Entries currently present
 //
-// 1. uGOP -> Identifier = FspuGopPerf
+// 0. uGOP      -> Identifier = FspuGopPerf
+// 1. uGOP Exit -> Identifier = FspuGopExitPerf
 //
 // FspMaxPerf -> Holds the total count of entries
 //
 typedef enum {
   FspuGopPerf,
+  FspuGopExitPerf,
   FspMaxPerf
 } FSP_PERFORMANCE;
 

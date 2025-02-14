@@ -52,6 +52,7 @@
   FspWrapperApiLib
   UsbcRetimerConfigLib
   PeiDTbtPolicyLib
+  PeiLib
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -69,6 +70,7 @@
   SecurityPkg/SecurityPkg.dec
   CnvFeaturePkg/CnvFeaturePkg.dec
   Usb4FeaturePkg/Usb4FeaturePkg.dec
+  PantherLakeOpenBoardPkg/OpenBoardPkg.dec
 
 [Pcd]
   gPlatformModuleTokenSpaceGuid.PcdEcExtraIoBase                ## CONSUMES
@@ -78,6 +80,7 @@
   gPlatformModuleTokenSpaceGuid.PcdShellEntryMapPrint           ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPlatformType
   gBoardModuleTokenSpaceGuid.PcdBootGuardPerformanceEnable      ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdGpioLidStatus                ## CONSUMES
 
   #
   # EC FailSafe Cpu Temp and Fan Speed Setting
@@ -97,6 +100,8 @@
   gEfiSecurityPkgTokenSpaceGuid.PcdTpmBaseAddress               ## CONSUMES
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress            ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTcoBaseAddress                        ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid  ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdPlatformFlavor                  ## CONSUMES
 
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdBootGuardEnable                       ## CONSUMES
@@ -119,6 +124,7 @@
   gPchSpiPpiGuid                                                ## CONSUMES
   gEfiPeiResetPpiGuid                                           ## NOTIFY
   gEfiPeiMasterBootModePpiGuid                                  ## CONSUMES
+  gPeiGraphicsPlatformPreMemPpiGuid                             ## PPI ALWAYS_PRODUCED
 
 [Guids]
   gOsVendorGlobalVariableGuid                                   ## CONSUMES ## Variable

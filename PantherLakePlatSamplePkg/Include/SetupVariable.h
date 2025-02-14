@@ -1720,6 +1720,7 @@ typedef struct {
   UINT8   PhclkGatePerLpmode;
   UINT8   DisableSwitchDfiToMc;
   UINT8   IGpuGsm2Size;
+  UINT8   SolFeatureEnabled;
 } SA_SETUP;
 
 /**

@@ -142,11 +142,13 @@ IGpuDisplayInitPostMem (
 /**
   This function is to set IGPU Memory map (RC6 base, Doorbell base, Dfdbase etc).
 
+  @param[in] SiPreMemPolicyPpi  Pointer to pre-mem SI policy.
+
   @retval     EFI_STATUS
 **/
 EFI_STATUS
 IGpuSetMemMap (
-  VOID
+  IN SI_PREMEM_POLICY_PPI  *SiPreMemPolicyPpi
   );
 
 /**

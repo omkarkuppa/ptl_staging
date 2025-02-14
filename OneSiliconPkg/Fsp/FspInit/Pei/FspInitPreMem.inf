@@ -49,6 +49,7 @@
   gSiPreMemDefaultPolicyInitPpiGuid         ## CONSUMES
   gPchPreMemDefaultPolicyInitPpiGuid
   gPchPreMemPolicyPpiGuid
+  gPeiGraphicsPlatformPreMemPpiGuid         ## PRODUCES
 
 [Guids]
   gFspReservedMemoryResourceHobGuid         ## PRODUCES
