@@ -1049,7 +1049,7 @@ DriveToFwUpdateMode (
   //
   // Change the PD Controller Mode
   //
-  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateEnableMode, MAX_PD_NUMBER);
+  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateEnableMode, FixedPcdGet8 (PcdMaxUsbCPdNumber));
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "\n%a : Failed to Enable Retimer FW Update Mode with Status = %r\n", __FUNCTION__, Status));
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_DRIVE_PD_CHANGE_MODE_FAIL, (UINT32) Status, 0);
@@ -1123,7 +1123,7 @@ RestoreToOriginalMode (
   //
   // Change the PD Controller Mode
   //
-  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateDisableMode, MAX_PD_NUMBER);
+  Status = TbtPdRetimerFwUpdateModeChange (This, RetimerFwUpdateDisableMode, FixedPcdGet8 (PcdMaxUsbCPdNumber));
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "\n%a : Failed to Exit Retimer FW Update Mode For PD Controller with Status = %r\n", __FUNCTION__, Status));
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, USBC_RETIMER_CAPSULE_EVT_CODE_RESTORE_PD_CHANGE_MODE_FAIL, (UINT32) Status, 0);

@@ -52,9 +52,9 @@
 [PcdsFixedAtBuild]
   # Main feature PCD to support UsbC Capsule update feature
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleFeatureEnable|FALSE|BOOLEAN|0xCC000001
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber         |0x04 |UINT8  |0xCC000010
 
 [PcdsDynamic]
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdSupportBitmap|0x0|UINT8|0xCC000010
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerFlashNumber|0x0|UINT8|0xCC000011
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapabilityParsingTimeDelay|0x0|UINT32|0xCC000014
   # Time delay to make sure retimer is ready for communication after Drive to TBT mode.

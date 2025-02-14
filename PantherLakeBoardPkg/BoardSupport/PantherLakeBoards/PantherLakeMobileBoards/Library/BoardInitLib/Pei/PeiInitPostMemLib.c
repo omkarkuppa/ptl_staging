@@ -425,7 +425,6 @@ PtlBoardTbtInit (
   // PD/Retimer information
   //
   PcdSetBoolS (PcdUsbCEcSupportPdInfoPresent, PcdGetBool (VpdPcdUsbCEcSupportPdInfoPresent));
-  SetPcdUsbCPdSupportBitmap ();
 
   PcdSetBoolS (PcdUsbCEcSupportRetimerInfoPresent, PcdGetBool (VpdPcdUsbCEcSupportRetimerInfoPresent));
   PcdSet8S (PcdUsbCCapsuleDebugLevel, mSetupData.UsbcCapsuleDebugLevel);

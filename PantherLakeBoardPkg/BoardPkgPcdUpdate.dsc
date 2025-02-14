@@ -170,6 +170,7 @@
   !endif
 
     gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable|TRUE
+    gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdMaxUsbCPdNumber|0x4
 
   !if gUsb4FeaturePkgTokenSpaceGuid.PcdDTbtEnable == TRUE
     gUsb4FeaturePkgTokenSpaceGuid.PcdBoardDTbtControllerNumber|0x1

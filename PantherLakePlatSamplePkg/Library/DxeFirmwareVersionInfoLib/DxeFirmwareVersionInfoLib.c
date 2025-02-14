@@ -126,7 +126,6 @@ ReadUsbCPdVersion(
   USBC_PD_SETUP            UsbCPdSetup;
   UINT32                   VarAttributes;
   UINTN                    VarSize;
-  UINT8                    PdSupportBitmap;
   UINT8                    Index;
   UINT64                   TempPdVersion;
 
@@ -148,14 +147,7 @@ ReadUsbCPdVersion(
     goto Exit;
   }
 
-  Status = EFI_NOT_READY;
-
-  PdSupportBitmap = PcdGet8 (PcdUsbCPdSupportBitmap);
-
-  for (Index = 0; Index < MAX_PD_NUMBER; Index++) {
-    if (!(PdSupportBitmap & (PD_SUPPORT << Index))) {
-      continue;
-    }
+  for (Index = 0; Index < FixedPcdGet8 (PcdMaxUsbCPdNumber); Index++) {
     ZeroMem (DataBuffer, sizeof (DataBuffer));
     Status = GetPDFwVersion (Index + 1, DataBuffer);
     DEBUG ((DEBUG_INFO, "Get PD%d FW version with status:%r\n", Index + 1, Status));
@@ -208,22 +200,6 @@ ReadUsbCPdVersion(
     goto Exit;
   }
 
-  if (SetupData.UsbCPdSupportBitmap != PdSupportBitmap) {
-    VarAttributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE;
-    SetupData.UsbCPdSupportBitmap = PdSupportBitmap;
-    Status = gRT->SetVariable (
-                    L"Setup",
-                    &gSetupVariableGuid,
-                    VarAttributes,
-                    VarSize,
-                    &SetupData
-                    );
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Failed to set setup variable\n"));
-      goto Exit;
-    }
-  }
-
 Exit:
   DEBUG ((DEBUG_INFO, "ReadUsbCPdVersion - End\n"));
 }
@@ -265,7 +241,7 @@ UpdateUsbCPdVersion (
     goto Exit;
   }
 
-  for (Index = 0; Index < MAX_PD_NUMBER; Index++) {
+  for (Index = 0; Index < FixedPcdGet8 (PcdMaxUsbCPdNumber); Index++) {
     switch (Index) {
       case 0:
         UsbCPdVersion = UsbCPdSetup.UsbCPd1Version;

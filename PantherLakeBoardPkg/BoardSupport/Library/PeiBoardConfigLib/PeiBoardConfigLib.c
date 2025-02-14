@@ -1129,46 +1129,6 @@ SetUcsiRevisionPcd (
   DEBUG ((DEBUG_INFO, "UpdateUCSIVersionPcd - End\n"));
 }
 
-/**
-  Setting PcdUsbCPdSupportBitmap from UsbC connector configuration table
-  The lower 4 bits (BIT0 - BIT3) of PcdUsbCPdSupportBitmap represent
-  whether TCP 0 through 3 can support PD.
-
-**/
-VOID
-SetPcdUsbCPdSupportBitmap (
-  VOID
-  )
-{
-  UINT8                           ConnectorIndex;
-  UINT8                           PdSupportBitmap;
-  USB_CONNECTOR_HOB_DATA          *UsbConnectorHobDataPtr;
-  USB_CONNECTOR_BOARD_CONFIG      *UsbConnectorBoardConfig;
-  USBC_CONNECTOR_HOB_DATA         *UsbCConnectorHobDataPtr;
-  USBC_CONNECTOR_BOARD_CONFIG     *UsbCConnectorBoardConfig;
-  PdSupportBitmap = 0;
-
-  UsbConnectorHobDataPtr  = GetUsbConnectorHobData ();
-  UsbCConnectorHobDataPtr = GetUsbCConnectorHobData ();
-
-  if (UsbConnectorHobDataPtr != NULL || UsbCConnectorHobDataPtr != NULL) {
-    UsbConnectorBoardConfig  = UsbConnectorHobDataPtr->UsbConnectorBoardConfig;
-    UsbCConnectorBoardConfig = UsbCConnectorHobDataPtr->UsbCConnectorBoardConfig;
-    if (UsbConnectorBoardConfig != NULL && UsbCConnectorBoardConfig != NULL) {
-      for (ConnectorIndex = 0; ConnectorIndex < UsbCConnectorHobDataPtr->NumberOfUsbCConnectors; ConnectorIndex++, UsbCConnectorBoardConfig++) {
-        if (UsbConnectorBoardConfig[ConnectorIndex].Usb3Controller == TCSS_USB3 &&
-            UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum < MAX_TCSS_USB3_PORTS &&
-            UsbCConnectorBoardConfig->PdNum != 0) {
-          PdSupportBitmap |= (PD_SUPPORT << UsbConnectorBoardConfig[ConnectorIndex].Usb3PortNum);
-        }
-      }
-    }
-  }
-
-  DEBUG ((DEBUG_INFO, "PdSupportBitmap: 0x%x\n", PdSupportBitmap));
-  PcdSet8S (PcdUsbCPdSupportBitmap, PdSupportBitmap);
-}
-
 VOID
 EFIAPI
 CnvPreMemPcdInitBeforeSiliconInit (

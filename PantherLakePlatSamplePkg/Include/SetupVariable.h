@@ -511,7 +511,6 @@ typedef struct {
   UINT16  ReservePMemoryPerSlot;
   UINT8   ReserveIoPerSlot;
   UINT8   UsbCRetimerNumber;
-  UINT8   UsbCPdSupportBitmap;
 
   UINT8   IccLockRegisters;
   UINT8   IccProfile;

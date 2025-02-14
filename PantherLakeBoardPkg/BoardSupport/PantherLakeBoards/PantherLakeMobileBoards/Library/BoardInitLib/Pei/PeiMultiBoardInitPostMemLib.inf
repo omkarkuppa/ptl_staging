@@ -81,7 +81,6 @@
 
   #Tbt config
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportPdInfoPresent
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdSupportBitmap         ## PRODUCES
 
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportRetimerInfoPresent
 
