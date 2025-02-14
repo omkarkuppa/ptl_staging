@@ -611,7 +611,7 @@ HeciMemRead (
   UINTN                 HeciBarSmm;
   UINTN                 HeciBar;
 
-  if (This == NULL || Buffer == NULL || Width != EfiPciIoWidthUint32 || Count != 1 || BarIndex != 0) {
+  if (This == NULL || Buffer == NULL || Count != 1 || BarIndex != 0) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -636,7 +636,20 @@ HeciMemRead (
     SetHeciBar (HeciAccess, HeciBar);
   }
 
-  *((UINT32 *) Buffer) = MmioRead32 (HeciBar + (UINTN) Offset);
+  switch (Width) {
+    case EfiPciIoWidthUint32:
+      *((UINT32 *) Buffer) = MmioRead32 (HeciBar + (UINTN) Offset);
+      break;
+    case EfiPciIoWidthUint16:
+      *((UINT16 *) Buffer) = MmioRead16 (HeciBar + (UINTN) Offset);
+      break;
+    case EfiPciIoWidthUint8:
+      *((UINT8 *) Buffer) = MmioRead8 (HeciBar + (UINTN) Offset);
+      break;
+    default:
+      return EFI_UNSUPPORTED;
+  }
+
 
   if (HeciBarSmm != 0) {
     SetHeciBar (HeciAccess, HeciBarSmm);

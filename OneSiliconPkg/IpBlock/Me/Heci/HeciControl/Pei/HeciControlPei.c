@@ -146,14 +146,6 @@ HeciControlEntryPoint (
     return EFI_ABORTED;
   }
 
-  //
-  // HECI1 and HECI2/3 are loaded in different ways.
-  // HECI1 is handled by CSE BUP but HECI2/3 are handled later in the CSE driver.
-  // In this phase, only HECI1 can be initialized.
-  // HECI2 and HECI3 will be initialized by HeciControlReinstallCallback () in Memory Discovered.
-  //
-  HeciControlInitalizeSpecificCommunicationDevice (HeciControl, HECI1);
-
   Status = PeiServicesNotifyPpi (&mReinstallHeciControlOnMemoryDiscovered);
   if (EFI_ERROR (Status)) {
     REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_ME_HECI_CONTROL_PPI_EXIT_ERR_INSTALLPPIFAIL); //PostCode (0xEA3)
@@ -217,7 +209,6 @@ HeciControlReinstallCallback (
 
   CopyMem (HeciControl, HeciControlOld, sizeof (HECI_CONTROL_PRIVATE));
   SetHeciControlFunctions (HeciControl);
-  HeciControlInitalizeAllCommunicationDevices (HeciControl);
 
   HeciControlPpi = (EFI_PEI_PPI_DESCRIPTOR*) AllocateZeroPool (sizeof (EFI_PEI_PPI_DESCRIPTOR));
   if (HeciControlPpi == NULL) {

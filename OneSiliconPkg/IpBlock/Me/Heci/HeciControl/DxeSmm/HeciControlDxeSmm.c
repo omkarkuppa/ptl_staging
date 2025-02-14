@@ -83,7 +83,6 @@ HeciControlEntryPoint (
   HeciControl = HeciAllocateMemory (sizeof (HECI_CONTROL_PRIVATE));
   if (HeciControl != NULL) {
     SetHeciControlFunctions (HeciControl);
-    HeciControlInitalizeAllCommunicationDevices (HeciControl);
 
     Status = InstallHeciProtocol (
                SelectedHeciGuid,

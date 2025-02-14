@@ -599,6 +599,20 @@ HeciInit (
     DEBUG ((DEBUG_ERROR, " ERROR: Init failed (Device Disabled)\n"));
     Status = EFI_DEVICE_ERROR;
   } else {
+    HeciAccess->PciIo.Pci.Read (
+                            &(HeciAccess->PciIo),
+                            EfiPciIoWidthUint8,
+                            R_ME_CFG_HIDM,
+                            1,
+                            &InterruptMode
+                            );
+    if (InterruptMode & B_ME_CFG_HIDM_L) {
+      DEBUG ((DEBUG_INFO, HECI_TRANSPORT_NUM_DEBUG, HeciNumber));
+      DEBUG ((DEBUG_INFO, " HECI already initialized, skipping\n"));
+      HeciTransport->IsInitialized = TRUE;
+      return EFI_SUCCESS;
+    }
+
     //
     // Make sure HECI interrupts are disabled before configuring delivery mode.
     //

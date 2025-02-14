@@ -74,6 +74,9 @@ ClearD0I3Bit (
   UINT8        Cmd;
   UINTN        Timeout;
   UINT32       D0I3Ctrl;
+  BOOLEAN      IsTempBar;
+
+  IsTempBar = FALSE;
 
   DEBUG ((DEBUG_INFO, "[HECI%d] Clearing D0I3 bit\n", HECI_DEVICE_TO_NUMBER (Function)));
   ///
@@ -92,7 +95,10 @@ ClearD0I3Bit (
 
   if (DeviceBar == 0) {
     DEBUG ((DEBUG_WARN, "MMIO Bar for HECI%d isn't programmed\n", HECI_DEVICE_TO_NUMBER (Function)));
-    return;
+    IsTempBar = TRUE;
+    DeviceBar = PcdGet32 (PcdSiliconInitTempMemBaseAddr);
+    PciSegmentWrite32 (DevicePciCfgBase + PCI_BASE_ADDRESSREG_OFFSET, (UINT32) DeviceBar);
+    PciSegmentWrite32 (DevicePciCfgBase + PCI_BASE_ADDRESSREG_OFFSET + 0x4, 0);
   }
 
   ///
@@ -134,6 +140,10 @@ ClearD0I3Bit (
   }
   DEBUG ((DEBUG_INFO, "[HECI%d] R_ME_MEM_DEVIDLEC register = %08X\n", HECI_DEVICE_TO_NUMBER (Function), MmioRead32 ((UINTN) DeviceBar + R_ME_MEM_DEVIDLEC)));
   PciSegmentWrite8 (DevicePciCfgBase + PCI_COMMAND_OFFSET, Cmd);
+
+  if (IsTempBar) {
+    PciSegmentWrite32 (DevicePciCfgBase + PCI_BASE_ADDRESSREG_OFFSET, 0);
+  }
 }
 
 
@@ -216,8 +226,10 @@ IsD0I3BitEnabled (
   UINT32       D0I3Ctrl;
   BOOLEAN      Status;
   UINT8        Cmd;
+  BOOLEAN      IsTempBar;
 
-  Status = FALSE;
+  Status    = FALSE;
+  IsTempBar = FALSE;
 
   ///
   /// Get Device MMIO address
@@ -239,7 +251,10 @@ IsD0I3BitEnabled (
 
   if (DeviceBar == 0) {
     DEBUG ((DEBUG_WARN, "MMIO Bar for HECI%d isn't programmed\n", HECI_DEVICE_TO_NUMBER (Function)));
-    return Status;
+    IsTempBar = TRUE;
+    DeviceBar = PcdGet32 (PcdSiliconInitTempMemBaseAddr);
+    PciSegmentWrite32 (DevicePciCfgBase + PCI_BASE_ADDRESSREG_OFFSET, (UINT32) DeviceBar);
+    PciSegmentWrite32 (DevicePciCfgBase + PCI_BASE_ADDRESSREG_OFFSET + 0x4, 0);
   }
 
   ///
@@ -257,5 +272,10 @@ IsD0I3BitEnabled (
   }
 
   PciSegmentWrite8 (DevicePciCfgBase + PCI_COMMAND_OFFSET, Cmd);
+
+  if (IsTempBar) {
+    PciSegmentWrite32 (DevicePciCfgBase + PCI_BASE_ADDRESSREG_OFFSET, 0);
+  }
+
   return Status;
 }

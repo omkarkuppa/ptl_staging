@@ -194,100 +194,6 @@ HeciControlInit (
 }
 
 /**
-  Initialize defined HECI communication interface (excluding ICH interface).
-
-  @param[in]  This                HeciControl instance
-  @param[in]  HeciTransport       HeciTransport instance
-
-  @retval EFI_SUCCESS             Initialization succeed
-  @retval EFI_INVALID_PARAMETER   At least one of input parameter is NULL
-**/
-EFI_STATUS
-EFIAPI
-HeciControlInitalizeCommunicationDevice (
-  IN  HECI_CONTROL_PRIVATE    *This,
-  IN  HECI_TRANSPORT          *HeciTransport
-  )
-{
-  HECI_DEVICE_INFO    HeciDeviceInfo;
-  EFI_STATUS          Status;
-
-  if (This == NULL || HeciTransport == NULL) {
-    return EFI_INVALID_PARAMETER;
-  }
-
-  HeciTransport->GetHeciDeviceInfo (HeciTransport, &HeciDeviceInfo);
-  if (!HeciTransport->GetInitializationState (HeciTransport)) {
-    Status = HeciControlInit (This, HeciTransport);
-    if (!EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, HECI_CONTROL_DEBUG));
-      DEBUG ((DEBUG_INFO, " HECI %d initialized\n", HECI_DEVICE_TO_NUMBER (HeciDeviceInfo.HeciFunction)));
-    }
-  } else {
-    DEBUG ((DEBUG_INFO, HECI_CONTROL_DEBUG));
-    DEBUG ((DEBUG_INFO, " HECI %d already initialized, skipping\n", HECI_DEVICE_TO_NUMBER (HeciDeviceInfo.HeciFunction)));
-  }
-
-  return EFI_SUCCESS;
-}
-
-/**
-  Initialize all defined HECI communication interfaces.
-
-  @param[in]  This    HeciControl instance
-**/
-VOID
-HeciControlInitalizeAllCommunicationDevices (
-  IN  HECI_CONTROL_PRIVATE    *This
-  )
-{
-  HECI_TRANSPORT    *HeciTransport;
-  EFI_STATUS        Status;
-
-  DEBUG ((DEBUG_INFO, HECI_CONTROL_DEBUG));
-  DEBUG ((DEBUG_INFO, " Initialize HECI Interfaces\n"));
-
-  HeciTransport = GetFirstHeciTransport ();
-  while (HeciTransport != NULL) {
-    Status = HeciControlInitalizeCommunicationDevice (This, HeciTransport);
-    if (EFI_ERROR (Status)) {
-      break;
-    }
-    HeciTransport = HeciTransport->GetNextHeciTransport (HeciTransport);
-  }
-}
-
-/**
-  Initialize Specific HECI communication interface.
-
-  @param[in]  This      HeciControl instance
-  @param[in]  HeciNum   Heci Number
-**/
-VOID
-HeciControlInitalizeSpecificCommunicationDevice (
-  IN  HECI_CONTROL_PRIVATE  *This,
-  IN  UINT8                 HeciNum
-  )
-{
-  HECI_TRANSPORT      *HeciTransport;
-  HECI_DEVICE_INFO    HeciDeviceInfo;
-
-  DEBUG ((DEBUG_INFO, HECI_CONTROL_DEBUG));
-  DEBUG ((DEBUG_INFO, " Initialize HECI %d Interface\n", HECI_DEVICE_TO_NUMBER (HeciNum)));
-
-  HeciTransport = GetFirstHeciTransport ();
-  while (HeciTransport != NULL) {
-    HeciTransport->GetHeciDeviceInfo (HeciTransport, &HeciDeviceInfo);
-    if (HeciDeviceInfo.HeciFunction == HeciNum) {
-      HeciControlInitalizeCommunicationDevice (This, HeciTransport);
-      break;
-    }
-
-    HeciTransport = HeciTransport->GetNextHeciTransport (HeciTransport);
-  }
-}
-
-/**
   Clear HECI Buffer for given HECI transport
 
   @param[in]  HeciTransport   Pointer to HECI Transport Instance
@@ -405,26 +311,21 @@ HeciControlReset (
 
   if (VerifyHeciAvailability (HeciTransport)) {
     HeciTransport->GetHeciDeviceInfo (HeciTransport, &HeciDeviceInfo);
-    if (HeciTransport->GetInitializationState (HeciTransport)) {
-      DEBUG ((DEBUG_INFO, HECI_CONTROL_DEBUG));
-      DEBUG ((
-        DEBUG_INFO,
-        " %a () - Execute reset for HECI %d [%d:%d:%d:%d]\n",
-        __FUNCTION__,
-        HECI_DEVICE_TO_NUMBER (HeciDeviceInfo.HeciFunction),
-        HeciDeviceInfo.HeciSegment,
-        HeciDeviceInfo.HeciBus,
-        HeciDeviceInfo.HeciDevice,
-        HeciDeviceInfo.HeciFunction
-        ));
 
-      HeciBufferClear (HeciTransport);
-      Status = HeciTransport->HeciReset (HeciTransport, Timeout);
-    } else {
-      DEBUG ((DEBUG_WARN, HECI_CONTROL_DEBUG));
-      DEBUG ((DEBUG_ERROR, " ERROR: %a () - HECI %d is not initialized\n", __FUNCTION__, HECI_DEVICE_TO_NUMBER (HeciDeviceInfo.HeciFunction)));
-      return EFI_DEVICE_ERROR;
-    }
+    DEBUG ((DEBUG_INFO, HECI_CONTROL_DEBUG));
+    DEBUG ((
+      DEBUG_INFO,
+      " %a () - Execute reset for HECI %d [%d:%d:%d:%d]\n",
+      __FUNCTION__,
+      HECI_DEVICE_TO_NUMBER (HeciDeviceInfo.HeciFunction),
+      HeciDeviceInfo.HeciSegment,
+      HeciDeviceInfo.HeciBus,
+      HeciDeviceInfo.HeciDevice,
+      HeciDeviceInfo.HeciFunction
+      ));
+
+    HeciBufferClear (HeciTransport);
+    Status = HeciTransport->HeciReset (HeciTransport, Timeout);
   }
 
   return Status;
@@ -507,18 +408,19 @@ HeciControlSend (
     HeciDeviceInfo.HeciFunction
     ));
 
-  if (HeciTransport->GetInitializationState (HeciTransport)) {
-    if (Timeout == NULL) {
-      DefaultTimeout = HECI_SEND_TIMEOUT;
-      Timeout = &DefaultTimeout;
+  if (HeciTransport->GetInitializationState (HeciTransport) == FALSE) {
+    Status = HeciControlInit (This, HeciTransport);
+    if (EFI_ERROR (Status)) {
+      return Status;
     }
-
-    Status = HeciTransport->HeciSend (HeciTransport, Timeout, HostAddress, EngineAddress, MessageBody, MessageLength);
-  } else {
-    DEBUG ((DEBUG_WARN, HECI_CONTROL_DEBUG));
-    DEBUG ((DEBUG_ERROR, " ERROR: %a () - HECI %d is not initialized\n", __FUNCTION__, HECI_DEVICE_TO_NUMBER (HeciDeviceInfo.HeciFunction)));
-    Status = EFI_DEVICE_ERROR;
   }
+
+  if (Timeout == NULL) {
+    DefaultTimeout = HECI_SEND_TIMEOUT;
+    Timeout = &DefaultTimeout;
+  }
+
+  Status = HeciTransport->HeciSend (HeciTransport, Timeout, HostAddress, EngineAddress, MessageBody, MessageLength);
 
   return Status;
 }
@@ -563,10 +465,9 @@ HeciControlReceive (
   IN OUT  UINT32                  *MessageLength
   )
 {
-  EFI_STATUS          Status;
-  HECI_TRANSPORT      *HeciTransport;
-  HECI_DEVICE_INFO    HeciDeviceInfo;
-  UINT32              DefaultTimeout;
+  EFI_STATUS        Status;
+  HECI_TRANSPORT    *HeciTransport;
+  UINT32            DefaultTimeout;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -578,19 +479,19 @@ HeciControlReceive (
     return EFI_WRITE_PROTECTED;
   }
 
-  if (HeciTransport->GetInitializationState (HeciTransport)) {
-    if (Timeout == NULL) {
-      DefaultTimeout = HECI_READ_TIMEOUT;
-      Timeout = &DefaultTimeout;
+  if (HeciTransport->GetInitializationState (HeciTransport) == FALSE) {
+    Status = HeciControlInit (This, HeciTransport);
+    if (EFI_ERROR (Status)) {
+      return Status;
     }
-
-    Status = HeciTransport->HeciReceive (HeciTransport, Timeout, HostAddress, EngineAddress, MessageBody, MessageLength);
-  } else {
-    HeciTransport->GetHeciDeviceInfo (HeciTransport, &HeciDeviceInfo);
-    DEBUG ((DEBUG_WARN, HECI_CONTROL_DEBUG));
-    DEBUG ((DEBUG_ERROR, " ERROR: %a () - HECI %d is not initialized\n", __FUNCTION__, HECI_DEVICE_TO_NUMBER (HeciDeviceInfo.HeciFunction)));
-    Status = EFI_DEVICE_ERROR;
   }
+
+  if (Timeout == NULL) {
+    DefaultTimeout = HECI_READ_TIMEOUT;
+    Timeout = &DefaultTimeout;
+  }
+
+  Status = HeciTransport->HeciReceive (HeciTransport, Timeout, HostAddress, EngineAddress, MessageBody, MessageLength);
 
   return Status;
 }
@@ -704,30 +605,31 @@ HeciControlSendAndReceive (
       HeciDeviceInfo.HeciFunction
       ));
 
-    if (HeciTransport->GetInitializationState (HeciTransport)) {
-      if (Timeout == NULL) {
-        DefaultTimeout = HECI_SEND_TIMEOUT + HECI_READ_TIMEOUT;
-        Timeout = &DefaultTimeout;
+    if (HeciTransport->GetInitializationState (HeciTransport) == FALSE) {
+      Status = HeciControlInit (This, HeciTransport);
+      if (EFI_ERROR (Status)) {
+        return Status;
       }
-
-      Status = HeciTransport->HeciSendAndReceive (
-                                HeciTransport,
-                                Timeout,
-                                Retries,
-                                HostAddress,
-                                EngineAddress,
-                                ReqMsgInternal,
-                                ReqLen,
-                                RspMsg,
-                                RspLen,
-                                SendStatus,
-                                ReceiveStatus
-                                );
-    } else {
-      DEBUG ((DEBUG_WARN, HECI_CONTROL_DEBUG));
-      DEBUG ((DEBUG_ERROR, " ERROR: %a () - HECI %d is not initialized\n", __FUNCTION__, HECI_DEVICE_TO_NUMBER (HeciDeviceInfo.HeciFunction)));
-      Status = EFI_DEVICE_ERROR;
     }
+
+    if (Timeout == NULL) {
+      DefaultTimeout = HECI_SEND_TIMEOUT + HECI_READ_TIMEOUT;
+      Timeout = &DefaultTimeout;
+    }
+
+    Status = HeciTransport->HeciSendAndReceive (
+                              HeciTransport,
+                              Timeout,
+                              Retries,
+                              HostAddress,
+                              EngineAddress,
+                              ReqMsgInternal,
+                              ReqLen,
+                              RspMsg,
+                              RspLen,
+                              SendStatus,
+                              ReceiveStatus
+                              );
   }
 
   if (AllocationReqSize > 0) {

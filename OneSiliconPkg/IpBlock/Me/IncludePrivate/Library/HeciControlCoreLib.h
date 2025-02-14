@@ -36,44 +36,6 @@ typedef struct _HECI_CONTROL_PRIVATE_ {
 } HECI_CONTROL_PRIVATE;
 
 /**
-  Initialize defined HECI communication interface (excluding ICH interface).
-
-  @param[in]     This           HeciControl instance
-  @param[in]     HeciTransport  HeciTransport instance
-
-  @retval EFI_SUCCESS           Initialization succeed
-  @retval EFI_INVALID_PARAMETER At least one of input parameter is NULL
-**/
-EFI_STATUS
-EFIAPI
-HeciControlInitalizeCommunicationDevice (
-  IN      HECI_CONTROL_PRIVATE *This,
-  IN      HECI_TRANSPORT       *HeciTransport
-  );
-
-/**
-  Initialize all defined HECI communication interfaces (excluding ICH interfaces).
-
-  @param[in]     This           HeciControl instance
-**/
-VOID
-HeciControlInitalizeAllCommunicationDevices (
-  IN      HECI_CONTROL_PRIVATE *This
-  );
-
-/**
-  Initialize Specific HECI communication interface.
-
-  @param[in]     This           HeciControl instance
-  @param[in]     HeciNum        Heci Number
-**/
-VOID
-HeciControlInitalizeSpecificCommunicationDevice (
-  IN  HECI_CONTROL_PRIVATE *This,
-  IN  UINT8                HeciNum
-  );
-
-/**
   Initialize HECI_CONTROL protocol functions
 
   @param[out]     HeciControl HECI control pointer to be initialized
