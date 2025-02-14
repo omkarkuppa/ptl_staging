@@ -180,6 +180,8 @@ cd ..\..\
 --pcd gBoardModuleTokenSpaceGuid.PcdSignedFspEnable=TRUE ^
 --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0 ^
 --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=0
+  set FSP_BUILD_OPTION_PCD=%FSP_BUILD_OPTION_PCD% ^
+--pcd gPantherLakeFspPkgTokenSpaceGuid.PcdSignedFspBuild=TRUE
 
 ) else if /i "embedded" == "%1" (
   set EMBEDDED_BUILD=TRUE
