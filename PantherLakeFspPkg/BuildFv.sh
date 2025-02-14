@@ -268,6 +268,12 @@ function PreBuild(){
     echo FspPerformanceEnable is enabled...
     export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gPantherLakeFspPkgTokenSpaceGuid.PcdFspPerformanceEnable=TRUE"
   fi
+
+  if [ "$SMBIOS_ENABLE" = "FALSE" ];then
+    echo smbios table generation is disabled...
+    export FSP_BUILD_OPTION_PCD="$FSP_BUILD_OPTION_PCD --pcd gSiPkgTokenSpaceGuid.PcdSmbiosEnable=FALSE"
+  fi
+
 }
 
 function PostBuild(){
