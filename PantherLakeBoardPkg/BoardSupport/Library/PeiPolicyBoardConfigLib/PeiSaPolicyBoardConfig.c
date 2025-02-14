@@ -50,13 +50,14 @@ UpdatePeiSaPolicyBoardConfig (
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                            *FspsUpd;
   VOID                            *FspmUpd;
-#endif
-  TCSS_PEI_CONFIG     *TcssConfig;
-  TcssConfig          = NULL;
-
 #if FixedPcdGetBool(PcdTcssSupport) == 1
-    TCSS_PEI_PREMEM_CONFIG             *TcssPeiPreMemConfig;
-    TcssPeiPreMemConfig = NULL;
+  UINT8                           *TcssPortPtr;
+#endif
+#else
+#if FixedPcdGetBool(PcdTcssSupport) == 1
+  TCSS_PEI_CONFIG                 *TcssConfig;
+  TCSS_PEI_PREMEM_CONFIG          *TcssPeiPreMemConfig;
+#endif
 #endif
 
 #if FixedPcdGetBool(PcdTcssSupport) == 1
@@ -65,10 +66,6 @@ UpdatePeiSaPolicyBoardConfig (
   UINT8                              ConnectorIndex;
   USB_CONNECTOR_HOB_DATA             *UsbConnectorHobDataPtr;
 #endif
-
-  EFI_PEI_READ_ONLY_VARIABLE2_PPI    *VariableServices;
-  UINTN                              VariableSize;
-  SETUP_DATA                         SetupData;
 
   DEBUG ((DEBUG_INFO, "Updating SA Policy by board config in Post-Mem\n"));
   Status = EFI_SUCCESS;
@@ -85,33 +82,23 @@ UpdatePeiSaPolicyBoardConfig (
     return EFI_NOT_FOUND;
   }
 #else
+#if FixedPcdGetBool(PcdTcssSupport) == 1
+  TcssConfig                      = NULL;
+  TcssPeiPreMemConfig             = NULL;
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTcssPeiPreMemConfigGuid, (VOID *) &TcssPeiPreMemConfig);
   ASSERT_EFI_ERROR (Status);
+  if (Status != EFI_SUCCESS){
+    return Status;
+  }
   Status = GetConfigBlock ((VOID *) SiPolicyPpi, &gTcssPeiConfigGuid, (VOID *) &TcssConfig);
   ASSERT_EFI_ERROR (Status);
+  if (Status != EFI_SUCCESS){
+    return Status;
+  }
+#endif
 #endif // FspMode Check
 
-  Status = PeiServicesLocatePpi (
-             &gEfiPeiReadOnlyVariable2PpiGuid,
-             0,
-             NULL,
-             (VOID **) &VariableServices
-             );
-  ASSERT_EFI_ERROR (Status);
-
-  VariableSize = sizeof (SETUP_DATA);
-  Status = VariableServices->GetVariable (
-                  VariableServices,
-                  L"Setup",
-                  &gSetupVariableGuid,
-                  NULL,
-                  &VariableSize,
-                  &SetupData
-                  );
-  ASSERT_EFI_ERROR (Status);
-
 #if FixedPcdGetBool(PcdTcssSupport) == 1
-  if (TcssConfig != NULL) {
     //
     // Ascertain BoardId
     //
@@ -159,9 +146,13 @@ UpdatePeiSaPolicyBoardConfig (
     }
 
     for (PortIndex = 0; PortIndex < MAX_TCSS_USB3_PORTS; PortIndex++) {
-      UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb30Enable[PortIndex], TcssConfig->UsbConfig.PortUsb30[PortIndex].Enable, IS_TC_PORT_USB_SUPPORTED (TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[PortIndex]));
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+      TcssPortPtr = &(((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort0) + PortIndex;
+      ((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb30Enable[PortIndex] = IS_TC_PORT_USB_SUPPORTED (*TcssPortPtr);
+#else
+      TcssConfig->UsbConfig.PortUsb30[PortIndex].Enable = IS_TC_PORT_USB_SUPPORTED (TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[PortIndex]);
+#endif
     }
-  }
 #endif  // PcdTcssSupport
   return Status;
 }
