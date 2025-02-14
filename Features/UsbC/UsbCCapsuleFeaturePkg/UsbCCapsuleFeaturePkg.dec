@@ -29,7 +29,6 @@
   Include
   Include/Library
   Include/UsbCCapsuleDebug
-  Test/Mock/Include
 
 [Guids]
   gUsbCCapsuleFeaturePkgTokenSpaceGuid  =  {0xDAD050DE, 0xAA13, 0x46A4, {0xB0, 0x78, 0x70, 0xDA, 0xCB, 0x5D, 0xEB, 0xFC}}
