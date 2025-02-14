@@ -18,28 +18,35 @@
 
 @par Specification Reference:
 **/
+
 #ifndef _IGPU_DATA_HOB_H_
 #define _IGPU_DATA_HOB_H_
 
 #include <Base.h>
 
-extern EFI_GUID gIGpuDataHobGuid;
+#define VGA_DISPLAY_DISABLED  0
+#define VGA_DISPLAY_ENABLED   (BIT0)
+#define VGA_MODE3_ENABLED     (VGA_DISPLAY_ENABLED)
+#define VGA_MODE12_ENABLED    (VGA_DISPLAY_ENABLED | BIT1)
+
+extern EFI_GUID  gIGpuDataHobGuid;
 #pragma pack (push,1)
 
 /**
   These members describe the configuration of IGPU_DATA_HOB.
 **/
 typedef struct {
-  EFI_HOB_GUID_TYPE           EfiHobGuidType;                           ///< Offset 0 - 23: GUID Hob type structure for gIGpuDataHobGuid
-  UINT8                       PrimaryDisplayDetection;                  ///< Primary Display - default is IGD. [IGD = 0; PEG = 1; PCIE = 2]
-  UINT64                      FlatCcsBaseAddr;                          ///< Flat CCS Base Address
-  UINT32                      FlatCcsMemSize;                           ///< Flat CCS Size in MB
-  UINT32                      GraphicsConfigPtr;                        ///< Graphics Configuration Ptr.
-  UINT32                      VbtSize;                                  ///< Intel Graphics VBT (Video BIOS Table) Size.
-  UINT8                       LidStatus;                                ///< LFP Display Lid Status (LID_STATUS enum).
-  UINT8                       Rsvd[3];                                  ///< Reserved for future use.
-  UINT64                      Gsm2BaseAddress;                          ///< Graphics stolen memory 2 base address
-  UINT64                      Gsm2Size;                                 ///< Graphics stolen memory 2 size
+  EFI_HOB_GUID_TYPE    EfiHobGuidType;          ///< Offset 0 - 23: GUID Hob type structure for gIGpuDataHobGuid
+  UINT8                PrimaryDisplayDetection; ///< Primary Display - default is IGD. [IGD = 0; PEG = 1; PCIE = 2]
+  UINT64               FlatCcsBaseAddr;         ///< Flat CCS Base Address
+  UINT32               FlatCcsMemSize;          ///< Flat CCS Size in MB
+  UINT32               GraphicsConfigPtr;       ///< Graphics Configuration Ptr.
+  UINT32               VbtSize;                 ///< Intel Graphics VBT (Video BIOS Table) Size.
+  UINT8                LidStatus;               ///< LFP Display Lid Status (LID_STATUS enum).
+  UINT8                VgaDisplayConfig;        ///< VGA Display configuration
+  UINT8                Rsvd[2];                 ///< Reserved for future use.
+  UINT64               Gsm2BaseAddress;         ///< Graphics stolen memory 2 base address
+  UINT64               Gsm2Size;                ///< Graphics stolen memory 2 size
 } IGPU_DATA_HOB;
 #pragma pack (pop)
 #endif

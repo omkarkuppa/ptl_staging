@@ -244,6 +244,7 @@ IGpuDisplayInitPreMem (
   EFI_HOB_GUID_TYPE        *GuidHob;
   CHAR8                    *String;
   UINT64                   StartTime;
+  IGPU_DATA_HOB            *IGpuDataHob;
 
   DEBUG ((DEBUG_INFO, "%a() Start\n", __FUNCTION__));
 
@@ -305,6 +306,11 @@ IGpuDisplayInitPreMem (
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "GraphicsPreMemPpiInit Failed\n"));
         return;
+      }
+
+      IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+      if (IGpuDataHob != NULL) {
+        IGpuDataHob->VgaDisplayConfig = VGA_MODE3_ENABLED;
       }
 
       String = IGpuPreMemConfig->VgaMessage;

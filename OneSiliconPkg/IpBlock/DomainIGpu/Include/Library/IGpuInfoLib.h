@@ -18,6 +18,7 @@
 
 @par Specification Reference:
 **/
+
 #ifndef __IGPU_INFO_LIB_H__
 #define __IGPU_INFO_LIB_H__
 
@@ -567,4 +568,32 @@ EFIAPI
 IGpuIdleMedia (
   VOID
   );
+
+/**
+  Updates the progress bar on the VGA display.
+
+  This function is responsible for updating the progress bar displayed on the VGA screen.
+  It ensures that the visual representation of the progress is accurately reflected based
+  on the current progress state.
+
+  @param[in] Percentage  The percentage of the progress bar to fill (0-100).
+**/
+VOID
+UpdateProgressBar (
+  IN UINT8  Percentage
+  );
+
+/**
+  Clear the VGA display based on the current video mode (Mode 3 or Mode 12).
+
+  This function checks the current VGA mode, and depending on whether the mode is
+  Mode 3 (80x25 text mode) or Mode 12 (640x480 graphics mode with 16 colors),
+  it clears the display by setting all memory locations to zero, effectively
+  resetting the display to a blank state (black background).
+**/
+VOID
+ClearVgaDisplay (
+  VOID
+  );
+
 #endif // __IGPU_INFO_LIB_H__

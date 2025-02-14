@@ -28,6 +28,45 @@
 #include <Library/NguInfoLib.h>
 #include <IGpuDataHob.h>
 
+//
+// VGA Text Mode (Mode 3)
+//
+#define VGA_MODE3_BASE_ADDRESS  0xB8000
+#define VGA_COLUMNS             80
+#define VGA_LINES               25
+
+#define PROGRESS_BAR_SIZE        100
+#define VGA_COLOR_BLACK          0x00
+#define VGA_COLOR_BLUE           0x01
+#define VGA_COLOR_GREEN          0x02
+#define VGA_COLOR_CYAN           0x03
+#define VGA_COLOR_RED            0x04
+#define VGA_COLOR_MAGENTA        0x05
+#define VGA_COLOR_BROWN          0x06
+#define VGA_COLOR_LIGHT_GRAY     0x07
+#define VGA_COLOR_DARK_GRAY      0x08
+#define VGA_COLOR_LIGHT_BLUE     0x09
+#define VGA_COLOR_LIGHT_GREEN    0x0A
+#define VGA_COLOR_LIGHT_CYAN     0x0B
+#define VGA_COLOR_LIGHT_RED      0x0C
+#define VGA_COLOR_LIGHT_MAGENTA  0x0D
+#define VGA_COLOR_YELLOW         0x0E
+#define VGA_COLOR_WHITE          0x0F
+#define GREEN_ON_BLACK           0x02
+#define WHITE_ON_BLACK           0x07
+
+#define SOLID_BLOCK_CHAR  0xDB  // ASCII 219 solid block character
+#define LIGHT_WHITE_BOX   0xB0  // ASCII 176, light white box
+#define SOLID_WHITE_BOX   0xDB  // ASCII 219, solid white box
+#define RED_ON_BLACK      0x04  // Red on black color attribute
+
+//
+// VGA Graphics Mode (Mode 12)
+//
+#define VGA_MODE12_BASE_ADDRESS  0xA0000  // VGA memory base for Mode 12 (640x480, 16 colors)
+#define VGA_MODE12_WIDTH         640      // Width of the screen in pixels
+#define VGA_MODE12_HEIGHT        480      // Height of the screen in pixels
+
 /**
   Update the GttMmAdr if it's updated in register context.
   @param[in] pInst       Pointer to IP inst
@@ -1808,4 +1847,183 @@ IGpuIdleMedia (
   IGpuCheckAndUpdateGttMmAdr (IGpuInst);
 
   IpIGpuIdleMedia (IGpuInst);
+}
+
+/**
+  Set a character at a specific (X, Y) position in VGA text mode.
+  @note: This function is only applicable for VGA text mode (Mode 3) and it assumed VGA is enabled.
+
+  @param[in] X       The column position (0-based).
+  @param[in] Y       The row position (0-based).
+  @param[in] Char    The ASCII character to display.
+  @param[in] Color   The attribute byte for text color (foreground/background).
+**/
+VOID
+SetChar (
+  IN UINT16  X,
+  IN UINT16  Y,
+  IN CHAR8   Char,
+  IN UINT8   Color
+  )
+{
+  volatile UINT16  *VgaBuffer;
+
+  //
+  // Ensure X and Y are within bounds
+  //
+  if ((X >= VGA_COLUMNS) || (Y >= VGA_LINES)) {
+    return; // Invalid coordinates
+  }
+
+  VgaBuffer                      = (UINT16 *)(UINTN)VGA_MODE3_BASE_ADDRESS;
+  VgaBuffer[Y * VGA_COLUMNS + X] = (UINT16)((Color << 8) | Char);
+}
+
+/**
+  Updates the progress bar on the VGA display.
+
+  This function is responsible for updating the progress bar displayed on the VGA screen.
+  It ensures that the visual representation of the progress is accurately reflected based
+  on the current progress state.
+
+  @param[in] Percentage  The percentage of the progress bar to fill (0-100).
+**/
+VOID
+UpdateProgressBar (
+  IN UINT8  Percentage
+  )
+{
+  UINT8          Index;
+  IGPU_DATA_HOB  *IGpuDataHob;
+  BOOLEAN        IsMode3;
+  UINT8          MaxColumns;
+
+  //
+  // Ensure the percentage is within the valid range (0-100).
+  //
+  if (Percentage > 100) {
+    Percentage = 100;
+  }
+
+  //
+  // Retrieve the IGPU data HOB to determine the VGA display configuration
+  //
+  IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob == NULL) {
+    return; // Exit if the IGPU data HOB is not found
+  }
+
+  //
+  // Exit if the VGA display is disabled
+  //
+  if (IGpuDataHob->VgaDisplayConfig == VGA_DISPLAY_DISABLED) {
+    return;
+  }
+
+  //
+  // Check if it's VGA Mode3 or Mode12
+  //
+  if (IGpuDataHob->VgaDisplayConfig == VGA_MODE3_ENABLED) {
+    IsMode3 = TRUE;
+  } else {
+    IsMode3 = FALSE;
+  }
+
+  //
+  // Print the progress bar.
+  //
+  if (IsMode3) {
+    //
+    // Calculate the maximum columns to fill based on the percentage.
+    //
+    MaxColumns = (UINT8)(((UINT16)Percentage * (UINT16)VGA_COLUMNS) / 100);
+    for (Index = 0; Index < MaxColumns; Index++) {
+      //
+      // Set each character in the progress bar to a solid block character with white color.
+      // Display the progress bar in the 2nd line from the bottom of the screen.
+      //
+      SetChar (Index, VGA_LINES - 2, SOLID_BLOCK_CHAR, VGA_COLOR_WHITE);
+    }
+  }
+}
+
+/**
+  Clear the VGA display based on the current video mode (Mode 3 or Mode 12).
+
+  This function checks the current VGA mode, and depending on whether the mode is
+  Mode 3 (80x25 text mode) or Mode 12 (640x480 graphics mode with 16 colors),
+  it clears the display by setting all memory locations to zero, effectively
+  resetting the display to a blank state (black background).
+**/
+VOID
+ClearVgaDisplay (
+  VOID
+  )
+{
+  IGPU_DATA_HOB    *IGpuDataHob;
+  volatile UINT16  *VgaBuffer;
+  UINTN            BufferSize;
+
+  //
+  // Retrieve the IGPU data HOB to determine the VGA display configuration
+  //
+  IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob == NULL) {
+    return; // Exit if the IGPU data HOB is not found
+  }
+
+  BufferSize = 0;
+
+  // Determine the VGA mode and set the buffer and size accordingly
+  if (IGpuDataHob->VgaDisplayConfig == VGA_MODE3_ENABLED) {
+    //
+    // Point to the VGA framebuffer for Mode 3 (0xB8000)
+    //
+    VgaBuffer = (UINT16 *)(UINTN)VGA_MODE3_BASE_ADDRESS;
+    //
+    // Calculate the size of the framebuffer for Mode 3
+    //
+    // Mode 3 uses a resolution of 80x25 (80 columns and 25 rows).
+    // - Each character cell on the screen is represented by 2 bytes:
+    //   - 1 byte for the character data (ASCII code)
+    //   - 1 byte for the attribute data (color and other settings).
+    // - Therefore, each character occupies 2 bytes in memory.
+    //
+    // Total number of character cells: 80 columns * 25 rows = 2,000 cells
+    // Since each character cell occupies 2 bytes, the total framebuffer size is:
+    // 2,000 character cells * 2 bytes per cell = 4,000 bytes.
+    //
+    // Framebuffer size: 80 * 25 * 2 = 4,000 bytes (0xFA0 bytes).
+    //
+    BufferSize = VGA_COLUMNS * VGA_LINES * sizeof (UINT16);
+  } else if (IGpuDataHob->VgaDisplayConfig == VGA_MODE12_ENABLED) {
+    //
+    // Point to the VGA framebuffer for Mode 12 (0xA0000)
+    //
+    VgaBuffer = (UINT16 *)(UINTN)VGA_MODE12_BASE_ADDRESS;
+    //
+    // Calculate the size of the framebuffer for Mode 12
+    // Mode 12 uses a 640x480 resolution with 16 colors (4-bit color depth).
+    // - The total number of pixels in the framebuffer is 640 (width) * 480 (height).
+    // - Each pixel uses 4 bits (1 nibble), but each byte (8 bits) can store 2 pixels.
+    // - Therefore, the framebuffer size needs to account for 2 pixels per byte.
+    //
+    // Total number of pixels: 640 * 480 = 307,200 pixels
+    // Since each byte holds 2 pixels, we divide the total number of pixels by 2 to
+    // get the number of bytes required to store the framebuffer.
+    //
+    // Framebuffer size: 307,200 pixels / 2 pixels per byte = 153,600 bytes
+    //
+    BufferSize = (VGA_MODE12_WIDTH * VGA_MODE12_HEIGHT) / 2; // 153,600 bytes
+  }
+
+  //
+  // Unsupported mode selected, exit the function
+  //
+  if (BufferSize == 0) {
+    return;
+  }
+
+  // Clear the display by setting all pixels or characters to zero (black background)
+  ZeroMem ((VOID *)VgaBuffer, BufferSize);
 }
