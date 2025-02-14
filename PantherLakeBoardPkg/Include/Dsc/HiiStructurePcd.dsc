@@ -3929,7 +3929,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.LoadSSDTFromFile|0x0                          
 gStructPcdTokenSpaceGuid.PcdSetup.LpitResidencyCounter|0x3                                         # LPIT Residency Counter
 gStructPcdTokenSpaceGuid.PcdSetup.MPdtSupport|0x0                                                  # MPDT Support
 gStructPcdTokenSpaceGuid.PcdSetup.NativeAspmEnable|0x2                                             # Native ASPM
-gStructPcdTokenSpaceGuid.PcdSetup.OrientationSensor|0x1                                            # Orientation Sensor
+gStructPcdTokenSpaceGuid.PcdSetup.OrientationSensor|0x0                                            # Orientation Sensor
 gStructPcdTokenSpaceGuid.PcdSetup.OsDebugPort|0x0                                                  # Kernel Debug Serial Port
 gStructPcdTokenSpaceGuid.PcdSetup.OsNativeResourceBalance|0x0                                      # Os Native Resource Balance
 gStructPcdTokenSpaceGuid.PcdSetup.PCHTempReadEnable|0x1                                            # PCH Temp Read
