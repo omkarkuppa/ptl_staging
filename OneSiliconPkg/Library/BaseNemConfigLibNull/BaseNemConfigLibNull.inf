@@ -22,7 +22,7 @@
 [Defines]
   INF_VERSION                    = 0x0001001D
   BASE_NAME                      = BaseNemConfigLibNull
-  FILE_GUID                      = ABF8BAE2-E84A-5469-AF67-1EC94693DB88
+  FILE_GUID                      = 2113d0a7-c7a9-4166-b486-bb20005ee2f7
   MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
   LIBRARY_CLASS                  = NemConfigLib
