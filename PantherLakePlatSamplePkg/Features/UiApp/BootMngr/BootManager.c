@@ -274,6 +274,7 @@ CallBootManager (
   if (gBootManagerPrivate.HiiHandle == NULL) {
     DEBUG((DEBUG_ERROR, "ERROR: HiiHandle is NULL\n"));
     ASSERT(gBootManagerPrivate.HiiHandle != NULL);
+    return;
   }
 
 

@@ -260,14 +260,6 @@
   gBoardModuleTokenSpaceGuid.PcdPcieClock7                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPcieClock8                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPcieClock9                     ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieClock10                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieClock11                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieClock12                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieClock13                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieClock14                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieClock15                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieClock16                    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPcieClock17                    ## CONSUMES
 
   # PCH PCIe Clock Info
   gBoardModuleTokenSpaceGuid.PcdPchPcieClock0                  ## CONSUMES

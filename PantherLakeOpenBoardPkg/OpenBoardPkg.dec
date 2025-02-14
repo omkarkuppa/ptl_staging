@@ -80,14 +80,6 @@ Include
   gBoardModuleTokenSpaceGuid.PcdPcieClock7|0|UINT64|0x000000A5
   gBoardModuleTokenSpaceGuid.PcdPcieClock8|0|UINT64|0x000000A6
   gBoardModuleTokenSpaceGuid.PcdPcieClock9|0|UINT64|0x000000A7
-  gBoardModuleTokenSpaceGuid.PcdPcieClock10|0|UINT64|0x000000A8
-  gBoardModuleTokenSpaceGuid.PcdPcieClock11|0|UINT64|0x000000A9
-  gBoardModuleTokenSpaceGuid.PcdPcieClock12|0|UINT64|0x000000AA
-  gBoardModuleTokenSpaceGuid.PcdPcieClock13|0|UINT64|0x000000AB
-  gBoardModuleTokenSpaceGuid.PcdPcieClock14|0|UINT64|0x000000AC
-  gBoardModuleTokenSpaceGuid.PcdPcieClock15|0|UINT64|0x000000AD
-  gBoardModuleTokenSpaceGuid.PcdPcieClock16|0|UINT64|0x000000AE
-  gBoardModuleTokenSpaceGuid.PcdPcieClock17|0|UINT64|0x000000AF
 
   # MRC Config
   gBoardModuleTokenSpaceGuid.PcdSpdPresent|FALSE|BOOLEAN|0x00101012
