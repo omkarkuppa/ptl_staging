@@ -1017,8 +1017,12 @@ ExtractConfig (
   OUT EFI_STRING                            *Results
   )
 {
-  if ((NULL == This) || (NULL == Progress) || (NULL == Results)) {
+  if ((This == NULL) || (Progress == NULL) || (Results == NULL)) {
    return EFI_INVALID_PARAMETER;
+  }
+
+  if (Request == NULL) {
+    return EFI_NOT_FOUND;
   }
 
   DEBUG ((DEBUG_INFO, "MEBx Setup Extract Config:\n"));
@@ -1034,7 +1038,6 @@ ExtractConfig (
                               Results,
                               Progress
                               );
-
 }
 
 /**
@@ -1332,7 +1335,7 @@ RouteConfig (
   DEBUG ((DEBUG_INFO, "MEBx Setup Route Config:\n"));
   DEBUG ((DEBUG_INFO, "%s\n", Configuration));
 
-  if ((NULL == This) || (NULL == Progress)) {
+  if ((This == NULL) || (Configuration == NULL) || (Progress == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1342,6 +1345,9 @@ RouteConfig (
   CopyMem (&NewCfg, &gMebxConfiguration, sizeof (NewCfg));
   BufferSize = sizeof (MEBX_CONFIGURATION);
   Status = mHiiConfigRouting->ConfigToBlock (mHiiConfigRouting, Configuration, (UINT8 *) &NewCfg, &BufferSize, Progress);
+  if (EFI_ERROR (Status)) {
+    return EFI_NOT_FOUND;
+  }
   if (gMebxConfiguration.GlobalExposure != SHOW_EVERYTHING || NewCfg.GlobalExposure != SHOW_EVERYTHING) {
     goto Exit;
   }
