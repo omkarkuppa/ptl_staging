@@ -3616,6 +3616,8 @@
   #
 
 
+  gPlatformFspPkgTokenSpaceGuid.FspmRsvd3834                | * | 0x06 | {0x00}
+
   # Note please keep "UpdTerminator" at the end of each UPD region.
   # The tool will use this field to determine the actual end of the UPD data
   # structure.

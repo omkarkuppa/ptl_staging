@@ -442,7 +442,7 @@
   # !BSF HELP:{Enable/Disable PCIe tunneling for USB4, default is enable}
   gPlatformFspPkgTokenSpaceGuid.ITbtPcieTunnelingForUsb4    | * | 0x01 | 0x01
   # Added reserved space  UnusedUpdSpace3
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd3                 | * | 0x1 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd3                 | * | 0x2 | {0x00}
 
   # !BSF NAME:{ITBTForcePowerOn Timeout value} TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
   # !BSF HELP:{ITBTForcePowerOn value. Specified increment values in miliseconds. Range is 0-1000. 100 = 100 ms.}
@@ -462,7 +462,7 @@
   # !BSF HELP:{ITbt Usb4CmMode value. 0:Firmware CM, 1:Software CM}
   gPlatformFspPkgTokenSpaceGuid.Usb4CmMode                  | * | 0x01 | 0x01
   # Added reserved space  UnusedUpdSpace4[5]
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd4                 | * | 0x5 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd4                 | * | 0xB | {0x00}
 
   ## PEI_ITBT_CONFIG End
 

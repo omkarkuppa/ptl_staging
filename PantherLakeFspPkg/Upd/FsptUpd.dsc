@@ -193,7 +193,7 @@
   # !BSF HELP:{Select SerialIo Uart Controller mode}
   gPlatformFspPkgTokenSpaceGuid.PcdLpssUart2ndMode                  | * | 0x01 | 0x02
 
-  gPlatformFspPkgTokenSpaceGuid.UnusedUpdSpace                         | * | 0x01 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.FsptUpdRsvd196                 | * | 0x01 | 0x00
 
   # !BSF NAME:{PcdLpssUart2ndBaudRate - FSPT} TYPE:{EditNum, DEC, (0,6000000)}
   # !BSF HELP:{Set default BaudRate Supported from 0 - default to 6000000}
