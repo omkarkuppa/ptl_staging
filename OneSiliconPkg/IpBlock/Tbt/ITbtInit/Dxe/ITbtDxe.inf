@@ -62,6 +62,7 @@
   gEfiFirmwareVolume2ProtocolGuid               ## CONSUMES
   gITbtPolicyProtocolGuid                       ## CONSUMES
   gDisableITbtBmeProtocolGuid                   ## PRODUCES
+  gPlatformTseExcludeProtocolGuid               ## PRODUCES
 
 [Guids]
   gEfiEventExitBootServicesGuid                 ## CONSUMES

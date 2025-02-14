@@ -41,6 +41,7 @@
 #include <Library/ItbtPcieRpLib.h>
 #include <Library/MeUtilsLib.h>
 #include <Protocol/TbtDisBmeProtocol.h>
+#include <Protocol/PlatformTseExcludeProtocol.h>
 #include <MeState.h>
 #include <MkhiMsgs.h>
 #include <MeBiosPayloadHob.h>
@@ -85,7 +86,7 @@ DisableITbtBmeCallBackFunction (
   for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index++) {
       Status = GetItbtPcieRpInfo ((UINTN) Index, &RpSegment, &RpBus, &RpDev, &RpFunc);
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Failed to get port[%d] info, Status: %r\n", Index, Status));
+        DEBUG ((DEBUG_ERROR, "Failed to get iTBT PCIe root port[%d] info, Status: %r\n", Index, Status));
         continue;
       }
 
@@ -127,6 +128,101 @@ InstallITbtDisableBmeProtocol (
     DEBUG ((DEBUG_ERROR, "ITbtDisableBmeProtocol Failed. Status: %d\n", Status));
   } else {
     DEBUG ((DEBUG_INFO, "ITbtDisableBmeProtocol Installed\n"));
+  }
+}
+
+/**
+  ThunderBolt (TBT) NVMe drives are not supported by TSE design currently.
+  The function is for checking if the device is under TBT daisy chain.
+
+  @param[in]   This               The Platform TSE Exclude Protocol Instance.
+  @param[in]   PciIo              Target Device PciIo Protocol
+  @param[out]  IsTseSupported     A pointer to a Boolean determining TSE is supported or not
+
+  @retval  EFI_SUCCESS            Successfully check whether device is under TBT daisy chain.
+  @retval  EFI_NOT_FOUND          Failed to get DTbtInfoHob.
+  @retval  EFI_INVALID_PARAMETER  Invalid parameter passed in.
+
+**/
+EFI_STATUS
+EFIAPI
+PlatformITbtTseExcludeCheck (
+  IN   PLATFORM_TSE_EXCLUDE_PROTOCOL  *This,
+  IN   EFI_PCI_IO_PROTOCOL            *PciIo,
+  OUT  BOOLEAN                        *IsTseSupported
+  )
+{
+  EFI_STATUS     Status;
+  UINTN          TargetSegment;
+  UINTN          TargetBus;
+  UINTN          TargetDevice;
+  UINTN          TargetFunction;
+  UINT8          Index;
+  UINTN          RpSegment;
+  UINTN          RpBus;
+  UINTN          RpDev;
+  UINTN          RpFunc;
+  UINT8          SecondaryBus;
+  UINT8          SubordinateBus;
+
+  if ((This == NULL) || (PciIo == NULL) || (IsTseSupported == NULL)) {
+    DEBUG ((DEBUG_ERROR, "Invalid parameter\n"));
+    return EFI_INVALID_PARAMETER;
+  }
+
+  Status = PciIo->GetLocation (PciIo, &TargetSegment, &TargetBus, &TargetDevice, &TargetFunction);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  *IsTseSupported = TRUE;
+
+  for (Index = 0; Index < MAX_ITBT_PCIE_PORT; Index++) {
+    Status = GetItbtPcieRpInfo ((UINTN) Index, &RpSegment, &RpBus, &RpDev, &RpFunc);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "Failed to get iTBT PCIe root port[%d] info, Status: %r\n", Index, Status));
+      continue;
+    }
+
+    SecondaryBus   = PciSegmentRead8 (PCI_SEGMENT_LIB_ADDRESS (RpSegment, RpBus, RpDev, RpFunc, PCI_BRIDGE_SECONDARY_BUS_REGISTER_OFFSET));
+    SubordinateBus = PciSegmentRead8 (PCI_SEGMENT_LIB_ADDRESS (RpSegment, RpBus, RpDev, RpFunc, PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET));
+    if ((SecondaryBus <= TargetBus) && (TargetBus <= SubordinateBus)) {
+      DEBUG ((DEBUG_INFO, "Bus:0x%x Device:0x%x Function:0x%x is under iTBT device, not supported with TSE\n", TargetBus, TargetDevice, TargetFunction));
+      *IsTseSupported = FALSE;
+    }
+  }
+
+  return EFI_SUCCESS;
+}
+
+PLATFORM_TSE_EXCLUDE_PROTOCOL mPlatformITbtTseExcludeProtocol = {
+  PlatformITbtTseExcludeCheck
+};
+
+/**
+  The function installs Platform TSE Exclude protocol for iTBT check
+
+**/
+VOID
+EFIAPI
+InstallPlatformITbtTseExcludeProtocol (
+  VOID
+  )
+{
+  EFI_STATUS        Status;
+  EFI_HANDLE        Handle;
+
+  Handle = NULL;
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                  &Handle,
+                  &gPlatformTseExcludeProtocolGuid,
+                  &mPlatformITbtTseExcludeProtocol,
+                  NULL
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Failed to Install Platform TSE Exclude Protocol for iTBT with Status = %r\n", __FUNCTION__, Status));
+  } else {
+    DEBUG ((DEBUG_INFO, "gPlatformTseExcludeProtocolGuid Installed Successfully for iTBT\n"));
   }
 }
 
@@ -227,6 +323,7 @@ ITbtNvsAreaInit (
 
   @param[in] Event     - A pointer to the Event that triggered the callback.
   @param[in] Context   - A pointer to private data registered with the callback function.
+
 **/
 VOID
 EFIAPI
@@ -251,6 +348,27 @@ ITbtAcpiEndOfDxeCallback (
   ASSERT_EFI_ERROR (Status);
 
   return;
+}
+
+/**
+  This function gets registered as a callback on End of DXE for iTBT
+
+  @param[in] Event     - A pointer to the Event that triggered the callback.
+  @param[in] Context   - A pointer to private data registered with the callback function.
+
+**/
+VOID
+EFIAPI
+ITbtEndOfDxeCallback (
+  IN EFI_EVENT    Event,
+  IN VOID         *Context
+  )
+{
+  ITbtAcpiEndOfDxeCallback (Event, Context);
+
+  InstallPlatformITbtTseExcludeProtocol ();
+
+  gBS->CloseEvent (Event);
 }
 
 /**
@@ -317,17 +435,23 @@ ITbtDxeEntryPoint (
   ASSERT_EFI_ERROR (Status);
 
   //
-  // Register an end of DXE event for ITBT ACPI to do some patch
+  // Register an end of DXE event for iTBT
+  // To patch TBT ASL code and install TSE Exclude protocol
   //
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
                   TPL_CALLBACK,
-                  ITbtAcpiEndOfDxeCallback,
+                  ITbtEndOfDxeCallback,
                   NULL,
                   &gEfiEndOfDxeEventGroupGuid,
                   &EndOfDxeEvent
                   );
   ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to Register a End Of Dxe Event for iTBT, Status: %r\n", Status));
+    gBS->CloseEvent (EndOfDxeEvent);
+    goto Exit;
+  }
 
   Status = gBS->LocateProtocol (
               &gITbtPolicyProtocolGuid,

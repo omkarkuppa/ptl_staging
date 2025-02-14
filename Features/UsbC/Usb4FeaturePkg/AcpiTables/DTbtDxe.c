@@ -23,6 +23,7 @@
 #include <Uefi/UefiSpec.h>
 #include <DTbtInfoHob.h>
 #include <Protocol/TbtDisBmeProtocol.h>
+#include <Protocol/PlatformTseExcludeProtocol.h>
 #include <Protocol/DxeDTbtPolicy.h>
 #include <DTbtNvsArea.h>
 #include <Protocol/FirmwareVolume2.h>
@@ -42,6 +43,7 @@
 #include <Library/DxeTbtDisBmeLib.h>
 #include <Library/DTbtCommonLib.h>
 #include <Library/DevicePathLib.h>
+#include <Library/Usb4PlatformHob.h>
 
 GLOBAL_REMOVE_IF_UNREFERENCED DTBT_NVS_AREA_PROTOCOL                    mDTbtNvsAreaProtocol;
 GLOBAL_REMOVE_IF_UNREFERENCED DTBT_INFO_HOB                             *gDTbtInfoHob = NULL;
@@ -306,6 +308,108 @@ InstallDTbtDisableBmeProtocol (
 }
 
 /**
+  ThunderBolt (TBT) NVMe drives are not supported by TSE design currently.
+  The function is for checking if the device is under TBT daisy chain.
+
+  @param[in]   This               The Platform TSE Exclude Protocol Instance.
+  @param[in]   PciIo              Target Device PciIo Protocol
+  @param[out]  IsTseSupported     A pointer to a Boolean determining TSE is supported or not
+
+  @retval  EFI_SUCCESS            Successfully check whether device is under TBT daisy chain.
+  @retval  EFI_NOT_FOUND          Failed to get DTbtInfoHob.
+  @retval  EFI_INVALID_PARAMETER  Invalid parameter passed in.
+
+**/
+EFI_STATUS
+EFIAPI
+PlatformDTbtTseExcludeCheck (
+  IN   PLATFORM_TSE_EXCLUDE_PROTOCOL  *This,
+  IN   EFI_PCI_IO_PROTOCOL            *PciIo,
+  OUT  BOOLEAN                        *IsTseSupported
+  )
+{
+  EFI_STATUS     Status;
+  UINTN          TargetSegment;
+  UINTN          TargetBus;
+  UINTN          TargetDevice;
+  UINTN          TargetFunction;
+  UINT8          SecondaryBus;
+  UINT8          SubordinateBus;
+  UINT8          DTbtNum;
+  UINT8          PcieRpBus;
+  UINT8          PcieRpDev;
+  UINT8          PcieRpFunc;
+
+  if ((This == NULL) || (PciIo == NULL) || (IsTseSupported == NULL)) {
+    DEBUG ((DEBUG_ERROR, "Invalid parameter\n"));
+    return EFI_INVALID_PARAMETER;
+  }
+
+  Status = PciIo->GetLocation (PciIo, &TargetSegment, &TargetBus, &TargetDevice, &TargetFunction);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  *IsTseSupported = TRUE;
+
+  if (gDTbtInfoHob == NULL) {
+    gDTbtInfoHob = (DTBT_INFO_HOB *) GetFirstGuidHob (&gDTbtInfoHobGuid);
+    if (gDTbtInfoHob == NULL) {
+      return EFI_NOT_FOUND;
+    }
+  }
+
+  for (DTbtNum = 0; DTbtNum < PcdGet8 (PcdBoardDTbtControllerNumber); DTbtNum++) {
+    if (gDTbtInfoHob->DTbtControllerConfig[DTbtNum].DTbtControllerEn == 1) {
+      if (IS_DTBT_RP_NUM_VALID (gDTbtInfoHob->DTbtControllerConfig, DTbtNum)) {
+        PcieRpBus      = gDTbtInfoHob->DTbtControllerConfig[DTbtNum].PcieRpBus;
+        PcieRpDev      = gDTbtInfoHob->DTbtControllerConfig[DTbtNum].PcieRpDev;
+        PcieRpFunc     = gDTbtInfoHob->DTbtControllerConfig[DTbtNum].PcieRpFunc;
+        SecondaryBus   = PciSegmentRead8 (PCI_SEGMENT_LIB_ADDRESS (0, PcieRpBus, PcieRpDev, PcieRpFunc, PCI_BRIDGE_SECONDARY_BUS_REGISTER_OFFSET));
+        SubordinateBus = PciSegmentRead8 (PCI_SEGMENT_LIB_ADDRESS (0, PcieRpBus, PcieRpDev, PcieRpFunc, PCI_BRIDGE_SUBORDINATE_BUS_REGISTER_OFFSET));
+        if ((SecondaryBus <= TargetBus) && (TargetBus <= SubordinateBus)) {
+          DEBUG ((DEBUG_INFO, "Bus:0x%x Device:0x%x Function:0x%x is under dTBT device, not supported with TSE\n", TargetBus, TargetDevice, TargetFunction));
+          *IsTseSupported = FALSE;
+        }
+      }
+    }
+  }
+
+  return EFI_SUCCESS;
+}
+
+PLATFORM_TSE_EXCLUDE_PROTOCOL mPlatformDTbtTseExcludeProtocol = {
+  PlatformDTbtTseExcludeCheck
+};
+
+/**
+  The function installs Platform TSE Exclude protocol for dTBT check
+
+**/
+VOID
+EFIAPI
+InstallPlatformDTbtTseExcludeProtocol (
+  VOID
+  )
+{
+  EFI_STATUS        Status;
+  EFI_HANDLE        Handle;
+
+  Handle = NULL;
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                  &Handle,
+                  &gPlatformTseExcludeProtocolGuid,
+                  &mPlatformDTbtTseExcludeProtocol,
+                  NULL
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: Failed to Install Platform TSE Exclude Protocol for dTBT with Status = %r\n", __FUNCTION__, Status));
+  } else {
+    DEBUG ((DEBUG_INFO, "gPlatformTseExcludeProtocolGuid Installed Successfully for dTBT\n"));
+  }
+}
+
+/**
   DTBT NVS Area Initialize
 **/
 VOID
@@ -478,6 +582,7 @@ DtbtUpdateUsb4Ver2ClassCode (VOID)
 
   @param[in] Event     - A pointer to the Event that triggered the callback.
   @param[in] Context   - A pointer to private data registered with the callback function.
+
 **/
 VOID
 EFIAPI
@@ -572,6 +677,62 @@ DTbtAcpiEndOfDxeCallback (
 }
 
 /**
+  This function gets registered as a callback on End of DXE for dTBT
+
+  @param[in] Event     - A pointer to the Event that triggered the callback.
+  @param[in] Context   - A pointer to private data registered with the callback function.
+
+**/
+VOID
+EFIAPI
+DTbtEndOfDxeCallback (
+  IN EFI_EVENT    Event,
+  IN VOID         *Context
+  )
+{
+  USB4_PLATFORM_HOB   *Usb4PlatformHob;
+  USB4_PLATFORM_INFO  *Usb4PlatformInfo;
+  VOID                *HobPtr;
+  UINT8               DTbtControllerStatus;
+  UINT8               Index;
+  UINT8               DTbtControllerCount;
+
+  DTbtAcpiEndOfDxeCallback (Event, Context);
+
+  //
+  // Check dTBT status in platform USB4 host router information
+  //
+  HobPtr = GetFirstGuidHob (&gUsb4PlatformHobGuid);
+  if (HobPtr == NULL) {
+    DEBUG ((DEBUG_ERROR, "gUsb4PlatformHobGuid not found\n"));
+    return;
+  }
+
+  Usb4PlatformHob      = GET_GUID_HOB_DATA (HobPtr);
+  Usb4PlatformInfo     = &(Usb4PlatformHob->Usb4PlatformInfo);
+  //
+  // USB4 host router mask
+  // bit 4 - 7 : Discrete USB4 host router 0 - 3
+  //
+  DTbtControllerStatus = ((Usb4PlatformInfo->Usb4HrMask >> 4) & 0x0F);
+  DTbtControllerCount  = 0;
+  for (Index = 0; Index < PcdGet8 (PcdBoardDTbtControllerNumber); Index++) {
+    if ((DTbtControllerStatus >> Index) & 0x01) {
+      DTbtControllerCount++;
+    }
+  }
+
+  //
+  // Only Install the Protocol when any dTBT device is enabled
+  //
+  if (DTbtControllerCount > 0) {
+    InstallPlatformDTbtTseExcludeProtocol ();
+  }
+
+  gBS->CloseEvent (Event);
+}
+
+/**
   Initialize Thunderbolt(TM) SSDT ACPI tables
 
   @retval EFI_SUCCESS    ACPI tables are initialized successfully
@@ -638,17 +799,23 @@ DTbtDxeEntryPoint (
   ASSERT_EFI_ERROR (Status);
 
   //
-  // Register an end of DXE event for DTBT ACPI to do some patch
+  // Register an end of DXE event for dTBT
+  // To patch TBT ASL code and install TSE Exclude protocol
   //
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
                   TPL_CALLBACK,
-                  DTbtAcpiEndOfDxeCallback,
+                  DTbtEndOfDxeCallback,
                   NULL,
                   &gEfiEndOfDxeEventGroupGuid,
                   &EndOfDxeEvent
                   );
   ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to Register a End Of Dxe Event for dTBT, Status: %r\n", Status));
+    gBS->CloseEvent (EndOfDxeEvent);
+    goto Exit;
+  }
 
   //
   // USB4 Set Class Code ARGV = 2 if USB4 Class Code option is 'USB4 Standard' for loading OS inbox driver.

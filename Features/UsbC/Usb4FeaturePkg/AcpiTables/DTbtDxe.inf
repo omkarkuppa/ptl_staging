@@ -71,11 +71,13 @@
   gDxeDTbtPolicyProtocolGuid                    ## CONSUMES
   gDxeDisableDTbtBmeProtocolGuid                ## PRODUCES
   gEfiAcpiTableProtocolGuid                     ## CONSUMES
+  gPlatformTseExcludeProtocolGuid               ## PRODUCES
 
 [Guids]
   gDTbtInfoHobGuid                              ## CONSUMES
   gEfiEndOfDxeEventGroupGuid                    ## CONSUMES
   gEfiEventExitBootServicesGuid                 ## CONSUMES
+  gUsb4PlatformHobGuid                          ## CONSUMES
 
 [Depex]
   gEfiVariableWriteArchProtocolGuid AND
