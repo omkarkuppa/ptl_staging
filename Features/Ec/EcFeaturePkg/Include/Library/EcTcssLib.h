@@ -181,4 +181,72 @@ EFIAPI
 NotifyEcToRestorePL4Value (
   VOID
   );
+
+/**
+  Execute the PD Vendor Command via 0x0C command with EC private port
+
+  @param[in]  PdCntrlIndex       PD controller index (0-based).
+  @param[in]  VendorCmd          PD Vendor command data
+  @param[in]  Lock               Need to Lock the EC PD I2C target or not
+  @param[in]  InputData          A pointer to input data
+  @param[in]  InputDataSize      A pointer to input data size
+  @param[out] OutputData         A pointer to out data
+  @param[out] OutputDataSize     A pointer to out data size
+
+  @retval EFI_SUCCESS            Command success.
+  @retval EFI_TIMEOUT            EC is busy.
+  @retval EFI_ACCESS_DENIED      EC PD I2C target is lock.
+  @retval EFI_INVALID_PARAMETER  Parameter invalid.
+  @retval EFI_UNSUPPORTED        Unsupported EC channel or the command is not found in mEcCommand.
+  @retval EFI_BUFFER_TOO_SMALL   The DataBuffer is too small to Read/Write data with EC FW.
+
+**/
+EFI_STATUS
+EFIAPI
+EcPdExecuteVendorCommand (
+  IN  UINT8    PdCntrlIndex,
+  IN  UINT8    VendorCmd,
+  IN  BOOLEAN  Lock,
+  IN  UINT8    *InputData,
+  IN  UINT8    *InputDataSize,
+  OUT UINT8    *OutputData OPTIONAL,
+  OUT UINT8    *OutputDataSize OPTIONAL
+  );
+
+/**
+  Lock or unlock the EC PD I2c target
+
+  @param[in] Lock                Lock(0x01) or unlock(0x00).
+
+  @retval EFI_SUCCESS            Command success.
+  @retval EFI_TIMEOUT            EC is busy.
+  @retval EFI_INVALID_PARAMETER  Parameter invalid.
+  @retval EFI_UNSUPPORTED        Unsupported EC channel or the command is not found in mEcCommand.
+  @retval EFI_BUFFER_TOO_SMALL   The DataBuffer is too small to Read/Write data with EC FW.
+
+**/
+EFI_STATUS
+EFIAPI
+LockEcPdI2cTarget (
+  IN UINT8  Lock
+  );
+
+/**
+  Check the EC PD lock status
+
+  @param[in, out] LockStatus     Lock status
+
+  @retval EFI_SUCCESS            Command success.
+  @retval EFI_TIMEOUT            EC is busy.
+  @retval EFI_INVALID_PARAMETER  Parameter invalid.
+  @retval EFI_UNSUPPORTED        Unsupported EC channel or the command is not found in mEcCommand.
+  @retval EFI_BUFFER_TOO_SMALL   The DataBuffer is too small to Read/Write data with EC FW.
+
+**/
+EFI_STATUS
+EFIAPI
+GetEcPdLockStatus (
+  IN OUT UINT8  *LockStatus
+  );
+
 #endif // _EC_TCSS_LIB_H_

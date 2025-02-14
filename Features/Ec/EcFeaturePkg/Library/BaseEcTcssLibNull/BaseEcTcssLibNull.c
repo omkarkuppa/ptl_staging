@@ -200,3 +200,69 @@ NotifyEcToRestorePL4Value (
 {
   return EFI_SUCCESS;
 }
+
+/**
+
+/**
+  Execute the PD Vendor Command via 0x0C command with EC private port
+
+  @param[in]  PdCntrlIndex       PD controller index (0-based).
+  @param[in]  VendorCmd          PD Vendor command data
+  @param[in]  Lock               Need to Lock the EC PD I2C target or not
+  @param[in]  InputData          A pointer to input data
+  @param[in]  InputDataSize      A pointer to input data size
+  @param[out] OutputData         A pointer to out data
+  @param[out] OutputDataSize     A pointer to out data size
+
+  @retval EFI_UNSUPPORTED        Command unsupported.
+
+**/
+EFI_STATUS
+EFIAPI
+EcPdExecuteVendorCommand (
+  IN  UINT8    PdCntrlIndex,
+  IN  UINT8    VendorCmd,
+  IN  BOOLEAN  Lock,
+  IN  UINT8    *InputData,
+  IN  UINT8    *InputDataSize,
+  OUT UINT8    *OutputData OPTIONAL,
+  OUT UINT8    *OutputDataSize OPTIONAL
+  )
+{
+  return EFI_UNSUPPORTED;
+}
+
+/**
+  Lock or unlock the EC PD I2C target
+
+  @param[in] Lock                Lock(0x01) or unlock(0x00).
+
+  @retval EFI_UNSUPPORTED        Command unsupported.
+
+**/
+EFI_STATUS
+EFIAPI
+LockEcPdI2cTarget (
+  IN UINT8  Lock
+  )
+{
+  return EFI_UNSUPPORTED;
+}
+
+/**
+  Check the EC PD lock status
+
+  @param[in, out] LockStatus     Lock status
+
+  @retval EFI_UNSUPPORTED        Command unsupported.
+
+**/
+EFI_STATUS
+EFIAPI
+GetEcPdLockStatus (
+  IN OUT UINT8  *LockStatus
+  )
+{
+  return EFI_UNSUPPORTED;
+}
+
