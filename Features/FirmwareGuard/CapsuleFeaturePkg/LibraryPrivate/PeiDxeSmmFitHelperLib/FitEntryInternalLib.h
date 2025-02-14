@@ -32,41 +32,11 @@
 //
 #include <IndustryStandard/FirmwareInterfaceTable.h>
 
-//
-// FIT Entry type definitions
-//
-#define FIT_TYPE_03_DIAGNOSTIC_ACM                  0x03
-#define FIT_TYPE_06_FIT_RESET_STATE                 0x06
-#define FIT_TYPE_1A_VENDOR_AUTH_BOOT_PROV_TBL       0x1A
-#define FIT_TYPE_1B_VENDOR_AUTH_BOOT_KM             0x1B
-#define FIT_TYPE_1C_VENDOR_AUTH_BOOT_IMG_MANIFEST   0x1C
-#define FIT_TYPE_1D_VENDOR_AUTH_BOOT_IMG_HASH_DESC  0x1D
-#define FIT_TYPE_2C_SACM_DEBUG                      0x2C
-#define FIT_TYPE_2E_GRANULAR_SCRTM_ERROR            0x2E
-
 #define FIT_ENTRY_SIZE_MASK_VAL       0xFFFFFF
 #define FIT_ENTRY_SIZE_MULTIPLE_VAL   16
-#define FIT_ENTRY_TYPE_2_VERSION_200  0x0200
 
 #define CHECKSUM_DISABLED  0x0
 #define CHECKSUM_ENABLED   0x1
-
-typedef struct {
-  UINT64    Address;
-  UINT8     Model             : 4;
-  UINT8     Family            : 4;
-  UINT8     ProcessorType     : 4;
-  UINT8     ExtModel          : 4;
-  UINT8     ModelMask         : 4;
-  UINT8     FamilyMask        : 4;
-  UINT8     ProcessorTypeMask : 4;
-  UINT8     ExtModelMask      : 4;
-  UINT16    Version;
-  UINT8     Type              : 7;
-  UINT8     C_V               : 1;
-  UINT8     ExtFamily         : 4;
-  UINT8     ExtFamilyMask     : 4;
-} FIT_TYPE2_VER_200_ENTRY;
 
 /**
   Check the type of the FIT entry is valid.

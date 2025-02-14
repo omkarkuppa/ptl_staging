@@ -38,7 +38,8 @@
 
   Note:
     (1) Input of address should be converted into memory range.
-    (2) FIT table is in the range (4GB - 16MB) to (4GB - 40h).
+    (2) FIT table is in the range FIT_TABLE_LOWER_ADDRESS
+        to FIT_TABLE_UPPER_ADDRESS.
 
   @param[in]  FitEntryAddress  FIT entry address mapping to memory.
 

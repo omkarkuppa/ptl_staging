@@ -47,7 +47,8 @@
 
   Note:
     (1) Input of address should be converted into memory range.
-    (2) FIT table is in the range (4GB - 16MB) to (4GB - 40h).
+    (2) FIT table is in the range FIT_TABLE_LOWER_ADDRESS
+        to FIT_TABLE_UPPER_ADDRESS.
 
   @param[in]  FitEntryAddress  FIT entry address mapping to memory.
 
@@ -67,12 +68,12 @@ IsFitEntryAddressValid (
   StartAddress = FitEntryAddress;
   EndAddress   = StartAddress + sizeof (FIRMWARE_INTERFACE_TABLE_ENTRY) - 1;
 
-  if (StartAddress < (SIZE_4GB - SIZE_16MB)) {
+  if (StartAddress < FIT_TABLE_LOWER_ADDRESS) {
     DEBUG ((DEBUG_ERROR, "Start offset of FIT entry is above 4G - 16MB - [0x%X]\n", StartAddress));
     return FALSE;
   }
 
-  if (EndAddress > (SIZE_4GB - FIT_POINTER_OFFSET)) {
+  if (EndAddress > FIT_TABLE_UPPER_ADDRESS) {
     DEBUG ((DEBUG_ERROR, "End offset of FIT entry is below 4G - 40h - [0x%X]\n", EndAddress));
     return FALSE;
   }
@@ -381,9 +382,9 @@ GetFitType2EntryVer200Info (
      OUT       CPUID_VERSION_INFO_EAX          *ProcessorFmsMaskPtr
   )
 {
-  FIT_TYPE2_VER_200_ENTRY  *FitType2Ver200EntryPtr;
-  CPUID_VERSION_INFO_EAX   FmsVal;
-  CPUID_VERSION_INFO_EAX   FmsMaskVal;
+  FIT_TYPE_02_VERSION_200_ENTRY  *FitType02Ver200EntryPtr;
+  CPUID_VERSION_INFO_EAX         FmsVal;
+  CPUID_VERSION_INFO_EAX         FmsMaskVal;
 
   FmsVal.Uint32     = 0;
   FmsMaskVal.Uint32 = 0;
@@ -393,30 +394,30 @@ GetFitType2EntryVer200Info (
   }
 
   if ((FitEntryPtr->Type != FIT_TYPE_02_STARTUP_ACM) ||
-      (FitEntryPtr->Version != FIT_ENTRY_TYPE_2_VERSION_200))
+      (FitEntryPtr->Version != FIT_TYPE_02_VERSION_200))
   {
     return EFI_INVALID_PARAMETER;
   }
 
-  FitType2Ver200EntryPtr = (FIT_TYPE2_VER_200_ENTRY *)FitEntryPtr;
+  FitType02Ver200EntryPtr = (FIT_TYPE_02_VERSION_200_ENTRY *)FitEntryPtr;
 
   //
   // Fill in the FMS information from FIT entry.
   //
-  FmsVal.Bits.Model            = FitType2Ver200EntryPtr->Model;
-  FmsVal.Bits.FamilyId         = FitType2Ver200EntryPtr->Family;
-  FmsVal.Bits.ProcessorType    = FitType2Ver200EntryPtr->ProcessorType;
-  FmsVal.Bits.ExtendedModelId  = FitType2Ver200EntryPtr->ExtModel;
-  FmsVal.Bits.ExtendedFamilyId = FitType2Ver200EntryPtr->ExtFamily;
+  FmsVal.Bits.Model            = FitType02Ver200EntryPtr->Model;
+  FmsVal.Bits.FamilyId         = FitType02Ver200EntryPtr->Family;
+  FmsVal.Bits.ProcessorType    = FitType02Ver200EntryPtr->ProcessorType;
+  FmsVal.Bits.ExtendedModelId  = FitType02Ver200EntryPtr->ExtModel;
+  FmsVal.Bits.ExtendedFamilyId = FitType02Ver200EntryPtr->ExtFamily;
 
   //
   // Fill in the FMS mask information from FIT entry.
   //
-  FmsMaskVal.Bits.Model            = FitType2Ver200EntryPtr->ModelMask;
-  FmsMaskVal.Bits.FamilyId         = FitType2Ver200EntryPtr->FamilyMask;
-  FmsMaskVal.Bits.ProcessorType    = FitType2Ver200EntryPtr->ProcessorTypeMask;
-  FmsMaskVal.Bits.ExtendedModelId  = FitType2Ver200EntryPtr->ExtModelMask;
-  FmsMaskVal.Bits.ExtendedFamilyId = FitType2Ver200EntryPtr->ExtFamilyMask;
+  FmsMaskVal.Bits.Model            = FitType02Ver200EntryPtr->ModelMask;
+  FmsMaskVal.Bits.FamilyId         = FitType02Ver200EntryPtr->FamilyMask;
+  FmsMaskVal.Bits.ProcessorType    = FitType02Ver200EntryPtr->ProcessorTypeMask;
+  FmsMaskVal.Bits.ExtendedModelId  = FitType02Ver200EntryPtr->ExtModelMask;
+  FmsMaskVal.Bits.ExtendedFamilyId = FitType02Ver200EntryPtr->ExtFamilyMask;
 
   DEBUG ((DEBUG_INFO, "FMS Value     : 0x%X\n", FmsVal));
   DEBUG ((DEBUG_INFO, "FMS Mask Value: 0x%X\n", FmsMaskVal));
