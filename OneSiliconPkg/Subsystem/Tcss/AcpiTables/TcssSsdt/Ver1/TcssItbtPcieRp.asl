@@ -203,7 +203,6 @@
   Method (_DSW, 3) {
     Store (Arg1, \_SB.PC00.TDM0.SD3C)                  // If entering Sx (Arg1 > 1), need to skip TCSS D3Cold & TBT RTD3/D3Cold.
     Store (Arg1, \_SB.PC00.TDM1.SD3C)                  // If entering Sx (Arg1 > 1), need to skip TCSS D3Cold & TBT RTD3/D3Cold.
-    C2PM (Arg0, Arg1, Arg2, DCPM)
   }
 
   //

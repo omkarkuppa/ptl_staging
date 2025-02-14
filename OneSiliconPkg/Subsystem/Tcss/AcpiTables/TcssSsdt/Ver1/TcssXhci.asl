@@ -159,7 +159,6 @@
     ADBG (Concatenate ("Arg0 -", ToHexString (Arg0)))
     ADBG (Concatenate ("Arg1 -", ToHexString (Arg1)))
     ADBG (Concatenate ("Arg2 -", ToHexString (Arg2)))
-    C2PM (Arg0, Arg1, Arg2, DCPM)
     Store (Arg1, SD3C)                                 // If entering Sx (Arg1 > 1), need to skip TCSS D3Cold & TBT RTD3/D3Cold.
     ADBG (Concatenate ("SD3C -", ToHexString (SD3C)))
   }
