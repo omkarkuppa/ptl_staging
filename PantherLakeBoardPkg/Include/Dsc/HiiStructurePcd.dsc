@@ -4152,14 +4152,14 @@ gStructPcdTokenSpaceGuid.PcdSetup.Usb4ClassOption|0x1                           
 gStructPcdTokenSpaceGuid.PcdSetup.DiscreteTbtSupport|0x0                                           # Discrete Thunderbolt(TM) Support
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtController[0]|0x0                                            # DTBT Controller 0
 gStructPcdTokenSpaceGuid.PcdSetup.DTbthostRouterPortNumber[0]|0x1                                  # TBT Host Router
-gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieExtraBusRsvd[0]|0x14                                     # Extra Bus Reserved, default value as DTBT_PCIE_EXTRA_BUS_RSVD_ONE_PORT_DEFAULT
+gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieExtraBusRsvd[0]|0x2A                                     # Extra Bus Reserved, default value as DTBT_PCIE_EXTRA_BUS_RSVD_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemRsvd[0]|0x60                                          # Reserved Memory, default value as DTBT_PCIE_MEM_RSVD_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemAddrRngMax[0]|0x1A                                    # Memory Alignment, default value as DTBT_PCIE_MEM_ADDRRNGMAX_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemRsvd[0]|0x8000                                       # Reserved PMemory, default value as DTBT_PCIE_PMEM_RSVD_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemAddrRngMax[0]|0x1C                                   # PMemory Alignment, default value as DTBT_PCIE_PMEM_ADDRRNGMAX_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtController[1]|0x0                                            # DTBT Controller 1
 gStructPcdTokenSpaceGuid.PcdSetup.DTbthostRouterPortNumber[1]|0x1                                  # TBT Host Router
-gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieExtraBusRsvd[1]|0x14                                     # Extra Bus Reserved, default value as DTBT_PCIE_EXTRA_BUS_RSVD_ONE_PORT_DEFAULT
+gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieExtraBusRsvd[1]|0x2A                                     # Extra Bus Reserved, default value as DTBT_PCIE_EXTRA_BUS_RSVD_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemRsvd[1]|0x60                                          # Reserved Memory, default value as DTBT_PCIE_MEM_RSVD_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPcieMemAddrRngMax[1]|0x1A                                    # Memory Alignment, default value as DTBT_PCIE_MEM_ADDRRNGMAX_ONE_PORT_DEFAULT
 gStructPcdTokenSpaceGuid.PcdSetup.DTbtPciePMemRsvd[1]|0x8000                                       # Reserved PMemory, default value as DTBT_PCIE_PMEM_RSVD_ONE_PORT_DEFAULT

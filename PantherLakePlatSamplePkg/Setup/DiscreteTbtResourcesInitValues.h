@@ -31,7 +31,7 @@
 //
 //  One port dTBT default init values for Barlow Ridge
 //
-#define DTBT_PCIE_EXTRA_BUS_RSVD_ONE_PORT_DEFAULT     20
+#define DTBT_PCIE_EXTRA_BUS_RSVD_ONE_PORT_DEFAULT     42
 #define DTBT_PCIE_MEM_RSVD_ONE_PORT_DEFAULT           96
 #define DTBT_PCIE_MEM_ADDRRNGMAX_ONE_PORT_DEFAULT     26
 #define DTBT_PCIE_PMEM_RSVD_ONE_PORT_DEFAULT          32768
@@ -40,7 +40,7 @@
 //
 //  Two ports dTBT default init values for Barlow Ridge
 //
-#define DTBT_PCIE_EXTRA_BUS_RSVD_TWO_PORT_DEFAULT     41
+#define DTBT_PCIE_EXTRA_BUS_RSVD_TWO_PORT_DEFAULT     81
 #define DTBT_PCIE_MEM_RSVD_TWO_PORT_DEFAULT           128
 #define DTBT_PCIE_MEM_ADDRRNGMAX_TWO_PORT_DEFAULT     26
 #define DTBT_PCIE_PMEM_RSVD_TWO_PORT_DEFAULT          65536
