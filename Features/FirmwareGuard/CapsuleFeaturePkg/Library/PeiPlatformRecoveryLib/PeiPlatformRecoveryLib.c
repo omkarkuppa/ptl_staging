@@ -31,7 +31,6 @@
 #include <Library/PcdLib.h>
 #include <Guid/SysFwUpdateProgress.h>
 #include <Library/HashSupportLib.h>
-#include <Library/PayloadResiliencySupportLib.h>
 
 EFI_STATUS
 EFIAPI
@@ -668,75 +667,73 @@ PlatformRecoveryModule (
 
     DEBUG ((DEBUG_INFO, "Required FVs from Obb recovery file are installed.\n"));
 
-    if (IsPayloadBackupEnabled ()) {
+    //
+    // Load NonFitPayloads digest file on ROM (PreMem FV) first for further check.
+    //
+    Status = PeiServicesFfsFindFileByName (&gPayloadSha384HashFileGuid, (EFI_PEI_FV_HANDLE)(UINTN) FixedPcdGet32 (PcdFlashFvPreMemoryBase), &DigestFileHandle);
+    if (!EFI_ERROR (Status)) {
       //
-      // Load NonFitPayloads digest file on ROM (PreMem FV) first for further check.
+      // Search RAW section.
       //
-      Status = PeiServicesFfsFindFileByName (&gPayloadSha384HashFileGuid, (EFI_PEI_FV_HANDLE)(UINTN) FixedPcdGet32 (PcdFlashFvPreMemoryBase), &DigestFileHandle);
+      Status = PeiServicesFfsFindSectionData (EFI_SECTION_RAW, DigestFileHandle, &DigestFileBuffer);
       if (!EFI_ERROR (Status)) {
-        //
-        // Search RAW section.
-        //
-        Status = PeiServicesFfsFindSectionData (EFI_SECTION_RAW, DigestFileHandle, &DigestFileBuffer);
-        if (!EFI_ERROR (Status)) {
-          DEBUG ((DEBUG_INFO, "Find NonFitPayloads digest on ROM\n"));
-        }
+        DEBUG ((DEBUG_INFO, "Find NonFitPayloads digest on ROM\n"));
       }
-
-      if (EFI_ERROR (Status) || (DigestFileBuffer == NULL)) {
-        DEBUG ((DEBUG_ERROR, "Failed to located NonFitPayloads digest file on ROM\n"));
-        return EFI_NOT_FOUND;
-      }
-
-      //
-      // Decide Recovery filename to be loaded. Load NonFitPayload.bin by default
-      //
-      String = SYSFW_UPDATE_CURRENT_PAYLOAD_BACKUP_FILE_NAME;
-
-      if ((UpdateProgress != NULL) && \
-          ((UpdateProgress->Component == UpdatingBios) && (UpdateProgress->Progress >= BiosIbb))) {
-        //
-        // Ibb has been updated. Load corresponding new NonFitPayloadN.bin.
-        //
-        String = SYSFW_UPDATE_NEW_PAYLOAD_BACKUP_FILE_NAME;
-      }
-
-      //
-      // Search NonFitPayload recovery file from external storage media
-      //
-      StringSize = StrnSizeS (String, 200);
-      PcdSetPtrS (PcdRecoveryFileName, &StringSize, String);
-      Status = GetRecoveryImage (PeiServices, &RecoveryBuffer, &RecoveryBufferSize);
-      DEBUG ((DEBUG_INFO, "Loading NonFitPayload recovery file %s (%r)\n", (CHAR16 *)PcdGetPtr (PcdRecoveryFileName), Status));
-      if (EFI_ERROR (Status)) {
-        return Status;
-      }
-
-      //
-      // Examine NonFitPayload file digest from media
-      //
-      Status = ExamineHashShaDigest (
-              (UINT8 *)RecoveryBuffer,
-              RecoveryBufferSize,
-              (UINT8 *)DigestFileBuffer,
-              BACKUP_FILE_HASH_DIGEST_SIZE
-              );
-      if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "NonFitPayload file loaded from media is corrupted.\n"));
-        return Status;
-      }
-
-      //
-      // Report FVs in NonFitPayload image
-      //
-      Status = ReportPostMemFvInNonFitPayloadBuffer (RecoveryBuffer, RecoveryBufferSize);
-      if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Failed to install required FVs from NonFitPayload recovery file.\n"));
-        return Status;
-      }
-
-      DEBUG ((DEBUG_INFO, "Required FVs from NonFitPayload recovery file are installed.\n"));
     }
+
+    if (EFI_ERROR (Status) || (DigestFileBuffer == NULL)) {
+      DEBUG ((DEBUG_ERROR, "Failed to located NonFitPayloads digest file on ROM\n"));
+      return EFI_NOT_FOUND;
+    }
+
+    //
+    // Decide Recovery filename to be loaded. Load NonFitPayload.bin by default
+    //
+    String = SYSFW_UPDATE_CURRENT_PAYLOAD_BACKUP_FILE_NAME;
+
+    if ((UpdateProgress != NULL) && \
+        ((UpdateProgress->Component == UpdatingBios) && (UpdateProgress->Progress >= BiosIbb))) {
+      //
+      // Ibb has been updated. Load corresponding new NonFitPayloadN.bin.
+      //
+      String = SYSFW_UPDATE_NEW_PAYLOAD_BACKUP_FILE_NAME;
+    }
+
+    //
+    // Search NonFitPayload recovery file from external storage media
+    //
+    StringSize = StrnSizeS (String, 200);
+    PcdSetPtrS (PcdRecoveryFileName, &StringSize, String);
+    Status = GetRecoveryImage (PeiServices, &RecoveryBuffer, &RecoveryBufferSize);
+    DEBUG ((DEBUG_INFO, "Loading NonFitPayload recovery file %s (%r)\n", (CHAR16 *)PcdGetPtr (PcdRecoveryFileName), Status));
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+
+    //
+    // Examine NonFitPayload file digest from media
+    //
+    Status = ExamineHashShaDigest (
+               (UINT8 *)RecoveryBuffer,
+               RecoveryBufferSize,
+               (UINT8 *)DigestFileBuffer,
+               BACKUP_FILE_HASH_DIGEST_SIZE
+               );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "NonFitPayload file loaded from media is corrupted.\n"));
+      return Status;
+    }
+
+    //
+    // Report FVs in NonFitPayload image
+    //
+    Status = ReportPostMemFvInNonFitPayloadBuffer (RecoveryBuffer, RecoveryBufferSize);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "Failed to install required FVs from NonFitPayload recovery file.\n"));
+      return Status;
+    }
+
+    DEBUG ((DEBUG_INFO, "Required FVs from NonFitPayload recovery file are installed.\n"));
 
   } else {
     DEBUG ((DEBUG_INFO, "Obb Fvs should already be installed in ReportPostMemFv\n"));

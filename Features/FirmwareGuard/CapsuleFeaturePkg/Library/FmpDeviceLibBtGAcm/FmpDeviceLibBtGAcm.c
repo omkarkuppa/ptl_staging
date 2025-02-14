@@ -38,7 +38,6 @@
 #include <TxtInfoHob.h>
 #include <Library/CapsuleUpdateResetLib.h>
 #include <Library/ResiliencySupportLib.h>
-#include <Library/PayloadResiliencySupportLib.h>
 
 /**
   Check if the input Image contains expected files used for BIOS update.
@@ -814,9 +813,7 @@ FmpDeviceSetImageWithStatus (
   //
   if (!IsPreviousUpdateUnfinished (&PreviousProgress)) {
     SaveObbToStorage (NULL, 0); // Backup current Obb in case it's not on ESP already.
-    if (IsPayloadBackupEnabled ()) {
-      SaveNonFitPayloadToStorage (NULL, 0); // Still backup current NonFitPayload in case it's not on ESP already.
-    }
+    SaveNonFitPayloadToStorage (NULL, 0); // Still backup current NonFitPayload in case it's not on ESP already.
     SaveCurrentCapsuleToStorage ((VOID *) Image, ImageSize);
   } else {
     ASSERT (PreviousProgress.Component == UpdatingBtGAcm);

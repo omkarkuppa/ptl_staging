@@ -44,7 +44,6 @@
   PcdLib
   HobLib
   HashSupportLib
-  PayloadResiliencySupportLib
 
 [Sources]
   PeiPlatformRecoveryLib.c

@@ -36,7 +36,6 @@
 #include <Library/CapsuleUpdateResetLib.h>
 #include <Library/PlatformBiosUpdateHookLib.h>
 #include <Library/ResiliencySupportLib.h>
-#include <Library/PayloadResiliencySupportLib.h>
 
 /**
   Provide a function to install the Firmware Management Protocol instance onto a
@@ -746,16 +745,14 @@ FmpDeviceSetImageWithStatus (
       ASSERT (FALSE);
     }
 
-    if (IsPayloadBackupEnabled ()) {
-      if (ExtractNonFitPayloadFromImage ((VOID *) Image, ImageSize, &NonFitPayloadImage, &NonFitPayloadImageSize)) {
-        SaveNonFitPayloadToStorage (
-          NonFitPayloadImage,
-          NonFitPayloadImageSize
-          );
-      } else {
-        DEBUG ((DEBUG_ERROR, "Fail to find new NonFitPayload image\n"));
-        ASSERT (FALSE);
-      }
+    if (ExtractNonFitPayloadFromImage ((VOID *) Image, ImageSize, &NonFitPayloadImage, &NonFitPayloadImageSize)) {
+      SaveNonFitPayloadToStorage (
+        NonFitPayloadImage,
+        NonFitPayloadImageSize
+        );
+    } else {
+      DEBUG ((DEBUG_ERROR, "Fail to find new NonFitPayload image\n"));
+      ASSERT (FALSE);
     }
 
     SaveCurrentCapsuleToStorage ((VOID *) Image, ImageSize);

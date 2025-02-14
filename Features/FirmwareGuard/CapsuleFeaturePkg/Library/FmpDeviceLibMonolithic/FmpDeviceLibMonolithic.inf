@@ -58,7 +58,6 @@
   PlatformBiosUpdateHookLib
   PlatformEcUpdateHookLib
   ResiliencySupportLib
-  PayloadResiliencySupportLib
 
 [Pcd]
   gCapsuleFeaturePkgTokenSpaceGuid.PcdSystemFirmwareFmpSupportedMode            ## CONSUMES ## SOMETIMES_PRODUCES

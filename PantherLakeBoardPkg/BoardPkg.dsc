@@ -532,11 +532,9 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   PlatformEcResetLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformEcResetLib/PlatformEcResetLib.inf
   PlatformMeUpdateHookLib|CapsuleFeaturePkg/Library/PlatformMeUpdateHookLibNull/PlatformMeUpdateHookLibNull.inf
   PlatformDxeBootStateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformDxeBootStateHookLib/PlatformDxeBootStateHookLib.inf
-  PayloadResiliencySupportLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PayloadResiliencySupportLib/PayloadResiliencySupportLib.inf
 !else
   PlatformWdtLib|CapsuleFeaturePkg/Library/PlatformWdtLibNull/PlatformWdtLibNull.inf
   ResiliencySupportLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PeiDxeSmmResiliencySupportLibNull/PeiDxeSmmResiliencySupportLibNull.inf
-  PayloadResiliencySupportLib|CapsuleFeaturePkg/Library/PayloadResiliencySupportLibNull/PayloadResiliencySupportLibNull.inf
 !endif
   TcgStorageCoreLib|SecurityPkg/Library/TcgStorageCoreLib/TcgStorageCoreLib.inf
   TcgStorageOpalLib|SecurityPkg/Library/TcgStorageOpalLib/TcgStorageOpalLib.inf

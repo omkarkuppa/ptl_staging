@@ -26,7 +26,6 @@
 #include <Library/CapsuleUpdateResetLib.h>
 #include <Library/ResiliencySupportLib.h>
 #include <Library/PlatformBiosUpdateHookLib.h>
-#include <Library/PayloadResiliencySupportLib.h>
 
 //
 // MicrocodeFmp driver private data
@@ -764,9 +763,7 @@ FmpDeviceSetImageWithStatus (
     //  2) Use FV TopSwap region as recovery storage. No need to achive image to external storage
     //
     SaveObbToStorage (NULL, 0); // Still backup current Obb in case it's not on ESP already.
-    if (IsPayloadBackupEnabled ()) {
-      SaveNonFitPayloadToStorage (NULL, 0); // Still backup current NonFitPayload in case it's not on ESP already.
-    }
+    SaveNonFitPayloadToStorage (NULL, 0); // Still backup current NonFitPayload in case it's not on ESP already.
     SaveCurrentCapsuleToStorage ((VOID *) Image, ImageSize);
   } else {
     //
