@@ -557,12 +557,7 @@ SiInitPostMemOnPolicy (
   TELEMETRY_PEI_CONFIG        *TelemetryPeiConfig;
   NPU_PEI_CONFIG              *NpuPeiConfig;
   VMD_PEI_CONFIG              *VmdPeiConfig;
-#if FixedPcdGetBool(PcdVmdEnable) == 1
-  VOID                        *BaseAddressImr11;
-  UINT32                      CpuFamilyId;
-  EFI_RESOURCE_TYPE           ResourceType;
-  EFI_RESOURCE_ATTRIBUTE_TYPE ResourceAttribute;
-#endif
+
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
   OVERCLOCKING_PREMEM_CONFIG  *OverClockingConfig;
 #endif
@@ -579,9 +574,6 @@ SiInitPostMemOnPolicy (
   SiPreMemPolicyPpi      = NULL;
   SiPolicy               = NULL;
   VmdPeiConfig           = NULL;
-#if FixedPcdGetBool(PcdVmdEnable) == 1
-  BaseAddressImr11       = NULL;
-#endif
   HostBridgePeiConfig    = NULL;
 #if FixedPcdGetBool(PcdOverclockEnable) == 1
   OverClockingConfig     = NULL;
@@ -785,49 +777,6 @@ SiInitPostMemOnPolicy (
   PERF_INMODULE_BEGIN ("VmdInit");
   VmdInit(VmdPeiConfig);
   PERF_INMODULE_END ("VmdInit");
-
-#if (FixedPcdGetBool(PcdVmdEnable) == 1)
-  if ((IsVmdEnabled() == TRUE) && (VmdPeiConfig->VmdEnable)) {
-    CpuFamilyId = GetCpuFamilyModel ();
-    if (((GetCpuSteppingId () == EnumPtlHA0) || (GetCpuSteppingId () == EnumPtlUA0)) && (CpuFamilyId == CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE)) {
-      //
-      // Allocating 1MB for IMR11
-      //
-      BaseAddressImr11 = AllocateAlignedPages ((EFI_SIZE_TO_PAGES (SIZE_1MB)), SIZE_1MB);
-      ASSERT (BaseAddressImr11 != NULL);
-      DEBUG ((DEBUG_INFO, "BaseAddressImr11 = %lx\n",BaseAddressImr11));
-
-      //
-      // Program IMR11 with same BaseAddress
-      //
-      Status = SetImr (IMR_1M_IMR11, (UINT64) BaseAddressImr11, (UINT64) SIZE_1MB);
-      if (Status != EFI_SUCCESS) {
-        DEBUG ((DEBUG_ERROR, "Fail to program IMR11\n"));
-      }
-
-      ResourceType = EFI_RESOURCE_MEMORY_RESERVED;
-
-      ResourceAttribute = \
-        EFI_RESOURCE_ATTRIBUTE_PRESENT |
-        EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-        EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE;
-
-      BuildResourceDescriptorHob (
-        ResourceType,                                // MemoryType,
-        ResourceAttribute,                           // MemoryAttribute
-        (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
-        SIZE_1MB                                     // MemoryLength
-        );
-
-      BuildMemoryAllocationHob (
-        (EFI_PHYSICAL_ADDRESS)BaseAddressImr11,      // MemoryBegin
-        SIZE_1MB,                                    // MemoryLength
-        EfiReservedMemoryType
-        );
-
-    }
-  }
-#endif
 
   /// PAVP Initialization
   ///
