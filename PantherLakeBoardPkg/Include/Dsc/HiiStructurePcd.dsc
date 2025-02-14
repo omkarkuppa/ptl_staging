@@ -1578,6 +1578,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchSerialIoUart[0]|0x0                     
 !endif
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchSerialIoUart[1]|0x0                                        # UART1 Controller
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchSerialIoUart[2]|0x0                                        # UART2 Controller
+gStructPcdTokenSpaceGuid.PcdPchSetup.SerialIoDebugUartPowerGating|0x0                              # LPSS UART Debug Power Gating
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchSidebandLock|0x1                                           # Lock PCH Sideband Access
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchSpiCsPolarity[0]|0x1                                       # ChipSelect 0 polarity
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchSpiCsPolarity[1]|0x1                                       # ChipSelect 1 polarity
