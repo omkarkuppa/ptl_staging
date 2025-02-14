@@ -47,6 +47,7 @@
 
 [Components.X64]
   SndwDevTopologyFeaturePkg/SndwInstallDevTopology/SndwInstallDevTopology.inf
-  SndwDevTopologyFeaturePkg/AcpiTables/SndwDevTopologySsdt.inf
+  SndwDevTopologyFeaturePkg/AcpiTables/SndwDevTopologySsdtPlatformA.inf
+  SndwDevTopologyFeaturePkg/AcpiTables/SndwDevTopologySsdtPlatformB.inf
   SndwDevTopologyFeaturePkg/AcpiTables/SndwDevTopologyBtNdaiSsdt.inf
   SndwDevTopologyFeaturePkg/AcpiTables/SndwDevTopologyIDispNdaiSsdt.inf

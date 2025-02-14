@@ -55,7 +55,8 @@
 [Guids]
   gEfiAcpiTableGuid                             ## CONSUMES
   gSndwDevTopologyConfigurationVariableGuid     ## CONSUMES
-  gSndwDevTopologyAcpiTableStorageGuid          ## CONSUMES
+  gSndwDevTopologyAcpiTableStorageGuid0         ## CONSUMES
+  gSndwDevTopologyAcpiTableStorageGuid1         ## CONSUMES
   gSndwBtNdaiAcpiTableStorageGuid               ## CONSUMES
   gSndwIDispNdaiAcpiTableStorageGuid            ## CONSUMES
 

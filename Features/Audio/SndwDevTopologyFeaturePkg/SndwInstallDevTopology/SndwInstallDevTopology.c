@@ -143,6 +143,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT64 SupportedHdaDidValue[] = {
 GLOBAL_REMOVE_IF_UNREFERENCED CHAR8 DefaultHdasDevicePath[] = "\\_SB.PC00.HDAS";
 GLOBAL_REMOVE_IF_UNREFERENCED CHAR8 HdasDevicePathRp01[]    = "\\_SB.PC02.HDAS";
 
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_GUID* SndwDevTopologyAcpiTableListOfGuids[] = {
+  &gSndwDevTopologyAcpiTableStorageGuid0,
+  &gSndwDevTopologyAcpiTableStorageGuid1
+};
 
 /**
   Is Hda device supported.
@@ -569,7 +573,7 @@ SndwDevTopologyInstallAcpiTable (
 
   Status = SndwGetSsdtSndwDevTopologyFileFromFv (SsdtTableGuid, TableId, &TableHeader);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "Cannot find SSDT table. %a () End.\n", __FUNCTION__));
+    DEBUG ((DEBUG_WARN, "Cannot find SSDT table, GUID: %g. %a () End.\n", SsdtTableGuid, __FUNCTION__));
     return Status;
   }
 
@@ -702,6 +706,7 @@ SndwDevTopologyInstallAcpiTablesBasedOnPolicy (
 {
   SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE     SndwDevTopologyConfigurationVariable;
   EFI_STATUS                                   Status;
+  UINT8                                        Index;
 
   Status = SndwGetConfigurationVariable (&SndwDevTopologyConfigurationVariable);
   if (EFI_ERROR (Status)) {
@@ -748,12 +753,19 @@ SndwDevTopologyInstallAcpiTablesBasedOnPolicy (
       SndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber,
       ACX_CONFIG_NUMBER_TO_SIGNATURE (SndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber)
       ));
-    Status = SndwDevTopologyInstallAcpiTable (
-                &gSndwDevTopologyAcpiTableStorageGuid,
-                ACX_CONFIG_NUMBER_TO_SIGNATURE (SndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber),
-                OverrideDevicePathEnabled,
-                HdasDevicePath
-                );
+    for (Index = 0; Index < ARRAY_SIZE (SndwDevTopologyAcpiTableListOfGuids); Index++) {
+      Status = SndwDevTopologyInstallAcpiTable (
+                  SndwDevTopologyAcpiTableListOfGuids[Index],
+                  ACX_CONFIG_NUMBER_TO_SIGNATURE (SndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber),
+                  OverrideDevicePathEnabled,
+                  HdasDevicePath
+                  );
+      if (EFI_ERROR (Status)) {
+        continue;
+      } else {
+        break;
+      }
+    }
     if (EFI_ERROR (Status)) {
       DEBUG ((DEBUG_WARN, "Failed to install ACPI SSDT table for the selected SoundWire topology. %a () End.\n", __FUNCTION__));
       return EFI_NOT_FOUND;

@@ -46,8 +46,8 @@ Name(_DSD, Package()
     Package (2) {"mipi-sdw-manager-list", 0x0}, // Integer
 
     // Lane mapping
-    //Package (2) {"mipi-sdw-lane-1-mapping", "mipi-sdw-manager-lane-1"},
-    //Package (2) {"mipi-sdw-lane-2-mapping", "mipi-sdw-manager-lane-2"},
+    Package (2) {"mipi-sdw-lane-1-mapping", "mipi-sdw-manager-lane-1"},
+    Package (2) {"mipi-sdw-lane-2-mapping", "mipi-sdw-manager-lane-2"},
 
         // Data Port configuration
     Package (2) {"mipi-sdw-source-port-list", 0x1554}, // Bitmap, DP 2,4,6,8,10,12
@@ -88,7 +88,7 @@ Name(DP1S, Package()
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
     Package (2) {"mipi-sdw-port-encoding-type", 0x02},
-    //Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
+    Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
   }
 }) // End DP1S
 
@@ -109,7 +109,7 @@ Name(DP2S, Package()
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
     Package (2) {"mipi-sdw-port-encoding-type", 0x02},
-    //Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
+    Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
   }
 }) // End DP2S
 
@@ -130,7 +130,7 @@ Name(DP3S, Package()
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
     Package (2) {"mipi-sdw-port-encoding-type", 0x02},
-    //Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
+    Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
   }
 }) // End DP3S
 
@@ -151,7 +151,7 @@ Name(DP4S, Package()
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
     Package (2) {"mipi-sdw-port-encoding-type", 0x02},
-    //Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
+    Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
   }
 }) // End DP4S
 
@@ -172,7 +172,7 @@ Name(DP5S, Package()
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
     Package (2) {"mipi-sdw-port-encoding-type", 0x02},
-    //Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
+    Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
   }
 }) // End DP5S
 
@@ -193,7 +193,7 @@ Name(DP6S, Package()
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
     Package (2) {"mipi-sdw-port-encoding-type", 0x02},
-    //Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
+    Package (2) {"mipi-sdw-lane-list", Package() {0, 1, 2}},
   }
 }) // End DP6S
 
@@ -214,7 +214,7 @@ Name(DP7S, Package()
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
     Package (2) {"mipi-sdw-port-encoding-type", 0x02},
-    //Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
+    Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
   }
 }) // End DP7S
 
@@ -235,7 +235,7 @@ Name(DP8S, Package()
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
     Package (2) {"mipi-sdw-port-encoding-type", 0x02},
-    //Package (2) {"mipi-sdw-lane-list", Package() {1, 2, 0}},
+    Package (2) {"mipi-sdw-lane-list", Package() {1, 2, 0}},
   }
 }) // End DP8S
 
@@ -256,7 +256,7 @@ Name(DP10, Package()
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
     Package (2) {"mipi-sdw-port-encoding-type", 0x02},
-    //Package (2) {"mipi-sdw-lane-list", Package() {1, 2, 0}},
+    Package (2) {"mipi-sdw-lane-list", Package() {1, 2, 0}},
   }
 }) // End DP10
 
@@ -277,7 +277,7 @@ Name(DP12, Package()
     Package (2) {"mipi-sdw-modes-supported", 0x0F},
     Package (2) {"mipi-sdw-max-async-buffer", 0x08},
     Package (2) {"mipi-sdw-port-encoding-type", 0x02},
-    //Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
+    Package (2) {"mipi-sdw-lane-list", Package() {2, 0, 1}},
   }
 }) // End DP12
 
@@ -299,8 +299,8 @@ Device(AF03)
   Include ("AudioFunction_712VB_HID.asl")
 }
 
-//Device(AF04)
-//{
-//  Name (_ADR, 0x4)
-//  Include ("AudioFunction_712VB_AMP.asl")
-//}
+Device(AF04)
+{
+  Name (_ADR, 0x4)
+  Include ("AudioFunction_712VB_AMP.asl")
+}

@@ -1933,4 +1933,3 @@ HDA_VERB_TABLE_DATABASE HdaVerbTableDataBase = HDAUDIO_VERB_TABLE_DATABASE_INIT 
   &HdaVerbTableAlc897,
   &HdaVerbTableAlc892
 );
-

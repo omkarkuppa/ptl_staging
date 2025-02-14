@@ -28,25 +28,25 @@ Name (_DSD, Package ()  // _DSD: Device-Specific Data
     Package (2) {"mipi-sdw-sdca-interface-revision", 0x0801}, // v0.8r01
     //Package (2) {"mipi-sdca-control-list",  Package() {0x4, 0x5,0x6, 0x7, 0x8} },
     //Package (2) {"mipi-sdca-control-list",  0x01F0},  // Bitmap: 0x4, 0x5,0x6, 0x7, 0x8
-    Package (2) {"mipi-sdca-control-list",  0xF000000301F2 }, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11, 0x2C, 0x2D, 0x2E, 0x2F - Function level controls
-        Package (2) {"mipi-sdca-entity-id-list", Package() {0x1} },
+    Package(2) {"mipi-sdca-control-list", 0xF000000301F2}, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11, 0x2C, 0x2D, 0x2E, 0x2F - Function level controls
+    Package (2) {"mipi-sdca-entity-id-list", Package() {0x1} },
   },
 
   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
   Package ()
   {
+    Package(2) {"mipi-sdca-control-0x1-subproperties", "C042"},//Commit_Group_Mask, Class, RW
     Package(2) {"mipi-sdca-control-0x4-subproperties", "C004"},
     Package(2) {"mipi-sdca-control-0x5-subproperties", "C005"},
     Package(2) {"mipi-sdca-control-0x6-subproperties", "C006"},
     Package(2) {"mipi-sdca-control-0x7-subproperties", "C007"},
     Package(2) {"mipi-sdca-control-0x8-subproperties", "C008"},
-    Package(2) {"mipi-sdca-control-0x1-subproperties", "C042"},
-    Package(2) {"mipi-sdca-control-0x10-subproperties", "C043"},//Function_Status, Class, RW1C
+          Package(2) {"mipi-sdca-control-0x10-subproperties", "C043"},//Function_Status, Class, RW1C
     Package(2) {"mipi-sdca-control-0x11-subproperties", "C044"},//Function_Action, Class, RW1S
     Package(2) {"mipi-sdca-control-0x2C-subproperties", "C02C"},//Device_Manufacturer_ID
     Package(2) {"mipi-sdca-control-0x2D-subproperties", "C02D"},//Device_Part_ID
     Package(2) {"mipi-sdca-control-0x2E-subproperties", "C02E"},//Device_Version
-        Package(2) {"mipi-sdca-control-0x2F-subproperties", "C02F"},//Device_SDCA_Version
+                Package(2) {"mipi-sdca-control-0x2F-subproperties", "C02F"},//Device_SDCA_Version
     Package(2) {"mipi-sdca-entity-id-0x1-subproperties", "E001"},
   },
 
@@ -122,6 +122,87 @@ Name(BUF2, Buffer()
 
 }) //End BUF2
 
+  Name(C042, Package()
+  {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+      //Commit_Group_Mask, Class, RW
+      Package(2) {"mipi-sdca-control-access-layer", 0x4},
+      Package(2) {"mipi-sdca-control-access-mode", 0},
+    }
+  }) //End AF04.C042
+
+  Name(C043, Package()
+  {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+      //Function_Status, Class, RW1C
+      Package(2) {"mipi-sdca-control-access-layer", 0x4},
+      Package(2) {"mipi-sdca-control-access-mode", 2},
+      Package(2) {"mipi-sdca-control-interrupt-position", 1}, //IntStat_SDCA_1
+    }
+  }) //End AF04.C043
+
+  Name(C044, Package()
+  {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+      //Function_Action, Class, RW1S
+      Package(2) {"mipi-sdca-control-access-layer", 0x4},
+      Package(2) {"mipi-sdca-control-access-mode", 4},
+    }
+  }) //End AF04.C044
+
+  Name(C02C, Package()
+  {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+      //Device_Manufacturer_ID = 0x025d, Class, DC
+      Package(2) {"mipi-sdca-control-access-layer", 0x4},
+      Package(2) {"mipi-sdca-control-access-mode", 5},
+      Package(2) {"mipi-sdca-control-dc-value", 0x025D},
+    }
+  }) //End AF04.C02C
+
+  Name(C02D, Package()
+  {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+      //Device_Part_ID = 0x722, Class, DC
+      Package(2) {"mipi-sdca-control-access-layer", 0x4},
+      Package(2) {"mipi-sdca-control-access-mode", 5},
+      Package(2) {"mipi-sdca-control-dc-value", 0x0722},
+    }
+  }) //End AF04.C02D
+
+  Name(C02E, Package()
+  {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+      //Device_Version, Class, DC
+      Package(2) {"mipi-sdca-control-access-layer", 0x4},
+      Package(2) {"mipi-sdca-control-access-mode", 5},
+      Package(2) {"mipi-sdca-control-dc-value", 0x1},
+    }
+  }) //End AF04.C02E
+
+  Name(C02F, Package()
+  {
+    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package()
+    {
+      //Device_SDCA_Version, Class, DC
+      Package(2) {"mipi-sdca-control-access-layer", 0x4},
+      Package(2) {"mipi-sdca-control-access-mode", 5},
+      Package(2) {"mipi-sdca-control-dc-value", 0x8},      //2024-11-18__robocat
+    }
+  }) //End AF04.C02F
 Name(C004, Package()
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -164,7 +245,7 @@ Name(C007, Package()
   {
     Package(2) {"mipi-sdca-control-access-layer", 4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x0712},
+    Package(2) {"mipi-sdca-control-dc-value", 0x0722},
   }
 }) // End C007
 
@@ -179,87 +260,6 @@ Name(C008, Package()
     Package(2) {"mipi-sdca-control-dc-value", 0x1},
   }
 }) // End C008
-Name(C042, Package()
-{
-  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  Package()
-  {
-    //Commit_Group_Mask, Class, RW
-    Package(2) {"mipi-sdca-control-access-layer", 0x4},
-    Package(2) {"mipi-sdca-control-access-mode", 0},
-  }
-}) //End AF04.C042
-
-Name(C043, Package()
-{
-  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  Package()
-  {
-    //Function_Status, Class, RW1C
-    Package(2) {"mipi-sdca-control-access-layer", 0x4},
-    Package(2) {"mipi-sdca-control-access-mode", 2},
-    Package(2) {"mipi-sdca-control-interrupt-position", 11}, //IntStat_SDCA_11
-  }
-}) //End AF04.C043
-
-Name(C044, Package()
-{
-  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  Package()
-  {
-    //Function_Action, Class, RW1S
-    Package(2) {"mipi-sdca-control-access-layer", 0x4},
-    Package(2) {"mipi-sdca-control-access-mode", 4},
-  }
-}) //End AF04.C044
-
-Name(C02C, Package()
-{
-  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  Package()
-  {
-    //Device_Manufacturer_ID = 0x025d, Class, DC
-    Package(2) {"mipi-sdca-control-access-layer", 0x4},
-    Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x025D},
-  }
-}) //End AF04.C02C
-
-Name(C02D, Package()
-{
-  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  Package()
-  {
-    //Device_Part_ID = 0x721, Class, DC
-    Package(2) {"mipi-sdca-control-access-layer", 0x4},
-    Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x0721},
-  }
-}) //End AF04.C02D
-
-Name(C02E, Package()
-{
-  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  Package()
-  {
-    //Device_Version, Class, DC
-    Package(2) {"mipi-sdca-control-access-layer", 0x4},
-    Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x1},
-  }
-}) //End AF04.C02E
-
-Name(C02F, Package()
-{
-  ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  Package()
-  {
-    //Device_SDCA_Version, Class, DC
-    Package(2) {"mipi-sdca-control-access-layer", 0x4},
-    Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x8},
-  }
-}) //End AF04.C02F
 
 Name(E001, Package()
 {

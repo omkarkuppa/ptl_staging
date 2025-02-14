@@ -3,7 +3,7 @@
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2022 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -21,7 +21,7 @@
 ##
 
 INF SndwDevTopologyFeaturePkg/SndwInstallDevTopology/SndwInstallDevTopology.inf
-INF RuleOverride = ACPITABLE SndwDevTopologyFeaturePkg/AcpiTables/SndwDevTopologySsdt.inf
+INF RuleOverride = ACPITABLE SndwDevTopologyFeaturePkg/AcpiTables/SndwDevTopologySsdtPlatformB.inf
 
 !if gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyBtSndwSupported == TRUE
   INF RuleOverride = ACPITABLE SndwDevTopologyFeaturePkg/AcpiTables/SndwDevTopologyBtNdaiSsdt.inf

@@ -29,8 +29,10 @@
           Package (2) {"mipi-sdca-function-topology-features", 0x0000000000000000}, // No option
           Package (2) {"mipi-sdw-clockstopprepare-timeout", 0x4E5}, // 335ms + 54ms + 785ms*1.1
           //Package (2) {"mipi-sdca-control-list",  0x000001F0 }, // Bitmap: 0x4, 0x5, 0x6, 0x7, 0x8 - Function level controls
-                                        Package (2) {"mipi-sdca-control-list",  0xF000000301F2 }, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11, 0x2C, 0x2D, 0x2E, 0x2F - Function level controls
-          Package (2) {"mipi-sdca-entity-id-list",Package() {0x1, 0x2, 0x4A, 0x41, 0x42, 0x03, 0x05, 0x45, 0x46, 0x47, 0x40, 0x06, 0x07, 0x48, 0x12, 0x08, 0x09, 0x43, 0xA, 0xB, 0x44, 0xC, 0x49, 0xD, 0x2A, 0x0F, 0x11, 0x10} }, // List of entities in this function
+                                  Package (2) {"mipi-sdca-control-list",  0xF000000301F2 }, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11, 0x2C, 0x2D, 0x2E, 0x2F - Function level controls
+          Package (2) {"mipi-sdca-entity-id-list",
+          Package() {0x1, 0x2, 0x4A, 0x41, 0x42, 0x03, 0x05, 0x45, 0x46, 0x47, 0x40,
+            0x06, 0x07, 0x48, 0x12, 0x08, 0x09, 0x43, 0xA, 0xB, 0x44, 0xC, 0x49, 0xD, 0x2A, 0x0F, 0x11, 0x10} }, // List of entities in this function
           // Cluster Library
           Package (2) {"mipi-sdca-cluster-id-list", Package() {0x11, 0x12} },
         },
@@ -43,13 +45,13 @@
           Package (2) {"mipi-sdca-control-0x6-subproperties", "C006"},
           Package (2) {"mipi-sdca-control-0x7-subproperties", "C007"},
           Package (2) {"mipi-sdca-control-0x8-subproperties", "C008"},
-                                        Package (2) {"mipi-sdca-control-0x1-subproperties", "C042"},
+                                  Package (2) {"mipi-sdca-control-0x1-subproperties", "C042"},
           Package (2) {"mipi-sdca-control-0x10-subproperties", "C043"},//Function_Status, Class, RW1C
           Package (2) {"mipi-sdca-control-0x11-subproperties", "C044"},//Function_Action, Class, RW1S
           Package (2) {"mipi-sdca-control-0x2C-subproperties", "C02C"},//Device_Manufacturer_ID
           Package (2) {"mipi-sdca-control-0x2D-subproperties", "C02D"},//Device_Part_ID
-                            Package (2) {"mipi-sdca-control-0x2E-subproperties", "C02E"},//Device_Version
-                                        Package (2) {"mipi-sdca-control-0x2F-subproperties", "C02F"},//Device_SDCA_Version
+                      Package (2) {"mipi-sdca-control-0x2E-subproperties", "C02E"},//Device_Version
+                      Package (2) {"mipi-sdca-control-0x2F-subproperties", "C02F"},//Device_SDCA_Version
           Package (2) {"mipi-sdca-entity-id-0x1-subproperties", "E001"},
           Package (2) {"mipi-sdca-entity-id-0x2-subproperties", "E002"},
           Package (2) {"mipi-sdca-entity-id-0x4A-subproperties", "E04A"},
@@ -96,6 +98,9 @@
 
       Name(BUF0, Buffer()
       {
+                                0x4A, 0x20, 0x00, 0x02, 0x00, // 0x0200204A, 0x80   //20241127 To fix D3 back to D0 headst pop noise
+        0x4A, 0x00, 0x00, 0x02, 0x30, // 0x0200004A, 0x30   //20241127
+
         0x67, 0x20, 0x00, 0x02, 0x41, // 0x02002067, 0x41
         0x67, 0x00, 0x00, 0x02, 0x00, // 0x02000067, 0x00
 
@@ -123,16 +128,15 @@
         0x4A, 0x20, 0x00, 0x02, 0x00, // 0x0200204A, 0x00   //20240325 update here for OMTP headset detection.
         0x4A, 0x00, 0x00, 0x02, 0x30, // 0x0200004A, 0x30
 
-        0x0E, 0x20, 0x00, 0x02, 0xA1, // 0x0200200E, 0xA1
+        0x0E, 0x20, 0x00, 0x02, 0xA1, // 0x0200200E, 0xA1   //Disable fast charge (weak driving) for power saving
         0x0E, 0x00, 0x00, 0x02, 0xE0, // 0x0200000E, 0xE0
 
-                                //0x5A, 0x2F, 0x00, 0x00, 0x05, // 0x00002F5A, 0x05   //Entity 40 power change to 131ms
-
+                                0x5A, 0x2F, 0x00, 0x00, 0x05, // 0x00002F5A, 0x05   //Entity 40 power change to 131ms
 
       }) //End AF01.BUF0
 
   //==============================================================================================
-  Name(C042, Package()
+      Name(C042, Package()
       {
         ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
         Package()
@@ -183,10 +187,10 @@
         ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
         Package()
         {
-          //Device_Part_ID = 0x721, Class, DC
+          //Device_Part_ID = 0x712, Class, DC
           Package(2) {"mipi-sdca-control-access-layer", 0x4},
           Package(2) {"mipi-sdca-control-access-mode", 5},
-          Package(2) {"mipi-sdca-control-dc-value", 0x0721},
+          Package(2) {"mipi-sdca-control-dc-value", 0x0712},
         }
       }) //End AF04.C02D
 

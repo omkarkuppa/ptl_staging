@@ -28,6 +28,7 @@ typedef struct {
 
 extern HDA_VERB_TABLE_DATABASE HdaVerbTableDataBase;
 extern HDAUDIO_VERB_TABLE      HdaVerbTableAlc245NoDmic;
+extern HDAUDIO_VERB_TABLE      HdaVerbTableAlc245X2;
 extern HDAUDIO_VERB_TABLE      HdaVerbTableAlc245X4;
 
 #endif // _PCH_HDA_VERB_TABLES_H_

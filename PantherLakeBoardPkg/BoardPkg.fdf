@@ -1712,7 +1712,7 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/CpuPowerManagement/Dxe/DxeCp
 !endif
 
 !if gSndwDevTopologyFeaturePkgTokenSpaceGuid.PcdSndwDevTopologyFeatureEnable == TRUE
-  !include SndwDevTopologyFeaturePkg/Include/SndwDevTopologyFeaturePostMem.fdf
+    !include SndwDevTopologyFeaturePkg/Include/SndwDevTopologyFeaturePostMemPlatformA.fdf
 !endif
 
 !if gSiPkgTokenSpaceGuid.PcdAmtEnable == TRUE

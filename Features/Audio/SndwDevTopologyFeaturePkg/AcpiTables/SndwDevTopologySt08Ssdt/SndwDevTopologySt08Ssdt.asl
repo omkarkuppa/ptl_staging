@@ -19,35 +19,27 @@
 @par Specification Reference:
 **/
 
-DefinitionBlock ("SndwDevTopologySt06Ssdt.aml", "SSDT", 2, "INTEL", "St06Ssdt", 0x1000) {
+DefinitionBlock ("SndwDevTopologySt08Ssdt.aml", "SSDT", 2, "INTEL", "St08Ssdt", 0x1000) {
 
-  External (\_SB.PC00.HDAS.IDA.SNDW, DeviceObj)
+  External(\_SB.PC00.HDAS.IDA.SNDW, DeviceObj)
 
   Scope (\_SB)
   {
     Device(AUDC)
     {
       Name(_HID, "ACPI0018")
-      Include("AudioComposition_PC00.asl")
+      Include("AudioComposition_722.asl")
     } //End AUDC
   }
 
   Scope (\_SB.PC00.HDAS.IDA.SNDW)
   {
-    // SoundWire Device (SWDA) on Link #3 (Realtek ALC712VB : UID_00)
-    // _ADR: Link_3 Bit[51:48]=3 | ALC712_ID Bit[47:0]=30025D071201 | UID_00 Bit[43:40]=0
-    Device(SWDA)
+    // SoundWire Device #0 on Link #3 (Realtek ALC722)
+    // _ADR: (V_HDA_SNDW_LINK_ID_3 | V_HDA_SNDW_DID_REALTEK_ALC722)
+    Device (SWD0)
     {
-      Name (_ADR, 0x000330025D071201)
-      Include ("Peripheral_712VB.asl")
-    }
-
-    // SoundWire Device (SWDB) on Link #2 (Realtek ALC1320 : UID_00) for aggregated woofer speakers
-    // _ADR: Link_2 Bit[51:48]=2 | ALC1320_ID Bit[47:0]=30025D132001 | UID_00 Bit[43:40]=0
-    Device(SWDB)
-    {
-      Name (_ADR, 0x000230025D132001)
-      Include ("Peripheral_1320.asl")
+      Name (_ADR, 0x000330025d072201)
+      Include ("Peripheral_722.asl")
     }
   }
 }

@@ -1,5 +1,26 @@
+/** @file
+  SoundWire topology definitions
+
+  @copyright
+  INTEL CONFIDENTIAL
+  Copyright (C) 2025 Intel Corporation.
+
+  This software and the related documents are Intel copyrighted materials,
+  and your use of them is governed by the express license under which they
+  were provided to you ("License"). Unless the License provides otherwise,
+  you may not use, modify, copy, publish, distribute, disclose or transmit
+  this software or the related documents without Intel's prior written
+  permission.
+
+  This software and the related documents are provided as is, with no
+  express or implied warranties, other than those that are expressly stated
+  in the License.
+
+@par Specification Reference:
+**/
+
 // Device(AF04) {
-// 	Name(_ADR, 04)
+//   Name(_ADR, 04)
 
   Name(_DSD, Package()
   {
@@ -10,19 +31,19 @@
       //Package(2) {"mipi-sdw-sdca-interface-revision", 0x1000}, // v1.0r00, this is peripheral device property
       Package(2) {"mipi-sdw-wake-up-unavailable", 0}, // support wakeup
       Package(2) {"mipi-sdw-test-mode-supported", 1}, // Integer/Boolean
-      //Package(2) {"mipi-sdca-function-topology-features", 0x8000000000042D},	// Security/Privacy(55), Companion Data Output(10), Reference Stream(5), Sense Capture(3), Ultrasound Render(2), Secondary Transducer(0)
-      Package(2) {"mipi-sdca-function-topology-features", 0x002C},	// Reference Stream(5), Sense Capture(3), Ultrasound Render(2)
+      //Package(2) {"mipi-sdca-function-topology-features", 0x8000000000042D},  // Security/Privacy(55), Companion Data Output(10), Reference Stream(5), Sense Capture(3), Ultrasound Render(2), Secondary Transducer(0)
+      Package(2) {"mipi-sdca-function-topology-features", 0x002C},  // Reference Stream(5), Sense Capture(3), Ultrasound Render(2)
       //Package(2) {"mipi-sdca-control-list", 0x301F2}, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11 - Function level controls
       Package(2) {"mipi-sdca-control-list", 0xF000000301F2}, // Bitmap: 0x1, 0x4, 0x5, 0x6, 0x7, 0x8, 0x10, 0x11, 0x2C, 0x2D, 0x2E, 0x2F - Function level controls
       // All entities
         // Package(2) {"mipi-sdca-entity-id-list",
-        // 	Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24, 0x38, 0x66, 0x63, 0x62, 0x27, 0x17, 0x61, 0x60, 0x51} },
+        //   Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24, 0x38, 0x66, 0x63, 0x62, 0x27, 0x17, 0x61, 0x60, 0x51} },
       // No Security/Privacy (0x51)
         // Package(2) {"mipi-sdca-entity-id-list",
-        // 	Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24, 0x38, 0x66, 0x63, 0x62, 0x27, 0x17, 0x61, 0x60} },
+        //   Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24, 0x38, 0x66, 0x63, 0x62, 0x27, 0x17, 0x61, 0x60} },
       // No Security/Privacy (0x51), no secondary transducer (0x27, 0x17, 0x61, 0x60)
         // Package(2) {"mipi-sdca-entity-id-list",
-        // 	Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24, 0x38, 0x66, 0x63, 0x62} },
+        //   Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24, 0x38, 0x66, 0x63, 0x62} },
       // No Security/Privacy (0x51), no secondary transducer (0x17, 0x61, 0x60), no companion data output (0x38, 0x66, 0x63, 0x62)
       Package(2) {"mipi-sdca-entity-id-list",
         Package() {0x40, 0x33, 0x13, 0x43, 0x42, 0x50, 0x29, 0x22, 0x31, 0x3, 0x4, 0x20, 0x21, 0x52, 0x15, 0x44, 0x26, 0x32, 0x6, 0x36, 0x28, 0x14, 0x67, 0x24} },
@@ -2157,11 +2178,11 @@
 
   // Name(BUF1, Buffer()
   // {
-  // 	0x0, 0x00,  // NotRotated, 0x00, OT23=ICN1, OT27=ICN2
-  // 	0x1, 0x08,  // 90DegreesCounterClockwise, 0x08, OT23=(ICN1+ICN2)/2, OT27=(ICN1+ICN2)/2
-  // 	0x2, 0x01,  // 180DegreesCounterClockwise, 0x01, OT23=ICN2, OT27=ICN1
-  // 	0x3, 0x08,  // 270DegreesCounterClockwise, 0x08, OT23=(ICN1+ICN2)/2, OT27=(ICN1+ICN2)/2
-  // 	0x4, 0x00,  // Close lid, 0x00, OT23=ICN1, OT27=ICN2
+  //   0x0, 0x00,  // NotRotated, 0x00, OT23=ICN1, OT27=ICN2
+  //   0x1, 0x08,  // 90DegreesCounterClockwise, 0x08, OT23=(ICN1+ICN2)/2, OT27=(ICN1+ICN2)/2
+  //   0x2, 0x01,  // 180DegreesCounterClockwise, 0x01, OT23=ICN2, OT27=ICN1
+  //   0x3, 0x08,  // 270DegreesCounterClockwise, 0x08, OT23=(ICN1+ICN2)/2, OT27=(ICN1+ICN2)/2
+  //   0x4, 0x00,  // Close lid, 0x00, OT23=ICN1, OT27=ICN2
   // }) //End AF04.BUF1
 
   Name(C004, Package()
@@ -2553,14 +2574,14 @@
       // Mixer, Class, DC, The Q7.8dB format used for MU Controls represents the gain range −128 dB to +127.996 dB
       Package(2) {"mipi-sdca-control-access-layer", 0x4},
       Package(2) {"mipi-sdca-control-access-mode", 5},
-      Package(2) {"mipi-sdca-control-cn-0-dc-value", 0x0000},	// Input Pin 1, Ch 1 => Output Pin 1, Ch 1 => 0dB unmute
-      Package(2) {"mipi-sdca-control-cn-1-dc-value", 0x8000},	// Input Pin 1, Ch 1 => Output Pin 1, Ch 2 => -128dB mute
-      Package(2) {"mipi-sdca-control-cn-2-dc-value", 0x8000},	// Input Pin 1, Ch 2 => Output Pin 1, Ch 1 => -128dB mute
-      Package(2) {"mipi-sdca-control-cn-3-dc-value", 0x0000},	// Input Pin 1, Ch 2 => Output Pin 1, Ch 2 => 0dB unmute
-      Package(2) {"mipi-sdca-control-cn-4-dc-value", 0x0000},	// Input Pin 2, Ch 1 => Output Pin 1, Ch 1 => 0dB unmute
-      Package(2) {"mipi-sdca-control-cn-5-dc-value", 0x8000},	// Input Pin 2, Ch 1 => Output Pin 1, Ch 2 => -128dB mute
-      Package(2) {"mipi-sdca-control-cn-6-dc-value", 0x8000},	// Input Pin 2, Ch 2 => Output Pin 1, Ch 1 => -128dB mute
-      Package(2) {"mipi-sdca-control-cn-7-dc-value", 0x0000},	// Input Pin 2, Ch 2 => Output Pin 1, Ch 2 => 0dB unmute
+      Package(2) {"mipi-sdca-control-cn-0-dc-value", 0x0000},  // Input Pin 1, Ch 1 => Output Pin 1, Ch 1 => 0dB unmute
+      Package(2) {"mipi-sdca-control-cn-1-dc-value", 0x8000},  // Input Pin 1, Ch 1 => Output Pin 1, Ch 2 => -128dB mute
+      Package(2) {"mipi-sdca-control-cn-2-dc-value", 0x8000},  // Input Pin 1, Ch 2 => Output Pin 1, Ch 1 => -128dB mute
+      Package(2) {"mipi-sdca-control-cn-3-dc-value", 0x0000},  // Input Pin 1, Ch 2 => Output Pin 1, Ch 2 => 0dB unmute
+      Package(2) {"mipi-sdca-control-cn-4-dc-value", 0x0000},  // Input Pin 2, Ch 1 => Output Pin 1, Ch 1 => 0dB unmute
+      Package(2) {"mipi-sdca-control-cn-5-dc-value", 0x8000},  // Input Pin 2, Ch 1 => Output Pin 1, Ch 2 => -128dB mute
+      Package(2) {"mipi-sdca-control-cn-6-dc-value", 0x8000},  // Input Pin 2, Ch 2 => Output Pin 1, Ch 1 => -128dB mute
+      Package(2) {"mipi-sdca-control-cn-7-dc-value", 0x0000},  // Input Pin 2, Ch 2 => Output Pin 1, Ch 2 => 0dB unmute
     }
   }) //End AF04.C031
 
@@ -2634,7 +2655,7 @@
   }) //End AF04.EN22
 
   Name(C023, Package()
-  {	//Bypass
+  {  //Bypass
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
@@ -2645,33 +2666,33 @@
   }) //End AF04.C023
 
   // Name(C024, Package()
-  // {	//FDL_CurrentOwner
-  // 	Package()
-  // 	{   // FDL_CurrentOwner, Class, RW1C
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 2},
-  // 		Package(2) {"mipi-sdca-control-interrupt-position", 2}, //IntStat_SDCA_2
-  // 	}
+  // {  //FDL_CurrentOwner
+  //   Package()
+  //   {   // FDL_CurrentOwner, Class, RW1C
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 2},
+  //     Package(2) {"mipi-sdca-control-interrupt-position", 2}, //IntStat_SDCA_2
+  //   }
   // }) //End AF04.C024
 
   // Name(C025, Package()
-  // {	//FDL_MessageOffset
+  // {  //FDL_MessageOffset
   // }) //End AF04.C025
 
   // Name(C026, Package()
-  // {	//FDL_MessageLength
+  // {  //FDL_MessageLength
   // }) //End AF04.C026
 
   // Name(C027, Package()
-  // {	//FDL_Status
+  // {  //FDL_Status
   // }) //End AF04.C027
 
   // Name(C028, Package()
-  // {	//FDL_Set_Index
+  // {  //FDL_Set_Index
   // }) //End AF04.C028
 
   // Name(C029, Package()
-  // {	//FDL_Host_Request
+  // {  //FDL_Host_Request
   // }) //End AF04.C029
 
   Name(EN31, Package()
@@ -2711,46 +2732,46 @@
 
   // Name(C048, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// Bypass, Class, RW (Full MFPU)
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 0},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // Bypass, Class, RW (Full MFPU)
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 0},
+  //   }
   // }) //End AF04.C048
 
   // Name(C013, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// Algorithm_Ready, Class, RO (Full MFPU)
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 3},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // Algorithm_Ready, Class, RO (Full MFPU)
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 3},
+  //   }
   // }) //End AF04.C013
 
   // Name(C014, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// Algorithm_Enable, Class, RW (Full MFPU)
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 0},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // Algorithm_Enable, Class, RW (Full MFPU)
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 0},
+  //   }
   // }) //End AF04.C014
 
   // Name(C015, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// Algorithm_Prepare, Class, RW (Full MFPU)
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 0},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // Algorithm_Prepare, Class, RW (Full MFPU)
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 0},
+  //   }
   // }) //End AF04.C015
 
   Name(EN03, Package()
@@ -2815,7 +2836,7 @@
   }) //End AF04.BUF2
 
   // Name(C010, Package()
-  // {	// Loudness
+  // {  // Loudness
   // }) //End AF04.C010
 
   Name(EN04, Package()
@@ -2891,11 +2912,11 @@
   }) //End PSM1
 
   // Name(C033, Package()
-  // {	// HorizontalBalance
+  // {  // HorizontalBalance
   // }) //End AF04.C033
 
   // Name(C034, Package()
-  // {	// VerticalBalance
+  // {  // VerticalBalance
   // }) //End AF04.C034
 
   Name(EN20, Package()
@@ -3445,11 +3466,11 @@
   }) //End PSM2
 
   // Name(C036, Package()
-  // {	// HorizontalBalance
+  // {  // HorizontalBalance
   // }) //End AF04.C036
 
   // Name(C037, Package()
-  // {	// VerticalBalance
+  // {  // VerticalBalance
   // }) //End AF04.C037
 
   Name(EN36, Package()
@@ -3752,395 +3773,395 @@
 
   // Name(EN38, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-entity-type", 0x03},
-  // 		Package(2) {"mipi-sdca-entity-label", "OT 127"}, // Companion Data Output
-  // 		Package(2) {"mipi-sdca-terminal-type", 0x192}, // Companion Data for Secondary Transducers
-  // 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
-  // 		Package(2) {"mipi-sdca-control-list", 0x00020110}, // Bitmap: 0x4-Usage, 0x8-Latency, 0x11-DataPortIndex
-  // 	},
-  // 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-input-pin-1", "EN63"}, // Input Pin 1 connected to FU 127
-  // 		Package(2) {"mipi-sdca-control-0x4-subproperties", "C540"},
-  // 		Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
-  // 		Package(2) {"mipi-sdca-control-0x11-subproperties", "C541"},
-  // 		Package(2) {"mipi-sdca-terminal-clock-connection", "EN66"},	// CS 127
-  // 	},
-  // 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-terminal-dp-numbers","BUFB"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-entity-type", 0x03},
+  //     Package(2) {"mipi-sdca-entity-label", "OT 127"}, // Companion Data Output
+  //     Package(2) {"mipi-sdca-terminal-type", 0x192}, // Companion Data for Secondary Transducers
+  //     Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+  //     Package(2) {"mipi-sdca-control-list", 0x00020110}, // Bitmap: 0x4-Usage, 0x8-Latency, 0x11-DataPortIndex
+  //   },
+  //   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-input-pin-1", "EN63"}, // Input Pin 1 connected to FU 127
+  //     Package(2) {"mipi-sdca-control-0x4-subproperties", "C540"},
+  //     Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
+  //     Package(2) {"mipi-sdca-control-0x11-subproperties", "C541"},
+  //     Package(2) {"mipi-sdca-terminal-clock-connection", "EN66"},  // CS 127
+  //   },
+  //   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-terminal-dp-numbers","BUFB"},
+  //   }
   // }) //End AF04.EN38
 
   // Name(BUFB, Buffer()
   // {
-  // 	0x0, 0x6, // DP_Index: 0x0 DP_Num: 0x6
+  //   0x0, 0x6, // DP_Index: 0x0 DP_Num: 0x6
   // }) //End AF04.BUFB
 
   // Name(C540, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// Usage, Class, DC
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 5},
-  // 		Package(2) {"mipi-sdca-control-dc-value", 1},
-  // 	},
-  // 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-control-range", "USG6"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // Usage, Class, DC
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 5},
+  //     Package(2) {"mipi-sdca-control-dc-value", 1},
+  //   },
+  //   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-control-range", "USG6"},
+  //   }
   // }) //End AF04.C540
 
   // Name(USG6, Buffer()
   // {
-  // 	0x07, 0x00,  // Range type 0x0007 (Septuples)
-  // 	0x01, 0x00,  // Count of ranges = 0x1
-  // 	0x01, 0x00, 0x00, 0x00, // Usage Number
-  // 	0x2a, 0x03, 0x00, 0x00, // Usage CBN, 810 (0x32a) Companion Amp Data Out
-  // 	0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
-  // 	0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
-  // 	0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
-  // 	0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
-  // 	0x00, 0x00, 0x00, 0x00, // Usage Tag
-  // 	// add the others if we want to support a different usage
+  //   0x07, 0x00,  // Range type 0x0007 (Septuples)
+  //   0x01, 0x00,  // Count of ranges = 0x1
+  //   0x01, 0x00, 0x00, 0x00, // Usage Number
+  //   0x2a, 0x03, 0x00, 0x00, // Usage CBN, 810 (0x32a) Companion Amp Data Out
+  //   0x80, 0xbb, 0x00, 0x00, // Sample Rate, 48000Hz (0xBB80)
+  //   0x18, 0x00, 0x00, 0x00, // Sample Width, 24-bits (0x18)
+  //   0x00, 0x00, 0x00, 0x00, // Full Scale, 0 not report
+  //   0x00, 0x00, 0x00, 0x00, // Noise Floor, 0 not report
+  //   0x00, 0x00, 0x00, 0x00, // Usage Tag
+  //   // add the others if we want to support a different usage
   // }) //End USG6
 
   // Name(C541, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// DataPortIndex, Class, DC
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 5},
-  // 		Package(2) {"mipi-sdca-control-dc-value", 0},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // DataPortIndex, Class, DC
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 5},
+  //     Package(2) {"mipi-sdca-control-dc-value", 0},
+  //   }
   // }) //End AF04.C541
 
   // Name(EN66, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-entity-type", 0x0b},
-  // 		Package(2) {"mipi-sdca-entity-label", "CS 127"},
-  // 		Package(2) {"mipi-sdca-cs-type", 0},
-  // 		Package(2) {"mipi-sdca-control-list", 0x10000}, // Bitmap: 0x10-SampleFreqIndex
-  // 	},
-  // 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-control-0x10-subproperties", "C122"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-entity-type", 0x0b},
+  //     Package(2) {"mipi-sdca-entity-label", "CS 127"},
+  //     Package(2) {"mipi-sdca-cs-type", 0},
+  //     Package(2) {"mipi-sdca-control-list", 0x10000}, // Bitmap: 0x10-SampleFreqIndex
+  //   },
+  //   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-control-0x10-subproperties", "C122"},
+  //   }
   // }) //End AF04.EN66
 
   // Name(C122, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// SampleFreqIndex, Class, DC
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 5},
-  // 		Package(2) {"mipi-sdca-control-dc-value", 9},
-  // 	},
-  // 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-control-range","BUFC"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // SampleFreqIndex, Class, DC
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 5},
+  //     Package(2) {"mipi-sdca-control-dc-value", 9},
+  //   },
+  //   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-control-range","BUFC"},
+  //   }
   // }) //End AF04.C122
 
   // Name(BUFC, Buffer()
   // {
-  // 	0x02, 0x00,  // Range type 0x0002 (Pairs)
-  // 	0x01, 0x00,  // Count of ranges = 0x1
-  // 	//0x04, 0x00, 0x00, 0x00, 0x80, 0x3E, 0x00, 0x00, // 0x00000004, 0x00003E80(16000)
-  // 	//0x07, 0x00, 0x00, 0x00, 0x00, 0x7D, 0x00, 0x00, // 0x00000007, 0x00007D00(32000)
-  // 	//0x08, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // 0x00000008, 0x0000AC44(44100)
-  // 	0x09, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // 0x00000009, 0x0000BB80(48000)
-  // 	//0x0B, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // 0x0000000B, 0x00017700(96000)
-  // 	//0x0d, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // 0x0000000d, 0x0002EE00(192000)
+  //   0x02, 0x00,  // Range type 0x0002 (Pairs)
+  //   0x01, 0x00,  // Count of ranges = 0x1
+  //   //0x04, 0x00, 0x00, 0x00, 0x80, 0x3E, 0x00, 0x00, // 0x00000004, 0x00003E80(16000)
+  //   //0x07, 0x00, 0x00, 0x00, 0x00, 0x7D, 0x00, 0x00, // 0x00000007, 0x00007D00(32000)
+  //   //0x08, 0x00, 0x00, 0x00, 0x44, 0xAC, 0x00, 0x00, // 0x00000008, 0x0000AC44(44100)
+  //   0x09, 0x00, 0x00, 0x00, 0x80, 0xBB, 0x00, 0x00, // 0x00000009, 0x0000BB80(48000)
+  //   //0x0B, 0x00, 0x00, 0x00, 0x00, 0x77, 0x01, 0x00, // 0x0000000B, 0x00017700(96000)
+  //   //0x0d, 0x00, 0x00, 0x00, 0x00, 0xEE, 0x02, 0x00, // 0x0000000d, 0x0002EE00(192000)
   // }) //End AF04.BUFC
 
   // Name(EN63, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-entity-type", 0x07},
-  // 		Package(2) {"mipi-sdca-entity-label", "FU 127"},
-  // 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
-  // 		Package(2) {"mipi-sdca-control-list", 0x00010000}, // Bitmap: 0x10-Latency
-  // 	},
-  // 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-input-pin-1", "EN62"}, // Input Pin 1 connected to UDMPU 127
-  // 		Package(2) {"mipi-sdca-control-0x10-subproperties", "LC00"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-entity-type", 0x07},
+  //     Package(2) {"mipi-sdca-entity-label", "FU 127"},
+  //     Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+  //     Package(2) {"mipi-sdca-control-list", 0x00010000}, // Bitmap: 0x10-Latency
+  //   },
+  //   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-input-pin-1", "EN62"}, // Input Pin 1 connected to UDMPU 127
+  //     Package(2) {"mipi-sdca-control-0x10-subproperties", "LC00"},
+  //   }
   // }) //End EN63
 
   // Name(EN62, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-entity-type", 0x21},
-  // 		Package(2) {"mipi-sdca-entity-label", "UDMPU 127"},
-  // 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
-  // 		Package(2) {"mipi-sdca-control-list", 0x00010040}, // Bitmap: 0x6-Latency, 0x10-ClusterIndex
-  // 	},
-  // 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-input-pin-1", "EN50"}, // Input Pin 1 connected to MU 26
-  // 		Package(2) {"mipi-sdca-control-0x6-subproperties", "LC00"},
-  // 		Package(2) {"mipi-sdca-control-0x10-subproperties", "C4C3"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-entity-type", 0x21},
+  //     Package(2) {"mipi-sdca-entity-label", "UDMPU 127"},
+  //     Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+  //     Package(2) {"mipi-sdca-control-list", 0x00010040}, // Bitmap: 0x6-Latency, 0x10-ClusterIndex
+  //   },
+  //   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-input-pin-1", "EN50"}, // Input Pin 1 connected to MU 26
+  //     Package(2) {"mipi-sdca-control-0x6-subproperties", "LC00"},
+  //     Package(2) {"mipi-sdca-control-0x10-subproperties", "C4C3"},
+  //   }
   // }) //End EN62
 
   // Name(C4C3, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// ClusterIndex, Class, DC
-  // 		Package(2) {"mipi-sdca-control-access-layer", 4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 5},
-  // 		Package(2) {"mipi-sdca-control-dc-value", 1},
-  // 	},
-  // 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-control-range", "CLM5"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // ClusterIndex, Class, DC
+  //     Package(2) {"mipi-sdca-control-access-layer", 4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 5},
+  //     Package(2) {"mipi-sdca-control-dc-value", 1},
+  //   },
+  //   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-control-range", "CLM5"},
+  //   }
   // }) //End C4C3
 
   // Name(CLM5, Buffer()
   // {
-  // 	0x02, 0x00,  // Range type 2 parameters
-  // 	0x01, 0x00,  // Count of ranges = 0x1
-  // 	0x01, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, // Cluster Index = 0x1,  Cluster ID = 0x05
+  //   0x02, 0x00,  // Range type 2 parameters
+  //   0x01, 0x00,  // Count of ranges = 0x1
+  //   0x01, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, // Cluster Index = 0x1,  Cluster ID = 0x05
   // }) //End CLM5
 
   // Name(EN27, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-entity-type", 0x11},
-  // 		Package(2) {"mipi-sdca-entity-label", "PDE 27"},
-  // 		Package(2) {"mipi-sdca-control-list", 0x10002}, // Bitmap: 0x1-Request_PS, 0x10-Actual_PS
-  // 		Package(2) {"mipi-sdca-powerdomain-managed-list", Package() {0x17}, }, //OT27
-  // 		Package(2)
-  // 		{
-  // 			"mipi-sdca-powerdomain-transition-typical-delay",
-  // 			Package()
-  // 			{
-  // 				3, 0, 500000,
-  // 				0, 3, 500000,
-  // 			},
-  // 		},
-  // 		Package(2)
-  // 		{
-  // 			"mipi-sdca-powerdomain-transition-max-delay",
-  // 			Package()
-  // 			{
-  // 				3, 0, 800000,
-  // 				0, 3, 800000,
-  // 			},
-  // 		},
-  // 	},
-  // 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-control-0x1-subproperties", "C002"},
-  // 		Package(2) {"mipi-sdca-control-0x10-subproperties", "C017"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-entity-type", 0x11},
+  //     Package(2) {"mipi-sdca-entity-label", "PDE 27"},
+  //     Package(2) {"mipi-sdca-control-list", 0x10002}, // Bitmap: 0x1-Request_PS, 0x10-Actual_PS
+  //     Package(2) {"mipi-sdca-powerdomain-managed-list", Package() {0x17}, }, //OT27
+  //     Package(2)
+  //     {
+  //       "mipi-sdca-powerdomain-transition-typical-delay",
+  //       Package()
+  //       {
+  //         3, 0, 500000,
+  //         0, 3, 500000,
+  //       },
+  //     },
+  //     Package(2)
+  //     {
+  //       "mipi-sdca-powerdomain-transition-max-delay",
+  //       Package()
+  //       {
+  //         3, 0, 800000,
+  //         0, 3, 800000,
+  //       },
+  //     },
+  //   },
+  //   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-control-0x1-subproperties", "C002"},
+  //     Package(2) {"mipi-sdca-control-0x10-subproperties", "C017"},
+  //   }
   // }) //End AF04.EN27
 
   // Name(C002, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// Requested_PS, Class, R/W
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 0},
-  // 	},
-  // 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-control-range", "PDER"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // Requested_PS, Class, R/W
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 0},
+  //   },
+  //   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-control-range", "PDER"},
+  //   }
   // }) //End AF04.C002
 
   // Name(C017, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// Actual_PS, Class, RO
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 3},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // Actual_PS, Class, RO
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 3},
+  //   }
   // }) //End AF04.C017
 
   // Name(EN17, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-entity-type", 0x03},
-  // 		Package(2) {"mipi-sdca-entity-label", "OT 27"}, //Secondary transducer
-  // 		Package(2) {"mipi-sdca-terminal-type", 0x390}, // Secondary Full-range or Woofer Speaker Transducer
-  // 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
-  // 		Package(2) {"mipi-sdca-control-list", 0x110 },  // Bitmap: 0x4-Usage, 0x8-Latency
-  // 	},
-  // 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-input-pin-1", "EN61"}, // Input Pin 1 connected to FU 27
-  // 		//Package(2) {"mipi-sdca-powerdomain-entity", "EN27"}, //PDE 27
-  // 		Package(2) {"mipi-sdca-control-0x4-subproperties", "C154"},
-  // 		Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
-  // 	},
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-entity-type", 0x03},
+  //     Package(2) {"mipi-sdca-entity-label", "OT 27"}, //Secondary transducer
+  //     Package(2) {"mipi-sdca-terminal-type", 0x390}, // Secondary Full-range or Woofer Speaker Transducer
+  //     Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+  //     Package(2) {"mipi-sdca-control-list", 0x110 },  // Bitmap: 0x4-Usage, 0x8-Latency
+  //   },
+  //   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-input-pin-1", "EN61"}, // Input Pin 1 connected to FU 27
+  //     //Package(2) {"mipi-sdca-powerdomain-entity", "EN27"}, //PDE 27
+  //     Package(2) {"mipi-sdca-control-0x4-subproperties", "C154"},
+  //     Package(2) {"mipi-sdca-control-0x8-subproperties", "LC00"},
+  //   },
   // }) //End AF04.EN17
 
   // Name(C154, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// Usage, Class, DC
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 5},
-  // 		Package(2) {"mipi-sdca-control-dc-value", 1},
-  // 	},
-  // 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-control-range", "USG7"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // Usage, Class, DC
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 5},
+  //     Package(2) {"mipi-sdca-control-dc-value", 1},
+  //   },
+  //   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-control-range", "USG7"},
+  //   }
   // }) //End AF04.C154
 
   // Name(USG7, Buffer()
   // {
-  // 	0x07, 0x00,  // Range type 0x0007 (Septuples)
-  // 	0x01, 0x00,  // Count of ranges = 0x1
-  // 	0x01, 0x00, 0x00, 0x00, // Usage Number
-  // 	0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1AE) Full band and Near-ultrasound
-  // 	0x00, 0x00, 0x00, 0x00, // Sample Rate, 0 not report
-  // 	0x00, 0x00, 0x00, 0x00, // Sample Width, 0 not report
-  // 	0x00, 0x80, 0x00, 0x00, // Full Scale, -128.0dB (0x8000) not report actual value
-  // 	0x00, 0x80, 0x00, 0x00, // Noise Floor, -128.0dB (0x8000) not report actual value
-  // 	0x00, 0x00, 0x00, 0x00, // Usage Tag
+  //   0x07, 0x00,  // Range type 0x0007 (Septuples)
+  //   0x01, 0x00,  // Count of ranges = 0x1
+  //   0x01, 0x00, 0x00, 0x00, // Usage Number
+  //   0xae, 0x01, 0x00, 0x00, // Usage CBN, 430 (0x1AE) Full band and Near-ultrasound
+  //   0x00, 0x00, 0x00, 0x00, // Sample Rate, 0 not report
+  //   0x00, 0x00, 0x00, 0x00, // Sample Width, 0 not report
+  //   0x00, 0x80, 0x00, 0x00, // Full Scale, -128.0dB (0x8000) not report actual value
+  //   0x00, 0x80, 0x00, 0x00, // Noise Floor, -128.0dB (0x8000) not report actual value
+  //   0x00, 0x00, 0x00, 0x00, // Usage Tag
   // }) //End USG7
 
   // Name(EN61, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-entity-type", 0x07},
-  // 		Package(2) {"mipi-sdca-entity-label", "FU 27"},
-  // 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
-  // 		Package(2) {"mipi-sdca-control-list", 0x00010000}, // Bitmap: 0x10-Latency
-  // 	},
-  // 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-input-pin-1", "EN60"}, // Input Pin 1 connected to UDMPU 27
-  // 		Package(2) {"mipi-sdca-control-0x10-subproperties", "LC00"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-entity-type", 0x07},
+  //     Package(2) {"mipi-sdca-entity-label", "FU 27"},
+  //     Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+  //     Package(2) {"mipi-sdca-control-list", 0x00010000}, // Bitmap: 0x10-Latency
+  //   },
+  //   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-input-pin-1", "EN60"}, // Input Pin 1 connected to UDMPU 27
+  //     Package(2) {"mipi-sdca-control-0x10-subproperties", "LC00"},
+  //   }
   // }) //End EN61
 
   // Name(EN60, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-entity-type", 0x21},
-  // 		Package(2) {"mipi-sdca-entity-label", "UDMPU 27"},
-  // 		Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
-  // 		//Package(2) {"mipi-sdca-control-list", Package() {0x6, 0x10} }, // Latency, ClusterIndex
-  // 		Package(2) {"mipi-sdca-control-list", 0x00010040}, // Bitmap: 0x6-Latency, 0x10-ClusterIndex
-  // 	},
-  // 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-input-pin-1", "EN50"}, // Input Pin 1 connected to MU 26
-  // 		Package(2) {"mipi-sdca-control-0x6-subproperties", "LC00"},
-  // 		Package(2) {"mipi-sdca-control-0x10-subproperties", "C4C2"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-entity-type", 0x21},
+  //     Package(2) {"mipi-sdca-entity-label", "UDMPU 27"},
+  //     Package(2) {"mipi-sdca-input-pin-list", 0x2}, // Input Pin 1 connected
+  //     //Package(2) {"mipi-sdca-control-list", Package() {0x6, 0x10} }, // Latency, ClusterIndex
+  //     Package(2) {"mipi-sdca-control-list", 0x00010040}, // Bitmap: 0x6-Latency, 0x10-ClusterIndex
+  //   },
+  //   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-input-pin-1", "EN50"}, // Input Pin 1 connected to MU 26
+  //     Package(2) {"mipi-sdca-control-0x6-subproperties", "LC00"},
+  //     Package(2) {"mipi-sdca-control-0x10-subproperties", "C4C2"},
+  //   }
   // }) //End EN60
 
   // Name(C4C2, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		// ClusterIndex, Class, DC
-  // 		Package(2) {"mipi-sdca-control-access-layer", 0x4},
-  // 		Package(2) {"mipi-sdca-control-access-mode", 5},
-  // 		Package(2) {"mipi-sdca-control-dc-value", 1},
-  // 	},
-  // 	ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-control-range", "CLM6"},
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     // ClusterIndex, Class, DC
+  //     Package(2) {"mipi-sdca-control-access-layer", 0x4},
+  //     Package(2) {"mipi-sdca-control-access-mode", 5},
+  //     Package(2) {"mipi-sdca-control-dc-value", 1},
+  //   },
+  //   ToUUID("edb12dd0-363d-4085-a3d2-49522ca160c4"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-control-range", "CLM6"},
+  //   }
   // }) //End C4C2
 
   // Name(CLM6, Buffer()
   // {
-  // 	0x02, 0x00,  // Range type 2 parameters
-  // 	0x01, 0x00,  // Count of ranges = 0x1
-  // 	0x01, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, // Cluster Index = 0x1,  Cluster ID = 0x04
+  //   0x02, 0x00,  // Range type 2 parameters
+  //   0x01, 0x00,  // Count of ranges = 0x1
+  //   0x01, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, // Cluster Index = 0x1,  Cluster ID = 0x04
   // }) //End CLM6
 
   // Name(EN51, Package()
   // {
-  // 	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-entity-type", 0x13},
-  // 		Package(2) {"mipi-sdca-entity-label", "SPE 199"},
-  // 		Package(2) {"mipi-sdca-control-list", 0x1E}, // Bitmap: 0x1-Private, 0x2-Privacy_Policy, 0x3-Privacy_LockState, 0x4-Privacy_Owner
-  // 	},
-  // 	ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
-  // 	Package()
-  // 	{
-  // 		Package(2) {"mipi-sdca-control-0x1-subproperties", "C041"}, // Private
-  // 		Package(2) {"mipi-sdca-control-0x2-subproperties", "C040"}, // Privacy_Policy
-  // 		Package(2) {"mipi-sdca-control-0x3-subproperties", "C039"}, // Privacy_LockState
-  // 		Package(2) {"mipi-sdca-control-0x4-subproperties", "C038"}, // Privacy_Owner
-  // 	}
+  //   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-entity-type", 0x13},
+  //     Package(2) {"mipi-sdca-entity-label", "SPE 199"},
+  //     Package(2) {"mipi-sdca-control-list", 0x1E}, // Bitmap: 0x1-Private, 0x2-Privacy_Policy, 0x3-Privacy_LockState, 0x4-Privacy_Owner
+  //   },
+  //   ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
+  //   Package()
+  //   {
+  //     Package(2) {"mipi-sdca-control-0x1-subproperties", "C041"}, // Private
+  //     Package(2) {"mipi-sdca-control-0x2-subproperties", "C040"}, // Privacy_Policy
+  //     Package(2) {"mipi-sdca-control-0x3-subproperties", "C039"}, // Privacy_LockState
+  //     Package(2) {"mipi-sdca-control-0x4-subproperties", "C038"}, // Privacy_Owner
+  //   }
   // }) //End AF04.EN51
 
   // Name(C038, Package()
-  // {	// Private
+  // {  // Private
   // }) //End AF04.C038
 
   // Name(C039, Package()
-  // {	// Privacy_Policy
+  // {  // Privacy_Policy
   // }) //End AF04.C039
 
   // Name(C040, Package()
-  // {	// Privacy_LockState
+  // {  // Privacy_LockState
   // }) //End AF04.C040
 
   // Name(C041, Package()
-  // {	// Privacy_Owner
+  // {  // Privacy_Owner
   // }) //End AF04.C041
 
   Name(EXT0, Package()
@@ -4164,8 +4185,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH11"},	// channel 1, Generic Audio, Generic-Left
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH12"},	// channel 2, Generic Audio, Generic-Right
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH11"},  // channel 1, Generic Audio, Generic-Left
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH12"},  // channel 2, Generic Audio, Generic-Right
     }
   }) //End CL01
 
@@ -4174,9 +4195,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x02}, 	// Generic-Left
+      Package(2) {"mipi-sdca-cluster-channel-id", 1},         // channel 1
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01},     // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x02},   // Generic-Left
     }
   }) //End CH11
 
@@ -4185,9 +4206,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x03}, 	// Generic-Right
+      Package(2) {"mipi-sdca-cluster-channel-id", 2},         // channel 2
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01},     // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x03},   // Generic-Right
     }
   }) //End CH12
 
@@ -4202,8 +4223,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH21"},	// channel 1, ultrasound, Generic-Left
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH22"},	// channel 2, ultrasound, Generic-Right
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH21"},  // channel 1, ultrasound, Generic-Left
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH22"},  // channel 2, ultrasound, Generic-Right
     }
   }) //End CL01
 
@@ -4212,9 +4233,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x06}, 		// Ultrasound
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x02}, 	// Generic-Left
+      Package(2) {"mipi-sdca-cluster-channel-id", 1},         // channel 1
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x06},     // Ultrasound
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x02},   // Generic-Left
     }
   }) //End CH21
 
@@ -4223,9 +4244,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x06}, 		// Ultrasound
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x03}, 	// Generic-Right
+      Package(2) {"mipi-sdca-cluster-channel-id", 2},         // channel 2
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x06},     // Ultrasound
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x03},   // Generic-Right
     }
   }) //End CH22
 
@@ -4240,8 +4261,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH31"},	// channel 1 (Imp-Def), Generic Audio, Primary Transducer
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH32"},	// channel 2 (Imp-Def), Generic Audio, Primary Transducer
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH31"},  // channel 1 (Imp-Def), Generic Audio, Primary Transducer
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH32"},  // channel 2 (Imp-Def), Generic Audio, Primary Transducer
     }
   }) //End CL03
 
@@ -4250,9 +4271,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1 (Imp-Def)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x50}, 	// Primary Transducer
+      Package(2) {"mipi-sdca-cluster-channel-id", 1},         // channel 1 (Imp-Def)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01},     // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x50},   // Primary Transducer
     }
   }) //End CH31
 
@@ -4261,9 +4282,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2 (Imp-Def)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x50}, 	// Primary Transducer
+      Package(2) {"mipi-sdca-cluster-channel-id", 2},         // channel 2 (Imp-Def)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01},     // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x50},   // Primary Transducer
     }
   }) //End CH32
 
@@ -4278,8 +4299,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH41"},	// channel 1 (Imp-Def), Generic Audio, Secondary Transducer
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH42"},	// channel 2 (Imp-Def), Generic Audio, Secondary Transducer
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH41"},  // channel 1 (Imp-Def), Generic Audio, Secondary Transducer
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH42"},  // channel 2 (Imp-Def), Generic Audio, Secondary Transducer
     }
   }) //End CL04
 
@@ -4288,9 +4309,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1 (Imp-Def)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51}, 	// Secondary Transducer
+      Package(2) {"mipi-sdca-cluster-channel-id", 1},         // channel 1 (Imp-Def)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01},     // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51},   // Secondary Transducer
     }
   }) //End CH41
 
@@ -4299,9 +4320,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2 (Imp-Def)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51}, 	// Secondary Transducer
+      Package(2) {"mipi-sdca-cluster-channel-id", 2},         // channel 2 (Imp-Def)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01},     // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51},   // Secondary Transducer
     }
   }) //End CH42
 
@@ -4316,8 +4337,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH51"},	// channel 1 (Imp-Def), Generic Audio, Companion Data Output for Secondary Transducer
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH52"},	// channel 2 (Imp-Def), Generic Audio, Companion Data Output for Secondary Transducer
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH51"},  // channel 1 (Imp-Def), Generic Audio, Companion Data Output for Secondary Transducer
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH52"},  // channel 2 (Imp-Def), Generic Audio, Companion Data Output for Secondary Transducer
     }
   }) //End CL05
 
@@ -4326,9 +4347,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1 (Imp-Def)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51}, 	// Companion Data Output for Secondary Transducer
+      Package(2) {"mipi-sdca-cluster-channel-id", 1},         // channel 1 (Imp-Def)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01},     // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51},   // Companion Data Output for Secondary Transducer
     }
   }) //End CH51
 
@@ -4337,14 +4358,14 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2 (Imp-Def)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01}, 		// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51}, 	// Companion Data Output for Secondary Transducer
+      Package(2) {"mipi-sdca-cluster-channel-id", 2},         // channel 2 (Imp-Def)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x01},     // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x51},   // Companion Data Output for Secondary Transducer
     }
   }) //End CH52
 
   // Start of CL06 (OT 25)
-  Name(CL06, Package()	// 2-ch-ref-2-speaker-1/2
+  Name(CL06, Package()  // 2-ch-ref-2-speaker-1/2
   {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
@@ -4354,8 +4375,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH61"},	// channel 101, EchoRef-1, Reference
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH62"},	// channel 102, EchoRef-2, Reference
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH61"},  // channel 101, EchoRef-1, Reference
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH62"},  // channel 102, EchoRef-2, Reference
     }
   }) //End CL06
 
@@ -4364,9 +4385,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 101}, 				// channel 101
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x05}, 		// Reference
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x71}, 	// EchoRef-1
+      Package(2) {"mipi-sdca-cluster-channel-id", 101},         // channel 101
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x05},     // Reference
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x71},   // EchoRef-1
     }
   }) //End CH61
 
@@ -4375,9 +4396,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 102}, 				// channel 102
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x05}, 		// Reference
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x72}, 	// EchoRef-2
+      Package(2) {"mipi-sdca-cluster-channel-id", 102},         // channel 102
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x05},     // Reference
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x72},   // EchoRef-2
     }
   }) //End CH62
 
@@ -4393,8 +4414,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH91"},	// channel 1 User-Left, Generic Audio, Equipment-Left
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH92"},	// channel 2 User-Right, Generic Audio, Equipment-Right
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH91"},  // channel 1 User-Left, Generic Audio, Equipment-Left
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH92"},  // channel 2 User-Right, Generic Audio, Equipment-Right
     }
   }) //End CL10
 
@@ -4409,8 +4430,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH93"},	// channel 255 User-Single, Generic Audio, Equipment-Combined
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH93"},	// channel 255 User-Single, Generic Audio, Equipment-Combined
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH93"},  // channel 255 User-Single, Generic Audio, Equipment-Combined
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH93"},  // channel 255 User-Single, Generic Audio, Equipment-Combined
     }
   }) //End CL11
 
@@ -4425,8 +4446,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH92"},	// channel 2 User-Right, Generic Audio, Equipment-Right
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH91"},	// channel 1 User-Left, Generic Audio, Equipment-Left
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH92"},  // channel 2 User-Right, Generic Audio, Equipment-Right
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH91"},  // channel 1 User-Left, Generic Audio, Equipment-Left
     }
   }) //End CL12
 
@@ -4441,8 +4462,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH93"},	// channel 255 User-Single, Generic Audio, Equipment-Combined
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH93"},	// channel 255 User-Single, Generic Audio, Equipment-Combined
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH93"},  // channel 255 User-Single, Generic Audio, Equipment-Combined
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH93"},  // channel 255 User-Single, Generic Audio, Equipment-Combined
     }
   }) //End CL13
 
@@ -4457,8 +4478,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH94"},	// channel 1 User-Left, ultrasound, Equipment-Left
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH95"},	// channel 2 User-Right, ultrasound, Equipment-Right
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH94"},  // channel 1 User-Left, ultrasound, Equipment-Left
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH95"},  // channel 2 User-Right, ultrasound, Equipment-Right
     }
   }) //End CL20
 
@@ -4473,8 +4494,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH96"},	// channel 255 User-Single, ultrasound, Equipment-Combined
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH96"},	// channel 255 User-Single, ultrasound, Equipment-Combined
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH96"},  // channel 255 User-Single, ultrasound, Equipment-Combined
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH96"},  // channel 255 User-Single, ultrasound, Equipment-Combined
     }
   }) //End CL21
 
@@ -4489,8 +4510,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH95"},	// channel 2 User-Right, ultrasound, Equipment-Right
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH94"},	// channel 1 User-Left, ultrasound, Equipment-Left
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH95"},  // channel 2 User-Right, ultrasound, Equipment-Right
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH94"},  // channel 1 User-Left, ultrasound, Equipment-Left
     }
   }) //End CL22
 
@@ -4505,8 +4526,8 @@
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CH96"},	// channel 255 User-Single, ultrasound, Equipment-Combined
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CH96"},	// channel 255 User-Single, ultrasound, Equipment-Combined
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CH96"},  // channel 255 User-Single, ultrasound, Equipment-Combined
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CH96"},  // channel 255 User-Single, ultrasound, Equipment-Combined
     }
   }) //End CL23
 
@@ -4515,9 +4536,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 1}, 				// channel 1 (User Left)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x1}, 			// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x2}, 	// Equipment-Left
+      Package(2) {"mipi-sdca-cluster-channel-id", 1},         // channel 1 (User Left)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x1},       // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x2},   // Equipment-Left
     }
   }) //End CH91
 
@@ -4526,9 +4547,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 2}, 				// channel 2 (User Right)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x1}, 			// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x3}, 	// Equipment-Right
+      Package(2) {"mipi-sdca-cluster-channel-id", 2},         // channel 2 (User Right)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x1},       // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x3},   // Equipment-Right
     }
   }) //End CH92
 
@@ -4537,9 +4558,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 255}, 				// channel 255 (User Single)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x1}, 			// Generic Audio
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x47}, 	// Equipment-Combined
+      Package(2) {"mipi-sdca-cluster-channel-id", 255},         // channel 255 (User Single)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x1},       // Generic Audio
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x47},   // Equipment-Combined
     }
   }) //End CH93
 
@@ -4548,9 +4569,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 1},				// channel 1 (User Left)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x6},			// 0x06: ultrasound
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x2},	// 0x02: Equipment-Left
+      Package(2) {"mipi-sdca-cluster-channel-id", 1},        // channel 1 (User Left)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x6},      // 0x06: ultrasound
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x2},  // 0x02: Equipment-Left
     }
   }) //End CH94
 
@@ -4559,9 +4580,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 2},				// channel 2 (User Right)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x6},			// 0x06: ultrasound
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x3},	// 0x03: Equipment-Right
+      Package(2) {"mipi-sdca-cluster-channel-id", 2},        // channel 2 (User Right)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x6},      // 0x06: ultrasound
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x3},  // 0x03: Equipment-Right
     }
   }) //End CH95
 
@@ -4570,39 +4591,39 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 255},				// channel 255 (User Single)
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x6},			// 0x06: ultrasound
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x47},	// 0x47: Equipment-Combined
+      Package(2) {"mipi-sdca-cluster-channel-id", 255},        // channel 255 (User Single)
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x6},      // 0x06: ultrasound
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x47},  // 0x47: Equipment-Combined
     }
   }) //End CH96
 
-  Name(CL41, Package()	// 2T, 2ch, Transducer Priority, LI/LV/RI/RV
+  Name(CL41, Package()  // 2T, 2ch, Transducer Priority, LI/LV/RI/RV
   {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-count", 2},					// 2 channels
+      Package(2) {"mipi-sdca-channel-count", 2},          // 2 channels
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CHA1"},	// channel 1, SV1, T12i
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CHA2"},	// channel 2, SV2, T12i
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CHA1"},  // channel 1, SV1, T12i
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CHA2"},  // channel 2, SV2, T12i
     }
   }) //End CL41
 
-  Name(CL42, Package()	// 2T, 2ch, Variable Priority, LI/RI/LV/RV
+  Name(CL42, Package()  // 2T, 2ch, Variable Priority, LI/RI/LV/RV
   {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-count", 2},					// 2 channels
+      Package(2) {"mipi-sdca-channel-count", 2},          // 2 channels
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),
     Package()
     {
-      Package(2) {"mipi-sdca-channel-1-subproperties", "CHA3"},	// channel 1, SV12i, T1
-      Package(2) {"mipi-sdca-channel-2-subproperties", "CHA4"},	// channel 2, SV12i, T2
+      Package(2) {"mipi-sdca-channel-1-subproperties", "CHA3"},  // channel 1, SV12i, T1
+      Package(2) {"mipi-sdca-channel-2-subproperties", "CHA4"},  // channel 2, SV12i, T2
     }
   }) //End CL42
 
@@ -4611,9 +4632,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 1},				// channel 1
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x09},		// 0x09: SV1
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x5A},	// 0x5A: T12i
+      Package(2) {"mipi-sdca-cluster-channel-id", 1},        // channel 1
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x09},    // 0x09: SV1
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x5A},  // 0x5A: T12i
     }
   }) //End CHA1
 
@@ -4622,9 +4643,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 2},				// channel 2
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x0A},		// 0x0A: SV2
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x5A},	// 0x5A: T12i
+      Package(2) {"mipi-sdca-cluster-channel-id", 2},        // channel 2
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x0A},    // 0x0A: SV2
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x5A},  // 0x5A: T12i
     }
   }) //End CHA2
 
@@ -4633,9 +4654,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 1},				// channel 1
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x10},		// 0x09: SV12i
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x58},	// 0x58: T1
+      Package(2) {"mipi-sdca-cluster-channel-id", 1},        // channel 1
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x10},    // 0x09: SV12i
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x58},  // 0x58: T1
     }
   }) //End CHA3
 
@@ -4644,9 +4665,9 @@
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
     Package()
     {
-      Package(2) {"mipi-sdca-cluster-channel-id", 2},				// channel 2
-      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x10},		// 0x0A: SV12i
-      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x59},	// 0x5A: T2
+      Package(2) {"mipi-sdca-cluster-channel-id", 2},        // channel 2
+      Package(2) {"mipi-sdca-cluster-channel-purpose", 0x10},    // 0x0A: SV12i
+      Package(2) {"mipi-sdca-cluster-channel-relationship", 0x59},  // 0x5A: T2
     }
   }) //End CHA4
 
