@@ -409,6 +409,7 @@ InstallSmbiosType17 (
         if (DramDeviceType == DDR_DTYPE_LPDDR5 || DramDeviceType == DDR_DTYPE_LPDDR5X) {
           switch (ModuleType & DDR_MTYPE_SPD_MASK) {
             case DDR_MTYPE_LPDIMM_LP5:
+            case DDR_MTYPE_CAMM:
               SmbiosTableType17Data.FormFactor = 0x11;
               break;
 
