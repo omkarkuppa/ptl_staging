@@ -85,6 +85,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED FVI_STRINGS                    mPchFviStrings[] = 
 };
 
 GLOBAL_REMOVE_IF_UNREFERENCED INTEL_FIRMWARE_VERSION_INFO    mSaFviData[] = {
+                                                               FVI_VERSION (DEFAULT_FVI_VERSION),   // Reference Code - MRC
                                                                FVI_VERSION (DEFAULT_FVI_VERSION),   // SA CRID Status
                                                                FVI_VERSION (DEFAULT_FVI_VERSION),   // SA CRID origin
                                                                FVI_VERSION (DEFAULT_FVI_VERSION),   // SA CRID new
@@ -95,6 +96,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED INTEL_FIRMWARE_VERSION_INFO    mSaFviData[] = {
                                                                FVI_VERSION (DEFAULT_FVI_VERSION)    // SAM FW version
                                                              };
 GLOBAL_REMOVE_IF_UNREFERENCED FVI_STRINGS                    mSaFviStrings[] = {
+                                                               { MEM_FVI_STRING,         NULL },
                                                                { SA_CRID_STATUS,         SA_CRID_DISABLED },
                                                                { SA_CRID_ORIGINAL_VALUE, NULL },
                                                                { SA_CRID_NEW_VALUE,      NULL },
