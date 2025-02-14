@@ -23,8 +23,8 @@
 #define __IP_IGPU_H__
 
 #include <IpCsi.h>
-#include <IpIGpuConfig.h>
-#include <IpIGpuDefines.h>
+#include "IpIGpuConfig.h"
+#include "IpIGpuDefines.h"
 
 #if !defined (MDEPKG_NDEBUG)
 #define IP_IGPU_PRINT_ALL

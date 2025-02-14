@@ -66,6 +66,7 @@
   gEfiGraphicsInfoHobGuid
   gEfiGraphicsDeviceInfoHobGuid
   gSiMemoryInfoDataGuid               ## CONSUMES
+  gIGpuFlatCcsMemoryResourceHobGuid   ## CONSUMES
 
 [Ppis]
   gSiPreMemPolicyPpiGuid              ## CONSUMES
@@ -74,8 +75,3 @@
   gEfiPeiGraphicsPpiGuid              ## CONSUMES
   gPeiGraphicsFramebufferReadyPpiGuid ## PRODUCES
   gIntelPeiPreMemGraphicsPpiGuid      ## CONSUMES
-
-[BuildOptions]
-  *_*_*_CC_FLAGS = -I $(WORKSPACE)/OneSiliconPkg/CsiIpBlock/IpIGpu/Include
-  *_*_*_CC_FLAGS = -I $(WORKSPACE)/OneSiliconPkg/IpBlock/DomainIGpu/IncludePrivate
-  *_*_*_CC_FLAGS = -I $(WORKSPACE)/OneSiliconPkg/IpBlock/DomainIGpu/Include

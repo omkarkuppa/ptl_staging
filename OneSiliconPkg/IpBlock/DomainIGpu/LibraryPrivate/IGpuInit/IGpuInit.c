@@ -1014,12 +1014,13 @@ IGpuMemoryAllocation (
                         EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
                         EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE;
 
-    BuildResourceDescriptorHob (
-                                ResourceType,      // MemoryType,
-                                ResourceAttribute, // MemoryAttribute
-                                FlatCcsBaseAddr,   // MemoryBegin
-                                FlatCcsSizeInBytes // MemoryLength
-                                );
+    BuildResourceDescriptorWithOwnerHob (
+                                         ResourceType,       // MemoryType,
+                                         ResourceAttribute,  // MemoryAttribute
+                                         FlatCcsBaseAddr,    // MemoryBegin
+                                         FlatCcsSizeInBytes, // MemoryLength
+                                         &gIGpuFlatCcsMemoryResourceHobGuid
+                                         );
 
     BuildMemoryAllocationHob (
                               FlatCcsBaseAddr,
