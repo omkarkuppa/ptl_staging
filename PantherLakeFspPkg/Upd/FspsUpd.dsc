@@ -57,6 +57,8 @@
   # !BSF NAME:{BiosGuardAttr} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{BiosGuardAttr default values}
   gPlatformFspPkgTokenSpaceGuid.BiosGuardAttr               | * | 0x4 | 0xFFFFFFFF
+  # Added reserved space  UnusedUpdSpace0[4]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd0                | * | 0x4 | {0x00}
 
   # !BSF NAME:{BiosGuardModulePtr} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFF)}
   # !BSF HELP:{BiosGuardModulePtr default values}
@@ -103,6 +105,8 @@
   # !BSF NAME:{PCH eSPI NmiEnableCs1 } TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Set this bit to enable eSPI NMI VW events to be processed by the SOC}
   gPlatformFspPkgTokenSpaceGuid.PchEspiNmiEnableCs1  | * | 0x01 | 0x00
+  # Added reserved space  UnusedUpdSpace1
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd1                  | * | 0x1 | 0x00
 
   ## PCH_ESPI_CONFIG End
 
@@ -124,6 +128,8 @@
   # !BSF NAME:{Enable/Disable CrashLog} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable(Default): Enable CPU CrashLog, Disable: Disable CPU CrashLog}
   gPlatformFspPkgTokenSpaceGuid.CpuCrashLogEnable           | * | 0x01 | 0x1
+  # Added reserved space  UnusedUpdSpace2[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd2                 | * | 0x3 | {0x00}
 
   # !BSF NAME:{StreamTracer Mode} TYPE:{Combo}
   # !BSF OPTION:{0: Disable (Default), 524288: Advanced Tracing , 8192: Auto , 3: User input}
@@ -431,6 +437,8 @@
   # !BSF NAME:{Enable/Disable PCIe tunneling for USB4} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable PCIe tunneling for USB4, default is enable}
   gPlatformFspPkgTokenSpaceGuid.ITbtPcieTunnelingForUsb4    | * | 0x01 | 0x01
+  # Added reserved space  UnusedUpdSpace3
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd3                 | * | 0x1 | 0x00
 
   # !BSF NAME:{ITBTForcePowerOn Timeout value} TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
   # !BSF HELP:{ITBTForcePowerOn value. Specified increment values in miliseconds. Range is 0-1000. 100 = 100 ms.}
@@ -449,6 +457,8 @@
   # !BSF NAME:{ITbt Usb4CmMode value} TYPE:{EditNum, HEX, (0x00, 0xFF)}
   # !BSF HELP:{ITbt Usb4CmMode value. 0:Firmware CM, 1:Software CM}
   gPlatformFspPkgTokenSpaceGuid.Usb4CmMode                  | * | 0x01 | 0x01
+  # Added reserved space  UnusedUpdSpace4[5]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd4                 | * | 0x5 | {0x00}
 
   ## PEI_ITBT_CONFIG End
 
@@ -515,6 +525,8 @@
   # !BSF NAME:{Iax Switch} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable. 0: Disable, 1: enable, Enable or disable Iax functionality.}
   gPlatformFspPkgTokenSpaceGuid.IaxEnable                  | * | 0x01 | 0x00
+  # Added reserved space  UnusedUpdSpace5[1]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd5                 | * | 0x1 | 0x00
 
   ## IAX_PEI_CONFIG End
 
@@ -710,6 +722,8 @@
   # !BSF NAME:{Enable PCH ISH I3C pins assigned} TYPE:{EditNum, HEX, (0x0,0xFF)}
   # !BSF HELP:{Set if ISH I3C native pins are to be enabled by BIOS. 0: Disable; 1: Enable.}
   gPlatformFspPkgTokenSpaceGuid.PchIshI3cEnable             | * | 0x02 | { 0x00, 0x00}
+  # Added reserved space   UnusedUpdSpace6[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd6                | * | 0x3 | {0x00}
 
   ## ISH_I3C_CONFIG End
 
@@ -1616,6 +1630,8 @@
   # !BSF NAME:{PCIE RP LTR Override Spec Compliant} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFF)}
   # !BSF HELP:{Override LTR based on Ep capability.}
   gPlatformFspPkgTokenSpaceGuid.PcieRpLtrOverrideSpecCompliant      | * | 0x1C | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
+  # Added reserved space   UnusedUpdSpace7[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd7                 | * | 0x2 | {0x00}
 
   ## PCH_PCIE_CONFIG End
 
@@ -1634,6 +1650,8 @@
   # !BSF NAME:{SPIn Device Mode} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFF)}
   # !BSF HELP:{Selects SPI operation mode. N represents controller index: SPI0, SPI1, ... Available modes: 0:LpssSpiDisabled, 1:LpssSpiPci, 2:LpssSpiHidden}
   gPlatformFspPkgTokenSpaceGuid.SerialIoLpssSpiMode             | * | 0x07 | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
+  # Added reserved space   UnusedUpdSpace8[1]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd8                 | * | 0x1 | 0x00
 
   # !BSF NAME:{LPSS SPI MOSI Pin Muxing} TYPE:{EditNum, HEX, (0,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
@@ -1664,6 +1682,8 @@
   # !BSF NAME:{UARTn Device Mode} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFF)}
   # !BSF HELP:{Selects Uart operation mode. N represents controller index: Uart0, Uart1, ... Available modes: 0:SerialIoUartDisabled, 1:SerialIoUartPci, 2:SerialIoUartHidden, 3:SerialIoUartCom, 4:SerialIoUartSkipInit}
   gPlatformFspPkgTokenSpaceGuid.SerialIoUartMode            | * | 0x07 | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+  # Added reserved space    UnusedUpdSpace9[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd9                | * | 0x3 | {0x00}
 
   # !BSF NAME:{Default BaudRate for each Serial IO UART} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
@@ -1693,6 +1713,8 @@
   # !BSF NAME:{Enables UART hardware flow control, CTS and RTS lines} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFF)}
   # !BSF HELP:{Enables UART hardware flow control, CTS and RTS lines.}
   gPlatformFspPkgTokenSpaceGuid.SerialIoUartAutoFlow        | * | 0x07 | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
+  # Added reserved space    UnusedUpdSpace10[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd10                 | * | 0x2 | {0x00}
 
   # !BSF NAME:{SerialIoUartRtsPinMuxPolicy} TYPE:{EditNum, HEX, (0,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
@@ -1720,6 +1742,8 @@
   # !BSF NAME:{I2Cn Device Mode} TYPE:{EditNum, HEX,  (0x00,0xFFFFFFFFFFFFFFFFFFFF)}
   # !BSF HELP:{Selects I2c operation mode. N represents controller index: I2c0, I2c1, ... Available modes: 0:SerialIoI2cDisabled, 1:SerialIoI2cPci, 2:SerialIoI2cHidden}
   gPlatformFspPkgTokenSpaceGuid.SerialIoI2cMode             | * | 0x08 | { 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
+  # Added reserved space    UnusedUpdSpace11[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd11                 | * | 0x2 | {0x00}
 
   # !BSF NAME:{Serial IO I2C SDA Pin Muxing} TYPE:{EditNum, HEX, (0,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
@@ -1738,6 +1762,8 @@
   # !BSF NAME:{I3C Device Mode} TYPE:{EditNum, HEX,  (0x00,0xFFFFFF)}
   # !BSF HELP:{Selects I3c operation mode. Available modes: 0:SerialIoI3cDisabled, 1:SerialIoI3cPci, 2:SerialIoI3cPhantom (only applicable to I3C1, controlls GPIO enabling)}
   gPlatformFspPkgTokenSpaceGuid.SerialIoI3cMode             | * | 0x03 | {0, 0, 0}
+  # Added reserved space    UnusedUpdSpace12[1]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd12               | * | 0x1 | 0x00
 
   # !BSF NAME:{Serial IO I3C SDA Pin Muxing} TYPE:{EditNum, HEX, (0,0xFFFFFFFFFFFFFFFFFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
@@ -1747,6 +1773,8 @@
   # !BSF NAME:{Serial IO I3C SDA Pad Termination} TYPE:{EditNum, HEX, (0,0xFFFFFF)}
   # !BSF HELP:{0x0: Hardware default, 0x1: None, 0x13: 1kOhm weak pull-up, 0x15: 5kOhm weak pull-up, 0x19: 20kOhm weak pull-up - Enable/disable SerialIo I3C0,I3C1,... pads termination respectively. One byte for each controller, byte0 for I3C0, byte1 for I3C1, and so on.}
   gPlatformFspPkgTokenSpaceGuid.SerialIoI3cSdaPadTermination     | * | 0x3 | { 0, 0, 0 }
+  # Added reserved space    UnusedUpdSpace13[1]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd13                 | * | 0x1 | 0x00
 
   # !BSF NAME:{Serial IO I3C SCL Pin Muxing} TYPE:{EditNum, HEX, (0,0xFFFFFFFFFFFFFFFFFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
@@ -1756,6 +1784,8 @@
   # !BSF NAME:{Serial IO I3C SCL Pad Termination} TYPE:{EditNum, HEX, (0,0xFFFFFF)}
   # !BSF HELP:{0x0: Hardware default, 0x1: None, 0x13: 1kOhm weak pull-up, 0x15: 5kOhm weak pull-up, 0x19: 20kOhm weak pull-up - Enable/disable SerialIo I3C0,I3C1,... pads termination respectively. One byte for each controller, byte0 for I3C0, byte1 for I3C1, and so on.}
   gPlatformFspPkgTokenSpaceGuid.SerialIoI3cSclPadTermination     | * | 0x3 | { 0, 0, 0 }
+  # Added reserved space    UnusedUpdSpace14[1]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd14                 | * | 0x1 | 0x00
 
   # !BSF NAME:{Serial IO I3C SCL FB Pin Muxing} TYPE:{EditNum, HEX, (0,0xFFFFFFFFFFFFFFFFFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
@@ -1791,6 +1821,9 @@
   # !BSF NAME:{Enable D3 Hot in TCSS } TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{This policy will enable/disable D3 hot support in IOM}
   gPlatformFspPkgTokenSpaceGuid.D3HotEnable                 | * | 0x01 | 0x00
+  # Added reserved space    UnusedUpdSpace15[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd15               | * | 0x3 | {0x00}
+
   # !BSF NAME:{TypeC port GPIO setting} TYPE:{EditNum, HEX, (0, 0xFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
   # !BSF HELP:{GPIO Ping number for Type C Aux orientation setting, use the GpioPad that is defined in GpioPinsXXXH.h and GpioPinsXXXLp.h as argument.(XXX is platform name, Ex: Lnl = LunarLake)}
@@ -1819,6 +1852,8 @@
   # !BSF NAME:{Enable/Disable PMC-PD Solution } TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{This policy will enable/disable PMC-PD Solution vs EC-TCPC Solution}
   gPlatformFspPkgTokenSpaceGuid.PmcPdEnable                 | * | 0x01 | 0x01
+  # Added reserved space    UnusedUpdSpace16
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd16               | * | 0x1 | 0x00
 
   # !BSF NAME:{TCSS Aux Orientation Override Enable} TYPE:{EditNum, HEX, (0x0,0x0FFF)}
   # !BSF HELP:{Bits 0, 2, ... 10 control override enables, bits 1, 3, ... 11 control overrides}
@@ -1915,6 +1950,9 @@
   # !BSF NAME:{Touch Host Controller Timestamp timer behavior in D0i2} TYPE:{EditNum, HEX, (0,0xFFFF)}
   # !BSF HELP:{Timestamp timer behavior in D0i2. 1 = Timer resets to 0 when entering D0i2 0 = Timer is paused instead of reset to 0 when entering D0i2}
   gPlatformFspPkgTokenSpaceGuid.TimestampTimerMode         | * | 0x02 | {0x0, 0x0}
+  # Added reserved space    UnusedUpdSpace17[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd17                 | * | 0x2 | {0x00}
+
   # !BSF NAME:{Touch Host Controller Display Frame Sync Period} TYPE:{EditNum, HEX, (0,0xFFFFFFFFFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
   # !BSF HELP:{Period of the emulated display frame sync [ms] The minimum period is 2ms, maximum period is 100ms}
@@ -1933,6 +1971,9 @@
   # !BSF NAME:{Touch Host Controller DYSync} TYPE:{EditNum, HEX, (0,0xFFFF)}
   # !BSF HELP:{Based on this setting GPIO for given THC will be in native mode}
   gPlatformFspPkgTokenSpaceGuid.ThcDsyncPad         | * | 0x02 | {0x0, 0x0}
+  # Added reserved space    UnusedUpdSpace18[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd18                 | * | 0x2 | {0x00}
+
   # !BSF NAME:{Touch Host Controller Hid Over Spi Connection Speed} TYPE:{EditNum, HEX, (0,0xFFFFFFFFFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
   # !BSF HELP:{Hid Over Spi Connection Speed - SPI Frequency}
@@ -1996,6 +2037,9 @@
   # !BSF NAME:{Touch Host Controller Hid Over I2c Addressing Mode} TYPE:{EditNum, HEX, (0,0xFFFF)}
   # !BSF HELP:{Hid Over I2c Addressing Mode - 0x1: The connection uses 10-bit addressing. 0x0: The connection uses 7-bit addressing.}
   gPlatformFspPkgTokenSpaceGuid.ThcHidI2cAddressingMode                | * | 0x2 | {0x0, 0x0}
+  # Added reserved space    UnusedUpdSpace19[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd19                          | * | 0x2 | {0x00}
+
   # !BSF NAME:{Touch Host Controller Hid Over I2c Device Descriptor Address} TYPE:{EditNum, HEX, (0,0xFFFFFFFFFFFFFFFF)}
   # !HDR STRUCT:{UINT32}
   # !BSF HELP:{Hid Over I2c Device Descriptor Address}
@@ -2142,6 +2186,9 @@
 
   gPlatformFspPkgTokenSpaceGuid.PchTsnEnable                | * | 0x04 | {0x01, 0x01, 0x01, 0x01}
 
+  # Added reserved space    UnusedUpdSpace20
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd20               | * | 0x2 | 0x0
+
   # !BSF NAME:{PCH TSN MAC Address High Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
   # !BSF HELP:{Set TSN MAC Address High.}
   gPlatformFspPkgTokenSpaceGuid.PchTsn1MacAddressHigh       | * | 0x04 | 0x00000000
@@ -2225,6 +2272,8 @@
   # !BSF NAME:{Enable xHCI LTR override} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables override of recommended LTR values for xHCI}
   gPlatformFspPkgTokenSpaceGuid.PchUsbLtrOverrideEnable         | * | 0x01 | 0x00
+  # Added reserved space    UnusedUpdSpace21[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd21                   | * | 0x3 | {0x00}
 
   # !BSF NAME:{xHCI High Idle Time LTR override} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Value used for overriding LTR recommendation for xHCI High Idle Time LTR setting}
@@ -2417,6 +2466,8 @@
   # !BSF NAME:{Change Default SSID} TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
   # !BSF HELP:{Change the default SSID used in FSP to programming internal devices. This is only valid when SkipSsidProgramming is FALSE.}
   gPlatformFspPkgTokenSpaceGuid.SiCustomizedSsid    | * | 0x02 | 0x0000
+  # Added reserved space    UnusedUpdSpace22[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd22               | * | 0x2 | {0x00}
 
   #
   # typedef struct {
@@ -2468,6 +2519,8 @@
   # !BSF NAME:{SiPostMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for SI Post-Mem}
   gPlatformFspPkgTokenSpaceGuid.SiPostMemRsvd               | * | 0x06 | {0x00}
+  # Added reserved space    UnusedUpdSpace23[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd23               | * | 0x3 | {0x00}
 
   #
   # SI Post-Mem Block End
@@ -2485,6 +2538,8 @@
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
   # !BSF HELP:{Address of LogoPixelWidth}
   gPlatformFspPkgTokenSpaceGuid.LogoPixelWidth              | * | 0x04 | 0x00000000
+  # Added reserved space    UnusedUpdSpace24[4]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd24               | * | 0x4 | {0x00}
 
   # !BSF NAME:{Blt Buffer Address}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
@@ -2533,6 +2588,8 @@
   # !BSF NAME:{Enable/Disable IGFX Media Standby} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable(Default): Enable IGFX Media Standby, Disable: Disable IGFX MediaStandby}
   gPlatformFspPkgTokenSpaceGuid.MediaStandby               | * | 0x01 | 0x1
+  # Added reserved space    UnusedUpdSpace25[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd25              | * | 0x3 | {0x00}
 
   # !BSF NAME:{Intel Graphics VBT (Video BIOS Table) Size}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
@@ -2543,6 +2600,8 @@
   # !BSF OPTION:{0: LidClosed, 1: LidOpen}
   # !BSF HELP:{LFP Display Lid Status (LID_STATUS enum): 0 (Default): LidClosed, 1: LidOpen.}
   gPlatformFspPkgTokenSpaceGuid.LidStatus                   | * | 0x01 | 0x0
+  # Added reserved space    UnusedUpdSpace26[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd26               | * | 0x3 | {0x00}
 
   # !BSF NAME:{HorizontalResolution for PEI Logo}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
@@ -2637,6 +2696,8 @@
   # !BSF NAME:{Mask to enable the platform configuration of external Vnn VR rail} TYPE:{EditNum, HEX, (0x00,0x0F)}
   # !BSF HELP:{External Vnn Rail Supported Configuration}
   gPlatformFspPkgTokenSpaceGuid.PchFivrExtVnnRailSupportedVoltageStates  | * | 0x1 | 0x0
+  # Added reserved space    UnusedUpdSpace27
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd27                       | * | 0x1 | 0x00
 
   # !BSF NAME:{External Vnn Voltage Value that will be used in S0ix/Sx states} TYPE:{EditNum, HEX, (0x0,0x07FF)}
   # !BSF HELP:{Value is given in 2.5mV increments (0=0mV, 1=2.5mV, 2=5mV...), Default is set to 420}}
@@ -2677,6 +2738,8 @@
   # !BSF NAME:{FIVR Dynamic Power Management} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable FIVR Dynamic Power Management.}
   gPlatformFspPkgTokenSpaceGuid.PchFivrDynPm                            | * | 0x01 | 0x01
+  # Added reserved space    UnusedUpdSpace28
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd28                           | * | 0x1 | 0x00
 
   # !BSF NAME:{External V1P05 Icc Max Value} TYPE:{EditNum, HEX, (0x0,0x1F4)}
   # !BSF HELP:{Granularity of this setting is 1mA and maximal possible value is 500mA}
@@ -2765,6 +2828,8 @@
   # !BSF NAME:{CNVi BT Audio Offload} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable BT Audio Offload, Default is ENABLE. 0: DISABLE, 1: ENABLE}
   gPlatformFspPkgTokenSpaceGuid.CnviBtAudioOffload          | * | 0x01 | 0x01
+  # Added reserved space    UnusedUpdSpace29[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd29               | * | 0x3 | {0x00}
 
   # !BSF NAME:{CNVi RF_RESET pin muxing} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select CNVi RF_RESET# pin depending on board routing. LP/P/M: GPP_A8 = 0x2942E408(default) or GPP_F4 = 0x194CE404. H/S: 0. Refer to GPIO_*_MUXING_CNVI_RF_RESET_* in GpioPins*.h.}
@@ -2801,6 +2866,8 @@
   # !BSF NAME:{PCH HDA Verb Table Entry Number} TYPE:{EditNum, HEX, (0x0,0xFF)}
   # !BSF HELP:{Number of Entries in Verb Table.}
   gPlatformFspPkgTokenSpaceGuid.PchHdaVerbTableEntryNum     | * | 1 | 0
+  # Added reserved space    UnusedUpdSpace30[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd30               | * | 0x3 | {0x00}
 
   # !BSF NAME:{PCH HDA Verb Table Pointer} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
   # !BSF HELP:{Pointer to Array of pointers to Verb Table.}
@@ -2849,6 +2916,8 @@
   # !BSF NAME:{HD Audio Microphone Privacy applied for Dmic in HW Mode} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{HD Audio Microphone Privacy applied for Dmic in HW Mode: 0: Disable, 1: Enable}
   gPlatformFspPkgTokenSpaceGuid.PchHdaMicPrivacyHwModeDmic    | * | 0x01 | 0x00
+  # Added reserved space    UnusedUpdSpace31
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd31                 | * | 0x1 | 0x00
 
   # !BSF NAME:{HD Audio Microphone Privacy Timeout. Indicates the time-out duration to wait before forcing the actual microphone privacy DMA data zeroing.} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
   # !BSF HELP:{HD Audio Microphone Privacy Timeout. Indicates the time-out duration to wait before forcing the actual microphone privacy DMA data zeroing.}
@@ -2856,6 +2925,8 @@
 
   # Reserved for alignment checking and it can be used when new item is added.
   gPlatformFspPkgTokenSpaceGuid.PchHdaRsvd    | * | 0x05 | { 0x00, 0x00, 0x00, 000 }
+  # Added reserved space    UnusedUpdSpace32[3]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd32               | * | 0x3 | {0x00}
 
   ## HDAUDIO_CONFIG End
 
@@ -2868,6 +2939,8 @@
   # !BSF NAME:{Length of ChipsetInit Binary} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{ChipsetInit Binary Length.}
   gPlatformFspPkgTokenSpaceGuid.ChipsetInitBinLen           | * | 0x04 | 0x00000000
+  # Added reserved space    UnusedUpdSpace33[4]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd33               | * | 0x4 | {0x00}
 
   # !BSF NAME:{Pointer to NPHY Binary} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Nphy Binary Pointer.}
@@ -2876,6 +2949,8 @@
   # !BSF NAME:{Length of NPHY Binary} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Nphy Binary Length.}
   gPlatformFspPkgTokenSpaceGuid.NphyBinLen                  | * | 0x04 | 0x00000000
+  # Added reserved space    UnusedUpdSpace34[4]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd34               | * | 0x4 | {0x00}
 
   # !BSF NAME:{Pointer to SYNPS PHY Binary} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{Synps Binary Pointer.}
@@ -2894,11 +2969,14 @@
   # !BSF NAME:{PMC WDT enable} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/disable PMC WDT configuration}
   gPlatformFspPkgTokenSpaceGuid.PmcWdtTimerEn               | * | 0x1  | 0x01
+  # Added reserved space    UnusedUpdSpace35
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd35               | * | 0x1 | 0x00
 
   # !HDR EMBED:{FSP_S_CONFIG:FspsConfig:END}
   gPlatformFspPkgTokenSpaceGuid.ReservedFspsUpd             | * | 0x1 | 0x00
 
-
+  # Added reserved space  UnusedUpdSpace[6]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd36               | * | 0x06 | {0x00}
 
   # Note please keep "UpdTerminator" at the end of each UPD region.
   # The tool will use this field to determine the actual end of the UPD data
