@@ -21,6 +21,7 @@
 
 #include "I2cSensorLSM6DSOX.h"
 #include "I2cSensorPei.h"
+#include "I2cGopConfig.h"
 
 /**
   Function Call to execute the Sensor confirguration using I2C interface.
@@ -36,8 +37,17 @@ ReadLsm6dsoxOrientation (
 {
   UINT8        Data;
   EFI_STATUS   Status;
+  EFI_HOB_GUID_TYPE              *GuidHob;
+  GOP_CONFIG_DRIVER_HOB  *GopConfigDriverHob;
 
   DEBUG ((DEBUG_INFO, "Reading orientation from LSM6DSOX Sensor\n"));
+
+  GuidHob = GetFirstGuidHob (&gGopConfigDriverHobGuid);
+  if (GuidHob != NULL) {
+    GopConfigDriverHob = (GOP_CONFIG_DRIVER_HOB *) GET_GUID_HOB_DATA (GuidHob);
+  }else{
+    return EFI_NOT_FOUND;
+  }
 
   Status = ReadSensorData (R_LSM6DSL_WHO_AM_I, &Data, 1);
   if (EFI_ERROR (Status)) {
@@ -108,10 +118,10 @@ ReadLsm6dsoxOrientation (
   }
   DEBUG ((DEBUG_INFO, "R_LSM6DSL_D6D_SRC = 0x%x\n", Data));
   if ((Data & B_LSM6DSL_D6D_SRC_XL) || (Data & B_LSM6DSL_D6D_SRC_XH)) {
-    PcdSetBoolS (PcdI2cSensorDisplayRotationOn, TRUE);   // Landscape
+    GopConfigDriverHob->SoftwareId = V_LANDSCAPE;
   }
   else {
-    PcdSetBoolS (PcdI2cSensorDisplayRotationOn, FALSE);  // Portrait
+    GopConfigDriverHob->SoftwareId = V_PORTRAIT;
   }
 
   return EFI_SUCCESS;

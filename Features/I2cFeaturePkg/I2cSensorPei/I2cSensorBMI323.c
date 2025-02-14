@@ -21,7 +21,7 @@
 
 #include "I2cSensorBMI323.h"
 #include "I2cSensorPei.h"
-
+#include "I2cGopConfig.h"
 /**
   Function Call to read device orientation from BMI323 orientation sensor using I2C interface.
 
@@ -34,22 +34,38 @@ ReadBmi323Orientation (
   VOID
   )
 {
-  UINT8       Data[2];
+  UINT8       Data[4];
   UINT16      Value;
   UINT32      Ctr = 0;
   UINT8       Orientation;
   EFI_STATUS  Status;
+  EFI_HOB_GUID_TYPE              *GuidHob;
+  GOP_CONFIG_DRIVER_HOB  *GopConfigDriverHob;
+
+  DEBUG ((DEBUG_INFO, "Reading orientation from Bmi323 Sensor\n"));
+  
+  GuidHob = GetFirstGuidHob (&gGopConfigDriverHobGuid);
+  if (GuidHob != NULL) {
+    GopConfigDriverHob = (GOP_CONFIG_DRIVER_HOB *) GET_GUID_HOB_DATA (GuidHob);
+  }else{
+    return EFI_NOT_FOUND;
+  }
 
   DEBUG ((DEBUG_INFO, "Reading orientation from Bmi323 Sensor\n"));
 
   ZeroMem (Data, sizeof (Data));
+
+  // Reset sensor
+  WriteSensor16 (R_BMI323_CFG_RES, V_BMI323_CMD_SOFT_REST);
+  MicroSecondDelay (5000);
+
   // Read sensor chip id
-  Status = ReadSensorData (R_BMI323_CHIP_ID, &Data[0], 2);
+  Status = ReadSensorData (R_BMI323_CHIP_ID, &Data[0], 4);
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Value = (Data[1] << 8) | Data[0];
+  Value =  Data[2];
   DEBUG ((DEBUG_INFO, "Value of R_BMI323_CHIP_ID:%x\n", Value));
 
   if (Value != V_BMI323_ID) {
@@ -58,8 +74,9 @@ ReadBmi323Orientation (
   }
 
   // Read device status
-  ReadSensorData (R_BMI323_DEVICE_STATUS, &Data[0], 2);
-  Value = (Data[1] << 8) | Data[0];
+  ZeroMem (Data, sizeof (Data));
+  ReadSensorData (R_BMI323_DEVICE_STATUS, &Data[0], 4);
+  Value = (Data[3] << 8) | Data[2];
   DEBUG ((DEBUG_INFO, "Value of R_BMI323_DEVICE_STATUS:%x\n", Value));
 
   if ((Value & 0x1) != V_BMI323_DEVICE_POWER_OK) {
@@ -68,8 +85,9 @@ ReadBmi323Orientation (
   }
 
   // Read Sensor status
-  ReadSensorData (R_BMI323_SENSOR_STATUS, &Data[0], 2);
-  Value = (Data[1] << 8) | Data[0];
+  ZeroMem (Data, sizeof (Data));
+  ReadSensorData (R_BMI323_SENSOR_STATUS, &Data[0], 4);
+  Value = (Data[3] << 8) | Data[2];
   DEBUG ((DEBUG_INFO, "Value of R_BMI323_SENSOR_STATUS:%x\n", Value));
 
   if ((Value & 0x1) != V_BMI323_SENSOR_INIT_OK) {
@@ -84,32 +102,77 @@ ReadBmi323Orientation (
 
   //wait for feature engine to init
   while (TRUE) {
-    ReadSensorData (R_BMI323_FEATURE_IO1, &Data[0], 2);
-    if ((Data[0] & 0xF) == V_BMI323_FEATURE_ENGINE_INITIALZED) {
+    ReadSensorData (R_BMI323_FEATURE_IO1, &Data[0], 4);
+    if ((Data[2] & 0xF) == V_BMI323_FEATURE_ENGINE_INITIALZED) {
       break;
     }
     if (Ctr > V_TIMEOUT) {
-      DEBUG ((DEBUG_ERROR, "BMI323 Feature engine initialzation error.\n"));
+      DEBUG ((DEBUG_ERROR, "BMI323 Feature engine initialization error.\n"));
       return EFI_DEVICE_ERROR;
     }
     MicroSecondDelay (5000);
     Ctr ++;
   }
 
-  WriteSensor16 (R_BMI323_ORIENT_1, V_BMI323_ORIENT1_SYMMETRICAL); // Symmetrical spread of area for portrait and landscape orientation
+  //Acc config
+  WriteSensor16 (R_BMI323_ACC_CONF, V_BMI323_ACC_NOR_MODE); // Config accelerometer with normal mode parameters
+  ReadSensorData (R_BMI323_ACC_CONF, &Data[0], 4);
+  Value = (Data[3] << 8) | Data[2];
+  DEBUG ((DEBUG_INFO, "Acc config:%x\n", Value));
+  //gyro config
+  WriteSensor16 (R_BMI323_GYR_CONF, V_BMI323_GYR_NOR_MODE); // Config gyroscope with normal mode parameters
+  ReadSensorData (R_BMI323_GYR_CONF, &Data[0], 4);
+  Value = (Data[3] << 8) | Data[2];
+  DEBUG ((DEBUG_INFO, "Gyro config:%x\n", Value));
+  //Orientation config
+  WriteSensor16 (R_BMI323_FEATURE_DATA_ADDR, R_BMI323_ORIENT_1);
+  WriteSensor16 (R_BMI323_FEATURE_DATA_TX, V_BMI323_ORIENT1_SYMMETRICAL); // Symmetrical spread of area for portrait and landscape orientation
+  WriteSensor16 (R_BMI323_FEATURE_DATA_ADDR, R_BMI323_ORIENT_1);
+  ReadSensorData (R_BMI323_FEATURE_DATA_TX, &Data[0], 4);
+  Value = (Data[3] << 8) | Data[2];
+  DEBUG ((DEBUG_INFO, "ORIENT_1 config:%x\n", Value));
+  
+  //Orientation Feature enable
+  ReadSensorData (R_BMI323_FEATURE_IO0, &Data[0], 4);
+  Value = (Data[3] << 8) | Data[2];
+  WriteSensor16 (R_BMI323_FEATURE_IO0, 0); // Clear register before setting
+  WriteSensor16 (R_BMI323_FEATURE_IO0, Value | V_BMI323_FEATURE_ORIENT_EN); // Enable orientation detection
+  WriteSensor16 (R_BMI323_FEATURE_IO_STATUS, V_BMI323_FEATURE_IO_STATUS_WRITE);
+  ReadSensorData (R_BMI323_FEATURE_IO0, &Data[0], 4);
+  Value = (Data[3] << 8) | Data[2];
+  DEBUG ((DEBUG_INFO, "Feature_io0:%x\n", Value));
 
-  Status = ReadSensorData (R_BMI323_FEATURE_EVENT_EXT, &Data[0], 2); // Read orientaion
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-  Orientation = Data[0] & 0x3;
-
-  if (Orientation == V_BMI323_PORTRAIT_UPRIGHT || Orientation == V_BMI323_PORTRAIT_UPSIDE_DOWN) {
-    PcdSetBoolS (PcdI2cSensorDisplayRotationOn, FALSE);  // Portrait
-  }
-  else {
-    PcdSetBoolS (PcdI2cSensorDisplayRotationOn, TRUE);   // Landscape
-  }
+  //Set Int1 for Orientation
+  WriteSensor16 (R_BMI323_INT_MAP1, V_BMI323_INT_MAP1_ORIENT_OUT);
+  Ctr = 0;
+  do {
+    ReadSensorData (R_BMI323_INT_STATUS_INT1, &Data[0], 4);
+    Value = (Data[3] << 8) | Data[2];
+    DEBUG ((DEBUG_INFO, "INT1:%x\n", Value));
+    if (Value != 0) {
+      Status = ReadSensorData (R_BMI323_FEATURE_EVENT_EXT, &Data[0], 4); // Read orientation
+      if (EFI_ERROR (Status)) {
+        return Status;
+      }
+      Orientation = Data[2] & V_BMI323_LANDSCAPE_RIGHT;
+      DEBUG ((DEBUG_INFO, "Orientation:%x\n", Orientation));
+      if (Orientation == V_BMI323_PORTRAIT_UPRIGHT || Orientation == V_BMI323_PORTRAIT_UPSIDE_DOWN) {
+        //Pass Software Id to GOP
+        GopConfigDriverHob->SoftwareId = V_PORTRAIT;
+      }
+      else {
+        //Pass Software Id to GOP
+        GopConfigDriverHob->SoftwareId = V_LANDSCAPE;
+      }
+      break;
+    }
+    if (Ctr > V_TIMEOUT) {
+      DEBUG ((DEBUG_ERROR, "BMI323 does not got orientation data from sensor.\n"));
+      return EFI_DEVICE_ERROR;
+    }
+    MicroSecondDelay (200000);
+    Ctr ++;
+  } while (TRUE);
 
   return EFI_SUCCESS;
 }

@@ -656,13 +656,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdPlnDelayEnableGpio|0x0|UINT32|0x00000280
   gBoardModuleTokenSpaceGuid.PcdPlnDelaySelectionGpio|0x0|UINT32|0x00000281
 
-  #
-  # Display Posture Based on I2C Sensor
-  #
-  gBoardModuleTokenSpaceGuid.PcdDisplayRotationOn|FALSE|BOOLEAN|0x00000291
-  gBoardModuleTokenSpaceGuid.PcdOrientationSensorBusNumber|0x3|UINT8|0x0000292
-  gBoardModuleTokenSpaceGuid.PcdOrientationSensorAddress|0x6B|UINT8|0x00000293
-
   # DashG
   gBoardModuleTokenSpaceGuid.PcdDashGEnable|FALSE|BOOLEAN|0x00000282
 

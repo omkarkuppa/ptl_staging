@@ -52,14 +52,14 @@
   IoLib
   TimerLib
   PcdLib
-
+[Guids]
+  gGopConfigDriverHobGuid
 [Ppis]
   gSensorI2cPpiGuid         ## PRODUCES
 
 [Pcd]
   gI2cFeaturePkgTokenSpaceGuid.PcdOrientationI2cSensorBusNumber
   gI2cFeaturePkgTokenSpaceGuid.PcdOrientationI2cSensorAddress
-  gI2cFeaturePkgTokenSpaceGuid.PcdI2cSensorDisplayRotationOn                    ## PRODUCES
-
+  
 [Depex]
   TRUE

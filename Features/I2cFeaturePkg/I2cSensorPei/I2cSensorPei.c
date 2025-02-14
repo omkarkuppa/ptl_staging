@@ -120,8 +120,8 @@ WriteSensor16 (
   DEBUG((DEBUG_INFO, "WriteSensor16 ()\n"));
 
   WriBuf[0] = Address;
-  WriBuf[1] = (UINT8)(Value >> 8);
-  WriBuf[2] = (UINT8)(Value & 0xFF);
+  WriBuf[1] = (UINT8)(Value & 0xFF);
+  WriBuf[2] = (UINT8)(Value >> 8);
   I2cNumber = PcdGet8 (PcdOrientationI2cSensorBusNumber);
 
   Status = SerialIoI2cWrite (
