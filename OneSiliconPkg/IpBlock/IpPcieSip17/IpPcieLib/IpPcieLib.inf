@@ -41,8 +41,3 @@
   IpPcie.c
   IpPcieSipInitLib.c
   IpPcieSipEqLib.c
-
-[BuildOptions]
-  *_*_*_CC_FLAGS = -I $(WORKSPACE)/OneSiliconPkg/IpBlock/IpPcieSip17/Include
-  *_*_*_CC_FLAGS = -I $(WORKSPACE)/OneSiliconPkg/IpBlock/IpPcieSip17/Register
-  *_*_*_CC_FLAGS = -I $(WORKSPACE)/OneSiliconPkg/IncludePrivate/Library

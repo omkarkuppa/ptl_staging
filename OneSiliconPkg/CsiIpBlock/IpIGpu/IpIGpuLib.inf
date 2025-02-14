@@ -42,12 +42,11 @@
   IpIGpuDisplayLib/IpIGpuDisplayLib.c
   IpIGpuMediaLib/IpIGpuMediaLib.c
   IpIGpuGtLib/IpIGpuGtLib.c
+  Include/IpIGpu.h
+  Include/IpIGpuConfig.h
+  Include/IpIGpuDefines.h
   Register/Common/IGpuCfg.h
   Register/Common/IGpuDisplayRegs.h
   Register/Common/IGpuDisplayMem.h
   Register/Common/IGpuMediaRegs.h
   Register/Common/IpIGpuGtReg.h
-
-[BuildOptions]
-  *_*_*_CC_FLAGS = -I $(WORKSPACE)/OneSiliconPkg/CsiIpBlock/IpIGpu/Include
-  *_*_*_CC_FLAGS = -I $(WORKSPACE)/OneSiliconPkg/CsiIpBlock/IpIGpu/Register/Common

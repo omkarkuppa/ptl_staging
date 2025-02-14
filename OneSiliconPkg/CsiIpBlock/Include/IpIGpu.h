@@ -22,6 +22,6 @@
 #ifndef IP_IGPU_GEN_H_
 #define IP_IGPU_GEN_H_
 
-#include "../IpIGpu/Include/IpIGpu.h"
+#include "IpIGpu/Include/IpIGpu.h"
 
 #endif
