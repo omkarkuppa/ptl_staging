@@ -442,7 +442,7 @@ gStructPcdTokenSpaceGuid.PcdDebugConfigData.RamDebugInterface|0x0               
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialDebug|0x3                                        # Serial Debug Messages
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialDebugBaudRate|0x7                                # Serial Debug Message Baud Rate
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialDebugMrcLevel|0x3                                # MRC Serial Debug Messages
-gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialIoDebugInterface|0x1                             # Serial IO UART
+gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialIoDebugInterface|0x0                             # Serial IO UART
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialIoUartDebugBaudRate|0x1c200                      # Baud Rate
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialIoUartDebugControllerNumber|0x0                  # Controller Number
 gStructPcdTokenSpaceGuid.PcdDebugConfigData.SerialIoUartDebugDataBits|0x8                          # Word Length
