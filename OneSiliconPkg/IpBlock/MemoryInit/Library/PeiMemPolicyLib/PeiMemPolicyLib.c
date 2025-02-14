@@ -204,7 +204,7 @@ MrcPrintPolicyPpiPreMem (
 
   DEBUG((DEBUG_INFO, "------------------------ MEMORY_CONFIG_NO_CRC -----------------\n"));
   DEBUG((DEBUG_INFO, " CleanMemory: %d\n MemTestOnWarmBoot: %d\n", MemConfigNoCrc->CleanMemory, MemConfigNoCrc->MemTestOnWarmBoot));
-  DEBUG((DEBUG_INFO, " SerialDebugLevel: %d\n PlatformMemorySize: 0x%" PRIXMAX "\n", MemConfigNoCrc->SerialDebugLevel, MemConfigNoCrc->PlatformMemorySize));
+  DEBUG((DEBUG_INFO, " SerialDebugLevel: %d\n PlatformMemorySize: 0x%lx\n", MemConfigNoCrc->SerialDebugLevel, MemConfigNoCrc->PlatformMemorySize));
   DEBUG((DEBUG_INFO, " SpdAddressTable[%d] :", MEM_CFG_MAX_SOCKETS));
   for (Index = 0; Index < MEM_CFG_MAX_SOCKETS; Index++) {
     DEBUG ((DEBUG_INFO, " 0x%x", MemConfigNoCrc->SpdAddressTable[Index]));
