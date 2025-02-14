@@ -591,16 +591,4 @@ IpPcieSetDtrStat (
   IP_PCIE_DTR_STAT  Stat
   );
 
-/**
-  DTR train from Gen4 to Gen5
-
-  @param[in] pInst               *pInst
-
-  @retval  IpCsiStsSuccess        The function completes successfully
-  @retval  IpCsiStsErrorNullPtr   pInst was NULL
-**/
-IP_CSI_STATUS
-IpPcieDtrGen4ToGen5 (
-  IP_PCIE_INST   *pInst
-  );
 #endif

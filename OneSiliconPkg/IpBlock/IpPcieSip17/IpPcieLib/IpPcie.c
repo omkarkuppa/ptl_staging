@@ -26,8 +26,6 @@
 #include <IpPcieVersion.h>
 #include <IpPcieDefines.h>
 #include "IpPcieSipInitLib.h"
-#include <Register/PmcRegs.h>
-#include <Library/IoLib.h>
 
 #define DISABLE_TIMEOUT      5000
 
@@ -871,19 +869,6 @@ IpPcieRpSpeedChange (
   PRINT_LEVEL1 ("%s Start (%d) \n", __FUNCTION__, pInst->RpIndex);
   PRINT_LEVEL1 ("MaxLinkSpeed = %d \n", MaxLinkSpeed);
 
-  if (pInst->PcieRpCommonConfig.EnableDtr) {
-    if (IpPcieGetDtrStat(pInst) == IpPcieDtrReady) {
-      if (MaxLinkSpeed == IpPcieGen5) {
-        PRINT_LEVEL1 ("DTR Ready: Port %d both RP and EP have Gen5 cap\n", pInst->RpIndex);
-        PRINT_LEVEL1 ("DTR Ready: Port %d MLS set to Gen4 first \n",pInst->RpIndex);
-        MaxLinkSpeed = IpPcieGen4;
-      } else {
-        PRINT_LEVEL1 ("DTR Not Need: Port %d either RP or EP has no Gen5 cap\n", pInst->RpIndex);
-        IpPcieSetDtrStat(pInst, IpPcieDtrNotNeed);
-      }
-    }
-  }
-
   /// PCH BIOS Spec Section 8.15 Additional PCI Express* Programming Steps
   /// Set "Link Speed Training Policy", Dxx:Fn + D4h[6] to 1.
   /// Make sure this is after mod-PHY related programming is completed.
@@ -1215,13 +1200,6 @@ IpPcieRpSpeedChange (
             pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
         }
       }
-    }
-  }
-
-  if (pInst->PcieRpCommonConfig.EnableDtr) {
-    //if DTR stat is still Ready, now it's the case that MLS is Gen5 and Gen4 has been train successully
-    if (IpPcieGetDtrStat (pInst) == IpPcieDtrReady) {
-      IpPcieDtrGen4ToGen5 (pInst);
     }
   }
 
@@ -2246,212 +2224,5 @@ IpPcieSetDtrStat (
   temp = (Stat << 1) & 0x6;
   Spr.Bits.scb |= temp;
   IpWrRegWrite (pInst->RegCntxt_Cfg_Sb, SPR_PCIE_CFG_REG, Spr.Data, IpWrRegFlagSize8Bits);
-  return IpCsiStsSuccess;
-}
-
-
-/**
-  DTR train
-
-  @param[in] pInst               *pInst
-
-  @retval  IpCsiStsSuccess        The function completes successfully
-  @retval  IpCsiStsErrorNullPtr   pInst was NULL
-**/
-IP_CSI_STATUS
-IpPcieDtrGen4ToGen5 (
-  IP_PCIE_INST  *pInst
-  )
-{
-  UINT32 MinTemp;
-  UINT32 DtrHiVal;
-
-  UINT32                            TimeoutCount;
-  LCTL_PCIE_CFG_STRUCT              Lctl;
-  LCTL2_PCIE_CFG_STRUCT             Lctl2;
-  LSTS_PCIE_CFG_STRUCT              Lsts;
-  PCIESTS1_PCIE_CFG_STRUCT          Pciests1;
-  PX32EQCFG1_PCIE_MEM_RCRB_STRUCT   Px32EqCfg1;
-  UINT32                            LtssmState;
-  G5STS_PCIE_CFG_STRUCT             G5sts;
-  UINT16                            Tls;
-  UINT16                            Cls;
-  BOOLEAN                           TempHigerThanDtrHiVal;
-  BOOLEAN                           TempValid;
-  UINT32                            TssCount;
-  UINTN                             TSSAddr;
-  UINT32                            PwrmBase;
-
-  LtssmState = 0x33; //  LTSSMSTATE L0
-  PwrmBase = 0xFE000000; // PMC MBAR MMIO base address
-
-  if (pInst == NULL) {
-    PRINT_ERROR_NO_CNTXT ("ERROR: %s: Invalid pInst\n", __FUNCTION__);
-    return 0;
-  }
-
-  PRINT_LEVEL1 ("%s Start at RootPort %d\n", __FUNCTION__, pInst->RpIndex);
-
-  // Check Min temp valid or not
-  TempValid = FALSE;
-  for(TssCount = 0; TssCount < 8; TssCount++) {
-    TSSAddr = PwrmBase + R_PMC_PWRM_TSS0 + TssCount * 4;
-    if (MmioRead32(TSSAddr) & B_PMC_PWRM_TSS0_TSRV) {
-      TempValid = TRUE;
-      break;
-    }
-  }
-
-  if (!TempValid){
-    PRINT_LEVEL1 ("DTR: Temperature is not valid \n");
-    return 0;
-  }
-
-  // Read MinTemp;
-  MinTemp = MmioRead32 (PwrmBase + R_PMC_PWRM_MIN_TEMP) & B_PMC_PWRM_MIN_TEMP_MIN_TEMP;
-
-  // Read DTRHIVAL
-  DtrHiVal = MmioRead32 (PwrmBase + R_PMC_PWRM_TSDTR_THRESH) & B_PMC_PWRM_TSDTR_THRESH_DTRHIVAL;
-
-  PRINT_LEVEL1 ("DTR: MinTemp = 0x%x, DtrHiVal = 0x%x\n", MinTemp, DtrHiVal);
-
-  TempHigerThanDtrHiVal = FALSE;
-
-  // MinTemp is negative and DtrHiVal is negative
-  if ((MinTemp & 0x100) && (DtrHiVal & 0x100)) {
-    if (MinTemp > DtrHiVal) {
-      TempHigerThanDtrHiVal = TRUE;
-    }
-  }
-  // MinTemp is positive and DtrHiVal is positive
-  if (!(MinTemp & 0x100) && !(DtrHiVal & 0x100)) {
-    if (MinTemp > DtrHiVal) {
-      TempHigerThanDtrHiVal = TRUE;
-    }
-  }
-
-  // MinTemp is positive and DtrHiVal is negative
-  if (!(MinTemp & 0x100) && (DtrHiVal & 0x100)) {
-    TempHigerThanDtrHiVal = TRUE;
-  }
-
-  PRINT_LEVEL1 ("DTR: TempHigerThanDtrHiVal = %d\n", TempHigerThanDtrHiVal);
-
-  if (!TempHigerThanDtrHiVal) {
-    PRINT_LEVEL1 ("DTR: Temperature too low in BIOS phase for Gen5 train at RootPort %d\n", pInst->RpIndex);
-    return 0;
-  } else {
-    PRINT_LEVEL1 ("DTR: Temperature is fine in BIOS phase for Gen5 train at RootPort %d\n", pInst->RpIndex);
-    Lctl2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-    Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-    Tls = Lctl2.Bits.tls;
-    Cls = Lsts.Bits.cls;
-    PRINT_LEVEL1 ("DTR: CurrentLinkSpeed is %d at RootPort %d\n", Cls, pInst->RpIndex);
-
-    //
-    // Set TLS to Gen5
-    //
-    Lctl2.Bits.tls = IpPcieGen5;
-    IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, Lctl2.Data, IpWrRegFlagSize16Bits);
-    //
-    // Retrain link
-    //
-    Lctl.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-    Lctl.Bits.rl = 1;
-    IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, Lctl.Data, IpWrRegFlagSize16Bits);
-
-    pInst->PrivateConfig.LinkRetrainInProgress = TRUE;
-
-    //
-    // 150 ms timeout while checking for link active on retrained link
-    //
-    for (TimeoutCount = 0; (pInst->PrivateConfig.LinkRetrainInProgress && (TimeoutCount < 600)); TimeoutCount++) {
-      //
-      // Delay 100 us
-      //
-      IpWrDelayUs (pInst->TimeCntxt, 100);
-      //
-      // Check for remaining root port which was link retrained
-      //
-      if (pInst->PrivateConfig.LinkRetrainInProgress) {
-
-        Lctl2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-        Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-        Tls = Lctl2.Bits.tls;
-        Cls = Lsts.Bits.cls;
-        //
-        // Program Link Status register 0x0052
-        // If the link is active, clear the bitmap
-        //
-        Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-        Pciests1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, PCIESTS1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-        if ((Lsts.Bits.la) && (Cls == Tls) && (Pciests1.Bits.ltsmstate == LtssmState)) {
-          G5sts.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, G5STS_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-          Px32EqCfg1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Mem_Rcrb, PX32EQCFG1_PCIE_MEM_RCRB_REG, IpWrRegFlagSize32Bits);
-          if(G5sts.Bits.eq32ph3succ && Px32EqCfg1.Bits.px32ghaed){
-            pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
-            PRINT_LEVEL1 ("Rootport %d At Gen5\n", pInst->RpIndex);
-          }
-        }
-      }
-    }
-
-    // Gen5 Train timeout
-    if (pInst->PrivateConfig.LinkRetrainInProgress) {
-      PRINT_LEVEL1 ("DTR Not Need: Gen4 not trained to Gen5 at RootPort %d\n", pInst->RpIndex);
-      IpPcieSetDtrStat(pInst, IpPcieDtrNotNeed);
-      //
-      // Set TLS to CLS
-      //
-      Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-      Cls = Lsts.Bits.cls;
-      PRINT_LEVEL1 ("[Rootport %d]Device not trained - reverting to CLS at %d\n", pInst->RpIndex, Cls);
-      Lctl2.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-      Lctl2.Bits.tls = Cls;
-      IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL2_PCIE_CFG_REG, Lctl2.Data, IpWrRegFlagSize16Bits);
-      //
-      // Retrain link
-      //
-      Lctl.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-      Lctl.Bits.rl = 1;
-      IpWrRegWrite (pInst->RegCntxt_Cfg_Pri, LCTL_PCIE_CFG_REG, Lctl.Data, IpWrRegFlagSize16Bits);
-    }
-
-    //
-    // Wait for retrain completion or timeout in 22.5ms
-    //
-    for (TimeoutCount = 0; (pInst->PrivateConfig.LinkRetrainInProgress && (TimeoutCount < 150)); TimeoutCount++) {
-      //
-      // Delay 150 us
-      //
-      IpWrDelayUs (pInst->TimeCntxt, 150);
-      //
-      // Check for remaining root port which was link retrained
-      //
-      if (pInst->PrivateConfig.LinkRetrainInProgress) {
-        PRINT_LEVEL1 ("Still not trained in the loop - retrain in progress\n");
-        //
-        // If the link is active, clear the bitmap
-        //
-        Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-        PRINT_LEVEL1 ("LA status at: %d\n", Lsts.Bits.la);
-        Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-        PRINT_LEVEL1 ("CLS status at: %d\n", Lsts.Bits.cls);
-        Pciests1.Data = (UINT32) IpWrRegRead (pInst->RegCntxt_Cfg_Sb, PCIESTS1_PCIE_CFG_REG, IpWrRegFlagSize32Bits);
-        PRINT_LEVEL1 ("LTSSM status at: %d\n", Pciests1.Bits.ltsmstate);
-        if((Lsts.Bits.la) && (Lsts.Bits.cls == (UINT16)IpPcieGen4) && (Pciests1.Bits.ltsmstate == LtssmState)) {
-            pInst->PrivateConfig.LinkRetrainInProgress = FALSE;
-        }
-      }
-    }
-  }
-
-  Lsts.Data = (UINT16) IpWrRegRead (pInst->RegCntxt_Cfg_Pri, LSTS_PCIE_CFG_REG, IpWrRegFlagSize16Bits);
-  if (Lsts.Bits.la == 0) {
-    PRINT_LEVEL1 ("DTR Not Ready: Link not active at RootPort %d\n", pInst->RpIndex);
-    IpPcieSetDtrStat(pInst, IpPcieDtrNotReady);
-  }
-
-  PRINT_LEVEL1 ("%s End at RootPort %d\n", __FUNCTION__, pInst->RpIndex);
   return IpCsiStsSuccess;
 }

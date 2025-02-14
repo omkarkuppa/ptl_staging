@@ -757,6 +757,7 @@ PchUpdateNvsArea (
   mPchNvsAreaProtocol.Area->CpuSku = GetCpuSku ();
   mPchNvsAreaProtocol.Area->PsOnEnable            = (UINT8)mPchPmcConfigHob->PsOnEnable;
   mPchNvsAreaProtocol.Area->DtrSciEnable             = 0;
+  DEBUG ((DEBUG_INFO, "DtrSciEnable: 0x%x\n", mPchNvsAreaProtocol.Area->DtrSciEnable));
 
   for (Index = 0; Index < GetPchMaxPciePortNum (); Index++) {
     mPchNvsAreaProtocol.Area->LtrEnable[Index]  = (UINT8)RootPort[Index].PcieRpCommonConfig.LtrEnable;

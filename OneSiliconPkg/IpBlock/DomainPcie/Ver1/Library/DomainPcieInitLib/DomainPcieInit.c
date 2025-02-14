@@ -57,6 +57,8 @@
 #include <IpPcieRegs.h>
 #include <Library/PcdInfoLib.h>
 #include <Library/PeiVtdInitFruLib.h>
+#include <Register/PmcRegs.h>
+#define PCH_PWRM_BASE_ADDRESS 0xFE000000 // PMC MBAR MMIO base address
 
 typedef struct {
   UINT16  Vid;
@@ -605,6 +607,104 @@ PcieIsRpOwningLanes (
 }
 
 /**
+  Detect min temp and determine link speed when DTR is enabled
+
+  @param[in] pInst   Point of pInst
+  @param[in] UINT8   Speed per root port and end point capability
+  @retval UINT8  Speed per DTR
+**/
+UINT8 PcieDtrSpeedDetermine(
+  IN IP_PCIE_INST       *pInst,
+  IN UINT8              CapSpeed
+  )
+{
+  UINT32                            MinTemp;
+  UINT32                            DtrHiVal;
+  BOOLEAN                           TempHigerThanDtrHiVal;
+  BOOLEAN                           TempValid;
+  UINT32                            TssCount;
+  UINTN                             TSSAddr;
+  UINT32                            PwrmBase;
+
+  PwrmBase = PCH_PWRM_BASE_ADDRESS;
+
+  PRINT_LEVEL1 ("%s start at RootPort %d\n", __FUNCTION__, pInst->RpIndex);
+
+  if (CapSpeed < IpPcieGen5) {
+    PRINT_LEVEL1 ("DTR Not Need: Port %d either RP or EP has no Gen5 cap\n", pInst->RpIndex);
+    IpPcieSetDtrStat(pInst, IpPcieDtrNotNeed);
+    return CapSpeed;
+  }
+
+  // Following is handle Gen5 case
+
+  PRINT_LEVEL1 ("DTR: Port %d both RP and EP have Gen5 cap\n", pInst->RpIndex);
+
+  if (pInst == NULL) {
+    PRINT_ERROR_NO_CNTXT ("DTR: Port %d Invalid pInst, so target Gen4\n", pInst->RpIndex);
+    return IpPcieGen4;
+  }
+
+  if (IpPcieGetDtrStat(pInst) != IpPcieDtrReady) {
+    PRINT_LEVEL1 ("DTR: Port %d state machine not ready, so target Gen4\n", pInst->RpIndex);
+    return IpPcieGen4;
+  }
+
+  // Check Min temp valid or not
+  TempValid = FALSE;
+  for(TssCount = 0; TssCount < 8; TssCount++) {
+    TSSAddr = PwrmBase + R_PMC_PWRM_TSS0 + TssCount * 4;
+    if (MmioRead32(TSSAddr) & B_PMC_PWRM_TSS0_TSRV) {
+      TempValid = TRUE;
+      break;
+    }
+  }
+
+  if (!TempValid){
+    PRINT_LEVEL1 ("DTR: Port %d Temperature is not valid, so target Gen4\n", pInst->RpIndex);
+    return IpPcieGen4;
+  }
+
+  // Read MinTemp;
+  MinTemp = MmioRead32 (PwrmBase + R_PMC_PWRM_MIN_TEMP) & B_PMC_PWRM_MIN_TEMP_MIN_TEMP;
+
+  // Read DTRHIVAL
+  DtrHiVal = MmioRead32 (PwrmBase + R_PMC_PWRM_TSDTR_THRESH) & B_PMC_PWRM_TSDTR_THRESH_DTRHIVAL;
+
+  PRINT_LEVEL1 ("DTR: MinTemp = 0x%x, DtrHiVal = 0x%x\n", MinTemp, DtrHiVal);
+
+  TempHigerThanDtrHiVal = FALSE;
+
+  // MinTemp is negative and DtrHiVal is negative
+  if ((MinTemp & 0x100) && (DtrHiVal & 0x100)) {
+    if (MinTemp > DtrHiVal) {
+      TempHigerThanDtrHiVal = TRUE;
+    }
+  }
+  // MinTemp is positive and DtrHiVal is positive
+  if (!(MinTemp & 0x100) && !(DtrHiVal & 0x100)) {
+    if (MinTemp > DtrHiVal) {
+      TempHigerThanDtrHiVal = TRUE;
+    }
+  }
+
+  // MinTemp is positive and DtrHiVal is negative
+  if (!(MinTemp & 0x100) && (DtrHiVal & 0x100)) {
+    TempHigerThanDtrHiVal = TRUE;
+  }
+
+  PRINT_LEVEL1 ("DTR: TempHigerThanDtrHiVal = %d\n", TempHigerThanDtrHiVal);
+
+  if (!TempHigerThanDtrHiVal) {
+    PRINT_LEVEL1 ("DTR: Temperature too low in BIOS phase for Gen5 train at RootPort %d, so target Gen4\n", pInst->RpIndex);
+    return IpPcieGen4;
+  } else {
+    PRINT_LEVEL1 ("DTR: Temperature is fine in BIOS phase for Gen5 train at RootPort %d\n", pInst->RpIndex);
+    return IpPcieGen5;
+  }
+}
+
+/**
   Called by SIP library to check if CLKREQ signal is being pulled down.
 
   @param[in] pInst   Point of pInst
@@ -886,7 +986,11 @@ DomainPcieInstSingleInit (
   LcapCfg.Data = PciSegmentRead32 (RpBase + LCAP_PCIE_CFG_REG);
   RpMaxLinkSpeed = (UINT8)LcapCfg.Bits.mls;
 
-  IpPcieRpSpeedChange (pInst, MIN (RpMaxLinkSpeed, DevInfo.MaxLinkSpeed));
+  if (pInst->PcieRpCommonConfig.EnableDtr) {
+    IpPcieRpSpeedChange (pInst, PcieDtrSpeedDetermine(pInst, MIN (RpMaxLinkSpeed, DevInfo.MaxLinkSpeed)));
+  } else {
+    IpPcieRpSpeedChange (pInst, MIN (RpMaxLinkSpeed, DevInfo.MaxLinkSpeed));
+  }
 
   return pInst;
 }
