@@ -429,6 +429,7 @@ PtlBoardTbtInit (
 
   PcdSetBoolS (PcdUsbCEcSupportRetimerInfoPresent, PcdGetBool (VpdPcdUsbCEcSupportRetimerInfoPresent));
   PcdSet8S (PcdUsbCCapsuleDebugLevel, mSetupData.UsbcCapsuleDebugLevel);
+
   //
   // 2 seconds GOP HPD polling timer + 1 seconds to ensure all pending timer callbacks to be serviced.
   //

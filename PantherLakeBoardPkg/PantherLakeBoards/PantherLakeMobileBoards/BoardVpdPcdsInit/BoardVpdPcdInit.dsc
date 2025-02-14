@@ -247,6 +247,9 @@
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent|*|FALSE
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|*|FALSE
 
+  # Control the EC debug Info Print level before executing any command for PD Bridge, default is DEBUG_VERBOSE
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel|*|0x00400000
+
   gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCUcmMode|*|0x0 # 0: Unsupported, 1: UCSI, 2: UCMCx
   gBoardModuleTokenSpaceGuid.VpdPcdHdaI2sCodecIrqGpio|*|{CODE(

@@ -1454,6 +1454,10 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   # UsbC Retimer Capsule Debug PostCode Print: FALSE - Disable, TRUE - Enable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCCapsuleProgressCodeEnable|0|BOOLEAN|0x00001264
 
+  # Control the EC debug Info Print level before executing any command for PD Bridge, default is DEBUG_VERBOSE
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel|0x00400000|UINT32|0x00001268
+
+
   # PMC PD Enable
   gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable                    |FALSE|BOOLEAN|0x00001265
 

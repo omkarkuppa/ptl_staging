@@ -84,8 +84,8 @@
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCPdSupportBitmap         ## PRODUCES
 
   gBoardModuleTokenSpaceGuid.PcdUsbCEcSupportRetimerInfoPresent
-  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable  ## CONSUMES
 
+  gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCRetimerConfigTable  ## CONSUMES
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleDebugLevel
 
   # TPM interrupt
@@ -250,6 +250,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdMipiCamGpioEnable
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportPdInfoPresent
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCEcSupportRetimerInfoPresent
+  gBoardModuleTokenSpaceGuid.VpdPcdPdBridgeDebugInfoPrintLevel
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdTcssWaitRetimerDeviceReady
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCRetimerFlash
   gBoardModuleTokenSpaceGuid.VpdPcdTcssPmcPdEnable
