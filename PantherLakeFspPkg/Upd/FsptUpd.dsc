@@ -285,7 +285,7 @@
   # !BSF HELP:{Select which Serial Io SPI controller is initalized in early stage.}
   gPlatformFspPkgTokenSpaceGuid.PcdSerialIoSpiNumber                | * | 0x01 | 0x0
   # Added reserved space  UnusedUpdSpace0[3]
-  gPlatformFspPkgTokenSpaceGuid.FsptUpdRsvd0                        | * | 0x3 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.FsptUpdRsvd0                        | * | 0x3 | {0x0, 0x0, 0x0}
 
   # !BSF NAME:{Serial Io SPI Device MMIO Base} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
   # !BSF HELP:{Assigns MMIO for Serial Io SPI controller usage in early stage.}
@@ -310,7 +310,7 @@
 
   # !BSF NAME:{Serial Io I2C Device MMIO Base} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
   # !BSF HELP:{Assigns MMIO for Serial Io I2C controller usage in early stage.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoI2cMmioBase              | * | 0x04 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoI2cMmioBase              | * | 0x04 | 0xFE028000
 
   # !BSF NAME:{Serial Io I2C Sda Gpio Pin} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select SerialIo I2C Rts pin. Refer to GPIO_*_MUXING_SERIALIO_I2C*_SDA* for possible values.}
@@ -322,12 +322,12 @@
 
   # !BSF NAME:{Serial Io I2C Gpio Pad termination} TYPE:{EditNum, HEX, (0x00, 0xFF)}
   # !BSF HELP:{0x0: Hardware default, 0x1: None, 0x13: 1kOhm weak pull-up, 0x15: 5kOhm weak pull-up, 0x19: 20kOhm weak pull-up - Enable/disable SerialIo I2C0,I2C1,... pads termination respectively. One byte for each controller, byte0 for I2C0, byte1 for I2C1, and so on.}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoI2cPadsTerm | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoI2cPadsTerm | * | 0x01 | 0x1
 
   # !BSF NAME:{Serial Io I2c Controller Number} TYPE:{EditNum, HEX, (0x0,0xFF)}
   # !BSF OPTION:{0:SerialIoI2c0, 1:SerialIoI2c1, 2:SerialIoI2c2, 0xFF:Disable}
   # !BSF HELP:{Select SerialIo I2C Controller number to be intilizaed during early boot. Default is 0xFF}
-  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoI2cNumber         | * | 0x01 | 0xFF
+  gPlatformFspPkgTokenSpaceGuid.PcdSerialIoI2cNumber         | * | 0x01 | 0x2
 
   # !BSF NAME:{Enable Secondary Data Cache Region} TYPE:{Combo}
   # !BSF OPTION:{0:Disable, 1:Enable}

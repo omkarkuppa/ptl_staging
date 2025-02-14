@@ -44,7 +44,7 @@
   PeiLpssI2cInitLib
   LpssI2cSocInitLib
   LpssUartLib
-  SecLpssUartInitLib
+  SecLpssInitLib
 
 
 [Packages]

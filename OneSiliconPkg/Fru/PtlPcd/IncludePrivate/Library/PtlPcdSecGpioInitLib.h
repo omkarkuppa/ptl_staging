@@ -24,6 +24,8 @@
 #define _PTL_PCD_GPIO_INIT_LIB_H_
 
 #include <LpssUartConfig.h>
+#include <LpssI2cConfig.h>
+#include <LpssSpiConfig.h>
 
 /**
   Configures GPIO for each LPSS UART Controller
@@ -33,7 +35,31 @@
 VOID
 EFIAPI
 PtlPcdSecLpssUartGpioConfigure (
-  IN LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig,
-  IN UINT8                    UartInstance
+  IN LPSS_UART_DEVICE_CONFIG     *UartDeviceConfig,
+  IN UINT8                       UartInstance
   );
+
+/**
+  Configures GPIO for each LPSS I2C Controller
+
+  @param[in] I2cDeviceConfig   LPSS I2C Config
+**/
+VOID
+EFIAPI
+PtlPcdSecLpssI2cGpioConfigure (
+  IN LPSS_I2C_CONTROLLER_CONFIG  *I2cDeviceConfig,
+  IN UINT8                       I2cInstance
+  );
+
+/**
+  Configures GPIO for each LPSS SPI Controller
+
+**/
+VOID
+EFIAPI
+PtlPcdSecLpssSpiGpioConfigure (
+  IN LPSS_SPI_DEVICE_CONFIG    *SpiDeviceConfig,
+  IN UINT8                     SpiInstance
+  );
+
 #endif //_PTL_PCD_GPIO_INIT_LIB_H_

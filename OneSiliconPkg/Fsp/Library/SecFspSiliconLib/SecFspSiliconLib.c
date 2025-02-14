@@ -33,40 +33,38 @@
 #include <Library/LpssUartDebugPropertyPcdLib.h>
 #include <LpssI2cConfig.h>
 #include <LpssUartConfig.h>
-#include <Library/LpssUartDebugPropertyPcdLib.h>
-
+#include <LpssSpiConfig.h>
 /**
   Serial Io Spi Configuration Wrapper
 
   @param[out] SpiDeviceConfig           A pointer to the SERIAL_IO_SPI_CONFIG.
-  @param[out] SerialIoSpiNumber         The Number of Serial Io Spi.
-  @param[out] SerialIoSpiMmioBase       MMIO Base Address by default in PCI Mode
+  @param[out] LpssSpiNumber         The Number of Serial Io Spi.
+  @param[out] LpssSpiMmioBase       MMIO Base Address by default in PCI Mode
 **/
 VOID
-SerialIoSpiConfigurationWrapper (
-  OUT SERIAL_IO_SPI_CONFIG  *SpiDeviceConfig,
-  OUT UINT8                 *SerialIoSpiNumber,
-  OUT UINTN                 *SerialIoSpiMmioBase
+LpssSpiConfigurationWrapper (
+  OUT LPSS_SPI_DEVICE_CONFIG            *SpiDeviceConfig,
+  OUT UINT8                             *LpssSpiNumber,
+  OUT UINTN                             *LpssSpiMmioBase
   )
 {
-  FSPT_UPD               *FsptUpd;
-  UINT8                  CsIndex;
-
+  FSPT_UPD                               *FsptUpd;
+  UINT8                                  CsIndex;
+  
   FsptUpd = (FSPT_UPD *)((UINTN) (SecGetFsptApiParameter ()));
   if (FsptUpd != NULL) {
-    SpiDeviceConfig->Mode                = FsptUpd->FsptConfig.PcdSerialIoSpiMode;
-    if (SpiDeviceConfig->Mode == 0) {
+    SpiDeviceConfig->Mode                  = FsptUpd->FsptConfig.PcdSerialIoSpiMode;
+    if (SpiDeviceConfig->Mode == LpssSpiDisabled) {
       return;
     }
-    *SerialIoSpiNumber                   = FsptUpd->FsptConfig.PcdSerialIoSpiNumber;
-    *SerialIoSpiMmioBase                 = FsptUpd->FsptConfig.PcdSerialIoSpiMmioBase;
-    SpiDeviceConfig->DefaultCsOutput     = FsptUpd->FsptConfig.PcdSerialIoSpiDefaultCsOutput;
-    SpiDeviceConfig->CsMode              = FsptUpd->FsptConfig.PcdSerialIoSpiCsMode;
-    SpiDeviceConfig->CsState             = FsptUpd->FsptConfig.PcdSerialIoSpiCsState;
-
-    SpiDeviceConfig->PinMux.Clk          = FsptUpd->FsptConfig.PcdSerialIoSpiClkPinMux;
-    SpiDeviceConfig->PinMux.Miso         = FsptUpd->FsptConfig.PcdSerialIoSpiMisoPinMux;
-    SpiDeviceConfig->PinMux.Mosi         = FsptUpd->FsptConfig.PcdSerialIoSpiMosiPinMux;
+    *LpssSpiNumber                         = FsptUpd->FsptConfig.PcdSerialIoSpiNumber;
+    *LpssSpiMmioBase                       = FsptUpd->FsptConfig.PcdSerialIoSpiMmioBase;
+    SpiDeviceConfig->DefaultCsOutput       = FsptUpd->FsptConfig.PcdSerialIoSpiDefaultCsOutput;
+    SpiDeviceConfig->CsMode                = FsptUpd->FsptConfig.PcdSerialIoSpiCsMode;
+    SpiDeviceConfig->CsState               = FsptUpd->FsptConfig.PcdSerialIoSpiCsState;
+    SpiDeviceConfig->PinMux.Clk            = FsptUpd->FsptConfig.PcdSerialIoSpiClkPinMux;
+    SpiDeviceConfig->PinMux.Miso           = FsptUpd->FsptConfig.PcdSerialIoSpiMisoPinMux;
+    SpiDeviceConfig->PinMux.Mosi           = FsptUpd->FsptConfig.PcdSerialIoSpiMosiPinMux;
 
     for (CsIndex = 0; CsIndex < PCH_MAX_SERIALIO_SPI_CHIP_SELECTS; CsIndex++) {
       SpiDeviceConfig->CsEnable[CsIndex]   = FsptUpd->FsptConfig.PcdSerialIoSpiCsEnable[CsIndex];
@@ -75,44 +73,6 @@ SerialIoSpiConfigurationWrapper (
     }
     return;
   }
-  SpiDeviceConfig->Mode = 0;
-}
-
-
-/**
-  Serial Io I2C Configuration Wrapper
-
-  @param[out] I2cDeviceConfig           A pointer to the SERIAL_IO_I2C_CONFIG.
-  @param[out] SerialIoI2cNumber         The Number of Serial Io I2c.
-  @param[out] SerialIoI2cMmioBase       MMIO Base Address by default in PCI Mode
-**/
-VOID
-SerialIoI2cConfigurationWrapper (
-  OUT SERIAL_IO_I2C_CONFIG  *I2cDeviceConfig,
-  OUT UINT8                 *SerialIoI2cNumber,
-  OUT UINTN                 *SerialIoI2cMmioBase
-  )
-{
-  FSPT_UPD               *FsptUpd;
-
-  I2cDeviceConfig->Mode = 0;
-
-  FsptUpd = (FSPT_UPD *)((UINTN) (SecGetFsptApiParameter ()));
-  if (FsptUpd == NULL) {
-    return;
-  }
-
-  *SerialIoI2cMmioBase = FsptUpd->FsptConfig.PcdSerialIoI2cMmioBase;
-  *SerialIoI2cNumber = FsptUpd->FsptConfig.PcdSerialIoI2cNumber;
-  if (*SerialIoI2cNumber == 0xFF) {
-    return;
-  }
-
-  I2cDeviceConfig->Mode                = SerialIoI2cPci;
-  I2cDeviceConfig->PadTermination      = FsptUpd->FsptConfig.PcdSerialIoI2cPadsTerm;
-  I2cDeviceConfig->PinMux.Sda          = FsptUpd->FsptConfig.PcdSerialIoI2cSdaPin;
-  I2cDeviceConfig->PinMux.Scl          = FsptUpd->FsptConfig.PcdSerialIoI2cSclPin;
-  return;
 }
 
 /**
@@ -124,22 +84,17 @@ SerialIoI2cConfigurationWrapper (
 **/
 VOID
 LpssI2cConfigurationWrapper (
-  OUT LPSS_I2C_CONTROLLER_CONFIG *I2cDeviceConfig,
-  OUT UINT8                      *LpssI2cNumber,
-  OUT UINT64                     *LpssI2cMmioBase
+  OUT LPSS_I2C_CONTROLLER_CONFIG       *I2cDeviceConfig,
+  OUT UINT8                            *LpssI2cNumber,
+  OUT UINTN                            *LpssI2cMmioBase
   )
 {
-  FSPT_UPD               *FsptUpd;
-
-  I2cDeviceConfig->Mode = 0;
-
+  FSPT_UPD                             *FsptUpd;
+  I2cDeviceConfig->Mode                = LpssI2cDisabled;
   FsptUpd = (FSPT_UPD *)((UINTN) (SecGetFsptApiParameter ()));
-  if (FsptUpd == NULL) {
-    return;
-  }
-
-  *LpssI2cMmioBase = FsptUpd->FsptConfig.PcdSerialIoI2cMmioBase;
-  *LpssI2cNumber = FsptUpd->FsptConfig.PcdSerialIoI2cNumber;
+  if (FsptUpd != NULL) {
+    *LpssI2cMmioBase                   = FsptUpd->FsptConfig.PcdSerialIoI2cMmioBase;
+    *LpssI2cNumber                     = FsptUpd->FsptConfig.PcdSerialIoI2cNumber;
   if (*LpssI2cNumber == 0xFF) {
     return;
   }
@@ -149,6 +104,7 @@ LpssI2cConfigurationWrapper (
   I2cDeviceConfig->PinMux.Sda          = FsptUpd->FsptConfig.PcdSerialIoI2cSdaPin;
   I2cDeviceConfig->PinMux.Scl          = FsptUpd->FsptConfig.PcdSerialIoI2cSclPin;
   return;
+  }
 }
 
 /**
@@ -164,16 +120,16 @@ LpssUartDebugConfigurationWrapper (
   OUT LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig,
   OUT UINT8                    *LpssUartDebugEnable,
   OUT UINT8                    *LpssUartNumber,
-  OUT UINT32                   *LpssUartPciMmioBase
+  OUT UINTN                    *LpssUartPciMmioBase
   )
 {
   FSPT_UPD               *FsptUpd;
 
   FsptUpd = (FSPT_UPD *)((UINTN) (SecGetFsptApiParameter ()));
   if (FsptUpd != NULL) {
-    *LpssUartDebugEnable              = FsptUpd->FsptConfig.PcdLpssUartDebugEnable;
-    *LpssUartNumber                   = FsptUpd->FsptConfig.PcdLpssUartNumber;
-    *LpssUartPciMmioBase              = FsptUpd->FsptConfig.PcdLpssUartDebugMmioBase;
+    *LpssUartDebugEnable                  = FsptUpd->FsptConfig.PcdLpssUartDebugEnable;
+    *LpssUartNumber                       = FsptUpd->FsptConfig.PcdLpssUartNumber;
+    *LpssUartPciMmioBase                  = FsptUpd->FsptConfig.PcdLpssUartDebugMmioBase;
     UartDeviceConfig->Mode                = FsptUpd->FsptConfig.PcdLpssUartMode;
     UartDeviceConfig->Attributes.BaudRate = FsptUpd->FsptConfig.PcdLpssUartBaudRate;
     UartDeviceConfig->Attributes.Parity   = FsptUpd->FsptConfig.PcdLpssUartParity;
@@ -205,7 +161,7 @@ Lpss2ndUartConfigurationWrapper (
   OUT LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig,
   OUT UINT8                    *UartEnable,
   OUT UINT8                    *LpssUartNumber,
-  OUT UINT32                   *LpssUartPciMmioBase
+  OUT UINTN                    *LpssUartPciMmioBase
   )
 {
   FSPT_UPD               *FsptUpd;

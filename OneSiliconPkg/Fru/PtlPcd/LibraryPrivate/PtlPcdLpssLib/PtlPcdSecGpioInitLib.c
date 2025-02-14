@@ -33,7 +33,11 @@
 #include <Library/IoLib.h>
 #include <Library/P2SbSidebandAccessLib.h>
 #include <Library/Ptl/PcdInfoLib/PtlPcdInfoLib.h>
+#include <LpssI2cConfig.h>
+#include <LpssSpiConfig.h>
 #define MAX_UART_INSTANCES 3
+#define MAX_I2C_INSTANCES  6
+#define MAX_SPI_INSTANCES  3
 
 typedef enum {
   GpioUartPinRx,
@@ -42,16 +46,48 @@ typedef enum {
   GpioUartPinCts
 } GPIOV2_SEC_UART_PIN_MUX;
 
+typedef enum {
+  GpioI2cPinScl,
+  GpioI2cPinSda,
+} GPIOV2_SEC_I2C_PIN_MUX;
+
+typedef enum {
+  GpioSpiPinCs,
+  GpioSpiPinClk,
+  GpioSpiPinMiso,
+  GpioSpiPinMosi
+}GPIOV2_SEC_SPI_PIN_MUX;
+
 typedef struct {
   GPIOV2_PAD UartTx;
   GPIOV2_PAD UartRx;
   GPIOV2_PAD UartRts;
   GPIOV2_PAD UartCts;
 } UART_PIN;
+
+typedef struct {
+  GPIOV2_PAD I2cScl;
+  GPIOV2_PAD I2cSda;
+} I2C_PIN;
+
+typedef struct {
+  GPIOV2_PAD SpiCs;
+  GPIOV2_PAD SpiClk;
+  GPIOV2_PAD SpiMiso;
+  GPIOV2_PAD SpiMosi;
+} SPI_PIN;
+
 typedef struct {
   UART_PIN UartPin[MAX_UART_INSTANCES];
 } UART_PIN_SET;
 
+typedef struct {
+  I2C_PIN I2cPin[MAX_I2C_INSTANCES];
+} I2C_PIN_SET;
+
+typedef struct {
+  SPI_PIN SpiPin[MAX_SPI_INSTANCES];
+} SPI_PIN_SET;
 /**
   This procedure does minimum Gpio Configuration required for Lpss Devices
   in SEC phase.
@@ -104,7 +140,6 @@ SecLpssGpioConfigure (
   return EFI_SUCCESS;
 }
 
-// PTL Platform
 UART_PIN_SET PtlUartPinSet = {
     {
       { GPIOV2_PTL_PCD_MUXING__XXGPP_H_9__UART0_TXD, GPIOV2_PTL_PCD_MUXING__XXGPP_H_8__UART0_RXD, GPIOV2_PTL_PCD_MUXING__XXGPP_H_10__UART0_RTS_B, GPIOV2_PTL_PCD_MUXING__XXGPP_H_11__UART0_CTS_B },
@@ -115,11 +150,34 @@ UART_PIN_SET PtlUartPinSet = {
 
 
 
+I2C_PIN_SET PtlI2cPinSet = {
+    {
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_H_20__I2C0_SCL, GPIOV2_PTL_PCD_MUXING__XXGPP_H_19__I2C0_SDA},
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_H_22__I2C1_SCL, GPIOV2_PTL_PCD_MUXING__XXGPP_H_21__I2C1_SDA},
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_B_3__A_I2C2_SCL, GPIOV2_PTL_PCD_MUXING__XXGPP_B_2__A_I2C2_SDA },
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_H_7__I2C3_SCL, GPIOV2_PTL_PCD_MUXING__XXGPP_H_6__I2C3_SDA },
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_B_19__A_I2C4_SCL, GPIOV2_PTL_PCD_MUXING__XXGPP_B_18__A_I2C4_SDA },
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_F_12__I2C5_SCL, GPIOV2_PTL_PCD_MUXING__XXGPP_F_12__I2C5_SCL }
+    }
+};
+
+
+
+SPI_PIN_SET PtlSpiPinSet = {
+    {
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_E_17__GSPI0_CS0_B, GPIOV2_PTL_PCD_MUXING__XXGPP_E_11__GSPI0_CLK, GPIOV2_PTL_PCD_MUXING__XXGPP_E_13__GSPI0_MISO, GPIOV2_PTL_PCD_MUXING__XXGPP_E_12__GSPI0_MOSI },
+      { GPIOV2_PTL_PCD_MUXING__XXGPP_F_17__GSPI1_CS0_B, GPIOV2_PTL_PCD_MUXING__XXGPP_F_11__GSPI1_CLK, GPIOV2_PTL_PCD_MUXING__XXGPP_F_13__GSPI1_MISO, GPIOV2_PTL_PCD_MUXING__XXGPP_F_12__GSPI1_MOSI },
+      { GPIOV2_PAD_NONE, GPIOV2_PAD_NONE, GPIOV2_PAD_NONE, GPIOV2_PAD_NONE }
+    }
+};
+
+
+
 GPIOV2_PAD
 GetUartGpioPad (
-  UART_PIN_SET            *UartPinSet,
-  UINT8                   UartInstance,
-  GPIOV2_SEC_UART_PIN_MUX PinType
+  IN UART_PIN_SET            *UartPinSet,
+  IN UINT8                   UartInstance,
+  IN GPIOV2_SEC_UART_PIN_MUX PinType
   )
 {
   switch (PinType) {
@@ -135,6 +193,45 @@ GetUartGpioPad (
       return GPIOV2_PAD_NONE;
   }
 }
+
+GPIOV2_PAD
+GetI2cGpioPad (
+  IN I2C_PIN_SET               *I2cPinSet,
+  IN UINT8                     I2cInstance,
+  IN GPIOV2_SEC_I2C_PIN_MUX    PinType
+  )
+{
+  switch (PinType) {
+    case GpioI2cPinScl:
+      return I2cPinSet->I2cPin[I2cInstance].I2cScl;
+    case GpioI2cPinSda:
+      return I2cPinSet->I2cPin[I2cInstance].I2cSda;
+    default:
+      return GPIOV2_PAD_NONE;
+  }
+}
+
+GPIOV2_PAD
+GetSpiGpioPad (
+ IN SPI_PIN_SET               *SpiPinSet,
+ IN UINT8                     SpiInstance,
+ IN GPIOV2_SEC_SPI_PIN_MUX    PinType
+  )
+{
+  switch (PinType) {
+    case GpioSpiPinCs:
+      return SpiPinSet->SpiPin[SpiInstance].SpiCs;
+    case GpioSpiPinClk:
+      return SpiPinSet->SpiPin[SpiInstance].SpiClk;
+    case GpioSpiPinMiso:
+      return SpiPinSet->SpiPin[SpiInstance].SpiMiso;
+    case GpioSpiPinMosi:
+      return SpiPinSet->SpiPin[SpiInstance].SpiMosi;
+    default:
+      return GPIOV2_PAD_NONE;
+  }
+}
+
 /**
   Gets GPIO PinMux value
   @param[in]  PinMux         Pin Mux value from PCD
@@ -143,20 +240,67 @@ GetUartGpioPad (
 **/
 GPIOV2_PAD
 PtlPcdSecGetUartGpioPad (
-  IN UINT32                  PinMux,
+  IN UINT32                  UartPin,
   IN UINT8                   UartInstance,
   IN GPIOV2_SEC_UART_PIN_MUX PinType
   )
 {
-  if (PinMux == 0) {
-    if (PtlIsPcdP()) {
+  if (UartPin == 0) {
+    if (PtlIsPcdP () || PtlIsPcdH ()) {
       return GetUartGpioPad(&PtlUartPinSet, UartInstance, PinType);
     }
 
 
+
   }
-  
-  return PinMux;
+  return UartPin;
+}
+
+/**
+  Gets GPIO PinMux value
+  @param[in]  PinMux         Pin Mux value from PCD
+  @param[in]  SpiInstance    SPI instance (0 for SPI0, 1 for SPI1, 2 for SPI2)
+  @param[in]  PinType        LPSS SPI Pin Type
+**/
+GPIOV2_PAD
+PtlPcdSecGetSpiGpioPad (
+  IN UINT32                  SpiPin,
+  IN UINT8                   SpiInstance,
+  IN GPIOV2_SEC_SPI_PIN_MUX  PinType
+  )
+{
+  if (SpiPin == 0) {
+    if (PtlIsPcdP () || PtlIsPcdH ()) {
+      return GetSpiGpioPad(&PtlSpiPinSet, SpiInstance, PinType);
+    }
+
+
+  }
+  return SpiPin;
+}
+
+/**
+  Gets GPIO PinMux value
+  @param[in]  PinMux         Pin Mux value from PCD
+  @param[in]  I2cInstance    I2C instance (0 for I2C0, 1 for I2C1, 2 for I2C2)
+  @param[in]  PinType        LPSS I2c Pin Type
+**/
+GPIOV2_PAD
+PtlPcdSecGetI2cGpioPad (
+  IN UINT32                  I2cPin,
+  IN UINT8                   I2cInstance,
+  IN GPIOV2_SEC_I2C_PIN_MUX  PinType
+  )
+{
+  if (I2cPin == 0) {
+    if (PtlIsPcdP () || PtlIsPcdH ()) {
+      return GetI2cGpioPad(&PtlI2cPinSet, I2cInstance, PinType);
+    }
+
+
+  }
+
+  return I2cPin;
 }
 
 /**
@@ -190,6 +334,58 @@ PtlPcdSecLpssUartGpioConfigure (
     GpioPad = PtlPcdSecGetUartGpioPad (UartDeviceConfig->PinMux.Cts, UartInstance, GpioUartPinCts);
     SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
   }
+
+  return;
+}
+
+/**
+  Configures GPIO for each I2c Controller in SEC phase
+
+  @param[in] I2cDeviceConfig   Lpss I2c Config
+**/
+VOID
+EFIAPI
+PtlPcdSecLpssI2cGpioConfigure (
+  IN LPSS_I2C_CONTROLLER_CONFIG  *I2cDeviceConfig,
+  IN UINT8                       I2cInstance
+  )
+{
+  GPIOV2_PAD                     GpioPad;
+  
+  GpioPad = PtlPcdSecGetI2cGpioPad (I2cDeviceConfig->PinMux.Scl, I2cInstance, GpioI2cPinScl);
+  SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+
+  GpioPad = PtlPcdSecGetI2cGpioPad (I2cDeviceConfig->PinMux.Sda, I2cInstance, GpioI2cPinSda);
+  SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+
+  return;
+}
+
+/**
+  Configures GPIO for each Lpss SPI Controller in SEC phase
+
+  @param[in] SPIDeviceConfig   Lpss SPI Config
+**/
+VOID
+EFIAPI
+PtlPcdSecLpssSpiGpioConfigure (
+  IN LPSS_SPI_DEVICE_CONFIG  *SpiDeviceConfig,
+  IN UINT8                   SpiInstance
+  )
+{
+  GPIOV2_PAD                 GpioPad;
+
+  GpioPad = PtlPcdSecGetSpiGpioPad (SpiDeviceConfig->PinMux.Cs[0],SpiInstance,GpioSpiPinCs);
+  SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+
+  GpioPad = PtlPcdSecGetSpiGpioPad (SpiDeviceConfig->PinMux.Clk, SpiInstance, GpioSpiPinClk);
+  SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+
+  GpioPad = PtlPcdSecGetSpiGpioPad (SpiDeviceConfig->PinMux.Miso, SpiInstance, GpioSpiPinMiso);
+  SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
+
+  GpioPad = PtlPcdSecGetSpiGpioPad (SpiDeviceConfig->PinMux.Mosi, SpiInstance, GpioSpiPinMosi);
+  SecLpssGpioConfigure (GpioPad, GPIOV2_PAD_GET_PAD_MODE (GpioPad));
 
   return;
 }

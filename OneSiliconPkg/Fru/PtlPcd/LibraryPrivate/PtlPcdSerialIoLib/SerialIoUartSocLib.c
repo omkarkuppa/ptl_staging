@@ -72,4 +72,3 @@ GetLpssUartFixedBar1 (
   }
   return 0x0;
 }
-

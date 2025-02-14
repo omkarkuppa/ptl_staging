@@ -21,24 +21,16 @@
 #include <Library/IoLib.h>
 #include <Library/DebugLib.h>
 #include <IndustryStandard/Pci30.h>
-#include <Register/LpssUartRegs.h>
 #include <Library/LpssUartLib.h>
 #include <Library/PchPciBdfLib.h>
 #include <Register/LpssRegs.h>
 #include <Library/PciSegmentLib.h>
-#include <Defines/PchReservedResources.h>
 #include <Fru/PtlPcd/IncludePrivate/Library/PtlPcdSecGpioInitLib.h>
 #include <Library/PchInfoLib.h>
+#include <Register/LpssUartRegs.h>
 
-/**
-  Allows memory access
-
-  @param[in] PciCfgBase       Pci Config Offset
-  @param[in] Hidden           Mode that determines access type
-
-**/
 VOID
-LpssEnableMse (
+LpssUartEnableMse (
   IN UINT64                    PciCfgBase
   )
 {
@@ -67,7 +59,7 @@ SecLpssUartGetOutOfReset (
 
 **/
 VOID
-LpssSetD0 (
+LpssUartSetD0 (
   IN UINT64                    PciCfgBase
   )
 {
@@ -83,23 +75,19 @@ LpssSetD0 (
   @param[in] FixedPciCfgAddress  Fixed Pci Config Space for BAR1
   @param[in] PciConfgCtrAddr     Register offset for each LPSS
   @param[in] PsfPort             Psf Port data
-
 **/
 VOID
-SecLpssPciSetFixedMmio (
-  IN UINT64          PciCfgBase,
-  IN UINT32          FixedBaseAddress
+SecLpssUartPciSetFixedMmio (
+  IN UINT64            PciCfgBase,
+  IN UINT32            FixedBaseAddress
   )
 {
   // Assign BAR0 and BAR1 (access to Pci Config Space)
   //
   PciSegmentWrite32 (PciCfgBase + R_LPSS_UART_CFG_BAR, FixedBaseAddress);
   PciSegmentWrite32 (PciCfgBase + R_LPSS_UART_CFG_BAR_HIGH, 0x0);
-  // Enable MSE and set D0 before placing device in Hidden Mode, otherwise memory will not map
-  //
-  LpssSetD0 (PciCfgBase);
-  LpssEnableMse (PciCfgBase);
 }
+
 /**
   Configures LPSS Controller with minimum configuration in ACPI mode
 
@@ -112,14 +100,17 @@ SecLpssUartConfiguration (
   IN LPSS_UART_DEVICE_CONFIG      *UartDeviceConfig                     
   )
 {
-  //
-  // This is to prevent from overflow of array access.
-  //
+  IN UINT64                        PciCfgBase;
   if (UartNumber >= GetMaxUartInterfacesNum()) {
     return;
   }
-
-  SecLpssPciSetFixedMmio (LpssUartPciCfgBase (UartNumber), GetLpssUartFixedMmioAddress (UartNumber));
+  
+  PciCfgBase  = LpssUartPciCfgBase (UartNumber);
+  SecLpssUartPciSetFixedMmio (PciCfgBase, GetLpssUartFixedMmioAddress (UartNumber));
+  // Enable MSE and set D0 before placing device in Hidden Mode, otherwise memory will not map
+  //
+  LpssUartSetD0 (PciCfgBase);
+  LpssUartEnableMse (PciCfgBase);
   SecLpssUartGetOutOfReset (GetLpssUartFixedMmioAddress (UartNumber));
   LpssUartSetAttributes (
     GetLpssUartFixedMmioAddress (UartNumber),
@@ -131,4 +122,5 @@ SecLpssUartConfiguration (
   );
   PtlPcdSecLpssUartGpioConfigure (UartDeviceConfig, UartNumber);
 }
+
 

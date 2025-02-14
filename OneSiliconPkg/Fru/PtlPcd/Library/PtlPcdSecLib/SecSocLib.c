@@ -33,7 +33,6 @@
 #include <Library/PmcPrivateLib.h>
 #include <Library/PchInfoLib.h>
 #include <Library/DebugLib.h>
-
 #include <Register/P2sbRegs.h>
 #include <Register/SmbusRegs.h>
 #include <Register/RtcRegs.h>
@@ -47,7 +46,8 @@
 #include <Library/SecLpssUartInitLib.h>
 #include <Library/LpssUartLib.h>
 #include <Register/TcoRegs.h>
-
+#include <LpssI2cConfig.h>
+#include <LpssSpiConfig.h>
 /**
   Serial Io Uart Debug Configuration Wrapper
 
@@ -61,7 +61,7 @@ LpssUartDebugConfigurationWrapper (
   OUT LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig,
   OUT UINT8                    *LpssUartDebugEnable,
   OUT UINT8                    *LpssUartNumber,
-  OUT UINT32                   *LpssUartPciMmioBase
+  OUT UINTN                    *LpssUartPciMmioBase
   );
 
 /**
@@ -78,7 +78,7 @@ Lpss2ndUartConfigurationWrapper (
   OUT LPSS_UART_DEVICE_CONFIG  *UartDeviceConfig,
   OUT UINT8                    *UartEnable,
   OUT UINT8                    *LpssUartNumber,
-  OUT UINT32                   *LpssUartPciMmioBase
+  OUT UINTN                    *LpssUartPciMmioBase
   );
 
 
@@ -93,7 +93,48 @@ VOID
 LpssI2cConfigurationWrapper (
   OUT LPSS_I2C_CONTROLLER_CONFIG *I2cDeviceConfig,
   OUT UINT8                      *LpssI2cNumber,
-  OUT UINT64                     *LpssI2cMmioBase
+  OUT UINTN                      *LpssI2cMmioBase
+  );
+
+/**
+ Lpss Spi Configuration Wrapper
+
+  @param[out] SpiDeviceConfig           A pointer to the LPSS_SPI_DEVICE_CONFIG.
+  @param[out] LpssSpiNumber             The Number of Lpss Spi.
+  @param[out] LpssSpiNumber             MMIO Base Address by default in PCI Mode
+**/
+VOID
+LpssSpiConfigurationWrapper (
+  OUT LPSS_SPI_DEVICE_CONFIG     *SpiDeviceConfig,
+  OUT UINT8                      *LpssSpiNumber,
+  OUT UINTN                      *LpssSpiMmioBase
+  );
+
+/**
+ Lpss I2C Configuration
+
+  @param[in] LpssI2cNumber             The Number of Lpss I2c.
+  @param[in] I2cDeviceConfig           A pointer to the LPSS_I2C_CONTROLLER_CONFIG.
+  @param[in] LpssI2cMmioBase           LPSS_I2C_MMIO_BASE
+**/
+VOID
+SecLpssI2cConfiguration (
+  IN UINT8                      LpssI2cNumber,
+  IN LPSS_I2C_CONTROLLER_CONFIG *I2cDeviceConfig,
+  IN UINTN                      LpssI2cMmioBase
+  );
+
+/**
+ Lpss SPI Configuration
+
+  @param[in] LpssSpiNumber             The Number of Lpss Spi.
+  @param[in] SpiDeviceConfig           A pointer to the LPSS_SPI_DEVICE_CONFIG.
+**/
+VOID
+SecLpssSpiConfiguration (
+  IN UINT8                      LpssSpiNumber,
+  IN LPSS_SPI_DEVICE_CONFIG     *SpiDeviceConfig,
+  IN UINTN                      LpssSpiMmioBase
   );
 
 /**
@@ -105,7 +146,16 @@ SerialIoSpiEarlyinitalization (
   VOID
   )
 {
+  LPSS_SPI_DEVICE_CONFIG   SpiDeviceConfig;
+  UINT8                    LpssSpiNumber;
+  UINTN                    LpssSpiMmioBase;
 
+  LpssSpiConfigurationWrapper (&SpiDeviceConfig, &LpssSpiNumber, &LpssSpiMmioBase);
+  if (SpiDeviceConfig.Mode == LpssSpiDisabled) {
+    return;
+  }
+
+  SecLpssSpiConfiguration (LpssSpiNumber, &SpiDeviceConfig, LpssSpiMmioBase);
 }
 
 /**
@@ -117,32 +167,16 @@ SerialIoI2cEarlyinitalization (
   VOID
   )
 {
-  EFI_STATUS                  Status;
-  LPSS_I2C_HANDLE             I2cHandle;
   LPSS_I2C_CONTROLLER_CONFIG  I2cDeviceConfig;
   UINT8                       LpssI2cNumber;
-  UINT64                      LpssI2cMmioBase;
-  REGISTER_ACCESS             *PciCfgAccess;
+  UINTN                       LpssI2cMmioBase;
 
   LpssI2cConfigurationWrapper (&I2cDeviceConfig, &LpssI2cNumber, &LpssI2cMmioBase);
-
-  Status = PtlPcdLpssI2cBuildHandle (NULL, &I2cHandle, &I2cDeviceConfig, LpssI2cNumber);
-  if (Status == EFI_UNSUPPORTED) {
+  if (I2cDeviceConfig.Mode == LpssI2cDisabled) {
     return;
   }
 
-  if (I2cDeviceConfig.Mode == 0) {
-    return;
-  }
-
-  PciCfgAccess = I2cHandle.Controller->PcieCfgAccess;
-
-  PciCfgAccess->Write32 (PciCfgAccess, PCI_BASE_ADDRESSREG_OFFSET, (UINT32)LpssI2cMmioBase);
-  if (PciCfgAccess->Read32 (PciCfgAccess, PCI_BASE_ADDRESSREG_OFFSET) & BIT2) {
-    PciCfgAccess->Write32 (PciCfgAccess, PCI_BASE_ADDRESSREG_OFFSET + 4, (UINT32) RShiftU64 (LpssI2cMmioBase, 32));
-  }
-
-  LpssI2cInit (&I2cHandle);
+  SecLpssI2cConfiguration (LpssI2cNumber, &I2cDeviceConfig, LpssI2cMmioBase);
 }
 
 /**
@@ -160,8 +194,8 @@ LpssUartDebugConfiguration (
   UINT8                    AdditionalUartEnabled;
   UINT8                    LpssUartNumber;
   UINT8                    Lpss2ndUartNumber;
-  UINT32                   LpssUartPciMmioBase;
-  UINT32                   Lpss2ndUartPciMmioBase;
+  UINTN                    LpssUartPciMmioBase;
+  UINTN                    Lpss2ndUartPciMmioBase;
   CHAR8                    CarInitBuffer[32];
 
   AsciiSPrint (CarInitBuffer, sizeof (CarInitBuffer), "FSP-T: CAR Init\n");
