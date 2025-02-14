@@ -357,35 +357,39 @@ BoardConfigUsbConnectorInit (
 
   PcdSet64S (PcdUsbConnectorTable,  (UINT64) PcdGetPtr (VpdPcdUsbConnector));
   PcdSet64S (PcdUsbCConnectorTable, (UINT64) PcdGetPtr (VpdPcdUsbCConnector));
+  //
+  // Set CVS specific VpdPcd
+  //
+  if (*(UINT32 *)(PcdGetPtr (VpdPcdCvsUsbConnector)) != 0 && *(UINT32 *)(PcdGetPtr (VpdPcdCvsUsbCConnector)) != 0) {
+    Status = PeiServicesLocatePpi (
+              &gEfiPeiReadOnlyVariable2PpiGuid,  // GUID
+              0,                                 // INSTANCE
+              NULL,                              // EFI_PEI_PPI_DESCRIPTOR
+              (VOID **) &VariableServices        // PPI
+              );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "BoardConfigUsbConnectorInit : PeiServicesLocatePpi failed\n"));
+      return;
+    }
 
-  Status = PeiServicesLocatePpi (
-             &gEfiPeiReadOnlyVariable2PpiGuid,  // GUID
-             0,                                 // INSTANCE
-             NULL,                              // EFI_PEI_PPI_DESCRIPTOR
-             (VOID **) &VariableServices        // PPI
-             );
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "BoardConfigUsbConnectorInit : PeiServicesLocatePpi failed\n"));
-    return;
-  }
+    VariableSize = sizeof (SETUP_DATA);
+    Status = VariableServices->GetVariable (
+                                VariableServices,
+                                L"Setup",
+                                &gSetupVariableGuid,
+                                NULL,
+                                &VariableSize,
+                                &Setup
+                                );
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "BoardConfigUsbConnectorInit : Failed to get setup variable \n"));
+      return;
+    }
 
-  VariableSize = sizeof (SETUP_DATA);
-  Status = VariableServices->GetVariable (
-                               VariableServices,
-                               L"Setup",
-                               &gSetupVariableGuid,
-                               NULL,
-                               &VariableSize,
-                               &Setup
-                               );
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "BoardConfigUsbConnectorInit : Failed to get setup variable \n"));
-    return;
-  }
-
-  if (Setup.LchSupport) {
-    PcdSet64S (PcdUsbConnectorTable,  (UINT64) PcdGetPtr (VpdPcdCvsUsbConnector));
-    PcdSet64S (PcdUsbCConnectorTable, (UINT64) PcdGetPtr (VpdPcdCvsUsbCConnector));
+    if (Setup.LchSupport) {
+      PcdSet64S (PcdUsbConnectorTable,  (UINT64) PcdGetPtr (VpdPcdCvsUsbConnector));
+      PcdSet64S (PcdUsbCConnectorTable, (UINT64) PcdGetPtr (VpdPcdCvsUsbCConnector));
+    }
   }
 }
 
