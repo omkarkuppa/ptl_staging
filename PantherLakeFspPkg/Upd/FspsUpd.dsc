@@ -817,6 +817,16 @@
   # !BSF HELP:{When FALSE, it disables PCH ACPI timer, and stops TCO timer. NOTE: This will have huge power impact when it's enabled. If TCO timer is disabled, uCode ACPI timer emulation must be enabled, and WDAT table must not be exposed to the OS.}
   gPlatformFspPkgTokenSpaceGuid.EnableTcoTimer              | * | 0x01 | 0x00
 
+!if (gSiPkgTokenSpaceGuid.PcdEmbeddedEnable == TRUE)
+  # !BSF NAME:{Enable Timed GPIO0} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable Timed GPIO0. When disabled, it disables cross time stamp time-synchronization as extension of Hammock Harbor time synchronization.}
+  gPlatformFspPkgTokenSpaceGuid.EnableTimedGpio0             | * | 0x01 | 0x00
+
+  # !BSF NAME:{Enable Timed GPIO1} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable Timed GPIO1. When disabled, it disables cross time stamp time-synchronization as extension of Hammock Harbor time synchronization.}
+  gPlatformFspPkgTokenSpaceGuid.EnableTimedGpio1             | * | 0x01 | 0x00
+!endif
+
   # !BSF NAME:{Enable PS_ON.} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{PS_ON is a new C10 state from the CPU on desktop SKUs that enables a lower power target that will be required by the California Energy Commission (CEC). When FALSE, PS_ON is to be disabled.}
   gPlatformFspPkgTokenSpaceGuid.PsOnEnable                  | * | 0x01 | 0x00

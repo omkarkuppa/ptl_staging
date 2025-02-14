@@ -207,7 +207,7 @@ PtlPcdPmcGetSocConfig (
   PmcSocConfig->LpmPriorityConfigurable = FALSE;
   PmcSocConfig->LpmPriVal = 0;
   PmcSocConfig->OsIdleSupported = FALSE;
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
   PmcSocConfig->TimedGpioSupported = TRUE;
 #endif
   PmcSocConfig->CpuIovrRampTime = 0;

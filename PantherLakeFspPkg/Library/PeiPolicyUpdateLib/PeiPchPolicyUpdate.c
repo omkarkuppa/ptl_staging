@@ -1295,7 +1295,7 @@ FspUpdatePmPolicy (
   PmConfig->WolOvrWkSts                   = FspsUpd->FspsConfig.PchPmWolOvrWkSts;
   PmConfig->EnableTcoTimer                = FspsUpd->FspsConfig.EnableTcoTimer;
   PmConfig->DtrSci                        = 0;
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
   PmConfig->EnableTimedGpio0              = FspsUpd->FspsConfig.EnableTimedGpio0;
   PmConfig->EnableTimedGpio1              = FspsUpd->FspsConfig.EnableTimedGpio1;
 #endif

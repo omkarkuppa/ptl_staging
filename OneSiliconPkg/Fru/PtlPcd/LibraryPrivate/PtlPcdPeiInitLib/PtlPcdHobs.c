@@ -410,7 +410,7 @@ BuildPchConfigHobs (
   ZeroMem (PmcConfigHob, sizeof (PMC_CONFIG_HOB));
   PmcConfigHob->PsOnEnable            = PmConfig->PsOnEnable;
   PmcConfigHob->EnableDtrSci          = 0;
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
   PmcConfigHob->EnableTimedGpio0      = PmConfig->EnableTimedGpio0;
   PmcConfigHob->EnableTimedGpio1      = PmConfig->EnableTimedGpio1;
 #endif

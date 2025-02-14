@@ -258,7 +258,7 @@ UpdateScsAcpiData (
     DEBUG((DEBUG_INFO, "UpdateScsAcpiData() Ufs0 %d Ufs1 %d \n", mPchNvsAreaProtocol.Area->Ufs0Enabled, mPchNvsAreaProtocol.Area->Ufs1Enabled));
   }
 }
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
 /**
   Update NVS Area for Timed GPIO devices.
 **/
@@ -346,7 +346,7 @@ PchAcpiOnEndOfDxe (
   //
   UpdateLpssAcpiData ();
   UpdateCnviAcpiData ();
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+#if (FixedPcdGet8(PcdEmbeddedEnable) == 0x1)
   UpdateTimedGpioSetup();
 #endif
 
