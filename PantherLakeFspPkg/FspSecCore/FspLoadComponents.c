@@ -338,6 +338,12 @@ FspLoadComponents (
   // Check if signing is supported
   //
   if (!(IsSigningSupported (Fbm))) {
+    //
+    // Rebase PeiCore inside FSP-M FV for signed FSP
+    //
+    if (!(Bspm->FspmLoadingPolicy & FSPM_COMPRESSED)) {
+      RebasePeiCoreFfs ((UINTN) Bspm->FspmBaseAddress);
+    }
     return;
   }
 
