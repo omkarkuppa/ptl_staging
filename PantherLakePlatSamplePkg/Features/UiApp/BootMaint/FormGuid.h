@@ -93,7 +93,9 @@
 //
 // End Label
 //
+#ifndef LABEL_END
 #define LABEL_END   0xffff
+#endif
 #define MAX_MENU_NUMBER 100
 
 //
