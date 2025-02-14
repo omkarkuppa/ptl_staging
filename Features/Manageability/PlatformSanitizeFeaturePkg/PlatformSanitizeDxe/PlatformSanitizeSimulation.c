@@ -68,20 +68,20 @@ PsBootParameterStatusUpdateForSimulate (
 
   if (EraseActionBit & PS_ERASE_STORAGE_MEDIA) {
     //
-    // For Storage Erase action, additionally clear verification, document report bits and also
+    // For Storage Erase action, additionally clear verification and
     // clear Storage erase password.
     //
-    mPsBootParameters->PsPendingList &= ~(PS_ERASE_STORAGE_MEDIA | PS_VERIFY_STORAGE_MEDIA | PS_GENERATE_SANITIZE_REPORT);
+    mPsBootParameters->PsPendingList &= ~(PS_ERASE_STORAGE_MEDIA | PS_VERIFY_STORAGE_MEDIA);
     ZeroMem (&mPsBootStorageParameter.PsStorageDevPassword, STORAGE_DEV_PSW_MAX_LEN);
 
     // Update the status
-    mPsBootParameters->PsStatus.PsAttempted |= (PS_ERASE_STORAGE_MEDIA | PS_GENERATE_SANITIZE_REPORT);
+    mPsBootParameters->PsStatus.PsAttempted |= PS_ERASE_STORAGE_MEDIA;
     if (mPsBootParameters->PsRequestedList & PS_VERIFY_STORAGE_MEDIA) {
       mPsBootParameters->PsStatus.PsAttempted |= PS_VERIFY_STORAGE_MEDIA;
     }
 
     if (Status == EFI_SUCCESS) {
-      mPsBootParameters->PsStatus.PsAttemptResult |= (PS_ERASE_STORAGE_MEDIA | PS_GENERATE_SANITIZE_REPORT);
+      mPsBootParameters->PsStatus.PsAttemptResult |= PS_ERASE_STORAGE_MEDIA;
       if (mPsBootParameters->PsRequestedList & PS_VERIFY_STORAGE_MEDIA) {
         mPsBootParameters->PsStatus.PsAttemptResult |= PS_VERIFY_STORAGE_MEDIA;
       }
@@ -405,6 +405,9 @@ PsSimulateSanitizeActions (
     return;
   }
 
+  // In simulation mode, Sanitize report won't be generated. So, cleared PS_GENERATE_SANITIZE_REPORT bit.
+  mPsBootParameters->PsRequestedList = mPsBootParameters->PsRequestedList & (~PS_GENERATE_SANITIZE_REPORT);
+  mPsBootParameters->PsPendingList = mPsBootParameters->PsPendingList & (~PS_GENERATE_SANITIZE_REPORT);
   DEBUG ((DEBUG_INFO, "PS: Requested Sanitize Items = %x\n", mPsBootParameters->PsRequestedList));
   DEBUG ((DEBUG_INFO, "PS: Pending Sanitize Items = %x\n", mPsBootParameters->PsPendingList));
 
