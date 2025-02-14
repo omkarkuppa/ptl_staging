@@ -27,6 +27,8 @@
 #include <Library/EcLib.h>
 #include <Library/EcPrivateLib.h>
 
+GLOBAL_REMOVE_IF_UNREFERENCED  UINT32     gEcDebugInfoPrintLevel = 0x00000040;
+
 #if FixedPcdGetBool(PcdEcZeroTimeout) == 0
 #ifndef STALL_ONE_MICRO_SECOND
 #define STALL_ONE_MICRO_SECOND  1
@@ -164,7 +166,7 @@ EcId0Interface (
   UINT8             MaxValue;
   UINT32            EcDebugPrintLevel;
 
-  EcDebugPrintLevel = PcdGet32 (PcdEcDebugInfoPrintLevel);
+  EcDebugPrintLevel = gEcDebugInfoPrintLevel;
   Status = EFI_SUCCESS;
 
   //
@@ -368,7 +370,7 @@ ReceiveEcDataTimeout (
   UINT8             EcStatus;
   UINT32            EcDebugPrintLevel;
 
-  EcDebugPrintLevel = PcdGet32 (PcdEcDebugInfoPrintLevel);
+  EcDebugPrintLevel = gEcDebugInfoPrintLevel;
 
   if (Data == NULL) {
     return EFI_INVALID_PARAMETER;

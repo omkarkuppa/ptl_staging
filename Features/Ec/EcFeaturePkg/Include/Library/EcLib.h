@@ -35,6 +35,8 @@
 #include <Base.h>
 #include <Uefi.h>
 
+extern UINT32 gEcDebugInfoPrintLevel;
+
 //
 // Function declarations
 //
