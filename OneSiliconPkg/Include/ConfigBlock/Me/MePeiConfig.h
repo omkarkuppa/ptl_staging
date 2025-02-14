@@ -103,10 +103,17 @@ typedef struct {
   **/
   UINT32 MeUnconfigOnRtcClear             : 2;
   UINT32 MctpBroadcastCycle               : 1;   ///< <b>(Test)</b> <b>0: Disable</b>; 1: Enable - Program registers for MCTP Cycle.
-  UINT32 CseDataResilience                : 1;   ///< 0: Disable; <b>1: Enable</b> - CSE data resilience support
+  /**
+    Enable/Disable CSME Data Resilience BIOS support.
+    It will force loading ME data default.
+    -    0: Disable
+    - <b>1: Enable</b> BIOS will send Data Clear HECI command in PEI if MFS failure is detected.
+    -    2: Enable and defer - BIOS will defer Data Clear HECI command to DXE if MFS failure is detected.
+  **/
+  UINT32 CseDataResilience                : 2;                                                 ///< but defer the data clear command to later boot phase
   UINT32 SseCommunication                 : 2;   ///< (Test) 0: POR; 1: Enable; 2: Disable - Enable/Disable SSE/SSE++ Devices.
   UINT32 PseEomFlowEnable                 : 1;   ///< <b>0: Disable</b>; 1: Enable - PSE EOM flow enable
-  UINT32 RsvdBits                         : 22;  ///< Reserved for future use & Config block alignment
+  UINT32 RsvdBits                         : 21;  ///< Reserved for future use & Config block alignment
 } ME_PEI_CONFIG;
 
 #pragma pack (pop)
