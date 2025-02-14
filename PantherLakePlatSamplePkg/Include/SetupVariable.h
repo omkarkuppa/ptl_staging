@@ -961,7 +961,12 @@ typedef struct {
   UINT16  VrVoltageLimit[MAX_VR_NUM];
   UINT8   TccOffsetLock;
   UINT8   ThETAIbattEnable;
-  UINT8   Reserved1[2];
+
+  //
+  // CEP (Current Excursion Protection) Enable.
+  //
+  UINT8   CepEnable[MAX_VR_NUM];
+  UINT8   Reserved1[4];
 
   //
   // CPU related

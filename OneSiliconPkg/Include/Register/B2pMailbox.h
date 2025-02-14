@@ -375,6 +375,8 @@ typedef union {
 
 #define MAILBOX_VR_SUBCMD_SVID_GET_FAST_VMODE_ICC_LIMIT                    0x00000024
 #define MAILBOX_VR_SUBCMD_SVID_SET_FAST_VMODE_ICC_LIMIT                    0x00000025
+#define MAILBOX_VR_SUBCMD_SVID_GET_MISC_CONFIG                             0x00000026
+#define MAILBOX_VR_SUBCMD_SVID_SET_MISC_CONFIG                             0x00000027
 typedef union {
   struct {
     UINT32 FastVModeIccLimit        :11; ///< [10:0]  Fast VMode ICC Limit

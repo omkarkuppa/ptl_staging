@@ -128,6 +128,7 @@ FspUpdatePeiCpuPolicyPreMem (
     CpuPowerMgmtVrConfig->DcLoadline[Index]          = FspmUpd->FspmConfig.DcLoadline[Index];
     CpuPowerMgmtVrConfig->IccMax[Index]              = FspmUpd->FspmConfig.IccMax[Index];
     CpuPowerMgmtVrConfig->EnableFastVmode[Index]     = FspmUpd->FspmConfig.EnableFastVmode[Index];
+    CpuPowerMgmtVrConfig->CepEnable[Index]           = FspmUpd->FspmConfig.CepEnable[Index];
     if (FspmUpd->FspmConfig.EnableFastVmode[Index] == 1) {
       CpuPowerMgmtVrConfig->IccLimit[Index]            = FspmUpd->FspmConfig.IccLimit[Index];
     }

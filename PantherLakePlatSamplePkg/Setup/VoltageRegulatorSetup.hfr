@@ -364,4 +364,13 @@
       endoneof;
     endif; // grayoutif FastPkgCRampDisable Disable
 #endif
+
+#if (VR_INDEX < 4) && (VR_INDEX != 1)
+    oneof varid   = CPU_SETUP.CepEnable[VR_INDEX],
+      prompt      = STRING_TOKEN(STR_VR_CEP_ENABLE),
+      help        = STRING_TOKEN(STR_VR_CEP_ENABLE_HELP),
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+#endif
 endif;

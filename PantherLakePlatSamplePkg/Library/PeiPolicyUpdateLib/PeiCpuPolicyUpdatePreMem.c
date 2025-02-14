@@ -959,6 +959,7 @@ UpdatePeiCpuPolicyPreMem (
       COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.ImonSlope[Index], CpuPowerMgmtVrConfig->ImonSlope[Index], CpuSetup.ImonSlope[Index], Index);
       COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.ImonOffset[Index], CpuPowerMgmtVrConfig->ImonOffset[Index], (INT32)CpuSetup.ImonOffset[Index] * ((CpuSetup.ImonOffsetPrefix[Index] == 1) ? -1 : 1), Index);
       COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.EnableFastVmode[Index], CpuPowerMgmtVrConfig->EnableFastVmode[Index],CpuSetup.EnableFastVmode[Index], Index);
+      COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.CepEnable[Index], CpuPowerMgmtVrConfig->CepEnable[Index], CpuSetup.CepEnable[Index], Index);
 
       //
       // Only update if IccMax is non-zero. This is to distinguish between the default EDS override.

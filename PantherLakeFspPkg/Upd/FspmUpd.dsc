@@ -2783,6 +2783,11 @@
   # !BSF HELP:{Enable/Disable VR FastVmode; <b>0: Disable</b>; 1: Enable.For all VR by domain}
   gPlatformFspPkgTokenSpaceGuid.EnableFastVmode             | * | 0x6 | {0x1, 0x1, 0x1, 0x0, 0x0, 0x0}
 
+  # !BSF NAME:{Enable/Disable CEP}
+  # !BSF TYPE:{Combo} OPTION:{0: Disable, 1: Enable}
+  # !BSF HELP:{Control for enabling/disabling CEP (Current Excursion Protection). <b>0: Disable</b>; 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.CepEnable                    | * | 0x6 | {0x00, 0x00, 0x00, 0x00, 0x00}
+
   # !BSF NAME:{Vsys Full Scale}
   # !BSF TYPE:{EditNum, DEC, (0,255000)}
   # !BSF HELP:{Vsys Full Scale, Range is 0-255000mV}

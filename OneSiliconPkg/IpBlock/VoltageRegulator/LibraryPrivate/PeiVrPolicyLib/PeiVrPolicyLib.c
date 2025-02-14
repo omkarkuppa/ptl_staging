@@ -72,6 +72,7 @@ CpuPowerMgmtVrConfigPrint (
       DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : TdcEnable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcEnable[Index]));
       DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : TdcTimeWindow[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcTimeWindow[Index]));
       DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : TdcLock[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcLock[Index]));
+      DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : CepEnable[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->CepEnable[Index]));
       DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG:: FastPkgCRampDisable for Index = %d : 0x%X\n", Index, CpuPowerMgmtVrConfig->FastPkgCRampDisable[Index]));
       DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG:: SlowSlewRate for Index = %d : 0x%X\n", Index, CpuPowerMgmtVrConfig->SlowSlewRate[Index]));
       DEBUG ((DEBUG_INFO, " CPU_POWER_MGMT_VR_CONFIG : TdcMode[%X] : 0x%X\n", Index, CpuPowerMgmtVrConfig->TdcMode[Index]));
@@ -147,6 +148,10 @@ LoadCpuPowerMgmtVrConfigDefault (
     // 0: Disable, 1: Enable, 2: User Config
     //
     CpuPowerMgmtVrConfig->VccInDemotionEnable[Index] = 1;
+    //
+    // Default enable Current Excursion Protection.
+    //
+    CpuPowerMgmtVrConfig->CepEnable[Index] = 0;
   }
   ///
   /// Load CPU power management Vr Config block default for specific generation.

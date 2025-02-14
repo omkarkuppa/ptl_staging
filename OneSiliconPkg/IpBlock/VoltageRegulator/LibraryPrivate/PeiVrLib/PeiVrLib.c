@@ -50,6 +50,17 @@ typedef union {
   } Fields;
 } MAILBOX_DATA_FORMAT_VSYS;
 
+///
+/// Misc Config
+///
+typedef union {
+  UINT32 Data;
+  struct {
+    UINT32 CepEnable    : 1;
+    UINT32 Reserved1    : 31;
+  } Fields;
+} MAILBOX_DATA_FORMAT_MISC_CONFIG;
+
 /**
   Return TRUE when the Fast Vmode IccLimit is supported in the specific VR.
 
@@ -782,21 +793,26 @@ SetVrPerVr(
   IN CPU_POWER_MGMT_VR_CONFIG    *CpuPowerMgmtVrConfig
   )
 {
-  VR_DATA_HOB                 VrDataHob;
-  VR_DOMAIN_TOPOLOGY          VrDomainTopology;
-  UINTN                       VrIndex;
-  UINT8                       TempVrAddress;
-  UINT8                       SvidEnabled;
-  VOID                        *Hob;
-  UINT16                      IccMax[MAX_NUM_VRS];
-  UINT16                      IccMaxItrip[MAX_NUM_VRS];
-  UINT16                      IccLimit[MAX_NUM_VRS];
-  UINT16                      TdcCurrentLimit[MAX_NUM_VRS];
-  UINT32                      TdcTimeWindow[MAX_NUM_VRS];
-  UINT16                      AcLoadline[MAX_NUM_VRS];
-  UINT16                      DcLoadline[MAX_NUM_VRS];
-  UINT16                      VoltageLimit[MAX_NUM_VRS];
-  UINTN                       MaxNumVrs;
+  VR_DATA_HOB                      VrDataHob;
+  VR_DOMAIN_TOPOLOGY               VrDomainTopology;
+  UINTN                            VrIndex;
+  UINT8                            TempVrAddress;
+  UINT8                            SvidEnabled;
+  VOID                             *Hob;
+  UINT16                           IccMax[MAX_NUM_VRS];
+  UINT16                           IccMaxItrip[MAX_NUM_VRS];
+  UINT16                           IccLimit[MAX_NUM_VRS];
+  UINT16                           TdcCurrentLimit[MAX_NUM_VRS];
+  UINT32                           TdcTimeWindow[MAX_NUM_VRS];
+  UINT16                           AcLoadline[MAX_NUM_VRS];
+  UINT16                           DcLoadline[MAX_NUM_VRS];
+  UINT16                           VoltageLimit[MAX_NUM_VRS];
+  UINTN                            MaxNumVrs;
+  UINT32                           MailboxData;
+  UINT32                           MailboxStatus;
+  MAILBOX_DATA_FORMAT_MISC_CONFIG  MiscConfigData;
+  PCODE_MAILBOX_INTERFACE          MailboxCommand;
+  EFI_STATUS                       Status;
 
   DEBUG ((DEBUG_INFO, "VR: Update VR overrides\n"));
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_CPU_VR_UPDATE_OVEERRIDES); //PostCode (0xC41)
@@ -891,6 +907,33 @@ SetVrPerVr(
           );
     }
     SetVrMiscConfig (CpuPowerMgmtVrConfig, TempVrAddress, VrIndex);
+
+    if (IsVrCepConfigSupport (VrIndex)) {
+      MailboxCommand.InterfaceData = 0;
+      MailboxCommand.Fields.Command = MAILBOX_VR_CMD_SVID_VR_HANDLER;
+      MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SVID_GET_MISC_CONFIG;
+      MailboxCommand.Fields.Param2 = (TempVrAddress & VR_ADDRESS_MASK);
+      DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Read Command = MAILBOX_VR_SUBCMD_SVID_GET_MISC_CONFIG\n"));
+      Status = MailboxRead (MailboxCommand.InterfaceData, &MailboxData, &MailboxStatus);
+      if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
+        DEBUG ((DEBUG_ERROR, "VR: Error Reading Misc Configuration for VrIndex = %x. EFI_STATUS = %r, Mailbox Status = %X\n", VrIndex , Status, MailboxStatus));
+      } else {
+        MiscConfigData.Data = MailboxData;
+        if ((CpuPowerMgmtVrConfig->CepEnable[VrIndex] != MiscConfigData.Fields.CepEnable)) {
+          MailboxData ^= BIT0;
+          DEBUG ((DEBUG_INFO, "VR: Write CEP for VrIndex %d is %x.\n", VrIndex, MiscConfigData.Fields.CepEnable));
+        }
+        MailboxCommand.InterfaceData = 0;
+        MailboxCommand.Fields.Command = MAILBOX_VR_CMD_SVID_VR_HANDLER;
+        MailboxCommand.Fields.Param1 = MAILBOX_VR_SUBCMD_SVID_SET_MISC_CONFIG;
+        MailboxCommand.Fields.Param2 = (TempVrAddress & VR_ADDRESS_MASK);
+        DEBUG ((DEBUG_INFO, "(MAILBOX) Mailbox Write Command = MAILBOX_VR_SUBCMD_SVID_SET_MISC_CONFIG\n"));
+        Status = MailboxWrite (MailboxCommand.InterfaceData, MailboxData, &MailboxStatus);
+        if (EFI_ERROR (Status) || (MailboxStatus != PCODE_MAILBOX_CC_SUCCESS)) {
+          DEBUG ((DEBUG_ERROR, "VR: Error Writing Misc Configuration for VrIndex = %x. EFI_STATUS = %r, Mailbox Status = %X\n", VrIndex , Status, MailboxStatus));
+        }
+      }
+    }
   }
 
   ///

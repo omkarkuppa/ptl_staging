@@ -140,4 +140,16 @@ GetVrListFru (
   OUT UINTN  *VrCount
   );
 
+/**
+  This function return whether CEP (Current Excursion Protection) configuration supported or not.
+  @param[in]  VrIndex   Index of VR.
+  @retval TRUE  - CEP (Current Excursion Protection) configuration supported.
+  @retval FALSE - CEP (Current Excursion Protection) configuration unsupported.
+**/
+BOOLEAN
+EFIAPI
+IsVrCepConfigSupport (
+  IN  UINTN  VrIndex
+  );
+
 #endif //_PEI_VR_LIB_H

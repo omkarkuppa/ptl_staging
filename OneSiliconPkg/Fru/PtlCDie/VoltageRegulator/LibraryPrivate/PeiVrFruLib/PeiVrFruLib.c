@@ -30,6 +30,7 @@
 #include <Library/PeiVrLib.h>
 #include <Guid/CpuPmData.h>
 #include <Register/B2pMailbox.h>
+#include <Register/Ptl/VoltageRegulator/VoltageRegulatorDomains.h>
 
 UINT32  mVrList[] = {
   SIGNATURE_32 ('C', 'O', 'R', 'E'), SIGNATURE_32 ('_', '_', 'G', 'T'),
@@ -533,4 +534,22 @@ GetVrOverridesFru (
   ///
   DEBUG ((DEBUG_INFO, "No matching CpuIdentifier found in the VrOverride Table.\n"));
   return RETURN_NOT_FOUND;
+}
+
+/**
+  This function return whether CEP (Current Excursion Protection) configuration supported or not.
+  @param[in]  VrIndex   Index of VR.
+  @retval TRUE  - CEP (Current Excursion Protection) configuration supported.
+  @retval FALSE - CEP (Current Excursion Protection) configuration unsupported.
+**/
+BOOLEAN
+EFIAPI
+IsVrCepConfigSupport (
+  IN  UINTN  VrIndex
+  )
+{
+  if ((VrIndex == CPU_VR_DOMAIN_IA) || (VrIndex == CPU_VR_DOMAIN_ATOM) || (VrIndex == CPU_VR_DOMAIN_SA)) {
+    return TRUE;
+  }
+  return FALSE;
 }

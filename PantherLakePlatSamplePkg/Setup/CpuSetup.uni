@@ -98,6 +98,9 @@
 #string STR_CPU_DVLR_RFI_FREQ_SELECT            #language en-US "DLVR RFI Frequency"
 #string STR_CPU_DVLR_RFI_FREQ_SELECT_HELP       #language en-US "DLVR RFI Frequency in MHz."
 
+#string STR_VR_CEP_ENABLE                       #language en-US "CEP Enable"
+#string STR_VR_CEP_ENABLE_HELP                  #language en-US "Enable/Disable CEP (Current Excursion Protection) Support."
+
 #string STR_2227_2MHZ                             #language en-US "2227.2MHz"
 #string STR_2140MHZ                             #language en-US "2140MHz"
 
