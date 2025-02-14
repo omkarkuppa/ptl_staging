@@ -77,7 +77,7 @@
 
 [FixedPcd]
   gPlatformModuleTokenSpaceGuid.PcdObbVerificationEnforcementEnable    ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdSignedFspEnable                        ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSignedFspEnable                              ## CONSUMES
   gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp    ## CONSUMES
 
 [Pcd]

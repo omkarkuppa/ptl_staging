@@ -177,11 +177,10 @@ cd ..\..\
   set FSP_SIGNED=TRUE
   set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
 --pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE ^
---pcd gBoardModuleTokenSpaceGuid.PcdSignedFspEnable=TRUE ^
 --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0 ^
 --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=0
-  set FSP_BUILD_OPTION_PCD=%FSP_BUILD_OPTION_PCD% ^
---pcd gPantherLakeFspPkgTokenSpaceGuid.PcdSignedFspBuild=TRUE
+  set SI_BUILD_OPTION_PCD=%SI_BUILD_OPTION_PCD% ^
+--pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=TRUE
 
 ) else if /i "embedded" == "%1" (
   set EMBEDDED_BUILD=TRUE

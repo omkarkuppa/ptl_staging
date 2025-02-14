@@ -88,6 +88,7 @@ struc SecCarInitParamsFsp24
   ; FSP_T_CONFIG {
   .UsedFspTConfigBeforeSecondaryDataCache:  resw 71
   .EnableSecondaryDataCache:                resb  1
+  .ProgramWriteBackCodeCache:               resb  1
   ; }
   .size:
 endstruc
@@ -567,13 +568,20 @@ TopMemoryMtrr:
   ;
   ; Program base register
   ;
-  sub     edx, edx
   mov     ecx, MTRR_PHYS_BASE_1         ; setup variable mtrr
   add     ecx, ebx                      ; ebx is still NEXT_MTRR_INDEX
 
   and     eax, 0xFFFFF000               ; eax is the low 32bit MTRR mask. Retrieve the base address from MTRR mask
                                         ; MTRR mask = eax AND 0xFFFFF000 = 4G - mask_size
+  mov     rdx, r9                       ; Get FSPT UPD from R9
+  cmp     byte [edx + SecCarInitParamsFsp24.ProgramWriteBackCodeCache], 1  ; Check if this is signed FSP boot
+  jnz     ProgramWriteProtectedCodeCache
+  or      eax, MTRR_MEMORY_TYPE_WB      ; set type to write back
+  jmp     ProgramAttributeDone
+ProgramWriteProtectedCodeCache:
   or      eax, MTRR_MEMORY_TYPE_WP      ; set type to write protect
+ProgramAttributeDone:
+  sub     edx, edx
   wrmsr
 
   ;
@@ -670,12 +678,19 @@ GotSize:
   ;
   ; Program base register
   ;
-  sub     edx, edx
   mov     ecx, MTRR_PHYS_BASE_1         ; setup variable mtrr
   add     ecx, ebx                      ; ebx is still NEXT_MTRR_INDEX
 
   movd    eax, CODE_BASE_TO_CACHE
+  mov     rdx, r9                       ; Get FSPT UPD from R9
+  cmp     byte [edx + SecCarInitParamsFsp24.ProgramWriteBackCodeCache], 1  ; Check if this is signed FSP boot
+  jnz     ProgramWriteProtectedCodeCache1
+  or      eax, MTRR_MEMORY_TYPE_WB      ; set type to write back
+  jmp     ProgramAttributeDone1
+ProgramWriteProtectedCodeCache1:
   or      eax, MTRR_MEMORY_TYPE_WP      ; set type to write protect
+ProgramAttributeDone1:
+  sub     edx, edx
   wrmsr
   ;
   ; Advance and loop

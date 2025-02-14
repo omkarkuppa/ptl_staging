@@ -108,7 +108,7 @@
   gBoardModuleTokenSpaceGuid.PcdFlashFvExtendedAdvancedBase           ## CONSUMES
   gPlatformModuleTokenSpaceGuid.PcdExtendedBiosRegionSupport          ## CONSUMES
   gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp   ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdSignedFspEnable                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSignedFspEnable                             ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashFvUplSize                        ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdFlashFvUplBase                        ## CONSUMES
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress                  ## CONSUMES

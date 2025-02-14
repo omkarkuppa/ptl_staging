@@ -79,7 +79,7 @@
   gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp   ## CONSUMES
   gMultiIbbFeaturePkgTokenSpaceGuid.PcdAcmSetNem                      ## CONSUMES
   gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable          ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdSignedFspEnable                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSignedFspEnable                             ## CONSUMES
 
 [Depex]
   TRUE

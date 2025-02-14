@@ -210,6 +210,7 @@
 
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection|0
   gSiPkgTokenSpaceGuid.PcdEnableFspmCompression|FALSE
+  gSiPkgTokenSpaceGuid.PcdSignedFspEnable|FALSE
 
   ## This PCD decides how FSP is measured
   # 1) The BootGuard ACM may already measured the FSP component, such as FSPT/FSPM.

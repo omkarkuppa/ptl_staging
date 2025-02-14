@@ -185,7 +185,6 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   gBoardModuleTokenSpaceGuid.PcdAcpiDebugFeatureEnable     |FALSE|BOOLEAN|0xF0000045
   gBoardModuleTokenSpaceGuid.PcdModularCryptoEnable        |FALSE|BOOLEAN|0xF000001B
   gBoardModuleTokenSpaceGuid.PcdFspPeiGopDisable           |FALSE|BOOLEAN|0xF000001C
-  gBoardModuleTokenSpaceGuid.PcdSignedFspEnable            |FALSE|BOOLEAN|0xF000001E
 
   ##
   ## The Flash PCDs will be patched based on FDF definitions during build.

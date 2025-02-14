@@ -169,6 +169,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST FSPT_UPD FsptUpdDataPtr = {
     FixedPcdGet8 (PcdSerialIoI2cPadsTerm),                                                     // PcdSerialIoI2cPadsTerm
     FixedPcdGet8 (PcdSerialIoI2cNumber),                                                       // PcdSerialIoI2cNumber
     FixedPcdGet8 (PcdEnableFspmCompression),                                                   // SecondaryDataStackSet
+    FixedPcdGet8 (PcdSignedFspEnable),                                                         // ProgramWriteBackCodeCache
     {
       0x00
     }

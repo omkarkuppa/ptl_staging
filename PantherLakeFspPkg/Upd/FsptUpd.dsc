@@ -334,8 +334,17 @@
   # !BSF HELP:{Enable Secondary Data Cache Region}
   gPlatformFspPkgTokenSpaceGuid.EnableSecondaryDataCache       | * | 0x01 | 0x0
 
+  # !BSF NAME:{Enable Signed FSP Code Cache Programming} TYPE:{Combo}
+  # !BSF OPTION:{0:Disable, 1:Enable}
+  # !BSF HELP:{Enable Signed FSP Code Cache Programming}
+!if gSiPkgTokenSpaceGuid.PcdSignedFspEnable == TRUE
+  gPlatformFspPkgTokenSpaceGuid.ProgramWriteBackCodeCache       | * | 0x01 | 0x01
+!else
+  gPlatformFspPkgTokenSpaceGuid.ProgramWriteBackCodeCache       | * | 0x01 | 0x00
+!endif
+
   # !HDR EMBED:{FSP_T_CONFIG:FsptConfig:END}
-  gPlatformFspPkgTokenSpaceGuid.ReservedFsptUpd1                | * | 0x09 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.ReservedFsptUpd1                | * | 0x08 | {0x00}
   # Added reserved space  UnusedUpdSpace2[6]
   gPlatformFspPkgTokenSpaceGuid.FsptUpdRsvd2                    | * | 0x6 | {0x00}
 

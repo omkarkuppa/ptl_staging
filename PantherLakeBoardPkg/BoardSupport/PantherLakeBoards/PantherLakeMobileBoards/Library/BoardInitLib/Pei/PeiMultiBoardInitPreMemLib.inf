@@ -295,7 +295,7 @@
 
   #MultiIBB
   gMultiIbbFeaturePkgTokenSpaceGuid.PcdMultiIbbFeatureEnable                 ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdSignedFspEnable                              ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSignedFspEnable                                    ## CONSUMES
   gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMBase                           ## CONSUMES
 
   gBoardModuleTokenSpaceGuid.PcdUsbConnectorTable                            ## PRODUCES

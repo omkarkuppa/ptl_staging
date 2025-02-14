@@ -63,7 +63,7 @@
   gPantherLakeFspPkgTokenSpaceGuid.PcdFspPerformanceEnable|FALSE
   gPantherLakeFspPkgTokenSpaceGuid.PcdMonoStatusCode|FALSE
   gPantherLakeFspPkgTokenSpaceGuid.PcdAcpiInFspEnabled|FALSE
-  gPantherLakeFspPkgTokenSpaceGuid.PcdSignedFspBuild|FALSE
+  gSiPkgTokenSpaceGuid.PcdSignedFspEnable|FALSE
   #
   # Symbol in release build
   #

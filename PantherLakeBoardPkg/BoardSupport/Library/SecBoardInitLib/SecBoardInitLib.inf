@@ -117,3 +117,4 @@
   gSiPkgTokenSpaceGuid.PcdSerialIoSpiMisoPinMux                       ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdSerialIoSpiMosiPinMux                       ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdEnableFspmCompression                       ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSignedFspEnable                             ## CONSUMES
