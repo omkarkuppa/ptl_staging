@@ -910,7 +910,7 @@ AmthiGetGfxUiInfo (
 **/
 EFI_STATUS
 AmthiGetGfxFragment (
-  IN UINT32  ImageId,
+  IN AMT_IMAGE_ID  ImageId,
   IN UINT32  ByteOffset,
   IN UINT32  ByteSizeReq,
   OUT UINT32 *ByteSizeResp,

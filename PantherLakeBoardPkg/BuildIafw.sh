@@ -156,6 +156,12 @@ done
 if [ ! -d $WORKSPACE/Conf ]; then
    mkdir $WORKSPACE/Conf
 fi
+
+if [ ! $GCC_BIN ] && [ -d /usr/local/gcc-14/bin ]; then
+  export GCC_BIN=/usr/local/gcc-14/bin/
+  echo "GCC_BIN becomes $GCC_BIN"
+fi
+
 . $WORKSPACE_CORE/edksetup.sh BaseTools
 
 #
@@ -321,7 +327,12 @@ if [ "$COMPILER" = "GCC" ]; then
   #
   # Detect GCC Tool Chain Version
   #
-  GCC_VERSION=$(gcc --version | grep ^gcc | awk '{print $4}' | sed 's/\.[0-9]*$//g')
+  if [ $GCC_BIN ]; then
+    GCC_VERSION=$($GCC_BIN/gcc --version | grep ^gcc | sed -e "s/.*) //" | sed 's/\([0-9]\+.[0-9]\).*/\1/')
+  else
+    GCC_VERSION=$(gcc --version | grep ^gcc | sed -e "s/.*) //" | sed 's/\([0-9]\+.[0-9]\).*/\1/')
+  fi
+  echo "GCC version: $GCC_VERSION!"
   if [ "$GCC_VERSION" = "5.4" ]; then
     export TOOL_CHAIN_TAG=GCC
   elif [ "$GCC_VERSION" = "5.5" ]; then
@@ -333,6 +344,10 @@ if [ "$COMPILER" = "GCC" ]; then
   elif [ "$GCC_VERSION" = "11.3" ]; then
     export TOOL_CHAIN_TAG=GCC
   elif [ "$GCC_VERSION" = "11.4" ]; then
+    export TOOL_CHAIN_TAG=GCC
+  elif [ "$GCC_VERSION" = "14.1" ]; then
+    export TOOL_CHAIN_TAG=GCC
+  elif [ "$GCC_VERSION" = "14.2" ]; then
     export TOOL_CHAIN_TAG=GCC
   elif [ "$GCC_VERSION_SKIP_CHECK" != "" ]; then
     export TOOL_CHAIN_TAG=GCC

@@ -116,6 +116,11 @@ if [ $1 = "-h" ]; then
   USAGE
 fi
 
+if [ ! $GCC_BIN ] && [ -d /usr/local/gcc-14/bin ]; then
+  export GCC_BIN=/usr/local/gcc-14/bin/
+  echo "GCC_BIN becomes $GCC_BIN"
+fi
+
 if [ "$CLEAN_BUILD" = "FALSE" ]; then
   if [ ! -d $WORKSPACE/Conf ]
   then

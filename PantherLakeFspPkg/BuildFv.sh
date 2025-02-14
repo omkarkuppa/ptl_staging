@@ -540,12 +540,21 @@ if [ "$1" = "GCC" ]; then
 #
 # Detect GCC Tool Chain Version
 #
-GCC_VERSION=$(gcc -dumpversion|sed 's/^\([0-9]\.[0-9]\).*/\1/')
+if [ $GCC_BIN ]; then
+  GCC_VERSION=$($GCC_BIN/gcc -dumpversion|sed 's/^\([0-9]\+\.[0-9]\).*/\1/')
+else
+  GCC_VERSION=$(gcc -dumpversion|sed 's/^\([0-9]\+\.[0-9]\).*/\1/')
+fi
+echo "FSP GCC version: $GCC_VERSION!"
 if [ "$GCC_VERSION" = "5.4" ]; then
   export TOOL_CHAIN=GCC
 elif [ "$GCC_VERSION" = "5.5" ]; then
   export TOOL_CHAIN=GCC
 elif [ "$GCC_VERSION" = "11" ]; then
+  export TOOL_CHAIN=GCC
+elif [ "$GCC_VERSION" = "14.1" ]; then
+  export TOOL_CHAIN=GCC
+elif [ "$GCC_VERSION" = "14.2" ]; then
   export TOOL_CHAIN=GCC
 elif [ "$GCC_VERSION_SKIP_CHECK" != "" ]; then
   export TOOL_CHAIN=GCC
