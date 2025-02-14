@@ -148,7 +148,7 @@ UpdatePeiSaPolicyBoardConfig (
     for (PortIndex = 0; PortIndex < MAX_TCSS_USB3_PORTS; PortIndex++) {
 #if FixedPcdGet8(PcdFspModeSelection) == 1
       TcssPortPtr = &(((FSPM_UPD *) FspmUpd)->FspmConfig.TcssPort0) + PortIndex;
-      ((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb30Enable[PortIndex] = IS_TC_PORT_USB_SUPPORTED (*TcssPortPtr);
+      ((FSPS_UPD *) FspsUpd)->FspsConfig.UsbTcPortEn |= (IS_TC_PORT_USB_SUPPORTED (*TcssPortPtr) << PortIndex);
 #else
       TcssConfig->UsbConfig.PortUsb30[PortIndex].Enable = IS_TC_PORT_USB_SUPPORTED (TcssPeiPreMemConfig->UsbTcConfig.PortIndex.CapPolicy[PortIndex]);
 #endif

@@ -355,7 +355,11 @@ UpdatePeiSaPolicy (
       //
       // Update policy while USBC Port native USB3 unsupported
       //
-      UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb30Enable[Index],      TcssPeiConfig->UsbConfig.PortUsb30[Index].Enable, FALSE);
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+      ((FSPS_UPD *) FspsUpd)->FspsConfig.UsbTcPortEn &= ~(1 << Index);
+#else
+      TcssPeiConfig->UsbConfig.PortUsb30[Index].Enable = FALSE;
+#endif
       UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CpuUsb3OverCurrentPin[Index],TcssPeiConfig->UsbConfig.PortUsb30[Index].OverCurrentPin, USB_OC_SKIP);
       UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.TcssCpuUsbPdoProgramming,    TcssPeiConfig->UsbConfig.PdoProgramming, TRUE);
       UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchXhciUaolEnable,           TcssPeiConfig->UsbConfig.UaolEnable, TRUE);
