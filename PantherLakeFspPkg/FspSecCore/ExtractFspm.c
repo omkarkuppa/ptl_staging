@@ -57,17 +57,23 @@ FindFvSection (
 }
 
 /**
-  Rebase FSP-M image base address in FSP-M headr
+  Rebase FSP-M image base address in FSP-M header
+
+  @param[in]  Bspm         Base address of BSSS.
 
 **/
 VOID
 RebaseFspmImageBase (
-  VOID
+  IN BSPM_ELEMENT            *Bspm
 )
 {
   FSP_INFO_HEADER            *FspHeader;
   UINT32                     FspmBaseAddress;
   EFI_COMMON_SECTION_HEADER  *Section = NULL;
+
+  if (!(Bspm->FspmLoadingPolicy & FSPM_COMPRESSED)) {
+    return;
+  }
 
   FspmBaseAddress = PcdGet32 (PcdSecondaryDataStackBase) + SIZE_4KB;
   Section = (EFI_COMMON_SECTION_HEADER *) FindFvSection (FspmBaseAddress);
@@ -79,7 +85,7 @@ RebaseFspmImageBase (
 /**
   The Entry point of the FSP Wrapper Extract Guided Section
 
-  @param[in]  FspmBaseAddress   Base address of compressed FSP-M
+  @param[in]  Bspm         Base address of BSSS.
 
   @retval  RETURN_SUCCESS Decompression completed successfully
   @retval  RETURN_INVALID_PARAMETER
@@ -89,7 +95,7 @@ RebaseFspmImageBase (
 EFI_STATUS
 EFIAPI
 ExtractFspm (
-  IN UINT32                  FspmBaseAddress
+  IN BSPM_ELEMENT            *Bspm
   )
 {
   EFI_COMMON_SECTION_HEADER  *Section = NULL;
@@ -101,6 +107,13 @@ ExtractFspm (
   UINT32                     ScratchBufferSize;
   UINT32                     OutputBufferSize;
   UINT16                     SectionAttribute;
+  UINT32                     FspmBaseAddress;
+
+  if (!(Bspm->FspmLoadingPolicy & FSPM_COMPRESSED)) {
+    DEBUG ((DEBUG_INFO, "FSP-M is not compressed\n"));
+    return EFI_SUCCESS;
+  }
+  FspmBaseAddress = Bspm->FspmBaseAddress;
 
   Section = (EFI_COMMON_SECTION_HEADER *) FindFvSection (FspmBaseAddress);
 

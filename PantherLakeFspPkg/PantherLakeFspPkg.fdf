@@ -171,7 +171,9 @@ FvNameGuid         = 01530A64-BD0f-4CD8-80B1-5AC6B83EE3B8
 INF RuleOverride = FSPHEADER   $(FSP_PACKAGE)/FspHeader/FspHeader.inf
 INF RuleOverride = RELOC   $(FSP_PACKAGE)/FspSecCore/FspSecCoreO.inf
 
+!if gSiPkgTokenSpaceGuid.PcdSignedFspEnable == TRUE
 INF $(FSP_PACKAGE)/FspLoaderPeim/FspLoaderPeim.inf
+!endif
 
 !if $(FSP64_BUILD) == TRUE
   INF RuleOverride=RESET_VECTOR UefiCpuPkg/ResetVector/Vtf0/Vtf0.inf

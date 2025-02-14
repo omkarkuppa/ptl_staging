@@ -27,6 +27,7 @@
 #include <Library/BootGuardLib.h>
 #include <Library/FspMeasurementLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/FspLoadComponentsLib.h>
 
 FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
   FSP_VERIFY_API_WRAPPER_STRUCTURE_ID,
@@ -35,46 +36,6 @@ FSP_VERIFY_API_WRAPPER  mFspVerifyApiWrapper = {
   NULL,  // To be patched post FSP build
   NULL   // To be patched post FSP build
 };
-
-/**
-  Do Pei Core Te section relocation in Fv.
-
-  @param[in]    FvHandle        Pointer to Fv.
-
-  @retval  EFI_SUCCESS                    Relocation success.
-           EFI_INVALID_PARAMETER          Relocation fail.
-
-**/
-EFI_STATUS
-EFIAPI
-RebasePeiCoreFfs (
-  IN UINTN FvHandle
-  );
-
-/**
-  Rebase FSP-M image base address in FSP-M headr
-
-**/
-VOID
-RebaseFspmImageBase (
-  VOID
-);
-
-/**
-  The Entry point of the FSP Wrapper Extract Guided Section
-
-  @param[in]  FspmBaseAddress   Base address of compressed FSP-M
-
-  @retval  RETURN_SUCCESS Decompression completed successfully
-  @retval  RETURN_INVALID_PARAMETER
-                          Not able to find FSPM FV.
-
-**/
-EFI_STATUS
-EFIAPI
-ExtractFspm (
-  IN UINT32                  FspmBaseAddress
-  );
 
 /**
   Get BSP Segment Base Address and Size infomation from BSPM_ELEMENT
@@ -162,7 +123,6 @@ LoadFspm (
     CpuDeadLoop ();
   }
 
-  RebaseFspmImageBase ();
   RebasePeiCoreFfs ((UINTN) Bspm->FspmBaseAddress);
 
   return EFI_SUCCESS;
@@ -326,10 +286,6 @@ FspLoadComponents (
   Bspm = LocateBspm ();
   if (Bspm == NULL) {
     return;
-  }
-
-  if (Bspm->FspmLoadingPolicy & FSPM_COMPRESSED) {
-    ExtractFspm (Bspm->FspmBaseAddress);
   }
 
   Fbm = LocateFbm ();

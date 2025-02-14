@@ -119,10 +119,12 @@
 #
   PeimEntryPoint|MdePkg/Library/PeimEntryPoint/PeimEntryPoint.inf
 
+!if gSiPkgTokenSpaceGuid.PcdSignedFspEnable == TRUE
 #
 # Crypto services
 #
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/PeiCryptLib.inf
+!endif
 
 #
 # Silicon Init Pei Library
@@ -243,17 +245,19 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   PlatformPostCodeMapLib|$(PLATFORM_SI_PACKAGE)/Library/Rsc2PostCodeMapLibNull/PlatformPostCodeMapLibNull.inf
   Rsc2PostCodeMapLib|$(PLATFORM_SI_PACKAGE)/Library/Rsc2PostCodeMapLib/Rsc2PostCodeMapLib.inf
 
+  FspFbmSupportLib|$(FSP_PACKAGE)/Library/BaseFspFbmSupportLib/BaseFspFbmSupportLib.inf
+!if gSiPkgTokenSpaceGuid.PcdSignedFspEnable == TRUE
 #
 # Crypto services
 #
   OpensslLib|CryptoPkg/Library/OpensslLib/OpensslLib.inf
   IntrinsicLib|CryptoPkg/Library/IntrinsicLib/IntrinsicLib.inf
   RngLib|MdePkg/Library/BaseRngLib/BaseRngLib.inf
-  FspFbmSupportLib|$(FSP_PACKAGE)/Library/BaseFspFbmSupportLib/BaseFspFbmSupportLib.inf
   FspVerificationLib|$(FSP_PACKAGE)/Library/BaseFspVerificationLib/BaseFspVerificationLib.inf
   FspMeasurementLib|$(FSP_PACKAGE)/Library/MeasurementLib/FspMeasurementLib.inf
   Tpm2DeviceLib|$(FSP_PACKAGE)/Library/SecTpm2DeviceLibDTpm/Tpm2DeviceLibDTpmFsp.inf
   Tpm2CommandLib|SecurityPkg/Library/Tpm2CommandLib/Tpm2CommandLib.inf
+!endif
 
 #
 # UEFI & PI
@@ -576,6 +580,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
       gIntelFsp2PkgTokenSpaceGuid.PcdMultiPhaseNumberOfPhases|1
   }
 
+!if gSiPkgTokenSpaceGuid.PcdSignedFspEnable == TRUE
   #
   # FSP Loader
   # FspLoaderPeim shares APIs to FspSecCoreO use to save size.
@@ -588,6 +593,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
     <PcdsFixedAtBuild>
       gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer|FALSE
   }
+!endif
 
   #
   # SEC Core
@@ -595,6 +601,11 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
   $(FSP_PACKAGE)/FspSecCore/FspSecCoreO.inf {
     <LibraryClasses>
       NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
+!if gSiPkgTokenSpaceGuid.PcdSignedFspEnable == TRUE
+      FspLoadComponentsLib|$(FSP_PACKAGE)/Library/FspLoadComponentsLib/FspLoadComponents.inf
+!else
+      FspLoadComponentsLib|$(FSP_PACKAGE)/Library/FspLoadComponentsLibNull/FspLoadComponentsNull.inf
+!endif
     <PcdsFixedAtBuild>
       gSiPkgTokenSpaceGuid.PcdFspValidatePeiServiceTablePointer|FALSE
   }

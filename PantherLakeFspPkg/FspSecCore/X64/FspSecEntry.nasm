@@ -32,6 +32,8 @@ IA32_CPUID_SSE2_B         equ        26
 SECTION .text
 
 extern   ASM_PFX(FspLoadComponents)
+extern   ASM_PFX(ExtractFspm)
+extern   ASM_PFX(RebaseFspmImageBase)
 extern   ASM_PFX(PcdGet32 (PcdFlashFvFsptBase))
 
 
@@ -389,11 +391,34 @@ TempRamInitDone:
   and     rax, 0fh
   sub     rsp, rax
 
+  ;
+  ; Decompress FSPM region
+  ;
+  PUSHA_64
+  xor     rcx, rcx
+  mov     ecx, esi                      ; Pass BSSS base address
+  sub     rsp, 20h
+  call    ASM_PFX(ExtractFspm)
+  test    rax, rax                      ; Check return status
+  jnz     FspApiFailed
+  add     rsp, 20h
+  POPA_64
+
   ; Load FSPM and BspPremem in FSP Signing flow
   PUSHA_64
   sub     rsp, 20h
   mov     rcx, rdx
   call    ASM_PFX(FspLoadComponents)
+  add     rsp, 20h
+  POPA_64
+
+  ; Rebase FSP-M PeiCore after verification when FSP-M is not compressed
+  PUSHA_64
+  xor     rcx, rcx
+  mov     ecx, esi                      ; Pass BSSS base address
+  sub     rsp, 20h
+  mov     rcx, rdx
+  call    ASM_PFX(RebaseFspmImageBase)
   add     rsp, 20h
   POPA_64
 

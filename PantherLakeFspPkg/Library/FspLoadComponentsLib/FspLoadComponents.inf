@@ -1,9 +1,9 @@
 ## @file
-#  Sec Core for FSP-O
+#  Load FSP components for verification and measurement
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2022 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -21,10 +21,11 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = FspSecCoreO
-  FILE_GUID                      = 78C674DF-FC05-3302-29C2-143B7E0067AC
-  MODULE_TYPE                    = SEC
+  BASE_NAME                      = FspLoadComponents
+  FILE_GUID                      = b0625e7f-e532-45d4-ad75-cc8c7e748e14
+  MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = FspLoadComponents
 
 #
 # The following information is for reference only and not required by the build tools.
@@ -32,27 +33,37 @@
 #  VALID_ARCHITECTURES           = IA32 X64
 #
 
-[Sources.X64]
-  X64/FspSecEntry.nasm
-  ExtractFspm.c
-
-[Sources.IA32]
-  IA32/FspSecEntry.nasm
+[Sources]
+  FspLoadComponents.c
+  FspRebasePeiCore.c
 
 [Packages]
   MdePkg/MdePkg.dec
   IntelFsp2Pkg/IntelFsp2Pkg.dec
   PantherLakeFspPkg/PantherLakeFspPkg.dec
   OneSiliconPkg/SiPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  SecurityPkg/SecurityPkg.dec
   IntelSiliconPkg/IntelSiliconPkg.dec
 
 [LibraryClasses]
-  BaseLib
-  ExtractGuidedSectionLib
-  LzmaArchDecompressLib
   FspLoadComponentsLib
+  MtrrLib
+  DebugLib
+  CpuLib
+  PcdLib
+  BaseMemoryLib
+  NemConfigLib
+  FspFbmSupportLib
+  FspVerificationLib
+  Tpm2DeviceLib
+  Tpm2CommandLib
+  FspMeasurementLib
 
-  [Pcd]
+[Pcd]
   gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptBase          ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase               ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize               ## CONSUMES
+  gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamBase              ## CONSUMES
+  gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize              ## CONSUMES
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize          ## CONSUMES
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptSize          ## CONSUMES
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspoSize          ## CONSUMES
