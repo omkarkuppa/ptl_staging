@@ -445,7 +445,7 @@ CheckSvnFromBiosImage (
   //
   // Check KM SVN
   //
-  Status = VerifySvn (MFT_KEY_USAGE_INDEX_OEM_KEY_MANIFEST, KmHeader->KmSvn);
+  Status = VerifySvn (MFT_KEY_USAGE_INDEX_OEM_BTG_KEY_MANIFEST, KmHeader->KmSvn);
   DEBUG ((DEBUG_INFO, "Check KM SVN: %r\n", Status));
 
 Exit:
