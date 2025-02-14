@@ -169,7 +169,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableGv|0x1                               
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwp|0x1                                                 # Intel(R) Speed Shift Technology
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwpAutoEppGrouping|0x1                                  # HwP Autonomous EPP Grouping
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwpAutoPerCorePstate|0x1                                # HwP Autonomous Per Core P State
-gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableRp|0x0                                                  # Resource Priority Feature
+gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableRp|0x1                                                  # Resource Priority Feature
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableThermalMonitor|0x1                                      # Thermal Monitor
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableVsysCritical|0x0                                        # Vsys/Psys Critical
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnergyEfficientPState|0x1                                     # Energy Efficient P-state

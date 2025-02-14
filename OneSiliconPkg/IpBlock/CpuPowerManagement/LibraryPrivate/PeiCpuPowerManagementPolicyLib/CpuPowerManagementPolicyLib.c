@@ -298,7 +298,7 @@ LoadCpuPowerMgmtBasicConfigDefault (
     CPU Power Management Basic configuration
   ********************************/
   CpuPowerMgmtBasicConfig->Hwp                          = TRUE;
-  CpuPowerMgmtBasicConfig->EnableRp                     = FALSE;
+  CpuPowerMgmtBasicConfig->EnableRp                     = TRUE;
   CpuPowerMgmtBasicConfig->HwpLock                      = TRUE;
   CpuPowerMgmtBasicConfig->HwpInterruptControl          = TRUE;
   CpuPowerMgmtBasicConfig->PowerFloorManagement         = TRUE;
