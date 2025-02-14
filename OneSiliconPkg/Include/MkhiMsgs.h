@@ -1105,6 +1105,7 @@ typedef enum {
 #define  MODULAR_IO_DP          0x1
 #define  MODULAR_IO_HDMI        0x2
 #define  MODULAR_IO_EDP         0x3
+#define  MODULAR_IO_USBA        0x4
 #define  MODULAR_IO_USB_DP_ALT  0xE
 
 #define MODULAR_IO_DDI_ENABLE 0

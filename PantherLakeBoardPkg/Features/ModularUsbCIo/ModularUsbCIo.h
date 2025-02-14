@@ -74,7 +74,7 @@
                                                       ? MODULAR_IO_USB4_40G : MODULAR_IO_USB_DP_ALT;                  \
       break;                                                                                                          \
     case MODULAR_IO_CONNECTOR_TYPE_USBA:                                                                              \
-      CseModularIoConfigPtr->Port##PortNum##Config = MODULAR_IO_USB4_40G;                                             \
+      CseModularIoConfigPtr->Port##PortNum##Config = MODULAR_IO_USBA;                                             \
       break;                                                                                                          \
     case MODULAR_IO_CONNECTOR_TYPE_DP:                                                                                \
       CseModularIoConfigPtr->Port##PortNum##Config = MODULAR_IO_DP;                                                   \
