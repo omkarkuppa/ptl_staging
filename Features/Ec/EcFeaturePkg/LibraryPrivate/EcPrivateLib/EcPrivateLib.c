@@ -162,26 +162,27 @@ EcId0Interface (
   UINT8             TxDataIndex;
   UINT8             RxDataIndex;
   UINT8             MaxValue;
+  UINT32            EcDebugPrintLevel;
 
+  EcDebugPrintLevel = PcdGet32 (PcdEcDebugInfoPrintLevel);
   Status = EFI_SUCCESS;
 
   //
   // Ec Debug info print
   //
-  DEBUG ((DEBUG_INFO, "Ec Command(Hex):       %02X\n", Command));
-  DEBUG ((DEBUG_INFO, "Ec DataSize Address:   0x%08X\n", DataSize));
-  DEBUG ((DEBUG_INFO, "Ec DataBuffer Address: 0x%08X\n", DataBuffer));
+  DEBUG ((DEBUG_VERBOSE, "Ec DataSize Address:   0x%08X\n", DataSize));
+  DEBUG ((DEBUG_VERBOSE, "Ec DataBuffer Address: 0x%08X\n", DataBuffer));
   if (DataSize != NULL) {
-    DEBUG ((DEBUG_INFO, "Ec DataSize value(Hex): %x\n", *DataSize));
+    DEBUG ((EcDebugPrintLevel, "Ec DataSize value(Hex): %x\n", *DataSize));
     if (DataBuffer == NULL) {
       DEBUG ((DEBUG_ERROR , "Invalid NULL DataBuffer!\n"));
       Status = EFI_INVALID_PARAMETER;
     } else {
-      DEBUG ((DEBUG_INFO, "EC DataBuffer(Hex):\n"));
+      DEBUG ((EcDebugPrintLevel, "EC DataBuffer(Hex):\n"));
       for (Index = 0; Index < *DataSize; Index++) {
-        DEBUG ((DEBUG_INFO, "%02x ", DataBuffer[Index]));
+        DEBUG ((EcDebugPrintLevel, "%02x ", DataBuffer[Index]));
       }
-      DEBUG ((DEBUG_INFO, "\n"));
+      DEBUG ((EcDebugPrintLevel, "\n"));
     }
   } else {
     if (DataBuffer != NULL) {
@@ -289,9 +290,9 @@ SendEcCommandTimeout (
     ReceiveEcStatus (&EcStatus);
     Index+=10;
   }
-  DEBUG ((DEBUG_INFO, "Ec OBF check, EcStatus: %x\n", EcStatus));
 
   if (Index >= Timeout) {
+    DEBUG ((DEBUG_ERROR, "Ec OBF check, EcStatus: %x\n", EcStatus));
     return EFI_TIMEOUT;
   }
 
@@ -302,14 +303,11 @@ SendEcCommandTimeout (
     ReceiveEcStatus (&EcStatus);
     Index+=10;
   }
-  DEBUG ((DEBUG_INFO, "Ec IBF check, EcStatus: %x\n", EcStatus));
 
   if (Index >= Timeout) {
+    DEBUG ((DEBUG_ERROR, "Ec IBF check, EcStatus: %x\n", EcStatus));
     return EFI_TIMEOUT;
   }
-
-  //Printing EC Command Sent
-  DEBUG ((DEBUG_INFO, "Sending EC Command: %02X\n", Command));
 
   //
   // Send the EC command
@@ -368,6 +366,9 @@ ReceiveEcDataTimeout (
 {
   UINTN             Index;
   UINT8             EcStatus;
+  UINT32            EcDebugPrintLevel;
+
+  EcDebugPrintLevel = PcdGet32 (PcdEcDebugInfoPrintLevel);
 
   if (Data == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -384,9 +385,9 @@ ReceiveEcDataTimeout (
     ReceiveEcStatus (&EcStatus);
     Index++;
   }
-  DEBUG ((DEBUG_INFO, "Ec OBF check, EcStatus: %x\n", EcStatus));
 
   if (Index >= Timeout) {
+    DEBUG ((DEBUG_ERROR, "Ec OBF check, EcStatus: %x\n", EcStatus));
     return EFI_TIMEOUT;
   }
   //
@@ -395,7 +396,7 @@ ReceiveEcDataTimeout (
   *Data = IoRead8 (EC_D_PORT);
 
   //Printing EC Data Received
-  DEBUG ((DEBUG_INFO, "Receiving EC Data: %02X\n", *Data));
+  DEBUG ((EcDebugPrintLevel, "Receiving EC Data: %02X\n", *Data));
 
   return EFI_SUCCESS;
 }
@@ -431,9 +432,9 @@ SendEcDataTimeout (
     ReceiveEcStatus (&EcStatus);
     Index++;
   }
-  DEBUG ((DEBUG_INFO, "Ec IBF check, EcStatus: %x\n", EcStatus));
 
   if (Index >= Timeout) {
+    DEBUG ((DEBUG_ERROR, "Ec IBF check, EcStatus: %x\n", EcStatus));
     return EFI_TIMEOUT;
   }
 
@@ -442,10 +443,6 @@ SendEcDataTimeout (
   //
   IoWrite8 (EC_D_PORT, Data);
 
-  //
-  // Printing EC Data Sent
-  //
-  DEBUG ((DEBUG_INFO, "Sent EC Data: %02X sent\n", Data));
   return EFI_SUCCESS;
 }
 
@@ -494,7 +491,9 @@ EcInterface (
   switch (EcId) {
     case EcId0:
       Status = EcId0Interface (Command, DataSize, DataBuffer);
-      DEBUG ((DEBUG_INFO, "Ec Command Status: %r\n", Status));
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "Ec Command Status: %r\n", Status));
+      }
       break;
 
     default:

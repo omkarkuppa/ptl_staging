@@ -66,3 +66,4 @@
 [PcdsDynamic, PcdsDynamicEx]
   gEcFeaturePkgTokenSpaceGuid.PcdEcPeciMode|0x00|UINT8|0x00101035
   gEcFeaturePkgTokenSpaceGuid.PcdBatterySupport|0x0|UINT8|0x00101036
+  gEcFeaturePkgTokenSpaceGuid.PcdEcDebugInfoPrintLevel|0x00000040|UINT32|0x00101037

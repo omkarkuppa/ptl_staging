@@ -47,3 +47,4 @@
 
 [Pcd]
   gEcFeaturePkgTokenSpaceGuid.PcdEcZeroTimeout       ## CONSUMES
+  gEcFeaturePkgTokenSpaceGuid.PcdEcDebugInfoPrintLevel       ## CONSUMES
