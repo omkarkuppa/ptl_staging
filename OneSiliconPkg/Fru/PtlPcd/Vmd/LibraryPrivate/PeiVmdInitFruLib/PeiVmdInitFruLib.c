@@ -38,6 +38,7 @@
 #include <Library/PeiImrInitLib.h>
 #include <Register/CpuGenInfoRegs.h>
 #include <Library/CpuLib.h>
+#include <HostBridgeDataHob.h>
 
 #define VMD_DEVICE_ID        (0xB06F)
 
@@ -333,12 +334,12 @@ VmdMemoryAllocation (
   IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
   )
 {
-  EFI_STATUS                   Status;
   EFI_RESOURCE_TYPE            ResourceType;
   EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttribute;
   UINT64                       BaseAddressImr11;
   UINT32                       Imr11SizeInBytes;
   UINT32                       CpuFamilyId;
+  HOST_BRIDGE_DATA_HOB         *HostBridgeDataHob;
 
   if ((IsVmdEnabled() == TRUE)) {
     CpuFamilyId = GetCpuFamilyModel ();
@@ -373,12 +374,13 @@ VmdMemoryAllocation (
         Imr11SizeInBytes,                            // MemoryLength
         EfiReservedMemoryType
         );
+      
       //
-      // Program IMR11.
+      // Store Imr1M11 Base address in Hob, later program the IMR11 based on VMD is enabled or not during the PostMem
       //
-      Status = SetImr (IMR_1M_IMR11, (UINT64) BaseAddressImr11, (UINT64) SIZE_1MB);
-      if (Status != EFI_SUCCESS) {
-        DEBUG ((DEBUG_ERROR, "Fail to program IMR11\n"));
+      HostBridgeDataHob = (HOST_BRIDGE_DATA_HOB *) GetFirstGuidHob (&gHostBridgeDataHobGuid);
+      if (HostBridgeDataHob != NULL) {
+        HostBridgeDataHob->Imr1M11BaseAddress = BaseAddressImr11;
       }
 
       *TopUseableMemAddr = BaseAddressImr11 + Imr11SizeInBytes;

@@ -34,6 +34,7 @@ typedef struct {
   UINT8                    EnableAbove4GBMmio;                   ///< 0=Disable above 4GB MMIO resource support, 1=Enable above 4GB MMIO resource support
   BOOLEAN                  SkipPamLock;                          ///< 0=All PAM registers will be locked in System Agent code, 1=Do not lock PAM registers in System Agent code.
   BOOLEAN                  CridEnable;                           ///< This field inidicates if CRID is enabled or disabled (to support Intel(R) SIPP)
+  UINT64                   Imr1M11BaseAddress;                   ///< Store the Base address of IMR1M11.
   UINT8                    Rsvd1[2];                             ///< Reserved for future use
 } HOST_BRIDGE_DATA_HOB;
 #pragma pack (pop)

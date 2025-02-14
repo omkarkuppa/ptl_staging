@@ -34,6 +34,8 @@
 #include <Library/PeiVmdInitFruLib.h>
 #include <Library/PeiHostBridgeIpStatusLib.h>
 #include <Defines/HostBridgeDefines.h>
+#include <HostBridgeDataHob.h>
+#include <Library/PeiImrInitLib.h>
 
 EFI_PEI_PPI_DESCRIPTOR  gVmdInitDonePpi = {
   (EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST),
@@ -120,6 +122,7 @@ VmdInit (
   UINT8                         HobIndex;
   EFI_STATUS                    Status;
   BOOLEAN                       VmdDevenStatus;
+  HOST_BRIDGE_DATA_HOB          *HostBridgeDataHob;
 
   //
   // VMD Initializations if the VMD IP is Supported
@@ -192,6 +195,19 @@ VmdInit (
   } else {
     DEBUG((DEBUG_VERBOSE, "Enabling VMD device in DevEn \n"));
     UncoreDevEnWrite (Vmd, 0, Enable);
+  }
+
+  //
+  // Program IMR11.
+  //
+  HostBridgeDataHob = (HOST_BRIDGE_DATA_HOB *) GetFirstGuidHob (&gHostBridgeDataHobGuid);
+  if (HostBridgeDataHob != NULL) {
+    if (HostBridgeDataHob->Imr1M11BaseAddress != 0) {
+      Status = SetImr (IMR_1M_IMR11, HostBridgeDataHob->Imr1M11BaseAddress, (UINT64) SIZE_1MB);
+      if (Status != EFI_SUCCESS) {
+        DEBUG ((DEBUG_ERROR, "IMR_1M_IMR11 Status = %r\n", Status));
+      }
+    }
   }
 
   DeviceBaseAddress = PCI_SEGMENT_LIB_ADDRESS (SA_SEG_NUM, VMD_BUS_NUM, VMD_DEV_NUM, VMD_FUN_NUM,0);
