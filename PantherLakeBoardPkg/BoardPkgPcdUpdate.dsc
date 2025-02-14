@@ -562,7 +562,7 @@
 
   gPantherLakeBinPkgTokenSpaceGuid.PcdIntelGopVbtBinEnable|TRUE
 
-  gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear|2024
+  gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear|2025
 
   gIntelFsp2PkgTokenSpaceGuid.PcdGlobalDataPointerAddress|0xFED00148
   gIntelFsp2WrapperTokenSpaceGuid.PcdPeiMinMemSize|0x4800000

@@ -127,7 +127,8 @@ else
     -p gEfiMdeModulePkgTokenSpaceGuid.PcdBrowserFieldTextColor=0x01 \
     -p gUefiCpuPkgTokenSpaceGuid.PcdCpuApLoopMode=0x2 \
     -p gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport=TRUE \
-    -p gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset=TRUE
+    -p gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset=TRUE \
+    -p gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear=2025
     ret=$?
     if [ $ret -ne 0 ]; then
       BuildFail $ret
