@@ -758,10 +758,14 @@ EnumerateSndwCodecs (
       Status = SndwReadCodecsStatus (HdaBar + SndwControllerMmioOffset, &PeripheralsStatus);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "Sndw#%d controller did not detect any codecs on the peripherials.\n", SndwLinkIndex));
-        continue;
+        break;
       }
 
-      if ((PeripheralsStatus & B_SNDW_MEM_PERIPHERALSTAT_STATUS (0)) == SndwPeripheralAttachedOk) {
+      DEBUG ((DEBUG_INFO, "Sndw#%d peripheral status: 0x%X.\n", SndwLinkIndex, PeripheralsStatus));
+      if ((PeripheralsStatus & B_SNDW_MEM_PERIPHERALSTAT_STATUS (0)) == SndwPeripheralNotPresent) {
+        DEBUG ((DEBUG_ERROR, "Enumeration complete on Sndw#%d controller.\n", SndwLinkIndex));
+        break;
+      } else if ((PeripheralsStatus & B_SNDW_MEM_PERIPHERALSTAT_STATUS (0)) == SndwPeripheralAttachedOk) {
         DEBUG ((DEBUG_INFO, "Peripheral#%d attached correctly.\n", 0));
 
         ///
@@ -803,8 +807,6 @@ EnumerateSndwCodecs (
         CopyMem (CodecListEntry->CodecInfo.CodecId.Data, CodecId.Data, sizeof (SNDW_CODEC_ID));
 
         PrintCodecInfo (&(CodecListEntry->CodecInfo));
-
-        DEBUG ((DEBUG_INFO, "Sndw#%d peripheral status: 0x%X.\n", SndwLinkIndex, PeripheralsStatus));
 
         if (CodecListHead == NULL) {
           SndwAccessContext->CodecListHead = CodecListEntry;
@@ -917,8 +919,11 @@ SndwSend (
     return EFI_NOT_FOUND;
   }
 
+  //
+  // Update DeviceAddress in case of a write to one peripheral
+  //
   for (Index = 0; Index < TxSize; Index++) {
-    if (TxCommand[Index].TxWrite.DeviceAddress != 0xF) {
+    if (TxCommand[Index].TxWrite.DeviceAddress <= SNDW_MAX_PERIPHERAL_NUMBER) {
       TxCommand[Index].TxWrite.DeviceAddress = PeripheralIndex;
     }
   }
@@ -982,9 +987,9 @@ SndwSendWithAck (
   DEBUG ((DEBUG_INFO, "Sndw%d: Controller mmio address: 0x%X.\n", SndwCodecInfo.SndwLinkIndex, HdaBar + SndwControllerMmioOffset));
 
   //
-  // In case of broadcast do not update DeviceAddress
+  // Update DeviceAddress in case of a write to one peripheral
   //
-  if (TxCommand.TxWrite.DeviceAddress != 0xF) {
+  if (TxCommand.TxWrite.DeviceAddress <= SNDW_MAX_PERIPHERAL_NUMBER) {
     TxCommand.TxWrite.DeviceAddress = PeripheralIndex;
   }
 
