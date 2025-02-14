@@ -420,6 +420,10 @@
   # !BSF HELP:{Enable/Disable UFS Inline Encryption feature, One byte for each Controller - (1,0) to enable Inline Encryption for controller 0 and (0, 1) to enable Inline Encryption for controller 1}
   gPlatformFspPkgTokenSpaceGuid.UfsInlineEncryption         | * | 0x02 | {0, 0}
 
+  # !BSF NAME:{UFS Connection Status} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{UFS Connection Status, One byte for each Controller - (1,0) to UFS connected to controller 0 and (0,1) to UFS connected to controller 1}
+  gPlatformFspPkgTokenSpaceGuid.UfsDeviceConnected         | * | 0x02 | {0x1, 0x1}
+
   ## SCS_UFS_CONFIG End
 
   ## PEI_ITBT_CONFIG Start

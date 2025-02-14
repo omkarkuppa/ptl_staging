@@ -210,7 +210,7 @@ PtlPcdScsInit (
   // If UFS is not supported by PMC and UFS is enabled by default.
   // Clear BIT0 of SCRATCH_GCR_0 to Enable UFS.
   //
-  if (PmcIsScsUfsFunctionDisabled () && UfsConfig->UfsControllerConfig[Ufs0Port.ControllerIndex].Enable) {
+  if (PmcIsScsUfsFunctionDisabled () && UfsConfig->UfsControllerConfig[Ufs0Port.ControllerIndex].Enable && UfsConfig->UfsControllerConfig[Ufs0Port.ControllerIndex].UfsDeviceConnected) {
     PmcStaticEnableUfs ();
     return;
   }
@@ -233,7 +233,7 @@ PtlPcdScsInit (
   if (!EFI_ERROR (Status)) {
     ScsUfsInit (&ScsUfsHandle);
     if ((ScsUfsHandle.Config->Enable || ScsUfsHandle.SocConfig.IsBootMedium) &&
-       (ScsUfsHandle.SocConfig.NumOfLanes != 0)) {
+       (ScsUfsHandle.SocConfig.NumOfLanes != 0) && ScsUfsHandle.Config->UfsDeviceConnected) {
         PciSegmentOr16(
           ScsUfsHandle.Controller.PciCfgBase + R_SCS_CFG_PG_CONFIG,
           (B_SCS_CFG_PG_CONFIG_PGE | B_SCS_CFG_PG_CONFIG_I3E)

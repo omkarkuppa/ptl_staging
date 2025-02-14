@@ -106,6 +106,7 @@ UfsPrintConfig (
     DEBUG ((DEBUG_INFO, "------------------ SCS UFS%d Config ------------------\n", UfsIndex));
     DEBUG ((DEBUG_INFO, " Enable = %d\n", UfsConfig->UfsControllerConfig[UfsIndex].Enable));
     DEBUG ((DEBUG_INFO, " InlineEncryption = %d\n", UfsConfig->UfsControllerConfig[UfsIndex].InlineEncryption));
+    DEBUG ((DEBUG_INFO, " UfsDeviceConnected = %d\n", UfsConfig->UfsControllerConfig[UfsIndex].UfsDeviceConnected));
   }
 }
 
@@ -181,9 +182,8 @@ UfsLoadConfigDefault (
 
   for (UfsIndex = 0; UfsIndex < PchGetMaxUfsNum (); UfsIndex++) {
     UfsConfig->UfsControllerConfig[UfsIndex].Enable = TRUE;
-    if (IsMtlSoc ()) {
-      UfsConfig->UfsControllerConfig[UfsIndex].InlineEncryption = TRUE;
-    }
+    UfsConfig->UfsControllerConfig[UfsIndex].UfsDeviceConnected = TRUE;
+    UfsConfig->UfsControllerConfig[UfsIndex].InlineEncryption = TRUE;
   }
 }
 

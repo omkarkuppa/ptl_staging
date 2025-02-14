@@ -297,6 +297,7 @@ FspUpdateUfsPolicy (
   //
   for (UfsIndex = 0; (UfsIndex < PchGetMaxUfsNum ()) && (UfsIndex < 2); UfsIndex++) {
     UfsConfig->UfsControllerConfig[UfsIndex].Enable = FspsUpd->FspsConfig.UfsEnable[UfsIndex];
+    UfsConfig->UfsControllerConfig[UfsIndex].UfsDeviceConnected = FspsUpd->FspsConfig.UfsDeviceConnected[UfsIndex];
     UfsConfig->UfsControllerConfig[UfsIndex].InlineEncryption = FspsUpd->FspsConfig.UfsInlineEncryption[UfsIndex];
   }
 }

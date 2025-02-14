@@ -1111,6 +1111,7 @@ UpdateUfsConfig (
   for (UfsIndex = 0; UfsIndex < PchGetMaxUfsNum (); UfsIndex++) {
 #endif
     COMPARE_UPDATE_POLICY_ARRAY(((FSPS_UPD *) FspsUpd)->FspsConfig.UfsEnable[UfsIndex], UfsConfig->UfsControllerConfig[UfsIndex].Enable, PchSetup->PchScsUfsEnable[UfsIndex], UfsIndex);
+    UPDATE_POLICY(((FSPS_UPD *) FspsUpd)->FspsConfig.UfsDeviceConnected[UfsIndex], UfsConfig->UfsControllerConfig[UfsIndex].UfsDeviceConnected, TRUE);
     UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.UfsInlineEncryption[UfsIndex], UfsConfig->UfsControllerConfig[UfsIndex].InlineEncryption, PchSetup->PchScsUfsInlineEncryption[UfsIndex]);
   }
   }

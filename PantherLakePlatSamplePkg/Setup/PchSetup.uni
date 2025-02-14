@@ -1981,7 +1981,7 @@
 #string STR_SCS_OPTIONS_FORM_HELP               #language en-US "Storage and Communication Subsystem (SCS) Configuration"
 #string STR_SCS_UFS_CONTROLLER0                 #language en-US "UFS 3.1 Controller 0"
 #string STR_SCS_UFS_CONTROLLER1                 #language en-US "UFS 3.1 Controller 1"
-#string STR_SCS_UFS_CONTROLLER_HELP             #language en-US "Enable or Disable UFS 3.1 Controller"
+#string STR_SCS_UFS_CONTROLLER_HELP             #language en-US "Enable or Disable UFS 3.1 Controller. UFS device need to be connected for successful UFS detection by the controller"
 #string STR_SCS_UFS_INLINE_ENCRYPTION           #language en-US "UFS Inline Encryption"
 #string STR_SCS_UFS_INLINE_ENCRYPTION_HELP      #language en-US "Enable or Disable UFS Inline Encryption feature"
 

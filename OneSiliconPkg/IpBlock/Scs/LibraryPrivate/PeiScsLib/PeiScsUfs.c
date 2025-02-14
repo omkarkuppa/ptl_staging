@@ -140,7 +140,7 @@ ScsUfsInit (
   }
 
   if ((ScsUfsHandle->Config->Enable || ScsUfsHandle->SocConfig.IsBootMedium) &&
-      (ScsUfsHandle->SocConfig.NumOfLanes != 0)) {
+      (ScsUfsHandle->SocConfig.NumOfLanes != 0) && ScsUfsHandle->Config->UfsDeviceConnected) {
     ScsUfsEnable (ScsUfsHandle);
   } else {
     ScsUfsDisable (ScsUfsHandle);

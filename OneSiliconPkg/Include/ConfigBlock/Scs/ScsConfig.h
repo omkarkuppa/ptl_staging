@@ -145,9 +145,10 @@ typedef struct {
 } SCS_EMMC_DXE_CONFIG;
 
 typedef struct {
-  UINT32  Enable           : 1;  ///< Enable/Disable UFS controller 0: Disabled, <b>1: Enabled</b>
-  UINT32  InlineEncryption : 1;  ///< Enable/Disable UFS Inline Encryption feature. 0: Disabled, 1: Enabled
-  UINT32  Reserved         : 30;
+  UINT32  Enable             : 1;  ///< Enable/Disable UFS controller 0: Disabled, <b>1: Enabled</b>
+  UINT32  InlineEncryption   : 1;  ///< Enable/Disable UFS Inline Encryption feature. 0: Disabled, 1: Enabled
+  UINT32  UfsDeviceConnected : 1;  ///< UFS Device Connection Status 0: Connected, 1: Disconnected
+  UINT32  Reserved           : 29;
 } SCS_UFS_CONTROLLER_CONFIG;
 
 typedef struct {
