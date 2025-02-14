@@ -234,6 +234,7 @@ efivarstore SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE,
     // Define goto commands for the forms defined in this file
     label LABEL_FORM_START;
 
+#if FixedPcdGetBool(PcdXmlCliFeatureEnable) == 1
     // XmlCli Setup Form
     goto
       formsetguid = {0x8fd6d4e5, 0x138c, 0x4b5c, {0xef, 0x95, 0xdd, 0x00, 0xd2, 0x68, 0x9b, 0x8c}},  // XMLCLI_FORM_SET_GUID
@@ -241,6 +242,7 @@ efivarstore SNDW_DEV_TOPOLOGY_CONFIGURATION_VARIABLE,
       question    = 0,
       prompt      = STRING_TOKEN(STR_XMLCLI_FORM),
       help        = STRING_TOKEN(STR_XMLCLI_FORM_HELP);
+#endif
 
     goto MANAGEABILITY_FORM_ID,
       prompt = STRING_TOKEN(STR_MANAGEABILITY_FORM),
