@@ -212,6 +212,11 @@ def main():
         # If FSP_SIGNED is True, Patch FBM to FSP Top binary.
         #
         fbmFilePath = os.path.join(FspBinDir, "PantherLakeFspBinPkg", "Fbm.bin")
+        # Check whether FBM bin file exists or not
+        if not os.path.isfile(fbmFilePath):
+            print(f"Error: {fbmFilePath} does not exist.")
+            sys.exit(1)
+
         with open(fbmFilePath, "rb") as FileRead:
             FbmBin = FileRead.read()
 

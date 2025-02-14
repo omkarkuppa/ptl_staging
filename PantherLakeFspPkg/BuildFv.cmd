@@ -447,6 +447,14 @@ echo on
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Fsp.bsf attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Fsp.bsf
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Fsp.fd attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Fsp.fd
 copy /y %OUT_DIR%\%FSP_PKG_NAME%\%BD_TARGET%_%TOOL_CHAIN_TAG%\FV\FSP.fd %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Fsp.fd
+
+@if %FSP_SIGNED% EQU TRUE (
+  @echo call FspoPatcher to patch FSP-O
+  @call %PYTHON_COMMAND% %WORKSPACE_COMMON%\%FSP_PKG_NAME%\Tools\FspoPatcher\FspoPatcher.py ^
+      -f %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Fsp.fd
+  if ERRORLEVEL 1 goto:PreBuildFail
+)
+
 if exist %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\FspUpd.h attrib -r %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\FspUpd.h
 if exist "%OUT_DIR%\%FSP_PKG_NAME%\%BD_TARGET%_%TOOL_CHAIN_TAG%\FV\FspUpd.h" (
   copy /y %OUT_DIR%\%FSP_PKG_NAME%\%BD_TARGET%_%TOOL_CHAIN_TAG%\FV\FspUpd.h %WORKSPACE_SILICON%\%FSP_BIN_PKG_NAME%\Include\

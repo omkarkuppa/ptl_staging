@@ -175,6 +175,7 @@ cd ..\..\
   set FSP64_BUILD=TRUE
   set FSP_RESET=TRUE
   set FSP_SIGNED=TRUE
+  set ROM_FILENAME_SPECIAL_BUILD_TYPE=_FSPSIGNED
   set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
 --pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE ^
 --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0 ^

@@ -71,6 +71,14 @@ set EDK_TOOLS_BIN=%WORKSPACE_CORE%\BaseTools\Bin\Win32
   set PYTHON_COMMAND=py -3
 )
 
+@if not defined FSP_SIGNED (
+  @set FSP_SIGNED=FALSE
+)
+
+@if not defined FSP_RESET (
+  @set FSP_RESET=TRUE
+)
+
 rem Perform pre-build
 rem -----------------
 
@@ -98,6 +106,18 @@ set DEFAULT_TARGET_FILE=CurrentTarget.txt
     goto DIE
     )
 
+  rem Handle Build environment variables in case of fspsigned
+  rem --------------------------------------------------------
+  for %%a in (%*) do (
+    if /i "%%a"=="fspsigned" (
+      set FSP_RESET=TRUE
+      set FSP_SIGNED=TRUE
+      set SI_BUILD_OPTION_PCD=%SI_BUILD_OPTION_PCD% --pcd gSiPkgTokenSpaceGuid.PcdSignedFspEnable=TRUE
+      set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% --pcd gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp=TRUE ^
+                                              --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspMeasurementConfig=0 ^
+                                              --pcd gIntelFsp2WrapperTokenSpaceGuid.PcdFspModeSelection=0
+    )
+  )
   rem Remove shifted arguments by reconstructing BUILD_ARGS
   rem -----------------------------------------------------
   set BUILD_ARGS=
@@ -288,12 +308,13 @@ rem ----------------------------------------------------------------------------
   echo =                 [notimestamp]                                               =
   echo =                 [chksize=threshold]                                         =
   echo =                 [fsp64]                                                     =
+  echo =                 [fspsigned]                                                 =
   echo =                                                                             =
-  echo =     Example build for LunarLakeFspPkg:                                      =
-  echo =       .\Intel\OneSiliconPkg\Fsp\BuildFsp.cmd LunarLake /d             =
+  echo =     Example build for PantherLakeFspPkg:                                    =
+  echo =       .\Intel\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake /d                 =
   echo =                                                                             =
-  echo =     Example build for LunarLakeFspPkg with chksize:                         =
-  echo =       .\Intel\OneSiliconPkg\Fsp\BuildFsp.cmd LunarLake /d chksize=512 =
+  echo =     Example build for PantherLakeFspPkg with chksize:                       =
+  echo =       .\Intel\OneSiliconPkg\Fsp\BuildFsp.cmd PantherLake /d chksize=512     =
   echo ===============================================================================
   echo = By default BuildFsp assumes below paths when executing:                     =
   echo =   \Edk2\                 : FSP required open source packages                =
