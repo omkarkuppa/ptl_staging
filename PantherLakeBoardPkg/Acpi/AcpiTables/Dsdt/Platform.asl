@@ -971,6 +971,18 @@ Scope (\_SB)
           Return (0xFF)
         } Else {
           ADBG ("U4FN: OS and platform doesn't support native USB4")
+
+#if FixedPcdGetBool (PcdITbtEnable) == 1
+          If (LAnd (CondRefOf (\_SB.PC00.TDM0.STCM), And (CMSK, CM_MASK_ITBT_0)))
+          {
+            \_SB.PC00.TDM0.STCM (1, U4CM)
+          }
+          If (LAnd (CondRefOf (\_SB.PC00.TDM1.STCM), And (CMSK, CM_MASK_ITBT_1)))
+          {
+            \_SB.PC00.TDM1.STCM (1, U4CM)
+          }
+#endif  // #if FixedPcdGetBool (PcdITbtEnable) == 1
+
           Return (0)
         }
       }

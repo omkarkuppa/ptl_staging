@@ -388,7 +388,7 @@ Scope (\_SB.PC00) {
   Name (LNSL, 0)
 } //scope
 
-Scope (\_SB_.PC00) {
+Scope (\_SB.PC00) {
   //
   // xDCI (OTG) Controller - Device 20, Function 1
   //
