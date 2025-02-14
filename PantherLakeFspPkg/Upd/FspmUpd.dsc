@@ -2852,7 +2852,7 @@
   # !BSF NAME:{Enable/Disable CEP}
   # !BSF TYPE:{Combo} OPTION:{0: Disable, 1: Enable}
   # !BSF HELP:{Control for enabling/disabling CEP (Current Excursion Protection). <b>0: Disable</b>; 1: Enable}
-  gPlatformFspPkgTokenSpaceGuid.CepEnable                    | * | 0x6 | {0x00, 0x00, 0x00, 0x00, 0x00}
+  gPlatformFspPkgTokenSpaceGuid.CepEnable                    | * | 0x6 | {0x01, 0x00, 0x01, 0x01, 0x00, 0x00}
   # Added reserved space  UnusedUpdSpace[6]
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd48                  | * | 0x2 | {0x00}
 

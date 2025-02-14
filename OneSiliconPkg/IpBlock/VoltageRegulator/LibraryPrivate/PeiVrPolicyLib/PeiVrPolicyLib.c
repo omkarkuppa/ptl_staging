@@ -151,7 +151,7 @@ LoadCpuPowerMgmtVrConfigDefault (
     //
     // Default enable Current Excursion Protection.
     //
-    CpuPowerMgmtVrConfig->CepEnable[Index] = 0;
+    CpuPowerMgmtVrConfig->CepEnable[Index] = 1;
   }
   ///
   /// Load CPU power management Vr Config block default for specific generation.

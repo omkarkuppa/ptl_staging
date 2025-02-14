@@ -167,9 +167,9 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableCx|0x1                               
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableFastVmode[0]|0x1                                        # Core VR Fast Vmode
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableFastVmode[1]|0x1                                        # GT VR Fast Vmode
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableFastVmode[2]|0x1                                        # SA VR Fast Vmode
-gStructPcdTokenSpaceGuid.PcdCpuSetup.CepEnable[0]|0x0                                              # Core VR CEP Enable
-gStructPcdTokenSpaceGuid.PcdCpuSetup.CepEnable[2]|0x0                                              # SA VR CEP Enable
-gStructPcdTokenSpaceGuid.PcdCpuSetup.CepEnable[3]|0x0                                              # LP Atom Core VR CEP Enable
+gStructPcdTokenSpaceGuid.PcdCpuSetup.CepEnable[0]|0x1                                              # Core VR CEP Enable
+gStructPcdTokenSpaceGuid.PcdCpuSetup.CepEnable[2]|0x1                                              # SA VR CEP Enable
+gStructPcdTokenSpaceGuid.PcdCpuSetup.CepEnable[3]|0x1                                              # LP Atom Core VR CEP Enable
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableGv|0x1                                                  # Intel(R) SpeedStep(tm)
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwp|0x1                                                 # Intel(R) Speed Shift Technology
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EnableHwpAutoEppGrouping|0x1                                  # HwP Autonomous EPP Grouping
