@@ -124,14 +124,17 @@ _SmiEntryPoint:
     ;
     mov     bx, ASM_PFX(gGdtDesc) - _SmiEntryPoint + 0x8000  ; bx = GdtDesc offset
 o32 lgdt    [cs:bx]                       ; lgdt fword ptr cs:[bx]
+    mov     ax, PROTECT_MODE_CS
+    mov     [cs:bx-0x2],ax
 o32 mov     edi, strict dword 0
 gSmmFeatureSmbasePatch:
-    add     [cs:bx-0x6],edi
+    lea     eax, [edi + (@ProtectedMode - _SmiEntryPoint) + 0x8000]
+    mov     [cs:bx-0x6],eax
     mov     ebx, cr0
     and     ebx, 0x9ffafff3
     or      ebx, 0x23
     mov     cr0, ebx
-    jmp     dword PROTECT_MODE_CS:(@ProtectedMode - _SmiEntryPoint) + 0x8000
+    jmp     dword 0x0:0x0
 ASM_PFX(gGdtDesc):
     DW 0
     DD 0
@@ -146,9 +149,6 @@ o16 mov     gs, ax
 o16 mov     ss, ax
     mov     esp, strict dword 0
 gSmmFeatureSmiStackPatch:
-    mov     eax, ASM_PFX(gGdtDesc) - _SmiEntryPoint + 0x8000
-    add     eax, edi
-    sub     [eax - 6], edi
     jmp     ProtFlatMode
 
 BITS 64
