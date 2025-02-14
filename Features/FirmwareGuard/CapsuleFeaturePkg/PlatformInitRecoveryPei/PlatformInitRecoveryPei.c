@@ -33,7 +33,10 @@
 #include <Library/ResiliencySupportLib.h>
 #include <Library/PlatformWdtLib.h>
 #include <Library/BootGuardLib.h>
+#include <Library/PmcLib.h>
+#include <Library/IoLib.h>
 #include <Register/GenerationMsr.h>
+#include <Register/PmcRegs.h>
 #include <Txt.h>
 
 #define FIT_SUCCESSFUL                            0x0
@@ -494,35 +497,65 @@ IsFitOrPolicyError (
 }
 
 /**
-  Function to arm the watchdog timer to monitor the boot healthy.
-
-  @param[in] TimeOut  Value to second to arm the watchdog timer.
-                      1 stands for 1 second, max is 255 seconds with input 0xFF.
+  Arm watchdog timer to monitor boot healthy.
+  In some condictions that do not need WDT, this function will be aborted.
 
   @retval EFI_SUCCESS       The operation succeed.
-  @retval EFI_DEVICE_ERROR  The operation failed.
+  @retval EFI_ABORTED       The operation is aborted and WDT is disarmed.
+  @retval Others            The operation failed or is unsupported.
 
 **/
 EFI_STATUS
-ArmMonitorBootHealthWdt (
-  IN UINT8  TimeOut
+SetBootMonitor (
+  VOID
   )
 {
   EFI_STATUS     Status;
   EFI_BOOT_MODE  BootMode;
 
-  Status = EFI_SUCCESS;
-
   PeiServicesGetBootMode (&BootMode);
 
-  if (BootMode != BOOT_ON_S3_RESUME) {
-    Status = ArmPlatformWdt (TimeOut);
-    ASSERT_EFI_ERROR (Status);
+  if (BootMode == BOOT_ON_S3_RESUME) {
+    DEBUG ((DEBUG_INFO, "Disarm EC WDT in S3\n"));
+    DisarmPlatformWdt ();
+    return EFI_ABORTED;
   }
 
-  DEBUG ((DEBUG_INFO, "Arm the EC WDT timer [0x%x] to monitor boot healthy\n", TimeOut));
+#ifdef MDEPKG_NDEBUG
+  //
+  // Start WDT with a max timeout value (255s) to monitor system boot
+  //
+  Status = ArmPlatformWdt (MAX_EC_WDT_TIMEOUT);
+#else
+  //
+  // Disarm EC WDT in debug build to avoid MRC training longer than max timeout value (255s)
+  //
+  DEBUG ((DEBUG_INFO, "Disarm EC WDT in debug build\n"));
+  DisarmPlatformWdt ();
+  Status = EFI_ABORTED;
+#endif
 
   return Status;
+}
+
+/**
+  Clear the DRAM Initialization Scratchpad Bit (DISB).
+
+  @retval  None.
+
+**/
+VOID
+ClearPmcDisb (
+  VOID
+  )
+{
+  //
+  // NOTE: Byte access to not clear BIT18 and BIT16.
+  //
+  MmioAnd8 (
+    PmcGetPwrmBase () + R_PMC_PWRM_GEN_PMCON_A + 2,
+    (UINT8)(~((B_PMC_PWRM_GEN_PMCON_A_DISB) >> 16))
+    );
 }
 
 /**
@@ -541,12 +574,13 @@ PlatformInitRecoveryEntryPoint (
   IN CONST EFI_PEI_SERVICES         **PeiServices
   )
 {
-  //
-  // Disarm the EC WDT first since it might be armed from capsule update
-  // or had been expired.
-  //
-  DisarmPlatformWdt ();
-  DEBUG ((DEBUG_INFO, "Disarm EC WDT timeout.\n"));
+  if (IsTopSwapEnabled ()) {
+    //
+    // Clear DISB to avoid MRC training failure
+    //
+    DEBUG ((DEBUG_INFO, "Clear DISB when TS is enabled\n"));
+    ClearPmcDisb ();
+  }
 
   if (IsBiosBackupValid () == TRUE) {
     //
@@ -554,18 +588,18 @@ PlatformInitRecoveryEntryPoint (
     // and that'll lead to ACM policy check failure
     //
     if (!IsSimicsEnvironment () && !IsHfpgaEnvironment () && IsFitOrPolicyError ()) {
-      DEBUG ((DEBUG_INFO, "Trigger EC WDT timeout for BIOS recovery.\n"));
+      DEBUG ((DEBUG_INFO, "Trigger EC WDT for BIOS recovery.\n"));
       ArmPlatformWdt (mWdtTimeOut);
       CpuDeadLoop ();
     }
 
-#ifdef MDEPKG_NDEBUG
     //
-    // Arm EC WDT with a max timeout value (255s).
-    // It is used to monitor system boot in release build.
+    // Start monitoring system boot
     //
-    ArmMonitorBootHealthWdt (MAX_EC_WDT_TIMEOUT);
-#endif
+    SetBootMonitor ();
+  } else {
+    DisarmPlatformWdt ();
+    DEBUG ((DEBUG_INFO, "Disarm EC WDT when BIOS backup is invalid.\n"));
   }
 
   PeiServicesNotifyPpi (&mPlatformInitRecoveryNotifyList);
