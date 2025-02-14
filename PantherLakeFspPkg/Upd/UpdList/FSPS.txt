@@ -162,7 +162,6 @@ SaPcieItbtRpSnoopLatencyOverrideValue
 EnableHwpAutoEppGrouping
 SerialIoUartDbg2
 PchTsnEnable
-PchTsnMultiVcEnable
 TTSuggestedSetting
 IehMode
 PchFivrExtVnnRailCtrlRampTmr
@@ -291,7 +290,6 @@ PcieEqOverrideDefault
 PchLanLtrEnable
 SerialIoUartStopBits
 SciIrqSelect
-C1e
 PchFivrExtVnnRailSxIccMax
 MeUnconfigOnRtcClear
 PcieRpPcieSpeed
@@ -366,4 +364,3 @@ PchPmWoWlanEnable
 VmdPortFunc
 D3HotEnable
 SerialIoI3cMode
-FspEventHandler
