@@ -3355,7 +3355,6 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.UnlockGpioPads|0x0                         
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchTsnEnable[2]|0x0                                         # PCH TSN LAN Controller3
   gStructPcdTokenSpaceGuid.PcdPchSetup.PchTsnEnable[3]|0x0                                         # PCH TSN LAN Controller4
   gStructPcdTokenSpaceGuid.PcdPchSetup.TsnPcsEnabled|0x0                                           # Enable Timed TSN PCS
-  gStructPcdTokenSpaceGuid.PcdPchSetup.TsnMultiVcEnable|0x0                                        # PCH TSN Multi-Vc
 
 gStructPcdTokenSpaceGuid.PcdPlatformEraseVariable.PlatformEraseSimulation|0x0                      # Simulation Mode
 gStructPcdTokenSpaceGuid.PcdPlatformEraseVariable.SanitizeOrder|{0x03,0x04,0x02,0x01}              # Erase Method Priority

@@ -19,56 +19,15 @@
 @par Specification Reference:
 **/
 
-#include <PiPei.h>
-#include <Ppi/SiPolicy.h>
+#include <Library/DebugLib.h>
+#include <Uefi/UefiBaseType.h>
 #include <Register/PchRegs.h>
 #include <Register/TsnRegs.h>
+#include <TsnHandle.h>
 #include <Library/IoLib.h>
-#include <Library/DebugLib.h>
-#include <Library/PeiItssLib.h>
-#include <Library/BaseMemoryLib.h>
+#include <Library/BaseLib.h>
 #include <Library/PciSegmentLib.h>
 #include <IndustryStandard/Pci30.h>
-#include <TsnHandle.h>
-
-
-/**
-  The function programs the Tc to DMA channel mapping
-**/
-STATIC
-VOID
-TsnTcDmaMapping (
-  IN  REGISTER_ACCESS   *TsnPcrAccess
-  )
-{
-  // Tc to DMA channel mapping
-  TsnPcrAccess->AndThenOr32 (
-    TsnPcrAccess,
-    R_TSN_PCR_AXIID_TO_TC0_MAP_0,
-    (UINT32) ~B_TSN_PCR_AXIID_TO_TC0_MAP_0,
-    V_TSN_PCR_AXIID_TO_TC0_MAP_0
-    );
-  TsnPcrAccess->AndThenOr32 (
-    TsnPcrAccess,
-    R_TSN_PCR_AXIID_TO_TC1_MAP_0,
-    (UINT32) ~B_TSN_PCR_AXIID_TO_TC1_MAP_0,
-    V_TSN_PCR_AXIID_TO_TC1_MAP_0
-    );
-
-  //MSI Tc to DMA channel mapping
-  TsnPcrAccess->AndThenOr32 (
-    TsnPcrAccess,
-    R_TSN_PCR_MSI_TO_TC0_MAP,
-    (UINT32) ~B_TSN_PCR_MSI_TO_TC0_MAP,
-    V_TSN_PCR_MSI_TO_TC0_MAP
-    );
-  TsnPcrAccess->AndThenOr32 (
-    TsnPcrAccess,
-    R_TSN_PCR_MSI_TO_TC1_MAP,
-    (UINT32) ~B_TSN_PCR_MSI_TO_TC1_MAP,
-    V_TSN_PCR_MSI_TO_TC1_MAP
-    );
-}
 
 /**
   Configures Timed Sensitive Network (TSN) Controller Registers and MAC Programming
@@ -83,8 +42,6 @@ TsnConfigureRegisters (
 {
   UINT64               PchTsnBase;
   UINTN                TsnMemBar;
-  REGISTER_ACCESS      *TsnPcrAccess;
-  TSN_CONFIG           *TsnConfig;
   TSN_PRIVATE_CONFIG   *TsnPrivate;
   UINT32               Data32;
   UINT32               MacLow;
@@ -92,31 +49,20 @@ TsnConfigureRegisters (
 
   DEBUG ((DEBUG_VERBOSE, "%a () - Start.\n", __FUNCTION__));
 
-  PchTsnBase   = TsnHandle->Controller->PciCfgBaseAddr;
-  TsnPcrAccess = TsnHandle->Controller->TsnPcrAccess;
-  TsnMemBar    = TsnHandle->Controller->Mmio;
-  TsnConfig    = TsnHandle->Config;
-  TsnPrivate   = TsnHandle->PrivateConfig;
-
-  // Configure Multi-Vc via Tc to DMA channel mapping
-  if (TsnConfig->MultiVcEnable == 1) {
-    TsnTcDmaMapping (TsnPcrAccess);
-  }
+  PchTsnBase = TsnHandle->Controller->PciCfgBaseAddr;
+  TsnMemBar  = TsnHandle->Controller->Mmio;
+  TsnPrivate = TsnHandle->PrivateConfig;
 
   // Program Temp BARs
-  PciSegmentAnd8 (PchTsnBase + PCI_COMMAND_OFFSET, (UINT8) ~EFI_PCI_COMMAND_MEMORY_SPACE);
+  PciSegmentAnd16 (PchTsnBase + PCI_COMMAND_OFFSET, (UINT16) ~EFI_PCI_COMMAND_MEMORY_SPACE);
   PciSegmentWrite32 (PchTsnBase + PCI_BASE_ADDRESSREG_OFFSET, (UINT32) TsnMemBar);
   if (PciSegmentRead32 (PchTsnBase + PCI_BASE_ADDRESSREG_OFFSET) & BIT2) {
-    PciSegmentWrite32 (PchTsnBase + PCI_BASE_ADDRESSREG_OFFSET + 4, (UINT32) RShiftU64 (TsnMemBar, 32));
+    PciSegmentWrite32 (PchTsnBase + PCI_BASE_ADDRESSREG_OFFSET + 4, (UINT32) ((UINT64) TsnMemBar >> 32));
   }
-  PciSegmentWrite32 (PchTsnBase + PCI_BASE_ADDRESSREG_OFFSET + 8,  0x0);
-  if (PciSegmentRead32 (PchTsnBase + PCI_BASE_ADDRESSREG_OFFSET + 8) & BIT2) {
-    PciSegmentWrite32 (PchTsnBase + PCI_BASE_ADDRESSREG_OFFSET + 12, 0x0);
-  }
-  DEBUG ((DEBUG_INFO, "TsnMemBar: 0x%xll\n", TsnMemBar));
+  DEBUG ((DEBUG_INFO, "TsnMemBar: 0x%llx\n", TsnMemBar));
 
   // Enable Memory Space encoding
-  PciSegmentOr32 (PchTsnBase + PCI_COMMAND_OFFSET, (EFI_PCI_COMMAND_MEMORY_SPACE));
+  PciSegmentOr16 (PchTsnBase + PCI_COMMAND_OFFSET, (EFI_PCI_COMMAND_MEMORY_SPACE));
 
   // Program MAC address for TSN on PCH
   DEBUG ((DEBUG_INFO, "Start MAC address programming\n"));
@@ -131,7 +77,7 @@ TsnConfigureRegisters (
 
   // Program MacAddressHigh[15:0]
   // MacAddressHigh[31] Address Enable Bit
-  MmioWrite32 (TsnMemBar + R_TSN_MEM_MAC_ADDRESS0_HIGH, ((TsnPrivate->Port->MacAddr[1] & B_TSN_MEM_MAC_ADDRESS_HIGH_MASK) | B_TSN_MEM_ADDRESS_ENABLE));
+  MmioWrite32 (TsnMemBar + R_TSN_MEM_MAC_ADDRESS0_HIGH, ((TsnPrivate->Port->MacAddr[1] & B_TSN_MEM_MAC_ADDRESS_HIGH_MASK) | B_TSN_MEM_MAC_ADDRESS0_HIGH_AE));
 
   MacLow = MmioRead32 (TsnMemBar + R_TSN_MEM_MAC_ADDRESS0_LOW);
   MacHigh = MmioRead32 (TsnMemBar + R_TSN_MEM_MAC_ADDRESS0_HIGH);
@@ -181,8 +127,11 @@ TsnConfigureInterrupt (
   Initialize the Intel TSN Controller
 
   @param[in] TsnHandle   Pointer to TSN Handle
+
+  @retval EFI_SUCCESS    Completed successfully
+  @retval EFI_NOT_FOUND  TSN device is not available
 **/
-VOID
+EFI_STATUS
 TsnInit (
   IN  TSN_HANDLE   *TsnHandle
   )
@@ -196,7 +145,7 @@ TsnInit (
   // Check if TSN is available
   if ((PciSegmentRead16 (PchTsnBase + PCI_VENDOR_ID_OFFSET)) == 0xFFFF) {
     DEBUG ((DEBUG_INFO, "TSN config space not accessible! TSN not available\n"));
-    return;
+    return EFI_NOT_FOUND;
   }
 
   TsnConfigureRegisters (TsnHandle);
@@ -204,4 +153,6 @@ TsnInit (
   TsnConfigureInterrupt (TsnHandle);
 
   DEBUG ((DEBUG_VERBOSE, "%a () - End.\n", __FUNCTION__));
+
+  return EFI_SUCCESS;
 }

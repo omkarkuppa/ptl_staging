@@ -2316,8 +2316,6 @@ typedef struct {
   //
   UINT8   PsfFusaConfigEnable;
 
-  UINT8   TsnMultiVcEnable;
-
   UINT16  ExternalV1p05IccMaximum;
   UINT16  ExternalVnnIccMaximum;
   UINT16  ExternalVnnSxIccMaximum;

@@ -46,7 +46,6 @@ TsnPrintConfig (
     DEBUG ((DEBUG_INFO, " Enable[%d] = %x\n", Index, TsnConfig->Enable[Index]));
     DEBUG ((DEBUG_INFO, " MacAddr high[%d] = 0x%x MacAddr low = 0x%x\n", Index, TsnConfig->Port[Index].MacAddr[1], TsnConfig->Port[Index].MacAddr[0]));
   }
-  DEBUG ((DEBUG_INFO, " TsnMultiVcEnable = 0x%x\n", TsnConfig->MultiVcEnable));
 }
 
 /**
@@ -72,7 +71,6 @@ TsnLoadConfigDefault (
     TsnConfig->Port[Index].MacAddr[0] = 0;
     TsnConfig->Port[Index].MacAddr[1] = 0;
   }
-  TsnConfig->MultiVcEnable = (UINT8) 0x0;
 }
 
 STATIC COMPONENT_BLOCK_ENTRY  mTsnBlocks = {

@@ -2026,7 +2026,6 @@ UpdateTsnConfig (
       }
     }
   }
-  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchTsnMultiVcEnable, TsnConfig->MultiVcEnable, PchSetup->TsnMultiVcEnable);
 }
 #endif
 

@@ -42,10 +42,10 @@
   OneSiliconPkg/SiPkg.dec
 
 [LibraryClasses]
-  BaseLib
+  DebugLib
   BaseMemoryLib
   IoLib
-  DebugLib
+  PciSegmentLib
 
 [Guids]
 

@@ -60,9 +60,7 @@ typedef struct {
     Determines if enable PCH internal TSN, 0: Disable; <b>1: Enable</b>.
   **/
   UINT8                 Enable[PCH_MAX_TSN_PORT];
-  UINT8                 MultiVcEnable;              ///< Enable Multi-Vc via Tc to DMA mapping. Deafult is </b> 0:disable</b>
   TSN_MAC_ADDR          Port[PCH_MAX_TSN_PORT];     ///< MAC Address Data Structure
-  UINT8                 Rsvd[3];
 } TSN_CONFIG;
 
 #pragma pack (pop)

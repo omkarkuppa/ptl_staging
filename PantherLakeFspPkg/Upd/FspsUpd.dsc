@@ -2142,10 +2142,6 @@
 
   gPlatformFspPkgTokenSpaceGuid.PchTsnEnable                | * | 0x04 | {0x01, 0x01, 0x01, 0x01}
 
-  # !BSF NAME:{Enable TSN Multi-VC} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable/disable Multi Virtual Channels(VC) in TSN.}
-  gPlatformFspPkgTokenSpaceGuid.PchTsnMultiVcEnable         | * | 0x01 | 0x0
-
   # !BSF NAME:{PCH TSN MAC Address High Bits} TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
   # !BSF HELP:{Set TSN MAC Address High.}
   gPlatformFspPkgTokenSpaceGuid.PchTsn1MacAddressHigh       | * | 0x04 | 0x00000000

@@ -118,7 +118,6 @@ FspUpdateTsnPolicy (
   for (Index = 0; Index < PCH_MAX_TSN_PORT; Index++) {
     TsnConfig->Enable[Index]    = FspsUpd->FspsConfig.PchTsnEnable[Index];
   }
-  TsnConfig->MultiVcEnable      = FspsUpd->FspsConfig.PchTsnMultiVcEnable;
 
   TsnConfig->Port[0].MacAddr[1] = FspsUpd->FspsConfig.PchTsn1MacAddressHigh;
   TsnConfig->Port[0].MacAddr[0] = FspsUpd->FspsConfig.PchTsn1MacAddressLow;
