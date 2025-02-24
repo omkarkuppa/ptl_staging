@@ -359,13 +359,14 @@ export STARTUP_ACM_PARA=
 export ACM_FIT_ENTRY_DATA_FILE=$WORKSPACE/$BUILD_DIR/FV/AcmFitGenPara.txt
 
 # Parsing the BtGAcm binary in BIOS rom image.
-$PYTHON_COMMAND $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/BtGAcmParser/AcmFitEntryGenerator.py \
-  -F $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd \
-  -A 0x40000 \
+$PYTHON_COMMAND $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/BtgAcmMisc/BtgAcmMiscScript.py \
+  FitEntry \
+  -I $WORKSPACE/$BUILD_DIR/FV/CLIENTBIOS.fd \
+  -S $BTG_ACM_SLOT_SIZE \
   -O $ACM_FIT_ENTRY_DATA_FILE
 if [ $? -ne 0 ]
 then
-  echo "!!! Error: AcmFitEntryGenerator failure !!!"
+  echo "!!! Error: Failed to generate the FIT type-2 entry parameter file !!!"
   exit 1
 fi
 

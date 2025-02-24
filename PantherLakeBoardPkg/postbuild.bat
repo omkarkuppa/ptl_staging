@@ -402,14 +402,15 @@ set STARTUP_AC_PARA=-S %STARTUP_AC_MODULE_GUID%
 @set ACM_FIT_ENTRY_DATA_FILE=%BUILD_DIR%\FV\AcmFitGenPara.txt
 
 @REM Parsing the BtGAcm binary in BIOS rom image.
-@call %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\BtGAcmParser\AcmFitEntryGenerator.py ^
-  -F %BUILD_DIR%\FV\ClientBios.fd ^
-  -A 0x40000 ^
-  -O !ACM_FIT_ENTRY_DATA_FILE!
-@if %errorlevel% NEQ 0 (
-  echo Error: AcmFitEntryGenerator failure
-  @set SCRIPT_ERROR=1
-  goto EndPostBuild
+CALL %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\BtgAcmMisc\BtgAcmMiscScript.py ^
+  FitEntry ^
+  -I %BUILD_DIR%\FV\ClientBios.fd ^
+  -S %BTG_ACM_SLOT_SIZE% ^
+  -O %ACM_FIT_ENTRY_DATA_FILE%
+IF %ERRORLEVEL% NEQ 0 (
+  ECHO Error: Failed to generate the FIT type-2 entry parameter file
+  @SET SCRIPT_ERROR=1
+  GOTO EndPostBuild
 )
 
 @REM Get the parameter used for FitGen tool.
