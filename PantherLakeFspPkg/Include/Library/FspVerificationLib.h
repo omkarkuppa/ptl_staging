@@ -34,6 +34,36 @@
 #define BOOT_GUARD_PROFILE_5                 5
 
 /**
+  Find FSP header pointer.
+
+  @param[in] FlashFvFspBase Flash address of FSP FV.
+
+  @return FSP header pointer.
+**/
+FSP_INFO_HEADER *
+EFIAPI
+FspFindFspHeader (
+  IN EFI_PHYSICAL_ADDRESS  FlashFvFspBase
+  );
+
+/**
+  Get FSP Version information.
+
+  @param[in]   Bspm        BSPM structure found in BPM.
+  @param[out]  FspVersion  Holds the FSP version.
+
+  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
+  @retval EFI_SUCCESS             Verification Pass.
+
+**/
+EFI_STATUS
+EFIAPI
+GetFspVersion (
+  IN BSPM_ELEMENT         *Bspm,
+  OUT UINT8               FspVersion []
+  );
+
+/**
   Detect the boot guard profile.
 
   @retval BootGuardProfile  Boot Guard Profile.

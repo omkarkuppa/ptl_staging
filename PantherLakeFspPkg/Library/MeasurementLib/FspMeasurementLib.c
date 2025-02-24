@@ -584,8 +584,8 @@ SaveFspotEventData (
   FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPOT, TpmActivePcrBanks);
   Status = SaveHashEvent (&TpmDigestValues,
                          TpmActivePcrBanks,
-                         (UINT8 *) "FSPOT",
-                         sizeof ("FSPOT"),
+                         (UINT8 *) L"FSPOT",
+                         sizeof (L"FSPOT"),
                          EV_POST_CODE
                          );
   if (Status == EFI_SUCCESS) {
@@ -713,6 +713,61 @@ InitializeTpmAndGetActivePcrs (
 }
 
 /**
+  Fetch FSP version and convert to NULL terminated UTF16 bit string.
+
+  @param[in]   Bspm                  BSPM structure found in BPM.
+  @param[out]  ScrtmUtf16String      BSPM structure found in BPM.
+
+  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
+  @retval EFI_SUCCESS             Verification Pass.
+
+**/
+EFI_STATUS
+EFIAPI
+GetFspVersionString (
+  IN BSPM_ELEMENT      *Bspm,
+  OUT CHAR16            ScrtmUtf16String[]
+  )
+{
+  UINT8                   FspVersion [6];
+  UINT8                   ByteCounter;
+  UINT8                   UnicodeCounter;
+  CHAR16                  ConvertBuffer[3] = {'\0'};
+
+  CHAR16                  *UnicodeCharIterator = ScrtmUtf16String;
+
+  GetFspVersion (Bspm, FspVersion);
+
+  for (ByteCounter = 0; ByteCounter < 6; ByteCounter++) {
+    //
+    // Fill convertion buffer with hex strings (with leading zeroes) per byte input.
+    //
+    UnicodeSPrint (
+      ConvertBuffer,
+      sizeof (CHAR16) * 3,
+      L"%02X",
+      FspVersion[ByteCounter]
+      );
+
+    if (UnicodeCharIterator >= (ScrtmUtf16String + SCRTM_VERSION_UTF16_LENGTH)) {
+      DEBUG ((DEBUG_ERROR, "ERROR parsing FSP version string! %s\n", ScrtmUtf16String));
+      ASSERT (UnicodeCharIterator < (ScrtmUtf16String + SCRTM_VERSION_UTF16_LENGTH));
+      break;
+    }
+    //
+    //  Keep 2 UTF-16 characters and trim NULL character from resulting hex strings
+    //
+    for (UnicodeCounter = 0; UnicodeCounter < 2; UnicodeCounter++) {
+      *UnicodeCharIterator = (CHAR16) ConvertBuffer[UnicodeCounter];
+      UnicodeCharIterator++;
+    }
+  }
+  DEBUG ((DEBUG_INFO, "SCRTM version UTF-16 string: %s\n", ScrtmUtf16String));
+
+  return EFI_SUCCESS;
+}
+
+/**
   Create HOB to save the event log data. The HOBs will be consumed
   by PeiBootGuardEventLogLib to create event logs. Event data will
   be saved for FSP Version, FSP-O/T, FSP-M, BSP Pre-Mem and FSP-S.
@@ -734,6 +789,7 @@ VerifiedComponentSaveHashEvent (
   UINT32                         TpmActivePcrBanks;
   TPML_DIGEST_VALUES             TpmDigestValues;
   UINT64                         AcmPolicyStatus;
+  CHAR16                         ScrtmUtf16String[SCRTM_VERSION_UTF16_LENGTH] = {'\0'};
 
   if (IsS3Resume () == 1) {
     //
@@ -778,12 +834,13 @@ VerifiedComponentSaveHashEvent (
   }
 
   if (FspMeasurementData->Bits.FspVersionStatus == EFI_SUCCESS) {
+    GetFspVersionString (Bspm, ScrtmUtf16String);
     ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
     FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSP_VERSION, TpmActivePcrBanks);
     Status = SaveHashEvent (&TpmDigestValues,
                            TpmActivePcrBanks,
-                           (UINT8 *) "FSP Version",
-                           sizeof ("FSP Version"),
+                           (UINT8 *) ScrtmUtf16String,
+                           sizeof (UINT16) * SCRTM_VERSION_UTF16_LENGTH,
                            EV_S_CRTM_VERSION
                            );
     if (Status == EFI_SUCCESS) {
@@ -800,8 +857,8 @@ VerifiedComponentSaveHashEvent (
     FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPM, TpmActivePcrBanks);
     Status = SaveHashEvent (&TpmDigestValues,
                            TpmActivePcrBanks,
-                           (UINT8 *) "FSPM",
-                           sizeof ("FSPM"),
+                           (UINT8 *) L"FSPM",
+                           sizeof (L"FSPM"),
                            EV_POST_CODE
                            );
     if (Status == EFI_SUCCESS) {
@@ -817,8 +874,8 @@ VerifiedComponentSaveHashEvent (
       if (IbbSegmentPtr[Index].Size != 0 && (IbbSegmentPtr[Index].Flags & BIT_HASHED_IBB) == 0) {
         Status = SaveHashEvent (&TpmDigestValues,
                               TpmActivePcrBanks,
-                              (UINT8 *) "BSPM",
-                              sizeof ("BSPM"),
+                              (UINT8 *) L"BSPM",
+                              sizeof (L"BSPM"),
                               EV_POST_CODE
                               );
         if (Status == EFI_SUCCESS) {
@@ -841,8 +898,8 @@ VerifiedComponentSaveHashEvent (
     DEBUG ((DEBUG_INFO, "FSP-S extended to PCR Bank %d\n", TpmActivePcrBanks));
     Status = SaveHashEvent (&TpmDigestValues,
                            TpmActivePcrBanks,
-                           (UINT8 *) "FSPS",
-                           sizeof ("FSPS"),
+                           (UINT8 *) L"FSPS",
+                           sizeof (L"FSPS"),
                            EV_POST_CODE
                            );
     if (Status == EFI_SUCCESS) {

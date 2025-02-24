@@ -37,6 +37,7 @@
 #define TXT_PUBLIC_BASE                             0xFED30000
 #define MMIO_ACM_POLICY_STATUS                      (TXT_PUBLIC_BASE + R_CPU_ACM_POLICY_STATUS)
 #define FSP_MEASUREMENT_INFO_DEFAULT                0XFFFFFFFF
+#define SCRTM_VERSION_UTF16_LENGTH                  13
 
 #define  BIT_HASHED_IBB                             0x00000001    //0: Hashed IBB    1:Non-Hashed IBB
 

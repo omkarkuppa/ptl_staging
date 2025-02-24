@@ -149,6 +149,56 @@ FspFindFspHeader (
 }
 
 /**
+  Get FSP Version information.
+
+  @param[in]   Bspm        BSPM structure found in BPM.
+  @param[out]  FspVersion  Holds the FSP version.
+
+  @retval EFI_INVALID_PARAMETER   One or more parameters are invalid.
+  @retval EFI_SUCCESS             Verification Pass.
+
+**/
+EFI_STATUS
+EFIAPI
+GetFspVersion (
+  IN BSPM_ELEMENT         *Bspm,
+  OUT UINT8               FspVersion []
+  )
+{
+  FSP_INFO_HEADER         *FspInfoHeader;
+  UINTN                   FspmImageBase;
+
+  if (Bspm->FspmLoadingPolicy & FSPM_COMPRESSED) {
+    FspmImageBase = (UINTN) PcdGet32 (PcdSecondaryDataStackBase) + SIZE_4KB;
+  } else {
+    FspmImageBase = (UINTN) Bspm->FspmBaseAddress;
+  }
+
+  FspInfoHeader = (FSP_INFO_HEADER *) FspFindFspHeader ((UINT32) FspmImageBase);
+  if (FspInfoHeader == NULL) {
+    DEBUG ((DEBUG_INFO, "FspInfoHeader is NULL.\n"));
+    return EFI_INVALID_PARAMETER;
+  }
+
+  FspVersion[0] = FspInfoHeader->ImageRevision & 0xff;
+  FspVersion[1] = FspInfoHeader->ExtendedImageRevision & 0xff;
+  FspVersion[2] = (FspInfoHeader->ImageRevision & 0xff00) >> 8;
+  FspVersion[3] = (FspInfoHeader->ExtendedImageRevision & 0xff00) >> 8;
+  FspVersion[4] = (UINT8)((FspInfoHeader->ImageRevision & 0x00ff0000) >> 16);
+  FspVersion[5] = (UINT8)((FspInfoHeader->ImageRevision & 0xff000000) >> 24);
+
+  DEBUG ((DEBUG_INFO,
+          "FSP Version : %02x.%02x.%04x.%04x\n",
+          FspVersion[5],
+          FspVersion[4],
+          (FspVersion[3] << 8) | (FspVersion[2]),
+          (FspVersion[1] << 8) | (FspVersion[0])
+        ));
+
+  return EFI_SUCCESS;
+}
+
+/**
   Verify FSP Version information in BSPM and FBM.
   FSP Version digest information is kept in FBM, FSP will only verify the SHA384 digest.
 
@@ -173,8 +223,6 @@ VerifyFspVersion (
   VOID                    *HashCtx;
   UINT8                   FspVersion [6];
   REGION_SEGMENT          Segment;
-  FSP_INFO_HEADER         *FspInfoHeader;
-  UINTN                   FspmImageBase;
 
   DEBUG ((DEBUG_INFO, "FSP Version Verification ...\n"));
   if (Bspm == NULL || Fbm == NULL || Buffer == NULL) {
@@ -189,37 +237,12 @@ VerifyFspVersion (
   }
   DEBUG ((DEBUG_INFO, "FSP Version Digest is Found!\n"));
 
-  if (Bspm->FspmLoadingPolicy & FSPM_COMPRESSED) {
-    FspmImageBase = (UINTN) PcdGet32 (PcdSecondaryDataStackBase) + SIZE_4KB;
-  } else {
-    FspmImageBase = (UINTN) Bspm->FspmBaseAddress;
-  }
-
-  FspInfoHeader = (FSP_INFO_HEADER *) FspFindFspHeader ((UINT32) FspmImageBase);
-  if (FspInfoHeader == NULL) {
-    DEBUG ((DEBUG_INFO, "FspInfoHeader is NULL.\n"));
-    return EFI_INVALID_PARAMETER;
-  }
-
-  FspVersion[0] = FspInfoHeader->ImageRevision & 0xff;
-  FspVersion[1] = FspInfoHeader->ExtendedImageRevision & 0xff;
-  FspVersion[2] = (FspInfoHeader->ImageRevision & 0xff00) >> 8;
-  FspVersion[3] = (FspInfoHeader->ExtendedImageRevision & 0xff00) >> 8;
-  FspVersion[4] = (UINT8)((FspInfoHeader->ImageRevision & 0x00ff0000) >> 16);
-  FspVersion[5] = (UINT8)((FspInfoHeader->ImageRevision & 0xff000000) >> 24);
+  GetFspVersion (Bspm, FspVersion);
 
   Segment.Reserved = 0;
   Segment.Flags    = 0;
   Segment.Base     = 0;
   Segment.Size     = sizeof (FspVersion);
-
-  DEBUG ((DEBUG_INFO,
-          "FSP Version : %02x.%02x.%04x.%04x\n",
-          FspVersion[5],
-          FspVersion[4],
-          (FspVersion[3] << 8) | (FspVersion[2]),
-          (FspVersion[1] << 8) | (FspVersion[0])
-        ));
 
   if (FspDigest->ComponentDigests.Sha384Digest.Size != 0) {
     if (Sha384Verify (HashCtx, &FspDigest->ComponentDigests.Sha384Digest,
