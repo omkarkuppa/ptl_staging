@@ -25,6 +25,7 @@
 #include <Ppi/EndOfPeiPhase.h>
 #include <DprInfoHob.h>
 #include <Library/TxtPeiLib.h>
+#include <IndustryStandard/FirmwareInterfaceTable.h>
 #include <TxtInfoHob.h>
 #include <Library/PciSegmentLib.h>
 #include <Library/PcdLib.h>
@@ -33,6 +34,8 @@
 #include <Register/PchRegs.h>
 #include <Register/PmcRegs.h>
 #include <Library/SpiAccessLib.h>
+#include <Library/PmcLib.h>
+#include <Library/PreSiliconEnvDetectLib.h>
 
 EFI_STATUS
 EFIAPI
@@ -102,6 +105,23 @@ TxtInit (
     DEBUG ((DEBUG_WARN, "TXTPEI::PEI Lib initialization failure\n"));
   }
 
+  /**
+  Simics Environment reports RTC Battery failure on first boot, the check is added
+  to make sure that the clear secrets leaf isn't executed when running in the Simics
+  Environment
+  **/
+  if (!IsSimicsEnvironment ()) {
+    if (!PmcIsRtcBatteryGood ()) {
+      if (IsTxtSecretsSet () && !IsTxtEnabledCmos()) {
+        if (TxtInfoHob->Data.TxtMode == 1) {
+          DEBUG ((DEBUG_INFO, "TXTPEI::RTC Failure Detected, Restoring FIT A Content\n"));
+          UpdateTxtStatusCmos(TRUE);
+        }
+        DEBUG ((DEBUG_INFO, "TXTPEI::RTC Failure Detected & Secrets is set, Executing ClearSecretsBit\n"));
+        ClearSecretsBit ();
+      }
+    }
+  }
   /**
   Determine TPM presence. If TPM is not present - disabling TXT through TxtInfoHob by setting TxtMode=0
   In case TXT had been enabled but TPM was removed suddenly. Although TPM presence is precondition of this module
@@ -513,4 +533,32 @@ SetPowerDownRequest (
   DEBUG ((DEBUG_INFO, "TXTPEI::TxtInfoHob->Data.TxtPowerdownRequest = %d\n", TxtInfoHob->Data.TxtPowerdownRequest));
 
   return Status;
+}
+
+
+/**
+  This routine will find the FIT A Record
+  @retval Pointer to FIT Record Type A
+**/
+VOID*
+EFIAPI
+GetFitAPtr (
+  VOID
+)
+{
+  UINT64                                 FitPointer;
+  FIRMWARE_INTERFACE_TABLE_ENTRY         *FitEntry;
+  UINT32                                 EntryNum;
+  UINTN                                  Index;
+  FitPointer = *(UINT64 *) (UINTN) FIT_POINTER_ADDRESS;
+  FitEntry = (FIRMWARE_INTERFACE_TABLE_ENTRY *) (UINTN) FitPointer;
+  EntryNum = (FitEntry[0].Size[0] | (FitEntry[0].Size[1] << 8) | (FitEntry[0].Size[2] << 16));
+
+  for (Index = 0; Index < EntryNum; Index++) {
+    if (FitEntry[Index].Type == FIT_TYPE_0A_TXT_POLICY) {
+      return (VOID *) FitEntry[Index].Address;
+    }
+  }
+
+  return NULL;
 }

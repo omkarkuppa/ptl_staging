@@ -91,6 +91,10 @@
 #define APINIT_ADDR               TXT_SVMM_JOIN_REG_OFF   ///< Offset of register containing AP init base address
 #define SEMAPHORE                 TXT_SVMM_JOIN_REG_OFF2  ///< Offset of register containing semaphore address
 
+#define CMOS_IO_ADDRESS           0x70
+#define CMOS_IO_DATA              0x71
+#define FIT_REC_TXT_POLICY_TYPE_A 0x2A
+
 #pragma pack(push, 1)
 ///
 /// TXT HEAP Memory: Extended data elements

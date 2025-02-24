@@ -47,11 +47,13 @@ ConfigBlockLib
 MpInitLib
 LocalApicLib
 ReportStatusCodeLib
+PreSiliconEnvDetectLib
 
 [Packages]
 MdePkg/MdePkg.dec
 UefiCpuPkg/UefiCpuPkg.dec
 OneSiliconPkg/SiPkg.dec
+IntelSiliconPkg/IntelSiliconPkg.dec
 
 [Pcd]
 gSiPkgTokenSpaceGuid.PcdSiPciExpressBaseAddress

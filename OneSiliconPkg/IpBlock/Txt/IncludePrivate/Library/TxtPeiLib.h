@@ -631,4 +631,32 @@ IsTxtACheckRequested (
   VOID
   );
 
+
+/**
+  This routine will find the FIT A Record
+  @retval Pointer to FIT Record Type A
+**/
+VOID*
+EFIAPI
+GetFitAPtr (
+  VOID
+  );
+
+/**
+  This routine will check the TxtStatus in CMOS
+  @retval TRUE - If Txt is enabled, otherwise FALSE
+**/
+BOOLEAN
+IsTxtEnabledCmos (
+  VOID
+  );
+
+/**
+  UpdateTxtStatusCmos to write TXT Status to CMOS.
+  @param[in] TxtStatus To Enable/Disable TXT
+**/
+VOID
+UpdateTxtStatusCmos (
+  BOOLEAN
+  );
 #endif

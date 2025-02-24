@@ -1363,3 +1363,52 @@ IsTxtACheckRequested (
       }
   return FALSE;
 }
+
+/**
+  This routine will check the TxtStatus in CMOS
+  @retval TRUE - If Txt is enabled, otherwise FALSE
+**/
+BOOLEAN
+IsTxtEnabledCmos (
+  VOID
+  )
+{
+  UINT8 TxtStatus;
+
+  TxtStatus = 0;
+
+  IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+  TxtStatus = IoRead8(CMOS_IO_DATA);
+
+  DEBUG ((DEBUG_INFO, "TXTPEI: CmosTxtStatus = %d\n", TxtStatus));
+
+  return ((TxtStatus & BIT4) == BIT4) ? TRUE : FALSE;
+}
+
+/**
+  UpdateTxtStatusCmos to write TXT Status to CMOS.
+  @param[in] TxtStatus To Enable/Disable TXT
+**/
+VOID
+UpdateTxtStatusCmos (
+  BOOLEAN TxtStatus
+  )
+{
+  UINT8               CmosStatus  = 0;
+
+  IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+  CmosStatus = IoRead8(CMOS_IO_DATA);
+
+  DEBUG ((DEBUG_INFO, "TXTPEI: CmosStatus = %d\n", CmosStatus));
+
+  if (TxtStatus == TRUE) {
+    IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+    IoWrite8 (CMOS_IO_DATA, CmosStatus | BIT4);
+  } else {
+    IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+    IoWrite8 (CMOS_IO_DATA, CmosStatus & ~BIT4);
+  }
+
+  IoWrite8 (CMOS_IO_ADDRESS, FIT_REC_TXT_POLICY_TYPE_A);
+  DEBUG ((DEBUG_INFO, "TXTPEI: CmosStatus Post Write = %d\n", IoRead8(CMOS_IO_DATA)));
+}
