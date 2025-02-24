@@ -41,15 +41,14 @@ Scope (\_SB.PC00.RP01.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  Method (_DSM, 4, Serialized)
+  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
   {
-    // Compare passed in UUID to supported UUID.
-    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT))) {
+    Method (_DSM, 4, Serialized) {
       Include ("WwanDsm.asl")
-    }
-    // If the code falls through to this point, just return a buffer of 0.
-    Return (Buffer () {0x00})
-  }  // End _DSM Method
+      // If the code falls through to this point, just return a buffer of 0.
+      Return (Buffer () {0x00})
+    }  // End _DSM Method
+  }
 }
 
 Scope (\_SB.PC00.RP02.PXSX)
@@ -73,16 +72,16 @@ Scope (\_SB.PC00.RP02.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  Method (_DSM, 4, Serialized)
+  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
   {
-    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
+    Method (_DSM, 4, Serialized)
     {
       // Compare passed in UUID to supported UUID.
       Include ("WwanDsm.asl")
+      // If the code falls through to this point, just return a buffer of 0.
+      Return (Buffer () {0x00})
     }
-    // If the code falls through to this point, just return a buffer of 0.
-    Return (Buffer () {0x00})
-  }  // End _DSM Method
+  }
 }
 
 Scope (\_SB.PC00.RP03.PXSX)
@@ -106,16 +105,15 @@ Scope (\_SB.PC00.RP03.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-
-  Method (_DSM, 4, Serialized)
+  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
   {
-    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-    {      // Compare passed in UUID to supported UUID.
+    Method (_DSM, 4, Serialized)
+    {
       Include ("WwanDsm.asl")
+      // If the code falls through to this point, just return a buffer of 0.
+      Return (Buffer () {0x00})
     }
-    // If the code falls through to this point, just return a buffer of 0.
-    Return (Buffer () {0x00})
-  }  // End _DSM Method
+  }
 }
 
 Scope (\_SB.PC00.RP04.PXSX)
@@ -139,15 +137,14 @@ Scope (\_SB.PC00.RP04.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  Method (_DSM, 4, Serialized)
-  {
-    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-    {      // Compare passed in UUID to supported UUID.
+  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT))) {
+    Method (_DSM, 4, Serialized)
+    {
       Include ("WwanDsm.asl")
+      // If the code falls through to this point, just return a buffer of 0.
+      Return (Buffer () {0x00})
     }
-    // If the code falls through to this point, just return a buffer of 0.
-    Return (Buffer () {0x00})
-  }  // End _DSM Method
+  }
 }
 
 Scope (\_SB.PC00.RP05.PXSX)
@@ -171,12 +168,13 @@ Scope (\_SB.PC00.RP05.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  Method (_DSM, 4, Serialized)
+  If (LOr (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)), LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0)))))
   {
-    //
-    // DLRM support
-    //
-    If (LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0)))) {
+    Method (_DSM, 4, Serialized)
+    {
+      //
+      // DLRM support
+      //
       If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4")))
       {
         If (LEqual (1, ToInteger (Arg1)))        // Revision 1.
@@ -209,15 +207,13 @@ Scope (\_SB.PC00.RP05.PXSX)
         } Else {
           ADBG ("DLRM Revision 0: No function supported")
         }
+        Return (Buffer() {0x00})
       }
-    }
 
-    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT))) {
-      // Compare passed in UUID to supported UUID.
       Include ("WwanDsm.asl")
-    }
-    Return (Buffer () {0x00})
-  }  // End _DSM Method
+      Return (Buffer () {0x00})
+    }  // End _DSM Method
+  }
 }
 
 Scope (\_SB.PC00.RP06.PXSX)
@@ -241,14 +237,14 @@ Scope (\_SB.PC00.RP06.PXSX)
   // Arg2: Integer Function Index
   // Arg3: Package Parameters
   //
-  Method (_DSM, 4, Serialized)
+  If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
   {
-    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)))
-    {      // Compare passed in UUID to supported UUID.
+    Method (_DSM, 4, Serialized)
+    {
       Include ("WwanDsm.asl")
+      // If the code falls through to this point, just return a buffer of 0.
+      Return (Buffer () {0x00})
     }
-    // If the code falls through to this point, just return a buffer of 0.
-    Return (Buffer () {0x00})
   }  // End _DSM Method
 }
 
@@ -274,12 +270,13 @@ Scope (\_SB.PC00.RP09.PXSX)
   // Arg3: Package Parameters
   //
   //
-  Method (_DSM, 4, Serialized)
+  If (LOr (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT)), LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0)))))
   {
-    //
-    // DLRM support
-    //
-    If (LAnd (CondRefOf (\DLRM), (LNotEqual (\DLRM, 0)))) {
+    Method (_DSM, 4, Serialized)
+    {
+      //
+      // DLRM support
+      //
       If (LEqual (Arg0, ToUUID ("C41F8AFB-4701-F0EB-1D26-0296648C30E4")))
       {
         If (LEqual (1, ToInteger (Arg1)))        // Revision 1.
@@ -312,14 +309,12 @@ Scope (\_SB.PC00.RP09.PXSX)
         } Else {
           ADBG ("DLRM Revision 0: No function supported")
         }
+        Return (Buffer () {0x00})
       }
-    }
 
-    If (LAnd (LNotEqual (WWEN, 0), LEqual (WWRP, SLOT))) {
-      // Compare passed in UUID to supported UUID.
       Include ("WwanDsm.asl")
-    }
-    Return (Buffer () {0x00})
-  }  // End _DSM Method
-}
 
+      Return (Buffer () {0x00})
+    }  // End _DSM Method
+  }
+}
