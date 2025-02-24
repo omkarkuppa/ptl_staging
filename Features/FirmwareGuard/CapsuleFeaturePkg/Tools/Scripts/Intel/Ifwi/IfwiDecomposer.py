@@ -55,30 +55,30 @@ DEFAULT_FIT_TOOL_FILENAME            : str  = 'FitTool.exe'
 #
 DEFAULT_BIOS_FILENAME   : str       = 'ClientBios.rom'
 BIOS_DECOMPOSE_PATH_LIST: List[str] = [
-    f'{DEFAULT_IFWI_INTERMEDIATE_FOLDER_NAME}\BIOS Region.bin',
+    f'{DEFAULT_IFWI_INTERMEDIATE_FOLDER_NAME}\\BIOS Region.bin',
     ]
 
 DEFAULT_EC_FILENAME   : str       = 'Ec.bin'
 EC_DECOMPOSE_PATH_LIST: List[str] = [
-    f'{DEFAULT_IFWI_INTERMEDIATE_FOLDER_NAME}\EC Region.bin',
-    f'{DEFAULT_IFWI_DECOMPOSE_FOLDER_NAME}\*#EcRegion.bin',
+    f'{DEFAULT_IFWI_INTERMEDIATE_FOLDER_NAME}\\EC Region.bin',
+    f'{DEFAULT_IFWI_DECOMPOSE_FOLDER_NAME}\\*#EcRegion.bin',
     ]
 
 DEFAULT_CSME_FILENAME   : str       = 'CSERegion.bin'
 CSME_DECOMPOSE_PATH_LIST: List[str] = [
-    f'{DEFAULT_IFWI_INTERMEDIATE_FOLDER_NAME}\CSE Region.bin',
+    f'{DEFAULT_IFWI_INTERMEDIATE_FOLDER_NAME}\\CSE Region.bin',
     ]
 
 DEFAULT_GBE_FILENAME   : str       = 'GbE.bin'
 GBE_DECOMPOSE_PATH_LIST: List[str] = [
-    f'{DEFAULT_IFWI_INTERMEDIATE_FOLDER_NAME}\GBE Region.bin',
+    f'{DEFAULT_IFWI_INTERMEDIATE_FOLDER_NAME}\\GBE Region.bin',
     ]
 
 DEFAULT_ISHPDT_FILENAME   : str       = 'IshPdt.bin'
 ISHPDT_DECOMPOSE_PATH_LIST: List[str] = [
-    f'{DEFAULT_IFWI_INTERMEDIATE_FOLDER_NAME}\PdtBinary.bin',
-    f'{DEFAULT_IFWI_DECOMPOSE_FOLDER_NAME}\*#IshPdtBinary.bin',
-    f'{DEFAULT_IFWI_DECOMPOSE_FOLDER_NAME}\*ish_pdt_binary.bin',
+    f'{DEFAULT_IFWI_INTERMEDIATE_FOLDER_NAME}\\PdtBinary.bin',
+    f'{DEFAULT_IFWI_DECOMPOSE_FOLDER_NAME}\\*#IshPdtBinary.bin',
+    f'{DEFAULT_IFWI_DECOMPOSE_FOLDER_NAME}\\*ish_pdt_binary.bin',
     ]
 
 #

@@ -132,9 +132,9 @@ class FlashConfig (INICfgFile):
         HelperGuidStr: str = (f'{self.__HelperGuid}').upper ()
 
         MappingData: list = [
-            [HEAD_NUM_OF_UPDATE,     f'{self.__RegionCnt}'                        ],
-            [HEAD_IMAGE_GUID_NAME,   f'{ImageGuidStr} # gCapsuleBiosImageFileGuid'],
-            [HEAD_IMAGE_HELPER_GUID, f'{HelperGuidStr} # gCapsuleBiosBgupFileGuid'],
+            [HEAD_NUM_OF_UPDATE,     f'{self.__RegionCnt}' ],
+            [HEAD_IMAGE_GUID_NAME,   f'{ImageGuidStr}'     ],
+            [HEAD_IMAGE_HELPER_GUID, f'{HelperGuidStr}'    ],
             ]
         super ().UpdateDataToSection (CFG_HEAD_SECTION_NAME, MappingData)
 

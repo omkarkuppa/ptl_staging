@@ -170,15 +170,16 @@ class GenCapsulePayload (object):
             str:
                 Type of IFWI.
         """
-        LayoutName: str            = str ()
-        Tree      : Et.ElementTree = ET.parse (self.__IfwiCfgFilePath)
-        Root      : Et.Element     = Tree.getroot ()
+        IsFound   : bool       = None
+        LayoutName: str        = str ()
+        XmlObject : XmlWrapper = XmlWrapper (FilePath = self.__IfwiCfgFilePath)
+        Root      : Et.Element = XmlObject.Root
 
-        LayoutName = Root.attrib.get ('layout_name')
-
-        if not LayoutName:
+        IsFound, LayoutName = XmlObject.GetAttribute (Root, 'layout_name')
+        if not IsFound:
             raise ValueError (f'Failed to get the IFWI layout.')
-        elif IFWI_CORPORATE in LayoutName:
+
+        if IFWI_CORPORATE in LayoutName:
             return IFWI_CORPORATE
         elif IFWI_CONSUMER in LayoutName:
             return IFWI_CONSUMER

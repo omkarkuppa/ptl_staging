@@ -130,7 +130,7 @@ if (BUILD_OP_VER == ISH_PDT_BUILD_OP_VER_1):
                 raise ValueError (
                         'Please at least input '
                         '(1) -ifwi & -fit or '
-                        '(2) -ishpdt '
+                        '(2) -pdt '
                         'to assign the ISH PDT FW image.'
                         )
 
