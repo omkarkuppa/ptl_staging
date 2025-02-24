@@ -54,6 +54,7 @@
 #define GET_IP_FIRMWARE_CMD      0x21
 #define GET_DEBUG_TOKEN_DATA_CMD 0x22
 #define GET_BIOS_SEED_CMD        0x23
+#define LOAD_BINARY_CMD          0x26
 
 ///
 /// Defines for BUP_MPHY_GROUP_ID Command
@@ -430,6 +431,25 @@ typedef union {
   GET_BIOS_SEED_REQUEST   Request;
   GET_BIOS_SEED_RESPONSE  Response;
 } GET_BIOS_SEED_BUFFER;
+
+typedef enum {
+  UfsPhyBinaryId = 0x100
+} BINARY_ID;
+
+typedef struct {
+  MKHI_MESSAGE_HEADER  MkhiHeader;
+  UINT32               IdsCount;
+  UINT32               BinaryIds[0];
+} LOAD_BINARY_REQUEST;
+
+typedef struct {
+  MKHI_MESSAGE_HEADER  MkhiHeader;
+} LOAD_BINARY_RESPONSE;
+
+typedef union {
+  LOAD_BINARY_REQUEST  Request;
+  LOAD_BINARY_RESPONSE Response;
+} LOAD_BINARY_BUFFER;
 
 ///
 /// ICC group defines

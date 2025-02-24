@@ -463,6 +463,24 @@ PeiHeciGetBiosSeed (
   OUT UINT8           *BiosSeed
   );
 
+/**
+  The function sends a request to load a binary using HECI and waits for an acknowledgment.
+
+  @param[in] IdsCount             The number of binary IDs in the list.
+  @param[in] BinaryIdsList        Pointer to the list of binary IDs.
+
+  @retval EFI_SUCCESS             Command succeeded.
+  @retval EFI_UNSUPPORTED         Current ME mode doesn't support this function.
+  @retval EFI_INVALID_PARAMETER   BinaryIdsList is NULL.
+  @retval EFI_OUT_OF_RESOURCES    Unable to allocate required resources.
+  @retval EFI_DEVICE_ERROR        HECI Device error, command aborts abnormally.
+**/
+EFI_STATUS
+PeiHeciLoadBinaryMsg (
+  IN UINT32             IdsCount,
+  IN UINT32             *BinaryIdsList
+  );
+
 //
 // BUP_ICC_GROUP_ID = 0xF1
 //

@@ -1290,6 +1290,74 @@ PeiHeciGetBiosSeed (
   return Status;
 }
 
+/**
+  The function sends a request to load a binary using HECI and waits for an acknowledgment.
+
+  @param[in] IdsCount             The number of binary IDs in the list.
+  @param[in] BinaryIdsList        Pointer to the list of binary IDs.
+
+  @retval EFI_SUCCESS             Command succeeded.
+  @retval EFI_UNSUPPORTED         Current ME mode doesn't support this function.
+  @retval EFI_INVALID_PARAMETER   BinaryIdsList is NULL.
+  @retval EFI_OUT_OF_RESOURCES    Unable to allocate required resources.
+  @retval EFI_DEVICE_ERROR        HECI Device error, command aborts abnormally.
+**/
+EFI_STATUS
+PeiHeciLoadBinaryMsg (
+  IN UINT32          IdsCount,
+  IN UINT32          *BinaryIdsList
+  )
+{
+  EFI_STATUS         Status;
+  LOAD_BINARY_BUFFER *LoadBinary;
+  UINT32             MeMode;
+  UINT32             Length;
+  UINT32             RespLength;
+
+  Status = MeBiosGetMeMode (&MeMode);
+  if (EFI_ERROR (Status) || (MeMode != ME_MODE_NORMAL)) {
+    return EFI_UNSUPPORTED;
+  }
+
+  if (BinaryIdsList == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  LoadBinary = AllocateZeroPool (IdsCount * sizeof (UINT32) + sizeof (LOAD_BINARY_BUFFER));
+  if (LoadBinary == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  LoadBinary->Request.MkhiHeader.Fields.GroupId = BUP_COMMON_GROUP_ID;
+  LoadBinary->Request.MkhiHeader.Fields.Command = LOAD_BINARY_CMD;
+  LoadBinary->Request.IdsCount                  = IdsCount;
+  CopyMem (&LoadBinary->Request.BinaryIds, BinaryIdsList, IdsCount * sizeof (UINT32));
+
+  Length                                        = IdsCount * sizeof (UINT32) + sizeof (LOAD_BINARY_REQUEST);
+  RespLength                                    = sizeof (LOAD_BINARY_RESPONSE);
+
+  Status = HeciWrapperSendWithAck (
+             BIOS_FIXED_HOST_ADDR,
+             HECI_MKHI_MESSAGE_ADDR,
+             (UINT32 *) LoadBinary,
+             Length,
+             (UINT32 *) LoadBinary,
+             &RespLength
+             );
+
+  if (EFI_ERROR (Status) ||
+      ((LoadBinary->Response.MkhiHeader.Fields.Command) != LOAD_BINARY_CMD) ||
+      ((LoadBinary->Response.MkhiHeader.Fields.IsResponse) != 1) ||
+      (LoadBinary->Response.MkhiHeader.Fields.Result != MkhiStatusSuccess)) {
+    Status = EFI_DEVICE_ERROR;
+  }
+
+  DEBUG ((DEBUG_INFO, "%a() exit, Status = %r\n", __FUNCTION__, Status));
+
+  FreePool (LoadBinary);
+
+  return Status;
+}
 
 //
 // BUP_ICC_GROUP_ID = 0xF1
