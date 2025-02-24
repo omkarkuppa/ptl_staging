@@ -364,3 +364,9 @@ PchPmWoWlanEnable
 VmdPortFunc
 D3HotEnable
 SerialIoI3cMode
+VmdEnable
+VmdPort
+VmdVariablePtr
+VmdMemBar1Base
+VmdMemBar2Base
+VmdGlobalMapping
