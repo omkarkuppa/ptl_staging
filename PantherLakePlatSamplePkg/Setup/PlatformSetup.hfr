@@ -790,8 +790,8 @@
   oneof varid   = SETUP_DATA.OrientationSensor,
     prompt      = STRING_TOKEN(STR_SENSOR_TYPE_PROMPT),
     help        = STRING_TOKEN(STR_SENSOR_TYPE_HELP),
-    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-    option text = STRING_TOKEN(STR_BOSCH_BMI323),  value = 1, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+    option text = STRING_TOKEN(STR_BOSCH_BMI323),  value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
     option text = STRING_TOKEN(STR_ST_LSM6DSOX),  value = 2, flags = RESET_REQUIRED;
   endoneof;
 
