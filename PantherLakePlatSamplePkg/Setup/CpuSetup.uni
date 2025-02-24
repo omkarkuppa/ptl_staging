@@ -804,9 +804,9 @@
 #string STR_TRUE                                #language en-US "True"
 
 #string STR_HYST_WINDOW_PCORE                   #language en-US "Pcore Hysteresis Window"
-#string STR_HYST_WINDOW_PCORE_HELP              #language en-US "Set the Hysteresis time in miliseconds. Range is 0-50ms. Pcode will clip any number above max and return success"
+#string STR_HYST_WINDOW_PCORE_HELP              #language en-US "Set the Hysteresis time in milliseconds. Range is 0-50ms. Pcode will clip any number above max and return success"
 #string STR_HYST_WINDOW_ECORE                   #language en-US "Ecore Hysteresis Window"
-#string STR_HYST_WINDOW_ECORE_HELP              #language en-US "Set the Hysteresis time in miliseconds. Range is 0-50ms. Pcode will clip any number above max and return success"
+#string STR_HYST_WINDOW_ECORE_HELP              #language en-US "Set the Hysteresis time in milliseconds. Range is 0-50ms. Pcode will clip any number above max and return success"
 
 #string STR_FAST_PKG_C_RAMP_DISABLE             #language en-US "Disable Fast PKG C State Ramp"
 #string STR_FAST_PKG_C_RAMP_DISABLE_HELP        #language en-US "This option needs to be configured to reduce acoustic noise during deeper C states. False: Don't disable Fast ramp during deeper C states; True: Disable Fast ramp during deeper C state"
