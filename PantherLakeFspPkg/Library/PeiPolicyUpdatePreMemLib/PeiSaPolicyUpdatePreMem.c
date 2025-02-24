@@ -419,6 +419,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.CmdRanksTerminated                      = FspmUpd->FspmConfig.CmdRanksTerminated;
   MemConfig->ExternalInputs.CmdMirror                               = FspmUpd->FspmConfig.CmdMirror;
   MemConfig->ExternalInputs.TrainingEnables3.PHASECLKCAL            = FspmUpd->FspmConfig.PHASECLKCAL;
+  MemConfig->ExternalInputs.TrainingEnables3.TXDQSDCC               = FspmUpd->FspmConfig.TXDQSDCC;
   MemConfig->ExternalInputs.TrainingEnables3.RXVREFPERBIT           = FspmUpd->FspmConfig.RXVREFPERBIT;
   MemConfig->ExternalInputs.TrainingEnables3.PPR                    = FspmUpd->FspmConfig.PPR;
   MemConfig->ExternalInputs.TrainingEnables3.LVRAUTOTRIM            = FspmUpd->FspmConfig.LVRAUTOTRIM;

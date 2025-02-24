@@ -1280,6 +1280,8 @@
 #string STR_RDVC2D_TRNG_NAME                    #language en-US "Read Voltage Centering 2D"
 #string STR_RDVC2D_TRNG_HELP                    #language en-US "Read Voltage Centering 2D"
 #string STR_RXVREFPERBIT_TRNG_NAME              #language en-US "RxVref Per-Bit Training"
+#string STR_TXDQSDCC_NAME                       #language en-US "TXDQS DCC Training"
+#string STR_TXDQSDCC_HELP                       #language en-US "TXDQS DCC Training"
 #string STR_LCT_TRNG_NAME                       #language en-US "Late Command Training"
 #string STR_LCT_TRNG_HELP                       #language en-US "Late Command Training"
 #string STR_RTL_TRNG_NAME                       #language en-US "Round Trip Latency"

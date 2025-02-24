@@ -614,10 +614,15 @@
   # !BSF HELP:{Select DIMM timing profile. Options are 0=Default Profile, 1=Custom Profile, 2=XMP Profile 1, 3=XMP Profile 2}
   gPlatformFspPkgTokenSpaceGuid.SpdProfileSelected          | * | 0x01 | 0x00
 
-  # !BSF NAME:{RxVref Per-Bit Training
+  # !BSF NAME:{RxVref Per-Bit Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable RxVref Per-Bit Training}
   gPlatformFspPkgTokenSpaceGuid.RXVREFPERBIT                | * | 0x01 | 0x00
+
+  # !BSF NAME:{TXDQS DCC Training}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enables/Disable TXDQS DCC Training}
+  gPlatformFspPkgTokenSpaceGuid.TXDQSDCC                    | * | 0x01 | 0x01
 
   # !BSF NAME:{Rx DQS Duty Cycle Correction}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}

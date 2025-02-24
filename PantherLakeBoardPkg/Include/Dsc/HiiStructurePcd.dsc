@@ -3605,7 +3605,8 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.WRTDIMMDFE|0x1                              
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.RXDQSDCC|0x1                                                   # Offset 56 BIT0 - RXDQS Duty Cycle Correction
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMNTODT|0x0                                                  #           BIT1 - DIMM Non-Target ODT training
-gStructPcdTokenSpaceGuid.PcdSaSetup.RXVREFPERBIT|0x0                                               #           BIT3 - RxVref Per-Bit Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.TXDQSDCC |0x1                                                  #           BIT2 - RxVref Per-Bit Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.RXVREFPERBIT|0x0                                               #           BIT3 - TXDQS DCC Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.PPR|0x0                                                        #           BIT4 - Post Package Repair
 gStructPcdTokenSpaceGuid.PcdSaSetup.LVRAUTOTRIM|0x0                                                #           BIT5 - LVR Auto Trim
 gStructPcdTokenSpaceGuid.PcdSaSetup.OPTIMIZECOMP|0x0                                               #           BIT7 - Comp optimization

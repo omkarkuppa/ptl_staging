@@ -1031,6 +1031,7 @@ UpdatePeiSaPolicyPreMem (
 
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RXDQSDCC,  MemConfig->ExternalInputs.TrainingEnables3.RXDQSDCC,       SaSetup.RXDQSDCC       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DIMMNTODT,  MemConfig->ExternalInputs.TrainingEnables3.DIMMNTODT,      SaSetup.DIMMNTODT      );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TXDQSDCC,  MemConfig->ExternalInputs.TrainingEnables3.TXDQSDCC,   SaSetup.TXDQSDCC   );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RXVREFPERBIT,  MemConfig->ExternalInputs.TrainingEnables3.RXVREFPERBIT,   SaSetup.RXVREFPERBIT   );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PPR,  MemConfig->ExternalInputs.TrainingEnables3.PPR,            SaSetup.PPR            );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.LVRAUTOTRIM,  MemConfig->ExternalInputs.TrainingEnables3.LVRAUTOTRIM,    SaSetup.LVRAUTOTRIM    );
