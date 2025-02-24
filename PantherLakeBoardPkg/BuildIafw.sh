@@ -47,7 +47,7 @@ export NOTIMESTAMP=
 
 export PTL_BUILD=TRUE
 export PrepRelease=DEBUG
-export FSPM_COMPRESSED=FALSE
+export FSPM_COMPRESSED=TRUE
 export SILENT_MODE=FALSE
 CapsuleBuild=FALSE
 export COMPILER=GCC
