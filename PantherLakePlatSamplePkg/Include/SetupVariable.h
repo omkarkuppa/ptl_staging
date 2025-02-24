@@ -1252,7 +1252,7 @@ typedef struct {
   <b>Revision 2</b>:  - Added CnviDdrRfim.
 **/
 
-#define SA_SETUP_REVISION   2
+#define SA_SETUP_REVISION   3
 
 typedef struct {
   UINT8   Revision;

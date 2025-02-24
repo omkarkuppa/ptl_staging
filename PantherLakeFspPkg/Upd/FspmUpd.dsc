@@ -769,6 +769,8 @@
   # !BSF NAME:{PPR Repair Rank}  TYPE:{EditNum, HEX, (0x00,0x01)}
   # !BSF HELP:{PPR repair Rank: User chooses to force repair specifc address }
   gPlatformFspPkgTokenSpaceGuid.PprRepairRank               | * | 0x01 | 0x0
+  # Added reserved space  UnusedUpdSpace0[3]
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd773              | * | 0x3 | {0x00}
 
   # !BSF NAME:{PPR Repair Row}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
   # !BSF HELP:{PPR repair Row: User chooses to force repair specifc address }
@@ -1537,6 +1539,8 @@
   # !BSF NAME:{Enable HD Audio DMIC_N Link} TYPE:{EditNum, HEX, (0x00,0xFFFF)}
   # !BSF HELP:{Enable/disable HD Audio DMIC1 link. Muxed with SNDW3.}
   gPlatformFspPkgTokenSpaceGuid.PchHdaAudioLinkDmicEnable  | * | 0x02 | { 0x00, 0x00}
+  # Added reserved space UnusedUpdSpace1[2]
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd1543            | * | 0x02 | {0x00}
 
   # !BSF NAME:{DMIC<N> ClkA Pin Muxing (N - DMIC number)} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFF)}
   # !BSF HELP:{Determines DMIC<N> ClkA Pin muxing. See  GPIO_*_MUXING_DMIC<N>_CLKA_*}
@@ -1547,7 +1551,7 @@
   # !BSF HELP:{Enable/disable HD Audio DSP feature.}
   gPlatformFspPkgTokenSpaceGuid.PchHdaDspEnable             | * | 0x01 | 0x01
   # Added reserved space UnusedUpdSpace9[3]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd9                | * | 0x03 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd1554             | * | 0x03 | {0x00}
 
   # !BSF NAME:{DMIC<N> Data Pin Muxing} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFFFFFFFFFF)}
   # !BSF HELP:{Determines DMIC<N> Data Pin muxing. See GPIO_*_MUXING_DMIC<N>_DATA_*}
@@ -1837,8 +1841,8 @@
   # !BSF NAME:{Enable/Disable I2cPostcode} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable (Default): Postcode via I2C, Disable: Postcode via Port80}
   gPlatformFspPkgTokenSpaceGuid.I2cPostCodeEnable                   | * | 0x01 | 0x0
-  # Added reserved space  UnusedUpdSpace14
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd14               | * | 0x01 | 0x00
+  # Added reserved space  UnusedUpdSpace0[5]
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd14               | * | 0x05 | {0x00}
 
   #
   # Debug Pre-Mem Block End
@@ -3328,6 +3332,8 @@
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable Rx DQS Delay Comp Support}
   gPlatformFspPkgTokenSpaceGuid.RxDqsDelayCompEn         | * | 0x01 | 0x00
+  # Added reserved space UnusedUpdSpace1[3]
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd336           | * | 0x03 | {0x00}
 
   # !BSF NAME:{Fore Single Rank config}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -3611,8 +3617,8 @@
   # !HDR STRUCT:{UINT8}
   # !BSF HELP:{Specify DDRIO Clock to CKD DIMM for CH0D0/CH0D1/CH1D0&CH1D1}
   gPlatformFspPkgTokenSpaceGuid.PhyClockToCkdDimm            | * | 0x8 | { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
-  # Added reserved space   UnusedUpdSpace42[8]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd42                | * | 0x8 | {0x00}
+  # Added reserved space   UnusedUpdSpace1[4]
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd42                | * | 0x4 | {0x00}
 
   # !HDR EMBED:{FSP_M_CONFIG:FspmConfig:END}
   gPlatformFspPkgTokenSpaceGuid.ReservedFspmUpd             | * | 0x03 | {0x00}
