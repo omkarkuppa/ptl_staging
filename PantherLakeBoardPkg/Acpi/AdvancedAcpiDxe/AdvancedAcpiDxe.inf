@@ -289,7 +289,6 @@
   gUefiIntelPlatformVariablesGuid               ## CONSUMES
   gUsbConnectorHobGuid                          ## CONSUMES
   gUsbCConnectorHobGuid                         ## CONSUMES
-  gEfiVendorSpecifcRtd3keyGuid                  ## CONSUMES
 
 [Depex]
   gEfiAcpiTableProtocolGuid           AND
