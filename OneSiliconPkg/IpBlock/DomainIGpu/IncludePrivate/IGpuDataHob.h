@@ -24,11 +24,6 @@
 
 #include <Base.h>
 
-#define VGA_DISPLAY_DISABLED  0
-#define VGA_DISPLAY_ENABLED   (BIT0)
-#define VGA_MODE3_ENABLED     (VGA_DISPLAY_ENABLED)
-#define VGA_MODE12_ENABLED    (VGA_DISPLAY_ENABLED | BIT1)
-
 extern EFI_GUID  gIGpuDataHobGuid;
 #pragma pack (push,1)
 

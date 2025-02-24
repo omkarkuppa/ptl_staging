@@ -3216,8 +3216,8 @@
   gPlatformFspPkgTokenSpaceGuid.LidStatus                   | * | 0x01 | 0x0
 
   # !BSF NAME:{Control SOL VGA Initialition sequence} TYPE:{Combo}
-  # !BSF OPTION:{0x0: NO SOL VGA Init, 0x1: SOL VGA Init}
-  # !BSF HELP:{Initialise SOL Init}
+  # !BSF TYPE:{Combo} OPTION:{0:VGA Disable, 1:Mode 3 VGA, 2:Mode 12 VGA}
+  # !BSF HELP:{Initialise SOL Init, BIT0 - (0 : Disable VGA Support, 1 : Enable VGA Support),, BIT1 - (0 : VGA Text Mode 3, 1 : VGA Graphics Mode 12)}
   gPlatformFspPkgTokenSpaceGuid.VgaInitControl              | * | 0x01 | 0x0
 
   ## GRAPHICS_PEI_PREMEM_CONFIG End

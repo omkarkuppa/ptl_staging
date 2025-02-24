@@ -597,20 +597,22 @@ ClearVgaDisplay (
   );
 
 /**
-  Write a block of graphics data to the VGA memory in Mode 12h.
+  Draw an image at a specific (X, Y) position in VGA Mode 12h.
 
-  This function writes a block of graphics data to the VGA memory in Mode 12h (640x480, 16 colors).
-  It processes each of the 4 VGA planes and writes the corresponding data to VGA memory.
+  This function draws an image at the specified (X, Y) position in VGA Mode 12h (640x480, 16 colors).
+  It processes each of the 4 VGA planes and writes the corresponding data to VGA memory to render the image.
 
-  @param[in] X          The X coordinate of the top-left corner of the block.
-  @param[in] Y          The Y coordinate of the top-left corner of the block.
-  @param[in] Width      The width of the block.
-  @param[in] Height     The height of the block.
-  @param[in] VgaBuffer  Pointer to the buffer containing the graphics data.
+  @param[in] X          The X coordinate of the top-left corner of the image.
+  @param[in] Y          The Y coordinate of the top-left corner of the image.
+  @param[in] Width      The width of the image in pixels.
+  @param[in] Height     The height of the image in pixels.
+  @param[in] VgaBuffer  Pointer to the buffer containing the VGA-compatible graphics data.
+
+  @note This function assumes VGA Mode 12h is active and properly initialized.
 **/
 VOID
 EFIAPI
-WriteVgaMode12Graphics (
+VgaMode12DrawImage (
   IN UINT32      X,
   IN UINT32      Y,
   IN UINT32      Width,

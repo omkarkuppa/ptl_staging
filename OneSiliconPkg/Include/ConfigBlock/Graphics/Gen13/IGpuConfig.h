@@ -33,6 +33,15 @@
 #define DDI_DEVICE_NUMBER  4
 #define MAX_BCLM_ENTRIES   30
 
+#define VGA_DISPLAY_DISABLED  (0)
+#define VGA_DISPLAY_ENABLED   (BIT0)
+#define VGA_MODE3_SUPPORT     (0)
+#define VGA_MODE12_SUPPORT    (BIT1)
+
+#define IS_VGA_ENABLED(data)         (((data) & BIT0) == VGA_DISPLAY_ENABLED)
+#define IS_VGA_MODE3_ENABLED(data)   (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_MODE3_SUPPORT))
+#define IS_VGA_MODE12_ENABLED(data)  (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_MODE12_SUPPORT))
+
 typedef enum {
   DISPLAY_AUTO = 0x00,
   DISPLAY_IGD  = 0x01,
@@ -132,7 +141,12 @@ typedef struct {
   UINT8                OemT12DelayOverride;        ///< Offset 68 :Oem T12 Delay Override <b> Disable<\b>,Enable-Enable T12 Time.
   UINT8                IGpuGsm2Size;               ///< Offset 68 {0:2GB, 1:4GB, 2:6GB, 3:8GB, 4:10GB, 5:12GB, 6:14GB, 7:16GB, 8:18GB, 9:20GB, 10:22GB, 11:24GB, 12:26GB, 13:28GB, 14:30GB, 15:32GB, 0xFF/Other Value:No Allocation}
   UINT8                TestRsvd0[5];               ///< Offset 69 Reserved for 8 bytes alignment
-  BOOLEAN              VgaInitControl;             ///< Offset 74 : 0 (No VGA Support), 1 = 1 (VGA Supported)
+
+  /**
+   BIT0 - 0 : Disable VGA Support, 1 : Enable VGA Support
+   BIT1 - 0 : VGA Text Mode 3, 1 : VGA Graphics Mode 12
+  **/
+  UINT8                VgaInitControl;             ///< Offset 74 VGA Init Control
   VOID                 *VgaMessage;                ///< Pointer to Message which should be displayed
   VOID                 *VbtPtr;                    ///< Address of the Graphics Configuration Table
 } IGPU_PEI_PREMEM_CONFIG;

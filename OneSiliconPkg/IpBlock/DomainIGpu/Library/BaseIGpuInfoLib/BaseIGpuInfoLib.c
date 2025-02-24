@@ -68,6 +68,8 @@
 #define VGA_MODE12_HEIGHT               480     // Height of the screen in pixels
 #define VGA_MODE12_MAX_PLANE            4
 #define VGA_MODE12_PROGRESS_BAR_HEIGHT  16
+#define VGA_MODE12_CHAR_WIDTH           8
+#define VGA_MODE12_CHAR_HEIGHT          16
 
 /**
   Update the GttMmAdr if it's updated in register context.
@@ -1968,20 +1970,22 @@ FillRectangle (
 }
 
 /**
-  Write a block of graphics data to the VGA memory in Mode 12h.
+  Draw an image at a specific (X, Y) position in VGA Mode 12h.
 
-  This function writes a block of graphics data to the VGA memory in Mode 12h (640x480, 16 colors).
-  It processes each of the 4 VGA planes and writes the corresponding data to VGA memory.
+  This function draws an image at the specified (X, Y) position in VGA Mode 12h (640x480, 16 colors).
+  It processes each of the 4 VGA planes and writes the corresponding data to VGA memory to render the image.
 
-  @param[in] X          The X coordinate of the top-left corner of the block.
-  @param[in] Y          The Y coordinate of the top-left corner of the block.
-  @param[in] Width      The width of the block.
-  @param[in] Height     The height of the block.
-  @param[in] VgaBuffer  Pointer to the buffer containing the graphics data.
+  @param[in] X          The X coordinate of the top-left corner of the image.
+  @param[in] Y          The Y coordinate of the top-left corner of the image.
+  @param[in] Width      The width of the image in pixels.
+  @param[in] Height     The height of the image in pixels.
+  @param[in] VgaBuffer  Pointer to the buffer containing the VGA-compatible graphics data.
+
+  @note This function assumes VGA Mode 12h is active and properly initialized.
 **/
 VOID
 EFIAPI
-WriteVgaMode12Graphics (
+VgaMode12DrawImage (
   IN UINT32      X,
   IN UINT32      Y,
   IN UINT32      Width,
@@ -1995,7 +1999,7 @@ WriteVgaMode12Graphics (
   UINT32          Offset;
   UINT32          Row;
   UINT32          BytesPerRow;
-  IGPU_DATA_HOB  *IGpuDataHob;
+  IGPU_DATA_HOB   *IGpuDataHob;
 
   //
   // Ensure coordinates and dimensions are within bounds
@@ -2015,24 +2019,110 @@ WriteVgaMode12Graphics (
   //
   // Exit if the VGA display configuration is not Mode 12
   //
-  if (IGpuDataHob->VgaDisplayConfig != VGA_MODE12_ENABLED) {
+  if (!IS_VGA_MODE12_ENABLED (IGpuDataHob->VgaDisplayConfig)) {
     return;
   }
 
+  //
   // Calculate the number of bytes per row for the given width
+  //
   BytesPerRow = Width / 8;
-  Buffer = (const UINT8 *)VgaBuffer;
+  Buffer      = (const UINT8 *)VgaBuffer;
 
   // Process each of the 4 VGA planes
   for (Plane = 0; Plane < VGA_MODE12_MAX_PLANE; Plane++) {
     SetVgaPlane (Plane); // Set the current VGA plane
 
     for (Row = 0; Row < Height; Row++) {
+      //
       // Calculate VGA memory offset for the current row
+      //
       Offset     = (Plane * Height * BytesPerRow) + (Row * BytesPerRow);
       VgaMemBase = (volatile UINT8 *)(UINTN)(VGA_MODE12_BASE_ADDRESS + ((Y + Row) * (VGA_MODE12_WIDTH / 8)) + (X / 8));
+      //
       // Copy the data from the buffer to VGA memory
+      //
       CopyMem ((VOID *)VgaMemBase, &Buffer[Offset], BytesPerRow);
+    }
+  }
+}
+
+/**
+  Draw a character at a specific (X, Y) position in VGA Mode 12h.
+
+  This function draws a character at the specified (X, Y) position in VGA Mode 12h (640x480, 16 colors).
+  It processes each of the 4 VGA planes and sets the corresponding bits in VGA memory to draw the character.
+
+  @param[in] X         The X coordinate of the top-left corner of the character.
+  @param[in] Y         The Y coordinate of the top-left corner of the character.
+  @param[in] Char      The ASCII character to display.
+  @param[in] CharData  Pointer to the 8x16 character bitmap data.
+
+  @note This function assumes VGA Mode 12h is active and VGA is enabled.
+**/
+VOID
+VgaMode12DrawChar (
+  UINT16  X,
+  UINT16  Y,
+  CHAR8   Char,
+  UINT8   *CharData
+  )
+{
+  volatile UINT8  *VgaMemBase;
+  UINT8           CurrentByte;
+  UINT8           Plane;
+  UINT8           Bit;
+  UINT8           Bitmap;
+  UINT8           Row;
+  UINT32          ScreenOffset;
+  UINT32          ScreenOffsetBase;
+
+  //
+  // Ensure the coordinates are within bounds and the character data is not null.
+  //
+  if ((X >= VGA_MODE12_WIDTH) || (Y >= VGA_MODE12_HEIGHT) || (CharData == NULL)) {
+    return; // Invalid coordinates or null character data
+  }
+
+  //
+  // Calculate the base offset in VGA memory for the character's position
+  //
+  ScreenOffsetBase = (UINT32)((Y * VGA_MODE12_WIDTH / 8) + (X / 8));
+
+  //
+  // Iterate over each row of the character bitmap
+  //
+  for (Row = 0; Row < VGA_MODE12_CHAR_HEIGHT; Row++) {
+    //
+    // Get the bitmap data for the current row
+    //
+    Bitmap = CharData[Row];
+
+    //
+    // Process each of the 4 VGA planes
+    //
+    for (Plane = 0; Plane < 4; Plane++) {
+      SetVgaPlane (Plane); // Set the current VGA plane
+      //
+      // Calculate the screen offset for the current row and plane
+      //
+      ScreenOffset = ScreenOffsetBase + (Row * (VGA_MODE12_WIDTH / 8));
+      VgaMemBase   = (volatile UINT8 *)VGA_MODE12_BASE_ADDRESS;
+
+      // Read the existing value to preserve other bits
+      CurrentByte = VgaMemBase[ScreenOffset];
+
+      //
+      // Iterate over each bit in the byte
+      //
+      for (Bit = 0; Bit < VGA_MODE12_CHAR_WIDTH; Bit++) {
+        if (Bitmap & (1 << (7 - Bit))) {
+          CurrentByte |= (1 << (7 - Bit));  // Set the bit if the corresponding bit in the bitmap is set
+        }
+      }
+
+      // Write back the modified byte to VGA memory
+      VgaMemBase[ScreenOffset] = CurrentByte;
     }
   }
 }
@@ -2082,9 +2172,9 @@ UpdateProgressBar (
   //
   // Check if it's VGA Mode3 or Mode12
   //
-  if (IGpuDataHob->VgaDisplayConfig == VGA_MODE3_ENABLED) {
+  if (IS_VGA_MODE3_ENABLED (IGpuDataHob->VgaDisplayConfig)) {
     IsMode3 = TRUE;
-  } else if (IGpuDataHob->VgaDisplayConfig == VGA_MODE12_ENABLED) {
+  } else if (IS_VGA_MODE12_ENABLED (IGpuDataHob->VgaDisplayConfig)) {
     IsMode3 = FALSE;
   } else {
     return; // Exit if the VGA display configuration is invalid
@@ -2149,7 +2239,7 @@ ClearVgaDisplay (
   BufferSize = 0;
 
   // Determine the VGA mode and set the buffer and size accordingly
-  if (IGpuDataHob->VgaDisplayConfig == VGA_MODE3_ENABLED) {
+  if (IS_VGA_MODE3_ENABLED (IGpuDataHob->VgaDisplayConfig)) {
     //
     // Point to the VGA framebuffer for Mode 3 (0xB8000)
     //
@@ -2173,7 +2263,7 @@ ClearVgaDisplay (
 
     // Clear the display by setting all pixels or characters to zero (black background)
     ZeroMem ((VOID *)VgaBuffer, BufferSize);
-  } else if (IGpuDataHob->VgaDisplayConfig == VGA_MODE12_ENABLED) {
+  } else if (IS_VGA_MODE12_ENABLED (IGpuDataHob->VgaDisplayConfig)) {
     //
     // Point to the VGA framebuffer for Mode 12 (0xA0000)
     //

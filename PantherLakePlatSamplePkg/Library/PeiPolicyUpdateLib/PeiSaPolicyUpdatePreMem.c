@@ -255,7 +255,7 @@ UpdatePeiSaPolicyPreMem (
 
   UINTN                                           Size;
   VOID                                            *Buffer;
-  BOOLEAN                                         VgaInitControl;
+  UINT8                                           VgaInitControl;
 
   DEBUG ((DEBUG_INFO, "Update %a Start\n", __FUNCTION__));
   ZeroMem ((VOID*) SaDisplayConfigTable, sizeof (SaDisplayConfigTable));
@@ -263,7 +263,7 @@ UpdatePeiSaPolicyPreMem (
   BootMode             = 0;
   PlatformMemorySize   = 0;
   Buffer               = NULL;
-  VgaInitControl       = FALSE;
+  VgaInitControl       = 0;
 
   MemConfigNoCrc       = NULL;
 
@@ -734,19 +734,25 @@ UpdatePeiSaPolicyPreMem (
     //
     // Check if SOL is enabled from BIOS Setup Menu
     //
-    if (SaSetup.SolFeatureEnabled == TRUE) {
+    if (SaSetup.SolFeatureEnabled != VGA_DISPLAY_DISABLED) {
       if ((BootMode == BOOT_WITH_FULL_CONFIGURATION) || (BootMode == BOOT_WITH_DEFAULT_SETTINGS)) {
-        VgaInitControl = TRUE;
+        if (SaSetup.SolFeatureEnabled == 1) {
+          VgaInitControl = (VGA_MODE3_SUPPORT | VGA_DISPLAY_ENABLED);
+        } else if (SaSetup.SolFeatureEnabled == 2) {
+          VgaInitControl = (VGA_MODE12_SUPPORT | VGA_DISPLAY_ENABLED);
+        } else {
+          VgaInitControl = VGA_DISPLAY_DISABLED;
+        }
       }
     }
 
     if (IsSimicsEnvironment ()) {
-      VgaInitControl = FALSE;
+      VgaInitControl = VGA_DISPLAY_DISABLED;
     }
 
     UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.VgaInitControl,  IGpuPreMemConfig->VgaInitControl,  VgaInitControl);
 
-    if (VgaInitControl == TRUE) {
+    if (VgaInitControl != VGA_DISPLAY_DISABLED) {
       PeiGetSectionFromAnyFv (PcdGetPtr (PcdIntelGraphicsPreMemVbtFileGuid), EFI_SECTION_RAW, 0, &Buffer, &Size);
 #if FixedPcdGet8(PcdFspModeSelection) == 1
       ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaMessage  = (UINT64) VgaMessage;

@@ -285,7 +285,7 @@ IGpuDisplayInitPreMem (
   // VGA Initialization
   //
   if (IpIGpuSupported (IGpuInst) == TRUE) {
-    if (IGpuPreMemConfig->VgaInitControl == TRUE) {
+    if (IGpuPreMemConfig->VgaInitControl != VGA_DISPLAY_DISABLED) {
       Status = PeiServicesLocatePpi (&gIntelPeiPreMemGraphicsPpiGuid, 0, NULL, (VOID **)&GraphicsPreMemPpi);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "Failed to locate Ppi %g\n", &gIntelPeiPreMemGraphicsPpiGuid));
@@ -310,11 +310,13 @@ IGpuDisplayInitPreMem (
 
       IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
       if (IGpuDataHob != NULL) {
-        IGpuDataHob->VgaDisplayConfig = VGA_MODE3_ENABLED;
+        IGpuDataHob->VgaDisplayConfig = IGpuPreMemConfig->VgaInitControl;
       }
 
       String = IGpuPreMemConfig->VgaMessage;
-      GraphicsPreMemPpi->GraphicsPreMemPpiVgaWrite (VGA_TEXT_CENTER, 12, String);
+      if (IS_VGA_MODE3_ENABLED(IGpuPreMemConfig->VgaInitControl)) {
+        GraphicsPreMemPpi->GraphicsPreMemPpiVgaWrite (VGA_TEXT_CENTER, 12, String);
+      }
 
       //
       // Log uGOP timing in FSP
