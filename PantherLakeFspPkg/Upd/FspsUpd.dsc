@@ -1815,6 +1815,19 @@
   #
   #VMD post-mem config
   #
+  # !BSF NAME:{Enable VMD controller} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/disable to VMD controller.0: Disable; 1: Enable(Default)}
+  gPlatformFspPkgTokenSpaceGuid.VmdEnable                 | * | 0x01 | 0x01
+
+  # !BSF NAME:{Enable VMD Global Mapping} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/disable to VMD controller.0: Disable(Default); 1: Enable}
+  gPlatformFspPkgTokenSpaceGuid.VmdGlobalMapping          | * | 0x01 | 0x00
+
+  # !BSF NAME:{Map port under VMD} TYPE:{Combo} OPTION:{$EN_DIS}
+  # !HDR STRUCT:{UINT8}
+  # !BSF HELP:{Map/UnMap port under VMD}
+  gPlatformFspPkgTokenSpaceGuid.VmdPort         | * | 0x1F | {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+
   # !BSF NAME:{VMD Port Bus} TYPE:{EditNum, DEC, (0,255)}
   # !HDR STRUCT:{UINT8}
   # !BSF HELP:{VMD Root port bus number.}
@@ -1829,6 +1842,23 @@
   # !HDR STRUCT:{UINT8}
   # !BSF HELP:{VMD Root port function number.}
   gPlatformFspPkgTokenSpaceGuid.VmdPortFunc     | * | 0x1F | {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+  # Added reserved space  UnusedUpdSpace0[7]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd37     | * | 0x7 | {0x00}
+
+  # !BSF NAME:{VMD Variable} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
+  # !BSF HELP:{VMD Variable Pointer.}
+  gPlatformFspPkgTokenSpaceGuid.VmdVariablePtr  | * | 0x8 | 0x00
+
+  # !BSF NAME:{Temporary CfgBar address for VMD} TYPE:{EditNum, HEX, (0x00, 0xFFFFFFFF)}
+  # !BSF HELP:{The reference code will use this as Temporary Cfg Bar address space to access Cfg space of mapped devices. Platform should provide conflict free Temporary MMIO Range to (CfgBarAddr + 32MB MMIO).
+  gPlatformFspPkgTokenSpaceGuid.VmdCfgBarBase                    | * | 0x4 | 0xA0000000
+  # !BSF NAME:{Temporary MemBar1 address for VMD} TYPE:{EditNum, HEX, (0x00, 0xFFFFFFFF)}
+  # !BSF HELP:{The reference code will use this as Temporary MemBar1 address space to access MMIO space of mapped devices. Platform should provide conflict free Temporary MMIO Range to (MemBar1Addr + 32MB MMIO).
+  gPlatformFspPkgTokenSpaceGuid.VmdMemBar1Base                    | * | 0x4 | 0xA2000000
+
+  # !BSF NAME:{Temporary MemBar2 address for VMD} TYPE:{EditNum, HEX, (0x00, 0xFFFFFFFF)}
+  # !BSF HELP:{The reference code will use this as Temporary MemBar2 address space to access MMIO space of mapped devices. Platform should provide conflict free Temporary MMIO Range to (MemBar2Addr + 1MB MMIO).
+  gPlatformFspPkgTokenSpaceGuid.VmdMemBar2Base                    | * | 0x4 | 0xA4000000
 
   ## TCSS_PEI_CONFIG Start
 
@@ -2480,8 +2510,8 @@
   # !BSF NAME:{Change Default SSID} TYPE:{EditNum, HEX, (0x00, 0xFFFF)}
   # !BSF HELP:{Change the default SSID used in FSP to programming internal devices. This is only valid when SkipSsidProgramming is FALSE.}
   gPlatformFspPkgTokenSpaceGuid.SiCustomizedSsid    | * | 0x02 | 0x0000
-  # Added reserved space    UnusedUpdSpace22[2]
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd22               | * | 0x2 | {0x00}
+  # Added reserved space    UnusedUpdSpace22[6]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd22               | * | 0x6 | {0x00}
 
   #
   # typedef struct {

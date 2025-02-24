@@ -200,7 +200,6 @@ UpdatePeiSaPolicy (
   EFI_BOOT_MODE                   BootMode;
   PCH_SETUP                       PchSetup;
   UINT8                           CapPolicy;
-
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                            *FspsUpd;
   VOID                            *FspmUpd;
@@ -212,11 +211,11 @@ UpdatePeiSaPolicy (
   TCSS_PEI_PREMEM_CONFIG          *TcssPeiPreMemConfig;
   IGPU_PEI_CONFIG                 *IGpuConfig;
 #if FixedPcdGetBool(PcdVmdEnable) == 1
-  VOID                            *VmdVariablePtr;
   VMD_PEI_CONFIG                  *VmdPeiConfig;
 #endif
 #endif //FSPMode Check
 #if FixedPcdGetBool(PcdVmdEnable) == 1
+  VOID                            *VmdVariablePtr;
   UINT8                           VmdDevIndex;
 #endif
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL   *Blt;
@@ -475,22 +474,18 @@ UpdatePeiSaPolicy (
   //
   // VMD related settings from setup variable
   //
-#if FixedPcdGet8(PcdFspModeSelection) == 0
-  COMPARE_AND_UPDATE_POLICY (NULL, VmdPeiConfig->VmdEnable,                       SaSetup.VmdEnable);
-  COMPARE_AND_UPDATE_POLICY (NULL, VmdPeiConfig->VmdGlobalMapping,                SaSetup.VmdGlobalMapping);
-#endif
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdEnable, VmdPeiConfig->VmdEnable,                       SaSetup.VmdEnable);
+  COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdGlobalMapping, VmdPeiConfig->VmdGlobalMapping,                SaSetup.VmdGlobalMapping);
+
   for (VmdDevIndex = 0; VmdDevIndex < VMD_MAX_DEVICES; ++VmdDevIndex) {
-#if FixedPcdGet8(PcdFspModeSelection) == 0
-    COMPARE_AND_UPDATE_POLICY (NULL, VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpEnable,   SaSetup.VmdPort[VmdDevIndex]);
-#endif
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdPort[VmdDevIndex], VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpEnable,   SaSetup.VmdPort[VmdDevIndex]);
     //Update dev and Fuc
-    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdPortDev[Index], VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpDevice, SaSetup.VmdPortDev[VmdDevIndex]);
-    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdPortFunc[Index], VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpFunction, SaSetup.VmdPortFunc[VmdDevIndex]);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdPortDev[VmdDevIndex], VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpDevice, SaSetup.VmdPortDev[VmdDevIndex]);
+    COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdPortFunc[VmdDevIndex], VmdPeiConfig->VmdPortEnable[VmdDevIndex].RpFunction, SaSetup.VmdPortFunc[VmdDevIndex]);
   }
-#if FixedPcdGet8(PcdFspModeSelection) == 0
-  UPDATE_POLICY (NULL, VmdPeiConfig->VmdCfgBarBase,  (UINTN)PcdGet32(PcdVmdCfgBarBase));
-  UPDATE_POLICY (NULL, VmdPeiConfig->VmdMemBar1Base, (UINTN)PcdGet32(PcdVmdMemBar1Base));
-  UPDATE_POLICY (NULL, VmdPeiConfig->VmdMemBar2Base, (UINTN)PcdGet32(PcdVmdMemBar2Base));
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdCfgBarBase, VmdPeiConfig->VmdCfgBarBase,  PcdGet32(PcdVmdCfgBarBase));
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdMemBar1Base, VmdPeiConfig->VmdMemBar1Base,PcdGet32(PcdVmdMemBar1Base));
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.VmdMemBar2Base, VmdPeiConfig->VmdMemBar2Base,PcdGet32(PcdVmdMemBar2Base));
 
   // Read VmdVariable
   VarSize = 0;
@@ -520,6 +515,10 @@ UpdatePeiSaPolicy (
       DEBUG ((DEBUG_INFO, "Vmd OS Variable not found Status is %r\n", Status));
     }
   }
+#if FixedPcdGet8(PcdFspModeSelection) == 1
+    ((FSPS_UPD *) FspsUpd)->FspsConfig.VmdVariablePtr = (UINT64) VmdVariablePtr;
+    DEBUG ((DEBUG_INFO, "VmdVariablePtr from PeiGetSectionFromFv is 0x%x\n", ((FSPS_UPD *) FspsUpd)->FspsConfig.VmdVariablePtr));
+#else
   VmdPeiConfig->VmdVariablePtr = VmdVariablePtr;
   DEBUG ((DEBUG_INFO, "VmdVariablePtr from PeiGetSectionFromFv is 0x%x\n", VmdPeiConfig->VmdVariablePtr));
 #endif

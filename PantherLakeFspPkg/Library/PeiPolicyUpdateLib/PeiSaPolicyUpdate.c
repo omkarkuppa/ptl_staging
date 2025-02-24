@@ -139,11 +139,18 @@ FspUpdatePeiSaPolicy (
   // VMD configuration
   //
   if (VmdPeiConfig != NULL) {
-    for (int i=0; i < VMD_MAX_DEVICES; ++i) {
-      VmdPeiConfig->VmdPortEnable[i].RpBus       = FspsConfig->VmdPortBus[i];
-      VmdPeiConfig->VmdPortEnable[i].RpDevice    = FspsConfig->VmdPortDev[i];
-      VmdPeiConfig->VmdPortEnable[i].RpFunction  = FspsConfig->VmdPortFunc[i];
+    VmdPeiConfig->VmdEnable       = FspsConfig->VmdEnable;
+    VmdPeiConfig->VmdGlobalMapping = FspsConfig->VmdGlobalMapping;
+    for (Index = 0; Index < VMD_MAX_DEVICES; ++Index) {
+      VmdPeiConfig->VmdPortEnable[Index].RpEnable    = FspsConfig->VmdPort[Index];
+      VmdPeiConfig->VmdPortEnable[Index].RpBus       = FspsConfig->VmdPortBus[Index];
+      VmdPeiConfig->VmdPortEnable[Index].RpDevice    = FspsConfig->VmdPortDev[Index];
+      VmdPeiConfig->VmdPortEnable[Index].RpFunction  = FspsConfig->VmdPortFunc[Index];
     }
+    VmdPeiConfig->VmdVariablePtr  = (EFI_VMD_OS_DATA*)(UINTN)FspsConfig->VmdVariablePtr;
+    VmdPeiConfig->VmdCfgBarBase   = FspsConfig->VmdCfgBarBase;
+    VmdPeiConfig->VmdMemBar1Base  = FspsConfig->VmdMemBar1Base;
+    VmdPeiConfig->VmdMemBar2Base  = FspsConfig->VmdMemBar2Base;
   }
 #endif
   if (TcssPeiConfig != NULL) {
