@@ -384,6 +384,7 @@ set UPL_SETTINGS= ^
   -p gEfiMdeModulePkgTokenSpaceGuid.PcdSupportUpdateCapsuleReset=TRUE ^
   -p gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosEntryPointProvideMethod=0x01 ^
   -p gPcAtChipsetPkgTokenSpaceGuid.PcdMinimalValidYear=%BUILD_DATE:~0,4% ^
+  -p gUefiCpuPkgTokenSpaceGuid.PcdCpuInitIpiDelayInMicroSeconds=100 ^
   -p gEfiMdeModulePkgTokenSpaceGuid.PcdDxeNxMemoryProtectionPolicy=%PCD_DXE_NX_MEMORY_PROTECTION_POLICY%
 
 echo %UPL_SETTINGS%

@@ -79,6 +79,10 @@
   gIntelSiliconPkgTokenSpaceGuid.PcdVTdPeiDmaBufferSizeS3|0x00600000
   gSiPkgTokenSpaceGuid.PcdSafBarBaseAddress            |0xFA000000
 
+  ## Specifies delay value in microseconds after sending out an INIT IPI.
+  # @Prompt Configure delay value after send an INIT IPI
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuInitIpiDelayInMicroSeconds | 100
+
 [PcdsDynamicExDefault]
   gSiPkgTokenSpaceGuid.PcdPciExpressRegionLength       |0x10000000
   ## Specifies the AP wait loop state during POST phase.
