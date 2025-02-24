@@ -286,6 +286,9 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdDmicReworkConfig     ## CONSUMES
 
+  # Ufs device detect status
+  gBoardModuleTokenSpaceGuid.PcdUfsDeviceDetected        ## CONSUMES
+
 [Sources]
   PeiPchPolicyUpdatePreMem.c
   PeiPchPolicyUpdate.c

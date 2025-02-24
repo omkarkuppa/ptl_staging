@@ -1940,12 +1940,25 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
     Register/GpioV2PcdPins.h
     GpioV2Config.h
   }
+  # Ufs device detect Gpio pin
+  gBoardModuleTokenSpaceGuid.VpdPcdGpioUfsDetect              |{0}|GPIOV2_INIT_CONFIG[]|0x50000025 {
+  <HeaderFiles>
+    Register/GpioV2PcdPins.h
+    GpioV2Config.h
+    PlatformGpioConfig.h
+  <Packages>
+    MdePkg/MdePkg.dec
+    OneSiliconPkg/SiPkg.dec
+    PantherLakePlatSamplePkg/PlatformPkg.dec
+    PantherLakeBoardPkg/BoardPkg.dec
+  }
 #################################################################
 # VPD PCD's End #
 #################################################################
 
 [PcdsDynamic, PcdsDynamicEx]
-
+  # Ufs device detect status
+  gBoardModuleTokenSpaceGuid.PcdUfsDeviceDetected       |FALSE|BOOLEAN|0x00000149
 [PcdsPatchableInModule]
 
 [PcdsFeatureFlag]

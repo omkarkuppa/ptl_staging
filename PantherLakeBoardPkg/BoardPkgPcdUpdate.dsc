@@ -749,3 +749,8 @@
   #
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress|0
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspsBaseAddress|0
+
+  #
+  # Ufs device detect status
+  #
+  gBoardModuleTokenSpaceGuid.PcdUfsDeviceDetected |FALSE
