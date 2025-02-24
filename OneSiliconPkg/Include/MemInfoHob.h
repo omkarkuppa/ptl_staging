@@ -343,6 +343,7 @@ typedef struct {
   UINT16            PprRepairsSuccessful;              ///< PPR: Counts of repair successes
   PPR_RESULT_COLUMNS_HOB PprErrorInfo;                 ///< PPR: Error location
   UINT8             PprAvailableResources[MAX_NODE][MAX_CH][_MAX_RANK_IN_CHANNEL][_MAX_SDRAM_IN_DIMM]; ///< PPR available resources per device
+  BOOLEAN           MixedEccDimms;                     ///< TRUE if both ECC and nonECC Dimms were detected in the system
 } MEMORY_INFO_DATA_HOB;
 
 /**

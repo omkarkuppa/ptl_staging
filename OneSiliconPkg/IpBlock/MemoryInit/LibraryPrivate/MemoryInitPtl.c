@@ -3558,6 +3558,7 @@ BuildMemoryInfoDataHob (
     MemoryInfo->ErrorCorrectionType = MemoryErrorCorrectionNone;
   }
   MemoryInfo->EccSupport              = Outputs->EccSupport;
+  MemoryInfo->MixedEccDimms           = SaveData->IsMixedEccDimms;
   MemoryInfo->TotalPhysicalMemorySize = Outputs->MemoryMapData.TotalPhysicalMemorySize;
   MrcCall->MrcSetMem ((UINT8 *) &MemoryInfo->RcompTarget, sizeof (MemoryInfo->RcompTarget), 0);
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE_NUM; Profile++) {
