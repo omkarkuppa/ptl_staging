@@ -197,7 +197,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED CPU_VR_PROFILE mWclVr[] = {
 // {{Ia,     IaFvm, IaFvmItrip, Gt,  GtFvm, GtFvmItrip, Sa,  SaFvm, SaFvmItrip, Atom} {IaLimit, IaTimeLimit, IaIrmsLimit, IaIrmsTimeLimit, GtLimit, GtTimeLimit, SaLimit, SaTimeLimit, AtomLimit, AtomTimeLimit, AtomIrmsLimit, AtomIrmsTimeLimit} {IaVoltageLimit, GtVoltageLimit, SaVoltageLimit, AtomVoltageLimit}}
 //
   {{     0,      0,      0,       0,     0,      0,       0,    0,        0,      0}, {    0,      0,             0,          0,             0,         1,          0,       0,            0,         1,              0,                0       },  {1600,               1520,           1520,          1520}},  // ProfileVrWclU15W10
-  {{  40*4,      0,      0,    40*4,     0,      0,    35*4,    0,        0,   25*4}, { 20*8,      1,             0,          0,          18*8,         1,       14*8,       0,         11*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}   // ProfileVrWclU15W20
+  {{  40*4,      0,      0,    40*4,     0,      0,    35*4,    0,        0,   28*4}, { 23*8,      1,             0,          0,          20*8,         1,       20*8,       0,         19*8,         1,              0,                0       },  {1600,               1520,           1520,          1520}}   // ProfileVrWclU15W20
 
 };
 //
