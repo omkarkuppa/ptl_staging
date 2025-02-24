@@ -662,8 +662,8 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   # Display MUX GPIO
   gBoardModuleTokenSpaceGuid.PcdDisplayMuxGpioNo|0|UINT32|0x00000283
 
-  # Coin-less mode SPI-NOR clear
-  gBoardModuleTokenSpaceGuid.PcdCoinlessSpiNorClearGpio|0x0|UINT32|0x0010039A
+  # Coin-less mode Detect
+  gBoardModuleTokenSpaceGuid.PcdCoinlessModeDetectGpio|0x0|UINT32|0x0010039A
 
 [PcdsDynamicEx]
   # Flag to Disable Vpd Gpio
@@ -1691,8 +1691,8 @@ BoardSupport/PantherLakeBoards/PantherLakeMobileBoards/Library/BoardInitLib/Pei
   # Slot number for Nvme recovery feature
   gBoardModuleTokenSpaceGuid.VpdPcdNvmeRecoveryPrimarySlotPortNumber|0|UINT32|0x50000031
 
-  # Coin-less mode SPI-NOR clear
-  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessSpiNorClearGpio    |{0}|GPIOV2_INIT_CONFIG[]|0x000012C8 {
+  # Coin-less Mode Detect
+  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessModeDetectGpio    |{0}|GPIOV2_INIT_CONFIG[]|0x000012C8 {
   <HeaderFiles>
     PlatformBoardConfig.h
     GpioV2Config.h

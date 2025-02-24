@@ -765,7 +765,7 @@
     { 0x0 } // terminator
   })}
 
-  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessSpiNorClearGpio|*|{CODE({
+  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessModeDetectGpio|*|{CODE({
     //
     // Coinless does not support on ADK platform
     //

@@ -57,7 +57,7 @@
   gBoardModuleTokenSpaceGuid.PcdBoardType                 ## CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdVpdBaseAddress64      ## CONSUMES
   gEcFeaturePkgTokenSpaceGuid.PcdEcEnable                 ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdCoinlessSpiNorClearGpio   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.PcdCoinlessModeDetectGpio   ## CONSUMES
 
 [Sources]
   PeiBootModeLib.c

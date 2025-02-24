@@ -454,8 +454,8 @@
   gBoardModuleTokenSpaceGuid.VpdPcdSkuType|*|0x1
   gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining|*|0x0
 
-  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessSpiNorClearGpio|*|{CODE({
-    {GPIOV2_PTL_PCD_XXGPP_F_9, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirIn,  GpioV2StateDefault,  GpioV2IntLevel, GpioV2ResetHost,  GpioV2TermDefault, GpioV2Unlock,  GpioV2Lock}},  // COINLESS_SPI_NOR_CLEAR
+  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessModeDetectGpio|*|{CODE({
+    {GPIOV2_PTL_PCD_XXGPP_F_9, {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirIn,  GpioV2StateDefault,  GpioV2IntLevel, GpioV2ResetHost,  GpioV2TermDefault, GpioV2Unlock,  GpioV2Lock}},  // COINLESS_MODE_SELECT
     { 0x0 }
   })}
 

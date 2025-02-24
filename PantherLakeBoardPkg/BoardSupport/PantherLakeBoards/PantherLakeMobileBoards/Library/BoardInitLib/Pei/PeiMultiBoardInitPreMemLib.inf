@@ -212,8 +212,8 @@
   gBoardModuleTokenSpaceGuid.PcdEcFailSafeActionFanPwm
   gDptfFeaturePkgTokenSpaceGuid.PcdDptfFeatureEnable          ## CONSUMES
 
-  # Coin-less mode
-  gBoardModuleTokenSpaceGuid.PcdCoinlessSpiNorClearGpio        ## PRODUCES
+  # Coin-less mode Detect
+  gBoardModuleTokenSpaceGuid.PcdCoinlessModeDetectGpio        ## PRODUCES
 
   gBoardModuleTokenSpaceGuid.PcdWwanBbrstGpio                               ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdWwanPerstGpio                               ## CONSUMES
@@ -267,7 +267,7 @@
   gBoardModuleTokenSpaceGuid.VpdPcdSkuType                                   ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdDisableMrcRetraining                      ## CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdVpdBaseAddress64                         ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessSpiNorClearGpio                   ## CONSUMES
+  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessModeDetectGpio                   ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdVdd2lPowerRailPresent                     ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCUcmMode                               ## CONSUMES
   gBoardModuleTokenSpaceGuid.VpdPcdGopConfigSoftwareId                       ## CONSUMES

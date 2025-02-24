@@ -608,7 +608,7 @@
     { 0x0 } // terminator
   })}
 
-  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessSpiNorClearGpio|*|{CODE({
+  gBoardModuleTokenSpaceGuid.VpdPcdCoinlessModeDetectGpio|*|{CODE({
     {0x0}
   })}
 

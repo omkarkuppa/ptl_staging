@@ -141,14 +141,14 @@ IsRecoveryMode (
 
 
 /**
-  Detect coinless SPI NOR clear.
+  Detect coinless Mode.
 
-  @retval  TRUE   Execute coinless SPI NOR clear.
-  @retval  FALSE  Doesn't execute coinless SPI NOR clear.
+  @retval  TRUE   Execute coinless Mode.
+  @retval  FALSE  Doesn't execute coinless Mode.
 **/
 BOOLEAN
 EFIAPI
-IsCoinlessSpiNorClear (
+IsCoinlessModeDetect (
   VOID
   );
 

@@ -406,14 +406,14 @@ BoardConfigGpioInit (
 
 
   //
-  // Coin-less mode SPI-NOR clear
+  // Coin-less mode Detect
   //
-  VpdPcdGpioTable = PcdGetPtr (VpdPcdCoinlessSpiNorClearGpio);
-  PcdSet32S (PcdCoinlessSpiNorClearGpio, VpdPcdGpioTable->GpioPad);
+  VpdPcdGpioTable = PcdGetPtr (VpdPcdCoinlessModeDetectGpio);
+  PcdSet32S (PcdCoinlessModeDetectGpio, VpdPcdGpioTable->GpioPad);
   if ((VpdPcdGpioTable->GpioPad) != 0) {
-    Status = GpioV2ConfigurePad (PcdGet32(PcdCoinlessSpiNorClearGpio), &VpdPcdGpioTable->GpioConfig);
+    Status = GpioV2ConfigurePad (PcdGet32(PcdCoinlessModeDetectGpio), &VpdPcdGpioTable->GpioConfig);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "Configure COINLESS_SPI_NOR_CLEAR Pad failed.\n"));
+      DEBUG ((DEBUG_INFO, "Configure COINLESS_MODE_SELECT Pad failed.\n"));
     }
   }
 

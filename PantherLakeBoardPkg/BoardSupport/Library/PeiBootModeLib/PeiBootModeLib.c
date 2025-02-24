@@ -420,12 +420,16 @@ DetectBootMode (
     PmcSetSleepState (PmcInS0State);
   }
 
-
-  if ( IsCoinlessSpiNorClear () == TRUE ){
+  if ( IsCoinlessModeDetect () == TRUE ) {
     DEBUG ((DEBUG_INFO, "In Coinless mode\n"));
-    DEBUG ((DEBUG_INFO, "Trigger Coinless mode SPI NOR Clear. BootMode BOOT_WITH_DEFAULT_SETTINGS.\n"));
-    BootMode = BOOT_WITH_DEFAULT_SETTINGS;
+  } else {
+    DEBUG ((DEBUG_INFO, "In Coin mode or Coinless Mode Gpio is LOW\n"));
+    if (!PmcIsRtcBatteryGood ()) {
+      DEBUG ((DEBUG_ERROR, "RTC Power failure !! Could be due to a weak or missing battery, BootMode BOOT_WITH_DEFAULT_SETTINGS.\n"));
+      BootMode = BOOT_WITH_DEFAULT_SETTINGS;
+    }
   }
+
 
   ///
   /// Check whether Setup Variable does exist to know the first boot or not.
@@ -746,32 +750,33 @@ IsRecoveryMode (
 }
 
 /**
-  Detect coinless SPI NOR clear.
+  Detect coinless Mode.
 
-  @retval  TRUE   Execute coinless SPI NOR clear.
-  @retval  FALSE  Doesn't execute coinless SPI NOR clear.
+  @retval  TRUE   Execute coinless Mode.
+  @retval  FALSE  Doesn't execute coinless Mode.
 **/
 BOOLEAN
 EFIAPI
-IsCoinlessSpiNorClear (
+IsCoinlessModeDetect (
   VOID
   )
 {
-  GPIOV2_PAD_STATE CoinlessSpiNorClearGpioState;
-  EFI_STATUS       Status;
+  GPIOV2_PAD_STATE  GpioPadState;
+  EFI_STATUS        Status;
 
-  CoinlessSpiNorClearGpioState = GpioV2StateLow;
-  if(PcdGet32 (PcdCoinlessSpiNorClearGpio) == 0){
-    DEBUG ((DEBUG_INFO, "Spi Nor Clear GPIO not present\n"));
+  GpioPadState = GpioV2StateLow;
+  if (PcdGet32 (PcdCoinlessModeDetectGpio) == 0) {
+    DEBUG ((DEBUG_INFO, "Coinless mode GPIO not present\n"));
     return FALSE;
   }
-  Status = GpioV2GetRx (PcdGet32 (PcdCoinlessSpiNorClearGpio), &CoinlessSpiNorClearGpioState);
+
+  Status = GpioV2GetRx (PcdGet32 (PcdCoinlessModeDetectGpio), &GpioPadState);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Invalid Coinless Spi Nor Clear GPIO: %x\n", PcdGet32 (PcdCoinlessSpiNorClearGpio)));
+    DEBUG ((DEBUG_ERROR, "Invalid Coinless Mode GPIO: %x\n", PcdGet32 (PcdCoinlessModeDetectGpio)));
     return FALSE;
   }
 
-  if (CoinlessSpiNorClearGpioState == GpioV2StateHigh) {
+  if (GpioPadState == GpioV2StateHigh) {
     return TRUE;
   } else {
     return FALSE;
