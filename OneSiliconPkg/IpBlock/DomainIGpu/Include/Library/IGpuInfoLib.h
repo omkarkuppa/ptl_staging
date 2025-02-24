@@ -596,4 +596,26 @@ ClearVgaDisplay (
   VOID
   );
 
+/**
+  Write a block of graphics data to the VGA memory in Mode 12h.
+
+  This function writes a block of graphics data to the VGA memory in Mode 12h (640x480, 16 colors).
+  It processes each of the 4 VGA planes and writes the corresponding data to VGA memory.
+
+  @param[in] X          The X coordinate of the top-left corner of the block.
+  @param[in] Y          The Y coordinate of the top-left corner of the block.
+  @param[in] Width      The width of the block.
+  @param[in] Height     The height of the block.
+  @param[in] VgaBuffer  Pointer to the buffer containing the graphics data.
+**/
+VOID
+EFIAPI
+WriteVgaMode12Graphics (
+  IN UINT32      X,
+  IN UINT32      Y,
+  IN UINT32      Width,
+  IN UINT32      Height,
+  IN const VOID  *VgaBuffer
+  );
+
 #endif // __IGPU_INFO_LIB_H__

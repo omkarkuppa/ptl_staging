@@ -3218,7 +3218,7 @@
   # !BSF NAME:{Control SOL VGA Initialition sequence} TYPE:{Combo}
   # !BSF OPTION:{0x0: NO SOL VGA Init, 0x1: SOL VGA Init}
   # !BSF HELP:{Initialise SOL Init}
-  gPlatformFspPkgTokenSpaceGuid.VgaInitControl              | * | 0x01 | 0x1
+  gPlatformFspPkgTokenSpaceGuid.VgaInitControl              | * | 0x01 | 0x0
 
   ## GRAPHICS_PEI_PREMEM_CONFIG End
 

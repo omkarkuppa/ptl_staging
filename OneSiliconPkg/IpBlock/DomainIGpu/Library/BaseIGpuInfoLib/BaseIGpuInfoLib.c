@@ -66,6 +66,7 @@
 #define VGA_MODE12_BASE_ADDRESS         0xA0000 // VGA memory base for Mode 12 (640x480, 16 colors)
 #define VGA_MODE12_WIDTH                640     // Width of the screen in pixels
 #define VGA_MODE12_HEIGHT               480     // Height of the screen in pixels
+#define VGA_MODE12_MAX_PLANE            4
 #define VGA_MODE12_PROGRESS_BAR_HEIGHT  16
 
 /**
@@ -1888,7 +1889,7 @@ SetChar (
   is enabled by writing the appropriate value to port 0x3C5.
 
   @param[in]  Plane  The VGA plane to set (0-3).
-
+  @note This function assumes VGA mode 12h is active and VGA is enabled.
 **/
 VOID
 EFIAPI
@@ -1945,7 +1946,7 @@ FillRectangle (
   //
   // Write to each plane
   //
-  for (Plane = 0; Plane < 4; Plane++) {
+  for (Plane = 0; Plane < VGA_MODE12_MAX_PLANE; Plane++) {
     SetVgaPlane (Plane);
 
     for (RowIndex = 0; RowIndex < Height; RowIndex++) {
@@ -1962,6 +1963,76 @@ FillRectangle (
           *VgaMemory++ = 0x00; // Clear all 8 pixels in the byte
         }
       }
+    }
+  }
+}
+
+/**
+  Write a block of graphics data to the VGA memory in Mode 12h.
+
+  This function writes a block of graphics data to the VGA memory in Mode 12h (640x480, 16 colors).
+  It processes each of the 4 VGA planes and writes the corresponding data to VGA memory.
+
+  @param[in] X          The X coordinate of the top-left corner of the block.
+  @param[in] Y          The Y coordinate of the top-left corner of the block.
+  @param[in] Width      The width of the block.
+  @param[in] Height     The height of the block.
+  @param[in] VgaBuffer  Pointer to the buffer containing the graphics data.
+**/
+VOID
+EFIAPI
+WriteVgaMode12Graphics (
+  IN UINT32      X,
+  IN UINT32      Y,
+  IN UINT32      Width,
+  IN UINT32      Height,
+  IN const VOID  *VgaBuffer
+  )
+{
+  UINT8           Plane;
+  const UINT8     *Buffer;
+  volatile UINT8  *VgaMemBase;
+  UINT32          Offset;
+  UINT32          Row;
+  UINT32          BytesPerRow;
+  IGPU_DATA_HOB  *IGpuDataHob;
+
+  //
+  // Ensure coordinates and dimensions are within bounds
+  //
+  if ((X >= VGA_MODE12_WIDTH) || (Y >= VGA_MODE12_HEIGHT) || (X + Width > VGA_MODE12_WIDTH) || (Y + Height > VGA_MODE12_HEIGHT)) {
+    return; // Invalid coordinates or dimensions
+  }
+
+  //
+  // Retrieve the IGPU data HOB to determine the VGA display configuration
+  //
+  IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob == NULL) {
+    return; // Exit if the IGPU data HOB is not found
+  }
+
+  //
+  // Exit if the VGA display configuration is not Mode 12
+  //
+  if (IGpuDataHob->VgaDisplayConfig != VGA_MODE12_ENABLED) {
+    return;
+  }
+
+  // Calculate the number of bytes per row for the given width
+  BytesPerRow = Width / 8;
+  Buffer = (const UINT8 *)VgaBuffer;
+
+  // Process each of the 4 VGA planes
+  for (Plane = 0; Plane < VGA_MODE12_MAX_PLANE; Plane++) {
+    SetVgaPlane (Plane); // Set the current VGA plane
+
+    for (Row = 0; Row < Height; Row++) {
+      // Calculate VGA memory offset for the current row
+      Offset     = (Plane * Height * BytesPerRow) + (Row * BytesPerRow);
+      VgaMemBase = (volatile UINT8 *)(UINTN)(VGA_MODE12_BASE_ADDRESS + ((Y + Row) * (VGA_MODE12_WIDTH / 8)) + (X / 8));
+      // Copy the data from the buffer to VGA memory
+      CopyMem ((VOID *)VgaMemBase, &Buffer[Offset], BytesPerRow);
     }
   }
 }
@@ -2119,7 +2190,7 @@ ClearVgaDisplay (
     //     38,400 bytes * 4 planes = 153,600 bytes.
     //
     BufferSize = (VGA_MODE12_WIDTH * VGA_MODE12_HEIGHT) / 8; // 38,400 bytes
-    for (Plane = 0; Plane < 4; Plane++) {
+    for (Plane = 0; Plane < VGA_MODE12_MAX_PLANE; Plane++) {
       SetVgaPlane (Plane); // Activate the plane
       ZeroMem ((VOID *)VgaMode12Buffer, BufferSize);
     }
