@@ -36,6 +36,7 @@
 #include <Library/PeiHostBridgeIpStatusLib.h>
 #include <Library/TseDataHob.h>
 #include <Library/TseInfoLib.h>
+#include <Library/VmdInfoLib.h>
 
 #include <Defines/HostBridgeDefines.h>
 #include <Register/TseIocceRegs.h>
@@ -181,15 +182,20 @@ SetBDF (
   //
   // Check endpoint device type is NVME drive
   //
-  PciBase = PCI_LIB_ADDRESS (Bus, Device, Function, 0);
 
-  SubClassCode = PciSegmentRead8 (PciBase + PCI_CLASSCODE_OFFSET + 1);
-  BaseCode     = PciSegmentRead8 (PciBase + PCI_CLASSCODE_OFFSET + 2);
+  if ((IsVmdEnabled() == TRUE) && (IsVmdBus(Bus) == TRUE)) {
+    DEBUG ((DEBUG_ERROR, "Specified BDF is a VMD NVMe device\n"));
+  } else {
+    PciBase = PCI_LIB_ADDRESS (Bus, Device, Function, 0);
 
-  if ((BaseCode != PCI_CLASS_MASS_STORAGE) || (SubClassCode != PCI_CLASS_MASS_STORAGE_NVM)) {
-    DEBUG ((DEBUG_WARN, "Specified BDF is not TSE compatible! B:0x%x, D:0x%x, F:0x%x, SubClassCode: 0x%x, BaseCode: 0x%x\n", Bus, Device, Function, SubClassCode, BaseCode));
-    EfiReleaseLock (&(mTseDriverContextPtr->TseDriverContextLock));
-    return EFI_INVALID_PARAMETER;
+    SubClassCode = PciSegmentRead8 (PciBase + PCI_CLASSCODE_OFFSET + 1);
+    BaseCode     = PciSegmentRead8 (PciBase + PCI_CLASSCODE_OFFSET + 2);
+
+    if ((BaseCode != PCI_CLASS_MASS_STORAGE) || (SubClassCode != PCI_CLASS_MASS_STORAGE_NVM)) {
+      DEBUG ((DEBUG_WARN, "Specified BDF is not TSE compatible! B:0x%x, D:0x%x, F:0x%x, SubClassCode: 0x%x, BaseCode: 0x%x\n", Bus, Device, Function, SubClassCode, BaseCode));
+      EfiReleaseLock (&(mTseDriverContextPtr->TseDriverContextLock));
+      return EFI_INVALID_PARAMETER;
+    }
   }
 
   MchBar = GetHostBridgeRegisterData (HostBridgeCfgReg, MchBarCfgBase);
