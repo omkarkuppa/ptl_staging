@@ -365,11 +365,14 @@ SetDriverHealthHwErrRecVariable (
   UINT64                                      RemainingVariableStorageSize;
   UINT64                                      MaximumVariableSize;
   EFI_TELEMETRY_HEALTH_RECORD                 SectionRecord;
+  UINTN                                       Index;
+  BOOLEAN                                     IsMatched;
 
   BufferSize          = 0;
   TotalRecordLength   = 0;
   DriverHealthRecData = NULL;
   AcpiTelemetryHeader = NULL;
+  IsMatched           = FALSE;
 
   if (AcpiPhatTablePointer == NULL) {
     Status = EFI_INVALID_PARAMETER;
@@ -412,6 +415,22 @@ SetDriverHealthHwErrRecVariable (
     if (AcpiTelemetryHeader->PlatformHealthAssessmentRecordType != FirmwareHealthDataRecord) {
       continue;
     }
+
+    //
+    // Set DriverHealth HwErrRec Variable only when the record belongs to mDriverHealthSupportList.
+    //
+    IsMatched = FALSE;
+    for (Index = 0; mDriverHealthSupportList[Index] != NULL; Index++) {
+      if (CompareGuid (&(((EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_STRUCTURE *) AcpiTelemetryHeader)->DeviceSignature), mDriverHealthSupportList[Index])) {
+        IsMatched = TRUE;
+        break;
+      }
+    }
+
+    if (!IsMatched) {
+      continue;
+    }
+
     //
     // found driver health records
     //
@@ -420,6 +439,7 @@ SetDriverHealthHwErrRecVariable (
     // skip EFI_ACPI_6_5_PHAT_RECORD, Reserved and AmHealthy
     //
     CopyGuid (&ComponentID, &((EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_STRUCTURE *) AcpiTelemetryHeader)->DeviceSignature);
+
     //
     // Pre-allocate Buffer for MotherBoard Record When the function is first call.
     //

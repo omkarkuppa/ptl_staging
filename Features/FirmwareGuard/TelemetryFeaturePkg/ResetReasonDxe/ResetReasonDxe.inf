@@ -55,8 +55,5 @@
   MemoryAllocationLib
   UefiBootServicesTableLib
 
-[Guids]
-  gResetReasonDeviceSignatureGuid       ## PRODUCES
-
 [Depex]
-  gEfiAdapterInformationProtocolGuid    ## CONSUMES
+  gEfiAdapterInformationProtocolGuid    ## Todo: Remove this rependency and add proper dependency

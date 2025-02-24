@@ -20,7 +20,6 @@
 **/
 
 #include "ResetReasonDxe.h"
-#include <TelemetryCommon.h>
 #include <Register/PmcRegs.h>
 #include <Register/EspiRegs.h>
 #include <Library/IoLib.h>
@@ -33,47 +32,85 @@
 #include <Library/UefiBootServicesTableLib.h>
 
 /**
-  Checks if PHAT is installed, if it is add data and update PHAT.
-  If PHAT is not found then add data to PHAt and install table
-  to ACPI.
+  Construct and attach Reset reason health data record to PHAT.
 
-  @param[in]  DataTable     Reset Reason data table configured
-  @param[in]  OpStatus      Status to publish tables AmHealthy
+  @param[in]  ResetReasonRecord      A pointer to Reset Reason health record.
+  @param[in]  ResetReasonRecordSize  Size of ResetReasonRecord buffer
+  @param[in]  AmHealthy              AmHeathy field of reset reason healthy data
 
   @retval EFI_SUCCESS       Successfully posted data to existing or new PHAT ACPI table
   @retval other             Failed to publish data
+
 **/
 EFI_STATUS
 PublishResetReasonPhat (
-  IN EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE *DataTable,
-  IN OUT EFI_STATUS  OpStatus
+  IN EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE  *ResetReasonRecord,
+  IN UINT16                                                  ResetReasonRecordSize,
+  IN UINT8                                                   AmHealthy
   )
 {
-  EFI_STATUS                          Status;
-  PHAT_RESET_REASON_RECORD_STRUCTURE  *ResetReasonPhatTable;
+  EFI_STATUS                                               Status;
+  EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_STRUCTURE  *HealthDataRecord;
+  UINT16                                                   HealthDataRecordSize;
+  CHAR16                                                   DevicePathText[] = RESET_REASON_DEVICE_PATH_STR;
+  UINT16                                                   DevicePathTextSize;
+  UINT16                                                   DeviceSpecificDataOffset;
 
-  if (DataTable == NULL) {
+  if ((ResetReasonRecord == NULL) || \
+      (ResetReasonRecordSize < sizeof (EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE))) {
+    DEBUG ((DEBUG_ERROR, "Reset Reason Record is expected\n"));
     return EFI_INVALID_PARAMETER;
   }
 
-  ResetReasonPhatTable = (PHAT_RESET_REASON_RECORD_STRUCTURE  *) AllocateZeroPool (sizeof (PHAT_RESET_REASON_RECORD_STRUCTURE));
-  if (ResetReasonPhatTable == NULL) {
+  HealthDataRecord         = NULL;
+  DevicePathTextSize       = RESET_REASON_DEVICE_PATH_STR_SIZE;
+
+  DeviceSpecificDataOffset = \
+      sizeof (EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_STRUCTURE) \
+    + DevicePathTextSize;
+
+  HealthDataRecordSize     = \
+      sizeof (EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_STRUCTURE) \
+    + DevicePathTextSize \
+    + ResetReasonRecordSize;
+
+  HealthDataRecord = AllocateZeroPool (HealthDataRecordSize);
+  if (HealthDataRecord == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  ///
-  /// Configure the Reset Reason Data to ACPI data
-  ///
-  ResetReasonPhatTable->PlatformRecordType        = RESET_REASON_PHAT_RECORD_TYPE;
-  ResetReasonPhatTable->Revision                  = EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_REVISION;
-  ResetReasonPhatTable->DeviceSignature           = (GUID) EFI_ACPI_6_5_PHAT_RESET_REASON_HEADER_GUID;
-  CopyMem (&ResetReasonPhatTable->Data, &DataTable, sizeof (EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE));
-  ResetReasonPhatTable->RecordLength              = sizeof (PHAT_RESET_REASON_RECORD_STRUCTURE);
+  //
+  // Configure the Reset Reason Health Data header
+  //
+  HealthDataRecord->PlatformRecordType       = EFI_ACPI_6_5_PHAT_RECORD_TYPE_FIRMWARE_HEALTH_DATA_RECORD;
+  HealthDataRecord->RecordLength             = HealthDataRecordSize;
+  HealthDataRecord->Revision                 = EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_REVISION;
+  HealthDataRecord->AmHealthy                = AmHealthy;
+  HealthDataRecord->DeviceSignature          = (GUID)EFI_ACPI_6_5_PHAT_RESET_REASON_HEADER_GUID;
+  HealthDataRecord->DeviceSpecificDataOffset = DeviceSpecificDataOffset;
 
-  ///
-  /// Table exists, get current table
-  ///
-  Status = InstallPhatTable (ResetReasonPhatTable, ResetReasonPhatTable->RecordLength);
+  //
+  // Update DevicePath field
+  //
+  CopyMem ((UINT8 *)HealthDataRecord + sizeof (EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_STRUCTURE), \
+           DevicePathText, \
+           DevicePathTextSize
+           );
+  //
+  // Attach Device-specificData (reset reason health record)
+  //
+  CopyMem ((UINT8 *)HealthDataRecord + DeviceSpecificDataOffset, \
+           ResetReasonRecord, \
+           ResetReasonRecordSize
+           );
+
+  //
+  // Attach reset reason health data record to PHAT
+  //
+  Status = InstallPhatTable (HealthDataRecord, HealthDataRecordSize);
+  DEBUG ((DEBUG_INFO, "InstallPhatTable for reset reason: %r\n", Status));
+
+  FreePool (HealthDataRecord);
 
   return Status;
 }
@@ -480,10 +517,11 @@ GetSourceAndReason (
 }
 
 /**
-  Callback to get and install telemetry platform reset reason PHAT.
+  Construct reset reason record and health data table to PHAT
 
-  @retval EFI_SUCCESS   Able to get and set reset reason to PHAT
+  @retval EFI_SUCCESS   Successfully attach reset reason health data record to PHAT
   @retval Other         Something occurred causing a failure
+
 **/
 EFI_STATUS
 EFIAPI
@@ -491,37 +529,37 @@ ResetReasonMain (
   VOID
   )
 {
-  EFI_STATUS                      Status;
-  EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE   *ResetReasonHealthTable;
+  EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE  *ResetReasonHealthRecord;
+  UINT16                                                  ResetReasonHealthRecordSize;
+  EFI_STATUS                                              Status;
 
-  ///
-  /// Initiate reset reason table
-  ///
-  ResetReasonHealthTable = (EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE *) AllocateZeroPool (sizeof (EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE));
-  if (ResetReasonHealthTable == NULL) {
+  //
+  // Initiate reset reason table
+  // Todo: Record needs to consider Vendor specific reset reason which might be needed in the future.
+  //
+  ResetReasonHealthRecordSize = sizeof (EFI_ACPI_6_5_PHAT_RESET_REASON_HEALTH_RECORD_STRUCTURE);
+  ResetReasonHealthRecord     = AllocateZeroPool (ResetReasonHealthRecordSize);
+  if (ResetReasonHealthRecord == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  ///
-  /// Get and set reset reason and source
-  ///
-  Status = GetSourceAndReason (ResetReasonHealthTable);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "[%a] Get reset reason and source exit with status: %r\n", __FUNCTION__, Status));
-    if (Status != EFI_NOT_FOUND) {
-      /// Reason may not be found but will still publish the data as unknown
-      FreePool (ResetReasonHealthTable);
-    }
-  }
+  //
+  // Get and set reset reason and source
+  // Todo: This function needs revisiting
+  //
+  // Status = GetSourceAndReason (ResetReasonHealthRecord);
 
-  ///
-  /// Publish table to PHAT
-  ///
-  Status = PublishResetReasonPhat (ResetReasonHealthTable, Status);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "[%a] Publish reset reason PHAT exit with status: %r\n", __FUNCTION__, Status));    FreePool (ResetReasonHealthTable);
-  }
+  //
+  // Publish table to PHAT
+  // Todo: input correct AmHealthy once GetSourceAndReason works.
+  //
+  Status = PublishResetReasonPhat (
+             ResetReasonHealthRecord,
+             ResetReasonHealthRecordSize,
+             EFI_ACPI_6_5_PHAT_FIRMWARE_HEALTH_DATA_RECORD_UNKNOWN
+             );
 
+  FreePool (ResetReasonHealthRecord);
   return Status;
 }
 
@@ -543,9 +581,9 @@ ResetReasonEntryPoint (
 {
   EFI_STATUS      Status;
 
-  DEBUG ((DEBUG_WARN, "[%a] Entry\n", __FUNCTION__));
+  DEBUG ((DEBUG_INFO, "[%a] Entry\n", __FUNCTION__));
 
   Status = ResetReasonMain ();
-  DEBUG ((DEBUG_WARN, "[%a] Exit with status %r\n", __FUNCTION__, Status));
+  DEBUG ((DEBUG_INFO, "[%a] Exit with status %r\n", __FUNCTION__, Status));
   return Status;
 }
