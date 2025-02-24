@@ -769,13 +769,13 @@
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cController|*|0x0
   gBoardModuleTokenSpaceGuid.VpdPcdClwlI2cSlaveAddress|*|0x0
 
-[PcdsDynamicHii.common.SkuIdPtlHLp5Gcs1.STANDARD]
+[PcdsDynamicHii.common.SkuIdPtlHLp5Gcs2.STANDARD]
   #
   # Power Meter
   #
   gStructPcdTokenSpaceGuid.PcdSetup.PowermeterDeviceEnable|0x1                                       # Enable PowerMeter, Enabled
   gStructPcdTokenSpaceGuid.PcdSetup.TelemetryDeviceEnable|0x0                                        # Enable Telemetry
-  
+
   #
   # Touch pad
   #
