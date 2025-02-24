@@ -63,9 +63,10 @@
 //
 // VGA Graphics Mode (Mode 12)
 //
-#define VGA_MODE12_BASE_ADDRESS  0xA0000  // VGA memory base for Mode 12 (640x480, 16 colors)
-#define VGA_MODE12_WIDTH         640      // Width of the screen in pixels
-#define VGA_MODE12_HEIGHT        480      // Height of the screen in pixels
+#define VGA_MODE12_BASE_ADDRESS         0xA0000 // VGA memory base for Mode 12 (640x480, 16 colors)
+#define VGA_MODE12_WIDTH                640     // Width of the screen in pixels
+#define VGA_MODE12_HEIGHT               480     // Height of the screen in pixels
+#define VGA_MODE12_PROGRESS_BAR_HEIGHT  16
 
 /**
   Update the GttMmAdr if it's updated in register context.
@@ -1880,6 +1881,92 @@ SetChar (
 }
 
 /**
+  Set the current VGA plane (0-3) for memory access.
+
+  This function sets the VGA plane for memory access by writing to the plane mask register.
+  The plane mask register is addressed at port 0x3C4 with index 0x02, and the specified plane
+  is enabled by writing the appropriate value to port 0x3C5.
+
+  @param[in]  Plane  The VGA plane to set (0-3).
+
+**/
+VOID
+EFIAPI
+SetVgaPlane (
+  IN UINT8  Plane
+  )
+{
+  IoWrite8 (0x3C4, 0x02);                // Address the plane mask register (index 0x02)
+  IoWrite8 (0x3C5, (UINT8)(1 << Plane)); // Enable writing to the specified plane
+}
+
+/**
+  Draw a filled rectangle on the screen.
+
+  This function draws a filled rectangle on the screen using VGA mode 12h.
+  It processes each of the 4 VGA planes and sets or clears the corresponding
+  bits in VGA memory to draw the rectangle.
+
+  @param[in] X       The X coordinate of the top-left corner of the rectangle.
+  @param[in] Y       The Y coordinate of the top-left corner of the rectangle.
+  @param[in] Width   The width of the rectangle.
+  @param[in] Height  The height of the rectangle.
+  @param[in] Color   The color of the rectangle (1 for filled, 0 for empty).
+
+  @note This function assumes VGA mode 12h is active and VGA is enabled.
+*/
+VOID
+FillRectangle (
+  IN UINT16  X,
+  IN UINT16  Y,
+  IN UINT16  Width,
+  IN UINT16  Height,
+  IN UINT8   Color
+  )
+{
+  UINT16          RowIndex;
+  UINT16          ColumnIndex;
+  volatile UINT8  *VgaMemory;
+  UINT16          BytesPerRow;
+  UINT16          StartOffset;
+  UINT8           Plane;
+
+  // Ensure coordinates are within bounds
+  if ((X >= VGA_MODE12_WIDTH) || (Y >= VGA_MODE12_HEIGHT) || (X + Width > VGA_MODE12_WIDTH) || (Y + Height > VGA_MODE12_HEIGHT)) {
+    return;
+  }
+
+  //
+  // Calculate bytes per row and start offset
+  //
+  BytesPerRow = VGA_MODE12_WIDTH / 8;
+  StartOffset = (Y * BytesPerRow) + (X / 8);
+
+  //
+  // Write to each plane
+  //
+  for (Plane = 0; Plane < 4; Plane++) {
+    SetVgaPlane (Plane);
+
+    for (RowIndex = 0; RowIndex < Height; RowIndex++) {
+      // Process each row
+      VgaMemory = (volatile UINT8 *)(UINTN)(VGA_MODE12_BASE_ADDRESS + StartOffset + (RowIndex * BytesPerRow));
+
+      for (ColumnIndex = 0; ColumnIndex < (Width + 7) / 8; ColumnIndex++) {
+        // Write each byte in the row
+        // Check if the current plane bit is set in the color value
+        if ((Color & (1 << Plane)) != 0) {
+          // Set bits for this plane
+          *VgaMemory++ = 0xFF; // Set all 8 pixels in the byte
+        } else {
+          *VgaMemory++ = 0x00; // Clear all 8 pixels in the byte
+        }
+      }
+    }
+  }
+}
+
+/**
   Updates the progress bar on the VGA display.
 
   This function is responsible for updating the progress bar displayed on the VGA screen.
@@ -1897,6 +1984,7 @@ UpdateProgressBar (
   IGPU_DATA_HOB  *IGpuDataHob;
   BOOLEAN        IsMode3;
   UINT8          MaxColumns;
+  UINT16         FilledWidth;
 
   //
   // Ensure the percentage is within the valid range (0-100).
@@ -1925,8 +2013,10 @@ UpdateProgressBar (
   //
   if (IGpuDataHob->VgaDisplayConfig == VGA_MODE3_ENABLED) {
     IsMode3 = TRUE;
-  } else {
+  } else if (IGpuDataHob->VgaDisplayConfig == VGA_MODE12_ENABLED) {
     IsMode3 = FALSE;
+  } else {
+    return; // Exit if the VGA display configuration is invalid
   }
 
   //
@@ -1944,6 +2034,17 @@ UpdateProgressBar (
       //
       SetChar (Index, VGA_LINES - 2, SOLID_BLOCK_CHAR, VGA_COLOR_WHITE);
     }
+  } else {
+    //
+    // Calculate the filled width for the progress bar based on the percentage.
+    //
+    FilledWidth = (UINT16)(((UINT16)Percentage * (UINT16)VGA_MODE12_WIDTH) / 100);
+    //
+    // Draw a filled rectangle for the progress bar with white color.
+    // Considering a line size of 16 pixels, we will have 30 lines (480 / 16).
+    // Display the progress bar in the 2nd line from the bottom of the screen.
+    //
+    FillRectangle (0, VGA_MODE12_HEIGHT - (2 * VGA_MODE12_PROGRESS_BAR_HEIGHT), FilledWidth, VGA_MODE12_PROGRESS_BAR_HEIGHT, VGA_COLOR_WHITE);
   }
 }
 
@@ -1962,7 +2063,9 @@ ClearVgaDisplay (
 {
   IGPU_DATA_HOB    *IGpuDataHob;
   volatile UINT16  *VgaBuffer;
+  volatile UINT8   *VgaMode12Buffer;
   UINTN            BufferSize;
+  UINT8            Plane;
 
   //
   // Retrieve the IGPU data HOB to determine the VGA display configuration
@@ -1996,34 +2099,29 @@ ClearVgaDisplay (
     // Framebuffer size: 80 * 25 * 2 = 4,000 bytes (0xFA0 bytes).
     //
     BufferSize = VGA_COLUMNS * VGA_LINES * sizeof (UINT16);
+
+    // Clear the display by setting all pixels or characters to zero (black background)
+    ZeroMem ((VOID *)VgaBuffer, BufferSize);
   } else if (IGpuDataHob->VgaDisplayConfig == VGA_MODE12_ENABLED) {
     //
     // Point to the VGA framebuffer for Mode 12 (0xA0000)
     //
-    VgaBuffer = (UINT16 *)(UINTN)VGA_MODE12_BASE_ADDRESS;
+    VgaMode12Buffer = (volatile UINT8 *)(UINTN)VGA_MODE12_BASE_ADDRESS;
     //
-    // Calculate the size of the framebuffer for Mode 12
-    // Mode 12 uses a 640x480 resolution with 16 colors (4-bit color depth).
-    // - The total number of pixels in the framebuffer is 640 (width) * 480 (height).
-    // - Each pixel uses 4 bits (1 nibble), but each byte (8 bits) can store 2 pixels.
-    // - Therefore, the framebuffer size needs to account for 2 pixels per byte.
+    // Calculate the framebuffer size for Mode 12h (640x480x16).
+    // Mode 12h uses a planar memory layout with 16 colors (4-bit color depth).
+    // - The total number of pixels is 640 (width) * 480 (height) = 307,200 pixels.
+    // - Each pixel is stored in 4 separate bit planes.
+    // - Each plane stores 1 bit per pixel, meaning 8 pixels are packed into 1 byte.
+    // - Therefore, the number of bytes per plane is:
+    //     (640 * 480) / 8 = 38,400 bytes per plane.
+    // - Since there are 4 planes, the total framebuffer size is:
+    //     38,400 bytes * 4 planes = 153,600 bytes.
     //
-    // Total number of pixels: 640 * 480 = 307,200 pixels
-    // Since each byte holds 2 pixels, we divide the total number of pixels by 2 to
-    // get the number of bytes required to store the framebuffer.
-    //
-    // Framebuffer size: 307,200 pixels / 2 pixels per byte = 153,600 bytes
-    //
-    BufferSize = (VGA_MODE12_WIDTH * VGA_MODE12_HEIGHT) / 2; // 153,600 bytes
+    BufferSize = (VGA_MODE12_WIDTH * VGA_MODE12_HEIGHT) / 8; // 38,400 bytes
+    for (Plane = 0; Plane < 4; Plane++) {
+      SetVgaPlane (Plane); // Activate the plane
+      ZeroMem ((VOID *)VgaMode12Buffer, BufferSize);
+    }
   }
-
-  //
-  // Unsupported mode selected, exit the function
-  //
-  if (BufferSize == 0) {
-    return;
-  }
-
-  // Clear the display by setting all pixels or characters to zero (black background)
-  ZeroMem ((VOID *)VgaBuffer, BufferSize);
 }
