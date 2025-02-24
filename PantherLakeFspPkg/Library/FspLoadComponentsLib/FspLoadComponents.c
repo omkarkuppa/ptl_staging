@@ -123,7 +123,13 @@ LoadFspm (
     CpuDeadLoop ();
   }
 
-  RebasePeiCoreFfs ((UINTN) Bspm->FspmBaseAddress);
+  if (!(Bspm->FspmLoadingPolicy & FSPM_COMPRESSED)) {
+    //
+    // Pei Core rebase is not needed for FSP-M compression as we
+    // are not using FSP Pei Core when FSP-M is compressed.
+    //
+    RebasePeiCoreFfs ((UINTN) Bspm->FspmBaseAddress);
+  }
 
   return EFI_SUCCESS;
 }

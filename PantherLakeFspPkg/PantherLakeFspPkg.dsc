@@ -263,6 +263,7 @@ TdxFruLib|$(PLATFORM_SI_PACKAGE)/Fru/PtlCDie/LibraryPrivate/TdxFruLib/TdxFruLib.
 # UEFI & PI
 #
   FspMultiPhaseLib|IntelFsp2Pkg/Library/BaseFspMultiPhaseLib/BaseFspMultiPhaseLib.inf
+  ExtractFspmLib|$(FSP_PACKAGE)/Library/ExtractFspmLib/ExtractFspmLib.inf
   ExtractGuidedSectionLib|PantherLakeFspPkg/Library/SecExtractGuidedSectionLib/SecExtractGuidedSectionLib.inf
   LzmaArchDecompressLib|MdeModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
 

@@ -81,7 +81,7 @@
 
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamBase|0xFEF00000
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize|0x000FF000
-  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase|0xFA000000
+  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase|0xFC000000
   gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize|0x00000000
 gIntelFsp2PkgTokenSpaceGuid.PcdFspReservedMemoryLength|0x00500000
   gIntelFsp2PkgTokenSpaceGuid.PcdFspTemporaryRamSize|0x00020000

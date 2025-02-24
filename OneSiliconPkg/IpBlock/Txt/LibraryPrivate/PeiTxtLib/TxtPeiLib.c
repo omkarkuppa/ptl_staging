@@ -1014,6 +1014,10 @@ DoAcmLaunch (
   EFI_STATUS                    Status;
   SI_PREMEM_POLICY_PPI          *SiPreMemPolicy;
   CPU_SECURITY_PREMEM_CONFIG    *CpuSecurityPreMemConfig;
+  EFI_PHYSICAL_ADDRESS          TempRamAddr;
+  UINT64                        *AcmRelocPointer;
+  EFI_PHYSICAL_ADDRESS          AcmModuleAddr;
+  UINT64                        AcmModuleSize;
 
   Status = PeiServicesLocatePpi (
              &gSiPreMemPolicyPpiGuid,
@@ -1039,16 +1043,41 @@ DoAcmLaunch (
     StopPbeTimer ();
   }
 
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_ENTRY); //PostCode (0x9901)
-  if (func == TXT_LAUNCH_CLEAR_SECRETS) {
-    DEBUG ((DEBUG_INFO, "Trigger FastBootFlagStatusCallback to clean FastBoot Status\n"));
-    Status = PeiServicesInstallPpi (&mPeiTxtCleanResetNotificationPpi);
-    ASSERT_EFI_ERROR (Status);
-    LaunchBiosAcmClearSecrets ();
-  } else if (func == TXT_LAUNCH_ACHECK) {
-    LaunchBiosAcmAcheck ();
+  AcmModuleAddr = TxtInfoHob->Data.BiosAcmBase;
+  AcmModuleSize = TxtInfoHob->Data.BiosAcmSize;
+
+  Status = PeiServicesAllocatePages (
+                   EfiLoaderCode,
+                   EFI_SIZE_TO_PAGES (AcmModuleSize),
+                   &TempRamAddr
+                   );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Page Allocation Failed, ACM skipped\n"));
+    //
+    // Halt the system if pool allocation fails and ACM can not be launched.
+    //
+    CpuDeadLoop ();
+  } else {
+    DEBUG ((DEBUG_INFO, "Page Allocation Success, Address = 0x%X\n", TempRamAddr));
+    AcmRelocPointer = (UINT64 *) TempRamAddr;
+
+    CopyMem (
+        AcmRelocPointer,
+        (UINT64 *) AcmModuleAddr,
+        AcmModuleSize
+        );
+    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_ENTRY); //PostCode (0x9901)
+    if (func == TXT_LAUNCH_CLEAR_SECRETS) {
+      DEBUG ((DEBUG_INFO, "Trigger FastBootFlagStatusCallback to clean FastBoot Status\n"));
+      Status = PeiServicesInstallPpi (&mPeiTxtCleanResetNotificationPpi);
+      ASSERT_EFI_ERROR (Status);
+      LaunchBiosAcmClearSecrets (TempRamAddr);
+    } else if (func == TXT_LAUNCH_ACHECK) {
+      LaunchBiosAcmAcheck (TempRamAddr);
+    }
+    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_EXIT); //PostCode (0x9902)
   }
-  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_EXIT); //PostCode (0x9902)
 
   return EFI_SUCCESS;
 }

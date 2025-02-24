@@ -430,7 +430,7 @@
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize|0x00000000
   gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperPcdBootGuardCnbSize|0x1000
 !if gSiPkgTokenSpaceGuid.PcdEnableFspmCompression == TRUE
-  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase|0xFA000000
+  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase|0xFC000000
   gMinPlatformPkgTokenSpaceGuid.PcdFspDispatchModeUseFspPeiMain|FALSE
 !endif
 

@@ -241,5 +241,6 @@ WdtInstallResetCallback (
   DEBUG ((DEBUG_INFO, "(WDT) Readback = 0x%08x\n", Readback));
 
   PeiServicesNotifyPpi (&mResetNotificationReady);
+  PeiServicesNotifyPpi (&mResetNotificationReadyAfterMemoryDiscovered);
 
 }

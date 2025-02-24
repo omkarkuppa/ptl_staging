@@ -65,6 +65,12 @@
 #include <Defines/PcdPchBdfAssignment.h>
 #include <Library/CpuRegbarAccessLib.h>
 
+STATIC EFI_GUID mResetNotificationCallbackPtrGuid = {0xb0d9cc70, 0x5bbf, 0x4eb2, {0xbc, 0x34, 0x53, 0x1b, 0xfe, 0x7f, 0x59, 0xeb}};
+
+typedef struct {
+  EFI_RESET_SYSTEM  ResetFunction;
+} RESET_CALLBACK_PTR_HOB;
+
 VOID
 EFIAPI
 SpiDmaWaResetNotificationCallback (
@@ -93,6 +99,8 @@ SpiDmaWaResetNotify (
 {
   EFI_STATUS                      Status;
   EFI_RESET_NOTIFICATION_PROTOCOL *ResetNotify;
+  RESET_CALLBACK_PTR_HOB          *PtrHob;
+
   DEBUG ((DEBUG_INFO, "%a\n",__FUNCTION__));
 
   Status = PeiServicesLocatePpi (
@@ -103,6 +111,59 @@ SpiDmaWaResetNotify (
             );
 
   if (!EFI_ERROR(Status)) {
+    PtrHob = BuildGuidHob (&mResetNotificationCallbackPtrGuid, sizeof (RESET_CALLBACK_PTR_HOB));
+    if (PtrHob == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+    }
+    PtrHob->ResetFunction = SpiDmaWaResetNotificationCallback;
+    ResetNotify->RegisterResetNotify (ResetNotify, SpiDmaWaResetNotificationCallback);
+  }
+  return EFI_SUCCESS;
+}
+
+/**
+  This function register reset notify ppi in PEI after memory is discovered
+
+  @param[in]  PeiServices      Pointer to PEI Services Table.
+  @param[in]  NotifyDescriptor Pointer to the descriptor for the Notification event that
+                               caused this function to execute.
+  @param[in]  Interface        Pointer to the PPI data associated with this function.
+  @retval     EFI_SUCCESS  The function completes successfully
+  @retval     others
+
+**/
+STATIC
+EFI_STATUS
+EFIAPI
+SpiDmaWaResetNotifyAfterMemoryDiscovered (
+  IN CONST EFI_PEI_SERVICES     **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
+  IN VOID                       *Interface
+  )
+{
+  EFI_STATUS                      Status;
+  EFI_RESET_NOTIFICATION_PROTOCOL *ResetNotify;
+  EFI_HOB_GUID_TYPE               *GuidHob;
+  RESET_CALLBACK_PTR_HOB          *PtrHob;
+
+  Status = PeiServicesLocatePpi (
+            &gEdkiiPlatformSpecificResetNotificationPpiGuid,
+            0,
+            NULL,
+            (VOID **) &ResetNotify
+            );
+
+  if (!EFI_ERROR(Status)) {
+    //
+    // After memory is discovered, we need to fixup pointer to the callback function.
+    //
+    GuidHob = GetFirstGuidHob (&mResetNotificationCallbackPtrGuid);
+    if (GuidHob == NULL) {
+      ASSERT (FALSE);
+      return EFI_NOT_FOUND;
+    }
+    PtrHob = (RESET_CALLBACK_PTR_HOB *) GET_GUID_HOB_DATA (GuidHob);
+    ResetNotify->UnregisterResetNotify (ResetNotify, PtrHob->ResetFunction);
     ResetNotify->RegisterResetNotify (ResetNotify, SpiDmaWaResetNotificationCallback);
   }
   return EFI_SUCCESS;
@@ -112,6 +173,12 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mSpiDmaWaResetNotify = 
   EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
   &gEdkiiPlatformSpecificResetNotificationPpiGuid,
   (EFI_PEIM_NOTIFY_ENTRY_POINT) SpiDmaWaResetNotify
+};
+
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mSpiDmaWaResetNotifyAfterMemoryDiscovered = {
+  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+  &gEfiPeiMemoryDiscoveredPpiGuid,
+  (EFI_PEIM_NOTIFY_ENTRY_POINT) SpiDmaWaResetNotifyAfterMemoryDiscovered
 };
 
 /**
@@ -260,6 +327,7 @@ PtlPcdOnMemoryDiscovered (
   DEBUG ((DEBUG_INFO, "%a - Start\n",__FUNCTION__));
   PtlPcdSpiDmaWaStart ();
   PeiServicesNotifyPpi (&mSpiDmaWaResetNotify);
+  PeiServicesNotifyPpi (&mSpiDmaWaResetNotifyAfterMemoryDiscovered);
   DEBUG ((DEBUG_INFO, "%a - End\n",__FUNCTION__));
 }
 

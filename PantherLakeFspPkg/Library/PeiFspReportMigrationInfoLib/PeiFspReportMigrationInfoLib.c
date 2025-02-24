@@ -124,7 +124,7 @@ FspReportMigrationInfoConstructor (
       //
       ToMigrateFvInfo = ((TO_MIGRATE_FV_INFO *)(MigrationInfo + 1)) + MigrationInfo->ToMigrateFvCount;
       ToMigrateFvInfo->FvOrgBaseOnTempRam = FspmBaseAddress;
-      ToMigrateFvInfo->FvMigrationFlags   = 0;  // Skip raw data copy
+      ToMigrateFvInfo->FvMigrationFlags   = FLAGS_FV_MIGRATE_BEFORE_PEI_CORE_REENTRY;  // Skip raw data copy
       MigrationInfo->ToMigrateFvCount ++;
 
     } else {
@@ -136,7 +136,7 @@ FspReportMigrationInfoConstructor (
       MigrationInfo->ToMigrateFvCount     = 1;  // We only migrate FSP-M
       ToMigrateFvInfo                     = (TO_MIGRATE_FV_INFO *) (MigrationInfo + 1);
       ToMigrateFvInfo->FvOrgBaseOnTempRam = FspmBaseAddress;
-      ToMigrateFvInfo->FvMigrationFlags   = 0;  // Skip raw data copy
+      ToMigrateFvInfo->FvMigrationFlags   = FLAGS_FV_MIGRATE_BEFORE_PEI_CORE_REENTRY;  // Skip raw data copy
       MigrationInfo->MigrateAll           = FALSE;
       BuildGuidDataHob (&gEdkiiMigrationInfoGuid, MigrationInfo, Size);
       FreePool (MigrationInfo);

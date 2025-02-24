@@ -45,6 +45,12 @@
 extern EFI_GUID gFspSiliconFvGuid;
 extern EFI_GUID gFspPerformanceDataGuid;
 
+STATIC EFI_GUID mResetCallbackPtrGuid = {0xab8f75ec, 0xcefd, 0x45ae, {0x92, 0x43, 0x0d, 0x60, 0x06, 0xe0, 0x31, 0x93}};
+
+typedef struct {
+  EFI_RESET_SYSTEM  ResetFunction;
+} RESET_CALLBACK_PTR_HOB;
+
 EFI_PEI_RESET_PPI mResetPpi = {
   FspResetSystem
 };
@@ -251,8 +257,9 @@ Reset2ReadyCallBack (
   IN VOID                       *Interface
   )
 {
-  EFI_STATUS                    Status;
+  EFI_STATUS                                Status;
   EDKII_PLATFORM_SPECIFIC_RESET_HANDLER_PPI *ResetHandlerPpi;
+  RESET_CALLBACK_PTR_HOB                    *PtrHob;
 
   Status = PeiServicesLocatePpi (
               &gEdkiiPlatformSpecificResetHandlerPpiGuid,
@@ -262,8 +269,61 @@ Reset2ReadyCallBack (
               );
 
   ASSERT_EFI_ERROR (Status);
+  PtrHob = BuildGuidHob (&mResetCallbackPtrGuid, sizeof (RESET_CALLBACK_PTR_HOB));
+  if (PtrHob == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+  PtrHob->ResetFunction = FspResetSystem2;
   Status = ResetHandlerPpi->RegisterResetNotify (ResetHandlerPpi, FspResetSystem2);
   return EFI_SUCCESS;
+}
+
+/**
+  This function register reset handler ppi in PEI after memory is discovered.
+
+  @param[in]  PeiServices      Pointer to PEI Services Table.
+  @param[in]  NotifyDescriptor Pointer to the descriptor for the Notification event that
+                               caused this function to execute.
+  @param[in]  Interface        Pointer to the PPI data associated with this function.
+  @retval     EFI_SUCCESS  The function completes successfully
+  @retval     others
+
+**/
+STATIC
+EFI_STATUS
+EFIAPI
+Reset2ReadyCallBackAfterMemoryDiscovered (
+  IN CONST EFI_PEI_SERVICES     **PeiServices,
+  IN EFI_PEI_NOTIFY_DESCRIPTOR  *NotifyDescriptor,
+  IN VOID                       *Interface
+  )
+{
+  EFI_STATUS                      Status;
+  EFI_RESET_NOTIFICATION_PROTOCOL *ResetNotify;
+  EFI_HOB_GUID_TYPE               *GuidHob;
+  RESET_CALLBACK_PTR_HOB          *PtrHob;
+
+  Status = PeiServicesLocatePpi (
+            &gEdkiiPlatformSpecificResetHandlerPpiGuid,
+            0,
+            NULL,
+            (VOID **) &ResetNotify
+            );
+
+  if (!EFI_ERROR(Status)) {
+    //
+    // After memory is discovered, we need to fixup pointer to the callback function.
+    //
+    GuidHob = GetFirstGuidHob (&mResetCallbackPtrGuid);
+    if (GuidHob == NULL) {
+      ASSERT (FALSE);
+      return EFI_NOT_FOUND;
+    }
+    PtrHob = (RESET_CALLBACK_PTR_HOB *) GET_GUID_HOB_DATA (GuidHob);
+    ResetNotify->UnregisterResetNotify (ResetNotify, PtrHob->ResetFunction);
+    ResetNotify->RegisterResetNotify (ResetNotify, FspResetSystem2);
+  }
+  return Status;
 }
 
 
@@ -271,6 +331,12 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mReset2Ready = {
   EFI_PEI_PPI_DESCRIPTOR_NOTIFY_DISPATCH | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
   &gEfiPeiReset2PpiGuid,
   (EFI_PEIM_NOTIFY_ENTRY_POINT) Reset2ReadyCallBack
+};
+
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_PEI_NOTIFY_DESCRIPTOR  mReset2ReadyAfterMemoryDiscovered = {
+  EFI_PEI_PPI_DESCRIPTOR_NOTIFY_CALLBACK | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST,
+  &gEfiPeiMemoryDiscoveredPpiGuid,
+  (EFI_PEIM_NOTIFY_ENTRY_POINT) Reset2ReadyCallBackAfterMemoryDiscovered
 };
 
 /**
@@ -290,6 +356,7 @@ InstallReinstallFspResetPpiServices (
   UINT8                           Index;
 
   PeiServicesNotifyPpi (&mReset2Ready);
+  PeiServicesNotifyPpi (&mReset2ReadyAfterMemoryDiscovered);
 
   for (Index =0; Index < (sizeof(mPreMemPpiList)/sizeof(EFI_PEI_PPI_DESCRIPTOR)); Index++) {
     //

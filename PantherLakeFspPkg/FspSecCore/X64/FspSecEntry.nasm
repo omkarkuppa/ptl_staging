@@ -417,7 +417,6 @@ TempRamInitDone:
   xor     rcx, rcx
   mov     ecx, esi                      ; Pass BSSS base address
   sub     rsp, 20h
-  mov     rcx, rdx
   call    ASM_PFX(RebaseFspmImageBase)
   add     rsp, 20h
   POPA_64

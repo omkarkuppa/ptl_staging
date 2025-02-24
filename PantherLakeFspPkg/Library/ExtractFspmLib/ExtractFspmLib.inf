@@ -1,9 +1,9 @@
 ## @file
-#  Sec Core for FSP-O
+#    FSPM Extract Guided Section Library Implementation
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2022 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -21,10 +21,11 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = FspSecCoreO
-  FILE_GUID                      = 78C674DF-FC05-3302-29C2-143B7E0067AC
-  MODULE_TYPE                    = SEC
+  BASE_NAME                      = ExtractFspmLib
+  FILE_GUID                      = a641bf69-2a82-4fa7-a24a-fec9ad32f626
+  MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = ExtractFspmLib
 
 #
 # The following information is for reference only and not required by the build tools.
@@ -32,21 +33,21 @@
 #  VALID_ARCHITECTURES           = IA32 X64
 #
 
-[Sources.X64]
-  X64/FspSecEntry.nasm
-
-[Sources.IA32]
-  IA32/FspSecEntry.nasm
+[Sources]
+  ExtractFspmLib.c
 
 [Packages]
   MdePkg/MdePkg.dec
   IntelFsp2Pkg/IntelFsp2Pkg.dec
   PantherLakeFspPkg/PantherLakeFspPkg.dec
+  OneSiliconPkg/SiPkg.dec
+  IntelSiliconPkg/IntelSiliconPkg.dec
 
 [LibraryClasses]
-  BaseLib
-  ExtractFspmLib
-  FspLoadComponentsLib
+  ExtractGuidedSectionLib
+  LzmaArchDecompressLib
 
 [Pcd]
-  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFsptBase          ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackBase               ## CONSUMES
+  gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize               ## CONSUMES
+  gPantherLakeFspPkgTokenSpaceGuid.PcdFlashFvFspmSize          ## CONSUMES

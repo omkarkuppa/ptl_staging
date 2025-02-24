@@ -1,5 +1,5 @@
 /** @file
-  FSPM Extract Guided Section Peim Implementation
+  FSPM Extract Guided Section Library Implementation
 
   @copyright
   INTEL CONFIDENTIAL
@@ -108,6 +108,7 @@ ExtractFspm (
   UINT32                     OutputBufferSize;
   UINT16                     SectionAttribute;
   UINT32                     FspmBaseAddress;
+  UINT32                     DecompressionHeaderSize;
 
   if (!(Bspm->FspmLoadingPolicy & FSPM_COMPRESSED)) {
     DEBUG ((DEBUG_INFO, "FSP-M is not compressed\n"));
@@ -122,15 +123,21 @@ ExtractFspm (
     return EFI_INVALID_PARAMETER;
   }
 
-  // 0x10 gets added as decompression header. Need to align with 4K boundary.
-  OutputBuffer = (UINTN *) (UINTN)(PcdGet32 (PcdSecondaryDataStackBase) + SIZE_4KB - 0x10);
-
   Status = GuidedSectionGetInfo (
                                  Section,
                                  &OutputBufferSize,
                                  &ScratchBufferSize,
                                  &SectionAttribute
                                  );
+
+  //
+  // OutputBufferSize contains the size of FV + decompression header size.
+  // Get the decompression header size.
+  //
+  DecompressionHeaderSize = OutputBufferSize - PcdGet32 (PcdFlashFvFspmSize);
+
+  // Compensate decompression header size and align with 4K boundary.
+  OutputBuffer = (UINTN *) (UINTN)(PcdGet32 (PcdSecondaryDataStackBase) + SIZE_4KB - DecompressionHeaderSize);
 
   RequiredBufferSize = OutputBufferSize + ScratchBufferSize + SIZE_4KB;
   if (RequiredBufferSize > (PcdGet32 (PcdSecondaryDataStackSize))) {

@@ -115,19 +115,19 @@ SET gIntelSiliconPkgTokenSpaceGuid.PcdFlashMicrocodeFvSize            = 0x000400
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Offset                 = 0x00CE0000  # Flash addr (0xFFCE0000)
 SET gBoardModuleTokenSpaceGuid.PcdFlashFvIbbnp1Size                   = 0x00020000  #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemoryOffset          = 0x00D00000  # Flash addr (0xFFD00000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00050000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00D50000  # Flash addr (0xFFD50000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPostMemorySize            = 0x00040000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSOffset                = 0x00D40000  # Flash addr (0xFFD40000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspSSize                  = 0x00060000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00DB0000  # Flash addr (0xFFDB0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMOffset                = 0x00DA0000  # Flash addr (0xFFDA0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspMSize                  = 0x00100000  #
 !if gFspWrapperFeaturePkgTokenSpaceGuid.PcdFspWrapperResetVectorInFsp == FALSE
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00EB0000  # Flash addr (0xFFEB0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTOffset                = 0x00EA0000  # Flash addr (0xFFEA0000)
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvFspTSize                  = 0x00010000  #
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00EC0000  # Flash addr (0xFFEC0000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x00140000  #
-!else
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00EB0000  # Flash addr (0xFFEB0000)
-SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x00130000  #
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x00150000  #
+!else
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemoryOffset           = 0x00EA0000  # Flash addr (0xFFEA0000)
+SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvPreMemorySize             = 0x00140000  #
 ## 1. FspTopAt4G contains FSP components (FSP-T and FSP-O) which should be put at Top 4G location, these FSP
 ##    components come from FSP build directly, which require base and size MUST align with the settings under
 ##    XXXFspPkg\XXXFspPkg.fdf - PcdFlashFvFsptSize/PcdFlashFvFspoSize

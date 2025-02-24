@@ -156,18 +156,22 @@ LaunchBiosAcmSclean (
 
 /**
   Execute CLEAR SECRETS through BIOS ACM
+
+  @param[in] AcmModuleAddr   - Acm Module address
 **/
 VOID
 LaunchBiosAcmClearSecrets (
-  VOID
+  UINTN AcmModuleAddr
   );
 
 /**
   Execute ACHECK through BIOS ACM
+
+  @param[in] AcmModuleAddr   - Acm Module address
 **/
 VOID
 LaunchBiosAcmAcheck (
-  VOID
+  UINTN AcmModuleAddr
   );
 
 /**
