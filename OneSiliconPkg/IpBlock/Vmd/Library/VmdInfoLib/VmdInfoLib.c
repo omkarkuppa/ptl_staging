@@ -222,3 +222,24 @@ ClearVmdTempBars(
     DEBUG ((DEBUG_INFO, "VMD MemBar2 0X%x:\n", (PciSegmentRead32 (DeviceBaseAddress + MEMBAR2_IOC_VMD_REG)) & BAR_VALUE_MASK));
   }
 }
+
+/**
+  IsVmdBus: Check if the input bus number is within the VMD reserved bus range (224-255).
+
+  @param[in]     Bus    input PCI bus number between 0 to 255.
+
+  @retval TRUE  if  if the input bus number is within the VMD reserved bus range.
+  @retval False if  if the input bus number is not within the VMD reserved bus range.
+**/
+
+BOOLEAN
+EFIAPI
+IsVmdBus (
+  IN UINT8 Bus
+  )
+{
+  if ((Bus >= VMD_RSVD_BUS_RANGE_START) && (Bus <= VMD_RSVD_BUS_RANGE_END)) {
+    return TRUE;
+  }
+  return FALSE;
+}

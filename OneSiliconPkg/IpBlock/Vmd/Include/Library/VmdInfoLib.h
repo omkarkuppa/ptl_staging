@@ -27,6 +27,8 @@
 #define MAX_OS_VISIBLE_BUSES_WITH_VMD       223  // OS visible range is 0-223. Bus range from 225 to 255 is reserved for VMD when it is enabled.
 #define MAX_OS_VISIBLE_BUS_LENGTH_WITH_VMD  224  // Buses 0 to 223
 #define VMD_DUMMY_DEVICE_ID                 (0xB07F) // Dummy Function DID
+#define VMD_RSVD_BUS_RANGE_START            224
+#define VMD_RSVD_BUS_RANGE_END              255
 
 //
 //VMD device will be assigned with (Segment/Bus/Device/Function) equals to (0/0/14/0)
@@ -175,6 +177,21 @@ VOID
 EFIAPI
 ClearVmdTempBars(
   VOID
+  );
+
+/**
+  IsVmdBus: Check if the input bus number is within the VMD reserved bus range (224-255).
+
+  @param[in]     Bus    input PCI bus number between 0 to 255.
+
+  @retval TRUE  if  if the input bus number is within the VMD reserved bus range.
+  @retval False if  if the input bus number is not within the VMD reserved bus range.
+**/
+
+BOOLEAN
+EFIAPI
+IsVmdBus (
+  IN UINT8 Bus
   );
 
 #endif /* _VMD_INFO_LIB_H_ */
