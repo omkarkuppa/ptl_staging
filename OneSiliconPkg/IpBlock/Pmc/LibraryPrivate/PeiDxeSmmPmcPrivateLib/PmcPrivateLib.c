@@ -394,13 +394,29 @@ PmcIsHostSwPgCtrlLocked (
 **/
 BOOLEAN
 PmcIsLanDeepSxWakeEnabled (
-  VOID
+  IN UINTN   PmcMmio
   )
 {
   //
   // Get wake info from PWRMBASE + DSX_CFG
   //
-  return ((MmioRead32 (PmcGetPwrmBase () + R_PMC_PWRM_DSX_CFG) & (UINT32) B_PMC_PWRM_DSX_CFG_LANWAKE_PIN_DSX_EN) != 0);
+  return ((MmioRead32 (PmcMmio + R_PMC_PWRM_DSX_CFG) & (UINT32) B_PMC_PWRM_DSX_CFG_LANWAKE_PIN_DSX_EN) != 0);
+}
+
+/**
+  This function checks if LAN wake is enabled
+
+  @retval Lan Wake state
+**/
+BOOLEAN
+PmcIsWakeOnLanEnabled (
+  IN UINTN   PmcMmio
+  )
+{
+  //
+  // Check if WOL enabled
+  //
+  return ((MmioRead32 (PmcMmio + R_PMC_PWRM_GEN_PMCON_B) & (UINT32)B_PMC_PWRM_GEN_PMCON_B_WOL_EN_OVRD) != 0);
 }
 
 /**

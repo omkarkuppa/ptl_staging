@@ -176,11 +176,13 @@ PmcIsHostSwPgCtrlLocked (
 /**
   This function checks if LAN wake from DeepSx is enabled
 
+  @param[in] PmcMmio       PMC MMIO
+
   @retval Lan Wake state
 **/
 BOOLEAN
 PmcIsLanDeepSxWakeEnabled (
-  VOID
+  IN UINTN   PmcMmio
   );
 
 /**
@@ -768,4 +770,15 @@ PmcEnableWdt (
   IN UINTN  PmcMmio
   );
 
+/**
+  This function checks if LAN wake is enabled
+
+  @param[in] PmcMmio       PMC MMIO
+
+  @retval Lan Wake state
+**/
+BOOLEAN
+PmcIsWakeOnLanEnabled (
+  IN UINTN   PmcMmio
+  );
 #endif // _PMC_PRIVATE_LIB_H_

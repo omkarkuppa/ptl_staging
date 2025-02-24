@@ -283,12 +283,14 @@ GbeSxWorkaround (
   Called upon Sx entry.
 **/
 VOID
-GbeConfigureDeepSxWake (
-  VOID
+GbeConfigureSxWake (
+  IN UINTN   PwrmBase
   )
 {
-  if (PmcIsLanDeepSxWakeEnabled ()) {
+  if (PmcIsLanDeepSxWakeEnabled (PwrmBase) || PmcIsWakeOnLanEnabled (PwrmBase)) {
     IoOr32 ((UINTN) mAcpiBaseAddr + R_ACPI_IO_GPE0_EN_127_96, (UINT32) B_ACPI_IO_GPE0_EN_127_96_LANWAKE_EN);
+  } else {
+    IoAnd32 ((UINTN)mAcpiBaseAddr + R_ACPI_IO_GPE0_EN_127_96, (UINT32)~B_ACPI_IO_GPE0_EN_127_96_LANWAKE_EN);
   }
 }
 
@@ -302,7 +304,7 @@ PchLanSxCallback (
 {
   if (IsGbeEnabled (GbePciCfgBase ())) {
     GbeSxWorkaround ();
-    GbeConfigureDeepSxWake ();
+    GbeConfigureSxWake (PmcGetPwrmBase ());
 
     if (WOLFastStartupEnabled == FORCE_ENABLE) {
       //

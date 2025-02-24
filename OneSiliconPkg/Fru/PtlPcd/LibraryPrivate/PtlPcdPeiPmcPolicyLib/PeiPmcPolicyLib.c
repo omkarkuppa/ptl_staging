@@ -47,7 +47,7 @@ PmcLoadConfigDefaultPtl (
   PmConfig->WolOvrWkSts                          = TRUE;
 
   PmConfig->WakeConfig.WolEnableOverride         = TRUE;
-  PmConfig->WakeConfig.LanWakeFromDeepSx         = TRUE;
+  PmConfig->WakeConfig.LanWakeFromDeepSx         = FALSE;
 
   PmConfig->PchSlpS3MinAssert                    = PchSlpS350ms;
   PmConfig->PchSlpS4MinAssert                    = PchSlpS41s;
