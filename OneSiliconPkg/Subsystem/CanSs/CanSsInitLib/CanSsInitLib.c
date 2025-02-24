@@ -39,6 +39,7 @@ CanSsPrintCtrlSettings (
   DEBUG ((DEBUG_INFO, "\tController Index: %d\n",     CanCtrl->CtrlIndex));
   DEBUG ((DEBUG_INFO, "\tPciCfgCtrlOffset: 0x%04X\n", CanCtrl->PciCfgCtrlOffset));
   DEBUG ((DEBUG_INFO, "\tIrq:              %d\n",     CanCtrl->IrqNumber));
+  DEBUG ((DEBUG_INFO, "\tIPin:             %d\n",     CanCtrl->IPin));
 }
 
 /**
@@ -56,8 +57,9 @@ CanConfigureInterrupts (
   UINT32    Data32Or;
   UINT32    Data32And;
 
-  Data32Or =  (UINT32) (CanCtrl->IrqNumber << N_CAN_PCR_PCICFGCTR_PCI_IRQ);
-  Data32And = ~(UINT32) (B_CAN_PCR_PCICFGCTR_PCI_IRQ);
+  Data32Or =  (UINT32) ((CanCtrl->IrqNumber << N_CAN_PCR_PCICFGCTR_PCI_IRQ) |
+                        (CanCtrl->IPin << N_CAN_PCR_PCICFGCTR_PCI_IPIN));
+  Data32And = ~(UINT32) (B_CAN_PCR_PCICFGCTR_PCI_IRQ | B_CAN_PCR_PCICFGCTR_PCI_IPIN);
 
   PcrAccess->AndThenOr32 (PcrAccess, CanCtrl->PciCfgCtrlOffset, Data32And, Data32Or);
 }

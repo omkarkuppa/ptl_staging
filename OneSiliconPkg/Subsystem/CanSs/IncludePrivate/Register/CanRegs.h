@@ -58,4 +58,7 @@
 #define B_CAN_PCR_PCICFGCTR_PCI_IRQ             ( BIT27 | BIT26 | BIT25 | BIT24 | BIT23 | BIT22 | BIT21 | BIT20 ) ///< Pci Irq Field
 #define N_CAN_PCR_PCICFGCTR_PCI_IRQ             20
 
+#define B_CAN_PCR_PCICFGCTR_PCI_IPIN            ( BIT11 | BIT10 | BIT9 | BIT8 ) ///< Interrupt Pin Field
+#define N_CAN_PCR_PCICFGCTR_PCI_IPIN            8
+
 #endif //_CAN_REGS_H_

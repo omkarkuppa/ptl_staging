@@ -46,6 +46,12 @@ struct _CAN_CTRL {
   */
   UINT8       IrqNumber;
 
+  /*
+    IPIN:
+    Interrupt Pin: indicates the values to be used for Global Interrupts.
+  */
+  UINT8       IPin;
+
   CAN_CTRL    *Next;
 };
 
