@@ -82,8 +82,10 @@
   # UsbC Capsule Feature Package
   #####################################
 
-  UsbCCapsuleFeaturePkg/UsbCRetimerDxe/UsbCRetimerDxe.inf
-
+  UsbCCapsuleFeaturePkg/UsbCRetimerDxe/UsbCRetimerDxe.inf {
+    <LibraryClasses>
+      NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
+  }
 #
 # UsbCRetimer FMP
 #
@@ -104,6 +106,7 @@
 
     <LibraryClasses>
       FmpDeviceLib|UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/UsbCRetimer/FmpDeviceLibTbtRetimer.inf
+      NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
   }
 
 #
@@ -126,6 +129,7 @@
 
     <LibraryClasses>
       FmpDeviceLib|UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/DiscreteTbt/FmpDeviceLibDiscreteTbt.inf
+      NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
   }
 
 #
@@ -147,6 +151,7 @@
 
     <LibraryClasses>
       FmpDeviceLib|UsbCCapsuleFeaturePkg/Library/FmpDeviceLib/PdBridge/FmpDeviceLibPdBridge.inf
+      NULL|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
   }
 
 #
