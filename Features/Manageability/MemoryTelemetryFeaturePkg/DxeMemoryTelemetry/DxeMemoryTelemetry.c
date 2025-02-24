@@ -144,22 +144,28 @@ GetFormFactor (
   IN UINT8  DramDeviceType
   )
 {
+  if (DramDeviceType == DDR_DTYPE_LPDDR5 || DramDeviceType == DDR_DTYPE_LPDDR5X) {
+    switch (ModuleType & DDR_MTYPE_SPD_MASK) {
+      case DDR_MTYPE_LPDIMM_LP5:
+      case DDR_MTYPE_CAMM:
+        return MEMORY_FORM_FACTOR_CAM;
+      case DDR_MTYPE_MEM_DOWN_LP5:
+      default:
+        return MemoryFormFactorRowOfChips;
+    }
+  }
   switch (ModuleType & DDR_MTYPE_SPD_MASK) {
     case DDR_MTYPE_SODIMM:
       ///
       /// Legacy non-JEDEC LPDDR3 SPD images use SODIMM module type which should be soldered down form factor.
       ///
       return (DramDeviceType == DDR_DTYPE_LPDDR3) ? MemoryFormFactorRowOfChips : MemoryFormFactorSodimm;
-      break;
     case DDR_MTYPE_RDIMM:
       return (UINT8) MemoryFormFactorRimm;
-      break;
     case DDR_MTYPE_CSODIMM:
       return MemoryFormFactorSodimm;
-      break;
     case DDR_MTYPE_MEM_DOWN:
       return (UINT8) MemoryFormFactorRowOfChips;
-      break;
     case DDR_MTYPE_UDIMM:
     case DDR_MTYPE_LR_DIMM:
     case DDR_MTYPE_CUDIMM:
@@ -167,7 +173,6 @@ GetFormFactor (
     case DDR_MTYPE_DDIMM:
     default:
       return (UINT8) MemoryFormFactorDimm;
-      break;
   }
 }
 
