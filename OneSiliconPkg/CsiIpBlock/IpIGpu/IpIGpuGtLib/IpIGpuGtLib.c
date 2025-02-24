@@ -271,11 +271,12 @@ IpIGpuGtInit (
     ///
     /// 5b. ECOBUS Disable Fence writes
     ///
-    Ecobusrst.Data                            = (UINT32)IpWrRegRead (pInst->MmioAccess, ECO_BUSRST_GPM_GRP_GCD_GT_REG, IpWrRegFlagSize32Bits);
-    Ecobusrst.Bits.gacfg_fence_c6status_write = TRUE;
-    Ecobusrst.Bits.cpd_block_mgsr_disable     = TRUE;
-    Ecobusrst.Bits.cpd_bypass_go_msg_strms    = TRUE;
-    Ecobusrst.Bits.lock                       = TRUE;
+    Ecobusrst.Data                             = (UINT32)IpWrRegRead (pInst->MmioAccess, ECO_BUSRST_GPM_GRP_GCD_GT_REG, IpWrRegFlagSize32Bits);
+    Ecobusrst.Bits.gacfg_fence_c6status_write  = TRUE;
+    Ecobusrst.Bits.cpd_block_mgsr_disable      = TRUE;
+    Ecobusrst.Bits.cpd_bypass_go_msg_strms     = TRUE;
+    Ecobusrst.Bits.lock                        = TRUE;
+    Ecobusrst.Bits.wait_mem_wipe_post_flr_chkn = TRUE;
     IpWrRegWrite (pInst->MmioAccess, ECO_BUSRST_GPM_GRP_GCD_GT_REG, Ecobusrst.Data, IpWrRegFlagSize32Bits);
     IpIGpuPrintRegData (pInst, NULL, ECO_BUSRST_GPM_GRP_GCD_GT_REG, Ecobusrst.Data, (UINT32)IpWrRegRead (pInst->MmioAccess, ECO_BUSRST_GPM_GRP_GCD_GT_REG, IpWrRegFlagSize32Bits));
 
