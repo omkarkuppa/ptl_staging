@@ -107,6 +107,7 @@ IpIGpuGtInit (
   GAMCNTRL_CTRL_GAMCTRL_3D_GT_STRUCT         GamCntrl;
   GAMCTRLLOCK_GAMCTRL_3D_GT_STRUCT           GamCtrlLock;
   BOOLEAN                                    IsFlatCcsCompressionEnable;
+  GMD_ID_STRUCT                              GmdId;
 
   PRINT_LEVEL1 ("%s Start\n", __FUNCTION__);
 
@@ -236,6 +237,10 @@ IpIGpuGtInit (
       }
       CcChickenGtStruct.Bits.encompperffix = FALSE;
       CcChickenGtStruct.Bits.l3cmpctrl     = TRUE;
+      GmdId.Data = GmdIdStruct.Data;
+      if (GmdId.Bits.GMDArchitecture == 30) {
+        CcChickenGtStruct.Bits.l2dyncompctrl = FALSE;
+      }
       if (GmdIdStruct.Data == GMD_GT_30_0) {
         CcChickenGtStruct.Data |= BIT30;
       }
