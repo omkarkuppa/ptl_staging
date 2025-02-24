@@ -72,5 +72,9 @@
 #define MAX_IBECC_REGIONS       8  ///< Maximum number of protection regions handled by IBECC
 #endif
 
+#define VGA_LOGO_WIDTH 200
+#define VGA_LOGO_HEIGHT 58
+extern CONST UINT8  VgaPlanarImage200x58[4][58][25];
+
 #endif
 

@@ -581,6 +581,11 @@ FspUpdatePeiSaPolicyPreMem (
     IGpuPreMemConfig->VbtPtr = (VOID *) (UINTN) FspmUpd->FspmConfig.VbtPtr;
     IGpuPreMemConfig->VgaInitControl = FspmUpd->FspmConfig.VgaInitControl;
     IGpuPreMemConfig->VgaMessage = (VOID *) (UINTN) FspmUpd->FspmConfig.VgaMessage;
+    IGpuPreMemConfig->Mode12Info.VgaMode12ImagePtr  = (UINT8 *) (UINTN) FspmUpd->FspmConfig.VgaMode12ImagePtr;
+    IGpuPreMemConfig->Mode12Info.LogoPixelHeight    = FspmUpd->FspmConfig.LogoPixelHeight;
+    IGpuPreMemConfig->Mode12Info.LogoPixelWidth     = FspmUpd->FspmConfig.LogoPixelWidth;
+    IGpuPreMemConfig->Mode12Info.LogoXPosition      = FspmUpd->FspmConfig.LogoXPosition;
+    IGpuPreMemConfig->Mode12Info.LogoYPosition      = FspmUpd->FspmConfig.LogoYPosition;
 
     //
     // Display DDI Initialization

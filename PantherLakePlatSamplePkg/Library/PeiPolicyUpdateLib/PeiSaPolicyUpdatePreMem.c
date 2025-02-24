@@ -755,8 +755,13 @@ UpdatePeiSaPolicyPreMem (
     if (VgaInitControl != VGA_DISPLAY_DISABLED) {
       PeiGetSectionFromAnyFv (PcdGetPtr (PcdIntelGraphicsPreMemVbtFileGuid), EFI_SECTION_RAW, 0, &Buffer, &Size);
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-      ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaMessage  = (UINT64) VgaMessage;
-      ((FSPM_UPD *) FspmUpd)->FspmConfig.VbtPtr = (UINT64) Buffer;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaMessage         = (UINT64)VgaMessage;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.VbtPtr             = (UINT64)Buffer;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaMode12ImagePtr  = (UINT64)VgaPlanarImage200x58;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoPixelHeight    = VGA_LOGO_HEIGHT;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoPixelWidth     = VGA_LOGO_WIDTH;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoXPosition      = (VGA_MODE12_WIDTH - VGA_LOGO_WIDTH) / 2;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoYPosition      = (VGA_MODE12_HEIGHT - VGA_LOGO_HEIGHT) / 2;
       Status = CheckLidStatus (&LidStatusOpen);
       if (Status == EFI_SUCCESS) {
         ((FSPM_UPD *) FspmUpd)->FspmConfig.LidStatus = LidStatusOpen;
@@ -766,6 +771,11 @@ UpdatePeiSaPolicyPreMem (
       IGpuPreMemConfig->VgaMessage = (VOID *)VgaMessage;
       IGpuPreMemConfig->VbtPtr = Buffer;
       DEBUG ((DEBUG_INFO, "Vbt Pointer from PeiGetSectionFromAnyFv is 0x%x\n", IGpuPreMemConfig->VbtPtr));
+      IGpuPreMemConfig->Mode12Info.VgaMode12ImagePtr  = (UINT8 *)VgaPlanarImage200x58;
+      IGpuPreMemConfig->Mode12Info.LogoPixelHeight    = VGA_LOGO_HEIGHT;
+      IGpuPreMemConfig->Mode12Info.LogoPixelWidth     = VGA_LOGO_WIDTH;
+      IGpuPreMemConfig->Mode12Info.LogoXPosition      = (VGA_MODE12_WIDTH- IGpuPreMemConfig->Mode12Info.LogoPixelWidth) / 2;
+      IGpuPreMemConfig->Mode12Info.LogoYPosition      = (VGA_MODE12_HEIGHT - IGpuPreMemConfig->Mode12Info.LogoPixelHeight) / 2;
 #endif
     }
 

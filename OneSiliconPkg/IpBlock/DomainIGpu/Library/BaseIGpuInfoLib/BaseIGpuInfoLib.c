@@ -1941,8 +1941,16 @@ FillRectangle (
 
   //
   // Calculate bytes per row and start offset
+  // VGA Mode 12h uses a planar memory layout with 4 planes, each storing 1 bit per pixel.
+  // Each byte in VGA memory represents 8 pixels (1 bit per pixel in each of the 4 planes),
+  // so we divide the width by 8 to get the number of bytes per row.
   //
   BytesPerRow = VGA_MODE12_WIDTH / 8;
+  //
+  // Calculate start offset
+  // Considering the Y coordinate and the X coordinate divided by 8.
+  // This gives the starting byte offset in VGA memory for the top-left corner of the rectangle.
+  //
   StartOffset = (Y * BytesPerRow) + (X / 8);
 
   //
@@ -1980,6 +1988,7 @@ FillRectangle (
   @param[in] Width      The width of the image in pixels.
   @param[in] Height     The height of the image in pixels.
   @param[in] VgaBuffer  Pointer to the buffer containing the VGA-compatible graphics data.
+                        Ex: VgaPlanarImage200x58[4][58][25] for a 200x58 image.
 
   @note This function assumes VGA Mode 12h is active and properly initialized.
 **/
@@ -2025,6 +2034,8 @@ VgaMode12DrawImage (
 
   //
   // Calculate the number of bytes per row for the given width
+  // Each byte in VGA memory represents 8 pixels (1 bit per pixel in each of the 4 planes),
+  // so we divide the width by 8 to get the number of bytes per row.
   //
   BytesPerRow = Width / 8;
   Buffer      = (const UINT8 *)VgaBuffer;
@@ -2035,9 +2046,20 @@ VgaMode12DrawImage (
 
     for (Row = 0; Row < Height; Row++) {
       //
-      // Calculate VGA memory offset for the current row
+      // - The buffer is structured as [Planes][Height][Width/8].
+      // - Each plane contains (Height * BytesPerRow) bytes.
+      // - To access the correct plane, multiply Plane by (Height * BytesPerRow).
+      // - To access the correct row within that plane, add (Row * BytesPerRow).
+      // - This results in a linear offset into the 3D buffer.
       //
-      Offset     = (Plane * Height * BytesPerRow) + (Row * BytesPerRow);
+      Offset = (Plane * Height * BytesPerRow) + (Row * BytesPerRow);
+      //
+      // VGA memory is arranged as a linear framebuffer.
+      // Each row in VGA memory is (640 / 8) = 80 bytes wide.
+      // (Y + Row) gives the vertical position.
+      // (Y + Row) * (VGA_MODE12_WIDTH / 8) moves to the correct row in VGA memory.
+      // (X / 8) finds the byte offset within that row (since each byte represents 8 pixels).
+      //
       VgaMemBase = (volatile UINT8 *)(UINTN)(VGA_MODE12_BASE_ADDRESS + ((Y + Row) * (VGA_MODE12_WIDTH / 8)) + (X / 8));
       //
       // Copy the data from the buffer to VGA memory
@@ -2086,6 +2108,8 @@ VgaMode12DrawChar (
 
   //
   // Calculate the base offset in VGA memory for the character's position
+  // VGA Mode 12h uses a planar memory layout with 4 planes, each storing 1 bit per pixel.
+  // Each byte in VGA memory represents 8 pixels (1 bit per pixel), so we divide by 8 to get the byte offset.
   //
   ScreenOffsetBase = (UINT32)((Y * VGA_MODE12_WIDTH / 8) + (X / 8));
 
@@ -2105,6 +2129,8 @@ VgaMode12DrawChar (
       SetVgaPlane (Plane); // Set the current VGA plane
       //
       // Calculate the screen offset for the current row and plane
+      // Each byte in VGA memory represents 8 pixels (1 bit per pixel), so we divide by 8 to get the byte offset.
+      // The offset is calculated by adding the base offset and the row offset.
       //
       ScreenOffset = ScreenOffsetBase + (Row * (VGA_MODE12_WIDTH / 8));
       VgaMemBase   = (volatile UINT8 *)VGA_MODE12_BASE_ADDRESS;
@@ -2116,6 +2142,11 @@ VgaMode12DrawChar (
       // Iterate over each bit in the byte
       //
       for (Bit = 0; Bit < VGA_MODE12_CHAR_WIDTH; Bit++) {
+        //
+        // Check if the corresponding bit in the bitmap is set
+        // Bitmap is an 8-bit value where each bit represents a pixel in the character row.
+        // If the bit is set (1), we set the corresponding bit in the VGA memory byte.
+        //
         if (Bitmap & (1 << (7 - Bit))) {
           CurrentByte |= (1 << (7 - Bit));  // Set the bit if the corresponding bit in the bitmap is set
         }

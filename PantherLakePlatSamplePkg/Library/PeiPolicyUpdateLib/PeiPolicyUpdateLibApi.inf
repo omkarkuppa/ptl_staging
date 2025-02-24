@@ -359,6 +359,7 @@
   PeiSiPolicyUpdate.c
   PcieWorkaroundOnPolicy.c
   PeiFspVPolicyUpdate.c
+  PeiSaPolicyVgaInfo.c
 
 [Ppis]
   gEfiPeiReadOnlyVariable2PpiGuid               ## CONSUMES

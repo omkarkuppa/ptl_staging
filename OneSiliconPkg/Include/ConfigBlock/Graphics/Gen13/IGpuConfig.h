@@ -26,9 +26,17 @@
 
 #pragma pack(push, 1)
 
-#define IGPU_PEI_PREMEM_CONFIG_REVISION  1
+#define IGPU_PEI_PREMEM_CONFIG_REVISION  2
 #define IGPU_PEI_CONFIG_REVISION         1
 #define IGPU_DXE_CONFIG_REVISION         1
+
+#ifndef VGA_MODE12_WIDTH
+#define VGA_MODE12_WIDTH  640  // Width of the screen in pixels
+#endif
+
+#ifndef VGA_MODE12_HEIGHT
+#define VGA_MODE12_HEIGHT  480  // Height of the screen in pixels
+#endif
 
 #define DDI_DEVICE_NUMBER  4
 #define MAX_BCLM_ENTRIES   30
@@ -37,10 +45,13 @@
 #define VGA_DISPLAY_ENABLED   (BIT0)
 #define VGA_MODE3_SUPPORT     (0)
 #define VGA_MODE12_SUPPORT    (BIT1)
+#define VGA_EXIT_SUPPORT      (0)
+#define VGA_NO_EXIT_SUPPORT   (BIT2)
 
-#define IS_VGA_ENABLED(data)         (((data) & BIT0) == VGA_DISPLAY_ENABLED)
-#define IS_VGA_MODE3_ENABLED(data)   (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_MODE3_SUPPORT))
-#define IS_VGA_MODE12_ENABLED(data)  (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_MODE12_SUPPORT))
+#define IS_VGA_ENABLED(data)              (((data) & BIT0) == VGA_DISPLAY_ENABLED)
+#define IS_VGA_MODE3_ENABLED(data)        (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_MODE3_SUPPORT))
+#define IS_VGA_MODE12_ENABLED(data)       (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_MODE12_SUPPORT))
+#define IS_VGA_EXIT_STATUS_SUPPORT(data)  (IS_VGA_ENABLED(data) && (((data) & BIT2) == VGA_EXIT_SUPPORT))
 
 typedef enum {
   DISPLAY_AUTO = 0x00,
@@ -88,6 +99,14 @@ typedef struct {
   UINT8    DdiPort3Ddc;    /// The DDC setting of DDI Port 3, this settings must match VBT's settings. <b>DdiDisable - Disable DDC</b>, DdiDdcEnable - Enable DDC
   UINT8    DdiPort4Ddc;    /// The DDC setting of DDI Port 4, this settings must match VBT's settings. <b>DdiDisable - Disable DDC</b>, DdiDdcEnable - Enable DDC
 } DDI_CONFIGURATION;
+
+typedef struct {
+  UINT8     *VgaMode12ImagePtr;    ///< Pointer to VGA Mode 12 Image
+  UINT16    LogoPixelHeight;       ///< Height of VgaMode12ImagePtr
+  UINT16    LogoPixelWidth;        ///< Width of VgaMode12ImagePtr
+  UINT16    LogoXPosition;         ///< X position of Image on Display
+  UINT16    LogoYPosition;         ///< Y position of Image on Display
+} VGA_MODE12_INFO;
 
 /**
   This Configuration block is to configure GT related PreMem data/variables.\n
@@ -149,6 +168,7 @@ typedef struct {
   UINT8                VgaInitControl;             ///< Offset 74 VGA Init Control
   VOID                 *VgaMessage;                ///< Pointer to Message which should be displayed
   VOID                 *VbtPtr;                    ///< Address of the Graphics Configuration Table
+  VGA_MODE12_INFO      Mode12Info;                 ///< Offset 82 VGA Mode 12 Information
 } IGPU_PEI_PREMEM_CONFIG;
 
 typedef struct {

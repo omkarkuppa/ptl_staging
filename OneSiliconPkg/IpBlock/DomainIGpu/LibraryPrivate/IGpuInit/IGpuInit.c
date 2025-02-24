@@ -899,7 +899,7 @@ IGpuSetMemMap (
   //
   if (IpIGpuSupported (IGpuInst) == TRUE) {
     if (IGpuPreMemConfig != NULL) {
-      if (IGpuPreMemConfig->VgaInitControl != VGA_DISPLAY_DISABLED) {
+      if (IS_VGA_EXIT_STATUS_SUPPORT(IGpuPreMemConfig->VgaInitControl)) {
         Status = PeiServicesLocatePpi (&gIntelPeiPreMemGraphicsPpiGuid, 0, NULL, (VOID **)&GraphicsPreMemPpi);
         if (EFI_ERROR (Status)) {
           DEBUG ((DEBUG_ERROR, "Unable to locate the GraphicsPreMemPpi\n"));
