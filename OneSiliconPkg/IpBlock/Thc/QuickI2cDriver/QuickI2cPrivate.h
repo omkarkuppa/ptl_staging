@@ -71,7 +71,7 @@
 //
 #include <IndustryStandard/Pci30.h>
 
-#define THC_STANDALONE_DEBUG  0 // Required for stand alone driver Debug
+//#define THC_STANDALONE_DEBUG  0 // Required for stand alone driver Debug
 #define THC_LOCAL_DEBUG(Message, ...)
 
 #define THC_POLLING_PERIOD     10     // milliseconds
