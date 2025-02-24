@@ -109,6 +109,23 @@
   @echo ***********************************
   )
 
+@REM
+@REM Definition for BtGACM Support.
+@REM
+@SET BTG_ACM_BASE_PATH=%WORKSPACE_BINARIES%\%PLATFORM_BIN_PACKAGE%\Binaries\BootGuard
+@SET BTG_ACM_OUTPUT_PATH=%WORKSPACE%\%BUILD_DIR%\BootGuard
+@SET BTG_ACM_SLOT_SIZE=0x40000
+
+CALL %PYTHON_COMMAND% %WORKSPACE_PLATFORM%\%PLATFORM_BOARD_PACKAGE%\Tools\BtgAcmMisc\BtgAcmMiscScript.py ^
+  Padding ^
+  -I %BTG_ACM_BASE_PATH% ^
+  -S %BTG_ACM_SLOT_SIZE% ^
+  -O %BTG_ACM_OUTPUT_PATH%
+IF %ERRORLEVEL% NEQ 0 (
+  @ECHO ERROR: Failed to do the padding operation on BtGACM
+  GOTO :BldFail
+)
+
 @echo on
 
 @echo ********************************************************************

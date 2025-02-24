@@ -53,6 +53,13 @@ export LSV=0x0001
 export FW_VERSION_STRING="Version 0.0.0.1"
 export MICROCODE_FV_FDF=$WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Include/Fdf/FvMicrocode.fdf
 
+#
+# Definition for BtGACM Support.
+#
+export BTG_ACM_BASE_PATH=$WORKSPACE_BINARIES/$PLATFORM_BIN_PACKAGE/Binaries/BootGuard
+export BTG_ACM_OUTPUT_PATH=$WORKSPACE/$BUILD_DIR/BootGuard
+export BTG_ACM_SLOT_SIZE=0x40000
+
 python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/microcode_padding.py \
   --opt padding \
   --fw-version \
@@ -65,6 +72,17 @@ python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/microcode_padding.py \
 if [ $ret -ne 0 ]; then
   echo "!!! ERROR: microcode_padding.py execute failure !!!"
   echo "microcode_padding.py --opt padding --fw-version $FW_VERSION --lsv $LSV --fw-version-string $FW_VERSION_STRING --slotsize $SLOT_SIZE"
+  BuildFail $ret
+fi
+
+python3 $WORKSPACE_PLATFORM/$PLATFORM_BOARD_PACKAGE/Tools/BtgAcmMisc/BtgAcmMiscScript.py \
+  Padding \
+  -I $BTG_ACM_BASE_PATH \
+  -S $BTG_ACM_SLOT_SIZE \
+  -O $BTG_ACM_OUTPUT_PATH
+
+if [ $ret -ne 0 ]; then
+  echo "!!! ERROR: Failed to do the padding operation on BtGACM !!!"
   BuildFail $ret
 fi
 
