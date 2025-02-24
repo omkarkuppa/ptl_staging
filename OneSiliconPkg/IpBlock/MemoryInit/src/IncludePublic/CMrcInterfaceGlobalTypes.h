@@ -33,6 +33,11 @@ This file includes all the data structures that the MRC considers "global data".
 #include "Ptl/CMrcExtInputs.h"
 
 
+#ifdef PRODUCT_RZLWS
+#include <Nvl/MrcGlobalDefinitions.h>
+#include "Nvl/CMrcExtInputs.h"
+#endif
+
 #pragma pack (push, 1)
 
 #define CALC_MRC_DDR_TYPE_MAX(x)  ((x) - 1)

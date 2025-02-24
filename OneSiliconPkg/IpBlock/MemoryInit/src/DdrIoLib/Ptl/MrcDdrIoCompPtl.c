@@ -25,6 +25,7 @@
 #include "MrcDdrCommon.h"
 #include "MrcDdrIoComp.h"
 #include "MrcCrosser.h"
+#include "MrcDdr5.h" // for TOdtValueDqDdr5
 
 // RCOMP target values for { RdOdt, WrDS, WrDSCmd, WrDSCtl, WrDSClk } - per DDR Type
 const UINT16 RcompTargetLpddr5Type3[MAX_RCOMP_TARGETS]    = { 40, 27, 30, 30, 30 };
@@ -32,8 +33,6 @@ const UINT16 RcompTargetLpddr5Type4_1R[MAX_RCOMP_TARGETS] = { 40, 27, 30, 30, 25
 const UINT16 RcompTargetLpddr5Type4_2R[MAX_RCOMP_TARGETS] = { 40, 27, 30, 30, 30 };
 
 const UINT16 RcompTargetPDdr5[MAX_RCOMP_TARGETS]          = { 60, 27, 25, 25, 25 };
-
-const UINT8 CompParamList[] = { RdOdt, WrDS, WrDSCmd, WrDSCtl, WrDSClk };
 
 /**
   This function determines default RcompTargets based on CPU type and DDR Type
@@ -175,82 +174,120 @@ MrcDccForceComp (
   return Status;
 }
 
-
 /**
-  This function prints DdrIo COMP registers related to VccDdq.
+  The function preforms a frequency switch Rcomp
 
-  @param[in] MrcData - All the MRC global data.
-
+  @param[in, out] MrcData - MRC global data.
 **/
 VOID
-MrcPrintDdrIoCompVddq (
-  IN MrcParameters* const MrcData
-)
+FreqSwitchComp (
+  IN OUT MrcParameters *const MrcData
+  )
 {
-  MrcDebug* Debug;
-  MrcOutput* Outputs;
-  INT16       CompCodeUp;
-  INT16       CompCodeDn;
-  INT64       GetSetVal;
-  GSM_GT      GlobalCompUp;
-  GSM_GT      GlobalCompDn;
-  UINT32      Index;
+  MrcOutput     *Outputs;
+  INT64  PHClkDutyCycleEnable;
+  INT64  PHClkPhaseEn;
+  INT64  DataDccRankEn;
+  INT64  ClkDccRankEn;
+  INT64  WckDccRankEn;
+  UINT32 Override;
+  INT64  GetSetDis;
+  UINT8  FirstController;
+  UINT8  FirstChannel;
+  UINT8  FirstRank[MAX_CONTROLLER][MAX_CHANNEL];
+  DDRDATA_SHARED0_CR_DDRCRCOMPDQSDELAYCONTROL_STRUCT CompDqsDelayControl;
+
+  Outputs           = &MrcData->Outputs;
+  GetSetDis = 0;
+  FirstController   = Outputs->FirstPopController;
+  FirstChannel      = Outputs->Controller[FirstController].FirstPopCh;
+  // Get the first rank index for each channel
+  // per-channel results will be stored at this index
+  GetFirstRank (MrcData, FirstRank);
+
+  // Save Data
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, ReadFromCache , &PHClkDutyCycleEnable);
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, ReadFromCache , &PHClkPhaseEn);
+  MrcGetSetChStrb (MrcData, FirstController, FirstChannel, 0, GsmDataDccRankEn, ReadFromCache , &DataDccRankEn);
+  MrcGetSetCcc (MrcData, FirstController, FirstChannel, FirstRank[FirstController][FirstChannel], MRC_IGNORE_ARG, GsmClkDccRankEn, ReadFromCache , &ClkDccRankEn);
+  MrcGetSetMcCh (MrcData, FirstController, FirstChannel, GsmWckDccRankEn, ReadFromCache , &WckDccRankEn);
+  CompDqsDelayControl.Data = MrcReadCR (MrcData, DDRDATA_SHARED0_CR_DDRCRCOMPDQSDELAYCONTROL_REG);
+  Override = CompDqsDelayControl.Bits.Override;
+
+  // Disable FSM's to reduce unnecessary change
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, WriteToCache, &GetSetDis);
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, WriteToCache, &GetSetDis);
+  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmDataDccRankEn, WriteToCache, &GetSetDis);
+  MrcGetSetCcc (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MRC_IGNORE_ARG, GsmClkDccRankEn, WriteToCache, &GetSetDis);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmWckDccRankEn, WriteToCache, &GetSetDis);
+
+  MrcFlushRegisterCachedData (MrcData);
+
+  CompDqsDelayControl.Bits.Override = 1;
+  MrcWriteCrMulticast (MrcData, DATASHARED_CR_DDRCRCOMPDQSDELAYCONTROL_REG, CompDqsDelayControl.Data);
+
+  ForceRcomp (MrcData, FullComp);
+
+  // Restore Data
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, WriteToCache, &PHClkDutyCycleEnable);
+  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, WriteToCache, &PHClkPhaseEn);
+  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmDataDccRankEn, WriteToCache, &DataDccRankEn);
+  MrcGetSetCcc (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MRC_IGNORE_ARG, GsmClkDccRankEn, WriteToCache, &ClkDccRankEn);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmWckDccRankEn, WriteToCache, &WckDccRankEn);
+
+  MrcFlushRegisterCachedData (MrcData);
+
+  CompDqsDelayControl.Bits.Override = Override;
+  MrcWriteCrMulticast (MrcData, DATASHARED_CR_DDRCRCOMPDQSDELAYCONTROL_REG, CompDqsDelayControl.Data);
+}
+
+
+
+/**
+  Calculate the frequency using QclkRatio and gear set in PHY WORKPOINT0 register
+
+  @param[in]      MrcData      - Include all MRC global data.
+  @param[in, out] MemoryClock  - The current memory clock.
+  @param[in, out] Ratio        - The current memory ratio setting.
+
+  @retval: The current memory frequency.
+**/
+MrcFrequency
+MrcGetPhyCurrentMemoryFrequency (
+  MrcParameters* const   MrcData,
+  UINT32* const          MemoryClock,
+  MrcClockRatio* const   Ratio
+  )
+{
+  INT64                      GetSetVal;
+  UINT32                     QclkRatioData;
+  INT64                      QclkGearData;
+  MrcOutput                  *Outputs;
+  MrcSaGvPoint               SaGvPoint;
 
   Outputs = &MrcData->Outputs;
-  Debug = &Outputs->Debug;
+  SaGvPoint = Outputs->SaGvPoint;
 
-  // Walk backwards here to match the earlier flow
-  for (Index = (sizeof(CompParamList) / sizeof(CompParamList[0])); Index > 0; Index--) {
-    // Return the new comp code (hardware output)
-    switch (CompParamList[Index - 1]) {
-      case RdOdt:
-        GlobalCompUp = CompRcompOdtUp;
-        GlobalCompDn = CompRcompOdtDn;
-        break;
-      case WrDS:
-        GlobalCompUp = TxRonUp;
-        GlobalCompDn = TxRonDn;
-        break;
-      case WrDSClk:
-        GlobalCompUp = WrDSCodeUpClk;
-        GlobalCompDn = WrDSCodeDnClk;
-        break;
-      case WrDSCmd:
-        GlobalCompUp = WrDSCodeUpCmd;
-        GlobalCompDn = WrDSCodeDnCmd;
-        break;
-      case WrDSCtl:
-      default:
-        GlobalCompUp = WrDSCodeUpCtl;
-        GlobalCompDn = WrDSCodeDnCtl;
-        break;
-    }
+  MrcGetSetFreqIndex (MrcData, SaGvPoint, GsmWorkPointRatio, ReadCached | PrintValue, &GetSetVal);
+  QclkRatioData = (UINT32) GetSetVal;
+  MrcGetSetFreqIndex (MrcData, SaGvPoint, GsmWorkPointGear4, ReadCached | PrintValue, &QclkGearData);
 
-    if (GlobalCompUp == CompRcompOdtUp) {
-      // In Vss mode only odt down is valid
-      if (MrcData->Outputs.OdtMode == MrcOdtModeVss) {
-        GlobalCompUp = GlobalCompDn;
-      } else {
-        GlobalCompDn = GlobalCompUp;
-      }
-    }
-    MrcGetSetNoScope(MrcData, GlobalCompUp, ReadUncached, &GetSetVal);
-    CompCodeUp = (INT16)GetSetVal;
-    MrcGetSetNoScope(MrcData, GlobalCompDn, ReadUncached, &GetSetVal);
-    CompCodeDn = (INT16)GetSetVal;
-
-    //To save code space, RdOdt parameter will print out Up and Down even though only one is valid
-    MRC_DEBUG_MSG (
-      Debug,
-      MSG_LEVEL_NOTE,
-      "  %8s:  Current Comp code (Up/Down): %3d/%3d\n",
-      GlobalCompOffsetStr[CompParamList[Index - 1]],
-      CompCodeUp,
-      CompCodeDn
-    );
-
-    if ((CompCodeUp <= 0) || (CompCodeUp >= 63) || (CompCodeDn <= 0) || (CompCodeDn >= 63)) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "WARNING: COMP code is saturated !\n");
-    }
+  if (QclkGearData == 0) {
+    QclkRatioData *= 2; // In gear2 the actual ratio is twice the ratio in the register
   }
+  if (QclkGearData == 1) {
+    QclkRatioData *= 4; // In gear4 the actual ratio is 4x the ratio in the register
+  }
+
+  if (MemoryClock != NULL) {
+    *MemoryClock = MrcRatioToClock(MrcData, (MrcClockRatio)QclkRatioData);
+  }
+  if (Ratio != NULL) {
+    *Ratio = (MrcClockRatio)QclkRatioData;
+  }
+
+  return MrcRatioToFrequency (
+    MrcData,
+    (MrcClockRatio)QclkRatioData
+  );
 }

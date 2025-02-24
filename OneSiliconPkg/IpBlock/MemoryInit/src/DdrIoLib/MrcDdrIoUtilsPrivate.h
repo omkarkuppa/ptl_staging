@@ -26,19 +26,6 @@
 PRIVATE_HEADER_DEFENDER(MrcDdrIoUtilsPrivate);
 
 
-/**
-  This function does Force Comp and Polls
-
-  @param[in, out] MrcData - Include all MRC global data.
-  @param[in]     CompType - Enum of Comp being forced
-
-  @retval mrcSuccess if Poll returns expected otherwise mrcDeviceBusy.
-**/
-MrcStatus
-WrappedForceRcomp (
-  IN OUT MrcParameters *const MrcData,
-  IN     COMP_CYCLE_TYPE      CompType
-  );
 
 /**
   This function calculates lock threshold.

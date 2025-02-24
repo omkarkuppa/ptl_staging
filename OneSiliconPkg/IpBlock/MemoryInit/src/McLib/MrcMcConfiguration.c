@@ -362,7 +362,7 @@ MrcRoundTripMatch (
           continue;
         }
         // Start rrd_fsm
-        MrcGetSetMcChRnk (MrcData, Controller, Channel, Rank, GsmMccRrdValidTrigger, WriteCached | PrintValue, &GetSetEn);
+        MrcGetSetMcChRnk (MrcData, Controller, Channel, Rank, GsmMccRrdValidTrigger, WriteNoCache | PrintValue, &GetSetEn);
         // Issue one MRR
         MrcIssueMrr (MrcData, Controller, Channel, Rank, mrMR5, MrrData);
         // Poll on FSM to complete

@@ -66,7 +66,6 @@ typedef struct {
   // Begin Outputs Save Data
   MrcDdrType     OutDdrType;
   BOOLEAN        OutLpByteMode;
-  BOOLEAN        OutEnhancedChannelMode;
   BOOLEAN        OutIsLpddr;
   BOOLEAN        OutIsLpddr5;
   BOOLEAN        OutIsDdr5;

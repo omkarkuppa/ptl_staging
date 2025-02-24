@@ -103,4 +103,28 @@ GetVddqControlTarget (
   IN UINT32   VccddqVoltageMv
  );
 
+/**
+  static_pma1 sequence.
+
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+MrcStaticPma1 (
+  IN OUT MrcParameters *const MrcData
+  );
+
+#ifdef HVM_MODE
+/**
+  This function configure Vcc Lvr and Pma1 for HVM runs.
+
+  @param[in] MrcData - Pointer to MRC global data.
+
+  @retval  MrcStatus -  If succeeded, return mrcSuccess
+**/
+MrcStatus
+MrcVccLvrInit (
+  IN MrcParameters *const MrcData
+  );
+#endif // HVM_MODE
+
 #endif // MrcDdrIoLvr_h

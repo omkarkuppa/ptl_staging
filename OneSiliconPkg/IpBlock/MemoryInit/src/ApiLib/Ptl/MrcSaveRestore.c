@@ -943,7 +943,6 @@ MrcSaveMCValues (
   SaveData->IsLP5Camm2             = Outputs->IsLP5Camm2;
   SaveData->LpX                    = Outputs->LpX;
   SaveData->LpByteMode             = Outputs->LpByteMode;
-  SaveData->EnhancedChannelMode    = Outputs->EnhancedChannelMode;
   SaveData->XmpProfileEnable       = Outputs->XmpProfileEnable;
   SaveData->XmpConfigWarning       = (SaveData->XmpConfigWarning || Outputs->XmpConfigWarning);
   SaveData->MaxChannels            = Outputs->MaxChannels;
@@ -954,6 +953,7 @@ MrcSaveMCValues (
   SaveData->GearMode[Outputs->SaGvPoint] = Outputs->GearMode;
   SaveData->FreqMax                = Outputs->FreqMax;
   SaveData->MaxDqBits              = Outputs->MaxDqBits;
+  SaveData->MaxRanks               = Outputs->MaxRanks;
   SaveData->IsCkdSupported         = Outputs->IsCkdSupported;
   SaveData->PmaCceConfig           = (UINT8) Inputs->PmaCceConfig;
   SaveData->TmeEnable              = (UINT8) Inputs->TmeEnable;
@@ -1143,7 +1143,6 @@ MrcRestoreNonTrainingValues (
   Outputs->IsLpddr5               = SaveData->IsLpddr5;
   Outputs->IsDdr5                 = SaveData->IsDdr5;
   Outputs->IsLP5Camm2             = SaveData->IsLP5Camm2;
-  Outputs->EnhancedChannelMode    = SaveData->EnhancedChannelMode;
   Outputs->LpX                    = SaveData->LpX;
   Outputs->LpByteMode             = SaveData->LpByteMode;
   Outputs->XmpProfileEnable       = SaveData->XmpProfileEnable;
@@ -1154,6 +1153,7 @@ MrcRestoreNonTrainingValues (
   Outputs->GearMode               = SaveData->GearMode[SaGvPoint];
   Outputs->Frequency              = SaveData->Frequency[SaGvPoint];
   Outputs->MaxDqBits              = SaveData->MaxDqBits;
+  Outputs->MaxRanks               = SaveData->MaxRanks;
   Outputs->IsCkdSupported         = SaveData->IsCkdSupported;
   Outputs->HighFrequency          = Outputs->Frequency;
   if (Outputs->GearMode == 1) {

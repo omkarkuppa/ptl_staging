@@ -24,6 +24,10 @@
 #include <Ptl/ebh_tables.h>
 
 
+#ifdef PRODUCT_RZLWS
+#include <Nvl/ebh_tables.h>
+#endif
+
 //DRAM decode bit ranges (based on sub channel address)
 #define RANGE_LPDDR5_RANK         15
 #define RANGE_LPDDR5_BG0          12

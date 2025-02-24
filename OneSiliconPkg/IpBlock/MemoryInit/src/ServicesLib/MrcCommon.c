@@ -40,6 +40,7 @@
 
 #ifdef CR_SPEED_FLAG
 #include "MrcOemPlatform.h"
+#include "GreenRegAccess.h"
 #endif
 
 #ifdef MRC_DEBUG_PRINT
@@ -1066,7 +1067,12 @@ MrcWriteCrMulticast (
 #ifdef CR_SPEED_FLAG
   MrcStatsIncrementData (MrcData, MRC_WRITE_CR);
   MrcStatsStartTimer (MrcData, WRITE_CR_TIME);
-  MrcOemMmioWrite32 (Offset, Value);
+  //MrcOemMmioWrite32 (Offset, Value);
+  UINT8 InterfaceId = GetPortInterfaceId (Offset);
+  // Inline RegWrite32() / XtensaWrite32() here for faster CR access
+  TIE_SET_PORT_ID (InterfaceId);
+  // #pragma flush
+  TIE_WRITE (Offset, Value, FullByteEnable);
   MrcStatsEndTimer (MrcData, WRITE_CR_TIME);
 #else
   const MRC_FUNCTION *MrcCall;
@@ -1159,7 +1165,12 @@ MrcWriteCR (
 #ifdef CR_SPEED_FLAG
   MrcStatsIncrementData (MrcData, MRC_WRITE_CR);
   MrcStatsStartTimer (MrcData, WRITE_CR_TIME);
-  MrcOemMmioWrite32 (Offset, Value);
+  //MrcOemMmioWrite32 (Offset, Value);
+  UINT8 InterfaceId = GetPortInterfaceId (Offset);
+  // Inline RegWrite32() / XtensaWrite32() here for faster CR access
+  TIE_SET_PORT_ID (InterfaceId);
+  // #pragma flush
+  TIE_WRITE (Offset, Value, FullByteEnable);
   MrcStatsEndTimer (MrcData, WRITE_CR_TIME);
 #else
   const MRC_FUNCTION *MrcCall;
@@ -1293,7 +1304,15 @@ MrcReadCR (
 #ifdef CR_SPEED_FLAG
   MrcStatsIncrementData (MrcData, MRC_READ_CR);
   MrcStatsStartTimer (MrcData, READ_CR_TIME);
-  Value = MrcOemMmioRead32 (Offset);
+  //Value = MrcOemMmioRead32 (Offset);
+  UINT32 Error;
+  UINT8 InterfaceId = GetPortInterfaceId (Offset);
+  // Inline RegRead32() / XtensaRead32() here for faster CR access
+  TIE_SET_PORT_ID (InterfaceId);
+  //#pragma flush
+  RD_CMD (Offset);
+  //#pragma flush
+  RD_DATA (Error, Value);
   MrcStatsEndTimer (MrcData, READ_CR_TIME);
 #else
   const MRC_FUNCTION *MrcCall;
@@ -2557,7 +2576,8 @@ MrcGetPrePostamble (
       Status = mrcWrongInputParameter;
     }
     if (MrcDdr5GetWritePostambleSetting (MrcData, &WpostVal) == mrcSuccess) {
-      WrPostamble = (UINT8) WpostVal;
+      // DDR5 WRPST is either 0.5tCK or 1.5 tCK; rounding up to 1 or 2 clocks.
+      WrPostamble = (WpostVal == Ddr5tWPOST_0pt5tCK_0) ? 1 : 2;
     } else {
       Status = mrcWrongInputParameter;
     }

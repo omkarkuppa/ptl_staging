@@ -1300,18 +1300,12 @@ ValidPrimaryWidth (
         return FALSE;
         break;
     }
-    if (Width == MRC_SPD_PRIMARY_BUS_WIDTH_16) {
-      Outputs->EnhancedChannelMode = TRUE;
-    }
     IsLpddr = TRUE;
   } else {  // LPDDR5
     IsLpddr = TRUE;
     NumberOfChannels = 1;//Hardcoded
     Width = MRC_SPD_PRIMARY_BUS_WIDTH_16;//Hardcoded
     // We will check for mixed width case later in MrcSpdProcessing()
-    if (Width == MRC_SPD_PRIMARY_BUS_WIDTH_16) {
-      Outputs->EnhancedChannelMode = TRUE;
-    }
   }
 
   switch (Width) {
@@ -1397,7 +1391,7 @@ Ddr5SpdToDensityIndex (
 }
 
 /**
-  Checks if current DRAM density index is valid for current technology/project. The index check follows the 
+  Checks if current DRAM density index is valid for current technology/project. The index check follows the
   SdramCapacityTable defined by JEDEC spec.
 
     @param[in] MrcDimmOut - Pointer to structure containing DIMM information.
@@ -1462,7 +1456,7 @@ ValidBank (
   UINT8        BankGroup;
   UINT8        ValidCheck;
   UINT8        ValidCheckStep;
-  UINT8        SpdDensity; 
+  UINT8        SpdDensity;
 
   Debug       = &MrcData->Outputs.Debug;
   ValidCheck  = TRUE;
@@ -1660,12 +1654,12 @@ UINT8
 TranscodeJedecSpecLPCammSdramDensityPerDie (
   IN OUT MrcParameters* const MrcData,
   IN UINT8 const SdramDensityPerDie
-  ) 
+  )
 {
   MrcDebug   *Debug;
   Debug = &MrcData->Outputs.Debug;
   switch (SdramDensityPerDie) {
-    case 2:  
+    case 2:
       return 1;
 
     case 3:
@@ -1713,7 +1707,7 @@ UINT32
 GetJedecSpecLPCammSize (
   IN OUT MrcParameters* const MrcData,
   IN OUT MrcDimmOut* const DimmOut
-  ) 
+  )
 {
   UINT16     SdramDensityPerDie;
   UINT32     TotalSizeMBytes;
@@ -1722,11 +1716,11 @@ GetJedecSpecLPCammSize (
 
   SdramDensityPerDie = TranscodeJedecSpecLPCammSdramDensityPerDie (MrcData, DimmOut->DensityIndex);
   SdramDensityPerDie *= 1024;//Scale to not lose precision on non power of two values for SdramDensityPerDie.
- 
+
   //The following is straight from the 1.0 JEDEC LP CAMM2 Spec for total size:
   //  DimmSize (GB) = NumOfSubchannelsPerDimm * (PrimaryBusWidthPerSubCh / SdramDieDataWidth) * (SdramDensityPerDie / 8) * PackageRanksPerSubCh
   TotalSizeMBytes = (DimmOut->PrimaryBusWidth / DimmOut->SdramWidth) * (SdramDensityPerDie / 8) * DimmOut->RankInDimm;
-  
+
   return TotalSizeMBytes;
 }
 

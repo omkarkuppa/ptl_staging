@@ -1204,6 +1204,7 @@ MrcSetSafeModeOverrides (
     ExtInputs->TrainingEnables3.ISENSERMT      = 0;
     ExtInputs->TrainingEnables3.QCLKPHALIGN    = 0;
     ExtInputs->TrainingEnables3.RXDQSVOCC      = 0;
+    ExtInputs->TrainingEnables3.WCKCLKRF       = 0;
     ExtInputs->MarginLimitCheck                = 0;
   }
 
@@ -1301,6 +1302,7 @@ MrcSetOverrides (
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Updating Rcomp Resistors: %u\n", ExtInputs->RcompResistor);
   }
 
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Outputs->MaxRanks: %u\n", Outputs->MaxRanks);
   RcompTarget = MrcGetDefaultRcompTarget(MrcData, ExtInputs->MemoryProfile);
   if (NULL == RcompTarget) {
     Status = mrcFail;
@@ -2107,7 +2109,7 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ROUNDTRIPMATCH: %u\nTLINECLKCAL: %u\nDCCPISERIALCAL: %u\nPHASECLKCAL: %u\n", TrainingSteps3->ROUNDTRIPMATCH, TrainingSteps3->TLINECLKCAL,  TrainingSteps3->DCCPISERIALCAL, TrainingSteps3->PHASECLKCAL);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WCKPADDCCCAL: %u\nRDCTLET: %u\nRDDQODTT: %u\nEMPHASIS: %u\n",                TrainingSteps3->WCKPADDCCCAL,   TrainingSteps3->RDCTLET,      TrainingSteps3->RDDQODTT,       TrainingSteps3->EMPHASIS);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DIMMRXOFFSET: %u\nVIEWPINCAL: %u\nQCLKDCC: %u\nWCKCLKPREDCC: %u\n",          TrainingSteps3->DIMMRXOFFSET,   TrainingSteps3->VIEWPINCAL,   TrainingSteps3->QCLKDCC,        TrainingSteps3->WCKCLKPREDCC);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DQSPADDCC: %u\nQCLKPHALIGN: %u\nRXDQSVOCC: %u\n",                            TrainingSteps3->DQSPADDCC,      TrainingSteps3->QCLKPHALIGN,  TrainingSteps3->RXDQSVOCC       /* Reserved3Bit27 */);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DQSPADDCC: %u\nQCLKPHALIGN: %u\nRXDQSVOCC: %u\nWCKCLKRF %u\n",               TrainingSteps3->DQSPADDCC,      TrainingSteps3->QCLKPHALIGN,  TrainingSteps3->RXDQSVOCC,      TrainingSteps3->WCKCLKRF);
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MCREGOFFSET: %u\n", ExtInputs->MCREGOFFSET);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DFETap1StepSize: %u\nDFETap2StepSize: %u\n", ExtInputs->DFETap1StepSize, ExtInputs->DFETap2StepSize);

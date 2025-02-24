@@ -19,14 +19,12 @@
 @par Specification Reference:
 **/
 
-#ifndef _MrcDdrIoComp_h_
-#define _MrcDdrIoComp_h_
+#ifndef MRC_DDR_IO_COMP_H
+#define MRC_DDR_IO_COMP_H
 
+#include "CMrcStatsTracker.h" // for MrcStatsStartTimer()
 #include "CMrcTypes.h"
 #include "CMrcApi.h"
-
-/// Constants
-extern const UINT8 CompParamList[5];
 
 /**
   This function determines default RcompTargets based on CPU type and DDR Type
@@ -90,4 +88,112 @@ MrcPrintDdrIoCompVddq (
   IN MrcParameters* const MrcData
 );
 
-#endif // _MrcDdrIoComp_h_
+/**
+  This function does Force Comp and Polls
+
+  @param[in, out] MrcData - Include all MRC global data.
+  @param[in]     CompType - Enum of Comp being forced
+
+  @retval mrcSuccess if Poll returns expected otherwise mrcDeviceBusy.
+**/
+MrcStatus
+ForceRcomp (
+  IN OUT MrcParameters *const MrcData,
+  IN     COMP_CYCLE_TYPE      CompType
+  );
+
+/**
+  The function preforms a frequency switch Rcomp
+
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+FreqSwitchComp (
+  IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  Retrieve the current memory frequency from PHY and clock from the memory controller.
+
+  @param[in]      MrcData      - Include all MRC global data.
+  @param[in, out] MemoryClock  - The current memory clock.
+  @param[in, out] Ratio        - The current memory ratio setting.
+
+  @retval: The current memory frequency.
+**/
+MrcFrequency
+MrcGetPhyCurrentMemoryFrequency (
+  MrcParameters* const   MrcData,
+  UINT32* const          MemoryClock,
+  MrcClockRatio* const   Ratio
+  );
+
+/**
+  This function programs DdrIo COMP registers and related to VccDdq.
+
+  @param[in] MrcData          - All the MRC global data.
+  @param[in] Print            - Whether to print debug
+  @param[in] VccddqVoltageMv  - Voltage in mV
+
+  @retval mrcSuccess if all registers configured.
+**/
+MrcStatus
+DdrIoSetVddqImpactedCrs (
+  IN MrcParameters *const MrcData,
+  IN BOOLEAN  Print,
+  IN UINT32   VccddqVoltageMv
+  );
+
+/**
+  This function calculates the Up/Dn values for the Param (RdOdt/WrDS/WrDSCmd/WrDSCtl/WrDSClk).
+
+  @param[in]   MrcData - All the MRC global data.
+  @param[in]   Param   - Parameter to calculate Up/Dn values
+  @param[in]   RcompTarget - RcompTarget Override
+  @param[in]   Print       - Print out or not
+  @param[out]  UpValue     - Value for Up component.
+  @param[out]  DnValue     - Value for Dn component.
+
+  @retval mrcSuccess if Param is supported
+  @retval mrcFail otherwise
+**/
+MrcStatus
+CalcUpDnVref (
+  IN MrcParameters *const MrcData,
+  IN UINT32    Param,
+  IN UINT16    RcompTarget[MAX_RCOMP_TARGETS],
+  IN BOOLEAN   Print,
+  OUT INT16    *UpValue,
+  OUT INT16    *DnValue
+  );
+
+/**
+  This function calculates the Dq Rtarg_pup value using Vref_pupcode formula:
+  Vref_pupcode = 193 * (Rext / (Rext + Rtarg_pup))
+  Rtarg_pup = Rext * ((193 / Vref_pupcode) - 1)
+
+  @param[in] MrcData          - All the MRC global data.
+  @param[in] DqVrefUpValue    - The DqVrefUp value.
+
+  @retval Returns Dq Rtarg_pup value
+**/
+UINT32
+CalcDQRodtValueFromDqOdtVrefUp (
+  IN MrcParameters *const MrcData,
+  IN UINT32  DqVrefUpValue
+  );
+
+/**
+  Run the comp engine continuously. If the comp completes before the timeout, run it again.
+  @param[in, out] MrcData - Include all MRC global data.
+  @param[in]     TestLength  - Run time in us
+  @retval mrcSuccess Poll returns expected
+  @retval mrcDeviceBusy did not return expected.
+**/
+MrcStatus
+ForceRcompContinuous (
+  IN OUT MrcParameters* const MrcData,
+  IN     UINT32               TestLength
+  );
+
+#endif // MRC_DDR_IO_COMP_H

@@ -707,11 +707,11 @@ GetPhyWr2WrTA (
       MinPiCode = MIN (MinPiCode, ((TxPathResults->MinTxDq[Controller][Channel] + TxPathResults->MinTxDqBit[Controller][Channel])));
       MaxPiCode = MAX (MaxPiCode, ((UINT32) (TxPathResults->MaxTxDq[Controller][Channel] + TxPathResults->MaxTxDqBit[Controller][Channel])));
       if (IsDdr5) {
-        // PHYWr2Wr_PI = 128*( (Gear4?3:2) + 0.75 + PIXover + 1  +  WrPreambleT + WrPreambleLow) + DeltaPICode + GuardBand
+        // PHYWr2Wr_PI = 128*( (Gear4?3:2) + 0.75 + PIXover + 1 + WRPRE + WRPST) + DeltaPICode + GuardBand
         //  DeltaPICode = DeltaPICode = MAXRANK(TXCONTROL0RANK{PopRanks}.TxDqsDelayPi) - MINRANK(TXCONTROL0RANK{PopRanks}.TxDqsDelayPi)
         //  PIXover = Gear4 ? MAXRANK( (TXCONTROL0RANK{PopRanks}.TxDqsDelayPi>>7) & 0x1 ) : 0
         DeltaPiCode = TxPathResults->DeltaPiCode[Controller][Channel];
-        PIXover = (IsGear4 ? (TxPathResults->MaxTxDqs[Controller][Channel] >> 7 & 0x1) : 0) + WrPreambleT + WrPostamble;
+        PIXover = (IsGear4 ? (TxPathResults->MaxTxDqs[Controller][Channel] >> 7 & 0x1) : 0) + WrPreambleT + WrPreambleLow + WrPostamble;
       } else {
         // PHYWr2Wr_PI = 128*( (Gear4?3:2) + 0.75 + PIXover + 1) + DeltaPICode + DramWriteDriftPI + GuardBand
         //  MaxPICode = MAXRANK(TXCONTROL0RANK{PopRanks}.TxDqDelay) + MAXLANE( DDRDATADQRank{PopRanks}Lane{7:0}.TxDQPerBitDeskew ))

@@ -62,7 +62,6 @@ MrcSaveStaticSpdData (
   StaticSpdData->OutDdrType             = Outputs->DdrType;
   StaticSpdData->OutLpX                 = Outputs->LpX;
   StaticSpdData->OutLpByteMode          = Outputs->LpByteMode;
-  StaticSpdData->OutEnhancedChannelMode = Outputs->EnhancedChannelMode;
   StaticSpdData->OutIsLpddr             = Outputs->IsLpddr;
   StaticSpdData->OutIsLpddr5            = Outputs->IsLpddr5;
   StaticSpdData->OutIsDdr5              = Outputs->IsDdr5;
@@ -164,7 +163,6 @@ MrcRestoreStaticSpdData (
   Outputs->DdrType             = StaticSpdData->OutDdrType;
   Outputs->LpX                 = StaticSpdData->OutLpX;
   Outputs->LpByteMode          = StaticSpdData->OutLpByteMode;
-  Outputs->EnhancedChannelMode = StaticSpdData->OutEnhancedChannelMode;
   Outputs->IsLpddr             = StaticSpdData->OutIsLpddr;
   Outputs->IsLpddr5            = StaticSpdData->OutIsLpddr5;
   Outputs->IsDdr5              = StaticSpdData->OutIsDdr5;

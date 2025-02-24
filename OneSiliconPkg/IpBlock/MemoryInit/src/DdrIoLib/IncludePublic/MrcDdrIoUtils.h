@@ -103,35 +103,6 @@ MrcGetGBDrift (
   );
 
 /**
-  This function does Force Comp and Polls
-
-  @param[in, out] MrcData - Include all MRC global data.
-  @param[in]     CompType - Enum of Comp being forced
-
-  @retval mrcSuccess if Poll returns expected otherwise mrcDeviceBusy.
-**/
-MrcStatus
-ForceRcomp (
-  IN OUT MrcParameters *const MrcData,
-  IN     COMP_CYCLE_TYPE      CompType
-  );
-
-/**
-  Run the comp engine continuously. If the comp completes before the timeout, run it again.
-
-  @param[in, out] MrcData - Include all MRC global data.
-  @param[in]     TestLength  - Run time in us
-
-  @retval mrcSuccess Poll returns expected
-  @retval mrcDeviceBusy did not return expected.
-**/
-MrcStatus
-ForceRcompContinuous (
-  IN OUT MrcParameters* const MrcData,
-  IN     UINT32               TestLength
-  );
-
-/**
   This function configures the Data Invert Nibble feature in the Phy based on the Phy ODT configuration
 
   @param[in]  MrcData - Pointer to MRC global data.
@@ -286,16 +257,6 @@ MrcCalcRatio33 (
 **/
 VOID
 CbMixMuxConfig (
-  IN OUT MrcParameters *const MrcData
-  );
-
-/**
-  The function preforms a frequency switch Rcomp
-
-  @param[in, out] MrcData - MRC global data.
-**/
-VOID
-FreqSwitchComp (
   IN OUT MrcParameters *const MrcData
   );
 
@@ -527,22 +488,6 @@ VOID
 MrcProgramPostCode (
   IN MrcParameters* const MrcData,
   IN INT64          PostCode
-  );
-
-/**
-  Retrieve the current memory frequency from PHY and clock from the memory controller.
-
-  @param[in]      MrcData      - Include all MRC global data.
-  @param[in, out] MemoryClock  - The current memory clock.
-  @param[in, out] Ratio        - The current memory ratio setting.
-
-  @retval: The current memory frequency.
-**/
-MrcFrequency
-MrcGetPhyCurrentMemoryFrequency (
-  MrcParameters* const   MrcData,
-  UINT32* const          MemoryClock,
-  MrcClockRatio* const   Ratio
   );
 
 /**

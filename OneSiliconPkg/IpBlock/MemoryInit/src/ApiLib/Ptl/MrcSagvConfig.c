@@ -32,7 +32,7 @@ SaGvTypes SagvFreqPor8533plus[MAX_SAGV_POINTS] = {
 SaGvTypes SagvFreqPor[CALC_MRC_DDR_TYPE_MAX (MAX_MRC_DDR_TYPE)][MAX_SAGV_POINTS] = {
   //       0,             1,               2,               3
   {LowBwSaGv,     MidBwSaGv,   RfiHighBwSaGv,      HighBwSaGv}, // LPDDR5
-  {LowBwSaGv, RfiHighBwSaGv,      HighBwSaGv,  LowLatencySaGv}, // DDR5
+  {LowBwSaGv,     MidBwSaGv,   RfiHighBwSaGv,      HighBwSaGv}, // DDR5
 };
 
 // LPDDR5/x Supported Frequencies
@@ -158,7 +158,7 @@ MrcCalcSagvTypeConfig (
     break;
 
   case MidBwSaGv:
-    Freq = f4800;
+    Freq = IsLpddr5 ? f4800 : f3200;
     Gear = 4;
     break;
 

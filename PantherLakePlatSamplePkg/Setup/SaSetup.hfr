@@ -589,6 +589,7 @@
           option text = STRING_TOKEN(STR_DDR3_FREQ_5400_STRING), value = 5400, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_5600_STRING), value = 5600, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_6400_STRING), value = 6400, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DDR3_FREQ_7200_STRING), value = 7200, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_7467_STRING), value = 7467, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_8533_STRING), value = 8533, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_9600_STRING), value = 9600, flags = RESET_REQUIRED;
@@ -621,6 +622,7 @@
           option text = STRING_TOKEN(STR_DDR3_FREQ_5400_STRING), value = 5400, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_5600_STRING), value = 5600, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_6400_STRING), value = 6400, flags = RESET_REQUIRED;
+          option text = STRING_TOKEN(STR_DDR3_FREQ_7200_STRING), value = 7200, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_7467_STRING), value = 7467, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_8533_STRING), value = 8533, flags = RESET_REQUIRED;
           option text = STRING_TOKEN(STR_DDR3_FREQ_9600_STRING), value = 9600, flags = RESET_REQUIRED;

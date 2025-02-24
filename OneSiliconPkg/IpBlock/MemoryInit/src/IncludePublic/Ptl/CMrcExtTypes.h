@@ -158,7 +158,7 @@ typedef struct {
   UINT32 QCLKPHALIGN : 1;     ///< BIT25 - MC QClk Ph QClk Align Calibration
   UINT32 RXDQSVOCC : 1;       ///< BIT26 - RxDqs VOC Centering Training
   UINT32 ISENSERMT : 1;       ///< BIT27 - Current Sensor RMT
-  UINT32 Reserved3Bit28 : 1;  ///< BIT28 - Reserved
+  UINT32 WCKCLKRF : 1;        ///< BIT28 - DCC WCK/CLK RiseFall
   UINT32 Reserved3Bit29 : 1;  ///< BIT29 - Reserved
   UINT32 Reserved3Bit30 : 1;  ///< BIT30 - Reserved
   UINT32 Reserved3Bit31 : 1;  ///< BIT31 - Reserved

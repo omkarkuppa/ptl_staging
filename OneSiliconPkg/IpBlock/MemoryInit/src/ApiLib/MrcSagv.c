@@ -331,13 +331,6 @@ MrcSaGvSwitch (
   }
 
   if (ExtInputs->RealtimeMemoryFrequency && (Outputs->SaGvPoint != MrcSaGvPoint0)) {
-    /*
-     * MRC-Comment:RestrictedBegin
-     * HSD 15014944558
-     * Todo: need talk to PCU to force to run at MrcSaGvPoint0
-     * Perhaps need add mailbox codes
-     * MRC-Comment:RestrictedEnd
-     */
   }
 
   return Status;

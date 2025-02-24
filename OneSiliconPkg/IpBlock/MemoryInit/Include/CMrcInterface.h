@@ -27,8 +27,16 @@
 #include <Ptl/CMrcExtTypes.h>
 
 
+#ifdef PRODUCT_RZLWS
+#include <Nvl/CMrcExtTypes.h>
+#endif
+
 #include <Ptl/MrcGenSaveRestoreRegCount.h>
 
+
+#ifdef PRODUCT_RZLWS
+#include <Nvl/MrcGenSaveRestoreRegCount.h>
+#endif
 
 #define CPUID_FULL_FAMILY_MODEL_LUNARLAKE_MOBILE 0x000B06D0
 
@@ -627,7 +635,8 @@ typedef enum {
   OemRmtPerBit,             ///< before Rank Margin Tool Per Bit training
   OemRmtLvr,                ///< before Lvr Rmt
   OemDllDccCal,             ///< before Initializing DLL Duty Cycle Correction
-  OemDccRiseFall,           ///< before Duty Cycle Correction for Rise/Fall Alignment
+  OemDccWckClkRiseFall,     ///< before Duty Cycle Correction for WCK/CLK Rise/Fall Alignment
+  OemDccRiseFall,           ///< before Duty Cycle Correction for DQS Rise/Fall Alignment
   OemVccClkRxFfCal,         ///< before VccClkRx FeedForward Leg Calibration
   OemRxDqsDcc,              ///< before Duty Cycle Correction for RxDqs
   OemPrintDdrMrs,           ///< before the printing non-LPDDR$ MRs
@@ -675,6 +684,7 @@ typedef enum {
   OemDqsPadDcc,             ///< before DQS PAD DCC Optimization
   OemRxDqsVoc,              ///< before RxDqs VOC Centering
   OemDunitTatOptimization,  ///< before Dunit TAT optimization
+  OemVccLvrInit,            ///< before Vcc Lvr init configuration
   ///
   ///*********************************************************************************
   ///
@@ -1334,12 +1344,18 @@ typedef enum {
 typedef enum {
   ipVerDdrIoMtl = 7,         ///< Gen7: MeteorLake
   ipVerDdrIoLnlPtl = 8,      ///< Gen8: LunarLake / PantherLake
+#ifdef PRODUCT_RZLWS
+  ipVerDdrIoNvl = 10         ///< Gen10: NovaLake
+#endif
 } MrcDdrIoIpVer;
 
 /// Define the Version of IP for MC.
 typedef enum {
   ipVerMcMtl = 9,       ///< Gen9: MeteorLake
   ipVerMcLnlPtl = 10,   ///< Gen10: LunarLake/PantherLake
+#ifdef PRODUCT_RZLWS
+  ipVerMcNvl = 11,      ///< Gen11: NovaLake
+#endif
 } MrcMcIpVer;
 
 /// Define the MRC Test Environment
@@ -1932,7 +1948,6 @@ typedef struct {
   UINT8           MaxChannels;                              ///< Maximum number of channels supported by the controller varies per technology.
   UINT8           BurstLength;                              ///< Burst length in DCLKs
   BOOLEAN         LpByteMode;                               ///< DRAM die width is x8 (Byte mode).
-  BOOLEAN         EnhancedChannelMode;                      ///< Indicates if 64-bit channel is subdivided into two 32-bit channels.
   UINT8           XmpProfileEnable;                         ///< XMP capable DIMMs detected in system. Bit 0 is XMP1, ...
   BOOLEAN           Is2RankDdr5;                   ///< TRUE if any DDR5 2R Dimm is populated.
   BOOLEAN           XmpConfigWarning;              ///< XMP Dimm Config Warning - 1DPC capable but installed 2DPC
@@ -1975,6 +1990,7 @@ typedef struct {
   UINT8             Ibecc;
   UINT8             TmeEnable;
   UINT8             PmaCceConfig;
+  UINT8             MaxRanks;                     ///< Maximum number of ranks detected in any channel on the Phy. Per Channel MaxRanks may be different.
   UINT8             ReservedBytesAlign[4];        ///< Align to 4 bytes for MrcSavedata
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back
@@ -2076,7 +2092,6 @@ typedef struct {
   BOOLEAN             IsLpddr5;                       ///< TRUE if current memory type is LPDDR5
   BOOLEAN             IsDdr5;                         ///< TRUE if current memory type is DDR5
   BOOLEAN             IsDvfsqEnabled;                 ///< TRUE if DVFSQ is enabled for a given GV point, which is determined by Inputs.DvfsqEnabled && Frequency <= f3200.
-  BOOLEAN             EnhancedChannelMode;            ///< Indicates the controller's smallest channel size is bifurcated
   BOOLEAN             DramDqOdtEn;                    ///< Specifies if the DRAM DQ ODT is enabled.
   BOOLEAN             LpByteMode;                     ///< DRAM die width is x8 (Byte mode).
   BOOLEAN             Gear4Ever;                      ///< If any SAGV point was Gear4, then this is TRUE otherwise FALSE.
@@ -2161,7 +2176,7 @@ typedef struct {
   BOOLEAN             IsLoopbackSetupDone;
   BOOLEAN             WeaklockEn;                  ///< Weaklock enable
   BOOLEAN             RxDqsDelayCompEn;            ///< Rx DQS Delay Comp enable
-  UINT8               ReservedBytesAlign[2];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  UINT8               ReservedBytesAlign[3];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   MrcIpTestEnv        IpModel;
   MrcDdrType          DdrType;                     ///< Current memory type: DDR5, LPDDR5
   MrcSaGvPoint        SaGvFirst;                   ///< First SaGv Point to be trained

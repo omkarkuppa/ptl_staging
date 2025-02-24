@@ -797,16 +797,6 @@ VOID MrcGetDdrPhyWeights (
   );
 
 /**
-  static_pma1 sequence - platform specific registers
-
-  @param[in, out] MrcData - MRC global data.
-**/
-VOID
-MrcStaticPma1PlatformSpecific (
-  IN OUT MrcParameters *const MrcData
-  );
-
-/**
   This function configures the Power Metering weights.
 
   @param[in out]  MrValue     - MR value.

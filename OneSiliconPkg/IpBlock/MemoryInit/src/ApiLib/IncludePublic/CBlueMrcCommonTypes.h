@@ -81,17 +81,41 @@ typedef enum {
   RxCompDqsDelayP,
   RxCompDqsDelayN,
   RxCompDqsOffset,
-  CompRcompOdtUp,               ///< The resistive value of the pull-up block of on die termination
-  CompRcompOdtDn,               ///< The resistive value of the pull-dn block of on die termination
   WrDSCodeUpCmd,                ///< RcompUp Code for Write Drive Strength-Cmd
   WrDSCodeUpCtl,                ///< RcompUp Code for Write Drive Strength-Ctl
   WrDSCodeUpClk,                ///< RcompUp Code for Write Drive Strength-Clk
   WrDSCodeDnCmd,                ///< RcompDown Code for Write Drive Strength-Cmd
   WrDSCodeDnCtl,                ///< RcompDown Code for Write Drive Strength-Ctl
   WrDSCodeDnClk,                ///< RcompDown Code for Write Drive Strength-Clk
+  DqOdtVrefUp,
+  DqOdtVrefDn,
+  DqDrvVrefUp,
+  DqDrvVrefDn,
+  ClkDrvVrefUp,
+  ClkDrvVrefDn,
+  CmdDrvVrefUp,
+  CmdDrvVrefDn,
+  CtlDrvVrefUp,
+  CtlDrvVrefDn,
+  CompRcompOdtUp,               ///< The resistive value of the pull-up block of on die termination
+  CompRcompOdtDn,               ///< The resistive value of the pull-dn block of on die termination
                                 ///< -----------------------------------------------------------------
   EndOfPhyMarker,               ///< Marker for end of phy groups.
                                 ///< -----------------------------------------------------------------
+  GsmIocCccCaVoltageSelect,
+  GsmIocCccCtlVoltageSelect,
+  GsmIocCccClkVoltageSelect,
+  GsmIocWckClkVoltageSelect,
+  GsmIocCccTxCANmosOnly,
+  GsmIocCccTxCTLNmosOnly,
+  GsmIocCccTxCLKNmosOnly,
+  GsmIocWckTxCLKNmosOnly,
+  GsmIocDisWckPupDcc,
+  GsmIocDataTxDqNmosOnly ,
+  GsmIocCompTxCANmosOnly ,
+  GsmIocCompTxCTLNmosOnly,
+  GsmIocCompTxCLKNmosOnly,
+  GsmIocCompTxDqNmosOnly,
   GsmIocIoReset,                ///< Used to reset the DDR IO.
   GsmIocDccClkGateDisable,
   GsmTrainWCkEn,

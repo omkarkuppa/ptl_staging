@@ -27,6 +27,7 @@
 #include "MrcRegisterStruct.h"
 #include "MrcCommon.h"
 #include "MrcTurnAround.h"
+#include "MrcDdrIoComp.h"
 
 extern const char *GlobalCompOffsetStr[];
 
@@ -812,6 +813,30 @@ MrcCheckDccCodeSaturate (
   );
 
 /**
+  This function does DQ/DQS/Fall DCC calibration
+
+  @param[in, out] MrcData - Include all MRC global data.
+
+  @retval mrcSuccess if DCC converges otherwise mrcFail.
+**/
+MRC_IRAM0_FUNCTION
+MrcStatus
+MrcDccRiseFall (
+  IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  This function does WCK/CLK Rise/Fall DCC calibration
+  @param[in, out] MrcData - Include all MRC global data.
+  @retval mrcSuccess if DCC converges otherwise mrcFail.
+**/
+MRC_IRAM0_FUNCTION
+MrcStatus
+MrcDccRiseFallWckClk (
+  IN OUT MrcParameters *const MrcData
+  );
+
+/**
   This function does sweeping of DQ/DQS Rise/Fall DCC calibration
 
   @param[in, out] MrcData - Include all MRC global data.
@@ -910,59 +935,6 @@ GetVTarget (
   );
 
 /**
-  This function calculates the AuxClk based on QClkRatio/PHClkRatio.
-
-  @param[in, out] MrcData - All the MRC global data.
-  @param[in]      Ratio33 - QClkRatio/PHClkRatio
-
-  @returns AuxClk.
-**/
-UINT32
-GetAuxClk (
-  IN MrcParameters *const MrcData,
-  IN UINT32               Ratio33
-  );
-
-/**
-  This function programs DdrIo COMP registers and related to VccDdq.
-
-  @param[in] MrcData          - All the MRC global data.
-  @param[in] Print            - Whether to print debug
-  @param[in] VccddqVoltageMv  - Voltage in mV
-
-  @retval mrcSuccess if all registers configured.
-**/
-MrcStatus
-DdrIoSetVddqImpactedCrs (
-  IN MrcParameters *const MrcData,
-  IN BOOLEAN  Print,
-  IN UINT32   VccddqVoltageMv
-  );
-
-/**
-  This function calculates the Up/Dn values for the Param (RdOdt/WrDS/WrDSCmd/WrDSCtl/WrDSClk).
-
-  @param[in]   MrcData - All the MRC global data.
-  @param[in]   Param   - Parameter to calculate Up/Dn values
-  @param[in]   RcompTarget - RcompTarget Override
-  @param[in]   Print       - Print out or not
-  @param[out]  UpValue     - Value for Up component.
-  @param[out]  DnValue     - Value for Dn component.
-
-  @retval mrcSuccess if Param is supported
-  @retval mrcFail otherwise
-**/
-MrcStatus
-CalcUpDnVref (
-  IN MrcParameters *const MrcData,
-  IN UINT32    Param,
-  IN UINT16    RcompTarget[MAX_RCOMP_TARGETS],
-  IN BOOLEAN   Print,
-  OUT INT16    *UpValue,
-  OUT INT16    *DnValue
-  );
-
-/**
   This function toggles the LargeChangeReset bit for the requested DCC types (DATA/CLK/WCK) with a 10ns wait between setting and clearing
   as well as setting LargeChangeEnable for the requested DCC types.
   Will only target populated partitions (DATA/CLK/WCK) via GetSet multicast.
@@ -974,22 +946,6 @@ VOID
 MrcLargeChangeResetSetup (
   IN  MrcParameters *const MrcData,
   IN  UINT32  DccTypeMask
-  );
-
-/**
-  This function calculates the Dq Rtarg_pup value using Vref_pupcode formula:
-  Vref_pupcode = 193 * (Rext / (Rext + Rtarg_pup))
-  Rtarg_pup = Rext * ((193 / Vref_pupcode) - 1)
-
-  @param[in] MrcData          - All the MRC global data.
-  @param[in] DqVrefUpValue    - The DqVrefUp value.
-
-  @retval Returns Dq Rtarg_pup value
-**/
-UINT32
-CalcDQRodtValueFromDqOdtVrefUp (
-  IN MrcParameters *const MrcData,
-  IN UINT32  DqVrefUpValue
   );
 
 /**
@@ -2447,73 +2403,6 @@ SetPhyRxMode (
   );
 
 /**
-  Set up initial DCC values and also save and restore few DCC related fields
-
-  @param[in, out] MrcData                          - Include all MRC global data.
-  @param[in]      Save                             - Save/restore initial DCC values.
-  @param[in]      SenseAtRxDll                     - SenseAtRxDll.
-  @param[in]      DccSample                        - DCC samples the target clock 2^n times to measure duty cycle
-  @param[in, out] SaveRxCompDqsDelayP              - Save RxCompDqsDelayP per byte
-  @param[in, out] SaveRxCompDqsDelayN              - Save RxCompDqsDelayN per byte
-  @param[in, out] SaveRxDqsPDelay                  - Save RxDqsPDelay per byte
-  @param[in, out] SaveRxDqsNDelay                  - Save RxDqsNDelay per byte
-  @param[in, out] SaveRxDqsBitDelay                - Save RxDqsBitDelay per bit
-  @param[in, out] SaveRxDqsBitOffset               - Save RxDqsBitOffset per bit
-  @param[in, out] SaveDqsIdleModeDrvEn             - Save DqsIdleModeDrvEn
-  @param[in, out] SaveCompDqsDelayControlOverride  - Save DDRCRCOMPDQSDELAYCONTROL Override
-**/
-VOID
-SetupDccAccData (
-  IN OUT MrcParameters *const MrcData,
-  IN     BOOLEAN              Save,
-  IN     BOOLEAN              SenseAtRxDll,
-  IN     INT64                DccSample,
-  IN OUT INT64                SaveRxCompDqsDelayP[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM],
-  IN OUT INT64                SaveRxCompDqsDelayN[MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM],
-  IN OUT INT64                SaveRxDqsPDelay[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM],
-  IN OUT INT64                SaveRxDqsNDelay[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM],
-  IN OUT INT64                SaveRxDqsBitDelay[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS],
-  IN OUT INT64                SaveRxDqsBitOffset[MAX_RANK_IN_CHANNEL][MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM][MAX_BITS],
-  IN OUT UINT32               *SaveDqsIdleModeDrvEn,
-  IN OUT UINT32               *SaveCompDqsDelayControlOverride
-  );
-
-/**
-  This function responsible to invoke DCC FSM
-  reads the results and sums the results.
-
-  @param[in, out] MrcData - Include all MRC global data.
-  @param[in]      SenseAtRxDll - SenseAtRxDll.
-  @param[in, out] DccResultPassStrobe - return the result per byte
-
-  @retval mrcSuccess if DCC converges
-  @retval mrcFail otherwise
-**/
-MrcStatus
-RunDccAccRxDqs (
-  IN OUT MrcParameters* const MrcData,
-  IN     BOOLEAN              SenseAtRxDll,
-  IN OUT UINT32 DccResultPassStrobe [MAX_CONTROLLER][MAX_CHANNEL][MAX_SDRAM_IN_DIMM]
-  );
-
-
-/**
-  This function responsible for adjusting RxDqs Voc Code
-
-  @param[in, out] MrcData      - Include all MRC global data.
-  @param[in, out] RxDqsVocCode - voccode is RxDqsAmpOffset given in [0..31] range.
-  @param[in     ] Status       - latest run result status 'low' or 'high' from DccTarget/2.
-  @param[in, out] Saturate     - returns if one of the range limits were reached.
-**/
-VOID
-AdjustRxDqsVocCode (
-  IN OUT MrcParameters* const MrcData,
-  IN OUT UINT8*               RxDqsVocCode,
-  IN     DCC_STATUS           Status,
-  IN OUT BOOLEAN*             Saturate
-  );
-
-/**
   This function returns the offset to access specific Channel/Rank/Strobe/Bit of DataDqRankXLaneY.
 
   @param[in]  Channel - 0-based index of Channel to access.
@@ -2785,16 +2674,6 @@ PhaseWacAMoleAlgo (
 VOID
 RefPiControlInit (
   IN  MrcParameters *const MrcData
-  );
-
-/**
-  static_pma1 sequence.
-
-  @param[in, out] MrcData - MRC global data.
-**/
-VOID
-MrcStaticPma1 (
-  IN OUT MrcParameters *const MrcData
   );
 
 /**

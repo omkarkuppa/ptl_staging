@@ -184,4 +184,5 @@
 #define MRC_DUNIT_TAT_OPTIMIZATION      (0xDD8D)
 #define MRC_TXDQS_DCC                   (0xDD8E)
 #define MRC_CURRENT_SENSOR_RMT          (0xDD8F)
+#define MRC_VCC_LVR_INIT                (0xDD90)
 #endif

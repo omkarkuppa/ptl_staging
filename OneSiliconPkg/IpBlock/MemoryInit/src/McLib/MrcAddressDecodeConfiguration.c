@@ -100,7 +100,7 @@ ZoneConfiguration (
   MrcGetSetMc (MrcData, Controller, GsmMccHashMask, WriteToCache | PrintValue, &HashMask);
 
   SubChannelHash.Data = 0;
-  if (IsLpddr && Outputs->EnhancedChannelMode && FullLpChPop) {
+  if (IsLpddr && FullLpChPop) {
     // HASH can only be enabled if all LPDDR channels are populated on the controller.
     // If RI is off, HASH must be off.
     if (ExtInputs->SubChHashOverride == TRUE) {

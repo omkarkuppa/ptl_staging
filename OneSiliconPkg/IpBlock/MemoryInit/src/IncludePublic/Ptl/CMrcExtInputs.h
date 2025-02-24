@@ -276,7 +276,13 @@ typedef struct {
   UINT8   RowPressEn;                     ///< Offset 324 Enable/disable ROW PRESS feature
   UINT8   WeaklockEn;                     ///< Offset 325 Weak Lock Enable: <b>0=Auto</b>, 1=Enable, 2=Disable
   UINT8   RxDqsDelayCompEn;               ///< Offset 326 Rx DQS Delay Comp Enable: <b>0=Auto</b>, 1=Enable, 2=Disable
-  UINT8   Reserved327[61];                ///< Offset 327 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (388) = 416 should be a multiple of 8 bytes.
+
+  UINT8  RxDqsStepSizeLB            : 2;  ///< Offset 327 Bit 0-1  Control RxDqs step size for Dq Loopback test
+  UINT8  RxVrefStepSizeLB           : 2;  ///<            Bit 2-3  Control RxVref step size for Dq Loopback test
+  UINT8  TxStepSizeLB               : 2;  ///<            Bit 4-5  Control Tx step size for Dq Loopback test
+  UINT8  ReservedBitsLB             : 2;  ///<            Bit 5-7  Reserved
+
+  UINT8   Reserved328[60];                ///< Offset 328 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (388) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

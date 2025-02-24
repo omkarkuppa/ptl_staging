@@ -179,8 +179,8 @@
 #define MRC_EXT_INPUTS_INIT_VAL_DQSPADDCC              (0)  // BIT24
 #define MRC_EXT_INPUTS_INIT_VAL_QCLKPHALIGN            (0)  // BIT25
 #define MRC_EXT_INPUTS_INIT_VAL_RXDQSVOCC              (0)  // BIT26
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit27         (0)  // BIT27
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit28         (0)  // BIT28
+#define MRC_EXT_INPUTS_INIT_VAL_ISENSERMT              (0)  // BIT27
+#define MRC_EXT_INPUTS_INIT_VAL_WCKCLKRF               (0)  // BIT28
 #define MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit29         (0)  // BIT29
 #define MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit30         (0)  // BIT30
 #define MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit31         (0)  // BIT31
@@ -355,8 +355,8 @@
 #define MRC_EXT_INPUTS_INIT_VAL_AdjustWckMode            (3)
 #define MRC_EXT_INPUTS_INIT_VAL_TelemetryControl         (0)
 #define MRC_EXT_INPUTS_INIT_VAL_SpineAndPhclkGateControl (0)
-#define MRC_EXT_INPUTS_INIT_VAL_SpineGatePerLpmode       (0)
-#define MRC_EXT_INPUTS_INIT_VAL_PhclkGatePerLpmode       (0)
+#define MRC_EXT_INPUTS_INIT_VAL_SpineGatePerLpmode       (0x7)//lpmode05=0x1,              lpmode2=0x1, lpmode3=0x1,lpmode4=0x0
+#define MRC_EXT_INPUTS_INIT_VAL_PhclkGatePerLpmode       (0)  //lpmode05=0x0, lpmode1=0x0, lpmode2=0x0, lpmode3=0x0,lpmode4=0x0
 #define MRC_EXT_INPUTS_INIT_VAL_DisableSwitchDfiToMc     (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DqLoopbackTest           (0)
 #define MRC_EXT_INPUTS_INIT_VAL_DunitTatOptimization     (0)
@@ -366,7 +366,12 @@
 #define MRC_EXT_INPUTS_INIT_VAL_WeaklockEn                      (MrcAuto)
 #define MRC_EXT_INPUTS_INIT_VAL_RxDqsDelayCompEn                (MrcAuto)
 
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved327                     {0}
+#define MRC_EXT_INPUTS_INIT_VAL_RxDqsStepSizeLB          (1)
+#define MRC_EXT_INPUTS_INIT_VAL_RxVrefStepSizeLB         (2)
+#define MRC_EXT_INPUTS_INIT_VAL_TxStepSizeLB             (1)
+#define MRC_EXT_INPUTS_INIT_VAL_ReservedBitsLB        (0)
+
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved328                     {0}
 
 #ifdef MRC_MINIBIOS_BUILD
 #define MRC_INT_INPUTS_INIT_VAL_LpFreqSwitch                            (0)
@@ -546,8 +551,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
       MRC_EXT_INPUTS_INIT_VAL_DQSPADDCC,         // BIT24
       MRC_EXT_INPUTS_INIT_VAL_QCLKPHALIGN,       // BIT25
       MRC_EXT_INPUTS_INIT_VAL_RXDQSVOCC,         // BIT26
-      MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit27,    // BIT27
-      MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit28,    // BIT28
+      MRC_EXT_INPUTS_INIT_VAL_ISENSERMT,         // BIT27
+      MRC_EXT_INPUTS_INIT_VAL_WCKCLKRF,          // BIT28
       MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit29,    // BIT29
       MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit30,    // BIT30
       MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit31,    // BIT31
@@ -732,11 +737,15 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_DqLoopbackTest,
     MRC_EXT_INPUTS_INIT_VAL_DunitTatOptimization,
     MRC_EXT_INPUTS_INIT_VAL_SvReservedBits,
-
     MRC_EXT_INPUTS_INIT_VAL_RowPressEn,
     MRC_EXT_INPUTS_INIT_VAL_WeaklockEn,
     MRC_EXT_INPUTS_INIT_VAL_RxDqsDelayCompEn,
-    MRC_EXT_INPUTS_INIT_VAL_Reserved327,
+    MRC_EXT_INPUTS_INIT_VAL_RxDqsStepSizeLB,
+    MRC_EXT_INPUTS_INIT_VAL_RxVrefStepSizeLB,
+    MRC_EXT_INPUTS_INIT_VAL_TxStepSizeLB,
+    MRC_EXT_INPUTS_INIT_VAL_ReservedBitsLB,
+
+    MRC_EXT_INPUTS_INIT_VAL_Reserved328,
   },
 #ifdef MRC_MINIBIOS_BUILD
   /// MRC_INT_INPUTS_TYPE

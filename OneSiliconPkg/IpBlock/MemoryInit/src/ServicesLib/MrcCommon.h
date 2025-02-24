@@ -4237,6 +4237,7 @@ MrcFindMaxVal (
   IN UINT8 ArraySize
   );
 
+#ifdef HVM_MODE
 /**
   This procedure is meant to handle RcvEn centering, places strobe in the middle of the data eye,
   using a very robust, linear search algorithm.
@@ -4258,6 +4259,29 @@ RcvEnCentering1D (
   IN     BOOLEAN              EarlyCentering,
   IN     UINT8                RankBitMask
   );
+
+/**
+  This procedure is meant to handle TxDqs centering, places strobe in the middle of the data eye,
+  using a very robust, linear search algorithm.
+
+  @param[in,out] MrcData        - Include all MRC global data.
+  @param[in]     StepSize       - Step size
+  @param[in]     LoopCount      - loop count
+  @param[in]     MsgPrintMask   - Serial debug output message enable.
+  @param[in]     EarlyCentering - Execute as early centering routine
+
+  @retval        MrcStatus -  If succeeded, return mrcSuccess
+**/
+MrcStatus
+TxDqsCentering1D (
+  IN OUT MrcParameters* const MrcData,
+  IN     const UINT8          StepSize,
+  IN     const UINT8          LoopCount,
+  IN     UINT8                MsgPrintMask,
+  IN     BOOLEAN              EarlyCentering,
+  IN     UINT8                RankBitMask
+  );
+#endif // HVM_MODE
 
 /**
   Report DQ loopback margin results into a DRAM0 array

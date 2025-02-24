@@ -23,4 +23,8 @@
 #include <Ptl/MrcGlobalDefinitions.h>
 
 
+#ifdef PRODUCT_RZLWS
+#include <Nvl/MrcGlobalDefinitions.h>
+#endif
+
 #endif

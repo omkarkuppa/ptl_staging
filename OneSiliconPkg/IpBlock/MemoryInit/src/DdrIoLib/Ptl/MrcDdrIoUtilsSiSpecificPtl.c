@@ -33,8 +33,8 @@ UINT8 AuxClkRef100[] = { 33,  33,  27,  28,  27,  30,  33,  28,  33,  32,  33,  
                          54,  52,  52,  57,  54,  45,  56,  52,  57,  63,  64,  60,  66,  66,  68,  69, // 32 .. 47
                          69,  66,  66,  68,  69,  69,  76,  63,  78,  78,  30,  75,  83,  76,  78,  78, // 48 .. 63
                          78,  81,  87,  88,  90,  84,  84,  92,  87,  87,  88,  92,  88,  93,  92,  84, // 64 .. 79
-                         93,  92,  63,  99, 105, 100, 100, 102, 114, 104, 116,  78, 114, 120, 114, 108, // 80 .. 95
-                        116, 111, 111, 112, 126, 114, 128, 117, 126, 144, 144, 120, 135,  90, 120, 124, // 96 .. 111
+                         93,  92,  63,  99, 105, 100, 100, 102, 108, 104, 116,  78, 114, 120, 114, 108, // 80 .. 95
+                        116, 111, 111, 112, 126, 114, 128, 117, 104, 144, 144, 120, 135,  90, 120, 124, // 96 .. 111
                         123, 141, 123, 126, 136, 129, 138, 129, 129, 132, 132, 135, 132, 136, 136, 138, // 112 .. 127
                         136, 140, 138, 141, 141, 144, 141, 144, 144, 108, 100, 132, 135, 111, 111, 135, // 128 .. 143
                         104, 114, 140, 138, 114, 140, 144, 117, 141, 120, 132, 120, 136, 123, 120, 123, // 144 .. 159
@@ -707,56 +707,6 @@ MrcGetSaOdtValue (
   SaOdtValue->SaDuration = MIN (TempVarInt, 15);
 }
 
-
-/**
-  Calculate the frequency using QclkRatio and gear set in PHY WORKPOINT0 register
-
-  @param[in]      MrcData      - Include all MRC global data.
-  @param[in, out] MemoryClock  - The current memory clock.
-  @param[in, out] Ratio        - The current memory ratio setting.
-
-  @retval: The current memory frequency.
-**/
-MrcFrequency
-MrcGetPhyCurrentMemoryFrequency (
-  MrcParameters* const   MrcData,
-  UINT32* const          MemoryClock,
-  MrcClockRatio* const   Ratio
-  )
-{
-  INT64                      GetSetVal;
-  UINT32                     QclkRatioData;
-  INT64                      QclkGearData;
-  MrcOutput                  *Outputs;
-  MrcSaGvPoint               SaGvPoint;
-
-  Outputs = &MrcData->Outputs;
-  SaGvPoint = Outputs->SaGvPoint;
-
-  MrcGetSetFreqIndex (MrcData, SaGvPoint, GsmWorkPointRatio, ReadCached | PrintValue, &GetSetVal);
-  QclkRatioData = (UINT32) GetSetVal;
-  MrcGetSetFreqIndex (MrcData, SaGvPoint, GsmWorkPointGear4, ReadCached | PrintValue, &QclkGearData);
-
-  if (QclkGearData == 0) {
-    QclkRatioData *= 2; // In gear2 the actual ratio is twice the ratio in the register
-  }
-  if (QclkGearData == 1) {
-    QclkRatioData *= 4; // In gear4 the actual ratio is 4x the ratio in the register
-  }
-
-  if (MemoryClock != NULL) {
-    *MemoryClock = MrcRatioToClock(MrcData, (MrcClockRatio)QclkRatioData);
-  }
-  if (Ratio != NULL) {
-    *Ratio = (MrcClockRatio)QclkRatioData;
-  }
-
-  return MrcRatioToFrequency (
-    MrcData,
-    (MrcClockRatio)QclkRatioData
-  );
-}
-
 /**
   This function calculates QClkRatio.
 
@@ -831,77 +781,6 @@ ResetVctlInit (
     Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRTXDLLCONTROL0_REG, DDRCCC_SHARED1_CR_DDRCRTXDLLCONTROL0_REG, Index);
     DdrCccTxDllControl0.Data = MrcReadCR (MrcData, Offset);
     DdrCccTxDllControl0.Bits.VctlInit = (DdrFrequency < f3200) ? 0 : ((DdrFrequency < f3600) ? 1 : ((DdrFrequency < f4400) ? 2 : 3));
-    MrcWriteCR (MrcData, Offset, DdrCccTxDllControl0.Data);
-  }
-}
-
-/**
-  This function toggles the DllDacCodeFreeze in RxDLL only
-
-  @param[in] MrcData - Pointer to MRC global data.
-  @param[in] Value   - Value to be programmed for DllDacCodeFreeze
-**/
-VOID
-ToggleRxDllDacCodeFreeze (
-  IN MrcParameters *const MrcData,
-  IN UINT8         Value
-  )
-{
-  UINT32              ChIdx;
-  UINT32              DataIdx;
-  UINT32              Offset;
-  DATA0CH0_CR_DDRCRDLLCONTROL0_STRUCT  DllControl0;
-
-  for (DataIdx = 0; DataIdx < MRC_DATA_MOBILE_NUM; DataIdx++) {
-    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, DataIdx, MRC_IGNORE_ARG))) {
-      continue;
-    }
-    for (ChIdx = 0; ChIdx < MRC_DATA_CH_NUM; ChIdx++) {
-      Offset = MrcGetDataOffset (MrcData, DATA0CH0_CR_DDRCRDLLCONTROL0_REG, MRC_IGNORE_ARG, ChIdx, DataIdx);
-      DllControl0.Data = MrcReadCR (MrcData, Offset);
-      DllControl0.Bits.DllDacCodeFreeze = Value;
-      MrcWriteCR (MrcData, Offset, DllControl0.Data);
-    }
-  }
-}
-
-/**
-  This function toggles the DllDacCodeFreeze
-
-  @param[in, out] MrcData - Pointer to MRC global data.
-  @param[in]      Value   - Value to be programmed for DllDacCodeFreeze
-
-**/
-VOID
-ToggleDllDacCodeFreeze (
-  IN OUT MrcParameters *const MrcData,
-  IN     UINT8         Value
-  )
-{
-  UINT8   Index;
-  UINT32  Offset;
-  DATASHARED_CR_DDRCRTXDLLCONTROL0_STRUCT        TxDllControl0;
-  DDRCCC_SHARED0_CR_DDRCRTXDLLCONTROL0_STRUCT    DdrCccTxDllControl0;
-
-  ToggleRxDllDacCodeFreeze (MrcData, Value);
-
-  for (Index = 0; Index < MRC_DATA_MOBILE_NUM; Index++) {
-    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
-      continue;
-    }
-    Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRTXDLLCONTROL0_REG, DDRDATA_SHARED1_CR_DDRCRTXDLLCONTROL0_REG, Index);
-    TxDllControl0.Data = MrcReadCR (MrcData, Offset);
-    TxDllControl0.Bits.DllDacCodeFreeze = Value;
-    MrcWriteCR (MrcData, Offset, TxDllControl0.Data);
-  }
-
-  for (Index = 0; Index < MRC_CCC_SHARED_MOBILE_NUM; Index++) {
-    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
-      continue;
-    }
-    Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRTXDLLCONTROL0_REG, DDRCCC_SHARED1_CR_DDRCRTXDLLCONTROL0_REG, Index);
-    DdrCccTxDllControl0.Data = MrcReadCR (MrcData, Offset);
-    DdrCccTxDllControl0.Bits.DllDacCodeFreeze = Value;
     MrcWriteCR (MrcData, Offset, DdrCccTxDllControl0.Data);
   }
 }
@@ -1333,73 +1212,6 @@ CbMixMuxConfig (
 
   MrcWriteCrMulticast (MrcData, DATASHARED_DDRTXDLL_CR_PICODELUT2_REG, PiCodeLUT2.Data);
   MrcWriteCrMulticast (MrcData, DATASHARED_DDRRXDLL_CR_PICODELUT2_REG, PiCodeLUT2.Data);
-}
-
-/**
-  The function preforms a frequency switch Rcomp
-
-  @param[in, out] MrcData - MRC global data.
-**/
-VOID
-FreqSwitchComp (
-  IN OUT MrcParameters *const MrcData
-  )
-{
-  MrcOutput     *Outputs;
-  INT64  PHClkDutyCycleEnable;
-  INT64  PHClkPhaseEn;
-  INT64  DataDccRankEn;
-  INT64  ClkDccRankEn;
-  INT64  WckDccRankEn;
-  UINT32 Override;
-  INT64  GetSetDis;
-  UINT8  FirstController;
-  UINT8  FirstChannel;
-  UINT8  FirstRank[MAX_CONTROLLER][MAX_CHANNEL];
-  DDRDATA_SHARED0_CR_DDRCRCOMPDQSDELAYCONTROL_STRUCT CompDqsDelayControl;
-
-  Outputs           = &MrcData->Outputs;
-  GetSetDis = 0;
-  FirstController   = Outputs->FirstPopController;
-  FirstChannel      = Outputs->Controller[FirstController].FirstPopCh;
-  // Get the first rank index for each channel
-  // per-channel results will be stored at this index
-  GetFirstRank (MrcData, FirstRank);
-
-  // Save Data
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, ReadFromCache , &PHClkDutyCycleEnable);
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, ReadFromCache , &PHClkPhaseEn);
-  MrcGetSetChStrb (MrcData, FirstController, FirstChannel, 0, GsmDataDccRankEn, ReadFromCache , &DataDccRankEn);
-  MrcGetSetCcc (MrcData, FirstController, FirstChannel, FirstRank[FirstController][FirstChannel], MRC_IGNORE_ARG, GsmClkDccRankEn, ReadFromCache , &ClkDccRankEn);
-  MrcGetSetMcCh (MrcData, FirstController, FirstChannel, GsmWckDccRankEn, ReadFromCache , &WckDccRankEn);
-  CompDqsDelayControl.Data = MrcReadCR (MrcData, DDRDATA_SHARED0_CR_DDRCRCOMPDQSDELAYCONTROL_REG);
-  Override = CompDqsDelayControl.Bits.Override;
-
-  // Disable FSM's to reduce unnecessary change
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, WriteToCache, &GetSetDis);
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, WriteToCache, &GetSetDis);
-  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmDataDccRankEn, WriteToCache, &GetSetDis);
-  MrcGetSetCcc (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MRC_IGNORE_ARG, GsmClkDccRankEn, WriteToCache, &GetSetDis);
-  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmWckDccRankEn, WriteToCache, &GetSetDis);
-
-  MrcFlushRegisterCachedData (MrcData);
-
-  CompDqsDelayControl.Bits.Override = 1;
-  MrcWriteCrMulticast (MrcData, DATASHARED_CR_DDRCRCOMPDQSDELAYCONTROL_REG, CompDqsDelayControl.Data);
-
-  ForceRcomp (MrcData, FullComp);
-
-  // Restore Data
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkDutyCycleEn, WriteToCache, &PHClkDutyCycleEnable);
-  MrcGetSetPartitionBlock (MrcData, PartitionPll, MRC_IGNORE_ARG, GsmDccPHClkPhaseEn, WriteToCache, &PHClkPhaseEn);
-  MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmDataDccRankEn, WriteToCache, &DataDccRankEn);
-  MrcGetSetCcc (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_RANK_IN_CHANNEL, MRC_IGNORE_ARG, GsmClkDccRankEn, WriteToCache, &ClkDccRankEn);
-  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmWckDccRankEn, WriteToCache, &WckDccRankEn);
-
-  MrcFlushRegisterCachedData (MrcData);
-
-  CompDqsDelayControl.Bits.Override = Override;
-  MrcWriteCrMulticast (MrcData, DATASHARED_CR_DDRCRCOMPDQSDELAYCONTROL_REG, CompDqsDelayControl.Data);
 }
 
 /**
