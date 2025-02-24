@@ -62,6 +62,7 @@
 #include <UsbPortMapNvs.h>
 #include <Library/UefiLib.h>
 #include <Library/PcieHelperLib.h>
+#include <Library/PciLib.h>
 //
 // Global variables
 //
@@ -80,6 +81,110 @@ GLOBAL_REMOVE_IF_UNREFERENCED TCSS_DATA_HOB                             *mTcssHo
 //
 // Function implementations
 //
+
+//
+// 0x30 enables ASPM [L0s and L1] and 0x01 enables RTD3 for third party gfx card.
+//
+#define ENABLE_ASPM_AND_RTD3_VALUE                   0x31
+//
+// Indicates Pci offset start index in Reg key.
+//
+#define  PCI_OFFSET_START                            17
+//
+// Pci Offset Length
+//
+#define PCI_ID_LEN                                   4
+
+/**
+  Replace Reg key char  with  Host Bridge Pcie Vendor/Device/SubsystemVendor/SubsystemDevice ID
+  in Vendore specific Reg Key.
+
+  @param  Reg_key               The Original RegKey String.
+  @param  Pci_Reg_Value         The Pcie Register Value.
+  @param  Pci_Reg_Len           The Pcie Register Length.
+
+  @return None.
+
+**/
+
+VOID
+ReplaceRegkeyCharwithPciIds (
+  OUT CHAR16  *Reg_Key,
+  IN  UINT16  Pci_Reg_Value,
+  IN  UINTN   Pci_Reg_Len
+  )
+{
+
+  CHAR16 mHexDigit[] = L"0123456789abcdef";
+
+  for (; Pci_Reg_Len > 0; Pci_Reg_Len--, Reg_Key++) {
+    *Reg_Key = mHexDigit[((Pci_Reg_Value >> (4 * (Pci_Reg_Len - 1))) & 0x0f)];
+  }
+}
+
+/**
+  Vendor Centric Reg key Hook Method .The method helps to expose uefi variable with value
+  0x31 (0x01 ->rtd3 enable and 0x30 (L0 and L1 supported))which notifies vendor sepcific
+  card that platform support RTD3 hot for the slot.
+
+  @retval EFI_SUCCESS            The function completed successfully.
+ **/
+
+EFI_STATUS
+EFIAPI
+VendorSpecificRtd3RegKeyEnableHookMethod (
+ VOID
+)
+{
+  //
+  // UEFI Rtd3 Reg key PCIEPowerControl_VVVVDDDDddddvvvv
+  // VVVV :- Denotes Host Bridge Vendor ID.
+  // DDDD :- Denotes Host Bridge Device ID.
+  // dddd :- Subsystem Host Bridge Device ID.
+  // vvvv :- Subsystem Host Bridge Vendor ID.
+  //
+  CHAR16        RegKeyVariable[] = L"PCIEPowerControl_VVVVDDDDddddvvvv";
+  UINT16        Pci_Reg;
+  UINTN         Index = PCI_OFFSET_START;
+  UINT32        Rtd3UefiVariable = ENABLE_ASPM_AND_RTD3_VALUE;
+  UINTN         VarDataSize = sizeof (Rtd3UefiVariable);
+  UINTN         HostBridgeAddr;
+  EFI_STATUS    Status;
+  HostBridgeAddr = PCI_LIB_ADDRESS (0, 0, 0, 0);
+  UINT8          Pci_Offsets[] = {PCI_VENDOR_ID_OFFSET, PCI_DEVICE_ID_OFFSET, PCI_SUBSYSTEM_ID_OFFSET, PCI_SUBSYSTEM_VENDOR_ID_OFFSET};
+
+  //
+  // Patch Vendor/Device ID of Host Bridge in the Reg key
+  //
+  for (UINT8 Pci_Index = 0; Pci_Index < (sizeof (Pci_Offsets)/sizeof (Pci_Offsets[0])); Pci_Index ++) {
+    Pci_Reg = PciRead16 (HostBridgeAddr + Pci_Offsets[Pci_Index]);
+    ReplaceRegkeyCharwithPciIds (&RegKeyVariable[Index], Pci_Reg, PCI_ID_LEN);
+    Index += PCI_ID_LEN;
+  }
+
+  // UEFI variable installation
+  Status = gRT->SetVariable (
+                  RegKeyVariable,
+                  &gEfiVendorSpecifcRtd3keyGuid,
+                  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                  VarDataSize,
+                  &Rtd3UefiVariable
+                  );
+   if (!EFI_ERROR (Status)) {
+    Status = gRT->GetVariable (
+                  RegKeyVariable,
+                  &gEfiVendorSpecifcRtd3keyGuid,
+                  NULL,
+                  &VarDataSize,
+                  &Rtd3UefiVariable
+                );
+   } else {
+    DEBUG ((DEBUG_ERROR, "Variable Not created\n"));
+   }
+
+  return Status;
+
+}
 
 /**
   Update Group Position for PCH USB2 Port, PCH USB3 Port, TCSS USB3 Port, DTBT USB3 Port
@@ -3861,6 +3966,12 @@ InstallAcpiPlatform (
   // Reference Code ACPI Tables
   //
   PublishAcpiTablesFromFv(gRcAcpiTableStorageGuid);
+
+  //
+  // Vendor Specific hook method to enable RTD3 reg Key
+  //
+  Status = VendorSpecificRtd3RegKeyEnableHookMethod ();
+  DEBUG ((DEBUG_INFO, "Vendor specific Uefi Variable Installation = %r\n", Status));
 
 #if FixedPcdGetBool (PcdEcEnable) == 1
   Status = EcInitialize (&CpuSetup);
