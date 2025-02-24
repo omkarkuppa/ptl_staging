@@ -2229,6 +2229,156 @@ DrawBiosColorCode (
 }
 
 /**
+  This function will change video resolution when dual
+  display are connected.
+
+  @param   None.
+
+  @retval  EFI_SUCCESS  Mode is changed successfully.
+  @retval  Others       Mode failed to changed.
+**/
+EFI_STATUS
+EFIAPI
+UpdateResolutionForDualDisplay (
+  VOID
+  )
+{
+  EFI_GRAPHICS_OUTPUT_PROTOCOL          *GraphicsOutput;
+  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL       *SimpleTextOut;
+  UINTN                                 SizeOfInfo;
+  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *Info;
+  UINT32                                MaxGopMode;
+  UINT32                                ModeNumber;
+  UINT32                                HorizontalResolution;
+  UINT32                                VerticalResolution;
+  UINTN                                 HandleCount;
+  EFI_HANDLE                            *HandleBuffer;
+  EFI_STATUS                            Status;
+  UINTN                                 Index;
+
+  MaxGopMode  = 0;
+
+  //
+  // Get current video resolution and text mode
+  //
+  Status = gBS->HandleProtocol (
+                  gST->ConsoleOutHandle,
+                  &gEfiGraphicsOutputProtocolGuid,
+                  (VOID**)&GraphicsOutput
+                  );
+  if (EFI_ERROR (Status)) {
+      Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **)&GraphicsOutput);
+      if (EFI_ERROR (Status)) {
+          GraphicsOutput = NULL;
+      }
+  }
+
+  Status = gBS->HandleProtocol (
+                  gST->ConsoleOutHandle,
+                  &gEfiSimpleTextOutProtocolGuid,
+                  (VOID**)&SimpleTextOut
+                  );
+  if (EFI_ERROR (Status)) {
+    SimpleTextOut = NULL;
+  }
+
+  if ((GraphicsOutput == NULL)) {
+    return EFI_UNSUPPORTED;
+  }
+
+
+  HorizontalResolution = PcdGet32(PcdVideoHorizontalResolution);
+  VerticalResolution = PcdGet32(PcdVideoVerticalResolution);
+
+  if (GraphicsOutput != NULL) {
+    MaxGopMode  = GraphicsOutput->Mode->MaxMode;
+  }
+
+  //
+  // 1. If current video resolution is same with required video resolution,
+  //    video resolution need not be changed.
+  // 2. If current video resolution is different from required video resolution, we need restart whole console drivers.
+  //
+  for (ModeNumber = 0; ModeNumber < MaxGopMode; ModeNumber++) {
+    Status = GraphicsOutput->QueryMode (
+                               GraphicsOutput,
+                               ModeNumber,
+                               &SizeOfInfo,
+                               &Info
+                               );
+    if (!EFI_ERROR (Status)) {
+      if ((Info->HorizontalResolution == HorizontalResolution) &&
+          (Info->VerticalResolution == VerticalResolution)) {
+          FreePool (Info);
+          return EFI_SUCCESS;
+      }
+    }
+  }
+  if (ModeNumber == MaxGopMode) {
+    Status = GraphicsOutput->SetMode (GraphicsOutput, ModeNumber - 1);
+    if (!EFI_ERROR (Status)) {
+      //
+      // Set PCD to Inform GraphicsConsole to change video resolution.
+      //
+      PcdSet32S (PcdVideoHorizontalResolution, GraphicsOutput->Mode->Info->HorizontalResolution);
+      PcdSet32S (PcdVideoVerticalResolution, GraphicsOutput->Mode->Info->VerticalResolution);
+      FreePool (Info);
+      //
+      // Video mode is changed, so restart graphics console driver and higher level driver.
+      // Reconnect graphics console driver and higher level driver.
+      // Locate all the handles with GOP protocol and reconnect it.
+      //
+      Status = gBS->LocateHandleBuffer (
+                    ByProtocol,
+                    &gEfiSimpleTextOutProtocolGuid,
+                    NULL,
+                    &HandleCount,
+                    &HandleBuffer
+                    );
+      if (!EFI_ERROR (Status)) {
+        for (Index = 0; Index < HandleCount; Index++) {
+          gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
+        }
+        for (Index = 0; Index < HandleCount; Index++) {
+          gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
+        }
+        if (HandleBuffer != NULL) {
+          FreePool (HandleBuffer);
+        }
+      }
+    }
+  }
+  return EFI_SUCCESS;
+}
+
+/**
+  This function will change video resolution and text mode
+  for internal shell when internal shell is launched.
+  @param  Event   Pointer to this event
+  @param  Context Event handler private data
+  @retval None.
+**/
+VOID
+EFIAPI
+NotifyUpdateResolutionForDualDisplay (
+  IN  EFI_EVENT       Event,
+  IN  VOID            *Context
+  )
+{
+  EFI_STATUS               Status;
+  VOID                     *Interface;
+
+  Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, &Interface);
+  if (EFI_ERROR (Status)) {
+    return;
+  }
+
+  UpdateResolutionForDualDisplay ();
+
+  gBS->CloseEvent (Event);
+}
+
+/**
   Function to change the Display Resolution to 1024x768 for KVM session.
 **/
 VOID
@@ -3729,6 +3879,8 @@ PlatformBootManagerAfterConsole (
   EFI_STATUS                    Status;
   BOOLEAN                       UefiShellEnabled;
   ESRT_MANAGEMENT_PROTOCOL      *EsrtManagement;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL  *GraphicsOutput;
+  VOID                          *MsgRegistration;
 
   IsFirstBoot = FALSE;
   UefiShellEnabled = PcdGetBool (PcdUefiShellEnable);
@@ -3739,7 +3891,36 @@ PlatformBootManagerAfterConsole (
   if (!BootState) {
     IsFirstBoot = TRUE;
   }
+  //
+  // Initialize GraphicsOutput as NULL.
+  //
+  GraphicsOutput = NULL;
 
+  Status = gBS->HandleProtocol (
+                  gST->ConsoleOutHandle,
+                  &gEfiGraphicsOutputProtocolGuid,
+                  (VOID**)&GraphicsOutput
+                  );
+  //
+  // Create event to set proper video resolution in case of dual display.
+  //
+  if (EFI_ERROR (Status)) {
+      Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **)&GraphicsOutput);
+      if (EFI_ERROR (Status)) {
+          GraphicsOutput = NULL;
+          EfiCreateProtocolNotifyEvent (
+            &gEfiGraphicsOutputProtocolGuid,
+            TPL_CALLBACK,
+            NotifyUpdateResolutionForDualDisplay,
+            NULL,
+            &MsgRegistration
+            );
+      }
+  }
+
+  if (GraphicsOutput != NULL) {
+     UpdateResolutionForDualDisplay ();
+  }
   //
   // Use a DynamicHii type pcd to save the boot status, which is used to
   // control configuration mode, such as FULL/MINIMAL/NO_CHANGES configuration.

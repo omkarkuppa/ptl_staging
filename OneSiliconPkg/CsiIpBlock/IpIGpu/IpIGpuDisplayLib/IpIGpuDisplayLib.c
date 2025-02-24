@@ -490,9 +490,6 @@ IpIGpuPavpInit (
     return IpCsiStsErrorNotAllowed;
   }
 
-  DisplayMirrorPavpc.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, DEPAVPC_REG_0_DISP_REG, IpWrRegFlagSize32Bits);
-  DiplayPavpc.Data        = (UINT32)IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
-
   if (!IpIGpuCmdRegEnabled (pInst)) {
     ///
     /// Enable Bus Initiator and Memory access on 0:2:0
@@ -500,6 +497,8 @@ IpIGpuPavpInit (
     IpIGpuEnableCmdReg (pInst);
   }
 
+  DisplayMirrorPavpc.Data = (UINT32)IpWrRegRead (pInst->MmioAccess, DEPAVPC_REG_0_DISP_REG, IpWrRegFlagSize32Bits);
+  DiplayPavpc.Data        = (UINT32)IpWrRegRead (pInst->MmioAccess, PAVPC0_REG_IGPU_REG, IpWrRegFlagSize32Bits);
   ///
   /// If device 0:2:0 (Internal Graphics Device, or GT) is not enabled, skip PAVP
   ///
