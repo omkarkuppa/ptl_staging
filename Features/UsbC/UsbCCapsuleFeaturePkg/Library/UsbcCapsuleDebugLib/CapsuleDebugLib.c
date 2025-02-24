@@ -342,6 +342,7 @@ InstallCapsuleDebugLibProtocol (
   EFI_CAPSULE_DEBUG_PROTOCOL  *CapsuleDebugProtocol;
   UINT32                      Index;
   UINT32                      EvtId;
+  UINTN                       PageCount;
 
   if ((ProtocolGuid == NULL) || (LogMappingTable == NULL)) {
     DEBUG ((DEBUG_ERROR, "InstallCapsuleDebugProtocol: Invalid parameters (%p, %p)\n", ProtocolGuid, LogMappingTable));
@@ -378,12 +379,14 @@ InstallCapsuleDebugLibProtocol (
   ///
   /// Allocate memory for protocol
   ///
-  CapsuleDebugProtocol = (EFI_CAPSULE_DEBUG_PROTOCOL *) AllocateZeroPool (sizeof (EFI_CAPSULE_DEBUG_PROTOCOL));
+  PageCount = EFI_SIZE_TO_PAGES (sizeof (EFI_CAPSULE_DEBUG_PROTOCOL));
+  CapsuleDebugProtocol = (EFI_CAPSULE_DEBUG_PROTOCOL *) AllocatePages (PageCount);
   if (CapsuleDebugProtocol == NULL) {
     DEBUG ((DEBUG_ERROR, "InstallCapsuleDebugProtocol: Insufficient buffer for allocating protocol\n"));
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
   }
+  ZeroMem (CapsuleDebugProtocol, EFI_PAGES_TO_SIZE (PageCount));
 
   ///
   /// Initialize protocol data and interfaces
