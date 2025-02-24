@@ -3818,7 +3818,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.ReplicateSagv|0                             
 gStructPcdTokenSpaceGuid.PcdSaSetup.AdjustWckMode|0x3                                              #            Bit 10-11  Adjust Wck Mode
 gStructPcdTokenSpaceGuid.PcdSaSetup.TelemetryControl|0x0                                           #            Bit 12-13  MC/PMA telemetry Control
 gStructPcdTokenSpaceGuid.PcdSaSetup.SpineAndPhclkGateControl|0x0                                   #            Bit 14     PHclk\Qclk SPINE gating Control
-gStructPcdTokenSpaceGuid.PcdSaSetup.SpineGatePerLpmode|0x0                                         #            Bit 15-18  SPINE Gate Control Per Lpmode
+gStructPcdTokenSpaceGuid.PcdSaSetup.SpineGatePerLpmode|0x7                                         #            Bit 15-18  SPINE Gate Control Per Lpmode
 gStructPcdTokenSpaceGuid.PcdSaSetup.PhclkGatePerLpmode|0x0                                         #            Bit 19-23  PHCLK Gate Control Per Lpmode
 gStructPcdTokenSpaceGuid.PcdSaSetup.DisableSwitchDfiToMc|0x0                                       #            Bit 24     Disable Switch DFI to MC after cold boot
 gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                                                 # Offset 324 Enable/disable ROW PRESS feature

@@ -536,7 +536,7 @@
           minimum = 0,
           maximum = 0xF,
           step    = 1,
-          default = 0,
+          default = 0x7,
         endnumeric;
 
         numeric varid  = SA_SETUP.PhclkGatePerLpmode,

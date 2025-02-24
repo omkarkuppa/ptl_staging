@@ -3583,7 +3583,7 @@
   # !BSF NAME:{SpineGating per lpmode}
   # !BSF TYPE:{EditNum, HEX, (0x00,0xF)}
   # !BSF HELP:{SpineGatePerLpmode[0]:Lpmode0.5, SpineGatePerLpmode[1]:Lpmode2, SpineGatePerLpmode[2]:Lpmode3, SpineGatePerLpmode[3]:Lpmode4}
-  gPlatformFspPkgTokenSpaceGuid.SpineGatePerLpmode        | * | 0x01 | 0
+  gPlatformFspPkgTokenSpaceGuid.SpineGatePerLpmode        | * | 0x01 | 0x07
 
   # !BSF NAME:{PhClkGating control per lpmode}
   # !BSF TYPE:{EditNum, HEX, (0x00,0x1F)}
