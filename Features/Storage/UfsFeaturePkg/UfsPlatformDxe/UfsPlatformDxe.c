@@ -46,6 +46,21 @@ GLOBAL_REMOVE_IF_UNREFERENCED UINT16 mUfsSupportedDeviceId [] = {
 
 #define UFS_UIC_TIMEOUT                 5000
 
+//
+// LA Tx Equalization = -3.5dB
+// {AttributeId, GenSelIndex, AttributeValue}
+// AttributeId - Tx Equalization Register
+// GenSelIndex - Lane 0 or Lane 1
+// AttributeValue - Register Value
+//
+TX_EQUALIZATION_DATA mTxEqalizationData[] =
+{
+  {TXC10DIRECTCONF3, 0x0, 0x5D},
+  {TXC10DIRECTCONF3, 0x1, 0x5D},
+  {TXC10DIRECTCONF5, 0x0, 0x46},
+  {TXC10DIRECTCONF5, 0x1, 0x46}
+};
+
 /**
   Fill UIC Command associated fields.
 
@@ -612,8 +627,9 @@ UfsHcPlatformPostHce (
   IN EDKII_UFS_HC_DRIVER_INTERFACE  *UfsHcDriverInterface
   )
 {
-  EDKII_UIC_COMMAND  LccDisableCommand;
+  EDKII_UIC_COMMAND  UicCommand;
   EFI_STATUS         Status;
+  UINT8              Index = 0;
 
   if (UfsHcDriverInterface == NULL) {
     return;
@@ -623,10 +639,31 @@ UfsHcPlatformPostHce (
   // For all supported integrated controllers we have to disable the
   // line configuration check(LCC).
   //
-  UfsFillUicCommand (UfsUicDmeSet, PA_Local_TX_LCC_Enable, 0, 0, 0, &LccDisableCommand );
-  Status = UfsHcDriverInterface->UfsExecUicCommand (UfsHcDriverInterface, &LccDisableCommand);
+  UfsFillUicCommand (UfsUicDmeSet, PA_Local_TX_LCC_Enable, 0, 0, 0, &UicCommand );
+  Status = UfsHcDriverInterface->UfsExecUicCommand (UfsHcDriverInterface, &UicCommand);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "UfsHcPlatformPostHce: Failed to Set UfsUicDmeSet PA_Local_TX_LCC_Enable(%x) %r \n", PA_Local_TX_LCC_Enable, Status));
+  }
+
+  //
+  // Tx Equalization Programming to tune the signal eye.
+  //
+  DEBUG ((DEBUG_INFO, "UfsHcPlatformPostHce: Tx Equalization Programming\n"));
+
+  for (Index = 0; Index < ARRAY_SIZE (mTxEqalizationData); Index++) {
+    UfsFillUicCommand (UfsUicDmeSet, mTxEqalizationData[Index].AttributeId, mTxEqalizationData[Index].GenSelIndex, 0, mTxEqalizationData[Index].AttributeValue, &UicCommand );
+    Status = UfsHcDriverInterface->UfsExecUicCommand (UfsHcDriverInterface, &UicCommand);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "UfsHcPlatformPostHce: Failed to set Attribute(%x) \n", mTxEqalizationData[Index].AttributeId));
+      continue;
+    }
+
+    UfsFillUicCommand (UfsUicDmeGet,  mTxEqalizationData[Index].AttributeId, 0, 0, 0, &UicCommand );
+    Status = UfsHcDriverInterface->UfsExecUicCommand (UfsHcDriverInterface, &UicCommand);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "UfsHcPlatformPostHce: Failed to Get Attribute(%x)\n",  mTxEqalizationData[Index].AttributeId));
+    }
+  DEBUG ((DEBUG_INFO, "UfsHcPlatformPostHce: UfsUicDmeGet Attribute(%x) = %x\n",  mTxEqalizationData[Index].AttributeId, UicCommand.Arg3));
   }
 }
 
