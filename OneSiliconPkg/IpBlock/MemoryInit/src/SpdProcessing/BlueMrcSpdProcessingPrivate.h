@@ -829,5 +829,18 @@ MrcCheckInputParams (
   IN OUT MrcParameters *const MrcData
   );
 
+/**
+  Process the SPD information for all DIMMs with no platform frequency limits
+  and populate the MaxDimmFreq host struct field.
+
+    @param[in, out] MrcData - The MRC "global data".
+
+    @retval mrcSuccess on success, mrcDimmNotExist if no DIMMs found.
+**/
+MrcStatus
+MrcSpdProcessingMaxFreqCheck (
+  IN OUT MrcParameters *const MrcData
+  );
+
 
 #endif // BLUE_MRC_SPD_PROCESSING_PRIVATE_H

@@ -546,12 +546,11 @@ typedef union {
 
 typedef union {
   struct {
-    UINT8 PprResBg0 : 1;  ///< Bits 0:0
-    UINT8 PprResBg1 : 1;  ///< Bits 1:1
-    UINT8 PprResBg2 : 1;  ///< Bits 2:2
-    UINT8 PprResBg3 : 1;  ///< Bits 3:3
-    UINT8 Ppre      : 1;  ///< Bits 4:4
-    UINT8 NtDqOdt   : 3;  ///< Bits 5:7
+    UINT8 Pdfec             : 1;  ///< Bits 0:0 - Per-pin DFE Control
+    UINT8 DvfscSupport      : 2;  ///< Bits 1:2 - DVFSC/E-DVFSC Support
+    UINT8 EdvfscOdtSupport  : 1;  ///< Bits 3:3 - E-DVFSC ODT Option Support
+    UINT8 Ppre              : 1;  ///< Bits 4:4 - PPR Enable / Disable
+    UINT8 NtDqOdt           : 3;  ///< Bits 5:7 - NT DDQ ODT
   } Bits;
   UINT8 Data8;
 } LPDDR5_MODE_REGISTER_41_TYPE;

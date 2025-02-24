@@ -568,6 +568,7 @@ typedef enum {
   OemEarlyReadMprDqDqs2D,   ///<  before Early MPR Read Timing Centering 2D
   OemReadDqDqs,             ///<  before Read Timing Centering
   OemDimmRonTraining,       ///<  before DIMM Ron Training
+  OemTxDqsDccTraining,      ///<  before TxDqs DCC Training
   OemDimmODTTraining,       ///<  before DIMM ODT Training
   OemDimmNTODTTraining,     ///<  before DIMM NT ODT Training
   OemDimmOdtCaTraining,     ///<  before DIMM ODT CA Training
@@ -636,6 +637,7 @@ typedef enum {
   OemPmaConfig,             ///< before PMA Config
   OemSagvFinalize,          ///< before SAGV Finalization
   OemMrcDdrIoFinalize,      ///< before DdrIo Finalization
+  OemMrcCurrentSensorRMT,   ///< before Current Sensor RMT
   OemSwitchDfiControl,      ///< before MrcSwitchDfiControl
   OemMrcUnmatchedRxCalPre,  ///< before Unmatched Receiver Calibration Pre
   OemDccLpddr5Wck,          ///< before Functional DCC - LPDDR5 WCK
@@ -1966,13 +1968,14 @@ typedef struct {
   BOOLEAN           LpX;                          ///< Low power die of the LPDDR part is detected.
   BOOLEAN           IsCkdSupported;               ///< TRUE if SPD byte 242 CKD Buffer is supported
   BOOLEAN           IsCs2NEver;                   ///< If any SAGV point has CS 2N Mode
+  BOOLEAN           IsMixedEccDimms;              ///< TRUE if at least one ECC DIMM and at least one nonECC DIMM are present
   MrcVddSelect      VddqVoltage[MAX_PROFILE];     ///< The voltage (VDDQ) setting for all DIMMs in the system, per profile.
   MrcVddSelect      VppVoltage[MAX_PROFILE];      ///< The voltage (VPP) setting for all DIMMs in the system, per profile.
   MrcFrequency      MemFrequency[MAX_PROFILE];    ///< Every Profile's Frequency
   UINT8             Ibecc;
   UINT8             TmeEnable;
   UINT8             PmaCceConfig;
-  UINT8             ReservedBytesAlign[1];        ///< Align to 4 bytes for MrcSavedata
+  UINT8             ReservedBytesAlign[4];        ///< Align to 4 bytes for MrcSavedata
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back
   //
@@ -2156,7 +2159,9 @@ typedef struct {
   UINT8               BankIncOrder[MAX_MPTU];      ///< Used to program BankIncOrder in Ddr5 for each Dunit
   UINT8               CaDeselectStress;
   BOOLEAN             IsLoopbackSetupDone;
-  UINT8               ReservedBytesAlign[1];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  BOOLEAN             WeaklockEn;                  ///< Weaklock enable
+  BOOLEAN             RxDqsDelayCompEn;            ///< Rx DQS Delay Comp enable
+  UINT8               ReservedBytesAlign[2];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   MrcIpTestEnv        IpModel;
   MrcDdrType          DdrType;                     ///< Current memory type: DDR5, LPDDR5
   MrcSaGvPoint        SaGvFirst;                   ///< First SaGv Point to be trained
@@ -2166,6 +2171,7 @@ typedef struct {
   UINT8               BibEnable;
   UINT8               BibIdle;
   UINT8               BibIdleType;
+  BOOLEAN             CaTristateForISenseRmt;      ///< Enable calling MrcTriStateCa in IoReset for Current Sensor RMT
   // Entries below this point are not copied from green back to blue
   MRC_REGISTER_CACHE  RegisterCache;
 } MrcOutput;
@@ -2302,12 +2308,13 @@ typedef struct {
   UINT8             IsXMP3Revision12Supported;     ///< Indicates whether the SPD data supports XMP1.2 version
   UINT8             MemoryProfileSave;             ///< Save MemoryProfile. Used when DMB/RMF is enabled.
   BOOLEAN           IsIbeccEnabled;                ///< Overrides the ext inputs Ibecc field so that Ibecc inputs do not trigger a cold boot.
+  BOOLEAN           IsIbeccPmaEnabled;             ///< Overrides the ext inputs Ibecc field in case IBECCDIS in MEMSS PMA.
   BOOLEAN           RxDqVrefPerBit;                ///< Enable or disable RX DQ VREF Per Bit
   BOOLEAN           FourToggleReadPreamble;        ///< Enable or disable Four Toggle Read Preamble
   BOOLEAN           PprEnable;                     ///< Effective PPR configuration for the current boot
   BOOLEAN           SenseAtRxDll;                  ///< Boolean variable to enable or disable RxDqsDcc SenseAtRxDll
   UINT8             LastIbeccOperationMode;        ///< Input from BIOS indicating the last IBECC operation mode. Valid only on warm boot.
-  UINT8             Reserved;                      ///< Reserved to ensure config block size is a multiple of DWORDs
+  UINT8             Reserved[4];                   ///< Reserved to ensure config block size is a multiple of DWORDs
   UINT32            SaMemCfgCrcNoOffsetKnobs;      ///< The CRC32 of the SA memory configuration without OffsetKnobs.
   /**
    Sets the serial debug message level\n
@@ -2337,15 +2344,12 @@ typedef struct {
   BOOLEAN LockUiDiv6Flow;     ///< LockUI Calibration flow uses Div6 mode
   UINT16  RloadTarget;        ///< Rload target value for Rload compensation
   BOOLEAN DiscardLvrAutoTrimResults; ///< Discard LVR Auto Trim Results and use PHY init values
-  BOOLEAN PhClkSkipPhCorrection; ///< Skip PhClk correction in PhClk calibration
-#ifdef HVM_MODE
-  UINT8   PhClkCheckPhError;     ///< Defines min to max tolerance for phase spacing check, specified max - min of all 8 phases in 1/512 * phclk increments
-  UINT8   PhClkCheckDcError;     ///< Defines duty cycle tolerance in 1/512 * phclk increments
-  UINT8   ReservedBytesAlign[2]; ///< Reserved Bytes to ensure HVM block size is a multiple of DWORDs
-#endif // HVM_MODE
+  BOOLEAN PhClkSkipPhCorrection;  ///< Skip PhClk correction in PhClk calibration
+  UINT8   PhClkCheckPhError;      ///< Defines min to max tolerance for phase spacing check, specified max - min of all 8 phases in 1/512 * phclk increments
+  UINT8   PhClkCheckDcError;      ///< Defines duty cycle tolerance in 1/512 * phclk increments
   BOOLEAN IsOneDpcSplitBgEnabled; ///< TRUE: 1Rank Split Bg On SubChannel Enabled.
   UINT32  DebugValue;             ///< Used for general debug
-  UINT8   ReservedBytesAlign2[4]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
+  UINT8   ReservedBytesAlign[2];  ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {

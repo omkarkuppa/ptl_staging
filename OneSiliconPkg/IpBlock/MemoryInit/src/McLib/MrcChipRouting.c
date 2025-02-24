@@ -121,7 +121,7 @@ MrcWorkPointLock (
 
   // PLL Lock
   Status = McFrequencySet (MrcData, FALSE, MRC_PRINTS_ON);
-
+  SetWorkPointDataForMc(MrcData);
   if ((Outputs->SaGvPoint == Outputs->SaGvFirst) || !MrcIsSaGvEnabled (MrcData)) {
     MrcPmCfgCrAccess (MrcData, FALSE, TRUE);
   }

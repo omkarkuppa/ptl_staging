@@ -132,7 +132,7 @@ typedef struct {
 typedef struct {
   UINT32 RXDQSDCC:1;          ///< BIT0 - RXDQS Duty Cycle Correction
   UINT32 DIMMNTODT:1;         ///< BIT1 - DIMM Non-Target ODT training
-  UINT32 Reserved3Bit2:1;     ///< BIT2 - Reserved
+  UINT32 TXDQSDCC:1;          ///< BIT2 - TXDQS DCC Training
   UINT32 RXVREFPERBIT:1;      ///< BIT3 - RxVref Per-Bit Training
   UINT32 PPR:1;               ///< BIT4 - Post Package Repair
   UINT32 LVRAUTOTRIM:1;       ///< BIT5 - LVR Auto Trim
@@ -157,7 +157,7 @@ typedef struct {
   UINT32 DQSPADDCC : 1;       ///< BIT24 - DQS DCC PAD Optimization
   UINT32 QCLKPHALIGN : 1;     ///< BIT25 - MC QClk Ph QClk Align Calibration
   UINT32 RXDQSVOCC : 1;       ///< BIT26 - RxDqs VOC Centering Training
-  UINT32 Reserved3Bit27 : 1;  ///< BIT27 - Reserved
+  UINT32 ISENSERMT : 1;       ///< BIT27 - Current Sensor RMT
   UINT32 Reserved3Bit28 : 1;  ///< BIT28 - Reserved
   UINT32 Reserved3Bit29 : 1;  ///< BIT29 - Reserved
   UINT32 Reserved3Bit30 : 1;  ///< BIT30 - Reserved

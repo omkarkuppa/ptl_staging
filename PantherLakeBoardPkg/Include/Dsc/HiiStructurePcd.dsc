@@ -3623,7 +3623,6 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.MrcTimeMeasure|0x0                          
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcFastBoot|0x1                                                #           Bit 1 - Fast Boot
 gStructPcdTokenSpaceGuid.PcdSaSetup.RankInterleave|0x1                                             #           Bit 3 - RI Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnhancedInterleave|0x1                                         #           Bit 4 - Enh Interleave Support
-gStructPcdTokenSpaceGuid.PcdSaSetup.WeaklockEn|0x0                                                 #           Bit 5 - DLL Weak Lock Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashEnable|0x1                                               #           Bit 6 - Ch Hash Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnablePwrDn|0x1                                                #           Bit 7 - DDR PowerDown and idle counter
 gStructPcdTokenSpaceGuid.PcdSaSetup.EnablePwrDnLpddr|0x1                                           #           Bit 8 - For LPDDR Only: DDR PowerDown and idle counter
@@ -3823,6 +3822,8 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.SpineGatePerLpmode|0x0                      
 gStructPcdTokenSpaceGuid.PcdSaSetup.PhclkGatePerLpmode|0x0                                         #            Bit 19-23  PHCLK Gate Control Per Lpmode
 gStructPcdTokenSpaceGuid.PcdSaSetup.DisableSwitchDfiToMc|0x0                                       #            Bit 24     Disable Switch DFI to MC after cold boot
 gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                                                 # Offset 324 Enable/disable ROW PRESS feature
+gStructPcdTokenSpaceGuid.PcdSaSetup.WeaklockEn|0x0                                                 # Offset 325 - DLL Weak Lock Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.RxDqsDelayCompEn|0x0                                           # Offset 326 - Rx DQS Delay Comp Support
 
 ##############################
 # MRC - ExtInputs end

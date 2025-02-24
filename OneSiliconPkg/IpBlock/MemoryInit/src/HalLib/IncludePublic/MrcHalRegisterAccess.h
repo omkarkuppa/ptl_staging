@@ -202,13 +202,9 @@ GetSet (
     Get the GSM_GT bit shift instruction, CR offset, and Multicasting offsets.
 
   @param[in]      MrcData     - Pointer to global data structure.
-  @param[in]      Socket      - Processor socket in the system (0-based).  Not used in Core MRC.
   @param[in]      Controller  - Memory Controller Number within the processor (0-based).
   @param[in]      Channel     - DDR Channel Number within the processor socket (0-based).
   @param[in]      Rank        - Rank number within a channel (0-based).
-  @param[in]      Strobe      - If Group is a CMD/CTL/CLK Index type, this is the index for that signal.  Otherwise, Dqs data group within the rank (0-based).
-  @param[in]      Lane        - Lane index within the GSM_GT group (0-based).
-  @param[in]      FreqIndex   - Index supporting multiple operating frequencies.
   @param[in]      Group       - DDRIO group to access.
   @param[in]      Mode        - Bit-field flags controlling Get/Set.
   @param[in,out]  Value       - Pointer to value for Get/Set to operate on.  Can be offset or absolute value based on mode.
@@ -217,13 +213,9 @@ GetSet (
 MrcStatus
 MrcCkdGetSet (
   IN      MrcParameters *const  MrcData,
-  IN      UINT32        const   Socket,
   IN      UINT32        const   Controller,
   IN      UINT32        const   Channel,
   IN      UINT32        const   Rank,
-  IN      UINT32        const   Strobe,
-  IN      UINT32        const   Lane,
-  IN      UINT32        const   FreqIndex,
   IN      GSM_GT        const   Group,
   IN      UINT32                Mode,
   IN OUT  INT64         *const  Value

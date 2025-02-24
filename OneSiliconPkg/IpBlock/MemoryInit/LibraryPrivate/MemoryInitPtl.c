@@ -884,6 +884,8 @@ DEBUG_CODE_END();
   }
 
   Inputs->TxtClean = IsTxtSecretsSet ();
+
+  // In case of Txt Enabled, Ibecc is in non-protective mode (bypass), and will be enabled after TxtACheck is done
   Inputs->IsIbeccEnabled = ExtInputs->Ibecc && !IsTxtACheckRequested();
 
   //
@@ -3575,8 +3577,8 @@ BuildMemoryInfoDataHob (
   MemoryInfo->DynamicMemoryBoostTrainingFailed = SaveData->DynamicMemoryBoostTrainingFailed;
   MemoryInfo->Ratio = SaveData->Ratio;
   MemoryInfo->NumPopulatedChannels = Outputs->NumPopChannel;
-  MemoryInfo->IsIbeccEnabled = Inputs->IsIbeccEnabled;
-  DEBUG((DEBUG_INFO, "MemoryInfo->IsIbeccEnabled = %d \n", MemoryInfo->IsIbeccEnabled));
+  MemoryInfo->IsIbeccEnabled = Inputs->IsIbeccPmaEnabled;
+  DEBUG ((DEBUG_INFO, "IsIbeccEnabled: %u\n", MemoryInfo->IsIbeccEnabled));
 
   AmtPprRanInLastBoot.Data = 0;
   if ((Outputs->PprRunningState == PPR_IS_DONE) && (ExtInputs->PprTestType != 0)) {

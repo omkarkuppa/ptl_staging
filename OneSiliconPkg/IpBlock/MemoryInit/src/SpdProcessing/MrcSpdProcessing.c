@@ -7349,15 +7349,21 @@ MrcSpdProcessingCalc (
   UINT8                         ValidRankBitMask;
   BOOLEAN                       Xmp1DPC;
   BOOLEAN                       IsNonCkd;
+  BOOLEAN                       IsAnyEccDimm;
+  BOOLEAN                       IsAnyNonEccDimm;
+  MrcSaveData                   *SaveData;
 
   Outputs = &MrcData->Outputs;
   Debug   = &Outputs->Debug;
   Status  = mrcDimmNotExist;
+  SaveData = &MrcData->Save.Data;
 
   Outputs->tMAC      = MRC_TMAC_UNLIMITED;
   MaxDimm            = Outputs->MaxDimm;
   MaxChannel         = Outputs->MaxChannels;
   IsNonCkd           = FALSE;
+  IsAnyEccDimm       = FALSE;
+  IsAnyNonEccDimm    = FALSE;
 
   // Perform an inital timing calculation with no frequency limits to get the
   // max frequency supported by the current DIMM population
@@ -7430,6 +7436,8 @@ MrcSpdProcessingCalc (
               Outputs->EccSupport  &= DimmOut->EccSupport;
               Outputs->IsCkdSupported |= DimmOut->IsCkdSupport;
               IsNonCkd |= (DimmOut->IsCkdSupport == 0 ? TRUE : FALSE);
+              IsAnyEccDimm |= DimmOut->EccSupport;
+              IsAnyNonEccDimm |= (DimmOut->EccSupport == FALSE);
               Outputs->tMAC         = MIN (Outputs->tMAC, DimmOut->tMAC);
               if ((XmpSupport (DimmOut, XMP_PROFILE1) && (DimmOut->XmpProfile1Config == 0)) ||
                   (XmpSupport (DimmOut, XMP_PROFILE2) && (DimmOut->XmpProfile2Config == 0)) ||
@@ -7491,6 +7499,9 @@ MrcSpdProcessingCalc (
     Outputs->ValidMcBitMask,
     Outputs->ValidChBitMask
   );
+
+  // Ecc and NonEcc Dimms mix detected in the system
+  SaveData->IsMixedEccDimms = (IsAnyEccDimm && IsAnyNonEccDimm);
 
 #if defined(FULL_HEADLESS) && !defined(NEW_STUB)
   MrcStubWriteMrcData (MrcData); // sending data early for sync-server.exe

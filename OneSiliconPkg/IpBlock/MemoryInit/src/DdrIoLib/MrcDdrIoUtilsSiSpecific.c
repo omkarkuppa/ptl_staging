@@ -141,6 +141,56 @@ ForceRcomp (
 
 
 /**
+  Run the comp engine continuously. If the comp completes before the timeout, run it again.
+
+  @param[in, out] MrcData     - Include all MRC global data.
+  @param[in]      TestLength  - Run time in us
+
+  @retval mrcSuccess Poll returns expected
+  @retval mrcDeviceBusy did not return expected.
+**/
+MrcStatus
+ForceRcompContinuous (
+  IN OUT MrcParameters *const MrcData,
+  IN     UINT32               TestLength
+  )
+{
+  UINT32 TimeStep;
+  UINT32 Step;
+  UINT32 RunTime = 0;
+  UINT32 NumWaitsToClearBusyBit;
+  INT64 GetSetEn = 1;
+  INT64 GetSetVal;
+  BOOLEAN Busy;
+
+  Step = 100 * MRC_TIMER_1NS;
+  TimeStep = (TestLength * MRC_TIMER_1US) / Step; // Convert to step size
+ 
+  do {
+    MrcGetSetNoScope (MrcData, GsmCompCtrlPeriodicComp, ForceWriteNoCache, &GetSetEn);
+    NumWaitsToClearBusyBit = 0;
+    do {
+      RunTime++;
+      // It's possible to exit this loop when the timer expires but the comp hasn't yet cleared the Busy bit (ie in the middle of a normal operation)
+      // NumWaitsToClearBusyBit tracks the amount of steps needed for one iteration of a comp cycle and adds it to the final timeout to ensure that the
+      // comp has adequite time to finish a regular cycle.
+      NumWaitsToClearBusyBit++;
+      MrcWait (MrcData, Step);
+
+      MrcGetSetNoScope (MrcData, GsmCompCtrlPeriodicComp, ReadNoCache, &GetSetVal);
+      Busy = (GetSetVal == 1);
+    } while (Busy && (RunTime <= TimeStep));
+  } while ((RunTime + NumWaitsToClearBusyBit) <= TimeStep);
+
+  if (Busy) {
+    MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "%s: Comp failed to complete within %dus!\n", gErrString, TestLength);
+    return mrcDeviceBusy;
+  }
+  return mrcSuccess;
+}
+
+
+/**
   This function does Force Comp and Polls
 
   @param[in, out] MrcData - Include all MRC global data.

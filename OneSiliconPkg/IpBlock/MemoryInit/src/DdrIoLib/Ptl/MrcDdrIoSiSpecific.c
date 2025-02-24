@@ -54,6 +54,22 @@ BlueMrcClearXtensaDramTop (
 }
 
 /**
+  Check if MRC needs to reload Green MRC image on subsequent SAGV points.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval TRUE  - need to reload
+  @retval FALSE - no need to reload
+**/
+BOOLEAN
+MrcIsGreenReloadNeeded (
+  IN MrcParameters *const MrcData
+  )
+{
+  return FALSE; // No need to reload Green MRC image on SAGV1/2/3
+}
+
+/**
   This function sets the bit of InternalClocksOn in DataControl0 struct.
 
   @param[in out] DataControl0  - Pointer to DATA0CH0_CR_DDRCRDATACONTROL0_STRUCT.

@@ -485,6 +485,9 @@
 #string STR_WEAKLOCK_SUPPORT_PROMPT             #language en-US "DLL Weak Lock Support"
 #string STR_WEAKLOCK_SUPPORT_HELP               #language en-US "Enable/Disable Dll Weaklock support"
 
+#string STR_RXDQSDELAYCOMPEN_SUPPORT_PROMPT     #language en-US "Rx DQS Delay Comp Support"
+#string STR_RXDQSDELAYCOMPEN_SUPPORT_HELP       #language en-US "Enable/Disable Rx DQS Delay Comp support"
+
 #string STR_ASYNCODT_SUPPORT_PROMPT             #language en-US "Async Odt Support"
 #string STR_ASYNCODT_SUPPORT_HELP               #language en-US "Enable/Disable Async Odt Support"
 

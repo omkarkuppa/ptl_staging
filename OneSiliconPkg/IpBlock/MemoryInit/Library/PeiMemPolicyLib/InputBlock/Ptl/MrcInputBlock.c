@@ -154,7 +154,7 @@
 // TrainingEnables3
 #define MRC_EXT_INPUTS_INIT_VAL_RXDQSDCC               (1)  // BIT0
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMNTODT              (0)  // BIT1
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit2          (0)  // BIT2
+#define MRC_EXT_INPUTS_INIT_VAL_TXDQSDCC               (1)  // BIT2
 #define MRC_EXT_INPUTS_INIT_VAL_RXVREFPERBIT           (0)  // BIT3
 #define MRC_EXT_INPUTS_INIT_VAL_PPR                    (0)  // BIT4
 #define MRC_EXT_INPUTS_INIT_VAL_LVRAUTOTRIM            (0)  // BIT5
@@ -190,7 +190,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_DqPinsInterleaved      (0)
 #define MRC_EXT_INPUTS_INIT_VAL_RankInterleave         (1)
 #define MRC_EXT_INPUTS_INIT_VAL_EnhancedInterleave     (1)
-#define MRC_EXT_INPUTS_INIT_VAL_WeaklockEn             (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Rvsd60b5               (0)
 #define MRC_EXT_INPUTS_INIT_VAL_ChHashEnable           (1)
 #define MRC_EXT_INPUTS_INIT_VAL_EnablePwrDn            (1)
 #define MRC_EXT_INPUTS_INIT_VAL_EnablePwrDnLpddr       (1)
@@ -260,7 +260,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_SafeModeOverride                (0xFF)
 #define MRC_EXT_INPUTS_INIT_VAL_DdrSafeMode                     (MRC_BIT2) // DDR_SAFE_DCC
 
-#define MRC_EXT_INPUTS_INIT_VAL_McSafeMode                      (0x02)
+#define MRC_EXT_INPUTS_INIT_VAL_McSafeMode                      (0)
 #define MRC_EXT_INPUTS_INIT_VAL_LpMode                          (MRC_LPMODE_ALL)
 #define MRC_EXT_INPUTS_INIT_VAL_LpMode4                         (MrcLpMode4_Enable)
 #define MRC_EXT_INPUTS_INIT_VAL_PprTestType                     (0x6)
@@ -363,8 +363,10 @@
 #define MRC_EXT_INPUTS_INIT_VAL_SvReservedBits           (0)
 
 #define MRC_EXT_INPUTS_INIT_VAL_RowPressEn                      (0)
+#define MRC_EXT_INPUTS_INIT_VAL_WeaklockEn                      (MrcAuto)
+#define MRC_EXT_INPUTS_INIT_VAL_RxDqsDelayCompEn                (MrcAuto)
 
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved325                     {0}
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved327                     {0}
 
 #ifdef MRC_MINIBIOS_BUILD
 #define MRC_INT_INPUTS_INIT_VAL_LpFreqSwitch                            (0)
@@ -384,10 +386,8 @@
 #define MRC_INT_INPUTS_INIT_VAL_RloadTarget                             (1000)
 #define MRC_INT_INPUTS_INIT_VAL_DiscardLvrAutoTrimResults               (0)
 #define MRC_INT_INPUTS_INIT_VAL_PhClkSkipPhCorrection                   (0)
-#ifdef HVM_MODE
 #define MRC_INT_INPUTS_INIT_VAL_PhClkCheckPhError                       (20)
 #define MRC_INT_INPUTS_INIT_VAL_PhClkCheckDcError                       (10)
-#endif // HVM_MODE
 #endif
 
 MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
@@ -521,7 +521,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     {
       MRC_EXT_INPUTS_INIT_VAL_RXDQSDCC,          // BIT0
       MRC_EXT_INPUTS_INIT_VAL_DIMMNTODT,         // BIT1
-      MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit2,     // BIT2
+      MRC_EXT_INPUTS_INIT_VAL_TXDQSDCC,          // BIT2
       MRC_EXT_INPUTS_INIT_VAL_RXVREFPERBIT,      // BIT3
       MRC_EXT_INPUTS_INIT_VAL_PPR,               // BIT4
       MRC_EXT_INPUTS_INIT_VAL_LVRAUTOTRIM,       // BIT5
@@ -557,7 +557,7 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_DqPinsInterleaved,
     MRC_EXT_INPUTS_INIT_VAL_RankInterleave,
     MRC_EXT_INPUTS_INIT_VAL_EnhancedInterleave,
-    MRC_EXT_INPUTS_INIT_VAL_WeaklockEn,
+    MRC_EXT_INPUTS_INIT_VAL_Rvsd60b5,
     MRC_EXT_INPUTS_INIT_VAL_ChHashEnable,
     MRC_EXT_INPUTS_INIT_VAL_EnablePwrDn,
     MRC_EXT_INPUTS_INIT_VAL_EnablePwrDnLpddr,
@@ -734,7 +734,9 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_SvReservedBits,
 
     MRC_EXT_INPUTS_INIT_VAL_RowPressEn,
-    MRC_EXT_INPUTS_INIT_VAL_Reserved325,
+    MRC_EXT_INPUTS_INIT_VAL_WeaklockEn,
+    MRC_EXT_INPUTS_INIT_VAL_RxDqsDelayCompEn,
+    MRC_EXT_INPUTS_INIT_VAL_Reserved327,
   },
 #ifdef MRC_MINIBIOS_BUILD
   /// MRC_INT_INPUTS_TYPE
@@ -756,10 +758,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_INT_INPUTS_INIT_VAL_RloadTarget,
     MRC_INT_INPUTS_INIT_VAL_DiscardLvrAutoTrimResults,
     MRC_INT_INPUTS_INIT_VAL_PhClkSkipPhCorrection,
-#ifdef HVM_MODE
     MRC_INT_INPUTS_INIT_VAL_PhClkCheckPhError,
     MRC_INT_INPUTS_INIT_VAL_PhClkCheckDcError,
-#endif // HVM_MODE
   },
 #endif
   MRC_INPUT_BINARY_BLOCK_END
@@ -795,7 +795,6 @@ MrcInternalInputsDefaultInit (
   OUT MrcInput *Inputs
   )
 {
-
   Inputs->LpFreqSwitch              = MainInputs.InternalInputs.LpFreqSwitch;
   Inputs->ErrorCountForFail         = MainInputs.InternalInputs.ErrorCountForFail;
   Inputs->BER                       = MainInputs.InternalInputs.BER;
@@ -812,11 +811,9 @@ MrcInternalInputsDefaultInit (
   Inputs->MptuPropagationErrorFlow  = MainInputs.InternalInputs.MptuPropagationErrorFlow;
   Inputs->RloadTarget               = MainInputs.InternalInputs.RloadTarget;
   Inputs->DiscardLvrAutoTrimResults = MainInputs.InternalInputs.DiscardLvrAutoTrimResults;
-  Inputs->PhClkSkipPhCorrection    = MainInputs.InternalInputs.PhClkSkipPhCorrection;
-#ifdef HVM_MODE
-  Inputs->PhClkCheckPhError        = MainInputs.InternalInputs.PhClkCheckPhError;
-  Inputs->PhClkCheckDcError        = MainInputs.InternalInputs.PhClkCheckDcError;
-#endif // HVM_MODE
+  Inputs->PhClkSkipPhCorrection     = MainInputs.InternalInputs.PhClkSkipPhCorrection;
+  Inputs->PhClkCheckPhError         = MainInputs.InternalInputs.PhClkCheckPhError;
+  Inputs->PhClkCheckDcError         = MainInputs.InternalInputs.PhClkCheckDcError;
 }
 
 /**

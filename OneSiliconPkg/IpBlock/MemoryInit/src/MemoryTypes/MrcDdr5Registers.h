@@ -107,11 +107,11 @@ typedef enum {
   Ddr5Trtp_24,
   Ddr5Trtp_26,
   Ddr5Trtp_27,
-  Ddr5Trtp_28,
+  Ddr5Trtp_29,
   Ddr5Trtp_30,
   Ddr5Trtp_32,
   Ddr5Trtp_33,
-  Ddr5TrtpMax
+  Ddr5Trtp_35
 } DDR5_MR6_TRTP;
 
 

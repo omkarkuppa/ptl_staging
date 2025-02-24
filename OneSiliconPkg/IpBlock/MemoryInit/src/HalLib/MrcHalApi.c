@@ -849,13 +849,9 @@ MrcCkdGetSetCW (
 {
   return MrcCkdGetSet (
     MrcData,
-    MRC_IGNORE_ARG,
     Controller,
     Channel,
     Rank,
-    MRC_IGNORE_ARG,
-    MRC_IGNORE_ARG,
-    MRC_IGNORE_ARG,
     Group,
     Mode,
     Value

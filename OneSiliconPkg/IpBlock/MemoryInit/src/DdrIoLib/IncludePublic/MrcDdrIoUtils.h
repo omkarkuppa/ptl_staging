@@ -117,6 +117,21 @@ ForceRcomp (
   );
 
 /**
+  Run the comp engine continuously. If the comp completes before the timeout, run it again.
+
+  @param[in, out] MrcData - Include all MRC global data.
+  @param[in]     TestLength  - Run time in us
+
+  @retval mrcSuccess Poll returns expected
+  @retval mrcDeviceBusy did not return expected.
+**/
+MrcStatus
+ForceRcompContinuous (
+  IN OUT MrcParameters* const MrcData,
+  IN     UINT32               TestLength
+  );
+
+/**
   This function configures the Data Invert Nibble feature in the Phy based on the Phy ODT configuration
 
   @param[in]  MrcData - Pointer to MRC global data.

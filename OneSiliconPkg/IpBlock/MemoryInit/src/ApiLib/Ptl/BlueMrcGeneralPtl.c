@@ -31,7 +31,26 @@ MrcSetPrjOverrides (
   IN OUT MrcParameters *const MrcData
   )
 {
-  // At this time there are no PTL-specific overrides to be added here
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
+  MrcOutput           *Outputs;
+
+  ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
+  Outputs   = &MrcData->Outputs;
+
+  // Resolving 'Auto' for weaklock and rxdqsdelay comp:
+  //  Low frequency:  Enable weaklock and disable RxDqsDelay comp
+  //  High frequency: Disable weaklock and enable RxDqsDelay comp
+  if (ExtInputs->WeaklockEn == MrcAuto) {
+    Outputs->WeaklockEn = (Outputs->Frequency <= f3200);
+  } else {
+    Outputs->WeaklockEn = (ExtInputs->WeaklockEn == MrcEnable);
+  }
+  if (ExtInputs->RxDqsDelayCompEn == MrcAuto) {
+    Outputs->RxDqsDelayCompEn = (Outputs->Frequency > f3200);
+  } else {
+    Outputs->RxDqsDelayCompEn = (ExtInputs->RxDqsDelayCompEn == MrcEnable);
+  }
+  MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "RxDqsDelayCompEn: %sabled\n", Outputs->RxDqsDelayCompEn ? "En" : "Dis");
 }
 
 /**

@@ -184,25 +184,35 @@ typedef enum {
 } RAIL_PARTTION;
 
 
-#define PART_RAIL_DATA_MSK  (MRC_BIT0 << DataRailPartion) // data bit0
-#define PART_RAIL_CCC_MSK   (MRC_BIT0 << CccRailPartion)  // ccc bit1
-#define PART_RAIL_COMP_MSK  (MRC_BIT0 << CompRailPartion) // comp bit2
+#define DATA_PART_MASK  (MRC_BIT0 << DataRailPartion) // data bit0
+#define CCC_PART_MASK   (MRC_BIT0 << CccRailPartion)  // ccc bit1
+#define COMP_PART_MASK  (MRC_BIT0 << CompRailPartion) // comp bit2
 
-static const UINT8 RailPartsMask[MaxRail] = {
-  PART_RAIL_DATA_MSK,                                          // VCCCLKRX0
-  PART_RAIL_DATA_MSK,                                          // VCCCLKRX1
-  PART_RAIL_DATA_MSK | PART_RAIL_CCC_MSK,                      // VCCCLKTX
-  PART_RAIL_DATA_MSK,                                          // NBIASFF
-  PART_RAIL_DATA_MSK | PART_RAIL_CCC_MSK | PART_RAIL_COMP_MSK, // VCCIOG
-                                           PART_RAIL_COMP_MSK, // VCCPLL
-                                           PART_RAIL_COMP_MSK, // VCCDIST
-                                           PART_RAIL_COMP_MSK, // VCCCLKQ
-  PART_RAIL_DATA_MSK | PART_RAIL_CCC_MSK | PART_RAIL_COMP_MSK, // VCCMEMG
-                       PART_RAIL_CCC_MSK | PART_RAIL_COMP_MSK, // VCCDD2G
-                                           PART_RAIL_COMP_MSK  // VCCDDQG
-};
+//Mapping Table: Maps each voltage rail to a list containing the [+/- AC Tolerance (% of Target), +/- DC Tolerance (mV)]
+//hese tolerance numbers are combined with the target voltage and used by runLvrRMT to check if voltage is within spec.
+//All are x1000 to avoid using float number.
+                                            // VCCCLKRX0    VCCCLKRX1    VCCCLKTX     NBIASFF     VCCIOG        VCCPLL     VCCDIST     VCCCLKQ      VCCMEMG      VCCDD2G      VCCDDQG
+static const UINT32 RailTol[MaxRail][2] =     {{15,  5000}, {15,  5000}, {15, 5000}, {10, 5000}, {30,  8000}, { 5, 5000}, {10, 5000}, {20, 15000}, {50, 50000}, {50, 50000}, {50, 50000}};
+static const UINT8 SelVSense[MaxRail] =       { 1,            2,          3,           5,          4,            2,         1,          3,           6,          5,           7};
+static const UINT8 SelLvrAutoTrim[MaxRail] =  { 0,            1,          2,           4,          3,            1,         0,          2,           0,          0,           0};
+static const UINT8 RailPartsMask[MaxRail] =   { DATA_PART_MASK,                                   // VCCCLKRX0
+                                                DATA_PART_MASK,                                   // VCCCLKRX1
+                                                DATA_PART_MASK | CCC_PART_MASK,                   // VCCCLKTX
+                                                DATA_PART_MASK,                                   // NBIASFF
+                                                DATA_PART_MASK | CCC_PART_MASK | COMP_PART_MASK,  // VCCIOG
+                                                                                 COMP_PART_MASK,  // VCCPLL
+                                                                                 COMP_PART_MASK,  // VCCDIST
+                                                                                 COMP_PART_MASK,  // VCCCLKQ
+                                                DATA_PART_MASK | CCC_PART_MASK | COMP_PART_MASK,  // VCCMEMG
+                                                                 CCC_PART_MASK | COMP_PART_MASK,  // VCCDD2G
+                                                DATA_PART_MASK | CCC_PART_MASK | COMP_PART_MASK}; // VCCDDQG
 
-static const UINT8 PartInstanceNum[MaxRailPartion] = { MRC_DATA_DT_NUM , MRC_CCC_SHARED_NUM , MRC_COMP_NUM };
+#ifdef MRC_DEBUG_PRINT
+static const CHAR8* const RailStr[MaxRail] = {"VCCCLKRX0", "VCCCLKRX1", "VCCCLKTX", "NBIASFF", "VCCIOG", "VCCPLL", "VCCDIST", "VCCCLKQ", "VCCMEMG", "VCCDD2G", "VCCDDQG"};
+static const CHAR8* const PartStr[MaxRailPartion] = {"Data", "Ccc", "Comp"};
+#endif
+
+static const UINT8 PartInstanceNum[MaxRailPartion] = {MRC_DATA_SHARED_NUM , MRC_CCC_SHARED_NUM , MRC_COMP_NUM};
 
 typedef struct {
   INT64 RxPiPwrDnDis;
@@ -3024,7 +3034,7 @@ MrcDdrIoFastEnable (
   @retval None
 **/
 VOID
-MrcGetSetDqsRFTrainingModeInSenseAmp (
+MrcGetSetDqsRFTrainingMode  (
   IN  MrcParameters *const MrcData,
   IN  UPDATE_MODE          UpdateMode,
   IN  UINT32               Mode,
@@ -3173,4 +3183,24 @@ MrcSetChannelNotPopulated (
   MrcParameters * MrcData
 );
 
+/**
+  The function programs Rx VREF training result.
+
+  @param[in, out] MrcData          - Include all MRC global data.
+  @param[in]      Controller       - Memory controller
+  @param[in]      Channel          - Channel number
+  @param[in]      Byte             - Byte number
+  @param[in]      Mode             - Get Set Mode will be used in the GetSet function
+  @param[in]      SweepResultsBit  - Structure to store liner search results on the Bit level
+
+**/
+void
+MrcProgramRxVrefTrainingResult (
+  IN OUT MrcParameters *const MrcData,
+  IN UINT8                    Controller,
+  IN UINT8                    Channel,
+  IN UINT8                    Byte,
+  IN UINT8                    Mode,
+  IN SweepResultsBit   *const SweepResultBit
+  );
 #endif //MRC_DDR_IO_API_H_

@@ -359,6 +359,9 @@ typedef struct {
 #define TX_EQ_NUM     (32)
 #define DFE_NUM_DDR5  (DDR5_DIMM_DFE_TAP1_RANGE + 11)
 #define DFE_NUM_LP5   (LPDDR5_DIMM_DFE_TAP_RANGE + 1)
+#define TX_DQS_DCC_MAX        (15) // post silicon optimization experiment result
+#define TX_DQS_DCC_MIN        (-5) // post silicon optimization experiment result
+#define TX_DQS_DCC_RANGE      (TX_DQS_DCC_MAX - TX_DQS_DCC_MIN + 1) //edges included // 21 
 
 typedef struct {
   UINT16  OptLastParams[2];
@@ -1937,6 +1940,18 @@ ForceSystemRComp(
   IN MrcParameters* const MrcData,
   IN UINT8                OptParam,
   IN BOOLEAN              ForceComp
+);
+
+/**
+  This function implements TxDqsDCC training.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval - mrcSuccess
+**/
+MrcStatus
+MrcTxDqsDccTraining (
+  IN MrcParameters* const MrcData
 );
 
 #endif // _MrcCrosser_h_

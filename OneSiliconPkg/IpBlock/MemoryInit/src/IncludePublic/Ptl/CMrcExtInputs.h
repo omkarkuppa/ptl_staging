@@ -99,7 +99,7 @@ typedef struct {
   UINT32  DqPinsInterleaved:1;                ///<            Bit 2  - Interleaving mode of DQ/DQS pins which depends on board routing: <b>0=Disable</b>, 1=Enable
   UINT32  RankInterleave:1;                   ///<            Bit 3  - Rank Interleave Mode: 0=Disable, <b>1=Enable</b>
   UINT32  EnhancedInterleave:1;               ///<            Bit 4  - Enhanced Interleave Mode: 0=Disable, <b>1=Enable</b>
-  UINT32  WeaklockEn:1;                       ///<            Bit 5  - Weak Lock Enable: 0=Disable, <b>1=Enable</b>
+  UINT32  Reserved60b5:1;                     ///<            Bit 5  - Reserved
   UINT32  ChHashEnable:1;                     ///<            Bit 6  - Channel Hash Enable: 0=Disable, <b>1=Enable</b>
   UINT32  EnablePwrDn:1;                      ///<            Bit 7  - Enable Power Down control for DDR: 0=PCODE control, <b>1=BIOS control</b>
   UINT32  EnablePwrDnLpddr:1;                 ///<            Bit 8  - Enable Power Down for LPDDR: 0=PCODE control, <b>1=BIOS control</b>
@@ -274,7 +274,9 @@ typedef struct {
   UINT32  SvReservedBits            : 5;  ///<            Bit 27-31  Reserved
 
   UINT8   RowPressEn;                     ///< Offset 324 Enable/disable ROW PRESS feature
-  UINT8   Reserved325[63];                ///< Offset 325 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (388) = 416 should be a multiple of 8 bytes.
+  UINT8   WeaklockEn;                     ///< Offset 325 Weak Lock Enable: <b>0=Auto</b>, 1=Enable, 2=Disable
+  UINT8   RxDqsDelayCompEn;               ///< Offset 326 Rx DQS Delay Comp Enable: <b>0=Auto</b>, 1=Enable, 2=Disable
+  UINT8   Reserved327[61];                ///< Offset 327 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (388) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

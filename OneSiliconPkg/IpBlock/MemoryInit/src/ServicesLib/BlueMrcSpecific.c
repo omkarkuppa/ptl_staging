@@ -227,7 +227,6 @@ SelectReutRanks (
   UINT8   NewRankCount;
   UINT8   OldRankCount;
   UINT32  OldBaseRepeats;
-  UINT32  NewBaseRepeats;
   UINT32  Burst;
   UINT8   IpChannel;
   BOOLEAN IsLpddr;
@@ -273,8 +272,7 @@ SelectReutRanks (
       MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_ERROR, "%s SelectReutRanks: Old Rank Count is zero!", gErrString);
     }
     Burst = (OldBaseRepeats + 1) / OldRankCount;
-    NewBaseRepeats = Cpgc20BaseRepeatsMcCh (MrcData, Controller, IpChannel, Burst, NewRankCount);
-    Cpgc20ConfigPgRotation (MrcData, MrcLog2 (MrcData, NewBaseRepeats + 1));
+    Cpgc20BaseRepeatsMcCh (MrcData, Controller, IpChannel, Burst, NewRankCount);
   }
   return (UINT8) (MRC_BIT0 << ((Controller * Outputs->MaxChannels) + ch));
 }

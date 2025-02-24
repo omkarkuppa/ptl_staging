@@ -1299,7 +1299,7 @@ EnableDdr5MulticycleCs (
 }
 
 /**
-  This function sets workpoint data for MC and PHY.
+  This function sets workpoint data for PHY.
 
   @param[in, out] MrcData - MRC global data.
 
@@ -1310,7 +1310,6 @@ SetWorkPointData (
   IN OUT MrcParameters *const MrcData
   )
 {
-  SetWorkPointDataForMc(MrcData);
   MrcSetWorkPointDataForPhy(MrcData);
   return MrcSetWorkpointCR(MrcData);
 }

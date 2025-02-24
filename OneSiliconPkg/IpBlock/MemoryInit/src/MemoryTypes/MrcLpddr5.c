@@ -959,7 +959,7 @@ InitMrwLpddr5 (
         Mr24.Bits.Dfeql = DfeQl;
         Mr24.Bits.Dfequ = DfeQu;
         MrPtr[mrIndexMR24] = Mr24.Data8;
-        
+
         DcaValue = (Outputs->Frequency > f4800) ? 0xA : 0;
         //MR30 - DCA WCK
         Mr30.Data8 = 0;
@@ -981,11 +981,11 @@ InitMrwLpddr5 (
           Status = mrcWrongInputParameter;
         }
         Mr17.Bits.SocOdt = SocOdtEnc;
-        if ((Rank > 0) || Outputs->IsDvfsqEnabled) {
+        if ((Rank > 0) || Outputs->IsDvfsqEnabled || Outputs->IsDvfscEnabled) {
           Mr17.Bits.CaOdtDis = 1;
           Mr17.Bits.CkOdtDis = 1;
         }
-        if (Outputs->IsDvfsqEnabled) {
+        if (Outputs->IsDvfsqEnabled || Outputs->IsDvfscEnabled) {
           Mr17.Bits.CsOdtDis = 1;
         }
         MrPtr[mrIndexMR17] = Mr17.Data8;
@@ -1003,7 +1003,7 @@ InitMrwLpddr5 (
 
         //MR11
         Mr11.Data8 = 0;
-        if (!Outputs->IsDvfsqEnabled) {
+        if (!Outputs->IsDvfsqEnabled && !Outputs->IsDvfscEnabled) {
           Mr11.Bits.DqOdt = DqOdtEnc;
           Mr11.Bits.CaOdt = CaOdtEnc;
           Mr11.Bits.NtOdtEn = Inputs->NonTargetOdtEn;
@@ -1034,7 +1034,7 @@ InitMrwLpddr5 (
         Mr18.Data8 = 0;
         // Wck Pins are shared for ranks, and the termination on a single rank will be applied on all states. Therefore only as single rank needs
         // define a termination
-        if ((Rank == 0) && !Outputs->IsDvfsqEnabled) {
+        if ((Rank == 0) && !Outputs->IsDvfsqEnabled && !Outputs->IsDvfscEnabled) {
           Mr18.Bits.WckOdt = WckOdtEnc; // Ohms
         }
         Mr18.Bits.WckFreqMode = (Outputs->HighFrequency >= f3200) ? 1 : 0;
@@ -1829,6 +1829,9 @@ MrcSetVrefLpddr5 (
   UINT8       ByteSel;
   LPDDR5_MODE_REGISTER_12_TYPE  Lpddr5Mr12;
   LPDDR5_MODE_REGISTER_14_TYPE  Lpddr5Mr14;
+#if defined(LOCAL_STUB_STATE_FLAG)
+  MRC_LOCAL_STUB_STATE_STRUCT   LsState;
+#endif
 
   Status     = mrcSuccess;
   Outputs    = &MrcData->Outputs;
@@ -1852,6 +1855,11 @@ MrcSetVrefLpddr5 (
       for (ByteSel = 0; ByteSel < (Outputs->LpByteMode ? 2 : 1); ByteSel++) {
         MrIndex = mrIndexMR12 + ByteSel; // mrIndexMR12 + 1 = mrIndexMR12Upper
         Lpddr5Mr12.Bits.CaVref = VrefCode;
+#if defined(LOCAL_STUB_STATE_FLAG)
+        LsState.Data = MrcReadCR64 (MrcData, MRC_LOCAL_STUB_STATE_REG);
+        LsState.Bits.CmdVrefSetting = VrefCode;
+        MrcWriteCR64 (MrcData, MRC_LOCAL_STUB_STATE_REG, LsState.Data);
+#endif
         Lpddr5Mr12.Bits.VrefByteSel = ByteSel;
         Status = MrcIssueMrw (
                   MrcData,

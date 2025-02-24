@@ -31,32 +31,6 @@
 #include "MrcPostCodes.h"
 
 /**
-  This routine programs the EXT_BUF for Victim-aggressor traffic on DQ lanes using a VA pattern
-  This routine performs the following steps:
-  0: Fill a buffer with the VA pattern
-  1: Program the external buffer values into the EXT_BUF of the CPGC pattern generator
-  @param[in] MrcData     - Include all MRC global data.
-  @param[in] McChBitMask - Memory Controller Channel Bit mask for which test should be setup for.
-  @param[in] vmask       - 32 bit victim mask.  1 indicates this bit should use LFSR0. Mask length is 16 bits (CPGC_20_NUM_DPAT_EXTBUF)
-  @param[in] amask       - 32 bit aggressor mask. 0/1 indicates this bit should use LFSR1/2. Mask length is 16 bits (CPGC_20_NUM_DPAT_EXTBUF)
-
-  @retval Nothing
-**/
-VOID
-MrcProgramVAPattern (
-  IN MrcParameters *const MrcData,
-  IN UINT8                McChBitMask,
-  IN UINT32               vmask,
-  IN UINT32               amask
-  )
-{
-  UINT32  Pattern[CPGC_20_NUM_DPAT_EXTBUF];
-
-  Cpgc20FillVAPattern (vmask, amask, Pattern);
-  Cpgc20SetDqAssignemnt (MrcData, McChBitMask, Pattern);
-}
-
-/**
   Programs all the key registers to define a CPGC test as per input mask and Outputs->McChBitMask.
   McChBitMask is initialized in MrcPretraining based on population, and used throughout internal CPGC structure.
   Modify McChBitMask to specify which MC/CH to program
@@ -100,7 +74,6 @@ SetupIOTest (
   UINT32            BlockRepeats;
   BOOLEAN           IsDdr5;
   BOOLEAN           IsPatSrcAllZeroes;
-  BOOLEAN           IsDqPatternRequired;
 
   Inputs      = &MrcData->Inputs;
   Outputs     = &MrcData->Outputs;
@@ -139,17 +112,7 @@ SetupIOTest (
   if (!IsPatSrcAllZeroes) {
     // Setup the Pattern Generator for the test.
     //   StaticPattern: The caller programs the pattern
-    IsDqPatternRequired = (PatCtlPtr->DQPat != StaticPattern);
-    if (IsDqPatternRequired) {
-      MrcProgramVAPattern (MrcData, McChBitMask, BASIC_VA_VICTIM_16, BASIC_VA_AGGRESSOR_16);
-    }
-
     Cpgc20LfsrCfg (MrcData, 0);
-
-    // Program Write Data Buffer Related Entries.
-    // Assumes the PG has already been selected above for Data PG's.
-    // Program the data rotation -- IncRate if Dynamic, 0 if Static.
-    Cpgc20ConfigPgRotation (MrcData, ((PatCtlPtr->PatSource == MrcPatSrcDynamic) ? PatCtlPtr->IncRate : 0));  // No data rotation
   }
 
   // Enable/Disable DC/Invert on all lanes, including ECC
@@ -343,164 +306,47 @@ RunIOTest (
   IN BOOLEAN              IsCmdVC
   )
 {
-  const MrcInput      *Inputs;
-  const MRC_FUNCTION  *MrcCall;
   MrcDebug            *Debug;
   MrcOutput           *Outputs;
   MrcStatus           Status;
-  INT64               GetSetVal;
-  UINT32              Controller;
-  UINT32              Channel;
-  UINT32              TestIdx;
-  UINT8               CurMcChBitMask;
-  UINT8               NumTests;
-  UINT8               tRDRD_dr_Min[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT8               tRDRD_sg_Min[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT8               tRDRD_dg_Min[MAX_CONTROLLER][MAX_CHANNEL];
-  UINT8               TurnAroundOffset;
-  UINT8               MaxChannel;
-  BOOLEAN             IsLpddr;
 
-  Inputs        = &MrcData->Inputs;
-  MrcCall       = Inputs->Call.Func;
   Outputs       = &MrcData->Outputs;
-  IsLpddr       = Outputs->IsLpddr;
-  MaxChannel    = Outputs->MaxChannels;
   Debug         = &Outputs->Debug;
-  MrcCall->MrcSetMem ((UINT8 *) tRDRD_dr_Min, sizeof (tRDRD_dr_Min), 0);
-  MrcCall->MrcSetMem ((UINT8 *) tRDRD_sg_Min, sizeof (tRDRD_sg_Min), 0);
-  MrcCall->MrcSetMem ((UINT8 *) tRDRD_dg_Min, sizeof (tRDRD_dg_Min), 0);
+  Status        = mrcSuccess;
 
-  NumTests               = 1;
-  Status                 = mrcSuccess;
+  //###########################################################
+  // Start Test and Poll on completion
+  //###########################################################
 
-  if (DQPat == RdRdTA) {
-    NumTests = 2;
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      for (Channel = 0; Channel < MaxChannel; Channel++) {
-        if ((!MrcChannelExist (MrcData, Controller, Channel)) || IS_MC_SUB_CH (IsLpddr, Channel)) {
-          continue;
-        }
-        CurMcChBitMask = (1 << ((Controller * MaxChannel) + Channel));
-        if ((CurMcChBitMask & McChBitMask) == 0) {
-          continue;
-        }
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDsg, ReadFromCache, &GetSetVal);
-        tRDRD_sg_Min[Controller][Channel] = (UINT8) GetSetVal; // save the min value allowed
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdg, ReadFromCache, &GetSetVal);
-        tRDRD_dg_Min[Controller][Channel] = (UINT8) GetSetVal; // save the min value allowed
-      }
-    }
-  } else if (DQPat == RdRdTA_All) {
-    NumTests = 8;
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      for (Channel = 0; Channel < MaxChannel; Channel++) {
-        if ((!MrcChannelExist (MrcData, Controller, Channel)) || IS_MC_SUB_CH (IsLpddr, Channel)) {
-          continue;
-        }
-        CurMcChBitMask = (1 << ((Controller * MaxChannel) + Channel));
-        if ((CurMcChBitMask & McChBitMask) == 0) {
-          continue;
-        }
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDsg, ReadFromCache, &GetSetVal);
-        tRDRD_sg_Min[Controller][Channel] = (UINT8) GetSetVal; // save the min value allowed
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdg, ReadFromCache, &GetSetVal);
-        tRDRD_dg_Min[Controller][Channel] = (UINT8) GetSetVal; // save the min value allowed
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdr, ReadFromCache, &GetSetVal);
-        tRDRD_dr_Min[Controller][Channel] = (UINT8) GetSetVal; // save the min value allowed
-      }
-    }
+  // IO Reset needed before starting test.
+  if (!Outputs->IsSkipIoReset) {
+    IoReset(MrcData);
   }
 
-  for (TestIdx = 0; TestIdx < NumTests; TestIdx++) {
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      for (Channel = 0; Channel < MaxChannel; Channel++) {
-        CurMcChBitMask = (1 << ((Controller * MaxChannel) + Channel));
-        if (!(CurMcChBitMask & McChBitMask) ||
-          (IS_MC_SUB_CH (IsLpddr, Channel) && ((DQPat == RdRdTA) || (DQPat == RdRdTA_All)))) {
-          continue;
-        }
-
-        if (DQPat == RdRdTA) {
-          // Program tRDRD parameter
-          GetSetVal = tRDRD_sg_Min[Controller][Channel] + TestIdx;
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDsg, WriteCached, &GetSetVal);
-          GetSetVal = tRDRD_dg_Min[Controller][Channel] + TestIdx;
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdg, WriteCached, &GetSetVal);
-        } else if (DQPat == RdRdTA_All) {
-          // Program tRDRD for SR and DR
-          //  Run 8 tests, Covering tRDRD_sr = 4,5,6,7 and tRDRD_dr = Min,+1,+2,+3
-          TurnAroundOffset = (TestIdx % 4);
-          GetSetVal = tRDRD_sg_Min[Controller][Channel] + TurnAroundOffset;
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDsg, WriteCached, &GetSetVal);
-          GetSetVal = tRDRD_dg_Min[Controller][Channel] + TurnAroundOffset;
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdg, WriteCached, &GetSetVal);
-          GetSetVal = tRDRD_dr_Min[Controller][Channel] + TurnAroundOffset;
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdr, WriteCached, &GetSetVal);
-        }
-      } // for Channel
-    }  // for Controller
-
-    //###########################################################
-    // Start Test and Poll on completion
-    //###########################################################
-
-    // IO Reset needed before starting test.
-    if (!Outputs->IsSkipIoReset) {
-      IoReset(MrcData);
-    }
-
-    if (ClearErrors && (TestIdx == 0)) {
-      Cpgc20ClearErrors (MrcData, McChBitMask);
-    }
-
-    // We do not clear error everytime before start test because we want to accumulate errors through various point tests.
-    // TestIdx indicates how many point tests are supposed to be run for each parameter.
-    // We need to run multiple point tests because of following reasons:
-    //   MRC needs to manually rotate victim lanes for CADB Deselects and ReadMPR DDR5.
-    //   To adjust Turnaround values for TAT stress tests.
-    TestDataEngineTestStart (MrcData, McChBitMask);
-
-    // Wait till CPGC test is done on all participating channels
-    Status = TestDataEngineTestDone (MrcData, McChBitMask);
-    if (Status != mrcSuccess) {
-      MRC_DEBUG_ASSERT(FALSE, Debug, "RunIO test exceeds timeout value\n");
-    }
-
-    // For x64 Channels, we can break out as soon as either SubChannel has an error for the channels populated.
-    // Same as Error Status mask.
-    // Current assumption is SubChannels are run sequentially.  Traffic is only sent on tested sub channel.  If a failure occurs, report it as an error for that Channel.
-    // If a Sch is not populated, its Error status is Don't Care.
-    // Not Valid (NV)
-    // Sc1,Sc0   | 0,0 | 0,1 | 1,1 | 1,0 |
-    // Sc1E,Sc0E |-----------------------|
-    //    0,0    | NV  |  0  |  0  |  0  |
-    //    0,1    | NV  |  1  |  1  |  0  |
-    //    1,1    | NV  |  1  |  1  |  1  |
-    //    1,0    | NV  |  0  |  1  |  1  |
-    //           |-----------------------|
-    //} // NumDqRot
-  } // NumTests
-
-  if ((DQPat == RdRdTA) || (DQPat == RdRdTA_All)) {
-    // Restore original tRDRD value
-    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-      for (Channel = 0; Channel < MaxChannel; Channel++) {
-        CurMcChBitMask = (1 << ((Controller * MaxChannel) + Channel));
-        if (!(CurMcChBitMask & McChBitMask) || IS_MC_SUB_CH (IsLpddr, Channel)) {
-          continue;
-        }
-        GetSetVal = tRDRD_sg_Min[Controller][Channel];
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDsg, WriteCached, &GetSetVal);
-        GetSetVal = tRDRD_dg_Min[Controller][Channel];
-        MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdg, WriteCached, &GetSetVal);
-        if (DQPat == RdRdTA_All) {
-          GetSetVal = tRDRD_dr_Min[Controller][Channel];
-          MrcGetSetMcCh (MrcData, Controller, Channel, GsmMctRDRDdr, WriteCached, &GetSetVal);
-        }
-      }
-    }
+  if (ClearErrors) {
+    Cpgc20ClearErrors (MrcData, McChBitMask);
   }
+
+  TestDataEngineTestStart (MrcData, McChBitMask);
+
+  // Wait till CPGC test is done on all participating channels
+  Status = TestDataEngineTestDone (MrcData, McChBitMask);
+  if (Status != mrcSuccess) {
+    MRC_DEBUG_ASSERT(FALSE, Debug, "RunIO test timeout\n");
+  }
+
+  // For x64 Channels, we can break out as soon as either SubChannel has an error for the channels populated.
+  // Same as Error Status mask.
+  // Current assumption is SubChannels are run sequentially.  Traffic is only sent on tested sub channel.  If a failure occurs, report it as an error for that Channel.
+  // If a Sch is not populated, its Error status is Don't Care.
+  // Not Valid (NV)
+  // Sc1,Sc0   | 0,0 | 0,1 | 1,1 | 1,0 |
+  // Sc1E,Sc0E |-----------------------|
+  //    0,0    | NV  |  0  |  0  |  0  |
+  //    0,1    | NV  |  1  |  1  |  0  |
+  //    1,1    | NV  |  1  |  1  |  1  |
+  //    1,0    | NV  |  0  |  1  |  1  |
+  //           |-----------------------|
   return McChBitMask;
 }
 

@@ -243,6 +243,8 @@ IbeccOperationMode
 ChHashOverride
 RetrainToWorkingChannel
 RowPressEn
+WeaklockEn
+RxDqsDelayCompEn
 DisableMc0Ch0
 DisableMc0Ch1
 DisableMc0Ch2

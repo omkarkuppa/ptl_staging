@@ -1409,7 +1409,7 @@
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 64   | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 62   | {0x00}
 
   #
   # MRC Block End
@@ -3323,6 +3323,11 @@
   gPlatformFspPkgTokenSpaceGuid.WeaklockEn               | * | 0x01 | 0x00
   # Added reserved space   UnusedUpdSpace39
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd39            | * | 0x1 | 0x00
+
+  # !BSF NAME:{Rx DQS Delay Comp Support}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enables/Disable Rx DQS Delay Comp Support}
+  gPlatformFspPkgTokenSpaceGuid.RxDqsDelayCompEn         | * | 0x01 | 0x00
 
   # !BSF NAME:{Fore Single Rank config}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}

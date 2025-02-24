@@ -1568,7 +1568,6 @@ typedef struct {
   UINT8   MrcFastBoot;
   UINT8   RankInterleave;
   UINT8   EnhancedInterleave;
-  UINT8   WeaklockEn;
   UINT8   ChHashEnable;
   UINT8   EnablePwrDn;
   UINT8   EnablePwrDnLpddr;
@@ -1727,9 +1726,11 @@ typedef struct {
   UINT8   PhclkGatePerLpmode;
   UINT8   DisableSwitchDfiToMc;
   UINT8   RowPressEn;
+  UINT8   WeaklockEn;
+  UINT8   RxDqsDelayCompEn;
   UINT8   IGpuGsm2Size;
   UINT8   SolFeatureEnabled;
-  UINT8   Rsvd[64];
+  UINT8   Rsvd[63];
 } SA_SETUP;
 
 /**

@@ -418,7 +418,7 @@ Ddr5EnableCsGearDown (
   );
 
 /**
-  This function sets workpoint data for MC and PHY.
+  This function sets workpoint data for PHY.
 
   @param[in, out] MrcData - MRC global data.
 

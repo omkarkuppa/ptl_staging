@@ -280,6 +280,7 @@ EncodeTrtpDdr5 (
 
   Debug = &MrcData->Outputs.Debug;
   Status = mrcSuccess;
+  MrValue = 0;
 
 
   switch (Value) {
@@ -325,8 +326,8 @@ EncodeTrtpDdr5 (
     case 27:
       MrValue = Ddr5Trtp_27;
       break;
-    case 28:
-      MrValue = Ddr5Trtp_28;
+    case 29:
+      MrValue = Ddr5Trtp_29;
       break;
     case 30:
       MrValue = Ddr5Trtp_30;
@@ -337,22 +338,22 @@ EncodeTrtpDdr5 (
     case 33:
       MrValue = Ddr5Trtp_33;
       break;
+    case 35:
+      MrValue = Ddr5Trtp_35;
+      break;
     default:
-      MrValue = Ddr5TrtpMax;
       Status = mrcWrongInputParameter;
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid tRTP Value: %d\n", gErrString, Value);
       break;
   }
 
-  if (MrValue < Ddr5TrtpMax) {
+  if (Status == mrcSuccess) {
     if (EncVal != NULL) {
       *EncVal = MrValue;
     } else {
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s %s\n", __FUNCTION__, gNullPtrErrStr);
       Status = mrcWrongInputParameter;
     }
-  } else {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Invalid tRTP Value: %d\n", gErrString, Value);
-    Status = mrcWrongInputParameter;
   }
 
   return Status;

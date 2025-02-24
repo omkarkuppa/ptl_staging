@@ -689,6 +689,7 @@ typedef struct {
   INT64 ForceRxOnDq;
   INT64 InternalClocksOn;
   INT64 EnPhaseGating;
+  INT64 DqsRFTrainingModeSave;
 } DDR5_CA_TRAIN_IO_INIT_SAVE;
 
 typedef struct {
@@ -697,6 +698,7 @@ typedef struct {
   INT64 ForceRxOnDqsMux;
   INT64 ForceRxOnDq;
   INT64 EnPhaseGating;
+  INT64 DqsRFTrainingModeSave;
 } LPDDR5_CA_TRAIN_IO_SAVE;
 
 typedef union {
@@ -3987,7 +3989,7 @@ MrcSetupCkdAddress (
   @param[in] CkdDimm    - CKD Dimm Number.
   @param[in] Offset     - Register offset.
 
-  @return The current CKD Control Word value, either from the CkdBuffer or from hardware if CkdBuffer doesn't exist.
+  @retval The current CKD Control Word value, either from the CkdBuffer or from hardware if CkdBuffer doesn't exist.
 **/
 UINT8
 MrcCkdBufferRead (

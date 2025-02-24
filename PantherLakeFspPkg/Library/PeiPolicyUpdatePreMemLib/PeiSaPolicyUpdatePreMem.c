@@ -319,6 +319,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.DisableSwitchDfiToMc   = FspmUpd->FspmConfig.DisableSwitchDfiToMc;
   MemConfig->ExternalInputs.AsyncOdtDis            = FspmUpd->FspmConfig.AsyncOdtDis;
   MemConfig->ExternalInputs.WeaklockEn             = FspmUpd->FspmConfig.WeaklockEn;
+  MemConfig->ExternalInputs.RxDqsDelayCompEn       = FspmUpd->FspmConfig.RxDqsDelayCompEn;
   MemConfig->ExternalInputs.ForceSingleRank        = FspmUpd->FspmConfig.ForceSingleRank;
   MemConfig->ExternalInputs.DynamicMemoryBoost     = FspmUpd->FspmConfig.DynamicMemoryBoost;
   MemConfig->ExternalInputs.PerBankRefresh         = FspmUpd->FspmConfig.PerBankRefresh;

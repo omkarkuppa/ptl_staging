@@ -61,24 +61,4 @@ RunIoTestNoRank (
   IN const UINT8          ClearErrors
   );
 
-/**
-  This routine programs the EXT_BUF for Victim-aggressor traffic on DQ lanes using a VA pattern
-  This routine performs the following steps:
-  0: Fill a buffer with the VA pattern
-  1: Program the external buffer values into the EXT_BUF of the CPGC pattern generator
-  @param[in] MrcData     - Include all MRC global data.
-  @param[in] McChBitMask - Memory Controller Channel Bit mask for which test should be setup for.
-  @param[in] vmask       - 32 bit victim mask.  1 indicates this bit should use LFSR0. Mask length is 16 bits (CPGC_20_NUM_DPAT_EXTBUF)
-  @param[in] amask       - 32 bit aggressor mask. 0/1 indicates this bit should use LFSR1/2. Mask length is 16 bits (CPGC_20_NUM_DPAT_EXTBUF)
-
-  @retval Nothing
-**/
-VOID
-MrcProgramVAPattern (
-  IN MrcParameters *const MrcData,
-  IN UINT8                McChBitMask,
-  IN UINT32               vmask,
-  IN UINT32               amask
-  );
-
 #endif //BLUE_MRC_IO_TEST_H_

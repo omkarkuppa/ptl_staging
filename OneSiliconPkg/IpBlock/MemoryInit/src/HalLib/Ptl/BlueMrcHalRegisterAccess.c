@@ -1180,6 +1180,24 @@ MrcGetSet (
   TransStrobe = Strobe;
   TransLane = Lane;
 
+#if defined(LOCAL_STUB_STATE_FLAG)
+  // Record the logical location information of the GetSet field. Fields like CurrentWrV
+  // and CmdVrefSetting need to be preserved between writes to the LsState register, but
+  // StageIncrement must be cleared, as the state of LocalStub is modified whenever it is
+  // set.
+  MRC_LOCAL_STUB_STATE_STRUCT LsState;
+  LsState.Data = MrcReadCR64(MrcData, MRC_LOCAL_STUB_STATE_REG);
+  LsState.Bits.Socket = Socket;
+  LsState.Bits.Controller = Controller;
+  LsState.Bits.Channel = Channel;
+  LsState.Bits.Dimm = Dimm;
+  LsState.Bits.Rank = Rank;
+  LsState.Bits.Strobe = Strobe;
+  LsState.Bits.Lane = Lane;
+  LsState.Bits.StateInit = 0;
+  LsState.Bits.StageIncrement = 0;
+  MrcWriteCR64(MrcData, MRC_LOCAL_STUB_STATE_REG, LsState.Data);
+#endif // STUB_FLAG
 
   Status = MrcTranslateSystemToIp (MrcData, &TransController, &TransChannel, &TransRank, &TransStrobe, &TransLane, Group);
 
@@ -1488,13 +1506,9 @@ CkdGetSet (
   Top level function used to read/write CKD Control Word
 
   @param[in]      MrcData     - Pointer to global data structure.
-  @param[in]      Socket      - Processor socket in the system (0-based).  Not used in Core MRC.
   @param[in]      Controller  - Memory Controller Number within the processor (0-based).
   @param[in]      Channel     - DDR Channel Number within the processor socket (0-based).
   @param[in]      Rank        - Rank number within a channel (0-based).
-  @param[in]      Strobe      - If Group is a CMD/CTL/CLK Index type, this is the index for that signal.  Otherwise, Dqs data group within the rank (0-based).
-  @param[in]      Lane        - Lane index within the GSM_GT group (0-based).
-  @param[in]      FreqIndex   - Index supporting multiple operating frequencies.
   @param[in]      Group       - DDRIO group to access.
   @param[in]      Mode        - Bit-field flags controlling Get/Set.
   @param[in,out]  Value       - Pointer to value for Get/Set to operate on.  Can be offset or absolute value based on mode.
@@ -1504,13 +1518,9 @@ CkdGetSet (
 MrcStatus
 MrcCkdGetSet (
   IN      MrcParameters *const  MrcData,
-  IN      UINT32        const   Socket,
   IN      UINT32        const   Controller,
   IN      UINT32        const   Channel,
   IN      UINT32        const   Rank,
-  IN      UINT32        const   Strobe,
-  IN      UINT32        const   Lane,
-  IN      UINT32        const   FreqIndex,
   IN      GSM_GT        const   Group,
   IN      UINT32                Mode,
   IN OUT  INT64         *const  Value
@@ -1519,37 +1529,22 @@ MrcCkdGetSet (
   const MRC_FUNCTION *MrcCall;
   MrcStatus         Status;
   MrcStatus         CurrentStatus;
-  MrcOutput         *Outputs;
-  UINT32            SocketLoop;
   UINT32            ControllerLoop;
   UINT32            ChannelLoop;
   UINT32            RankLoop;
-  UINT32            StrobeLoop;
-  UINT32            LaneLoop;
   BOOLEAN           ReadOnly;
-  BOOLEAN           IsLpddr;
-  BOOLEAN           IsSkipGroup;
   BOOLEAN           MulticastAccess;
   BOOLEAN           ValidMc;
   BOOLEAN           ValidCh;
   BOOLEAN           ValidRank;
-  BOOLEAN           ValidStrobe;
   UINT32            TransController;
   UINT32            TransChannel;
   UINT32            TransRank;
   UINT32            TransStrobe;
   UINT32            TransLane;
-  MRC_RANGE         SocketRange;
   MRC_RANGE         ControllerRange;
   MRC_RANGE         ChannelRange;
   MRC_RANGE         RankRange;
-  MRC_RANGE         StrobeRange;
-  MRC_RANGE         LaneRange;
-
-  // Check that the Group is unsupported
-  if (MrcCheckGroupUnSupported (MrcData, Group, Strobe)) {
-    return mrcSuccess;
-  }
 
 #ifdef MRC_DEBUG_PRINT
   MrcDebug      *Debug;
@@ -1563,15 +1558,10 @@ MrcCkdGetSet (
   }
 #endif // MRC_DEBUG_PRINT
 
-  Outputs = &MrcData->Outputs;
   MrcCall = MrcData->Inputs.Call.Func;
-  IsLpddr = Outputs->IsLpddr;
-  MrcCall->MrcSetMem ((UINT8 *) &SocketRange,     sizeof (SocketRange),     0);
   MrcCall->MrcSetMem ((UINT8 *) &ControllerRange, sizeof (ControllerRange), 0);
   MrcCall->MrcSetMem ((UINT8 *) &ChannelRange,    sizeof (ChannelRange),    0);
   MrcCall->MrcSetMem ((UINT8 *) &RankRange,       sizeof (RankRange),       0);
-  MrcCall->MrcSetMem ((UINT8 *) &StrobeRange,     sizeof (StrobeRange),     0);
-  MrcCall->MrcSetMem ((UINT8 *) &LaneRange,       sizeof (LaneRange),       0);
 
   ReadOnly = (Mode & GSM_READ_ONLY) == GSM_READ_ONLY;
   Status = mrcSuccess;
@@ -1580,97 +1570,72 @@ MrcCkdGetSet (
   MulticastAccess = MrcDetectMulticast (
     MrcData,
     Group,
-    Socket,
+    MRC_IGNORE_ARG,
     Controller,
     Channel,
     Rank,
-    Strobe,
-    Lane,
-    &SocketRange,
+    MRC_IGNORE_ARG,
+    MRC_IGNORE_ARG,
+    NULL,
     &ControllerRange,
     &ChannelRange,
     &RankRange,
-    &StrobeRange,
-    &LaneRange
+    NULL,
+    NULL
   );
 
   ValidMc     = (Controller != MRC_IGNORE_ARG);
   ValidCh     = (Channel != MRC_IGNORE_ARG);
   ValidRank   = (Rank != MRC_IGNORE_ARG);
-  ValidStrobe = (Strobe != MRC_IGNORE_ARG);
-
-  IsSkipGroup = MrcGsmGtSkip (Group);
 
   // Break Multicast requests into multiple unicasts if it is not GSM_READ_ONLY.
   if (MulticastAccess) {
     if (ReadOnly) {
       // Ensure no one is trying to read with multicast parameters.
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Attempted to read from a Multicast. Group: %s(%d) Controller: %u, Channel: %u, Rank: %u, Byte: %u, Lane: %u\n",
-        GsmGtDebugStrings[Group], Group, Controller, Channel, Rank, Strobe, Lane);
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Attempted to read from a Multicast. Group: %s(%d) Controller: %u, Channel: %u, Rank: %u\n",
+        GsmGtDebugStrings[Group], Group, Controller, Channel, Rank);
       return mrcWrongInputParameter;
     }
-    MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "SocketStart: %d\tSocketEnd: %d\n", SocketRange.Start, SocketRange.End);
     MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "ControllerStart: %d\tControllerEnd: %d\n", ControllerRange.Start, ControllerRange.End);
     MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "ChannelStart: %d\tChannelEnd: %d\n", ChannelRange.Start, ChannelRange.End);
     MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "RankStart: %d\tRankEnd: %d\n", RankRange.Start, RankRange.End);
-    MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "StrobeStart: %d\tStrobeEnd: %d\n", StrobeRange.Start, StrobeEnd.End);
-    MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "LaneStart: %d\tLaneEnd: %d\n", LaneRange.Start, LaneRange.End);
-    for (SocketLoop = SocketRange.Start; SocketLoop <= SocketRange.End; SocketLoop++) {
-      for (ControllerLoop = ControllerRange.Start; ControllerLoop <= ControllerRange.End; ControllerLoop++) {
-        if (ValidMc) {
-          if (!MrcControllerExist (MrcData, ControllerLoop)) {
-            MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "Group %s skipped as %s %d does not exist\n", GsmGtDebugStrings[Group], gControllerStr, ControllerLoop);
+    for (ControllerLoop = ControllerRange.Start; ControllerLoop <= ControllerRange.End; ControllerLoop++) {
+      if (ValidMc) {
+        if (!MrcControllerExist (MrcData, ControllerLoop)) {
+          MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "Group %s skipped as %s %d does not exist\n", GsmGtDebugStrings[Group], gControllerStr, ControllerLoop);
+          continue;
+        }
+      }
+      for (ChannelLoop = ChannelRange.Start; ChannelLoop <= ChannelRange.End; ChannelLoop++) {
+        if (ValidMc && ValidCh) {
+          if (!MrcChannelExist (MrcData, ControllerLoop, ChannelLoop)) {
+            MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "Group %s skipped as %s %d does not exist\n", GsmGtDebugStrings[Group], gChannelStr, ChannelLoop);
             continue;
           }
         }
-        for (ChannelLoop = ChannelRange.Start; ChannelLoop <= ChannelRange.End; ChannelLoop++) {
-          if (ValidMc && ValidCh) {
-            if (!MrcChannelExist (MrcData, ControllerLoop, ChannelLoop)) {
-              MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "Group %s skipped as %s %d does not exist\n", GsmGtDebugStrings[Group], gChannelStr, ChannelLoop);
-              continue;
-            } else if (IsSkipGroup && (IS_MC_SUB_CH (IsLpddr, ChannelLoop))) {
-              // Skip calling MrcGetSet for CH 1/3 if we are LPDDR since there isn't any register associated to it.
+        for (RankLoop = RankRange.Start; RankLoop <= RankRange.End; RankLoop++) {
+          if (ValidMc && ValidCh && ValidRank) {
+            if (!MrcRankExist (MrcData, ControllerLoop, ChannelLoop, RankLoop)) {
+              MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "Group %s skipped as %s %d does not exist\n", GsmGtDebugStrings[Group], gRankStr, RankLoop);
               continue;
             }
           }
-          for (RankLoop = RankRange.Start; RankLoop <= RankRange.End; RankLoop++) {
-            if (ValidMc && ValidCh && ValidRank) {
-              if (!MrcRankExist (MrcData, ControllerLoop, ChannelLoop, RankLoop)) {
-                MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "Group %s skipped as %s %d does not exist\n", GsmGtDebugStrings[Group], gRankStr, RankLoop);
-                continue;
-              }
-            }
-            for (StrobeLoop = StrobeRange.Start; StrobeLoop <= StrobeRange.End; StrobeLoop++) {
-              if (ValidMc && ValidCh && ValidRank && ValidStrobe) {
-                if (!MrcByteExist (MrcData, ControllerLoop, ChannelLoop, StrobeLoop)) {
-                  MRC_HAL_DEBUG_MSG (Debug, MSG_LEVEL_HAL, "Group %s skipped as %s %d does not exist\n", GsmGtDebugStrings[Group], gByteStr, StrobeLoop);
-                  continue;
-                }
-              }
-              for (LaneLoop = LaneRange.Start; LaneLoop <= LaneRange.End; LaneLoop++) {
-                CurrentStatus = MrcCkdGetSet (
-                  MrcData,
-                  SocketLoop,
-                  ControllerLoop,
-                  ChannelLoop,
-                  RankLoop,
-                  StrobeLoop,
-                  LaneLoop,
-                  FreqIndex,
-                  Group,
-                  Mode,
-                  Value
-                );
-                if (Status == mrcSuccess) {
-                  Status = CurrentStatus;
-                }
-              } // BitLoop
-            } // StrobeLoop
-          } // RankLoop
-        } // ChannelLoop
-      } // ControllerLoop
-    } // SocketLoop
-      // We stop here when breaking up multicasts.
+          CurrentStatus = MrcCkdGetSet (
+                MrcData,
+                ControllerLoop,
+                ChannelLoop,
+                RankLoop,
+                Group,
+                Mode,
+                Value
+              );
+          if (Status == mrcSuccess) {
+            Status = CurrentStatus;
+          }
+        } // RankLoop
+      } // ChannelLoop
+    } // ControllerLoop
+    // We stop here when breaking up multicasts.
     return Status;
   }
 
@@ -1678,15 +1643,13 @@ MrcCkdGetSet (
   TransController = Controller;
   TransChannel    = Channel;
   TransRank       = Rank;
-  TransStrobe     = Strobe;
-  TransLane       = Lane;
   Status = MrcTranslateSystemToIp (MrcData, &TransController, &TransChannel, &TransRank, &TransStrobe, &TransLane, Group);
 
   if (Status != mrcSuccess) {
     return Status;
   }
 
-  Status = CkdGetSet (MrcData, Socket, TransController, TransChannel, TransRank, TransStrobe, TransLane, FreqIndex, Group, Mode, Value);
+  Status = CkdGetSet (MrcData, MRC_IGNORE_ARG, TransController, TransChannel, TransRank, TransStrobe, TransLane, MRC_IGNORE_ARG, Group, Mode, Value);
 
   return Status;
 }

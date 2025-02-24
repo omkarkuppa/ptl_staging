@@ -182,4 +182,6 @@
 #define MRC_EARLY_RXDQS_VOC             (0xDD8B)
 #define MRC_RXDQS_VOC                   (0xDD8C)
 #define MRC_DUNIT_TAT_OPTIMIZATION      (0xDD8D)
+#define MRC_TXDQS_DCC                   (0xDD8E)
+#define MRC_CURRENT_SENSOR_RMT          (0xDD8F)
 #endif

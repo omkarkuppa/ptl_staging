@@ -1856,8 +1856,6 @@ AdvancedMemTestRankSetupMATSRowRange (
         Cpgc20BaseRepeats (MrcData, LocalMcChBitMask, BaseRepeats, 1); // Num Ranks = 1
         MrcSetLoopcount (MrcData, LocalMcChBitMask, 0);
       }
-      // Ensure hardware rotation is disabled
-      Cpgc20ConfigPgRotation (MrcData, 0);
 
       MRC_DEBUG_MSG (
         &Outputs->Debug,
@@ -2131,7 +2129,6 @@ SetupIOTestAmt (
   //UINT32            *LfsrSeed;
   BOOLEAN           IsDdr5;
   BOOLEAN           IsPatSrcAllZeroes;
-  BOOLEAN           IsDqPatternRequired;
 
   Inputs      = &MrcData->Inputs;
   Outputs     = &MrcData->Outputs;
@@ -2160,11 +2157,6 @@ SetupIOTestAmt (
   if (!IsPatSrcAllZeroes) {
     // Setup the Pattern Generator for the test.
     //   StaticPattern: The caller programs the pattern
-    //   GaloisMprVa: RunIOTest programs the pattern
-    IsDqPatternRequired = (PatCtlPtr->DQPat != StaticPattern && PatCtlPtr->DQPat != GaloisMprVa);
-    if (IsDqPatternRequired) {
-      MrcProgramVAPattern (MrcData, McChBitMask, BASIC_VA_VICTIM_16, BASIC_VA_AGGRESSOR_16);
-    }
 
     // Write the LFSR seeds
     if (PatCtlPtr->DQPat == StaticPattern) {
@@ -2187,11 +2179,6 @@ SetupIOTestAmt (
     */
     //@todo should LSFR Poly match previous code or documentation?
     Cpgc20LfsrCfg (MrcData, LaneRotateRate);
-
-    // Program Write Data Buffer Related Entries.
-    // Assumes the PG has already been selected above for Data PG's.
-    // Program the data rotation -- IncRate if Dynamic, 0 if Static.
-    Cpgc20ConfigPgRotation (MrcData, ((PatCtlPtr->PatSource == MrcPatSrcDynamic) ? PatCtlPtr->IncRate : 0));  // No data rotation
   }
 
   // Enable/Disable DC/Invert on all lanes, including ECC

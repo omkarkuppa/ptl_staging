@@ -139,6 +139,19 @@ BlueMrcClearXtensaDramTop (
   );
 
 /**
+  Check if MRC needs to reload Green MRC image on subsequent SAGV points.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval TRUE  - need to reload
+  @retval FALSE - no need to reload
+**/
+BOOLEAN
+MrcIsGreenReloadNeeded (
+  IN MrcParameters *const MrcData
+  );
+
+/**
   Set TerDcd Override Values
 
   @param[in] MrcData    - Include all MRC global data.

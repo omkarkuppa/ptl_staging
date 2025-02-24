@@ -963,7 +963,6 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Ddr5AutoPrechargeEnable, MemConfig->ExternalInputs.Ddr5AutoPrechargeEnable, SaSetup.Ddr5AutoPrechargeEnable                           );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.Lp5SplitACTEnable, MemConfig->ExternalInputs.Lp5SplitACTEnable,       SaSetup.Lp5SplitACTEnable                                 );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RetrainToWorkingChannel, MemConfig->ExternalInputs.RetrainToWorkingChannel, SaSetup.RetrainToWorkingChannel                           );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RowPressEn, MemConfig->ExternalInputs.RowPressEn,                 SaSetup.RowPressEn                           );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SubChHashOverride, MemConfig->ExternalInputs.SubChHashOverride,       SaSetup.SubChHashOverride                                 );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ProbelessTrace, MemConfig->ExternalInputs.ProbelessTrace,          SaSetup.ProbelessTrace                                    );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChHashInterleaveBit, MemConfig->ExternalInputs.ChHashInterleaveBit,     SaSetup.ChHashInterleaveBit                               );
@@ -1049,7 +1048,7 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.MrcFastBoot, MemConfig->ExternalInputs.MrcFastBoot,             SaSetup.MrcFastBoot            );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RankInterleave, MemConfig->ExternalInputs.RankInterleave,          SaSetup.RankInterleave         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EnhancedInterleave, MemConfig->ExternalInputs.EnhancedInterleave,      SaSetup.EnhancedInterleave     );
-    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.WeaklockEn,     MemConfig->ExternalInputs.WeaklockEn,              SaSetup.WeaklockEn             );
+
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.ChHashEnable, MemConfig->ExternalInputs.ChHashEnable,            SaSetup.ChHashEnable           );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EnablePwrDn, MemConfig->ExternalInputs.EnablePwrDn,             SaSetup.EnablePwrDn            );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EnablePwrDnLpddr, MemConfig->ExternalInputs.EnablePwrDnLpddr,        SaSetup.EnablePwrDnLpddr       );
@@ -1233,6 +1232,9 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SpineGatePerLpmode, MemConfig->ExternalInputs.SpineGatePerLpmode,          SaSetup.SpineGatePerLpmode      );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PhclkGatePerLpmode, MemConfig->ExternalInputs.PhclkGatePerLpmode,          SaSetup.PhclkGatePerLpmode      );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DisableSwitchDfiToMc, MemConfig->ExternalInputs.DisableSwitchDfiToMc,        SaSetup.DisableSwitchDfiToMc    );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RowPressEn, MemConfig->ExternalInputs.RowPressEn,                 SaSetup.RowPressEn                           );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.WeaklockEn,     MemConfig->ExternalInputs.WeaklockEn,              SaSetup.WeaklockEn             );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RxDqsDelayCompEn,     MemConfig->ExternalInputs.RxDqsDelayCompEn,              SaSetup.RxDqsDelayCompEn             );
 
     DEBUG_CODE (
       DEBUG_CONFIG_DATA DebugConfigData;

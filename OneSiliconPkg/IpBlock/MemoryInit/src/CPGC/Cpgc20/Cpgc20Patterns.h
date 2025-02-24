@@ -67,21 +67,6 @@ typedef enum {
 } MRC_PG_UNISEQ_TYPE;
 
 /**
-  This function configures the rotation rate for the PG (per Outputs->McChBitMask).
-  If the RotateRate is 0, the hardware rotation is disabled.
-
-  @param[in]  MrcData       - Pointer to MRC global data.
-  @param[in]  RotateRate    - Log2 count of how many transactions (SubSequence or Cacheline) before we rotate the PG.
-
-  @retval Nothing.
-**/
-MrcStatus
-Cpgc20ConfigPgRotation (
-  IN  MrcParameters *const  MrcData,
-  IN  UINT16                RotateRate
-  );
-
-/**
   This function sets up the CPGC LFSR configuration per Outputs->McChBitMask.
 
   @param[in]  MrcData     - Pointer to global MRC data.
@@ -179,44 +164,6 @@ Cpgc20SetPgInvDcEn (
   IN  MrcParameters *const  MrcData,
   IN  UINT64                DataLaneMask,
   IN  UINT8                 EccLaneMask
-  );
-
-/**
-  This routine fills an array with the CPGC pattern generators EXT_BUF values,
-  the values depends on whether its driving victim LFSR or aggressor LFSR.
-  This routine performs the following steps:
-  Step 0: Iterate through all CPGC DPAT External Buffers
-  Step 1: Use the vmask and amask parameters to determine victim and agressor bytes
-  Step 2: Create a compressed vector for a given 32 byte cacheline
-          Victim bytes have a value of AA, and Aggressor bytes have a value of CC
-
-  @param[in] vmask       - 32 bit victim mask.  1 indicates this bit should use LFSR0. Mask length is 16 bits (CPGC_20_NUM_DPAT_EXTBUF)
-  @param[in] amask       - 32 bit aggressor mask. 0/1 indicates this bit should use LFSR1/2. Mask length is 16 bits (CPGC_20_NUM_DPAT_EXTBUF)
-  @param[out] Pattern    - 32 bit pattern array to be programed to CPGC_20_NUM_DPAT_EXTBUF
-
-  @retval Nothing
-**/
-VOID
-Cpgc20FillVAPattern (
-  IN UINT32               vmask,
-  IN UINT32               amask,
-  OUT UINT32              Pattern[CPGC_20_NUM_DPAT_EXTBUF]
-  );
-
-/**
-  Program CPGC_DPAT_EXTBUF in a specified index, with a specified pattern.
-
-  @param[in] MrcData     - Include all MRC global data.
-  @param[in] McChBitMask - Memory Controller Channel Bit mask for which test should be setup for.
-  @param[in] Pattern  - Array of a given pattern.
-
-  @retval Nothing
-**/
-VOID
-Cpgc20SetDqAssignemnt (
-  IN MrcParameters *const  MrcData,
-  IN UINT8                 McChMask,
-  IN UINT32                Pattern[CPGC_20_NUM_DPAT_EXTBUF]
   );
 
 /**

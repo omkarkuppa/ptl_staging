@@ -50,10 +50,8 @@ typedef struct {
   UINT16              RloadTarget;
   BOOLEAN             DiscardLvrAutoTrimResults;
   BOOLEAN             PhClkSkipPhCorrection;
-#ifdef HVM_MODE
   UINT8               PhClkCheckPhError;
   UINT8               PhClkCheckDcError;
-#endif // HVM_MODE
 } MRC_INT_INPUTS_TYPE;
 #endif
 

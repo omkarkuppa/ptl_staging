@@ -53,11 +53,12 @@ typedef enum {
 /**
   This function converts CKD Control Word Offset to CKD Index to be used in CkdBuffer
   @param[in]  CkdOffset   - CKD Control Word Offset
+
   @retval Control Word Index. 0xFF Read-Only Control Word
 **/
 UINT8
 MrcCkdOffsetToIndex (
-  IN OUT  MrcCkdOffset CkdOffset
+  IN  MrcCkdOffset CkdOffset
   );
 
 /**
@@ -67,7 +68,7 @@ MrcCkdOffsetToIndex (
 **/
 UINT8
 MrcCkdIndexToOffset (
-  IN OUT  MrcCkdIndex CkdIndex
+  IN  MrcCkdIndex CkdIndex
   );
 
 /**

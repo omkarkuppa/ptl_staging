@@ -31,6 +31,7 @@
 #include "MrcSagv.h"
 #include "MrcCommon.h"
 #include "DecompressLib.h"
+#include "MrcDdrIo.h"
 
 #ifndef FULL_HEADLESS
 
@@ -92,13 +93,16 @@ MrcUcLoadGreenCode (
   UINT32          SizeToWrite;
   UINT32          BufferIndex;
   BOOLEAN         ClearBuffer;
-  // BOOLEAN         SkipLoad;
   UINTN           BytesWritten;
 
   Inputs  = &MrcData->Inputs;
   Outputs = &MrcData->Outputs;
   Debug   = &Outputs->Debug;
   IsSaGvAndNotFirst = MrcIsSaGvEnabled (MrcData) && (Outputs->SaGvPoint != Outputs->SaGvFirst);
+
+  if (IsSaGvAndNotFirst && !MrcIsGreenReloadNeeded (MrcData)) {
+    return mrcSuccess;
+  }
 
   Status = mrcSuccess;
   if (!IsSaGvAndNotFirst) {
@@ -120,17 +124,12 @@ MrcUcLoadGreenCode (
   }
 
   BufferIndex = 0;
-  // SkipLoad = FALSE;
   ClearBuffer = FALSE;
   ChunkSize = *(UINT32*)(Payload);
   Chunk = ((UINT8*)Payload) + sizeof(UINT32); // First chunk is at start, skip its size
   TotalIndex = 0;
   if (MRC_UNCOMPRESSED_CHUNK_SIZE == 0) { // Use original code for uncompressed payload
     for (Index = StartSection; Index < EndSection; Index++) {
-      if (IsSaGvAndNotFirst && (gUcPayloadSections[Index].Address < XTENSA_FESRAM_BASE)) {
-        // No need to download NE SRAM on subsequent SAGV points
-        // continue;
-      }
       MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Loading Green MRC segment %2d to SRAM address 0x%08x size 0x%08x\n", Index, gUcPayloadSections[Index].Address, gUcPayloadSections[Index].Size);
       BlueMrcWriteUcData (
         MrcData,
@@ -144,13 +143,7 @@ MrcUcLoadGreenCode (
   }
 
   for (Index = StartSection; Index < EndSection; Index++) { // Compressed payload requires decompressing chunks
-    if (IsSaGvAndNotFirst && (gUcPayloadSections[Index].Address < XTENSA_FESRAM_BASE)) {
-      // No need to download NE SRAM on subsequent SAGV points, but decompression is in-order
-      // SkipLoad = TRUE;
-    } else {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Loading Green MRC segment %2d to SRAM address 0x%08x size 0x%08x, payload offset 0x%08x\n", Index, gUcPayloadSections[Index].Address, gUcPayloadSections[Index].Size, gUcPayloadSections[Index].Offset);
-    }
-
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Loading Green MRC segment %2d to SRAM address 0x%08x size 0x%08x, payload offset 0x%08x\n", Index, gUcPayloadSections[Index].Address, gUcPayloadSections[Index].Size, gUcPayloadSections[Index].Offset);
     SectionIndex = 0;
     while (SectionIndex < gUcPayloadSections[Index].Size) { // While section end not reached
       if (BufferIndex == 0) { // If no remaining data, decomp a chunk
@@ -171,15 +164,11 @@ MrcUcLoadGreenCode (
         ClearBuffer = TRUE;
       }
 
-      // if (SkipLoad) {
-      //   SkipLoad = FALSE; // Make sure to check next 
-      // } else {
       BlueMrcWriteUcData ( // Write from decomp buffer
         MrcData,
         (UINT32 *) ((DecompBuffer + BufferIndex)),
         gUcPayloadSections[Index].Address + SectionIndex, // Function will convert from Xtensa address space into UCSS address space
         SizeToWrite);
-      // }
 
       SectionIndex = SectionIndex + SizeToWrite;
       TotalIndex = TotalIndex + SizeToWrite;
