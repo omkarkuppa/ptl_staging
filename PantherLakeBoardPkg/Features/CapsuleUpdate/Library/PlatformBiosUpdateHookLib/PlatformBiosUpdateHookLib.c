@@ -335,3 +335,28 @@ PlatformFmpUcodeUpdatePostHook (
 
   return EFI_SUCCESS;
 }
+
+/**
+  A function used to perform platform related task after BtGAcm update.
+
+  @param[in]  UpdateStatus  The status of BtGAcm update.
+
+  @retval  EFI_SUCCESS  Platform required actions are performed successfully.
+  @retval  Others       Platform required actions are failed to execute.
+
+**/
+EFI_STATUS
+EFIAPI
+PlatformFmpBtGAcmUpdatePostHook (
+  IN EFI_STATUS  UpdateStatus
+  )
+{
+  if (!EFI_ERROR (UpdateStatus)) {
+    //
+    // Clear the DRAM DISB bit
+    //
+    ClearDramInitScratchpad ();
+  }
+
+  return EFI_SUCCESS;
+}

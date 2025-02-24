@@ -39,6 +39,10 @@
 #include <Register/PmcRegs.h>
 #include <Txt.h>
 
+#include <Library/PciSegmentLib.h>
+#include <Register/HeciRegs.h>
+#include <Library/MeInfoLib.h>
+
 #define FIT_SUCCESSFUL                            0x0
 #define FIT_STARTUP_ACM_ENTRY                     0x2
 #define FIT_STARTUP_ACM_NOT_SUPPORTED             0x1
@@ -559,6 +563,46 @@ ClearPmcDisb (
 }
 
 /**
+  ME Code corruption detection
+
+  @retval  TRUE   ME code corruption is detected.
+  @retval  FALSE  ME code corruption is not detected. 
+
+**/
+BOOLEAN
+EFIAPI
+IsMeCodeCorrupted (
+  VOID
+  )
+{
+  UINT64                 HeciBaseAddress;
+  HECI_FWS_REGISTER      MeFwSts;
+  HECI_GS_SHDW_REGISTER  MeFwSts2;
+
+  DEBUG ((DEBUG_INFO, "IsMeCodeCorrupted Start\n"));
+
+  HeciBaseAddress = MeHeciPciCfgBase (HECI1);
+  MeFwSts.ul      = PciSegmentRead32 (HeciBaseAddress + R_ME_CFG_HFS);
+  MeFwSts2.ul     = PciSegmentRead32 (HeciBaseAddress + R_ME_CFG_HFS_2);
+
+  if ((MeFwSts.ul == 0xFFFFFFFF) || (MeFwSts2.ul == 0xFFFFFFFF)) {
+    DEBUG ((DEBUG_INFO, "ME is disabled\n"));
+    return FALSE;
+  }
+
+  DEBUG ((DEBUG_INFO, "MeFwSts = 0x%x!\n",  MeFwSts.ul));
+  DEBUG ((DEBUG_INFO, "MeFwSts2 = 0x%x!\n", MeFwSts2.ul));
+
+  if ((MeFwSts.r.CurrentState == ME_STATE_RECOVERY) ||
+      (MeFwSts.r.FtBupLdFlr == 1) ||
+      (MeFwSts2.r.FwUpdIpu == 1)) {
+    DEBUG ((DEBUG_INFO, "ME region is corrupted\n"));
+    return TRUE;
+  }
+
+  return FALSE;
+}
+/**
   Entry point of this module.
 
   @param[in] FileHandle   Handle of the file being invoked.
@@ -579,6 +623,14 @@ PlatformInitRecoveryEntryPoint (
     // Clear DISB to avoid MRC training failure
     //
     DEBUG ((DEBUG_INFO, "Clear DISB when TS is enabled\n"));
+    ClearPmcDisb ();
+  }
+
+  if (IsMeCodeCorrupted ()) {
+    //
+    // Clear DISB to avoid MRC training failure
+    //
+    DEBUG ((DEBUG_INFO, "Clear DISB when ME code is corrupted\n"));
     ClearPmcDisb ();
   }
 

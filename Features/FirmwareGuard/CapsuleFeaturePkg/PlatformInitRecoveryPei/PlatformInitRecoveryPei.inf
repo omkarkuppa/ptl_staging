@@ -40,6 +40,8 @@
   ResiliencySupportLib
   PmcLib
   IoLib
+  PciSegmentLib
+  MeInfoLib
 
 [Packages]
   MdeModulePkg/MdeModulePkg.dec

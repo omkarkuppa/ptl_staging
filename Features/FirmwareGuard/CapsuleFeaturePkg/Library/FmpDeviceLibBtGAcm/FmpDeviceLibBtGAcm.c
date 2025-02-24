@@ -38,6 +38,7 @@
 #include <TxtInfoHob.h>
 #include <Library/CapsuleUpdateResetLib.h>
 #include <Library/ResiliencySupportLib.h>
+#include <Library/PlatformBiosUpdateHookLib.h>
 
 /**
   Check if the input Image contains expected files used for BIOS update.
@@ -835,6 +836,7 @@ FmpDeviceSetImageWithStatus (
     DEBUG ((DEBUG_INFO, "[%a]: ACM Update Fail!\n", __FUNCTION__));
   }
 
+  PlatformFmpBtGAcmUpdatePostHook (Status);
   ClearUpdateProgress ();
   DeleteBackupFiles ();
   if (GetBiosResiliencyType () != NOT_SUPPORT_RECOVERY) {
