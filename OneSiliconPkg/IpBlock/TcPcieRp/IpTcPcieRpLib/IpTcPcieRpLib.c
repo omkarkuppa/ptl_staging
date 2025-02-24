@@ -354,11 +354,11 @@ IpTcPcieMiscInit (
   IpWrRegWrite (CfgCntxt, R_TC_PCIE_RP_CFG_PCIERTP2, Data32, IpWrRegFlagSize32Bits);
 
   ///
-  ///  Completion Ordering Mode (COM)0xEC1  13 1
+  ///  Completion Ordering Mode (COM)0xEC1  13 0
   ///
-  Data32Or = B_TC_PCIE_RP_CFG_DC_COM;
+  Data32And = (UINT32)~ (B_TC_PCIE_RP_CFG_DC_COM);
   Data32 = (UINT32)IpWrRegRead (CfgCntxt, R_TC_PCIE_RP_CFG_DC, IpWrRegFlagSize32Bits);
-  Data32 |= Data32Or;
+  Data32 &= Data32And;
   IpWrRegWrite (CfgCntxt, R_TC_PCIE_RP_CFG_DC, Data32, IpWrRegFlagSize32Bits);
 
   ///
@@ -368,14 +368,15 @@ IpTcPcieMiscInit (
   ///  Posted Write Chaining Enable (PWCE):0x594  0 1
   ///  Completion Chaining Enable (DDCE):0x594  1 1
   ///  Chain Timer (CT):0x594  9:02 0x8
-  ///  Chain Timer Enable (CTE):0x594  10 1
+  ///  Chain Timer Enable (CTE):0x594  10 0
   ///  Relaxed Order Attribute Override Policy (ROAOP):0x594  11 0x0
   ///  Posted Chain Limit Mode (PCLM):0x594  14:13 0x2
   ///  Non-Posted Chain Limit Mode (NPCLM):0x594  16:15 0x2
 
-  Data32And = ~ (UINT32) (B_TC_PCIE_RP_CFG_COCTL_PCLM | B_TC_PCIE_RP_CFG_COCTL_NPCLM | B_TC_PCIE_RP_CFG_COCTL_CT | B_TC_PCIE_RP_CFG_COCTL_ROAOP);
+  Data32And = ~ (UINT32) (B_TC_PCIE_RP_CFG_COCTL_PCLM | B_TC_PCIE_RP_CFG_COCTL_NPCLM | B_TC_PCIE_RP_CFG_COCTL_CT |
+                          B_TC_PCIE_RP_CFG_COCTL_ROAOP | B_TC_PCIE_RP_CFG_COCTL_CTE);
   Data32Or = B_TC_PCIE_RP_CFG_COCTL_PWCE | B_TC_PCIE_RP_CFG_COCTL_DDCE | 0x8 << N_TC_PCIE_RP_CFG_COCTL_CT |
-    B_TC_PCIE_RP_CFG_COCTL_CTE | (0x2 << N_TC_PCIE_RP_CFG_COCTL_PCLM) | (0x2 << N_TC_PCIE_RP_CFG_COCTL_NPCLM);
+             (0x2 << N_TC_PCIE_RP_CFG_COCTL_PCLM) | (0x2 << N_TC_PCIE_RP_CFG_COCTL_NPCLM);
   Data32 = (UINT32)IpWrRegRead (CfgCntxt, R_TC_PCIE_RP_CFG_COCTL, IpWrRegFlagSize32Bits);
   Data32 &= Data32And;
   Data32 |= Data32Or;
