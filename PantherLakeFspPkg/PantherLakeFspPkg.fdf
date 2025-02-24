@@ -474,8 +474,7 @@ INF $(SILICON_PRODUCT_PATH)/SiInit/Dxe/SiInitDxeFsp.inf
     }
   }
 
-[Rule.Common.SEC.RESET_VECTOR]
+[Rule.Common.USER_DEFINED.RESET_VECTOR]
   FILE RAW = $(NAMED_GUID) {
     RAW RAW  Align = 8      $(INF_OUTPUT)/Vtf0.bin
   }
-
