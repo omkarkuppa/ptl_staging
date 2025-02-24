@@ -101,6 +101,7 @@ typedef struct{
 } BIOSGUARD_INVOCATION_RESULT;
 
 #define BIOSGUARD_INSTANCE_FROM_BIOSGUARDPROTOCOL(a)  CR (a, BIOSGUARD_INSTANCE, BiosGuardProtocol, BIOSGUARD_SIGNATURE)
+#define BIOSGUARD_BUFFER_SIZE_WITH_NEW_RECORDS(a)             ((BGUP_TSEG_BUFFER_SIZE / 8) - a - 1)
 
 /**
   Display condition associated with  error code returned by the module

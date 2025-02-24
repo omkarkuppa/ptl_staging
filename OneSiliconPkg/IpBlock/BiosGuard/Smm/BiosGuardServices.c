@@ -898,6 +898,8 @@ BiosGuardPrintInvocationResult (
   @retval EFI_INVALID_PARAMETER  The parameters specified are not valid.
   @retval EFI_UNSUPPORTED        The CPU or SPI memory is not supported.
   @retval EFI_DEVICE_ERROR       Device error, command aborts abnormally.
+  @retval EFI_BAD_BUFFER_SIZE    DataSectionSize in BGUP header exceeds the size of BIOS Guard update data buffer
+  @retval EFI_OUT_OF_RESOURCES   Command queue exceeds the size of BIOS Guard data buffer
 **/
 EFI_STATUS
 EFIAPI
@@ -949,6 +951,13 @@ BiosGuardProtocolExecute (
     /// and create update Pkg
     ///
 
+    //Check mBiosGuardUpdateCounter to prevent potential overflow
+    if (mBiosGuardUpdateCounter > BIOSGUARD_BUFFER_SIZE_WITH_NEW_RECORDS(1)) {
+      DEBUG ((DEBUG_ERROR, "Buffer overflow while placing the data from the caller into the global BIOS Guard Update data\n"));
+      Status = EFI_OUT_OF_RESOURCES;
+      goto BiGProtocolExecuteExit;
+    }
+
     ///
     /// First, finalize the script by adding the "End" command
     ///
@@ -966,7 +975,8 @@ BiosGuardProtocolExecute (
     DataSectionSizeCopy = mBiosGuardUpdatePackagePtr->BgupHeader.DataSectionSize;
     if ((((UINT64) ScriptSectionSize) + DataSectionSizeCopy) >= BGUP_TSEG_BUFFER_SIZE) {
       DEBUG ((DEBUG_ERROR, "Buffer overflow while placing the data from the caller into the global BIOS Guard Update data\n"));
-      return EFI_BAD_BUFFER_SIZE;
+      Status =  EFI_BAD_BUFFER_SIZE;
+      goto BiGProtocolExecuteExit;
     }
 
     ///
@@ -1032,7 +1042,7 @@ BiosGuardProtocolExecute (
           if (EFI_ERROR (Status)) {
             DEBUG ((DEBUG_ERROR, "AP unable to launch BIOS Guard Module Binary. Index = %d and NumberofCpus = %d\n", Index, gSmst->NumberOfCpus));
             ASSERT_EFI_ERROR (Status);
-            return Status;
+            goto BiGProtocolExecuteExit;
           }
         }
       }
@@ -1086,6 +1096,7 @@ BiosGuardProtocolExecute (
 
   mBiosGuardFullStatus = BiosGuardInstance->MsrValue;
 
+BiGProtocolExecuteExit:
   BiosGuardInstance->BiosGuardDirectory[EnumBgupCertificate] = 0;
   BiosGuardInstance->BiosGuardDirectory[EnumBgupCertificate] |= LShiftU64 (BIOSGUARD_DIRECTORY_UNDEFINED_ENTRY, 56);
   BiosGuardInstance->BiosGuardDirectory[EnumBiosGuardLog]    = 0;
@@ -1118,6 +1129,7 @@ BiosGuardProtocolExecute (
 
   @retval EFI_SUCCESS            Successfully filled the BIOS Guard script buffer.
   @retval EFI_BAD_BUFFER_SIZE    DataSectionSize in BGUP header exceeds the size of BIOS Guard script buffer
+  @retval EFI_OUT_OF_RESOURCES   Command queue exceeds the size of BIOS Guard data buffer
 **/
 EFI_STATUS
 EFIAPI
@@ -1129,6 +1141,12 @@ BiosGuardProtocolWrite (
   )
 {
   UINT64 DataSectionSizeCopy = ((UINT64) mBiosGuardUpdatePackagePtr->BgupHeader.DataSectionSize);
+
+  //Check mBiosGuardUpdateCounter to prevent potential overflow
+  if (mBiosGuardUpdateCounter > BIOSGUARD_BUFFER_SIZE_WITH_NEW_RECORDS(4)) {
+    DEBUG ((DEBUG_ERROR, "Buffer overflow while placing the data from the caller into the global BIOS Guard Update data\n"));
+    return EFI_OUT_OF_RESOURCES;
+  }
 
   ///
   /// Set Buffer Offset Index immediate command
@@ -1188,6 +1206,13 @@ BiosGuardProtocolBlockErase (
   IN UINTN              Offset
   )
 {
+
+  //Check mBiosGuardUpdateCounter to prevent potential overflow
+  if (mBiosGuardUpdateCounter > BIOSGUARD_BUFFER_SIZE_WITH_NEW_RECORDS(3)) {
+    DEBUG ((DEBUG_ERROR, "Buffer overflow while placing the data from the caller into the global BIOS Guard Update data\n"));
+    return;
+  }
+
   ///
   /// Set Flash Index immediate command
   ///
