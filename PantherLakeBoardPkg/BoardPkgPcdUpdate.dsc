@@ -91,6 +91,10 @@
     !endif
   !endif
 
+  # THC
+  gThcFeaturePkgTokenSpaceGuid.PcdThcMultipleVenFeatureSupport    |TRUE
+  gThcFeaturePkgTokenSpaceGuid.PcdThcHidFeatureEnable |TRUE
+
 !if $(FSP64_BUILD) == TRUE
   gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE
 !else

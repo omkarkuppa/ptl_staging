@@ -87,6 +87,8 @@
   # UsbCCapsuleFeaturePkg
   UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
 
+  ThcFeaturePkg/ThcFeaturePkg.dec
+
 [Sources]
   PeiPayloadHookLib.c
 
@@ -253,6 +255,13 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvDispatch
   gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids
 
+  # ThcFeaturePkg
+  gThcFeaturePkgTokenSpaceGuid.PcdThcMultipleVenFeatureSupport
+  gThcFeaturePkgTokenSpaceGuid.VpdThcSlaveAddressTable
+  gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceSlaveAddress
+  gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceSlaveAddress
+  gThcFeaturePkgTokenSpaceGuid.PcdThcQuickI2cDevId
+
   # PlatSamplePkg
   gPlatformModuleTokenSpaceGuid.PcdAhciMaxPorts
   gPlatformModuleTokenSpaceGuid.PcdComPortAttributes0IsEnabled
@@ -323,4 +332,3 @@
   # UsbCCapsuleFeaturePkg
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleDebugLevel
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapabilityParsingTimeDelay
-

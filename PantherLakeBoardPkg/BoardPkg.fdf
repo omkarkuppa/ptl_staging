@@ -1063,6 +1063,11 @@ INF UserAuthFeaturePkg/UserAuthenticationDxeSmm/UserAuthenticationSmm.inf
 !endif
 
 
+!if gThcFeaturePkgTokenSpaceGuid.PcdThcMultipleVenFeatureSupport == TRUE
+  !include ThcFeaturePkg/Include/PostMemory.fdf
+  INF $(PLATFORM_FEATURES_PATH)/Thc/ThcPlatformDriver/ThcPlatformDxe.inf
+!endif
+
 [FV.FvUefiBoot]
 BlockSize          = $(FLASH_BLOCK_SIZE)
 FvAlignment        = 16

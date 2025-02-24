@@ -28,6 +28,7 @@ typedef UINT8 PTL_SOC_STEPPING;
 
 #define PTL_PCD_P  0x0
 #define PTL_PCD_H  0x1
+#define WCL_PCD    0x2
 #define PTL_SOC_UNKNOWN_SERIES  0xFF
 
 #define PTL_SOC_A0  0x0
@@ -95,6 +96,15 @@ PtlIsPcdP (
   VOID
   );
 
+/**
+  Checks if PCD is of WCL PCD series.
+
+  @return TRUE if SoC is of WCL PCD series.
+**/
+BOOLEAN
+IsWclPcd (
+  VOID
+  );
 
 
 /**

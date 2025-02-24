@@ -666,6 +666,17 @@ QuickI2cDriverBindingStart (
     return Status;
   }
 
+  Status = gBS->LocateProtocol (
+                  &gHidProtocolGuid,
+                  NULL,
+                  (VOID **) &(QuickI2cDev->HidInterfaceProtocol)
+                );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "ERROR - QuickI2c failed to locate HidProtocol Status: %r\n", Status));
+    FreePool (QuickI2cDev);
+    return Status;
+  }
+
   Status = QuickI2cDisableInterrupt (QuickI2cDev->PciBar0);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "ERROR - QuickI2c failed to disable interrupts Status: %r\n", Status));
@@ -688,8 +699,15 @@ QuickI2cDriverBindingStart (
 
   Status = QuickI2cReadDeviceDescriptor (QuickI2cDev, &mHidOverI2c[QuickI2cDev->InstanceId]);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to Read Device Descriptor Status: %r\n", Status));
-    goto THC_ERROR_EXIT;
+    DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to Read Device Descriptor for address 0x%x with status: %r\n", mHidOverI2c[QuickI2cDev->InstanceId].DeviceAddress, Status));
+    // Check for multiple vendor feature support to try VPD entries
+    if (PcdGetBool (PcdThcMultipleVenFeatureSupport) == TRUE) {
+      Status = QuickI2cValidateAndProgramDeviceAddress (QuickI2cDev, &mHidOverI2c[QuickI2cDev->InstanceId]);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_WARN, "ERROR - QuickI2c failed to Validate and Program Device Address Status: %r\n", Status));
+        goto THC_ERROR_EXIT;
+      }
+    }
   }
 
   QuickI2cPrintDeviceDescriptor (QuickI2cDev);

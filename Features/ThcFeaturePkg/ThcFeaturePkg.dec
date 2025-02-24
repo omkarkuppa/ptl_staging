@@ -1,0 +1,70 @@
+## @file
+#
+# DEC file for ThcFeaturePkg
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2025 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION = 0x00010017
+  PACKAGE_NAME      = ThcFeaturePkg
+  PACKAGE_GUID      = 6EFF0071-36F7-4EAD-AE86-E3B18E721C08
+  PACKAGE_VERSION   = 0.1
+
+[Includes]
+  Include
+
+[LibraryClasses]
+
+[Guids]
+  gThcFeaturePkgTokenSpaceGuid = {0x78592ee9, 0x4ad2, 0x4d08, {0xa9, 0x6c, 0x4d, 0xf9, 0x72, 0xc3, 0xd8, 0x13}}
+
+[Protocols]
+  gHidProtocolGuid             = {0x862a6dee, 0x6001, 0x431f, {0x88, 0x66, 0x2d, 0x55, 0xd3, 0x92, 0x5a, 0xcc}}
+
+[Ppis]
+
+[PcdsFeatureFlag]
+  gThcFeaturePkgTokenSpaceGuid.PcdThcMultipleVenFeatureSupport |TRUE|BOOLEAN|0x50000032
+  gThcFeaturePkgTokenSpaceGuid.PcdThcHidFeatureEnable          |TRUE|BOOLEAN|0x50000036
+
+[PcdsDynamic]
+  #
+  # THC I2C Device descriptor address
+  #
+  gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceSlaveAddress      |0x00|UINT8|0x00001122
+  gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceSlaveAddress      |0x00|UINT8|0x00001130
+
+[PcdsDynamicEx]
+  #
+  # THC I2c DeviceID List
+  #
+  gThcFeaturePkgTokenSpaceGuid.PcdThcQuickI2cDevId      |{0}|THC_HID_OVER_I2C_DEVID|0x50000083 {
+    <HeaderFiles>
+      ThcPlatformDxe.h
+    <Packages>
+      ThcFeaturePkg/ThcFeaturePkg.dec
+  }
+
+  gThcFeaturePkgTokenSpaceGuid.VpdThcSlaveAddressTable  |{0}|VPD_THC_SLAVE_ADDRESS_TABLE|0x000012DA {
+    <HeaderFiles>
+      ThcBoardData.h
+    <Packages>
+      ThcFeaturePkg/ThcFeaturePkg.dec
+  }

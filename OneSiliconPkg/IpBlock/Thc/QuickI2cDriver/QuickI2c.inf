@@ -32,13 +32,13 @@
 [Packages]
   MdePkg/MdePkg.dec
   OneSiliconPkg/SiPkg.dec
+  ThcFeaturePkg/ThcFeaturePkg.dec
 
 [Sources]
   QuickI2cPrivate.h
   QuickI2cLibPrivate.c
   QuickI2cAbsPtr.c
   QuickI2cDriver.c
-  QuickI2cHid.c
   QuickI2c.c
   QuickI2cComponentName.c
   QuickI2cThcProtocolImpl.c
@@ -56,7 +56,7 @@
   TimerLib
   IoLib
   HobLib
-  #DxeThcSocLib
+  PcdLib
 
 [Protocols]
   gEfiDriverBindingProtocolGuid ## CONSUMES
@@ -66,6 +66,7 @@
   gThcProtocolGuid ## PRODUCES
   gThcResetProtocolGuid ## CONSUMES
   gEfiSimplePointerProtocolGuid  ## CONSUMES
+  gHidProtocolGuid  ## CONSUMES
 
 [Guids]
   gEfiEventExitBootServicesGuid ## CONSUMES
@@ -73,5 +74,10 @@
   gPchThcConfigHobGuid          ## CONSUMES
   gPchInfoHobGuid               ## CONSUMES
 
+[Pcd]
+  gThcFeaturePkgTokenSpaceGuid.PcdThcMultipleVenFeatureSupport ## CONSUMES
+  gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceSlaveAddress ## CONSUMES
+  gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceSlaveAddress ## CONSUMES
+  gThcFeaturePkgTokenSpaceGuid.VpdThcSlaveAddressTable   ## CONSUMES
 [Depex]
   TRUE

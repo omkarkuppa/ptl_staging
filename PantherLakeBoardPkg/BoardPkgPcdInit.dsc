@@ -130,6 +130,10 @@
   # Nvme feature
   gNvmeFeaturePkgTokenSpaceGuid.PcdNvmeFeatureEnable|TRUE
 
+  # THC
+  gThcFeaturePkgTokenSpaceGuid.PcdThcMultipleVenFeatureSupport    |TRUE
+  gThcFeaturePkgTokenSpaceGuid.PcdThcHidFeatureEnable |TRUE
+
 [PcdsFeatureFlag.X64]
 # Optimze Driver init time in FastBoot Mode
 # If set PcdPs2KbdExtendedVerification to False, we can save 380 ms for Ps2KeyboardDxe driver initialize time

@@ -73,6 +73,10 @@
   !include $(PLATFORM_BOARD_PACKAGE)/VpdI2cRpTable.dsc
 !endif
 
+!if gThcFeaturePkgTokenSpaceGuid.PcdThcMultipleVenFeatureSupport == TRUE
+  !include $(PLATFORM_BOARD_PACKAGE)/VpdThcSlaveAddressTable.dsc
+!endif
+
   #
   # @Todo: Need to check if the copies from PantherLakeSvRestrictedPkg are required or not
 ################################################################################
@@ -346,6 +350,17 @@
     I2cFeaturePkg/I2cPlatformDxe/I2cPlatformDxe.inf {
       <LibraryClasses>
       NULL|$(PLATFORM_BOARD_PACKAGE)/Library/I2cPlatformDxeHookLib/I2cPlatformDxeLibPtlPcd.inf
+    }
+!endif
+
+!if gThcFeaturePkgTokenSpaceGuid.PcdThcHidFeatureEnable == TRUE
+  !include ThcFeaturePkg/Include/ThcFeature.dsc
+!endif
+!if gThcFeaturePkgTokenSpaceGuid.PcdThcMultipleVenFeatureSupport == TRUE
+  [Components.X64]
+  $(PLATFORM_FEATURES_PATH)/Thc/ThcPlatformDriver/ThcPlatformDxe.inf {
+      <LibraryClasses>
+      NULL|$(PLATFORM_BOARD_PACKAGE)/Library/ThcPlatformDxeHookLib/ThcPlatformDxeLibPtlPcd.inf
     }
 !endif
 

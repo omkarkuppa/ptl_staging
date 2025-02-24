@@ -79,6 +79,21 @@ QuickI2cReadDeviceDescriptor (
   );
 
 /**
+  Program and validates the device address based on platform VPD entries
+
+  @param[in]  QuickI2cDev      Context of QuickI2c device
+  @param[in]  HidOverI2c       Hid Over I2c Context
+
+  @retval EFI_SUCCESS     QuickI2c initialized successfully
+  @retval other           Error during initialization
+**/
+EFI_STATUS
+QuickI2cValidateAndProgramDeviceAddress (
+  IN QUICK_I2C_DEV                *QuickI2cDev,
+  IN THC_HID_OVER_I2C             *HidOverI2c
+  );
+
+/**
   THC Global Interrupt Enable or Disable API
   @param[in]  MmioBase                  QuickI2c MMIO BAR0
   @param[in]  GlobalInterruptState      Context of QuickI2c device
@@ -105,7 +120,7 @@ QuickI2cDisIntAndInternalStateClr (
 /**
   Configure/Clear internal IP state
   @param[in]  MmioBase        QuickI2c MMIO BAR0
-  
+
   @retval  Status
 **/
 EFI_STATUS

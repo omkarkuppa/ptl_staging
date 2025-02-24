@@ -1,5 +1,5 @@
 /** @file
-  Touch Host Controller Human Interface Device API
+  HID Interface Driver
 
   @copyright
   INTEL CONFIDENTIAL
@@ -19,9 +19,9 @@
 @par Specification Reference:
 **/
 
-#include "QuickI2cPrivate.h"
-#include "QuickI2cDriver.h"
+#include <Include/HidInterfaceParser.h>
 
+#define DEBUG_HID_PARSE_INFO DEBUG_VERBOSE
 
 /*
   HID's InputReportDescriptor consists of variable length tokens.
@@ -50,6 +50,7 @@ HidGetToken (
   Token.ID = ((**Descriptor)>>2);
   Token.Value = 0;
   DataSize = (**Descriptor)&0x3;
+  DEBUG ((DEBUG_HID_PARSE_INFO, "\n (0x%x, ", (**Descriptor)));
 
   if (**Descriptor==0xFE) {
     // Long Item format
@@ -67,16 +68,20 @@ HidGetToken (
   switch (DataSize) {
     case 0:
       Token.Value = 0;
+      DEBUG ((DEBUG_HID_PARSE_INFO, " 0) "));
       break;
     case 1:
       Token.Value = *(*Descriptor + 1);
+      DEBUG ((DEBUG_HID_PARSE_INFO, "0x%x) ", Token.Value));
       break;
     case 2:
       Token.Value = *(*Descriptor + 1) + (*(*Descriptor + 2) << 8);
+      DEBUG ((DEBUG_HID_PARSE_INFO, "0x%x) ", Token.Value));
       break;
     case 3:
       Token.Value = *(*Descriptor + 1) + ((*(*Descriptor + 2)) << 8) + ((*(*Descriptor + 3)) << 16) + ((*(*Descriptor + 4)) << 24);
       DataSize = 4;
+      DEBUG ((DEBUG_HID_PARSE_INFO, "0x%x) ", Token.Value));
       break;
     default: ;
   }
@@ -188,7 +193,7 @@ HidUpdateStack (
       if (Stack->GlobalUsage == DESKTOP && Token.Value == Y_AXIS) { Stack->UsageY = Stack->Usages; }
       if (Stack->GlobalUsage == CUSTOM_REPORT_ID && Token.Value == THQA_FEATURE_REPORT) {
         GetReportPacket->FeatureReportAvailable = TRUE;
-        GetReportPacket->ReportId = Stack->TempReport.Id;
+        GetReportPacket->ReportId = (UINT8) Stack->TempReport.Id;
       }
       break;
     case LOG_MIN:  Stack->LogMin = Token.Value; break;
@@ -322,82 +327,29 @@ HidAccessBit (
 VOID
 STATIC
 HidShowReportTable (
-  IN HID_INPUT_REPORT_TABLE ReportTable
+  IN HID_INPUT_REPORT_TABLE *ReportTable
   )
 {
   UINT32 Index;
   UINT32 Collections;
 
-  for (Index = 0; Index < ReportTable.Quantity; Index++) {
-    DEBUG ((DEBUG_INFO, "Report Id_%x", ReportTable.Report[Index].Id));
-    THC_LOCAL_DEBUG (L"Report Id_%x", ReportTable.Report[Index].Id)
-    DEBUG ((DEBUG_INFO, " %d_TouchPanel_%d_Touchpad_%d_Mouse \n", ReportTable.Report[Index].UsageTouchPanel, ReportTable.Report[Index].UsageTouchPad, ReportTable.Report[Index].UsageMouse));
-    THC_LOCAL_DEBUG (L" %d_TouchPanel_%d_Touchpad_%d_Mouse \n", ReportTable.Report[Index].UsageTouchPanel, ReportTable.Report[Index].UsageTouchPad, ReportTable.Report[Index].UsageMouse)
-    for (Collections = 0; Collections < ReportTable.Report[Index].CollectionCount; Collections++) {
+  for (Index = 0; Index < ReportTable->Quantity; Index++) {
+    DEBUG ((DEBUG_INFO, "Report Id_%x \n", ReportTable->Report[Index].Id));
+    DEBUG ((DEBUG_INFO, " %d_TouchPanel_%d_Touchpad_%d_Mouse \n", ReportTable->Report[Index].UsageTouchPanel, ReportTable->Report[Index].UsageTouchPad, ReportTable->Report[Index].UsageMouse));
+    for (Collections = 0; Collections < ReportTable->Report[Index].CollectionCount; Collections++) {
       DEBUG ((DEBUG_INFO, " Collection Id_%x ", Collections));
-      DEBUG ((DEBUG_INFO, "MaxX_%x ", ReportTable.Report[Index].Collection[Collections].LogMaxX));
-      DEBUG ((DEBUG_INFO, "MinX_%x ", ReportTable.Report[Index].Collection[Collections].LogMinX));
-      DEBUG ((DEBUG_INFO, "MaxY_%x ", ReportTable.Report[Index].Collection[Collections].LogMaxY));
-      DEBUG ((DEBUG_INFO, "MinY_%x ", ReportTable.Report[Index].Collection[Collections].LogMinY));
-      DEBUG ((DEBUG_INFO, "BitB_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartB, ReportTable.Report[Index].Collection[Collections].BitStopB));
-      DEBUG ((DEBUG_INFO, "BitX_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartX, ReportTable.Report[Index].Collection[Collections].BitStopX));
-      DEBUG ((DEBUG_INFO, "Input_%d_Rel_%d ", ReportTable.Report[Index].Collection[Collections].BitsInputX, ReportTable.Report[Index].Collection[Collections].BitsInputX & HID_FLAG_RELATIVE));
-      DEBUG ((DEBUG_INFO, "BitY_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartY, ReportTable.Report[Index].Collection[Collections].BitStopY));
-      DEBUG ((DEBUG_INFO, "Input_%d_Rel_%d ", ReportTable.Report[Index].Collection[Collections].BitsInputY, ReportTable.Report[Index].Collection[Collections].BitsInputY & HID_FLAG_RELATIVE));
+      DEBUG ((DEBUG_INFO, "MaxX_%x ", ReportTable->Report[Index].Collection[Collections].LogMaxX));
+      DEBUG ((DEBUG_INFO, "MinX_%x ", ReportTable->Report[Index].Collection[Collections].LogMinX));
+      DEBUG ((DEBUG_INFO, "MaxY_%x ", ReportTable->Report[Index].Collection[Collections].LogMaxY));
+      DEBUG ((DEBUG_INFO, "MinY_%x ", ReportTable->Report[Index].Collection[Collections].LogMinY));
+      DEBUG ((DEBUG_INFO, "BitB_%d-%d ", ReportTable->Report[Index].Collection[Collections].BitStartB, ReportTable->Report[Index].Collection[Collections].BitStopB));
+      DEBUG ((DEBUG_INFO, "BitX_%d-%d ", ReportTable->Report[Index].Collection[Collections].BitStartX, ReportTable->Report[Index].Collection[Collections].BitStopX));
+      DEBUG ((DEBUG_INFO, "Input_%d_Rel_%d ", ReportTable->Report[Index].Collection[Collections].BitsInputX, ReportTable->Report[Index].Collection[Collections].BitsInputX & HID_FLAG_RELATIVE));
+      DEBUG ((DEBUG_INFO, "BitY_%d-%d ", ReportTable->Report[Index].Collection[Collections].BitStartY, ReportTable->Report[Index].Collection[Collections].BitStopY));
+      DEBUG ((DEBUG_INFO, "Input_%d_Rel_%d ", ReportTable->Report[Index].Collection[Collections].BitsInputY, ReportTable->Report[Index].Collection[Collections].BitsInputY & HID_FLAG_RELATIVE));
       DEBUG ((DEBUG_INFO, "\n"));
-      THC_LOCAL_DEBUG (L" Collection Id_%x ", Collections)
-      THC_LOCAL_DEBUG (L"MaxX_%x ", ReportTable.Report[Index].Collection[Collections].LogMaxX)
-      THC_LOCAL_DEBUG (L"MinX_%x ", ReportTable.Report[Index].Collection[Collections].LogMinX)
-      THC_LOCAL_DEBUG (L"MaxY_%x ", ReportTable.Report[Index].Collection[Collections].LogMaxY)
-      THC_LOCAL_DEBUG (L"MinY_%x ", ReportTable.Report[Index].Collection[Collections].LogMinY)
-      THC_LOCAL_DEBUG (L"BitB_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartB, ReportTable.Report[Index].Collection[Collections].BitStopB)
-      THC_LOCAL_DEBUG (L"BitX_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartX, ReportTable.Report[Index].Collection[Collections].BitStopX)
-      THC_LOCAL_DEBUG (L"Input_%d_Rel_%d ", ReportTable.Report[Index].Collection[Collections].BitsInputX, ReportTable.Report[Index].Collection[Collections].BitsInputX & HID_FLAG_RELATIVE)
-      THC_LOCAL_DEBUG (L"BitY_%d-%d ", ReportTable.Report[Index].Collection[Collections].BitStartY, ReportTable.Report[Index].Collection[Collections].BitStopY)
-      THC_LOCAL_DEBUG (L"Input_%d_Rel_%d ", ReportTable.Report[Index].Collection[Collections].BitsInputX, ReportTable.Report[Index].Collection[Collections].BitsInputX & HID_FLAG_RELATIVE)
-      THC_LOCAL_DEBUG (L"\n")
     }
   }
-}
-
-
-/**
-  Parses HID Descriptor and creates Report Tables
-
-  @param[in]  QuickI2cDev       Context of QuickI2c device
-  @param[in]  Descriptor        Pointer to the descriptor
-  @param[in]  DescriptorLength  Size of the descriptor to parse
-**/
-VOID
-HidParseDescriptor (
-  IN QUICK_I2C_DEV   *QuickI2cDev,
-  IN UINT8           *Descriptor,
-  IN UINT32          DescriptorLength
-  )
-{
-  UINT8            *MovingPointer;
-  HID_PARSER_STACK *ParseStack;
-  HID_TOKEN        Token;
-
-  DEBUG((DEBUG_INFO, "%a \n", __FUNCTION__));
-
-  ParseStack = (HID_PARSER_STACK*)AllocateZeroPool(sizeof(HID_PARSER_STACK));
-
-  if (ParseStack == NULL) {
-      return;
-  }
-
-  MovingPointer = Descriptor;
-
-  ParseStack->TempReport.Id = 0xFFFF; //Invalid/Default report
-
-  while (DescriptorLength > 0) {
-    Token = HidGetToken (&MovingPointer, &DescriptorLength);
-    HidUpdateStack (ParseStack, Token, &(QuickI2cDev->InputReportTable), &(QuickI2cDev->ReportPacket));
-  }
-  HidExportReport (ParseStack, &(QuickI2cDev->InputReportTable));
-  HidShowReportTable (QuickI2cDev->InputReportTable);
-  FreePool(ParseStack);
 }
 
 /**
@@ -426,19 +378,22 @@ ConvertOutputToInt (
 /*
   This function uses dictionaries to parse incoming InputReport and convert it into X/Y coordinates plus Button info.
 
+  @param[in]  This                    Pointer to the HID_INTERFACE_PROTOCOL instance
   @param[in]  ReportTable             Report Table with all supported HID reports.
   @param[in]  InputStream             Pointer to the HID report.
   @param[out] Output                  Result X/Y/B data.
   @param[out] MouseTouchOutput        Result relative X/Y data.
   @param[in]  MinMax                  X/Y Min and Max data.
   @param[in]  HidSolutionFlag         Flag for HID protocol.
-  @param[in]  UsageDevice             Device usage
+  @param[out] UsageDevice             Device usage
 
   @retval EFI_SUCCESS       Parsing completed.
   @retval EFI_NOT_FOUND     Corresponding Report ID was not found in the Report Table.
 */
 EFI_STATUS
+EFIAPI
 HidParseInput (
+  IN HID_INTERFACE_PROTOCOL     *This,
   IN HID_INPUT_REPORT_TABLE     ReportTable,
   IN UINT8                      *InputStream,
   IN OUT HID_TOUCH_OUTPUT       *Output,
@@ -500,7 +455,7 @@ HidParseInput (
   // There's no guarantee coordinates will be byte-aligned, therefore we use bit access
   //
   for (Index = 0; Index < ReportTable.Quantity; Index++) {
-    THC_LOCAL_DEBUG (L"HidParseInput Report ID 0x%X \n", InputStream[0])
+    DEBUG ((DEBUG_VERBOSE, "HidParseInput Report ID 0x%X \n", InputStream[0]));
     if (InputStream[0] == ReportTable.Report[Index].Id) {
       for (Collections = 0; Collections < ReportTable.Report[Index].CollectionCount; Collections++) {
         //
@@ -523,8 +478,8 @@ HidParseInput (
         //
         BitStopX = ReportTable.Report[Index].Collection[Collections].BitStopX;
         if ((HidSolutionFlag == ElanHidProtocol) &&
-            ((ReportTable.Report[Index].Collection[Collections].BitStopX - ReportTable.Report[Index].Collection[Collections].BitStartX) == THC_ELAN_HID_MAX_LENGTH)) {
-          BitStopX = ReportTable.Report[Index].Collection[Collections].BitStopX - THC_ELAN_HID_SKIP_LENGTH;
+            ((ReportTable.Report[Index].Collection[Collections].BitStopX - ReportTable.Report[Index].Collection[Collections].BitStartX) == ELAN_HID_MAX_LENGTH)) {
+          BitStopX = ReportTable.Report[Index].Collection[Collections].BitStopX - ELAN_HID_SKIP_LENGTH;
         }
         for (BitIndex = ReportTable.Report[Index].Collection[Collections].BitStartX; BitIndex < BitStopX; BitIndex++) {
           Output->X += HidAccessBit (RawData, BitIndex) << (BitIndex - ReportTable.Report[Index].Collection[Collections].BitStartX);
@@ -537,8 +492,8 @@ HidParseInput (
         //
         BitStopY = ReportTable.Report[Index].Collection[Collections].BitStopY;
         if ((HidSolutionFlag == ElanHidProtocol) &&
-            ((ReportTable.Report[Index].Collection[Collections].BitStopY - ReportTable.Report[Index].Collection[Collections].BitStartY) == THC_ELAN_HID_MAX_LENGTH)) {
-          BitStopY = ReportTable.Report[Index].Collection[Collections].BitStopY - THC_ELAN_HID_SKIP_LENGTH;
+            ((ReportTable.Report[Index].Collection[Collections].BitStopY - ReportTable.Report[Index].Collection[Collections].BitStartY) == ELAN_HID_MAX_LENGTH)) {
+          BitStopY = ReportTable.Report[Index].Collection[Collections].BitStopY - ELAN_HID_SKIP_LENGTH;
         }
         for (BitIndex = ReportTable.Report[Index].Collection[Collections].BitStartY; BitIndex < BitStopY; BitIndex++) {
           Output->Y += HidAccessBit (RawData, BitIndex) << (BitIndex - ReportTable.Report[Index].Collection[Collections].BitStartY);
@@ -563,12 +518,15 @@ HidParseInput (
         //
         // Touch Pad - converted data to absolute position
         //
-        if (ReportTable.Report[Index].UsageTouchPad == 1 || (ReportTable.Report[Index].UsageMouse == 1 && (*UsageDevice == Absolute))) {
+        if ((ReportTable.Report[Index].UsageTouchPad == 1 && (*UsageDevice == Absolute)) ||
+            (ReportTable.Report[Index].UsageMouse == 1 && (*UsageDevice == Absolute))) {
+          //
           // Logical Max and Min in descriptor are only provided for the relative values
+          //
           MinMax->MinX = 0;
-          MinMax->MaxX = QUICK_I2C_RELATIVE_COORDINATES_MAX_X;
+          MinMax->MaxX = RELATIVE_COORDINATES_MAX_X;
           MinMax->MinY = 0;
-          MinMax->MaxY = QUICK_I2C_RELATIVE_COORDINATES_MAX_Y;
+          MinMax->MaxY = RELATIVE_COORDINATES_MAX_Y;
 
           // Calculate absolute X position using CurrentX onscreen and incoming relative_x data
           Output->X =
@@ -608,3 +566,101 @@ HidParseInput (
   return EFI_NOT_FOUND;
 }
 
+
+/**
+  Parses HID Descriptor and creates Report Tables
+
+  @param[in]  This              Pointer to the HID_INTERFACE_PROTOCOL instance
+  @param[in]  InputReportTable  Pointer to the final report table that contains all the Reports
+  @param[in]  ReportPacket      Pointer to the report packet format
+  @param[in]  Descriptor        Pointer to the descriptor
+  @param[in]  DescriptorLength  Size of the descriptor to parse
+
+  @retval EFI_SUCCESS           The operation completed successfully.
+  @retval EFI_OUT_OF_RESOURCES  Failed to allocate memory.
+**/
+EFI_STATUS
+EFIAPI
+HidParseDescriptor (
+  IN HID_INTERFACE_PROTOCOL *This,
+  IN HID_INPUT_REPORT_TABLE *InputReportTable,
+  IN HID_GET_REPORT_FORMAT  *ReportPacket,
+  IN UINT8                  *Descriptor,
+  IN UINT32                 DescriptorLength
+  )
+{
+  UINT8            *MovingPointer;
+  HID_PARSER_STACK *ParseStack;
+  HID_TOKEN        Token;
+
+  DEBUG((DEBUG_INFO, "%a \n", __FUNCTION__));
+
+  ParseStack = (HID_PARSER_STACK*)AllocateZeroPool((UINTN)sizeof(HID_PARSER_STACK));
+
+  if (ParseStack == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  MovingPointer = Descriptor;
+
+  ParseStack->TempReport.Id = 0xFFFF; //Invalid/Default report
+
+  while (DescriptorLength > 0) {
+    Token = HidGetToken (&MovingPointer, &DescriptorLength);
+    HidUpdateStack (ParseStack, Token, InputReportTable, ReportPacket);
+  }
+  HidExportReport (ParseStack, InputReportTable);
+  HidShowReportTable (InputReportTable);
+  FreePool(ParseStack);
+  return EFI_SUCCESS;
+}
+
+/**
+  This is the declaration of an EFI image entry point. This entry point is
+  the same for UEFI Applications, UEFI OS Loaders, and UEFI Drivers including
+  both device drivers and bus drivers.
+
+  @param  ImageHandle           The firmware allocated handle for the UEFI image.
+  @param  SystemTable           A pointer to the EFI System Table.
+
+  @retval EFI_SUCCESS           The operation completed successfully.
+  @retval Others                An unexpected error occurred.
+**/
+EFI_STATUS
+EFIAPI
+HidInterfaceDriverEntryPoint (
+  IN EFI_HANDLE                 ImageHandle,
+  IN EFI_SYSTEM_TABLE           *SystemTable
+  )
+{
+  EFI_STATUS                    Status;
+  HID_INTERFACE_PROTOCOL        *HidInterfaceProtocol;
+
+  DEBUG ((DEBUG_INFO, "%a: Entry Point\n", __FUNCTION__));
+
+  // Allocate memory for the protocol instance
+  Status = gBS->AllocatePool (EfiBootServicesData, sizeof (HID_INTERFACE_PROTOCOL), (VOID**)&HidInterfaceProtocol);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
+
+  // Initialize the protocol instance
+  HidInterfaceProtocol->Version             = HID_INTERFACE_PROTOCOL_VERSION;
+  HidInterfaceProtocol->ParseDescriptor     = HidParseDescriptor;
+  HidInterfaceProtocol->ParseInput          = HidParseInput;
+
+
+  // Install the protocol interface
+  Status = gBS->InstallProtocolInterface (
+                  &ImageHandle,
+                  &gHidProtocolGuid,
+                  EFI_NATIVE_INTERFACE,
+                  HidInterfaceProtocol
+                  );
+  if (EFI_ERROR(Status)) {
+    gBS->FreePool(HidInterfaceProtocol);
+  }
+  DEBUG ((DEBUG_INFO, "%a: Install HidInterfaceProtocol Status %r\n", __FUNCTION__, Status));
+
+  return Status;
+}

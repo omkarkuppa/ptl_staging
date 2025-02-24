@@ -1,0 +1,69 @@
+## @file
+# Touch Host Controller - Quick I2C (HID over I2C) Platform Driver
+#
+#  @copyright
+#  INTEL CONFIDENTIAL
+#  Copyright (C) 2025 Intel Corporation.
+#
+#  This software and the related documents are Intel copyrighted materials,
+#  and your use of them is governed by the express license under which they
+#  were provided to you ("License"). Unless the License provides otherwise,
+#  you may not use, modify, copy, publish, distribute, disclose or transmit
+#  this software or the related documents without Intel's prior written
+#  permission.
+#
+#  This software and the related documents are provided as is, with no
+#  express or implied warranties, other than those that are expressly stated
+#  in the License.
+#
+# @par Specification Reference:
+#
+##
+
+[Defines]
+  INF_VERSION                 = 0x00010007
+  BASE_NAME                   = ThcPlatformDxe
+  FILE_GUID                   = 3c95f5c6-d481-4568-b84d-43eec4d8ec85
+  VERSION_STRING              = 1.0
+  MODULE_TYPE                 = DXE_DRIVER
+  UEFI_SPECIFICATION_VERSION  = 2.10
+  ENTRY_POINT                 = ThcPlatformEntryPoint
+
+[Packages]
+  MdePkg/MdePkg.dec
+  ThcFeaturePkg/ThcFeaturePkg.dec
+  OneSiliconPkg/SiPkg.dec
+  PantherLakePlatSamplePkg/PlatformPkg.dec
+
+[Sources]
+  ThcPlatformDxe.c
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  IoLib
+  PcdLib
+
+[Protocols]
+  gEfiPciIoProtocolGuid ## CONSUMES
+  gEfiPciEnumerationCompleteProtocolGuid        ## CONSUMES
+
+[Guids]
+  gEfiEventExitBootServicesGuid ## CONSUMES
+  gPchSetupVariableGuid      ## CONSUMES
+
+[Pcd]
+  gThcFeaturePkgTokenSpaceGuid.PcdThc0DeviceSlaveAddress ## CONSUMES
+  gThcFeaturePkgTokenSpaceGuid.PcdThc1DeviceSlaveAddress ## CONSUMES
+  gThcFeaturePkgTokenSpaceGuid.PcdThcQuickI2cDevId       ## CONSUMES
+
+[Depex]
+  gEfiPciIoProtocolGuid AND
+  gEfiPciEnumerationCompleteProtocolGuid AND
+  gHidProtocolGuid

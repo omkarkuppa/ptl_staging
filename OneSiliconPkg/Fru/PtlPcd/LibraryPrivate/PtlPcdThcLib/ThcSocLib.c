@@ -47,16 +47,8 @@
 #include <PcdSbPortIds.h>
 #include <Library/PeiSiSsidLib.h>
 #include <Library/HobLib.h>
+#include <Library/PcdPeiThcSocInitLib.h>
 
-#define THC_PCD_H_SPI_DEVICE_ID_1    0xE349
-#define THC_PCD_H_SPI_DEVICE_ID_2    0xE34B
-#define THC_PCD_P_SPI_DEVICE_ID_1    0xE449
-#define THC_PCD_P_SPI_DEVICE_ID_2    0xE44B
-
-#define PTL_PCD_H_I2C_DEVICE_ID_1   0xE348
-#define PTL_PCD_H_I2C_DEVICE_ID_2   0xE34A
-#define PTL_PCD_P_I2C_DEVICE_ID_1   0xE448
-#define PTL_PCD_P_I2C_DEVICE_ID_2   0xE44A
 
 /**
   Disables THC controller in power controller and fabric

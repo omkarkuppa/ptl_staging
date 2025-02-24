@@ -216,6 +216,18 @@ PtlIsPcdH (
   return (PtlPcdGetSeries () == PTL_PCD_H);
 }
 
+/**
+  Checks if PCD is of WCL PCD series.
+
+  @return TRUE if SoC is of WCL PCD series.
+**/
+BOOLEAN
+IsWclPcd (
+  VOID
+  )
+{
+  return (PtlPcdGetSeries () == WCL_PCD);
+}
 
 
 /**
