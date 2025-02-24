@@ -1166,8 +1166,8 @@ InitHiiConfigFromVariable (
     VariableUpdate = TRUE;
   }
 
-  if (AmtIsRemoteSessionEnabled () && (Variable->RpeOptionExposure == 1)) {
-    Variable->RpeOptionGrayOut = 1;
+  if (Variable->RpeOptionExposure == 1) {
+    Variable->RpeOptionGrayOut = AmtIsRemoteSessionEnabled () ? 1 : 0;
     VariableUpdate = TRUE;
   }
 
