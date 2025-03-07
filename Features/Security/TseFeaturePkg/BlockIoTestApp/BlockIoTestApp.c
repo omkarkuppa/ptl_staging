@@ -274,7 +274,11 @@ SetUefiTableCryptoConfiguration (
 
   Status = BlockIoCrypto->SetConfiguration (BlockIoCrypto, 1, NewConfiguration, ResultingTable);
 
-  DumpResponseConfigurationTable (ResultingTable, 1);
+  if (EFI_ERROR (Status)) {
+    ShellPrintEx (-1, -1, L"Failed to set new configuration entry!\n");
+  } else {
+    DumpResponseConfigurationTable (ResultingTable, 1);
+  }
   FreePool (ResultingTable);
   return Status;
 }

@@ -1440,6 +1440,28 @@ ProcessReleasedUefiTableEntries (
   DEBUG ((DEBUG_INFO, "Sanitizing input entries...\n"));
   for (InputEntryIdx = 0; InputEntryIdx < RequestedChangesCount; InputEntryIdx++) {
     DEBUG ((DEBUG_INFO, "InputEntryIdx: %d\n", InputEntryIdx));
+    if (CompareGuid (&(RequestedConfigurationEntries[InputEntryIdx].KeyOwnerGuid), &NilGuid) == FALSE) {
+      //
+      // Scan and check that the requested capability is supported by the engine.
+      //
+      CapSupported = FALSE;
+      for (CapIdx = 0; CapIdx < CapCount; CapIdx++) {
+        if (CompareGuid (&(RequestedConfigurationEntries[InputEntryIdx].Capability.Algorithm), &(mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx].Algorithm)) &&
+            (RequestedConfigurationEntries[InputEntryIdx].Capability.KeySize == mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx].KeySize) &&
+            ((RequestedConfigurationEntries[InputEntryIdx].Capability.CryptoBlockSizeBitMask & mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx].CryptoBlockSizeBitMask) != 0)) {
+          CapSupported = TRUE;
+          break;
+        }
+      }
+
+      //
+      // If any entry is unsupported by the engine, abort operation.
+      //
+      if (CapSupported == FALSE) {
+        DEBUG ((DEBUG_ERROR, "Unsupported capability for entry with index (%d)!\n", RequestedConfigurationEntries[InputEntryIdx].Index));
+        return EFI_UNSUPPORTED;
+      }
+    }
     for (TableEntryIdx = 0; TableEntryIdx < ConfigurationMaxEntries; TableEntryIdx++) {
       DEBUG ((DEBUG_INFO, "TableEntryIdx: %d\n", TableEntryIdx));
 
@@ -1477,26 +1499,6 @@ ProcessReleasedUefiTableEntries (
           (RequestedConfigurationEntries[InputEntryIdx].Index == ModifiedConfigurationTable[TableEntryIdx].Index)) {
         DEBUG ((DEBUG_ERROR, "SubmitConfigurationTable () - Index (%d) has already been allocated.\n", RequestedConfigurationEntries[InputEntryIdx].Index));
         return EFI_INVALID_PARAMETER;
-      }
-      //
-      // Scan and check that the requested capability is supported by the engine.
-      //
-      CapSupported = FALSE;
-      for (CapIdx = 0; CapIdx < CapCount; CapIdx++) {
-        if (CompareGuid (&(RequestedConfigurationEntries[InputEntryIdx].Capability.Algorithm), &(mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx].Algorithm)) &&
-            (RequestedConfigurationEntries[InputEntryIdx].Capability.KeySize == mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx].KeySize) &&
-            ((RequestedConfigurationEntries[InputEntryIdx].Capability.CryptoBlockSizeBitMask & mTseDriverContextPtr->EngineInfo.CryptoCap.Capabilities[CapIdx].CryptoBlockSizeBitMask) != 0)) {
-          CapSupported = TRUE;
-          break;
-        }
-      }
-
-      //
-      // If any entry is unsupported by the engine, abort operation.
-      //
-      if (CapSupported == FALSE) {
-        DEBUG ((DEBUG_ERROR, "Unsupported capability for entry with index (%d)!\n", RequestedConfigurationEntries[InputEntryIdx].Index));
-        return EFI_UNSUPPORTED;
       }
     }
   }
