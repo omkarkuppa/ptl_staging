@@ -58,7 +58,8 @@
 #define SNW_INTEL_CLOCK_LOOPBACK_DELAY_SOURCE               10
 #define SDW_INTEL_AUTONOMOUS_CLK_STOP_INDEX                 11
 #define SDW_INTEL_SNDW_ENABLED_LANES_INDEX                  12
-#define SNW_INTEL_LAST_INDEX                                13
+#define SDW_INTEL_SNDW_MLCS                                 13
+#define SNW_INTEL_LAST_INDEX                                14
 #define SDW_MIPI_CLK_STOP_MODE0_SUPPORT_INDEX               (SNW_INTEL_LAST_INDEX + 0)
 #define SDW_MIPI_CLK_STOP_MODE1_SUPPORT_INDEX               (SNW_INTEL_LAST_INDEX + 1)
 #define SDW_MIPI_CLK_FREQ_SUPPORTED_INDEX                   (SNW_INTEL_LAST_INDEX + 2)
@@ -70,6 +71,8 @@
 
 #define SDW_CLOCK_SOURCE_SELECT_XTAL                        0
 #define SDW_CLOCK_SOURCE_SELECT_APLL                        1
+#define SDW_MLCS_XTAL                                       0
+#define SDW_MLCS_APLL                                       2
 
 #define SDW_LNK_DESC_DATA(LinkDesc) DeRefOf(Index(LinkDesc, 1))
 #define SDW_LNK_ENTRY(LinkDesc, EntryIndex) DeRefOf(Index(SDW_LNK_DESC_DATA(LinkDesc), EntryIndex))
@@ -136,6 +139,7 @@ Device (SNDW) {
     Store (Package () {0x00}, Local1)
     Store (0x00, Local2)
     Store (0x00, Local3)
+    Store (0x00, Local4)
 
     Switch (ToInteger (Arg2)) {
       Case (SDW_CLOCK_SOURCE_SELECT_XTAL) {
@@ -145,21 +149,21 @@ Device (SNDW) {
           Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL24MHZ}, Local1)
           Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL24MHZ, Local2)
           Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL24MHZ, Local3)
-        }
-        ElseIf (Arg1 == 38400000) {
+        } ElseIf (Arg1 == 38400000) {
           ADBG ("XTAL 38.4MHz")
           Store (V_HDA_SNDW_IP_CLOCK_XTAL38P4MHZ, Local0)
           Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ}, Local1)
           Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ, Local2)
           Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ, Local3)
-        }
-        ElseIf (Arg1 == 19200000) {
+        } ElseIf (Arg1 == 19200000) {
           ADBG ("XTAL 19.2MHz")
           Store (V_HDA_SNDW_IP_CLOCK_XTAL19P2MHZ, Local0)
           Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL19P2MHZ}, Local1)
           Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL19P2MHZ, Local2)
           Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL19P2MHZ, Local3)
         }
+
+        Store (SDW_MLCS_XTAL, Local4)
       }
       Case (SDW_CLOCK_SOURCE_SELECT_APLL) {
         ADBG ("APLL 96MHz")
@@ -167,6 +171,7 @@ Device (SNDW) {
         Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_PLL_96MHZ}, Local1)
         Store (V_HDA_SNDW_FRAME_ROW_SIZE_PLL_96MHZ, Local2)
         Store (V_HDA_SNDW_FRAME_COL_SIZE_PLL_96MHZ, Local3)
+        Store (SDW_MLCS_APLL, Local4)
       }
       Default {
         ADBG ("SOURCE CLOCK UNSUPPORTED")
@@ -178,11 +183,14 @@ Device (SNDW) {
     // based on detected XTAL (0: 24MHz or 1: 38.4MHz; 2: Unsupported).
     // By default assign values corresponding to XTAL 24MHz.
 
-    // LNK[N] (Arg0) - update property values for selected XTAL (Arg1)
+    // LNK[N] (Arg0) - update property values for selected XTAL(Arg1)/APLL
     Store (Local0, SDW_LNK_ENTRY_DATA (Arg0, SDW_INTEL_IP_CLK_INDEX))
     Store (Local1, SDW_LNK_ENTRY_DATA (Arg0, SDW_MIPI_CLK_FREQ_SUPPORTED_INDEX))
     Store (Local2, SDW_LNK_ENTRY_DATA (Arg0, SDW_MIPI_DEFAULT_FRAME_ROW_SIZE_INDEX))
     Store (Local3, SDW_LNK_ENTRY_DATA (Arg0, SDW_MIPI_DEFAULT_FRAME_COL_SIZE_INDEX))
+
+    // LNK[N] (Arg0) - "intel-sdw-mlcs" property value for selected clock
+    Store (Local4, SDW_LNK_ENTRY_DATA (Arg0, SDW_INTEL_SNDW_MLCS))
   }
 
   // Update SoundWire AC I/O Clock Loopback based on PchPolicy
@@ -318,6 +326,7 @@ Device (SNDW) {
       Package (2) {"intel-sdw-clss", 1}, //SoundWire Clock Loopback Source Select (0 - External Loopback, 1 - Internal Loopback)
       Package (2) {"intel-autonomous-clock-stop", 0}, //SoundWire autonomous clock stop capability (0-Disabled, 1-Enabled)
       Package (2) {"intel-sdw-lane-mask", 1}, // Lane mask for multilane configuration, each bit corresponds to enabled data lane, 0b0001 - sndw0 data lane enabled
+      Package (2) {"intel-sdw-mlcs", 0}, // SoundWire Clock Source Select (0 - XTAL, 2 - Audio PLL)
       //
       // Properties defined as per the MIPI software spec for Link controllers
       //
@@ -351,6 +360,7 @@ Device (SNDW) {
       Package (2) {"intel-sdw-clss", 1}, //SoundWire Clock Loopback Source Select (0 - External Loopback, 1 - Internal Loopback)
       Package (2) {"intel-autonomous-clock-stop", 0}, //SoundWire autonomous clock stop capability (0-Disabled, 1-Enabled)
       Package (2) {"intel-sdw-lane-mask", 1}, // Lane mask for multilane configuration, each bit corresponds to enabled data lane, 0b0001 - sndw0 data lane enabled
+      Package (2) {"intel-sdw-mlcs", 0}, // SoundWire Clock Source Select (0 - XTAL, 2 - Audio PLL)
       //
       // Properties defined as per the MIPI software spec for Link controllers
       //
@@ -384,6 +394,7 @@ Device (SNDW) {
       Package (2) {"intel-sdw-clss", 1}, //SoundWire Clock Loopback Source Select (0 - External Loopback, 1 - Internal Loopback)
       Package (2) {"intel-autonomous-clock-stop", 0}, //SoundWire autonomous clock stop capability (0-Disabled, 1-Enabled)
       Package (2) {"intel-sdw-lane-mask", 1}, // Lane mask for multilane configuration, each bit corresponds to enabled data lane, 0b0001 - sndw0 data lane enabled
+      Package (2) {"intel-sdw-mlcs", 0}, // SoundWire Clock Source Select (0 - XTAL, 2 - Audio PLL)
       //
       // Properties defined as per the MIPI software spec for Link controllers
       //
@@ -417,6 +428,7 @@ Device (SNDW) {
       Package (2) {"intel-sdw-clss", 1}, //SoundWire Clock Loopback Source Select (0 - External Loopback, 1 - Internal Loopback)
       Package (2) {"intel-autonomous-clock-stop", 0}, //SoundWire autonomous clock stop capability (0-Disabled, 1-Enabled)
       Package (2) {"intel-sdw-lane-mask", 1}, // Lane mask for multilane configuration, each bit corresponds to enabled data lane, 0b0001 - sndw0 data lane enabled
+      Package (2) {"intel-sdw-mlcs", 0}, // SoundWire Clock Source Select (0 - XTAL, 2 - Audio PLL)
       //
       // Properties defined as per the MIPI software spec for Link controllers
       //
@@ -450,6 +462,7 @@ Device (SNDW) {
       Package (2) {"intel-sdw-clss", 1}, //SoundWire Clock Loopback Source Select (0 - External Loopback, 1 - Internal Loopback)
       Package (2) {"intel-autonomous-clock-stop", 0}, //SoundWire autonomous clock stop capability (0-Disabled, 1-Enabled)
       Package (2) {"intel-sdw-lane-mask", 1}, // Lane mask for multilane configuration, each bit corresponds to enabled data lane, 0b0001 - sndw0 data lane enabled
+      Package (2) {"intel-sdw-mlcs", 0}, // SoundWire Clock Source Select (0 - XTAL, 2 - Audio PLL)
       //
       // Properties defined as per the MIPI software spec for Link controllers
       //
