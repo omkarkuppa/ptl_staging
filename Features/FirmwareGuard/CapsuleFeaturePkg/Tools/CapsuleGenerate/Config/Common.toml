@@ -101,7 +101,7 @@ Title = "Configuration file - TOML for Client CapsuleGenerate"
   # gCapsuleBiosBgupFileGuid
   BiosBgup      = { FileName = 'BiosBgup.bin',            FileGuid = 'C2E2039C-CFD8-4706-BE37-8F4DBB526005' }
   # gCapsuleBiosConfigFileGuid
-  BiosConfig    = { FileName = 'BiosUpdateConfig.ini',    FileGuid = '812136D3-4D3A-433A-9418-29BB9BF78F6E' }
+  BiosConfig    = { FileName = 'BiosUpdateConfig.ini',    FileGuid = 'F73E8213-0A23-4FF6-BFB3-3995E312AAF7' }
   # gCapsuleExtendedBiosConfigFileGuid
   ExtBiosConfig = { FileName = 'ExtBiosUpdateConfig.ini', FileGuid = 'BFEABAF1-0306-494B-9126-28CE91FB4EF6' }
   # gCapsuleEcImageFileGuid
