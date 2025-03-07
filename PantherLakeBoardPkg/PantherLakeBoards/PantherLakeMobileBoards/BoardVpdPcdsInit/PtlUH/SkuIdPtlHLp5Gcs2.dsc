@@ -779,17 +779,9 @@
   #
   # Touch pad
   #
-  gStructPcdTokenSpaceGuid.PcdPchSetup.PchSerialIoI2c[5]|0x0                                         # I2C5 Controller, Disabled
-  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcAssignment[0]|0x1                                          # THC Port Configuration, THC0
-  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcAssignment[1]|0x2                                          # THC Port Configuration, THC1
-  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcMode[1]|0x2                                                # THC Mode, HID over I2C
-  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cDeviceAddress[1]|0x2C                                # HIDI2C Device address, 0x2C
-  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cConnectionSpeed[1]|0x186A0                           # Requested Connection Speed, 0x186A0
-  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cAddressingMode[1]|0x0                                # Addressing Mode, 0
-  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cDeviceDescriptorAddress[1]|0x20                      # Device Descriptor address, 0x20
-  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cStandardModeSerialClockLineHighPeriod[1]|0x267       # SM SCL HIGH Period, 0x267
-  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcHidI2cStandardModeSerialClockLineLowPeriod[1]|0x271        # SM SCL LOW Period, 0x271
-  gStructPcdTokenSpaceGuid.PcdPchSetup.ThcWakeOnTouch[1]|0x1                                         # Wake On Touch, Enabled
+  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cSensorDevicePort[5]|0x1                                    # Connected device
+  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cTouchPadType|0x7                                           # Touch Pad
+  gStructPcdTokenSpaceGuid.PcdSetup.PchI2cTouchPadIrqMode|0x0                                        # Touch Pad Interrupt Mode
 
   #
   # DDT Fan
