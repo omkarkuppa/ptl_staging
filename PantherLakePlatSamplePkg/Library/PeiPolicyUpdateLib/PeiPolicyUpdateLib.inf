@@ -271,9 +271,6 @@
   # Payload Management
   gBoardModuleTokenSpaceGuid.PcdFlashNonFitPayloadSize         ## CONSUMES
 
-  # MKTME
-  gSiPkgTokenSpaceGuid.PcdMkTmeKeyIdBits                       ## CONSUMES
-
   gSiPkgTokenSpaceGuid.PcdHgSubSystemId                        ## CONSUMES
 
   gSiPkgTokenSpaceGuid.PcdTsnSupport                           ## CONSUMES

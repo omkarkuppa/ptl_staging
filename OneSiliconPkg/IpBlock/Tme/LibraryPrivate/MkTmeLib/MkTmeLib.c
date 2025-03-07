@@ -270,7 +270,6 @@ TmeInit (
   TME_CONFIG                         TmeConfig;
   TME_POLICY                         *LocalTmePolicy;
   UINT32                             RegisterVal32;
-  UINT8                              MkTmeKeyIdBits;
   BOOLEAN                            WarmReset;
   BOOLEAN                            IsLocked;
 
@@ -406,24 +405,17 @@ TmeInit (
     TmeConfig.SaveKeyForStandby = 1;
   }
 
-  ///
-  ///  Support for key split between MKTME & TDx KeyIds
-  ///
-  MkTmeKeyIdBits = PcdGet8 (PcdMkTmeKeyIdBits);
-  if (MkTmeKeyIdBits > TmeConfig.MkTmeMaxKeyIdBits) {
-    ///
-    /// if Pcd is greater than max then configure KeyId to max supported
-    ///
-    TmeConfig.MkTmeKeyIdBits  = TmeConfig.MkTmeMaxKeyIdBits;
-  } else {
-    TmeConfig.MkTmeKeyIdBits = MkTmeKeyIdBits;
-  }
+  //
+  // Configure KeyId to max supported
+  //
+  TmeConfig.MkTmeKeyIdBits  = TmeConfig.MkTmeMaxKeyIdBits;
+
+
 
   // Check if TDx is supported
   if (LocalTmePolicy->TdxEnable) {
     // Set tdx keyid bits. The default value is 1.
-    TmeConfig.TdxKeyIdBits = PcdGet8 (PcdTdxKeyIdBits);
-
+    TmeConfig.TdxKeyIdBits = TDX_KEY_ID_BITS;
     DEBUG ((DEBUG_INFO, " Key split between MKTME & TDx KeyIds.\n"));
     DEBUG ((DEBUG_INFO, " MktmeKeyIdBits = 0x%X\n", TmeConfig.MkTmeKeyIdBits));
     DEBUG ((DEBUG_INFO, " TdxKeyIdBits   = 0x%X\n", TmeConfig.TdxKeyIdBits));

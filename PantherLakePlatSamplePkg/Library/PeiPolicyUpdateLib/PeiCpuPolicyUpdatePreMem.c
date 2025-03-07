@@ -738,13 +738,6 @@ UpdatePeiCpuPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.TdxActmModuleSize, CpuSecurityPreMemConfig->TdxActmModuleSize, ModuleSize);
   #endif
 
-  ///
-  /// Set PcdMkTmeKeyIdBits to hardware default if TME is supported
-  ///
-  if (IsTmeSupported () == TRUE) {
-    PcdSet8S (PcdMkTmeKeyIdBits, (UINT8) MsrGetMkTmeMaxKeyidBits ());
-  }
-
   //
   // Set TME exclude base and size to 0
   // Set GenerateNewTmeKey to disable

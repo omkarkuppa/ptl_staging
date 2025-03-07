@@ -48,7 +48,3 @@ MkTmeLib.c
 
 [FixedPcd]
 gSiPkgTokenSpaceGuid.PcdVtdEnable    ## CONSUMES
-
-[Pcd]
-gSiPkgTokenSpaceGuid.PcdMkTmeKeyIdBits  ## CONSUMES
-gSiPkgTokenSpaceGuid.PcdTdxKeyIdBits    ## CONSUMES

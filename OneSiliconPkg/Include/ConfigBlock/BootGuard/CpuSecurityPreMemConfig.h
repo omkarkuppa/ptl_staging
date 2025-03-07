@@ -92,6 +92,7 @@ typedef struct {
   UINT32             TdxActmModuleSize;
 
   UINT8              TdxSeamldrSvn;
+
   UINT8              RsvdBytes95[3];
 } CPU_SECURITY_PREMEM_CONFIG;
 
