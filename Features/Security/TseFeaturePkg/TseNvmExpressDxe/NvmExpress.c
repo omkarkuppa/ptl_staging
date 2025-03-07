@@ -995,6 +995,8 @@ NvmExpressDriverBindingSupported (
   UINTN                     HandleCount;
   PLATFORM_TSE_EXCLUDE_PROTOCOL *TseExcludeProtocol;
 
+  IsTseSupported = TRUE;
+
   //
   // Check whether device path is valid
   //
@@ -1110,7 +1112,12 @@ NvmExpressDriverBindingSupported (
                   );
 
   if (EFI_ERROR (Status) || (HandleBuffer == NULL) || (HandleCount == 0)) {
-    return Status;
+    //
+    // Regarding Board that not support TBT, Bios will not install gPlatformTseExcludeProtocolGuid.
+    // Return EFI_SUCCESS Status here to not impact the flow of NVME Driver Start.
+    // 
+    DEBUG ((DEBUG_INFO, "Failed to locate gPlatformTseExcludeProtocolGuid\n")); 
+    return EFI_SUCCESS;
   }
 
   //
@@ -1127,6 +1134,7 @@ NvmExpressDriverBindingSupported (
     }
 
     Status = TseExcludeProtocol->TseExcludeCheck(TseExcludeProtocol, PciIo, &IsTseSupported);
+    DEBUG ((DEBUG_INFO, "IsTseSupported: %x\n", IsTseSupported));
     if (EFI_ERROR (Status)) {
       break;
     }
