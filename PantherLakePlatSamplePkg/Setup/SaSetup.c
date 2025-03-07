@@ -712,6 +712,8 @@ InitSaStrings (
     } else {
       DEBUG ((EFI_D_INFO, "Vmd Info Hob not found\n"));
     }
+  } else {
+    pSaSetup->VmdSupported = 0;
   }
   gRT->SetVariable (
         L"SaSetup",
