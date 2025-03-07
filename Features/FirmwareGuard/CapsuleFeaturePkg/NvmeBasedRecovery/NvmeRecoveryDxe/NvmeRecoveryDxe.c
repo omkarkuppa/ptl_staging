@@ -1941,6 +1941,49 @@ IsSupportedRootportDevice (
 }
 
 /**
+  NVMe Resiliency detect csme corruption
+
+  To determine the CSE Image health and then trigger WDT timeout.
+**/
+VOID
+MeNvmeResiliency (
+  VOID
+  )
+{
+  UINT64                 HeciBaseAddress;
+  HECI_FWS_REGISTER      MeFwSts;
+  HECI_GS_SHDW_REGISTER  MeFwSts2;
+  UINT8                  WdtTimeOut;
+
+  DEBUG ((DEBUG_INFO, "Me Nvme Resiliency detect start\n"));
+
+  HeciBaseAddress = MeHeciPciCfgBase (HECI1);
+  MeFwSts.ul      = PciSegmentRead32 (HeciBaseAddress + R_ME_CFG_HFS);
+  MeFwSts2.ul     = PciSegmentRead32 (HeciBaseAddress + R_ME_CFG_HFS_2);
+  WdtTimeOut      = 3;
+
+  if ((MeFwSts.ul == 0xFFFFFFFF) || (MeFwSts2.ul == 0xFFFFFFFF)) {
+    DEBUG ((DEBUG_INFO, "ME is disabled, read status from MeFwHob\n"));
+    MeFwSts.ul = GetMeStatusFromFwstsHob (R_ME_CFG_HFS);
+    MeFwSts2.ul = GetMeStatusFromFwstsHob (R_ME_CFG_HFS_2);
+  }
+
+  DEBUG ((DEBUG_INFO, "MeFwSts = 0x%x!\n", MeFwSts.ul));
+  DEBUG ((DEBUG_INFO, "MeFwSts2 = 0x%x!\n", MeFwSts2.ul));
+
+  if ((MeFwSts.r.CurrentState == ME_STATE_RECOVERY) ||
+      (MeFwSts.r.FtBupLdFlr == 1) ||
+      (MeFwSts2.r.FwUpdIpu == 1)) {
+      DEBUG ((DEBUG_INFO, "ME region is corrupted, trigger WDT timeout\n"));
+      ArmPlatformWdt (WdtTimeOut);
+      CpuDeadLoop ();
+  }
+
+  DEBUG ((DEBUG_INFO, "Me Nvme Resiliency end\n"));
+  return;
+}
+
+/**
 
   It determines if current boot process is normal, then healthy image will
   be saved to NVMe Boot Partition.
@@ -1997,8 +2040,13 @@ NvmeRecoveryCallBack (
   IsFirstBoot              = FALSE;
   ZeroMem (&NvmeBackupInfo, sizeof (NVME_BACKUP_INFO));
 
+  // If SSD has backup image, try to detect csme health status
+  if (IsBiosBackupValid () == TRUE) {
+    MeNvmeResiliency();
+  }
+
   //
-  // Disarm EC WDT first, since from RPL EC, WDT is armed as default, need disarm at the beginning.
+  // Disarm EC WDT, with NIST EC, WDT is armed as default.
   //
   Status = DisarmPlatformWdt ();
   DEBUG ((DEBUG_INFO, "DisarmPlatformWdt: %r\n", Status));
@@ -2254,50 +2302,6 @@ Exit:
 }
 
 /**
-  NVMe Resiliency detect csme corruption
-
-  To determine the CSE Image health and then trigger WDT timeout.
-**/
-VOID
-MeNvmeResiliency
-(
-  VOID
-)
-{
-  UINT64                 HeciBaseAddress;
-  HECI_FWS_REGISTER      MeFwSts;
-  HECI_GS_SHDW_REGISTER  MeFwSts2;
-  UINT8                  WdtTimeOut;
-
-  DEBUG ((DEBUG_INFO, "Me Nvme Resiliency detect start\n"));
-
-  HeciBaseAddress = MeHeciPciCfgBase (HECI1);
-  MeFwSts.ul      = PciSegmentRead32 (HeciBaseAddress + R_ME_CFG_HFS);
-  MeFwSts2.ul     = PciSegmentRead32 (HeciBaseAddress + R_ME_CFG_HFS_2);
-  WdtTimeOut      = 3;
-
-  if ((MeFwSts.ul == 0xFFFFFFFF) || (MeFwSts2.ul == 0xFFFFFFFF)) {
-    DEBUG ((DEBUG_INFO, "ME is disabled, read status from MeFwHob\n"));
-    MeFwSts.ul = GetMeStatusFromFwstsHob (R_ME_CFG_HFS);
-    MeFwSts2.ul = GetMeStatusFromFwstsHob (R_ME_CFG_HFS_2);
-  }
-
-  DEBUG ((DEBUG_INFO, "MeFwSts = 0x%x!\n", MeFwSts.ul));
-  DEBUG ((DEBUG_INFO, "MeFwSts2 = 0x%x!\n", MeFwSts2.ul));
-
-  if ((MeFwSts.r.CurrentState == ME_STATE_RECOVERY) ||
-      (MeFwSts.r.FtBupLdFlr == 1) ||
-      (MeFwSts2.r.FwUpdIpu == 1)) {
-      DEBUG ((DEBUG_INFO, "ME region is corrupted, trigger WDT timeout\n"));
-      ArmPlatformWdt (WdtTimeOut);
-      CpuDeadLoop ();
-  }
-
-  DEBUG ((DEBUG_INFO, "Me Nvme Resiliency end\n"));
-  return;
-}
-
-/**
   Returns the SMBIOS table with the specified type.
 
   @param[in]  Type    The type of the SMBIOS table which is searched.
@@ -2448,11 +2452,6 @@ NvmeRecoveryDxeEntryPoint (
     DEBUG ((DEBUG_INFO, "NVMe Recovery Function is not supported, NvmeRecoveryDxeEntryPoint End\n"));
     Status = EFI_SUCCESS;
     goto Exit;
-  }
-
-  // If SSD has backup image, try to detect csme health status
-  if (IsBiosBackupValid () == TRUE) {
-    MeNvmeResiliency();
   }
 
   Status = gBS->CreateEventEx (
