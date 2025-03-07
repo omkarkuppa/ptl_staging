@@ -4134,7 +4134,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.SkipHIIUpdate|0x1                             
 gStructPcdTokenSpaceGuid.PcdSetup.SkipObbHashVerification|0x2                                      # Skip OBB HASH Verify
 gStructPcdTokenSpaceGuid.PcdSetup.GbeFwUpdateEnable|0x1                                            # GBE Firmware Update Support
 gStructPcdTokenSpaceGuid.PcdSetup.StorageRtd3Support|0x1                                           # D3 Setting for Storage
-gStructPcdTokenSpaceGuid.PcdSetup.StorageDynamicLinkManagement|0x0                                 # StorageDynamicLinkManagement
+gStructPcdTokenSpaceGuid.PcdSetup.StorageDynamicLinkManagement|0x1                                 # StorageDynamicLinkManagement
 gStructPcdTokenSpaceGuid.PcdSetup.SysFwUpdateLoadDefault|0x0                                       # Restore Setup Default
 gStructPcdTokenSpaceGuid.PcdSetup.SysFwUpdateSkipPowerCheck|0x0                                    # Skip Power Check
 gStructPcdTokenSpaceGuid.PcdSetup.SystemTimeAndAlarmSource|0x0                                     # System Time and Alarm Source
