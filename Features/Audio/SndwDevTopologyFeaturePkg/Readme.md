@@ -23,11 +23,13 @@ Feature package contains:
   * **SndwDevTopologySsdtPlatformA**  (*SndwDevTopologySsdtPlatformA.inf*) - Module contain SSDT tables for different topology configurations:
     * SndwDevTopologySt00Ssdt - SSDT contains DisCo for legacy codecs topology.
     * SndwDevTopologySt01Ssdt - SSDT contains DisCo for ALC711-VD1, ALC714-VC1, 2x ALC316 and SSID: 10EC3056.
-    * SndwDevTopologySt02Ssdt - SSDT contains DisCo for ALC712-VB, ALC1320, 5-Star Configuration.
-    * SndwDevTopologySt03Ssdt - SSDT contains DisCo for ALC713-VB, 2xALC1320, 4-Star(3) Configuration.
+    * SndwDevTopologySt02Ssdt - SSDT contains DisCo for ALC712-VB, ALC1320, 5-Star Configuration, ES-1.
+    * SndwDevTopologySt03Ssdt - SSDT contains DisCo for ALC713-VB, 2xALC1320, 4-Star(3) Configuration, ES-1.
     * SndwDevTopologySt04Ssdt - SSDT contains DisCo for ALC722-CG, 4-Star(1) Configuration.
     * SndwDevTopologySt05Ssdt - SSDT contains DisCo for Cirrus 6-speaker configuration
     * SndwDevTopologySt06Ssdt - SSDT contains DisCo for GCS/ADK ALC712-VB, ALC1320 Configuration.
+    * SndwDevTopologySt09Ssdt - SSDT contains DisCo for ALC712-VB, ALC1320, 5-Star Configuration, MP.
+    * SndwDevTopologySt10Ssdt - SSDT contains DisCo for ALC713-VB, 2xALC1320, 4-Star(3) Configuration, MP.
   * **SndwDevTopologySsdtPlatformB**  (*SndwDevTopologySsdtPlatformB.inf*) - Module contain SSDT tables for different topology configurations:
     * SndwDevTopologySt00Ssdt - SSDT contains DisCo for legacy codecs topology.
     * SndwDevTopologySt07Ssdt - SSDT contains DisCo for ALC712-VB, 3-Star Configuration.

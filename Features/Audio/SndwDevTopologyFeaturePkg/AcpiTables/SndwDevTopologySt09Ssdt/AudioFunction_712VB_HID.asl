@@ -3,7 +3,7 @@
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2024 Intel Corporation.
+  Copyright (C) 2025 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -40,7 +40,7 @@ Name (_DSD, Package ()  // _DSD: Device-Specific Data
     Package(2) {"mipi-sdca-control-0x6-subproperties", "C006"},
     Package(2) {"mipi-sdca-control-0x7-subproperties", "C007"},
     Package(2) {"mipi-sdca-control-0x8-subproperties", "C008"},
-             Package(2) {"mipi-sdca-control-0x1-subproperties", "C042"},
+              Package(2) {"mipi-sdca-control-0x1-subproperties", "C042"},
     Package(2) {"mipi-sdca-control-0x10-subproperties", "C043"},//Function_Status, Class, RW1C
     Package(2) {"mipi-sdca-control-0x11-subproperties", "C044"},//Function_Action, Class, RW1S
     Package(2) {"mipi-sdca-control-0x2C-subproperties", "C02C"},//Device_Manufacturer_ID
@@ -94,30 +94,30 @@ Name(BUF2, Buffer()
   0xa1, 0x01,       // COLLECTION (Application)
       0x85, 0x11,   // REPORT_ID
 
-  0x09, 0xe9,   // USAGE (Volume up) 08
-  0x15, 0x00,   // LOGICAL_MINIMUM (0)
-  0x25, 0x01,   // LOGICAL_MAXIMUM (1)
-  0x75, 0x01,   // REPORT_SIZE (1)
-  0x95, 0x01,   // REPORT_COUNT (1)
-  0x81, 0x02,   // INPUT (Data, Var, Abs)
+    0x09, 0xe9,   // USAGE (Volume up) 08
+    0x15, 0x00,   // LOGICAL_MINIMUM (0)
+    0x25, 0x01,   // LOGICAL_MAXIMUM (1)
+    0x75, 0x01,   // REPORT_SIZE (1)
+    0x95, 0x01,   // REPORT_COUNT (1)
+    0x81, 0x02,   // INPUT (Data, Var, Abs)
 
-  0x09, 0xea,   // USAGE (Volume down) 09
-  0x15, 0x00,   // LOGICAL_MINIMUM (0)
-  0x25, 0x01,   // LOGICAL_MAXIMUM (1)
-  0x75, 0x01,   // REPORT_SIZE (1)
-  0x95, 0x01,   // REPORT_COUNT (1)
-  0x81, 0x02,   // INPUT (Data, Var, Abs)
+    0x09, 0xea,   // USAGE (Volume down) 09
+    0x15, 0x00,   // LOGICAL_MINIMUM (0)
+    0x25, 0x01,   // LOGICAL_MAXIMUM (1)
+    0x75, 0x01,   // REPORT_SIZE (1)
+    0x95, 0x01,   // REPORT_COUNT (1)
+    0x81, 0x02,   // INPUT (Data, Var, Abs)
 
-  0x09, 0xcd,   // USAGE (play/pause) 10
-  0x15, 0x00,   // LOGICAL_MINIMUM (0)
-  0x25, 0x01,   // LOGICAL_MAXIMUM (1)
-  0x75, 0x01,   // REPORT_SIZE (1)
-  0x95, 0x01,   // REPORT_COUNT (1)
-  0x81, 0x06,   // INPUT (Data, Var, Relative)
+    0x09, 0xcd,   // USAGE (play/pause) 10
+    0x15, 0x00,   // LOGICAL_MINIMUM (0)
+    0x25, 0x01,   // LOGICAL_MAXIMUM (1)
+    0x75, 0x01,   // REPORT_SIZE (1)
+    0x95, 0x01,   // REPORT_COUNT (1)
+    0x81, 0x06,   // INPUT (Data, Var, Relative)
 
-  0x75, 0x0D,   // REPORT_SIZE (1) 11~23
-  0x95, 0x01,   // REPORT_COUNT (1)
-  0x81, 0x03,   // INPUT (Cnst,Ary,Abs)
+    0x75, 0x0D,   // REPORT_SIZE (1) 11~23
+    0x95, 0x01,   // REPORT_COUNT (1)
+    0x81, 0x03,   // INPUT (Cnst,Ary,Abs)
   0xC0,             // MAIN::END_COLLECTION
 
 }) //End BUF2
@@ -164,7 +164,7 @@ Name(C007, Package()
   {
     Package(2) {"mipi-sdca-control-access-layer", 4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x0713},
+    Package(2) {"mipi-sdca-control-dc-value", 0x0712},
   }
 }) // End C007
 
@@ -179,7 +179,6 @@ Name(C008, Package()
     Package(2) {"mipi-sdca-control-dc-value", 0x1},
   }
 }) // End C008
-
 Name(C042, Package()
 {
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
@@ -231,10 +230,10 @@ Name(C02D, Package()
   ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
   Package()
   {
-    //Device_Part_ID = 0x721, Class, DC
+    //Device_Part_ID = 0x712, Class, DC
     Package(2) {"mipi-sdca-control-access-layer", 0x4},
     Package(2) {"mipi-sdca-control-access-mode", 5},
-    Package(2) {"mipi-sdca-control-dc-value", 0x0721},
+    Package(2) {"mipi-sdca-control-dc-value", 0x0712},
   }
 }) //End AF04.C02D
 

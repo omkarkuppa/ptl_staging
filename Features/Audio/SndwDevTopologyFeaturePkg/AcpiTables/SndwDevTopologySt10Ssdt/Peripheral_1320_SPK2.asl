@@ -3,7 +3,7 @@
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2024 Intel Corporation.
+  Copyright (C) 2025 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -211,5 +211,5 @@
     Device(AF04)
     {
         Name (_ADR, 0x4)
-        Include ("AudioFunction_1320_SPK1.asl")
+        Include ("AudioFunction_1320VBC_SPK2_ADR01.asl")
     }

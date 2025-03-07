@@ -35,6 +35,8 @@ VERSION_STRING       = 1.0
   SndwDevTopologySt04Ssdt/SndwDevTopologySt04Ssdt.asl
   SndwDevTopologySt05Ssdt/SndwDevTopologySt05Ssdt.asl
   SndwDevTopologySt06Ssdt/SndwDevTopologySt06Ssdt.asl
+  SndwDevTopologySt09Ssdt/SndwDevTopologySt09Ssdt.asl
+  SndwDevTopologySt10Ssdt/SndwDevTopologySt10Ssdt.asl
 
 [Packages]
   MdePkg/MdePkg.dec

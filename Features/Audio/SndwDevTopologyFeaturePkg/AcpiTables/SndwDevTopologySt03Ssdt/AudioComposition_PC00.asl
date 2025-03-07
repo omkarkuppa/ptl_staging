@@ -140,7 +140,8 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-vendor-aggregation-peripheral-1-dp-number", 0x01},
        // Reference aggregation
        Package (2) {"acpi-vendor-amp-degraded-mode", 0x00}, // 0: Speaker protection on codec, 1: Speaker protection on DSP
-       Package (2) {"acpi_vendor_smart_amp", 0x01}, // 0: Simple amp, 1: Smart amp
+       //Package (2) {"acpi_vendor_smart_amp", 0x01}, // 0: Simple amp, 1: Smart amp
+       Package (2) {"acpi_vendor_smart_amp", 0x00}, // 0: Simple amp, 1: Smart amp   //20250210 update for Intel streaming driver
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-count", 0x02},
        Package (2) {"acpi-vendor-aggregation-peripheral-0-aec-feedback-channel-mask", 0x03},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-aec-feedback-channel-mask", 0x0C},

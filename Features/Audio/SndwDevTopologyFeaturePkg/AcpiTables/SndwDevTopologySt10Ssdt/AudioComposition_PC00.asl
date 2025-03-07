@@ -3,7 +3,7 @@
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2024 Intel Corporation.
+  Copyright (C) 2025 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -23,20 +23,18 @@ Name(_DSD, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
        Package (2) {"acpi-acd-interface-revision", 0x00000001},    // 0.1 Spec Version Bits 31-16: (Upper word) Major version number. Bits 15-0: (Lower word) Minor version number
-       Package (2) {"acpi-acd-endpoint-count", 8},    // 8 Endpoints: MicrophoneArray, Headphones, LineOut, HeadsetOutput, Microphone, LineIn, HeadsetMic, Speaker (EP8) or Aggregated Speaker (EP0)
+       Package (2) {"acpi-acd-endpoint-count", 8},    // 8 Endpoints: Aggregated Speaker, MicrophoneArray, Headphones, LineOut, HeadsetOutput, Microphone, LineIn, HeadsetMic
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
     Package () {
-       Package (2) {"acpi-acd-endpoint-0-properties", "EP01"},     // Configuration for MicrophoneArray
-       Package (2) {"acpi-acd-endpoint-1-properties", "EP02"},     // Configuration for Headphones
-       Package (2) {"acpi-acd-endpoint-2-properties", "EP03"},     // Configuration for LineOut
-       Package (2) {"acpi-acd-endpoint-3-properties", "EP04"},     // Configuration for HeadsetOutput
-       Package (2) {"acpi-acd-endpoint-4-properties", "EP05"},     // Configuration for Microphone
-       Package (2) {"acpi-acd-endpoint-5-properties", "EP06"},     // Configuration for LineIn
-       Package (2) {"acpi-acd-endpoint-6-properties", "EP07"},     // Configuration for HeadsetMic
-       Package (2) {"acpi-acd-endpoint-7-properties", "EP00"},     // Configuration for Aggregated Speaker
-       //Package (2) {"acpi-acd-endpoint-7-properties", "EP08"},     // Configuration for 1320 Speaker
-       //Package (2) {"acpi-acd-endpoint-7-properties", "EP09"},     // Configuration for 712 Speaker
+       Package (2) {"acpi-acd-endpoint-0-properties", "EP00"},     // Configuration for Aggregated Speaker
+       Package (2) {"acpi-acd-endpoint-1-properties", "EP01"},     // Configuration for MicrophoneArray
+       Package (2) {"acpi-acd-endpoint-2-properties", "EP02"},     // Configuration for Headphones
+       Package (2) {"acpi-acd-endpoint-3-properties", "EP03"},     // Configuration for LineOut
+       Package (2) {"acpi-acd-endpoint-4-properties", "EP04"},     // Configuration for HeadsetOutput
+       Package (2) {"acpi-acd-endpoint-5-properties", "EP05"},     // Configuration for Microphone
+       Package (2) {"acpi-acd-endpoint-6-properties", "EP06"},     // Configuration for LineIn
+       Package (2) {"acpi-acd-endpoint-7-properties", "EP07"},     // Configuration for HeadsetMic
     }
 }) //End _DSD
 
@@ -118,31 +116,30 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
        Package (2) {"acpi-acd-connection-count", 2},
        Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
        Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
-       Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x3},
+       Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x1},
        Package (2) {"acpi-vendor-connection-1-dsp-pin", 0x2},
        Package (2) {"acpi-vendor-connection-1-stream-type", 0x0},
        Package (2) {"acpi-vendor-connection-1-peripheral-dp-number", 0x1},
        // Playback aggregation
        Package (2) {"acpi-vendor-aggregation-peripheral-count", 0x02},
        Package (2) {"acpi-vendor-aggregation-peripheral-0-function-manufacturer-id", 0x025d},
-       Package (2) {"acpi-vendor-aggregation-peripheral-0-function-id", 0x0712},
+       Package (2) {"acpi-vendor-aggregation-peripheral-0-function-id", 0x1320},
        Package (2) {"acpi-vendor-aggregation-peripheral-0-controller-id", 0x00},
-       Package (2) {"acpi-vendor-aggregation-peripheral-0-link-id", 0x03},
+       Package (2) {"acpi-vendor-aggregation-peripheral-0-link-id", 0x02},
        Package (2) {"acpi-vendor-aggregation-peripheral-0-unique-id", 0x00},
        Package (2) {"acpi-vendor-aggregation-peripheral-0-function-number", 0x04},
        Package (2) {"acpi-vendor-aggregation-peripheral-0-function-type", 0x01},
-       Package (2) {"acpi-vendor-aggregation-peripheral-0-dp-number", 0x03},
+       Package (2) {"acpi-vendor-aggregation-peripheral-0-dp-number", 0x01},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-manufacturer-id", 0x025d},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-id", 0x1320},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-controller-id", 0x00},
-       Package (2) {"acpi-vendor-aggregation-peripheral-1-link-id", 0x02},
-       Package (2) {"acpi-vendor-aggregation-peripheral-1-unique-id", 0x00},
+       Package (2) {"acpi-vendor-aggregation-peripheral-1-link-id", 0x01},
+       Package (2) {"acpi-vendor-aggregation-peripheral-1-unique-id", 0x01},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-number", 0x04},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-function-type", 0x01},
        Package (2) {"acpi-vendor-aggregation-peripheral-1-dp-number", 0x01},
        // Reference aggregation
        Package (2) {"acpi-vendor-amp-degraded-mode", 0x00}, // 0: Speaker protection on codec, 1: Speaker protection on DSP
-       //Package (2) {"acpi-vendor-amp-degraded-mode", 0x01}, // 0: Speaker protection on codec, 1: Speaker protection on DSP
        //Package (2) {"acpi_vendor_smart_amp", 0x01}, // 0: Simple amp, 1: Smart amp
        Package (2) {"acpi_vendor_smart_amp", 0x00}, // 0: Simple amp, 1: Smart amp   //20250210 update for Intel streaming driver
        Package (2) {"acpi-vendor-feedback-aggregation-peripheral-count", 0x02},
@@ -154,17 +151,17 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
           Buffer()
           {
              0x01,
-             0x00, 0x03, 0x00, 0x00,
-             0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
-             0x03 // data port
+             0x00, 0x02, 0x00, 0x00,
+             0x01, 0x20, 0x13, 0x5D, 0x02, 0x30, 0x02, 0x00,
+             0x01 // data port
           }
        },
        Package (2) {"acpi-acd-connection-1-properties",
           Buffer()
           {
              0x01,
-             0x00, 0x02, 0x00, 0x00,
-             0x00, 0x20, 0x13, 0x5D, 0x02, 0x30, 0x02, 0x00,
+             0x00, 0x01, 0x00, 0x00,
+             0x01, 0x20, 0x13, 0x5D, 0x02, 0x31, 0x01, 0x00,
              0x01 // data port
           }
        },
@@ -173,17 +170,17 @@ Name(VN00, Package() {    // Passed in as an AcxObjectBag during circuit creatio
           Buffer()
           {
              0x02,
-             0x00, 0x03, 0x00, 0x00,
-             0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
-             0x0C, 0x03 // data port, channel mask
+             0x00, 0x02, 0x00, 0x00,
+             0x01, 0x20, 0x13, 0x5D, 0x02, 0x30, 0x02, 0x00,
+             0x04, 0x03 // data port, channel mask
           }
        },
        Package (2) {"custom-acd-feedback-1-properties",
           Buffer()
           {
              0x02,
-             0x00, 0x02, 0x00, 0x00,
-             0x00, 0x20, 0x13, 0x5D, 0x02, 0x30, 0x02, 0x00,
+             0x00, 0x01, 0x00, 0x00,
+             0x01, 0x20, 0x13, 0x5D, 0x02, 0x31, 0x01, 0x00,
              0x04, 0x0C // data port, channel mask
           }
        },
@@ -209,9 +206,9 @@ Name(AG00, Package() {
 Name(CC01, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDA.AF04"},
+       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDB.AF04"},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
-       Package (2) {"acpi-acd-sdca-terminal-id", 0x42},    // Entity id of the Analog terminal used for this endpoint
+       Package (2) {"acpi-acd-sdca-terminal-id", 0x13},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
     },
     ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
@@ -223,7 +220,7 @@ Name(CC01, Package() {
 Name(CC02, Package() {
     ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
     Package () {
-       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDB.AF04"},
+       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDC.AF04"},
        Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
        Package (2) {"acpi-acd-sdca-terminal-id", 0x13},    // Entity id of the Analog terminal used for this endpoint
        Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
@@ -292,7 +289,7 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
          {
             0x02,
             0x00, 0x03, 0x00, 0x00,
-            0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+            0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
             0x08
          }
       },
@@ -302,7 +299,7 @@ Name(VN01, Package() {    // Passed in as an AcxObjectBag during circuit creatio
          {
             0x02,
             0x00, 0x03, 0x00, 0x00,
-            0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+            0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
             0x0A,                   // dataport
             0xFE, 0xFF,             // wFormatTag
             0x02, 0x00,             // nChannels
@@ -391,7 +388,7 @@ Name(VN02, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x01,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x01
                         }
                   },
@@ -470,7 +467,7 @@ Name(VN03, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x01,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x01
                         }
                   },
@@ -549,7 +546,7 @@ Name(VN04, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x01,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x01
                         }
                   },
@@ -628,7 +625,7 @@ Name(VN05, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x02,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x04
                         }
                   },
@@ -707,7 +704,7 @@ Name(VN06, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x02,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x04
                         }
                   },
@@ -786,7 +783,7 @@ Name(VN07, Package() {    // Passed in as an AcxObjectBag during circuit creatio
                         {
                            0x02,
                            0x00, 0x03, 0x00, 0x00,
-                           0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
+                           0x01, 0x13, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
                            0x04
                         }
                   },
@@ -806,162 +803,4 @@ Name(CC71, Package() {
       Package (2) {"msft-acx-properties", "AC02"},    // Acx specific properties
    }
 }) //End CC71
-
-// Name(EP08, Package() {
-//    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-//    Package () {
-//       Package (2) {"acpi-acd-endpoint-friendly-name", "Speaker"},
-//       Package (2) {"acpi-acd-endpoint-config-count", 1},    // Only one config, No alternate config
-//       Package (2) {"acpi-acd-endpoint-id", 1},    // Endpoint id
-//    },
-//    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-//    Package () {
-//       Package (2) {"acpi-acd-endpoint-config-0-properties", "EC80"},
-//    }
-// }) //End EP08
-
-// Name(EC80, Package() {
-//    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-//    Package () {
-//       Package (2) {"acpi-acd-config-priority", 1},
-//       Package (2) {"acpi-acd-config-friendly-name", "Speaker_With_DSP"},
-//       Package (2) {"acpi-acd-collection-type", 1},    // 0: Generic, 1: SoundWire
-//       Package (2) {"acpi-acd-collection-ordering", 0},    // Serial Connection
-//       Package (2) {"acpi-acd-collection-count", 2},    // DSP + Sdca Audio Function makes the endpoint
-//    },
-//    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-//    Package () {
-//       Package (2) {"acpi-acd-collection-0-properties", "CC80"},    // DSP Configuration
-//       Package (2) {"acpi-acd-collection-1-properties", "CC81"},    // Sdca Audio Function Configuration
-//    }
-// }) //End EC80
-
-// Name(CC80, Package() {
-//    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-//    Package () {
-//       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
-//       Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
-//    },
-//    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-//    Package () {
-//       Package (2) {"msft-acx-properties", "AC00"},    // Acx specific properties
-//       Package (2) {"acpi-acd-vendor-collection-properties", "VN08"},
-//    }
-// }) //End CC80
-
-// Name(VN08, Package() {    // Passed in as an AcxObjectBag during circuit creation. Contents of this package are proprietary.
-//    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-//    Package () {
-//       Package (2) {"acpi-vendor-id", 0x1},
-//       Package (2) {"acpi-vendor-config-type", "Streaming_Speaker"},
-//       Package (2) {"acpi-vendor-sdca-terminal-type", 0x0380},
-//       Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},
-//       Package (2) {"acpi-acd-connection-count", 1},
-//       Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
-//       Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
-//       Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x1},
-//       Package (2) {"acpi-acd-connection-0-properties",
-//          Buffer()
-//          {
-//             0x01,
-//             0x00, 0x02, 0x00, 0x00,
-//             0x00, 0x20, 0x13, 0x5D, 0x02, 0x30, 0x02, 0x00,
-//             0x01
-//          }
-//       },
-//    }
-// }) //End VN08
-
-// Name(CC81, Package() {
-//    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-//    Package () {
-//       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDB.AF04"},
-//       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
-//       Package (2) {"acpi-acd-sdca-terminal-id", 0x13},    // Entity id of the Analog terminal used for this endpoint
-//       Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
-//    },
-//    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-//    Package () {
-//       Package (2) {"msft-acx-properties", "AC02"},    // Acx specific properties
-//    }
-// }) //End CC81
-
-// Name(EP09, Package() {
-//    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-//    Package () {
-//       Package (2) {"acpi-acd-endpoint-friendly-name", "Speaker"},
-//       Package (2) {"acpi-acd-endpoint-config-count", 1},    // Only one config, No alternate config
-//       Package (2) {"acpi-acd-endpoint-id", 1},    // Endpoint id
-//    },
-//    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-//    Package () {
-//       Package (2) {"acpi-acd-endpoint-config-0-properties", "EC90"},
-//    }
-// }) //End EP09
-
-// Name(EC90, Package() {
-//    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-//    Package () {
-//       Package (2) {"acpi-acd-config-priority", 1},
-//       Package (2) {"acpi-acd-config-friendly-name", "Speaker_With_DSP"},
-//       Package (2) {"acpi-acd-collection-type", 1},    // 0: Generic, 1: SoundWire
-//       Package (2) {"acpi-acd-collection-ordering", 0},    // Serial Connection
-//       Package (2) {"acpi-acd-collection-count", 2},    // DSP + Sdca Audio Function makes the endpoint
-//    },
-//    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-//    Package () {
-//       Package (2) {"acpi-acd-collection-0-properties", "CC90"},    // DSP Configuration
-//       Package (2) {"acpi-acd-collection-1-properties", "CC91"},    // Sdca Audio Function Configuration
-//    }
-// }) //End EC90
-
-// Name(CC90, Package() {
-//    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-//    Package () {
-//       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS"},
-//       Package (2) {"acpi-acd-device-type", 0},    // 0: Generic, 1: SoundWire
-//    },
-//    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-//    Package () {
-//       Package (2) {"msft-acx-properties", "AC00"},    // Acx specific properties
-//       Package (2) {"acpi-acd-vendor-collection-properties", "VN09"},
-//    }
-// }) //End CC90
-
-// Name(VN09, Package() {    // Passed in as an AcxObjectBag during circuit creation. Contents of this package are proprietary.
-//    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-//    Package () {
-//       Package (2) {"acpi-vendor-id", 0x1},
-//       Package (2) {"acpi-vendor-config-type", "Streaming_Speaker"},
-//       Package (2) {"acpi-vendor-sdca-terminal-type", 0x0380},
-//       Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},
-//       Package (2) {"acpi-acd-connection-count", 1},
-//       Package (2) {"acpi-vendor-connection-0-dsp-pin", 0x0},
-//       Package (2) {"acpi-vendor-connection-0-stream-type", 0x0},
-//       Package (2) {"acpi-vendor-connection-0-peripheral-dp-number", 0x3},
-//       Package (2) {"acpi-acd-connection-0-properties",
-//          Buffer()
-//          {
-//             0x01,
-//             0x00, 0x03, 0x00, 0x00,
-//             0x01, 0x12, 0x07, 0x5D, 0x02, 0x30, 0x03, 0x00,
-//             0x03
-//          }
-//       },
-//    }
-// }) //End VN09
-
-// Name(CC91, Package() {
-//    ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),    // Device Properties UUID
-//    Package () {
-//       Package (2) {"acpi-acd-device-namestring", "\\_SB.PC00.HDAS.IDA.SNDW.SWDA.AF04"},
-//       Package (2) {"acpi-acd-device-type", 1},    // 0: Generic, 1: SoundWire
-//       Package (2) {"acpi-acd-sdca-terminal-id", 0x42},    // Entity id of the Analog terminal used for this endpoint
-//       Package (2) {"acpi-acd-sdca-terminal-type", 0x0380},    // Sdca Terminal Type based on Sdca Version implemented by Audio Function
-//    },
-//    ToUUID("dbb8e3e6-5886-4ba6-8795-1319f52a966b"),    // Hierarchical Data Extension UUID
-//    Package () {
-//       Package (2) {"msft-acx-properties", "AC02"},    // Acx specific properties
-//    }
-// }) //End CC91
 

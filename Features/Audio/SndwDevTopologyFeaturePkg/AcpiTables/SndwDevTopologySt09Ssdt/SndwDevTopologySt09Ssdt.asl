@@ -3,7 +3,7 @@
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2022 Intel Corporation.
+  Copyright (C) 2025 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -19,16 +19,16 @@
 @par Specification Reference:
 **/
 
-DefinitionBlock ("SndwDevTopologySt02Ssdt.aml", "SSDT", 2, "INTEL", "St02Ssdt", 0x1000) {
+DefinitionBlock ("SndwDevTopologySt09Ssdt.aml", "SSDT", 2, "INTEL", "St09Ssdt", 0x1000) {
 
   External(\_SB.PC00.HDAS.IDA.SNDW, DeviceObj)
 
   Scope (\_SB)
   {
-    Device(AUDC)
+    Device (AUDC)
     {
-      Name(_HID, "ACPI0018")
-      Include("AudioComposition_PC00.asl")
+      Name (_HID, "ACPI0018")
+      Include ("AudioComposition_PC00.asl")
     } //End AUDC
   }
 
@@ -43,10 +43,10 @@ DefinitionBlock ("SndwDevTopologySt02Ssdt.aml", "SSDT", 2, "INTEL", "St02Ssdt", 
     }
 
     // SoundWire Device (SWDB) on Link #2 (Realtek ALC1320 : UID_00) for aggregated woofer speakers
-    // _ADR: Link_2 Bit[51:48]=2 | ALC1320_ID Bit[47:0]=30025D132000 | UID_00 Bit[43:40]=0
+    // _ADR: Link_2 Bit[51:48]=2 | ALC1320_ID Bit[47:0]=30025D132001 | UID_00 Bit[43:40]=0
     Device (SWDB)
     {
-      Name (_ADR, 0x000230025D132000)
+      Name (_ADR, 0x000230025D132001)
       Include ("Peripheral_1320.asl")
     }
   }
