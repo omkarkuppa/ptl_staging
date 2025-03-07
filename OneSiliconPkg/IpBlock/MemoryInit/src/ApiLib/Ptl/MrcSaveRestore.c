@@ -997,6 +997,8 @@ MrcUpdateSavedMCValues (
   MrcSaveData           *SaveData;
   MrcSaveHeader         *SaveHeader;
   MrcStatus             Status;
+  UINT32                PostCodesDone;
+  UINT32                PostCodesTotal;
 
   Inputs      = &MrcData->Inputs;
   SaveData    = &MrcData->Save.Data;
@@ -1006,9 +1008,19 @@ MrcUpdateSavedMCValues (
   // In Fast Boot, MeStolenSize may have changed. This should be updated within Save Data structure.
   SaveData->MeStolenSize           = Inputs->MeStolenSize;
   SaveData->ImrAlignment           = Inputs->ImrAlignment;
+  // PostCodesDone/Total should not be counted into CRC.
+  PostCodesDone = SaveData->PostCodesDone;
+  PostCodesTotal = SaveData->PostCodesTotal;
+  SaveData->PostCodesDone = 0;
+  SaveData->PostCodesTotal = 0;
+
   SaveData->SaMemCfgCrc = Inputs->SaMemCfgCrcForSave;
   SaveHeader->Crc       = MrcCalculateCrc32 ((UINT8 *) SaveData, sizeof (MrcSaveData));
   MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "Saved data CRC = %xh\n", SaveHeader->Crc);
+
+  // Restore the values of PostCodesDone/Total that were temporarily zeroed-out for the CRC
+  SaveData->PostCodesDone = PostCodesDone;
+  SaveData->PostCodesTotal = PostCodesTotal;
 
   return Status;
 }
