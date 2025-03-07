@@ -1652,7 +1652,6 @@ UpdateThcConfig (
   )
 {
   UINT8       ThcIndex;
-
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   THC_CONFIG  *ThcConfig;
   EFI_STATUS  Status;
@@ -1692,7 +1691,8 @@ UpdateThcConfig (
     //
     COMPARE_UPDATE_POLICY_ARRAY (((FSPS_UPD *) FspsUpd)->FspsConfig.ThcResetPad[ThcIndex],            ThcConfig->ThcPort[ThcIndex].Reset.ResetPad,                  0x0,                                                 ThcIndex);
     COMPARE_UPDATE_POLICY_ARRAY (((FSPS_UPD *) FspsUpd)->FspsConfig.ThcResetPadTrigger[ThcIndex],     ThcConfig->ThcPort[ThcIndex].Reset.ResetPadTrigger,           PchSetup->ThcResetPadTrigger[ThcIndex],              ThcIndex);
-    COMPARE_UPDATE_POLICY_ARRAY (((FSPS_UPD *) FspsUpd)->FspsConfig.ThcResetSequencingDelay[ThcIndex],    ThcConfig->ThcPort[ThcIndex].Reset.ResetSequencingDelay,  300,                                                 ThcIndex);
+    COMPARE_UPDATE_POLICY_ARRAY (((FSPS_UPD *) FspsUpd)->FspsConfig.ThcResetSequencingDelay[ThcIndex],ThcConfig->ThcPort[ThcIndex].Reset.ResetSequencingDelay,      300,                                                 ThcIndex);
+
     COMPARE_UPDATE_POLICY_ARRAY (((FSPS_UPD *) FspsUpd)->FspsConfig.ThcDsyncPad[ThcIndex],                      ThcConfig->ThcPort[ThcIndex].ThcDsyncPadEnable,                    PchSetup->ThcDsyncPad[ThcIndex],                        ThcIndex);
     COMPARE_UPDATE_POLICY_ARRAY (((FSPS_UPD *) FspsUpd)->FspsConfig.ThcHidSpiConnectionSpeed[ThcIndex]  ,       ThcConfig->ThcPort[ThcIndex].HidOverSpi.Frequency,                 PchSetup->ThcHidSpiConnectionSpeed[ThcIndex],           ThcIndex);
     COMPARE_UPDATE_POLICY_ARRAY (((FSPS_UPD *) FspsUpd)->FspsConfig.ThcHidSpiInputReportHeaderAddress[ThcIndex],ThcConfig->ThcPort[ThcIndex].HidOverSpi.InputReportHeaderAddress,  PchSetup->ThcHidSpiInputReportHeaderAddress[ThcIndex],  ThcIndex);
