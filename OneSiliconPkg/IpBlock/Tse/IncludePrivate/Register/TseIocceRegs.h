@@ -52,7 +52,7 @@
 #define _TSE_IOCCE_REGS_H_
 
 #define R_IOCCE_TSE_BASE                                      0x12400
-#define R_IOCCE_TSE_LIMIT                                     R_IOCCE_TSE_BASE + 0x7FF
+#define R_IOCCE_TSE_LIMIT                                     R_IOCCE_TSE_BASE + 0x3FF
 
 #define R_IOCCE_TSE_TABLE_OFFSET_MCHBAR                       0x28
 

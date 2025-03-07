@@ -52,7 +52,7 @@
 #define _TSE_IOC_REGS_H_
 
 #define R_IOC_TSE_BASE                                        0x73D0
-#define R_IOC_TSE_LIMIT                                       R_IOC_TSE_BASE + 0xFA
+#define R_IOC_TSE_LIMIT                                       R_IOC_TSE_BASE + 0x2C
 
 #define R_IOC_TSE_FUSE_BASE                                   0x73D0
 
