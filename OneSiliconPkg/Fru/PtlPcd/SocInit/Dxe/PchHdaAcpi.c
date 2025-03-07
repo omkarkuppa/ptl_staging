@@ -241,6 +241,8 @@ UpdateHdaAcpiData (
   mPchNvsAreaProtocol.Area->HDBO =  (UINT8)HdAudioDxeConfig->HdaDiscBtOffload.HdaDiscBtOffEnabled;
   mPchNvsAreaProtocol.Area->HDBO |= (UINT8)HdAudioDxeConfig->HdaDiscBtOffload.HdaDiscBtOffSspLink << 8;
   DEBUG ((DEBUG_INFO, "HDBO NVS Value: %x\n", mPchNvsAreaProtocol.Area->HDBO));
+
+  mPchNvsAreaProtocol.Area->SSFP =  (UINT8)HdAudioDxeConfig->SoundFreqPoolSelect;
 }
 
 /**

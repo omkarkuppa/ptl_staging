@@ -442,6 +442,7 @@ typedef struct {
   UINT8    SML4;                                    ///< Offset 1315    HD-Audio SoundWire Link #5 Multilane lanes enabled
   UINT8    DtrSciEnable;                            ///< Offset 1316    PMC DTR SCI enable
   UINT8    SWCS;                                    ///< Offset 1317    SoundWire Clock Source Select
+  UINT8    SSFP;                                    ///< Offset 1318    SoundWire Supported Frequency Pool
 } PCH_NVS_AREA;
 
 #pragma pack(pop)

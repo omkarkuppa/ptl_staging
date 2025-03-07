@@ -337,6 +337,7 @@
 #string STR_HDAUDIO_SNDW_CLK_SRC_SELECT_XTAL                              #language en-US "XTAL"
 #string STR_HDAUDIO_SNDW_CLK_SRC_SELECT_APLL                              #language en-US "Audio PLL"
 
+
 #string STR_PCH_CRID_PROMPT                     #language en-US "Compatible Revision ID"
 #string STR_PCH_CRID_HELP                       #language en-US "Enable/Disable the PCH Compatible Revision ID feature"
 

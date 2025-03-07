@@ -2422,6 +2422,7 @@ typedef struct {
   // THC Customized SubSystem Device ID and SubSystem Vendor ID
   UINT16  ThcCustomizedSsdid[PCH_MAX_THC_CONTROLLERS];
   UINT16  ThcCustomizedSsvid[PCH_MAX_THC_CONTROLLERS];
+
   UINT8   Reserved1[32];
 } PCH_SETUP;
 

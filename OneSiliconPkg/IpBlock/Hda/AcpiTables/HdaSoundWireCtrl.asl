@@ -32,10 +32,11 @@
 #define V_HDA_SNDW_FRAME_COL_SIZE_XTAL24MHZ                 2
 
 // Values for XTAL 38.4MHz
-#define V_HDA_SNDW_IP_CLOCK_XTAL38P4MHZ                     38400000 // 38.4 MHz
-#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ         4800000, 9600000  // 4.8 MHz, 9.6 MHz
-#define V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ               50
-#define V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ               4
+#define V_HDA_SNDW_IP_CLOCK_XTAL38P4MHZ                           38400000 // 38.4 MHz
+#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_DYNAMIC       4800000, 9600000  // 4.8 MHz, 9.6 MHz
+#define V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_STATIC_HIRES  9600000  // 9.6 MHz
+#define V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ                     50
+#define V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ                     4
 
 // Values for XTAL 19.2MHz
 #define V_HDA_SNDW_IP_CLOCK_XTAL19P2MHZ                     19200000 // 19.2 MHz
@@ -134,7 +135,8 @@ Device (SNDW) {
   // Arg0 - Link instance (LNK[N])
   // Arg1 - XTAL Clock Value
   // Arg2 - SoundWire Clock Source Select
-  Method (XCFG, 3,  NotSerialized) {
+  // Arg3 - SoundWire supported frequency pool select
+  Method (XCFG, 4,  NotSerialized) {
     Store (0x00, Local0)
     Store (Package () {0x00}, Local1)
     Store (0x00, Local2)
@@ -152,7 +154,11 @@ Device (SNDW) {
         } ElseIf (Arg1 == 38400000) {
           ADBG ("XTAL 38.4MHz")
           Store (V_HDA_SNDW_IP_CLOCK_XTAL38P4MHZ, Local0)
-          Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ}, Local1)
+          if (Arg3 == 0) {
+            Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_DYNAMIC}, Local1)
+          } Else {
+            Store (Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_STATIC_HIRES}, Local1)
+          }
           Store (V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ, Local2)
           Store (V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ, Local3)
         } ElseIf (Arg1 == 19200000) {
@@ -264,11 +270,11 @@ Device (SNDW) {
     // Update SoundWire clock source based properties
     // XTAL - PCH NVS variable with XTAL frequency (0 - 24MHz; 1 - 38.4MHz)
     // SWCS - PCH NVS variable with SoundWire Clock source value (0 - XTAL; 1 - Audio PLL)
-    XCFG (LNK0, XTAL, SWCS)
-    XCFG (LNK1, XTAL, SWCS)
-    XCFG (LNK2, XTAL, SWCS)
-    XCFG (LNK3, XTAL, SWCS)
-    XCFG (LNK4, XTAL, SWCS)
+    XCFG (LNK0, XTAL, SWCS, SSFP)
+    XCFG (LNK1, XTAL, SWCS, SSFP)
+    XCFG (LNK2, XTAL, SWCS, SSFP)
+    XCFG (LNK3, XTAL, SWCS, SSFP)
+    XCFG (LNK4, XTAL, SWCS, SSFP)
 
     // Update DOAIS and DODS based proparties
     // PCH NVS variables set in accordance with PchPolicy
@@ -292,8 +298,8 @@ Device (SNDW) {
     Package () {
       Package (2) {"mipi-sdw-sw-interface-revision", V_HDA_SNDW_SW_INTERFACE_REVISION},
       // mipi-sdw-manager-list deprectes mipi-sdw-master-count, in DisCo 2.0 r8
-	  Package (2) {"mipi-sdw-manager-list", 0x1F},
-	  Package (2) {"mipi-sdw-master-count", 4} // deprecated in DisCo 2.0 r8
+      Package (2) {"mipi-sdw-manager-list", 0x1F},
+      Package (2) {"mipi-sdw-master-count", 4} // deprecated in DisCo 2.0 r8
       // Vendor specific parameters (optional)
     },
     // Properties for the SoundWire bus instances
@@ -332,7 +338,7 @@ Device (SNDW) {
       //
       Package (2) {"mipi-sdw-clock-stop-mode0-supported", 1}, // Integer/Boolean
       Package (2) {"mipi-sdw-clock-stop-mode1-supported", 1}, // Integer/Boolean
-      Package (2) {"mipi-sdw-clock-frequencies-supported", Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ}}, // Package
+      Package (2) {"mipi-sdw-clock-frequencies-supported", Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_DYNAMIC}}, // Package
       Package (2) {"mipi-sdw-default-frame-rate", 48000}, // Integer
       Package (2) {"mipi-sdw-default-frame-row-size", V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ}, // Integer
       Package (2) {"mipi-sdw-default-frame-col-size", V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ}, // Integer
@@ -366,7 +372,7 @@ Device (SNDW) {
       //
       Package (2) {"mipi-sdw-clock-stop-mode0-supported", 1}, // Integer/Boolean
       Package (2) {"mipi-sdw-clock-stop-mode1-supported", 1}, // Integer/Boolean
-      Package (2) {"mipi-sdw-clock-frequencies-supported", Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ}}, // Package
+      Package (2) {"mipi-sdw-clock-frequencies-supported", Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_DYNAMIC}}, // Package
       Package (2) {"mipi-sdw-default-frame-rate", 48000}, // Integer
       Package (2) {"mipi-sdw-default-frame-row-size", V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ}, // Integer
       Package (2) {"mipi-sdw-default-frame-col-size", V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ}, // Integer
@@ -400,7 +406,7 @@ Device (SNDW) {
       //
       Package (2) {"mipi-sdw-clock-stop-mode0-supported", 1}, // Integer/Boolean
       Package (2) {"mipi-sdw-clock-stop-mode1-supported", 1}, // Integer/Boolean
-      Package (2) {"mipi-sdw-clock-frequencies-supported", Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ}}, // Package
+      Package (2) {"mipi-sdw-clock-frequencies-supported", Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_DYNAMIC}}, // Package
       Package (2) {"mipi-sdw-default-frame-rate", 48000}, // Integer
       Package (2) {"mipi-sdw-default-frame-row-size", V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ}, // Integer
       Package (2) {"mipi-sdw-default-frame-col-size", V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ}, // Integer
@@ -434,7 +440,7 @@ Device (SNDW) {
       //
       Package (2) {"mipi-sdw-clock-stop-mode0-supported", 1}, // Integer/Boolean
       Package (2) {"mipi-sdw-clock-stop-mode1-supported", 1}, // Integer/Boolean
-      Package (2) {"mipi-sdw-clock-frequencies-supported", Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ}}, // Package
+      Package (2) {"mipi-sdw-clock-frequencies-supported", Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_DYNAMIC}}, // Package
       Package (2) {"mipi-sdw-default-frame-rate", 48000}, // Integer
       Package (2) {"mipi-sdw-default-frame-row-size", V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ}, // Integer
       Package (2) {"mipi-sdw-default-frame-col-size", V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ}, // Integer
@@ -468,7 +474,7 @@ Device (SNDW) {
       //
       Package (2) {"mipi-sdw-clock-stop-mode0-supported", 1}, // Integer/Boolean
       Package (2) {"mipi-sdw-clock-stop-mode1-supported", 1}, // Integer/Boolean
-      Package (2) {"mipi-sdw-clock-frequencies-supported", Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ}}, // Package
+      Package (2) {"mipi-sdw-clock-frequencies-supported", Package () {V_HDA_SNDW_CLOCK_FREQ_SUPPORTED_XTAL38P4MHZ_DYNAMIC}}, // Package
       Package (2) {"mipi-sdw-default-frame-rate", 48000}, // Integer
       Package (2) {"mipi-sdw-default-frame-row-size", V_HDA_SNDW_FRAME_ROW_SIZE_XTAL38P4MHZ}, // Integer
       Package (2) {"mipi-sdw-default-frame-col-size", V_HDA_SNDW_FRAME_COL_SIZE_XTAL38P4MHZ}, // Integer

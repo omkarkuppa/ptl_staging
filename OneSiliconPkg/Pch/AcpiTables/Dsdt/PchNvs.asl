@@ -507,4 +507,5 @@
   SML4, 8,  // Offset(1315),  HD-Audio SoundWire Link #5 Multilane lanes enabled
   DTRE, 8,  // Offset(1316),  PMC DTR SCI enable
   SWCS, 8,  // Offset(1317),  SoundWire Clock Source Select
+  SSFP, 8,  // Offset(1318),  SoundWire Supported Frequency Pool
   }

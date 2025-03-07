@@ -189,6 +189,7 @@ UpdateHdAudioDxePolicy (
   // Discrete BT Offload Variables
   HdAudioDxeConfig->HdaDiscBtOffload.HdaDiscBtOffEnabled = PchSetup->HdaDiscBtOffEnabled;
   HdAudioDxeConfig->HdaDiscBtOffload.HdaDiscBtOffSspLink = PchSetup->HdaDiscBtOffSspLink;
+
 }
 
 /**

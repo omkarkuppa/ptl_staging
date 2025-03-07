@@ -60,6 +60,7 @@ HdaDxePrintConfig (
   DEBUG ((DEBUG_INFO, " DSP Feature Mask              : 0x%x\n", HdaDxeConfig->DspFeatureMask));
   DEBUG ((DEBUG_INFO, " Discrete BT Offload Enabled   : %d\n", HdaDxeConfig->HdaDiscBtOffload.HdaDiscBtOffEnabled));
   DEBUG ((DEBUG_INFO, " Discrete BT Offload Ssp Link  : %d\n", HdaDxeConfig->HdaDiscBtOffload.HdaDiscBtOffSspLink));
+  DEBUG ((DEBUG_INFO, " Frequency Pool for SoundWire  : %d\n", HdaDxeConfig->SoundFreqPoolSelect));
 }
 
 /**

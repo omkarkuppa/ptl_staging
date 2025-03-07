@@ -26,7 +26,7 @@
 
 #define HDAUDIO_PREMEM_CONFIG_REVISION 5
 #define HDAUDIO_CONFIG_REVISION 1
-#define HDAUDIO_DXE_CONFIG_REVISION 2
+#define HDAUDIO_DXE_CONFIG_REVISION 3
 
 extern EFI_GUID gHdAudioPreMemConfigGuid;
 extern EFI_GUID gHdAudioConfigGuid;
@@ -298,6 +298,8 @@ typedef struct {
   - Add IoControlEnabled
   <b>Revision 3:</b>
   - Remove IoControlEnabled
+  <b>Revision 4:</b>
+  - Add SoundFreqPoolSelect and RsvdBits1
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER        Header;          ///< Config Block Header
@@ -317,6 +319,8 @@ typedef struct {
    *  Discrete BT HCI Audio Offload Support
    **/
   HDAUDIO_DISC_BT_OFFLOAD HdaDiscBtOffload;
+  UINT32                  SoundFreqPoolSelect   :  1; ///< SoundWire supported frequency pool select: <b> 0: Dynamic</b>; 1: Static HiRes.
+  UINT32                  RsvdBits1             :  31;
 } HDAUDIO_DXE_CONFIG;
 
 #pragma pack (pop)

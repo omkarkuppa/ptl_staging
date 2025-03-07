@@ -29,7 +29,7 @@
 **/
 typedef struct {
   UINT64    PciCfgBaseAddr;
-  UINT16     Segment;
+  UINT16    Segment;
   UINT8     Bus;
   UINT8     Device;
   UINT8     Function;
