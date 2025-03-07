@@ -63,15 +63,4 @@ VmdMemoryAllocation (
   IN EFI_RESOURCE_ATTRIBUTE_TYPE  ResourceAttributeTested
   );
 
-/**
-  Check if Vmd Memory reservation is required.
-
-  @retval TRUE    If Memory reservation is required..
-  @retval FALSE   If Memory reservation is not required..
-**/
-BOOLEAN
-IsVmdMemoryAllocationRequired (
-VOID
-  );
-
 #endif /* _PEI_VMD_INIT_FRU_LIB_H_ */

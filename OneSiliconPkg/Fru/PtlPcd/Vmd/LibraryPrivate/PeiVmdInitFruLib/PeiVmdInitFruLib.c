@@ -347,7 +347,7 @@ VmdMemoryAllocation (
 
       BaseAddressImr11 = *TopUseableMemAddr;
       //
-      // Check if CCS Base is 1M aligned or not. If not, it should be MB aligned due to IMR requirement.
+      // Check if Base is 1M aligned or not. If not, it should be MB aligned due to IMR requirement.
       //
       if ((BaseAddressImr11 & (SIZE_1MB - 1)) != 0x0) {
         BaseAddressImr11 = (BaseAddressImr11 & ((UINT64) ~(SIZE_1MB - 1))) + SIZE_1MB;
@@ -387,27 +387,4 @@ VmdMemoryAllocation (
       *Touud            -= Imr11SizeInBytes;
     }
   }
-}
-
-/**
-  Check if Vmd Memory reservation is required.
-
-  @retval TRUE    If Memory reservation is required..
-  @retval FALSE   If Memory reservation is not required..
-**/
-
-BOOLEAN
-IsVmdMemoryAllocationRequired (
-VOID
-  )
-{
-  UINT32                      CpuFamilyId;
-
-  if ((IsVmdEnabled() == TRUE)) {
-    CpuFamilyId = GetCpuFamilyModel ();
-    if (((GetCpuSteppingId () == EnumPtlHA0) || (GetCpuSteppingId () == EnumPtlUA0)) && (CpuFamilyId == CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE)) {
-      return TRUE;
-    }
-  }
-  return FALSE;
 }

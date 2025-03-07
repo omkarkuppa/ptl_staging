@@ -107,18 +107,3 @@ VmdMemoryAllocation (
 {
 
 }
-
-/**
-  Check if Vmd Memory reservation is required.
-
-  @retval TRUE    If Memory reservation is required..
-  @retval FALSE   If Memory reservation is not required..
-**/
-
-BOOLEAN
-IsVmdMemoryAllocationRequired (
-VOID
-  )
-{
-  return FALSE;
-}

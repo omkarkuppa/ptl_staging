@@ -438,10 +438,6 @@ SetNocImrExclusion (
 
   BaseAbove4Gb = BASE_4GB;
 
-  if (IsVmdMemoryAllocationRequired ()) {
-    SizeAbove4Gb += (UINT64)SIZE_1MB;
-  }
-
   if (TraceHubDataHob->TraceHubMemSize != 0) {
     SizeAbove4Gb += TraceHubDataHob->TraceHubMemSize;
   }

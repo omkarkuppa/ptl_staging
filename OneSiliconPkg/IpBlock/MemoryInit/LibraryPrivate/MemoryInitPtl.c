@@ -1961,9 +1961,6 @@ InstallEfiMemory (
     PeiTraceHubMemoryAllocation(&TopUseableMemAddr, &Touud);
     DEBUG((DEBUG_INFO, "[Post Trace Hub Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
-    VmdMemoryAllocation(&TopUseableMemAddr, &Touud, ResourceAttributeTested);
-    DEBUG((DEBUG_INFO, "[Post Vmd Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
-
     //
     // Memory Allocation for Telemetry
     //
@@ -2046,6 +2043,12 @@ InstallEfiMemory (
     //
     IGpuGsm2Allocation(SiPreMemPolicyPpi, &TopUseableMemAddr, &Touud, ResourceAttributeTested);
     DEBUG((DEBUG_INFO, "[Post GSM2 Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
+
+    //
+    // VMD allocation
+    //
+    VmdMemoryAllocation(&TopUseableMemAddr, &Touud, ResourceAttributeTested);
+    DEBUG((DEBUG_INFO, "[Post Vmd Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
     // This is above PSMI memory space, give it to EFI.
