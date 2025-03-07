@@ -84,13 +84,13 @@ External (\_SB.GRXE, MethodObj)
         If (LEqual (DeRefOf(Index(TPTD,7)), 1)) { Store (1000000, SPED) }
         Return
       }
-      If (LEqual(TPDT, SENSEL_FORCEPAD)) { // Sensel ForcePad Support
+      If (LEqual(DeRefOf(Index(TPTD,4)), SENSEL_FORCEPAD)) { // Sensel ForcePad Support
         Store ("SNSL0033", _HID)    // Hardware ID
         Store (0x0001, HID2)        // HID descriptor address
         Store (0x2C,   BADR)        // HID slave Address
         Return
       }
-      If (LEqual(TPDT, SMART_C_COVER)) { // Smart C Cover Support
+      If (LEqual(DeRefOf(Index(TPTD,4)), SMART_C_COVER)) { // Smart C Cover Support
         Store ("PIXA0002", _HID)    // Hardware ID
         Store (0x0020, HID2)        // HID descriptor address
         Store (0x2C,   BADR)        // HID slave Address
