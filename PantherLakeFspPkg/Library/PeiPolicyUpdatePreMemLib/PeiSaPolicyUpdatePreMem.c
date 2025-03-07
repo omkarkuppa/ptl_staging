@@ -587,6 +587,8 @@ FspUpdatePeiSaPolicyPreMem (
     IGpuPreMemConfig->Mode12Info.LogoPixelWidth     = FspmUpd->FspmConfig.LogoPixelWidth;
     IGpuPreMemConfig->Mode12Info.LogoXPosition      = FspmUpd->FspmConfig.LogoXPosition;
     IGpuPreMemConfig->Mode12Info.LogoYPosition      = FspmUpd->FspmConfig.LogoYPosition;
+    IGpuPreMemConfig->VbtSize                       = FspmUpd->FspmConfig.VbtSize;
+    IGpuPreMemConfig->LidStatus                     = FspmUpd->FspmConfig.LidStatus;
 
     //
     // Display DDI Initialization

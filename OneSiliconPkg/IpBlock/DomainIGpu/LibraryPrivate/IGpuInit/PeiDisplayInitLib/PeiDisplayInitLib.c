@@ -245,6 +245,7 @@ IGpuDisplayInitPreMem (
   CHAR8                    *String;
   UINT64                   StartTime;
   IGPU_DATA_HOB            *IGpuDataHob;
+  GOP_POLICY_PTR           GopPolicy;
 
   DEBUG ((DEBUG_INFO, "%a() Start\n", __FUNCTION__));
 
@@ -275,12 +276,6 @@ IGpuDisplayInitPreMem (
   ///
   ProgramDisplayNativeGpioInit (IGpuPreMemConfig);
 
-  ///
-  /// End of Display Init Pre Mem Signal
-  /// Install gIGpuDisplayInitPreMemDonePpi for OEM use.
-  ///
-  PeiServicesInstallPpi (&gIGpuDisplayInitPreMemDonePpi);
-
   //
   // VGA Initialization
   //
@@ -302,14 +297,39 @@ IGpuDisplayInitPreMem (
       //
       StartTime = GetFspCurrentTime ();
 
-      Status = GraphicsPreMemPpi->GraphicsPreMemPpiInit (IGpuPreMemConfig->VbtPtr);
+      ZeroMem (&GopPolicy, sizeof (GOP_POLICY_PTR));
+      GopPolicy.Version         = 0x1;
+      GopPolicy.Size            = (UINT8)sizeof (GOP_POLICY_PTR);
+      GopPolicy.VbtPtr          = IGpuPreMemConfig->VbtPtr;
+      GopPolicy.VbtSize         = IGpuPreMemConfig->VbtSize;
+      GopPolicy.Flags.LidStatus = IGpuPreMemConfig->LidStatus;
+      GopPolicy.Flags.BootPhase = GopPreMemPhase;
+      if (IS_VGA_MODE3_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
+        GopPolicy.GfxMode = VGA_TEXT;
+      } else if (IS_VGA_MODE12_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
+        GopPolicy.GfxMode = VGA_GRAPHICS;
+      }
+
+      DEBUG ((DEBUG_INFO, "Version = 0x%x\n", GopPolicy.Version));
+      DEBUG ((DEBUG_INFO, "Size = 0x%x\n", GopPolicy.Size));
+      DEBUG ((DEBUG_INFO, "VbtPtr = 0x%x\n", GopPolicy.VbtPtr));
+      DEBUG ((DEBUG_INFO, "VbtSize = 0x%x\n", GopPolicy.VbtSize));
+      DEBUG ((DEBUG_INFO, "LidStatus = 0x%x\n", GopPolicy.Flags.LidStatus));
+      DEBUG ((DEBUG_INFO, "Premem GOP BootPhase = 0x%x\n", GopPolicy.Flags.BootPhase));
+      DEBUG ((DEBUG_INFO, "GopMode = 0x%x\n", GopPolicy.GfxMode));
+
+      Status = GraphicsPreMemPpi->GraphicsPreMemPpiInit ((VOID *)&GopPolicy);
       if (EFI_ERROR (Status)) {
         DEBUG ((DEBUG_ERROR, "GraphicsPreMemPpiInit Failed\n"));
+        IpIGpuDisableIoCmdReg (IGpuInst);
         return;
       }
 
       IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
       if (IGpuDataHob != NULL) {
+        //
+        // Update IGpuDataHob when the PreMem GOP Init is successful
+        //
         IGpuDataHob->VgaDisplayConfig = IGpuPreMemConfig->VgaInitControl;
       }
 
@@ -328,6 +348,12 @@ IGpuDisplayInitPreMem (
       LogFspPerformanceData (FspuGopPerf, StartTime);
     }
   }
+
+  ///
+  /// End of Display Init Pre Mem Signal
+  /// Install gIGpuDisplayInitPreMemDonePpi for OEM use.
+  ///
+  PeiServicesInstallPpi (&gIGpuDisplayInitPreMemDonePpi);
 
   DEBUG ((DEBUG_INFO, "%a() End\n", __FUNCTION__));
 }

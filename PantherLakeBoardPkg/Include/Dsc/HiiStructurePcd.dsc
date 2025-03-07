@@ -3434,7 +3434,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.SaPcieItbtSnoopLatencyOverrideValue[1]|0xc8 
 gStructPcdTokenSpaceGuid.PcdSaSetup.SaPcieItbtSnoopLatencyOverrideValue[2]|0xc8                    # Snoop Latency Value
 gStructPcdTokenSpaceGuid.PcdSaSetup.SaPcieItbtSnoopLatencyOverrideValue[3]|0xc8                    # Snoop Latency Value
 gStructPcdTokenSpaceGuid.PcdSaSetup.SkipExtGfxScan|0x0                                             # Skip Scanning of External Gfx Card
-gStructPcdTokenSpaceGuid.PcdSaSetup.SolFeatureEnabled|0x1                                          # Intel Graphics PreMem SOL
+gStructPcdTokenSpaceGuid.PcdSaSetup.SolFeatureEnabled|0x2                                          # Intel Graphics PreMem SOL
 gStructPcdTokenSpaceGuid.PcdSaSetup.StrongWkLeaker|0x7                                             # Strong Weak Leaker
 gStructPcdTokenSpaceGuid.PcdSaSetup.TcStateLimit|0xa                                               # Tc C-State Limit
 gStructPcdTokenSpaceGuid.PcdSaSetup.TcNotifyIgd|0x0                                                # Tc Notify iGFX

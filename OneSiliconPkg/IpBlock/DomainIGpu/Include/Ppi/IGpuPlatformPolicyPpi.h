@@ -56,6 +56,32 @@ typedef enum {
   VGA_TEXT_RIGHT,
 } VGA_TEXT_ALIGNMENT;
 
+typedef enum {
+  GopPreMemPhase  = 0,
+  GopPostMemPhase = 1
+} GOP_BOOT_PHASE;
+
+typedef enum {
+  VGA_TEXT            = 0, // Only for premem
+  VGA_GRAPHICS        = 1, // Only for premem
+  HIRES_GRAPHICS_MODE = 2
+} GOP_MODE;
+
+typedef struct _STATUS_FLAGS {
+  UINT8    LidStatus    :1; // 1 - Open, 0 - Closed
+  UINT8    BootPhase    :1;
+  UINT8    ReservedBits :6;
+} STATUS_FLAGS;
+
+typedef struct {
+  UINT8           Version; // For future changes and compatibility.
+  UINT8           Size;    // Size of structure.
+  VOID            *VbtPtr; // Pointer to vbt data
+  UINT32          VbtSize; // Size of vbt.
+  STATUS_FLAGS    Flags;
+  GOP_MODE        GfxMode;
+} GOP_POLICY_PTR;
+
 /**
   This function gets the platform lid status for LFP displays.
 

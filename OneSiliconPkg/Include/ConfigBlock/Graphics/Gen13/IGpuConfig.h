@@ -26,7 +26,7 @@
 
 #pragma pack(push, 1)
 
-#define IGPU_PEI_PREMEM_CONFIG_REVISION  2
+#define IGPU_PEI_PREMEM_CONFIG_REVISION  3
 #define IGPU_PEI_CONFIG_REVISION         1
 #define IGPU_DXE_CONFIG_REVISION         1
 
@@ -123,6 +123,10 @@ typedef struct {
   This Configuration block is to configure GT related PreMem data/variables.\n
   <b>Revision 1</b>:
   - Initial version.
+  <b>Revision 2</b>:
+  - Added VGA_MODE12_INFO
+  <b>Revision 3</b>:
+  - Added VbtSize and LidStatus
 
 **/
 typedef struct {
@@ -164,13 +168,14 @@ typedef struct {
   UINT8                PanelPowerEnable;           ///< Offset 32 :<b>(Test)</b> Control for enabling/disabling VDD force bit (Required only for early enabling of eDP panel): 0=FALSE, <b>1=TRUE</b>
   UINT8                MemoryBandwidthCompression; ///< Offset 33 This policy is used to enable/disable Memory Bandwidth Compression <b>0- Disable</b>, 1- Enable
   UINT16               DeltaT12PowerCycleDelay;    ///< Offset 34 Power Cycle Delay required for eDP as per VESA standard.0 - 0 ms, <b>0xFFFF - Auto calculate to max 500 ms<\b>
-  UINT8                RsvdBytes128[4];            ///< Reserved
+  UINT32               VbtSize;                    ///< Size of VBT data
   UINT64               GttMmAdr;                   ///< Offset 36 Temp Address of Graphics GTTMMADR: Default is <b>0xAF000000</b>
   UINT64               LMemBar;                    ///< Offset 44 Temp Address of Graphics LMEMBAR: Default is <b>0xB0000000</b>
   DDI_CONFIGURATION    DdiConfiguration;           ///< Offset 52 DDI configuration, need to match with VBT settings.
   UINT8                OemT12DelayOverride;        ///< Offset 68 :Oem T12 Delay Override <b> Disable<\b>,Enable-Enable T12 Time.
   UINT8                IGpuGsm2Size;               ///< Offset 68 {0:2GB, 1:4GB, 2:6GB, 3:8GB, 4:10GB, 5:12GB, 6:14GB, 7:16GB, 8:18GB, 9:20GB, 10:22GB, 11:24GB, 12:26GB, 13:28GB, 14:30GB, 15:32GB, 0xFF/Other Value:No Allocation}
-  UINT8                TestRsvd0[5];               ///< Offset 69 Reserved for 8 bytes alignment
+  UINT8                TestRsvd0[4];               ///< Offset 69 Reserved for 8 bytes alignment
+  BOOLEAN              LidStatus;                  ///< Lid Status: 0=Close, <b>1=Open</b>
 
   /**
    BIT0 - 0 : Disable VGA Support, 1 : Enable VGA Support

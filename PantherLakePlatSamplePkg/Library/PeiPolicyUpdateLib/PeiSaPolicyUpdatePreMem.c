@@ -227,10 +227,10 @@ UpdatePeiSaPolicyPreMem (
 #endif
   GOP_CONFIG_DRIVER_HOB                           *GopConfigDriverHob;
   EFI_HOB_GUID_TYPE                               *GuidHob;
+  BOOLEAN                                         LidStatusOpen;
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
   VOID                                            *FspmUpd;
-  BOOLEAN                                         LidStatusOpen;
 #else
   IGPU_PEI_PREMEM_CONFIG                          *IGpuPreMemConfig;
   MEMORY_CONFIGURATION                            *MemConfig;
@@ -754,6 +754,7 @@ UpdatePeiSaPolicyPreMem (
 
     if (VgaInitControl != VGA_DISPLAY_DISABLED) {
       PeiGetSectionFromAnyFv (PcdGetPtr (PcdIntelGraphicsPreMemVbtFileGuid), EFI_SECTION_RAW, 0, &Buffer, &Size);
+      Status = CheckLidStatus (&LidStatusOpen);
 #if FixedPcdGet8(PcdFspModeSelection) == 1
       ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaMessage         = (UINT64)VgaMessage;
       ((FSPM_UPD *) FspmUpd)->FspmConfig.VbtPtr             = (UINT64)Buffer;
@@ -762,10 +763,12 @@ UpdatePeiSaPolicyPreMem (
       ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoPixelWidth     = VGA_LOGO_WIDTH;
       ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoXPosition      = (VGA_MODE12_WIDTH - VGA_LOGO_WIDTH) / 2;
       ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoYPosition      = (VGA_MODE12_HEIGHT - VGA_LOGO_HEIGHT) / 2;
-      Status = CheckLidStatus (&LidStatusOpen);
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.VbtSize            = (UINT32)Size;
       if (Status == EFI_SUCCESS) {
         ((FSPM_UPD *) FspmUpd)->FspmConfig.LidStatus = LidStatusOpen;
         DEBUG ((DEBUG_INFO, "LidStatus = 0x%x\n", LidStatusOpen));
+      } else {
+        ((FSPM_UPD *) FspmUpd)->FspmConfig.LidStatus = LidOpen;
       }
 #else
       IGpuPreMemConfig->VgaMessage = (VOID *)VgaMessage;
@@ -776,6 +779,12 @@ UpdatePeiSaPolicyPreMem (
       IGpuPreMemConfig->Mode12Info.LogoPixelWidth     = VGA_LOGO_WIDTH;
       IGpuPreMemConfig->Mode12Info.LogoXPosition      = (VGA_MODE12_WIDTH- IGpuPreMemConfig->Mode12Info.LogoPixelWidth) / 2;
       IGpuPreMemConfig->Mode12Info.LogoYPosition      = (VGA_MODE12_HEIGHT - IGpuPreMemConfig->Mode12Info.LogoPixelHeight) / 2;
+      IGpuPreMemConfig->VbtSize = (UINT32)Size;
+      if (Status == EFI_SUCCESS) {
+        IGpuPreMemConfig->LidStatus = LidStatusOpen;
+      } else {
+        IGpuPreMemConfig->LidStatus = LidOpen;
+      }
 #endif
     }
 

@@ -80,7 +80,6 @@
   gPlatformModuleTokenSpaceGuid.PcdShellEntryMapPrint           ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdPlatformType
   gSiPkgTokenSpaceGuid.PcdBootGuardPerformanceEnable            ## CONSUMES
-  gBoardModuleTokenSpaceGuid.VpdPcdGpioLidStatus                ## CONSUMES
 
   #
   # EC FailSafe Cpu Temp and Fan Speed Setting
@@ -100,8 +99,6 @@
   gEfiSecurityPkgTokenSpaceGuid.PcdTpmBaseAddress               ## CONSUMES
   gIntelFsp2WrapperTokenSpaceGuid.PcdFspmBaseAddress            ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTcoBaseAddress                        ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdIntelGraphicsPreMemVbtFileGuid  ## CONSUMES
-  gBoardModuleTokenSpaceGuid.PcdPlatformFlavor                  ## CONSUMES
 
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEnableDiscreteAudioOffloadPreMem       ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTableEnableDiscreteAudioOffloadPreMemSize   ## CONSUMES
@@ -129,7 +126,6 @@
   gPchSpiPpiGuid                                                ## CONSUMES
   gEfiPeiResetPpiGuid                                           ## NOTIFY
   gEfiPeiMasterBootModePpiGuid                                  ## CONSUMES
-  gPeiGraphicsPlatformPreMemPpiGuid                             ## PPI ALWAYS_PRODUCED
 
 [Guids]
   gOsVendorGlobalVariableGuid                                   ## CONSUMES ## Variable
