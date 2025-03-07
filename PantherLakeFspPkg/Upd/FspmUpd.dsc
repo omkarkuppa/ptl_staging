@@ -1411,7 +1411,7 @@
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 62   | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 61   | {0x00}
 
   #
   # MRC Block End
@@ -3359,6 +3359,11 @@
   gPlatformFspPkgTokenSpaceGuid.RxDqsDelayCompEn         | * | 0x01 | 0x00
   # Added reserved space UnusedUpdSpace1[3]
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd336           | * | 0x03 | {0x00}
+
+  # !BSF NAME:{Mrc Failure On Unsupported Dimm}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enables/Disable Mrc Failure On Unsupported Dimm}
+  gPlatformFspPkgTokenSpaceGuid.MrcFailureOnUnsupportedDimm | * | 0x01 | 0x00
 
   # !BSF NAME:{Fore Single Rank config}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}

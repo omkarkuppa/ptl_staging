@@ -245,6 +245,7 @@ RetrainToWorkingChannel
 RowPressEn
 WeaklockEn
 RxDqsDelayCompEn
+MrcFailureOnUnsupportedDimm
 DisableMc0Ch0
 DisableMc0Ch1
 DisableMc0Ch2

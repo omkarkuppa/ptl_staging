@@ -1251,6 +1251,7 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RowPressEn, MemConfig->ExternalInputs.RowPressEn,                 SaSetup.RowPressEn                           );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.WeaklockEn,     MemConfig->ExternalInputs.WeaklockEn,              SaSetup.WeaklockEn             );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RxDqsDelayCompEn,     MemConfig->ExternalInputs.RxDqsDelayCompEn,              SaSetup.RxDqsDelayCompEn             );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.MrcFailureOnUnsupportedDimm, MemConfig->ExternalInputs.MrcFailureOnUnsupportedDimm, SaSetup.MrcFailureOnUnsupportedDimm );
 
     DEBUG_CODE (
       DEBUG_CONFIG_DATA DebugConfigData;

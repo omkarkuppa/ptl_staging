@@ -1730,7 +1730,8 @@ typedef struct {
   UINT8   RxDqsDelayCompEn;
   UINT8   IGpuGsm2Size;
   UINT8   SolFeatureEnabled;
-  UINT8   Rsvd[63];
+  UINT8   MrcFailureOnUnsupportedDimm;
+  UINT8   Rsvd[62];
 } SA_SETUP;
 
 /**

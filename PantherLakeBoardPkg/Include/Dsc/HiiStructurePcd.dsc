@@ -3824,6 +3824,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DisableSwitchDfiToMc|0x0                    
 gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                                                 # Offset 324 Enable/disable ROW PRESS feature
 gStructPcdTokenSpaceGuid.PcdSaSetup.WeaklockEn|0x0                                                 # Offset 325 - DLL Weak Lock Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.RxDqsDelayCompEn|0x0                                           # Offset 326 - Rx DQS Delay Comp Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.MrcFailureOnUnsupportedDimm|0x0                                # Offset 328 - Enable/disable MRC failure policy for unsupported memory type.
 
 ##############################
 # MRC - ExtInputs end
