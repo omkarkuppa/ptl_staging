@@ -35,7 +35,6 @@
 #include <Defines/HostBridgeDefines.h>
 #include <HostBridgeDataHob.h>
 #include <MeBiosPayloadHob.h>
-#include <MemInfoHob.h>
 #include <TcssDataHob.h>
 #include <TxtInfoHob.h>
 #include <IndustryStandard/FirmwareVersionInfo.h>
@@ -85,7 +84,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED FVI_STRINGS                    mPchFviStrings[] = 
 };
 
 GLOBAL_REMOVE_IF_UNREFERENCED INTEL_FIRMWARE_VERSION_INFO    mSaFviData[] = {
-                                                               FVI_VERSION (DEFAULT_FVI_VERSION),   // Reference Code - MRC
                                                                FVI_VERSION (DEFAULT_FVI_VERSION),   // SA CRID Status
                                                                FVI_VERSION (DEFAULT_FVI_VERSION),   // SA CRID origin
                                                                FVI_VERSION (DEFAULT_FVI_VERSION),   // SA CRID new
@@ -96,7 +94,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED INTEL_FIRMWARE_VERSION_INFO    mSaFviData[] = {
                                                                FVI_VERSION (DEFAULT_FVI_VERSION)    // SAM FW version
                                                              };
 GLOBAL_REMOVE_IF_UNREFERENCED FVI_STRINGS                    mSaFviStrings[] = {
-                                                               { MEM_FVI_STRING,         NULL },
                                                                { SA_CRID_STATUS,         SA_CRID_DISABLED },
                                                                { SA_CRID_ORIGINAL_VALUE, NULL },
                                                                { SA_CRID_NEW_VALUE,      NULL },
@@ -346,13 +343,9 @@ BuildSaFviHob (
 {
   CONST UINT8                     StrEnabled[sizeof (SA_CRID_ENABLED)] = SA_CRID_ENABLED;
   CONST UINT8                     StrDisabled[sizeof (SA_CRID_DISABLED)] = SA_CRID_DISABLED;
-  STATIC CONST SiMrcVersion       MemRcVersionConst = {0, 0, 0, 0};
-  CONST SiMrcVersion              *MemRcVersion;
-  MEMORY_INFO_DATA_HOB            *MemInfo;
   UINT64                          McBaseAddress;
   UINT8                           Data8;
   TCSS_DATA_HOB                   *TcssHob;
-  EFI_HOB_GUID_TYPE               *GuidHob;
   UINT32                          SamFwVersion;
 
   McBaseAddress = PCI_SEGMENT_LIB_ADDRESS (SA_SEG_NUM, SA_MC_BUS, SA_MC_DEV, SA_MC_FUN, 0);
@@ -381,26 +374,6 @@ BuildSaFviHob (
   }
   PciSegmentWrite8 ((UINT64) (McBaseAddress + PCI_REVISION_ID_OFFSET), Data8);
 
-  //
-  // Search for the Memory Configuration GUID HOB. If it is not present, then
-  // there's nothing we can do. It may not exist on the update path.
-  //
-  GuidHob = NULL;
-  MemInfo = NULL;
-  GuidHob = GetFirstGuidHob (&gSiMemoryInfoDataGuid);
-  if (GuidHob != NULL) {
-    MemInfo = (MEMORY_INFO_DATA_HOB *) GET_GUID_HOB_DATA (GuidHob);
-  }
-  if (MemInfo != NULL) {
-    MemRcVersion = &MemInfo->Version;
-  } else {
-    MemRcVersion = &MemRcVersionConst;
-  }
-
-  mSaFviData[MEM_RC_VER].Version.MajorVersion = (UINT8)  MemRcVersion->Major;
-  mSaFviData[MEM_RC_VER].Version.MinorVersion = (UINT8)  MemRcVersion->Minor;
-  mSaFviData[MEM_RC_VER].Version.Revision     = (UINT8)  MemRcVersion->Rev;
-  mSaFviData[MEM_RC_VER].Version.BuildNumber  = (UINT16) MemRcVersion->Build;
   mSaFviData[CRID_NEW].Version.MajorVersion   = 0;
   mSaFviData[CRID_NEW].Version.MinorVersion   = 0;
   mSaFviData[CRID_NEW].Version.Revision       = 0;

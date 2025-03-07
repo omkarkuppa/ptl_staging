@@ -363,7 +363,7 @@ UpdateFviInfo (
         UpdatePchFvi (FviData, (CHAR8 **) &FviString, Crid);
       }
 
-      if (AsciiStrnCmp ((CHAR8 *) &FviString->ComponentName, MEM_FVI_STRING, AsciiStrLen (MEM_FVI_STRING)) == 0) {
+      if (AsciiStrnCmp ((CHAR8 *) &FviString->ComponentName, SA_CRID_STATUS, AsciiStrLen (SA_CRID_STATUS)) == 0) {
         UpdateSaFvi (FviData);
       }
       if (AsciiStrnCmp ((CHAR8 *) &FviString->ComponentName, ME_FW_FVI_STRING, AsciiStrLen (ME_FW_FVI_STRING)) == 0) {

@@ -39,8 +39,7 @@ typedef enum {
 } TELEMETRY_PCH_FVI_INDEX;
 
 typedef enum {
-  MemRcVer = 0,
-  CridOriginal,
+  CridOriginal = 0,
   Cridnew,
   VbiosVer,
   IomFwVer,

@@ -181,7 +181,6 @@ typedef enum {
 ///
 /// SA Data definitions
 ///
-#define MEM_FVI_STRING              "Reference Code - MRC"
 #define SA_CRID_STATUS              "SA-CRID Status"
 #define SA_CRID_ORIGINAL_VALUE      "SA-CRID Original Value"
 #define SA_CRID_NEW_VALUE           "SA-CRID New Value"
@@ -197,8 +196,7 @@ typedef enum {
 #define CRID_LOCK                   0x17
 
 typedef enum {
-  MEM_RC_VER = 0,
-  CRID_STATUS,
+  CRID_STATUS = 0,
   CRID_ORIGINAL,
   CRID_NEW,
   VBIOS_VER,

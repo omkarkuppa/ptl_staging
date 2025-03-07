@@ -60,7 +60,6 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_ACPI_6_5_PHAT_VERSION_ELEMENT mPchFviTelemetry
 //
 GLOBAL_REMOVE_IF_UNREFERENCED EFI_ACPI_6_5_PHAT_VERSION_ELEMENT mSaFviTelemetryData[] = {
 
-  { SA_MEM_RC_VERSION_COMPONENT_ID,    DEFAULT_FVI_TELEMETRY_VERSION,   FVI_INTEL_SIGNATURE,  },
   { SA_CRID_ORIGINAL_COMPONENT_ID,     DEFAULT_FVI_TELEMETRY_VERSION,   FVI_INTEL_SIGNATURE,  },
   { SA_CRID_NEW_COMPONENT_ID,          DEFAULT_FVI_TELEMETRY_VERSION,   FVI_INTEL_SIGNATURE,  },
   { SA_VBIOS_VERSION_COMPONENT_ID,     DEFAULT_FVI_TELEMETRY_VERSION,   FVI_INTEL_SIGNATURE,  },
@@ -232,11 +231,6 @@ InitializeSaFviData (
 
   Index  = 0;
   Status = EFI_SUCCESS;
-
-  //
-  // RC version
-  //
-  mSaFviTelemetryData[MemRcVer].VersionValue = IntelFwVerToUint64 (&SaFviData[MEM_RC_VER].Version);
 
   //
   // CRID
@@ -460,7 +454,7 @@ InitFviTelemetryAip (
         InitializePchFviData (FviData, (CHAR8 **) &FviString);
       }
 
-      if (AsciiStrnCmp ((CHAR8 *) &FviString->ComponentName, MEM_FVI_STRING, AsciiStrLen (MEM_FVI_STRING)) == 0) {
+      if (AsciiStrnCmp ((CHAR8 *) &FviString->ComponentName, SA_CRID_STATUS, AsciiStrLen (SA_CRID_STATUS)) == 0) {
         InitializeSaFviData (FviData, (CHAR8 **) &FviString);
       }
 
