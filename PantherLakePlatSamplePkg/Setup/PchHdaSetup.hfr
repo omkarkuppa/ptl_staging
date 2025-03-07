@@ -600,22 +600,6 @@
        flags  = 0,
        key    = 0;
 
-    // Post Processing Module 0 - Waves Post-process
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[0],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_0_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 1 - DTS
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[1],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_1_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
     // Pre Processing Module 2 - IntelSst Speech
     checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[2],
       prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_2_PROMPT),
@@ -624,125 +608,6 @@
       key      = 0,
     endcheckbox;
 
-    // Post Processing Module 3 - Dolby
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[3],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_3_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 4 - Waves Pre-process
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[4],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_4_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 5 - Audyssey
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[5],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_5_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 5 - Maxim Smart AMP
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[6],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_6_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 7 - ForteMedia SAMSoft
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[7],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_7_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 9 - Sound Research IP
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[9],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_9_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 10 - Conexant Pre-Process
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[10],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_10_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 11 - Conexant Smart Amp
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[11],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_11_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 12 - Realtek Post-Process
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[12],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_12_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 13 - Realtek Smart Amp
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[13],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_13_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 14 - Icepower IP MFX sub module
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[14],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_14_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 15 - Icepower IP EFX sub module
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[15],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_15_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 16 - Icepower IP SFX sub module
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[16],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_16_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 17 - Voice Preprocessing
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[17],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_17_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
-
-    // Post Processing Module 18 - Acoustic Context Awareness (ACA)
-    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[18],
-      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_18_PROMPT),
-      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
-      flags    = 0 | RESET_REQUIRED,
-      key      = 0,
-    endcheckbox;
 
     // Post Processing Module 27 - AEC for Cirrus
     checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[27],
@@ -814,6 +679,43 @@
               maxsize = 36,
       endstring;
     endif; // Custom module 31 disabled
+
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[25],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_25_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    suppressif ideqval PCH_SETUP.PchHdAudioPostProcessingMod[25] == 0x0;
+      string  varid   = PCH_SETUP.PchHdAudioPostProcessingModCustomGuid4,
+              prompt  = STRING_TOKEN(STR_PCH_HDA_PP_CUSTOM_GUID_25_PROMPT),
+              help    = STRING_TOKEN(STR_PCH_HDA_PP_CUSTOM_GUID_HELP),
+              flags   = 0 | RESET_REQUIRED, //INTERACTIVE,
+              key     = 0,
+              minsize = 36, // GUID characters number in format 11111111-2222-3333-4444-1234567890ab (without ending null)
+              maxsize = 36,
+      endstring;
+    endif; // Custom module 25 disabled
+
+    checkbox varid  = PCH_SETUP.PchHdAudioPostProcessingMod[26],
+      prompt   = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_26_PROMPT),
+      help     = STRING_TOKEN(STR_PCH_HDA_PP_MODULE_HELP),
+      flags    = 0 | RESET_REQUIRED,
+      key      = 0,
+    endcheckbox;
+
+    suppressif ideqval PCH_SETUP.PchHdAudioPostProcessingMod[26] == 0x0;
+      string  varid   = PCH_SETUP.PchHdAudioPostProcessingModCustomGuid5,
+              prompt  = STRING_TOKEN(STR_PCH_HDA_PP_CUSTOM_GUID_26_PROMPT),
+              help    = STRING_TOKEN(STR_PCH_HDA_PP_CUSTOM_GUID_HELP),
+              flags   = 0 | RESET_REQUIRED, //INTERACTIVE,
+              key     = 0,
+              minsize = 36, // GUID characters number in format 11111111-2222-3333-4444-1234567890ab (without ending null)
+              maxsize = 36,
+      endstring;
+    endif; // Custom module 26 disabled
+
   endform; //End of PCH_HDAUDIO_FEATURES_FORM_ID
 
   form formid = AUTO_ID(PCH_HDAUDIO_MIC_PRIVACY_FORM_ID),

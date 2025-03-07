@@ -128,13 +128,8 @@ Scope (\_SB.PC00.HDAS)
     // Return - TRUE if PP Module supported, else FALSE.
 
     // ADPM - Platform NVS AudioDSP Post-Processing Module Bit Mask:
-    //  [BIT0] - Waves; [BIT1] - DTS; [BIT2] - Intel SST Speech; [BIT3] - Dolby
-    //  [BIT4] - Icepower; [BIT5] - Audyssey; [BIT6] - [Unused]
-    //  [BIT7] - ForteMedia SAMSoft; [BIT8] - Intel WoV; [BIT9] - Sound Research IP
-    //  [BIT10] - Conexant Pre-Process; [BIT11] - Conexant Smart Amp
-    //  [BIT12] - Realtek Post-Process; [BIT13] - Realtek Smart Amp
-    //  [BIT14] - PP Module Icepower IP MFX sub module; [BIT15] - PP Module Icepower IP EFX sub module
-    //  [BIT16] - PP Module Voice Preprocessing; [BIT17] - PP Module Voice Preprocessing
+    //  [BIT2] - Intel SST Speech
+    //  [BIT26:25] - Custom 3rd party IP modules (GUIDs provided from BIOS Setup)
     //  [BIT27] - AEC for Cirrus
     //  [BIT28] - Waves Full and Reduced for Cirrus
     //  [BIT31:29] - Custom 3rd party IP modules (GUIDs provided from BIOS Setup)
@@ -156,9 +151,16 @@ Scope (\_SB.PC00.HDAS)
       Return (And (ADPM, BIT2)) // DSDT NVS ADPM[BIT2] set - supported (return true)
     }
 
-    // PP Module Intel WoV
-    If (LEqual (Arg0, ToUUID ("EC774FA9-28D3-424A-90E4-69F984F1EEB7"))) {
-      Return (And (ADPM, BIT8)) // ADPM[BIT8] set - supported (return true)
+    // PP Module 'Delta' Custom GUID
+    // Check PP module with GUID - entered in Setup menu
+    If (LEqual (Arg0, ACCG (AG4L, AG4H))) {
+      Return (And (ADPM, BIT25)) // ADPM[BIT25] set - supported (return true)
+    }
+
+    // PP Module 'Epsilon' Custom GUID
+    // Check PP module with GUID - entered in Setup menu
+    If (LEqual (Arg0, ACCG (AG5L, AG5H))) {
+      Return (And (ADPM, BIT26)) // ADPM[BIT26] set - supported (return true)
     }
 
     // AEC for Cirrus

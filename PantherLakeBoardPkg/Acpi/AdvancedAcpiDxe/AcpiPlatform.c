@@ -3684,9 +3684,9 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->I2SI = PcdGet32 (PcdHdaI2sCodecIrqGpio);
   mPlatformNvsAreaProtocol.Area->I2SB = PcdGet8 (PcdHdaI2sCodecI2cBusNumber);
 
-  DEBUG((DEBUG_INFO,"HDA: I2S Codec Select [I2SC] = 0x%02x\n", mPlatformNvsAreaProtocol.Area->I2SC));
-  DEBUG((DEBUG_INFO,"HDA: I2S Codec JD Int pin [I2SI] = 0x%08x\n", mPlatformNvsAreaProtocol.Area->I2SI));
-  DEBUG((DEBUG_INFO,"HDA: I2S Codec I2C Bus Number [I2SB] = 0x%02x\n", mPlatformNvsAreaProtocol.Area->I2SB));
+  DEBUG ((DEBUG_INFO, "HDA: I2S Codec Select [I2SC] = 0x%02x\n", mPlatformNvsAreaProtocol.Area->I2SC));
+  DEBUG ((DEBUG_INFO, "HDA: I2S Codec JD Int pin [I2SI] = 0x%08x\n", mPlatformNvsAreaProtocol.Area->I2SI));
+  DEBUG ((DEBUG_INFO, "HDA: I2S Codec I2C Bus Number [I2SB] = 0x%02x\n", mPlatformNvsAreaProtocol.Area->I2SB));
 
   for (Index = 0; Index < HDAUDIO_PP_MODULES; Index++) {
     mPlatformNvsAreaProtocol.Area->HdaDspPpModuleMask |= (UINT32)(mPchSetup.PchHdAudioPostProcessingMod[Index] ? (1 << Index) : 0);
@@ -3694,36 +3694,58 @@ InstallAcpiPlatform (
   DEBUG((DEBUG_INFO,"HDA: HdaDspPpModuleMask [ADPM] = 0x%08x\n", mPlatformNvsAreaProtocol.Area->HdaDspPpModuleMask));
 
   if (mPchSetup.PchHdAudioPostProcessingMod[29]){
-    DEBUG((DEBUG_INFO,"HDA: AudioDSP Pre/Post-Processing custom module 'Alpha' enabled (BIT29)\n"));
+    DEBUG ((DEBUG_INFO, "HDA: AudioDSP Pre/Post-Processing custom module 'Alpha' enabled (BIT29)\n"));
 
-    CopyMem(LocalGuidString, mPchSetup.PchHdAudioPostProcessingModCustomGuid1, GUID_CHARS_NUMBER * sizeof(CHAR16));
+    CopyMem (LocalGuidString, mPchSetup.PchHdAudioPostProcessingModCustomGuid1, GUID_CHARS_NUMBER * sizeof(CHAR16));
     GuidStringToAcpiBuffer (LocalGuidString, &AcpiGuidPart1, &AcpiGuidPart2);
     mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid1Low  = AcpiGuidPart1;
     mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid1High = AcpiGuidPart2;
-    DEBUG((DEBUG_INFO,"HdaDspPpModCustomGuid1Low  = 0x%016Lx\nHdaDspPpModCustomGuid2High = 0x%016Lx\n",
+    DEBUG ((DEBUG_INFO, "HdaDspPpModCustomGuid1Low  = 0x%016Lx\nHdaDspPpModCustomGuid2High = 0x%016Lx\n",
             mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid1Low, mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid1High));
   }
 
   if (mPchSetup.PchHdAudioPostProcessingMod[30]){
-    DEBUG((DEBUG_INFO,"HDA: AudioDSP Pre/Post-Processing custom module 'Beta' enabled (BIT30)\n"));
+    DEBUG ((DEBUG_INFO, "HDA: AudioDSP Pre/Post-Processing custom module 'Beta' enabled (BIT30)\n"));
 
-    CopyMem(LocalGuidString, mPchSetup.PchHdAudioPostProcessingModCustomGuid2, GUID_CHARS_NUMBER * sizeof(CHAR16));
+    CopyMem (LocalGuidString, mPchSetup.PchHdAudioPostProcessingModCustomGuid2, GUID_CHARS_NUMBER * sizeof(CHAR16));
     GuidStringToAcpiBuffer (LocalGuidString, &AcpiGuidPart1, &AcpiGuidPart2);
     mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid2Low  = AcpiGuidPart1;
     mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid2High = AcpiGuidPart2;
-    DEBUG((DEBUG_INFO,"HdaDspPpModCustomGuid2Low  = 0x%016Lx\nHdaDspPpModCustomGuid2High = 0x%016Lx\n",
+    DEBUG ((DEBUG_INFO, "HdaDspPpModCustomGuid2Low  = 0x%016Lx\nHdaDspPpModCustomGuid2High = 0x%016Lx\n",
             mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid2Low, mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid2High));
   }
 
   if (mPchSetup.PchHdAudioPostProcessingMod[31]){
-    DEBUG((DEBUG_INFO,"HDA: AudioDSP Pre/Post-Processing custom module 'Gamma' enabled (BIT31)\n"));
+    DEBUG ((DEBUG_INFO, "HDA: AudioDSP Pre/Post-Processing custom module 'Gamma' enabled (BIT31)\n"));
 
-    CopyMem(LocalGuidString, mPchSetup.PchHdAudioPostProcessingModCustomGuid3, GUID_CHARS_NUMBER * sizeof(CHAR16));
+    CopyMem (LocalGuidString, mPchSetup.PchHdAudioPostProcessingModCustomGuid3, GUID_CHARS_NUMBER * sizeof(CHAR16));
     GuidStringToAcpiBuffer (LocalGuidString, &AcpiGuidPart1, &AcpiGuidPart2);
     mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid3Low  = AcpiGuidPart1;
     mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid3High = AcpiGuidPart2;
-    DEBUG((DEBUG_INFO,"HdaDspPpModCustomGuid3Low  = 0x%016Lx\nHdaDspPpModCustomGuid3High = 0x%016Lx\n",
+    DEBUG ((DEBUG_INFO, "HdaDspPpModCustomGuid3Low  = 0x%016Lx\nHdaDspPpModCustomGuid3High = 0x%016Lx\n",
             mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid3Low, mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid3High));
+  }
+
+  if (mPchSetup.PchHdAudioPostProcessingMod[25]){
+    DEBUG((DEBUG_INFO, "HDA: AudioDSP Pre/Post-Processing custom module 'Delta' enabled (BIT25)\n"));
+
+    CopyMem (LocalGuidString, mPchSetup.PchHdAudioPostProcessingModCustomGuid4, GUID_CHARS_NUMBER * sizeof(CHAR16));
+    GuidStringToAcpiBuffer (LocalGuidString, &AcpiGuidPart1, &AcpiGuidPart2);
+    mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid4Low  = AcpiGuidPart1;
+    mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid4High = AcpiGuidPart2;
+    DEBUG ((DEBUG_INFO, "HdaDspPpModCustomGuid4Low  = 0x%016Lx\nHdaDspPpModCustomGuid4High = 0x%016Lx\n",
+            mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid4Low, mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid4High));
+  }
+
+  if (mPchSetup.PchHdAudioPostProcessingMod[26]){
+    DEBUG ((DEBUG_INFO, "HDA: AudioDSP Pre/Post-Processing custom module 'Epsilon' enabled (BIT26)\n"));
+
+    CopyMem (LocalGuidString, mPchSetup.PchHdAudioPostProcessingModCustomGuid5, GUID_CHARS_NUMBER * sizeof(CHAR16));
+    GuidStringToAcpiBuffer (LocalGuidString, &AcpiGuidPart1, &AcpiGuidPart2);
+    mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid5Low  = AcpiGuidPart1;
+    mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid5High = AcpiGuidPart2;
+    DEBUG ((DEBUG_INFO, "HdaDspPpModCustomGuid5Low  = 0x%016Lx\nHdaDspPpModCustomGuid5High = 0x%016Lx\n",
+            mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid5Low, mPlatformNvsAreaProtocol.Area->HdaDspPpModCustomGuid5High));
   }
 
   ///

@@ -1742,9 +1742,11 @@ typedef struct {
  structure revision and update below history table\n
 
   <b>Revision 1</b>:  - Initial version.
+  <b>Revision 2</b>:  - Add PchHdAudioPostProcessingModCustomGuid4,
+                        PchHdAudioPostProcessingModCustomGuid5
 **/
 
-#define PCH_SETUP_REVISION  1
+#define PCH_SETUP_REVISION  2
 
 typedef struct {
   UINT8   Revision;
@@ -2424,6 +2426,8 @@ typedef struct {
   UINT16  ThcCustomizedSsvid[PCH_MAX_THC_CONTROLLERS];
 
   UINT8   Reserved1[32];
+  CHAR16  PchHdAudioPostProcessingModCustomGuid4[GUID_CHARS_NUMBER];
+  CHAR16  PchHdAudioPostProcessingModCustomGuid5[GUID_CHARS_NUMBER];
 } PCH_SETUP;
 
 

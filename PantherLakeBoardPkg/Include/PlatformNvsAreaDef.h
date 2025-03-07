@@ -693,6 +693,10 @@ typedef struct {
   UINT8    StorageDynamicLinkManagement;            ///< Offset 2852    Storage Dynamic Link (PCIe) Rate management (DLRM) Support
   UINT8    M2Ssd1Gen4_5Dlrm;                        ///< Offset 2853    Pcie slot 1 M.2 SSD Gen4_5 DLRM support
   UINT8    M2Ssd2Gen4_5Dlrm;                        ///< Offset 2854    Pcie slot 2 M.2 SSD Gen4_5 DLRM support
+  UINT64   HdaDspPpModCustomGuid4Low;               ///< Offset 2855    HDA PP module custom GUID 4 - first 64bit  [0-63]
+  UINT64   HdaDspPpModCustomGuid4High;              ///< Offset 2863    HDA PP module custom GUID 4 - second 64bit [64-127]
+  UINT64   HdaDspPpModCustomGuid5Low;               ///< Offset 2871    HDA PP module custom GUID 5 - first 64bit  [0-63]
+  UINT64   HdaDspPpModCustomGuid5High;              ///< Offset 2879    HDA PP module custom GUID 5 - second 64bit [64-127]
 } PLATFORM_NVS_AREA;
 
 #pragma pack(pop)

@@ -711,4 +711,8 @@
   DLRM, 8,  // Offset(2852),  Storage Dynamic Link (PCIe) Rate management (DLRM) Support
   S1G4, 8,  // Offset(2853),  Pcie slot 1 M.2 SSD Gen4_5 DLRM support
   S2G4, 8,  // Offset(2854),  Pcie slot 2 M.2 SSD Gen4_5 DLRM support
+  AG4L, 64, // Offset(2855),  HDA PP module custom GUID 4 - first 64bit  [0-63]
+  AG4H, 64, // Offset(2863),  HDA PP module custom GUID 4 - second 64bit [64-127]
+  AG5L, 64, // Offset(2871),  HDA PP module custom GUID 5 - first 64bit  [0-63]
+  AG5H, 64, // Offset(2879),  HDA PP module custom GUID 5 - second 64bit [64-127]
   }

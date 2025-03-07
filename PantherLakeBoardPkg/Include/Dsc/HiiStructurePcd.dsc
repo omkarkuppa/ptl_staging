@@ -1325,23 +1325,12 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioHdaLinkEnable|0x0                
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioI2sCodecSelect|0x0                                  # I2S Codec Select
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPme|0x0                                             # PME Enable
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[0]|0x0                            # Waves Post-process
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[1]|0x0                            # DTS
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[2]|0x0                            # IntelSST Speech
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[3]|0x0                            # Dolby
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[4]|0x0                            # Waves Pre-process
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[5]|0x0                            # Audyssey
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[6]|0x0                            # Maxim Smart AMP
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[7]|0x0                            # ForteMedia SAMSoft
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[9]|0x0                            # Sound Research IP
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[10]|0x0                           # Conexant Pre-Process
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[11]|0x0                           # Conexant Smart Amp
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[12]|0x0                           # Realtek Post-Process
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[13]|0x0                           # Realtek Smart Amp
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[14]|0x0                           # Icepower IP MFX sub module
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[15]|0x0                           # Icepower IP EFX sub module
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[16]|0x0                           # Icepower IP SFX sub module
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[17]|0x0                           # Voice Preprocessing
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[18]|0x0                           # Acoustic Context Awareness (ACA)
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[3]|0x0                            # Intel Test MFX module
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[4]|0x0                            # Intel Test EFX module
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[5]|0x0                            # Intel Test ULS module
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[6]|0x0                            # Intel Test High Load module
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[7]|0x0                            # Intel Test SmartAmp module
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[27]|0x0                           # AEC for Cirrus
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[28]|0x0                           # Waves Full and Reduced for Cirrus
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[29]|0x0                           # Custom Module 'Alpha'
@@ -1350,6 +1339,8 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingMod[31]|0x0        
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingModCustomGuid1|{0x0, 0x0}          # 'Alpha' GUID:
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingModCustomGuid2|{0x0, 0x0}          # 'Beta'  GUID:
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingModCustomGuid3|{0x0, 0x0}          # 'Gamma' GUID:
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingModCustomGuid4|{0x0, 0x0}          # 'Delta' GUID:
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingModCustomGuid5|{0x0, 0x0}          # 'Epsilon' GUID:
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSdiLaneEnable[0]|0x1                                # SDI0
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSdiLaneEnable[1]|0x0                                # SDI1
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[0]|0x0                               # SNDW #0
