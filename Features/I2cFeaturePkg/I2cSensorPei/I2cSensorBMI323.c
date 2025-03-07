@@ -91,7 +91,7 @@ ReadBmi323Orientation (
   DEBUG ((DEBUG_INFO, "Value of R_BMI323_SENSOR_STATUS:%x\n", Value));
 
   if ((Value & 0x1) != V_BMI323_SENSOR_INIT_OK) {
-    DEBUG ((DEBUG_ERROR, "BMI323 initialzation error.\n"));
+    DEBUG ((DEBUG_ERROR, "BMI323 initialization error.\n"));
     return EFI_DEVICE_ERROR;
   }
 

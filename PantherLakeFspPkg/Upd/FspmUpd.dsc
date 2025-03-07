@@ -2088,7 +2088,7 @@
   gPlatformFspPkgTokenSpaceGuid.CoreVfPointRatio       | * | 0x0F | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
   # !BSF NAME:{Core VF Configuration Scope} TYPE:{Combo}  OPTION:{0:All-core, 1:Per-core}
-  # !BSF HELP:{Alows both all-core VF curve or per-core VF curve configuration; <b>0: All-core</b>; 1: Per-core.}
+  # !BSF HELP:{Allows both all-core VF curve or per-core VF curve configuration; <b>0: All-core</b>; 1: Per-core.}
   gPlatformFspPkgTokenSpaceGuid.CoreVfConfigScope           | * | 0x01 | 0x00
   # Added reserved space  UnusedUpdSpace18[1]
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd18                | * | 0x01 | 0x00
@@ -2154,7 +2154,7 @@
   gPlatformFspPkgTokenSpaceGuid.RingVfPointRatio       | * | 0x0F | { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
 
   # !BSF NAME:{Soc Die SSC enable} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable/Dsiable Soc-Die SSC Configuration. 0(Default)=Disable, 1=Enable}
+  # !BSF HELP:{Enable/Disable Soc-Die SSC Configuration. 0(Default)=Disable, 1=Enable}
   gPlatformFspPkgTokenSpaceGuid.SocDieSscEnable             | * | 0x01 | 0x00
 
   # !BSF NAME:{Core Operating Point Reporting}
@@ -2576,7 +2576,7 @@
   gPlatformFspPkgTokenSpaceGuid.Custom1PowerLimit2          | * | 0x04 | 0x0
 
   # !BSF NAME:{Enable Configurable TDP} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Applies Assured Power (cTDP) initialization settings based on non-Assured Power (cTDP) or Assured Power (cTDP). Default is 1: Applies to Assured Power (cTDP) ; if 0 then applies non-Assured Power (cTDP) and BIOS will bypass Assured Power (cTDP)  initialzation flow}
+  # !BSF HELP:{Applies Assured Power (cTDP) initialization settings based on non-Assured Power (cTDP) or Assured Power (cTDP). Default is 1: Applies to Assured Power (cTDP) ; if 0 then applies non-Assured Power (cTDP) and BIOS will bypass Assured Power (cTDP)  initialization flow}
   gPlatformFspPkgTokenSpaceGuid.ApplyConfigTdp             | * | 0x01 | 0x01
 
   # !BSF NAME:{Dual Tau Boost} TYPE:{Combo} OPTION:{$EN_DIS}

@@ -1,5 +1,5 @@
 /** @file
-  This file is SampleCode for Intel Silicon DXE Platform Policy initialzation.
+  This file is SampleCode for Intel Silicon DXE Platform Policy initialization.
 
   @copyright
   INTEL CONFIDENTIAL

@@ -197,7 +197,7 @@ SET gBoardModuleTokenSpaceGuid.PcdFlashFvFirmwareBinariesSize         = 0x000A00
 
 #
 # FIT Payload Region - Start
-# FIT Payload has a separete build process, and will be stitched into ClientBios.rom at PostBuild
+# FIT Payload has a separate build process, and will be stitched into ClientBios.rom at PostBuild
 # The size should be fixed.
 #
 SET gMinPlatformPkgTokenSpaceGuid.PcdFlashFvMicrocodeOffset           = 0x00AA0000  # Flash addr (0xFFCA0000)

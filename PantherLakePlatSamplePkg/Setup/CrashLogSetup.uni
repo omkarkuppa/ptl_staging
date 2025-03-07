@@ -40,7 +40,7 @@
 #string STR_COLLECT_CRASH_LOG_ON_ALL_RESET_PROMPT       #language en-US "CrashLog On All Reset"
 #string STR_COLLECT_CRASH_LOG_ON_ALL_RESET_HELP         #language en-US "Option to invoke CrashLog collection on all reset"
 
-#string STR_CRASH_LOG_REAEM_PROMPT                      #language en-US "CrashLog Re-Arm Enable"
+#string STR_CRASH_LOG_REARM_PROMPT                      #language en-US "CrashLog Re-Arm Enable"
 #string STR_CRASH_LOG_REARM_HELP                        #language en-US "Option to invoke CrashLog Re-Arm"
 
 #string STR_CRASH_LOG_CLEAR_ENABLE_PROMPT               #language en-US "CrashLog Clear Enable"

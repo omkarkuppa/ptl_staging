@@ -47,7 +47,7 @@
 #string STR_MRC_SERIAL_DEBUG_LEVEL_PROMPT      #language en-US "MRC Serial Debug Messages"
 #string STR_MRC_SERIAL_DEBUG_LEVEL_PROMPT_HELP #language en-US "Enable/Disable MRC Serial Debug Messages"
 #string STR_SERIAL_DEBUG_BAUD_RATE             #language en-US "Serial Debug Message Baud Rate"
-#string STR_SERIAL_DEBUG_BAUR_RATE_HELP        #language en-US "Baud Rate for Serial Debug Messages"
+#string STR_SERIAL_DEBUG_BAUD_RATE_HELP        #language en-US "Baud Rate for Serial Debug Messages"
 #string STR_9600                               #language en-US  "9600"
 #string STR_19200                              #language en-US  "19200"
 #string STR_57600                              #language en-US  "57600"

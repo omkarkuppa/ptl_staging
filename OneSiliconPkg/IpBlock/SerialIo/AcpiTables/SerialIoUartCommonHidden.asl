@@ -93,7 +93,7 @@ Scope (\_SB) {
   // UART SAVE Register
   // Saves UART's registers in a package for future restore purposes
   // Arg0 - UART MMIO 64BIT
-  // Arg1 - UART regiters - Package
+  // Arg1 - UART registers - Package
   //
   Method (URSA, 2, Serialized) {
     // Local0 -> Index
@@ -130,7 +130,7 @@ Scope (\_SB) {
   // Arg0 - UART MMIO 64BIT
   //
   // Return:
-  //   UART regiters - Package DLL (1 byte), DLH (1 byte), FCR (1 byte), LCR (1 byte), MCR (1 byte), M/N (4 bytes)
+  //   UART registers - Package DLL (1 byte), DLH (1 byte), FCR (1 byte), LCR (1 byte), MCR (1 byte), M/N (4 bytes)
   //
   Method (URRS, 1, Serialized) {
     // Local0 -> Index

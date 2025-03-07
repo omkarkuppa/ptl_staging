@@ -107,7 +107,7 @@ typedef struct {
   UINT8  TjMaxOffset;
   /**
   Core VF Configuration Scope.
-  Alows both all-core VF curve or per-core VF curve configuration.
+  Allows both all-core VF curve or per-core VF curve configuration.
   <b>0: All-core Scope, setting the VF curve for all cores.</b>
   1: Per-core Scope, setting the VF curve per-core.
   **/

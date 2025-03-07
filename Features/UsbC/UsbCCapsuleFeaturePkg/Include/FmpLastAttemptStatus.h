@@ -48,7 +48,7 @@
 ///   * LAST_ATTEMPT_STATUS_DEVICE_LIBRARY - FMP device library
 ///
 /// Future last attempt status code additions in FmpDevicePkg should be added as follows:
-///   * FMP devoce library: Onto the end of the LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_ERROR range
+///   * FMP device library: Onto the end of the LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_ERROR range
 ///   * Other components: Add a new range onto the end of the last existing range in the enum within the limits of
 ///     [LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MIN_ERROR_CODE_VALUE,LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_MAX_ERROR_CODE_VALUE]
 ///

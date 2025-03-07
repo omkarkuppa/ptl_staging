@@ -45,7 +45,7 @@ form formid   = AUTO_ID(CRASHLOG_FORM_ID),
     //
     suppressif  ideqval CRASHLOG_CONTROL_VARIABLE.CpuRearm == 0;
     oneof varid  = CRASHLOG_VARIABLE.CpuRearm,
-      prompt      = STRING_TOKEN(STR_CRASH_LOG_REAEM_PROMPT),
+      prompt      = STRING_TOKEN(STR_CRASH_LOG_REARM_PROMPT),
       help        = STRING_TOKEN(STR_CRASH_LOG_REARM_HELP),
       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
@@ -84,7 +84,7 @@ form formid   = AUTO_ID(CRASHLOG_FORM_ID),
     //
     suppressif  ideqval CRASHLOG_CONTROL_VARIABLE.SiliconRearm == 0;
     oneof varid  = CRASHLOG_VARIABLE.SiliconRearm,
-      prompt      = STRING_TOKEN(STR_CRASH_LOG_REAEM_PROMPT),
+      prompt      = STRING_TOKEN(STR_CRASH_LOG_REARM_PROMPT),
       help        = STRING_TOKEN(STR_CRASH_LOG_REARM_HELP),
       option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
       option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;

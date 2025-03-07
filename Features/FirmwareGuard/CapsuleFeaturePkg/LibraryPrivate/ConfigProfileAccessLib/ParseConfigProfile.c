@@ -92,7 +92,7 @@ ParseUpdateDataFile (
   *UpdateArray = AllocateZeroPool ((sizeof (UPDATE_CONFIG_DATA) * Num));
   if (*UpdateArray == NULL) {
     CloseIniFile (Context);
-    DEBUG ((DEBUG_ERROR, "ParseUpdateDataFile: Run out of memory resouce\n"));
+    DEBUG ((DEBUG_ERROR, "ParseUpdateDataFile: Run out of memory resource\n"));
     return EFI_OUT_OF_RESOURCES;
   }
 

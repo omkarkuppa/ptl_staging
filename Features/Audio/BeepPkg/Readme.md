@@ -387,7 +387,7 @@ The Beep PPI/Protocol is installed differently depending on the interface that i
 
 Before using functions for generating beep sound user should use ```Enable``` function, after that user can use ```Beep``` function.
 Parameters for ```Beep``` are pointer to Beep PPI/Protocol, frequency in Hz, amplitude in dB, number of beep sound, duration of beep in milliseconds and pause between beeps in milliseconds. ```Beep``` function is blocking function.
-It means that user cannot do anything before end of this function. Beep PPI/Protocol contains also function for non blocking beep sounds. ```BeepOn``` function alows to turn on tone generator.
+It means that user cannot do anything before end of this function. Beep PPI/Protocol contains also function for non blocking beep sounds. ```BeepOn``` function allows to turn on tone generator.
 Parameters for ```BeepOn``` are pointer to Beep PPI/Protocol, frequency in Hz, amplitude in dB. ```BeepOff``` allow to turn off tone generator. Parameter for ```BeepOff``` is pointer to Beep PPI/Protocol.
 After all operations user should use ```Disable``` function. This step is important for further SoundWire components like OS drivers.
 

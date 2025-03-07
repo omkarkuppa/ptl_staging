@@ -91,7 +91,7 @@ form formid = AUTO_ID(DEBUG_INTERFACE_FORM_ID),
 
     oneof varid   = DEBUG_CONFIG_DATA.SerialDebugBaudRate,
       prompt      = STRING_TOKEN (STR_SERIAL_DEBUG_BAUD_RATE),
-      help        = STRING_TOKEN (STR_SERIAL_DEBUG_BAUR_RATE_HELP),
+      help        = STRING_TOKEN (STR_SERIAL_DEBUG_BAUD_RATE_HELP),
       option text = STRING_TOKEN (STR_9600), value = 3, flags = 0;
       option text = STRING_TOKEN (STR_19200), value = 4, flags = 0;
       option text = STRING_TOKEN (STR_57600), value = 6, flags = 0;

@@ -143,7 +143,7 @@ typedef struct {
   UINT32                InterruptPinMuxing;             ///< Each GPIO PORTx/SPIx INTB Pin has different muxing options refer to GPIO_*_MUXING_THC_SPIx_*
   UINT8                 WakeOnTouch;                    ///< 1 = Enable <b>0 = Disable</b>. Based on this setting vGPIO for given THC will be in native mode, and additional _CRS for wake will be exposed in ACPI
   UINT8                 ThcDsyncPadEnable;              ///< 1 = Enable <b>0 = Disable</b>. Based on this settings enables display sync GPIO for given THC
-  UINT8                 Mode;                           ///< 2 = Hid over I2C <b>1 = Hid over SPI <b>0 = THC</b>. Switch between Intel THC protcol and Industry standard HID Over SPI protocol.
+  UINT8                 Mode;                           ///< 2 = Hid over I2C <b>1 = Hid over SPI <b>0 = THC</b>. Switch between Intel THC protocol and Industry standard HID Over SPI protocol.
   /**
     Timestamp timer behavior in D0i2
       <b>1 = Timer resets to 0 when entering D0i2</b>
