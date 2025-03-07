@@ -378,7 +378,7 @@ TbtNvmDrvDmaDebugPrint (
   }
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_NEWLINE, 0, 0);
   for (Index = 0; Index < 4; Index++) {
-    MmioAddr = TbtNvmDrvDmaReadMmio(This, REG_TX_OPTIONS_BASE + Index*4);
+    MmioAddr = TbtNvmDrvDmaReadMmio(This, REG_RX_RING_BASE + Index*4);
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_RX_RING, Index, MmioAddr);
   }
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_DMA_NEWLINE, 0, 0);

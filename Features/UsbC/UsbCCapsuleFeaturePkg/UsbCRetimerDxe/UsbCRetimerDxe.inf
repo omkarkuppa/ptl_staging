@@ -51,7 +51,7 @@
   UsbCRetimerDxe.c
 
 [Protocols]
-  gEfiUsbCCapsuleDebugProtocolGuid              ## PRODUCES
+  gUsbCCapsuleDebugProtocolGuid                     ## PRODUCES
 
 [Pcd]
   gUsbCCapsuleFeaturePkgTokenSpaceGuid.PcdUsbCCapsuleDebugLevel

@@ -27,5 +27,7 @@
 #include "FmpDeviceLibUsbCRetimerLog.h"
 #include "FmpDeviceLibDiscreteTbtLog.h"
 #include "TbtRetimerNvmUpdateLibLog.h"
+#include "FmpDeviceLibPdBridgeLog.h"
+#include "UsbCPdBridgeUpdateLibLog.h"
 
 #endif

@@ -49,7 +49,7 @@ CapsuleLogWrite (
   )
 {
   EFI_STATUS                       Status;
-  EFI_CAPSULE_DEBUG_PROTOCOL       *CapsuleDebugProtocol;
+  USBC_CAPSULE_DEBUG_PROTOCOL      *CapsuleDebugProtocol;
   UINT8                            CapsuleReleaseEnable;
   CHAR8                            LogStr[200];
   UINT32                           EvtId;
@@ -58,9 +58,9 @@ CapsuleLogWrite (
 
   CapsuleReleaseEnable = PcdGet8 (PcdUsbCCapsuleDebugLevel);
 
-  Status = gBS->LocateProtocol (&gEfiUsbCCapsuleDebugProtocolGuid, NULL, (VOID**) &CapsuleDebugProtocol);
+  Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProtocolGuid, NULL, (VOID**) &CapsuleDebugProtocol);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to locate gEfiUsbCCapsuleDebugProtocolGuid (%r).\n", Status));
+    DEBUG ((DEBUG_ERROR, "Failed to locate gUsbCCapsuleDebugProtocolGuid (%r).\n", Status));
     return Status;
   }
 
@@ -118,16 +118,16 @@ CapsuleLogWrite (
     }
 
     switch (LogLevel) {
-      case CAPSULE_DBG_VERBOSE:
+      case USBC_CAPSULE_DBG_VERBOSE:
         DEBUG ((DEBUG_VERBOSE, LogStr));
         break;
-      case CAPSULE_DBG_INFO:
+      case USBC_CAPSULE_DBG_INFO:
         DEBUG ((DEBUG_INFO, LogStr));
         break;
-      case CAPSULE_DBG_WARN:
+      case USBC_CAPSULE_DBG_WARN:
         DEBUG ((DEBUG_WARN, LogStr));
         break;
-      case CAPSULE_DBG_ERROR:
+      case USBC_CAPSULE_DBG_ERROR:
         DEBUG ((DEBUG_ERROR, LogStr));
         break;
       default:

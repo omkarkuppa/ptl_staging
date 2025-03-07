@@ -34,6 +34,8 @@
 #include <Library/UsbCPdBridgeUpdateLib.h>
 #include <Guid/SystemResourceTable.h>
 #include <Protocol/UsbCPdBridgeProtocol.h>
+#include <Library/UsbcCapsuleDebugLib.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 
 /**
@@ -463,7 +465,7 @@ FmpDeviceCheckImageWithStatus (
   PdBridgePayloadItem   = NULL;
 
   if (ImageUpdatable == NULL) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - ImageUpdatable Pointer Parameter is NULL.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_CHECKIMAGE, 0, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_IMAGE_TABLE_NOT_PROVIDED;
     return EFI_INVALID_PARAMETER;
   }
@@ -474,7 +476,7 @@ FmpDeviceCheckImageWithStatus (
   *ImageUpdatable = IMAGE_UPDATABLE_VALID;
 
   if (Image == NULL) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - Image Pointer Parameter is NULL.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_CHECKIMAGE_POINTER_NULL, 0, 0);
     *ImageUpdatable    = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_IMAGE_PARAMETER_IS_NULL;
     return EFI_INVALID_PARAMETER;
@@ -483,7 +485,7 @@ FmpDeviceCheckImageWithStatus (
   if ((ImageSize < sizeof (PAYLOAD_HEADER)) || \
       (*(UINT32 *) Image != PD_BRIDGE_PAYLOAD_HEADER_SIGNATURE))
   {
-    DEBUG ((DEBUG_ERROR, "CheckImage - PD Bridge payload signature is not detected.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_SIGNATURE_NOT_DETECTED, 0, 0);
     *ImageUpdatable    = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_SIGNATURE_IS_NOT_DETECTED;
     return EFI_INVALID_PARAMETER;
@@ -492,7 +494,7 @@ FmpDeviceCheckImageWithStatus (
   PdBridgePayloadHeader = (PAYLOAD_HEADER *) Image;
 
   if (PdBridgePayloadHeader->PayloadCount == 0) {
-    DEBUG ((DEBUG_ERROR, "CheckImage - PD Bridge in header is 0, nothing to update.\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_ZERO, 0, 0);
     *ImageUpdatable    = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_PAYLOAD_COUNT_IS_ZERO;
     return EFI_INVALID_PARAMETER;
@@ -501,7 +503,7 @@ FmpDeviceCheckImageWithStatus (
   if (ImageSize < (sizeof (PAYLOAD_HEADER) + \
                    (PdBridgePayloadHeader->PayloadCount * sizeof (PD_BRIDGE_PAYLOAD_ITEM))))
   {
-    DEBUG ((DEBUG_ERROR, "CheckImage - PD Bridge payload size too small\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_SIZE_SMALL, 0, 0);
     *ImageUpdatable    = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_PAYLOAD_SIZE_TOO_SMALL;
     return EFI_INVALID_PARAMETER;
@@ -511,7 +513,7 @@ FmpDeviceCheckImageWithStatus (
 
   for (Index = 0; Index < PdBridgePayloadHeader->PayloadCount; Index++, PdBridgePayloadItem++) {
     if ((PdBridgePayloadItem->ImageOffset + PdBridgePayloadItem->ImageSize) > ImageSize) {
-      DEBUG ((DEBUG_ERROR, "CheckImage - PD Bridge payload is out of bounds\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_OUT_BOUNDS1, 0, 0);
       *ImageUpdatable    = IMAGE_UPDATABLE_INVALID;
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS;
       return EFI_INVALID_PARAMETER;
@@ -636,7 +638,7 @@ UpdatePdBridgeVersion (
                     );
     ASSERT_EFI_ERROR (Status);
   } else {
-    DEBUG ((DEBUG_ERROR, "Failed to get UsbCPdBridgeVersionGuid variable with return Status = (%r).\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_GET_VERSION_VARIABLE_FAILED, (UINT32) Status, 0);
     return EFI_UNSUPPORTED;
   }
 
@@ -725,16 +727,16 @@ FmpDeviceSetImageWithStatus (
   UINT32                   FwVersion;
   UINT32                   SubFwVersion;
 
-  DEBUG ((DEBUG_INFO, "%a (PD Bridge) - Start\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_SET_IMAGE_START, 0, 0);
 
   if (Image == NULL) {
-    DEBUG ((DEBUG_ERROR, "FmpDeviceSetImageWithStatus - Image is NULL\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_IMAGE_NULL, 0, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_IMAGE_NOT_PROVIDED;
     return EFI_INVALID_PARAMETER;
   }
 
   if (Progress == NULL) {
-    DEBUG ((DEBUG_ERROR, "FmpDeviceSetImageWithStatus - Invalid progress callback\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_PROGRESS_IS_NULL, 0, 0);
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_PROGRESS_CALLBACK_ERROR;
     return EFI_INVALID_PARAMETER;
   }
@@ -744,15 +746,15 @@ FmpDeviceSetImageWithStatus (
   ///
   Status = Progress (5);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "FmpDeviceSetImageWithStatus - Progress Callback failed with Status %r.\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_PROGRESS_CALLBACK_FAILED, (UINT32) Status, 0);
     goto Exit;
   }
 
-  DEBUG ((DEBUG_INFO, "Update PD Bridge - Start\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_UPDATE_START, 0, 0);
 
   Status = gBS->LocateProtocol (&gUsbCPdBridgeProtocolGuid, NULL, (VOID **) &PdBridgeProtocol);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "FmpDeviceSetImageWithStatus - Failed to locate PdBridgeProtocol (%r).\n", Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_LOCATE_PROTOCOL_FAILED, (UINT32) Status, 0);
     goto Exit;
   }
 
@@ -774,23 +776,23 @@ FmpDeviceSetImageWithStatus (
   /// Start to update PD Bridge firmware
   ///
   for (Index = 0; Index < PdBridgePayloadHeader->PayloadCount; Index++, PdBridgePayloadItem++) {
-    DEBUG ((DEBUG_INFO, "Update PD Bridge payload(%d/%d).\n", Index + 1, PdBridgePayloadHeader->PayloadCount));
-    DEBUG ((DEBUG_INFO, "ImageOffset=0x%x, size=0x%x\n", PdBridgePayloadItem->ImageOffset, PdBridgePayloadItem->ImageSize));
-    DEBUG ((DEBUG_INFO, "PdCntrlIndex=0x%x, ShareFlashMode=0x%x\n", PdBridgePayloadItem->PrivateData.PdBridge.PdCntrlIndex, PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_COUNT, (UINT32) (Index + 1), PdBridgePayloadHeader->PayloadCount);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_IMAGE_OFFSET_SIZE, PdBridgePayloadItem->ImageOffset, PdBridgePayloadItem->ImageSize);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_CNTRL_INDEX_SHARE_FLASH_MODE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.PdCntrlIndex, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode);
     if ((PdBridgePayloadItem->ImageOffset + PdBridgePayloadItem->ImageSize) > ImageSize) {
-      DEBUG ((DEBUG_ERROR, "PD Bridge payload is out of bounds\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_OUT_BOUNDS2, 0, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS_2;
       Status = EFI_INVALID_PARAMETER;
       goto UnLockEcPdCommunication;
     }
     if (PdBridgePayloadItem->FirmwareType != PD_BRIDGE) {
-      DEBUG ((DEBUG_ERROR, "PayLoad - Update failed on un-support FirmwareType value %d\n", PdBridgePayloadItem->FirmwareType));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_UNSUPPORT_FW_TYPE, (UINT32) PdBridgePayloadItem->FirmwareType, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_UNSUPPORT_FIRMWARE_TYPE;
       continue;
     }
 
     if (PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode > SHARE_FLASH_MODE_ENABLE) {
-      DEBUG ((DEBUG_ERROR, "PayLoad - Update failed on invalid ShareFlashMode value %d\n", PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_INVALID_SHARE_FLASH_MODE_VALUE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_INVALID_SHARE_FLASH_MODE_VALUE;
       continue;
     }
@@ -814,14 +816,15 @@ FmpDeviceSetImageWithStatus (
       if (!EFI_ERROR (Status)) {
         FwVersion    = (UINT32) (PdBridgeVersion & 0xFFFFFFFF);
         SubFwVersion = (UINT32) ((PdBridgeVersion >> 32) & 0xFFFFFFFF);
-        DEBUG ((DEBUG_INFO, "[USBC] PD%d Version is %08x.%08x\n", Index, FwVersion, SubFwVersion));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_FW_VERSION_INDEX, (UINT32) Index, 0);
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_FW_VERSION, (UINT32) FwVersion, SubFwVersion);
         ///
         /// Update the version to gUsbCPdBridgeVersionGuid
         ///
         UpdatePdBridgeVersion (FwVersion);
       }
     } else {
-      DEBUG ((DEBUG_ERROR, "PD Bridge update failed (%r) at image index %d\n", Status, Index));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_UPDATE_FAILED_AT_INDEX, (UINT32) Status, (UINT32) Index);
     }
   }
 
@@ -834,7 +837,7 @@ UnLockEcPdCommunication:
 Exit:
   Progress (100);
 
-  DEBUG ((DEBUG_INFO, "%a (PD Bridge) - End\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_SET_IMAGE_END, 0, 0);
   if (EFI_ERROR (Status)) {
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_UPDATE_FAILED;
   }
@@ -862,6 +865,6 @@ FmpDeviceLock (
   VOID
   )
 {
-  DEBUG ((DEBUG_INFO, "FmpDeviceLib(PD Bridge): FmpDeviceLock() for system FLASH\n"));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_LOCK, 0, 0);
   return EFI_UNSUPPORTED;
 }

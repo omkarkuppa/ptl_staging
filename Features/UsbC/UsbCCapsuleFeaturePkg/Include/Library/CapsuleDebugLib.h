@@ -45,7 +45,7 @@ LogDataToStr (
 /**
   Reset the next log read position to 0
 
-  @param[in] This  - Pointer to EFI_Capsule_DEBUG_PROTOCOL instance
+  @param[in] This  - Pointer to USBC_CAPSULE_DEBUG_PROTOCOL instance
 
   @retval EFI_SUCCESS           - Reset the next log read position successfully
   @retval EFI_INVALID_PARAMETER - Invalid parameter
@@ -54,14 +54,14 @@ LogDataToStr (
 EFI_STATUS
 EFIAPI
 LogReadReset (
-  IN EFI_CAPSULE_DEBUG_PROTOCOL    *This
+  IN USBC_CAPSULE_DEBUG_PROTOCOL  *This
   );
 
 /**
   Write Log data to the next available Log entry in Log buffer
   Protocol DebugLevel controls what level of Log data can be written to Log buffer
 
-  @param[in] This      - Pointer to EFI_Capsule_DEBUG_PROTOCOL instance
+  @param[in] This      - Pointer to USBC_CAPSULE_DEBUG_PROTOCOL instance
   @param[in] LogLevel  - Log level associated with Log data
   @param[in] EventCode - Event code of Log data
   @param[in] EvtArg0   - Argument 0 of Log data
@@ -75,17 +75,17 @@ LogReadReset (
 EFI_STATUS
 EFIAPI
 LogWrite (
-  IN EFI_CAPSULE_DEBUG_PROTOCOL  *This,
-  IN UINT8                       LogLevel,
-  IN UINT32                      EventCode,
-  IN UINT32                      EvtArg0,
-  IN UINT32                      EvtArg1
+  IN USBC_CAPSULE_DEBUG_PROTOCOL  *This,
+  IN UINT8                        LogLevel,
+  IN UINT32                       EventCode,
+  IN UINT32                       EvtArg0,
+  IN UINT32                       EvtArg1
   );
 
 /**
   Read Log data from the next Log entry in Log buffer
 
-  @param[in]  This    - Pointer to EFI_Capsule_DEBUG_PROTOCOL instance
+  @param[in]  This    - Pointer to USBC_CAPSULE_DEBUG_PROTOCOL instance
   @param[out] LogData - Pointer to the output buffer for Log data
 
   @retval EFI_SUCCESS           - Read Log data from Log buffer successfully
@@ -97,14 +97,14 @@ LogWrite (
 EFI_STATUS
 EFIAPI
 LogRead (
-  IN  EFI_CAPSULE_DEBUG_PROTOCOL  *This,
-  OUT CAPSULE_LOG_ENTRY           *LogData
+  IN  USBC_CAPSULE_DEBUG_PROTOCOL  *This,
+  OUT CAPSULE_LOG_ENTRY            *LogData
   );
 
 /**
   Parse Log data and convert to Log string
 
-  @param[in]  This       - Pointer to EFI_Capsule_DEBUG_PROTOCOL instance
+  @param[in]  This       - Pointer to USBC_CAPSULE_DEBUG_PROTOCOL instance
   @param[in]  LogData    - Pointer to the Log data
   @param[out] LogStr     - Pointer to the output Log string buffer
   @param[in]  StrBufSize - Log string buffer size
@@ -117,10 +117,10 @@ LogRead (
 EFI_STATUS
 EFIAPI
 LogParse (
-  IN  EFI_CAPSULE_DEBUG_PROTOCOL  *This,
-  IN  CAPSULE_LOG_ENTRY           *LogData,
-  OUT CHAR8                       *LogStr,
-  IN  UINT32                      StrBufSize
+  IN  USBC_CAPSULE_DEBUG_PROTOCOL  *This,
+  IN  CAPSULE_LOG_ENTRY            *LogData,
+  OUT CHAR8                        *LogStr,
+  IN  UINT32                       StrBufSize
   );
 
 /**
@@ -141,11 +141,11 @@ LogParse (
 **/
 EFI_STATUS
 InstallCapsuleDebugLibProtocol (
-  IN EFI_GUID                         *ProtocolGuid,
-  IN UINT32                           DebugLevel,
-  IN const CAPSULE_LOG_MAPPING_ENTRY  *LogMappingTable,
-  IN UINT32                           LogMappingEntries,
-  OUT EFI_CAPSULE_DEBUG_PROTOCOL      **ReturnedProtocol
+  IN EFI_GUID                          *ProtocolGuid,
+  IN UINT32                            DebugLevel,
+  IN const CAPSULE_LOG_MAPPING_ENTRY   *LogMappingTable,
+  IN UINT32                            LogMappingEntries,
+  OUT USBC_CAPSULE_DEBUG_PROTOCOL      **ReturnedProtocol
   );
 
 #endif

@@ -459,7 +459,7 @@
 ///
 #define EVT_ARGS_TBTCMD_WRITE_IECS_DATA_ERROR                1
 #define EVT_CODE_TBTCMD_WRITE_IECS_DATA_ERROR                ((EVT_ID_TBTCMD_WRITE_IECS_DATA_ERROR << 2) | (EVT_ARGS_TBTCMD_WRITE_IECS_DATA_ERROR))
-#define STR_ID_TBTCMD_WRITE_IECS_DATA_ERROR                  "TbtNvmDrvRetimerThruHr::WriteIecs: ERROR when writing the data, Status - %d. Exiting...\n"
+#define STR_ID_TBTCMD_WRITE_IECS_DATA_ERROR                  "TbtNvmDrvRetimerThruHr::WriteIecs: ERROR when writing the data, TbtStatus - %d. Exiting...\n"
 ///
 /// WriteIecs - TbtNvmDrvRetimerThruHrWriteIecs: Writing USB 4.0 reg, USB4CapRegWrite = 0x%08x
 ///

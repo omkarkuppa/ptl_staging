@@ -22,7 +22,7 @@
 #define _USBC_CAPSULE_DEBUG_LIB_H_
 
 #include <Uefi.h>
-#include <CapsuleDebugProtocol.h>
+#include <UsbCCapsuleDebugProtocol.h>
 
 /**
   Write Log data to the next available Log entry in Log buffer

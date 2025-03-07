@@ -113,7 +113,7 @@
   FmpDependencyCheckLib|FmpDevicePkg/Library/FmpDependencyCheckLibNull/FmpDependencyCheckLibNull.inf
   FmpDependencyDeviceLib|FmpDevicePkg/Library/FmpDependencyDeviceLibNull/FmpDependencyDeviceLibNull.inf
   CapsuleUpdatePolicyLib|FmpDevicePkg/Library/CapsuleUpdatePolicyLibOnProtocol/CapsuleUpdatePolicyLibOnProtocol.inf
-  
+
 [Components]
   UsbCCapsuleFeaturePkg/Application/InternalOnly/UsbCCapsuleDiagnosticTool/UsbCCapsuleDiagnosticTool.inf {
     <LibraryClasses>

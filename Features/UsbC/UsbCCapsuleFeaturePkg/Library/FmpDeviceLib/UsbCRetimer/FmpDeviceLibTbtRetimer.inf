@@ -60,7 +60,7 @@
 [Protocols]
   gUsbCRetimerProtocolGuid
   gEfiUsb2HcProtocolGuid
-  gEfiUsbCCapsuleDebugProtocolGuid              ## PRODUCES
+  gUsbCCapsuleDebugProtocolGuid                 ## PRODUCES
   gUsbCCapsuleDebugProgressCodeProtocolGuid
 
 [Guids]

@@ -27,7 +27,7 @@
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PrintLib.h>
-#include <Library/CapsuleDebugProtocol.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 #include <Library/CapsuleDebugLib.h>
 
 /**
@@ -73,13 +73,13 @@ Exit:
 /**
   Reset the next log read position to 0
 
-  @param[in] This - Pointer to EFI_CAPSULE_DEBUG_PROTOCOL instance
+  @param[in] This - Pointer to USBC_CAPSULE_DEBUG_PROTOCOL instance
 
 **/
 EFI_STATUS
 EFIAPI
 LogReadReset (
-  IN EFI_CAPSULE_DEBUG_PROTOCOL  *This
+  IN USBC_CAPSULE_DEBUG_PROTOCOL  *This
   )
 {
   if (This == NULL) {
@@ -98,7 +98,7 @@ LogReadReset (
   Write Log data to the next available Log entry in Log buffer
   Protocol DebugLevel controls what level of Log data can be written to Log buffer
 
-  @param[in] This      - Pointer to EFI_CAPSULE_DEBUG_PROTOCOL instance
+  @param[in] This      - Pointer to USBC_CAPSULE_DEBUG_PROTOCOL instance
   @param[in] LogLevel  - Log level associated with Log data
   @param[in] EventCode - Event code of Log data
   @param[in] EvtArg0   - Argument 0 of Log data
@@ -112,11 +112,11 @@ LogReadReset (
 EFI_STATUS
 EFIAPI
 LogWrite (
-  IN EFI_CAPSULE_DEBUG_PROTOCOL  *This,
-  IN UINT8                       LogLevel,
-  IN UINT32                      EventCode,
-  IN UINT32                      EvtArg0,
-  IN UINT32                      EvtArg1
+  IN USBC_CAPSULE_DEBUG_PROTOCOL  *This,
+  IN UINT8                        LogLevel,
+  IN UINT32                       EventCode,
+  IN UINT32                       EvtArg0,
+  IN UINT32                       EvtArg1
   )
 {
   EFI_STATUS Status;
@@ -157,7 +157,7 @@ Exit:
 /**
   Read Log data from the next Log entry in Log buffer
 
-  @param[in]  This    - Pointer to EFI_CAPSULE_DEBUG_PROTOCOL instance
+  @param[in]  This    - Pointer to USBC_CAPSULE_DEBUG_PROTOCOL instance
   @param[out] LogData - Pointer to the output buffer for Log data
 
   @retval EFI_SUCCESS           - Read Log data from Log buffer successfully
@@ -169,8 +169,8 @@ Exit:
 EFI_STATUS
 EFIAPI
 LogRead (
-  IN  EFI_CAPSULE_DEBUG_PROTOCOL  *This,
-  OUT CAPSULE_LOG_ENTRY           *LogData
+  IN  USBC_CAPSULE_DEBUG_PROTOCOL  *This,
+  OUT CAPSULE_LOG_ENTRY            *LogData
   )
 {
   EFI_STATUS Status;
@@ -213,7 +213,7 @@ Exit:
 /**
   Parse Log data and convert to Log string
 
-  @param[in]  This       - Pointer to EFI_CAPSULE_DEBUG_PROTOCOL instance
+  @param[in]  This       - Pointer to USBC_CAPSULE_DEBUG_PROTOCOL instance
   @param[in]  LogData    - Pointer to the Log data
   @param[out] LogStr     - Pointer to the output Log string buffer
   @param[in]  StrBufSize - Log string buffer size
@@ -226,10 +226,10 @@ Exit:
 EFI_STATUS
 EFIAPI
 LogParse (
-  IN  EFI_CAPSULE_DEBUG_PROTOCOL  *This,
-  IN  CAPSULE_LOG_ENTRY           *LogData,
-  OUT CHAR8                       *LogStr,
-  IN  UINT32                      StrBufSize
+  IN  USBC_CAPSULE_DEBUG_PROTOCOL  *This,
+  IN  CAPSULE_LOG_ENTRY            *LogData,
+  OUT CHAR8                        *LogStr,
+  IN  UINT32                       StrBufSize
   )
 {
   EFI_STATUS                       Status;
@@ -334,15 +334,15 @@ InstallCapsuleDebugLibProtocol (
   IN UINT32                           DebugLevel,
   IN const CAPSULE_LOG_MAPPING_ENTRY  *LogMappingTable,
   IN UINT32                           LogMappingEntries,
-  OUT EFI_CAPSULE_DEBUG_PROTOCOL      **ReturnedProtocol
+  OUT USBC_CAPSULE_DEBUG_PROTOCOL     **ReturnedProtocol
   )
 {
-  EFI_STATUS                  Status;
-  EFI_HANDLE                  Handle;
-  EFI_CAPSULE_DEBUG_PROTOCOL  *CapsuleDebugProtocol;
-  UINT32                      Index;
-  UINT32                      EvtId;
-  UINTN                       PageCount;
+  EFI_STATUS                       Status;
+  EFI_HANDLE                       Handle;
+  USBC_CAPSULE_DEBUG_PROTOCOL      *CapsuleDebugProtocol;
+  UINT32                           Index;
+  UINT32                           EvtId;
+  UINTN                            PageCount;
 
   if ((ProtocolGuid == NULL) || (LogMappingTable == NULL)) {
     DEBUG ((DEBUG_ERROR, "InstallCapsuleDebugProtocol: Invalid parameters (%p, %p)\n", ProtocolGuid, LogMappingTable));
@@ -350,7 +350,7 @@ InstallCapsuleDebugLibProtocol (
     goto Exit;
   }
 
-  if (DebugLevel > CAPSULE_DBG_VERBOSE) {
+  if (DebugLevel > USBC_CAPSULE_DBG_VERBOSE) {
     DEBUG ((DEBUG_ERROR, "InstallCapsuleDebugProtocol: Invalid debug level %d\n", DebugLevel));
     Status = EFI_INVALID_PARAMETER;
     goto Exit;
@@ -379,8 +379,8 @@ InstallCapsuleDebugLibProtocol (
   ///
   /// Allocate memory for protocol
   ///
-  PageCount = EFI_SIZE_TO_PAGES (sizeof (EFI_CAPSULE_DEBUG_PROTOCOL));
-  CapsuleDebugProtocol = (EFI_CAPSULE_DEBUG_PROTOCOL *) AllocatePages (PageCount);
+  PageCount = EFI_SIZE_TO_PAGES (sizeof (USBC_CAPSULE_DEBUG_PROTOCOL));
+  CapsuleDebugProtocol = (USBC_CAPSULE_DEBUG_PROTOCOL *) AllocatePages (PageCount);
   if (CapsuleDebugProtocol == NULL) {
     DEBUG ((DEBUG_ERROR, "InstallCapsuleDebugProtocol: Insufficient buffer for allocating protocol\n"));
     Status = EFI_OUT_OF_RESOURCES;
@@ -391,8 +391,8 @@ InstallCapsuleDebugLibProtocol (
   ///
   /// Initialize protocol data and interfaces
   ///
-  CapsuleDebugProtocol->CapsuleLogBuf.Signature = EFI_CAPSULE_LOG_SIGNATURE;
-  CapsuleDebugProtocol->CapsuleLogBuf.Revision  = EFI_CAPSULE_LOG_REVISION;
+  CapsuleDebugProtocol->CapsuleLogBuf.Signature = CAPSULE_LOG_SIGNATURE;
+  CapsuleDebugProtocol->CapsuleLogBuf.Revision  = CAPSULE_LOG_REVISION;
   CapsuleDebugProtocol->CapsuleLogBuf.LogCount  = 0x00;
   CapsuleDebugProtocol->CapsuleLogBuf.NextRead  = 0x00;
   CapsuleDebugProtocol->LogMappingTable         = LogMappingTable;

@@ -52,6 +52,7 @@
   MemoryAllocationLib
   UefiBootServicesTableLib
   UsbCPdBridgeUpdateLib
+  UsbcCapsuleDebugLib
 
 [Guids]
   gUsbCPdBridgeVersionGuid                ## CONSUMES

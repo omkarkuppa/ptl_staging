@@ -1,5 +1,5 @@
 /** @file
-  Publish EFI_CAPSULE_DEBUG_PROTOCOL.
+  Publish USBC_CAPSULE_DEBUG_PROTOCOL.
 
   @copyright
   INTEL CONFIDENTIAL
@@ -32,7 +32,7 @@
 ///
 /// Pointer to Capsule Debug Protocol instance
 ///
-EFI_CAPSULE_DEBUG_PROTOCOL   *mRetimerCapsuleLog = NULL;
+USBC_CAPSULE_DEBUG_PROTOCOL   *mRetimerCapsuleLog = NULL;
 extern const CAPSULE_LOG_MAPPING_ENTRY  mUsbCCapsuleLogMappingTable [];
 extern UINT32 mUsbCCapsuleLogMappingEntries;
 
@@ -48,7 +48,7 @@ InstallCapsuleDebugProtocol (
   EFI_STATUS   Status;
 
   Status = InstallCapsuleDebugLibProtocol (
-             &gEfiUsbCCapsuleDebugProtocolGuid,
+             &gUsbCCapsuleDebugProtocolGuid,
              PcdGet8 (PcdUsbCCapsuleDebugLevel),
              mUsbCCapsuleLogMappingTable,
              mUsbCCapsuleLogMappingEntries,

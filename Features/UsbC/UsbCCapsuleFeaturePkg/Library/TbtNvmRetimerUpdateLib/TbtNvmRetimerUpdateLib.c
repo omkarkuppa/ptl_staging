@@ -690,7 +690,7 @@ UpdateRetimerNvmFirmware (
 
       TbtStatus = TbtNvmDrvDeviceWrBlk (Device, BufferPointer + Offset, WriteLength);
       if (TBT_STATUS_ERR (TbtStatus)) {
-        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_ERROR_OFFSET, 0, 0);
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_ERROR_OFFSET, Offset, 0);
         if (TBT_STATUS_FATAL_ERR (TbtStatus)) {
           CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_UPDATE_NVM_FATAL_ERROR, 0, 0);
           Status = EFI_DEVICE_ERROR;

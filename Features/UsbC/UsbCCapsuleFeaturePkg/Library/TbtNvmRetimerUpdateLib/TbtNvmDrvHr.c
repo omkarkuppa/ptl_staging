@@ -585,9 +585,10 @@ TbtNvmDrvHrCtor (
     return NULL;
   }
 
-  HrImplPtr = TbtNvmDrvAllocateMem (sizeof(TBT_HR_IMPL));
+  HrImplPtr = TbtNvmDrvAllocateMem (sizeof (TBT_HR_IMPL));
   if (!HrImplPtr) {
     gBS->FreePool (Handles);
+    Status = EFI_OUT_OF_RESOURCES;
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_ALLOCATE_MEM_FAIL, (UINT32) Status, 0);
     return NULL;
   }
@@ -616,7 +617,7 @@ TbtNvmDrvHrCtor (
         break;
       case (PCIE_RP_TYPE_CPU):
         CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_TYPE_CPU, (UINT32) FirmwareType, 0);
-        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_TYPE_CPU1, (UINT32) CpuRpNumber, (UINT32) CpuBusNumber);        
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_TYPE_CPU1, (UINT32) CpuRpNumber, (UINT32) CpuBusNumber);
         break;
       default:
         CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_INVALID_RP_TYPE, (UINT32) PcieRpConfig->PcieRpType, 0);
@@ -731,7 +732,7 @@ TbtNvmDrvHrCtor (
   if (EFI_ERROR (Status)) {
     if (FirmwareType == INTEGRATED_TBT_RETIMER) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_NOT_FOUND_FOR_ITBT_RETIMER, (UINT32) TbtDmaPcieBdf->Bus, (UINT32) TbtDmaPcieBdf->Device);
-      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_NOT_FOUND_FOR_ITBT_RETIMER2, (UINT32) TbtDmaPcieBdf->Function, (UINT32) Status);  
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_NOT_FOUND_FOR_ITBT_RETIMER2, (UINT32) TbtDmaPcieBdf->Function, (UINT32) Status);
     } else {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_NOT_FOUND_FOR_DTBT_RETIMER, (UINT32) (PcieRpConfig->PcieRootPort), (UINT32) Status);
     }
@@ -770,7 +771,7 @@ TbtNvmDrvHrCtor (
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_FORCE_PWR_ITBT, 0, 0);
     TbtStatus = ForcePwrFunc (HrImplPtr->pPciIoProto, TRUE, &TBTControllerWasPowered);
     if (TBT_STATUS_ERR (TbtStatus)) {
-      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_PERFORM_PWR_ERROR, CombinedPciId, (UINT32) Status);
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_TBT_DRV_CTOR_PERFORM_PWR_ERROR, CombinedPciId, (UINT32) TbtStatus);
       goto free_hr_impl;
     }
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_TBT_DRV_CTOR_FORCE_PWR_DEV, CombinedPciId, 0);

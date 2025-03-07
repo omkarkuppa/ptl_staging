@@ -72,12 +72,12 @@ struct _USBC_PD_BRIDGE_PROTOCOL {
   EXECUTE_VENDOR_CMD     ExecuteVendorCmd;  ///< Execute the PD Vendor Command via EC private port
 };
 
-gEfiUsbCCapsuleDebugProtocolGuid          - Support UsbC Capsule diagnostic tool in release BIOS
+gUsbCCapsuleDebugProtocolGuid             - Support UsbC Capsule diagnostic tool in release BIOS
 
 ///
 /// Data structure of Capsule Debug Protocol
 ///
-struct _EFI_CAPSULE_DEBUG_PROTOCOL {
+struct _USBC_CAPSULE_DEBUG_PROTOCOL {
   CAPSULE_LOG_BUFFER               CapsuleLogBuf;         ///< Log buffer for Log data
   const CAPSULE_LOG_MAPPING_ENTRY  *LogMappingTable;      ///< Mapping table for converting log data to log string
   UINT32                           LogMappingEntries;     ///< The number of mapping entries in Log mapping table

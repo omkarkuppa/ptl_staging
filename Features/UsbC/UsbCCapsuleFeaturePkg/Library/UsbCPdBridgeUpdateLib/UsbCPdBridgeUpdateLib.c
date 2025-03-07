@@ -24,6 +24,9 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UsbCPdBridgeUpdateLib.h>
 #include <Protocol/UsbCPdBridgeProtocol.h>
+#include <Library/UsbcCapsuleDebugLib.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
+#include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
 
 /**
   The command to read data up to 32bytes from NVM.
@@ -56,16 +59,17 @@ NvmRead (
   UINT32                 DataSize;
 
   if ((Length > 32) || (Length == 0)) {
-    DEBUG ((DEBUG_ERROR, "%a: Length is Invalid\n", __FUNCTION__));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID, 0, 0);
     return EFI_INVALID_PARAMETER;
   }
 
   if ((OutputData == NULL) || (OutputDataSize == NULL)) {
-    DEBUG ((DEBUG_ERROR, "%a: OutputData or OutputDataSize is NULL\n", __FUNCTION__));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_READ_OUTPUT_DATA_NULL, 0, 0);
     return EFI_INVALID_PARAMETER;
   }
 
-  DEBUG ((DEBUG_INFO, "%a: Read data Start at Offset:%x Length:%x for PdBridgeIndex:%d\n", __FUNCTION__, NvmOffset, Length, PdBridgeIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_READ_OFFSET_LENGTH, NvmOffset, (UINT32) Length);
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_READ_DATA_INDEX, (UINT32) PdBridgeIndex, 0);
 
   ReadCmdData.Reserved1 = 0;
   ReadCmdData.NvmOffset = NvmOffset;
@@ -75,7 +79,7 @@ NvmRead (
 
   Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_READ, FALSE, (UINT8 *) &ReadCmdData, (UINT8 *) &DataSize, (UINT8 *) OutputData, (UINT8 *) OutputDataSize);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_NVM_READ, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_NVM_READ, (UINT32) Status);
     return Status;
   }
 
@@ -107,7 +111,7 @@ NvmSetOffset (
   NVM_SET_OFFSET_CMD_METADATA  SetOffsetCmdData;
   UINT32                       DataSize;
 
-  DEBUG ((DEBUG_INFO, "%a: SetOffset to :%x for PdBridgeIndex:%d\n", __FUNCTION__, NvmOffset, PdBridgeIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_SET_OFFSET_INDEX, NvmOffset, (UINT32) PdBridgeIndex);
 
   SetOffsetCmdData.Reserved1 = 0;
   SetOffsetCmdData.NvmOffset = NvmOffset;
@@ -116,11 +120,11 @@ NvmSetOffset (
 
   Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_SET_OFFSET, FALSE, (UINT8 *) &SetOffsetCmdData, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_NVM_SET_OFFSET, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_SET_OFFSET_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_NVM_SET_OFFSET, (UINT32) Status);
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "%a: SetOffset to :%x for PdBridgeIndex:%d successfully\n", __FUNCTION__, NvmOffset, PdBridgeIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_SET_OFFSET_SUCCESS, NvmOffset, (UINT32) PdBridgeIndex);
 
   return EFI_SUCCESS;
 }
@@ -152,12 +156,12 @@ NvmWrite (
   UINT32      DataSize;
 
   if (Buffer == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a: Buffer is NULL\n", __FUNCTION__));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_NULL, 0, 0);
     return EFI_INVALID_PARAMETER;
   }
 
   if (BufferSize > 32) {
-    DEBUG ((DEBUG_ERROR, "%a: BufferSize is larger than 32\n", __FUNCTION__));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER, 0, 0);
     return EFI_INVALID_PARAMETER;
   }
 
@@ -166,7 +170,7 @@ NvmWrite (
   DataSize = BufferSize;
   Status   = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_WRITE, FALSE, (UINT8 *) WriteData, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_NVM_WRITE, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_NVM_WRITE, (UINT32) Status);
     return Status;
   }
 
@@ -194,18 +198,18 @@ NvmAuthenticateWrite (
   UINT8       Data;
   UINT32      DataSize;
 
-  DEBUG ((DEBUG_INFO, "%a: Send NVM Authenticate Write command to PdBridgeIndex:%d\n", __FUNCTION__, PdBridgeIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_AUTH_CMD_INDEX, (UINT32) PdBridgeIndex, 0);
 
   Data     = 0;
   DataSize = sizeof (Data);
 
   Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_AUTH_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE, (UINT32) Status);
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "%a: Send NVM Authenticate Write command to PdBridgeIndex:%d successfully\n", __FUNCTION__, PdBridgeIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_AUTH_WRITE_CMD_SUCCESS, (UINT32) PdBridgeIndex, 0);
 
   return EFI_SUCCESS;
 }
@@ -232,18 +236,18 @@ NvmStallNvmAccess (
   UINT8       Data;
   UINT32      DataSize;
 
-  DEBUG ((DEBUG_INFO, "%a: Send Stall NVM Access command to PdBridgeIndex:%d\n", __FUNCTION__, PdBridgeIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_STALL_INDEX, (UINT32) PdBridgeIndex, 0);
 
   Data     = 0;
   DataSize = sizeof (Data);
 
   Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_STALL_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS, (UINT32) Status);
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "%a: Send Stall NVM Access command to PdBridgeIndex:%d successfully\n", __FUNCTION__, PdBridgeIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_STALL_CMD_SUCCESS, (UINT32) PdBridgeIndex, 0);
 
   return EFI_SUCCESS;
 }
@@ -270,18 +274,18 @@ NvmReset (
   UINT8       Data;
   UINT32      DataSize;
 
-  DEBUG ((DEBUG_INFO, "%a: Send NVM Reset command to PdBridgeIndex:%d\n", __FUNCTION__, PdBridgeIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_RESET_INDEX, (UINT32) PdBridgeIndex, 0);
 
   Data     = 0;
   DataSize = sizeof (Data);
 
   Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_RESET, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a: Execute Vendor command code :%x failed, Status:%r\n", __FUNCTION__, VENDOR_SPECIFIC_CMD_RESET, Status));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_RESET_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_RESET, (UINT32) Status);
     return Status;
   }
 
-  DEBUG ((DEBUG_INFO, "%a: Send NVM Reset command to PdBridgeIndex:%d successfully\n", __FUNCTION__, PdBridgeIndex));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_RESET_CMD_SUCCESS, (UINT32) PdBridgeIndex, 0);
   return EFI_SUCCESS;
 }
 
@@ -351,16 +355,16 @@ UpdatePdBridgeNvmFirmware (
   BufferPointer += ((*((UINT32 *)BufferPointer) & PD_BRIDGE_IMAGE_START_ADDRESS_MASK));
 
 
-  DEBUG ((DEBUG_INFO, "UpdatePdBridgeNvmFirmware START (0x%06x bytes to write):\n", ImageSize));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_START, (UINT32) ImageSize, 0);
 
   for (RecoveryCount = 0; RecoveryCount < PD_BRIDGE_TOTAL_NUM_OF_RECOVERIES_DURING_IMAGE_WRITE; RecoveryCount++) {
     Status = NvmSetOffset (This, PdBridgeIndex, PD_BRIDGE_NVM_OFFSET);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: NvmSetOffset failed, Status:%r\n", __FUNCTION__, Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_SET_OFFSET_FAIL, (UINT32) Status, 0);
       continue;
     }
 
-    DEBUG ((DEBUG_INFO, "The total data size to write is 0x%6x\n", ImageSize));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_TOTAL_SIZE, (UINT32) ImageSize, 0);
 
     for (Offset = 0; Offset < ImageSize; Offset += PD_BRIDGE_MAX_TO_WRITE) {
       if ((Progress != NULL) & (DisplayLength > 0) && ((Offset & 0xFF) == 0)) {
@@ -371,7 +375,7 @@ UpdatePdBridgeNvmFirmware (
       }
 
       if ((Offset % 3200) == 0) {
-        DEBUG ((DEBUG_INFO, "Written so far : 0x%05x bytes\n", Offset * 4));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_WRITTEN_SO_FAR, (UINT32) (Offset * 4), 0);
       }
 
       WriteLength = (ImageSize - Offset) >= PD_BRIDGE_MAX_TO_WRITE ? PD_BRIDGE_MAX_TO_WRITE :
@@ -379,22 +383,22 @@ UpdatePdBridgeNvmFirmware (
 
       Status = NvmWrite (This, PdBridgeIndex, (UINT8 *) (BufferPointer + Offset), WriteLength);
       if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "%a: NvmWrite failed, Status:%r\n", __FUNCTION__, Status));
+        CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_NVMWRITE_FAIL, (UINT32) Status, 0);
         break;
       }
     }
 
     if (!EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "Image write finished.\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_WRITE_FINISH, 0, 0);
       Status = EFI_SUCCESS;
       break;
     } else {
-      DEBUG ((DEBUG_ERROR, "Got an error while writing the image. As a recovery, starting again\n"));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_GOT_ERROR_RECOVERY, 0, 0);
     }
   }
 
   if (RecoveryCount >= PD_BRIDGE_TOTAL_NUM_OF_RECOVERIES_DURING_IMAGE_WRITE) {
-    DEBUG ((DEBUG_ERROR, "Image write wasn't successful due to a device error\n"));
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_DEV_ERROR, 0, 0);
     Status = EFI_DEVICE_ERROR;
     goto UpdateImageComplete;
   }
@@ -402,30 +406,30 @@ UpdatePdBridgeNvmFirmware (
   if (ShareFlashMode == SHARE_FLASH_MODE_ENABLE) {
     Status = NvmStallNvmAccess (This, PdBridgeIndex);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: NvmStallNvmAccess failed, Status:%r\n", __FUNCTION__, Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_STALLNVM_FAIL, (UINT32) Status, 0);
       return Status;
     }
 
     Status = NvmAuthenticateWrite (This, PdBridgeIndex);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: NvmAuthenticateWrite failed, Status:%r\n", __FUNCTION__, Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_AUTHWRITE_FAIL, (UINT32) Status, 0);
       return Status;
     }
 
     Status = NvmReset (This, PdBridgeIndex);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: NvmReset failed, Status:%r\n", __FUNCTION__, Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_NVMRESET_FAIL, (UINT32) Status, 0);
       return Status;
     }
   } else {
     Status = NvmAuthenticateWrite (This, PdBridgeIndex);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "%a: NvmAuthenticateWrite failed, Status:%r\n", __FUNCTION__, Status));
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_AUTHWRITE_FAIL, (UINT32) Status, 0);
       return Status;
     }
   }
 
-  DEBUG ((DEBUG_INFO, "%a: PD Bridge NVM firmware update and authentication success\n", __FUNCTION__));
+  CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_SUCCESS, 0, 0);
 
   Status = EFI_SUCCESS;
 
