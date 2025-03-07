@@ -1863,6 +1863,7 @@ IGpuIdleMedia (
   @param[in] Color   The attribute byte for text color (foreground/background).
 **/
 VOID
+EFIAPI
 SetChar (
   IN UINT16  X,
   IN UINT16  Y,
@@ -1891,7 +1892,8 @@ SetChar (
   is enabled by writing the appropriate value to port 0x3C5.
 
   @param[in]  Plane  The VGA plane to set (0-3).
-  @note This function assumes VGA mode 12h is active and VGA is enabled.
+
+  @note: This function assumes VGA mode 12h is active and VGA is enabled.
 **/
 VOID
 EFIAPI
@@ -1916,9 +1918,10 @@ SetVgaPlane (
   @param[in] Height  The height of the rectangle.
   @param[in] Color   The color of the rectangle (1 for filled, 0 for empty).
 
-  @note This function assumes VGA mode 12h is active and VGA is enabled.
+  @note: This function assumes VGA mode 12h is active and VGA is enabled.
 */
 VOID
+EFIAPI
 FillRectangle (
   IN UINT16  X,
   IN UINT16  Y,
@@ -1990,7 +1993,7 @@ FillRectangle (
   @param[in] VgaBuffer  Pointer to the buffer containing the VGA-compatible graphics data.
                         Ex: VgaPlanarImage200x58[4][58][25] for a 200x58 image.
 
-  @note This function assumes VGA Mode 12h is active and properly initialized.
+  @note: this API shouldn't be used in DXE Phase.
 **/
 VOID
 EFIAPI
@@ -2083,6 +2086,7 @@ VgaMode12DrawImage (
   @note This function assumes VGA Mode 12h is active and VGA is enabled.
 **/
 VOID
+EFIAPI
 VgaMode12DrawChar (
   UINT16  X,
   UINT16  Y,
@@ -2163,11 +2167,14 @@ VgaMode12DrawChar (
 
   This function is responsible for updating the progress bar displayed on the VGA screen.
   It ensures that the visual representation of the progress is accurately reflected based
-  on the current progress state.
+  on the current progress state. If the percentage is 0, the progress bar will be cleared.
 
   @param[in] Percentage  The percentage of the progress bar to fill (0-100).
+
+  @note: this API shouldn't be used in DXE Phase.
 **/
 VOID
+EFIAPI
 UpdateProgressBar (
   IN UINT8  Percentage
   )
@@ -2177,6 +2184,8 @@ UpdateProgressBar (
   BOOLEAN        IsMode3;
   UINT8          MaxColumns;
   UINT16         FilledWidth;
+  UINT8          Color;
+  CHAR8          Char;
 
   //
   // Ensure the percentage is within the valid range (0-100).
@@ -2211,6 +2220,18 @@ UpdateProgressBar (
     return; // Exit if the VGA display configuration is invalid
   }
 
+  Color = VGA_COLOR_WHITE;
+  Char  = SOLID_BLOCK_CHAR;
+
+  //
+  // Clear Progress Bar if Percentage is 0
+  //
+  if (Percentage == 0) {
+    Color      = VGA_COLOR_BLACK;
+    Char       = ' ';
+    Percentage = 100;
+  }
+
   //
   // Print the progress bar.
   //
@@ -2224,7 +2245,7 @@ UpdateProgressBar (
       // Set each character in the progress bar to a solid block character with white color.
       // Display the progress bar in the 2nd line from the bottom of the screen.
       //
-      SetChar (Index, VGA_LINES - 2, SOLID_BLOCK_CHAR, VGA_COLOR_WHITE);
+      SetChar (Index, VGA_LINES - 2, Char, Color);
     }
   } else {
     //
@@ -2236,7 +2257,141 @@ UpdateProgressBar (
     // Considering a line size of 16 pixels, we will have 30 lines (480 / 16).
     // Display the progress bar in the 2nd line from the bottom of the screen.
     //
-    FillRectangle (0, VGA_MODE12_HEIGHT - (2 * VGA_MODE12_PROGRESS_BAR_HEIGHT), FilledWidth, VGA_MODE12_PROGRESS_BAR_HEIGHT, VGA_COLOR_WHITE);
+    FillRectangle (0, VGA_MODE12_HEIGHT - (2 * VGA_MODE12_PROGRESS_BAR_HEIGHT), FilledWidth, VGA_MODE12_PROGRESS_BAR_HEIGHT, Color);
+  }
+}
+
+/**
+  Draw a string on the screen in VGA Mode 3.
+
+  This function draws a string on the screen in VGA Mode 3 (80x25 text mode).
+  It processes the string, handles new line characters, and aligns the text
+  based on the specified alignment (left, right, center).
+
+  @param[in] String     The string to display.
+  @param[in] Alignment  The alignment of the text (0 for left, 1 for center, 2 for right).
+
+  @note: this API shouldn't be used in DXE Phase.
+**/
+VOID
+EFIAPI
+WriteTextModeString (
+  IN CHAR8  *String,
+  IN UINT8  Alignment
+  )
+{
+  UINT16         X;
+  UINT16         Y;
+  UINT16         Length;
+  UINT16         LineCount;
+  CHAR8          *LineStart;
+  CHAR8          *NewLine;
+  CHAR8          Buffer[256];
+  IGPU_DATA_HOB  *IGpuDataHob;
+
+  //
+  // Check if the input string is NULL
+  //
+  if (String == NULL) {
+    return;
+  }
+
+  //
+  // Retrieve the IGPU data HOB to determine the VGA display configuration
+  //
+  IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob == NULL) {
+    return; // Exit if the IGPU data HOB is not found
+  }
+
+  //
+  // Exit if the VGA display configuration is not Mode 3
+  //
+  if (!IS_VGA_MODE3_ENABLED (IGpuDataHob->VgaDisplayConfig)) {
+    return;
+  }
+
+  //
+  // Calculate the number of lines in the string
+  //
+  LineCount = 0;
+  LineStart = String;
+  while (*LineStart != '\0') {
+    //
+    // Find the next newline character
+    //
+    NewLine = AsciiStrStr (LineStart, "\n");
+    if (NewLine != NULL) {
+      //
+      // Move to the character after the newline
+      //
+      LineStart = NewLine + 1;
+    } else {
+      //
+      // Move to the end of the string
+      //
+      LineStart += AsciiStrLen (LineStart);
+    }
+
+    //
+    // Increment the line count
+    //
+    LineCount++;
+  }
+
+  //
+  // Calculate the starting Y position to center the text vertically
+  //
+  Y = (VGA_LINES - LineCount) / 2;
+
+  //
+  // Reset LineStart to the beginning of the string
+  //
+  LineStart = String;
+  while (*LineStart != '\0' && Y < VGA_LINES) {
+    //
+    // Find the next newline character
+    //
+    NewLine = AsciiStrStr (LineStart, "\n");
+    if (NewLine != NULL) {
+      Length = (UINT16)(NewLine - LineStart);                     // Calculate the length of the line
+      AsciiStrnCpyS (Buffer, sizeof (Buffer), LineStart, Length); // Copy the line to the buffer
+      Buffer[Length] = '\0';                                      // Null-terminate the buffer
+      LineStart      = NewLine + 1;                               // Move to the character after the newline
+    } else {
+      Length = (UINT16)AsciiStrLen (LineStart);                   // Calculate the length of the remaining string
+      AsciiStrnCpyS (Buffer, sizeof (Buffer), LineStart, Length); // Copy the remaining string to the buffer
+      Buffer[Length] = '\0';                                      // Null-terminate the buffer
+      LineStart     += Length;                                    // Move to the end of the string
+    }
+
+    //
+    // Determine the starting X position based on the alignment
+    //
+    switch (Alignment) {
+      case 1: // Center
+        X = (VGA_COLUMNS - Length) / 2;
+        break;
+      case 2: // Right
+        X = VGA_COLUMNS - Length;
+        break;
+      case 0: // Left
+      default:
+        X = 0;
+        break;
+    }
+
+    //
+    //
+    // Draw the characters on the screen
+    for (UINT16 Index = 0; Index < Length && X + Index < VGA_COLUMNS; Index++) {
+      SetChar (X + Index, Y, Buffer[Index], WHITE_ON_BLACK);
+    }
+
+    //
+    // Move to the next line
+    //
+    Y++;
   }
 }
 
@@ -2247,8 +2402,11 @@ UpdateProgressBar (
   Mode 3 (80x25 text mode) or Mode 12 (640x480 graphics mode with 16 colors),
   it clears the display by setting all memory locations to zero, effectively
   resetting the display to a blank state (black background).
+
+  @note: this API shouldn't be used in DXE Phase.
 **/
 VOID
+EFIAPI
 ClearVgaDisplay (
   VOID
   )

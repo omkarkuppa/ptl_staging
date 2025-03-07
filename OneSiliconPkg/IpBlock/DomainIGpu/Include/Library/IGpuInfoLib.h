@@ -574,11 +574,14 @@ IGpuIdleMedia (
 
   This function is responsible for updating the progress bar displayed on the VGA screen.
   It ensures that the visual representation of the progress is accurately reflected based
-  on the current progress state.
+  on the current progress state. If the percentage is 0, the progress bar will be cleared.
 
   @param[in] Percentage  The percentage of the progress bar to fill (0-100).
+
+  @note: this API shouldn't be used in DXE Phase.
 **/
 VOID
+EFIAPI
 UpdateProgressBar (
   IN UINT8  Percentage
   );
@@ -590,8 +593,11 @@ UpdateProgressBar (
   Mode 3 (80x25 text mode) or Mode 12 (640x480 graphics mode with 16 colors),
   it clears the display by setting all memory locations to zero, effectively
   resetting the display to a blank state (black background).
+
+  @note: this API shouldn't be used in DXE Phase.
 **/
 VOID
+EFIAPI
 ClearVgaDisplay (
   VOID
   );
@@ -608,7 +614,7 @@ ClearVgaDisplay (
   @param[in] Height     The height of the image in pixels.
   @param[in] VgaBuffer  Pointer to the buffer containing the VGA-compatible graphics data.
 
-  @note This function assumes VGA Mode 12h is active and properly initialized.
+  @note: this API shouldn't be used in DXE Phase.
 **/
 VOID
 EFIAPI
@@ -618,6 +624,25 @@ VgaMode12DrawImage (
   IN UINT32      Width,
   IN UINT32      Height,
   IN const VOID  *VgaBuffer
+  );
+
+/**
+  Draw a string on the screen in VGA Mode 3.
+
+  This function draws a string on the screen in VGA Mode 3 (80x25 text mode).
+  It processes the string, handles new line characters, and aligns the text
+  based on the specified alignment (left, right, center).
+
+  @param[in] String     The string to display.
+  @param[in] Alignment  The alignment of the text (0 for left, 1 for center, 2 for right).
+
+  @note: this API shouldn't be used in DXE Phase.
+**/
+VOID
+EFIAPI
+WriteTextModeString (
+  IN CHAR8  *String,
+  IN UINT8  Alignment
   );
 
 #endif // __IGPU_INFO_LIB_H__

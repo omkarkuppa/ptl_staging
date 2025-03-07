@@ -315,7 +315,7 @@ IGpuDisplayInitPreMem (
 
       String = IGpuPreMemConfig->VgaMessage;
       if (IS_VGA_MODE3_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
-        GraphicsPreMemPpi->GraphicsPreMemPpiVgaWrite (VGA_TEXT_CENTER, 12, String);
+        WriteTextModeString (String, VGA_TEXT_CENTER);
       } else if (IS_VGA_MODE12_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
         if ((IGpuPreMemConfig->Mode12Info.LogoPixelWidth != 0) && (IGpuPreMemConfig->Mode12Info.LogoPixelHeight != 0) && (IGpuPreMemConfig->Mode12Info.VgaMode12ImagePtr != NULL)) {
           VgaMode12DrawImage (IGpuPreMemConfig->Mode12Info.LogoXPosition, IGpuPreMemConfig->Mode12Info.LogoYPosition, IGpuPreMemConfig->Mode12Info.LogoPixelWidth, IGpuPreMemConfig->Mode12Info.LogoPixelHeight, (VOID *)IGpuPreMemConfig->Mode12Info.VgaMode12ImagePtr);
@@ -462,6 +462,7 @@ IGpuCallPpiAndFillFrameBuffer (
   EFI_PEI_GRAPHICS_INFO_HOB          *PlatformGraphicsOutput;
   EFI_PEI_GRAPHICS_DEVICE_INFO_HOB   *IGpuDeviceInfoHob;
   EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE  *Mode = NULL;
+  IGPU_DATA_HOB                      *IGpuDataHob;
 
   DEBUG ((DEBUG_INFO, "%a Begin\n", __FUNCTION__));
 
@@ -473,6 +474,17 @@ IGpuCallPpiAndFillFrameBuffer (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_WARN, "Failed to locate Ppi GraphicsPpiInit and GraphicsPpiGetMode. \n"));
     return Status;
+  }
+
+  //
+  // Retrieve the IGPU data HOB to update the VGA display configuration
+  //
+  IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+  if (IGpuDataHob != NULL) {
+    //
+    // Disable the VGA in Hob
+    //
+    IGpuDataHob->VgaDisplayConfig = VGA_DISPLAY_DISABLED;
   }
 
   ///

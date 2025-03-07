@@ -41,12 +41,23 @@
 #define DDI_DEVICE_NUMBER  4
 #define MAX_BCLM_ENTRIES   30
 
+//
+// BIT 0 : VgaInitControl to Enable or Disable
+//
 #define VGA_DISPLAY_DISABLED  (0)
 #define VGA_DISPLAY_ENABLED   (BIT0)
-#define VGA_MODE3_SUPPORT     (0)
-#define VGA_MODE12_SUPPORT    (BIT1)
-#define VGA_EXIT_SUPPORT      (0)
-#define VGA_NO_EXIT_SUPPORT   (BIT2)
+
+//
+// BIT 1 : VgaInitControl for Mode 3 or Mode 12 Support
+//
+#define VGA_MODE3_SUPPORT   (0)
+#define VGA_MODE12_SUPPORT  (BIT1)
+
+//
+// BIT 2 : VgaInitControl for Extended SOL Support
+//
+#define VGA_EXIT_SUPPORT     (0)        // Extended SOL UnSupported
+#define VGA_NO_EXIT_SUPPORT  (BIT2)     // Extended SOL Supported
 
 #define IS_VGA_ENABLED(data)              (((data) & BIT0) == VGA_DISPLAY_ENABLED)
 #define IS_VGA_MODE3_ENABLED(data)        (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_MODE3_SUPPORT))
