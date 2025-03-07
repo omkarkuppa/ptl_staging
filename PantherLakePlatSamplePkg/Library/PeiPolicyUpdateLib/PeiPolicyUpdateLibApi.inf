@@ -442,4 +442,3 @@
   gGopConfigDriverHobGuid                       ## CONSUMES
   gTishDataHobGuid                              ## CONSUMES
   gCnviPreMemConfigGuid                         ## CONSUMES
-  gUefiIntelCnvWlanVariablesGuid                ## CONSUMES

@@ -127,19 +127,6 @@ typedef struct {
   UINT32               CnvDriveStrengthBriRsp;  // Defines the drive strength BRI response.
 } CNV_UEFI_VAR_DSBR;
 
-//
-// Definition for WWan Coex platform init config (WCPI)
-//
-#define CNV_UEFI_WCPI_VAR_NAME        L"UefiCnvCommonWCPI"
-#define CNV_UEFI_WCPI_VAR_REVISION    1
-
-typedef struct {
-  CNV_UEFI_VAR_HEADER  Header;
-  UINT8                WwanCoexInit;  // WWan Coex platform init config
-  UINT8                Reserved1;
-  UINT8                Reserved2;
-} UEFI_CNV_VAR_WCPI;
-
 #pragma pack(pop)
 
 #endif //__CNV_VARIABLES_COMMON_H__
