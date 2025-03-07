@@ -1250,9 +1250,11 @@ typedef struct {
  structure revision and update below history table\n
   <b>Revision 1</b>:  - Initial version.
   <b>Revision 2</b>:  - Added CnviDdrRfim.
+  <b>Revision 3</b>:  - CI Fix.
+  <b>Revision 4</b>:  - Add MrcFailureOnUnsupportedDimm.
 **/
 
-#define SA_SETUP_REVISION   3
+#define SA_SETUP_REVISION   4
 
 typedef struct {
   UINT8   Revision;

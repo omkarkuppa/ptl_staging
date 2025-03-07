@@ -45,7 +45,7 @@
 ///
 typedef union {
   struct {
-    UINT64 MrcDone                     : 1;  // Bits 0:0
+    UINT64 Reserved0                   : 1;  // Bits 0:0
     UINT64 MRC_RUNNING                 : 1;  // Bits 1:1
     UINT64 MEM_BASICMEMORYTEST_FAIL    : 1;  // Bits 2:2
     UINT64 MrcDisableChannel           : 8;  // Bits 10:3
@@ -59,15 +59,8 @@ typedef union {
   UINT8  Data8[8];
 } M_PCU_CR_SSKPD_PCU_STRUCT;
 
-#define SSKPD_PCU_SKPD_MRC_DONE                 0x1ULL   // BIT0
 #define SSKPD_PCU_SKPD_MRC_RUNNING              0x2ULL   // BIT1
 #define SSKPD_PCU_SKPD_MEM_BASICMEMORYTEST_FAIL 0x4ULL   // BIT2
-
-#define PCU_CR_SSKPD_PCU_MRCDONE_OFF  (0)
-#define PCU_CR_SSKPD_PCU_MRCDONE_WID  (1)
-#define PCU_CR_SSKPD_PCU_MRCDONE_MSK  (0x1)
-#define PCU_CR_SSKPD_PCU_MRCDONE_MAX  (0x1)
-#define PCU_CR_SSKPD_PCU_MRCDONE_DEF  (0x1)
 
 #define PCIE_CR_OPIO_RX_DLL_GLOBAL3_DMIBAR_REG  (0xB1C)
 

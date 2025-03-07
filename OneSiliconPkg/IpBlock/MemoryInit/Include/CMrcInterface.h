@@ -81,6 +81,8 @@ typedef enum {
   mrMR40 = 40,
   mrMR41 = 41,
   mrMR42 = 42,
+  mrMR43 = 43,
+  mrMR44 = 44,
   mrMR45 = 45,
   mrMR46 = 46,
   mrMR48 = 48,
@@ -229,6 +231,8 @@ typedef enum {
   mrIndexMR39,
   mrIndexMR40,
   mrIndexMR41,
+  mrIndexMR43,
+  mrIndexMR44,
   mrIndexMR45,
   mrIndexMR46,
   mrIndexMR48,
@@ -569,6 +573,7 @@ typedef enum {
   OemEarlyReadDqDqs2D,      ///<  before Early Read Timing Centering 2D
   OemEarlyReadMprDqDqs2D,   ///<  before Early MPR Read Timing Centering 2D
   OemReadDqDqs,             ///<  before Read Timing Centering
+  OemDccDdr5ReadDca,        ///<  before Dram Dca Training
   OemDimmRonTraining,       ///<  before DIMM Ron Training
   OemTxDqsDccTraining,      ///<  before TxDqs DCC Training
   OemDimmODTTraining,       ///<  before DIMM ODT Training
@@ -657,8 +662,9 @@ typedef enum {
   OemDccPiSerializerCal,    ///< before DCC PI Seriallizer Calibration
   OemVccLvrAutoTrim,        ///< before Vcc LVR Auto Trim
   OemDccTlineClkCal,        ///< before Tline CLK calibration
-  OemQClkDcc,             ///< before QCLK DCC calibration
+  OemQClkDcc,               ///< before QCLK DCC calibration
   OemMrcDdr5RxXTalk,        ///< before Ddr5 Rx Cross-Talk Cancellation
+  OemMrcTxXTalk,            ///< before Tx Cross-Talk Cancellation
   OemMarginLimitCheck,      ///< before Margin Limit Check
   OemTestMtgRegAccess,      ///< before MrcTestMtgRegAccess
   OemShortMtgTest,          ///< before MrcShortMtgTest
@@ -1372,6 +1378,7 @@ typedef enum {
   DIMM_DISABLED,          ///< DIMM/rank Pair is disabled, regardless of presence.
   DIMM_PRESENT,           ///< There is a DIMM present in the slot/rank pair and it will be used.
   DIMM_NOT_PRESENT,       ///< There is no DIMM present in the slot/rank pair.
+  DIMM_NOT_SUPPORTED,     ///< There is a DIMM present, but its type it's not supported.
   MAX_DIMM_STATUS         ///< Delimiter
 } MrcDimmSts;
 
@@ -1735,6 +1742,8 @@ typedef struct {
   UINT8       Ddr5PdaMr3[MAX_BYTE_IN_DDR5_CHANNEL];    ///< DDR5 MR3 for per-DRAM
   UINT8       Ddr5PdaMr7[MAX_BYTE_IN_DDR5_CHANNEL];    ///< DDR5 MR7 for per-DRAM
   UINT8       Ddr5PdaCaOdtStrap[MAX_BYTE_IN_DDR5_CHANNEL];  ///< DDR5 MR32 CA ODT Strap per-DRAM
+  UINT8       Ddr5PdaMr43[MAX_BYTE_IN_DDR5_CHANNEL];   ///< DDR5 MR43 for per-DRAM
+  UINT8       Ddr5PdaMr44[MAX_BYTE_IN_DDR5_CHANNEL];   ///< DDR5 MR44 for per-DRAM
   UINT8       Ddr5PdaMr48[MAX_BYTE_IN_DDR5_CHANNEL];   ///< DDR5 MR48 for per-DRAM
   UINT8       Ddr5PdaMr129[MAX_BYTE_IN_DDR5_CHANNEL];  ///< DDR5 MR129 for per-DRAM DFE Tap1 Lower Byte DQ[0]
   UINT8       Ddr5PdaMr130[MAX_BYTE_IN_DDR5_CHANNEL];  ///< DDR5 MR130 for per-DRAM DFE Tap2 Lower Byte DQ[0]
@@ -1824,6 +1833,7 @@ typedef struct {
   BOOLEAN           Mr7PdaEnabled;                                                ///< Defines if MR7 (Write Leveling Half Step) is required as PDA for this channel.
   BOOLEAN           IsMr10PdaEnabled;                                             ///< Defines if MR10 (VrefDQ) is required as PDA for this channel.
   BOOLEAN           IsMr11PdaEnabled;                                             ///< Defines if MR11 (VrefCA) is required as PDA for this channel.
+  BOOLEAN           IsMrDcaPdaEnabled;                                            ///< Defines if MRs of Dca (Write Pattern) is required as PDA for this channel.
   BOOLEAN           IsMr48PdaEnabled;                                             ///< Defines if MR48 (Write Pattern) is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap1Enabled;                                         ///< Defines if MRs of DFE TAP1 is required as PDA for this channel.
   BOOLEAN           MrXPdaDfeTap2Enabled;                                         ///< Defines if MRs of DFE TAP2 is required as PDA for this channel.
@@ -2272,9 +2282,9 @@ typedef struct {
   BOOLEAN           IsMcMbA0;                       ///< Identifies that the current CPU stepping is Mobile A0 (MC)
   BOOLEAN           IsDdrIoMbA0;                    ///< Identifies that the current CPU stepping is Mobile A0 (PHY)
   BOOLEAN           IsMcMbB0;                       ///< Identifies that the current CPU stepping is Mobile B0 (MC)
-  BOOLEAN           IsDdrIoMbB0;                    ///< Identifies that the current CPU stepping is Mobile B0 (PHY)
+  BOOLEAN           IsDdrIoB0;                    ///< Identifies that the current CPU stepping is Mobile B0 (PHY)
   BOOLEAN           IsMcDtA0;                       ///< Identified that the current CPU stepping is Desktop A0 (MC)
-  BOOLEAN           IsDdrIoDtA0;                    ///< Identified that the current CPU stepping is Desktop A0 (PHY)
+  BOOLEAN           IsDdrIoA0;                    ///< Identified that the current CPU stepping is Desktop A0 (PHY)
   BOOLEAN           IsDdrIoTc;                      ///< Identified that the current CPU is a test chip (PHY)
   BOOLEAN           NonTargetOdtEn;                 ///< Enables Non-Target ODT for LPDDR5
   BOOLEAN           TxtClean;                       ///< TRUE if we require to perform TxtClean when Trusted eXecution Technology flow enabled.
@@ -2316,8 +2326,9 @@ typedef struct {
   BOOLEAN           FourToggleReadPreamble;        ///< Enable or disable Four Toggle Read Preamble
   BOOLEAN           PprEnable;                     ///< Effective PPR configuration for the current boot
   BOOLEAN           SenseAtRxDll;                  ///< Boolean variable to enable or disable RxDqsDcc SenseAtRxDll
+  BOOLEAN           IbeccInitRangesSkip;           ///< TRUE: Force Skip IbeccInitRanges (CTE param to speed up runs)
   UINT8             LastIbeccOperationMode;        ///< Input from BIOS indicating the last IBECC operation mode. Valid only on warm boot.
-  UINT8             Reserved[4];                   ///< Reserved to ensure config block size is a multiple of DWORDs
+  UINT8             Reserved[3];                   ///< Reserved to ensure config block size is a multiple of DWORDs
   UINT32            SaMemCfgCrcNoOffsetKnobs;      ///< The CRC32 of the SA memory configuration without OffsetKnobs.
   /**
    Sets the serial debug message level\n

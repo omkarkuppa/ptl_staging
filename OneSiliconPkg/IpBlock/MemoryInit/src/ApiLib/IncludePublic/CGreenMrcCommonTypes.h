@@ -77,7 +77,7 @@ typedef enum {
   NomOdt,                       ///< Resistance setting within a set of possible resistances, which may be a different set of values per product. Indexed by integer values.
   ParkOdt,                      ///< Resistance setting within a set of possible resistances, which may be a different set of values per product. Indexed by integer values.
   TxDqTco,                      ///< TCO Comp Code for DQ
-  TxXtalk,                      ///<
+  TxXtalk,                      ///< Capacitance value 0 - 15 for the Tx Xtalk Cancelation training 
   DqsEqLegs,                    ///<
   DqsEqRes,                     ///<
   DqsEqCap,                     ///<
@@ -302,6 +302,7 @@ typedef enum {
   GsmIocDbiEnable,
   GsmIocDbiMode,
   GsmIocForceRxAmpOn,
+  GsmIocDisRxSalOffWhenDrvEnHi,
   GsmIocForceRxOnDqs,
   GsmIocForceRxOnDqsMux,
   GsmIocForceRxOnDq,

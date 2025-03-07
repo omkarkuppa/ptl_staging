@@ -120,7 +120,8 @@ MrcPrintDdrIoCompVddq (
 MrcStatus
 WrappedForceRcomp (
   IN OUT MrcParameters *const MrcData,
-  IN     COMP_CYCLE_TYPE      CompType
+  IN     COMP_CYCLE_TYPE      CompType,
+  IN     BOOLEAN              CheckAllCompDone
   )
 {
   const MRC_FUNCTION  *MrcCall;
@@ -140,7 +141,7 @@ WrappedForceRcomp (
     IsAllCompDone = (PhyPmStatus0.Bits.AllCompDone == DDRPHY_MISC_SAUG_CR_PHYPMSTATUS0_AllCompDone_MAX);
   } while (!IsAllCompDone && (MrcCall->MrcGetCpuTime () < Timeout));
 
-  if (!IsAllCompDone) {
+  if (CheckAllCompDone && !IsAllCompDone) {
     return mrcDeviceBusy;
   }
 
@@ -197,8 +198,35 @@ ForceRcomp (
   MRC_STATISTIC Timer = MRC_FORCE_RCOMP_TIME;
 
   MrcStatsStartTimer (MrcData, Timer);
-  Status = WrappedForceRcomp (MrcData, CompType);
+  Status = WrappedForceRcomp (MrcData, CompType, TRUE);
   MrcStatsEndTimer (MrcData, Timer);
+
+  return Status;
+}
+
+/**
+  Wrap Force Comp and Polls with stats timer to record time spent in the routine.
+
+  @param[in, out] MrcData - Include all MRC global data.
+  @param[in]     CompType - Enum of Comp being forced
+
+  @retval mrcSuccess Poll returns expected
+  @retval mrcDeviceBusy did not return expected.
+**/
+MrcStatus
+ForceRcompNotCheckAllCompDone (
+  IN OUT MrcParameters *const MrcData,
+  IN     COMP_CYCLE_TYPE      CompType
+  )
+{
+  MrcStatus Status;
+
+  MRC_STATISTIC Timer = MRC_FORCE_RCOMP_TIME;
+  
+  MrcStatsStartTimer (MrcData, Timer);
+  Status = WrappedForceRcomp (MrcData, CompType, FALSE);
+  MrcStatsEndTimer (MrcData, Timer);
+  MrcWait (MrcData, 27 * MRC_TIMER_1NS);
 
   return Status;
 }

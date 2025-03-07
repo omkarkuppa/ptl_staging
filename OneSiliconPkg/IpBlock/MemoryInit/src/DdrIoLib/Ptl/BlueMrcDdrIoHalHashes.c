@@ -607,6 +607,10 @@ MrcGetDdrIoCfgHash (
       HashPtr->Data = DATA0CH0_CR_DDRCRDATACONTROL0_ForceRxOn_HSH;
       break;
 
+    case GsmIocDisRxSalOffWhenDrvEnHi:
+      HashPtr->Data = DATA0CH0_CR_DDRCRDATACONTROL0_DisRxSalOffWhenDrvEnHi_HSH;
+      break;
+
     case GsmIocDataInvertNibble:
       HashPtr->Data = DATA0CH0_CR_DDRCRDATACONTROL5_DataInvertNibble_HSH;
       break;

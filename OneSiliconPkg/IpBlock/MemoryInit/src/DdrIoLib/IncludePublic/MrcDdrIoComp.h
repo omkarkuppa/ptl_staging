@@ -103,6 +103,21 @@ ForceRcomp (
   );
 
 /**
+  Wrap Force Comp and Polls with stats timer to record time spent in the routine.
+
+  @param[in, out] MrcData - Include all MRC global data.
+  @param[in]     CompType - Enum of Comp being forced
+
+  @retval mrcSuccess Poll returns expected
+  @retval mrcDeviceBusy did not return expected.
+**/
+MrcStatus
+ForceRcompNotCheckAllCompDone (
+  IN OUT MrcParameters *const MrcData,
+  IN     COMP_CYCLE_TYPE      CompType
+  );
+
+/**
   The function preforms a frequency switch Rcomp
 
   @param[in, out] MrcData - MRC global data.

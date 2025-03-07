@@ -184,96 +184,6 @@ MrcDataInvertNibble (
 }
 
 /**
-  This function sets DDRIO IP Version, Derivative, Segment, Stepping based on DDRPHY_MISC_SAUG_CR_IPVERSION_REG.
-
-  @param[in]  MrcData     - Include all MRC global data.
-
-  @retval Nothing.
-**/
-MrcStatus
-MrcSetupDdrIoIpInfo (
-  OUT MrcParameters *const MrcData
-  )
-{
-  MrcInput             *Inputs;
-  MrcDebug             *Debug;
-  MrcStatus            Status;
-  MrcDdrIoIpVersion    *IpVersion;
-  DDRPHY_MISC_SAUG_CR_IPVERSION_STRUCT   DdrMiscIpVersion;
-  const char           *StepStr;
-
-  Inputs          = &MrcData->Inputs;
-  Debug           = &MrcData->Outputs.Debug;
-  IpVersion       = &Inputs->DdrIoIpVersion;
-  Status          = mrcSuccess;
-  StepStr         = NULL;
-
-  DdrMiscIpVersion.Data = MrcReadCR (MrcData, DDRPHY_MISC_SAUG_CR_IPVERSION_REG);
-  IpVersion->Bits.Version    = (UINT8)DdrMiscIpVersion.Bits.Version;
-  IpVersion->Bits.Derivative = (UINT8)DdrMiscIpVersion.Bits.Derivative;
-  IpVersion->Bits.Segment    = (UINT8)DdrMiscIpVersion.Bits.Segment;
-  IpVersion->Bits.Stepping   = (UINT8)DdrMiscIpVersion.Bits.Subversion;
-
-  if (IpVersion->Bits.Stepping > ipStepLast) {
-    IpVersion->Bits.Stepping = ipStepLast;
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "\n%s DDRIO IP: %s = %d\n", gWarnString, gMrcIpSteppingStr, ipStepLast);
-  }
-
-  if (IpVersion->Bits.Version != ipVerDdrIoLnlPtl) {
-      MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "\n%s DDRIO IP: %s\n", gWarnString, gMrcIpVersionStr);
-      Status  = mrcFail;
-  }
-
-  if (Inputs->ExtInputs.Ptr->SimicsFlag && IpVersion->Bits.Derivative != ipDerivativeWcl) {
-    StepStr = "A0";
-    Inputs->IsDdrIoMbA0 = TRUE;
-    IpVersion->Bits.Derivative = ipDerivativePtl;
-  } else {
-    switch (IpVersion->Bits.Segment) {
-      case IpSegmentMobile:
-        Inputs->IsDdrIoUlxUlt = TRUE;
-        switch (IpVersion->Bits.Stepping) {
-          case ipStepB0:
-            StepStr = "B0";
-            Inputs->IsDdrIoMbB0 = TRUE;
-            break;
-
-          default:
-          case ipStepA0:
-            StepStr = "A0";
-            Inputs->IsDdrIoMbA0 = TRUE;
-            break;
-        }
-        break;
-
-      default:
-        MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "\n%s DDRIO IP: %s\n", gWarnString, gMrcIpSegmentStr);
-        Status  = mrcFail;
-        break;
-    }
-  }
-
-  if (IpVersion->Bits.Derivative == ipDerivativeWcl) {
-    Inputs->IsDdrphyx64 = TRUE;
-  }
-
-  if (Status == mrcSuccess) {
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s\n", Inputs->IsDdrphyx64 ? "PantherLake" : "PantherLake" );
-    MRC_DEBUG_MSG (
-      Debug,
-      MSG_LEVEL_NOTE,
-      "\nPHY IP Version: %d.%d.%d %s\n",
-      IpVersion->Bits.Derivative,
-      IpVersion->Bits.Segment,
-      IpVersion->Bits.Version,
-      (StepStr == NULL) ? "Unknown" : StepStr
-    );
-  }
-
-  return Status;
-}
-
-/**
   This function programs the WorkPoint CR, including enforcing any fuse limits to avoid HW from NACKing PLLLock Requests.
 
   @param[in, out] MrcData - MRC global data.
@@ -402,23 +312,6 @@ MrcGetEnDqsOdtParkModeValue (
 {
   return DQS_PARK_DIFF_LOW_WHEN_LPM0_NO_ODT_NO_DRVEN_TXANALOGEN;
 }
-
-
-/**
-  This function programs the current post code to PHYPMSTATUS1 register field.
-
-  @param[in]  MrcData  - Include all MRC global data.
-  @param[in]  PostCode - MRC post code to be programmed
-
-**/
-VOID
-MrcProgramPostCode (
-  IN MrcParameters* const MrcData,
-  IN INT64          PostCode
-  )
-{
-}
-
 
 /**
   This function is to set up the margin parameters for RdV.
@@ -736,56 +629,6 @@ MrcCalcRatio33 (
 }
 
 /**
-  This function resets VctlInit with value 0
-
-  @param[in, out] MrcData - Pointer to MRC global data.
-**/
-VOID
-ResetVctlInit (
-  IN OUT MrcParameters *const MrcData
-  )
-{
-  MrcOutput    *Outputs;
-  MrcFrequency DdrFrequency;
-  UINT32       ChIdx;
-  UINT32       DataIdx;
-  UINT8        Index;
-  UINT32       Offset;
-  DATA0CH0_CR_DDRCRDLLCONTROL0_STRUCT            DllControl0;
-  DATASHARED_CR_DDRCRTXDLLCONTROL0_STRUCT        TxDllControl0;
-  DDRCCC_SHARED0_CR_DDRCRTXDLLCONTROL0_STRUCT    DdrCccTxDllControl0;
-
-  Outputs = &MrcData->Outputs;
-  DdrFrequency = Outputs->Frequency;
-
-  for (DataIdx = 0; DataIdx < MRC_DATA_MOBILE_NUM; DataIdx++) {
-    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, DataIdx, MRC_IGNORE_ARG))) {
-      continue;
-    }
-    for (ChIdx = 0; ChIdx < MRC_DATA_CH_NUM; ChIdx++) {
-      Offset = MrcGetDataOffset (MrcData, DATA0CH0_CR_DDRCRDLLCONTROL0_REG, MRC_IGNORE_ARG, ChIdx, DataIdx);
-      DllControl0.Data = MrcReadCR (MrcData, Offset);
-      DllControl0.Bits.VctlInit = 0;
-      MrcWriteCR (MrcData, Offset, DllControl0.Data);
-    }
-    Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRTXDLLCONTROL0_REG, DDRDATA_SHARED1_CR_DDRCRTXDLLCONTROL0_REG, DataIdx);
-    TxDllControl0.Data = MrcReadCR (MrcData, Offset);
-    TxDllControl0.Bits.VctlInit = 0;
-    MrcWriteCR (MrcData, Offset, TxDllControl0.Data);
-  }
-
-  for (Index = 0; Index < MRC_CCC_SHARED_MOBILE_NUM; Index++) {
-    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
-      continue;
-    }
-    Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRTXDLLCONTROL0_REG, DDRCCC_SHARED1_CR_DDRCRTXDLLCONTROL0_REG, Index);
-    DdrCccTxDllControl0.Data = MrcReadCR (MrcData, Offset);
-    DdrCccTxDllControl0.Bits.VctlInit = (DdrFrequency < f3200) ? 0 : ((DdrFrequency < f3600) ? 1 : ((DdrFrequency < f4400) ? 2 : 3));
-    MrcWriteCR (MrcData, Offset, DdrCccTxDllControl0.Data);
-  }
-}
-
-/**
   This function updates the DLL VCDL DCC Code
 
   @param[in, out] MrcData               - Pointer to MRC global data.
@@ -1014,12 +857,14 @@ MrcDdrIoInitRefPiFsmCtl (
   UINT16    MaxWidth;
   UINT32    PrintLevel;
   BOOLEAN   IsGear4;
+  BOOLEAN   IsCccGear4;
   DATA0CH0_CR_REFPIFSMCONTROL_STRUCT  RefPiFsmControl;
   MrcInput  *Inputs;
 
   Inputs     = &MrcData->Inputs;
   Debug      = &MrcData->Outputs.Debug;
   IsGear4    = MrcData->Outputs.GearMode;
+  IsCccGear4 = (BOOLEAN) MrcData->Inputs.ExtInputs.Ptr->CccHalfFrequency;
   PrintLevel = PrintTask ? MSG_LEVEL_ALGO : MSG_LEVEL_NONE;
   if (Inputs->IsDdrIoMbA0) {
     MinWidth = 4;
@@ -1047,7 +892,7 @@ MrcDdrIoInitRefPiFsmCtl (
 
     case MrcRefPi2XOverAlign:                   // RefPi4XOver Alignment
       RefPiFsmControl.Bits.MinVal = 0;
-      RefPiFsmControl.Bits.MaxVal = 128 + (2 * MinWidth);
+      RefPiFsmControl.Bits.MaxVal = (IsCccGear4 ? 256 : 128) + (2 * MinWidth);
       RefPiFsmControl.Bits.Param = 2;           // configure FSM to align RefPi4XOver to Refpi
       RefPiFsmControl.Bits.WriteValParam = 1;   // Automatically update Refpi4XOver field
       MRC_DEBUG_MSG (Debug, PrintLevel, " > Align RefPi4XOver to Refpi");
@@ -1180,41 +1025,6 @@ MrcSetXSyncDelay (
 }
 
 /**
-  This function updates CBMix and CBMux based on the data rate
-
-  @param[in, out] MrcData - MRC global data.
-**/
-VOID
-CbMixMuxConfig (
-  IN OUT MrcParameters *const MrcData
-  )
-{
-  MrcOutput         *Outputs;
-  MrcFrequency      Frequency;
-  UINT32            CbMux;
-  UINT32            CbMix;
-  DATASHARED_DDRTXDLL_CR_PICODELUT1_STRUCT   PiCodeLUT1;
-  DATASHARED_DDRTXDLL_CR_PICODELUT2_STRUCT   PiCodeLUT2;
-
-  Outputs   = &MrcData->Outputs;
-  Frequency = Outputs->Frequency;
-
-  CbMux = (Frequency <= f2000) ? 0xA : ((Frequency <= f3300) ? 0x8 : 0);
-  CbMix = (Frequency <= f2000) ? 0x3 : ((Frequency <= f3300) ? 0x1 : 0);
-
-  PiCodeLUT1.Data = MrcReadCR (MrcData, DATASHARED_DDRTXDLL_CR_PICODELUT1_REG);
-  PiCodeLUT2.Data = MrcReadCR (MrcData, DATASHARED_DDRTXDLL_CR_PICODELUT2_REG);
-  PiCodeLUT1.Bits.CbMix = CbMix;
-  PiCodeLUT2.Bits.CbMux = CbMux;
-
-  MrcWriteCrMulticast (MrcData, DATASHARED_DDRTXDLL_CR_PICODELUT1_REG, PiCodeLUT1.Data);
-  MrcWriteCrMulticast (MrcData, DATASHARED_DDRRXDLL_CR_PICODELUT1_REG, PiCodeLUT1.Data);
-
-  MrcWriteCrMulticast (MrcData, DATASHARED_DDRTXDLL_CR_PICODELUT2_REG, PiCodeLUT2.Data);
-  MrcWriteCrMulticast (MrcData, DATASHARED_DDRRXDLL_CR_PICODELUT2_REG, PiCodeLUT2.Data);
-}
-
-/**
   This function program OffsetCalCnt.
 
   @param[in, out] MrcData - MRC global data.
@@ -1278,7 +1088,7 @@ MrcFinalizeRefPiFsmControl (
 
   Status = mrcSuccess;
 
-  RefPiFsmCtl.Data = MrcDdrIoInitRefPiFsmCtl(MrcData, MrcRefPiDefault, MRC_REFPI_DEFAULT, MRC_PRINT_CURRENT_TASK);   // Reset FsmControl for CCC and DATA partitions
+  RefPiFsmCtl.Data = MrcDdrIoInitRefPiFsmCtl (MrcData, MrcRefPiDefault, MRC_REFPI_DEFAULT, MRC_PRINT_CURRENT_TASK);   // Reset FsmControl for CCC and DATA partitions
   MrcWriteCrMulticast (MrcData, CCC_CR_REFPIFSMCONTROL_REG, RefPiFsmCtl.Data);
   MrcWriteCrMulticast (MrcData, DATA_CR_REFPIFSMCONTROL_REG, RefPiFsmCtl.Data);
 
@@ -1484,75 +1294,6 @@ MrcGetSetForceRxOn (
 }
 
 /**
-  Find initial Cben and BwSel values based on the current Frequency and Gear mode
-
-  @param[in]  MrcData   - Pointer to global MRC data.
-  @param[out] BwSel - The BW code based on gear and frequency
-  @param[out] Cben  - The CB code based on gear and frequency
-*/
-VOID
-MrcBwSelCbenFreqSet (
-  IN  MrcParameters *const MrcData,
-  OUT UINT32               *BwSel,
-  OUT UINT32               *Cben
-  )
-{
-  MrcInput            *Inputs;
-  MRC_EXT_INPUTS_TYPE *ExtInputs;
-  MrcFrequency        Frequency;
-
-  Inputs    = &MrcData->Inputs;
-  ExtInputs = Inputs->ExtInputs.Ptr;
-  Frequency = MrcData->Outputs.Frequency;
-
-  if (ExtInputs->CccHalfFrequency) {
-    if (Frequency <= f2267) {
-      *BwSel = 1;
-    } else if (Frequency <= f3000) {
-      *BwSel = 2;
-    } else if (Frequency <= f4400) {
-      *BwSel = 5;
-    } else if (Frequency <= f8533) {
-      *BwSel = 9;
-    } else {
-      *BwSel = 8;
-    }
-
-    if (Frequency < f6267) {
-      *Cben = 3;
-    } else if (Frequency <= f9200) {
-      *Cben = 2;
-    } else {
-      *Cben = 1;
-    }
-  } else {
-    if (Frequency <= f2267) {
-      *BwSel = 5;
-    } else if (Frequency <= f4267) {
-      *BwSel = 9;
-    } else if (Frequency <= f6133) {
-      *BwSel = 8;
-    } else if (Frequency <= f8533) {
-      *BwSel = 4;
-    } else {
-      *BwSel = 7;
-    }
-
-    if (Frequency <= f3067) {
-      *Cben = 3;
-    } else if (Frequency <= f4267) {
-      *Cben = 2;
-    } else if (Frequency <= f6133) {
-      *Cben = 1;
-    } else if (Frequency <= f9200) {
-      *Cben = 0;
-    } else {
-      *Cben = 3;
-    }
-  }
-}
-
-/**
   Configuring the bit channel_not_populated.
 
   @param[in] MrcData - Pointer to MRC global data
@@ -1563,4 +1304,48 @@ MrcSetChannelNotPopulated (
   MrcParameters * MrcData
 )
 {
+}
+
+/**
+  This function toggles the DLL Reset.
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] Value   - DLL Reset value
+**/
+VOID
+MrcToggleDllReset (
+  IN MrcParameters * const MrcData,
+  IN UINT32                Value
+  )
+{
+  UINT32     Offset;
+  UINT32     Index;
+  DATASHARED_CR_DDRCRDLLCONTROL1_STRUCT       DllControl1;
+  DATASHARED_CR_DDRCRTXDLLCONTROL1_STRUCT     DataTxDllControl1;
+  CCCSHARED_CR_DDRCRTXDLLCONTROL1_STRUCT      CccTxDllControl1;
+
+  // Issue DLL Reset
+  for (Index = 0; Index < MRC_CCC_SHARED_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
+    Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRTXDLLCONTROL1_REG, DDRCCC_SHARED1_CR_DDRCRTXDLLCONTROL1_REG, Index);
+    CccTxDllControl1.Data = MrcReadCR (MrcData, Offset);
+    CccTxDllControl1.Bits.ForceDLLReset = Value;
+    MrcWriteCR (MrcData, Offset, CccTxDllControl1.Data);
+  }
+  for (Index = 0; Index < MRC_DATA_SHARED_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
+    Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRTXDLLCONTROL1_REG, DDRDATA_SHARED1_CR_DDRCRTXDLLCONTROL1_REG, Index);
+    DataTxDllControl1.Data = MrcReadCR (MrcData, Offset);
+    DataTxDllControl1.Bits.ForceDLLReset = Value;
+    MrcWriteCR (MrcData, Offset, DataTxDllControl1.Data);
+
+    Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRDLLCONTROL1_REG, DDRDATA_SHARED1_CR_DDRCRDLLCONTROL1_REG, Index);
+    DllControl1.Data = MrcReadCR (MrcData, Offset);
+    DllControl1.Bits.ForceDLLReset = Value;
+    MrcWriteCR (MrcData, Offset, DllControl1.Data);
+  }
 }

@@ -282,7 +282,8 @@ typedef struct {
   UINT8  TxStepSizeLB               : 2;  ///<            Bit 4-5  Control Tx step size for Dq Loopback test
   UINT8  ReservedBitsLB             : 2;  ///<            Bit 5-7  Reserved
 
-  UINT8   Reserved328[60];                ///< Offset 328 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (388) = 416 should be a multiple of 8 bytes.
+  UINT8   MrcFailureOnUnsupportedDimm;    ///< Offset 328 Enable/disable MRC failure policy for unsupported memory type.
+  UINT8   Reserved329[59];                ///< Offset 329 Reserved for future use. Total size of CONFIG_BLOCK_HEADER (28 bytes) + MRC_EXT_INPUTS_TYPE (388) = 416 should be a multiple of 8 bytes.
 } MRC_EXT_INPUTS_TYPE;
 
 #pragma pack(pop)

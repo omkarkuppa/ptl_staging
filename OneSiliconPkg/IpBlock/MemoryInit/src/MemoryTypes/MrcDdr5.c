@@ -83,6 +83,8 @@ const MrcModeRegister JedecInitSequenceMultiCycle[] = {
   mrMR45,
   mrMR59,
   // PDA MR's start here
+  mrMR43,
+  mrMR44,
   // IMPORTANT note: the order of the MR's here should be opposite to their training order in MRC call table
   // For example, MR3 is trained as PDA before MR10.
   mrMR129, // DFE Tap1 DQL[0]
@@ -1336,6 +1338,8 @@ MrcDdr5GetGmfAttributes (
     case mrMR38:
     case mrMR39:
     case mrMR40:
+    case mrMR43:
+    case mrMR44:
     case mrMR45:
     case mrMR48:
     case mrMR34:
@@ -3269,8 +3273,8 @@ MrFillPdaMrsDataDdr5 (
   ChannelOut = &Outputs->Controller[Controller].Channel[Channel];
   *NumMrData = 0;
 
-  if ((MrAddress != mrMR3) && (MrAddress != mrMR7) && (MrAddress != mrMR10) && (MrAddress != mrMR11) && (MrAddress != mrMR48) &&
-    !(Ddr5IsDimmDfeMr(MrAddress))) {
+  if ((MrAddress != mrMR3) && (MrAddress != mrMR7) && (MrAddress != mrMR10) && (MrAddress != mrMR11) && (MrAddress != mrMR43) &&
+     (MrAddress != mrMR44) && (MrAddress != mrMR48) && !(Ddr5IsDimmDfeMr(MrAddress))) {
     MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_ERROR, "MrFillPdaMrsDataDdr5 does not support  MR %d \n", MrAddress);
     return mrcWrongInputParameter;
   }
@@ -3334,6 +3338,12 @@ MrFillPdaMrsDataDdr5 (
           break;
         case mrMR48:
           MrPdaData[*NumMrData] = RankOut->Ddr5PdaMr48[DeviceIdx];
+          break;
+        case mrMR43:
+          MrPdaData[*NumMrData] = RankOut->Ddr5PdaMr43[DeviceIdx];
+          break;
+        case mrMR44:
+          MrPdaData[*NumMrData] = RankOut->Ddr5PdaMr44[DeviceIdx];
           break;
         case mrMR129: // DFE PDA Tap1 DQL
         case mrMR137:
@@ -4275,6 +4285,17 @@ Ddr5GetOptDimmParamMrIndex (
       // ODTL RD NT Offset
       LocalMrIndex = mrIndexMR39;
       LocalMrNum = mrMR39;
+      break;
+
+    case OptDimmDcaQclk:
+    case OptDimmDcaIBclk:
+      LocalMrIndex = mrIndexMR43;
+      LocalMrNum = mrMR43;
+      break;
+
+    case OptDimmDcaQBclk:
+      LocalMrIndex = mrIndexMR44;
+      LocalMrNum = mrMR44;
       break;
 
     case OptDdr5DimmDFETap1:

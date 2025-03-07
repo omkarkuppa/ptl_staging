@@ -836,7 +836,7 @@
   # !BSF NAME:{RX DQS VOC Centring Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable RX DQS VOC Centring Training}
-  gPlatformFspPkgTokenSpaceGuid.RXDQSVOCC              | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.RXDQSVOCC              | * | 0x01 | 0x01
 
   # !BSF NAME:{NMode}
   # !BSF TYPE:{EditNum, HEX, (0x00,0x02)}
@@ -1411,7 +1411,7 @@
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 61   | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 62   | {0x00}
 
   #
   # MRC Block End
@@ -3358,7 +3358,7 @@
   # !BSF HELP:{Enables/Disable Rx DQS Delay Comp Support}
   gPlatformFspPkgTokenSpaceGuid.RxDqsDelayCompEn         | * | 0x01 | 0x00
   # Added reserved space UnusedUpdSpace1[3]
-  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd336           | * | 0x03 | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd336           | * | 0x02 | {0x00}
 
   # !BSF NAME:{Mrc Failure On Unsupported Dimm}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}

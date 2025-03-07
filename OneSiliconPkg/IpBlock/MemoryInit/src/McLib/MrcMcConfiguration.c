@@ -37,6 +37,7 @@
 #include "MrcChipApi.h"
 #include "MrcDdrIoDefines.h"
 #include "MrcPowerMetering.h"
+#include "MrcMcSiSpecific.h"
 
 /**
   This function provides disabling of periodic ZQ latch during runtime DVFSQ_LOW
@@ -513,6 +514,8 @@ MrcLpMode4Enable (
 
   if (ExtInputs->LpMode4 != 0 && Outputs->IsLpddr5) {
     MrcGetSetNoScope (MrcData, GsmIocEnableLpMode4, WriteCached | PrintValue, &GetSetEn);
+
+    MrcMcLpmodeSelfRefreshLength (MrcData);
   }
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {

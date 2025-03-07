@@ -159,6 +159,7 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmIocDdr5CkdMode",
   "GsmIocDisableTxDqs",
   "GsmIocForceRxAmpOn",
+  "GsmIocDisRxSalOffWhenDrvEnHi",
   "GsmIocForceRxOnDqs",
   "GsmIocForceRxOnDqsMux",
   "GsmIocForceRxOnDq",

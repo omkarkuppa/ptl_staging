@@ -135,6 +135,7 @@ typedef enum {
   GsmIocDdr5CkdMode,                ///< Forces CLK to Toggle by forcing into DDR5 CKD Mode
   GsmIocDisableTxDqs,
   GsmIocForceRxAmpOn,
+  GsmIocDisRxSalOffWhenDrvEnHi,
   GsmIocForceRxOnDqs,
   GsmIocForceRxOnDqsMux,
   GsmIocForceRxOnDq,

@@ -63,3 +63,48 @@ MrcTranslateCccInstance (
   return CccTranslatedInstance;
 }
 
+/**
+  Get the max CMD Groups per channel associated with the current memory technology
+
+  @param[in] MrcData  - Pointer to global MRC data.
+
+  @return The maximum number of CMD Groups per channel for the current memory technology
+**/
+UINT8
+MrcGetCmdGroupMax (
+  MrcParameters *const MrcData
+  )
+{
+  return (MrcData->Outputs.IsDdr5) ? MRC_DDR5_CMD_GRP_MAX: 1;
+}
+
+/**
+  This function decodes Controller/Channel/Rank to a group index.
+  Desktop has two CCC groups for CS in MC0.Ch0.  Rank2/3 are assigned to group 1
+  while Rank0/1 is group 0.  All other combinations are a single group.
+
+  @param[in] MrcData    - Pointer to global MRC data.
+  @param[in] Controller - 0-based index
+  @param[in] Channel    - 0-based index
+  @param[in] Rank       - 0-based index
+
+  @retval CccChCsPiGroup - Group Index value.
+**/
+CccChCsPiGroup
+MrcGetCsRankPiGroup (
+  IN MrcParameters *const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank
+  )
+{
+  CccChCsPiGroup GroupIdx;
+
+  if (MrcData->Inputs.IsDdrIoDtHalo && (Controller == 0) && (Channel == 0) && (Rank >= MAX_RANK_IN_DIMM)) {
+    GroupIdx = CccChCsPiGroup1;
+  } else {
+    GroupIdx = CccChCsPiGroup0;
+  }
+
+  return GroupIdx;
+}

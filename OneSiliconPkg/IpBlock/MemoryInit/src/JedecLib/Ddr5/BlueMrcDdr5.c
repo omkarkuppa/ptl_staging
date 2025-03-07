@@ -805,6 +805,8 @@ MrcFinalizeDdr5MrSeq (
     mrMR45,
     mrMR59,
     // PDA MRs start from here
+    mrMR43,
+    mrMR44,
     mrMR129,
     mrMR130,
     mrMR131,

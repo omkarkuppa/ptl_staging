@@ -541,6 +541,7 @@ MrcGetDdrIoConfigOffsets (
       break;
 
     case GsmIocForceRxAmpOn:
+    case GsmIocDisRxSalOffWhenDrvEnHi:
     case GsmIocForceOdtOn:
     case GsmIocTxPiPwrDnDis:
     case GsmIocInternalClocksOn:

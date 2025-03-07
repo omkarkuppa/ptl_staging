@@ -664,6 +664,20 @@ MrcEarlyDdrIoFinalize (
   );
 
 /**
+  Enable or disable the scrambler.
+
+  @param[in] MrcData - Pointer to the MRC global data area.
+  @param[in] EnableScrambler - Enable (1) or disable (0) the scrambler
+  @retval MrcStatus
+
+**/
+MrcStatus
+ScramblerEnable(
+  IN MrcParameters* const MrcData,
+  IN         INT64        EnableScrambler
+  );
+
+/**
   This function performs late DDRIO final configuration after Rank Margin Tool.
 
   @param[in]  MrcData - Pointer to MRC global data.
@@ -2293,7 +2307,49 @@ MrcProgramRxVref (
   );
 
 /**
-  The function programs Rx DBI VREF
+  The function sets Rx VREF for DQ.
+
+  @param[in, out] MrcData        - Include all MRC global data.
+  @param[in]      Controller     - Memory controller
+  @param[in]      Channel        - Channel number
+  @param[in]      Strobe         - Strobe number
+  @param[in]      Mode           - Get Set Mode will be used in the GetSet function
+  @param[in]      GetSetVref     - The pointer to the VREF value which will be used by GetSet
+
+**/
+void
+MrcSetRxDqVref (
+  IN OUT MrcParameters *const MrcData,
+  IN UINT8                    Controller,
+  IN UINT8                    Channel,
+  IN UINT8                    Strobe,
+  IN UINT8                    Mode,
+  IN INT64                    *GetSetVref
+  );
+
+/**
+  The function reads Rx VREF per byte for DQ.
+
+  @param[in, out] MrcData        - Include all MRC global data.
+  @param[in]      Controller     - Memory controller
+  @param[in]      Channel        - Channel number
+  @param[in]      Strobe         - Strobe number
+  @param[in]      Mode           - Get Set Mode will be used in the GetSet function
+  @param[in]      GetSetVref     - The pointer to the VREF value which will be used by GetSet
+
+**/
+void
+MrcGetRxDqVref (
+  IN OUT MrcParameters *const MrcData,
+  IN UINT8                    Controller,
+  IN UINT8                    Channel,
+  IN UINT8                    Strobe,
+  IN UINT8                    Mode,
+  IN INT64                    *GetSetVref
+  );
+
+/**
+  The function programs Rx DBI VREF which is in a byte register
 
   @param[in, out] MrcData        - Include all MRC global data.
   @param[in]      Controller     - Memory controller
@@ -2303,7 +2359,7 @@ MrcProgramRxVref (
   @param[in]      GetSetVref     - The pointer to the VREF value which will be used by GetSet
 **/
 VOID
-MrcProgramRxDbiVref (
+MrcProgramRxDbiVrefPerByte (
   IN OUT MrcParameters *const MrcData,
   IN UINT8                    Controller,
   IN UINT8                    Channel,
@@ -2311,6 +2367,7 @@ MrcProgramRxDbiVref (
   IN UINT8                    Mode,
   IN INT64                    *GetSetVref
   );
+
 
 /**
   This function determines the max UI delay of the read unmatched path per channel, and
@@ -3082,4 +3139,62 @@ MrcProgramRxVrefTrainingResult (
   IN UINT8                    Mode,
   IN SweepResultsBit   *const SweepResultBit
   );
+
+/**
+  This function programs the current MRC post code to PHYPMSTATUS1 register field.
+
+  @param[in]  MrcData  - Include all MRC global data.
+  @param[in]  PostCode - MRC post code to be programmed
+
+**/
+VOID
+MrcProgramPostCode (
+  IN MrcParameters* const MrcData,
+  IN INT64          PostCode
+  );
+
+/**
+  This function sets DDRIO IP Version, Derivative, Segment, Stepping based on DDRPHY_MISC_SAUG_CR_IP_VERSION_REG.
+
+  @param[in]  MrcData     - Include all MRC global data.
+
+  @retval Nothing
+**/
+MrcStatus
+MrcSetupDdrIoIpInfo (
+  OUT MrcParameters *const MrcData
+  );
+
+/**
+  The function gets the getset Rx VREF per byte group enum
+
+  @retval return the getset Rx VREF per byte group enum
+
+**/
+GSM_GT
+MrcGetRdVPerByteGroup (
+    );
+
+/**
+  Get the max CMD Groups per channel associated with the current memory technology
+
+  @param[in] MrcData  - Pointer to global MRC data.
+
+  @return The maximum number of CMD Groups per channel for the current memory technology
+**/
+UINT8
+MrcGetCmdGroupMax (
+  MrcParameters *const MrcData
+);
+
+/**
+  This function updates CBMix and CBMux based on the PHClk ratio locked
+
+  @param[in, out] MrcData - MRC global data.
+**/
+VOID
+CbMixMuxConfig (
+  IN OUT MrcParameters *const MrcData
+  );
+
 #endif //MRC_DDR_IO_API_H_

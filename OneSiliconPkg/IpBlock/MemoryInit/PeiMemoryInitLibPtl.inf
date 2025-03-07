@@ -228,9 +228,9 @@ src/DdrIoLib/MrcDdrIoUtilsPrivate.h
 src/DdrIoLib/Ptl/MrcDdrIoLvrPtl.c
 src/DdrIoLib/Ptl/MrcDdrIoCompPtl.c
 src/DdrIoLib/MrcDdrIoComp.c
+src/DdrIoLib/MrcDdrIoCcc.c
 src/DdrIoLib/IncludePublic/MrcDdrIoLvr.h
 src/DdrIoLib/IncludePublic/MrcDdrIoComp.h
-src/DdrIoLib/Ptl/MrcDdrIoDllPtl.c
 src/DdrIoLib/MrcDdrIoDll.c
 src/DdrIoLib/Ptl/BlueMrcDdrIoHalHashes.c
 src/DdrIoLib/Ptl/BlueMrcDdrIoHalLimits.c
@@ -239,6 +239,7 @@ src/DdrIoLib/Ptl/BlueMrcDdrIoHalOffsets.c
 src/DdrIoLib/Ptl/MrcDdrIoSiSpecific.c
 src/DdrIoLib/MrcDdrIo.h
 src/DdrIoLib/IncludePublic/MrcDdrIoApi.h
+src/DdrIoLib/Ptl/MrcDdrIoApiPtl.c
 src/DdrIoLib/MrcDdrIoUtilsSiSpecific.c
 src/DdrIoLib/MrcDdrIoHalOffsetsPrivate.h
 src/McLib/MrcChipRouting.h

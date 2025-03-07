@@ -570,13 +570,14 @@ PeimMemoryInit (
   UINT16                       HobTotalSize;
   MrcParameters                MrcGlobalData;
   BOOLEAN                      InterpeterTrainingDone;
-  UINT64                       SskpdValue;
+  M_PCU_CR_SSKPD_PCU_STRUCT    SskpdValue;
   VOID                         *S3DataPtr;
   BOOLEAN                      IsLastBasicMemoryTestPass;
   BOOLEAN                      DidPreviousTrainingFail;
   UINT8                        Controller;
   UINT8                        Channel;
   BOOLEAN                      IsEfiResetColdRequired;
+  UINT32                       EfiStatusErrorCode;
 
   UINT32                       ImrsSize;
   UINT32                       Alignment;
@@ -868,19 +869,19 @@ DEBUG_CODE_END();
     }
   }
 
-  SskpdValue = MrcWmRegGet (MrcData);
+  SskpdValue.Data = MrcWmRegGet (MrcData);
 
   // Telemetry Health Report
   // If sticky scratchpad SSKPD_PCU_SKPD_MEM_BASICMEMORYTEST_FAIL bit is set,
   // there was a BasicMemoryTest failure during the previous flow.
   // Report the health check result to Telemetry Health Driver,
   // and then clear the bit.
-  if ((SskpdValue & SSKPD_PCU_SKPD_MEM_BASICMEMORYTEST_FAIL) != 0) {
+  if ((SskpdValue.Bits.MEM_BASICMEMORYTEST_FAIL) != 0) {
     if (ExtInputs->MrcFastBoot > 0) {
         IsLastBasicMemoryTestPass = FALSE;
     }
     MrcWmRegClrBits (MrcData, SSKPD_PCU_SKPD_MEM_BASICMEMORYTEST_FAIL);
-    SskpdValue &= ~SSKPD_PCU_SKPD_MEM_BASICMEMORYTEST_FAIL;
+    SskpdValue.Bits.MEM_BASICMEMORYTEST_FAIL = 0;
   }
 
   Inputs->TxtClean = IsTxtSecretsSet ();
@@ -897,7 +898,7 @@ DEBUG_CODE_END();
       // If sticky scratchpad is set, there was a failure during previous Fast flow, so use Cold.
       if ((SaveDataValid == TRUE) &&
           (ExtInputs->MrcFastBoot > 0) &&
-          (SskpdValue == 0) &&
+          (SskpdValue.Bits.MRC_RUNNING == 0) &&
           (ColdBootRequired (MrcData, MemConfig, &CpuMemoryInitConfig, MrcBootMode, &IsEfiResetColdRequired) == FALSE)
           ) {
         MrcBootMode = bmFast;
@@ -905,11 +906,11 @@ DEBUG_CODE_END();
       } else {
         DEBUG ((DEBUG_INFO, "Cold boot\n"));
         SaveDataValid = FALSE;
-        if (SskpdValue) {
+        if (SskpdValue.Bits.MRC_RUNNING == 1) {
           /*
            * If MRC training fails at XMP profile when DMB=TRUE,
            * MRC triggers WarmReset. After reset, MrcGetBootMode
-           * returns _ColdBoot_ and SskpdValue equals non-zero.
+           * returns _ColdBoot_ and SskpdValue.Bits.MRC_RUNNING equals non-zero.
            */
           DidPreviousTrainingFail = TRUE;
         }
@@ -956,7 +957,7 @@ DEBUG_CODE_END();
             Check SSKPD register to determine if Warm Reset occurred before MRC was reached during a cold boot.
             If so, we need to choose Fast or Cold boot path.
           */
-          if ((MrcBootMode == bmWarm) && (SskpdValue == 0)) {
+          if ((MrcBootMode == bmWarm) && (SskpdValue.Bits.MRC_RUNNING == 0)) {
             DEBUG ((
               DEBUG_WARN,
               "Reset occurred in the cold boot path before reaching MRC.\n"
@@ -1120,6 +1121,7 @@ DEBUG_CODE_END();
       DEBUG ((DEBUG_INFO, "\n Install MRC Boot Required PPI. MrcStatus: %d \n", MrcStatus));
     }
 
+    EfiStatusErrorCode = EFI_COMPUTING_UNIT_MEMORY | EFI_CU_EC_NON_SPECIFIC;
     switch (MrcStatus) {
       case mrcSuccess:
         if (ExtInputs->RetrainToWorkingChannel && (Inputs->BootMode == bmCold)) {
@@ -1183,6 +1185,7 @@ DEBUG_CODE_END();
         (*PeiServices)->ResetSystem2 (EfiResetWarm, EFI_SUCCESS, 0, NULL);
         break;
 
+      case mrcUnsupportedTechnology:
       case mrcDimmNotExist:
         //
         // Set memory init status = 0x1 and send DRAM Init Done to ME FW,
@@ -1199,22 +1202,17 @@ DEBUG_CODE_END();
         DEBUG ((DEBUG_INFO, "CSE IMR Base High = 0x%08X\n", Outputs->MemoryMapData.MeStolenBase >> 12));
 
         MrcCall->MrcDebugHook (MrcData, MRC_NO_MEMORY_DETECTED);
-        DEBUG ((DEBUG_ERROR, "There are no DIMMs present in the system\n"));
-        //
-        //Indicate to the caller that memory has not been detected.
-        //
-        (*PeiServices)->ReportStatusCode (
-          PeiServices,
-          EFI_ERROR_CODE,
-          EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_NONE_DETECTED,
-          0,    // Instance
-          NULL, // *CallerId OPTIONAL
-          NULL  // *Data OPTIONAL
-          );
+        if (MrcStatus == mrcUnsupportedTechnology) {
+          DEBUG ((DEBUG_ERROR, "DIMM is present but not supported\n"));
+          EfiStatusErrorCode = EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_INVALID_TYPE;
+        } else {
+          DEBUG ((DEBUG_ERROR, "There are no DIMMs present in the system\n"));
+          EfiStatusErrorCode = EFI_COMPUTING_UNIT_MEMORY | EFI_CU_MEMORY_EC_NONE_DETECTED;
+        }
         // no break;
 
       default:
-        if ((ExtInputs->RetrainToWorkingChannel) && (MrcStatus != mrcDimmNotExist)) {
+        if ((ExtInputs->RetrainToWorkingChannel) && (MrcStatus != mrcDimmNotExist) && (MrcStatus != mrcUnsupportedTechnology)) {
           DEBUG ((DEBUG_INFO, "MRC ReTrain to Working Channel Enabled\n"));
           if (MrcDisableFailingChannels (MrcData, WRITE_SAVE_TO_SCRATCHPAD) != TRUE) {
             IoWrite16 (0x80, 0);  // Clear 16-bit port80
@@ -1224,12 +1222,12 @@ DEBUG_CODE_END();
         }
 
         DEBUG ((DEBUG_ERROR, "Memory initialization has failed\n"));
-        REPORT_STATUS_CODE (EFI_ERROR_CODE, EFI_COMPUTING_UNIT_MEMORY | EFI_CU_EC_NON_SPECIFIC);
+        REPORT_STATUS_CODE (EFI_ERROR_CODE, EfiStatusErrorCode);
         // REPORT_STATUS_CODE will write an EFI status code to the post code IO port 80
         // Write back the last MRC post code so that the last post code seen is the MRC post code
         (MrcCall->MrcIoWrite16)(0x80, Debug->PostCode[MRC_POST_CODE]);
 
-        if (MrcStatus == mrcDimmNotExist) {
+        if ((MrcStatus == mrcDimmNotExist) || (MrcStatus == mrcUnsupportedTechnology)) {
           (MrcCall->MrcIoWrite16)(0x80, MRC_NO_MEMORY_DETECTED);
         } else {
           // Replace the upper byte (0x81) with MRC_FAILURE_INDICATION
@@ -3558,7 +3556,6 @@ BuildMemoryInfoDataHob (
     MemoryInfo->ErrorCorrectionType = MemoryErrorCorrectionNone;
   }
   MemoryInfo->EccSupport              = Outputs->EccSupport;
-  MemoryInfo->MixedEccDimms           = SaveData->IsMixedEccDimms;
   MemoryInfo->TotalPhysicalMemorySize = Outputs->MemoryMapData.TotalPhysicalMemorySize;
   MrcCall->MrcSetMem ((UINT8 *) &MemoryInfo->RcompTarget, sizeof (MemoryInfo->RcompTarget), 0);
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE_NUM; Profile++) {

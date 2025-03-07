@@ -38,7 +38,7 @@ MrcMcLpmodeSelfRefreshLength (
   Inputs = &MrcData->Inputs;
 
   if (Inputs->IsMcMbA0) {
-    GetSetVal = 0xF;
+    GetSetVal = MC0_CH0_CR_SPID_LOW_POWER_CTL_selfrefresh_length_MAX;
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSelfRefreshLength, WriteCached | PrintValue, &GetSetVal);
   }
 }

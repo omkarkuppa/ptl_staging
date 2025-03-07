@@ -389,6 +389,7 @@ DimmPresence (
 
         case RDimmMemoryPackage:
           MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "  ERROR: RDIMM is not supported !\n");
+          return DIMM_NOT_SUPPORTED;
 
         default:
           break;
@@ -1854,7 +1855,6 @@ ValidEccSupport (
     @retval TRUE Function completed.  This would be a void function but
     it appears in a table of functions that must return a BOOLEAN.
 **/
-static
 BOOLEAN
 ValidCkdSupport (
   IN OUT MrcParameters* const MrcData,
@@ -6634,7 +6634,8 @@ GetChannelDimmVpp (
     @param[in] Channel      - Current channel number.
     @param[in] Dimm         - Current DIMM number.
 
-    @retval mrcSuccess if DIMM is present otherwise mrcDimmNotExist.
+    @retval mrcSuccess if DIMM is present, mrcUnsupportedTechnology if DIMM technology is not supported
+            otherwise mrcDimmNotExist.
 **/
 MrcStatus
 SpdDimmRecognition (
@@ -6664,6 +6665,7 @@ SpdDimmRecognition (
   const UINT8  *CrcStart;
   MrcDimmOut   *DimmOut;
   MrcDimmIn    *DimmIn;
+  MrcDimmSts   DimmPresenceStatus;
   BOOLEAN      Status;
   UINT32       CrcSize;
   UINT8        Index;
@@ -6673,19 +6675,23 @@ SpdDimmRecognition (
   Spd     = &DimmIn->Spd.Data;
   DimmOut = &MrcData->Outputs.Controller[Controller].Channel[Channel].Dimm[Dimm];
   DimmOut->Status = DIMM_NOT_PRESENT;
-  if (DIMM_PRESENT == DimmPresence (&MrcData->Outputs.Debug, Spd)) {
+  DimmPresenceStatus = DimmPresence (&MrcData->Outputs.Debug, Spd);
+  if (DIMM_PRESENT == DimmPresenceStatus) {
     Status = TRUE;
     for (Index = 0; (Status == TRUE) && (Index < ARRAY_COUNT (CallTable)); Index++) {
       Status &= CallTable[Index].mrc_task (MrcData, Spd, DimmOut);
     }
     if (Status == FALSE) {
       DimmOut->Status = DIMM_DISABLED;
+      MRC_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "DIMM is present but initialization error occurred\n");
       return mrcDimmNotExist;
     }
     DimmOut->Status = DIMM_PRESENT;
     CrcStart = MrcSpdCrcArea (MrcData, Controller, Channel, Dimm, &CrcSize);
     GetDimmCrc ((const UINT8*const) CrcStart, CrcSize, &Crc);
     DimmOut->Crc = Crc;
+  } else if (DIMM_NOT_SUPPORTED == DimmPresenceStatus) {
+    return mrcUnsupportedTechnology;
   } else {
     return mrcDimmNotExist;
   }
@@ -7149,7 +7155,8 @@ MrcSpdProcessingStatic (
             Channel,
             Dimm
             );
-          if (mrcSuccess == SpdDimmRecognition (MrcData, Controller, Channel, Dimm)) {
+          Status = SpdDimmRecognition (MrcData, Controller, Channel, Dimm);
+          if (mrcSuccess == Status) {
             DimmCount++;
             ChannelOut->DimmCount++;
             if (ChannelOut->DimmCount == 2) {
@@ -7172,6 +7179,8 @@ MrcSpdProcessingStatic (
                 );
               return (Status);
             }
+          } else if ((mrcUnsupportedTechnology == Status) && (Inputs->ExtInputs.Ptr->MrcFailureOnUnsupportedDimm)) {
+            return Status;
           }
         }
       }

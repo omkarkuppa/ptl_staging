@@ -429,7 +429,6 @@ SetWorkPointData (
   IN OUT MrcParameters *const MrcData
   );
 
-#ifdef HVM_MODE
 /**
   Set up DQ Loopback mode and run margin tests
 
@@ -441,6 +440,5 @@ MrcStatus
 MrcDqLoopbackTest (
   IN MrcParameters *const MrcData
   );
-#endif //HVM_MODE
 
 #endif // _MrcChipApi_h_

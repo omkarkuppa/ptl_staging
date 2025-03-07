@@ -24,6 +24,7 @@
 #include "MrcMemoryApi.h"
 #include "MrcHalRegisterAccess.h"
 #include "MrcDdrIoUtils.h"
+#include "MrcDdrIoApi.h"
 #include "MrcDdr5.h"
 #include "MrcLpddr5.h"
 #include "MrcPostCodes.h"  // for MRC_TURN_AROUND
@@ -1495,6 +1496,14 @@ MrcMrAddrToIndex (
     case mrMR41:
     case mrMR42:
       MrIndex = (UINT8) *MrAddress - (mrMR34 - mrIndexMR34);
+      break;
+
+    case mrMR43:
+      MrIndex = mrIndexMR43;
+      break;
+
+    case mrMR44:
+      MrIndex = mrIndexMR44;
       break;
 
     case mrMR45:
@@ -3537,6 +3546,12 @@ MrcMrIsPda (
     break;
   case mrMR11:
     if (ChannelOut->IsMr11PdaEnabled) {
+      return TRUE;
+    }
+    break;
+  case mrMR43:
+  case mrMR44:
+    if (ChannelOut->IsMrDcaPdaEnabled) {
       return TRUE;
     }
     break;

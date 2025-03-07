@@ -25,8 +25,6 @@
 // DO NOT REMOVE: Ensures this header is only included once in the code
 PRIVATE_HEADER_DEFENDER(MrcDdrIoUtilsPrivate);
 
-
-
 /**
   This function calculates lock threshold.
 

@@ -147,8 +147,8 @@
 #define MRC_EXT_INPUTS_INIT_VAL_RXUNMATCHEDCAL         (1)  // BIT26
 #define MRC_EXT_INPUTS_INIT_VAL_WRTDIMMDFE             (1)  // BIT27
 #define MRC_EXT_INPUTS_INIT_VAL_RMTLVR                 (0)  // BIT28
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved2Bit29         (0)  // BIT29
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved2Bit30         (0)  // BIT30
+#define MRC_EXT_INPUTS_INIT_VAL_DCCDDR5READDCA         (0)  // BIT29
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved1Bit30         (0)  // BIT30
 #define MRC_EXT_INPUTS_INIT_VAL_SimicsReservedBit      (0)  // BIT31
 
 // TrainingEnables3
@@ -178,7 +178,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_WCKCLKPREDCC           (0)  // BIT23
 #define MRC_EXT_INPUTS_INIT_VAL_DQSPADDCC              (0)  // BIT24
 #define MRC_EXT_INPUTS_INIT_VAL_QCLKPHALIGN            (0)  // BIT25
-#define MRC_EXT_INPUTS_INIT_VAL_RXDQSVOCC              (0)  // BIT26
+#define MRC_EXT_INPUTS_INIT_VAL_RXDQSVOCC              (1)  // BIT26
 #define MRC_EXT_INPUTS_INIT_VAL_ISENSERMT              (0)  // BIT27
 #define MRC_EXT_INPUTS_INIT_VAL_WCKCLKRF               (0)  // BIT28
 #define MRC_EXT_INPUTS_INIT_VAL_Reserved3Bit29         (0)  // BIT29
@@ -369,9 +369,10 @@
 #define MRC_EXT_INPUTS_INIT_VAL_RxDqsStepSizeLB          (1)
 #define MRC_EXT_INPUTS_INIT_VAL_RxVrefStepSizeLB         (2)
 #define MRC_EXT_INPUTS_INIT_VAL_TxStepSizeLB             (1)
-#define MRC_EXT_INPUTS_INIT_VAL_ReservedBitsLB        (0)
+#define MRC_EXT_INPUTS_INIT_VAL_ReservedBitsLB           (0)
 
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved328                     {0}
+#define MRC_EXT_INPUTS_INIT_VAL_MrcFailureOnUnsupportedDimm     (0)
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved329                     {0}
 
 #ifdef MRC_MINIBIOS_BUILD
 #define MRC_INT_INPUTS_INIT_VAL_LpFreqSwitch                            (0)
@@ -518,8 +519,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
       MRC_EXT_INPUTS_INIT_VAL_RXUNMATCHEDCAL,    // BIT26
       MRC_EXT_INPUTS_INIT_VAL_WRTDIMMDFE,        // BIT27
       MRC_EXT_INPUTS_INIT_VAL_RMTLVR,            // BIT28
-      MRC_EXT_INPUTS_INIT_VAL_Reserved2Bit29,    // BIT29
-      MRC_EXT_INPUTS_INIT_VAL_Reserved2Bit30,    // BIT30
+      MRC_EXT_INPUTS_INIT_VAL_DCCDDR5READDCA,    // BIT29
+      MRC_EXT_INPUTS_INIT_VAL_Reserved1Bit30,    // BIT30
       MRC_EXT_INPUTS_INIT_VAL_SimicsReservedBit, // BIT31
     },
     // TrainingEnables3
@@ -744,8 +745,8 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_RxVrefStepSizeLB,
     MRC_EXT_INPUTS_INIT_VAL_TxStepSizeLB,
     MRC_EXT_INPUTS_INIT_VAL_ReservedBitsLB,
-
-    MRC_EXT_INPUTS_INIT_VAL_Reserved328,
+    MRC_EXT_INPUTS_INIT_VAL_MrcFailureOnUnsupportedDimm,
+    MRC_EXT_INPUTS_INIT_VAL_Reserved329,
   },
 #ifdef MRC_MINIBIOS_BUILD
   /// MRC_INT_INPUTS_TYPE

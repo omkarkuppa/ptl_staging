@@ -118,6 +118,7 @@
 #define DDR5_CLK_DCC_STEP (1)
 #define RX_DFE_NUM (16)
 #define RX_DFE_BIT_NUM (8)
+#define TX_XTALK_CAPVAL_NUM (16)
 
 #define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY (22) // More than this, and the XTensa will run out of memory during a per-bit sweep if the array is per-rank
 #define MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_CHANNEL_ARRAY (MAX_RANK_IN_CHANNEL * MAX_SI_TRAINING_SWEEP_RANGE_BIT_PER_RANK_ARRAY) // More than this, and the XTensa will run out of memory during a per-bit sweep
@@ -287,6 +288,12 @@ typedef enum {
   SotVrefSearchStage,
   SotVocSearchStage
 } SenseAmpTrainingLsFeedbackStage; // LocalStub feedback stages
+
+// LP5 DCA type
+typedef enum {
+  DcaTypeTx,  // WCK DCA MR30
+  DcaTypeRx   // Read DCA MR69
+} MrcDcaType;
 
 #define MAX_OPT_POINTS        (64)
 #define MAX_OPT_POINTS_BIT    (16)
@@ -574,6 +581,18 @@ DimmDFETraining (
   IN MrcParameters* const MrcData,
   IN UINT8          Param,
   IN BOOLEAN        Optimize
+  );
+
+/**
+  This function Calls for  Tx Xtalk training
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - if it succeeds return mrcSuccess
+**/
+MrcStatus
+MrcTxXtalk (
+  IN MrcParameters* const MrcData
   );
 
 /**
@@ -1656,6 +1675,19 @@ WriteEqTraining(
   );
 
 /**
+  This function implements Write (Transmitter) Cross Talk Cancelation.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - if it succeeds return mrcSuccess
+
+**/
+MrcStatus
+MrcTxXTalkCancellation (
+  IN MrcParameters* const MrcData
+  );
+
+/**
   This function implements the  DimmODTTraining for LPDDR5.
 
   @param[in] MrcData - Include all MRC global data.
@@ -1953,6 +1985,7 @@ MrcStatus
 MrcTxDqsDccTraining (
   IN MrcParameters* const MrcData
 );
+
 
 #endif // _MrcCrosser_h_
 

@@ -511,6 +511,7 @@ MrcGetDdrIoCfgGroupLimits (
     case GsmIocTxPiPwrDnDis:
     case GsmIocInternalClocksOn:
     case GsmIocForceRxAmpOn:
+    case GsmIocDisRxSalOffWhenDrvEnHi:
     case GsmIocEnableLpMode4:
     case GsmDccPHClkPhaseEn:
     case GsmDccPHClkDutyCycleEn:

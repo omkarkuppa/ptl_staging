@@ -77,9 +77,6 @@ MrcMcLowPowerMode (
   GetSetVal = (IsEnabled && ((ExtInputs->LpMode & MRC_LPMODE3) || (ExtInputs->LpMode4 != MrcLpMode4_Disable))) ? 1 : 0;
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccSelfRefreshEnable, WriteCached | PrintValue, &GetSetVal);
 
-  if (IsEnabled && ExtInputs->LpMode4 != MrcLpMode4_Disable) {
-    MrcMcLpmodeSelfRefreshLength (MrcData);
-  }
 }
 
 /**

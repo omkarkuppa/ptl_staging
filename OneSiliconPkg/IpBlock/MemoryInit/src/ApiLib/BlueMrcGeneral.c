@@ -35,6 +35,7 @@
 #include "MrcDdrIoLvr.h"
 #include "MrcDdrIoComp.h"
 #include "MrcDdrIoUtils.h"
+#include "MrcDdrIoApi.h"
 #include "MrcDdrCommon.h"
 #include "MrcSpdProcessingDefs.h" // for MRC_SPD_SDRAM_DENSITY_8Gb
 #include "MrcSaveRestore.h"
@@ -672,8 +673,9 @@ MrcIbecc (
   UINT8                                         Controller;
   UINT8                                         IbeccRegion;
   UINT8                                         ControllerCount;
-  BOOLEAN                                       IsDdr5;
   BOOLEAN                                       IsIbeccSymmetric;
+  UINT32                                        HashMask;
+  UINT32                                        HashLsb;
   INT64                                         GetSetEnable;
   IbeccOpMode                                   IbeccOperationMode;
   MC0_IBECC_CONTROL_STRUCT                      IbeccControl;
@@ -689,7 +691,6 @@ MrcIbecc (
   Outputs   = &MrcData->Outputs;
   Debug     = &Outputs->Debug;
   ExtInputs = Inputs->ExtInputs.Ptr;
-  IsDdr5    = Outputs->IsDdr5;
   ControllerCount       = 0;
   GetSetEnable          = 1;
   TomMinusEdsr          = 0;
@@ -789,8 +790,9 @@ MrcIbecc (
           // SAF FW & BIOS programming HASH_MASK 5.1.5.2, section MC hash:
           // The IBECC register should be configured to same values as the HBO one.
           IbeccAddrHash.Bits.HASH_ENABLED = TRUE;
-          IbeccAddrHash.Bits.HASH_LSB     = IsDdr5 ? 3 : 2;
-          IbeccAddrHash.Bits.HASH_MASK    = IsDdr5 ? 0x2098 : 0x2094;
+          GetMcIbeccHash (MrcData, &HashMask, &HashLsb);
+          IbeccAddrHash.Bits.HASH_MASK    = HashMask;
+          IbeccAddrHash.Bits.HASH_LSB     = HashLsb;
           MrcWriteCR (MrcData, Offset, IbeccAddrHash.Data);
           MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "IbeccAddrHash: 0x%x\n", IbeccAddrHash.Data);
         }
@@ -801,6 +803,7 @@ MrcIbecc (
         Outputs->IsIbeccInitRangesRequired =
           (Inputs->BootMode != bmWarm || (Inputs->BootMode == bmWarm && IbeccOperationMode != Inputs->LastIbeccOperationMode)) &&
           IbeccOperationMode != IbeccNonProtect;
+
 
         if (Outputs->IsIbeccInitRangesRequired) {
           Offset = OFFSET_CALC_CH (MC0_IBECC_MEMORY_INIT_CONTROL_REG, MC1_IBECC_MEMORY_INIT_CONTROL_REG, Controller);

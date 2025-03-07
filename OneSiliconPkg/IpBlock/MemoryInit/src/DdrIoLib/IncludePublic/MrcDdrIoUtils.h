@@ -77,17 +77,19 @@ typedef struct {
 } SaOdtTiming;
 
 /**
-  Find initial Cben and BwSel values based on the current Frequency and CCC Half Frequency mode
+  Find initial Cben and BwSel values based on the current Frequency and Gear mode
 
-  @param[in]  MrcData   - Pointer to global MRC data.
-  @param[out] BwSel - The BW code based on gear and frequency
-  @param[out] Cben  - The CB code based on gear and frequency
+  @param[in]  MrcData               - Pointer to global MRC data.
+  @param[out] BwSel                 - The BW code based on gear and frequency
+  @param[out] Cben                  - The CB code based on gear and frequency
+  @param[out] CbenDllCbTuneOvrdData - The CB code is different for DataDllCbTuneOvrd, optional
 */
 VOID
 MrcBwSelCbenFreqSet (
   IN  MrcParameters *const MrcData,
   OUT UINT32               *BwSel,
-  OUT UINT32               *Cben
+  OUT UINT32               *Cben,
+  OUT UINT32               *CbenDllCbTuneOvrdData OPTIONAL
   );
 
 /**
@@ -116,18 +118,6 @@ MrcDataInvertNibble (
   );
 
 /**
-  This function sets DDRIO IP Version, Derivative, Segment, Stepping based on DDRPHY_MISC_SAUG_CR_IP_VERSION_REG.
-
-  @param[in]  MrcData     - Include all MRC global data.
-
-  @retval Nothing
-**/
-MrcStatus
-MrcSetupDdrIoIpInfo (
-  OUT MrcParameters *const MrcData
-  );
-
-/**
   This function returns channel bit mask of the channels that hardware exists even though it may not be populated
   @param[in] MrcData - Pointer to MRC global data.
 
@@ -136,18 +126,6 @@ MrcSetupDdrIoIpInfo (
 UINT8
 MrcGetValidHwChBitMask (
   IN MrcParameters *const MrcData
-  );
-
-/**
-  Get the max CMD Groups per channel associated with the current memory technology
-
-  @param[in] MrcData  - Pointer to global MRC data.
-
-  @return The maximum number of CMD Groups per channel for the current memory technology
-**/
-UINT8
-MrcGetCmdGroupMax (
-  MrcParameters *const MrcData
   );
 
 /**
@@ -248,16 +226,6 @@ MrcSetXSyncDelay (
 UINT32
 MrcCalcRatio33 (
   IN MrcParameters* const MrcData
-  );
-
-/**
-  This function updates CBMix and CBMux based on the PHClk ratio locked
-
-  @param[in, out] MrcData - MRC global data.
-**/
-VOID
-CbMixMuxConfig (
-  IN OUT MrcParameters *const MrcData
   );
 
 /**
@@ -475,19 +443,6 @@ MrcBlockTrainResetToggle (
 MrcStatus
 MrcVoltageReadout (
   IN MrcParameters *const MrcData
-  );
-
-/**
-  This function programs the current MRC post code to PHYPMSTATUS1 register field.
-
-  @param[in]  MrcData  - Include all MRC global data.
-  @param[in]  PostCode - MRC post code to be programmed
-
-**/
-VOID
-MrcProgramPostCode (
-  IN MrcParameters* const MrcData,
-  IN INT64          PostCode
   );
 
 /**

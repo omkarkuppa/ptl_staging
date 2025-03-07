@@ -29,6 +29,7 @@
 #define MRC_TIMER_1S      (1000 * 1000 * 1000)
 
 #define MRC_WAIT_TIMEOUT      10000  // 10 second wait timeout
+#define MRC_DLL_DETERMINISTIC_WAIT_TIMEOUT      15000  // 15 second wait timeout
 
 #define FEMTOSECONDS_PER_NANOSECOND 1000000 ///< Number of Femtoseconds in a Nanosecond
 

@@ -114,21 +114,6 @@ MrcGetGBDrift (
 }
 
 /**
-  Get the max CMD Groups per channel associated with the current memory technology
-
-  @param[in] MrcData  - Pointer to global MRC data.
-
-  @return The maximum number of CMD Groups per channel for the current memory technology
-**/
-UINT8
-MrcGetCmdGroupMax (
-  MrcParameters *const MrcData
-  )
-{
-  return (MrcData->Outputs.IsDdr5) ? MRC_DDR5_CMD_GRP_MAX: 1;
-}
-
-/**
   This function gets the max partition number for DataShared partitions.
 
   @param[in]  MrcData   - Pointer to global data.

@@ -124,8 +124,8 @@ typedef struct {
   UINT32 RXUNMATCHEDCAL:1;       ///< BIT26 - Unmatched Rx Calibaration
   UINT32 WRTDIMMDFE:1;           ///< BIT27 - DIMM DFE Training
   UINT32 RMTLVR:1;               ///< BIT28 - LVR RMT
-  UINT32 Reserved2Bit29:1;       ///< BIT29 - Reserved
-  UINT32 Reserved2Bit30:1;       ///< BIT30 - Reserved
+  UINT32 DCCDDR5READDCA:1;       ///< BIT29 - DRAM DCC for DDR5 READ DCA
+  UINT32 Reserved1Bits:1;        ///< BIT30 - Reserved
   UINT32 SimicsReservedBit:1;    ///< BIT31 - Simics uses this bit for mrc_mem_flows
 } TrainingStepsEn2;
 

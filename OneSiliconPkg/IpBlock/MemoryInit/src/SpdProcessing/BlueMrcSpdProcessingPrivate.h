@@ -262,6 +262,22 @@ ValidEccSupport (
   IN OUT MrcDimmOut      *const DimmOut
   );
 
+/**
+  Obtain CKD support Status for this DIMM.
+
+    @param[in, out] MrcData - Pointer to MrcData data structure.
+    @param[in]      Spd     - Pointer to Spd data structure.
+    @param[in, out] DimmOut - Pointer to structure containing DIMM information.
+
+    @retval TRUE Function completed.  This would be a void function but
+    it appears in a table of functions that must return a BOOLEAN.
+**/
+BOOLEAN
+ValidCkdSupport (
+  IN OUT MrcParameters* const MrcData,
+  IN const MrcSpd* const Spd,
+  IN OUT MrcDimmOut* const DimmOut
+  );
 
 /**
   Obtain address mirroring Status for this DIMM.
@@ -780,7 +796,8 @@ GetChannelDimmVdd (
     @param[in] Channel      - Current channel number.
     @param[in] Dimm         - Current DIMM number.
 
-    @retval mrcSuccess if DIMM is present otherwise mrcDimmNotExist.
+    @retval mrcSuccess if DIMM is present, mrcUnsupportedTechnology if DIMM technology is not supported
+            otherwise mrcDimmNotExist.
 **/
 MrcStatus
 SpdDimmRecognition (

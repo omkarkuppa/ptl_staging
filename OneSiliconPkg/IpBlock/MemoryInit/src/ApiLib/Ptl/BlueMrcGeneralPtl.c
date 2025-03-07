@@ -86,3 +86,25 @@ MrcModifyRdRdTimings (
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccDisLpddr5RdwrInterleaving, WriteCached, &RdWrInterleaving);
   }
 }
+
+/**
+ * @brief Get the Mc Ibecc Hash Mask and LSB values.
+ *
+ * @param[in]      MrcData  - All the MRC global data.
+ * @param[in, out] HashMask - Pointer to the Hash Mask set.
+ * @param[in, out] HashLsb  - Pointer to the Hash LSB to set.
+ */
+VOID
+GetMcIbeccHash (
+  IN     MrcParameters *const MrcData,
+  IN OUT UINT32               *HashMask,
+  IN OUT UINT32               *HashLsb
+  )
+{
+  BOOLEAN   IsDdr5;
+
+  IsDdr5    = MrcData->Outputs.IsDdr5;
+
+  *HashMask = IsDdr5 ? 0x2098 : 0x2094;
+  *HashLsb  = IsDdr5 ? 3 : 2;
+}

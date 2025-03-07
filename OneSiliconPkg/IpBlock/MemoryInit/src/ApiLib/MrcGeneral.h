@@ -308,6 +308,20 @@ MrcModifyRdRdTimings (
   );
 
 /**
+ * @brief Get the Mc Ibecc Hash Mask and LSB values.
+ *
+ * @param[in]      MrcData  - All the MRC global data.
+ * @param[in, out] HashMask - Pointer to the Hash Mask set.
+ * @param[in, out] HashLsb  - Pointer to the Hash LSB to set.
+ */
+VOID
+GetMcIbeccHash (
+  IN     MrcParameters *const MrcData,
+  IN OUT UINT32               *HashMask,
+  IN OUT UINT32               *HashLsb
+  );
+
+/**
   Adjust Wck Mode
 
   @param[in] MrcData - The MRC global data.

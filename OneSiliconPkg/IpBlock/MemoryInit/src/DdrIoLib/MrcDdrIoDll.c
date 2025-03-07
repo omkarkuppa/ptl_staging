@@ -20,8 +20,6 @@
 
 #include "MrcDdrIoApi.h"  // for prototypes
 
-
-
 /**
   Save or restore RxDLL VctlInit values
 
@@ -79,4 +77,33 @@ MrcWeaklockEnDis (
   MrcGetSetChStrb (MrcData, MAX_CONTROLLER, MAX_CHANNEL, MAX_SDRAM_IN_DIMM, GsmIocDllWeakLock, WriteCached, &GetSetVal);
   MrcGetSetPartitionBlock(MrcData, PartitionDataShared, MRC_DATA_SHARED_NUM, GsmIocTxDllWeakLock, WriteCached, &GetSetVal);
   MrcGetSetPartitionBlock(MrcData, PartitionCccShared, MRC_CCC_SHARED_NUM, GsmIocTxDllWeakLock, WriteCached, &GetSetVal);
+}
+
+/**
+  This function sets the value for Rx Data InputClkSelect.
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] Value   - InputClkSelect value
+
+**/
+VOID
+SetInputClkSelect (
+  IN MrcParameters * const MrcData,
+  IN UINT32                Value
+  )
+{
+  UINT32     Offset;
+  UINT32     Index;
+  DATASHARED_CR_DDRCRDLLCONTROL1_STRUCT       DllControl1;
+
+  for (Index = 0; Index < MRC_DATA_SHARED_NUM; Index++) {
+    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
+      continue;
+    }
+    Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRDLLCONTROL1_REG, DDRDATA_SHARED1_CR_DDRCRDLLCONTROL1_REG, Index);
+    DllControl1.Data = MrcReadCR (MrcData, Offset);
+    DllControl1.Bits.InputClkSelect = Value;
+    MrcWriteCR (MrcData, Offset, DllControl1.Data);
+  }
+
 }

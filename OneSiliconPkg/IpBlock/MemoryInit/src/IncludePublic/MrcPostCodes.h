@@ -153,7 +153,7 @@
 #define MRC_NORMAL_MODE                 (0xDD71)
 #define MRC_MC_FINALIZE                 (0xDD72)
 #define MRC_VCCCLK_FFOFFCORR            (0xDD73)
-#define MRC_DCC_LP5_READ_DCA            (0xDD74)
+#define MRC_DCC_READ_DCA                (0xDD74)
 #define MRC_DCC_LP5_WCK_DCA             (0xDD75)
 #define MRC_DCC_DDR5_CLK                (0xDD76)
 #define MRC_IBECC                       (0xDD77)
@@ -185,4 +185,5 @@
 #define MRC_TXDQS_DCC                   (0xDD8E)
 #define MRC_CURRENT_SENSOR_RMT          (0xDD8F)
 #define MRC_VCC_LVR_INIT                (0xDD90)
+#define MRC_TX_XTALK                    (0xDD92)
 #endif
