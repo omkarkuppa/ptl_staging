@@ -37,6 +37,7 @@
 #include <SpiHandle.h>
 #include <Library/PeiServicesLib.h>
 #include <PiPei.h>
+#include <Ppi/SiPolicy.h>
 
 /**
   PPI indicates Extended BIOS Decode initialization is done
@@ -72,24 +73,6 @@ PtlPcdExtendedBiosDecodeRangeInit (
       "%a - Cannot create SPI handle, exiting, Status %r\n",
       __FUNCTION__, Status
       ));
-    return;
-  }
-
-  if (SpiHandle.SpiConfig == NULL) {
-    DEBUG ((
-      DEBUG_ERROR,
-      "%a - No SpiConfig instance in SPI handle\n",
-      __FUNCTION__
-      ));
-    return;
-  }
-
-  if (SpiHandle.SpiConfig->ExtendedBiosDecodeRangeEnable == FALSE) {
-    DEBUG ((
-      DEBUG_INFO,
-      "%a - Extended BIOS decode range is disabled. Skipping initialization.\n",
-       __FUNCTION__
-       ));
     return;
   }
 
@@ -176,17 +159,48 @@ static EFI_PEI_NOTIFY_DESCRIPTOR mInitializeExtendedBiosDecodePpiPeiNotifyList =
 /**
   Registers an extended BIOS range decode initialization callback when memory has been discovered.
 
-  @retval   EFI_SUCCESS   Notify descriptor registration done.
+  @param[in] SiPreMemPolicyPpi         The Silicon PreMem Policy PPI instance
+
+  @retval   EFI_SUCCESS   Notify descriptor registration done or skipped on purpose.
   @retval   Other         Notify descriptor registration unsuccesful.
 **/
 EFI_STATUS
 PtlPcdExtendedBiosDecodeRangeRegistration (
-  VOID
+  IN  SI_PREMEM_POLICY_PPI    *SiPreMemPolicyPpi
   )
 {
   EFI_STATUS             Status;
+  SPI_HANDLE             SpiHandle;
 
   DEBUG ((DEBUG_INFO, "%a start\n", __FUNCTION__));
+
+  Status = PtlPcdGetSpiHandle (&SpiHandle, (SI_POLICY_PPI *) SiPreMemPolicyPpi);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - Cannot create SPI handle, exiting, Status %r\n",
+      __FUNCTION__, Status
+      ));
+    return Status;
+  }
+
+  if (SpiHandle.SpiConfig == NULL) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a - No SpiConfig instance in SPI handle\n",
+      __FUNCTION__
+      ));
+    return EFI_DEVICE_ERROR;
+  }
+
+  if (SpiHandle.SpiConfig->ExtendedBiosDecodeRangeEnable == FALSE) {
+    DEBUG ((
+      DEBUG_INFO,
+      "%a - Extended BIOS decode range is disabled. Skipping initialization.\n",
+       __FUNCTION__
+       ));
+    return EFI_SUCCESS;
+  }
 
   ///
   /// Register a callback  to initialize BIOS decode range

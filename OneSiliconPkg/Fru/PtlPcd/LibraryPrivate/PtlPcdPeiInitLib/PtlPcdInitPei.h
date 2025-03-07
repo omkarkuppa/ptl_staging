@@ -373,14 +373,16 @@ PtlPcdIehInit (
   );
 
 /**
-  Registers an extended BIOS range decode initialization callback.
+  Registers an extended BIOS range decode initialization callback when memory has been discovered.
 
-  @retval   EFI_SUCCESS   Notify descriptor registration done.
+  @param[in] SiPreMemPolicyPpi         The Silicon PreMem Policy PPI instance
+
+  @retval   EFI_SUCCESS   Notify descriptor registration done or skipped on purpose.
   @retval   Other         Notify descriptor registration unsuccesful.
 **/
 EFI_STATUS
 PtlPcdExtendedBiosDecodeRangeRegistration (
-  VOID
+  IN  SI_PREMEM_POLICY_PPI    *SiPreMemPolicyPpi
   );
 
 /**

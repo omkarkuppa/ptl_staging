@@ -431,7 +431,7 @@ PtlPcdOnPolicyInstalled (
 
   PtlPcdPcieRpPreMemInit (SiPreMemPolicyPpi);
 
-  PtlPcdExtendedBiosDecodeRangeRegistration ();
+  PtlPcdExtendedBiosDecodeRangeRegistration (SiPreMemPolicyPpi);
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PC_INST_PCD | PC_PEI_PREMEM_INIT_DCI);
   PtlPcdDciInit (SiPreMemPolicyPpi);
