@@ -34,8 +34,8 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
   CapTrustPublicCert   = 'SigningKeys/TestRoot3K.pub.pem'
   CapOtherPublicCert   = 'SigningKeys/TestSub3K.pub.pem'
   CapSignerPrivateCert = 'SigningKeys/TestCert3K.pem'
-  MePreProdCertSubject = ''
-  MeProdCertSubject    = ''
+  MePreProdCertSubject = 'PREPROD_ALLCLIENT_RSA3K_SIGNOP'
+  MeProdCertSubject    = 'PROD_PTLP_CSME21_SELFSIGNED_3K_SIGNOP'
 
 [FitTool]
   Method         = 'mFit'
@@ -109,6 +109,10 @@ Title = "Configuration file - TOML for PantherLake Mobile Platform"
   [Firmware.Me]
     Version   = 1
     IsEnabled = true
+
+    [Firmware.Me.Guid]
+      Cons_21 = '9DED4D29-DAD7-4297-AC3A-924D4E7DA042'
+      Corp_21 = 'F77BD6C9-FA4F-493F-9370-F3A501AB8189'
 
   [Firmware.Monolithic]
     Version   = 1

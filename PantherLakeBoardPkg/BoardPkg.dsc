@@ -292,7 +292,7 @@
     # This would allow the CSME capsule which signed sample test key.
     # (3K test keys from platform sample code.)
     #
-    DEFINE CSME_GENERATION          = 0
+    DEFINE CSME_GENERATION          = 21
 
   [PcdsFixedAtBuild]
     #
@@ -547,7 +547,7 @@ CmosAccessLib|BoardModulePkg/Library/CmosAccessLib/CmosAccessLib.inf
   PlatformFspUpdateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformFspUpdateHookLib/PlatformFspUpdateHookLib.inf
   PlatformWdtLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformWdtLib/PlatformWdtLib.inf
   PlatformEcResetLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformEcResetLib/PlatformEcResetLib.inf
-  PlatformMeUpdateHookLib|CapsuleFeaturePkg/Library/PlatformMeUpdateHookLibNull/PlatformMeUpdateHookLibNull.inf
+  PlatformMeUpdateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformMeUpdateHookLib/PlatformMeUpdateHookLib.inf
   PlatformDxeBootStateHookLib|$(PLATFORM_BOARD_PACKAGE)/Features/CapsuleUpdate/Library/PlatformDxeBootStateHookLib/PlatformDxeBootStateHookLib.inf
 !else
   PlatformWdtLib|CapsuleFeaturePkg/Library/PlatformWdtLibNull/PlatformWdtLibNull.inf

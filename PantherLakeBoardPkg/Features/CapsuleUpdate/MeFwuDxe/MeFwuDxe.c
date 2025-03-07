@@ -53,8 +53,8 @@
                                    UINT32 TotalBytesToSendToFw
                                    );
 
-  @retval  SUCCESS  If Update started successfully.
-  @retval  Others   Error code otherwise.
+  @retval  0       If Update started successfully.
+  @retval  Others  Error code otherwise.
 
 **/
 UINT32
@@ -83,31 +83,31 @@ PlatformMeFwuFullUpdateFromBuffer (
   This function should be called only after starting the update by calling
   FwuUpdateFull/Partial...
 
-  @param[in, out]  InProgress       True if Update is still in progress.
-                                    False if Update finished. Caller allocated.
-  @param[in, out]  CurrentPercent   Current percent of the update,
-                                    if Update is in progress. Caller allocated.
-  @param[in, out]  FwUpdateStatus   FW error code status of the update,
-                                    if it finished (success or error code).
-                                    Caller allocated.
-  @param[in, out]  NeededResetType  Needed reset type after the update,
-                                    if it finished. Caller allocated.
-                                    MFT_PART_INFO_EXT_UPDATE_ACTION_NONE         0
-                                    MFT_PART_INFO_EXT_UPDATE_ACTION_HOST_RESET   1
-                                    MFT_PART_INFO_EXT_UPDATE_ACTION_CSE_RESET    2
-                                    MFT_PART_INFO_EXT_UPDATE_ACTION_GLOBAL_RESET 3
+  @param[out]  InProgress       True if Update is still in progress.
+                                False if Update finished. Caller allocated.
+  @param[out]  CurrentPercent   Current percent of the update,
+                                if Update is in progress. Caller allocated.
+  @param[out]  FwUpdateStatus   FW error code status of the update,
+                                if it finished (success or error code).
+                                Caller allocated.
+  @param[out]  NeededResetType  Needed reset type after the update,
+                                if it finished. Caller allocated.
+                                MFT_PART_INFO_EXT_UPDATE_ACTION_NONE         0
+                                MFT_PART_INFO_EXT_UPDATE_ACTION_HOST_RESET   1
+                                MFT_PART_INFO_EXT_UPDATE_ACTION_CSE_RESET    2
+                                MFT_PART_INFO_EXT_UPDATE_ACTION_GLOBAL_RESET 3
 
-  @retval  SUCCESS  If Update is still in progress, or finished successfully.
-  @retval  Others   Error code otherwise.
+  @retval  0       If Update is still in progress, or finished successfully.
+  @retval  Others  Error code otherwise.
 
 **/
 UINT32
 EFIAPI
 PlatformMeFwuCheckUpdateProgress (
-  IN OUT BOOLEAN  *InProgress,
-  IN OUT UINT32   *CurrentPercent,
-  IN OUT UINT32   *FwUpdateStatus,
-  IN OUT UINT32   *NeededResetType
+  OUT BOOLEAN  *InProgress,
+  OUT UINT32   *CurrentPercent,
+  OUT UINT32   *FwUpdateStatus,
+  OUT UINT32   *NeededResetType
   )
 {
   return FwuCheckUpdateProgress (
@@ -121,32 +121,32 @@ PlatformMeFwuCheckUpdateProgress (
 /**
   Get FW Update enabling state.
 
-  @param[in, out]  EnabledState  FW Update enabling state. Caller allocated.
-                                 FW_UPDATE_DISABLED = 0.
-                                   - Full Disabled.
-                                   - Partial Enabled.
-                                 FW_UPDATE_ENABLED = 1.
-                                   - Full Enabled.
-                                   - Partial Enabled.
-                                 FW_UPDATE_FULL_AND_PARTIAL_DISABLED = 3.
-                                   - Full Disabled.
-                                   - Partial Disabled.
+  @param[out]  EnabledState  FW Update enabling state. Caller allocated.
+                             FW_UPDATE_DISABLED = 0.
+                               - Full Disabled.
+                               - Partial Enabled.
+                             FW_UPDATE_ENABLED = 1.
+                               - Full Enabled.
+                               - Partial Enabled.
+                             FW_UPDATE_FULL_AND_PARTIAL_DISABLED = 3.
+                               - Full Disabled.
+                               - Partial Disabled.
 
-  @retval  SUCCESS  If succeeded.
-  @retval  Others   Error code otherwise.
+  @retval  0       If succeeded.
+  @retval  Others  Error code otherwise.
 
 **/
 UINT32
 EFIAPI
 PlatformMeFwuEnabledState (
-  IN OUT UINT16  *EnabledState
+  OUT UINT16  *EnabledState
   )
 {
   return FwuEnabledState (EnabledState);
 }
 
 /**
-  Set FW Update enabling state. (Supported only before EOP.)
+  Set FW Update enabling state.
 
   @param[in]  EnabledState  FW Update enabling state.
                             FW_UPDATE_DISABLED = 0.
@@ -159,10 +159,10 @@ PlatformMeFwuEnabledState (
                               - Full Disabled.
                               - Partial Disabled.
 
-  @return  SUCCESS  If succeeded.
-  @retval  Others   Error code otherwise.
+  @retval  0       If succeeded.
+  @retval  Others  Error code otherwise.
 
-*/
+**/
 UINT32
 EFIAPI
 PlatformMeFwuSetEnabledState (
@@ -175,40 +175,63 @@ PlatformMeFwuSetEnabledState (
 /**
   Get OEM ID from flash.
 
-  @param[in, out]  OemId  OEM ID from flash. Caller allocated.
+  @param[out]  OemId  OEM ID from flash. Caller allocated.
 
-  @retval  SUCCESS  If succeeded.
-  @retval  Others   Error code otherwise.
+  @retval  0       If succeeded.
+  @retval  Others  Error code otherwise.
 
 **/
 UINT32
 EFIAPI
 PlatformMeFwuOemId (
-  IN OUT EFI_GUID  *OemId
+  OUT EFI_GUID  *OemId
   )
 {
   return FwuOemId ((_UUID *)OemId);
 }
 
 /**
-  Set ISH configuration file. (Supported only before EOP.)
+  Get FW Type, from the flash image.
+
+  @param[out]  FwType  FW Type. Caller allocated.
+                       FWU_FW_TYPE_INVALID   0
+                       FWU_FW_TYPE_RESERVED  1
+                       FWU_FW_TYPE_CONSUMER  3
+                       FWU_FW_TYPE_CORPORATE 4
+
+  @retval  0       If succeeded.
+  @retval  Others  Error code otherwise.
+
+**/
+UINT32
+EFIAPI
+PlatformMeFwuFwType (
+  OUT UINT32  *FwType
+  )
+{
+  return FwuFwType (FwType);
+}
+
+/**
+  Set ISH configuration file.
 
   Receive PDT file payload, create bios2ish file as a composition of
   bios2ish header (with PDT Update data type) and PDT file payload
   and send it to FW to set file.
+  Supported only before EOP.
 
   @param[in]  Buffer        Buffer of PDT file payload.
   @param[in]  BufferLength  Length of the buffer in bytes.
 
-  @retval  SUCCESS  If succeeded.
-  @retval  Others   Error code otherwise.
+  @retval  0       If succeeded.
+  @retval  Others  Error code otherwise.
 
 **/
 UINT32
 EFIAPI
 PlatformMeFwuSetIshConfig (
-  IN  UINT8   *Buffer,
-  IN  UINT32  BufferLength
+  IN UINT8   *Buffer,
+  IN UINT32  BufferLength
   )
 {
   return FwuSetIshConfig (Buffer, BufferLength);
@@ -217,15 +240,15 @@ PlatformMeFwuSetIshConfig (
 /**
   Get the recovery image from the FW using DMA buffer.
 
-  @param[in]       DmaBuffer        DMA-able buffer for the recovery image.
-                                    The buffer should be pre-allocated
-                                    by the caller.
-  @param[in]       DmaBufferLength  Length of the buffer in bytes.
-  @param[in, out]  ImageLength      Length of the recovery image
-                                    that was written in the buffer.
+  @param[in]  DmaBuffer        DMA-able buffer for the recovery image.
+                               The buffer should be pre-allocated
+                               by the caller.
+  @param[in]  DmaBufferLength  Length of the buffer in bytes.
+  @param[out] ImageLength      Length of the recovery image
+                               that was written in the buffer.
 
-  @retval  SUCCESS  If succeeded.
-  @retval  Others   Error code otherwise.
+  @return  0       If succeeded.
+  @retval  Others  Error code otherwise.
 
 **/
 UINT32
@@ -233,7 +256,7 @@ EFIAPI
 PlatformMeFwuGetRecoveryImageToDmaBuffer (
   IN     EFI_PHYSICAL_ADDRESS  DmaBuffer,
   IN     UINT32                DmaBufferLength,
-  IN OUT UINT32                *ImageLength
+     OUT UINT32                *ImageLength
   )
 {
   return FwuGetRecoveryImageToDmaBuffer (DmaBuffer, DmaBufferLength, ImageLength);
@@ -248,6 +271,7 @@ ME_FIRMWARE_UPDATE_PROTOCOL  mFirmwareUpdateContext = {
   PlatformMeFwuSetEnabledState,             // ME_FIRMWARE_UPDATE_PROTOCOL_SET_ENABLED_STATE
   PlatformMeFwuEnabledState,                // ME_FIRMWARE_UPDATE_PROTOCOL_ENABLED_STATE
   PlatformMeFwuOemId,                       // ME_FIRMWARE_UPDATE_PROTOCOL_OEM_ID
+  PlatformMeFwuFwType,                      // ME_FIRMWARE_UPDATE_PROTOCOL_FW_TYPE
   PlatformMeFwuSetIshConfig,                // ME_FIRMWARE_UPDATE_PROTOCOL_SET_ISH_CONFIG
   PlatformMeFwuGetRecoveryImageToDmaBuffer  // ME_FIRMWARE_UPDATE_PROTOCOL_GET_RECOVERY_TO_DMA
 };
