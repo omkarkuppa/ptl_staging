@@ -73,6 +73,10 @@ goto ArgParse
   set EXT_BUILD_FLAGS=%EXT_BUILD_FLAGS% -D FSP_ARCH=X64 -D FSP64_BUILD=TRUE
 )
 
+@if not defined FSP_SIGNED (
+  @set FSP_SIGNED=FALSE
+)
+
 @REM
 @REM If any target option is not specified, PantherLake build by default
 @REM
