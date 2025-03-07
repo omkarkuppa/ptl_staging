@@ -2872,8 +2872,13 @@
   # !BSF NAME:{CNVi BT Audio Offload} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable BT Audio Offload, Default is ENABLE. 0: DISABLE, 1: ENABLE}
   gPlatformFspPkgTokenSpaceGuid.CnviBtAudioOffload          | * | 0x01 | 0x01
-  # Added reserved space    UnusedUpdSpace29[3]
-  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd29               | * | 0x3 | {0x00}
+
+  # !BSF NAME:{WWAN Coex} TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
+  # !BSF HELP:{WWAN Coex is getting updated from UEFI variable}
+  gPlatformFspPkgTokenSpaceGuid.CnviWwanCoex                | * | 0x01 | 0x00
+
+  # Added reserved space    UnusedUpdSpace29[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd29               | * | 0x2 | {0x00}
 
   # !BSF NAME:{CNVi RF_RESET pin muxing} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
   # !BSF HELP:{Select CNVi RF_RESET# pin depending on board routing. LP/P/M: GPP_A8 = 0x2942E408(default) or GPP_F4 = 0x194CE404. H/S: 0. Refer to GPIO_*_MUXING_CNVI_RF_RESET_* in GpioPins*.h.}

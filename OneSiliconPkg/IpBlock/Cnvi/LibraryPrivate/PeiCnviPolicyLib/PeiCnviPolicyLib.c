@@ -47,6 +47,7 @@ CnviPrintConfig (
   DEBUG ((DEBUG_INFO, "BT Audio Offload           = %x\n", CnviConfig->BtAudioOffload));
   DEBUG ((DEBUG_INFO, "BT Audio Offload Interface = %x\n", CnviConfig->BtAudioOffloadInterface));
   DEBUG ((DEBUG_INFO, "BT Interface               = %x\n", CnviConfig->BtInterface));
+  DEBUG ((DEBUG_INFO, "Wwan Coex                  = %x\n", CnviConfig->WwanCoex));
 }
 
 /**
@@ -75,6 +76,7 @@ CnviLoadConfigDefault (
   CnviConfig->BtAudioOffload          = TRUE;                   // BT Audio Offload enabled
   CnviConfig->BtAudioOffloadInterface = CnviBtAudioOffloadI2s;  // BT Audio Offload Interface I2S (
   CnviConfig->BtInterface             = CnviBtIfUsb;            // USB interface
+  CnviConfig->WwanCoex                = 0x0;                    // WWAN COEX
 }
 
 STATIC COMPONENT_BLOCK_ENTRY mCnviBlock = {

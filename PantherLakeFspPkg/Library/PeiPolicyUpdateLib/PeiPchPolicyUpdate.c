@@ -234,6 +234,7 @@ FspUpdateCnviPolicy (
   CnviConfig->BtAudioOffloadInterface = FspsUpd->FspsConfig.CnviBtAudioOffloadInterface;
   CnviConfig->PinMux.RfReset = FspsUpd->FspsConfig.CnviRfResetPinMux;
   CnviConfig->PinMux.Clkreq  = FspsUpd->FspsConfig.CnviClkreqPinMux;
+  CnviConfig->WwanCoex       = FspsUpd->FspsConfig.CnviWwanCoex;
 }
 
 /**

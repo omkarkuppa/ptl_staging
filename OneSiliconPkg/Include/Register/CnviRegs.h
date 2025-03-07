@@ -141,6 +141,11 @@
                                                                 * CNVi
                                                                 * BT core.
                                                                 */
+#define R_CNVI_PCR_SCRATCH0                   0x00008130U     ///< Scratch0 Pad
+                                                              /// Register default value: 0x00000000
+                                                              /* This is a read write register 
+                                                               * and has no impact on hardware control.
+                                                               */
 #define R_CNVI_PCR_BT_PCIE_IF                 0x00008250U      ///< BT_PCIE_IF
                                                                /// Register default value: 0x00000000
 #define B_CNVI_PCR_BT_PCIE_IF_BT_PCIE_IF_SEL  BIT0             ///< BT_PCIE_IF

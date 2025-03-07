@@ -258,6 +258,38 @@ BuildCnviConfigHob (
 }
 
 /**
+  Program SCRATCH0 based on WWAN COEX
+
+  @param[in] CnviHandle          Pointer to CNVi Handle Structure
+**/
+VOID
+CnviUpdateWwanCoex (
+  IN CNVI_HANDLE             *CnviHandle
+)
+{
+  EFI_STATUS                 Status;
+  REGISTER_ACCESS            *CnviPcrAccess;
+  CNVI_CONFIG                *CnviConfig;
+
+  if (CnviHandle == NULL) {
+    Status = EFI_INVALID_PARAMETER;
+    DEBUG ((DEBUG_INFO, "%a () - End. Status = %r\n", __FUNCTION__, Status));
+    return;
+  }
+
+  CnviPcrAccess  = CnviHandle->SbAccess;
+  CnviConfig     = CnviHandle->Config;
+
+  DEBUG ((DEBUG_INFO, "Before Write SCRATCH0 = %x\n", CnviPcrAccess->Read32 (CnviPcrAccess, R_CNVI_PCR_SCRATCH0)));
+  CnviPcrAccess->Write32 (
+                    CnviPcrAccess,
+                    R_CNVI_PCR_SCRATCH0,
+                    (UINT32) CnviConfig->WwanCoex
+                    );
+  DEBUG ((DEBUG_INFO, "After Write SCRATCH0 = %x\n", CnviPcrAccess->Read32 (CnviPcrAccess, R_CNVI_PCR_SCRATCH0)));
+}
+
+/**
   Initialize CNVi devices
 
   @param[in] CnviHandle          Pointer to CNVi Handle Structure
@@ -306,6 +338,8 @@ CnviInit (
   CnviCallbacks->BtPreInit (CnviHandle);
 
   BuildCnviConfigHob (CnviConfig);
+
+  CnviUpdateWwanCoex (CnviHandle);
 
   DEBUG ((DEBUG_INFO, "%a () - End.\n", __FUNCTION__));
 }
