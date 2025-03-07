@@ -1804,7 +1804,7 @@ PeiHeciCommitFilesMsg (
              &RecvLength
              );
 
-  if (CommitFiles.MchiHeader.Fields.Result != McaStatusSuccess) {
+  if (CommitFiles.MchiHeader.Fields.Result != McaStatusSuccess && CommitFiles.MchiHeader.Fields.Result != McaStatusGlobalResetRequired) {
     Status = EFI_DEVICE_ERROR;
   }
 
