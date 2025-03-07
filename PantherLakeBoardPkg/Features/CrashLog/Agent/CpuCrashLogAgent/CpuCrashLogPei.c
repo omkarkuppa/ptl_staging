@@ -128,13 +128,6 @@ CrashlogAgentUnInit (
     RestoreDevice10Mmio (CpuAgent->DvsecStruct.Fields.TBir, CpuAgent->SavedPciCmdSts);
   }
 
-  //
-  // Reset private data
-  //
-  if (CpuAgent->CrashRecordInfo != NULL) {
-    FreePool (CpuAgent->CrashRecordInfo);
-  }
-
   FreePool (CpuAgent);
   return EFI_SUCCESS;
 }
@@ -158,7 +151,6 @@ CrashlogAgentExtract (
   )
 {
   EFI_STATUS                 Status;
-  UINT32                     Index;
   EFI_PHYSICAL_ADDRESS       Address;
   CAPABILITY_STATUS_PHASE_2  ClStatus;
 
@@ -186,15 +178,9 @@ CrashlogAgentExtract (
   //
   // Get crash record information from SSRAM
   //
-  if (CpuAgent->CrashRecordInfo == NULL) {
-    Status = UpdateCrashRecordInfo ();
-    if (EFI_ERROR (Status)) {
-      return Status;
-    }
-
-    if (CpuAgent->CrashRecordInfo == NULL) {
-      return EFI_OUT_OF_RESOURCES;
-    }
+  Status = UpdateCrashRecordInfo ();
+  if (EFI_ERROR (Status)) {
+    return Status;
   }
 
   *RecordCount = CpuAgent->ValidRecordCount;
@@ -203,26 +189,24 @@ CrashlogAgentExtract (
   // Copy crash record from SSRAM to memory
   //
   if (Records != NULL) {
-    for (Index = 0; Index < CpuAgent->DiscoveryTbl.Header.DW0.Count; Index++) {
-      if (CpuAgent->CrashRecordInfo[Index].Valid) {
-        Status = PeiServicesAllocatePages (
-                   EfiBootServicesData,
-                   EFI_SIZE_TO_PAGES (CpuAgent->CrashRecordInfo[Index].Size),
-                   &Address
-                   );
-        if (!EFI_ERROR (Status)) {
-          AccessMmioDword (
-            (VOID *)(UINTN)Address,
-            CpuAgent->CrashRecordInfo[Index].Addr,
-            CpuAgent->CrashRecordInfo[Index].Size / sizeof (UINT32),
-            READ);
-          Records->Address = (UINTN)Address;
-          Records->Size = CpuAgent->CrashRecordInfo[Index].Size;
-          Records ++;
-        } else {
-          DEBUG ((DEBUG_ERROR, "failed to allocate enough memory store crashlog data.\n"));
-          return Status;
-        }
+    if (CpuAgent->CrashRecordInfo.Valid) {
+      Status = PeiServicesAllocatePages (
+                  EfiBootServicesData,
+                  EFI_SIZE_TO_PAGES (CpuAgent->CrashRecordInfo.Size),
+                  &Address
+                  );
+      if (!EFI_ERROR (Status)) {
+        AccessMmioDword (
+          (VOID *)(UINTN)Address,
+          CpuAgent->CrashRecordInfo.Addr,
+          CpuAgent->CrashRecordInfo.Size / sizeof (UINT32),
+          READ);
+        Records->Address = (UINTN)Address;
+        Records->Size = CpuAgent->CrashRecordInfo.Size;
+        Records ++;
+      } else {
+        DEBUG ((DEBUG_ERROR, "failed to allocate enough memory store crashlog data.\n"));
+        return Status;
       }
     }
     CpuAgent->RecordCollected = TRUE;

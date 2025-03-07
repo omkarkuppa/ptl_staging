@@ -146,7 +146,7 @@ struct _CPU_CRASHLOG_AGENT_PRIVATE_DATA {
   // Crashlog record
   //
   UINT32                       ValidRecordCount;
-  CRASH_RECORD_INFORMATION     *CrashRecordInfo;
+  CRASH_RECORD_INFORMATION     CrashRecordInfo;
   BOOLEAN                      RecordCollected;
 };
 

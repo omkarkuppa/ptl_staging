@@ -312,15 +312,12 @@ PrintCrashRecordInfo (
   VOID
   )
 {
-  UINT32    Index;
 
   DEBUG ((DEBUG_INFO, " -----------------------------------------------  \n"));
   DEBUG ((DEBUG_INFO, " --------------- Crash record info -------------  \n"));
   DEBUG ((DEBUG_INFO, " -----------------------------------------------  \n"));
-  for (Index = 0; Index < CpuAgent->DiscoveryTbl.Header.DW0.Count; Index ++) {
-    if (CpuAgent->CrashRecordInfo[Index].Valid) {
-      DEBUG ((DEBUG_INFO, " record %d:: Addr= 0x%08x\n", Index, CpuAgent->CrashRecordInfo[Index].Addr));
-    }
+  if (CpuAgent->CrashRecordInfo.Valid) {
+      DEBUG ((DEBUG_INFO, " record :: Addr= 0x%08x\n", CpuAgent->CrashRecordInfo.Addr));
   }
   DEBUG ((DEBUG_INFO, " -----------------------------------------------  \n"));
   return EFI_SUCCESS;
@@ -389,25 +386,19 @@ UpdateCrashRecordInfo (
   UINT32                RecordSize;
   UINT32                Data32;
   CRASH_RECORD_VERSION  *Version;
-  UINT32                Index;
 
   RecordAddr = 0;
   RecordSize = 0;
 
   //
-  // Check if record cound is 0
-  //
-  if (CpuAgent->DiscoveryTbl.Header.DW0.Count == 0) {
-    DEBUG ((DEBUG_ERROR, " error: record cound is 0.\n"));
-    return EFI_NOT_FOUND;
-  }
-
-  //
   // Check if the PUNIT crash record is valid. if no, skip all crash record extraction.
   //
-  GetCrashRecordInfoOfIndex (0, &RecordAddr, &RecordSize);
-  if ((RecordSize == 0) || (RecordAddr == 0)) {
+  RecordAddr = CpuAgent->Device10MmioBase + CpuAgent->DiscoveryTbl.Header.DW2;
+  RecordSize = CpuAgent->DiscoveryTbl.Header.DW3 * sizeof (UINT32);
+
+  if ((RecordSize == 0) || (CpuAgent->DiscoveryTbl.Header.DW2 == 0)) {
     DEBUG ((DEBUG_ERROR, " error: PUNIT crash record is not found.\n"));
+    CpuAgent->CrashRecordInfo.Valid = FALSE;
     return EFI_NOT_FOUND;
   } else {
     // The crash record is invalid if first DW is 0 or consumed bit is set
@@ -415,43 +406,15 @@ UpdateCrashRecordInfo (
     Version = (CRASH_RECORD_VERSION *)&Data32;
     if ((Data32 == CRASHLOG_INVALID_CHECK_0) || (Data32 == CRASHLOG_INVALID_CHECK_DEAD_BEEF) || (Version->Consumed == 1)) {
       DEBUG ((DEBUG_ERROR, " error: PUNIT crash record is not valid, value is 0x%x.\n", Data32));
+      CpuAgent->CrashRecordInfo.Valid = FALSE;
       return EFI_NOT_FOUND;
     }
   }
 
-  //
-  // Allocate memory for crash record information
-  //
-  CpuAgent->CrashRecordInfo = AllocateZeroPool (CpuAgent->DiscoveryTbl.Header.DW0.Count * sizeof (CRASH_RECORD_INFORMATION));
-  if (CpuAgent->CrashRecordInfo == NULL) {
-    DEBUG ((DEBUG_ERROR, " error: Fail to allocate memory for store crash record information.\n"));
-    return EFI_OUT_OF_RESOURCES;
-  }
-
-  //
-  // Locate all records info on SSRAM and update CrashRecordInfo table
-  //
-  for (Index = 0; Index < CpuAgent->DiscoveryTbl.Header.DW0.Count; Index++) {
-    RecordAddr = RecordSize = 0;
-    GetCrashRecordInfoOfIndex (Index, &RecordAddr, &RecordSize);
-    CpuAgent->CrashRecordInfo[Index].Addr = RecordAddr;
-    CpuAgent->CrashRecordInfo[Index].Size = RecordSize;
-    if ((RecordSize == 0) || (RecordAddr == 0)) {
-      CpuAgent->CrashRecordInfo[Index].Valid = FALSE;
-    } else {
-      //
-      // Check if crash record valid
-      //
-      Data32 = MmioRead32 ((UINTN)RecordAddr);
-      if ((Data32 == CRASHLOG_INVALID_CHECK_0) || (Data32 == CRASHLOG_INVALID_CHECK_DEAD_BEEF)) {
-        CpuAgent->CrashRecordInfo[Index].Valid = FALSE;
-      } else  {
-        CpuAgent->CrashRecordInfo[Index].Valid = TRUE;
-        CpuAgent->ValidRecordCount ++;
-      }
-    }
-  }
-
+  CpuAgent->CrashRecordInfo.Addr = RecordAddr;
+  CpuAgent->CrashRecordInfo.Size = RecordSize;
+  CpuAgent->CrashRecordInfo.Valid = TRUE;
+  CpuAgent->ValidRecordCount ++;
   //
   // Print crash record information
   //
