@@ -927,7 +927,8 @@ InitMrwLpddr5 (
             Status  = mrcWrongInputParameter;
           }
         }
-        DqVrefMv = (UINT16) (Outputs->VccddqVoltage / 4) + 10;
+
+        DqVrefMv = MrcLp5GetVrefDq (MrcData);
         CaVrefMv = (UINT16) MrcCalcIdealVref (MrcData, CaDrvStrength, 0, CaOdt, CmdV, TRUE);
         CaVrefMv = CheckVrefLimits (MrcData, CaVrefMv, CmdV);
         VrefToOffset (MrcData, DqVrefMv, &Offset);
@@ -1040,7 +1041,12 @@ InitMrwLpddr5 (
         Mr18.Bits.WckFreqMode = (Outputs->HighFrequency >= f3200) ? 1 : 0;
         // If we have more than 1 rank, we do not use dynamic, so we set Always on = 1.
         // Needs to align with WCK_CONFIG.WCK_MODE
-        Mr18.Bits.WckAlwaysOn = (ChannelOut->ValidRankBitMask >  1) ? 1 : 0;
+        if (ExtInputs->WckModeOverride < 2) {
+          Mr18.Bits.WckAlwaysOn = ExtInputs->WckModeOverride;
+        } else {
+          Mr18.Bits.WckAlwaysOn = (ChannelOut->ValidRankBitMask >  1) ? 1 : 0;
+        }
+
         MrPtr[mrIndexMR18] = Mr18.Data8;
 
         //MR3 - DBI-RD/WR = 0 (Disabled)

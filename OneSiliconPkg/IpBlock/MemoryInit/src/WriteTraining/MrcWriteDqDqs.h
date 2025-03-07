@@ -286,6 +286,28 @@ WriteVoltageCentering2D_DDR5 (
   IN     UINT8                En2D
   );
 
+/**
+  Revoke the DVFSQ configuration in DRAM Mode Registers back to 0.5v due to insufficient margins at 0.3v
 
+  @param[in, out] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - mrcSuccess if succeeded
+**/
+MrcStatus
+MrcRevokeDvfsqConfiguration (
+  IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  Check margins and fallback to 0.5V if below threshold.
+
+  @param[in, out] MrcData - Include all MRC global data.
+
+  @retval MrcStatus - mrcSuccess if succeeded
+**/
+MrcStatus
+MrcDvfsqCheckRmtResult (
+  IN OUT MrcParameters *const MrcData
+  );
 
 #endif // _MrcWriteDqDqs_h_

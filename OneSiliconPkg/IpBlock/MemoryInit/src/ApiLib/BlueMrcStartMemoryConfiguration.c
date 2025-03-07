@@ -449,6 +449,16 @@ MrcWrappedStartMemoryConfiguration (
   }
   SaGvNumPoints = MrcCountBitsEqOne (SaGvWpMask);
 
+#ifdef MRC_MINIBIOS_BUILD
+  // We do not update the PostCodesDone/Total values during the MiniBIOS boots
+  // since the progress bar feature is only used during the full BIOS boots.
+  SaveData->PostCodesDone  = 0;
+  SaveData->PostCodesTotal = 0;
+#else
+  SaveData->PostCodesDone  = 0;
+  SaveData->PostCodesTotal = (MRC_POST_CODE_LAST - MRC_INITIALIZATION_START) * SaGvNumPoints;
+#endif
+
   if (SaGv) {
     // Regular SAGV case - reorder the points in Warm / S3 resume flow
     if ((BootMode == bmWarm) || (BootMode == bmS3)) {
@@ -546,11 +556,13 @@ MrcWrappedStartMemoryConfiguration (
               ((((SaGvOther >> Outputs->SaGvPoint) & 1) != 0) && (Task->policy_flag & MF_GV_OTHER)) ||
               ((Outputs->SaGvPoint == SaGvLast)               && (Task->policy_flag & MF_GV_LAST))){
             CpStatus = MrcInternalCheckPoint (MrcData, Task->oem_cmd);
+            PostCodeOut = (Task->post_code_ovr == POST_CODE_NO_OVR) ? post_code : Task->post_code_ovr;
             if (mrcSuccess != CpStatus && !Inputs->IgnoreCheckPoint) {
+              // MrcDebugHook is called here to update the MRC progress bar for skipped call table steps.
+              MrcCall->MrcDebugHook (MrcData, PostCodeOut);
               continue;
             }
             // Output post code to post code I/O port.
-            PostCodeOut = (Task->post_code_ovr == POST_CODE_NO_OVR) ? post_code : Task->post_code_ovr;
             if ((Select == 0) || ((Select > 0) && (Select == PostCodeOut))) {
               MrcCall->MrcDebugHook (MrcData, PostCodeOut);
             }
@@ -626,8 +638,16 @@ MrcWrappedStartMemoryConfiguration (
               break;
             }
           }
+        } else {
+          // MrcDebugHook is called here to update the MRC progress bar for call table steps skipped due to the SaGv point check.
+          PostCodeOut = (Task->post_code_ovr == POST_CODE_NO_OVR) ? post_code : Task->post_code_ovr;
+          MrcCall->MrcDebugHook (MrcData, PostCodeOut);
         } // Select match
-      } // if boot mode match
+      } else {
+        // MrcDebugHook is called here to update the MRC progress bar for call table steps skipped due to the boot mode check.
+        PostCodeOut = (Task->post_code_ovr == POST_CODE_NO_OVR) ? post_code : Task->post_code_ovr;
+        MrcCall->MrcDebugHook (MrcData, PostCodeOut);
+      } // for boot mode match
     } // for index
 
     if ((MrcStatus == mrcSuccess) && (SaGv) && (Outputs->SaGvPoint != Outputs->SaGvLast) && (Select == 0)) {

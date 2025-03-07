@@ -314,7 +314,7 @@ typedef struct {
 
 // Half UI
 #define MRC_0p5UI_IN_PI  (32)
-
+#define PCTLE_VOUT       (580)
 typedef enum {
   SelLvrVccIog,
   SelLvrVccDdq,
@@ -3195,6 +3195,53 @@ MrcGetCmdGroupMax (
 VOID
 CbMixMuxConfig (
   IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  Programming of CCC_CR_DDRCRCCCCLKCONTROLS_BlockTrainRst
+
+  @param[in] MrcData - The MRC global data.
+  @param[in] BlockTrainReset - TRUE to BlockTrainReset for most training algos.  FALSE for specific training algos that need PiDivider sync.
+
+**/
+VOID
+MrcBlockTrainResetToggle (
+  IN MrcParameters *const MrcData,
+  IN BOOLEAN              BlockTrainReset
+  );
+
+/**
+  This procedure sets the pctle settings.
+
+  @param[in,out] MrcData        - Include all MRC global data.
+  @param[out]    Vref           - The VREF value
+  @param[out]    EquOdt         - The EquOdt value
+  @param[out]    Controller     - The Controller value
+  @param[out]    Channel        - The Channel value
+  @param[out]    Rank           - The Rank value
+
+**/
+void
+MRCSetPctle (
+  IN MrcParameters *const MrcData,
+  IN INT32               *Vref,
+  IN UINT32               EquOdt,
+  IN UINT32               Controller,
+  IN UINT8                Channel,
+  IN UINT8                Rank
+  );
+
+/**
+  This function is used to set the default RxVREF.
+
+  @param[in]  MrcData         - Pointer to global data structure.
+  @param[in]  Vref            - Pointer to the VREF value.
+
+**/
+void
+MrcSetDefaultRxVrefValueDdr5 (
+  IN  MrcParameters *const  MrcData,
+  IN  UINT32                *Vref
   );
 
 #endif //MRC_DDR_IO_API_H_

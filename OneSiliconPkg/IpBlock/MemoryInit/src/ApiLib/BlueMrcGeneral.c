@@ -203,22 +203,21 @@ TurningOffVddqForDvfsqLowPoint (
   )
 {
   const MrcInput   *Inputs;
-  UINT16           SaGvPoint;
+  UINT32           SaGvPoint;
   INT64            GetSetVal;
-  UINT8            SagvWpMaskSave;
+
   const MRC_EXT_INPUTS_TYPE  *ExtInputs;
 
   Inputs = &MrcData->Inputs;
   ExtInputs = Inputs->ExtInputs.Ptr;
-  SagvWpMaskSave = ExtInputs->SaGvWpMask;
+
   GetSetVal = 0;
 
   if (MrcIsSaGvEnabled (MrcData)) {
     for (SaGvPoint = 0; SaGvPoint < MAX_SAGV_POINTS; SaGvPoint++) {
-      if ((ExtInputs->SaGvFreq[SaGvPoint] <= 3200) && ((SagvWpMaskSave & 1) == 1)) {
-        GetSetVal |= (INT64) (1<<SaGvPoint);
+      if ((ExtInputs->SaGvFreq[SaGvPoint] <= 3200) && ((ExtInputs->SaGvWpMask & (1 << SaGvPoint)))) {
+        GetSetVal |= (UINT64) (1 << SaGvPoint);
       }
-      SagvWpMaskSave >>= 1;
     }
   } else {
     GetSetVal = 0x1;
@@ -1403,23 +1402,25 @@ MrcSetOverrides (
       }
     }
 
-    //
-    // Set Outputs->IsDvfsqEnabled based on frequency, and limit to lowest GV point only.
-    // DVFSQ low (enabled) is restricted to single point, as all GV points must write same MRs at the same time,
-    // and DVFSQ high must write MR28 before FSP-OP change. However, to avoid breaking any requirements, DVFSQ low would then need to write
-    // contradictory data depending on whether switching from High to Low, vs staying Low to Low.
-    // This is not possible to program with current register implementation, so prevent Low to Low transition by restricting DVFSQ Low to only GV0
-    //
-    if (ExtInputs->DvfsqEnabled && (Outputs->HighFrequency <= f3200) && ((Outputs->SaGvPoint == 0) || !MrcIsSaGvEnabled (MrcData))) {
-      Outputs->IsDvfsqEnabled = TRUE;
-    }
-
     // There is a limitation for MC to perform DVFSQ_LOW->DVFSQ_LOW SAGV transition, due to ZQ-stop limitation.
     // Transition from DVFSQ_LOW->DVFSQ_LOW can still be supported for debug, if ALL SAGV point are DVFSQ_LOW and
     // MRS FSM is programmed with no ZQ operation whatsoever. in that mode ZQ should be completely disabled, both periodic,
     // SRX exit and in MRS FSM for SAGV.  The request: (a) no ZQ whatsoever, (b) More than 1 DVFSQ_LOW point is allowed
     // 2 options will be supported: 1 DVFSQ point or all points are configured as DVFSQ points
     Outputs->IsZqDisabled = FALSE;
+    //
+    // Set Outputs->IsDvfsqEnabled based on frequency, and limit to lowest GV point only.
+    // DVFSQ low (enabled) is restricted to single point, as all GV points must write same MRs at the same time,
+    // and DVFSQ high must write MR28 before FSP-OP change. However, to avoid breaking any requirements, DVFSQ low would then need to write
+    // contradictory data depending on whether switching from High to Low, vs staying Low to Low.
+    // This is not possible to program with current register implementation, so prevent Low to Low transition by restricting DVFSQ Low to only GV0
+    // Setting Outputs->IsZqDisabled allows us to overcome different SAGV points DVFSQ restriction - Can run multipule points
+    //
+    if (ExtInputs->DvfsqEnabled && (Outputs->HighFrequency <= f3200) && (Outputs->IsZqDisabled || (Outputs->SaGvPoint == 0) || !MrcIsSaGvEnabled (MrcData))) {
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DVFSQ is enabled\n");
+      Outputs->IsDvfsqEnabled = TRUE;
+    }
+
     // Set Outputs->IsDvfscEnabled based on Inputs->IsDvfscEnable
     Outputs->IsDvfscEnabled = FALSE;
     if ((ExtInputs->DvfscEnabled && (Outputs->Frequency <= f3200)) && ((Outputs->SaGvPoint == 0) || !MrcIsSaGvEnabled (MrcData))) {
@@ -2075,10 +2076,12 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tForceCkdBypass: %Xh\n"
     "\tIsDdrphyx64: %Xh\n"
-    "\tSenseAtRxDll: %Xh\n",
+    "\tSenseAtRxDll: %Xh\n"
+    "\tWckModeOverride: %u\n",
     ExtInputs->ForceCkdBypass,
     Inputs->IsDdrphyx64,
-    Inputs->SenseAtRxDll
+    Inputs->SenseAtRxDll,
+    ExtInputs->WckModeOverride
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n%s*****    MRC TRAINING STEPS     *****\n%s", PrintBorder, PrintBorder);

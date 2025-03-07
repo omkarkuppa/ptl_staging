@@ -108,3 +108,146 @@ MrcGetCsRankPiGroup (
 
   return GroupIdx;
 }
+
+/**
+  This function takes the input CS timings (CtlPiCode[]) for multiple ranks on a
+  single channel and normalizes the timing between a shared PHY CCC Channel timing
+  register field (CtlGrpPi) and a per-rank offset register field (CsPerBitCcc).
+
+  The registers are updated with the normalized values before returning.
+
+  @param[in]  MrcData      - Include all MRC global data.
+  @param[in]  Controller   - 0-based index instance to select.
+  @param[in]  Channel      - 0-based index instance to select.
+  @param[in]  RankMask     - Bit mask of ranks sharing CCC Channel
+  @param[in]  CtlPiCode    - The effective CS PI code to program for each rank
+
+  @return MrcStatus - mrcFail if the per-rank offset is larger than the per-pin register max
+                    - mrcSuccess in all other cases
+**/
+MrcStatus
+MrcCsPerPinNormalizeRanks (
+  IN MrcParameters *const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               RankMask,
+  IN UINT16               CtlPiCode[MAX_RANK_IN_CHANNEL]
+  )
+{
+  UINT32             MinPiCode;
+  UINT32             MaxPiCode;
+  INT64              PerBitMax;
+  UINT32             Rank;
+  UINT32             CsGrpRankMask;
+  UINT16             PiCode;
+  INT64              CsPiCodeShared;
+  INT64              CsPiCodePerPin;
+  CccChCsPiGroup     CsGrp;
+  CccChCsPiGroup     RankCsGrp;
+  MrcOutput          *Outputs;
+  INT64              TriCaSave;
+
+  if (RankMask == 0) {
+    // Nothing to do
+    return mrcSuccess;
+  }
+
+  Outputs = &MrcData->Outputs;
+
+  MrcGetSetLimits (MrcData, CsPerBitCcc, MRC_IGNORE_ARG, NULL, &PerBitMax, NULL);
+  TriCaSave = MrcTristateCa (MrcData, MRC_ENABLE, 0);
+
+  for (CsGrp = CccChCsPiGroup0; CsGrp < CccChCsPiGroupMax; CsGrp++) {
+    // Calculate the rank mask for the current CsGrp
+    CsGrpRankMask = 0;
+    for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+      if ((RankMask & (MRC_BIT0 << Rank)) == 0) {
+        continue;
+      }
+      // This needs to be reviewed for each pin layout to ensure we map the group<->rank correctly.
+      RankCsGrp = MrcGetCsRankPiGroup (MrcData, Controller, Channel, Rank);
+      if (RankCsGrp == CsGrp){
+        CsGrpRankMask |= (MRC_BIT0 << Rank);
+      }
+    }
+    if (CsGrpRankMask == 0) {
+      // Skip this CS group if no ranks are associated with it
+      // This will be true for CsGrp = CccChCsPiGroup1 in all cases except Desktop DDR5 MC0.CH0
+      continue;
+    }
+    // Initialize Min \ Max values to limit values
+    MinPiCode = MRC_UINT32_MAX;
+    MaxPiCode = MRC_UINT_MIN;
+    // Find the Min\Max PiCode ranges
+    for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+      if ((CsGrpRankMask & (MRC_BIT0 << Rank)) == 0) {
+        continue;
+      }
+      PiCode = CtlPiCode[Rank];
+      MinPiCode = MIN (MinPiCode, PiCode);
+      MaxPiCode = MAX (MaxPiCode, PiCode);
+    }
+    // The difference between the min and max per-rank PI Code must not exceed the per-pin register max value
+    if ((MaxPiCode - MinPiCode) > PerBitMax) {
+      MRC_DEBUG_ASSERT (FALSE, &Outputs->Debug, "CS Per-Pin delta > %lld", PerBitMax);
+      MrcTristateCa (MrcData, MRC_DISABLE, TriCaSave);
+      return mrcParamSaturation;
+    }
+    // Normalize by distributing the CS timing between the shared CCC delay and the Per-Pin CCC offset
+    CsPiCodeShared = MinPiCode;
+    // Only need to index CtlGrpPi using the first rank sharing the CCC Channel
+    Rank = MrcLowBitSet32(CsGrpRankMask);
+    MrcGetSetCcc (MrcData, Controller, Channel, Rank, MRC_IGNORE_ARG, CtlGrpPi, WriteToCache, &CsPiCodeShared);
+    for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+      if ((CsGrpRankMask & (MRC_BIT0 << Rank)) == 0) {
+        continue;
+      }
+      CsPiCodePerPin = CtlPiCode[Rank] - MinPiCode;
+      MrcGetSetCccLane (MrcData, Controller, Channel, MRC_IGNORE_ARG, Rank, CsPerBitCcc, WriteToCache, &CsPiCodePerPin);
+    }
+  }
+  MrcFlushRegisterCachedData (MrcData);
+
+  // Disable CA tristate after changing PIs
+  MrcTristateCa (MrcData, MRC_DISABLE, TriCaSave);
+
+  return mrcSuccess;
+}
+
+/**
+  This function uses the MrcData->Outputs.Controller[].CmdTiming[].CtlPiCode[]
+  host structure to finalize the CS timings on all populated ranks. The timings
+  are normalized to distribute the per-rank timings between the shared CCC
+  channel register field and the per-pin offset field.
+
+  @param[in]  MrcData      - Include all MRC global data.
+
+  @return MrcStatus - mrcFail if the per-rank offset is larger than the per-pin register max
+                    - mrcSuccess in all other cases
+**/
+MrcStatus
+MrcCsPerPinNormalize (
+  IN MrcParameters *const MrcData
+  )
+{
+  UINT32    Controller;
+  UINT32    Channel;
+  UINT32    ValidRankBitMask;
+  MrcOutput *Outputs;
+  MrcStatus Status;
+  BOOLEAN   IsFailed;
+  MrcIntCmdTimingOut *IntCmdTiming;
+
+  Outputs  = &MrcData->Outputs;
+  IsFailed = FALSE;
+
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      IntCmdTiming = &Outputs->Controller[Controller].CmdTiming[Channel];
+      ValidRankBitMask = Outputs->Controller[Controller].Channel[Channel].ValidRankBitMask;
+      Status = MrcCsPerPinNormalizeRanks (MrcData, Controller, Channel, ValidRankBitMask, IntCmdTiming->CtlPiCode);
+      IsFailed = IsFailed || (Status != mrcSuccess);
+    }
+  }
+  return IsFailed ? mrcFail : mrcSuccess;
+}

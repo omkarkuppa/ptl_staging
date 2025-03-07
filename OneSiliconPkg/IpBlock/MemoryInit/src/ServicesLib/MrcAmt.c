@@ -352,7 +352,7 @@ MrcConfigurePprCmdPat (
       }
     }
   }
-  Cpgc20SetCommandSequence(MrcData, CmdPat, FALSE, BurstWait);
+  Cpgc20SetCommandSequence(MrcData, CmdPat, FALSE, BurstWait, FALSE);
 }
 
 /**
@@ -1844,7 +1844,7 @@ AdvancedMemTestRankSetupMATSRowRange (
       if ((Outputs->IsLpddr && (MrcGetBankBgOrg(MrcData, Outputs->Frequency) != MrcLp5BgMode)) || PprAmtData->FromRowTestPpr) {
         AmtUpdateL2PBankMappingWithoutBG (MrcData, PprAmtData->Rank, PprAmtData->FromRowTestPpr, PprAmtData->Bank);  // Use if LP5 16 bank mode or programming a single bank
       } else {
-        MrcUpdateL2PAllsBanksMapping (MrcData, PprAmtData->Rank, LocalMcChBitMask);
+        MrcUpdateL2PAllsBanksMapping (MrcData, PprAmtData->Rank, LocalMcChBitMask, FALSE);
       }
 
       // Set base repeats according to bank groups, number of rows tested, and column bits.
@@ -2186,7 +2186,7 @@ SetupIOTestAmt (
   Cpgc20SetPgInvDcCfg (MrcData, IsPatSrcAllZeroes ? Cpgc20DcMode : Cpgc20InvertMode, 0, FALSE, 0, BASIC_STATIC_PATTERN);
 
   //Setup test command sequence
-  Cpgc20SetCommandSequence(MrcData, CmdPat, FALSE, SubSeqWait);
+  Cpgc20SetCommandSequence(MrcData, CmdPat, FALSE, SubSeqWait, FALSE);
 
   //###########################################################
   // Program Cpgc Address

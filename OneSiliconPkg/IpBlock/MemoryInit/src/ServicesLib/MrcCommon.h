@@ -141,6 +141,8 @@
 #define BASIC_NON_MPR_VA_AGGRESSOR_16  0xFFFF
 #define MRC_NUM_MUX_SEEDS   (3)
 
+#define MRC_CHNG_MAR_GRP_NUM  (2)
+
 typedef enum {
   NtDimmR0,
   NtDimmR1,
@@ -4310,6 +4312,42 @@ MrcEarlyRxDqsVocCentering1D (
 MrcStatus
 MrcRxDqsVocCentering1D (
   IN OUT MrcParameters *const MrcData
+  );
+
+/**
+  This function is a helper function for ChangeMargin.
+  This function forms the correct Channel Mask based on the Margin Parameter, Channel, and Multicast settings.
+
+  @param[in,out] MrcData      - Include all MRC global data.
+  @param[in]     Param        - Includes parameter(s) to change including two dimensional.
+  @param[in]     Controller   - 0-based Controller Index.
+  @param[in]     Channel      - 0-based Channel Index.
+  @param[in]     EnMultiCast  - To enable Multicast (broadcast) or single register mode
+
+  @retval UINT16 - Channel Bit Mask.
+**/
+UINT16
+CalcMcChannelMask (
+  IN OUT MrcParameters *const MrcData,
+  IN     const UINT8          Param,
+  IN           UINT8          Controller,
+  IN           UINT8          Channel,
+  IN     const UINT8          EnMultiCast
+  );
+
+/**
+  Enable / Disable CA tristate on populated MPTU's
+  @param[in,out] MrcData    - Include all MRC global data.
+  @param[in]     IsTrisate  - TRUE : Enable Tristate, FALSE : Restore TRI_CA to original programming
+  @param[in]     TriCaSave  - TRI_CA value to be restored when IsTristate is FALSE
+  @retval  Original TRI_CA value
+**/
+MRC_IRAM0_FUNCTION
+INT64
+MrcTristateCa (
+  IN OUT MrcParameters *const MrcData,
+  IN     BOOLEAN              IsTristate,
+  IN     INT64                TriCaSave
   );
 
 #endif //_MrcCommon_h_

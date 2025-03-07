@@ -69,3 +69,13 @@ ColdBootRequired (
   IN MRC_BOOT_MODE                MrcBootMode,
   OUT BOOLEAN                     *IsEfiResetColdRequired
   );
+
+/**
+  Update the progress bar showing the MRC completion status.
+
+  @param[in out]  MrcData - All the MRC global data.
+**/
+VOID
+MrcUpdateProgressBar (
+  IN OUT MrcParameters *CONST MrcData
+  );

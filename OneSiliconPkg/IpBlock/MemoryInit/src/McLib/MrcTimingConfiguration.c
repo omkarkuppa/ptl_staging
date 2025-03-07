@@ -39,7 +39,6 @@
   @retval Nothing.
 
 **/
-static
 void
 SetTcPreActOdt (
   IN OUT MrcParameters *const MrcData,
@@ -114,10 +113,13 @@ SetTcPreActOdt (
 
   nWRDiff = GetnWRDiff (MrcData);
 
-  tRDPRE = Timing->tRTP + MrcGetBurstLengthNMin (MrcData);
+  tRDPRE = Timing->tRTP;
+  if (IsLpddr5) {
+    tRDPRE += MrcGetBurstLengthNMin (MrcData);
+  }
 
   // Store tRDPRE in units of tCK consitent with JEDEC Timings
-   MrcData->Save.Data.SaGvOutputs.SaGvTiming[Outputs->SaGvPoint].IpTiming.tRDPRE = (UINT16) tRDPRE;
+  MrcData->Save.Data.SaGvOutputs.SaGvTiming[Outputs->SaGvPoint].IpTiming.tRDPRE = (UINT16) tRDPRE;
 
   if (IsLpddr5) {
     tRDPRE = ((INT32) tRDPRE) * 4;

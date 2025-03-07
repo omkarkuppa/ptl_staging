@@ -65,19 +65,24 @@ SetupIOTest (
 {
   MrcInput          *Inputs;
   MrcOutput         *Outputs;
+  MRC_FUNCTION      *MrcCall;
   UINT32            ChunkMask;
   UINT8             Byte;
   UINT8             Controller;
   UINT8             Channel;
   UINT8             IpChannel;
   UINT8             OldRankCount;
+  UINT64            DqLaneMask;
   UINT32            BlockRepeats;
   BOOLEAN           IsDdr5;
   BOOLEAN           IsPatSrcAllZeroes;
+  BOOLEAN           UseAltData;
 
   Inputs      = &MrcData->Inputs;
   Outputs     = &MrcData->Outputs;
+  MrcCall     = Inputs->Call.Func;
   IsDdr5      = Outputs->IsDdr5;
+  UseAltData  = FALSE;
   IsPatSrcAllZeroes = (PatCtlPtr->PatSource == MrcPatSrcAllZeroes);
 
   if (Inputs->NumCL != 0) {
@@ -109,18 +114,30 @@ SetupIOTest (
    //###########################################################
   // Program Data Pattern Controls.  PGs are selected for Data
   //###########################################################
-  if (!IsPatSrcAllZeroes) {
+
+  if (IsPatSrcAllZeroes) {
+    // Enable/Disable DC/Invert on all lanes, including ECC
+    Cpgc20SetPgInvDcEn (MrcData, ENABLE_DQ_LANE_MASK, ENABLE_ECC_LANE_MASK);
+    Cpgc20SetPgInvDcCfg (MrcData, Cpgc20DcMode, 0, FALSE, 0, BASIC_STATIC_PATTERN);
+  } else {
     // Setup the Pattern Generator for the test.
     //   StaticPattern: The caller programs the pattern
+    if (PatCtlPtr->DQPat == StaticPattern) {
+      // Use single byte as a fixed pattern using DC mode
+      UseAltData = TRUE;
+      MrcCall->MrcSetMem ((UINT8 *) &DqLaneMask, sizeof (DqLaneMask), PatCtlPtr->StaticPattern);
+      Cpgc20SetPgInvDcEn (MrcData, DqLaneMask, PatCtlPtr->StaticPattern);
+      Cpgc20SetPgInvDcCfg (MrcData, Cpgc20DcMode, 1, FALSE, 0, BASIC_STATIC_PATTERN);
+    } else {
+      Cpgc20SetPgInvDcEn (MrcData, DISABLE_DQ_LANE_MASK, DISABLE_ECC_LANE_MASK);
+      Cpgc20SetPgInvDcCfg (MrcData, Cpgc20InvertMode, 0, FALSE, 0, BASIC_STATIC_PATTERN);
+    }
+
     Cpgc20LfsrCfg (MrcData, 0);
   }
 
-  // Enable/Disable DC/Invert on all lanes, including ECC
-  Cpgc20SetPgInvDcEn (MrcData, IsPatSrcAllZeroes ? ENABLE_DQ_LANE_MASK : DISABLE_DQ_LANE_MASK, IsPatSrcAllZeroes ? ENABLE_ECC_LANE_MASK : DISABLE_ECC_LANE_MASK);
-  Cpgc20SetPgInvDcCfg (MrcData, IsPatSrcAllZeroes ? Cpgc20DcMode : Cpgc20InvertMode, 0, FALSE, 0, BASIC_STATIC_PATTERN);
-
   //Setup test command sequence
-  Cpgc20SetCommandSequence (MrcData, CmdPat, FALSE, SubSeqWait);
+  Cpgc20SetCommandSequence (MrcData, CmdPat, FALSE, SubSeqWait, UseAltData);
 
   //###########################################################
   // Program Cpgc Address
@@ -151,40 +168,43 @@ SetupIOTest (
   MrcIssueZQ (MrcData);
 
 }
+
 /**
-  This function sets up a basic victim-aggressor test for the given channel mask and per Outputs->McChBitMask.
-  McChBitMask is initialized in MrcPretraining based on population, and used throughout internal CPGC structure.
-  Modify McChBitMask to specify which MC/CH to program
+  This function sets up a basic static WR/RD test for the given channel mask.
 
   @param[in,out] MrcData       - Pointer to MRC global data.
   @param[in]     McChBitMask   - Memory Controller Channel Bit mask for which test should be setup for.
   @param[in]     LC            - Exponential number of loops to run the test.
   @param[in]     SOE           - Error handling switch for test.
-  @param[in]     Spread        - Stopping point of the pattern.
+  @param[in]     EnCADB        - Switch to enable CADB
+  @param[in]     EnCKE         - Switch to enable CKE.
   @param[in]     CmdPat        - Command Pattern
   @param[in]     Wait          - Wait time between subsequences
   @param[in]     NumCLOverride - Override for NumCL (Non-zero causes override)
-
+  @param[in]     DataPtn       - Data Pattern
 **/
 void
-SetupIOTestBasicVA (
-  IN OUT MrcParameters *const MrcData,
+SetupIOTestStatic (
+  IN OUT MrcParameters* const MrcData,
   IN     const UINT8          McChBitMask,
   IN     const UINT8          LC,
   IN     const UINT8          SOE,
-  IN     const UINT8          Spread,
+  IN     const UINT8          EnCADB,
+  IN     const UINT8          EnCKE,
   IN     const UINT8          CmdPat,
   IN     const UINT8          Wait,
-  IN     const UINT16         NumCLOverride
+  IN     const UINT16         NumCLOverride,
+  IN     const UINT8          DataPtn
   )
 {
-  MRC_PATTERN_CTL        PatCtl;
+  MRC_PATTERN_CTL       PatCtl;
   UINT16                NumCL;
   const MRC_ADDRESS     *Address;
   UINT8                 AdjustedLoopCount;
   MrcOutput             *Outputs;
   MRC_ADDRESS           AddressArr[MAX_CONTROLLER][MAX_CHANNEL];
-  static const MRC_ADDRESS Address_Ddr5 = {
+
+  static const MRC_ADDRESS AddressDdr5 = {
     BANK_2_ROW_COL_2_RANK,
     FAST_Y,
     0x0,    // Single Address Instruction
@@ -192,10 +212,10 @@ SetupIOTestBasicVA (
     0,
     0,
     6,      // ColSizeBits - 2^6 = 64
-    2       // BankSize    - 2 bank groups toggle for B2B traffic
+    8       // since the BG is sawapped before Banks, 8 banks is enough for B2B
   };
 
-  static const MRC_ADDRESS Address_lpddr = {
+  static const MRC_ADDRESS AddressLpddr = {
     BANK_2_ROW_COL_2_RANK,
     FAST_Y,
     0x0,    // Single Address Instruction
@@ -206,48 +226,39 @@ SetupIOTestBasicVA (
     1       // BankSize    - LP4/5 doesn't need bank groups toggle for B2B   @todo_rpl LP5 BG mode might need this
   };
 
-  AdjustedLoopCount = LC;
-  PatCtl.Start      = 0;
-  PatCtl.Stop       = Spread - 1;
-  PatCtl.DQPat      = BasicVA;
-  PatCtl.PatSource  = MrcPatSrcDynamic;
-  PatCtl.EnableXor  = FALSE;
   Outputs = &MrcData->Outputs;
-  Address = Outputs->IsDdr5 ? &Address_Ddr5 : &Address_lpddr;
+  Address = Outputs->IsDdr5 ? &AddressDdr5 : &AddressLpddr;
 
-  /* fill the local 2D array with the correct data depends on lpddr/ddr device */
-  FillAddressArray (MrcData, AddressArr, (MRC_ADDRESS *const)Address);
+  PatCtl.DQPat = StaticPattern;
+  PatCtl.PatSource = MrcPatSrcStatic;
+  PatCtl.StaticPattern = DataPtn;
+  // fill the local 2D array with the correct data depends on lpddr/ddr device
+  FillAddressArray (MrcData, AddressArr, (MRC_ADDRESS* const)Address);
 
   // Column limit is 2^10
   // BL=16: column increment is 2^4 per CL --> 10 - 4 = 6, 2^6 = 64
-  //  DDR5 toggles 2 Bank Groups so we should multiply NumCL by 2
+  // DDR5 toggles 8 Banks so we should multiply NumCL by 8
   // BL=32: column increment is 2^5 per CL --> 10 - 5 = 5, 2^5 = 32
-  NumCL = NumCLOverride ? NumCLOverride : (Outputs->IsDdr5 ? 64 : 32);
-  PatCtl.IncRate = 4;
+  NumCL = NumCLOverride ? NumCLOverride : (Outputs->IsDdr5 ? 512 : 32);
 
-  // LPDDR burst length is 32, DDR5 is 16
+  AdjustedLoopCount = LC;
+  if (Outputs->IsDdr5) {
+    // Divide the Loopcount by 2 for Data stress, because DDR5 has twice longer burst length comparing to DDR4.
+    if (AdjustedLoopCount >= 1) {
+      AdjustedLoopCount -= 1;
+    }
+  }
   if (Outputs->IsLpddr) {
-    if (AdjustedLoopCount > 2) {
+    // Divide the Loopcount by 4 for Data stress, because LP4/LP5 has 4 times longer burst length comparing to DDR4.
+    if (AdjustedLoopCount >= 2) {
       AdjustedLoopCount -= 2;
     } else {
-      AdjustedLoopCount = 1;
-    }
-  } else if (Outputs->IsDdr5) {
-    if (AdjustedLoopCount > 1) {
-      AdjustedLoopCount -= 1;
-    } else {
-      AdjustedLoopCount = 1;
+      AdjustedLoopCount = 0;
     }
   }
 
-  SetupIOTest (MrcData, McChBitMask, CmdPat, NumCL, AdjustedLoopCount, AddressArr, SOE, &PatCtl, Wait);
-
-  Outputs->DQPatLC = (AdjustedLoopCount - 8 + 1);
-  if (Outputs->DQPatLC < 1) {
-    Outputs->DQPatLC = 1;
-  }
-
-  Outputs->DQPat = BasicVA;
+  SetupIOTest (MrcData, McChBitMask, PatWrRd, NumCL, AdjustedLoopCount, AddressArr, NSOE, &PatCtl, 0);
+  MrcData->Outputs.DQPat = PatCtl.DQPat;
 }
 
 /**

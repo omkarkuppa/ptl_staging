@@ -675,6 +675,7 @@ typedef enum {
   OemUcExecuteGreen,        ///< before Green MRC begins executing
   OemDbi,                   ///< before DBI training
   OemDvfsqVoltageRamp,      ///< before DVFSQ asks Blue to ramp VDDQ voltage down to 0.3V
+  OemDvfsqCheckRmtResult,   ///< before checking margins with DVFSQ
   OemDimmRxOffsetCal,       ///< before checking Dimm Rx Offset Calibration
   OemMcDeswizzleRegisters,  ///< before MrcMcProgramDeswizzleRegisters
   OemIsDramSupportsDvfsc,   ///< Check if DRAM supports E-DVFSC before finishing SAGV0 training flow
@@ -1978,7 +1979,8 @@ typedef struct {
   BOOLEAN           QClkCalOffHighSaved[MAX_SAGV_POINTS];
   UINT32            QClkCalOffHighFreq[MAX_SAGV_POINTS];
   UINT8             CkdShift[MAX_CONTROLLER][MAX_DDR5_CHANNEL][MAX_RANK_IN_CHANNEL]; ///< CKD QCK Output Delay obtained from Early Command Training
-  BOOLEAN           LpX;                          ///< Low power die of the LPDDR part is detected.
+  BOOLEAN           LpX;                            ///< Low power die of the LPDDR part is detected.
+  UINT32            VccddqVoltage[MAX_SAGV_POINTS]; ///< Current VCCDDQ (can be affected by DVFSQ on LP5)
   BOOLEAN           IsCkdSupported;               ///< TRUE if SPD byte 242 CKD Buffer is supported
   BOOLEAN           IsCs2NEver;                   ///< If any SAGV point has CS 2N Mode
   BOOLEAN           IsMixedEccDimms;              ///< TRUE if at least one ECC DIMM and at least one nonECC DIMM are present
@@ -2005,6 +2007,8 @@ typedef struct {
   MrcBwSel        BwSelCalHighFreq[MAX_SAGV_POINTS];        ///< Per sagv point BwSel cal training results for high frequency
   MrcBwSel        BwSelCalLowFreq[MAX_SAGV_POINTS];         ///< Per sagv point BwSel cal training results for low frequency
   BOOLEAN         BwSelLowSaved[MAX_SAGV_POINTS];           ///< TRUE if Low Frequency BwSel cal training results have been calculated
+  UINT32          PostCodesDone;                            ///< Used for updating the MRC progress bar. Contains the number of call table steps completed since the beginning of MRC execution.
+  UINT32          PostCodesTotal;                           ///< Used for updating the MRC progress bar. Contains the total number of post codes.
 } MrcSaveData;
 
 // MrcOutputs needs to be DWORD aligned

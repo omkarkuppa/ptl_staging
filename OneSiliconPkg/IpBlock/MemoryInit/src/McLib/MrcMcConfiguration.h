@@ -155,4 +155,31 @@ MrcEnableMcParityGen (
   IN MrcParameters *MrcData
   );
 
+/**
+  Disable clock gating for the schedulers and return the state of the dis_scheds_clk_gate field
+  before the change.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval Value of dis_scheds_clk_gate field before disabling. 
+**/
+INT64
+MrcDisableSchedsClkGate (
+  IN MrcParameters *MrcData
+  );
+
+/**
+  Restore the state of the dis_scheds_clk_gate field.
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] DisSchedsClkGateSave - Value of dis_scheds_clk_gate to restore.
+
+  @return none
+**/
+VOID
+MrcRestoreDisSchedsClkGate (
+  IN MrcParameters *MrcData,
+  IN INT64 DisSchedsClkGateSave
+  );
+
 #endif // __MrcMcConfiguration_h__

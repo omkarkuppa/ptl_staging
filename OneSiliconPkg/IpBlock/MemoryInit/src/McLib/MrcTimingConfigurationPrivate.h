@@ -62,6 +62,22 @@ GetDeratingExt (
   IN MrcParameters *const MrcData
   );
 
+/**
+  This function sets up the following MC Timing
+  registers: TC_PRE, TC_ACT, TC_ODT
 
+  @param[in, out] MrcData     - Include all MRC global data.
+  @param[in]      Controller  - 0-based index to select the Controller.
+  @param[in]      Channel     - 0-based index to select the Channel.
+
+  @retval Nothing.
+
+**/
+void
+SetTcPreActOdt (
+  IN OUT MrcParameters *const MrcData,
+  IN     const UINT32         Controller,
+  IN     const UINT32         Channel
+  );
 
 #endif // MrcTimingConfigurationPrivate_h_

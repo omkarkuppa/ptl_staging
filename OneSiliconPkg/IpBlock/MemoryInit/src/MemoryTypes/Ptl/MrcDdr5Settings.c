@@ -193,3 +193,42 @@ GetOdtIndexDdr5 (
   OdtIndex = (RanksInDimm0 == 2) ? oi1DPC2R : oi1DPC1R;
   return OdtIndex;
 }
+
+/**
+  Return the initial DDR5 DQ Vref (MR10)
+
+  @param[in]  MrcData      - Pointer to global MRC data
+  @param[in]  Controller   - Controller to work on
+  @param[in]  Channel      - Channel to work on
+  @param[out] VrefDqCalVal - DQ Vref in MR10 encoding
+
+  @retval mrcSuccess              if VrefDqCalVal is not NULL
+  @retval mrcWrongInputParameter  if VrefDqCalVal is NULL
+**/
+MrcStatus
+MrcDdr5GetVrefDqCalibrationValue (
+  IN  MrcParameters *const  MrcData,
+  IN  UINT32                Controller,
+  IN  UINT32                Channel,
+  OUT DDR5_MR10_VREF *const VrefDqCalVal
+  )
+{
+  MrcOutput       *Outputs;
+  DDR5_MR10_VREF  VrefVal;
+
+  Outputs = &MrcData->Outputs;
+
+  if (VrefDqCalVal == NULL) {
+    return mrcWrongInputParameter;
+  }
+
+  // Assuming mobile 1DPC
+  if (Outputs->Controller[Controller].Channel[Channel].ValidRankBitMask > 1) {
+    VrefVal = (Outputs->Frequency > f6400) ? Ddr5Vref_76p5 : Ddr5Vref_75p0; // 2R
+  } else {
+    VrefVal = (Outputs->Frequency > f6400) ? Ddr5Vref_70p0 : Ddr5Vref_68p0; // 1R
+  }
+  *VrefDqCalVal = VrefVal;
+  return mrcSuccess;
+}
+

@@ -420,19 +420,6 @@ MrcCalcCurrentRxBitDelay (
   );
 
 /**
-  Programming of CCC_CR_DDRCRCCCCLKCONTROLS_BlockTrainRst
-
-  @param[in] MrcData - The MRC global data.
-  @param[in] BlockTrainReset - TRUE to BlockTrainReset for most training algos.  FALSE for specific training algos that need PiDivider sync.
-
-**/
-VOID
-MrcBlockTrainResetToggle (
-  IN MrcParameters *const MrcData,
-  IN BOOLEAN              BlockTrainReset
-  );
-
-/**
   This function performs an ADC readout for the VCCCLK and PBIas voltages before Read MPR training.
   The readout applies across Data, CCC, and Comp partitions
 

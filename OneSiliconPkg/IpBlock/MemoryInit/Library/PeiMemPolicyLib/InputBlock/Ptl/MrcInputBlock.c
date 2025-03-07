@@ -372,7 +372,8 @@
 #define MRC_EXT_INPUTS_INIT_VAL_ReservedBitsLB           (0)
 
 #define MRC_EXT_INPUTS_INIT_VAL_MrcFailureOnUnsupportedDimm     (0)
-#define MRC_EXT_INPUTS_INIT_VAL_Reserved329                     {0}
+#define MRC_EXT_INPUTS_INIT_VAL_WckModeOverride          (2)
+#define MRC_EXT_INPUTS_INIT_VAL_Reserved330              {0}
 
 #ifdef MRC_MINIBIOS_BUILD
 #define MRC_INT_INPUTS_INIT_VAL_LpFreqSwitch                            (0)
@@ -746,7 +747,10 @@ MRC_INPUT_BINARY_BLOCK_TYPE MainInputs = {
     MRC_EXT_INPUTS_INIT_VAL_TxStepSizeLB,
     MRC_EXT_INPUTS_INIT_VAL_ReservedBitsLB,
     MRC_EXT_INPUTS_INIT_VAL_MrcFailureOnUnsupportedDimm,
-    MRC_EXT_INPUTS_INIT_VAL_Reserved329,
+
+    MRC_EXT_INPUTS_INIT_VAL_WckModeOverride,
+
+    MRC_EXT_INPUTS_INIT_VAL_Reserved330,
   },
 #ifdef MRC_MINIBIOS_BUILD
   /// MRC_INT_INPUTS_TYPE

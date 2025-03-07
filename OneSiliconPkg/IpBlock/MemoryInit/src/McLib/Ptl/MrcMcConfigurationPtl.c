@@ -124,3 +124,53 @@ MrcUpdateTRefi (
 {
   *tRefi = UDIVIDEROUND (*tRefi * 97, 100);
 }
+
+
+/**
+  Disable clock gating for the schedulers and return the state of the dis_scheds_clk_gate field
+  before the change.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval Value of dis_scheds_clk_gate field before disabling. 
+**/
+INT64
+MrcDisableSchedsClkGate (
+  IN MrcParameters *MrcData
+  )
+{
+  MrcOutput *Outputs;
+  UINT32 FirstController;
+  UINT32 FirstChannel;
+  INT64  DisSchedsClkGateSave;
+  INT64  GetSetEn;
+
+  Outputs  = &MrcData->Outputs;
+  GetSetEn = 1;
+
+  FirstController = Outputs->FirstPopController;
+  FirstChannel    = Outputs->Controller[FirstController].FirstPopCh;
+
+  MrcGetSetMcCh (MrcData, FirstController, FirstChannel, GsmMccDisSchedsClkGate, ReadCached,  &DisSchedsClkGateSave);
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccDisSchedsClkGate,   WriteCached, &GetSetEn);
+
+  return DisSchedsClkGateSave;
+}
+
+/**
+  Restore the state of the dis_scheds_clk_gate field.
+
+  @param[in] MrcData - Include all MRC global data.
+  @param[in] DisSchedsClkGateSave - Value of dis_scheds_clk_gate to restore.
+
+  @return none
+**/
+VOID
+MrcRestoreDisSchedsClkGate (
+  IN MrcParameters *MrcData,
+  IN INT64 DisSchedsClkGateSave
+  )
+{
+  // Restore original value
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccDisSchedsClkGate, WriteCached, &DisSchedsClkGateSave);
+}

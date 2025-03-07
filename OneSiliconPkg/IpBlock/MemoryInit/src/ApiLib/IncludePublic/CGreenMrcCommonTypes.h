@@ -315,24 +315,14 @@ typedef enum {
   GsmIocDqsRFMode,                ///< Mode for DQS Rise/Fall testing
   GsmIocClkEnFeedback,            ///< Enable Feedback Mode for Clk P Fall/N Rise and Clk P Rise/N Fall
   GsmIocWckEnFeedback,            ///< Enable Feedback Mode for Wck P Fall/N Rise and Wck P Rise/N Fall
-  GsmIocWckEnFeedbackCh0,         ///< Enable Feedback Mode for Wck P Fall/N Rise and Wck P Rise/N Fall
-  GsmIocWckEnFeedbackCh1,         ///< Enable Feedback Mode for Wck P Fall/N Rise and Wck P Rise/N Fall
   GsmIocClkPFallNRiseFeedback,    ///< Clk P Fall/N Rise Feedback
   GsmIocClkPRiseNFallFeedback,    ///< Clk P Rise/N Fall Feedback
   GsmIocClkPFallNRise,            ///< Clk P Fall/N Rise Setting
   GsmIocClkPRiseNFall,            ///< Clk P Rise/N Fall Setting
   GsmIocWckPFallNRiseFeedback,    ///< Wck P Fall/N Rise Feedback
-  GsmIocWckPFallNRiseFeedbackCh0, ///< Wck P Fall/N Rise Feedback
-  GsmIocWckPFallNRiseFeedbackCh1, ///< Wck P Fall/N Rise Feedback
   GsmIocWckPRiseNFallFeedback,    ///< Wck P Rise/N Fall Feedback
-  GsmIocWckPRiseNFallFeedbackCh0, ///< Wck P Rise/N Fall Feedback
-  GsmIocWckPRiseNFallFeedbackCh1, ///< Wck P Rise/N Fall Feedback
   GsmIocWckPFallNRise,            ///< Wck P Fall/N Rise Setting
-  GsmIocWckPFallNRiseCh0,         ///< Wck P Fall/N Rise Setting
-  GsmIocWckPFallNRiseCh1,         ///< Wck P Fall/N Rise Setting
   GsmIocWckPRiseNFall,            ///< Wck P Rise/N Fall Setting
-  GsmIocWckPRiseNFallCh0,         ///< Wck P Rise/N Fall Setting
-  GsmIocWckPRiseNFallCh1,         ///< Wck P Rise/N Fall Setting
   GsmIocCaTrainingMode,
   GsmIocCaParityTrain,
   GsmIocCaParityOdd,
@@ -494,8 +484,6 @@ typedef enum {
   GsmIocTcoCode,
   GsmIocDccCode,
   GsmIocLaneEn,
-  GsmIocLaneEnCh0,
-  GsmIocLaneEnCh1,
   GsmIocPiDivInc,
   GsmIocPiDivEn,
   GsmIocLaneEnCcc,

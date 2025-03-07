@@ -468,13 +468,15 @@ Cpgc20BaseRepeats (
   @param[in]  MrcData           - Pointer to MRC global data.
   @param[in]  Rank              - Rank to work on
   @param[in]  McChbitMask       - Bit masks of MC channels to enable for the test.
+  @param[in]  UpdateAddrMaxBank - Update MaxBank value for CPGC
 
 **/
 void
 MrcUpdateL2PAllsBanksMapping (
   IN  MrcParameters *const  MrcData,
   IN  UINT32                Rank,
-  IN  const UINT8           McChBitMask
+  IN  const UINT8           McChBitMask,
+  IN  BOOLEAN               UpdateAddrMaxBank
   );
 
 /**
@@ -559,6 +561,7 @@ Cpgc20TestDone (
                            4: PatWrRdTA (WriteRead Turnarounds),
   @param[in] EnCADB      - Enable test to write random deselect packages on bus to create xtalk/isi
   @param[in] SubSeqWait  - # of Dclks to stall at the end of a sub-sequence
+  @param[in] UseAltData  - Enable Alternate Data flag for Command instructions
 
   @retval Nothing
 **/
@@ -567,7 +570,8 @@ Cpgc20SetCommandSequence (
   IN MrcParameters *const  MrcData,
   IN const UINT8           CmdPat,
   IN const UINT8           EnCADB,
-  IN UINT16                SubSeqWait
+  IN UINT16                SubSeqWait,
+  IN BOOLEAN               UseAltData
   );
 
 /**
@@ -622,6 +626,23 @@ Cpgc20SetAddrMaxRank (
   IN  UINT32                Channel,
   IN  UINT8                 MaxRank,
   IN  OUT  UINT8            *OrigRankCount
+  );
+
+/**
+  This function sets maximum number of banks to test for a region.
+
+  @param[in]  MrcData           - Pointer to MRC global data.
+  @param[in]  Controller        - Controller to work on
+  @param[in]  Channel           - Channel to work on
+  @param[in]  MaxBank           - Maximum number of Banks to test for a region
+  @retval Nothing.
+**/
+void
+Cpgc20SetAddrMaxBank (
+  IN  MrcParameters *const  MrcData,
+  IN  UINT32                Controller,
+  IN  UINT32                Channel,
+  IN  UINT8                 MaxBank
   );
 
 /**

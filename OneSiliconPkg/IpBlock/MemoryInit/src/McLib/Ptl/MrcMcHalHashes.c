@@ -952,13 +952,13 @@ MrcGetMcConfigHash (
     HashPtr->Data = MC0_CH0_CR_SPID_LOW_POWER_CTL_idle_enable_HSH;
     break;
 
-    case GsmMccDis2cByp:
-      HashPtr->Data = MC0_CH0_CR_SCHED_CBIT_dis_2c_byp_HSH;
-      break;
+  case GsmMccDis2cByp:
+    HashPtr->Data = MC0_CH0_CR_SCHED_CBIT_dis_2c_byp_HSH;
+    break;
 
-    case GsmMccSchedDisClkGateLocal:
-      HashPtr->Data = MC0_CH0_CR_SCHED_CBIT_dis_clk_gate_HSH;
-      break;
+  case GsmMccSchedDisClkGateLocal:
+    HashPtr->Data = MC0_CH0_CR_SCHED_CBIT_dis_clk_gate_HSH;
+    break;
 
   case GsmMccDisAsyncOdt:
     HashPtr->Data = MC0_CH0_CR_SCHED_SECOND_CBIT_dis_async_odt_HSH;
@@ -966,6 +966,10 @@ MrcGetMcConfigHash (
 
   case GsmMccDisableSplitAct:
     HashPtr->Data = MC0_CH0_CR_SCHED_THIRD_CBIT_disable_split_act_HSH;
+    break;
+
+  case GsmMccDisSchedsClkGate:
+    HashPtr->Data = MC0_CH0_CR_SCHED_THIRD_CBIT_dis_scheds_clk_gate_HSH;
     break;
 
   case GsmMccCmiSourceId0:

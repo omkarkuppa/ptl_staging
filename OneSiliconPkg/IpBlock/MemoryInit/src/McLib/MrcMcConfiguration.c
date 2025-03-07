@@ -335,6 +335,7 @@ MrcRoundTripMatch (
   UINT32                  Controller;
   UINT8                   Channel;
   UINT32                  Rank;
+  INT64                   DisSchedsClkGateSave;
   INT64                   DisIosSbClkGateSave[MAX_CONTROLLER];
   INT64                   GetSetEn;
   INT64                   Trigger;
@@ -349,6 +350,9 @@ MrcRoundTripMatch (
   Outputs = &MrcData->Outputs;
   Debug   = &Outputs->Debug;
   GetSetEn = 1;
+
+
+  DisSchedsClkGateSave = MrcDisableSchedsClkGate (MrcData);
 
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
     if (!MrcControllerExist (MrcData, Controller)) {
@@ -404,6 +408,8 @@ MrcRoundTripMatch (
     MrcGetSetMc (MrcData, Controller, GsmMccDisIosfSbClkGate, WriteCached, &DisIosSbClkGateSave[Controller]);
 
   } // Controller
+
+  MrcRestoreDisSchedsClkGate (MrcData, DisSchedsClkGateSave);
 
   return mrcSuccess;
 }

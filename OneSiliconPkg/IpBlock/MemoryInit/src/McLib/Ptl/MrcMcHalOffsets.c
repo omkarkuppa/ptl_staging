@@ -850,6 +850,7 @@ MrcGetMcConfigRegOffset (
       break;
 
     case GsmMccDisableSplitAct:
+    case GsmMccDisSchedsClkGate:
     case GsmMccMcCbRowPressDisAutoPre:
       if (Channel < MaxChannel) {
         Offset = OFFSET_CALC_MC_CH (MC0_CH0_CR_SCHED_THIRD_CBIT_REG, MC1_CH0_CR_SCHED_THIRD_CBIT_REG, Controller, MC0_CH1_CR_SCHED_THIRD_CBIT_REG, Channel);

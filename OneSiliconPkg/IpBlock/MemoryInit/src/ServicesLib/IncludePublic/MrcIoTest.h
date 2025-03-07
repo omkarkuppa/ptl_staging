@@ -106,4 +106,32 @@ RunIOTest (
   IN BOOLEAN              IsCmdVC
   );
 
+/**
+  This function sets up a basic static WR/RD test for the given channel mask.
+
+  @param[in,out] MrcData       - Pointer to MRC global data.
+  @param[in]     McChBitMask   - Memory Controller Channel Bit mask for which test should be setup for.
+  @param[in]     LC            - Exponential number of loops to run the test.
+  @param[in]     SOE           - Error handling switch for test.
+  @param[in]     EnCADB        - Switch to enable CADB
+  @param[in]     EnCKE         - Switch to enable CKE.
+  @param[in]     CmdPat        - Command Pattern
+  @param[in]     Wait          - Wait time between subsequences
+  @param[in]     NumCLOverride - Override for NumCL (Non-zero causes override)
+  @param[in]     DataPtn       - Data Pattern
+**/
+void
+SetupIOTestStatic (
+  IN OUT MrcParameters* const MrcData,
+  IN     const UINT8          McChBitMask,
+  IN     const UINT8          LC,
+  IN     const UINT8          SOE,
+  IN     const UINT8          EnCADB,
+  IN     const UINT8          EnCKE,
+  IN     const UINT8          CmdPat,
+  IN     const UINT8          Wait,
+  IN     const UINT16         NumCLOverride,
+  IN     const UINT8          DataPtn
+  );
+
 #endif //MRC_IO_TEST_H_

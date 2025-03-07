@@ -821,6 +821,8 @@ MrcSaveMCValues (
   UINT8                 Dimm;
   MrcSaveOrRestore      SaveRestoreType;  // @todo used for future simplification of single save/restore function call.
   BOOLEAN               SkipPrint;
+  UINT32                PostCodesDone;
+  UINT32                PostCodesTotal;
 
   // Copy channel and DIMM information to the data area that will be saved.
   Inputs      = &MrcData->Inputs;
@@ -961,9 +963,20 @@ MrcSaveMCValues (
 
   MrcCall->MrcCopyMem ((UINT8 *) &SaveData->OffsetKnobs, (UINT8 *) &Inputs->ExtInputs.Ptr->OffsetKnobs, sizeof (McRegOffsets));
   SaveData->SaMemCfgCrc = Inputs->SaMemCfgCrcForSave;
+
+  // PostCodesDone/Total should not be counted into CRC because their values will keep changing until the end of the calltable
+  PostCodesDone = SaveData->PostCodesDone;
+  PostCodesTotal = SaveData->PostCodesTotal;
+  SaveData->PostCodesDone = 0;
+  SaveData->PostCodesTotal = 0;
+
   SaveHeader->Crc       = MrcCalculateCrc32 ((UINT8 *) SaveData, sizeof (MrcSaveData));
   MrcData->Save.Size    = sizeof (MrcSave);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Saved data CRC = %xh\n", SaveHeader->Crc);
+
+  // Restore the values of PostCodesDone/Total that were temporarily zeroed-out for the CRC
+  SaveData->PostCodesDone = PostCodesDone;
+  SaveData->PostCodesTotal = PostCodesTotal;
 
   return Status;
 }

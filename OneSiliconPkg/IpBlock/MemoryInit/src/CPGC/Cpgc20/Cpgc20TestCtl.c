@@ -1401,13 +1401,15 @@ Cpgc20UpdateBaseRepeatsForWholeRankExtended (
   @param[in]  MrcData           - Pointer to MRC global data.
   @param[in]  Rank              - Rank to work on
   @param[in]  McChbitMask       - Bit masks of MC channels to enable for the test.
+  @param[in]  UpdateAddrMaxBank - Update MaxBank value for CPGC
 
 **/
 void
 MrcUpdateL2PAllsBanksMapping (
   IN  MrcParameters *const  MrcData,
   IN  UINT32                Rank,
-  IN  const UINT8           McChBitMask
+  IN  const UINT8           McChBitMask,
+  IN  BOOLEAN               UpdateAddrMaxBank
   )
 {
   MrcOutput         *Outputs;
@@ -1451,6 +1453,9 @@ MrcUpdateL2PAllsBanksMapping (
           BankMapping = Ddr5_16Gbx16BankMapB2B;
         }
         Cpgc20GetSetBankSequence (MrcData, Controller, Channel, BankMapping, BankCount, MRC_SET);
+        if (UpdateAddrMaxBank) {
+          Cpgc20SetAddrMaxBank (MrcData, Controller, Channel, (BankCount - 1));
+        }
       }
     }
   }
@@ -1577,6 +1582,7 @@ Cpgc20GetBaseRepeats (
                            4: PatWrRdTA (WriteRead Turnarounds),
   @param[in] EnCADB      - Enable test to write random deselect packages on bus to create xtalk/isi
   @param[in] SubSeqWait  - # of Dclks to stall at the end of a sub-sequence
+  @param[in] UseAltData  - Enable Alternate Data flag for Command instructions
 
   @retval Nothing
 **/
@@ -1585,7 +1591,8 @@ Cpgc20SetCommandSequence (
   IN MrcParameters *const  MrcData,
   IN const UINT8           CmdPat,
   IN const UINT8           EnCADB,
-  IN UINT16                SubSeqWait
+  IN UINT16                SubSeqWait,
+  IN BOOLEAN               UseAltData
   )
 {
   MC0_REQ0_CR_CPGC2_COMMAND_INSTRUCTION_0_STRUCT        Cpgc2CmdInstruction[6]; // 6 instructions defined in this function
@@ -1611,11 +1618,13 @@ Cpgc20SetCommandSequence (
   Cpgc2CmdInstruction[0].Data          = 0;
   Cpgc2CmdInstruction[0].Bits.WriteCmd = 1;
   Cpgc2CmdInstruction[0].Bits.Address_Decode_or_PRBS_En = EnCADB;
+  Cpgc2CmdInstruction[0].Bits.Alternate_Data = (UseAltData) ? 1 : 0;
   Cpgc2CmdInstruction[0].Bits.Last     = 1;
 
   // Read CMD [1]
   Cpgc2CmdInstruction[1].Data          = 0;
   Cpgc2CmdInstruction[1].Bits.Address_Decode_or_PRBS_En = EnCADB;
+  Cpgc2CmdInstruction[1].Bits.Alternate_Data = (UseAltData) ? 1 : 0;
   Cpgc2CmdInstruction[1].Bits.Last     = 1;
 
   // Read-Write CMD [2-3]
@@ -1928,6 +1937,34 @@ Cpgc20SetAddrMaxRank (
   *OrigRankCount = (UINT8)(Cpgc2AddrSize.Bits.Block_Size_Max_Rank + 1);
   Cpgc2AddrSize.Bits.Block_Size_Max_Rank = MaxRank;
   Cpgc2AddrSize.Bits.Region_Size_Max_Rank = MaxRank;
+  MrcWriteCR64(MrcData, Offset, Cpgc2AddrSize.Data);
+}
+
+/**
+  This function sets maximum number of banks to test for a region.
+
+  @param[in]  MrcData           - Pointer to MRC global data.
+  @param[in]  Controller        - Controller to work on
+  @param[in]  Channel           - Channel to work on
+  @param[in]  MaxBank           - Maximum number of Banks to test for a region
+  @retval Nothing.
+**/
+void
+Cpgc20SetAddrMaxBank (
+  IN  MrcParameters *const  MrcData,
+  IN  UINT32                Controller,
+  IN  UINT32                Channel,
+  IN  UINT8                 MaxBank
+  )
+{
+  MC0_REQ0_CR_CPGC2_ADDRESS_SIZE_STRUCT Cpgc2AddrSize;
+  UINT32 Offset;
+  Offset = OFFSET_CALC_MC_CH (
+              MC0_REQ0_CR_CPGC2_ADDRESS_SIZE_REG,
+              MC1_REQ0_CR_CPGC2_ADDRESS_SIZE_REG, Controller,
+              MC0_REQ1_CR_CPGC2_ADDRESS_SIZE_REG, Channel);
+  Cpgc2AddrSize.Data = MrcReadCR64 (MrcData, Offset);
+  Cpgc2AddrSize.Bits.Region_Size_Max_Bank = MaxBank;
   MrcWriteCR64(MrcData, Offset, Cpgc2AddrSize.Data);
 }
 

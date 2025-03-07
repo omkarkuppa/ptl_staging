@@ -185,5 +185,9 @@
 #define MRC_TXDQS_DCC                   (0xDD8E)
 #define MRC_CURRENT_SENSOR_RMT          (0xDD8F)
 #define MRC_VCC_LVR_INIT                (0xDD90)
+#define MRC_DVFSQ_CHECK_RMT_RESULT      (0xDD91)
 #define MRC_TX_XTALK                    (0xDD92)
+
+#define MRC_POST_CODE_LAST              (MRC_TX_XTALK) // IMPORTANT: Keep aligned to the largest post code
+
 #endif

@@ -1399,4 +1399,16 @@ GetLpddr5tCWL (
   IN UINT8  WlSet
   );
 
+/**
+  Return the initial LPDDR5 DQ Vref (MR14/MR15)
+
+  @param[in]  MrcData      - Pointer to global MRC data
+
+  @retval Initial DQ Vref in [mV]
+**/
+UINT16
+MrcLp5GetVrefDq (
+  IN  MrcParameters *const  MrcData
+  );
+
 #endif // _MRC_LPDDR5_H_

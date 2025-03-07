@@ -42,9 +42,11 @@
 #include "MrcHalRegisterAccess.h"
 #include "MrcReset.h"
 #include "BlueMrcJedecApi.h"  // for MrcGetSagvMrSeq()
-
-/// Local Defines
-#define MRC_CHNG_MAR_GRP_NUM  (2)
+#include "BlueMrcIoTest.h"
+#include "MrcSagv.h"
+#include "MrcIoTest.h"
+#include "MrcGeneral.h"
+#include "MrcMcSiSpecific.h"
 
 
 #define MRC_EXIT_VALUE (0xFF)
@@ -1152,7 +1154,7 @@ MrcCkeOverrideProgramming (
   INT32         Channel;
   UINT32        Controller;
   UINT32        ValidRankMask;
- 
+
   Outputs = &MrcData->Outputs;
 
   if (Outputs->IsLpddr) {
@@ -1255,4 +1257,754 @@ MrcGetScope (
     MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "\n%s - %d Group is not defined\n", __func__, Param);
   }
   return RetVal;
+}
+
+/**
+  This function implements the flow to properly switch MC PLL during run time.
+  @params[in] MrcData     - Pointer to MRC global data.
+  @params[in] NewFreq     - The new frequency to lock MC PLL.
+  @params[in] DebugPrint  - Boolean parameter to enable/disable debug messages for the callee.
+  @retval MrcStatus - mrcSuccess if frequency is updated properly, otherwise an error status.
+**/
+MrcStatus
+MrcFrequencySwitch (
+  IN  MrcParameters* const  MrcData,
+  IN  MrcFrequency          NewFreq,
+  IN  BOOLEAN               DebugPrint
+  )
+{
+  return mrcSuccess; // Freq Switch not used for Blue MRC
+}
+
+/**
+  Check whether there is errors at Point RdT/RdV or WrT/WrV
+  @param[in]      MrcData     - Include all MRC global data.
+  @param[in]      McChBitmask - Bit mask of present MC channels
+  @param[in]      RankMask    - Bit mask of Ranks to change margins for
+  @param[in]      MarginPoint - Margin Point to test
+  @param[in]      ParamType   - MRC_MarginTypes: WrV, WrT, RdT, RdV.
+  @retval MrcStatus - mrcSuccess if point successful pass, otherwise returns an error status.
+**/
+MrcStatus
+MrcDataPointTest (
+  IN     MrcParameters* MrcData,
+  IN     UINT8             McChBitmask,
+  IN     UINT8             RankMask,
+  IN     MarginCheckPoint* MarginPoint,
+  IN     MrcMarginTypes    ParamType
+  )
+{
+  MrcOutput* Outputs;
+  MrcDebug*  Debug;
+  MrcStatus  Status;
+  UINT8      AllChannelError;
+  INT32      Value;
+#ifdef MRC_DEBUG_PRINT
+  UINT64     ErrStatus;
+  UINT8      Controller;
+  UINT8      Channel;
+#endif // MRC_DEBUG_PRINT
+
+  Outputs = &MrcData->Outputs;
+  Debug = &Outputs->Debug;
+
+  // Check to make sure type is RdT/RdV or WrT/WrV
+  if (!(((MarginPoint->VoltageType == RdV) && (MarginPoint->TimingType == RdT)) ||
+    ((MarginPoint->VoltageType == WrV) && (MarginPoint->TimingType == WrT)))) {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Function MrcDataPointTest, Invalid combination TimingType: %d VoltageType:%d\n", MarginPoint->TimingType, MarginPoint->VoltageType);
+    return mrcWrongInputParameter;
+  }
+
+  // Change margin before the test
+  if ((ParamType == RdV) || (ParamType == WrV)) {
+    Value = MarginPoint->VoltageMargin;
+  } else {
+    Value = MarginPoint->TimingMargin;
+  }
+
+  // EnMulticast = 1, byte (mask) = 0x1FF for DDR5 WrV PDA
+  ChangeMargin (MrcData, ParamType, Value, 0, 1, 0, 0, RankMask, 0x1FF, 0, 0);
+
+  // Run Test
+  // Rank is not needed here because this is not a CaParity/CaParityPerLane test.
+  RunIoTestNoRank (MrcData, McChBitmask, Outputs->DQPat, 1);
+  AllChannelError = Cpgc20GetAllChannelsError (MrcData, McChBitmask);
+
+#ifdef MRC_DEBUG_PRINT
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      if (MC_CH_MASK_CHECK (McChBitmask, Controller, Channel, Outputs->MaxChannels) == 0) {
+        continue;
+      }
+      MrcGetMiscErrStatus (MrcData, Controller, Channel, ByteGroupErrStatus, &ErrStatus);
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Param: %s, Mc%uCh%u, Result=%xh\n", gMarginTypesStr[ParamType], Controller, Channel, (UINT16) ErrStatus);
+    }
+  }
+#endif // MRC_DEBUG_PRINT
+
+  // Set whether it passed/failed
+  Status = (AllChannelError > 0) ? mrcFail : mrcSuccess;
+
+  // Clean up margin
+  ChangeMargin (MrcData, ParamType, 0, 0, 1, 0, 0, RankMask, 0x1FF, 0, 0);
+
+  return Status;
+}
+
+
+// Max buses checked (Rx/Tx)
+#define MAX_BLUE_MARGIN_CHECK (2)
+
+/**
+  Check Margin Limits by utilizing box test.
+
+  @param[in, out] MrcData - Include all MRC global data.
+
+  @retval MrcStatus -  mrcSuccess if succeeded
+**/
+MrcStatus
+MrcMarginLimitCheck (
+  IN OUT MrcParameters* const MrcData
+  )
+{
+  const MrcInput      *Inputs;
+  const MRC_EXT_INPUTS_TYPE *ExtInputs;
+  MrcDebug            *Debug;
+  const MRC_FUNCTION  *MrcCall;
+  MrcOutput           *Outputs;
+  MrcStatus           Status;
+  MrcStatus           Pass;
+  UINT8               LoopCount;
+  UINT8               Controller;
+  UINT8               Channel;
+  UINT8               McChBitMask;
+  UINT8               Rank;
+  UINT8               RankMask;
+  UINT8               Param;
+  UINT8               MarginLevel;
+  UINT8               MarginLevelMask;
+  UINT8               TimingSign;
+  UINT8               VoltageSign;
+  UINT8               SignalIdx;
+  MarginCheckPoint    MarginCheckL2Table[MAX_BLUE_MARGIN_CHECK];
+  MarginCheckPoint    MarginPoint;
+  const MarginCheckPoint *MarginPointTemp;
+  BOOLEAN             IsMarginCheckBoth;
+  MarginCheckMode     MarginCheckResult;
+  UINT8               MaxChannels;
+  UINT8               FailResultsT[MAX_BLUE_MARGIN_CHECK][MAX_RANK_IN_CHANNEL][MAX_EDGES];
+  UINT8               FailResultsV[MAX_BLUE_MARGIN_CHECK][MAX_RANK_IN_CHANNEL][MAX_EDGES];
+  INT64               GetSetVal;
+  MRC_MC_AD_SAVE      MadSavedValues;
+
+  static const MarginCheckPoint MarginCheckL1Table[] = {
+    { RdT,  12, RdV,  55 },
+    { WrT,  12, WrV,  22 },
+    { CmdT, 30, CmdV, 30 }
+  };
+
+#ifdef MRC_DEBUG_PRINT
+  UINT8 ParamV;
+  // Margin check strings are used for debug printing
+  // Note: The order needs to same as MarginCheckMode Enum
+  static const char* MarginCheckStr[] = {
+    "Pass",
+    "L1",
+    "L2",
+    "L1/L2"
+  };
+#endif
+
+  Inputs = &MrcData->Inputs;
+  MrcCall = Inputs->Call.Func;
+  Outputs = &MrcData->Outputs;
+  ExtInputs = Inputs->ExtInputs.Ptr;
+  Debug = &Outputs->Debug;
+  MaxChannels = Outputs->MaxChannels;
+  Status = mrcSuccess;
+
+  MrcCall->MrcSetMem ((UINT8 *) FailResultsT, sizeof (FailResultsT), 0);
+  MrcCall->MrcSetMem ((UINT8 *) FailResultsV, sizeof (FailResultsV), 0);
+  MrcCall->MrcSetMem ((UINT8 *) MarginCheckL2Table, sizeof (MarginCheckL2Table), 0);
+
+  IsMarginCheckBoth = (ExtInputs->MarginLimitCheck == Margin_Check_Both);
+
+  // Setup Loop Count
+  LoopCount = (ExtInputs->RMTLoopCount != 0) ? ExtInputs->RMTLoopCount : 12;
+
+
+#ifdef MRC_DEBUG_PRINT
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "L1 limits:\n");
+  for (SignalIdx = 0; SignalIdx < MAX_BLUE_MARGIN_CHECK; SignalIdx++) {
+    Param = MarginCheckL1Table[SignalIdx].TimingType;
+    ParamV = MarginCheckL1Table[SignalIdx].VoltageType;
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %s:\t%d\t%s:\t%d\n",
+      gMarginTypesStr[Param], MarginCheckL1Table[SignalIdx].TimingMargin,
+      gMarginTypesStr[ParamV], MarginCheckL1Table[SignalIdx].VoltageMargin
+    );
+  }
+#endif // MRC_DEBUG_PRINT
+
+  MrcModifyRdRdTimings (MrcData, TRUE);
+  MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcSaveEnum, &MadSavedValues);
+
+  GetSetVal = 1;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);
+  MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmDisAllCplInterleave, WriteCached, &GetSetVal);
+
+  MrcModifyMcAddressDecoderValues (MrcData);
+
+  // Setup L2 table
+  for (SignalIdx = 0; SignalIdx < MAX_BLUE_MARGIN_CHECK; SignalIdx++) {
+    MarginCheckL2Table[SignalIdx].TimingType = MarginCheckL1Table[SignalIdx].TimingType;
+    MarginCheckL2Table[SignalIdx].TimingMargin = (INT8) ((MarginCheckL1Table[SignalIdx].TimingMargin * ExtInputs->MarginLimitL2) / 100);
+    MarginCheckL2Table[SignalIdx].VoltageType = MarginCheckL1Table[SignalIdx].VoltageType;
+    MarginCheckL2Table[SignalIdx].VoltageMargin = (INT8) ((MarginCheckL1Table[SignalIdx].VoltageMargin * ExtInputs->MarginLimitL2) / 100);
+  }
+
+  for (SignalIdx = 0; SignalIdx < MAX_BLUE_MARGIN_CHECK; SignalIdx++) {
+    Param = MarginCheckL1Table[SignalIdx].TimingType;
+
+    // Note: The following statement depends on the order of MarginCheckL1Table.
+    if (Param == RdT) {
+      // Test Margin for RdT/RdV, WrT/WrV
+      // SOE=1, EnCADB=0, EnCKE=0 SOE=1 sets bit12 of REUT_CH_ERR_CTL
+      SetupIOTestStatic (MrcData, Outputs->McChBitMask, LoopCount, NSOE, 0, 0, PatWrRd, 0, 0, 0x5a);
+    }
+
+    for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+      // Select rank for REUT test
+      RankMask = 1 << Rank;
+
+      McChBitMask = 0;
+      for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+        for (Channel = 0; Channel < MaxChannels; Channel++) {
+          McChBitMask |= SelectReutRanks (MrcData, Controller, Channel, RankMask, FALSE);
+        }
+      }
+
+      // Continue with next rank if this rank is not present on any channel
+      if (McChBitMask == 0) {
+        continue;
+      }
+
+      if (Outputs->IsDdr5) {
+        // Update bank mapping to get B2B writes.
+        MrcUpdateL2PAllsBanksMapping (MrcData, Rank, McChBitMask, TRUE);
+      }
+
+      for (MarginLevel = Margin_Check_L2; MarginLevel > Margin_Check_Disable; MarginLevel--) {
+
+        // check wether to run margin level
+        MarginLevelMask = 1 << (MarginLevel - 1);
+        if ((MarginLevelMask & ExtInputs->MarginLimitCheck) == 0) {
+          continue;
+        }
+
+        if (MarginLevel == Margin_Check_L2) {
+          MarginPointTemp = &MarginCheckL2Table[SignalIdx];
+        } else {
+          MarginPointTemp = &MarginCheckL1Table[SignalIdx];
+        }
+
+        MrcCall->MrcCopyMem ((UINT8 *) &MarginPoint, (UINT8 *) MarginPointTemp, sizeof (MarginPoint));
+
+        for (TimingSign = 0; TimingSign < 2; TimingSign++) {
+          // Skip testing point on L1 check if L2 check passed
+          if ((MarginLevel == Margin_Check_L1) && (FailResultsT[SignalIdx][Rank][TimingSign] != Margin_Check_L2 && IsMarginCheckBoth)) {
+            continue;
+          }
+          MarginPoint.TimingMargin = MarginPointTemp->TimingMargin * ((TimingSign * 2) - 1);
+          // test margin point
+          Pass = MrcDataPointTest (MrcData, McChBitMask, RankMask, &MarginPoint, MarginPoint.TimingType);
+          if (Pass != mrcSuccess) {
+            FailResultsT[SignalIdx][Rank][TimingSign] = ((MarginLevel == Margin_Check_L1) && IsMarginCheckBoth) ? Margin_Check_Both : MarginLevel;
+          }
+        } // TimingSign
+
+        for (VoltageSign = 0; VoltageSign < 2; VoltageSign++) {
+          // Skip testing point on L1 check if L2 check passed
+          if ((MarginLevel == Margin_Check_L1) && (FailResultsV[SignalIdx][Rank][VoltageSign] != Margin_Check_L2 && IsMarginCheckBoth)) {
+            continue;
+          }
+          MarginPoint.VoltageMargin = MarginPointTemp->VoltageMargin * ((VoltageSign * 2) - 1);
+          // test margin point
+          Pass = MrcDataPointTest (MrcData, McChBitMask, RankMask, &MarginPoint, MarginPoint.VoltageType);
+
+          if (Pass != mrcSuccess) {
+            FailResultsV[SignalIdx][Rank][VoltageSign] = ((MarginLevel == Margin_Check_L1) && IsMarginCheckBoth) ? Margin_Check_Both : MarginLevel;
+          }
+        } // VoltageSign
+      } // MarginLevel
+    }  // Rank
+  }  // Param
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Margin Check level\nParams: \tRdT/RdV\t\t\t\tWrT/WrV\n");
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\t\t+V\t-V\t+T\t-T\t+V\t-V\t+T\t-T");
+
+  MarginCheckResult = 0;
+
+  // Find the Worst level result
+  for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+    if (((1 << Rank) & Outputs->ValidRankMask) == 0) {
+      // Skip if this rank is not present on any of the channels
+      continue;
+    }
+
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\nR%d\t\t", Rank);
+
+    for (SignalIdx = 0; SignalIdx < MAX_BLUE_MARGIN_CHECK; SignalIdx++) {
+      for (TimingSign = 0; TimingSign < 2; TimingSign++) {
+        if (MarginCheckResult < FailResultsT[SignalIdx][Rank][TimingSign]) {
+          MarginCheckResult = FailResultsT[SignalIdx][Rank][TimingSign];
+        }
+      }  // TimingSign
+      for (VoltageSign = 0; VoltageSign < 2; VoltageSign++) {
+        if (MarginCheckResult < FailResultsV[SignalIdx][Rank][VoltageSign]) {
+          MarginCheckResult = FailResultsV[SignalIdx][Rank][VoltageSign];
+        }
+      }// VoltageSign
+      MRC_DEBUG_MSG (Debug,
+        MSG_LEVEL_NOTE,
+        "%s\t%s\t%s\t%s\t",
+        MarginCheckStr[FailResultsV[SignalIdx][Rank][1]],
+        MarginCheckStr[FailResultsV[SignalIdx][Rank][0]],
+        MarginCheckStr[FailResultsT[SignalIdx][Rank][1]],
+        MarginCheckStr[FailResultsT[SignalIdx][Rank][0]]);
+    }  // SignalIdx
+  }  // Rank
+
+  MrcModifyRdRdTimings (MrcData, FALSE);
+  MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcRestoreEnum, &MadSavedValues);
+
+  GetSetVal = 0;
+  MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);
+  MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmDisAllCplInterleave, WriteCached, &GetSetVal);
+
+     // Determine if a cold boot required
+  Status = (MarginCheckResult == ExtInputs->MarginLimitCheck) ? mrcResetFullTrain : mrcSuccess;
+
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\nmargin check result:%s Frequency %d \n", MarginCheckStr[MarginCheckResult], Outputs->Frequency);
+
+  if (Status == mrcResetFullTrain) {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Margin Check Failed - cold boot required\n");
+  }
+
+  return Status;
+}
+
+/**
+  This function is used to move CMD/CTL/CLK/CKE PIs during training
+
+  @param[in,out] MrcData    - Include all MRC global data.
+  @param[in]     Controller - Controller to shift PI.
+  @param[in]     Channel    - Channel to shift PI.
+  @param[in]     Iteration  - Determines which PI to shift:
+                              MrcIterationClock  = 0
+                              MrcIterationCmd    = 1
+                              MrcIterationCtl    = 2
+                              MrcIterationCmdCtl = 3
+  @param[in]     RankMask   - Ranks to work on
+  @param[in]     GroupMask  - Which groups to work on for CLK/CMD/CTL. See MrcGetCmdGroupMax()
+  @param[in]     NewValue   - value to shift in case of CLK Iteration, New value for all other cases
+  @param[in]     UpdateHost - Determines if MrcData structure is updated
+
+  @retval mrcSuccess if successful, otherwise the function returns an error if the register setting was out of range for MrcIterationCmdCtl.
+**/
+MrcStatus
+ShiftPIforCmdTraining (
+  IN OUT MrcParameters *const MrcData,
+  IN     const UINT32         Controller,
+  IN     const UINT32         Channel,
+  IN     const UINT8          Iteration,
+  IN     const UINT8          RankMask,
+  IN     const UINT8          GroupMask,
+  IN     INT32                NewValue,
+  IN     const UINT8          UpdateHost
+  )
+{
+  MrcDebug            *Debug;
+  MrcOutput           *Outputs;
+  MrcIntCmdTimingOut  *IntCmdTiming;
+  GSM_GT              GsmMode;
+  INT64               GetSetVal;
+  INT64               GetSetValZero;
+  INT64               GroupLimitMax;
+  UINT8               Rank;
+  UINT8               Group;
+  UINT8               CmdGroupMax;
+
+  Outputs       = &MrcData->Outputs;
+  Debug         = &Outputs->Debug;
+  IntCmdTiming  = &Outputs->Controller[Controller].CmdTiming[Channel];
+  GsmMode       = ForceWriteCached;
+  CmdGroupMax   = MrcGetCmdGroupMax (MrcData);
+  GetSetValZero = 0;
+
+  MrcGetSetLimits (MrcData, CmdGrpPi, 0, NULL, &GroupLimitMax, NULL);
+
+
+  if (Iteration == MrcIterationCmd || Iteration == MrcIterationCtl) {
+    if ((NewValue < 0) || (NewValue > GroupLimitMax)) {
+      MRC_DEBUG_MSG(Debug, MSG_LEVEL_NOTE, "Mc%d.C%d ShiftPIforCmdTraining: value (%d) out of limits, ", Controller, Channel, NewValue);
+      if (NewValue < 0) {
+        NewValue = 0;
+      } else if (NewValue > GroupLimitMax) {
+        NewValue = (UINT16)GroupLimitMax;
+      }
+      MRC_DEBUG_MSG(Debug, MSG_LEVEL_NOTE, "New value = %d\n", NewValue);
+    }
+  }
+  //MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\nShiftPIforCmdTraining: Iteration: %d, Channel: %d, RankMask: %d, GroupMask: %d, NewValue = 0x%x\n", Iteration, Channel, RankMask, GroupMask, NewValue);
+
+  switch (Iteration) {
+    case MrcIterationCmdCtl:
+    case MrcIterationCmd: // Shift Command
+      GetSetVal = NewValue;
+      for (Group = 0; Group < CmdGroupMax; Group++) {
+        if ((1 << Group) & GroupMask) {
+          if (Iteration == MrcIterationCmdCtl) {
+            GetSetVal = (INT16)(IntCmdTiming->CmdPiCode[Group] + NewValue);
+            if ((GetSetVal < 0) || (GetSetVal > GroupLimitMax)) { // Check for out-of-bounds
+              return mrcRegisterSettingOutOfBounds;
+            }
+          }
+          MrcGetSetCcc (MrcData, Controller, Channel, MRC_IGNORE_ARG, Group, CmdGrpPi, GsmMode, &GetSetVal);
+          if (UpdateHost) {
+            IntCmdTiming->CmdPiCode[Group] = (UINT16) GetSetVal;
+          }
+        }
+      }
+      if (Iteration == MrcIterationCmd) {
+        break;
+      }
+      /*FALLTHROUGH*/
+
+    case MrcIterationCtl: // Shift CS/ODT
+      GetSetVal = NewValue;
+      // Shift CS/ODT
+      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+        if (RankMask & (1 << Rank)) {
+          if (Iteration == MrcIterationCmdCtl) {
+            GetSetVal = (INT16)(IntCmdTiming->CtlPiCode[Rank] + NewValue);
+            if ((GetSetVal < 0) || (GetSetVal > GroupLimitMax)) { // Check for out-of-bounds
+              return mrcRegisterSettingOutOfBounds;
+            }
+          }
+          // Clear the per rank offset before setting the CCC Channel shared timing
+          MrcGetSetCccLane (MrcData, Controller, Channel, MRC_IGNORE_ARG, Rank, CsPerBitCcc, GsmMode, &GetSetValZero);
+          // Set the CCC Channel shared timing
+          MrcGetSetCcc (MrcData, Controller, Channel, Rank, 0, CtlGrpPi, GsmMode, &GetSetVal);
+          if (UpdateHost) {
+            IntCmdTiming->CtlPiCode[Rank] = (UINT16) GetSetVal;
+          }
+        }
+      }
+      break;
+
+    default:
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "%sUnknown parameter to shift\n", gWarnString);
+      break;
+  }
+
+  return mrcSuccess;
+}
+
+/**
+  This function is used by most margin search functions to change the underlying margin parameter.
+  This function allows single search function to be used for different types of margins with minimal impact.
+  It provides multiple different parameters, including 2D parameters like Read or Write FAN.
+  It can work in either MultiCast or single register mode.
+
+  @param[in,out] MrcData       - Include all MRC global data.
+  @param[in]     param         - Includes parameter(s) to change including two dimensional.
+  @param[in]     value0        - Selected value to program margin param to
+  @param[in]     value1        - Selected value to program margin param to in 2D mode (FAN mode)
+  @param[in]     EnMultiCast   - To enable Multicast (broadcast) or single register mode
+  @param[in]     Controller    - Desired Memory Controller
+  @param[in]     Channel       - Desired Channel
+  @param[in]     RankMaskIn    - Desired Rank mask that changes should be applied to
+  @param[in]     byte          - Desired byte offset register
+  @param[in]     UpdateMrcData - Used to decide if MRC host must be updated
+  @param[in]     SkipWait      - Used to skip wait until all channel are done
+
+  @retval MrcStatus -  if succeeded, return mrcSuccess
+**/
+MrcStatus
+ChangeMargin (
+  IN OUT MrcParameters *const MrcData,
+  IN     const UINT8          param,
+  IN     const INT32          value0,
+  IN     const INT32          value1,
+  IN     const UINT8          EnMultiCast,
+  IN     const UINT8          Controller,
+  IN     const UINT8          Channel,
+  IN     const UINT8          RankMaskIn,
+  IN     const UINT16         byte,
+  IN     const UINT8          UpdateMrcData,
+  IN     const UINT8          SkipWait
+  )
+{
+  // Programs margin param to the selected value0
+  // If param is a 2D margin parameter (ex: FAN), then it uses both value0 and value1
+  //    For an N point 2D parameter, value1 can be an integer from 0 to (N-1)
+  //    For per bit timing parameter, value1 is the sign of the shift
+  //   param = {0:RcvEn, 1:RdT, 2:WrT, 3: WrDqsT, 4:RdV, 5:WrV, 6:WrLevel,
+  //         7:RdVBit, 8:RdVBit1, 9:RcvEnaX, 10:WrTUnMatched, 11:CmdT, 12:CmdV,
+  //         13:CtlV, 14:RdTN, 15:RdTP, 16:CmdTBit, 17:RdTDbi, 18:WrTDbi,
+  //         19:RdVDbi, 20:WrTBit, 21:RdTBit}
+  // Note: For Write Vref, the trained value and margin register are the same
+  // Note: rank is only used for the RxTBit, TxTBit, RdVBit and RdVBit1 settings, and to propagate RdVref
+  // Note: PerBit Settings (RdVBit, RdVBit1) provide all 8 offsets in value0
+
+  MrcDebug          *Debug;
+  MrcOutput         *Outputs;
+  MrcIntCmdTimingOut *IntCmdTiming;
+  MrcStatus         Status;
+  GSM_GT            Group[MRC_CHNG_MAR_GRP_NUM];
+  INT64             GetSetVal[MRC_CHNG_MAR_GRP_NUM];
+  UINT32            GsmMode;
+  UINT32            CurrentMc;
+  UINT32            McStart;
+  UINT32            McEnd;
+  UINT32            ChannelStart;
+  UINT32            ChannelEnd;
+  UINT32            McChannelMask;
+  UINT32            ByteStart;
+  UINT32            ByteEnd;
+  UINT32            CurrentCh;
+  UINT32            CurrentRank;
+  UINT32            CurrentByte;
+  UINT32            GrpIdx;
+  UINT8             CmdGroupMax;
+  UINT8             CmdGroup;
+  UINT16            Max0;
+  INT32             v0;
+  INT32             v0Input;
+  INT32             Min;
+  BOOLEAN           UpdateGrp[MRC_CHNG_MAR_GRP_NUM];
+  BOOLEAN           PdaMode;
+  BOOLEAN           IsDdr5;
+  UINT8             RankMask;
+  UINT16            DeviceMask;
+  GSM_GT            GsmGroup;
+
+#if defined(LOCAL_STUB_STATE_FLAG)
+  MRC_LOCAL_STUB_STATE_STRUCT LsState;
+#endif
+
+  Status   = mrcSuccess;
+  Outputs  = &MrcData->Outputs;
+  Debug    = &Outputs->Debug;
+  IsDdr5   = Outputs->IsDdr5;
+  RankMask = RankMaskIn;
+
+  if (IsPerRankMarginParam (param)) {
+    if ((EnMultiCast == 1) && (RankMask == 0)) {
+      // If EnMultiCast is 1 and RankMask is 0 assume Rank Multicast
+      RankMask = 0xF;
+    }
+  } else {
+    // For non controllable per rank parameter don't use RankMask
+    RankMask = 0;
+  }
+
+  // Used for CMDV and WRV
+  McChannelMask = CalcMcChannelMask (MrcData, param, Controller, Channel, EnMultiCast);
+  // Used for CMDT
+  CmdGroupMax = MrcGetCmdGroupMax (MrcData);
+  GsmMode = (UpdateMrcData) ? ForceWriteCached : ForceWriteUncached;
+  for (v0 = 0; v0 < MRC_CHNG_MAR_GRP_NUM; v0++) {
+    UpdateGrp[v0] = FALSE;
+    Group[v0]     = GsmGtMax;
+    GetSetVal[v0] = 0;
+  }
+  if (EnMultiCast == 0) {
+    McStart = Controller;
+    McEnd = Controller + 1;
+    ChannelStart = Channel;
+    ChannelEnd = Channel + 1;
+    ByteStart = (UINT8) byte;
+    ByteEnd = (UINT8) byte + 1;
+  } else {
+    McStart = 0;
+    McEnd = MAX_CONTROLLER;
+    ChannelStart = 0;
+    ChannelEnd = Outputs->MaxChannels;
+    ByteStart = 0;
+    ByteEnd = Outputs->SdramCount;
+  }
+  // Pre-Process the margin numbers
+  Max0 = 0;
+
+  if ((param == WrT) || (param == RdT) || (param == CmdT)) {
+    GsmGroup = MrcGetChangeMarginGroup (MrcData, param);
+    if (GsmGroup == MRC_INT32_MAX) {
+      return mrcWrongInputParameter;
+    }
+    MrcGetSetLimits (MrcData, GsmGroup, 0, NULL, &GetSetVal[0], NULL);
+    Max0 = (UINT16)GetSetVal[0];
+  } else if (param == RdV) {
+    Max0 = GetVrefOffsetLimits (MrcData, param); // Vref for RdV and RdFan modes
+  }
+  // Pre-Process the margin numbers.
+  v0    = value0;
+
+  // Value parameter checking is handled within MrcUpdateVref for WrV and CmdV
+  if ((param != WrV) && (param != CmdV)) {
+    Min = (-1) - Max0;
+    v0 = RANGE (v0, Min, Max0);
+  }
+
+  switch (param) {
+    case RdT:
+      UpdateGrp[0]  = TRUE;
+      GetSetVal[0]  = v0;
+      Group[0]      = RxDqsOffset;
+      break;
+
+    case WrT:
+      UpdateGrp[0]  = TRUE;
+      GetSetVal[0]  = v0;
+      Group[0]      = TxDqOffset;
+      break;
+
+    case RdV:
+      UpdateGrp[0]  = TRUE;
+      GetSetVal[0]  = v0;
+      Group[0]      = RxVrefOffset;
+      break;
+
+    case CmdV:
+      PdaMode = IsDdr5 && (byte != 0); // Force DDR5 PDA for CmdV to OFF until specified otherwise
+      MrcUpdateVref (MrcData, McChannelMask, RankMask, byte, param, v0, UpdateMrcData, PdaMode, SkipWait, TRUE);
+      if (IsDdr5 && (byte == 0) && (!Outputs->IsOCProfile)) {
+        for (CurrentRank = 0; CurrentRank < MAX_RANK_IN_CHANNEL; CurrentRank++) {
+          if ((1 << CurrentRank) & RankMask) {
+            for (CurrentMc = McStart; CurrentMc < McEnd; CurrentMc++) {
+              for (CurrentCh = ChannelStart; CurrentCh < ChannelEnd; CurrentCh++) {
+                if (MrcRankExist (MrcData, CurrentMc, CurrentCh, CurrentRank)) {
+                  MrcDdr5SetVrefCsCachedOffset (MrcData, CurrentMc, CurrentCh, CurrentRank, v0, UpdateMrcData, FALSE);
+                }
+              }
+            }
+          }
+        }
+      }
+      break;
+
+    case CmdT:
+      for (CurrentMc = McStart; CurrentMc < McEnd; CurrentMc++) {
+        for (CurrentCh = ChannelStart; CurrentCh < ChannelEnd; CurrentCh++) {
+          if (MrcChannelExist (MrcData, CurrentMc, CurrentCh)) {
+            IntCmdTiming = &Outputs->Controller[CurrentMc].CmdTiming[CurrentCh];
+            for (CmdGroup = 0; CmdGroup < CmdGroupMax; CmdGroup++) {
+              v0Input = (INT32)(IntCmdTiming->CmdPiCode[CmdGroup]) + v0;
+              ShiftPIforCmdTraining (MrcData, CurrentMc, CurrentCh, MrcIterationCmd, MRC_IGNORE_ARG_8, 1 << CmdGroup, v0Input, UpdateMrcData);
+            }
+          }
+        }
+      }
+      break;
+
+    case WrV:
+#if defined(LOCAL_STUB_STATE_FLAG)
+      LsState.Data = MrcReadCR64 (MrcData, MRC_LOCAL_STUB_STATE_REG);
+      LsState.Bits.CurrentWrV = v0;
+      MrcWriteCR64(MrcData, MRC_LOCAL_STUB_STATE_REG, LsState.Data);
+#endif
+      PdaMode     = IsDdr5 && (byte != 0);
+      DeviceMask  = PdaMode ? byte  : 1;
+      MrcUpdateVref (MrcData, McChannelMask, RankMask, DeviceMask, param, v0, UpdateMrcData, PdaMode, SkipWait, TRUE);
+      break;
+
+    default:
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Function ChangeMargin, Invalid parameter %d\n", param);
+      return mrcWrongInputParameter;
+  } // end switch (param)
+
+  if ((param == RdV) && (EnMultiCast == 1) && UpdateGrp[0]) { // Direct CR multicast for speed
+    MrcWriteDirectMulticast (MrcData, param, v0);
+  } else {
+    for (GrpIdx = 0; GrpIdx < MRC_CHNG_MAR_GRP_NUM; GrpIdx++) {
+      if (UpdateGrp[GrpIdx] == FALSE) {
+        continue;
+      }
+      // Write CR
+      for (CurrentMc = McStart; CurrentMc < McEnd; CurrentMc++) {
+        for (CurrentCh = ChannelStart; CurrentCh < ChannelEnd; CurrentCh++) {
+          if (MrcChannelExist (MrcData, CurrentMc, CurrentCh)) {
+            for (CurrentByte = ByteStart; CurrentByte < ByteEnd; CurrentByte++) {
+              MrcGetSetChStrb (
+                MrcData,
+                CurrentMc,
+                CurrentCh,
+                CurrentByte,
+                Group[GrpIdx],
+                GsmMode,
+                &GetSetVal[GrpIdx]
+                );
+            } // CurrentByte
+          } //MrcChannelExist
+        } // CurrentCh
+      } // Controller
+    } // GrpIdx
+  }
+
+  return Status;
+}
+
+/**
+  This function maps the Change Margin param to the Get Set group
+  This function only supports params: RcvEna, RdT, WrT, WrLevel, WrDqsT, RcvEnaX, WrTUnMatched
+
+  @param[in] MrcData  - Include all MRC global data.
+  @param[in] param    - Change margin parameter
+
+  return GSM_GT - The Get Set group that maps to the input parameter
+**/
+GSM_GT
+MrcGetChangeMarginGroup (
+  IN  MrcParameters* const MrcData,
+  IN  const UINT8          param
+  )
+{
+  MrcDebug* Debug;
+  Debug = &MrcData->Outputs.Debug;
+
+  switch (param) {
+    case RdT:
+      return RxDqsOffset;
+      break;
+    case WrT:
+      return TxDqOffset;
+      break;
+    case CmdT:
+      return CmdGrpPi;
+      break;
+    default:
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s Param %d is unsupported\n", gErrString, param);
+      return MRC_INT32_MAX;
+      break;
+  }
+}
+
+/**
+  Enable / Disable CA tristate on populated MPTU's
+
+  @param[in,out] MrcData    - Include all MRC global data.
+  @param[in]     IsTrisate  - TRUE : Enable Tristate, FALSE : Restore TRI_CA to original programming
+  @param[in]     TriCaSave  - TRI_CA value to be restored when IsTristate is FALSE
+
+  @retval  Original TRI_CA value
+**/
+INT64
+MrcTristateCa (
+  IN OUT MrcParameters *const MrcData,
+  IN     BOOLEAN              IsTristate,
+  IN     INT64                TriCaSave
+  )
+{
+  return TRUE; // MrcTristateCa not used for Blue MRC
 }

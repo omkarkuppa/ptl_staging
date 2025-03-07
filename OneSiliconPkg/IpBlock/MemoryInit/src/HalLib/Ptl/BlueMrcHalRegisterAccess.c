@@ -100,6 +100,7 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmIocDllWeakLock",
   "GsmIocTxDllWeakLock",
   "RxVocFall",
+  "CsPerBitCcc",
   "WrRetrainDeltaPiCode",
   "RdRetrainDeltaPiCode",
   "RxCompDqsDelayP",
@@ -567,6 +568,7 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
   "GsmMccCkDisTristate",
   "GsmMccPageIdleTimerDisable",
   "GsmMccDisableSplitAct",
+  "GsmMccDisSchedsClkGate",
   "GsmMccAllowOppRefBelowWrtThreshold",
   "GsmMccWrtThreshold",
   "GsmMccPdwnIdleCounterSubch0",
@@ -2055,6 +2057,7 @@ MrcCheckGroupSupported (
     case GsmMccDisStarvedPriorityOnNewReq:
     case GsmMccAPD:
     case GsmMccDisableSplitAct:
+    case GsmMccDisSchedsClkGate:
     case GsmMccCmiSourceId0:
     case GsmMccCmiSourceId1:
     case GsmMccCmiSourceId2:

@@ -1320,8 +1320,6 @@ StartDramDqsToggleModeDdr5 (
   IN     UINT32                 Rank
   );
 
-#endif // MRC_DDR_5_H_
-
 /**
   Check if RIR is supported for a specific channel, this feature is supported
   if all populated ranks within a channel support it.
@@ -1442,3 +1440,46 @@ UINT32
 MrcDdr5OdtGbWrDrift (
   IN     MrcParameters *const MrcData
   );
+
+/**
+  Return the initial DDR5 DQ Vref (MR10)
+
+  @param[in]  MrcData      - Pointer to global MRC data
+  @param[in]  Controller   - Controller to work on
+  @param[in]  Channel      - Channel to work on
+  @param[out] VrefDqCalVal - DQ Vref in MR10 encoding
+
+  @retval mrcSuccess              if VrefDqCalVal is not NULL
+  @retval mrcWrongInputParameter  if VrefDqCalVal is NULL
+**/
+MrcStatus
+MrcDdr5GetVrefDqCalibrationValue (
+  IN  MrcParameters *const  MrcData,
+  IN  UINT32                Controller,
+  IN  UINT32                Channel,
+  OUT DDR5_MR10_VREF *const VrefDqCalVal
+  );
+
+/**  
+  Issue VREFCS command.
+
+  @param[in] MrcData       - Include all MRC global data.
+  @param[in] Controller    - the controller to work on
+  @param[in] Channel       - The channel to work on
+  @param[in] Rank          - The rank to work on
+  @param[in] VrefCsOffset  - VREFCs offset
+  @param[in] UpdateMrcData - Cache the results or not
+  @param[in] DebugPrint    - When TRUE, will print debugging information
+**/
+VOID
+MrcDdr5SetVrefCsCachedOffset (
+  IN MrcParameters* const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank,
+  IN INT32                VrefCsOffset,
+  IN UINT8                UpdateMrcData,
+  IN BOOLEAN              DebugPrint
+  );
+
+#endif // MRC_DDR_5_H_

@@ -31,12 +31,12 @@
 // ODT values are in this order: { RttWr, RttWck, RttCa, RttCa2RByteMode, RttCs, RttCs2RByteMode, RttNT}
 const TOdtValueLpddr Lpddr5OdtTableType3[MAX_DIMMS_IN_CHANNEL][MAX_ODT_VALUE] = {
 /// 1DPC 1R,                    1DPC 2R
-  {{60, 60, 80, 0, 80, 0, 0},  {48, 60, 120, 240, 80, 120, 0}},
+  {{60, 60, 240, 240, 80, 0, 0},  {48, 60, 240, 240, 80, 120, 0}},
 };
 
 const TOdtValueLpddr Lpddr5OdtTableType4[MAX_DIMMS_IN_CHANNEL][MAX_ODT_VALUE] = {
 /// 1DPC 1R,                    1DPC 2R
-  {{48, 60, 80, 0, 80, 0, 0},  {60, 48, 60, 120, 80, 120, 0}},
+  {{48, 60, 240, 240, 80, 0, 0},  {60, 48, 240, 240, 80, 120, 0}},
 };
 
 /**
@@ -98,22 +98,37 @@ MrcLp5GetDFE (
   OUT UINT8          *Dfequ
   )
 {
-  MrcInput              *Inputs;
-  const MrcBoardInputs  *BoardDetails;
-  BOOLEAN               IsTypicalBoard;
-
-  Inputs  = &MrcData->Inputs;
-  BoardDetails = &Inputs->ExtInputs.Ptr->BoardDetails;
-  IsTypicalBoard = BoardDetails->BoardStackUp == 0;
-
-  // DFE setting range is from -0.052V to -0.01V in step size of 7mV. Tap=1: -0.052V, Tap=7: -0.01V
-  if (Dfeql != NULL) {
-    *Dfeql = (IsTypicalBoard || Inputs->Lpddr5Camm) ? 1 : 6;
+  // EV Feedback - All configurations should have same value
+  if ((Dfeql != NULL) && (Dfequ != NULL)) {
+    *Dfeql = 4;
+    *Dfequ = 4;
   }
-  if (Dfequ != NULL) {
-    *Dfequ = (IsTypicalBoard || Inputs->Lpddr5Camm) ? 1 : 6;
-  }
-
 
   return mrcSuccess;
+}
+
+/**
+  Return the initial LPDDR5 DQ Vref (MR14/MR15)
+
+  @param[in]  MrcData      - Pointer to global MRC data
+
+  @retval Initial DQ Vref in [mV]
+**/
+UINT16
+MrcLp5GetVrefDq (
+  IN  MrcParameters *const  MrcData
+  )
+{
+  MrcOutput *Outputs;
+  UINT32    DqVrefMv;
+
+  Outputs = &MrcData->Outputs;
+
+  // Based on design input we don't want it to be a function of RttWr and WrDS
+  // Making it a function of SoC Vddq instead, plus additional offset for better initial centering
+
+  DqVrefMv = Outputs->VccddqVoltage / 4;
+  DqVrefMv += ((Outputs->Frequency == f9600) ? 5 : (Outputs->Frequency >= f6400) ? 30 : 10);
+
+  return (UINT16) DqVrefMv;
 }

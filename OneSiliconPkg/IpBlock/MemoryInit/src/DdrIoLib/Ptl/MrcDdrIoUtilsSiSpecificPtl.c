@@ -267,41 +267,6 @@ GetAuxClkRatio (
 }
 
 /**
-  Programming of CCC_CR_DDRCRCCCCLKCONTROLS_BlockTrainRst
-
-  @param[in] MrcData - The MRC global data.
-  @param[in] BlockTrainReset - TRUE to BlockTrainReset for most training algos.  FALSE for specific training algos that need PiDivider sync.
-
-**/
-VOID
-MrcBlockTrainResetToggle (
-  IN MrcParameters *const MrcData,
-  IN BOOLEAN              BlockTrainReset
-)
-{
-  UINT8   Value;
-  UINT8   Index;
-  UINT32  Offset;
-  DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_STRUCT  CccPinControls;
-
-  Value = (BlockTrainReset) ? 1 : 0;
-
-  for (Index = 0; Index < (MAX_SYS_CHANNEL / MRC_NUM_PAR_PER_SHARED); Index++) {
-    if (!(MrcGetHwPartitionExists (MrcData, PartitionCccShared, Index, MRC_IGNORE_ARG))) {
-      continue;
-    }
-    Offset = OFFSET_CALC_CH (DDRCCC_SHARED0_CR_DDRCRCCCPINCONTROLS_REG, DDRCCC_SHARED1_CR_DDRCRCCCPINCONTROLS_REG, Index);
-    CccPinControls.Data = MrcReadCR (MrcData, Offset);
-    if (CccPinControls.Bits.BlockTrainRst == Value) {
-      continue;
-    }
-    CccPinControls.Bits.BlockTrainRst = Value;
-    MrcWriteCR (MrcData, Offset, CccPinControls.Data);
-  }
-}
-
-
-/**
   This function gets the endqsodtparkmode value.
 
   @retval The value for endqsodtparkmode
@@ -1348,4 +1313,42 @@ MrcToggleDllReset (
     DllControl1.Bits.ForceDLLReset = Value;
     MrcWriteCR (MrcData, Offset, DllControl1.Data);
   }
+}
+
+/**
+  This procedure sets the pctle settings.
+
+  @param[in,out] MrcData        - Include all MRC global data.
+  @param[out]    Vref           - The VREF value
+  @param[out]    EquOdt         - The EquOdt value
+  @param[out]    Controller     - The Controller value
+  @param[out]    Channel        - The Channel value
+  @param[out]    Rank           - The Rank value
+
+**/
+void
+MRCSetPctle (
+  IN MrcParameters *const MrcData,
+  IN INT32                *Vref,
+  IN UINT32               EquOdt,
+  IN UINT32               Controller,
+  IN UINT8                Channel,
+  IN UINT8                Rank
+  )
+{
+}
+
+/**
+  This function is used to set the default RxVREF.
+
+  @param[in]  MrcData         - Pointer to global data structure.
+  @param[in]  Vref            - Pointer to the VREF value.
+
+**/
+void
+MrcSetDefaultRxVrefValueDdr5 (
+  IN  MrcParameters *const  MrcData,
+  IN  UINT32                *Vref
+  )
+{
 }

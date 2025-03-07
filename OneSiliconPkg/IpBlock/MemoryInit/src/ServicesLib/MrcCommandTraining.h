@@ -371,29 +371,6 @@ EarlyCommandTrainingDdr5 (
   );
 
 /**
-  Issue VREFCS command using MRH (Mode Register Handler).
-
-  @param[in] MrcData       - Include all MRC global data.
-  @param[in] Controller    - the controller to work on
-  @param[in] Channel       - The channel to work on
-  @param[in] Rank          - The rank to work on
-  @param[in] VrefCsOffset  - VREFCs offset
-  @param[in] UpdateMrcData - Cache the results or not
-  @param[in] DebugPrint    - When TRUE, will print debugging information
-**/
-MRC_IRAM1_FUNCTION
-VOID
-MrcDdr5SetVrefCsCachedOffset (
-  IN MrcParameters* const MrcData,
-  IN UINT32               Controller,
-  IN UINT32               Channel,
-  IN UINT32               Rank,
-  IN INT32                VrefCsOffset,
-  IN INT32                UpdateMrcData,
-  IN BOOLEAN              DebugPrint
-  );
-
-/**
   This function switches Channel Error method based on the TestPattern of the point test.
 
   @param[in] MrcData     - Pointer to global MRC data.

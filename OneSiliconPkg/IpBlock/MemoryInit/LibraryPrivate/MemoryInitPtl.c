@@ -1124,6 +1124,10 @@ DEBUG_CODE_END();
     EfiStatusErrorCode = EFI_COMPUTING_UNIT_MEMORY | EFI_CU_EC_NON_SPECIFIC;
     switch (MrcStatus) {
       case mrcSuccess:
+        // Clean-up after progress bar-related calculations
+        SaveData->PostCodesDone = 0;
+        SaveData->PostCodesTotal = 0;
+
         if (ExtInputs->RetrainToWorkingChannel && (Inputs->BootMode == bmCold)) {
           SaveData->SaMemCfgCrc = MrcCalculateCrc32((UINT8 *)MemConfig, sizeof (MEMORY_CONFIGURATION));
           SaveHeader->Crc       = MrcCalculateCrc32 ((UINT8 *) SaveData, sizeof (MrcSaveData));
@@ -3864,4 +3868,35 @@ SetLastIbeccOpMode (
     SskpdData64.Data
     );
   DEBUG ((DEBUG_INFO, "%a SSKPD_PCU W = 0x%llx\n", __FUNCTION__, SskpdData64.Data));
+}
+
+/**
+  Update the progress bar showing the MRC completion status.
+
+  @param[in out]  MrcData - All the MRC global data.
+**/
+VOID
+MrcUpdateProgressBar (
+  IN OUT MrcParameters *CONST MrcData
+  )
+{
+  MrcDebug    *Debug;
+  MrcSaveData *SaveData;
+  UINT32      Percentage;
+
+  Debug = &MrcData->Outputs.Debug;
+  SaveData = &MrcData->Save.Data;
+
+  SaveData->PostCodesDone += 1;
+
+  if (SaveData->PostCodesTotal == 0) {
+    UpdateProgressBar (0);
+  } else {
+    if (Debug->PostCode[MRC_POST_CODE] != MRC_MEM_INIT_DONE) {
+      Percentage = UDIVIDEROUND (SaveData->PostCodesDone * 100, SaveData->PostCodesTotal);
+      UpdateProgressBar ((UINT8) Percentage);
+    } else {
+      UpdateProgressBar (100);
+    }
+  }
 }

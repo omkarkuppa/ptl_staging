@@ -757,9 +757,10 @@ Ddr5JedecInitVal (
   TOdtValueDqDdr5  DqOdtTableIndex;
   TOdtValueCccDdr5 CccOdtTableIndex[2];
   TDFEValueDdr5    DFETableIndex;
-  DDR5_MR8_tRPRE RpreVal;
-  DDR5_MR8_tWPRE WpreVal;
+  DDR5_MR8_tRPRE   RpreVal;
+  DDR5_MR8_tWPRE   WpreVal;
   DDR5_MR8_tWPOST  WpostVal;
+  DDR5_MR10_VREF   VrefDqCalVal;
   DDR5_MODE_REGISTER_0_TYPE *Mr0;
   DDR5_MODE_REGISTER_2_TYPE *Mr2;
   DDR5_MODE_REGISTER_4_TYPE *Mr4;
@@ -908,13 +909,10 @@ Ddr5JedecInitVal (
       break;
 
     case mrMR10:
-      Mr10->Bits.VrefDqCalibrationValue = Ddr5Vref_75p0; // 75% of VDDQ
-      if (Inputs->IsDdrIoDtHalo && (Outputs->Is2DPC1R1R || Outputs->Is2DPC2R2R)) { // 2DPC 1R1R/2R2R Config
-        Mr10->Bits.VrefDqCalibrationValue = Ddr5Vref_80p0; /// 80% of VDDQ
+      if (MrcDdr5GetVrefDqCalibrationValue (MrcData, Controller, Channel, &VrefDqCalVal) != mrcSuccess) {
+        Status = mrcWrongInputParameter;
       }
-      if (Outputs->IsOCProfile) {
-        Mr10->Bits.VrefDqCalibrationValue = Ddr5Vref_68p0;
-      }
+      Mr10->Bits.VrefDqCalibrationValue = VrefDqCalVal;
       ChannelOut->IsMr10PdaEnabled = FALSE;
       break;
 
@@ -5310,4 +5308,51 @@ MrcDdr5OdtGbWrDrift (
   WrDrift += (20 * 20 * 128 * 40);
   WrDrift = UDIVIDEROUND (WrDrift, 200000);
   return WrDrift;
+}
+
+/**
+  Issue VREFCS command.
+
+  @param[in] MrcData       - Include all MRC global data.
+  @param[in] Controller    - the controller to work on
+  @param[in] Channel       - The channel to work on
+  @param[in] Rank          - The rank to work on
+  @param[in] VrefCsOffset  - VREFCs offset
+  @param[in] UpdateMrcData - Cache the results or not
+  @param[in] DebugPrint    - When TRUE, will print debugging information
+**/
+VOID
+MrcDdr5SetVrefCsCachedOffset (
+  IN MrcParameters* const MrcData,
+  IN UINT32               Controller,
+  IN UINT32               Channel,
+  IN UINT32               Rank,
+  IN INT32                VrefCsOffset,
+  IN UINT8                UpdateMrcData,
+  IN BOOLEAN              DebugPrint
+  )
+{
+  MrcRankOut*     RankOut;
+  DDR5_MR10_VREF  VrefCs;
+  UINT32          RankHalf;
+  UINT32          RankMod2;
+  INT32           CurrentOffset;
+
+  RankHalf = Rank / MAX_RANK_IN_DIMM;
+  RankMod2 = Rank % MAX_RANK_IN_DIMM;
+
+  RankOut = &MrcData->Outputs.Controller[Controller].Channel[Channel].Dimm[RankHalf].Rank[RankMod2];
+
+  VrefCs = DDR5_VREFCS_RAW(RankOut->MR[mrIndexMR12]);
+  CurrentOffset = MrcVrefToOffsetDdr5 (VrefCs, CmdV);
+  CurrentOffset += VrefCsOffset;
+  VrefCs = MrcOffsetToVrefDdr5 (MrcData, CmdV, CurrentOffset);
+  VrefCs = DDR5_VREFCS_RAW(VrefCs);
+
+  if (UpdateMrcData) {
+    RankOut->MR[mrIndexMR12] = DDR5_VREFCS(VrefCs);
+  }
+
+  MrcIssueVrefCmd (MrcData, Controller, Channel, Rank, DDR5_VREFCS(VrefCs), DebugPrint);
+  MrcIssueMpc (MrcData, Controller, Channel, Rank, DDR5_MPC_APPLY_VREF_RTT, DebugPrint);
 }

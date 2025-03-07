@@ -209,7 +209,7 @@ MrcEccClean (
 
     Cpgc20UpdateBaseRepeatsForWholeRankExtended (MrcData, Rank, McChBitMask, TRUE, CapNotPowerOf2);
 
-    MrcUpdateL2PAllsBanksMapping (MrcData, Rank, McChBitMask);
+    MrcUpdateL2PAllsBanksMapping (MrcData, Rank, McChBitMask, FALSE);
 
     for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
       for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
@@ -255,7 +255,7 @@ MrcEccClean (
 
       Cpgc20UpdateBaseRepeatsForWholeRankExtended (MrcData, Rank, McChBitMask, TRUE, CapNotPowerOf2);
 
-      MrcUpdateL2PAllsBanksMapping (MrcData, Rank, McChBitMask);
+      MrcUpdateL2PAllsBanksMapping (MrcData, Rank, McChBitMask, FALSE);
 
       for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
         for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {

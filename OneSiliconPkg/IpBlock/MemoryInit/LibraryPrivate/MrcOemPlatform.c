@@ -39,6 +39,9 @@
 #include "MrcBlueGreenCommunication.h"
 #include "BlueMrcAgentCommunication.h"
 
+#include <CMemoryInitPtl.h>
+
+
 #pragma pack (push, 1)
 typedef union {
   struct {
@@ -834,6 +837,10 @@ DebugHook (
   DEBUG ((DEBUG_INFO, "Post Code: %04Xh\n", DisplayDebugNumber));
 
   MrcNpkPostCode(DisplayDebugNumber, MrcData->Inputs.ExtInputs.Ptr->SimicsFlag);
+
+  if (MrcData->Inputs.BootMode == bmCold) {
+    MrcUpdateProgressBar (MrcData);
+  }
 }
 
 /**

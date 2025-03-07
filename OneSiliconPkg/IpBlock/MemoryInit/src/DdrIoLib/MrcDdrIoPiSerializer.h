@@ -122,6 +122,16 @@ MrcConfigureDataDcaCode (
 );
 
 /**
+  Program initial Tx DQS DCC offset
+
+  @param[in] MrcData  - Include all MRC global data.
+*/
+VOID
+MrcInitTxDqsDccOffset (
+  IN MrcParameters *const MrcData
+  );
+
+/**
   This function does calculation for DCC Step Size of WCK and CCC
 
   @param[in, out] MrcData - Include all MRC global data.
@@ -226,10 +236,36 @@ MrcPISerializerCalRunCheck (
 /**
   Print DCC PI Serializer results per partition
 
+  @param[in]  MrcData             - Include all MRC global data.
+  @param[in]  OnlyPrintLaneResult - Set to TRUE if only LaneResult needs to be printed else LaneResult along with
+                                    DccOffset will be printed.
+**/
+VOID
+MrcDccPiSrzPrintDataResults (
+  IN  MrcParameters *const  MrcData,
+  IN  BOOLEAN               OnlyPrintLaneResult
+  );
+
+/**
+  Print DCC PI Serializer results per partition
+
+  @param[in]  MrcData - Include all MRC global data.
+  @param[in]  OnlyPrintLaneResult - Set to TRUE if only LaneResult needs to be printed else LaneResult along with
+                                    DccOffset will be printed.
+**/
+VOID
+MrcDccPiSrzPrintWckResults (
+  IN  MrcParameters *const  MrcData,
+  IN  BOOLEAN               OnlyPrintLaneResult
+  );
+
+/**
+  Print DCC PI Serializer results per partition
+
   @param[in]  MrcData - Include all MRC global data.
 **/
 VOID
-MrcDccPiSrzPrintResults (
+MrcDccPiSrzPrintCCCResults (
   IN  MrcParameters *const  MrcData
   );
 #endif // MRC_DDR_IO_PI_SERIALIZER_SI_SPECIFIC_H_

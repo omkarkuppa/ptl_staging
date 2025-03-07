@@ -936,6 +936,7 @@ MrcGetMcConfigGroupLimits (
     case GsmMccDisAsyncOdt:
     case GsmMccDisStarvedPriorityOnNewReq:
     case GsmMccDisableSplitAct:
+    case GsmMccDisSchedsClkGate:
     case GsmMccHashEnabled:
     case GsmMccEcDis:
     case GsmMccEccGranularity:

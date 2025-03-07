@@ -34,6 +34,8 @@
 #include "MrcDdr5Ckd.h"
 #include "MrcCkdOffsets.h"
 #include "MrcPmic.h"
+#include "MrcReset.h"
+#include "MrcCommandTraining.h"
 
 #ifdef XCC_BUILD
 #define CR_SPEED_FLAG
@@ -3747,4 +3749,190 @@ DisplayMRContentFromHost (
       }
     } // Channel
   } // Controller
+}
+
+/**
+  This function is a helper function for ChangeMargin.
+  This function forms the correct Channel Mask based on the Margin Parameter, Channel, and Multicast settings.
+
+  @param[in,out] MrcData      - Include all MRC global data.
+  @param[in]     Param        - Includes parameter(s) to change including two dimensional.
+  @param[in]     Controller   - 0-based Controller Index.
+  @param[in]     Channel      - 0-based Channel Index.
+  @param[in]     EnMultiCast  - To enable Multicast (broadcast) or single register mode
+
+  @retval UINT16 - Channel Bit Mask.
+**/
+UINT16
+CalcMcChannelMask (
+  IN OUT MrcParameters *const MrcData,
+  IN     const UINT8          Param,
+  IN           UINT8          Controller,
+  IN           UINT8          Channel,
+  IN     const UINT8          EnMultiCast
+  )
+{
+  MrcOutput         *Outputs;
+  UINT16             McChannelMask;
+  UINT16             MaxChannels;
+
+  Outputs = &MrcData->Outputs;
+  MaxChannels = Outputs->MaxChannels;
+
+  McChannelMask = 0;
+  if ((Param == CmdV) || (Param == WrV)) {
+    if (EnMultiCast) {
+      for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+        for (Channel = 0; Channel < MaxChannels; Channel++) {
+          McChannelMask |= (1 << ((Controller) * (MaxChannels) + (Channel)));
+        }
+      }
+    } else {
+      McChannelMask = (1 << ((Controller) * (MaxChannels) + (Channel)));
+    }
+  }
+
+  return McChannelMask;
+}
+
+/**
+  Get the maximal possible offset for a given Param (e.g., WrV, RdV) and DDR technology.
+
+  @param[in]      MrcData  - Include all MRC global data.
+  @param[in]      Param    - Parameter to get the max possible offset for.
+
+  @retval UINT32 variable the maximal possible offset.
+**/
+UINT8
+GetVrefOffsetLimits (
+  IN  MrcParameters *const MrcData,
+  IN  UINT8                param
+  )
+{
+  MrcOutput        *Outputs;
+  MrcDebug         *Debug;
+  BOOLEAN          IsDdr5;
+  UINT8            MaxMargin;
+
+  Outputs = &MrcData->Outputs;
+  Debug   = &Outputs->Debug;
+  IsDdr5  = Outputs->IsDdr5;
+
+  switch (param) {
+    case RdV:
+    case RdVDbi:
+      // RdV supplied by CPU, identical for all technologies
+      MaxMargin = MAX_RX_VREF_OFFSET;
+      break;
+
+    case WrV:
+      // WrV technology dependent
+      if (IsDdr5) {
+        MaxMargin = DDR5_WRV_VREF_OFFSET_MAX;
+      } else { // LPDDR5
+        MaxMargin = LP5_VREF_OFFSET_MAX;
+      }
+      break;
+
+    case CmdV:
+      // CmdV technology dependent
+      if (IsDdr5) {
+        MaxMargin = DDR5_CMD_VREF_OFFSET_MAX;
+      } else { //LPDDR5
+        MaxMargin = LP5_VREF_OFFSET_MAX;
+      }
+      break;
+
+    default:
+      // Unknown input param
+      MaxMargin = 0;
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_WARNING, "%s unexpected param %d in GetVrefOffsetLimits\n", gWarnString, MaxMargin);
+      break;
+  }
+
+  return MaxMargin;
+}
+
+/**
+  Update the CA/DQ Vref value
+
+  @param[in,out] MrcData             - Include all MRC global data.
+  @param[in]     McChannelMask       - Select the Channels to update Vref for.
+  @param[in]     RankMask            - Selecting which Rank to talk to WrV and CmdV
+  @param[in]     DeviceMask          - Selecting which Devices to talk to (only valid for adjusting VrefDQ)
+  @param[in]     VrefType            - Determines the Vref to change: WrV or CmdV only.
+  @param[in]     Offset              - Vref offset value.
+  @param[in]     UpdateMrcData       - Used to decide if Mrc host must be updated.
+  @param[in]     PdaMode             - Selecting to use MRH or old method for MRS (only valid for adjusting VrefDQ)
+  @param[in]     SkipWait            - Determines if we will wait for vref to settle after writing to register
+  @param[in]     IsCachedOffsetParam - Determines if the parameter is an offset (relative to cache) or absolute value.
+
+  @retval Nothing
+**/
+void
+MrcUpdateVref (
+  IN OUT MrcParameters *const MrcData,
+  IN     UINT32               McChannelMask,
+  IN     UINT8                RankMask,
+  IN     UINT16               DeviceMask,
+  IN     UINT8                VrefType,
+  IN     INT32                Offset,
+  IN     BOOLEAN              UpdateMrcData,
+  IN     BOOLEAN              PdaMode,
+  IN     BOOLEAN              SkipWait,
+  IN     BOOLEAN              IsCachedOffsetParam
+  )
+{
+  MrcDebug            *Debug;
+  MrcInput            *Inputs;
+  MrcOutput           *Outputs;
+  const MRC_FUNCTION  *MrcCall;
+  INT64               GetSetValChannels[MAX_CHANNEL];
+  UINT8               Controller;
+  UINT8               Channel;
+
+  Inputs           = &MrcData->Inputs;
+  Outputs          = &MrcData->Outputs;
+  Debug            = &Outputs->Debug;
+  MrcCall          = Inputs->Call.Func;
+
+
+  if ((VrefType != WrV) && (VrefType != CmdV)) {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Function MrcUpdateVref, Invalid parameter %d\n", VrefType);
+    return;
+  }
+  MrcCall->MrcSetMem ((UINT8 *) GetSetValChannels, sizeof(GetSetValChannels), 0);
+  if (Outputs->IsLpddr && (VrefType == CmdV)) {
+    // program CmdV to FSP[1] while staying at FSP[0].
+    MrcSetFspVrcg (MrcData, ALL_RANK_MASK, MRC_IGNORE_ARG_8, LpFspWePoint1, LpFspOpPoint0);
+    // Set Low frequency (LP5:2133), unless we're already there
+    // Lower CKE - change CLK frequency while DRAM is in Power Down
+    if ((Outputs->Frequency != Outputs->LowFrequency) && Inputs->LpFreqSwitch) {
+      MrcFrequencySwitch (MrcData, Outputs->LowFrequency, !Outputs->RestoreMRs);
+    }
+  } // LPDDR5 and CmdV
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+      if ((!MrcChannelExist (MrcData, Controller, Channel)) ||
+          ((MC_CH_MASK_CHECK (McChannelMask, Controller, Channel, Outputs->MaxChannels)) == 0)){
+        continue;
+      }
+      MrcSetDramVref (
+        MrcData,
+        Controller,
+        Channel,
+        RankMask,
+        DeviceMask,
+        VrefType,
+        Offset,
+        UpdateMrcData,
+        PdaMode,
+        IsCachedOffsetParam
+        );
+    } // For Channel
+  } // For Controller
+  if (Outputs->IsLpddr && (VrefType == CmdV) && Outputs->EctDone) {
+    // Set FSP-OP = 1, set High frequency
+    MrcLpddrSwitchToHigh (MrcData, MRC_PRINTS_OFF);
+  }
 }

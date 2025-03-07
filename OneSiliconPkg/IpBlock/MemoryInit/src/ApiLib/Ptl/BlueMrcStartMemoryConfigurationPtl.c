@@ -82,6 +82,7 @@ const CallTableEntry  MrcCallTable[] = {
   {MrcUpdateSavedMCValues,          MRC_UPDATE_SAVE_MC_VALUES,     OemUpdateSaveMCValues,  1,                             MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Update MC Values in Fast flow", TrainedParamNoPrint)},
   {MrcIbecc,                        MRC_IBECC,                     OemIbecc,               1,           MF_WARM         | MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK ("MRC In-band ECC", TrainedParamNoPrint)},
   {MrcEccClean,                     MRC_ECC_CLEAN_START,           OemHwMemInit,           1,                             MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("MRC Memory Scrubbing", TrainedParamNoPrint)},
+  {MrcMarginLimitCheck,             MRC_MARGIN_LIMIT_CHECK,        OemMarginLimitCheck,    1,                             MF_FAST | MF_GV_FIRST | MF_GV_OTHER | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Margin Limit Check on Fast flow", TrainedParamNoPrint)},
   {MrcNormalMode,                   MRC_NORMAL_MODE,               OemNormalMode,          1,                             MF_FAST                             | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Normal Operation For Fast flow", TrainedParamNoPrint)},
   {MrcEccClean,                     MRC_ECC_CLEAN_START,           OemHwMemInit,           1,           MF_WARM                                               | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("MRC Memory Scrubbing", TrainedParamNoPrint)},
   {MrcNormalMode,                   MRC_NORMAL_MODE,               OemNormalMode,          1,           MF_WARM | MF_S3                                       | MF_GV_LAST,                   MRC_ITERATION_MAX, MRC_DEBUG_PRINTS_PER_TASK("Normal Operation For Warm / S3 flow", TrainedParamNoPrint)},
@@ -201,6 +202,12 @@ MrcInternalCheckPoint (
 
     case OemDdr5CkdConfig:
       if (IsLpddr || !Outputs->IsCkdSupported) {
+        Status = mrcFail; // Skip this training step
+      }
+      break;
+
+    case OemMarginLimitCheck:
+      if (ExtInputs->MarginLimitCheck == Margin_Check_Disable) {
         Status = mrcFail; // Skip this training step
       }
       break;
