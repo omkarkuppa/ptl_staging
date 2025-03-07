@@ -59,7 +59,7 @@
 [Pcd]
   gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress         ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdBiosSize                    ## CONSUMES
-  gSiPkgTokenSpaceGuid.PcdTemporaryRamBase            ## CONSUMES
+  gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamBase     ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdMchBaseAddress              ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdMchMmioSize                 ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdVtdMmioBase                 ## CONSUMES

@@ -54,7 +54,7 @@ IntelFsp2Pkg/IntelFsp2Pkg.dec
 gSiPkgTokenSpaceGuid.PcdNemCodeCacheBase
 gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress
 gSiPkgTokenSpaceGuid.PcdBiosSize
-gSiPkgTokenSpaceGuid.PcdTemporaryRamBase
+gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamBase
 gSiPkgTokenSpaceGuid.PcdMchBaseAddress
 gSiPkgTokenSpaceGuid.PcdMchMmioSize
 gSiPkgTokenSpaceGuid.PcdVtdMmioBase

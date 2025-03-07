@@ -54,7 +54,7 @@
   gPlatformModuleTokenSpaceGuid.PcdFlashFvRecovery3Size
   gSiPkgTokenSpaceGuid.PcdBiosAreaBaseAddress
   gSiPkgTokenSpaceGuid.PcdNemCodeCacheBase
-  gSiPkgTokenSpaceGuid.PcdTemporaryRamBase
+  gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamBase
   gIntelFsp2PkgTokenSpaceGuid.PcdTemporaryRamSize
 
 [Guids]
