@@ -64,16 +64,20 @@ GLOBAL_REMOVE_IF_UNREFERENCED CONST CPU_REV  mProcessorRevisionTable[] = {
 // Caution: The order of profile enum ID should match the order in profiles array.
 //
 enum {
-  ProfilePtlU15W40,      // PTL U      15W 4+0
-  ProfilePtlU15W20,      // PTL U      15W 2+0
-  ProfilePtlH12Xe25W48,  // PTL H 12Xe 25W 4+8
-  ProfilePtlH12Xe25W44,  // PTL H 12Xe 25W 4+4
-  ProfilePtlH12Xe25W28,  // PTL H 12Xe 25W 2+8
-  ProfilePtlH12Xe25W24,  // PTL H 12Xe 25W 2+4
-  ProfilePtlH4Xe25W48,   // PTL H 4Xe  25W 4+8
-  ProfilePtlH4Xe25W44,   // PTL H 4Xe  25W 4+4
-  ProfilePtlH4Xe25W28,   // PTL H 4Xe  25W 2+8
-  ProfilePtlH4Xe25W24,   // PTL H 4Xe  25W 2+4
+  ProfilePtlU15W40,            // PTL U      15W 4+0
+  ProfilePtlU15W20,            // PTL U      15W 2+0
+  ProfilePtlH12Xe25W48,        // PTL H 12Xe 25W 4+8
+  ProfilePtlH12Xe25W44,        // PTL H 12Xe 25W 4+4
+  ProfilePtlH12Xe25W28,        // PTL H 12Xe 25W 2+8
+  ProfilePtlH12Xe25W24,        // PTL H 12Xe 25W 2+4
+  ProfilePtlH4Xe25W48,         // PTL H 4Xe  25W 4+8
+  ProfilePtlH4Xe25W44,         // PTL H 4Xe  25W 4+4
+  ProfilePtlH4Xe25W28,         // PTL H 4Xe  25W 2+8
+  ProfilePtlH4Xe25W24,         // PTL H 4Xe  25W 2+4
+  ProfilePtlH4Xe65W48Pd2,      // PTL H 4Xe  65W 4+8 (CTDP UP, PD2)
+  ProfilePtlH12Xe65W48Pd2,     // PTL H 12Xe 65W 4+8 (CTDP UP, PD2)
+  ProfilePtlH4Xe65W48Pd3,      // PTL H 4Xe  65W 4+8 (CTDP UP, PD3)
+  ProfilePtlH12Xe65W48Pd3,     // PTL H 12Xe 65W 4+8 (CTDP UP, PD3)
   ProfilePtlMax
 };
 
@@ -91,16 +95,20 @@ GLOBAL_REMOVE_IF_UNREFERENCED PPM_PLX_PROFILE mPtlPlx[] = {
   //
   // MSR    MSR    TdpUp  TdpNominal  TdpDown  MSR w/ Fvm  MSR w/o Fvm  TimeWindow  IsysL1Tau  IsysLimitL1  IsysLimitL2  VsysMax  PsysPmax
   // PL1    PL2     PL2       PL2      PL2        PL4         PL4        PL1            Sec        1/8A         1/8A       mV      1/8W
-  {  1500,  5500,  5500,     5500,     5500,     15200,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W40
-  {  1500,  5500,  5500,     5500,     5500,     15200,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W20
-  {  2500,  6500,  6500,     6500,     6500,     17000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W48
-  {  2500,  6500,  6500,     6500,     6500,     17000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W44
-  {  2500,  6500,  6500,     6500,     6500,     17000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W28
+  {  1500,  5500,  5500,     5500,     5500,     16300,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W40
+  {  2500,  5500,  5500,     5500,     5500,     16300,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlU15W20
+  {  2500,  6400,  6400,     6400,     6400,     17500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W48
+  {  2500,  6400,  6400,     6400,     6400,     17500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W44
+  {  2500,  6400,  6400,     6400,     6400,     17500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W28
   {  2500,  6500,  6500,     6500,     6500,     17000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe25W24
-  {  2500,  6500,  6500,     6500,     6500,     17000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W48
-  {  2500,  6500,  6500,     6500,     6500,     17000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W44
-  {  2500,  6500,  6500,     6500,     6500,     17000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W28
+  {  2500,  6400,  6400,     6400,     6400,     17500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W48
+  {  2500,  6400,  6400,     6400,     6400,     17500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W44
+  {  2500,  6400,  6400,     6400,     6400,     17500,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W28
   {  2500,  6500,  6500,     6500,     6500,     17000,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe25W24
+  {  6500,  8000,  8000,     8000,     8000,     23900,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe65W48Pd2
+  {  6500,  8000,  8000,     8000,     8000,     23900,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe65W48Pd2
+  {  6500,  9500,  9500,     9500,     9500,     23900,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH4Xe65W48Pd3
+  {  6500,  9500,  9500,     9500,     9500,     23900,        0,        28,            28,         48,         120,     24000,    2800}, // ProfilePtlH12Xe65W48Pd3
 };
 //
 // Catch the mismatch of number of profile enum IDs and number of profiles.
@@ -125,22 +133,26 @@ STATIC_ASSERT (ARRAY_SIZE (mWclPlx) == ProfileWclMax, "PPM Profile count mismatc
 /// PowerLimits Override table for all SKUs. Non-cTDP parts would have '0' data for TDP level information.
 ///
 GLOBAL_REMOVE_IF_UNREFERENCED PPM_OVERRIDE_TABLE mPowerLimitsOverrideTable[] = {
-//
-//  Identifier               PLx
-//
-//
-//  PTL U, H 12Xe/4Xe
-//
-  { EnumPtlU15Watt40CpuId,     &mPtlPlx[ProfilePtlU15W40]     },
-  { EnumPtlU15Watt20CpuId,     &mPtlPlx[ProfilePtlU15W20]     },
-  { EnumPtlH12Xe25Watt48CpuId, &mPtlPlx[ProfilePtlH12Xe25W48] },
-  { EnumPtlH12Xe25Watt44CpuId, &mPtlPlx[ProfilePtlH12Xe25W44] },
-  { EnumPtlH12Xe25Watt28CpuId, &mPtlPlx[ProfilePtlH12Xe25W28] },
-  { EnumPtlH12Xe25Watt24CpuId, &mPtlPlx[ProfilePtlH12Xe25W24] },
-  { EnumPtlH4Xe25Watt48CpuId,  &mPtlPlx[ProfilePtlH4Xe25W48]  },
-  { EnumPtlH4Xe25Watt44CpuId,  &mPtlPlx[ProfilePtlH4Xe25W44]  },
-  { EnumPtlH4Xe25Watt28CpuId,  &mPtlPlx[ProfilePtlH4Xe25W28]  },
-  { EnumPtlH4Xe25Watt24CpuId,  &mPtlPlx[ProfilePtlH4Xe25W24]  },
+  //
+  //  Identifier                     PLx
+  //
+  //
+  //  PTL U, H 12Xe/4Xe
+  //
+  { EnumPtlU15Watt40CpuId,           &mPtlPlx[ProfilePtlU15W40]           },
+  { EnumPtlU15Watt20CpuId,           &mPtlPlx[ProfilePtlU15W20]           },
+  { EnumPtlH12Xe25Watt48CpuId,       &mPtlPlx[ProfilePtlH12Xe25W48]       },
+  { EnumPtlH12Xe25Watt44CpuId,       &mPtlPlx[ProfilePtlH12Xe25W44]       },
+  { EnumPtlH12Xe25Watt28CpuId,       &mPtlPlx[ProfilePtlH12Xe25W28]       },
+  { EnumPtlH12Xe25Watt24CpuId,       &mPtlPlx[ProfilePtlH12Xe25W24]       },
+  { EnumPtlH4Xe25Watt48CpuId,        &mPtlPlx[ProfilePtlH4Xe25W48]        },
+  { EnumPtlH4Xe25Watt44CpuId,        &mPtlPlx[ProfilePtlH4Xe25W44]        },
+  { EnumPtlH4Xe25Watt28CpuId,        &mPtlPlx[ProfilePtlH4Xe25W28]        },
+  { EnumPtlH4Xe25Watt24CpuId,        &mPtlPlx[ProfilePtlH4Xe25W24]        },
+  { EnumPtlH4Xe65Watt48Pd2CpuId,     &mPtlPlx[ProfilePtlH4Xe65W48Pd2]     },
+  { EnumPtlH12Xe65Watt48Pd2CpuId,    &mPtlPlx[ProfilePtlH12Xe65W48Pd2]    },
+  { EnumPtlH4Xe65Watt48Pd3CpuId,     &mPtlPlx[ProfilePtlH4Xe65W48Pd3]     },
+  { EnumPtlH12Xe65Watt48Pd3CpuId,    &mPtlPlx[ProfilePtlH12Xe65W48Pd3]    },
   ///
   /// WCL U
   ///

@@ -32,21 +32,25 @@ typedef enum {
   ///
   /// PTL U, H 12Xe/4Xe
   ///
-  EnumPtlU15Watt40CpuId     = 0x10,
-  EnumPtlU15Watt20CpuId     = 0x11,
-  EnumPtlH12Xe25Watt48CpuId = 0x12,
-  EnumPtlH12Xe25Watt44CpuId = 0x13,
-  EnumPtlH12Xe25Watt28CpuId = 0x14,
-  EnumPtlH12Xe25Watt24CpuId = 0x15,
-  EnumPtlH4Xe25Watt48CpuId  = 0x16,
-  EnumPtlH4Xe25Watt44CpuId  = 0x17,
-  EnumPtlH4Xe25Watt28CpuId  = 0x18,
-  EnumPtlH4Xe25Watt24CpuId  = 0x19,
+  EnumPtlU15Watt40CpuId           = 0x10,
+  EnumPtlU15Watt20CpuId           = 0x11,
+  EnumPtlH12Xe25Watt48CpuId       = 0x12,
+  EnumPtlH12Xe25Watt44CpuId       = 0x13,
+  EnumPtlH12Xe25Watt28CpuId       = 0x14,
+  EnumPtlH12Xe25Watt24CpuId       = 0x15,
+  EnumPtlH4Xe25Watt48CpuId        = 0x16,
+  EnumPtlH4Xe25Watt44CpuId        = 0x17,
+  EnumPtlH4Xe25Watt28CpuId        = 0x18,
+  EnumPtlH4Xe25Watt24CpuId        = 0x19,
+  EnumPtlH4Xe65Watt48Pd2CpuId     = 0x1A,
+  EnumPtlH12Xe65Watt48Pd2CpuId    = 0x1B,
+  EnumPtlH4Xe65Watt48Pd3CpuId     = 0x1C,
+  EnumPtlH12Xe65Watt48Pd3CpuId    = 0x1D,
   ///
   /// WCL U
   ///
-  EnumWclU15Watt10CpuId     = 0x30,
-  EnumWclU15Watt20CpuId     = 0x31,
+  EnumWclU15Watt10CpuId           = 0x30,
+  EnumWclU15Watt20CpuId           = 0x31,
 } CPU_IDENTIFIER;
 
 /**

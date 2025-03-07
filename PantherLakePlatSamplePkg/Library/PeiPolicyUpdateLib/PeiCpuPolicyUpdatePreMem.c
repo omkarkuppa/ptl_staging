@@ -48,6 +48,7 @@
 #if FixedPcdGet8(PcdFspModeSelection) == 1
 #include <FspmUpd.h>
 #endif
+#include <Library/PeiHostBridgeIpStatusLib.h>
 
 #define GET_OCCUPIED_SIZE(ActualSize, Alignment) \
   ((ActualSize) + (((Alignment) - ((ActualSize) & ((Alignment) - 1))) & ((Alignment) - 1)))
@@ -588,6 +589,151 @@ CreateSysG3StateHob (
 }
 
 /**
+  This function gets VR Power Design.
+
+  @param[in]  SelectedCtdpLevel      Selected Ctdp level in Setup knob
+  @param[in]  CustomPowerLimit1Power PL1 set in BIOS knob
+  @param[in]  CustomPowerLimit2Power PL2 set in BIOS knob
+
+  @retval     return VR Power Design
+**/
+UINT8
+EFIAPI
+GetVrPowerDeliveryDesign (
+  IN  UINT8  SelectedCtdpLevel,
+  IN  UINT32 CustomPowerLimit1Power,
+  IN  UINT32 CustomPowerLimit2Power
+  )
+{
+  UINT16                            CtdpNominalTdp,CtdpLevel1Tdp,CtdpLevel2Tdp;
+  UINT8                             VrPowerDeliveryDesign;
+  UINT8                             MaxCtdpLevel;
+  UINT8                             CpuConfigTdpLevels;
+  UINT16                            CpuDid;
+  UINT16                            BoardId;
+  BOOLEAN                           IsRvpBoard;
+  MSR_CONFIG_TDP_LEVEL1_REGISTER    ConfigTdpLevel1Msr;
+  MSR_CONFIG_TDP_LEVEL2_REGISTER    ConfigTdpLevel2Msr;
+  MSR_PACKAGE_POWER_SKU_REGISTER    PackagePowerSkuMsr;
+
+  VrPowerDeliveryDesign = 0;
+  MaxCtdpLevel          = 0;
+  CpuConfigTdpLevels    = GetConfigTdpLevels ();
+  BoardId               = PcdGet16 (PcdBoardId);
+  IsRvpBoard            = FALSE;
+
+  if ((BoardId == BoardIdPtlUHLp5Rvp1) ||
+      (BoardId == BoardIdPtlUHLp5Rvp3) ||
+      (BoardId == BoardIdPtlUHDdr5Rvp4) ||
+      (BoardId == BoardIdPtlUHCammDTbTRvp2) ||
+      (BoardId == BoardIdPtlUHLp5MemSktmRvp) ||
+      (BoardId == BoardIdPtlUHHmpRvp)) {
+    IsRvpBoard = TRUE;
+  }
+
+  ///
+  /// Get Ratio and TDP for each cTDP level
+  ///
+  PackagePowerSkuMsr.Uint64 = AsmReadMsr64 (MSR_PACKAGE_POWER_SKU);
+  CtdpNominalTdp = (UINT16) PackagePowerSkuMsr.Bits.PkgTdp;
+  ConfigTdpLevel1Msr.Uint64   = AsmReadMsr64 (MSR_CONFIG_TDP_LEVEL1);
+  CtdpLevel1Tdp = (UINT16) ConfigTdpLevel1Msr.Bits.PkgTdp;
+  ConfigTdpLevel2Msr.Uint64   = AsmReadMsr64 (MSR_CONFIG_TDP_LEVEL2);
+  CtdpLevel2Tdp = (UINT16) ConfigTdpLevel2Msr.Bits.PkgTdp;
+
+  CpuDid = (UINT16) GetHostBridgeRegisterData (HostBridgeDeviceId, HostBridgeDeviceIdData);
+  DEBUG ((DEBUG_INFO, " CpuDID = 0x%X\n", CpuDid));
+  DEBUG ((DEBUG_INFO, " BoardId = 0x%X\n", BoardId));
+  DEBUG ((DEBUG_INFO, " IsRvpBoard = 0x%X\n", IsRvpBoard));
+
+  ///
+  /// All cases when BIOS shall override PD.
+  ///
+  /*
+  --------------+---------------------+----------+
+  | Ctdp level  |      Board          | PD       |
+  +-------------+---------------------+----------+
+  |  Nominal    |                     |          |
+  |     or      |     NA(don't care)  | Official |
+  |  cTDP Down  |                     |          |
+  +-------------+---------------------+----------+
+  |             |        RVP          | PD3      |
+  |  cTDP Up    |---------------------+----------+
+  | (4Xe/12Xe)  |       others        | PD2      |
+  +-------------+---------------------+----------+
+
+  An unique case:
+    When cTDP level is nominal, Board is Intel RVP. Once PL2 is set to 80W and PL1 is set to 45W,
+    then PD2 will be used to help PPG and PnP validation.
+  */
+  if (CpuConfigTdpLevels != 0) {
+    DEBUG ((DEBUG_INFO, " CpuConfigTdpLevels = 0x%X\n", CpuConfigTdpLevels));
+    ///
+    /// Get the cTDP level with the highest TDP
+    ///
+    if ((CpuConfigTdpLevels == 1) && (CtdpLevel1Tdp >= CtdpNominalTdp)) {
+      MaxCtdpLevel = 1;
+    }
+    if (CpuConfigTdpLevels == 2) {
+      if ((CtdpLevel1Tdp >= CtdpNominalTdp) && (CtdpLevel1Tdp >= CtdpLevel2Tdp)) {
+        MaxCtdpLevel = 1;
+      } else if ((CtdpLevel2Tdp >= CtdpNominalTdp) && (CtdpLevel2Tdp >= CtdpLevel1Tdp)) {
+        MaxCtdpLevel = 2;
+      }
+    }
+
+    ///
+    /// Confirm selected cTDP is the maximum assured power.
+    ///
+    if (SelectedCtdpLevel == MaxCtdpLevel) {
+      DEBUG ((DEBUG_INFO, " SelectedCtdpLevel is 0x%X\n", SelectedCtdpLevel));
+      if (IsRvpBoard) {
+        ///
+        /// If detected board is Intel RVP, BIOS set PD3 (95W PL2) as default.
+        ///
+        if ((CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+4Xe
+          VrPowerDeliveryDesign = 0x1C; // PD3: EnumPtlH4Xe65Watt48Pd3CpuId
+        } else if ((CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+12Xe
+          VrPowerDeliveryDesign = 0x1D; // PD3: EnumPtlH12Xe65Watt48Pd3CpuId
+        }
+      } else {
+        DEBUG ((DEBUG_INFO, "it is Not RVP\n"));
+        ///
+        /// If detected board is not Intel RVP, BIOS sets PD2 as default for H 4Xe/12Xe 4+8+4.
+        ///
+        if ((CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+4Xe
+          VrPowerDeliveryDesign = 0x1A; // PD2: EnumPtlH4Xe65Watt48Pd2CpuId
+        } else if ((CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+12Xe
+          VrPowerDeliveryDesign = 0x1B; // PD2: EnumPtlH12Xe65Watt48Pd2CpuId
+        }
+      }
+    }
+  }
+
+  ///
+  /// The case includes:
+  ///   1) Ctdp Up/Down supports but select Nominal as default.
+  ///   2) Ctdp Up/Down unsupports. By default only Nominal supports.
+  ///
+  if (SelectedCtdpLevel == 0) {
+    ///
+    /// The unique case that RVP + PL1 45W + PL2 80W, BIOS sets PD2 as default which used for PPG and PnP validation.
+    ///
+    DEBUG ((DEBUG_INFO, "CustomPowerLimit1Power is - %x, CustomPowerLimit2Power is - %x \n", CustomPowerLimit1Power, CustomPowerLimit2Power));
+    if ((IsRvpBoard) && (CustomPowerLimit2Power == 0x13880) && (CustomPowerLimit1Power == 0xAFC8)) {
+      if ((CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_4XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+4Xe
+        VrPowerDeliveryDesign = 0x1A; // PD2: EnumPtlH4Xe65Watt48Pd2CpuId
+      } else if ((CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_8A) || (CpuDid == PTL_H_12XE_SA_DEVICE_ID_4C_4A)) { // 4+8+4+12Xe
+        VrPowerDeliveryDesign = 0x1B; // PD2: EnumPtlH12Xe65Watt48Pd2CpuId
+      }
+    }
+  }
+
+  DEBUG ((DEBUG_INFO, "VrPowerDeliveryDesign is - %x \n", VrPowerDeliveryDesign));
+  return (UINT8) VrPowerDeliveryDesign;
+}
+
+/**
   This function performs CPU PEI Policy initialization in Pre-memory.
 
   @retval EFI_SUCCESS              The PPI is installed and initialized.
@@ -629,6 +775,8 @@ UpdatePeiCpuPolicyPreMem (
   CPU_SECURITY_PREMEM_CONFIG      *CpuSecurityPreMemConfig;
   CPU_POWER_MGMT_VR_CONFIG        *CpuPowerMgmtVrConfig;
 #endif
+  UINT8                            VrPowerDeliveryDesign;
+
 
   BiosGuardHobPtr             = NULL;
   BiosSize                    = 0;
@@ -1004,6 +1152,12 @@ UpdatePeiCpuPolicyPreMem (
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.AcousticNoiseMitigation, CpuPowerMgmtVrConfig->AcousticNoiseMitigation, CpuSetup.AcousticNoiseMitigation);
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.PcoreHysteresisWindow, CpuPowerMgmtVrConfig->PcoreHysteresisWindow,   CpuSetup.PcoreHysteresisWindow  );
   COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.EcoreHysteresisWindow, CpuPowerMgmtVrConfig->EcoreHysteresisWindow,   CpuSetup.EcoreHysteresisWindow  );
+
+  ///
+  /// Update VrPowerDeliveryDesign when cTDP up selected
+  ///
+  VrPowerDeliveryDesign = GetVrPowerDeliveryDesign (CpuSetup.ConfigTdpLevel, CpuSetup.CustomPowerLimit1Power, CpuSetup.CustomPowerLimit2Power);
+  COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.VrPowerDeliveryDesign,  CpuPowerMgmtVrConfig->VrPowerDeliveryDesign, VrPowerDeliveryDesign);
 
   //
   // When overclocking is enabled, we need to ensure the VR defaults are
