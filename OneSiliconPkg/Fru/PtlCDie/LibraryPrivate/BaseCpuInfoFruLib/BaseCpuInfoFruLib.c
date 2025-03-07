@@ -580,11 +580,11 @@ GetCpuSkuIdentifier (
         case PTL_H_12XE_SA_DEVICE_ID_2C_4A:
         case PTL_H_12XE_NEX_SA_DEVICE_ID_2C_4A:
           if (PackageTdp == CPU_TDP_28_WATTS) {
-            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 12Xe 2+4 28W\n"));
-            CpuIdentifier = EnumPtlH12Xe25Watt24CpuId;
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 12Xe 2+4 28W, replace it with PTL Pkg-H 4Xe 2+8 28W\n"));
+            CpuIdentifier = EnumPtlH4Xe25Watt28CpuId;
           } else if (PackageTdp == CPU_TDP_25_WATTS) {
-            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 12Xe 2+4 25W\n"));
-            CpuIdentifier = EnumPtlH12Xe25Watt24CpuId;
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 12Xe 2+4 25W, replace it with PTL Pkg-H 4Xe 2+8 25W\n"));
+            CpuIdentifier = EnumPtlH4Xe25Watt28CpuId;
           }
           break;
         ///
@@ -623,11 +623,11 @@ GetCpuSkuIdentifier (
         case PTL_H_4XE_SA_DEVICE_ID_2C_4A:
         case PTL_H_4XE_NEX_SA_DEVICE_ID_2C_4A:
           if (PackageTdp == CPU_TDP_45_WATTS) {
-            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4Xe 2+4 45W\n"));
-            CpuIdentifier = EnumPtlH4Xe25Watt24CpuId;
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4Xe 2+4 45W, replace it with PTL Pkg-H 4Xe 2+8 45W\n"));
+            CpuIdentifier = EnumPtlH4Xe25Watt28CpuId;
           } else if (PackageTdp == CPU_TDP_25_WATTS) {
-            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4Xe 2+4 25W\n"));
-            CpuIdentifier = EnumPtlH4Xe25Watt24CpuId;
+            DEBUG ((DEBUG_INFO, "CPU Identifier = PTL Pkg-H 4Xe 2+4 25W, replace it with PTL Pkg-H 4Xe 2+8 25W\n"));
+            CpuIdentifier = EnumPtlH4Xe25Watt28CpuId;
           }
           break;
         case PTL_H_4XE_SA_DEVICE_ID_4C:
