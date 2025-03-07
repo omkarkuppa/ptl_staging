@@ -46,6 +46,7 @@
 #include <Protocol/ResetNotification.h>
 
 #include <Protocol/Tse.h>
+#include <Protocol/PlatformTseExcludeProtocol.h>
 
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>

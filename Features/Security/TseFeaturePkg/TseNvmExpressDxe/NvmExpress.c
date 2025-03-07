@@ -989,6 +989,11 @@ NvmExpressDriverBindingSupported (
   EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
   EFI_PCI_IO_PROTOCOL       *PciIo;
   UINT8                     ClassCode[3];
+  BOOLEAN                   IsTseSupported;
+  UINTN                     Index;
+  EFI_HANDLE                *HandleBuffer;
+  UINTN                     HandleCount;
+  PLATFORM_TSE_EXCLUDE_PROTOCOL *TseExcludeProtocol;
 
   //
   // Check whether device path is valid
@@ -1073,18 +1078,15 @@ NvmExpressDriverBindingSupported (
                         sizeof (ClassCode),
                         ClassCode
                         );
-  if (EFI_ERROR (Status)) {
-    goto Done;
+  if (!EFI_ERROR (Status)) {
+    //
+    // Examine Nvm Express controller PCI Configuration table fields
+    //
+    if ((ClassCode[0] != PCI_IF_NVMHCI) || (ClassCode[1] != PCI_CLASS_MASS_STORAGE_NVM) || (ClassCode[2] != PCI_CLASS_MASS_STORAGE)) {
+      Status = EFI_UNSUPPORTED;
+    }
   }
 
-  //
-  // Examine Nvm Express controller PCI Configuration table fields
-  //
-  if ((ClassCode[0] != PCI_IF_NVMHCI) || (ClassCode[1] != PCI_CLASS_MASS_STORAGE_NVM) || (ClassCode[2] != PCI_CLASS_MASS_STORAGE)) {
-    Status = EFI_UNSUPPORTED;
-  }
-
-Done:
   gBS->CloseProtocol (
          Controller,
          &gEfiPciIoProtocolGuid,
@@ -1092,7 +1094,54 @@ Done:
          Controller
          );
 
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }  
+
+  //
+  // Attempt to Open Platform TSE Exclude Protocol
+  //
+  Status = gBS->LocateHandleBuffer (
+                  ByProtocol,
+                  &gPlatformTseExcludeProtocolGuid,
+                  NULL,
+                  &HandleCount,
+                  &HandleBuffer
+                  );
+
+  if (EFI_ERROR (Status) || (HandleBuffer == NULL) || (HandleCount == 0)) {
+    return Status;
+  }
+
+  //
+  // Check if device is not TBT type
+  //
+  for (Index = 0; Index < HandleCount; Index++) {
+    Status = gBS->HandleProtocol (
+                    HandleBuffer[Index],
+                    &gPlatformTseExcludeProtocolGuid,
+                    (VOID **)&TseExcludeProtocol
+                    );
+    if (EFI_ERROR (Status)) {
+      break;
+    }
+
+    Status = TseExcludeProtocol->TseExcludeCheck(TseExcludeProtocol, PciIo, &IsTseSupported);
+    if (EFI_ERROR (Status)) {
+      break;
+    }
+
+    if(IsTseSupported == FALSE){
+      // BDF is under dTBT or iTBT and is not supported
+      Status = EFI_UNSUPPORTED;
+      break;
+    }
+
+  }
+
+  gBS->FreePool (HandleBuffer);
   return Status;
+
 }
 
 /**
