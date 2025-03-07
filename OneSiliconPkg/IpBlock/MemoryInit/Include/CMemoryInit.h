@@ -35,9 +35,6 @@
 #include <CMemoryInitPtl.h>
 
 
-#ifdef PRODUCT_RZLWS
-#include <CMemoryInitNvl.h>
-#endif
 
 ///
 /// SMRAM range definitions

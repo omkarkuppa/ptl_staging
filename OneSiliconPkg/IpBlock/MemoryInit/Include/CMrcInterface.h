@@ -27,16 +27,10 @@
 #include <Ptl/CMrcExtTypes.h>
 
 
-#ifdef PRODUCT_RZLWS
-#include <Nvl/CMrcExtTypes.h>
-#endif
 
 #include <Ptl/MrcGenSaveRestoreRegCount.h>
 
 
-#ifdef PRODUCT_RZLWS
-#include <Nvl/MrcGenSaveRestoreRegCount.h>
-#endif
 
 #define CPUID_FULL_FAMILY_MODEL_LUNARLAKE_MOBILE 0x000B06D0
 
@@ -1344,18 +1338,12 @@ typedef enum {
 typedef enum {
   ipVerDdrIoMtl = 7,         ///< Gen7: MeteorLake
   ipVerDdrIoLnlPtl = 8,      ///< Gen8: LunarLake / PantherLake
-#ifdef PRODUCT_RZLWS
-  ipVerDdrIoNvl = 10         ///< Gen10: NovaLake
-#endif
 } MrcDdrIoIpVer;
 
 /// Define the Version of IP for MC.
 typedef enum {
   ipVerMcMtl = 9,       ///< Gen9: MeteorLake
   ipVerMcLnlPtl = 10,   ///< Gen10: LunarLake/PantherLake
-#ifdef PRODUCT_RZLWS
-  ipVerMcNvl = 11,      ///< Gen11: NovaLake
-#endif
 } MrcMcIpVer;
 
 /// Define the MRC Test Environment
