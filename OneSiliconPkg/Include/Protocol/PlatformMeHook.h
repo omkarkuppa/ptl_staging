@@ -25,13 +25,17 @@
 /// ME Hook provided by platform for DXE phase
 /// This protocol provides an interface to hook reference code by OEM.
 ///
+/// Revision 1: Added PLATFORM_ME_HOOK_PRE_GLOBAL_RESET
+/// Revision 2: Added PLATFORM_ME_HOOK_PRE_DATA_CLEAR and PLATFORM_ME_HOOK_POST_DATA_CLEAR
+///
 
-#define PLATFORM_ME_HOOK_PROTOCOL_REVISION  1
+#define PLATFORM_ME_HOOK_PROTOCOL_REVISION  2
 
 /**
   Platform hook before BIOS sends Global Reset Heci Message to ME
 
   @retval EFI Status Code
+
 **/
 typedef
 EFI_STATUS
@@ -39,15 +43,50 @@ EFI_STATUS
   VOID
   );
 
+/**
+  Platform hook before BIOS sends Data Clear Heci Message to ME
+
+  @param[out]  ProceedDataClear  Pointer to consent sending Data Clear HECI message.
+
+  @retval  EFI_SUCCESS  Succeed to execute the function.
+           Others       Fail to execute the function.
+
+**/
+typedef
+EFI_STATUS
+(EFIAPI *PLATFORM_ME_HOOK_PRE_DATA_CLEAR) (
+  OUT BOOLEAN  *ProceedDataClear
+  );
+
+/**
+  Platform hook after BIOS sends Data Clear Heci Message to ME
+
+  @param[in]  DataClearStatus  Indicate the status of sending Data Clear HECI message.
+
+  @retval  EFI_SUCCESS  Succeed to execute the function.
+           Others       Fail to execute the function.
+
+**/
+typedef
+EFI_STATUS
+(EFIAPI *PLATFORM_ME_HOOK_POST_DATA_CLEAR) (
+  IN EFI_STATUS  DataClearStatus
+  );
+
 ///
 /// Platform ME Hook Protocol
-/// This protocol provides an interface to hook reference code by OEM before perform reset command through Heci.
+/// This protocol provides an interface to hook reference code by OEM
 ///
 typedef struct _PLATFORM_ME_HOOK_PROTOCOL {
   ///
   /// Function pointer for the hook called before BIOS sends Global Reset Heci Message to ME
   ///
-  PLATFORM_ME_HOOK_PRE_GLOBAL_RESET PreGlobalReset;
+  PLATFORM_ME_HOOK_PRE_GLOBAL_RESET  PreGlobalReset;
+  ///
+  /// Function pointers for the hook called before and after BIOS sends Data Clear Heci Message to ME
+  ///
+  PLATFORM_ME_HOOK_PRE_DATA_CLEAR    PreDataClear;
+  PLATFORM_ME_HOOK_POST_DATA_CLEAR   PostDataClear;
 } PLATFORM_ME_HOOK_PROTOCOL;
 
 extern EFI_GUID gPlatformMeHookProtocolGuid;

@@ -182,8 +182,9 @@ form formid = AUTO_ID(ME_FORM_ID),
     oneof varid   = ME_SETUP.CseDataResilience,
       prompt      = STRING_TOKEN(STR_CSE_DATA_RESILIENCE_PROMPT),
       help        = STRING_TOKEN(STR_CSE_DATA_RESILIENCE_HELP),
-      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED),     value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED),      value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DATA_RES_DXE), value = 2, flags = RESET_REQUIRED;
     endoneof;
 
     oneof varid   = ME_SETUP.PseEomFlowEnable,

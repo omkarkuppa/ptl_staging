@@ -329,8 +329,8 @@ IsDataResiliencyRequired (
     return FALSE;
   }
 
-  if (!MePeiConfig->CseDataResilience) {
-    DEBUG ((DEBUG_INFO, "CSE Data Resilience support disabled\n"));
+  if (MePeiConfig->CseDataResilience != CSE_DATA_RESILIENCE_ENABLED) {
+    DEBUG ((DEBUG_INFO, "CSE Data Resilience support is disabled or deferred\n"));
     return FALSE;
   }
 

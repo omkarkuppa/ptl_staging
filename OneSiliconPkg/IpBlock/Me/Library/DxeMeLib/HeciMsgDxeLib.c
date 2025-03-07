@@ -2618,6 +2618,51 @@ HeciGetErLog (
   return Status;
 }
 
+/**
+  This command is sent by the BIOS to clear CSME data to image creation state.
+  After the command succeeds, platform reset is expected.
+
+  @retval EFI_SUCCESS             Command succeeded.
+  @retval EFI_UNSUPPORTED         Get ME mode fail.
+  @retval EFI_DEVICE_ERROR        HECI Device error, command aborts abnormally
+  @retval EFI_TIMEOUT             HECI does not return the buffer before timeout or transition failed
+                                  within allowed time limit
+**/
+EFI_STATUS
+HeciDataClear (
+  VOID
+  )
+{
+  EFI_STATUS                 Status;
+  DATA_CLEAR_BUFFER          DataClear;
+  UINT32                     Length;
+  UINT32                     RespLength;
+
+  ZeroMem (&DataClear, sizeof (DATA_CLEAR_BUFFER));
+  DataClear.Request.MkhiHeader.Fields.GroupId = BUP_COMMON_GROUP_ID;
+  DataClear.Request.MkhiHeader.Fields.Command = DATA_CLEAR_CMD;
+  Length                                      = sizeof (DATA_CLEAR_REQUEST);
+  RespLength                                  = sizeof (DATA_CLEAR_RESPONSE);
+
+  Status = HeciWrapperSendWithAck (
+             BIOS_FIXED_HOST_ADDR,
+             HECI_MKHI_MESSAGE_ADDR,
+             (UINT32 *) &DataClear,
+             Length,
+             (UINT32 *) &DataClear,
+             &RespLength
+             );
+  if (!EFI_ERROR (Status) &&
+      ((DataClear.Response.MkhiHeader.Fields.Command != DATA_CLEAR_CMD) ||
+      (DataClear.Response.MkhiHeader.Fields.IsResponse != 1) ||
+      (DataClear.Response.MkhiHeader.Fields.Result != MkhiStatusSuccess))) {
+    Status = EFI_DEVICE_ERROR;
+  }
+
+  DEBUG ((DEBUG_INFO, "%a() exit, Status = %r\n", __FUNCTION__, Status));
+  return Status;
+}
+
 //
 // MKHI_GEN_GROUP_ID = 0xFF
 //

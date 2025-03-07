@@ -1520,7 +1520,12 @@ $(PLATFORM_SI_PACKAGE)/Product/PantherLake/EarlyDevices/EarlyDxeDevices.inf
   $(PLATFORM_BOARD_PACKAGE)/Features/Me/MeSmbiosUpdateConfigDxe/MeSmbiosUpdateConfigDxe.inf
 !endif
 
-  $(PLATFORM_BOARD_PACKAGE)/Features/ModularUsbCIo/ModularUsbCIoDxe.inf
+#
+# ME platform hook
+#
+$(PLATFORM_BOARD_PACKAGE)/Features/Me/PlatformMeHook/PlatformMeHookDxe.inf
+
+$(PLATFORM_BOARD_PACKAGE)/Features/ModularUsbCIo/ModularUsbCIoDxe.inf
 
 #
 # AcpiTables
@@ -1709,7 +1714,6 @@ $(PLATFORM_FEATURES_PATH)/Usb4Cm/Usb4PlatformDxe/Usb4PlatformDxe.inf
 # ME
 #
 $(PLATFORM_FEATURES_PATH)/Me/MeExtMeasurement/Dxe/MeExtMeasurement.inf
-
 
 #
 # USB4 Connection Manager

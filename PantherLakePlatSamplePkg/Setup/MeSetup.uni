@@ -247,7 +247,8 @@
 #string STR_MCTP_BROADCAST_CYCLE_HELP           #language en-US  "Enable/Disable Management Component Transport Protocol Broadcast Cycle and Set PMT as Bus Owner"
 
 #string STR_CSE_DATA_RESILIENCE_PROMPT          #language en-US  "CSE Data Resilience Support"
-#string STR_CSE_DATA_RESILIENCE_HELP            #language en-US  "Enable/Disable CSE Data Resilience Support"
+#string STR_CSE_DATA_RESILIENCE_HELP            #language en-US  "Disable: Disable CSE Data Resilience Support.\nEnable: Enable CSE Data Resilience Support in PEI.\nEnable and defer: Handle CSE Data Clear in DXE."
+#string STR_DATA_RES_DXE                        #language en-US  "Enable and defer"
 
 #string STR_PSE_EOM_FLOW_ENABLE_PROMPT          #language en-US  "PSE EOM Flow Enable"
 #string STR_PSE_EOM_FLOW_ENABLE_HELP            #language en-US  "Enable/Disable PSE EOM Flow"

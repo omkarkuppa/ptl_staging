@@ -1094,6 +1094,21 @@ HeciGetErLog (
   OUT UINT8        *RemainingEntries
   );
 
+/**
+  This command is sent by the BIOS to clear CSME data to image creation state.
+  After the command succeeds, platform reset is expected.
+
+  @retval EFI_SUCCESS             Command succeeded.
+  @retval EFI_UNSUPPORTED         Get ME mode fail.
+  @retval EFI_DEVICE_ERROR        HECI Device error, command aborts abnormally
+  @retval EFI_TIMEOUT             HECI does not return the buffer before timeout or transition failed
+                                  within allowed time limit
+**/
+EFI_STATUS
+HeciDataClear (
+  VOID
+  );
+
 //
 // MKHI_GEN_GROUP_ID = 0xFF
 //

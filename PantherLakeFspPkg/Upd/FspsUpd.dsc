@@ -695,7 +695,7 @@
   gPlatformFspPkgTokenSpaceGuid.MeUnconfigOnRtcClear        | * | 0x01 | 0x01
 
   # !BSF NAME:{CSE Data Resilience Support} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{0: Disable CSE Data Resilience Support. <b>1: Enable CSE Data Resilience Support.</b>}
+  # !BSF HELP:{0: Disable CSE Data Resilience Support. <b>1: Enable CSE Data Resilience Support.</b> 2: Enable CSE Data Resilience but defer to DXE.}
   gPlatformFspPkgTokenSpaceGuid.CseDataResilience           | * | 0x01 | 0x01
 
   # !BSF NAME:{PSE EOM Flow Control} TYPE:{Combo} OPTION:{$EN_DIS}

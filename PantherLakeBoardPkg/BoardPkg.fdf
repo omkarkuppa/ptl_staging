@@ -1963,6 +1963,11 @@ $(SIPKG_DXE_SMM_BIN) $(PLATFORM_SI_PACKAGE)/IpBlock/BiosGuard/Smm/BiosGuardServi
   !include MemoryTelemetryFeaturePkg/Include/PostMemory.fdf
 !endif # PcdMemoryTelemetryEnabled
 
+#
+# ME platform hook
+#
+INF $(PLATFORM_BOARD_PACKAGE)/Features/Me/PlatformMeHook/PlatformMeHookDxe.inf
+
 [FV.FvAdvanced]
 BlockSize          = $(FLASH_BLOCK_SIZE)
 FvAlignment        = 16

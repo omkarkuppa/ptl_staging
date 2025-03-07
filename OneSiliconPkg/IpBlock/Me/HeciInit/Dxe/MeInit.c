@@ -34,6 +34,7 @@
 #include <Library/PmcPrivateLib.h>
 #include <Library/MeUtilsLib.h>
 #include <Library/MeInfoLib.h>
+#include <Library/MeFwStsLib.h>
 #include <Protocol/Wdt.h>
 #include <Protocol/AmtReadyToBoot.h>
 #include <Register/HeciRegs.h>
@@ -41,8 +42,119 @@
 #include "HeciInit.h"
 #include "MeInit.h"
 #include <MeBiosPayloadHob.h>
+#include <MePeiConfig.h>
 
 GLOBAL_REMOVE_IF_UNREFERENCED BOOLEAN               mEopSentInFsp;
+
+/**
+  Check if Firmware requests the platform to invoke Data Resiliency flow
+
+  @retval TRUE               CSME Data Resiliency is requested
+  @retvak FALSE              CSME Data Resiliency is NOT requested
+**/
+BOOLEAN
+IsDataResiliencyRequired (
+  VOID
+  )
+{
+  EFI_HOB_GUID_TYPE      *GuidHob;
+  ME_PEI_CONFIG          *MePeiConfig;
+  UINT64                 HeciBaseAddress;
+  HECI_GS_SHDW_REGISTER  MeFwSts2;
+
+  DEBUG ((DEBUG_INFO, "%a () enter\n", __FUNCTION__));
+
+  GuidHob = GetFirstGuidHob (&gMePolicyHobGuid);
+  if (GuidHob == NULL) {
+    DEBUG ((DEBUG_ERROR, "Failed to get MePolicyHob\n"));
+    return FALSE;
+  }
+
+  MePeiConfig = GET_GUID_HOB_DATA (GuidHob);
+  if (MePeiConfig->CseDataResilience != CSE_DATA_RESILIENCE_ENABLED_DEFER_DXE) {
+    DEBUG ((DEBUG_INFO, "No need to handle CSE Data Resilience in DXE\n"));
+    return FALSE;
+  }
+
+  HeciBaseAddress = MeHeciPciCfgBase (HECI1);
+
+  if (PciSegmentRead32 (HeciBaseAddress + PCI_VENDOR_ID_OFFSET) == 0xFFFFFFFF) {
+    DEBUG ((DEBUG_INFO, "ME is disabled, read status from MeFwHob\n"));
+    MeFwSts2.ul = GetMeStatusFromFwstsHob (R_ME_CFG_HFS_2);
+  } else {
+    MeFwSts2.ul = PciSegmentRead32 (HeciBaseAddress + R_ME_CFG_HFS_2);
+  }
+
+  if (MeFwSts2.r.MfsFailure == 0) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+  Invoke data clear for CSME.
+  If data clear command fails or aborts, BIOS should continue to boot;
+  else BIOS send CSE reset and wait for CSE to finish data restore and trigger global reset.
+
+**/
+VOID
+InvokeDataResiliency (
+  VOID
+  )
+{
+  EFI_STATUS                 Status;
+  PLATFORM_ME_HOOK_PROTOCOL  *PlatformMeHook;
+  BOOLEAN                    ProceedDataClear;
+  UINT8                      Timeout;
+
+  DEBUG ((DEBUG_INFO, "%a () enter\n", __FUNCTION__));
+
+  PlatformMeHook   = NULL;
+  ProceedDataClear = TRUE;
+
+  Status = gBS->LocateProtocol (
+                  &gPlatformMeHookProtocolGuid,
+                  NULL,
+                  (VOID **) &PlatformMeHook
+                  );
+
+  if (!EFI_ERROR (Status)) {
+    Status = PlatformMeHook->PreDataClear (&ProceedDataClear);
+    if (!EFI_ERROR (Status) && !ProceedDataClear) {
+      DEBUG ((DEBUG_INFO, "User request to HECI skip Data Clear\n"));
+      return;
+    }
+  } else {
+    DEBUG ((DEBUG_INFO, "PlatformMeHookProtocol is absent\n"));
+    PlatformMeHook = NULL;
+  }
+
+  Status = HeciDataClear ();
+
+  if (PlatformMeHook != NULL) {
+    PlatformMeHook->PostDataClear (Status);
+  }
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Data Clear fail, Status = %r\n", Status));
+    return;
+  }
+
+  HeciSendCbmResetRequest (CBM_RR_REQ_ORIGIN_BIOS_POST, CBM_HRR_CSME_RESET);
+  //
+  // CSME will trigger global reset after data restore succeeds.
+  //
+  Timeout = ME_FORMAT_FILE_TIMEOUT;
+  DEBUG ((DEBUG_INFO, "Waiting for formating file system and restoring data to start"));
+  do {
+    MicroSecondDelay (ME_STATE_STALL_1_SECOND);
+    DEBUG ((DEBUG_INFO, "."));
+  } while (Timeout--);
+
+  DEBUG ((DEBUG_WARN, "\n Status polling timeout, CSME should trigger global reset."));
+  CpuDeadLoop ();
+}
 
 /**
   Perform Arb SVN commit when any of CSE managed SVN have a mismatch with minimum allowed SVN.
@@ -96,6 +208,10 @@ MeEndOfDxeEvent (
   Status = MeBiosGetMeMode (&MeMode);
   if (EFI_ERROR (Status)) {
     return;
+  }
+
+  if (IsDataResiliencyRequired()) {
+    InvokeDataResiliency ();
   }
 
   MeFirmwareStatus.ul = PciSegmentRead32 (MeHeciPciCfgBase (HECI1) + R_ME_CFG_HFS);

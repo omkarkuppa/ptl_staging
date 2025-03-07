@@ -275,6 +275,10 @@ typedef union {
   SET_EDEBUG_MODE_STATE_RESPONSE  Response;
 } SET_EDEBUG_MODE_STATE_BUFFER;
 
+#define CSE_DATA_RESILIENCE_DISABLED           0
+#define CSE_DATA_RESILIENCE_ENABLED            1
+#define CSE_DATA_RESILIENCE_ENABLED_DEFER_DXE  2
+
 typedef struct {
   MKHI_MESSAGE_HEADER MkhiHeader;
   UINT32              Reserved;

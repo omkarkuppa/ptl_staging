@@ -992,8 +992,8 @@ PeiHeciBupManufacturingResetAndHalt (
 }
 
 /**
-  This command is sent by the BIOS to switch clear CSME data to image creation state.
-  After the command success, platform reset is expected.
+  This command is sent by the BIOS to clear CSME data to image creation state.
+  After the command succeeds, platform reset is expected.
 
   @retval EFI_SUCCESS             Command succeeded.
   @retval EFI_UNSUPPORTED         Get ME mode fail.
