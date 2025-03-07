@@ -212,7 +212,7 @@ cd ..\..\
 ) else if /i "fspmuncompressed" == "%1" (
   set FSPM_COMPRESSED=FALSE
   set BUILD_OPTION_PCD=%BUILD_OPTION_PCD% ^
---pcd gSiPkgTokenSpaceGuid.PcdEnableFspmCompression=FALSE
+--pcd gSiPkgTokenSpaceGuid.PcdEnableFspmCompression=FALSE ^
 --pcd gMinPlatformPkgTokenSpaceGuid.PcdFspDispatchModeUseFspPeiMain=TRUE
 set FSP_BUILD_OPTION_PCD=%FSP_BUILD_OPTION_PCD% ^
 --pcd gSiPkgTokenSpaceGuid.PcdSecondaryDataStackSize=0x0

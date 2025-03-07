@@ -161,7 +161,7 @@ LaunchBiosAcmSclean (
 **/
 VOID
 LaunchBiosAcmClearSecrets (
-  UINTN AcmModuleAddr
+  VOID
   );
 
 /**
@@ -171,7 +171,7 @@ LaunchBiosAcmClearSecrets (
 **/
 VOID
 LaunchBiosAcmAcheck (
-  UINTN AcmModuleAddr
+  VOID
   );
 
 /**

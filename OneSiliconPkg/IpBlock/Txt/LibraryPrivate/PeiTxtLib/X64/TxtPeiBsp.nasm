@@ -74,6 +74,8 @@ SECTION .text
 %define BIOS_GDT [ebp-0x10]
 %define BIOS_IDT [ebp-0x20]
 
+extern ASM_PFX(LoadAcm)
+
 ;-----------------------------------------------------------------------------
 ;  Macro:        PUSHA_64
 ;
@@ -319,8 +321,6 @@ LaunchBiosAcm_CommonFlow:
     ;
     ; Save the parameters passed to us
     ;
-    mov     eax, ecx                ; save address of BIOS ACM in MMX0
-    movd    mm0, eax
     mov     rax, cr3                ; save page table in MMX1
     movd    mm1, eax
     mov     eax, edx                ; save value of ESI for GETSEC[ENTERACCS] in MMX2
@@ -412,6 +412,12 @@ LaunchBiosAcm_CallGetsec:
     ;
     ; Call GETSEC[ENTERACCS]
     ;
+    PUSHA_64
+    sub     rsp, 20h
+    call    ASM_PFX(LoadAcm)        ; Load ACM in WB memory
+    add     rsp, 20h
+    movd    mm0, eax                ; Save ACM base
+    POPA_64
     movd    eax, mm2                ; eax = ACM function
     mov     esi, eax                ; esi = ACM function
     movd    eax, mm0                ; eax = AcmBase

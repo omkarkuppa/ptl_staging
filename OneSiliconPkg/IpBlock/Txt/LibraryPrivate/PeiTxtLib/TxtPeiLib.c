@@ -992,6 +992,56 @@ PrepareApParams (
 }
 
 /**
+  Copy ACM in WB memory.
+
+  @retval TempRamAddr   - Address of the ACM region.
+**/
+EFI_PHYSICAL_ADDRESS
+LoadAcm (
+  VOID
+  )
+{
+  EFI_PHYSICAL_ADDRESS          AcmModuleAddr;
+  UINT64                        AcmModuleSize;
+  TXT_INFO_HOB                  *TxtInfoHob = NULL;
+  EFI_PHYSICAL_ADDRESS          TempRamAddr;
+  EFI_STATUS                    Status;
+
+  TxtInfoHob = GetFirstGuidHob (&gTxtInfoHobGuid);
+  if (TxtInfoHob == NULL) {
+    DEBUG ((DEBUG_ERROR, "TXTPEI::Failed to load ACM\n"));
+    return EFI_NOT_FOUND;
+  }
+  AcmModuleAddr = TxtInfoHob->Data.BiosAcmBase;
+  AcmModuleSize = TxtInfoHob->Data.BiosAcmSize;
+
+  Status = PeiServicesAllocatePages (
+                   EfiLoaderCode,
+                   EFI_SIZE_TO_PAGES (AcmModuleSize),
+                   &TempRamAddr
+                   );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "Page Allocation Failed, Load ACM in Temporary RAM\n"));
+    //
+    // There are no enough pages available to be allocated for ACM.
+    // Let's load ACM at the Temporary RAM base as ACM launch will anyway
+    // trigger a system reset.
+    //
+    TempRamAddr = (EFI_PHYSICAL_ADDRESS) (PcdGet32 (PcdTemporaryRamBase));
+  }
+
+  DEBUG ((DEBUG_INFO, "Loading ACM at 0x%X\n", TempRamAddr));
+  CopyMem (
+    (UINT64 *) TempRamAddr,
+    (UINT64 *) AcmModuleAddr,
+    AcmModuleSize
+    );
+
+  return TempRamAddr;
+}
+
+/**
   Invokes the SCLEAN/ACHECK function from the TXT BIOS ACM.
   1. Clearing of sleep type is necessary because SCLEAN/ACHECK destroys memory
   context, so S3 after it is run and system is reset is impossible. We
@@ -1014,10 +1064,6 @@ DoAcmLaunch (
   EFI_STATUS                    Status;
   SI_PREMEM_POLICY_PPI          *SiPreMemPolicy;
   CPU_SECURITY_PREMEM_CONFIG    *CpuSecurityPreMemConfig;
-  EFI_PHYSICAL_ADDRESS          TempRamAddr;
-  UINT64                        *AcmRelocPointer;
-  EFI_PHYSICAL_ADDRESS          AcmModuleAddr;
-  UINT64                        AcmModuleSize;
 
   Status = PeiServicesLocatePpi (
              &gSiPreMemPolicyPpiGuid,
@@ -1043,41 +1089,16 @@ DoAcmLaunch (
     StopPbeTimer ();
   }
 
-  AcmModuleAddr = TxtInfoHob->Data.BiosAcmBase;
-  AcmModuleSize = TxtInfoHob->Data.BiosAcmSize;
-
-  Status = PeiServicesAllocatePages (
-                   EfiLoaderCode,
-                   EFI_SIZE_TO_PAGES (AcmModuleSize),
-                   &TempRamAddr
-                   );
-
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Page Allocation Failed, ACM skipped\n"));
-    //
-    // Halt the system if pool allocation fails and ACM can not be launched.
-    //
-    CpuDeadLoop ();
-  } else {
-    DEBUG ((DEBUG_INFO, "Page Allocation Success, Address = 0x%X\n", TempRamAddr));
-    AcmRelocPointer = (UINT64 *) TempRamAddr;
-
-    CopyMem (
-        AcmRelocPointer,
-        (UINT64 *) AcmModuleAddr,
-        AcmModuleSize
-        );
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_ENTRY); //PostCode (0x9901)
-    if (func == TXT_LAUNCH_CLEAR_SECRETS) {
-      DEBUG ((DEBUG_INFO, "Trigger FastBootFlagStatusCallback to clean FastBoot Status\n"));
-      Status = PeiServicesInstallPpi (&mPeiTxtCleanResetNotificationPpi);
-      ASSERT_EFI_ERROR (Status);
-      LaunchBiosAcmClearSecrets (TempRamAddr);
-    } else if (func == TXT_LAUNCH_ACHECK) {
-      LaunchBiosAcmAcheck (TempRamAddr);
-    }
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_EXIT); //PostCode (0x9902)
+  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_ENTRY); //PostCode (0x9901)
+  if (func == TXT_LAUNCH_CLEAR_SECRETS) {
+    DEBUG ((DEBUG_INFO, "Trigger FastBootFlagStatusCallback to clean FastBoot Status\n"));
+    Status = PeiServicesInstallPpi (&mPeiTxtCleanResetNotificationPpi);
+    ASSERT_EFI_ERROR (Status);
+    LaunchBiosAcmClearSecrets ();
+  } else if (func == TXT_LAUNCH_ACHECK) {
+    LaunchBiosAcmAcheck ();
   }
+  REPORT_STATUS_CODE (EFI_PROGRESS_CODE, INTEL_RC_STATUS_CODE_TXT_ACM_EXIT); //PostCode (0x9902)
 
   return EFI_SUCCESS;
 }
