@@ -152,6 +152,16 @@ DefinitionBlock (
   //
 
   //
+  // VMD - START
+  //
+#if (FixedPcdGetBool (PcdVmdEnable) == 1)
+  Include ("Rtd3Vmd.asl")
+#endif
+  //
+  // VMD - END
+  //
+
+  //
   // GPE handler for 2-tier GPIO Start
   //
   Scope (\_GPE) {

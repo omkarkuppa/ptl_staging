@@ -2227,11 +2227,6 @@ PlatformUpdateTables (
           *Version = EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0;
         }
 
-#if (FixedPcdGetBool (PcdVmdEnable) == 1)
-        if (TableHeader->OemTableId == SIGNATURE_64('R','t','d','3','_','V','m','d')) {
-            *Version = EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0;
-        }
-#endif
       } // Rtd3Support
     } // Load RTD3 SSDT table
   }
