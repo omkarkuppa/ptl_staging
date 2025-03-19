@@ -335,7 +335,7 @@
 
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableLch|*|{CODE({
     { GPIOV2_PTL_PCD_XXGPP_F_20, {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirIn,  GpioV2StateDefault, GpioV2IntEdge|GpioV2IntApic,  GpioV2ResetHost,    GpioV2TermNone,  GpioV2Unlock, GpioV2Lock}}, // CVS_HST_WAKE
-    { GPIOV2_PTL_PCD_XXGPP_E_10, {GpioV2PadModeGpio,  GpioV2HostOwnGpio,  GpioV2DirOut, GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetDefault,  GpioV2TermNone, GpioV2Unlock, GpioV2Lock}}, // CRD1_RST_N
+    { GPIOV2_PTL_PCD_XXGPP_H_1,  {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,  GpioV2DirOut, GpioV2StateHigh,    GpioV2IntDis,                 GpioV2ResetHost,    GpioV2TermDefault}}, // CRD1_RST_N
     { 0x0 }
   })}
 
@@ -345,7 +345,7 @@
   )}
 
   gBoardModuleTokenSpaceGuid.VpdPcdLchResetGpioPin|*|{CODE(
-    { GPIOV2_PTL_PCD_XXGPP_E_10 } // CRD1_RST_N
+    { GPIOV2_PTL_PCD_XXGPP_H_1 } // CRD1_RST_N
   )}
 
   # Vr Alert Enable
@@ -423,12 +423,34 @@
     {0x0}  // terminator
   })}
 
+  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbConnector| * |{CODE(
+  {
+  // Connectable,   Visibility, ConnectorType, UsbOcPinType, UsbOcPin, Usb2Controller, Usb2PortNum, Usb3Controller, Usb3PortNum
+    {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN0,  PCH_USB2,       PORT1,       TCSS_USB3,      PORT1}, // TCP0
+    {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN1,  PCH_USB2,       PORT2,       TCSS_USB3,      PORT2}, // TCP1
+    {CONNECTABLE,   VISIBLE,    0x09,          VW_OC,        OC_PIN2,  PCH_USB2,       PORT3,       TCSS_USB3,      PORT3}, // TCP2
+    {UNCONNECTABLE, VISIBLE,    0x09,          VW_OC,        OC_PIN3,  PCH_USB2,       PORT4,       TCSS_USB3,      PORT4}, // Camera
+    {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT5,       PCH_USB3,       PORT1}, // Debug
+    {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT6,       0,              0    }, // WWAN
+    {CONNECTABLE,   INVISIBLE,  0x00,          0,            0,        PCH_USB2,       PORT7,       0,              0    }, // FPS
+    {0x0}  // terminator
+  })}
+
   gBoardModuleTokenSpaceGuid.VpdPcdUsbCConnector| * |{CODE(
   {
   // ModularIoSupported, EdpModularIoSupported, RetimerCount, PcieSupported, DpAltModeSupported, Usb4Supported, Tbt3Supported, PdNum,    AuxDpMode, TbtControllerType, TbtControllerNum, DmaPortNum, PcieType, PcieRootPortNum
     {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT1,  0,        0}, // TCP0
     {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT2,  0,        0}, // TCP1
     {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD2, 0,         ITBT_DMA,          TBT_CONTROLLER2,  DMA_PORT1,  0,        0}, // TCP2
+    {0x0}  // terminator
+  })}
+
+  gBoardModuleTokenSpaceGuid.VpdPcdCvsUsbCConnector| * |{CODE(
+  {
+  // ModularIoSupported, EdpModularIoSupported, RetimerCount, PcieSupported, DpAltModeSupported, Usb4Supported, Tbt3Supported, PdNum,    AuxDpMode, TbtControllerType, TbtControllerNum, DmaPortNum, PcieType, PcieRootPortNum
+    {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT1,  0,        0}, // TCP0
+    {FIXED_IO,           0,                     1,            1,             1,                  1,             1,             USBC_PD1, 0,         ITBT_DMA,          TBT_CONTROLLER1,  DMA_PORT2,  0,        0}, // TCP1
+    {MODULAR_IO,         0,                     0,            0,             0,                  0,             0,             USBC_PD3, 2,         ITBT_DMA,          TBT_CONTROLLER2,  DMA_PORT2,  0,        0}, // TCP3, default is HDMI
     {0x0}  // terminator
   })}
 
@@ -571,10 +593,9 @@
   // Camera
   //
     {GPIOV2_PTL_PCD_XXGPP_C_5,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // RGB_PWRDN_R
-    {GPIOV2_PTL_PCD_XXGPP_H_1,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // IR_LED_CTRL
+    {GPIOV2_PTL_PCD_XXGPP_H_1,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // CVS_RST_N
     {GPIOV2_PTL_PCD_XXGPP_E_6,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirIn,     GpioV2StateDefault,  GpioV2IntLevel,  GpioV2ResetHost,     GpioV2TermDefault}},  // CAM_PRIVACY_SWITCH_INPUT
-    {GPIOV2_PTL_PCD_XXGPP_F_20,   {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // ALTEK_WAKE
-    {GPIOV2_PTL_PCD_XXGPP_E_10,   {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // RGB_RST_N
+    {GPIOV2_PTL_PCD_XXGPP_F_20,   {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirIn,     GpioV2StateDefault,  GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // CVS_WAKE
     {GPIOV2_PTL_PCD_XXGPP_C_8,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateLow,      GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // IR_PWRDN
     {GPIOV2_PTL_PCD_XXGPP_E_1,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateHigh,     GpioV2IntDis,    GpioV2ResetHost,     GpioV2TermDefault}},  // IR_RST_N
     {GPIOV2_PTL_PCD_XXGPP_D_9,    {GpioV2PadModeGpio,  GpioV2HostOwnAcpi,    GpioV2DirOut,    GpioV2StateDefault,  GpioV2IntDis,    GpioV2ResetDefault,  GpioV2TermDefault}},  // FLICKER_PWM_IR_INDICATOR_LED_CTRL
@@ -633,6 +654,7 @@
     {GPIOV2_PTL_PCD_XXGPP_V_7,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     {GPIOV2_PTL_PCD_XXGPP_H_1,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
 
+    {GPIOV2_PTL_PCD_XXGPP_E_10,  {GpioV2PadModeGpio, GpioV2HostOwnGpio, GpioV2DirNone, GpioV2StateDefault, GpioV2IntDefault, GpioV2ResetDefault, GpioV2TermNone}}, // NC
     { 0x0 } // terminator
   })}
 
