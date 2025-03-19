@@ -1446,6 +1446,36 @@ InstallDsbr (
 }
 
 /**
+  Install WCPI (WWAN Coex platform Init) for WWAN
+
+  @retval EFI_SUCCESS        The function completed successfully
+  @retval others             Failed to install UEFI variable
+**/
+EFI_STATUS
+InstallWcpi (
+  )
+{
+  UEFI_CNV_VAR_WCPI                 WcpiVar;
+  EFI_STATUS                        Status;
+
+  ZeroMem (&WcpiVar, sizeof (UEFI_CNV_VAR_WCPI));
+  WcpiVar.Header.Revision        = CNV_UEFI_WCPI_VAR_REVISION;
+  WcpiVar.WwanCoexInit           = 0x0;
+
+  Status = UpdateVariables (
+             sizeof (UEFI_CNV_VAR_WCPI),
+             CNV_UEFI_WCPI_VAR_NAME,
+             &gUefiIntelCnvWlanVariablesGuid,
+             (VOID *) &WcpiVar,
+             FALSE,
+             FALSE
+             );
+  ASSERT (!EFI_ERROR (Status));
+
+  return Status;
+}
+
+/**
   Connectivity Config Initialization
 
   @retval EFI_SUCCESS        The function completed successfully
@@ -1612,6 +1642,11 @@ InstallCnvUefiVariables (
   }
 
   Status = InstallDsbr ();
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  Status = InstallWcpi ();
   if (EFI_ERROR (Status)) {
     return Status;
   }

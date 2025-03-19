@@ -24,6 +24,7 @@
 #include <Guid/GlobalVariable.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/CnviLib.h>
+#include <CnvVariablesCommon.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/MemoryAllocationLib.h>
@@ -1790,11 +1791,14 @@ UpdateCnviConfig (
   IN CNV_VFR_CONFIG_SETUP      *CnvSetup
   )
 {
-  BOOLEAN                         IsUsbOnly;
-  BOOLEAN                         NeedUpdate;
+  BOOLEAN                           IsUsbOnly;
+  BOOLEAN                           NeedUpdate;
+  UINTN                             VarDataSize;
+  UEFI_CNV_VAR_WCPI                 WcpiVar;
+  EFI_PEI_READ_ONLY_VARIABLE2_PPI   *VariableServices;
+  EFI_STATUS                        Status;
 #if FixedPcdGet8(PcdFspModeSelection) == 0
-  CNVI_CONFIG                     *CnviConfig;
-  EFI_STATUS                      Status;
+  CNVI_CONFIG                       *CnviConfig;
 #endif
 
 #if FixedPcdGet8(PcdFspModeSelection) == 1
@@ -1852,6 +1856,31 @@ UpdateCnviConfig (
   COMPARE_AND_UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviBtAudioOffloadInterface,CnviConfig->BtAudioOffloadInterface, CnvSetup->CnviBtAudioOffloadInterface);
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviRfResetPinMux,                      CnviConfig->PinMux.RfReset, 0);
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviClkreqPinMux,                       CnviConfig->PinMux.Clkreq,  0);
+
+  if (CnviCrfModuleIsPresent ()) {
+    Status = PeiServicesLocatePpi (
+             &gEfiPeiReadOnlyVariable2PpiGuid, // GUID
+             0,                                // INSTANCE
+             NULL,                             // EFI_PEI_PPI_DESCRIPTOR
+             (VOID **) &VariableServices       // PPI
+             );
+    ASSERT_EFI_ERROR (Status);
+
+    VarDataSize = sizeof (UEFI_CNV_VAR_WCPI);
+    Status = VariableServices->GetVariable (
+                                VariableServices,
+                                L"UefiCnvCommonWCPI",
+                                &gUefiIntelCnvWlanVariablesGuid,
+                                NULL,
+                                &VarDataSize,
+                                &WcpiVar
+                                );
+    if (EFI_ERROR (Status)) {
+       DEBUG ((DEBUG_ERROR, "GetVariable failed on UefiCnvCommonWCPI - %r\n", Status));
+       ASSERT_EFI_ERROR (Status);
+    }
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviWwanCoex,                         CnviConfig->WwanCoex,                WcpiVar.WwanCoexInit);
+  }
 }
 #endif
 
