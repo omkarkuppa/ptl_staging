@@ -321,3 +321,23 @@ RxDqsDelayCompEnable (
 
   return;
 }
+
+/**
+  Force FSM into Gear Down mode.
+
+  @param[in]  MrcData pointer to MRC global data.
+**/
+VOID
+MrcForceFsmIntoCsGeardownMode (
+  IN  MrcParameters *const  MrcData
+  )
+{
+  MrcInput *Inputs = &MrcData->Inputs;
+  MrcOutput *Outputs = &MrcData->Outputs;
+  INT64 GetSetEn = 1;
+  if (Outputs->IsDdr5 && Outputs->IsCs2NEnabled  &&
+      Inputs->IsDdrIoMbA0) {
+    MrcGetSetNoScope (MrcData, GsmIocCs2NReset, ForceWriteCached, &GetSetEn);
+    MrcGetSetNoScope (MrcData, GsmIocCsGearDownForce, ForceWriteCached, &GetSetEn);
+  }
+}

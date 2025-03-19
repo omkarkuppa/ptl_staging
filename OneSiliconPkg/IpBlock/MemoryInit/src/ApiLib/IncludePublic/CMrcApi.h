@@ -256,6 +256,10 @@ typedef union {
 //
 #define PCU_CR_PLATFORM_INFO        0xCE
 #define MRC_MSR_IA32_BIOS_SIGN_ID   0x8B
+#define MRC_MSR_IA32_MC5_CTL        0x414
+#define MRC_MSR_IA32_MC5_STATUS     0x415
+#define MRC_MSR_IA32_MC5_MISC       0x417
+
 #pragma pack (push, 1)
 typedef union {
   struct {

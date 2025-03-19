@@ -757,6 +757,7 @@ MrcGenMrsFsmClean (
   UINT8     MaxChannel;
   UINT8     MrsFsmControlRegIdx;
   UINT32    Data = 0;
+  BOOLEAN   IsCleanRequired;
   MRC_GEN_MRS_FSM_MR_TYPE                               *GenMrPtr;
 
   Outputs = &MrcData->Outputs;
@@ -770,8 +771,18 @@ MrcGenMrsFsmClean (
           if (MrcRankExist (MrcData, Controller, Channel, Rank)) {
             McCh = LP_IP_CH (Outputs->IsLpddr, Channel);
             for (MrsFsmControlRegIdx = 0; MrsFsmControlRegIdx < MAX_MR_GEN_FSM; MrsFsmControlRegIdx++) {
-              GenMrPtr = &MrData[Controller][Channel][Rank][MrsFsmControlRegIdx];
-              if (GenMrPtr->Valid || CleanAll) {
+              IsCleanRequired = FALSE;
+              if (MrData != NULL) {
+                GenMrPtr = &MrData[Controller][Channel][Rank][MrsFsmControlRegIdx];
+                if (GenMrPtr->Valid || CleanAll) {
+                  IsCleanRequired = TRUE;
+                }
+              } else {
+                // If the input MrData buffer is NULL, then we will clean all registers
+                IsCleanRequired = TRUE;
+              }
+              
+              if (IsCleanRequired) {
                 GenericMrsFsmMailboxAccess (MrcData, Controller, McCh, GmfMailboxWrite, GmfMailboxTypeControl, MrsFsmControlRegIdx, &Data);
               }
             }

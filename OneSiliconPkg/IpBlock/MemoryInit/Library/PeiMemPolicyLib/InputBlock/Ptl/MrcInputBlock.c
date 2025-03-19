@@ -139,7 +139,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_VCCCLKFF               (0)  // BIT18
 #define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCDQS             (0)  // BIT19
 #define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCCLK             (0)  // BIT20
-#define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCWCK             (0)  // BIT21
+#define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCWCK             (1)  // BIT21
 #define MRC_EXT_INPUTS_INIT_VAL_FUNCDCCDQ              (0)  // BIT22
 #define MRC_EXT_INPUTS_INIT_VAL_DATAPILIN              (1)  // BIT23
 #define MRC_EXT_INPUTS_INIT_VAL_DDR5XTALK              (0)  // BIT24

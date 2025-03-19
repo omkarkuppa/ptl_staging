@@ -28,6 +28,7 @@
 #include "MrcMcApi.h"
 #include "BlueMrcJedecApi.h"  // for MrcGetTrfm()
 #include "MrcSpdProcessingDefs.h"
+#include "MrcDdrIo.h"
 
 /**
   This function configures refresh parameters:
@@ -291,6 +292,8 @@ MrcSelfRefreshExitPostDfi (
 
   // set SRX_RESET = 0
   MrcSelfRefreshExit (MrcData, FALSE);
+
+  MrcForceFsmIntoCsGeardownMode (MrcData);
 
   return mrcSuccess;
 }

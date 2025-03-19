@@ -155,7 +155,7 @@ PrememoryInitCallBack (
 /**
   Main starting point for system memory initialization.
     1. Get SysBootMode and MrcBootMode
-    2. Locate SiPreMemPolicyPpi
+    2. Locate SiPreMemPolicy
     3. Locate S3DataPtr from MiscPeiPreMemConfig.
     4. SaveDataValid := TRUE if S3DataPtr is not NULL.
     5. If SysBootMode is BOOT_ON_S3_RESUME and S3Data is not valid:
@@ -338,7 +338,7 @@ MrcSetupMrcData (
   OUT      MrcParameters              *CONST MrcData,
   IN       MEMORY_CONFIGURATION       *CONST MemConfig,
   IN       MEMORY_CONFIG_NO_CRC       *CONST MemConfigNoCrc,
-  IN       SI_PREMEM_POLICY_PPI       *CONST SiPreMemPolicyPpi,
+  IN       SI_PREMEM_POLICY           *CONST SiPreMemPolicy,
   IN       BOOLEAN                    DidPreviousTrainingFail
   );
 

@@ -25,6 +25,7 @@
 #include "MrcCommon.h"
 #include "MrcCrosser.h"
 #include "MrcPostCodes.h"
+#include "MrcChipApi.h"
 
 #define PCH_PWRM_BASE_ADDRESS                       0xFE000000     ///< PMC MBAR MMIO base address
 #define R_PCH_PWRM_GEN_PMCON_A                      0x1020
@@ -353,6 +354,23 @@ MrcIsSaGvEnabled (
 BOOLEAN
 MrcIsIbeccSymmetric (
   IN MrcParameters *MrcData
+  );
+
+/**
+  This function is a wrapper for MrcGenMrsFsmCleanNonFastBoot().
+
+  @param[in] MrcData - Pointer to MRC global data.
+  @param[in] MrData  - Pointer to an array of MR data to configure the MRS FSM with.
+  @param[in] CleanAll - If set to TRUE, MrData values will be ignored and all Control Registers will be cleared
+
+  @retval mrcFail if clean failed.
+  @retval mrcSuccess otherwise.
+**/
+MrcStatus
+MrcGenMrsFsmCleanNonFastBoot (
+  IN  MrcParameters *MrcData,
+  IN  MRC_GEN_MRS_FSM_MR_TYPE MrData[MAX_CONTROLLER][MAX_CHANNEL][MAX_RANK_IN_CHANNEL][MAX_MR_GEN_FSM],
+  IN  BOOLEAN       CleanAll
   );
 
 #endif // _MrcGeneral_h_

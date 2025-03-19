@@ -248,7 +248,7 @@ MrcMcCapabilityPreSpd (
   }
 
   if (MrcIsSaGvEnabled (MrcData) && ((ExtInputs->MemoryProfile == STD_PROFILE) || ((ExtInputs->SafeModeOverride & MRC_SAFE_OVERRIDE_SAGV) != 0))) {
-    MrcGetSagvConfig (MrcData, Outputs->SaGvPoint, Outputs->FreqMax, MaxQclkFreq, &FreqMax, &Outputs->GearMode);
+    MrcGetSagvConfig (MrcData, Outputs->SaGvPoint, Outputs->FreqMax, MaxQclkFreq, TRUE, &FreqMax, &Outputs->GearMode);
     Outputs->FreqMax = MIN (FreqMax, Outputs->FreqMax);
   } else {
     // Set Gear by the input parameter if not auto, otherwise default to G2 up to 2133 MHz.
@@ -281,6 +281,11 @@ MrcMcCapabilityPreSpd (
     "%uMHz reference clock is selected\n",
     REF_FREQ
     );
+
+  if (Outputs->SaGvPoint == Outputs->SaGvFirst) {
+    MrcCalculatePprSaGvPoint (MrcData, MaxQclkFreq);
+  }
+
   return Status;
 }
 

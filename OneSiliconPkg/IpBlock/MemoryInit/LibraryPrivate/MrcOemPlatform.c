@@ -42,6 +42,7 @@
 #include <CMemoryInitPtl.h>
 
 
+
 #pragma pack (push, 1)
 typedef union {
   struct {
@@ -750,26 +751,26 @@ CheckPoint (
   MrcParameters                *MrcData;
   MrcInput                     *Inputs;
   MrcStatus                    Status;
-  SI_PREMEM_POLICY_PPI         *SiPreMemPolicyPpi;
+  SI_PREMEM_POLICY             *SiPreMemPolicy;
   MEMORY_CONFIG_NO_CRC         *MemConfigNoCrc;
   EFI_STATUS                   Status1;
 
   //
-  // Locate SiPreMemPolicyPpi to do a GetConfigBlock() to access platform data
+  // Locate SiPreMemPolicy to do a GetConfigBlock() to access platform data
   //
   Status1 = PeiServicesLocatePpi (
               &gSiPreMemPolicyPpiGuid,
               0,
               NULL,
-              (VOID **) &SiPreMemPolicyPpi
+              (VOID **) &SiPreMemPolicy
               );
   ASSERT_EFI_ERROR (Status1);
 
-  Status1 = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
+  Status1 = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
   ASSERT_EFI_ERROR (Status1);
   MrcData             = (MrcParameters *) GlobalData;
   Inputs              = &MrcData->Inputs;
-  SiPreMemPolicyPpi = (SI_PREMEM_POLICY_PPI *)(UINTN) Inputs->SiPreMemPolicyPpi;
+  SiPreMemPolicy = (SI_PREMEM_POLICY *)(UINTN) Inputs->SiPreMemPolicy;
   Status              = mrcSuccess;
 
   switch (Command) {

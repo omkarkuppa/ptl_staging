@@ -218,7 +218,7 @@ InstallMrcCallback (
 #ifndef NO_MRC
   EFI_STATUS                    Status;
   MRC_INSTANCE                  *MrcInstance;
-  SI_PREMEM_POLICY_PPI          *SiPreMemPolicyPpi;
+  SI_PREMEM_POLICY              *SiPreMemPolicy;
   TXT_PREMEM_CONFIG             *TxtPreMemConfig;
 
   DEBUG ((DEBUG_INFO, "[InstallMrcCallback] MRC Entry...\n"));
@@ -229,12 +229,12 @@ InstallMrcCallback (
              &gSiPreMemPolicyPpiGuid,
              0,
              NULL,
-             (VOID **) &SiPreMemPolicyPpi
+             (VOID **) &SiPreMemPolicy
              );
   ASSERT_EFI_ERROR (Status);
 
   TxtPreMemConfig = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gTxtPreMemConfigGuid, (VOID *) &TxtPreMemConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gTxtPreMemConfigGuid, (VOID *) &TxtPreMemConfig);
   ASSERT_EFI_ERROR(Status);
 
   //
@@ -502,7 +502,7 @@ MrcDisableFailingChannels (
 /**
   Main starting point for system memory initialization.
     - 1. Get SysBootMode and MrcBootMode
-    - 2. Locate SiPreMemPolicyPpi
+    - 2. Locate SiPreMemPolicy
     - 3. Locate S3DataPtr from MiscPeiPreMemConfig.
     - 4. SaveDataValid := TRUE if S3DataPtr is not NULL.
     - 5. If SysBootMode is BOOT_ON_S3_RESUME and S3Data is not valid:
@@ -533,7 +533,7 @@ PeimMemoryInit (
   MRC_INSTANCE                 *MrcInstance
   )
 {
-  SI_PREMEM_POLICY_PPI         *SiPreMemPolicyPpi;
+  SI_PREMEM_POLICY             *SiPreMemPolicy;
   MEMORY_CONFIGURATION         *MemConfig;
   MEMORY_CONFIG_NO_CRC         *MemConfigNoCrc;
   MEMORY_PLATFORM_DATA_HOB     *Hob;
@@ -627,36 +627,36 @@ PeimMemoryInit (
   //
   // Obtain policy settings.
   //
-  SiPreMemPolicyPpi = NULL;
-  Status = PeiServicesLocatePpi (&gSiPreMemPolicyPpiGuid, 0, NULL, (VOID **) &SiPreMemPolicyPpi);
+  SiPreMemPolicy = NULL;
+  Status = PeiServicesLocatePpi (&gSiPreMemPolicyPpiGuid, 0, NULL, (VOID **) &SiPreMemPolicy);
   ASSERT_EFI_ERROR (Status);
-  if (SiPreMemPolicyPpi == NULL) {
+  if (SiPreMemPolicy == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   MemConfig = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigGuid, (VOID *) &MemConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigGuid, (VOID *) &MemConfig);
   ASSERT_EFI_ERROR (Status);
   if (MemConfig == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   MemConfigNoCrc = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
   ASSERT_EFI_ERROR (Status);
   if (MemConfigNoCrc == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   SiPreMemConfig = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (SiPreMemConfig == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
   IGpuPreMemConfig = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (IGpuPreMemConfig == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1045,7 +1045,7 @@ DEBUG_CODE_END();
                        MrcData,
                        MemConfig,
                        MemConfigNoCrc,
-                       SiPreMemPolicyPpi,
+                       SiPreMemPolicy,
                        DidPreviousTrainingFail
                        );
   PERF_INMODULE_END ("MrcSetupMrcData");
@@ -1178,7 +1178,7 @@ DEBUG_CODE_END();
                                MrcData,
                                MemConfig,
                                MemConfigNoCrc,
-                               SiPreMemPolicyPpi,
+                               SiPreMemPolicy,
                                DidPreviousTrainingFail
                                );
         } else {
@@ -1302,7 +1302,7 @@ DEBUG_CODE_END();
   //
   // Set MEM_CONFIG_DONE
   //
-  PeiMemorySubSystemInit (SiPreMemPolicyPpi, MrcData);
+  PeiMemorySubSystemInit (SiPreMemPolicy, MrcData);
   // Restore Inputs->TsegSize
   Inputs->TsegSize = SavedTsegSize;
 
@@ -1488,7 +1488,7 @@ InstallEfiMemory (
   EFI_PHYSICAL_ADDRESS                  BadMemoryAddress;
   EFI_RESOURCE_TYPE                     ResourceType;
   EFI_RESOURCE_ATTRIBUTE_TYPE           ResourceAttribute;
-  SI_PREMEM_POLICY_PPI                  *SiPreMemPolicyPpi;
+  SI_PREMEM_POLICY                      *SiPreMemPolicy;
   MEMORY_CONFIG_NO_CRC                  *MemConfigNoCrc;
   EFI_RESOURCE_ATTRIBUTE_TYPE           ResourceAttributeTested;
   UINT64                                TopMemSize;
@@ -1546,17 +1546,17 @@ InstallEfiMemory (
   //
   PeiMemoryLength = 0;
   RequiredMemSize = 0;
-  SiPreMemPolicyPpi = NULL;
+  SiPreMemPolicy = NULL;
   Status = PeiServicesLocatePpi (
              &gSiPreMemPolicyPpiGuid,
              0,
              NULL,
-             (VOID **) &SiPreMemPolicyPpi
+             (VOID **) &SiPreMemPolicy
              );
 
   SiPreMemConfig = NULL;
-  if (SiPreMemPolicyPpi != NULL) {
-    Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
+  if (SiPreMemPolicy != NULL) {
+    Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
     if (Status != EFI_SUCCESS) {
       DEBUG ((DEBUG_ERROR, "Unable to Get gSiPreMemConfigGuid block\n"));
       ASSERT_EFI_ERROR (Status);
@@ -1564,8 +1564,8 @@ InstallEfiMemory (
   }
 
   MemConfigNoCrc = NULL;
-  if (SiPreMemPolicyPpi != NULL) {
-    Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
+  if (SiPreMemPolicy != NULL) {
+    Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
     if (Status != EFI_SUCCESS) {
       DEBUG ((DEBUG_ERROR, "Unable to Get gMemoryConfigNoCrcGuid block\n"));
       MemConfigNoCrc = NULL;
@@ -1645,7 +1645,7 @@ InstallEfiMemory (
 
   ASSERT_EFI_ERROR (Status);
 
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemorySubSystemConfigGuid, (VOID *) &MemorySubSystemConfig);
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemorySubSystemConfigGuid, (VOID *) &MemorySubSystemConfig);
   if (Status != EFI_SUCCESS) {
     ASSERT_EFI_ERROR (Status);
   }
@@ -2059,7 +2059,7 @@ InstallEfiMemory (
     //
     // GSM2 allocation
     //
-    IGpuGsm2Allocation(SiPreMemPolicyPpi, &TopUseableMemAddr, &Touud, ResourceAttributeTested);
+    IGpuGsm2Allocation(SiPreMemPolicy, &TopUseableMemAddr, &Touud, ResourceAttributeTested);
     DEBUG((DEBUG_INFO, "[Post GSM2 Allocation: TopUseableMemAddr=0x%llX Touud=0x%llX]\n", TopUseableMemAddr, Touud));
 
     //
@@ -2188,7 +2188,7 @@ GetMemoryMap (
   EFI_STATUS                   Status;
   UINT32                       SmramMask;
   UINT8                        Index;
-  SI_PREMEM_POLICY_PPI         *SiPreMemPolicyPpi;
+  SI_PREMEM_POLICY             *SiPreMemPolicy;
   MEMORY_CONFIGURATION         *MemConfig;
   IGPU_PEI_PREMEM_CONFIG       *IGpuPreMemConfig;
   UINT32                       GraphicsStolenSizeInMb;
@@ -2217,23 +2217,23 @@ GetMemoryMap (
   // Get platform memory range service
   //
   SmramMask = 0;
-  SiPreMemPolicyPpi = NULL;
+  SiPreMemPolicy = NULL;
   IGpuPreMemConfig = NULL;
   MemConfigNoCrc = NULL;
   Status = PeiServicesLocatePpi (
              &gSiPreMemPolicyPpiGuid,
              0,
              NULL,
-             (VOID **) &SiPreMemPolicyPpi
+             (VOID **) &SiPreMemPolicy
              );
   ASSERT_EFI_ERROR (Status);
 
-  if (SiPreMemPolicyPpi != NULL) {
+  if (SiPreMemPolicy != NULL) {
     MemConfig = NULL;
-    Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigGuid, (VOID *) &MemConfig);
+    Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigGuid, (VOID *) &MemConfig);
     ASSERT_EFI_ERROR (Status);
 
-    Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
+    Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
     ASSERT_EFI_ERROR (Status);
 
     if (MemConfig != NULL) {
@@ -2244,7 +2244,7 @@ GetMemoryMap (
     }
 
     if (IGpuIsSupported ()) {
-      Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
+      Status = GetConfigBlock ((VOID *) SiPreMemPolicy, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
       ASSERT_EFI_ERROR (Status);
 
       if (IGpuPreMemConfig != NULL) {
@@ -2964,7 +2964,7 @@ MrcGetSkuType (
   @param[in]  MrcData             - Pointer to the MRC global data structure
   @param[in]  MemConfig           - MEMORY_CONFIGURATION structure.
   @param[in]  MemConfigNoCrc      - MEMORY_CONFIG_NO_CRC structure.
-  @param[in]  SiPreMemPolicyPpi   - The SI Pre-Mem Policy PPI instance.
+  @param[in]  SiPreMemPolicy      - The SI Pre-Mem Policy instance.
 
   @retval  Updated MRC_BOOT_MODE
 **/
@@ -2975,7 +2975,7 @@ MrcSetupMrcData (
   OUT      MrcParameters              *CONST MrcData,
   IN       MEMORY_CONFIGURATION       *CONST MemConfig,
   IN       MEMORY_CONFIG_NO_CRC       *CONST MemConfigNoCrc,
-  IN       SI_PREMEM_POLICY_PPI       *CONST SiPreMemPolicyPpi,
+  IN       SI_PREMEM_POLICY           *CONST SiPreMemPolicy,
   IN       BOOLEAN                    DidPreviousTrainingFail
   )
 {

@@ -30,6 +30,7 @@
 #include "MrcDdr5.h"
 #include "MrcChipRouting.h"
 #include "MrcRowHammer.h"
+#include "MrcMcSiSpecific.h"
 
 extern MrcFrequency Lp5SupportedFrequencies[];
 extern MrcFrequency Ddr5SupportedFrequencies[];
@@ -93,6 +94,7 @@ MrcGetNextSupportedFreq (
   @param[in]  SaGvPoint   - Current operating SAGV point.
   @param[in]  FreqMax     - The maximum memory frequency allowed considering fuse, SPD, and topology limitations
   @param[in]  MaxQclkFreq - The maximum QCLK frequency supporte by the current hardware
+  @param[in]  SagvPrint   - Enable/disable debug printing for GV point number during processing.
   @param[out] FreqOut     - Pointer to return the SAGV point Frequency.
   @param[out] GearOut     - Pointer to return the SAGV point Gear.
 **/
@@ -102,6 +104,7 @@ MrcGetSagvConfig (
   IN  MrcSaGvPoint          SaGvPoint,
   IN  MrcFrequency          FreqMax,
   IN  UINT32                MaxQclkFreq,
+  IN  BOOLEAN               SagvPrint,
   OUT MrcFrequency          *FreqOut,   OPTIONAL
   OUT BOOLEAN               *GearOut    OPTIONAL
   )
@@ -124,7 +127,7 @@ MrcGetSagvConfig (
   Debug   = &Outputs->Debug;
 #endif
 
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "SAGV point %u\n", SaGvPoint);
+  MRC_DEBUG_MSG (Debug, SagvPrint ? MSG_LEVEL_NOTE : MSG_LEVEL_NONE, "SAGV point %u\n", SaGvPoint);
   if (FreqOut == NULL) {
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "%s %s is NULL\n", gErrString, "FreqOut");
   } else if (DdrType >= MRC_DDR_TYPE_UNKNOWN) {
@@ -152,7 +155,6 @@ MrcGetSagvConfig (
       *GearOut = (GearRatio == 4);
       MRC_DEBUG_ASSERT (GearRatio != 0, Debug, "Invalid SAGV %s: Point %d %s: %d\n", "Gear", SaGvPoint, "Gear", GearRatio);
     }
-    Outputs->GearMode = *GearOut;
   }
 }
 
@@ -410,6 +412,7 @@ MrcSaGvFinal (
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMctXP, WriteCached, &GetSetVal);
   }
 
+  MrcDisableWrRetraining (MrcData);
   MrcRirInit (MrcData);
 
   Status |= MrcFinalizeMrSeq (MrcData, MRC_PRINTS_ON);
@@ -433,6 +436,67 @@ MrcSaGvFinal (
   MrcSaveSagvOutputs (MrcData);
 
   return Status;
+}
+
+/**
+  Calculates at which SaGv point PPR shall be executed.
+
+  @param[in] MrcData     - The global host structure.
+  @param[in] MaxQclkFreq - Max QClk frequency.
+
+  @return nothing.
+**/
+VOID
+MrcCalculatePprSaGvPoint (
+  IN MrcParameters *const  MrcData,
+  IN UINT32         const  MaxQclkFreq
+  )
+{
+  MrcOutput   *Outputs;
+  UINT8        SaGvIndex;
+  MrcFrequency FreqOut;
+  MrcFrequency FreqForPpr;
+  BOOLEAN      GearOut;
+  MRC_EXT_INPUTS_TYPE *ExtInputs;
+
+#ifdef MRC_DEBUG_PRINT
+  MrcDebug *Debug;
+  Debug = &MrcData->Outputs.Debug;
+#endif // MRC_DEBUG_PRINT
+
+  ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
+  Outputs   = &MrcData->Outputs;
+  Outputs->SaGvPprPoint = MrcSaGvPointMax;
+  FreqForPpr = fNoInit;
+  FreqOut    = fNoInit;
+
+  if (Outputs->IsDdr5) {
+    Outputs->SaGvPprPoint = Outputs->SaGvLast;
+  }
+  else {
+    // LP5 shall execute PPR at the SaGv point, which has highest frequency less than or equal to 6400.
+    if (MrcIsSaGvEnabled (MrcData)) {
+      for (SaGvIndex = 0; SaGvIndex < MAX_SAGV_POINTS; SaGvIndex++) {
+        if ((ExtInputs->SaGvWpMask & (1 << SaGvIndex)) == 0) {
+          continue;
+        }
+        MrcGetSagvConfig (MrcData, SaGvIndex, Outputs->FreqMax, MaxQclkFreq, FALSE, &FreqOut, &GearOut);
+        if ((FreqOut <= f6400) && (FreqOut > FreqForPpr)) {
+          FreqForPpr = FreqOut;
+          Outputs->SaGvPprPoint = SaGvIndex;
+        }
+      }
+    } else {
+      // For single SaGv check if the current point frequency is less than or equal to 6400.
+      MrcGetSagvConfig (MrcData, Outputs->SaGvPoint, Outputs->FreqMax, MaxQclkFreq, FALSE, &FreqOut, &GearOut);
+      if (FreqOut <= f6400) {
+        Outputs->SaGvPprPoint = Outputs->SaGvPoint;
+      }
+    }
+  }
+  if (Outputs->SaGvPprPoint != MrcSaGvPointMax) {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "SaGv Point for PPR: %d\n", Outputs->SaGvPprPoint);
+  }
 }
 
 /**

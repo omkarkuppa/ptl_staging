@@ -152,6 +152,16 @@ MrcIsGreenReloadNeeded (
   );
 
 /**
+  Force FSM into Gear Down mode.
+
+  @param[in]  MrcData pointer to MRC global data.
+**/
+VOID
+MrcForceFsmIntoCsGeardownMode (
+  IN  MrcParameters *const  MrcData
+  );
+
+/**
   Set TerDcd Override Values
 
   @param[in] MrcData    - Include all MRC global data.
@@ -177,7 +187,7 @@ MrcOverrideTerDcd (
   @param[in, out] Channel        - Stores the CKD ranks' Channel that are associated with index 0
   @param[in, out] Rank           - Stores the CKD ranks' Rank that are associated with index 0
   @param[out]     CkdSharedClks  - Number of ranks that has the same CKD main clock
-  
+
 **/
 VOID
 MrcGetCkdRanks (

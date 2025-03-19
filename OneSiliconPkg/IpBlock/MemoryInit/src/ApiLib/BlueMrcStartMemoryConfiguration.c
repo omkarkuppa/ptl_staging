@@ -262,6 +262,7 @@ MrcPrepareNextMrcIteration (
   STATIC_SPD_DATA         StaticSpdData;
   MrcSaGvPoint            PrevSagvFirst;
   MrcSaGvPoint            PrevSagvLast;
+  MrcSaGvPoint            PrevSagvPpr;
 
   Inputs  = &MrcData->Inputs;
   Outputs = &MrcData->Outputs;
@@ -277,6 +278,7 @@ MrcPrepareNextMrcIteration (
   PrevMaxDimmFreq = Outputs->MaxDimmFreq;
   PrevSagvFirst = Outputs->SaGvFirst;
   PrevSagvLast = Outputs->SaGvLast;
+  PrevSagvPpr  = Outputs->SaGvPprPoint;
   PrevCmosConfig0 = Outputs->CmosConfig0;
   PrevCmosConfig1 = Outputs->CmosConfig1;
   PrevCmosConfig2 = Outputs->CmosConfig2;
@@ -289,6 +291,7 @@ MrcPrepareNextMrcIteration (
   Outputs->MaxDimmFreq = PrevMaxDimmFreq;
   Outputs->SaGvFirst = PrevSagvFirst;
   Outputs->SaGvLast = PrevSagvLast;
+  Outputs->SaGvPprPoint = PrevSagvPpr;
   Outputs->CmosConfig0 = PrevCmosConfig0;
   Outputs->CmosConfig1 = PrevCmosConfig1;
   Outputs->CmosConfig2 = PrevCmosConfig2;

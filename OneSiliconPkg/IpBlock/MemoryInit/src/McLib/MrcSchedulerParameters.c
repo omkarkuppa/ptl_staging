@@ -404,6 +404,10 @@ MrcSchedulerParametersConfig (
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccDisableSplitAct, WriteCached | PrintValue, &GetSetVal);
   }
 
+  if ((ExtInputs->TrainingEnables3.WRTRETRAIN) == 0) {
+    MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccEnSrxWrRetraining, WriteCached | PrintValue, &GetSetDis);
+  }
+
 }
 
 /**
