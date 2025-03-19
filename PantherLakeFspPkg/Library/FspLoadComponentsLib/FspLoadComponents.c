@@ -338,7 +338,7 @@ FspLoadComponents (
   if ((Bspm->FspmLoadingPolicy & BIT0) == LOADING_FSPM) {
     Status = LoadFspm (Bspm, Fbm, &FlashRegionList, DataStackBase, DataStackSize);
     if (Status == EFI_SUCCESS) {
-      ExtendFspmRegion (&FspMeasurementInfo, Fbm, TpmActivePcrBanks);
+      ExtendFspmRegion (&FspMeasurementInfo, Fbm, Bspm, TpmActivePcrBanks);
     }
   }
 
