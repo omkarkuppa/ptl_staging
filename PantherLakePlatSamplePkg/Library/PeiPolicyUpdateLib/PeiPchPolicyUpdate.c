@@ -1858,6 +1858,7 @@ UpdateCnviConfig (
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviRfResetPinMux,                      CnviConfig->PinMux.RfReset, 0);
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviClkreqPinMux,                       CnviConfig->PinMux.Clkreq,  0);
 
+#if FixedPcdGetBool (PcdCnvFeatureEnable) == 1
   if (CnviCrfModuleIsPresent ()) {
     Status = PeiServicesLocatePpi (
              &gEfiPeiReadOnlyVariable2PpiGuid, // GUID
@@ -1870,18 +1871,19 @@ UpdateCnviConfig (
     VarDataSize = sizeof (UEFI_CNV_VAR_WCPI);
     Status = VariableServices->GetVariable (
                                 VariableServices,
-                                L"UefiCnvCommonWCPI",
+                                CNV_UEFI_WCPI_VAR_NAME,
                                 &gUefiIntelCnvWlanVariablesGuid,
                                 NULL,
                                 &VarDataSize,
                                 &WcpiVar
                                 );
     if (EFI_ERROR (Status)) {
-       DEBUG ((DEBUG_ERROR, "GetVariable failed on UefiCnvCommonWCPI - %r\n", Status));
-       ASSERT_EFI_ERROR (Status);
+       DEBUG ((DEBUG_ERROR, "GetVariable failed on UefiCnvCommonWCPI - %r, skip policy update.\n", Status));
+    } else {
+       UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviWwanCoex,                         CnviConfig->WwanCoex,                WcpiVar.WwanCoexInit);
     }
-    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.CnviWwanCoex,                         CnviConfig->WwanCoex,                WcpiVar.WwanCoexInit);
   }
+#endif
 }
 #endif
 
