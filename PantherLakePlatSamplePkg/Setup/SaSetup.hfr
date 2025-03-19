@@ -4156,6 +4156,13 @@ endform;
         option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
       endoneof;
 
+      oneof varid   = SA_SETUP.DCCDDR5READDCA,
+        prompt      = STRING_TOKEN(STR_DCCDDR5READDCA_NAME),
+        help        = STRING_TOKEN(STR_DCCDDR5READDCA_NAME),
+        option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+        option text = STRING_TOKEN(STR_ENABLED),  value = 1, flags = RESET_REQUIRED;
+      endoneof;
+
       oneof varid   = SA_SETUP.DCCLP5READDCA,
         prompt      = STRING_TOKEN(STR_DCCLP5READDCA_NAME),
         help        = STRING_TOKEN(STR_DCCLP5READDCA_NAME),

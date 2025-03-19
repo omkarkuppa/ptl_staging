@@ -1254,7 +1254,7 @@ typedef struct {
   <b>Revision 4</b>:  - Add MrcFailureOnUnsupportedDimm.
 **/
 
-#define SA_SETUP_REVISION   4
+#define SA_SETUP_REVISION   5
 
 typedef struct {
   UINT8   Revision;
@@ -1733,7 +1733,8 @@ typedef struct {
   UINT8   IGpuGsm2Size;
   UINT8   SolFeatureEnabled;
   UINT8   MrcFailureOnUnsupportedDimm;
-  UINT8   Rsvd[62];
+  UINT8   DCCDDR5READDCA;
+  UINT8   Rsvd[61];
 } SA_SETUP;
 
 /**

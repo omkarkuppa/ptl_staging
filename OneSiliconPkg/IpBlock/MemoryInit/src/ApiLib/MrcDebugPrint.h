@@ -23,7 +23,36 @@
 #pragma pack (push, 1)
 
 
-#include "CMrcInterface.h"  // for MrcParameters
+#include "CMrcInterfaceGlobalTypes.h" // for MRC_DEBUG_PRINT
+
+typedef struct MrcParameters MrcParameters;
+typedef struct MRC_FUNCTION MRC_FUNCTION;
+typedef struct MrcDebug MrcDebug;
+
+
+#define MSG_LEVEL_NONE        0
+#define MSG_LEVEL_ERROR       MRC_BIT0
+#define MSG_LEVEL_WARNING     MRC_BIT1
+#define MSG_LEVEL_NOTE        MRC_BIT2
+#define MSG_LEVEL_EVENT       MRC_BIT3
+#define MSG_LEVEL_ALGO        MRC_BIT4
+#define MSG_LEVEL_HAL         MRC_BIT5
+#define MSG_LEVEL_MMIO        MRC_BIT6
+#define MSG_LEVEL_CSV         MRC_BIT7
+#define MSG_LEVEL_CTE         MRC_BIT8
+#define MSG_LEVEL_TIME        MRC_BIT10
+#define MSG_LEVEL_INTERPRETER MRC_BIT11
+#define MSG_LEVEL_ALL         MRC_INT32_MAX
+
+// 0:Disable, 1:Error Only, 2:Error & Warnings, 3:Load, Error, Warnings & Info, 4:Load, Error, Warnings, Info & Event, 5:Load, Error, Warnings, Info & Verbose.
+#define MSG_LEVEL_COMBO_1 MSG_LEVEL_ERROR
+#define MSG_LEVEL_COMBO_2 (MSG_LEVEL_COMBO_1 | MSG_LEVEL_WARNING)
+#define MSG_LEVEL_COMBO_3 (MSG_LEVEL_COMBO_2 | MSG_LEVEL_NOTE)
+#define MSG_LEVEL_COMBO_4 (MSG_LEVEL_COMBO_3 | MSG_LEVEL_EVENT)
+#define MSG_LEVEL_COMBO_5 (MSG_LEVEL_COMBO_4 | MSG_LEVEL_ALGO | MSG_LEVEL_TIME)
+
+typedef UINT32 MrcDebugMsgLevel;
+
 
 #if defined(__GNUC__)
 #include "stdarg.h"

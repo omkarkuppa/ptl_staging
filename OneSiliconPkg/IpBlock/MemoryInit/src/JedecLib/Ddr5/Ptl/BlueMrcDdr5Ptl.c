@@ -230,7 +230,7 @@ MrcPdaEnumeration (
         }
 
         // Enter PDA Enumerate ID
-        Status = MrcIssueMpc (MrcData, Controller, Channel, Rank, DDR5_MPC_ENTER_PDA_ENUM_PROG_MODE, MRC_PRINTS_OFF);
+        Status = MrcIssueMpc (MrcData, Controller, Channel, Rank, DDR5_MPC_ENTER_PDA_ENUM_PROG_MODE, MRC_PRINTS_ON);
         if(Status != mrcSuccess) {
             return Status;
         }
@@ -243,11 +243,11 @@ MrcPdaEnumeration (
         // Set up each device
         for (Device = 0; Device < NumDevices; Device++) {
           // Set DQ Pins LOW
-          MrcGetSetChStrb (MrcData, Controller, Channel, CpuByteList[Device], GsmIocDqOverrideData, WriteToCache, &GetSetDis);
+          MrcGetSetChStrb (MrcData, Controller, Channel, CpuByteList[Device], GsmIocDqOverrideData, WriteToCache |PrintValue, &GetSetDis);
           MrcFlushRegisterCachedData (MrcData);
 
           // Send PDA Enumerate ID
-          Status = MrcIssueMpc (MrcData, Controller, Channel, Rank, DDR5_MPC_PDA_ENUMERATE_ID (PdaIdList[Device]), MRC_PRINTS_OFF);
+          Status = MrcIssueMpc (MrcData, Controller, Channel, Rank, DDR5_MPC_PDA_ENUMERATE_ID (PdaIdList[Device]), MRC_PRINTS_ON);
           if(Status != mrcSuccess) {
             return Status;
           }
@@ -265,7 +265,7 @@ MrcPdaEnumeration (
         MrcFlushRegisterCachedData (MrcData);
 
         //Exit PDA Enumerate ID
-        Status = MrcIssueMpc (MrcData, Controller, Channel, Rank, DDR5_MPC_EXIT_PDA_ENUM_PROG_MODE, MRC_PRINTS_OFF);
+        Status = MrcIssueMpc (MrcData, Controller, Channel, Rank, DDR5_MPC_EXIT_PDA_ENUM_PROG_MODE, MRC_PRINTS_ON);
         if (Status != mrcSuccess) {
           return Status;
         }

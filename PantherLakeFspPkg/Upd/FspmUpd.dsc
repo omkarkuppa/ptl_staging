@@ -684,9 +684,9 @@
   # !BSF HELP:{Enable/Disable DQ/DQS Swizzle Training}
   gPlatformFspPkgTokenSpaceGuid.DQDQSSWZ                    | * | 0x01 | 0x01
 
-  # !BSF NAME:{DQ/DQS Swizzle Training}
+  # !BSF NAME:{LP5 Dca Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enable/Disable DQ/DQS Swizzle Training}
+  # !BSF HELP:{Enable/Disable LP5 Dca Training}
   gPlatformFspPkgTokenSpaceGuid.DCCLP5READDCA               | * | 0x01 | 0x01
 
   # !BSF NAME:{Functional Duty Cycle Correction for Data DQ}
@@ -836,7 +836,7 @@
   # !BSF NAME:{RX DQS VOC Centring Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable RX DQS VOC Centring Training}
-  gPlatformFspPkgTokenSpaceGuid.RXDQSVOCC              | * | 0x01 | 0x01
+  gPlatformFspPkgTokenSpaceGuid.RXDQSVOCC                   | * | 0x01 | 0x01
 
   # !BSF NAME:{NMode}
   # !BSF TYPE:{EditNum, HEX, (0x00,0x02)}
@@ -1407,11 +1407,16 @@
   # !BSF HELP:{Eanble/Disable DVFSC}
   gPlatformFspPkgTokenSpaceGuid.DvfscEnabled                | * | 0x01 | 0x00
 
+  # !BSF NAME:{Ddr5 Dca Training}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable DDR5 Dca Training}
+  gPlatformFspPkgTokenSpaceGuid.DCCDDR5READDCA               | * | 0x01 | 0x00
+
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 62   | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd                | * | 61   | {0x00}
 
   #
   # MRC Block End

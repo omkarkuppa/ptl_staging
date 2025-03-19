@@ -510,6 +510,7 @@ FspUpdatePeiSaPolicyPreMem (
   MemConfig->ExternalInputs.TrainingEnables2.DLLDCC = FspmUpd->FspmConfig.DLLDCC;
   MemConfig->ExternalInputs.TrainingEnables2.DQDQSSWZ = FspmUpd->FspmConfig.DQDQSSWZ;
   MemConfig->ExternalInputs.TrainingEnables2.DCCLP5READDCA = FspmUpd->FspmConfig.DCCLP5READDCA;
+  MemConfig->ExternalInputs.TrainingEnables2.DCCDDR5READDCA = FspmUpd->FspmConfig.DCCDDR5READDCA;
   MemConfig->ExternalInputs.TrainingEnables2.DLLBWSEL = FspmUpd->FspmConfig.DLLBWSEL;
   MemConfig->ExternalInputs.TrainingEnables2.VCCCLKFF = FspmUpd->FspmConfig.VCCCLKFF;
   MemConfig->ExternalInputs.TrainingEnables2.FUNCDCCDQ = FspmUpd->FspmConfig.FUNCDCCDQ;

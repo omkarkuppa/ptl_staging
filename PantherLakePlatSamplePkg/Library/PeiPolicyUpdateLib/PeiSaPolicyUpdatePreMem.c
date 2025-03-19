@@ -1042,6 +1042,7 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DQDQSSWZ,  MemConfig->ExternalInputs.TrainingEnables2.DQDQSSWZ,       SaSetup.DQDQSSWZ       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.REFPI,  MemConfig->ExternalInputs.TrainingEnables2.REFPI,          SaSetup.REFPI          );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DCCLP5READDCA,  MemConfig->ExternalInputs.TrainingEnables2.DCCLP5READDCA,  SaSetup.DCCLP5READDCA  );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DCCDDR5READDCA,  MemConfig->ExternalInputs.TrainingEnables2.DCCDDR5READDCA,  SaSetup.DCCDDR5READDCA  );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.VCCCLKFF,  MemConfig->ExternalInputs.TrainingEnables2.VCCCLKFF,       SaSetup.VCCCLKFF       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.FUNCDCCDQS,  MemConfig->ExternalInputs.TrainingEnables2.FUNCDCCDQS,     SaSetup.FUNCDCCDQS     );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.FUNCDCCCLK,  MemConfig->ExternalInputs.TrainingEnables2.FUNCDCCCLK,     SaSetup.FUNCDCCCLK     );

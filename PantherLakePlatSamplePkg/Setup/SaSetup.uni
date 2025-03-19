@@ -1328,6 +1328,7 @@
 #string STR_FUNCDCCCLK_NAME                     #language en-US "Function DCC for CLK"
 #string STR_FUNCDCCWCK_NAME                     #language en-US "Function DCC for LP5 WCK"
 #string STR_FUNCDCCDQ_NAME                      #language en-US "Function DCC for Data DQ"
+#string STR_DCCDDR5READDCA_NAME                 #language en-US "DRAM DCC for DDR5 READ DCA"
 #string STR_DCCLP5READDCA_NAME                  #language en-US "DRAM DCC for LP5 READ DCA"
 #string STR_DCCLP5WCKDCA_NAME                   #language en-US "DRAM DCC For LP5 WCK DCA"
 #string STR_RXUNMATCHEDCAL_NAME                 #language en-US "Unmatched Rx Calibration"
