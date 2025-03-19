@@ -3231,6 +3231,7 @@ InstallAcpiPlatform (
   mPlatformNvsAreaProtocol.Area->PlatformFlavor = PcdGet8 (PcdPlatformFlavor);
   mPlatformNvsAreaProtocol.Area->BoardRev       = PcdGet16 (PcdBoardRev);
   mPlatformNvsAreaProtocol.Area->BoardType      = PcdGet8 (PcdBoardType);
+  mPlatformNvsAreaProtocol.Area->PlatformBoardId     = (UINT8) PcdGet16 (PcdBoardId);
 
   mPlatformNvsAreaProtocol.Area->SerialPortAcpiDebug        = mSystemConfiguration.AcpiDebug && mSystemConfiguration.SerialPortAcpiDebug;
   mPlatformNvsAreaProtocol.Area->EnableAcpiDebug            = mSystemConfiguration.AcpiDebug;

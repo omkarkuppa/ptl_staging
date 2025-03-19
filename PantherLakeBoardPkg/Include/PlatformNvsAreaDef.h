@@ -100,7 +100,7 @@ typedef struct {
   //
   // Board Id
   //
-  UINT8    PlatformId;                              ///< Offset 47      Platform id
+  UINT8    PlatformBoardId;                         ///< Offset 47      Platform Board id
   UINT8    BoardType;                               ///< Offset 48      Board Type
   //
   // PCIe Hot Plug

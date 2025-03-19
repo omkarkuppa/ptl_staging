@@ -254,10 +254,10 @@
   gBoardModuleTokenSpaceGuid.VpdPcdSmbusAlertEnable|*|FALSE
 
   # EC FailSafe Cpu Temp
-  gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionCpuTemp|*|85
+  gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionCpuTemp|*|100
 
   # EC FailSafe Fan Speed Setting
-  gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionFanPwm|*|65
+  gBoardModuleTokenSpaceGuid.VpdPcdEcFailSafeActionFanPwm|*|35
 
   # Cnvd Gpio Table
   gBoardModuleTokenSpaceGuid.VpdPcdBoardGpioTableLch|*|{CODE({
@@ -790,6 +790,14 @@
   gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen3Participant|0x1                                   # Sensor Device 3
   gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen4Participant|0x1                                   # Sensor Device 4
   gStructPcdTokenSpaceGuid.PcdDptfConfig.EnableSen5Participant|0x1                                   # Sensor Device 5
+
+  #
+  # Platform Thermal Configuration
+  #
+  gStructPcdTokenSpaceGuid.PcdSetup.Ac0FanSpeed|0x23                        # Active Trip Point 0 Fan Speed
+  gStructPcdTokenSpaceGuid.PcdSetup.Ac0TripPoint|0x4F                       # Active Trip Point 0
+  gStructPcdTokenSpaceGuid.PcdSetup.Ac1FanSpeed|0x1E                        # Active Trip Point 1 Fan Speed
+  gStructPcdTokenSpaceGuid.PcdSetup.CpuFanSpeed|0x20                        # CPU Fan Speed
 
   #
   # HD Audio

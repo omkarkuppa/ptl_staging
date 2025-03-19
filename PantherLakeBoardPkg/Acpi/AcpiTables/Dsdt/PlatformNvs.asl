@@ -100,7 +100,7 @@
   //
   // Board Id
   //
-  PLID, 8,  // Offset(47),    Platform id
+  PBID, 8,  // Offset(47),    Platform Board id
   BTYP, 8,  // Offset(48),    Board Type
   //
   // PCIe Hot Plug
