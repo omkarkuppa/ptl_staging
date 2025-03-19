@@ -833,6 +833,10 @@ MrcGetDdrIoRegOffset (
       Offset = GetDdrIoCommandOffsets (Group, Channel, FreqIndex, FALSE, VolatileMask);
       break;
 
+    case CsPerBitCcc:
+      Offset = GetDdrIoCccLaneOffsets (Channel, Lane, VolatileMask);
+      break;
+
     default:
       break;
   }

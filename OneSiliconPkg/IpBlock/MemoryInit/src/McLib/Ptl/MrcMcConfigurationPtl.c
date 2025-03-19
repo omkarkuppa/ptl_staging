@@ -97,7 +97,7 @@ MrcConfigureDdr5EchoMask (
 }
 
 /**
-  Enables parity generation and disables parity checking (NVL only)
+  Enables parity generation and disables parity checking
   The register cache should be flushed after calling this function.
 
   @param[in] MrcData    - Include all MRC global data.

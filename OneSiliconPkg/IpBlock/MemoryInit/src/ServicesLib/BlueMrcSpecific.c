@@ -1013,6 +1013,9 @@ MrcPmCfgCrAccess (
       MptussCtrl0.Bits.mptu_en = 0;
       MrcWriteCR (MrcData, DDRPHY_MISC_SAUG_CR_MPTUSS_CTRL0_REG, MptussCtrl0.Data);
 
+      // Power down the SRAMs
+      MrcPowerGateUcssSrams (MrcData, MRC_ENABLE);
+
       MrcGetSetNoScope (MrcData, GsmSaxgEnable,         WriteCached | PrintValue, &GetSetDis);
       MrcWait (MrcData, 10);
       // Poll to check if SAXGPwrGood is deasserted.
@@ -1024,9 +1027,6 @@ MrcPmCfgCrAccess (
           Busy = FALSE;
         }
       } while (Busy && (MrcCall->MrcGetCpuTime () < Timeout));
-
-      // Power down the SRAMs
-      MrcPowerGateUcssSrams (MrcData, MRC_ENABLE);
     }
   }
   if (Busy) {
@@ -1351,9 +1351,106 @@ MrcDataPointTest (
   return Status;
 }
 
+/**
+  Check whether there is errors at Point RdT/RdV or WrT/WrV
+  @param[in]      MrcData     - Include all MRC global data.
+  @param[in]      McChBitmask - Bit mask of present MC channels
+  @param[in]      RankMask    - Bit mask of Ranks to change margins for
+  @param[in]      MarginPoint - Margin Point to test
+  @param[in]      ParamType   - MRC_MarginTypes: WrV, WrT, RdT, RdV.
+  @retval MrcStatus - mrcSuccess if point successful pass, otherwise returns an error status.
+**/
+MrcStatus
+MrcCmdPointTest (
+  IN     MrcParameters    *MrcData,
+  IN     UINT8            McChBitMask,
+  IN     UINT8            RankMask,
+  IN     MarginCheckPoint *MarginPoint,
+  IN     MrcMarginTypes   ParamType
+  )
+{
+  MrcOutput*  Outputs;
+  MrcDebug*   Debug;
+  MrcStatus   Status;
+  UINT8       AllChannelError;
+  UINT8       SkipWait;
+  UINT32      MaxChannels;
+  UINT8       Controller;
+  UINT8       Channel;
+#ifdef MRC_DEBUG_PRINT
+  UINT64      ErrStatus;
+#endif
 
-// Max buses checked (Rx/Tx)
-#define MAX_BLUE_MARGIN_CHECK (2)
+  Outputs = &MrcData->Outputs;
+  Debug = &Outputs->Debug;
+  MaxChannels = Outputs->MaxChannels;
+
+  // Check to make sure type is CmdT/CmdV
+  if ((MarginPoint->VoltageType != CmdV) || (MarginPoint->TimingType != CmdT)) {
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Function MrcCmdPointTest, Invalid combination TimingType: %d VoltageType:%d\n", MarginPoint->TimingType, MarginPoint->VoltageType);
+    return mrcWrongInputParameter;
+  }
+
+  // Change CmdV/CmdT before the test
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MaxChannels; Channel++) {
+      if (MC_CH_MASK_CHECK (McChBitMask, Controller, Channel, MaxChannels) == 0) {
+        continue;
+      }
+      SkipWait = (McChBitMask >> ((Controller * MaxChannels) + (Channel + 1))); // Skip if there are more channels
+      if (ParamType == CmdV) {
+        // Change CmdV
+        ChangeMargin (MrcData, MarginPoint->VoltageType, MarginPoint->VoltageMargin, 0, 0, Controller, Channel, RankMask, 0, 0, SkipWait);
+      } else {
+        // Change CmdT
+        ShiftPIforCmdTraining (MrcData, Controller, Channel, MrcIterationCmdCtl, RankMask, 0xFF, MarginPoint->TimingMargin, 0);
+      } // CmdT
+    }
+  }
+
+  // Run Test
+  // Rank is not needed here because this is not a CaParity/CaParityPerLane test.
+  RunIoTestNoRank (MrcData, McChBitMask, Outputs->DQPat, 1);
+  AllChannelError = Cpgc20GetAllChannelsError (MrcData, McChBitMask);
+
+#ifdef MRC_DEBUG_PRINT
+  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+    for (Channel = 0; Channel < MaxChannels; Channel++) {
+      if (MC_CH_MASK_CHECK (McChBitMask, Controller, Channel, MaxChannels) == 0) {
+        continue;
+      }
+      MrcGetMiscErrStatus (MrcData, Controller, Channel, ByteGroupErrStatus, &ErrStatus);
+      MRC_DEBUG_MSG(Debug, MSG_LEVEL_NOTE, "Param: %s, Mc%uCh%u, Result=%xh\n", gMarginTypesStr[ParamType], Controller, Channel, (UINT16)ErrStatus);
+    }
+  }
+#endif
+
+  // Set whether it passed/failed
+  Status = (AllChannelError > 0) ? mrcFail : mrcSuccess;
+
+  // Clean up margin
+  if (ParamType == CmdT) {
+    for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
+      for (Channel = 0; Channel < MaxChannels; Channel++) {
+        if (MC_CH_MASK_CHECK (McChBitMask, Controller, Channel, MaxChannels) == 0) {
+          continue;
+        }
+        ShiftPIforCmdTraining (MrcData, Controller, Channel, MrcIterationCmdCtl, RankMask, 0xFF, 0, 0);
+      } // Channel
+    } // Controller
+    // Normalize per-rank CS timings
+    MrcCsPerPinNormalize (MrcData);
+  } else {
+    // Clean up CmdV
+    ChangeMargin (MrcData, MarginPoint->VoltageType, 0, 0, 1, 0, 0, RankMask, 0, 0, 0);
+  }
+
+  if ((ParamType == CmdV) && (AllChannelError > 0)) {
+    MrcResetSequence (MrcData);
+  }
+
+  return Status;
+}
 
 /**
   Check Margin Limits by utilizing box test.
@@ -1386,21 +1483,22 @@ MrcMarginLimitCheck (
   UINT8               TimingSign;
   UINT8               VoltageSign;
   UINT8               SignalIdx;
-  MarginCheckPoint    MarginCheckL2Table[MAX_BLUE_MARGIN_CHECK];
+  MarginCheckPoint    MarginCheckL2Table[MAX_MARGIN_CHECK];
   MarginCheckPoint    MarginPoint;
   const MarginCheckPoint *MarginPointTemp;
   BOOLEAN             IsMarginCheckBoth;
   MarginCheckMode     MarginCheckResult;
   UINT8               MaxChannels;
-  UINT8               FailResultsT[MAX_BLUE_MARGIN_CHECK][MAX_RANK_IN_CHANNEL][MAX_EDGES];
-  UINT8               FailResultsV[MAX_BLUE_MARGIN_CHECK][MAX_RANK_IN_CHANNEL][MAX_EDGES];
+  UINT8               FailResultsT[MAX_MARGIN_CHECK][MAX_RANK_IN_CHANNEL][MAX_EDGES];
+  UINT8               FailResultsV[MAX_MARGIN_CHECK][MAX_RANK_IN_CHANNEL][MAX_EDGES];
+  UINT8               MarginTypesCount;
   INT64               GetSetVal;
   MRC_MC_AD_SAVE      MadSavedValues;
 
   static const MarginCheckPoint MarginCheckL1Table[] = {
     { RdT,  12, RdV,  55 },
     { WrT,  12, WrV,  22 },
-    { CmdT, 30, CmdV, 30 }
+    { CmdT, 10, CmdV, 10 }
   };
 
 #ifdef MRC_DEBUG_PRINT
@@ -1422,6 +1520,7 @@ MrcMarginLimitCheck (
   Debug = &Outputs->Debug;
   MaxChannels = Outputs->MaxChannels;
   Status = mrcSuccess;
+  MarginTypesCount = (Outputs->IsDdr5) ? MAX_MARGIN_CHECK : (MAX_MARGIN_CHECK - 1); // LP5 doesn't support CmdT/CmdV
 
   MrcCall->MrcSetMem ((UINT8 *) FailResultsT, sizeof (FailResultsT), 0);
   MrcCall->MrcSetMem ((UINT8 *) FailResultsV, sizeof (FailResultsV), 0);
@@ -1435,7 +1534,7 @@ MrcMarginLimitCheck (
 
 #ifdef MRC_DEBUG_PRINT
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "L1 limits:\n");
-  for (SignalIdx = 0; SignalIdx < MAX_BLUE_MARGIN_CHECK; SignalIdx++) {
+  for (SignalIdx = 0; SignalIdx < MarginTypesCount; SignalIdx++) {
     Param = MarginCheckL1Table[SignalIdx].TimingType;
     ParamV = MarginCheckL1Table[SignalIdx].VoltageType;
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, " %s:\t%d\t%s:\t%d\n",
@@ -1455,19 +1554,19 @@ MrcMarginLimitCheck (
   MrcModifyMcAddressDecoderValues (MrcData);
 
   // Setup L2 table
-  for (SignalIdx = 0; SignalIdx < MAX_BLUE_MARGIN_CHECK; SignalIdx++) {
+  for (SignalIdx = 0; SignalIdx < MarginTypesCount; SignalIdx++) {
     MarginCheckL2Table[SignalIdx].TimingType = MarginCheckL1Table[SignalIdx].TimingType;
     MarginCheckL2Table[SignalIdx].TimingMargin = (INT8) ((MarginCheckL1Table[SignalIdx].TimingMargin * ExtInputs->MarginLimitL2) / 100);
     MarginCheckL2Table[SignalIdx].VoltageType = MarginCheckL1Table[SignalIdx].VoltageType;
     MarginCheckL2Table[SignalIdx].VoltageMargin = (INT8) ((MarginCheckL1Table[SignalIdx].VoltageMargin * ExtInputs->MarginLimitL2) / 100);
   }
 
-  for (SignalIdx = 0; SignalIdx < MAX_BLUE_MARGIN_CHECK; SignalIdx++) {
+  for (SignalIdx = 0; SignalIdx < MarginTypesCount; SignalIdx++) {
     Param = MarginCheckL1Table[SignalIdx].TimingType;
 
     // Note: The following statement depends on the order of MarginCheckL1Table.
     if (Param == RdT) {
-      // Test Margin for RdT/RdV, WrT/WrV
+      // Test Margin for RdT/RdV, WrT/WrV, CmdT/CmdV
       // SOE=1, EnCADB=0, EnCKE=0 SOE=1 sets bit12 of REUT_CH_ERR_CTL
       SetupIOTestStatic (MrcData, Outputs->McChBitMask, LoopCount, NSOE, 0, 0, PatWrRd, 0, 0, 0x5a);
     }
@@ -1487,6 +1586,8 @@ MrcMarginLimitCheck (
       if (McChBitMask == 0) {
         continue;
       }
+
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Rank%u\n", Rank);
 
       if (Outputs->IsDdr5) {
         // Update bank mapping to get B2B writes.
@@ -1516,7 +1617,11 @@ MrcMarginLimitCheck (
           }
           MarginPoint.TimingMargin = MarginPointTemp->TimingMargin * ((TimingSign * 2) - 1);
           // test margin point
-          Pass = MrcDataPointTest (MrcData, McChBitMask, RankMask, &MarginPoint, MarginPoint.TimingType);
+          if (Param == CmdT) {
+            Pass = MrcCmdPointTest (MrcData, McChBitMask, RankMask, &MarginPoint, MarginPoint.TimingType);
+          } else {
+            Pass = MrcDataPointTest (MrcData, McChBitMask, RankMask, &MarginPoint, MarginPoint.TimingType);
+          }
           if (Pass != mrcSuccess) {
             FailResultsT[SignalIdx][Rank][TimingSign] = ((MarginLevel == Margin_Check_L1) && IsMarginCheckBoth) ? Margin_Check_Both : MarginLevel;
           }
@@ -1529,7 +1634,11 @@ MrcMarginLimitCheck (
           }
           MarginPoint.VoltageMargin = MarginPointTemp->VoltageMargin * ((VoltageSign * 2) - 1);
           // test margin point
-          Pass = MrcDataPointTest (MrcData, McChBitMask, RankMask, &MarginPoint, MarginPoint.VoltageType);
+          if (Param == CmdT) {
+            Pass = MrcCmdPointTest (MrcData, McChBitMask, RankMask, &MarginPoint, MarginPoint.VoltageType);
+          } else {
+            Pass = MrcDataPointTest (MrcData, McChBitMask, RankMask, &MarginPoint, MarginPoint.VoltageType);
+          }
 
           if (Pass != mrcSuccess) {
             FailResultsV[SignalIdx][Rank][VoltageSign] = ((MarginLevel == Margin_Check_L1) && IsMarginCheckBoth) ? Margin_Check_Both : MarginLevel;
@@ -1539,8 +1648,8 @@ MrcMarginLimitCheck (
     }  // Rank
   }  // Param
 
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Margin Check level\nParams: \tRdT/RdV\t\t\t\tWrT/WrV\n");
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\t\t+V\t-V\t+T\t-T\t+V\t-V\t+T\t-T");
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Margin Check level\nParams: \tRdT/RdV\t\t\t\tWrT/WrV%s\n", (Outputs->IsDdr5) ? "\t\t\t\tCmdT/CmdV" : "");
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\t\t+V\t-V\t+T\t-T\t+V\t-V\t+T\t-T%s", (Outputs->IsDdr5) ? "\t+V\t-V\t+T\t-T" : "");
 
   MarginCheckResult = 0;
 
@@ -1553,7 +1662,7 @@ MrcMarginLimitCheck (
 
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\nR%d\t\t", Rank);
 
-    for (SignalIdx = 0; SignalIdx < MAX_BLUE_MARGIN_CHECK; SignalIdx++) {
+    for (SignalIdx = 0; SignalIdx < MarginTypesCount; SignalIdx++) {
       for (TimingSign = 0; TimingSign < 2; TimingSign++) {
         if (MarginCheckResult < FailResultsT[SignalIdx][Rank][TimingSign]) {
           MarginCheckResult = FailResultsT[SignalIdx][Rank][TimingSign];
@@ -1581,11 +1690,11 @@ MrcMarginLimitCheck (
   MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMccCpgcInOrder, WriteCached, &GetSetVal);
   MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmDisAllCplInterleave, WriteCached, &GetSetVal);
 
-     // Determine if a cold boot required
+  // Determine if a cold boot required
   Status = (MarginCheckResult == ExtInputs->MarginLimitCheck) ? mrcResetFullTrain : mrcSuccess;
 
 
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\nmargin check result:%s Frequency %d \n", MarginCheckStr[MarginCheckResult], Outputs->Frequency);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\nMargin check result:%s Frequency %d \n", MarginCheckStr[MarginCheckResult], Outputs->Frequency);
 
   if (Status == mrcResetFullTrain) {
     MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "Margin Check Failed - cold boot required\n");

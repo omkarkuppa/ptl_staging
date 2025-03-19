@@ -26,6 +26,7 @@
 #include "Cpgc20.h"
 #include "Cpgc20Patterns.h"
 #include "MrcAmtPprInterface.h"
+#include "CMrcInternalTypes.h" // UINT64_STRUCT
 
 // Hook for function to display row failure list
 #define AMT_PRINT_ROW_FAIL_LIST   0

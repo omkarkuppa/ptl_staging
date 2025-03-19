@@ -21,7 +21,13 @@ This file includes all the data structures that the MRC considers "global data".
 #ifndef _InterfaceGlobalType_h_
 #define _InterfaceGlobalType_h_
 
-#include "CMrcStatsTrackerFramework.h"
+
+#ifndef MDEPKG_NDEBUG
+#ifndef MRC_DEBUG_PRINT
+#define MRC_DEBUG_PRINT (1)
+#endif
+#endif // MDEPKG_NDEBUG
+
 
 #ifdef XTENSA
 #include <CGreenMrcCommonTypes.h>
@@ -74,23 +80,27 @@ typedef enum {
 #define CACHE_PAD_ENTRIES           (0)
 
 #ifdef MRC_DISABLE_CACHING
-#define REGISTER_CACHE_SIZE         1
-#define MAX_REGISTER_CACHE_ENTRIES  1
+  #define REGISTER_CACHE_SIZE         1
+  #define MAX_REGISTER_CACHE_ENTRIES  1
 #else
-#define MIN_CACHE_ENTRIES_SIZE      1024
-#define MIN_CACHE_ENTRIES_MASK      (MIN_CACHE_ENTRIES_SIZE-1)
-#define REGISTER_CACHE_SIZE   ( \
-  CRS_ARRAY_ENTRIES +           \
-  CS_ARRAY_ENTRIES +            \
-  CHANNEL_ARRAY_ENTRIES +       \
-  CHANNEL_SUBCH_ARRAY_ENTRIES + \
-  ODT_CTL_ENTRIES +             \
-  SINGLE_ENTRIES +              \
-  CACHE_PAD_ENTRIES)
+    #define MIN_CACHE_ENTRIES_SIZE      1024
 
-#define MAX_REGISTER_CACHE_ENTRIES ((REGISTER_CACHE_SIZE<MIN_CACHE_ENTRIES_SIZE) ? MIN_CACHE_ENTRIES_SIZE : REGISTER_CACHE_SIZE)
+  #define MIN_CACHE_ENTRIES_MASK      (MIN_CACHE_ENTRIES_SIZE-1)
+  #define REGISTER_CACHE_SIZE   ( \
+    CRS_ARRAY_ENTRIES +           \
+    CS_ARRAY_ENTRIES +            \
+    CHANNEL_ARRAY_ENTRIES +       \
+    CHANNEL_SUBCH_ARRAY_ENTRIES + \
+    ODT_CTL_ENTRIES +             \
+    SINGLE_ENTRIES +              \
+    CACHE_PAD_ENTRIES)
 
+    #define MAX_REGISTER_CACHE_ENTRIES ((REGISTER_CACHE_SIZE<MIN_CACHE_ENTRIES_SIZE) ? MIN_CACHE_ENTRIES_SIZE : REGISTER_CACHE_SIZE)
 #endif // MRC_DISABLE_CACHING
+
+
+typedef UINT16 MrcPostCode;
+
 
 ///
 /// Enumerations

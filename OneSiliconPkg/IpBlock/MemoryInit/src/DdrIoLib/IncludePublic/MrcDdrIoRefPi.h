@@ -23,6 +23,7 @@
 #define _MrcDdrIoRefPi_h_
 
 #include "CMrcInterface.h"  // for MrcParameters
+#include "MrcDebugPrint.h"  // for MrcDebugMsgLevel
 
 // Defines
 #define MRC_REFPI_DEFAULT       (0)
@@ -142,7 +143,6 @@ MrcDdrIoInitRefPiFsmCtl (
   IN BOOLEAN              PrintTask
   );
 
-//To-Do: Add all function prototypes not elsewhere declared from MrcDdrIoConfigNvl.c here
 
 /**
   This function kicks off RefPI FSM in all the DDRIO partitions.  Each partition on a line is run in parallel

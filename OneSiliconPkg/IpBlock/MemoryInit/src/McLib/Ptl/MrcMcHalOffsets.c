@@ -22,6 +22,7 @@
 
 #include "CMcAddress.h"
 #include "MrcCommon.h"
+#include "CMrcInternalTypes.h" // for UINT64_STRUCT
 
 
 /**

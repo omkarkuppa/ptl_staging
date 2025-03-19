@@ -3574,7 +3574,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.CLKTCO|0x0                                  
 gStructPcdTokenSpaceGuid.PcdSaSetup.CMDSR|0x0                                                      #           BIT5 - CMD CTL CLK Slew Rate
 gStructPcdTokenSpaceGuid.PcdSaSetup.CMDDSEQ|0x0                                                    #           BIT6 - CMD/CTL DS & E 2D
 gStructPcdTokenSpaceGuid.PcdSaSetup.DIMMODTCA|0x0                                                  #           BIT7 - DIMM CA ODT Training
-gStructPcdTokenSpaceGuid.PcdSaSetup.DDR5ODTTIMING|0x0                                              #           BIT8 - DDR5 ODT Timing Config
+gStructPcdTokenSpaceGuid.PcdSaSetup.DDR5ODTTIMING|0x1                                              #           BIT8 - DDR5 ODT Timing Config
 gStructPcdTokenSpaceGuid.PcdSaSetup.DBI|0x0                                                        #           BIT9 - DBI
 gStructPcdTokenSpaceGuid.PcdSaSetup.DLLDCC|0x1                                                     #           BIT10 - DLL DCC Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DLLBWSEL|0x1                                                   #           BIT11 - DLL BW Select Calibration
@@ -3586,7 +3586,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DCCLP5READDCA|0x1                           
 gStructPcdTokenSpaceGuid.PcdSaSetup.VCCCLKFF|0x0                                                   #           BIT18 - VccCLK FF Offset Correction
 gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCDQS|0x0                                                 #           BIT19 - Functional Duty Cycle Correction for DDR5 DQS
 gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCCLK|0x0                                                 #           BIT20 - Functional Duty Cycle Correction for DDR5 CLK
-gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCWCK|0x0                                                 #           BIT21 - Functional Duty Cycle Correction for LP5 WCK
+gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCWCK|0x1                                                 #           BIT21 - Functional Duty Cycle Correction for LP5 WCK
 gStructPcdTokenSpaceGuid.PcdSaSetup.FUNCDCCDQ|0x0                                                  #           BIT22 - Functional Duty Cycle Correction for Data DQ
 gStructPcdTokenSpaceGuid.PcdSaSetup.DATAPILIN|0x1                                                  #           BIT23 - Data PI Linearity Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DDR5XTALK|0x0                                                  #           BIT24 - Ddr5 Rx Cross-Talk Cancellation

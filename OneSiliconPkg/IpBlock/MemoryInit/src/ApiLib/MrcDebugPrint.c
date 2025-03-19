@@ -22,6 +22,7 @@
 #include "CMrcTypes.h"
 #include "MrcPostCodes.h"
 #include "MrcDebugPrint.h"
+#include "CMrcInterface.h" // for MAX_RESULT_TYPE
 
 ///
 /// These strings are used inside of C-code for non-debug print purposes.

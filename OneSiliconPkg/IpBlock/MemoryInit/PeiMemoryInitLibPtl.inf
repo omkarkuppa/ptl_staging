@@ -275,6 +275,7 @@ src/HalLib/MrcHalInternal.h
 src/HalLib/MrcRegisterCache.c
 src/HalLib/IncludePublic/MrcRegisterCache.h
 src/IncludePrivate/CMcAddress.h
+src/IncludePrivate/CMrcInternalTypes.h
 src/ServicesLib/MrcCommon.h
 src/ServicesLib/MrcCrosser.h
 src/ServicesLib/MrcPmic.h

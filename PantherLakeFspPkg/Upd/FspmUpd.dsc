@@ -672,7 +672,7 @@
   # !BSF NAME:Functional Duty Cycle Correction for LP5 WCK}
   # !BSF TYPE:{Combo} OPTION:{0:Disable, 1:Enable}
   # !BSF HELP:{Enable/Disable Functional Duty Cycle Correction for LP5 WCK}
-  gPlatformFspPkgTokenSpaceGuid.FUNCDCCWCK                  | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.FUNCDCCWCK                  | * | 0x01 | 0x01
 
   # !BSF NAME:{Duty Cycle Correction for LP5 DCA}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -866,7 +866,7 @@
   # !BSF NAME:{DDR5 ODT Timing Config}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable DDR5 ODT TIMING CONFIG}
-  gPlatformFspPkgTokenSpaceGuid.DDR5ODTTIMING               | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.DDR5ODTTIMING               | * | 0x01 | 0x01
 
   # !BSF NAME:{HobBufferSize} TYPE:{Combo}
   # !BSF OPTION:{0:Default, 1: 1 Byte, 2: 1 KB, 3: Max value}

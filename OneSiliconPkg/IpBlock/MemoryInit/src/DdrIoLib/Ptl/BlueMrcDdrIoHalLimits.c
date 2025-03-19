@@ -274,6 +274,11 @@ MrcGetDdrIoGroupLimits (
       Max = DDRDATA_SHARED0_CR_DDRCRCCCPICODES_CLKPICodeCh0_MAX;
       break;
 
+    case CsPerBitCcc:
+      Min = DDRDATA_SHARED0_CR_DDRCRCCCCH0LANE0_PiCode_MIN;
+      Max = DDRDATA_SHARED0_CR_DDRCRCCCCH0LANE0_PiCode_MAX;
+      break;
+
     case TxRonUp:
       Min = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_RcompDrvUp_MIN;
       Max = DDRPHY_DDRCOMP_CR_DDRCRDATACOMP_RcompDrvUp_MAX;

@@ -31,26 +31,22 @@ BlueMrcClearXtensaDramTop (
   IN MrcParameters *const MrcData
   )
 {
-  MrcInput  *Inputs;
   MrcDebug  *Debug;
   UINT32    BytesWritten;
 
-  Inputs  = &MrcData->Inputs;
   Debug   = &MrcData->Outputs.Debug;
 
   // Zero out the top 32 KB of DRAM0 manually: [64..96KB]
-  if (Inputs->IsDdrIoMbA0) {
-    MrcWriteCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_SRAM_ADDR_REG, MRC_UCSS_DRAM_START + (64 * 1024));
-    BytesWritten = 0;
-    while (BytesWritten < (32 * 1024)) {
-      MrcWriteCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_SRAM_DATA_REG, 0);
-      BytesWritten += 4;
-      if ((BytesWritten % 8192) == 0) {
-        MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "."); // Print a dot every 8KB
-      }
+  MrcWriteCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_SRAM_ADDR_REG, MRC_UCSS_DRAM_START + (64 * 1024));
+  BytesWritten = 0;
+  while (BytesWritten < (32 * 1024)) {
+    MrcWriteCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_SRAM_DATA_REG, 0);
+    BytesWritten += 4;
+    if ((BytesWritten % 8192) == 0) {
+      MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "."); // Print a dot every 8KB
     }
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
   }
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "\n");
 }
 
 /**

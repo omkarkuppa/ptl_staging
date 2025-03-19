@@ -23,8 +23,8 @@
 #define _Memory_TEST_H_
 
 #include <Base.h>
-#include <MrcDebugPrint.h>
 #include <Library/DebugLib.h>
+#include "CMrcInterface.h"  // for MrcParameters
 
 ///
 /// Used in memory test routines

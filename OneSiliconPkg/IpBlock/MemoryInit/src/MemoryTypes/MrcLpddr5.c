@@ -1059,12 +1059,6 @@ InitMrwLpddr5 (
         Mr3.Bits.PullDnDrvStr = PdDsEnc;
         Mr3.Bits.WriteLatencySet = 1; // Write Latency Set B
         Mr3.Bits.BankBgOrg = MrcGetBankBgOrg (MrcData, Outputs->HighFrequency);
-        if (Outputs->IsDbiReadEnabled) {
-          Mr3.Bits.DbiRdEn = 1;
-        }
-        if (Outputs->IsDbiWriteEnabled) {
-          Mr3.Bits.DbiWrEn = 1;
-        }
         MrPtr[mrIndexMR3] = Mr3.Data8;
 
         //MR1 - Clock Mode = 0 (Differential)

@@ -21,6 +21,11 @@
 #ifndef MRC_EXT_TYPES_H_
 #define MRC_EXT_TYPES_H_
 
+// workaround to prevent redefinition errors and conflicts in MemoryConfig.h
+#ifndef _MEMORY_CONFIG_H_
+#include "CMrcTypes.h"  // for UINT8
+#endif
+
 /// SA GV points
 typedef enum {
   MrcSaGvPoint0,

@@ -31,20 +31,6 @@
 //
 // Data Types
 //
-#ifndef UINT64_STRUCT_T
-#define UINT64_STRUCT_T
-typedef union {
-  struct {
-    UINT32  Low;
-    UINT32  High;
-  } Data32;
-  UINT64 Data;
-  UINT16 Data16[4];
-  UINT8  Data8[8];
-} UINT64_STRUCT;
-#endif // UINT64_STRUCT_T
-
-
 typedef union {
   struct {
     INT32  Low;

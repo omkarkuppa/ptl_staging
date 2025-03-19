@@ -28,6 +28,7 @@
 #include "MrcCommon.h"
 #include "MrcTurnAround.h"
 #include "MrcDdrIoComp.h"
+#include "CMrcInternalTypes.h" // for UINT64_STRUCT
 
 extern const char *GlobalCompOffsetStr[];
 
@@ -314,7 +315,7 @@ typedef struct {
 
 // Half UI
 #define MRC_0p5UI_IN_PI  (32)
-#define PCTLE_VOUT       (580)
+#define PCTLE_VOUT       (730)
 typedef enum {
   SelLvrVccIog,
   SelLvrVccDdq,
@@ -1365,9 +1366,9 @@ MrcDccPISerializerCalibration (
   @param[in]      MrcData               - Include all MRC global data.
   @param[in]      UpdateMode            - The mode to be used for program.
   @param[in]      GetSetMode            - The GetSet mode to be used for program.
-  @param[in, out] *ForceRxOnDqsOrAmpOn  - Value to be written / Saved for ForceRxOnDqs [NVL] or ForceRxOn [PTL].
-  @param[in, out] *ForceRxOnDqsMux      - Value to be written / Saved for ForceRxOnDqsMux [NVL], not used in PTL.
-  @param[in, out] *ForceRxOnDq          - Value to be written / Saved for ForceRxOnDq [NVL], not used in PTL.
+  @param[in, out] *ForceRxOnDqsOrAmpOn  - Value to be written / Saved for ForceRxOnDqs or ForceRxOn.
+  @param[in, out] *ForceRxOnDqsMux      - Value to be written / Saved for ForceRxOnDqsMux.
+  @param[in, out] *ForceRxOnDq          - Value to be written / Saved for ForceRxOnDq.
 **/
 MRC_IRAM1_FUNCTION
 VOID
@@ -3242,6 +3243,20 @@ void
 MrcSetDefaultRxVrefValueDdr5 (
   IN  MrcParameters *const  MrcData,
   IN  UINT32                *Vref
+  );
+
+/**
+  This function gets the value for TxDqNmosOnlyValue
+
+  @param[in] MrcData - Pointer to global MRC data.
+  @param[in] VccDdq  - VCC DDQ Value.
+
+  @retval TxDqNmosOnly Value
+**/
+UINT32
+MrcGetTxDqNmosOnlyValue (
+  IN MrcParameters *const MrcData,
+  IN UINT32               VccDdq
   );
 
 #endif //MRC_DDR_IO_API_H_

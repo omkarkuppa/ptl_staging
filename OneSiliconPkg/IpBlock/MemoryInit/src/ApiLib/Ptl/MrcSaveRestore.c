@@ -867,6 +867,7 @@ MrcSaveMCValues (
 
       SaveData->IsMr10PdaEnabled |= (ChannelOut->IsMr10PdaEnabled);
       SaveData->IsMr11PdaEnabled |= (ChannelOut->IsMr11PdaEnabled);
+      SaveData->IsMrDcaPdaEnabled |= (ChannelOut->IsMrDcaPdaEnabled);
       SaveData->IsMr48PdaEnabled |= (ChannelOut->IsMr48PdaEnabled);
       SaveData->MrXPdaDfeTap1Enabled |= (ChannelOut->MrXPdaDfeTap1Enabled);
       SaveData->MrXPdaDfeTap2Enabled |= (ChannelOut->MrXPdaDfeTap2Enabled);
@@ -1095,6 +1096,7 @@ MrcRestoreNonTrainingValues (
         ChannelOut->IsMr10PdaEnabled = SaveData->IsMr10PdaEnabled;
         ChannelOut->IsMr11PdaEnabled = SaveData->IsMr11PdaEnabled;
         ChannelOut->IsMr48PdaEnabled = SaveData->IsMr48PdaEnabled;
+        ChannelOut->IsMrDcaPdaEnabled = SaveData->IsMrDcaPdaEnabled;
         ChannelOut->MrXPdaDfeTap1Enabled = SaveData->MrXPdaDfeTap1Enabled;
         ChannelOut->MrXPdaDfeTap2Enabled = SaveData->MrXPdaDfeTap2Enabled;
         ChannelOut->MrXPdaDfeTap3Enabled = SaveData->MrXPdaDfeTap3Enabled;

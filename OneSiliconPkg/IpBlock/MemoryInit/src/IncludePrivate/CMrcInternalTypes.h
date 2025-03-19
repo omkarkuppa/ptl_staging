@@ -1,9 +1,9 @@
 /** @file
-  Include the MRC version
+  Definitions of types used in cMRC code that are not used in exernal APIs.
 
   @copyright
   INTEL CONFIDENTIAL
-  Copyright (C) 2023 Intel Corporation.
+  Copyright (C) 2025 Intel Corporation.
 
   This software and the related documents are Intel copyrighted materials,
   and your use of them is governed by the express license under which they
@@ -16,15 +16,22 @@
   express or implied warranties, other than those that are expressly stated
   in the License.
 
-@par Specification Reference:
 **/
+#ifndef CMRC_INTERNAL_TYPES_H_
+#define CMRC_INTERNAL_TYPES_H_
 
-// The following text is also used for automatic filename creation. Ensure that there are no
-// other characters, including whitespace, before, after, and between the numbers and commas.
-// Ensure that the comment text follows the build number with no other characters between
-// the build number and the //.
-//  Major Minor Rev Build
-//  ----- ----- --- -----
-{
-0,0,64,0//PTL version
-}
+#include "CMrcTypes.h"  // for UINT32 (indirectly)
+
+  #ifndef UINT64_STRUCT_T
+    #define UINT64_STRUCT_T
+    typedef union {
+      struct {
+        UINT32  Low;
+        UINT32  High;
+      } Data32;
+      UINT64 Data;
+      UINT16 Data16[4];
+      UINT8  Data8[8];
+    } UINT64_STRUCT;
+  #endif // UINT64_STRUCT_T
+#endif // CMRC_INTERNAL_TYPES_H_

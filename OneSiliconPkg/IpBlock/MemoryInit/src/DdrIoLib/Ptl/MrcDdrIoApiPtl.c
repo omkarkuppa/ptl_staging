@@ -78,7 +78,7 @@ MrcSetupDdrIoIpInfo (
       Status  = mrcFail;
   }
 
-  if (Inputs->ExtInputs.Ptr->SimicsFlag && IpVersion->Bits.Derivative != ipDerivativeWcl) {
+  if (Inputs->ExtInputs.Ptr->SimicsFlag && IpVersion->Bits.Derivative != ipDerivativePtlx64) {
     StepStr = "A0";
     Inputs->IsDdrIoMbA0 = TRUE;
     IpVersion->Bits.Derivative = ipDerivativePtl;
@@ -107,8 +107,9 @@ MrcSetupDdrIoIpInfo (
     }
   }
 
-  if (IpVersion->Bits.Derivative == ipDerivativeWcl) {
+  if (IpVersion->Bits.Derivative == ipDerivativePtlx64) {
     Inputs->IsDdrphyx64 = TRUE;
+    Inputs->IsDdrIoMbA0 = FALSE;
   }
 
   if (Status == mrcSuccess) {

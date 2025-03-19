@@ -50,7 +50,7 @@ typedef enum {
 
 typedef enum {
   ipDerivativePtl = 1,
-  ipDerivativeWcl = 2
+  ipDerivativePtlx64 = 2
 } MrcIpDerivative;
 
 ///

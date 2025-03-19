@@ -641,6 +641,54 @@ const CHAR8* GsmGtDebugStrings[GsmDebugStringMax] = {
 };
 #endif // MCR_DEBUG_PRINT
 
+static const CccPinBlock Ddr5NilCsPins[MAX_DDR5_SYS_CHANNEL][MAX_CTL_PINS_UY] = {
+    //Channel 0
+    {
+    //{Channel, Lane}
+      { 1, 9 },  //CS0
+      { 1, 7 }   //CS1
+    },
+    //Channel 1
+    {
+      { 3, 9 }, //CS0
+      { 3, 7 }  //CS1
+    },
+    //Channel 2
+    {
+      { 5,  9 }, //CS0
+      { 5,  7 }  //CS1
+    },
+    //Channel 3
+    {
+      { 7, 9 }, //CS0
+      { 7, 7 }  //CS1
+    }
+  };
+
+  static const CccPinBlock Ddr5IlCsPins[MAX_DDR5_SYS_CHANNEL][MAX_CTL_PINS_UY] = {
+    //Channel 0
+    {
+    //{Channel, Lane}
+      { 0, 8 },  //CS0
+      { 0, 6 }   //CS1
+    },
+    //Channel 1
+    {
+      { 2, 8 }, //CS0
+      { 2, 6 }  //CS1
+    },
+    //Channel 2
+    {
+      { 5, 6 }, //CS0
+      { 5, 9 }  //CS1
+    },
+    //Channel 3
+    {
+      { 7, 6 }, //CS0
+      { 7, 8 }  //CS1
+    }
+  };
+
 static const UINT8 DqMirroringTable[MAX_BITS] = {7, 5, 6, 4, 3, 1, 2, 0};
 
 /**
@@ -1333,6 +1381,10 @@ MrcGetSetParamMaxAdjust (
       *LaneMax   = GetPartitionMax (Index, UlxUlt);
       break;
 
+    case CsPerBitCcc:
+      *LaneMax = MAX_CTL_PINS_UY;
+      break;
+
     default:
       //Everything else is considered as part of Data set
       *LaneMax = MAX_BITS;
@@ -1799,6 +1851,7 @@ MrcCheckGroupSupported (
     case CmdGrpPi:
     case CtlGrpPi:
     case WckGrpPi:
+    case CsPerBitCcc:
     case TxRonUp:
     case TxRonDn:
     case GsmIocEnableLpMode4:
@@ -2207,6 +2260,127 @@ MrcCheckComplexOrSideEffect (
     );*/
 
   return RetVal;
+}
+
+/**
+  Converting controller, channel, rank, strobe number from System to IP register architecture for CCC per bit on DDR5
+
+  @param[in]      MrcData     - Pointer to global data structure.
+  @param[in]      Controller  - Memory Controller Number within the processor (0-based).
+  @param[in]      Channel     - DDR Channel Number within the processor socket (0-based).
+  @param[in]      Rank        - Rank number within a channel (0-based).
+  @param[in]      Strobe      - Dqs data group within the rank or the command group (0-based).
+  @param[in]      Lane        - Lane index within the GSM_GT group (0-based).
+  @param[in]      Group       - DDRIO group to access.
+
+  @retval MrcStatus
+**/
+MrcStatus
+MrcCccPerBitTranslateDdr5 (
+  IN      MrcParameters *const  MrcData,
+  IN OUT  UINT32        *const  Controller,
+  IN OUT  UINT32        *const  Channel,
+  IN OUT  UINT32        *const  Rank,
+  IN OUT  UINT32        *const  Strobe,
+  IN OUT  UINT32        *const  Lane,
+  IN      GSM_GT        const   Group
+  )
+{
+  MrcStatus    Status;
+  UINT32       TransController;
+  UINT32       TransChannel;
+  UINT32       TransRank;
+  UINT32       TransStrobe;
+  UINT32       TransLane;
+  UINT32       MaxLane;
+  const CccPinBlock *CccPins;
+  BOOLEAN      IsCccNil;
+
+  IsCccNil = (MrcData->Inputs.ExtInputs.Ptr->CccPinsInterleaved) ? 0 : 1;
+
+  // Initialize the translated variables with the input. This gives us a code optimization
+  // where we don't have to assign in every Group that doesn't use that scope.
+  TransController = MRC_IGNORE_ARG;
+  TransChannel = (*Controller * MAX_DDR5_CHANNEL);
+  TransChannel += *Channel;
+  TransRank = *Rank;
+  TransStrobe = *Strobe;
+  TransLane = *Lane;
+  Status = mrcSuccess;
+
+  switch (Group) {
+    case CsPerBitCcc:
+      MaxLane = MAX_CTL_PINS_UY;
+      break;
+
+    default:
+      MaxLane = 0;
+      Status = mrcFail;
+      MRC_HAL_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_HAL,
+        "MrcCccPerBitTranslateDdr5, Group %s(%d) is not supported on this memory tech\n", GsmGtDebugStrings[Group], Group);
+  }
+  if (TransChannel >= (MAX_CONTROLLER * MAX_DDR5_CHANNEL)) {
+    Status = mrcFail;
+    MRC_HAL_DEBUG_MSG (&MrcData->Outputs.Debug, MSG_LEVEL_HAL,
+      "MrcCccPerBitTranslateDdr5, Channel %d is not supported on this memory tech\n", TransChannel);
+  }
+  if (Status == mrcSuccess) {
+    Status = (TransLane >= MaxLane) ? mrcFail : mrcSuccess;
+  }
+
+  if (Status == mrcSuccess) {
+    CccPins = IsCccNil ? &Ddr5NilCsPins[TransChannel][TransLane] : &Ddr5IlCsPins[TransChannel][TransLane];
+    TransChannel = CccPins->Channel;
+    TransLane = CccPins->Lane;
+  }
+
+  *Controller = TransController;
+  *Channel = TransChannel;
+  *Rank = TransRank;
+  *Strobe = TransStrobe;
+  *Lane = TransLane;
+  return Status;
+}
+
+/**
+  Converting controller, channel, rank, strobe number from System to IP register architecture for CCC per bit
+
+  @param[in]      MrcData     - Pointer to global data structure.
+  @param[in]      Controller  - Memory Controller Number within the processor (0-based).
+  @param[in]      Channel     - DDR Channel Number within the processor socket (0-based).
+  @param[in]      Rank        - Rank number within a channel (0-based).
+  @param[in]      Strobe      - Dqs data group within the rank or the command group (0-based).
+  @param[in]      Lane        - Lane index within the GSM_GT group (0-based).
+  @param[in]      Group       - DDRIO group to access.
+
+  @retval MrcStatus
+**/
+MrcStatus
+MrcCccPerBitTranslate (
+  IN      MrcParameters *const  MrcData,
+  IN OUT  UINT32        *const  Controller,
+  IN OUT  UINT32        *const  Channel,
+  IN OUT  UINT32        *const  Rank,
+  IN OUT  UINT32        *const  Strobe,
+  IN OUT  UINT32        *const  Lane,
+  IN      GSM_GT        const   Group
+  )
+{
+  MrcStatus   Status;
+  MrcDdrType  DdrType;
+
+  DdrType = MrcData->Outputs.DdrType;
+
+  switch (DdrType) {
+    case MRC_DDR_TYPE_DDR5:
+      Status = MrcCccPerBitTranslateDdr5 (MrcData, Controller, Channel, Rank, Strobe, Lane, Group);
+      break;
+    default:
+      Status = mrcFail;
+      break;
+  }
+
+  return Status;
 }
 
 /*
@@ -2624,6 +2798,10 @@ MrcTranslateSystemToIp (
       } else { // LPDDR5
         TransChannel += (*Channel);
       }
+      break;
+
+    case CsPerBitCcc:
+      Status = MrcCccPerBitTranslate (MrcData, &TransController, &TransChannel, &TransRank, &TransStrobe, &TransLane, Group);
       break;
 
     // DDRDATAxCHy_REG

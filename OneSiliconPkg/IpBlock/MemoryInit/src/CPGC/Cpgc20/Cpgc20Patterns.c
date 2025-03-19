@@ -26,6 +26,7 @@
 #include "MrcCpgcApi.h"
 #include "Cpgc20.h"
 #include "Cpgc20Patterns.h"
+#include "CMrcInternalTypes.h"  // for UINT64_STRUCT
 
 /**
   This function sets up the CPGC LFSR configuration per Outputs->McChBitMask.

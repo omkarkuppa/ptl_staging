@@ -28,6 +28,7 @@
 
 #include "CMrcTypes.h"
 #include "CMrcApi.h"
+#include "CMrcInterface.h"
 #include "MrcDebugPrint.h"
 
 #define POST_CODE_NO_OVR  ((1 << ((sizeof (MrcPostCode) * 8) - 1)) + ((1 << ((sizeof (MrcPostCode) * 8) - 1)) - 1))

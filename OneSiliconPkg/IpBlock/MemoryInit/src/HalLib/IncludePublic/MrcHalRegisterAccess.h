@@ -23,6 +23,7 @@
 #define _MrcHalRegisterAccess_h_
 #pragma pack (push, 1)
 
+#include "CMrcInternalTypes.h"  // for UINT64_STRUCT
 #include "MrcDebugPrint.h"
 #include "MrcRegisterCache.h"
 

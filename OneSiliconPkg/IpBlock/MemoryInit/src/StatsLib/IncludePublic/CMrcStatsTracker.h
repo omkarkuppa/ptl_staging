@@ -23,9 +23,10 @@
 
 #include "CMrcTypes.h" // for MrcStatus
 #include "CMrcStatsTrackerConfig.h" // for MRC_ENABLE_STATS
-#include "MrcDebugPrint.h"  // for MRC_DEBUG_PRINT
+#include "CMrcStatsTrackerFramework.h" // for MRC_STATISTIC
+#include "CMrcInterface.h"  // for MrcParameters
 
-#if !MRC_ENABLE_STATS || !MRC_DEBUG_PRINT
+#if !MRC_ENABLE_STATS
 
 // provide stub/null/inline stats functions
 
@@ -161,7 +162,7 @@ MrcStatsContinueTracking (
 {
   return;
 }
-#else	// MRC_ENABLE_STATS && MRC_DEBUG_PRINT
+#else // MRC_ENABLE_STATS
 // Provide normal function declarations
 
 /**
@@ -360,6 +361,6 @@ MrcStatsContinueTracking (
   IN OUT MrcParameters *const MrcData
   );
 
-#endif	// !MRC_ENABLE_STATS || !MRC_DEBUG_PRINT
+#endif  // !MRC_ENABLE_STATS
 
 #endif // CMRC_STATS_TRACKER_H_

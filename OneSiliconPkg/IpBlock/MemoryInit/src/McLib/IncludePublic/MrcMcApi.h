@@ -20,6 +20,7 @@
 #ifndef MRC_MC_API_H_
 #define MRC_MC_API_H_
 
+#include "CMrcInternalTypes.h" // for UINT64_STRUCT
 #include "CMrcTypes.h"  // for UINT32 (indirectly)
 #include "MrcDdrCommon.h"  // for MrcZqType
 #include "MrcDdrIoApi.h"

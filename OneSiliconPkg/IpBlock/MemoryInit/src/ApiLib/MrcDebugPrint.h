@@ -65,13 +65,6 @@ typedef UINT32 MrcDebugMsgLevel;
 #ifndef MrcVaList
 typedef char  *MrcVaList;
 #endif
-
-#ifndef MDEPKG_NDEBUG
-#ifndef MRC_DEBUG_PRINT
-#define MRC_DEBUG_PRINT (1)
-#endif
-#endif // MDEPKG_NDEBUG
-
 #define MRC_PRINTS_ON           TRUE
 #define MRC_PRINTS_OFF          FALSE
 

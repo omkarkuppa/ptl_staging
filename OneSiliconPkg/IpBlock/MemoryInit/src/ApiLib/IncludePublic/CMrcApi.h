@@ -83,7 +83,7 @@
 
 #define SUPPORT_BANK_4         SUPPORT     ///< SUPPORT means that 4 banks is supported by the system.
 #define SUPPORT_BANK_8         SUPPORT     ///< SUPPORT means that 8 banks is supported by the system.
-#define SUPPORT_BANK_16        UNSUPPORT   ///< SUPPORT means that 16 banks is supported by the system.
+#define SUPPORT_BANK_16        SUPPORT     ///< SUPPORT means that 16 banks is supported by the system.
 #define SUPPORT_BANK_32        UNSUPPORT   ///< SUPPORT means that 32 banks is supported by the system.
 #define SUPPORT_BANK_64        UNSUPPORT   ///< SUPPORT means that 64 banks is supported by the system.
 

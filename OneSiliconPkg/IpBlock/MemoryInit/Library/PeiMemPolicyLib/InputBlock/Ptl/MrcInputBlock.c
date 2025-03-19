@@ -126,7 +126,7 @@
 #define MRC_EXT_INPUTS_INIT_VAL_CMDSR                  (0)  // BIT5
 #define MRC_EXT_INPUTS_INIT_VAL_CMDDSEQ                (0)  // BIT6
 #define MRC_EXT_INPUTS_INIT_VAL_DIMMODTCA              (0)  // BIT7
-#define MRC_EXT_INPUTS_INIT_VAL_DDR5ODTTIMING          (0)  // BIT8
+#define MRC_EXT_INPUTS_INIT_VAL_DDR5ODTTIMING          (1)  // BIT8
 #define MRC_EXT_INPUTS_INIT_VAL_DBI                    (0)  // BIT9
 #define MRC_EXT_INPUTS_INIT_VAL_DLLDCC                 (1)  // BIT10
 #define MRC_EXT_INPUTS_INIT_VAL_DLLBWSEL               (1)  // BIT11

@@ -291,6 +291,10 @@ MrcGetDdrIoHash (
       HashPtr->Data = CH0CCC_CR_DDRCRCCCPICODES_CTLPICode_HSH;
       break;
 
+    case CsPerBitCcc:
+      HashPtr->Data = DDRDATA_SHARED0_CR_DDRCRCCCCH0LANE0_PiCode_HSH;
+      break;
+
     case WckGrpPi:
       if (ChMod2 == 0) {
         HashPtr->Data = DDRDATA_SHARED0_CR_DDRCRCCCPICODES_CLKPICodeCh0_HSH;

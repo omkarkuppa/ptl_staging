@@ -1512,6 +1512,9 @@ ValidBank (
 #if (SUPPORT_BANK_8 == SUPPORT)
       case MRC_SPD_LPDDR_SDRAM_BANK_8:
 #endif
+#if (SUPPORT_BANK_16 == SUPPORT)
+      case MRC_SPD_LPDDR_SDRAM_BANK_16:
+#endif
 #if ((SUPPORT_BANK_4 == SUPPORT) || (SUPPORT_BANK_8 == SUPPORT))
         DimmOut->Banks = MRC_BIT2 << BankAddress;
         break;
@@ -1547,7 +1550,15 @@ ValidBank (
         ValidCheckStep = FALSE;
     }
   } else {
-    DimmOut->BankGroups = MRC_BIT0 << BankGroup;
+    switch (BankGroup) {
+      case MRC_SPD_LPDDR5_SDRAM_BANK_GROUPS_1:
+      case MRC_SPD_LPDDR5_SDRAM_BANK_GROUPS_2:
+      case MRC_SPD_LPDDR5_SDRAM_BANK_GROUPS_4:
+        DimmOut->BankGroups = MRC_BIT0 << BankGroup;
+        break;
+      default:
+        ValidCheckStep = FALSE;
+    }
   }
 
   if (ValidCheckStep == FALSE) {
@@ -1558,6 +1569,22 @@ ValidBank (
       ErrorString,
       SpdValString,
       BankGroup
+      );
+    ValidCheck = FALSE;
+  }
+
+  if ((DimmOut->Banks * DimmOut->BankGroups) > (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType ? MAX_BANKS : MAX_LPDDR5_BANKS)) {
+    ValidCheckStep = FALSE;
+  }
+
+  if (ValidCheckStep == FALSE) {
+    MRC_DEBUG_MSG (
+      Debug,
+      MSG_LEVEL_ERROR,
+      "%sSDRAM Total Banks, Banks/BankGroup: %u/%u \n",
+      ErrorString,
+      DimmOut->Banks,
+      DimmOut->BankGroups
       );
     ValidCheck = FALSE;
   }

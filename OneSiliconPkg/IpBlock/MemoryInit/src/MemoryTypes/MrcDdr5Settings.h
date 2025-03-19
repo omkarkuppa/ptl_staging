@@ -85,7 +85,7 @@ SelectCccTableDdr5 (
   @param[in] Profile         - Memory Profile.
   @param[in] Controller      - selected Controller.
   @param[in] Channel         - selected Channel.
-  @param[in] Rank            - selected Rank.
+  @param[in] Dimm            - selected Dimm.
 
   @return Pointer to the relevant table or NULL if the table was not found.
 **/
@@ -95,7 +95,7 @@ SelectDfeTableDdr5 (
   IN const MrcProfile     Profile,
   IN const UINT32         Controller,
   IN const UINT32         Channel,
-  IN const UINT32         Rank
+  IN const UINT32         Dimm
   );
 
 #endif // MRC_DDR5_SETTINGS_H_

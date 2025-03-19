@@ -45,7 +45,7 @@ const INT8 DdrioChDelta[MAX_SYS_CHANNEL] = {0, 0, -1, -1, -2, -2, -1, -1};
 const INT8 DdrioChDeltaCccIL[MAX_SYS_CHANNEL] = {0, 0, 0, 0, -1, -1, -1, -1};
 
 static const UINT8 HwChBitMasks[][MAX_MRC_DDR_TYPE] = {
-    [ipDerivativeWcl] = {
+    [ipDerivativePtlx64] = {
       [MRC_DDR_TYPE_LPDDR5] = 0x0F,
       [MRC_DDR_TYPE_DDR5]   = 0x03,
     },
@@ -1187,7 +1187,7 @@ MrcGetValidHwChBitMask (
   MRC_DEBUG_ASSERT (DdrType == MRC_DDR_TYPE_DDR5 || DdrType == MRC_DDR_TYPE_LPDDR5,
                     &Outputs->Debug,
                     "Invalid DdrType (%d) which is not supported\n", DdrType);
-  MRC_DEBUG_ASSERT (IpDerivative == ipDerivativeWcl || IpDerivative == ipDerivativePtl,
+  MRC_DEBUG_ASSERT (IpDerivative == ipDerivativePtlx64 || IpDerivative == ipDerivativePtl,
                     &Outputs->Debug,
                     "Invalid DdrioIpDerivative (%d) which is not supported\n", IpDerivative);
 
@@ -1351,4 +1351,24 @@ MrcSetDefaultRxVrefValueDdr5 (
   IN  UINT32                *Vref
   )
 {
+}
+/**
+  This function gets the value for TxDqNmosOnlyValue
+
+  @param[in] MrcData - Pointer to global MRC data.
+  @param[in] VccDdq  - VCC DDQ Value.
+
+  @retval TxDqNmosOnly Value
+**/
+UINT32
+MrcGetTxDqNmosOnlyValue (
+  IN MrcParameters *const MrcData,
+  IN  UINT32              VccDdq
+  )
+{
+  if (VccDdq <= VDD_0_50) {
+    return 1;
+  } else {
+    return 0;
+  }
 }

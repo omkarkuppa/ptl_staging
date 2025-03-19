@@ -22,6 +22,7 @@
 #include "CMrcTypes.h"
 #include "MrcPostCodes.h"
 #include "MrcDebugPrint.h"
+#include "CMrcInterface.h" // for MRC_FUNCTION
 
 
 #ifdef MRC_DEBUG_PRINT

@@ -1965,7 +1965,7 @@ Cpgc20SetAddrMaxBank (
               MC0_REQ1_CR_CPGC2_ADDRESS_SIZE_REG, Channel);
   Cpgc2AddrSize.Data = MrcReadCR64 (MrcData, Offset);
   Cpgc2AddrSize.Bits.Region_Size_Max_Bank = MaxBank;
-  MrcWriteCR64(MrcData, Offset, Cpgc2AddrSize.Data);
+  MrcWriteCR64 (MrcData, Offset, Cpgc2AddrSize.Data);
 }
 
 /**

@@ -1084,13 +1084,13 @@ SetVccLvr (
     RptChCrMisc.Data = MrcReadCR (MrcData, Offset);
     RptChCrMisc.Bits.TLTermEn2TLClken = 4;
     RptChCrMisc.Bits.TLClken2TLTermEn = 4;
-    if (!Inputs->IsDdrIoMbA0 || Inputs->IsDdrphyx64) {
+    if (!Inputs->IsDdrIoMbA0) {
       RptChCrMisc.Bits.LVRPwrGoodQualTLTermEn      = 1;
       RptChCrMisc.Bits.LVRPwrGoodQualTLTermEnonLP4 = 1;
     }
     MrcWriteCR (MrcData, Offset, RptChCrMisc.Data);
 
-    if (!Inputs->IsDdrIoMbA0 || Inputs->IsDdrphyx64) {
+    if (!Inputs->IsDdrIoMbA0) {
       Offset = OFFSET_CALC_CH (DDRVCCCLK_SBMEM0_CR_PMMISC_CTRL_REG, DDRVCCCLK_SBMEM1_CR_PMMISC_CTRL_REG, Index);
       VccClkPmMiscCtrl.Data = MrcReadCR (MrcData, Offset);
       VccClkPmMiscCtrl.Bits.Spare = 2;

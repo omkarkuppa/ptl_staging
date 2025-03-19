@@ -40,14 +40,17 @@
 // C99 standard states that if a preprocessor symbol is not defined, then it is replaced by 0 when processing #if
 // constructs.  Some compilers raise this as a warning, and some configurations will raise the warning to an error.
 // Here we explicitly set MRC_ENABLE_STATS to zero if it is not defined.
-#ifndef MRC_ENABLE_STATS
-#define MRC_ENABLE_STATS 0
+
+#include "CMrcInterfaceGlobalTypes.h"  // for MRC_DEBUG_PRINT
+
+#if !defined(MRC_ENABLE_STATS) || !MRC_DEBUG_PRINT
+  #undef  MRC_ENABLE_STATS
+  #define MRC_ENABLE_STATS 0
 #endif
 
 // Do not print "Between Call Table" phase stats by default.
 // Change this to 1 if needed.
 #define MRC_PRINT_BETWEEN_CALL_TABLE_PHASE (0)
-
 
 
 // define stats to be tracked

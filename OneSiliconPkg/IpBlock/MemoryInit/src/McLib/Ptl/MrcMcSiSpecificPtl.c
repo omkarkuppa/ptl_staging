@@ -66,7 +66,7 @@ MrcFullRankBlockOptimization (
   Inputs              = &MrcData->Inputs;
   IpVersion           = &Inputs->DdrIoIpVersion;
 
-  if (IpVersion->Bits.Derivative == ipDerivativeWcl ||
+  if (IpVersion->Bits.Derivative == ipDerivativePtlx64 ||
      (IpVersion->Bits.Derivative == ipDerivativePtl && IpVersion->Bits.Stepping == ipStepB0)) {
     MrcGetSetMcCh (MrcData, Controller, Channel, GsmMccRhDrfmEnable, ReadCached, &GetSetVal);
     RhTrrControlStruct.Bits.DRFM_Enabled = (UINT32) GetSetVal;

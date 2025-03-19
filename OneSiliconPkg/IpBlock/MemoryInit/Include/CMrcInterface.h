@@ -22,7 +22,9 @@
 #ifndef MRC_INTERFACE_H
 #define MRC_INTERFACE_H
 #include "MrcSpdData.h"
-#include "CMrcInterfaceGlobalTypes.h"
+#include "CMrcInterfaceGlobalTypes.h"// for MrcDdrType
+#include "CMrcStatsTrackerConfig.h"  // for MRC_ENABLE_STATS (indirectly)
+#include "CMrcStatsTrackerFramework.h"  // for MrcStatsTracker
 
 #include <Ptl/CMrcExtTypes.h>
 
@@ -765,7 +767,7 @@ typedef RETURN_STATUS(EFIAPI *MRC_SET_LOCK_PRMRR)          (UINT64 PrmrrBase, UI
 
 /// These functions are implemented outside of the MRC Core.
 /// They can be modified by OEM as needed.
-typedef struct {
+typedef struct MRC_FUNCTION {
   MRC_IO_READ_8               MrcIoRead8;
   MRC_IO_READ_16              MrcIoRead16;
   MRC_IO_READ_32              MrcIoRead32;
@@ -867,28 +869,6 @@ typedef enum {
   CccChCsPiGroup1,
   CccChCsPiGroupMax
 } CccChCsPiGroup;
-
-#define MSG_LEVEL_NONE        0
-#define MSG_LEVEL_ERROR       MRC_BIT0
-#define MSG_LEVEL_WARNING     MRC_BIT1
-#define MSG_LEVEL_NOTE        MRC_BIT2
-#define MSG_LEVEL_EVENT       MRC_BIT3
-#define MSG_LEVEL_ALGO        MRC_BIT4
-#define MSG_LEVEL_HAL         MRC_BIT5
-#define MSG_LEVEL_MMIO        MRC_BIT6
-#define MSG_LEVEL_CSV         MRC_BIT7
-#define MSG_LEVEL_TIME        MRC_BIT10
-#define MSG_LEVEL_INTERPRETER MRC_BIT11
-#define MSG_LEVEL_ALL         MRC_INT32_MAX
-
-// 0:Disable, 1:Error Only, 2:Error & Warnings, 3:Load, Error, Warnings & Info, 4:Load, Error, Warnings, Info & Event, 5:Load, Error, Warnings, Info & Verbose.
-#define MSG_LEVEL_COMBO_1 MSG_LEVEL_ERROR
-#define MSG_LEVEL_COMBO_2 (MSG_LEVEL_COMBO_1 | MSG_LEVEL_WARNING)
-#define MSG_LEVEL_COMBO_3 (MSG_LEVEL_COMBO_2 | MSG_LEVEL_NOTE)
-#define MSG_LEVEL_COMBO_4 (MSG_LEVEL_COMBO_3 | MSG_LEVEL_EVENT)
-#define MSG_LEVEL_COMBO_5 (MSG_LEVEL_COMBO_4 | MSG_LEVEL_ALGO | MSG_LEVEL_TIME)
-
-typedef UINT32 MrcDebugMsgLevel;
 
 /// Define the frequencies that may be possible in the memory controller.
 /// Note that not all these values may be supported.
@@ -1338,8 +1318,6 @@ typedef enum {
 #define MC_PTLPUH_IP_SEGMENT 0xA8
 #define DDRIO_PTLPUH_IP_SEGMENT 0x3
 
-#define DDRIO_NVLPUH_IP_SEGMENT 0x3
-#define DDRIO_NVLDT_IP_SEGMENT 0x1
 
 /// Define the Version of IP for DDRIO.
 typedef enum {
@@ -1510,7 +1488,7 @@ typedef enum {
   MrcCceEnSingle,    ///< Enable CCE0 only if MC0 is populated
 } MRC_CCE_CONFIG;
 
-typedef struct {
+typedef struct MrcDebug {
   POINTER_STRUCT MrcData;
   POINTER_STRUCT Stream;
   POINTER_STRUCT Start;
@@ -1523,7 +1501,6 @@ typedef struct {
   UINT8 Dummy8AlignmentBuffer[2];
 } MrcDebug;
 
-typedef UINT16 MrcPostCode;
 typedef UINT16 MrcClockRatio;  ///< This value times the REF_FREQ determines the MrcFrequency.
 
 /// This data structure contains all the "DDR power saving data" values that are considered output by the MRC.
@@ -1991,7 +1968,8 @@ typedef struct {
   UINT8             TmeEnable;
   UINT8             PmaCceConfig;
   UINT8             MaxRanks;                     ///< Maximum number of ranks detected in any channel on the Phy. Per Channel MaxRanks may be different.
-  UINT8             ReservedBytesAlign[4];        ///< Align to 4 bytes for MrcSavedata
+  BOOLEAN           IsMrDcaPdaEnabled;            ///< TRUE if PDA programming of MR43/MR44 is used in DDR5
+  UINT8             ReservedBytesAlign[3];        ///< Align to 4 bytes for MrcSavedata
   //
   // IMPORTANT: data items below are not produced / consumed by Green MRC and hence are not copied from Blue to Green and back
   //
@@ -2103,8 +2081,7 @@ typedef struct {
   BOOLEAN             PowerTrainingCoarseGranularity; ///< Can be set to indicate to power training functions that should run in coarse-granularity sweep mode
   BOOLEAN             LpX;                            ///< Low power die of the LPDDR part is detected.
   BOOLEAN             IsSoDimm;                       ///< Used for Desktop TRUE if SODIMM, FALSE if UDIMM
-  BOOLEAN             IsDbiReadEnabled;               ///< TRUE if Read DBI is enabled (LP5)
-  BOOLEAN             IsDbiWriteEnabled;              ///< TRUE if Write DBI is enabled (LP5)
+  BOOLEAN             IsDbiEccEnabled;                ///< TRUE if DBI is enabled (LP5)
   BOOLEAN             IsDramDvfsqOn;                  ///< TRUE if DVFSQ is currently set on the DRAM. So for DVFSQ enabled flow, true when FSP-OP=1, false when FSP-OP=0.
   BOOLEAN             IsInsideJedecReset;             ///< TRUE if MRC is currently executing the JEDEC reset/init sequence
   BOOLEAN             IsWckSynced;                    ///< TRUE if WCK is currently synced and should not be interrupted, such as during Enhanced RDQS Training mode
@@ -2178,7 +2155,7 @@ typedef struct {
   BOOLEAN             IsLoopbackSetupDone;
   BOOLEAN             WeaklockEn;                  ///< Weaklock enable
   BOOLEAN             RxDqsDelayCompEn;            ///< Rx DQS Delay Comp enable
-  UINT8               ReservedBytesAlign[3];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
+  UINT8               ReservedBytesAlign[4];       ///< Reserved Bytes to ensure MrcOutput size is a multiple of DWORDs
   MrcIpTestEnv        IpModel;
   MrcDdrType          DdrType;                     ///< Current memory type: DDR5, LPDDR5
   MrcSaGvPoint        SaGvFirst;                   ///< First SaGv Point to be trained
@@ -2367,7 +2344,8 @@ typedef struct {
   UINT8   PhClkCheckDcError;      ///< Defines duty cycle tolerance in 1/512 * phclk increments
   BOOLEAN IsOneDpcSplitBgEnabled; ///< TRUE: 1Rank Split Bg On SubChannel Enabled.
   UINT32  DebugValue;             ///< Used for general debug
-  UINT8   ReservedBytesAlign[2];  ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
+  UINT16  Vout;
+  UINT8   ReservedBytesAlign2[4]; ///< Reserved Bytes to ensure MrcInput size is a multiple of DWORDs
 } MrcInput;
 
 typedef struct {
@@ -2376,7 +2354,7 @@ typedef struct {
   MrcSaveData   Data;   ///< The data portion of the MRC saved data.
 } MrcSave;
 
-typedef struct {
+typedef struct MrcParameters {
   UINT8        MrcDataString[4]; ///< Beginning of global data marker, starts with "MRC". Must be the first entry in this structure.
   UINT32       MrcDataSize;      ///< The size of the MRC global data area, in bytes. Must be the second entry in this structure.
   MrcInput     Inputs;           ///< System specific input variables.

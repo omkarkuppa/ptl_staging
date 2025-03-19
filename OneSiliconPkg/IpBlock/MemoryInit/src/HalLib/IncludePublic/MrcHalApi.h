@@ -24,6 +24,7 @@
 
 #include "MrcRegisterCache.h"
 #include "CMrcTypes.h"
+#include "CMrcInternalTypes.h"  // for UINT64_STRUCT
 
 ///
 /// Mode Parameters for MrcGetSet...()

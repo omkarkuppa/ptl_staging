@@ -228,26 +228,19 @@ EncodeReadLatencyLpddr5 (
   if (Outputs->LpByteMode) {
     RlSet += 1;
   }
-  if (Outputs->IsDbiReadEnabled) {  // Check the current status of DBI enable, as this function is used for MR programming
-    RlSet += 1;
-  }
 
   // Use MR2 table from JEDEC spec - "MR2 Register Definition"
   if (!Outputs->IsDvfscEnabled) {
     if (RlSet == 0) {
       ReadLatency = Lp5ReadLatencyDvfscDisabledSet0;
-    } else if (RlSet == 1) {
-      ReadLatency = Lp5ReadLatencyDvfscDisabledSet1;
     } else {
-      ReadLatency = Lp5ReadLatencyDvfscDisabledSet2;
+      ReadLatency = Lp5ReadLatencyDvfscDisabledSet1;
     }
   } else {
     if (RlSet == 0) {
       ReadLatency = Lp5ReadLatencyDvfscEnabledSet0;
-    } else if (RlSet == 1) {
-      ReadLatency = Lp5ReadLatencyDvfscEnabledSet1;
     } else {
-      ReadLatency = Lp5ReadLatencyDvfscEnabledSet2;
+      ReadLatency = Lp5ReadLatencyDvfscEnabledSet1;
     }
   }
 
