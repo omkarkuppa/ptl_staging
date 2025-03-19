@@ -943,9 +943,9 @@ GetPmcSsramMmioBar (
 **/
 VOID
 GetPmcResetRegisters (
-  IN OUT UINT32 GenPmConA,
-  IN OUT UINT32 HprCause0,
-  IN OUT UINT32 GblCause0,
-  IN OUT UINT32 GblCause1
+  IN OUT UINT32 *GenPmConA,
+  IN OUT UINT32 *HprCause0,
+  IN OUT UINT32 *GblCause0,
+  IN OUT UINT32 *GblCause1
   );
 #endif // _PMC_LIB_H_

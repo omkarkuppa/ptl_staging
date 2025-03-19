@@ -108,7 +108,7 @@ PublishResetReasonPhat (
   // Attach reset reason health data record to PHAT
   //
   Status = InstallPhatTable (HealthDataRecord, HealthDataRecordSize);
-  DEBUG ((DEBUG_INFO, "InstallPhatTable for reset reason: %r\n", Status));
+  DEBUG ((DEBUG_INFO, "[%a] InstallPhatTable for reset reason: %r\n", __FUNCTION__, Status));
 
   FreePool (HealthDataRecord);
 
@@ -436,7 +436,7 @@ GetSourceAndReason (
   HprCause0 = 0;
   GblCause0 = 0;
   GblCause1 = 0;
-  GetPmcResetRegisters (GenPmConA, HprCause0, GblCause0, GblCause1);
+  GetPmcResetRegisters (&GenPmConA, &HprCause0, &GblCause0, &GblCause1);
 
   ///
   /// Check for Cold Boot
@@ -545,9 +545,8 @@ ResetReasonMain (
 
   //
   // Get and set reset reason and source
-  // Todo: This function needs revisiting
   //
-  // Status = GetSourceAndReason (ResetReasonHealthRecord);
+  Status = GetSourceAndReason (ResetReasonHealthRecord);
 
   //
   // Publish table to PHAT

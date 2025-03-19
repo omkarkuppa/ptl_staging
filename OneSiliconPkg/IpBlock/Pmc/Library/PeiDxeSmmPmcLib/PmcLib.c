@@ -1522,10 +1522,10 @@ PmcSendPrivacyConsent (
 **/
 VOID
 GetPmcResetRegisters (
-  IN OUT UINT32 GenPmConA,
-  IN OUT UINT32 HprCause0,
-  IN OUT UINT32 GblCause0,
-  IN OUT UINT32 GblCause1
+  IN OUT UINT32 *GenPmConA,
+  IN OUT UINT32 *HprCause0,
+  IN OUT UINT32 *GblCause0,
+  IN OUT UINT32 *GblCause1
   )
 {
   UINTN    PwrmBase;
@@ -1534,14 +1534,14 @@ GetPmcResetRegisters (
   PwrmBase = PmcGetPwrmBase ();
 
   // Get PMC PM CON A Register
-  GenPmConA = IoRead32 ((UINTN) PwrmBase + R_PMC_PWRM_GEN_PMCON_A);
+  (*GenPmConA) = IoRead32 ((UINTN) PwrmBase + R_PMC_PWRM_GEN_PMCON_A);
 
   // Get PMC HPR Cause0 Register
-  HprCause0 = MmioRead32 (PwrmBase + R_PMC_PWRM_HPR_CAUSE0);
+  (*HprCause0) = MmioRead32 (PwrmBase + R_PMC_PWRM_HPR_CAUSE0);
 
   // Get PMC Global Cause0 Register
-  GblCause0 = MmioRead32 (PwrmBase + R_PMC_PWRM_GBLRST_CAUSE0);
+  (*GblCause0) = MmioRead32 (PwrmBase + R_PMC_PWRM_GBLRST_CAUSE0);
 
   // Get PMC Global Cause1 Register
-  GblCause1 = MmioRead32 (PwrmBase + R_PMC_PWRM_GBLRST_CAUSE1);
+  (*GblCause1) = MmioRead32 (PwrmBase + R_PMC_PWRM_GBLRST_CAUSE1);
 }
