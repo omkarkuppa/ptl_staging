@@ -166,6 +166,87 @@ WriteShadowRamImageToEeprom (
 }
 
 /**
+  Check the flash region to be programmed protection status.
+
+  @param[in]  PciIoProtocolPtr  Pointer to the PCI IO protocol instance.
+  @param[in]  Address           Address used to perform the program flash region.
+  @param[in]  Length            Length of buffer to be programmed.
+  @param[in]  IsProtectedPtr    Pointer to indicate the region is under protected.
+
+  @retval  EFI_SUCCESS            Succeed to indicate the flash region protection status.
+  @retval  EFI_INVALID_PARAMETER  Any input parameter is invalid.
+  @retval  EFI_DEVICE_ERROR       Operation could not be complete.
+  @retval  Others                 Failed to indicate the flash region protection status.
+
+**/
+EFI_STATUS
+CheckFlashRegionProtected (
+  IN     EFI_PCI_IO_PROTOCOL  *PciIoProtocolPtr,
+  IN     UINT32               Address,
+  IN     UINTN                Length,
+     OUT BOOLEAN              *IsProtectedPtr
+  )
+{
+  EFI_STATUS  Status;
+  UINTN       SecureModuleStart;
+  UINTN       SecureModuleEnd;
+  UINTN       SecureModuleSize;
+  UINTN       FlashRegionStart;
+  UINTN       FlashRegionEnd;
+
+  SecureModuleStart = 0;
+  SecureModuleEnd   = 0;
+  SecureModuleSize  = 0;
+  FlashRegionStart  = 0;
+  FlashRegionEnd    = 0;
+
+  if ((PciIoProtocolPtr == NULL) || (IsProtectedPtr == NULL)) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  *IsProtectedPtr = TRUE;
+
+  //
+  // Calculate the flash region range.
+  //
+  FlashRegionStart  = Address;
+  FlashRegionEnd    = Address + Length - 1;
+
+  DEBUG ((DEBUG_INFO, "Flash region to be checked @ 0x%08X - 0x%08X.\n", FlashRegionStart, FlashRegionEnd));
+
+  //
+  // Check if in shadow RAM sector.
+  //
+  if (Address < SHADOW_RAM_SECTOR_SIZE * 2) {
+    DEBUG ((DEBUG_INFO, "Address is located in shadow RAM sector.\n"));
+    goto Exit;
+  }
+
+  //
+  // Check if in secure module.
+  //
+  Status = GetModuleInfoFromFlash (PciIoProtocolPtr, MODULE_SECURE, &SecureModuleStart, &SecureModuleSize);
+  if (EFI_ERROR (Status)) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  SecureModuleEnd = SecureModuleStart + SecureModuleSize - 1;
+
+  DEBUG ((DEBUG_INFO, "Protected secure module @ 0x%08X - 0x%08X.\n", SecureModuleStart, SecureModuleEnd));
+
+  if ((FlashRegionStart >= SecureModuleStart) && (FlashRegionEnd <= SecureModuleEnd)) {
+    DEBUG ((DEBUG_INFO, "Region is located in protected secure module.\n"));
+    goto Exit;
+  }
+
+  *IsProtectedPtr = FALSE;
+
+Exit:
+
+  return EFI_SUCCESS;
+}
+
+/**
   Program the flash region with assigned buffer into specific address.
 
   @param[in]  PciIoProtocolPtr  Pointer to the PCI IO protocol instance.
@@ -413,7 +494,7 @@ FoxvilleUpdateInBlankMode (
 }
 
 /**
-  Update the NVM image into flash in unprotected mode.
+  Update the NVM image into flash in non blank mode.
 
   @param[in]  HwPtr      Pointer to the HW instance.
   @param[in]  ImagePtr   Pointer to the image.
@@ -422,13 +503,14 @@ FoxvilleUpdateInBlankMode (
   @retval  EFI_SUCCESS            Succeed to update the NVM image into flash.
   @retval  EFI_INVALID_PARAMETER  Any input parameter is invalid.
   @retval  EFI_VOLUME_CORRUPTED   Input buffer is corrupted.
+  @retval  EFI_ACCESS_DENIED      Region to be programmed is under protected.
   @retval  EFI_DEVICE_ERROR       Operation could not be complete.
   @retval  Others                 Failed to update the NVM image into flash.
 
 **/
 EFI_STATUS
 EFIAPI
-FoxvilleUpdateInUnprotectedMode (
+FoxvilleUpdateInNonBlankMode (
   IN FOXVILLE_HW_INSTANCE  *HwPtr,
   IN VOID                  *ImagePtr,
   IN UINTN                 ImageSize
@@ -436,12 +518,14 @@ FoxvilleUpdateInUnprotectedMode (
 {
   EFI_STATUS  Status;
   BOOLEAN     IsValid;
+  BOOLEAN     IsProtected;
   VOID        *ModuleInBufferPtr;
   UINTN       ModuleInBufferSize;
   UINTN       FpaModuleAddress;
   UINTN       FpaModuleSize;
 
   IsValid            = FALSE;
+  IsProtected        = TRUE;
   ModuleInBufferPtr  = NULL;
   ModuleInBufferSize = 0;
   FpaModuleAddress   = 0;
@@ -480,6 +564,19 @@ FoxvilleUpdateInUnprotectedMode (
   Status = CheckPreviousFwUpdateStatus (HwPtr->PciIo);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
+  }
+
+  //
+  // Check the flash region is not protected.
+  //
+  Status = CheckFlashRegionProtected (HwPtr->PciIo, (FpaModuleAddress & MAX_UINT32), ModuleInBufferSize, &IsProtected);
+  if (EFI_ERROR (Status)) {
+    return EFI_DEVICE_ERROR;
+  }
+
+  if (IsProtected) {
+    DEBUG ((DEBUG_ERROR, "Not allowed to program the FW into protected flash region.\n"));
+    return EFI_ACCESS_DENIED;
   }
 
   //

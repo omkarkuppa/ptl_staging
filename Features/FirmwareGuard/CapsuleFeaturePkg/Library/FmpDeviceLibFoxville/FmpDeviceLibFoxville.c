@@ -981,36 +981,41 @@ FmpDeviceSetImageWithStatus (
 
   CopyMem (ImageCopy, Image, ImageSize);
 
-  if (mFoxvilleDeviceInfoPtr->FlashMode == FLASH_MODE_BLANK) {
-    Status = FoxvilleUpdateInBlankMode (mPciIoProtocolPtr, ImageCopy, ImageSize);
-    if (EFI_ERROR (Status)) {
-      Status = EFI_ABORTED;
-      goto Exit;
-    }
-  } else if (mFoxvilleDeviceInfoPtr->FlashMode == FLASH_MODE_PROTECTED) {
-    //
-    // It could implement the flow to write the non-protected region in the future.
-    //
-    DEBUG ((DEBUG_ERROR, "Device is in protected mode, abort to perform FW update.\n"));
-    Status = EFI_UNSUPPORTED;
-    goto Exit;
-  } else {
-    Status = FoxvilleUpdateInUnprotectedMode (mFoxvilleHwInstPtr, ImageCopy, ImageSize);
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Flashing NVM FAILED\n"));
-      Status = EFI_ABORTED;
-      goto Exit;
-    }
+  switch (mFoxvilleDeviceInfoPtr->FlashMode) {
+    case FLASH_MODE_BLANK:
+      Status = FoxvilleUpdateInBlankMode (mPciIoProtocolPtr, (VOID *)ImageCopy, ImageSize);
+      if (EFI_ERROR (Status)) {
+        Status = EFI_ABORTED;
+        goto Exit;
+      }
 
-    //
-    // Reload the GPHY FW to complete the update.
-    //
-    Status = ReloadGphyFw (mPciIoProtocolPtr);
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Failed to reload the GPHY FW.\n"));
-      Status = EFI_DEVICE_ERROR;
+      break;
+
+    case FLASH_MODE_PROTECTED:
+    case FLASH_MODE_UNPROTECTED:
+      Status = FoxvilleUpdateInNonBlankMode (mFoxvilleHwInstPtr, (VOID *)ImageCopy, ImageSize);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "Flashing NVM FAILED\n"));
+        Status = EFI_ABORTED;
+        goto Exit;
+      }
+
+      //
+      // Reload the GPHY FW to complete the update.
+      //
+      Status = ReloadGphyFw (mPciIoProtocolPtr);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "Failed to reload the GPHY FW.\n"));
+        Status = EFI_DEVICE_ERROR;
+        goto Exit;
+      }
+
+      break;
+
+    default:
+      Status = EFI_UNSUPPORTED;
+      DEBUG ((DEBUG_ERROR, "Unsupported flash mode - [%02X].", mFoxvilleDeviceInfoPtr->FlashMode));
       goto Exit;
-    }
   }
 
   Progress (90);
