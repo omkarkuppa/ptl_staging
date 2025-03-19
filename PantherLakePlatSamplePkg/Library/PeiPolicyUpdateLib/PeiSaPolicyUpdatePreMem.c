@@ -737,9 +737,9 @@ UpdatePeiSaPolicyPreMem (
     if (SaSetup.SolFeatureEnabled != VGA_DISPLAY_DISABLED) {
       if ((BootMode == BOOT_WITH_FULL_CONFIGURATION) || (BootMode == BOOT_WITH_DEFAULT_SETTINGS)) {
         if (SaSetup.SolFeatureEnabled == 1) {
-          VgaInitControl = (VGA_MODE3_SUPPORT | VGA_DISPLAY_ENABLED);
+          VgaInitControl = (VGA_TEXT_MODE3_SUPPORT | VGA_DISPLAY_ENABLED);
         } else if (SaSetup.SolFeatureEnabled == 2) {
-          VgaInitControl = (VGA_MODE12_SUPPORT | VGA_DISPLAY_ENABLED);
+          VgaInitControl = (VGA_GRAPHICS_MODE12_SUPPORT | VGA_DISPLAY_ENABLED);
         } else {
           VgaInitControl = VGA_DISPLAY_DISABLED;
         }
@@ -756,14 +756,14 @@ UpdatePeiSaPolicyPreMem (
       PeiGetSectionFromAnyFv (PcdGetPtr (PcdIntelGraphicsPreMemVbtFileGuid), EFI_SECTION_RAW, 0, &Buffer, &Size);
       Status = CheckLidStatus (&LidStatusOpen);
 #if FixedPcdGet8(PcdFspModeSelection) == 1
-      ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaMessage         = (UINT64)VgaMessage;
-      ((FSPM_UPD *) FspmUpd)->FspmConfig.VbtPtr             = (UINT64)Buffer;
-      ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaMode12ImagePtr  = (UINT64)VgaPlanarImage200x58;
-      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoPixelHeight    = VGA_LOGO_HEIGHT;
-      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoPixelWidth     = VGA_LOGO_WIDTH;
-      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoXPosition      = (VGA_MODE12_WIDTH - VGA_LOGO_WIDTH) / 2;
-      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoYPosition      = (VGA_MODE12_HEIGHT - VGA_LOGO_HEIGHT) / 2;
-      ((FSPM_UPD *) FspmUpd)->FspmConfig.VbtSize            = (UINT32)Size;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaMessage                 = (UINT64)VgaMessage;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.VbtPtr                     = (UINT64)Buffer;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.VgaGraphicsMode12ImagePtr  = (UINT64)VgaPlanarImage200x58;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoPixelHeight            = VGA_LOGO_HEIGHT;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoPixelWidth             = VGA_LOGO_WIDTH;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoXPosition              = (VGA_GRAPHICS_MODE12_WIDTH - VGA_LOGO_WIDTH) / 2;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.LogoYPosition              = (VGA_GRAPHICS_MODE12_HEIGHT - VGA_LOGO_HEIGHT) / 2;
+      ((FSPM_UPD *) FspmUpd)->FspmConfig.VbtSize                    = (UINT32)Size;
       if (Status == EFI_SUCCESS) {
         ((FSPM_UPD *) FspmUpd)->FspmConfig.LidStatus = LidStatusOpen;
         DEBUG ((DEBUG_INFO, "LidStatus = 0x%x\n", LidStatusOpen));
@@ -774,11 +774,11 @@ UpdatePeiSaPolicyPreMem (
       IGpuPreMemConfig->VgaMessage = (VOID *)VgaMessage;
       IGpuPreMemConfig->VbtPtr = Buffer;
       DEBUG ((DEBUG_INFO, "Vbt Pointer from PeiGetSectionFromAnyFv is 0x%x\n", IGpuPreMemConfig->VbtPtr));
-      IGpuPreMemConfig->Mode12Info.VgaMode12ImagePtr  = (UINT8 *)VgaPlanarImage200x58;
-      IGpuPreMemConfig->Mode12Info.LogoPixelHeight    = VGA_LOGO_HEIGHT;
-      IGpuPreMemConfig->Mode12Info.LogoPixelWidth     = VGA_LOGO_WIDTH;
-      IGpuPreMemConfig->Mode12Info.LogoXPosition      = (VGA_MODE12_WIDTH- IGpuPreMemConfig->Mode12Info.LogoPixelWidth) / 2;
-      IGpuPreMemConfig->Mode12Info.LogoYPosition      = (VGA_MODE12_HEIGHT - IGpuPreMemConfig->Mode12Info.LogoPixelHeight) / 2;
+      IGpuPreMemConfig->GraphicsMode12Info.ImagePtr           = (UINT8 *)VgaPlanarImage200x58;
+      IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight    = VGA_LOGO_HEIGHT;
+      IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth     = VGA_LOGO_WIDTH;
+      IGpuPreMemConfig->GraphicsMode12Info.LogoXPosition      = (VGA_GRAPHICS_MODE12_WIDTH - IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth) / 2;
+      IGpuPreMemConfig->GraphicsMode12Info.LogoYPosition      = (VGA_GRAPHICS_MODE12_HEIGHT - IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight) / 2;
       IGpuPreMemConfig->VbtSize = (UINT32)Size;
       if (Status == EFI_SUCCESS) {
         IGpuPreMemConfig->LidStatus = LidStatusOpen;

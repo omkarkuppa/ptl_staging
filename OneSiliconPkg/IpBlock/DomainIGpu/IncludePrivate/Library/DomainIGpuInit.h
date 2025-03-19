@@ -37,8 +37,7 @@ typedef enum {
   // IpIGpuXe*
   IGpuXe   = 1,
   IGpuXe2  = 2,
-  IGpuXe3  = 3,
-  IGpuXe3p = 4,
+  IGpuXe3  = 3
 } IGPU_XE_VERSION;
 
 /**
@@ -128,6 +127,16 @@ IGpuPmInit (
 **/
 VOID
 IGpuDisplayInitPreMem (
+  IN  IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig
+  );
+
+/**
+  IGpuVgaInit: Initialize the SOL in PreMem.
+
+  @param[in] IGpuPreMemConfig        - IGPU_PEI_PREMEM_CONFIG to access the IGpuConfig related information
+**/
+VOID
+IGpuVgaInit (
   IN  IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig
   );
 

@@ -571,45 +571,45 @@ FspUpdatePeiSaPolicyPreMem (
   // Initialize the Graphics configuration
   //
   if (IGpuPreMemConfig != NULL) {
-    IGpuPreMemConfig->IgdDvmt50PreAlloc = FspmUpd->FspmConfig.IgdDvmt50PreAlloc;
-    IGpuPreMemConfig->InternalGraphics  = FspmUpd->FspmConfig.InternalGraphics;
-    IGpuPreMemConfig->PrimaryDisplay    = FspmUpd->FspmConfig.PrimaryDisplay;
-    IGpuPreMemConfig->GttMmAdr          = FspmUpd->FspmConfig.GttMmAdr;
-    IGpuPreMemConfig->LMemBar           = FspmUpd->FspmConfig.LMemBar;
-    IGpuPreMemConfig->DeltaT12PowerCycleDelay = FspmUpd->FspmConfig.DeltaT12PowerCycleDelay;
-    IGpuPreMemConfig->PanelPowerEnable = FspmUpd->FspmConfig.PanelPowerEnable;
-    IGpuPreMemConfig->OemT12DelayOverride = FspmUpd->FspmConfig.OemT12DelayOverride;
-    IGpuPreMemConfig->MemoryBandwidthCompression = FspmUpd->FspmConfig.MemoryBandwidthCompression;
-    IGpuPreMemConfig->VbtPtr = (VOID *) (UINTN) FspmUpd->FspmConfig.VbtPtr;
-    IGpuPreMemConfig->VgaInitControl = FspmUpd->FspmConfig.VgaInitControl;
-    IGpuPreMemConfig->VgaMessage = (VOID *) (UINTN) FspmUpd->FspmConfig.VgaMessage;
-    IGpuPreMemConfig->Mode12Info.VgaMode12ImagePtr  = (UINT8 *) (UINTN) FspmUpd->FspmConfig.VgaMode12ImagePtr;
-    IGpuPreMemConfig->Mode12Info.LogoPixelHeight    = FspmUpd->FspmConfig.LogoPixelHeight;
-    IGpuPreMemConfig->Mode12Info.LogoPixelWidth     = FspmUpd->FspmConfig.LogoPixelWidth;
-    IGpuPreMemConfig->Mode12Info.LogoXPosition      = FspmUpd->FspmConfig.LogoXPosition;
-    IGpuPreMemConfig->Mode12Info.LogoYPosition      = FspmUpd->FspmConfig.LogoYPosition;
-    IGpuPreMemConfig->VbtSize                       = FspmUpd->FspmConfig.VbtSize;
-    IGpuPreMemConfig->LidStatus                     = FspmUpd->FspmConfig.LidStatus;
+    IGpuPreMemConfig->IgdDvmt50PreAlloc                  = FspmUpd->FspmConfig.IgdDvmt50PreAlloc;
+    IGpuPreMemConfig->InternalGraphics                   = FspmUpd->FspmConfig.InternalGraphics;
+    IGpuPreMemConfig->PrimaryDisplay                     = FspmUpd->FspmConfig.PrimaryDisplay;
+    IGpuPreMemConfig->GttMmAdr                           = FspmUpd->FspmConfig.GttMmAdr;
+    IGpuPreMemConfig->LMemBar                            = FspmUpd->FspmConfig.LMemBar;
+    IGpuPreMemConfig->DeltaT12PowerCycleDelay            = FspmUpd->FspmConfig.DeltaT12PowerCycleDelay;
+    IGpuPreMemConfig->PanelPowerEnable                   = FspmUpd->FspmConfig.PanelPowerEnable;
+    IGpuPreMemConfig->OemT12DelayOverride                = FspmUpd->FspmConfig.OemT12DelayOverride;
+    IGpuPreMemConfig->MemoryBandwidthCompression         = FspmUpd->FspmConfig.MemoryBandwidthCompression;
+    IGpuPreMemConfig->VbtPtr                             = (VOID *)(UINTN)FspmUpd->FspmConfig.VbtPtr;
+    IGpuPreMemConfig->VgaInitControl                     = FspmUpd->FspmConfig.VgaInitControl;
+    IGpuPreMemConfig->VgaMessage                         = (VOID *)(UINTN)FspmUpd->FspmConfig.VgaMessage;
+    IGpuPreMemConfig->GraphicsMode12Info.ImagePtr        = (UINT8 *)(UINTN)FspmUpd->FspmConfig.VgaGraphicsMode12ImagePtr;
+    IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight = FspmUpd->FspmConfig.LogoPixelHeight;
+    IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth  = FspmUpd->FspmConfig.LogoPixelWidth;
+    IGpuPreMemConfig->GraphicsMode12Info.LogoXPosition   = FspmUpd->FspmConfig.LogoXPosition;
+    IGpuPreMemConfig->GraphicsMode12Info.LogoYPosition   = FspmUpd->FspmConfig.LogoYPosition;
+    IGpuPreMemConfig->VbtSize                            = FspmUpd->FspmConfig.VbtSize;
+    IGpuPreMemConfig->LidStatus                          = FspmUpd->FspmConfig.LidStatus;
 
     //
     // Display DDI Initialization
     //
     IGpuPreMemConfig->DdiConfiguration.DdiPortAConfig = FspmUpd->FspmConfig.DdiPortAConfig;
     IGpuPreMemConfig->DdiConfiguration.DdiPortBConfig = FspmUpd->FspmConfig.DdiPortBConfig;
-    IGpuPreMemConfig->DdiConfiguration.DdiPortAHpd = FspmUpd->FspmConfig.DdiPortAHpd;
-    IGpuPreMemConfig->DdiConfiguration.DdiPortBHpd = FspmUpd->FspmConfig.DdiPortBHpd;
-    IGpuPreMemConfig->DdiConfiguration.DdiPortCHpd = FspmUpd->FspmConfig.DdiPortCHpd;
-    IGpuPreMemConfig->DdiConfiguration.DdiPort1Hpd = FspmUpd->FspmConfig.DdiPort1Hpd;
-    IGpuPreMemConfig->DdiConfiguration.DdiPort2Hpd = FspmUpd->FspmConfig.DdiPort2Hpd;
-    IGpuPreMemConfig->DdiConfiguration.DdiPort3Hpd = FspmUpd->FspmConfig.DdiPort3Hpd;
-    IGpuPreMemConfig->DdiConfiguration.DdiPort4Hpd = FspmUpd->FspmConfig.DdiPort4Hpd;
-    IGpuPreMemConfig->DdiConfiguration.DdiPortADdc = FspmUpd->FspmConfig.DdiPortADdc;
-    IGpuPreMemConfig->DdiConfiguration.DdiPortBDdc = FspmUpd->FspmConfig.DdiPortBDdc;
-    IGpuPreMemConfig->DdiConfiguration.DdiPortCDdc = FspmUpd->FspmConfig.DdiPortCDdc;
-    IGpuPreMemConfig->DdiConfiguration.DdiPort1Ddc = FspmUpd->FspmConfig.DdiPort1Ddc;
-    IGpuPreMemConfig->DdiConfiguration.DdiPort2Ddc = FspmUpd->FspmConfig.DdiPort2Ddc;
-    IGpuPreMemConfig->DdiConfiguration.DdiPort3Ddc = FspmUpd->FspmConfig.DdiPort3Ddc;
-    IGpuPreMemConfig->DdiConfiguration.DdiPort4Ddc = FspmUpd->FspmConfig.DdiPort4Ddc;
+    IGpuPreMemConfig->DdiConfiguration.DdiPortAHpd    = FspmUpd->FspmConfig.DdiPortAHpd;
+    IGpuPreMemConfig->DdiConfiguration.DdiPortBHpd    = FspmUpd->FspmConfig.DdiPortBHpd;
+    IGpuPreMemConfig->DdiConfiguration.DdiPortCHpd    = FspmUpd->FspmConfig.DdiPortCHpd;
+    IGpuPreMemConfig->DdiConfiguration.DdiPort1Hpd    = FspmUpd->FspmConfig.DdiPort1Hpd;
+    IGpuPreMemConfig->DdiConfiguration.DdiPort2Hpd    = FspmUpd->FspmConfig.DdiPort2Hpd;
+    IGpuPreMemConfig->DdiConfiguration.DdiPort3Hpd    = FspmUpd->FspmConfig.DdiPort3Hpd;
+    IGpuPreMemConfig->DdiConfiguration.DdiPort4Hpd    = FspmUpd->FspmConfig.DdiPort4Hpd;
+    IGpuPreMemConfig->DdiConfiguration.DdiPortADdc    = FspmUpd->FspmConfig.DdiPortADdc;
+    IGpuPreMemConfig->DdiConfiguration.DdiPortBDdc    = FspmUpd->FspmConfig.DdiPortBDdc;
+    IGpuPreMemConfig->DdiConfiguration.DdiPortCDdc    = FspmUpd->FspmConfig.DdiPortCDdc;
+    IGpuPreMemConfig->DdiConfiguration.DdiPort1Ddc    = FspmUpd->FspmConfig.DdiPort1Ddc;
+    IGpuPreMemConfig->DdiConfiguration.DdiPort2Ddc    = FspmUpd->FspmConfig.DdiPort2Ddc;
+    IGpuPreMemConfig->DdiConfiguration.DdiPort3Ddc    = FspmUpd->FspmConfig.DdiPort3Ddc;
+    IGpuPreMemConfig->DdiConfiguration.DdiPort4Ddc    = FspmUpd->FspmConfig.DdiPort4Ddc;
   }
 #if (FixedPcdGetBool(PcdHgEnable) == 1)
   if (HgGpioData != NULL) {

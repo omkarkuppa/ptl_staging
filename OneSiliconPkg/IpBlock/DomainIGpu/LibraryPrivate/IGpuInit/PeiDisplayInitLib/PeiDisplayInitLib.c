@@ -227,6 +227,115 @@ ProgramDisplayNativeGpioInit (
 }
 
 /**
+  IGpuVgaInit: Initialize the SOL in PreMem.
+
+  @param[in] IGpuPreMemConfig        - IGPU_PEI_PREMEM_CONFIG to access the IGpuConfig related information
+**/
+VOID
+IGpuVgaInit (
+  IN  IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig
+  )
+{
+  EFI_STATUS               Status;
+  IP_IGPU_INST             *IGpuInst;
+  EFI_HOB_GUID_TYPE        *GuidHob;
+  CHAR8                    *String;
+  UINT64                   StartTime;
+  IGPU_DATA_HOB            *IGpuDataHob;
+  GOP_POLICY_PTR           GopPolicy;
+  EFI_PREMEM_GRAPHICS_PPI  *GraphicsPreMemPpi;
+
+  if (IGpuPreMemConfig == NULL) {
+    return;
+  }
+
+  GuidHob = GetFirstGuidHob (&gIGpuInstHobGuid);
+  if (GuidHob != NULL) {
+    IGpuInst = (IP_IGPU_INST *)GET_GUID_HOB_DATA (GuidHob);
+  } else {
+    ASSERT (FALSE);
+    return;
+  }
+
+  if (IGpuInst->Signature != IP_IGPU_SIGNATURE) {
+    CpuDeadLoop ();
+  }
+
+  //
+  // VGA Initialization
+  //
+  if (IpIGpuSupported (IGpuInst) == TRUE) {
+    if (IGpuPreMemConfig->VgaInitControl != VGA_DISPLAY_DISABLED) {
+      Status = PeiServicesLocatePpi (&gIntelPeiPreMemGraphicsPpiGuid, 0, NULL, (VOID **)&GraphicsPreMemPpi);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "Failed to locate Ppi %g\n", &gIntelPeiPreMemGraphicsPpiGuid));
+        return;
+      }
+
+      //
+      // Enable IO Bar on 0:2:0
+      //
+      IpIGpuEnableIoCmdReg (IGpuInst);
+
+      //
+      // Log the uGOP Timings
+      //
+      StartTime = GetFspCurrentTime ();
+
+      ZeroMem (&GopPolicy, sizeof (GOP_POLICY_PTR));
+      GopPolicy.Version         = 0x1;
+      GopPolicy.Size            = (UINT8)sizeof (GOP_POLICY_PTR);
+      GopPolicy.VbtPtr          = IGpuPreMemConfig->VbtPtr;
+      GopPolicy.VbtSize         = IGpuPreMemConfig->VbtSize;
+      GopPolicy.Flags.LidStatus = IGpuPreMemConfig->LidStatus;
+      GopPolicy.Flags.BootPhase = GopPreMemPhase;
+      if (IS_VGA_TEXT_MODE3_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
+        GopPolicy.GfxMode = VGA_TEXT;
+      } else if (IS_VGA_GRAPHICS_MODE12_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
+        GopPolicy.GfxMode = VGA_GRAPHICS;
+      }
+
+      DEBUG ((DEBUG_INFO, "Version = 0x%x\n", GopPolicy.Version));
+      DEBUG ((DEBUG_INFO, "Size = 0x%x\n", GopPolicy.Size));
+      DEBUG ((DEBUG_INFO, "VbtPtr = 0x%x\n", GopPolicy.VbtPtr));
+      DEBUG ((DEBUG_INFO, "VbtSize = 0x%x\n", GopPolicy.VbtSize));
+      DEBUG ((DEBUG_INFO, "LidStatus = 0x%x\n", GopPolicy.Flags.LidStatus));
+      DEBUG ((DEBUG_INFO, "Premem GOP BootPhase = 0x%x\n", GopPolicy.Flags.BootPhase));
+      DEBUG ((DEBUG_INFO, "GopMode = 0x%x\n", GopPolicy.GfxMode));
+
+      Status = GraphicsPreMemPpi->GraphicsPreMemPpiInit ((VOID *)&GopPolicy);
+      if (EFI_ERROR (Status)) {
+        DEBUG ((DEBUG_ERROR, "GraphicsPreMemPpiInit Failed\n"));
+        IpIGpuDisableIoCmdReg (IGpuInst);
+        return;
+      }
+
+      IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
+      if (IGpuDataHob != NULL) {
+        //
+        // Update IGpuDataHob when the PreMem GOP Init is successful
+        //
+        IGpuDataHob->VgaDisplayConfig = IGpuPreMemConfig->VgaInitControl;
+      }
+
+      String = IGpuPreMemConfig->VgaMessage;
+      if (IS_VGA_TEXT_MODE3_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
+        VgaTextMode3WriteString (String, VGA_TEXT_CENTER);
+      } else if (IS_VGA_GRAPHICS_MODE12_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
+        if ((IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth != 0) && (IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight != 0) && (IGpuPreMemConfig->GraphicsMode12Info.ImagePtr != NULL)) {
+          VgaGraphicsMode12RenderImage (IGpuPreMemConfig->GraphicsMode12Info.LogoXPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoYPosition, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelWidth, IGpuPreMemConfig->GraphicsMode12Info.LogoPixelHeight, (VOID *)IGpuPreMemConfig->GraphicsMode12Info.ImagePtr);
+        }
+      }
+
+      //
+      // Log uGOP timing in FSP
+      //
+      LogFspPerformanceData (FspuGopPerf, StartTime);
+    }
+  }
+}
+
+/**
   IGpuDisplayInitPreMem: Initialize the Display in PreMem phase
 
   @param[in] IGpuPreMemConfig        - IGPU_PEI_PREMEM_CONFIG to access the IGpuConfig related information
@@ -237,15 +346,10 @@ IGpuDisplayInitPreMem (
   IN  IGPU_PEI_PREMEM_CONFIG  *IGpuPreMemConfig
   )
 {
-  IP_IGPU_INST             *IGpuInst;
-  EFI_PREMEM_GRAPHICS_PPI  *GraphicsPreMemPpi;
-  EFI_STATUS               Status;
-  EFI_BOOT_MODE            BootMode;
-  EFI_HOB_GUID_TYPE        *GuidHob;
-  CHAR8                    *String;
-  UINT64                   StartTime;
-  IGPU_DATA_HOB            *IGpuDataHob;
-  GOP_POLICY_PTR           GopPolicy;
+  IP_IGPU_INST       *IGpuInst;
+  EFI_STATUS         Status;
+  EFI_BOOT_MODE      BootMode;
+  EFI_HOB_GUID_TYPE  *GuidHob;
 
   DEBUG ((DEBUG_INFO, "%a() Start\n", __FUNCTION__));
 
@@ -281,71 +385,9 @@ IGpuDisplayInitPreMem (
   //
   if (IpIGpuSupported (IGpuInst) == TRUE) {
     if (IGpuPreMemConfig->VgaInitControl != VGA_DISPLAY_DISABLED) {
-      Status = PeiServicesLocatePpi (&gIntelPeiPreMemGraphicsPpiGuid, 0, NULL, (VOID **)&GraphicsPreMemPpi);
-      if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "Failed to locate Ppi %g\n", &gIntelPeiPreMemGraphicsPpiGuid));
-        return;
+      if (IS_VGA_INIT_ON_DISPLAY_INIT (IGpuPreMemConfig->VgaInitControl)) {
+        IGpuVgaInit (IGpuPreMemConfig);
       }
-
-      //
-      // Enable IO Bar on 0:2:0
-      //
-      IpIGpuEnableIoCmdReg (IGpuInst);
-
-      //
-      // Log the uGOP Timings
-      //
-      StartTime = GetFspCurrentTime ();
-
-      ZeroMem (&GopPolicy, sizeof (GOP_POLICY_PTR));
-      GopPolicy.Version         = 0x1;
-      GopPolicy.Size            = (UINT8)sizeof (GOP_POLICY_PTR);
-      GopPolicy.VbtPtr          = IGpuPreMemConfig->VbtPtr;
-      GopPolicy.VbtSize         = IGpuPreMemConfig->VbtSize;
-      GopPolicy.Flags.LidStatus = IGpuPreMemConfig->LidStatus;
-      GopPolicy.Flags.BootPhase = GopPreMemPhase;
-      if (IS_VGA_MODE3_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
-        GopPolicy.GfxMode = VGA_TEXT;
-      } else if (IS_VGA_MODE12_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
-        GopPolicy.GfxMode = VGA_GRAPHICS;
-      }
-
-      DEBUG ((DEBUG_INFO, "Version = 0x%x\n", GopPolicy.Version));
-      DEBUG ((DEBUG_INFO, "Size = 0x%x\n", GopPolicy.Size));
-      DEBUG ((DEBUG_INFO, "VbtPtr = 0x%x\n", GopPolicy.VbtPtr));
-      DEBUG ((DEBUG_INFO, "VbtSize = 0x%x\n", GopPolicy.VbtSize));
-      DEBUG ((DEBUG_INFO, "LidStatus = 0x%x\n", GopPolicy.Flags.LidStatus));
-      DEBUG ((DEBUG_INFO, "Premem GOP BootPhase = 0x%x\n", GopPolicy.Flags.BootPhase));
-      DEBUG ((DEBUG_INFO, "GopMode = 0x%x\n", GopPolicy.GfxMode));
-
-      Status = GraphicsPreMemPpi->GraphicsPreMemPpiInit ((VOID *)&GopPolicy);
-      if (EFI_ERROR (Status)) {
-        DEBUG ((DEBUG_ERROR, "GraphicsPreMemPpiInit Failed\n"));
-        IpIGpuDisableIoCmdReg (IGpuInst);
-        return;
-      }
-
-      IGpuDataHob = (IGPU_DATA_HOB *)GetFirstGuidHob (&gIGpuDataHobGuid);
-      if (IGpuDataHob != NULL) {
-        //
-        // Update IGpuDataHob when the PreMem GOP Init is successful
-        //
-        IGpuDataHob->VgaDisplayConfig = IGpuPreMemConfig->VgaInitControl;
-      }
-
-      String = IGpuPreMemConfig->VgaMessage;
-      if (IS_VGA_MODE3_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
-        WriteTextModeString (String, VGA_TEXT_CENTER);
-      } else if (IS_VGA_MODE12_ENABLED (IGpuPreMemConfig->VgaInitControl)) {
-        if ((IGpuPreMemConfig->Mode12Info.LogoPixelWidth != 0) && (IGpuPreMemConfig->Mode12Info.LogoPixelHeight != 0) && (IGpuPreMemConfig->Mode12Info.VgaMode12ImagePtr != NULL)) {
-          VgaMode12DrawImage (IGpuPreMemConfig->Mode12Info.LogoXPosition, IGpuPreMemConfig->Mode12Info.LogoYPosition, IGpuPreMemConfig->Mode12Info.LogoPixelWidth, IGpuPreMemConfig->Mode12Info.LogoPixelHeight, (VOID *)IGpuPreMemConfig->Mode12Info.VgaMode12ImagePtr);
-        }
-      }
-
-      //
-      // Log uGOP timing in FSP
-      //
-      LogFspPerformanceData (FspuGopPerf, StartTime);
     }
   }
 

@@ -618,7 +618,7 @@ ClearVgaDisplay (
 **/
 VOID
 EFIAPI
-VgaMode12DrawImage (
+VgaGraphicsMode12RenderImage (
   IN UINT32      X,
   IN UINT32      Y,
   IN UINT32      Width,
@@ -640,7 +640,7 @@ VgaMode12DrawImage (
 **/
 VOID
 EFIAPI
-WriteTextModeString (
+VgaTextMode3WriteString (
   IN CHAR8  *String,
   IN UINT8  Alignment
   );

@@ -3225,27 +3225,27 @@
   # !BSF HELP:{Initialise SOL Init, BIT0 - (0 : Disable VGA Support, 1 : Enable VGA Support),, BIT1 - (0 : VGA Text Mode 3, 1 : VGA Graphics Mode 12), BIT2 - (0 : VGA Exit Supported, 1: NO VGA Exit)}
   gPlatformFspPkgTokenSpaceGuid.VgaInitControl              | * | 0x01 | 0x0
 
-  # !BSF NAME:{SOL VGA Mode 12 LogoPixelHeight}
+  # !BSF NAME:{SOL VGA Graphics Mode 12 LogoPixelHeight}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFF)}
-  # !BSF HELP:{Heigh of VGA Mode 12 Logo}
+  # !BSF HELP:{Heigh of VGA Graphics Mode 12 Logo}
   gPlatformFspPkgTokenSpaceGuid.LogoPixelHeight             | * | 0x02 | 0x00000000
 
-  # !BSF NAME:{SOL VGA Mode 12 LogoPixelWidth}
+  # !BSF NAME:{SOL VGA Graphics Mode 12 LogoPixelWidth}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFF)}
-  # !BSF HELP:{Width of VGA Mode 12 Logo}
+  # !BSF HELP:{Width of VGA Graphics Mode 12 Logo}
   gPlatformFspPkgTokenSpaceGuid.LogoPixelWidth              | * | 0x02 | 0x00000000
 
-  # !BSF NAME:{SOL VGA Mode 12 Image X Position}
+  # !BSF NAME:{SOL VGA Graphics Mode 12 Image X Position}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFF)}
   # !BSF HELP:{X position of Image on Display}
   gPlatformFspPkgTokenSpaceGuid.LogoXPosition               | * | 0x02 | 0x00000000
 
-  # !BSF NAME:{SOL VGA Mode 12 Image Pointer}
+  # !BSF NAME:{SOL VGA Graphics Mode 12 Image Pointer}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFFFFFF)}
-  # !BSF HELP:{Points to SOL VGA Mode 12 Image, VgaPlanarImage200x58[4][58][25] for 58Hx200W as example, }
-  gPlatformFspPkgTokenSpaceGuid.VgaMode12ImagePtr           | * | 0x08 | 0x00000000
+  # !BSF HELP:{Points to SOL VGA Graphics Graphics 12 Image, VgaPlanarImage200x58[4][58][25] for 58Hx200W as example, }
+  gPlatformFspPkgTokenSpaceGuid.VgaGraphicsMode12ImagePtr   | * | 0x08 | 0x00000000
 
-  # !BSF NAME:{SOL VGA Mode 12 Image Y Position}
+  # !BSF NAME:{SOL VGA Graphics Mode 12 Image Y Position}
   # !BSF TYPE:{EditNum, HEX, (0x0,0xFFFF)}
   # !BSF HELP:{Y position of Image on Display}
   gPlatformFspPkgTokenSpaceGuid.LogoYPosition               | * | 0x02 | 0x00000000

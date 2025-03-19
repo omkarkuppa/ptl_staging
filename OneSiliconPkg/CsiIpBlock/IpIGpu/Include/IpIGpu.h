@@ -52,8 +52,7 @@ typedef enum {
   // IpIGpuXe*
   IpIGpuXe   = 1,
   IpIGpuXe2  = 2,
-  IpIGpuXe3  = 3,
-  IpIGpuXe3p = 4,
+  IpIGpuXe3  = 3
 } IP_IGPU_XE_VERSION;
 
 typedef struct _IP_IGPU_INST IP_IGPU_INST;

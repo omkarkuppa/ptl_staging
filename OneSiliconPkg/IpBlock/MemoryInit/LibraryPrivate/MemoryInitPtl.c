@@ -588,6 +588,7 @@ PeimMemoryInit (
   EFI_PEI_FILE_HANDLE          PayloadFileHandle;
   SI_PREMEM_CONFIG             *SiPreMemConfig;
   UINT32                       SavedTsegSize;
+  IGPU_PEI_PREMEM_CONFIG       *IGpuPreMemConfig;
 
   DEBUG ((DEBUG_INFO, "[PeimMemoryInit]\n"));
 
@@ -651,6 +652,13 @@ PeimMemoryInit (
   Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gSiPreMemConfigGuid, (VOID *) &SiPreMemConfig);
   ASSERT_EFI_ERROR (Status);
   if (SiPreMemConfig == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  IGpuPreMemConfig = NULL;
+  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gGraphicsPeiPreMemConfigGuid, (VOID *) &IGpuPreMemConfig);
+  ASSERT_EFI_ERROR (Status);
+  if (IGpuPreMemConfig == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1096,6 +1104,12 @@ DEBUG_CODE_END();
   // Regular SAGV case - Read SAGV point for Warm / S3 resume flow
   if ((MrcBootMode == bmWarm) || (MrcBootMode == bmS3)) {
     MrcGetSaGvPointBeforeReset (MrcData);
+  }
+
+  if (MrcBootMode == bmCold) {
+    if (IS_VGA_INIT_ON_MRC_ONLY (IGpuPreMemConfig->VgaInitControl)) {
+      IGpuVgaInit (IGpuPreMemConfig);
+    }
   }
 
   do {

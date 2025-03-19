@@ -26,16 +26,16 @@
 
 #pragma pack(push, 1)
 
-#define IGPU_PEI_PREMEM_CONFIG_REVISION  3
+#define IGPU_PEI_PREMEM_CONFIG_REVISION  4
 #define IGPU_PEI_CONFIG_REVISION         1
 #define IGPU_DXE_CONFIG_REVISION         1
 
-#ifndef VGA_MODE12_WIDTH
-#define VGA_MODE12_WIDTH  640  // Width of the screen in pixels
+#ifndef VGA_GRAPHICS_MODE12_WIDTH
+#define VGA_GRAPHICS_MODE12_WIDTH  640  // Width of the screen in pixels
 #endif
 
-#ifndef VGA_MODE12_HEIGHT
-#define VGA_MODE12_HEIGHT  480  // Height of the screen in pixels
+#ifndef VGA_GRAPHICS_MODE12_HEIGHT
+#define VGA_GRAPHICS_MODE12_HEIGHT  480  // Height of the screen in pixels
 #endif
 
 #define DDI_DEVICE_NUMBER  4
@@ -50,8 +50,8 @@
 //
 // BIT 1 : VgaInitControl for Mode 3 or Mode 12 Support
 //
-#define VGA_MODE3_SUPPORT   (0)
-#define VGA_MODE12_SUPPORT  (BIT1)
+#define VGA_TEXT_MODE3_SUPPORT       (0)     // Text Mode
+#define VGA_GRAPHICS_MODE12_SUPPORT  (BIT1)  // Graphics Mode
 
 //
 // BIT 2 : VgaInitControl for Extended SOL Support
@@ -59,10 +59,18 @@
 #define VGA_EXIT_SUPPORT     (0)        // Extended SOL UnSupported
 #define VGA_NO_EXIT_SUPPORT  (BIT2)     // Extended SOL Supported
 
-#define IS_VGA_ENABLED(data)              (((data) & BIT0) == VGA_DISPLAY_ENABLED)
-#define IS_VGA_MODE3_ENABLED(data)        (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_MODE3_SUPPORT))
-#define IS_VGA_MODE12_ENABLED(data)       (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_MODE12_SUPPORT))
-#define IS_VGA_EXIT_STATUS_SUPPORT(data)  (IS_VGA_ENABLED(data) && (((data) & BIT2) == VGA_EXIT_SUPPORT))
+//
+// BIT 3 : VgaInitControl for SOL Init during MRC vs DisplayInit
+//
+#define VGA_INIT_DURING_DISPLAY_INIT_SUPPORT  (0)
+#define VGA_INIT_DURING_MRC_TRAINING_SUPPORT  (BIT3)
+
+#define IS_VGA_ENABLED(data)                  (((data) & BIT0) == VGA_DISPLAY_ENABLED)
+#define IS_VGA_TEXT_MODE3_ENABLED(data)       (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_TEXT_MODE3_SUPPORT))
+#define IS_VGA_GRAPHICS_MODE12_ENABLED(data)  (IS_VGA_ENABLED(data) && (((data) & BIT1) == VGA_GRAPHICS_MODE12_SUPPORT))
+#define IS_VGA_EXIT_STATUS_SUPPORT(data)      (IS_VGA_ENABLED(data) && (((data) & BIT2) == VGA_EXIT_SUPPORT))
+#define IS_VGA_INIT_ON_MRC_ONLY(data)         (IS_VGA_ENABLED(data) && (((data) & BIT3) == VGA_INIT_DURING_MRC_TRAINING_SUPPORT))
+#define IS_VGA_INIT_ON_DISPLAY_INIT(data)     (IS_VGA_ENABLED(data) && (((data) & BIT3) == VGA_INIT_DURING_DISPLAY_INIT_SUPPORT))
 
 typedef enum {
   DISPLAY_AUTO = 0x00,
@@ -112,12 +120,12 @@ typedef struct {
 } DDI_CONFIGURATION;
 
 typedef struct {
-  UINT8     *VgaMode12ImagePtr;    ///< Pointer to VGA Mode 12 Image
-  UINT16    LogoPixelHeight;       ///< Height of VgaMode12ImagePtr
-  UINT16    LogoPixelWidth;        ///< Width of VgaMode12ImagePtr
-  UINT16    LogoXPosition;         ///< X position of Image on Display
-  UINT16    LogoYPosition;         ///< Y position of Image on Display
-} VGA_MODE12_INFO;
+  UINT8     *ImagePtr;       ///< Pointer to VGA Mode 12 Image
+  UINT16    LogoPixelHeight; ///< Height of Logo
+  UINT16    LogoPixelWidth;  ///< Width of Logo
+  UINT16    LogoXPosition;   ///< X position of Image on Display
+  UINT16    LogoYPosition;   ///< Y position of Image on Display
+} VGA_GRAPHICS_MODE12_INFO;
 
 /**
   This Configuration block is to configure GT related PreMem data/variables.\n
@@ -127,6 +135,8 @@ typedef struct {
   - Added VGA_MODE12_INFO
   <b>Revision 3</b>:
   - Added VbtSize and LidStatus
+  <b>Revision 4</b>
+  - Modified VGA_MODE12_INFO to VGA_GRAPHICS_MODE12_INFO
 
 **/
 typedef struct {
@@ -164,27 +174,29 @@ typedef struct {
     253 = 56MB,<b> 254 = 60MB</b>,\n
     <b>Note: enlarging pre-allocated memory for IGPU may need to reduce MmioSize because of 4GB boundary limitation</b>
   **/
-  UINT16               IgdDvmt50PreAlloc;          ///< Offset 30 >
-  UINT8                PanelPowerEnable;           ///< Offset 32 :<b>(Test)</b> Control for enabling/disabling VDD force bit (Required only for early enabling of eDP panel): 0=FALSE, <b>1=TRUE</b>
-  UINT8                MemoryBandwidthCompression; ///< Offset 33 This policy is used to enable/disable Memory Bandwidth Compression <b>0- Disable</b>, 1- Enable
-  UINT16               DeltaT12PowerCycleDelay;    ///< Offset 34 Power Cycle Delay required for eDP as per VESA standard.0 - 0 ms, <b>0xFFFF - Auto calculate to max 500 ms<\b>
-  UINT32               VbtSize;                    ///< Size of VBT data
-  UINT64               GttMmAdr;                   ///< Offset 36 Temp Address of Graphics GTTMMADR: Default is <b>0xAF000000</b>
-  UINT64               LMemBar;                    ///< Offset 44 Temp Address of Graphics LMEMBAR: Default is <b>0xB0000000</b>
-  DDI_CONFIGURATION    DdiConfiguration;           ///< Offset 52 DDI configuration, need to match with VBT settings.
-  UINT8                OemT12DelayOverride;        ///< Offset 68 :Oem T12 Delay Override <b> Disable<\b>,Enable-Enable T12 Time.
-  UINT8                IGpuGsm2Size;               ///< Offset 68 {0:2GB, 1:4GB, 2:6GB, 3:8GB, 4:10GB, 5:12GB, 6:14GB, 7:16GB, 8:18GB, 9:20GB, 10:22GB, 11:24GB, 12:26GB, 13:28GB, 14:30GB, 15:32GB, 0xFF/Other Value:No Allocation}
-  UINT8                TestRsvd0[4];               ///< Offset 69 Reserved for 8 bytes alignment
-  BOOLEAN              LidStatus;                  ///< Lid Status: 0=Close, <b>1=Open</b>
+  UINT16                      IgdDvmt50PreAlloc;          ///< Offset 30 >
+  UINT8                       PanelPowerEnable;           ///< Offset 32 :<b>(Test)</b> Control for enabling/disabling VDD force bit (Required only for early enabling of eDP panel): 0=FALSE, <b>1=TRUE</b>
+  UINT8                       MemoryBandwidthCompression; ///< Offset 33 This policy is used to enable/disable Memory Bandwidth Compression <b>0- Disable</b>, 1- Enable
+  UINT16                      DeltaT12PowerCycleDelay;    ///< Offset 34 Power Cycle Delay required for eDP as per VESA standard.0 - 0 ms, <b>0xFFFF - Auto calculate to max 500 ms<\b>
+  UINT32                      VbtSize;                    ///< Size of VBT data
+  UINT64                      GttMmAdr;                   ///< Offset 36 Temp Address of Graphics GTTMMADR: Default is <b>0xAF000000</b>
+  UINT64                      LMemBar;                    ///< Offset 44 Temp Address of Graphics LMEMBAR: Default is <b>0xB0000000</b>
+  DDI_CONFIGURATION           DdiConfiguration;           ///< Offset 52 DDI configuration, need to match with VBT settings.
+  UINT8                       OemT12DelayOverride;        ///< Offset 68 :Oem T12 Delay Override <b> Disable<\b>,Enable-Enable T12 Time.
+  UINT8                       IGpuGsm2Size;               ///< Offset 68 {0:2GB, 1:4GB, 2:6GB, 3:8GB, 4:10GB, 5:12GB, 6:14GB, 7:16GB, 8:18GB, 9:20GB, 10:22GB, 11:24GB, 12:26GB, 13:28GB, 14:30GB, 15:32GB, 0xFF/Other Value:No Allocation}
+  UINT8                       TestRsvd0[4];               ///< Offset 69 Reserved for 8 bytes alignment
+  BOOLEAN                     LidStatus;                  ///< Lid Status: 0=Close, <b>1=Open</b>
 
   /**
    BIT0 - 0 : Disable VGA Support, 1 : Enable VGA Support
    BIT1 - 0 : VGA Text Mode 3, 1 : VGA Graphics Mode 12
+   BIT2 - 0 : No Extended SOL Support (Disable VGA after Memory training done), 1 : Extended SOL Support
+   BIT3 - 0 : VGA Init During Display Init, 1 - VGA Init During MRC Cold Boot.
   **/
-  UINT8                VgaInitControl;             ///< Offset 74 VGA Init Control
-  VOID                 *VgaMessage;                ///< Pointer to Message which should be displayed
-  VOID                 *VbtPtr;                    ///< Address of the Graphics Configuration Table
-  VGA_MODE12_INFO      Mode12Info;                 ///< Offset 82 VGA Mode 12 Information
+  UINT8                       VgaInitControl;      ///< Offset 74 VGA Init Control
+  VOID                        *VgaMessage;         ///< Pointer to Message which should be displayed
+  VOID                        *VbtPtr;             ///< Address of the Graphics Configuration Table
+  VGA_GRAPHICS_MODE12_INFO    GraphicsMode12Info;  ///< Offset 82 VGA Mode 12 Information
 } IGPU_PEI_PREMEM_CONFIG;
 
 typedef struct {

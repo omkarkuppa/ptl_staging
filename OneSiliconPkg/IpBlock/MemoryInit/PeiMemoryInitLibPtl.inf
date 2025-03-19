@@ -401,3 +401,4 @@ gMemoryUcPayloadGuid                    ## CONSUMES
 gTseDataHobGuid                         ## CONSUMES
 gTdxDataHobGuid                         ## CONSUMES
 gMemorySubSystemConfigGuid              ## CONSUMES
+gGraphicsPeiPreMemConfigGuid            ## CONSUMES
