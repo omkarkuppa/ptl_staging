@@ -588,8 +588,8 @@
 #
 !if gCnvFeaturePkgTokenSpaceGuid.PcdCnvFeatureEnable == TRUE
 !if gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP == TRUE
-  gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids|{GUID(gUndiDriverBinGuid), GUID(gWlanDriverBinGuid), GUID(gBluetoothHciImageGuid)}
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDeviceId|{UINT16(0xE340), UINT16(0xE341), UINT16(0xE342), UINT16(0xE343), UINT16(0xE440), UINT16(0xE441), UINT16(0xE442), UINT16(0xE443)}
+  gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids|{GUID(gUndiDriverBinGuid), GUID(gWlanDriverBinGuid), GUID(gBluetoothHciImageGuid), GUID(gBluetoothPciHciImageGuid)}
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSubSystemId|{UINT16(0x00E0), UINT16(0x00E4)}
 !endif
 !endif
 

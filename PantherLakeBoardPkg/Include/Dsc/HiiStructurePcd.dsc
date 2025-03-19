@@ -86,6 +86,7 @@ gStructPcdTokenSpaceGuid.PcdAmtPetInitConfig.FwProgress|0x1                     
 !if gCnvFeaturePkgTokenSpaceGuid.PcdPrebootBleSupport == 0x1
   gStructPcdTokenSpaceGuid.PcdCnvSetup.PrebootBleEnable|0x0                                          # Preboot BLE
 !endif
+gStructPcdTokenSpaceGuid.PcdCnvSetup.CnvCompatibilityCheck|0x0                                     # Cnv Compatability
 gStructPcdTokenSpaceGuid.PcdComAttributes.PortAttributes[0].BaudRate|0x1c200                       # Set COM Baud Rate
 gStructPcdTokenSpaceGuid.PcdComAttributes.PortAttributes[0].ComTag.ComNum|0x0                      # Set COM Tag
 gStructPcdTokenSpaceGuid.PcdComAttributes.PortAttributes[0].DataBits|0x8                           # Set COM Data Bits

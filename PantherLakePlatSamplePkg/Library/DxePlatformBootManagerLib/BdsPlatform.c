@@ -3383,7 +3383,7 @@ PlatformBootManagerBeforeConsole (
     return;
   }
 #endif
-  if (CnvSetup.PrebootBleEnable == 0) {
+  if ((CnvSetup.PrebootBleEnable == 0) || (CnvSetup.CnvCompatibilityCheck == 1)) {
     UnloadDriver (&gBluetoothHciImageGuid, L"Intel BT Hci Driver");
     UnloadDriver (&gBluetoothPciHciImageGuid, L"Intel Pci Bt HciDxe");
   }
