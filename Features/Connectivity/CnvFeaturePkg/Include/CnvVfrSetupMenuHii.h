@@ -40,7 +40,7 @@
 
 #pragma pack(1)
 // CNV VFR Menu Setup Variable
-#define CNV_VFR_CONFIG_SETUP_REVISION 1
+#define CNV_VFR_CONFIG_SETUP_REVISION 2
 typedef struct {
   UINT8    Revision;
   //
@@ -80,6 +80,7 @@ typedef struct {
 
   UINT8    SkipVidDidCheck;
 
+  UINT8    CnvCompatibilityCheck;
 } CNV_VFR_CONFIG_SETUP;
 #pragma pack ()
 

@@ -1,9 +1,9 @@
 ## @file
-# Component description file for CnvCompatability
+# Component description file for CnvSupporting
 #
 #  @copyright
 #  INTEL CONFIDENTIAL
-#  Copyright (C) 2024 Intel Corporation.
+#  Copyright (C) 2025 Intel Corporation.
 #
 #  This software and the related documents are Intel copyrighted materials,
 #  and your use of them is governed by the express license under which they
@@ -22,11 +22,11 @@
 
 [Defines]
   INF_VERSION      = 0x00010017
-  BASE_NAME        = CnvCompatibilityDxe
-  FILE_GUID        = 3CB08BB5-D7C8-4F44-AAEB-01951FF75C10
+  BASE_NAME        = CnvSupportingDxe
+  FILE_GUID        = f5c5557d-d001-468b-b8cb-239d3e43be75
   VERSION_STRING   = 1.0
   MODULE_TYPE      = DXE_DRIVER
-  ENTRY_POINT      = CnvCompatibleEntryPoint
+  ENTRY_POINT      = CnvSupportDxeEntryPoint
 
 [LibraryClasses]
   BaseLib
@@ -36,46 +36,23 @@
   MemoryAllocationLib
   UefiDriverEntryPoint
   UefiBootServicesTableLib
-  PciLib
-  PciSegmentLib
   DevicePathLib
-  DxeServicesTableLib
 
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  OneSiliconPkg/SiPkg.dec
+  #OneSiliconPkg/SiPkg.dec
   CnvFeaturePkg/CnvFeaturePkg.dec
 
-[Pcd]
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvPresent
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvCompatibilityGuid
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSubSystemId
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDispatch
-  gCnvFeaturePkgTokenSpaceGuid.PcdUnloadDriverGuids
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvUnloadRequirement
-
 [Sources]
-  CnvCompatibilityDxe.c
-  CnvCompatabilityUtilsDxe.c
-  CnvCompatibilityDxe.h
-
-[Guids]
-  gCnvCompatibilityGuid
-  gCnvExternalGuid
-  gEfiFirmwareFileSystem2Guid
-  gEfiFirmwareFileSystem3Guid
-  gEfiFileInfoGuid
+  CnvSupportingDxe.c
 
 [Protocols]
-  gEfiFirmwareVolume2ProtocolGuid
-  gEfiFirmwareVolumeBlockProtocolGuid
+  gCnvSupportingProtocolGuid
   gEfiBlockIoProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
-  gEfiLoadedImageDevicePathProtocolGuid
-  gEfiLoadedImageProtocolGuid
-  gCnvDispatchProtocolGuid
-  gEfiPciIoProtocolGuid
 
 [Depex]
-  gCnvSupportingProtocolGuid
+  gEfiVariableArchProtocolGuid AND
+  gEfiVariableWriteArchProtocolGuid AND
+  gEfiBlockIoProtocolGuid
