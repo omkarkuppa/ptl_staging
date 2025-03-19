@@ -325,9 +325,6 @@
 //
 // FVM control
 //
-#define KEY_CoreVrEnableFastVmode                 4290
-#define KEY_GtVrEnableFastVmode                   4291
-#define KEY_SaVrEnableFastVmode                   4292
 #define KEY_IccLimit0                             4293
 #define KEY_IccLimit1                             4294
 #define KEY_IccLimit2                             4295

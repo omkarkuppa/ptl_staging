@@ -72,9 +72,6 @@
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_ENABLE_THERMAL_FUN, ThermalFunctionCallback),                                         \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_TXT_POLICY_FIT, TxtPolicyCallBackFunction),                                           \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_PCH_STATE_AFTER_G3, StateAfterG3CallBackFunction),                                    \
-  ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_CoreVrEnableFastVmode, CpuVrConfigCallBackFunction),                                  \
-  ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_GtVrEnableFastVmode, CpuVrConfigCallBackFunction),                                    \
-  ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_SaVrEnableFastVmode, CpuVrConfigCallBackFunction),                                    \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_IccLimit0, CpuVrConfigCallBackFunction),                                              \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_IccLimit1, CpuVrConfigCallBackFunction),                                              \
   ITEM_CALLBACK_EX(ADVANCED_FORM_SET_CLASS, 0, KEY_IccLimit2, CpuVrConfigCallBackFunction),                                              \

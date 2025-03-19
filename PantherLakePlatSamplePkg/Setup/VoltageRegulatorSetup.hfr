@@ -220,17 +220,14 @@
 #if (VR_INDEX < 3)
     oneof varid     = CPU_SETUP.EnableFastVmode[VR_INDEX],
 #if VR_INDEX == 0
-      questionid    = AUTO_ID(KEY_CoreVrEnableFastVmode),
       prompt        = STRING_TOKEN (STR_CORE_VR_FAST_VMODE),
       help          = STRING_TOKEN (STR_CORE_VR_FAST_VMODE_HELP),
 #endif
 #if VR_INDEX == 1
-      questionid    = AUTO_ID(KEY_GtVrEnableFastVmode),
       prompt        = STRING_TOKEN (STR_GT_VR_FAST_VMODE),
       help          = STRING_TOKEN (STR_GT_VR_FAST_VMODE_HELP),
 #endif
 #if VR_INDEX == 2
-      questionid    = AUTO_ID(KEY_SaVrEnableFastVmode),
       prompt        = STRING_TOKEN (STR_SA_VR_FAST_VMODE),
       help          = STRING_TOKEN (STR_SA_VR_FAST_VMODE_HELP),
 #endif
