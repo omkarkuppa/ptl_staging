@@ -74,7 +74,7 @@ def _SIGNATURE_32 (A, B, C, D):
 
 HeaderSignature = _SIGNATURE_32 ('P', 'D', 'B', 'G')
 HeaderStruct    = '<IIII'
-ItemStruct      = '<BB14sIIB3s'
+ItemStruct      = '<BBB13sIIB3s'
 
 def gen_pd_bridge_header_from_ini (inifile):
 
@@ -100,6 +100,7 @@ def gen_pd_bridge_header_from_ini (inifile):
     FwType          = config.getint(Section, 'FirmwareType')
     PdCntrlIndex    = config.getint(Section, 'PdCntrlIndex')
     ShareFlashMode  = config.getint(Section, 'ShareFlashMode')
+    PdBridgeType    = config.getint(Section, 'PdBridgeType')
     File            = config.get(Section, 'FileName')
 
     PdBridgeFwFile = os.path.join(IniDir,File)
@@ -114,7 +115,7 @@ def gen_pd_bridge_header_from_ini (inifile):
       print ("Failed to open %s" % PdBridgeFwFile)
       sys.exit (1)
 
-    PdBridgeItemHeader = struct.pack (ItemStruct, PdCntrlIndex, ShareFlashMode, B'', ImageOffset, ImageSize, FwType, B'')
+    PdBridgeItemHeader = struct.pack (ItemStruct, PdCntrlIndex, ShareFlashMode, PdBridgeType, B'', ImageOffset, ImageSize, FwType, B'')
     ImageOffset = ImageOffset + ImageSize
     ItemHeaderBuffer = ItemHeaderBuffer + PdBridgeItemHeader
     PdBridgeFwBuffer = PdBridgeFwBuffer + PdBridgeFw

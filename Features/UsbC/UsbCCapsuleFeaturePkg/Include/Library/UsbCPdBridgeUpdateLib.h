@@ -40,6 +40,30 @@ typedef VOID  *PD_BRIDGE_DEV_INSTANCE;
 #define USBC_PD_BRIDGE_VERSION_NAME     L"UsbCPdBridgeVersion"
 
 /**
+  In the vendor command data, the first eight bytes represent the header and
+  it is always the same. The header structure is as follows:
+
+  | Byte Position | Description     |
+  |---------------|-----------------|
+  | 0             | Vendor Command  |
+  | 1-3           | Reserved        |
+  | 4-5           | Vendor ID       |
+  | 6-7           | Product ID      |
+
+  Initialize the vendor command data structure before sending the vendor command.
+
+  @param[in] ProductId   The Product ID to be set in the vendor command data.
+
+  @retval EFI_SUCCESS           The vendor command data was initialized successfully.
+  @retval EFI_INVALID_PARAMETER The Product ID is invalid (zero).
+
+**/
+EFI_STATUS
+InitialVendorCommandData (
+  UINT16 ProductId
+  );
+
+/**
   The command to read data up to 32bytes from NVM.
 
   @param[in]  This            The UsbC PD Bridge PROTOCOL Instance.
@@ -180,14 +204,16 @@ NvmReset (
   @param[in]  This                The UsbC PD Bridge PROTOCOL Instance.
   @param[in]  PdBridgeImage       Pointer to an image buffer contains PD Bridge FW to be updated with.
   @param[in]  ImageSize           The size of PD Bridge image buffer.
-  @param[in]  PdBridgeIndex       The index of PD Bridge (0-based).
-  @param[in]  ShareFlashMode      The indicator whether Shared flash mode supported
+  @param[in]  PrivateData         The pointer to the Firmware Private Data
   @param[in]  Progress            A function used to report the progress of updating the firmware
                                   device with the new firmware image.
   @param[in]  StartPercentage     The start completion percentage value that may be used to report progress
                                   during the flash write operation. The value is between 1 and 100.
   @param[in]  EndPercentage       The end completion percentage value that may be used to report progress
                                   during the flash write operation.
+  @param[out] LastAttemptStatus   A pointer to a UINT32 that holds the last attempt status to report back
+                                  to the ESRT table in case of error. This value will only be checked when
+                                  this function returns an error.
 
   @retval EFI_SUCCESS             PD Bridge Firmware is successfully updated.
   @retval Others                  An error occurred attempting to access the PD Bridge firmware
@@ -196,14 +222,14 @@ NvmReset (
 EFI_STATUS
 EFIAPI
 UpdatePdBridgeNvmFirmware (
-  IN  USBC_PD_BRIDGE_PROTOCOL                        *This,
-  IN  UINT8                                          *PdBridgeImage,
-  IN  UINTN                                          ImageSize,
-  IN  UINT8                                          PdBridgeIndex,
-  IN  UINT8                                          ShareFlashMode,
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress, OPTIONAL
-  IN  UINTN                                          StartPercentage,
-  IN  UINTN                                          EndPercentage
+  IN   USBC_PD_BRIDGE_PROTOCOL                        *This,
+  IN   UINT8                                          *PdBridgeImage,
+  IN   UINTN                                          ImageSize,
+  IN   FIRMWARE_PRIVATE_DATA                          *PrivateData,
+  IN   EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress, OPTIONAL
+  IN   UINTN                                          StartPercentage,
+  IN   UINTN                                          EndPercentage,
+  OUT  UINT32                                         *LastAttemptStatus
   );
 
 #endif

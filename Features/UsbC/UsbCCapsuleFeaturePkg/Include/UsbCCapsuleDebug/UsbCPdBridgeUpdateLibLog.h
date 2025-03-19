@@ -79,11 +79,11 @@
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_NULL                         ((EVT_ID_USBC_PD_BRIDGE_NVM_WRITE_NULL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_NULL))
 #define STR_ID_USBC_PD_BRIDGE_NVM_WRITE_NULL                           "NvmWrite: Buffer is NULL\n"
 ///
-/// NvmWrite - BufferSize is larger than 32
+/// NvmWrite - BufferSize is larger than PD_BRIDGE_MAX_TO_WRITE
 ///
-#define EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER                0
+#define EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER                1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER                ((EVT_ID_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER))
-#define STR_ID_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER                  "NvmWrite: BufferSize is larger than 32\n"
+#define STR_ID_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER                  "NvmWrite: BufferSize is larger than %d\n"
 ///
 /// NvmWrite - Execute Vendor command code :%x failed, Status:%r
 ///
@@ -199,7 +199,7 @@
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_STALLNVM_FAIL            ((EVT_ID_USBC_PD_BRIDGE_NVM_FW_UPDATE_STALLNVM_FAIL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_FW_UPDATE_STALLNVM_FAIL))
 #define STR_ID_USBC_PD_BRIDGE_NVM_FW_UPDATE_STALLNVM_FAIL              "UpdatePdBridgeNvmFirmware: NvmStallNvmAccess failed, Status:%r\n"
 ///
-/// UpdatePdBridgeNvmFirmware - 
+/// UpdatePdBridgeNvmFirmware -
 ///
 #define EVT_ARGS_USBC_PD_BRIDGE_NVM_FW_UPDATE_AUTHWRITE_FAIL           1
 #define EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_AUTHWRITE_FAIL           ((EVT_ID_USBC_PD_BRIDGE_NVM_FW_UPDATE_AUTHWRITE_FAIL << 2) | (EVT_ARGS_USBC_PD_BRIDGE_NVM_FW_UPDATE_AUTHWRITE_FAIL))

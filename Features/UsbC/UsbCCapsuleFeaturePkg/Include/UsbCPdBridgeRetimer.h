@@ -47,7 +47,8 @@ typedef union {
   struct {
     UINT8  PdCntrlIndex;
     UINT8  ShareFlashMode;  ///< 0: Disabled, 1:Enabled
-    UINT8  Reserved[14];
+    UINT8  PdBridgeType;    ///< 0: Gothic Bridge, Others: Reserved
+    UINT8  Reserved[13];
   } PdBridge;  ///< FirmwareType 3: PdBridge
 
   UINT8 Data8[16];
@@ -71,5 +72,10 @@ typedef enum {
   PD_BRIDGE = 0x03,
   FIRMWARE_TYPE_MAX_VALUE
 } FIRMWARE_TYPE;
+
+typedef enum {
+  GOTHIC_BRIDGE = 0x0,
+  PD_BRIDGE_TYPE_INVALID_VALUE
+} PD_BRIDGE_TYPE;
 
 #endif  ///< __USBC_PD_BRIDGE_RETIMER_H__

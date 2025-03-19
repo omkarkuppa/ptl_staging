@@ -726,6 +726,7 @@ FmpDeviceSetImageWithStatus (
   UINT64                   PdBridgeVersion;
   UINT32                   FwVersion;
   UINT32                   SubFwVersion;
+  UINT16                   ProductId;
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_SET_IMAGE_START, 0, 0);
 
@@ -747,6 +748,7 @@ FmpDeviceSetImageWithStatus (
   Status = Progress (5);
   if (EFI_ERROR (Status)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_PROGRESS_CALLBACK_FAILED, (UINT32) Status, 0);
+    *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_PROGRESS_CALLBACK_ERROR;
     goto Exit;
   }
 
@@ -755,6 +757,7 @@ FmpDeviceSetImageWithStatus (
   Status = gBS->LocateProtocol (&gUsbCPdBridgeProtocolGuid, NULL, (VOID **) &PdBridgeProtocol);
   if (EFI_ERROR (Status)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_LOCATE_PROTOCOL_FAILED, (UINT32) Status, 0);
+    *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_USBC_PD_BRIDGE_PROTOCOL_NOT_FOUND;
     goto Exit;
   }
 
@@ -763,6 +766,7 @@ FmpDeviceSetImageWithStatus (
   ///
   PdBridgePayloadHeader = (PAYLOAD_HEADER *) Image;
   PdBridgePayloadItem   = (PD_BRIDGE_PAYLOAD_ITEM *) (PdBridgePayloadHeader + 1);
+  ProductId             = 0;
 
   ///
   /// Send Lock command to EC to stop EC-PD regular communication.
@@ -779,6 +783,7 @@ FmpDeviceSetImageWithStatus (
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_COUNT, (UINT32) (Index + 1), PdBridgePayloadHeader->PayloadCount);
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_IMAGE_OFFSET_SIZE, PdBridgePayloadItem->ImageOffset, PdBridgePayloadItem->ImageSize);
     CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_CNTRL_INDEX_SHARE_FLASH_MODE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.PdCntrlIndex, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode);
+    CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_PD_BRIDGE_TYPE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.PdBridgeType, 0);
     if ((PdBridgePayloadItem->ImageOffset + PdBridgePayloadItem->ImageSize) > ImageSize) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_PAYLOAD_OUT_BOUNDS2, 0, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_PAYLOAD_IS_OUT_OF_BOUNDS_2;
@@ -788,24 +793,42 @@ FmpDeviceSetImageWithStatus (
     if (PdBridgePayloadItem->FirmwareType != PD_BRIDGE) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_UNSUPPORT_FW_TYPE, (UINT32) PdBridgePayloadItem->FirmwareType, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_UNSUPPORT_FIRMWARE_TYPE;
+      Status = EFI_INVALID_PARAMETER;
       continue;
     }
 
     if (PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode > SHARE_FLASH_MODE_ENABLE) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_INVALID_SHARE_FLASH_MODE_VALUE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_INVALID_SHARE_FLASH_MODE_VALUE;
+      Status = EFI_INVALID_PARAMETER;
       continue;
     }
 
+    if (PdBridgePayloadItem->PrivateData.PdBridge.PdBridgeType >= PD_BRIDGE_TYPE_INVALID_VALUE) {
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_INVALID_PD_BRIDGE_TYPE_VALUE, (UINT32) PdBridgePayloadItem->PrivateData.PdBridge.PdBridgeType, 0);
+      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_INVALID_PD_BRIDGE_TYPE_VALUE;
+      Status = EFI_INVALID_PARAMETER;
+      continue;
+    } else {
+      if (PdBridgePayloadItem->PrivateData.PdBridge.PdBridgeType == GOTHIC_BRIDGE) {
+        ProductId = GOTHIC_BRIDGE_PRODUCT_ID;
+      }
+    }
+
+    Status = InitialVendorCommandData (ProductId);
+    if (EFI_ERROR (Status)) {
+      CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_FMP_DEV_PD_BRIDGE_INIT_VENDOR_CMD_DATA_FAILED, (UINT32) Status, 0);
+      continue;
+    }
     Status = UpdatePdBridgeNvmFirmware (
                PdBridgeProtocol,
                (UINT8 *) Image + PdBridgePayloadItem->ImageOffset,
                PdBridgePayloadItem->ImageSize,
-               (PdBridgePayloadItem->PrivateData.PdBridge.PdCntrlIndex),
-               PdBridgePayloadItem->PrivateData.PdBridge.ShareFlashMode,
+               &PdBridgePayloadItem->PrivateData,
                Progress,
                START_UPDATE_PROCESS + (END_UPDATE_PROCESS / PdBridgePayloadHeader->PayloadCount) * Index,
-               START_UPDATE_PROCESS + (END_UPDATE_PROCESS / PdBridgePayloadHeader->PayloadCount) * (Index + 1)
+               START_UPDATE_PROCESS + (END_UPDATE_PROCESS / PdBridgePayloadHeader->PayloadCount) * (Index + 1),
+               LastAttemptStatus
                );
     if (!EFI_ERROR (Status)) {
       PdBridgeVersion = 0;
@@ -832,15 +855,12 @@ UnLockEcPdCommunication:
   ///
   /// Send UnLock command to EC to restore EC-PD regular communication.
   ///
-  Status = PdBridgeProtocol->Lock (PdBridgeProtocol, UNLOCK_I2C);
+  PdBridgeProtocol->Lock (PdBridgeProtocol, UNLOCK_I2C);
 
 Exit:
   Progress (100);
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_FMP_DEV_PD_BRIDGE_SET_IMAGE_END, 0, 0);
-  if (EFI_ERROR (Status)) {
-    *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_UPDATE_FAILED;
-  }
 
   return Status;
 }

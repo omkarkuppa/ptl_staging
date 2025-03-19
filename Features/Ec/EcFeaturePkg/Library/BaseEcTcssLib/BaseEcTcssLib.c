@@ -506,7 +506,7 @@ EcPdExecuteVendorCommand (
     /// Read the return data
     ///
     for (Index = 0; Index < *OutputDataSize; Index++) {
-      DataBuffer[0] = DATA_00 + Index;
+      DataBuffer[0] = VENDOR_CMD_DATA + Index;
       Status        = ReadEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
       if (EFI_ERROR (Status)) {
         goto ERROR_EXIT;
@@ -561,6 +561,9 @@ LockEcPdI2cTarget (
     DEBUG ((DEBUG_INFO, "%a: EC PD %s the I2C target\n", __FUNCTION__, Lock == EC_PD_LOCK_I2C ? L"Lock" : L"Unlock"));
     DataBuffer[1] = Lock;
     DataBuffer[0] = I2C_COMMUNICATION_LOCK;
+    Status        = WriteEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
+    DataBuffer[1] = EC_PRIVATE_CMD_LOCK;
+    DataBuffer[0] = BIOS_EC_COMMAND;
     Status        = WriteEcRam (EcId0Ch1, DataBuffer, sizeof (DataBuffer));
   }
 

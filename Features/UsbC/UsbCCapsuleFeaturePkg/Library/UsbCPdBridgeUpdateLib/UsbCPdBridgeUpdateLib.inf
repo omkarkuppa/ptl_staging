@@ -39,6 +39,7 @@
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  FmpDevicePkg/FmpDevicePkg.dec
   UsbCCapsuleFeaturePkg/UsbCCapsuleFeaturePkg.dec
 
 [LibraryClasses]

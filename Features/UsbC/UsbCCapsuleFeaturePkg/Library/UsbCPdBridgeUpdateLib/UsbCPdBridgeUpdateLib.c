@@ -24,9 +24,52 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UsbCPdBridgeUpdateLib.h>
 #include <Protocol/UsbCPdBridgeProtocol.h>
+#include <LastAttemptStatus.h>
+#include <FmpLastAttemptStatus.h>
 #include <Library/UsbcCapsuleDebugLib.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleLogEvents.h>
 #include <UsbCCapsuleDebug/UsbCCapsuleDebugProtocol.h>
+
+UINT8 gVendorCommandData[72];
+
+/**
+  In the vendor command data, the first eight bytes represent the header and
+  it is always the same. The header structure is as follows:
+
+  | Byte Position | Description     |
+  |---------------|-----------------|
+  | 0             | Vendor Command  |
+  | 1-3           | Reserved        |
+  | 4-5           | Vendor ID       |
+  | 6-7           | Product ID      |
+
+  Initialize the vendor command data structure before sending the vendor command.
+
+  @param[in] ProductId   The Product ID to be set in the vendor command data.
+
+  @retval EFI_SUCCESS           The vendor command data was initialized successfully.
+  @retval EFI_INVALID_PARAMETER The Product ID is invalid (zero).
+
+**/
+EFI_STATUS
+InitialVendorCommandData (
+  UINT16 ProductId
+  )
+{
+  UINT16 VendorId;
+
+  if (ProductId == 0) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  VendorId = PD_BRIDGE_VENDOR_ID;
+
+  ZeroMem (gVendorCommandData, sizeof (gVendorCommandData));
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_VENDOR_ID_OFFSET], &VendorId, sizeof (VendorId));
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_PRODUCT_ID_OFFSET], &ProductId, sizeof (ProductId));
+
+  return EFI_SUCCESS;
+}
 
 /**
   The command to read data up to 32bytes from NVM.
@@ -57,6 +100,7 @@ NvmRead (
   EFI_STATUS             Status;
   NVM_READ_CMD_METADATA  ReadCmdData;
   UINT32                 DataSize;
+  UINT8                  VendorCmd;
 
   if ((Length > 32) || (Length == 0)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_READ_LENGTH_INVALID, 0, 0);
@@ -75,9 +119,12 @@ NvmRead (
   ReadCmdData.NvmOffset = NvmOffset;
   ReadCmdData.Length    = Length;
   ReadCmdData.Reserved2 = 0;
-  DataSize              = sizeof (ReadCmdData);
+  VendorCmd             = VENDOR_SPECIFIC_CMD_NVM_READ;
+  DataSize              = sizeof (ReadCmdData) + VENDOR_SPECIFIC_CMD_HEADER_TOTAL_BYTES;
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_VENDOR_CMD_OFFSET], &VendorCmd, sizeof (VendorCmd));
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_DATA_OFFSET], &ReadCmdData, sizeof (ReadCmdData));
 
-  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_READ, FALSE, (UINT8 *) &ReadCmdData, (UINT8 *) &DataSize, (UINT8 *) OutputData, (UINT8 *) OutputDataSize);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_READ, FALSE, (UINT8 *) &gVendorCommandData, (UINT8 *) &DataSize, (UINT8 *) OutputData, (UINT8 *) OutputDataSize);
   if (EFI_ERROR (Status)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_NVM_READ, (UINT32) Status);
     return Status;
@@ -110,15 +157,19 @@ NvmSetOffset (
   EFI_STATUS                   Status;
   NVM_SET_OFFSET_CMD_METADATA  SetOffsetCmdData;
   UINT32                       DataSize;
+  UINT8                        VendorCmd;
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_SET_OFFSET_INDEX, NvmOffset, (UINT32) PdBridgeIndex);
 
   SetOffsetCmdData.Reserved1 = 0;
   SetOffsetCmdData.NvmOffset = NvmOffset;
   SetOffsetCmdData.Reserved2 = 0;
-  DataSize                   = sizeof (SetOffsetCmdData);
+  DataSize                   = sizeof (SetOffsetCmdData) + VENDOR_SPECIFIC_CMD_HEADER_TOTAL_BYTES;
+  VendorCmd                  = VENDOR_SPECIFIC_CMD_NVM_SET_OFFSET;
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_VENDOR_CMD_OFFSET], &VendorCmd, sizeof (VendorCmd));
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_DATA_OFFSET], &SetOffsetCmdData, sizeof (SetOffsetCmdData));
 
-  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_SET_OFFSET, FALSE, (UINT8 *) &SetOffsetCmdData, (UINT8 *) &DataSize, NULL, NULL);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_SET_OFFSET, FALSE, (UINT8 *) gVendorCommandData, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_SET_OFFSET_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_NVM_SET_OFFSET, (UINT32) Status);
     return Status;
@@ -152,23 +203,25 @@ NvmWrite (
   )
 {
   EFI_STATUS  Status;
-  UINT8       WriteData[32];
   UINT32      DataSize;
+  UINT8       VendorCmd;
 
   if (Buffer == NULL) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_NULL, 0, 0);
     return EFI_INVALID_PARAMETER;
   }
 
-  if (BufferSize > 32) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER, 0, 0);
+  if (BufferSize > PD_BRIDGE_MAX_TO_WRITE) {
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_BUFFER_LARGER, PD_BRIDGE_MAX_TO_WRITE, 0);
     return EFI_INVALID_PARAMETER;
   }
 
-  CopyMem (WriteData, Buffer, BufferSize);
+  DataSize  = BufferSize + VENDOR_SPECIFIC_CMD_HEADER_TOTAL_BYTES;
+  VendorCmd = VENDOR_SPECIFIC_CMD_NVM_WRITE;
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_VENDOR_CMD_OFFSET], &VendorCmd, sizeof (VendorCmd));
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_DATA_OFFSET], Buffer, BufferSize);
 
-  DataSize = BufferSize;
-  Status   = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_WRITE, FALSE, (UINT8 *) WriteData, (UINT8 *) &DataSize, NULL, NULL);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_WRITE, FALSE, (UINT8 *) gVendorCommandData, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_WRITE_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_NVM_WRITE, (UINT32) Status);
     return Status;
@@ -195,15 +248,16 @@ NvmAuthenticateWrite (
   )
 {
   EFI_STATUS  Status;
-  UINT8       Data;
   UINT32      DataSize;
+  UINT8       VendorCmd;
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_AUTH_CMD_INDEX, (UINT32) PdBridgeIndex, 0);
 
-  Data     = 0;
-  DataSize = sizeof (Data);
+  DataSize  = VENDOR_SPECIFIC_CMD_HEADER_TOTAL_BYTES;
+  VendorCmd = VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE;
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_VENDOR_CMD_OFFSET], &VendorCmd, sizeof (VendorCmd));
 
-  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE, FALSE, (UINT8 *) gVendorCommandData, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_AUTH_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE, (UINT32) Status);
     return Status;
@@ -233,15 +287,16 @@ NvmStallNvmAccess (
   )
 {
   EFI_STATUS  Status;
-  UINT8       Data;
   UINT32      DataSize;
+  UINT8       VendorCmd;
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_STALL_INDEX, (UINT32) PdBridgeIndex, 0);
 
-  Data     = 0;
-  DataSize = sizeof (Data);
+  DataSize  = VENDOR_SPECIFIC_CMD_HEADER_TOTAL_BYTES;
+  VendorCmd = VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS;
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_VENDOR_CMD_OFFSET], &VendorCmd, sizeof (VendorCmd));
 
-  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS, FALSE, (UINT8 *) gVendorCommandData, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_STALL_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS, (UINT32) Status);
     return Status;
@@ -271,15 +326,16 @@ NvmReset (
   )
 {
   EFI_STATUS  Status;
-  UINT8       Data;
   UINT32      DataSize;
+  UINT8       VendorCmd;
 
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_USBC_PD_BRIDGE_NVM_RESET_INDEX, (UINT32) PdBridgeIndex, 0);
 
-  Data     = 0;
-  DataSize = sizeof (Data);
+  DataSize  = VENDOR_SPECIFIC_CMD_HEADER_TOTAL_BYTES;
+  VendorCmd = VENDOR_SPECIFIC_CMD_RESET;
+  CopyMem (&gVendorCommandData[VENDOR_SPECIFIC_CMD_VENDOR_CMD_OFFSET], &VendorCmd, sizeof (VendorCmd));
 
-  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_RESET, FALSE, (UINT8 *) &Data, (UINT8 *) &DataSize, NULL, NULL);
+  Status = This->ExecuteVendorCmd (This, PdBridgeIndex, VENDOR_SPECIFIC_CMD_RESET, FALSE, (UINT8 *) gVendorCommandData, (UINT8 *) &DataSize, NULL, NULL);
   if (EFI_ERROR (Status)) {
     CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_RESET_VENDOR_CMD_FAIL, (UINT32) VENDOR_SPECIFIC_CMD_RESET, (UINT32) Status);
     return Status;
@@ -308,14 +364,16 @@ NvmReset (
   @param[in]  This                The UsbC PD Bridge PROTOCOL Instance.
   @param[in]  PdBridgeImage       Pointer to an image buffer contains PD Bridge FW to be updated with.
   @param[in]  ImageSize           The size of PD Bridge image buffer.
-  @param[in]  PdBridgeIndex       The index of PD Bridge (0-based).
-  @param[in]  ShareFlashMode      The indicator whether Shared flash mode supported
+  @param[in]  PrivateData         The pointer to the Firmware Private Data
   @param[in]  Progress            A function used to report the progress of updating the firmware
                                   device with the new firmware image.
   @param[in]  StartPercentage     The start completion percentage value that may be used to report progress
                                   during the flash write operation. The value is between 1 and 100.
   @param[in]  EndPercentage       The end completion percentage value that may be used to report progress
                                   during the flash write operation.
+  @param[out] LastAttemptStatus   A pointer to a UINT32 that holds the last attempt status to report back
+                                  to the ESRT table in case of error. This value will only be checked when
+                                  this function returns an error.
 
   @retval EFI_SUCCESS             PD Bridge Firmware is successfully updated.
   @retval Others                  An error occurred attempting to access the PD Bridge firmware
@@ -324,30 +382,33 @@ NvmReset (
 EFI_STATUS
 EFIAPI
 UpdatePdBridgeNvmFirmware (
-  IN  USBC_PD_BRIDGE_PROTOCOL                        *This,
-  IN  UINT8                                          *PdBridgeImage,
-  IN  UINTN                                          ImageSize,
-  IN  UINT8                                          PdBridgeIndex,
-  IN  UINT8                                          ShareFlashMode,
-  IN  EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress, OPTIONAL
-  IN  UINTN                                          StartPercentage,
-  IN  UINTN                                          EndPercentage
+  IN   USBC_PD_BRIDGE_PROTOCOL                        *This,
+  IN   UINT8                                          *PdBridgeImage,
+  IN   UINTN                                          ImageSize,
+  IN   FIRMWARE_PRIVATE_DATA                          *PrivateData,
+  IN   EFI_FIRMWARE_MANAGEMENT_UPDATE_IMAGE_PROGRESS  Progress, OPTIONAL
+  IN   UINTN                                          StartPercentage,
+  IN   UINTN                                          EndPercentage,
+  OUT  UINT32                                         *LastAttemptStatus
   )
 {
-  EFI_STATUS               Status;
-  UINT8                    *BufferPointer;
-  UINT32                   Offset;
-  UINT32                   RecoveryCount;
-  UINTN                    DisplayLength;
-  UINT8                    WriteLength;
+  EFI_STATUS  Status;
+  UINT8       *BufferPointer;
+  UINT32      Offset;
+  UINT32      RecoveryCount;
+  UINTN       DisplayLength;
+  UINT8       WriteLength;
+  UINT8       PdBridgeIndex;
 
-  if ((This == NULL) || (PdBridgeImage == NULL) || (EndPercentage < StartPercentage)) {
+  if ((This == NULL) || (PdBridgeImage == NULL) || (EndPercentage < StartPercentage) || (PrivateData == NULL)) {
     ASSERT (This != NULL);
     ASSERT (PdBridgeImage != NULL);
     ASSERT (EndPercentage > StartPercentage);
+    ASSERT (PrivateData != NULL);
     return EFI_INVALID_PARAMETER;
   }
 
+  PdBridgeIndex = PrivateData->PdBridge.PdCntrlIndex;
   DisplayLength = EndPercentage - StartPercentage;
 
   BufferPointer  = (UINT8 *) PdBridgeImage;
@@ -361,6 +422,7 @@ UpdatePdBridgeNvmFirmware (
     Status = NvmSetOffset (This, PdBridgeIndex, PD_BRIDGE_NVM_OFFSET);
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_SET_OFFSET_FAIL, (UINT32) Status, 0);
+      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_NVM_SET_OFFSET_FAILED;
       continue;
     }
 
@@ -384,6 +446,7 @@ UpdatePdBridgeNvmFirmware (
       Status = NvmWrite (This, PdBridgeIndex, (UINT8 *) (BufferPointer + Offset), WriteLength);
       if (EFI_ERROR (Status)) {
         CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_NVMWRITE_FAIL, (UINT32) Status, 0);
+        *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_NVM_WRITE_FAILED;
         break;
       }
     }
@@ -403,28 +466,32 @@ UpdatePdBridgeNvmFirmware (
     goto UpdateImageComplete;
   }
 
-  if (ShareFlashMode == SHARE_FLASH_MODE_ENABLE) {
+  if (PrivateData->PdBridge.ShareFlashMode == SHARE_FLASH_MODE_ENABLE) {
     Status = NvmStallNvmAccess (This, PdBridgeIndex);
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_STALLNVM_FAIL, (UINT32) Status, 0);
+      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_NVM_STALL_NVM_ACCESS_FAILED;
       return Status;
     }
 
     Status = NvmAuthenticateWrite (This, PdBridgeIndex);
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_AUTHWRITE_FAIL, (UINT32) Status, 0);
+      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_NVM_AUTH_WRITE_FAILED;
       return Status;
     }
 
     Status = NvmReset (This, PdBridgeIndex);
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_NVMRESET_FAIL, (UINT32) Status, 0);
+      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_NVM_RESET_FAILED;
       return Status;
     }
   } else {
     Status = NvmAuthenticateWrite (This, PdBridgeIndex);
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_AUTHWRITE_FAIL, (UINT32) Status, 0);
+      *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_NVM_AUTH_WRITE_FAILED;
       return Status;
     }
   }

@@ -26,15 +26,17 @@
 #define COMMAND_EXECUTION_STATUS    0x01 ///< Command execution status
 #define PD_CONTROLLER_INDEX         0x02 ///< PD controller index (0-based).
 #define VENDOR_REGISTER_OR_COMMAND  0x03 ///< PD Vendor register offset or command data
-#define DATA_00                     0x04 ///< Data start from Byte 4 to Byte 35
-#define DATA_SIZE                   0x24 ///< Data length corresponding to command
-#define RESERVED_0                  0x25 ///< Reserved_0
-#define RESERVED_1                  0x26 ///< Reserved_1
-#define RESERVED_2                  0x27 ///< Reserved_2
-#define I2C_COMMUNICATION_LOCK      0x28 ///< when the offset is set to 1, EC shall freeze other
+#define I2C_COMMUNICATION_LOCK      0x04 ///< when the offset is set to 1, EC shall freeze other
                                          ///< EC-PD communication
-#define RESERVED_3                  0x29 ///< Reserved_3
-#define RESERVED_4                  0x2A ///< Reserved_4
-#define RESERVED_5                  0x2B ///< Reserved_5
+#define DATA_SIZE                   0x05 ///< Data length corresponding to command
+#define RESERVED_0                  0x06 ///< Reserved_0
+#define RESERVED_1                  0x07 ///< Reserved_1
+#define DATA_00                     0x08 ///< Start offset of the Data field
+#define RESERVED_2                  0x09 ///< Reserved_2
+#define RESERVED_3                  0x0A ///< Reserved_3
+#define RESERVED_4                  0x0B ///< Reserved_4
+#define VENDOR_ID                   0x0C ///< Vendor ID (VID) from Byte 12 to 13
+#define PRODUCT_ID                  0x0E ///< Product ID (PID) from Byte 14 to 15
+#define VENDOR_CMD_DATA             0x10 ///< Vendor Command Data from Byte 16 to 79
 
 #endif

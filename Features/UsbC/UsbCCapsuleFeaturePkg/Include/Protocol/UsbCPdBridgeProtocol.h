@@ -26,7 +26,7 @@
 #include <PiDxe.h>
 #include "UsbCPdBridgeRetimer.h"
 
-#define PD_BRIDGE_MAX_TO_WRITE        32
+#define PD_BRIDGE_MAX_TO_WRITE        64
 #define PD_BRIDGE_NVM_VERSION_OFFSET  2
 #define PD_BRIDGE_NVM_OFFSET          0
 #define PD_BRIDGE_TOTAL_NUM_OF_RECOVERIES_DURING_IMAGE_WRITE 1
@@ -44,6 +44,22 @@
 #define VENDOR_SPECIFIC_CMD_NVM_AUTHENTICATE_WRITE  0x4
 #define VENDOR_SPECIFIC_CMD_STALL_NVM_ACCESS        0x5
 #define VENDOR_SPECIFIC_CMD_RESET                   0x6
+
+///
+/// VENDOR_SPECIFIC_CMD Data format offset
+///
+#define VENDOR_SPECIFIC_CMD_VENDOR_CMD_OFFSET       0x00 ///< Vendor command offset in Data field
+#define VENDOR_SPECIFIC_CMD_VENDOR_ID_OFFSET        0x04 ///< Vendor ID (VID) offset in Data field
+#define VENDOR_SPECIFIC_CMD_PRODUCT_ID_OFFSET       0x06 ///< Product ID (PID) offset in Data field
+#define VENDOR_SPECIFIC_CMD_DATA_OFFSET             0x08 ///< from byte 16 to 79
+#define VENDOR_SPECIFIC_CMD_HEADER_TOTAL_BYTES      8    ///< 1 Byte for command, 3 Bytes for reserved and 4 Bytes for VID + PID
+#define VENDOR_SPECIFIC_CMD_DATA_TOTAL_BYTES        72   ///< from byte 8 to 79
+
+///
+/// PD BRIDGE Vendor ID (VID) and Product ID (PID)
+///
+#define PD_BRIDGE_VENDOR_ID       0x8087
+#define GOTHIC_BRIDGE_PRODUCT_ID  0x0B74
 
 ///
 /// EC PD I2C target lock status
