@@ -29,25 +29,25 @@
 /**
   Gets the wifi profile name from ASF within the set timeout time.
 
-  @param[in, out]  ProfileData    Stored profile details
+  @param[in,out] ProfileData  Stored profile details
 
-  @return EFI_SUCCESS             Profiles returned
-  @return EFI_NOT_FOUND           Timeout before profile name returned
-  @return Others                  Error Occurred
+  @return EFI_SUCCESS     Profiles returned
+  @return EFI_NOT_FOUND   Timeout before profile name returned
+  @return Others          Error Occurred
 **/
 EFI_STATUS
 GetProfileName (
-  IN OUT WIFI_PROFILE_DATA    *ProfileData
+  IN OUT WIFI_PROFILE_DATA  **ProfileData
   );
 
 /**
   Gets Client certificate and key from ASF and saves to profile sync data structure.
 
-  @param[in, out]  WcmProfile       WiFi Connection Manager profile
+  @param[in,out] Profile     WiFi Connection Manager profile
 
-  @return EFI_SUCCESS               Profile certificate added successfully
-  @return EFI_INVALID_PARAMETER     Null pointer sent
-  @return Others                    Error Occurred
+  @return EFI_SUCCESS             Profile certificate added successfully
+  @return EFI_INVALID_PARAMETER   Null pointer sent
+  @return Others                  Error Occurred
 **/
 EFI_STATUS
 GetClientCertAndKey (
@@ -57,11 +57,11 @@ GetClientCertAndKey (
 /**
   Gets Root CA certificate from ASF and saves to profile sync data structure.
 
-  @param[in, out]  WcmProfile       WiFi Connection Manager profile
+  @param[in,out] Profile     WiFi Connection Manager profile
 
-  @return EFI_SUCCESS               Profile certificate added successfully
-  @return EFI_INVALID_PARAMETER     Null pointer sent
-  @return Others                    Error Occurred
+  @return EFI_SUCCESS             Profile certificate added successfully
+  @return EFI_INVALID_PARAMETER   Null pointer sent
+  @return Others                  Error Occurred
 **/
 EFI_STATUS
 GetRootCaClientCert (

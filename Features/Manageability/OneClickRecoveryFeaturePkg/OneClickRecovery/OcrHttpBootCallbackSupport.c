@@ -59,10 +59,11 @@ CHAR8        *mAuthValue                = NULL;
 /**
   Update the Authentication info to be sent to the HTTP Boot driver in HttpBootCallback()
 
-  @param[in]    Username        HTTP Boot Username string
-  @param[in]    Password        HTTP Boot Password string
+  @param[in] Username   HTTP Boot Username string
+  @param[in] Password   HTTP Boot Password string
 
-  @retval       EFI STATUS      Status of the updated authentication info process
+  @retval EFI STATUS    Status of the updated authentication info process
+  @retval Others        Error occurred
 **/
 EFI_STATUS
 UpdateOcrHttpAuthInfo (
@@ -142,10 +143,10 @@ MatchHttpBootDevicePath (
 /**
   Indicate if the HTTP status code indicates a redirection.
 
-  @param[in]  StatusCode      HTTP status code from server.
+  @param[in] StatusCode   HTTP status code from server.
 
-  @return                     TRUE if it's redirection.
-
+  @return TRUE      If it's redirection.
+  @retval FALSE     It's not redirection.
 **/
 BOOLEAN
 IsHttpRedirectStatusCode (
@@ -444,7 +445,7 @@ InstallNetworkCallback (
       DEBUG ((DEBUG_INFO, "Install gEdkiiHttpCallbackProtocolGuid\n"));
       mHttpBootCallbackInvoked = FALSE;
       mHttpBootDownloadComplete = FALSE;
-      Status = InstallHttpPetCallback (mHttpCallbackHandle);
+      Status = InstallHttpPetCallback (&mHttpCallbackHandle);
       if (EFI_ERROR (Status)) {
         mHttpCallbackHandle = NULL;
       }

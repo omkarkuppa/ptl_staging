@@ -205,14 +205,14 @@ OcrStatusCodeListener (
 /**
   Install the HTTP PET event callback
 
-  @param[in]  HttpCallbackHandle    HTTP callback handle
+  @param[in,out]  HttpCallbackHandle    HTTP callback handle
 
   @retval   EFI_SUCCESS             Fully installed the the callback event
   @retval   Other                   Failure occurred in installation of callback
 **/
 EFI_STATUS
 InstallHttpPetCallback (
-  EFI_HANDLE  *HttpCallbackHandle
+  IN OUT EFI_HANDLE  *HttpCallbackHandle
   )
 {
   EFI_STATUS    Status;
@@ -224,7 +224,7 @@ InstallHttpPetCallback (
                   &mHttpCallback
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "[%a] Http PET Callback uninstalled with Status %r", __FUNCTION__, Status));
+    DEBUG ((DEBUG_INFO, "[%a] Http PET Callback installed with Status %r", __FUNCTION__, Status));
   }
   return Status;
 }
@@ -236,7 +236,7 @@ InstallHttpPetCallback (
 **/
 VOID
 UninstallHttpPetCallback (
-  EFI_HANDLE  *HttpCallbackHandle
+  IN EFI_HANDLE  *HttpCallbackHandle
   )
 {
   EFI_STATUS    Status;

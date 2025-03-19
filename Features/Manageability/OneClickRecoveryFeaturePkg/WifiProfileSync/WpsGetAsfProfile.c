@@ -39,7 +39,7 @@
 **/
 EFI_STATUS
 GetProfileName (
-  IN OUT WIFI_PROFILE_DATA    *ProfileData
+  IN OUT WIFI_PROFILE_DATA    **ProfileData
   )
 {
   EFI_STATUS  Status;
@@ -47,23 +47,24 @@ GetProfileName (
 
   TimeoutCount = 0;
 
-  ProfileData = (WIFI_PROFILE_DATA *) AllocateZeroPool (sizeof (WIFI_PROFILE_DATA));
-  if (ProfileData == NULL) {
+  *ProfileData = (WIFI_PROFILE_DATA *) AllocateZeroPool (sizeof (WIFI_PROFILE_DATA));
+  if (*ProfileData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
   while (TimeoutCount < ME_DELAY_COUNT) {
-    Status = AsfWifiGetProfileName (ProfileData);
-    if (!EFI_ERROR (Status) && (ProfileData->Status == AmtStatusSuccess)) {
+    Status = AsfWifiGetProfileName (*ProfileData);
+    if (!EFI_ERROR (Status) && ((*ProfileData)->Status == AmtStatusSuccess)) {
       TimeoutCount = 0;
       break;
     }
 
     MicroSecondDelay (ME_WLAN_DELAY);
     TimeoutCount++;
-    if ((TimeoutCount >= ME_DELAY_COUNT) || (ProfileData->Status != AmtStatusNotFound)) {
-      DEBUG ((DEBUG_ERROR, "[%a] Failed to get profile name within time limit with status 0x%X\n", __FUNCTION__, ProfileData->Status));
-      FreePool (ProfileData);
+    if ((TimeoutCount >= ME_DELAY_COUNT) || ((*ProfileData)->Status != AmtStatusNotFound)) {
+      DEBUG ((DEBUG_ERROR, "[%a] Failed to get profile name within time limit with status 0x%X\n", __FUNCTION__, (*ProfileData)->Status));
+      FreePool (*ProfileData);
+      *ProfileData = NULL;
       return EFI_NOT_FOUND;
     }
   }
@@ -105,12 +106,15 @@ GetClientCertAndKey (
   if (EFI_ERROR (Status) || (Profile->Cert->Status != AmtStatusSuccess)) {
     DEBUG ((DEBUG_ERROR, "[%a] Failed to get client certificate with status 0x%x\n", __FUNCTION__, Profile->Cert->Status));
     FreePool (Profile->Cert);
+    Profile->Cert = NULL;
     return Status;
   }
 
   // Get key
   Profile->Key = (WIFI_8021X_CLIENT_KEY *) AllocateZeroPool (sizeof (WIFI_8021X_CLIENT_KEY));
   if (Profile->Key == NULL) {
+    FreePool (Profile->Cert);
+    Profile->Cert = NULL;
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -119,6 +123,8 @@ GetClientCertAndKey (
     DEBUG ((DEBUG_ERROR, "[%a] Failed to get client key with status 0x%x\n", __FUNCTION__, Profile->Key->Status));
     FreePool (Profile->Cert);
     FreePool (Profile->Key);
+    Profile->Cert = NULL;
+    Profile->Key = NULL;
   }
   return Status;
 }
@@ -157,6 +163,7 @@ GetRootCaClientCert (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "[%a] Failed to get root CA certificate with status 0x%x\n", __FUNCTION__, Status));
     FreePool (Profile->CaCert);
+    Profile->CaCert = NULL;
   }
   return Status;
 }

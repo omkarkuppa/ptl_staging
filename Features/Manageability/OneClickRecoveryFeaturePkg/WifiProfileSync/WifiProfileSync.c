@@ -111,8 +111,8 @@ SetConnectStatus (
 /**
   Function to retrieve the WiFi connection status when in OCR WLAN flow
 
-  @retval EFI_SUCCESS               WiFi connection completed successfully
-  @retval Others                    Error Occurred
+  @retval EFI_SUCCESS     WiFi connection completed successfully
+  @retval Others          Error Occurred
 **/
 EFI_STATUS
 EFIAPI
@@ -124,15 +124,44 @@ GetConnectStatus (
 }
 
 /**
+  Enable or disable HECI in the WiFI driver during HTTP boot flows.
+
+  @param[in]  State                 Value corresponding to enable, TRUE, or disable, FALSE.
+
+  @retval EFI_SUCCESS               Successfully set the flag for the WiFi driver
+  @retval EFI_UNSUPPORTED           Failed to set the enable/disable flag
+  @retval Others                    Error Occurred
+**/
+EFI_STATUS
+EnableWifiAmtCoex (
+  IN BOOLEAN        State
+  )
+{
+  EFI_STATUS        Status;
+
+  Status = gRT->SetVariable (
+                  L"EnableWifiAmtCoex",
+                  &gUefiIntelCnvWlanVariablesGuid,
+                  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                  sizeof (State),
+                  &State
+                  );
+  if (EFI_ERROR (Status)) {
+    ASSERT_EFI_ERROR (Status);
+  }
+  return Status;
+}
+
+/**
   Wifi Profile Sync boot variable update to included wifi driver during BDS phase check for
   network necessary for boot check.
 
-  @param [in] NetworkSupport        Determine if we are adding or removing the WiFi device from
-                                    PCI required for boot list
+  @param[in] NetworkSupport   Determine if we are adding or removing the WiFi device from
+                              PCI required for boot list
 
-  @retval EFI_SUCCESS               Setup data set successfully
-  @retval EFI_UNSUPPORTED           Failed to get or set the setup data
-  @retval Others                    Error occurred
+  @retval EFI_SUCCESS         Setup data set successfully
+  @retval EFI_UNSUPPORTED     Failed to get or set the setup data
+  @retval Others              Error occurred
 **/
 EFI_STATUS
 SetWifiProfileSyncBootSupportVariable (
@@ -154,7 +183,6 @@ SetWifiProfileSyncBootSupportVariable (
                   &WifiProfileSyncBootConfigData
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to get setup data EfiNetworkSupport during update.\n", __FUNCTION__));
     return EFI_UNSUPPORTED;
   }
 
@@ -193,9 +221,8 @@ SetWifiProfileSyncBootSupportVariable (
 /**
   Callback to reset EFI network data setup data
 
-  @param[in] Event                  A pointer to the Event that triggered the callback
-  @param[in] Context                A pointer to private data registered with the callback function
-
+  @param[in] Event      A pointer to the Event that triggered the callback
+  @param[in] Context    A pointer to private data registered with the callback function
 **/
 VOID
 EFIAPI
@@ -213,9 +240,9 @@ DisableNetwork (
   Event function to clear memory and uninstall WiFi profile protocol from system once
   WiFi Connection Manager has acquired necessary profile data to during OCR WLAN boot flow.
 
-  @retval EFI_SUCCESS               Profiles returned
-  @retval EFI_UNSUPPORTED           Protocol not supported
-  @retval Others                    Error Occurred
+  @retval EFI_SUCCESS         Profiles returned
+  @retval EFI_UNSUPPORTED     Protocol not supported
+  @retval Others              Error Occurred
 **/
 EFI_STATUS
 WifiProfileSyncClean (
@@ -234,6 +261,12 @@ WifiProfileSyncClean (
   if (mSyncProfile != NULL) {
     ZeroMem (mSyncProfile, sizeof (WIFI_PROFILE));
     FreePool (mSyncProfile);
+  }
+
+  Status = EnableWifiAmtCoex (FALSE);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to disable WiFi AMT Coex variable status %r\n", __FUNCTION__, Status));
+    ASSERT_EFI_ERROR (Status);
   }
 
   Status = gBS->LocateProtocol (&gEdkiiWiFiProfileSyncProtocolGuid, NULL, (VOID **) &ProfileSyncProtocol);
@@ -273,8 +306,8 @@ WifiProfileSyncClean (
 /**
   Callback set for exit boot services to clear the profile data from memory and uninstall protocol
 
-  @param[in] Event                  A pointer to the Event that triggered the callback
-  @param[in] Context                A pointer to private data registered with the callback function
+  @param[in] Event        A pointer to the Event that triggered the callback
+  @param[in] Context      A pointer to private data registered with the callback function
 
 **/
 VOID
@@ -288,7 +321,7 @@ WifiProfileSyncCleanCallback (
 
   Status = WifiProfileSyncClean ();
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to clean WiFi profile secrets!\n", __FUNCTION__));
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to clean WiFi profile secrets\n", __FUNCTION__));
   }
   gBS->CloseEvent (Event);
 }
@@ -298,13 +331,13 @@ WifiProfileSyncCleanCallback (
   and was stored in WiFi profile protocol, aligning and passing the ASF data structure to WCM
   structure
 
-  @param[in, out]  WcmProfile       WiFi Connection Manager profile structure
-  @param[in, out]  MacAddress       MAC address sent to the NiC aside profile data
+  @param[in,out] WcmProfile   WiFi Connection Manager profile structure
+  @param[in,out] MacAddress   MAC address sent to the NiC aside profile data
 
-  @return EFI_SUCCESS               Profiles returned
-  @return EFI_UNSUPPORTED           Profile protocol sharing not supported or enabled
-  @return EFI_NOT_FOUND             No profiles returned
-  @return Others                    Error Occurred
+  @return EFI_SUCCESS         Profiles returned
+  @return EFI_UNSUPPORTED     Profile protocol sharing not supported or enabled
+  @return EFI_NOT_FOUND       No profiles returned
+  @return Others              Error Occurred
 **/
 EFI_STATUS
 EFIAPI
@@ -352,73 +385,50 @@ GetProfile (
 /**
   Retrieve WiFi profile information including client certificate and key using ASF
 
-  @param[in, out]  Profile          WiFi profile protocol structure acquired from ASF
+  @param[in,out] Profile          WiFi profile protocol structure acquired from ASF
 
-  @retval EFI_SUCCESS               Profiles returned
-  @retval EFI_OUT_OF_RESOURCES      Not enough memory
-  @retval EFI_UNSUPPORTED           Profile Sync is not supported via PCD or other parameter
-  @retval Others                    Error Occurred
+  @retval EFI_SUCCESS             Profiles returned
+  @retval EFI_OUT_OF_RESOURCES    Not enough memory
+  @retval EFI_UNSUPPORTED         Profile Sync is not supported via PCD or other parameter
+  @retval Others                  Error Occurred
 **/
 EFI_STATUS
 GetAsfWifiProfile (
   IN OUT WIFI_PROFILE   *Profile
   )
 {
-  EFI_STATUS              Status;
+  EFI_STATUS    Status;
 
   if (Profile == NULL) {
-    DEBUG ((DEBUG_ERROR, "[%a] Invalid profile address supplied!\n", __FUNCTION__));
+    DEBUG ((DEBUG_ERROR, "[%a] Invalid profile address supplied\n", __FUNCTION__));
     return EFI_INVALID_PARAMETER;
   }
 
   // Get ASF Wifi Profile Name
-  Status = GetProfileName (Profile->ProfileData);
+  Status = GetProfileName (&Profile->ProfileData);
   if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to get WiFi profile name with status %r\n", __FUNCTION__, Status));
     return Status;
   }
 
   // Get profile data
   Status = AsfWifiGetProfileData (Profile->ProfileData);
   if (EFI_ERROR (Status) || (Profile->ProfileData->Status != AmtStatusSuccess)) {
-    return EFI_UNSUPPORTED;
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to get WiFi profile data with status %r\n", __FUNCTION__, Status));
+    return Status;
   }
 
   // Get client data if available
   Status = GetClientCertAndKey (Profile);
   if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to get client cert and key with status %r\n", __FUNCTION__, Status));
     return Status;
   }
 
   // Get Root CA Cert if available
   Status = GetRootCaClientCert (Profile);
-  return Status;
-}
-
-/**
-  Enable or disable HECI in the WiFI driver during HTTP boot flows.
-
-  @param[in]  State                 Value corresponding to enable, TRUE, or disable, FALSE.
-
-  @retval EFI_SUCCESS               Successfully set the flag for the WiFi driver
-  @retval EFI_UNSUPPORTED           Failed to set the enable/disable flag
-  @retval Others                    Error Occurred
-**/
-EFI_STATUS
-EnableWifiAmtCoex (
-  IN BOOLEAN        State
-  )
-{
-  EFI_STATUS        Status;
-
-  Status = gRT->SetVariable (
-                  L"EnableWifiAmtCoex",
-                  &gUefiIntelCnvWlanVariablesGuid,
-                  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                  sizeof (State),
-                  &State
-                  );
   if (EFI_ERROR (Status)) {
-    ASSERT_EFI_ERROR (Status);
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to get root CA cert with status %r\n", __FUNCTION__, Status));
   }
   return Status;
 }
@@ -426,9 +436,9 @@ EnableWifiAmtCoex (
 /**
   Main flow for profile sync drivers getting profile from ASF
 
-  @retval EFI_SUCCESS               Profiles returned
-  @retval EFI_UNSUPPORTED           Profile Sync is not supported to retrieve ASF profile
-  @retval Others                    Error Occurred
+  @retval EFI_SUCCESS         Profiles returned
+  @retval EFI_UNSUPPORTED     Profile Sync is not supported to retrieve ASF profile
+  @retval Others              Error Occurred
 **/
 EFI_STATUS
 WifiProfileSyncMain (
@@ -443,7 +453,7 @@ WifiProfileSyncMain (
 
   Status = gBS->LocateProtocol (&gEdkiiWiFiProfileSyncProtocolGuid, NULL, (VOID **) &ProfileSyncProtocol);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to find profile protocol with status %r\n", __FUNCTION__, Status));
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to find wifi profile protocol with status %r\n", __FUNCTION__, Status));
     ASSERT_EFI_ERROR (Status);
     return Status;
   }
@@ -456,7 +466,6 @@ WifiProfileSyncMain (
   // Get profile from ASF
   Status = GetAsfWifiProfile (mSyncProfile);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to get ASF WiFi profile data, certificate, and key with status %r!\n", __FUNCTION__, Status));
     WifiProfileSyncClean ();
     return EFI_LOAD_ERROR;
   }
@@ -467,8 +476,7 @@ WifiProfileSyncMain (
   // Set WiFi AMT coexistence flag true
   Status = EnableWifiAmtCoex (TRUE);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to set enable WiFi AMT coexistence flag to TRUE with status %r!\n", __FUNCTION__, Status));
-    ASSERT_EFI_ERROR (Status);
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to enable WiFi AMT Coex variable status %r\n", __FUNCTION__, Status));
   }
 
   // Register Exit Boot Services Event to clear profile data from memory
@@ -491,22 +499,22 @@ WifiProfileSyncMain (
 /**
   Check for Secure boot, boot guard and proper boot options and PCD's are enabling for ProfileSync.
 
-  @retval EFI_SUCCESS               Profiles returned
-  @retval EFI_UNSUPPORTED           Protocol not supported
-  @retval Others                    Error Occurred
+  @retval EFI_SUCCESS         Profiles returned
+  @retval EFI_UNSUPPORTED     Protocol not supported
+  @retval Others              Error Occurred
 **/
 BOOLEAN
 IsProfileSyncSupported (
   VOID
   )
 {
-  EFI_STATUS              Status;
-  UINT16                  SpecialCommand;
-  UINT8                   SecureBootState;
-  UINTN                   VarSize;
-  UINT32                  VarAttributes;
-  UINT64                  BootGuardBootStatus;
-  UINT64                  BootGuardOperationMode;
+  EFI_STATUS    Status;
+  UINT16        SpecialCommand;
+  UINT8         SecureBootState;
+  UINTN         VarSize;
+  UINT32        VarAttributes;
+  UINT64        BootGuardBootStatus;
+  UINT64        BootGuardOperationMode;
 
   // Check for secure boot enabled
   VarSize = sizeof (UINT8);
@@ -519,7 +527,7 @@ IsProfileSyncSupported (
                   &SecureBootState
                   );
   if (EFI_ERROR (Status) || (SecureBootState == SECURE_BOOT_DISABLE)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Unsupported - Secureboot disabled!\n", __FUNCTION__));
+    DEBUG ((DEBUG_ERROR, "[%a] Unsupported - Secureboot disabled\n", __FUNCTION__));
     return FALSE;
   }
 
@@ -538,7 +546,7 @@ IsProfileSyncSupported (
         DEBUG ((DEBUG_ERROR, "[%a] Unsupported - KVM not enabled and boot option is 0x%X\n", __FUNCTION__, SpecialCommand));
       }
     } else {
-      DEBUG ((DEBUG_ERROR, "[%a] Unsupported - Bootguard disabled!\n", __FUNCTION__));
+      DEBUG ((DEBUG_ERROR, "[%a] Unsupported - Bootguard disabled\n", __FUNCTION__));
     }
   }
 
@@ -548,30 +556,31 @@ IsProfileSyncSupported (
 /**
   The entry point for the Wifi Profile Sync driver.
 
-  @param[in] ImageHandle            The firmware allocated handle for the EFI image
-  @param[in] SystemTable            A pointer to the EFI System Table
+  @param[in] ImageHandle    The firmware allocated handle for the EFI image
+  @param[in] SystemTable    A pointer to the EFI System Table
 
-  @retval EFI_SUCCESS               The entry point is executed successfully
-  @retval other                     Some error occurs when executing this entry point
+  @retval EFI_SUCCESS       The entry point is executed successfully
+  @retval other             Some error occurs when executing this entry point
 **/
 EFI_STATUS
 EFIAPI
 WifiProfileSyncEntryPoint (
-  IN EFI_HANDLE                            ImageHandle,
-  IN EFI_SYSTEM_TABLE                      *SystemTable
+  IN EFI_HANDLE         ImageHandle,
+  IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  EFI_STATUS      Status;
-  EFI_TPL         OldTpl;
+  EFI_STATUS    Status;
+  EFI_TPL       OldTpl;
 
   if (!IsProfileSyncSupported ()) {
-    DEBUG ((DEBUG_ERROR, "[%a] WiFi profile sync not supported!\n", __FUNCTION__));
+    DEBUG ((DEBUG_ERROR, "[%a] WiFi profile sync not supported\n", __FUNCTION__));
     return EFI_UNSUPPORTED;
   }
 
+  // always create the AMT Coex variable and set it to FALSE for Wifi binary check
   Status = EnableWifiAmtCoex (FALSE);
   if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "[%a] Failed to set enable WiFi AMT coexistence flag to FALSE with status %r!\n", __FUNCTION__, Status));
+    DEBUG ((DEBUG_ERROR, "[%a] Failed to set enable WiFi AMT coexistence flag to FALSE with status %r\n", __FUNCTION__, Status));
     ASSERT_EFI_ERROR (Status);
   }
 

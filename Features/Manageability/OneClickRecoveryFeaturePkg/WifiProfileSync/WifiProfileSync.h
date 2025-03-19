@@ -45,7 +45,7 @@ SetConnectStatus (
 /**
   Function to retrieve the WiFi connection status when in OCR WLAN flow
 
-  @retval Status                    WiFi connection status stored
+  @retval Status    WiFi connection status stored
 **/
 EFI_STATUS
 EFIAPI
@@ -56,9 +56,8 @@ GetConnectStatus (
 /**
   Callback to reset EFI network data setup data
 
-  @param[in] Event                  A pointer to the Event that triggered the callback
-  @param[in] Context                A pointer to private data registered with the callback function
-
+  @param[in] Event      A pointer to the Event that triggered the callback
+  @param[in] Context    A pointer to private data registered with the callback function
 **/
 VOID
 EFIAPI
@@ -70,9 +69,8 @@ DisableNetwork (
 /**
   Callback set for exit boot services to clear the profile data from memory and uninstall protocol
 
-  @param[in] Event                  A pointer to the Event that triggered the callback
-  @param[in] Context                A pointer to private data registered with the callback function
-
+  @param[in] Event      A pointer to the Event that triggered the callback
+  @param[in] Context    A pointer to private data registered with the callback function
 **/
 VOID
 EFIAPI
@@ -86,13 +84,13 @@ WifiProfileSyncCleanCallback (
   and was stored in WiFi profile protocol, aligning and passing the ASF data structure to WCM
   structure
 
-  @param[in, out]  WcmProfile       WiFi Connection Manager profile structure
-  @param[in, out]  MacAddress       MAC address sent to the NiC aside profile data
+  @param[in,out] WcmProfile     WiFi Connection Manager profile structure
+  @param[in,out] MacAddress     MAC address sent to the NiC aside profile data
 
-  @return EFI_SUCCESS               Profiles returned
-  @return EFI_UNSUPPORTED           Profile protocol sharing not supported or enabled
-  @return EFI_NOT_FOUND             No profiles returned
-  @return Others                    Error Occurred
+  @return EFI_SUCCESS           Profiles returned
+  @return EFI_UNSUPPORTED       Profile protocol sharing not supported or enabled
+  @return EFI_NOT_FOUND         No profiles returned
+  @return Others                Error Occurred
 **/
 EFI_STATUS
 EFIAPI
@@ -104,11 +102,11 @@ GetProfile (
 /**
   The entry point for the Wifi Profile Sync driver.
 
-  @param[in] ImageHandle            The firmware allocated handle for the EFI image
-  @param[in] SystemTable            A pointer to the EFI System Table
+  @param[in] ImageHandle      The firmware allocated handle for the EFI image
+  @param[in] SystemTable      A pointer to the EFI System Table
 
-  @retval EFI_SUCCESS               The entry point is executed successfully
-  @retval other                     Some error occurs when executing this entry point
+  @retval EFI_SUCCESS         The entry point is executed successfully
+  @retval other               Some error occurs when executing this entry point
 **/
 EFI_STATUS
 EFIAPI
