@@ -26,7 +26,7 @@
 
 #pragma pack(push, 1)
 
-#define IGPU_PEI_PREMEM_CONFIG_REVISION  4
+#define IGPU_PEI_PREMEM_CONFIG_REVISION  1
 #define IGPU_PEI_CONFIG_REVISION         1
 #define IGPU_DXE_CONFIG_REVISION         1
 
@@ -131,13 +131,6 @@ typedef struct {
   This Configuration block is to configure GT related PreMem data/variables.\n
   <b>Revision 1</b>:
   - Initial version.
-  <b>Revision 2</b>:
-  - Added VGA_MODE12_INFO
-  <b>Revision 3</b>:
-  - Added VbtSize and LidStatus
-  <b>Revision 4</b>
-  - Modified VGA_MODE12_INFO to VGA_GRAPHICS_MODE12_INFO
-
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER    Header;                  ///< Offset 0-27 Config Block Header
@@ -193,10 +186,11 @@ typedef struct {
    BIT2 - 0 : No Extended SOL Support (Disable VGA after Memory training done), 1 : Extended SOL Support
    BIT3 - 0 : VGA Init During Display Init, 1 - VGA Init During MRC Cold Boot.
   **/
-  UINT8                       VgaInitControl;      ///< Offset 74 VGA Init Control
-  VOID                        *VgaMessage;         ///< Pointer to Message which should be displayed
-  VOID                        *VbtPtr;             ///< Address of the Graphics Configuration Table
-  VGA_GRAPHICS_MODE12_INFO    GraphicsMode12Info;  ///< Offset 82 VGA Mode 12 Information
+  UINT8                       VgaInitControl;             ///< Offset 74 VGA Init Control
+  VOID                        *VgaMessage;                ///< Pointer to Message which should be displayed
+  VOID                        *VbtPtr;                    ///< Address of the Graphics Configuration Table
+  VGA_GRAPHICS_MODE12_INFO    GraphicsMode12Info;         ///< Offset 82 VGA Mode 12 Information
+  UINT8                       Reserved[32];               ///< Reserved space for future use
 } IGPU_PEI_PREMEM_CONFIG;
 
 typedef struct {
@@ -230,8 +224,6 @@ typedef struct {
   If Intel IGPU Device is not supported, all policies can be ignored.
   <b>Revision 1</b>:
   - Initial version.
-  <b>Revision 2</b>:
-  - Added MediaStandby
 **/
 typedef struct {
   CONFIG_BLOCK_HEADER    Header;             ///< Offset 0-27 Config Block Header
@@ -242,7 +234,7 @@ typedef struct {
   UINT8                  RenderStandby;      ///< Offset 28 :<b>(Test)</b> This field is used to enable or disable RC6 (Render Standby): 0=FALSE, <b>1=TRUE</b>
   UINT8                  PavpEnable;         ///< Offset 29 :IGD PAVP TRUE/FALSE: 0=FALSE, <b>1=TRUE</b>
   UINT8                  MediaStandby;       ///< Offset 30 :This field is used to enable or disable MC6 (Media Standby): 0=FALSE, <b>1=TRUE</b>
-  UINT8                  RsvdBytes183[5];
+  UINT8                  RsvdBytes183[13];
 } IGPU_PEI_CONFIG;
 
 /**

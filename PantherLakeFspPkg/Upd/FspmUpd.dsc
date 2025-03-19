@@ -3707,6 +3707,9 @@
   # Added reserved space   UnusedUpdSpace1[4]
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd42                | * | 0x4 | {0x00}
 
+  # Added reserved space (for SA) UnusedUpdSpace0[48]
+  gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd49                | * | 0x30 | {0x00}
+
   # !HDR EMBED:{FSP_M_CONFIG:FspmConfig:END}
   gPlatformFspPkgTokenSpaceGuid.ReservedFspmUpd             | * | 0x03 | {0x00}
 
