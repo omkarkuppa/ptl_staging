@@ -534,7 +534,7 @@ if %EXTENDEDREGION_BUILD% EQU TRUE (
 @rem
 @if %FSP_RESET% EQU FALSE goto SkipFitLocation
 @set FIXED_FIT_LOCATION=
-@set FIT_OFFSET_TO_FSP_TOP=0x400
+@set FIT_OFFSET_TO_FSP_TOP=0x200
 @for /f "tokens=4" %%i in ('@findstr /c:"gBoardModuleTokenSpaceGuid\.PcdFlashFvFspOSize" %TempFlashMap%') do @set FLASH_FSPO_SIZE=%%i
 @for /f "tokens=4" %%i in ('@findstr /c:"gMinPlatformPkgTokenSpaceGuid\.PcdFlashFvFspTSize" %TempFlashMap%') do @set FLASH_FSPT_SIZE=%%i
 @set /A FIXED_FIT_LOCATION= 0x1000000 - 0x%FLASH_FSPO_SIZE:~-6% - 0x%FLASH_FSPT_SIZE:~-6% - %FIT_OFFSET_TO_FSP_TOP%
@@ -761,7 +761,7 @@ copy %BUILD_DIR%\FV\ClientBios.fd %BUILD_DIR%\FV\ClientBios_FitPre.fd /Y
 @if %FSP_RESET% EQU TRUE (
   @if %FSP_SIGNED% EQU TRUE (
     @rem Calculate FBM location, which is located FIT_OFFSET_TO_FSP_TOP before the start of FSP-T FV
-    @set FBM_OFFSET_TO_FIT=0x1C00
+    @set FBM_OFFSET_TO_FIT=0x1E00
     @set /A FIXED_FBM_LOCATION=0x!FIXED_FIT_LOCATION:~-6! - !FBM_OFFSET_TO_FIT!
     call cmd /c exit /b !FIXED_FBM_LOCATION!
     @set FIXED_FBM_LOCATION=!=exitcode:~-6!
