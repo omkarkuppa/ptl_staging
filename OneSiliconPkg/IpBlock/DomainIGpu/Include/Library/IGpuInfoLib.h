@@ -570,23 +570,6 @@ IGpuIdleMedia (
   );
 
 /**
-  Updates the progress bar on the VGA display.
-
-  This function is responsible for updating the progress bar displayed on the VGA screen.
-  It ensures that the visual representation of the progress is accurately reflected based
-  on the current progress state. If the percentage is 0, the progress bar will be cleared.
-
-  @param[in] Percentage  The percentage of the progress bar to fill (0-100).
-
-  @note: this API shouldn't be used in DXE Phase.
-**/
-VOID
-EFIAPI
-UpdateProgressBar (
-  IN UINT8  Percentage
-  );
-
-/**
   Clear the VGA display based on the current video mode (Mode 3 or Mode 12).
 
   This function checks the current VGA mode, and depending on whether the mode is
