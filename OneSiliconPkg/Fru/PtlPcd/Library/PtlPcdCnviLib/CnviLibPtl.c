@@ -76,3 +76,20 @@ IsCnviWifiEnabled (
   }
   return TRUE;
 }
+
+/**
+  Check if CNVi BT is Enabled.
+
+  @retval TRUE:  CNVi BT is enabled
+          FALSE: CNVi BT is disabled
+**/
+BOOLEAN
+IsCnviBtEnabled (
+  VOID
+  )
+{
+  if (PciSegmentRead16 (CnviBtPciCfgBase () + PCI_VENDOR_ID_OFFSET) == 0xFFFF) {
+    return FALSE;
+  }
+  return TRUE;
+}

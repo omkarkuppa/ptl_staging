@@ -43,4 +43,15 @@ IsCnviWifiEnabled (
   VOID
   );
 
+/**
+  Check if CNVi BT is Enabled.
+
+  @retval TRUE:  CNVi BT is enabled
+          FALSE: CNVi BT is disabled
+**/
+BOOLEAN
+IsCnviBtEnabled (
+  VOID
+  );
+
 #endif // _CNVI_LIB_H_
