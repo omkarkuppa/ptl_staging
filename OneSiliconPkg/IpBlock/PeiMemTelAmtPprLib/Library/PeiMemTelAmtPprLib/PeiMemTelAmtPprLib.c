@@ -86,12 +86,13 @@ UpdatePprMrcPolicy (
   )
 {
   EFI_STATUS              Status;
-  MEMORY_CONFIGURATION    *MemConfig;
   SI_PREMEM_POLICY_PPI    *SiPreMemPolicyPpi;
+  MEMORY_CONFIG_NO_CRC    *MemConfigNoCrc;
 
   if (AmtPprVariable == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+
 
   ///
   /// Obtain policy settings.
@@ -103,26 +104,24 @@ UpdatePprMrcPolicy (
     return Status;
   }
 
-  ///
-  /// Get the current MRC policy
-  ///
-  MemConfig = NULL;
-  Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigGuid, (VOID *) &MemConfig);
-  if (EFI_ERROR (Status) || (MemConfig == NULL)) {
-    DEBUG ((DEBUG_INFO, "[%a] Failed to get MemoryConfigGuid with statue: %r\n", __FUNCTION__, Status));
-    return Status;
+  if (SiPreMemPolicyPpi != NULL) {
+    Status = GetConfigBlock ((VOID *) SiPreMemPolicyPpi, &gMemoryConfigNoCrcGuid, (VOID *) &MemConfigNoCrc);
+    if (Status != EFI_SUCCESS) {
+      DEBUG ((DEBUG_ERROR, "Unable to Get gMemoryConfigNoCrcGuid block\n"));
+      MemConfigNoCrc = NULL;
+      ASSERT_EFI_ERROR (Status);
+    }
   }
 
   ///
   /// Update and enable AMT, PPR and PPR Test policies
   ///
-  if (AmtPprVariable->Bits.AmtEnabled) {
-    MemConfig->ExternalInputs.PprTestType           = PPR_TEST;
-    MemConfig->ExternalInputs.TrainingEnables3.PPR  = ENABLED;
+  if (AmtPprVariable->Bits.AmtEnabled && MemConfigNoCrc != NULL) {
+    MemConfigNoCrc->PprTestType.Value     = PPR_TEST;
     if (AmtPprVariable->Bits.PprEnabled) {
-      MemConfig->ExternalInputs.PprRepairType       = HARD_PPR;
+      MemConfigNoCrc->PprRepairType       = HARD_PPR;
     } else {
-      MemConfig->ExternalInputs.PprRepairType       = NOREPAIR_PPR;
+      MemConfigNoCrc->PprRepairType       = NOREPAIR_PPR;
     }
   }
   return EFI_SUCCESS;

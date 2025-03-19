@@ -91,9 +91,6 @@
   PlatformSetup.hfr
   PlatformSetup.c
 
-#Memory Configuration
-  MemorySetup.c
-
 #OverClockInit
   OverClockSetup.uni
   OverClockSetup.hfr

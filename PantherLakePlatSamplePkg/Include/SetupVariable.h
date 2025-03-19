@@ -130,7 +130,9 @@
 
 #define IBECC_REGIONS_MAX                 8
 
-#define MRC_MAX_RCOMP_TARGETS             5
+// Need to keep in sync with values in OneSiliconPkg\IpBlock\MemoryInit\src\IncludePublic\Ptl\CMrcExtTypes.h
+#define MRC_MAX_RCOMP_TARGETS  5
+#define MRC_PPR_REQUEST_MAX    2
 
 #define MRC_TOTAL_DIMMODT_ENTRIES         22
 
@@ -1252,9 +1254,11 @@ typedef struct {
   <b>Revision 2</b>:  - Added CnviDdrRfim.
   <b>Revision 3</b>:  - CI Fix.
   <b>Revision 4</b>:  - Add MrcFailureOnUnsupportedDimm.
+  <b>Revision 5</b>:  - Add DCCDDR5READDCA.
+  <b>Revision 6</b>:  - Add PPR-related variables.
 **/
 
-#define SA_SETUP_REVISION   5
+#define SA_SETUP_REVISION   6
 
 typedef struct {
   UINT8   Revision;
@@ -1712,7 +1716,6 @@ typedef struct {
   UINT8   PprRepairBank;
   UINT8   PprForceRepair;
   UINT8   BoardTopology;
-
   UINT16  SubChHashMask;
   UINT8   SubChHashInterleaveBit;
   UINT8   ForceCkdBypass;
@@ -1734,7 +1737,16 @@ typedef struct {
   UINT8   SolFeatureEnabled;
   UINT8   MrcFailureOnUnsupportedDimm;
   UINT8   DCCDDR5READDCA;
-  UINT8   Rsvd[61];
+  UINT8   PprRunMmrw;
+  UINT8   PprRequestEnable[MRC_PPR_REQUEST_MAX];
+  UINT8   PprRequestController[MRC_PPR_REQUEST_MAX];
+  UINT8   PprRequestChannel[MRC_PPR_REQUEST_MAX];
+  UINT8   PprRequestRank[MRC_PPR_REQUEST_MAX];
+  UINT8   PprRequestBankGroup[MRC_PPR_REQUEST_MAX];
+  UINT8   PprRequestBank[MRC_PPR_REQUEST_MAX];
+  UINT32  PprRequestRow[MRC_PPR_REQUEST_MAX];
+  UINT8   PprRequestDevice[MRC_PPR_REQUEST_MAX];
+  UINT8   Rsvd[44];
 } SA_SETUP;
 
 /**

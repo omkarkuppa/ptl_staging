@@ -726,66 +726,66 @@
 
   # !BSF NAME:{Hard Post Package Repair}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{Enables/Disable Hard Post Package Repair}
+  # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PPR                         | * | 0x01 | 0x00
 
   # !BSF NAME:{PPR Test Type}
   # !BSF TYPE:{EditNum, HEX, (0x00, 0xFF)}
-  # !BSF HELP:{Select memory tests used in Post Package Repair flow. This option is only valid if PPR=1, otherwise ignored. Bit 0: WCMATS8 test, Bit 1: Data Retention test, Bit 2: X March test, Bit 3: X March G test, Bit 4: Y March Short test, Bit 5: Y March Long test. Default=0x3, WCMATS8 and data retention}
-  gPlatformFspPkgTokenSpaceGuid.PprTestType                 | * | 0x1 | 0x6
+  # !BSF HELP:{Deprecated}
+  gPlatformFspPkgTokenSpaceGuid.PprTestType                 | * | 0x01 | 0x00
 
   # !BSF NAME:{PPR Run Once}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{When Eanble, PPR will run only once and then is disabled at next training cycle}
-  gPlatformFspPkgTokenSpaceGuid.PprRunOnce                  | * | 0x1 | 0x1
+  gPlatformFspPkgTokenSpaceGuid.PprRunOnce                  | * | 0x01 | 0x01
 
   # !BSF NAME:{PPR Run During Fastboot}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{When Eanble, PPR will run during fastboot}
-  gPlatformFspPkgTokenSpaceGuid.PprRunAtFastboot            | * | 0x1 | 0x0
+  # !BSF HELP:{Deprecated}
+  gPlatformFspPkgTokenSpaceGuid.PprRunAtFastboot            | * | 0x01 | 0x00
 
   # !BSF NAME:{PPR Repair Type}
   # !BSF TYPE:{Combo} OPTION:{0:Do not Repair (Default), 1:Soft Repair, 2:Hard Repair}
   # !BSF HELP:{PPR Repair Type: 0:Do not Repair (Default), 1:Soft Repair, 2:Hard Repair}
-  gPlatformFspPkgTokenSpaceGuid.PprRepairType               | * | 0x01 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PprRepairType               | * | 0x01 | 0x00
 
   # !BSF NAME:{PPR Error Injection}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{When Eanble, PPR will inject bad rows during testing}
-  gPlatformFspPkgTokenSpaceGuid.PprErrorInjection           | * | 0x1 | 0x0
+  gPlatformFspPkgTokenSpaceGuid.PprErrorInjection           | * | 0x01 | 0x00
 
   # !BSF NAME:{PPR Repair Controller}  TYPE:{EditNum, HEX, (0x00,0x01)}
-  # !BSF HELP:{PPR repair controller: User chooses to force repair specifc address }
+  # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PprRepairController         | * | 0x01 | 0x0
 
   # !BSF NAME:{PPR Repair Channel}  TYPE:{EditNum, HEX, (0x00,0x01)}
-  # !BSF HELP:{PPR repair Channel: User chooses to force repair specifc address }
+  # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PprRepairChannel            | * | 0x01 | 0x0
 
   # !BSF NAME:{PPR Repair Dimm}  TYPE:{EditNum, HEX, (0x00,0x01)}
-  # !BSF HELP:{PPR repair Dimm: User chooses to force repair specifc address }
+  # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PprRepairDimm               | * | 0x01 | 0x0
 
   # !BSF NAME:{PPR Repair Rank}  TYPE:{EditNum, HEX, (0x00,0x01)}
-  # !BSF HELP:{PPR repair Rank: User chooses to force repair specifc address }
+  # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PprRepairRank               | * | 0x01 | 0x0
   # Added reserved space  UnusedUpdSpace0[3]
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd773              | * | 0x3 | {0x00}
 
   # !BSF NAME:{PPR Repair Row}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
-  # !BSF HELP:{PPR repair Row: User chooses to force repair specifc address }
+  # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PprRepairRow                | * | 0x04 | 0x0
 
   # !BSF NAME:{PPR Repair Physical Address Low}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
-  # !BSF HELP:{PPR repair Physical Address Low: User chooses to force repair specifc address }
+  # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PprRepairPhysicalAddrLow    | * | 0x04 | 0x0
 
   # !BSF NAME:{PPR Repair Physical Address High}  TYPE:{EditNum, HEX, (0x00,0xFFFFFFFF)}
-  # !BSF HELP:{PPR repair Physical Address High: User chooses to force repair specifc address }
+  # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PprRepairPhysicalAddrHigh   | * | 0x04 | 0x0
 
   # !BSF NAME:{PPR Repair BankGroup}  TYPE:{EditNum, HEX, (0x00,0xFF)}
-  # !BSF HELP:{PPR repair BankGroup: User chooses to force repair specifc address }
+  # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PprRepairBankGroup          | * | 0x01 | 0x0
 
   # !BSF NAME:{LVR Auto Trim}
@@ -1052,6 +1052,7 @@
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{In-Band ECC Protected Region Enable }
   gPlatformFspPkgTokenSpaceGuid.IbeccProtectedRegionEnable  | * | 0x8 | { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
+
   # Added reserved space  UnusedUpdSpace45[1]
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd45               | * | 0x1 | 0x00
 
@@ -1209,6 +1210,7 @@
   # !BSF TYPE:{Combo} OPTION:{0:BIT6, 1:BIT7, 2:BIT8, 3:BIT9, 4:BIT10, 5:BIT11, 6:BIT12, 7:BIT13}
   # !BSF HELP:{Select the BIT to be used for Channel Interleaved mode. NOTE: BIT7 will interlave the channels at a 2 cacheline granularity, BIT8 at 4 and BIT9 at 8. Default is BIT8}
   gPlatformFspPkgTokenSpaceGuid.ChHashInterleaveBit         | * | 0x01 | 0x02
+
   # Added reserved space UnusedUpdSpace6
   gPlatformFspPkgTokenSpaceGuid.FspmUpdRsvd6             | * | 0x01 | 0x00
 
@@ -1412,11 +1414,61 @@
   # !BSF HELP:{Enable/Disable DDR5 Dca Training}
   gPlatformFspPkgTokenSpaceGuid.DCCDDR5READDCA               | * | 0x01 | 0x00
 
+  # !BSF NAME:{PPR Run WCHMATS8}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0x01)}
+  # !BSF HELP:{Run WCHMATS8 in Post Package Repair flow}
+  gPlatformFspPkgTokenSpaceGuid.PprRunWCHMATS8              | * | 0x01 | 0x00
+
+  # !BSF NAME:{PPR Run Retention}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0x01)}
+  # !BSF HELP:{Run Data Retention in Post Package Repair flow}
+  gPlatformFspPkgTokenSpaceGuid.PprRunRetention             | * | 0x01 | 0x00
+
+  # !BSF NAME:{PPR Run XMarch}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0x01)}
+  # !BSF HELP:{Run XMarch in Post Package Repair flow}
+  gPlatformFspPkgTokenSpaceGuid.PprRunXMarch                | * | 0x01 | 0x00
+
+  # !BSF NAME:{PPR Run XMarchG}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0x01)}
+  # !BSF HELP:{Run XMarchG in Post Package Repair flow}
+  gPlatformFspPkgTokenSpaceGuid.PprRunXMarchG               | * | 0x01 | 0x00
+
+  # !BSF NAME:{PPR Run YMarchShort}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0x01)}
+  # !BSF HELP:{Run YMarchShort in Post Package Repair flow}
+  gPlatformFspPkgTokenSpaceGuid.PprRunYMarchShort           | * | 0x01 | 0x00
+
+  # !BSF NAME:{PPR Run YMarchLong}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0x01)}
+  # !BSF HELP:{Run YMarchLong in Post Package Repair flow}
+  gPlatformFspPkgTokenSpaceGuid.PprRunYMarchLong            | * | 0x01 | 0x00
+
+  # !BSF NAME:{PPR Run Mmrw}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0x01)}
+  # !BSF HELP:{Run Mmrw in Post Package Repair flow}
+  gPlatformFspPkgTokenSpaceGuid.PprRunMmrw                  | * | 0x01 | 0x00
+
+  # !BSF NAME:{PPR Test Disabled}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0x01)}
+  # !BSF HELP:{Don't run any test in Post Package Repair flow}
+  gPlatformFspPkgTokenSpaceGuid.PprTestDisabled             | * | 0x01 | 0x00
+
+  # !BSF NAME:{PPR Entry Info}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0xFF)}
+  # !BSF HELP:{PPR Repair Info}
+  gPlatformFspPkgTokenSpaceGuid.PprEntryInfo                | * | 0x10 | { 0x0, 0x0 }
+
+  # !BSF NAME:{PPR Entry Address}
+  # !BSF TYPE:{EditNum, HEX, (0x00, 0xFFFFFFFF)}
+  # !BSF HELP:{PPR Repair Memory Address}
+  gPlatformFspPkgTokenSpaceGuid.PprEntryAddress             | * | 0x10 | { 0x0, 0x0 }
+
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd                | * | 61   | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 21  | {0x00}
 
   #
   # MRC Block End
@@ -3562,7 +3614,7 @@
   gPlatformFspPkgTokenSpaceGuid.PprForceRepair                  | * | 0x01 | 0
 
   # !BSF NAME:{PPR Repair Bank}  TYPE:{EditNum, HEX, (0x00,0xFF)}
-  # !BSF HELP:{PPR repair Bank: User chooses to force repair specifc address }
+  # !BSF HELP:{Deprecated}
   gPlatformFspPkgTokenSpaceGuid.PprRepairBank                  | * | 0x01 | 0
 
   # !BSF NAME:{Board Topology}
