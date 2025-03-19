@@ -180,7 +180,6 @@ WriteShadowRamImageToEeprom (
 
 **/
 EFI_STATUS
-EFIAPI
 ProgramFlashRegion (
   IN EFI_PCI_IO_PROTOCOL  *PciIoProtocolPtr,
   IN UINT32               Address,
@@ -237,7 +236,6 @@ ProgramFlashRegion (
 
 **/
 EFI_STATUS
-EFIAPI
 CheckSecureModuleInImageValid (
   IN     EFI_PCI_IO_PROTOCOL  *PciIoProtocolPtr,
   IN     VOID                 *ImagePtr,
@@ -306,7 +304,6 @@ Exit:
 
 **/
 EFI_STATUS
-EFIAPI
 UpdateEepromRegion (
   IN EFI_PCI_IO_PROTOCOL  *PciIoProtocolPtr,
   IN VOID                 *ImagePtr,
