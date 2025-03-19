@@ -346,13 +346,12 @@ PerformErase (
     if (!EFI_ERROR (Status) && (BlkIo != NULL)) {
       Size = (BlkIo->Media->LastBlock + 1) * (BlkIo->Media->BlockSize);
       MediaId = BlkIo->Media->MediaId;
+      // if the device doesn't have media, no need to erase
+      if (Size == 0) {
+        Dev->Result |= ERASE_RESULT_SUCCESS;
+        return EFI_SUCCESS;
+      }
     }
-  }
-
-  // if the device doesn't have media, no need to erase
-  if (Size == 0) {
-    Dev->Result |= ERASE_RESULT_SUCCESS;
-    return EFI_SUCCESS;
   }
 
   // erase storage, try all the sanitize type
