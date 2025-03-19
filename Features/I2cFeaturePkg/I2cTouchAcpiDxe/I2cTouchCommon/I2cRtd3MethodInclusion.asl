@@ -72,6 +72,11 @@ Method (PSTA, 1, Serialized) {
     Return (0x01)
   }
   If (Arg0 == 1) {
+    If (LEqual (DeRefOf (Index (TPWR,0)), 0)) {
+      ADBG ("TPL _STA is always ON")
+      Return (0x01)
+    }
+
     If (LEqual (\_SB.GGOV (DeRefOf (Index (TPWR,0))), 1)) {
       ADBG ("TPL _STA ON")
       Return (0x01)
@@ -108,9 +113,13 @@ Method (PON, 1, Serialized) /// _ON Method \n Turn on
   }
   ElseIf (Arg0 == 1) {
     ADBG ("I2C Touch PWR ON")
-    // drive pwr high
-    \_SB.SGOV (DeRefOf (Index (TPWR,0)), DeRefOf (Index (TPWR,1)))
-    Sleep (2)                  // time for Reset de-assert from Power
+
+    If (LNotEqual (DeRefOf (Index (TPWR,0)), 0)) {
+      // drive pwr high
+      \_SB.SGOV (DeRefOf (Index (TPWR,0)), DeRefOf (Index (TPWR,1)))
+      Sleep (2)                  // time for Reset de-assert from Power
+    }
+
       // De-Assert GPIO RST
     \_SB.SGOV (DeRefOf (Index(TRST,0)), DeRefOf (Index (TRST,1)))
       // update ONTM
@@ -146,10 +155,14 @@ Method (POFF, 1, Serialized)  /// _OFF method \n Turn off
     // Assert GPIO RST
     Xor (DeRefOf (Index (TRST,1)), 1, Local0)
     \_SB.SGOV (DeRefOf (Index (TRST,0)), Local0)
-    Sleep(3)                   // time for Power Off from Reset assert
-    // drive pwr low
-    Xor (DeRefOf (Index (TPWR,1)), 1, Local0)
-    \_SB.SGOV (DeRefOf (Index (TPWR,0)), Local0)
+
+    If (LNotEqual (DeRefOf (Index (TPWR,0)), 0)) {
+      Sleep(3)                   // time for Power Off from Reset assert
+      // drive pwr low
+      Xor (DeRefOf (Index (TPWR,1)), 1, Local0)
+      \_SB.SGOV (DeRefOf (Index (TPWR,0)), Local0)
+    }
+
     // update ONTM
     Store (Zero , ONTM)  ///- Clear ONTM
   }
