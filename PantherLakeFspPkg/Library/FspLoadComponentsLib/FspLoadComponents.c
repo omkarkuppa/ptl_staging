@@ -319,6 +319,7 @@ FspLoadComponents (
     //
     ExtendFspVersion (&FspMeasurementInfo, Fbm, TpmActivePcrBanks);
     ExtendFspotRegion (&FspMeasurementInfo, Fbm, TpmActivePcrBanks);
+    FspExtendIbbRegionNear4G (TpmActivePcrBanks);
   }
 
   //

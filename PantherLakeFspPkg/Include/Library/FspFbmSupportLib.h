@@ -27,6 +27,45 @@
 #include <FbmDef.h>
 
 /**
+  Find FIT entry address for BPM
+
+  @return FIT entry address for BPM
+
+**/
+VOID *
+EFIAPI
+FindBpmFitEntry (
+  VOID
+  );
+
+/**
+  Find BPM entry address from FIT
+
+  @return BPM address
+
+**/
+VOID *
+EFIAPI
+FindBpm (
+  VOID
+  );
+
+/**
+  Find BPM element by structureID
+
+  @param[in] Bpm           BPM address
+  @param[in] StructureID   BPM element StructureID
+
+  @return BPM element
+**/
+VOID *
+EFIAPI
+FindBpmElement (
+  IN BOOT_POLICY_MANIFEST_HEADER         *Bpm,
+  IN UINT64                              StructureId
+  );
+
+/**
  Locate FBM from FIT.
 
   @retval FBM structure location or NULL if not found.

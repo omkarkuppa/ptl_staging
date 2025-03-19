@@ -26,11 +26,6 @@
 #include <BpmDef.h>
 
 VOID *
-FindBpm (
-  VOID
-  );
-
-VOID *
 FindFbm (
   VOID
   );
@@ -136,7 +131,7 @@ LocateBspm (
 
   DEBUG ((DEBUG_INFO, "Locate Bsss BSPM Element START ...\n"));
 
-  FitEntry = (FIRMWARE_INTERFACE_TABLE_ENTRY *) FindBpm ();
+  FitEntry = (FIRMWARE_INTERFACE_TABLE_ENTRY *) FindBpmFitEntry ();
   if (FitEntry == NULL) {
     DEBUG ((DEBUG_ERROR, "BPM entry was not found inside the FIT!\n"));
     return NULL;

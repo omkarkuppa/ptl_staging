@@ -104,17 +104,138 @@ FindFitEntryData (
 }
 
 /**
+  Find BPM element by structureID
+
+  @param[in] Bpm           BPM address
+  @param[in] StructureID   BPM element StructureID
+
+  @return BPM element
+**/
+VOID *
+EFIAPI
+FindBpmElement (
+  IN BOOT_POLICY_MANIFEST_HEADER          *Bpm,
+  IN UINT64                               StructureId
+  )
+{
+  IBB_ELEMENT                             *IbbElement;
+  TXT_ELEMENT                             *TxtElement;
+  PLATFORM_CONFIG_DATA_ELEMENT            *PcdsElement;
+  PLATFORM_MANUFACTURER_ELEMENT           *PmElement;
+  BOOT_POLICY_MANIFEST_SIGNATURE_ELEMENT  *BpmSignatureElement;
+  UINT8                                   *Buffer;
+
+  Buffer = (UINT8 *)Bpm;
+
+  if (*(UINT64 *)Bpm->StructureId != BOOT_POLICY_MANIFEST_HEADER_STRUCTURE_ID) {
+    return NULL;
+  }
+
+  if (StructureId == BOOT_POLICY_MANIFEST_HEADER_STRUCTURE_ID) {
+    return Buffer;
+  }
+
+  Buffer += sizeof(BOOT_POLICY_MANIFEST_HEADER);
+  IbbElement = (IBB_ELEMENT *)Buffer;
+
+  if (*(UINT64 *)IbbElement->StructureId != BOOT_POLICY_MANIFEST_IBB_ELEMENT_STRUCTURE_ID) {
+    return NULL;
+  }
+
+  if (StructureId == BOOT_POLICY_MANIFEST_IBB_ELEMENT_STRUCTURE_ID) {
+    return Buffer;
+  }
+
+  if (StructureId == BOOT_POLICY_MANIFEST_IBB_ELEMENT_DIGEST_ID) {
+    Buffer = (UINT8 *) &(IbbElement->PostIbbHash);
+    Buffer += sizeof(UINT32) + IbbElement->PostIbbHash.Size;
+    Buffer += sizeof(UINT32); // IbbEntryPoint
+    return Buffer;
+  }
+
+  // Advance to end of the last IBB_ELEMENT structure
+  do {
+    Buffer += IbbElement->ElementSize; // Go to the end of the IBB Element structure
+    IbbElement = (IBB_ELEMENT *)Buffer;
+  } while (*(UINT64 *)IbbElement->StructureId == BOOT_POLICY_MANIFEST_IBB_ELEMENT_STRUCTURE_ID); // to support multiple IBB Elements
+
+  // Do we have TXT element in BPM?
+  // If so, advance to end of TXT_ELEMENT structure
+  TxtElement = (TXT_ELEMENT *)Buffer;
+  if (*(UINT64 *)TxtElement->StructureId == BOOT_POLICY_MANIFEST_TXT_ELEMENT_STRUCTURE_ID) {
+    Buffer += TxtElement->ElementSize;
+  }
+
+  // Do we have Platform Config Data element in BPM?
+  // If so, advance to end of PLATFORM_CONFIG_DATA_ELEMENT structure
+  PcdsElement = (PLATFORM_CONFIG_DATA_ELEMENT *)Buffer;
+  if (*(UINT64 *)PcdsElement->StructureId == BOOT_POLICY_MANIFEST_PLATFORM_CONFIG_DATA_ELEMENT_STRUCTURE_ID) {
+    if (StructureId == BOOT_POLICY_MANIFEST_PLATFORM_CONFIG_DATA_ELEMENT_STRUCTURE_ID) {
+      return Buffer;
+    }
+    if (StructureId == BPM_CNBS_ELEMENT_STRUCTURE_ID) {
+      Buffer = (UINT8 *) &PcdsElement->Cnbs;
+      return Buffer;
+    }
+    Buffer += PcdsElement->ElementSize;
+  }
+
+  // Do we have Platform Manufacturer element in BPM?
+  // If so, advance to end of PLATFORM_MANUFACTURER_ELEMENT structure
+  PmElement = (PLATFORM_MANUFACTURER_ELEMENT *)Buffer;
+  while (*(UINT64 *)PmElement->StructureId == BOOT_POLICY_MANIFEST_PLATFORM_MANUFACTURER_ELEMENT_STRUCTURE_ID) {
+    if (StructureId == BOOT_POLICY_MANIFEST_PLATFORM_MANUFACTURER_ELEMENT_STRUCTURE_ID) {
+      return Buffer;
+    }
+    Buffer += sizeof(PLATFORM_MANUFACTURER_ELEMENT) + PmElement->PmDataSize;
+    PmElement = (PLATFORM_MANUFACTURER_ELEMENT *)Buffer;
+  }
+
+  BpmSignatureElement = (BOOT_POLICY_MANIFEST_SIGNATURE_ELEMENT *)Buffer;
+  if (*(UINT64 *)BpmSignatureElement->StructureId != BOOT_POLICY_MANIFEST_SIGNATURE_ELEMENT_STRUCTURE_ID) {
+    return NULL;
+  }
+  if (StructureId == BOOT_POLICY_MANIFEST_SIGNATURE_ELEMENT_STRUCTURE_ID) {
+    return Buffer;
+  }
+  return NULL;
+}
+
+/**
+  Find FIT entry address for BPM
+
+  @return FIT entry address for BPM
+
+**/
+VOID *
+EFIAPI
+FindBpmFitEntry (
+  VOID
+  )
+{
+  return FindFitEntryData (FIT_TYPE_0C_BOOT_POLICY_MANIFEST);
+}
+
+/**
   Find BPM address
 
   @return BPM address
 
 **/
 VOID *
+EFIAPI
 FindBpm (
   VOID
   )
 {
-  return FindFitEntryData (FIT_TYPE_0C_BOOT_POLICY_MANIFEST);
+  FIRMWARE_INTERFACE_TABLE_ENTRY  *FitEntry;
+
+  FitEntry = (FIRMWARE_INTERFACE_TABLE_ENTRY *) FindBpmFitEntry ();
+  if (FitEntry == NULL) {
+    DEBUG ((DEBUG_ERROR, "BPM entry was not found inside the FIT!\n"));
+    return NULL;
+  }
+  return (BOOT_POLICY_MANIFEST_HEADER *)(UINTN) FitEntry->Address;
 }
 
 /**

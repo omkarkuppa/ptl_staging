@@ -186,6 +186,21 @@ ExtendFspVersion (
   );
 
 /**
+  Extend 4G - 4K region digest.
+
+  @param[in]   TpmActivePcrBanks   Active PCR value
+
+  @retval EFI_SUCCESS       Operation completed successfully.
+  @retval EFI_DEVICE_ERROR  Unexpected device behavior.
+
+**/
+EFI_STATUS
+EFIAPI
+FspExtendIbbRegionNear4G (
+  IN   UINT32                       TpmActivePcrBanks
+  );
+
+/**
   Create HOB to save the event log data. The HOBs will be consumed
   by PeiBootGuardEventLogLib to create event logs.
 

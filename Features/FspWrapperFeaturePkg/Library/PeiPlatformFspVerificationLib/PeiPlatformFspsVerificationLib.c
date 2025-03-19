@@ -90,7 +90,7 @@ PlatformVerifyFsps (
       //
       // Verified boot but FBM invalid should halt directly in ACM!!!
       //
-      DEBUG ((DEBUG_INFO, "No valid FBM is found, skip FSP-S verification!\n"));
+      DEBUG ((DEBUG_INFO, "FSP signing is not supported, skip FSP-S verification!\n"));
       return EFI_SUCCESS;
     } else {
       if (IsVerifiedBoot ()) {

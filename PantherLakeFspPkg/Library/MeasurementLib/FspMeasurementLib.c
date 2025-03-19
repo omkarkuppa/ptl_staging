@@ -33,6 +33,14 @@
 #include <Library/IoLib.h>
 #include <Register/PmcRegs.h>
 
+STATIC TPMI_ALG_HASH SortedAlgIds[] = {
+  TPM_ALG_SHA1,
+  TPM_ALG_SHA256,
+  TPM_ALG_SHA384,
+  TPM_ALG_SHA512,
+  TPM_ALG_SM3_256
+};
+
 /**
   Check if the boot mode is S3.
 
@@ -445,6 +453,250 @@ FspExtendFspVersion (
 }
 
 /**
+   Sort the input DigestList into the output SortedDigestList
+
+   To disambiguate any extension performed by ACM and allow BIOS
+   to reconstruct the event, order of entries in TPML_DIGEST_VALUES
+   structure must be strictly specified in the ascending order of the
+   TCG algorithm IDs: SHA1 -> SHA256 -> SHA384 -> SHA512 -> SM3
+
+   @param[in]  DigestList        Input Digest list to sort
+   @param[out] SortedDigestList  Output sorted Digest list
+
+   @retval EFI_INVALID_PARAMETER    Input parameter is not valid.
+   @retval EFI_UNSUPPORTED          Digest list is more than the supported countsss.
+   @retval EFI_SUCCESS              Operation completed successfully.
+**/
+EFI_STATUS
+EFIAPI
+SortDigestList (
+  IN  TPML_DIGEST_VALUES *DigestList,
+  OUT TPML_DIGEST_VALUES *SortedDigestList
+  )
+{
+  UINT8   SortedAlgIdsSize;
+  UINT8   AlgIterator;
+  UINT8   SortedDigestCurrentPosition;
+  UINT32  InputIterator;
+  UINT8   MatchCount;
+
+  SortedAlgIdsSize = sizeof (SortedAlgIds) / sizeof (TPMI_ALG_HASH);
+  AlgIterator = 0;
+  SortedDigestCurrentPosition = 0;
+  InputIterator = 0;
+  MatchCount = 0;
+
+  DEBUG ((DEBUG_INFO, "%a() entry...\n", __FUNCTION__));
+
+  if ((DigestList == NULL) || (SortedDigestList == NULL)) {
+    ASSERT (FALSE);
+    return EFI_INVALID_PARAMETER;
+  }
+
+  ZeroMem (SortedDigestList, sizeof (TPML_DIGEST_VALUES));
+
+  SortedDigestList->count = DigestList->count;
+
+  //
+  // Check that DigestList->count never exceeds the maximum supported digest count
+  //
+  if (DigestList->count > HASH_COUNT) {
+    DEBUG ((DEBUG_ERROR, "Digest count exceeds maximum digest count supported!\n"));
+    ASSERT (FALSE);
+    return EFI_UNSUPPORTED;
+  }
+
+  //
+  // Iterate over TCG algorithms in specified ascending order.
+  //
+  for (AlgIterator = 0; ((AlgIterator < SortedAlgIdsSize) && (MatchCount < DigestList->count)); AlgIterator++) {
+    //
+    // Iterate over input digest list searching for a matching algorithm entry.
+    //
+    for (InputIterator = 0; InputIterator < DigestList->count; InputIterator++) {
+
+      if (DigestList->digests[InputIterator].hashAlg != SortedAlgIds[AlgIterator]) {
+        continue;
+      }
+
+      SortedDigestList->digests[SortedDigestCurrentPosition].hashAlg = DigestList->digests[InputIterator].hashAlg;
+      CopyMem (
+        &(SortedDigestList->digests[SortedDigestCurrentPosition].digest),
+        &(DigestList->digests[InputIterator].digest),
+        sizeof (TPMU_HA));
+
+      SortedDigestCurrentPosition++;
+      MatchCount++;
+      break;
+    }
+  }
+  return EFI_SUCCESS;
+}
+
+/**
+  Get all the supported digests for 4G - 4K region and sort
+  them to ensure ascending order of the TCG algorithm IDs
+
+  @param[in]   TpmActivePcrBanks   Active PCR value
+  @param[out]  DigestList          List of digests
+
+  @retval EFI_SUCCESS              Operation completed successfully.
+  @retval EFI_NOT_FOUND            IBB hash not found
+  @retval EFI_INVALID_PARAMETER    Bpm was not found
+  @retval EFI_DEVICE_ERROR         Unexpected device behavior.
+
+**/
+EFI_STATUS
+EFIAPI
+IbbRegionNear4GGetDigestList (
+  IN  UINT32                   ActivePcrBanks,
+  OUT TPML_DIGEST_VALUES       *DigestList
+  )
+{
+  HASH_LIST                    *IbbHashPtr;
+  BOOT_POLICY_MANIFEST_HEADER  *Bpm;
+  UINT16                       Idx;
+  UINT8                        *CurrPos;
+  UINT16                       CurrHashAlg;
+  UINT32                       CurrPcrBank;
+  TPMI_ALG_HASH                CurrDigestAlg;
+  UINT16                       IbbDigestSize;
+  UINT16                       IbbDigestCount;
+  TPML_DIGEST_VALUES           SortedDigestList;
+
+  IbbHashPtr = NULL;
+  Bpm        = NULL;
+
+  Bpm = FindBpm ();
+  if (Bpm == NULL) {
+    ASSERT (FALSE);
+    return EFI_NOT_FOUND;
+  }
+
+  IbbHashPtr = (HASH_LIST*) FindBpmElement (Bpm, BOOT_POLICY_MANIFEST_IBB_ELEMENT_DIGEST_ID);
+  if (IbbHashPtr == NULL) {
+    DEBUG ((DEBUG_ERROR, "IBB Hash not found!\n"));
+    ASSERT (FALSE);
+    return EFI_NOT_FOUND;
+  }
+
+  CurrPcrBank = 0;
+  CurrHashAlg = 0;
+
+  CurrPos = (UINT8 *)IbbHashPtr;
+  IbbDigestCount = ((HASH_LIST*)CurrPos)->Count;
+  DEBUG ((DEBUG_INFO, "IbbDigestCount = 0x%04x\n", IbbDigestCount));
+
+  //
+  // Advance past size and count field
+  //
+  CurrPos += sizeof (UINT16) + sizeof (UINT16);
+
+  DEBUG ((DEBUG_INFO, "ActivePcrBanks = 0x%x\n", ActivePcrBanks));
+
+  for (Idx = 0; Idx < IbbDigestCount ; Idx++) {
+    CurrDigestAlg = ((SHAX_HASH_STRUCTURE *)CurrPos)->HashAlg;
+    IbbDigestSize = ((SHAX_HASH_STRUCTURE *)CurrPos)->Size;
+
+    DEBUG ((DEBUG_INFO, "Idx       = 0x%04x\n", Idx));
+    DEBUG ((DEBUG_INFO, "Hash Alg  = 0x%04x\n", CurrDigestAlg));
+    DEBUG ((DEBUG_INFO, "Hash Size = 0x%04x\n", IbbDigestSize));
+
+    //
+    // Advance to digest
+    //
+    CurrPos += sizeof (UINT16) + sizeof (UINT16);
+
+    switch (CurrDigestAlg) {
+    case TPM_ALG_SHA1:
+      CurrPcrBank = HASH_ALG_SHA1;
+      CurrHashAlg = TPM_ALG_SHA1;
+      break;
+    case TPM_ALG_SHA256:
+      CurrPcrBank = HASH_ALG_SHA256;
+      CurrHashAlg = TPM_ALG_SHA256;
+      break;
+    case TPM_ALG_SHA384:
+      CurrPcrBank = HASH_ALG_SHA384;
+      CurrHashAlg = TPM_ALG_SHA384;
+      break;
+    case TPM_ALG_SHA512:
+      CurrPcrBank = HASH_ALG_SHA512;
+      CurrHashAlg = TPM_ALG_SHA512;
+      break;
+    case TPM_ALG_SM3_256:
+      CurrPcrBank = HASH_ALG_SM3_256;
+      CurrHashAlg = TPM_ALG_SM3_256;
+      break;
+    default:
+      DEBUG ((DEBUG_WARN, "WARNING! Unsupported hashing algorithm (0x%04x) found in the BPM digests.\n", CurrDigestAlg));
+      break;
+    }
+
+    if ((DigestList->count < HASH_COUNT) && (ActivePcrBanks & CurrPcrBank) != 0) {
+      DEBUG ((DEBUG_INFO, "  Copying digest for matching active PCR bank: 0x%08x.\n", CurrPcrBank));
+      DigestList->digests[DigestList->count].hashAlg = CurrHashAlg;
+
+      CopyMem (
+        (UINT8 *)&(DigestList->digests[DigestList->count].digest),
+        CurrPos,
+        IbbDigestSize);
+
+      DigestList->count++;
+    }
+    CurrPos += IbbDigestSize;
+  }
+
+  //
+  // Sort digest list to ensure ascending order of the TCG algorithm IDs
+  //
+  SortDigestList (
+    DigestList,
+    &SortedDigestList
+    );
+
+  CopyMem (
+    DigestList,
+    &SortedDigestList,
+    sizeof (TPML_DIGEST_VALUES)
+    );
+
+  return EFI_SUCCESS;
+  }
+
+/**
+  Extend 4G - 4K region digest to active PCR.
+
+  @param[in]   TpmActivePcrBanks   Active PCR value
+
+  @retval EFI_SUCCESS       Operation completed successfully.
+  @retval EFI_DEVICE_ERROR  Unexpected device behavior.
+
+**/
+EFI_STATUS
+EFIAPI
+FspExtendIbbRegionNear4G (
+  IN UINT32                    ActivePcrBanks
+  )
+{
+  TPML_DIGEST_VALUES           DigestList;
+  EFI_STATUS                   Status;
+
+  ZeroMem (&DigestList, sizeof (TPML_DIGEST_VALUES));
+
+  IbbRegionNear4GGetDigestList (ActivePcrBanks, &DigestList);
+  //
+  // For signed FSP boot, only 4G - 4K region digest is calculated and placed in BPM
+  // Measure 4G - 4K region for BTG4.
+  //
+  Status = Tpm2PcrExtend (0, &DigestList);
+  DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d 4G - 4K region digests have been extended!)\n",
+          Status, DigestList.count));
+
+  return Status;
+}
+
+/**
   Extend FSP-M digests to active PCR.
 
   @param[in]   Fbm                 Base address of Fbm
@@ -567,7 +819,8 @@ ExtendFspotRegion (
 /**
   Save FSP-O/T event log data.
 
-  @param[in]  Fbm        Base address of Fbm
+  @param[in]  Fbm                 Base address of Fbm
+  @param[in]  TpmActivePcrBanks   Active PCR value
 
 **/
 VOID
@@ -590,6 +843,34 @@ SaveFspotEventData (
                          );
   if (Status == EFI_SUCCESS) {
     DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-OT\n"));
+  }
+}
+
+/**
+  Save 4G - 4K region event log data.
+
+  @param[in]  TpmActivePcrBanks   Active PCR value
+
+**/
+VOID
+EFIAPI
+SaveIbbRegionNear4GEventData (
+  IN   UINT32               TpmActivePcrBanks
+  )
+{
+  TPML_DIGEST_VALUES        TpmDigestValues;
+  EFI_STATUS                Status;
+
+  ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
+  IbbRegionNear4GGetDigestList (TpmActivePcrBanks, &TpmDigestValues);
+  Status = SaveHashEvent (&TpmDigestValues,
+                         TpmActivePcrBanks,
+                         (UINT8 *) L"4G - 4K Region",
+                         sizeof (L"4G - 4K Region"),
+                         EV_POST_CODE
+                         );
+  if (Status == EFI_SUCCESS) {
+    DEBUG ((DEBUG_INFO, "Hash event log saved successfully for 4G - 4K Region\n"));
   }
 }
 
@@ -815,6 +1096,7 @@ VerifiedComponentSaveHashEvent (
         return EFI_DEVICE_ERROR;
       }
       SaveFspotEventData (Fbm, TpmActivePcrBanks);
+      SaveIbbRegionNear4GEventData (TpmActivePcrBanks);
     }
     return EFI_UNSUPPORTED;
   }
@@ -850,6 +1132,7 @@ VerifiedComponentSaveHashEvent (
 
   if (FspMeasurementData->Bits.IbbStatus == EFI_SUCCESS) {
     SaveFspotEventData (Fbm, TpmActivePcrBanks);
+    SaveIbbRegionNear4GEventData (TpmActivePcrBanks);
   }
 
   if (FspMeasurementData->Bits.FspmStatus == EFI_SUCCESS) {

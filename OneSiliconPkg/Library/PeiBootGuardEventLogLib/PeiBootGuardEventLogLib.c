@@ -832,6 +832,7 @@ CreatePolicyDataMeasurementEvent (
       ASSERT_EFI_ERROR (Status);
       return Status;
     }
+    AcmPolicyDataSize += FbmSigSize;
   }
 
   //
@@ -891,7 +892,6 @@ EFI_STATUS
 CreateIbbMeasurementEvent (
   IN UINT32                       ActivePcrBanks,
   IN BOOT_POLICY_MANIFEST_HEADER  *Bpm,
-  IN FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
   IN HASH_LIST                    *IbbHashPtr
   )
 {
@@ -907,16 +907,6 @@ CreateIbbMeasurementEvent (
   TPML_DIGEST_VALUES           DigestList;
   TPML_DIGEST_VALUES           SortedDigestList;
   STATIC CONST CHAR16          IbbMeasurementEventDataString[] = L"Boot Guard Measured IBB\0";
-  STATIC CONST CHAR16          Near4GRegionEventDataString[] = L"4G - 4K Region\0";
-
-  //
-  // No measurements done for profile 0 in FSP signed case,
-  // and FACB used to check we're not profile 4/5
-  //
-  if ((Fbm != NULL) &&
-      ((AsmReadMsr64 (MSR_BOOT_GUARD_SACM_INFO) & B_BOOT_GUARD_SACM_INFO_FORCE_ANCHOR_BOOT) == 0)) {
-    return EFI_SUCCESS;
-  }
 
   CurrPcrBank = 0;
   CurrHashAlg =  0;
@@ -1016,27 +1006,6 @@ CreateIbbMeasurementEvent (
   NewEventHdr.PCRIndex  = 0;
   NewEventHdr.EventType = EV_POST_CODE;
   NewEventHdr.EventSize = sizeof (IbbMeasurementEventDataString);
-
-  if (Fbm != NULL) {
-    //
-    // For signed FSP boot, only 4G - 4K region digest is calculated and placed in BPM
-    // Measure 4G - 4K region for BTG4.
-    //
-    if (!IsMeasuredBoot ()) {
-      Status = Tpm2PcrExtend (0, &SortedDigestList);
-      if (Status != EFI_SUCCESS) {
-        return Status;
-      }
-    }
-    //
-    // Skip further measurement as all IBB components have been measured by ACM and FSP.
-    //
-    ExcludeIbbFv ();
-
-    NewEventHdr.EventSize = sizeof (Near4GRegionEventDataString);
-    Status = LogAcmPcrExtendedEvent (&SortedDigestList, &NewEventHdr, (UINT8 *) Near4GRegionEventDataString);
-    return Status;
-  }
 
   Status = LogAcmPcrExtendedEvent (&SortedDigestList, &NewEventHdr, (UINT8 *) IbbMeasurementEventDataString);
   return Status;
@@ -1352,7 +1321,7 @@ CreateBootguardEventLogEntriesCallback (
   //   0x0 : Startup Locality = 3
   //   0x1 : Startup Locality = 0
   //
-  if ((AcmPolicySts.Bits.TpmStartupLocality == 0) && (Fbm == NULL)) {
+  if (AcmPolicySts.Bits.TpmStartupLocality == 0) {
     TpmStartupLocality = LOCALITY_3_INDICATOR;
   }
 
@@ -1441,21 +1410,22 @@ CreateBootguardEventLogEntriesCallback (
   //
   PcdSet8S (PcdTpm2ScrtmPolicy, 0);
 
-  //
-  // Log ACM's extention of the IBB for non-signed FSP
-  // Measure and log 4G - 4K region for signed FSP
-  //
-  Status = CreateIbbMeasurementEvent (TpmActivePcrBanks, Bpm, Fbm, IbbHashPtr);
+  if (Fbm == NULL) {
+    //
+    // Log ACM's extention of the IBB for non-signed FSP
+    //
+    Status = CreateIbbMeasurementEvent (TpmActivePcrBanks, Bpm, IbbHashPtr);
 
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "CreateIbbMeasurementEvent() error status: %r\n", Status));
-    return Status;
-  }
-  if (Fbm != NULL) {
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "CreateIbbMeasurementEvent() error status: %r\n", Status));
+      return Status;
+    }
+  } else {
     //
     // Log FSP's extention of the IBB for signed FSP
     // Log data was saved by FSP in below order:
-    // 1. FSP version, 2. FSP-O/T, 3. FSP-M, 4. BSP Pre-Mem, 5. FSP-S
+    // 1. FSP version, 2. FSP-O/T, 3. 4G - 4K region,
+    // 4. FSP-M, 5. BSP Pre-Mem, 6. FSP-S
     //
     Status = CreateFspMeasuredIbbEvent ();
 
