@@ -1262,7 +1262,7 @@ gStructPcdTokenSpaceGuid.PcdMeSetup.vProTbtDock|0x1                             
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicMonoEnabled|0x0        # Dmic Mono
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicStereoEnabled|0x0      # Dmic Stereo
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicStereoVpEnabled|0x0    # Dmic Stereo VP
-gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicQuadEnabled|0x1        # Dmic Quad
+gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltDmicQuadEnabled|0x0        # Dmic Quad
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltBluetoothEnabled|0x2       # Bt
 gStructPcdTokenSpaceGuid.PcdNhltEndpointsTableConfigurationVariable.NhltI2sAlc274Enabled|0x0       # I2s Alc274
 gStructPcdTokenSpaceGuid.PcdNvmeSetup.PlnEnable|0x2                                                # Power Loss Notification Feature
@@ -1309,8 +1309,8 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchGpioIrqRoute|0xe                        
     gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudio|0x0                                            # HD Audio
 !endif
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioCodecSxWakeCapability|0x0                           # Codec Sx Wake Capability
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x1                               # DMIC #0
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x1                               # DMIC #1
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[0]|0x0                               # DMIC #0
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDmicLinkEnable[1]|0x0                               # DMIC #1
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDsp|0x1                                             # Audio DSP
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioDspUaaCompliance|0x0                                # Audio DSP Compliance Mode
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[0]|0x1                                      # WoV (Wake on Voice)
@@ -1319,7 +1319,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[2]|0x0                   
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[5]|0x1                                      # BT Intel HFP
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[6]|0x1                                      # BT Intel A2DP
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[9]|0x1                                      # BT Intel Low Energy
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[10]|0x0                                     # ACX/SDCA
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[10]|0x1                                     # ACX/SDCA
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioFeature[11]|0x0                                     # ACX/SDCA speaker aggregation
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioHdaLinkEnable|0x0                                   # HDA Link
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioI2sCodecSelect|0x0                                  # I2S Codec Select
@@ -1344,7 +1344,7 @@ gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioPostProcessingModCustomGuid5|{0x0
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSdiLaneEnable[0]|0x1                                # SDI0
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSdiLaneEnable[1]|0x0                                # SDI1
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[0]|0x0                               # SNDW #0
-gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[1]|0x1                               # SNDW #1
+gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[1]|0x0                               # SNDW #1
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[2]|0x0                               # SNDW #2
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwLinkEnable[3]|0x0                               # SNDW #3
 gStructPcdTokenSpaceGuid.PcdPchSetup.PchHdAudioSndwMultilaneEnable[0]|0x0                          # SNDW #2 Multilane
@@ -4201,7 +4201,7 @@ gStructPcdTokenSpaceGuid.PcdSetup.WwanTResTogDelayMs|0xa                        
 !else
     gStructPcdTokenSpaceGuid.PcdSiSetup.PlatformDebugOption|0x0                                    # Platform Debug Option
 !endif
-gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0x0     # SoundWire codecs topology
+  gStructPcdTokenSpaceGuid.PcdSndwDevTopologyConfigurationVariable.SndwDevTopologyConfigurationNumber|0x4     # SoundWire codecs topology
 gStructPcdTokenSpaceGuid.PcdTCG2_CONFIGURATION.TpmDevice|0x1                                       # Attempt TPM Device
 gStructPcdTokenSpaceGuid.PcdTCG2_VERSION.PpiVersion|0x332e31                                       # Attempt PPI Version
 gStructPcdTokenSpaceGuid.PcdTCG2_VERSION.Tpm2AcpiTableRev|0x4                                      # Attempt Rev of TPM2 ACPI Table
