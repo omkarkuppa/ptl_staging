@@ -20,10 +20,26 @@
 **/
 
 suppressif ideqval SETUP_VOLATILE_DATA.PchUsb3PortCount <= PCH_SS_PORT_INDEX;
-  oneof varid   = PCH_SETUP.PchUsbSsPort[PCH_SS_PORT_INDEX],
-    prompt      = STRING_TOKEN(CONCATENATE3(STR_PCH_USB_SS_PORT,PCH_SS_PORT_INDEX,_PROMPT)),
-    help        = STRING_TOKEN(STR_PCH_USB_PORT_DIS_HELP),
-    option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-    option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-  endoneof;
+  suppressif ideqval PCH_SETUP.PchUsbPortDisable == 0x0;
+    oneof varid   = PCH_SETUP.PchUsbSsPort[PCH_SS_PORT_INDEX],
+      prompt      = STRING_TOKEN(CONCATENATE3(STR_PCH_USB_SS_PORT,PCH_SS_PORT_INDEX,_PROMPT)),
+      help        = STRING_TOKEN(STR_PCH_USB_PORT_DIS_HELP),
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+    endoneof;
+  endif;
+
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+  grayoutif ideqval PCH_SETUP.PchUsbSsPort[PCH_SS_PORT_INDEX] == 0;
+    //
+    // Usb 3.1 speed control
+    //
+    oneof varid   = PCH_SETUP.PchUsb31PortSpeed[PCH_SS_PORT_INDEX],
+      prompt      = STRING_TOKEN(CONCATENATE3(STR_PCH_USB3_1_SPEED_PORT,PCH_SS_PORT_INDEX,_PROMPT)),
+      help        = STRING_TOKEN(STR_PCH_USB3_1_SPEED_DIS_HELP),
+      option text = STRING_TOKEN(STR_PCH_USB3_1_GEN_2_SPEED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_PCH_USB3_1_GEN_1_SPEED), value = 1, flags = RESET_REQUIRED;
+    endoneof;
+  endif;
+#endif
 endif;

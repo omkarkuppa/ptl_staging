@@ -395,12 +395,11 @@ FspUpdateUsbPolicy (
   IN FSPS_UPD       *FspsUpd
   )
 {
-  UINTN             Index;
-  USB_CONFIG        *UsbConfig;
-  EFI_STATUS        Status;
-  UINT8             Usb2PortCount;
-  UINT8             Usb3PortCount;
-
+  UINTN        Index;
+  USB_CONFIG   *UsbConfig;
+  EFI_STATUS   Status;
+  UINT8        Usb2PortCount;
+  UINT8        Usb3PortCount;
 
   Usb2PortCount = PtlPcdGetUsb2MaxPhysicalPortNum ();
   Usb3PortCount = PtlPcdGetXhciMaxUsb3PortNum ();
@@ -411,11 +410,11 @@ FspUpdateUsbPolicy (
     return;
   }
 
-  UsbConfig->PdoProgramming         = FspsUpd->FspsConfig.UsbPdoProgramming;
-  UsbConfig->OverCurrentEnable      = FspsUpd->FspsConfig.PchUsbOverCurrentEnable;
-
-  UsbConfig->XhciOcLock             = FspsUpd->FspsConfig.PchXhciOcLock;
-  UsbConfig->UaolEnable             = FspsUpd->FspsConfig.PchXhciUaolEnable;
+  UsbConfig->PdoProgramming    = FspsUpd->FspsConfig.UsbPdoProgramming;
+  UsbConfig->OverCurrentEnable = FspsUpd->FspsConfig.PchUsbOverCurrentEnable;
+  UsbConfig->XhciOcLock        = FspsUpd->FspsConfig.PchXhciOcLock;
+  UsbConfig->UaolEnable        = FspsUpd->FspsConfig.PchXhciUaolEnable;
+  UsbConfig->Usb31Speed        = FspsUpd->FspsConfig.Usb31PortSpeed;
 
   for (Index = 0; Index < Usb2PortCount; Index++) {
     UsbConfig->PortUsb20[Index].Enable         = FspsUpd->FspsConfig.PortUsb20Enable[Index];
@@ -439,9 +438,6 @@ FspUpdateUsbPolicy (
   }
 
   UsbConfig->XdciConfig.Enable  = FspsUpd->FspsConfig.XdciEnable;
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
-  UsbConfig->Usb31Speed         = FspsUpd->FspsConfig.PortUsb31Speed;
-#endif
 
 }
 

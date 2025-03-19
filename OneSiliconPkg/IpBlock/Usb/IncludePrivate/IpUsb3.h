@@ -246,7 +246,7 @@ struct _IP_USB3_INST {
   BOOLEAN                       OverCurrentLock;                // Lock OverCurrent configuration after programming
   BOOLEAN                       UsbAudioOffloadEnable;          // Enable/disable control of USB Audio Offload feature
   UINT16                        FabricPllAdvanceWake;           // Value for Fabric PLL Advance wake programming (FPSAW)
-  BOOLEAN                       Usb31SpeedAdvertise;            // Advertise ports as USB 3.1 speed
+  UINT32                        Usb31SpeedAdvertise;            // Set/Clear each bit advertises the corresponding SS port as USB 3.1 speed Gen1/Gen2
   BOOLEAN                       SkipD3HE;                       // If set code will not enable D3 Hot Enable in PCE
   BOOLEAN                       ExternalPowerControl;           // Flag for IPSD to not program Power Control
   BOOLEAN                       LtrEnable;                      // Enable LTR if set to FALSE will use NDE instead

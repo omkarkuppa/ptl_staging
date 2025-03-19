@@ -448,18 +448,6 @@
 
     SEPARATOR
 
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
-    //
-    // Usb 3.1 speed control
-    //
-    oneof varid   = PCH_SETUP.PchUsb31Speed,
-      prompt      = STRING_TOKEN(STR_PCH_USB3_1_SPEED_PROMPT),
-      help        = STRING_TOKEN(STR_PCH_USB3_1_SPEED_DIS_HELP),
-      option text = STRING_TOKEN(STR_PCH_USB3_1_GEN_2_SPEED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_PCH_USB3_1_GEN_1_SPEED), value = 1, flags = RESET_REQUIRED;
-    endoneof;
-#endif
-
     //
     // Usb ports per-port disable control enable
     //
@@ -478,86 +466,81 @@
     //
     // USB Port Disable Override fields
     //
-    suppressif ideqval PCH_SETUP.PchUsbPortDisable == 0x0;
+    // @note Make sure strings used in include for CONCATENATE macro are specified in separate HFR file and added in INF
+    //
+    #define PCH_SS_PORT_INDEX 0
+    #include "PchUsbSingleSsPort.hfr"
+    #undef PCH_SS_PORT_INDEX
+    #define PCH_SS_PORT_INDEX 1
+    #include "PchUsbSingleSsPort.hfr"
+    #undef PCH_SS_PORT_INDEX
+    #define PCH_SS_PORT_INDEX 2
+    #include "PchUsbSingleSsPort.hfr"
+    #undef PCH_SS_PORT_INDEX
+    #define PCH_SS_PORT_INDEX 3
+    #include "PchUsbSingleSsPort.hfr"
+    #undef PCH_SS_PORT_INDEX
+    #define PCH_SS_PORT_INDEX 4
+    #include "PchUsbSingleSsPort.hfr"
+    #undef PCH_SS_PORT_INDEX
+    #define PCH_SS_PORT_INDEX 5
+    #include "PchUsbSingleSsPort.hfr"
+    #undef PCH_SS_PORT_INDEX
+    #define PCH_SS_PORT_INDEX 6
+    #include "PchUsbSingleSsPort.hfr"
+    #undef PCH_SS_PORT_INDEX
+    #define PCH_SS_PORT_INDEX 7
+    #include "PchUsbSingleSsPort.hfr"
+    #undef PCH_SS_PORT_INDEX
+    #define PCH_SS_PORT_INDEX 8
+    #include "PchUsbSingleSsPort.hfr"
+    #undef PCH_SS_PORT_INDEX
+    #define PCH_SS_PORT_INDEX 9
+    #include "PchUsbSingleSsPort.hfr"
+    #undef PCH_SS_PORT_INDEX
 
-      //
-      // @note Make sure strings used in include for CONCATENATE macro are specified in separate HFR file and added in INF
-      //
-      #define PCH_SS_PORT_INDEX 0
-      #include "PchUsbSingleSsPort.hfr"
-      #undef PCH_SS_PORT_INDEX
-      #define PCH_SS_PORT_INDEX 1
-      #include "PchUsbSingleSsPort.hfr"
-      #undef PCH_SS_PORT_INDEX
-      #define PCH_SS_PORT_INDEX 2
-      #include "PchUsbSingleSsPort.hfr"
-      #undef PCH_SS_PORT_INDEX
-      #define PCH_SS_PORT_INDEX 3
-      #include "PchUsbSingleSsPort.hfr"
-      #undef PCH_SS_PORT_INDEX
-      #define PCH_SS_PORT_INDEX 4
-      #include "PchUsbSingleSsPort.hfr"
-      #undef PCH_SS_PORT_INDEX
-      #define PCH_SS_PORT_INDEX 5
-      #include "PchUsbSingleSsPort.hfr"
-      #undef PCH_SS_PORT_INDEX
-      #define PCH_SS_PORT_INDEX 6
-      #include "PchUsbSingleSsPort.hfr"
-      #undef PCH_SS_PORT_INDEX
-      #define PCH_SS_PORT_INDEX 7
-      #include "PchUsbSingleSsPort.hfr"
-      #undef PCH_SS_PORT_INDEX
-      #define PCH_SS_PORT_INDEX 8
-      #include "PchUsbSingleSsPort.hfr"
-      #undef PCH_SS_PORT_INDEX
-      #define PCH_SS_PORT_INDEX 9
-      #include "PchUsbSingleSsPort.hfr"
-      #undef PCH_SS_PORT_INDEX
-
-      #define PCH_HS_PORT_INDEX 0
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 1
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 2
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 3
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 4
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 5
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 6
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 7
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 8
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 9
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 10
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 11
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 12
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-      #define PCH_HS_PORT_INDEX 13
-      #include "PchUsbSingleHsPort.hfr"
-      #undef PCH_HS_PORT_INDEX
-
-    endif; // if PchUsbPortDisable == 0x0
+    #define PCH_HS_PORT_INDEX 0
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 1
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 2
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 3
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 4
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 5
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 6
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 7
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 8
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 9
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 10
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 11
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 12
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
+    #define PCH_HS_PORT_INDEX 13
+    #include "PchUsbSingleHsPort.hfr"
+    #undef PCH_HS_PORT_INDEX
 
 #if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
       SEPARATOR

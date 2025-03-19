@@ -389,7 +389,7 @@ Usb3InstOnCreate (
     Usb3Inst->OverCurrentEnable     = !!TcssPeiConfig->UsbConfig.OverCurrentEnable;
     Usb3Inst->OverCurrentLock       = !!TcssPeiConfig->UsbConfig.XhciOcLock;
     Usb3Inst->UsbAudioOffloadEnable = !!TcssPeiConfig->UsbConfig.UaolEnable;
-    Usb3Inst->Usb31SpeedAdvertise   = !!TcssPeiConfig->UsbConfig.Usb31Speed;
+    Usb3Inst->Usb31SpeedAdvertise   = TcssPeiConfig->UsbConfig.Usb31Speed;
 
     for (Index = 0; Index < Usb3Inst->Usb3LanesCount; Index++) {
       Usb3Inst->Usb3PortConfig[Index].Enable = !!TcssPeiConfig->UsbConfig.PortUsb30[Index].Enable;

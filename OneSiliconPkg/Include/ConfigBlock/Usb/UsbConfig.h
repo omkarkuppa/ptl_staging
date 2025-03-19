@@ -175,9 +175,9 @@ typedef struct {
   **/
   XDCI_CONFIG             XdciConfig;
   /**
-    Adding USB3.1 Speeed selection
+    USB3.1 Speeed selection. Each bit corresponds to a port.
   **/
-  UINT32                   Usb31Speed;
+  UINT32                  Usb31Speed;
 } USB_CONFIG;
 
 #pragma pack (pop)

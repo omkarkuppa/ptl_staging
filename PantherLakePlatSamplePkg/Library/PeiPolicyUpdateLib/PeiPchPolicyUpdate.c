@@ -933,10 +933,11 @@ UpdateUsbConfig (
   IN PCH_SETUP                 *PchSetup
   )
 {
-  UINTN           PortIndex;
-  USB_CONFIG      *UsbConfig;
-  UINT8           Usb2PortCount;
-  UINT8           Usb3PortCount;
+  UINTN        PortIndex;
+  USB_CONFIG   *UsbConfig;
+  UINT8        Usb2PortCount;
+  UINT8        Usb3PortCount;
+  UINT32       Usb31SpeedMask;
 #if FixedPcdGet8(PcdFspModeSelection) == 0
   EFI_STATUS      Status;
 #else
@@ -957,6 +958,7 @@ UpdateUsbConfig (
 
   Usb2PortCount = GetPchUsb2MaxPhysicalPortNum ();
   Usb3PortCount = GetPchXhciMaxUsb3PortNum ();
+  Usb31SpeedMask = 0;
 
   UPDATE_POLICY (((FSPS_UPD *)FspsUpd)->FspsConfig.UsbPdoProgramming, UsbConfig->PdoProgramming, PchSetup->PchUsbPdoProgramming);
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PchUsbOverCurrentEnable, UsbConfig->OverCurrentEnable, PchSetup->PchUsbOverCurrentEnable);
@@ -974,20 +976,19 @@ UpdateUsbConfig (
 #endif
   }
   for (PortIndex = 0; PortIndex < Usb3PortCount; PortIndex++) {
-    UPDATE_POLICY (
-      ((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb30Enable[PortIndex],
-      UsbConfig->PortUsb30[PortIndex].Enable,
-      !!PchSetup->PchUsbSsPort[PortIndex]
-      );
+    UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb30Enable[PortIndex], UsbConfig->PortUsb30[PortIndex].Enable, !!PchSetup->PchUsbSsPort[PortIndex]);
+#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
+    if (!!PchSetup->PchUsb31PortSpeed[PortIndex]) {
+      Usb31SpeedMask |= 1 << PortIndex;
+    }
+#endif
   }
+  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.Usb31PortSpeed, UsbConfig->Usb31Speed, Usb31SpeedMask);
 
   //
   // xDCI (USB device) related settings from setup variable
   //
   UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.XdciEnable, UsbConfig->XdciConfig.Enable, !!PchSetup->PchXdciSupport);
-#if FixedPcdGet8(PcdEmbeddedEnable) == 0x1
-  UPDATE_POLICY (((FSPS_UPD *) FspsUpd)->FspsConfig.PortUsb31Speed, UsbConfig->Usb31Speed, !!PchSetup->PchUsb31Speed);
-#endif
 
   //
   // Update both USB2 and USB3 OC pin mapping based on platform design

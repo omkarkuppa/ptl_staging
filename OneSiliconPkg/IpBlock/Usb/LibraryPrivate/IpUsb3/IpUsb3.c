@@ -65,6 +65,37 @@ IpUsb3EnableUsb3Ports (
 }
 
 /**
+  Configures if LBPM will advertise Gen2/Gen1 Speed by default in USB3 ports
+
+  @param[in]  pInst           USB3 IP Instance
+  @param[in]  Gen1PortsMask   Bitmask of enabled USB3 ports
+
+  @retval     IpCsiStsSuccess         programming completed without error
+  @retval     IpCsiStsErrorNullPtr    null pointer to IP Instance provided
+**/
+IP_CSI_STATUS
+IpUsb3ForceGen1Usb3Ports (
+  IP_USB3_INST  *pInst,
+  UINT32        Gen1PortsMask
+  )
+{
+  UINT32   Mask;
+
+  if (pInst == NULL) {
+    PRINT_ERROR_NULL_INST ("Instance pointer cannot be NULL\n");
+    return IpCsiStsErrorNullPtr;
+  }
+
+  PRINT_LEVEL1 ("Entered %s\n", __FUNCTION__);
+
+  Mask = ((0x1 << pInst->Usb3LanesCount) - 1);
+
+  IP_WR_AND_THEN_OR_32 (pInst->RegCntxtMem, R_XHCI_MEM_HOST_CTRL_SSP_LINK_PORT_REG1, ~(Mask), (Gen1PortsMask & Mask));
+
+  return IpCsiStsSuccess;
+}
+
+/**
   This goes through general USB3 controller initialization programming
   requirements described in USB3 Programming guide.
 
@@ -102,7 +133,8 @@ IpUsb3HostControllerInit (
         EnabledPortsMask |= (0x1 << LaneIndex);
       }
     }
-    IpUsb3EnableUsb3Ports(pInst, EnabledPortsMask);
+    IpUsb3ForceGen1Usb3Ports (pInst, pInst->Usb31SpeedAdvertise);
+    IpUsb3EnableUsb3Ports (pInst, EnabledPortsMask);
   }
 
   IpUsb3SetControl (pInst, 0, IpUsb3FeatIdResetPrepOverride, IpUsb3FeatValResetPrepOverrideEn);

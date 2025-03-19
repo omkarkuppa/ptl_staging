@@ -1516,6 +1516,21 @@
 #string STR_PCH_USB_SW_DEV_MODE13_PROMPT        #language en-US "USB SW Device Mode Port #13"
 #string STR_PCH_USB_SW_DEV_MODE_DIS_HELP        #language en-US "Enable Connector Event for device subscription."
 
+#string STR_PCH_USB3_1_SPEED_PORT0_PROMPT       #language en-US "USB3.1 Speed Selection Port #0"
+#string STR_PCH_USB3_1_SPEED_PORT1_PROMPT       #language en-US "USB3.1 Speed Selection Port #1"
+#string STR_PCH_USB3_1_SPEED_PORT2_PROMPT       #language en-US "USB3.1 Speed Selection Port #2"
+#string STR_PCH_USB3_1_SPEED_PORT3_PROMPT       #language en-US "USB3.1 Speed Selection Port #3"
+#string STR_PCH_USB3_1_SPEED_PORT4_PROMPT       #language en-US "USB3.1 Speed Selection Port #4"
+#string STR_PCH_USB3_1_SPEED_PORT5_PROMPT       #language en-US "USB3.1 Speed Selection Port #5"
+#string STR_PCH_USB3_1_SPEED_PORT6_PROMPT       #language en-US "USB3.1 Speed Selection Port #6"
+#string STR_PCH_USB3_1_SPEED_PORT7_PROMPT       #language en-US "USB3.1 Speed Selection Port #7"
+#string STR_PCH_USB3_1_SPEED_PORT8_PROMPT       #language en-US "USB3.1 Speed Selection Port #8"
+#string STR_PCH_USB3_1_SPEED_PORT9_PROMPT       #language en-US "USB3.1 Speed Selection Port #9"
+
+#string STR_PCH_USB3_1_GEN_2_SPEED              #language en-US "Gen 2"
+#string STR_PCH_USB3_1_GEN_1_SPEED              #language en-US "Gen 1"
+#string STR_PCH_USB3_1_SPEED_DIS_HELP           #language en-US "USB3.1 Speed selection; Gen1 or Gen2"
+
 //
 // USB Test Options
 //
@@ -1638,10 +1653,6 @@
 //
 #string STR_PCH_XDCI_SUPPORT_PROMPT             #language en-US "xDCI Support"
 #string STR_PCH_XDCI_SUPPORT_HELP               #language en-US "Enable/Disable xDCI (USB OTG Device)."
-#string STR_PCH_USB3_1_SPEED_PROMPT             #language en-US "USB3.1 Speed Selection"
-#string STR_PCH_USB3_1_GEN_2_SPEED              #language en-US "Gen 2"
-#string STR_PCH_USB3_1_GEN_1_SPEED              #language en-US "Gen 1"
-#string STR_PCH_USB3_1_SPEED_DIS_HELP           #language en-US "USB3.1 Speed selection; Gen1 or Gen2"
 
 //
 // PCI Express Settings

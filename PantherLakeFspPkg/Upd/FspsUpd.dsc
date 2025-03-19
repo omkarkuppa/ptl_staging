@@ -2183,9 +2183,16 @@
   # !HDR STRUCT:{UINT16}
   gPlatformFspPkgTokenSpaceGuid.ThcCustomizedSvid             | * | 0x04 | {0x8086, 0x8086}
 
+  # Added reserved space  UnusedUpdSpace38[2]
+  gPlatformFspPkgTokenSpaceGuid.FspsUpdRsvd38                | * | 0x2 | {0x00}
+
+  # !BSF NAME:{USB 3.1 Speed Selection} TYPE:{EditNum, HEX, (0,0xFFFFFFFF)}
+  # !BSF HELP:{Choose USB 3.1 Port Speed Selection. Each bit represents a port. 1: Gen1, 0: Gen2}
+  gPlatformFspPkgTokenSpaceGuid.Usb31PortSpeed              | * | 0x04 | 0x00000000
+
   # !BSF NAME:{PchPostMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for PCH Post-Mem}
-  gPlatformFspPkgTokenSpaceGuid.PchPostMemRsvd              | * | 0x1B | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.PchPostMemRsvd              | * | 0x15 | {0x00}
 
   ## THERMAL_CONFIG Start
 
@@ -2452,6 +2459,7 @@
   gPlatformFspPkgTokenSpaceGuid.PcieFiaProgramming | * | 0x01 | 0x01
 
   ## FIA_CONFIG End
+
   #
   # ME Post-Mem Restricted Block Start
   #
