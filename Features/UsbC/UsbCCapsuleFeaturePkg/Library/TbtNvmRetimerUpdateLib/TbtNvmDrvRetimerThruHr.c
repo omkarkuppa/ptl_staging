@@ -25,6 +25,7 @@
 #include <Protocol/UsbCProgressCodeProtocol.h>
 #include <Library/TbtNvmDrvRetimerThruHr.h>
 #include <Library/TbtNvmRetimerDrvHelpers.h>
+#include <Library/TbtNvmRetimerUpdateLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/PcdLib.h>
 #include <Library/UsbcCapsuleDebugLib.h>
@@ -357,7 +358,7 @@ InitHW (
   Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProgressCodeProtocolGuid, NULL, (VOID**) &UsbCProgressCodeProtocol);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "InitHW - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
-    return Status;
+    UsbCProgressCodeProtocol->ShowProgressCode = UsbCCapsuleShowProgressCodeDefault;
   }
 
   RetimerPtr = (RETIMER_THRU_HR *)This->Impl;
@@ -406,7 +407,7 @@ TerminateHW (
   Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProgressCodeProtocolGuid, NULL, (VOID**) &UsbCProgressCodeProtocol);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "TerminateHW - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
-    return Status;
+    UsbCProgressCodeProtocol->ShowProgressCode = UsbCCapsuleShowProgressCodeDefault;
   }
 
   RetimerPtr = (RETIMER_THRU_HR *)This->Impl;

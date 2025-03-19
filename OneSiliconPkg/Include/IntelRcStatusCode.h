@@ -440,23 +440,9 @@ FeaturePkg: TCSS Status Code format:
   | [19:16]            | [15:14]       | [13:11]             | [10:8]            | [7:0]                         |
   +--------------------+---------------+---------------------+-------------------+------------------------------=+
   | 0x81 - Features    | 0x0 - iTBT    | 0x0 - PEI Pre-Mem   | 0x0 - TCSS        | 0x00 - Init Start             |
-  |                    | 0x1 - dTBT    | 0x1 - PEI Post-Mem  |                   | 0x01 - Init Done              |
-  |                    | 0x2 - Capsule | 0x2 - End Of PEI    |                   | 0x02 - 0xDF Reserved          |
-  |                    |               | 0x3 - DXE           |                   | 0xE0 - Retimer Capsule Entry  |
-  |                    |               |                     |                   | 0xE1 - Offline Mode Entry     |
-  |                    |               |                     |                   | 0xE2 - Offline Mode Exit      |
-  |                    |               |                     |                   | 0xE3 - ENUM CMD               |
-  |                    |               |                     |                   | 0xE4 - LSUP CMD               |
-  |                    |               |                     |                   | 0xE5 - USUP CMD               |
-  |                    |               |                     |                   | 0xE6 - PD Drive               |
-  |                    |               |                     |                   | 0xE7 - PD Restore             |
-  |                    |               |                     |                   | 0xE8 - Retimer FP Assert      |
-  |                    |               |                     |                   | 0xE9 - Retimer FP De-Assert   |
-  |                    |               |                     |                   | 0xEA - Update Retimer NVM     |
-  |                    |               |                     |                   | 0xEB - dTBT Capsule Entry     |
-  |                    |               |                     |                   | 0xEC - dTBT Create Device Inst|
-  |                    |               |                     |                   | 0xED - Update dTBT NVM        |
-  |                    |               |                     |                   | 0xEE - Read Retimer Version   |
+  |                    |               | 0x1 - PEI Post-Mem  |                   | 0x01 - Init Done              |
+  |                    |               | 0x2 - End Of PEI    |                   |                               |
+  |                    |               |                     |                   |                               |
   +--------------------------------------------------------------------------------------------------------------+
 */
 
@@ -465,21 +451,6 @@ FeaturePkg: TCSS Status Code format:
 //
 #define INTEL_RC_STATUS_CODE_FEATURES_TCSS_GET_SET_TBT_SEC_LEVEL_ENTRY                 (INTEL_RC_STATUS_CODE_FEATURES | 0x7680)
 #define INTEL_RC_STATUS_CODE_FEATURES_TCSS_GET_SET_TBT_SEC_LEVEL_EXIT                  (INTEL_RC_STATUS_CODE_FEATURES | 0x7681)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_START                       (INTEL_RC_STATUS_CODE_FEATURES | 0x98E0)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_OFFLINE_MODE_ENTRY          (INTEL_RC_STATUS_CODE_FEATURES | 0x98E1)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_OFFLINE_MODE_EXIT           (INTEL_RC_STATUS_CODE_FEATURES | 0x98E2)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_ENUM_CMD                    (INTEL_RC_STATUS_CODE_FEATURES | 0x98E3)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_LSUP_CMD                    (INTEL_RC_STATUS_CODE_FEATURES | 0x98E4)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_USUP_CMD                    (INTEL_RC_STATUS_CODE_FEATURES | 0x98E5)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_PD_DRIVE                    (INTEL_RC_STATUS_CODE_FEATURES | 0x98E6)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_PD_RESTORE                  (INTEL_RC_STATUS_CODE_FEATURES | 0x98E7)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_RETIMER_FP_GPIO_ASSERT      (INTEL_RC_STATUS_CODE_FEATURES | 0x98E8)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_RETIMER_FP_GPIO_DEASSERT    (INTEL_RC_STATUS_CODE_FEATURES | 0x98E9)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_UPDATE_RETIMER_NVM_FW       (INTEL_RC_STATUS_CODE_FEATURES | 0x98EA)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_DTBT_CAPSULE_START                          (INTEL_RC_STATUS_CODE_FEATURES | 0x98EB)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_DTBT_CAPSULE_CREATE_DEV_INST                (INTEL_RC_STATUS_CODE_FEATURES | 0x98EC)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_DTBT_CAPSULE_UPDATE_NVM_FW                  (INTEL_RC_STATUS_CODE_FEATURES | 0x98ED)
-#define INTEL_RC_STATUS_CODE_FEATURES_USBC_READ_RETIMER_VERSION_START                  (INTEL_RC_STATUS_CODE_FEATURES | 0x98EE)
 
 #define TC_TYPE            14
 #define TC_PHASE           11

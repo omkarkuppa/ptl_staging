@@ -44,7 +44,7 @@
   UefiRuntimeServicesTableLib
   PcdLib
   GpioV2WrapperLib
-  ReportStatusCodeLib
+  PostCodeLib
   EcTcssLib
   Usb4DebugLib
   UsbcCapsuleDebugLib

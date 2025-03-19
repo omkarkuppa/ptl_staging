@@ -326,4 +326,15 @@ RestoreToOriginalMode (
   IN EFI_GUID               RetimerGuid ///< GUID from ESRT ACPI Table
   );
 
+/**
+  This API is used when UsbCProgressCodeProtocol locate fails.
+
+  @param[in] ProgressCode  The progress code to be displayed.
+
+**/
+VOID
+UsbCCapsuleShowProgressCodeDefault (
+  IN UINT32 UsbCCapsulePostCode
+  );
+
 #endif

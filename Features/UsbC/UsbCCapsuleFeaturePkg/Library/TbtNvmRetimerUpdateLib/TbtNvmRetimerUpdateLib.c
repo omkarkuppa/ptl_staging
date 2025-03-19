@@ -1142,3 +1142,17 @@ RestoreToOriginalMode (
   CapsuleLogWrite (USBC_CAPSULE_DBG_INFO, EVT_CODE_RESTORE_END, 0, 0);
   return Status;
 }
+
+/**
+  This API is used when UsbCProgressCodeProtocol locate fails.
+
+  @param[in] ProgressCode  The progress code to be displayed.
+
+**/
+VOID
+UsbCCapsuleShowProgressCodeDefault (
+  IN UINT32 ProgressCode
+  )
+{
+  return;
+}

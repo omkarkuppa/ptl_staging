@@ -30,9 +30,8 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/GpioV2WrapperLib.h>
-#include <Library/ReportStatusCodeLib.h>
+#include <Library/PostCodeLib.h>
 #include <PlatformBoardConfig.h>
-#include <IntelRcStatusCode.h>
 #include <Library/EcTcssLib.h>
 
 GLOBAL_REMOVE_IF_UNREFERENCED USBC_PROGRESS_CODE_PROTOCOL  mUsbCProgressCodeProtocol;
@@ -40,6 +39,9 @@ GLOBAL_REMOVE_IF_UNREFERENCED USBC_RETIMER_PROTOCOL        mUsbCRetimerProtocol;
 
 /**
   Show UsbC Capsule Progress Code
+
+  @param[in] ProgressCode  The progress code to be displayed.
+
 **/
 VOID
 UsbCCapsuleShowProgressCode (
@@ -47,7 +49,7 @@ UsbCCapsuleShowProgressCode (
   )
 {
   if (PcdGetBool (VpdPcdUsbCCapsuleProgressCodeEnable) == TRUE) {
-    REPORT_STATUS_CODE (EFI_PROGRESS_CODE, ProgressCode);
+    PostCode (ProgressCode);
   }
 }
 

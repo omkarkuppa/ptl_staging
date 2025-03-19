@@ -46,21 +46,6 @@ STATUS_CODE_TO_POST_CODE_MAP mPlatformPostCodeProgressMap[] = {
  //
  { INTEL_RC_STATUS_CODE_FEATURES_TCSS_GET_SET_TBT_SEC_LEVEL_ENTRY, 0x7680},               // [Features] TCSS Get TBT Security Level Entry
  { INTEL_RC_STATUS_CODE_FEATURES_TCSS_GET_SET_TBT_SEC_LEVEL_EXIT, 0x7681},                // [Features] TCSS Get TBT Security Level Exit
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_START, 0x98E0},                     // [Features] Retimer Capsule Update Start
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_OFFLINE_MODE_ENTRY, 0x98E1},        // [Features] Retimer Capsule Send LSEN(0) cmd - Offline Mode Entry
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_OFFLINE_MODE_EXIT, 0x98E2},         // [Features] Retimer Capsule Send LSEN(1) cmd - Offline Mode Exit
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_ENUM_CMD, 0x98E3},                  // [Features] Retimer Capsule Sned ENUM cmd
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_LSUP_CMD, 0x98E4},                  // [Features] Retimer Capsule Sned LSUP cmd
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_USUP_CMD, 0x98E5},                  // [Features] Retimer Capsule Sned USUP cmd
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_PD_DRIVE, 0x98E6},                  // [Features] Retimer Capsule PD Drive Start
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_PD_RESTORE, 0x98E7},                // [Features] Retimer Capsule PD Restore Start
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_RETIMER_FP_GPIO_ASSERT, 0x98E8},    // [Features] Retimer Capsule Assert Retimer FP GPIO
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_RETIMER_FP_GPIO_DEASSERT, 0x98E9},  // [Features] Retimer Capsule De-Assert Retimer FP GPIO
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_RETIMER_CAPSULE_UPDATE_RETIMER_NVM_FW, 0x98EA},     // [Features] Retimer Capsule Update NVM FW
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_DTBT_CAPSULE_START, 0x98EB},                        // [Features] dTBT Capsule Update Start
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_DTBT_CAPSULE_CREATE_DEV_INST, 0x98EC},              // [Features] dTBT Capsule Create Device Instance
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_DTBT_CAPSULE_UPDATE_NVM_FW, 0x98ED},                // [Features] dTBT Capsule Update NVM FW
- { INTEL_RC_STATUS_CODE_FEATURES_USBC_READ_RETIMER_VERSION_START, 0x98EE},                // [Features] Read Retimer Version Start
  {0,0}
  };
 

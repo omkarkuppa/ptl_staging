@@ -540,7 +540,7 @@ FmpDeviceCheckImageWithStatus (
 
   if ((ImageSize < sizeof (PAYLOAD_HEADER)) || \
       (*(UINT32 *)Image != DISCRETE_TBT_PAYLOAD_HEADER_SIGNATURE)) {
-    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_CHECKIMAGE_PAYLOAD_SIGNATURE_UNDETECTED, 0, 0);  
+    CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_DTBT_CHECKIMAGE_PAYLOAD_SIGNATURE_UNDETECTED, 0, 0);
     *ImageUpdatable = IMAGE_UPDATABLE_INVALID;
     *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_DTBT_ERROR_SIGNATURE_IS_NOT_DETECTED;
     return EFI_INVALID_PARAMETER;
@@ -778,8 +778,7 @@ FmpDeviceSetImageWithStatus (
   Status = gBS->LocateProtocol (&gUsbCCapsuleDebugProgressCodeProtocolGuid, NULL, (VOID**) &UsbCProgressCodeProtocol);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "UsbC Retimer Capsule - Failed to locate UsbCProgressCodeProtocol (%r).\n", Status));
-    *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_TBT_RETIMER_ERROR_USBC_PROGRESS_CODE_PROTOCOL_NOT_FOUND;
-    return Status;
+    UsbCProgressCodeProtocol->ShowProgressCode = UsbCCapsuleShowProgressCodeDefault;
   }
   UsbCProgressCodeProtocol->ShowProgressCode (USBC_DEBUG_PROGRESS_CODE_FEATURES_DTBT_CAPSULE_START);
   //
