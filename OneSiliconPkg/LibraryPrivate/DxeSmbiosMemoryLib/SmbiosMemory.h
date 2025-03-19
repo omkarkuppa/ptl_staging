@@ -107,34 +107,6 @@
 #define DDR_DTYPE_JEDEC_LPDDR3  0x0F  ///< LPDDR3 memory type, JEDEC SPD Specification
 
 ///
-/// Maximum rank memory size supported by the memory controller: 16GB for DDR5, 16GB (in terms of KB) for DDR4 and 4 GB for other types
-///
-#define MAX_RANK_CAPACITY       (4 * 1024 * 1024)
-#define MAX_RANK_CAPACITY_DDR4  (16 * 1024 * 1024)
-#define MAX_RANK_CAPACITY_DDR5  (16 * 1024 * 1024)
-
-//
-// DDR3 and DDR4 SPD Register Bytes
-//
-#define DDR4_SPD_BUFFER_SIZE              384
-#define DDR4_SPD_MANUFACTURER_ID_LSB      320
-#define DDR4_SPD_MANUFACTURER_ID_MSB      321
-#define DDR4_SPD_PART_NO_START_BYTE       329
-#define DDR4_SPD_PART_NO_END_BYTE         348
-#define DDR4_SPD_SERIAL_NO_START_BYTE     325
-#define DDR4_SPD_SERIAL_NO_END_BYTE       328
-#define DDR4_SPD_MEMORY_BUS_WIDTH_BYTE    13
-
-#define DDR3_SPD_BUFFER_SIZE              256
-#define DDR3_SPD_MANUFACTURER_ID_LSB      117
-#define DDR3_SPD_MANUFACTURER_ID_MSB      118
-#define DDR3_SPD_PART_NO_START_BYTE       128
-#define DDR3_SPD_PART_NO_END_BYTE         145
-#define DDR3_SPD_SERIAL_NO_START_BYTE     122
-#define DDR3_SPD_SERIAL_NO_END_BYTE       125
-#define DDR3_SPD_MEMORY_BUS_WIDTH_BYTE    8
-
-///
 /// Memory Module Manufacture ID List Structure
 ///
 typedef struct {
