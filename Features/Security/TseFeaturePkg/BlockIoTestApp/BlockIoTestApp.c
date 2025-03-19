@@ -269,7 +269,7 @@ SetUefiTableCryptoConfiguration (
   NewConfiguration[0].CryptoKey = gCryptoKeyPtr;
 
   NewConfiguration[0].Capability.Algorithm = gTseBlockIoCryptoAlgoAesXtsGuid;
-  NewConfiguration[0].Capability.KeySize = BIT8;
+  NewConfiguration[0].Capability.KeySize = BIT9;
   NewConfiguration[0].Capability.CryptoBlockSizeBitMask = BIT9 | BIT12;
 
   Status = BlockIoCrypto->SetConfiguration (BlockIoCrypto, 1, NewConfiguration, ResultingTable);
