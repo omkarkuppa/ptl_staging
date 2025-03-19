@@ -222,7 +222,7 @@ OcrProxyInfoInit (
       L"%s/Uri(http://%s)/Uri(%s)", // Proxy URL is always expected to support HTTP protocol
       DevicePath,
       ProxyUriPath,
-      &UriPath
+      UriPath
       );
 
     DEBUG ((DEBUG_INFO, "Printing OCR Proxy Devicepath = %s\n", mOcrProxyInfo->DevicePath[Index]));
