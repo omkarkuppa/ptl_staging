@@ -39,7 +39,7 @@
 // GopConfig Driver will use this Hob to override the VBT
 //
 typedef struct {
-  UINT64    SkuId;
+  UINT64         SkuId;
 /*
   ModuleTypeCId: There are total 16Bits are available. Remaining Upper 16bits are unused/rsvd.
   0000    0000    0000    0000
@@ -54,10 +54,12 @@ typedef struct {
   |   1  |   0  |   1  |   0  | Module HDMI  |
   --------------------------------------------
 */
-  UINT32   ModuleTypeCId;   // Used to identify the Modular Type C Type.
-  UINT8    SoftwareId;      // extensibility for un-defined reworks.
-  BOOLEAN  GopConfigEnable; // GopConfig Enable to check if the VBT modification is needed or not
-  UINT8    Reserved[2];
+  UINT32         ModuleTypeCId;   // Used to identify the Modular Type C Type.
+  UINT8          DisplayId;       // Used to define Fixed Ports (non-Type C).
+  UINT8          SoftwareId;      // extensibility for un-defined reworks.
+  UINT16         PlatformId;      // Used to identify platform
+  BOOLEAN        GopConfigEnable; // GopConfig Enable to check if the VBT modification is needed or not
+  UINT8          Reserved[7];
 } GOP_CONFIG_DRIVER_HOB;
 
 #endif // _BOARD_SA_CONFIG_PRE_MEM_H_

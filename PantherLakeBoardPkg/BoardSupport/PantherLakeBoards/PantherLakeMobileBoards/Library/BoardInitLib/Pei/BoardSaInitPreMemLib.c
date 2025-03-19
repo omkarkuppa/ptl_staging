@@ -118,8 +118,12 @@ BuildGopConfigDriver (
     ZeroMem (GopConfigDriverHob, sizeof (GOP_CONFIG_DRIVER_HOB));
     GopConfigDriverHob->SkuId = LibPcdGetSku ();
     GopConfigDriverHob->SoftwareId = PcdGet8 (VpdPcdGopConfigSoftwareId);
+    GopConfigDriverHob->DisplayId = (UINT8) PcdGet16 (PcdDisplayId);
+    GopConfigDriverHob->PlatformId = 0;
     DEBUG ((DEBUG_INFO, "GopConfig SkuId = 0x%X\n", GopConfigDriverHob->SkuId));
     DEBUG ((DEBUG_INFO, "GopConfig SoftwareId = 0x%X\n", GopConfigDriverHob->SoftwareId));
+    DEBUG ((DEBUG_INFO, "GopConfig DisplayId = 0x%X\n", GopConfigDriverHob->DisplayId));
+    DEBUG ((DEBUG_INFO, "GopConfig PlatformId = 0x%X\n", GopConfigDriverHob->PlatformId));
   }
 }
 
