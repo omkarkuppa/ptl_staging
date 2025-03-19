@@ -1140,9 +1140,13 @@ UpdatePeiCpuPolicyPreMem (
       COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.DcLoadline[Index], CpuPowerMgmtVrConfig->DcLoadline[Index], CpuSetup.DcLoadline[Index], Index);
     }
     //
-    // Slew rate option only support Core and GT domain
+    // VCCSA slew rate option in all the platforms from CML and future products was removed.
     //
-    COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.SlowSlewRate[Index], CpuPowerMgmtVrConfig->SlowSlewRate[Index], CpuSetup.SlowSlewRate[Index], Index);
+    if (Index == 2) {
+      UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.SlowSlewRate[Index], CpuPowerMgmtVrConfig->SlowSlewRate[Index], 0xFF);
+    } else {
+      COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.SlowSlewRate[Index], CpuPowerMgmtVrConfig->SlowSlewRate[Index], CpuSetup.SlowSlewRate[Index], Index);
+    }
     COMPARE_UPDATE_POLICY_ARRAY (((FSPM_UPD *) FspmUpd)->FspmConfig.FastPkgCRampDisable[Index], CpuPowerMgmtVrConfig->FastPkgCRampDisable[Index], CpuSetup.FastPkgCRampDisable[Index], Index);
   }
 
