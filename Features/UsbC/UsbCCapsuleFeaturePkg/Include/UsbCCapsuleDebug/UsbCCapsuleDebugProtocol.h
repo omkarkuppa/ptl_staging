@@ -143,7 +143,7 @@ EFI_STATUS
   );
 
 #define CAPSULE_LOG_SIGNATURE  SIGNATURE_32 ('C', 'A', 'P', 'L')
-#define CAPSULE_LOG_REVISION   0x02
+#define CAPSULE_LOG_REVISION   0x03
 ///
 /// The CAPSULE_LOG_ENTRY_MAX is the maximum number of log entries to record Capsule update.
 /// This value is based on experimental data showing each retimer capsule needs about 0xFFFFF entries.
@@ -165,7 +165,7 @@ typedef struct _CAPSULE_LOG_BUFFER {
 /// Data structure of Capsule Debug Protocol
 ///
 struct _USBC_CAPSULE_DEBUG_PROTOCOL {
-  CAPSULE_LOG_BUFFER               CapsuleLogBuf;         ///< Log buffer for Log data
+  CAPSULE_LOG_BUFFER               *CapsuleLogBuf;        ///< Log buffer for Log data
   const CAPSULE_LOG_MAPPING_ENTRY  *LogMappingTable;      ///< Mapping table for converting log data to log string
   UINT32                           LogMappingEntries;     ///< The number of mapping entries in Log mapping table
   UINT32                           DebugLevel;            ///< Debug level used for controlling what level of Log data can be saved in Log buffer

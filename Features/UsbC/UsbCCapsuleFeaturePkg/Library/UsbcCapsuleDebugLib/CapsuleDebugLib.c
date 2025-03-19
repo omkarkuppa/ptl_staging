@@ -82,14 +82,14 @@ LogReadReset (
   IN USBC_CAPSULE_DEBUG_PROTOCOL  *This
   )
 {
-  if (This == NULL) {
+  if ((This == NULL) || (This->CapsuleLogBuf == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   ///
   /// Reset next log read position
   ///
-  This->CapsuleLogBuf.NextRead = 0;
+  This->CapsuleLogBuf->NextRead = 0;
 
   return EFI_SUCCESS;
 }
@@ -119,11 +119,11 @@ LogWrite (
   IN UINT32                       EvtArg1
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
   Status = EFI_SUCCESS;
 
-  if (This == NULL) {
+  if ((This == NULL) || (This->CapsuleLogBuf == NULL)) {
     Status = EFI_INVALID_PARAMETER;
     goto Exit;
   }
@@ -135,7 +135,7 @@ LogWrite (
     ///
     /// Check if a free Log entry is available for Log data
     ///
-    if (This->CapsuleLogBuf.LogCount >= CAPSULE_LOG_ENTRY_MAX) {
+    if (This->CapsuleLogBuf->LogCount >= CAPSULE_LOG_ENTRY_MAX) {
       DEBUG ((DEBUG_ERROR, "CapsuleLogWrite: Log buffer is full!"));
       Status = EFI_OUT_OF_RESOURCES;
       goto Exit;
@@ -144,10 +144,10 @@ LogWrite (
     ///
     /// Save Log data to the next available Log entry
     ///
-    This->CapsuleLogBuf.Entry[This->CapsuleLogBuf.LogCount].EvtCode = EventCode;
-    This->CapsuleLogBuf.Entry[This->CapsuleLogBuf.LogCount].EvtArg0 = EvtArg0;
-    This->CapsuleLogBuf.Entry[This->CapsuleLogBuf.LogCount].EvtArg1 = EvtArg1;
-    This->CapsuleLogBuf.LogCount++;
+    This->CapsuleLogBuf->Entry[This->CapsuleLogBuf->LogCount].EvtCode = EventCode;
+    This->CapsuleLogBuf->Entry[This->CapsuleLogBuf->LogCount].EvtArg0 = EvtArg0;
+    This->CapsuleLogBuf->Entry[This->CapsuleLogBuf->LogCount].EvtArg1 = EvtArg1;
+    This->CapsuleLogBuf->LogCount++;
   }
 
 Exit:
@@ -173,9 +173,9 @@ LogRead (
   OUT CAPSULE_LOG_ENTRY            *LogData
   )
 {
-  EFI_STATUS Status;
+  EFI_STATUS  Status;
 
-  if (This == NULL) {
+  if ((This == NULL) || (This->CapsuleLogBuf == NULL)) {
     Status = EFI_INVALID_PARAMETER;
     goto Exit;
   }
@@ -186,8 +186,8 @@ LogRead (
     goto Exit;
   }
 
-  if (This->CapsuleLogBuf.NextRead >= CAPSULE_LOG_ENTRY_MAX) {
-    DEBUG ((DEBUG_ERROR, "CapsuleLogRead: NextRead = %d is out of range!\n", This->CapsuleLogBuf.NextRead));
+  if (This->CapsuleLogBuf->NextRead >= CAPSULE_LOG_ENTRY_MAX) {
+    DEBUG ((DEBUG_ERROR, "CapsuleLogRead: NextRead = %d is out of range!\n", This->CapsuleLogBuf->NextRead));
     Status = EFI_ACCESS_DENIED;
     goto Exit;
   }
@@ -197,12 +197,12 @@ LogRead (
   ///
   /// Get Log data if available
   ///
-  if (This->CapsuleLogBuf.NextRead < This->CapsuleLogBuf.LogCount) {
-    CopyMem (LogData, &(This->CapsuleLogBuf.Entry[This->CapsuleLogBuf.NextRead]), sizeof (CAPSULE_LOG_ENTRY));
-    This->CapsuleLogBuf.NextRead++;
+  if (This->CapsuleLogBuf->NextRead < This->CapsuleLogBuf->LogCount) {
+    CopyMem (LogData, &(This->CapsuleLogBuf->Entry[This->CapsuleLogBuf->NextRead]), sizeof (CAPSULE_LOG_ENTRY));
+    This->CapsuleLogBuf->NextRead++;
   } else {
     DEBUG ((DEBUG_ERROR, "No more Log data to read\n"));
-    DEBUG ((DEBUG_ERROR, "NextRead = %d, LogCount = %d\n", This->CapsuleLogBuf.NextRead, This->CapsuleLogBuf.LogCount));
+    DEBUG ((DEBUG_ERROR, "NextRead = %d, LogCount = %d\n", This->CapsuleLogBuf->NextRead, This->CapsuleLogBuf->LogCount));
     Status = EFI_END_OF_FILE;
   }
 
@@ -379,22 +379,37 @@ InstallCapsuleDebugLibProtocol (
   ///
   /// Allocate memory for protocol
   ///
-  PageCount = EFI_SIZE_TO_PAGES (sizeof (USBC_CAPSULE_DEBUG_PROTOCOL));
-  CapsuleDebugProtocol = (USBC_CAPSULE_DEBUG_PROTOCOL *) AllocatePages (PageCount);
+  CapsuleDebugProtocol = AllocateZeroPool (sizeof (USBC_CAPSULE_DEBUG_PROTOCOL));
   if (CapsuleDebugProtocol == NULL) {
     DEBUG ((DEBUG_ERROR, "InstallCapsuleDebugProtocol: Insufficient buffer for allocating protocol\n"));
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
   }
-  ZeroMem (CapsuleDebugProtocol, EFI_PAGES_TO_SIZE (PageCount));
 
-  ///
-  /// Initialize protocol data and interfaces
-  ///
-  CapsuleDebugProtocol->CapsuleLogBuf.Signature = CAPSULE_LOG_SIGNATURE;
-  CapsuleDebugProtocol->CapsuleLogBuf.Revision  = CAPSULE_LOG_REVISION;
-  CapsuleDebugProtocol->CapsuleLogBuf.LogCount  = 0x00;
-  CapsuleDebugProtocol->CapsuleLogBuf.NextRead  = 0x00;
+  if (DebugLevel != USBC_CAPSULE_DBG_DISABLED) {
+    ///
+    /// Allocate memory for CapsuleLogBuf
+    ///
+    PageCount = EFI_SIZE_TO_PAGES (sizeof (CAPSULE_LOG_BUFFER));
+    CapsuleDebugProtocol->CapsuleLogBuf = (CAPSULE_LOG_BUFFER *) AllocatePages (PageCount);
+    if (CapsuleDebugProtocol->CapsuleLogBuf == NULL) {
+      DEBUG ((DEBUG_ERROR, "InstallCapsuleDebugProtocol: Insufficient buffer for allocating CapsuleLogBuf\n"));
+      Status = EFI_OUT_OF_RESOURCES;
+      goto Exit;
+    }
+    ZeroMem (CapsuleDebugProtocol->CapsuleLogBuf, EFI_PAGES_TO_SIZE (PageCount));
+
+    ///
+    /// Initialize protocol data and interfaces
+    ///
+    CapsuleDebugProtocol->CapsuleLogBuf->Signature = CAPSULE_LOG_SIGNATURE;
+    CapsuleDebugProtocol->CapsuleLogBuf->Revision  = CAPSULE_LOG_REVISION;
+    CapsuleDebugProtocol->CapsuleLogBuf->LogCount  = 0x00;
+    CapsuleDebugProtocol->CapsuleLogBuf->NextRead  = 0x00;
+  } else {
+    CapsuleDebugProtocol->CapsuleLogBuf = NULL;
+  }
+
   CapsuleDebugProtocol->LogMappingTable         = LogMappingTable;
   CapsuleDebugProtocol->LogMappingEntries       = LogMappingEntries;
   CapsuleDebugProtocol->DebugLevel              = DebugLevel;
