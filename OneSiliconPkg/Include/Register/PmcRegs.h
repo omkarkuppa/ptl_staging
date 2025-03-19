@@ -581,12 +581,12 @@
 
 #define R_PMC_PWRM_GBLRST_CAUSE0                            0x1924                      ///< Global Reset Causes 0
 #define B_PMC_PWRM_GBLRST_CAUSE0_PBO                        BIT1                        ///< Global Cause0 power button reset
-#define B_PMC_PWRM_GBLRST_CAUSE0_FW_SOURCE                  BIT3                        ///< Global Cause0 system firmware reset source bit
-#define B_PMC_PWRM_GBLRST_CAUSE0_UNEXPECTED_RESET           BIT30                       ///< Global Cause0 unexpected reset
+#define B_PMC_PWRM_GBLRST_CAUSE0_ME_PBO                     BIT4                        ///< The last global reset was caused by me_pbo.
+#define B_PMC_PWRM_GBLRST_CAUSE0_ESE_GBLRST_REQ             BIT30
 #define B_PMC_PWRM_GBLRST_CAUSE0_THERMAL_RESET              (BIT27 | BIT26 | BIT25 | BIT5 | BIT3) ///< Gbl Cause0 thermal reset reason bits
 #define B_PMC_PWRM_GBLRST_CAUSE0_TIMEOUT_RESET              (BIT20 | BIT19 | BIT16 | BIT9 | BIT8) ///< Gbl Cause0 timeout reset reason bits
-#define B_PMC_PWRM_GBLRST_CAUSE0_FAULT_RESET                (BIT31 | BIT24 | BIT23 | BIT22 | BIT21 | BIT17 | BIT15 | BIT14 | BIT13 | BIT12 | BIT11 | BIT7 | BIT4 | BIT2 | BIT0) ///< Gbl Cause0 fault reset reason bits
-#define B_PMC_PWRM_GBLRST_CAUSE0_HW_SOURCE                  (BIT31 | BIT24 | BIT23 | BIT22 | BIT21 | BIT17 | BIT15 | BIT14 | BIT12 | BIT11 | BIT2 | BIT0) ///< Gbl Cause0 hardware reset source bits
+#define B_PMC_PWRM_GBLRST_CAUSE0_FAULT_RESET                (BIT31 | BIT28 | BIT24 | BIT23 | BIT22 | BIT21 | BIT17 | BIT15 | BIT14 | BIT13 | BIT12 | BIT11 | BIT7 | BIT4 | BIT2 | BIT0) ///< Gbl Cause0 fault reset reason bits
+#define B_PMC_PWRM_GBLRST_CAUSE0_FAULT_RESET_HW             (BIT31 | BIT28 | BIT24 | BIT23 | BIT22 | BIT21 | BIT17 | BIT15 | BIT14 | BIT12 | BIT11 | BIT2 | BIT0) ///< Gbl Cause0 hardware reset source bits
 
 #define R_PMC_PWRM_GBLRST_CAUSE1                            0X1928                      ///< Global Reset Causes 1
 #define B_PMC_PWRM_GBLRST_CAUSE1_FAULT_RESET                (BIT7 | BIT6 | BIT5 | BIT4 | BIT3 | BIT2 | BIT1 | BIT0)   ///< Global Reset Causes 1 fault reset reason bits
@@ -594,10 +594,10 @@
 
 #define R_PMC_PWRM_HPR_CAUSE0                               0x192C                      ///< Host Partition Reset Causes
 #define B_PMC_PWRM_HPR_CAUSE0_GBL_TO_HOST                   BIT15                       ///< Global Reset Converted to Host Reset
+#define B_PMC_PWRM_HPR_CAUSE0_TCO_WDT                       BIT6                        ///< Host TCO watchdog timer reached zero for the second time
+#define B_PMC_PWRM_HPR_CAUSE0_SYSRST_ES                     BIT2                        ///< Assertion of the SYS_RESET# pin after the 16 ms HW debounce.
+#define B_PMC_PWRM_HPR_CAUSE0_CF9_ES                        BIT1                        ///< Write to CF9
 #define B_PMC_PWRM_HPR_CAUSE0_AWR                           BIT0                        ///< Asynchronous Warm Reset Status
-#define B_PMC_PWRM_HPR_CAUSE0_SYSRST_ES                     BIT2                        ///< HPR Cause0 warm/cold reset bit
-#define V_PMC_PWRM_HPR_CAUSE0_CF9CR                         0x6                         ///< HPR Cause0 cold reset from CF9h
-#define V_PMC_PWRM_HPR_CAUSE0_CF9WR                         0xE                         ///< HPR Cause0 warm reset from CF9h
 #define B_PMC_PWRM_HPR_CAUSE0_COLD_RESET                    (BIT17 | BIT13 | BIT9)      ///< HPR Cause0 cold reset reason bits
 #define B_PMC_PWRM_HPR_CAUSE0_WARM_RESET                    (BIT16 | BIT12 | BIT8 | BIT3) ///< HPR Cause0 warm reset reason bits
 

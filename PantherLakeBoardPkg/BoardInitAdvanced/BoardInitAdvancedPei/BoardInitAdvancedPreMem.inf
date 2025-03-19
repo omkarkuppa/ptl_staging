@@ -71,6 +71,7 @@
   CnvFeaturePkg/CnvFeaturePkg.dec
   Usb4FeaturePkg/Usb4FeaturePkg.dec
   PantherLakeOpenBoardPkg/OpenBoardPkg.dec
+  TelemetryFeaturePkg/TelemetryFeaturePkg.dec
 
 [Pcd]
   gPlatformModuleTokenSpaceGuid.PcdEcExtraIoBase                ## CONSUMES
@@ -105,6 +106,8 @@
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTableDisableDiscreteAudioOffloadPreMem      ## CONSUMES
   gBoardModuleTokenSpaceGuid.PcdBoardGpioTableDisableDiscreteAudioOffloadPreMemSize  ## CONSUMES
 
+  gTelemetryFeaturePkgTokenSpaceGuid.PcdTelemetryFeatureEnable  ## CONSUMES
+
 [FixedPcd]
   gSiPkgTokenSpaceGuid.PcdBootGuardEnable                       ## CONSUMES
   gSiPkgTokenSpaceGuid.PcdTxtEnable                             ## CONSUMES
@@ -136,6 +139,7 @@
   gEfiTpmDeviceInstanceNoneGuid                                 ## CONSUMES
   gEfiTpmDeviceSelectedGuid                                     ## CONSUMES
   gAcmDataHobGuid                                               ## PRODUCES ## HOB
+  gIntelResetCauseHobGuid                                       ## PRODUCES ## HOB
 
 [Depex]
   gEfiPeiReadOnlyVariable2PpiGuid

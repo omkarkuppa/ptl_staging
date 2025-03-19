@@ -1534,7 +1534,7 @@ GetPmcResetRegisters (
   PwrmBase = PmcGetPwrmBase ();
 
   // Get PMC PM CON A Register
-  (*GenPmConA) = IoRead32 ((UINTN) PwrmBase + R_PMC_PWRM_GEN_PMCON_A);
+  (*GenPmConA) = MmioRead32 (PwrmBase + R_PMC_PWRM_GEN_PMCON_A);
 
   // Get PMC HPR Cause0 Register
   (*HprCause0) = MmioRead32 (PwrmBase + R_PMC_PWRM_HPR_CAUSE0);
