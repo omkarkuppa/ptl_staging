@@ -1693,6 +1693,8 @@ HeciFwCapsGetRuleData (
     return EFI_INVALID_PARAMETER;
   }
 
+  ZeroMem (&GetRuleMsg, sizeof (GET_RULE_BUFFER));
+
   Status = MeBiosGetMeMode (&MeMode);
   if (EFI_ERROR (Status) || (MeMode != ME_MODE_NORMAL)) {
     return EFI_UNSUPPORTED;
