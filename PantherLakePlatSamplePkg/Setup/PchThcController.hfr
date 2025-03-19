@@ -133,14 +133,14 @@
     oneof varid  = PCH_SETUP.ThcDsyncPad[THC_INDEX],
       prompt   = STRING_TOKEN(STR_THC_DSYNC_PAD_TITLE),
       help     = STRING_TOKEN(STR_THC_DSYNC_PAD_HELP),
-      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_DISABLED), value = 0, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_ENABLED), value = 1, flags =  RESET_REQUIRED;
     endoneof;
     oneof varid  = PCH_SETUP.ThcMode[THC_INDEX],
       prompt   = STRING_TOKEN(STR_THC_MODE_TITLE),
       help     = STRING_TOKEN(STR_THC_MODE_HELP),
-      option text = STRING_TOKEN(STR_THC_MODE_HIDSPI), value = 1, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
-      option text = STRING_TOKEN(STR_THC_MODE_HIDI2C), value = 2, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_MODE_HIDSPI), value = 1, flags = RESET_REQUIRED;
+      option text = STRING_TOKEN(STR_THC_MODE_HIDI2C), value = 2, flags = DEFAULT | MANUFACTURING | RESET_REQUIRED;
       option text = STRING_TOKEN(STR_THC_MODE_NONE),   value = 3, flags = RESET_REQUIRED;
     endoneof;
 
