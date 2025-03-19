@@ -36,6 +36,8 @@
 
 [Sources]
   DxeMemoryTelemetry.c
+  MemTelemetryPrint.c
+  MemTelemetryTableHandler.c
   DxeMemoryTelemetryAmtPpr.c
 
 [Packages]

@@ -23,47 +23,8 @@
 #define _DXE_MEMORY_TELEMETRY_H_
 
 #include <PiDxe.h>
-#include <MemInfoHob.h>
-
-///
-/// Memory module type definition in DDR3 SPD Data
-///
-#define DDR_MTYPE_SPD_OFFSET  3     ///< Module type, offset 3, bits (3:0)
-#define DDR_MTYPE_SPD_MASK    0x0F  ///< Module Type mask
-#define DDR_MTYPE_RDIMM       0x01  ///< Registered DIMM Memory
-#define DDR_MTYPE_UDIMM       0x02  ///< Unbuffered DIMM Memory
-#define DDR_MTYPE_SODIMM      0x03  ///< Small Outline DIMM Memory
-#define DDR_MTYPE_LR_DIMM     0x04  ///< LR-DIMM Memory
-#define DDR_MTYPE_CUDIMM      0x05  ///< CU DIMM Memory
-#define DDR_MTYPE_CSODIMM     0x06  ///< CSO DIMM Memory
-#define DDR_MTYPE_MRDIMM      0x07  ///< MR DIMM Memory
-#define DDR_MTYPE_CAMM        0x08  ///< CAMM Memory
-#define DDR_MTYPE_DDIMM       0x0A  ///< Small Outline Unbuffered DIMM Memory, 72-bit data bus
-#define DDR_MTYPE_MEM_DOWN    0x0B  ///< Soldered Down Memory
-
-///
-/// Memory device type definition in DDR3 SPD Data
-///
-#define DDR_DTYPE_SPD_OFFSET    2     ///< Device type, offset 2, bits (7:0)
-#define DDR_DTYPE_DDR3          11    ///< DDR3 memory type
-#define DDR_DTYPE_DDR4          12    ///< DDR4 memory type
-#define DDR_DTYPE_DDR5          18    ///< DDR5 memory type
-#define DDR_DTYPE_LPDDR5        19    ///< LPDDR5 memory type
-#define DDR_DTYPE_LPDDR5X       21    ///< LPDDR5X memory type
-#define DDR_DTYPE_LPDDR3        0xF1  ///< LPDDR3 memory type
-#define DDR_DTYPE_JEDEC_LPDDR3  0x0F  ///< LPDDR3 memory type, JEDEC SPD Specification
-
-///
-/// Memory module type definition in LP4/LP5 SPD Spec
-///
-#define DDR_MTYPE_LPDIMM_LP5      0x07  ///< LP DIMM Memory
-#define DDR_MTYPE_MEM_DOWN_LP5    0x0E  ///< Soldered Down Memory
-
-///
-/// Standin for missing enum definition in SMBIOS type 17 MEMORY_FORM_FACTOR
-/// TODO: Update concurrently with SMBIOS Type 17 Spec update of MEMORY_FORM_FACTOR
-///
-#define MEMORY_FORM_FACTOR_CAM    0x11
+#include "MemTelemetryTables.h"
+#include <Library/HobLib.h>
 
 /**
   Handles AMT PPR variable access and clearing/creating of variable for subsequent use
