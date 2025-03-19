@@ -1292,7 +1292,7 @@
   # !BSF NAME:{Mc Safe Mode Support}
   # !BSF TYPE:{EditNum, HEX, (0x00,0xFFFF)}
   # !BSF HELP:{McSafeMode[0]: Reserved, McSafeMode[1]: OppSR}
-  gPlatformFspPkgTokenSpaceGuid.McSafeMode                  | * | 0x01 | 0x02
+  gPlatformFspPkgTokenSpaceGuid.McSafeMode                  | * | 0x01 | 0x0
 
   # !BSF NAME:{Ask MRC to clear memory content}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
@@ -1407,12 +1407,12 @@
   # !BSF NAME:{E-DVFSC Enabled}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Eanble/Disable DVFSC}
-  gPlatformFspPkgTokenSpaceGuid.DvfscEnabled                | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.DvfscEnabled                | * | 0x01 | 0x01
 
   # !BSF NAME:{Ddr5 Dca Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enable/Disable DDR5 Dca Training}
-  gPlatformFspPkgTokenSpaceGuid.DCCDDR5READDCA               | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.DCCDDR5READDCA               | * | 0x01 | 0x01
 
   # !BSF NAME:{PPR Run WCHMATS8}
   # !BSF TYPE:{EditNum, HEX, (0x00, 0x01)}
@@ -1464,11 +1464,16 @@
   # !BSF HELP:{PPR Repair Memory Address}
   gPlatformFspPkgTokenSpaceGuid.PprEntryAddress             | * | 0x10 | { 0x0, 0x0 }
 
+  # !BSF NAME:{Read Vref Decap Training*}
+  # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
+  # !BSF HELP:{Enable/Disable Read Timing Centering Training with SR stress*}
+  gPlatformFspPkgTokenSpaceGuid.RDTCIDLE                    | * | 0x01 | 0x01
+
   ## MEMORY_CONFIGURATION End
 
   # !BSF NAME:{MrcPreMemRsvd} TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Reserved for MRC Pre-Mem}
-  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 21  | {0x00}
+  gPlatformFspPkgTokenSpaceGuid.MrcPreMemRsvd               | * | 20  | {0x00}
 
   #
   # MRC Block End

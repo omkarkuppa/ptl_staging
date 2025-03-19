@@ -1029,6 +1029,7 @@ UpdatePeiSaPolicyPreMem (
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DLLDCC,  MemConfig->ExternalInputs.TrainingEnables2.DLLDCC,         SaSetup.DLLDCC         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DLLBWSEL,  MemConfig->ExternalInputs.TrainingEnables2.DLLBWSEL,       SaSetup.DLLBWSEL       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RDVREFDC,  MemConfig->ExternalInputs.TrainingEnables2.RDVREFDC,       SaSetup.RDVREFDC       );
+    COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RDTCIDLE,  MemConfig->ExternalInputs.TrainingEnables2.RDTCIDLE,       SaSetup.RDTCIDLE       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.RMTBIT,  MemConfig->ExternalInputs.TrainingEnables2.RMTBIT,         SaSetup.RMTBIT         );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.DQDQSSWZ,  MemConfig->ExternalInputs.TrainingEnables2.DQDQSSWZ,       SaSetup.DQDQSSWZ       );
     COMPARE_AND_UPDATE_POLICY (((FSPM_UPD *) FspmUpd)->FspmConfig.REFPI,  MemConfig->ExternalInputs.TrainingEnables2.REFPI,          SaSetup.REFPI          );

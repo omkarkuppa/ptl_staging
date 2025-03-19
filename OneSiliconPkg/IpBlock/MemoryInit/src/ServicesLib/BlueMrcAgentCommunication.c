@@ -528,7 +528,7 @@ BlueMrcCheckXtStatusRegs (
     }
 
     Pfault1.Data = MrcReadCR (MrcData, UCSS_SRAM_CR_DDRUCSS_CR_UCSS_XT_PFAULTINFO1_REG);
-    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "XT_PFAULTIFO%u: 0x%x\n", 1, Pfault0.Data);
+    MRC_DEBUG_MSG (Debug, MSG_LEVEL_ERROR, "XT_PFAULTIFO%u: 0x%x\n", 1, Pfault1.Data);
     // Pfault Bits (32:63)
     // Bit 47 (map to bit 15) PrefetchRAM uncorrectable error
     // Bit 43 (map to bit 11) InstCache uncorrectable error

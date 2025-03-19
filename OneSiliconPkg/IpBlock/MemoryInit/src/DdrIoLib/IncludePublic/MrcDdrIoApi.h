@@ -625,6 +625,25 @@ MrcDdrIoInit (
   );
 
 /**
+  This function calculates SenseAmp duration for DQS and DQ.
+
+  @param[in]  MrcData - Pointer to MRC global data.
+  @param[in]  Qclk2Pi - Number of PI Ticks in a QClk
+  @param[in]  GuardBand - Guardband for drift in Rd DQS timing in psec
+  @param[in]  RdPreambleLow - Read Preamble low time
+  @param[in]  RdPreambleT - Read Preamble Toggle time
+
+**/
+VOID
+MrcProgramDqDqsSenseAmpDuration (
+  IN     MrcParameters *const MrcData,
+  IN     UINT32 Qclk2Pi,
+  IN     UINT32 GuardBand,
+  IN     UINT8  RdPreambleLow,
+  IN     UINT8  RdPreambleT
+  );
+
+/**
   This function calculates PHY values after changes to RcvEn
 
   @param[in]  MrcData - Pointer to MRC global data.
@@ -2079,9 +2098,7 @@ MrcAdcCountToVoltage (
   );
 
 /**
-  This function configure some registers according to HVM requirements:
-  1. clear DataValue(BSCAN override of data value for each ccc) in CCC_CR_DDRCRBSCANDATA_REG
-  2. Enter into infinite loop in the end of the function.
+  This function enters into an infinite loop for HVM, indicating the end of the MRC run.
 
   @param[in]  MrcData - Pointer to MRC global data.
 

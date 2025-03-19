@@ -37,9 +37,9 @@ typedef enum {
 
 typedef enum {
   NoRepair = 0,
-  sPPR     = 1,
-  hPPR     = 2,
-  mPPR     = 3,
+  sPPR = 1,
+  hPPR = 2,
+  mPPR = 3,
   PprTypeMax
 } MRC_PPR_REPAIR_TYPE;
 
@@ -122,7 +122,7 @@ typedef struct {
   UINT32 DLLDCC:1;               ///< BIT10 - DLL DCC Calibration
   UINT32 DLLBWSEL:1;             ///< BIT11 - DLL BW Select Calibration
   UINT32 RDVREFDC:1;             ///< BIT12 - Read Vref Decap Training
-  UINT32 Reserved2Bit13:1;       ///< BIT13 - Reserved
+  UINT32 RDTCIDLE:1;             ///< BIT13 - Read Timing Centering Training with SR stress
   UINT32 RMTBIT:1;               ///< BIT14 - Rank Margin Tool Per Bit
   UINT32 DQDQSSWZ:1;             ///< BIT15 - Map Dq Dqs Swizzle
   UINT32 REFPI:1;                ///< BIT16 - RefPi Calibration
@@ -191,6 +191,7 @@ typedef struct {
   UINT64  Reserved : 60;   // Bits 63:4
 } MRC_PPR_ENTRY_INFO;
 
+#ifndef MRC_MINIBIOS_BUILD
 typedef struct {
   UINT64 Controller :  1;  // Bit 0
   UINT64 Channel    :  3;  // Bits 2:1
@@ -201,6 +202,18 @@ typedef struct {
   UINT64 Device     :  3;  // Bits 31:29
   UINT64 Reserved   : 32;  // Bits 63:32
 } MRC_PPR_ENTRY_ADDRESS;
+#else
+typedef struct {
+  UINT32 Controller :  1;  // Bit 0
+  UINT32 Channel    :  3;  // Bits 2:1
+  UINT32 Rank       :  2;  // Bits 4:3
+  UINT32 BankGroup  :  3;  // Bits 8:5
+  UINT32 Bank       :  2;  // Bits 10:9
+  UINT32 Row        : 18;  // Bits 28:11
+  UINT32 Device     :  3;  // Bits 31:29
+  UINT32 Reserved1;        // Bits 63:32
+} MRC_PPR_ENTRY_ADDRESS;
+#endif
 
 // Keep PprTestTypeOffset in sync with MRC_PPR_TEST_TYPE
 typedef enum {
@@ -212,21 +225,22 @@ typedef enum {
   PprTestTypeYMarchLong    = 5,
   PprTestTypeMmrw          = 6,
   PprTestTypeNumMemTests   = PprTestTypeMmrw,
+  PprTestTypeMbist = 7,
   PprTestTypeTestDisabled  = 8,
 } PprTestTypeOffset;
 
 typedef union {
   struct {
-    UINT64 WcMats8       : 1;  // Bit0
-    UINT64 DataRetention : 1;  // Bit1
-    UINT64 XMarch        : 1;  // Bit2
-    UINT64 XMarchG       : 1;  // Bit3
-    UINT64 YMarchShort   : 1;  // Bit4
-    UINT64 YMarchLong    : 1;  // Bit5
-    UINT64 Mmrw          : 1;  // Bit6
-    UINT64 Mbist         : 1;  // Bit7
-    UINT64 TestDisabled  : 1;  // Bit8
-    UINT64 Reserved      : 55; // Bits 63:9
+    UINT64 WcMats8        : 1; // Bit0
+    UINT64 DataRetention  : 1; // Bit1
+    UINT64 XMarch         : 1; // Bit2
+    UINT64 XMarchG        : 1; // Bit3
+    UINT64 YMarchShort    : 1; // Bit4
+    UINT64 YMarchLong     : 1; // Bit5
+    UINT64 Mmrw           : 1; // Bit6
+    UINT64 Mbist          : 1; // Bit7
+    UINT64 TestDisabled   : 1; // Bit8
+    UINT64 Reserved9to63  : 55; // Bits9-64
   } Bits;
   UINT64 Value;
 } MRC_PPR_TEST_TYPE;

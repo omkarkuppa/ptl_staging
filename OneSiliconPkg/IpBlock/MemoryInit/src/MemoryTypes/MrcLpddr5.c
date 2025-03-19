@@ -843,6 +843,7 @@ InitMrwLpddr5 (
   LPDDR5_MODE_REGISTER_37_TYPE  Mr37;
   LPDDR5_MODE_REGISTER_40_TYPE  Mr40;
   LPDDR5_MODE_REGISTER_41_TYPE  Mr41;
+  LPDDR5_MODE_REGISTER_58_TYPE  Mr58;
   LPDDR5_MODE_REGISTER_69_TYPE  Mr69;
 
   Inputs = &MrcData->Inputs;
@@ -851,9 +852,10 @@ InitMrwLpddr5 (
   Debug = &Outputs->Debug;
   Profile = ExtInputs->MemoryProfile;
   Status = mrcSuccess;
-  SocOdt = Outputs->RcompTarget[RdOdt];
+  //SocOdt = Outputs->RcompTarget[RdOdt];
+  SocOdt = 40; // Separate SocOdt from RdOdt
   CaDrvStrength = Outputs->RcompTarget[WrDSCmd];
-  PdDrvStr = 40; // Ohms
+  PdDrvStr = 60; // Ohms
   CsOdtEnc = 0;
   if (ExtInputs->DqLoopbackTest) {
 #ifndef HVM_FLAG
@@ -961,15 +963,24 @@ InitMrwLpddr5 (
         Mr24.Bits.Dfequ = DfeQu;
         MrPtr[mrIndexMR24] = Mr24.Data8;
 
-        DcaValue = (Outputs->Frequency > f4800) ? 0xA : 0;
+        DcaValue = (Outputs->Frequency > f4800) ? 9 : 0;
         //MR30 - DCA WCK
         Mr30.Data8 = 0;
         Mr30.Bits.DcaUpperByte = DcaValue;
         Mr30.Bits.DcaLowByte = DcaValue;
         MrPtr[mrIndexMR30] = Mr30.Data8;
 
+        //MR58 - PRE EMP
+        Mr58.Data8 = 0;
+        Mr58.Bits.PUEmphasisLower = 3;
+        Mr58.Bits.PDEmphasisLower = 2;
+        Mr58.Bits.PUEmphasisUpper = 3;
+        Mr58.Bits.PDEmphasisUpper = 2;
+        MrPtr[mrIndexMR58] = Mr58.Data8;
+
         //MR69 - DCA READ
         Mr69.Data8 = 0;
+        DcaValue = 2;
         Mr69.Bits.ReadDcaUpperByte = DcaValue;
         Mr69.Bits.ReadDcaLowByte = DcaValue;
         MrPtr[mrIndexMR69] = Mr69.Data8;
@@ -1273,6 +1284,7 @@ static MrcModeRegister mSagvMrPerRankLpddr5[] = {
   mrMR14, // VREF_DQ[7:0]
   mrMR15, // VREF_DQ[15:8]
   mrMR17, // CK_ODT, CS_ODT, CA_ODT
+  mrMR18, // WCK_ODT
   mrMR24, // DFE
   mrMR30, // DIMM DCA (WCK)
   mrMR69, // DIMM DCA (Read)

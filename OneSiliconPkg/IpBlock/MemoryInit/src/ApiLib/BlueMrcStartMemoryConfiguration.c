@@ -640,11 +640,11 @@ MrcWrappedStartMemoryConfiguration (
                 MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "Exit call table due to EnterInterpreterOnPostCode: 0x%x\n", Inputs->EnterInterpreterOnPostCode);
               break;
             }
-          }
-        } else {
-          // MrcDebugHook is called here to update the MRC progress bar for call table steps skipped due to the SaGv point check.
-          PostCodeOut = (Task->post_code_ovr == POST_CODE_NO_OVR) ? post_code : Task->post_code_ovr;
-          MrcCall->MrcDebugHook (MrcData, PostCodeOut);
+          } else {
+            // MrcDebugHook is called here to update the MRC progress bar for call table steps skipped due to the SaGv point check.
+            PostCodeOut = (Task->post_code_ovr == POST_CODE_NO_OVR) ? post_code : Task->post_code_ovr;
+            MrcCall->MrcDebugHook (MrcData, PostCodeOut);
+          } // SAGV point match
         } // Select match
       } else {
         // MrcDebugHook is called here to update the MRC progress bar for call table steps skipped due to the boot mode check.

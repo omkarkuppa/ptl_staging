@@ -3553,7 +3553,7 @@ MrcMrIsPda (
     break;
   case mrMR43:
   case mrMR44:
-    if (ChannelOut->IsMrDcaPdaEnabled) {
+    if (IsSagvConfig || ChannelOut->IsMrDcaPdaEnabled) {
       return TRUE;
     }
     break;

@@ -50,6 +50,7 @@
 #include "MrcDdrIoComp.h"
 #include "CPlatformData.h"  // for PLATFORM_DATA and BDAT definitionss
 #include "MrcAmt.h" // For AMT_PPR_ENABLE
+#include "MrcPpr.h" // For MrcIsPprEnabled
 #include <Library/PeiVmdInitFruLib.h>
 
 //
@@ -675,10 +676,9 @@ PeimMemoryInit (
   DEBUG ((DEBUG_INFO, "SafeLoadingBiosEnableState: %x, PprRecoveryStatusEnable: %x\n",
     MemConfigNoCrc->SafeLoadingBiosEnableState, MemConfigNoCrc->PprRecoveryStatusEnable == 1));
   if ((MemConfigNoCrc->SafeLoadingBiosEnableState == 1) && (MemConfigNoCrc->PprRecoveryStatusEnable == 1)) {
-    //
-    // Trigger the MRC PprEnable policy to get Status of MRC PPR
-    //
-    MemConfig->ExternalInputs.TrainingEnables3.PPR = 1;
+    // Trigger to get Status of MRC PPR
+    MemConfigNoCrc->PprTestType.Bits.XMarch = 1;
+    MemConfigNoCrc->PprRepairType = hPPR;
   }
 
   //
@@ -686,21 +686,6 @@ PeimMemoryInit (
   // Input->ExtInputs points to the MemConfig and will break the raw data of MemConfig
   //
   Inputs->SaMemCfgCrc = MrcCalculateCrc32((UINT8 *)MemConfig, sizeof (MEMORY_CONFIGURATION));
-
-  // Unset MemConfig->ExternalInputs.PPR, MEMORY_CONFIGURATION CRC should not
-  // be calculated with this bit set, when it is non-zero. PPR Enable will only run once
-  ExtInputs->PprRepairPhysicalAddrLow = 0;
-  ExtInputs->PprRepairPhysicalAddrHigh = 0;
-  if (MemConfig->ExternalInputs.TrainingEnables3.PPR != 0) {
-    Inputs->PprEnable = TRUE;
-    if ((MemConfig->ExternalInputs.PprRunOnce != 0) && (MemConfig->ExternalInputs.PprRunAtFastboot == 0)) {
-      MemConfig->ExternalInputs.TrainingEnables3.PPR = 0;
-    }
-    ExtInputs->PprRepairPhysicalAddrLow = MemConfig->ExternalInputs.PprRepairPhysicalAddrLow;
-    MemConfig->ExternalInputs.PprRepairPhysicalAddrLow = 0;
-    ExtInputs->PprRepairPhysicalAddrHigh = MemConfig->ExternalInputs.PprRepairPhysicalAddrHigh;
-    MemConfig->ExternalInputs.PprRepairPhysicalAddrHigh = 0;
-  }
 
   Inputs->SaMemCfgCrcForSave = MrcCalculateCrc32((UINT8 *)MemConfig, sizeof (MEMORY_CONFIGURATION));
 
@@ -1049,6 +1034,9 @@ DEBUG_CODE_END();
                        DidPreviousTrainingFail
                        );
   PERF_INMODULE_END ("MrcSetupMrcData");
+
+  //  This shall be evaluated after MrcSetupMrcData is done
+  Inputs->PprEnable = MrcIsPprEnabled (MrcData);
 
   //
   // Initialize MeStolenSize to 0 before we retrieving from ME FW.
@@ -2809,11 +2797,6 @@ ColdBootRequired (
         ));
       RetVal = TRUE;
 
-      // TODO: PPR input policy should move to MEMORY_CONFIG_NO_CRC, and then SaMemCfgCrcForSave should be cleaned up
-      // if (Inputs->SaMemCfgCrc != Inputs->SaMemCfgCrcForSave) {
-      //   RetVal = TRUE;
-      // }
-
       // Check if McRegisterOffset is the only input parameter change if McRegisterOffset training function is enabled.
       // TODO: move MCREGOFFSET to MEMORY_CONFIG_NO_CRC and clean up this code
       if (MemConfig->ExternalInputs.MCREGOFFSET) {
@@ -3111,6 +3094,16 @@ DEBUG_CODE_END();
   Inputs->ErrorCountForFail = MRC_BER_ERROR_COUNTER_FOR_FAILURE;
   Inputs->BER = 1;
   ExtInputs->TrainTrace     = FALSE;
+
+  for (Index = 0; Index < PPR_REQUEST_MAX; Index++) {
+    Inputs->PprEntryInfo[Index] = MemConfigNoCrc->PprEntryInfo[Index];
+    Inputs->PprEntryAddress[Index] = MemConfigNoCrc->PprEntryAddress[Index];
+  }
+  Inputs->PprTestType.Value = MemConfigNoCrc->PprTestType.Value;
+  Inputs->PprRepairType     = MemConfigNoCrc->PprRepairType;
+  Inputs->PprRunOnce        = MemConfigNoCrc->PprRunOnce;
+  Inputs->PprErrorInjection = MemConfigNoCrc->PprErrorInjection;
+  Inputs->PprForceRepair    = MemConfigNoCrc->PprForceRepair;
 
   // LPDDR4: Bitmask of ranks that have CA bus terminated. Rank0 is terminating and Rank1 is non-terminating
   ExtInputs->CmdRanksTerminated = 0x01;
@@ -3580,7 +3573,7 @@ BuildMemoryInfoDataHob (
   MemoryInfo->EccSupport              = Outputs->EccSupport;
   MemoryInfo->TotalPhysicalMemorySize = Outputs->MemoryMapData.TotalPhysicalMemorySize;
   // Max Rank Capacity comes from MC HAS: 16GB in DDR5 and 8GB in LP5
-  MemoryInfo->MaxRankCapacity         = Outputs->IsDdr5 ? 16 : 8;
+  MemoryInfo->MaxRankCapacity = Outputs->IsDdr5 ? 16 : 8;
   MrcCall->MrcSetMem ((UINT8 *) &MemoryInfo->RcompTarget, sizeof (MemoryInfo->RcompTarget), 0);
   for (Profile = STD_PROFILE; Profile < MAX_PROFILE_NUM; Profile++) {
     MemoryInfo->VddVoltage[Profile]   = Outputs->VddVoltage[Profile];
@@ -3603,11 +3596,11 @@ BuildMemoryInfoDataHob (
   DEBUG ((DEBUG_INFO, "IsIbeccEnabled: %u\n", MemoryInfo->IsIbeccEnabled));
 
   AmtPprRanInLastBoot.Data = 0;
-  if ((Outputs->PprRunningState == PPR_IS_DONE) && (ExtInputs->PprTestType != 0)) {
+  if ((Outputs->PprRunningState == PPR_IS_DONE) && ((Inputs->PprTestType.Value & MRC_PPR_ADV_ALGORITHM_TEST_MASK) != 0)) {
     AmtPprRanInLastBoot.Bits.AmtEnabled = 1;
-    if (ExtInputs->PprRepairType != 0) {
-      AmtPprRanInLastBoot.Bits.PprEnabled = 1;
-    }
+  }
+  if ((Inputs->PprRepairType != 0) && (Outputs->PprNumDetectedErrors != 0)) {
+    AmtPprRanInLastBoot.Bits.PprEnabled = 1;
   }
   MemoryInfo->PprRanInLastBoot = AmtPprRanInLastBoot.Data;
 

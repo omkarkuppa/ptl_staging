@@ -3515,7 +3515,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.IbeccOperationMode|0x2                      
 gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashOverride|0x0                                             #           Bit 19 - Channel Hash override
 gStructPcdTokenSpaceGuid.PcdSaSetup.RetrainOnFastFail|0x1                                          #           Bit 21 - Restart MRC in Cold mode if SW MemTest fails during Fast flow
 gStructPcdTokenSpaceGuid.PcdSaSetup.DvfsqEnabled|0x0                                               #           Bit 22 - DVFSQ
-gStructPcdTokenSpaceGuid.PcdSaSetup.DvfscEnabled|0x0                                               #           Bit 23 - E-DVFSC
+gStructPcdTokenSpaceGuid.PcdSaSetup.DvfscEnabled|0x1                                               #           Bit 23 - E-DVFSC
 gStructPcdTokenSpaceGuid.PcdSaSetup.VoltageReadout|0x0                                             #           Bit 24 - Display VCCClk and PBias voltage readings across partitions
 gStructPcdTokenSpaceGuid.PcdSaSetup.CccHalfFrequency|0x0                                           #           Bit 25 - CCC Half Frequency
 gStructPcdTokenSpaceGuid.PcdSaSetup.Ddr5AutoPrechargeEnable|0x0                                    #           Bit 26:27 - DDR5 Auto Precharge Enable
@@ -3579,6 +3579,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DBI|0x0                                     
 gStructPcdTokenSpaceGuid.PcdSaSetup.DLLDCC|0x1                                                     #           BIT10 - DLL DCC Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.DLLBWSEL|0x1                                                   #           BIT11 - DLL BW Select Calibration
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDVREFDC|0x0                                                   #           BIT12 - Read Vref Decap Training*
+gStructPcdTokenSpaceGuid.PcdSaSetup.RDTCIDLE|0x1                                                   #           BIT13 - Read Timing Centering Training with SR stress
 gStructPcdTokenSpaceGuid.PcdSaSetup.RMTBIT|0x0                                                     #           BIT14 - Rank Margin Tool Per Bit
 gStructPcdTokenSpaceGuid.PcdSaSetup.DQDQSSWZ|0x1                                                   #           BIT15 - Map Dq Dqs Swizzle
 gStructPcdTokenSpaceGuid.PcdSaSetup.REFPI|0x1                                                      #           BIT16 - Ref PI Calibration
@@ -3695,7 +3696,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.TargetedRowRefreshMode|0x1                  
 gStructPcdTokenSpaceGuid.PcdSaSetup.DrfmBrc|0x2                                                    # Offset 157 Row Hammer: Directed Refresh Management Blast Radius Configuration
 gStructPcdTokenSpaceGuid.PcdSaSetup.SafeModeOverride|0xFF                                          # Offset 159 MRC Safe Mode Override
 gStructPcdTokenSpaceGuid.PcdSaSetup.DdrSafeMode|0x4                                                # Offset 160 DDR PHY Safe Mode Support
-gStructPcdTokenSpaceGuid.PcdSaSetup.McSafeMode|0x02                                                # Offset 164 MC Safe Mode Support
+gStructPcdTokenSpaceGuid.PcdSaSetup.McSafeMode|0x0                                                 # Offset 164 MC Safe Mode Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode|0x7                                                     # Offset 165 LpMode bit mask
 gStructPcdTokenSpaceGuid.PcdSaSetup.LpMode4|0x1                                                    # Offset 166 LpMode4
 
@@ -3823,7 +3824,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.RowPressEn|0x0                              
 gStructPcdTokenSpaceGuid.PcdSaSetup.WeaklockEn|0x0                                                 # Offset 325 - DLL Weak Lock Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.RxDqsDelayCompEn|0x0                                           # Offset 326 - Rx DQS Delay Comp Support
 gStructPcdTokenSpaceGuid.PcdSaSetup.MrcFailureOnUnsupportedDimm|0x0                                # Offset 328 - Enable/disable MRC failure policy for unsupported memory type.
-gStructPcdTokenSpaceGuid.PcdSaSetup.DCCDDR5READDCA|0x0                                             # Offset 329 - DRAM DCC for DDR5 READ DCA
+gStructPcdTokenSpaceGuid.PcdSaSetup.DCCDDR5READDCA|0x1                                             # Offset 329 - DRAM DCC for DDR5 READ DCA
 
 ##############################
 # MRC - ExtInputs end

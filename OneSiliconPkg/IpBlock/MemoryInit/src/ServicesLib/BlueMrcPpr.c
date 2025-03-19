@@ -21,6 +21,7 @@
 **/
 
 #include "MrcPpr.h"
+#include "MrcPprPrivate.h"
 #include "MrcAmt.h"
 #include "MrcCommon.h"
 #include "MrcChipApi.h"
@@ -33,6 +34,8 @@
 #include "MrcReset.h"
 #include "MrcGeneral.h"
 #include "MrcMcSiSpecific.h"
+
+#define FORCE_PPR_TEST_NUMBER (90)
 
 // Verify at compile time that MAX_PATTERN_DEPTH is equal to CPGC_20_NUM_DPAT_EXTBUF
 STATIC_ASSERT (MAX_PATTERN_DEPTH == CPGC_20_NUM_DPAT_EXTBUF, "Unexpected MAX_PATTERN_DEPTH value");
@@ -127,7 +130,7 @@ PprCleanup (
 
   Cpgc20SetDataControl (MrcData, MC0_REQ0_CR_CPGC2_DATA_CONTROL_Data_Select_Rotation_Repeats_DEF, MC0_REQ0_CR_CPGC2_DATA_CONTROL_SPLIT_BACKGROUND_DEF);
   MrcSetLoopcount (MrcData, Outputs->McChBitMask, 0);
-  AmtSetBaseAddressControl (MrcData, AdvMtWcMats8); // Reset fields to default (0)
+  AmtSetBaseAddressControl (MrcData, PprTestTypeWcMats8); // Reset fields to default (0)
 
   Outputs->PprPatBufShift = 0;
 }
@@ -335,7 +338,7 @@ DispositionFailRangesWithPprFlow (
   BOOLEAN             RepairStatus = FALSE;
   UINT8               MaxChDdr;
   MrcOutput           *Outputs;
-  MRC_EXT_INPUTS_TYPE *ExtInputs;
+  MrcInput            *Inputs;
   UINT32              DqMask[DQ_MASK_INDEX_MAX];
   UINT32              NumRowsError;
   UINT32              NumRepairsIssued;
@@ -344,7 +347,7 @@ DispositionFailRangesWithPprFlow (
   INT64               DisableRefreshMask;
 
   Outputs = &MrcData->Outputs;
-  ExtInputs = MrcData->Inputs.ExtInputs.Ptr;
+  Inputs = &MrcData->Inputs;
   MaxChDdr = Outputs->MaxChannels;
   MrcGetMcConfigGroupLimits (MrcData, GsmMccRefreshRankMask, NULL, &DisableRefreshMask, NULL);
   MRC_DEBUG_MSG (&Outputs->Debug, MSG_LEVEL_NOTE, "DispositionFailRangesWithPprFlow Starts:  McChBitMask=0x%x\n", McChBitMask);
@@ -370,7 +373,7 @@ DispositionFailRangesWithPprFlow (
         // Loop through all row failure ranges
         for (FailIndex = 0; FailIndex < AmtGetRowFailListSize (MrcData, Controller, Channel); FailIndex++) {
           FailRangePtr = AmtGetRowFailRange (MrcData, Controller, Channel, FailIndex);
-          if (ExtInputs->PprRepairType == NOREPAIR_PPR) {
+          if (Inputs->PprRepairType == NoRepair) {
             // Set RepairedMask
             if (FailRangePtr->BankGroupRepairedMask != FailRangePtr->BankGroupMask) {
               FailRangePtr->BankGroupRepairedMask = FailRangePtr->BankGroupMask;
@@ -453,7 +456,7 @@ DispositionFailRangesWithPprFlow (
             } // BankInterleaveIndex
           } // CurrentAddrMatch
         } // FailIndex
-        if (ExtInputs->PprRepairType == NOREPAIR_PPR) {
+        if (Inputs->PprRepairType == NoRepair) {
           MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "PPR repair flow is disabled via PprRepairType setup option.\n");
           break;
         }
@@ -584,9 +587,9 @@ InjectMemtestError (
 
   PprAmtData->Bank = (Outputs->IsLpddr) ? (Bank & 0xF) : Bank;  // For LP5, limit injected bank to between 0 and 15
 
-  // Reset Some cpgc registers for AdvMtWcMats8
+  // Reset Some cpgc registers for WcMats8
   SetupIOTestRetention (MrcData, PprAmtData, LocalMcChBitMask, 1);
-  if (PprAmtData->TestType == AdvMtMmrw) {
+  if (PprAmtData->TestType == PprTestTypeMmrw) {
     MrcProgramDSPattern (MrcData, LocalMcChBitMask, PprAmtData->DataPattern, ErrInjMask16);
   } else {
     MrcProgramMATSPattern (MrcData, LocalMcChBitMask, PprAmtData->DataPattern, PprAmtData->DataPatternDepth, PprAmtData->UiShl, ErrInjMask16);
@@ -766,7 +769,7 @@ MemTestMATSN (
       //1. Write sliding data pattern to all of memory
       MrcRunPprDetection(MrcData, PprAmtData, PatWr, Pattern, FALSE, MT_ADDR_DIR_UP, 1);
 
-      if (Inputs->ExtInputs.Ptr->PprErrorInjection != 0) {
+      if (Inputs->PprErrorInjection != 0) {
         // Rank 0, Controller 0, Ch 0, Bank 5, Row 1, TestSize 1, ErrInjMask16 0x000F
         if (Test == 0 && RetryCount == 1) {
           PprAmtData->Rank = 0;
@@ -906,7 +909,7 @@ MemTestDataRetention (
         PprAmtData->TestStatus = AdvMemTestPauseDataRet (MrcData);
       }
 
-      if (Inputs->ExtInputs.Ptr->PprErrorInjection != 0) {
+      if (Inputs->PprErrorInjection != 0) {
         // Rank 0, Controller 0, Ch 0, Bank 0, Row 1, TestSize 1, ErrInjMask16 0x000F
         if (Test == 0 && RetryCount == 1) {
           PprAmtData->Rank = 0;
@@ -990,22 +993,22 @@ MemTestMarch (
 
   // Copy cacheline1 into Pattern
   switch (PprAmtData->TestType) {
-    case AdvMtXMarch:
+    case PprTestTypeXMarch:
       MrcCall->MrcCopyMem ((UINT8*) Pattern, (UINT8*) AmtXMarchPattern, sizeof(AmtXMarchPattern));
       PatternDepth = 16;
       TestName = "MemTestXMarch";
       break;
-    case AdvMtXMarchG:
+    case PprTestTypeXMarchG:
       MrcCall->MrcCopyMem ((UINT8*) Pattern, (UINT8*) AmtXMarchGPattern, sizeof(AmtXMarchGPattern));
       PatternDepth = 8;
       TestName = "MemTestXMarchG";
       break;
-    case AdvMtYMarchShort:
+    case PprTestTypeYMarchShort:
       MrcCall->MrcCopyMem ((UINT8*) Pattern, (UINT8*) AmtXMarchPattern, sizeof(AmtXMarchPattern));  // Y March Short pattern is the same as X March
       PatternDepth = 16;
       TestName = "MemTestYMarchShort";
       break;
-    case AdvMtYMarchLong:
+    case PprTestTypeYMarchLong:
       MrcCall->MrcCopyMem ((UINT8*) Pattern, (UINT8*) AmtXMarchPattern, sizeof(AmtXMarchPattern));  // Y March Long pattern is the same as X March
       PatternDepth = 16;
       TestName = "MemTestYMarchLong";
@@ -1034,7 +1037,7 @@ MemTestMarch (
       //1. Execute write data pattern over all of memory
       MrcRunPprDetection (MrcData, PprAmtData, PatWr, Pattern, FALSE, MT_ADDR_DIR_UP, 1);
 
-      if (Inputs->ExtInputs.Ptr->PprErrorInjection != 0) {
+      if (Inputs->PprErrorInjection != 0) {
         if (RetryCount == 1) {
           PprAmtData->Rank = 0;
           InjectMemtestError(MrcData, PprAmtData, Controller, Channel, 5, 1, 1, 0x0F);
@@ -1065,7 +1068,7 @@ MemTestMarch (
         break;
       }
     } // while
-    if (PprAmtData->TestType == AdvMtXMarchG) {
+    if (PprAmtData->TestType == PprTestTypeXMarchG) {
       break;  // XMarchG has one data instruction and does not need to shift pattern
     } else if (PatBufShift < 3) {
       MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "Rerun with next PatBufShift=%d (different data pattern)\n", PatBufShift + 1);
@@ -1117,10 +1120,10 @@ MemTestMarchAlt (
   Channel         = Outputs->Controller[Controller].FirstPopCh;
 
   switch (PprAmtData->TestType) {
-    case AdvMtXMarch:
+    case PprTestTypeXMarch:
       TestName = "MemTestXMarchAlt";
       break;
-    case AdvMtYMarchShort:
+    case PprTestTypeYMarchShort:
       TestName = "MemTestYMarchShortAlt";
       break;
     default:
@@ -1149,7 +1152,7 @@ MemTestMarchAlt (
       //1. Execute write data pattern over all of memory
       MrcRunPprDetection (MrcData, PprAmtData, PatWr, Pattern, FALSE, MT_ADDR_DIR_UP, 1);
 
-      if (Inputs->ExtInputs.Ptr->PprErrorInjection != 0) {
+      if (Inputs->PprErrorInjection != 0) {
         if (RetryCount == 1) {
           PprAmtData->Rank = 0;
           InjectMemtestError(MrcData, PprAmtData, Controller, Channel, 5, 1, 1, 0x0F);
@@ -1255,7 +1258,7 @@ MemTestMmrw (
       Pattern[1] = 0; // Do not invert data pattern
       MrcRunPprDetection(MrcData, PprAmtData, PatWr, Pattern, FALSE, MT_ADDR_DIR_UP, 1 + (Test * NUM_AMT_MMRW_PATTERNS_PER_TEST));
 
-      if (Inputs->ExtInputs.Ptr->PprErrorInjection != 0) {
+      if (Inputs->PprErrorInjection != 0) {
         // Rank 0, Controller 0, Ch 0, Bank 0, Row 1, TestSize 1, ErrInjMask16 0x000F
         if (Test == 0 && RetryCount == 1) {
           PprAmtData->Rank = 0;
@@ -1325,35 +1328,26 @@ MrcPostPackageRepairEnable (
   const MRC_FUNCTION  *MrcCall;
   MrcOutput           *Outputs;
   MrcInput            *Inputs;
-  MRC_EXT_INPUTS_TYPE *ExtInputs;
   MrcStatus           Status;
-  UINT8               Test;
   UINT32              Controller;
   UINT32              Channel;
   UINT32              IpChannel;
   UINT32              BankIndex;
   INT64               GetSetDis;
-  BOOLEAN             InvertedPassEn;
   INT64               GetSetVal;
   INT64               EnableSrSave;
   UINT32              SavedCpgc20Credits[MAX_CONTROLLER];
   BOOLEAN             IsUlxUlt;
   BOOLEAN             SaveCpgcGlobalStart;
-  UINT8               BG;
-  UINT8               FirstChannel;
-  MrcChannelOut       *ChannelOut;
-  UINT8               Rank;
   MRC_MC_AD_SAVE      MadSavedValues;
   PPR_AMT_PARAMETER_DATA  PprAmtData;
   MRC_BG_BANK_PAIR    BankMappingSave[MAX_CONTROLLER][MAX_CHANNEL][MAX_BANKS];
+  BOOLEAN             IsTargetedPprRequested;
 
-  Status          = mrcSuccess;
   Outputs         = &MrcData->Outputs;
   Inputs          = &MrcData->Inputs;
-  ExtInputs       = Inputs->ExtInputs.Ptr;
   MrcCall         = Inputs->Call.Func;
   GetSetDis       = 0;
-  InvertedPassEn  = TRUE;
   IsUlxUlt        = Inputs->IsDdrIoUlxUlt;
   SaveCpgcGlobalStart = MrcData->Save.Data.CpgcGlobalStart;
   MrcData->Save.Data.CpgcGlobalStart = FALSE;
@@ -1370,15 +1364,6 @@ MrcPostPackageRepairEnable (
   MrcCall->MrcSetMem ((UINT8 *) &PprAmtData, sizeof(PprAmtData), 0);
   PprAmtData.BaseBits = GetBaseBits (MrcData);
 
-  /*
-   *  Run PPR at:
-   *  1) Coldboot
-   *  2) Fastboot and users config PprRunAtFastboot to TRUE
-   */
-  if ((Inputs->BootMode == bmFast) && (ExtInputs->PprRunAtFastboot == 0)) {
-    return mrcSuccess;
-  }
-
   MrcModifyRdRdTimings (MrcData, TRUE);
 
   MrcMcAddressDecoderValuesSaveRestore (MrcData, MrcSaveEnum, &MadSavedValues);
@@ -1394,16 +1379,10 @@ MrcPostPackageRepairEnable (
   Outputs->PprForceRepairStatus = mrcSuccess;
 
   // Store all Bank L2P mapping data so it can be restored later
-  for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
-    for (Channel = 0; Channel < Outputs->MaxChannels; Channel++) {
+  Status = mrcSuccess;
+  for (Controller = 0; Controller < MAX_CONTROLLER && Status == mrcSuccess; Controller++) {
+    for (Channel = 0; Channel < Outputs->MaxChannels && Status == mrcSuccess; Channel++) {
       Status = Cpgc20GetSetBankSequence (MrcData, Controller, Channel, BankMappingSave[Controller][Channel], MAX_BANKS, MRC_GET);
-      if (Status != mrcSuccess) {
-        break;
-      }
-    }
-
-    if (Status != mrcSuccess) {
-      break;
     }
   }
   // If function call fails for some reason, set BankMapping to default values
@@ -1417,11 +1396,8 @@ MrcPostPackageRepairEnable (
     }
   }
 
-  Status = mrcSuccess;
-
-
-  MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "PprTestType=0x%02x\n", ExtInputs->PprTestType);
-  MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "PprRepairType=0x%02x\n", ExtInputs->PprRepairType);
+  MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "PprTestType=0x%02x\n", (UINT32) Inputs->PprTestType.Value);
+  MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "PprRepairType=0x%02x\n", (UINT32) Inputs->PprRepairType);
 
   GetSetVal = 1;
   MrcGetSetMc (MrcData, MAX_CONTROLLER, GsmMccEnableRefresh, WriteNoCache, &GetSetVal);
@@ -1438,102 +1414,22 @@ MrcPostPackageRepairEnable (
     }
   }
 
-  if ((ExtInputs->PprRepairPhysicalAddrLow != 0) || (ExtInputs->PprRepairPhysicalAddrHigh != 0)) {
-    Status = mrcFail;
-    if (ExtInputs->PprRepairController < MAX_CONTROLLER) {
-      // Assume BIOS menu passes correct memory address
-      MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_NOTE, "Repair Physical address: 0x%x%08x\n", ExtInputs->PprRepairPhysicalAddrHigh, ExtInputs->PprRepairPhysicalAddrLow);
-      Status = MrcPostPackageRepair(MrcData, ExtInputs->PprRepairController, ExtInputs->PprRepairChannel, (UINT16)(MAX_RANK_IN_DIMM * ExtInputs->PprRepairDimm + ExtInputs->PprRepairRank), ExtInputs->PprRepairBankGroup, ExtInputs->PprRepairBank, ExtInputs->PprRepairRow, (1 << Outputs->SdramCount) - 1);
-    }
-    if (Status != mrcSuccess) {
-      Outputs->PprRepairFails++;
-    }
-    goto Done;
+  IsTargetedPprRequested = MrcIsTargetedPprRequested (MrcData);
+  if (IsTargetedPprRequested) {
+    MrcRunPprTargeted (MrcData);
   }
 
-  // If no memory tests are enabled, print a warning message
-  if ((ExtInputs->PprTestType & ((1 << AdvMtNumMemTests) - 1)) == 0) {
-    MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "MrcPostPackageRepairEnable: Warning - No memory tests are enabled, detection and repair flow will not occur\n");
-  }
-
-  Status = mrcSuccess;
-  // Run all memory tests
-  for (Test = 0; Test < AdvMtNumMemTests; Test++) {
-#if POISON_ROW_FAIL_LIST
-    PprAmtData.HasRowFailListBeenPoisonedOnThisTest = FALSE;
-#endif
-    if (ExtInputs->PprTestType & (1 << Test)) {
-      PprAmtData.TestType = (MRC_ADVANCED_MEM_TEST_TYPE) Test;
-      switch (Test) {
-        case PPR_MEMTEST_WCMATS8_BIT:
-          Status |= MemTestMATSN(MrcData, &PprAmtData, InvertedPassEn);
-          break;
-        case PPR_MEMTEST_DATA_RETENTION_BIT:
-          Status |= MemTestDataRetention(MrcData, &PprAmtData);
-          break;
-        case PPR_MEMTEST_XMARCH_BIT:
-#if AMT_USE_XMARCH_ALT == 1
-          Status |= MemTestMarchAlt(MrcData, &PprAmtData);
-          break;
-#endif
-        case PPR_MEMTEST_XMARCHG_BIT:
-        case PPR_MEMTEST_YMARCHSHORT_BIT:
-#if AMT_USE_YMARCH_SHORT_ALT == 1
-          // If statement is necessary due to fallthrough
-          if (Test == PPR_MEMTEST_YMARCHSHORT_BIT) {
-            Status |= MemTestMarchAlt(MrcData, &PprAmtData);
-            break;
-          }
-#endif
-        case PPR_MEMTEST_YMARCHLONG_BIT:
-          Status |= MemTestMarch(MrcData, &PprAmtData);
-          break;
-        case PPR_MEMTEST_MMRW_BIT:
-          Status |= MemTestMmrw(MrcData, &PprAmtData);
-          break;
-      }
+  if (Inputs->PprTestType.Value & MRC_PPR_ADV_ALGORITHM_TEST_MASK) {
+    Status = MrcRunPprAdvancedMemoryTests (MrcData, &PprAmtData);
+    if (Status == mrcSuccess) {
+      MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "All Tests Completed! TotalTime Elapsed for all Tests: %dms\n", PprAmtData.TotalTestTime);
     }
-    if (Status != mrcSuccess) {
-      MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "MrcPostPackageRepairEnable: Last memory test failed, skipping other tests\n");
-      break;
-    }
-    PprCleanup (MrcData, &PprAmtData, Outputs->McChBitMask);  // Clean up programming between different test setups
   }
 
-  if (ExtInputs->PprForceRepair) {  // Force repair sequence
-    BG      = 0;
-    Status  = mrcSuccess;
-    for (Test = 0; Test < 90; Test++) {
-      PprCleanup (MrcData, &PprAmtData, Outputs->McChBitMask);
-      if (Outputs->IsLpddr && (MrcGetBankBgOrg(MrcData, Outputs->Frequency) != MrcLp5BgMode)) {
-        BG = 0;
-      } else {
-        BG = 3;
-      }
-      FirstChannel = Outputs->Controller[Outputs->FirstPopController].FirstPopCh;
-      ChannelOut = &Outputs->Controller[Outputs->FirstPopController].Channel[FirstChannel];
-      // Get first rank
-      for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
-        if ((1 << Rank) & ChannelOut->ValidRankBitMask) {
-          break;
-        }
-      } // Rank
-#ifdef MRC_DEBUG_PRINT
-      Status |= MrcPostPackageRepair(MrcData, Outputs->FirstPopController, FirstChannel, Rank, BG, 2, 0xAB, 0xF);
-      MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_ERROR, "Ppr Status = %d\n", Status);
-#else
-      MrcPostPackageRepair(MrcData, Outputs->FirstPopController, FirstChannel, Rank, BG, 2, 0xAB, 0xF);
-#endif
-    }
-    Outputs->PprForceRepairStatus |= Status;
-    Status = mrcSuccess;
+  if (Inputs->PprForceRepair) {
+    MrcRunPprForceRepair (MrcData, &PprAmtData);
   }
 
-  if (Status == mrcSuccess) {
-    MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "All Tests Completed! TotalTime Elapsed for all Tests: %dms\n", PprAmtData.TotalTestTime);
-  }
-
-Done:
 
   PprCleanup (MrcData, &PprAmtData, Outputs->McChBitMask);
   for (Controller = 0; Controller < MAX_CONTROLLER; Controller++) {
@@ -1582,6 +1478,120 @@ Done:
    * 2) Avoid brick
    */
   return mrcSuccess;
+}
+
+/**
+  Run PPR Advanced Memory Tets.
+
+  @param[in] MrcData pointer to global MRC data.
+  @param[in] PprAmtData pointer to PPR and AMT data structure.
+
+  @returns MrcStatus
+**/
+MrcStatus
+MrcRunPprAdvancedMemoryTests (
+  IN MrcParameters *const MrcData,
+  PPR_AMT_PARAMETER_DATA  *const PprAmtData
+  )
+{
+  MrcStatus Status = mrcSuccess;
+  MrcInput *Inputs = &MrcData->Inputs;
+  MrcOutput *Outputs = &MrcData->Outputs;
+  UINT32 PprTestType = (UINT32) Inputs->PprTestType.Value;
+
+  BOOLEAN InvertedPassEn;
+  UINT8 Test;
+  // Run all memory tests
+  for (Test = 0; Test <= PprTestTypeNumMemTests; Test++) {
+#if POISON_ROW_FAIL_LIST
+    PprAmtData.HasRowFailListBeenPoisonedOnThisTest = FALSE;
+#endif
+    if (PprTestType & (1 << Test)) {
+      PprAmtData->TestType = (PprTestTypeOffset) Test;
+      switch (Test) {
+        case PprTestTypeWcMats8:
+          InvertedPassEn = TRUE;
+          Status = MemTestMATSN (MrcData, PprAmtData, InvertedPassEn);
+          break;
+        case PprTestTypeDataRetention:
+          Status = MemTestDataRetention (MrcData, PprAmtData);
+          break;
+        case PprTestTypeXMarch:
+#if AMT_USE_XMARCH_ALT == 1
+          Status = MemTestMarchAlt (MrcData, PprAmtData);
+          break;
+#endif
+        case PprTestTypeXMarchG:
+        case PprTestTypeYMarchShort:
+#if AMT_USE_YMARCH_SHORT_ALT == 1
+          if (Test == PprTestTypeYMarchShort) {
+            Status = MemTestMarchAlt (MrcData, PprAmtData);
+            break;
+          }
+#endif
+        case PprTestTypeYMarchLong:
+          Status = MemTestMarch (MrcData, PprAmtData);
+          break;
+        case PprTestTypeMmrw:
+          Status = MemTestMmrw(MrcData, PprAmtData);
+          break;
+      }
+      PprCleanup (MrcData, PprAmtData, Outputs->McChBitMask);  // Clean up programming between different test setups
+    }
+    if (Status != mrcSuccess) {
+      MRC_DEBUG_MSG(&MrcData->Outputs.Debug, MSG_LEVEL_ERROR, "MrcPostPackageRepairEnable: Last memory test failed, skipping other tests\n");
+      break;
+    }
+  }
+
+  return Status;
+}
+
+/**
+  Execute PPR force repair routine.
+
+  @param[in] MrcData pointer to global MRC data.
+  @param[in] PprAmtData pointer to PPR and AMT data structure.
+
+  @returns MrcStatus
+**/
+MrcStatus
+MrcRunPprForceRepair (
+  IN MrcParameters *const MrcData,
+  PPR_AMT_PARAMETER_DATA  *const PprAmtData
+  )
+{
+  MrcOutput *const Outputs = &MrcData->Outputs;
+
+  MrcStatus Status = mrcSuccess;
+
+  MrcChannelOut *ChannelOut;
+  UINT8 FirstChannel;
+  UINT8 Rank;
+  UINT8 Test;
+  UINT8 BG;
+
+  for (Test = 0; Test < FORCE_PPR_TEST_NUMBER; Test++) {
+    PprCleanup (MrcData, PprAmtData, Outputs->McChBitMask);
+    if (Outputs->IsLpddr && (MrcGetBankBgOrg(MrcData, Outputs->Frequency) != MrcLp5BgMode)) {
+      BG = 0;
+    } else {
+      BG = 3;
+    }
+    FirstChannel = Outputs->Controller[Outputs->FirstPopController].FirstPopCh;
+    ChannelOut = &Outputs->Controller[Outputs->FirstPopController].Channel[FirstChannel];
+    // Get first rank
+    for (Rank = 0; Rank < MAX_RANK_IN_CHANNEL; Rank++) {
+      if ((1 << Rank) & ChannelOut->ValidRankBitMask) {
+        break;
+      }
+    } // Rank
+    Status |= MrcPostPackageRepair(MrcData, Outputs->FirstPopController, FirstChannel, Rank, BG, 2, 0xAB, 0xF);
+    MRC_DEBUG_MSG(&Outputs->Debug, MSG_LEVEL_ERROR, "Ppr Status = %d\n", Status);
+  }
+  Outputs->PprForceRepairStatus = Status;
+
+  return Status;
 }
 
 /**

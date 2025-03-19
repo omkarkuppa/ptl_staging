@@ -1195,7 +1195,6 @@ MrcSetSafeModeOverrides (
     ExtInputs->TrainingEnables.RCVENC1D        = 0;
     ExtInputs->TrainingEnables2.DLLDCC         = 0;
     ExtInputs->TrainingEnables2.DLLBWSEL       = 0;
-    ExtInputs->TrainingEnables3.PPR            = 0;
     ExtInputs->TrainingEnables3.RXDQSDCC       = 0;
     ExtInputs->TrainingEnables3.DIMMNTODT      = 0;
     ExtInputs->TrainingEnables3.RXVREFPERBIT   = 0;
@@ -1699,14 +1698,18 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tNumCL: %u\n"
     "\tLoopCount: %u\n"
-    "\tPprTestType: %u\n"
     "\tDqLoopbackTest: %u\n"
+    "\tRxDqsStepSizeLB: %u\n"
+    "\tRxVrefStepSizeLB: %u\n"
+    "\tTxStepSizeLB: %u\n"
     "\tEnPeriodicComp: %u\n"
     "\tDunitTatOptimization: %u\n",
     Inputs->NumCL,
     Inputs->LoopCount,
-    ExtInputs->PprTestType,
     ExtInputs->DqLoopbackTest,
+    ExtInputs->RxDqsStepSizeLB,
+    ExtInputs->RxVrefStepSizeLB,
+    ExtInputs->TxStepSizeLB,
     ExtInputs->EnPeriodicComp,
     ExtInputs->DunitTatOptimization
     );
@@ -1956,22 +1959,16 @@ MrcPrintInputParameters (
     );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
-    "\tPprEnable: %u\n"
     "\tPprRunOnce: %u\n"
-    "\tPprRunAtFastboot: %u\n",
-    Inputs->PprEnable,
-    ExtInputs->PprRunOnce,
-    ExtInputs->PprRunAtFastboot
-  );
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
     "\tPprTestType: %Xh\n"
     "\tPprRepairType: %u\n"
     "\tPprErrorInjection: %u\n"
     "\tPprForceRepair: %u\n",
-    ExtInputs->PprTestType,
-    ExtInputs->PprRepairType,
-    ExtInputs->PprErrorInjection,
-    ExtInputs->PprForceRepair
+    Inputs->PprRunOnce,
+    (UINT32) Inputs->PprTestType.Value,
+    (UINT32) Inputs->PprRepairType,
+    Inputs->PprErrorInjection,
+    Inputs->PprForceRepair
   );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
@@ -1987,16 +1984,6 @@ MrcPrintInputParameters (
     ExtInputs->PprRepairRank,
     ExtInputs->PprRepairBankGroup,
     ExtInputs->PprRepairBank
-  );
-
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE,
-    "\tPprRepairRow: 0x%x\n"
-    "\tPprRepairPhysicalAddress: 0x%x%08x\n"
-    "\tRunRefPiMaxVoltage: 0x%x\n",
-    ExtInputs->PprRepairRow,
-    ExtInputs->PprRepairPhysicalAddrHigh,
-    ExtInputs->PprRepairPhysicalAddrLow,
-    ExtInputs->RunRefPiMaxVoltage
   );
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "LowerBasicMemTestSize: %d\n", ExtInputs->LowerBasicMemTestSize);
@@ -2105,20 +2092,21 @@ MrcPrintInputParameters (
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DCCPICODELUT: %u\nDIMMODTT: %u\nDIMMRONT: %u\nTXTCO: %u\n",              TrainingSteps2->DCCPICODELUT,   TrainingSteps2->DIMMODTT,       TrainingSteps2->DIMMRONT,       TrainingSteps2->TXTCO);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "CLKTCO: %u\nCMDSR: %u\nCMDDSEQ: %u\nDIMMODTCA: %u\n",                    TrainingSteps2->CLKTCO,         TrainingSteps2->CMDSR,          TrainingSteps2->CMDDSEQ,        TrainingSteps2->DIMMODTCA);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DDR5ODTTIMING: %u\nDBI: %u\nDLLDCC: %u\nDLLBWSEL: %u\n",                 TrainingSteps2->DDR5ODTTIMING,  TrainingSteps2->DBI,            TrainingSteps2->DLLDCC,         TrainingSteps2->DLLBWSEL);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RDVREFDC: %u\nRMTBIT: %u\nDQDQSSWZ: %u\n",                               TrainingSteps2->RDVREFDC,       /* Reserved2Bit13 */            TrainingSteps2->RMTBIT,         TrainingSteps2->DQDQSSWZ);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RDVREFDC: %u\nRDTCIDLE: %u\nRMTBIT: %u\nDQDQSSWZ: %u\n",                 TrainingSteps2->RDVREFDC,       TrainingSteps2->RDTCIDLE,       TrainingSteps2->RMTBIT,         TrainingSteps2->DQDQSSWZ);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "REFPI: %u\nDCCLP5READDCA: %u\nVCCCLKFF: %u\nFUNCDCCDQS: %u\n",           TrainingSteps2->REFPI,          TrainingSteps2->DCCLP5READDCA,  TrainingSteps2->VCCCLKFF,       TrainingSteps2->FUNCDCCDQS);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "FUNCDCCCLK: %u\nFUNCDCCWCK: %u\nFUNCDCCDQ: %u\nDATAPILIN: %u\n",         TrainingSteps2->FUNCDCCCLK,     TrainingSteps2->FUNCDCCWCK,     TrainingSteps2->FUNCDCCDQ,      TrainingSteps2->DATAPILIN);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DDR5XTALK: %u\nDCCLP5WCKDCA: %u\nRXUNMATCHEDCAL: %u\nWRTDIMMDFE: %u\n",  TrainingSteps2->DDR5XTALK,      TrainingSteps2->DCCLP5WCKDCA,   TrainingSteps2->RXUNMATCHEDCAL, TrainingSteps2->WRTDIMMDFE);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RMTLVR: %u\n",                                                           TrainingSteps2->RMTLVR          /* Reserved2Bit29 */            /* Reserved2Bit30 */            /* SimicsReservedBit */);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RMTLVR: %u\n DCCDDR5READDCA: %u\n",                                      TrainingSteps2->RMTLVR,         TrainingSteps2->DCCDDR5READDCA /* Reserved2Bit30 */            /* SimicsReservedBit */);
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "%s3:\n", "TrainingEnables");
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RXDQSDCC: %u\nDIMMNTODT: %u\nTXDQSDCC: %u\nRXVREFPERBIT: %u\n",              TrainingSteps3->RXDQSDCC,       TrainingSteps3->DIMMNTODT,   TrainingSteps3->TXDQSDCC,       TrainingSteps3->RXVREFPERBIT);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR: %u\nLVRAUTOTRIM: %u\nOPTIMIZECOMP: %u\n",                               TrainingSteps3->PPR,            TrainingSteps3->LVRAUTOTRIM, TrainingSteps3->OPTIMIZECOMP);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WRTRETRAIN: %u\nISENSERMT: %u\nJEDECRESET: %u\n",                            TrainingSteps3->WRTRETRAIN,     TrainingSteps3->ISENSERMT,    /* Reserved3Bit10 */            TrainingSteps3->JEDECRESET);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "RXDQSDCC: %u\nDIMMNTODT: %u\nTXDQSDCC: %u\nRXVREFPERBIT: %u\n",              TrainingSteps3->RXDQSDCC,       TrainingSteps3->DIMMNTODT,   TrainingSteps3->TXDQSDCC,        TrainingSteps3->RXVREFPERBIT);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "PPR: %u\nLVRAUTOTRIM: %u\nOPTIMIZECOMP: %u\n",                               TrainingSteps3->PPR,            TrainingSteps3->LVRAUTOTRIM, /* Reserved3Bit6 */              TrainingSteps3->OPTIMIZECOMP);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WRTRETRAIN: %u\nJEDECRESET: %u\n",                                           TrainingSteps3->WRTRETRAIN,     /* Reserved3Bit9 */          /* Reserved3Bit10 */             TrainingSteps3->JEDECRESET);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ROUNDTRIPMATCH: %u\nTLINECLKCAL: %u\nDCCPISERIALCAL: %u\nPHASECLKCAL: %u\n", TrainingSteps3->ROUNDTRIPMATCH, TrainingSteps3->TLINECLKCAL,  TrainingSteps3->DCCPISERIALCAL, TrainingSteps3->PHASECLKCAL);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WCKPADDCCCAL: %u\nRDCTLET: %u\nRDDQODTT: %u\nEMPHASIS: %u\n",                TrainingSteps3->WCKPADDCCCAL,   TrainingSteps3->RDCTLET,      TrainingSteps3->RDDQODTT,       TrainingSteps3->EMPHASIS);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DIMMRXOFFSET: %u\nVIEWPINCAL: %u\nQCLKDCC: %u\nWCKCLKPREDCC: %u\n",          TrainingSteps3->DIMMRXOFFSET,   TrainingSteps3->VIEWPINCAL,   TrainingSteps3->QCLKDCC,        TrainingSteps3->WCKCLKPREDCC);
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DQSPADDCC: %u\nQCLKPHALIGN: %u\nRXDQSVOCC: %u\nWCKCLKRF %u\n",               TrainingSteps3->DQSPADDCC,      TrainingSteps3->QCLKPHALIGN,  TrainingSteps3->RXDQSVOCC,      TrainingSteps3->WCKCLKRF);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DQSPADDCC: %u\nQCLKPHALIGN: %u\nRXDQSVOCC: %u\nISENSERMT: %u\n",             TrainingSteps3->DQSPADDCC,      TrainingSteps3->QCLKPHALIGN,  TrainingSteps3->RXDQSVOCC,      TrainingSteps3->ISENSERMT);
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "WCKCLKRF: %u\n",                                                             TrainingSteps3->WCKCLKRF        /* Reserved3Bit29 */          /* Reserved3Bit30 */            /* Reserved3Bit31 */);
 
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "MCREGOFFSET: %u\n", ExtInputs->MCREGOFFSET);
   MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "DFETap1StepSize: %u\nDFETap2StepSize: %u\n", ExtInputs->DFETap1StepSize, ExtInputs->DFETap2StepSize);

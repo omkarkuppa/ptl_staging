@@ -40,6 +40,8 @@ extern const INT8  DDRCCC_tCL4RXDQFIFORDEN_CH_SREP_NIL[MAX_SYS_CHANNEL];
 
 #define VCCCLK_NOMINAL 725
 
+#define DDR5CATMMAXPI (512) ///< DDR5 CA Training Mode Max PI value
+
 /// Structure to store Min/Max Rx Path Values Across Ranks
 typedef struct {
   UINT32 MaxRxDqsN[MAX_CONTROLLER][MAX_CHANNEL];
@@ -614,6 +616,24 @@ MrcGetAlertToMcMap (
   IN OUT MrcParameters *const MrcData,
   OUT    UINT8         *Alert0toMcMap,
   OUT    UINT8         *Alert1toMcMap
+  );
+
+/**
+  Calculates sweeping range for CATM based on min/max values of CtlPiCode.
+
+  @param[in]  MinPiCode - Min CTL PI accross all channels.
+  @param[in]  MaxPiCode - Max CTL PI accross all channels.
+  @param[out] PiLow     - Starting PI code value for CATM.
+  @param[out] PiHigh    - Ending PI code value for CATM.
+
+  @returns nothing.
+**/
+VOID
+MrcGetCatmSweepingRange (
+  IN  UINT16 MinPiCode,
+  IN  UINT16 MaxPiCode,
+  OUT UINT16 *PiLow,
+  OUT UINT16 *PiHigh
   );
 
 #endif // _MrcDdrIoUtils_h_

@@ -373,4 +373,19 @@ MrcGenMrsFsmCleanNonFastBoot (
   IN  BOOLEAN       CleanAll
   );
 
+/**
+  Set the Global driver grace period in MC.
+
+  @param[in] MrcData - Pointer to the MRC Debug structure.
+  @param[in] Controller    - Controller to setup
+  @param[in] Channel       - Channel to setup
+
+**/
+VOID
+MrcSetGlobalGraceCounter (
+  IN MrcParameters *MrcData,
+  IN UINT32        Controller,
+  IN UINT32        Channel
+  );
+
 #endif // _MrcGeneral_h_
