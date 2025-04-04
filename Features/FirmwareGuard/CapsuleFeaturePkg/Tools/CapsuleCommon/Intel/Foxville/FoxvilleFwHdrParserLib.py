@@ -59,7 +59,7 @@ class FoxvilleFwHdrParser (object):
 
         Returns:
             FoxvilleFwHdr:
-                The header of this Fxoville NVM firmware header.
+                The header of this Foxville NVM firmware header.
                 (Should be FoxvilleFwHdr object)
         """
         return self.__FoxvilleHdr

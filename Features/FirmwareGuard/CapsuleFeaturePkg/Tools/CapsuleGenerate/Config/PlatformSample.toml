@@ -20,7 +20,7 @@
 #
 ##
 
-Title = "Configuartion file - TOML for PlatformSample Platform"
+Title = "Configuration file - TOML for PlatformSample Platform"
 
 [Common]
   Vendor             = 'Intel'
