@@ -225,12 +225,7 @@ MrcMcCapabilityPreSpd (
       return Status;
     }
     if (Outputs->IsLpddr5) {
-      if (Outputs->IsAny2Ranks) {
-        Outputs->FreqMax = MIN (Outputs->FreqMax, f7467); // Default SAGV: 2400, 4800, 6400, 7467 (all G4)
-      } else {
-        Outputs->FreqMax = MIN (Outputs->FreqMax, f8533); // Default SAGV: 2400, 4800, 6400, 8533 (all G4)
-      }
-
+      Outputs->FreqMax = MIN (Outputs->FreqMax, f7467); // Default SAGV: 2400, 4800, 6400, 7467 (all G4)
     } else { // DDR5
       Outputs->FreqMax = MIN (Outputs->FreqMax, f6400); // Default SAGV: 3200, 4800, 5600, 6400 (all G4)
     }
