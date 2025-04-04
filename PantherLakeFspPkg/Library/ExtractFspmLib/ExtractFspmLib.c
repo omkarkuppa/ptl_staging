@@ -63,6 +63,7 @@ FindFvSection (
 
 **/
 VOID
+EFIAPI
 RebaseFspmImageBase (
   IN BSPM_ELEMENT            *Bspm
 )
