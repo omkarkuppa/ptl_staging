@@ -25,6 +25,20 @@
 #include "CMrcInterface.h"  // for MrcParameters
 
 /**
+  Reset the IO module. The hardware will handle creating the 20 dclk pulse
+  after the bit is set and will also clear the bit.
+
+  @param[in] MrcData - Include all MRC global data.
+
+  @retval mrcSuccess IO Reset was done successfully
+  @retval mrcDeviceBusy Timed out waiting for the IO to clear the bit
+**/
+MrcStatus
+IoReset(
+  IN MrcParameters *const MrcData
+  );
+
+/**
   Perform full JEDEC reset and init sequence.
 
   @param[in] MrcData - Include all MRC global data.

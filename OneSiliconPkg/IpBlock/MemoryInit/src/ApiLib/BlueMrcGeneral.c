@@ -1369,11 +1369,8 @@ MrcSetOverrides (
 
   MrcData->Save.Data.CpgcGlobalStart = TRUE;  // Start all CPGC engines together
 
-  // Set Default Read Preamble
-  // LP5: will be updated to a longer preamble after LockUI if needed
-  // DDR5: LockUI uses the same frequency-based formula
-  Outputs->ReadPreamble = Outputs->IsDdr5 ? ((Outputs->Frequency <= f4000) ? tRPRE_ALL_FREQ_DDR5_3tCK : tRPRE_ALL_FREQ_DDR5_4tCK) : MRC_LP5_tRPRE_TOGGLE_2tWCK;
-  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "ReadPreamble: %u\n", Outputs->ReadPreamble);
+  // Set Default Preamble
+  Outputs->ReadPreamble = Outputs->IsDdr5 ? ((Outputs->Frequency <= f4800) ? tRPRE_ALL_FREQ_DDR5_2tCK : tRPRE_ALL_FREQ_DDR5_4tCK) : MRC_LP5_tRPRE_TOGGLE_2tWCK;
 
 
 

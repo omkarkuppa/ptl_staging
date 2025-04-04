@@ -107,39 +107,3 @@ SetInputClkSelect (
   }
 
 }
-
-
-/**
-  This function saves/restores the value for Rx Data InputClkSelect.
-
-  @param[in] MrcData               - Include all MRC global data.
-  @param[in,out] InputClkSaveRes   - InputClkSelect value
-  @param[in] SaveOrRestore         - Save Or Restore InputClkSelect values
-
-**/
-VOID
-SaveRestoreInputClkSelect (
-  IN MrcParameters * const MrcData,
-  IN OUT UINT32            InputClkSaveRes[MRC_DATA_SHARED_NUM],
-  IN MrcSaveOrRestore      SaveOrRestore
-  )
-{
-  UINT32     Offset;
-  UINT32     Index;
-  DATASHARED_CR_DDRCRDLLCONTROL1_STRUCT       DllControl1;
-
-  for (Index = 0; Index < MRC_DATA_SHARED_NUM; Index++) {
-    if (!(MrcGetHwPartitionExists (MrcData, PartitionDataShared, Index, MRC_IGNORE_ARG))) {
-      continue;
-    }
-    Offset = OFFSET_CALC_CH (DDRDATA_SHARED0_CR_DDRCRDLLCONTROL1_REG, DDRDATA_SHARED1_CR_DDRCRDLLCONTROL1_REG, Index);
-    if (SaveOrRestore == MrcSaveEnum) {
-      DllControl1.Data = MrcReadCR (MrcData, Offset);
-      InputClkSaveRes[Index] = DllControl1.Data;
-    } else {
-      DllControl1.Data = InputClkSaveRes[Index];
-      MrcWriteCR (MrcData, Offset, DllControl1.Data);
-    }
-  }
-
-}

@@ -215,7 +215,6 @@ GetDdrIoPllOffsets (
 
   @param[in]  MrcData      - Global MRC data structure.
   @param[in]  Group        - DDRIO group being accessed.
-  @param[in]  Index        - Generic index, used for PI look-up-table
   @param[in]  Lane         - Lane index within the data group (0-based).
   @param[in]  FreqIndex    - Workpoint Index.
   @param[out] VolatileMask - Mask indicating which bits are volatile in register
@@ -226,7 +225,6 @@ UINT32
 GetDdrIoCompOffsets (
   IN  MrcParameters         *MrcData,
   IN  GSM_GT                Group,
-  IN  UINT32                Index,
   IN  UINT32                Lane,
   IN  UINT32                FreqIndex,
   OUT UINT64_STRUCT *const  VolatileMask
