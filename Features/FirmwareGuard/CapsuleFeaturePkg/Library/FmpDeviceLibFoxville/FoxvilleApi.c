@@ -852,7 +852,7 @@ CommitEepromToFlashSwDump (
   for (Offset = 0; Offset < (SHADOW_RAM_SECTOR_SIZE / sizeof (UINT16)); Offset++) {
     Status = ReadNvmEepromUint16 (PciIoProtocolPtr, Offset, &Data);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Failed to read the EEPROM @ [0x%08X]\n"));
+      DEBUG ((DEBUG_ERROR, "Failed to read the EEPROM @ [0x%08X]\n", Offset));
       return EFI_DEVICE_ERROR;
     }
 
