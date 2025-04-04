@@ -467,7 +467,10 @@ UpdatePdBridgeNvmFirmware (
   }
 
   if (PrivateData->PdBridge.ShareFlashMode == SHARE_FLASH_MODE_ENABLE) {
-    Status = NvmStallNvmAccess (This, PdBridgeIndex);
+    ///
+    /// For the shared flash mode, STALL_NVM_ACCESS is sent to the second PD Bridge to prevent any access to NVM.
+    ///
+    Status = NvmStallNvmAccess (This, PdBridgeIndex + 1);
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_STALLNVM_FAIL, (UINT32) Status, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_NVM_STALL_NVM_ACCESS_FAILED;
@@ -481,7 +484,10 @@ UpdatePdBridgeNvmFirmware (
       return Status;
     }
 
-    Status = NvmReset (This, PdBridgeIndex);
+    ///
+    /// For the shared flash mode, RESET command is sent to the second PD Bridge to reload the data from NVM
+    ///
+    Status = NvmReset (This, PdBridgeIndex + 1);
     if (EFI_ERROR (Status)) {
       CapsuleLogWrite (USBC_CAPSULE_DBG_ERROR, EVT_CODE_USBC_PD_BRIDGE_NVM_FW_UPDATE_NVMRESET_FAIL, (UINT32) Status, 0);
       *LastAttemptStatus = LAST_ATTEMPT_STATUS_DEVICE_LIBRARY_PD_BRIDGE_ERROR_NVM_RESET_FAILED;
