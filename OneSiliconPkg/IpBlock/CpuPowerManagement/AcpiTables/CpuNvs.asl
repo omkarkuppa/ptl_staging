@@ -325,4 +325,5 @@
   ISEN, 8,  // Offset(330),   Enable/Disable ThETA Ibatt Feature
   LL1E, 8,  // Offset(331),   Enable/Disable Isys Limit L1 Feature
   LL2E, 8,  // Offset(332),   Enable/Disable Isys Limit L2 Feature
+  TBMD, 8,  // Offset(333),   Enable/Disable Turbo Mode
   }
