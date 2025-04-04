@@ -863,7 +863,7 @@ SetVccLvr (
   IsColdBoot = (Inputs->BootMode == bmCold);
 
   // vcciog/vccclk: SELVDD2LADDER = (VccTargMv + 50 < 1000) ? 0 : 1 ## VccTargMv can be as high as 800 * 5/4 = 1000 before Vref Saturation
-  // Using 50mV guardband
+  // Using 50mV guardband 
   SelVdd2LadderVccClk = (VccClk + 50 < 1000) ? 0 : 1;
   SelVdd2LadderVccIog = (VccIog + 50 < 1000) ? 0 : 1;
   VrefSelClk = CalculateVrefSel (MrcData, SelVdd2LadderVccClk, VccClk);
@@ -927,7 +927,7 @@ SetVccLvr (
   WorkPoint0.Data = MrcReadCR (MrcData, Offset);
 
   // vccdist: SELVDD2LADDER = (VccTargMv + 50 < 1200) ? 0 : 1 ## VccTargMv can be as high as 800 * 3/2 = 1200 before Vref Saturation
-  // Using 50mV guardband
+  // Using 50mV guardband 
   WorkPoint0.Bits.DISTGLVRSelVdd2Ladder = (VccClk + 50 < 1200) ? 0 : 1; // 1: for Vccdd2_hv, 0: for Bgvref (0.8V)
 
   VrefSel = CalculateVrefSelVccDist (MrcData, WorkPoint0.Bits.DISTGLVRSelVdd2Ladder, VccClk);

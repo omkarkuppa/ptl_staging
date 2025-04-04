@@ -54,6 +54,9 @@ MrcBoardDesignFreqCheck (
   if (IsFreqLimitedBoard && IsLpddr5) {
     FreqMax = f7500;
   }
+  if (Inputs->Lpddr5Camm) {
+    FreqMax = f7467;
+  }
 
   Outputs->FreqMax = MIN (Outputs->FreqMax, FreqMax);
   if (Outputs->FreqMax == 0) {
