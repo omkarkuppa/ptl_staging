@@ -3535,7 +3535,7 @@ gStructPcdTokenSpaceGuid.PcdSaSetup.DdrRatio|0x0                                
 gStructPcdTokenSpaceGuid.PcdSaSetup.ChHashInterleaveBit|0x2                                        # Offset 46 Ch Hash Interleaved Bit
 
 gStructPcdTokenSpaceGuid.PcdSaSetup.ECT|0x1                                                        # Offset 48 BIT0 - Early Command Training
-gStructPcdTokenSpaceGuid.PcdSaSetup.SOT|0x0                                                        #           BIT1 - SenseAmp Offset Training
+gStructPcdTokenSpaceGuid.PcdSaSetup.SOT|0x1                                                        #           BIT1 - SenseAmp Offset Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.ERDMPRTC2D|0x1                                                 #           BIT2 - Early ReadMPR Timing Centering 2D
 gStructPcdTokenSpaceGuid.PcdSaSetup.RDMPRT|0x0                                                     #           BIT3 - Read MPR Training
 gStructPcdTokenSpaceGuid.PcdSaSetup.RCVET|0x1                                                      #           BIT4 - Receive Enable Training

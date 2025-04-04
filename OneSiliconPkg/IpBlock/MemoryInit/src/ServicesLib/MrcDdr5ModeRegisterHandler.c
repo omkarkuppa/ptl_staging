@@ -304,6 +304,9 @@ MrcDdr5GetPdaData (
         case mrMR11:
           MrPdaData[DeviceIdx] = (UINT8)RankOut->DdrPdaVrefCmd[DeviceIdx];
           break;
+        case mrMR23:
+          MrPdaData[DeviceIdx] = (UINT8)RankOut->Ddr5PdaMr23[DeviceIdx];
+          break;
         case mrMR43:
           MrPdaData[DeviceIdx] = (UINT8)RankOut->Ddr5PdaMr43[DeviceIdx];
           break;

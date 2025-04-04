@@ -881,7 +881,7 @@
   # !BSF NAME:{SenseAmp Offset Training}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
   # !BSF HELP:{Enables/Disable SenseAmp Offset Training}
-  gPlatformFspPkgTokenSpaceGuid.SOT                         | * | 0x01 | 0x00
+  gPlatformFspPkgTokenSpaceGuid.SOT                         | * | 0x01 | 0x01
 
   # !BSF NAME:{Early ReadMPR Timing Centering 2D}
   # !BSF TYPE:{Combo} OPTION:{$EN_DIS}
