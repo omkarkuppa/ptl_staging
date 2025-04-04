@@ -326,89 +326,6 @@ FspRegionGetDigestList (
 }
 
 /**
-  Get FSP M/S UPD Region digests to active PCR.
-
-  @param[in]   Fbm                 Base address of Fbm
-  @param[out]  TpmDigestValues     List of digests
-  @param[in]   FspComponentId      FSP M/S UPD component ID
-  @param[in]   TpmActivePcrBanks   Active PCR value
-
-  @retval EFI_SUCCESS              Operation completed successfully.
-  @retval EFI_INVALID_PARAMETER    If FspComponentId didn't match with FSP-M or S
-
-**/
-EFI_STATUS
-EFIAPI
-FspUpdRegionGetDigestList (
-  IN   BSPM_ELEMENT                   *Bspm,
-  OUT  TPML_DIGEST_VALUES             *TpmDigestValues,
-  IN   UINT8                          FspComponentId,
-  IN   UINT32                         TpmActivePcrBanks
-  )
-{
-  SHAX_HASH_STRUCTURE     *DigestPtr;
-
-  if (FspComponentId == FSP_REGION_TYPE_FSPM) {
-    DigestPtr = (SHAX_HASH_STRUCTURE *) (FSPM_UPD_DIGEST_PTR(Bspm, Bspm->BspSegmentCount, Bspm->FspConfigRegSegmentCount));
-  } else if (FspComponentId == FSP_REGION_TYPE_FSPS) {
-    DigestPtr = (SHAX_HASH_STRUCTURE *) (FSPS_UPD_DIGEST_PTR(Bspm, Bspm->BspSegmentCount, Bspm->FspConfigRegSegmentCount));
-  }else{
-    return EFI_INVALID_PARAMETER;
-  }
-
-  if ((TpmActivePcrBanks & HASH_ALG_SHA1) != 0) {
-    TpmDigestValues->digests[TpmDigestValues->count].hashAlg = TPM_ALG_SHA1;
-    CopyMem (
-      &TpmDigestValues->digests[TpmDigestValues->count].digest,
-      &DigestPtr->HashBuffer,
-      DigestPtr->Size
-      );
-    TpmDigestValues->count ++;
-  }
-
-  if ((TpmActivePcrBanks & HASH_ALG_SHA256) != 0) {
-    TpmDigestValues->digests[TpmDigestValues->count].hashAlg = TPM_ALG_SHA256;
-    CopyMem (
-      &TpmDigestValues->digests[TpmDigestValues->count].digest,
-      &DigestPtr->HashBuffer,
-      DigestPtr->Size
-      );
-    TpmDigestValues->count ++;
-  }
-
-  if ((TpmActivePcrBanks & HASH_ALG_SHA384) != 0) {
-    TpmDigestValues->digests[TpmDigestValues->count].hashAlg = TPM_ALG_SHA384;
-    CopyMem (
-      &TpmDigestValues->digests[TpmDigestValues->count].digest,
-      &DigestPtr->HashBuffer,
-      DigestPtr->Size
-      );
-    TpmDigestValues->count ++;
-  }
-
-  if ((TpmActivePcrBanks & HASH_ALG_SHA512) != 0) {
-    TpmDigestValues->digests[TpmDigestValues->count].hashAlg = TPM_ALG_SHA512;
-    CopyMem (
-      &TpmDigestValues->digests[TpmDigestValues->count].digest,
-      &DigestPtr->HashBuffer,
-      DigestPtr->Size
-      );
-    TpmDigestValues->count ++;
-  }
-
-  if ((TpmActivePcrBanks & HASH_ALG_SM3_256) != 0) {
-    TpmDigestValues->digests[TpmDigestValues->count].hashAlg = TPM_ALG_SM3_256;
-    CopyMem (
-      &TpmDigestValues->digests[TpmDigestValues->count].digest,
-      &DigestPtr->HashBuffer,
-      DigestPtr->Size
-      );
-    TpmDigestValues->count ++;
-  }
-  return EFI_SUCCESS;
-}
-
-/**
   Extend BSP Pre-Mem digests to active PCR.
 
   @param[in]   Bspm                Base address of Bspm
@@ -783,7 +700,6 @@ FspExtendIbbRegionNear4G (
   Extend FSP-M digests to active PCR.
 
   @param[in]   Fbm                 Base address of Fbm
-  @param[in]   Bspm                Base address of Bspm
   @param[in]   TpmActivePcrBanks   Active PCR value
 
   @retval EFI_SUCCESS       Operation completed successfully.
@@ -794,7 +710,6 @@ EFI_STATUS
 EFIAPI
 FspExtendFspm (
   IN  FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
-  IN  BSPM_ELEMENT                   *Bspm,
   IN  UINT32                         TpmActivePcrBanks
   )
 {
@@ -805,17 +720,6 @@ FspExtendFspm (
   FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPM, TpmActivePcrBanks);
   Status = Tpm2PcrExtend (0, &TpmDigestValues);
   DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-M digests have been extended!)\n", Status, TpmDigestValues.count));
-  if (Status == EFI_SUCCESS) {
-    // Extend FSP-M UPD Region digests to active PCR.
-    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    FspUpdRegionGetDigestList (Bspm, &TpmDigestValues, FSP_REGION_TYPE_FSPM, TpmActivePcrBanks);
-    Status = Tpm2PcrExtend (0, &TpmDigestValues);
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-M UPD Region digests have been extended!)\n", Status, TpmDigestValues.count));
-    } else {
-      DEBUG ((DEBUG_ERROR, "Failed to extend FSP-M UPD Region Status: %r\n", Status));
-    }
-  }
 
   return Status;
 }
@@ -824,7 +728,6 @@ FspExtendFspm (
   Extend FSP-S digests to active PCR.
 
   @param[in]   Fbm                 Base address of Fbm
-  @param[in]   Bspm                Base address of Bspm
   @param[in]   TpmActivePcrBanks   Active PCR value
 
   @retval EFI_SUCCESS       Operation completed successfully.
@@ -835,7 +738,6 @@ EFI_STATUS
 EFIAPI
 FspExtendFsps (
   IN  FSP_BOOT_MANIFEST_STRUCTURE    *Fbm,
-  IN  BSPM_ELEMENT                   *Bspm,
   IN  UINT32                         TpmActivePcrBanks
   )
 {
@@ -846,17 +748,6 @@ FspExtendFsps (
   FspRegionGetDigestList (Fbm, &TpmDigestValues, FSP_REGION_TYPE_FSPS, TpmActivePcrBanks);
   Status = Tpm2PcrExtend (0, &TpmDigestValues);
   DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-S digests have been extended!)\n", Status, TpmDigestValues.count));
-  if (Status == EFI_SUCCESS) {
-    // Extend FSP-S UPD Region digests to active PCR.
-    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    FspUpdRegionGetDigestList (Bspm, &TpmDigestValues, FSP_REGION_TYPE_FSPS, TpmActivePcrBanks);
-    Status = Tpm2PcrExtend (0, &TpmDigestValues);
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Tpm2PcrExtend: %r (%d FSP-S UPD Region digests have been extended!)\n", Status, TpmDigestValues.count));
-    } else {
-      DEBUG ((DEBUG_ERROR, "Failed to extend FSP-S UPD Region Status: %r\n", Status));
-    }
-  }
 
   return Status;
 }
@@ -988,7 +879,6 @@ SaveIbbRegionNear4GEventData (
 
   @param[out]  FspMeasurementInfo  Structure that points to the data
   @param[in]   Fbm                 Base address of Fbm
-  @param[in]   Bspm                Base address of Bspm
   @param[in]   TpmActivePcrBanks   Active PCR value
 
   @retval EFI_SUCCESS       Operation completed successfully.
@@ -1000,13 +890,12 @@ EFIAPI
 ExtendFspmRegion (
   OUT  FSP_BUILD_MEASUREMENT_INFO   *FspMeasurementInfo,
   IN   FSP_BOOT_MANIFEST_STRUCTURE  *Fbm,
-  IN   BSPM_ELEMENT                 *Bspm,
   IN   UINT32                       TpmActivePcrBanks
 )
 {
   EFI_STATUS  Status = EFI_ACCESS_DENIED;
   if (IsS3Resume () == 0) {
-    Status = FspExtendFspm (Fbm, Bspm, TpmActivePcrBanks);
+    Status = FspExtendFspm (Fbm, TpmActivePcrBanks);
     if (Status == EFI_SUCCESS) {
       FspMeasurementInfo->Bits.FspmStatus = EFI_SUCCESS;
       DEBUG ((DEBUG_INFO, "FSP-M extended to PCR Bank %d\n", TpmActivePcrBanks));
@@ -1258,20 +1147,6 @@ VerifiedComponentSaveHashEvent (
     if (Status == EFI_SUCCESS) {
       DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-M\n"));
     }
-    //
-    // Save Hash Event log for FSPM UPD Region
-    //
-    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    FspUpdRegionGetDigestList (Bspm, &TpmDigestValues, FSP_REGION_TYPE_FSPM, TpmActivePcrBanks);
-    Status = SaveHashEvent (&TpmDigestValues,
-                           TpmActivePcrBanks,
-                           (UINT8 *) L"FSPM UPD",
-                           sizeof (L"FSPM UPD"),
-                           EV_POST_CODE
-                           );
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-M UPD Region\n"));
-    }
   }
 
   if (FspMeasurementData->Bits.BspPreMemStatus == EFI_SUCCESS) {
@@ -1301,7 +1176,7 @@ VerifiedComponentSaveHashEvent (
   // FSP-S verification will happen later. We have deadloops to halt the boot
   // if verification fails.
   //
-  Status = FspExtendFsps (Fbm, Bspm, TpmActivePcrBanks);
+  Status = FspExtendFsps (Fbm, TpmActivePcrBanks);
   if (Status == EFI_SUCCESS) {
     DEBUG ((DEBUG_INFO, "FSP-S extended to PCR Bank %d\n", TpmActivePcrBanks));
     Status = SaveHashEvent (&TpmDigestValues,
@@ -1312,20 +1187,6 @@ VerifiedComponentSaveHashEvent (
                            );
     if (Status == EFI_SUCCESS) {
       DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-S\n"));
-    }
-    //
-    // Save Hash Event log for FSPS UPD Region
-    //
-    ZeroMem (&TpmDigestValues, sizeof (TPML_DIGEST_VALUES));
-    FspUpdRegionGetDigestList (Bspm, &TpmDigestValues, FSP_REGION_TYPE_FSPS, TpmActivePcrBanks);
-    Status = SaveHashEvent (&TpmDigestValues,
-                           TpmActivePcrBanks,
-                           (UINT8 *) L"FSPS UPD",
-                           sizeof (L"FSPS UPD"),
-                           EV_POST_CODE
-                           );
-    if (Status == EFI_SUCCESS) {
-      DEBUG ((DEBUG_INFO, "Hash event log saved successfully for FSP-S UPD Region\n"));
     }
   } else {
     DEBUG ((DEBUG_ERROR, "Failed to extend FSP-S! Status: %r\n", Status));
