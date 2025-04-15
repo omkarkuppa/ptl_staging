@@ -312,7 +312,7 @@ InstallImrConfigHob (
     DEBUG ((DEBUG_INFO, "IMR INFO: TCSS(iTBT+IOM) Disable BIT Mask in BiosImrDisableMask0 is Clear\n"));
   }
 
-  if (IsCnviWifiEnabled ()) {
+  if (IsCnviWifiEnabled () || IsCnviBtEnabled ()) {
     ImrConfigHob->BiosImrDisableMask0 &= (UINT32)~(BIT12); // CNVi
   }
 }
