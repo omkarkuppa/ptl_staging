@@ -128,6 +128,7 @@ MrcSaveStaticSpdData (
         StaticSpdData->DimmOutReferenceRawCard[Controller][Channel][Dimm]        = DimmOut->ReferenceRawCard;
         StaticSpdData->DimmOutXmpSupport[Controller][Channel][Dimm]              = DimmOut->XmpSupport;
         StaticSpdData->DimmOutCkdSupport[Controller][Channel][Dimm]              = DimmOut->IsCkdSupport;
+        StaticSpdData->DimmOutMbistMpprSupport[Controller][Channel][Dimm]        = DimmOut->IsMbistMpprSupport;
         StaticSpdData->DimmOutDeviceDensity[Controller][Channel][Dimm]           = DimmOut->DeviceDensity;
       } // for Dimm
     } // for Channel
@@ -229,6 +230,7 @@ MrcRestoreStaticSpdData (
         DimmOut->ReferenceRawCard        = StaticSpdData->DimmOutReferenceRawCard[Controller][Channel][Dimm];
         DimmOut->XmpSupport              = StaticSpdData->DimmOutXmpSupport[Controller][Channel][Dimm];
         DimmOut->IsCkdSupport            = StaticSpdData->DimmOutCkdSupport[Controller][Channel][Dimm];
+        DimmOut->IsMbistMpprSupport      = StaticSpdData->DimmOutMbistMpprSupport[Controller][Channel][Dimm];
         DimmOut->DeviceDensity           = StaticSpdData->DimmOutDeviceDensity[Controller][Channel][Dimm];
       } // for Dimm
     } // for Channel

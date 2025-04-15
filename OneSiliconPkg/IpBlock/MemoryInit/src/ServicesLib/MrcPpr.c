@@ -745,10 +745,14 @@ MrcPostPackageRepairTest (
   IN  MrcParameters *const MrcData
   )
 {
+  MrcInput *Inputs = &MrcData->Inputs;
   MrcStatus Status = mrcSuccess;
+  BOOLEAN IsMbist  = (((UINT32) Inputs->PprTestType.Value) & (1 << PprTestTypeMbist)) ? 1 : 0;
 
   if (MrcIsTargetedPprRequested (MrcData)) {
     Status = MrcRunPprTargeted (MrcData);
+  } else if (IsMbist) {
+    Status = RunMbistMppr (MrcData);
   }
 
   return Status;

@@ -1736,3 +1736,19 @@ MrcLpddr5PprControllerTeardown (
     MrcGetSetMcCh (MrcData, MAX_CONTROLLER, MAX_CHANNEL, GsmMcttWckStop, WriteCached, &SavetWckStop);
   }
 }
+
+/**
+  Initial function to execute MBIST/mPPR
+
+  @param[in]  MrcData           - Global MRC data structure
+
+  @retval MrcStatus - mrcSuccess/mrcFail
+
+**/
+MrcStatus
+RunMbistMppr (
+  IN  MrcParameters             *const MrcData
+  )
+{
+  return mrcSuccess;
+}

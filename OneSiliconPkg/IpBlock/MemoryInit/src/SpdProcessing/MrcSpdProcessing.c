@@ -1915,6 +1915,45 @@ ValidCkdSupport (
 }
 
 /**
+  Obtain MBIST/mPPR support Status for this DIMM.
+
+    @param[in, out] MrcData - Pointer to MrcData data structure.
+    @param[in]      Spd     - Pointer to Spd data structure.
+    @param[in, out] DimmOut - Pointer to structure containing DIMM information.
+
+    @retval TRUE Function completed.  This would be a void function but
+    it appears in a table of functions that must return a BOOLEAN.
+**/
+static
+BOOLEAN
+ValidMbistMpprSupport (
+  IN OUT MrcParameters* const MrcData,
+  IN const MrcSpd* const Spd,
+  IN OUT MrcDimmOut* const DimmOut
+)
+{
+  MrcDebug     *Debug;
+  UINT8        MbistMpprSupport;
+
+  Debug = &MrcData->Outputs.Debug;
+
+  if (MRC_DDR_TYPE_DDR5 == DimmOut->DdrType) {
+    MbistMpprSupport = Spd->Ddr5.Base.SdramOptionalFeatures.Bits.MbistMpprSupport;
+    if (MbistMpprSupport == 0x1) {
+      DimmOut->IsMbistMpprSupport = TRUE;
+    }  else {
+      DimmOut->IsMbistMpprSupport = FALSE;
+    }
+  } else {
+    DimmOut->IsMbistMpprSupport = FALSE;
+  }
+
+  MRC_DEBUG_MSG (Debug, MSG_LEVEL_NOTE, "  MBIST/mPPR is %ssupported\n", (DimmOut->IsMbistMpprSupport == FALSE) ? "not " : "");
+
+  return TRUE;
+}
+
+/**
   Obtain address mirroring Status for this DIMM.
 
     @param[in, out] MrcData - Pointer to MrcData data structure.
@@ -6686,7 +6725,8 @@ SpdDimmRecognition (
     {GetThermalRefreshSupport},
     {GetpTRRsupport},
     {GetReferenceRawCardSupport},
-    {ValidCkdSupport}
+    {ValidCkdSupport},
+    {ValidMbistMpprSupport}
   };
   const MrcSpd *Spd;
   const UINT8  *CrcStart;
@@ -7414,6 +7454,7 @@ MrcSpdProcessingCalc (
     if (mrcSuccess == SpdTimingCalculation (MrcData)) {
       Outputs->EccSupport = TRUE;
       Outputs->IsCkdSupported = FALSE;
+      Outputs->IsMbistMpprSupported = TRUE;
       Outputs->ValidMcBitMask = 0;
       Outputs->ValidChBitMask = 0;
       Outputs->ValidRankMask  = 0;
@@ -7468,6 +7509,7 @@ MrcSpdProcessingCalc (
               IsNonCkd |= (DimmOut->IsCkdSupport == 0 ? TRUE : FALSE);
               IsAnyEccDimm |= DimmOut->EccSupport;
               IsAnyNonEccDimm |= (DimmOut->EccSupport == FALSE);
+              Outputs->IsMbistMpprSupported &= DimmOut->IsMbistMpprSupport;
               Outputs->tMAC         = MIN (Outputs->tMAC, DimmOut->tMAC);
               if ((XmpSupport (DimmOut, XMP_PROFILE1) && (DimmOut->XmpProfile1Config == 0)) ||
                   (XmpSupport (DimmOut, XMP_PROFILE2) && (DimmOut->XmpProfile2Config == 0)) ||

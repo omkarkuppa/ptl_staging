@@ -474,6 +474,55 @@ MrcLpddr5PprControllerTeardown (
   );
 
 /**
+  Runs MBIST
+
+  @param[in]  MrcData           - Global MRC data structure
+  @param[in]  Rank              - Rank number
+  @param[in]  MbistMcChBitMask  - Memory Controller Channel Bit mask for MBIST rerun status
+  @param[in, out] MbistMpprStatus   - Array to store MBIST/mPPR Transparency status
+
+  @retval MrcStatus - mrcSuccess/mrcFail
+**/
+MrcStatus
+MemTestMbist (
+  IN  MrcParameters             *const MrcData,
+  IN  UINT32                    Rank,
+  IN  UINT32                    MbistMcChBitMask,
+  IN OUT UINT8                  MbistMpprStatus[MAX_CONTROLLER][MAX_CHANNEL][MAX_BYTE_IN_DDR5_CHANNEL]
+  );
+
+/**
+  Runs mPPR
+
+  @param[in]  MrcData               - Global MRC data structure
+  @param[in]  Rank                  - Rank number
+  @param[in]  MpprtMcChBitMask      - Memory Controller Channel Bit mask for mPPR rerun status
+  @param[in, out] MbistMpprStatus   - Array to store MBIST/mPPR Transparency status
+
+  @retval MrcStatus - mrcSuccess/mrcFail
+**/
+MrcStatus
+RunMppr (
+  IN     MrcParameters             *const MrcData,
+  IN     UINT32                    Rank,
+  IN     UINT32                    MpprtMcChBitMask,
+  IN OUT UINT8                     MbistMpprStatus[MAX_CONTROLLER][MAX_CHANNEL][MAX_BYTE_IN_DDR5_CHANNEL]
+  );
+
+/**
+  Initial function to execute MBIST/mPPR
+
+  @param[in]  MrcData           - Global MRC data structure
+
+  @retval MrcStatus - mrcSuccess/mrcFail
+
+**/
+MrcStatus
+RunMbistMppr (
+  IN  MrcParameters             *const MrcData
+  );
+
+/**
   This is a test function for direct testing of the Post Package Repair sequence.
   @param[in] MrcData     - Pointer to global MRC data.
 
