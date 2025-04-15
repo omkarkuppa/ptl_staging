@@ -392,9 +392,16 @@ DefinitionBlock (
     // Returns Package with Lch Dependencies for Link Device
     //
     Method (LNKD, 1, Serialized) {
-      If (LAnd (CondRefOf (\_SB.PC00.CVSS), CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VIC1))) {
-        ADBG ("CVS : Return dependency for Lch specific Camera")
-        Return (Package() {"\\_SB.PC00.CVSS", "\\_SB.PC00.XHCI.RHUB.HS03.VIC1"})
+      If ((ToInteger (PBID) == BoardIdPtlUHLp5Aep)) {
+        If (LAnd (CondRefOf (\_SB.PC00.CVVS), CondRefOf (\_SB.PC00.XHCI.RHUB.HS04.VIC3))) {
+          ADBG ("CVVS Camera AEP: Return dependency for Lch specific Camera")
+          Return (Package() {"\\_SB.PC00.CVVS", "\\_SB.PC00.XHCI.RHUB.HS04.VIC3"})
+        }
+      } else {
+        If (LAnd (CondRefOf (\_SB.PC00.CVSS), CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VIC1))) {
+          ADBG ("CVS : Return dependency for Lch specific Camera")
+          Return (Package() {"\\_SB.PC00.CVSS", "\\_SB.PC00.XHCI.RHUB.HS03.VIC1"})
+        }
       }
       Return (0)
     }
@@ -410,9 +417,16 @@ DefinitionBlock (
     // Returns Package with Lch Dependencies for Flash Device
     //
     Method (FLMD, 1, Serialized) {
-      If (LAnd (CondRefOf (\_SB.PC00.CVSS), CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VIC1))) {
-        ADBG ("CVS : Return dependency for Lch specific Flash")
-        Return (Package() {"\\_SB.PC00.CVSS", "\\_SB.PC00.XHCI.RHUB.HS03.VIC1"})
+      If ((ToInteger (PBID) == BoardIdPtlUHLp5Aep)) {
+        If (LAnd (CondRefOf (\_SB.PC00.CVVS), CondRefOf (\_SB.PC00.XHCI.RHUB.HS04.VIC3))) {
+          ADBG ("CVVS Camera AEP : Return dependency for Lch specific Flash")
+          Return (Package() {"\\_SB.PC00.CVVS", "\\_SB.PC00.XHCI.RHUB.HS04.VIC3"})
+        }
+      } else {
+        If (LAnd (CondRefOf (\_SB.PC00.CVSS), CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VIC1))) {
+          ADBG ("CVS : Return dependency for Lch specific Flash")
+          Return (Package() {"\\_SB.PC00.CVSS", "\\_SB.PC00.XHCI.RHUB.HS03.VIC1"})
+        }
       }
       Return (0)
     }
@@ -435,17 +449,32 @@ DefinitionBlock (
     //
     Method (VICC, 2, Serialized) {
       If (Land (LEqual (Arg0, LCH_LINK_NUMBER), LEqual (LCHS, LCH_ENABLED))) {
-        If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VIC1)) {
-          Name (VI11, ResourceTemplate ()
-          {
-              I2cSerialBusV2 (0x0000, ControllerInitiated, 0x400000,
-                  AddressingMode7Bit, "\\_SB.PC00.XHCI.RHUB.HS03.VIC1",
-                  0x00, ResourceConsumer, _Y1B, Exclusive,
-                  )
-          })
-          CreateWordField (VI11, _Y1B._ADR, DAR1)  // _ADR: Address
-          Store (Arg1, DAR1)
-          Return (VI11)
+        If ((ToInteger (PBID) == BoardIdPtlUHLp5Aep)) {
+          If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS04.VIC3)) {
+            Name (VI13, ResourceTemplate ()
+            {
+                I2cSerialBusV2 (0x0000, ControllerInitiated, 0x400000,
+                    AddressingMode7Bit, "\\_SB.PC00.XHCI.RHUB.HS04.VIC3",
+                    0x00, ResourceConsumer, _Y3B, Exclusive,
+                    )
+            })
+            CreateWordField (VI13, _Y3B._ADR, DAR3)  // _ADR: Address
+            Store (Arg1, DAR3)
+            Return (VI13)
+          }
+        } else {
+          If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VIC1)) {
+            Name (VI11, ResourceTemplate ()
+            {
+                I2cSerialBusV2 (0x0000, ControllerInitiated, 0x400000,
+                    AddressingMode7Bit, "\\_SB.PC00.XHCI.RHUB.HS03.VIC1",
+                    0x00, ResourceConsumer, _Y1B, Exclusive,
+                    )
+            })
+            CreateWordField (VI11, _Y1B._ADR, DAR1)  // _ADR: Address
+            Store (Arg1, DAR1)
+            Return (VI11)
+          }
         }
         ADBG ("VIC1 not available")
       }
@@ -453,17 +482,32 @@ DefinitionBlock (
     }
 
     Method (DSCR, 1, Serialized) {
-      If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VGPO)) {
-        Name (VDSC, ResourceTemplate () {
-          //
-          // Virtual GPIOs from RGB Camera
-          //
-          GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x01}
-          GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x02}
-          GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x03}
-          GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x04}
-        })
-        Return(VDSC)
+      If ((ToInteger (PBID) == BoardIdPtlUHLp5Aep)) {
+        If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS04.VGP1)) {
+          Name (ADSC, ResourceTemplate () {
+            //
+            // Virtual GPIOs from RGB Camera
+            //
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x01}
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x02}
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x03}
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,,) { 0x04}
+          })
+          Return(ADSC)
+        }
+      } else {
+        If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VGPO)) {
+          Name (VDSC, ResourceTemplate () {
+            //
+            // Virtual GPIOs from RGB Camera
+            //
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x01}
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x02}
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x03}
+            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,,) { 0x04}
+          })
+          Return(VDSC)
+        }
       }
       ADBG ("VGPO not available")
       Return (0)
@@ -475,13 +519,24 @@ DefinitionBlock (
     //
     Method (VPN3, 1, Serialized) {
       If (Land (LEqual (Arg0, LCH_LINK_NUMBER), LEqual (LCHS, LCH_ENABLED))) {
-        If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VGPO)) {
-          Name (GPOR, ResourceTemplate () {
-            GpioIo (Exclusive, PullDefault, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,GPOD) { 0xFFFF }
-          })
-          CreateWordField (GPOR, GPOD._PIN, PINV)
-          Store(VGPIO_PIN3, PINV)
-          Return (GPOR)
+        If ((ToInteger (PBID) == BoardIdPtlUHLp5Aep)) {
+          If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS04.VGP1)) {
+            Name (GPRA, ResourceTemplate () {
+              GpioIo (Exclusive, PullDefault, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS04.VGP1",,,GPDA) { 0xFFFF }
+            })
+            CreateWordField (GPRA, GPDA._PIN, PINA)
+            Store(VGPIO_PIN3, PINA)
+            Return (GPRA)
+          }
+        } else {
+          If (CondRefOf (\_SB.PC00.XHCI.RHUB.HS03.VGPO)) {
+            Name (GPOR, ResourceTemplate () {
+              GpioIo (Exclusive, PullDefault, 0, 0, IoRestrictionOutputOnly, "\\_SB.PC00.XHCI.RHUB.HS03.VGPO",,,GPOD) { 0xFFFF }
+            })
+            CreateWordField (GPOR, GPOD._PIN, PINV)
+            Store(VGPIO_PIN3, PINV)
+            Return (GPOR)
+          }
         }
         ADBG ("VGPO not available")
       }
@@ -507,7 +562,11 @@ DefinitionBlock (
   Include ("PinDriverLib.asl")
 
   If (LEqual (LCHS,1)) {
-    Include ("Lch.asl")
+    If ((ToInteger (PBID) == BoardIdPtlUHLp5Aep)) {
+      Include ("LchAep.asl")
+    } else {
+      Include ("Lch.asl")
+    }
   }
 
   If (LEqual(VMDE,1)) {
