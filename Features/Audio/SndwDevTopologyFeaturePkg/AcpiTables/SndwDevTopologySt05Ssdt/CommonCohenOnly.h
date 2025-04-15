@@ -29,6 +29,7 @@
 #define AIC_V2             1
 #define HWKWS              1
 #define COHEN_ONLY         1
+#define UAJ_RENDER_192KHZ  1
 
 //
 // 24-bit sample depth for DMIC capture

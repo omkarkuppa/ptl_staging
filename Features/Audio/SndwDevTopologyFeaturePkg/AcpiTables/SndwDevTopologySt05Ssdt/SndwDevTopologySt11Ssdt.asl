@@ -211,7 +211,7 @@
 #define CS35L56_FU_21_VOL_STEP          0x08, 0x00, 0x00, 0x00
 #define CS35L56_FU_21_VOL_FIXED_Q7_8    0x0
 
-DefinitionBlock ("SndwDevTopologySt09Ssdt.aml", "SSDT", 2, "INTEL", "St09Ssdt", 0x1000) {
+DefinitionBlock ("SndwDevTopologySt11Ssdt.aml", "SSDT", 2, "INTEL", "St11Ssdt", 0x1000) {
     // references to existing objects
     External(\_SB, DeviceObj)
     External(\_SB.PC00.HDAS.IDA.SNDW, DeviceObj)
