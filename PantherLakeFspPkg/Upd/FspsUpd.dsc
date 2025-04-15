@@ -363,8 +363,8 @@
   gPlatformFspPkgTokenSpaceGuid.PowerFloorManagement        | * | 0x01 | 0x01
 
   # !BSF NAME:{Power Floor Disaplay Disconnect} TYPE:{Combo} OPTION:{$EN_DIS}
-  # !BSF HELP:{SoC can disconnect secondary/external display to lower SoC floor power (Default enabled).  0: Disable: Display disconnect will not be used by SoC., <b>1: Enable </b>}
-  gPlatformFspPkgTokenSpaceGuid.PowerFloorDisplayDisconnect | * | 0x01 | 0x01
+  # !BSF HELP:{SoC can disconnect secondary/external display to lower SoC floor power (Default disabled).  0: Disable: Display disconnect will not be used by SoC., </b>1: Enable <b>}
+  gPlatformFspPkgTokenSpaceGuid.PowerFloorDisplayDisconnect | * | 0x01 | 0x00
 
   ## CPU_POWER_MGMT_BASIC_CONFIG End
 

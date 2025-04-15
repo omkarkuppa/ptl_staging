@@ -303,7 +303,6 @@ LoadCpuPowerMgmtBasicConfigDefault (
   CpuPowerMgmtBasicConfig->HwpLock                        = TRUE;
   CpuPowerMgmtBasicConfig->HwpInterruptControl            = TRUE;
   CpuPowerMgmtBasicConfig->PowerFloorManagement           = TRUE;
-  CpuPowerMgmtBasicConfig->PowerFloorDisplayDisconnect    = TRUE;
   CpuPowerMgmtBasicConfig->PowerFloorPcieGenDowngrade     = TRUE;
 
   ///
@@ -311,8 +310,6 @@ LoadCpuPowerMgmtBasicConfigDefault (
   ///
   CpuPowerMgmtBasicConfig->EnableHwpAutoPerCorePstate     = TRUE;
   CpuPowerMgmtBasicConfig->EnableHwpAutoEppGrouping       = TRUE;
-  CpuPowerMgmtBasicConfig->EnableDynamicEfficiencyControl = FALSE;
-
   CpuPowerMgmtBasicConfig->TurboMode                      = TRUE;
   CpuPowerMgmtBasicConfig->BootFrequency                  = 2;  // Turbo Performance
 
