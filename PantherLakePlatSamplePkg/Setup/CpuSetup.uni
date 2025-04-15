@@ -803,7 +803,7 @@
 #string STR_FALSE                               #language en-US "False"
 #string STR_TRUE                                #language en-US "True"
 
-#string STR_HYST_WINDOW_PCORE                   #language en-US "Pcore Hysteresis Window"
+#string STR_HYST_WINDOW_PCORE                   #language en-US "IAcore Hysteresis Window"
 #string STR_HYST_WINDOW_PCORE_HELP              #language en-US "Set the Hysteresis time in milliseconds. Range is 0-50ms. Pcode will clip any number above max and return success"
 #string STR_HYST_WINDOW_ECORE                   #language en-US "Ecore Hysteresis Window"
 #string STR_HYST_WINDOW_ECORE_HELP              #language en-US "Set the Hysteresis time in milliseconds. Range is 0-50ms. Pcode will clip any number above max and return success"

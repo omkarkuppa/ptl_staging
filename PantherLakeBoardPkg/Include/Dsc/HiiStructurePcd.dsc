@@ -105,7 +105,7 @@ gStructPcdTokenSpaceGuid.PcdCpuSetup.AcLoadline[2]|0x0                          
 gStructPcdTokenSpaceGuid.PcdCpuSetup.AcLoadline[3]|0x0                                             # AC Loadline
 gStructPcdTokenSpaceGuid.PcdCpuSetup.AcheckRequest|0x0                                             # Alias Check Request
 gStructPcdTokenSpaceGuid.PcdCpuSetup.AcousticNoiseMitigation|0x0                                   # Acoustic Noise Mitigation
-gStructPcdTokenSpaceGuid.PcdCpuSetup.PcoreHysteresisWindow|0x0                                     # Pcore Hysteresis Window
+gStructPcdTokenSpaceGuid.PcdCpuSetup.PcoreHysteresisWindow|0x0                                     # IAcore Hysteresis Window
 gStructPcdTokenSpaceGuid.PcdCpuSetup.EcoreHysteresisWindow|0x0                                     # Ecore Hysteresis Window
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ActiveCoreCount|0xff                                          # Active Performance-cores
 gStructPcdTokenSpaceGuid.PcdCpuSetup.ActiveLpAtomCoreCount|0xff                                    # Active LP Efficient-cores
