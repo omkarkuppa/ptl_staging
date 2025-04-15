@@ -103,14 +103,15 @@ CnvCompatibleEntryPoint (
   EFI_STATUS  Status;
   EFI_HANDLE  Handle;
   EFI_GUID    *Guid;
-  UINTN       Count, Index;
+  UINTN       Count;
+  UINTN       Index;
 
   DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
 
   Handle = NULL;
 
   //
-  // Check whether EfiNetworkSupport or PrebootBle enabled through PcdCnvDispatch
+  // Check whether CnvCompatibility Check enabled through PcdCnvDispatch
   //
   if ((PcdGetBool (PcdCnvDispatch))) {
     Status = gBS->InstallProtocolInterface (
@@ -121,7 +122,7 @@ CnvCompatibleEntryPoint (
                     );
     ASSERT_EFI_ERROR (Status);
   } else {
-    DEBUG ((DEBUG_INFO, "EfiNetworkSupport or PrebootBleEnable is Disabled\n"));
+    DEBUG ((DEBUG_INFO, "CnvCompatibility Check is Disabled\n"));
     Status = EFI_SUCCESS;
     return Status;
   }
@@ -143,16 +144,17 @@ CnvCompatibleEntryPoint (
     // Unload existing Drivers and load from ESP
     //
     Guid  = PcdGetPtr (PcdUnloadDriverGuids);
-    Count = PcdGetSize (PcdUnloadDriverGuids)/sizeof (EFI_GUID);
+    Count = PcdGetSize (PcdUnloadDriverGuids) / sizeof (EFI_GUID);
 
     for (Index = 0; Index < Count; Index++, Guid++) {
       UnloadCnvDriver (Guid);
     }
-
-    LoadCnvDriverFromFv ();
   }
 
-  DEBUG ((DEBUG_INFO, "%a End\n", __FUNCTION__));
+  //
+  // Load Fv from External Storage Device
+  //
+  LoadCnvDriverFromFv ();
   return EFI_SUCCESS;
 }
 
@@ -170,13 +172,13 @@ IsSupportedCnvPresent (
 {
   UINTN                SizeData;
   UINTN                Index;
-  UINTN                CnvDidIndex;
+  UINTN                CnvSubIdIndex;
   EFI_HANDLE           *PciHandles;
   UINTN                PciHandlesSize;
   EFI_PCI_IO_PROTOCOL  *PciIo;
   PCI_TYPE00           PciConfig;
   EFI_STATUS           Status;
-  UINT16               *CnvDeviceId;
+  UINT16               *CnvSubSystemId;
   UINTN                Count;
 
   DEBUG ((DEBUG_INFO, "%a Start\n", __FUNCTION__));
@@ -211,10 +213,10 @@ IsSupportedCnvPresent (
                             );
       if ((!EFI_ERROR (Status)) && (PciConfig.Hdr.VendorId == INTEL_VENDOR_ID)) {
         if (IS_CLASS2 (&PciConfig, PCI_CLASS_NETWORK, PCI_CLASS_NETWORK_OTHER)) {
-          CnvDeviceId  = PcdGetPtr (PcdCnvDeviceId);
-          Count = PcdGetSize (PcdCnvDeviceId)/sizeof (UINT16);
-          for (CnvDidIndex = 0; CnvDidIndex < Count; CnvDidIndex++, CnvDeviceId++) {
-            if (PciConfig.Hdr.DeviceId == *(CnvDeviceId)) {
+          CnvSubSystemId  = PcdGetPtr (PcdCnvSubSystemId);
+          Count = PcdGetSize (PcdCnvSubSystemId)/sizeof (UINT16);
+          for (CnvSubIdIndex = 0; CnvSubIdIndex < Count; CnvSubIdIndex++, CnvSubSystemId++) {
+            if (PciConfig.Device.SubsystemID == *(CnvSubSystemId)) {
               PcdSet8S (PcdCnvPresent, 1);
               break;
             } else {
@@ -559,12 +561,10 @@ LoadCnvDriverFromFv (
         LoadCnvDriver (FvAddress, BufferSize);
         FreePool (SimpleFsHandle);
         FreePool (FileInfo);
-        FreePool (FvAddress);
         return EFI_SUCCESS;
       } else {
         FreePool (SimpleFsHandle);
         FreePool (FileInfo);
-        FreePool (FvAddress);
         return EFI_NOT_FOUND;
       }
     }

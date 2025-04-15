@@ -87,7 +87,7 @@
   gCnvFeaturePkgTokenSpaceGuid.PcdDynamicSarSupport      |TRUE       |BOOLEAN|0x30000080
   gCnvFeaturePkgTokenSpaceGuid.PcdSkipVidDidCheck        |FALSE      |BOOLEAN|0x30000081
   gCnvFeaturePkgTokenSpaceGuid.PcdCnvBinLoadFromESP      |TRUE       |BOOLEAN|0x30003002
-  gCnvFeaturePkgTokenSpaceGuid.PcdCnvDeviceId            |{0x0}      |VOID*  |0x3000007F
+  gCnvFeaturePkgTokenSpaceGuid.PcdCnvSubSystemId         |{0x0}      |VOID*  |0x3000007F
 
 [PcdsDynamic]
   gCnvFeaturePkgTokenSpaceGuid.PcdGlobalCnvDlvrRfim    |1          |UINT8  |0x30000079
@@ -105,6 +105,7 @@
   gCnvFormPlatformProtocolGuid        = {0x012dc5f7, 0xc243, 0x4a1e, {0x8f, 0x7f, 0xd2, 0xa7, 0x51, 0xc1, 0x46, 0x6d}}
   gCnvUefiGuidLockStatusProtocolGuid  = {0x55df6f94, 0x420b, 0x4dd5, {0xb4, 0x2d, 0xb2, 0xbd, 0xfb, 0xb8, 0xcf, 0x39}}
   gCnvDispatchProtocolGuid            = {0x8dba4261, 0xea98, 0x48dc, {0xb0, 0xc2, 0x60, 0x01, 0x6b, 0x60, 0xf8, 0x52}}
+  gCnvSupportingProtocolGuid          = {0x7a88f441, 0x8ad2, 0x4d74, {0x9b, 0x22, 0xee, 0xf2, 0xc1, 0xee, 0x1c, 0x2c}}
 
 [PcdsDynamic, PcdsDynamicEx]
   #
