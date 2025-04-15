@@ -182,6 +182,8 @@ PeiHeciFwCapsGetRuleData (
     return EFI_UNSUPPORTED;
   }
 
+  ZeroMem (&GetRuleMsg, sizeof (GET_RULE_BUFFER));
+
   GetRuleMsg.Request.MkhiHeader.Data           = 0;
   GetRuleMsg.Request.MkhiHeader.Fields.GroupId = MKHI_FWCAPS_GROUP_ID;
   GetRuleMsg.Request.MkhiHeader.Fields.Command = FWCAPS_GET_RULE_CMD;
