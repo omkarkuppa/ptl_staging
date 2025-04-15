@@ -34,6 +34,8 @@
   # Silicon On/Off feature are defined here
   # Should put it before a new section, since it also has section.
   #
+
+
   !include $(SILICON_PRODUCT_PATH)/SiPkgPcdInit.dsc
 
   #
