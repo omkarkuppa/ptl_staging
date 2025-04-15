@@ -38,6 +38,10 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 //
+// AFP Foundation.
+//
+#include <Library/SeamlessRecoverySupportLib.h>
+//
 // Self-Module Foundation.
 //
 #include "Defines/FoxvilleCommon.h"
@@ -934,8 +938,9 @@ FmpDeviceSetImageWithStatus (
   OUT UINT32                                         *LastAttemptStatus
   )
 {
-  EFI_STATUS  Status;
-  UINT8       *ImageCopy;
+  EFI_STATUS                       Status;
+  SYSTEM_FIRMWARE_UPDATE_PROGRESS  PreviousProgress;
+  UINT8                            *ImageCopy;
 
   ImageCopy = NULL;
 
@@ -955,6 +960,19 @@ FmpDeviceSetImageWithStatus (
 
   DEBUG ((DEBUG_INFO, "Flashing new NVM image\n"));
 
+  //
+  // Check if system is continuing from an interrupted update.
+  // If not, save current Capsule image to storage for support seamless recovery
+  // Otherwise, no need to backup files again.
+  //
+  if (!IsPreviousUpdateUnfinished (&PreviousProgress)) {
+    SaveCurrentCapsuleToStorage ((VOID *)Image, ImageSize);
+  } else {
+    ASSERT (PreviousProgress.Component == UpdatingFoxville);
+  }
+
+  SetUpdateProgress (UpdatingFoxville, 0);
+
   ImageCopy = (UINT8 *)AllocateZeroPool (ImageSize);
   if (ImageCopy == NULL) {
     return EFI_ABORTED;
@@ -973,7 +991,8 @@ FmpDeviceSetImageWithStatus (
     // It could implement the flow to write the non-protected region in the future.
     //
     DEBUG ((DEBUG_ERROR, "Device is in protected mode, abort to perform FW update.\n"));
-    return EFI_ABORTED;
+    Status = EFI_UNSUPPORTED;
+    goto Exit;
   } else {
     Status = FoxvilleUpdateInUnprotectedMode (mFoxvilleHwInstPtr, ImageCopy, ImageSize);
     if (EFI_ERROR (Status)) {
@@ -992,6 +1011,9 @@ FmpDeviceSetImageWithStatus (
       goto Exit;
     }
   }
+
+  ClearUpdateProgress ();
+  DeleteBackupFiles ();
 
   Progress (90);
 

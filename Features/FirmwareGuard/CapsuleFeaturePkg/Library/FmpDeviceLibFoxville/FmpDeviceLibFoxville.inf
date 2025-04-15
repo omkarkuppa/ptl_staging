@@ -68,6 +68,9 @@
   CapsuleFeaturePkg/CapsuleFeaturePkg.dec
 
 [LibraryClasses]
+  #
+  # EDK-II Foundation.
+  #
   BaseLib
   BaseMemoryLib
   DebugLib
@@ -75,6 +78,10 @@
   PrintLib
   UefiBootServicesTableLib
   UefiLib
+  #
+  # AFP Foundation.
+  #
+  SeamlessRecoverySupportLib
 
 [Protocols]
   gEfiPciEnumerationCompleteProtocolGuid  ## CONSUMES
