@@ -124,6 +124,7 @@
 
 #define V_PCH_PSFX_PCR_DEV_GNTCNT_MAX                      4
 
+#define R_PSF_PCR_PSF_X_PSF_CLKREQ_HYS                     0x4004     // Offset 4004h: Clkreq Hysteresis Count Reload Register
 //PSFX Multicast Message Configuration
 #define R_PSF_PCR_PSF_X_RC_OWNER_RS0                       0x4008
 
