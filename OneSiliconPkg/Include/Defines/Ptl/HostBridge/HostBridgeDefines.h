@@ -26,6 +26,8 @@
 #define SA_MC_DEV               0x00
 #define SA_MC_FUN               0x00
 
+#define PCI_REVISION_ID_OFFSET  0x08
+
 #define V_SA_DEVICE_ID_INVALID  0xFFFF
 
 //

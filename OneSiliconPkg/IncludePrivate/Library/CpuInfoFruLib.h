@@ -180,6 +180,15 @@ GetFruGenerationString (
   );
 
 /**
+  Return MCP stepping based on compute die SRID
+  @retval  MCP stepping
+**/
+UINT8
+McpGetStepping (
+  VOID
+  );
+
+/**
   Returns Revision Table string
 
   @param[in]   CpuFamilyId

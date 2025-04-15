@@ -46,17 +46,26 @@
 STATIC CONST CHAR8 mCpuFamilyString[] = "PantherLake";
 STATIC CONST CHAR8 mCpuFamilyStringWcl[] = "WildcatLake";
 STATIC CHAR8 mPtlSocketTypeString[] = "BGA2540";
+
+#define NOCARE 0xFF
+
 typedef struct {
   UINT32  CPUID;
+  UINT8   SRID;
   CHAR8   String[16];
 } CPU_REV;
 
 GLOBAL_REMOVE_IF_UNREFERENCED CONST CPU_REV  mProcessorRevisionTable[] = {
-  {CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE    + EnumPtlHA0,    "A0"},
-  {CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE    + EnumPtlUA0,    "A0"},
-  {CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE    + EnumPtlUHB0,   "B0"},
-  {CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE    + EnumWclA0,     "A0"},
-  {CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE    + EnumWclB0,     "B0"}
+  //
+  //                        CPUID                              SRID      String
+  //
+  {CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE  + EnumPtlHA0,  NOCARE,   "A0"},
+  {CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE  + EnumPtlUA0,  NOCARE,   "A0"},
+  {CPUID_FULL_FAMILY_MODEL_PANTHERLAKE_MOBILE  + EnumPtlUHB0, NOCARE,   "B0"},
+  {CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE,                     0,   "A0"},
+  {CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE,                     1,   "A1"},
+  {CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE,                     2,   "A4"},
+  {CPUID_FULL_FAMILY_MODEL_WILDCATLAKE_MOBILE + EnumWclB0,         4,   "B0"}
 };
 
 //
@@ -444,6 +453,34 @@ GetFruGenerationString (
 }
 
 /**
+  Return MCP stepping based on compute die SRID
+  @retval  MCP stepping
+**/
+UINT8
+McpGetStepping (
+  VOID
+  )
+{
+   ///
+    /// WCL Package M Steppings
+    ///
+    /*
+    |  MCP Step   |  MCP Step  | FUSE_SRID   |
+    |  InternaL   |  External  |  Compute    |
+    +-------------+------------------------- +
+    |  WCL A0     |   WCL A0   |     0x0     |
+    |  WCL A1     |   WCL A1   |     0x1     |
+    |  WCL A4     |   WCL A1   |     0x2     |
+    |  WCL B0     |   WCL B0   |     0x4     |
+    */
+
+  //
+  // Read SRID from HostBridge (0 / 0 / 0)
+  //
+    return PciSegmentRead8 (PCI_SEGMENT_LIB_ADDRESS (SA_SEG_NUM, SA_MC_BUS, SA_MC_DEV, SA_MC_FUN, 0) + PCI_REVISION_ID_OFFSET) & 0xF;
+}
+
+/**
   Returns Revision Table string
 
   @param[in]   CpuId
@@ -458,11 +495,15 @@ GetRevisionTableString (
 {
   UINTN                 Index = 0;
   UINTN                 Count;
+  UINT8                 SrId;
+
+  SrId = McpGetStepping ();
 
   Count = ARRAY_SIZE (mProcessorRevisionTable);
 
   for (Index = 0; Index < Count; Index++) {
-    if (CpuId == mProcessorRevisionTable[Index].CPUID) {
+    if ((CpuId == mProcessorRevisionTable[Index].CPUID) &&
+        ((SrId == mProcessorRevisionTable[Index].SRID) || (mProcessorRevisionTable[Index].SRID == NOCARE))) {
       return mProcessorRevisionTable[Index].String;
     }
   }
